@@ -37,11 +37,11 @@ public class JAtcSim {
     Area area;
     Settings displaySettings = null;
     try {
-      area = ser.loadArea("C:\\Users\\Marek\\Documents\\NetBeansProjects\\JAtcSim\\src\\jatcsim\\lkpr.xml");
+      area = ser.loadArea("C:\\Users\\Marek\\Documents\\NetBeansProjects\\_JAtcSimSolution\\JAtcSim\\src\\jatcsim\\lkpr.xml");
 
       displaySettings = new Settings();
       ser.fillObject(
-          "C:\\Users\\Marek\\Documents\\NetBeansProjects\\JAtcSim\\src\\jatcsim\\colorScheme.xml",
+          "C:\\Users\\Marek\\Documents\\NetBeansProjects\\_JAtcSimSolution\\JAtcSim\\src\\jatcsim\\colorScheme.xml",
           displaySettings);
 
     } catch (Exception ex) {
