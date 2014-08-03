@@ -5,6 +5,7 @@
  */
 package jatcsimdraw.painting;
 
+import jatcsimlib.global.Optional;
 import jatcsimlib.types.KeyItem;
 import java.awt.Color;
 
@@ -32,8 +33,13 @@ public class DispSett implements KeyItem<String> {
 
   private String key;
   private Color color;
+  @Optional
   private int width;
-
+  @Optional
+  private int borderDistance;
+  @Optional
+  private int borderWidth;
+  
   @Override
   public String getKey() {
     return key;
@@ -46,6 +52,12 @@ public class DispSett implements KeyItem<String> {
   public int getWidth() {
     return width;
   }
-  
-  
+
+  public int getBorderDistance() {
+    return borderDistance;
+  }
+
+  public int getBorderWidth() {
+    return borderWidth;
+  }
 }

@@ -6,6 +6,7 @@
 package jatcsimxml.serialization;
 
 import jatcsimlib.exceptions.ERuntimeException;
+import jatcsimlib.global.Optional;
 import jatcsimlib.types.Coordinate;
 import jatcsimlib.types.KeyItem;
 import jatcsimlib.world.Airport;
@@ -59,12 +60,14 @@ public class Reflecter {
   }
 
   private static <T> void convertAndSetFieldValue(Element el, Field f, T targetObject) {
-    String tmpS = extractSimpleValueFromElement(el, f.getName());
+    boolean required = f.getAnnotation(Optional.class) == null;
+    String tmpS = extractSimpleValueFromElement(el, f.getName(),required);
+    if (tmpS == null) return;
     Object tmpO = convertToType(tmpS, f.getType());
     setFieldValue(f, targetObject, tmpO);
   }
 
-  private static String extractSimpleValueFromElement(Element el, String key) {
+  private static String extractSimpleValueFromElement(Element el, String key, boolean isRequired) {
     String ret = null;
     if (el.hasAttribute(key)) {
       ret = el.getAttribute(key);
@@ -74,7 +77,7 @@ public class Reflecter {
         ret = tmp.item(0).getTextContent();
     }
 
-    if (ret == null){
+    if (ret == null && isRequired){
       throw new ERuntimeException("Unable to find find key \"" + key + "\" in element \"" + el.getNodeName() + "\"");
     }
     

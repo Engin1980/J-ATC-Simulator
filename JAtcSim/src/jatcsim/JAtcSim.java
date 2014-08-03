@@ -34,7 +34,7 @@ public class JAtcSim {
   public static void main(String[] args) {
 
     Serializer ser = new Serializer();
-    Area area;
+    Area area = null;
     Settings displaySettings = null;
     try {
       area = ser.loadArea("C:\\Users\\Marek\\Documents\\NetBeansProjects\\_JAtcSimSolution\\JAtcSim\\src\\jatcsim\\lkpr.xml");

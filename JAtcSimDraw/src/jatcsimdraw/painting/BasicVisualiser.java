@@ -75,25 +75,25 @@ public class BasicVisualiser extends Visualiser {
 
     switch (navaid.getType()){
       case VOR:
-        p.drawPoint(navaid.getCoordinate(), ds.getColor(), 3);
-        p.drawCircleAround(navaid.getCoordinate(), 9, ds.getColor(), 1);
+        p.drawPoint(navaid.getCoordinate(), ds.getColor(), ds.getWidth());
+        p.drawCircleAround(navaid.getCoordinate(), ds.getBorderDistance(), ds.getColor(), ds.getBorderWidth());
         p.drawText(navaid.getName(), navaid.getCoordinate(), 3, 3, ds.getColor());
         break;
       case NDB:
-        p.drawPoint(navaid.getCoordinate(), ds.getColor(), 3);
-        p.drawTriangleAround(navaid.getCoordinate(), 12, ds.getColor(), 1);
+        p.drawPoint(navaid.getCoordinate(), ds.getColor(), ds.getWidth());
+        p.drawTriangleAround(navaid.getCoordinate(), ds.getBorderDistance(), ds.getColor(), ds.getBorderWidth());
         p.drawText(navaid.getName(), navaid.getCoordinate(), 3, 3, ds.getColor());
         break;
       case Fix:
-        p.drawPoint(navaid.getCoordinate(), ds.getColor(), 3);
+        p.drawPoint(navaid.getCoordinate(), ds.getColor(), ds.getWidth());
         //p.drawCircleAround(navaid.getCoordinate(), 9, ds.getColor(), 1);
         p.drawText(navaid.getName(), navaid.getCoordinate(), 3, 0, ds.getColor());
         break;
       case FixMinor:
-        p.drawPoint(navaid.getCoordinate(), ds.getColor(), 3);
+        p.drawPoint(navaid.getCoordinate(), ds.getColor(), ds.getWidth());
         break;
       case Airport:
-        p.drawPoint(navaid.getCoordinate(), ds.getColor(), 3);
+        p.drawPoint(navaid.getCoordinate(), ds.getColor(), ds.getWidth());
         p.drawText(navaid.getName(), navaid.getCoordinate(), 3, 3, ds.getColor());
         break;
     }
