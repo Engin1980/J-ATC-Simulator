@@ -10,6 +10,7 @@ import jatcsimdraw.shared.EventListener;
 import jatcsimdraw.shared.EventManager;
 import jatcsimdraw.shared.es.EMouseEvent;
 import jatcsimdraw.shared.es.WithCoordinateEvent;
+import jatcsimlib.other.RadarRange;
 import jatcsimlib.types.Coordinate;
 import jatcsimlib.world.Area;
 import java.awt.event.KeyEvent;
@@ -31,10 +32,10 @@ public class Radar {
   private final EventManager<
       Radar, EventListener<Radar, KeyEvent>, KeyEvent> keyPressEM = new EventManager(this);
 
-  public Radar(Canvas canvas, Coordinate topLeft, Coordinate bottomRight,
+  public Radar(Canvas canvas, RadarRange radarRange,
       Area area, Settings displaySettings) {
     this.c = canvas;
-    this.p = new BasicPainter(c, topLeft, bottomRight);
+    this.p = new BasicPainter(c, radarRange.topLeft, radarRange.bottomRight);
     this.v = new BasicVisualiser(p, displaySettings);
     this.m = new PaintManager(area, v);
 

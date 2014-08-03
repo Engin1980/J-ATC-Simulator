@@ -78,7 +78,7 @@ public class Reflecter {
     }
 
     if (ret == null && isRequired){
-      throw new ERuntimeException("Unable to find find key \"" + key + "\" in element \"" + el.getNodeName() + "\"");
+      throw new ERuntimeException("Unable to find key \"" + key + "\" in element \"" + el.getNodeName() + "\"");
     }
     
     return ret;
@@ -134,12 +134,15 @@ public class Reflecter {
   private static <T> void setFieldComplex(Element el, Field f, T ref) {
     Object newInstance = createInstance(f.getType());
     try {
+      f.setAccessible(true);
       f.set(ref, newInstance);
+      f.setAccessible(false);
     } catch (IllegalArgumentException | IllegalAccessException ex) {
       throw new ERuntimeException(
           "Failed to set value to field " + ref.getClass().getName() + "." + f.getName(), ex);
     }
-    fillObject(el, newInstance);
+    Element subEl = getElements(el, f.getName()).get(0);
+    fillObject(subEl, newInstance);
   }
 
   private static Object createInstance(Class<?> type) {

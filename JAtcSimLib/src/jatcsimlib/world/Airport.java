@@ -6,6 +6,7 @@
 
 package jatcsimlib.world;
 
+import jatcsimlib.other.RadarRange;
 import jatcsimlib.types.Coordinate;
 import jatcsimlib.types.KeyItem;
 import jatcsimlib.types.KeyList;
@@ -17,6 +18,7 @@ import jatcsimlib.types.KeyList;
 public class Airport implements KeyItem<String> {
   private String icao;
   private String name;
+  private RadarRange radarRange= new RadarRange();
   private final KeyList<Runway, String> runways = new KeyList();
 
   @Override
@@ -38,5 +40,9 @@ public class Airport implements KeyItem<String> {
   
   public KeyList<Runway, String> getRunways(){
     return runways;
+  }
+
+  public RadarRange getRadarRange() {
+    return radarRange;
   }
 }

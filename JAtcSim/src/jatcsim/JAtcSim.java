@@ -60,7 +60,7 @@ public class JAtcSim {
     //Coordinate br = new Coordinate(48.5, 18.9);
     
     EJComponentCanvas canvas = new EJComponentCanvas();
-    Radar r = new Radar(canvas, tl, br, area, displaySettings);
+    Radar r = new Radar(canvas, aip.getRadarRange(), area, displaySettings);
     final EJComponent comp = canvas.getEJComponent();    
 
     final FrmMain f = new FrmMain();

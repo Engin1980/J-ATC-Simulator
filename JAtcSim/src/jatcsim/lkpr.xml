@@ -2,6 +2,7 @@
 <area>
   <airports>
     <airport icao="LKPR" name="Praha Ruzyně">
+      <radarRange topLeft="50.5 13.0" bottomRight="49.5 15.5" />
       <runways>
         <runway active="true">
           <thresholds>

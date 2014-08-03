@@ -7,6 +7,7 @@
 package jatcsimlib.world;
 
 import jatcsimlib.types.Coordinate;
+import java.util.Objects;
 
 /**
  *
@@ -29,6 +30,30 @@ public class BorderArcPoint extends BorderPoint {
   public eDirection getDirection() {
     return direction;
   }
-  
-  
+
+  @Override
+  public int hashCode() {
+    int hash = 7;
+    hash = 67 * hash + Objects.hashCode(this.coordinate);
+    hash = 67 * hash + Objects.hashCode(this.direction);
+    return hash;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (obj == null) {
+      return false;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
+    final BorderArcPoint other = (BorderArcPoint) obj;
+    if (!Objects.equals(this.coordinate, other.coordinate)) {
+      return false;
+    }
+    if (this.direction != other.direction) {
+      return false;
+    }
+    return true;
+  }
 }
