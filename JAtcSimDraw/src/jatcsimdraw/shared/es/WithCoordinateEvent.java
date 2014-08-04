@@ -6,7 +6,7 @@
 
 package jatcsimdraw.shared.es;
 
-import jatcsimlib.types.Coordinate;
+import jatcsimlib.coordinates.Coordinate;
 
 /**
  *

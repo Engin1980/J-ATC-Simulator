@@ -7,8 +7,8 @@ package jatcsimdraw.painting;
 
 import jatcsimdraw.canvases.Canvas;
 import jatcsimlib.exceptions.ERuntimeException;
-import jatcsimlib.providers.Coordinates;
-import jatcsimlib.types.Coordinate;
+import jatcsimlib.coordinates.Coordinates;
+import jatcsimlib.coordinates.Coordinate;
 import java.awt.Color;
 
 /**

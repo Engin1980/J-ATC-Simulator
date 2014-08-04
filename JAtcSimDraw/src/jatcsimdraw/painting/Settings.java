@@ -7,7 +7,7 @@
 package jatcsimdraw.painting;
 
 import jatcsimlib.exceptions.ERuntimeException;
-import jatcsimlib.types.KeyList;
+import jatcsimlib.global.KeyList;
 import java.util.ArrayList;
 import java.util.List;
 

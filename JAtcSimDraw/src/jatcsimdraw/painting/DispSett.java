@@ -6,7 +6,7 @@
 package jatcsimdraw.painting;
 
 import jatcsimlib.global.Optional;
-import jatcsimlib.types.KeyItem;
+import jatcsimlib.global.KeyItem;
 import java.awt.Color;
 
 /**

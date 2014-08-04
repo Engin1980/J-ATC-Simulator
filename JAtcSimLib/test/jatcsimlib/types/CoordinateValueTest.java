@@ -6,6 +6,7 @@
 
 package jatcsimlib.types;
 
+import jatcsimlib.coordinates.CoordinateValue;
 import jatcsimlib.global.Global;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -22,8 +23,7 @@ public class CoordinateValueTest {
   @Test
   public void testSet_double() {
     double value = 79.505;
-    CoordinateValue instance = new CoordinateValue();
-    instance.set(value);
+    CoordinateValue instance = new CoordinateValue(value);
     
     double exp = 79.505;
     assertEquals(exp, value, 0);
@@ -34,8 +34,7 @@ public class CoordinateValueTest {
     int degrees = 79;
     int minutes = 54;
     double seconds = 23.32;
-    CoordinateValue instance = new CoordinateValue();
-    instance.set(degrees, minutes, seconds);
+    CoordinateValue instance = new CoordinateValue(degrees, minutes, seconds);
     
     int actDegrees = instance.getDegrees();
     int actMinutes = instance.getMinutes();
@@ -51,8 +50,7 @@ public class CoordinateValueTest {
     int degrees = 0;
     int minutes = 11;
     double seconds = 14.32;
-    CoordinateValue instance = new CoordinateValue();
-    instance.set(degrees, minutes, seconds);
+    CoordinateValue instance = new CoordinateValue(degrees, minutes, seconds);
     
     int actDegrees = instance.getDegrees();
     int actMinutes = instance.getMinutes();
@@ -67,8 +65,7 @@ public class CoordinateValueTest {
   public void testSet_2args() {
     int degrees = 0;
     double minutes = 11.25;
-    CoordinateValue instance = new CoordinateValue();
-    instance.set(degrees, minutes);
+    CoordinateValue instance = new CoordinateValue(degrees, minutes);
     
     double actValue = instance.get();
     
@@ -101,7 +98,7 @@ public class CoordinateValueTest {
 
   @Test
   public void testGetSeconds() {
-    CoordinateValue instance = new CoordinateValue();
+    CoordinateValue instance = new CoordinateValue(0);
     double expResult = 0.0;
     double result = instance.getSeconds();
     assertEquals(expResult, result, 0.0);

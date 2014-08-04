@@ -4,15 +4,18 @@
  * and open the template in the editor.
  */
 
-package jatcsimlib.other;
-
-import jatcsimlib.types.Coordinate;
+package jatcsimlib.global;
 
 /**
  *
  * @author Marek
  */
-public class RadarRange {
-  public Coordinate topLeft;
-  public Coordinate bottomRight;
+public class UnitProvider {
+  public static double kmToNM(double value){
+    return value * 0.539968;
+  }
+
+  public static double nmToKm(double value) {
+    return value / 0.539968;
+  }
 }

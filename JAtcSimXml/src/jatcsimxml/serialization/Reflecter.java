@@ -7,8 +7,8 @@ package jatcsimxml.serialization;
 
 import jatcsimlib.exceptions.ERuntimeException;
 import jatcsimlib.global.Optional;
-import jatcsimlib.types.Coordinate;
-import jatcsimlib.types.KeyItem;
+import jatcsimlib.coordinates.Coordinate;
+import jatcsimlib.global.KeyItem;
 import jatcsimlib.world.Airport;
 import jatcsimlib.world.Runway;
 import jatcsimlib.world.RunwayThreshold;

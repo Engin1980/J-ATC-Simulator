@@ -1,17 +1,18 @@
-
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
 
-package jatcsimlib.types;
+package jatcsimlib.coordinates;
+
+import jatcsimlib.coordinates.Coordinate;
 
 /**
  *
  * @author Marek
- * @param <T>
  */
-public interface KeyItem<T> {
-  public T getKey();
+public class RadarRange {
+  public Coordinate topLeft;
+  public Coordinate bottomRight;
 }

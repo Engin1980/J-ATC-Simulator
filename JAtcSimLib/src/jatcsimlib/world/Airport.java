@@ -6,10 +6,10 @@
 
 package jatcsimlib.world;
 
-import jatcsimlib.other.RadarRange;
-import jatcsimlib.types.Coordinate;
-import jatcsimlib.types.KeyItem;
-import jatcsimlib.types.KeyList;
+import jatcsimlib.coordinates.RadarRange;
+import jatcsimlib.coordinates.Coordinate;
+import jatcsimlib.global.KeyItem;
+import jatcsimlib.global.KeyList;
 
 /**
  *

@@ -6,8 +6,9 @@
 
 package jatcsimlib.providers;
 
-import jatcsimlib.types.Coordinate;
-import jatcsimlib.types.CoordinateValue;
+import jatcsimlib.coordinates.Coordinates;
+import jatcsimlib.coordinates.Coordinate;
+import jatcsimlib.coordinates.CoordinateValue;
 import org.junit.Test;
 import static org.junit.Assert.*;
 

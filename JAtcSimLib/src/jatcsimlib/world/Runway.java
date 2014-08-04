@@ -6,8 +6,8 @@
 
 package jatcsimlib.world;
 
-import jatcsimlib.types.KeyItem;
-import jatcsimlib.types.KeyList;
+import jatcsimlib.global.KeyItem;
+import jatcsimlib.global.KeyList;
 
 /**
  *

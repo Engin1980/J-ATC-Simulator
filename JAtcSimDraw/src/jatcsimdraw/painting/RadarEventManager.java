@@ -5,7 +5,7 @@
  */
 package jatcsimdraw.painting;
 
-import jatcsimlib.types.Coordinate;
+import jatcsimlib.coordinates.Coordinate;
 import java.util.ArrayList;
 import java.util.List;
 

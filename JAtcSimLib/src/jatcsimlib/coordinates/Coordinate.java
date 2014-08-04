@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package jatcsimlib.types;
+package jatcsimlib.coordinates;
 
 import jatcsimlib.exceptions.ERuntimeException;
 import java.util.Objects;

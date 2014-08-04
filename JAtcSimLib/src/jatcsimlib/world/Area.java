@@ -5,7 +5,7 @@
  */
 package jatcsimlib.world;
 
-import jatcsimlib.types.KeyList;
+import jatcsimlib.global.KeyList;
 import java.util.ArrayList;
 import java.util.List;
 

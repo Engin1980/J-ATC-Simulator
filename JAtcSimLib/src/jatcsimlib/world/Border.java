@@ -6,7 +6,7 @@
 
 package jatcsimlib.world;
 
-import jatcsimlib.types.Coordinate;
+import jatcsimlib.coordinates.Coordinate;
 import java.util.ArrayList;
 import java.util.List;
 

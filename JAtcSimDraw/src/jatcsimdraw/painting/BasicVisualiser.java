@@ -6,8 +6,8 @@
 package jatcsimdraw.painting;
 
 import jatcsimlib.exceptions.ERuntimeException;
-import jatcsimlib.providers.Coordinates;
-import jatcsimlib.types.Coordinate;
+import jatcsimlib.coordinates.Coordinates;
+import jatcsimlib.coordinates.Coordinate;
 import jatcsimlib.world.Border;
 import jatcsimlib.world.BorderArcPoint;
 import jatcsimlib.world.BorderExactPoint;

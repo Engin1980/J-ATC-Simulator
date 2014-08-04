@@ -1,9 +1,10 @@
 /*
  * http://www.movable-type.co.uk/scripts/latlong.html
  */
-package jatcsimlib.providers;
+package jatcsimlib.coordinates;
 
-import jatcsimlib.types.Coordinate;
+import jatcsimlib.global.UnitProvider;
+import jatcsimlib.coordinates.Coordinate;
 
 /**
  *

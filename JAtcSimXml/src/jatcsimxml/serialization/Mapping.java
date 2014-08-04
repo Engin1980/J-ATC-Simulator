@@ -7,7 +7,7 @@
 package jatcsimxml.serialization;
 
 import jatcsimdraw.painting.DispSett;
-import jatcsimlib.types.Coordinate;
+import jatcsimlib.coordinates.Coordinate;
 import jatcsimlib.world.Airport;
 import jatcsimlib.world.Approach;
 import jatcsimlib.world.Border;

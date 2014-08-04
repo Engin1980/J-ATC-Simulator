@@ -6,8 +6,8 @@
 
 package jatcsimlib.world;
 
-import jatcsimlib.types.Coordinate;
-import jatcsimlib.types.KeyItem;
+import jatcsimlib.coordinates.Coordinate;
+import jatcsimlib.global.KeyItem;
 
 /**
  *

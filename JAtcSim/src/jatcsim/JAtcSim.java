@@ -11,7 +11,7 @@ import jatcsimdraw.painting.Radar;
 import jatcsimdraw.painting.Settings;
 import jatcsimdraw.shared.EventListener;
 import jatcsimdraw.shared.es.WithCoordinateEvent;
-import jatcsimlib.types.Coordinate;
+import jatcsimlib.coordinates.Coordinate;
 import jatcsimxml.serialization.Serializer;
 import jatcsimlib.world.Airport;
 import jatcsimlib.world.Area;

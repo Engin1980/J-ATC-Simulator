@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package jatcsimlib.types;
+package jatcsimlib.global;
 
 /**
  *

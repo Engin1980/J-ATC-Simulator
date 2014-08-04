@@ -10,8 +10,8 @@ import jatcsimdraw.shared.EventListener;
 import jatcsimdraw.shared.EventManager;
 import jatcsimdraw.shared.es.EMouseEvent;
 import jatcsimdraw.shared.es.WithCoordinateEvent;
-import jatcsimlib.other.RadarRange;
-import jatcsimlib.types.Coordinate;
+import jatcsimlib.coordinates.RadarRange;
+import jatcsimlib.coordinates.Coordinate;
 import jatcsimlib.world.Area;
 import java.awt.event.KeyEvent;
 
