@@ -4,12 +4,12 @@
  * and open the template in the editor.
  */
 
-package jatcsimdraw.shared;
+package jatcsimlib;
 
 /**
  *
  * @author Marek
  */
-public interface EventArgument {
-  
+public abstract class SimulationSecondElapsedEvent {
+  public abstract void tick(Simulation sender);
 }

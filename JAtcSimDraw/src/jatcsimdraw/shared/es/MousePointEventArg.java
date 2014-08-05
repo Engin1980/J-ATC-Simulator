@@ -7,7 +7,7 @@
 package jatcsimdraw.shared.es;
 
 import jatcsimdraw.painting.Point;
-import jatcsimdraw.shared.EventArgument;
+import jatcsimlib.events.EventArgument;
 
 /**
  *

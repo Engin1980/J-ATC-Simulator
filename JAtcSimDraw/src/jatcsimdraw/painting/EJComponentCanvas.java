@@ -6,8 +6,8 @@
 package jatcsimdraw.painting;
 
 import jatcsimdraw.canvases.Canvas;
-import jatcsimdraw.shared.EventListener;
-import jatcsimdraw.shared.EventManager;
+import jatcsimlib.events.EventListener;
+import jatcsimlib.events.EventManager;
 import jatcsimdraw.shared.es.EMouseEvent;
 import java.awt.Color;
 import java.awt.Font;
@@ -162,10 +162,20 @@ public class EJComponentCanvas extends Canvas {
 
   @Override
   public void drawText(String text, Point p, int xShiftInPixels, int yShiftInPixels, Color c) {
-    FontMetrics fm = g.getFontMetrics();
-    Rectangle b = fm.getStringBounds(text, g).getBounds();
 
-    g.drawString(text, p.x + xShiftInPixels, p.y + b.height + yShiftInPixels);
+    String[] lines = text.split(System.getProperty("line.separator"));
+
+    int x = p.x + xShiftInPixels;
+    int y = p.y + yShiftInPixels;
+
+    for (String line : lines) {
+      FontMetrics fm = g.getFontMetrics();
+      Rectangle b = fm.getStringBounds(line, g).getBounds();
+
+      y = y + b.height - 5;
+
+      g.drawString(line, x, y);
+    }
   }
 
   @Override
@@ -216,11 +226,11 @@ public class EJComponentCanvas extends Canvas {
     Point orig = new Point(p.x - xRadius, p.y - yRadius);
     int angleLength = (toAngle < fromAngle) ? (toAngle + 360) : toAngle - fromAngle;
     fromAngle = toEJComponentAngle(fromAngle);
-    g.drawArc(orig.x, orig.y, xRadius+xRadius, yRadius+yRadius, fromAngle, -angleLength);
+    g.drawArc(orig.x, orig.y, xRadius + xRadius, yRadius + yRadius, fromAngle, -angleLength);
   }
-  
-  private int toEJComponentAngle (int angle){
-    return 360-angle + 90;
+
+  private int toEJComponentAngle(int angle) {
+    return 360 - angle + 90;
   }
 
 }

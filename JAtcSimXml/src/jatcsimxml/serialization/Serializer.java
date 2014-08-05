@@ -14,6 +14,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.parsers.DocumentBuilder;
@@ -29,23 +30,21 @@ import org.xml.sax.SAXException;
  */
 public class Serializer {
 
-  public Area loadArea (String xmlFileName){
-    Area ret;
-    
-    Document doc = readXmlDocument(xmlFileName);
-    
-    ret = new Area();
-    fillObject(xmlFileName, ret);
-    
-    return ret;
-  }
-  
   public void fillObject (String xmlFileName, Object targetObject){
     
-    Document doc = readXmlDocument(xmlFileName);
-    
-    Element el = doc.getDocumentElement();
+    Element el = loadXmlAndGetRootElement(xmlFileName);
     Reflecter.fillObject(el, targetObject);
+  }
+
+  private Element loadXmlAndGetRootElement(String xmlFileName) {
+    Document doc = readXmlDocument(xmlFileName);
+    Element el = doc.getDocumentElement();
+    return el;
+  }
+  
+  public void fillList (String xmlFileName, List targetObject){
+    Element el = loadXmlAndGetRootElement(xmlFileName);
+    Reflecter.fillList(el, targetObject);
   }
   
   private Document readXmlDocument(String fileName){

@@ -13,7 +13,7 @@ import java.awt.Color;
  *
  * @author Marek
  */
-public class DispSett implements KeyItem<String> {
+public class DispItem implements KeyItem<String> {
 
   public static final String RUNWAY_ACTIVE = "activeRunway";
   public static final String RUNWAY_CLOSED = "closedRunway";

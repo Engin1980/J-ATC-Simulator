@@ -8,8 +8,8 @@ package jatcsimdraw.canvases;
 
 import jatcsimdraw.painting.Point;
 import jatcsimdraw.painting.Size;
-import jatcsimdraw.shared.EventListener;
-import jatcsimdraw.shared.EventManager;
+import jatcsimlib.events.EventListener;
+import jatcsimlib.events.EventManager;
 import jatcsimdraw.shared.es.EMouseEvent;
 import java.awt.Color;
 import java.awt.event.KeyEvent;

@@ -10,7 +10,7 @@ package jatcsimlib.airplanes;
  *
  * @author Marek
  */
-public class AirplaneSpecification {
+public class AirplaneType {
   
   public enum eType{
     prop,
@@ -19,7 +19,7 @@ public class AirplaneSpecification {
   
   public enum eSize{
     light,
-    med,
+    medium,
     heavy
   }
   

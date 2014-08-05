@@ -5,6 +5,8 @@
  */
 package jatcsimdraw.painting;
 
+import jatcsimlib.Simulation;
+import jatcsimlib.airplanes.Airplane;
 import jatcsimlib.world.Airport;
 import jatcsimlib.world.Area;
 import jatcsimlib.world.Border;
@@ -17,11 +19,11 @@ import jatcsimlib.world.Runway;
  */
 public class PaintManager {
 
-  private final Area area;
+  private final Simulation simulation;
   private final Visualiser visualiser;
 
-  public PaintManager(Area area, Visualiser visualiser) {
-    this.area = area;
+  public PaintManager(Simulation simulation, Visualiser visualiser) {
+    this.simulation = simulation;
     this.visualiser = visualiser;
   }
 
@@ -30,22 +32,23 @@ public class PaintManager {
     drawBorders();
     drawNavaids();
     drawAirports();
+    drawAirplanes();
   }
 
   private void drawBorders() {
-    for (Border b : area.getBorders()){
+    for (Border b : simulation.getArea().getBorders()){
       visualiser.drawBorder(b);
     }
   }
 
   private void drawNavaids() {
-    for (Navaid n : area.getNavaids()){
+    for (Navaid n : simulation.getArea().getNavaids()){
       visualiser.drawNavaid(n);
     }
   }
 
   private void drawAirports() {
-    for(Airport a : area.getAirports()){
+    for(Airport a : simulation.getArea().getAirports()){
       drawAirport(a);
     }
   }
@@ -58,5 +61,11 @@ public class PaintManager {
 
   private void drawBackground() {
     visualiser.clear();
+  }
+
+  private void drawAirplanes() {
+    for (Airplane a : simulation.getPlanes()){
+      visualiser.drawPlane(a);
+    }
   }
 }

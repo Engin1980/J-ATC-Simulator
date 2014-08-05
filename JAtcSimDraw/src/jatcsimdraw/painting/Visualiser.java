@@ -6,6 +6,7 @@
 
 package jatcsimdraw.painting;
 
+import jatcsimlib.airplanes.Airplane;
 import jatcsimlib.world.Border;
 import jatcsimlib.world.Navaid;
 import jatcsimlib.world.Runway;
@@ -26,5 +27,6 @@ public abstract class Visualiser {
   public abstract void drawBorder(Border border);
   public abstract void drawRunway(Runway runway);
   public abstract void drawNavaid (Navaid navaid);
+  public abstract void drawPlane(Airplane plane);
   public abstract void clear();
 }

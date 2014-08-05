@@ -21,12 +21,27 @@ public class Callsign {
     this.number = number;
   }
 
+  public Callsign(String value) {
+    if (value == null)
+      throw new IllegalArgumentException("Callsign string cannot be null");
+    if (value.length()<4)
+      throw new IllegalArgumentException("Callsign string must be at least 4 chars long.");
+    
+    this.company = value.substring(0, 3).toUpperCase();
+    this.number = value.substring(3).toUpperCase();
+  }
+
   public String getCompany() {
     return company;
   }
 
   public String getNumber() {
     return number;
+  }
+
+  @Override
+  public String toString() {
+    return company + number;
   }
 
   @Override

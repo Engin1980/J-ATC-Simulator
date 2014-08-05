@@ -5,27 +5,49 @@
  */
 package jatcsimlib.airplanes;
 
+import jatcsimlib.atcs.ATC;
 import jatcsimlib.coordinates.Coordinate;
+import jatcsimlib.global.KeyItem;
+import jatcsimlib.world.Area;
 
 /**
  *
  * @author Marek
  */
-public class Airplane {
+public class Airplane implements KeyItem<Callsign> {
+
+  private static Area area;
 
   private final Callsign callsign;
   private int heading;
   private int altitude;
+  private int speed;
   private Coordinate coordinate;
   private char[] sqwk;
 
-  private final AirplaneSpecification airplaneSpecification;
+  private ATC atc;
 
-  public Airplane(Callsign callsign, Coordinate coordinate, char[] sqwk, AirplaneSpecification airplaneSpecification) {
+  private final AirplaneType airplaneSpecification;
+
+  public static void setArea(Area area) {
+    Airplane.area = area;
+  }
+
+  public Airplane(Callsign callsign, Coordinate coordinate, char[] sqwk, AirplaneType airplaneSpecification) {
     this.callsign = callsign;
     this.coordinate = coordinate;
     this.setSqwk(sqwk);
     this.airplaneSpecification = airplaneSpecification;
+
+    this.atc = null;
+  }
+
+  public ATC getAtc() {
+    return atc;
+  }
+
+  public void setAtc(ATC atc) {
+    this.atc = atc;
   }
 
   public void setHeading(int heading) {
@@ -45,6 +67,10 @@ public class Airplane {
     this.altitude = altitude;
   }
 
+  public void setSpeed(int speed) {
+    this.speed = speed;
+  }
+
   public final void setSqwk(char[] sqwk) {
     if (sqwk.length != 4) {
       throw new IllegalArgumentException("Sqwk length must be 4");
@@ -56,6 +82,55 @@ public class Airplane {
       }
     }
     this.sqwk = sqwk;
+  }
+
+  public void setCoordinate(Coordinate coordinate) {
+    this.coordinate = coordinate;
+  }
+
+  public Callsign getCallsign() {
+    return callsign;
+  }
+
+  public int getHeading() {
+    return heading;
+  }
+
+  public String getHeadingS(){
+    return String.format("%1$03d", this.heading);
+  }
+  
+  public int getAltitude() {
+    return altitude;
+  }
+
+  public String getAltitudeS(int transitionLevel) {
+    if (altitude > transitionLevel) {
+      return "FL" + (altitude / 100);
+    } else {
+      return Integer.toString(altitude);
+    }
+  }
+
+  public Coordinate getCoordinate() {
+    return coordinate;
+  }
+
+  public char[] getSqwk() {
+    return sqwk;
+  }
+
+  public AirplaneType getAirplaneSpecification() {
+    return airplaneSpecification;
+  }
+
+  public int getSpeed() {
+    return speed;
+  }
+
+  @Override
+  public Callsign getKey() {
+    return this.callsign;
   }
 
 }

@@ -6,7 +6,9 @@
 
 package jatcsimxml.serialization;
 
-import jatcsimdraw.painting.DispSett;
+import jatcsimdraw.painting.DispItem;
+import jatcsimdraw.painting.DispPlane;
+import jatcsimlib.airplanes.AirplaneType;
 import jatcsimlib.coordinates.Coordinate;
 import jatcsimlib.world.Airport;
 import jatcsimlib.world.Approach;
@@ -39,7 +41,10 @@ public class Mapping {
     mapAdd("Border.points", "point", BorderExactPoint.class);
     mapAdd("Border.points", "arc", BorderArcPoint.class);
     
-    mapAdd("Settings.dispSetts", DispSett.class);
+    mapAdd("AirplaneTypes", AirplaneType.class);
+    
+    mapAdd("Settings.dispItems", DispItem.class);
+    mapAdd("Settings.dispPlanes", DispPlane.class);
 
     simpleTypes.add(Integer.class);
     simpleTypes.add(int.class);

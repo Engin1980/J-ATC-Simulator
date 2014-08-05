@@ -4,12 +4,14 @@
  * and open the template in the editor.
  */
 
-package jatcsimdraw.shared;
+package jatcsimlib.airplanes;
+
+import java.util.ArrayList;
 
 /**
  *
  * @author Marek
  */
-public abstract class EventListener<Tparent, CeventArg> {
-  public abstract void raise (Tparent parent, CeventArg e);
+public class AirplaneTypes extends ArrayList<AirplaneType> {
+  
 }

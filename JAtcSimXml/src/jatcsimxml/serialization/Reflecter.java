@@ -28,25 +28,32 @@ import org.w3c.dom.NodeList;
  * @author Marek
  */
 public class Reflecter {
-  
+
   private static final boolean VERBOSE = false;
 
   static <T> void fillObject(Element el, T targetObject) {
-    if (VERBOSE) 
+    if (VERBOSE) {
       System.out.println("fillObject( <" + el.getNodeName() + "...>, " + targetObject.getClass().getSimpleName());
+    }
     Class c = targetObject.getClass();
     Field[] fields = c.getDeclaredFields();
 
     for (Field f : fields) {
-      if (java.lang.reflect.Modifier.isStatic(f.getModifiers()))
+      if (java.lang.reflect.Modifier.isStatic(f.getModifiers())) {
         continue; // statické přeskakujem
+      }
       fillField(el, f, targetObject);
     }
   }
 
+  static void fillList(Element el, List lst) {
+    fillFieldList(el, lst, lst.getClass().getSimpleName());
+  }
+
   private static <T> void fillField(Element el, Field f, T targetObject) {
-    if (VERBOSE) 
+    if (VERBOSE) {
       System.out.println("  fillField( <" + el.getNodeName() + "...>, " + targetObject.getClass().getSimpleName() + "." + f.getName());
+    }
 
     Class c = f.getType();
     if (Mapping.isSimpleTypeOrEnum(c)) {
@@ -61,8 +68,10 @@ public class Reflecter {
 
   private static <T> void convertAndSetFieldValue(Element el, Field f, T targetObject) {
     boolean required = f.getAnnotation(Optional.class) == null;
-    String tmpS = extractSimpleValueFromElement(el, f.getName(),required);
-    if (tmpS == null) return;
+    String tmpS = extractSimpleValueFromElement(el, f.getName(), required);
+    if (tmpS == null) {
+      return;
+    }
     Object tmpO = convertToType(tmpS, f.getType());
     setFieldValue(f, targetObject, tmpO);
   }
@@ -73,14 +82,15 @@ public class Reflecter {
       ret = el.getAttribute(key);
     } else {
       NodeList tmp = el.getElementsByTagName(key);
-      if (tmp.getLength() > 0)
+      if (tmp.getLength() > 0) {
         ret = tmp.item(0).getTextContent();
+      }
     }
 
-    if (ret == null && isRequired){
+    if (ret == null && isRequired) {
       throw new ERuntimeException("Unable to find key \"" + key + "\" in element \"" + el.getNodeName() + "\"");
     }
-    
+
     return ret;
   }
 
@@ -98,7 +108,7 @@ public class Reflecter {
   private static Object convertToType(String value, Class<?> type) {
     Object ret;
     if (type.isEnum()) {
-       //field.set(this, Enum.valueOf((Class<Enum>) field.getType(), value));
+      //field.set(this, Enum.valueOf((Class<Enum>) field.getType(), value));
       ret = Enum.valueOf((Class<Enum>) type, value);
     } else {
       switch (type.getSimpleName()) {
@@ -147,13 +157,13 @@ public class Reflecter {
 
   private static Object createInstance(Class<?> type) {
     Object ret;
-    
+
     // programuje se proti List, tak sem přijde požadavek na "List"
     // ale to je rozhraní, takže ho nahradím ArrayListem
-    if (type.equals (List.class)){
+    if (type.equals(List.class)) {
       type = ArrayList.class;
     }
-    
+
     try {
       ret = type.newInstance();
     } catch (InstantiationException | IllegalAccessException ex) {
@@ -162,19 +172,25 @@ public class Reflecter {
     return ret;
   }
 
-  private static <T> void setFieldList(Element el, Field f, T targetObject) {
-    // zanoření
-    List<Element> tmp = getElements(el, f.getName());
-    if (tmp.isEmpty()) 
-      return;
-    el = tmp.get(0);
-
+  private static void setFieldList(Element el, Field f, Object targetObject) {
     List lst = (List) createInstance(f.getType());
     setFieldValue(f, targetObject, lst);
 
+    // zanoření
+    List<Element> tmp = getElements(el, f.getName());
+    if (tmp.isEmpty()) {
+      return;
+    }
+    el = tmp.get(0);
+
+    String key = targetObject.getClass().getSimpleName() + "." + f.getName();
+    fillFieldList(el, lst, key);
+  }
+
+  private static void fillFieldList(Element el, List lst, String classFieldKey) {
     List<Element> childs = getElements(el);
     for (Element e : childs) {
-      Class itemType = getItemType(targetObject, f, e.getNodeName());
+      Class itemType = getItemType(classFieldKey, e.getNodeName());
       Object inn = createInstance(itemType);
       lst.add(inn);
 
@@ -185,8 +201,8 @@ public class Reflecter {
   private static List<Element> getElements(Element el) {
     return getElements(el, null);
   }
-  
-    private static List<Element> getElements(Element el, String subElementName) {
+
+  private static List<Element> getElements(Element el, String subElementName) {
     List<Element> ret = new ArrayList();
     NodeList c = el.getChildNodes();
     for (int i = 0; i < c.getLength(); i++) {
@@ -194,27 +210,23 @@ public class Reflecter {
       if (n.getNodeType() != Node.ELEMENT_NODE) {
         continue;
       }
-      if (subElementName != null && n.getNodeName().equals(subElementName) == false) 
+      if (subElementName != null && n.getNodeName().equals(subElementName) == false) {
         continue;
+      }
       Element eel = (Element) c.item(i);
       ret.add(eel);
     }
     return ret;
   }
 
-  private static <T> Class getItemType(T ref, Field f, String elementNameOrNull) {
-    return getItemType(ref.getClass().getSimpleName(), f.getName(), elementNameOrNull);
-  }
-
-  private static Class getItemType(String typeName, String fieldName, String elementNameOrNull) {
+  private static Class getItemType(String classFieldKey, String elementNameOrNull) {
     @SuppressWarnings("UnusedAssignment")
     Class ret = null;
 
-    String key = typeName + "." + fieldName;    
-    ret = Mapping.getMappedType (key, elementNameOrNull);
+    ret = Mapping.getMappedType(classFieldKey, elementNameOrNull);
 
     if (ret == null) {
-      throw new ERuntimeException("No list-mapping found for " + key);
+      throw new ERuntimeException("No list-mapping found for " + classFieldKey + " and <" + elementNameOrNull + ">");
     }
 
     return ret;
@@ -224,22 +236,24 @@ public class Reflecter {
     Color ret = null;
     String ps = "(..)(..)(..)";
     Pattern p = Pattern.compile(ps);
-    
+
     Matcher m = p.matcher(value);
-    if (m.find()){
+    if (m.find()) {
       String r = m.group(1);
       String g = m.group(2);
       String b = m.group(3);
-      try{
-      int ri = Integer.parseInt(r, 16);
-      int gi = Integer.parseInt(g, 16);
-      int bi = Integer.parseInt(b, 16);
-      ret = new Color(ri, gi, bi);
-      } finally {}
+      try {
+        int ri = Integer.parseInt(r, 16);
+        int gi = Integer.parseInt(g, 16);
+        int bi = Integer.parseInt(b, 16);
+        ret = new Color(ri, gi, bi);
+      } finally {
+      }
     }
-    if (ret == null)
+    if (ret == null) {
       throw new ERuntimeException("Unable to parse \"" + value + "\" into color.");
-    
+    }
+
     return ret;
   }
 

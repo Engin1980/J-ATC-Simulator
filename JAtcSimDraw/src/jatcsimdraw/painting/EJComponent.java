@@ -5,8 +5,8 @@
  */
 package jatcsimdraw.painting;
 
-import jatcsimdraw.shared.EventListener;
-import jatcsimdraw.shared.EventManager;
+import jatcsimlib.events.EventListener;
+import jatcsimlib.events.EventManager;
 import java.awt.Graphics;
 import javax.swing.JComponent;
 

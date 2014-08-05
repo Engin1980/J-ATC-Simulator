@@ -6,6 +6,7 @@
 
 package jatcsimdraw.painting;
 
+import jatcsimlib.atcs.ATC;
 import jatcsimlib.exceptions.ERuntimeException;
 import jatcsimlib.global.KeyList;
 import java.util.ArrayList;
@@ -16,14 +17,20 @@ import java.util.List;
  * @author Marek
  */
 public class Settings {
-  private final KeyList<DispSett, String> dispSetts = new KeyList();
+  private final KeyList<DispItem, String> dispItems = new KeyList();
+  private final KeyList<DispPlane, ATC.eType> dispPlanes = new KeyList();
   
-  public DispSett getDispSett(String key){
+  public DispItem getDispItem(String key){
     
-    DispSett ret = dispSetts.get(key);
+    DispItem ret = dispItems.get(key);
     if (ret == null)
-      throw new ERuntimeException("No disp-sett key \"" + key + "\" found in settings. Xml file invalid?");
+      throw new ERuntimeException("No disp-item key \"" + key + "\" found in settings. Xml file invalid?");
     
     return ret;
   }
+
+  public DispPlane getDispPlane(ATC.eType atcType) {
+    return dispPlanes.get(atcType);
+  }
+  
 }

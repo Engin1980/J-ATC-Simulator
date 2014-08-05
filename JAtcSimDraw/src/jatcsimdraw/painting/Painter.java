@@ -121,4 +121,6 @@ public abstract class Painter {
   abstract void clear(Color backColor);
 
   abstract void drawText(String name, Coordinate coordinate, int xShiftInPixels, int yShiftInPixels, Color color);
+  
+  abstract void drawLine(Coordinate coordinate, int lengthInPixels, int heading, Color color, int width);
 }

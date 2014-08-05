@@ -6,7 +6,6 @@
 package jatcsimdraw.painting;
 
 import jatcsimdraw.canvases.Canvas;
-import jatcsimlib.coordinates.Coordinates;
 import jatcsimlib.coordinates.Coordinate;
 import java.awt.Color;
 
@@ -68,5 +67,18 @@ public class BasicPainter extends Painter {
     Size sz = toDistance(radiusInNM);
 
     c.drawArc(p, sz.width, sz.height, (int) fromAngle, (int) toAngle, color);
+  }
+
+  @Override
+  void drawLine(Coordinate coordinate, int lengthInPixels, int heading, Color color, int width) {
+
+    Point p = toPoint(coordinate);
+    
+    heading = heading-90;
+
+    double x2 = p.x + Math.cos(Math.toRadians(heading)) * lengthInPixels;
+    double y2 = p.y + Math.sin(Math.toRadians(heading)) * lengthInPixels;
+
+    c.drawLine(p, new Point((int) x2, (int) y2), color, width);
   }
 }

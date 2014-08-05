@@ -5,6 +5,7 @@
  */
 package jatcsimdraw.painting;
 
+import jatcsimlib.airplanes.Airplane;
 import jatcsimlib.exceptions.ERuntimeException;
 import jatcsimlib.coordinates.Coordinates;
 import jatcsimlib.coordinates.Coordinate;
@@ -22,6 +23,8 @@ import java.awt.Color;
  */
 public class BasicVisualiser extends Visualiser {
 
+  private static final int TRANSITION_LEVEL = 5000;
+  
   public BasicVisualiser(Painter p, Settings sett) {
     super(p, sett);
   }
@@ -29,7 +32,7 @@ public class BasicVisualiser extends Visualiser {
   @Override
   public void drawBorder(Border border) {
 
-    DispSett ds = getDispSettBy(border);
+    DispItem ds = getDispSettBy(border);
 
     Coordinate last = null;
     for (int i = 0; i < border.getPoints().size(); i++){
@@ -61,7 +64,7 @@ public class BasicVisualiser extends Visualiser {
 
   @Override
   public void drawRunway(Runway runway) {
-    DispSett ds = getDispSettBy(runway);
+    DispItem ds = getDispSettBy(runway);
 
     p.drawLine(
         runway.getThresholdA().getCoordinate(),
@@ -71,7 +74,7 @@ public class BasicVisualiser extends Visualiser {
 
   @Override
   public void drawNavaid(Navaid navaid) {
-    DispSett ds = getDispSettBy(navaid);
+    DispItem ds = getDispSettBy(navaid);
 
     switch (navaid.getType()){
       case VOR:
@@ -100,39 +103,39 @@ public class BasicVisualiser extends Visualiser {
     
   }
 
-  private DispSett getDispSettBy(Border border) {
+  private DispItem getDispSettBy(Border border) {
     switch (border.getType()) {
       case CTR:
-        return sett.getDispSett(DispSett.BORDER_CTR);
+        return sett.getDispItem(DispItem.BORDER_CTR);
       case Country:
-        return sett.getDispSett(DispSett.BORDER_COUNTRY);
+        return sett.getDispItem(DispItem.BORDER_COUNTRY);
       case TMA:
-        return sett.getDispSett(DispSett.BORDER_TMA);
+        return sett.getDispItem(DispItem.BORDER_TMA);
       default:
         throw new ERuntimeException("Border type " + border.getType() + " not implemented.");
     }
   }
 
-  private DispSett getDispSettBy(Runway runway) {
+  private DispItem getDispSettBy(Runway runway) {
     if (runway.isActive()) {
-      return sett.getDispSett(DispSett.RUNWAY_ACTIVE);
+      return sett.getDispItem(DispItem.RUNWAY_ACTIVE);
     } else {
-      return sett.getDispSett(DispSett.RUNWAY_CLOSED);
+      return sett.getDispItem(DispItem.RUNWAY_CLOSED);
     }
   }
 
-  private DispSett getDispSettBy(Navaid navaid) {
+  private DispItem getDispSettBy(Navaid navaid) {
     switch (navaid.getType()) {
       case Fix:
-        return sett.getDispSett(DispSett.NAV_FIX);
+        return sett.getDispItem(DispItem.NAV_FIX);
       case FixMinor:
-        return sett.getDispSett(DispSett.NAV_FIX_MINOR);
+        return sett.getDispItem(DispItem.NAV_FIX_MINOR);
       case NDB:
-        return sett.getDispSett(DispSett.NAV_NDB);
+        return sett.getDispItem(DispItem.NAV_NDB);
       case VOR:
-        return sett.getDispSett(DispSett.NAV_VOR);
+        return sett.getDispItem(DispItem.NAV_VOR);
       case Airport:
-        return sett.getDispSett(DispSett.NAV_AIRPORT);
+        return sett.getDispItem(DispItem.NAV_AIRPORT);
       default:
         throw new ERuntimeException("Navaid type " + navaid.getType() + " is not supported.");
     }
@@ -140,7 +143,7 @@ public class BasicVisualiser extends Visualiser {
 
   @Override
   public void clear() {
-    DispSett ds = sett.getDispSett(DispSett.MAP_BACKCOLOR);
+    DispItem ds = sett.getDispItem(DispItem.MAP_BACKCOLOR);
     p.clear(ds.getColor());
   }
 
@@ -157,4 +160,38 @@ public class BasicVisualiser extends Visualiser {
     p.drawArc(borderArcPoint.getCoordinate(), startBear, endBear, distance, color);
   }
 
+  @Override
+  public void drawPlane(Airplane plane) {
+    
+    DispPlane dp = sett.getDispPlane(plane.getAtc().getType());
+    
+    p.drawPoint(plane.getCoordinate(), dp.getColor(), dp.getPointWidth());
+    p.drawLine(plane.getCoordinate(), dp.getHeadingLineLength(), plane.getHeading(), 
+        dp.getColor(), 1); // 1 = width
+    
+    StringBuilder sb = new StringBuilder();
+    sb.append(
+      buildPlaneString(dp.getFirstLineFormat(), plane));
+    sb.append("\r\n");
+    sb.append(
+      buildPlaneString(dp.getSecondLineFormat(), plane));
+    sb.append("\n");
+    sb.append(
+      buildPlaneString(dp.getThirdLineFormat(), plane));
+    
+    p.drawText(sb.toString(), plane.getCoordinate(), 3, 3, dp.getColor());
+        
+  }
+
+  private String buildPlaneString(String lineFormat, Airplane plane) {
+    String ret;
+    ret = String.format(lineFormat,
+        plane.getCallsign().getCompany(),       //1
+        plane.getCallsign().getNumber(),        //2
+        plane.getHeadingS(),                    //3
+        plane.getAltitudeS(TRANSITION_LEVEL),   //4
+        plane.getSpeed());                      //5
+    
+    return ret;
+  }
 }

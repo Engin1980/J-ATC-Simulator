@@ -6,10 +6,10 @@ and open the template in the editor.
 -->
 
 
-<types>
+<planeTypes>
   <type name="A319" maxAltitude="39000" 
-        vR="140" vMin="200" vMax="340" vCruise="280" vDep="150" vApp="140" 
-        lowClimbRate="5000" highClimbRate="800" highDescendRate="3000" lowDescendRate="2300"
-        type="jet" size="medium">
+      vR="140" vMin="200" vMax="340" vCruise="280" vDep="150" vApp="140" 
+      lowClimbRate="5000" highClimbRate="800" highDescendRate="3000" lowDescendRate="2300"
+      type="jet" size="medium">
   </type>
-</types>
+</planeTypes>  
