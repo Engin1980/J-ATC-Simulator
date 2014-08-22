@@ -13,7 +13,6 @@ import jatcsimdraw.shared.es.WithCoordinateEvent;
 import jatcsimlib.Simulation;
 import jatcsimlib.coordinates.RadarRange;
 import jatcsimlib.coordinates.Coordinate;
-import jatcsimlib.world.Area;
 import java.awt.event.KeyEvent;
 
 /**

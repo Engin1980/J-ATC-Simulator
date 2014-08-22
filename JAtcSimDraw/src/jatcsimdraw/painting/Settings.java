@@ -6,11 +6,9 @@
 
 package jatcsimdraw.painting;
 
-import jatcsimlib.atcs.ATC;
+import jatcsimlib.atcs.Atc;
 import jatcsimlib.exceptions.ERuntimeException;
 import jatcsimlib.global.KeyList;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  *
@@ -18,7 +16,7 @@ import java.util.List;
  */
 public class Settings {
   private final KeyList<DispItem, String> dispItems = new KeyList();
-  private final KeyList<DispPlane, ATC.eType> dispPlanes = new KeyList();
+  private final KeyList<DispPlane, Atc.eType> dispPlanes = new KeyList();
   
   public DispItem getDispItem(String key){
     
@@ -29,7 +27,7 @@ public class Settings {
     return ret;
   }
 
-  public DispPlane getDispPlane(ATC.eType atcType) {
+  public DispPlane getDispPlane(Atc.eType atcType) {
     return dispPlanes.get(atcType);
   }
   

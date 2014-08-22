@@ -5,7 +5,7 @@
  */
 package jatcsimdraw.painting;
 
-import jatcsimlib.atcs.ATC;
+import jatcsimlib.atcs.Atc;
 import jatcsimlib.global.KeyItem;
 import java.awt.Color;
 
@@ -13,7 +13,7 @@ import java.awt.Color;
  *
  * @author Marek
  */
-public class DispPlane implements KeyItem<ATC.eType> {
+public class DispPlane implements KeyItem<Atc.eType> {
 
   public enum eBehavior{
     any,
@@ -23,7 +23,7 @@ public class DispPlane implements KeyItem<ATC.eType> {
     loc
   }
   
-  private ATC.eType atcType;
+  private Atc.eType atcType;
   private eBehavior behavior;
   private Color color;
   private int pointWidth;
@@ -34,11 +34,11 @@ public class DispPlane implements KeyItem<ATC.eType> {
   private String thirdLineFormat;
 
   @Override
-  public ATC.eType getKey() {
+  public Atc.eType getKey() {
     return atcType;
   }
 
-  public ATC.eType getAtcType() {
+  public Atc.eType getAtcType() {
     return atcType;
   }
 
