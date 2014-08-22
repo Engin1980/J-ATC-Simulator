@@ -33,13 +33,32 @@ public class Airplane implements KeyItem<Callsign> {
     Airplane.area = area;
   }
 
-  public Airplane(Callsign callsign, Coordinate coordinate, char[] sqwk, AirplaneType airplaneSpecification) {
+  public Airplane(Callsign callsign, Coordinate coordinate, char[] sqwk, AirplaneType airplaneSpecification,
+      int heading, int altitude, int speed) {
     this.callsign = callsign;
     this.coordinate = coordinate;
     this.setSqwk(sqwk);
     this.airplaneSpecification = airplaneSpecification;
 
     this.atc = null;
+    
+    this.heading = heading;
+    this.altitude = altitude;
+    this.speed = speed;
+    this.ensureSanity();
+  }
+  
+  private void ensureSanity(){
+    while (heading<0)
+      heading +=360;
+    if (heading>359)
+      heading %= 360;
+    
+    if (speed<0)
+      speed = 0;
+    
+    if (altitude < 0)
+      altitude = 0;
   }
 
   public Atc getAtc() {
@@ -48,27 +67,6 @@ public class Airplane implements KeyItem<Callsign> {
 
   public void setAtc(Atc atc) {
     this.atc = atc;
-  }
-
-  public void setHeading(int heading) {
-    while (heading < 0) {
-      heading += 360;
-    }
-    if (heading > 359) {
-      heading = heading % 360;
-    }
-    this.heading = heading;
-  }
-
-  public void setAltitude(int altitude) {
-    if (altitude < 0) {
-      altitude = 0;
-    }
-    this.altitude = altitude;
-  }
-
-  public void setSpeed(int speed) {
-    this.speed = speed;
   }
 
   public final void setSqwk(char[] sqwk) {

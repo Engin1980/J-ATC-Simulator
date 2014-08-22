@@ -7,13 +7,11 @@ package jatcsimlib.commands;
 
 import jatcsimlib.exceptions.ENotSupportedException;
 import jatcsimlib.exceptions.ERuntimeException;
+import jatcsimlib.world.Navaid;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -28,6 +26,12 @@ public class CommandFormat {
     lst.add(new ParseDef(ChangeHeadingCommand.class, "((FH)|(TL)|(TR)) ?(\\d{1,3})", "FH", "TR", "TL"));
     lst.add(new ParseDef(ChangeAltitudeCommand.class, "((MA)|(CM)|(DM)) ?(\\d{1,3})", "MA", "CM", "DM"));
     lst.add(new ParseDef(ChangeSpeedCommand.class, "((SU)|(SD) ?(\\d{3})", "SU", "SD"));
+    
+    lst.add(new ParseDef(AfterAltitudeCommand.class, "AA (\\d{1,3})", "AA"));
+    lst.add(new ParseDef(AfterSpeedCommand.class, "AS (\\d{1,3})", "AS"));
+    lst.add(new ParseDef(AfterNavaidCommand.class, "AN (\\S+)", "AN"));
+    
+    lst.add(new ParseDef(ThenCommand.class, "T", "T"));
   }
 
   public static Command parse(String line) {
@@ -117,7 +121,7 @@ public class CommandFormat {
     return ret;
   }
 
-  private static Command parseCommand(ChangeSpeedCommand cmpd, RegexGrouper rg) {
+  private static Command parseCommand(ChangeSpeedCommand cmd, RegexGrouper rg) {
     ChangeSpeedCommand.eDirection d;
     int s;
 
@@ -134,6 +138,28 @@ public class CommandFormat {
     s = rg.getInt(2);
 
     ChangeSpeedCommand ret = new ChangeSpeedCommand(d, s);
+    return ret;
+  }
+  
+  private static Command parseCommand (AfterAltitudeCommand cmd, RegexGrouper rg){
+    int alt = rg.getInt(1) * 100;
+    Command ret = new AfterAltitudeCommand(alt);
+    return ret;
+  }
+  private static Command parseCommand (AfterSpeedCommand cmd, RegexGrouper rg){
+    int s = rg.getInt(1);
+    Command ret = new AfterSpeedCommand(s);
+    return ret;
+  }
+  private static Command parseCommand (AfterNavaidCommand cmd, RegexGrouper rg){
+    String ns = rg.getString(1);
+    Navaid n = null;
+    Command ret = new AfterNavaidCommand(n);
+    return ret;
+  }
+  
+    private static Command parseCommand (ThenCommand cmd, RegexGrouper rg){
+    Command ret = new ThenCommand();
     return ret;
   }
 

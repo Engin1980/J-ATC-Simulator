@@ -70,11 +70,8 @@ public class Simulation {
         new Callsign("EZY5495"),
         new Coordinate(50.7, 13.5),
         "1400".toCharArray(),
-        planeTypes.get(0));
-
-    plane.setAltitude(12000);
-    plane.setHeading(90);
-    plane.setSpeed(230);
+        planeTypes.get(0), 
+        90, 12000, 230);
 
     Atc atc = new UserAtc();
     plane.setAtc(atc);
