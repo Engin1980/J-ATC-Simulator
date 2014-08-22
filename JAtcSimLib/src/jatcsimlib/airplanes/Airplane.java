@@ -5,7 +5,7 @@
  */
 package jatcsimlib.airplanes;
 
-import jatcsimlib.atcs.ATC;
+import jatcsimlib.atcs.Atc;
 import jatcsimlib.coordinates.Coordinate;
 import jatcsimlib.global.KeyItem;
 import jatcsimlib.world.Area;
@@ -25,7 +25,7 @@ public class Airplane implements KeyItem<Callsign> {
   private Coordinate coordinate;
   private char[] sqwk;
 
-  private ATC atc;
+  private Atc atc;
 
   private final AirplaneType airplaneSpecification;
 
@@ -42,11 +42,11 @@ public class Airplane implements KeyItem<Callsign> {
     this.atc = null;
   }
 
-  public ATC getAtc() {
+  public Atc getAtc() {
     return atc;
   }
 
-  public void setAtc(ATC atc) {
+  public void setAtc(Atc atc) {
     this.atc = atc;
   }
 

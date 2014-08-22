@@ -10,23 +10,15 @@ package jatcsimlib.atcs;
  *
  * @author Marek
  */
-public abstract class Atc {
-  public enum eType{
-    gnd,
-    twr,
-    app,
-    ctr
-  }
-  
-  private final eType type;
+public class UserAtc extends Atc {
 
-  public Atc(eType type) {
-    this.type = type;
+  public UserAtc() {
+    super(eType.app);
   }
-  
-  public abstract boolean isHuman();
 
-  public eType getType() {
-    return type;
+  @Override
+  public boolean isHuman() {
+    return true;
   }
+
 }

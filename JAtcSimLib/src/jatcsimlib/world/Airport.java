@@ -18,7 +18,8 @@ import jatcsimlib.global.KeyList;
 public class Airport implements KeyItem<String> {
   private String icao;
   private String name;
-  private RadarRange radarRange= new RadarRange();
+  private int transitionAltitude;
+  private final RadarRange radarRange= new RadarRange();
   private final KeyList<Runway, String> runways = new KeyList();
 
   @Override
@@ -32,6 +33,10 @@ public class Airport implements KeyItem<String> {
 
   public String getName() {
     return name;
+  }
+
+  public int getTransitionAltitude() {
+    return transitionAltitude;
   }
   
   public Coordinate getLocation (){
