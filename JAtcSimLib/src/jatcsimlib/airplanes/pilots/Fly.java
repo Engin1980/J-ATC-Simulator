@@ -10,6 +10,6 @@ package jatcsimlib.airplanes.pilots;
  *
  * @author Marek
  */
-public abstract class Pilot {
+public class Fly {
   
 }

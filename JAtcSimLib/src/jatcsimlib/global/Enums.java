@@ -4,12 +4,12 @@
  * and open the template in the editor.
  */
 
-package jatcsimlib.airplanes.pilots;
+package jatcsimlib.global;
 
 /**
  *
  * @author Marek
  */
-public abstract class Pilot {
+public class Enums {
   
 }

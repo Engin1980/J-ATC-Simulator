@@ -16,11 +16,21 @@ import jatcsimlib.world.Area;
  */
 public class Airplane implements KeyItem<Callsign> {
 
+  private enum eTurnDirection {
+
+    left,
+    right
+  }
+
   private static Area area;
 
   private final Callsign callsign;
+  private int targetHeading;
+  private eTurnDirection targetHeadingTurnDirection;
   private int heading;
+  private int targetAltitude;
   private int altitude;
+  private int targetSpeed;
   private int speed;
   private Coordinate coordinate;
   private char[] sqwk;
@@ -41,24 +51,31 @@ public class Airplane implements KeyItem<Callsign> {
     this.airplaneSpecification = airplaneSpecification;
 
     this.atc = null;
-    
+
     this.heading = heading;
     this.altitude = altitude;
     this.speed = speed;
     this.ensureSanity();
+    this.targetAltitude = this.altitude;
+    this.targetHeading = this.heading;
+    this.targetSpeed = this.speed;
   }
-  
-  private void ensureSanity(){
-    while (heading<0)
-      heading +=360;
-    if (heading>359)
+
+  private void ensureSanity() {
+    while (heading < 0) {
+      heading += 360;
+    }
+    if (heading > 359) {
       heading %= 360;
-    
-    if (speed<0)
+    }
+
+    if (speed < 0) {
       speed = 0;
-    
-    if (altitude < 0)
+    }
+
+    if (altitude < 0) {
       altitude = 0;
+    }
   }
 
   public Atc getAtc() {
@@ -94,10 +111,10 @@ public class Airplane implements KeyItem<Callsign> {
     return heading;
   }
 
-  public String getHeadingS(){
+  public String getHeadingS() {
     return String.format("%1$03d", this.heading);
   }
-  
+
   public int getAltitude() {
     return altitude;
   }
@@ -131,4 +148,51 @@ public class Airplane implements KeyItem<Callsign> {
     return this.callsign;
   }
 
+  private void rollSpeed(int targetSpeed) {
+    this.targetSpeed = targetSpeed;
+  }
+
+  private void rollAltitude(int targetAltitude) {
+    this.targetAltitude = targetAltitude;
+  }
+
+  private void rollHeading(int targetHeading, eTurnDirection turn) {
+    this.targetHeadingTurnDirection = turn;
+    this.targetHeading = heading;
+  }
+
+  private void processSimulationSecond() {
+      adjustSpeed();
+      adjustHeading();
+      adjustAltitude();
+    
+    updateCoordinates();
+  }
+  
+  
+  private void adjustSpeed() {
+    if (targetSpeed > speed){
+      int step = airplaneSpecification.speedIncreaseRate;
+      speed += step;
+      if (targetSpeed < speed)
+        speed = targetSpeed;
+    } else if (targetSpeed < speed){
+      int step = airplaneSpecification.speedDecreaseRate;
+      speed -= step;
+      if (targetSpeed > speed)
+        speed = targetSpeed;
+    }
+  }
+
+  private void adjustHeading() {
+    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+  }
+
+  private void adjustAltitude() {
+    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+  }
+
+  private void updateCoordinates() {
+    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+  }
 }
