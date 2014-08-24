@@ -4,12 +4,12 @@
  * and open the template in the editor.
  */
 
-package jatcsimlib.airplanes.pilots;
+package jatcsimlib.commands;
 
 /**
  *
  * @author Marek
  */
-public class Fly {
+public class ClearedToApproachCommand extends Command {
   
 }

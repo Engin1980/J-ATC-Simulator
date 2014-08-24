@@ -162,25 +162,28 @@ public class Airplane implements KeyItem<Callsign> {
   }
 
   private void processSimulationSecond() {
+    if (speed != targetSpeed) {
       adjustSpeed();
-      adjustHeading();
-      adjustAltitude();
-    
+    }
+    adjustHeading();
+    adjustAltitude();
+
     updateCoordinates();
   }
-  
-  
+
   private void adjustSpeed() {
-    if (targetSpeed > speed){
+    if (targetSpeed > speed) {
       int step = airplaneSpecification.speedIncreaseRate;
       speed += step;
-      if (targetSpeed < speed)
+      if (targetSpeed < speed) {
         speed = targetSpeed;
-    } else if (targetSpeed < speed){
+      }
+    } else if (targetSpeed < speed) {
       int step = airplaneSpecification.speedDecreaseRate;
       speed -= step;
-      if (targetSpeed > speed)
+      if (targetSpeed > speed) {
         speed = targetSpeed;
+      }
     }
   }
 
@@ -189,7 +192,19 @@ public class Airplane implements KeyItem<Callsign> {
   }
 
   private void adjustAltitude() {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    if (targetAltitude > altitude) {
+      int step = airplaneSpecification.speedIncreaseRate;
+      speed += step;
+      if (targetAltitude < altitude) {
+        speed = targetAltitude;
+      }
+    } else if (targetAltitude < altitude) {
+      int step = airplaneSpecification.speedDecreaseRate;
+      speed -= step;
+      if (targetAltitude > speed) {
+        speed = targetAltitude;
+      }
+    }
   }
 
   private void updateCoordinates() {

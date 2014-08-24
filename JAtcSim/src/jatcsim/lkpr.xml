@@ -11,6 +11,16 @@
                 <approach type="ILS_I" radial="063" dh="200" point="50 06 06.61 N 014 13 34.58 E" />
                 <approach type="ILS_III" radial="063" dh="0" point="50 06 06.61 N 014 13 34.58 E" />
               </approaches>
+              <stars>
+                <star type="star" name="LOMKI5T" route="LOMKI PD PR707 PD BAROX" />
+                <star type="star" name="GOLOP1T" route="GOLOP PD PR711 PD PR712 PD PR513 PD KUVIX" />
+                <star type="star" name="VLM1T" route="VLM PD PR721 PD PR722 PD VLM15 PD PR723 PD PR523 PD PR521 PD AKEVA" />
+                <star type="star" name="GOSEK2T" route="PD GOSEK PD PR718 PD PR719 PD PR521 PD AKEVA" />
+              </stars>
+              <sids>
+                <sid planeType="jet" name="VOZ1E" route="PR619 PD PR633 PD PR635 PD VOZ" />
+                <sid planeType="prop" name="VOZ1D" route="PR619 PD PR625 PD PR626 PD PR627 PD VOZ" />
+              </sids>
             </threshold>
             <threshold name="24" coordinate="50 06 57.43 N 014 16 24.12 E">
               <approaches>

@@ -23,6 +23,10 @@ public class RegexGrouper {
 
     return ret;
   }
+  
+  public int getIndexOfCharacterAfterMatch(){
+    return m.end();
+  }
 
   public int getInt(int groupIndex) {
     return Integer.parseInt(m.group(groupIndex));
