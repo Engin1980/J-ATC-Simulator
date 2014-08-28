@@ -15,11 +15,14 @@ import java.util.regex.Pattern;
 public class RegexGrouper {
 
   private Matcher m;
-
+  
   public static RegexGrouper apply(String data, String pattern) {
     RegexGrouper ret = new RegexGrouper();
-    Pattern p = Pattern.compile(pattern);
+    Pattern p = Pattern.compile("^" + pattern);
     ret.m = p.matcher(data);
+    if (ret.m.find() == false){
+      ret = null;
+    }
 
     return ret;
   }

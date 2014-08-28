@@ -21,6 +21,7 @@ public class Airport implements KeyItem<String> {
   private int transitionAltitude;
   private final RadarRange radarRange= new RadarRange();
   private final KeyList<Runway, String> runways = new KeyList();
+  private Area parent;
 
   @Override
   public String getKey() {
@@ -50,4 +51,13 @@ public class Airport implements KeyItem<String> {
   public RadarRange getRadarRange() {
     return radarRange;
   }
+
+  public Area getParent() {
+    return parent;
+  }
+
+  public void setParent(Area parent) {
+    this.parent = parent;
+  }
+  
 }

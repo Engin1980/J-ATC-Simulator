@@ -15,8 +15,13 @@ import jatcsimlib.coordinates.Coordinate;
 import jatcsimlib.coordinates.Coordinates;
 import jatcsimlib.events.EventListener;
 import jatcsimlib.events.EventManager;
+import jatcsimlib.weathers.Weather;
 import jatcsimlib.world.Airport;
+import jatcsimlib.world.Approach;
 import jatcsimlib.world.Area;
+import jatcsimlib.world.Route;
+import jatcsimlib.world.Runway;
+import jatcsimlib.world.RunwayThreshold;
 import java.util.Calendar;
 
 /**
@@ -27,9 +32,11 @@ public class Simulation {
 
   private final Calendar now;
   private final Area area;
-  private final Airport airport;
-  private final AirplaneTypes planeTypes;
+  private final AirplaneTypes planeTypes;  
   private final AirplaneList planes = new AirplaneList();
+  
+  private RunwayThreshold activeRunwayThreshold;
+  private Weather weather;
 
   private final EventManager<Simulation, EventListener<Simulation, Simulation>, Simulation> tickEM = new EventManager(this);
 
@@ -37,12 +44,16 @@ public class Simulation {
     return area;
   }
 
-  public Airport getAirport() {
-    return airport;
+  public RunwayThreshold getActiveRunwayThreshold() {
+    return activeRunwayThreshold;
   }
-
+  
+  public Airport getActiveAirport(){
+    return activeRunwayThreshold.getParent().getParent();
+  }
+  
   public String toAltitudeString(int altInFt) {
-    if (altInFt > getAirport().getTransitionAltitude()) {
+    if (altInFt > getActiveAirport().getTransitionAltitude()) {
       return String.format("FL%03d", altInFt / 1000);
     } else {
       return String.format("%04d", altInFt);
@@ -59,13 +70,16 @@ public class Simulation {
 
   public Simulation(Area area, Airport airport, AirplaneTypes types, Calendar now) {
     this.area = area;
-    Airplane.setArea(area);
-
-    this.airport = airport;
-    this.now = now;
-
+    Airplane.area = area;
     this.planeTypes = types;
+    
+    this.rebuildParentReferences();
 
+    this.now = now;
+    
+    this.activeRunwayThreshold = 
+        airport.getRunways().get("06-24").getThresholdA();
+    
     Airplane plane = new Airplane(
         new Callsign("EZY5495"),
         new Coordinate(50.7, 13.5),
@@ -116,6 +130,27 @@ public class Simulation {
 
   public static void setCurrent(Simulation current) {
     Simulation.current = current;
+  }
+  
+  private void rebuildParentReferences (){
+    for (Airport a : this.area.getAirports()){
+      a.setParent(this.area);
+      
+      for (Runway r : a.getRunways()){
+        r.setParent(a);
+        
+        for (RunwayThreshold t : r.getThresholds()){
+          t.setParent(r);
+          
+          for (Route o : t.getRoutes()){
+            o.setParent(t);
+          }
+          for (Approach p : t.getApproaches()){
+            p.setParent(t);
+          }
+        }
+      }
+    }
   }
   
 }

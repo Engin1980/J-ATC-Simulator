@@ -18,6 +18,8 @@ public class RunwayThreshold implements KeyItem<String> {
   private String name;
   private Coordinate coordinate;
   private final KeyList<Approach, Approach.eType> approaches = new KeyList();
+  private final KeyList<Route, String> routes = new KeyList();
+  private Runway parent;
 
   public String getName() {
     return name;
@@ -30,10 +32,22 @@ public class RunwayThreshold implements KeyItem<String> {
   public KeyList<Approach, Approach.eType> getApproaches() {
     return approaches;
   }
+
+  public KeyList<Route, String> getRoutes() {
+    return routes;
+  }
   
   @Override
   public String getKey() {
     return getName();
+  }
+
+  public Runway getParent() {
+    return parent;
+  }
+
+  public void setParent(Runway parent) {
+    this.parent = parent;
   }
   
 }

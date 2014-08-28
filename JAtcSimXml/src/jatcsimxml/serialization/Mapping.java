@@ -16,6 +16,7 @@ import jatcsimlib.world.Border;
 import jatcsimlib.world.BorderArcPoint;
 import jatcsimlib.world.BorderExactPoint;
 import jatcsimlib.world.Navaid;
+import jatcsimlib.world.Route;
 import jatcsimlib.world.Runway;
 import jatcsimlib.world.RunwayThreshold;
 import java.awt.Color;
@@ -36,6 +37,7 @@ public class Mapping {
     mapAdd("Airport.runways", Runway.class);
     mapAdd("Runway.thresholds", RunwayThreshold.class);
     mapAdd("RunwayThreshold.approaches", Approach.class);
+    mapAdd("RunwayThreshold.routes", Route.class);
     mapAdd("Area.navaids", Navaid.class);
     mapAdd("Area.borders", Border.class);
     mapAdd("Border.points", "point", BorderExactPoint.class);

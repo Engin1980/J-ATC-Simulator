@@ -6,6 +6,7 @@
 package jatcsimlib.commands;
 
 import jatcsimlib.atcs.Atc;
+import jatcsimlib.exceptions.EInvalidCommandException;
 import jatcsimlib.exceptions.ENotSupportedException;
 import jatcsimlib.exceptions.ERuntimeException;
 import jatcsimlib.global.EStringBuilder;
@@ -28,39 +29,58 @@ public class CommandFormat {
     parsers.add(new ChangeHeadingCmdParser());
     parsers.add(new ChangeAltitudeCmdParser());
     parsers.add(new ChangeSpeedCmdParser());
-    
+
     parsers.add(new AfterAltitudeCmdParser());
     parsers.add(new AfterSpeedCmdParser());
     parsers.add(new AfterNavaidCmdParser());
-    
+
     parsers.add(new ProceedDirectCmdParser());
-    
+
     parsers.add(new ContactCmdParser());
-    
+
     parsers.add(new ThenCmdParser());
   }
 
   public static Command parseOne(String line) {
+    line = normalizeCommandsInString(line);
     return parseMulti(line)[0];
   }
-  
-  public static Command[] parseMulti(String line){
-    CmdParser p = getCmdParser(line);
-    RegexGrouper rg = RegexGrouper.apply(line, p.getPattern());
 
+  public static Command[] parseMulti(String line) {
+    line = normalizeCommandsInString(line);    
     List<Command> lst = new ArrayList<>();
     String tmp = line;
-    while (tmp != null){
+    while (tmp != null && tmp.length() > 0) {
+      CmdParser p = getCmdParser(tmp);
+      
+      if (p == null){
+        throw new EInvalidCommandException("Failed to parse command prefix.", 
+            line.substring(0, line.length() -  tmp.length() - 1),
+            tmp);
+      }
+      
+      RegexGrouper rg = RegexGrouper.apply(tmp, p.getPattern());
+
+      if (rg == null){
+        throw new EInvalidCommandException("Failed to parse command. Probably invalid syntax?", 
+            line.substring(0, line.length() -  tmp.length() - 1),
+            tmp);
+      }
+      
       Command cmd = p.parse(rg);
       lst.add(cmd);
-      tmp = tmp.substring(rg.getIndexOfCharacterAfterMatch());
+      tmp = tmp.substring(rg.getIndexOfCharacterAfterMatch()).trim();
     }
-    
+
     Command[] ret = new Command[0];
     ret = lst.toArray(ret);
     return ret;
   }
   
+  private static String normalizeCommandsInString(String line){
+    return line.toUpperCase() + " ";
+  }
+
   private static CmdParser getCmdParser(String line) {
     line = line.toUpperCase();
     CmdParser pd = null;
@@ -120,6 +140,7 @@ public class CommandFormat {
 }
 
 class ParseDef {
+
   public final String[] prefixes;
   public final String pattern;
   public final Class commandType;
@@ -147,8 +168,8 @@ abstract class CmdParser {
   abstract String[] getPrefixes();
 
   abstract String getPattern();
-  
-  public String getHelp(){
+
+  public String getHelp() {
     EStringBuilder sb = new EStringBuilder();
     sb.appendLine(this.getClass().getSimpleName());
     sb.appendLine("\t" + this.getPattern());
@@ -241,7 +262,7 @@ class ChangeAltitudeCmdParser extends CmdParser {
 class ChangeSpeedCmdParser extends CmdParser {
 
   private static final String[] prefixes = new String[]{"SU", "SD"};
-  private static final String pattern = "((SU)|(SD) ?(\\d{3})";
+  private static final String pattern = "((SU)|(SD) (\\d{3})";
 
   @Override
   String[] getPrefixes() {
@@ -278,7 +299,7 @@ class ChangeSpeedCmdParser extends CmdParser {
 class AfterAltitudeCmdParser extends CmdParser {
 
   private static final String[] prefixes = new String[]{"AA"};
-  private static final String pattern = "AA ?(\\d{1,3})";
+  private static final String pattern = "AA (\\d{1,3})";
 
   @Override
   String[] getPrefixes() {
@@ -301,7 +322,7 @@ class AfterAltitudeCmdParser extends CmdParser {
 class AfterSpeedCmdParser extends CmdParser {
 
   private static final String[] prefixes = new String[]{"AS"};
-  private static final String pattern = "AS ?(\\d{1,3})";
+  private static final String pattern = "AS (\\d{1,3})";
 
   @Override
   String[] getPrefixes() {
@@ -324,7 +345,7 @@ class AfterSpeedCmdParser extends CmdParser {
 class AfterNavaidCmdParser extends CmdParser {
 
   private static final String[] prefixes = new String[]{"AN"};
-  private static final String pattern = "AN ?(\\S+)";
+  private static final String pattern = "AN (\\S+)";
 
   @Override
   String[] getPrefixes() {
@@ -403,15 +424,15 @@ class ContactCmdParser extends CmdParser {
   }
 }
 
-class ClearedToApproachCmdParser extends CmdParser{
-  
+class ClearedToApproachCmdParser extends CmdParser {
+
   private static final String[] prefixes = new String[]{"C"};
-  private static final String pattern = "C (I|V|R)(\\S+)";
+  private static final String pattern = "C (I|V|R) (\\S+)";
 
   @Override
   public String getHelp() {
     EStringBuilder sb = new EStringBuilder();
-    
+
     sb.appendLine("Cleared to approach");
     sb.appendLine("\t " + pattern);
     sb.appendLine("\tI\t.. ILS");
@@ -421,7 +442,7 @@ class ClearedToApproachCmdParser extends CmdParser{
     sb.appendLine("\t C I 24 \t - cleared ILS 24");
     sb.appendLine("\t C R 24 \t - cleared VOR/DME 24");
     sb.appendLine("\t C V 24 \t - cleared visual 24");
-    
+
     return sb.toString();
   }
 
@@ -444,9 +465,10 @@ class ClearedToApproachCmdParser extends CmdParser{
   }
 }
 
-class ProceedDirectCmdParser extends CmdParser{
+class ProceedDirectCmdParser extends CmdParser {
+
   private static final String[] prefixes = new String[]{"PD"};
-  private static final String pattern = "PD ?(\\S+)";
+  private static final String pattern = "PD (\\S+)";
 
   @Override
   String[] getPrefixes() {
@@ -461,6 +483,7 @@ class ProceedDirectCmdParser extends CmdParser{
   @Override
   Command parse(RegexGrouper rg) {
     String ns = rg.getString(1);
+    System.out.println("\t\t\t" + ns);
     Navaid n = null;
     Command ret = new ProceedDirectCommand(n);
     return ret;

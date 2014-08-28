@@ -16,6 +16,8 @@ import jatcsimlib.global.KeyList;
 public class Runway implements KeyItem<String> {
   private KeyList<RunwayThreshold, String> thresholds = new KeyList();
   private boolean active;
+  
+  private Airport parent;
 
   public RunwayThreshold get(int index){
     return thresholds.get(index);
@@ -37,9 +39,21 @@ public class Runway implements KeyItem<String> {
     return active;
   }
   
+  public String getName(){
+    return getThresholdA().getName() + "-" + getThresholdB().getName();
+  }
   
   @Override
   public String getKey() {
-    return getThresholdA().getName() + "-" + getThresholdB().getName();
+    return getName();
   }
+
+  public Airport getParent() {
+    return parent;
+  }
+
+  public void setParent(Airport parent) {
+    this.parent = parent;
+  }
+  
 }

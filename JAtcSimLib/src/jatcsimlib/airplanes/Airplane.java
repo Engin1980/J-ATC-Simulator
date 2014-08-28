@@ -22,7 +22,7 @@ public class Airplane implements KeyItem<Callsign> {
     right
   }
 
-  private static Area area;
+  public static Area area;
 
   private final Callsign callsign;
   private int targetHeading;
@@ -38,10 +38,6 @@ public class Airplane implements KeyItem<Callsign> {
   private Atc atc;
 
   private final AirplaneType airplaneSpecification;
-
-  public static void setArea(Area area) {
-    Airplane.area = area;
-  }
 
   public Airplane(Callsign callsign, Coordinate coordinate, char[] sqwk, AirplaneType airplaneSpecification,
       int heading, int altitude, int speed) {

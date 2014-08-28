@@ -5,26 +5,16 @@
  */
 package jatcsim;
 
-import jatcsimdraw.painting.EJComponent;
-import jatcsimdraw.painting.EJComponentCanvas;
-import jatcsimdraw.painting.Radar;
 import jatcsimdraw.painting.Settings;
-import jatcsimlib.events.EventListener;
-import jatcsimdraw.shared.es.WithCoordinateEvent;
 import jatcsimlib.Simulation;
 import jatcsimlib.airplanes.AirplaneTypes;
+import jatcsimlib.commands.Command;
+import jatcsimlib.commands.CommandFormat;
 import jatcsimxml.serialization.Serializer;
 import jatcsimlib.world.Airport;
 import jatcsimlib.world.Area;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
+import jatcsimlib.world.Route;
 import java.util.Calendar;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.JFrame;
-import javax.swing.Timer;
 
 /**
  *
@@ -44,6 +34,21 @@ public class JAtcSim {
       loadDataFromXmlFiles();
     } catch (Exception ex) {
       throw (ex);
+    }
+    
+    if (true) {
+      System.out.println("*** My debug");
+      
+      for (Route r : area.getAirports().get(0).getRunways().get(0).getThresholds().get(0).getRoutes()){
+        System.out.println(r.getKey());
+        System.out.println("\t parsing " + r.getKey());
+        System.out.println("\t\t cmd: " + r.getRoute());
+        Command [] ret = CommandFormat.parseMulti(r.getRoute());
+        System.out.println("\t\t ok");
+        System.out.println("\t\t cnt: " + ret.length);
+      }
+      
+      return;
     }
 
     System.out.println("** Setting simulation");

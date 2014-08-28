@@ -6,36 +6,40 @@
 
 package jatcsimlib.world;
 
-import jatcsimlib.coordinates.Coordinate;
 import jatcsimlib.global.KeyItem;
-import jatcsimlib.global.Parentable;
 
 /**
  *
  * @author Marek
  */
-public class Approach implements KeyItem<Approach.eType> {
+public class Route implements KeyItem<String> {
 
   @Override
-  public eType getKey() {
-    return type;
+  public String getKey() {
+    return name;
   }
- 
-  public enum eType{
-    ILS_I,
-    ILS_II,
-    ILS_III,
-    VORDME,
-    NDB,
-    GPS
+  public enum eStarType{
+    sid,
+    star,
+    transition
   }
   
-  private eType type;
-  private int dh;
-  private int radial;
-  private Coordinate point;
-  private String gaRoute;
+  private eStarType type;
+  private String name;
+  private String route;
   private RunwayThreshold parent;
+
+  public eStarType getType() {
+    return type;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public String getRoute() {
+    return route;
+  }
 
   public RunwayThreshold getParent() {
     return parent;
@@ -44,4 +48,5 @@ public class Approach implements KeyItem<Approach.eType> {
   public void setParent(RunwayThreshold parent) {
     this.parent = parent;
   }
+  
 }

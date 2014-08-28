@@ -12,10 +12,10 @@ import jatcsimlib.global.KeyItem;
 import jatcsimlib.world.Airport;
 import jatcsimlib.world.Runway;
 import jatcsimlib.world.RunwayThreshold;
+import jatcsimxml.exceptions.XmlInvalidDataException;
 import java.awt.Color;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -42,6 +42,8 @@ public class Reflecter {
       if (java.lang.reflect.Modifier.isStatic(f.getModifiers())) {
         continue; // statické přeskakujem
       }
+      else if (f.getName().equals("parent"))
+        continue; // parent neplníme, ty jsou reference na nadřazené objekty a plní se sami
       fillField(el, f, targetObject);
     }
   }
@@ -151,7 +153,16 @@ public class Reflecter {
       throw new ERuntimeException(
           "Failed to set value to field " + ref.getClass().getName() + "." + f.getName(), ex);
     }
-    Element subEl = getElements(el, f.getName()).get(0);
+    Element subEl;
+    
+    try {
+      subEl = getElements(el, f.getName()).get(0);
+    } catch (Exception e) {
+      throw XmlInvalidDataException.createNoSuchElement(el, f.getName(), ref.getClass());
+    }
+    
+    
+    
     fillObject(subEl, newInstance);
   }
 

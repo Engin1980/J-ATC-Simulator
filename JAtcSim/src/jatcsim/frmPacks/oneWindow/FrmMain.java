@@ -70,7 +70,7 @@ public class FrmMain extends javax.swing.JFrame {
 
   void init(final Simulation sim, Settings displaySettings) {
     
-    Airport aip = sim.getAirport();
+    Airport aip = sim.getActiveAirport();
     
     EJComponentCanvas canvas = new EJComponentCanvas();
     Radar r = new Radar(canvas, aip.getRadarRange(), sim, displaySettings);
