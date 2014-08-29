@@ -13,6 +13,7 @@ import jatcsimlib.commands.CommandFormat;
 import jatcsimxml.serialization.Serializer;
 import jatcsimlib.world.Airport;
 import jatcsimlib.world.Area;
+import jatcsimlib.world.Navaid;
 import jatcsimlib.world.Route;
 import java.util.Calendar;
 
@@ -36,8 +37,10 @@ public class JAtcSim {
       throw (ex);
     }
     
-    if (true) {
+    if (false) {
       System.out.println("*** My debug");
+      
+      Navaid.area = area;
       
       for (Route r : area.getAirports().get(0).getRunways().get(0).getThresholds().get(0).getRoutes()){
         System.out.println(r.getKey());
