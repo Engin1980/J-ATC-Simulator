@@ -15,6 +15,8 @@ import jatcsimlib.global.KeyItem;
  */
 public class Navaid implements KeyItem<String> {
 
+  public static Area area;
+  
   @Override
   public String getKey() {
     return name;

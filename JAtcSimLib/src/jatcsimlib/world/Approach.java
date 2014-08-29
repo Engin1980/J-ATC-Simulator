@@ -8,7 +8,6 @@ package jatcsimlib.world;
 
 import jatcsimlib.coordinates.Coordinate;
 import jatcsimlib.global.KeyItem;
-import jatcsimlib.global.Parentable;
 
 /**
  *
@@ -44,4 +43,27 @@ public class Approach implements KeyItem<Approach.eType> {
   public void setParent(RunwayThreshold parent) {
     this.parent = parent;
   }
+
+  public String getGaRoute() {
+    return gaRoute;
+  }
+
+  public eType getType() {
+    return type;
+  }
+
+  public int getDh() {
+    return dh;
+  }
+
+  public int getRadial() {
+    return radial;
+  }
+
+  public Coordinate getPoint() {
+    return point;
+  }
+ 
+  
 }
+  

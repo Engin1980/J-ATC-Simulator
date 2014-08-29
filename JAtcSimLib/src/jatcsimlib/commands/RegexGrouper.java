@@ -30,6 +30,10 @@ public class RegexGrouper {
   public int getIndexOfCharacterAfterMatch(){
     return m.end();
   }
+  
+  public String getMatch(){
+    return m.group(0);
+  }
 
   public int getInt(int groupIndex) {
     return Integer.parseInt(m.group(groupIndex));
