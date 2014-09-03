@@ -22,8 +22,6 @@ public class Airplane implements KeyItem<Callsign> {
     right
   }
 
-  public static Area area;
-
   private final Callsign callsign;
   private int targetHeading;
   private eTurnDirection targetHeadingTurnDirection;
@@ -33,18 +31,18 @@ public class Airplane implements KeyItem<Callsign> {
   private int targetSpeed;
   private int speed;
   private Coordinate coordinate;
-  private char[] sqwk;
+  private Squawk sqwk;
   private boolean departure;
 
   private Atc atc;
 
   private final AirplaneType airplaneSpecification;
 
-  public Airplane(Callsign callsign, Coordinate coordinate, char[] sqwk, AirplaneType airplaneSpecification,
+  public Airplane(Callsign callsign, Coordinate coordinate, Squawk sqwk, AirplaneType airplaneSpecification,
       int heading, int altitude, int speed, boolean isDeparture) {
     this.callsign = callsign;
     this.coordinate = coordinate;
-    this.setSqwk(sqwk);
+    this.sqwk = sqwk;
     this.airplaneSpecification = airplaneSpecification;
 
     this.atc = null;
@@ -88,19 +86,6 @@ public class Airplane implements KeyItem<Callsign> {
     this.atc = atc;
   }
 
-  public final void setSqwk(char[] sqwk) {
-    if (sqwk.length != 4) {
-      throw new IllegalArgumentException("Sqwk length must be 4");
-    }
-    for (int i = 0; i < sqwk.length; i++) {
-      char c = sqwk[i];
-      if (c < '0' || c > '7') {
-        throw new IllegalArgumentException("Sqwk length must character 0-7.");
-      }
-    }
-    this.sqwk = sqwk;
-  }
-
   public void setCoordinate(Coordinate coordinate) {
     this.coordinate = coordinate;
   }
@@ -133,7 +118,7 @@ public class Airplane implements KeyItem<Callsign> {
     return coordinate;
   }
 
-  public char[] getSqwk() {
+  public Squawk getSqwk() {
     return sqwk;
   }
 

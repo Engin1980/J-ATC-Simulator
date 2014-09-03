@@ -37,29 +37,13 @@ public class JAtcSim {
       throw (ex);
     }
     
-    if (false) {
-      System.out.println("*** My debug");
-      
-      Navaid.area = area;
-      
-      for (Route r : area.getAirports().get(0).getRunways().get(0).getThresholds().get(0).getRoutes()){
-        System.out.println(r.getKey());
-        System.out.println("\t parsing " + r.getKey());
-        System.out.println("\t\t cmd: " + r.getRoute());
-        @SuppressWarnings("UnusedAssignment")
-        Command [] ret = CommandFormat.parseMulti(r.getRoute());
-        System.out.println("\t\t ok");
-        System.out.println("\t\t cnt: " + ret.length);
-      }
-      
-      return;
-    }
-
+    area.rebuildParentReferences();
+    
     System.out.println("** Setting simulation");
 
     Airport aip = area.getAirports().get(0);
-    final Simulation sim = new Simulation(
-        area, aip,
+    final Simulation sim = Simulation.create(
+        aip,
         types, Calendar.getInstance());
 
     jatcsim.frmPacks.Pack simPack = 

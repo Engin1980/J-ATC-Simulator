@@ -21,13 +21,13 @@ public class AirplaneList extends KeyList<Airplane, Callsign> {
   }
   
   public Airplane tryGetBySqwk (String sqwk){
-    char [] s = sqwk.toCharArray();
+    Squawk s = new Squawk(sqwk);
     return this.tryGet(s);
   }
   
-  public Airplane tryGet(char [] sqwk){
+  public Airplane tryGet(Squawk sqwk){
     for (Airplane p : this){
-      if (Arrays.equals(p.getSqwk(), sqwk))
+      if (p.getSqwk().equals(sqwk))
         return p;
     }
     return null;

@@ -9,12 +9,17 @@ import jatcsimlib.Acc;
 import jatcsimlib.Simulation;
 import jatcsimlib.airplanes.Airplane;
 import jatcsimlib.airplanes.AirplaneList;
+import jatcsimlib.airplanes.Squawk;
+import jatcsimlib.commands.ChangeAltitudeCommand;
 import jatcsimlib.commands.ContactCommand;
 import jatcsimlib.exceptions.ERuntimeException;
+import jatcsimlib.global.ETime;
 import jatcsimlib.messaging.Message;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -27,6 +32,8 @@ public class CentreAtc extends ComputerAtc {
 
   private final AirplaneList arrivingNewList = new AirplaneList();
   private final AirplaneList arrivingForApp = new AirplaneList();
+  
+  private final Map<Squawk, ETime> waitingRequestsList = new HashMap<>();
 
   public CentreAtc(String areaIcao) {
     super(Atc.eType.ctr, areaIcao);
@@ -38,31 +45,20 @@ public class CentreAtc extends ComputerAtc {
       throw new ERuntimeException("Departure plane cannot be registered using this method.");
     } else {
       arrivingNewList.add(plane);
-      Acc.messenger().addMessage(null);
+      Acc.messenger().addMessage(
+          this,
+          plane,
+          new ChangeAltitudeCommand(ChangeAltitudeCommand.eDirection.descend, 12000));
     }
-
   }
 
   public void elapseSecond() {
     List<Message> msgs = Acc.messenger().getMy(this);
     List<Message> tmp = new LinkedList<>();
-
-    // odstrani nezname
-    for (Message m : msgs) {
-      if (Atc.UNRECOGNIZED.equals(m.tryGetText())) {
-        Acc.messenger().remove(m);
-        msgs.remove(m);
-      }
-    }
-
-    // CTR -> APP, zadost na APP
-    AirplaneList plns = getPlanesReadyForApp();
-    for (Airplane p : plns) {
-      Acc.messenger().addMessage(this, Acc.atcApp(), p.getSqwk().toString());
-      arrivingNewList.remove(p);
-      arrivingForApp.add(p);
-    }
-    plns.clear();
+    
+    esRemoveInvalidMessages(msgs);
+    
+    esRequestPlaneSwitchFromApp();
 
     // CTR -> APP, potvrzene od APP
     for (Message m : msgs) {
@@ -90,14 +86,45 @@ public class CentreAtc extends ComputerAtc {
         }
 
       } else {
-        // CTR predava na APP
+        // ptvrzene od APP, CTR predava na APP
         arrivingForApp.remove(p); // bude odstraneno
+        waitingRequestsList.remove(p.getSqwk());
         Acc.messenger().addMessage(
             new Message(this, p, new ContactCommand(eType.app)));
         tmp.add(m);
       }
     }
     msgs.removeAll(tmp);
+  }
+
+  private void esRemoveInvalidMessages(List<Message> msgs) {
+    // odstrani nezname
+    for (Message m : msgs) {
+      if (Atc.UNRECOGNIZED.equals(m.tryGetText())) {
+        Acc.messenger().remove(m);
+        msgs.remove(m);
+      }
+    }
+  }
+
+  private void esRequestPlaneSwitchFromApp() {
+    // CTR -> APP, zadost na APP
+    AirplaneList plns = getPlanesReadyForApp();
+    for (Airplane p : plns) {
+      Acc.messenger().addMessage(this, Acc.atcApp(), p.getSqwk().toString());
+      arrivingNewList.remove(p);
+      arrivingForApp.add(p);
+      waitingRequestsList.put(p.getSqwk(), Acc.now());
+    }
+    plns.clear();
+    
+    // opakovani starych zadosti
+    ETime old = Acc.now().addSeconds(-20);
+    for (Squawk k : waitingRequestsList.keySet()){
+      if (waitingRequestsList.get(k).isBefore(old)){
+        Acc.messenger().addMessage(this, Acc.atcApp(), k.toString());
+      }
+    }
   }
 
   private AirplaneList getPlanesReadyForApp() {

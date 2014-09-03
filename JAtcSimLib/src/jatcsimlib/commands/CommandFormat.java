@@ -5,6 +5,7 @@
  */
 package jatcsimlib.commands;
 
+import jatcsimlib.Acc;
 import jatcsimlib.atcs.Atc;
 import jatcsimlib.exceptions.EInvalidCommandException;
 import jatcsimlib.exceptions.ENotSupportedException;
@@ -484,7 +485,7 @@ class ProceedDirectCmdParser extends CmdParser {
   Command parse(RegexGrouper rg) {
     String ns = rg.getString(1);
     
-    Navaid n = Navaid.area.getNavaids().tryGet(ns);
+    Navaid n = Acc.area().getNavaids().tryGet(ns);
     if (n == null)
       throw new EInvalidCommandException("Unable to find navaid named \"" + ns + "\".",rg.getMatch());
     Command ret = new ProceedDirectCommand(n);

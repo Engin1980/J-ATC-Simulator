@@ -6,6 +6,8 @@
 
 package jatcsimlib.atcs;
 
+import jatcsimlib.airplanes.Airplane;
+
 /**
  *
  * @author Marek
@@ -19,6 +21,11 @@ public class UserAtc extends Atc {
   @Override
   public boolean isHuman() {
     return true;
+  }
+
+  @Override
+  protected void _registerNewPlane(Airplane plane) {
+    throw new UnsupportedOperationException("Not supported yet."); 
   }
 
 }

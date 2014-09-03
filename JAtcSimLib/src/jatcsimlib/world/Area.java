@@ -36,5 +36,24 @@ public class Area {
     return borders;
   }
   
+  public void rebuildParentReferences() {
+    for (Airport a : this.getAirports()) {
+      a.setParent(this);
 
+      for (Runway r : a.getRunways()) {
+        r.setParent(a);
+
+        for (RunwayThreshold t : r.getThresholds()) {
+          t.setParent(r);
+
+          for (Route o : t.getRoutes()) {
+            o.setParent(t);
+          }
+          for (Approach p : t.getApproaches()) {
+            p.setParent(t);
+          }
+        }
+      }
+    }
+  }
 }

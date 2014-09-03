@@ -10,7 +10,7 @@ import jatcsimlib.airplanes.AirplaneList;
 import jatcsimlib.airplanes.AirplaneType;
 import jatcsimlib.airplanes.AirplaneTypes;
 import jatcsimlib.airplanes.Callsign;
-import jatcsimlib.atcs.Atc;
+import jatcsimlib.airplanes.Squawk;
 import jatcsimlib.atcs.CentreAtc;
 import jatcsimlib.atcs.TowerAtc;
 import jatcsimlib.atcs.UserAtc;
@@ -32,9 +32,7 @@ import jatcsimlib.world.Navaid;
 import jatcsimlib.world.Route;
 import jatcsimlib.world.Runway;
 import jatcsimlib.world.RunwayThreshold;
-import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Random;
 
 /**
  *
@@ -44,13 +42,14 @@ public class Simulation {
 
   private final ETime now;
   private final Area area;
+  private final Airport airport;
   private final AirplaneTypes planeTypes;
   private final AirplaneList planes = new AirplaneList();
 
   private RunwayThreshold activeRunwayThreshold;
   private Weather weather;
 
-  private Messenger messager = new Messenger();
+  private final Messenger messenger = new Messenger();
   private final UserAtc appAtc;
   private final TowerAtc twrAtc;
   private final CentreAtc ctrAtc;
@@ -86,26 +85,34 @@ public class Simulation {
   }
 
   public Messenger getMessenger() {
-    return messager;
+    return messenger;
   }
 
-  public Simulation(Area area, Airport airport, AirplaneTypes types, Calendar now) {
-    this.area = area;
-    Airplane.area = area;
-    Navaid.area = area;
-    this.planeTypes = types;
-
-    this.rebuildParentReferences();
-    this.checkRouteCommands();
-
-    this.activeRunwayThreshold
-        = airport.getRunways().tryGet("06-24").getThresholdA();
+  private  Simulation(Airport airport, AirplaneTypes types, Calendar now) {
+    if (airport == null) {
+      throw new IllegalArgumentException("Argument \"airport\" cannot be null.");
+    }
     
+    this.area = airport.getParent();
+    this.airport = airport;
+    this.planeTypes = types;
     this.twrAtc = new TowerAtc(airport.getIcao());
     this.ctrAtc = new CentreAtc(area.getIcao());
     this.appAtc = new UserAtc(airport.getIcao());
-    
+
     this.now = new ETime(now);
+  }
+
+  public static Simulation create(Airport airport, AirplaneTypes types, Calendar now) {
+    Simulation ret = new Simulation(airport, types, now);
+    Simulation.current = ret;
+
+    ret.checkRouteCommands();
+
+    ret.activeRunwayThreshold
+        = airport.getRunways().tryGet("06-24").getThresholdA();
+
+    return ret;
   }
 
   private boolean isBusy = false;
@@ -123,8 +130,8 @@ public class Simulation {
     updatePlanes();
 
     long end = System.currentTimeMillis();
-    System.out.println("## Sim elapse second: \t" + (end-start));
-    
+    System.out.println("## Sim elapse second: \t" + (end - start) + " at " + now.toString());
+
     tickEM.raise(this);
     isBusy = false;
   }
@@ -158,28 +165,7 @@ public class Simulation {
 
   public static void setCurrent(Simulation current) {
     Simulation.current = current;
-  }
-
-  private void rebuildParentReferences() {
-    for (Airport a : this.area.getAirports()) {
-      a.setParent(this.area);
-
-      for (Runway r : a.getRunways()) {
-        r.setParent(a);
-
-        for (RunwayThreshold t : r.getThresholds()) {
-          t.setParent(r);
-
-          for (Route o : t.getRoutes()) {
-            o.setParent(t);
-          }
-          for (Approach p : t.getApproaches()) {
-            p.setParent(t);
-          }
-        }
-      }
-    }
-  }
+  }  
 
   private void checkRouteCommands() {
     Command[] cmds;
@@ -205,9 +191,9 @@ public class Simulation {
                   String.format("Airport %s runway %s route %s has invalid commands: %s (error: %s)",
                       a.getIcao(), t.getName(), o.getName(), o.getRoute(), ex.getMessage()));
             }
-            try{
-            n = o.getMainFix();}
-            catch (ERuntimeException ex){
+            try {
+              n = o.getMainFix();
+            } catch (ERuntimeException ex) {
               throw new ERuntimeException(
                   String.format(
                       "Airport %s runway %s route %s has no main fix. SID last/STAR first command must be PD FIX (error: %s)",
@@ -223,7 +209,7 @@ public class Simulation {
     if (this.now.getSeconds() % 5 != 0) {
       return;
     }
-    
+
     System.out.println("## new plane");
 
     Airplane plane = generateNewArrivingPlane();
@@ -238,7 +224,7 @@ public class Simulation {
     Callsign cs = generateCallsign();
     Route r = getRandomRoute(true);
     Coordinate c = generateArrivalCoordinate(r.getMainFix().getCoordinate(), this.activeRunwayThreshold.getCoordinate());
-    char[] sqwk = generateSqwk();
+    Squawk sqwk = generateSqwk();
     AirplaneType pt = planeTypes.get(rnd.nextInt(planeTypes.size()));
     int heading = (int) Coordinates.getBearing(c, r.getMainFix().getCoordinate());
     int alt = rnd.nextInt(10000) + 12000;
@@ -251,16 +237,18 @@ public class Simulation {
     return ret;
   }
 
-  private char[] generateSqwk() {
+  private Squawk generateSqwk() {
     int len = 4;
-    char[] ret = null;
+    char[] tmp = new char[len];
+    Squawk ret = null;
     while (ret == null) {
-      ret = new char[len];
+      tmp = new char[len];
       for (int i = 0; i < len; i++) {
-        ret[i] = Integer.toString(rnd.nextInt(8)).charAt(0);
+        tmp[i] = Integer.toString(rnd.nextInt(8)).charAt(0);
       }
+      ret = new Squawk(tmp);
       for (Airplane p : this.planes) {
-        if (Arrays.equals(ret, p.getSqwk())) {
+        if (p.getSqwk().equals(ret)) {
           ret = null;
           break;
         }
@@ -331,6 +319,5 @@ public class Simulation {
   public CentreAtc getCtrAtc() {
     return ctrAtc;
   }
-  
-  
+
 }
