@@ -4,14 +4,12 @@
  * and open the template in the editor.
  */
 
-package jatcsimdraw.painting;
-
-import jatcsimlib.coordinates.Coordinate;
+package jatcismdraw.radarBase;
 
 /**
  *
  * @author Marek
  */
-public abstract class RadarEventListener {
-  public abstract void raise (Radar sender, Coordinate coordinate);
+public abstract class Radar {
+  
 }

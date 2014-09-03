@@ -6,8 +6,9 @@
 
 package jatcsimxml.serialization;
 
-import jatcsimdraw.painting.DispItem;
-import jatcsimdraw.painting.DispPlane;
+import jatcsimdraw.settings.DispItem;
+import jatcsimdraw.settings.DispPlane;
+import jatcsimdraw.settings.DispText;
 import jatcsimlib.airplanes.AirplaneType;
 import jatcsimlib.coordinates.Coordinate;
 import jatcsimlib.world.Airport;
@@ -47,6 +48,7 @@ public class Mapping {
     
     mapAdd("Settings.dispItems", DispItem.class);
     mapAdd("Settings.dispPlanes", DispPlane.class);
+    mapAdd("Settings.dispTexts", DispText.class);
 
     simpleTypes.add(Integer.class);
     simpleTypes.add(int.class);

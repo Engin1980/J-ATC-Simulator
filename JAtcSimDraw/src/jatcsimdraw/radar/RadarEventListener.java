@@ -4,14 +4,15 @@
  * and open the template in the editor.
  */
 
-package jatcsimdraw.painting;
+package jatcsimdraw.radar;
 
-import java.awt.Graphics;
+import jatcsimdraw.radar.BasicRadar;
+import jatcsimlib.coordinates.Coordinate;
 
 /**
  *
  * @author Marek
  */
-public abstract class EJComponentPaintListener {
-  public abstract void paint (EJComponent component, Graphics g);
+public abstract class RadarEventListener {
+  public abstract void raise (BasicRadar sender, Coordinate coordinate);
 }

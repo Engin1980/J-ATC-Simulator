@@ -3,9 +3,18 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package jatcsimdraw.painting;
+package jatcsimdraw.radar;
 
-import jatcsimdraw.canvases.Canvas;
+import jatcsimdraw.global.Point;
+import jatcsimdraw.settings.Settings;
+import jatcismdraw.radarBase.Canvas;
+import jatcismdraw.radarBase.Canvas;
+import jatcismdraw.radarBase.Painter;
+import jatcismdraw.radarBase.Radar;
+import jatcismdraw.radarBase.Visualiser;
+import jatcismdraw.radarBase.BasicPainter;
+import jatcismdraw.radarBase.BasicVisualiser;
+import jatcsimdraw.radar.PaintManager;
 import jatcsimlib.events.EventListener;
 import jatcsimlib.events.EventManager;
 import jatcsimdraw.shared.es.EMouseEvent;
@@ -19,30 +28,30 @@ import java.awt.event.KeyEvent;
  *
  * @author Marek
  */
-public class Radar {
+public class BasicRadar extends Radar  {
 
   private final Canvas c;
   private final Visualiser v;
   private final Painter p;
   private final PaintManager m;
-  private final EventManager<Radar, EventListener<Radar, WithCoordinateEvent>, WithCoordinateEvent> mouseMoveEM = new EventManager(this);
-  private final EventManager<Radar, EventListener<Radar, WithCoordinateEvent>, WithCoordinateEvent> mouseClickEM = new EventManager(this);
+  private final EventManager<BasicRadar, EventListener<BasicRadar, WithCoordinateEvent>, WithCoordinateEvent> mouseMoveEM = new EventManager(this);
+  private final EventManager<BasicRadar, EventListener<BasicRadar, WithCoordinateEvent>, WithCoordinateEvent> mouseClickEM = new EventManager(this);
   private final EventManager<
-      Radar, EventListener<Radar, Object>, Object> paintEM = new EventManager(this);
+      BasicRadar, EventListener<BasicRadar, Object>, Object> paintEM = new EventManager(this);
   private final EventManager<
-      Radar, EventListener<Radar, KeyEvent>, KeyEvent> keyPressEM = new EventManager(this);
+      BasicRadar, EventListener<BasicRadar, KeyEvent>, KeyEvent> keyPressEM = new EventManager(this);
 
-  public Radar(Canvas canvas, RadarRange radarRange,
+  public BasicRadar(Canvas canvas, RadarRange radarRange,
       Simulation sim, Settings displaySettings) {
     this.c = canvas;
     this.p = new BasicPainter(c, radarRange.topLeft, radarRange.bottomRight);
     this.v = new BasicVisualiser(p, displaySettings);
     this.m = new PaintManager(sim, v);
 
-    this.paintEM.addListener(new EventListener<Radar, Object>() {
+    this.paintEM.addListener(new EventListener<BasicRadar, Object>() {
 
       @Override
-      public void raise(Radar parent, Object e) {
+      public void raise(BasicRadar parent, Object e) {
         m.draw();
       }
     });
@@ -109,25 +118,21 @@ public class Radar {
     }
   }
 
-  public EventManager<Radar, EventListener<Radar, WithCoordinateEvent>, WithCoordinateEvent> onMouseMove() {
+  public EventManager<BasicRadar, EventListener<BasicRadar, WithCoordinateEvent>, WithCoordinateEvent> onMouseMove() {
     return mouseMoveEM;
   }
 
-  public EventManager<Radar, EventListener<Radar, WithCoordinateEvent>, WithCoordinateEvent> onMouseClick() {
+  public EventManager<BasicRadar, EventListener<BasicRadar, WithCoordinateEvent>, WithCoordinateEvent> onMouseClick() {
     return mouseClickEM;
   }
 
-  public EventManager<Radar, EventListener<Radar, KeyEvent>, KeyEvent> onKeyPress() {
+  public EventManager<BasicRadar, EventListener<BasicRadar, KeyEvent>, KeyEvent> onKeyPress() {
     return keyPressEM;
   }
 
   public EventManager<
-      Radar, EventListener<Radar, Object>, Object> onPaint() {
+      BasicRadar, EventListener<BasicRadar, Object>, Object> onPaint() {
     return paintEM;
-  }
-
-  private Point fromAwtPointToMyPoint(java.awt.Point p) {
-    return new Point(p.x, p.y);
   }
 
   public void zoomIn() {

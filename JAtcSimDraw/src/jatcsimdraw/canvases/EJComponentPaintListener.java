@@ -4,18 +4,14 @@
  * and open the template in the editor.
  */
 
-package jatcsimdraw.painting;
+package jatcsimdraw.canvases;
+
+import java.awt.Graphics;
 
 /**
  *
  * @author Marek
  */
-public class Size {
-  public final int width;
-  public final int height;
-
-  public Size(int width, int height) {
-    this.width = width;
-    this.height = height;
-  }
+public abstract class EJComponentPaintListener {
+  public abstract void paint (EJComponent component, Graphics g);
 }

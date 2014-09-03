@@ -6,7 +6,7 @@
 
 package jatcsim.frmPacks.oneWindow;
 
-import jatcsimdraw.painting.Settings;
+import jatcsimdraw.settings.Settings;
 import jatcsimlib.Simulation;
 
 /**

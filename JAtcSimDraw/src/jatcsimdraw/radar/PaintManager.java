@@ -3,15 +3,20 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package jatcsimdraw.painting;
+package jatcsimdraw.radar;
 
+import jatcismdraw.radarBase.Visualiser;
 import jatcsimlib.Simulation;
 import jatcsimlib.airplanes.Airplane;
+import jatcsimlib.messaging.Message;
+import jatcsimlib.messaging.Messenger;
 import jatcsimlib.world.Airport;
-import jatcsimlib.world.Area;
 import jatcsimlib.world.Border;
 import jatcsimlib.world.Navaid;
 import jatcsimlib.world.Runway;
+import java.util.AbstractList;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -33,6 +38,13 @@ public class PaintManager {
     drawNavaids();
     drawAirports();
     drawAirplanes();
+    drawCaptions();
+  }
+  
+  private void drawCaptions(){
+    Messenger ms = simulation.getMessenger();
+    List<Message> msgs = ms.getMy(simulation.getAppAtc());
+    visualiser.drawMessages(msgs);
   }
 
   private void drawBorders() {

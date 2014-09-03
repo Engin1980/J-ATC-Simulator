@@ -3,12 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package jatcsimdraw.painting;
+package jatcsimdraw.canvases;
 
-import jatcsimdraw.canvases.Canvas;
+import jatcsimdraw.global.Point;
+import jatcismdraw.radarBase.Canvas;
+import jatcismdraw.radarBase.Painter;
 import jatcsimlib.events.EventListener;
 import jatcsimlib.events.EventManager;
 import jatcsimdraw.shared.es.EMouseEvent;
+import jatcsimlib.exceptions.ENotSupportedException;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -20,6 +23,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.util.List;
 
 /**
  *
@@ -168,6 +172,8 @@ public class EJComponentCanvas extends Canvas {
     int x = p.x + xShiftInPixels;
     int y = p.y + yShiftInPixels;
 
+    g.setColor(c);
+
     for (String line : lines) {
       FontMetrics fm = g.getFontMetrics();
       Rectangle b = fm.getStringBounds(line, g).getBounds();
@@ -175,6 +181,23 @@ public class EJComponentCanvas extends Canvas {
       y = y + b.height - 5;
 
       g.drawString(line, x, y);
+    }
+  }
+
+  @Override
+  public void drawTextBlock(List<String> lines, Painter.eTextBlockLocation location, Color color) {
+    if (location == Painter.eTextBlockLocation.bottomMiddle
+        || location == Painter.eTextBlockLocation.middleLeft
+        || location == Painter.eTextBlockLocation.middleRight
+        || location == Painter.eTextBlockLocation.topMiddle) {
+      throw new ENotSupportedException();
+    }
+
+    g.setColor(color);
+
+    Point[] pts = getPositionsForText(lines, location);
+    for (int i = 0; i < lines.size(); i++) {
+      g.drawString(lines.get(i), pts[i].x, pts[i].y);
     }
   }
 
@@ -231,6 +254,64 @@ public class EJComponentCanvas extends Canvas {
 
   private int toEJComponentAngle(int angle) {
     return 360 - angle + 90;
+  }
+
+  private int xMargin = 4;
+  private int yMargin = -2;
+  private Point[] getPositionsForText(List<String> lines, Painter.eTextBlockLocation location) {
+    
+    
+    lines.add("Test1");
+    lines.add("Test2");
+    lines.add("Test3");
+    
+    int lastX;
+    int lastY;
+    int maxX;
+    Point[] ret = new Point[lines.size()];
+    FontMetrics fm = g.getFontMetrics();
+    
+    switch(location){
+      case topLeft:
+        lastX = xMargin;
+        lastY = yMargin;
+        for (int i = 0; i < lines.size(); i++) {
+          ret[i] = new Point(lastX, lastY);
+          Rectangle r = fm.getStringBounds(lines.get(i), g).getBounds();
+          lastY += r.height;
+        }
+        break;
+      case bottomLeft:
+        lastX = xMargin;
+        lastY = g.getClipBounds().height - yMargin;
+        for (int i = 0; i < lines.size(); i++) {          
+          Rectangle r = fm.getStringBounds(lines.get(i), g).getBounds();
+          lastY -= r.height;
+          ret[i] = new Point(lastX, lastY);
+        }
+        break;
+      case topRight:
+        lastY = yMargin;
+        maxX = g.getClipBounds().width - xMargin;
+        for (int i = 0; i < lines.size(); i++) {          
+          Rectangle r = fm.getStringBounds(lines.get(i), g).getBounds();
+          ret[i] = new Point(maxX - r.width, lastY);
+          lastY += r.height;
+        }
+        break;
+      case bottomRight:
+        maxX = g.getClipBounds().width-xMargin;
+        lastY = g.getClipBounds().height - yMargin;
+        for (int i = 0; i < lines.size(); i++) {
+          Rectangle r = fm.getStringBounds(lines.get(i), g).getBounds();
+          lastY -= r.height;
+          ret[i] = new Point(maxX - r.width, lastY);
+        }
+        break;
+      default:
+        throw new ENotSupportedException();
+    } // switch
+    return ret;
   }
 
 }

@@ -3,11 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package jatcsimdraw.painting;
+package jatcismdraw.radarBase;
 
-import jatcsimdraw.canvases.Canvas;
+import jatcismdraw.radarBase.Painter;
+import jatcsimdraw.global.Point;
+import jatcsimdraw.global.Size;
+import jatcismdraw.radarBase.Canvas;
 import jatcsimlib.coordinates.Coordinate;
 import java.awt.Color;
+import java.util.List;
 
 /**
  *
@@ -20,7 +24,7 @@ public class BasicPainter extends Painter {
   }
 
   @Override
-  void drawLine(Coordinate from, Coordinate to, Color color, int width) {
+  protected void drawLine(Coordinate from, Coordinate to, Color color, int width) {
     Point f = toPoint(from);
     Point t = toPoint(to);
 
@@ -28,37 +32,37 @@ public class BasicPainter extends Painter {
   }
 
   @Override
-  void drawPoint(Coordinate coordinate, Color color, int width) {
+  protected void drawPoint(Coordinate coordinate, Color color, int width) {
     Point p = toPoint(coordinate);
     c.drawPoint(p, color, width);
   }
 
   @Override
-  void drawCircleAround(Coordinate coordinate, int distanceInPixels, Color color, int width) {
+  protected void drawCircleAround(Coordinate coordinate, int distanceInPixels, Color color, int width) {
     Point p = toPoint(coordinate);
 
     c.drawCircleAround(p, distanceInPixels, color, width);
   }
 
   @Override
-  void clear(Color backColor) {
+  protected void clear(Color backColor) {
     c.clear(backColor);
   }
 
   @Override
-  void drawText(String text, Coordinate coordinate, int xShiftInPixels, int yShiftInPixels, Color color) {
+  protected void drawText(String text, Coordinate coordinate, int xShiftInPixels, int yShiftInPixels, Color color) {
     Point p = toPoint(coordinate);
     c.drawText(text, p, xShiftInPixels, yShiftInPixels, color);
   }
 
   @Override
-  void drawTriangleAround(Coordinate coordinate, int distanceInPixels, Color color, int width) {
+  protected void drawTriangleAround(Coordinate coordinate, int distanceInPixels, Color color, int width) {
     Point p = toPoint(coordinate);
     c.drawTriangleAround(p, distanceInPixels, color, width);
   }
 
   @Override
-  void drawArc(Coordinate coordinate, double fromAngle, double toAngle, double radiusInNM, Color color) {
+  protected void drawArc(Coordinate coordinate, double fromAngle, double toAngle, double radiusInNM, Color color) {
     Point p = toPoint(coordinate);
 
     fromAngle = Math.round(fromAngle);
@@ -70,15 +74,20 @@ public class BasicPainter extends Painter {
   }
 
   @Override
-  void drawLine(Coordinate coordinate, int lengthInPixels, int heading, Color color, int width) {
+  protected void drawLine(Coordinate coordinate, int lengthInPixels, int heading, Color color, int width) {
 
     Point p = toPoint(coordinate);
-    
-    heading = heading-90;
+
+    heading = heading - 90;
 
     double x2 = p.x + Math.cos(Math.toRadians(heading)) * lengthInPixels;
     double y2 = p.y + Math.sin(Math.toRadians(heading)) * lengthInPixels;
 
     c.drawLine(p, new Point((int) x2, (int) y2), color, width);
+  }
+
+  @Override
+  protected void drawTextBlock(List<String> lines, eTextBlockLocation location, Color color) {
+    c.drawTextBlock(lines, location, color);
   }
 }

@@ -3,12 +3,19 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package jatcsimdraw.painting;
+package jatcismdraw.radarBase;
 
+import jatcsimdraw.settings.DispItem;
+import jatcsimdraw.settings.DispPlane;
+import jatcsimdraw.settings.DispText;
+import jatcsimdraw.settings.Settings;
 import jatcsimlib.airplanes.Airplane;
+import jatcsimlib.atcs.Atc;
 import jatcsimlib.exceptions.ERuntimeException;
 import jatcsimlib.coordinates.Coordinates;
 import jatcsimlib.coordinates.Coordinate;
+import jatcsimlib.exceptions.ENotSupportedException;
+import jatcsimlib.messaging.Message;
 import jatcsimlib.world.Border;
 import jatcsimlib.world.BorderArcPoint;
 import jatcsimlib.world.BorderExactPoint;
@@ -16,6 +23,8 @@ import jatcsimlib.world.BorderPoint;
 import jatcsimlib.world.Navaid;
 import jatcsimlib.world.Runway;
 import java.awt.Color;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -29,6 +38,22 @@ public class BasicVisualiser extends Visualiser {
     super(p, sett);
   }
 
+  @Override
+  public void drawMessages(List<Message> msgs) {
+    MessageSet ms = createMessageSet(msgs);
+    
+    DispText dt;
+    
+    dt = sett.getDispText(DispText.eType.atc);
+    p.drawTextBlock (ms.atc, Painter.eTextBlockLocation.bottomRight, dt.getColor());
+    
+    dt = sett.getDispText(DispText.eType.plane);
+    p.drawTextBlock(ms.plane, Painter.eTextBlockLocation.bottomLeft, dt.getColor());
+    
+    dt = sett.getDispText(DispText.eType.system);
+    p.drawTextBlock(ms.system, Painter.eTextBlockLocation.topRight, dt.getColor());
+  }
+  
   @Override
   public void drawBorder(Border border) {
 
@@ -194,4 +219,37 @@ public class BasicVisualiser extends Visualiser {
     
     return ret;
   }
+
+  private MessageSet createMessageSet(List<Message> msgs) {
+    MessageSet ret = new MessageSet();
+    
+    for (Message m : msgs){
+      if (m.isSystemMessage())
+        ret.system.add(">> " + m.getText());
+      else if (m.isAtcMessage()){
+        Atc atc = (Atc) m.source;
+        if (atc.getType() == Atc.eType.twr)
+          ret.atc.add("TWR: " + m.getText());
+        else if (atc.getType() == Atc.eType.ctr)
+          ret.atc.add("CTR : " + m.getText());
+        else
+          throw new ENotSupportedException();
+      }
+      else if (m.isPlaneMessage()){
+        Airplane p = (Airplane) m.source;
+        ret.plane.add(p.getCallsign().toString() + ": " + m.getText());
+      }
+      else
+        throw new ENotSupportedException();
+    }
+    return ret;
+  }
+
+  
+}
+
+class MessageSet{
+  public final List<String> atc = new ArrayList<>();
+  public final List<String> plane = new ArrayList<>();
+  public final List<String> system = new ArrayList<>();
 }

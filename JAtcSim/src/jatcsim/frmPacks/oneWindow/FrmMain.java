@@ -6,10 +6,10 @@
 
 package jatcsim.frmPacks.oneWindow;
 
-import jatcsimdraw.painting.EJComponent;
-import jatcsimdraw.painting.EJComponentCanvas;
-import jatcsimdraw.painting.Radar;
-import jatcsimdraw.painting.Settings;
+import jatcsimdraw.canvases.EJComponent;
+import jatcsimdraw.canvases.EJComponentCanvas;
+import jatcsimdraw.radar.BasicRadar;
+import jatcsimdraw.settings.Settings;
 import jatcsimdraw.shared.es.WithCoordinateEvent;
 import jatcsimlib.Simulation;
 import jatcsimlib.events.EventListener;
@@ -73,7 +73,7 @@ public class FrmMain extends javax.swing.JFrame {
     Airport aip = sim.getActiveAirport();
     
     EJComponentCanvas canvas = new EJComponentCanvas();
-    Radar r = new Radar(canvas, aip.getRadarRange(), sim, displaySettings);
+    BasicRadar r = new BasicRadar(canvas, aip.getRadarRange(), sim, displaySettings);
     final EJComponent comp = canvas.getEJComponent();
 
     final FrmMain f = this;
@@ -83,10 +83,11 @@ public class FrmMain extends javax.swing.JFrame {
     f.addComponentListener(new ComponentListener() {
 
       @Override
-      public void componentResized(ComponentEvent e) {
+      public void componentResized(ComponentEvent e) {        
+        int newHeight = jTxtInput.getY(); // f.getHeight() - 60 ; //jTxtInput.getHeight() - 80;
         comp.setSize(
             f.getWidth(), 
-            f.getHeight() - jTxtInput.getHeight());
+            newHeight);
       }
 
       @Override
@@ -114,10 +115,10 @@ public class FrmMain extends javax.swing.JFrame {
     };
 
     // mouse coord on title
-    r.onMouseMove().addListener(new EventListener<Radar, WithCoordinateEvent>() {
+    r.onMouseMove().addListener(new EventListener<BasicRadar, WithCoordinateEvent>() {
 
       @Override
-      public void raise(Radar parent, WithCoordinateEvent e) {
+      public void raise(BasicRadar parent, WithCoordinateEvent e) {
         f.setTitle(e.coordinate.toString());
       }
     });

@@ -5,7 +5,7 @@
  */
 package jatcsim;
 
-import jatcsimdraw.painting.Settings;
+import jatcsimdraw.settings.Settings;
 import jatcsimlib.Simulation;
 import jatcsimlib.airplanes.AirplaneTypes;
 import jatcsimlib.commands.Command;

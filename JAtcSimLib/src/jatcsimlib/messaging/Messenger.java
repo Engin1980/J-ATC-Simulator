@@ -40,39 +40,12 @@ public class Messenger {
     return Simulation.getCurrent().getNow().toString();
   }
 
-  /*
-   public List<Message> getVisiblePlaneMessages(ETime time) {
-   List<Message> ret = getVisibleMessages(planeMsgs, time);
-   return ret;
-   }
-
-   public List<Message> getVisibleAtcMessages(ETime time) {
-   List<Message> ret = getVisibleMessages(atcMsgs, time);
-   return ret;
-   }
-
-   public List<Message> getVisibleSystemMessages(ETime time) {
-   List<Message> ret = getVisibleMessages(systemMsgs, time);
-   return ret;
-   }
-   */
   public void deleteOldMessages(ETime time) {
     for (Object key : inner.keySet()) {
       inner.get(key).removeOld(time);
     }
   }
 
-  /*
-   private List<Message> getVisibleMessages(MessageList msgs, ETime time) {
-   List<Message> ret = new ArrayList<>();
-   for (Message m : msgs) {
-   if (time.isBetween(m.displayFromTime, m.displayToTime)) {
-   ret.add(m);
-   }
-   }
-   return ret;
-   }
-   */
   public List<Message> getMy(Object target) {
     return getMy(target, Acc.now());
   }

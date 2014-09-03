@@ -4,16 +4,17 @@
  * and open the template in the editor.
  */
 
-package jatcsimdraw.canvases;
+package jatcismdraw.radarBase;
 
-import jatcsimdraw.painting.Point;
-import jatcsimdraw.painting.Size;
+import jatcsimdraw.global.Point;
+import jatcsimdraw.global.Size;
 import jatcsimlib.events.EventListener;
 import jatcsimlib.events.EventManager;
 import jatcsimdraw.shared.es.EMouseEvent;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.util.List;
 
 /**
  *
@@ -47,6 +48,8 @@ public abstract class Canvas {
   public abstract void drawArc(Point p, int xRadius, int yRadius, int fromAngle, int toAngle, Color color);
   
   public abstract void drawText(String text, Point p, int xShiftInPixels, int yShiftInPixels, Color c);
+  
+  public abstract void drawTextBlock(List<String> lines, Painter.eTextBlockLocation location, Color color);
   
   public abstract void clear(Color backColor);
   

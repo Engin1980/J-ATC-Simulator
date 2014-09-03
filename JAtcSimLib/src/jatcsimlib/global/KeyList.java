@@ -6,6 +6,8 @@
 
 package jatcsimlib.global;
 
+import jatcsimlib.exceptions.ERuntimeException;
+
 /**
  *
  * @author Marek
@@ -20,5 +22,14 @@ public class KeyList<T extends KeyItem<K>, K> extends java.util.ArrayList<T> {
       }
     }
     return null;
+  }
+  
+  public T get(K key){
+    for (T item : this){
+      if (item.getKey().equals(key)){
+        return item;
+      }
+    }
+    throw new ERuntimeException("No such element in KeyList - key: " + key.toString());
   }
 }

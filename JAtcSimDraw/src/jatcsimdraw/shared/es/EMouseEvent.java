@@ -5,7 +5,7 @@
  */
 package jatcsimdraw.shared.es;
 
-import jatcsimdraw.painting.Point;
+import jatcsimdraw.global.Point;
 
 /**
  *

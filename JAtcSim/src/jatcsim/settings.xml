@@ -18,7 +18,13 @@
     <dispItem key="borderTma" color="44AAFF" width="1" />
      
     <dispItem key="mapBackcolor" color="000000" width="1" />
-  </dispItems> 
+  </dispItems>
+  
+  <dispTexts>
+    <dispText type="atc" color="AAAAAA" />
+    <dispText type="plane" color="00FF00" />
+    <dispText type="system" color="FFFFFF" />
+  </dispTexts> 
    
   <dispPlanes>
     <!-- 

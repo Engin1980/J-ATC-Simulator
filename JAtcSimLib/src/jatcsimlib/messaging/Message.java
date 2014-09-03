@@ -10,6 +10,7 @@ import jatcsimlib.airplanes.Airplane;
 import jatcsimlib.atcs.Atc;
 import jatcsimlib.atcs.UserAtc;
 import jatcsimlib.exceptions.ENotSupportedException;
+import jatcsimlib.exceptions.ERuntimeException;
 import jatcsimlib.global.ERandom;
 import jatcsimlib.global.ETime;
 
@@ -19,31 +20,31 @@ import jatcsimlib.global.ETime;
  */
 public class Message implements Comparable<Message> {
 
-  public static int planeVisibleTimeInSeconds = 10;
-  public static int atcVisibleTimeInSeconds = 10;
-  public static int systemVisibleTimeInSeconds = 10;
-  
-  public static int minPlaneDelayInSeconds = 3;
-  public static int maxPlaneDelayInSeconds = 10;
-  public static int minAtcDelayInSeconds = 3;
-  public static int maxAtcDelayInSeconds = 10;
-  
-  public static int minSystemDelayInSeconds = 0;
-  public static int maxSystemDelayInSeconds = 0;
-  
+  protected static int planeVisibleTimeInSeconds = 10;
+  protected static int atcVisibleTimeInSeconds = 10;
+  protected static int systemVisibleTimeInSeconds = 10;
+
+  protected static int minPlaneDelayInSeconds = 3;
+  protected static int maxPlaneDelayInSeconds = 10;
+  protected static int minAtcDelayInSeconds = 3;
+  protected static int maxAtcDelayInSeconds = 10;
+
+  protected static int minSystemDelayInSeconds = 0;
+  protected static int maxSystemDelayInSeconds = 0;
+
   private static final ERandom rnd = new ERandom();
-  
-  public final ETime creationTime;
-  public final ETime displayFromTime;
-  public final ETime displayToTime;
+
+  protected final ETime creationTime;
+  protected final ETime displayFromTime;
+  protected final ETime displayToTime;
   public final Object source;
-  public final Object target;
-  public final Object content;
+  protected final Object target;
+  protected final Object content;
 
   public Message(Object source, Object target, Object content) {
-    this (Acc.now(), source, target, content);
+    this(Acc.now(), source, target, content);
   }
-  
+
   public Message(ETime creationTime, Object source, Object target, Object content) {
     if (content == null) {
       throw new IllegalArgumentException("Argument \"content\" cannot be null.");
@@ -51,7 +52,7 @@ public class Message implements Comparable<Message> {
     if (target == null) {
       throw new IllegalArgumentException("Argument \"target\" cannot be null.");
     }
-    
+
     this.creationTime = creationTime.clone();
     this.displayFromTime = this.creationTime.addSeconds(generateDelay(source));
     this.displayToTime = this.displayFromTime.addSeconds(generateVisible(source));
@@ -59,41 +60,45 @@ public class Message implements Comparable<Message> {
     this.target = target;
     this.content = content;
   }
-  
-  public boolean isPlaneMessage(){
+
+  public boolean isPlaneMessage() {
     return source != null && source instanceof Airplane;
   }
-  public boolean isAtcMessage(){
+
+  public boolean isAtcMessage() {
     return source != null && source instanceof Atc;
   }
-  public boolean isSystemMessage(){
+
+  public boolean isSystemMessage() {
     return source == null;
   }
 
   private int generateDelay(Object source) {
-    if (source == null)
+    if (source == null) {
       return rnd.getInt(minSystemDelayInSeconds, maxSystemDelayInSeconds);
-    else if (source instanceof Airplane)
+    } else if (source instanceof Airplane) {
       return rnd.getInt(minPlaneDelayInSeconds, maxPlaneDelayInSeconds);
-    else if (source instanceof UserAtc)
+    } else if (source instanceof UserAtc) {
       return 0;
-    else if (source instanceof Atc)
+    } else if (source instanceof Atc) {
       return rnd.getInt(minAtcDelayInSeconds, maxAtcDelayInSeconds);
-    else
+    } else {
       throw new ENotSupportedException();
+    }
   }
 
   private int generateVisible(Object source) {
-    if (source == null)
+    if (source == null) {
       return systemVisibleTimeInSeconds;
-    else if (source instanceof Airplane)
+    } else if (source instanceof Airplane) {
       return planeVisibleTimeInSeconds;
-    else if (source instanceof UserAtc)
+    } else if (source instanceof UserAtc) {
       return 0;
-    else if (source instanceof Atc)
+    } else if (source instanceof Atc) {
       return atcVisibleTimeInSeconds;
-    else
+    } else {
       throw new ENotSupportedException();
+    }
   }
 
   @Override
@@ -101,25 +106,28 @@ public class Message implements Comparable<Message> {
     return this.displayFromTime.compareTo(o.displayFromTime);
   }
 
-  public Object getSource() {
-    return source;
-  }
-
   public String getText() {
     return (String) content;
   }
-  
-  public String tryGetText(){
+
+  public String tryGetText() {
     String ret;
-    try{
+    try {
       ret = getText();
-    } catch (Exception ex){
+    } catch (Exception ex) {
       ret = null;
     }
     return ret;
   }
-  
-  public Object getContent(){
-    return content;
+
+  public String getSourceID() {
+    if (source == null)
+      return "<system>";
+    else if (source instanceof Atc)
+      return ((Atc) source).getName();
+    else if (source instanceof Airplane)
+      return ((Airplane) source).getCallsign().toString();
+    else
+      throw new ENotSupportedException();
   }
 }

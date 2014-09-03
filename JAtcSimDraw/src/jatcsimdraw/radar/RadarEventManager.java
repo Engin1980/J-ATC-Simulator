@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package jatcsimdraw.painting;
+package jatcsimdraw.radar;
 
+import jatcsimdraw.radar.BasicRadar;
 import jatcsimlib.coordinates.Coordinate;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,10 +16,10 @@ import java.util.List;
  */
 public class RadarEventManager {
 
-  private final Radar parent;
+  private final BasicRadar parent;
   private final List<RadarEventListener> lst = new ArrayList();
 
-  public RadarEventManager(Radar parent) {
+  public RadarEventManager(BasicRadar parent) {
     this.parent = parent;
   }
 

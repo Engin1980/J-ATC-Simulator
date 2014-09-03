@@ -3,19 +3,33 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package jatcsimdraw.painting;
+package jatcismdraw.radarBase;
 
-import jatcsimdraw.canvases.Canvas;
+import jatcsimdraw.global.Point;
+import jatcsimdraw.global.Size;
+import jatcismdraw.radarBase.Canvas;
 import jatcsimlib.exceptions.ERuntimeException;
 import jatcsimlib.coordinates.Coordinates;
 import jatcsimlib.coordinates.Coordinate;
 import java.awt.Color;
+import java.util.List;
 
 /**
  *
  * @author Marek
  */
 public abstract class Painter {
+  
+  public enum eTextBlockLocation{
+    topLeft,
+    topMiddle,
+    topRight,
+    middleLeft,
+    middleRight,
+    bottomLeft,
+    bottomMiddle,
+    bottomRight
+  }
 
   protected Canvas c;
   protected Coordinate topLeft;
@@ -85,7 +99,7 @@ public abstract class Painter {
     return ret;
   }
 
-  protected Coordinate toCoordinateDelta(Point point) {
+  public Coordinate toCoordinateDelta(Point point) {
     double mw = bottomRight.getLongitude().get() - topLeft.getLongitude().get();
     double mh = bottomRight.getLatitude().get() - topLeft.getLatitude().get();
 
@@ -97,30 +111,32 @@ public abstract class Painter {
     return ret;
   }
 
-  protected Coordinate toCoordinate(Point point) {
+  public Coordinate toCoordinate(Point point) {
     Coordinate ret = toCoordinateDelta(point);
     ret = ret.negate();
     ret = topLeft.add(ret);
     return ret;
   }
 
-  abstract void drawLine(Coordinate from, Coordinate to, Color color, int width);
+  protected abstract void drawLine(Coordinate from, Coordinate to, Color color, int width);
 
-  void drawLine(Coordinate from, Coordinate to, Color color) {
+  protected void drawLine(Coordinate from, Coordinate to, Color color) {
     drawLine(from, to, color, 1);
   }
 
-  abstract void drawPoint(Coordinate coordinate, Color color, int width);
+  protected abstract void drawPoint(Coordinate coordinate, Color color, int width);
 
-  abstract void drawCircleAround(Coordinate coordinate, int radiusInPixels, Color color, int width);
+  protected abstract void drawCircleAround(Coordinate coordinate, int radiusInPixels, Color color, int width);
 
-  abstract void drawTriangleAround(Coordinate coordinate, int distanceInPixels, Color color, int width);
+  protected abstract void drawTriangleAround(Coordinate coordinate, int distanceInPixels, Color color, int width);
 
-  abstract void drawArc(Coordinate coordinate, double fromAngle, double toAngle, double radiusInNM, Color color);
+  protected abstract void drawArc(Coordinate coordinate, double fromAngle, double toAngle, double radiusInNM, Color color);
 
-  abstract void clear(Color backColor);
+  protected abstract void clear(Color backColor);
 
-  abstract void drawText(String name, Coordinate coordinate, int xShiftInPixels, int yShiftInPixels, Color color);
+  protected abstract void drawText(String name, Coordinate coordinate, int xShiftInPixels, int yShiftInPixels, Color color);
   
-  abstract void drawLine(Coordinate coordinate, int lengthInPixels, int heading, Color color, int width);
+  protected abstract void drawLine(Coordinate coordinate, int lengthInPixels, int heading, Color color, int width);
+  
+  protected abstract void drawTextBlock(List<String> lines, eTextBlockLocation location, Color color);
 }
