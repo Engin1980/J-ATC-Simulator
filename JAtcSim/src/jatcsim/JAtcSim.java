@@ -46,6 +46,7 @@ public class JAtcSim {
         System.out.println(r.getKey());
         System.out.println("\t parsing " + r.getKey());
         System.out.println("\t\t cmd: " + r.getRoute());
+        @SuppressWarnings("UnusedAssignment")
         Command [] ret = CommandFormat.parseMulti(r.getRoute());
         System.out.println("\t\t ok");
         System.out.println("\t\t cnt: " + ret.length);

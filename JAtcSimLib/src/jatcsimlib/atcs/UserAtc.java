@@ -12,8 +12,8 @@ package jatcsimlib.atcs;
  */
 public class UserAtc extends Atc {
 
-  public UserAtc() {
-    super(eType.app);
+  public UserAtc(String airportIcao) {
+    super(eType.app, airportIcao);
   }
 
   @Override

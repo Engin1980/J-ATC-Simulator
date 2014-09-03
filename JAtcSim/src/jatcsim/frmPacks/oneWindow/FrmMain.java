@@ -104,7 +104,7 @@ public class FrmMain extends javax.swing.JFrame {
     f.add(comp);
     f.setVisible(true);
 
-    int delay = 3000; //milliseconds
+    int delay = 1000; //milliseconds
     ActionListener taskPerformer = new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent evt) {

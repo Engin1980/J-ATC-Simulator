@@ -15,6 +15,7 @@ import java.util.List;
  */
 public class Area {
 
+  private String icao;
   private final KeyList<Airport, String> airports = new KeyList();
   private final KeyList<Navaid, String> navaids = new KeyList();
   private final List<Border> borders = new ArrayList();
@@ -23,6 +24,10 @@ public class Area {
     return airports;
   }
 
+  public String getIcao() {
+    return icao;
+  }
+  
   public KeyList<Navaid, String> getNavaids() {
     return navaids;
   }

@@ -20,7 +20,7 @@ public class Settings {
   
   public DispItem getDispItem(String key){
     
-    DispItem ret = dispItems.get(key);
+    DispItem ret = dispItems.tryGet(key);
     if (ret == null)
       throw new ERuntimeException("No disp-item key \"" + key + "\" found in settings. Xml file invalid?");
     
@@ -28,7 +28,7 @@ public class Settings {
   }
 
   public DispPlane getDispPlane(Atc.eType atcType) {
-    return dispPlanes.get(atcType);
+    return dispPlanes.tryGet(atcType);
   }
   
 }

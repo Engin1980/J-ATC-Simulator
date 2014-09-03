@@ -11,8 +11,8 @@ package jatcsimlib.atcs;
  * @author Marek
  */
 public abstract class ComputerAtc extends Atc {
-  public ComputerAtc(eType type) {
-    super(type);
+  public ComputerAtc(eType type, String icao) {
+    super(type, icao);
   }
 
   @Override

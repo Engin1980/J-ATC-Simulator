@@ -41,9 +41,11 @@ public class Reflecter {
     for (Field f : fields) {
       if (java.lang.reflect.Modifier.isStatic(f.getModifiers())) {
         continue; // statické přeskakujem
-      }
-      else if (f.getName().equals("parent"))
+      } else if (f.getName().equals("parent")) {
         continue; // parent neplníme, ty jsou reference na nadřazené objekty a plní se sami
+      } else if (f.getName().startsWith("_")) {
+        continue; // pomocné dopočítávané hodnoty, neplníme, plní se samy
+      }
       fillField(el, f, targetObject);
     }
   }
@@ -144,7 +146,14 @@ public class Reflecter {
   }
 
   private static <T> void setFieldComplex(Element el, Field f, T ref) {
-    Object newInstance = createInstance(f.getType());
+    Object newInstance;
+    try {
+      newInstance = createInstance(f.getType());
+    } catch (Exception ex) {
+      throw new ERuntimeException(
+          "Failed to create instance for " + ref.getClass().getSimpleName() + "." + f.getName() + ".",
+          ex);
+    }
     try {
       f.setAccessible(true);
       f.set(ref, newInstance);
@@ -154,15 +163,13 @@ public class Reflecter {
           "Failed to set value to field " + ref.getClass().getName() + "." + f.getName(), ex);
     }
     Element subEl;
-    
+
     try {
       subEl = getElements(el, f.getName()).get(0);
     } catch (Exception e) {
       throw XmlInvalidDataException.createNoSuchElement(el, f.getName(), ref.getClass());
     }
-    
-    
-    
+
     fillObject(subEl, newInstance);
   }
 

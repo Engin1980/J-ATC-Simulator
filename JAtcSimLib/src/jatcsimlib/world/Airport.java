@@ -19,6 +19,7 @@ public class Airport implements KeyItem<String> {
   private String icao;
   private String name;
   private int transitionAltitude;
+  private int minCtrAtcAltitude;
   private final RadarRange radarRange= new RadarRange();
   private final KeyList<Runway, String> runways = new KeyList();
   private Area parent;
@@ -28,6 +29,10 @@ public class Airport implements KeyItem<String> {
     return icao;
   }
 
+  public int getMinCtrAtcAltitude() {
+    return minCtrAtcAltitude;
+  }
+  
   public String getIcao() {
     return icao;
   }

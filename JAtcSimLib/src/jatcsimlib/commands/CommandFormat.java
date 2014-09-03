@@ -483,9 +483,8 @@ class ProceedDirectCmdParser extends CmdParser {
   @Override
   Command parse(RegexGrouper rg) {
     String ns = rg.getString(1);
-    System.out.println("\t\t\t" + ns);
     
-    Navaid n = Navaid.area.getNavaids().get(ns);
+    Navaid n = Navaid.area.getNavaids().tryGet(ns);
     if (n == null)
       throw new EInvalidCommandException("Unable to find navaid named \"" + ns + "\".",rg.getMatch());
     Command ret = new ProceedDirectCommand(n);

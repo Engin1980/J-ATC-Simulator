@@ -12,8 +12,8 @@ package jatcsimlib.atcs;
  */
 public class TowerAtc extends ComputerAtc {
 
-  public TowerAtc() {
-    super(Atc.eType.twr);
+  public TowerAtc(String airportIcao) {
+    super(Atc.eType.twr, airportIcao);
   }
   
 }

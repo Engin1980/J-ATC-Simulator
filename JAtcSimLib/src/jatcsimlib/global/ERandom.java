@@ -4,15 +4,16 @@
  * and open the template in the editor.
  */
 
-package jatcsimlib.atcs;
+package jatcsimlib.global;
+
+import java.util.Random;
 
 /**
  *
  * @author Marek
  */
-public class ControlAtc extends ComputerAtc {
-
-  public ControlAtc() {
-    super(Atc.eType.ctr);
+public class ERandom extends Random {
+  public int getInt (int fromInclusive, int toExclusive){
+    return super.nextInt(toExclusive) + fromInclusive;
   }
 }

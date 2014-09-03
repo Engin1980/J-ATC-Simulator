@@ -3,35 +3,41 @@
 
 <settings>
   
-   <dispItems>
-     <dispItem key="activeRunway" color="FFFFFF" width="3" />
-     <dispItem key="closedRunway" color="FFAAAA" width="3" />
+  <dispItems>
+    <dispItem key="activeRunway" color="FFFFFF" width="3" />
+    <dispItem key="closedRunway" color="FFAAAA" width="3" />
      
-     <dispItem key="navVOR" color="55FF55" width="3" borderWidth="1" borderDistance="9" />
-     <dispItem key="navNDB" color="5555FF" width="3" borderWidth="1" borderDistance="10" />
-     <dispItem key="navFix" color="FF00FF" width="3" />
-     <dispItem key="navFixMinor" color="770077" width="3" />
-     <dispItem key="navAirport" color="AAAAFF" width="7" />
+    <dispItem key="navVOR" color="55FF55" width="3" borderWidth="1" borderDistance="9" />
+    <dispItem key="navNDB" color="5555FF" width="3" borderWidth="1" borderDistance="10" />
+    <dispItem key="navFix" color="FF00FF" width="3" />
+    <dispItem key="navFixMinor" color="770077" width="3" />
+    <dispItem key="navAirport" color="AAAAFF" width="7" />
      
-     <dispItem key="borderCountry" color="4444FF" width="1" />
-     <dispItem key="borderCtr" color="44AAFF" width="1" />
-     <dispItem key="borderTma" color="44AAFF" width="1" />
+    <dispItem key="borderCountry" color="4444FF" width="1" />
+    <dispItem key="borderCtr" color="44AAFF" width="1" />
+    <dispItem key="borderTma" color="44AAFF" width="1" />
      
-     <dispItem key="mapBackcolor" color="000000" width="1" />
-   </dispItems> 
+    <dispItem key="mapBackcolor" color="000000" width="1" />
+  </dispItems> 
    
-   <dispPlanes>
-     <!-- 
-      1 - callsign.company
-      2 - callsign.number
-      3 - heading
-      4 - altitude
-      5 - speed
-     -->
-     <dispPlane atcType="app" behavior="any" color="00FF00"
+  <dispPlanes>
+    <!-- 
+     1 - callsign.company
+     2 - callsign.number
+     3 - heading
+     4 - altitude
+     5 - speed
+    -->
+    <dispPlane atcType="app" behavior="any" color="00FF00"
                 pointWidth="7" headingLineLength="55" historyDotCount="10" 
                 firstLineFormat="%1$s%2$s" 
                 secondLineFormat="%4$s %3$s %5$3s " 
                 thirdLineFormat="" />
-   </dispPlanes>
+     
+    <dispPlane atcType="ctr" behavior="any" color="008800"
+                pointWidth="5" headingLineLength="15" historyDotCount="10"
+                firstLineFormat="%1$s%2$s"
+                secondLineFormat="%4$s"
+                thirdLineFormat="" />
+  </dispPlanes>
 </settings>

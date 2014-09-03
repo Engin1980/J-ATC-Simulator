@@ -34,19 +34,21 @@ public class Airplane implements KeyItem<Callsign> {
   private int speed;
   private Coordinate coordinate;
   private char[] sqwk;
+  private boolean departure;
 
   private Atc atc;
 
   private final AirplaneType airplaneSpecification;
 
   public Airplane(Callsign callsign, Coordinate coordinate, char[] sqwk, AirplaneType airplaneSpecification,
-      int heading, int altitude, int speed) {
+      int heading, int altitude, int speed, boolean isDeparture) {
     this.callsign = callsign;
     this.coordinate = coordinate;
     this.setSqwk(sqwk);
     this.airplaneSpecification = airplaneSpecification;
 
     this.atc = null;
+    this.departure = isDeparture;
 
     this.heading = heading;
     this.altitude = altitude;
@@ -77,8 +79,12 @@ public class Airplane implements KeyItem<Callsign> {
   public Atc getAtc() {
     return atc;
   }
+  
+  public boolean isDeparture(){
+    return departure;
+  }
 
-  public void setAtc(Atc atc) {
+  public void setAtcOnlyAtcCanCallThis(Atc atc) {
     this.atc = atc;
   }
 

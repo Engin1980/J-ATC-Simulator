@@ -13,7 +13,7 @@ package jatcsimlib.global;
  * @param <K> Type of key of the item.
  */
 public class KeyList<T extends KeyItem<K>, K> extends java.util.ArrayList<T> {
-  public T get(K key){
+  public T tryGet(K key){
     for (T item : this){
       if (item.getKey().equals(key)){
         return item;
