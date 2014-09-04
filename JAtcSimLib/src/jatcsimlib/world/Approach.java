@@ -26,7 +26,8 @@ public class Approach implements KeyItem<Approach.eType> {
     ILS_III,
     VORDME,
     NDB,
-    GPS
+    GPS,
+    Visual
   }
   
   private eType type;

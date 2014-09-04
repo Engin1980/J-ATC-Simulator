@@ -10,7 +10,7 @@ package jatcsimlib.commands;
  *
  * @author Marek
  */
-public class AfterAltitudeCommand extends Command {
+public class AfterAltitudeCommand extends AfterCommand {
   private final int altitudeInFt;
 
   public AfterAltitudeCommand(int altitudeInFt) {

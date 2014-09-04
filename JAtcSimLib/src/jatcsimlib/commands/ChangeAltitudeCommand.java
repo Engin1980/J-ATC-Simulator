@@ -31,4 +31,14 @@ public class ChangeAltitudeCommand extends Command {
     this.direction = direction;
     this.altitudeInFt = altitudeInFt;
   }
+
+  public eDirection getDirection() {
+    return direction;
+  }
+
+  public int getAltitudeInFt() {
+    return altitudeInFt;
+  }
+  
+  
 }

@@ -64,5 +64,15 @@ public class Airport implements KeyItem<String> {
   public void setParent(Area parent) {
     this.parent = parent;
   }
+
+  public RunwayThreshold tryGetRunwayThreshold(String runwayThresholdName) {
+    for(Runway r : runways){
+      for (RunwayThreshold t : r.getThresholds()){
+        if (t.getName().equals(runwayThresholdName))
+          return t;
+      }
+    }
+    return null;
+  }
   
 }

@@ -10,6 +10,8 @@ import jatcsimlib.commands.CommandFormat;
 import jatcsimlib.commands.ProceedDirectCommand;
 import jatcsimlib.exceptions.ERuntimeException;
 import jatcsimlib.global.KeyItem;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -22,6 +24,8 @@ public class Route implements KeyItem<String> {
   public String getKey() {
     return name;
   }
+
+
 
   public enum eType {
     sid,
@@ -67,6 +71,10 @@ public class Route implements KeyItem<String> {
 
     _routeCommands = CommandFormat.parseMulti(this.route);
     return _routeCommands;
+  }
+  
+    public List<Command> getCommandsList() {
+      return Arrays.asList(_routeCommands);
   }
 
   private Navaid _mainFix = null;

@@ -3,22 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+
 package jatcsimlib.commands;
 
 /**
  *
  * @author Marek
  */
-public class AfterSpeedCommand extends AfterCommand {
-
-  private final int speedInKts;
-
-  public AfterSpeedCommand(int speedInKts) {
-    this.speedInKts = speedInKts;
-  }
-
-  public int getSpeedInKts() {
-    return speedInKts;
-  }
-
+public abstract class AfterCommand extends Command {
+  
 }

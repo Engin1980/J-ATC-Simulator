@@ -260,11 +260,6 @@ public class EJComponentCanvas extends Canvas {
   private int yMargin = -2;
   private Point[] getPositionsForText(List<String> lines, Painter.eTextBlockLocation location) {
     
-    
-    lines.add("Test1");
-    lines.add("Test2");
-    lines.add("Test3");
-    
     int lastX;
     int lastY;
     int maxX;

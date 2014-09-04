@@ -4,16 +4,12 @@
  * and open the template in the editor.
  */
 
-package jatcsimlib.commands;
-
-import jatcsimlib.messaging.Message;
-import java.util.ArrayList;
-import java.util.List;
+package jatcsimlib.airplanes.pilots;
 
 /**
  *
  * @author Marek
  */
-public abstract class Command {
-
+class HoldInfo {
+  
 }

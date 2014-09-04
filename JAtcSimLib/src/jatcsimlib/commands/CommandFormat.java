@@ -11,6 +11,7 @@ import jatcsimlib.exceptions.EInvalidCommandException;
 import jatcsimlib.exceptions.ENotSupportedException;
 import jatcsimlib.exceptions.ERuntimeException;
 import jatcsimlib.global.EStringBuilder;
+import jatcsimlib.world.Approach;
 import jatcsimlib.world.Navaid;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -36,6 +37,7 @@ public class CommandFormat {
     parsers.add(new AfterNavaidCmdParser());
 
     parsers.add(new ProceedDirectCmdParser());
+    parsers.add(new ShortcutCmdParser());
 
     parsers.add(new ContactCmdParser());
 
@@ -428,7 +430,7 @@ class ContactCmdParser extends CmdParser {
 class ClearedToApproachCmdParser extends CmdParser {
 
   private static final String[] prefixes = new String[]{"C"};
-  private static final String pattern = "C (I|V|R) (\\S+)";
+  private static final String pattern = "C (I|II|III|G|V|R) (\\S+)";
 
   @Override
   public String getHelp() {
@@ -436,11 +438,14 @@ class ClearedToApproachCmdParser extends CmdParser {
 
     sb.appendLine("Cleared to approach");
     sb.appendLine("\t " + pattern);
-    sb.appendLine("\tI\t.. ILS");
+    sb.appendLine("\tI\t.. ILS cat I");
+    sb.appendLine("\tII\t.. ILS cat II");
+    sb.appendLine("\tIII\t.. ILS cat III");
     sb.appendLine("\tR\t.. VOR/DME");
+    sb.appendLine("\tG\t.. GPS");
     sb.appendLine("\tV\t.. visual");
     sb.appendLine("Example:");
-    sb.appendLine("\t C I 24 \t - cleared ILS 24");
+    sb.appendLine("\t C I 24 \t - cleared ILS category I 24");
     sb.appendLine("\t C R 24 \t - cleared VOR/DME 24");
     sb.appendLine("\t C V 24 \t - cleared visual 24");
 
@@ -459,9 +464,37 @@ class ClearedToApproachCmdParser extends CmdParser {
 
   @Override
   Command parse(RegexGrouper rg) {
-    String ns = rg.getString(1);
-    Navaid n = null;
-    Command ret = new AfterNavaidCommand(n);
+    String t = rg.getString(1);
+    String n = rg.getString(2);
+    
+    Approach.eType type;
+    switch(t){
+      case "G":
+        type = Approach.eType.GPS;
+        break;
+      case "I":
+        type =Approach.eType.ILS_I;
+        break;
+      case "II":
+        type =Approach.eType.ILS_II;
+        break;
+      case "III":
+        type =Approach.eType.ILS_III;
+        break;
+      case "N":
+        type = Approach.eType.NDB;
+        break;
+      case "R":
+        type = Approach.eType.VORDME;
+        break;
+      case "V":
+        type = Approach.eType.Visual;
+        break;
+      default:
+        throw new ENotSupportedException();
+    }
+    
+    Command ret = new ClearedToApproachCommand(type, n);
     return ret;
   }
 }
@@ -470,6 +503,33 @@ class ProceedDirectCmdParser extends CmdParser {
 
   private static final String[] prefixes = new String[]{"PD"};
   private static final String pattern = "PD (\\S+)";
+
+  @Override
+  String[] getPrefixes() {
+    return prefixes;
+  }
+
+  @Override
+  String getPattern() {
+    return pattern;
+  }
+
+  @Override
+  Command parse(RegexGrouper rg) {
+    String ns = rg.getString(1);
+    
+    Navaid n = Acc.area().getNavaids().tryGet(ns);
+    if (n == null)
+      throw new EInvalidCommandException("Unable to find navaid named \"" + ns + "\".",rg.getMatch());
+    Command ret = new ProceedDirectCommand(n);
+    return ret;
+  }
+}
+
+class ShortcutCmdParser extends CmdParser {
+
+  private static final String[] prefixes = new String[]{"SH"};
+  private static final String pattern = "SH (\\S+)";
 
   @Override
   String[] getPrefixes() {

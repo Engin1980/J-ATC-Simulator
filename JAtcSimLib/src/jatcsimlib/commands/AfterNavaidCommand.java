@@ -12,7 +12,7 @@ import jatcsimlib.world.Navaid;
  *
  * @author Marek
  */
-public class AfterNavaidCommand extends Command {
+public class AfterNavaidCommand extends AfterCommand {
   private final Navaid navaid;
 
   public AfterNavaidCommand(Navaid navaid) {

@@ -28,4 +28,14 @@ public class ChangeSpeedCommand extends Command {
     this.direction = direction;
     this.speedInKts = speedInKts;
   }
+
+  public eDirection getDirection() {
+    return direction;
+  }
+
+  public int getSpeedInKts() {
+    return speedInKts;
+  }
+  
+  
 }

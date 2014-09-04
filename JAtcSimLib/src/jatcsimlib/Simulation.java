@@ -68,11 +68,15 @@ public class Simulation {
     return activeRunwayThreshold.getParent().getParent();
   }
 
-  public String toAltitudeString(int altInFt) {
+  public String toAltitudeString(int altInFt, boolean appendFt) {
     if (altInFt > getActiveAirport().getTransitionAltitude()) {
-      return String.format("FL%03d", altInFt / 1000);
+      return String.format("FL%03d", altInFt / 100);
     } else {
-      return String.format("%04d", altInFt);
+      if (appendFt) {
+        return String.format("%04d ft", altInFt);
+      } else {
+        return String.format("%04d", altInFt);
+      }
     }
   }
 
@@ -88,11 +92,11 @@ public class Simulation {
     return messenger;
   }
 
-  private  Simulation(Airport airport, AirplaneTypes types, Calendar now) {
+  private Simulation(Airport airport, AirplaneTypes types, Calendar now) {
     if (airport == null) {
       throw new IllegalArgumentException("Argument \"airport\" cannot be null.");
     }
-    
+
     this.area = airport.getParent();
     this.airport = airport;
     this.planeTypes = types;
@@ -165,7 +169,7 @@ public class Simulation {
 
   public static void setCurrent(Simulation current) {
     Simulation.current = current;
-  }  
+  }
 
   private void checkRouteCommands() {
     Command[] cmds;
@@ -231,7 +235,8 @@ public class Simulation {
     int spd = pt.vCruise;
 
     ret = new Airplane(
-        cs, c, sqwk, pt, heading, alt, spd, false);
+        cs, c, sqwk, pt, heading, alt, spd, false,
+        r.getName(), r.getCommandsList());
 
     // pridat letadlu Route!
     return ret;
@@ -239,7 +244,7 @@ public class Simulation {
 
   private Squawk generateSqwk() {
     int len = 4;
-    char[] tmp = new char[len];
+    char[] tmp;
     Squawk ret = null;
     while (ret == null) {
       tmp = new char[len];

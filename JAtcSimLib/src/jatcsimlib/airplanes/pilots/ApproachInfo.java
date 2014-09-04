@@ -6,22 +6,18 @@
 
 package jatcsimlib.airplanes.pilots;
 
-import jatcsimlib.commands.Command;
-import java.util.List;
+import jatcsimlib.world.Approach;
 
 /**
  *
  * @author Marek
  */
-public class FlyPilot {
-  /**
-   * Approach/Departure route
-   */
-  private String routeName;
-  /**
-   * Approach/Departure commands left
-   */
-  private List<Command> routeCommands;
+public class ApproachInfo {
+  private Approach approach;
+
+  public ApproachInfo(Approach approach) {
+    this.approach = approach;
+  }
   
   
 }

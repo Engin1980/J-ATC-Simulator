@@ -5,16 +5,26 @@
  */
 package jatcsimlib.airplanes;
 
+import jatcsimlib.Acc;
+import jatcsimlib.airplanes.pilots.Pilot;
 import jatcsimlib.atcs.Atc;
+import jatcsimlib.commands.Command;
+import jatcsimlib.commands.ProceedDirectCommand;
 import jatcsimlib.coordinates.Coordinate;
 import jatcsimlib.global.KeyItem;
+import jatcsimlib.messaging.Message;
 import jatcsimlib.world.Area;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  *
  * @author Marek
  */
 public class Airplane implements KeyItem<Callsign> {
+
+  
 
   private enum eTurnDirection {
 
@@ -31,15 +41,17 @@ public class Airplane implements KeyItem<Callsign> {
   private int targetSpeed;
   private int speed;
   private Coordinate coordinate;
-  private Squawk sqwk;
-  private boolean departure;
+  private final Squawk sqwk;
+  private final boolean departure;
 
   private Atc atc;
+  private final Pilot pilot;
 
   private final AirplaneType airplaneSpecification;
 
   public Airplane(Callsign callsign, Coordinate coordinate, Squawk sqwk, AirplaneType airplaneSpecification,
-      int heading, int altitude, int speed, boolean isDeparture) {
+      int heading, int altitude, int speed, boolean isDeparture,
+      String routeName, List<Command> routeCommandQueue) {
     this.callsign = callsign;
     this.coordinate = coordinate;
     this.sqwk = sqwk;
@@ -55,6 +67,8 @@ public class Airplane implements KeyItem<Callsign> {
     this.targetAltitude = this.altitude;
     this.targetHeading = this.heading;
     this.targetSpeed = this.speed;
+    
+    this.pilot = new Pilot(routeName, routeCommandQueue);
   }
 
   private void ensureSanity() {
@@ -106,14 +120,6 @@ public class Airplane implements KeyItem<Callsign> {
     return altitude;
   }
 
-  public String getAltitudeS(int transitionLevel) {
-    if (altitude > transitionLevel) {
-      return "FL" + (altitude / 100);
-    } else {
-      return Integer.toString(altitude);
-    }
-  }
-
   public Coordinate getCoordinate() {
     return coordinate;
   }
@@ -148,7 +154,44 @@ public class Airplane implements KeyItem<Callsign> {
     this.targetHeading = heading;
   }
 
-  private void processSimulationSecond() {
+  public void updateAfterSecond(){
+    
+    processMessages();
+    drivePlane();
+    updateSHABySecond();
+    updateCoordinates();
+  }
+  
+  private void drivePlane(){
+    pilot.drivePlane();
+  }
+  
+  private void processMessages(){
+    List<Message> msgs = Acc.messenger().getMy(this);
+    
+    for (Message m : msgs){
+      processMessage(m);
+    }
+  } 
+  
+  private void processMessage(Message msg){
+    List<Command> cmds;
+    Object s = msg.source;
+    if (s instanceof Command){
+      cmds = new ArrayList<>(1);
+      cmds.add((Command) s);
+    } else {
+      cmds = (ArrayList<Command>) s;
+    }
+    
+    processCommands(cmds);
+  }
+  
+  private void processCommands(List<Command> cmds){
+   this.pilot.processNewCommands(cmds);
+  }
+  
+  private void updateSHABySecond() {
     if (speed != targetSpeed) {
       adjustSpeed();
     }

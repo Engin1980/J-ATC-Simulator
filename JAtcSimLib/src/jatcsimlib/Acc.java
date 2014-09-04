@@ -65,4 +65,8 @@ public class Acc {
   public static CentreAtc atcCtr(){
     return Simulation.getCurrent().getCtrAtc();
   }
+  
+  public static String toAltS(int altitudeInFt, boolean appendFt){
+    return Acc.sim().toAltitudeString(altitudeInFt, appendFt);
+  }
 }
