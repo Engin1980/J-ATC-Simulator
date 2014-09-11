@@ -6,6 +6,8 @@
 
 package jatcsimlib.world;
 
+import jatcsimlib.atcs.Atc;
+import jatcsimlib.atcs.AtcTemplate;
 import jatcsimlib.coordinates.RadarRange;
 import jatcsimlib.coordinates.Coordinate;
 import jatcsimlib.global.KeyItem;
@@ -19,9 +21,9 @@ public class Airport implements KeyItem<String> {
   private String icao;
   private String name;
   private int transitionAltitude;
-  private int minCtrAtcAltitude;
   private final RadarRange radarRange= new RadarRange();
   private final KeyList<Runway, String> runways = new KeyList();
+  private final KeyList<AtcTemplate, Atc.eType> atcTemplates = new KeyList();
   private Area parent;
 
   @Override
@@ -29,10 +31,6 @@ public class Airport implements KeyItem<String> {
     return icao;
   }
 
-  public int getMinCtrAtcAltitude() {
-    return minCtrAtcAltitude;
-  }
-  
   public String getIcao() {
     return icao;
   }
@@ -73,6 +71,10 @@ public class Airport implements KeyItem<String> {
       }
     }
     return null;
+  }
+
+  public KeyList<AtcTemplate, Atc.eType> getAtcTemplates() {
+    return atcTemplates;
   }
   
 }

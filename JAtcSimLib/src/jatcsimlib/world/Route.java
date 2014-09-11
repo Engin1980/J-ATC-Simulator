@@ -12,6 +12,7 @@ import jatcsimlib.exceptions.ERuntimeException;
 import jatcsimlib.global.KeyItem;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -62,9 +63,9 @@ public class Route implements KeyItem<String> {
     this.parent = parent;
   }
 
-  private Command[] _routeCommands = null;
+  private List<Command> _routeCommands = null;
 
-  public Command[] getCommands() {
+  public List<Command> getCommands() {
     if (_routeCommands != null) {
       return _routeCommands;
     }
@@ -73,8 +74,10 @@ public class Route implements KeyItem<String> {
     return _routeCommands;
   }
   
-    public List<Command> getCommandsList() {
-      return Arrays.asList(_routeCommands);
+    public List<Command> getCommandsListClone() {
+      List<Command> ret = new LinkedList<>();
+      ret.addAll(_routeCommands);
+      return ret;
   }
 
   private Navaid _mainFix = null;
@@ -98,8 +101,8 @@ public class Route implements KeyItem<String> {
     return _mainFix;
   }
 
-  private Navaid tryGetSidMainFix(Command[] commands) {
-    Command c = commands[commands.length - 1];
+  private Navaid tryGetSidMainFix(List<Command> commands) {
+    Command c = commands.get(commands.size() - 1);
     if (c instanceof ProceedDirectCommand) {
       return ((ProceedDirectCommand) c).getNavaid();
     } else {
@@ -107,8 +110,8 @@ public class Route implements KeyItem<String> {
     }
   }
 
-  private Navaid tryGetStarMainFix(Command[] commands) {
-    Command c = commands[0];
+  private Navaid tryGetStarMainFix(List<Command> commands) {
+    Command c = commands.get(0);
     if (c instanceof ProceedDirectCommand) {
       return ((ProceedDirectCommand) c).getNavaid();
     } else {

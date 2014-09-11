@@ -43,7 +43,7 @@ public class PaintManager {
   
   private void drawCaptions(){
     Messenger ms = simulation.getMessenger();
-    List<Message> msgs = ms.getMy(simulation.getAppAtc());
+    List<Message> msgs = ms.getMy(simulation.getAppAtc(), false);
     visualiser.drawMessages(msgs);
   }
 

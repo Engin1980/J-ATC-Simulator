@@ -14,12 +14,21 @@ import jatcsimlib.airplanes.Airplane;
  */
 public class TowerAtc extends ComputerAtc {
 
-  public TowerAtc(String airportIcao) {
-    super(Atc.eType.twr, airportIcao);
+  public TowerAtc(AtcTemplate template) {
+    super(template);
   }
 
   @Override
   protected void _registerNewPlane(Airplane plane) {
+    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+  }
+
+  @Override
+  public boolean isControllingAirplane(Airplane plane) {
+    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+  }
+
+  public void elapseSecond() {
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
   

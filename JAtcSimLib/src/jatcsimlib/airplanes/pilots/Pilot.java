@@ -10,6 +10,7 @@ import jatcsimlib.airplanes.Airplane;
 import jatcsimlib.atcs.Atc;
 import jatcsimlib.commands.AfterAltitudeCommand;
 import jatcsimlib.commands.AfterCommand;
+import jatcsimlib.commands.AfterCommandList;
 import jatcsimlib.commands.AfterNavaidCommand;
 import jatcsimlib.commands.AfterSpeedCommand;
 import jatcsimlib.commands.ChangeAltitudeCommand;
@@ -21,9 +22,12 @@ import jatcsimlib.commands.ContactCommand;
 import jatcsimlib.commands.ProceedDirectCommand;
 import jatcsimlib.commands.ShortcutCommand;
 import jatcsimlib.commands.ThenCommand;
+import jatcsimlib.commands.ToNavaidCommand;
 import jatcsimlib.coordinates.Coordinate;
+import jatcsimlib.coordinates.Coordinates;
 import jatcsimlib.exceptions.ENotSupportedException;
 import jatcsimlib.exceptions.ERuntimeException;
+import jatcsimlib.global.Headings;
 import jatcsimlib.world.Approach;
 import jatcsimlib.world.Navaid;
 import jatcsimlib.world.RunwayThreshold;
@@ -38,18 +42,14 @@ import java.util.List;
  */
 public class Pilot {
 
+  private Atc atc = null;
   private final Airplane parent;
   private final String routeName;
   private final List<Command> queue = new LinkedList<>();
-  private final List<Command> afterAltitudeCommands = new LinkedList<>();
-  private final List<Command> afterNavaidCommands = new LinkedList<>();
-  private final List<Command> afterSpeedCommands = new LinkedList<>();
 
-  private ChangeHeadingCommand.eDirection targetHeadingDirection;
-  private int targetHeading;
+  private final AfterCommandList afterCommands = new AfterCommandList();
+
   private Coordinate targetCoordinate;
-  private int targetAltitudeInFt;
-  private int targetSpeedInKts;
   private HoldInfo hold;
   private ApproachInfo app;
 
@@ -60,69 +60,45 @@ public class Pilot {
   public Pilot(Airplane parent, String routeName, List<Command> routeCommandQueue) {
     this.parent = parent;
     this.routeName = routeName;
+    expandThenCommands(routeCommandQueue);
     this.queue.addAll(routeCommandQueue);
   }
 
-  public void processNewCommands(List<Command> cmds) {
+  public void addNewCommands(List<Command> cmds) {
     int index = 0;
     expandThenCommands(cmds);
     while (index < cmds.size()) {
-      index = processNewCommand(cmds, index);
+      index = addNewCommand(cmds, index);
     }
   }
 
-  private int processNewCommand(List<Command> cmds, int index) {
+  private int addNewCommand(List<Command> cmds, int index) {
     int ret = index + 1;
     Command c = cmds.get(index);
-    if (c instanceof ProceedDirectCommand) {
-      this.queue.clear();
+    if ((c instanceof ToNavaidCommand)) {
+      Navaid n = ((ToNavaidCommand) c).getNavaid();
+      // tady musí ještě být sekvenční promazání v afterCommands zpětně celé routy
+      this.afterCommands.removeByNavaidConsequentRecursively(n);
+      this.afterCommands.removeByConsequent(ChangeHeadingCommand.class);
       this.queue.add(c);
-
-    } else if (c instanceof ShortcutCommand) {
-      ShortcutCommand t = (ShortcutCommand) c;
-      int pointIndex = getIndexOfNavaidInCommands(t.getNavaid());
-      if (pointIndex < 0) {
-        Acc.messenger().addMessage(
-            parent, parent.getAtc(), " Unable to shortcut to " + t.getNavaid().getName() + ", fix not on route!");
-      } else {
-        for (int i = 0; i < pointIndex; i++) {
-          this.queue.remove(i);
-        }
-      }
-
     } else if (c instanceof ChangeHeadingCommand) {
       this.queue.clear();
+      this.afterCommands.removeByConsequent(ChangeHeadingCommand.class);
+      this.afterCommands.removeByConsequent(ProceedDirectCommand.class);
       this.queue.add(c);
-    } else if (c instanceof ChangeAltitudeCommand) {
-      removeQueueCommands(AfterAltitudeCommand.class);
-      removeQueueCommands(ChangeAltitudeCommand.class);
-      this.queue.add(0, c);
-    } else if (c instanceof ChangeSpeedCommand) {
-      removeQueueCommands(AfterSpeedCommand.class);
-      removeQueueCommands(ChangeSpeedCommand.class);
-      this.queue.add(0, c);
-
-    } else if (c instanceof AfterAltitudeCommand) {
-      removeQueueCommands(AfterAltitudeCommand.class);
-      this.queue.add(0, c);
-      this.queue.add(1, cmds.get(index + 1));
+    } else if (c instanceof AfterCommand) {
+      if (c instanceof AfterNavaidCommand) {
+        // zkontrolovat, jestli se letí přes tenhle navaid
+        // jinak to nemá smysl
+      }
+      this.afterCommands.add((AfterCommand) c, cmds.get(index + 1));
       ret += 1;
-    } else if (c instanceof AfterSpeedCommand) {
-      removeQueueCommands(AfterSpeedCommand.class);
-      this.queue.add(0, c);
-      this.queue.add(1, cmds.get(index + 1));
-      ret += 1;
-    } else if (c instanceof AfterNavaidCommand) {
-      removeQueueCommands(AfterNavaidCommand.class);
-      this.queue.add(0, c);
-      this.queue.add(1, cmds.get(index + 1));
-      ret += 1;
-
-    } else if (c instanceof ClearedToApproachCommand) {
-      this.queue.clear();
-      this.queue.add(0, c);
-    } else if (c instanceof ContactCommand) {
-      this.queue.add(0, c);
+    } else if ((c instanceof ContactCommand)
+        || (c instanceof ChangeSpeedCommand)
+        || (c instanceof ChangeAltitudeCommand)
+        || (c instanceof ClearedToApproachCommand)) {
+      this.afterCommands.removeByConsequent(c.getClass());
+      this.queue.add(c);
     } else {
       throw new ERuntimeException("Pilot cannot deal with command " + c.getClass().getSimpleName() + " - probably not implemented.");
     }
@@ -130,48 +106,50 @@ public class Pilot {
   }
 
   public void drivePlane() {
-    
+
     /*
     
-    1. zpracuji se prikazy ve fronte
-    2. zkontroluje se, jestli neni neco "after"
-    3. ridi se letadlo
+     1. zpracuji se prikazy ve fronte
+     2. zkontroluje se, jestli neni neco "after"
+     3. ridi se letadlo
     
-    */
-    processQueueCommands();
-    processAfterCommands();
+     */
+    processStandardQueueCommands();
+    processAfterCommands(); // udelat vlastni queue toho co se ma udelat a pak to provest pres processQueueCommands
     endrivePlane();
   }
 
-  private void processQueueCommands() {
-    if (queue.isEmpty()) {
-      return;
+  private void processStandardQueueCommands() {
+    processQueueCommands(this.queue);
+  }
+
+  private void processAfterCommands() {
+    List<Command> cmdsToProcess
+        = afterCommands.getAndRemoveSatisfiedCommands(parent);
+
+    processQueueCommands(cmdsToProcess);
+  }
+
+  private void processQueueCommands(List<Command> queue) {
+    while (!queue.isEmpty()) {
+      Command c = queue.get(0);
+      if (c instanceof AfterCommand) {
+        processAfterCommandFromQueue(queue);
+      } else {
+        boolean res = tryProcessQueueCommand(c);
+        if (res) {
+          queue.remove(0);
+        }
+      }
     }
-    Command c = queue.get(0);
-    if (c instanceof AfterCommand) {
-      if (c instanceof AfterAltitudeCommand) {
-        Command n = queue.get(1);
-        afterAltitudeCommands.clear();
-        afterAltitudeCommands.add(c);
-        afterAltitudeCommands.add(n);
-      } else if (c instanceof AfterSpeedCommand) {
-        Command n = queue.get(1);
-        afterSpeedCommands.clear();
-        afterSpeedCommands.add(c);
-        afterSpeedCommands.add(n);
-      } else if (c instanceof AfterNavaidCommand) {
-        Command n = queue.get(1);
-        afterNavaidCommands.clear();
-        afterNavaidCommands.add(c);
-        afterNavaidCommands.add(n);
-      }
+  }
+
+  private void processAfterCommandFromQueue(List<Command> queue) {
+    AfterCommand af = (AfterCommand) queue.get(0);
+    queue.remove(0);
+    while (!queue.isEmpty() && !(queue.get(0) instanceof AfterCommand)) {
+      afterCommands.add(af, queue.get(0));
       queue.remove(0);
-      queue.remove(0);
-    } else {
-      boolean res = tryProcessQueueCommand(c);
-      if (res) {
-        queue.remove(0);
-      }
     }
   }
 
@@ -179,11 +157,15 @@ public class Pilot {
     Method m;
     m = tryGetProcessQueueCommandMethodToInvoke(c.getClass());
 
+    if (m == null) {
+      throw new ERuntimeException("Method \"ProcessQueueCommand\" for command type \"" + c.getClass() + "\" not found.");
+    }
+
     boolean ret;
     try {
-      ret = (boolean) m.invoke(null, c);
+      ret = (boolean) m.invoke(this, c);
     } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
-      throw new ERuntimeException("Format-command failed for " + c.getClass());
+      throw new ERuntimeException("Format-command failed for " + c.getClass() + ". Reason: " + ex.getMessage());
     }
     return ret;
   }
@@ -191,7 +173,7 @@ public class Pilot {
   private Method tryGetProcessQueueCommandMethodToInvoke(Class<? extends Command> commandType) {
     Method ret;
     try {
-      ret = Pilot.class.getMethod("processQueueCommand", commandType);
+      ret = Pilot.class.getDeclaredMethod("processQueueCommand", commandType);
     } catch (NoSuchMethodException | SecurityException ex) {
       ret = null;
     }
@@ -200,7 +182,6 @@ public class Pilot {
   }
 
   private boolean processQueueCommand(ProceedDirectCommand c) {
-    targetHeading = -1;
     if (hold != null) {
       hold = null;
     }
@@ -208,6 +189,7 @@ public class Pilot {
       app = null;
     }
     targetCoordinate = c.getNavaid().getCoordinate();
+    sayIfReq(c, "Proceed direct " + c.getNavaid().getName());
     return true;
   }
 
@@ -215,25 +197,25 @@ public class Pilot {
     switch (c.getDirection()) {
       case climb:
         if (parent.getAltitude() > c.getAltitudeInFt()) {
-          say(
+          sayOrError(c,
               "Cannot perform command to climb to " + Acc.toAltS(c.getAltitudeInFt(), true) + " cos we are higher.");
           return true;
         }
         break;
       case descend:
         if (parent.getAltitude() < c.getAltitudeInFt()) {
-          say(
+          sayOrError(c,
               "Cannot perform command to descend to " + Acc.toAltS(c.getAltitudeInFt(), true) + " cos we are lower.");
           return true;
         }
         break;
     } // switch
     if (c.getAltitudeInFt() > parent.getAirplaneSpecification().maxAltitude) {
-     say("Unable to climb to " + Acc.toAltS(parent.getAirplaneSpecification().maxAltitude, true) + ".");
+      sayOrError(c, "Unable to climb to " + Acc.toAltS(parent.getAirplaneSpecification().maxAltitude, true) + ". Too high.");
       return true;
     }
-    targetAltitudeInFt = c.getAltitudeInFt();
-    say("Altitude " + Acc.toAltS(targetAltitudeInFt, true));
+    parent.setTargetAltitude(c.getAltitudeInFt());
+    sayIfReq(c, "Altitude " + Acc.toAltS(c.getAltitudeInFt(), true));
     return true;
   }
 
@@ -241,14 +223,14 @@ public class Pilot {
     switch (c.getDirection()) {
       case increase:
         if (parent.getSpeed() > c.getSpeedInKts()) {
-          say(
+          sayOrError(c,
               "Cannot perform command to speed up to " + c.getSpeedInKts() + " cos we are faster.");
           return true;
         }
         break;
       case decrease:
         if (parent.getAltitude() < c.getSpeedInKts()) {
-          say(
+          sayOrError(c,
               "Cannot perform command to descend to " + c.getSpeedInKts() + " cos we are slower.");
           return true;
         }
@@ -257,7 +239,7 @@ public class Pilot {
     if (app != null) {
       if (c.getSpeedInKts() < parent.getAirplaneSpecification().vMinApp
           || c.getSpeedInKts() > parent.getAirplaneSpecification().vMaxApp) {
-        say(
+        sayOrError(c,
             "At approach, we accept only speed between "
             + parent.getAirplaneSpecification().vMinApp + " kts and "
             + parent.getAirplaneSpecification().vMaxApp + " kts.");
@@ -266,29 +248,40 @@ public class Pilot {
     } else {
       if (c.getSpeedInKts() < parent.getAirplaneSpecification().vMinClean
           || c.getSpeedInKts() > parent.getAirplaneSpecification().vMaxClean) {
-        say(
+        sayOrError(c,
             "While cruise, we accept only speed between "
             + parent.getAirplaneSpecification().vMinClean + " kts and "
             + parent.getAirplaneSpecification().vMaxClean + " kts.");
         return true;
       }
     } // if (app != null)
-    targetSpeedInKts = c.getSpeedInKts();
-    say("Speed " + targetSpeedInKts + " kts.");
+    parent.setTargetSpeed(c.getSpeedInKts());
+    sayIfReq(c, "Speed " + c.getSpeedInKts() + " kts.");
     return true;
   }
 
   private boolean processQueueCommand(ChangeHeadingCommand c) {
     targetCoordinate = null;
-    targetHeading = c.getHeading();
-    targetHeadingDirection = c.getDirection();
-    say ("Heading " + c.getHeading());
+    int targetHeading = c.getHeading();
+    boolean leftTurn;
+
+    if (c.getDirection() == ChangeHeadingCommand.eDirection.any) {
+      leftTurn
+          = (Headings.getBetterDirectionToTurn(parent.getHeading(), c.getHeading()) == ChangeHeadingCommand.eDirection.left);
+    } else {
+      leftTurn
+          = c.getDirection() == ChangeHeadingCommand.eDirection.left;
+    }
+
+    parent.setTargetHeading(targetHeading, leftTurn);
+
+    sayIfReq(c, "Heading " + c.getHeading());
     return true;
   }
-  
-  private boolean processQueueCommand(ContactCommand c){
+
+  private boolean processQueueCommand(ContactCommand c) {
     Atc a;
-    switch (c.getAtcType()){
+    switch (c.getAtcType()) {
       case app:
         a = Acc.atcApp();
         break;
@@ -301,31 +294,70 @@ public class Pilot {
       default:
         throw new ENotSupportedException();
     }
-    Acc.messenger().addMessage(parent, a,
+    // confirmation to previous atc
+    sayIfReq(c, "Contact " + a.getName() + "."); // at " + a.getFrequency() + ".");
+    
+    // change of atc
+    atc = a;
+    Acc.messenger().addMessage(5, parent, a,
         parent.getCallsign().toString() + " with you at " + Acc.toAltS(parent.getAltitude(), true));
+    
     return true;
   }
-  
-  private boolean processQueueCommand(ClearedToApproachCommand c){
+
+  private boolean processQueueCommand(ShortcutCommand c) {
+    ShortcutCommand t = c;
+    int pointIndex = getIndexOfNavaidInCommands(t.getNavaid());
+    if (pointIndex < 0) {
+      Acc.messenger().addMessage(
+          parent, this.atc, " Unable to shortcut to " + t.getNavaid().getName() + ", fix not on route!");
+    } else {
+      for (int i = 0; i < pointIndex; i++) {
+        this.queue.remove(i);
+      }
+    }
+    return true;
+  }
+
+  private boolean processQueueCommand(ClearedToApproachCommand c) {
     RunwayThreshold rt = Acc.airport().tryGetRunwayThreshold(c.getRunwayThresholdName());
-    if (rt == null){
-      say("There is no runway " + c.getRunwayThresholdName() + " we can approach to.");
+    if (rt == null) {
+      sayOrError(c, "There is no runway " + c.getRunwayThresholdName() + " we can approach to.");
       return true;
     }
     Approach a = rt.getApproaches().tryGet(c.getType());
-    if (a == null){
-      say("There is no approach of type " + c.getType() + " for runway " + rt.getName() + ".");
+    if (a == null) {
+      sayOrError(c, "There is no approach of type " + c.getType() + " for runway " + rt.getName() + ".");
       return true;
     }
-    
-    if (hold != null) hold = null;
+
+    if (hold != null) {
+      hold = null;
+    }
     this.app = new ApproachInfo(a);
-    say("Cleared to " + a.getType() + " approach runway " + rt.getName() + ".");
+    sayIfReq(c, "Cleared to " + a.getType() + " approach runway " + rt.getName() + ".");
     return true;
   }
-  
-  private void say (String text){
-    Acc.messenger().addMessage(parent, parent.getAtc(), text);
+
+  private void sayOrError(Command c, String text) {
+    if (c.isConfirmNeeded()) {
+      say(text);
+    } else {
+      Acc.messenger().addMessage(null, Acc.atcApp(),
+          String.format("Plane %0#s refused command. Reason: %1#s.",
+              parent.getCallsign(), text));
+    }
+  }
+
+  private void sayIfReq(Command c, String text) {
+    if (c.isConfirmNeeded()) {
+      say(text);
+    }
+  }
+
+  private void say(String text) {
+    if (atc != null)
+      Acc.messenger().addMessage(parent, atc, text);
   }
 
   private int getIndexOfNavaidInCommands(Navaid navaid) {
@@ -366,7 +398,7 @@ public class Pilot {
       if (cmds.get(i) instanceof ThenCommand) {
         if (i == 0 || i == cmds.size() - 1) {
           Acc.messenger().addMessage(
-              parent, parent.getAtc(), "\"THEN\" command cannot be first or last in queue. Whole command block is ignored.");
+              parent, atc, "\"THEN\" command cannot be first or last in queue. Whole command block is ignored.");
           cmds.clear();
           return;
         }
@@ -380,12 +412,28 @@ public class Pilot {
           n = new AfterSpeedCommand(((ChangeSpeedCommand) prev).getSpeedInKts());
         } else {
           Acc.messenger().addMessage(
-              parent, parent.getAtc(), "\"THEN\" command is after strange command, it does not make sense. Whole command block is ignored.");
+              parent, atc, "\"THEN\" command is after strange command, it does not make sense. Whole command block is ignored.");
           cmds.clear();
           return;
         }
         cmds.remove(i);
         cmds.add(i, n);
+      }
+    }
+  }
+
+  private void endrivePlane() {
+    if (hold != null) {
+      // fly hold
+    } else if (app != null) {
+      // fly app
+    } else if (targetCoordinate != null) {
+      int heading = (int) Coordinates.getBearing(parent.getCoordinate(), targetCoordinate);
+      heading = Headings.to(heading);
+      if (heading != parent.getTargetHeading()) {
+        boolean useLeftTurn
+            = Headings.getBetterDirectionToTurn(parent.getHeading(), heading) == ChangeHeadingCommand.eDirection.left;
+        parent.setTargetHeading(heading, useLeftTurn);
       }
     }
   }

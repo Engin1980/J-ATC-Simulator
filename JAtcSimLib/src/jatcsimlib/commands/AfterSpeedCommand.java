@@ -20,5 +20,10 @@ public class AfterSpeedCommand extends AfterCommand {
   public int getSpeedInKts() {
     return speedInKts;
   }
+  
+    @Override
+  public String toString() {
+    return "AS{"+ speedInKts + '}';
+  }
 
 }

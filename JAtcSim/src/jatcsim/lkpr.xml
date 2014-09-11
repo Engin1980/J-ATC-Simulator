@@ -1,8 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <area icao="LKAA">
   <airports>
-    <airport icao="LKPR" name="Praha Ruzyně" transitionAltitude="5000" minCtrAtcAltitude="5000">
+    <airport icao="LKPR" name="Praha Ruzyně" transitionAltitude="5000">
       <radarRange topLeft="50.5 13.0" bottomRight="49.5 15.5" />
+      <atcTemplates>
+        <atcTemplate type="ctr" name="LKAA_CTR" frequency="127.12" 
+                     releaseAltitude="14000" acceptAltitude="7000" orderedAltitude="10000" />
+        <atcTemplate type="twr" name="LKPR_TWR" frequency="118.10" 
+                     releaseAltitude="300" acceptAltitude="4000" orderedAltitude="4000" />
+        <atcTemplate type="app" name="LKPR_APP" frequency="119.00" 
+                     releaseAltitude="-1" acceptAltitude="-1" orderedAltitude="-1" />
+      </atcTemplates>
       <runways>
         <runway active="true">
           <thresholds>
@@ -12,12 +20,12 @@
                 <approach type="ILS_III" radial="063" dh="0" point="50 06 06.61 N 014 13 34.58 E" gaRoute="CM 040" />
               </approaches>
               <routes>
-                <route type="star" name="LOMKI5T" route="PD LOMKI DM 50 PD PR707 PD BAROX" />
-                <route type="star" name="GOLOP1T" route="PD GOLOP PD PR711 PD PR712 PD PR513 PD KUVIX" />
-                <route type="star" name="VLM1T" route="PD VLM PD PR721 PD PR722 PD PR723 PD PR523 PD PR521 PD AKEVA" />
-                <route type="star" name="GOSEK2T" route="PD GOSEK PD PR718 PD PR719 PD PR521 PD AKEVA" />
-                <route type="sid" name="VOZ1E" route="PD PR619 PD PR633 PD PR635 PD VOZ" />
-                <route type="sid" name="VOZ1D" route="PD PR619 PD PR625 PD PR626 PD PR627 PD VOZ" />
+                <route type="star" name="LOMKI5T" route="PD LOMKI T PD PR707 T PD BAROX" />
+                <route type="star" name="GOLOP1T" route="PD GOLOP T PD PR711 T PD PR712 T PD PR513 T PD KUVIX" />
+                <route type="star" name="VLM1T" route="PD VLM T PD PR721 T PD PR722 T PD PR723 T PD PR523 T PD PR521 T PD AKEVA" />
+                <route type="star" name="GOSEK2T" route="PD GOSEK T PD PR718 T PD PR719 T PD PR521 T PD AKEVA" />
+                <route type="sid" name="VOZ1E" route="PD PR619 T PD PR633 T PD PR635 T PD VOZ" />
+                <route type="sid" name="VOZ1D" route="PD PR619 T PD PR625 T PD PR626 T PD PR627 T PD VOZ" />
               </routes>
             </threshold>
             <threshold name="24" coordinate="50 06 57.43 N 014 16 24.12 E">

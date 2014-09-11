@@ -9,13 +9,13 @@ import jatcsimlib.Acc;
 import jatcsimlib.airplanes.pilots.Pilot;
 import jatcsimlib.atcs.Atc;
 import jatcsimlib.commands.Command;
-import jatcsimlib.commands.ProceedDirectCommand;
 import jatcsimlib.coordinates.Coordinate;
+import jatcsimlib.coordinates.Coordinates;
+import jatcsimlib.exceptions.ERuntimeException;
+import jatcsimlib.global.Headings;
 import jatcsimlib.global.KeyItem;
 import jatcsimlib.messaging.Message;
-import jatcsimlib.world.Area;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -24,28 +24,30 @@ import java.util.List;
  */
 public class Airplane implements KeyItem<Callsign> {
 
-  
-
-  private enum eTurnDirection {
-
-    left,
-    right
-  }
-
   private final Callsign callsign;
+  
   private int targetHeading;
-  private eTurnDirection targetHeadingTurnDirection;
+  private boolean targetHeadingLeftTurn;
   private int heading;
+  
   private int targetAltitude;
   private int altitude;
+  
   private int targetSpeed;
   private int speed;
+  
   private Coordinate coordinate;
+  
   private final Squawk sqwk;
+  
   private final boolean departure;
 
-  private Atc atc;
   private final Pilot pilot;
+  
+  // get this out someway
+  // now it is needed by "draw" cos there dont know
+  // who is responsible for plane
+  public Atc visuallyResponsibleAtc;
 
   private final AirplaneType airplaneSpecification;
 
@@ -57,7 +59,6 @@ public class Airplane implements KeyItem<Callsign> {
     this.sqwk = sqwk;
     this.airplaneSpecification = airplaneSpecification;
 
-    this.atc = null;
     this.departure = isDeparture;
 
     this.heading = heading;
@@ -68,7 +69,7 @@ public class Airplane implements KeyItem<Callsign> {
     this.targetHeading = this.heading;
     this.targetSpeed = this.speed;
     
-    this.pilot = new Pilot(routeName, routeCommandQueue);
+    this.pilot = new Pilot(this, routeName, routeCommandQueue);
   }
 
   private void ensureSanity() {
@@ -88,20 +89,8 @@ public class Airplane implements KeyItem<Callsign> {
     }
   }
 
-  public Atc getAtc() {
-    return atc;
-  }
-  
   public boolean isDeparture(){
     return departure;
-  }
-
-  public void setAtcOnlyAtcCanCallThis(Atc atc) {
-    this.atc = atc;
-  }
-
-  public void setCoordinate(Coordinate coordinate) {
-    this.coordinate = coordinate;
   }
 
   public Callsign getCallsign() {
@@ -141,20 +130,7 @@ public class Airplane implements KeyItem<Callsign> {
     return this.callsign;
   }
 
-  private void rollSpeed(int targetSpeed) {
-    this.targetSpeed = targetSpeed;
-  }
-
-  private void rollAltitude(int targetAltitude) {
-    this.targetAltitude = targetAltitude;
-  }
-
-  private void rollHeading(int targetHeading, eTurnDirection turn) {
-    this.targetHeadingTurnDirection = turn;
-    this.targetHeading = heading;
-  }
-
-  public void updateAfterSecond(){
+  public void elapseSecond(){
     
     processMessages();
     drivePlane();
@@ -167,7 +143,7 @@ public class Airplane implements KeyItem<Callsign> {
   }
   
   private void processMessages(){
-    List<Message> msgs = Acc.messenger().getMy(this);
+    List<Message> msgs = Acc.messenger().getMy(this, true);
     
     for (Message m : msgs){
       processMessage(m);
@@ -176,27 +152,26 @@ public class Airplane implements KeyItem<Callsign> {
   
   private void processMessage(Message msg){
     List<Command> cmds;
-    Object s = msg.source;
+    Object s = msg.content;
     if (s instanceof Command){
       cmds = new ArrayList<>(1);
       cmds.add((Command) s);
-    } else {
-      cmds = (ArrayList<Command>) s;
-    }
+    } else if (s instanceof List) {
+      cmds = (List<Command>) s;
+    } else
+      throw new ERuntimeException("Airplane can only deal with messages containing \"Command\" or \"List<Command>\".");
     
     processCommands(cmds);
   }
   
   private void processCommands(List<Command> cmds){
-   this.pilot.processNewCommands(cmds);
+   this.pilot.addNewCommands(cmds);
   }
   
   private void updateSHABySecond() {
-    if (speed != targetSpeed) {
-      adjustSpeed();
-    }
-    adjustHeading();
-    adjustAltitude();
+    if (targetSpeed != speed)  adjustSpeed();
+    if (targetHeading != heading) adjustHeading();
+    if (targetAltitude != altitude) adjustAltitude();
 
     updateCoordinates();
   }
@@ -218,26 +193,72 @@ public class Airplane implements KeyItem<Callsign> {
   }
 
   private void adjustHeading() {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    int newHeading = 
+        Headings.turn(heading, airplaneSpecification.headingChangeRate, targetHeadingLeftTurn, targetHeading);
+    this.heading = newHeading;
   }
 
   private void adjustAltitude() {
     if (targetAltitude > altitude) {
-      int step = airplaneSpecification.speedIncreaseRate;
-      speed += step;
+      int step = (int) (airplaneSpecification.getClimbRateForAltitude(this.altitude));
+      altitude += step;
       if (targetAltitude < altitude) {
-        speed = targetAltitude;
+        altitude = targetAltitude;
       }
     } else if (targetAltitude < altitude) {
-      int step = airplaneSpecification.speedDecreaseRate;
-      speed -= step;
-      if (targetAltitude > speed) {
-        speed = targetAltitude;
+      int step = (int) (airplaneSpecification.getDescendRateForAltitude(this.altitude));
+      altitude -= step;
+      if (targetAltitude > altitude) {
+        altitude = targetAltitude;
       }
     }
   }
 
-  private void updateCoordinates() {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+  public int getTAS(){
+    double m = 1 + this.altitude / 100000d;
+    int ret = (int) (this.speed * m);
+    return ret;
   }
+  
+  public int getGS(){
+    return getTAS();
+  }
+  
+  private static final double secondFraction = 1/60d/60d;
+  private void updateCoordinates() {
+    double dist = this.getGS() * secondFraction;
+    Coordinate newC = 
+        Coordinates.getCoordinate(coordinate, heading, dist);
+    this.coordinate = newC;
+  }
+  
+  public void setTargetHeading(int targetHeading, boolean useLeftTurn){
+    this.targetHeading = targetHeading;
+    this.targetHeadingLeftTurn = useLeftTurn;
+  }
+  public void setTargetSpeed(int targetSpeed){
+    this.targetSpeed = targetSpeed;
+  }
+  public void setTargetAltitude(int targetAltitude){
+    this.targetAltitude = targetAltitude;
+  }
+
+  public int getTargetHeading() {
+    return targetHeading;
+  }
+
+  public int getTargetAltitude() {
+    return targetAltitude;
+  }
+
+  public int getTargetSpeed() {
+    return targetSpeed;
+  }
+
+  @Override
+  public String toString() {
+    return this.callsign.toString();
+  }
+  
+  
 }

@@ -14,8 +14,8 @@ import jatcsimlib.airplanes.Airplane;
  */
 public class UserAtc extends Atc {
 
-  public UserAtc(String airportIcao) {
-    super(eType.app, airportIcao);
+  public UserAtc(AtcTemplate template) {
+    super(template);
   }
 
   @Override
@@ -26,6 +26,15 @@ public class UserAtc extends Atc {
   @Override
   protected void _registerNewPlane(Airplane plane) {
     throw new UnsupportedOperationException("Not supported yet."); 
+  }
+
+  @Override
+  public boolean isControllingAirplane(Airplane plane) {
+    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+  }
+
+  public void elapseSecond() {
+    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
 
 }

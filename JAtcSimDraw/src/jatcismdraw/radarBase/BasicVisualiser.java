@@ -9,6 +9,7 @@ import jatcsimdraw.settings.DispItem;
 import jatcsimdraw.settings.DispPlane;
 import jatcsimdraw.settings.DispText;
 import jatcsimdraw.settings.Settings;
+import jatcsimlib.Acc;
 import jatcsimlib.airplanes.Airplane;
 import jatcsimlib.atcs.Atc;
 import jatcsimlib.exceptions.ERuntimeException;
@@ -188,7 +189,8 @@ public class BasicVisualiser extends Visualiser {
   @Override
   public void drawPlane(Airplane plane) {
     
-    DispPlane dp = sett.getDispPlane(plane.getAtc().getType());
+    Atc.eType atcType = getResponsibleAtc(plane);
+    DispPlane dp = sett.getDispPlane(atcType);
     
     p.drawPoint(plane.getCoordinate(), dp.getColor(), dp.getPointWidth());
     p.drawLine(plane.getCoordinate(), dp.getHeadingLineLength(), plane.getHeading(), 
@@ -214,7 +216,7 @@ public class BasicVisualiser extends Visualiser {
         plane.getCallsign().getCompany(),       //1
         plane.getCallsign().getNumber(),        //2
         plane.getHeadingS(),                    //3
-        plane.getAltitudeS(TRANSITION_LEVEL),   //4
+        Acc.toAltS(plane.getAltitude(), true),  //4
         plane.getSpeed());                      //5
     
     return ret;
@@ -243,6 +245,10 @@ public class BasicVisualiser extends Visualiser {
         throw new ENotSupportedException();
     }
     return ret;
+  }
+
+  private Atc.eType getResponsibleAtc(Airplane plane) {
+    return plane.visuallyResponsibleAtc.getType();
   }
 
   

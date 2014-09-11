@@ -12,16 +12,15 @@ import jatcsimlib.world.Navaid;
  *
  * @author Marek
  */
-public class ProceedDirectCommand extends Command {
-  private final Navaid navaid;
+public class ProceedDirectCommand extends ToNavaidCommand {
 
   public ProceedDirectCommand(Navaid navaid) {
-    this.navaid = navaid;
-  }
-
-  public Navaid getNavaid() {
-    return navaid;
+    super(navaid);
   }
   
+    @Override
+  public String toString() {
+    return "PD{"+ navaid.getName() + '}';
+  }
   
 }

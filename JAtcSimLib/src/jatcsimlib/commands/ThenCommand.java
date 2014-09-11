@@ -11,5 +11,9 @@ package jatcsimlib.commands;
  * @author Marek
  */
 public class ThenCommand extends Command {
-  
+ 
+    @Override
+  public String toString() {
+    return "T{}";
+  }
 }

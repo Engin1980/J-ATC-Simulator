@@ -10,6 +10,7 @@ import jatcsimdraw.settings.DispItem;
 import jatcsimdraw.settings.DispPlane;
 import jatcsimdraw.settings.DispText;
 import jatcsimlib.airplanes.AirplaneType;
+import jatcsimlib.atcs.AtcTemplate;
 import jatcsimlib.coordinates.Coordinate;
 import jatcsimlib.world.Airport;
 import jatcsimlib.world.Approach;
@@ -36,6 +37,7 @@ public class Mapping {
   static {
     mapAdd("Area.airports", Airport.class);
     mapAdd("Airport.runways", Runway.class);
+    mapAdd("Airport.atcTemplates", AtcTemplate.class);
     mapAdd("Runway.thresholds", RunwayThreshold.class);
     mapAdd("RunwayThreshold.approaches", Approach.class);
     mapAdd("RunwayThreshold.routes", Route.class);

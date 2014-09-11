@@ -37,5 +37,8 @@ public class ChangeSpeedCommand extends Command {
     return speedInKts;
   }
   
-  
+    @Override
+  public String toString() {
+    return "SU/SD{"+ speedInKts + '}';
+  }
 }

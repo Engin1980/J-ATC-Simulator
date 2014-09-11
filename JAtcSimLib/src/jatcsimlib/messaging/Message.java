@@ -38,8 +38,8 @@ public class Message implements Comparable<Message> {
   protected final ETime displayFromTime;
   protected final ETime displayToTime;
   public final Object source;
-  protected final Object target;
-  protected final Object content;
+  public final Object target;
+  public final Object content;
 
   public Message(Object source, Object target, Object content) {
     this(Acc.now(), source, target, content);
@@ -75,13 +75,13 @@ public class Message implements Comparable<Message> {
 
   private int generateDelay(Object source) {
     if (source == null) {
-      return rnd.getInt(minSystemDelayInSeconds, maxSystemDelayInSeconds);
+      return rnd.nextInt(minSystemDelayInSeconds, maxSystemDelayInSeconds);
     } else if (source instanceof Airplane) {
-      return rnd.getInt(minPlaneDelayInSeconds, maxPlaneDelayInSeconds);
+      return rnd.nextInt(minPlaneDelayInSeconds, maxPlaneDelayInSeconds);
     } else if (source instanceof UserAtc) {
       return 0;
     } else if (source instanceof Atc) {
-      return rnd.getInt(minAtcDelayInSeconds, maxAtcDelayInSeconds);
+      return rnd.nextInt(minAtcDelayInSeconds, maxAtcDelayInSeconds);
     } else {
       throw new ENotSupportedException();
     }
@@ -93,7 +93,7 @@ public class Message implements Comparable<Message> {
     } else if (source instanceof Airplane) {
       return planeVisibleTimeInSeconds;
     } else if (source instanceof UserAtc) {
-      return 0;
+      return 10; // ai_ATC must be able to check the message
     } else if (source instanceof Atc) {
       return atcVisibleTimeInSeconds;
     } else {
@@ -130,4 +130,11 @@ public class Message implements Comparable<Message> {
     else
       throw new ENotSupportedException();
   }
+
+  @Override
+  public String toString() {
+    return "MSG: " + source + " => " + target + " :: " + content;
+  }
+  
+  
 }

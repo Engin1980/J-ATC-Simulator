@@ -3,22 +3,25 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+
 package jatcsimlib.commands;
 
-import jatcsimlib.messaging.Message;
-import java.util.ArrayList;
-import java.util.List;
+import jatcsimlib.world.Navaid;
 
 /**
  *
  * @author Marek
  */
-public abstract class Command {
+public class ToNavaidCommand  extends Command{
+  protected final Navaid navaid;
 
-  private boolean confirmNeeded = true;
-
-  public boolean isConfirmNeeded() {
-    return confirmNeeded;
+  public ToNavaidCommand(Navaid navaid) {
+    this.navaid = navaid;
   }
+
+  public Navaid getNavaid() {
+    return navaid;
+  }
+  
   
 }

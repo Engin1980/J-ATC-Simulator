@@ -102,4 +102,39 @@ public class AirplaneType {
 
   public eType type;
   public eSize size;
+
+  private RateInfo _climb = null;
+  private RateInfo _descend = null;
+
+  public double getClimbRateForAltitude(int altitude) {
+    if (_climb == null) {
+      double a = (this.lowClimbRate/60d - this.highClimbRate/60d) / (double) (2000 - this.maxAltitude);
+      double b = this.highClimbRate/60d - a * this.maxAltitude;
+      _climb = new RateInfo(a, b);
+    }
+
+    return _climb.a * altitude + _climb.b;
+  }
+
+  public double getDescendRateForAltitude(int altitude) {
+    if (_descend == null) {
+      double a = (this.lowDescendRate/60d - this.highDescendRate/60d) / (double) (2000 - this.maxAltitude);
+      double b = this.highDescendRate/60d - a * this.maxAltitude;
+      _descend = new RateInfo(a, b);
+    }
+
+    return _descend.a * altitude + _descend.b;
+  }
+}
+
+class RateInfo {
+
+  public final double a;
+  public final double b;
+
+  public RateInfo(double a, double b) {
+    this.a = a;
+    this.b = b;
+  }
+
 }

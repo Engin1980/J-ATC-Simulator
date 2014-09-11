@@ -41,5 +41,9 @@ public class ChangeHeadingCommand extends Command {
     return direction;
   }
   
+    @Override
+  public String toString() {
+    return "FH{"+ heading + '}';
+  }
   
 }

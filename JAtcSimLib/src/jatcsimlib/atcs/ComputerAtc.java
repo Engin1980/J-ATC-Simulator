@@ -11,10 +11,11 @@ package jatcsimlib.atcs;
  * @author Marek
  */
 public abstract class ComputerAtc extends Atc {
-  public ComputerAtc(eType type, String icao) {
-    super(type, icao);
-  }
 
+  public ComputerAtc(AtcTemplate template) {
+    super(template);
+  }
+  
   @Override
   public boolean isHuman(){return false;}
   

@@ -58,6 +58,6 @@ public class MessageList {
   void remove(Message m) {
     inner.remove(m);
   }
-  
+
   
 }

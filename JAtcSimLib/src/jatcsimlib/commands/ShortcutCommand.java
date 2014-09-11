@@ -12,15 +12,10 @@ import jatcsimlib.world.Navaid;
  *
  * @author Marek
  */
-public class ShortcutCommand extends Command {
-  private final Navaid navaid;
+public class ShortcutCommand extends ToNavaidCommand {
 
   public ShortcutCommand(Navaid navaid) {
-    this.navaid = navaid;
-  }
-
-  public Navaid getNavaid() {
-    return navaid;
+    super(navaid);
   }
   
 }

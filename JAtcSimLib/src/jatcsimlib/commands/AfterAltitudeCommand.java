@@ -20,6 +20,10 @@ public class AfterAltitudeCommand extends AfterCommand {
   public int getAltitudeInFt() {
     return altitudeInFt;
   }
-  
+
+  @Override
+  public String toString() {
+    return "AA{"+ altitudeInFt + '}';
+  }
   
 }

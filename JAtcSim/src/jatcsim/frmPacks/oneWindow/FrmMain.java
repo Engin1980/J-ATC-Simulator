@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package jatcsim.frmPacks.oneWindow;
 
 import jatcsimdraw.canvases.EJComponent;
@@ -12,12 +11,18 @@ import jatcsimdraw.radar.BasicRadar;
 import jatcsimdraw.settings.Settings;
 import jatcsimdraw.shared.es.WithCoordinateEvent;
 import jatcsimlib.Simulation;
+import jatcsimlib.airplanes.Airplane;
+import jatcsimlib.atcs.Atc;
+import jatcsimlib.commands.Command;
+import jatcsimlib.commands.CommandFormat;
 import jatcsimlib.events.EventListener;
 import jatcsimlib.world.Airport;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.KeyEvent;
+import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.Timer;
 
@@ -33,7 +38,7 @@ public class FrmMain extends javax.swing.JFrame {
   public FrmMain() {
     initComponents();
   }
-  
+
   /**
    * This method is called from within the constructor to
    * initialize the form. WARNING: Do NOT modify this code.
@@ -48,45 +53,60 @@ public class FrmMain extends javax.swing.JFrame {
 
     setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
+    jTxtInput.addKeyListener(new java.awt.event.KeyAdapter() {
+      public void keyPressed(java.awt.event.KeyEvent evt) {
+        jTxtInputKeyPressed(evt);
+      }
+    });
+
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
     getContentPane().setLayout(layout);
     layout.setHorizontalGroup(
       layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-      .addComponent(jTxtInput, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+      .addComponent(jTxtInput, javax.swing.GroupLayout.DEFAULT_SIZE, 1032, Short.MAX_VALUE)
     );
     layout.setVerticalGroup(
       layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
       .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-        .addGap(0, 280, Short.MAX_VALUE)
+        .addGap(0, 607, Short.MAX_VALUE)
         .addComponent(jTxtInput, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
     );
 
     pack();
   }// </editor-fold>//GEN-END:initComponents
 
+  private void jTxtInputKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTxtInputKeyPressed
+    if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+      String msg = jTxtInput.getText();
+      sendMessage(msg);
+      jTxtInput.setText("");
+    }
+  }//GEN-LAST:event_jTxtInputKeyPressed
+
   // Variables declaration - do not modify//GEN-BEGIN:variables
   private javax.swing.JTextField jTxtInput;
   // End of variables declaration//GEN-END:variables
 
+  private Simulation sim;
+
   void init(final Simulation sim, Settings displaySettings) {
-    
+
+    this.sim = sim;
     Airport aip = sim.getActiveAirport();
-    
+
     EJComponentCanvas canvas = new EJComponentCanvas();
     BasicRadar r = new BasicRadar(canvas, aip.getRadarRange(), sim, displaySettings);
     final EJComponent comp = canvas.getEJComponent();
 
     final FrmMain f = this;
     f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    //f.setSize(900, 500);
-    // anchor of radar:
     f.addComponentListener(new ComponentListener() {
 
       @Override
-      public void componentResized(ComponentEvent e) {        
+      public void componentResized(ComponentEvent e) {
         int newHeight = jTxtInput.getY(); // f.getHeight() - 60 ; //jTxtInput.getHeight() - 80;
         comp.setSize(
-            f.getWidth(), 
+            f.getWidth(),
             newHeight);
       }
 
@@ -105,7 +125,7 @@ public class FrmMain extends javax.swing.JFrame {
     f.add(comp);
     f.setVisible(true);
 
-    int delay = 1000; //milliseconds
+    int delay = 500; //milliseconds
     ActionListener taskPerformer = new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent evt) {
@@ -124,6 +144,51 @@ public class FrmMain extends javax.swing.JFrame {
     });
 
     new Timer(delay, taskPerformer).start();
-    
+
+  }
+
+  private void sendMessage(String msg) {
+    Atc app = sim.getAppAtc();
+    if (msg.startsWith("+")) {
+      // msg for CTR
+      msg = msg.substring(1);
+      sim.getMessenger().addMessage(app, sim.getCtrAtc(), msg);
+    } else if (msg.startsWith("-")) {
+      // msg for TWR
+      msg = msg.substring(1);
+      sim.getMessenger().addMessage(app, sim.getTwrAtc(), msg);
+    } else if (msg.startsWith("=")) {
+      // system
+      msg = msg.substring(1);
+      sim.getMessenger().addMessage(app, null, msg);
+    } else {
+      String [] spl = splitToCallsignAndMessages(msg);
+      Airplane p = sim.getPlanes().tryGetByCallsingOrNumber(spl[0]);
+      if (p == null) {
+        sim.getMessenger().addMessage(null, app, "No such plane for callsign " + spl[0] + ".");
+      } else {
+        List<Command> cmdList;
+        try{
+        cmdList = CommandFormat.parseMulti(spl[1]);
+        } catch (Exception ex){
+          sim.getMessenger().addMessage(null, app, "Command error: " + ex.getMessage());
+          return;
+        }
+        sim.getMessenger().addMessage(app, p, cmdList);
+      }
+    }
+  }
+
+  private String[] splitToCallsignAndMessages(String msg) {
+    String [] ret = new String[2];
+    int i = msg.indexOf(" ");
+    if (i == msg.length() || i < 0){
+      ret[0] = msg;
+      ret[1] = "";
+    } else {
+      ret[0] = msg.substring(0, i);
+      ret[1] = msg.substring(i+1);
+    }
+    return ret;
   }
 }

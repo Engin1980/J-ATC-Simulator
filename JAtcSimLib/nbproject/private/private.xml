@@ -5,6 +5,7 @@
         <group>
             <file>file:/C:/Users/Marek/Documents/NetBeansProjects/_JAtcSimSolution/JAtcSimLib/src/jatcsimlib/airplanes/pilots/Pilot.java</file>
             <file>file:/C:/Users/Marek/Documents/NetBeansProjects/_JAtcSimSolution/JAtcSimLib/src/jatcsimlib/airplanes/Airplane.java</file>
+            <file>file:/C:/Users/Marek/Documents/NetBeansProjects/_JAtcSimSolution/JAtcSimLib/src/jatcsimlib/commands/Command.java</file>
             <file>file:/C:/Users/Marek/Documents/NetBeansProjects/_JAtcSimSolution/JAtcSimLib/src/jatcsimlib/commands/ClearedToApproachCommand.java</file>
         </group>
     </open-files>

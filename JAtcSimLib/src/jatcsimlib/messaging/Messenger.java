@@ -27,12 +27,19 @@ public class Messenger {
     addMessage(m);
   }
 
+  public void addMessage(int delay, Object source, Object target, Object content) {
+    Message m = new Message(Acc.now().addSeconds(delay), source, target, content);
+    addMessage(m);
+
+  }
+
   public void addMessage(Message m) {
 
     if (inner.containsKey(m.target) == false) {
       inner.put(m.target, new MessageList());
     }
 
+    System.out.println("## new message " + Acc.now() + "->" + m.displayFromTime + " :: " + m.toString());
     inner.get(m.target).add(m);
   }
 
@@ -46,16 +53,19 @@ public class Messenger {
     }
   }
 
-  public List<Message> getMy(Object target) {
-    return getMy(target, Acc.now());
+  public List<Message> getMy(Object target, boolean clearRetrieved) {
+    return getMy(target, Acc.now(), clearRetrieved);
   }
 
-  public List<Message> getMy(Object target, ETime time) {
+  public List<Message> getMy(Object target, ETime time, boolean cleanRetrieved) {
     if (inner.containsKey(target) == false) {
       return new ArrayList<>();
     }
 
     List<Message> ret = inner.get(target).cloneVisibleToList(time);
+    if (cleanRetrieved){
+      inner.get(target).removeAll(ret);
+    }
 
     return ret;
   }

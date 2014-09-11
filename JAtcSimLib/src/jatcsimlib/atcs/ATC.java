@@ -6,10 +6,7 @@
 
 package jatcsimlib.atcs;
 
-import jatcsimlib.Simulation;
 import jatcsimlib.airplanes.Airplane;
-import jatcsimlib.exceptions.ENotSupportedException;
-import jatcsimlib.messaging.Messenger;
 
 /**
  *
@@ -29,25 +26,18 @@ public abstract class Atc {
   private final eType type;
   
   private final String name;
+  private final double frequency;
+  protected final int acceptAltitude;
+  protected final int releaseAltitude;
+  protected final int orderedAltitude;
 
-  public Atc(eType type, String icao) {
-    this.type = type;
-    switch (type){
-      case app:
-        this.name = icao + "_APP";
-        break;
-      case ctr:
-        this.name = icao + "_CTR";
-        break;
-      case twr:
-        this.name = icao + "_TWR";
-        break;
-      case gnd:
-        this.name = icao + "_GND";
-        break;
-      default:
-        throw new ENotSupportedException();
-    }
+  public Atc(AtcTemplate template) {
+    this.type = template.getType();
+    this.name = template.getName();
+    this.frequency = template.getFrequency();
+    this.acceptAltitude = template.getAcceptAltitude();
+    this.releaseAltitude = template.getReleaseAltitude();
+    this.orderedAltitude = template.getOrderedAltitude();
   }
   
   public abstract boolean isHuman();
@@ -60,10 +50,34 @@ public abstract class Atc {
     return name;
   }
   
+  public abstract boolean isControllingAirplane(Airplane plane);
+  
   public void registerNewPlane (Airplane plane){
-    plane.setAtcOnlyAtcCanCallThis(this);
+    plane.visuallyResponsibleAtc = this;
     _registerNewPlane(plane);
   }
   protected abstract void _registerNewPlane(Airplane plane);
- 
+
+  public int getReleaseAltitude() {
+    return releaseAltitude;
+  }
+
+  public double getFrequency() {
+    return frequency;
+  }
+
+  public int getAcceptAltitude() {
+    return acceptAltitude;
+  }
+
+  public int getOrderedAltitude() {
+    return orderedAltitude;
+  }
+
+  @Override
+  public String toString() {
+    return this.name;
+  }
+
+  
 }

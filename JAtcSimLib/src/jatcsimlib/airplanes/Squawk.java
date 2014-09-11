@@ -37,7 +37,7 @@ public class Squawk {
 
   @Override
   public String toString() {
-    return code.toString();
+    return new String(code);
   }
 
   @Override

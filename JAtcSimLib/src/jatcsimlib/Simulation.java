@@ -11,11 +11,14 @@ import jatcsimlib.airplanes.AirplaneType;
 import jatcsimlib.airplanes.AirplaneTypes;
 import jatcsimlib.airplanes.Callsign;
 import jatcsimlib.airplanes.Squawk;
+import jatcsimlib.atcs.Atc;
 import jatcsimlib.atcs.CentreAtc;
 import jatcsimlib.atcs.TowerAtc;
 import jatcsimlib.atcs.UserAtc;
+import jatcsimlib.commands.ChangeAltitudeCommand;
 import jatcsimlib.commands.Command;
 import jatcsimlib.commands.CommandFormat;
+import jatcsimlib.commands.ContactCommand;
 import jatcsimlib.coordinates.Coordinate;
 import jatcsimlib.coordinates.Coordinates;
 import jatcsimlib.events.EventListener;
@@ -33,6 +36,7 @@ import jatcsimlib.world.Route;
 import jatcsimlib.world.Runway;
 import jatcsimlib.world.RunwayThreshold;
 import java.util.Calendar;
+import java.util.List;
 
 /**
  *
@@ -100,9 +104,9 @@ public class Simulation {
     this.area = airport.getParent();
     this.airport = airport;
     this.planeTypes = types;
-    this.twrAtc = new TowerAtc(airport.getIcao());
-    this.ctrAtc = new CentreAtc(area.getIcao());
-    this.appAtc = new UserAtc(airport.getIcao());
+    this.twrAtc = new TowerAtc(airport.getAtcTemplates().get(Atc.eType.twr));
+    this.ctrAtc = new CentreAtc(airport.getAtcTemplates().get(Atc.eType.ctr));
+    this.appAtc = new UserAtc(airport.getAtcTemplates().get(Atc.eType.app));
 
     this.now = new ETime(now);
   }
@@ -129,12 +133,17 @@ public class Simulation {
     long start = System.currentTimeMillis();
     isBusy = true;
     now.increaseSecond();
+    
+    
+    this.ctrAtc.elapseSecond();
+    //this.twrAtc.elapseSecond();
+    //this.appAtc.elapseSecond();
 
     generateNewPlanes();
     updatePlanes();
 
     long end = System.currentTimeMillis();
-    System.out.println("## Sim elapse second: \t" + (end - start) + " at " + now.toString());
+    //System.out.println("## Sim elapse second: \t" + (end - start) + " at " + now.toString());
 
     tickEM.raise(this);
     isBusy = false;
@@ -142,23 +151,8 @@ public class Simulation {
 
   private void updatePlanes() {
     for (Airplane plane : this.planes) {
-      updatePlane(plane);
+      plane.elapseSecond();
     }
-  }
-
-  private void updatePlane(Airplane plane) {
-    updatePlanePosition(plane);
-  }
-
-  private final static double SEC_OF_HOUR = 1d / 60 / 60;
-
-  private void updatePlanePosition(Airplane plane) {
-    int heading = plane.getHeading();
-    int speedKts = plane.getSpeed();
-
-    double distanceInNM = speedKts * SEC_OF_HOUR;
-    Coordinate newCoordinate = Coordinates.getCoordinate(plane.getCoordinate(), heading, distanceInNM);
-    plane.setCoordinate(newCoordinate);
   }
 
   private static Simulation current;
@@ -172,7 +166,7 @@ public class Simulation {
   }
 
   private void checkRouteCommands() {
-    Command[] cmds;
+    List<Command> cmds;
     Navaid n;
     for (Airport a : this.area.getAirports()) {
       for (Runway r : a.getRunways()) {
@@ -210,11 +204,13 @@ public class Simulation {
   }
 
   private void generateNewPlanes() {
-    if (this.now.getSeconds() % 5 != 0) {
+    if (planes.isEmpty() == false) { // smazat
       return;
     }
 
-    System.out.println("## new plane");
+    if (this.now.getSeconds() % 5 != 0) {
+      return;
+    }
 
     Airplane plane = generateNewArrivingPlane();
 
@@ -231,14 +227,23 @@ public class Simulation {
     Squawk sqwk = generateSqwk();
     AirplaneType pt = planeTypes.get(rnd.nextInt(planeTypes.size()));
     int heading = (int) Coordinates.getBearing(c, r.getMainFix().getCoordinate());
-    int alt = rnd.nextInt(10000) + 12000;
+    int alt = rnd.nextInt(2, 6) * 1000 + Acc.atcCtr().getReleaseAltitude();
     int spd = pt.vCruise;
 
+    List<Command> routeCmds = r.getCommandsListClone();
+    // added command to descend
+    routeCmds.add(0, 
+        new ChangeAltitudeCommand(
+            ChangeAltitudeCommand.eDirection.descend, 
+            Acc.atcCtr().getOrderedAltitude()
+        ));
+    // added command to contact CTR
+    routeCmds.add(0, new ContactCommand(Atc.eType.ctr));
+    
     ret = new Airplane(
         cs, c, sqwk, pt, heading, alt, spd, false,
-        r.getName(), r.getCommandsList());
+        r.getName(), routeCmds);
 
-    // pridat letadlu Route!
     return ret;
   }
 
@@ -265,7 +270,7 @@ public class Simulation {
   private Coordinate generateArrivalCoordinate(Coordinate navFix, Coordinate aipFix) {
     double radial = Coordinates.getBearing(aipFix, navFix);
     radial += rnd.nextDouble() * 50 - 25; // nahodne zatoceni priletoveho radialu
-    double dist = rnd.nextDouble() * 10;
+    double dist = rnd.nextDouble() * 20;
     Coordinate ret = null;
     while (ret == null) {
 

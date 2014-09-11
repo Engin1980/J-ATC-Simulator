@@ -16,6 +16,7 @@ import jatcsimlib.world.Navaid;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -46,12 +47,12 @@ public class CommandFormat {
 
   public static Command parseOne(String line) {
     line = normalizeCommandsInString(line);
-    return parseMulti(line)[0];
+    return parseMulti(line).get(0);
   }
 
-  public static Command[] parseMulti(String line) {
+  public static List<Command> parseMulti(String line) {
     line = normalizeCommandsInString(line);    
-    List<Command> lst = new ArrayList<>();
+    List<Command> ret = new LinkedList<>();
     String tmp = line;
     while (tmp != null && tmp.length() > 0) {
       CmdParser p = getCmdParser(tmp);
@@ -71,12 +72,10 @@ public class CommandFormat {
       }
       
       Command cmd = p.parse(rg);
-      lst.add(cmd);
+      ret.add(cmd);
       tmp = tmp.substring(rg.getIndexOfCharacterAfterMatch()).trim();
     }
 
-    Command[] ret = new Command[0];
-    ret = lst.toArray(ret);
     return ret;
   }
   

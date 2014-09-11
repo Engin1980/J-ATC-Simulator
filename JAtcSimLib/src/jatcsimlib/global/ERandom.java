@@ -13,7 +13,15 @@ import java.util.Random;
  * @author Marek
  */
 public class ERandom extends Random {
-  public int getInt (int fromInclusive, int toExclusive){
-    return super.nextInt(toExclusive) + fromInclusive;
+  public int nextInt (int fromInclusive, int toExclusive){
+    return nextInt(toExclusive) + fromInclusive;
+  }
+  
+  @Override
+  public int nextInt (int maximum){
+    if (maximum == 0)
+      return 0;
+    else 
+      return super.nextInt(maximum);
   }
 }

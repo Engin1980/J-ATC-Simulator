@@ -40,5 +40,8 @@ public class ChangeAltitudeCommand extends Command {
     return altitudeInFt;
   }
   
-  
+    @Override
+  public String toString() {
+    return "CM/DM{"+ altitudeInFt + '}';
+  }
 }

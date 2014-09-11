@@ -23,4 +23,9 @@ public class AfterNavaidCommand extends AfterCommand {
     return navaid;
   }
   
+    @Override
+  public String toString() {
+    return "AN{"+ navaid.getName() + '}';
+  }
+  
 }

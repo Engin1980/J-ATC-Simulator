@@ -6,16 +6,13 @@
 package jatcsimlib.atcs;
 
 import jatcsimlib.Acc;
-import jatcsimlib.Simulation;
 import jatcsimlib.airplanes.Airplane;
 import jatcsimlib.airplanes.AirplaneList;
 import jatcsimlib.airplanes.Squawk;
-import jatcsimlib.commands.ChangeAltitudeCommand;
 import jatcsimlib.commands.ContactCommand;
 import jatcsimlib.exceptions.ERuntimeException;
 import jatcsimlib.global.ETime;
 import jatcsimlib.messaging.Message;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -27,16 +24,16 @@ import java.util.Map;
  */
 public class CentreAtc extends ComputerAtc {
 
-  private AirplaneList departingConfirmedList = new AirplaneList();
-  private AirplaneList departingList = new AirplaneList();
+  private final AirplaneList departingConfirmedList = new AirplaneList();
+  private final AirplaneList departingList = new AirplaneList();
 
   private final AirplaneList arrivingNewList = new AirplaneList();
   private final AirplaneList arrivingForApp = new AirplaneList();
   
   private final Map<Squawk, ETime> waitingRequestsList = new HashMap<>();
 
-  public CentreAtc(String areaIcao) {
-    super(Atc.eType.ctr, areaIcao);
+  public CentreAtc(AtcTemplate template) {
+    super(template);
   }
 
   @Override
@@ -44,16 +41,12 @@ public class CentreAtc extends ComputerAtc {
     if (plane.isDeparture()) {
       throw new ERuntimeException("Departure plane cannot be registered using this method.");
     } else {
-      arrivingNewList.add(plane);
-      Acc.messenger().addMessage(
-          this,
-          plane,
-          new ChangeAltitudeCommand(ChangeAltitudeCommand.eDirection.descend, 12000));
+      arrivingNewList.add(plane);      
     }
   }
 
   public void elapseSecond() {
-    List<Message> msgs = Acc.messenger().getMy(this);
+    List<Message> msgs = Acc.messenger().getMy(this, true);
     List<Message> tmp = new LinkedList<>();
     
     esRemoveInvalidMessages(msgs);
@@ -63,6 +56,7 @@ public class CentreAtc extends ComputerAtc {
     // CTR -> APP, potvrzene od APP
     for (Message m : msgs) {
       if (m.source != Acc.atcApp()) {
+        tmp.add(m);
         continue;
       }
       String sqwk = m.tryGetText();
@@ -131,7 +125,7 @@ public class CentreAtc extends ComputerAtc {
     AirplaneList ret = new AirplaneList();
     // arriving pozadat o predani CTR na APP
     for (Airplane p : arrivingNewList) {
-      if (p.getAltitude() < 16E3) {
+      if (p.getAltitude() < super.releaseAltitude) {
         ret.add(p);
       }
     }
@@ -141,10 +135,22 @@ public class CentreAtc extends ComputerAtc {
   private boolean canIAcceptFromApp(Airplane p) {
     if (p.isDeparture() == false)
       return false;
-    if (p.getAtc() != Acc.atcApp())
+    if (Acc.atcApp().isControllingAirplane(p) == false)
       return false;
-    if (p.getAltitude() < Acc.airport().getMinCtrAtcAltitude())
+    if (p.getAltitude() < super.acceptAltitude)
       return false;
     return true;
+  }
+
+  @Override
+  public boolean isControllingAirplane(Airplane plane) {
+    if (departingConfirmedList.contains(plane))
+      return true;
+    else if (departingList.contains(plane))
+      return true;
+    else if (arrivingNewList.contains(plane))
+      return true;
+    
+    return false;
   }
 }
