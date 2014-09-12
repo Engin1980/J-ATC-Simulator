@@ -16,6 +16,10 @@ public class AfterNavaidCommand extends AfterCommand {
   private final Navaid navaid;
 
   public AfterNavaidCommand(Navaid navaid) {
+    if (navaid == null) {
+      throw new IllegalArgumentException("Argument \"navaid\" cannot be null.");
+    }
+
     this.navaid = navaid;
   }
 

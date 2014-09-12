@@ -133,8 +133,7 @@ public class Simulation {
     long start = System.currentTimeMillis();
     isBusy = true;
     now.increaseSecond();
-    
-    
+
     this.ctrAtc.elapseSecond();
     //this.twrAtc.elapseSecond();
     //this.appAtc.elapseSecond();
@@ -227,19 +226,19 @@ public class Simulation {
     Squawk sqwk = generateSqwk();
     AirplaneType pt = planeTypes.get(rnd.nextInt(planeTypes.size()));
     int heading = (int) Coordinates.getBearing(c, r.getMainFix().getCoordinate());
-    int alt = generateArrivingPlaneAltitude (c);
+    int alt = generateArrivingPlaneAltitude(c);
     int spd = pt.vCruise;
 
     List<Command> routeCmds = r.getCommandsListClone();
     // added command to descend
-    routeCmds.add(0, 
+    routeCmds.add(0,
         new ChangeAltitudeCommand(
-            ChangeAltitudeCommand.eDirection.descend, 
+            ChangeAltitudeCommand.eDirection.descend,
             Acc.atcCtr().getOrderedAltitude()
         ));
     // added command to contact CTR
     routeCmds.add(0, new ContactCommand(Atc.eType.ctr));
-    
+
     ret = new Airplane(
         cs, c, sqwk, pt, heading, alt, spd, false,
         r.getName(), routeCmds);
@@ -332,9 +331,9 @@ public class Simulation {
 
   private int generateArrivingPlaneAltitude(Coordinate c) {
     double thousandsFeetPerMile = 0.35;
-    
+
     double dist = Coordinates.getDistanceInNM(c, Acc.airport().getLocation());
-    
+
     int ret = (int) (dist * thousandsFeetPerMile) - rnd.nextInt(0, 7);
     ret = ret * 1000;
     return ret;

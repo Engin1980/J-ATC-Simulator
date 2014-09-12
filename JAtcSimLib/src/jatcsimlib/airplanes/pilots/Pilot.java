@@ -105,7 +105,7 @@ public class Pilot {
     return ret;
   }
 
-  public void drivePlane() {
+  public void elapseSecond() {
 
     /*
     
@@ -425,6 +425,7 @@ public class Pilot {
   private void endrivePlane() {
     if (hold != null) {
       // fly hold
+      flyHold();
     } else if (app != null) {
       // fly app
     } else if (targetCoordinate != null) {
@@ -435,6 +436,59 @@ public class Pilot {
             = Headings.getBetterDirectionToTurn(parent.getHeading(), heading) == ChangeHeadingCommand.eDirection.left;
         parent.setTargetHeading(heading, useLeftTurn);
       }
+    }
+  }
+  
+  private void flyHold(){
+    switch (hold.phase){
+      case beginning:
+        setHoldDataByEntry();
+        hold.phase = HoldInfo.ePhase.entering;
+        break;
+      case entering:
+      case inbound:
+        if (Coordinates.getDistanceInNM(parent.getCoordinate(), hold.fix) < 0.5){
+          parent.setTargetHeading(hold.outboundHeading, false);
+          hold.phase = HoldInfo.ePhase.firstTurn;
+        }
+      break;
+      case firstTurn:
+        if (hold.outboundHeading == parent.getHeading()){
+          hold.secondTurnTime = Acc.now().addSeconds(60);
+          hold.phase = HoldInfo.ePhase.outbound;
+        }
+        break;
+      case outbound:
+        if (Acc.now().isAfter(hold.secondTurnTime)){
+          parent.setTargetHeading(Headings.add(hold.outboundHeading, 180), false);
+          hold.phase = HoldInfo.ePhase.secondTurn;
+        }
+      case secondTurn:
+        if (parent.getTargetHeading() == parent.getHeading()){
+          // nejak zajistit, at leti po radiale //TODO
+          hold.phase = HoldInfo.ePhase.inbound;
+        }
+      default:
+        throw new ENotSupportedException();
+    }
+  }
+
+  private void setHoldDataByEntry() {
+    int y = parent.getHeading();
+    int h = hold.incomingFixHeading;
+    int a = Headings.add(h, -75);
+    int b = Headings.add(h, 110);
+    if (Headings.isBetween(a, y, h)){
+      // teardrop
+      
+    } else if (Headings.isBetween(h, y, b)){
+      // parallel
+    } else {
+      // direct
+      int heading = (int) Coordinates.getBearing(parent.getCoordinate(), hold.fix);
+      boolean leftTurn = Headings.getBetterDirectionToTurn(parent.getHeading(), heading) == ChangeHeadingCommand.eDirection.left;
+      parent.setTargetHeading(heading, leftTurn);
+      hold.phase = HoldInfo.ePhase.entering;
     }
   }
 }

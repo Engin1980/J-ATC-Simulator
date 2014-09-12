@@ -13,6 +13,7 @@ import jatcsimdraw.shared.es.WithCoordinateEvent;
 import jatcsimlib.Simulation;
 import jatcsimlib.airplanes.Airplane;
 import jatcsimlib.atcs.Atc;
+import jatcsimlib.atcs.UserAtc;
 import jatcsimlib.commands.Command;
 import jatcsimlib.commands.CommandFormat;
 import jatcsimlib.events.EventListener;
@@ -78,8 +79,8 @@ public class FrmMain extends javax.swing.JFrame {
   private void jTxtInputKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTxtInputKeyPressed
     if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
       String msg = jTxtInput.getText();
-      sendMessage(msg);
-      jTxtInput.setText("");
+      boolean accepted = sendMessage(msg);
+      if (accepted) jTxtInput.setText("");
     }
   }//GEN-LAST:event_jTxtInputKeyPressed
 
@@ -147,47 +148,56 @@ public class FrmMain extends javax.swing.JFrame {
 
   }
 
-  private void sendMessage(String msg) {
-    Atc app = sim.getAppAtc();
+  private boolean sendMessage(String msg) {
+    boolean ret ;
+    UserAtc app = sim.getAppAtc();
     if (msg.startsWith("+")) {
       // msg for CTR
       msg = msg.substring(1);
-      sim.getMessenger().addMessage(app, sim.getCtrAtc(), msg);
+      app.sendCommands(Atc.eType.ctr, msg);
+      ret = true;
     } else if (msg.startsWith("-")) {
       // msg for TWR
       msg = msg.substring(1);
-      sim.getMessenger().addMessage(app, sim.getTwrAtc(), msg);
+      app.sendCommands(Atc.eType.twr, msg);
+      ret = true;
     } else if (msg.startsWith("=")) {
       // system
       msg = msg.substring(1);
-      sim.getMessenger().addMessage(app, null, msg);
+      app.sendSystem(msg);
+      ret = true;
     } else {
-      String [] spl = splitToCallsignAndMessages(msg);
+      String[] spl = splitToCallsignAndMessages(msg);
       Airplane p = sim.getPlanes().tryGetByCallsingOrNumber(spl[0]);
       if (p == null) {
-        sim.getMessenger().addMessage(null, app, "No such plane for callsign " + spl[0] + ".");
+        app.sendError("No such plane (or multiple planes) for callsign " + spl[0] + ".");
+        ret = false;
       } else {
-        List<Command> cmdList;
-        try{
-        cmdList = CommandFormat.parseMulti(spl[1]);
-        } catch (Exception ex){
-          sim.getMessenger().addMessage(null, app, "Command error: " + ex.getMessage());
-          return;
+        List<Command> cmdList = null;
+        try {
+          cmdList = CommandFormat.parseMulti(spl[1]);
+          ret = true;
+        } catch (Exception ex) {
+          app.sendError("Command error: " + ex.getMessage());
+          ret = false;
         }
-        sim.getMessenger().addMessage(app, p, cmdList);
+        if (ret) {
+          sim.getMessenger().addMessage(app, p, cmdList);
+        }
       }
     }
+    return ret;
   }
 
   private String[] splitToCallsignAndMessages(String msg) {
-    String [] ret = new String[2];
+    String[] ret = new String[2];
     int i = msg.indexOf(" ");
-    if (i == msg.length() || i < 0){
+    if (i == msg.length() || i < 0) {
       ret[0] = msg;
       ret[1] = "";
     } else {
       ret[0] = msg.substring(0, i);
-      ret[1] = msg.substring(i+1);
+      ret[1] = msg.substring(i + 1);
     }
     return ret;
   }

@@ -50,9 +50,9 @@ public class BasicPainter extends Painter {
   }
 
   @Override
-  protected void drawText(String text, Coordinate coordinate, int xShiftInPixels, int yShiftInPixels, Color color) {
+  protected void drawText(String text, Coordinate coordinate, int xShiftInPixels, int yShiftInPixels, Color color, eTextType textType) {
     Point p = toPoint(coordinate);
-    c.drawText(text, p, xShiftInPixels, yShiftInPixels, color);
+    c.drawText(text, p, xShiftInPixels, yShiftInPixels, color, textType);
   }
 
   @Override
@@ -87,7 +87,7 @@ public class BasicPainter extends Painter {
   }
 
   @Override
-  protected void drawTextBlock(List<String> lines, eTextBlockLocation location, Color color) {
-    c.drawTextBlock(lines, location, color);
+  protected void drawTextBlock(List<String> lines, eTextBlockLocation location, Color color, eTextType textType) {
+    c.drawTextBlock(lines, location, color, textType);
   }
 }

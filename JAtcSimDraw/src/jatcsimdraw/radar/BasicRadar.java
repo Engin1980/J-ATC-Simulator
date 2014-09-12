@@ -8,13 +8,11 @@ package jatcsimdraw.radar;
 import jatcsimdraw.global.Point;
 import jatcsimdraw.settings.Settings;
 import jatcismdraw.radarBase.Canvas;
-import jatcismdraw.radarBase.Canvas;
 import jatcismdraw.radarBase.Painter;
 import jatcismdraw.radarBase.Radar;
 import jatcismdraw.radarBase.Visualiser;
 import jatcismdraw.radarBase.BasicPainter;
 import jatcismdraw.radarBase.BasicVisualiser;
-import jatcsimdraw.radar.PaintManager;
 import jatcsimlib.events.EventListener;
 import jatcsimlib.events.EventManager;
 import jatcsimdraw.shared.es.EMouseEvent;
@@ -22,6 +20,7 @@ import jatcsimdraw.shared.es.WithCoordinateEvent;
 import jatcsimlib.Simulation;
 import jatcsimlib.coordinates.RadarRange;
 import jatcsimlib.coordinates.Coordinate;
+import java.awt.Font;
 import java.awt.event.KeyEvent;
 
 /**
@@ -56,7 +55,9 @@ public class BasicRadar extends Radar  {
       }
     });
 
-    this.c.setFont("Courier CE", 10);
+    this.c.setNavaidFont("Courier CE", Font.PLAIN, 10);
+    this.c.setPlaneFont("Courier CE", Font.BOLD, 10);
+    this.c.setMessageFont("Verdana", Font.BOLD, 11);
     
     this.c.onMouseEvent().addListener(new EventListener<Canvas, EMouseEvent>() {
       @Override

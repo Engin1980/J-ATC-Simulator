@@ -6,6 +6,7 @@
 package jatcsimlib;
 
 import jatcsimlib.airplanes.AirplaneList;
+import jatcsimlib.atcs.Atc;
 import jatcsimlib.atcs.CentreAtc;
 import jatcsimlib.atcs.TowerAtc;
 import jatcsimlib.atcs.UserAtc;
@@ -68,5 +69,18 @@ public class Acc {
   
   public static String toAltS(int altitudeInFt, boolean appendFt){
     return Acc.sim().toAltitudeString(altitudeInFt, appendFt);
+  }
+
+  public static Atc atc(Atc.eType type) {
+    switch(type){
+      case app:
+        return atcApp();
+      case ctr:
+        return atcCtr();
+      case twr:
+        return atcTwr();
+      default:
+        throw new ENotSupportedException();
+    }
   }
 }

@@ -139,7 +139,7 @@ public class Airplane implements KeyItem<Callsign> {
   }
   
   private void drivePlane(){
-    pilot.drivePlane();
+    pilot.elapseSecond();
   }
   
   private void processMessages(){

@@ -71,6 +71,6 @@ public class Messenger {
   }
 
   public void remove(Message m) {
-    inner.get(m).remove(m);
+    inner.get(m.target).remove(m);
   }
 }

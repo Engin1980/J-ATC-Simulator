@@ -6,10 +6,28 @@
 
 package jatcsimlib.airplanes.pilots;
 
+import jatcsimlib.coordinates.Coordinate;
+import jatcsimlib.global.ETime;
+
 /**
  *
  * @author Marek
  */
 class HoldInfo {
+  public enum ePhase{
+    beginning,
+    entering,
+    firstTurn,
+    outbound,
+    secondTurn,
+    inbound,
+    parAgainst,
+    parTurn
+  }
   
+  public Coordinate fix;
+  public int incomingFixHeading;
+  public ePhase phase;
+  public ETime secondTurnTime;
+  public int outboundHeading;
 }

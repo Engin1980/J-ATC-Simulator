@@ -6,7 +6,11 @@
 
 package jatcsimlib.atcs;
 
+import jatcsimlib.Acc;
 import jatcsimlib.airplanes.Airplane;
+import jatcsimlib.commands.Command;
+import jatcsimlib.exceptions.ENotSupportedException;
+import java.util.List;
 
 /**
  *
@@ -37,4 +41,18 @@ public class UserAtc extends Atc {
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
 
+  public void sendCommands(Airplane plane, List<Command> commands){
+    Acc.messenger().addMessage(this, plane, commands);
+  }
+  public void sendCommands(Atc.eType type, String commandText){
+    Atc atc = Acc.atc(type);
+    Acc.messenger().addMessage(this, atc, commandText);
+  }
+  public void sendError (String message){
+    Acc.messenger().addMessage(null, this, message);
+  }
+  public void sendSystem (String message){
+    throw new ENotSupportedException();
+  }
+  
 }

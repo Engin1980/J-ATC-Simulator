@@ -4,9 +4,8 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/C:/Users/Marek/Documents/NetBeansProjects/_JAtcSimSolution/JAtcSimLib/src/jatcsimlib/airplanes/pilots/Pilot.java</file>
-            <file>file:/C:/Users/Marek/Documents/NetBeansProjects/_JAtcSimSolution/JAtcSimLib/src/jatcsimlib/airplanes/Airplane.java</file>
-            <file>file:/C:/Users/Marek/Documents/NetBeansProjects/_JAtcSimSolution/JAtcSimLib/src/jatcsimlib/commands/Command.java</file>
-            <file>file:/C:/Users/Marek/Documents/NetBeansProjects/_JAtcSimSolution/JAtcSimLib/src/jatcsimlib/commands/ClearedToApproachCommand.java</file>
+            <file>file:/C:/Users/Marek/Documents/NetBeansProjects/_JAtcSimSolution/JAtcSimLib/src/jatcsimlib/airplanes/pilots/HoldInfo.java</file>
+            <file>file:/C:/Users/Marek/Documents/NetBeansProjects/_JAtcSimSolution/JAtcSimLib/src/jatcsimlib/airplanes/pilots/ApproachInfo.java</file>
         </group>
     </open-files>
 </project-private>

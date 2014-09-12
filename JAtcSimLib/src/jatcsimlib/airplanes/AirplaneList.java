@@ -53,7 +53,12 @@ public class AirplaneList extends KeyList<Airplane, Callsign> {
   }
 
   public Airplane tryGetBySqwk(String sqwk) {
-    Squawk s = new Squawk(sqwk);
+    Squawk s;
+    try{
+    s = new Squawk(sqwk);
+    } catch (Exception ex){
+      return null;
+    }
     return this.tryGet(s);
   }
 

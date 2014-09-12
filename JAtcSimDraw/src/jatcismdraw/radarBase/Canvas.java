@@ -24,7 +24,9 @@ public abstract class Canvas {
   public abstract int getWidth();
   public abstract int getHeight();
   
-  public abstract void setFont(String name, int size);
+  public abstract void setNavaidFont(String name, int type, int size);
+  public abstract void setPlaneFont(String name, int type, int size);
+  public abstract void setMessageFont(String name, int type, int size);
   
   public void drawLine (Point from, Point to, Color color, int width){
     drawLine(from.x, from.y, to.x, to.y, color, width);
@@ -47,9 +49,9 @@ public abstract class Canvas {
 
   public abstract void drawArc(Point p, int xRadius, int yRadius, int fromAngle, int toAngle, Color color);
   
-  public abstract void drawText(String text, Point p, int xShiftInPixels, int yShiftInPixels, Color c);
+  public abstract void drawText(String text, Point p, int xShiftInPixels, int yShiftInPixels, Color c, Painter.eTextType textType);
   
-  public abstract void drawTextBlock(List<String> lines, Painter.eTextBlockLocation location, Color color);
+  public abstract void drawTextBlock(List<String> lines, Painter.eTextBlockLocation location, Color color, Painter.eTextType textType);
   
   public abstract void clear(Color backColor);
   

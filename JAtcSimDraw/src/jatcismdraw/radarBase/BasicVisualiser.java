@@ -33,8 +33,6 @@ import java.util.List;
  */
 public class BasicVisualiser extends Visualiser {
 
-  private static final int TRANSITION_LEVEL = 5000;
-  
   public BasicVisualiser(Painter p, Settings sett) {
     super(p, sett);
   }
@@ -46,13 +44,13 @@ public class BasicVisualiser extends Visualiser {
     DispText dt;
     
     dt = sett.getDispText(DispText.eType.atc);
-    p.drawTextBlock (ms.atc, Painter.eTextBlockLocation.bottomRight, dt.getColor());
+    p.drawTextBlock (ms.atc, Painter.eTextBlockLocation.bottomRight, dt.getColor(), Painter.eTextType.message);
     
     dt = sett.getDispText(DispText.eType.plane);
-    p.drawTextBlock(ms.plane, Painter.eTextBlockLocation.bottomLeft, dt.getColor());
+    p.drawTextBlock(ms.plane, Painter.eTextBlockLocation.bottomLeft, dt.getColor(), Painter.eTextType.message );
     
     dt = sett.getDispText(DispText.eType.system);
-    p.drawTextBlock(ms.system, Painter.eTextBlockLocation.topRight, dt.getColor());
+    p.drawTextBlock(ms.system, Painter.eTextBlockLocation.topRight, dt.getColor(), Painter.eTextType.message);    
   }
   
   @Override
@@ -106,24 +104,24 @@ public class BasicVisualiser extends Visualiser {
       case VOR:
         p.drawPoint(navaid.getCoordinate(), ds.getColor(), ds.getWidth());
         p.drawCircleAround(navaid.getCoordinate(), ds.getBorderDistance(), ds.getColor(), ds.getBorderWidth());
-        p.drawText(navaid.getName(), navaid.getCoordinate(), 3, 3, ds.getColor());
+        p.drawText(navaid.getName(), navaid.getCoordinate(), 3, 3, ds.getColor(), Painter.eTextType.navaid);
         break;
       case NDB:
         p.drawPoint(navaid.getCoordinate(), ds.getColor(), ds.getWidth());
         p.drawTriangleAround(navaid.getCoordinate(), ds.getBorderDistance(), ds.getColor(), ds.getBorderWidth());
-        p.drawText(navaid.getName(), navaid.getCoordinate(), 3, 3, ds.getColor());
+        p.drawText(navaid.getName(), navaid.getCoordinate(), 3, 3, ds.getColor(), Painter.eTextType.navaid);
         break;
       case Fix:
         p.drawPoint(navaid.getCoordinate(), ds.getColor(), ds.getWidth());
         //p.drawCircleAround(navaid.getCoordinate(), 9, ds.getColor(), 1);
-        p.drawText(navaid.getName(), navaid.getCoordinate(), 3, 0, ds.getColor());
+        p.drawText(navaid.getName(), navaid.getCoordinate(), 3, 0, ds.getColor(), Painter.eTextType.navaid);
         break;
       case FixMinor:
         p.drawPoint(navaid.getCoordinate(), ds.getColor(), ds.getWidth());
         break;
       case Airport:
         p.drawPoint(navaid.getCoordinate(), ds.getColor(), ds.getWidth());
-        p.drawText(navaid.getName(), navaid.getCoordinate(), 3, 3, ds.getColor());
+        p.drawText(navaid.getName(), navaid.getCoordinate(), 3, 3, ds.getColor(), Painter.eTextType.navaid);
         break;
     }
     
@@ -206,7 +204,7 @@ public class BasicVisualiser extends Visualiser {
     sb.append(
       buildPlaneString(dp.getThirdLineFormat(), plane));
     
-    p.drawText(sb.toString(), plane.getCoordinate(), 3, 3, dp.getColor());
+    p.drawText(sb.toString(), plane.getCoordinate(), 3, 3, dp.getColor(), Painter.eTextType.plane);
         
   }
 

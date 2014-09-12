@@ -31,6 +31,12 @@ public abstract class Painter {
     bottomRight
   }
 
+    public enum eTextType{
+    navaid,
+    plane,
+    message
+  }
+  
   protected Canvas c;
   protected Coordinate topLeft;
   protected Coordinate bottomRight;
@@ -134,9 +140,9 @@ public abstract class Painter {
 
   protected abstract void clear(Color backColor);
 
-  protected abstract void drawText(String name, Coordinate coordinate, int xShiftInPixels, int yShiftInPixels, Color color);
+  protected abstract void drawText(String name, Coordinate coordinate, int xShiftInPixels, int yShiftInPixels, Color color, eTextType textType);
   
   protected abstract void drawLine(Coordinate coordinate, int lengthInPixels, int heading, Color color, int width);
   
-  protected abstract void drawTextBlock(List<String> lines, eTextBlockLocation location, Color color);
+  protected abstract void drawTextBlock(List<String> lines, eTextBlockLocation location, Color color, eTextType textType);
 }

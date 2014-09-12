@@ -70,7 +70,11 @@ public class Route implements KeyItem<String> {
       return _routeCommands;
     }
 
+    try{
     _routeCommands = CommandFormat.parseMulti(this.route);
+    } catch (Exception ex){
+      throw new ERuntimeException("Parsing commands failed. Did the app check route commands at loading?", ex);
+    }
     return _routeCommands;
   }
   
