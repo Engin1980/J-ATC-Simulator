@@ -227,7 +227,7 @@ public class Simulation {
     Squawk sqwk = generateSqwk();
     AirplaneType pt = planeTypes.get(rnd.nextInt(planeTypes.size()));
     int heading = (int) Coordinates.getBearing(c, r.getMainFix().getCoordinate());
-    int alt = rnd.nextInt(2, 6) * 1000 + Acc.atcCtr().getReleaseAltitude();
+    int alt = generateArrivingPlaneAltitude (c);
     int spd = pt.vCruise;
 
     List<Command> routeCmds = r.getCommandsListClone();
@@ -270,7 +270,7 @@ public class Simulation {
   private Coordinate generateArrivalCoordinate(Coordinate navFix, Coordinate aipFix) {
     double radial = Coordinates.getBearing(aipFix, navFix);
     radial += rnd.nextDouble() * 50 - 25; // nahodne zatoceni priletoveho radialu
-    double dist = rnd.nextDouble() * 20;
+    double dist = rnd.nextDouble() * 50; // vzdalenost od prvniho bodu STARu
     Coordinate ret = null;
     while (ret == null) {
 
@@ -307,7 +307,7 @@ public class Simulation {
     Route ret = null;
     while (ret == null) {
       int index = rnd.nextInt(this.activeRunwayThreshold.getRoutes().size());
-      if (this.activeRunwayThreshold.getRoutes().get(index).getType().isArrival()) {
+      if (this.activeRunwayThreshold.getRoutes().get(index).getType().isArrival() == arrival) {
         ret = this.activeRunwayThreshold.getRoutes().get(index);
       }
     }
@@ -328,6 +328,16 @@ public class Simulation {
 
   public CentreAtc getCtrAtc() {
     return ctrAtc;
+  }
+
+  private int generateArrivingPlaneAltitude(Coordinate c) {
+    double thousandsFeetPerMile = 0.35;
+    
+    double dist = Coordinates.getDistanceInNM(c, Acc.airport().getLocation());
+    
+    int ret = (int) (dist * thousandsFeetPerMile) - rnd.nextInt(0, 7);
+    ret = ret * 1000;
+    return ret;
   }
 
 }
