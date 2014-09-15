@@ -8,12 +8,13 @@ package jatcsim.frmPacks;
 
 import jatcsimdraw.settings.Settings;
 import jatcsimlib.Simulation;
+import jatcsimlib.world.Area;
 
 /**
  *
  * @author Marek
  */
 public abstract class Pack {
-  public abstract void initPack(Simulation sim, Settings displSettings);
+  public abstract void initPack(Simulation sim, Area area, Settings displSettings);
   public abstract void startPack();
 }

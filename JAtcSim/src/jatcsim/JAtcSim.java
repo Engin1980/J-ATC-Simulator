@@ -37,7 +37,7 @@ public class JAtcSim {
       throw (ex);
     }
     
-    area.rebuildParentReferences();
+    area.initAfterLoad();
     
     System.out.println("** Setting simulation");
 
@@ -49,7 +49,7 @@ public class JAtcSim {
     jatcsim.frmPacks.Pack simPack = 
         new jatcsim.frmPacks.oneWindow.Pack();
     
-    simPack.initPack(sim, displaySettings);
+    simPack.initPack(sim, area, displaySettings);
   }
 
   private static void loadDataFromXmlFiles() throws Exception {
@@ -58,7 +58,7 @@ public class JAtcSim {
     Serializer ser = new Serializer();
     
     try {
-      area = new Area();
+      area = Area.create();
       ser.fillObject(
           "C:\\Users\\Marek\\Documents\\NetBeansProjects\\_JAtcSimSolution\\JAtcSim\\src\\jatcsim\\lkpr.xml",
           area);

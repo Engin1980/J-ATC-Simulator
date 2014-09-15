@@ -18,6 +18,7 @@ import jatcsimlib.commands.Command;
 import jatcsimlib.commands.CommandFormat;
 import jatcsimlib.events.EventListener;
 import jatcsimlib.world.Airport;
+import jatcsimlib.world.Area;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
@@ -90,13 +91,13 @@ public class FrmMain extends javax.swing.JFrame {
 
   private Simulation sim;
 
-  void init(final Simulation sim, Settings displaySettings) {
+  void init(final Simulation sim, final Area area, Settings displaySettings) {
 
     this.sim = sim;
     Airport aip = sim.getActiveAirport();
 
     EJComponentCanvas canvas = new EJComponentCanvas();
-    BasicRadar r = new BasicRadar(canvas, aip.getRadarRange(), sim, displaySettings);
+    BasicRadar r = new BasicRadar(canvas, aip.getRadarRange(), sim, area, displaySettings);
     final EJComponent comp = canvas.getEJComponent();
 
     final FrmMain f = this;

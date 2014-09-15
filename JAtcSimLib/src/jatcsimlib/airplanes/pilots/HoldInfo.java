@@ -8,6 +8,7 @@ package jatcsimlib.airplanes.pilots;
 
 import jatcsimlib.coordinates.Coordinate;
 import jatcsimlib.global.ETime;
+import jatcsimlib.global.Headings;
 
 /**
  *
@@ -16,18 +17,24 @@ import jatcsimlib.global.ETime;
 class HoldInfo {
   public enum ePhase{
     beginning,
-    entering,
+    directEntry,
+    parallelEntry,
+    parallelAgainst,
+    parallelTurn,
+    tearEntry,
+    tearAgainst,
     firstTurn,
     outbound,
     secondTurn,
-    inbound,
-    parAgainst,
-    parTurn
+    inbound
   }
   
   public Coordinate fix;
-  public int incomingFixHeading;
+  public int inboundRadial;
   public ePhase phase;
   public ETime secondTurnTime;
-  public int outboundHeading;
+  public boolean isLeftTurned;
+  public int getOutboundHeading(){
+    return Headings.add(inboundRadial, 180);
+  }
 }

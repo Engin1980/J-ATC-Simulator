@@ -24,6 +24,7 @@ public class Airport implements KeyItem<String> {
   private final RadarRange radarRange= new RadarRange();
   private final KeyList<Runway, String> runways = new KeyList();
   private final KeyList<AtcTemplate, Atc.eType> atcTemplates = new KeyList();
+  private final KeyList<PublishedHold, Navaid> holds = new KeyList();
   private Area parent;
 
   @Override
@@ -58,6 +59,11 @@ public class Airport implements KeyItem<String> {
   public Area getParent() {
     return parent;
   }
+
+  public KeyList<PublishedHold, Navaid> getHolds() {
+    return holds;
+  }
+  
 
   public void setParent(Area parent) {
     this.parent = parent;

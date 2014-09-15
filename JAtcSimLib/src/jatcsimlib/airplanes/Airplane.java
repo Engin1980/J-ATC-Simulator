@@ -8,6 +8,7 @@ package jatcsimlib.airplanes;
 import jatcsimlib.Acc;
 import jatcsimlib.airplanes.pilots.Pilot;
 import jatcsimlib.atcs.Atc;
+import jatcsimlib.commands.ChangeHeadingCommand;
 import jatcsimlib.commands.Command;
 import jatcsimlib.coordinates.Coordinate;
 import jatcsimlib.coordinates.Coordinates;
@@ -232,6 +233,11 @@ public class Airplane implements KeyItem<Callsign> {
     this.coordinate = newC;
   }
   
+  public void setTargetHeading(int targetHeading){
+    boolean useLeft =
+        Headings.getBetterDirectionToTurn(heading, targetHeading) == ChangeHeadingCommand.eDirection.left;
+    setTargetHeading(targetHeading, useLeft);
+  }
   public void setTargetHeading(int targetHeading, boolean useLeftTurn){
     this.targetHeading = targetHeading;
     this.targetHeadingLeftTurn = useLeftTurn;

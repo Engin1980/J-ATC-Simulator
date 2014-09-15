@@ -24,55 +24,68 @@ import jatcsimlib.world.RunwayThreshold;
  */
 public class Acc {
 
+  private static Area area;
+  private static Simulation sim;
+
+  public static void setArea(Area area) {
+    Acc.area = area;
+  }
+
+  public static void setSimulation(Simulation simulation) {
+    Acc.sim = simulation;
+  }
+
   public static Simulation sim() {
-    return Simulation.getCurrent();
+    return sim;
   }
-  
-  public static AirplaneList planes(){
-    return Simulation.getCurrent().getPlanes();
+
+  public static AirplaneList planes() {
+    return sim.getPlanes();
   }
-  
-  public static ETime now(){
-    return Simulation.getCurrent().getNow();
+
+  public static ETime now() {
+    return sim.getNow();
   }
 
   public static Airport airport() {
-    return Simulation.getCurrent().getActiveAirport();
+    return sim.getActiveAirport();
   }
 
   public static Messenger messenger() {
-    return Simulation.getCurrent().getMessenger();
+    return sim.getMessenger();
   }
 
   public static Weather weather() {
     throw new ENotSupportedException();
-//return Simulation.getCurrent().getWeather();
+//return sim.getWeather();
   }
 
   public static RunwayThreshold threshold() {
-    return Simulation.getCurrent().getActiveRunwayThreshold();
+    return sim.getActiveRunwayThreshold();
   }
 
   public static Area area() {
-    return Simulation.getCurrent().getArea();
+    return area;
   }
-  
-  public static UserAtc atcApp(){
-    return Simulation.getCurrent().getAppAtc();
+
+  public static UserAtc atcApp() {
+    return sim.getAppAtc();
   }
-  public static TowerAtc atcTwr(){
-    return Simulation.getCurrent().getTwrAtc();
+
+  public static TowerAtc atcTwr() {
+    return sim.getTwrAtc();
   }
-  public static CentreAtc atcCtr(){
-    return Simulation.getCurrent().getCtrAtc();
+
+  public static CentreAtc atcCtr() {
+    return sim.getCtrAtc();
   }
-  
-  public static String toAltS(int altitudeInFt, boolean appendFt){
+
+  public static String toAltS(int altitudeInFt, boolean appendFt) {
     return Acc.sim().toAltitudeString(altitudeInFt, appendFt);
   }
 
   public static Atc atc(Atc.eType type) {
-    switch(type){
+    switch (type) {
       case app:
         return atcApp();
       case ctr:

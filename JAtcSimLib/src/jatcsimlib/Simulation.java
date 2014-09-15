@@ -45,7 +45,6 @@ import java.util.List;
 public class Simulation {
 
   private final ETime now;
-  private final Area area;
   private final Airport airport;
   private final AirplaneTypes planeTypes;
   private final AirplaneList planes = new AirplaneList();
@@ -60,9 +59,6 @@ public class Simulation {
 
   private final EventManager<Simulation, EventListener<Simulation, Simulation>, Simulation> tickEM = new EventManager(this);
 
-  public Area getArea() {
-    return area;
-  }
 
   public RunwayThreshold getActiveRunwayThreshold() {
     return activeRunwayThreshold;
@@ -101,7 +97,6 @@ public class Simulation {
       throw new IllegalArgumentException("Argument \"airport\" cannot be null.");
     }
 
-    this.area = airport.getParent();
     this.airport = airport;
     this.planeTypes = types;
     this.twrAtc = new TowerAtc(airport.getAtcTemplates().get(Atc.eType.twr));
@@ -113,10 +108,9 @@ public class Simulation {
 
   public static Simulation create(Airport airport, AirplaneTypes types, Calendar now) {
     Simulation ret = new Simulation(airport, types, now);
-    Simulation.current = ret;
 
-    ret.checkRouteCommands();
-
+    Acc.setSimulation(ret);
+    
     ret.activeRunwayThreshold
         = airport.getRunways().tryGet("06-24").getThresholdA();
 
@@ -154,56 +148,8 @@ public class Simulation {
     }
   }
 
-  private static Simulation current;
-
-  public static Simulation getCurrent() {
-    return current;
-  }
-
-  public static void setCurrent(Simulation current) {
-    Simulation.current = current;
-  }
-
-  private void checkRouteCommands() {
-    List<Command> cmds;
-    Navaid n;
-    for (Airport a : this.area.getAirports()) {
-      for (Runway r : a.getRunways()) {
-        for (RunwayThreshold t : r.getThresholds()) {
-          for (Approach p : t.getApproaches()) {
-            try {
-              cmds = CommandFormat.parseMulti(p.getGaRoute());
-            } catch (Exception ex) {
-              throw new ERuntimeException(
-                  String.format("Airport %s runway %s approach %s has invalid go-around route commands: %s (error: %s)",
-                      a.getIcao(), t.getName(), p.getType(), p.getGaRoute(), ex.getMessage()));
-            }
-          } // for (Approach
-
-          for (Route o : t.getRoutes()) {
-            try {
-              cmds = CommandFormat.parseMulti(o.getRoute());
-            } catch (Exception ex) {
-              throw new ERuntimeException(
-                  String.format("Airport %s runway %s route %s has invalid commands: %s (error: %s)",
-                      a.getIcao(), t.getName(), o.getName(), o.getRoute(), ex.getMessage()));
-            }
-            try {
-              n = o.getMainFix();
-            } catch (ERuntimeException ex) {
-              throw new ERuntimeException(
-                  String.format(
-                      "Airport %s runway %s route %s has no main fix. SID last/STAR first command must be PD FIX (error: %s)",
-                      a.getIcao(), t.getName(), o.getName(), o.getRoute()));
-            }
-          }
-        } // for (RunwayThreshold
-      } // for (Runway
-    } // for (Airport
-  }
-
   private void generateNewPlanes() {
-    if (planes.isEmpty() == false) { // smazat
+    if (planes.size() > 2) { // smazat
       return;
     }
 

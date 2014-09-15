@@ -44,7 +44,7 @@ public class Messenger {
   }
 
   public String getTime() {
-    return Simulation.getCurrent().getNow().toString();
+    return Acc.now().toString();
   }
 
   public void deleteOldMessages(ETime time) {

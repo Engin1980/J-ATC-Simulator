@@ -20,6 +20,7 @@ import jatcsimdraw.shared.es.WithCoordinateEvent;
 import jatcsimlib.Simulation;
 import jatcsimlib.coordinates.RadarRange;
 import jatcsimlib.coordinates.Coordinate;
+import jatcsimlib.world.Area;
 import java.awt.Font;
 import java.awt.event.KeyEvent;
 
@@ -41,11 +42,11 @@ public class BasicRadar extends Radar  {
       BasicRadar, EventListener<BasicRadar, KeyEvent>, KeyEvent> keyPressEM = new EventManager(this);
 
   public BasicRadar(Canvas canvas, RadarRange radarRange,
-      Simulation sim, Settings displaySettings) {
+      Simulation sim, Area area, Settings displaySettings) {
     this.c = canvas;
     this.p = new BasicPainter(c, radarRange.topLeft, radarRange.bottomRight);
     this.v = new BasicVisualiser(p, displaySettings);
-    this.m = new PaintManager(sim, v);
+    this.m = new PaintManager(sim, area, v);
 
     this.paintEM.addListener(new EventListener<BasicRadar, Object>() {
 

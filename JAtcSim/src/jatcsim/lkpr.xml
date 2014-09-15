@@ -48,7 +48,25 @@
             <threshold name="22" coordinate="50 06 10.50 N 014 17 04.00 E" />
           </thresholds>
         </runway>
-      </runways>      
+      </runways> 
+      <holds>
+        <!-- generic -->
+        <hold navaidName="LOMKI" inboundRadial="091" turn="right" />
+        <hold navaidName="BAROX" inboundRadial="062" turn="left" />
+        <hold navaidName="GOSEK" inboundRadial="038" turn="left" />
+        <hold navaidName="VLM" inboundRadial="304" turn="left" />
+        <hold navaidName="GOLOP" inboundRadial="171" turn="left" />
+        <hold navaidName="OKL" inboundRadial="90" turn="right" />
+        <!-- apps  -->
+        <hold navaidName="KUVIX" inboundRadial="242" turn="right" />
+        <hold navaidName="AKEVA" inboundRadial="242" turn="left" />
+        <hold navaidName="SOMIS" inboundRadial="304" turn="left" />
+        <hold navaidName="EVEMI" inboundRadial="304" turn="right" />
+        <hold navaidName="ERASU" inboundRadial="62" turn="left" />
+        <hold navaidName="RATEV" inboundRadial="62" turn="right" />
+        <hold navaidName="ARVEG" inboundRadial="123" turn="left" />
+        <hold navaidName="KENOK" inboundRadial="304" turn="left" />
+      </holds>     
     </airport>
   </airports>
   <navaids>

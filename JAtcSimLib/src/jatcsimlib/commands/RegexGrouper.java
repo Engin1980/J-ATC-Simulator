@@ -15,35 +15,50 @@ import java.util.regex.Pattern;
 public class RegexGrouper {
 
   private Matcher m;
-  
+
   public static RegexGrouper apply(String data, String pattern) {
     RegexGrouper ret = new RegexGrouper();
     Pattern p = Pattern.compile("^" + pattern);
     ret.m = p.matcher(data);
-    if (ret.m.find() == false){
+    if (ret.m.find() == false) {
       ret = null;
     }
 
     return ret;
   }
-  
-  public int getIndexOfCharacterAfterMatch(){
+
+  public int getIndexOfCharacterAfterMatch() {
     return m.end();
   }
-  
-  public String getMatch(){
+
+  public String getMatch() {
     return m.group(0);
   }
 
   public int getInt(int groupIndex) {
     return Integer.parseInt(m.group(groupIndex));
   }
-  
-  public double getDouble (int groupIndex){
+
+  public double getDouble(int groupIndex) {
     return Double.parseDouble(m.group(groupIndex));
   }
 
   public String getString(int groupIndex) {
     return (String) m.group(groupIndex);
+  }
+
+  public String tryGetString(int groupIndex) {
+    if (groupIndex < m.groupCount()) {
+      return getString(groupIndex);
+    } else {
+      return null;
+    }
+  }
+    public Integer tryGetInt(int groupIndex) {
+    if (groupIndex < m.groupCount()) {
+      return getInt(groupIndex);
+    } else {
+      return null;
+    }
   }
 }

@@ -8,10 +8,10 @@ package jatcsimlib.world;
 import jatcsimlib.commands.Command;
 import jatcsimlib.commands.CommandFormat;
 import jatcsimlib.commands.ProceedDirectCommand;
+import jatcsimlib.exceptions.EBindException;
 import jatcsimlib.exceptions.ERuntimeException;
 import jatcsimlib.global.KeyItem;
-import java.util.ArrayList;
-import java.util.Arrays;
+import jatcsimlib.global.MustBeBinded;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -19,21 +19,20 @@ import java.util.List;
  *
  * @author Marek
  */
-public class Route implements KeyItem<String> {
+public class Route extends MustBeBinded implements KeyItem<String> {
 
   @Override
   public String getKey() {
     return name;
   }
 
-
-
   public enum eType {
+
     sid,
     star,
     transition;
-    
-    public boolean isArrival(){
+
+    public boolean isArrival() {
       return this == star || this == transition;
     }
   }
@@ -42,6 +41,8 @@ public class Route implements KeyItem<String> {
   private String name;
   private String route;
   private RunwayThreshold parent;
+  private List<Command> _routeCommands = null;
+  private Navaid _mainFix = null;
 
   public eType getType() {
     return type;
@@ -63,50 +64,49 @@ public class Route implements KeyItem<String> {
     this.parent = parent;
   }
 
-  private List<Command> _routeCommands = null;
-
-  public List<Command> getCommands() {
-    if (_routeCommands != null) {
-      return _routeCommands;
-    }
-
-    try{
-    _routeCommands = CommandFormat.parseMulti(this.route);
-    } catch (Exception ex){
-      throw new ERuntimeException("Parsing commands failed. Did the app check route commands at loading?", ex);
-    }
-    return _routeCommands;
-  }
-  
-    public List<Command> getCommandsListClone() {
-      List<Command> ret = new LinkedList<>();
-      ret.addAll(_routeCommands);
-      return ret;
-  }
-
-  private Navaid _mainFix = null;
-
-  public Navaid getMainFix() {
-    if (_mainFix != null) {
-      return _mainFix;
+  @Override
+  protected void _bind() {
+    try {
+      _routeCommands = CommandFormat.parseMulti(this.route);
+    } catch (Exception ex) {
+      throw new EBindException("Parsing commands failed. Commands contain error (see cause).", ex);
     }
 
     switch (type) {
       case sid:
-        _mainFix = tryGetSidMainFix(getCommands());
+        _mainFix = tryGetSidMainFix();
         break;
       case star:
       case transition:
-        _mainFix = tryGetStarMainFix(getCommands());
+        _mainFix = tryGetStarMainFix();
         break;
       default:
-        throw new ERuntimeException("Failed to obtain main route fix of route " + this.name + ". SID last/STAR first command must be \"proceed direct\" (commands: " + this.route + ")");
+        throw new EBindException("Failed to obtain main route fix of route " + this.name + ". SID last/STAR first command must be \"proceed direct\" (commands: " + this.route + ")");
     }
+  }
+
+  public List<Command> getCommands() {
+    super.checkBinded();
+
+    return _routeCommands;
+  }
+
+  public List<Command> getCommandsListClone() {
+    super.checkBinded();
+
+    List<Command> ret = new LinkedList<>();
+    ret.addAll(_routeCommands);
+    return ret;
+  }
+
+  public Navaid getMainFix() {
+    super.checkBinded();
+
     return _mainFix;
   }
 
-  private Navaid tryGetSidMainFix(List<Command> commands) {
-    Command c = commands.get(commands.size() - 1);
+  private Navaid tryGetSidMainFix() {
+    Command c = _routeCommands.get(_routeCommands.size() - 1);
     if (c instanceof ProceedDirectCommand) {
       return ((ProceedDirectCommand) c).getNavaid();
     } else {
@@ -114,8 +114,8 @@ public class Route implements KeyItem<String> {
     }
   }
 
-  private Navaid tryGetStarMainFix(List<Command> commands) {
-    Command c = commands.get(0);
+  private Navaid tryGetStarMainFix() {
+    Command c = _routeCommands.get(0);
     if (c instanceof ProceedDirectCommand) {
       return ((ProceedDirectCommand) c).getNavaid();
     } else {

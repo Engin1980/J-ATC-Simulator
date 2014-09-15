@@ -8,6 +8,7 @@ package jatcsim.frmPacks.oneWindow;
 
 import jatcsimdraw.settings.Settings;
 import jatcsimlib.Simulation;
+import jatcsimlib.world.Area;
 
 /**
  *
@@ -16,9 +17,9 @@ import jatcsimlib.Simulation;
 public class Pack extends jatcsim.frmPacks.Pack {
 
   @Override
-  public void initPack(Simulation sim, Settings displaySettings) {
+  public void initPack(Simulation sim, Area area, Settings displaySettings) {
     FrmMain f = new FrmMain();
-    f.init(sim, displaySettings);
+    f.init(sim, area, displaySettings);
   }
 
   @Override

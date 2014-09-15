@@ -19,6 +19,7 @@ import jatcsimlib.commands.ChangeSpeedCommand;
 import jatcsimlib.commands.ClearedToApproachCommand;
 import jatcsimlib.commands.Command;
 import jatcsimlib.commands.ContactCommand;
+import jatcsimlib.commands.HoldCommand;
 import jatcsimlib.commands.ProceedDirectCommand;
 import jatcsimlib.commands.ShortcutCommand;
 import jatcsimlib.commands.ThenCommand;
@@ -125,7 +126,7 @@ public class Pilot {
 
   private void processAfterCommands() {
     List<Command> cmdsToProcess
-        = afterCommands.getAndRemoveSatisfiedCommands(parent);
+        = afterCommands.getAndRemoveSatisfiedCommands(parent, this.targetCoordinate);
 
     processQueueCommands(cmdsToProcess);
   }
@@ -296,12 +297,12 @@ public class Pilot {
     }
     // confirmation to previous atc
     sayIfReq(c, "Contact " + a.getName() + "."); // at " + a.getFrequency() + ".");
-    
+
     // change of atc
     atc = a;
     Acc.messenger().addMessage(5, parent, a,
         parent.getCallsign().toString() + " with you at " + Acc.toAltS(parent.getAltitude(), true));
-    
+
     return true;
   }
 
@@ -339,6 +340,23 @@ public class Pilot {
     return true;
   }
 
+  private boolean processQueueCommand(HoldCommand c) {
+    if (app != null) {
+      app = null;
+    }
+    if (targetCoordinate != null) {
+      targetCoordinate = null;
+    }
+    hold = new HoldInfo();
+    hold.fix = c.getNavaid().getCoordinate();
+    hold.inboundRadial = c.getInboundRadial();
+    hold.isLeftTurned = c.isLeftTurn();
+    hold.phase = HoldInfo.ePhase.beginning;
+
+    sayIfReq(c, "Proceed direct and hold over " + c.getNavaid().getName());
+    return true;
+  }
+
   private void sayOrError(Command c, String text) {
     if (c.isConfirmNeeded()) {
       say(text);
@@ -356,8 +374,9 @@ public class Pilot {
   }
 
   private void say(String text) {
-    if (atc != null)
+    if (atc != null) {
       Acc.messenger().addMessage(parent, atc, text);
+    }
   }
 
   private int getIndexOfNavaidInCommands(Navaid navaid) {
@@ -432,42 +451,109 @@ public class Pilot {
       int heading = (int) Coordinates.getBearing(parent.getCoordinate(), targetCoordinate);
       heading = Headings.to(heading);
       if (heading != parent.getTargetHeading()) {
-        boolean useLeftTurn
-            = Headings.getBetterDirectionToTurn(parent.getHeading(), heading) == ChangeHeadingCommand.eDirection.left;
-        parent.setTargetHeading(heading, useLeftTurn);
+        parent.setTargetHeading(heading);
       }
     }
   }
-  
-  private void flyHold(){
-    switch (hold.phase){
-      case beginning:
-        setHoldDataByEntry();
-        hold.phase = HoldInfo.ePhase.entering;
-        break;
-      case entering:
-      case inbound:
-        if (Coordinates.getDistanceInNM(parent.getCoordinate(), hold.fix) < 0.5){
-          parent.setTargetHeading(hold.outboundHeading, false);
+
+  private static final double NEAR_FIX_DISTANCE = 0.5;
+
+  private void flyHold() {
+
+    if (hold.phase == HoldInfo.ePhase.beginning) {
+      setHoldDataByEntry();
+    }
+
+    switch (hold.phase) {
+      case directEntry:
+        if (Coordinates.getDistanceInNM(parent.getCoordinate(), hold.fix) < NEAR_FIX_DISTANCE) {
+          parent.setTargetHeading(hold.getOutboundHeading(), hold.isLeftTurned);
           hold.phase = HoldInfo.ePhase.firstTurn;
+        } else {
+          int newHeading = (int) Coordinates.getBearing(parent.getCoordinate(), hold.fix);
+          parent.setTargetHeading(newHeading);
         }
-      break;
+        break;
+      case inbound:
+        if (Coordinates.getDistanceInNM(parent.getCoordinate(), hold.fix) < NEAR_FIX_DISTANCE) {
+          parent.setTargetHeading(hold.getOutboundHeading(), hold.isLeftTurned);
+          hold.phase = HoldInfo.ePhase.firstTurn;
+        } else {
+          int newHeading = (int) Coordinates.getHeadingToRadial(
+              parent.getCoordinate(), hold.fix, hold.inboundRadial, parent.getHeading());
+          parent.setTargetHeading(newHeading);
+
+        }
+        break;
       case firstTurn:
-        if (hold.outboundHeading == parent.getHeading()){
+        if (parent.getTargetHeading() == parent.getHeading()) {
           hold.secondTurnTime = Acc.now().addSeconds(60);
           hold.phase = HoldInfo.ePhase.outbound;
         }
         break;
       case outbound:
-        if (Acc.now().isAfter(hold.secondTurnTime)){
-          parent.setTargetHeading(Headings.add(hold.outboundHeading, 180), false);
+        if (Acc.now().isAfter(hold.secondTurnTime)) {
+          parent.setTargetHeading(hold.inboundRadial, hold.isLeftTurned);
           hold.phase = HoldInfo.ePhase.secondTurn;
         }
+        break;
       case secondTurn:
-        if (parent.getTargetHeading() == parent.getHeading()){
-          // nejak zajistit, at leti po radiale //TODO
+        if (parent.getTargetHeading() == parent.getHeading()) {
           hold.phase = HoldInfo.ePhase.inbound;
         }
+        break;
+
+      case tearEntry:
+        if (Coordinates.getDistanceInNM(parent.getCoordinate(), hold.fix) < NEAR_FIX_DISTANCE) {
+
+          int newHeading;
+          newHeading = hold.isLeftTurned
+              ? Headings.add(hold.inboundRadial, -160)
+              : Headings.add(hold.inboundRadial, 160);
+          parent.setTargetHeading(newHeading, hold.isLeftTurned);
+          hold.secondTurnTime = Acc.now().addSeconds(60);
+
+          hold.phase = HoldInfo.ePhase.tearAgainst;
+        } else {
+          int newHeading = (int) Coordinates.getBearing(parent.getCoordinate(), hold.fix);
+          parent.setTargetHeading(newHeading);
+        }
+
+      case tearAgainst:
+        if (Acc.now().isAfter(hold.secondTurnTime)) {
+          hold.secondTurnTime = null;
+          parent.setTargetHeading(hold.inboundRadial, hold.isLeftTurned);
+          hold.phase = HoldInfo.ePhase.secondTurn;
+        }
+        break;
+
+      case parallelEntry:
+        if (Coordinates.getDistanceInNM(parent.getCoordinate(), hold.fix) < NEAR_FIX_DISTANCE) {
+          parent.setTargetHeading(hold.getOutboundHeading(), !hold.isLeftTurned);
+          hold.secondTurnTime = Acc.now().addSeconds(60);
+          hold.phase = HoldInfo.ePhase.parallelAgainst;
+        } else {
+          int newHeading = (int) Coordinates.getBearing(parent.getCoordinate(), hold.fix);
+          parent.setTargetHeading(newHeading);
+        }
+        break;
+
+      case parallelAgainst:
+        if (Acc.now().isAfter(hold.secondTurnTime)) {
+          int newHeading = (hold.isLeftTurned)
+              ? Headings.add(hold.getOutboundHeading(), 210)
+              : Headings.add(hold.getOutboundHeading(), -210);
+          parent.setTargetHeading(newHeading, !hold.isLeftTurned);
+          hold.phase = HoldInfo.ePhase.parallelTurn;
+        }
+        break;
+
+      case parallelTurn:
+        if (parent.getHeading() == parent.getTargetHeading()) {
+          hold.phase = HoldInfo.ePhase.directEntry;
+        }
+        break;
+
       default:
         throw new ENotSupportedException();
     }
@@ -475,20 +561,16 @@ public class Pilot {
 
   private void setHoldDataByEntry() {
     int y = parent.getHeading();
-    int h = hold.incomingFixHeading;
+    int h = hold.inboundRadial;
     int a = Headings.add(h, -75);
     int b = Headings.add(h, 110);
-    if (Headings.isBetween(a, y, h)){
-      // teardrop
-      
-    } else if (Headings.isBetween(h, y, b)){
-      // parallel
+    if (Headings.isBetween(a, y, h)) {
+      hold.phase = HoldInfo.ePhase.tearEntry;
+    } else if (Headings.isBetween(h, y, b)) {
+      hold.phase = HoldInfo.ePhase.parallelEntry;
     } else {
       // direct
-      int heading = (int) Coordinates.getBearing(parent.getCoordinate(), hold.fix);
-      boolean leftTurn = Headings.getBetterDirectionToTurn(parent.getHeading(), heading) == ChangeHeadingCommand.eDirection.left;
-      parent.setTargetHeading(heading, leftTurn);
-      hold.phase = HoldInfo.ePhase.entering;
+      hold.phase = HoldInfo.ePhase.directEntry;
     }
   }
 }

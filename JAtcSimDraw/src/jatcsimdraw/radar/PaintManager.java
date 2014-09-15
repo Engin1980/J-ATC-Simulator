@@ -11,11 +11,10 @@ import jatcsimlib.airplanes.Airplane;
 import jatcsimlib.messaging.Message;
 import jatcsimlib.messaging.Messenger;
 import jatcsimlib.world.Airport;
+import jatcsimlib.world.Area;
 import jatcsimlib.world.Border;
 import jatcsimlib.world.Navaid;
 import jatcsimlib.world.Runway;
-import java.util.AbstractList;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,10 +24,12 @@ import java.util.List;
 public class PaintManager {
 
   private final Simulation simulation;
+  private final Area area;
   private final Visualiser visualiser;
 
-  public PaintManager(Simulation simulation, Visualiser visualiser) {
+  public PaintManager(Simulation simulation, Area area, Visualiser visualiser) {
     this.simulation = simulation;
+    this.area = area;
     this.visualiser = visualiser;
   }
 
@@ -48,19 +49,19 @@ public class PaintManager {
   }
 
   private void drawBorders() {
-    for (Border b : simulation.getArea().getBorders()){
+    for (Border b : area.getBorders()){
       visualiser.drawBorder(b);
     }
   }
 
   private void drawNavaids() {
-    for (Navaid n : simulation.getArea().getNavaids()){
+    for (Navaid n : area.getNavaids()){
       visualiser.drawNavaid(n);
     }
   }
 
   private void drawAirports() {
-    for(Airport a : simulation.getArea().getAirports()){
+    for(Airport a : area.getAirports()){
       drawAirport(a);
     }
   }

@@ -92,7 +92,7 @@ public class AfterCommandList {
     return ret;
   }
 
-  public List<Command> getAndRemoveSatisfiedCommands(Airplane referencePlane) {
+  public List<Command> getAndRemoveSatisfiedCommands(Airplane referencePlane, Coordinate currentTargetCoordinateOrNull) {
     int alt = referencePlane.getAltitude();
     int spd = referencePlane.getSpeed();
     Coordinate cor = referencePlane.getCoordinate();
@@ -117,16 +117,22 @@ public class AfterCommandList {
         } else {
           i++;
         }
-      } else if (inner.get(i).after instanceof AfterNavaidCommand){
-        double dist = 
-            Coordinates.getDistanceInNM(
-                ((AfterNavaidCommand) inner.get(i).after).getNavaid().getCoordinate(), 
-                cor);
-        if (dist < 2){
-          ret.add(inner.get(i).consequent);
-          inner.remove(i);
-        } else {
+      } else if (inner.get(i).after instanceof AfterNavaidCommand) {
+        AfterNavaidCommand anc = (AfterNavaidCommand) inner.get(i).after;
+        if (anc.getNavaid().getCoordinate().equals(currentTargetCoordinateOrNull) == false) {
+          // flying over some navaid, but not over current targeted by plane(pilot)
           i++;
+        } else {
+          double dist
+              = Coordinates.getDistanceInNM(
+                  ((AfterNavaidCommand) inner.get(i).after).getNavaid().getCoordinate(),
+                  cor);
+          if (dist < 2) {
+            ret.add(inner.get(i).consequent);
+            inner.remove(i);
+          } else {
+            i++;
+          }
         }
       } else {
         throw new ENotSupportedException();

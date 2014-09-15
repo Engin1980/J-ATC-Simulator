@@ -13,6 +13,7 @@ import jatcsimlib.exceptions.ERuntimeException;
 import jatcsimlib.global.EStringBuilder;
 import jatcsimlib.world.Approach;
 import jatcsimlib.world.Navaid;
+import jatcsimlib.world.PublishedHold;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -39,6 +40,7 @@ public class CommandFormat {
 
     parsers.add(new ProceedDirectCmdParser());
     parsers.add(new ShortcutCmdParser());
+    parsers.add(new HoldCmdParser());
 
     parsers.add(new ContactCmdParser());
 
@@ -51,26 +53,26 @@ public class CommandFormat {
   }
 
   public static List<Command> parseMulti(String line) {
-    line = normalizeCommandsInString(line);    
+    line = normalizeCommandsInString(line);
     List<Command> ret = new LinkedList<>();
     String tmp = line;
     while (tmp != null && tmp.length() > 0) {
       CmdParser p = getCmdParser(tmp);
-      
-      if (p == null){
-        throw new EInvalidCommandException("Failed to parse command prefix.", 
-            line.substring(0, line.length() -  tmp.length() - 1),
+
+      if (p == null) {
+        throw new EInvalidCommandException("Failed to parse command prefix.",
+            line.substring(0, line.length() - tmp.length() - 1),
             tmp);
       }
-      
+
       RegexGrouper rg = RegexGrouper.apply(tmp, p.getPattern());
 
-      if (rg == null){
-        throw new EInvalidCommandException("Failed to parse command. Probably invalid syntax?", 
-            line.substring(0, line.length() -  tmp.length() - 1),
+      if (rg == null) {
+        throw new EInvalidCommandException("Failed to parse command. Probably invalid syntax?",
+            line.substring(0, line.length() - tmp.length() - 1),
             tmp);
       }
-      
+
       Command cmd = p.parse(rg);
       ret.add(cmd);
       tmp = tmp.substring(rg.getIndexOfCharacterAfterMatch()).trim();
@@ -78,8 +80,8 @@ public class CommandFormat {
 
     return ret;
   }
-  
-  private static String normalizeCommandsInString(String line){
+
+  private static String normalizeCommandsInString(String line) {
     return line.toUpperCase() + " ";
   }
 
@@ -465,20 +467,20 @@ class ClearedToApproachCmdParser extends CmdParser {
   Command parse(RegexGrouper rg) {
     String t = rg.getString(1);
     String n = rg.getString(2);
-    
+
     Approach.eType type;
-    switch(t){
+    switch (t) {
       case "G":
         type = Approach.eType.GPS;
         break;
       case "I":
-        type =Approach.eType.ILS_I;
+        type = Approach.eType.ILS_I;
         break;
       case "II":
-        type =Approach.eType.ILS_II;
+        type = Approach.eType.ILS_II;
         break;
       case "III":
-        type =Approach.eType.ILS_III;
+        type = Approach.eType.ILS_III;
         break;
       case "N":
         type = Approach.eType.NDB;
@@ -492,7 +494,7 @@ class ClearedToApproachCmdParser extends CmdParser {
       default:
         throw new ENotSupportedException();
     }
-    
+
     Command ret = new ClearedToApproachCommand(type, n);
     return ret;
   }
@@ -516,10 +518,11 @@ class ProceedDirectCmdParser extends CmdParser {
   @Override
   Command parse(RegexGrouper rg) {
     String ns = rg.getString(1);
-    
+
     Navaid n = Acc.area().getNavaids().tryGet(ns);
-    if (n == null)
-      throw new EInvalidCommandException("Unable to find navaid named \"" + ns + "\".",rg.getMatch());
+    if (n == null) {
+      throw new EInvalidCommandException("Unable to find navaid named \"" + ns + "\".", rg.getMatch());
+    }
     Command ret = new ProceedDirectCommand(n);
     return ret;
   }
@@ -543,11 +546,58 @@ class ShortcutCmdParser extends CmdParser {
   @Override
   Command parse(RegexGrouper rg) {
     String ns = rg.getString(1);
-    
+
     Navaid n = Acc.area().getNavaids().tryGet(ns);
-    if (n == null)
-      throw new EInvalidCommandException("Unable to find navaid named \"" + ns + "\".",rg.getMatch());
+    if (n == null) {
+      throw new EInvalidCommandException("Unable to find navaid named \"" + ns + "\".", rg.getMatch());
+    }
     Command ret = new ProceedDirectCommand(n);
+    return ret;
+  }
+}
+
+class HoldCmdParser extends CmdParser {
+
+  private static final String[] prefixes = new String[]{"H"};
+  private static final String pattern = "H (\\S{1,5})( (\\d{3}))?( (R|L))?";
+
+  @Override
+  String[] getPrefixes() {
+    return prefixes;
+  }
+
+  @Override
+  String getPattern() {
+    return pattern;
+  }
+
+  @Override
+  Command parse(RegexGrouper rg) {
+    HoldCommand ret;
+
+    String ns = rg.getString(1);
+    Navaid n = Acc.area().getNavaids().tryGet(ns);
+    if (n == null) {
+      throw new EInvalidCommandException("Unable to find navaid named \"" + ns + "\".", rg.getMatch());
+    }
+
+    Integer heading = rg.tryGetInt(3);
+    String leftOrRight = rg.tryGetString(5);
+    boolean left = leftOrRight.equals("L");
+
+    if (heading == null) {
+      PublishedHold h = Acc.airport().getHolds().get(n);
+
+      if (h == null) {
+        throw new EInvalidCommandException(
+            "Hold over fix " + ns + " is not published. You must specify exact hold procedure.",
+            rg.getMatch());
+      }
+
+      ret = new HoldCommand(h);
+    } else {
+      ret = new HoldCommand(n, heading, left);
+    }
     return ret;
   }
 }
