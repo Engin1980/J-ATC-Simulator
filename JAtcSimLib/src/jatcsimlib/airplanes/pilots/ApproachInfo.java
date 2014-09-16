@@ -6,18 +6,30 @@
 
 package jatcsimlib.airplanes.pilots;
 
+import jatcsimlib.Acc;
 import jatcsimlib.world.Approach;
 
 /**
  *
  * @author Marek
  */
-public class ApproachInfo {
-  private Approach approach;
+class ApproachInfo {
+  public enum ePhase {
+  approaching,
+  finalEnter,
+  finalOther,
+  shortFinal,
+  touchdownAndLanded
+  }
+  public Approach approach;
+  public ePhase phase = ePhase.approaching;
+  public final int finalAltitude;
+  public final int shortFinalAltitude;
 
   public ApproachInfo(Approach approach) {
     this.approach = approach;
+    this.finalAltitude = Acc.airport().getAltitude() + 500;
+    this.shortFinalAltitude = this.finalAltitude - 300;
   }
-  
   
 }

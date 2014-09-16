@@ -28,22 +28,42 @@
    
   <dispPlanes>
     <!-- 
-     1 - callsign.company
-     2 - callsign.number
-     3 - heading
-     4 - altitude
-     5 - speed
+case 1:    callsign 
+case 2:    callsignCompany 
+case 3:    callsignNumber 
+case 4:    sqwk 
+case 11:   heading 
+case 12:   targetHeading 
+case 21:   speedLong 
+case 22:   speedShort 
+case 31:   targetSpeedLong 
+case 32:   targetSpeedShort 
+case 33:   altitudeLong 
+case 34:   altitudeShort 
+case 35:   altitudeInFtShort 
+case 36:   targetAltitudeLong 
+case 37:   targetAltitudeShort 
+case 38:   targetAltitudeInFtShort 
+case 41:   verticalSpeedLong 
+case 42:   verticalSpeedShort 
+case 43:   climbDescendChar 
     -->
     <dispPlane atcType="app" behavior="any" color="00FF00"
-                pointWidth="7" headingLineLength="55" historyDotCount="10" 
-                firstLineFormat="%1$s%2$s" 
-                secondLineFormat="%4$s %3$s %5$3s " 
-                thirdLineFormat="" />
+               pointWidth="7" headingLineLength="55" historyDotCount="10" 
+               firstLineFormat="{1}" 
+               secondLineFormat="{34}{43}{37} {22}"
+               thirdLineFormat="{4}" />
      
     <dispPlane atcType="ctr" behavior="any" color="008800"
-                pointWidth="5" headingLineLength="15" historyDotCount="10"
-                firstLineFormat="%1$s%2$s"
-                secondLineFormat="%4$s"
-                thirdLineFormat="" />
+               pointWidth="5" headingLineLength="15" historyDotCount="10"
+               firstLineFormat="{1}"
+               secondLineFormat="{34} {22}"
+               thirdLineFormat="{4}" />
+    
+    <dispPlane atcType="twr" behavior="any" color="008888"
+               pointWidth="5" headingLineLength="15" historyDotCount="10"
+               firstLineFormat="{1}"
+               secondLineFormat="{34} {22}"
+               thirdLineFormat="{4}" />
   </dispPlanes>
 </settings>

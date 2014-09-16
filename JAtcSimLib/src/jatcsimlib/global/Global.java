@@ -15,4 +15,6 @@ public class Global {
    * If TRUE, Coordinates are displayed as DD°MM'SS", if FALSE, as decimal.
    */
   public static boolean COORDINATE_LONG = false;
+  
+  public static int MAX_PLANE_COUNT = 3;
 }

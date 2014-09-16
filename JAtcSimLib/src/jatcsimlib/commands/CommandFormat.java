@@ -14,10 +14,10 @@ import jatcsimlib.global.EStringBuilder;
 import jatcsimlib.world.Approach;
 import jatcsimlib.world.Navaid;
 import jatcsimlib.world.PublishedHold;
+import jatcsimlib.world.RunwayThreshold;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -42,6 +42,8 @@ public class CommandFormat {
     parsers.add(new ShortcutCmdParser());
     parsers.add(new HoldCmdParser());
 
+    parsers.add(new ClearedToApproachCmdParser());
+
     parsers.add(new ContactCmdParser());
 
     parsers.add(new ThenCmdParser());
@@ -52,9 +54,9 @@ public class CommandFormat {
     return parseMulti(line).get(0);
   }
 
-  public static List<Command> parseMulti(String line) {
+  public static CommandList parseMulti(String line) {
     line = normalizeCommandsInString(line);
-    List<Command> ret = new LinkedList<>();
+    CommandList ret = new CommandList();
     String tmp = line;
     while (tmp != null && tmp.length() > 0) {
       CmdParser p = getCmdParser(tmp);
@@ -266,7 +268,7 @@ class ChangeAltitudeCmdParser extends CmdParser {
 class ChangeSpeedCmdParser extends CmdParser {
 
   private static final String[] prefixes = new String[]{"SU", "SD"};
-  private static final String pattern = "((SU)|(SD) (\\d{3})";
+  private static final String pattern = "((SU)|(SD)) (\\d{3})";
 
   @Override
   String[] getPrefixes() {
@@ -293,7 +295,7 @@ class ChangeSpeedCmdParser extends CmdParser {
       default:
         throw new ERuntimeException("Invalid prefix");
     }
-    s = rg.getInt(2);
+    s = rg.getInt(4);
 
     ChangeSpeedCommand ret = new ChangeSpeedCommand(d, s);
     return ret;
@@ -364,7 +366,10 @@ class AfterNavaidCmdParser extends CmdParser {
   @Override
   Command parse(RegexGrouper rg) {
     String ns = rg.getString(1);
-    Navaid n = null;
+    Navaid n = Acc.area().getNavaids().tryGet(ns);
+    if (n == null) {
+      throw new EInvalidCommandException("Unable to find navaid named \"" + ns + "\".", rg.getMatch());
+    }
     Command ret = new AfterNavaidCommand(n);
     return ret;
   }
@@ -465,11 +470,11 @@ class ClearedToApproachCmdParser extends CmdParser {
 
   @Override
   Command parse(RegexGrouper rg) {
-    String t = rg.getString(1);
-    String n = rg.getString(2);
+    String typeS = rg.getString(1);
+    String runwayName = rg.getString(2);
 
     Approach.eType type;
-    switch (t) {
+    switch (typeS) {
       case "G":
         type = Approach.eType.GPS;
         break;
@@ -495,7 +500,21 @@ class ClearedToApproachCmdParser extends CmdParser {
         throw new ENotSupportedException();
     }
 
-    Command ret = new ClearedToApproachCommand(type, n);
+    RunwayThreshold rt = Acc.airport().tryGetRunwayThreshold(runwayName);
+    if (rt == null) {
+      throw new EInvalidCommandException(
+          "Cannot be cleared to approach. There is no runway name \"" + runwayName + "\".", rg.getMatch());
+    }
+
+    Approach app = rt.tryGetApproachByTypeWithILSDerived(type);
+    if (app == null) {
+      throw new EInvalidCommandException(
+          "Cannot be cleared to approach. There is no approach type "
+          + type + " for runway " + rt.getName(),
+          rg.getMatch());
+    }
+
+    Command ret = new ClearedToApproachCommand(app);
     return ret;
   }
 }
@@ -583,7 +602,7 @@ class HoldCmdParser extends CmdParser {
 
     Integer heading = rg.tryGetInt(3);
     String leftOrRight = rg.tryGetString(5);
-    boolean left = leftOrRight.equals("L");
+    
 
     if (heading == null) {
       PublishedHold h = Acc.airport().getHolds().get(n);
@@ -596,6 +615,7 @@ class HoldCmdParser extends CmdParser {
 
       ret = new HoldCommand(h);
     } else {
+      boolean left = leftOrRight.equals("L");
       ret = new HoldCommand(n, heading, left);
     }
     return ret;

@@ -12,30 +12,26 @@ import jatcsimlib.world.PublishedHold;
  *
  * @author Marek
  */
-public class HoldCommand extends Command {
+public class HoldCommand extends ToNavaidCommand {
 
-  private final Navaid navaid;
   private final int inboundHeading;
   private final boolean leftTurn;
   private final PublishedHold publishedHold;
 
   public HoldCommand(PublishedHold publishedHold) {
+    super(publishedHold.getNavaid());
     if (publishedHold == null) {
       throw new IllegalArgumentException("Argument \"publishedHold\" cannot be null.");
     }
 
     this.publishedHold = publishedHold;
-    this.navaid = null;
     this.inboundHeading = Integer.MIN_VALUE;
     this.leftTurn = false;
   }
 
   public HoldCommand(Navaid navaid, int inboundHeading, boolean leftTurn) {
-    if (navaid == null) {
-      throw new IllegalArgumentException("Argument \"navaid\" cannot be null.");
-    }
-
-    this.navaid = navaid;
+    super(navaid);
+    
     this.inboundHeading = inboundHeading;
     this.leftTurn = leftTurn;
     this.publishedHold = null;

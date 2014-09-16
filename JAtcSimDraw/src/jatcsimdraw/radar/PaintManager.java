@@ -11,9 +11,11 @@ import jatcsimlib.airplanes.Airplane;
 import jatcsimlib.messaging.Message;
 import jatcsimlib.messaging.Messenger;
 import jatcsimlib.world.Airport;
+import jatcsimlib.world.Approach;
 import jatcsimlib.world.Area;
 import jatcsimlib.world.Border;
 import jatcsimlib.world.Navaid;
+import jatcsimlib.world.Route;
 import jatcsimlib.world.Runway;
 import java.util.List;
 
@@ -36,38 +38,40 @@ public class PaintManager {
   public void draw() {
     drawBackground();
     drawBorders();
+    drawStars();
+    drawApproaches();
     drawNavaids();
     drawAirports();
     drawAirplanes();
     drawCaptions();
   }
-  
-  private void drawCaptions(){
+
+  private void drawCaptions() {
     Messenger ms = simulation.getMessenger();
     List<Message> msgs = ms.getMy(simulation.getAppAtc(), false);
     visualiser.drawMessages(msgs);
   }
 
   private void drawBorders() {
-    for (Border b : area.getBorders()){
+    for (Border b : area.getBorders()) {
       visualiser.drawBorder(b);
     }
   }
 
   private void drawNavaids() {
-    for (Navaid n : area.getNavaids()){
+    for (Navaid n : area.getNavaids()) {
       visualiser.drawNavaid(n);
     }
   }
 
   private void drawAirports() {
-    for(Airport a : area.getAirports()){
+    for (Airport a : area.getAirports()) {
       drawAirport(a);
     }
   }
 
   private void drawAirport(Airport a) {
-    for(Runway r : a.getRunways()){
+    for (Runway r : a.getRunways()) {
       visualiser.drawRunway(r);
     }
   }
@@ -77,8 +81,23 @@ public class PaintManager {
   }
 
   private void drawAirplanes() {
-    for (Airplane a : simulation.getPlanes()){
+    for (Airplane a : simulation.getPlanes()) {
       visualiser.drawPlane(a);
     }
   }
+
+  private void drawStars() {
+    for (Route r : simulation.getActiveRunwayThreshold().getRoutes()) {
+      if (r.getType() == Route.eType.sid) continue;
+      visualiser.drawStar(r.getNavaids());
+    }
+  }
+
+  private void drawApproaches() {
+    Approach a = simulation.getActiveRunwayThreshold().getHighestApproach();
+    if (a != null) {
+      visualiser.drawApproach(a);
+    }
+  }
+
 }

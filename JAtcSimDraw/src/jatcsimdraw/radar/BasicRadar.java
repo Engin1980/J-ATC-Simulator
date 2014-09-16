@@ -56,9 +56,9 @@ public class BasicRadar extends Radar  {
       }
     });
 
-    this.c.setNavaidFont("Courier CE", Font.PLAIN, 10);
-    this.c.setPlaneFont("Courier CE", Font.BOLD, 10);
-    this.c.setMessageFont("Verdana", Font.BOLD, 11);
+    this.c.setNavaidFont("Arial Unicode MT", Font.PLAIN, 10);
+    this.c.setPlaneFont("Arial Unicode MT", Font.BOLD, 12);
+    this.c.setMessageFont("Arial Unicode MT", Font.BOLD, 14);
     
     this.c.onMouseEvent().addListener(new EventListener<Canvas, EMouseEvent>() {
       @Override

@@ -6,7 +6,7 @@
 package jatcsimxml.serialization;
 
 import jatcsimlib.exceptions.ERuntimeException;
-import jatcsimlib.global.Optional;
+import jatcsimlib.global.XmlOptional;
 import jatcsimlib.coordinates.Coordinate;
 import jatcsimlib.global.KeyItem;
 import jatcsimlib.world.Airport;
@@ -71,7 +71,7 @@ public class Reflecter {
   }
 
   private static <T> void convertAndSetFieldValue(Element el, Field f, T targetObject) {
-    boolean required = f.getAnnotation(Optional.class) == null;
+    boolean required = f.getAnnotation(XmlOptional.class) == null;
     String tmpS = extractSimpleValueFromElement(el, f.getName(), required);
     if (tmpS == null) {
       return;

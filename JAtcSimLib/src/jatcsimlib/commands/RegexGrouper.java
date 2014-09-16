@@ -14,17 +14,20 @@ import java.util.regex.Pattern;
  */
 public class RegexGrouper {
 
-  private Matcher m;
+  private final Matcher m;
 
   public static RegexGrouper apply(String data, String pattern) {
-    RegexGrouper ret = new RegexGrouper();
     Pattern p = Pattern.compile("^" + pattern);
-    ret.m = p.matcher(data);
+    RegexGrouper ret = new RegexGrouper(p.matcher(data));
     if (ret.m.find() == false) {
       ret = null;
     }
 
     return ret;
+  }
+
+  public RegexGrouper(Matcher m) {
+    this.m = m;
   }
 
   public int getIndexOfCharacterAfterMatch() {
@@ -48,14 +51,15 @@ public class RegexGrouper {
   }
 
   public String tryGetString(int groupIndex) {
-    if (groupIndex < m.groupCount()) {
+    if (groupIndex <= m.groupCount() && m.group(groupIndex) != null) {
       return getString(groupIndex);
     } else {
       return null;
     }
   }
-    public Integer tryGetInt(int groupIndex) {
-    if (groupIndex < m.groupCount()) {
+
+  public Integer tryGetInt(int groupIndex) {
+    if (groupIndex < m.groupCount() && m.group(groupIndex) != null) {
       return getInt(groupIndex);
     } else {
       return null;

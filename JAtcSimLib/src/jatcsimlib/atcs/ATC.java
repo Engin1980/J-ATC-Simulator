@@ -14,8 +14,6 @@ import jatcsimlib.airplanes.Airplane;
  */
 public abstract class Atc {
   
-  protected static final String UNRECOGNIZED = "???";
-  
   public enum eType{
     gnd,
     twr,

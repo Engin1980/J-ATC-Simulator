@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <area icao="LKAA">
   <airports>
-    <airport icao="LKPR" name="Praha Ruzyně" transitionAltitude="5000">
+    <airport icao="LKPR" name="Praha Ruzyně" altitude="1247" transitionAltitude="5000">
       <radarRange topLeft="50.5 13.0" bottomRight="49.5 15.5" />
       <atcTemplates>
         <atcTemplate type="ctr" name="LKAA_CTR" frequency="127.12" 

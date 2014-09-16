@@ -16,7 +16,9 @@ import jatcsimlib.exceptions.ERuntimeException;
 import jatcsimlib.coordinates.Coordinates;
 import jatcsimlib.coordinates.Coordinate;
 import jatcsimlib.exceptions.ENotSupportedException;
+import jatcsimlib.global.Headings;
 import jatcsimlib.messaging.Message;
+import jatcsimlib.world.Approach;
 import jatcsimlib.world.Border;
 import jatcsimlib.world.BorderArcPoint;
 import jatcsimlib.world.BorderExactPoint;
@@ -200,7 +202,7 @@ public class BasicVisualiser extends Visualiser {
     sb.append("\r\n");
     sb.append(
       buildPlaneString(dp.getSecondLineFormat(), plane));
-    sb.append("\n");
+    sb.append("\r\n");
     sb.append(
       buildPlaneString(dp.getThirdLineFormat(), plane));
     
@@ -209,14 +211,7 @@ public class BasicVisualiser extends Visualiser {
   }
 
   private String buildPlaneString(String lineFormat, Airplane plane) {
-    String ret;
-    ret = String.format(lineFormat,
-        plane.getCallsign().getCompany(),       //1
-        plane.getCallsign().getNumber(),        //2
-        plane.getHeadingS(),                    //3
-        Acc.toAltS(plane.getAltitude(), true),  //4
-        plane.getSpeed());                      //5
-    
+    String ret = plane.getInfo().format(lineFormat);
     return ret;
   }
 
@@ -225,19 +220,19 @@ public class BasicVisualiser extends Visualiser {
     
     for (Message m : msgs){
       if (m.isSystemMessage())
-        ret.system.add(">> " + m.getText());
+        ret.system.add(">> " + m.getAsString().text);
       else if (m.isAtcMessage()){
         Atc atc = (Atc) m.source;
         if (atc.getType() == Atc.eType.twr)
-          ret.atc.add("TWR: " + m.getText());
+          ret.atc.add("TWR: " + m.getAsPlaneSwitchMessage().getAsString());
         else if (atc.getType() == Atc.eType.ctr)
-          ret.atc.add("CTR : " + m.getText());
+          ret.atc.add("CTR : " + m.getAsPlaneSwitchMessage().getAsString());
         else
           throw new ENotSupportedException();
       }
       else if (m.isPlaneMessage()){
         Airplane p = (Airplane) m.source;
-        ret.plane.add(p.getCallsign().toString() + ": " + m.getText());
+        ret.plane.add(p.getCallsign().toString() + ": " + m.getAsString().text);
       }
       else
         throw new ENotSupportedException();
@@ -247,6 +242,25 @@ public class BasicVisualiser extends Visualiser {
 
   private Atc.eType getResponsibleAtc(Airplane plane) {
     return plane.visuallyResponsibleAtc.getType();
+  }
+
+  @Override
+  public void drawStar(List<Navaid> navaidPoints) {
+    for (int i = 0; i < navaidPoints.size()-1; i++) {
+      p.drawLine(
+          navaidPoints.get(i).getCoordinate(), 
+          navaidPoints.get(i+1).getCoordinate(), 
+          Color.GRAY);
+    }
+  }
+
+  @Override
+  public void drawApproach(Approach approach) {
+    Coordinate start = Coordinates.getCoordinate(
+        approach.getPoint(),
+        Headings.add(approach.getRadial(), 180),
+        17);
+    p.drawLine(start, approach.getPoint(), Color.MAGENTA);
   }
 
   

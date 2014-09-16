@@ -17,23 +17,18 @@ import jatcsimlib.atcs.TowerAtc;
 import jatcsimlib.atcs.UserAtc;
 import jatcsimlib.commands.ChangeAltitudeCommand;
 import jatcsimlib.commands.Command;
-import jatcsimlib.commands.CommandFormat;
 import jatcsimlib.commands.ContactCommand;
 import jatcsimlib.coordinates.Coordinate;
 import jatcsimlib.coordinates.Coordinates;
 import jatcsimlib.events.EventListener;
 import jatcsimlib.events.EventManager;
-import jatcsimlib.exceptions.ERuntimeException;
 import jatcsimlib.global.ERandom;
 import jatcsimlib.global.ETime;
+import jatcsimlib.global.Global;
 import jatcsimlib.messaging.Messenger;
 import jatcsimlib.weathers.Weather;
 import jatcsimlib.world.Airport;
-import jatcsimlib.world.Approach;
-import jatcsimlib.world.Area;
-import jatcsimlib.world.Navaid;
 import jatcsimlib.world.Route;
-import jatcsimlib.world.Runway;
 import jatcsimlib.world.RunwayThreshold;
 import java.util.Calendar;
 import java.util.List;
@@ -149,7 +144,7 @@ public class Simulation {
   }
 
   private void generateNewPlanes() {
-    if (planes.size() > 2) { // smazat
+    if (planes.size() >= Global.MAX_PLANE_COUNT) { // smazat
       return;
     }
 

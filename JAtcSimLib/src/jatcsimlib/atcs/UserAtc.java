@@ -3,20 +3,25 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package jatcsimlib.atcs;
 
 import jatcsimlib.Acc;
 import jatcsimlib.airplanes.Airplane;
-import jatcsimlib.commands.Command;
+import jatcsimlib.airplanes.AirplaneList;
+import jatcsimlib.commands.CommandList;
 import jatcsimlib.exceptions.ENotSupportedException;
-import java.util.List;
+import jatcsimlib.messaging.IContent;
 
 /**
  *
  * @author Marek
  */
 public class UserAtc extends Atc {
+
+  private final AirplaneList departures = new AirplaneList();
+  private final AirplaneList departuresForCtr = new AirplaneList();
+  private final AirplaneList arrivals = new AirplaneList();
+  private final AirplaneList arrivalsForTwr = new AirplaneList();
 
   public UserAtc(AtcTemplate template) {
     super(template);
@@ -29,7 +34,7 @@ public class UserAtc extends Atc {
 
   @Override
   protected void _registerNewPlane(Airplane plane) {
-    throw new UnsupportedOperationException("Not supported yet."); 
+    throw new UnsupportedOperationException("Not supported yet.");
   }
 
   @Override
@@ -41,18 +46,38 @@ public class UserAtc extends Atc {
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
 
-  public void sendCommands(Airplane plane, List<Command> commands){
+  public void sendCommands(Airplane plane, CommandList commands) {
     Acc.messenger().addMessage(this, plane, commands);
   }
-  public void sendCommands(Atc.eType type, String commandText){
+
+  public void sendCommands(Atc.eType type, Airplane plane) {
     Atc atc = Acc.atc(type);
-    Acc.messenger().addMessage(this, atc, commandText);
+    IContent cnt;
+
+    if (this.arrivals.contains(plane)) {
+      // je to zadost na vezku
+      this.arrivalsForTwr.add(plane);
+      this.arrivals.remove(plane);
+      cnt = new PlaneSwitchMessage(plane);
+    } else if (this.departures.contains(plane)) {
+      // je to zadost na ctr
+      this.departuresForCtr.add(plane);
+      this.departures.remove(plane);
+      cnt = new PlaneSwitchMessage(plane);
+    } else {
+      //  je to potvrzeni zadosti nebo se app zblaznil
+      cnt = new PlaneSwitchMessage(plane);
+    }
+
+    Acc.messenger().addMessage(this, atc, cnt);
   }
-  public void sendError (String message){
+
+  public void sendError(String message) {
     Acc.messenger().addMessage(null, this, message);
   }
-  public void sendSystem (String message){
+
+  public void sendSystem(String message) {
     throw new ENotSupportedException();
   }
-  
+
 }

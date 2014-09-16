@@ -16,6 +16,10 @@ public class ToNavaidCommand  extends Command{
   protected final Navaid navaid;
 
   public ToNavaidCommand(Navaid navaid) {
+    if (navaid == null) {
+      throw new IllegalArgumentException("Argument \"navaid\" cannot be null.");
+    }
+    
     this.navaid = navaid;
   }
 

@@ -13,21 +13,18 @@ import jatcsimlib.world.Approach;
  * @author Marek
  */
 public class ClearedToApproachCommand extends Command {
-  private final Approach.eType type;
-  private final String runwayThresholdName;
+  private final Approach approach;
 
-  public ClearedToApproachCommand(Approach.eType type, String runwayName) {
-    this.type = type;
-    this.runwayThresholdName = runwayName;
+  public ClearedToApproachCommand(Approach approach) {
+    this.approach = approach;
   }
 
-  public Approach.eType getType() {
-    return type;
+  public Approach getApproach() {
+    return approach;
   }
 
-  public String getRunwayThresholdName() {
-    return runwayThresholdName;
+  @Override
+  public String toString() {
+    return "Cleared-to-app{" + approach.getType() + " " + approach.getParent().getName() + '}';
   }
-  
-  
 }

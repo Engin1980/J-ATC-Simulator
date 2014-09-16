@@ -8,11 +8,14 @@ package jatcsimlib.messaging;
 import jatcsimlib.Acc;
 import jatcsimlib.Simulation;
 import jatcsimlib.atcs.CentreAtc;
+import jatcsimlib.commands.Command;
+import jatcsimlib.commands.CommandList;
 import jatcsimlib.global.ETime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import sun.tools.jar.CommandLine;
 
 /**
  *
@@ -22,15 +25,30 @@ public class Messenger {
 
   private final Map<Object, MessageList> inner = new HashMap<>();
 
-  public void addMessage(Object source, Object target, Object content) {
+  public void addMessage(Object source, Object target, String text) {
+    Message m = new Message(source, target, new StringMessage(text));
+    addMessage(m);
+  }
+
+  public void addMessage(Object source, Object target, Command content) {
+    CommandList cmds = new CommandList();
+    cmds.add(content);
+    Message m = new Message(source, target, cmds);
+    addMessage(m);
+  }
+
+  public void addMessage(Object source, Object target, IContent content) {
     Message m = new Message(source, target, content);
     addMessage(m);
   }
 
-  public void addMessage(int delay, Object source, Object target, Object content) {
+  public void addMessage(int delay, Object source, Object target, IContent content) {
     Message m = new Message(Acc.now().addSeconds(delay), source, target, content);
     addMessage(m);
+  }
 
+  public void addMessage(int delay, Object source, Object target, String content) {
+    addMessage(delay, source, target, new StringMessage(content));
   }
 
   public void addMessage(Message m) {
@@ -63,7 +81,7 @@ public class Messenger {
     }
 
     List<Message> ret = inner.get(target).cloneVisibleToList(time);
-    if (cleanRetrieved){
+    if (cleanRetrieved) {
       inner.get(target).removeAll(ret);
     }
 

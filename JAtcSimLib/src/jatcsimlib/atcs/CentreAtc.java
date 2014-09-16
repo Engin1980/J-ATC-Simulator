@@ -29,8 +29,8 @@ public class CentreAtc extends ComputerAtc {
 
   private final AirplaneList arrivingNewList = new AirplaneList();
   private final AirplaneList arrivingForApp = new AirplaneList();
-  
-  private final Map<Squawk, ETime> waitingRequestsList = new HashMap<>();
+
+  private final WaitingList waitingRequestsList = new WaitingList();
 
   public CentreAtc(AtcTemplate template) {
     super(template);
@@ -41,16 +41,14 @@ public class CentreAtc extends ComputerAtc {
     if (plane.isDeparture()) {
       throw new ERuntimeException("Departure plane cannot be registered using this method.");
     } else {
-      arrivingNewList.add(plane);      
+      arrivingNewList.add(plane);
     }
   }
 
   public void elapseSecond() {
     List<Message> msgs = Acc.messenger().getMy(this, true);
     List<Message> tmp = new LinkedList<>();
-    
-    esRemoveInvalidMessages(msgs);
-    
+
     esRequestPlaneSwitchFromApp();
 
     // CTR -> APP, potvrzene od APP
@@ -59,65 +57,54 @@ public class CentreAtc extends ComputerAtc {
         tmp.add(m);
         continue;
       }
-      String sqwk = m.tryGetText();
-      Airplane p = arrivingForApp.tryGetBySqwk(sqwk);
+      Airplane p = m.getAsPlaneSwitchMessage().plane;
+      if (arrivingForApp.contains(p) == false) {
+        p = null;
+      }
 
       if (p == null) {
         // APP predava na CTR, muze?
-        p = Acc.planes().tryGetBySqwk(sqwk);
-        if (p == null) {
-          Acc.messenger().addMessage(this, Acc.atcApp(), sqwk + " fail - invalid SQWK");
+        p = m.getAsPlaneSwitchMessage().plane;
+        if (canIAcceptFromApp(p)) {
+          departingConfirmedList.add(p);
+          Acc.messenger().addMessage(this, Acc.atcApp(),
+              new PlaneSwitchMessage(p, " accepted"));
           Acc.messenger().remove(m);
         } else {
-          if (canIAcceptFromApp(p)) {
-            departingConfirmedList.add(p);
-            Acc.messenger().addMessage(this, Acc.atcApp(), p.getSqwk().toString());
-            Acc.messenger().remove(m);
-          } else {
-            Acc.messenger().addMessage(this, Acc.atcApp(), sqwk + " fail - not in CTR coverage");
-            Acc.messenger().remove(m);
-          }
+          Acc.messenger().addMessage(this, Acc.atcApp(),
+              new PlaneSwitchMessage(p, " refused. Not in my coverage."));
+          Acc.messenger().remove(m);
         }
 
       } else {
-        // ptvrzene od APP, CTR predava na APP
+        // potvrzene od APP, CTR predava na APP
         arrivingForApp.remove(p); // bude odstraneno
-        waitingRequestsList.remove(p.getSqwk());
-        Acc.messenger().addMessage(
-            new Message(this, p, new ContactCommand(eType.app)));
+        waitingRequestsList.remove(p);
+        p.visuallyResponsibleAtc = Acc.atcApp();
+        Acc.messenger().addMessage(this, p, new ContactCommand(eType.app));
         tmp.add(m);
       }
     }
     msgs.removeAll(tmp);
   }
 
-  private void esRemoveInvalidMessages(List<Message> msgs) {
-    // odstrani nezname
-    for (Message m : msgs) {
-      if (Atc.UNRECOGNIZED.equals(m.tryGetText())) {
-        Acc.messenger().remove(m);
-        msgs.remove(m);
-      }
-    }
-  }
-
   private void esRequestPlaneSwitchFromApp() {
     // CTR -> APP, zadost na APP
     AirplaneList plns = getPlanesReadyForApp();
     for (Airplane p : plns) {
-      Acc.messenger().addMessage(this, Acc.atcApp(), p.getSqwk().toString());
+      Acc.messenger().addMessage(this, Acc.atcApp(),
+          new PlaneSwitchMessage(p, " to you"));
       arrivingNewList.remove(p);
       arrivingForApp.add(p);
-      waitingRequestsList.put(p.getSqwk(), Acc.now());
+      waitingRequestsList.add(p);
     }
     plns.clear();
-    
+
     // opakovani starych zadosti
-    ETime old = Acc.now().addSeconds(-20);
-    for (Squawk k : waitingRequestsList.keySet()){
-      if (waitingRequestsList.get(k).isBefore(old)){
-        Acc.messenger().addMessage(this, Acc.atcApp(), k.toString());
-      }
+    List<Airplane> awaitings = waitingRequestsList.getAwaitings();
+    for (Airplane p : awaitings) {
+        Acc.messenger().addMessage(this, Acc.atcApp(),
+            new PlaneSwitchMessage(p, " to you (repeated)"));
     }
   }
 
@@ -133,24 +120,28 @@ public class CentreAtc extends ComputerAtc {
   }
 
   private boolean canIAcceptFromApp(Airplane p) {
-    if (p.isDeparture() == false)
+    if (p.isDeparture() == false) {
       return false;
-    if (Acc.atcApp().isControllingAirplane(p) == false)
+    }
+    if (Acc.atcApp().isControllingAirplane(p) == false) {
       return false;
-    if (p.getAltitude() < super.acceptAltitude)
+    }
+    if (p.getAltitude() < super.acceptAltitude) {
       return false;
+    }
     return true;
   }
 
   @Override
   public boolean isControllingAirplane(Airplane plane) {
-    if (departingConfirmedList.contains(plane))
+    if (departingConfirmedList.contains(plane)) {
       return true;
-    else if (departingList.contains(plane))
+    } else if (departingList.contains(plane)) {
       return true;
-    else if (arrivingNewList.contains(plane))
+    } else if (arrivingNewList.contains(plane)) {
       return true;
-    
+    }
+
     return false;
   }
 }

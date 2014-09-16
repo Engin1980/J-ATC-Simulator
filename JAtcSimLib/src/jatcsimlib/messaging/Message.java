@@ -8,7 +8,10 @@ package jatcsimlib.messaging;
 import jatcsimlib.Acc;
 import jatcsimlib.airplanes.Airplane;
 import jatcsimlib.atcs.Atc;
+import jatcsimlib.atcs.PlaneSwitchMessage;
 import jatcsimlib.atcs.UserAtc;
+import jatcsimlib.commands.Command;
+import jatcsimlib.commands.CommandList;
 import jatcsimlib.exceptions.ENotSupportedException;
 import jatcsimlib.exceptions.ERuntimeException;
 import jatcsimlib.global.ERandom;
@@ -20,9 +23,9 @@ import jatcsimlib.global.ETime;
  */
 public class Message implements Comparable<Message> {
 
-  protected static int planeVisibleTimeInSeconds = 10;
-  protected static int atcVisibleTimeInSeconds = 10;
-  protected static int systemVisibleTimeInSeconds = 10;
+  protected static int planeVisibleTimeInSeconds = 30;
+  protected static int atcVisibleTimeInSeconds = 30;
+  protected static int systemVisibleTimeInSeconds = 30;
 
   protected static int minPlaneDelayInSeconds = 3;
   protected static int maxPlaneDelayInSeconds = 10;
@@ -39,13 +42,20 @@ public class Message implements Comparable<Message> {
   protected final ETime displayToTime;
   public final Object source;
   public final Object target;
-  public final Object content;
+  public final IContent content;
 
-  public Message(Object source, Object target, Object content) {
+  public static Message create (Object source, Object target, Command c){
+    CommandList cmdLst = new CommandList();
+    cmdLst.add(c);
+    Message ret = new Message(source, target, cmdLst);
+    return ret;
+  }
+  
+  public Message(Object source, Object target, IContent content) {
     this(Acc.now(), source, target, content);
   }
 
-  public Message(ETime creationTime, Object source, Object target, Object content) {
+  public Message(ETime creationTime, Object source, Object target, IContent content) {
     if (content == null) {
       throw new IllegalArgumentException("Argument \"content\" cannot be null.");
     }
@@ -83,7 +93,7 @@ public class Message implements Comparable<Message> {
     } else if (source instanceof Atc) {
       return rnd.nextInt(minAtcDelayInSeconds, maxAtcDelayInSeconds);
     } else {
-      throw new ENotSupportedException();
+      throw new ENotSupportedException("Type of source: " + source.getClass().getSimpleName());
     }
   }
 
@@ -106,20 +116,6 @@ public class Message implements Comparable<Message> {
     return this.displayFromTime.compareTo(o.displayFromTime);
   }
 
-  public String getText() {
-    return (String) content;
-  }
-
-  public String tryGetText() {
-    String ret;
-    try {
-      ret = getText();
-    } catch (Exception ex) {
-      ret = null;
-    }
-    return ret;
-  }
-
   public String getSourceID() {
     if (source == null)
       return "<system>";
@@ -136,5 +132,13 @@ public class Message implements Comparable<Message> {
     return "MSG: " + source + " => " + target + " :: " + content;
   }
   
-  
+  public CommandList getAsCommands(){
+    return (CommandList) content;
+  }
+  public PlaneSwitchMessage getAsPlaneSwitchMessage(){
+    return (PlaneSwitchMessage) content;
+  }
+  public StringMessage getAsString(){
+    return (StringMessage) content;
+  }
 }

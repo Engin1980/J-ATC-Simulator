@@ -95,7 +95,7 @@ public final class Coordinates {
     return ret;
   }
   
-  private static final double RADIAL_APPROACH_MULTIPLIER = 1.3;
+  private static final double RADIAL_APPROACH_MULTIPLIER = 7; // 1.3;
   private static final double RADIAL_MAX_DIFF = 30;
   public static double getHeadingToRadial (Coordinate from, Coordinate to, int radialTo, int currentHeading){
     double heading = Coordinates.getBearing(from, to);

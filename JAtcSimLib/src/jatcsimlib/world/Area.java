@@ -53,6 +53,8 @@ public class Area {
       }
       for (Runway r : a.getRunways()) {
         for (RunwayThreshold t : r.getThresholds()) {
+          t.bind();
+          
           for (Route o : t.getRoutes()) {
             o.bind();
           }

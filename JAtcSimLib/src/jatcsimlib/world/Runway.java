@@ -14,7 +14,7 @@ import jatcsimlib.global.KeyList;
  * @author Marek
  */
 public class Runway implements KeyItem<String> {
-  private KeyList<RunwayThreshold, String> thresholds = new KeyList();
+  private final KeyList<RunwayThreshold, String> thresholds = new KeyList();
   private boolean active;
   
   private Airport parent;

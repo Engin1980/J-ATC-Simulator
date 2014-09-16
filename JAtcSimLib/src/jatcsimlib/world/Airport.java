@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package jatcsimlib.world;
 
 import jatcsimlib.atcs.Atc;
@@ -18,10 +17,12 @@ import jatcsimlib.global.KeyList;
  * @author Marek
  */
 public class Airport implements KeyItem<String> {
+
   private String icao;
   private String name;
+  private int altitude;
   private int transitionAltitude;
-  private final RadarRange radarRange= new RadarRange();
+  private final RadarRange radarRange = new RadarRange();
   private final KeyList<Runway, String> runways = new KeyList();
   private final KeyList<AtcTemplate, Atc.eType> atcTemplates = new KeyList();
   private final KeyList<PublishedHold, Navaid> holds = new KeyList();
@@ -43,13 +44,17 @@ public class Airport implements KeyItem<String> {
   public int getTransitionAltitude() {
     return transitionAltitude;
   }
-  
-  public Coordinate getLocation (){
+
+  public Coordinate getLocation() {
     return runways.get(0).getThresholdA().getCoordinate();
   }
-  
-  public KeyList<Runway, String> getRunways(){
+
+  public KeyList<Runway, String> getRunways() {
     return runways;
+  }
+
+  public int getAltitude() {
+    return altitude;
   }
 
   public RadarRange getRadarRange() {
@@ -63,17 +68,17 @@ public class Airport implements KeyItem<String> {
   public KeyList<PublishedHold, Navaid> getHolds() {
     return holds;
   }
-  
 
   public void setParent(Area parent) {
     this.parent = parent;
   }
 
   public RunwayThreshold tryGetRunwayThreshold(String runwayThresholdName) {
-    for(Runway r : runways){
-      for (RunwayThreshold t : r.getThresholds()){
-        if (t.getName().equals(runwayThresholdName))
+    for (Runway r : runways) {
+      for (RunwayThreshold t : r.getThresholds()) {
+        if (t.getName().equals(runwayThresholdName)) {
           return t;
+        }
       }
     }
     return null;
@@ -82,5 +87,5 @@ public class Airport implements KeyItem<String> {
   public KeyList<AtcTemplate, Atc.eType> getAtcTemplates() {
     return atcTemplates;
   }
-  
+
 }

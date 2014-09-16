@@ -15,5 +15,9 @@ public class ENotSupportedException extends ERuntimeException {
   public ENotSupportedException() {
     super("Not supported operation.");
   }
+
+  public ENotSupportedException(String message) {
+    super("Not supported operation. " + message);
+  }
   
 }

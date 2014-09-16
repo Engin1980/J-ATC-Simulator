@@ -5,7 +5,7 @@
  */
 package jatcsimdraw.settings;
 
-import jatcsimlib.global.Optional;
+import jatcsimlib.global.XmlOptional;
 import jatcsimlib.global.KeyItem;
 import java.awt.Color;
 
@@ -33,11 +33,11 @@ public class DispItem implements KeyItem<String> {
 
   private String key;
   private Color color;
-  @Optional
+  @XmlOptional
   private int width;
-  @Optional
+  @XmlOptional
   private int borderDistance;
-  @Optional
+  @XmlOptional
   private int borderWidth;
   
   @Override

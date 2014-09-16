@@ -18,4 +18,11 @@ public class UnitProvider {
   public static double nmToKm(double value) {
     return value / 0.539968;
   }
+  
+  public static double ftToNm(double value){
+    return value / 6077.1;
+  }
+  public static double nmToFt (double value){
+    return value * 6076.1;
+  }
 }

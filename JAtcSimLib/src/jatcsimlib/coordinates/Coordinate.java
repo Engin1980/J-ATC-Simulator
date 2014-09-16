@@ -133,7 +133,7 @@ public final class Coordinate {
 
   @Override
   public int hashCode() {
-    int hash = 5;
+    int hash =  5;
     hash = 29 * hash + Objects.hashCode(this.latitude);
     hash = 29 * hash + Objects.hashCode(this.longitude);
     return hash;

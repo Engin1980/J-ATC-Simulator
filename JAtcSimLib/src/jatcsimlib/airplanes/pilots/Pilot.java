@@ -53,6 +53,8 @@ public class Pilot {
   private Coordinate targetCoordinate;
   private HoldInfo hold;
   private ApproachInfo app;
+  
+  private Integer orderedSpeed;
 
   public String getRouteName() {
     return this.routeName;
@@ -97,7 +99,8 @@ public class Pilot {
     } else if ((c instanceof ContactCommand)
         || (c instanceof ChangeSpeedCommand)
         || (c instanceof ChangeAltitudeCommand)
-        || (c instanceof ClearedToApproachCommand)) {
+        || (c instanceof ClearedToApproachCommand)
+        || (c instanceof HoldCommand)) {
       this.afterCommands.removeByConsequent(c.getClass());
       this.queue.add(c);
     } else {
@@ -262,6 +265,13 @@ public class Pilot {
   }
 
   private boolean processQueueCommand(ChangeHeadingCommand c) {
+    if (hold != null) {
+      hold = null;
+    }
+    if (app != null) {
+      app = null;
+    }
+
     targetCoordinate = null;
     int targetHeading = c.getHeading();
     boolean leftTurn;
@@ -299,7 +309,7 @@ public class Pilot {
     sayIfReq(c, "Contact " + a.getName() + "."); // at " + a.getFrequency() + ".");
 
     // change of atc
-    atc = a;
+    this.atc = a;
     Acc.messenger().addMessage(5, parent, a,
         parent.getCallsign().toString() + " with you at " + Acc.toAltS(parent.getAltitude(), true));
 
@@ -321,22 +331,28 @@ public class Pilot {
   }
 
   private boolean processQueueCommand(ClearedToApproachCommand c) {
-    RunwayThreshold rt = Acc.airport().tryGetRunwayThreshold(c.getRunwayThresholdName());
-    if (rt == null) {
-      sayOrError(c, "There is no runway " + c.getRunwayThresholdName() + " we can approach to.");
-      return true;
-    }
-    Approach a = rt.getApproaches().tryGet(c.getType());
-    if (a == null) {
-      sayOrError(c, "There is no approach of type " + c.getType() + " for runway " + rt.getName() + ".");
-      return true;
-    }
 
     if (hold != null) {
       hold = null;
     }
-    this.app = new ApproachInfo(a);
-    sayIfReq(c, "Cleared to " + a.getType() + " approach runway " + rt.getName() + ".");
+
+    // zatim resim jen pozici letadla
+    int radFromFix
+        = (int) Coordinates.getBearing(parent.getCoordinate(), c.getApproach().getPoint());
+    int dist
+        = (int) Coordinates.getDistanceInNM(c.getApproach().getPoint(), parent.getCoordinate());
+    if (dist > 17 || !Headings.isBetween(
+        Headings.add(c.getApproach().getRadial(), -30),
+        radFromFix,
+        Headings.add(c.getApproach().getRadial(), 30))) {
+      Acc.messenger().addMessage(parent, atc, "Cannot enter approach now. Difficult position.");
+    } else {
+      this.app = new ApproachInfo(c.getApproach());
+      sayIfReq(c, "Cleared to " + c.getApproach().getType()
+          + " approach runway " + c.getApproach().getParent().getName() + ".");
+
+    }
+
     return true;
   }
 
@@ -362,7 +378,7 @@ public class Pilot {
       say(text);
     } else {
       Acc.messenger().addMessage(null, Acc.atcApp(),
-          String.format("Plane %0#s refused command. Reason: %1#s.",
+          String.format("Plane %1#s refused command. Reason: %2#s.",
               parent.getCallsign(), text));
     }
   }
@@ -442,11 +458,13 @@ public class Pilot {
   }
 
   private void endrivePlane() {
+    adjustSpeed();
     if (hold != null) {
       // fly hold
       flyHold();
     } else if (app != null) {
       // fly app
+      flyApproach();
     } else if (targetCoordinate != null) {
       int heading = (int) Coordinates.getBearing(parent.getCoordinate(), targetCoordinate);
       heading = Headings.to(heading);
@@ -508,16 +526,17 @@ public class Pilot {
 
           int newHeading;
           newHeading = hold.isLeftTurned
-              ? Headings.add(hold.inboundRadial, -160)
-              : Headings.add(hold.inboundRadial, 160);
-          parent.setTargetHeading(newHeading, hold.isLeftTurned);
-          hold.secondTurnTime = Acc.now().addSeconds(60);
+              ? Headings.add(hold.inboundRadial, -150)
+              : Headings.add(hold.inboundRadial, 150);
+          parent.setTargetHeading(newHeading);
+          hold.secondTurnTime = Acc.now().addSeconds(120);
 
           hold.phase = HoldInfo.ePhase.tearAgainst;
         } else {
           int newHeading = (int) Coordinates.getBearing(parent.getCoordinate(), hold.fix);
           parent.setTargetHeading(newHeading);
         }
+        break;
 
       case tearAgainst:
         if (Acc.now().isAfter(hold.secondTurnTime)) {
@@ -541,8 +560,8 @@ public class Pilot {
       case parallelAgainst:
         if (Acc.now().isAfter(hold.secondTurnTime)) {
           int newHeading = (hold.isLeftTurned)
-              ? Headings.add(hold.getOutboundHeading(), 210)
-              : Headings.add(hold.getOutboundHeading(), -210);
+              ? Headings.add(hold.getOutboundHeading(), -210)
+              : Headings.add(hold.getOutboundHeading(), +210);
           parent.setTargetHeading(newHeading, !hold.isLeftTurned);
           hold.phase = HoldInfo.ePhase.parallelTurn;
         }
@@ -560,17 +579,130 @@ public class Pilot {
   }
 
   private void setHoldDataByEntry() {
-    int y = parent.getHeading();
+    int y = (int) Coordinates.getBearing(parent.getCoordinate(), hold.fix);
+    int yy = Headings.add(y, 180);
+
     int h = hold.inboundRadial;
     int a = Headings.add(h, -75);
     int b = Headings.add(h, 110);
-    if (Headings.isBetween(a, y, h)) {
-      hold.phase = HoldInfo.ePhase.tearEntry;
-    } else if (Headings.isBetween(h, y, b)) {
+
+    if (Headings.isBetween(b, yy, a)) {
+      hold.phase = HoldInfo.ePhase.directEntry;
+    } else if (Headings.isBetween(h, yy, b)) {
       hold.phase = HoldInfo.ePhase.parallelEntry;
     } else {
-      // direct
-      hold.phase = HoldInfo.ePhase.directEntry;
+      hold.phase = HoldInfo.ePhase.tearEntry;
     }
+  }
+
+  private void flyApproach() {
+    switch (app.phase) {
+      case approaching:
+        updateHeadingOnApproach();
+        updateAltitudeOnApproach();
+
+        if (orderedSpeed == null){
+          parent.setTargetSpeed(parent.getAirplaneSpecification().vApp);
+        }
+        
+        if (parent.getAltitude() < app.finalAltitude) {
+          app.phase = ApproachInfo.ePhase.finalEnter;
+        }
+        break;
+      case finalEnter:
+        // na final
+        if (parent.getSpeed() != parent.getAirplaneSpecification().vApp) {
+          parent.setTargetSpeed(parent.getAirplaneSpecification().vApp);
+        }
+
+        // neni na twr, tak GA
+        if (this.atc != Acc.atcTwr()) {
+          goAround("Not at TWR atc.");
+          return;
+        }
+
+        // moc nizko, uz pod stabilized altitude
+        if (parent.getTargetHeading() != app.approach.getRadial()) {
+          goAround("Unstabilized approach.");
+          return;
+        }
+
+        updateHeadingOnApproach();
+        updateAltitudeOnApproach();
+
+        app.phase = ApproachInfo.ePhase.finalOther;
+        break;
+      case finalOther:
+
+        updateHeadingOnApproach();
+        updateAltitudeOnApproach();
+
+        if (parent.getAltitude() < app.shortFinalAltitude) {
+          app.phase = ApproachInfo.ePhase.shortFinal;
+        }
+        break;
+      case shortFinal:
+        updateAltitudeOnApproach();
+        int newxHeading = (int) app.approach.getRadial();
+        parent.setTargetHeading(newxHeading);
+        
+        if (parent.getAltitude() == Acc.airport().getAltitude()){
+          app.phase = ApproachInfo.ePhase.touchdownAndLanded;
+        }
+        break;
+      case touchdownAndLanded:
+        // is on the ground
+//        int newxHeading = (int) app.approach.getRadial();
+//        parent.setTargetHeading(newxHeading);
+
+        parent.setTargetSpeed(0);
+        break;
+      default:
+        throw new ENotSupportedException();
+    }
+  }
+
+  private void updateAltitudeOnApproach() {
+    double distToLand
+        = Coordinates.getDistanceInNM(parent.getCoordinate(), app.approach.getParent().getCoordinate());
+    int newAltitude
+        = (int) (app.approach.getParent().getParent().getParent().getAltitude()
+        + app.approach.getGlidePathPerNM() * distToLand);
+
+    newAltitude = (int) Math.min(newAltitude, parent.getTargetAltitude());
+    newAltitude = (int) Math.max(newAltitude, Acc.airport().getAltitude());
+
+    parent.setTargetAltitude(newAltitude);
+  }
+
+  private void updateHeadingOnApproach() {
+    int newHeading
+        = (int) Coordinates.getHeadingToRadial(
+            parent.getCoordinate(), app.approach.getPoint(),
+            app.approach.getRadial(), parent.getHeading());
+    parent.setTargetHeading(newHeading);
+  }
+
+  private boolean isGroundVisible() {
+    return true;
+  }
+
+  private void adjustSpeed() {
+    if (parent.isDeparture() == false) {
+      if (parent.getAltitude() < 10_000) {
+        if (parent.getTargetSpeed() > 250) {
+          parent.setTargetSpeed(250);
+        }
+      }
+    }
+  }
+
+  private void goAround(String reason) {
+    Acc.messenger().addMessage(
+        this,
+        atc,
+        "Going around! " + reason);
+    addNewCommands(app.approach.getGaCommands());
+    app = null;
   }
 }

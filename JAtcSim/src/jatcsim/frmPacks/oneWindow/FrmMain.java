@@ -12,10 +12,12 @@ import jatcsimdraw.settings.Settings;
 import jatcsimdraw.shared.es.WithCoordinateEvent;
 import jatcsimlib.Simulation;
 import jatcsimlib.airplanes.Airplane;
+import jatcsimlib.airplanes.Squawk;
 import jatcsimlib.atcs.Atc;
 import jatcsimlib.atcs.UserAtc;
 import jatcsimlib.commands.Command;
 import jatcsimlib.commands.CommandFormat;
+import jatcsimlib.commands.CommandList;
 import jatcsimlib.events.EventListener;
 import jatcsimlib.world.Airport;
 import jatcsimlib.world.Area;
@@ -81,7 +83,9 @@ public class FrmMain extends javax.swing.JFrame {
     if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
       String msg = jTxtInput.getText();
       boolean accepted = sendMessage(msg);
-      if (accepted) jTxtInput.setText("");
+      if (accepted) {
+        jTxtInput.setText("");
+      }
     }
   }//GEN-LAST:event_jTxtInputKeyPressed
 
@@ -150,17 +154,27 @@ public class FrmMain extends javax.swing.JFrame {
   }
 
   private boolean sendMessage(String msg) {
-    boolean ret ;
+    boolean ret;
     UserAtc app = sim.getAppAtc();
     if (msg.startsWith("+")) {
       // msg for CTR
       msg = msg.substring(1);
-      app.sendCommands(Atc.eType.ctr, msg);
+      Airplane plane = sim.getPlanes().tryGet(new Squawk(msg));
+      if (plane == null) {
+        app.sendError("No such plane with sqwk = " + msg);
+      } else {
+        app.sendCommands(Atc.eType.ctr, plane);
+      }
       ret = true;
     } else if (msg.startsWith("-")) {
       // msg for TWR
       msg = msg.substring(1);
-      app.sendCommands(Atc.eType.twr, msg);
+      Airplane plane = sim.getPlanes().tryGet(new Squawk(msg));
+      if (plane == null) {
+        app.sendError("No such plane with sqwk = " + msg);
+      } else {
+        app.sendCommands(Atc.eType.twr, plane);
+      }
       ret = true;
     } else if (msg.startsWith("=")) {
       // system
@@ -174,7 +188,7 @@ public class FrmMain extends javax.swing.JFrame {
         app.sendError("No such plane (or multiple planes) for callsign " + spl[0] + ".");
         ret = false;
       } else {
-        List<Command> cmdList = null;
+        CommandList cmdList = null;
         try {
           cmdList = CommandFormat.parseMulti(spl[1]);
           ret = true;
