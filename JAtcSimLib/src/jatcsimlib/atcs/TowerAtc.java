@@ -11,7 +11,6 @@ import jatcsimlib.airplanes.AirplaneList;
 import jatcsimlib.commands.ClearedForTakeoffCommand;
 import jatcsimlib.commands.ContactCommand;
 import jatcsimlib.coordinates.Coordinates;
-import jatcsimlib.global.ETime;
 import jatcsimlib.messaging.Message;
 import java.util.LinkedList;
 import java.util.List;
@@ -22,14 +21,14 @@ import java.util.List;
  */
 public class TowerAtc extends ComputerAtc {
 
-  private AirplaneList arrivingFromApp = new AirplaneList();
-  private AirplaneList arriving = new AirplaneList();
+  private final AirplaneList arrivingFromApp = new AirplaneList();
+  private final AirplaneList arriving = new AirplaneList();
 
-  private AirplaneList readyForTakeOff = new AirplaneList();
-  private AirplaneList readyWaitingForApp = new AirplaneList();
-  private AirplaneList departed = new AirplaneList();
+  private final AirplaneList readyForTakeOff = new AirplaneList();
+  private final AirplaneList readyWaitingForApp = new AirplaneList();
+  private final AirplaneList departed = new AirplaneList();
 
-  private WaitingList waitingRequestsList = new WaitingList();
+  private final WaitingList waitingRequestsList = new WaitingList();
 
   public TowerAtc(AtcTemplate template) {
     super(template);
@@ -40,14 +39,13 @@ public class TowerAtc extends ComputerAtc {
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
 
-  @Override
-  public boolean isControllingAirplane(Airplane plane) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-  }
-
   public void elapseSecond() {
     List<Message> msgs = Acc.messenger().getMy(this, true);
     List<Message> tmp = new LinkedList<>();
+    
+    if (msgs.isEmpty() == false){
+      System.out.println("## PP");
+    }
 
     esRequestPlaneSwitchFromApp();
 
@@ -80,7 +78,6 @@ public class TowerAtc extends ComputerAtc {
         // potvrzene od APP, TWR predava na APP
         readyWaitingForApp.remove(p); // bude odstraneno
         waitingRequestsList.remove(p);
-        p.visuallyResponsibleAtc = Acc.atcApp();
         Acc.messenger().addMessage(this, p, new ClearedForTakeoffCommand());
         Acc.messenger().addMessage(this, p, new ContactCommand(eType.app));
         tmp.add(m);

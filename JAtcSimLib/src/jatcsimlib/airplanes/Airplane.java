@@ -47,11 +47,6 @@ public class Airplane implements KeyItem<Callsign> {
 
   private int lastVerticalSpeed;
 
-  // get this out someway
-  // now it is needed by "draw" cos there dont know
-  // who is responsible for plane
-  public Atc visuallyResponsibleAtc;
-
   private final AirplaneType airplaneSpecification;
   
   private final AirplaneInfo info;
@@ -97,7 +92,7 @@ public class Airplane implements KeyItem<Callsign> {
     public String targetAltitudeShort() {
       return Integer.toString(Airplane.this.targetAltitude / 100);
     }
-
+    
     public String climbDescendChar() {
       if (Airplane.this.targetAltitude > Airplane.this.altitude) {
         return "↑"; //"▲";

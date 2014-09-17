@@ -8,6 +8,7 @@ package jatcismdraw.radarBase;
 
 import jatcsimdraw.settings.Settings;
 import jatcsimlib.airplanes.Airplane;
+import jatcsimlib.atcs.Atc;
 import jatcsimlib.messaging.Message;
 import jatcsimlib.world.Approach;
 import jatcsimlib.world.Border;
@@ -31,7 +32,7 @@ public abstract class Visualiser {
   public abstract void drawBorder(Border border);
   public abstract void drawRunway(Runway runway);
   public abstract void drawNavaid (Navaid navaid);
-  public abstract void drawPlane(Airplane plane);
+  public abstract void drawPlane(Airplane plane, Atc.eType responsibleAtcType);
   public abstract void drawMessages(List<Message> msgs);
   public abstract void drawStar(List<Navaid> navaidPoints);
   public abstract void drawApproach(Approach approach);

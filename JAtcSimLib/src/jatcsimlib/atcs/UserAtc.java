@@ -10,6 +10,7 @@ import jatcsimlib.airplanes.Airplane;
 import jatcsimlib.airplanes.AirplaneList;
 import jatcsimlib.commands.CommandList;
 import jatcsimlib.exceptions.ENotSupportedException;
+import jatcsimlib.exceptions.ERuntimeException;
 import jatcsimlib.messaging.IContent;
 
 /**
@@ -37,11 +38,6 @@ public class UserAtc extends Atc {
     throw new UnsupportedOperationException("Not supported yet.");
   }
 
-  @Override
-  public boolean isControllingAirplane(Airplane plane) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-  }
-
   public void elapseSecond() {
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
@@ -66,7 +62,12 @@ public class UserAtc extends Atc {
       cnt = new PlaneSwitchMessage(plane);
     } else {
       //  je to potvrzeni zadosti nebo se app zblaznil
-      cnt = new PlaneSwitchMessage(plane);
+      if (getPrm().isToSwitch(plane)) {
+        getPrm().confirmSwitch(this, plane);
+        cnt = new PlaneSwitchMessage(plane);
+      } else {
+        throw new ERuntimeException("Cannot confirm switch of something not asked to switch to... TODO");
+      }
     }
 
     Acc.messenger().addMessage(this, atc, cnt);

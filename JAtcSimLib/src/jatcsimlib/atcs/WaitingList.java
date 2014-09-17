@@ -46,4 +46,8 @@ public class WaitingList {
 
     return ret;
   }
+
+  boolean contains(Airplane plane) {
+    return planes.contains(plane);
+  }
 }

@@ -8,27 +8,17 @@ package jatcsimlib.atcs;
 import jatcsimlib.Acc;
 import jatcsimlib.airplanes.Airplane;
 import jatcsimlib.airplanes.AirplaneList;
-import jatcsimlib.airplanes.Squawk;
 import jatcsimlib.commands.ContactCommand;
 import jatcsimlib.exceptions.ERuntimeException;
-import jatcsimlib.global.ETime;
 import jatcsimlib.messaging.Message;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 /**
  *
  * @author Marek
  */
 public class CentreAtc extends ComputerAtc {
-
-  private final AirplaneList departingConfirmedList = new AirplaneList();
-  private final AirplaneList departingList = new AirplaneList();
-
-  private final AirplaneList arrivingNewList = new AirplaneList();
-  private final AirplaneList arrivingForApp = new AirplaneList();
 
   private final WaitingList waitingRequestsList = new WaitingList();
 
@@ -40,9 +30,7 @@ public class CentreAtc extends ComputerAtc {
   protected void _registerNewPlane(Airplane plane) {
     if (plane.isDeparture()) {
       throw new ERuntimeException("Departure plane cannot be registered using this method.");
-    } else {
-      arrivingNewList.add(plane);
-    }
+    } 
   }
 
   public void elapseSecond() {
@@ -51,36 +39,38 @@ public class CentreAtc extends ComputerAtc {
 
     esRequestPlaneSwitchFromApp();
 
-    // CTR -> APP, potvrzene od APP
     for (Message m : msgs) {
       if (m.source != Acc.atcApp()) {
         tmp.add(m);
         continue;
       }
+      
       Airplane p = m.getAsPlaneSwitchMessage().plane;
-      if (arrivingForApp.contains(p) == false) {
+      if (waitingRequestsList.contains(p) == false) {
         p = null;
       }
 
       if (p == null) {
-        // APP predava na CTR, muze?
+        // APP -> CTR, muze?       
+
         p = m.getAsPlaneSwitchMessage().plane;
         if (canIAcceptFromApp(p)) {
-          departingConfirmedList.add(p);
+          getPrm().confirmSwitch(this, p);
+
           Acc.messenger().addMessage(this, Acc.atcApp(),
               new PlaneSwitchMessage(p, " accepted"));
           Acc.messenger().remove(m);
         } else {
+          getPrm().refuseSwitch(this, p);
+
           Acc.messenger().addMessage(this, Acc.atcApp(),
               new PlaneSwitchMessage(p, " refused. Not in my coverage."));
           Acc.messenger().remove(m);
         }
 
       } else {
-        // potvrzene od APP, CTR predava na APP
-        arrivingForApp.remove(p); // bude odstraneno
+        // CTR -> APP, potvrzene od APP
         waitingRequestsList.remove(p);
-        p.visuallyResponsibleAtc = Acc.atcApp();
         Acc.messenger().addMessage(this, p, new ContactCommand(eType.app));
         tmp.add(m);
       }
@@ -94,8 +84,9 @@ public class CentreAtc extends ComputerAtc {
     for (Airplane p : plns) {
       Acc.messenger().addMessage(this, Acc.atcApp(),
           new PlaneSwitchMessage(p, " to you"));
-      arrivingNewList.remove(p);
-      arrivingForApp.add(p);
+
+      getPrm().requestSwitch(this, Acc.atcApp(), p);
+
       waitingRequestsList.add(p);
     }
     plns.clear();
@@ -103,15 +94,17 @@ public class CentreAtc extends ComputerAtc {
     // opakovani starych zadosti
     List<Airplane> awaitings = waitingRequestsList.getAwaitings();
     for (Airplane p : awaitings) {
-        Acc.messenger().addMessage(this, Acc.atcApp(),
-            new PlaneSwitchMessage(p, " to you (repeated)"));
+      Acc.messenger().addMessage(this, Acc.atcApp(),
+          new PlaneSwitchMessage(p, " to you (repeated)"));
     }
   }
 
   private AirplaneList getPlanesReadyForApp() {
     AirplaneList ret = new AirplaneList();
     // arriving pozadat o predani CTR na APP
-    for (Airplane p : arrivingNewList) {
+    for (Airplane p : getPrm().getPlanes(this)) {
+      if (p.isDeparture()) continue;
+      if (getPrm().isToSwitch(p)) continue;
       if (p.getAltitude() < super.releaseAltitude) {
         ret.add(p);
       }
@@ -132,16 +125,4 @@ public class CentreAtc extends ComputerAtc {
     return true;
   }
 
-  @Override
-  public boolean isControllingAirplane(Airplane plane) {
-    if (departingConfirmedList.contains(plane)) {
-      return true;
-    } else if (departingList.contains(plane)) {
-      return true;
-    } else if (arrivingNewList.contains(plane)) {
-      return true;
-    }
-
-    return false;
-  }
 }

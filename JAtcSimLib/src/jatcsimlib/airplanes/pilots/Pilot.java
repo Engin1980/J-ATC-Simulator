@@ -683,7 +683,7 @@ public class Pilot {
     parent.setTargetHeading(newHeading);
   }
 
-  private boolean isGroundVisible() {
+  private boolean canSeeRunwayFromCurrentPosition() {
     return true;
   }
 
@@ -699,7 +699,7 @@ public class Pilot {
 
   private void goAround(String reason) {
     Acc.messenger().addMessage(
-        this,
+        parent,
         atc,
         "Going around! " + reason);
     addNewCommands(app.approach.getGaCommands());

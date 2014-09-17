@@ -13,6 +13,7 @@ import jatcsimlib.airplanes.Callsign;
 import jatcsimlib.airplanes.Squawk;
 import jatcsimlib.atcs.Atc;
 import jatcsimlib.atcs.CentreAtc;
+import jatcsimlib.atcs.PlaneResponsibilityManager;
 import jatcsimlib.atcs.TowerAtc;
 import jatcsimlib.atcs.UserAtc;
 import jatcsimlib.commands.ChangeAltitudeCommand;
@@ -154,8 +155,15 @@ public class Simulation {
 
     Airplane plane = generateNewArrivingPlane();
 
+    
+    PlaneResponsibilityManager.getInstance().registerPlane(ctrAtc, plane);
     ctrAtc.registerNewPlane(plane);
     planes.add(plane);
+  }
+  
+  public Atc getResponsibleAtc(Airplane plane){
+    return
+        Acc.prm().getResponsibleAtc(plane);
   }
 
   private Airplane generateNewArrivingPlane() {
@@ -163,11 +171,11 @@ public class Simulation {
 
     Callsign cs = generateCallsign();
     Route r = getRandomRoute(true);
-    Coordinate c = generateArrivalCoordinate(r.getMainFix().getCoordinate(), this.activeRunwayThreshold.getCoordinate());
+    Coordinate coord = generateArrivalCoordinate(r.getMainFix().getCoordinate(), this.activeRunwayThreshold.getCoordinate());
     Squawk sqwk = generateSqwk();
     AirplaneType pt = planeTypes.get(rnd.nextInt(planeTypes.size()));
-    int heading = (int) Coordinates.getBearing(c, r.getMainFix().getCoordinate());
-    int alt = generateArrivingPlaneAltitude(c);
+    int heading = (int) Coordinates.getBearing(coord, r.getMainFix().getCoordinate());
+    int alt = generateArrivingPlaneAltitude(coord);
     int spd = pt.vCruise;
 
     List<Command> routeCmds = r.getCommandsListClone();
@@ -181,7 +189,7 @@ public class Simulation {
     routeCmds.add(0, new ContactCommand(Atc.eType.ctr));
 
     ret = new Airplane(
-        cs, c, sqwk, pt, heading, alt, spd, false,
+        cs, coord, sqwk, pt, heading, alt, spd, false,
         r.getName(), routeCmds);
 
     return ret;

@@ -187,10 +187,9 @@ public class BasicVisualiser extends Visualiser {
   }
 
   @Override
-  public void drawPlane(Airplane plane) {
+  public void drawPlane(Airplane plane, Atc.eType responsibleAtcType) {
     
-    Atc.eType atcType = getResponsibleAtc(plane);
-    DispPlane dp = sett.getDispPlane(atcType);
+    DispPlane dp = sett.getDispPlane(responsibleAtcType);
     
     p.drawPoint(plane.getCoordinate(), dp.getColor(), dp.getPointWidth());
     p.drawLine(plane.getCoordinate(), dp.getHeadingLineLength(), plane.getHeading(), 
@@ -238,10 +237,6 @@ public class BasicVisualiser extends Visualiser {
         throw new ENotSupportedException();
     }
     return ret;
-  }
-
-  private Atc.eType getResponsibleAtc(Airplane plane) {
-    return plane.visuallyResponsibleAtc.getType();
   }
 
   @Override

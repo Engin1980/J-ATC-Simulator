@@ -28,6 +28,10 @@ public abstract class Atc {
   protected final int acceptAltitude;
   protected final int releaseAltitude;
   protected final int orderedAltitude;
+  
+  protected PlaneResponsibilityManager getPrm(){
+    return PlaneResponsibilityManager.getInstance();
+  }
 
   public Atc(AtcTemplate template) {
     this.type = template.getType();
@@ -48,10 +52,11 @@ public abstract class Atc {
     return name;
   }
   
-  public abstract boolean isControllingAirplane(Airplane plane);
+  public final boolean isControllingAirplane(Airplane plane){
+    return getPrm().getResponsibleAtc(plane) == this;
+  }
   
   public void registerNewPlane (Airplane plane){
-    plane.visuallyResponsibleAtc = this;
     _registerNewPlane(plane);
   }
   protected abstract void _registerNewPlane(Airplane plane);

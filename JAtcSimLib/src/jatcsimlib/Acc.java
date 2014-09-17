@@ -8,6 +8,7 @@ package jatcsimlib;
 import jatcsimlib.airplanes.AirplaneList;
 import jatcsimlib.atcs.Atc;
 import jatcsimlib.atcs.CentreAtc;
+import jatcsimlib.atcs.PlaneResponsibilityManager;
 import jatcsimlib.atcs.TowerAtc;
 import jatcsimlib.atcs.UserAtc;
 import jatcsimlib.exceptions.ENotSupportedException;
@@ -41,6 +42,10 @@ public class Acc {
 
   public static AirplaneList planes() {
     return sim.getPlanes();
+  }
+  
+  public static PlaneResponsibilityManager prm(){
+    return PlaneResponsibilityManager.getInstance();
   }
 
   public static ETime now() {
