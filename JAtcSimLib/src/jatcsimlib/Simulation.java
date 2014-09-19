@@ -125,7 +125,7 @@ public class Simulation {
     now.increaseSecond();
 
     this.ctrAtc.elapseSecond();
-    //this.twrAtc.elapseSecond();
+    this.twrAtc.elapseSecond();
     //this.appAtc.elapseSecond();
 
     generateNewPlanes();
@@ -218,7 +218,7 @@ public class Simulation {
   private Coordinate generateArrivalCoordinate(Coordinate navFix, Coordinate aipFix) {
     double radial = Coordinates.getBearing(aipFix, navFix);
     radial += rnd.nextDouble() * 50 - 25; // nahodne zatoceni priletoveho radialu
-    double dist = rnd.nextDouble() * 50; // vzdalenost od prvniho bodu STARu
+    double dist = rnd.nextDouble() * 1; // 50; // vzdalenost od prvniho bodu STARu
     Coordinate ret = null;
     while (ret == null) {
 
@@ -279,7 +279,7 @@ public class Simulation {
   }
 
   private int generateArrivingPlaneAltitude(Coordinate c) {
-    double thousandsFeetPerMile = 0.35;
+    double thousandsFeetPerMile = 0.30;
 
     double dist = Coordinates.getDistanceInNM(c, Acc.airport().getLocation());
 

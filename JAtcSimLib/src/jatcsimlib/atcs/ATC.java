@@ -6,6 +6,7 @@
 
 package jatcsimlib.atcs;
 
+import jatcsimlib.Acc;
 import jatcsimlib.airplanes.Airplane;
 
 /**
@@ -81,6 +82,7 @@ public abstract class Atc {
   public String toString() {
     return this.name;
   }
+
 
   
 }

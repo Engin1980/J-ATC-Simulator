@@ -8,10 +8,14 @@ package jatcsimlib.atcs;
 import jatcsimlib.Acc;
 import jatcsimlib.airplanes.Airplane;
 import jatcsimlib.airplanes.AirplaneList;
+import jatcsimlib.commands.AfterAltitudeCommand;
 import jatcsimlib.commands.ClearedForTakeoffCommand;
+import jatcsimlib.commands.CommandList;
 import jatcsimlib.commands.ContactCommand;
 import jatcsimlib.coordinates.Coordinates;
+import jatcsimlib.messaging.GoingAroundStringMessage;
 import jatcsimlib.messaging.Message;
+import jatcsimlib.messaging.StringMessage;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -20,13 +24,6 @@ import java.util.List;
  * @author Marek
  */
 public class TowerAtc extends ComputerAtc {
-
-  private final AirplaneList arrivingFromApp = new AirplaneList();
-  private final AirplaneList arriving = new AirplaneList();
-
-  private final AirplaneList readyForTakeOff = new AirplaneList();
-  private final AirplaneList readyWaitingForApp = new AirplaneList();
-  private final AirplaneList departed = new AirplaneList();
 
   private final WaitingList waitingRequestsList = new WaitingList();
 
@@ -39,51 +36,51 @@ public class TowerAtc extends ComputerAtc {
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
 
-  public void elapseSecond() {
+  @Override
+  protected void _elapseSecond() {
     List<Message> msgs = Acc.messenger().getMy(this, true);
-    List<Message> tmp = new LinkedList<>();
-    
-    if (msgs.isEmpty() == false){
+
+    if (msgs.isEmpty() == false) {
       System.out.println("## PP");
     }
 
     esRequestPlaneSwitchFromApp();
 
-    // TWR -> APP, potvrzene od APP
     for (Message m : msgs) {
-      if (m.source != Acc.atcApp()) {
-        tmp.add(m);
+      if (m.source instanceof Airplane) {
+        if (m.content instanceof GoingAroundStringMessage) {
+          // predavame na APP
+          super.requestSwitch((Airplane) m.source);
+          waitingRequestsList.add((Airplane) m.source);
+        }
+      } else if (m.source != Acc.atcApp()) {
         continue;
       }
+
       Airplane p = m.getAsPlaneSwitchMessage().plane;
-      if (readyWaitingForApp.contains(p) == false) {
+      if (waitingRequestsList.contains(p) == false) {
         p = null;
       }
 
       if (p == null) {
-        // APP predava na TWR, muze?
+        // APP -> TWR, muze?
         p = m.getAsPlaneSwitchMessage().plane;
         if (canIAcceptFromApp(p)) {
-          arrivingFromApp.add(p);
-          Acc.messenger().addMessage(this, Acc.atcApp(),
-              new PlaneSwitchMessage(p, " accepted"));
-          Acc.messenger().remove(m);
+          super.confirmSwitch(p);
         } else {
-          Acc.messenger().addMessage(this, Acc.atcApp(),
-              new PlaneSwitchMessage(p, " refused. Not in my coverage."));
-          Acc.messenger().remove(m);
+          super.refuseSwitch(p);
         }
 
       } else {
         // potvrzene od APP, TWR predava na APP
-        readyWaitingForApp.remove(p); // bude odstraneno
         waitingRequestsList.remove(p);
-        Acc.messenger().addMessage(this, p, new ClearedForTakeoffCommand());
-        Acc.messenger().addMessage(this, p, new ContactCommand(eType.app));
-        tmp.add(m);
+        CommandList cmdList = new CommandList();
+        cmdList.add(new ClearedForTakeoffCommand());
+        cmdList.add(new AfterAltitudeCommand(Acc.airport().getAltitude() + 200));
+        cmdList.add(new ContactCommand(eType.app));
+        Acc.messenger().addMessage(this, p, cmdList);
       }
     }
-    msgs.removeAll(tmp);
   }
 
   private boolean canIAcceptFromApp(Airplane p) {
@@ -104,16 +101,16 @@ public class TowerAtc extends ComputerAtc {
   }
 
   private void esRequestPlaneSwitchFromApp() {
-    // CTR -> APP, zadost na APP
+    // TWR -> APP, zadost na APP
     AirplaneList plns = getPlanesReadyForApp();
     for (Airplane p : plns) {
       Acc.messenger().addMessage(this, Acc.atcApp(),
           new PlaneSwitchMessage(p, " to you"));
-      readyForTakeOff.remove(p);
-      readyWaitingForApp.add(p);
+
+      getPrm().requestSwitch(this, Acc.atcApp(), p);
+
       waitingRequestsList.add(p);
     }
-    plns.clear();
 
     // opakovani starych zadosti
     List<Airplane> awaitings = waitingRequestsList.getAwaitings();
@@ -124,14 +121,20 @@ public class TowerAtc extends ComputerAtc {
   }
 
   private AirplaneList getPlanesReadyForApp() {
-//    AirplaneList ret = new AirplaneList();
-//    // arriving pozadat o predani CTR na APP
-//    for (Airplane p : arrivingNewList) {
-//      if (p.getAltitude() < super.releaseAltitude) {
-//        ret.add(p);
-//      }
-//    }
-    return readyForTakeOff;
+    AirplaneList ret = new AirplaneList();
+
+    for (Airplane p : getPrm().getPlanes(this)) {
+      if (p.isDeparture() == false) {
+        continue;
+      }
+      if (getPrm().isToSwitch(p)) {
+        continue;
+      }
+
+      ret.add(p);
+    }
+
+    return ret;
   }
 
 }

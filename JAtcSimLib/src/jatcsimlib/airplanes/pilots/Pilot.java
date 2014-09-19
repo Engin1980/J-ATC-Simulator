@@ -29,6 +29,7 @@ import jatcsimlib.coordinates.Coordinates;
 import jatcsimlib.exceptions.ENotSupportedException;
 import jatcsimlib.exceptions.ERuntimeException;
 import jatcsimlib.global.Headings;
+import jatcsimlib.messaging.GoingAroundStringMessage;
 import jatcsimlib.world.Approach;
 import jatcsimlib.world.Navaid;
 import jatcsimlib.world.RunwayThreshold;
@@ -701,7 +702,7 @@ public class Pilot {
     Acc.messenger().addMessage(
         parent,
         atc,
-        "Going around! " + reason);
+        new GoingAroundStringMessage(reason));
     addNewCommands(app.approach.getGaCommands());
     app = null;
   }

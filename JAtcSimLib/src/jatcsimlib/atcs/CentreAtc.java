@@ -20,7 +20,6 @@ import java.util.List;
  */
 public class CentreAtc extends ComputerAtc {
 
-  private final WaitingList waitingRequestsList = new WaitingList();
 
   public CentreAtc(AtcTemplate template) {
     super(template);
@@ -30,21 +29,20 @@ public class CentreAtc extends ComputerAtc {
   protected void _registerNewPlane(Airplane plane) {
     if (plane.isDeparture()) {
       throw new ERuntimeException("Departure plane cannot be registered using this method.");
-    } 
+    }
   }
 
-  public void elapseSecond() {
+  @Override
+  protected void _elapseSecond() {
     List<Message> msgs = Acc.messenger().getMy(this, true);
-    List<Message> tmp = new LinkedList<>();
 
     esRequestPlaneSwitchFromApp();
 
     for (Message m : msgs) {
       if (m.source != Acc.atcApp()) {
-        tmp.add(m);
         continue;
       }
-      
+
       Airplane p = m.getAsPlaneSwitchMessage().plane;
       if (waitingRequestsList.contains(p) == false) {
         p = null;
@@ -55,56 +53,38 @@ public class CentreAtc extends ComputerAtc {
 
         p = m.getAsPlaneSwitchMessage().plane;
         if (canIAcceptFromApp(p)) {
-          getPrm().confirmSwitch(this, p);
-
-          Acc.messenger().addMessage(this, Acc.atcApp(),
-              new PlaneSwitchMessage(p, " accepted"));
-          Acc.messenger().remove(m);
+          super.confirmSwitch(p);
         } else {
-          getPrm().refuseSwitch(this, p);
-
-          Acc.messenger().addMessage(this, Acc.atcApp(),
-              new PlaneSwitchMessage(p, " refused. Not in my coverage."));
-          Acc.messenger().remove(m);
+          super.refuseSwitch(p);
         }
 
       } else {
         // CTR -> APP, potvrzene od APP
         waitingRequestsList.remove(p);
         Acc.messenger().addMessage(this, p, new ContactCommand(eType.app));
-        tmp.add(m);
       }
     }
-    msgs.removeAll(tmp);
   }
 
   private void esRequestPlaneSwitchFromApp() {
     // CTR -> APP, zadost na APP
     AirplaneList plns = getPlanesReadyForApp();
     for (Airplane p : plns) {
-      Acc.messenger().addMessage(this, Acc.atcApp(),
-          new PlaneSwitchMessage(p, " to you"));
-
-      getPrm().requestSwitch(this, Acc.atcApp(), p);
-
+      super.requestSwitch(p);
       waitingRequestsList.add(p);
-    }
-    plns.clear();
-
-    // opakovani starych zadosti
-    List<Airplane> awaitings = waitingRequestsList.getAwaitings();
-    for (Airplane p : awaitings) {
-      Acc.messenger().addMessage(this, Acc.atcApp(),
-          new PlaneSwitchMessage(p, " to you (repeated)"));
-    }
+    }   
   }
 
   private AirplaneList getPlanesReadyForApp() {
     AirplaneList ret = new AirplaneList();
     // arriving pozadat o predani CTR na APP
     for (Airplane p : getPrm().getPlanes(this)) {
-      if (p.isDeparture()) continue;
-      if (getPrm().isToSwitch(p)) continue;
+      if (p.isDeparture()) {
+        continue;
+      }
+      if (getPrm().isToSwitch(p)) {
+        continue;
+      }
       if (p.getAltitude() < super.releaseAltitude) {
         ret.add(p);
       }

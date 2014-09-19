@@ -196,7 +196,9 @@ public class EJComponentCanvas extends Canvas {
         || location == Painter.eTextBlockLocation.topMiddle) {
       throw new ENotSupportedException();
     }
-    if (lines.isEmpty()) return;
+    if (lines.isEmpty()) {
+      return;
+    }
 
     setFontByTextType(textType);
     g.setColor(color);
@@ -205,7 +207,7 @@ public class EJComponentCanvas extends Canvas {
     for (int i = 0; i < lines.size(); i++) {
       g.drawString(lines.get(i), pts[i].x, pts[i].y);
     }
-    
+
     g.setFont(navaidFont);
   }
 
@@ -214,11 +216,13 @@ public class EJComponentCanvas extends Canvas {
     Font f = new Font(name, type, size);
     this.navaidFont = f;
   }
+
   @Override
   public void setPlaneFont(String name, int type, int size) {
     Font f = new Font(name, type, size);
     this.planeFont = f;
   }
+
   @Override
   public void setMessageFont(String name, int type, int size) {
     Font f = new Font(name, type, size);
@@ -276,15 +280,16 @@ public class EJComponentCanvas extends Canvas {
 
   private int xMargin = 4;
   private int yMargin = -2;
+
   private Point[] getPositionsForText(List<String> lines, Painter.eTextBlockLocation location) {
-    
+
     int lastX;
     int lastY;
     int maxX;
     Point[] ret = new Point[lines.size()];
     FontMetrics fm = g.getFontMetrics();
-    
-    switch(location){
+
+    switch (location) {
       case topLeft:
         lastX = xMargin;
         lastY = yMargin + 16;
@@ -297,7 +302,7 @@ public class EJComponentCanvas extends Canvas {
       case bottomLeft:
         lastX = xMargin;
         lastY = this.getHeight() - yMargin; // g.getClipBounds().height - yMargin;
-        for (int i = 0; i < lines.size(); i++) {          
+        for (int i = lines.size() - 1; i >= 0; i--) {
           Rectangle r = fm.getStringBounds(lines.get(i), g).getBounds();
           lastY -= r.height;
           ret[i] = new Point(lastX, lastY);
@@ -306,7 +311,7 @@ public class EJComponentCanvas extends Canvas {
       case topRight:
         lastY = yMargin + 16;
         maxX = this.getWidth() - xMargin; //g.getClipBounds().width - xMargin;
-        for (int i = 0; i < lines.size(); i++) {          
+        for (int i = 0; i < lines.size(); i++) {
           Rectangle r = fm.getStringBounds(lines.get(i), g).getBounds();
           ret[i] = new Point(maxX - r.width, lastY);
           lastY += r.height;
@@ -315,7 +320,7 @@ public class EJComponentCanvas extends Canvas {
       case bottomRight:
         maxX = this.getWidth() - xMargin; //g.getClipBounds().width-xMargin;
         lastY = this.getHeight() - yMargin; // g.getClipBounds().height - yMargin;
-        for (int i = 0; i < lines.size(); i++) {
+        for (int i = lines.size() - 1; i >= 0; i--) {
           Rectangle r = fm.getStringBounds(lines.get(i), g).getBounds();
           lastY -= r.height;
           ret[i] = new Point(maxX - r.width, lastY);
@@ -328,13 +333,16 @@ public class EJComponentCanvas extends Canvas {
   }
 
   private void setFontByTextType(Painter.eTextType textType) {
-    switch (textType){
+    switch (textType) {
       case message:
-        g.setFont(messageFont); break;
+        g.setFont(messageFont);
+        break;
       case navaid:
-        g.setFont(navaidFont); break;
+        g.setFont(navaidFont);
+        break;
       case plane:
-        g.setFont(planeFont); break;
+        g.setFont(planeFont);
+        break;
       default:
         throw new ENotSupportedException();
     }

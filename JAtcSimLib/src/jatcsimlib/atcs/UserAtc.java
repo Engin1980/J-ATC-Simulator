@@ -48,29 +48,24 @@ public class UserAtc extends Atc {
 
   public void sendCommands(Atc.eType type, Airplane plane) {
     Atc atc = Acc.atc(type);
-    IContent cnt;
-
-    if (this.arrivals.contains(plane)) {
-      // je to zadost na vezku
-      this.arrivalsForTwr.add(plane);
-      this.arrivals.remove(plane);
-      cnt = new PlaneSwitchMessage(plane);
-    } else if (this.departures.contains(plane)) {
-      // je to zadost na ctr
-      this.departuresForCtr.add(plane);
-      this.departures.remove(plane);
-      cnt = new PlaneSwitchMessage(plane);
-    } else {
-      //  je to potvrzeni zadosti nebo se app zblaznil
-      if (getPrm().isToSwitch(plane)) {
-        getPrm().confirmSwitch(this, plane);
-        cnt = new PlaneSwitchMessage(plane);
+    
+    if (getPrm().isToSwitch(plane)){
+      // je to ... -> APP
+      
+      if (getPrm().getResponsibleAtc(plane).getType() != type){
+        // nesedi smer potvrzeni A predava na APP, ale APP potvrzuje na B
+        sendError("SQWK " + plane.getSqwk() + " not in your control. You cannot ask for switch.");
       } else {
-        throw new ERuntimeException("Cannot confirm switch of something not asked to switch to... TODO");
+        // potvrdime
+        getPrm().confirmSwitch(this, plane);
       }
+    } else {
+      // je nova zadost APP -> ???
+      getPrm().requestSwitch(this, atc, plane);
     }
 
-    Acc.messenger().addMessage(this, atc, cnt);
+    PlaneSwitchMessage msg = new PlaneSwitchMessage(plane);
+    Acc.messenger().addMessage(this, atc, msg);
   }
 
   public void sendError(String message) {
