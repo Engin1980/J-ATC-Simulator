@@ -13,6 +13,10 @@ import jatcsimlib.commands.ChangeHeadingCommand;
  * @author Marek
  */
 public class Headings {
+
+  public static Object format(int heading) {
+    return String.format("%03d", heading);
+  }
   private Headings(){}
   
   public static ChangeHeadingCommand.eDirection getBetterDirectionToTurn(int current, int target){

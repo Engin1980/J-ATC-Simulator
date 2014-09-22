@@ -5,8 +5,8 @@
         <group>
             <file>file:/C:/Users/Marek/Documents/NetBeansProjects/_JAtcSimSolution/JAtcSimLib/src/jatcsimlib/commands/CommandFormat.java</file>
             <file>file:/C:/Users/Marek/Documents/NetBeansProjects/_JAtcSimSolution/JAtcSimLib/src/jatcsimlib/airplanes/pilots/Pilot.java</file>
-            <file>file:/C:/Users/Marek/Documents/NetBeansProjects/_JAtcSimSolution/JAtcSimLib/src/jatcsimlib/airplanes/Airplane.java</file>
             <file>file:/C:/Users/Marek/Documents/NetBeansProjects/_JAtcSimSolution/JAtcSimLib/src/jatcsimlib/global/Global.java</file>
+            <file>file:/C:/Users/Marek/Documents/NetBeansProjects/_JAtcSimSolution/JAtcSimLib/src/jatcsimlib/atcs/TowerAtc.java</file>
         </group>
     </open-files>
 </project-private>

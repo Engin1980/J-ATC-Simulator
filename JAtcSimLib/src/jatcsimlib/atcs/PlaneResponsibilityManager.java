@@ -10,6 +10,7 @@ import jatcsimlib.airplanes.Airplane;
 import jatcsimlib.airplanes.AirplaneList;
 import jatcsimlib.exceptions.ENotSupportedException;
 import jatcsimlib.exceptions.ERuntimeException;
+import jatcsimlib.global.ReadOnlyList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -46,6 +47,7 @@ public class PlaneResponsibilityManager {
 
   private final Map<Airplane, eState> map = new HashMap<>();
   private final Map<Atc, AirplaneList> lst = new HashMap<>();
+  private final AirplaneList all = new AirplaneList();
 
   private PlaneResponsibilityManager() {
     lst.put(Acc.atcApp(), new AirplaneList());
@@ -80,6 +82,7 @@ public class PlaneResponsibilityManager {
 
     map.put(plane, typeToState(atc));
     lst.get(atc).add(plane);
+    all.add(plane);
   }
 
   public void unregisterPlane(Airplane plane) {
@@ -87,9 +90,11 @@ public class PlaneResponsibilityManager {
       throw new ERuntimeException("Plane is not registered, cannot be unregistered!");
     }
 
-    map.remove(plane);
     Atc atc = getResponsibleAtc(plane);
+    
+    map.remove(plane);
     lst.get(atc).remove(plane);
+    all.remove(plane);
   }
 
   public void requestSwitch(Atc from, Atc to, Airplane plane) {
@@ -219,5 +224,9 @@ public class PlaneResponsibilityManager {
 
   public boolean isRegistered(Airplane plane) {
     return map.containsKey(plane);
+  }
+  
+  public ReadOnlyList<Airplane> getAll(){
+    return new ReadOnlyList<>(all);
   }
 }

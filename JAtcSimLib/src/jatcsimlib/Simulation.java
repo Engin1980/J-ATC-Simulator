@@ -26,6 +26,7 @@ import jatcsimlib.events.EventManager;
 import jatcsimlib.global.ERandom;
 import jatcsimlib.global.ETime;
 import jatcsimlib.global.Global;
+import jatcsimlib.global.ReadOnlyList;
 import jatcsimlib.messaging.Messenger;
 import jatcsimlib.weathers.Weather;
 import jatcsimlib.world.Airport;
@@ -43,7 +44,6 @@ public class Simulation {
   private final ETime now;
   private final Airport airport;
   private final AirplaneTypes planeTypes;
-  private final AirplaneList planes = new AirplaneList();
 
   private RunwayThreshold activeRunwayThreshold;
   private Weather weather;
@@ -54,7 +54,6 @@ public class Simulation {
   private final CentreAtc ctrAtc;
 
   private final EventManager<Simulation, EventListener<Simulation, Simulation>, Simulation> tickEM = new EventManager(this);
-
 
   public RunwayThreshold getActiveRunwayThreshold() {
     return activeRunwayThreshold;
@@ -80,8 +79,8 @@ public class Simulation {
     return now;
   }
 
-  public AirplaneList getPlanes() {
-    return planes;
+  public ReadOnlyList<Airplane> getPlanes() {
+    return Acc.planes();
   }
 
   public Messenger getMessenger() {
@@ -106,7 +105,7 @@ public class Simulation {
     Simulation ret = new Simulation(airport, types, now);
 
     Acc.setSimulation(ret);
-    
+
     ret.activeRunwayThreshold
         = airport.getRunways().tryGet("06-24").getThresholdA();
 
@@ -129,6 +128,7 @@ public class Simulation {
     //this.appAtc.elapseSecond();
 
     generateNewPlanes();
+    removeOldPlanes();
     updatePlanes();
 
     long end = System.currentTimeMillis();
@@ -139,13 +139,13 @@ public class Simulation {
   }
 
   private void updatePlanes() {
-    for (Airplane plane : this.planes) {
+    for (Airplane plane : Acc.planes()) {
       plane.elapseSecond();
     }
   }
 
   private void generateNewPlanes() {
-    if (planes.size() >= Global.MAX_PLANE_COUNT) { // smazat
+    if (Acc.planes().size() >= Global.MAX_PLANE_COUNT) { // smazat
       return;
     }
 
@@ -155,15 +155,12 @@ public class Simulation {
 
     Airplane plane = generateNewArrivingPlane();
 
-    
-    PlaneResponsibilityManager.getInstance().registerPlane(ctrAtc, plane);
+    Acc.prm().registerPlane(ctrAtc, plane);
     ctrAtc.registerNewPlane(plane);
-    planes.add(plane);
   }
-  
-  public Atc getResponsibleAtc(Airplane plane){
-    return
-        Acc.prm().getResponsibleAtc(plane);
+
+  public Atc getResponsibleAtc(Airplane plane) {
+    return Acc.prm().getResponsibleAtc(plane);
   }
 
   private Airplane generateNewArrivingPlane() {
@@ -204,8 +201,8 @@ public class Simulation {
       for (int i = 0; i < len; i++) {
         tmp[i] = Integer.toString(rnd.nextInt(8)).charAt(0);
       }
-      ret = new Squawk(tmp);
-      for (Airplane p : this.planes) {
+      ret = Squawk.create(tmp);
+      for (Airplane p : Acc.planes()) {
         if (p.getSqwk().equals(ret)) {
           ret = null;
           break;
@@ -223,7 +220,7 @@ public class Simulation {
     while (ret == null) {
 
       ret = Coordinates.getCoordinate(navFix, (int) radial, dist);
-      for (Airplane p : this.planes) {
+      for (Airplane p : Acc.planes()) {
         double delta = Coordinates.getDistanceInNM(ret, p.getCoordinate());
         if (delta < 5d) {
           ret = null;
@@ -239,7 +236,7 @@ public class Simulation {
     Callsign ret = null;
     while (ret == null) {
       ret = new Callsign("CSA", String.format("%04d", rnd.nextInt(10000)));
-      for (Airplane p : this.planes) {
+      for (Airplane p : Acc.planes()) {
         if (ret.equals(p.getCallsign())) {
           ret = null;
           break;
@@ -286,6 +283,25 @@ public class Simulation {
     int ret = (int) (dist * thousandsFeetPerMile) - rnd.nextInt(0, 7);
     ret = ret * 1000;
     return ret;
+  }
+
+  private void removeOldPlanes() {
+    AirplaneList rem = new AirplaneList();
+    for (Airplane p : Acc.planes()) {
+      // landed
+      if (p.getSpeed() < 30) {
+        rem.add(p);
+      }
+
+      // departed
+      if (p.isDeparture() && p.getAltitude() > 15000) {
+        rem.add(p);
+      }
+    }
+    
+    for (Airplane p : rem){
+      Acc.prm().unregisterPlane(p);
+    }
   }
 
 }

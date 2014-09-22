@@ -20,12 +20,12 @@
                 <approach type="ILS_III" radial="063" dh="0" point="50 06 06.61 N 014 13 34.58 E" gaRoute="CM 040" />
               </approaches>
               <routes>
-                <route type="star" name="LOMKI5T" route="PD LOMKI T PD PR707 T PD BAROX" />
-                <route type="star" name="GOLOP1T" route="PD GOLOP T PD PR711 T PD PR712 T PD PR513 T PD KUVIX" />
-                <route type="star" name="VLM1T" route="PD VLM T PD PR721 T PD PR722 T PD PR723 T PD PR523 T PD PR521 T PD AKEVA" />
-                <route type="star" name="GOSEK2T" route="PD GOSEK T PD PR718 T PD PR719 T PD PR521 T PD AKEVA" />
-                <route type="sid" name="VOZ1E" route="PD PR619 T PD PR633 T PD PR635 T PD VOZ" />
-                <route type="sid" name="VOZ1D" route="PD PR619 T PD PR625 T PD PR626 T PD PR627 T PD VOZ" />
+                <route type="star" name="LOMKI5T" route="PD LOMKI T PD PR707 T PD BAROX T H BAROX" />
+                <route type="star" name="GOLOP1T" route="PD GOLOP T PD PR711 T PD PR712 T PD PR513 T PD KUVIX T FH 243" />
+                <route type="star" name="VLM1T" route="PD VLM T PD PR721 T PD PR722 T PD PR723 T PD PR523 T PD PR521 T PD AKEVA T FH 243" />
+                <route type="star" name="GOSEK2T" route="PD GOSEK T PD PR718 T PD PR719 T PD PR521 T PD AKEVA T FH 243" />
+                <route type="sid" name="VOZ1E" route="PD PR619 T PD PR633 T PD PR635 T PD VOZ T FH 150" />
+                <route type="sid" name="VOZ1D" route="PD PR619 T PD PR625 T PD PR626 T PD PR627 T PD VOZ T FH 150" />
               </routes>
             </threshold>
             <threshold name="24" coordinate="50 06 57.43 N 014 16 24.12 E">

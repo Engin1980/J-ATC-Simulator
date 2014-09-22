@@ -15,10 +15,4 @@ import java.util.List;
  */
 public abstract class Command {
 
-  private boolean confirmNeeded = true;
-
-  public boolean isConfirmNeeded() {
-    return confirmNeeded;
-  }
-  
 }

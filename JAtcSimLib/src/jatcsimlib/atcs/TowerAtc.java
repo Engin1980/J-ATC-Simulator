@@ -53,6 +53,7 @@ public class TowerAtc extends ComputerAtc {
           super.requestSwitch((Airplane) m.source);
           waitingRequestsList.add((Airplane) m.source);
         }
+        continue;
       } else if (m.source != Acc.atcApp()) {
         continue;
       }

@@ -5,6 +5,7 @@
  */
 package jatcsimlib;
 
+import jatcsimlib.airplanes.Airplane;
 import jatcsimlib.airplanes.AirplaneList;
 import jatcsimlib.atcs.Atc;
 import jatcsimlib.atcs.CentreAtc;
@@ -13,6 +14,7 @@ import jatcsimlib.atcs.TowerAtc;
 import jatcsimlib.atcs.UserAtc;
 import jatcsimlib.exceptions.ENotSupportedException;
 import jatcsimlib.global.ETime;
+import jatcsimlib.global.ReadOnlyList;
 import jatcsimlib.messaging.Messenger;
 import jatcsimlib.weathers.Weather;
 import jatcsimlib.world.Airport;
@@ -40,8 +42,8 @@ public class Acc {
     return sim;
   }
 
-  public static AirplaneList planes() {
-    return sim.getPlanes();
+  public static ReadOnlyList<Airplane> planes() {
+    return prm().getAll();
   }
   
   public static PlaneResponsibilityManager prm(){

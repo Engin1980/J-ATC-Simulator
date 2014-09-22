@@ -12,10 +12,10 @@ import jatcsimdraw.settings.Settings;
 import jatcsimdraw.shared.es.WithCoordinateEvent;
 import jatcsimlib.Simulation;
 import jatcsimlib.airplanes.Airplane;
+import jatcsimlib.airplanes.Airplanes;
 import jatcsimlib.airplanes.Squawk;
 import jatcsimlib.atcs.Atc;
 import jatcsimlib.atcs.UserAtc;
-import jatcsimlib.commands.Command;
 import jatcsimlib.commands.CommandFormat;
 import jatcsimlib.commands.CommandList;
 import jatcsimlib.events.EventListener;
@@ -26,7 +26,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
-import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.Timer;
 
@@ -159,7 +158,12 @@ public class FrmMain extends javax.swing.JFrame {
     if (msg.startsWith("+")) {
       // msg for CTR
       msg = msg.substring(1);
-      Airplane plane = sim.getPlanes().tryGet(new Squawk(msg));
+      Squawk s = Squawk.tryCreate(msg);
+      if (s == null) {
+        app.sendError("Invalid transponder format: " + msg);
+        return true;
+      }
+      Airplane plane = Airplanes.tryGet(sim.getPlanes(), s);
       if (plane == null) {
         app.sendError("No such plane with sqwk = " + msg);
       } else {
@@ -169,7 +173,12 @@ public class FrmMain extends javax.swing.JFrame {
     } else if (msg.startsWith("-")) {
       // msg for TWR
       msg = msg.substring(1);
-      Airplane plane = sim.getPlanes().tryGet(new Squawk(msg));
+      Squawk s = Squawk.tryCreate(msg);
+      if (s == null){
+        app.sendError("Invalid transponder format: " + msg);
+        return true;
+      }
+      Airplane plane = Airplanes.tryGet(sim.getPlanes(), s);
       if (plane == null) {
         app.sendError("No such plane with sqwk = " + msg);
       } else {
@@ -183,7 +192,7 @@ public class FrmMain extends javax.swing.JFrame {
       ret = true;
     } else {
       String[] spl = splitToCallsignAndMessages(msg);
-      Airplane p = sim.getPlanes().tryGetByCallsingOrNumber(spl[0]);
+      Airplane p = Airplanes.tryGetByCallsingOrNumber(sim.getPlanes(), spl[0]);
       if (p == null) {
         app.sendError("No such plane (or multiple planes) for callsign " + spl[0] + ".");
         ret = false;

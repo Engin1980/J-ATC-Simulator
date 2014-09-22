@@ -118,6 +118,10 @@ public class Airplane implements KeyItem<Callsign> {
     public String speedShort() {
       return Integer.toString(Airplane.this.speed);
     }
+    
+    public String speedShortAligned(){
+      return String.format("%1# 3d", Airplane.this.speed);
+    }
 
     public String targetSpeedLong() {
       return Airplane.this.targetSpeed + " kt";
@@ -206,6 +210,8 @@ public class Airplane implements KeyItem<Callsign> {
           return this.speedLong();
         case 22:
           return this.speedShort();
+        case 23:
+          return this.speedShortAligned();
         case 31:
           return this.targetSpeedLong();
         case 32:

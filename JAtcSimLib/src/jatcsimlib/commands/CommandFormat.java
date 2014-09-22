@@ -11,6 +11,7 @@ import jatcsimlib.exceptions.EInvalidCommandException;
 import jatcsimlib.exceptions.ENotSupportedException;
 import jatcsimlib.exceptions.ERuntimeException;
 import jatcsimlib.global.EStringBuilder;
+import jatcsimlib.global.Headings;
 import jatcsimlib.world.Approach;
 import jatcsimlib.world.Navaid;
 import jatcsimlib.world.PublishedHold;
@@ -101,23 +102,27 @@ public class CommandFormat {
     return null;
   }
 
-  public String format(Command cmd) {
+  public static String format(Command cmd, boolean longSentence) {
     Method m;
     m = tryGetFormatCommandMethodToInvoke(cmd.getClass());
 
+    if (m == null){
+      throw new ERuntimeException("No \"format\" method found for type " + cmd.getClass().getSimpleName());
+    }
+    
     String ret;
     try {
-      ret = (String) m.invoke(null, cmd);
+      ret = (String) m.invoke(null, cmd, longSentence);
     } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
       throw new ERuntimeException("Format-command failed for " + cmd.getClass());
     }
     return ret;
   }
 
-  private Method tryGetFormatCommandMethodToInvoke(Class<? extends Command> commandType) {
+  private static Method tryGetFormatCommandMethodToInvoke(Class<? extends Command> commandType) {
     Method ret;
     try {
-      ret = CommandFormat.class.getMethod("formatCommand", commandType);
+      ret = CommandFormat.class.getDeclaredMethod("format", commandType, boolean.class);
     } catch (NoSuchMethodException | SecurityException ex) {
       ret = null;
     }
@@ -125,24 +130,102 @@ public class CommandFormat {
     return ret;
   }
 
-  private String formatCommand(ChangeHeadingCommand cmd) {
+  public static String format(ChangeHeadingCommand cmd, boolean longSentence) {
     StringBuilder sb = new StringBuilder();
     switch (cmd.getDirection()) {
       case any:
-        sb.append("FH");
+        sb.append(longSentence ? "fly heading " : "FH ");
         break;
       case left:
-        sb.append("TL");
+        sb.append(longSentence ? "turn left " : "TL ");
         break;
       case right:
-        sb.append("TR");
+        sb.append(longSentence ? "turn right " : "TR ");
         break;
       default:
         throw new ENotSupportedException();
     }
-    sb.append(String.format("%03d", cmd.getHeading()));
+    sb.append(Headings.format(cmd.getHeading()));
     return sb.toString();
   }
+
+  public static String format(ProceedDirectCommand cmd, boolean longSentence) {
+    StringBuilder sb = new StringBuilder();
+    sb.append(longSentence ? "proceed direct " : "PD ");
+    sb.append(cmd.getNavaid().getName());
+    return sb.toString();
+  }
+
+  public static String format(ChangeAltitudeCommand cmd, boolean longSentence) {
+    StringBuilder sb = new StringBuilder();
+    switch (cmd.getDirection()) {
+      case any:
+        sb.append(longSentence ? "" : "");
+        break;
+      case climb:
+        sb.append(longSentence ? "climb and maintain " : "CM ");
+        break;
+      case descend:
+        sb.append(longSentence ? "descend and maintain " : "CM ");
+        break;
+      default:
+        throw new ENotSupportedException();
+    }
+    sb.append(Acc.toAltS(cmd.getAltitudeInFt(), true));
+    return sb.toString();
+  }
+
+  public static String format(ChangeSpeedCommand cmd, boolean longSentence) {
+    StringBuilder sb = new StringBuilder();
+    sb.append(longSentence ? "speed " : "");
+    sb.append(cmd.getSpeedInKts());
+    sb.append(" kts");
+    return sb.toString();
+  }
+
+  public static String format(ContactCommand cmd, boolean longSentence) {
+    StringBuilder sb = new StringBuilder();
+    sb.append(longSentence ? "contact " : "c-atc ");
+    sb.append(cmd.getAtcType());
+    if (longSentence) {
+      Atc atc = Acc.atc(cmd.getAtcType());
+      sb.append(" at ");
+      sb.append(atc.getFrequency());
+    }
+    return sb.toString();
+  }
+
+  public static String format(ShortcutCommand cmd, boolean longSentence) {
+    StringBuilder sb = new StringBuilder();
+    sb.append(longSentence ? "shortcut to " : "SH ");
+    sb.append(cmd.getNavaid().getName());
+    return sb.toString();
+  }
+  
+    public static String format(ClearedToApproachCommand cmd, boolean longSentence) {
+    StringBuilder sb = new StringBuilder();
+    sb.append(longSentence ? "cleared for " : "C ");
+    sb.append(cmd.getApproach().getType());
+    sb.append(longSentence ? " approach" : " ");
+    sb.append(cmd.getApproach().getParent().getName());
+    return sb.toString();
+  }
+    
+  public static String format(HoldCommand cmd, boolean longSentence) {
+    StringBuilder sb = new StringBuilder();
+    sb.append(longSentence ? "hold over " : "H ");
+    sb.append(cmd.getNavaid().getName());
+    if (cmd.isPublished()){
+      sb.append(longSentence ? " as published" : " P");
+    } else {
+      if (longSentence) sb.append("inbound " );
+      sb.append(Headings.format(cmd.getInboundRadial()));
+      sb.append(longSentence ? 
+          cmd.isLeftTurn() ? "left turns " : "right turns " : 
+          cmd.isLeftTurn() ? "L " : "R ");
+    }
+    return sb.toString();
+  }    
 }
 
 class ParseDef {
@@ -435,7 +518,7 @@ class ContactCmdParser extends CmdParser {
 
 class ClearedToApproachCmdParser extends CmdParser {
 
-  private static final String[] prefixes = new String[]{"C"};
+  private static final String[] prefixes = new String[]{"C "};
   private static final String pattern = "C (I|II|III|G|V|R) (\\S+)";
 
   @Override
@@ -602,7 +685,6 @@ class HoldCmdParser extends CmdParser {
 
     Integer heading = rg.tryGetInt(3);
     String leftOrRight = rg.tryGetString(5);
-    
 
     if (heading == null) {
       PublishedHold h = Acc.airport().getHolds().get(n);
