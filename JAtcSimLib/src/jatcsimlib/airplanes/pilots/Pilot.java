@@ -447,6 +447,8 @@ public class Pilot {
   }
 
   private void expandThenCommands(List<Command> cmds) {
+    if (cmds.isEmpty()) return;
+    
     for (int i = 0; i < cmds.size(); i++) {
       if (cmds.get(i) instanceof ThenCommand) {
         if (i == 0 || i == cmds.size() - 1) {
@@ -748,6 +750,7 @@ public class Pilot {
         parent,
         atc,
         new GoingAroundStringMessage(reason));
+    parent.setTargetSpeed(parent.getAirplaneSpecification().vDep);    
     addNewCommands(app.approach.getGaCommands());
     app = null;
   }

@@ -59,6 +59,10 @@ public class Area {
           for (Route o : t.getRoutes()) {
             o.bind();
           }
+          
+          for (Approach p : t.getApproaches()){
+            p.bind();
+          }
         }
       }
     }

@@ -13,7 +13,6 @@ import jatcsimlib.airplanes.Callsign;
 import jatcsimlib.airplanes.Squawk;
 import jatcsimlib.atcs.Atc;
 import jatcsimlib.atcs.CentreAtc;
-import jatcsimlib.atcs.PlaneResponsibilityManager;
 import jatcsimlib.atcs.TowerAtc;
 import jatcsimlib.atcs.UserAtc;
 import jatcsimlib.commands.AfterAltitudeCommand;
@@ -155,7 +154,7 @@ public class Simulation {
       return;
     }
 
-    Airplane plane = generateNewDepartingPlane(); // generateNewArrivingPlane();
+    Airplane plane = generateNewArrivingPlane(); // generateNewDepartingPlane(); // generateNewArrivingPlane();
 
     if (plane.isDeparture()) {
       Acc.prm().registerPlane(twrAtc, plane);

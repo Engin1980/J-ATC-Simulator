@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package jatcsimlib.world;
 
 import jatcsimlib.commands.CommandFormat;
@@ -18,24 +17,10 @@ import jatcsimlib.global.XmlOptional;
  *
  * @author Marek
  */
-public class Approach extends MustBeBinded implements  KeyItem<Approach.eType> {
+public class Approach extends MustBeBinded implements KeyItem<Approach.eType> {
 
-  @Override
-  public eType getKey() {
-    return type;
-  }
+  public enum eType {
 
-  @Override
-  protected void _bind() {
-    _gaCommands = 
-        CommandFormat.parseMulti(gaRoute);
-  }
-
-  public double getGlidePathPerNM() {
-    return UnitProvider.nmToFt(Math.tan(glidePathPercentage* Math.PI / 180));
-  }
- 
-  public enum eType{
     ILS_I,
     ILS_II,
     ILS_III,
@@ -44,7 +29,7 @@ public class Approach extends MustBeBinded implements  KeyItem<Approach.eType> {
     GPS,
     Visual
   }
-  
+
   private eType type;
   private int dh;
   private int radial;
@@ -52,7 +37,7 @@ public class Approach extends MustBeBinded implements  KeyItem<Approach.eType> {
   private double glidePathPercentage = 3;
   private Coordinate point;
   private String gaRoute;
-  private CommandList _gaCommands; 
+  private CommandList _gaCommands;
   private RunwayThreshold parent;
 
   public RunwayThreshold getParent() {
@@ -66,7 +51,7 @@ public class Approach extends MustBeBinded implements  KeyItem<Approach.eType> {
   public CommandList getGaCommands() {
     return _gaCommands;
   }
-  
+
   public String getGaRoute() {
     return gaRoute;
   }
@@ -82,7 +67,7 @@ public class Approach extends MustBeBinded implements  KeyItem<Approach.eType> {
   public double getGlidePathPercentage() {
     return glidePathPercentage;
   }
-  
+
   public int getRadial() {
     return radial;
   }
@@ -90,7 +75,19 @@ public class Approach extends MustBeBinded implements  KeyItem<Approach.eType> {
   public Coordinate getPoint() {
     return point;
   }
- 
-  
+
+  @Override
+  public eType getKey() {
+    return type;
+  }
+
+  @Override
+  protected void _bind() {
+    _gaCommands
+        = CommandFormat.parseMulti(gaRoute);
+  }
+
+  public double getGlidePathPerNM() {
+    return UnitProvider.nmToFt(Math.tan(glidePathPercentage * Math.PI / 180));
+  }
 }
-  

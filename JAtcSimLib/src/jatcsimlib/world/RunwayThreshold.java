@@ -24,6 +24,7 @@ public class RunwayThreshold extends MustBeBinded implements KeyItem<String> {
   private Runway parent;
   private double _course;
   private int initialDepartureAltitude;
+  private RunwayThreshold _other;
 
   public int getInitialDepartureAltitude() {
     return initialDepartureAltitude;
@@ -97,24 +98,16 @@ public class RunwayThreshold extends MustBeBinded implements KeyItem<String> {
 
   @Override
   protected void _bind() {
-    RunwayThreshold other
+    this._other
         = this.getParent().getThresholdA().equals(this)
         ? this.getParent().getThresholdB()
         : this.getParent().getThresholdA();
     this._course
-        = Coordinates.getBearing(this.coordinate, other.coordinate);
+        = Coordinates.getBearing(this.coordinate, _other.coordinate);
   }
 
   public RunwayThreshold getOtherThreshold() {
-    RunwayThreshold ret;
-
-    if (this.getParent().getThresholdA() == this) {
-      ret = this.getParent().getThresholdB();
-    } else {
-      ret = this.getParent().getThresholdA();
-    }
-
-    return ret;
+    return _other;
   }
 
 }
