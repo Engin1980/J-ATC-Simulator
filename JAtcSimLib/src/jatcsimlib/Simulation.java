@@ -16,7 +16,9 @@ import jatcsimlib.atcs.CentreAtc;
 import jatcsimlib.atcs.PlaneResponsibilityManager;
 import jatcsimlib.atcs.TowerAtc;
 import jatcsimlib.atcs.UserAtc;
+import jatcsimlib.commands.AfterAltitudeCommand;
 import jatcsimlib.commands.ChangeAltitudeCommand;
+import jatcsimlib.commands.ChangeSpeedCommand;
 import jatcsimlib.commands.Command;
 import jatcsimlib.commands.ContactCommand;
 import jatcsimlib.coordinates.Coordinate;
@@ -104,10 +106,10 @@ public class Simulation {
   public static Simulation create(Airport airport, AirplaneTypes types, Calendar now) {
     Simulation ret = new Simulation(airport, types, now);
 
-    Acc.setSimulation(ret);
-
     ret.activeRunwayThreshold
         = airport.getRunways().tryGet("06-24").getThresholdA();
+
+    Acc.setSimulation(ret);
 
     return ret;
   }
@@ -153,10 +155,15 @@ public class Simulation {
       return;
     }
 
-    Airplane plane = generateNewArrivingPlane();
+    Airplane plane = generateNewDepartingPlane(); // generateNewArrivingPlane();
 
-    Acc.prm().registerPlane(ctrAtc, plane);
-    ctrAtc.registerNewPlane(plane);
+    if (plane.isDeparture()) {
+      Acc.prm().registerPlane(twrAtc, plane);
+      twrAtc.registerNewPlane(plane);
+    } else {
+      Acc.prm().registerPlane(ctrAtc, plane);
+      ctrAtc.registerNewPlane(plane);
+    }
   }
 
   public Atc getResponsibleAtc(Airplane plane) {
@@ -187,6 +194,44 @@ public class Simulation {
 
     ret = new Airplane(
         cs, coord, sqwk, pt, heading, alt, spd, false,
+        r.getName(), routeCmds);
+
+    return ret;
+  }
+
+  private Airplane generateNewDepartingPlane() {
+    Airplane ret;
+
+    Callsign cs = generateCallsign();
+    Route r = getRandomRoute(false);
+    Coordinate coord = this.activeRunwayThreshold.getCoordinate();
+    Squawk sqwk = generateSqwk();
+    AirplaneType pt = planeTypes.get(rnd.nextInt(planeTypes.size()));
+    int heading = (int) Coordinates.getBearing(coord, this.activeRunwayThreshold.getOtherThreshold().getCoordinate());
+    int alt = this.activeRunwayThreshold.getParent().getParent().getAltitude();
+    int spd = 0;
+
+    List<Command> routeCmds = r.getCommandsListClone();
+
+    int indx = 0;
+    // added command to contact after departure
+    routeCmds.add(indx++, new ContactCommand(Atc.eType.twr));
+    
+    routeCmds.add(indx++, new ChangeAltitudeCommand(
+        ChangeAltitudeCommand.eDirection.climb, this.activeRunwayThreshold.getInitialDepartureAltitude()));
+
+    // -- po vysce+300 ma kontaktovat APP
+    routeCmds.add(indx++,
+        new AfterAltitudeCommand(this.activeRunwayThreshold.getParent().getParent().getAltitude() + 300));
+    routeCmds.add(indx++, new ContactCommand(Atc.eType.app));
+
+    // -- po vysce + 3000 rychlost na odlet
+    routeCmds.add(indx++,
+        new AfterAltitudeCommand(this.activeRunwayThreshold.getParent().getParent().getAltitude() + 3000));
+    routeCmds.add(indx++, new ChangeSpeedCommand(ChangeSpeedCommand.eDirection.increase, 250));
+
+    ret = new Airplane(
+        cs, coord, sqwk, pt, heading, alt, spd, true,
         r.getName(), routeCmds);
 
     return ret;
@@ -289,7 +334,7 @@ public class Simulation {
     AirplaneList rem = new AirplaneList();
     for (Airplane p : Acc.planes()) {
       // landed
-      if (p.getSpeed() < 30) {
+      if (p.isArrival() && p.getSpeed() < 30) {
         rem.add(p);
       }
 
@@ -298,8 +343,8 @@ public class Simulation {
         rem.add(p);
       }
     }
-    
-    for (Airplane p : rem){
+
+    for (Airplane p : rem) {
       Acc.prm().unregisterPlane(p);
     }
   }

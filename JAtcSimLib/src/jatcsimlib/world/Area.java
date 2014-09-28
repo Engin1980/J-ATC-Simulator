@@ -48,6 +48,7 @@ public class Area {
 
   private void _bind() {
     for (Airport a : this.getAirports()) {
+      Acc.setAirport(a);
       for (PublishedHold h : a.getHolds()) {
         h.bind();
       }
@@ -61,6 +62,7 @@ public class Area {
         }
       }
     }
+    Acc.setAirport(null);
   }
 
   private void rebuildParentReferences() {
@@ -92,6 +94,7 @@ public class Area {
     List<Command> cmds;
     Navaid n;
     for (Airport a : this.getAirports()) {
+      Acc.setAirport(a);
       for (Runway r : a.getRunways()) {
         for (RunwayThreshold t : r.getThresholds()) {
           for (Approach p : t.getApproaches()) {
@@ -124,6 +127,7 @@ public class Area {
         } // for (RunwayThreshold
       } // for (Runway
     } // for (Airport
+    Acc.setAirport(null);
   }
 
   private Area() {

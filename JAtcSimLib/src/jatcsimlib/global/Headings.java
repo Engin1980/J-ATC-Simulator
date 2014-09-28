@@ -17,6 +17,12 @@ public class Headings {
   public static Object format(int heading) {
     return String.format("%03d", heading);
   }
+
+  public static int diff(int a, int b) {
+    int ret = a - b;
+    ret = to(ret);
+    return ret;
+  }
   private Headings(){}
   
   public static ChangeHeadingCommand.eDirection getBetterDirectionToTurn(int current, int target){

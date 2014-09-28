@@ -25,11 +25,13 @@ class ApproachInfo {
   public ePhase phase = ePhase.approaching;
   public final int finalAltitude;
   public final int shortFinalAltitude;
+  public boolean isAppSpeedSet;
 
   public ApproachInfo(Approach approach) {
     this.approach = approach;
     this.finalAltitude = Acc.airport().getAltitude() + 500;
     this.shortFinalAltitude = this.finalAltitude - 300;
+    this.isAppSpeedSet = false;
   }
   
 }

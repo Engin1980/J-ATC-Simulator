@@ -202,7 +202,7 @@ public class CommandFormat {
     return sb.toString();
   }
   
-    public static String format(ClearedToApproachCommand cmd, boolean longSentence) {
+  public static String format(ClearedToApproachCommand cmd, boolean longSentence) {
     StringBuilder sb = new StringBuilder();
     sb.append(longSentence ? "cleared for " : "C ");
     sb.append(cmd.getApproach().getType());

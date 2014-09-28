@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package jatcsimlib.world;
 
 import jatcsimlib.coordinates.Coordinate;
@@ -16,14 +15,20 @@ import jatcsimlib.global.MustBeBinded;
  *
  * @author Marek
  */
-public class RunwayThreshold extends MustBeBinded implements  KeyItem<String> {
+public class RunwayThreshold extends MustBeBinded implements KeyItem<String> {
+
   private String name;
   private Coordinate coordinate;
   private final KeyList<Approach, Approach.eType> approaches = new KeyList();
   private final KeyList<Route, String> routes = new KeyList();
   private Runway parent;
   private double _course;
+  private int initialDepartureAltitude;
 
+  public int getInitialDepartureAltitude() {
+    return initialDepartureAltitude;
+  }
+  
   public String getName() {
     return name;
   }
@@ -39,7 +44,7 @@ public class RunwayThreshold extends MustBeBinded implements  KeyItem<String> {
   public KeyList<Route, String> getRoutes() {
     return routes;
   }
-  
+
   @Override
   public String getKey() {
     return getName();
@@ -52,17 +57,17 @@ public class RunwayThreshold extends MustBeBinded implements  KeyItem<String> {
   public void setParent(Runway parent) {
     this.parent = parent;
   }
-  
-  public double getCourse(){
+
+  public double getCourse() {
     checkBinded();
-    
+
     return this._course;
   }
-  
-  public Approach tryGetApproachByTypeWithILSDerived(Approach.eType type){
+
+  public Approach tryGetApproachByTypeWithILSDerived(Approach.eType type) {
     Approach ret = getApproaches().get(type);
     if (ret == null) {
-      switch (type){
+      switch (type) {
         case ILS_I:
           ret = tryGetApproachByTypeWithILSDerived(Approach.eType.ILS_II);
           break;
@@ -75,26 +80,41 @@ public class RunwayThreshold extends MustBeBinded implements  KeyItem<String> {
 
   public Approach getHighestApproach() {
     Approach ret;
-    
+
     ret = tryGetApproachByTypeWithILSDerived(Approach.eType.ILS_I);
-    if (ret == null)
+    if (ret == null) {
       ret = approaches.tryGet(Approach.eType.GPS);
-    if (ret == null)
+    }
+    if (ret == null) {
       ret = approaches.tryGet(Approach.eType.VORDME);
-    if (ret == null)
+    }
+    if (ret == null) {
       ret = approaches.tryGet(Approach.eType.NDB);
-    
+    }
+
     return ret;
   }
 
   @Override
   protected void _bind() {
-    RunwayThreshold other = 
-        this.getParent().getThresholdA().equals(this) ?
-        this.getParent().getThresholdB() :
-        this.getParent().getThresholdA();
-    this._course = 
-        Coordinates.getBearing(this.coordinate, other.coordinate);
+    RunwayThreshold other
+        = this.getParent().getThresholdA().equals(this)
+        ? this.getParent().getThresholdB()
+        : this.getParent().getThresholdA();
+    this._course
+        = Coordinates.getBearing(this.coordinate, other.coordinate);
+  }
+
+  public RunwayThreshold getOtherThreshold() {
+    RunwayThreshold ret;
+
+    if (this.getParent().getThresholdA() == this) {
+      ret = this.getParent().getThresholdB();
+    } else {
+      ret = this.getParent().getThresholdA();
+    }
+
+    return ret;
   }
 
 }

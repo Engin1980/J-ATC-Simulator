@@ -13,6 +13,7 @@ import jatcsimlib.commands.ClearedForTakeoffCommand;
 import jatcsimlib.commands.CommandList;
 import jatcsimlib.commands.ContactCommand;
 import jatcsimlib.coordinates.Coordinates;
+import jatcsimlib.exceptions.ERuntimeException;
 import jatcsimlib.messaging.GoingAroundStringMessage;
 import jatcsimlib.messaging.Message;
 import jatcsimlib.messaging.StringMessage;
@@ -25,15 +26,15 @@ import java.util.List;
  */
 public class TowerAtc extends ComputerAtc {
 
-  private final WaitingList waitingRequestsList = new WaitingList();
-
   public TowerAtc(AtcTemplate template) {
     super(template);
   }
 
   @Override
   protected void _registerNewPlane(Airplane plane) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    if (plane.isArrival()) {
+      throw new ERuntimeException("Arriving plane cannot be registered using this method.");
+    }
   }
 
   @Override
@@ -91,7 +92,7 @@ public class TowerAtc extends ComputerAtc {
     if (Acc.atcApp().isControllingAirplane(p) == false) {
       return false;
     }
-    if (p.getAltitude() < super.acceptAltitude) {
+    if (p.getAltitude() > super.acceptAltitude) {
       return false;
     }
     double dist = Coordinates.getDistanceInNM(p.getCoordinate(), Acc.airport().getLocation());
@@ -125,7 +126,7 @@ public class TowerAtc extends ComputerAtc {
     AirplaneList ret = new AirplaneList();
 
     for (Airplane p : getPrm().getPlanes(this)) {
-      if (p.isDeparture() == false) {
+      if (p.isArrival()) {
         continue;
       }
       if (getPrm().isToSwitch(p)) {

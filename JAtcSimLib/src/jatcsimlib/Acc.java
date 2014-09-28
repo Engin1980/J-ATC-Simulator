@@ -29,13 +29,19 @@ public class Acc {
 
   private static Area area;
   private static Simulation sim;
+  private static Airport aip;
 
   public static void setArea(Area area) {
     Acc.area = area;
   }
+  
+  public static void setAirport(Airport aip){
+    Acc.aip = aip;
+  }
 
   public static void setSimulation(Simulation simulation) {
     Acc.sim = simulation;
+    Acc.setAirport(sim.getActiveAirport());
   }
 
   public static Simulation sim() {
@@ -55,7 +61,7 @@ public class Acc {
   }
 
   public static Airport airport() {
-    return sim.getActiveAirport();
+    return Acc.aip;
   }
 
   public static Messenger messenger() {

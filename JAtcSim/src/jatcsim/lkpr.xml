@@ -14,7 +14,7 @@
       <runways>
         <runway active="true">
           <thresholds>
-            <threshold name="06" coordinate="50 06 06.61 N 014 13 34.58 E">
+            <threshold name="06" coordinate="50 06 06.61 N 014 13 34.58 E" initialDepartureAltitude="5000">
               <approaches>
                 <approach type="ILS_I" radial="063" dh="200" point="50 06 06.61 N 014 13 34.58 E" gaRoute="CM 040" />
                 <approach type="ILS_III" radial="063" dh="0" point="50 06 06.61 N 014 13 34.58 E" gaRoute="CM 040" />
@@ -24,11 +24,11 @@
                 <route type="star" name="GOLOP1T" route="PD GOLOP T PD PR711 T PD PR712 T PD PR513 T PD KUVIX T FH 243" />
                 <route type="star" name="VLM1T" route="PD VLM T PD PR721 T PD PR722 T PD PR723 T PD PR523 T PD PR521 T PD AKEVA T FH 243" />
                 <route type="star" name="GOSEK2T" route="PD GOSEK T PD PR718 T PD PR719 T PD PR521 T PD AKEVA T FH 243" />
-                <route type="sid" name="VOZ1E" route="PD PR619 T PD PR633 T PD PR635 T PD VOZ T FH 150" />
-                <route type="sid" name="VOZ1D" route="PD PR619 T PD PR625 T PD PR626 T PD PR627 T PD VOZ T FH 150" />
+                <route type="sid" name="VOZ1E" route="PD PR619 T PD PR633 T PD PR635 T PD VOZ" />
+                <route type="sid" name="VOZ1D" route="PD PR619 T PD PR625 T PD PR626 T PD PR627 T PD VOZ" />
               </routes>
             </threshold>
-            <threshold name="24" coordinate="50 06 57.43 N 014 16 24.12 E">
+            <threshold name="24" coordinate="50 06 57.43 N 014 16 24.12 E" initialDepartureAltitude="5000">
               <approaches>
                 <approach type="ILS_I" radial="243" dh="200" point="50 06 57.43 N 014 16 24.12 E" gaRoute="CM 040" />
                 <approach type="ILS_III" radial="243" dh="0" point="50 06 57.43 N 014 16 24.12 E" gaRoute="CM 040" />
@@ -38,14 +38,14 @@
         </runway>
         <runway active="true">
           <thresholds>
-            <threshold name="12" coordinate="50 06 28.84 N 014 14 43.32 E" />
-            <threshold name="30" coordinate="50 05 25.68 N 014 16 53.02 E" />
+            <threshold name="12" coordinate="50 06 28.84 N 014 14 43.32 E" initialDepartureAltitude="5000" />
+            <threshold name="30" coordinate="50 05 25.68 N 014 16 53.02 E" initialDepartureAltitude="5000" />
           </thresholds>
         </runway>
         <runway active="false">
           <thresholds>
-            <threshold name="04" coordinate="50 05 15.77 N 014 16 00.06 E" />
-            <threshold name="22" coordinate="50 06 10.50 N 014 17 04.00 E" />
+            <threshold name="04" coordinate="50 05 15.77 N 014 16 00.06 E" initialDepartureAltitude="5000" />
+            <threshold name="22" coordinate="50 06 10.50 N 014 17 04.00 E" initialDepartureAltitude="5000" />
           </thresholds>
         </runway>
       </runways> 

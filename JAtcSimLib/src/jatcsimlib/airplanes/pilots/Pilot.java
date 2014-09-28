@@ -16,6 +16,7 @@ import jatcsimlib.commands.AfterSpeedCommand;
 import jatcsimlib.commands.ChangeAltitudeCommand;
 import jatcsimlib.commands.ChangeHeadingCommand;
 import jatcsimlib.commands.ChangeSpeedCommand;
+import jatcsimlib.commands.ClearedForTakeoffCommand;
 import jatcsimlib.commands.ClearedToApproachCommand;
 import jatcsimlib.commands.Command;
 import jatcsimlib.commands.CommandFormat;
@@ -104,6 +105,8 @@ public class Pilot {
         || (c instanceof ClearedToApproachCommand)
         || (c instanceof HoldCommand)) {
       this.afterCommands.removeByConsequent(c.getClass());
+      this.queue.add(c);
+    } else if ((c instanceof ClearedForTakeoffCommand)) {
       this.queue.add(c);
     } else {
       throw new ERuntimeException("Pilot cannot deal with command " + c.getClass().getSimpleName() + " - probably not implemented.");
@@ -378,16 +381,15 @@ public class Pilot {
     return true;
   }
 
+  private boolean processQueueCommand(ClearedForTakeoffCommand c) {
+    int s = parent.getAirplaneSpecification().vDep;
+    parent.setTargetSpeed(s);
+    return true;
+  }
+
   private void sayOrError(Command c, String text) {
     String s = "Not able to process command " + CommandFormat.format(c, true) + ", because: " + text;
     say(s);
-//    if (c.isConfirmNeeded()) {
-//      say(text);
-//    } else {
-//      Acc.messenger().addMessage(null, Acc.atcApp(),
-//          String.format("Plane %1#s refused command. Reason: %2#s.",
-//              parent.getCallsign(), text));
-//    }
   }
 
   private boolean isConfirmationsNowRequested = false;
@@ -421,9 +423,9 @@ public class Pilot {
     }
 
     ret.append(parent.getCallsign());
-    char c = ret.charAt(1);
+    char c = ret.charAt(0);
     c = Character.toUpperCase(c);
-    ret.setCharAt(1, c);
+    ret.setCharAt(0, c);
 
     Acc.messenger().addMessage(parent, atc, ret.toString());
 
@@ -612,23 +614,32 @@ public class Pilot {
   }
 
   private void flyApproach() {
+    System.out.println("## \t " + app.phase);
     switch (app.phase) {
       case approaching:
         updateHeadingOnApproach();
-        updateAltitudeOnApproach();
+        updateAltitudeOnApproach(false);
 
-        if (orderedSpeed == null) {
-          parent.setTargetSpeed(parent.getAirplaneSpecification().vApp);
+        // zpomalim, jen pokud nemam prikazanou rychlost a
+        // navic jsem blizko localizeru uz
+        if (orderedSpeed == null && app.isAppSpeedSet == false) {
+          int diff = getAppHeadingDifference();
+          if (diff < 15) {
+            parent.setTargetSpeed(parent.getAirplaneSpecification().vApp);
+            app.isAppSpeedSet = true;
+          }
         }
 
+        System.out.println("## \t\t " + parent.getAltitude() + " // " + app.finalAltitude);
         if (parent.getAltitude() < app.finalAltitude) {
           app.phase = ApproachInfo.ePhase.finalEnter;
         }
         break;
       case finalEnter:
         // na final
-        if (parent.getSpeed() != parent.getAirplaneSpecification().vApp) {
+        if (app.isAppSpeedSet == false) {
           parent.setTargetSpeed(parent.getAirplaneSpecification().vApp);
+          app.isAppSpeedSet = true;
         }
 
         // neni na twr, tak GA
@@ -638,30 +649,33 @@ public class Pilot {
         }
 
         // moc nizko, uz pod stabilized altitude
-        if (parent.getTargetHeading() != app.approach.getRadial()) {
+        int MAX_APP_HEADING_DIFF = 3;
+        if (Math.abs(parent.getTargetHeading() - app.approach.getRadial()) > MAX_APP_HEADING_DIFF) {
           goAround("Unstabilized approach.");
           return;
         }
 
         updateHeadingOnApproach();
-        updateAltitudeOnApproach();
+        updateAltitudeOnApproach(false);
 
         app.phase = ApproachInfo.ePhase.finalOther;
         break;
       case finalOther:
 
         updateHeadingOnApproach();
-        updateAltitudeOnApproach();
+        updateAltitudeOnApproach(false);
 
+        System.out.println("## \t\t " + parent.getAltitude() + " // " + app.shortFinalAltitude);
         if (parent.getAltitude() < app.shortFinalAltitude) {
           app.phase = ApproachInfo.ePhase.shortFinal;
         }
         break;
       case shortFinal:
-        updateAltitudeOnApproach();
+        updateAltitudeOnApproach(true);
         int newxHeading = (int) app.approach.getRadial();
         parent.setTargetHeading(newxHeading);
 
+        System.out.println("## \t\t " + parent.getAltitude() + " // " + Acc.airport().getAltitude());
         if (parent.getAltitude() == Acc.airport().getAltitude()) {
           app.phase = ApproachInfo.ePhase.touchdownAndLanded;
         }
@@ -678,12 +692,28 @@ public class Pilot {
     }
   }
 
-  private void updateAltitudeOnApproach() {
-    double distToLand
-        = Coordinates.getDistanceInNM(parent.getCoordinate(), app.approach.getParent().getCoordinate());
-    int newAltitude
-        = (int) (app.approach.getParent().getParent().getParent().getAltitude()
-        + app.approach.getGlidePathPerNM() * distToLand);
+  private int getAppHeadingDifference() {
+    int heading = (int) Coordinates.getBearing(parent.getCoordinate(), app.approach.getParent().getCoordinate());
+    int ret = Headings.diff(heading, parent.getHeading());
+    return ret;
+  }
+
+  private void updateAltitudeOnApproach(boolean checkIfIsAfterThreshold) {
+    int newAltitude = -1;
+    if (checkIfIsAfterThreshold) {
+      int diff = getAppHeadingDifference();
+      if (diff > 90) {
+        newAltitude = Acc.airport().getAltitude();
+      }
+    }
+
+    if (newAltitude == -1) {
+      double distToLand
+          = Coordinates.getDistanceInNM(parent.getCoordinate(), app.approach.getParent().getCoordinate());
+      newAltitude
+          = (int) (app.approach.getParent().getParent().getParent().getAltitude()
+          + app.approach.getGlidePathPerNM() * distToLand);
+    }
 
     newAltitude = (int) Math.min(newAltitude, parent.getTargetAltitude());
     newAltitude = (int) Math.max(newAltitude, Acc.airport().getAltitude());
@@ -704,7 +734,7 @@ public class Pilot {
   }
 
   private void adjustSpeed() {
-    if (parent.isDeparture() == false) {
+    if (parent.isArrival()) {
       if (parent.getAltitude() < 10_000) {
         if (parent.getTargetSpeed() > 250) {
           parent.setTargetSpeed(250);

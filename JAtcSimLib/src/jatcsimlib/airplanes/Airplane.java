@@ -284,6 +284,10 @@ public class Airplane implements KeyItem<Callsign> {
   public boolean isDeparture() {
     return departure;
   }
+  
+  public boolean isArrival() {
+    return !departure;
+  }
 
   public Callsign getCallsign() {
     return callsign;
@@ -402,6 +406,8 @@ public class Airplane implements KeyItem<Callsign> {
   }
 
   private void adjustAltitude() {
+    if (speed < airplaneSpecification.vR) return;
+    
     int origAlt = altitude;
     if (targetAltitude > altitude) {
       int step = (int) (airplaneSpecification.getClimbRateForAltitude(this.altitude));

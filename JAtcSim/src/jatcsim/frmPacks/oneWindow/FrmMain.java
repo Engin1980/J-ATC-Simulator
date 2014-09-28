@@ -55,6 +55,11 @@ public class FrmMain extends javax.swing.JFrame {
     jTxtInput = new javax.swing.JTextField();
 
     setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+    addFocusListener(new java.awt.event.FocusAdapter() {
+      public void focusGained(java.awt.event.FocusEvent evt) {
+        formFocusGained(evt);
+      }
+    });
 
     jTxtInput.addKeyListener(new java.awt.event.KeyAdapter() {
       public void keyPressed(java.awt.event.KeyEvent evt) {
@@ -87,6 +92,11 @@ public class FrmMain extends javax.swing.JFrame {
       }
     }
   }//GEN-LAST:event_jTxtInputKeyPressed
+
+  private void formFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_formFocusGained
+    // TODO add your handling code here:
+   this.jTxtInput.requestFocus();
+  }//GEN-LAST:event_formFocusGained
 
   // Variables declaration - do not modify//GEN-BEGIN:variables
   private javax.swing.JTextField jTxtInput;

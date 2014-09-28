@@ -93,7 +93,7 @@ public class CentreAtc extends ComputerAtc {
   }
 
   private boolean canIAcceptFromApp(Airplane p) {
-    if (p.isDeparture() == false) {
+    if (p.isArrival()) {
       return false;
     }
     if (Acc.atcApp().isControllingAirplane(p) == false) {
