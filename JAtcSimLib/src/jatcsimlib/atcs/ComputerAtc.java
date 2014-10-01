@@ -60,4 +60,8 @@ public abstract class ComputerAtc extends Atc {
     Acc.messenger().addMessage(this, Acc.atcApp(),
         new PlaneSwitchMessage(plane, " accepted"));
   }
+  
+  protected void approveSwitch(Airplane plane) {
+    getPrm().approveSwitch(plane);
+  }
 }

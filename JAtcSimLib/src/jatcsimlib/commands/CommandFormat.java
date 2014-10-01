@@ -85,6 +85,10 @@ public class CommandFormat {
   }
 
   private static String normalizeCommandsInString(String line) {
+    line = line.trim();
+    while (line.contains("  ")){
+      line = line.replace("  ", " ");
+    }
     return line.toUpperCase() + " ";
   }
 

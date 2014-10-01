@@ -16,5 +16,5 @@ public class Global {
    */
   public static boolean COORDINATE_LONG = false;
   
-  public static int MAX_PLANE_COUNT = 1;
+  public static int MAX_PLANE_COUNT = 7;
 }

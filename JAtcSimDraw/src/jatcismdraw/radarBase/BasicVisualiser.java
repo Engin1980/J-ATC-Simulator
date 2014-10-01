@@ -42,26 +42,26 @@ public class BasicVisualiser extends Visualiser {
   @Override
   public void drawMessages(List<Message> msgs) {
     MessageSet ms = createMessageSet(msgs);
-    
+
     DispText dt;
-    
+
     dt = sett.getDispText(DispText.eType.atc);
-    p.drawTextBlock (ms.atc, Painter.eTextBlockLocation.bottomRight, dt.getColor(), Painter.eTextType.message);
-    
+    p.drawTextBlock(ms.atc, Painter.eTextBlockLocation.bottomRight, dt.getColor(), Painter.eTextType.message);
+
     dt = sett.getDispText(DispText.eType.plane);
-    p.drawTextBlock(ms.plane, Painter.eTextBlockLocation.bottomLeft, dt.getColor(), Painter.eTextType.message );
-    
+    p.drawTextBlock(ms.plane, Painter.eTextBlockLocation.bottomLeft, dt.getColor(), Painter.eTextType.message);
+
     dt = sett.getDispText(DispText.eType.system);
-    p.drawTextBlock(ms.system, Painter.eTextBlockLocation.topRight, dt.getColor(), Painter.eTextType.message);    
+    p.drawTextBlock(ms.system, Painter.eTextBlockLocation.topRight, dt.getColor(), Painter.eTextType.message);
   }
-  
+
   @Override
   public void drawBorder(Border border) {
 
     DispItem ds = getDispSettBy(border);
 
     Coordinate last = null;
-    for (int i = 0; i < border.getPoints().size(); i++){
+    for (int i = 0; i < border.getPoints().size(); i++) {
       BorderPoint bp = border.getPoints().get(i);
       if (bp instanceof BorderExactPoint) {
         BorderExactPoint bep = (BorderExactPoint) bp;
@@ -70,8 +70,8 @@ public class BasicVisualiser extends Visualiser {
         }
         last = bep.getCoordinate();
       } else if (bp instanceof BorderArcPoint) {
-        BorderExactPoint bPrev = (BorderExactPoint) border.getPoints().get(i-1);
-        BorderExactPoint bNext = (BorderExactPoint) border.getPoints().get(i+1);
+        BorderExactPoint bPrev = (BorderExactPoint) border.getPoints().get(i - 1);
+        BorderExactPoint bNext = (BorderExactPoint) border.getPoints().get(i + 1);
         drawArc(bPrev, (BorderArcPoint) bp, bNext, ds.getColor());
         last = null;
       } else {
@@ -102,7 +102,7 @@ public class BasicVisualiser extends Visualiser {
   public void drawNavaid(Navaid navaid) {
     DispItem ds = getDispSettBy(navaid);
 
-    switch (navaid.getType()){
+    switch (navaid.getType()) {
       case VOR:
         p.drawPoint(navaid.getCoordinate(), ds.getColor(), ds.getWidth());
         p.drawCircleAround(navaid.getCoordinate(), ds.getBorderDistance(), ds.getColor(), ds.getBorderWidth());
@@ -126,7 +126,7 @@ public class BasicVisualiser extends Visualiser {
         p.drawText(navaid.getName(), navaid.getCoordinate(), 3, 3, ds.getColor(), Painter.eTextType.navaid);
         break;
     }
-    
+
   }
 
   private DispItem getDispSettBy(Border border) {
@@ -177,36 +177,40 @@ public class BasicVisualiser extends Visualiser {
     double startBear = Coordinates.getBearing(borderArcPoint.getCoordinate(), bPrev.getCoordinate());
     double endBear = Coordinates.getBearing(borderArcPoint.getCoordinate(), bNext.getCoordinate());
     double distance = Coordinates.getDistanceInNM(borderArcPoint.getCoordinate(), bPrev.getCoordinate());
-    if (borderArcPoint.getDirection() == BorderArcPoint.eDirection.counterclockwise){
+    if (borderArcPoint.getDirection() == BorderArcPoint.eDirection.counterclockwise) {
       double tmp = startBear;
       startBear = endBear;
       endBear = tmp;
     }
-    
+
     p.drawArc(borderArcPoint.getCoordinate(), startBear, endBear, distance, color);
   }
 
   @Override
   public void drawPlane(Airplane plane, Atc.eType responsibleAtcType) {
-    
+
     DispPlane dp = sett.getDispPlane(responsibleAtcType);
-    
-    p.drawPoint(plane.getCoordinate(), dp.getColor(), dp.getPointWidth());
-    p.drawLine(plane.getCoordinate(), dp.getHeadingLineLength(), plane.getHeading(), 
-        dp.getColor(), 1); // 1 = width
-    
+
+    p.drawPoint(plane.getCoordinate(), dp.getColor(), dp.getPointWidth()); // point of plane
+    p.drawLine(plane.getCoordinate(), dp.getHeadingLineLength(), plane.getHeading(),
+        dp.getColor(), 1); // 1 = width // heading of plane
+
+    if (plane.getSpeed() > 100 || plane.getVerticalSpeed() != 0) {
+      p.drawCircleAroundInNM(plane.getCoordinate(), 5.0, dp.getColor(), 1);
+    }
+
     StringBuilder sb = new StringBuilder();
     sb.append(
-      buildPlaneString(dp.getFirstLineFormat(), plane));
+        buildPlaneString(dp.getFirstLineFormat(), plane));
     sb.append("\r\n");
     sb.append(
-      buildPlaneString(dp.getSecondLineFormat(), plane));
+        buildPlaneString(dp.getSecondLineFormat(), plane));
     sb.append("\r\n");
     sb.append(
-      buildPlaneString(dp.getThirdLineFormat(), plane));
-    
+        buildPlaneString(dp.getThirdLineFormat(), plane));
+
     p.drawText(sb.toString(), plane.getCoordinate(), 3, 3, dp.getColor(), Painter.eTextType.plane);
-        
+
   }
 
   private String buildPlaneString(String lineFormat, Airplane plane) {
@@ -216,35 +220,35 @@ public class BasicVisualiser extends Visualiser {
 
   private MessageSet createMessageSet(List<Message> msgs) {
     MessageSet ret = new MessageSet();
-    
-    for (Message m : msgs){
-      if (m.isSystemMessage())
+
+    for (Message m : msgs) {
+      if (m.isSystemMessage()) {
         ret.system.add(">> " + m.getAsString().text);
-      else if (m.isAtcMessage()){
+      } else if (m.isAtcMessage()) {
         Atc atc = (Atc) m.source;
-        if (atc.getType() == Atc.eType.twr)
+        if (atc.getType() == Atc.eType.twr) {
           ret.atc.add("TWR: " + m.getAsPlaneSwitchMessage().getAsString());
-        else if (atc.getType() == Atc.eType.ctr)
+        } else if (atc.getType() == Atc.eType.ctr) {
           ret.atc.add("CTR : " + m.getAsPlaneSwitchMessage().getAsString());
-        else
+        } else {
           throw new ENotSupportedException();
-      }
-      else if (m.isPlaneMessage()){
+        }
+      } else if (m.isPlaneMessage()) {
         Airplane p = (Airplane) m.source;
         ret.plane.add(p.getCallsign().toString() + ": " + m.getAsString().text);
-      }
-      else
+      } else {
         throw new ENotSupportedException();
+      }
     }
     return ret;
   }
 
   @Override
   public void drawStar(List<Navaid> navaidPoints) {
-    for (int i = 0; i < navaidPoints.size()-1; i++) {
+    for (int i = 0; i < navaidPoints.size() - 1; i++) {
       p.drawLine(
-          navaidPoints.get(i).getCoordinate(), 
-          navaidPoints.get(i+1).getCoordinate(), 
+          navaidPoints.get(i).getCoordinate(),
+          navaidPoints.get(i + 1).getCoordinate(),
           Color.GRAY);
     }
   }
@@ -258,10 +262,10 @@ public class BasicVisualiser extends Visualiser {
     p.drawLine(start, approach.getPoint(), Color.MAGENTA);
   }
 
-  
 }
 
-class MessageSet{
+class MessageSet {
+
   public final List<String> atc = new ArrayList<>();
   public final List<String> plane = new ArrayList<>();
   public final List<String> system = new ArrayList<>();

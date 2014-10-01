@@ -13,6 +13,7 @@ import jatcsimlib.atcs.PlaneResponsibilityManager;
 import jatcsimlib.atcs.TowerAtc;
 import jatcsimlib.atcs.UserAtc;
 import jatcsimlib.exceptions.ENotSupportedException;
+import jatcsimlib.global.ERandom;
 import jatcsimlib.global.ETime;
 import jatcsimlib.global.ReadOnlyList;
 import jatcsimlib.messaging.Messenger;
@@ -108,5 +109,9 @@ public class Acc {
       default:
         throw new ENotSupportedException();
     }
+  }
+  
+  public static ERandom rnd(){
+    return Simulation.rnd;
   }
 }

@@ -43,7 +43,6 @@ import java.util.List;
 public class Simulation {
 
   private final ETime now;
-  private final Airport airport;
   private final AirplaneTypes planeTypes;
 
   private RunwayThreshold activeRunwayThreshold;
@@ -93,7 +92,6 @@ public class Simulation {
       throw new IllegalArgumentException("Argument \"airport\" cannot be null.");
     }
 
-    this.airport = airport;
     this.planeTypes = types;
     this.twrAtc = new TowerAtc(airport.getAtcTemplates().get(Atc.eType.twr));
     this.ctrAtc = new CentreAtc(airport.getAtcTemplates().get(Atc.eType.ctr));
@@ -154,7 +152,7 @@ public class Simulation {
       return;
     }
 
-    Airplane plane = generateNewArrivingPlane(); // generateNewDepartingPlane(); // generateNewArrivingPlane();
+    Airplane plane = generateNewDepartingPlane(); // generateNewArrivingPlane();
 
     if (plane.isDeparture()) {
       Acc.prm().registerPlane(twrAtc, plane);
@@ -221,7 +219,7 @@ public class Simulation {
 
     // -- po vysce+300 ma kontaktovat APP
     routeCmds.add(indx++,
-        new AfterAltitudeCommand(this.activeRunwayThreshold.getParent().getParent().getAltitude() + 300));
+        new AfterAltitudeCommand(this.activeRunwayThreshold.getParent().getParent().getAltitude() + Acc.rnd().nextInt(150, 450)));
     routeCmds.add(indx++, new ContactCommand(Atc.eType.app));
 
     // -- po vysce + 3000 rychlost na odlet
@@ -290,7 +288,7 @@ public class Simulation {
     return ret;
   }
 
-  private static final ERandom rnd = new ERandom();
+  public static final ERandom rnd = new ERandom();
 
   private Route getRandomRoute(boolean arrival) {
     Route ret = null;
@@ -338,7 +336,8 @@ public class Simulation {
       }
 
       // departed
-      if (p.isDeparture() && p.getAltitude() > 15000) {
+      if (p.isDeparture() && Acc.prm().getResponsibleAtc(p).equals(Acc.atcCtr()) &&
+          (p.getAltitude() == p.getTargetAltitude() || p.getAltitude() > 18000)) {
         rem.add(p);
       }
     }

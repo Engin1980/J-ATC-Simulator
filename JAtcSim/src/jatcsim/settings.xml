@@ -49,7 +49,7 @@ case 42:   verticalSpeedShort
 case 43:   climbDescendChar 
     -->
     <dispPlane atcType="app" behavior="any" color="00FF00"
-               pointWidth="7" headingLineLength="55" historyDotCount="10" 
+               pointWidth="7" headingLineLength="10" historyDotCount="10" 
                firstLineFormat="{1}" 
                secondLineFormat="{34}{43}{37} {22}"
                thirdLineFormat="{4}" />

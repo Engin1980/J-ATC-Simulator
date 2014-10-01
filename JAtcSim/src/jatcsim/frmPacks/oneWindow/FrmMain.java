@@ -5,6 +5,7 @@
  */
 package jatcsim.frmPacks.oneWindow;
 
+import com.sun.java.accessibility.util.AWTEventMonitor;
 import jatcsimdraw.canvases.EJComponent;
 import jatcsimdraw.canvases.EJComponentCanvas;
 import jatcsimdraw.radar.BasicRadar;
@@ -26,7 +27,10 @@ import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
+import static java.awt.event.KeyEvent.VK_ESCAPE;
+import java.awt.event.KeyListener;
 import javax.swing.JFrame;
+import javax.swing.JTextField;
 import javax.swing.Timer;
 
 /**
@@ -95,7 +99,7 @@ public class FrmMain extends javax.swing.JFrame {
 
   private void formFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_formFocusGained
     // TODO add your handling code here:
-   this.jTxtInput.requestFocus();
+    this.jTxtInput.requestFocus();
   }//GEN-LAST:event_formFocusGained
 
   // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -103,6 +107,7 @@ public class FrmMain extends javax.swing.JFrame {
   // End of variables declaration//GEN-END:variables
 
   private Simulation sim;
+  private CommandJTextWraper wrp;
 
   void init(final Simulation sim, final Area area, Settings displaySettings) {
 
@@ -112,6 +117,9 @@ public class FrmMain extends javax.swing.JFrame {
     EJComponentCanvas canvas = new EJComponentCanvas();
     BasicRadar r = new BasicRadar(canvas, aip.getRadarRange(), sim, area, displaySettings);
     final EJComponent comp = canvas.getEJComponent();
+
+    comp.addKeyListener(new MyKeyListener(this.jTxtInput));
+    wrp = new CommandJTextWraper(jTxtInput);
 
     final FrmMain f = this;
     f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -184,7 +192,7 @@ public class FrmMain extends javax.swing.JFrame {
       // msg for TWR
       msg = msg.substring(1);
       Squawk s = Squawk.tryCreate(msg);
-      if (s == null){
+      if (s == null) {
         app.sendError("Invalid transponder format: " + msg);
         return true;
       }
@@ -235,4 +243,90 @@ public class FrmMain extends javax.swing.JFrame {
     }
     return ret;
   }
+}
+
+class MyKeyListener implements KeyListener {
+
+  private final JTextField cmdTextField;
+
+  public MyKeyListener(JTextField cmdTextField) {
+    this.cmdTextField = cmdTextField;
+  }
+
+  @Override
+  public void keyTyped(KeyEvent e) {
+    this.cmdTextField.dispatchEvent(new KeyEvent(cmdTextField,
+        KeyEvent.KEY_TYPED, System.currentTimeMillis(),
+        e.getModifiers(), KeyEvent.VK_UNDEFINED, e.getKeyChar()));
+    this.cmdTextField.requestFocus();
+  }
+
+  @Override
+  public void keyPressed(KeyEvent e) {
+  }
+
+  @Override
+  public void keyReleased(KeyEvent e) {
+
+  }
+
+}
+
+class CommandJTextWraper {
+
+  private final JTextField parent;
+  private String lastMessage = "";
+
+  public CommandJTextWraper(JTextField parentJTextField) {
+    parent = parentJTextField;
+
+    parent.addKeyListener(new KeyListener() {
+
+      @Override
+      public void keyTyped(KeyEvent e) {
+
+      }
+
+      @Override
+      public void keyPressed(KeyEvent e) {
+        switch (e.getKeyCode()) {
+          case java.awt.event.KeyEvent.VK_ESCAPE:
+            setText("");
+            break;
+          case java.awt.event.KeyEvent.VK_LEFT:
+            addText(" TL ");
+            break;
+          case java.awt.event.KeyEvent.VK_RIGHT:
+            addText(" TR ");
+            break;
+          case java.awt.event.KeyEvent.VK_UP:
+            addText(" CM ");
+            break;
+          case java.awt.event.KeyEvent.VK_DOWN:
+            addText(" DM ");
+            break;
+          case java.awt.event.KeyEvent.VK_ENTER:
+            lastMessage = parent.getText();
+            break;
+          case java.awt.event.KeyEvent.VK_PAGE_UP:
+            setText(lastMessage);
+            break;
+        }
+      }
+
+      @Override
+      public void keyReleased(KeyEvent e) {
+      }
+
+      private void setText(String text) {
+        parent.setText(text);
+      }
+
+      private void addText(String text) {
+        parent.setText(parent.getText() + text);
+      }
+
+    });
+  }
+
 }

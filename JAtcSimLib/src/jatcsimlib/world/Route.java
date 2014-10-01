@@ -72,7 +72,7 @@ public class Route extends MustBeBinded implements KeyItem<String> {
     try {
       _routeCommands = CommandFormat.parseMulti(this.route);
     } catch (Exception ex) {
-      throw new EBindException("Parsing commands failed. Route commands contain error (see cause).", ex);
+      throw new EBindException("Parsing commands failed for route " + this.name + ". Route commands contain error (see cause).", ex);
     }
 
     switch (type) {

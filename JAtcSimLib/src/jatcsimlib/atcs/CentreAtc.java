@@ -8,10 +8,10 @@ package jatcsimlib.atcs;
 import jatcsimlib.Acc;
 import jatcsimlib.airplanes.Airplane;
 import jatcsimlib.airplanes.AirplaneList;
+import jatcsimlib.commands.ChangeAltitudeCommand;
 import jatcsimlib.commands.ContactCommand;
 import jatcsimlib.exceptions.ERuntimeException;
 import jatcsimlib.messaging.Message;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -39,6 +39,15 @@ public class CentreAtc extends ComputerAtc {
     esRequestPlaneSwitchFromApp();
 
     for (Message m : msgs) {
+      if (m.source instanceof Airplane){
+        Airplane  p  = (Airplane) m.source;
+        if (p.isDeparture()){
+          Acc.messenger().addMessage(
+              this, 
+              p, 
+              new ChangeAltitudeCommand(ChangeAltitudeCommand.eDirection.climb, getDepartureRandomTargetAltitude(p)));
+        }
+      }
       if (m.source != Acc.atcApp()) {
         continue;
       }
@@ -54,6 +63,7 @@ public class CentreAtc extends ComputerAtc {
         p = m.getAsPlaneSwitchMessage().plane;
         if (canIAcceptFromApp(p)) {
           super.confirmSwitch(p);
+          super.approveSwitch(p);
         } else {
           super.refuseSwitch(p);
         }
@@ -61,6 +71,7 @@ public class CentreAtc extends ComputerAtc {
       } else {
         // CTR -> APP, potvrzene od APP
         waitingRequestsList.remove(p);
+        super.approveSwitch(p);
         Acc.messenger().addMessage(this, p, new ContactCommand(eType.app));
       }
     }
@@ -82,7 +93,7 @@ public class CentreAtc extends ComputerAtc {
       if (p.isDeparture()) {
         continue;
       }
-      if (getPrm().isToSwitch(p)) {
+      if (getPrm().isAskedToSwitch(p)) {
         continue;
       }
       if (p.getAltitude() < super.releaseAltitude) {
@@ -103,6 +114,13 @@ public class CentreAtc extends ComputerAtc {
       return false;
     }
     return true;
+  }
+
+
+  private int getDepartureRandomTargetAltitude(Airplane p) {
+    int ret = Acc.rnd().nextInt(20, p.getAirplaneSpecification().maxAltitude / 1000);
+    ret = ret * 1000;
+    return ret;
   }
 
 }

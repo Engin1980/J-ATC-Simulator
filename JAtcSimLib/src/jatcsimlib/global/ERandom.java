@@ -14,7 +14,7 @@ import java.util.Random;
  */
 public class ERandom extends Random {
   public int nextInt (int fromInclusive, int toExclusive){
-    return nextInt(toExclusive) + fromInclusive;
+    return nextInt(toExclusive - fromInclusive) + fromInclusive;
   }
   
   @Override

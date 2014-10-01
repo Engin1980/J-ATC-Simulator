@@ -8,16 +8,12 @@ package jatcsimlib.atcs;
 import jatcsimlib.Acc;
 import jatcsimlib.airplanes.Airplane;
 import jatcsimlib.airplanes.AirplaneList;
-import jatcsimlib.commands.AfterAltitudeCommand;
 import jatcsimlib.commands.ClearedForTakeoffCommand;
 import jatcsimlib.commands.CommandList;
-import jatcsimlib.commands.ContactCommand;
 import jatcsimlib.coordinates.Coordinates;
 import jatcsimlib.exceptions.ERuntimeException;
 import jatcsimlib.messaging.GoingAroundStringMessage;
 import jatcsimlib.messaging.Message;
-import jatcsimlib.messaging.StringMessage;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -25,6 +21,9 @@ import java.util.List;
  * @author Marek
  */
 public class TowerAtc extends ComputerAtc {
+
+  private final AirplaneList readyForTakeoff = new AirplaneList();
+  private final AirplaneList departings = new AirplaneList();
 
   public TowerAtc(AtcTemplate template) {
     super(template);
@@ -40,10 +39,6 @@ public class TowerAtc extends ComputerAtc {
   @Override
   protected void _elapseSecond() {
     List<Message> msgs = Acc.messenger().getMy(this, true);
-
-    if (msgs.isEmpty() == false) {
-      System.out.println("## PP");
-    }
 
     esRequestPlaneSwitchFromApp();
 
@@ -69,6 +64,7 @@ public class TowerAtc extends ComputerAtc {
         p = m.getAsPlaneSwitchMessage().plane;
         if (canIAcceptFromApp(p)) {
           super.confirmSwitch(p);
+          super.approveSwitch(p);
         } else {
           super.refuseSwitch(p);
         }
@@ -76,13 +72,46 @@ public class TowerAtc extends ComputerAtc {
       } else {
         // potvrzene od APP, TWR predava na APP
         waitingRequestsList.remove(p);
-        CommandList cmdList = new CommandList();
-        cmdList.add(new ClearedForTakeoffCommand());
-        cmdList.add(new AfterAltitudeCommand(Acc.airport().getAltitude() + 200));
-        cmdList.add(new ContactCommand(eType.app));
-        Acc.messenger().addMessage(this, p, cmdList);
+        readyForTakeoff.add(p);
       }
     }
+
+    processReadyForTakeoff();
+    switchDepartings();
+  }
+
+  private void processReadyForTakeoff() {
+    if (readyForTakeoff.isEmpty() == false && canTakeOffSomebodyNow()) {
+      Airplane p = readyForTakeoff.get(0);
+      readyForTakeoff.remove(0);
+      departings.add(p);
+
+      CommandList cmdList = new CommandList();
+      cmdList.add(new ClearedForTakeoffCommand());
+      Acc.messenger().addMessage(this, p, cmdList);
+    }
+  }
+
+  private boolean canTakeOffSomebodyNow() {
+    for (Airplane p : getPrm().getPlanes(this)) {
+      double dst = Coordinates.getDistanceInNM(p.getCoordinate(), Acc.threshold().getCoordinate());
+      if (p.isArrival()) {
+        if (dst < 5) {
+          return false;
+        }
+      } else {
+        if (readyForTakeoff.contains(p)) {
+          continue;
+        }
+        if (p.getSpeed() == 0 && departings.contains(p) == false) {
+          continue;
+        }
+        if (dst < 3) {
+          return false;
+        }
+      }
+    }    
+    return true;
   }
 
   private boolean canIAcceptFromApp(Airplane p) {
@@ -113,7 +142,6 @@ public class TowerAtc extends ComputerAtc {
 
       waitingRequestsList.add(p);
     }
-
     // opakovani starych zadosti
     List<Airplane> awaitings = waitingRequestsList.getAwaitings();
     for (Airplane p : awaitings) {
@@ -129,7 +157,7 @@ public class TowerAtc extends ComputerAtc {
       if (p.isArrival()) {
         continue;
       }
-      if (getPrm().isToSwitch(p)) {
+      if (getPrm().isAskedToSwitch(p)) {
         continue;
       }
 
@@ -137,6 +165,20 @@ public class TowerAtc extends ComputerAtc {
     }
 
     return ret;
+  }
+
+  private void switchDepartings() {
+    AirplaneList tmp = new AirplaneList();
+    for (Airplane p : departings){
+      if (p.getAltitude() > Acc.airport().getAltitude()){
+        tmp.add(p);
+      }
+    }
+    
+    for (Airplane p : tmp){
+      super.approveSwitch(p);
+      departings.remove(p);
+    }
   }
 
 }

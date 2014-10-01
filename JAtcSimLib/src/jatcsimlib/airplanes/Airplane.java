@@ -288,6 +288,10 @@ public class Airplane implements KeyItem<Callsign> {
   public boolean isArrival() {
     return !departure;
   }
+  
+  public int getVerticalSpeed(){
+    return lastVerticalSpeed;
+  }
 
   public Callsign getCallsign() {
     return callsign;

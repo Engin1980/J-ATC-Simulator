@@ -129,10 +129,26 @@ public abstract class Painter {
   protected void drawLine(Coordinate from, Coordinate to, Color color) {
     drawLine(from, to, color, 1);
   }
+  
+  protected void drawLine(Coordinate from, int heading, double lengthInNM, Color color, int width){
+    Size s = this.toDistance(lengthInNM);
+    
+    int a = heading % 180;
+    double x
+    
+    double xs = s.width * ((heading % 180) % 90) / 90.0;
+    
+  }
 
   protected abstract void drawPoint(Coordinate coordinate, Color color, int width);
 
   protected abstract void drawCircleAround(Coordinate coordinate, int radiusInPixels, Color color, int width);
+  
+  protected void drawCircleAroundInNM(Coordinate coordinate, double distanceInNM, Color color, int width) {
+    Size s = this.toDistance(distanceInNM);
+    
+    drawCircleAround(coordinate, s.width, color, width);
+  }
 
   protected abstract void drawTriangleAround(Coordinate coordinate, int distanceInPixels, Color color, int width);
 

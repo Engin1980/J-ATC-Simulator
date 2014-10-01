@@ -34,14 +34,41 @@ public class PlaneResponsibilityManager {
         || s == eState.twr2app;
   }
 
+  boolean isAskedToSwitch(Airplane p) {
+    eState s = map.get(p);
+    boolean ret = s == eState.app 
+        || s == eState.ctr
+        || s == eState.twr;
+    ret = !ret;
+    return ret;
+  }
+
+  private Atc getApprovedAtc(Airplane p) {
+    switch (map.get(p)){
+      case app2ctrReady:
+        return Acc.atcCtr();
+      case app2twrReady:
+        return Acc.atcTwr();
+      case ctr2appReady:
+      case twr2appReady:
+        return Acc.atcApp();
+      default:
+        throw new ENotSupportedException();
+    }
+  }
+
   public enum eState {
 
     ctr,
     ctr2app,
+    ctr2appReady,
     app2ctr,
+    app2ctrReady,
     app,
     app2twr,
+    app2twrReady,
     twr2app,
+    twr2appReady,
     twr
   }
 
@@ -54,8 +81,8 @@ public class PlaneResponsibilityManager {
     lst.put(Acc.atcCtr(), new AirplaneList());
     lst.put(Acc.atcTwr(), new AirplaneList());
   }
-  
-  protected AirplaneList getPlanes(Atc atc){
+
+  protected AirplaneList getPlanes(Atc atc) {
     //TODO není to moc pomalé?
     AirplaneList nw = new AirplaneList();
     nw.addAll(lst.get(atc));
@@ -91,7 +118,7 @@ public class PlaneResponsibilityManager {
     }
 
     Atc atc = getResponsibleAtc(plane);
-    
+
     map.remove(plane);
     lst.get(atc).remove(plane);
     all.remove(plane);
@@ -169,17 +196,48 @@ public class PlaneResponsibilityManager {
 
   public void confirmSwitch(Atc atc, Airplane plane) {
     if (isToSwitchToAtc(atc, plane)) {
-      
-      Atc oldAtc = getResponsibleAtc(plane);
-      
-      eState newState = typeToState(atc);
-      map.put(plane, newState);
-      
-      lst.get(oldAtc).remove(plane);
-      lst.get(atc).add(plane);
+      switch (map.get(plane)) {
+        case app2ctr:
+          map.put(plane, eState.app2ctrReady);
+          break;
+        case app2twr:
+          map.put(plane, eState.app2twrReady);
+          break;
+        case ctr2app:
+          map.put(plane, eState.ctr2appReady);
+          break;
+        case twr2app:
+          map.put(plane, eState.twr2appReady);
+          break;
+        default:
+          throw new ENotSupportedException();
+      }
     } else {
       throw new ERuntimeException("Cannot switch plane, not ready to switch.");
     }
+  }
+
+  public void approveSwitch(Airplane plane) {
+    if (isApprovedToSwitch(plane) == false){
+      throw new ERuntimeException("Plane not approved to switch!");
+    }
+    
+    Atc oldAtc = getResponsibleAtc(plane);
+
+    Atc newAtc = getApprovedAtc(plane);
+    eState newState = typeToState(newAtc);
+    map.put(plane, newState);
+
+    lst.get(oldAtc).remove(plane);
+    lst.get(newAtc).add(plane);
+  }
+  
+  private boolean isApprovedToSwitch(Airplane plane){
+    eState s = map.get(plane);
+    return s == eState.app2ctrReady
+        || s == eState.app2twrReady
+        || s == eState.ctr2appReady
+        || s == eState.twr2appReady;
   }
 
   public Atc getResponsibleAtc(Airplane plane) {
@@ -188,12 +246,16 @@ public class PlaneResponsibilityManager {
       case app:
       case app2ctr:
       case app2twr:
+      case app2ctrReady:
+      case app2twrReady:
         return Acc.atcApp();
       case ctr:
       case ctr2app:
+      case ctr2appReady:
         return Acc.atcCtr();
       case twr:
       case twr2app:
+      case twr2appReady:
         return Acc.atcTwr();
       default:
         throw new ENotSupportedException();
@@ -225,8 +287,8 @@ public class PlaneResponsibilityManager {
   public boolean isRegistered(Airplane plane) {
     return map.containsKey(plane);
   }
-  
-  public ReadOnlyList<Airplane> getAll(){
+
+  public ReadOnlyList<Airplane> getAll() {
     return new ReadOnlyList<>(all);
   }
 }

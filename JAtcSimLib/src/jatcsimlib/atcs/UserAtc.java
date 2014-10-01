@@ -39,7 +39,7 @@ public class UserAtc extends Atc {
   }
 
   public void elapseSecond() {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    
   }
 
   public void sendCommands(Airplane plane, CommandList commands) {
