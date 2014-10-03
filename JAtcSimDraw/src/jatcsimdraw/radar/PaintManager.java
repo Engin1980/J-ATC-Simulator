@@ -81,8 +81,8 @@ public class PaintManager {
   }
 
   private void drawAirplanes() {
-    for (Airplane a : simulation.getPlanes()) {
-      visualiser.drawPlane(a, simulation.getResponsibleAtc(a).getType());
+    for (Airplane.AirplaneInfo ai : simulation.getPlaneInfos()) {
+      visualiser.drawPlane(ai);
     }
   }
 

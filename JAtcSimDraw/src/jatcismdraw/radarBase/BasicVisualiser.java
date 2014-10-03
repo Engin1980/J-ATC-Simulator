@@ -9,8 +9,8 @@ import jatcsimdraw.settings.DispItem;
 import jatcsimdraw.settings.DispPlane;
 import jatcsimdraw.settings.DispText;
 import jatcsimdraw.settings.Settings;
-import jatcsimlib.Acc;
 import jatcsimlib.airplanes.Airplane;
+import jatcsimlib.airplanes.Callsign;
 import jatcsimlib.atcs.Atc;
 import jatcsimlib.exceptions.ERuntimeException;
 import jatcsimlib.coordinates.Coordinates;
@@ -27,13 +27,18 @@ import jatcsimlib.world.Navaid;
 import jatcsimlib.world.Runway;
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
  * @author Marek
  */
 public class BasicVisualiser extends Visualiser {
+  
+  private final PlaneHistoryDotManager h = new PlaneHistoryDotManager();
 
   public BasicVisualiser(Painter p, Settings sett) {
     super(p, sett);
@@ -187,34 +192,51 @@ public class BasicVisualiser extends Visualiser {
   }
 
   @Override
-  public void drawPlane(Airplane plane, Atc.eType responsibleAtcType) {
+  public void drawPlane(Airplane.AirplaneInfo planeInfo) {
 
-    DispPlane dp = sett.getDispPlane(responsibleAtcType);
+    DispPlane dp = sett.getDispPlane(planeInfo);
 
-    p.drawPoint(plane.getCoordinate(), dp.getColor(), dp.getPointWidth()); // point of plane
-    p.drawLine(plane.getCoordinate(), dp.getHeadingLineLength(), plane.getHeading(),
-        dp.getColor(), 1); // 1 = width // heading of plane
-
-    if (plane.getSpeed() > 100 || plane.getVerticalSpeed() != 0) {
-      p.drawCircleAroundInNM(plane.getCoordinate(), 5.0, dp.getColor(), 1);
+    if (dp.isVisible() == false) {
+      return;
     }
 
+    // plane dot and direction line
+    p.drawPoint(planeInfo.coordinate(), dp.getColor(), dp.getPointWidth()); // point of plane
+    p.drawLineByHeadingAndDistance(planeInfo.coordinate(), planeInfo.heading(), dp.getHeadingLineLength(), dp.getColor(), 1);
+
+    // separation ring
+    if (planeInfo.speed() > 100 || planeInfo.verticalSpeed() != 0) {
+      p.drawCircleAroundInNM(planeInfo.coordinate(), dp.getSeparationRingRadius(), dp.getColor(), 1);
+    }
+
+    // plane label
     StringBuilder sb = new StringBuilder();
     sb.append(
-        buildPlaneString(dp.getFirstLineFormat(), plane));
+        buildPlaneString(dp.getFirstLineFormat(), planeInfo));
+
+    if (planeInfo.tunedAtc() != planeInfo.responsibleAtc()) {
+      sb.append("*");
+    }
+
     sb.append("\r\n");
     sb.append(
-        buildPlaneString(dp.getSecondLineFormat(), plane));
+        buildPlaneString(dp.getSecondLineFormat(), planeInfo));
     sb.append("\r\n");
     sb.append(
-        buildPlaneString(dp.getThirdLineFormat(), plane));
+        buildPlaneString(dp.getThirdLineFormat(), planeInfo));
 
-    p.drawText(sb.toString(), plane.getCoordinate(), 3, 3, dp.getColor(), Painter.eTextType.plane);
+    p.drawText(sb.toString(), planeInfo.coordinate(), 3, 3, dp.getColor(), Painter.eTextType.plane);
 
+    // plane history
+    this.h.add(planeInfo.callsign(), planeInfo.coordinate(), dp.getHistoryDotCount());
+    List<Coordinate> hist = h.get(planeInfo.callsign());
+    for (Coordinate c : hist){
+      p.drawPoint(c, dp.getColor(), 3);
+    }
   }
 
-  private String buildPlaneString(String lineFormat, Airplane plane) {
-    String ret = plane.getInfo().format(lineFormat);
+  private String buildPlaneString(String lineFormat, Airplane.AirplaneInfo planeInfo) {
+    String ret = planeInfo.format(lineFormat);
     return ret;
   }
 
@@ -269,4 +291,40 @@ class MessageSet {
   public final List<String> atc = new ArrayList<>();
   public final List<String> plane = new ArrayList<>();
   public final List<String> system = new ArrayList<>();
+}
+
+class PlaneHistoryDotManager {
+
+  private final Map<Callsign, List<Coordinate>> inner = new HashMap<>();
+
+  public void add(Callsign cs, Coordinate c, int maxHistory) {
+    if (inner.containsKey(cs) == false) {
+      inner.put(cs, new LinkedList<Coordinate>());
+    }
+
+    List<Coordinate> l = inner.get(cs);
+    //if (l.size() < maxHistory) {
+      inner.get(cs).add(c);
+    //}
+  }
+
+  public void removeOneHistoryFromAll() {
+    List<Callsign> tr = new LinkedList<>();
+    for (Callsign cs : inner.keySet()) {
+      List<Coordinate> l = inner.get(cs);
+      if (l.isEmpty() == false)
+        l.remove(0);
+      if (l.isEmpty()){
+        tr.add(cs);
+      }
+    }
+    
+    for (Callsign cs : tr){
+      inner.remove(cs);
+    }
+  }
+
+  List<Coordinate> get(Callsign callsign) {
+    return inner.get(callsign);
+  }
 }

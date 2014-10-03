@@ -7,11 +7,13 @@ package jatcsimlib.atcs;
 
 import jatcsimlib.Acc;
 import jatcsimlib.airplanes.Airplane;
-import jatcsimlib.airplanes.AirplaneList;
+import jatcsimlib.airplanes.Airplanes;
+import jatcsimlib.airplanes.Callsign;
+import jatcsimlib.airplanes.Squawk;
+import jatcsimlib.commands.CommandFormat;
 import jatcsimlib.commands.CommandList;
 import jatcsimlib.exceptions.ENotSupportedException;
 import jatcsimlib.exceptions.ERuntimeException;
-import jatcsimlib.messaging.IContent;
 
 /**
  *
@@ -19,10 +21,33 @@ import jatcsimlib.messaging.IContent;
  */
 public class UserAtc extends Atc {
 
-  private final AirplaneList departures = new AirplaneList();
-  private final AirplaneList departuresForCtr = new AirplaneList();
-  private final AirplaneList arrivals = new AirplaneList();
-  private final AirplaneList arrivalsForTwr = new AirplaneList();
+  private void raiseError(String string) {
+    switch (this.errorBehavior) {
+      case sendSystemErrors:
+        sendError(string);
+        break;
+      case throwExceptions:
+        throw new ERuntimeException(string);
+      default:
+        throw new ENotSupportedException();
+    }
+  }
+
+  public enum eErrorBehavior {
+
+    throwExceptions,
+    sendSystemErrors
+  }
+
+  private eErrorBehavior errorBehavior = eErrorBehavior.sendSystemErrors;
+
+  public eErrorBehavior getErrorBehavior() {
+    return errorBehavior;
+  }
+
+  public void setErrorBehavior(eErrorBehavior errorBehavior) {
+    this.errorBehavior = errorBehavior;
+  }
 
   public UserAtc(AtcTemplate template) {
     super(template);
@@ -39,22 +64,69 @@ public class UserAtc extends Atc {
   }
 
   public void elapseSecond() {
-    
+
   }
 
-  public void sendCommands(Airplane plane, CommandList commands) {
+  public void sendToPlane(String airplaneCallsignOrPart, String commands) {
+    Airplane p = Airplanes.tryGetByCallsingOrNumber(Acc.planes(), airplaneCallsignOrPart);
+    if (p == null) {
+      raiseError(
+          "Cannot identify airplane under callsign (or part) \"" + airplaneCallsignOrPart + "\" . None or multiple planes identified.");
+      return;
+    }
+
+    CommandList cmdList;
+    try {
+      cmdList = CommandFormat.parseMulti(commands);
+    } catch (Exception ex) {
+      raiseError(ex.getMessage());
+      return;
+    }
+    sendToPlane(p, cmdList);
+  }
+
+  public void sendToPlane(Callsign c, CommandList commands) {
+    Airplane pln = Airplanes.tryGetByCallsign(Acc.planes(), c);
+    if (pln == null) {
+      raiseError("No such plane for callsign \"" + c.toString() + "\".");
+      return;
+    }
+    sendToPlane(pln, commands);
+  }
+
+  private void sendToPlane(Airplane plane, CommandList commands) {
     Acc.messenger().addMessage(this, plane, commands);
   }
 
-  public void sendCommands(Atc.eType type, Airplane plane) {
+  public void sendToAtc(Atc.eType type, String sqwkAsString) {
+    Squawk s;
+
+    s = Squawk.tryCreate(sqwkAsString);
+    if (s == null) {
+      raiseError("\"" + sqwkAsString + "\" is not valid transponder code.");
+      return;
+    }
+    sendToAtc(type, s);
+  }
+
+  public void sendToAtc(Atc.eType type, Squawk squawk) {
+    Airplane pln = Airplanes.tryGetBySqwk(Acc.planes(), squawk);
+    if (pln == null) {
+      raiseError("No such plane with callsign " + squawk.toString());
+    }
+    sendToAtc(type, pln);
+  }
+
+  private void sendToAtc(Atc.eType type, Airplane plane) {
     Atc atc = Acc.atc(type);
-    
-    if (getPrm().isToSwitch(plane)){
+
+    if (getPrm().isToSwitch(plane)) {
       // je to ... -> APP
-      
-      if (getPrm().getResponsibleAtc(plane).getType() != type){
+
+      if (getPrm().getResponsibleAtc(plane).getType() != type) {
         // nesedi smer potvrzeni A predava na APP, ale APP potvrzuje na B
-        sendError("SQWK " + plane.getSqwk() + " not in your control. You cannot ask for switch.");
+        sendError("SQWK " + plane.getSqwk() + " not in your control. You cannot request switch.");
+        return;
       } else {
         // potvrdime
         getPrm().confirmSwitch(this, plane);

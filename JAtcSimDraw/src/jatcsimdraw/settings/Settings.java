@@ -5,7 +5,9 @@
  */
 package jatcsimdraw.settings;
 
+import jatcsimlib.airplanes.Airplane;
 import jatcsimlib.atcs.Atc;
+import jatcsimlib.exceptions.ENotSupportedException;
 import jatcsimlib.exceptions.ERuntimeException;
 import jatcsimlib.global.KeyList;
 
@@ -16,7 +18,7 @@ import jatcsimlib.global.KeyList;
 public class Settings {
 
   private final KeyList<DispItem, String> dispItems = new KeyList();
-  private final KeyList<DispPlane, Atc.eType> dispPlanes = new KeyList();
+  private final KeyList<DispPlane, DispPlane.eBehavior> dispPlanes = new KeyList();
   private final KeyList<DispText, DispText.eType> dispTexts = new KeyList();
 
   public DispItem getDispItem(String key) {
@@ -29,11 +31,16 @@ public class Settings {
     return ret;
   }
 
-  public DispPlane getDispPlane(Atc.eType atcType) {
-    DispPlane ret = dispPlanes.tryGet(atcType);
-    if (ret == null) {
-      throw new ERuntimeException("No disp-plane key \"" + atcType + "\" found in settings. Xml file invalid?");
+  public DispPlane getDispPlane(Airplane.AirplaneInfo planeInfo) {
+    DispPlane ret = null;
+    for (DispPlane dp : dispPlanes){
+      if (isMatch(dp, planeInfo)){
+        ret = dp;
+      }
+      
+      if (ret != null) break;
     }
+    
     return ret;
   }
 
@@ -43,6 +50,21 @@ public class Settings {
       throw new ERuntimeException("No disp-text key \"" + type + "\" found in settings. Xml file invalid?");
     }
     return ret;
+  }
+
+  private boolean isMatch(DispPlane dp, Airplane.AirplaneInfo planeInfo) {
+    switch (dp.getBehavior()){
+      case stopped:
+        return planeInfo.speed() == 0;
+      case app:
+        return planeInfo.responsibleAtc().getType() == Atc.eType.app;
+      case twr:
+        return planeInfo.responsibleAtc().getType() == Atc.eType.twr;
+      case ctr:
+        return planeInfo.responsibleAtc().getType() == Atc.eType.ctr;
+      default:
+        throw new ENotSupportedException();
+    }
   }
 
 }

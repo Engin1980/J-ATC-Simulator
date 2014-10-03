@@ -12,6 +12,8 @@ import jatcsimlib.exceptions.ENotSupportedException;
 import jatcsimlib.exceptions.ERuntimeException;
 import jatcsimlib.global.ReadOnlyList;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -36,7 +38,7 @@ public class PlaneResponsibilityManager {
 
   boolean isAskedToSwitch(Airplane p) {
     eState s = map.get(p);
-    boolean ret = s == eState.app 
+    boolean ret = s == eState.app
         || s == eState.ctr
         || s == eState.twr;
     ret = !ret;
@@ -44,7 +46,7 @@ public class PlaneResponsibilityManager {
   }
 
   private Atc getApprovedAtc(Airplane p) {
-    switch (map.get(p)){
+    switch (map.get(p)) {
       case app2ctrReady:
         return Acc.atcCtr();
       case app2twrReady:
@@ -55,6 +57,12 @@ public class PlaneResponsibilityManager {
       default:
         throw new ENotSupportedException();
     }
+  }
+
+  public ReadOnlyList<Airplane.AirplaneInfo> getInfos() {
+    ReadOnlyList<Airplane.AirplaneInfo> ret
+        = new ReadOnlyList<>(this.infos);
+    return ret;
   }
 
   public enum eState {
@@ -75,6 +83,7 @@ public class PlaneResponsibilityManager {
   private final Map<Airplane, eState> map = new HashMap<>();
   private final Map<Atc, AirplaneList> lst = new HashMap<>();
   private final AirplaneList all = new AirplaneList();
+  private final List<Airplane.AirplaneInfo> infos = new LinkedList<>();
 
   private PlaneResponsibilityManager() {
     lst.put(Acc.atcApp(), new AirplaneList());
@@ -110,6 +119,7 @@ public class PlaneResponsibilityManager {
     map.put(plane, typeToState(atc));
     lst.get(atc).add(plane);
     all.add(plane);
+    infos.add(plane.getInfo());
   }
 
   public void unregisterPlane(Airplane plane) {
@@ -122,6 +132,7 @@ public class PlaneResponsibilityManager {
     map.remove(plane);
     lst.get(atc).remove(plane);
     all.remove(plane);
+    infos.remove(plane.getInfo());
   }
 
   public void requestSwitch(Atc from, Atc to, Airplane plane) {
@@ -218,10 +229,10 @@ public class PlaneResponsibilityManager {
   }
 
   public void approveSwitch(Airplane plane) {
-    if (isApprovedToSwitch(plane) == false){
+    if (isApprovedToSwitch(plane) == false) {
       throw new ERuntimeException("Plane not approved to switch!");
     }
-    
+
     Atc oldAtc = getResponsibleAtc(plane);
 
     Atc newAtc = getApprovedAtc(plane);
@@ -231,8 +242,8 @@ public class PlaneResponsibilityManager {
     lst.get(oldAtc).remove(plane);
     lst.get(newAtc).add(plane);
   }
-  
-  private boolean isApprovedToSwitch(Airplane plane){
+
+  private boolean isApprovedToSwitch(Airplane plane) {
     eState s = map.get(plane);
     return s == eState.app2ctrReady
         || s == eState.app2twrReady

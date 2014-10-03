@@ -5,20 +5,14 @@
  */
 package jatcsim.frmPacks.oneWindow;
 
-import com.sun.java.accessibility.util.AWTEventMonitor;
 import jatcsimdraw.canvases.EJComponent;
 import jatcsimdraw.canvases.EJComponentCanvas;
 import jatcsimdraw.radar.BasicRadar;
 import jatcsimdraw.settings.Settings;
 import jatcsimdraw.shared.es.WithCoordinateEvent;
 import jatcsimlib.Simulation;
-import jatcsimlib.airplanes.Airplane;
-import jatcsimlib.airplanes.Airplanes;
-import jatcsimlib.airplanes.Squawk;
 import jatcsimlib.atcs.Atc;
 import jatcsimlib.atcs.UserAtc;
-import jatcsimlib.commands.CommandFormat;
-import jatcsimlib.commands.CommandList;
 import jatcsimlib.events.EventListener;
 import jatcsimlib.world.Airport;
 import jatcsimlib.world.Area;
@@ -27,7 +21,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
-import static java.awt.event.KeyEvent.VK_ESCAPE;
 import java.awt.event.KeyListener;
 import javax.swing.JFrame;
 import javax.swing.JTextField;
@@ -176,57 +169,26 @@ public class FrmMain extends javax.swing.JFrame {
     if (msg.startsWith("+")) {
       // msg for CTR
       msg = msg.substring(1);
-      Squawk s = Squawk.tryCreate(msg);
-      if (s == null) {
-        app.sendError("Invalid transponder format: " + msg);
-        return true;
-      }
-      Airplane plane = Airplanes.tryGet(sim.getPlanes(), s);
-      if (plane == null) {
-        app.sendError("No such plane with sqwk = " + msg);
-      } else {
-        app.sendCommands(Atc.eType.ctr, plane);
-      }
+      app.sendToAtc(Atc.eType.ctr, msg);
       ret = true;
+
     } else if (msg.startsWith("-")) {
       // msg for TWR
       msg = msg.substring(1);
-      Squawk s = Squawk.tryCreate(msg);
-      if (s == null) {
-        app.sendError("Invalid transponder format: " + msg);
-        return true;
-      }
-      Airplane plane = Airplanes.tryGet(sim.getPlanes(), s);
-      if (plane == null) {
-        app.sendError("No such plane with sqwk = " + msg);
-      } else {
-        app.sendCommands(Atc.eType.twr, plane);
-      }
+      app.sendToAtc(Atc.eType.twr, msg);
       ret = true;
+
     } else if (msg.startsWith("=")) {
       // system
       msg = msg.substring(1);
       app.sendSystem(msg);
       ret = true;
+
     } else {
+      // plane commands
       String[] spl = splitToCallsignAndMessages(msg);
-      Airplane p = Airplanes.tryGetByCallsingOrNumber(sim.getPlanes(), spl[0]);
-      if (p == null) {
-        app.sendError("No such plane (or multiple planes) for callsign " + spl[0] + ".");
-        ret = false;
-      } else {
-        CommandList cmdList = null;
-        try {
-          cmdList = CommandFormat.parseMulti(spl[1]);
-          ret = true;
-        } catch (Exception ex) {
-          app.sendError("Command error: " + ex.getMessage());
-          ret = false;
-        }
-        if (ret) {
-          sim.getMessenger().addMessage(app, p, cmdList);
-        }
-      }
+      app.sendToPlane(spl[0], spl[1]);
+      ret = true;
     }
     return ret;
   }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
+<!DOCTYPE settings SYSTEM "settings.dtd">
 
 <settings>
   
@@ -48,20 +48,31 @@ case 41:   verticalSpeedLong
 case 42:   verticalSpeedShort 
 case 43:   climbDescendChar 
     -->
-    <dispPlane atcType="app" behavior="any" color="00FF00"
+    
+    <dispPlane behavior="stopped" visible="false" color="000000"
+               pointWidth="0" headingLineLength="0" historyDotCount="0" 
+               separationRingRadius="0"
+               firstLineFormat="" 
+               secondLineFormat=""
+               thirdLineFormat="" />
+    
+    <dispPlane behavior="app" color="00FF00"
                pointWidth="7" headingLineLength="10" historyDotCount="10" 
+               separationRingRadius="3"
                firstLineFormat="{1}" 
                secondLineFormat="{34}{43}{37} {22}"
                thirdLineFormat="{4}" />
      
-    <dispPlane atcType="ctr" behavior="any" color="008800"
-               pointWidth="5" headingLineLength="15" historyDotCount="10"
+    <dispPlane behavior="ctr" color="008800"
+               separationRingRadius="5"
+               pointWidth="5" headingLineLength="7" historyDotCount="10"
                firstLineFormat="{1}"
                secondLineFormat="{34} {22}"
                thirdLineFormat="{4}" />
     
-    <dispPlane atcType="twr" behavior="any" color="008888"
-               pointWidth="5" headingLineLength="15" historyDotCount="10"
+    <dispPlane behavior="twr" color="008888"
+               separationRingRadius="3"
+               pointWidth="5" headingLineLength="7" historyDotCount="10"
                firstLineFormat="{1}"
                secondLineFormat="{34} {22}"
                thirdLineFormat="{4}" />

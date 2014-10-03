@@ -79,8 +79,8 @@ public class Simulation {
     return now;
   }
 
-  public ReadOnlyList<Airplane> getPlanes() {
-    return Acc.planes();
+  public ReadOnlyList<Airplane.AirplaneInfo> getPlaneInfos() {
+    return Acc.prm().getInfos();
   }
 
   public Messenger getMessenger() {
@@ -152,7 +152,12 @@ public class Simulation {
       return;
     }
 
-    Airplane plane = generateNewDepartingPlane(); // generateNewArrivingPlane();
+    Airplane plane;
+    if (true){
+      plane = generateNewArrivingPlane();
+    } else {
+      plane = generateNewDepartingPlane();
+    }
 
     if (plane.isDeparture()) {
       Acc.prm().registerPlane(twrAtc, plane);

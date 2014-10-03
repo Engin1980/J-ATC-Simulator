@@ -48,12 +48,20 @@ public class Airplane implements KeyItem<Callsign> {
   private int lastVerticalSpeed;
 
   private final AirplaneType airplaneSpecification;
-  
+
   private final AirplaneInfo info;
 
   public class AirplaneInfo {
 
-    public String callsign() {
+    public Coordinate coordinate() {
+      return Airplane.this.coordinate;
+    }
+
+    public Callsign callsign() {
+      return Airplane.this.callsign;
+    }
+
+    public String callsignS() {
       return Airplane.this.callsign.toString();
     }
 
@@ -65,34 +73,46 @@ public class Airplane implements KeyItem<Callsign> {
       return Airplane.this.callsign.getNumber();
     }
 
-    public String sqwk() {
+    public String sqwkS() {
       return Airplane.this.sqwk.toString();
     }
 
-    public String altitudeLong() {
+    public Atc tunedAtc() {
+      return pilot.getTunedAtc();
+    }
+
+    public Atc responsibleAtc() {
+      return Acc.prm().getResponsibleAtc(Airplane.this);
+    }
+
+    public int altitude() {
+      return Airplane.this.altitude;
+    }
+
+    public String altitudeSLong() {
       return Acc.toAltS(Airplane.this.altitude, true);
     }
 
-    public String altitudeInFtShort() {
+    public String altitudeSInFtShort() {
       return Integer.toString(Airplane.this.altitude);
     }
 
-    public String targetAltitudeInFtShort() {
+    public String targetAltitudeSInFtShort() {
       return Integer.toString(Airplane.this.targetAltitude);
     }
 
-    public String altitudeShort() {
+    public String altitudeSShort() {
       return Integer.toString(Airplane.this.altitude / 100);
     }
 
-    public String targetAltitudeLong() {
+    public String targetAltitudeSLong() {
       return Acc.toAltS(Airplane.this.targetAltitude, true);
     }
 
-    public String targetAltitudeShort() {
+    public String targetAltitudeSShort() {
       return Integer.toString(Airplane.this.targetAltitude / 100);
     }
-    
+
     public String climbDescendChar() {
       if (Airplane.this.targetAltitude > Airplane.this.altitude) {
         return "↑"; //"▲";
@@ -103,63 +123,75 @@ public class Airplane implements KeyItem<Callsign> {
       }
     }
 
-    public String heading() {
+    public int heading() {
+      return Airplane.this.heading;
+    }
+
+    public String headingS() {
       return String.format("%1$3s", Airplane.this.heading);
     }
 
-    public String targetHeading() {
+    public String targetHeadingS() {
       return String.format("%1$3s", Airplane.this.targetHeading);
     }
 
-    public String speedLong() {
+    public int speed() {
+      return Airplane.this.speed;
+    }
+
+    public String speedSLong() {
       return Airplane.this.speed + " kt";
     }
 
-    public String speedShort() {
+    public String speedSShort() {
       return Integer.toString(Airplane.this.speed);
     }
-    
-    public String speedShortAligned(){
+
+    public String speedSShortAligned() {
       return String.format("%1# 3d", Airplane.this.speed);
     }
 
-    public String targetSpeedLong() {
+    public int targetSpeed() {
+      return Airplane.this.targetSpeed;
+    }
+
+    public String targetSpeedSLong() {
       return Airplane.this.targetSpeed + " kt";
     }
 
-    public String targetSpeedShort() {
+    public String targetSpeedSShort() {
       return Integer.toString(Airplane.this.targetSpeed);
     }
 
-    private Atc pilotAtc;
-
     public String planeAtcName() {
-      return pilotAtc.getName();
+      return tunedAtc().getName();
     }
 
     public String planeAtcType() {
-      return pilotAtc.getType().toString();
+      return tunedAtc().getType().toString();
     }
 
-    private Atc responsibleAtc;
-
     public String responsibleAtcName() {
-      return responsibleAtc.getName();
+      return responsibleAtc().getName();
     }
 
     public String responsibleAtcType() {
-      return responsibleAtc.getType().toString();
+      return responsibleAtc().getType().toString();
     }
 
     public String planeType() {
       return Airplane.this.airplaneSpecification.name;
     }
 
-    public String verticalSpeedLong() {
+    public int verticalSpeed() {
+      return Airplane.this.lastVerticalSpeed;
+    }
+
+    public String verticalSpeedSLong() {
       return Airplane.this.lastVerticalSpeed + " ft/m";
     }
 
-    public String verticalSpeedShort() {
+    public String verticalSpeedSShort() {
       return Integer.toString(Airplane.this.lastVerticalSpeed);
     }
 
@@ -195,43 +227,43 @@ public class Airplane implements KeyItem<Callsign> {
     private String getFormatValueByIndex(int index) {
       switch (index) {
         case 1:
-          return this.callsign();
+          return this.callsignS();
         case 2:
           return this.callsignCompany();
         case 3:
           return this.callsignNumber();
         case 4:
-          return this.sqwk();
+          return this.sqwkS();
         case 11:
-          return this.heading();
+          return this.headingS();
         case 12:
-          return this.targetHeading();
+          return this.targetHeadingS();
         case 21:
-          return this.speedLong();
+          return this.speedSLong();
         case 22:
-          return this.speedShort();
+          return this.speedSShort();
         case 23:
-          return this.speedShortAligned();
+          return this.speedSShortAligned();
         case 31:
-          return this.targetSpeedLong();
+          return this.targetSpeedSLong();
         case 32:
-          return this.targetSpeedShort();
+          return this.targetSpeedSShort();
         case 33:
-          return this.altitudeLong();
+          return this.altitudeSLong();
         case 34:
-          return this.altitudeShort();
+          return this.altitudeSShort();
         case 35:
-          return this.altitudeInFtShort();
+          return this.altitudeSInFtShort();
         case 36:
-          return this.targetAltitudeLong();
+          return this.targetAltitudeSLong();
         case 37:
-          return this.targetAltitudeShort();
+          return this.targetAltitudeSShort();
         case 38:
-          return this.targetAltitudeInFtShort();
+          return this.targetAltitudeSInFtShort();
         case 41:
-          return this.verticalSpeedLong();
+          return this.verticalSpeedSLong();
         case 42:
-          return this.verticalSpeedShort();
+          return this.verticalSpeedSShort();
         case 43:
           return this.climbDescendChar();
         default:
@@ -244,9 +276,9 @@ public class Airplane implements KeyItem<Callsign> {
   public Airplane(Callsign callsign, Coordinate coordinate, Squawk sqwk, AirplaneType airplaneSpecification,
       int heading, int altitude, int speed, boolean isDeparture,
       String routeName, List<Command> routeCommandQueue) {
-    
+
     this.info = this.new AirplaneInfo();
-    
+
     this.callsign = callsign;
     this.coordinate = coordinate;
     this.sqwk = sqwk;
@@ -284,12 +316,12 @@ public class Airplane implements KeyItem<Callsign> {
   public boolean isDeparture() {
     return departure;
   }
-  
+
   public boolean isArrival() {
     return !departure;
   }
-  
-  public int getVerticalSpeed(){
+
+  public int getVerticalSpeed() {
     return lastVerticalSpeed;
   }
 
@@ -410,8 +442,10 @@ public class Airplane implements KeyItem<Callsign> {
   }
 
   private void adjustAltitude() {
-    if (speed < airplaneSpecification.vR) return;
-    
+    if (speed < airplaneSpecification.vR) {
+      return;
+    }
+
     int origAlt = altitude;
     if (targetAltitude > altitude) {
       int step = (int) (airplaneSpecification.getClimbRateForAltitude(this.altitude));
@@ -428,6 +462,10 @@ public class Airplane implements KeyItem<Callsign> {
     }
 
     this.lastVerticalSpeed = (altitude - origAlt) * 60;
+  }
+
+  public Atc getTunedAtc() {
+    return pilot.getTunedAtc();
   }
 
   public int getTAS() {

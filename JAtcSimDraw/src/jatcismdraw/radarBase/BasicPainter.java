@@ -43,13 +43,6 @@ public class BasicPainter extends Painter {
 
     c.drawCircleAround(p, distanceInPixels, color, width);
   }
-  
-  @Override
-  protected void drawCircleAroundInNM(Coordinate coordinate, double distanceInNM, Color color, int width) {
-    Size s = super.toDistance(distanceInNM);
-    
-    drawCircleAround(coordinate, s.width, color, width);
-  }
 
   @Override
   protected void clear(Color backColor) {

@@ -616,7 +616,6 @@ public class Pilot {
   }
 
   private void flyApproach() {
-    System.out.println("## \t " + app.phase);
     switch (app.phase) {
       case approaching:
         updateHeadingOnApproach();
@@ -632,7 +631,6 @@ public class Pilot {
           }
         }
 
-        System.out.println("## \t\t " + parent.getAltitude() + " // " + app.finalAltitude);
         if (parent.getAltitude() < app.finalAltitude) {
           app.phase = ApproachInfo.ePhase.finalEnter;
         }
@@ -667,7 +665,6 @@ public class Pilot {
         updateHeadingOnApproach();
         updateAltitudeOnApproach(false);
 
-        System.out.println("## \t\t " + parent.getAltitude() + " // " + app.shortFinalAltitude);
         if (parent.getAltitude() < app.shortFinalAltitude) {
           app.phase = ApproachInfo.ePhase.shortFinal;
         }
@@ -677,7 +674,6 @@ public class Pilot {
         int newxHeading = (int) app.approach.getRadial();
         parent.setTargetHeading(newxHeading);
 
-        System.out.println("## \t\t " + parent.getAltitude() + " // " + Acc.airport().getAltitude());
         if (parent.getAltitude() == Acc.airport().getAltitude()) {
           app.phase = ApproachInfo.ePhase.touchdownAndLanded;
         }
@@ -753,5 +749,9 @@ public class Pilot {
     parent.setTargetSpeed(parent.getAirplaneSpecification().vDep);    
     addNewCommands(app.approach.getGaCommands());
     app = null;
+  }
+
+  public Atc getTunedAtc() {
+    return this.atc;
   }
 }

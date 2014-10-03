@@ -19,8 +19,9 @@ import java.util.List;
  * @author Marek
  */
 public abstract class Painter {
-  
-  public enum eTextBlockLocation{
+
+  public enum eTextBlockLocation {
+
     topLeft,
     topMiddle,
     topRight,
@@ -31,12 +32,13 @@ public abstract class Painter {
     bottomRight
   }
 
-    public enum eTextType{
+  public enum eTextType {
+
     navaid,
     plane,
     message
   }
-  
+
   protected Canvas c;
   protected Coordinate topLeft;
   protected Coordinate bottomRight;
@@ -67,6 +69,11 @@ public abstract class Painter {
     setCoordinates(topLeft, bottomRight);
   }
 
+  /**
+   * Convert lat-lon coordinate into x-y pixel coordinate.
+   * @param coord Lat-lon coordinate
+   * @return x-y pixel coordinate
+   */
   protected Point toPoint(Coordinate coord) {
     double mw = bottomRight.getLongitude().get() - topLeft.getLongitude().get();
     double mh = bottomRight.getLatitude().get() - topLeft.getLatitude().get();
@@ -99,7 +106,7 @@ public abstract class Painter {
 
     w = Math.abs(w);
     h = Math.abs(h);
-    
+
     Size ret = new Size((int) w, (int) h);
 
     return ret;
@@ -129,24 +136,20 @@ public abstract class Painter {
   protected void drawLine(Coordinate from, Coordinate to, Color color) {
     drawLine(from, to, color, 1);
   }
-  
-  protected void drawLine(Coordinate from, int heading, double lengthInNM, Color color, int width){
-    Size s = this.toDistance(lengthInNM);
+
+  protected void drawLineByHeadingAndDistance(Coordinate from, int heading, double lengthInNM, Color color, int width) {
+    Coordinate to = Coordinates.getCoordinate(from, heading, lengthInNM);
     
-    int a = heading % 180;
-    double x
-    
-    double xs = s.width * ((heading % 180) % 90) / 90.0;
-    
+    drawLine(from, to, color, width);
   }
 
   protected abstract void drawPoint(Coordinate coordinate, Color color, int width);
 
   protected abstract void drawCircleAround(Coordinate coordinate, int radiusInPixels, Color color, int width);
-  
+
   protected void drawCircleAroundInNM(Coordinate coordinate, double distanceInNM, Color color, int width) {
     Size s = this.toDistance(distanceInNM);
-    
+
     drawCircleAround(coordinate, s.width, color, width);
   }
 
@@ -157,8 +160,8 @@ public abstract class Painter {
   protected abstract void clear(Color backColor);
 
   protected abstract void drawText(String name, Coordinate coordinate, int xShiftInPixels, int yShiftInPixels, Color color, eTextType textType);
-  
+
   protected abstract void drawLine(Coordinate coordinate, int lengthInPixels, int heading, Color color, int width);
-  
+
   protected abstract void drawTextBlock(List<String> lines, eTextBlockLocation location, Color color, eTextType textType);
 }

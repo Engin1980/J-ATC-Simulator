@@ -32,7 +32,7 @@ public abstract class Visualiser {
   public abstract void drawBorder(Border border);
   public abstract void drawRunway(Runway runway);
   public abstract void drawNavaid (Navaid navaid);
-  public abstract void drawPlane(Airplane plane, Atc.eType responsibleAtcType);
+  public abstract void drawPlane(Airplane.AirplaneInfo planeInfo);
   public abstract void drawMessages(List<Message> msgs);
   public abstract void drawStar(List<Navaid> navaidPoints);
   public abstract void drawApproach(Approach approach);

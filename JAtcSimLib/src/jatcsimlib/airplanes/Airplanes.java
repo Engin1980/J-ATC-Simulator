@@ -42,12 +42,20 @@ public class Airplanes {
     } catch (Exception ex) {
       return null;
     }
-    return KeyItems.tryGet(planes, cs);
+    return tryGetByCallsign(planes, cs);
+  }
+  
+  public static Airplane tryGetByCallsign(Iterable<Airplane> planes, Callsign callsign){
+    return KeyItems.tryGet(planes, callsign);
   }
 
   public static Airplane getByCallsing(Iterable<Airplane> planes, String callsign) {
     Callsign cs = new Callsign(callsign);
-    return KeyItems.get(planes, cs);
+    return getByCallsing(planes, cs);
+  }
+
+  public static Airplane getByCallsing(Iterable<Airplane> planes, Callsign callsign) {
+    return KeyItems.get(planes, callsign);
   }
 
   public static Airplane tryGetBySqwk(Iterable<Airplane> planes, String sqwk) {
@@ -57,10 +65,10 @@ public class Airplanes {
     } catch (Exception ex) {
       return null;
     }
-    return Airplanes.tryGet(planes, s);
+    return Airplanes.tryGetBySqwk(planes, s);
   }
 
-  public static Airplane tryGet(Iterable<Airplane> planes, Squawk sqwk) {
+  public static Airplane tryGetBySqwk(Iterable<Airplane> planes, Squawk sqwk) {
     for (Airplane p : planes) {
       if (p.getSqwk().equals(sqwk)) {
         return p;
