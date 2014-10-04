@@ -212,12 +212,12 @@ public class Airplane implements KeyItem<Callsign> {
 
       return sb.toString();
     }
-    
-    public String typeName(){
+
+    public String typeName() {
       return Airplane.this.airplaneType.name;
     }
-    
-    public String typeCategory(){
+
+    public String typeCategory() {
       return Character.toString(Airplane.this.airplaneType.category);
     }
 
@@ -431,20 +431,32 @@ public class Airplane implements KeyItem<Callsign> {
     updateCoordinates();
   }
 
+  private final static double GROUND_MULTIPLIER = 3.0;
+
   private void adjustSpeed() {
+    //boolean onGround = altitude == Acc.airport().getAltitude();
+    // this is faster:
+    boolean onGround = speed < airplaneType.vMinApp && speed > 20;
+    // in flight
     if (targetSpeed > speed) {
       int step = airplaneType.speedIncreaseRate;
+      if (onGround) {
+        step = (int) Math.ceil(step * GROUND_MULTIPLIER);
+      }
       speed += step;
       if (targetSpeed < speed) {
         speed = targetSpeed;
       }
     } else if (targetSpeed < speed) {
       int step = airplaneType.speedDecreaseRate;
+      if (onGround) {
+        step = (int) Math.ceil(step * GROUND_MULTIPLIER);
+      }
       speed -= step;
       if (targetSpeed > speed) {
         speed = targetSpeed;
       }
-    }
+    } // else if (targetSpeed < speed)
   }
 
   private void adjustHeading() {

@@ -153,7 +153,7 @@ public class Simulation {
     }
 
     Airplane plane;
-    if (true){
+    if (false){
       plane = generateNewArrivingPlane();
     } else {
       plane = generateNewDepartingPlane();
