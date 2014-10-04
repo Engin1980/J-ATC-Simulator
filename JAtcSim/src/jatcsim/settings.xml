@@ -31,7 +31,9 @@
 case 1:    callsign 
 case 2:    callsignCompany 
 case 3:    callsignNumber 
-case 4:    sqwk 
+case 4:    type
+case 5:    category by type
+case 8:    sqwk 
 case 11:   heading 
 case 12:   targetHeading 
 case 21:   speedLong 
@@ -61,20 +63,20 @@ case 43:   climbDescendChar
                separationRingRadius="3"
                firstLineFormat="{1}" 
                secondLineFormat="{34}{43}{37} {22}"
-               thirdLineFormat="{4}" />
+               thirdLineFormat="{8} {4}" />
      
     <dispPlane behavior="ctr" color="008800"
                separationRingRadius="5"
                pointWidth="5" headingLineLength="7" historyDotCount="10"
                firstLineFormat="{1}"
                secondLineFormat="{34} {22}"
-               thirdLineFormat="{4}" />
+               thirdLineFormat="{8} {4}" />
     
     <dispPlane behavior="twr" color="008888"
                separationRingRadius="3"
                pointWidth="5" headingLineLength="7" historyDotCount="10"
                firstLineFormat="{1}"
                secondLineFormat="{34} {22}"
-               thirdLineFormat="{4}" />
+               thirdLineFormat="{8} {4}" />
   </dispPlanes>
 </settings>

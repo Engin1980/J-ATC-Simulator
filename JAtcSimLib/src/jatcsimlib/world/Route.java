@@ -10,9 +10,9 @@ import jatcsimlib.commands.CommandFormat;
 import jatcsimlib.commands.ProceedDirectCommand;
 import jatcsimlib.commands.ToNavaidCommand;
 import jatcsimlib.exceptions.EBindException;
-import jatcsimlib.exceptions.ERuntimeException;
 import jatcsimlib.global.KeyItem;
 import jatcsimlib.global.MustBeBinded;
+import jatcsimlib.global.XmlOptional;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -43,6 +43,8 @@ public class Route extends MustBeBinded implements KeyItem<String> {
   private String name;
   private String route;
   private RunwayThreshold parent;
+  @XmlOptional
+  private String category = null;
   private List<Command> _routeCommands = null;
   private List<Navaid> _routeNavaids = null;
   private Navaid _mainFix = null;
@@ -67,6 +69,18 @@ public class Route extends MustBeBinded implements KeyItem<String> {
     this.parent = parent;
   }
 
+  public String getCategory() {
+    return this.category;
+  }
+
+  public boolean isValidForCategory(char categoryChar) {
+    if (this.category.indexOf(categoryChar) > -1) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   @Override
   protected void _bind() {
     try {
@@ -86,12 +100,18 @@ public class Route extends MustBeBinded implements KeyItem<String> {
       default:
         throw new EBindException("Failed to obtain main route fix of route " + this.name + ". SID last/STAR first command must be \"proceed direct\" (commands: " + this.route + ")");
     }
-    
+
     _routeNavaids = new ArrayList<>();
-    for (Command c : _routeCommands){
-      if (c instanceof ToNavaidCommand){
+    for (Command c : _routeCommands) {
+      if (c instanceof ToNavaidCommand) {
         _routeNavaids.add(((ToNavaidCommand) c).getNavaid());
       }
+    }
+
+    if (this.category == null || this.category.isEmpty()) {
+      this.category = "ABCD";
+    } else {
+      this.category = this.category.toUpperCase();
     }
   }
 
@@ -108,8 +128,8 @@ public class Route extends MustBeBinded implements KeyItem<String> {
     ret.addAll(_routeCommands);
     return ret;
   }
-  
-  public List<Navaid> getNavaids(){
+
+  public List<Navaid> getNavaids() {
     return this._routeNavaids;
   }
 

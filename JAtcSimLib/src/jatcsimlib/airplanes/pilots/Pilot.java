@@ -221,7 +221,7 @@ public class Pilot {
         }
         break;
     } // switch
-    if (c.getAltitudeInFt() > parent.getAirplaneSpecification().maxAltitude) {
+    if (c.getAltitudeInFt() > parent.getAirplaneType().maxAltitude) {
       sayOrError(c, "too high.");
       return true;
     }
@@ -248,21 +248,21 @@ public class Pilot {
         break;
     } // switch
     if (app != null) {
-      if (c.getSpeedInKts() < parent.getAirplaneSpecification().vMinApp
-          || c.getSpeedInKts() > parent.getAirplaneSpecification().vMaxApp) {
+      if (c.getSpeedInKts() < parent.getAirplaneType().vMinApp
+          || c.getSpeedInKts() > parent.getAirplaneType().vMaxApp) {
         sayOrError(c,
             "At approach, we accept only speed between "
-            + parent.getAirplaneSpecification().vMinApp + " kts and "
-            + parent.getAirplaneSpecification().vMaxApp + " kts.");
+            + parent.getAirplaneType().vMinApp + " kts and "
+            + parent.getAirplaneType().vMaxApp + " kts.");
         return true;
       }
     } else {
-      if (c.getSpeedInKts() < parent.getAirplaneSpecification().vMinClean
-          || c.getSpeedInKts() > parent.getAirplaneSpecification().vMaxClean) {
+      if (c.getSpeedInKts() < parent.getAirplaneType().vMinClean
+          || c.getSpeedInKts() > parent.getAirplaneType().vMaxClean) {
         sayOrError(c,
             "While cruise, we accept only speed between "
-            + parent.getAirplaneSpecification().vMinClean + " kts and "
-            + parent.getAirplaneSpecification().vMaxClean + " kts.");
+            + parent.getAirplaneType().vMinClean + " kts and "
+            + parent.getAirplaneType().vMaxClean + " kts.");
         return true;
       }
     } // if (app != null)
@@ -382,7 +382,7 @@ public class Pilot {
   }
 
   private boolean processQueueCommand(ClearedForTakeoffCommand c) {
-    int s = parent.getAirplaneSpecification().vDep;
+    int s = parent.getAirplaneType().vDep;
     parent.setTargetSpeed(s);
     return true;
   }
@@ -626,7 +626,7 @@ public class Pilot {
         if (orderedSpeed == null && app.isAppSpeedSet == false) {
           int diff = getAppHeadingDifference();
           if (diff < 15) {
-            parent.setTargetSpeed(parent.getAirplaneSpecification().vApp);
+            parent.setTargetSpeed(parent.getAirplaneType().vApp);
             app.isAppSpeedSet = true;
           }
         }
@@ -638,7 +638,7 @@ public class Pilot {
       case finalEnter:
         // na final
         if (app.isAppSpeedSet == false) {
-          parent.setTargetSpeed(parent.getAirplaneSpecification().vApp);
+          parent.setTargetSpeed(parent.getAirplaneType().vApp);
           app.isAppSpeedSet = true;
         }
 
@@ -746,7 +746,7 @@ public class Pilot {
         parent,
         atc,
         new GoingAroundStringMessage(reason));
-    parent.setTargetSpeed(parent.getAirplaneSpecification().vDep);    
+    parent.setTargetSpeed(parent.getAirplaneType().vDep);    
     addNewCommands(app.approach.getGaCommands());
     app = null;
   }

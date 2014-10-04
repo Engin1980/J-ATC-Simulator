@@ -24,14 +24,22 @@
                 <route type="star" name="GOLOP1T" route="PD GOLOP T PD PR711 T PD PR712 T PD PR513 T PD KUVIX T FH 243" />
                 <route type="star" name="VLM1T" route="PD VLM T PD PR721 T PD PR722 T PD PR723 T PD PR523 T PD PR521 T PD AKEVA T FH 243" />
                 <route type="star" name="GOSEK2T" route="PD GOSEK T PD PR718 T PD PR719 T PD PR521 T PD AKEVA T FH 243" />
-                <route type="sid" name="VOZ1E" route="PD PR619 T PD PR633 T PD PR635 T PD VOZ" />
-                <route type="sid" name="VOZ1D" route="PD PR619 T PD PR625 T PD PR626 T PD PR627 T PD VOZ" />
-                <route type="sid" name="BALTU2E" route="PD PR619 T PD PR631 T PD PR632 T PD PR621 T PD ESINU T PD BALTU" />
-                <route type="sid" name="BALTU2D" route="PD PR619 T PD PR621 T PD ESINU T PD BALTU" />
-                <route type="sid" name="BALTU2E" route="PD PR619 T PD PR631 T PD PR632 T PD PR621 T PD ESINU T PD DOBEN" />
-                <route type="sid" name="BALTU2D" route="PD PR619 T PD PR621 T PD ESINU T PD DOBEN" />
-                <route type="sid" name="VENOX2D" route="PD PR619 T PD PR621 T PD PR622 T PD VENOX" />
-                <route type="sid" name="VENOX1E" route="PD PR619 T PD PR631 T PD PR632 T PD VENOX" />
+                <route type="sid" name="VOZ1E" category="CD" 
+                       route="PD PR619 T PD PR633 T PD PR635 T PD VOZ" />
+                <route type="sid" name="VOZ1D" category="AB" 
+                       route="PD PR619 T PD PR625 T PD PR626 T PD PR627 T PD VOZ" />
+                <route type="sid" name="BALTU2E" category="CD" 
+                       route="PD PR619 T PD PR631 T PD PR632 T PD PR621 T PD ESINU T PD BALTU" />
+                <route type="sid" name="BALTU2D" category="AB" 
+                       route="PD PR619 T PD PR621 T PD ESINU T PD BALTU" />
+                <route type="sid" name="BALTU2E" category="CD" 
+                       route="PD PR619 T PD PR631 T PD PR632 T PD PR621 T PD ESINU T PD DOBEN" />
+                <route type="sid" name="BALTU2D" category="AB" 
+                       route="PD PR619 T PD PR621 T PD ESINU T PD DOBEN" />
+                <route type="sid" name="VENOX2D" category="AB" 
+                       route="PD PR619 T PD PR621 T PD PR622 T PD VENOX" />
+                <route type="sid" name="VENOX1E" category="CD" 
+                       route="PD PR619 T PD PR631 T PD PR632 T PD VENOX" />
                 <route type="sid" name="ARTUP1E" route="PD PR619 T PD PR633 T PD PR634 T PD ARTUP" />
                 
                 

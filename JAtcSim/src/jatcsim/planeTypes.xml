@@ -7,14 +7,76 @@ and open the template in the editor.
 
 
 <planeTypes>
-  <type name="A319" maxAltitude="39000" 
-        vMinApp="127" vApp="140" vMaxApp="180"
-        vR="140" vDep="157"
+  
+  <!-- A320 family -->
+  <type name="A318" category="C" maxAltitude="39000" 
+        vMinApp="110" vApp="120" vMaxApp="160"
+        vR="130" vDep="140"
+        vMinClean="180" vMaxClean="330" vCruise="287"
+        lowClimbRate="5000" highClimbRate="700"
+        lowDescendRate="2000" highDescendRate="3500"
+        speedIncreaseRate="3" speedDecreaseRate="5"
+        headingChangeRate="3">
+  </type>
+  
+  <type name="A319" category="C" maxAltitude="39000" 
+        vMinApp="120" vApp="130" vMaxApp="160"
+        vR="140" vDep="150"
         vMinClean="190" vMaxClean="330" vCruise="287"
         lowClimbRate="5000" highClimbRate="700"
         lowDescendRate="2000" highDescendRate="3500"
         speedIncreaseRate="3" speedDecreaseRate="5"
-        headingChangeRate="3"
-        type="jet" size="medium">
+        headingChangeRate="3">
+  </type>
+  
+  <type name="A320" category="C" maxAltitude="39000" 
+        vMinApp="130" vApp="140" vMaxApp="170"
+        vR="145" vDep="155"
+        vMinClean="200" vMaxClean="330" vCruise="287"
+        lowClimbRate="5000" highClimbRate="700"
+        lowDescendRate="2000" highDescendRate="3500"
+        speedIncreaseRate="3" speedDecreaseRate="5"
+        headingChangeRate="3">
+  </type>
+  
+  <type name="A321" category="C" maxAltitude="39000" 
+        vMinApp="135" vApp="145" vMaxApp="180"
+        vR="150" vDep="165"
+        vMinClean="200" vMaxClean="330" vCruise="287"
+        lowClimbRate="5000" highClimbRate="700"
+        lowDescendRate="2000" highDescendRate="3500"
+        speedIncreaseRate="3" speedDecreaseRate="5"
+        headingChangeRate="3">
+  </type>
+  
+  <!-- A330, A340, A380 -->
+  <type name="A330" category="C" maxAltitude="41000" 
+        vMinApp="135" vApp="140" vMaxApp="190"
+        vR="155" vDep="165"
+        vMinClean="210" vMaxClean="330" vCruise="287"
+        lowClimbRate="5000" highClimbRate="700"
+        lowDescendRate="1800" highDescendRate="3500"
+        speedIncreaseRate="2" speedDecreaseRate="5"
+        headingChangeRate="3">
+  </type>
+  
+  <type name="A346" category="D" maxAltitude="41000" 
+        vMinApp="140" vApp="150" vMaxApp="200"
+        vR="160" vDep="170"
+        vMinClean="210" vMaxClean="330" vCruise="287"
+        lowClimbRate="5000" highClimbRate="700"
+        lowDescendRate="1500" highDescendRate="3500"
+        speedIncreaseRate="3" speedDecreaseRate="4"
+        headingChangeRate="3">
+  </type>  
+  
+  <type name="A380" category="C" maxAltitude="41000" 
+          vMinApp="135" vApp="145" vMaxApp="190"
+          vR="155" vDep="165"
+          vMinClean="210" vMaxClean="330" vCruise="287"
+          lowClimbRate="5000" highClimbRate="700"
+          lowDescendRate="1700" highDescendRate="3500"
+          speedIncreaseRate="3" speedDecreaseRate="5"
+          headingChangeRate="3">
   </type>
 </planeTypes>  

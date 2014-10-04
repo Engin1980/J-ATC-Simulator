@@ -176,10 +176,12 @@ public class Simulation {
     Airplane ret;
 
     Callsign cs = generateCallsign();
-    Route r = getRandomRoute(true);
+    AirplaneType pt = planeTypes.get(rnd.nextInt(planeTypes.size()));
+    
+    Route r = getRandomRoute(true, pt);
     Coordinate coord = generateArrivalCoordinate(r.getMainFix().getCoordinate(), this.activeRunwayThreshold.getCoordinate());
     Squawk sqwk = generateSqwk();
-    AirplaneType pt = planeTypes.get(rnd.nextInt(planeTypes.size()));
+    
     int heading = (int) Coordinates.getBearing(coord, r.getMainFix().getCoordinate());
     int alt = generateArrivingPlaneAltitude(coord);
     int spd = pt.vCruise;
@@ -205,10 +207,12 @@ public class Simulation {
     Airplane ret;
 
     Callsign cs = generateCallsign();
-    Route r = getRandomRoute(false);
+    AirplaneType pt = planeTypes.get(rnd.nextInt(planeTypes.size()));
+    
+    Route r = getRandomRoute(false, pt);
     Coordinate coord = this.activeRunwayThreshold.getCoordinate();
     Squawk sqwk = generateSqwk();
-    AirplaneType pt = planeTypes.get(rnd.nextInt(planeTypes.size()));
+    
     int heading = (int) Coordinates.getBearing(coord, this.activeRunwayThreshold.getOtherThreshold().getCoordinate());
     int alt = this.activeRunwayThreshold.getParent().getParent().getAltitude();
     int spd = 0;
@@ -295,12 +299,15 @@ public class Simulation {
 
   public static final ERandom rnd = new ERandom();
 
-  private Route getRandomRoute(boolean arrival) {
+  private Route getRandomRoute(boolean arrival, AirplaneType planeType) {
     Route ret = null;
     while (ret == null) {
       int index = rnd.nextInt(this.activeRunwayThreshold.getRoutes().size());
-      if (this.activeRunwayThreshold.getRoutes().get(index).getType().isArrival() == arrival) {
-        ret = this.activeRunwayThreshold.getRoutes().get(index);
+      ret = this.activeRunwayThreshold.getRoutes().get(index);
+      if (ret.getType().isArrival() != arrival
+          ||
+          !ret.isValidForCategory(planeType.category)) {
+        ret = null;
       }
     }
     return ret;

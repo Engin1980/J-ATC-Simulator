@@ -47,7 +47,7 @@ public class Airplane implements KeyItem<Callsign> {
 
   private int lastVerticalSpeed;
 
-  private final AirplaneType airplaneSpecification;
+  private final AirplaneType airplaneType;
 
   private final AirplaneInfo info;
 
@@ -180,7 +180,7 @@ public class Airplane implements KeyItem<Callsign> {
     }
 
     public String planeType() {
-      return Airplane.this.airplaneSpecification.name;
+      return Airplane.this.airplaneType.name;
     }
 
     public int verticalSpeed() {
@@ -212,6 +212,14 @@ public class Airplane implements KeyItem<Callsign> {
 
       return sb.toString();
     }
+    
+    public String typeName(){
+      return Airplane.this.airplaneType.name;
+    }
+    
+    public String typeCategory(){
+      return Character.toString(Airplane.this.airplaneType.category);
+    }
 
     private void updatePair(StringBuilder ret, int[] p) {
       int start = ret.indexOf("{");
@@ -233,6 +241,10 @@ public class Airplane implements KeyItem<Callsign> {
         case 3:
           return this.callsignNumber();
         case 4:
+          return this.typeName();
+        case 5:
+          return this.typeCategory();
+        case 8:
           return this.sqwkS();
         case 11:
           return this.headingS();
@@ -282,7 +294,7 @@ public class Airplane implements KeyItem<Callsign> {
     this.callsign = callsign;
     this.coordinate = coordinate;
     this.sqwk = sqwk;
-    this.airplaneSpecification = airplaneSpecification;
+    this.airplaneType = airplaneSpecification;
 
     this.departure = isDeparture;
 
@@ -353,8 +365,8 @@ public class Airplane implements KeyItem<Callsign> {
     return sqwk;
   }
 
-  public AirplaneType getAirplaneSpecification() {
-    return airplaneSpecification;
+  public AirplaneType getAirplaneType() {
+    return airplaneType;
   }
 
   public int getSpeed() {
@@ -421,13 +433,13 @@ public class Airplane implements KeyItem<Callsign> {
 
   private void adjustSpeed() {
     if (targetSpeed > speed) {
-      int step = airplaneSpecification.speedIncreaseRate;
+      int step = airplaneType.speedIncreaseRate;
       speed += step;
       if (targetSpeed < speed) {
         speed = targetSpeed;
       }
     } else if (targetSpeed < speed) {
-      int step = airplaneSpecification.speedDecreaseRate;
+      int step = airplaneType.speedDecreaseRate;
       speed -= step;
       if (targetSpeed > speed) {
         speed = targetSpeed;
@@ -437,24 +449,24 @@ public class Airplane implements KeyItem<Callsign> {
 
   private void adjustHeading() {
     int newHeading
-        = Headings.turn(heading, airplaneSpecification.headingChangeRate, targetHeadingLeftTurn, targetHeading);
+        = Headings.turn(heading, airplaneType.headingChangeRate, targetHeadingLeftTurn, targetHeading);
     this.heading = newHeading;
   }
 
   private void adjustAltitude() {
-    if (speed < airplaneSpecification.vR) {
+    if (speed < airplaneType.vR) {
       return;
     }
 
     int origAlt = altitude;
     if (targetAltitude > altitude) {
-      int step = (int) (airplaneSpecification.getClimbRateForAltitude(this.altitude));
+      int step = (int) (airplaneType.getClimbRateForAltitude(this.altitude));
       altitude += step;
       if (targetAltitude < altitude) {
         altitude = targetAltitude;
       }
     } else if (targetAltitude < altitude) {
-      int step = (int) (airplaneSpecification.getDescendRateForAltitude(this.altitude));
+      int step = (int) (airplaneType.getDescendRateForAltitude(this.altitude));
       altitude -= step;
       if (targetAltitude > altitude) {
         altitude = targetAltitude;

@@ -11,23 +11,16 @@ package jatcsimlib.airplanes;
  */
 public class AirplaneType {
 
-  public enum eType {
-
-    prop,
-    jet
-  }
-
-  public enum eSize {
-
-    light,
-    medium,
-    heavy
-  }
-
   /**
    * Name of type
    */
   public String name;
+  
+  /**
+   * Category (A, B, C or D)
+   */
+  public char category;
+  
   /**
    * Maximum altitude in ft
    */
@@ -99,9 +92,6 @@ public class AirplaneType {
    * Rate of heading change in degrees/second.
    */
   public int headingChangeRate;
-
-  public eType type;
-  public eSize size;
 
   private RateInfo _climb = null;
   private RateInfo _descend = null;
