@@ -124,6 +124,10 @@ public class Reflecter {
         case "Double":
           ret = Double.parseDouble(value);
           break;
+        case "char":
+        case "Character":
+          ret = value.charAt(0);
+          break;
         case "boolean":
         case "Boolean":
           ret = Boolean.parseBoolean(value);

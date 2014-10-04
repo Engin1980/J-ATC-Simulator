@@ -63,6 +63,8 @@ public class Mapping {
     simpleTypes.add(String.class);
     simpleTypes.add(Coordinate.class);
     simpleTypes.add(Color.class);
+    simpleTypes.add(char.class);
+    simpleTypes.add(Character.class);
   }
   
   private static void mapAdd (String typeAndPropertyName, String elementName, Class targetType){
