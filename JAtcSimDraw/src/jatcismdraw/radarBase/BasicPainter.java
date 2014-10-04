@@ -5,10 +5,8 @@
  */
 package jatcismdraw.radarBase;
 
-import jatcismdraw.radarBase.Painter;
 import jatcsimdraw.global.Point;
 import jatcsimdraw.global.Size;
-import jatcismdraw.radarBase.Canvas;
 import jatcsimlib.coordinates.Coordinate;
 import java.awt.Color;
 import java.util.List;

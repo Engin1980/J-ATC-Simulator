@@ -164,4 +164,11 @@ public abstract class Painter {
   protected abstract void drawLine(Coordinate coordinate, int lengthInPixels, int heading, Color color, int width);
 
   protected abstract void drawTextBlock(List<String> lines, eTextBlockLocation location, Color color, eTextType textType);
+  
+  public void beforeDraw(){
+    c.beforeDraw();
+  }
+  public void afterDraw(){
+    c.afterDraw();
+  }
 }

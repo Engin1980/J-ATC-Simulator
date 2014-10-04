@@ -37,8 +37,8 @@ import java.util.Map;
  * @author Marek
  */
 public class BasicVisualiser extends Visualiser {
-  
-  private final PlaneHistoryDotManager h = new PlaneHistoryDotManager();
+
+  private final PlaneHistoryDotManager planeDotHistory = new PlaneHistoryDotManager();
 
   public BasicVisualiser(Painter p, Settings sett) {
     super(p, sett);
@@ -228,9 +228,9 @@ public class BasicVisualiser extends Visualiser {
     p.drawText(sb.toString(), planeInfo.coordinate(), 3, 3, dp.getColor(), Painter.eTextType.plane);
 
     // plane history
-    this.h.add(planeInfo.callsign(), planeInfo.coordinate(), dp.getHistoryDotCount());
-    List<Coordinate> hist = h.get(planeInfo.callsign());
-    for (Coordinate c : hist){
+    this.planeDotHistory.add(planeInfo.callsign(), planeInfo.coordinate(), dp.getHistoryDotCount());
+    List<Coordinate> hist = planeDotHistory.get(planeInfo.callsign());
+    for (Coordinate c : hist) {
       p.drawPoint(c, dp.getColor(), 3);
     }
   }
@@ -284,6 +284,12 @@ public class BasicVisualiser extends Visualiser {
     p.drawLine(start, approach.getPoint(), Color.MAGENTA);
   }
 
+  @Override
+  public void afterDraw() {
+    super.afterDraw();
+    this.planeDotHistory.removeOneHistoryFromAll();
+  }
+
 }
 
 class MessageSet {
@@ -296,31 +302,35 @@ class MessageSet {
 class PlaneHistoryDotManager {
 
   private final Map<Callsign, List<Coordinate>> inner = new HashMap<>();
+  private final Map<Callsign, Integer> maxCount = new HashMap<>();
 
   public void add(Callsign cs, Coordinate c, int maxHistory) {
     if (inner.containsKey(cs) == false) {
       inner.put(cs, new LinkedList<Coordinate>());
+      maxCount.put(cs, maxHistory);
     }
 
-    List<Coordinate> l = inner.get(cs);
-    //if (l.size() < maxHistory) {
-      inner.get(cs).add(c);
-    //}
+    inner.get(cs).add(c);
+    if (maxCount.get(cs) != maxHistory){
+      maxCount.put(cs, maxHistory);
+    }
   }
 
   public void removeOneHistoryFromAll() {
     List<Callsign> tr = new LinkedList<>();
     for (Callsign cs : inner.keySet()) {
       List<Coordinate> l = inner.get(cs);
-      if (l.isEmpty() == false)
+      if (l.size() > maxCount.get(cs)) {
         l.remove(0);
-      if (l.isEmpty()){
+      }
+      if (l.isEmpty()) {
         tr.add(cs);
       }
     }
-    
-    for (Callsign cs : tr){
+
+    for (Callsign cs : tr) {
       inner.remove(cs);
+      maxCount.remove(cs);
     }
   }
 

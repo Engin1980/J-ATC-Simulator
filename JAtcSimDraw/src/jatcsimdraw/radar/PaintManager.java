@@ -36,6 +36,7 @@ public class PaintManager {
   }
 
   public void draw() {
+    visualiser.beforeDraw();
     drawBackground();
     drawBorders();
     drawStars();
@@ -44,6 +45,7 @@ public class PaintManager {
     drawAirports();
     drawAirplanes();
     drawCaptions();
+    visualiser.afterDraw();
   }
 
   private void drawCaptions() {

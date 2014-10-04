@@ -13,7 +13,6 @@ import jatcsimlib.events.EventManager;
 import jatcsimdraw.shared.es.EMouseEvent;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
 import java.util.List;
 
 /**
@@ -54,6 +53,9 @@ public abstract class Canvas {
   public abstract void drawTextBlock(List<String> lines, Painter.eTextBlockLocation location, Color color, Painter.eTextType textType);
   
   public abstract void clear(Color backColor);
+  
+  public void beforeDraw(){}
+  public void afterDraw(){}
   
   /**
    * Forces canvas to invoke "paint" event.
