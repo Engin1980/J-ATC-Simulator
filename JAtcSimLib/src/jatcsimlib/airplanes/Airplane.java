@@ -283,6 +283,16 @@ public class Airplane implements KeyItem<Callsign> {
       }
     }
 
+    private boolean airprox = false;
+
+    public boolean isAirprox() {
+      return airprox;
+    }
+
+    void setAirprox(boolean airprox) {
+      this.airprox = airprox;
+    }
+
   }
 
   public Airplane(Callsign callsign, Coordinate coordinate, Squawk sqwk, AirplaneType airplaneSpecification,

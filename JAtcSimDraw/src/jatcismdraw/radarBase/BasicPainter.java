@@ -9,6 +9,7 @@ import jatcsimdraw.global.Point;
 import jatcsimdraw.global.Size;
 import jatcsimlib.coordinates.Coordinate;
 import java.awt.Color;
+import java.awt.Font;
 import java.util.List;
 
 /**
@@ -48,9 +49,9 @@ public class BasicPainter extends Painter {
   }
 
   @Override
-  protected void drawText(String text, Coordinate coordinate, int xShiftInPixels, int yShiftInPixels, Color color, eTextType textType) {
+  protected void drawText(String text, Coordinate coordinate, int xShiftInPixels, int yShiftInPixels, Font font, Color color) {
     Point p = toPoint(coordinate);
-    c.drawText(text, p, xShiftInPixels, yShiftInPixels, color, textType);
+    c.drawText(text, p, xShiftInPixels, yShiftInPixels, font, color);
   }
 
   @Override
@@ -85,7 +86,7 @@ public class BasicPainter extends Painter {
   }
 
   @Override
-  protected void drawTextBlock(List<String> lines, eTextBlockLocation location, Color color, eTextType textType) {
-    c.drawTextBlock(lines, location, color, textType);
+  protected void drawTextBlock(List<String> lines, eTextBlockLocation location, Font font, Color color) {
+    c.drawTextBlock(lines, location, font, color);
   }
 }

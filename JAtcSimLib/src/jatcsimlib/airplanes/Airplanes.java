@@ -5,7 +5,9 @@
  */
 package jatcsimlib.airplanes;
 
+import jatcsimlib.coordinates.Coordinates;
 import jatcsimlib.global.KeyItems;
+import jatcsimlib.global.ReadOnlyList;
 
 /**
  *
@@ -44,8 +46,8 @@ public class Airplanes {
     }
     return tryGetByCallsign(planes, cs);
   }
-  
-  public static Airplane tryGetByCallsign(Iterable<Airplane> planes, Callsign callsign){
+
+  public static Airplane tryGetByCallsign(Iterable<Airplane> planes, Callsign callsign) {
     return KeyItems.tryGet(planes, callsign);
   }
 
@@ -75,5 +77,39 @@ public class Airplanes {
       }
     }
     return null;
+  }
+
+  public static void evaluateAirproxes(ReadOnlyList<Airplane> planes) {
+    for (Airplane p : planes) {
+      p.getInfo().setAirprox(false);
+    }
+
+    for (int i = 0; i < planes.size() - 1; i++) {
+      Airplane a = planes.get(i);
+      for (int j = i + 1; j < planes.size(); j++) {
+        Airplane b = planes.get(j);
+
+        if (isInAirprox(a, b)) {
+          a.getInfo().setAirprox(true);
+          b.getInfo().setAirprox(true);
+        }
+      }
+
+    }
+  }
+
+  private static boolean isInAirprox(Airplane a, Airplane b) {
+    if (Math.abs(a.getAltitude() - b.getAltitude()) > 1000) {
+      return false;
+    }
+
+    double d = Coordinates.getDistanceInNM(
+        a.getCoordinate(), b.getCoordinate());
+
+    if (d > 5) {
+      return false;
+    }
+
+    return true;
   }
 }

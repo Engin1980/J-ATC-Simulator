@@ -7,11 +7,11 @@ package jatcismdraw.radarBase;
 
 import jatcsimdraw.global.Point;
 import jatcsimdraw.global.Size;
-import jatcismdraw.radarBase.Canvas;
 import jatcsimlib.exceptions.ERuntimeException;
 import jatcsimlib.coordinates.Coordinates;
 import jatcsimlib.coordinates.Coordinate;
 import java.awt.Color;
+import java.awt.Font;
 import java.util.List;
 
 /**
@@ -30,13 +30,6 @@ public abstract class Painter {
     bottomLeft,
     bottomMiddle,
     bottomRight
-  }
-
-  public enum eTextType {
-
-    navaid,
-    plane,
-    message
   }
 
   protected Canvas c;
@@ -159,11 +152,11 @@ public abstract class Painter {
 
   protected abstract void clear(Color backColor);
 
-  protected abstract void drawText(String name, Coordinate coordinate, int xShiftInPixels, int yShiftInPixels, Color color, eTextType textType);
+  protected abstract void drawText(String name, Coordinate coordinate, int xShiftInPixels, int yShiftInPixels, Font font, Color color);
 
   protected abstract void drawLine(Coordinate coordinate, int lengthInPixels, int heading, Color color, int width);
 
-  protected abstract void drawTextBlock(List<String> lines, eTextBlockLocation location, Color color, eTextType textType);
+  protected abstract void drawTextBlock(List<String> lines, eTextBlockLocation location, Font font, Color color);
   
   public void beforeDraw(){
     c.beforeDraw();

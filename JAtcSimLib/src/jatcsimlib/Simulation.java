@@ -9,6 +9,7 @@ import jatcsimlib.airplanes.Airplane;
 import jatcsimlib.airplanes.AirplaneList;
 import jatcsimlib.airplanes.AirplaneType;
 import jatcsimlib.airplanes.AirplaneTypes;
+import jatcsimlib.airplanes.Airplanes;
 import jatcsimlib.airplanes.Callsign;
 import jatcsimlib.airplanes.Squawk;
 import jatcsimlib.atcs.Atc;
@@ -129,6 +130,7 @@ public class Simulation {
     generateNewPlanes();
     removeOldPlanes();
     updatePlanes();
+    evalAirproxes();
 
     long end = System.currentTimeMillis();
     //System.out.println("## Sim elapse second: \t" + (end - start) + " at " + now.toString());
@@ -153,7 +155,7 @@ public class Simulation {
     }
 
     Airplane plane;
-    if (false){
+    if (true){
       plane = generateNewArrivingPlane();
     } else {
       plane = generateNewDepartingPlane();
@@ -357,6 +359,10 @@ public class Simulation {
     for (Airplane p : rem) {
       Acc.prm().unregisterPlane(p);
     }
+  }
+
+  private void evalAirproxes() {
+    Airplanes.evaluateAirproxes(Acc.planes());    
   }
 
 }

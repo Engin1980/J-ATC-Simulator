@@ -45,6 +45,7 @@ public class PaintManager {
     drawAirports();
     drawAirplanes();
     drawCaptions();
+    drawTime();
     visualiser.afterDraw();
   }
 
@@ -100,6 +101,10 @@ public class PaintManager {
     if (a != null) {
       visualiser.drawApproach(a);
     }
+  }
+
+  private void drawTime() {
+    visualiser.drawTime(simulation.getNow());
   }
 
 }

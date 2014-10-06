@@ -34,9 +34,6 @@ public class EJComponentCanvas extends Canvas {
   private final EJComponent c;
   private Graphics g;
   private final EJComponentCanvas me = this;
-  private Font navaidFont;
-  private Font planeFont;
-  private Font messageFont;
 
   public EJComponentCanvas() {
     this(new EJComponent());
@@ -151,7 +148,7 @@ public class EJComponentCanvas extends Canvas {
     int h = getHeight();
     int w = getWidth();
     g.fillRect(0, 0, w, h);
-  }
+  } 
 
   @Override
   public void drawPoint(int x, int y, Color color, int width) {
@@ -168,14 +165,14 @@ public class EJComponentCanvas extends Canvas {
   }
 
   @Override
-  public void drawText(String text, Point p, int xShiftInPixels, int yShiftInPixels, Color c, Painter.eTextType textType) {
+  public void drawText(String text, Point p, int xShiftInPixels, int yShiftInPixels, Font font, Color c) {
 
     String[] lines = text.split(System.getProperty("line.separator"));
 
     int x = p.x + xShiftInPixels;
     int y = p.y + yShiftInPixels;
 
-    setFontByTextType(textType);
+    g.setFont(font);
     g.setColor(c);
 
     for (String line : lines) {
@@ -189,7 +186,8 @@ public class EJComponentCanvas extends Canvas {
   }
 
   @Override
-  public void drawTextBlock(List<String> lines, Painter.eTextBlockLocation location, Color color, Painter.eTextType textType) {
+  public void drawTextBlock(List<String> lines, Painter.eTextBlockLocation location,
+      Font font, Color color) {
     if (location == Painter.eTextBlockLocation.bottomMiddle
         || location == Painter.eTextBlockLocation.middleLeft
         || location == Painter.eTextBlockLocation.middleRight
@@ -200,33 +198,13 @@ public class EJComponentCanvas extends Canvas {
       return;
     }
 
-    setFontByTextType(textType);
+    g.setFont(font);
     g.setColor(color);
 
     Point[] pts = getPositionsForText(lines, location);
     for (int i = 0; i < lines.size(); i++) {
       g.drawString(lines.get(i), pts[i].x, pts[i].y);
     }
-
-    g.setFont(navaidFont);
-  }
-
-  @Override
-  public void setNavaidFont(String name, int type, int size) {
-    Font f = new Font(name, type, size);
-    this.navaidFont = f;
-  }
-
-  @Override
-  public void setPlaneFont(String name, int type, int size) {
-    Font f = new Font(name, type, size);
-    this.planeFont = f;
-  }
-
-  @Override
-  public void setMessageFont(String name, int type, int size) {
-    Font f = new Font(name, type, size);
-    this.messageFont = f;
   }
 
   @Override
@@ -330,22 +308,6 @@ public class EJComponentCanvas extends Canvas {
         throw new ENotSupportedException();
     } // switch
     return ret;
-  }
-
-  private void setFontByTextType(Painter.eTextType textType) {
-    switch (textType) {
-      case message:
-        g.setFont(messageFont);
-        break;
-      case navaid:
-        g.setFont(navaidFont);
-        break;
-      case plane:
-        g.setFont(planeFont);
-        break;
-      default:
-        throw new ENotSupportedException();
-    }
   }
 
 }

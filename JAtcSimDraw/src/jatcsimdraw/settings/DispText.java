@@ -8,6 +8,7 @@ package jatcsimdraw.settings;
 
 import jatcsimlib.global.KeyItem;
 import java.awt.Color;
+import java.awt.Font;
 
 /**
  *
@@ -21,12 +22,18 @@ public class DispText implements KeyItem<DispText.eType> {
   }
   public enum eType{
     atc,
-    plane,
-    system
+    plane, // message from plane
+    system,
+    time,
+    navaid,
+    callsign // callsign of plane
   }
   
   private eType type;
   private Color color;
+  private String fontName;
+  private int fontSize;
+  private int fontStyle;
 
   public eType getType() {
     return type;
@@ -34,5 +41,21 @@ public class DispText implements KeyItem<DispText.eType> {
 
   public Color getColor() {
     return color;
+  }
+
+  public String getFontName() {
+    return fontName;
+  }
+
+  public int getSize() {
+    return fontSize;
+  }
+  
+  private Font _font = null;
+  public Font getFont(){
+    if (_font == null){
+      _font = new Font(fontName, fontStyle, fontSize);
+    }
+    return _font;
   }
 }

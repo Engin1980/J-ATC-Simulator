@@ -21,9 +21,13 @@
   </dispItems>
   
   <dispTexts>
-    <dispText type="atc" color="AAAAAA" />
-    <dispText type="plane" color="00FF00" />
-    <dispText type="system" color="FFFFFF" />
+    <!-- style: 0=plain, 1=bold, 2=italic -->
+    <dispText type="atc" color="AAAAAA" fontName="Arial Unicode MT" fontSize="14" fontStyle="1" />
+    <dispText type="plane" color="00FF00" fontName="Arial Unicode MT" fontSize="14" fontStyle="1"  />
+    <dispText type="system" color="FFFFFF" fontName="Arial Unicode MT" fontSize="14" fontStyle="1" />
+    <dispText type="time" color="AAAAFF" fontName="Courier CE" fontSize="10" fontStyle="0" />
+    <dispText type="callsign" color="000000" fontName="Arial Unicode MT" fontSize="12" fontStyle="1" />
+    <dispText type="navaid" color="000000" fontName="Arial Unicode MT" fontSize="10" fontStyle="0" />
   </dispTexts> 
    
   <dispPlanes>

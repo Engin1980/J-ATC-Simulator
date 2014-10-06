@@ -16,6 +16,7 @@ import jatcsimlib.exceptions.ERuntimeException;
 import jatcsimlib.coordinates.Coordinates;
 import jatcsimlib.coordinates.Coordinate;
 import jatcsimlib.exceptions.ENotSupportedException;
+import jatcsimlib.global.ETime;
 import jatcsimlib.global.Headings;
 import jatcsimlib.messaging.Message;
 import jatcsimlib.world.Approach;
@@ -51,13 +52,13 @@ public class BasicVisualiser extends Visualiser {
     DispText dt;
 
     dt = sett.getDispText(DispText.eType.atc);
-    p.drawTextBlock(ms.atc, Painter.eTextBlockLocation.bottomRight, dt.getColor(), Painter.eTextType.message);
+    p.drawTextBlock(ms.atc, Painter.eTextBlockLocation.bottomRight, dt.getFont(), dt.getColor());
 
     dt = sett.getDispText(DispText.eType.plane);
-    p.drawTextBlock(ms.plane, Painter.eTextBlockLocation.bottomLeft, dt.getColor(), Painter.eTextType.message);
+    p.drawTextBlock(ms.plane, Painter.eTextBlockLocation.bottomLeft, dt.getFont(), dt.getColor());
 
     dt = sett.getDispText(DispText.eType.system);
-    p.drawTextBlock(ms.system, Painter.eTextBlockLocation.topRight, dt.getColor(), Painter.eTextType.message);
+    p.drawTextBlock(ms.system, Painter.eTextBlockLocation.topRight, dt.getFont(), dt.getColor());
   }
 
   @Override
@@ -106,29 +107,30 @@ public class BasicVisualiser extends Visualiser {
   @Override
   public void drawNavaid(Navaid navaid) {
     DispItem ds = getDispSettBy(navaid);
+    DispText dt = sett.getDispText(DispText.eType.navaid);
 
     switch (navaid.getType()) {
       case VOR:
         p.drawPoint(navaid.getCoordinate(), ds.getColor(), ds.getWidth());
         p.drawCircleAround(navaid.getCoordinate(), ds.getBorderDistance(), ds.getColor(), ds.getBorderWidth());
-        p.drawText(navaid.getName(), navaid.getCoordinate(), 3, 3, ds.getColor(), Painter.eTextType.navaid);
+        p.drawText(navaid.getName(), navaid.getCoordinate(), 3, 3, dt.getFont(), ds.getColor());
         break;
       case NDB:
         p.drawPoint(navaid.getCoordinate(), ds.getColor(), ds.getWidth());
         p.drawTriangleAround(navaid.getCoordinate(), ds.getBorderDistance(), ds.getColor(), ds.getBorderWidth());
-        p.drawText(navaid.getName(), navaid.getCoordinate(), 3, 3, ds.getColor(), Painter.eTextType.navaid);
+        p.drawText(navaid.getName(), navaid.getCoordinate(), 3, 3, dt.getFont(), ds.getColor());
         break;
       case Fix:
         p.drawPoint(navaid.getCoordinate(), ds.getColor(), ds.getWidth());
         //p.drawCircleAround(navaid.getCoordinate(), 9, ds.getColor(), 1);
-        p.drawText(navaid.getName(), navaid.getCoordinate(), 3, 0, ds.getColor(), Painter.eTextType.navaid);
+        p.drawText(navaid.getName(), navaid.getCoordinate(), 3, 0, dt.getFont(), ds.getColor());
         break;
       case FixMinor:
         p.drawPoint(navaid.getCoordinate(), ds.getColor(), ds.getWidth());
         break;
       case Airport:
         p.drawPoint(navaid.getCoordinate(), ds.getColor(), ds.getWidth());
-        p.drawText(navaid.getName(), navaid.getCoordinate(), 3, 3, ds.getColor(), Painter.eTextType.navaid);
+        p.drawText(navaid.getName(), navaid.getCoordinate(), 3, 3, dt.getFont(), ds.getColor());
         break;
     }
 
@@ -195,6 +197,7 @@ public class BasicVisualiser extends Visualiser {
   public void drawPlane(Airplane.AirplaneInfo planeInfo) {
 
     DispPlane dp = sett.getDispPlane(planeInfo);
+    DispText dt = sett.getDispText(DispText.eType.callsign);
 
     if (dp.isVisible() == false) {
       return;
@@ -206,7 +209,8 @@ public class BasicVisualiser extends Visualiser {
 
     // separation ring
     if (planeInfo.speed() > 100 || planeInfo.verticalSpeed() != 0) {
-      p.drawCircleAroundInNM(planeInfo.coordinate(), dp.getSeparationRingRadius(), dp.getColor(), 1);
+      p.drawCircleAroundInNM(planeInfo.coordinate(), dp.getSeparationRingRadius(), 
+          planeInfo.isAirprox() ? Color.red : dp.getColor(), 1);
     }
 
     // plane label
@@ -225,7 +229,7 @@ public class BasicVisualiser extends Visualiser {
     sb.append(
         buildPlaneString(dp.getThirdLineFormat(), planeInfo));
 
-    p.drawText(sb.toString(), planeInfo.coordinate(), 3, 3, dp.getColor(), Painter.eTextType.plane);
+    p.drawText(sb.toString(), planeInfo.coordinate(), 3, 3, dt.getFont(), dp.getColor());
 
     // plane history
     this.planeDotHistory.add(planeInfo.callsign(), planeInfo.coordinate(), dp.getHistoryDotCount());
@@ -290,6 +294,14 @@ public class BasicVisualiser extends Visualiser {
     this.planeDotHistory.removeOneHistoryFromAll();
   }
 
+  @Override
+  public void drawTime(ETime time){
+    DispText dt = sett.getDispText(DispText.eType.time);
+    List<String> lst = new ArrayList();
+    lst.add(time.toString());
+    p.drawTextBlock(lst, Painter.eTextBlockLocation.topLeft, dt.getFont(), dt.getColor());
+    
+  }
 }
 
 class MessageSet {
