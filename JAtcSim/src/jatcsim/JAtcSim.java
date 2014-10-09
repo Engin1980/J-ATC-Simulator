@@ -5,16 +5,12 @@
  */
 package jatcsim;
 
-import jatcsimdraw.settings.Settings;
+import jatcsimdraw.mainRadar.settings.Settings;
 import jatcsimlib.Simulation;
 import jatcsimlib.airplanes.AirplaneTypes;
-import jatcsimlib.commands.Command;
-import jatcsimlib.commands.CommandFormat;
 import jatcsimxml.serialization.Serializer;
 import jatcsimlib.world.Airport;
 import jatcsimlib.world.Area;
-import jatcsimlib.world.Navaid;
-import jatcsimlib.world.Route;
 import java.util.Calendar;
 
 /**
@@ -31,6 +27,8 @@ public class JAtcSim {
    * @param args the command line arguments
    */
   public static void main(String[] args) throws Exception {
+    
+    // loading data
     try {
       loadDataFromXmlFiles();
     } catch (Exception ex) {
@@ -46,10 +44,13 @@ public class JAtcSim {
         aip,
         types, Calendar.getInstance());
 
+    
+    // starting pack & simulation
     jatcsim.frmPacks.Pack simPack = 
-        new jatcsim.frmPacks.oneWindow.Pack();
+        new jatcsim.frmPacks.simple.Pack();
     
     simPack.initPack(sim, area, displaySettings);
+    simPack.startPack();
   }
 
   private static void loadDataFromXmlFiles() throws Exception {

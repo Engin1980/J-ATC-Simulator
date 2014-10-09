@@ -6,9 +6,9 @@
 
 package jatcsimxml.serialization;
 
-import jatcsimdraw.settings.DispItem;
-import jatcsimdraw.settings.DispPlane;
-import jatcsimdraw.settings.DispText;
+import jatcsimdraw.mainRadar.settings.DispItem;
+import jatcsimdraw.mainRadar.settings.DispPlane;
+import jatcsimdraw.mainRadar.settings.DispText;
 import jatcsimlib.airplanes.AirplaneType;
 import jatcsimlib.atcs.AtcTemplate;
 import jatcsimlib.coordinates.Coordinate;

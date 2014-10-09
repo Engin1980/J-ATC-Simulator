@@ -104,6 +104,14 @@ public class Airplane implements KeyItem<Callsign> {
     public String altitudeSShort() {
       return Integer.toString(Airplane.this.altitude / 100);
     }
+    
+    public String altitudeSFixed(){
+      return String.format("%1$03d", Airplane.this.altitude / 100);
+    }
+    
+    public String targetAltitudeSFixed(){
+      return String.format("%1$03d", Airplane.this.targetAltitude / 100);
+    }
 
     public String targetAltitudeSLong() {
       return Acc.toAltS(Airplane.this.targetAltitude, true);
@@ -122,17 +130,32 @@ public class Airplane implements KeyItem<Callsign> {
         return "=";
       }
     }
+    
+    public String departureArrivalChar(){
+      if (isDeparture())
+        return "▲"; //"↑"; //
+      else
+        return "▼"; // "↓";
+    }
 
     public int heading() {
       return Airplane.this.heading;
     }
 
-    public String headingS() {
-      return String.format("%1$3s", Airplane.this.heading);
+    public String headingSLong() {
+      return String.format("%1$03d", Airplane.this.heading);
+    }
+    
+    public String headingSShort() {
+      return Integer.toString(Airplane.this.heading);
     }
 
-    public String targetHeadingS() {
-      return String.format("%1$3s", Airplane.this.targetHeading);
+    public String targetHeadingSLong() {
+      return String.format("%1$03d", Airplane.this.targetHeading);
+    }
+    
+    public String targetHeadingSShort() {
+      return Integer.toString(Airplane.this.targetHeading);
     }
 
     public int speed() {
@@ -167,16 +190,16 @@ public class Airplane implements KeyItem<Callsign> {
       return tunedAtc().getName();
     }
 
-    public String planeAtcType() {
-      return tunedAtc().getType().toString();
+    public Atc.eType planeAtcType() {
+      return tunedAtc().getType();
     }
 
     public String responsibleAtcName() {
       return responsibleAtc().getName();
     }
 
-    public String responsibleAtcType() {
-      return responsibleAtc().getType().toString();
+    public Atc.eType responsibleAtcType() {
+      return responsibleAtc().getType();
     }
 
     public String planeType() {
@@ -247,9 +270,13 @@ public class Airplane implements KeyItem<Callsign> {
         case 8:
           return this.sqwkS();
         case 11:
-          return this.headingS();
+          return this.headingSLong();
         case 12:
-          return this.targetHeadingS();
+          return this.headingSShort();
+        case 15:
+          return this.targetHeadingSLong();
+        case 16:
+          return this.targetHeadingSShort();
         case 21:
           return this.speedSLong();
         case 22:
@@ -291,6 +318,14 @@ public class Airplane implements KeyItem<Callsign> {
 
     void setAirprox(boolean airprox) {
       this.airprox = airprox;
+    }
+
+    public boolean isDeparture() {
+      return Airplane.this.departure;
+    }
+
+    public String routeNameOrFix() {
+      return Airplane.this.pilot.getRouteName();
     }
 
   }

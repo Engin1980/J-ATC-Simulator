@@ -6,7 +6,7 @@
 
 package jatcsim.frmPacks;
 
-import jatcsimdraw.settings.Settings;
+import jatcsimdraw.mainRadar.settings.Settings;
 import jatcsimlib.Simulation;
 import jatcsimlib.world.Area;
 
