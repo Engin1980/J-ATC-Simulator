@@ -32,6 +32,7 @@ import jatcsimlib.exceptions.ENotSupportedException;
 import jatcsimlib.exceptions.ERuntimeException;
 import jatcsimlib.global.Headings;
 import jatcsimlib.messaging.GoingAroundStringMessage;
+import jatcsimlib.weathers.Weather;
 import jatcsimlib.world.Navaid;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -231,6 +232,13 @@ public class Pilot {
   }
 
   private boolean processQueueCommand(ChangeSpeedCommand c) {
+    if (c.isResumeOwnSpeed()) {
+      this.orderedSpeed = null;
+
+      sayIfReq(CommandFormat.format(c, true));
+      return true;
+    }
+
     switch (c.getDirection()) {
       case increase:
         if (parent.getSpeed() > c.getSpeedInKts()) {
@@ -280,7 +288,12 @@ public class Pilot {
     }
 
     targetCoordinate = null;
-    int targetHeading = c.getHeading();
+    int targetHeading;
+    if (c.isCurrentHeading()) {
+      targetHeading = parent.getHeading();
+    } else {
+      targetHeading = c.getHeading();
+    }
     boolean leftTurn;
 
     if (c.getDirection() == ChangeHeadingCommand.eDirection.any) {
@@ -447,8 +460,10 @@ public class Pilot {
   }
 
   private void expandThenCommands(List<Command> cmds) {
-    if (cmds.isEmpty()) return;
-    
+    if (cmds.isEmpty()) {
+      return;
+    }
+
     for (int i = 0; i < cmds.size(); i++) {
       if (cmds.get(i) instanceof ThenCommand) {
         if (i == 0 || i == cmds.size() - 1) {
@@ -616,6 +631,20 @@ public class Pilot {
   }
 
   private void flyApproach() {
+
+    if (app.phase != ApproachInfo.ePhase.touchdownAndLanded) {
+      if (app.isRunwayVisible == null) {
+        if (parent.getAltitude() < app.approach.getDecisionAltitude()) {
+          if (canSeeRunwayFromCurrentPosition() == false) {
+            app.isRunwayVisible = false;
+            goAround("Runway not visible at decision point.");
+          } else {
+            app.isRunwayVisible = true;
+          }
+        }
+      }
+    }
+
     switch (app.phase) {
       case approaching:
         updateHeadingOnApproach();
@@ -728,15 +757,36 @@ public class Pilot {
   }
 
   private boolean canSeeRunwayFromCurrentPosition() {
+    Weather w = Acc.weather();
+
+    if ((w.getCloudBaseInFt() + Acc.airport().getAltitude()) < parent.getAltitude()) {
+      return false;
+    }
+
+    double d = Coordinates.getDistanceInNM(parent.getCoordinate(), Acc.threshold().getCoordinate());
+    if (w.getVisibilityInMiles() < d) {
+      return false;
+    }
+
     return true;
   }
 
   private void adjustSpeed() {
+    if (orderedSpeed != null) {
+      if (parent.getTargetSpeed() != this.orderedSpeed) {
+        parent.setTargetSpeed(this.orderedSpeed);
+      }
+    }
     if (parent.isArrival()) {
       if (parent.getAltitude() < 10_000) {
         if (parent.getTargetSpeed() > 250) {
           parent.setTargetSpeed(250);
         }
+      }
+    } else {
+      // is departure
+      if (parent.getAltitude() > 10_000 && parent.getTargetSpeed() != parent.getAirplaneType().vCruise) {
+        parent.setTargetSpeed(parent.getAirplaneType().vCruise);
       }
     }
   }
@@ -746,7 +796,7 @@ public class Pilot {
         parent,
         atc,
         new GoingAroundStringMessage(reason));
-    parent.setTargetSpeed(parent.getAirplaneType().vDep);    
+    parent.setTargetSpeed(parent.getAirplaneType().vDep);
     addNewCommands(app.approach.getGaCommands());
     app = null;
   }

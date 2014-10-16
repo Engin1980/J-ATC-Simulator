@@ -13,15 +13,20 @@ import jatcsimlib.exceptions.ERuntimeException;
  */
 public class ChangeSpeedCommand extends Command {
 
-  public enum eDirection{
+  private static final int RESUME_OWN_SPEED = -1;
+
+  public enum eDirection {
+
     increase,
     decrease
   }
-  
-  private eDirection direction;
-  private int speedInKts;
+
+  private final eDirection direction;
+  private final int speedInKts;
 
   public ChangeSpeedCommand() {
+    speedInKts = RESUME_OWN_SPEED;
+    direction = eDirection.increase;
   }
 
   public ChangeSpeedCommand(eDirection direction, int speedInKts) {
@@ -36,9 +41,17 @@ public class ChangeSpeedCommand extends Command {
   public int getSpeedInKts() {
     return speedInKts;
   }
-  
-    @Override
+
+  public boolean isResumeOwnSpeed() {
+    return speedInKts == RESUME_OWN_SPEED;
+  }
+
+  @Override
   public String toString() {
-    return "SU/SD{"+ speedInKts + '}';
+    if (isResumeOwnSpeed()) {
+      return "SR";
+    } else {
+      return "SU/SD{" + speedInKts + '}';
+    }
   }
 }

@@ -42,5 +42,9 @@ public class Navaid implements KeyItem<String> {
   public eType getType() {
     return type;
   }
-  
+
+  @Override
+  public String toString() {
+    return name + " {" + type + '}';
+  }
 }

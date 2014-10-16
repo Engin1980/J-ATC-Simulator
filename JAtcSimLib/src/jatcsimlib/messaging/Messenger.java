@@ -6,8 +6,6 @@
 package jatcsimlib.messaging;
 
 import jatcsimlib.Acc;
-import jatcsimlib.Simulation;
-import jatcsimlib.atcs.CentreAtc;
 import jatcsimlib.commands.Command;
 import jatcsimlib.commands.CommandList;
 import jatcsimlib.global.ETime;

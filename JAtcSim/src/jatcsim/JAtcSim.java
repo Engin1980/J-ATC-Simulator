@@ -66,7 +66,7 @@ public class JAtcSim {
       
       displaySettings = new Settings();
       ser.fillObject(
-          "C:\\Users\\Marek\\Documents\\NetBeansProjects\\_JAtcSimSolution\\JAtcSim\\src\\jatcsim\\settings.xml",
+          "C:\\Users\\Marek\\Documents\\NetBeansProjects\\_JAtcSimSolution\\JAtcSim\\src\\jatcsim\\mainRadarSettings.xml",
           displaySettings);
       
       types = new AirplaneTypes();

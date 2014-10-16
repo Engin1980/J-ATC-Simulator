@@ -19,6 +19,7 @@ import jatcsimlib.exceptions.ENotSupportedException;
 import jatcsimlib.global.ETime;
 import jatcsimlib.global.Headings;
 import jatcsimlib.messaging.Message;
+import jatcsimlib.messaging.StringMessage;
 import jatcsimlib.world.Approach;
 import jatcsimlib.world.Border;
 import jatcsimlib.world.BorderArcPoint;
@@ -198,19 +199,23 @@ public class BasicVisualiser extends Visualiser {
 
     DispPlane dp = sett.getDispPlane(planeInfo);
     DispText dt = sett.getDispText(DispText.eType.callsign);
+    Color c = dp.getColor();
+    if (planeInfo.isAirprox()) {
+      c = Color.RED;
+    }
 
     if (dp.isVisible() == false) {
       return;
     }
 
     // plane dot and direction line
-    p.drawPoint(planeInfo.coordinate(), dp.getColor(), dp.getPointWidth()); // point of plane
-    p.drawLineByHeadingAndDistance(planeInfo.coordinate(), planeInfo.heading(), dp.getHeadingLineLength(), dp.getColor(), 1);
+    p.drawPoint(planeInfo.coordinate(), c, dp.getPointWidth()); // point of plane
+    p.drawLineByHeadingAndDistance(planeInfo.coordinate(), planeInfo.heading(), dp.getHeadingLineLength(), c, 1);
 
     // separation ring
     if (planeInfo.speed() > 100 || planeInfo.verticalSpeed() != 0) {
-      p.drawCircleAroundInNM(planeInfo.coordinate(), dp.getSeparationRingRadius(), 
-          planeInfo.isAirprox() ? Color.red : dp.getColor(), 1);
+      p.drawCircleAroundInNM(planeInfo.coordinate(), dp.getSeparationRingRadius(),
+          c, 1);
     }
 
     // plane label
@@ -229,13 +234,13 @@ public class BasicVisualiser extends Visualiser {
     sb.append(
         buildPlaneString(dp.getThirdLineFormat(), planeInfo));
 
-    p.drawText(sb.toString(), planeInfo.coordinate(), 3, 3, dt.getFont(), dp.getColor());
+    p.drawText(sb.toString(), planeInfo.coordinate(), 3, 3, dt.getFont(), c);
 
     // plane history
     this.planeDotHistory.add(planeInfo.callsign(), planeInfo.coordinate(), dp.getHistoryDotCount());
     List<Coordinate> hist = planeDotHistory.get(planeInfo.callsign());
-    for (Coordinate c : hist) {
-      p.drawPoint(c, dp.getColor(), 3);
+    for (Coordinate coordinate : hist) {
+      p.drawPoint(coordinate, c, 3);
     }
   }
 
@@ -252,13 +257,7 @@ public class BasicVisualiser extends Visualiser {
         ret.system.add(">> " + m.getAsString().text);
       } else if (m.isAtcMessage()) {
         Atc atc = (Atc) m.source;
-        if (atc.getType() == Atc.eType.twr) {
-          ret.atc.add("TWR: " + m.getAsPlaneSwitchMessage().getAsString());
-        } else if (atc.getType() == Atc.eType.ctr) {
-          ret.atc.add("CTR : " + m.getAsPlaneSwitchMessage().getAsString());
-        } else {
-          throw new ENotSupportedException();
-        }
+        ret.atc.add(atc.getName() + ": " + m.toContentString());
       } else if (m.isPlaneMessage()) {
         Airplane p = (Airplane) m.source;
         ret.plane.add(p.getCallsign().toString() + ": " + m.getAsString().text);
@@ -271,11 +270,23 @@ public class BasicVisualiser extends Visualiser {
 
   @Override
   public void drawStar(List<Navaid> navaidPoints) {
+    DispItem di = sett.getDispItem(DispItem.STAR);
     for (int i = 0; i < navaidPoints.size() - 1; i++) {
       p.drawLine(
           navaidPoints.get(i).getCoordinate(),
           navaidPoints.get(i + 1).getCoordinate(),
-          Color.GRAY);
+          di.getColor());
+    }
+  }
+
+  @Override
+  public void drawSid(List<Navaid> navaidPoints) {
+    DispItem di = sett.getDispItem(DispItem.SID);
+    for (int i = 0; i < navaidPoints.size() - 1; i++) {
+      p.drawLine(
+          navaidPoints.get(i).getCoordinate(),
+          navaidPoints.get(i + 1).getCoordinate(),
+          di.getColor());
     }
   }
 
@@ -295,12 +306,12 @@ public class BasicVisualiser extends Visualiser {
   }
 
   @Override
-  public void drawTime(ETime time){
+  public void drawTime(ETime time) {
     DispText dt = sett.getDispText(DispText.eType.time);
     List<String> lst = new ArrayList();
     lst.add(time.toString());
     p.drawTextBlock(lst, Painter.eTextBlockLocation.topLeft, dt.getFont(), dt.getColor());
-    
+
   }
 }
 
@@ -323,7 +334,7 @@ class PlaneHistoryDotManager {
     }
 
     inner.get(cs).add(c);
-    if (maxCount.get(cs) != maxHistory){
+    if (maxCount.get(cs) != maxHistory) {
       maxCount.put(cs, maxHistory);
     }
   }

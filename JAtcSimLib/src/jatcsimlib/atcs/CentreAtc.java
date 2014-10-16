@@ -24,6 +24,9 @@ public class CentreAtc extends ComputerAtc {
   public CentreAtc(AtcTemplate template) {
     super(template);
   }
+  
+  @Override
+  public void init(){}
 
   @Override
   protected void _registerNewPlane(Airplane plane) {

@@ -11,17 +11,20 @@ package jatcsimlib.commands;
  */
 public class ChangeHeadingCommand extends Command {
 
-  public enum eDirection{
+  public static final int CURRENT_HEADING = -1;
+
+  public enum eDirection {
+
     any,
     left,
     right
   }
-  
+
   private final int heading;
   private final eDirection direction;
 
   public ChangeHeadingCommand() {
-    heading = -1;
+    heading = CURRENT_HEADING;
     direction = eDirection.any;
   }
 
@@ -40,10 +43,18 @@ public class ChangeHeadingCommand extends Command {
   public eDirection getDirection() {
     return direction;
   }
-  
-    @Override
-  public String toString() {
-    return "FH{"+ heading + '}';
+
+  public boolean isCurrentHeading() {
+    return heading == CURRENT_HEADING;
   }
-  
+
+  @Override
+  public String toString() {
+    if (isCurrentHeading()) {
+      return "FCH";
+    } else {
+      return "FH{" + heading + '}';
+    }
+  }
+
 }

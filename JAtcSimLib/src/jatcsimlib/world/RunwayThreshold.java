@@ -10,6 +10,7 @@ import jatcsimlib.coordinates.Coordinates;
 import jatcsimlib.global.KeyItem;
 import jatcsimlib.global.KeyList;
 import jatcsimlib.global.MustBeBinded;
+import jatcsimlib.global.XmlOptional;
 
 /**
  *
@@ -25,9 +26,15 @@ public class RunwayThreshold extends MustBeBinded implements KeyItem<String> {
   private double _course;
   private int initialDepartureAltitude;
   private RunwayThreshold _other;
+  @XmlOptional
+  private boolean preferred = false;
 
   public int getInitialDepartureAltitude() {
     return initialDepartureAltitude;
+  }
+
+  public boolean isPreferred() {
+    return preferred;
   }
   
   public String getName() {
@@ -66,7 +73,7 @@ public class RunwayThreshold extends MustBeBinded implements KeyItem<String> {
   }
 
   public Approach tryGetApproachByTypeWithILSDerived(Approach.eType type) {
-    Approach ret = getApproaches().get(type);
+    Approach ret = getApproaches().tryGet(type);
     if (ret == null) {
       switch (type) {
         case ILS_I:
@@ -84,7 +91,7 @@ public class RunwayThreshold extends MustBeBinded implements KeyItem<String> {
 
     ret = tryGetApproachByTypeWithILSDerived(Approach.eType.ILS_I);
     if (ret == null) {
-      ret = approaches.tryGet(Approach.eType.GPS);
+      ret = approaches.tryGet(Approach.eType.GNSS);
     }
     if (ret == null) {
       ret = approaches.tryGet(Approach.eType.VORDME);

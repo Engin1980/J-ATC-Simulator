@@ -35,6 +35,7 @@ public abstract class Visualiser {
   public abstract void drawPlane(Airplane.AirplaneInfo planeInfo);
   public abstract void drawMessages(List<Message> msgs);
   public abstract void drawStar(List<Navaid> navaidPoints);
+  public abstract void drawSid(List<Navaid> navaidPoints);
   public abstract void drawApproach(Approach approach);
   public abstract void drawTime(ETime time);
   public abstract void clear();

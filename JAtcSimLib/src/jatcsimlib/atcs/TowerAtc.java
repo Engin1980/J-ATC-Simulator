@@ -12,8 +12,13 @@ import jatcsimlib.commands.ClearedForTakeoffCommand;
 import jatcsimlib.commands.CommandList;
 import jatcsimlib.coordinates.Coordinates;
 import jatcsimlib.exceptions.ERuntimeException;
+import jatcsimlib.global.ETime;
+import jatcsimlib.global.Headings;
 import jatcsimlib.messaging.GoingAroundStringMessage;
 import jatcsimlib.messaging.Message;
+import jatcsimlib.weathers.Weather;
+import jatcsimlib.world.Runway;
+import jatcsimlib.world.RunwayThreshold;
 import java.util.List;
 
 /**
@@ -22,8 +27,12 @@ import java.util.List;
  */
 public class TowerAtc extends ComputerAtc {
 
+  private static final int RUNWAY_CHANGE_INFO_UPDATE_INTERVAL = 10 * 60;
+
   private final AirplaneList readyForTakeoff = new AirplaneList();
   private final AirplaneList departings = new AirplaneList();
+  private RunwayChangeInfo runwayChangeInfo = null;
+  private RunwayThreshold runwayThresholdInUse = null;
 
   public TowerAtc(AtcTemplate template) {
     super(template);
@@ -35,6 +44,11 @@ public class TowerAtc extends ComputerAtc {
       throw new ERuntimeException("Arriving plane cannot be registered using this method.");
     }
   }
+
+  public RunwayThreshold getRunwayThresholdInUse() {
+    return runwayThresholdInUse;
+  }
+  
 
   @Override
   protected void _elapseSecond() {
@@ -78,6 +92,9 @@ public class TowerAtc extends ComputerAtc {
 
     processReadyForTakeoff();
     switchDepartings();
+
+    // runway change
+    checkForRunwayChange();
   }
 
   private void processReadyForTakeoff() {
@@ -110,7 +127,7 @@ public class TowerAtc extends ComputerAtc {
           return false;
         }
       }
-    }    
+    }
     return true;
   }
 
@@ -128,6 +145,7 @@ public class TowerAtc extends ComputerAtc {
     if (dist > 15) {
       return false;
     }
+    
     return true;
   }
 
@@ -169,16 +187,96 @@ public class TowerAtc extends ComputerAtc {
 
   private void switchDepartings() {
     AirplaneList tmp = new AirplaneList();
-    for (Airplane p : departings){
-      if (p.getAltitude() > Acc.airport().getAltitude()){
+    for (Airplane p : departings) {
+      if (p.getAltitude() > Acc.airport().getAltitude()) {
         tmp.add(p);
       }
     }
-    
-    for (Airplane p : tmp){
+
+    for (Airplane p : tmp) {
       super.approveSwitch(p);
       departings.remove(p);
     }
   }
 
+  private void checkForRunwayChange() {
+    if (Acc.now().getTotalSeconds() % RUNWAY_CHANGE_INFO_UPDATE_INTERVAL == 0) {
+      RunwayThreshold suggestedThreshold = getSuggestedThreshold();
+      if (suggestedThreshold != Acc.threshold()) {
+        RunwayChangeInfo rci = new RunwayChangeInfo(suggestedThreshold, Acc.now().addSeconds(15 * 60)); // change in 15 minutes
+        if (this.runwayChangeInfo == null || this.runwayChangeInfo.newRunwayThreshold != suggestedThreshold) {
+          this.runwayChangeInfo = rci;
+          Acc.messenger().addMessage(
+              this,
+              Acc.atcApp(),
+              "Change to runway " + rci.newRunwayThreshold.getName() + " at " + rci.changeTime.toString());
+        }
+      }
+    } else if (this.runwayChangeInfo != null && this.runwayChangeInfo.changeTime.isBefore(Acc.now())){
+      changeRunwayInUse(this.runwayChangeInfo.newRunwayThreshold);
+      this.runwayChangeInfo = null;
+    }
+  }
+  
+  @Override
+  public void init(){
+    RunwayThreshold suggestedThreshold = getSuggestedThreshold();
+    changeRunwayInUse(suggestedThreshold);
+  }
+  
+  private static final int MAXIMAL_SPEED_FOR_PREFERRED_RUNWAY = 5;
+  public static RunwayThreshold getSuggestedThreshold() {
+    Weather w = Acc.weather();
+    
+    RunwayThreshold rt = null;
+    
+    if (w.getWindSpeetInKts() <= MAXIMAL_SPEED_FOR_PREFERRED_RUNWAY){
+      for (Runway r : Acc.airport().getRunways()){
+        if (r.isActive() == false) continue; // skip inactive runways
+        for (RunwayThreshold t : r.getThresholds()){
+          if (t.isPreferred()){
+            rt = t;
+            break;
+          }
+        }
+        if (rt != null) break;
+      }
+    }
+    
+    int diff = Integer.MAX_VALUE;
+    if (rt == null){
+      // select runway according to wind
+      for (Runway r : Acc.airport().getRunways()){
+        for (RunwayThreshold t : r.getThresholds()){
+          int localDiff = Headings.diff(w.getWindHeading(), (int) t.getCourse());
+          if (localDiff < diff){
+            diff = localDiff;
+            rt = t;
+          }
+        }
+      }
+    }
+    
+    return rt;
+  }
+
+  private void changeRunwayInUse(RunwayThreshold newRunwayInUseThreshold) {
+    Acc.messenger().addMessage(
+          this,
+          Acc.atcApp(),
+          "Runway in use " + newRunwayInUseThreshold.getName());
+      this.runwayThresholdInUse = newRunwayInUseThreshold;
+  }
+
+}
+
+class RunwayChangeInfo {
+
+  public final RunwayThreshold newRunwayThreshold;
+  public final ETime changeTime;
+
+  public RunwayChangeInfo(RunwayThreshold newRunwayThreshold, ETime changeTime) {
+    this.newRunwayThreshold = newRunwayThreshold;
+    this.changeTime = changeTime;
+  }
 }

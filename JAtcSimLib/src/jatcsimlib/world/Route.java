@@ -5,6 +5,7 @@
  */
 package jatcsimlib.world;
 
+import jatcsimlib.commands.ChangeHeadingCommand;
 import jatcsimlib.commands.Command;
 import jatcsimlib.commands.CommandFormat;
 import jatcsimlib.commands.ProceedDirectCommand;
@@ -23,6 +24,25 @@ import java.util.List;
  */
 public class Route extends MustBeBinded implements KeyItem<String> {
 
+  public static Route createNewByFix(Navaid n, boolean arrival) {
+    Route ret = new Route();
+    
+    ret.name = n.getName();
+    
+    ret._routeCommands = new ArrayList<>();
+    if (arrival){
+      ret._routeCommands.add(new ProceedDirectCommand(n));
+    }
+    ret._mainFix = n;
+    ret.type = eType.vectoring;
+    ret._routeCommands.add(new ProceedDirectCommand(n));
+    ret.route = "";
+
+    ret.bind();
+    
+    return ret;
+  }
+
   @Override
   public String getKey() {
     return name;
@@ -32,7 +52,8 @@ public class Route extends MustBeBinded implements KeyItem<String> {
 
     sid,
     star,
-    transition;
+    transition,
+    vectoring;
 
     public boolean isArrival() {
       return this == star || this == transition;
@@ -96,6 +117,10 @@ public class Route extends MustBeBinded implements KeyItem<String> {
       case star:
       case transition:
         _mainFix = tryGetStarMainFix();
+        break;
+      case vectoring:
+        if (_mainFix == null)
+          throw new EBindException("\"Vectoing\" route must have set _mainFix explicitly.");
         break;
       default:
         throw new EBindException("Failed to obtain main route fix of route " + this.name + ". SID last/STAR first command must be \"proceed direct\" (commands: " + this.route + ")");

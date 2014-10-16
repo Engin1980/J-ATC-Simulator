@@ -38,6 +38,10 @@ public class ETime implements Comparable<ETime> {
   public int getSeconds() {
     return value % 60;
   }
+  
+  public int getTotalSeconds(){
+    return value;
+  }
 
   public int getMinutes() {
     return ((int) (Math.floor(value / 60))) % 60;

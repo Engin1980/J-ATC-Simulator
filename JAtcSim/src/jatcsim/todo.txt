@@ -1,1 +1,0 @@
-BUG: Na příletu letí letadlo STAR a dostane PD. Když během letu na PD narazí na 

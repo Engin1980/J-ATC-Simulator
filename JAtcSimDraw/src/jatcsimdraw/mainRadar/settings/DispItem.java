@@ -29,7 +29,8 @@ public class DispItem implements KeyItem<String> {
   public static final String BORDER_TMA = "borderTma";
   
   public static final String MAP_BACKCOLOR = "mapBackcolor";
-  
+  public static final String SID = "sid";
+  public static final String STAR = "star";
 
   private String key;
   private Color color;

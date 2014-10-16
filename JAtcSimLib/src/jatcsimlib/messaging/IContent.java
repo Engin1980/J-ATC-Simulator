@@ -11,5 +11,4 @@ package jatcsimlib.messaging;
  * @author Marek
  */
 public interface IContent {
-  
 }

@@ -26,12 +26,12 @@ public class Approach extends MustBeBinded implements KeyItem<Approach.eType> {
     ILS_III,
     VORDME,
     NDB,
-    GPS,
+    GNSS,
     Visual
   }
 
   private eType type;
-  private int dh;
+  private int da;
   private int radial;
   @XmlOptional
   private double glidePathPercentage = 3;
@@ -60,8 +60,8 @@ public class Approach extends MustBeBinded implements KeyItem<Approach.eType> {
     return type;
   }
 
-  public int getDh() {
-    return dh;
+  public int getDecisionAltitude(){
+    return da;
   }
 
   public double getGlidePathPercentage() {

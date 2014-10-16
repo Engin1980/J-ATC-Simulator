@@ -40,7 +40,7 @@ public class Pack extends jatcsim.frmPacks.Pack {
 
   @Override
   public void startPack() {
-    int delay = 500; //milliseconds
+    int delay = 500; 
     ActionListener taskPerformer = new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent evt) {

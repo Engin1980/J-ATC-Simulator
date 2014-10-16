@@ -141,4 +141,15 @@ public class Message implements Comparable<Message> {
   public StringMessage getAsString(){
     return (StringMessage) content;
   }
+
+  public String toContentString() {
+    if (content instanceof CommandList)
+      return "--?? set of commands ??--";
+    else if (content instanceof PlaneSwitchMessage){
+      return getAsPlaneSwitchMessage().getAsString();
+    } else if (content instanceof StringMessage){
+      return getAsString().text;
+    } else
+      throw new ENotSupportedException();
+  }
 }

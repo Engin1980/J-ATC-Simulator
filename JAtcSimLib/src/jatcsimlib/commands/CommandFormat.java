@@ -85,8 +85,11 @@ public class CommandFormat {
   }
 
   private static String normalizeCommandsInString(String line) {
+    if (line == null || line.isEmpty()) {
+      return "";
+    }
     line = line.trim();
-    while (line.contains("  ")){
+    while (line.contains("  ")) {
       line = line.replace("  ", " ");
     }
     return line.toUpperCase() + " ";
@@ -110,10 +113,10 @@ public class CommandFormat {
     Method m;
     m = tryGetFormatCommandMethodToInvoke(cmd.getClass());
 
-    if (m == null){
+    if (m == null) {
       throw new ERuntimeException("No \"format\" method found for type " + cmd.getClass().getSimpleName());
     }
-    
+
     String ret;
     try {
       ret = (String) m.invoke(null, cmd, longSentence);
@@ -136,20 +139,25 @@ public class CommandFormat {
 
   public static String format(ChangeHeadingCommand cmd, boolean longSentence) {
     StringBuilder sb = new StringBuilder();
-    switch (cmd.getDirection()) {
-      case any:
-        sb.append(longSentence ? "fly heading " : "FH ");
-        break;
-      case left:
-        sb.append(longSentence ? "turn left " : "TL ");
-        break;
-      case right:
-        sb.append(longSentence ? "turn right " : "TR ");
-        break;
-      default:
-        throw new ENotSupportedException();
+
+    if (cmd.isCurrentHeading()) {
+      sb.append(longSentence ? "fly current heading" : "FCH");
+    } else {
+      switch (cmd.getDirection()) {
+        case any:
+          sb.append(longSentence ? "fly heading " : "FH ");
+          break;
+        case left:
+          sb.append(longSentence ? "turn left " : "TL ");
+          break;
+        case right:
+          sb.append(longSentence ? "turn right " : "TR ");
+          break;
+        default:
+          throw new ENotSupportedException();
+      }
+      sb.append(Headings.format(cmd.getHeading()));
     }
-    sb.append(Headings.format(cmd.getHeading()));
     return sb.toString();
   }
 
@@ -180,11 +188,15 @@ public class CommandFormat {
   }
 
   public static String format(ChangeSpeedCommand cmd, boolean longSentence) {
-    StringBuilder sb = new StringBuilder();
-    sb.append(longSentence ? "speed " : "");
-    sb.append(cmd.getSpeedInKts());
-    sb.append(" kts");
-    return sb.toString();
+    if (cmd.isResumeOwnSpeed()) {
+      return longSentence ? "resume own speed" : "SR";
+    } else {
+      StringBuilder sb = new StringBuilder();
+      sb.append(longSentence ? "speed " : "");
+      sb.append(cmd.getSpeedInKts());
+      sb.append(" kts");
+      return sb.toString();
+    }
   }
 
   public static String format(ContactCommand cmd, boolean longSentence) {
@@ -205,7 +217,7 @@ public class CommandFormat {
     sb.append(cmd.getNavaid().getName());
     return sb.toString();
   }
-  
+
   public static String format(ClearedToApproachCommand cmd, boolean longSentence) {
     StringBuilder sb = new StringBuilder();
     sb.append(longSentence ? "cleared for " : "C ");
@@ -214,22 +226,24 @@ public class CommandFormat {
     sb.append(cmd.getApproach().getParent().getName());
     return sb.toString();
   }
-    
+
   public static String format(HoldCommand cmd, boolean longSentence) {
     StringBuilder sb = new StringBuilder();
     sb.append(longSentence ? "hold over " : "H ");
     sb.append(cmd.getNavaid().getName());
-    if (cmd.isPublished()){
+    if (cmd.isPublished()) {
       sb.append(longSentence ? " as published" : " P");
     } else {
-      if (longSentence) sb.append("inbound " );
+      if (longSentence) {
+        sb.append("inbound ");
+      }
       sb.append(Headings.format(cmd.getInboundRadial()));
-      sb.append(longSentence ? 
-          cmd.isLeftTurn() ? "left turns " : "right turns " : 
-          cmd.isLeftTurn() ? "L " : "R ");
+      sb.append(longSentence
+          ? cmd.isLeftTurn() ? "left turns " : "right turns "
+          : cmd.isLeftTurn() ? "L " : "R ");
     }
     return sb.toString();
-  }    
+  }
 }
 
 class ParseDef {
@@ -275,7 +289,7 @@ abstract class CmdParser {
 class ChangeHeadingCmdParser extends CmdParser {
 
   private static final String[] prefixes = new String[]{"FH", "TR", "TL"};
-  private static final String pattern = "((FH)|(TL)|(TR)) ?(\\d{1,3})";
+  private static final String pattern = "((FH)|(TR)|(TL)) ?(\\d{1,3})?";
 
   @Override
   String[] getPrefixes() {
@@ -303,8 +317,14 @@ class ChangeHeadingCmdParser extends CmdParser {
       default:
         throw new ENotSupportedException();
     }
-    int h = rg.getInt(5);
-    ChangeHeadingCommand ret = new ChangeHeadingCommand(h, d);
+    ChangeHeadingCommand ret;
+
+    if (rg.getString(5) == null) {
+      ret = new ChangeHeadingCommand();
+    } else {
+      int h = rg.getInt(5);
+      ret = new ChangeHeadingCommand(h, d);
+    }
     return ret;
   }
 
@@ -354,8 +374,8 @@ class ChangeAltitudeCmdParser extends CmdParser {
 
 class ChangeSpeedCmdParser extends CmdParser {
 
-  private static final String[] prefixes = new String[]{"SU", "SD"};
-  private static final String pattern = "((SU)|(SD)) (\\d{3})";
+  private static final String[] prefixes = new String[]{"SU", "SD", "SR"};
+  private static final String pattern = "((SU)|(SD)|(SR)) ?(\\d{3})?";
 
   @Override
   String[] getPrefixes() {
@@ -369,24 +389,39 @@ class ChangeSpeedCmdParser extends CmdParser {
 
   @Override
   Command parse(RegexGrouper rg) {
-    ChangeSpeedCommand.eDirection d;
-    int s;
 
-    switch (rg.getString(1)) {
-      case "SU":
-        d = ChangeSpeedCommand.eDirection.increase;
-        break;
-      case "SD":
-        d = ChangeSpeedCommand.eDirection.decrease;
-        break;
-      default:
-        throw new ERuntimeException("Invalid prefix");
+    if ("SR".equals(rg.getString(1))) {
+      if (rg.getString(5) != null) {
+        throw new EInvalidCommandException("\"Resume own speed\" command must not have specified speed.", rg.getMatch());
+      }
+    } else {
+      if (rg.getString(5) == null) {
+        throw new EInvalidCommandException("\"Speed up/down\" have to had speed specified.", rg.getMatch());
+      }
     }
-    s = rg.getInt(4);
 
-    ChangeSpeedCommand ret = new ChangeSpeedCommand(d, s);
+    ChangeSpeedCommand ret;
+    if ("SR".equals(rg.getString(1))) {
+      ret = new ChangeSpeedCommand();
+    } else {
+      ChangeSpeedCommand.eDirection d;
+      int s;
+      switch (rg.getString(1)) {
+        case "SU":
+          d = ChangeSpeedCommand.eDirection.increase;
+          break;
+        case "SD":
+          d = ChangeSpeedCommand.eDirection.decrease;
+          break;
+        default:
+          throw new ERuntimeException("Invalid prefix");
+      }
+      s = rg.getInt(4);
+      ret = new ChangeSpeedCommand(d, s);
+    }
     return ret;
   }
+
 }
 
 class AfterAltitudeCmdParser extends CmdParser {
@@ -563,7 +598,7 @@ class ClearedToApproachCmdParser extends CmdParser {
     Approach.eType type;
     switch (typeS) {
       case "G":
-        type = Approach.eType.GPS;
+        type = Approach.eType.GNSS;
         break;
       case "I":
         type = Approach.eType.ILS_I;

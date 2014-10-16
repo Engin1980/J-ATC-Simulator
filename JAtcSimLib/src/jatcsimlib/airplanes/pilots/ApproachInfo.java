@@ -26,6 +26,7 @@ class ApproachInfo {
   public final int finalAltitude;
   public final int shortFinalAltitude;
   public boolean isAppSpeedSet;
+  public Boolean isRunwayVisible = null;
 
   public ApproachInfo(Approach approach) {
     this.approach = approach;

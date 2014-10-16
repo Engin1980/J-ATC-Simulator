@@ -6,7 +6,6 @@
 package jatcsimlib;
 
 import jatcsimlib.airplanes.Airplane;
-import jatcsimlib.airplanes.AirplaneList;
 import jatcsimlib.atcs.Atc;
 import jatcsimlib.atcs.CentreAtc;
 import jatcsimlib.atcs.PlaneResponsibilityManager;
@@ -70,12 +69,12 @@ public class Acc {
   }
 
   public static Weather weather() {
-    throw new ENotSupportedException();
+    return sim.getWeather();
 //return sim.getWeather();
   }
 
   public static RunwayThreshold threshold() {
-    return sim.getActiveRunwayThreshold();
+    return atcTwr().getRunwayThresholdInUse();
   }
 
   public static Area area() {

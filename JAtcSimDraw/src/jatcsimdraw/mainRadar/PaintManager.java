@@ -40,6 +40,7 @@ public class PaintManager {
     drawBackground();
     drawBorders();
     drawStars();
+    drawSids();
     drawApproaches();
     drawNavaids();
     drawAirports();
@@ -93,6 +94,13 @@ public class PaintManager {
     for (Route r : simulation.getActiveRunwayThreshold().getRoutes()) {
       if (r.getType() == Route.eType.sid) continue;
       visualiser.drawStar(r.getNavaids());
+    }
+  }
+  
+  private void drawSids() {
+    for (Route r : simulation.getActiveRunwayThreshold().getRoutes()){
+      if (r.getType() != Route.eType.sid) continue;
+      visualiser.drawSid(r.getNavaids());
     }
   }
 

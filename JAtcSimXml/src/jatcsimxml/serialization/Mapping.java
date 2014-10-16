@@ -24,7 +24,6 @@ import jatcsimlib.world.Runway;
 import jatcsimlib.world.RunwayThreshold;
 import java.awt.Color;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 /**

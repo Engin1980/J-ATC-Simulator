@@ -7,7 +7,6 @@
 package jatcsimlib.atcs;
 
 import jatcsimlib.airplanes.Airplane;
-import jatcsimlib.exceptions.ENotSupportedException;
 import jatcsimlib.messaging.IContent;
 
 /**

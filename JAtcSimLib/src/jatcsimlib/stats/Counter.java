@@ -4,12 +4,20 @@
  * and open the template in the editor.
  */
 
-package jatcsimlib.global;
+package jatcsimlib.stats;
 
 /**
  *
  * @author Marek
  */
-public class Enums {
+public class Counter {
+  private int count = 0;
   
+  public void add(){
+    count++;
+  }
+  
+  public int get(){
+    return count;
+  }
 }

@@ -43,6 +43,8 @@ public abstract class Atc {
     this.orderedAltitude = template.getOrderedAltitude();
   }
   
+  public abstract void init();
+  
   public abstract boolean isHuman();
 
   public eType getType() {

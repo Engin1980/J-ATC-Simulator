@@ -13,19 +13,51 @@ import jatcsimlib.global.UnitProvider;
  * @author Marek
  */
 public class Weather {
-  private int visibilityInMeters;
-  private int lowCloudAltitudeInFt;
+  private int windHeading;
+  private int windSpeetInKts;
+  private int visibilityInM;
+  private int cloudBaseInFt;
 
   public Weather() {
   }
 
-  public double getVisibilityInMiles() {
-    return UnitProvider.kmToNM(visibilityInMeters);
+  public Weather(int windHeading, int windSpeetInKts, int visibilityInM, int cloudBaseInFt) {
+    this.windHeading = windHeading;
+    this.windSpeetInKts = windSpeetInKts;
+    this.visibilityInM = visibilityInM;
+    this.cloudBaseInFt = cloudBaseInFt;
   }
 
-  public int getLowCloudAltitudeInFt() {
-    return lowCloudAltitudeInFt;
+  /**
+   * Returns visibility in nauctional miles
+   * @return 
+   */
+  public double getVisibilityInMiles() {
+    return UnitProvider.kmToNM(visibilityInM);
   }
-  
+
+  /**
+   * Returns lowest cloud altitude in ft above AGL
+   * @return 
+   */
+  public int getCloudBaseInFt() {
+    return cloudBaseInFt;
+  }
+
+  /**
+   * Returns heading from which is incoming.
+   * @return 
+   */
+  public int getWindHeading() {
+    return windHeading;
+  }
+
+  /**
+   * Returns speed of wind in kts.
+   * @return 
+   */
+  public int getWindSpeetInKts() {
+    return windSpeetInKts;
+  }
   
 }

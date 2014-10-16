@@ -28,13 +28,20 @@ import jatcsimlib.events.EventManager;
 import jatcsimlib.global.ERandom;
 import jatcsimlib.global.ETime;
 import jatcsimlib.global.Global;
+import jatcsimlib.global.Headings;
 import jatcsimlib.global.ReadOnlyList;
 import jatcsimlib.messaging.Messenger;
 import jatcsimlib.weathers.Weather;
+import jatcsimlib.weathers.WeatherDownloadNoaaGov;
+import jatcsimlib.weathers.WeatherDownloader;
 import jatcsimlib.world.Airport;
+import jatcsimlib.world.Navaid;
 import jatcsimlib.world.Route;
+import jatcsimlib.world.Routes;
+import jatcsimlib.world.Runway;
 import jatcsimlib.world.RunwayThreshold;
 import java.util.Calendar;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -45,8 +52,8 @@ public class Simulation {
 
   private final ETime now;
   private final AirplaneTypes planeTypes;
+  private final Airport airport;
 
-  private RunwayThreshold activeRunwayThreshold;
   private Weather weather;
 
   private final Messenger messenger = new Messenger();
@@ -56,12 +63,8 @@ public class Simulation {
 
   private final EventManager<Simulation, EventListener<Simulation, Simulation>, Simulation> tickEM = new EventManager(this);
 
-  public RunwayThreshold getActiveRunwayThreshold() {
-    return activeRunwayThreshold;
-  }
-
   public Airport getActiveAirport() {
-    return activeRunwayThreshold.getParent().getParent();
+    return airport;
   }
 
   public String toAltitudeString(int altInFt, boolean appendFt) {
@@ -93,6 +96,7 @@ public class Simulation {
       throw new IllegalArgumentException("Argument \"airport\" cannot be null.");
     }
 
+    this.airport = airport;
     this.planeTypes = types;
     this.twrAtc = new TowerAtc(airport.getAtcTemplates().get(Atc.eType.twr));
     this.ctrAtc = new CentreAtc(airport.getAtcTemplates().get(Atc.eType.ctr));
@@ -104,10 +108,15 @@ public class Simulation {
   public static Simulation create(Airport airport, AirplaneTypes types, Calendar now) {
     Simulation ret = new Simulation(airport, types, now);
 
-    ret.activeRunwayThreshold
-        = airport.getRunways().tryGet("06-24").getThresholdA();
-
     Acc.setSimulation(ret);
+
+    // weather
+    WeatherDownloader wd = new WeatherDownloadNoaaGov();
+    ret.weather = wd.downloadWeather(airport.getIcao());
+
+    Acc.atcTwr().init();
+    Acc.atcApp().init();
+    Acc.atcCtr().init();
 
     return ret;
   }
@@ -155,7 +164,7 @@ public class Simulation {
     }
 
     Airplane plane;
-    if (true){
+    if (Acc.rnd().nextDouble() < Global.ARRIVING_PLANE_PROBABILITY) {
       plane = generateNewArrivingPlane();
     } else {
       plane = generateNewDepartingPlane();
@@ -179,11 +188,14 @@ public class Simulation {
 
     Callsign cs = generateCallsign();
     AirplaneType pt = planeTypes.get(rnd.nextInt(planeTypes.size()));
-    
-    Route r = getRandomRoute(true, pt);
-    Coordinate coord = generateArrivalCoordinate(r.getMainFix().getCoordinate(), this.activeRunwayThreshold.getCoordinate());
+
+    Route r = tryGetRandomRoute(true, pt);
+    if (r == null) {
+      r = tryGeneratePointRoute(true);
+    }
+    Coordinate coord = generateArrivalCoordinate(r.getMainFix().getCoordinate(), Acc.threshold().getCoordinate());
     Squawk sqwk = generateSqwk();
-    
+
     int heading = (int) Coordinates.getBearing(coord, r.getMainFix().getCoordinate());
     int alt = generateArrivingPlaneAltitude(coord);
     int spd = pt.vCruise;
@@ -210,13 +222,13 @@ public class Simulation {
 
     Callsign cs = generateCallsign();
     AirplaneType pt = planeTypes.get(rnd.nextInt(planeTypes.size()));
-    
-    Route r = getRandomRoute(false, pt);
-    Coordinate coord = this.activeRunwayThreshold.getCoordinate();
+
+    Route r = tryGetRandomRoute(false, pt);
+    Coordinate coord = Acc.threshold().getCoordinate();
     Squawk sqwk = generateSqwk();
-    
-    int heading = (int) Coordinates.getBearing(coord, this.activeRunwayThreshold.getOtherThreshold().getCoordinate());
-    int alt = this.activeRunwayThreshold.getParent().getParent().getAltitude();
+
+    int heading = (int) Acc.threshold().getCourse();
+    int alt = Acc.threshold().getParent().getParent().getAltitude();
     int spd = 0;
 
     List<Command> routeCmds = r.getCommandsListClone();
@@ -224,18 +236,18 @@ public class Simulation {
     int indx = 0;
     // added command to contact after departure
     routeCmds.add(indx++, new ContactCommand(Atc.eType.twr));
-    
+
     routeCmds.add(indx++, new ChangeAltitudeCommand(
-        ChangeAltitudeCommand.eDirection.climb, this.activeRunwayThreshold.getInitialDepartureAltitude()));
+        ChangeAltitudeCommand.eDirection.climb, Acc.threshold().getInitialDepartureAltitude()));
 
     // -- po vysce+300 ma kontaktovat APP
     routeCmds.add(indx++,
-        new AfterAltitudeCommand(this.activeRunwayThreshold.getParent().getParent().getAltitude() + Acc.rnd().nextInt(150, 450)));
+        new AfterAltitudeCommand(Acc.threshold().getParent().getParent().getAltitude() + Acc.rnd().nextInt(150, 450)));
     routeCmds.add(indx++, new ContactCommand(Atc.eType.app));
 
     // -- po vysce + 3000 rychlost na odlet
     routeCmds.add(indx++,
-        new AfterAltitudeCommand(this.activeRunwayThreshold.getParent().getParent().getAltitude() + 3000));
+        new AfterAltitudeCommand(Acc.threshold().getParent().getParent().getAltitude() + 3000));
     routeCmds.add(indx++, new ChangeSpeedCommand(ChangeSpeedCommand.eDirection.increase, 250));
 
     ret = new Airplane(
@@ -268,7 +280,7 @@ public class Simulation {
   private Coordinate generateArrivalCoordinate(Coordinate navFix, Coordinate aipFix) {
     double radial = Coordinates.getBearing(aipFix, navFix);
     radial += rnd.nextDouble() * 50 - 25; // nahodne zatoceni priletoveho radialu
-    double dist = rnd.nextDouble() * 1; // 50; // vzdalenost od prvniho bodu STARu
+    double dist = rnd.nextDouble() * 50; // vzdalenost od prvniho bodu STARu
     Coordinate ret = null;
     while (ret == null) {
 
@@ -301,17 +313,18 @@ public class Simulation {
 
   public static final ERandom rnd = new ERandom();
 
-  private Route getRandomRoute(boolean arrival, AirplaneType planeType) {
-    Route ret = null;
-    while (ret == null) {
-      int index = rnd.nextInt(this.activeRunwayThreshold.getRoutes().size());
-      ret = this.activeRunwayThreshold.getRoutes().get(index);
-      if (ret.getType().isArrival() != arrival
-          ||
-          !ret.isValidForCategory(planeType.category)) {
-        ret = null;
-      }
+  private Route tryGetRandomRoute(boolean arrival, AirplaneType planeType) {
+
+    Iterable<Route> rts = Acc.threshold().getRoutes();
+    List<Route> avails = Routes.getByFilter(rts, arrival, planeType.category);
+
+    if (avails.isEmpty()) {
+      return null; // if no route, return null
     }
+    int index = rnd.nextInt(avails.size());
+
+    Route ret = avails.get(index);
+
     return ret;
   }
 
@@ -350,8 +363,8 @@ public class Simulation {
       }
 
       // departed
-      if (p.isDeparture() && Acc.prm().getResponsibleAtc(p).equals(Acc.atcCtr()) &&
-          (p.getAltitude() == p.getTargetAltitude() || p.getAltitude() > 18000)) {
+      if (p.isDeparture() && Acc.prm().getResponsibleAtc(p).equals(Acc.atcCtr())
+          && (p.getAltitude() == p.getTargetAltitude() || p.getAltitude() > 18000)) {
         rem.add(p);
       }
     }
@@ -362,7 +375,46 @@ public class Simulation {
   }
 
   private void evalAirproxes() {
-    Airplanes.evaluateAirproxes(Acc.planes());    
+    Airplanes.evaluateAirproxes(Acc.planes());
+  }
+
+  public void setActiveRunwayThreshold(RunwayThreshold newRunwayThreshold) {
+    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+  }
+
+  public RunwayThreshold getActiveRunwayThreshold() {
+    return Acc.threshold();
+  }
+
+  private Route tryGeneratePointRoute(boolean arrival) {
+    //1. take points from arriving routes
+    List<Navaid> nvs = new LinkedList();
+
+    for (Runway rw : Acc.airport().getRunways()) {
+      for (RunwayThreshold rt : rw.getThresholds()) {
+        for (Route r : rt.getRoutes()) {
+          if (arrival && r.getType() == Route.eType.sid) {
+            continue;
+          } else if (!arrival && r.getType() != Route.eType.sid) {
+            continue;
+          }
+
+          Navaid n = r.getMainFix();
+
+          if (nvs.contains(n) == false) {
+            nvs.add(n);
+          }
+        }
+      }
+    }
+
+    int index = Acc.rnd().nextInt(nvs.size());
+
+    Navaid n = nvs.get(index);
+
+    Route r = Route.createNewByFix(n, arrival);
+
+    return r;
   }
 
 }

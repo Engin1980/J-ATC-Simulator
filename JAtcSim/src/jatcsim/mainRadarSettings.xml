@@ -17,7 +17,10 @@
     <dispItem key="borderCtr" color="44AAFF" width="1" />
     <dispItem key="borderTma" color="44AAFF" width="1" />
      
-    <dispItem key="mapBackcolor" color="000000" width="1" />
+    <dispItem key="mapBackcolor" color="000000" />
+    
+    <dispItem key="star" color="990099" />
+    <dispItem key="sid" color="009900" />
   </dispItems>
   
   <dispTexts>

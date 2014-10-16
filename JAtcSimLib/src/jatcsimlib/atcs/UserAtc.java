@@ -41,6 +41,9 @@ public class UserAtc extends Atc {
 
   private eErrorBehavior errorBehavior = eErrorBehavior.sendSystemErrors;
 
+  @Override
+  public void init(){}
+  
   public eErrorBehavior getErrorBehavior() {
     return errorBehavior;
   }
