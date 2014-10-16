@@ -2,6 +2,14 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="4">
         <file>
+            <url>src/jatcsimlib/airplanes/pilots/Pilot.java</url>
+            <bookmark id="4">
+                <name/>
+                <line>237</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
             <url>src/jatcsimlib/world/Route.java</url>
             <bookmark id="3">
                 <name/>
@@ -14,23 +22,8 @@
                 <key/>
             </bookmark>
         </file>
-        <file>
-            <url>src/jatcsimlib/airplanes/pilots/Pilot.java</url>
-            <bookmark id="4">
-                <name/>
-                <line>237</line>
-                <key/>
-            </bookmark>
-        </file>
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group>
-            <file>file:/C:/Users/Marek/Documents/NetBeansProjects/_JAtcSimSolution/JAtcSimLib/src/jatcsimlib/world/RunwayThreshold.java</file>
-            <file>file:/C:/Users/Marek/Documents/NetBeansProjects/_JAtcSimSolution/JAtcSimLib/src/jatcsimlib/airplanes/pilots/Pilot.java</file>
-            <file>file:/C:/Users/Marek/Documents/NetBeansProjects/_JAtcSimSolution/JAtcSimLib/src/jatcsimlib/airplanes/pilots/ApproachInfo.java</file>
-            <file>file:/C:/Users/Marek/Documents/NetBeansProjects/_JAtcSimSolution/JAtcSimLib/src/jatcsimlib/world/Approach.java</file>
-            <file>file:/C:/Users/Marek/Documents/NetBeansProjects/_JAtcSimSolution/JAtcSimLib/src/jatcsimlib/commands/CommandFormat.java</file>
-            <file>file:/C:/Users/Marek/Documents/NetBeansProjects/_JAtcSimSolution/JAtcSimLib/src/jatcsimlib/coordinates/Coordinate.java</file>
-        </group>
+        <group/>
     </open-files>
 </project-private>
