@@ -20,6 +20,9 @@ import java.util.Map;
  */
 public class Messenger {
 
+  private boolean newAtcMessage = false;
+  private boolean newPlaneMessage = false;
+
   private final Map<Object, MessageList> inner = new HashMap<>();
 
   public void addMessage(Object source, Object target, String text) {
@@ -50,8 +53,22 @@ public class Messenger {
 
   public void addMessage(Message m) {
 
+    _addMessage(m);
+  }
+
+  private void _addMessage(Message m) {
     if (inner.containsKey(m.target) == false) {
       inner.put(m.target, new MessageList());
+    }
+
+    if (m.isAtcMessage()) {
+      if (newAtcMessage == false) {
+        newAtcMessage = true;
+      }
+    } else if (m.isPlaneMessage()) {
+      if (newPlaneMessage == false) {
+        newPlaneMessage = true;
+      }
     }
 
     System.out.println("## new message " + Acc.now() + "->" + m.displayFromTime + " :: " + m.toString());
@@ -88,4 +105,18 @@ public class Messenger {
   public void remove(Message m) {
     inner.get(m.target).remove(m);
   }
+
+  public boolean isNewAtcMessage() {
+    return newAtcMessage;
+  }
+
+  public boolean isNewPlaneMessage() {
+    return newPlaneMessage;
+  }
+
+  public void resetNewMessagesFlag() {
+    newAtcMessage = false;
+    newPlaneMessage = false;
+  }
+
 }

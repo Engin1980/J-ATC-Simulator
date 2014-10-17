@@ -88,7 +88,7 @@
                 <approach type="VORDME" point="50 05 44.80 N 014 15 55.81 E" radial="128" da="1530" gaRoute="FH 124 CM 040" />
               </approaches>
               <routes>
-                <route type="star" name="GOLOP1P" route="PD GOLOP T PD SP957 T PD PR958 T PD EVEMI" />
+                <route type="star" name="GOLOP1P" route="PD GOLOP T PD PR957 T PD PR958 T PD EVEMI" />
                 <route type="star" name="VLM1P" route="PD VLM T PD PR950 T PD PR951 T PD PR952 T PD PR958 T PD EVEMI" />
                 <route type="star" name="LOMKI4P" route="PD LOMKI T PD PR707 T PD PR956 T PD PR954 T PD SOMIS" />
                 <route type="star" name="GOSEK2P" route="PD GOSEK T PD PR953 T PD PR954 T PD SOMIS" />
@@ -109,7 +109,7 @@
                 <route type="sid" name="VOZ1H" category="CD"
                        route="PD PR626 T PD PR412 T PD VOZ" />
                 <route type="sid" name="ARTUP1H" 
-                       category="PD PR626 T PD PR861 T PD ARTUP" />
+                       route="PD PR626 T PD PR861 T PD ARTUP" />
               </routes>
             </threshold>
             <threshold name="30" coordinate="50 05 25.68 N 014 16 53.02 E" initialDepartureAltitude="5000">

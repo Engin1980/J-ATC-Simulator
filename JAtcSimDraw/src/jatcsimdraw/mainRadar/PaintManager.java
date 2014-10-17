@@ -52,6 +52,12 @@ public class PaintManager {
 
   private void drawCaptions() {
     Messenger ms = simulation.getMessenger();
+    if (ms.isNewAtcMessage()){
+      SoundManager.playAtcNewMessage();
+    } else if (ms.isNewPlaneMessage()){
+      SoundManager.playPlaneNewMessage();
+    }
+    ms.resetNewMessagesFlag();
     List<Message> msgs = ms.getMy(simulation.getAppAtc(), false);
     visualiser.drawMessages(msgs);
   }
