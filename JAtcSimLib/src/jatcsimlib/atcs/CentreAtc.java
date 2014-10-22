@@ -121,7 +121,7 @@ public class CentreAtc extends ComputerAtc {
 
 
   private int getDepartureRandomTargetAltitude(Airplane p) {
-    int ret = Acc.rnd().nextInt(20, p.getAirplaneType().maxAltitude / 1000);
+    int ret = Acc.rnd().nextInt(20, p.getType().maxAltitude / 1000);
     ret = ret * 1000;
     return ret;
   }

@@ -5,7 +5,8 @@
  */
 package jatcsimlib.commands;
 
-import jatcsimlib.exceptions.ERuntimeException;
+import jatcsimlib.exceptions.ENotSupportedException;
+import jatcsimlib.global.SpeedRestriction;
 
 /**
  *
@@ -13,37 +14,31 @@ import jatcsimlib.exceptions.ERuntimeException;
  */
 public class ChangeSpeedCommand extends Command {
 
-  private static final int RESUME_OWN_SPEED = -1;
-
-  public enum eDirection {
-
-    increase,
-    decrease
-  }
-
-  private final eDirection direction;
-  private final int speedInKts;
+  private final SpeedRestriction value;
 
   public ChangeSpeedCommand() {
-    speedInKts = RESUME_OWN_SPEED;
-    direction = eDirection.increase;
+    value = null;
   }
 
-  public ChangeSpeedCommand(eDirection direction, int speedInKts) {
-    this.direction = direction;
-    this.speedInKts = speedInKts;
+  public ChangeSpeedCommand(SpeedRestriction.eDirection direction, int speedInKts) {
+    SpeedRestriction sr = new SpeedRestriction(direction, speedInKts);
+    this.value = sr;
   }
 
-  public eDirection getDirection() {
-    return direction;
+  public ChangeSpeedCommand(SpeedRestriction value) {
+    this.value = value;
+  }
+
+  public SpeedRestriction.eDirection getDirection() {
+    return value.direction;
   }
 
   public int getSpeedInKts() {
-    return speedInKts;
+    return value.speedInKts;
   }
 
   public boolean isResumeOwnSpeed() {
-    return speedInKts == RESUME_OWN_SPEED;
+    return value == null;
   }
 
   @Override
@@ -51,7 +46,20 @@ public class ChangeSpeedCommand extends Command {
     if (isResumeOwnSpeed()) {
       return "SR";
     } else {
-      return "SU/SD{" + speedInKts + '}';
+      switch (value.direction){
+        case atLeast:
+          return "SL{" + value.speedInKts + "}";
+        case atMost:
+          return "SM{" + value.speedInKts + "}";
+        case exactly:
+          return "SE{" + value.speedInKts + "}";
+        default:
+          throw new ENotSupportedException();
+      }
     }
+  }
+
+  public SpeedRestriction getSpeedRestriction() {
+    return value;
   }
 }

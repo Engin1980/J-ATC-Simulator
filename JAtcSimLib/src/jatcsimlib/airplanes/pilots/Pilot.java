@@ -31,6 +31,7 @@ import jatcsimlib.coordinates.Coordinates;
 import jatcsimlib.exceptions.ENotSupportedException;
 import jatcsimlib.exceptions.ERuntimeException;
 import jatcsimlib.global.Headings;
+import jatcsimlib.global.SpeedRestriction;
 import jatcsimlib.messaging.GoingAroundStringMessage;
 import jatcsimlib.weathers.Weather;
 import jatcsimlib.world.Navaid;
@@ -56,10 +57,21 @@ public class Pilot {
   private HoldInfo hold;
   private ApproachInfo app;
 
-  private Integer orderedSpeed;
+  private boolean orderedSpeedChanged = false;
+  private SpeedRestriction orderedSpeed;
+
+  private enum eSpeedState {
+
+    takeOff,
+    approachAndFinal,
+    departureLow,
+    arrivingLow,
+    high
+  }
+  private eSpeedState speedState;
 
   private final List<String> saidText = new LinkedList<>();
-
+  
   public String getRouteName() {
     return this.routeName;
   }
@@ -69,6 +81,7 @@ public class Pilot {
     this.routeName = routeName;
     expandThenCommands(routeCommandQueue);
     this.queue.addAll(routeCommandQueue);
+    speedState = parent.isArrival() ? eSpeedState.high : eSpeedState.takeOff;
   }
 
   public void addNewCommands(List<Command> cmds) {
@@ -222,10 +235,14 @@ public class Pilot {
         }
         break;
     } // switch
-    if (c.getAltitudeInFt() > parent.getAirplaneType().maxAltitude) {
+    if (c.getAltitudeInFt() > parent.getType().maxAltitude) {
       sayOrError(c, "too high.");
       return true;
     }
+    
+    if (app != null)
+      app = null;
+    
     parent.setTargetAltitude(c.getAltitudeInFt());
     sayIfReq(CommandFormat.format(c, true));
     return true;
@@ -234,49 +251,31 @@ public class Pilot {
   private boolean processQueueCommand(ChangeSpeedCommand c) {
     if (c.isResumeOwnSpeed()) {
       this.orderedSpeed = null;
+      this.orderedSpeedChanged = true;
+      sayIfReq(CommandFormat.format(c, true));
+      return true;
+    } else {
+      // not resume speed
 
+      SpeedRestriction sr = c.getSpeedRestriction();
+      int cMax = app == null ? parent.getType().vMaxClean : parent.getType().vMaxApp;
+      int cMin = app == null ? parent.getType().vMinClean : parent.getType().vMinApp;
+
+      if (sr.direction != SpeedRestriction.eDirection.atMost && sr.speedInKts > cMax) {
+        sayOrError(c,
+            "Unable to reach speed " + c.getSpeedInKts() + " kts, maximum is " + cMax + ".");
+        return true;
+      } else if (sr.direction != SpeedRestriction.eDirection.atLeast && sr.speedInKts < cMin) {
+        sayOrError(c,
+            "Unable to reach speed " + c.getSpeedInKts() + " kts, minimum is " + cMin + ".");
+        return true;
+      }
+
+      this.orderedSpeed = sr;
+      this.orderedSpeedChanged = true;
       sayIfReq(CommandFormat.format(c, true));
       return true;
     }
-
-    switch (c.getDirection()) {
-      case increase:
-        if (parent.getSpeed() > c.getSpeedInKts()) {
-          sayOrError(c,
-              "Cannot perform command to speed up to " + c.getSpeedInKts() + " cos we are faster.");
-          return true;
-        }
-        break;
-      case decrease:
-        if (parent.getAltitude() < c.getSpeedInKts()) {
-          sayOrError(c,
-              "Cannot perform command to descend to " + c.getSpeedInKts() + " cos we are slower.");
-          return true;
-        }
-        break;
-    } // switch
-    if (app != null) {
-      if (c.getSpeedInKts() < parent.getAirplaneType().vMinApp
-          || c.getSpeedInKts() > parent.getAirplaneType().vMaxApp) {
-        sayOrError(c,
-            "At approach, we accept only speed between "
-            + parent.getAirplaneType().vMinApp + " kts and "
-            + parent.getAirplaneType().vMaxApp + " kts.");
-        return true;
-      }
-    } else {
-      if (c.getSpeedInKts() < parent.getAirplaneType().vMinClean
-          || c.getSpeedInKts() > parent.getAirplaneType().vMaxClean) {
-        sayOrError(c,
-            "While cruise, we accept only speed between "
-            + parent.getAirplaneType().vMinClean + " kts and "
-            + parent.getAirplaneType().vMaxClean + " kts.");
-        return true;
-      }
-    } // if (app != null)
-    parent.setTargetSpeed(c.getSpeedInKts());
-    sayIfReq(CommandFormat.format(c, true));
-    return true;
   }
 
   private boolean processQueueCommand(ChangeHeadingCommand c) {
@@ -395,8 +394,9 @@ public class Pilot {
   }
 
   private boolean processQueueCommand(ClearedForTakeoffCommand c) {
-    int s = parent.getAirplaneType().vDep;
+    int s = parent.getType().vDep;
     parent.setTargetSpeed(s);
+    this.speedState = eSpeedState.takeOff;
     return true;
   }
 
@@ -655,7 +655,7 @@ public class Pilot {
         if (orderedSpeed == null && app.isAppSpeedSet == false) {
           int diff = getAppHeadingDifference();
           if (diff < 15) {
-            parent.setTargetSpeed(parent.getAirplaneType().vApp);
+            parent.setTargetSpeed(parent.getType().vApp);
             app.isAppSpeedSet = true;
           }
         }
@@ -667,7 +667,7 @@ public class Pilot {
       case finalEnter:
         // na final
         if (app.isAppSpeedSet == false) {
-          parent.setTargetSpeed(parent.getAirplaneType().vApp);
+          parent.setTargetSpeed(parent.getType().vApp);
           app.isAppSpeedSet = true;
         }
 
@@ -772,21 +772,84 @@ public class Pilot {
   }
 
   private void adjustSpeed() {
-    if (orderedSpeed != null) {
-      if (parent.getTargetSpeed() != this.orderedSpeed) {
-        parent.setTargetSpeed(this.orderedSpeed);
-      }
-    }
-    if (parent.isArrival()) {
-      if (parent.getAltitude() < 10_000) {
-        if (parent.getTargetSpeed() > 250) {
-          parent.setTargetSpeed(250);
+    switch (speedState) {
+      case takeOff:
+        if (parent.getAltitude() > Acc.airport().getAltitude() + 1500) {
+          if (parent.isDeparture()) {
+            speedState = eSpeedState.departureLow;
+          } else {
+            speedState = eSpeedState.arrivingLow;
+          }
+          setBestSpeed();
         }
-      }
+        break;
+      case departureLow:
+        if (parent.getAltitude() > 10_000) {
+          speedState = eSpeedState.high;
+          setBestSpeed();
+        }
+        break;
+      case high:
+        if (parent.isArrival() && parent.getAltitude() < 10_000) {
+          speedState = eSpeedState.arrivingLow;
+          setBestSpeed();
+        }
+        break;
+      case arrivingLow:
+        if (app != null) {
+          speedState = eSpeedState.approachAndFinal;
+          setBestSpeed();
+        }
+        break;
+    }
+
+    if (this.orderedSpeedChanged) {
+      setBestSpeed();
+    }
+  }
+
+  private void setBestSpeed() {
+    int s;
+    switch (speedState) {
+      case high:
+        s = parent.getType().vCruise;
+        break;
+      case departureLow:
+      case arrivingLow:
+        s = Math.min(parent.getType().vCruise, 250);
+        break;
+      case approachAndFinal:
+        s = parent.getType().vApp;
+        break;
+      case takeOff:
+        s = parent.getType().vDep;
+        break;
+      default:
+        throw new ENotSupportedException();
+    }
+    s = updateSpeedBySpeedRestriction(s);
+    parent.setTargetSpeed(s);
+  }
+
+  private int updateSpeedBySpeedRestriction(int speedInKts) {
+    if (this.orderedSpeed == null) {
+      return speedInKts;
     } else {
-      // is departure
-      if (parent.getAltitude() > 10_000 && parent.getTargetSpeed() != parent.getAirplaneType().vCruise) {
-        parent.setTargetSpeed(parent.getAirplaneType().vCruise);
+      switch (this.speedState) {
+        case approachAndFinal:
+        case takeOff:
+          return speedInKts;
+        default:
+          switch (this.orderedSpeed.direction) {
+            case exactly:
+              return this.orderedSpeed.speedInKts;
+            case atMost:
+              return Math.min(this.orderedSpeed.speedInKts, speedInKts);
+            case atLeast:
+              return Math.max(this.orderedSpeed.speedInKts, speedInKts);
+            default:
+              throw new ENotSupportedException();
+          }
       }
     }
   }
@@ -796,9 +859,13 @@ public class Pilot {
         parent,
         atc,
         new GoingAroundStringMessage(reason));
-    parent.setTargetSpeed(parent.getAirplaneType().vDep);
+    parent.setTargetSpeed(parent.getType().vDep);
     addNewCommands(app.approach.getGaCommands());
     app = null;
+
+    int s = parent.getType().vDep;
+    parent.setTargetSpeed(s); // ok
+    this.speedState = eSpeedState.takeOff;
   }
 
   public Atc getTunedAtc() {

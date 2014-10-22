@@ -71,12 +71,55 @@ and open the template in the editor.
   </type>  
   
   <type name="A380" category="C" maxAltitude="41000" 
-          vMinApp="135" vApp="145" vMaxApp="190"
-          vR="155" vDep="165"
-          vMinClean="210" vMaxClean="330" vCruise="287"
-          lowClimbRate="5000" highClimbRate="700"
-          lowDescendRate="1700" highDescendRate="3500"
-          speedIncreaseRate="3" speedDecreaseRate="5"
-          headingChangeRate="3">
+        vMinApp="135" vApp="145" vMaxApp="190"
+        vR="155" vDep="165"
+        vMinClean="210" vMaxClean="330" vCruise="287"
+        lowClimbRate="5000" highClimbRate="700"
+        lowDescendRate="1700" highDescendRate="3500"
+        speedIncreaseRate="3" speedDecreaseRate="5"
+        headingChangeRate="3">
   </type>
+  
+  <!-- ATR -->
+  <type name="AT72" category="B" maxAltitude="25000"
+        vMinApp="110" vApp="120" vMaxApp="145"
+        vR="110" v2="120" vDep="180"
+        vMinClean="190" vMaxClean="270" vCruise="255"
+        lowClimbRate="3000" highClimbRate="600"
+        lowDescendRate="1700" highDescendRate="1000"
+        speedIncreaseRate="2" speedDecreaseRate="3"
+        headingChangeRate="3" />
+
+    <type name="AT42" category="B" maxAltitude="25000"
+        vMinApp="90" vApp="100" vMaxApp="120"
+        vR="100" v2="110" vDep="160"
+        vMinClean="170" vMaxClean="250" vCruise="230"
+        lowClimbRate="2600" highClimbRate="500"
+        lowDescendRate="1700" highDescendRate="1000"
+        speedIncreaseRate="2" speedDecreaseRate="3"
+        headingChangeRate="3" />
+    
+  <!-- other -->
+ 
+   <type name="C172" category="A" maxAltitude="9000"
+           vMinApp="65" vApp="70" vMaxApp="80"
+           vR="65" v2="75" vDep="80"
+           vMinClean="80" vMaxClean="100" vCruise="120"
+           lowClimbRate="600" highClimbRate="200"
+           lowDescendRate="500" highDescendRate="1000"
+           speedIncreaseRate="1" speedDecreaseRate="2"
+           headingChangeRate="3" /> 
+  
+  <!-- template
+   
+  <type name="" category="" maxAltitude=""
+           vMinApp="" vApp="" vMaxApp=""
+           vR="" v2="" vDep=""
+           vMinClean="" vMaxClean="" vCruise=""
+           lowClimbRate="" highClimbRate=""
+           lowDescendRate="" highDescendRate=""
+           speedIncreaseRate="" speedDecreaseRate=""
+           headingChangeRate="" /> 
+           
+  -->
 </planeTypes>  

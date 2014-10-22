@@ -410,7 +410,7 @@ public class Airplane implements KeyItem<Callsign> {
     return sqwk;
   }
 
-  public AirplaneType getAirplaneType() {
+  public AirplaneType getType() {
     return airplaneType;
   }
 
@@ -512,6 +512,7 @@ public class Airplane implements KeyItem<Callsign> {
 
   private void adjustAltitude() {
     if (speed < airplaneType.vR) {
+      if (altitude == Acc.airport().getAltitude())
       return;
     }
 

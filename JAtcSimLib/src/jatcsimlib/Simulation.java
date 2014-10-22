@@ -187,7 +187,7 @@ public class Simulation {
     Airplane ret;
 
     Callsign cs = generateCallsign();
-    AirplaneType pt = planeTypes.get(rnd.nextInt(planeTypes.size()));
+    AirplaneType pt = planeTypes.getRandomByTraffic(Acc.airport().getTraffic());
 
     Route r = tryGetRandomRoute(true, pt);
     if (r == null) {
@@ -197,7 +197,7 @@ public class Simulation {
     Squawk sqwk = generateSqwk();
 
     int heading = (int) Coordinates.getBearing(coord, r.getMainFix().getCoordinate());
-    int alt = generateArrivingPlaneAltitude(coord);
+    int alt = generateArrivingPlaneAltitude(r);
     int spd = pt.vCruise;
 
     List<Command> routeCmds = r.getCommandsListClone();
@@ -246,9 +246,9 @@ public class Simulation {
     routeCmds.add(indx++, new ContactCommand(Atc.eType.app));
 
     // -- po vysce + 3000 rychlost na odlet
-    routeCmds.add(indx++,
-        new AfterAltitudeCommand(Acc.threshold().getParent().getParent().getAltitude() + 3000));
-    routeCmds.add(indx++, new ChangeSpeedCommand(ChangeSpeedCommand.eDirection.increase, 250));
+//    routeCmds.add(indx++,
+//        new AfterAltitudeCommand(Acc.threshold().getParent().getParent().getAltitude() + 3000));
+//    routeCmds.add(indx++, new ChangeSpeedCommand(ChangeSpeedCommand.eDirection.increase, 250));
 
     ret = new Airplane(
         cs, coord, sqwk, pt, heading, alt, spd, true,
@@ -280,7 +280,7 @@ public class Simulation {
   private Coordinate generateArrivalCoordinate(Coordinate navFix, Coordinate aipFix) {
     double radial = Coordinates.getBearing(aipFix, navFix);
     radial += rnd.nextDouble() * 50 - 25; // nahodne zatoceni priletoveho radialu
-    double dist = rnd.nextDouble() * 50; // vzdalenost od prvniho bodu STARu
+    double dist = rnd.nextDouble() * Global.MAX_ARRIVING_PLANE_DISTANCE; // vzdalenost od prvniho bodu STARu
     Coordinate ret = null;
     while (ret == null) {
 
@@ -344,12 +344,14 @@ public class Simulation {
     return ctrAtc;
   }
 
-  private int generateArrivingPlaneAltitude(Coordinate c) {
+  private int generateArrivingPlaneAltitude(Route r) {
     double thousandsFeetPerMile = 0.30;
 
-    double dist = Coordinates.getDistanceInNM(c, Acc.airport().getLocation());
+    double dist = r.getRouteLength();
+    if (dist < 0)
+      dist = Coordinates.getDistanceInNM(r.getMainFix().getCoordinate(), Acc.airport().getLocation());
 
-    int ret = (int) (dist * thousandsFeetPerMile) - rnd.nextInt(0, 7);
+    int ret = (int) (dist * thousandsFeetPerMile) + rnd.nextInt(5, 12);
     ret = ret * 1000;
     return ret;
   }

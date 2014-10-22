@@ -16,6 +16,8 @@ public class Global {
    */
   public static boolean COORDINATE_LONG = false;
   
-  public static int MAX_PLANE_COUNT = 7;
-  public static double ARRIVING_PLANE_PROBABILITY = 0.66;
+  public static double MAX_ARRIVING_PLANE_DISTANCE = 15;
+  
+  public static int MAX_PLANE_COUNT =  1; //7;
+  public static double ARRIVING_PLANE_PROBABILITY = 1; // 0.66;
 }

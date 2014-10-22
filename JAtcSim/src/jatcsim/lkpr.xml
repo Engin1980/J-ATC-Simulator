@@ -2,6 +2,176 @@
 <area icao="LKAA">
   <airports>
     <airport icao="LKPR" name="Praha Ruzyně" altitude="1247" transitionAltitude="5000">
+      <traffic categoryA="0.01" categoryB="0.01" categoryC="0.8" categoryD="0.18" />
+      <radarRange topLeft="50.5 13.0" bottomRight="49.5 15.5" />
+      <atcTemplates>
+        <atcTemplate type="ctr" name="LKAA_CTR" frequency="127.12" 
+                     releaseAltitude="14000" acceptAltitude="7000" orderedAltitude="10000" />
+        <atcTemplate type="twr" name="LKPR_TWR" frequency="118.10" 
+                     releaseAltitude="300" acceptAltitude="4000" orderedAltitude="4000" />
+        <atcTemplate type="app" name="LKPR_APP" frequency="119.00" 
+                     releaseAltitude="-1" acceptAltitude="-1" orderedAltitude="-1" />
+      </atcTemplates>
+      <runways>
+        <runway active="true">
+          <thresholds>
+            <threshold name="06" coordinate="50 06 06.61 N 014 13 34.58 E" initialDepartureAltitude="5000">
+              <approaches>
+                <approach type="ILS_I" point="50 06 06.61 N 014 13 34.58 E" radial="063" da="1380" gaRoute="CM 040" />
+                <approach type="GNSS" point="50 06 06.61 N 014 13 34.58 E" radial="062" da="1600" gaRoute="CM 040" />
+                <approach type="NDB" point="50 07 12 N 014 17 12 E" radial="062" da="1600" gaRoute="FH 062 CM 040" />                
+              </approaches>
+              <routes>
+                <route type="star" name="LOMKI5T" route="PD LOMKI T PD PR707 T PD BAROX T H BAROX" />
+                <route type="star" name="GOLOP1T" route="PD GOLOP T PD PR711 T PD PR712 T PD PR513 T PD KUVIX T FH 243" />
+                <route type="star" name="VLM1T" route="PD VLM T PD PR721 T PD PR722 T PD PR723 T PD PR523 T PD PR521 T PD AKEVA T FH 243" />
+                <route type="star" name="GOSEK2T" route="PD GOSEK T PD PR718 T PD PR719 T PD PR521 T PD AKEVA T FH 243" />
+                <route type="sid" name="VOZ1E" category="CD" 
+                       route="PD PR619 T PD PR633 T PD PR635 T PD VOZ" />
+                <route type="sid" name="VOZ1D" category="AB" 
+                       route="PD PR619 T PD PR625 T PD PR626 T PD PR627 T PD VOZ" />
+                <route type="sid" name="BALTU2E" category="CD" 
+                       route="PD PR619 T PD PR631 T PD PR632 T PD PR621 T PD ESINU T PD BALTU" />
+                <route type="sid" name="BALTU2D" category="AB" 
+                       route="PD PR619 T PD PR621 T PD ESINU T PD BALTU" />
+                <route type="sid" name="BALTU2E" category="CD" 
+                       route="PD PR619 T PD PR631 T PD PR632 T PD PR621 T PD ESINU T PD DOBEN" />
+                <route type="sid" name="BALTU2D" category="AB" 
+                       route="PD PR619 T PD PR621 T PD ESINU T PD DOBEN" />
+                <route type="sid" name="VENOX2D" category="AB" 
+                       route="PD PR619 T PD PR621 T PD PR622 T PD VENOX" />
+                <route type="sid" name="VENOX1E" category="CD" 
+                       route="PD PR619 T PD PR631 T PD PR632 T PD VENOX" />
+                <route type="sid" name="ARTUP1E" route="PD PR619 T PD PR633 T PD PR634 T PD ARTUP" />
+                
+                
+              </routes>
+            </threshold>
+            <threshold name="24" coordinate="50 06 57.43 N 014 16 24.12 E" initialDepartureAltitude="5000" preferred="true">
+              <approaches>
+                <approach type="ILS_I" point="50 06 57.43 N 014 16 24.12 E" radial="242" da="1330" gaRoute="FH 242 CM 040" />
+                <approach type="ILS_II" point="50 06 57.43 N 014 16 24.12 E" radial="242" da="1250" gaRoute="FH 242 CM 040" />
+                <approach type="ILS_III" point="50 06 57.43 N 014 16 24.12 E" radial="242" da="1247" gaRoute="FH 242 CM 040" />
+                <approach type="GNSS" point="50 06 57.43 N 014 16 24.12 E" radial="242" da="1460" gaRoute="FH 242 CM 040" />
+                <approach type="NDB" point="50 07 12 N 014 17 12 E" radial="242" da="1460" gaRoute="FH 242 CM 040" />
+              </approaches>
+              <routes>
+                <route type="star" name="VLM1S" route="PD VLM T PD PR522 T PD PR523 T PD RATEV" />
+                <route type="star" name="GOSEK2S" route="PD GOSEK T PD PR521 T PD PR523 T PD RATEV" />
+                <route type="star" name="LOMKI4S" route="PD LOMKI T PD PR511 T PD PR512 T PD PR513 T PD PR518 T PD ERASU" />
+                <route type="star" name="GOLOP1S" route="PD GOLOP T PD PR516 T PD PR517 T PD PR518 T PD ERASU" />
+                <route type="sid" name="ARTUP1M" category="AB"
+                       route="AA 017 PD PR407 T PD BAGRU T PD PR409 T PD ARTUP" />
+                <route type="sid" name="ARTUP1A" category="CD"
+                       route="PD PR402 T PD PR405 T PD PR406 T PD PR407 T PD BAGRU T PD PR409 T PD ARTUP" />
+                <route type="sid" name="VENOX1A" category="AB"
+                       route="AA 017 PD PR407 T PD VENOX" />
+                <route type="sid" name="VENOX1A" category="CD"
+                       route="PD PR402 T PD PR405 T PD PR406 T PD VENOX" />
+                <route type="sid" name="BALTU2A"
+                       route="PD PR402 T PD PR405 T PD BALTU" />
+                <route type="sid" name="DOBEN2A"
+                       route="PD PR402 T PD DOBEN" />
+                <route type="sid" name="VOZ1M" category="AB"
+                       route="AA 017 PD PR411 T PD PR412 T PD VOZ" />
+                <route type="sid" name="VOZ1A" category="CD"
+                       route="PD PR402 T PD PR403 T PD PR404 T PD VOZ" />
+              </routes>
+            </threshold>
+          </thresholds>
+        </runway>
+        <runway active="true">
+          <thresholds>
+            <threshold name="12" coordinate="50 06 28.84 N 014 14 43.32 E" initialDepartureAltitude="5000">
+              <approaches>
+                <approach type="GNSS" point="50 06 28.84 N 014 14 43.32 E" radial="124" da="1550" gaRoute="FH 124 CM 040" />
+                <approach type="ILS_I" point="50 06 28.84 N 014 14 43.32 E" radial="124" da="1350" gaRoute="FH 124 CM 040" />
+                <approach type="VORDME" point="50 05 44.80 N 014 15 55.81 E" radial="128" da="1530" gaRoute="FH 124 CM 040" />
+              </approaches>
+              <routes>
+                <route type="star" name="GOLOP1P" route="PD GOLOP T PD PR957 T PD PR958 T PD EVEMI" />
+                <route type="star" name="VLM1P" route="PD VLM T PD PR950 T PD PR951 T PD PR952 T PD PR958 T PD EVEMI" />
+                <route type="star" name="LOMKI4P" route="PD LOMKI T PD PR707 T PD PR956 T PD PR954 T PD SOMIS" />
+                <route type="star" name="GOSEK2P" route="PD GOSEK T PD PR953 T PD PR954 T PD SOMIS" />
+                <route type="sid" name="VENOX1H" 
+                       route="PD PR626 T PD PR856 T PD UTORO T PD PR858 T PD VENOX" />
+                <route type="sid" name="BALTU2H" 
+                       route="PD PR626 T PD PR856 T PD UTORO T PD PR858 T PD ESINU T PD BALTU" />
+                <route type="sid" name="DOBEN2H" category="CD"
+                       route="PD PR626 T PD PR856 T PD UTORO T PD PR858 T PD ESINU T PD DOBEN" />
+                <route type="sid" name="DOBEN1G" category="AB"
+                       route="AA 017 PD PR854 T PD PR855 T PD DOBEN" />
+                <route type="sid" name="VOZ1G" category="AB"
+                       route="AA 017 PD PR411 T PD PR404 T PD VOZ" />
+                <route type="sid" name="VOZ1Q" category="AB"
+                       route="AA 017 PD PR411 T PD PR412 T PD VOZ" />
+                <route type="sid" name="VOZ1K" category="CD"
+                       route="PD PR626 T PD PR627 T PD VOZ" />
+                <route type="sid" name="VOZ1H" category="CD"
+                       route="PD PR626 T PD PR412 T PD VOZ" />
+                <route type="sid" name="ARTUP1H" 
+                       route="PD PR626 T PD PR861 T PD ARTUP" />
+              </routes>
+            </threshold>
+            <threshold name="30" coordinate="50 05 25.68 N 014 16 53.02 E" initialDepartureAltitude="5000">
+              <approaches>
+                <approach type="ILS_I" point="50 06 28.84 N 014 14 43.32 E" radial="304" da="1380" gaRoute="FH 304 CM 040" />
+                <approach type="GNSS" point="50 06 28.84 N 014 14 43.32 E" radial="304" da="1580" gaRoute="FH 304 CM 040" />
+                <approach type="VORDME" point="50 05 44.80 N 014 15 55.81 E" radial="299" da="1630" gaRoute="FH 304 CM 040" />
+              </approaches>
+              <routes>
+                <route type="star" name="GOLOP2R" route="PD GOLOP T PD BAGRU T PD PR914 T PD PR915 T PD ARVEG" />
+                <route type="star" name="LOMKI6R" route="PD LOMKI T PD PR511 T PD PR512 T PD PR914 T PD PR915 T PD ARVEG" />
+                <route type="star" name="VLM1R" route="PD VLM T PD PR904 T PD KENOK" />
+                <route type="star" name="GOSEK3R" route="PD GOSEK T PD PR901 T PD PR902 T PD PR903 T PD PR904 T PD KENOK" />
+                <route type="sid" name="VOZ1N" category="AB"
+                       route="AA 017 PD PR807 T PD PR808 T PD VOZ" />
+                <route type="sid" name="VOZ1B" category="CD"
+                       route="PD PR813 T PD PR814 T PD PR403 T PD PR404 T PD VOZ" />
+                <route type="sid" name="DOBEN2B"
+                       route="PD PR813 T PD PR814 T PD PR817 T PD DOBEN" />
+                <route type="sid" name="BALTU2B"
+                       route="PD PR813 T PD PR815 T PD BALTU" />
+                <route type="sid" name="VENOX1B" category="CD"
+                       route="PD PR813 T PD PR815 T PD PR816 T PD VENOX" />
+                <route type="sid" name="VENOX1N" category="AB"
+                       route="AA 017 PD PR818 T PD VENOX" />
+                <route type="sid" name="ARTUP1N" category="AB"
+                       route="AA 017 PD PR818 T PD PR819 T PD ARTUP" />
+                <route type="sid" name="ARTUP1B" category="CD"
+                       route="PD PR813 T PD PR815 T PD PR816 T PD PR818 T PD PR819 T PD ARTUP" />
+              </routes>
+            </threshold>
+          </thresholds>
+        </runway>
+        <runway active="false">
+          <thresholds>
+            <threshold name="04" coordinate="50 05 15.77 N 014 16 00.06 E" initialDepartureAltitude="5000" />
+            <threshold name="22" coordinate="50 06 10.50 N 014 17 04.00 E" initialDepartureAltitude="5000" />
+          </thresholds>
+        </runway>
+      </runways> 
+      <holds>
+        <!-- generic -->
+        <hold navaidName="LOMKI" inboundRadial="091" turn="right" />
+        <hold navaidName="BAROX" inboundRadial="062" turn="left" />
+        <hold navaidName="GOSEK" inboundRadial="038" turn="left" />
+        <hold navaidName="VLM" inboundRadial="304" turn="left" />
+        <hold navaidName="GOLOP" inboundRadial="171" turn="left" />
+        <hold navaidName="OKL" inboundRadial="90" turn="right" />
+        <!-- apps  -->
+        <hold navaidName="KUVIX" inboundRadial="242" turn="right" />
+        <hold navaidName="AKEVA" inboundRadial="242" turn="left" />
+        <hold navaidName="SOMIS" inboundRadial="304" turn="left" />
+        <hold navaidName="EVEMI" inboundRadial="304" turn="right" />
+        <hold navaidName="ERASU" inboundRadial="62" turn="left" />
+        <hold navaidName="RATEV" inboundRadial="62" turn="right" />
+        <hold navaidName="ARVEG" inboundRadial="123" turn="left" />
+        <hold navaidName="KENOK" inboundRadial="304" turn="left" />
+      </holds>     
+    </airport>
+    <airport icao="LKMT" name="Ostrava Mošnov" altitude="844" transitionAltitude="5000">
+      <traffic categoryA="0.6" categoryB="0.3" categoryC="0.08" categoryD="0.02" />
       <radarRange topLeft="50.5 13.0" bottomRight="49.5 15.5" />
       <atcTemplates>
         <atcTemplate type="ctr" name="LKAA_CTR" frequency="127.12" 

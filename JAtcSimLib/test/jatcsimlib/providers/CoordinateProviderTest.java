@@ -38,5 +38,4 @@ public class CoordinateProviderTest {
     assertEquals(expResult, result, 0.01);
   }
   
-  
 }

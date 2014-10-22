@@ -13,7 +13,6 @@ import jatcsimlib.atcs.UserAtc;
 import jatcsimlib.commands.Command;
 import jatcsimlib.commands.CommandList;
 import jatcsimlib.exceptions.ENotSupportedException;
-import jatcsimlib.exceptions.ERuntimeException;
 import jatcsimlib.global.ERandom;
 import jatcsimlib.global.ETime;
 
@@ -27,10 +26,12 @@ public class Message implements Comparable<Message> {
   protected static int atcVisibleTimeInSeconds = 30;
   protected static int systemVisibleTimeInSeconds = 30;
 
-  protected static int minPlaneDelayInSeconds = 3;
-  protected static int maxPlaneDelayInSeconds = 10;
-  protected static int minAtcDelayInSeconds = 3;
-  protected static int maxAtcDelayInSeconds = 10;
+  protected static int minPlaneDelayInSeconds = 0; //3;
+  protected static int maxPlaneDelayInSeconds = 0; //10;
+  protected static int minAtcDelayInSeconds = 0; // 3;
+  protected static int maxAtcDelayInSeconds = 0; //10;
+  protected static int minUserAtcDelayInSeconds = 1;
+  protected static int maxUserAtcDelayInSeconds = 10;
 
   protected static int minSystemDelayInSeconds = 0;
   protected static int maxSystemDelayInSeconds = 0;
@@ -89,7 +90,7 @@ public class Message implements Comparable<Message> {
     } else if (source instanceof Airplane) {
       return rnd.nextInt(minPlaneDelayInSeconds, maxPlaneDelayInSeconds);
     } else if (source instanceof UserAtc) {
-      return 0;
+      return rnd.nextInt(minUserAtcDelayInSeconds, maxUserAtcDelayInSeconds);
     } else if (source instanceof Atc) {
       return rnd.nextInt(minAtcDelayInSeconds, maxAtcDelayInSeconds);
     } else {

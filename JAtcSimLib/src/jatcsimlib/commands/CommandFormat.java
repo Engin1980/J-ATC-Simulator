@@ -12,6 +12,7 @@ import jatcsimlib.exceptions.ENotSupportedException;
 import jatcsimlib.exceptions.ERuntimeException;
 import jatcsimlib.global.EStringBuilder;
 import jatcsimlib.global.Headings;
+import jatcsimlib.global.SpeedRestriction;
 import jatcsimlib.world.Approach;
 import jatcsimlib.world.Navaid;
 import jatcsimlib.world.PublishedHold;
@@ -195,6 +196,14 @@ public class CommandFormat {
       sb.append(longSentence ? "speed " : "");
       sb.append(cmd.getSpeedInKts());
       sb.append(" kts");
+      switch (cmd.getDirection()){
+        case atLeast:
+          sb.append(" or more");
+          break;
+        case atMost:
+          sb.append(" or less");
+          break;
+      }
       return sb.toString();
     }
   }
@@ -374,8 +383,8 @@ class ChangeAltitudeCmdParser extends CmdParser {
 
 class ChangeSpeedCmdParser extends CmdParser {
 
-  private static final String[] prefixes = new String[]{"SU", "SD", "SR"};
-  private static final String pattern = "((SU)|(SD)|(SR)) ?(\\d{3})?";
+  private static final String[] prefixes = new String[]{"SM", "SL", "SE", "SR"};
+  private static final String pattern = "(SR)|(?:(S[MLE]) ?(\\d{3}))";
 
   @Override
   String[] getPrefixes() {
@@ -390,34 +399,29 @@ class ChangeSpeedCmdParser extends CmdParser {
   @Override
   Command parse(RegexGrouper rg) {
 
-    if ("SR".equals(rg.getString(1))) {
-      if (rg.getString(5) != null) {
-        throw new EInvalidCommandException("\"Resume own speed\" command must not have specified speed.", rg.getMatch());
-      }
-    } else {
-      if (rg.getString(5) == null) {
-        throw new EInvalidCommandException("\"Speed up/down\" have to had speed specified.", rg.getMatch());
-      }
-    }
-
     ChangeSpeedCommand ret;
-    if ("SR".equals(rg.getString(1))) {
+    
+    // 1. gr je SR
+    // 2. gr je SL/SM/SE
+    // 3. gr je kts
+    if (rg.getString(1) != null){
       ret = new ChangeSpeedCommand();
     } else {
-      ChangeSpeedCommand.eDirection d;
-      int s;
-      switch (rg.getString(1)) {
-        case "SU":
-          d = ChangeSpeedCommand.eDirection.increase;
+      int speed = rg.getInt(3);
+      char c = rg.getString(2).charAt(1);
+      switch (c){
+        case 'L':
+          ret = new ChangeSpeedCommand(SpeedRestriction.eDirection.atLeast, speed);
           break;
-        case "SD":
-          d = ChangeSpeedCommand.eDirection.decrease;
+        case 'M':
+          ret = new ChangeSpeedCommand(SpeedRestriction.eDirection.atMost, speed);
+          break;
+        case 'E':
+          ret = new ChangeSpeedCommand(SpeedRestriction.eDirection.exactly, speed);
           break;
         default:
-          throw new ERuntimeException("Invalid prefix");
+          throw new ENotSupportedException();
       }
-      s = rg.getInt(4);
-      ret = new ChangeSpeedCommand(d, s);
     }
     return ret;
   }

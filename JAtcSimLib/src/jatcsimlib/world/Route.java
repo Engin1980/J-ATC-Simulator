@@ -10,6 +10,7 @@ import jatcsimlib.commands.Command;
 import jatcsimlib.commands.CommandFormat;
 import jatcsimlib.commands.ProceedDirectCommand;
 import jatcsimlib.commands.ToNavaidCommand;
+import jatcsimlib.coordinates.Coordinates;
 import jatcsimlib.exceptions.EBindException;
 import jatcsimlib.global.KeyItem;
 import jatcsimlib.global.MustBeBinded;
@@ -48,6 +49,26 @@ public class Route extends MustBeBinded implements KeyItem<String> {
     return name;
   }
 
+  private double calculateRouteLength() {
+    double ret = 0;
+    Navaid prev = null;
+    
+    for (Command cmd : this._routeCommands){
+      if ((cmd instanceof ProceedDirectCommand) == false) continue;
+      
+      if (prev == null)
+        prev = ((ProceedDirectCommand) cmd).getNavaid();
+      else{
+        Navaid curr = ((ProceedDirectCommand)cmd).getNavaid();
+        double dist = Coordinates.getDistanceInNM(prev.getCoordinate(), curr.getCoordinate());
+        ret += dist;
+        prev = curr;
+      }
+    }
+
+    return ret;
+  }
+
   public enum eType {
 
     sid,
@@ -68,10 +89,15 @@ public class Route extends MustBeBinded implements KeyItem<String> {
   private String category = null;
   private List<Command> _routeCommands = null;
   private List<Navaid> _routeNavaids = null;
+  private double _routeLength = -1;
   private Navaid _mainFix = null;
 
   public eType getType() {
     return type;
+  }
+  
+  public double getRouteLength(){
+    return _routeLength;
   }
 
   public String getName() {
@@ -138,6 +164,8 @@ public class Route extends MustBeBinded implements KeyItem<String> {
     } else {
       this.category = this.category.toUpperCase();
     }
+    
+    _routeLength = calculateRouteLength();
   }
 
   public List<Command> getCommands() {

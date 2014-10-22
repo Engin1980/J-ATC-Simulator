@@ -8,8 +8,6 @@ package jatcsimdraw.mainRadar;
 import jatcsimlib.exceptions.ERuntimeException;
 import java.io.File;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;

@@ -20,8 +20,8 @@ import java.util.Map;
  */
 public class Messenger {
 
-  private boolean newAtcMessage = false;
-  private boolean newPlaneMessage = false;
+  private boolean newAtcMessageForUserAtc = false;
+  private boolean newPlaneMessageForUserAtc = false;
 
   private final Map<Object, MessageList> inner = new HashMap<>();
 
@@ -61,17 +61,16 @@ public class Messenger {
       inner.put(m.target, new MessageList());
     }
 
-    if (m.isAtcMessage()) {
-      if (newAtcMessage == false) {
-        newAtcMessage = true;
+    if (m.isAtcMessage() && m.target == Acc.atcApp()) {
+      if (newAtcMessageForUserAtc == false) {
+        newAtcMessageForUserAtc = true;
       }
-    } else if (m.isPlaneMessage()) {
-      if (newPlaneMessage == false) {
-        newPlaneMessage = true;
+    } else if (m.isPlaneMessage() && m.target == Acc.atcApp()) {
+      if (newPlaneMessageForUserAtc == false) {
+        newPlaneMessageForUserAtc = true;
       }
     }
 
-    System.out.println("## new message " + Acc.now() + "->" + m.displayFromTime + " :: " + m.toString());
     inner.get(m.target).add(m);
   }
 
@@ -107,16 +106,16 @@ public class Messenger {
   }
 
   public boolean isNewAtcMessage() {
-    return newAtcMessage;
+    return newAtcMessageForUserAtc;
   }
 
   public boolean isNewPlaneMessage() {
-    return newPlaneMessage;
+    return newPlaneMessageForUserAtc;
   }
 
   public void resetNewMessagesFlag() {
-    newAtcMessage = false;
-    newPlaneMessage = false;
+    newAtcMessageForUserAtc = false;
+    newPlaneMessageForUserAtc = false;
   }
 
 }
