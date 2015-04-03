@@ -26,8 +26,8 @@ public class SoundManager {
   private static Clip atcClip = null;
 
   static {
-    File planeMessageFile = new File("C:\\Users\\Marek\\Documents\\NetBeansProjects\\_JAtcSimSolution\\JAtcSim\\src\\jatcsim\\plane.wav");
-    File atcMessageFile = new File("C:\\Users\\Marek\\Documents\\NetBeansProjects\\_JAtcSimSolution\\JAtcSim\\src\\jatcsim\\atc.wav");
+    File planeMessageFile = new File("C:\\Users\\Marek Vajgl\\Documents\\NetBeansProjects\\_JAtcSimSolution\\JAtcSim\\src\\jatcsim\\plane.wav");
+    File atcMessageFile = new File("C:\\Users\\Marek Vajgl\\Documents\\NetBeansProjects\\_JAtcSimSolution\\JAtcSim\\src\\jatcsim\\atc.wav");
     try {
       planeMessageStream = AudioSystem.getAudioInputStream(planeMessageFile);
       atcMessageStream = AudioSystem.getAudioInputStream(atcMessageFile);
