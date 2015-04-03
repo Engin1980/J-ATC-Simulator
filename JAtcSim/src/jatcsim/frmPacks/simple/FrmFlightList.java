@@ -18,10 +18,8 @@ import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.awt.geom.Rectangle2D;
 import java.util.LinkedList;
 import java.util.List;
-import javax.swing.DefaultListModel;
 import javax.swing.JComponent;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
@@ -36,9 +34,6 @@ import javax.swing.event.ListDataListener;
  */
 public class FrmFlightList extends javax.swing.JFrame {
 
-  /**
-   * Creates new form FrmFlightList
-   */
   public FrmFlightList() {
     initComponents();
   }

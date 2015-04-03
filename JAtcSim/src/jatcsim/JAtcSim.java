@@ -5,6 +5,7 @@
  */
 package jatcsim;
 
+import jatcsim.startup.FrmOtherStartup;
 import jatcsim.startup.FrmStartup;
 import jatcsimdraw.mainRadar.settings.Settings;
 import jatcsimlib.Simulation;
@@ -34,22 +35,28 @@ public class JAtcSim {
    */
   public static void main(String[] args) throws Exception {
 
+//    FrmOtherStartup fos = new FrmOtherStartup();
+//    fos.setVisible(true);
+//    
+//    Thread ot = new JFrameThread(fos);
+//    ot.start();
+//    ot.join();
+//    System.exit(1);
+    
     FrmStartup fs = new FrmStartup();
     fs.eInit();
-
+    fs.setVisible(true);
+    
     System.out.println("BEF");
     Thread stf = new JFrameThread(fs);
     stf.start();
     stf.join();
     System.out.println("AFT");
 
-    if (fs.isDataValid() == false) {
-      System.exit(0);
-    }
-
-//    while (fs.isVisible()){
-//      Thread.sleep(500);
+//    if (fs.isDataValid() == false) {
+//      System.exit(0);
 //    }
+
     // loading data
     try {
       loadDataFromXmlFiles();
@@ -82,17 +89,17 @@ public class JAtcSim {
     try {
       area = Area.create();
       ser.fillObject(
-        "C:\\Users\\Marek\\Documents\\NetBeansProjects\\_JAtcSimSolution\\JAtcSim\\src\\jatcsim\\lkpr.xml",
+        "C:\\Users\\Marek Vajgl\\Documents\\NetBeansProjects\\_JAtcSimSolution\\JAtcSim\\src\\jatcsim\\lkpr.xml",
         area);
 
       displaySettings = new Settings();
       ser.fillObject(
-        "C:\\Users\\Marek\\Documents\\NetBeansProjects\\_JAtcSimSolution\\JAtcSim\\src\\jatcsim\\mainRadarSettings.xml",
+        "C:\\Users\\Marek Vajgl\\Documents\\NetBeansProjects\\_JAtcSimSolution\\JAtcSim\\src\\jatcsim\\mainRadarSettings.xml",
         displaySettings);
 
       types = new AirplaneTypes();
       ser.fillList(
-        "C:\\Users\\Marek\\Documents\\NetBeansProjects\\_JAtcSimSolution\\JAtcSim\\src\\jatcsim\\planeTypes.xml",
+        "C:\\Users\\Marek Vajgl\\Documents\\NetBeansProjects\\_JAtcSimSolution\\JAtcSim\\src\\jatcsim\\planeTypes.xml",
         types);
 
     } catch (Exception ex) {
