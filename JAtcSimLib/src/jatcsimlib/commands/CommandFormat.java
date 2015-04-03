@@ -179,7 +179,7 @@ public class CommandFormat {
         sb.append(longSentence ? "climb and maintain " : "CM ");
         break;
       case descend:
-        sb.append(longSentence ? "descend and maintain " : "CM ");
+        sb.append(longSentence ? "descend and maintain " : "DM ");
         break;
       default:
         throw new ENotSupportedException();
