@@ -5,8 +5,9 @@
  */
 package jatcsimlib.world;
 
-import jatcsimlib.commands.CommandFormat;
 import jatcsimlib.commands.CommandList;
+import jatcsimlib.commands.formatting.Parser;
+import jatcsimlib.commands.formatting.ShortParser;
 import jatcsimlib.coordinates.Coordinate;
 import jatcsimlib.global.KeyItem;
 import jatcsimlib.global.MustBeBinded;
@@ -83,8 +84,9 @@ public class Approach extends MustBeBinded implements KeyItem<Approach.eType> {
 
   @Override
   protected void _bind() {
+    Parser p = new ShortParser();
     _gaCommands
-        = CommandFormat.parseMulti(gaRoute);
+        = p.parseMulti(gaRoute);
   }
 
   public double getGlidePathPerNM() {

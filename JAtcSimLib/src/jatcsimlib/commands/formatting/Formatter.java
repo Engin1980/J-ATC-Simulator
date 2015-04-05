@@ -12,6 +12,7 @@ import jatcsimlib.commands.*;
  * @author Marek Vajgl
  */
 public interface Formatter {
+  
   public String format(AfterAltitudeCommand cmd);
   public String format(AfterNavaidCommand cmd);
   public String format(AfterSpeedCommand cmd);
@@ -25,5 +26,5 @@ public interface Formatter {
   public String format(ProceedDirectCommand cmd);
   public String format(ShortcutCommand cmd);
   public String format(ThenCommand cmd);
-  public String format (ToNavaidCommand cmd);
+  public String format(ToNavaidCommand cmd);
 }

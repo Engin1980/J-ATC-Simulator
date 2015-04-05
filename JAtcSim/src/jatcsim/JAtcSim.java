@@ -5,7 +5,6 @@
  */
 package jatcsim;
 
-import jatcsim.startup.FrmOtherStartup;
 import jatcsim.startup.FrmStartup;
 import jatcsimdraw.mainRadar.settings.Settings;
 import jatcsimlib.Simulation;
@@ -16,8 +15,6 @@ import jatcsimlib.world.Area;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Calendar;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JFrame;
 
 /**

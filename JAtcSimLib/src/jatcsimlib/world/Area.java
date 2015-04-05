@@ -7,7 +7,8 @@ package jatcsimlib.world;
 
 import jatcsimlib.Acc;
 import jatcsimlib.commands.Command;
-import jatcsimlib.commands.CommandFormat;
+import jatcsimlib.commands.formatting.Parser;
+import jatcsimlib.commands.formatting.ShortParser;
 import jatcsimlib.exceptions.ERuntimeException;
 import jatcsimlib.global.KeyList;
 import java.util.ArrayList;
@@ -95,6 +96,7 @@ public class Area {
   }
 
   private void checkRouteCommands() {
+    Parser parser = new ShortParser();
     List<Command> cmds;
     Navaid n;
     for (Airport a : this.getAirports()) {
@@ -103,7 +105,7 @@ public class Area {
         for (RunwayThreshold t : r.getThresholds()) {
           for (Approach p : t.getApproaches()) {
             try {
-              cmds = CommandFormat.parseMulti(p.getGaRoute());
+              cmds = parser.parseMulti(p.getGaRoute());
             } catch (Exception ex) {
               throw new ERuntimeException(
                   String.format("Airport %s runway %s approach %s has invalid go-around route commands: %s (error: %s)",
@@ -113,7 +115,7 @@ public class Area {
 
           for (Route o : t.getRoutes()) {
             try {
-              cmds = CommandFormat.parseMulti(o.getRoute());
+              cmds = parser.parseMulti(o.getRoute());
             } catch (Exception ex) {
               throw new ERuntimeException(
                   String.format("Airport %s runway %s route %s has invalid commands: %s (error: %s)",

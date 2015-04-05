@@ -19,13 +19,15 @@ import jatcsimlib.commands.ChangeSpeedCommand;
 import jatcsimlib.commands.ClearedForTakeoffCommand;
 import jatcsimlib.commands.ClearedToApproachCommand;
 import jatcsimlib.commands.Command;
-import jatcsimlib.commands.CommandFormat;
 import jatcsimlib.commands.ContactCommand;
 import jatcsimlib.commands.HoldCommand;
 import jatcsimlib.commands.ProceedDirectCommand;
 import jatcsimlib.commands.ShortcutCommand;
 import jatcsimlib.commands.ThenCommand;
 import jatcsimlib.commands.ToNavaidCommand;
+import jatcsimlib.commands.formatting.Formatter;
+import jatcsimlib.commands.formatting.Formatters;
+import jatcsimlib.commands.formatting.LongFormatter;
 import jatcsimlib.coordinates.Coordinate;
 import jatcsimlib.coordinates.Coordinates;
 import jatcsimlib.exceptions.ENotSupportedException;
@@ -49,7 +51,7 @@ public class Pilot {
   private Atc atc = null;
   private final Airplane parent;
   private final String routeName;
-  private final List<Command> queue = new LinkedList<>();
+  private final List<Command> queue = new LinkedList<>();  
 
   private final AfterCommandList afterCommands = new AfterCommandList();
 
@@ -59,6 +61,8 @@ public class Pilot {
 
   private boolean orderedSpeedChanged = false;
   private SpeedRestriction orderedSpeed;
+  
+  private static final Formatter cmdFmt = new LongFormatter();
 
   private enum eSpeedState {
 
@@ -216,7 +220,7 @@ public class Pilot {
       app = null;
     }
     targetCoordinate = c.getNavaid().getCoordinate();
-    sayIfReq(CommandFormat.format(c, true));
+    sayIfReq(cmdFmt.format(c));
     return true;
   }
 
@@ -244,7 +248,7 @@ public class Pilot {
       app = null;
     
     parent.setTargetAltitude(c.getAltitudeInFt());
-    sayIfReq(CommandFormat.format(c, true));
+    sayIfReq(cmdFmt.format(c));
     return true;
   }
 
@@ -252,7 +256,7 @@ public class Pilot {
     if (c.isResumeOwnSpeed()) {
       this.orderedSpeed = null;
       this.orderedSpeedChanged = true;
-      sayIfReq(CommandFormat.format(c, true));
+      sayIfReq(cmdFmt.format(c));
       return true;
     } else {
       // not resume speed
@@ -273,7 +277,7 @@ public class Pilot {
 
       this.orderedSpeed = sr;
       this.orderedSpeedChanged = true;
-      sayIfReq(CommandFormat.format(c, true));
+      sayIfReq(cmdFmt.format(c));
       return true;
     }
   }
@@ -305,7 +309,7 @@ public class Pilot {
 
     parent.setTargetHeading(targetHeading, leftTurn);
 
-    sayIfReq(CommandFormat.format(c, true));
+    sayIfReq(cmdFmt.format(c));
     return true;
   }
 
@@ -325,7 +329,7 @@ public class Pilot {
         throw new ENotSupportedException();
     }
     // confirmation to previous atc
-    sayIfReq(CommandFormat.format(c, true));
+    sayIfReq(cmdFmt.format(c));
     sayToAtc();
 
     // change of atc
@@ -347,7 +351,7 @@ public class Pilot {
         this.queue.remove(i);
       }
     }
-    sayIfReq(CommandFormat.format(c, true));
+    sayIfReq(cmdFmt.format(c));
     return true;
   }
 
@@ -370,7 +374,7 @@ public class Pilot {
     } else {
       this.app = new ApproachInfo(c.getApproach());
 
-      sayIfReq(CommandFormat.format(c, true));
+      sayIfReq(cmdFmt.format(c));
     }
 
     return true;
@@ -389,7 +393,7 @@ public class Pilot {
     hold.isLeftTurned = c.isLeftTurn();
     hold.phase = HoldInfo.ePhase.beginning;
 
-    sayIfReq(CommandFormat.format(c, true));
+    sayIfReq(cmdFmt.format(c));
     return true;
   }
 
@@ -401,7 +405,10 @@ public class Pilot {
   }
 
   private void sayOrError(Command c, String text) {
-    String s = "Not able to process command " + CommandFormat.format(c, true) + ", because: " + text;
+    String s =String.format(
+      "Not able to process command %s, because %s.",
+      Formatters.format(c, cmdFmt),
+      text);
     say(s);
   }
 

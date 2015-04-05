@@ -7,9 +7,10 @@ package jatcsimlib.world;
 
 import jatcsimlib.commands.ChangeHeadingCommand;
 import jatcsimlib.commands.Command;
-import jatcsimlib.commands.CommandFormat;
 import jatcsimlib.commands.ProceedDirectCommand;
 import jatcsimlib.commands.ToNavaidCommand;
+import jatcsimlib.commands.formatting.Parser;
+import jatcsimlib.commands.formatting.ShortParser;
 import jatcsimlib.coordinates.Coordinates;
 import jatcsimlib.exceptions.EBindException;
 import jatcsimlib.global.KeyItem;
@@ -131,7 +132,8 @@ public class Route extends MustBeBinded implements KeyItem<String> {
   @Override
   protected void _bind() {
     try {
-      _routeCommands = CommandFormat.parseMulti(this.route);
+      Parser p = new ShortParser();
+      _routeCommands = p.parseMulti(this.route);
     } catch (Exception ex) {
       throw new EBindException("Parsing commands failed for route " + this.name + ". Route commands contain error (see cause).", ex);
     }

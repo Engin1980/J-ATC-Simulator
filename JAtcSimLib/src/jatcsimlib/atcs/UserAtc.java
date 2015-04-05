@@ -10,8 +10,9 @@ import jatcsimlib.airplanes.Airplane;
 import jatcsimlib.airplanes.Airplanes;
 import jatcsimlib.airplanes.Callsign;
 import jatcsimlib.airplanes.Squawk;
-import jatcsimlib.commands.CommandFormat;
 import jatcsimlib.commands.CommandList;
+import jatcsimlib.commands.formatting.Parser;
+import jatcsimlib.commands.formatting.ShortParser;
 import jatcsimlib.exceptions.ENotSupportedException;
 import jatcsimlib.exceptions.ERuntimeException;
 
@@ -20,6 +21,8 @@ import jatcsimlib.exceptions.ERuntimeException;
  * @author Marek
  */
 public class UserAtc extends Atc {
+  
+  private Parser parser = new ShortParser();
 
   private void raiseError(String string) {
     switch (this.errorBehavior) {
@@ -80,7 +83,7 @@ public class UserAtc extends Atc {
 
     CommandList cmdList;
     try {
-      cmdList = CommandFormat.parseMulti(commands);
+      cmdList = parser.parseMulti(commands);
     } catch (Exception ex) {
       raiseError(ex.getMessage());
       return;
