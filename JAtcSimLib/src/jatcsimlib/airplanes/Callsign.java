@@ -39,6 +39,10 @@ public class Callsign {
     return number;
   }
 
+  /**
+   * Returns company and number together, without separating space, e.g. EZY5405.
+   * @return Company and number together
+   */
   @Override
   public String toString() {
     return company + number;
