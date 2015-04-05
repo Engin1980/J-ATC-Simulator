@@ -11,25 +11,45 @@ package jatcsimlib.global;
  * @author Marek
  */
 public class EStringBuilder {
-  private final StringBuilder sb = new StringBuilder();
+  private final StringBuilder sb;
 
-  public void append(String text){
-    sb.append(text);
+  public EStringBuilder(){
+    sb = new StringBuilder();
+  }
+  public EStringBuilder(int initialCapacity){
+    sb = new StringBuilder(initialCapacity);
   }
   
-  public void appendFormat(String format, String... args){
+  public void clear(){
+    sb.setLength(0);
+  }
+  
+  public EStringBuilder append(String text){
+    sb.append(text);
+    return this;
+  }
+  
+  public EStringBuilder appendFormat(String format, Object... args){
     append(
       String.format(format, (Object[]) args));
+    return this;
   }
   
-  public void appendFormatLine(String format, String... args){
+  public EStringBuilder appendFormatLine(String format, Object... args){
     appendLine(
       String.format(format, (Object[]) args));
+    return this;
   }
   
-  public void appendLine(String line){
+  public EStringBuilder appendLine(String line){
     append(line);
     append("\r\n");
+    return this;
+  }
+  
+  public EStringBuilder appendLine(){
+    this.appendLine("");
+    return this;
   }
   
   @Override
