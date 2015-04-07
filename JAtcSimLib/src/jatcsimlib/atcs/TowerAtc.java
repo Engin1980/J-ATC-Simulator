@@ -105,7 +105,7 @@ public class TowerAtc extends ComputerAtc {
 
       CommandList cmdList = new CommandList();
       cmdList.add(new ClearedForTakeoffCommand());
-      Acc.messenger().addMessage(this, p, cmdList);
+      Acc.messenger().addMessage(Message.create(this, p, cmdList));
     }
   }
 
@@ -153,8 +153,8 @@ public class TowerAtc extends ComputerAtc {
     // TWR -> APP, zadost na APP
     AirplaneList plns = getPlanesReadyForApp();
     for (Airplane p : plns) {
-      Acc.messenger().addMessage(this, Acc.atcApp(),
-          new PlaneSwitchMessage(p, " to you"));
+      Acc.messenger().addMessage(Message.create(this, Acc.atcApp(),
+          new PlaneSwitchMessage(p, " to you")));
 
       getPrm().requestSwitch(this, Acc.atcApp(), p);
 
@@ -163,8 +163,8 @@ public class TowerAtc extends ComputerAtc {
     // opakovani starych zadosti
     List<Airplane> awaitings = waitingRequestsList.getAwaitings();
     for (Airplane p : awaitings) {
-      Acc.messenger().addMessage(this, Acc.atcApp(),
-          new PlaneSwitchMessage(p, " to you (repeated)"));
+      Acc.messenger().addMessage(Message.create(this, Acc.atcApp(),
+          new PlaneSwitchMessage(p, " to you (repeated)")));
     }
   }
 
@@ -206,10 +206,10 @@ public class TowerAtc extends ComputerAtc {
         RunwayChangeInfo rci = new RunwayChangeInfo(suggestedThreshold, Acc.now().addSeconds(15 * 60)); // change in 15 minutes
         if (this.runwayChangeInfo == null || this.runwayChangeInfo.newRunwayThreshold != suggestedThreshold) {
           this.runwayChangeInfo = rci;
-          Acc.messenger().addMessage(
+          Acc.messenger().addMessage(Message.create(
               this,
               Acc.atcApp(),
-              "Change to runway " + rci.newRunwayThreshold.getName() + " at " + rci.changeTime.toString());
+              "Change to runway " + rci.newRunwayThreshold.getName() + " at " + rci.changeTime.toString()));
         }
       }
     } else if (this.runwayChangeInfo != null && this.runwayChangeInfo.changeTime.isBefore(Acc.now())){
@@ -261,10 +261,10 @@ public class TowerAtc extends ComputerAtc {
   }
 
   private void changeRunwayInUse(RunwayThreshold newRunwayInUseThreshold) {
-    Acc.messenger().addMessage(
+    Acc.messenger().addMessage(Message.create(
           this,
           Acc.atcApp(),
-          "Runway in use " + newRunwayInUseThreshold.getName());
+          "Runway in use " + newRunwayInUseThreshold.getName()));
       this.runwayThresholdInUse = newRunwayInUseThreshold;
   }
 

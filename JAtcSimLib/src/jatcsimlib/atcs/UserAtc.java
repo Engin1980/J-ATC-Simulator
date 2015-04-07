@@ -15,6 +15,9 @@ import jatcsimlib.commands.formatting.Parser;
 import jatcsimlib.commands.formatting.ShortParser;
 import jatcsimlib.exceptions.ENotSupportedException;
 import jatcsimlib.exceptions.ERuntimeException;
+import jatcsimlib.messaging.Message;
+import jatcsimlib.messaging.Messenger;
+import jatcsimlib.messaging.StringMessage;
 
 /**
  *
@@ -101,7 +104,7 @@ public class UserAtc extends Atc {
   }
 
   private void sendToPlane(Airplane plane, CommandList commands) {
-    Acc.messenger().addMessage(this, plane, commands);
+    Acc.messenger().addMessage(Message.create(this, plane, commands));
   }
 
   public void sendToAtc(Atc.eType type, String sqwkAsString) {
@@ -143,15 +146,18 @@ public class UserAtc extends Atc {
     }
 
     PlaneSwitchMessage msg = new PlaneSwitchMessage(plane);
-    Acc.messenger().addMessage(this, atc, msg);
+    Acc.messenger().addMessage(Message.create(this, atc, msg));
   }
 
   public void sendError(String message) {
-    Acc.messenger().addMessage(null, this, message);
+    Acc.messenger().addMessage(Message.createFromSystem(this, message));
   }
 
   public void sendSystem(String message) {
-    throw new ENotSupportedException();
+    if (message.trim().equals("?")){
+      Message m = Message.createForSystem (this, message.trim());
+      Acc.messenger().addMessage(m);
+    }
   }
 
 }

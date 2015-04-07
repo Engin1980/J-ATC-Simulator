@@ -29,6 +29,7 @@ import jatcsimlib.world.Navaid;
 import jatcsimlib.world.Runway;
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -59,7 +60,7 @@ public class BasicVisualiser extends Visualiser {
     p.drawTextBlock(ms.plane, Painter.eTextBlockLocation.bottomLeft, dt.getFont(), dt.getColor());
 
     dt = sett.getDispText(DispText.eType.system);
-    p.drawTextBlock(ms.system, Painter.eTextBlockLocation.topRight, dt.getFont(), dt.getColor());
+    p.drawTextBlock(decodeSystemMultilines(ms.system), Painter.eTextBlockLocation.topRight, dt.getFont(), dt.getColor());
   }
 
   @Override
@@ -253,12 +254,12 @@ public class BasicVisualiser extends Visualiser {
     MessageSet ret = new MessageSet();
 
     for (Message m : msgs) {
-      if (m.isSystemMessage()) {
+      if (m.isFromSystemMessage()) {
         ret.system.add(">> " + m.getAsString().text);
-      } else if (m.isAtcMessage()) {
+      } else if (m.isFromAtcMessage()) {
         Atc atc = (Atc) m.source;
         ret.atc.add(atc.getName() + ": " + m.toContentString());
-      } else if (m.isPlaneMessage()) {
+      } else if (m.isFromPlaneMessage()) {
         Airplane p = (Airplane) m.source;
         ret.plane.add(p.getCallsign().toString() + ": " + m.getAsString().text);
       } else {
@@ -312,6 +313,16 @@ public class BasicVisualiser extends Visualiser {
     lst.add(time.toString());
     p.drawTextBlock(lst, Painter.eTextBlockLocation.topLeft, dt.getFont(), dt.getColor());
 
+  }
+
+  private List<String> decodeSystemMultilines(List<String> system) {
+    List<String> ret = new ArrayList<>();
+    String del = "\r\n";
+    for(String s : system){
+      String [] spl = s.split(del);
+      ret.addAll(Arrays.asList(spl));
+    }
+    return ret;
   }
 }
 

@@ -7,6 +7,7 @@ package jatcsimlib.atcs;
 
 import jatcsimlib.Acc;
 import jatcsimlib.airplanes.Airplane;
+import jatcsimlib.messaging.Message;
 import java.util.List;
 
 /**
@@ -34,8 +35,8 @@ public abstract class ComputerAtc extends Atc {
     // opakovani starych zadosti
     List<Airplane> awaitings = waitingRequestsList.getAwaitings();
     for (Airplane p : awaitings) {
-      Acc.messenger().addMessage(this, Acc.atcApp(),
-          new PlaneSwitchMessage(p, " to you (repeated)"));
+      Acc.messenger().addMessage(Message.create(this, Acc.atcApp(),
+          new PlaneSwitchMessage(p, " to you (repeated)")));
     }
 
   }
@@ -43,22 +44,22 @@ public abstract class ComputerAtc extends Atc {
   protected void requestSwitch(Airplane plane) {
     getPrm().requestSwitch(this, Acc.atcApp(), plane);
 
-    Acc.messenger().addMessage(this, Acc.atcApp(),
-        new PlaneSwitchMessage(plane, " to you"));
+    Acc.messenger().addMessage(Message.create(this, Acc.atcApp(),
+        new PlaneSwitchMessage(plane, " to you")));
   }
 
   protected void refuseSwitch(Airplane plane) {
     getPrm().refuseSwitch(this, plane);
 
-    Acc.messenger().addMessage(this, Acc.atcApp(),
-        new PlaneSwitchMessage(plane, " refused. Not in my coverage."));
+    Acc.messenger().addMessage(Message.create(this, Acc.atcApp(),
+        new PlaneSwitchMessage(plane, " refused. Not in my coverage.")));
   }
 
   protected void confirmSwitch(Airplane plane) {
     getPrm().confirmSwitch(this, plane);
 
-    Acc.messenger().addMessage(this, Acc.atcApp(),
-        new PlaneSwitchMessage(plane, " accepted"));
+    Acc.messenger().addMessage(Message.create(this, Acc.atcApp(),
+        new PlaneSwitchMessage(plane, " accepted")));
   }
   
   protected void approveSwitch(Airplane plane) {

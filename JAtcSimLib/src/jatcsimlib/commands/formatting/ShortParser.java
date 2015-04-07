@@ -110,6 +110,28 @@ public class ShortParser implements Parser {
 
     return null;
   }
+  
+  @Override
+  public String getHelp(){
+    EStringBuilder sb = new EStringBuilder();
+    
+    sb.appendLine("FH - fly heading; TL - turn left; TR - turn right");
+    sb.appendLine("MA - maintain altitude; CM - climb; DM - descend");
+    sb.appendLine("SE - speed exact; SM - speed at most; SL - speed at least; SR - own speed");
+    sb.appendLine("T - then; AA - after altitude; AN - after fix; AS - after speed");
+    sb.appendLine("CT - contact tower; CA - contact approach; CC - contact center");
+    sb.appendLine("C - cleared for approach (see details); C (I|II|III|G|V|R) [runway]");
+    sb.appendLine("PD - proceed direct");
+    sb.appendLine("SH - shortcut to");
+    sb.appendLine("H - hold (see details); H P [navaid] - hold as published");
+    
+    return sb.toString();
+  }
+
+  @Override
+  public String getHelp(String commandPrefix) {
+    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+  }
 }
 
 // <editor-fold defaultstate="collapsed" desc=" CmdParser + implementations ">

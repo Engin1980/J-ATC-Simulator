@@ -20,36 +20,20 @@ import java.util.Map;
  */
 public class Messenger {
 
+  /**
+   * Flag if is some new atc message for user added.
+   */
   private boolean newAtcMessageForUserAtc = false;
+  /**
+   * Flag if is some new plane message for user added.
+   */
   private boolean newPlaneMessageForUserAtc = false;
-
+  /**
+   * 
+   */
+  private boolean newSystemMessageForUserAtc = false;
+  
   private final Map<Object, MessageList> inner = new HashMap<>();
-
-  public void addMessage(Object source, Object target, String text) {
-    Message m = new Message(source, target, new StringMessage(text));
-    addMessage(m);
-  }
-
-  public void addMessage(Object source, Object target, Command content) {
-    CommandList cmds = new CommandList();
-    cmds.add(content);
-    Message m = new Message(source, target, cmds);
-    addMessage(m);
-  }
-
-  public void addMessage(Object source, Object target, IContent content) {
-    Message m = new Message(source, target, content);
-    addMessage(m);
-  }
-
-  public void addMessage(int delay, Object source, Object target, IContent content) {
-    Message m = new Message(Acc.now().addSeconds(delay), source, target, content);
-    addMessage(m);
-  }
-
-  public void addMessage(int delay, Object source, Object target, String content) {
-    addMessage(delay, source, target, new StringMessage(content));
-  }
 
   public void addMessage(Message m) {
 
@@ -61,13 +45,18 @@ public class Messenger {
       inner.put(m.target, new MessageList());
     }
 
-    if (m.isAtcMessage() && m.target == Acc.atcApp()) {
+    if (m.isFromAtcMessage() && m.target == Acc.atcApp()) {
       if (newAtcMessageForUserAtc == false) {
         newAtcMessageForUserAtc = true;
       }
-    } else if (m.isPlaneMessage() && m.target == Acc.atcApp()) {
+    } else if (m.isFromPlaneMessage() && m.target == Acc.atcApp()) {
       if (newPlaneMessageForUserAtc == false) {
         newPlaneMessageForUserAtc = true;
+      }
+    }
+    if (m.isFromSystemMessage() && m.target == Acc.atcApp()){
+      if (newSystemMessageForUserAtc == false){
+        newSystemMessageForUserAtc = true;
       }
     }
 
@@ -78,16 +67,43 @@ public class Messenger {
     return Acc.now().toString();
   }
 
+  /**
+   * Deletes messages older than ETime.
+   * @param time Minimal ETime of deleted messages.
+   */
   public void deleteOldMessages(ETime time) {
     for (Object key : inner.keySet()) {
       inner.get(key).removeOld(time);
     }
   }
+  
+  /**
+   * Returns all system messages.
+   * @param clearRetrieved
+   * @return 
+   */
+  public List<Message> getSystems (boolean clearRetrieved){
+    return getMy(Message.SYSTEM, clearRetrieved);
+  }
 
+  /**
+   * Returns all messages submitted for "target" object.
+   * @param target What is target object, which items should be returned?
+   * @param clearRetrieved Clear items which were returned?
+   * @return Messages of the "target" object.
+   */
   public List<Message> getMy(Object target, boolean clearRetrieved) {
     return getMy(target, Acc.now(), clearRetrieved);
   }
+  
 
+  /**
+   * Returns all messages submitted for "target" object older than ETime.
+   * @param target What is target object, which items should be returned?
+   * @param time Only older messages than this time will be returned.
+   * @param cleanRetrieved Clear items which were returned?
+   * @return Messages of the "target" object older than ETime
+   */
   public List<Message> getMy(Object target, ETime time, boolean cleanRetrieved) {
     if (inner.containsKey(target) == false) {
       return new ArrayList<>();
@@ -101,6 +117,10 @@ public class Messenger {
     return ret;
   }
 
+  /**
+   * Removes specific message
+   * @param m Message to remove
+   */
   public void remove(Message m) {
     inner.get(m.target).remove(m);
   }
@@ -113,9 +133,13 @@ public class Messenger {
     return newPlaneMessageForUserAtc;
   }
 
+  public boolean isNewSystemMessage(){
+    return newSystemMessageForUserAtc;
+  }
+  
   public void resetNewMessagesFlag() {
     newAtcMessageForUserAtc = false;
     newPlaneMessageForUserAtc = false;
+    newSystemMessageForUserAtc = false;
   }
-
 }

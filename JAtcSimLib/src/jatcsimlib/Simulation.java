@@ -21,6 +21,7 @@ import jatcsimlib.commands.ChangeAltitudeCommand;
 import jatcsimlib.commands.ChangeSpeedCommand;
 import jatcsimlib.commands.Command;
 import jatcsimlib.commands.ContactCommand;
+import jatcsimlib.commands.formatting.ShortParser;
 import jatcsimlib.coordinates.Coordinate;
 import jatcsimlib.coordinates.Coordinates;
 import jatcsimlib.events.EventListener;
@@ -30,6 +31,7 @@ import jatcsimlib.global.ETime;
 import jatcsimlib.global.Global;
 import jatcsimlib.global.Headings;
 import jatcsimlib.global.ReadOnlyList;
+import jatcsimlib.messaging.Message;
 import jatcsimlib.messaging.Messenger;
 import jatcsimlib.weathers.Weather;
 import jatcsimlib.weathers.WeatherDownloadNoaaGov;
@@ -132,10 +134,15 @@ public class Simulation {
     isBusy = true;
     now.increaseSecond();
 
+    // system stuff
+    this.processSystemMessages();
+    
+    // atc stuff
     this.ctrAtc.elapseSecond();
     this.twrAtc.elapseSecond();
     //this.appAtc.elapseSecond();
 
+    // planes stuff
     generateNewPlanes();
     removeOldPlanes();
     updatePlanes();
@@ -417,6 +424,27 @@ public class Simulation {
     Route r = Route.createNewByFix(n, arrival);
 
     return r;
+  }
+
+  private void processSystemMessages() {
+    List<Message> systemMessages = Acc.messenger().getSystems(true);
+    
+    for(Message m : systemMessages){
+      processSystemMessage(m);
+    }
+  }
+
+  private static final String SYSMES_COMMANDS = "?";
+  private void processSystemMessage(Message m) {
+    if (m.getAsString().text.equals(SYSMES_COMMANDS)){
+      printCommandsHelps();
+    }
+  }
+
+  private void printCommandsHelps() {
+    String txt = new ShortParser().getHelp();
+    
+    Acc.messenger().addMessage(Message.createFromSystem(Acc.atcApp(), txt));
   }
 
 }

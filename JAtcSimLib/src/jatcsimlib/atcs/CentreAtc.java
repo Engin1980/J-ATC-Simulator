@@ -20,13 +20,13 @@ import java.util.List;
  */
 public class CentreAtc extends ComputerAtc {
 
-
   public CentreAtc(AtcTemplate template) {
     super(template);
   }
-  
+
   @Override
-  public void init(){}
+  public void init() {
+  }
 
   @Override
   protected void _registerNewPlane(Airplane plane) {
@@ -42,13 +42,15 @@ public class CentreAtc extends ComputerAtc {
     esRequestPlaneSwitchFromApp();
 
     for (Message m : msgs) {
-      if (m.source instanceof Airplane){
-        Airplane  p  = (Airplane) m.source;
-        if (p.isDeparture()){
-          Acc.messenger().addMessage(
-              this, 
-              p, 
-              new ChangeAltitudeCommand(ChangeAltitudeCommand.eDirection.climb, getDepartureRandomTargetAltitude(p)));
+      if (m.source instanceof Airplane) {
+        Airplane p = (Airplane) m.source;
+        if (p.isDeparture()) {
+          Message n = Message.create(
+            this,
+            p,
+            new ChangeAltitudeCommand(ChangeAltitudeCommand.eDirection.climb, getDepartureRandomTargetAltitude(p)));
+          Acc.messenger().addMessage(n);
+
         }
       }
       if (m.source != Acc.atcApp()) {
@@ -75,7 +77,8 @@ public class CentreAtc extends ComputerAtc {
         // CTR -> APP, potvrzene od APP
         waitingRequestsList.remove(p);
         super.approveSwitch(p);
-        Acc.messenger().addMessage(this, p, new ContactCommand(eType.app));
+        Message n = Message.create(this, p, new ContactCommand(eType.app));
+        Acc.messenger().addMessage(n);
       }
     }
   }
@@ -86,7 +89,7 @@ public class CentreAtc extends ComputerAtc {
     for (Airplane p : plns) {
       super.requestSwitch(p);
       waitingRequestsList.add(p);
-    }   
+    }
   }
 
   private AirplaneList getPlanesReadyForApp() {
@@ -118,7 +121,6 @@ public class CentreAtc extends ComputerAtc {
     }
     return true;
   }
-
 
   private int getDepartureRandomTargetAltitude(Airplane p) {
     int ret = Acc.rnd().nextInt(20, p.getType().maxAltitude / 1000);

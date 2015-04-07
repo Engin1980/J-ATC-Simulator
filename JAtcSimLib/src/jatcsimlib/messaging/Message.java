@@ -21,6 +21,8 @@ import jatcsimlib.global.ETime;
  * @author Marek
  */
 public class Message implements Comparable<Message> {
+  
+  final static Object SYSTEM = new Object();
 
   protected static int planeVisibleTimeInSeconds = 30;
   protected static int atcVisibleTimeInSeconds = 30;
@@ -48,21 +50,68 @@ public class Message implements Comparable<Message> {
   public static Message create (Object source, Object target, Command c){
     CommandList cmdLst = new CommandList();
     cmdLst.add(c);
-    Message ret = new Message(source, target, cmdLst);
+    Message ret = new Message(null, source, target, cmdLst);
     return ret;
   }
   
-  public Message(Object source, Object target, IContent content) {
+  public static Message create(Airplane source, Atc target, IContent content){
+    Message ret = new Message(source, target, content);
+    return ret;
+  }
+  
+  public static Message create(Airplane source, Atc target, String text, int secondsDelay){
+    StringMessage sm = new StringMessage(text);
+    Message ret = new Message(secondsDelay, source, target, sm);
+    return ret;
+  }
+  
+  public static Message create(Airplane source, Atc target, String text){
+    return create(source, target, new StringMessage(text));
+  }
+  
+  public static Message create(Atc source, Atc target, IContent content){
+    Message ret = new Message(source, target, content);
+    return ret;
+  }
+  
+  public static Message create(Atc source, Atc target, String text){
+    return create(source, target, new StringMessage(text));
+  }
+  
+  public static Message create(Atc source, Airplane plane, IContent content){
+    Message ret = new Message(source, plane, content);
+    return ret;
+  }
+  
+  public static Message createForSystem(UserAtc source, String text){
+    StringMessage sm = new StringMessage(text);
+    Message ret = new Message(source, SYSTEM, sm);
+    return ret;
+  }
+    
+  public static Message createFromSystem(UserAtc target, String text){
+    StringMessage sm = new StringMessage(text);
+    Message ret = new Message(SYSTEM, target, sm);
+    return ret;
+  }
+  
+  private Message(int secondsDelay, Object source, Object target, IContent content){
+    this (Acc.now().addSeconds(secondsDelay), source, target, content);
+  }
+  
+  private Message(Object source, Object target, IContent content){
     this(Acc.now(), source, target, content);
   }
-
-  public Message(ETime creationTime, Object source, Object target, IContent content) {
+  
+  private Message(ETime creationTime, Object source, Object target, IContent content) {
     if (content == null) {
       throw new IllegalArgumentException("Argument \"content\" cannot be null.");
     }
     if (target == null) {
       throw new IllegalArgumentException("Argument \"target\" cannot be null.");
     }
+    if (creationTime == null)
+      creationTime = Acc.now();
 
     this.creationTime = creationTime.clone();
     this.displayFromTime = this.creationTime.addSeconds(generateDelay(source));
@@ -72,20 +121,20 @@ public class Message implements Comparable<Message> {
     this.content = content;
   }
 
-  public boolean isPlaneMessage() {
+  public boolean isFromPlaneMessage() {
     return source != null && source instanceof Airplane;
   }
 
-  public boolean isAtcMessage() {
+  public boolean isFromAtcMessage() {
     return source != null && source instanceof Atc;
   }
 
-  public boolean isSystemMessage() {
-    return source == null;
+  public boolean isFromSystemMessage() {
+    return source == SYSTEM;
   }
 
-  private int generateDelay(Object source) {
-    if (source == null) {
+  private static int generateDelay(Object source) {
+    if (source == SYSTEM) {
       return rnd.nextInt(minSystemDelayInSeconds, maxSystemDelayInSeconds);
     } else if (source instanceof Airplane) {
       return rnd.nextInt(minPlaneDelayInSeconds, maxPlaneDelayInSeconds);
@@ -98,8 +147,8 @@ public class Message implements Comparable<Message> {
     }
   }
 
-  private int generateVisible(Object source) {
-    if (source == null) {
+  private static int generateVisible(Object source) {
+    if (source == SYSTEM) {
       return systemVisibleTimeInSeconds;
     } else if (source instanceof Airplane) {
       return planeVisibleTimeInSeconds;
@@ -118,7 +167,7 @@ public class Message implements Comparable<Message> {
   }
 
   public String getSourceID() {
-    if (source == null)
+    if (source == SYSTEM)
       return "<system>";
     else if (source instanceof Atc)
       return ((Atc) source).getName();

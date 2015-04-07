@@ -171,12 +171,12 @@ public class FrmMain extends javax.swing.JFrame {
       app.sendToAtc(Atc.eType.twr, msg);
       ret = true;
 
-    } else if (msg.startsWith("=")) {
+    } else if (msg.startsWith("?")){
       // system
-      msg = msg.substring(1);
+      //msg = msg.substring(1);
       app.sendSystem(msg);
       ret = true;
-
+      
     } else {
       // plane commands
       String[] spl = splitToCallsignAndMessages(msg);

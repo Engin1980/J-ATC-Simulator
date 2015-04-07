@@ -32,10 +32,14 @@ import jatcsimlib.coordinates.Coordinate;
 import jatcsimlib.coordinates.Coordinates;
 import jatcsimlib.exceptions.ENotSupportedException;
 import jatcsimlib.exceptions.ERuntimeException;
+import jatcsimlib.global.EStringBuilder;
+import jatcsimlib.global.ETime;
 import jatcsimlib.global.Headings;
 import jatcsimlib.global.SpeedRestriction;
 import jatcsimlib.messaging.GoingAroundStringMessage;
+import jatcsimlib.messaging.Message;
 import jatcsimlib.weathers.Weather;
+import jatcsimlib.world.Approach;
 import jatcsimlib.world.Navaid;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -76,9 +80,71 @@ public class Pilot {
 
   private final List<String> saidText = new LinkedList<>();
   
-  public String getRouteName() {
+  // <editor-fold defaultstate="collapsed" desc=" getters/setters ">
+  
+    public String getRouteName() {
     return this.routeName;
   }
+
+  public Coordinate getTargetCoordinate() {
+    return targetCoordinate;
+  }
+
+  /**
+   * Returns string for flight recorder.
+   * @return 
+   */
+  public String getHoldLogString() {
+    if (hold == null)
+      return "no-hold";
+    
+    EStringBuilder sb = new EStringBuilder();
+    
+    sb.appendFormat("%s incrs: %03d/%s in: %s",
+      hold.fix.toString(),
+      hold.inboundRadial,
+      hold.isLeftTurned ? "L" : "R",
+      hold.phase.toString());
+    
+    return sb.toString();
+  }
+
+  /**
+   * Returns string for flight recorder.
+   * @return 
+   */
+  public String getApproachLogString() {
+    if (app == null)
+      return "no-app";
+    
+    EStringBuilder sb = new EStringBuilder();
+    
+    sb.appendFormat("%s%s in %s", 
+      app.approach.getType().toString(),
+      app.approach.getParent().getName(),
+      app.phase.toString());
+    
+    return sb.toString();
+  }
+
+  public String getSpeedLogString() {
+    EStringBuilder sb = new EStringBuilder();
+    
+    sb.appendFormat("%s", speedState.toString());
+    if (orderedSpeed != null){
+      sb.appendFormat(" (%s %4d)", 
+        orderedSpeed.direction.toString(),
+        orderedSpeed.speedInKts);
+    }
+    
+    return sb.toString();
+  }
+    
+    
+  
+// </editor-fold>
+  
+
 
   public Pilot(Airplane parent, String routeName, List<Command> routeCommandQueue) {
     this.parent = parent;
@@ -195,8 +261,11 @@ public class Pilot {
     boolean ret;
     try {
       ret = (boolean) m.invoke(this, c);
-    } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
-      throw new ERuntimeException("processQueueCommand failed for " + c.getClass() + ". Reason: " + ex.getMessage());
+    } catch (Throwable ex) {
+      throw new ERuntimeException(
+        String.format("processQueueCommand failed for %s. Reason: %s",
+          c.getClass(),
+          eng.eSystem.Exceptions.toString(ex), ex));
     }
     return ret;
   }
@@ -334,8 +403,10 @@ public class Pilot {
 
     // change of atc
     this.atc = a;
-    Acc.messenger().addMessage(5, parent, a,
-        parent.getCallsign().toString() + " with you at " + Acc.toAltS(parent.getAltitude(), true));
+    Message m = Message.create(
+      parent, a, 
+      parent.getCallsign().toString() + " with you at " + Acc.toAltS(parent.getAltitude(), true), 5);
+    Acc.messenger().addMessage(m);
 
     return true;
   }
@@ -344,8 +415,10 @@ public class Pilot {
     ShortcutCommand t = c;
     int pointIndex = getIndexOfNavaidInCommands(t.getNavaid());
     if (pointIndex < 0) {
-      Acc.messenger().addMessage(
-          parent, this.atc, " Unable to shortcut to " + t.getNavaid().getName() + ", fix not on route!");
+      Message m = Message.create(
+        parent, this.atc,
+        " Unable to shortcut to " + t.getNavaid().getName() + ", fix not on route!");
+      Acc.messenger().addMessage(m);
     } else {
       for (int i = 0; i < pointIndex; i++) {
         this.queue.remove(i);
@@ -370,7 +443,8 @@ public class Pilot {
         Headings.add(c.getApproach().getRadial(), -30),
         radFromFix,
         Headings.add(c.getApproach().getRadial(), 30))) {
-      Acc.messenger().addMessage(parent, atc, "Cannot enter approach now. Difficult position.");
+      Message m = Message.create(parent, atc, "Cannot enter approach now. Difficult position.");
+      Acc.messenger().addMessage(m);
     } else {
       this.app = new ApproachInfo(c.getApproach());
 
@@ -447,7 +521,8 @@ public class Pilot {
     c = Character.toUpperCase(c);
     ret.setCharAt(0, c);
 
-    Acc.messenger().addMessage(parent, atc, ret.toString());
+    Message m = Message.create(parent, atc, ret.toString());
+    Acc.messenger().addMessage(m);
 
     saidText.clear();
 
@@ -474,8 +549,8 @@ public class Pilot {
     for (int i = 0; i < cmds.size(); i++) {
       if (cmds.get(i) instanceof ThenCommand) {
         if (i == 0 || i == cmds.size() - 1) {
-          Acc.messenger().addMessage(
-              parent, atc, "\"THEN\" command cannot be first or last in queue. Whole command block is ignored.");
+          Acc.messenger().addMessage(Message.create(
+              parent, atc, "\"THEN\" command cannot be first or last in queue. Whole command block is ignored."));
           cmds.clear();
           return;
         }
@@ -488,8 +563,8 @@ public class Pilot {
         } else if (prev instanceof ChangeSpeedCommand) {
           n = new AfterSpeedCommand(((ChangeSpeedCommand) prev).getSpeedInKts());
         } else {
-          Acc.messenger().addMessage(
-              parent, atc, "\"THEN\" command is after strange command, it does not make sense. Whole command block is ignored.");
+          Acc.messenger().addMessage(Message.create(
+              parent, atc, "\"THEN\" command is after strange command, it does not make sense. Whole command block is ignored."));
           cmds.clear();
           return;
         }
@@ -862,10 +937,10 @@ public class Pilot {
   }
 
   private void goAround(String reason) {
-    Acc.messenger().addMessage(
+    Acc.messenger().addMessage(Message.create(
         parent,
         atc,
-        new GoingAroundStringMessage(reason));
+        new GoingAroundStringMessage(reason)));
     parent.setTargetSpeed(parent.getType().vDep);
     addNewCommands(app.approach.getGaCommands());
     app = null;

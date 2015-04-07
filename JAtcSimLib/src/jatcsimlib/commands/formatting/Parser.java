@@ -15,4 +15,6 @@ import jatcsimlib.commands.CommandList;
 public interface Parser {
   public Command parseOne(String text);
   public CommandList parseMulti(String text);
+  public String getHelp();
+  public String getHelp(String commandPrefix);
 }

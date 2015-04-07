@@ -25,6 +25,7 @@ import java.util.List;
  */
 public class Airplane implements KeyItem<Callsign> {
 
+  // <editor-fold defaultstate="collapsed" desc=" variables ">
   private final Callsign callsign;
 
   private int targetHeading;
@@ -51,6 +52,10 @@ public class Airplane implements KeyItem<Callsign> {
 
   private final AirplaneInfo info;
 
+  private FlightRecorder flightRecorder = null;
+
+  // </editor-fold>
+  // <editor-fold defaultstate="collapsed" desc=" .ctors ">
   public class AirplaneInfo {
 
     public Coordinate coordinate() {
@@ -104,12 +109,12 @@ public class Airplane implements KeyItem<Callsign> {
     public String altitudeSShort() {
       return Integer.toString(Airplane.this.altitude / 100);
     }
-    
-    public String altitudeSFixed(){
+
+    public String altitudeSFixed() {
       return String.format("%1$03d", Airplane.this.altitude / 100);
     }
-    
-    public String targetAltitudeSFixed(){
+
+    public String targetAltitudeSFixed() {
       return String.format("%1$03d", Airplane.this.targetAltitude / 100);
     }
 
@@ -130,12 +135,13 @@ public class Airplane implements KeyItem<Callsign> {
         return "=";
       }
     }
-    
-    public String departureArrivalChar(){
-      if (isDeparture())
+
+    public String departureArrivalChar() {
+      if (isDeparture()) {
         return "▲"; //"↑"; //
-      else
+      } else {
         return "▼"; // "↓";
+      }
     }
 
     public int heading() {
@@ -145,7 +151,7 @@ public class Airplane implements KeyItem<Callsign> {
     public String headingSLong() {
       return String.format("%1$03d", Airplane.this.heading);
     }
-    
+
     public String headingSShort() {
       return Integer.toString(Airplane.this.heading);
     }
@@ -153,7 +159,7 @@ public class Airplane implements KeyItem<Callsign> {
     public String targetHeadingSLong() {
       return String.format("%1$03d", Airplane.this.targetHeading);
     }
-    
+
     public String targetHeadingSShort() {
       return Integer.toString(Airplane.this.targetHeading);
     }
@@ -331,8 +337,8 @@ public class Airplane implements KeyItem<Callsign> {
   }
 
   public Airplane(Callsign callsign, Coordinate coordinate, Squawk sqwk, AirplaneType airplaneSpecification,
-      int heading, int altitude, int speed, boolean isDeparture,
-      String routeName, List<Command> routeCommandQueue) {
+    int heading, int altitude, int speed, boolean isDeparture,
+    String routeName, List<Command> routeCommandQueue) {
 
     this.info = this.new AirplaneInfo();
 
@@ -352,6 +358,9 @@ public class Airplane implements KeyItem<Callsign> {
     this.targetSpeed = this.speed;
 
     this.pilot = new Pilot(this, routeName, routeCommandQueue);
+    
+    // flight recorders on
+    this.flightRecorder = new FlightRecorder(this.callsign, false, true);
   }
 
   private void ensureSanity() {
@@ -366,6 +375,8 @@ public class Airplane implements KeyItem<Callsign> {
     }
   }
 
+  // </editor-fold>
+  // <editor-fold defaultstate="collapsed" desc=" getters / setters ">
   public AirplaneInfo getInfo() {
     return info;
   }
@@ -418,6 +429,16 @@ public class Airplane implements KeyItem<Callsign> {
     return speed;
   }
 
+  public FlightRecorder getFlightRecorder() {
+    return flightRecorder;
+  }
+  
+  public String getTargetHeadingS(){
+    return String.format("%1$03d", this.targetHeading);
+  }
+
+  // </editor-fold>
+  // <editor-fold defaultstate="collapsed" desc=" public methods ">
   @Override
   public Callsign getKey() {
     return this.callsign;
@@ -429,8 +450,17 @@ public class Airplane implements KeyItem<Callsign> {
     drivePlane();
     updateSHABySecond();
     updateCoordinates();
+    
+    flightRecorder.logFDR(this, this.pilot);
   }
 
+  @Override
+  public String toString() {
+    return this.callsign.toString();
+  }
+
+  // </editor-fold>
+  // <editor-fold defaultstate="collapsed" desc=" private methods ">
   private void drivePlane() {
     pilot.elapseSecond();
   }
@@ -471,6 +501,8 @@ public class Airplane implements KeyItem<Callsign> {
     }
     if (targetAltitude != altitude) {
       adjustAltitude();
+    } else {
+      if (lastVerticalSpeed != 0) lastVerticalSpeed = 0;
     }
 
     updateCoordinates();
@@ -506,14 +538,15 @@ public class Airplane implements KeyItem<Callsign> {
 
   private void adjustHeading() {
     int newHeading
-        = Headings.turn(heading, airplaneType.headingChangeRate, targetHeadingLeftTurn, targetHeading);
+      = Headings.turn(heading, airplaneType.headingChangeRate, targetHeadingLeftTurn, targetHeading);
     this.heading = newHeading;
   }
 
   private void adjustAltitude() {
     if (speed < airplaneType.vR) {
-      if (altitude == Acc.airport().getAltitude())
-      return;
+      if (altitude == Acc.airport().getAltitude()) {
+        return;
+      }
     }
 
     int origAlt = altitude;
@@ -553,13 +586,13 @@ public class Airplane implements KeyItem<Callsign> {
   private void updateCoordinates() {
     double dist = this.getGS() * secondFraction;
     Coordinate newC
-        = Coordinates.getCoordinate(coordinate, heading, dist);
+      = Coordinates.getCoordinate(coordinate, heading, dist);
     this.coordinate = newC;
   }
 
   public void setTargetHeading(int targetHeading) {
     boolean useLeft
-        = Headings.getBetterDirectionToTurn(heading, targetHeading) == ChangeHeadingCommand.eDirection.left;
+      = Headings.getBetterDirectionToTurn(heading, targetHeading) == ChangeHeadingCommand.eDirection.left;
     setTargetHeading(targetHeading, useLeft);
   }
 
@@ -588,9 +621,5 @@ public class Airplane implements KeyItem<Callsign> {
     return targetSpeed;
   }
 
-  @Override
-  public String toString() {
-    return this.callsign.toString();
-  }
-
+  // </editor-fold>
 }
