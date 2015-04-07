@@ -6,19 +6,17 @@
 package jatcsimlib.airplanes;
 
 import jatcsimlib.Acc;
+import jatcsimlib.airplanes.pilots.Pilot;
 import jatcsimlib.exceptions.ERuntimeException;
 import jatcsimlib.global.EStringBuilder;
 import jatcsimlib.global.ETime;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Writer;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -27,26 +25,24 @@ import java.util.logging.Logger;
 public class FlightRecorder {
 
   private final static int DEFAULT_STRING_BUILDER_SIZE = 256;
-  private final static String SEPARATOR = ";\t";
-  
+  private final static String SEPARATOR = ";";
+
+  public final static String logPath = "R:\\jatcsim\\FDRs\\";
+  private static String logPathDate = null;
+
   private final boolean isConsole;
   private final boolean isFile;
   private final Path filePath;
   private BufferedWriter wrt;
   private final EStringBuilder sb = new EStringBuilder(DEFAULT_STRING_BUILDER_SIZE);
-  
 
-  public FlightRecorder(Callsign callsign, boolean logToConsole) {
-    this(callsign, logToConsole, null);
-  }
-
-  public FlightRecorder(Callsign callsign, String logPath) {
-    this(callsign, false, logPath);
-  }
-
-  public FlightRecorder(Callsign callsign, boolean logToConsole, String logPath) {
+  public FlightRecorder(Callsign callsign, boolean logToConsole, boolean logToFile) {
     this.isConsole = logToConsole;
-    if (logPath != null) {
+
+    if (logToFile) {
+      if (logPath == null) {
+        throw new ERuntimeException("Cannot initialize flight recorder. FlightRecorder.logPath property must be set first.");
+      }
       filePath = buildLogFileName(logPath, callsign);
       isFile = true;
       openFile();
@@ -58,32 +54,53 @@ public class FlightRecorder {
 
   /**
    * Logs common information reported every second.
+   *
    * @param plane Plane to log about.
    */
-  public void logFDR (Airplane plane){
+  void logFDR(Airplane plane, Pilot pilot) {
     ETime now = Acc.now();
     sb.clear();
-    
-    sb.append(now.toString()).append(SEPARATOR);
-    sb.append(plane.getCallsign().toString()).append(SEPARATOR);
-    sb.appendFormat("H:%s", plane.getHeadingS()).append(SEPARATOR);
-    sb.appendFormat("A:%d (%d)", plane.getAltitude()/100, plane.getVerticalSpeed()).append(SEPARATOR);
-    sb.appendFormat("S:%d", plane.getSpeed()).append(SEPARATOR);
+
+    sb.append("FDR ").append(SEPARATOR);
+    sb.appendFormat(" %s ", now.toString()).append(SEPARATOR);
+    sb.appendFormat(" %s ", plane.getCallsign().toString()).append(SEPARATOR);
+
+    // coord
+    sb.appendFormat(" %20s  ", plane.getCoordinate().toString()).append(SEPARATOR);
+
+    // heading
+    sb.appendFormat(" H:%5s => %5s ", plane.getHeadingS(), plane.getTargetHeadingS()).append(SEPARATOR);
+
+    // alt
+    sb.appendFormat(" A:%7d (%5d) => %7d ", plane.getAltitude(), plane.getVerticalSpeed(), plane.getTargetAltitude()).append(SEPARATOR);
+
+    // spd
+    sb.appendFormat(" S:%5d => %5d ", plane.getSpeed(), plane.getTargetSpeed()).append(SEPARATOR);
+
+    // from pilot
+    sb.appendFormat(" HLD {%s} ", pilot.getHoldLogString()).append(SEPARATOR);
+    sb.appendFormat(" APP {%s} ", pilot.getApproachLogString()).append(SEPARATOR);
+    sb.appendFormat(" SPD {%s} ", pilot.getSpeedLogString());
+
     sb.appendLine();
-    
-    if (isFile){
-      try{
-      wrt.write(sb.toString());
-      } catch (IOException ex){
+    if (isFile) {
+      try {
+        wrt.write(sb.toString());
+        wrt.flush();
+      } catch (IOException ex) {
         throw new ERuntimeException("Failed to write to flight recorder FDR - file " + filePath.toString(), ex);
       }
     }
-    
-    if (isConsole){
+
+    if (isConsole) {
       System.out.print(sb.toString());
     }
   }
-  
+
+  public void close() {
+    closeFile();
+  }
+
   private void openFile() {
 
     Path dir = filePath.getParent();
@@ -120,9 +137,12 @@ public class FlightRecorder {
   }
 
   private static Path buildLogFileName(String logPath, Callsign callsign) {
-    Date d = new Date();
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyy_MM_dd_HH_mm");
-    Path ret = Paths.get(logPath, sdf.format(d), callsign.toString() + ".log");
+    if (logPathDate == null) {
+      Date d = new Date();
+      SimpleDateFormat sdf = new SimpleDateFormat("yyyy_MM_dd_HH_mm");
+      logPathDate = sdf.format(d);
+    }
+    Path ret = Paths.get(logPath, logPathDate, callsign.toString() + ".log");
     return ret;
   }
 }
