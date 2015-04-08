@@ -6,6 +6,7 @@
 package jatcsimlib.messaging;
 
 import jatcsimlib.Acc;
+import jatcsimlib.airplanes.Airplane;
 import jatcsimlib.commands.Command;
 import jatcsimlib.commands.CommandList;
 import jatcsimlib.global.ETime;
@@ -29,15 +30,17 @@ public class Messenger {
    */
   private boolean newPlaneMessageForUserAtc = false;
   /**
-   * 
+   *
    */
   private boolean newSystemMessageForUserAtc = false;
-  
+
   private final Map<Object, MessageList> inner = new HashMap<>();
 
   public void addMessage(Message m) {
 
     _addMessage(m);
+
+    _flightRecordMessageIf(m);
   }
 
   private void _addMessage(Message m) {
@@ -54,8 +57,8 @@ public class Messenger {
         newPlaneMessageForUserAtc = true;
       }
     }
-    if (m.isFromSystemMessage() && m.target == Acc.atcApp()){
-      if (newSystemMessageForUserAtc == false){
+    if (m.isFromSystemMessage() && m.target == Acc.atcApp()) {
+      if (newSystemMessageForUserAtc == false) {
         newSystemMessageForUserAtc = true;
       }
     }
@@ -69,6 +72,7 @@ public class Messenger {
 
   /**
    * Deletes messages older than ETime.
+   *
    * @param time Minimal ETime of deleted messages.
    */
   public void deleteOldMessages(ETime time) {
@@ -76,18 +80,20 @@ public class Messenger {
       inner.get(key).removeOld(time);
     }
   }
-  
+
   /**
    * Returns all system messages.
+   *
    * @param clearRetrieved
-   * @return 
+   * @return
    */
-  public List<Message> getSystems (boolean clearRetrieved){
+  public List<Message> getSystems(boolean clearRetrieved) {
     return getMy(Message.SYSTEM, clearRetrieved);
   }
 
   /**
    * Returns all messages submitted for "target" object.
+   *
    * @param target What is target object, which items should be returned?
    * @param clearRetrieved Clear items which were returned?
    * @return Messages of the "target" object.
@@ -95,10 +101,10 @@ public class Messenger {
   public List<Message> getMy(Object target, boolean clearRetrieved) {
     return getMy(target, Acc.now(), clearRetrieved);
   }
-  
 
   /**
    * Returns all messages submitted for "target" object older than ETime.
+   *
    * @param target What is target object, which items should be returned?
    * @param time Only older messages than this time will be returned.
    * @param cleanRetrieved Clear items which were returned?
@@ -119,6 +125,7 @@ public class Messenger {
 
   /**
    * Removes specific message
+   *
    * @param m Message to remove
    */
   public void remove(Message m) {
@@ -133,13 +140,22 @@ public class Messenger {
     return newPlaneMessageForUserAtc;
   }
 
-  public boolean isNewSystemMessage(){
+  public boolean isNewSystemMessage() {
     return newSystemMessageForUserAtc;
   }
-  
+
   public void resetNewMessagesFlag() {
     newAtcMessageForUserAtc = false;
     newPlaneMessageForUserAtc = false;
     newSystemMessageForUserAtc = false;
+  }
+
+  private void _flightRecordMessageIf(Message m) {
+    if (m.source instanceof Airplane) {
+      ((Airplane) m.source).getFlightRecorder().logCVR(m);
+    }
+    if (m.target instanceof Airplane) {
+      ((Airplane) m.target).getFlightRecorder().logCVR(m);
+    }
   }
 }

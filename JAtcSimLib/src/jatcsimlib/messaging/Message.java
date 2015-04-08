@@ -22,7 +22,7 @@ import jatcsimlib.global.ETime;
  */
 public class Message implements Comparable<Message> {
   
-  final static Object SYSTEM = new Object();
+  public final static Object SYSTEM = new Object();
 
   protected static int planeVisibleTimeInSeconds = 30;
   protected static int atcVisibleTimeInSeconds = 30;

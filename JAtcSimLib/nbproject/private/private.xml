@@ -1,6 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
-    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="5">
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="6">
+        <file>
+            <url>src/jatcsimlib/airplanes/pilots/Pilot.java</url>
+            <bookmark id="6">
+                <name/>
+                <line>226</line>
+                <key/>
+            </bookmark>
+            <bookmark id="4">
+                <name/>
+                <line>324</line>
+                <key/>
+            </bookmark>
+        </file>
         <file>
             <url>src/jatcsimlib/world/Route.java</url>
             <bookmark id="3">
@@ -15,14 +28,6 @@
             </bookmark>
         </file>
         <file>
-            <url>src/jatcsimlib/airplanes/pilots/Pilot.java</url>
-            <bookmark id="4">
-                <name/>
-                <line>258</line>
-                <key/>
-            </bookmark>
-        </file>
-        <file>
             <url>src/jatcsimlib/commands/CommandFormat.java</url>
             <bookmark id="5">
                 <name/>
@@ -32,8 +37,6 @@
         </file>
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group>
-            <file>file:/C:/Users/Marek%20Vajgl/Documents/NetBeansProjects/_JAtcSimSolution/JAtcSimLib/src/jatcsimlib/airplanes/FlightRecorder.java</file>
-        </group>
+        <group/>
     </open-files>
 </project-private>

@@ -46,7 +46,7 @@ public class Formatters {
     private static Method tryGetFormatCommandMethodToInvoke(Class<? extends Command> commandType) {
     Method ret;
     try {
-      ret = Formatter.class.getDeclaredMethod("format", commandType, boolean.class);
+      ret = Formatter.class.getDeclaredMethod("format", commandType);
     } catch (NoSuchMethodException | SecurityException ex) {
       ret = null;
     }

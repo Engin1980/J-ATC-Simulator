@@ -7,9 +7,19 @@ package jatcsimlib.airplanes;
 
 import jatcsimlib.Acc;
 import jatcsimlib.airplanes.pilots.Pilot;
+import jatcsimlib.atcs.Atc;
+import jatcsimlib.commands.Command;
+import jatcsimlib.commands.CommandList;
+import jatcsimlib.commands.formatting.Formatter;
+import jatcsimlib.commands.formatting.Formatters;
+import jatcsimlib.commands.formatting.LongFormatter;
+import jatcsimlib.exceptions.ENotSupportedException;
 import jatcsimlib.exceptions.ERuntimeException;
 import jatcsimlib.global.EStringBuilder;
 import jatcsimlib.global.ETime;
+import jatcsimlib.messaging.IContent;
+import jatcsimlib.messaging.Message;
+import jatcsimlib.messaging.StringMessage;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -83,9 +93,13 @@ public class FlightRecorder {
     sb.appendFormat(" SPD {%s} ", pilot.getSpeedLogString());
 
     sb.appendLine();
+    logLine(sb.toString());
+  }
+
+  private void logLine(String line) throws ERuntimeException {
     if (isFile) {
       try {
-        wrt.write(sb.toString());
+        wrt.write(line);
         wrt.flush();
       } catch (IOException ex) {
         throw new ERuntimeException("Failed to write to flight recorder FDR - file " + filePath.toString(), ex);
@@ -144,5 +158,58 @@ public class FlightRecorder {
     }
     Path ret = Paths.get(logPath, logPathDate, callsign.toString() + ".log");
     return ret;
+  }
+
+  public void logCVR(Message m) {
+    sb.clear();
+
+    String src = getMessageObjectString(m.source);
+    String trg = getMessageObjectString(m.target);
+    String cnt = getMessageContentString(m.content);
+
+    ETime now = Acc.now();
+    sb.clear();
+
+    sb.append("CVR ").append(SEPARATOR);
+    sb.appendFormat(" %s ", now.toString()).append(SEPARATOR);
+    sb.appendFormat("FROM: %s ", src).append(SEPARATOR);
+    sb.appendFormat("TO: %s ", trg).append(SEPARATOR);
+    sb.appendFormat(" %s ", cnt);
+
+    sb.appendLine();
+    logLine(sb.toString());
+  }
+
+  private String getMessageObjectString(Object object) {
+    if (object == Message.SYSTEM) {
+      return "<SYSTEM>";
+    } else if (object instanceof Atc) {
+      Atc atc = (Atc) object;
+      return atc.getName();
+    } else if (object instanceof Airplane) {
+      Airplane plane = (Airplane) object;
+      return plane.getCallsign().toString();
+    } else {
+      throw new ENotSupportedException("Unknown object type.");
+    }
+  }
+
+  private static Formatter fmt = new LongFormatter();
+
+  private String getMessageContentString(IContent content) {
+    if (content instanceof StringMessage) {
+      return ((StringMessage) content).text;
+    } else if (content instanceof CommandList) {
+      CommandList cmds = (CommandList) content;
+      EStringBuilder sb = new EStringBuilder();
+      for (Command cmd : cmds) {
+        sb.append(Formatters.format(cmd, fmt)).append(", ");
+      }
+      return sb.toString();
+    } else if (content instanceof Command) {
+      return Formatters.format((Command) content, fmt);
+    } else {
+      throw new ERuntimeException("Message content cannot be get for type " + content.getClass().getName());
+    }
   }
 }
