@@ -360,7 +360,7 @@ public class Airplane implements KeyItem<Callsign> {
     this.pilot = new Pilot(this, routeName, routeCommandQueue);
     
     // flight recorders on
-    this.flightRecorder = new FlightRecorder(this.callsign, false, true);
+    this.flightRecorder = FlightRecorder.create(this.callsign, false, true);
   }
 
   private void ensureSanity() {

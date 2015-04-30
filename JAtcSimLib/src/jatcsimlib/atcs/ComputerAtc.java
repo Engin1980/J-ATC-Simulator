@@ -35,34 +35,39 @@ public abstract class ComputerAtc extends Atc {
     // opakovani starych zadosti
     List<Airplane> awaitings = waitingRequestsList.getAwaitings();
     for (Airplane p : awaitings) {
-      Acc.messenger().addMessage(Message.create(this, Acc.atcApp(),
-          new PlaneSwitchMessage(p, " to you (repeated)")));
+      Message m = Message.create(this, Acc.atcApp(),
+        new PlaneSwitchMessage(p, " to you (repeated)"));
+      Acc.messenger().addMessage(m);
+      recorder.logMessage(m);
     }
 
   }
 
   protected void requestSwitch(Airplane plane) {
     getPrm().requestSwitch(this, Acc.atcApp(), plane);
-
-    Acc.messenger().addMessage(Message.create(this, Acc.atcApp(),
-        new PlaneSwitchMessage(plane, " to you")));
+    Message m = Message.create(this, Acc.atcApp(),
+      new PlaneSwitchMessage(plane, " to you"));
+    Acc.messenger().addMessage(m);
   }
 
   protected void refuseSwitch(Airplane plane) {
     getPrm().refuseSwitch(this, plane);
-
-    Acc.messenger().addMessage(Message.create(this, Acc.atcApp(),
-        new PlaneSwitchMessage(plane, " refused. Not in my coverage.")));
+    Message m = Message.create(this, Acc.atcApp(),
+      new PlaneSwitchMessage(plane, " refused. Not in my coverage."));
+    Acc.messenger().addMessage(m);
+    recorder.logMessage(m);
   }
 
   protected void confirmSwitch(Airplane plane) {
     getPrm().confirmSwitch(this, plane);
-
-    Acc.messenger().addMessage(Message.create(this, Acc.atcApp(),
-        new PlaneSwitchMessage(plane, " accepted")));
+    Message m = Message.create(this, Acc.atcApp(),
+      new PlaneSwitchMessage(plane, " accepted"));
+    Acc.messenger().addMessage(m);
+    recorder.logMessage(m);
   }
-  
+
   protected void approveSwitch(Airplane plane) {
     getPrm().approveSwitch(plane);
+    recorder.log(this, "OTH", "approveSwitch " + plane.getCallsign().toString());
   }
 }

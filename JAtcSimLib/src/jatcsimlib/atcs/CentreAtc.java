@@ -42,6 +42,8 @@ public class CentreAtc extends ComputerAtc {
     esRequestPlaneSwitchFromApp();
 
     for (Message m : msgs) {
+      recorder.logMessage(m); // incoming message
+      
       if (m.source instanceof Airplane) {
         Airplane p = (Airplane) m.source;
         if (p.isDeparture()) {
@@ -50,7 +52,7 @@ public class CentreAtc extends ComputerAtc {
             p,
             new ChangeAltitudeCommand(ChangeAltitudeCommand.eDirection.climb, getDepartureRandomTargetAltitude(p)));
           Acc.messenger().addMessage(n);
-
+          recorder.logMessage(n);
         }
       }
       if (m.source != Acc.atcApp()) {
@@ -79,6 +81,7 @@ public class CentreAtc extends ComputerAtc {
         super.approveSwitch(p);
         Message n = Message.create(this, p, new ContactCommand(eType.app));
         Acc.messenger().addMessage(n);
+        recorder.logMessage(n);
       }
     }
   }

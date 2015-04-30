@@ -48,7 +48,6 @@ public class TowerAtc extends ComputerAtc {
   public RunwayThreshold getRunwayThresholdInUse() {
     return runwayThresholdInUse;
   }
-  
 
   @Override
   protected void _elapseSecond() {
@@ -57,6 +56,8 @@ public class TowerAtc extends ComputerAtc {
     esRequestPlaneSwitchFromApp();
 
     for (Message m : msgs) {
+      recorder.logMessage(m); // incoming message
+
       if (m.source instanceof Airplane) {
         if (m.content instanceof GoingAroundStringMessage) {
           // predavame na APP
@@ -105,7 +106,9 @@ public class TowerAtc extends ComputerAtc {
 
       CommandList cmdList = new CommandList();
       cmdList.add(new ClearedForTakeoffCommand());
-      Acc.messenger().addMessage(Message.create(this, p, cmdList));
+      Message m = Message.create(this, p, cmdList);
+      Acc.messenger().addMessage(m);
+      recorder.logMessage(m);
     }
   }
 
@@ -145,16 +148,20 @@ public class TowerAtc extends ComputerAtc {
     if (dist > 15) {
       return false;
     }
-    
+
     return true;
   }
 
   private void esRequestPlaneSwitchFromApp() {
+    Message m;
+
     // TWR -> APP, zadost na APP
     AirplaneList plns = getPlanesReadyForApp();
     for (Airplane p : plns) {
-      Acc.messenger().addMessage(Message.create(this, Acc.atcApp(),
-          new PlaneSwitchMessage(p, " to you")));
+      m = Message.create(this, Acc.atcApp(),
+        new PlaneSwitchMessage(p, " to you"));
+      Acc.messenger().addMessage(m);
+      recorder.logMessage(m);
 
       getPrm().requestSwitch(this, Acc.atcApp(), p);
 
@@ -163,8 +170,10 @@ public class TowerAtc extends ComputerAtc {
     // opakovani starych zadosti
     List<Airplane> awaitings = waitingRequestsList.getAwaitings();
     for (Airplane p : awaitings) {
-      Acc.messenger().addMessage(Message.create(this, Acc.atcApp(),
-          new PlaneSwitchMessage(p, " to you (repeated)")));
+      m = Message.create(this, Acc.atcApp(),
+        new PlaneSwitchMessage(p, " to you (repeated)"));
+      Acc.messenger().addMessage(m);
+      recorder.logMessage(m);
     }
   }
 
@@ -206,66 +215,75 @@ public class TowerAtc extends ComputerAtc {
         RunwayChangeInfo rci = new RunwayChangeInfo(suggestedThreshold, Acc.now().addSeconds(15 * 60)); // change in 15 minutes
         if (this.runwayChangeInfo == null || this.runwayChangeInfo.newRunwayThreshold != suggestedThreshold) {
           this.runwayChangeInfo = rci;
-          Acc.messenger().addMessage(Message.create(
-              this,
-              Acc.atcApp(),
-              "Change to runway " + rci.newRunwayThreshold.getName() + " at " + rci.changeTime.toString()));
+          Message m = Message.create(
+            this,
+            Acc.atcApp(),
+            "Change to runway " + rci.newRunwayThreshold.getName() + " at " + rci.changeTime.toString());
+          Acc.messenger().addMessage(m);
+          recorder.logMessage(m);
         }
       }
-    } else if (this.runwayChangeInfo != null && this.runwayChangeInfo.changeTime.isBefore(Acc.now())){
+    } else if (this.runwayChangeInfo != null && this.runwayChangeInfo.changeTime.isBefore(Acc.now())) {
       changeRunwayInUse(this.runwayChangeInfo.newRunwayThreshold);
       this.runwayChangeInfo = null;
     }
   }
-  
+
   @Override
-  public void init(){
+  public void init() {
     RunwayThreshold suggestedThreshold = getSuggestedThreshold();
     changeRunwayInUse(suggestedThreshold);
   }
-  
+
   private static final int MAXIMAL_SPEED_FOR_PREFERRED_RUNWAY = 5;
+
   public static RunwayThreshold getSuggestedThreshold() {
     Weather w = Acc.weather();
-    
+
     RunwayThreshold rt = null;
-    
-    if (w.getWindSpeetInKts() <= MAXIMAL_SPEED_FOR_PREFERRED_RUNWAY){
-      for (Runway r : Acc.airport().getRunways()){
-        if (r.isActive() == false) continue; // skip inactive runways
-        for (RunwayThreshold t : r.getThresholds()){
-          if (t.isPreferred()){
+
+    if (w.getWindSpeetInKts() <= MAXIMAL_SPEED_FOR_PREFERRED_RUNWAY) {
+      for (Runway r : Acc.airport().getRunways()) {
+        if (r.isActive() == false) {
+          continue; // skip inactive runways
+        }
+        for (RunwayThreshold t : r.getThresholds()) {
+          if (t.isPreferred()) {
             rt = t;
             break;
           }
         }
-        if (rt != null) break;
+        if (rt != null) {
+          break;
+        }
       }
     }
-    
+
     int diff = Integer.MAX_VALUE;
-    if (rt == null){
+    if (rt == null) {
       // select runway according to wind
-      for (Runway r : Acc.airport().getRunways()){
-        for (RunwayThreshold t : r.getThresholds()){
+      for (Runway r : Acc.airport().getRunways()) {
+        for (RunwayThreshold t : r.getThresholds()) {
           int localDiff = Headings.diff(w.getWindHeading(), (int) t.getCourse());
-          if (localDiff < diff){
+          if (localDiff < diff) {
             diff = localDiff;
             rt = t;
           }
         }
       }
     }
-    
+
     return rt;
   }
 
   private void changeRunwayInUse(RunwayThreshold newRunwayInUseThreshold) {
-    Acc.messenger().addMessage(Message.create(
-          this,
-          Acc.atcApp(),
-          "Runway in use " + newRunwayInUseThreshold.getName()));
-      this.runwayThresholdInUse = newRunwayInUseThreshold;
+    Message m = Message.create(
+      this,
+      Acc.atcApp(),
+      "Runway in use " + newRunwayInUseThreshold.getName());
+    Acc.messenger().addMessage(m);
+    recorder.logMessage(m);
+    this.runwayThresholdInUse = newRunwayInUseThreshold;
   }
 
 }

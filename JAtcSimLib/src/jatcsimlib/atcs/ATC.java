@@ -30,6 +30,8 @@ public abstract class Atc {
   protected final int releaseAltitude;
   protected final int orderedAltitude;
   
+  protected final AtcRecorder recorder;
+  
   protected PlaneResponsibilityManager getPrm(){
     return PlaneResponsibilityManager.getInstance();
   }
@@ -41,6 +43,8 @@ public abstract class Atc {
     this.acceptAltitude = template.getAcceptAltitude();
     this.releaseAltitude = template.getReleaseAltitude();
     this.orderedAltitude = template.getOrderedAltitude();
+    
+    this.recorder = AtcRecorder.create(this);
   }
   
   public abstract void init();

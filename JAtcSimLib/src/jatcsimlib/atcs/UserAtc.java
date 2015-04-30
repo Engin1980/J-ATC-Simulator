@@ -27,13 +27,14 @@ public class UserAtc extends Atc {
   
   private Parser parser = new ShortParser();
 
-  private void raiseError(String string) {
+  private void raiseError(String text) {
+    recorder.log(this, "ERR", text);
     switch (this.errorBehavior) {
       case sendSystemErrors:
-        sendError(string);
+        sendError(text);
         break;
       case throwExceptions:
-        throw new ERuntimeException(string);
+        throw new ERuntimeException(text);
       default:
         throw new ENotSupportedException();
     }
@@ -104,7 +105,9 @@ public class UserAtc extends Atc {
   }
 
   private void sendToPlane(Airplane plane, CommandList commands) {
-    Acc.messenger().addMessage(Message.create(this, plane, commands));
+    Message m = Message.create(this, plane, commands);
+    Acc.messenger().addMessage(m);
+    recorder.logMessage(m);
   }
 
   public void sendToAtc(Atc.eType type, String sqwkAsString) {
@@ -146,17 +149,22 @@ public class UserAtc extends Atc {
     }
 
     PlaneSwitchMessage msg = new PlaneSwitchMessage(plane);
-    Acc.messenger().addMessage(Message.create(this, atc, msg));
+    Message m = Message.create(this, atc, msg);
+    Acc.messenger().addMessage(m);
+    recorder.logMessage(m);
   }
 
   public void sendError(String message) {
-    Acc.messenger().addMessage(Message.createFromSystem(this, message));
+    Message m = Message.createFromSystem(this, message);
+    Acc.messenger().addMessage(m);
+    recorder.logMessage(m);
   }
 
   public void sendSystem(String message) {
     if (message.trim().equals("?")){
       Message m = Message.createForSystem (this, message.trim());
       Acc.messenger().addMessage(m);
+      recorder.logMessage(m);
     }
   }
 

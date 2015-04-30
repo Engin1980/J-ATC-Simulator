@@ -6,9 +6,9 @@
       <radarRange topLeft="50.5 13.0" bottomRight="49.5 15.5" />
       <atcTemplates>
         <atcTemplate type="ctr" name="LKAA_CTR" frequency="127.12" 
-                     releaseAltitude="14000" acceptAltitude="7000" orderedAltitude="10000" />
+                     releaseAltitude="19000" acceptAltitude="7000" orderedAltitude="17000" />
         <atcTemplate type="twr" name="LKPR_TWR" frequency="118.10" 
-                     releaseAltitude="300" acceptAltitude="4000" orderedAltitude="4000" />
+                     releaseAltitude="300" acceptAltitude="4000" orderedAltitude="5000" />
         <atcTemplate type="app" name="LKPR_APP" frequency="119.00" 
                      releaseAltitude="-1" acceptAltitude="-1" orderedAltitude="-1" />
       </atcTemplates>
