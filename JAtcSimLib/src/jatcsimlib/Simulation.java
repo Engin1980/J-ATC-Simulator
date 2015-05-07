@@ -18,7 +18,6 @@ import jatcsimlib.atcs.TowerAtc;
 import jatcsimlib.atcs.UserAtc;
 import jatcsimlib.commands.AfterAltitudeCommand;
 import jatcsimlib.commands.ChangeAltitudeCommand;
-import jatcsimlib.commands.ChangeSpeedCommand;
 import jatcsimlib.commands.Command;
 import jatcsimlib.commands.ContactCommand;
 import jatcsimlib.commands.formatting.ShortParser;
@@ -29,7 +28,6 @@ import jatcsimlib.events.EventManager;
 import jatcsimlib.global.ERandom;
 import jatcsimlib.global.ETime;
 import jatcsimlib.global.Global;
-import jatcsimlib.global.Headings;
 import jatcsimlib.global.ReadOnlyList;
 import jatcsimlib.messaging.Message;
 import jatcsimlib.messaging.Messenger;
@@ -42,9 +40,12 @@ import jatcsimlib.world.Route;
 import jatcsimlib.world.Routes;
 import jatcsimlib.world.Runway;
 import jatcsimlib.world.RunwayThreshold;
+import java.text.ParseException;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  *
@@ -52,8 +53,11 @@ import java.util.List;
  */
 public class Simulation {
 
+  public EventListener<Simulation, Integer> tickSpeedChanged = null;
+  
   private final ETime now;
   private final AirplaneTypes planeTypes;
+  
   private final Airport airport;
 
   private Weather weather;
@@ -65,6 +69,11 @@ public class Simulation {
 
   private final EventManager<Simulation, EventListener<Simulation, Simulation>, Simulation> tickEM = new EventManager(this);
 
+  //TODO nemelo by byt soukrome
+  public AirplaneTypes getPlaneTypes() {
+    return planeTypes;
+  }
+  
   public Airport getActiveAirport() {
     return airport;
   }
@@ -194,7 +203,7 @@ public class Simulation {
     Airplane ret;
 
     Callsign cs = generateCallsign();
-    AirplaneType pt = planeTypes.getRandomByTraffic(Acc.airport().getTraffic());
+    AirplaneType pt = planeTypes.getRandomByTraffic(Acc.airport().getTrafficCategories());
 
     Route r = tryGetRandomRoute(true, pt);
     if (r == null) {
@@ -264,6 +273,7 @@ public class Simulation {
     return ret;
   }
 
+  //todel
   private Squawk generateSqwk() {
     int len = 4;
     char[] tmp;
@@ -284,6 +294,7 @@ public class Simulation {
     return ret;
   }
 
+  //todel
   private Coordinate generateArrivalCoordinate(Coordinate navFix, Coordinate aipFix) {
     double radial = Coordinates.getBearing(aipFix, navFix);
     radial += rnd.nextDouble() * 50 - 25; // nahodne zatoceni priletoveho radialu
@@ -304,6 +315,7 @@ public class Simulation {
     return ret;
   }
 
+  //todel
   private Callsign generateCallsign() {
     Callsign ret = null;
     while (ret == null) {
@@ -319,7 +331,7 @@ public class Simulation {
   }
 
   public static final ERandom rnd = new ERandom();
-
+// todel
   private Route tryGetRandomRoute(boolean arrival, AirplaneType planeType) {
 
     Iterable<Route> rts = Acc.threshold().getRoutes();
@@ -351,6 +363,7 @@ public class Simulation {
     return ctrAtc;
   }
 
+  //todel
   private int generateArrivingPlaneAltitude(Route r) {
     double thousandsFeetPerMile = 0.30;
 
@@ -395,6 +408,7 @@ public class Simulation {
     return Acc.threshold();
   }
 
+  //todel
   private Route tryGeneratePointRoute(boolean arrival) {
     //1. take points from arriving routes
     List<Navaid> nvs = new LinkedList();
@@ -435,10 +449,32 @@ public class Simulation {
   }
 
   private static final String SYSMES_COMMANDS = "?";
+  private static final Pattern SYSMES_CHANGE_SPEED = Pattern.compile("tick=(\\d+)");
   private void processSystemMessage(Message m) {
-    if (m.getAsString().text.equals(SYSMES_COMMANDS)){
+    String msgText = m.getAsString().text;
+    if (msgText.equals(SYSMES_COMMANDS)){
       printCommandsHelps();
+    } else if (SYSMES_CHANGE_SPEED.asPredicate().test(msgText)){
+      processSystemMessageTick(msgText, m);
     }
+  }
+
+  private void processSystemMessageTick(String msgText, Message m) {
+    Matcher matcher = SYSMES_CHANGE_SPEED.matcher(msgText);
+    matcher.find();
+    String tickS = matcher.group(1);
+    int tickI;
+    try {
+      tickI = Integer.parseInt(tickS);
+    } catch (NumberFormatException ex) {
+      Acc.messenger().addMessage(
+        Message.createFromSystem((UserAtc) m.source, "Unable to parse " + tickS + " to integer. Example: ?tick=750"));
+      return;
+    }
+    if (tickSpeedChanged != null)
+      tickSpeedChanged.raise(this, tickI);
+    Acc.messenger().addMessage(
+      Message.createFromSystem((UserAtc) m.source, "Tick speed changed to " + tickI + " miliseconds."));
   }
 
   private void printCommandsHelps() {

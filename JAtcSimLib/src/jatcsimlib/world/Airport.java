@@ -11,7 +11,7 @@ import jatcsimlib.coordinates.RadarRange;
 import jatcsimlib.coordinates.Coordinate;
 import jatcsimlib.global.KeyItem;
 import jatcsimlib.global.KeyList;
-import jatcsimlib.global.Traffic;
+import jatcsimlib.global.TrafficCategories;
 
 /**
  *
@@ -27,7 +27,7 @@ public class Airport implements KeyItem<String> {
   private final KeyList<Runway, String> runways = new KeyList();
   private final KeyList<AtcTemplate, Atc.eType> atcTemplates = new KeyList();
   private final KeyList<PublishedHold, Navaid> holds = new KeyList();
-  private Traffic traffic;
+  private TrafficCategories trafficCategories;
   
   private Area parent;
 
@@ -91,8 +91,8 @@ public class Airport implements KeyItem<String> {
     return atcTemplates;
   }
   
-  public Traffic getTraffic(){
-    return this.traffic;
+  public TrafficCategories getTrafficCategories(){
+    return this.trafficCategories;
   }
 
 }

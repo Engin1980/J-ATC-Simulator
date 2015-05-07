@@ -10,7 +10,7 @@ package jatcsimlib.global;
  *
  * @author Marek
  */
-public class Traffic {
+public class TrafficCategories {
   private double categoryA;
   private double categoryB;
   private double categoryC;

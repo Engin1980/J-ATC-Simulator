@@ -16,16 +16,14 @@ import jatcsimlib.commands.formatting.ShortParser;
 import jatcsimlib.exceptions.ENotSupportedException;
 import jatcsimlib.exceptions.ERuntimeException;
 import jatcsimlib.messaging.Message;
-import jatcsimlib.messaging.Messenger;
-import jatcsimlib.messaging.StringMessage;
 
 /**
  *
  * @author Marek
  */
 public class UserAtc extends Atc {
-  
-  private Parser parser = new ShortParser();
+
+  private final Parser parser = new ShortParser();
 
   private void raiseError(String text) {
     recorder.log(this, "ERR", text);
@@ -49,8 +47,9 @@ public class UserAtc extends Atc {
   private eErrorBehavior errorBehavior = eErrorBehavior.sendSystemErrors;
 
   @Override
-  public void init(){}
-  
+  public void init() {
+  }
+
   public eErrorBehavior getErrorBehavior() {
     return errorBehavior;
   }
@@ -81,7 +80,7 @@ public class UserAtc extends Atc {
     Airplane p = Airplanes.tryGetByCallsingOrNumber(Acc.planes(), airplaneCallsignOrPart);
     if (p == null) {
       raiseError(
-          "Cannot identify airplane under callsign (or part) \"" + airplaneCallsignOrPart + "\" . None or multiple planes identified.");
+        "Cannot identify airplane under callsign (or part) \"" + airplaneCallsignOrPart + "\" . None or multiple planes identified.");
       return;
     }
 
@@ -161,11 +160,12 @@ public class UserAtc extends Atc {
   }
 
   public void sendSystem(String message) {
-    if (message.trim().equals("?")){
-      Message m = Message.createForSystem (this, message.trim());
-      Acc.messenger().addMessage(m);
-      recorder.logMessage(m);
+    if (message.trim().isEmpty()) {
+      message = "?";
     }
+    Message m = Message.createForSystem(this, message.trim());
+    Acc.messenger().addMessage(m);
+    recorder.logMessage(m);
   }
 
 }

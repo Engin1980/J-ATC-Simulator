@@ -7,7 +7,7 @@ package jatcsimlib.airplanes;
 
 import jatcsimlib.Acc;
 import jatcsimlib.exceptions.ENotSupportedException;
-import jatcsimlib.global.Traffic;
+import jatcsimlib.global.TrafficCategories;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -52,7 +52,7 @@ public class AirplaneTypes extends ArrayList<AirplaneType> {
     return ret;
   }
 
-  public AirplaneType getRandomByTraffic(Traffic traffic) {
+  public AirplaneType getRandomByTraffic(TrafficCategories traffic) {
     AirplaneType ret;
     char c;
     double d = Acc.rnd().nextDouble();
