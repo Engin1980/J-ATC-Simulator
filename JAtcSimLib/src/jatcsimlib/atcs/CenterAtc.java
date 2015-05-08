@@ -18,9 +18,9 @@ import java.util.List;
  *
  * @author Marek
  */
-public class CentreAtc extends ComputerAtc {
+public class CenterAtc extends ComputerAtc {
 
-  public CentreAtc(AtcTemplate template) {
+  public CenterAtc(AtcTemplate template) {
     super(template);
   }
 

@@ -13,7 +13,7 @@ import jatcsimlib.airplanes.Airplanes;
 import jatcsimlib.airplanes.Callsign;
 import jatcsimlib.airplanes.Squawk;
 import jatcsimlib.atcs.Atc;
-import jatcsimlib.atcs.CentreAtc;
+import jatcsimlib.atcs.CenterAtc;
 import jatcsimlib.atcs.TowerAtc;
 import jatcsimlib.atcs.UserAtc;
 import jatcsimlib.commands.AfterAltitudeCommand;
@@ -74,7 +74,7 @@ public class Simulation {
   private final Messenger messenger = new Messenger();
   private final UserAtc appAtc;
   private final TowerAtc twrAtc;
-  private final CentreAtc ctrAtc;
+  private final CenterAtc ctrAtc;
 
   private final EventManager<Simulation, EventListener<Simulation, Simulation>, Simulation> tickEM = new EventManager(this);
 
@@ -119,7 +119,7 @@ public class Simulation {
     this.airport = airport;
     this.planeTypes = types;
     this.twrAtc = new TowerAtc(airport.getAtcTemplates().get(Atc.eType.twr));
-    this.ctrAtc = new CentreAtc(airport.getAtcTemplates().get(Atc.eType.ctr));
+    this.ctrAtc = new CenterAtc(airport.getAtcTemplates().get(Atc.eType.ctr));
     this.appAtc = new UserAtc(airport.getAtcTemplates().get(Atc.eType.app));
 
     this.now = new ETime(now);
@@ -377,7 +377,7 @@ public class Simulation {
     return twrAtc;
   }
 
-  public CentreAtc getCtrAtc() {
+  public CenterAtc getCtrAtc() {
     return ctrAtc;
   }
 

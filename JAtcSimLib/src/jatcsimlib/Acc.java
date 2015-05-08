@@ -7,7 +7,7 @@ package jatcsimlib;
 
 import jatcsimlib.airplanes.Airplane;
 import jatcsimlib.atcs.Atc;
-import jatcsimlib.atcs.CentreAtc;
+import jatcsimlib.atcs.CenterAtc;
 import jatcsimlib.atcs.PlaneResponsibilityManager;
 import jatcsimlib.atcs.TowerAtc;
 import jatcsimlib.atcs.UserAtc;
@@ -89,7 +89,7 @@ public class Acc {
     return sim.getTwrAtc();
   }
 
-  public static CentreAtc atcCtr() {
+  public static CenterAtc atcCtr() {
     return sim.getCtrAtc();
   }
 
