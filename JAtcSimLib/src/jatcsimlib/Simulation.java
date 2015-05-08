@@ -52,8 +52,17 @@ import java.util.regex.Pattern;
  * @author Marek
  */
 public class Simulation {
-
-  public EventListener<Simulation, Integer> tickSpeedChanged = null;
+  private final Simulation me = this;
+  public EventListener<Simulation, Object> secondElapsed = null;
+  
+  private final Timer tmr = new Timer(new EventListener<Timer, Object>() {
+    @Override
+    public void raise(Timer parent, Object e) {
+      Simulation.this.elapseSecond();
+      if (secondElapsed != null)
+        secondElapsed.raise(Simulation.this, null);
+    }
+  });
   
   private final ETime now;
   private final AirplaneTypes planeTypes;
@@ -134,7 +143,16 @@ public class Simulation {
 
   private boolean isBusy = false;
 
-  public void elapseSecond() {
+  public void start(){
+    if (this.tmr.isRunning() == false)
+      this.tmr.start(1000); // initial speed 1sec
+  }
+  
+  public void stop(){
+    this.tmr.stop();
+  }
+  
+  private void elapseSecond() {
     if (isBusy) {
       System.out.println("## -- elapse second is busy!");
       return;
@@ -471,8 +489,8 @@ public class Simulation {
         Message.createFromSystem((UserAtc) m.source, "Unable to parse " + tickS + " to integer. Example: ?tick=750"));
       return;
     }
-    if (tickSpeedChanged != null)
-      tickSpeedChanged.raise(this, tickI);
+    this.tmr.stop();
+    this.tmr.start(tickI);
     Acc.messenger().addMessage(
       Message.createFromSystem((UserAtc) m.source, "Tick speed changed to " + tickI + " miliseconds."));
   }

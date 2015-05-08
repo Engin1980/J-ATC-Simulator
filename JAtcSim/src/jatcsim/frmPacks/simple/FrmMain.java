@@ -173,7 +173,7 @@ public class FrmMain extends javax.swing.JFrame {
 
     } else if (msg.startsWith("?")){
       // system
-      //msg = msg.substring(1);
+      msg = msg.substring(1);
       app.sendSystem(msg);
       ret = true;
       

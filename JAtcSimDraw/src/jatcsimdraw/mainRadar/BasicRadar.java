@@ -21,7 +21,6 @@ import jatcsimlib.Simulation;
 import jatcsimlib.coordinates.RadarRange;
 import jatcsimlib.coordinates.Coordinate;
 import jatcsimlib.world.Area;
-import java.awt.Font;
 import java.awt.event.KeyEvent;
 
 /**
@@ -80,12 +79,12 @@ public class BasicRadar extends Radar  {
             break;
           case Drag:
             coord = p.toCoordinateDelta(pt);
-            System.out.println("Move by " + coord);
             moveMapBy(coord);
             break;
         }
 
       }
+
     });
     this.c.onPaint().addListener(new EventListener<Canvas, Object>() {
 

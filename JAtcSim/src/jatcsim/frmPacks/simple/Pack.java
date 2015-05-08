@@ -8,6 +8,7 @@ package jatcsim.frmPacks.simple;
 
 import jatcsimdraw.mainRadar.settings.Settings;
 import jatcsimlib.Simulation;
+import jatcsimlib.events.EventListener;
 import jatcsimlib.world.Area;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -30,6 +31,14 @@ public class Pack extends jatcsim.frmPacks.Pack {
   @Override
   public void initPack(Simulation sim, Area area, Settings displaySettings) {
     this.sim = sim;
+    this.sim.secondElapsed = new EventListener<Simulation, Object>() {
+
+      @Override
+      public void raise(Simulation parent, Object e) {
+        frmMain.elapseSecond();
+        frmList.elapseSecond();
+      }
+    };
     
     this.frmMain = new FrmMain();
     frmMain.init(sim, area, displaySettings);
@@ -40,17 +49,6 @@ public class Pack extends jatcsim.frmPacks.Pack {
 
   @Override
   public void startPack() {
-    int delay = 500; 
-    ActionListener taskPerformer = new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent evt) {
-        sim.elapseSecond();
-        frmMain.elapseSecond();
-        frmList.elapseSecond();
-      }
-    };
-    
-    tmr = new Timer(delay, taskPerformer);
-    tmr.start();
+    this.sim.start();
   }
 }
