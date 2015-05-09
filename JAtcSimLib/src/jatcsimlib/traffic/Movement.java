@@ -34,6 +34,13 @@ public class Movement {
   public ETime getInitTime() {
     return initTime;
   }
-  
-  
+
+  @Override
+  public String toString() {
+    return 
+      this.callsign + " {" 
+      + ((isDeparture() == false) ? "=>" : "") 
+      + getInitTime().toString() 
+      + ((isDeparture()) ? "=>" : "") + "}";
+  }
 }
