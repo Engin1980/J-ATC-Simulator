@@ -120,7 +120,7 @@ public class LongFormatter implements Formatter {
 
   @Override
   public String format(ClearedForTakeoffCommand cmd) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    return "cleared for takeoff " + cmd.getRunwayThreshold().getName();
   }
 
   @Override
