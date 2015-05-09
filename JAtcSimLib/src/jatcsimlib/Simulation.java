@@ -31,6 +31,8 @@ import jatcsimlib.global.Global;
 import jatcsimlib.global.ReadOnlyList;
 import jatcsimlib.messaging.Message;
 import jatcsimlib.messaging.Messenger;
+import jatcsimlib.traffic.GeneratedTraffic;
+import jatcsimlib.traffic.Traffic;
 import jatcsimlib.weathers.Weather;
 import jatcsimlib.weathers.WeatherDownloadNoaaGov;
 import jatcsimlib.weathers.WeatherDownloader;
@@ -52,29 +54,34 @@ import java.util.regex.Pattern;
  * @author Marek
  */
 public class Simulation {
-  private final Simulation me = this;
+
   public EventListener<Simulation, Object> secondElapsed = null;
-  
+
   private final Timer tmr = new Timer(new EventListener<Timer, Object>() {
     @Override
     public void raise(Timer parent, Object e) {
       Simulation.this.elapseSecond();
-      if (secondElapsed != null)
+      if (secondElapsed != null) {
         secondElapsed.raise(Simulation.this, null);
+      }
     }
   });
-  
+
   private final ETime now;
   private final AirplaneTypes planeTypes;
-  
   private final Airport airport;
-
   private Weather weather;
-
   private final Messenger messenger = new Messenger();
   private final UserAtc appAtc;
   private final TowerAtc twrAtc;
   private final CenterAtc ctrAtc;
+
+  private final Traffic traffic = new GeneratedTraffic(
+    7, new int[]{
+      4, 4, 4, 4, 4, 4,
+      4, 4, 4, 4, 4, 4,
+      4, 4, 4, 4, 4, 4,
+      4, 4, 4, 4, 4, 4});
 
   private final EventManager<Simulation, EventListener<Simulation, Simulation>, Simulation> tickEM = new EventManager(this);
 
@@ -82,7 +89,7 @@ public class Simulation {
   public AirplaneTypes getPlaneTypes() {
     return planeTypes;
   }
-  
+
   public Airport getActiveAirport() {
     return airport;
   }
@@ -143,15 +150,16 @@ public class Simulation {
 
   private boolean isBusy = false;
 
-  public void start(){
-    if (this.tmr.isRunning() == false)
+  public void start() {
+    if (this.tmr.isRunning() == false) {
       this.tmr.start(1000); // initial speed 1sec
+    }
   }
-  
-  public void stop(){
+
+  public void stop() {
     this.tmr.stop();
   }
-  
+
   private void elapseSecond() {
     if (isBusy) {
       System.out.println("## -- elapse second is busy!");
@@ -163,7 +171,7 @@ public class Simulation {
 
     // system stuff
     this.processSystemMessages();
-    
+
     // atc stuff
     this.ctrAtc.elapseSecond();
     this.twrAtc.elapseSecond();
@@ -189,27 +197,16 @@ public class Simulation {
   }
 
   private void generateNewPlanes() {
-    if (Acc.planes().size() >= Global.MAX_PLANE_COUNT) { // smazat
-      return;
-    }
+    Airplane[] newPlanes = traffic.getNewAirplanes();
 
-    if (this.now.getSeconds() % 5 != 0) {
-      return;
-    }
-
-    Airplane plane;
-    if (Acc.rnd().nextDouble() < Global.ARRIVING_PLANE_PROBABILITY) {
-      plane = generateNewArrivingPlane();
-    } else {
-      plane = generateNewDepartingPlane();
-    }
-
-    if (plane.isDeparture()) {
-      Acc.prm().registerPlane(twrAtc, plane);
-      twrAtc.registerNewPlane(plane);
-    } else {
-      Acc.prm().registerPlane(ctrAtc, plane);
-      ctrAtc.registerNewPlane(plane);
+    for (Airplane newPlane : newPlanes) {
+      if (newPlane.isDeparture()) {
+        Acc.prm().registerPlane(twrAtc, newPlane);
+        twrAtc.registerNewPlane(newPlane);
+      } else {
+        Acc.prm().registerPlane(ctrAtc, newPlane);
+        ctrAtc.registerNewPlane(newPlane);
+      }
     }
   }
 
@@ -237,16 +234,16 @@ public class Simulation {
     List<Command> routeCmds = r.getCommandsListClone();
     // added command to descend
     routeCmds.add(0,
-        new ChangeAltitudeCommand(
-            ChangeAltitudeCommand.eDirection.descend,
-            Acc.atcCtr().getOrderedAltitude()
-        ));
+      new ChangeAltitudeCommand(
+        ChangeAltitudeCommand.eDirection.descend,
+        Acc.atcCtr().getOrderedAltitude()
+      ));
     // added command to contact CTR
     routeCmds.add(0, new ContactCommand(Atc.eType.ctr));
 
     ret = new Airplane(
-        cs, coord, sqwk, pt, heading, alt, spd, false,
-        r.getName(), routeCmds);
+      cs, coord, sqwk, pt, heading, alt, spd, false,
+      r.getName(), routeCmds);
 
     return ret;
   }
@@ -272,21 +269,20 @@ public class Simulation {
     routeCmds.add(indx++, new ContactCommand(Atc.eType.twr));
 
     routeCmds.add(indx++, new ChangeAltitudeCommand(
-        ChangeAltitudeCommand.eDirection.climb, Acc.threshold().getInitialDepartureAltitude()));
+      ChangeAltitudeCommand.eDirection.climb, Acc.threshold().getInitialDepartureAltitude()));
 
     // -- po vysce+300 ma kontaktovat APP
     routeCmds.add(indx++,
-        new AfterAltitudeCommand(Acc.threshold().getParent().getParent().getAltitude() + Acc.rnd().nextInt(150, 450)));
+      new AfterAltitudeCommand(Acc.threshold().getParent().getParent().getAltitude() + Acc.rnd().nextInt(150, 450)));
     routeCmds.add(indx++, new ContactCommand(Atc.eType.app));
 
     // -- po vysce + 3000 rychlost na odlet
 //    routeCmds.add(indx++,
 //        new AfterAltitudeCommand(Acc.threshold().getParent().getParent().getAltitude() + 3000));
 //    routeCmds.add(indx++, new ChangeSpeedCommand(ChangeSpeedCommand.eDirection.increase, 250));
-
     ret = new Airplane(
-        cs, coord, sqwk, pt, heading, alt, spd, true,
-        r.getName(), routeCmds);
+      cs, coord, sqwk, pt, heading, alt, spd, true,
+      r.getName(), routeCmds);
 
     return ret;
   }
@@ -350,6 +346,7 @@ public class Simulation {
 
   public static final ERandom rnd = new ERandom();
 // todel
+
   private Route tryGetRandomRoute(boolean arrival, AirplaneType planeType) {
 
     Iterable<Route> rts = Acc.threshold().getRoutes();
@@ -386,8 +383,9 @@ public class Simulation {
     double thousandsFeetPerMile = 0.30;
 
     double dist = r.getRouteLength();
-    if (dist < 0)
+    if (dist < 0) {
       dist = Coordinates.getDistanceInNM(r.getMainFix().getCoordinate(), Acc.airport().getLocation());
+    }
 
     int ret = (int) (dist * thousandsFeetPerMile) + rnd.nextInt(5, 12);
     ret = ret * 1000;
@@ -404,7 +402,7 @@ public class Simulation {
 
       // departed
       if (p.isDeparture() && Acc.prm().getResponsibleAtc(p).equals(Acc.atcCtr())
-          && (p.getAltitude() == p.getTargetAltitude() || p.getAltitude() > 18000)) {
+        && (p.getAltitude() == p.getTargetAltitude() || p.getAltitude() > 18000)) {
         rem.add(p);
       }
     }
@@ -460,19 +458,20 @@ public class Simulation {
 
   private void processSystemMessages() {
     List<Message> systemMessages = Acc.messenger().getSystems(true);
-    
-    for(Message m : systemMessages){
+
+    for (Message m : systemMessages) {
       processSystemMessage(m);
     }
   }
 
   private static final String SYSMES_COMMANDS = "?";
   private static final Pattern SYSMES_CHANGE_SPEED = Pattern.compile("tick=(\\d+)");
+
   private void processSystemMessage(Message m) {
     String msgText = m.getAsString().text;
-    if (msgText.equals(SYSMES_COMMANDS)){
+    if (msgText.equals(SYSMES_COMMANDS)) {
       printCommandsHelps();
-    } else if (SYSMES_CHANGE_SPEED.asPredicate().test(msgText)){
+    } else if (SYSMES_CHANGE_SPEED.asPredicate().test(msgText)) {
       processSystemMessageTick(msgText, m);
     }
   }
@@ -497,7 +496,7 @@ public class Simulation {
 
   private void printCommandsHelps() {
     String txt = new ShortParser().getHelp();
-    
+
     Acc.messenger().addMessage(Message.createFromSystem(Acc.atcApp(), txt));
   }
 

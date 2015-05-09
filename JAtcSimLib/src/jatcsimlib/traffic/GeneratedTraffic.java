@@ -80,6 +80,7 @@ public class GeneratedTraffic extends Traffic {
     for (int i = 0; i < expMovs; i++) {
       Movement m = generateMovement(Acc.now().getHours());
       preparedMovements.add(m);
+      System.out.println("\tPrepared movement: " + m);
     }
     Collections.sort(preparedMovements, new MovementSortByETimeComparer());
     lastHourGeneratedTraffic = Acc.now().getHours() + 1;
