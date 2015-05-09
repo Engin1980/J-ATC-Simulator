@@ -105,7 +105,7 @@ public class TowerAtc extends ComputerAtc {
       departings.add(p);
 
       CommandList cmdList = new CommandList();
-      cmdList.add(new ClearedForTakeoffCommand());
+      cmdList.add(new ClearedForTakeoffCommand(runwayThresholdInUse));
       Message m = Message.create(this, p, cmdList);
       Acc.messenger().addMessage(m);
       recorder.logMessage(m);
