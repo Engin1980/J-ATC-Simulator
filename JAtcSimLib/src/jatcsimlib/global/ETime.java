@@ -32,7 +32,7 @@ public class ETime implements Comparable<ETime> {
   }
 
   public final void set(int hours, int minutes, int seconds) {
-    this.value = hours * 24 * 60 + minutes * 60 + seconds;
+    this.value = hours * 60 * 60 + minutes * 60 + seconds;
   }
 
   public int getSeconds() {
@@ -48,7 +48,7 @@ public class ETime implements Comparable<ETime> {
   }
 
   public int getHours() {
-    return ((int) (Math.floor(value / 60 / 24))) % 24;
+    return ((int) (Math.floor(value / 60 / 60)));
   }
 
   @Override
