@@ -10,9 +10,6 @@ import jatcsimdraw.mainRadar.settings.Settings;
 import jatcsimlib.Simulation;
 import jatcsimlib.events.EventListener;
 import jatcsimlib.world.Area;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import javax.swing.Timer;
 
 /**
  *
@@ -23,7 +20,6 @@ public class Pack extends jatcsim.frmPacks.Pack {
   private Simulation sim;
   private FrmMain frmMain;
   private FrmFlightList frmList;
-  private Timer tmr;
 
   public Pack() {
   }
