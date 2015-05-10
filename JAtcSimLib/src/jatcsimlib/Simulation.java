@@ -76,12 +76,13 @@ public class Simulation {
   private final TowerAtc twrAtc;
   private final CenterAtc ctrAtc;
 
+  private int TRAFFIC_COUNT = 10;
   private final Traffic traffic = new GeneratedTraffic(
     7, 1.0, new int[]{
-      4, 4, 4, 4, 4, 4,
-      4, 4, 4, 4, 4, 4,
-      4, 4, 4, 4, 4, 4,
-      4, 4, 4, 4, 4, 4});
+      TRAFFIC_COUNT, TRAFFIC_COUNT, TRAFFIC_COUNT, TRAFFIC_COUNT, TRAFFIC_COUNT, TRAFFIC_COUNT,
+      TRAFFIC_COUNT, TRAFFIC_COUNT, TRAFFIC_COUNT, TRAFFIC_COUNT, TRAFFIC_COUNT, TRAFFIC_COUNT,
+      TRAFFIC_COUNT, TRAFFIC_COUNT, TRAFFIC_COUNT, TRAFFIC_COUNT, TRAFFIC_COUNT, TRAFFIC_COUNT,
+      TRAFFIC_COUNT, TRAFFIC_COUNT, TRAFFIC_COUNT, TRAFFIC_COUNT, TRAFFIC_COUNT, TRAFFIC_COUNT});
 
   private final EventManager<Simulation, EventListener<Simulation, Simulation>, Simulation> tickEM = new EventManager(this);
 
