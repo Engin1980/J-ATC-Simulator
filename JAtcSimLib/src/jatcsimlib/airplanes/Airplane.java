@@ -358,7 +358,7 @@ public class Airplane implements KeyItem<Callsign> {
     this.targetSpeed = this.speed;
 
     this.pilot = new Pilot(this, routeName, routeCommandQueue);
-    
+
     // flight recorders on
     this.flightRecorder = FlightRecorder.create(this.callsign, false, true);
   }
@@ -432,8 +432,8 @@ public class Airplane implements KeyItem<Callsign> {
   public FlightRecorder getFlightRecorder() {
     return flightRecorder;
   }
-  
-  public String getTargetHeadingS(){
+
+  public String getTargetHeadingS() {
     return String.format("%1$03d", this.targetHeading);
   }
 
@@ -450,7 +450,7 @@ public class Airplane implements KeyItem<Callsign> {
     drivePlane();
     updateSHABySecond();
     updateCoordinates();
-    
+
     flightRecorder.logFDR(this, this.pilot);
   }
 
@@ -493,16 +493,35 @@ public class Airplane implements KeyItem<Callsign> {
   }
 
   private void updateSHABySecond() {
-    if (targetSpeed != speed) {
-      adjustSpeed();
+    double energy = 1;
+    // when climb, first energy goes for altitude, then for speed
+    // when descend, first energy goes for speed, then for altitude
+    boolean isSpeedPreffered = getVerticalSpeed() > 0 || speed < this.getType().vDep;
+
+    if (isSpeedPreffered) {
+      if (targetSpeed != speed) {
+        energy = adjustSpeed(energy);
+      }
+      energy = Math.max(energy, 0.2);
+      if (targetAltitude != altitude) {
+        adjustAltitude(energy);
+      }
+    } else {
+      if (targetAltitude != altitude) {
+        energy = adjustAltitude(energy);
+      }
+      energy = Math.max(energy, 0.2);
+      if (targetSpeed != speed) {
+        energy = adjustSpeed(energy);
+      }
     }
+
+    if (lastVerticalSpeed != 0 && targetAltitude == altitude) {
+      lastVerticalSpeed = 0;
+    }
+
     if (targetHeading != heading) {
       adjustHeading();
-    }
-    if (targetAltitude != altitude) {
-      adjustAltitude();
-    } else {
-      if (lastVerticalSpeed != 0) lastVerticalSpeed = 0;
     }
 
     updateCoordinates();
@@ -510,8 +529,7 @@ public class Airplane implements KeyItem<Callsign> {
 
   private final static double GROUND_MULTIPLIER = 3.0;
 
-  private void adjustSpeed() {
-    //boolean onGround = altitude == Acc.airport().getAltitude();
+  private double adjustSpeed(double energyLeft) {
     // this is faster:
     boolean onGround = speed < airplaneType.vMinApp && speed > 20;
     // in flight
@@ -522,7 +540,11 @@ public class Airplane implements KeyItem<Callsign> {
       }
       speed += step;
       if (targetSpeed < speed) {
+        double diff = speed - targetSpeed;
+        energyLeft = energyLeft - diff / step;
         speed = targetSpeed;
+      } else {
+        energyLeft = 0;
       }
     } else if (targetSpeed < speed) {
       int step = airplaneType.speedDecreaseRate;
@@ -531,9 +553,14 @@ public class Airplane implements KeyItem<Callsign> {
       }
       speed -= step;
       if (targetSpeed > speed) {
+        double diff = targetSpeed - speed;
+        energyLeft = energyLeft - diff / step;
         speed = targetSpeed;
+      } else {
+        energyLeft = 0;
       }
     } // else if (targetSpeed < speed)
+    return energyLeft;
   }
 
   private void adjustHeading() {
@@ -542,29 +569,35 @@ public class Airplane implements KeyItem<Callsign> {
     this.heading = newHeading;
   }
 
-  private void adjustAltitude() {
+  private double adjustAltitude(double energyLeft) {
     if (speed < airplaneType.vR) {
       if (altitude == Acc.airport().getAltitude()) {
-        return;
+        return energyLeft;
       }
     }
-
+    
     int origAlt = altitude;
+    
+    double step;
     if (targetAltitude > altitude) {
-      int step = (int) (airplaneType.getClimbRateForAltitude(this.altitude));
-      altitude += step;
-      if (targetAltitude < altitude) {
-        altitude = targetAltitude;
-      }
-    } else if (targetAltitude < altitude) {
-      int step = (int) (airplaneType.getDescendRateForAltitude(this.altitude));
-      altitude -= step;
-      if (targetAltitude > altitude) {
-        altitude = targetAltitude;
-      }
+      step = airplaneType.getClimbRateForAltitude(this.altitude);
+    } else {
+      step = -airplaneType.getDescendRateForAltitude(this.altitude);
     }
-
+    step = step * energyLeft;
+    double neededStep = targetAltitude - altitude;
+    
+    if (step < neededStep){
+      energyLeft = 0;
+      altitude += step;
+    } else {
+      energyLeft = energyLeft - neededStep/step;
+      altitude = targetAltitude;
+    }
+    
     this.lastVerticalSpeed = (altitude - origAlt) * 60;
+
+    return energyLeft;
   }
 
   public Atc getTunedAtc() {
