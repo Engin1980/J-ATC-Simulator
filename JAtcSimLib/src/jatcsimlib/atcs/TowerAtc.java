@@ -11,6 +11,7 @@ import jatcsimlib.airplanes.AirplaneList;
 import jatcsimlib.commands.ClearedForTakeoffCommand;
 import jatcsimlib.commands.CommandList;
 import jatcsimlib.coordinates.Coordinates;
+import jatcsimlib.exceptions.ENotSupportedException;
 import jatcsimlib.exceptions.ERuntimeException;
 import jatcsimlib.global.ETime;
 import jatcsimlib.global.Headings;
@@ -19,7 +20,9 @@ import jatcsimlib.messaging.Message;
 import jatcsimlib.weathers.Weather;
 import jatcsimlib.world.Runway;
 import jatcsimlib.world.RunwayThreshold;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -33,6 +36,7 @@ public class TowerAtc extends ComputerAtc {
   private final AirplaneList departings = new AirplaneList();
   private RunwayChangeInfo runwayChangeInfo = null;
   private RunwayThreshold runwayThresholdInUse = null;
+  private final LastDepartures lastDepartures = new LastDepartures();
 
   public TowerAtc(AtcTemplate template) {
     super(template);
@@ -99,10 +103,11 @@ public class TowerAtc extends ComputerAtc {
   }
 
   private void processReadyForTakeoff() {
-    if (readyForTakeoff.isEmpty() == false && canTakeOffSomebodyNow()) {
+    if (readyForTakeoff.isEmpty() == false && canTakeOffNextPlane()) {
       Airplane p = readyForTakeoff.get(0);
       readyForTakeoff.remove(0);
       departings.add(p);
+      lastDepartures.set(runwayThresholdInUse, p, Acc.now());
 
       CommandList cmdList = new CommandList();
       cmdList.add(new ClearedForTakeoffCommand(runwayThresholdInUse));
@@ -112,25 +117,35 @@ public class TowerAtc extends ComputerAtc {
     }
   }
 
-  private boolean canTakeOffSomebodyNow() {
+  private boolean canTakeOffNextPlane() {
     for (Airplane p : getPrm().getPlanes(this)) {
       double dst = Coordinates.getDistanceInNM(p.getCoordinate(), Acc.threshold().getCoordinate());
-      if (p.isArrival()) {
-        if (dst < 5) {
-          return false;
-        }
-      } else {
-        if (readyForTakeoff.contains(p)) {
-          continue;
-        }
-        if (p.getSpeed() == 0 && departings.contains(p) == false) {
-          continue;
-        }
-        if (dst < 3) {
-          return false;
-        }
+      if (p.isArrival() && dst < 5) { // ... with distance closer than 5nm
+        return false;
       }
+    } // for
+
+    LastDeparture ld = lastDepartures.get(runwayThresholdInUse);
+    if (ld == null) {
+      return true;
     }
+    
+    TakeOffSeparation tos = TakeOffSeparation.create(
+      ld.plane.getType().category, 
+      this.readyForTakeoff.get(0).getType().category);
+    
+    if (ld.time.addSeconds(tos.seconds).isAfter(Acc.now())) {
+      return false; // there are too close due to time
+    }
+    if (Coordinates.getDistanceInNM(ld.plane.getCoordinate(), this.readyForTakeoff.get(0).getCoordinate()) < tos.nm){
+      return false; // they are too close due to distance
+    }
+    
+    final int MIN_ALTITUDE_FOR_NEXT = 300;
+    if (Acc.airport().getAltitude() + MIN_ALTITUDE_FOR_NEXT > ld.plane.getAltitude()) {
+      return false; // the first one is not high enough
+    }
+
     return true;
   }
 
@@ -296,5 +311,84 @@ class RunwayChangeInfo {
   public RunwayChangeInfo(RunwayThreshold newRunwayThreshold, ETime changeTime) {
     this.newRunwayThreshold = newRunwayThreshold;
     this.changeTime = changeTime;
+  }
+}
+
+class TakeOffSeparation {
+
+  public final int nm;
+  public final int seconds;
+
+  private TakeOffSeparation(int nm, int seconds) {
+    this.nm = nm;
+    this.seconds = seconds;
+  }
+
+  private final static int[][] sepDistanceNm = new int[][]{
+    new int[]{4, 5, 6, 6}, // A
+    new int[]{0, 3, 3, 5}, // B
+    new int[]{0, 0, 3, 4}, // C
+    new int[]{0, 0, 0, 0}}; // D
+
+  private final static int[][] sepTimeSeconds = new int[][]{
+    new int[]{120, 180, 180, 180}, // A
+    new int[]{0, 120, 120, 120}, // B
+    new int[]{0, 0, 120, 120}, // C
+    new int[]{0, 0, 0, 120}}; // D
+
+  private static int c2i(char c) {
+    switch (c) {
+      case 'A':
+        return 0;
+      case 'B':
+        return 1;
+      case 'C':
+        return 2;
+      case 'D':
+        return 3;
+      default:
+        throw new ENotSupportedException("Unknown plane type category " + c);
+    }
+  }
+
+  public static TakeOffSeparation create(char leadingTypeCategory, char followingTypeCategory) {
+    int a = c2i(leadingTypeCategory);
+    int b = c2i(followingTypeCategory);
+    int time = sepTimeSeconds[a][b];
+    int dist = sepDistanceNm[a][b];
+    
+    return new TakeOffSeparation(dist, time);
+  }
+}
+
+class LastDeparture {
+
+  public final Airplane plane;
+  public final ETime time;
+
+  public LastDeparture(Airplane plane, ETime time) {
+    this.plane = plane;
+    this.time = time;
+  }
+}
+
+class LastDepartures {
+
+  private final Map<RunwayThreshold, LastDeparture> inner = new HashMap<>();
+
+  public void set(RunwayThreshold runwayThreshold, LastDeparture departure) {
+    inner.put(runwayThreshold, departure);
+  }
+
+  public void set(RunwayThreshold runwayThreshold, Airplane plane, ETime time) {
+    this.set(runwayThreshold, new LastDeparture(plane, time.clone()));
+  }
+
+  public LastDeparture get(RunwayThreshold runwayThreshold) {
+    if (inner.containsKey(runwayThreshold)) {
+      return inner.get(runwayThreshold);
+    } else {
+      return null;
+    }
   }
 }
