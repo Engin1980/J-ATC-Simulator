@@ -587,7 +587,7 @@ public class Airplane implements KeyItem<Callsign> {
     step = step * energyLeft;
     double neededStep = targetAltitude - altitude;
     
-    if (step < neededStep){
+    if (Math.abs(step) < Math.abs(neededStep)){
       energyLeft = 0;
       altitude += step;
     } else {
