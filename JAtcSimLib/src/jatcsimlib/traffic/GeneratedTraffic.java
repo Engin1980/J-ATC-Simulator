@@ -36,21 +36,32 @@ import java.util.List;
  * @author Marek Vajgl
  */
 public class GeneratedTraffic extends Traffic {
-  private int maxPlanesInSimulation;
+  private final int maxPlanesInSimulation;
+  private final double probabilityOfDeparture;
   private final int[] movementsPerHour;
   private int lastHourGeneratedTraffic = -1;
   private final List<Movement> preparedMovements = new LinkedList();
 
-  public GeneratedTraffic(int maxPlanesInSimulation, int[] movementsPerHour) {
+  public GeneratedTraffic(int maxPlanesInSimulation, double probabilityOfDeparture, int[] movementsPerHour) {
     if (maxPlanesInSimulation < 1){
         throw new IllegalArgumentException("Argument \"maxPlanesInSimulation\" must be equal or greather than 1.");
     }
+    
+    if (eng.eSystem.Number.isBetweenOrEqual(0, probabilityOfDeparture, 1) == false){
+      throw new IllegalArgumentException("\"probabilityOfDeparture\" must be between 0 and 1.");
+    }
+    
     if (movementsPerHour == null)
       throw new IllegalArgumentException("Argument \"movementsPerHour\" cannot be null.");
     if (movementsPerHour.length != 24)
       throw new IllegalArgumentException("Argument \"movementsPerHour\" must have length equal to 24.");
+    for (int mph : movementsPerHour) {
+      if (mph < 0)
+        throw new IllegalArgumentException("Argument \"movementsPerHour\" must have all numbers greater or equal to zero.");
+    }
 
     this.maxPlanesInSimulation = maxPlanesInSimulation;
+    this.probabilityOfDeparture = probabilityOfDeparture;
     this.movementsPerHour = movementsPerHour;
   }  
   
@@ -90,7 +101,7 @@ public class GeneratedTraffic extends Traffic {
   private Movement generateMovement(int hour) {
     
     ETime initTime = new ETime(hour, Acc.rnd().nextInt(0, 60), Acc.rnd().nextInt(0, 60));
-    boolean isDeparture = (Acc.rnd().nextDouble() <= 0.5);
+    boolean isDeparture = (Acc.rnd().nextDouble() <= this.probabilityOfDeparture);
     Movement ret = new Movement(null, initTime, isDeparture);
     return ret;
     
@@ -109,45 +120,7 @@ public class GeneratedTraffic extends Traffic {
     }
     return ret;
   }
-
-    
-    /*
-        private Airplane generateNewArrivingPlane() {
-    Airplane ret;
-
-    Callsign cs = generateCallsign();
-    AirplaneType pt = planeTypes.getRandomByTraffic(Acc.airport().getTrafficCategories());
-
-    Route r = tryGetRandomRoute(true, pt);
-    if (r == null) {
-      r = tryGeneratePointRoute(true);
-    }
-    Coordinate coord = generateArrivalCoordinate(r.getMainFix().getCoordinate(), Acc.threshold().getCoordinate());
-    Squawk sqwk = generateSqwk();
-
-    int heading = (int) Coordinates.getBearing(coord, r.getMainFix().getCoordinate());
-    int alt = generateArrivingPlaneAltitude(r);
-    int spd = pt.vCruise;
-
-    List<Command> routeCmds = r.getCommandsListClone();
-    // added command to descend
-    routeCmds.add(0,
-        new ChangeAltitudeCommand(
-            ChangeAltitudeCommand.eDirection.descend,
-            Acc.atcCtr().getOrderedAltitude()
-        ));
-    // added command to contact CTR
-    routeCmds.add(0, new ContactCommand(Atc.eType.ctr));
-
-    ret = new Airplane(
-        cs, coord, sqwk, pt, heading, alt, spd, false,
-        r.getName(), routeCmds);
-
-    return ret;
-  }
-
-    */
-
+  
   private Airplane generateAirplaneFromMovement(Movement m) {
     if (m.isDeparture())
       return generateNewDepartureAirplaneFromMovement(m);

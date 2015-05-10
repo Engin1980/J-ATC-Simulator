@@ -77,7 +77,7 @@ public class Simulation {
   private final CenterAtc ctrAtc;
 
   private final Traffic traffic = new GeneratedTraffic(
-    7, new int[]{
+    7, 1.0, new int[]{
       4, 4, 4, 4, 4, 4,
       4, 4, 4, 4, 4, 4,
       4, 4, 4, 4, 4, 4,
