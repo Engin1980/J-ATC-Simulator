@@ -25,34 +25,42 @@ public class AirplaneType {
    * Maximum altitude in ft
    */
   public int maxAltitude;
+  
   /**
    * Rotation speed at take-off.
    */
   public int vR;
+  
   /**
    * Minimum speed at approach
    */
   public int vMinApp;
+  
   /**
    * Maximum speed at approach
    */
   public int vMaxApp;
+  
   /**
    * Common speed at approach
    */
   public int vApp;
+  
   /**
    * Minimum clean speed
    */
   public int vMinClean;
+  
   /**
    * Maximum clean speed
    */
   public int vMaxClean;
+  
   /**
    * Common cruise speed
    */
   public int vCruise;
+  
   /**
    * Departure speed
    */
