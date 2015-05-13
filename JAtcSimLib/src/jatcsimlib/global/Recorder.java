@@ -19,7 +19,7 @@ import jatcsimlib.exceptions.ENotSupportedException;
 import jatcsimlib.exceptions.ERuntimeException;
 import jatcsimlib.messaging.IContent;
 import jatcsimlib.messaging.Message;
-import jatcsimlib.messaging.StringMessage;
+import jatcsimlib.messaging.StringMessageContent;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -123,8 +123,8 @@ public abstract class Recorder {
   private static Formatter fmt = new LongFormatter();
 
   protected String getMessageContentString(IContent content) {
-    if (content instanceof StringMessage) {
-      return ((StringMessage) content).text;
+    if (content instanceof StringMessageContent) {
+      return ((StringMessageContent) content).text;
     } else if (content instanceof CommandList) {
       CommandList cmds = (CommandList) content;
       EStringBuilder sb = new EStringBuilder();

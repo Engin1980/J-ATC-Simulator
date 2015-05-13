@@ -11,6 +11,8 @@ import jatcsimlib.airplanes.AirplaneList;
 import jatcsimlib.exceptions.ENotSupportedException;
 import jatcsimlib.exceptions.ERuntimeException;
 import jatcsimlib.global.ReadOnlyList;
+import jatcsimlib.messaging.Message;
+import jatcsimlib.messaging.StringMessageContent;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -31,16 +33,16 @@ public class PlaneResponsibilityManager {
   boolean isToSwitch(Airplane p) {
     eState s = map.get(p);
     return s == eState.app2ctr
-        || s == eState.app2twr
-        || s == eState.ctr2app
-        || s == eState.twr2app;
+      || s == eState.app2twr
+      || s == eState.ctr2app
+      || s == eState.twr2app;
   }
 
   boolean isAskedToSwitch(Airplane p) {
     eState s = map.get(p);
     boolean ret = s == eState.app
-        || s == eState.ctr
-        || s == eState.twr;
+      || s == eState.ctr
+      || s == eState.twr;
     ret = !ret;
     return ret;
   }
@@ -61,7 +63,7 @@ public class PlaneResponsibilityManager {
 
   public ReadOnlyList<Airplane.AirplaneInfo> getInfos() {
     ReadOnlyList<Airplane.AirplaneInfo> ret
-        = new ReadOnlyList<>(this.infos);
+      = new ReadOnlyList<>(this.infos);
     return ret;
   }
 
@@ -138,15 +140,12 @@ public class PlaneResponsibilityManager {
   public void requestSwitch(Atc from, Atc to, Airplane plane) {
     eState st = typeToState(from);
     if (map.get(plane) != st) {
-      if (from == null)
-        throw new ERuntimeException("Cannot request switch - \"from\" object is null.");
-      else if (plane == null)
-        throw new ERuntimeException("Cannot request switch - \"plane\" object is null.");
-      else if (map == null)
-        throw new ERuntimeException("Cannot request switch - \"map\" object is null.");
-      else if (map.get(plane) == null)
-        throw new ERuntimeException("Cannot request switch - \"map.get(plane)\" object is null.");
-      throw new ERuntimeException("Cannot request switch. Not responsible atc for airplane. Atc: " + from.getName() + ", plane: " + plane.getCallsign() + ", state: " + map.get(plane));
+      StringBuilder sb = new StringBuilder();
+      sb.append("Code ").append(plane.getSqwk().toString()).append(" err: ");
+      sb.append(" Cannot request switch. Atc ").append(from.getName()).append(" is not responsible for plane.");
+      Message m = Message.createFromSystem(Acc.atcApp(), sb.toString());
+      Acc.messenger().addMessage(m);
+      return;
     }
 
     switch (from.getType()) {
@@ -254,9 +253,9 @@ public class PlaneResponsibilityManager {
   private boolean isApprovedToSwitch(Airplane plane) {
     eState s = map.get(plane);
     return s == eState.app2ctrReady
-        || s == eState.app2twrReady
-        || s == eState.ctr2appReady
-        || s == eState.twr2appReady;
+      || s == eState.app2twrReady
+      || s == eState.ctr2appReady
+      || s == eState.twr2appReady;
   }
 
   public Atc getResponsibleAtc(Airplane plane) {

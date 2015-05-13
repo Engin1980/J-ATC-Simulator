@@ -526,7 +526,7 @@ public class Airplane implements KeyItem<Callsign> {
 
   }
 
-  private final static double GROUND_MULTIPLIER = 3.0;
+  private final static double GROUND_MULTIPLIER = 1.0; //1.5; //3.0;
 
   private double adjustSpeed(double energyLeft) {
     // this is faster:

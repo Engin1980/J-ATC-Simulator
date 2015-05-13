@@ -60,13 +60,13 @@ public class Message implements Comparable<Message> {
   }
   
   public static Message create(Airplane source, Atc target, String text, int secondsDelay){
-    StringMessage sm = new StringMessage(text);
+    StringMessageContent sm = new StringMessageContent(text);
     Message ret = new Message(secondsDelay, source, target, sm);
     return ret;
   }
   
   public static Message create(Airplane source, Atc target, String text){
-    return create(source, target, new StringMessage(text));
+    return create(source, target, new StringMessageContent(text));
   }
   
   public static Message create(Atc source, Atc target, IContent content){
@@ -75,7 +75,7 @@ public class Message implements Comparable<Message> {
   }
   
   public static Message create(Atc source, Atc target, String text){
-    return create(source, target, new StringMessage(text));
+    return create(source, target, new StringMessageContent(text));
   }
   
   public static Message create(Atc source, Airplane plane, IContent content){
@@ -84,13 +84,13 @@ public class Message implements Comparable<Message> {
   }
   
   public static Message createForSystem(UserAtc source, String text){
-    StringMessage sm = new StringMessage(text);
+    StringMessageContent sm = new StringMessageContent(text);
     Message ret = new Message(source, SYSTEM, sm);
     return ret;
   }
     
   public static Message createFromSystem(UserAtc target, String text){
-    StringMessage sm = new StringMessage(text);
+    StringMessageContent sm = new StringMessageContent(text);
     Message ret = new Message(SYSTEM, target, sm);
     return ret;
   }
@@ -188,8 +188,8 @@ public class Message implements Comparable<Message> {
   public PlaneSwitchMessage getAsPlaneSwitchMessage(){
     return (PlaneSwitchMessage) content;
   }
-  public StringMessage getAsString(){
-    return (StringMessage) content;
+  public StringMessageContent getAsString(){
+    return (StringMessageContent) content;
   }
 
   public String toContentString() {
@@ -197,7 +197,7 @@ public class Message implements Comparable<Message> {
       return "--?? set of commands ??--";
     else if (content instanceof PlaneSwitchMessage){
       return getAsPlaneSwitchMessage().getAsString();
-    } else if (content instanceof StringMessage){
+    } else if (content instanceof StringMessageContent){
       return getAsString().text;
     } else
       throw new ENotSupportedException();

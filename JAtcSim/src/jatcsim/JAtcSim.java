@@ -6,9 +6,11 @@
 package jatcsim;
 
 import jatcsim.startup.FrmStartup;
+import jatcsimdraw.mainRadar.SoundManager;
 import jatcsimdraw.mainRadar.settings.Settings;
 import jatcsimlib.Simulation;
 import jatcsimlib.airplanes.AirplaneTypes;
+import jatcsimlib.exceptions.ERuntimeException;
 import jatcsimxml.serialization.Serializer;
 import jatcsimlib.world.Airport;
 import jatcsimlib.world.Area;
@@ -23,6 +25,7 @@ import javax.swing.JFrame;
  */
 public class JAtcSim {
 
+  public static java.io.File resFolder = null;
   private static Area area = null;
   private static Settings displaySettings = null;
   private static AirplaneTypes types = null;
@@ -32,14 +35,9 @@ public class JAtcSim {
    */
   public static void main(String[] args) throws Exception {
 
-//    FrmOtherStartup fos = new FrmOtherStartup();
-//    fos.setVisible(true);
-//    
-//    Thread ot = new JFrameThread(fos);
-//    ot.start();
-//    ot.join();
-//    System.exit(1);
+    initResourcesFolder();
     
+    /*
     FrmStartup fs = new FrmStartup();
     fs.eInit();
     fs.setVisible(true);
@@ -49,11 +47,8 @@ public class JAtcSim {
     stf.start();
     stf.join();
     System.out.println("AFT");
-
-//    if (fs.isDataValid() == false) {
-//      System.exit(0);
-//    }
-
+    */
+      
     // loading data
     try {
       loadDataFromXmlFiles();
@@ -69,6 +64,7 @@ public class JAtcSim {
     final Simulation sim = Simulation.create(
       aip,
       types, Calendar.getInstance());
+    SoundManager.init(resFolder.toString());
 
     // starting pack & simulation
     jatcsim.frmPacks.Pack simPack
@@ -86,22 +82,39 @@ public class JAtcSim {
     try {
       area = Area.create();
       ser.fillObject(
-        "C:\\Users\\Marek Vajgl\\Documents\\NetBeansProjects\\_JAtcSimSolution\\JAtcSim\\src\\jatcsim\\lkpr.xml",
+        resFolder.toString() + "\\areas\\lkpr.xml",
         area);
 
       displaySettings = new Settings();
       ser.fillObject(
-        "C:\\Users\\Marek Vajgl\\Documents\\NetBeansProjects\\_JAtcSimSolution\\JAtcSim\\src\\jatcsim\\mainRadarSettings.xml",
+        resFolder.toString() + "\\settings\\mainRadarSettings.xml",
         displaySettings);
 
       types = new AirplaneTypes();
       ser.fillList(
-        "C:\\Users\\Marek Vajgl\\Documents\\NetBeansProjects\\_JAtcSimSolution\\JAtcSim\\src\\jatcsim\\planeTypes.xml",
+        resFolder.toString() + "\\settings\\planeTypes.xml",
         types);
 
     } catch (Exception ex) {
       throw ex;
     }
+  }
+
+  private static void initResourcesFolder() {
+    String curDir = System.getProperty("user.dir") + "\\";
+    java.io.File f;
+    f = new java.io.File(curDir + "src\\resources");
+    if (f.exists()){
+      resFolder = f;
+      return;
+    }
+    f = new java.io.File(curDir + "resources");
+    if (f.exists()){
+      resFolder = f;
+      return;
+    }
+    
+    throw new ERuntimeException("Unable to find resources folder.");
   }
 }
 

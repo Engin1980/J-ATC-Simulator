@@ -9,7 +9,6 @@ package jatcsimlib.messaging;
 import jatcsimlib.global.ETime;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -18,7 +17,7 @@ import java.util.List;
  * @author Marek
  */
 public class MessageList {
-  private List<Message> inner = new ArrayList<>();
+  private final List<Message> inner = new ArrayList<>();
   private boolean sorted = false;
   // nebude tu lepší "linked-list"?
   

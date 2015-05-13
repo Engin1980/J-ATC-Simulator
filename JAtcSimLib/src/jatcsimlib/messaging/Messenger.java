@@ -7,8 +7,6 @@ package jatcsimlib.messaging;
 
 import jatcsimlib.Acc;
 import jatcsimlib.airplanes.Airplane;
-import jatcsimlib.commands.Command;
-import jatcsimlib.commands.CommandList;
 import jatcsimlib.global.ETime;
 import java.util.ArrayList;
 import java.util.HashMap;

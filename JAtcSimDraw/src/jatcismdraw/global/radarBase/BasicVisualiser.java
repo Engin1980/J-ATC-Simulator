@@ -19,7 +19,7 @@ import jatcsimlib.exceptions.ENotSupportedException;
 import jatcsimlib.global.ETime;
 import jatcsimlib.global.Headings;
 import jatcsimlib.messaging.Message;
-import jatcsimlib.messaging.StringMessage;
+import jatcsimlib.messaging.StringMessageContent;
 import jatcsimlib.world.Approach;
 import jatcsimlib.world.Border;
 import jatcsimlib.world.BorderArcPoint;
@@ -41,6 +41,16 @@ import java.util.Map;
  */
 public class BasicVisualiser extends Visualiser {
 
+  /**
+   * Remembers last repaint of "hour" on the visualiser. 
+   * Hour change increases refreshTick variable
+   */
+  private static int lastDrawnTimeTotalSeconds;
+  /**
+   * RefreshTick is used to define how often history of planes should be stored.
+   * This value should be increased every second/and repaint.
+   */
+  private static long refreshTick = 0;
   private final PlaneHistoryDotManager planeDotHistory = new PlaneHistoryDotManager();
 
   public BasicVisualiser(Painter p, Settings sett) {
@@ -91,8 +101,8 @@ public class BasicVisualiser extends Visualiser {
       BorderExactPoint lastP = (BorderExactPoint) border.getPoints().get(border.getPoints().size() - 1);
       BorderExactPoint firstP = (BorderExactPoint) border.getPoints().get(0);
       p.drawLine(
-          lastP.getCoordinate(), firstP.getCoordinate(),
-          ds.getColor(), ds.getWidth());
+        lastP.getCoordinate(), firstP.getCoordinate(),
+        ds.getColor(), ds.getWidth());
     }
   }
 
@@ -101,9 +111,9 @@ public class BasicVisualiser extends Visualiser {
     DispItem ds = getDispSettBy(runway);
 
     p.drawLine(
-        runway.getThresholdA().getCoordinate(),
-        runway.getThresholdB().getCoordinate(),
-        ds.getColor(), ds.getWidth());
+      runway.getThresholdA().getCoordinate(),
+      runway.getThresholdB().getCoordinate(),
+      ds.getColor(), ds.getWidth());
   }
 
   @Override
@@ -216,13 +226,13 @@ public class BasicVisualiser extends Visualiser {
     // separation ring
     if (planeInfo.speed() > 100 || planeInfo.verticalSpeed() != 0) {
       p.drawCircleAroundInNM(planeInfo.coordinate(), dp.getSeparationRingRadius(),
-          c, 1);
+        c, 1);
     }
 
     // plane label
     StringBuilder sb = new StringBuilder();
     sb.append(
-        buildPlaneString(dp.getFirstLineFormat(), planeInfo));
+      buildPlaneString(dp.getFirstLineFormat(), planeInfo));
 
     if (planeInfo.tunedAtc() != planeInfo.responsibleAtc()) {
       sb.append("*");
@@ -230,18 +240,22 @@ public class BasicVisualiser extends Visualiser {
 
     sb.append("\r\n");
     sb.append(
-        buildPlaneString(dp.getSecondLineFormat(), planeInfo));
+      buildPlaneString(dp.getSecondLineFormat(), planeInfo));
     sb.append("\r\n");
     sb.append(
-        buildPlaneString(dp.getThirdLineFormat(), planeInfo));
+      buildPlaneString(dp.getThirdLineFormat(), planeInfo));
 
     p.drawText(sb.toString(), planeInfo.coordinate(), 3, 3, dt.getFont(), c);
 
     // plane history
-    this.planeDotHistory.add(planeInfo.callsign(), planeInfo.coordinate(), dp.getHistoryDotCount());
+    if (refreshTick % dp.getHistoryDotStep() == 0) {
+      this.planeDotHistory.add(planeInfo.callsign(), planeInfo.coordinate(), dp.getHistoryDotCount());
+    }
     List<Coordinate> hist = planeDotHistory.get(planeInfo.callsign());
-    for (Coordinate coordinate : hist) {
-      p.drawPoint(coordinate, c, 3);
+    if (hist != null) {
+      for (Coordinate coordinate : hist) {
+        p.drawPoint(coordinate, c, 3);
+      }
     }
   }
 
@@ -274,9 +288,9 @@ public class BasicVisualiser extends Visualiser {
     DispItem di = sett.getDispItem(DispItem.STAR);
     for (int i = 0; i < navaidPoints.size() - 1; i++) {
       p.drawLine(
-          navaidPoints.get(i).getCoordinate(),
-          navaidPoints.get(i + 1).getCoordinate(),
-          di.getColor());
+        navaidPoints.get(i).getCoordinate(),
+        navaidPoints.get(i + 1).getCoordinate(),
+        di.getColor());
     }
   }
 
@@ -285,18 +299,18 @@ public class BasicVisualiser extends Visualiser {
     DispItem di = sett.getDispItem(DispItem.SID);
     for (int i = 0; i < navaidPoints.size() - 1; i++) {
       p.drawLine(
-          navaidPoints.get(i).getCoordinate(),
-          navaidPoints.get(i + 1).getCoordinate(),
-          di.getColor());
+        navaidPoints.get(i).getCoordinate(),
+        navaidPoints.get(i + 1).getCoordinate(),
+        di.getColor());
     }
   }
 
   @Override
   public void drawApproach(Approach approach) {
     Coordinate start = Coordinates.getCoordinate(
-        approach.getPoint(),
-        Headings.add(approach.getRadial(), 180),
-        17);
+      approach.getPoint(),
+      Headings.add(approach.getRadial(), 180),
+      17);
     p.drawLine(start, approach.getPoint(), Color.MAGENTA);
   }
 
@@ -313,13 +327,17 @@ public class BasicVisualiser extends Visualiser {
     lst.add(time.toString());
     p.drawTextBlock(lst, Painter.eTextBlockLocation.topLeft, dt.getFont(), dt.getColor());
 
+    if (lastDrawnTimeTotalSeconds != time.getTotalSeconds()){
+      lastDrawnTimeTotalSeconds = time.getTotalSeconds();
+      refreshTick++;
+    }
   }
 
   private List<String> decodeSystemMultilines(List<String> system) {
     List<String> ret = new ArrayList<>();
     String del = "\r\n";
-    for(String s : system){
-      String [] spl = s.split(del);
+    for (String s : system) {
+      String[] spl = s.split(del);
       ret.addAll(Arrays.asList(spl));
     }
     return ret;

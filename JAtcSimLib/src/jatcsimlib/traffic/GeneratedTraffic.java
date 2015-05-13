@@ -116,7 +116,7 @@ public class GeneratedTraffic extends Traffic {
 
     ETime initTime = new ETime(hour, Acc.rnd().nextInt(0, 60), Acc.rnd().nextInt(0, 60));
     boolean isDeparture = (Acc.rnd().nextDouble() <= this.probabilityOfDeparture);
-    Movement ret = new Movement(null, initTime, isDeparture);
+    Movement ret = new Movement(generateCallsign(), initTime, isDeparture);
     return ret;
 
   }
@@ -127,6 +127,12 @@ public class GeneratedTraffic extends Traffic {
       ret = new Callsign("CSA", String.format("%04d", Acc.rnd().nextInt(10000)));
       for (Airplane p : Acc.planes()) {
         if (ret.equals(p.getCallsign())) {
+          ret = null;
+          break;
+        }
+      }
+      for (Movement m : this.preparedMovements) {
+        if (m.equals(m.getCallsign())) {
           ret = null;
           break;
         }
@@ -147,11 +153,7 @@ public class GeneratedTraffic extends Traffic {
     Airplane ret;
 
     Callsign cs;
-    if (m.getCallsign() == null) {
-      cs = generateCallsign();
-    } else {
-      cs = m.getCallsign();
-    }
+    cs = m.getCallsign();
 
     AirplaneType pt = Acc.sim().getPlaneTypes().getRandomByTraffic(Acc.airport().getTrafficCategories());
 
@@ -286,11 +288,7 @@ public class GeneratedTraffic extends Traffic {
     Airplane ret;
 
     Callsign cs;
-    if (m.getCallsign() == null) {
-      cs = generateCallsign();
-    } else {
-      cs = m.getCallsign();
-    }
+    cs = m.getCallsign();
     AirplaneType pt = Acc.sim().getPlaneTypes().getRandomByTraffic(Acc.airport().getTrafficCategories());
 
     Route r = tryGetRandomRoute(false, pt);

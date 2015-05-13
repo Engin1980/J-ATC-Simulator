@@ -35,7 +35,7 @@ import jatcsimlib.exceptions.ERuntimeException;
 import jatcsimlib.global.EStringBuilder;
 import jatcsimlib.global.Headings;
 import jatcsimlib.global.SpeedRestriction;
-import jatcsimlib.messaging.GoingAroundStringMessage;
+import jatcsimlib.messaging.GoingAroundStringMessageContent;
 import jatcsimlib.messaging.Message;
 import jatcsimlib.weathers.Weather;
 import jatcsimlib.world.Navaid;
@@ -934,10 +934,9 @@ public class Pilot {
   }
 
   private void goAround(String reason) {
-    Acc.messenger().addMessage(Message.create(
-        parent,
+    Acc.messenger().addMessage(Message.create(parent,
         atc,
-        new GoingAroundStringMessage(reason)));
+        new GoingAroundStringMessageContent(reason)));
     parent.setTargetSpeed(parent.getType().vDep);
     addNewCommands(app.approach.getGaCommands());
     app = null;

@@ -256,7 +256,7 @@ public class FrmStartup extends javax.swing.JFrame {
   }
 
   public void eInit() {
-    String iniFileName = "C:\\Users\\Marek Vajgl\\Documents\\NetBeansProjects\\_JAtcSimSolution\\JAtcSim\\src\\jatcsim\\config.ini";
+    String iniFileName =  jatcsim.JAtcSim.resFolder.toString() + "\\settings\\config.ini";
 
     IniFile inf = IniFile.tryLoad(iniFileName);
 

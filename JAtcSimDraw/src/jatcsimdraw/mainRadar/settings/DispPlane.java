@@ -31,6 +31,7 @@ public class DispPlane implements KeyItem<DispPlane.eBehavior> {
   private int headingLineLength;
   private int separationRingRadius;
   private int historyDotCount;
+  private int historyDotStep;
   private String firstLineFormat;
   private String secondLineFormat;
   private String thirdLineFormat;
@@ -89,11 +90,19 @@ public class DispPlane implements KeyItem<DispPlane.eBehavior> {
   }
 
   /**
-   * Get number of history dots of the plane.
+   * Get second step between history dots of the plane.
    * @return 
    */
   public int getHistoryDotCount() {
     return historyDotCount;
+  }
+
+  /**
+   * Get number of history dots of the plane.
+   * @return 
+   */
+  public int getHistoryDotStep() {
+    return historyDotStep;
   }
 
   /**

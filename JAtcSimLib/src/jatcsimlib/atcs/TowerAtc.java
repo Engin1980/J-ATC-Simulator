@@ -15,7 +15,7 @@ import jatcsimlib.exceptions.ENotSupportedException;
 import jatcsimlib.exceptions.ERuntimeException;
 import jatcsimlib.global.ETime;
 import jatcsimlib.global.Headings;
-import jatcsimlib.messaging.GoingAroundStringMessage;
+import jatcsimlib.messaging.GoingAroundStringMessageContent;
 import jatcsimlib.messaging.Message;
 import jatcsimlib.weathers.Weather;
 import jatcsimlib.world.Runway;
@@ -63,7 +63,7 @@ public class TowerAtc extends ComputerAtc {
       recorder.logMessage(m); // incoming message
 
       if (m.source instanceof Airplane) {
-        if (m.content instanceof GoingAroundStringMessage) {
+        if (m.content instanceof GoingAroundStringMessageContent) {
           // predavame na APP
           super.requestSwitch((Airplane) m.source);
           waitingRequestsList.add((Airplane) m.source);
@@ -351,11 +351,18 @@ class TakeOffSeparation {
     }
   }
 
+  /**
+   * Increase frequency of departures. Higher means higher frequency of take-offs.
+   */
+  private final static double DEPARTURE_ACCELERATOR_DIVIDER = 1.3;
+  
   public static TakeOffSeparation create(char leadingTypeCategory, char followingTypeCategory) {
     int a = c2i(leadingTypeCategory);
     int b = c2i(followingTypeCategory);
     int time = sepTimeSeconds[a][b];
     int dist = sepDistanceNm[a][b];
+    time = (int)(time * DEPARTURE_ACCELERATOR_DIVIDER);
+    dist = (int) (dist*DEPARTURE_ACCELERATOR_DIVIDER);
     
     return new TakeOffSeparation(dist, time);
   }

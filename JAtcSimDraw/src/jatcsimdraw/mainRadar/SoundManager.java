@@ -23,11 +23,11 @@ public class SoundManager {
   private static AudioInputStream planeMessageStream = null;
   private static AudioInputStream atcMessageStream = null;
   private static Clip planeClip = null;
-  private static Clip atcClip = null;
+  private static Clip atcClip = null;  
 
-  static {
-    File planeMessageFile = new File("C:\\Users\\Marek Vajgl\\Documents\\NetBeansProjects\\_JAtcSimSolution\\JAtcSim\\src\\jatcsim\\plane.wav");
-    File atcMessageFile = new File("C:\\Users\\Marek Vajgl\\Documents\\NetBeansProjects\\_JAtcSimSolution\\JAtcSim\\src\\jatcsim\\atc.wav");
+  public static void init(String wavFolderPath) {
+    File planeMessageFile = new File(wavFolderPath + "\\sounds\\plane.wav");
+    File atcMessageFile = new File(wavFolderPath + "\\sounds\\atc.wav");
     try {
       planeMessageStream = AudioSystem.getAudioInputStream(planeMessageFile);
       atcMessageStream = AudioSystem.getAudioInputStream(atcMessageFile);

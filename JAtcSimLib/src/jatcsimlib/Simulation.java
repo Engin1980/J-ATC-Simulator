@@ -7,27 +7,17 @@ package jatcsimlib;
 
 import jatcsimlib.airplanes.Airplane;
 import jatcsimlib.airplanes.AirplaneList;
-import jatcsimlib.airplanes.AirplaneType;
 import jatcsimlib.airplanes.AirplaneTypes;
 import jatcsimlib.airplanes.Airplanes;
-import jatcsimlib.airplanes.Callsign;
-import jatcsimlib.airplanes.Squawk;
 import jatcsimlib.atcs.Atc;
 import jatcsimlib.atcs.CenterAtc;
 import jatcsimlib.atcs.TowerAtc;
 import jatcsimlib.atcs.UserAtc;
-import jatcsimlib.commands.AfterAltitudeCommand;
-import jatcsimlib.commands.ChangeAltitudeCommand;
-import jatcsimlib.commands.Command;
-import jatcsimlib.commands.ContactCommand;
 import jatcsimlib.commands.formatting.ShortParser;
-import jatcsimlib.coordinates.Coordinate;
-import jatcsimlib.coordinates.Coordinates;
 import jatcsimlib.events.EventListener;
 import jatcsimlib.events.EventManager;
 import jatcsimlib.global.ERandom;
 import jatcsimlib.global.ETime;
-import jatcsimlib.global.Global;
 import jatcsimlib.global.ReadOnlyList;
 import jatcsimlib.messaging.Message;
 import jatcsimlib.messaging.Messenger;
@@ -37,14 +27,8 @@ import jatcsimlib.weathers.Weather;
 import jatcsimlib.weathers.WeatherDownloadNoaaGov;
 import jatcsimlib.weathers.WeatherDownloader;
 import jatcsimlib.world.Airport;
-import jatcsimlib.world.Navaid;
-import jatcsimlib.world.Route;
-import jatcsimlib.world.Routes;
-import jatcsimlib.world.Runway;
 import jatcsimlib.world.RunwayThreshold;
-import java.text.ParseException;
 import java.util.Calendar;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -76,9 +60,9 @@ public class Simulation {
   private final TowerAtc twrAtc;
   private final CenterAtc ctrAtc;
 
-  private final int TRAFFIC_COUNT = 5;
+  private final int TRAFFIC_COUNT = 35;
   private final Traffic traffic = new GeneratedTraffic(
-    1, 0.0, new int[]{
+    15, 1.0, new int[]{
       TRAFFIC_COUNT, TRAFFIC_COUNT, TRAFFIC_COUNT, TRAFFIC_COUNT, TRAFFIC_COUNT, TRAFFIC_COUNT,
       TRAFFIC_COUNT, TRAFFIC_COUNT, TRAFFIC_COUNT, TRAFFIC_COUNT, TRAFFIC_COUNT, TRAFFIC_COUNT,
       TRAFFIC_COUNT, TRAFFIC_COUNT, TRAFFIC_COUNT, TRAFFIC_COUNT, TRAFFIC_COUNT, TRAFFIC_COUNT,

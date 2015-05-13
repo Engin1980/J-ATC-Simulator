@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE settings SYSTEM "settings.dtd">
+
+<settings>
+  
+  <dispItems>
+    <dispItem key="activeRunway" color="FFFFFF" width="3" />
+    <dispItem key="closedRunway" color="FFAAAA" width="3" />
+     
+    <dispItem key="navVOR" color="55FF55" width="3" borderWidth="1" borderDistance="9" />
+    <dispItem key="navNDB" color="5555FF" width="3" borderWidth="1" borderDistance="10" />
+    <dispItem key="navFix" color="FF00FF" width="3" />
+    <dispItem key="navFixMinor" color="770077" width="3" />
+    <dispItem key="navAirport" color="AAAAFF" width="7" />
+     
+    <dispItem key="borderCountry" color="4444FF" width="1" />
+    <dispItem key="borderCtr" color="44AAFF" width="1" />
+    <dispItem key="borderTma" color="44AAFF" width="1" />
+     
+    <dispItem key="mapBackcolor" color="000000" />
+    
+    <dispItem key="star" color="990099" />
+    <dispItem key="sid" color="009900" />
+  </dispItems>
+  
+  <dispTexts>
+    <!-- style: 0=plain, 1=bold, 2=italic -->
+    <dispText type="atc" color="AAAAAA" fontName="Arial Unicode MT" fontSize="14" fontStyle="1" />
+    <dispText type="plane" color="00FF00" fontName="Arial Unicode MT" fontSize="14" fontStyle="1"  />
+    <dispText type="system" color="FFFFFF" fontName="Arial Unicode MT" fontSize="14" fontStyle="1" />
+    <dispText type="time" color="AAAAFF" fontName="Courier CE" fontSize="10" fontStyle="0" />
+    <dispText type="callsign" color="000000" fontName="Arial Unicode MT" fontSize="12" fontStyle="1" />
+    <dispText type="navaid" color="000000" fontName="Arial Unicode MT" fontSize="10" fontStyle="0" />
+  </dispTexts> 
+   
+  <dispPlanes>
+    <!-- 
+case 1:    callsign 
+case 2:    callsignCompany 
+case 3:    callsignNumber 
+case 4:    type
+case 5:    category by type
+case 8:    sqwk 
+case 11:   heading 
+case 12:   targetHeading 
+case 21:   speedLong 
+case 22:   speedShort 
+case 31:   targetSpeedLong 
+case 32:   targetSpeedShort 
+case 33:   altitudeLong 
+case 34:   altitudeShort 
+case 35:   altitudeInFtShort 
+case 36:   targetAltitudeLong 
+case 37:   targetAltitudeShort 
+case 38:   targetAltitudeInFtShort 
+case 41:   verticalSpeedLong 
+case 42:   verticalSpeedShort 
+case 43:   climbDescendChar 
+    -->
+    
+    <dispPlane behavior="stopped" visible="false" color="000000"
+               pointWidth="0" headingLineLength="0" 
+               historyDotCount="0"  historyDotStep="5"
+               separationRingRadius="0"
+               firstLineFormat="" 
+               secondLineFormat=""
+               thirdLineFormat="" />
+    
+    <dispPlane behavior="app" color="00FF00"
+               pointWidth="7" headingLineLength="10" 
+               historyDotCount="37" historyDotStep="5"
+               separationRingRadius="3"
+               firstLineFormat="{1}" 
+               secondLineFormat="{34}{43}{37} {22}"
+               thirdLineFormat="{8} {4}" />
+     
+    <dispPlane behavior="ctr" color="008800"
+               separationRingRadius="5"
+               pointWidth="5" headingLineLength="7" 
+               historyDotCount="10" historyDotStep="5"
+               firstLineFormat="{1}"
+               secondLineFormat="{34} {22}"
+               thirdLineFormat="{8} {4}" />
+    
+    <dispPlane behavior="twr" color="008888"
+               separationRingRadius="3"
+               pointWidth="5" headingLineLength="7" 
+               historyDotCount="10" historyDotStep="5"
+               firstLineFormat="{1}"
+               secondLineFormat="{34} {22}"
+               thirdLineFormat="{8} {4}" />
+  </dispPlanes>
+</settings>
