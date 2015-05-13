@@ -72,6 +72,7 @@ public class EJComponentCanvas extends Canvas {
 
       @Override
       public void mouseReleased(MouseEvent e) {
+        if (dragStartPoint == null) return;
         java.awt.Point dragEndPoint = e.getPoint();
         Point p = new Point(
             dragEndPoint.x - dragStartPoint.x,

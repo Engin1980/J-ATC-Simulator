@@ -103,7 +103,7 @@ public class Airplanes {
   }
 
   private static boolean isInAirprox(Airplane a, Airplane b) {
-    if (Math.abs(a.getAltitude() - b.getAltitude()) > 1000) {
+    if (Math.abs(a.getAltitude() - b.getAltitude()) >= 1000) {
       return false;
     }
 

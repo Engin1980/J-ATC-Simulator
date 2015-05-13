@@ -498,6 +498,10 @@ public class Airplane implements KeyItem<Callsign> {
     // when descend, first energy goes for speed, then for altitude
     boolean isSpeedPreffered = getVerticalSpeed() > 0 || speed < this.getType().vDep;
 
+    if (lastVerticalSpeed != 0 && targetAltitude == altitude) {
+      lastVerticalSpeed = 0;
+    }
+
     if (isSpeedPreffered) {
       if (targetSpeed != speed) {
         energy = adjustSpeed(energy);
@@ -516,15 +520,10 @@ public class Airplane implements KeyItem<Callsign> {
       }
     }
 
-    if (lastVerticalSpeed != 0 && targetAltitude == altitude) {
-      lastVerticalSpeed = 0;
-    }
-
     if (targetHeading != heading) {
       adjustHeading();
     }
 
-    updateCoordinates();
   }
 
   private final static double GROUND_MULTIPLIER = 3.0;
@@ -575,9 +574,9 @@ public class Airplane implements KeyItem<Callsign> {
         return energyLeft;
       }
     }
-    
+
     int origAlt = altitude;
-    
+
     double step;
     if (targetAltitude > altitude) {
       step = airplaneType.getClimbRateForAltitude(this.altitude);
@@ -586,15 +585,15 @@ public class Airplane implements KeyItem<Callsign> {
     }
     step = step * energyLeft;
     double neededStep = targetAltitude - altitude;
-    
-    if (Math.abs(step) < Math.abs(neededStep)){
+
+    if (Math.abs(step) < Math.abs(neededStep)) {
       energyLeft = 0;
       altitude += step;
     } else {
-      energyLeft = energyLeft - neededStep/step;
+      energyLeft = energyLeft - neededStep / step;
       altitude = targetAltitude;
     }
-    
+
     this.lastVerticalSpeed = (altitude - origAlt) * 60;
 
     return energyLeft;

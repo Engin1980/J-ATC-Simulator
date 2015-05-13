@@ -39,17 +39,17 @@ public class LongFormatter implements Formatter {
   
   @Override
   public String format(AfterAltitudeCommand cmd) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    return "when passing " + Acc.toAltS(cmd.getAltitudeInFt(), true) + " ";
   }
 
   @Override
   public String format(AfterNavaidCommand cmd) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    return "after " + cmd.getNavaid().getName() + " ";
   }
 
   @Override
   public String format(AfterSpeedCommand cmd) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    return "at speed " + cmd.getSpeedInKts() + "kts ";
   }
 
   @Override
@@ -177,7 +177,7 @@ public class LongFormatter implements Formatter {
 
   @Override
   public String format(ThenCommand cmd) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    return "then ";
   }
 
   @Override

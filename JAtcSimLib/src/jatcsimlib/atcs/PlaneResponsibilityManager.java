@@ -138,6 +138,14 @@ public class PlaneResponsibilityManager {
   public void requestSwitch(Atc from, Atc to, Airplane plane) {
     eState st = typeToState(from);
     if (map.get(plane) != st) {
+      if (from == null)
+        throw new ERuntimeException("Cannot request switch - \"from\" object is null.");
+      else if (plane == null)
+        throw new ERuntimeException("Cannot request switch - \"plane\" object is null.");
+      else if (map == null)
+        throw new ERuntimeException("Cannot request switch - \"map\" object is null.");
+      else if (map.get(plane) == null)
+        throw new ERuntimeException("Cannot request switch - \"map.get(plane)\" object is null.");
       throw new ERuntimeException("Cannot request switch. Not responsible atc for airplane. Atc: " + from.getName() + ", plane: " + plane.getCallsign() + ", state: " + map.get(plane));
     }
 

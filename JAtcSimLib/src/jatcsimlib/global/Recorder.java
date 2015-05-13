@@ -35,6 +35,7 @@ import java.util.Date;
 public abstract class Recorder {
 
   public static final String GENERIC_LOG_PATH = "R:\\jatcsim\\FDRs\\";
+  private static final String logPathDate = new SimpleDateFormat("yyyy_MM_dd_HH_mm").format(new Date());
 
   private final boolean isConsole;
 
@@ -52,9 +53,9 @@ public abstract class Recorder {
   }
 
   protected static Path buildGenericLogFilePath(String fileName) {
-    Date d = new Date();
+    /*Date d = new Date();
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy_MM_dd_HH_mm");
-    String logPathDate = sdf.format(d);
+    String logPathDate = sdf.format(d);*/
     Path ret = Paths.get(GENERIC_LOG_PATH, logPathDate, fileName);
     return ret;
   }

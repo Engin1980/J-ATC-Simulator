@@ -7,24 +7,11 @@ package jatcsimlib.airplanes;
 
 import jatcsimlib.Acc;
 import jatcsimlib.airplanes.pilots.Pilot;
-import jatcsimlib.atcs.Atc;
-import jatcsimlib.commands.Command;
-import jatcsimlib.commands.CommandList;
-import jatcsimlib.commands.formatting.Formatter;
-import jatcsimlib.commands.formatting.Formatters;
-import jatcsimlib.commands.formatting.LongFormatter;
-import jatcsimlib.exceptions.ENotSupportedException;
-import jatcsimlib.exceptions.ERuntimeException;
 import jatcsimlib.global.EStringBuilder;
 import jatcsimlib.global.ETime;
 import jatcsimlib.global.Recorder;
-import jatcsimlib.messaging.IContent;
 import jatcsimlib.messaging.Message;
-import jatcsimlib.messaging.StringMessage;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 /**
  *
@@ -75,7 +62,7 @@ public class FlightRecorder extends Recorder {
     sb.appendFormat(" A:%7d (%5d) => %7d ", plane.getAltitude(), plane.getVerticalSpeed(), plane.getTargetAltitude()).append(SEPARATOR);
 
     // spd
-    sb.appendFormat(" S:%5d => %5d ", plane.getSpeed(), plane.getTargetSpeed()).append(SEPARATOR);
+    sb.appendFormat(" S:%5d (%5d) => %5d ", plane.getSpeed(), plane.getGS(), plane.getTargetSpeed()).append(SEPARATOR);
 
     // from pilot
     sb.appendFormat(" HLD {%s} ", pilot.getHoldLogString()).append(SEPARATOR);

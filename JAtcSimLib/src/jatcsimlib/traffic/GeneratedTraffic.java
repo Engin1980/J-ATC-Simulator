@@ -36,6 +36,7 @@ import java.util.List;
  * @author Marek Vajgl
  */
 public class GeneratedTraffic extends Traffic {
+
   private final int maxPlanesInSimulation;
   private final double probabilityOfDeparture;
   private final int[] movementsPerHour;
@@ -43,50 +44,61 @@ public class GeneratedTraffic extends Traffic {
   private final List<Movement> preparedMovements = new LinkedList();
 
   public GeneratedTraffic(int maxPlanesInSimulation, double probabilityOfDeparture, int[] movementsPerHour) {
-    if (maxPlanesInSimulation < 1){
-        throw new IllegalArgumentException("Argument \"maxPlanesInSimulation\" must be equal or greather than 1.");
+    if (maxPlanesInSimulation < 1) {
+      throw new IllegalArgumentException("Argument \"maxPlanesInSimulation\" must be equal or greather than 1.");
     }
-    
-    if (eng.eSystem.Number.isBetweenOrEqual(0, probabilityOfDeparture, 1) == false){
+
+    if (eng.eSystem.Number.isBetweenOrEqual(0, probabilityOfDeparture, 1) == false) {
       throw new IllegalArgumentException("\"probabilityOfDeparture\" must be between 0 and 1.");
     }
-    
-    if (movementsPerHour == null)
+
+    if (movementsPerHour == null) {
       throw new IllegalArgumentException("Argument \"movementsPerHour\" cannot be null.");
-    if (movementsPerHour.length != 24)
+    }
+    if (movementsPerHour.length != 24) {
       throw new IllegalArgumentException("Argument \"movementsPerHour\" must have length equal to 24.");
+    }
     for (int mph : movementsPerHour) {
-      if (mph < 0)
+      if (mph < 0) {
         throw new IllegalArgumentException("Argument \"movementsPerHour\" must have all numbers greater or equal to zero.");
+      }
     }
 
     this.maxPlanesInSimulation = maxPlanesInSimulation;
     this.probabilityOfDeparture = probabilityOfDeparture;
     this.movementsPerHour = movementsPerHour;
-  }  
-  
+  }
+
   @Override
   public Airplane[] getNewAirplanes() {
     generateNewMovementsIfReq();
-    
+
     List<Airplane> ret = new ArrayList();
-    while (preparedMovements.size() > 0){
+    while (preparedMovements.size() > 0) {
+
       Movement m = preparedMovements.get(0);
-      if (m.getInitTime().isBeforeOrEq(Acc.now())){
-        ret.add(generateAirplaneFromMovement(m));
+      if (m.getInitTime().isBeforeOrEq(Acc.now())) {
+
+        // too much planes
+        if (Acc.planes().size() + ret.size() < maxPlanesInSimulation) {
+          ret.add(generateAirplaneFromMovement(m));
+        }
+
         preparedMovements.remove(m);
-      } else
+      } else {
         break; // exit while if no more airplanes are ready
+      }
     }
-    
+
     Airplane[] retA = ret.toArray(new Airplane[0]);
     return retA;
   }
 
   private void generateNewMovementsIfReq() {
-    if (lastHourGeneratedTraffic != -1 && Acc.now().getHours() != lastHourGeneratedTraffic)
+    if (lastHourGeneratedTraffic != -1 && Acc.now().getHours() != lastHourGeneratedTraffic) {
       return;
-    
+    }
+
     int expMovs = movementsPerHour[Acc.now().getHours()];
     for (int i = 0; i < expMovs; i++) {
       Movement m = generateMovement(Acc.now().getHours());
@@ -95,18 +107,20 @@ public class GeneratedTraffic extends Traffic {
     }
     Collections.sort(preparedMovements, new MovementSortByETimeComparer());
     lastHourGeneratedTraffic = Acc.now().getHours() + 1;
-    if (lastHourGeneratedTraffic > 23) lastHourGeneratedTraffic = 0;
+    if (lastHourGeneratedTraffic > 23) {
+      lastHourGeneratedTraffic = 0;
+    }
   }
 
   private Movement generateMovement(int hour) {
-    
+
     ETime initTime = new ETime(hour, Acc.rnd().nextInt(0, 60), Acc.rnd().nextInt(0, 60));
     boolean isDeparture = (Acc.rnd().nextDouble() <= this.probabilityOfDeparture);
     Movement ret = new Movement(null, initTime, isDeparture);
     return ret;
-    
+
   }
-  
+
   private Callsign generateCallsign() {
     Callsign ret = null;
     while (ret == null) {
@@ -120,23 +134,25 @@ public class GeneratedTraffic extends Traffic {
     }
     return ret;
   }
-  
+
   private Airplane generateAirplaneFromMovement(Movement m) {
-    if (m.isDeparture())
+    if (m.isDeparture()) {
       return generateNewDepartureAirplaneFromMovement(m);
-    else
+    } else {
       return generateNewArrivalPlaneFromMovement(m);
+    }
   }
 
   private Airplane generateNewArrivalPlaneFromMovement(Movement m) {
     Airplane ret;
 
     Callsign cs;
-    if (m.getCallsign() == null)
+    if (m.getCallsign() == null) {
       cs = generateCallsign();
-    else
+    } else {
       cs = m.getCallsign();
-    
+    }
+
     AirplaneType pt = Acc.sim().getPlaneTypes().getRandomByTraffic(Acc.airport().getTrafficCategories());
 
     Route r = tryGetRandomRoute(true, pt);
@@ -153,32 +169,33 @@ public class GeneratedTraffic extends Traffic {
     List<Command> routeCmds = r.getCommandsListClone();
     // added command to descend
     routeCmds.add(0,
-        new ChangeAltitudeCommand(
-            ChangeAltitudeCommand.eDirection.descend,
-            Acc.atcCtr().getOrderedAltitude()
-        ));
+      new ChangeAltitudeCommand(
+        ChangeAltitudeCommand.eDirection.descend,
+        Acc.atcCtr().getOrderedAltitude()
+      ));
     // added command to contact CTR
     routeCmds.add(0, new ContactCommand(Atc.eType.ctr));
 
     ret = new Airplane(
-        cs, coord, sqwk, pt, heading, alt, spd, false,
-        r.getName(), routeCmds);
+      cs, coord, sqwk, pt, heading, alt, spd, false,
+      r.getName(), routeCmds);
 
     return ret;
   }
-  
+
   private int generateArrivingPlaneAltitude(Route r) {
     double thousandsFeetPerMile = 0.30;
 
     double dist = r.getRouteLength();
-    if (dist < 0)
+    if (dist < 0) {
       dist = Coordinates.getDistanceInNM(r.getMainFix().getCoordinate(), Acc.airport().getLocation());
+    }
 
-    int ret = (int) (dist * thousandsFeetPerMile) + rnd.nextInt(5, 12);
+    int ret = (int) (dist * thousandsFeetPerMile) + rnd.nextInt(1, 5); //5, 12);
     ret = ret * 1000;
     return ret;
   }
-  
+
   private Coordinate generateArrivalCoordinate(Coordinate navFix, Coordinate aipFix) {
     double radial = Coordinates.getBearing(aipFix, navFix);
     radial += rnd.nextDouble() * 50 - 25; // nahodne zatoceni priletoveho radialu
@@ -198,7 +215,7 @@ public class GeneratedTraffic extends Traffic {
     }
     return ret;
   }
-  
+
   private Squawk generateSqwk() {
     int len = 4;
     char[] tmp;
@@ -218,7 +235,7 @@ public class GeneratedTraffic extends Traffic {
     }
     return ret;
   }
-  
+
   private Route tryGeneratePointRoute(boolean arrival) {
     //1. take points from arriving routes
     List<Navaid> nvs = new LinkedList();
@@ -249,7 +266,7 @@ public class GeneratedTraffic extends Traffic {
 
     return r;
   }
-  
+
   private Route tryGetRandomRoute(boolean arrival, AirplaneType planeType) {
 
     Iterable<Route> rts = Acc.threshold().getRoutes();
@@ -269,10 +286,11 @@ public class GeneratedTraffic extends Traffic {
     Airplane ret;
 
     Callsign cs;
-    if (m.getCallsign() == null)
+    if (m.getCallsign() == null) {
       cs = generateCallsign();
-    else
+    } else {
       cs = m.getCallsign();
+    }
     AirplaneType pt = Acc.sim().getPlaneTypes().getRandomByTraffic(Acc.airport().getTrafficCategories());
 
     Route r = tryGetRandomRoute(false, pt);
@@ -290,36 +308,34 @@ public class GeneratedTraffic extends Traffic {
     routeCmds.add(indx++, new ContactCommand(Atc.eType.twr));
 
     routeCmds.add(indx++, new ChangeAltitudeCommand(
-        ChangeAltitudeCommand.eDirection.climb, Acc.threshold().getInitialDepartureAltitude()));
+      ChangeAltitudeCommand.eDirection.climb, Acc.threshold().getInitialDepartureAltitude()));
 
     // -- po vysce+300 ma kontaktovat APP
     routeCmds.add(indx++,
-        new AfterAltitudeCommand(Acc.threshold().getParent().getParent().getAltitude() + Acc.rnd().nextInt(150, 450)));
+      new AfterAltitudeCommand(Acc.threshold().getParent().getParent().getAltitude() + Acc.rnd().nextInt(150, 450)));
     routeCmds.add(indx++, new ContactCommand(Atc.eType.app));
 
     // -- po vysce + 3000 rychlost na odlet
 //    routeCmds.add(indx++,
 //        new AfterAltitudeCommand(Acc.threshold().getParent().getParent().getAltitude() + 3000));
 //    routeCmds.add(indx++, new ChangeSpeedCommand(ChangeSpeedCommand.eDirection.increase, 250));
-
     ret = new Airplane(
-        cs, coord, sqwk, pt, heading, alt, spd, true,
-        r.getName(), routeCmds);
+      cs, coord, sqwk, pt, heading, alt, spd, true,
+      r.getName(), routeCmds);
 
     return ret;
   }
-  
+
 }
 
 // <editor-fold defaultstate="collapsed" desc=" MovementSortByETimeComparer ">
-
-class MovementSortByETimeComparer implements Comparator<Movement>{
+class MovementSortByETimeComparer implements Comparator<Movement> {
 
   @Override
   public int compare(Movement o1, Movement o2) {
     return o1.getInitTime().compareTo(o2.getInitTime());
   }
-  
+
 }
 
 // </editor-fold>
