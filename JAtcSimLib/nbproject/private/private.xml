@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
-    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="7">
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="8">
         <file>
             <url>src/jatcsimlib/airplanes/pilots/Pilot.java</url>
             <bookmark id="6">
@@ -31,7 +31,12 @@
             <url>src/jatcsimlib/atcs/TowerAtc.java</url>
             <bookmark id="7">
                 <name/>
-                <line>353</line>
+                <line>358</line>
+                <key/>
+            </bookmark>
+            <bookmark id="8">
+                <name/>
+                <line>366</line>
                 <key/>
             </bookmark>
         </file>
@@ -45,11 +50,6 @@
         </file>
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group>
-            <file>file:/C:/Users/Marek%20Vajgl/Documents/NetBeansProjects/_JAtcSimSolution/JAtcSimLib/src/jatcsimlib/global/UnitProvider.java</file>
-            <file>file:/C:/Users/Marek%20Vajgl/Documents/NetBeansProjects/_JAtcSimSolution/JAtcSimLib/src/jatcsimlib/coordinates/Coordinates.java</file>
-            <file>file:/C:/Users/Marek%20Vajgl/Documents/NetBeansProjects/_JAtcSimSolution/JAtcSimLib/test/jatcsimlib/providers/CoordinateProviderTest.java</file>
-            <file>file:/C:/Users/Marek%20Vajgl/Documents/NetBeansProjects/_JAtcSimSolution/JAtcSimLib/src/jatcsimlib/airplanes/Airplane.java</file>
-        </group>
+        <group/>
     </open-files>
 </project-private>

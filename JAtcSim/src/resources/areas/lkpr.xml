@@ -65,10 +65,10 @@
                 <approach type="NDB" point="50 07 12 N 014 17 12 E" radial="242" da="1460" gaRoute="FH 242 CM 040" />
               </approaches>
               <routes>
-                <route type="star" name="VLM1S" route="PD VLM T PD PR522 T PD PR523 T PD RATEV" />
-                <route type="star" name="GOSEK2S" route="PD GOSEK T PD PR521 T PD PR523 T PD RATEV" />
-                <route type="star" name="LOMKI4S" route="PD LOMKI T PD PR511 T PD PR512 T PD PR513 T PD PR518 T PD ERASU" />
-                <route type="star" name="GOLOP1S" route="PD GOLOP T PD PR516 T PD PR517 T PD PR518 T PD ERASU" />
+                <route type="star" name="VLM1S" route="PD VLM T PD PR522 T PD PR523 SM 220 T PD RATEV" />
+                <route type="star" name="GOSEK2S" route="PD GOSEK T PD PR521 T PD PR523 SM 220 T PD RATEV" />
+                <route type="star" name="LOMKI4S" route="PD LOMKI T PD PR511 T PD PR512 T PD PR513 SM 220 T PD PR518 T PD ERASU" />
+                <route type="star" name="GOLOP1S" route="PD GOLOP T PD PR516 T PD PR517 SM 220 T PD PR518 T PD ERASU" />
                 <route type="sid" name="ARTUP1M" category="AB"
                        route="AA 017 PD PR407 T PD BAGRU T PD PR409 T PD ARTUP" />
                 <route type="sid" name="ARTUP1A" category="CD"

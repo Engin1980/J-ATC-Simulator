@@ -474,6 +474,11 @@ public class Airplane implements KeyItem<Callsign> {
   }
 
   private void processMessage(Message msg) {
+    // if message from non-tuned ATC, then is ignored
+    if (msg.source != this.pilot.getTunedAtc()){
+      return;
+    }
+    
     List<Command> cmds;
     Object s = msg.content;
     if (s instanceof Command) {
