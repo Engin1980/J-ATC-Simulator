@@ -28,6 +28,8 @@ public interface Formatter {
   public String format(ThenCommand cmd);
   public String format(ToNavaidCommand cmd);
   
+  public String format(GoodDayCommand cmd);
+  
   public String format(Confirmation cmd);
   public String format(Rejection cmd);
 }

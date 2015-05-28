@@ -167,5 +167,10 @@ public class ShortFormatter implements Formatter {
   public String format(Rejection cmd) {
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
+
+  @Override
+  public String format(GoodDayCommand cmd) {
+    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+  }
   
 }

@@ -25,4 +25,12 @@ public class CommandList extends LinkedList<Command> implements IContent {
   public CommandList clone(){
     return new CommandList(this);
   }
+  
+  public boolean contains (Class commandTypeClass){
+    for (Command cmd : this) {
+      if (cmd.getClass().equals(commandTypeClass))
+        return true;
+    }
+    return false;
+  }
 }

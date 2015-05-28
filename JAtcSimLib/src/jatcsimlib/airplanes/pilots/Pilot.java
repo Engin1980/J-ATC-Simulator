@@ -23,6 +23,7 @@ import jatcsimlib.commands.Command;
 import jatcsimlib.commands.CommandList;
 import jatcsimlib.commands.Confirmation;
 import jatcsimlib.commands.ContactCommand;
+import jatcsimlib.commands.GoodDayCommand;
 import jatcsimlib.commands.HoldCommand;
 import jatcsimlib.commands.ProceedDirectCommand;
 import jatcsimlib.commands.Rejection;
@@ -267,7 +268,7 @@ public class Pilot {
       ret = (boolean) m.invoke(this, c);
     } catch (Throwable ex) {
       throw new ERuntimeException(
-        String.format("processQueueCommand failed for %s. Reason: %s",
+        String.format("processQueueCommand() execution failed for %s. Reason: %s",
           c.getClass(),
           eng.eSystem.Exceptions.toString(ex), ex));
     }
@@ -284,8 +285,7 @@ public class Pilot {
 
     return ret;
   }
-
-  @SuppressWarnings("unchecked")
+  
   private boolean processQueueCommand(ProceedDirectCommand c) {
     if (hold != null) {
       hold = null;
@@ -412,8 +412,10 @@ public class Pilot {
     // change of atc
     this.atc = a;
     Message m = Message.create(
-      parent, a, 
-      parent.getCallsign().toString() + " with you at " + Acc.toAltS(parent.getAltitude(), true), 5);
+      parent, 
+      a, 
+      new GoodDayCommand(parent.getCallsign(), Acc.toAltS(parent.getAltitude(), true)),
+      5);
     Acc.messenger().addMessage(m);
 
     return true;

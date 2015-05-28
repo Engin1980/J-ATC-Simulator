@@ -57,7 +57,19 @@ public class Message implements Comparable<Message> {
     return ret;
   }
   
+  public static Message create (Object source, Object target, Command c, int secondsDelay){
+    CommandList cmdLst = new CommandList();
+    cmdLst.add(c);
+    Message ret = new Message(secondsDelay, source, target, cmdLst);
+    return ret;
+  }
+  
   public static Message create(Airplane source, Atc target, IContent content){
+    Message ret = new Message(source, target, content);
+    return ret;
+  }
+  
+  public static Message create(Airplane source, Atc target, IContent content, int secondsDelay){
     Message ret = new Message(source, target, content);
     return ret;
   }

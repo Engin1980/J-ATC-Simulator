@@ -17,6 +17,7 @@ import jatcsimlib.commands.ClearedForTakeoffCommand;
 import jatcsimlib.commands.ClearedToApproachCommand;
 import jatcsimlib.commands.Confirmation;
 import jatcsimlib.commands.ContactCommand;
+import jatcsimlib.commands.GoodDayCommand;
 import jatcsimlib.commands.HoldCommand;
 import jatcsimlib.commands.ProceedDirectCommand;
 import jatcsimlib.commands.Rejection;
@@ -195,6 +196,16 @@ public class LongFormatter implements Formatter {
   @Override
   public String format(Rejection cmd) {
     return "Unable " + Formatters.format(cmd.getOrigin(), this) + ". " + cmd.getReason();
+  }
+
+  private final String [] greetings = new String[]{"Good day", "Hello", "Hi"};
+  @Override
+  public String format(GoodDayCommand cmd) {
+    double d = Acc.rnd().nextDouble();
+    d = d * greetings.length;
+    StringBuilder sb = new StringBuilder();
+    sb.append(greetings[(int)d]).append(", ").append(cmd.getCallsign().toString()).append(" with you at ").append(cmd.getAltitudeInfoText());
+    return sb.toString();
   }
 
 }

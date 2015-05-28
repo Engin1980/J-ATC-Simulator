@@ -9,7 +9,9 @@ import jatcsimlib.Acc;
 import jatcsimlib.airplanes.Airplane;
 import jatcsimlib.airplanes.AirplaneList;
 import jatcsimlib.commands.ChangeAltitudeCommand;
+import jatcsimlib.commands.CommandList;
 import jatcsimlib.commands.ContactCommand;
+import jatcsimlib.commands.GoodDayCommand;
 import jatcsimlib.exceptions.ERuntimeException;
 import jatcsimlib.messaging.Message;
 import java.util.List;
@@ -45,6 +47,11 @@ public class CenterAtc extends ComputerAtc {
       recorder.logMessage(m); // incoming message
       
       if (m.source instanceof Airplane) {
+        
+        CommandList cmds = (CommandList) m.content;
+        
+        if (cmds.contains(GoodDayCommand.class) == false)
+          continue;
         
         Airplane p = (Airplane) m.source;
         if (p.isDeparture()) {
