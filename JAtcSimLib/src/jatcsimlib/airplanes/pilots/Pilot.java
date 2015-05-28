@@ -13,16 +13,21 @@ import jatcsimlib.commands.AfterCommand;
 import jatcsimlib.commands.AfterCommandList;
 import jatcsimlib.commands.AfterNavaidCommand;
 import jatcsimlib.commands.AfterSpeedCommand;
+import jatcsimlib.commands.Answer;
 import jatcsimlib.commands.ChangeAltitudeCommand;
 import jatcsimlib.commands.ChangeHeadingCommand;
 import jatcsimlib.commands.ChangeSpeedCommand;
 import jatcsimlib.commands.ClearedForTakeoffCommand;
 import jatcsimlib.commands.ClearedToApproachCommand;
 import jatcsimlib.commands.Command;
+import jatcsimlib.commands.CommandList;
+import jatcsimlib.commands.Confirmation;
 import jatcsimlib.commands.ContactCommand;
 import jatcsimlib.commands.HoldCommand;
 import jatcsimlib.commands.ProceedDirectCommand;
+import jatcsimlib.commands.Rejection;
 import jatcsimlib.commands.ShortcutCommand;
+import jatcsimlib.commands.StringCommand;
 import jatcsimlib.commands.ThenCommand;
 import jatcsimlib.commands.ToNavaidCommand;
 import jatcsimlib.commands.formatting.Formatter;
@@ -42,11 +47,13 @@ import jatcsimlib.world.Navaid;
 import java.lang.reflect.Method;
 import java.util.LinkedList;
 import java.util.List;
+import sun.tools.jar.CommandLine;
 
 /**
  *
  * @author Marek
  */
+@SuppressWarnings("unused")
 public class Pilot {
 
   private Atc atc = null;
@@ -75,7 +82,7 @@ public class Pilot {
   }
   private eSpeedState speedState;
 
-  private final List<String> saidText = new LinkedList<>();
+  private final CommandList saidText = new CommandList();
   
   // <editor-fold defaultstate="collapsed" desc=" getters/setters ">
   
@@ -278,6 +285,7 @@ public class Pilot {
     return ret;
   }
 
+  @SuppressWarnings("unchecked")
   private boolean processQueueCommand(ProceedDirectCommand c) {
     if (hold != null) {
       hold = null;
@@ -286,7 +294,7 @@ public class Pilot {
       app = null;
     }
     targetCoordinate = c.getNavaid().getCoordinate();
-    sayIfReq(cmdFmt.format(c));
+    confirmIfReq(c);
     return true;
   }
 
@@ -314,7 +322,7 @@ public class Pilot {
       app = null;
     
     parent.setTargetAltitude(c.getAltitudeInFt());
-    sayIfReq(cmdFmt.format(c));
+    confirmIfReq(c);
     return true;
   }
 
@@ -322,7 +330,7 @@ public class Pilot {
     if (c.isResumeOwnSpeed()) {
       this.orderedSpeed = null;
       this.orderedSpeedChanged = true;
-      sayIfReq(cmdFmt.format(c));
+      confirmIfReq(c);
       return true;
     } else {
       // not resume speed
@@ -330,6 +338,9 @@ public class Pilot {
       SpeedRestriction sr = c.getSpeedRestriction();
       int cMax = app == null ? parent.getType().vMaxClean : parent.getType().vMaxApp;
       int cMin = app == null ? parent.getType().vMinClean : parent.getType().vMinApp;
+      if (app == null && Coordinates.getDistanceInNM(this.parent.getCoordinate(), Acc.threshold().getFafCross()) < 10){
+        cMin = (int) (cMin * 0.85);
+      }
 
       if (sr.direction != SpeedRestriction.eDirection.atMost && sr.speedInKts > cMax) {
         sayOrError(c,
@@ -343,7 +354,7 @@ public class Pilot {
 
       this.orderedSpeed = sr;
       this.orderedSpeedChanged = true;
-      sayIfReq(cmdFmt.format(c));
+      confirmIfReq(c);
       return true;
     }
   }
@@ -375,7 +386,7 @@ public class Pilot {
 
     parent.setTargetHeading(targetHeading, leftTurn);
 
-    sayIfReq(cmdFmt.format(c));
+    confirmIfReq(c);
     return true;
   }
 
@@ -395,7 +406,7 @@ public class Pilot {
         throw new ENotSupportedException();
     }
     // confirmation to previous atc
-    sayIfReq(cmdFmt.format(c));
+    confirmIfReq(c);
     sayToAtc();
 
     // change of atc
@@ -408,20 +419,20 @@ public class Pilot {
     return true;
   }
 
+  
   private boolean processQueueCommand(ShortcutCommand c) {
-    ShortcutCommand t = c;
-    int pointIndex = getIndexOfNavaidInCommands(t.getNavaid());
+    int pointIndex = getIndexOfNavaidInCommands(c.getNavaid());
     if (pointIndex < 0) {
       Message m = Message.create(
         parent, this.atc,
-        " Unable to shortcut to " + t.getNavaid().getName() + ", fix not on route!");
+        " Unable to shortcut to " + c.getNavaid().getName() + ", fix not on route!");
       Acc.messenger().addMessage(m);
     } else {
       for (int i = 0; i < pointIndex; i++) {
         this.queue.remove(i);
       }
     }
-    sayIfReq(cmdFmt.format(c));
+    confirmIfReq(c);
     return true;
   }
 
@@ -445,7 +456,7 @@ public class Pilot {
     } else {
       this.app = new ApproachInfo(c.getApproach());
 
-      sayIfReq(cmdFmt.format(c));
+      confirmIfReq(c);
     }
 
     return true;
@@ -464,7 +475,7 @@ public class Pilot {
     hold.isLeftTurned = c.isLeftTurn();
     hold.phase = HoldInfo.ePhase.beginning;
 
-    sayIfReq(cmdFmt.format(c));
+    confirmIfReq(c);
     return true;
   }
 
@@ -475,24 +486,28 @@ public class Pilot {
     return true;
   }
 
-  private void sayOrError(Command c, String text) {
-    String s =String.format(
-      "Not able to process command %s, because %s.",
-      Formatters.format(c, cmdFmt),
-      text);
-    say(s);
+  private void sayOrError(Command c, String rejectionReason) {
+    Rejection r = new Rejection(rejectionReason, c);
+    say(r);
   }
 
   private boolean isConfirmationsNowRequested = false;
-
-  private void sayIfReq(String text) {
+  
+  private void confirmIfReq(Command originalCommandToBeConfirmed){
+    if (isConfirmationsNowRequested){
+      Confirmation cmd = new Confirmation(originalCommandToBeConfirmed);
+      sayIfReq(cmd);
+    }
+  }
+  
+  private void sayIfReq(Answer cmd){
     if (isConfirmationsNowRequested) {
-      say(text);
+      say(cmd);
     }
   }
 
-  private void say(String text) {
-    saidText.add(text);
+  private void say(Command command) {
+    saidText.add(command);
   }
 
   private void sayToAtc() {
@@ -506,23 +521,10 @@ public class Pilot {
       return;
     }
 
-    StringBuilder ret = new StringBuilder();
-
-    for (String s : saidText) {
-      ret.append(s);
-      ret.append(", ");
-    }
-
-    ret.append(parent.getCallsign());
-    char c = ret.charAt(0);
-    c = Character.toUpperCase(c);
-    ret.setCharAt(0, c);
-
-    Message m = Message.create(parent, atc, ret.toString());
+    Message m = Message.create(parent, atc, saidText.clone());
     Acc.messenger().addMessage(m);
 
     saidText.clear();
-
   }
 
   private int getIndexOfNavaidInCommands(Navaid navaid) {

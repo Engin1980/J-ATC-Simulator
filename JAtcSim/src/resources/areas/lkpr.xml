@@ -24,17 +24,18 @@
       <runways>
         <runway active="true">
           <thresholds>
-            <threshold name="06" coordinate="50 06 06.61 N 014 13 34.58 E" initialDepartureAltitude="5000">
+            <threshold name="06" coordinate="50 06 06.61 N 014 13 34.58 E" initialDepartureAltitude="5000"
+              fafCross="50 03 44.80 N 014 08 14.12 E">
               <approaches>
-                <approach type="ILS_I" point="50 06 06.61 N 014 13 34.58 E" radial="063" da="1380" gaRoute="CM 040" />
+                <approach type="ILS_I" point="50 06 06.61 N 014 13 34.58 E" radial="063" da="1380" gaRoute="CM 040"  />
                 <approach type="GNSS" point="50 06 06.61 N 014 13 34.58 E" radial="062" da="1600" gaRoute="CM 040" />
                 <approach type="NDB" point="50 07 12 N 014 17 12 E" radial="062" da="1600" gaRoute="FH 062 CM 040" />                
               </approaches>
               <routes>
-                <route type="star" name="LOMKI5T" route="PD LOMKI T PD PR707 T PD BAROX T H BAROX" />
-                <route type="star" name="GOLOP1T" route="PD GOLOP T PD PR711 T PD PR712 T PD PR513 T PD KUVIX T FH 243" />
-                <route type="star" name="VLM1T" route="PD VLM T PD PR721 T PD PR722 T PD PR723 T PD PR523 T PD PR521 T PD AKEVA T FH 243" />
-                <route type="star" name="GOSEK2T" route="PD GOSEK T PD PR718 T PD PR719 T PD PR521 T PD AKEVA T FH 243" />
+                <route type="star" name="LOMKI5T" route="PD LOMKI T SL 250 PD PR707 T SL 220 PD BAROX T H BAROX" />
+                <route type="star" name="GOLOP1T" route="PD GOLOP T SL 250 PD PR711 T PD PR712 T PD PR513 T SL 220 PD KUVIX T FH 242" />
+                <route type="star" name="VLM1T" route="PD VLM T PD PR721 T PD PR722 T SL 250 PD PR723 T PD PR523 T SL 220 PD PR521 T PD AKEVA T FH 242" />
+                <route type="star" name="GOSEK2T" route="PD GOSEK T SL 250 PD PR718 T PD PR719 T SL 220 PD PR521 T PD AKEVA T FH 242" />
                 <route type="sid" name="VOZ1E" category="CD" 
                        route="PD PR619 T PD PR633 T PD PR635 T PD VOZ" />
                 <route type="sid" name="VOZ1D" category="AB" 
@@ -52,11 +53,10 @@
                 <route type="sid" name="VENOX1E" category="CD" 
                        route="PD PR619 T PD PR631 T PD PR632 T PD VENOX" />
                 <route type="sid" name="ARTUP1E" route="PD PR619 T PD PR633 T PD PR634 T PD ARTUP" />
-                
-                
               </routes>
             </threshold>
-            <threshold name="24" coordinate="50 06 57.43 N 014 16 24.12 E" initialDepartureAltitude="5000" preferred="true">
+            <threshold name="24" coordinate="50 06 57.43 N 014 16 24.12 E" initialDepartureAltitude="5000" preferred="true"
+              fafCross="50.14389457717 14.37693911194">
               <approaches>
                 <approach type="ILS_I" point="50 06 57.43 N 014 16 24.12 E" radial="242" da="1330" gaRoute="FH 242 CM 040" />
                 <approach type="ILS_II" point="50 06 57.43 N 014 16 24.12 E" radial="242" da="1250" gaRoute="FH 242 CM 040" />
@@ -65,10 +65,10 @@
                 <approach type="NDB" point="50 07 12 N 014 17 12 E" radial="242" da="1460" gaRoute="FH 242 CM 040" />
               </approaches>
               <routes>
-                <route type="star" name="VLM1S" route="PD VLM T PD PR522 T PD PR523 SM 220 T PD RATEV" />
-                <route type="star" name="GOSEK2S" route="PD GOSEK T PD PR521 T PD PR523 SM 220 T PD RATEV" />
-                <route type="star" name="LOMKI4S" route="PD LOMKI T PD PR511 T PD PR512 T PD PR513 SM 220 T PD PR518 T PD ERASU" />
-                <route type="star" name="GOLOP1S" route="PD GOLOP T PD PR516 T PD PR517 SM 220 T PD PR518 T PD ERASU" />
+                <route type="star" name="VLM1S" route="PD VLM T SL 250 PD PR522 T SL 220 PD PR523 T PD RATEV T FH 062" />
+                <route type="star" name="GOSEK2S" route="PD GOSEK T SL 250 PD PR521 T SL 220 PD PR523 T PD RATEV T FH 062" />
+                <route type="star" name="LOMKI4S" route="PD LOMKI T PD PR511 T SL 250 PD PR512 T SL 220 PD PR513 T PD PR518 T PD ERASU T FH 062" />
+                <route type="star" name="GOLOP1S" route="PD GOLOP T SL 250 PD PR516 T SL 220 PD PR517 T PD PR518 T PD ERASU T FH 062" />
                 <route type="sid" name="ARTUP1M" category="AB"
                        route="AA 017 PD PR407 T PD BAGRU T PD PR409 T PD ARTUP" />
                 <route type="sid" name="ARTUP1A" category="CD"
@@ -91,17 +91,18 @@
         </runway>
         <runway active="true">
           <thresholds>
-            <threshold name="12" coordinate="50 06 28.84 N 014 14 43.32 E" initialDepartureAltitude="5000">
+            <threshold name="12" coordinate="50 06 28.84 N 014 14 43.32 E" initialDepartureAltitude="5000"
+              fafCross="50.04654820513 14.37903063684">
               <approaches>
                 <approach type="GNSS" point="50 06 28.84 N 014 14 43.32 E" radial="124" da="1550" gaRoute="FH 124 CM 040" />
                 <approach type="ILS_I" point="50 06 28.84 N 014 14 43.32 E" radial="124" da="1350" gaRoute="FH 124 CM 040" />
                 <approach type="VORDME" point="50 05 44.80 N 014 15 55.81 E" radial="128" da="1530" gaRoute="FH 124 CM 040" />
               </approaches>
               <routes>
-                <route type="star" name="GOLOP1P" route="PD GOLOP T PD PR957 T PD PR958 T PD EVEMI" />
-                <route type="star" name="VLM1P" route="PD VLM T PD PR950 T PD PR951 T PD PR952 T PD PR958 T PD EVEMI" />
-                <route type="star" name="LOMKI4P" route="PD LOMKI T PD PR707 T PD PR956 T PD PR954 T PD SOMIS" />
-                <route type="star" name="GOSEK2P" route="PD GOSEK T PD PR953 T PD PR954 T PD SOMIS" />
+                <route type="star" name="GOLOP1P" route="PD GOLOP T SL 250 PD PR957 T SL 220 PD PR958 T PD EVEMI T FH 304" />
+                <route type="star" name="VLM1P" route="PD VLM T PD PR950 T SL 250 PD PR951 T PD PR952 T SL 220 PD PR958 T PD EVEMI T FH 304" />
+                <route type="star" name="LOMKI4P" route="PD LOMKI T SL 250 PD PR707 T PD PR956 T SL 220 PD PR954 T PD SOMIS T FH 304" />
+                <route type="star" name="GOSEK2P" route="PD GOSEK T SL 250 PD PR953 T SL 220 PD PR954 T PD SOMIS T FH 304" />
                 <route type="sid" name="VENOX1H" 
                        route="PD PR626 T PD PR856 T PD UTORO T PD PR858 T PD VENOX" />
                 <route type="sid" name="BALTU2H" 
@@ -122,17 +123,18 @@
                        route="PD PR626 T PD PR861 T PD ARTUP" />
               </routes>
             </threshold>
-            <threshold name="30" coordinate="50 05 25.68 N 014 16 53.02 E" initialDepartureAltitude="5000">
+            <threshold name="30" coordinate="50 05 25.68 N 014 16 53.02 E" initialDepartureAltitude="5000"
+              fafCross="50.00877 14.47320">
               <approaches>
                 <approach type="ILS_I" point="50 06 28.84 N 014 14 43.32 E" radial="304" da="1380" gaRoute="FH 304 CM 040" />
                 <approach type="GNSS" point="50 06 28.84 N 014 14 43.32 E" radial="304" da="1580" gaRoute="FH 304 CM 040" />
                 <approach type="VORDME" point="50 05 44.80 N 014 15 55.81 E" radial="299" da="1630" gaRoute="FH 304 CM 040" />
               </approaches>
               <routes>
-                <route type="star" name="GOLOP2R" route="PD GOLOP T PD BAGRU T PD PR914 T PD PR915 T PD ARVEG" />
-                <route type="star" name="LOMKI6R" route="PD LOMKI T PD PR511 T PD PR512 T PD PR914 T PD PR915 T PD ARVEG" />
-                <route type="star" name="VLM1R" route="PD VLM T PD PR904 T PD KENOK" />
-                <route type="star" name="GOSEK3R" route="PD GOSEK T PD PR901 T PD PR902 T PD PR903 T PD PR904 T PD KENOK" />
+                <route type="star" name="GOLOP2R" route="PD GOLOP T SL 250 PD BAGRU T PD PR914 T SL 220 PD PR915 T PD ARVEG T FH 124" />
+                <route type="star" name="LOMKI6R" route="PD LOMKI T PD PR511 T SL 250 PD PR512 T PD PR914 T SL 220 PD PR915 T PD ARVEG T FH 124" />
+                <route type="star" name="VLM1R" route="PD VLM T SL 250 PD PR904 T SL 220 PD KENOK T H KENOK" />
+                <route type="star" name="GOSEK3R" route="PD GOSEK T SL 250 PD PR901 T PD PR902 T PD PR903 T SL 220 PD PR904 T PD KENOK T H KENOK" />
                 <route type="sid" name="VOZ1N" category="AB"
                        route="AA 017 PD PR807 T PD PR808 T PD VOZ" />
                 <route type="sid" name="VOZ1B" category="CD"

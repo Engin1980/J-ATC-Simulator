@@ -28,6 +28,8 @@ public class RunwayThreshold extends MustBeBinded implements KeyItem<String> {
   private RunwayThreshold _other;
   @XmlOptional
   private boolean preferred = false;
+  @XmlOptional
+  private Coordinate fafCross;
 
   public int getInitialDepartureAltitude() {
     return initialDepartureAltitude;
@@ -45,6 +47,10 @@ public class RunwayThreshold extends MustBeBinded implements KeyItem<String> {
     return coordinate;
   }
 
+  public Coordinate getFafCross() {
+    return fafCross;
+  }
+  
   public KeyList<Approach, Approach.eType> getApproaches() {
     return approaches;
   }

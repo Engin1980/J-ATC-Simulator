@@ -10,6 +10,7 @@
     <dispItem key="navVOR" color="55FF55" width="3" borderWidth="1" borderDistance="9" />
     <dispItem key="navNDB" color="5555FF" width="3" borderWidth="1" borderDistance="10" />
     <dispItem key="navFix" color="FF00FF" width="3" />
+    <dispItem key="fafFix" color="5555FF" width="10" />
     <dispItem key="navFixMinor" color="770077" width="3" />
     <dispItem key="navAirport" color="AAAAFF" width="7" />
      

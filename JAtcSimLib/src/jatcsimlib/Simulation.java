@@ -22,6 +22,7 @@ import jatcsimlib.global.ReadOnlyList;
 import jatcsimlib.messaging.Message;
 import jatcsimlib.messaging.Messenger;
 import jatcsimlib.traffic.GeneratedTraffic;
+import jatcsimlib.traffic.TestTrafficOneApproach;
 import jatcsimlib.traffic.Traffic;
 import jatcsimlib.weathers.Weather;
 import jatcsimlib.weathers.WeatherDownloadNoaaGov;
@@ -60,13 +61,14 @@ public class Simulation {
   private final TowerAtc twrAtc;
   private final CenterAtc ctrAtc;
 
+  //private final Traffic traffic = new TestTrafficOneApproach(); 
   private final int TRAFFIC_COUNT = 35;
   private final Traffic traffic = new GeneratedTraffic(
-    15, 0.0, new int[]{
-      TRAFFIC_COUNT, TRAFFIC_COUNT, TRAFFIC_COUNT, TRAFFIC_COUNT, TRAFFIC_COUNT, TRAFFIC_COUNT,
-      TRAFFIC_COUNT, TRAFFIC_COUNT, TRAFFIC_COUNT, TRAFFIC_COUNT, TRAFFIC_COUNT, TRAFFIC_COUNT,
-      TRAFFIC_COUNT, TRAFFIC_COUNT, TRAFFIC_COUNT, TRAFFIC_COUNT, TRAFFIC_COUNT, TRAFFIC_COUNT,
-      TRAFFIC_COUNT, TRAFFIC_COUNT, TRAFFIC_COUNT, TRAFFIC_COUNT, TRAFFIC_COUNT, TRAFFIC_COUNT});
+    1, 1, new int[]{
+      TRAFFIC_COUNT / 4, TRAFFIC_COUNT / 4, TRAFFIC_COUNT / 4, TRAFFIC_COUNT / 4, TRAFFIC_COUNT / 4, TRAFFIC_COUNT / 3,
+      TRAFFIC_COUNT / 2, TRAFFIC_COUNT / 1, TRAFFIC_COUNT / 1, TRAFFIC_COUNT / 3, TRAFFIC_COUNT / 4, TRAFFIC_COUNT / 4,
+      TRAFFIC_COUNT / 4, TRAFFIC_COUNT / 2, TRAFFIC_COUNT / 1, TRAFFIC_COUNT / 3, TRAFFIC_COUNT / 1, TRAFFIC_COUNT / 2,
+      TRAFFIC_COUNT / 1, TRAFFIC_COUNT / 3, TRAFFIC_COUNT / 1, TRAFFIC_COUNT / 1, TRAFFIC_COUNT / 4, TRAFFIC_COUNT / 4});
 
   private final EventManager<Simulation, EventListener<Simulation, Simulation>, Simulation> tickEM = new EventManager(this);
 

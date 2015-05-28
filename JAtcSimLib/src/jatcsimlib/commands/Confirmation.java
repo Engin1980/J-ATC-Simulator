@@ -3,13 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
-package jatcsimlib;
+package jatcsimlib.commands;
 
 /**
  *
- * @author Marek
+ * @author Marek Vajgl
  */
-public abstract class SimulationSecondElapsedEvent {
-  public abstract void tick(Simulation sender);
+public class Confirmation extends Answer {
+
+  public Confirmation(Command origin) {
+    super(origin);
+  }
 }

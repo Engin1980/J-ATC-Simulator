@@ -3,22 +3,21 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
-package jatcsimlib.messaging;
+package jatcsimlib.commands;
 
 /**
  *
- * @author Marek
+ * @author Marek Vajgl
  */
-public class StringMessage implements IContent{
-  public final String text;
+public class StringCommand extends Command {
+  private final String text;
 
-  public StringMessage(String text) {
+  public StringCommand(String text) {
     this.text = text;
   }
 
-  @Override
-  public String toString() {
-    return "Msg{" + text + '}';
+  public String getText() {
+    return text;
   }
+  
 }

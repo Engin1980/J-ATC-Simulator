@@ -291,10 +291,10 @@ class ChangeSpeedCmdParser extends CmdParser {
       char c = rg.getString(2).charAt(1);
       switch (c) {
         case 'L':
-          ret = new ChangeSpeedCommand(SpeedRestriction.eDirection.atLeast, speed);
+          ret = new ChangeSpeedCommand(SpeedRestriction.eDirection.atMost, speed);
           break;
         case 'M':
-          ret = new ChangeSpeedCommand(SpeedRestriction.eDirection.atMost, speed);
+          ret = new ChangeSpeedCommand(SpeedRestriction.eDirection.atLeast, speed);
           break;
         case 'E':
           ret = new ChangeSpeedCommand(SpeedRestriction.eDirection.exactly, speed);

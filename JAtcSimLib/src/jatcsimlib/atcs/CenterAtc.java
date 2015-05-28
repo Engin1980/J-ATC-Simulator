@@ -45,6 +45,7 @@ public class CenterAtc extends ComputerAtc {
       recorder.logMessage(m); // incoming message
       
       if (m.source instanceof Airplane) {
+        
         Airplane p = (Airplane) m.source;
         if (p.isDeparture()) {
           Message n = Message.create(

@@ -15,9 +15,11 @@ import jatcsimlib.commands.ChangeHeadingCommand;
 import jatcsimlib.commands.ChangeSpeedCommand;
 import jatcsimlib.commands.ClearedForTakeoffCommand;
 import jatcsimlib.commands.ClearedToApproachCommand;
+import jatcsimlib.commands.Confirmation;
 import jatcsimlib.commands.ContactCommand;
 import jatcsimlib.commands.HoldCommand;
 import jatcsimlib.commands.ProceedDirectCommand;
+import jatcsimlib.commands.Rejection;
 import jatcsimlib.commands.ShortcutCommand;
 import jatcsimlib.commands.ThenCommand;
 import jatcsimlib.commands.ToNavaidCommand;
@@ -183,6 +185,16 @@ public class LongFormatter implements Formatter {
   @Override
   public String format(ToNavaidCommand cmd) {
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+  }
+
+  @Override
+  public String format(Confirmation cmd) {
+    return Formatters.format(cmd.getOrigin(), this);
+  }
+
+  @Override
+  public String format(Rejection cmd) {
+    return "Unable " + Formatters.format(cmd.getOrigin(), this) + ". " + cmd.getReason();
   }
 
 }

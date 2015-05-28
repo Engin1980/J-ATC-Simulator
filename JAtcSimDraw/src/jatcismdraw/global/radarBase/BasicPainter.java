@@ -55,12 +55,6 @@ public class BasicPainter extends Painter {
   }
 
   @Override
-  protected void drawTriangleAround(Coordinate coordinate, int distanceInPixels, Color color, int width) {
-    Point p = toPoint(coordinate);
-    c.drawTriangleAround(p, distanceInPixels, color, width);
-  }
-
-  @Override
   protected void drawArc(Coordinate coordinate, double fromAngle, double toAngle, double radiusInNM, Color color) {
     Point p = toPoint(coordinate);
 

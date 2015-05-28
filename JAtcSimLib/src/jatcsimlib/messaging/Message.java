@@ -12,6 +12,9 @@ import jatcsimlib.atcs.PlaneSwitchMessage;
 import jatcsimlib.atcs.UserAtc;
 import jatcsimlib.commands.Command;
 import jatcsimlib.commands.CommandList;
+import jatcsimlib.commands.formatting.Formatters;
+import jatcsimlib.commands.formatting.LongFormatter;
+import jatcsimlib.commands.formatting.ShortFormatter;
 import jatcsimlib.exceptions.ENotSupportedException;
 import jatcsimlib.global.ERandom;
 import jatcsimlib.global.ETime;
@@ -194,7 +197,7 @@ public class Message implements Comparable<Message> {
 
   public String toContentString() {
     if (content instanceof CommandList)
-      return "--?? set of commands ??--";
+      return Formatters.format((CommandList) content, LongFormatter.getInstance());
     else if (content instanceof PlaneSwitchMessage){
       return getAsPlaneSwitchMessage().getAsString();
     } else if (content instanceof StringMessageContent){

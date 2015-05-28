@@ -6,7 +6,6 @@
 
 package jatcsimlib.world;
 
-import jatcsimlib.Acc;
 import jatcsimlib.exceptions.EBindException;
 import jatcsimlib.global.KeyItem;
 import jatcsimlib.global.MustBeBinded;

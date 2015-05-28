@@ -55,7 +55,8 @@ public class Airplane implements KeyItem<Callsign> {
   private FlightRecorder flightRecorder = null;
 
   // </editor-fold>
-  // <editor-fold defaultstate="collapsed" desc=" .ctors ">
+  // <editor-fold defaultstate="collapsed" desc=" Nested ">
+  
   public class AirplaneInfo {
 
     public Coordinate coordinate() {
@@ -335,6 +336,10 @@ public class Airplane implements KeyItem<Callsign> {
     }
 
   }
+  
+// </editor-fold>
+  // <editor-fold defaultstate="collapsed" desc=" .ctors ">
+  
 
   public Airplane(Callsign callsign, Coordinate coordinate, Squawk sqwk, AirplaneType airplaneSpecification,
     int heading, int altitude, int speed, boolean isDeparture,

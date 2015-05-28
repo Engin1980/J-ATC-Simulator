@@ -19,7 +19,6 @@ import jatcsimlib.exceptions.ENotSupportedException;
 import jatcsimlib.global.ETime;
 import jatcsimlib.global.Headings;
 import jatcsimlib.messaging.Message;
-import jatcsimlib.messaging.StringMessageContent;
 import jatcsimlib.world.Approach;
 import jatcsimlib.world.Border;
 import jatcsimlib.world.BorderArcPoint;
@@ -275,7 +274,7 @@ public class BasicVisualiser extends Visualiser {
         ret.atc.add(atc.getName() + ": " + m.toContentString());
       } else if (m.isFromPlaneMessage()) {
         Airplane p = (Airplane) m.source;
-        ret.plane.add(p.getCallsign().toString() + ": " + m.getAsString().text);
+        ret.plane.add(p.getCallsign().toString() + ": " + m.toContentString());
       } else {
         throw new ENotSupportedException();
       }
@@ -312,6 +311,10 @@ public class BasicVisualiser extends Visualiser {
       Headings.add(approach.getRadial(), 180),
       17);
     p.drawLine(start, approach.getPoint(), Color.MAGENTA);
+    if (approach.getParent().getFafCross() != null){
+      p.drawCross(approach.getParent().getFafCross(), Color.MAGENTA, 5, 1);  
+    }
+    
   }
 
   @Override

@@ -72,18 +72,20 @@ public class EJComponentCanvas extends Canvas {
 
       @Override
       public void mouseReleased(MouseEvent e) {
-        if (dragStartPoint == null) return;
+        if (dragStartPoint == null) {
+          return;
+        }
         java.awt.Point dragEndPoint = e.getPoint();
         Point p = new Point(
-            dragEndPoint.x - dragStartPoint.x,
-            dragEndPoint.y - dragStartPoint.y);
+          dragEndPoint.x - dragStartPoint.x,
+          dragEndPoint.y - dragStartPoint.y);
         dragStartPoint = null;
         if (p.x < MINIMUM_DRAG_SHIFT && p.y < MINIMUM_DRAG_SHIFT) {
           return;
         }
 
         EMouseEvent eme = new EMouseEvent(
-            p.x, p.y, EMouseEvent.eType.Drag);
+          p.x, p.y, EMouseEvent.eType.Drag);
         me.mouseEventEM.raise(eme);
       }
     });
@@ -107,7 +109,7 @@ public class EJComponentCanvas extends Canvas {
       @Override
       public void mouseWheelMoved(MouseWheelEvent e) {
         EMouseEvent eme = new EMouseEvent(
-            e.getPoint(), e.getWheelRotation(), EMouseEvent.eType.WheelScroll);
+          e.getPoint(), e.getWheelRotation(), EMouseEvent.eType.WheelScroll);
         mouseEventEM.raise(eme);
       }
     });
@@ -149,7 +151,7 @@ public class EJComponentCanvas extends Canvas {
     int h = getHeight();
     int w = getWidth();
     g.fillRect(0, 0, w, h);
-  } 
+  }
 
   @Override
   public void drawPoint(int x, int y, Color color, int width) {
@@ -188,11 +190,11 @@ public class EJComponentCanvas extends Canvas {
 
   @Override
   public void drawTextBlock(List<String> lines, Painter.eTextBlockLocation location,
-      Font font, Color color) {
+    Font font, Color color) {
     if (location == Painter.eTextBlockLocation.bottomMiddle
-        || location == Painter.eTextBlockLocation.middleLeft
-        || location == Painter.eTextBlockLocation.middleRight
-        || location == Painter.eTextBlockLocation.topMiddle) {
+      || location == Painter.eTextBlockLocation.middleLeft
+      || location == Painter.eTextBlockLocation.middleRight
+      || location == Painter.eTextBlockLocation.topMiddle) {
       throw new ENotSupportedException();
     }
     if (lines.isEmpty()) {
@@ -221,6 +223,18 @@ public class EJComponentCanvas extends Canvas {
     drawLine(pts[0], pts[1], color, width);
     drawLine(pts[1], pts[2], color, width);
     drawLine(pts[2], pts[0], color, width);
+  }
+
+  public void drawCross(Point p, Color color, int length, int width) {
+    int hl = length / 2;
+    
+    Point topLeft = new Point(p.x - hl, p.y - hl);
+    Point bottomRight = new Point(p.x + hl, p.y + hl);
+    drawLine(topLeft, bottomRight, color, width);
+    
+    Point topRight = new Point(p.x + hl, p.y-hl);
+    Point bottomLeft = new Point(p.x-hl, p.y+hl);
+    drawLine(topRight, bottomLeft, color, width);
   }
 
   private final EventManager<Canvas, EventListener<Canvas, EMouseEvent>, EMouseEvent> mouseEventEM = new EventManager(this);

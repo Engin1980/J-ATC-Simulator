@@ -42,6 +42,8 @@ public abstract class Canvas {
   public abstract void drawCircleAround(Point p, int distanceInPixels, Color color, int width);
   
   public abstract void drawTriangleAround(Point p, int distanceInPixels, Color color, int width);
+  
+  public abstract void drawCross(Point p, Color color, int length, int width);
 
   public abstract void drawArc(Point p, int xRadius, int yRadius, int fromAngle, int toAngle, Color color);
   

@@ -135,7 +135,17 @@ public abstract class Painter {
     
     drawLine(from, to, color, width);
   }
-
+  
+  protected void drawTriangleAround(Coordinate coordinate, int distanceInPixels, Color color, int width) {
+    Point p = toPoint(coordinate);
+    c.drawTriangleAround(p, distanceInPixels, color, width);
+  }
+  
+  protected void drawCross (Coordinate coordinate, Color color, int length, int width){
+    Point p = toPoint(coordinate);
+    c.drawCross(p, color, length, width);
+  }
+  
   protected abstract void drawPoint(Coordinate coordinate, Color color, int width);
 
   protected abstract void drawCircleAround(Coordinate coordinate, int radiusInPixels, Color color, int width);
@@ -145,8 +155,6 @@ public abstract class Painter {
 
     drawCircleAround(coordinate, s.width, color, width);
   }
-
-  protected abstract void drawTriangleAround(Coordinate coordinate, int distanceInPixels, Color color, int width);
 
   protected abstract void drawArc(Coordinate coordinate, double fromAngle, double toAngle, double radiusInNM, Color color);
 
