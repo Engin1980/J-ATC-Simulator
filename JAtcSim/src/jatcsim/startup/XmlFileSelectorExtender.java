@@ -17,18 +17,18 @@ import javax.swing.filechooser.FileNameExtensionFilter;
  *
  * @author Marek
  */
-public class XmlFileSelector {
+public class XmlFileSelectorExtender {
 
   private final JTextField txt;
   private final JButton btn;
   private File file = null;
   private XmlFileSelectorFileChangedHandler handler;
 
-  public XmlFileSelector(JTextField txt, JButton btn, File file) {
+  public XmlFileSelectorExtender(JTextField txt, JButton btn, File file) {
     this(txt, btn, file, null);
   }
 
-  public XmlFileSelector(JTextField txt, JButton btn, File file,
+  public XmlFileSelectorExtender(JTextField txt, JButton btn, File file,
     XmlFileSelectorFileChangedHandler handler) {
     this.txt = txt;
     this.btn = btn;
@@ -53,11 +53,11 @@ public class XmlFileSelector {
     }
   }
 
-  public XmlFileSelector(JTextField txt, JButton btn) {
+  public XmlFileSelectorExtender(JTextField txt, JButton btn) {
     this(txt, btn, null, null);
   }
 
-  public XmlFileSelector(JTextField txt, JButton btn, XmlFileSelectorFileChangedHandler handler) {
+  public XmlFileSelectorExtender(JTextField txt, JButton btn, XmlFileSelectorFileChangedHandler handler) {
     this(txt, btn, null, handler);
   }
 

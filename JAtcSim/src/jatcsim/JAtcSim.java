@@ -6,6 +6,8 @@
 package jatcsim;
 
 import jatcsim.startup.FrmStartup;
+import jatcsim.startup.StartupSettings;
+import jatcsim.startup.StartupWizard;
 import jatcsimdraw.mainRadar.SoundManager;
 import jatcsimdraw.mainRadar.settings.Settings;
 import jatcsimlib.Simulation;
@@ -36,6 +38,15 @@ public class JAtcSim {
   public static void main(String[] args) throws Exception {
 
     initResourcesFolder();
+    
+    // startup wizard
+    StartupSettings sett = StartupSettings.tryLoad();
+    StartupWizard wizard = new StartupWizard(sett);
+    wizard.run();
+    if (wizard.isFinished() == false)
+      return;
+    sett.save();
+    
     
     /*
     FrmStartup fs = new FrmStartup();

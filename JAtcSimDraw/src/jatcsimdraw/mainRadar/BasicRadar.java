@@ -29,6 +29,8 @@ import java.awt.event.KeyEvent;
  */
 public class BasicRadar extends Radar  {
 
+  private double heightRange = 1;
+  
   private final Canvas c;
   private final Visualiser v;
   private final Painter p;
@@ -181,7 +183,18 @@ public class BasicRadar extends Radar  {
     this.repaint();
   }
   
+  
   public void repaint() {
+  
+    Coordinate topLeft = p.getTopLeft();
+    
+    double widthRange = heightRange * (c.getWidth() / (double) c.getHeight());
+    
+    Coordinate bottomRight = new Coordinate(
+      topLeft.getLatitude().add(-heightRange),
+      topLeft.getLongitude().add(widthRange));
+    p.setCoordinates(topLeft, bottomRight);
+    
     c.repaint();
   }
 
