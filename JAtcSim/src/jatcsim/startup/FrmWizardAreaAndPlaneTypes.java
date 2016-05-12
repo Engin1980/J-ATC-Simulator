@@ -105,19 +105,7 @@ public class FrmWizardAreaAndPlaneTypes extends FrmWizardFrame {
   }// </editor-fold>//GEN-END:initComponents
 
   private void btnContinueActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnContinueActionPerformed
-
-    if (checkAreaSanity() == false) {
-      return;
-    }
-    if (checkTypesSanity() == false) {
-      return;
-    }
-    
-    this.settings.setAreaXmlFile(txtAreaXml.getText());
-    this.settings.setPlanesXmlFile(txtTypesXml.getText());
-    
-    super.dialogResult  = DialogResult.Ok;
-    this.setVisible(false);
+    super.closeDialogIfValid();
   }//GEN-LAST:event_btnContinueActionPerformed
 
 
@@ -175,5 +163,20 @@ public class FrmWizardAreaAndPlaneTypes extends FrmWizardFrame {
   protected void fillBySettings() {
     txtAreaXml.setText(settings.getAreaXmlFile());
     txtTypesXml.setText(settings.getPlanesXmlFile());
+  }
+
+  @Override
+  protected boolean isValidated() {
+    if (checkAreaSanity() == false) {
+      return false;
+    }
+    if (checkTypesSanity() == false) {
+      return false;
+    }
+    
+    this.settings.setAreaXmlFile(txtAreaXml.getText());
+    this.settings.setPlanesXmlFile(txtTypesXml.getText());
+    
+    return true;
   }
 }

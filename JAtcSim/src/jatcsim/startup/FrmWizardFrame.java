@@ -15,7 +15,14 @@ import javax.swing.JFrame;
  */
 public abstract class FrmWizardFrame extends JFrame {
 
+  public enum DialogResult {
+
+    Ok,
+    Cancel
+  }
+
   protected StartupSettings settings;
+  private DialogResult dialogResult = DialogResult.Cancel;
 
   public void initSettings(StartupSettings settings) {
     this.settings = settings;
@@ -24,21 +31,17 @@ public abstract class FrmWizardFrame extends JFrame {
 
   protected abstract void fillBySettings();
 
+  protected abstract boolean isValidated();
+  
   @Override
   public void setVisible(boolean value) {
     if (value) {
       setFontAll(this.getComponents());
       this.dialogResult = DialogResult.Cancel;
+      this.setLocationRelativeTo(null);  // *** this will center your app ***
     }
     super.setVisible(value);
   }
-
-  public enum DialogResult {
-
-    Ok,
-    Cancel
-  }
-  protected DialogResult dialogResult = DialogResult.Cancel;
 
   public DialogResult getDialogResult() {
     return dialogResult;
@@ -57,6 +60,14 @@ public abstract class FrmWizardFrame extends JFrame {
       } catch (InterruptedException ex) {
       }
     }
+  }
+  
+  protected void closeDialogIfValid(){
+    if (isValidated()){
+      this.dialogResult = DialogResult.Ok;
+      this.setVisible(false);
+    }
+      
   }
 
   private static final Font f = new Font("Verdana", 0, 12);

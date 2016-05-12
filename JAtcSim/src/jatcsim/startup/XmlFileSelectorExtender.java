@@ -22,14 +22,8 @@ public class XmlFileSelectorExtender {
   private final JTextField txt;
   private final JButton btn;
   private File file = null;
-  private XmlFileSelectorFileChangedHandler handler;
 
   public XmlFileSelectorExtender(JTextField txt, JButton btn, File file) {
-    this(txt, btn, file, null);
-  }
-
-  public XmlFileSelectorExtender(JTextField txt, JButton btn, File file,
-    XmlFileSelectorFileChangedHandler handler) {
     this.txt = txt;
     this.btn = btn;
     this.btn.addActionListener(new ActionListener() {
@@ -40,38 +34,27 @@ public class XmlFileSelectorExtender {
       }
     });
     this.file = file;
-    this.handler = handler;
-    if (file != null) {
-      if (handler != null) {
-        handler.fileChanged(file.getAbsolutePath());
-      }
-    } else {
-      // file == null
-      this.txt.setEditable(false);
-      this.txt.setText("< browse for file >");
-      this.btn.setText("(browse)");
-    }
+    this.txt.setEditable(false);
+    this.txt.setText("< browse for file >");
+    this.btn.setText("(browse)");
   }
 
   public XmlFileSelectorExtender(JTextField txt, JButton btn) {
-    this(txt, btn, null, null);
+    this(txt, btn, null);
   }
 
-  public XmlFileSelectorExtender(JTextField txt, JButton btn, XmlFileSelectorFileChangedHandler handler) {
-    this(txt, btn, null, handler);
-  }
-
-  public final void setFile(String file){
+  public final void setFile(String file) {
     File f = new File(file);
     setFile(f);
   }
-  
+
   public final void setFile(File file) {
     this.file = file;
     txt.setText(file.getAbsolutePath());
-    if (handler != null) {
-      handler.fileChanged(file.getAbsolutePath());
-    }
+  }
+
+  public final File getFile() {
+    return file;
   }
 
   private void processDialog() {
@@ -85,13 +68,10 @@ public class XmlFileSelectorExtender {
       return; // cancel etc.
     }
     setFile(jfc.getSelectedFile());
-    if (handler != null) {
-      handler.fileChanged(jfc.getSelectedFile().getAbsolutePath());
-    }
   }
 
-  public File getFile() {
-    return file;
+  public boolean isValid() {
+    return file != null && file.exists();
   }
 
 }

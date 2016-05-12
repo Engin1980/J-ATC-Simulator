@@ -24,7 +24,7 @@ public class StartupWizard {
   public void run() {
 
     FrmWizardFrame.DialogResult res;
-    
+
     if (settings == null) {
       settings = new StartupSettings();
     }
@@ -33,9 +33,14 @@ public class StartupWizard {
     if (res != FrmWizardFrame.DialogResult.Ok) {
       return;
     }
-    
+
     res = doStep2();
-    if (res != FrmWizardFrame.DialogResult.Ok){
+    if (res != FrmWizardFrame.DialogResult.Ok) {
+      return;
+    }
+
+    res = doStep3();
+    if (res != FrmWizardFrame.DialogResult.Ok) {
       return;
     }
 
@@ -52,9 +57,16 @@ public class StartupWizard {
     frm.showDialog();
     return frm.getDialogResult();
   }
-  
+
   private FrmWizardFrame.DialogResult doStep2() {
     FrmWizardFrame frm = new FrmWizardAirportTimeAndWeather();
+    frm.initSettings(settings);
+    frm.showDialog();
+    return frm.getDialogResult();
+  }
+
+  private FrmWizardFrame.DialogResult doStep3() {
+    FrmWizardFrame frm = new FrmWizardTraffic();
     frm.initSettings(settings);
     frm.showDialog();
     return frm.getDialogResult();

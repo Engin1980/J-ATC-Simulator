@@ -9,9 +9,12 @@ import jatcsimlib.world.Airport;
 import jatcsimlib.world.Area;
 import jatcsimxml.serialization.Serializer;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JComboBox;
 
 /**
  *
@@ -19,12 +22,28 @@ import javax.swing.DefaultComboBoxModel;
  */
 public class FrmWizardAirportTimeAndWeather extends FrmWizardFrame {
 
+  private static List<PresetMetar> presetMetars = new ArrayList();
+  
+  static{
+    presetMetars.add(new PresetMetar("--- choose ---", null));
+    presetMetars.add(new PresetMetar("Normal", "METAR LKPR 121200Z 21004KT 9999 FEW030 16/12 Q1001"));
+    presetMetars.add(new PresetMetar("Windy", "METAR LKPR 121200Z 05018G34KT 9999 SCT050 13/10 Q1011"));
+    presetMetars.add(new PresetMetar("Stormy", "METAR LKPR 121200Z 18011G10KT 6000 TSRA+ OVC050TCU 27/09 Q0996"));
+    presetMetars.add(new PresetMetar("Foggy", "METAR LKPR 121200Z 00000KT 0350 OVC020 19/11 Q1013"));
+  }
+  
   /**
    * Creates new form FrmWizardAirportAndTraffic
    */
   public FrmWizardAirportTimeAndWeather() {
     initComponents();
     initExtenders();
+    
+    DefaultComboBoxModel model = new DefaultComboBoxModel();
+    for (PresetMetar presetMetar : presetMetars) {
+      model.addElement(presetMetar);
+    }
+    cmbPresetMetars.setModel(model);
   }
 
   /**
@@ -48,6 +67,8 @@ public class FrmWizardAirportTimeAndWeather extends FrmWizardFrame {
     jLabel1 = new javax.swing.JLabel();
     cmbWeatherUpdate = new javax.swing.JComboBox();
     btnSetCurrentTime = new javax.swing.JButton();
+    jLabel2 = new javax.swing.JLabel();
+    cmbPresetMetars = new javax.swing.JComboBox();
 
     setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -99,10 +120,23 @@ public class FrmWizardAirportTimeAndWeather extends FrmWizardFrame {
       }
     });
 
+    jLabel2.setText("... choose from preset:");
+
+    cmbPresetMetars.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+    cmbPresetMetars.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        cmbPresetMetarsActionPerformed(evt);
+      }
+    });
+
     javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
     getContentPane().setLayout(layout);
     layout.setHorizontalGroup(
       layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+      .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        .addComponent(btnContinue)
+        .addContainerGap())
       .addGroup(layout.createSequentialGroup()
         .addContainerGap()
         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -120,24 +154,26 @@ public class FrmWizardAirportTimeAndWeather extends FrmWizardFrame {
                 .addComponent(btnSetCurrentTime))
               .addComponent(rdbWeatherFromUser)
               .addComponent(rdbWeatherFromWeb))
-            .addGap(0, 251, Short.MAX_VALUE))
+            .addGap(0, 390, Short.MAX_VALUE))
           .addGroup(layout.createSequentialGroup()
             .addGap(21, 21, 21)
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
               .addGroup(layout.createSequentialGroup()
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(cmbWeatherUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
-              .addGroup(layout.createSequentialGroup()
                 .addComponent(txtMetar)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnDownloadMetar)))))
+                .addComponent(btnDownloadMetar))
+              .addGroup(layout.createSequentialGroup()
+                .addComponent(jLabel2)
+                .addGap(32, 32, 32)
+                .addComponent(cmbPresetMetars, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(375, 375, 375)))))
         .addGap(10, 10, 10))
-      .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        .addComponent(btnContinue)
-        .addContainerGap())
+      .addGroup(layout.createSequentialGroup()
+        .addGap(135, 135, 135)
+        .addComponent(jLabel1)
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+        .addComponent(cmbWeatherUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
+        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
     );
     layout.setVerticalGroup(
       layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -163,11 +199,15 @@ public class FrmWizardAirportTimeAndWeather extends FrmWizardFrame {
           .addComponent(btnDownloadMetar))
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-          .addComponent(jLabel1)
-          .addComponent(cmbWeatherUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+          .addComponent(jLabel2)
+          .addComponent(cmbPresetMetars, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+          .addComponent(cmbWeatherUpdate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+          .addComponent(jLabel1))
+        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 119, Short.MAX_VALUE)
         .addComponent(btnContinue)
-        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        .addContainerGap())
     );
 
     pack();
@@ -182,24 +222,7 @@ public class FrmWizardAirportTimeAndWeather extends FrmWizardFrame {
   }//GEN-LAST:event_txtTimeKeyTyped
 
   private void btnContinueActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnContinueActionPerformed
-
-    if (checkTimeSanity() == false) {
-      return;
-    }
-    if (checkMetarSanity() == false) {
-      return;
-    }
-    
-    this.settings.setRecentTime(txtTime.getText());
-    String selIcao = (String) cmbAirports.getSelectedItem();
-    selIcao = selIcao.substring(0,5);
-    this.settings.setRecentIcao(selIcao);
-    this.settings.setWeatherOnline(rdbWeatherFromWeb.isSelected());
-    this.settings.setWeatherUserChanges(cmbWeatherUpdate.getSelectedIndex());
-    this.settings.setWeatherUserMetar(txtMetar.getText());
-
-    super.dialogResult  = DialogResult.Ok;
-    this.setVisible(false);
+    super.closeDialogIfValid();
   }//GEN-LAST:event_btnContinueActionPerformed
 
   private void btnSetCurrentTimeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSetCurrentTimeActionPerformed
@@ -209,13 +232,23 @@ public class FrmWizardAirportTimeAndWeather extends FrmWizardFrame {
     txtTime.setText(tmp);
   }//GEN-LAST:event_btnSetCurrentTimeActionPerformed
 
+  private void cmbPresetMetarsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbPresetMetarsActionPerformed
+   if (cmbPresetMetars.getSelectedIndex() == 0) return;
+   
+    PresetMetar pm = (PresetMetar) cmbPresetMetars.getSelectedItem();
+   txtMetar.setText(pm.metar);
+   cmbPresetMetars.setSelectedIndex(0);
+  }//GEN-LAST:event_cmbPresetMetarsActionPerformed
+
   // Variables declaration - do not modify//GEN-BEGIN:variables
   private javax.swing.JButton btnContinue;
   private javax.swing.JButton btnDownloadMetar;
   private javax.swing.JButton btnSetCurrentTime;
   private javax.swing.JComboBox cmbAirports;
+  private javax.swing.JComboBox cmbPresetMetars;
   private javax.swing.JComboBox cmbWeatherUpdate;
   private javax.swing.JLabel jLabel1;
+  private javax.swing.JLabel jLabel2;
   private javax.swing.JLabel jLabel4;
   private javax.swing.JLabel jLabel5;
   private javax.swing.JLabel jLabel6;
@@ -278,4 +311,41 @@ public class FrmWizardAirportTimeAndWeather extends FrmWizardFrame {
     //TODO finish test for metar validity
     return true;
   }
+
+  @Override
+  protected boolean isValidated() {
+    if (checkTimeSanity() == false) {
+      return false;
+    }
+    if (checkMetarSanity() == false) {
+      return false;
+    }
+    
+    this.settings.setRecentTime(txtTime.getText());
+    String selIcao = (String) cmbAirports.getSelectedItem();
+    selIcao = selIcao.substring(0,5);
+    this.settings.setRecentIcao(selIcao);
+    this.settings.setWeatherOnline(rdbWeatherFromWeb.isSelected());
+    this.settings.setWeatherUserChanges(cmbWeatherUpdate.getSelectedIndex());
+    this.settings.setWeatherUserMetar(txtMetar.getText());
+
+    return true;
+  }
+}
+
+class PresetMetar{
+  public String key;
+  public String metar;
+
+  public PresetMetar(String key, String metar) {
+    this.key = key;
+    this.metar = metar;
+  }
+
+  @Override
+  public String toString() {
+    return key;
+  }
+  
+  
 }
