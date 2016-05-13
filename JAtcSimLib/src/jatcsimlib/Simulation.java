@@ -19,11 +19,13 @@ import jatcsimlib.events.EventManager;
 import jatcsimlib.global.ERandom;
 import jatcsimlib.global.ETime;
 import jatcsimlib.global.ReadOnlyList;
+import jatcsimlib.global.TryResult;
 import jatcsimlib.messaging.Message;
 import jatcsimlib.messaging.Messenger;
 import jatcsimlib.traffic.GeneratedTraffic;
 import jatcsimlib.traffic.TestTrafficOneApproach;
 import jatcsimlib.traffic.Traffic;
+import jatcsimlib.weathers.MetarDecoder;
 import jatcsimlib.weathers.Weather;
 import jatcsimlib.weathers.MetarDownloaderNoaaGov;
 import jatcsimlib.weathers.MetarDownloader;
@@ -119,14 +121,12 @@ public class Simulation {
     this.now = new ETime(now);
   }
 
-  public static Simulation create(Airport airport, AirplaneTypes types, Calendar now) {
+  public static Simulation create(Airport airport, AirplaneTypes types, Weather weather, Calendar now) {
     Simulation ret = new Simulation(airport, types, now);
 
     Acc.setSimulation(ret);
 
-    // weather
-    MetarDownloader wd = new MetarDownloaderNoaaGov();
-    ret.weather = wd.downloadWeather(airport.getIcao());
+    ret.weather = weather;
 
     Acc.atcTwr().init();
     Acc.atcApp().init();

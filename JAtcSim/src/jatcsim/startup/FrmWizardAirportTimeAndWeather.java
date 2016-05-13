@@ -5,6 +5,11 @@
  */
 package jatcsim.startup;
 
+import jatcsimlib.global.TryResult;
+import jatcsimlib.weathers.MetarDecoder;
+import jatcsimlib.weathers.MetarDownloader;
+import jatcsimlib.weathers.MetarDownloaderNoaaGov;
+import jatcsimlib.weathers.Weather;
 import jatcsimlib.world.Airport;
 import jatcsimlib.world.Area;
 import jatcsimxml.serialization.Serializer;
@@ -92,7 +97,6 @@ public class FrmWizardAirportTimeAndWeather extends FrmWizardFrame {
     jLabel6.setText("Weather:");
 
     rdbWeatherFromWeb.setText("use real weather continously downloaded from web");
-    rdbWeatherFromWeb.setEnabled(false);
 
     rdbWeatherFromUser.setSelected(true);
     rdbWeatherFromUser.setText("user set - insert METAR string:");
@@ -100,7 +104,11 @@ public class FrmWizardAirportTimeAndWeather extends FrmWizardFrame {
     txtMetar.setText("METAR ZZZZ 111111Z 20212KTS 9000 OVC012");
 
     btnDownloadMetar.setText("Download now");
-    btnDownloadMetar.setEnabled(false);
+    btnDownloadMetar.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        btnDownloadMetarActionPerformed(evt);
+      }
+    });
 
     btnContinue.setText("Continue");
     btnContinue.addActionListener(new java.awt.event.ActionListener() {
@@ -240,6 +248,15 @@ public class FrmWizardAirportTimeAndWeather extends FrmWizardFrame {
    cmbPresetMetars.setSelectedIndex(0);
   }//GEN-LAST:event_cmbPresetMetarsActionPerformed
 
+  private void btnDownloadMetarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDownloadMetarActionPerformed
+    MetarDownloader d = new MetarDownloaderNoaaGov();
+    TryResult<String> res = d.tryDownloadMetar(settings.getRecentIcao());
+    if (res.isSuccess)
+      txtMetar.setText(res.result);
+    else
+      MessageBox.show("Failed to download METAR for " + settings.getRecentIcao() + ". Reason: " + res.exceptionOrNull.getMessage(), "Error downloading METAR...");
+  }//GEN-LAST:event_btnDownloadMetarActionPerformed
+
   // Variables declaration - do not modify//GEN-BEGIN:variables
   private javax.swing.JButton btnContinue;
   private javax.swing.JButton btnDownloadMetar;
@@ -308,7 +325,11 @@ public class FrmWizardAirportTimeAndWeather extends FrmWizardFrame {
   }
 
   private boolean checkMetarSanity() {
-    //TODO finish test for metar validity
+    TryResult<Weather> res = MetarDecoder.tryDecode(txtMetar.getText());
+    if (res.isSuccess == false){
+      MessageBox.show("Failed to decode METAR to weather. Reason: " + res.exceptionOrNull.getMessage() + ".", "Error...");
+      return false;
+    }
     return true;
   }
 

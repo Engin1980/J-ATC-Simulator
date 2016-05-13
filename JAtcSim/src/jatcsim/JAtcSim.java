@@ -14,6 +14,8 @@ import jatcsimdraw.mainRadar.settings.Settings;
 import jatcsimlib.Simulation;
 import jatcsimlib.airplanes.AirplaneTypes;
 import jatcsimlib.exceptions.ERuntimeException;
+import jatcsimlib.weathers.Weather;
+import jatcsimlib.weathers.WeatherProvider;
 import jatcsimxml.serialization.Serializer;
 import jatcsimlib.world.Airport;
 import jatcsimlib.world.Area;
@@ -63,14 +65,23 @@ public class JAtcSim {
     area.initAfterLoad();
 
     System.out.println("** Setting simulation");
-
+        
     // area, airport and time
     String icao = sett.getRecentIcao();
     Calendar simTime = Calendar.getInstance();
     updateCalendarToSimTime(simTime, sett);
     Airport aip = area.getAirports().get(icao);
+    
+    // weather
+    Weather weather;
+    if (sett.isWeatherOnline())
+      weather = WeatherProvider.downloadAndDecodeMetar(aip.getIcao());
+    else
+      weather = WeatherProvider.decodeMetar(sett.getWeatherUserMetar());
+    
+    // sim init
     final Simulation sim = Simulation.create(
-      aip, types, simTime);
+      aip, types, weather, simTime);
     SoundManager.init(resFolder.toString());
 
     // starting pack & simulation

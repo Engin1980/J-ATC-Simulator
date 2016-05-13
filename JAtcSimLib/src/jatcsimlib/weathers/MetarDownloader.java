@@ -27,7 +27,7 @@ public abstract class MetarDownloader {
    * @param icao ICAO of the airport to download metar of
    * @return Metar string, or exception.
    */
-  public TryResult<String> downloadMetar(String icao) {
+  public TryResult<String> tryDownloadMetar(String icao) {
     TryResult<String> ret;
 
     try {

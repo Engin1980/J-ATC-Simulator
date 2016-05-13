@@ -162,7 +162,6 @@
     <Component class="javax.swing.JRadioButton" name="rdbWeatherFromWeb">
       <Properties>
         <Property name="text" type="java.lang.String" value="use real weather continously downloaded from web"/>
-        <Property name="enabled" type="boolean" value="false"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JRadioButton" name="rdbWeatherFromUser">
@@ -179,8 +178,10 @@
     <Component class="javax.swing.JButton" name="btnDownloadMetar">
       <Properties>
         <Property name="text" type="java.lang.String" value="Download now"/>
-        <Property name="enabled" type="boolean" value="false"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnDownloadMetarActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="btnContinue">
       <Properties>
