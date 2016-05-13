@@ -17,15 +17,17 @@ public class Weather {
   private int windSpeetInKts;
   private int visibilityInM;
   private int cloudBaseInFt;
+  public double cloudBaseHitProbability;
 
   public Weather() {
   }
 
-  public Weather(int windHeading, int windSpeetInKts, int visibilityInM, int cloudBaseInFt) {
+  public Weather(int windHeading, int windSpeetInKts, int visibilityInM, int cloudBaseInFt, double cloudBaseHitProbability) {
     this.windHeading = windHeading;
     this.windSpeetInKts = windSpeetInKts;
     this.visibilityInM = visibilityInM;
     this.cloudBaseInFt = cloudBaseInFt;
+    this.cloudBaseHitProbability = cloudBaseHitProbability;
   }
 
   /**
@@ -58,6 +60,14 @@ public class Weather {
    */
   public int getWindSpeetInKts() {
     return windSpeetInKts;
+  }
+
+  /**
+   * Return 0..1 probability that pilot will not see through the clouds.
+   * @return 0 if no clouds are covering ground view, 1 if clouds are covering ground view
+   */
+  public double getCloudBaseHitProbability() {
+    return cloudBaseHitProbability;
   }
   
 }

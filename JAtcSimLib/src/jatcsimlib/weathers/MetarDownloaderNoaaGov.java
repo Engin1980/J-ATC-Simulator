@@ -16,7 +16,7 @@ import java.util.logging.Logger;
  *
  * @author Marek
  */
-public class WeatherDownloadNoaaGov extends WeatherDownloader {
+public class MetarDownloaderNoaaGov extends MetarDownloader {
 
   @Override
   protected String downloadMetarString(String icao) {

@@ -5,6 +5,7 @@
  */
 package jatcsim;
 
+import jatcsim.frmPacks.Pack;
 import jatcsim.startup.FrmStartup;
 import jatcsim.startup.StartupSettings;
 import jatcsim.startup.StartupWizard;
@@ -18,7 +19,11 @@ import jatcsimlib.world.Airport;
 import jatcsimlib.world.Area;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Calendar;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFrame;
 
 /**
@@ -38,31 +43,19 @@ public class JAtcSim {
   public static void main(String[] args) throws Exception {
 
     initResourcesFolder();
-    
+
     // startup wizard
     StartupSettings sett = StartupSettings.tryLoad();
     StartupWizard wizard = new StartupWizard(sett);
     wizard.run();
-    if (wizard.isFinished() == false)
+    if (wizard.isFinished() == false) {
       return;
+    }
     sett.save();
-    
-    
-    /*
-    FrmStartup fs = new FrmStartup();
-    fs.eInit();
-    fs.setVisible(true);
-    
-    System.out.println("BEF");
-    Thread stf = new JFrameThread(fs);
-    stf.start();
-    stf.join();
-    System.out.println("AFT");
-    */
-      
+
     // loading data
     try {
-      loadDataFromXmlFiles();
+      loadDataFromXmlFiles(sett);
     } catch (Exception ex) {
       throw (ex);
     }
@@ -71,39 +64,51 @@ public class JAtcSim {
 
     System.out.println("** Setting simulation");
 
-    Airport aip = area.getAirports().get(0);
+    // area, airport and time
+    String icao = sett.getRecentIcao();
+    Calendar simTime = Calendar.getInstance();
+    updateCalendarToSimTime(simTime, sett);
+    Airport aip = area.getAirports().get(icao);
     final Simulation sim = Simulation.create(
-      aip,
-      types, Calendar.getInstance());
+      aip, types, simTime);
     SoundManager.init(resFolder.toString());
 
     // starting pack & simulation
+    String packType = sett.getRadarPackClassName();
     jatcsim.frmPacks.Pack simPack
-      = new jatcsim.frmPacks.simple.Pack();
+      = createPackInstance(packType);
 
     simPack.initPack(sim, area, displaySettings);
     simPack.startPack();
   }
 
-  private static void loadDataFromXmlFiles() throws Exception {
+  private static void loadDataFromXmlFiles(StartupSettings sett) throws Exception {
     System.out.println("*** Loading XML");
 
     Serializer ser = new Serializer();
+    String failMsg;
+    String fileName;
 
     try {
+      fileName = sett.getAreaXmlFile();
+      failMsg = "Failed to load area from " + fileName;
       area = Area.create();
       ser.fillObject(
-        resFolder.toString() + "\\areas\\lkpr.xml",
+        fileName,
         area);
 
+      fileName = resFolder.toString() + "\\settings\\mainRadarSettings.xml";
+      failMsg = "Failed to load area from " + fileName;
       displaySettings = new Settings();
       ser.fillObject(
-        resFolder.toString() + "\\settings\\mainRadarSettings.xml",
+        fileName,
         displaySettings);
 
+      fileName = sett.getPlanesXmlFile();
+      failMsg = "Failed to load plane types from " + fileName;
       types = new AirplaneTypes();
       ser.fillList(
-        resFolder.toString() + "\\settings\\planeTypes.xml",
+        fileName,
         types);
 
     } catch (Exception ex) {
@@ -115,17 +120,40 @@ public class JAtcSim {
     String curDir = System.getProperty("user.dir") + "\\";
     java.io.File f;
     f = new java.io.File(curDir + "src\\resources");
-    if (f.exists()){
+    if (f.exists()) {
       resFolder = f;
       return;
     }
     f = new java.io.File(curDir + "resources");
-    if (f.exists()){
+    if (f.exists()) {
       resFolder = f;
       return;
     }
-    
+
     throw new ERuntimeException("Unable to find resources folder.");
+  }
+
+  private static void updateCalendarToSimTime(Calendar simTime, StartupSettings sett) {
+    String timeS = sett.getRecentTime();
+    String[] pts = timeS.split(":");
+    int hours = Integer.parseInt(pts[0]);
+    int minutes = Integer.parseInt(pts[1]);
+    simTime.set(Calendar.HOUR_OF_DAY, hours);
+    simTime.set(Calendar.MINUTE, minutes);
+  }
+
+  private static Pack createPackInstance(String packTypeName) {
+    Class<?> clazz;
+    Object object;
+    try {
+      clazz = Class.forName(packTypeName);
+      Constructor<?> ctor = clazz.getConstructor();
+      object = ctor.newInstance();
+    } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException ex) {
+      throw new RuntimeException("Failed to create instance of radar pack " + packTypeName + ". Reason: " + ex.getMessage(), ex);
+    }
+    Pack ret = (Pack) object;
+    return ret;
   }
 }
 

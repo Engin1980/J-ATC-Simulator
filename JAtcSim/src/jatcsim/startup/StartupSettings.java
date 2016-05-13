@@ -36,6 +36,8 @@ public class StartupSettings {
   private static final int TRAFFIC_CUSTOM_C_TYPE_WEIGHT = 14;
   private static final int TRAFFIC_CUSTOM_D_TYPE_WEIGHT = 15;
   private static final int TRAFFIC_XML_DELAY_ALLOWED = 16;
+  
+  private static final int RADAR_PACK_CLASS = 17;
 
   private static final Map<Integer, Way> maps;
 
@@ -61,6 +63,8 @@ public class StartupSettings {
     maps.put(TRAFFIC_CUSTOM_C_TYPE_WEIGHT, new Way("Traffic", "weightTypeC"));
     maps.put(TRAFFIC_CUSTOM_D_TYPE_WEIGHT, new Way("Traffic", "weightTypeD"));
     maps.put(TRAFFIC_XML_DELAY_ALLOWED, new Way("Traffic", "delayAllowed"));
+    
+    maps.put(RADAR_PACK_CLASS, new Way("Radar", "radar"));
   }
 
   private String areaXmlFile;
@@ -83,6 +87,8 @@ public class StartupSettings {
   private int trafficCustomWeightTypeC;
   private int trafficCustomWeightTypeD;
   private boolean trafficXmlDelayAllowed;
+  
+  private String radarPackClassName;
   
   
   public static StartupSettings tryLoad() {
@@ -112,6 +118,8 @@ public class StartupSettings {
     ret.trafficCustomWeightTypeD = getInt(inf, TRAFFIC_CUSTOM_D_TYPE_WEIGHT, 5);
     ret.trafficXmlDelayAllowed = getBoolean(inf, TRAFFIC_XML_DELAY_ALLOWED, true);
 
+    ret.radarPackClassName = getString(inf, RADAR_PACK_CLASS, "jatcsim.frmPacks.simple.Pack");
+    
     return ret;
   }
 
@@ -141,6 +149,8 @@ public class StartupSettings {
     setInt(inf,  TRAFFIC_CUSTOM_D_TYPE_WEIGHT, this.trafficCustomWeightTypeD);
     setBoolean(inf, TRAFFIC_XML_DELAY_ALLOWED, this.trafficXmlDelayAllowed);
 
+    setString(inf, RADAR_PACK_CLASS, this.radarPackClassName);
+    
     try {
       inf.save(iniFileName);
     } catch (IOException ex) {
@@ -149,6 +159,12 @@ public class StartupSettings {
     }
   }
 
+  private static String getString(IniFile inf, int wayKey, String defaultValue){
+    String ret = getString(inf, wayKey);
+    if (ret == null || ret.isEmpty())
+      ret = defaultValue;
+    return ret;
+  }
   
   private static String getString(IniFile inf, int wayKey) {
     Way way = maps.get(wayKey);
@@ -341,7 +357,14 @@ public class StartupSettings {
     this.trafficCustomWeightTypeD = trafficCustomWeightTypeD;
   }
 
-  
+  public String getRadarPackClassName() {
+    return radarPackClassName;
+  }
+
+  public void setRadarPackClassName(String radarPackClassName) {
+    this.radarPackClassName = radarPackClassName;
+  }
+
   
 }
 

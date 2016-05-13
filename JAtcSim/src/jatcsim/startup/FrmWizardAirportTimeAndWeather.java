@@ -323,7 +323,7 @@ public class FrmWizardAirportTimeAndWeather extends FrmWizardFrame {
     
     this.settings.setRecentTime(txtTime.getText());
     String selIcao = (String) cmbAirports.getSelectedItem();
-    selIcao = selIcao.substring(0,5);
+    selIcao = selIcao.substring(0,4);
     this.settings.setRecentIcao(selIcao);
     this.settings.setWeatherOnline(rdbWeatherFromWeb.isSelected());
     this.settings.setWeatherUserChanges(cmbWeatherUpdate.getSelectedIndex());

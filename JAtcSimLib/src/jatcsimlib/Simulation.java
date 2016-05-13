@@ -25,8 +25,8 @@ import jatcsimlib.traffic.GeneratedTraffic;
 import jatcsimlib.traffic.TestTrafficOneApproach;
 import jatcsimlib.traffic.Traffic;
 import jatcsimlib.weathers.Weather;
-import jatcsimlib.weathers.WeatherDownloadNoaaGov;
-import jatcsimlib.weathers.WeatherDownloader;
+import jatcsimlib.weathers.MetarDownloaderNoaaGov;
+import jatcsimlib.weathers.MetarDownloader;
 import jatcsimlib.world.Airport;
 import jatcsimlib.world.RunwayThreshold;
 import java.util.Calendar;
@@ -125,7 +125,7 @@ public class Simulation {
     Acc.setSimulation(ret);
 
     // weather
-    WeatherDownloader wd = new WeatherDownloadNoaaGov();
+    MetarDownloader wd = new MetarDownloaderNoaaGov();
     ret.weather = wd.downloadWeather(airport.getIcao());
 
     Acc.atcTwr().init();
