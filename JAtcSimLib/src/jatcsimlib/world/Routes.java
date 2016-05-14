@@ -14,11 +14,11 @@ import java.util.List;
  * @author Marek
  */
 public class Routes {
-  public static List<Route> getByFilter(Iterable<Route> list, boolean arrival, char category) {
+  public static List<Route> getByFilter(Iterable<Route> list, boolean isArrival, char category) {
     List<Route> ret = new LinkedList<>();
     
     for (Route r : list){
-      if (arrival){
+      if (isArrival){
         if (r.getType() == Route.eType.sid) continue;
       } else {
         if (r.getType() != Route.eType.sid) continue;

@@ -97,4 +97,12 @@ public class ETime implements Comparable<ETime> {
   public void increaseSecond() {
     this.value++;
   }
+
+  /**
+   * Checks if minute fraction is zero.
+   * @return true if seconds == 0, false otherwise.
+   */
+  public boolean isIntegralMinute() {
+    return getSeconds() == 0;
+  }
 }

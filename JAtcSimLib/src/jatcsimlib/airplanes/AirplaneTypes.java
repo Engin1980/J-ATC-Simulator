@@ -52,12 +52,12 @@ public class AirplaneTypes extends ArrayList<AirplaneType> {
     return ret;
   }
 
-  public AirplaneType getRandomByTraffic(TrafficCategories traffic) {
+  public AirplaneType getRandomByTraffic(TrafficCategories traffic, boolean isIfr) {
     AirplaneType ret;
     char c;
     double d = Acc.rnd().nextDouble();
 
-    if (d < traffic.getCategoryA()) {
+    if (d < traffic.getCategoryA() || !isIfr) { // VFR is allways A
       c = 'A';
     } else if (d < (traffic.getCategoryA() + traffic.getCategoryB())) {
       c = 'B';

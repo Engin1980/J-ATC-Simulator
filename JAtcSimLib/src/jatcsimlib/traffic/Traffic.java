@@ -6,6 +6,7 @@
 package jatcsimlib.traffic;
 
 import jatcsimlib.airplanes.Airplane;
+import jatcsimlib.global.ETime;
 
 /**
  *
@@ -13,6 +14,15 @@ import jatcsimlib.airplanes.Airplane;
  */
 public abstract class Traffic {
   
+  /**
+   * Returns new airplanes after specified time.
+   * @return New airplanes
+   */
   public abstract Airplane[] getNewAirplanes();
+
+  /**
+   * Generates new airplanes for future, if required.
+   */
+  public abstract void generateNewMovementsIfRequired();
   
 }

@@ -13,14 +13,16 @@ import jatcsimlib.global.ETime;
  * @author Marek Vajgl
  */
 public class Movement {
-  private Callsign callsign;
-  private boolean departure;
-  private ETime initTime;
+  private final Callsign callsign;
+  private final boolean departure;
+  private final boolean ifr;
+  private final ETime initTime;
 
-  public Movement(Callsign callsign, ETime initTime, boolean isDeparture) {
+  public Movement(Callsign callsign, ETime initTime, boolean isDeparture, boolean isIfr) {
     this.callsign = callsign;
     this.departure = isDeparture;
     this.initTime = initTime;
+    this.ifr = isIfr;
   }    
 
   public Callsign getCallsign() {
@@ -35,12 +37,13 @@ public class Movement {
     return initTime;
   }
 
+  public boolean isIfr() {
+    return ifr;
+  }
+
   @Override
   public String toString() {
-    return 
-      this.callsign + " {" 
-      + ((isDeparture() == false) ? "=>" : "") 
-      + getInitTime().toString() 
-      + ((isDeparture()) ? "=>" : "") + "}";
+    return "Movement{" + "callsign=" + callsign + ", departure=" + departure + ", ifr=" + ifr + ", initTime=" + initTime + '}';
   }
+  
 }

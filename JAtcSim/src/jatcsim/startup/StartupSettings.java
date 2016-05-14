@@ -16,28 +16,32 @@ import java.util.Map;
  */
 public class StartupSettings {
 
-  private static final int AREA_XML_FILE = 0;
-  private static final int PLANES_XML_FILES = 1;
-  private static final int ICAO = 2;
-
-  private static final int TIME = 3;
-
-  private static final int WEATHER_USER_METAR = 4;
-  private static final int WEATHER_ONLINE = 5;
-  private static final int WEATHER_USER_CHANGES = 6;
-
-  private static final int TRAFFIC_USE_XML = 7;
-  private static final int TRAFFIC_XML_FILE = 8;
-  private static final int TRAFFIC_CUSTOM_MOVEMENTS = 9;
-  private static final int TRAFFIC_CUSTOM_ARRIVALS2DEPARTURES = 10;
-  private static final int TRAFFIC_CUSTOM_VFR2IFR = 11;
-  private static final int TRAFFIC_CUSTOM_A_TYPE_WEIGHT = 12;
-  private static final int TRAFFIC_CUSTOM_B_TYPE_WEIGHT = 13;
-  private static final int TRAFFIC_CUSTOM_C_TYPE_WEIGHT = 14;
-  private static final int TRAFFIC_CUSTOM_D_TYPE_WEIGHT = 15;
-  private static final int TRAFFIC_XML_DELAY_ALLOWED = 16;
+  private static int IDCNT = 1;
   
-  private static final int RADAR_PACK_CLASS = 17;
+  private static final int AREA_XML_FILE = IDCNT++;
+  private static final int PLANES_XML_FILES = IDCNT++;
+  private static final int ICAO = IDCNT++;
+
+  private static final int TIME = IDCNT++;
+
+  private static final int WEATHER_USER_METAR = IDCNT++;
+  private static final int WEATHER_ONLINE = IDCNT++;
+  private static final int WEATHER_USER_CHANGES = IDCNT++;
+
+  private static final int TRAFFIC_USE_XML = IDCNT++;
+  private static final int TRAFFIC_XML_FILE = IDCNT++;
+  private static final int TRAFFIC_CUSTOM_MOVEMENTS = IDCNT++;
+  private static final int TRAFFIC_CUSTOM_ARRIVALS2DEPARTURES = IDCNT++;
+  private static final int TRAFFIC_CUSTOM_VFR2IFR = IDCNT++;
+  private static final int TRAFFIC_CUSTOM_A_TYPE_WEIGHT = IDCNT++;
+  private static final int TRAFFIC_CUSTOM_B_TYPE_WEIGHT = IDCNT++;
+  private static final int TRAFFIC_CUSTOM_C_TYPE_WEIGHT = IDCNT++;
+  private static final int TRAFFIC_CUSTOM_D_TYPE_WEIGHT = IDCNT++;
+  private static final int TRAFFIC_XML_DELAY_ALLOWED = IDCNT++;
+  private static final int TRAFFIC_CUSTOM_USING_EXTENDED_CALLSIGNS = IDCNT++;
+  private static final int TRAFFIC_CUSTOM_MAX_PLANES = IDCNT++;
+  
+  private static final int RADAR_PACK_CLASS = IDCNT++;
 
   private static final Map<Integer, Way> maps;
 
@@ -63,6 +67,8 @@ public class StartupSettings {
     maps.put(TRAFFIC_CUSTOM_C_TYPE_WEIGHT, new Way("Traffic", "weightTypeC"));
     maps.put(TRAFFIC_CUSTOM_D_TYPE_WEIGHT, new Way("Traffic", "weightTypeD"));
     maps.put(TRAFFIC_XML_DELAY_ALLOWED, new Way("Traffic", "delayAllowed"));
+    maps.put(TRAFFIC_CUSTOM_USING_EXTENDED_CALLSIGNS, new Way("Traffic", "useExtendedCallsigns"));
+    maps.put(TRAFFIC_CUSTOM_MAX_PLANES, new Way("Traffic", "maxPlanes"));
     
     maps.put(RADAR_PACK_CLASS, new Way("Radar", "radar"));
   }
@@ -87,6 +93,8 @@ public class StartupSettings {
   private int trafficCustomWeightTypeC;
   private int trafficCustomWeightTypeD;
   private boolean trafficXmlDelayAllowed;
+  private boolean trafficCustomUsingExtendedCallsigns;
+  private int trafficCustomMaxPlanes;
   
   private String radarPackClassName;
   
@@ -117,6 +125,8 @@ public class StartupSettings {
     ret.trafficCustomWeightTypeC = getInt(inf, TRAFFIC_CUSTOM_C_TYPE_WEIGHT, 5);
     ret.trafficCustomWeightTypeD = getInt(inf, TRAFFIC_CUSTOM_D_TYPE_WEIGHT, 5);
     ret.trafficXmlDelayAllowed = getBoolean(inf, TRAFFIC_XML_DELAY_ALLOWED, true);
+    ret.trafficCustomUsingExtendedCallsigns = getBoolean(inf, TRAFFIC_CUSTOM_USING_EXTENDED_CALLSIGNS, false);
+    ret.trafficCustomMaxPlanes = getInt(inf, TRAFFIC_CUSTOM_MAX_PLANES, 15);
 
     ret.radarPackClassName = getString(inf, RADAR_PACK_CLASS, "jatcsim.frmPacks.simple.Pack");
     
@@ -148,6 +158,8 @@ public class StartupSettings {
     setInt(inf,  TRAFFIC_CUSTOM_C_TYPE_WEIGHT, this.trafficCustomWeightTypeC);
     setInt(inf,  TRAFFIC_CUSTOM_D_TYPE_WEIGHT, this.trafficCustomWeightTypeD);
     setBoolean(inf, TRAFFIC_XML_DELAY_ALLOWED, this.trafficXmlDelayAllowed);
+    setBoolean(inf, TRAFFIC_CUSTOM_USING_EXTENDED_CALLSIGNS, this.trafficCustomUsingExtendedCallsigns);
+    setInt(inf, TRAFFIC_CUSTOM_MAX_PLANES, this.trafficCustomMaxPlanes);
 
     setString(inf, RADAR_PACK_CLASS, this.radarPackClassName);
     
@@ -365,6 +377,29 @@ public class StartupSettings {
     this.radarPackClassName = radarPackClassName;
   }
 
+  public boolean isTrafficCustomUsingExtendedCallsigns() {
+    return trafficCustomUsingExtendedCallsigns;
+  }
+
+  public void setTrafficCustomUsingExtendedCallsigns(boolean trafficCustomUsingExtendedCallsigns) {
+    this.trafficCustomUsingExtendedCallsigns = trafficCustomUsingExtendedCallsigns;
+  }
+
+  public static int getIDCNT() {
+    return IDCNT;
+  }
+
+  public static void setIDCNT(int IDCNT) {
+    StartupSettings.IDCNT = IDCNT;
+  }
+
+  public int getTrafficCustomMaxPlanes() {
+    return trafficCustomMaxPlanes;
+  }
+
+  public void setTrafficCustomMaxPlanes(int trafficCustomMaxPlanes) {
+    this.trafficCustomMaxPlanes = trafficCustomMaxPlanes;
+  }
   
 }
 

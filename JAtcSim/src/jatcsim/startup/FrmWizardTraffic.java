@@ -55,6 +55,9 @@ public class FrmWizardTraffic extends FrmWizardFrame {
     jLabel8 = new javax.swing.JLabel();
     jLabel9 = new javax.swing.JLabel();
     jLabel10 = new javax.swing.JLabel();
+    chkCustomExtendedCallsigns = new javax.swing.JCheckBox();
+    nudMaxPlanes = new javax.swing.JSpinner();
+    jLabel11 = new javax.swing.JLabel();
     btnContinue = new javax.swing.JButton();
 
     setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -173,6 +176,17 @@ public class FrmWizardTraffic extends FrmWizardFrame {
 
     jLabel10.setText("D plane type occurence probability weight");
 
+    chkCustomExtendedCallsigns.setText("Use extended callsigns");
+
+    nudMaxPlanes.setValue(10);
+    nudMaxPlanes.addChangeListener(new javax.swing.event.ChangeListener() {
+      public void stateChanged(javax.swing.event.ChangeEvent evt) {
+        nudMaxPlanesStateChanged(evt);
+      }
+    });
+
+    jLabel11.setText("Max planes count:");
+
     javax.swing.GroupLayout pnlCustomLayout = new javax.swing.GroupLayout(pnlCustom);
     pnlCustom.setLayout(pnlCustomLayout);
     pnlCustomLayout.setHorizontalGroup(
@@ -181,34 +195,47 @@ public class FrmWizardTraffic extends FrmWizardFrame {
         .addContainerGap()
         .addGroup(pnlCustomLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
           .addGroup(pnlCustomLayout.createSequentialGroup()
-            .addComponent(jLabel2)
-            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-            .addComponent(nudMovements, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE))
-          .addGroup(pnlCustomLayout.createSequentialGroup()
             .addGroup(pnlCustomLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
               .addComponent(jLabel4)
               .addComponent(jLabel3))
             .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
             .addGroup(pnlCustomLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
               .addGroup(pnlCustomLayout.createSequentialGroup()
+                .addComponent(sldD, javax.swing.GroupLayout.PREFERRED_SIZE, 269, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel10))
+              .addGroup(pnlCustomLayout.createSequentialGroup()
+                .addComponent(sldC, javax.swing.GroupLayout.PREFERRED_SIZE, 269, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel9))
+              .addGroup(pnlCustomLayout.createSequentialGroup()
+                .addComponent(sldVfrIfr, javax.swing.GroupLayout.PREFERRED_SIZE, 269, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel6))
+              .addGroup(pnlCustomLayout.createSequentialGroup()
+                .addComponent(sldA, javax.swing.GroupLayout.PREFERRED_SIZE, 269, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel7))
+              .addGroup(pnlCustomLayout.createSequentialGroup()
+                .addComponent(sldB, javax.swing.GroupLayout.PREFERRED_SIZE, 269, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel8))
+              .addGroup(pnlCustomLayout.createSequentialGroup()
                 .addComponent(sldArrivalsDepartures, javax.swing.GroupLayout.PREFERRED_SIZE, 269, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel5))
-              .addGroup(pnlCustomLayout.createSequentialGroup()
-                .addGroup(pnlCustomLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                  .addComponent(sldA, javax.swing.GroupLayout.PREFERRED_SIZE, 269, javax.swing.GroupLayout.PREFERRED_SIZE)
-                  .addComponent(sldVfrIfr, javax.swing.GroupLayout.PREFERRED_SIZE, 269, javax.swing.GroupLayout.PREFERRED_SIZE)
-                  .addComponent(sldB, javax.swing.GroupLayout.PREFERRED_SIZE, 269, javax.swing.GroupLayout.PREFERRED_SIZE)
-                  .addComponent(sldC, javax.swing.GroupLayout.PREFERRED_SIZE, 269, javax.swing.GroupLayout.PREFERRED_SIZE)
-                  .addComponent(sldD, javax.swing.GroupLayout.PREFERRED_SIZE, 269, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(pnlCustomLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                  .addComponent(jLabel6)
-                  .addComponent(jLabel7)
-                  .addComponent(jLabel8)
-                  .addComponent(jLabel9)
-                  .addComponent(jLabel10))))))
-        .addContainerGap(140, Short.MAX_VALUE))
+                  .addComponent(chkCustomExtendedCallsigns)
+                  .addComponent(jLabel5)))))
+          .addGroup(pnlCustomLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+            .addGroup(pnlCustomLayout.createSequentialGroup()
+              .addComponent(jLabel11)
+              .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+              .addComponent(nudMaxPlanes, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(pnlCustomLayout.createSequentialGroup()
+              .addComponent(jLabel2)
+              .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+              .addComponent(nudMovements, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE))))
+        .addGap(22, 141, Short.MAX_VALUE))
     );
     pnlCustomLayout.setVerticalGroup(
       pnlCustomLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -220,16 +247,20 @@ public class FrmWizardTraffic extends FrmWizardFrame {
               .addGroup(pnlCustomLayout.createSequentialGroup()
                 .addGroup(pnlCustomLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                   .addGroup(pnlCustomLayout.createSequentialGroup()
-                    .addGroup(pnlCustomLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(pnlCustomLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                      .addComponent(jLabel2)
+                      .addComponent(nudMovements, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                      .addComponent(chkCustomExtendedCallsigns))
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addGroup(pnlCustomLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                       .addGroup(pnlCustomLayout.createSequentialGroup()
                         .addGroup(pnlCustomLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                          .addComponent(jLabel2)
-                          .addComponent(nudMovements, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                          .addComponent(nudMaxPlanes, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                          .addComponent(jLabel11))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(pnlCustomLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                          .addComponent(sldArrivalsDepartures, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                          .addComponent(jLabel4)))
-                      .addComponent(jLabel5))
+                        .addComponent(sldArrivalsDepartures, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                      .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.TRAILING)
+                      .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.TRAILING))
                     .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                     .addGroup(pnlCustomLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                       .addComponent(sldVfrIfr, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -269,7 +300,7 @@ public class FrmWizardTraffic extends FrmWizardFrame {
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
               .addComponent(rdbXml, javax.swing.GroupLayout.PREFERRED_SIZE, 334, javax.swing.GroupLayout.PREFERRED_SIZE)
               .addComponent(rdbCustom))
-            .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addContainerGap(352, Short.MAX_VALUE))
           .addGroup(layout.createSequentialGroup()
             .addGap(21, 21, 21)
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -291,9 +322,9 @@ public class FrmWizardTraffic extends FrmWizardFrame {
         .addComponent(rdbCustom)
         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
         .addComponent(pnlCustom, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+        .addGap(18, 18, 18)
         .addComponent(btnContinue)
-        .addContainerGap(26, Short.MAX_VALUE))
+        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
     );
 
     pack();
@@ -318,13 +349,19 @@ public class FrmWizardTraffic extends FrmWizardFrame {
     super.closeDialogIfValid();
   }//GEN-LAST:event_btnContinueActionPerformed
 
+  private void nudMaxPlanesStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_nudMaxPlanesStateChanged
+    // TODO add your handling code here:
+  }//GEN-LAST:event_nudMaxPlanesStateChanged
+
   // Variables declaration - do not modify//GEN-BEGIN:variables
   private javax.swing.JButton btnContinue;
   private javax.swing.JButton btnTrafficXmlFileBrowse;
   private javax.swing.JCheckBox chkAllowDelays;
+  private javax.swing.JCheckBox chkCustomExtendedCallsigns;
   private javax.swing.ButtonGroup grpRdb;
   private javax.swing.JLabel jLabel1;
   private javax.swing.JLabel jLabel10;
+  private javax.swing.JLabel jLabel11;
   private javax.swing.JLabel jLabel2;
   private javax.swing.JLabel jLabel3;
   private javax.swing.JLabel jLabel4;
@@ -333,6 +370,7 @@ public class FrmWizardTraffic extends FrmWizardFrame {
   private javax.swing.JLabel jLabel7;
   private javax.swing.JLabel jLabel8;
   private javax.swing.JLabel jLabel9;
+  private javax.swing.JSpinner nudMaxPlanes;
   private javax.swing.JSpinner nudMovements;
   private javax.swing.JPanel pnlCustom;
   private javax.swing.JPanel pnlXml;
@@ -362,6 +400,8 @@ XmlFileSelectorExtender xmlFile;
     sldB.setValue(settings.getTrafficCustomWeightTypeB());
     sldC.setValue(settings.getTrafficCustomWeightTypeC());
     sldD.setValue(settings.getTrafficCustomWeightTypeD());
+    chkCustomExtendedCallsigns.setSelected(settings.isTrafficCustomUsingExtendedCallsigns());
+    nudMaxPlanes.setValue(settings.getTrafficCustomMaxPlanes());
 
     updatePanelAccess();
   }
@@ -386,6 +426,8 @@ XmlFileSelectorExtender xmlFile;
     settings.setTrafficCustomWeightTypeB(sldB.getValue());
     settings.setTrafficCustomWeightTypeC(sldC.getValue());
     settings.setTrafficCustomWeightTypeD(sldD.getValue());
+    settings.setTrafficCustomUsingExtendedCallsigns(chkCustomExtendedCallsigns.isSelected());
+    settings.setTrafficCustomMaxPlanes((int) nudMaxPlanes.getValue());
 
     return true;
   }

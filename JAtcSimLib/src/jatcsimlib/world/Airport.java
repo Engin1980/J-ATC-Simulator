@@ -9,6 +9,7 @@ import jatcsimlib.atcs.Atc;
 import jatcsimlib.atcs.AtcTemplate;
 import jatcsimlib.coordinates.RadarRange;
 import jatcsimlib.coordinates.Coordinate;
+import jatcsimlib.exceptions.ERuntimeException;
 import jatcsimlib.global.KeyItem;
 import jatcsimlib.global.KeyList;
 import jatcsimlib.global.TrafficCategories;
@@ -23,10 +24,14 @@ public class Airport implements KeyItem<String> {
   private String name;
   private int altitude;
   private int transitionAltitude;
+  private int vfrAltitude;
+  private String mainAirportNavaidName;
+  private Navaid _mainAirportNavaid;
   private final RadarRange radarRange = new RadarRange();
   private final KeyList<Runway, String> runways = new KeyList();
   private final KeyList<AtcTemplate, Atc.eType> atcTemplates = new KeyList();
   private final KeyList<PublishedHold, Navaid> holds = new KeyList();
+  private final KeyList<VfrPoint, String> vfrPoints = new KeyList();
   private TrafficCategories trafficCategories;
   
   private Area parent;
@@ -95,4 +100,24 @@ public class Airport implements KeyItem<String> {
     return this.trafficCategories;
   }
 
+  public KeyList<VfrPoint, String> getVfrPoints() {
+    return this.vfrPoints;
+  }
+
+  public int getVfrAltitude() {
+    return vfrAltitude;
+  }
+  
+  public Navaid getMainAirportNavaid(){
+    if (this._mainAirportNavaid == null){
+      try{
+      this._mainAirportNavaid = this.getParent().getNavaids().get(this.mainAirportNavaidName);
+      } catch (ERuntimeException ex){
+        throw new ERuntimeException("Failed to find main navaid named " + this.mainAirportNavaidName + " for aiport " + this.name + ". Invalid area file?", ex);
+      }
+    }
+    
+    return this._mainAirportNavaid;
+  }
+  
 }

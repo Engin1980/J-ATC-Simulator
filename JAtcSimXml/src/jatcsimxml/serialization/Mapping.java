@@ -22,6 +22,7 @@ import jatcsimlib.world.PublishedHold;
 import jatcsimlib.world.Route;
 import jatcsimlib.world.Runway;
 import jatcsimlib.world.RunwayThreshold;
+import jatcsimlib.world.VfrPoint;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +40,7 @@ public class Mapping {
     mapAdd("Airport.runways", Runway.class);
     mapAdd("Airport.atcTemplates", AtcTemplate.class);
     mapAdd("Airport.holds", PublishedHold.class);
+    mapAdd("Airport.vfrPoints", VfrPoint.class);
     mapAdd("Runway.thresholds", RunwayThreshold.class);
     mapAdd("RunwayThreshold.approaches", Approach.class);
     mapAdd("RunwayThreshold.routes", Route.class);

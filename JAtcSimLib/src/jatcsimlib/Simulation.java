@@ -19,16 +19,11 @@ import jatcsimlib.events.EventManager;
 import jatcsimlib.global.ERandom;
 import jatcsimlib.global.ETime;
 import jatcsimlib.global.ReadOnlyList;
-import jatcsimlib.global.TryResult;
 import jatcsimlib.messaging.Message;
 import jatcsimlib.messaging.Messenger;
-import jatcsimlib.traffic.GeneratedTraffic;
-import jatcsimlib.traffic.TestTrafficOneApproach;
+import jatcsimlib.traffic.CustomTraffic;
 import jatcsimlib.traffic.Traffic;
-import jatcsimlib.weathers.MetarDecoder;
 import jatcsimlib.weathers.Weather;
-import jatcsimlib.weathers.MetarDownloaderNoaaGov;
-import jatcsimlib.weathers.MetarDownloader;
 import jatcsimlib.world.Airport;
 import jatcsimlib.world.RunwayThreshold;
 import java.util.Calendar;
@@ -64,13 +59,14 @@ public class Simulation {
   private final CenterAtc ctrAtc;
 
   //private final Traffic traffic = new TestTrafficOneApproach(); 
-  private final int TRAFFIC_COUNT = 35;
-  private final Traffic traffic = new GeneratedTraffic(
-    1, 1, new int[]{
-      TRAFFIC_COUNT / 4, TRAFFIC_COUNT / 4, TRAFFIC_COUNT / 4, TRAFFIC_COUNT / 4, TRAFFIC_COUNT / 4, TRAFFIC_COUNT / 3,
-      TRAFFIC_COUNT / 2, TRAFFIC_COUNT / 1, TRAFFIC_COUNT / 1, TRAFFIC_COUNT / 3, TRAFFIC_COUNT / 4, TRAFFIC_COUNT / 4,
-      TRAFFIC_COUNT / 4, TRAFFIC_COUNT / 2, TRAFFIC_COUNT / 1, TRAFFIC_COUNT / 3, TRAFFIC_COUNT / 1, TRAFFIC_COUNT / 2,
-      TRAFFIC_COUNT / 1, TRAFFIC_COUNT / 3, TRAFFIC_COUNT / 1, TRAFFIC_COUNT / 1, TRAFFIC_COUNT / 4, TRAFFIC_COUNT / 4});
+//  private final int TRAFFIC_COUNT = 35;
+//  private final Traffic traffic = new CustomTraffic(
+//    1, 1, new int[]{
+//      TRAFFIC_COUNT / 4, TRAFFIC_COUNT / 4, TRAFFIC_COUNT / 4, TRAFFIC_COUNT / 4, TRAFFIC_COUNT / 4, TRAFFIC_COUNT / 3,
+//      TRAFFIC_COUNT / 2, TRAFFIC_COUNT / 1, TRAFFIC_COUNT / 1, TRAFFIC_COUNT / 3, TRAFFIC_COUNT / 4, TRAFFIC_COUNT / 4,
+//      TRAFFIC_COUNT / 4, TRAFFIC_COUNT / 2, TRAFFIC_COUNT / 1, TRAFFIC_COUNT / 3, TRAFFIC_COUNT / 1, TRAFFIC_COUNT / 2,
+//      TRAFFIC_COUNT / 1, TRAFFIC_COUNT / 3, TRAFFIC_COUNT / 1, TRAFFIC_COUNT / 1, TRAFFIC_COUNT / 4, TRAFFIC_COUNT / 4});
+  private final Traffic traffic;
 
   private final EventManager<Simulation, EventListener<Simulation, Simulation>, Simulation> tickEM = new EventManager(this);
 
@@ -107,13 +103,23 @@ public class Simulation {
     return messenger;
   }
 
-  private Simulation(Airport airport, AirplaneTypes types, Calendar now) {
-    if (airport == null) {
+  private Simulation(Airport airport, AirplaneTypes types, Weather weather, Traffic traffic, Calendar now) {
+    if (airport == null)
       throw new IllegalArgumentException("Argument \"airport\" cannot be null.");
-    }
+    if (types == null)
+      throw new IllegalArgumentException("Argument \"types\" cannot be null.");
+    if (weather == null)
+      throw new IllegalArgumentException("Argument \"weather\" cannot be null.");
+    if (traffic == null)
+      throw new IllegalArgumentException("Argument \"traffic\" cannot be null.");
+    if (now == null)
+      throw new IllegalArgumentException("Argument \"now\" cannot be null.");
+
 
     this.airport = airport;
     this.planeTypes = types;
+    this.weather = weather;
+    this.traffic = traffic;
     this.twrAtc = new TowerAtc(airport.getAtcTemplates().get(Atc.eType.twr));
     this.ctrAtc = new CenterAtc(airport.getAtcTemplates().get(Atc.eType.ctr));
     this.appAtc = new UserAtc(airport.getAtcTemplates().get(Atc.eType.app));
@@ -121,12 +127,10 @@ public class Simulation {
     this.now = new ETime(now);
   }
 
-  public static Simulation create(Airport airport, AirplaneTypes types, Weather weather, Calendar now) {
-    Simulation ret = new Simulation(airport, types, now);
+  public static Simulation create(Airport airport, AirplaneTypes types, Weather weather, Traffic traffic, Calendar now) {
+    Simulation ret = new Simulation(airport, types, weather, traffic, now);
 
     Acc.setSimulation(ret);
-
-    ret.weather = weather;
 
     Acc.atcTwr().init();
     Acc.atcApp().init();
@@ -155,9 +159,14 @@ public class Simulation {
     long start = System.currentTimeMillis();
     isBusy = true;
     now.increaseSecond();
-
+    
     // system stuff
     this.processSystemMessages();
+    
+    // traffic stuff
+    if (now.isIntegralMinute()){
+      traffic.generateNewMovementsIfRequired();
+    }
 
     // atc stuff
     this.ctrAtc.elapseSecond();

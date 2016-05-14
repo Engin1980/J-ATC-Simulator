@@ -14,6 +14,8 @@ import jatcsimdraw.mainRadar.settings.Settings;
 import jatcsimlib.Simulation;
 import jatcsimlib.airplanes.AirplaneTypes;
 import jatcsimlib.exceptions.ERuntimeException;
+import jatcsimlib.traffic.CustomTraffic;
+import jatcsimlib.traffic.Traffic;
 import jatcsimlib.weathers.Weather;
 import jatcsimlib.weathers.WeatherProvider;
 import jatcsimxml.serialization.Serializer;
@@ -55,7 +57,7 @@ public class JAtcSim {
     }
     sett.save();
 
-    // loading data
+    // loading data from Xml files
     try {
       loadDataFromXmlFiles(sett);
     } catch (Exception ex) {
@@ -79,9 +81,12 @@ public class JAtcSim {
     else
       weather = WeatherProvider.decodeMetar(sett.getWeatherUserMetar());
     
+    // traffic
+    Traffic traffic = getTrafficFromStartupSettings(sett);
+    
     // sim init
     final Simulation sim = Simulation.create(
-      aip, types, weather, simTime);
+      aip, types, weather, traffic, simTime);
     SoundManager.init(resFolder.toString());
 
     // starting pack & simulation
@@ -164,6 +169,29 @@ public class JAtcSim {
       throw new RuntimeException("Failed to create instance of radar pack " + packTypeName + ". Reason: " + ex.getMessage(), ex);
     }
     Pack ret = (Pack) object;
+    return ret;
+  }
+
+  private static Traffic getTrafficFromStartupSettings(StartupSettings sett) {
+    Traffic ret;
+    if (sett.isTrafficUseXml())
+      throw new UnsupportedOperationException("Traffic from XML files not supported yet.");
+    else{
+      ret = new CustomTraffic(
+        sett.getTrafficCustomMovements(),
+        sett.getTrafficCustomArrivals2Departures() / 10d, // 0-10 to 0.0-1.0
+        sett.getTrafficCustomMaxPlanes(),
+        sett.getTrafficCustomVfr2Ifr() / 10d, // dtto
+        sett.getTrafficCustomWeightTypeA(),
+        sett.getTrafficCustomWeightTypeB(),
+        sett.getTrafficCustomWeightTypeC(),
+        sett.getTrafficCustomWeightTypeD(),
+        sett.isTrafficCustomUsingExtendedCallsigns()
+      );
+      
+      ret.generateNewMovementsIfRequired();
+    }
+    
     return ret;
   }
 }

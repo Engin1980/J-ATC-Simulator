@@ -70,7 +70,6 @@ public class Acc {
 
   public static Weather weather() {
     return sim.getWeather();
-//return sim.getWeather();
   }
 
   public static RunwayThreshold threshold() {

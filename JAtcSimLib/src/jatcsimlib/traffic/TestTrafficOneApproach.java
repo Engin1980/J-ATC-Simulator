@@ -28,12 +28,13 @@ import java.util.List;
  */
 public class TestTrafficOneApproach extends TestTraffic {
 
-  @Override
-  protected Airplane[] generatePlanes() {
-    Airplane[] ret = new Airplane[1];
-    Airplane a;
+  Airplane a = null;
+  boolean done = false;
 
-    AirplaneType pt = Acc.sim().getPlaneTypes().getRandomByTraffic(Acc.airport().getTrafficCategories());
+  private Airplane generatePlane() {
+    Airplane ret;
+
+    AirplaneType pt = Acc.sim().getPlaneTypes().getRandomByTraffic(Acc.airport().getTrafficCategories(), true);
     Route r = tryGetRandomRoute(true, pt);
     Coordinate coord = generateArrivalCoordinate(r.getMainFix().getCoordinate(), Acc.threshold().getCoordinate());
     int heading = (int) Coordinates.getBearing(coord, r.getMainFix().getCoordinate());
@@ -48,12 +49,12 @@ public class TestTrafficOneApproach extends TestTraffic {
       ));
     // added command to contact CTR
     routeCmds.add(0, new ContactCommand(Atc.eType.ctr));
-    
+
     for (Command routeCmd : routeCmds) {
       System.out.println(routeCmd.toString());
     }
 
-    a = new Airplane(
+    ret = new Airplane(
       new Callsign("CSA", "1111"),
       coord,
       Squawk.create("1111"),
@@ -64,8 +65,6 @@ public class TestTrafficOneApproach extends TestTraffic {
       false,
       r.getName(),
       routeCmds);
-
-    ret[0] = a;
 
     return ret;
   }
@@ -84,7 +83,7 @@ public class TestTrafficOneApproach extends TestTraffic {
 
     return ret;
   }
-  
+
   private int generateArrivingPlaneAltitude(Route r) {
     double thousandsFeetPerMile = 0.30;
 
@@ -97,7 +96,7 @@ public class TestTrafficOneApproach extends TestTraffic {
     ret = ret * 1000;
     return ret;
   }
-  
+
   private Coordinate generateArrivalCoordinate(Coordinate navFix, Coordinate aipFix) {
     double radial = Coordinates.getBearing(aipFix, navFix);
     radial += rnd.nextDouble() * 50 - 25; // nahodne zatoceni priletoveho radialu
@@ -116,6 +115,25 @@ public class TestTrafficOneApproach extends TestTraffic {
       dist += rnd.nextDouble() * 10;
     }
     return ret;
+  }
+
+  @Override
+  public Airplane[] getNewAirplanes() {
+    if (a != null) {
+      Airplane[] ret = new Airplane[]{a};
+      a = null;
+      return ret;
+    } else {
+      return new Airplane[0];
+    }
+  }
+
+  @Override
+  public void generateNewMovementsIfRequired() {
+    if (!done) {
+      a = generatePlane();
+      done = true;
+    }
   }
 
 }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <area icao="LKAA">
   <airports>
-    <airport icao="LKPR" name="Praha Ruzyně" altitude="1247" transitionAltitude="5000">
+    <airport icao="LKPR" name="Praha Ruzyně" altitude="1247" transitionAltitude="5000" vfrAltitude="2500" mainAirportNavaidName="OKL">
       <trafficCategories categoryA="0.01" categoryB="0.01" categoryC="0.8" categoryD="0.18" />
       <!--
       <trafficDefinitions>
@@ -179,9 +179,19 @@
         <hold navaidName="RATEV" inboundRadial="62" turn="right" />
         <hold navaidName="ARVEG" inboundRadial="123" turn="left" />
         <hold navaidName="KENOK" inboundRadial="304" turn="left" />
-      </holds>     
+      </holds>  
+      <vfrPoints>
+        <vfrPoint name="A" coordinate="50 08 17 N 014 14 38 E" forArrivals="false" forDepartures="false" />
+        <vfrPoint name="B" coordinate="50 11 16 N 014 11 09 E" forArrivals="false" forDepartures="false" />
+        <vfrPoint name="E" coordinate="49 59 10 N 014 21 41 E" forArrivals="true" forDepartures="true" />
+        <vfrPoint name="C" coordinate="50 11 18 N 014 02 28 E" forArrivals="false" forDepartures="false" />
+        <vfrPoint name="N" coordinate="50 16 06 N 014 14 21 E" forArrivals="true" forDepartures="true" />
+        <vfrPoint name="S" coordinate="49 57 42 N 014 04 58 E" forArrivals="true" forDepartures="true" />
+        <vfrPoint name="T" coordinate="50 02 59 N 014 16 22 E" forArrivals="false" forDepartures="false" />
+        <vfrPoint name="W" coordinate="50 09 10 N 013 58 59 E" forArrivals="true" forDepartures="true" />
+      </vfrPoints>   
     </airport>
-    <airport icao="LKMT" name="Ostrava Mošnov" altitude="844" transitionAltitude="5000">
+    <airport icao="LKMT" name="Ostrava Mošnov" altitude="844" transitionAltitude="5000" vfrAltitude="2500" mainAirportNavaidName="OTA">
       <trafficCategories categoryA="0.6" categoryB="0.3" categoryC="0.08" categoryD="0.02" />
       <radarRange topLeft="50.0 17.0" bottomRight="49.0 19.0" />
       <atcTemplates>
@@ -258,7 +268,10 @@
         <hold navaidName="MORUV" inboundRadial="222" turn="left" />
         <hold navaidName="BOGTU" inboundRadial="042" turn="left" />
         <hold navaidName="EKMIT" inboundRadial="042" turn="right" />
-      </holds>     
+      </holds> 
+      <VfrPoints>
+        <!-- TODO -->
+      </VfrPoints>    
     </airport>
   </airports>
   <navaids>

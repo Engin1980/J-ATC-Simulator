@@ -16,15 +16,20 @@ import jatcsimlib.commands.AfterAltitudeCommand;
 import jatcsimlib.commands.ChangeAltitudeCommand;
 import jatcsimlib.commands.Command;
 import jatcsimlib.commands.ContactCommand;
+import jatcsimlib.commands.ProceedDirectCommand;
 import jatcsimlib.coordinates.Coordinate;
 import jatcsimlib.coordinates.Coordinates;
+import jatcsimlib.exceptions.ERuntimeException;
 import jatcsimlib.global.ETime;
 import jatcsimlib.global.Global;
+import jatcsimlib.global.KeyList;
 import jatcsimlib.world.Navaid;
 import jatcsimlib.world.Route;
 import jatcsimlib.world.Routes;
 import jatcsimlib.world.Runway;
 import jatcsimlib.world.RunwayThreshold;
+import jatcsimlib.world.VfrPoint;
+import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -35,15 +40,55 @@ import java.util.List;
  *
  * @author Marek Vajgl
  */
-public class GeneratedTraffic extends Traffic {
+public class CustomTraffic extends Traffic {
 
+  private static final String[] COMPANIES = new String[]{"CSA", "EZY", "BAW", "RYR"};
+  private static final String[] PLANE_COUNTRY_CODES = new String[]{"OK", "OM"};
+  private static final double EXTENDED_CALLSIGN_PROBABILITY = 0.7;
+
+  /**
+   * Max number of planes in simulation
+   */
   private final int maxPlanesInSimulation;
+
+  /**
+   * Probability that generated plane is departure (arrival otherwise), range 0.0-1.0 .
+   */
   private final double probabilityOfDeparture;
-  private final int[] movementsPerHour;
+
+  /**
+   * Probability that generated plane is IFR (VFR otherwise), range 0.0-1.0.
+   */
+  private final double probabilityOfIfr;
+
+  /**
+   * Specifies number of movements for each hour. This is 24 item array, where for each hour number movements is
+   * defined.
+   */
+  private final int[] movementsPerHour = new int[24];
+
+  /**
+   * Specifies aggregated(!) probability thresholds of each category. 0 = A, 1 = B, 2 = C, 3 = D, this[4] should be
+   * allways 1. Generated VFR is allways A.
+   */
+  private final double[] probabilityOfCategory = new double[4];
+
+  /**
+   * Specifies if extended callsigns containing characters at the end can be used.
+   */
+  private final boolean useExtendedCallsigns;
+
   private int lastHourGeneratedTraffic = -1;
   private final List<Movement> preparedMovements = new LinkedList();
 
-  public GeneratedTraffic(int maxPlanesInSimulation, double probabilityOfDeparture, int[] movementsPerHour) {
+  public CustomTraffic(int movementsPerHour, double probabilityOfDeparture, int maxPlanesInSimulation, double probabilityOfIfr,
+    int trafficCustomWeightTypeA, int trafficCustomWeightTypeB, int trafficCustomWeightTypeC, int trafficCustomWeightTypeD,
+    boolean useExtendedCallsigns) {
+
+    if (movementsPerHour < 1) {
+      throw new IllegalArgumentException("Argument \"movementsPerHour\" must be equal or greater than 1.");
+    }
+
     if (maxPlanesInSimulation < 1) {
       throw new IllegalArgumentException("Argument \"maxPlanesInSimulation\" must be equal or greather than 1.");
     }
@@ -52,26 +97,31 @@ public class GeneratedTraffic extends Traffic {
       throw new IllegalArgumentException("\"probabilityOfDeparture\" must be between 0 and 1.");
     }
 
-    if (movementsPerHour == null) {
-      throw new IllegalArgumentException("Argument \"movementsPerHour\" cannot be null.");
-    }
-    if (movementsPerHour.length != 24) {
-      throw new IllegalArgumentException("Argument \"movementsPerHour\" must have length equal to 24.");
-    }
-    for (int mph : movementsPerHour) {
-      if (mph < 0) {
-        throw new IllegalArgumentException("Argument \"movementsPerHour\" must have all numbers greater or equal to zero.");
-      }
+    if (eng.eSystem.Number.isBetweenOrEqual(0, probabilityOfIfr, 1) == false) {
+      throw new IllegalArgumentException("\"probabilityOfIfr\" must be between 0 and 1.");
     }
 
+    for (int i = 0; i < this.movementsPerHour.length; i++) {
+      this.movementsPerHour[i] = movementsPerHour;
+    }
     this.maxPlanesInSimulation = maxPlanesInSimulation;
     this.probabilityOfDeparture = probabilityOfDeparture;
-    this.movementsPerHour = movementsPerHour;
+    this.probabilityOfIfr = probabilityOfIfr;
+
+    // category probabilities init
+    {
+      double sum = trafficCustomWeightTypeA + trafficCustomWeightTypeB + trafficCustomWeightTypeC + trafficCustomWeightTypeD;
+      probabilityOfCategory[0] = trafficCustomWeightTypeA / sum;
+      probabilityOfCategory[1] = probabilityOfCategory[0] + trafficCustomWeightTypeB / sum;
+      probabilityOfCategory[2] = probabilityOfCategory[1] + trafficCustomWeightTypeC / sum;
+      probabilityOfCategory[3] = 1;
+    }
+    
+    this.useExtendedCallsigns = useExtendedCallsigns;
   }
 
   @Override
   public Airplane[] getNewAirplanes() {
-    generateNewMovementsIfReq();
 
     List<Airplane> ret = new ArrayList();
     while (preparedMovements.size() > 0) {
@@ -79,9 +129,10 @@ public class GeneratedTraffic extends Traffic {
       Movement m = preparedMovements.get(0);
       if (m.getInitTime().isBeforeOrEq(Acc.now())) {
 
-        // too much planes
+        // check for too many planes. If true, movement is dropped
         if (Acc.planes().size() + ret.size() < maxPlanesInSimulation) {
-          ret.add(generateAirplaneFromMovement(m));
+          Airplane a = generateAirplaneFromMovement(m);
+          ret.add(a);
         }
 
         preparedMovements.remove(m);
@@ -94,7 +145,8 @@ public class GeneratedTraffic extends Traffic {
     return retA;
   }
 
-  private void generateNewMovementsIfReq() {
+  @Override
+  public void generateNewMovementsIfRequired() {
     if (lastHourGeneratedTraffic != -1 && Acc.now().getHours() != lastHourGeneratedTraffic) {
       return;
     }
@@ -116,28 +168,65 @@ public class GeneratedTraffic extends Traffic {
 
     ETime initTime = new ETime(hour, Acc.rnd().nextInt(0, 60), Acc.rnd().nextInt(0, 60));
     boolean isDeparture = (Acc.rnd().nextDouble() <= this.probabilityOfDeparture);
-    Movement ret = new Movement(generateCallsign(), initTime, isDeparture);
+    boolean isIfr = Acc.rnd().nextDouble() <= this.probabilityOfIfr;
+    Callsign cls = generateCallsign(isIfr);
+    Movement ret = new Movement(cls, initTime, isDeparture, isIfr);
     return ret;
 
   }
 
-  private Callsign generateCallsign() {
+  private Callsign generateCallsign(boolean isIfr) {
     Callsign ret = null;
+
     while (ret == null) {
-      ret = new Callsign("CSA", String.format("%04d", Acc.rnd().nextInt(10000)));
-      for (Airplane p : Acc.planes()) {
+
+      ret = buildRandomCallsign(isIfr);
+      for (Airplane p : Acc.planes()) { // check not existing in current planes
         if (ret.equals(p.getCallsign())) {
           ret = null;
           break;
         }
       }
-      for (Movement m : this.preparedMovements) {
-        if (m.equals(m.getCallsign())) {
+      for (Movement m : this.preparedMovements) { // check not existing in future planes
+        if (m.getCallsign().equals(ret)) {
           ret = null;
           break;
         }
       }
+
     }
+
+    return ret;
+  }
+
+  private Callsign buildRandomCallsign(boolean isIfr) {
+    String prefix;
+    StringBuilder sb = new StringBuilder();
+    if (isIfr) {
+      prefix = eng.eSystem.Arrays.getRandom(COMPANIES);
+      if (this.useExtendedCallsigns && Acc.rnd().nextDouble() < EXTENDED_CALLSIGN_PROBABILITY) {
+        sb.append(getRandomCallsignChar('0', '9'));
+        sb.append(getRandomCallsignChar('A', 'Z'));
+        sb.append(getRandomCallsignChar('A', 'Z'));
+      } else {
+        sb.append(getRandomCallsignChar('0', '9'));
+        sb.append(getRandomCallsignChar('0', '9'));
+        sb.append(getRandomCallsignChar('0', '9'));
+        sb.append(getRandomCallsignChar('0', '9'));
+      }
+    } else {
+      prefix = eng.eSystem.Arrays.getRandom(PLANE_COUNTRY_CODES);
+      sb.append(getRandomCallsignChar('A', 'Z'));
+      sb.append(getRandomCallsignChar('A', 'Z'));
+      sb.append(getRandomCallsignChar('A', 'Z'));
+    }
+    Callsign ret = new Callsign(prefix, sb.toString());
+    return ret;
+  }
+
+  private char getRandomCallsignChar(char from, char to) {
+    int val = Acc.rnd().nextInt(from, to + 1);
+    char ret = (char) val;
     return ret;
   }
 
@@ -155,32 +244,58 @@ public class GeneratedTraffic extends Traffic {
     Callsign cs;
     cs = m.getCallsign();
 
-    AirplaneType pt = Acc.sim().getPlaneTypes().getRandomByTraffic(Acc.airport().getTrafficCategories());
+    AirplaneType pt = Acc.sim().getPlaneTypes().getRandomByTraffic(Acc.airport().getTrafficCategories(), m.isIfr());
 
-    Route r = tryGetRandomRoute(true, pt);
-    if (r == null) {
-      r = tryGeneratePointRoute(true);
+    Route r;
+    Coordinate coord;
+    int heading;
+    int alt;
+    int spd;
+    List<Command> routeCmds;
+    String routeName;
+
+    if (m.isIfr()) {
+      // I F R   flight
+      r = tryGetRandomIfrRoute(true, pt);
+      if (r == null) {
+        r = tryGeneratePointRoute(true);
+        //TODO ta funkce před by se neměla jmenovat "tryGenerate...", protože se čeká, že vždycky něco vrací
+      }
+      coord = generateArrivalCoordinate(r.getMainFix().getCoordinate(), Acc.threshold().getCoordinate());
+      heading = (int) Coordinates.getBearing(coord, r.getMainFix().getCoordinate());
+      alt = generateArrivingPlaneAltitude(r);
+
+      routeCmds = r.getCommandsListClone();
+      // added command to descend
+      routeCmds.add(0,
+        new ChangeAltitudeCommand(
+          ChangeAltitudeCommand.eDirection.descend,
+          Acc.atcCtr().getOrderedAltitude()
+        ));
+      // added command to contact CTR
+      routeCmds.add(0, new ContactCommand(Atc.eType.ctr));
+
+      routeName = r.getName();
+    } else {
+      // V F R    flight
+      VfrPoint entryPoint = getRandomVfrEntryPoint(Acc.airport().getVfrPoints());
+      coord = generateArrivalCoordinate(entryPoint.getCoordinate(), Acc.threshold().getCoordinate());
+      heading = (int) Coordinates.getBearing(coord, entryPoint.getCoordinate());
+      alt = Acc.airport().getVfrAltitude();
+      
+      routeCmds = new LinkedList<>();
+      routeCmds.add(0,
+        new ProceedDirectCommand(Acc.airport().getMainAirportNavaid()));
+      routeCmds.add(new ContactCommand(Atc.eType.app));
+      
+      routeName = "(vfr)";
     }
-    Coordinate coord = generateArrivalCoordinate(r.getMainFix().getCoordinate(), Acc.threshold().getCoordinate());
     Squawk sqwk = generateSqwk();
-
-    int heading = (int) Coordinates.getBearing(coord, r.getMainFix().getCoordinate());
-    int alt = generateArrivingPlaneAltitude(r);
-    int spd = pt.vCruise;
-
-    List<Command> routeCmds = r.getCommandsListClone();
-    // added command to descend
-    routeCmds.add(0,
-      new ChangeAltitudeCommand(
-        ChangeAltitudeCommand.eDirection.descend,
-        Acc.atcCtr().getOrderedAltitude()
-      ));
-    // added command to contact CTR
-    routeCmds.add(0, new ContactCommand(Atc.eType.ctr));
-
+    spd = pt.vCruise;
+    
     ret = new Airplane(
       cs, coord, sqwk, pt, heading, alt, spd, false,
-      r.getName(), routeCmds);
+      routeName, routeCmds);
 
     return ret;
   }
@@ -239,7 +354,6 @@ public class GeneratedTraffic extends Traffic {
   }
 
   private Route tryGeneratePointRoute(boolean arrival) {
-    //1. take points from arriving routes
     List<Navaid> nvs = new LinkedList();
 
     for (Runway rw : Acc.airport().getRunways()) {
@@ -269,17 +383,15 @@ public class GeneratedTraffic extends Traffic {
     return r;
   }
 
-  private Route tryGetRandomRoute(boolean arrival, AirplaneType planeType) {
+  private Route tryGetRandomIfrRoute(boolean isArrival, AirplaneType planeType) {
 
     Iterable<Route> rts = Acc.threshold().getRoutes();
-    List<Route> avails = Routes.getByFilter(rts, arrival, planeType.category);
+    List<Route> avails = Routes.getByFilter(rts, isArrival, planeType.category);
 
     if (avails.isEmpty()) {
       return null; // if no route, return null
     }
-    int index = rnd.nextInt(avails.size());
-
-    Route ret = avails.get(index);
+    Route ret = eng.eSystem.Lists.getRandom(avails);
 
     return ret;
   }
@@ -289,9 +401,14 @@ public class GeneratedTraffic extends Traffic {
 
     Callsign cs;
     cs = m.getCallsign();
-    AirplaneType pt = Acc.sim().getPlaneTypes().getRandomByTraffic(Acc.airport().getTrafficCategories());
+    AirplaneType pt = Acc.sim().getPlaneTypes().getRandomByTraffic(Acc.airport().getTrafficCategories(), m.isIfr());
 
-    Route r = tryGetRandomRoute(false, pt);
+    Route r;
+    if (m.isIfr()) {
+      r = tryGetRandomIfrRoute(false, pt);
+    } else {
+      r = null;
+    }
     Coordinate coord = Acc.threshold().getCoordinate();
     Squawk sqwk = generateSqwk();
 
@@ -299,7 +416,12 @@ public class GeneratedTraffic extends Traffic {
     int alt = Acc.threshold().getParent().getParent().getAltitude();
     int spd = 0;
 
-    List<Command> routeCmds = r.getCommandsListClone();
+    List<Command> routeCmds;
+    if (r != null) {
+      routeCmds = r.getCommandsListClone();
+    } else {
+      routeCmds = new ArrayList<>();
+    }
 
     int indx = 0;
     // added command to contact after departure
@@ -317,10 +439,32 @@ public class GeneratedTraffic extends Traffic {
 //    routeCmds.add(indx++,
 //        new AfterAltitudeCommand(Acc.threshold().getParent().getParent().getAltitude() + 3000));
 //    routeCmds.add(indx++, new ChangeSpeedCommand(ChangeSpeedCommand.eDirection.increase, 250));
+    String routeName;
+    if (r != null) {
+      routeName = r.getName();
+    } else {
+      routeName = "(vfr)";
+    }
     ret = new Airplane(
       cs, coord, sqwk, pt, heading, alt, spd, true,
-      r.getName(), routeCmds);
+      routeName, routeCmds);
 
+    return ret;
+  }
+
+  private VfrPoint getRandomVfrEntryPoint(KeyList<VfrPoint, String> vfrPoints) {
+    List<VfrPoint> entryPoints = new ArrayList();
+    for (VfrPoint vfrPoint : vfrPoints) {
+      if (vfrPoint.isForArrivals()) {
+        entryPoints.add(vfrPoint);
+      }
+    }
+
+    if (entryPoints.isEmpty()) {
+      throw new ERuntimeException("No VFR entry points specified for the area. Cannot create VFR arrival traffic.");
+    }
+
+    VfrPoint ret = eng.eSystem.Lists.getRandom(entryPoints);
     return ret;
   }
 
