@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
-    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="8">
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="12">
         <file>
             <url>src/jatcsimlib/airplanes/pilots/Pilot.java</url>
             <bookmark id="6">
@@ -37,6 +37,14 @@
             <bookmark id="8">
                 <name/>
                 <line>366</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
+            <url>src/jatcsimlib/traffic/GeneratedTraffic.java</url>
+            <bookmark id="12">
+                <name/>
+                <line>278</line>
                 <key/>
             </bookmark>
         </file>

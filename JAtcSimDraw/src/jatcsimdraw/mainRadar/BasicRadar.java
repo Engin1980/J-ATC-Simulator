@@ -135,10 +135,12 @@ public class BasicRadar extends Radar  {
   }
 
   public void zoomIn() {
+    System.out.println("ZoomIn");
     zoomBy(0.9);
   }
 
   public void zoomOut() {
+    System.out.println("ZoomOut");
     zoomBy(1.1);
   }
 
@@ -147,13 +149,23 @@ public class BasicRadar extends Radar  {
         = p.getTopLeft().getLatitude().get() - p.getBottomRight().getLatitude().get();
     double distLon
         = p.getTopLeft().getLongitude().get() - p.getBottomRight().getLongitude().get();
-
+    
+    System.out.println("BeforeZoomBy location: ");
+    System.out.println("topLeft : " + p.getTopLeft().toString());
+    System.out.println("bottomRight: " + p.getBottomRight().toString());
+    System.out.println("distLat: " + distLat);
+    System.out.println("distLng: " + distLon);
+    System.out.println("multiplier: " + multiplier);
+    
     distLat = distLat / 2d;
     distLon = distLon / 2d;
 
     double distShiftLat = distLat * multiplier - distLat;
     double distShiftLon = distLon * multiplier - distLon;
 
+    System.out.println("\tdistShiftLat: " + distShiftLat);
+    System.out.println("\tdistShiftLon: " + distShiftLon);
+    
     p.setCoordinates(
         new Coordinate(
             p.getTopLeft().getLatitude().get() + distShiftLat,
@@ -161,7 +173,22 @@ public class BasicRadar extends Radar  {
         new Coordinate(
             p.getBottomRight().getLatitude().get() - distShiftLat,
             p.getBottomRight().getLongitude().get() - distShiftLon));
+    
+    System.out.println("AfterZoomBy location: ");
+    System.out.println("topLeft : " + p.getTopLeft().toString());
+    System.out.println("bottomRight: " + p.getBottomRight().toString());
+    System.out.println("distLat: " + distLat);
+    System.out.println("distLng: " + distLon);
+    System.out.println("");
+    
     this.repaint();
+    
+    System.out.println("AfterZoomByPaint location: ");
+    System.out.println("topLeft : " + p.getTopLeft().toString());
+    System.out.println("bottomRight: " + p.getBottomRight().toString());
+    System.out.println("distLat: " + distLat);
+    System.out.println("distLng: " + distLon);
+    System.out.println("");
   }
 
   public void centerAt(Coordinate coordinate){
@@ -188,12 +215,14 @@ public class BasicRadar extends Radar  {
   
     Coordinate topLeft = p.getTopLeft();
     
-    double widthRange = heightRange * (c.getWidth() / (double) c.getHeight());
+    //TODO tohle musim vyresit, protoze s timhle nefunguje zoomovani a bez tohodle zase zmena velikosti okna
     
-    Coordinate bottomRight = new Coordinate(
-      topLeft.getLatitude().add(-heightRange),
-      topLeft.getLongitude().add(widthRange));
-    p.setCoordinates(topLeft, bottomRight);
+//    double widthRange = heightRange * (c.getWidth() / (double) c.getHeight());
+//    
+//    Coordinate bottomRight = new Coordinate(
+//      topLeft.getLatitude().add(-heightRange),
+//      topLeft.getLongitude().add(widthRange));
+//    p.setCoordinates(topLeft, bottomRight);
     
     c.repaint();
   }

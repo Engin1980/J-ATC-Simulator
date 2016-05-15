@@ -135,6 +135,8 @@ public class Simulation {
     Acc.atcTwr().init();
     Acc.atcApp().init();
     Acc.atcCtr().init();
+    
+    traffic.generateNewMovementsIfRequired(); // this must be here, after "simTime" init
 
     return ret;
   }

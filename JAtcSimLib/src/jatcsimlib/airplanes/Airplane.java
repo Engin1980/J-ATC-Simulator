@@ -546,6 +546,8 @@ public class Airplane implements KeyItem<Callsign> {
       int step = airplaneType.speedIncreaseRate;
       if (onGround) {
         step = (int) Math.ceil(step * GROUND_MULTIPLIER);
+      } else{
+        step = (int) Math.ceil(step * energyLeft);
       }
       speed += step;
       if (targetSpeed < speed) {
@@ -559,6 +561,8 @@ public class Airplane implements KeyItem<Callsign> {
       int step = airplaneType.speedDecreaseRate;
       if (onGround) {
         step = (int) Math.ceil(step * GROUND_MULTIPLIER);
+      }else{
+        step = (int) Math.ceil(step * energyLeft);
       }
       speed -= step;
       if (targetSpeed > speed) {

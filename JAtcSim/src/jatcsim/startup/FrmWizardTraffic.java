@@ -138,7 +138,7 @@ public class FrmWizardTraffic extends FrmWizardFrame {
     sldVfrIfr.setMaximum(10);
     sldVfrIfr.setPaintTicks(true);
     sldVfrIfr.setSnapToTicks(true);
-    sldVfrIfr.setValue(5);
+    sldVfrIfr.setEnabled(false);
 
     jLabel3.setText("VFR");
 

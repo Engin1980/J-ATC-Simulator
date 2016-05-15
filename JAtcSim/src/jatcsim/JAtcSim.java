@@ -6,7 +6,6 @@
 package jatcsim;
 
 import jatcsim.frmPacks.Pack;
-import jatcsim.startup.FrmStartup;
 import jatcsim.startup.StartupSettings;
 import jatcsim.startup.StartupWizard;
 import jatcsimdraw.mainRadar.SoundManager;
@@ -26,8 +25,6 @@ import java.awt.event.WindowEvent;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Calendar;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JFrame;
 
 /**
@@ -35,6 +32,8 @@ import javax.swing.JFrame;
  * @author Marek
  */
 public class JAtcSim {
+
+  private static final boolean FAST_START = true;
 
   public static java.io.File resFolder = null;
   private static Area area = null;
@@ -51,10 +50,13 @@ public class JAtcSim {
     // startup wizard
     StartupSettings sett = StartupSettings.tryLoad();
     StartupWizard wizard = new StartupWizard(sett);
-    wizard.run();
-    if (wizard.isFinished() == false) {
-      return;
+    if (FAST_START == false) {
+      wizard.run();
+      if (wizard.isFinished() == false) {
+        return;
+      }
     }
+
     sett.save();
 
     // loading data from Xml files
@@ -67,23 +69,24 @@ public class JAtcSim {
     area.initAfterLoad();
 
     System.out.println("** Setting simulation");
-        
+
     // area, airport and time
     String icao = sett.getRecentIcao();
     Calendar simTime = Calendar.getInstance();
     updateCalendarToSimTime(simTime, sett);
     Airport aip = area.getAirports().get(icao);
-    
+
     // weather
     Weather weather;
-    if (sett.isWeatherOnline())
+    if (sett.isWeatherOnline()) {
       weather = WeatherProvider.downloadAndDecodeMetar(aip.getIcao());
-    else
+    } else {
       weather = WeatherProvider.decodeMetar(sett.getWeatherUserMetar());
-    
+    }
+
     // traffic
     Traffic traffic = getTrafficFromStartupSettings(sett);
-    
+
     // sim init
     final Simulation sim = Simulation.create(
       aip, types, weather, traffic, simTime);
@@ -174,9 +177,9 @@ public class JAtcSim {
 
   private static Traffic getTrafficFromStartupSettings(StartupSettings sett) {
     Traffic ret;
-    if (sett.isTrafficUseXml())
+    if (sett.isTrafficUseXml()) {
       throw new UnsupportedOperationException("Traffic from XML files not supported yet.");
-    else{
+    } else {
       ret = new CustomTraffic(
         sett.getTrafficCustomMovements(),
         sett.getTrafficCustomArrivals2Departures() / 10d, // 0-10 to 0.0-1.0
@@ -188,10 +191,8 @@ public class JAtcSim {
         sett.getTrafficCustomWeightTypeD(),
         sett.isTrafficCustomUsingExtendedCallsigns()
       );
-      
-      ret.generateNewMovementsIfRequired();
     }
-    
+
     return ret;
   }
 }

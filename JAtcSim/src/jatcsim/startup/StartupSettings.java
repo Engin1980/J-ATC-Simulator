@@ -119,7 +119,7 @@ public class StartupSettings {
     ret.trafficXmlFile = getString(inf, TRAFFIC_XML_FILE);
     ret.trafficCustomMovements = getInt(inf, TRAFFIC_CUSTOM_MOVEMENTS, 10);
     ret.trafficCustomArrivals2Departures = getInt(inf, TRAFFIC_CUSTOM_ARRIVALS2DEPARTURES, 5);
-    ret.trafficCustomVfr2Ifr = getInt(inf, TRAFFIC_CUSTOM_VFR2IFR, 8);
+    ret.trafficCustomVfr2Ifr = 10; // getInt(inf, TRAFFIC_CUSTOM_VFR2IFR, 8);
     ret.trafficCustomWeightTypeA = getInt(inf, TRAFFIC_CUSTOM_A_TYPE_WEIGHT, 5);
     ret.trafficCustomWeightTypeB = getInt(inf, TRAFFIC_CUSTOM_B_TYPE_WEIGHT, 5);
     ret.trafficCustomWeightTypeC = getInt(inf, TRAFFIC_CUSTOM_C_TYPE_WEIGHT, 5);
