@@ -50,6 +50,7 @@ public class Simulation {
   });
   public static final ERandom rnd = new ERandom();
   private final ETime now;
+  private int simulationSecondLengthInMs;
   private final AirplaneTypes planeTypes;
   private final Airport airport;
   private Weather weather;
@@ -58,14 +59,6 @@ public class Simulation {
   private final TowerAtc twrAtc;
   private final CenterAtc ctrAtc;
 
-  //private final Traffic traffic = new TestTrafficOneApproach(); 
-//  private final int TRAFFIC_COUNT = 35;
-//  private final Traffic traffic = new CustomTraffic(
-//    1, 1, new int[]{
-//      TRAFFIC_COUNT / 4, TRAFFIC_COUNT / 4, TRAFFIC_COUNT / 4, TRAFFIC_COUNT / 4, TRAFFIC_COUNT / 4, TRAFFIC_COUNT / 3,
-//      TRAFFIC_COUNT / 2, TRAFFIC_COUNT / 1, TRAFFIC_COUNT / 1, TRAFFIC_COUNT / 3, TRAFFIC_COUNT / 4, TRAFFIC_COUNT / 4,
-//      TRAFFIC_COUNT / 4, TRAFFIC_COUNT / 2, TRAFFIC_COUNT / 1, TRAFFIC_COUNT / 3, TRAFFIC_COUNT / 1, TRAFFIC_COUNT / 2,
-//      TRAFFIC_COUNT / 1, TRAFFIC_COUNT / 3, TRAFFIC_COUNT / 1, TRAFFIC_COUNT / 1, TRAFFIC_COUNT / 4, TRAFFIC_COUNT / 4});
   private final Traffic traffic;
 
   private final EventManager<Simulation, EventListener<Simulation, Simulation>, Simulation> tickEM = new EventManager(this);
@@ -103,7 +96,7 @@ public class Simulation {
     return messenger;
   }
 
-  private Simulation(Airport airport, AirplaneTypes types, Weather weather, Traffic traffic, Calendar now) {
+  private Simulation(Airport airport, AirplaneTypes types, Weather weather, Traffic traffic, Calendar now, int simulationSecondLengthInMs) {
     if (airport == null)
       throw new IllegalArgumentException("Argument \"airport\" cannot be null.");
     if (types == null)
@@ -125,10 +118,11 @@ public class Simulation {
     this.appAtc = new UserAtc(airport.getAtcTemplates().get(Atc.eType.app));
 
     this.now = new ETime(now);
+    this.simulationSecondLengthInMs = simulationSecondLengthInMs;
   }
 
-  public static Simulation create(Airport airport, AirplaneTypes types, Weather weather, Traffic traffic, Calendar now) {
-    Simulation ret = new Simulation(airport, types, weather, traffic, now);
+  public static Simulation create(Airport airport, AirplaneTypes types, Weather weather, Traffic traffic, Calendar now, int simulationSecondLengthInMs) {
+    Simulation ret = new Simulation(airport, types, weather, traffic, now, simulationSecondLengthInMs);
 
     Acc.setSimulation(ret);
 
@@ -145,7 +139,7 @@ public class Simulation {
 
   public void start() {
     if (this.tmr.isRunning() == false) {
-      this.tmr.start(1000); // initial speed 1sec
+      this.tmr.start(this.simulationSecondLengthInMs); // initial speed 1sec
     }
   }
 

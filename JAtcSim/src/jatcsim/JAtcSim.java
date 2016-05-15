@@ -33,7 +33,7 @@ import javax.swing.JFrame;
  */
 public class JAtcSim {
 
-  private static final boolean FAST_START = true;
+  private static final boolean FAST_START = false;
 
   public static java.io.File resFolder = null;
   private static Area area = null;
@@ -89,7 +89,7 @@ public class JAtcSim {
 
     // sim init
     final Simulation sim = Simulation.create(
-      aip, types, weather, traffic, simTime);
+      aip, types, weather, traffic, simTime, sett.getSimulationSecondLengthInMs());
     SoundManager.init(resFolder.toString());
 
     // starting pack & simulation

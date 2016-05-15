@@ -43,6 +43,11 @@ public class StartupWizard {
     if (res != FrmWizardFrame.DialogResult.Ok) {
       return;
     }
+    
+    res = doStep4();
+    if (res != FrmWizardFrame.DialogResult.Ok) {
+      return;
+    }
 
     this.finished = true;
   }
@@ -67,6 +72,13 @@ public class StartupWizard {
 
   private FrmWizardFrame.DialogResult doStep3() {
     FrmWizardFrame frm = new FrmWizardTraffic();
+    frm.initSettings(settings);
+    frm.showDialog();
+    return frm.getDialogResult();
+  }
+  
+  private FrmWizardFrame.DialogResult doStep4() {
+    FrmWizardFrame frm = new FrmWizardSimulationAndRadar();
     frm.initSettings(settings);
     frm.showDialog();
     return frm.getDialogResult();

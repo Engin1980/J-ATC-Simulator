@@ -20,6 +20,7 @@ public class Settings {
   private final KeyList<DispItem, String> dispItems = new KeyList();
   private final KeyList<DispPlane, DispPlane.eBehavior> dispPlanes = new KeyList();
   private final KeyList<DispText, DispText.eType> dispTexts = new KeyList();
+  private int refreshRate;
 
   public DispItem getDispItem(String key) {
 
@@ -65,6 +66,10 @@ public class Settings {
       default:
         throw new ENotSupportedException();
     }
+  }
+
+  public int getRefreshRate() {
+    return refreshRate;
   }
 
 }

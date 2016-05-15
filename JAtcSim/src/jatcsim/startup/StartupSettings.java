@@ -42,6 +42,8 @@ public class StartupSettings {
   private static final int TRAFFIC_CUSTOM_MAX_PLANES = IDCNT++;
   
   private static final int RADAR_PACK_CLASS = IDCNT++;
+  
+  private static final int SIMULATION_SPEED = IDCNT++;
 
   private static final Map<Integer, Way> maps;
 
@@ -71,6 +73,8 @@ public class StartupSettings {
     maps.put(TRAFFIC_CUSTOM_MAX_PLANES, new Way("Traffic", "maxPlanes"));
     
     maps.put(RADAR_PACK_CLASS, new Way("Radar", "radar"));
+    
+    maps.put(SIMULATION_SPEED, new Way("Simulation", "secondLengthInMs"));
   }
 
   private String areaXmlFile;
@@ -97,6 +101,8 @@ public class StartupSettings {
   private int trafficCustomMaxPlanes;
   
   private String radarPackClassName;
+  
+  private int simulationSecondLengthInMs;
   
   
   public static StartupSettings tryLoad() {
@@ -130,6 +136,8 @@ public class StartupSettings {
 
     ret.radarPackClassName = getString(inf, RADAR_PACK_CLASS, "jatcsim.frmPacks.simple.Pack");
     
+    ret.simulationSecondLengthInMs = getInt(inf, SIMULATION_SPEED, 750);
+    
     return ret;
   }
 
@@ -162,6 +170,8 @@ public class StartupSettings {
     setInt(inf, TRAFFIC_CUSTOM_MAX_PLANES, this.trafficCustomMaxPlanes);
 
     setString(inf, RADAR_PACK_CLASS, this.radarPackClassName);
+    
+    setInt(inf, SIMULATION_SPEED, this.simulationSecondLengthInMs);
     
     try {
       inf.save(iniFileName);
@@ -399,6 +409,14 @@ public class StartupSettings {
 
   public void setTrafficCustomMaxPlanes(int trafficCustomMaxPlanes) {
     this.trafficCustomMaxPlanes = trafficCustomMaxPlanes;
+  }
+
+  public int getSimulationSecondLengthInMs() {
+    return simulationSecondLengthInMs;
+  }
+
+  public void setSimulationSecondLengthInMs(int simulationSecondLengthInMs) {
+    this.simulationSecondLengthInMs = simulationSecondLengthInMs;
   }
   
 }

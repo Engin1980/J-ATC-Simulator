@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE settings SYSTEM "settings.dtd">
 
-<settings>
+<settings refreshRate="3">
   
   <dispItems>
     <dispItem key="activeRunway" color="FFFFFF" width="3" />

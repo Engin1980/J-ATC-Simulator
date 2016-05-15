@@ -98,10 +98,14 @@ public class FrmMain extends javax.swing.JFrame {
   private Simulation sim;
   private CommandJTextWraper wrp;
   private EJComponent radarComponent;
+  private int refreshRate;
+  private int refreshRateCounter = 0;
 
   void init(final Simulation sim, final Area area, Settings displaySettings) {
 
     this.sim = sim;
+    this.refreshRate = displaySettings.getRefreshRate();
+    this.refreshRateCounter = 0;
 
     Airport aip = sim.getActiveAirport();
 
@@ -203,7 +207,11 @@ public class FrmMain extends javax.swing.JFrame {
   }
 
   void elapseSecond() {
-    radarComponent.repaint();
+    this.refreshRateCounter++;
+    if (this.refreshRateCounter >= this.refreshRate){
+      this.refreshRateCounter = 0;
+      radarComponent.repaint();
+    }
   }
 }
 
