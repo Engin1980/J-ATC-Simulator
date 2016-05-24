@@ -14,6 +14,7 @@ import jatcsimlib.atcs.CenterAtc;
 import jatcsimlib.atcs.TowerAtc;
 import jatcsimlib.atcs.UserAtc;
 import jatcsimlib.commands.formatting.ShortParser;
+import jatcsimlib.coordinates.Coordinates;
 import jatcsimlib.events.EventListener;
 import jatcsimlib.events.EventManager;
 import jatcsimlib.global.ERandom;
@@ -27,6 +28,7 @@ import jatcsimlib.weathers.Weather;
 import jatcsimlib.world.Airport;
 import jatcsimlib.world.RunwayThreshold;
 import java.util.Calendar;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -97,17 +99,21 @@ public class Simulation {
   }
 
   private Simulation(Airport airport, AirplaneTypes types, Weather weather, Traffic traffic, Calendar now, int simulationSecondLengthInMs) {
-    if (airport == null)
+    if (airport == null) {
       throw new IllegalArgumentException("Argument \"airport\" cannot be null.");
-    if (types == null)
+    }
+    if (types == null) {
       throw new IllegalArgumentException("Argument \"types\" cannot be null.");
-    if (weather == null)
+    }
+    if (weather == null) {
       throw new IllegalArgumentException("Argument \"weather\" cannot be null.");
-    if (traffic == null)
+    }
+    if (traffic == null) {
       throw new IllegalArgumentException("Argument \"traffic\" cannot be null.");
-    if (now == null)
+    }
+    if (now == null) {
       throw new IllegalArgumentException("Argument \"now\" cannot be null.");
-
+    }
 
     this.airport = airport;
     this.planeTypes = types;
@@ -129,7 +135,7 @@ public class Simulation {
     Acc.atcTwr().init();
     Acc.atcApp().init();
     Acc.atcCtr().init();
-    
+
     traffic.generateNewMovementsIfRequired(); // this must be here, after "simTime" init
 
     return ret;
@@ -155,12 +161,12 @@ public class Simulation {
     long start = System.currentTimeMillis();
     isBusy = true;
     now.increaseSecond();
-    
+
     // system stuff
     this.processSystemMessages();
-    
+
     // traffic stuff
-    if (now.isIntegralMinute()){
+    if (now.isIntegralMinute()) {
       traffic.generateNewMovementsIfRequired();
     }
 
@@ -188,16 +194,36 @@ public class Simulation {
     }
   }
 
+  private final List<Airplane> newPlanesDelayedToAvoidCollision = new LinkedList();
+
   private void generateNewPlanes() {
     Airplane[] newPlanes = traffic.getNewAirplanes();
+
+    if (newPlanesDelayedToAvoidCollision.isEmpty() == false) {
+      for (Airplane newPlane : newPlanesDelayedToAvoidCollision) {
+        if (isInVicinityOfSomeOtherPlane(newPlane) == false) {
+          newPlanesDelayedToAvoidCollision.remove(newPlane);
+          Acc.prm().registerPlane(ctrAtc, newPlane);
+          ctrAtc.registerNewPlane(newPlane);
+        }
+      }
+    }
 
     for (Airplane newPlane : newPlanes) {
       if (newPlane.isDeparture()) {
         Acc.prm().registerPlane(twrAtc, newPlane);
         twrAtc.registerNewPlane(newPlane);
       } else {
-        Acc.prm().registerPlane(ctrAtc, newPlane);
-        ctrAtc.registerNewPlane(newPlane);
+        // here are two possibilities
+        // 1. new airplanes are delayed to avoid current airplanes. That is, as far as new plane is in vicinity of an other plane, it is added to "delayed" collection.
+        //    when it is no more in vicinity, it is added into approaching planes
+        // 2. new airplanes are raised to fly over current ones. This seems to be more innatural and more difficult to implement, so this option is not included now.
+        if (isInVicinityOfSomeOtherPlane(newPlane)) {
+          newPlanesDelayedToAvoidCollision.add(newPlane);
+        } else {
+          Acc.prm().registerPlane(ctrAtc, newPlane);
+          ctrAtc.registerNewPlane(newPlane);
+        }
       }
     }
   }
@@ -298,4 +324,20 @@ public class Simulation {
     Acc.messenger().addMessage(Message.createFromSystem(Acc.atcApp(), txt));
   }
 
+  private final static double MAX_VICINITY_DISTANCE_IN_NM = 10;
+
+  private boolean isInVicinityOfSomeOtherPlane(Airplane checkedPlane) {
+    boolean ret = false;
+    for (Airplane plane : Acc.planes()) {
+      if (plane.isArrival() == false) {
+        continue;
+      }
+      double dist = Coordinates.getDistanceInNM(checkedPlane.getCoordinate(), plane.getCoordinate());
+      if (dist < MAX_VICINITY_DISTANCE_IN_NM) {
+        ret = true;
+        break;
+      }
+    }
+    return ret;
+  }
 }
