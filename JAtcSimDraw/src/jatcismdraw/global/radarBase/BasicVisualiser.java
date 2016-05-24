@@ -273,6 +273,9 @@ public class BasicVisualiser extends Visualiser {
         Atc atc = (Atc) m.source;
         ret.atc.add(atc.getName() + ": " + m.toContentString());
       } else if (m.isFromPlaneMessage()) {
+        // TODO tady je to principielně blbě
+        // zprávička se tu do stringu sestavuje až tady, což je blbost, protože pak se sestaví vždycky jindy
+        // měla by se sestavit do stringu, když ji říká pilot, a pak by se měla jenom říct.
         Airplane p = (Airplane) m.source;
         ret.plane.add(p.getCallsign().toString() + ": " + m.toContentString());
       } else {

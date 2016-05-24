@@ -53,9 +53,6 @@ public abstract class Recorder {
   }
 
   protected static Path buildGenericLogFilePath(String fileName) {
-    /*Date d = new Date();
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyy_MM_dd_HH_mm");
-    String logPathDate = sdf.format(d);*/
     Path ret = Paths.get(GENERIC_LOG_PATH, logPathDate, fileName);
     return ret;
   }
