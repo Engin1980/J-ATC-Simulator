@@ -1,6 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
-    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="3">
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="5">
+        <file>
+            <url>src/jatcismdraw/global/radarBase/BasicVisualiser.java</url>
+            <bookmark id="5">
+                <name/>
+                <line>81</line>
+                <key/>
+            </bookmark>
+            <bookmark id="4">
+                <name/>
+                <line>279</line>
+                <key/>
+            </bookmark>
+        </file>
         <file>
             <url>src/jatcsimdraw/painting/EJComponentCanvas.java</url>
             <bookmark id="1">
@@ -21,6 +34,7 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/C:/Users/Marek%20Vajgl/Documents/NetBeansProjects/_JAtcSimSolution/JAtcSimDraw/src/jatcismdraw/global/radarBase/BasicVisualiser.java</file>
+            <file>file:/C:/Users/Marek%20Vajgl/Documents/NetBeansProjects/_JAtcSimSolution/JAtcSimDraw/src/jatcsimdraw/mainRadar/BasicRadar.java</file>
         </group>
     </open-files>
 </project-private>

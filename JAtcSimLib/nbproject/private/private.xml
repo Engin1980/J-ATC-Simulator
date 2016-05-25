@@ -28,14 +28,6 @@
             </bookmark>
         </file>
         <file>
-            <url>src/jatcsimlib/traffic/GeneratedTraffic.java</url>
-            <bookmark id="12">
-                <name/>
-                <line>278</line>
-                <key/>
-            </bookmark>
-        </file>
-        <file>
             <url>src/jatcsimlib/atcs/TowerAtc.java</url>
             <bookmark id="7">
                 <name/>
@@ -49,6 +41,14 @@
             </bookmark>
         </file>
         <file>
+            <url>src/jatcsimlib/traffic/GeneratedTraffic.java</url>
+            <bookmark id="12">
+                <name/>
+                <line>278</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
             <url>src/jatcsimlib/commands/CommandFormat.java</url>
             <bookmark id="5">
                 <name/>
@@ -58,9 +58,6 @@
         </file>
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group>
-            <file>file:/C:/Users/Marek%20Vajgl/Documents/NetBeansProjects/_JAtcSimSolution/JAtcSimLib/src/jatcsimlib/atcs/AtcRecorder.java</file>
-            <file>file:/C:/Users/Marek%20Vajgl/Documents/NetBeansProjects/_JAtcSimSolution/JAtcSimLib/src/jatcsimlib/atcs/ComputerAtc.java</file>
-        </group>
+        <group/>
     </open-files>
 </project-private>

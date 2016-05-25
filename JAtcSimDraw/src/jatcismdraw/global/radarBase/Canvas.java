@@ -61,7 +61,21 @@ public abstract class Canvas {
    */
   public abstract void repaint();
   
-  public abstract EventManager<Canvas, EventListener<Canvas, EMouseEvent>, EMouseEvent> onMouseEvent();
-  public abstract EventManager<Canvas, EventListener<Canvas, Object>, Object> onPaint();
-  public abstract EventManager<Canvas, EventListener<Canvas, KeyEvent>, KeyEvent> onKeyPress();  
+  private final EventManager<Canvas, EventListener<Canvas, EMouseEvent>, EMouseEvent>  mouseEventManager = 
+    new EventManager<>(this);
+  public final EventManager<Canvas, EventListener<Canvas, EMouseEvent>, EMouseEvent> onMouseEvent(){
+    return this.mouseEventManager;
+  }
+  
+  private final EventManager<Canvas, EventListener<Canvas, Object>, Object> paintEventManager =
+    new EventManager<>(this);
+  public final EventManager<Canvas, EventListener<Canvas, Object>, Object> onPaint(){
+    return this.paintEventManager;
+  }
+  
+  private final EventManager<Canvas, EventListener<Canvas, KeyEvent>, KeyEvent> keyEventManager =
+    new EventManager<>(this);
+  public final EventManager<Canvas, EventListener<Canvas, KeyEvent>, KeyEvent> onKeyPress(){
+    return this.keyEventManager;
+  }
 }

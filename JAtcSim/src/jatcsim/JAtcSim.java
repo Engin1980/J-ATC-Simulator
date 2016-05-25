@@ -33,7 +33,7 @@ import javax.swing.JFrame;
  */
 public class JAtcSim {
 
-  private static final boolean FAST_START = false;
+  private static final boolean FAST_START = true;
 
   public static java.io.File resFolder = null;
   private static Area area = null;

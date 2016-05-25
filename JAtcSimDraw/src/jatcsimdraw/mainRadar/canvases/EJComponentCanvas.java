@@ -8,8 +8,8 @@ package jatcsimdraw.mainRadar.canvases;
 import jatcsimdraw.global.Point;
 import jatcismdraw.global.radarBase.Canvas;
 import jatcismdraw.global.radarBase.Painter;
+import jatcsimdraw.global.events.EKeyboardModifier;
 import jatcsimlib.events.EventListener;
-import jatcsimlib.events.EventManager;
 import jatcsimdraw.global.events.EMouseEvent;
 import jatcsimlib.exceptions.ENotSupportedException;
 import java.awt.Color;
@@ -46,28 +46,34 @@ public class EJComponentCanvas extends Canvas {
       @Override
       public void raise(EJComponent parent, Graphics e) {
         me.g = e;
-        paintEM.raise(null);
+        me.onPaint().raise(null);
       }
     });
     c.addMouseListener(new MouseAdapter() {
 
       private java.awt.Point dragStartPoint = null;
+      private int dragStartModifiers = 0;
       private int MINIMUM_DRAG_SHIFT = 3;
 
       @Override
       public void mouseClicked(MouseEvent e) {
         EMouseEvent eme;
+        EMouseEvent.eType type;
         if (e.getClickCount() == 2) {
-          eme = new EMouseEvent(e.getPoint(), EMouseEvent.eType.DoubleClick);
+          // TODO dopsat key modifikatory alt/shift/ctr
+          type = EMouseEvent.eType.DoubleClick;
         } else {
-          eme = new EMouseEvent(e.getPoint(), EMouseEvent.eType.Click);
+          type = EMouseEvent.eType.Click;
+          
         }
-        mouseEventEM.raise(eme);
+        eme = EMouseEvent.createClick(e.getPoint().x, e.getPoint().y, type, EMouseEvent.eButton.convertFromSpringButton(e.getButton()), EKeyboardModifier.NONE);
+        me.onMouseEvent().raise(eme);
       }
 
       @Override
       public void mousePressed(MouseEvent e) {
         dragStartPoint = e.getPoint();
+        dragStartModifiers = e.getModifiers();
       }
 
       @Override
@@ -76,41 +82,45 @@ public class EJComponentCanvas extends Canvas {
           return;
         }
         java.awt.Point dragEndPoint = e.getPoint();
-        Point p = new Point(
+        Point diffPoint = new Point(
           dragEndPoint.x - dragStartPoint.x,
           dragEndPoint.y - dragStartPoint.y);
-        dragStartPoint = null;
-        if (p.x < MINIMUM_DRAG_SHIFT && p.y < MINIMUM_DRAG_SHIFT) {
-          return;
+        if (diffPoint.x < MINIMUM_DRAG_SHIFT && diffPoint.y < MINIMUM_DRAG_SHIFT) {
+          mouseClicked(e); // if move not enough big for drag, then it is a click
         }
 
-        EMouseEvent eme = new EMouseEvent(
-          p.x, p.y, EMouseEvent.eType.Drag);
-        me.mouseEventEM.raise(eme);
+        EMouseEvent eme = EMouseEvent.createDrag(
+          dragStartPoint.x, dragStartPoint.y, dragEndPoint.x, dragEndPoint.y,
+          EMouseEvent.eButton.convertFromSpringButton(e.getButton()),
+          new EKeyboardModifier(dragStartModifiers));
+        dragStartModifiers = 0;
+        dragStartPoint = null;
+
+        me.onMouseEvent().raise(eme);
       }
     });
     c.addMouseMotionListener(new MouseAdapter() {
 
       @Override
       public void mouseMoved(MouseEvent e) {
-        EMouseEvent eme = new EMouseEvent(e.getPoint(), EMouseEvent.eType.Move);
-        mouseEventEM.raise(eme);
+        EMouseEvent eme = EMouseEvent.createMove(e.getPoint().x, e.getPoint().y);
+        onMouseEvent().raise(eme);
       }
     });
     c.addKeyListener(new KeyAdapter() {
 
       @Override
       public void keyPressed(KeyEvent e) {
-        me.keyPressEM.raise(e);
+        me.onKeyPress().raise(e);
       }
     });
     c.addMouseWheelListener(new MouseWheelListener() {
 
       @Override
       public void mouseWheelMoved(MouseWheelEvent e) {
-        EMouseEvent eme = new EMouseEvent(
-          e.getPoint(), e.getWheelRotation(), EMouseEvent.eType.WheelScroll);
-        mouseEventEM.raise(eme);
+        EMouseEvent eme = EMouseEvent.createScroll(
+          e.getPoint().x, e.getPoint().y, e.getWheelRotation());
+        onMouseEvent().raise(eme);
       }
     });
   }
@@ -225,37 +235,17 @@ public class EJComponentCanvas extends Canvas {
     drawLine(pts[2], pts[0], color, width);
   }
 
+  @Override
   public void drawCross(Point p, Color color, int length, int width) {
     int hl = length / 2;
-    
+
     Point topLeft = new Point(p.x - hl, p.y - hl);
     Point bottomRight = new Point(p.x + hl, p.y + hl);
     drawLine(topLeft, bottomRight, color, width);
-    
-    Point topRight = new Point(p.x + hl, p.y-hl);
-    Point bottomLeft = new Point(p.x-hl, p.y+hl);
+
+    Point topRight = new Point(p.x + hl, p.y - hl);
+    Point bottomLeft = new Point(p.x - hl, p.y + hl);
     drawLine(topRight, bottomLeft, color, width);
-  }
-
-  private final EventManager<Canvas, EventListener<Canvas, EMouseEvent>, EMouseEvent> mouseEventEM = new EventManager(this);
-
-  @Override
-  public EventManager<Canvas, EventListener<Canvas, EMouseEvent>, EMouseEvent> onMouseEvent() {
-    return this.mouseEventEM;
-  }
-
-  private final EventManager paintEM = new EventManager(this);
-
-  @Override
-  public EventManager<Canvas, EventListener<Canvas, Object>, Object> onPaint() {
-    return this.paintEM;
-  }
-
-  private final EventManager<Canvas, EventListener<Canvas, KeyEvent>, KeyEvent> keyPressEM = new EventManager(this);
-
-  @Override
-  public EventManager<Canvas, EventListener<Canvas, KeyEvent>, KeyEvent> onKeyPress() {
-    return this.keyPressEM;
   }
 
   @Override

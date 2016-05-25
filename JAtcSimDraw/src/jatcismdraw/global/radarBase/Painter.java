@@ -7,11 +7,16 @@ package jatcismdraw.global.radarBase;
 
 import jatcsimdraw.global.Point;
 import jatcsimdraw.global.Size;
+import jatcsimdraw.global.events.ECoordinatedMouseEvent;
+import jatcsimdraw.global.events.EMouseEvent;
 import jatcsimlib.exceptions.ERuntimeException;
 import jatcsimlib.coordinates.Coordinates;
 import jatcsimlib.coordinates.Coordinate;
+import jatcsimlib.events.EventListener;
+import jatcsimlib.events.EventManager;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.event.KeyEvent;
 import java.util.List;
 
 /**
@@ -35,6 +40,21 @@ public abstract class Painter {
   protected Canvas c;
   protected Coordinate topLeft;
   protected Coordinate bottomRight;
+  private final EventManager<Painter, EventListener<Painter, ECoordinatedMouseEvent>, ECoordinatedMouseEvent> mouseEventManager;
+  private final EventManager<Painter, EventListener<Painter, Object>, Object> paintEventManager;
+  private final EventManager<Painter, EventListener<Painter, KeyEvent>, KeyEvent> keyEventManager;
+
+  public final EventManager<Painter, EventListener<Painter, ECoordinatedMouseEvent>, ECoordinatedMouseEvent> onMouseEvent() {
+    return this.mouseEventManager;
+  }
+
+  public final EventManager<Painter, EventListener<Painter, Object>, Object> onPaint() {
+    return this.paintEventManager;
+  }
+
+  public final EventManager<Painter, EventListener<Painter, KeyEvent>, KeyEvent> onKeyPress() {
+    return this.keyEventManager;
+  }
 
   public Coordinate getTopLeft() {
     return topLeft;
@@ -60,10 +80,50 @@ public abstract class Painter {
   public Painter(Canvas c, Coordinate topLeft, Coordinate bottomRight) {
     this.c = c;
     setCoordinates(topLeft, bottomRight);
+
+    this.keyEventManager = new EventManager<>(this);
+    this.paintEventManager = new EventManager<>(this);
+    this.mouseEventManager = new EventManager<>(this);
+
+    c.onKeyPress().addListener(new EventListener<Canvas, KeyEvent>() {
+      @Override
+      public void raise(Canvas parent, KeyEvent e) {
+        keyEventManager.raise(e);
+      }
+    });
+    c.onPaint().addListener(new EventListener<Canvas, Object>() {
+      @Override
+      public void raise(Canvas parent, Object e) {
+        paintEventManager.raise(e);
+      }
+    });
+    c.onMouseEvent().addListener(new EventListener<Canvas, EMouseEvent>() {
+      @Override
+      public void raise(Canvas parent, EMouseEvent e) {
+        onCanvasMouseEvent(parent, e);
+      }
+    });
+  }
+
+  private void onCanvasMouseEvent(Canvas c, EMouseEvent e) {
+    ECoordinatedMouseEvent ce;
+    Coordinate coord = toCoordinate(e.getPoint());
+    if (e.type == EMouseEvent.eType.Drag) {
+      Coordinate dropCoord = toCoordinate(e.getDropPoint());
+      ce = ECoordinatedMouseEvent.create( coord, dropCoord, e);
+      System.out.println("### DRAG");
+      System.out.println("### from " + e.x + " x " + e.y + " to " + coord);
+      System.out.println("### to " + e.dropX + " x " + e.dropY + " to " + dropCoord);
+
+    } else {
+      ce = ECoordinatedMouseEvent.create(coord, e);
+    }
+    this.mouseEventManager.raise(ce);
   }
 
   /**
    * Convert lat-lon coordinate into x-y pixel coordinate.
+   *
    * @param coord Lat-lon coordinate
    * @return x-y pixel coordinate
    */
@@ -84,7 +144,7 @@ public abstract class Painter {
   }
 
   protected Size toDistance(double distanceInNM) {
-    Coordinate a = topLeft.clone(); //new Coordinate(0, 0);
+    Coordinate a = topLeft.clone();
     Coordinate b;
     b = Coordinates.getCoordinate(a, 90, distanceInNM);
     double w = a.getLongitude().get() - b.getLongitude().get();
@@ -110,9 +170,9 @@ public abstract class Painter {
     double mh = bottomRight.getLatitude().get() - topLeft.getLatitude().get();
 
     double latD
-        = point.y / (double) c.getHeight() * mh;
+      = point.y / (double) c.getHeight() * mh;
     double lonD
-        = point.x / (double) c.getWidth() * mw;
+      = point.x / (double) c.getWidth() * mw;
     Coordinate ret = new Coordinate(-latD, -lonD);
     return ret;
   }
@@ -132,20 +192,20 @@ public abstract class Painter {
 
   protected void drawLineByHeadingAndDistance(Coordinate from, int heading, double lengthInNM, Color color, int width) {
     Coordinate to = Coordinates.getCoordinate(from, heading, lengthInNM);
-    
+
     drawLine(from, to, color, width);
   }
-  
+
   protected void drawTriangleAround(Coordinate coordinate, int distanceInPixels, Color color, int width) {
     Point p = toPoint(coordinate);
     c.drawTriangleAround(p, distanceInPixels, color, width);
   }
-  
-  protected void drawCross (Coordinate coordinate, Color color, int length, int width){
+
+  protected void drawCross(Coordinate coordinate, Color color, int length, int width) {
     Point p = toPoint(coordinate);
     c.drawCross(p, color, length, width);
   }
-  
+
   protected abstract void drawPoint(Coordinate coordinate, Color color, int width);
 
   protected abstract void drawCircleAround(Coordinate coordinate, int radiusInPixels, Color color, int width);
@@ -165,11 +225,12 @@ public abstract class Painter {
   protected abstract void drawLine(Coordinate coordinate, int lengthInPixels, int heading, Color color, int width);
 
   protected abstract void drawTextBlock(List<String> lines, eTextBlockLocation location, Font font, Color color);
-  
-  public void beforeDraw(){
+
+  public void beforeDraw() {
     c.beforeDraw();
   }
-  public void afterDraw(){
+
+  public void afterDraw() {
     c.afterDraw();
   }
 }

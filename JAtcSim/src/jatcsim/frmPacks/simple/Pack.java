@@ -41,6 +41,9 @@ public class Pack extends jatcsim.frmPacks.Pack {
     
     this.frmList = new FrmFlightList();
     frmList.init(sim);
+    this.frmList.setSize(this.frmList.getSize().width, frmMain.getSize().height);
+    
+    this.frmMain.setLocation((this.frmList.getSize().width), this.frmMain.getLocation().y);
   }
 
   @Override

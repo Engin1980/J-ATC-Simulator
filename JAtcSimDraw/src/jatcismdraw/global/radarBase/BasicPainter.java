@@ -21,7 +21,7 @@ public class BasicPainter extends Painter {
   public BasicPainter(Canvas c, Coordinate topLeft, Coordinate bottomRight) {
     super(c, topLeft, bottomRight);
   }
-
+  
   @Override
   protected void drawLine(Coordinate from, Coordinate to, Color color, int width) {
     Point f = toPoint(from);

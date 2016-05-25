@@ -5,6 +5,9 @@
  */
 package jatcismdraw.global.radarBase;
 
+import jatcsimdraw.global.Point;
+import jatcsimdraw.global.events.ECoordinatedMouseEvent;
+import jatcsimdraw.global.events.EMouseEvent;
 import jatcsimdraw.mainRadar.settings.DispItem;
 import jatcsimdraw.mainRadar.settings.DispPlane;
 import jatcsimdraw.mainRadar.settings.DispText;
@@ -15,6 +18,7 @@ import jatcsimlib.atcs.Atc;
 import jatcsimlib.exceptions.ERuntimeException;
 import jatcsimlib.coordinates.Coordinates;
 import jatcsimlib.coordinates.Coordinate;
+import jatcsimlib.events.EventListener;
 import jatcsimlib.exceptions.ENotSupportedException;
 import jatcsimlib.global.ETime;
 import jatcsimlib.global.Headings;
@@ -41,19 +45,42 @@ import java.util.Map;
 public class BasicVisualiser extends Visualiser {
 
   /**
-   * Remembers last repaint of "hour" on the visualiser. 
-   * Hour change increases refreshTick variable
+   * Remembers last repaint of "hour" on the visualiser. Hour change increases refreshTick variable
    */
   private static int lastDrawnTimeTotalSeconds;
   /**
-   * RefreshTick is used to define how often history of planes should be stored.
-   * This value should be increased every second/and repaint.
+   * RefreshTick is used to define how often history of planes should be stored. This value should be increased every
+   * second/and repaint.
    */
   private static long refreshTick = 0;
   private final PlaneHistoryDotManager planeDotHistory = new PlaneHistoryDotManager();
+  /**
+   * Last drawn positions of planes.
+   */
+  private final Map<Callsign, Coordinate> lastPlanePositions = new HashMap();
+  /**
+   * Definition of the shift of the airplane info label
+   */
+  private final Map<Callsign, Point> customPlaneLabelShift = new HashMap();
 
   public BasicVisualiser(Painter p, Settings sett) {
     super(p, sett);
+
+    p.onMouseEvent().addListener(new EventListener<Painter, ECoordinatedMouseEvent>() {
+
+      @Override
+      public void raise(Painter parent, ECoordinatedMouseEvent e) {
+        onPainterMouseEvent(parent, e);
+      }
+    });
+  }
+
+  private void onPainterMouseEvent(Painter parent, ECoordinatedMouseEvent e) {
+    // move default aircraft label position
+    // RButton + Ctrl
+    if (e.button == EMouseEvent.eButton.right && e.modifiers.is(false, true, false)) {
+      updateCustomPlaneLabelShift(e);
+    }
   }
 
   @Override
@@ -244,7 +271,13 @@ public class BasicVisualiser extends Visualiser {
     sb.append(
       buildPlaneString(dp.getThirdLineFormat(), planeInfo));
 
-    p.drawText(sb.toString(), planeInfo.coordinate(), 3, 3, dt.getFont(), c);
+    Point labelShift;
+    if (customPlaneLabelShift.containsKey(planeInfo.callsign())){
+      labelShift = customPlaneLabelShift.get(planeInfo.callsign());
+    } else {
+      labelShift = new Point(3,3);
+    }
+    p.drawText(sb.toString(), planeInfo.coordinate(), labelShift.x, labelShift.y, dt.getFont(), c);
 
     // plane history
     if (refreshTick % dp.getHistoryDotStep() == 0) {
@@ -256,6 +289,9 @@ public class BasicVisualiser extends Visualiser {
         p.drawPoint(coordinate, c, 3);
       }
     }
+
+    // plane positions
+    lastPlanePositions.put(planeInfo.callsign(), planeInfo.coordinate());
   }
 
   private String buildPlaneString(String lineFormat, Airplane.AirplaneInfo planeInfo) {
@@ -314,10 +350,10 @@ public class BasicVisualiser extends Visualiser {
       Headings.add(approach.getRadial(), 180),
       17);
     p.drawLine(start, approach.getPoint(), Color.MAGENTA);
-    if (approach.getParent().getFafCross() != null){
-      p.drawCross(approach.getParent().getFafCross(), Color.MAGENTA, 5, 1);  
+    if (approach.getParent().getFafCross() != null) {
+      p.drawCross(approach.getParent().getFafCross(), Color.MAGENTA, 5, 1);
     }
-    
+
   }
 
   @Override
@@ -333,7 +369,7 @@ public class BasicVisualiser extends Visualiser {
     lst.add(time.toString());
     p.drawTextBlock(lst, Painter.eTextBlockLocation.topLeft, dt.getFont(), dt.getColor());
 
-    if (lastDrawnTimeTotalSeconds != time.getTotalSeconds()){
+    if (lastDrawnTimeTotalSeconds != time.getTotalSeconds()) {
       lastDrawnTimeTotalSeconds = time.getTotalSeconds();
       refreshTick++;
     }
@@ -345,6 +381,42 @@ public class BasicVisualiser extends Visualiser {
     for (String s : system) {
       String[] spl = s.split(del);
       ret.addAll(Arrays.asList(spl));
+    }
+    return ret;
+  }
+
+  private void updateCustomPlaneLabelShift(ECoordinatedMouseEvent e) {
+    Callsign cls = getClosestPlaneCallsign(e.getCoordinate(), 10);
+    if (cls == null) {
+      // no plane found
+      return;
+    }
+    int diffX = e.dropX - e.x;
+    int diffY = e.dropY - e.y;
+    Point p = new Point(diffX, diffY);
+    customPlaneLabelShift.put(cls, p);
+    // TODO musi se vyresit odebirani starych letadel
+  }
+
+  /**
+   * Returns closest drawn airplane to coordinate position in maximal distance.
+   *
+   * @param coordinate Coordinate where to look for planes.
+   * @param maxDistanceInNM Only planes at distance lower than this are taken into account.
+   * @return Plane found at set coordinate, or null if no plane were found at coordinate in maxDistance.
+   */
+  private Callsign getClosestPlaneCallsign(Coordinate coordinate, double maxDistanceInNM) {
+    Callsign ret = null;
+    double dist = Double.MAX_VALUE;
+    System.out.println("##");
+    for (Callsign cls : lastPlanePositions.keySet()) {
+      Coordinate planeCoord = lastPlanePositions.get(cls);
+      double currDist = Coordinates.getDistanceInNM(coordinate, planeCoord);
+      System.out.println("## Dist to " + cls + " is " + currDist + " (point pos: " + coordinate + ";; planePos: " + planeCoord + ")");
+      if (currDist < dist && currDist < maxDistanceInNM) {
+        ret = cls;
+        dist = currDist;
+      }
     }
     return ret;
   }

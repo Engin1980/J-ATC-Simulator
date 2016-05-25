@@ -27,10 +27,10 @@ import java.awt.event.KeyEvent;
  *
  * @author Marek
  */
-public class BasicRadar extends Radar  {
+public class BasicRadar extends Radar {
 
   private double heightRange = 1;
-  
+
   private final Canvas c;
   private final Visualiser v;
   private final Painter p;
@@ -43,7 +43,7 @@ public class BasicRadar extends Radar  {
       BasicRadar, EventListener<BasicRadar, KeyEvent>, KeyEvent> keyPressEM = new EventManager(this);
 
   public BasicRadar(Canvas canvas, RadarRange radarRange,
-      Simulation sim, Area area, Settings displaySettings) {
+    Simulation sim, Area area, Settings displaySettings) {
     this.c = canvas;
     this.p = new BasicPainter(c, radarRange.topLeft, radarRange.bottomRight);
     this.v = new BasicVisualiser(p, displaySettings);
@@ -74,14 +74,17 @@ public class BasicRadar extends Radar  {
             mouseClickEM.raise(new WithCoordinateEvent(coord));
             break;
           case DoubleClick:
-            centerAt (coord);
+            centerAt(coord);
             break;
           case Move:
             mouseMoveEM.raise(new WithCoordinateEvent(coord));
             break;
           case Drag:
-            coord = p.toCoordinateDelta(pt);
-            moveMapBy(coord);
+            // drag bez priznaku je posun mapy, jinak je to posun letadla
+            if (e.modifiers.is(false, false, false) && e.button == EMouseEvent.eButton.right) {
+              coord = p.toCoordinateDelta(e.getDropRangePoint());
+              moveMapBy(coord);
+            }
             break;
         }
 
@@ -146,17 +149,17 @@ public class BasicRadar extends Radar  {
 
   private void zoomBy(double multiplier) {
     double distLat
-        = p.getTopLeft().getLatitude().get() - p.getBottomRight().getLatitude().get();
+      = p.getTopLeft().getLatitude().get() - p.getBottomRight().getLatitude().get();
     double distLon
-        = p.getTopLeft().getLongitude().get() - p.getBottomRight().getLongitude().get();
-    
+      = p.getTopLeft().getLongitude().get() - p.getBottomRight().getLongitude().get();
+
     System.out.println("BeforeZoomBy location: ");
     System.out.println("topLeft : " + p.getTopLeft().toString());
     System.out.println("bottomRight: " + p.getBottomRight().toString());
     System.out.println("distLat: " + distLat);
     System.out.println("distLng: " + distLon);
     System.out.println("multiplier: " + multiplier);
-    
+
     distLat = distLat / 2d;
     distLon = distLon / 2d;
 
@@ -165,24 +168,24 @@ public class BasicRadar extends Radar  {
 
     System.out.println("\tdistShiftLat: " + distShiftLat);
     System.out.println("\tdistShiftLon: " + distShiftLon);
-    
+
     p.setCoordinates(
-        new Coordinate(
-            p.getTopLeft().getLatitude().get() + distShiftLat,
-            p.getTopLeft().getLongitude().get() + distShiftLon),
-        new Coordinate(
-            p.getBottomRight().getLatitude().get() - distShiftLat,
-            p.getBottomRight().getLongitude().get() - distShiftLon));
-    
+      new Coordinate(
+        p.getTopLeft().getLatitude().get() + distShiftLat,
+        p.getTopLeft().getLongitude().get() + distShiftLon),
+      new Coordinate(
+        p.getBottomRight().getLatitude().get() - distShiftLat,
+        p.getBottomRight().getLongitude().get() - distShiftLon));
+
     System.out.println("AfterZoomBy location: ");
     System.out.println("topLeft : " + p.getTopLeft().toString());
     System.out.println("bottomRight: " + p.getBottomRight().toString());
     System.out.println("distLat: " + distLat);
     System.out.println("distLng: " + distLon);
     System.out.println("");
-    
+
     this.repaint();
-    
+
     System.out.println("AfterZoomByPaint location: ");
     System.out.println("topLeft : " + p.getTopLeft().toString());
     System.out.println("bottomRight: " + p.getBottomRight().toString());
@@ -191,46 +194,43 @@ public class BasicRadar extends Radar  {
     System.out.println("");
   }
 
-  public void centerAt(Coordinate coordinate){
+  public void centerAt(Coordinate coordinate) {
     double distLat
-        = p.getTopLeft().getLatitude().get() - p.getBottomRight().getLatitude().get();
+      = p.getTopLeft().getLatitude().get() - p.getBottomRight().getLatitude().get();
     double distLon
-        = p.getTopLeft().getLongitude().get() - p.getBottomRight().getLongitude().get();
+      = p.getTopLeft().getLongitude().get() - p.getBottomRight().getLongitude().get();
 
     distLat = distLat / 2d;
     distLon = distLon / 2d;
 
     p.setCoordinates(
-        new Coordinate(
-            coordinate.getLatitude().get() + distLat,
-            coordinate.getLongitude().get() + distLon),
-        new Coordinate(
-            coordinate.getLatitude().get() - distLat,
-            coordinate.getLongitude().get() - distLon));
+      new Coordinate(
+        coordinate.getLatitude().get() + distLat,
+        coordinate.getLongitude().get() + distLon),
+      new Coordinate(
+        coordinate.getLatitude().get() - distLat,
+        coordinate.getLongitude().get() - distLon));
     this.repaint();
   }
-  
-  
+
   public void repaint() {
-  
+
     Coordinate topLeft = p.getTopLeft();
-    
+
     //TODO tohle musim vyresit, protoze s timhle nefunguje zoomovani a bez tohodle zase zmena velikosti okna
-    
 //    double widthRange = heightRange * (c.getWidth() / (double) c.getHeight());
 //    
 //    Coordinate bottomRight = new Coordinate(
 //      topLeft.getLatitude().add(-heightRange),
 //      topLeft.getLongitude().add(widthRange));
 //    p.setCoordinates(topLeft, bottomRight);
-    
     c.repaint();
   }
 
   private void moveMapBy(Coordinate c) {
     p.setCoordinates(
-        p.getTopLeft().add(c), 
-        p.getBottomRight().add(c));
+      p.getTopLeft().add(c),
+      p.getBottomRight().add(c));
     repaint();
   }
 }
