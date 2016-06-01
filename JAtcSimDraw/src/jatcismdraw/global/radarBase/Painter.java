@@ -111,10 +111,6 @@ public abstract class Painter {
     if (e.type == EMouseEvent.eType.Drag) {
       Coordinate dropCoord = toCoordinate(e.getDropPoint());
       ce = ECoordinatedMouseEvent.create( coord, dropCoord, e);
-      System.out.println("### DRAG");
-      System.out.println("### from " + e.x + " x " + e.y + " to " + coord);
-      System.out.println("### to " + e.dropX + " x " + e.dropY + " to " + dropCoord);
-
     } else {
       ce = ECoordinatedMouseEvent.create(coord, e);
     }

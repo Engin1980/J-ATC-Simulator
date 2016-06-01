@@ -36,9 +36,9 @@ public class TestTrafficOneApproach extends TestTraffic {
 
     AirplaneType pt = Acc.sim().getPlaneTypes().getRandomByTraffic(Acc.airport().getTrafficCategories(), true);
     Route r = tryGetRandomRoute(true, pt);
-    Coordinate coord = generateArrivalCoordinate(r.getMainFix().getCoordinate(), Acc.threshold().getCoordinate());
-    int heading = (int) Coordinates.getBearing(coord, r.getMainFix().getCoordinate());
-    int alt = generateArrivingPlaneAltitude(r);
+    Coordinate coord = new Coordinate(50.217994, 14.307286); // generateArrivalCoordinate(r.getMainFix().getCoordinate(), Acc.threshold().getCoordinate());
+    int heading = 065; // (int) Coordinates.getBearing(coord, r.getMainFix().getCoordinate());
+    int alt = 7000; // generateArrivingPlaneAltitude(r);
     int spd = pt.vCruise;
     List<Command> routeCmds = r.getCommandsListClone();
     // added command to descend

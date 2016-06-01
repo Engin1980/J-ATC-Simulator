@@ -138,12 +138,10 @@ public class BasicRadar extends Radar {
   }
 
   public void zoomIn() {
-    System.out.println("ZoomIn");
     zoomBy(0.9);
   }
 
   public void zoomOut() {
-    System.out.println("ZoomOut");
     zoomBy(1.1);
   }
 
@@ -153,21 +151,11 @@ public class BasicRadar extends Radar {
     double distLon
       = p.getTopLeft().getLongitude().get() - p.getBottomRight().getLongitude().get();
 
-    System.out.println("BeforeZoomBy location: ");
-    System.out.println("topLeft : " + p.getTopLeft().toString());
-    System.out.println("bottomRight: " + p.getBottomRight().toString());
-    System.out.println("distLat: " + distLat);
-    System.out.println("distLng: " + distLon);
-    System.out.println("multiplier: " + multiplier);
-
     distLat = distLat / 2d;
     distLon = distLon / 2d;
 
     double distShiftLat = distLat * multiplier - distLat;
     double distShiftLon = distLon * multiplier - distLon;
-
-    System.out.println("\tdistShiftLat: " + distShiftLat);
-    System.out.println("\tdistShiftLon: " + distShiftLon);
 
     p.setCoordinates(
       new Coordinate(
@@ -177,21 +165,8 @@ public class BasicRadar extends Radar {
         p.getBottomRight().getLatitude().get() - distShiftLat,
         p.getBottomRight().getLongitude().get() - distShiftLon));
 
-    System.out.println("AfterZoomBy location: ");
-    System.out.println("topLeft : " + p.getTopLeft().toString());
-    System.out.println("bottomRight: " + p.getBottomRight().toString());
-    System.out.println("distLat: " + distLat);
-    System.out.println("distLng: " + distLon);
-    System.out.println("");
-
     this.repaint();
 
-    System.out.println("AfterZoomByPaint location: ");
-    System.out.println("topLeft : " + p.getTopLeft().toString());
-    System.out.println("bottomRight: " + p.getBottomRight().toString());
-    System.out.println("distLat: " + distLat);
-    System.out.println("distLng: " + distLon);
-    System.out.println("");
   }
 
   public void centerAt(Coordinate coordinate) {

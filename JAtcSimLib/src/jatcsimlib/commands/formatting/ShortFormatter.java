@@ -169,6 +169,11 @@ public class ShortFormatter implements Formatter {
   }
 
   @Override
+  public String format(StringCommand cmd){
+    return cmd.getText();
+  }
+  
+  @Override
   public String format(GoodDayCommand cmd) {
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }

@@ -123,6 +123,7 @@ public class AirplaneType {
 
     return _descend.a * altitude + _descend.b;
   }
+
 }
 
 class RateInfo {

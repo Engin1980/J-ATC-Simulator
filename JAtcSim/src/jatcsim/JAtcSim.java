@@ -14,6 +14,7 @@ import jatcsimlib.Simulation;
 import jatcsimlib.airplanes.AirplaneTypes;
 import jatcsimlib.exceptions.ERuntimeException;
 import jatcsimlib.traffic.CustomTraffic;
+import jatcsimlib.traffic.TestTrafficOneApproach;
 import jatcsimlib.traffic.Traffic;
 import jatcsimlib.weathers.Weather;
 import jatcsimlib.weathers.WeatherProvider;
@@ -85,7 +86,8 @@ public class JAtcSim {
     }
 
     // traffic
-    Traffic traffic = getTrafficFromStartupSettings(sett);
+    //Traffic traffic = getTrafficFromStartupSettings(sett);
+    Traffic traffic = new TestTrafficOneApproach();
 
     // sim init
     final Simulation sim = Simulation.create(

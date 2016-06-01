@@ -25,4 +25,10 @@ public class SpeedRestriction {
     this.direction = direction;
     this.speedInKts = speedInKts;
   }
+
+  @Override
+  public String toString() {
+    return direction + " " + speedInKts;
+  }
+  
 }

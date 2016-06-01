@@ -22,6 +22,7 @@ import jatcsimlib.commands.HoldCommand;
 import jatcsimlib.commands.ProceedDirectCommand;
 import jatcsimlib.commands.Rejection;
 import jatcsimlib.commands.ShortcutCommand;
+import jatcsimlib.commands.StringCommand;
 import jatcsimlib.commands.ThenCommand;
 import jatcsimlib.commands.ToNavaidCommand;
 import jatcsimlib.exceptions.ENotSupportedException;
@@ -196,6 +197,11 @@ public class LongFormatter implements Formatter {
   @Override
   public String format(Rejection cmd) {
     return "Unable " + Formatters.format(cmd.getOrigin(), this) + ". " + cmd.getReason();
+  }
+  
+  @Override
+  public String format(StringCommand cmd){
+    return cmd.getText();
   }
 
   private final String [] greetings = new String[]{"Good day", "Hello", "Hi"};

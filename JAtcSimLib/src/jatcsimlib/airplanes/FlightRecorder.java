@@ -63,11 +63,10 @@ public class FlightRecorder extends Recorder {
 
     // spd
     sb.appendFormat(" S:%5d (%5d) => %5d ", plane.getSpeed(), plane.getGS(), plane.getTargetSpeed()).append(SEPARATOR);
-
+    sb.appendFormat("AT: " + pilot.getAutoThrustLogString()).append(SEPARATOR);
+    
     // from pilot
-    sb.appendFormat(" HLD {%s} ", pilot.getHoldLogString()).append(SEPARATOR);
-    sb.appendFormat(" APP {%s} ", pilot.getApproachLogString()).append(SEPARATOR);
-    sb.appendFormat(" SPD {%s} ", pilot.getSpeedLogString());
+    sb.appendFormat(" BEH: {%s} ", pilot.getBehaviorLogString());
 
     sb.appendLine();
     logLine(sb.toString());

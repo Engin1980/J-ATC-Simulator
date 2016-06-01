@@ -27,6 +27,7 @@ public interface Formatter {
   public String format(ShortcutCommand cmd);
   public String format(ThenCommand cmd);
   public String format(ToNavaidCommand cmd);
+  public String format(StringCommand cmd);
   
   public String format(GoodDayCommand cmd);
   
