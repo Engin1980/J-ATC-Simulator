@@ -2,6 +2,19 @@
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="23">
         <file>
+            <url>src/jatcsimlib/airplanes/pilots/Pilot.java</url>
+            <bookmark id="22">
+                <name/>
+                <line>276</line>
+                <key/>
+            </bookmark>
+            <bookmark id="23">
+                <name/>
+                <line>947</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
             <url>src/jatcsimlib/world/Route.java</url>
             <bookmark id="3">
                 <name/>
@@ -11,6 +24,14 @@
             <bookmark id="1">
                 <name/>
                 <line>38</line>
+                <key/>
+            </bookmark>
+        </file>
+        <file>
+            <url>src/jatcsimlib/traffic/GeneratedTraffic.java</url>
+            <bookmark id="12">
+                <name/>
+                <line>278</line>
                 <key/>
             </bookmark>
         </file>
@@ -28,27 +49,6 @@
             </bookmark>
         </file>
         <file>
-            <url>src/jatcsimlib/traffic/GeneratedTraffic.java</url>
-            <bookmark id="12">
-                <name/>
-                <line>278</line>
-                <key/>
-            </bookmark>
-        </file>
-        <file>
-            <url>src/jatcsimlib/airplanes/pilots/Pilot.java</url>
-            <bookmark id="22">
-                <name/>
-                <line>269</line>
-                <key/>
-            </bookmark>
-            <bookmark id="23">
-                <name/>
-                <line>930</line>
-                <key/>
-            </bookmark>
-        </file>
-        <file>
             <url>src/jatcsimlib/commands/CommandFormat.java</url>
             <bookmark id="5">
                 <name/>
@@ -60,8 +60,6 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/C:/Users/Marek%20Vajgl/Documents/NetBeansProjects/_JAtcSimSolution/JAtcSimLib/src/jatcsimlib/airplanes/pilots/Pilot.java</file>
-            <file>file:/C:/Users/Marek%20Vajgl/Documents/NetBeansProjects/_JAtcSimSolution/JAtcSimLib/src/jatcsimlib/airplanes/pilots/eApproachPhase.java</file>
-            <file>file:/C:/Users/Marek%20Vajgl/Documents/NetBeansProjects/_JAtcSimSolution/JAtcSimLib/src/jatcsimlib/airplanes/Airplane.java</file>
         </group>
     </open-files>
 </project-private>
