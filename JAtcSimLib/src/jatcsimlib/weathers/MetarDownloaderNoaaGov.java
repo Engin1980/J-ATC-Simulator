@@ -22,7 +22,8 @@ public class MetarDownloaderNoaaGov extends MetarDownloader {
   protected String downloadMetarString(String icao) {
     String url = 
         String.format(
-            "http://weather.noaa.gov/pub/data/observations/metar/stations/%1$s.TXT", 
+            // "http://weather.noaa.gov/pub/data/observations/metar/stations/%1$s.TXT", 
+                "ftp://tgftp.nws.noaa.gov/data/observations/metar/stations/%1$s.TXT",
             icao.toUpperCase());
     
     BufferedReader br = super.getBufferedReader(url);
@@ -30,7 +31,7 @@ public class MetarDownloaderNoaaGov extends MetarDownloader {
     String line;
     
     try{
-    line = br.readLine();
+    line = br.readLine(); // skips the first line, where date is
     line = br.readLine();
     } catch (IOException ex ){
       throw new ERuntimeException("Failed to read content of url " + url);
