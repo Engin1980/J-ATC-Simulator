@@ -13,6 +13,7 @@ import java.util.Calendar;
  */
 public class ETime implements Comparable<ETime> {
 
+  private final int DAY_SECONDS = 60 * 60 * 24;
   private int value = 0;
 
   public ETime(int value) {
@@ -35,11 +36,15 @@ public class ETime implements Comparable<ETime> {
     this.value = hours * 60 * 60 + minutes * 60 + seconds;
   }
 
+  public final void set(int day, int hours, int minutes, int seconds) {
+    this.value = day * DAY_SECONDS + hours * 60 * 60 + minutes * 60 + seconds;
+  }
+
   public int getSeconds() {
     return value % 60;
   }
-  
-  public int getTotalSeconds(){
+
+  public int getTotalSeconds() {
     return value;
   }
 
@@ -50,9 +55,17 @@ public class ETime implements Comparable<ETime> {
   public int getHours() {
     return ((int) (Math.floor(value / 60 / 60)));
   }
+  
+  public int getDays(){
+    return ((int) (Math.floor(value / DAY_SECONDS)));
+  }
 
   @Override
   public String toString() {
+    return String.format("%d.%02d:%02d:%02d", getDays(), getHours(), getMinutes(), getSeconds());
+  }
+  
+  public String toTimeString() {
     return String.format("%02d:%02d:%02d", getHours(), getMinutes(), getSeconds());
   }
 
@@ -100,6 +113,7 @@ public class ETime implements Comparable<ETime> {
 
   /**
    * Checks if minute fraction is zero.
+   *
    * @return true if seconds == 0, false otherwise.
    */
   public boolean isIntegralMinute() {

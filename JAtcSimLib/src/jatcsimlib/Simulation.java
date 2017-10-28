@@ -22,7 +22,6 @@ import jatcsimlib.global.ETime;
 import jatcsimlib.global.ReadOnlyList;
 import jatcsimlib.messaging.Message;
 import jatcsimlib.messaging.Messenger;
-import jatcsimlib.traffic.CustomTraffic;
 import jatcsimlib.traffic.Traffic;
 import jatcsimlib.weathers.Weather;
 import jatcsimlib.world.Airport;
@@ -39,8 +38,14 @@ import java.util.regex.Pattern;
  */
 public class Simulation {
 
+  /**
+   * Public event informing surrounding about elapsed second.
+   */
   public EventListener<Simulation, Object> secondElapsed = null;
 
+  /**
+   * Internal timer used to make simulation ticks.
+   */
   private final Timer tmr = new Timer(new EventListener<Timer, Object>() {
     @Override
     public void raise(Timer parent, Object e) {

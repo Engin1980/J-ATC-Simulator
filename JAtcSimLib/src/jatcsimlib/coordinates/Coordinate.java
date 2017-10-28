@@ -81,7 +81,7 @@ public final class Coordinate {
         new CoordinateValue(aDegrees, aMinutes, aSeconds),
         new CoordinateValue(bDegrees, bMinutes, bSeconds));
   }
-
+  
   public Coordinate(int aDegrees, double aMinutesSeconds,
       int bDegrees, double bMinutesSeconds) {
     this(
