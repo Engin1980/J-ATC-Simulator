@@ -5,15 +5,25 @@
  */
 package jatcsim.startup;
 
-import java.awt.Component;
-import java.awt.Font;
-import javax.swing.JFrame;
+import java.awt.*;
+import javax.swing.*;
 
 /**
  *
  * @author Marek Vajgl
  */
 public abstract class FrmWizardFrame extends JFrame {
+
+  public JPanel wrapWithContinueButton(JPanel pnl, JButton btnContinue) {
+
+    Dimension d = new Dimension(200, btnContinue.getHeight());
+    btnContinue.setMinimumSize(d);
+    btnContinue.setMaximumSize(d);
+
+    JPanel ret = LayoutManager.createBoxPanel(LayoutManager.eHorizontalAlign.center, 0,
+        pnl, LayoutManager.createBorderedPanel(10, btnContinue));
+    return ret;
+  }
 
   public enum DialogResult {
 
@@ -23,6 +33,11 @@ public abstract class FrmWizardFrame extends JFrame {
 
   protected StartupSettings settings;
   private DialogResult dialogResult = DialogResult.Cancel;
+
+  protected final Dimension BUTTON_DIMENSION = new Dimension(150, 1);
+  protected final Dimension FILE_FIELD_DIMENSION = new Dimension(500, 1);
+  protected final Dimension LARGE_FRAME_FIELD_DIMENSION = new Dimension(900, 1);
+  protected final int distance = 10;
 
   public void initSettings(StartupSettings settings) {
     this.settings = settings;

@@ -1,0 +1,21 @@
+<!ELEMENT settings (dispItems, dispTexts, dispPlanes)>
+
+<!ELEMENT dispItems (dispItem+)>
+<!ELEMENT dispTexts (dispText+)>
+<!ELEMENT dispPlanes (dispPlane+)>
+
+<!ELEMENT dispItem ANY>
+
+<!ELEMENT dispText ANY>
+
+<!ELEMENT dispPlane EMPTY>
+<!ATTLIST dispItem behavior (stopped|ctr|app|twr) #REQUIRED>
+<!ATTLIST dispItem visible (true|false) #IMPLIED>
+<!ATTLIST dispItem color CDATA #REQUIRED>
+<!ATTLIST dispItem pointWidth CDATA #REQUIRED>
+<!ATTLIST dispItem headingLineLength CDATA #REQUIRED>
+<!ATTLIST dispItem historyDotCount CDATA #REQUIRED>
+<!ATTLIST dispItem separationRingDistance CDATA #REQUIRED>
+<!ATTLIST dispItem firstLineFormat CDATA #REQUIRED>
+<!ATTLIST dispItem secondLineFormat CDATA #REQUIRED>
+<!ATTLIST dispItem thirdLineFormat CDATA #REQUIRED>

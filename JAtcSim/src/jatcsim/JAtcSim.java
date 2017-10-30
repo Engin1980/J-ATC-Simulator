@@ -140,12 +140,12 @@ public class JAtcSim {
   private static void initResourcesFolder() {
     String curDir = System.getProperty("user.dir") + "\\";
     java.io.File f;
-    f = new java.io.File(curDir + "src\\resources");
+    f = new java.io.File(curDir + "\\resources");
     if (f.exists()) {
       resFolder = f;
       return;
     }
-    f = new java.io.File(curDir + "resources");
+    f = new java.io.File(curDir + "\\JatcSim\\resources");
     if (f.exists()) {
       resFolder = f;
       return;

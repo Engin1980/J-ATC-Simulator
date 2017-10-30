@@ -335,8 +335,7 @@ public class Pilot {
           this.phase = eApproachPhase.longFinal;
 
           // moc nizko, uz pod stabilized altitude
-          //TODO use bearing instead of heading here!
-          int MAX_APP_HEADING_DIFF = 15; // this must be quite big, raised from 3 to 15
+          int MAX_APP_HEADING_DIFF = 3;
           if (Math.abs(parent.getTargetHeading() - this.approach.getRadial()) > MAX_APP_HEADING_DIFF) {
             goAround("Unstabilized approach.");
             return;

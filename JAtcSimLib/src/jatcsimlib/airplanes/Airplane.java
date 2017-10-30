@@ -627,19 +627,12 @@ public class Airplane implements KeyItem<Callsign> {
     return getTAS();
   }
 
-  private static final double SECOND_FRACTION = 1 / 60d / 60d;
+  private static final double secondFraction = 1 / 60d / 60d;
 
   private void updateCoordinates() {
-    double dist = this.getGS() * SECOND_FRACTION;
-    // new coordinate caused by airplane moving
+    double dist = this.getGS() * secondFraction;
     Coordinate newC
       = Coordinates.getCoordinate(coordinate, heading, dist);
-    // coordinate update caused by the wind
-    if (this.isFlying()){
-      double distInNm = Acc.weather().getWindSpeetInKts() * SECOND_FRACTION;
-      newC =
-              Coordinates.getCoordinate(newC, Acc.weather().getWindHeading(), distInNm);
-    }
     this.coordinate = newC;
   }
 
