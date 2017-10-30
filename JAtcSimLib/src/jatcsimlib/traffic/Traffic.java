@@ -24,5 +24,6 @@ public abstract class Traffic {
    * Generates new airplanes for future, if required.
    */
   public abstract void generateNewMovementsIfRequired();
-  
+
+  public abstract Movement[] getScheduledMovements();
 }

@@ -22,10 +22,13 @@ import jatcsimlib.global.ETime;
 import jatcsimlib.global.ReadOnlyList;
 import jatcsimlib.messaging.Message;
 import jatcsimlib.messaging.Messenger;
+import jatcsimlib.traffic.Movement;
 import jatcsimlib.traffic.Traffic;
 import jatcsimlib.weathers.Weather;
 import jatcsimlib.world.Airport;
 import jatcsimlib.world.RunwayThreshold;
+
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
@@ -70,9 +73,15 @@ public class Simulation {
 
   private final EventManager<Simulation, EventListener<Simulation, Simulation>, Simulation> tickEM = new EventManager(this);
 
-  //TODO nemelo by byt soukrome
+  //TODO shouldn't this be private?
   public AirplaneTypes getPlaneTypes() {
     return planeTypes;
+  }
+
+  public Movement[] getScheduledMovements(){
+    Movement [] ret;
+    ret = traffic.getScheduledMovements();
+    return ret;
   }
 
   public Airport getActiveAirport() {

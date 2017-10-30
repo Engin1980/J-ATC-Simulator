@@ -136,4 +136,9 @@ public class TestTrafficOneApproach extends TestTraffic {
     }
   }
 
+  @Override
+  public Movement[] getScheduledMovements() {
+    return new Movement[0];
+  }
+
 }

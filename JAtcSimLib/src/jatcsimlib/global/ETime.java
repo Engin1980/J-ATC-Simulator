@@ -32,6 +32,7 @@ public class ETime implements Comparable<ETime> {
     set(h, m, s);
   }
 
+  // TODO remove sets or make them private, ensure that constructor rounds value around midnight.
   public final void set(int hours, int minutes, int seconds) {
     this.value = hours * 60 * 60 + minutes * 60 + seconds;
   }
@@ -118,5 +119,15 @@ public class ETime implements Comparable<ETime> {
    */
   public boolean isIntegralMinute() {
     return getSeconds() == 0;
+  }
+
+  /**
+   * Returns clone of this time extended by minutes
+   * @param minutes Number of minutes to add.
+   * @return This time extended by number of minutes.
+   */
+  public ETime addMinutes(int minutes) {
+    // TODO check for midnight
+    return new ETime(this.getTotalSeconds() + minutes*60);
   }
 }

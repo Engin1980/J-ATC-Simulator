@@ -5,39 +5,27 @@
  */
 package jatcsimlib.traffic;
 
+import com.sun.org.apache.bcel.internal.generic.RET;
 import jatcsimlib.Acc;
-import static jatcsimlib.Simulation.rnd;
 import jatcsimlib.airplanes.Airplane;
 import jatcsimlib.airplanes.AirplaneType;
 import jatcsimlib.airplanes.Callsign;
 import jatcsimlib.airplanes.Squawk;
 import jatcsimlib.atcs.Atc;
-import jatcsimlib.commands.AfterAltitudeCommand;
-import jatcsimlib.commands.ChangeAltitudeCommand;
-import jatcsimlib.commands.Command;
-import jatcsimlib.commands.ContactCommand;
-import jatcsimlib.commands.ProceedDirectCommand;
+import jatcsimlib.commands.*;
 import jatcsimlib.coordinates.Coordinate;
 import jatcsimlib.coordinates.Coordinates;
 import jatcsimlib.exceptions.ERuntimeException;
 import jatcsimlib.global.ETime;
 import jatcsimlib.global.Global;
 import jatcsimlib.global.KeyList;
-import jatcsimlib.world.Navaid;
-import jatcsimlib.world.Route;
-import jatcsimlib.world.Routes;
-import jatcsimlib.world.Runway;
-import jatcsimlib.world.RunwayThreshold;
-import jatcsimlib.world.VfrPoint;
-import java.util.AbstractList;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
+import jatcsimlib.world.*;
+
+import java.util.*;
+
+import static jatcsimlib.Simulation.rnd;
 
 /**
- *
  * @author Marek Vajgl
  */
 public class CustomTraffic extends Traffic {
@@ -74,23 +62,38 @@ public class CustomTraffic extends Traffic {
   private final double[] probabilityOfCategory = new double[4];
 
   /**
+   * Specifies delay probability, range 0.0-1.0.
+   */
+  private final double delayProbability = 0.3;
+  /**
+   * Max delay in minutes per step.
+   */
+  private final int maxDelayInMinutesPerStep = 15;
+
+  /**
    * Specifies if extended callsigns containing characters at the end can be used.
    */
   private final boolean useExtendedCallsigns;
 
-  private int lastHourGeneratedTraffic = -1;
+  /**
+   * How many minutes takes it approximately to fly whole approach.
+   */
+  private final int arrivalRouteTimeInMinutes = 20;
+
+
   private final List<Movement> preparedMovements = new LinkedList();
+  private int nextHourToGenerateTraffic = -1;
 
   public CustomTraffic(int movementsPerHour, double probabilityOfDeparture, int maxPlanesInSimulation, double probabilityOfIfr,
-    int trafficCustomWeightTypeA, int trafficCustomWeightTypeB, int trafficCustomWeightTypeC, int trafficCustomWeightTypeD,
-    boolean useExtendedCallsigns) {
+                       int trafficCustomWeightTypeA, int trafficCustomWeightTypeB, int trafficCustomWeightTypeC, int trafficCustomWeightTypeD,
+                       boolean useExtendedCallsigns) {
 
-    if (movementsPerHour < 1) {
-      throw new IllegalArgumentException("Argument \"movementsPerHour\" must be equal or greater than 1.");
+    if (movementsPerHour < 0) {
+      throw new IllegalArgumentException("Argument \"movementsPerHour\" must be equal or greater than 0.");
     }
 
     if (maxPlanesInSimulation < 1) {
-      throw new IllegalArgumentException("Argument \"maxPlanesInSimulation\" must be equal or greather than 1.");
+      throw new IllegalArgumentException("Argument \"maxPlanesInSimulation\" must be equal or greater than 1.");
     }
 
     if (eng.eSystem.Number.isBetweenOrEqual(0, probabilityOfDeparture, 1) == false) {
@@ -116,7 +119,7 @@ public class CustomTraffic extends Traffic {
       probabilityOfCategory[2] = probabilityOfCategory[1] + trafficCustomWeightTypeC / sum;
       probabilityOfCategory[3] = 1;
     }
-    
+
     this.useExtendedCallsigns = useExtendedCallsigns;
   }
 
@@ -147,21 +150,28 @@ public class CustomTraffic extends Traffic {
 
   @Override
   public void generateNewMovementsIfRequired() {
-    if (lastHourGeneratedTraffic != -1 && Acc.now().getHours() != lastHourGeneratedTraffic) {
+    if (nextHourToGenerateTraffic != -1 && Acc.now().getHours() != nextHourToGenerateTraffic) {
       return;
     }
 
-    int expMovs = movementsPerHour[Acc.now().getHours()];
+    int currentHour = Acc.now().getHours();
+    int expMovs = movementsPerHour[currentHour];
     for (int i = 0; i < expMovs; i++) {
-      Movement m = generateMovement(Acc.now().getHours());
+      Movement m = generateMovement(currentHour);
       preparedMovements.add(m);
-      System.out.println("\tPrepared movement: " + m);
     }
-    Collections.sort(preparedMovements, new MovementSortByETimeComparer());
-    lastHourGeneratedTraffic = Acc.now().getHours() + 1;
-    if (lastHourGeneratedTraffic > 23) {
-      lastHourGeneratedTraffic = 0;
+    Collections.sort(preparedMovements, new Movement.SortByETimeComparer());
+    nextHourToGenerateTraffic = currentHour + 1;
+    if (nextHourToGenerateTraffic > 23) {
+      nextHourToGenerateTraffic = 0;
     }
+  }
+
+  @Override
+  public Movement[] getScheduledMovements() {
+    Movement [] ret =
+        preparedMovements.toArray(new Movement[0]);
+    return ret;
   }
 
   private Movement generateMovement(int hour) {
@@ -170,9 +180,22 @@ public class CustomTraffic extends Traffic {
     boolean isDeparture = (Acc.rnd().nextDouble() <= this.probabilityOfDeparture);
     boolean isIfr = Acc.rnd().nextDouble() <= this.probabilityOfIfr;
     Callsign cls = generateCallsign(isIfr);
-    Movement ret = new Movement(cls, initTime, isDeparture, isIfr);
+
+    int delayInMinutes = generateDelayMinutes();
+    ETime scheduledTime = isDeparture ? initTime.clone() : initTime.addMinutes(arrivalRouteTimeInMinutes);
+
+    Movement ret = new Movement(cls, initTime, delayInMinutes, isDeparture, isIfr);
     return ret;
 
+  }
+
+  private int generateDelayMinutes() {
+    int ret = 0;
+    while (Acc.rnd().nextDouble() < delayProbability) {
+      int del = Acc.rnd().nextInt(maxDelayInMinutesPerStep);
+      ret += del;
+    }
+    return ret;
   }
 
   private Callsign generateCallsign(boolean isIfr) {
@@ -259,7 +282,7 @@ public class CustomTraffic extends Traffic {
       r = tryGetRandomIfrRoute(true, pt);
       if (r == null) {
         r = tryGeneratePointRoute(true);
-        //TODO ta funkce před by se neměla jmenovat "tryGenerate...", protože se čeká, že vždycky něco vrací
+        //TODO this function should not be called "tryGenerate..." as its expected always to return something
       }
       coord = generateArrivalCoordinate(r.getMainFix().getCoordinate(), Acc.threshold().getCoordinate());
       heading = (int) Coordinates.getBearing(coord, r.getMainFix().getCoordinate());
@@ -268,10 +291,10 @@ public class CustomTraffic extends Traffic {
       routeCmds = r.getCommandsListClone();
       // added command to descend
       routeCmds.add(0,
-        new ChangeAltitudeCommand(
-          ChangeAltitudeCommand.eDirection.descend,
-          Acc.atcCtr().getOrderedAltitude()
-        ));
+          new ChangeAltitudeCommand(
+              ChangeAltitudeCommand.eDirection.descend,
+              Acc.atcCtr().getOrderedAltitude()
+          ));
       // added command to contact CTR
       routeCmds.add(0, new ContactCommand(Atc.eType.ctr));
 
@@ -282,20 +305,20 @@ public class CustomTraffic extends Traffic {
       coord = generateArrivalCoordinate(entryPoint.getCoordinate(), Acc.threshold().getCoordinate());
       heading = (int) Coordinates.getBearing(coord, entryPoint.getCoordinate());
       alt = Acc.airport().getVfrAltitude();
-      
+
       routeCmds = new LinkedList<>();
       routeCmds.add(0,
-        new ProceedDirectCommand(Acc.airport().getMainAirportNavaid()));
+          new ProceedDirectCommand(Acc.airport().getMainAirportNavaid()));
       routeCmds.add(new ContactCommand(Atc.eType.app));
-      
+
       routeName = "(vfr)";
     }
     Squawk sqwk = generateSqwk();
     spd = pt.vCruise;
-    
+
     ret = new Airplane(
-      cs, coord, sqwk, pt, heading, alt, spd, false,
-      routeName, routeCmds);
+        cs, coord, sqwk, pt, heading, alt, spd, false,
+        routeName, routeCmds);
 
     return ret;
   }
@@ -316,7 +339,7 @@ public class CustomTraffic extends Traffic {
   private Coordinate generateArrivalCoordinate(Coordinate navFix, Coordinate aipFix) {
     double radial = Coordinates.getBearing(aipFix, navFix);
     radial += rnd.nextDouble() * 50 - 25; // nahodne zatoceni priletoveho radialu
-    double dist = rnd.nextDouble() * Global.MAX_ARRIVING_PLANE_DISTANCE; // vzdalenost od prvniho bodu STARu
+    double dist = rnd.nextDouble() * Global.MAX_ARRIVING_PLANE_DISTANCE + 5; // vzdalenost od prvniho bodu STARu
     Coordinate ret = null;
     while (ret == null) {
 
@@ -428,11 +451,11 @@ public class CustomTraffic extends Traffic {
     routeCmds.add(indx++, new ContactCommand(Atc.eType.twr));
 
     routeCmds.add(indx++, new ChangeAltitudeCommand(
-      ChangeAltitudeCommand.eDirection.climb, Acc.threshold().getInitialDepartureAltitude()));
+        ChangeAltitudeCommand.eDirection.climb, Acc.threshold().getInitialDepartureAltitude()));
 
     // -- po vysce+300 ma kontaktovat APP
     routeCmds.add(indx++,
-      new AfterAltitudeCommand(Acc.threshold().getParent().getParent().getAltitude() + Acc.rnd().nextInt(150, 450)));
+        new AfterAltitudeCommand(Acc.threshold().getParent().getParent().getAltitude() + Acc.rnd().nextInt(150, 450)));
     routeCmds.add(indx++, new ContactCommand(Atc.eType.app));
 
     // -- po vysce + 3000 rychlost na odlet
@@ -446,8 +469,8 @@ public class CustomTraffic extends Traffic {
       routeName = "(vfr)";
     }
     ret = new Airplane(
-      cs, coord, sqwk, pt, heading, alt, spd, true,
-      routeName, routeCmds);
+        cs, coord, sqwk, pt, heading, alt, spd, true,
+        routeName, routeCmds);
 
     return ret;
   }
@@ -470,14 +493,3 @@ public class CustomTraffic extends Traffic {
 
 }
 
-// <editor-fold defaultstate="collapsed" desc=" MovementSortByETimeComparer ">
-class MovementSortByETimeComparer implements Comparator<Movement> {
-
-  @Override
-  public int compare(Movement o1, Movement o2) {
-    return o1.getInitTime().compareTo(o2.getInitTime());
-  }
-
-}
-
-// </editor-fold>

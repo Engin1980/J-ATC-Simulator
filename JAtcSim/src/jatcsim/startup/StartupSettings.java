@@ -6,28 +6,25 @@
 package jatcsim.startup;
 
 import eng.eIni.IniFile;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- *
  * @author Marek Vajgl
  */
 public class StartupSettings {
 
+  private static final Map<Integer, Way> maps;
   private static int IDCNT = 1;
-  
   private static final int AREA_XML_FILE = IDCNT++;
   private static final int PLANES_XML_FILES = IDCNT++;
   private static final int ICAO = IDCNT++;
-
   private static final int TIME = IDCNT++;
-
   private static final int WEATHER_USER_METAR = IDCNT++;
   private static final int WEATHER_ONLINE = IDCNT++;
   private static final int WEATHER_USER_CHANGES = IDCNT++;
-
   private static final int TRAFFIC_USE_XML = IDCNT++;
   private static final int TRAFFIC_XML_FILE = IDCNT++;
   private static final int TRAFFIC_CUSTOM_MOVEMENTS = IDCNT++;
@@ -40,12 +37,29 @@ public class StartupSettings {
   private static final int TRAFFIC_XML_DELAY_ALLOWED = IDCNT++;
   private static final int TRAFFIC_CUSTOM_USING_EXTENDED_CALLSIGNS = IDCNT++;
   private static final int TRAFFIC_CUSTOM_MAX_PLANES = IDCNT++;
-  
   private static final int RADAR_PACK_CLASS = IDCNT++;
-  
   private static final int SIMULATION_SPEED = IDCNT++;
-
-  private static final Map<Integer, Way> maps;
+  private String areaXmlFile;
+  private String planesXmlFile;
+  private String recentIcao;
+  private String recentTime;
+  private String weatherUserMetar;
+  private boolean weatherOnline;
+  private int weatherUserChanges;
+  private boolean trafficUseXml;
+  private String trafficXmlFile;
+  private int trafficCustomMovements;
+  private int trafficCustomArrivals2Departures;
+  private int trafficCustomVfr2Ifr;
+  private int trafficCustomWeightTypeA;
+  private int trafficCustomWeightTypeB;
+  private int trafficCustomWeightTypeC;
+  private int trafficCustomWeightTypeD;
+  private boolean trafficXmlDelayAllowed;
+  private boolean trafficCustomUsingExtendedCallsigns;
+  private int trafficCustomMaxPlanes;
+  private String radarPackClassName;
+  private int simulationSecondLengthInMs;
 
   static {
     maps = new HashMap();
@@ -71,51 +85,26 @@ public class StartupSettings {
     maps.put(TRAFFIC_XML_DELAY_ALLOWED, new Way("Traffic", "delayAllowed"));
     maps.put(TRAFFIC_CUSTOM_USING_EXTENDED_CALLSIGNS, new Way("Traffic", "useExtendedCallsigns"));
     maps.put(TRAFFIC_CUSTOM_MAX_PLANES, new Way("Traffic", "maxPlanes"));
-    
+
     maps.put(RADAR_PACK_CLASS, new Way("Radar", "radar"));
-    
+
     maps.put(SIMULATION_SPEED, new Way("Simulation", "secondLengthInMs"));
   }
 
-  private String areaXmlFile;
-  private String planesXmlFile;
-
-  private String recentIcao;
-  private String recentTime;
-
-  private String weatherUserMetar;
-  private boolean weatherOnline;
-  private int weatherUserChanges;
-
-  private boolean trafficUseXml;
-  private String trafficXmlFile;
-  private int trafficCustomMovements;
-  private int trafficCustomArrivals2Departures;
-  private int trafficCustomVfr2Ifr;
-  private int trafficCustomWeightTypeA;
-  private int trafficCustomWeightTypeB;
-  private int trafficCustomWeightTypeC;
-  private int trafficCustomWeightTypeD;
-  private boolean trafficXmlDelayAllowed;
-  private boolean trafficCustomUsingExtendedCallsigns;
-  private int trafficCustomMaxPlanes;
-  
-  private String radarPackClassName;
-  
-  private int simulationSecondLengthInMs;
-  
-  
   public static StartupSettings tryLoad() {
     StartupSettings ret = new StartupSettings();
     String iniFileName = jatcsim.JAtcSim.resFolder.toString() + "\\settings\\config.ini";
 
     IniFile inf = IniFile.tryLoad(iniFileName);
+    //TODO process error in some better way than this stupid exception
+    if (inf == null)
+      throw new RuntimeException("Failed to load INI file from " + iniFileName);
 
     ret.areaXmlFile = getString(inf, AREA_XML_FILE);
     ret.planesXmlFile = getString(inf, PLANES_XML_FILES);
 
     ret.recentIcao = getString(inf, ICAO);
-    ret.recentTime = getString(inf,TIME);
+    ret.recentTime = getString(inf, TIME);
 
     ret.weatherOnline = getBoolean(inf, WEATHER_ONLINE, true);
     ret.weatherUserChanges = getInt(inf, WEATHER_USER_CHANGES, 0);
@@ -135,59 +124,19 @@ public class StartupSettings {
     ret.trafficCustomMaxPlanes = getInt(inf, TRAFFIC_CUSTOM_MAX_PLANES, 15);
 
     ret.radarPackClassName = getString(inf, RADAR_PACK_CLASS, "jatcsim.frmPacks.simple.Pack");
-    
+
     ret.simulationSecondLengthInMs = getInt(inf, SIMULATION_SPEED, 750);
-    
+
     return ret;
   }
 
-  public void save() {
-    String iniFileName = jatcsim.JAtcSim.resFolder.toString() + "\\settings\\config.ini";
-
-    IniFile inf = new IniFile();
-
-    setString(inf,  AREA_XML_FILE, this.areaXmlFile);
-    setString(inf,  PLANES_XML_FILES, this.planesXmlFile);
-
-    setString(inf,  ICAO, this.recentIcao);
-    setString(inf,  TIME, this.recentTime);
-
-    setBoolean(inf,  WEATHER_ONLINE, this.weatherOnline);
-    setInt(inf,  WEATHER_USER_CHANGES, this.weatherUserChanges);
-    setString(inf,  WEATHER_USER_METAR, this.weatherUserMetar);
-
-    setBoolean(inf,  TRAFFIC_USE_XML, this.trafficUseXml);
-    setString(inf,  TRAFFIC_XML_FILE, this.trafficXmlFile);
-    setInt(inf,  TRAFFIC_CUSTOM_MOVEMENTS, this.trafficCustomMovements);
-    setInt(inf,  TRAFFIC_CUSTOM_ARRIVALS2DEPARTURES, this.trafficCustomArrivals2Departures);
-    setInt(inf,  trafficCustomVfr2Ifr, this.trafficCustomVfr2Ifr);
-    setInt(inf,  TRAFFIC_CUSTOM_A_TYPE_WEIGHT, this.trafficCustomWeightTypeA);
-    setInt(inf,  TRAFFIC_CUSTOM_B_TYPE_WEIGHT, this.trafficCustomWeightTypeB);
-    setInt(inf,  TRAFFIC_CUSTOM_C_TYPE_WEIGHT, this.trafficCustomWeightTypeC);
-    setInt(inf,  TRAFFIC_CUSTOM_D_TYPE_WEIGHT, this.trafficCustomWeightTypeD);
-    setBoolean(inf, TRAFFIC_XML_DELAY_ALLOWED, this.trafficXmlDelayAllowed);
-    setBoolean(inf, TRAFFIC_CUSTOM_USING_EXTENDED_CALLSIGNS, this.trafficCustomUsingExtendedCallsigns);
-    setInt(inf, TRAFFIC_CUSTOM_MAX_PLANES, this.trafficCustomMaxPlanes);
-
-    setString(inf, RADAR_PACK_CLASS, this.radarPackClassName);
-    
-    setInt(inf, SIMULATION_SPEED, this.simulationSecondLengthInMs);
-    
-    try {
-      inf.save(iniFileName);
-    } catch (IOException ex) {
-      //TODO log that saving failed
-      System.out.println("Failed to save config.ini.");
-    }
-  }
-
-  private static String getString(IniFile inf, int wayKey, String defaultValue){
+  private static String getString(IniFile inf, int wayKey, String defaultValue) {
     String ret = getString(inf, wayKey);
     if (ret == null || ret.isEmpty())
       ret = defaultValue;
     return ret;
   }
-  
+
   private static String getString(IniFile inf, int wayKey) {
     Way way = maps.get(wayKey);
     String ret = inf.getValue(way.section, way.key);
@@ -230,18 +179,55 @@ public class StartupSettings {
     }
     return ret;
   }
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+  public static int getIDCNT() {
+    return IDCNT;
+  }
+
+  public static void setIDCNT(int IDCNT) {
+    StartupSettings.IDCNT = IDCNT;
+  }
+
+  public void save() {
+    String iniFileName = jatcsim.JAtcSim.resFolder.toString() + "\\settings\\config.ini";
+
+    IniFile inf = new IniFile();
+
+    setString(inf, AREA_XML_FILE, this.areaXmlFile);
+    setString(inf, PLANES_XML_FILES, this.planesXmlFile);
+
+    setString(inf, ICAO, this.recentIcao);
+    setString(inf, TIME, this.recentTime);
+
+    setBoolean(inf, WEATHER_ONLINE, this.weatherOnline);
+    setInt(inf, WEATHER_USER_CHANGES, this.weatherUserChanges);
+    setString(inf, WEATHER_USER_METAR, this.weatherUserMetar);
+
+    setBoolean(inf, TRAFFIC_USE_XML, this.trafficUseXml);
+    setString(inf, TRAFFIC_XML_FILE, this.trafficXmlFile);
+    setInt(inf, TRAFFIC_CUSTOM_MOVEMENTS, this.trafficCustomMovements);
+    setInt(inf, TRAFFIC_CUSTOM_ARRIVALS2DEPARTURES, this.trafficCustomArrivals2Departures);
+    setInt(inf, trafficCustomVfr2Ifr, this.trafficCustomVfr2Ifr);
+    setInt(inf, TRAFFIC_CUSTOM_A_TYPE_WEIGHT, this.trafficCustomWeightTypeA);
+    setInt(inf, TRAFFIC_CUSTOM_B_TYPE_WEIGHT, this.trafficCustomWeightTypeB);
+    setInt(inf, TRAFFIC_CUSTOM_C_TYPE_WEIGHT, this.trafficCustomWeightTypeC);
+    setInt(inf, TRAFFIC_CUSTOM_D_TYPE_WEIGHT, this.trafficCustomWeightTypeD);
+    setBoolean(inf, TRAFFIC_XML_DELAY_ALLOWED, this.trafficXmlDelayAllowed);
+    setBoolean(inf, TRAFFIC_CUSTOM_USING_EXTENDED_CALLSIGNS, this.trafficCustomUsingExtendedCallsigns);
+    setInt(inf, TRAFFIC_CUSTOM_MAX_PLANES, this.trafficCustomMaxPlanes);
+
+    setString(inf, RADAR_PACK_CLASS, this.radarPackClassName);
+
+    setInt(inf, SIMULATION_SPEED, this.simulationSecondLengthInMs);
+
+    try {
+      inf.save(iniFileName);
+    } catch (IOException ex) {
+      //TODO log that saving failed
+      System.out.println("Failed to save config.ini.");
+    }
+  }
+
   public boolean isTrafficXmlDelayAllowed() {
     return trafficXmlDelayAllowed;
   }
@@ -252,6 +238,10 @@ public class StartupSettings {
 
   public String getRecentIcao() {
     return recentIcao;
+  }
+
+  public void setRecentIcao(String recentIcao) {
+    this.recentIcao = recentIcao;
   }
 
   public String getWeatherUserMetar() {
@@ -278,10 +268,6 @@ public class StartupSettings {
     this.weatherUserChanges = weatherUserChanges;
   }
 
-  public void setRecentIcao(String recentIcao) {
-    this.recentIcao = recentIcao;
-  }
-
   public String getRecentTime() {
     return recentTime;
   }
@@ -289,7 +275,6 @@ public class StartupSettings {
   public void setRecentTime(String recentTime) {
     this.recentTime = recentTime;
   }
-
 
   public String getAreaXmlFile() {
     return areaXmlFile;
@@ -395,14 +380,6 @@ public class StartupSettings {
     this.trafficCustomUsingExtendedCallsigns = trafficCustomUsingExtendedCallsigns;
   }
 
-  public static int getIDCNT() {
-    return IDCNT;
-  }
-
-  public static void setIDCNT(int IDCNT) {
-    StartupSettings.IDCNT = IDCNT;
-  }
-
   public int getTrafficCustomMaxPlanes() {
     return trafficCustomMaxPlanes;
   }
@@ -418,7 +395,7 @@ public class StartupSettings {
   public void setSimulationSecondLengthInMs(int simulationSecondLengthInMs) {
     this.simulationSecondLengthInMs = simulationSecondLengthInMs;
   }
-  
+
 }
 
 class Way {
