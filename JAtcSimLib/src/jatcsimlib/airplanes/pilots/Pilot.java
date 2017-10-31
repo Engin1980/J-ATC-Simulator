@@ -879,6 +879,8 @@ public class Pilot {
     Message m = Message.create(parent, atc, saidText.clone());
     Acc.messenger().addMessage(m);
 
+    System.out.println("Saying " + m.toString() + " // " + m.toContentString());
+
     saidText.clear();
   }
 

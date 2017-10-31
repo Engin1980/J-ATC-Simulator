@@ -1,0 +1,99 @@
+title JAtcSim radar painting
+
+participant main()
+participant simPack
+participant sim
+participant frmMain
+
+main()->+main(): init
+activate main()
+main()->sim : create sim
+
+main()->+simPack : init()
+main()->simPack : startPack()
+simPack->+frmMain : create
+frmMain->+radarComponent: create
+radarComponent -> +paintManager: .ctor
+paintManager --> -radarComponent :
+
+
+note over radarComponent
+    addListener:
+    radarComponent.draw
+    -> paintManager
+end note
+
+radarComponent --> -frmMain :
+deactivate frmMain
+
+note over simPack
+    addListener:
+    sim.elapsedSecond
+    -> frmMain
+end note
+
+simPack->+sim : start()
+deactivate simPack
+
+loop simulation elapses second
+sim->+frmMain: secondElapsed()
+frmMain->+radarComponent: repaint()
+note left of radarComponent : set of \n paint events
+
+radarComponent->+paintManager:draw()
+
+paintManager -> visualiser : beforeDraw()
+
+paintManager -> +paintManager : drawBackground()
+deactivate paintManager
+
+paintManager -> +paintManager : drawBorders()
+paintManager -> +area : getBorders()
+area --> -paintManager: borders
+deactivate paintManager
+
+paintManager -> +paintManager : drawSids()
+paintManager -> +sim : getActiveRunwayThreshold().getRoutes()
+sim --> -paintManager : routes
+deactivate paintManager
+
+paintManager -> +paintManager : drawStars()
+paintManager -> +sim : getActiveRunwayThreshold().getRoutes()
+sim --> -paintManager : routes
+deactivate paintManager
+
+paintManager -> +paintManager : drawApproaches()
+paintManager -> +sim : getActiveRunwayThreshold().getHighestApproach()
+sim --> -paintManager : approach
+deactivate paintManager
+
+paintManager -> +paintManager : drawNavaids()
+paintManager -> +area : getNavaids()
+area --> -paintManager : navaids
+deactivate paintManager
+
+paintManager -> +paintManager : drawAirports()
+paintManager -> +area : getAirports()
+area --> - paintManager : airports
+deactivate paintManager
+
+paintManager -> +paintManager : drawAirplanes()
+paintManager -> +sim: getPlaneInfos()
+sim --> -paintManager : planes
+deactivate paintManager
+
+paintManager -> +paintManager : drawCaptions()
+paintManager -> +sim : getMessenger()
+sim --> -paintManager : messenger
+paintManager -> +messenger: getMyMessages()
+messenger --> -paintManager : messages
+deactivate paintManager
+
+paintManager -> +paintManager : drawTime()
+deactivate paintManager
+
+paintManager -> visualiser : afterDraw()
+deactivate paintManager
+
+end
+

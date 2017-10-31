@@ -1,0 +1,3 @@
+Sequential diagrams from
+ - sequencediagram.org
+ - https://www.websequencediagrams.com/

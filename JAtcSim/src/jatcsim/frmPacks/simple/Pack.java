@@ -58,7 +58,7 @@ public class Pack extends jatcsim.frmPacks.Pack {
   }
 
   private void updateScheduledTrafficListing() {
-    // todo allways creates an array as a copy of list of scheduled movements, what can be time consuming
+    // todo always creates an array as a copy of list of scheduled movements, what can be time consuming
     Movement[] movements = this.sim.getScheduledMovements();
     if (movements.length != lastMovementCount) {
       frmScheduledTrafficListing.refresh(movements);
