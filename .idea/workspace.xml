@@ -2,32 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0a5135e5-75c5-448e-b07a-2ec70e5a6d00" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/newMessaging/Messenger.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/newMessaging/StringMessageContent.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/newMessaging/System.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/formatting/Formatter.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/formatting/LongFormatter.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/parsing/Parser.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/parsing/shortParsing/AfterNavaidParser.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/parsing/shortParsing/AfterSpeedParser.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/parsing/shortParsing/ChangeAltitudeParser.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/parsing/shortParsing/ChangeHeadingParser.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/parsing/shortParsing/ChangeSpeedParser.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/parsing/shortParsing/ClearedToApproachParser.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/parsing/shortParsing/ContactParser.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/parsing/shortParsing/HoldParser.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/parsing/shortParsing/ParseDef.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/parsing/shortParsing/ParserResult.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/parsing/shortParsing/ProceedDirectParser.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/parsing/shortParsing/RadarContactConfirmationParser.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/parsing/shortParsing/ShortParser.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/parsing/shortParsing/ShortcutParser.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/parsing/shortParsing/SpeechParser.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/parsing/shortParsing/ThenParser.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/commands/specific/RegexGrouper.java" afterPath="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/parsing/shortParsing/RegexGrouper.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/Speech.java" afterPath="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/Speech.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/commands/CommandResponse.java" afterPath="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/commands/CommandResponse.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/newMessaging/MessageDelayer.java" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -38,126 +13,7 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="AfterNavaidParser.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/parsing/shortParsing/AfterNavaidParser.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="90">
-              <caret line="6" column="0" lean-forward="false" selection-start-line="6" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="AfterSpeedParser.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/parsing/shortParsing/AfterSpeedParser.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="60">
-              <caret line="4" column="0" lean-forward="false" selection-start-line="4" selection-start-column="0" selection-end-line="4" selection-end-column="0" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ChangeAltitudeParser.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/parsing/shortParsing/ChangeAltitudeParser.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="75">
-              <caret line="5" column="0" lean-forward="false" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="0" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ChangeHeadingParser.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/parsing/shortParsing/ChangeHeadingParser.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="75">
-              <caret line="5" column="0" lean-forward="false" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="0" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ChangeSpeedParser.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/parsing/shortParsing/ChangeSpeedParser.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="90">
-              <caret line="6" column="0" lean-forward="false" selection-start-line="6" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ClearedToApproachParser.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/parsing/shortParsing/ClearedToApproachParser.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="120">
-              <caret line="8" column="0" lean-forward="false" selection-start-line="8" selection-start-column="0" selection-end-line="8" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ContactParser.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/parsing/shortParsing/ContactParser.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="90">
-              <caret line="6" column="0" lean-forward="false" selection-start-line="6" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="HoldParser.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/parsing/shortParsing/HoldParser.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="495">
-              <caret line="38" column="13" lean-forward="false" selection-start-line="38" selection-start-column="13" selection-end-line="38" selection-end-column="13" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ShortcutParser.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/parsing/shortParsing/ShortcutParser.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="90">
-              <caret line="6" column="0" lean-forward="false" selection-start-line="6" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ShortParser.java" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/parsing/shortParsing/ShortParser.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="50">
-              <caret line="57" column="7" lean-forward="true" selection-start-line="57" selection-start-column="7" selection-end-line="57" selection-end-column="7" />
-              <folding>
-                <element signature="imports" expanded="true" />
-                <element signature="n#!!doc;n#parsers#0;n#ShortParser#0" expanded="true" />
-                <element signature="method#normalizeCommandsInString#0;class#ShortParser#0" expanded="false" />
-                <element signature="method#getHelp#0;class#ShortParser#0" expanded="false" />
-                <element signature="method#getHelp#1;class#ShortParser#0" expanded="false" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-    </leaf>
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300" />
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -196,7 +52,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/commands/formatting/ShortParser.java" />
         <option value="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/Sentence.java" />
         <option value="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/Speach.java" />
         <option value="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/commands/Command.java" />
@@ -247,6 +102,7 @@
         <option value="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/parsing/shortParsing/HoldParser.java" />
         <option value="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/parsing/shortParsing/ShortcutParser.java" />
         <option value="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/parsing/shortParsing/ShortParser.java" />
+        <option value="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/newMessaging/MessageDelayer.java" />
       </list>
     </option>
   </component>
@@ -376,6 +232,14 @@
               <item name="JAtcSimLib" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="jatcsimlib" type="462c0819:PsiDirectoryNode" />
+              <item name="newMessaging" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="JAtcSimSolution" type="b2602c69:ProjectViewProjectNode" />
+              <item name="JAtcSimSolution" type="462c0819:PsiDirectoryNode" />
+              <item name="JAtcSimLib" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="jatcsimlib" type="462c0819:PsiDirectoryNode" />
               <item name="speaking" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -395,25 +259,6 @@
               <item name="jatcsimlib" type="462c0819:PsiDirectoryNode" />
               <item name="speaking" type="462c0819:PsiDirectoryNode" />
               <item name="formatting" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="JAtcSimSolution" type="b2602c69:ProjectViewProjectNode" />
-              <item name="JAtcSimSolution" type="462c0819:PsiDirectoryNode" />
-              <item name="JAtcSimLib" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="jatcsimlib" type="462c0819:PsiDirectoryNode" />
-              <item name="speaking" type="462c0819:PsiDirectoryNode" />
-              <item name="parsing" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="JAtcSimSolution" type="b2602c69:ProjectViewProjectNode" />
-              <item name="JAtcSimSolution" type="462c0819:PsiDirectoryNode" />
-              <item name="JAtcSimLib" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="jatcsimlib" type="462c0819:PsiDirectoryNode" />
-              <item name="speaking" type="462c0819:PsiDirectoryNode" />
-              <item name="parsing" type="462c0819:PsiDirectoryNode" />
-              <item name="shortParsing" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -587,7 +432,6 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1554" height="916" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -598,7 +442,7 @@
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.20091027" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.20091027" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.43960148" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -653,14 +497,6 @@
     <select />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/commands/specific/RadarContactConfirmationCommand.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="30">
-          <caret line="2" column="13" lean-forward="false" selection-start-line="2" selection-start-column="13" selection-end-line="2" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/commands/specific/ProceedDirectCommand.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="150">
@@ -966,7 +802,7 @@
         <state relative-caret-position="150">
           <caret line="10" column="1" lean-forward="true" selection-start-line="10" selection-start-column="1" selection-end-line="10" selection-end-column="1" />
           <folding>
-            <element signature="imports" expanded="true" />
+            <element signature="imports" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1074,7 +910,7 @@
         <state relative-caret-position="60">
           <caret line="4" column="0" lean-forward="false" selection-start-line="4" selection-start-column="0" selection-end-line="4" selection-end-column="0" />
           <folding>
-            <element signature="imports" expanded="true" />
+            <element signature="imports" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1092,7 +928,7 @@
         <state relative-caret-position="60">
           <caret line="4" column="0" lean-forward="false" selection-start-line="4" selection-start-column="0" selection-end-line="4" selection-end-column="0" />
           <folding>
-            <element signature="imports" expanded="true" />
+            <element signature="imports" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1102,7 +938,7 @@
         <state relative-caret-position="75">
           <caret line="5" column="0" lean-forward="false" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="0" />
           <folding>
-            <element signature="imports" expanded="true" />
+            <element signature="imports" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1112,17 +948,7 @@
         <state relative-caret-position="75">
           <caret line="5" column="0" lean-forward="false" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="0" />
           <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/parsing/shortParsing/ChangeSpeedParser.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="90">
-          <caret line="6" column="0" lean-forward="false" selection-start-line="6" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
-          <folding>
-            <element signature="imports" expanded="true" />
+            <element signature="imports" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1140,7 +966,7 @@
         <state relative-caret-position="90">
           <caret line="6" column="0" lean-forward="false" selection-start-line="6" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
           <folding>
-            <element signature="imports" expanded="true" />
+            <element signature="imports" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1150,7 +976,7 @@
         <state relative-caret-position="495">
           <caret line="38" column="13" lean-forward="false" selection-start-line="38" selection-start-column="13" selection-end-line="38" selection-end-column="13" />
           <folding>
-            <element signature="imports" expanded="true" />
+            <element signature="imports" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1165,14 +991,34 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/parsing/shortParsing/ShortParser.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="50">
+        <state relative-caret-position="365">
           <caret line="57" column="7" lean-forward="true" selection-start-line="57" selection-start-column="7" selection-end-line="57" selection-end-column="7" />
           <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="n#!!doc;n#parsers#0;n#ShortParser#0" expanded="true" />
+            <element signature="imports" expanded="false" />
+            <element signature="n#!!doc;n#parsers#0;n#ShortParser#0" expanded="false" />
             <element signature="method#normalizeCommandsInString#0;class#ShortParser#0" expanded="false" />
             <element signature="method#getHelp#0;class#ShortParser#0" expanded="false" />
             <element signature="method#getHelp#1;class#ShortParser#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/parsing/shortParsing/ChangeSpeedParser.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="6" column="0" lean-forward="false" selection-start-line="6" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
+          <folding>
+            <element signature="imports" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/newMessaging/MessageDelayer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="840">
+          <caret line="56" column="8" lean-forward="true" selection-start-line="56" selection-start-column="8" selection-end-line="56" selection-end-column="8" />
+          <folding>
+            <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
