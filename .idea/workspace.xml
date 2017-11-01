@@ -2,18 +2,16 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="0a5135e5-75c5-448e-b07a-2ec70e5a6d00" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/commands/RadarContactConfirmationCommand.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/commands/RequestRadarContactCommand.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/Speech.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/commands/Command.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/commands/CommandResponse.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/notifications/Confirmation.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/notifications/Notification.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/notifications/Rejection.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/notifications/specific/GoodDayNotification.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/notifications/specific/RadarContactConfirmationNotification.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/notifications/specific/RequestRadarContactNotification.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/JAtcSim/src/jatcsim/JAtcSim.java" afterPath="$PROJECT_DIR$/JAtcSim/src/jatcsim/JAtcSim.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/airplanes/pilots/Pilot.java" afterPath="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/airplanes/pilots/Pilot.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/atcs/CenterAtc.java" afterPath="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/atcs/CenterAtc.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/atcs/TowerAtc.java" afterPath="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/atcs/TowerAtc.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/commands/formatting/Formatter.java" afterPath="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/commands/formatting/Formatter.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/commands/formatting/LongFormatter.java" afterPath="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/commands/formatting/LongFormatter.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/commands/formatting/ShortFormatter.java" afterPath="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/commands/formatting/ShortFormatter.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/commands/formatting/ShortParser.java" afterPath="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/commands/formatting/ShortParser.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/traffic/TestTrafficOneApproach.java" afterPath="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/traffic/TestTrafficOneApproach.java" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -25,38 +23,36 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="Pilot.java" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/airplanes/pilots/Pilot.java">
+      <file leaf-file-name="CommandList.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/commands/CommandList.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="165">
-              <caret line="558" column="47" lean-forward="false" selection-start-line="558" selection-start-column="47" selection-end-line="558" selection-end-column="47" />
+            <state relative-caret-position="150">
+              <caret line="17" column="13" lean-forward="false" selection-start-line="17" selection-start-column="13" selection-end-line="17" selection-end-column="13" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Message.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/newMessaging/Message.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="555">
+              <caret line="63" column="0" lean-forward="true" selection-start-line="63" selection-start-column="0" selection-end-line="63" selection-end-column="0" />
               <folding>
-                <element signature="docComment;class#Pilot#0" expanded="false" />
-                <element signature="e#1145#1172#0" expanded="true" />
-                <element signature="class#Behavior#0;class#Pilot#0" expanded="false" />
-                <element signature="method#Behavior#0;class#Behavior#0;class#Pilot#0" expanded="false" />
-                <element signature="class#TakeOffBehavior#0;class#Pilot#0" expanded="false" />
-                <element signature="method#fly#0;class#TakeOffBehavior#0;class#Pilot#0" expanded="false" />
-                <element signature="class#HoldBehavior#0;class#Pilot#0" expanded="false" />
-                <element signature="method#setHoldDataByEntry#0;class#HoldBehavior#0;class#Pilot#0" expanded="false" />
-                <element signature="method#fly#0;class#HoldBehavior#0;class#Pilot#0" expanded="false" />
-                <element signature="method#toLogString#0;class#HoldBehavior#0;class#Pilot#0" expanded="false" />
-                <element signature="class#ApproachBehavior#0;class#Pilot#0" expanded="false" />
-                <element signature="method#ApproachBehavior#0;class#ApproachBehavior#0;class#Pilot#0" expanded="false" />
-                <element signature="method#fly#0;class#ApproachBehavior#0;class#Pilot#0" expanded="false" />
-                <element signature="e#8832#8875#0" expanded="false" />
-                <element signature="e#9186#9252#0" expanded="false" />
-                <element signature="e#9576#9601#0" expanded="false" />
-                <element signature="e#9908#9933#0" expanded="false" />
-                <element signature="e#10251#10280#0" expanded="false" />
-                <element signature="method#toLogString#0;class#ApproachBehavior#0;class#Pilot#0" expanded="false" />
-                <element signature="n#!!doc;n#getRouteName#0;n#Pilot#0" expanded="true" />
-                <element signature="method#confirmIfReq#0;class#Pilot#0" expanded="false" />
-                <element signature="method#getIndexOfNavaidInCommands#0;class#Pilot#0" expanded="false" />
-                <element signature="method#expandThenCommands#0;class#Pilot#0" expanded="false" />
-                <element signature="method#endrivePlane#0;class#Pilot#0" expanded="false" />
-                <element signature="method#getBehaviorLogString#0;class#Pilot#0" expanded="false" />
+                <element signature="method#getSource#0;class#Message#0" expanded="false" />
+                <element signature="method#getTarget#0;class#Message#0" expanded="false" />
+                <element signature="method#getContent#0;class#Message#0" expanded="false" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Message.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/messaging/Message.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-1990">
+              <caret line="25" column="13" lean-forward="false" selection-start-line="25" selection-start-column="13" selection-end-line="25" selection-end-column="13" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -98,20 +94,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/Libs/eINI.jar!/eng/eIni/IniFile.class" />
-        <option value="$PROJECT_DIR$/JAtcSim/src/jatcsim/startup/FrmStartup.form" />
-        <option value="$PROJECT_DIR$/JAtcSim/src/jatcsim/startup/IFrmWizardAreaAndPlaneTypes.form" />
-        <option value="$PROJECT_DIR$/JAtcSim/src/jatcsim/startup/IFrmWizardAreaAndPlaneTypes.java" />
-        <option value="$PROJECT_DIR$/JAtcSim/src/jatcsim/startup/XFrmWizardAreaAndPlaneTypes.java" />
-        <option value="$PROJECT_DIR$/JAtcSim/src/jatcsim/startup/StartupWizard.java" />
-        <option value="$PROJECT_DIR$/JAtcSim/src/jatcsim/startup/LayoutManager.java" />
-        <option value="$PROJECT_DIR$/JAtcSim/src/jatcsim/startup/extenders/XmlFileSelectorExtender.java" />
-        <option value="$PROJECT_DIR$/JAtcSim/src/jatcsim/startup/extenders/TimeExtender.java" />
-        <option value="$PROJECT_DIR$/JAtcSim/src/jatcsim/startup/FrmWizardFrame.java" />
-        <option value="$PROJECT_DIR$/JAtcSim/src/jatcsim/startup/FrmWizardAirportTimeAndWeather.java" />
-        <option value="$PROJECT_DIR$/JAtcSim/src/jatcsim/startup/FrmWizardAreaAndPlaneTypes.java" />
-        <option value="$PROJECT_DIR$/JAtcSim/src/jatcsim/startup/FrmWizardTraffic.java" />
-        <option value="$PROJECT_DIR$/JAtcSim/src/jatcsim/startup/FrmWizardSimulationAndRadar.java" />
         <option value="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/global/ETime.java" />
         <option value="$PROJECT_DIR$/JAtcSim/src/jatcsim/frmPacks/simple/FrmTrafficListing.java" />
         <option value="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/traffic/Traffic.java" />
@@ -138,6 +120,31 @@
         <option value="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/traffic/TestTrafficOneApproach.java" />
         <option value="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/airplanes/pilots/Pilot.java" />
         <option value="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/commands/formatting/ShortParser.java" />
+        <option value="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/Sentence.java" />
+        <option value="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/Speach.java" />
+        <option value="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/Speech.java" />
+        <option value="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/commands/Command.java" />
+        <option value="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/notifications/Notification.java" />
+        <option value="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/commands/specific/AfterNavaidCommand.java" />
+        <option value="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/commands/specific/AfterAltitudeCommand.java" />
+        <option value="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/notifications/Confirmation.java" />
+        <option value="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/commands/specific/Rejection.java" />
+        <option value="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/notifications/Rejection.java" />
+        <option value="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/commands/CommandResponse.java" />
+        <option value="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/commands/specific/ChangeAltitudeCommand.java" />
+        <option value="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/commands/AfterCommand.java" />
+        <option value="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/commands/specific/ChangeHeadingCommand.java" />
+        <option value="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/commands/specific/ChangeSpeedCommand.java" />
+        <option value="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/commands/specific/ClearedForTakeoffCommand.java" />
+        <option value="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/commands/specific/ClearedToApproachCommand.java" />
+        <option value="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/commands/specific/ContactCommand.java" />
+        <option value="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/notifications/specific/GoodDayNotification.java" />
+        <option value="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/commands/specific/ToNavaidCommand.java" />
+        <option value="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/notifications/specific/RadarContactConfirmationNotification.java" />
+        <option value="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/notifications/specific/RequestRadarContactNotification.java" />
+        <option value="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/newMessaging/IMessageParticipant.java" />
+        <option value="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/newMessaging/IMessageContent.java" />
+        <option value="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/newMessaging/Message.java" />
       </list>
     </option>
   </component>
@@ -250,68 +257,23 @@
               <item name="JAtcSimLib" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="jatcsimlib" type="462c0819:PsiDirectoryNode" />
-              <item name="airplanes" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="JAtcSimSolution" type="b2602c69:ProjectViewProjectNode" />
-              <item name="JAtcSimSolution" type="462c0819:PsiDirectoryNode" />
-              <item name="JAtcSimLib" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="jatcsimlib" type="462c0819:PsiDirectoryNode" />
-              <item name="airplanes" type="462c0819:PsiDirectoryNode" />
-              <item name="pilots" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="JAtcSimSolution" type="b2602c69:ProjectViewProjectNode" />
-              <item name="JAtcSimSolution" type="462c0819:PsiDirectoryNode" />
-              <item name="JAtcSimLib" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="jatcsimlib" type="462c0819:PsiDirectoryNode" />
-              <item name="atcs" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="JAtcSimSolution" type="b2602c69:ProjectViewProjectNode" />
-              <item name="JAtcSimSolution" type="462c0819:PsiDirectoryNode" />
-              <item name="JAtcSimLib" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="jatcsimlib" type="462c0819:PsiDirectoryNode" />
-              <item name="atcs" type="462c0819:PsiDirectoryNode" />
-              <item name="TowerAtc.java" type="529ef68f:ClassesTreeStructureProvider$PsiClassOwnerTreeNode" />
-            </path>
-            <path>
-              <item name="JAtcSimSolution" type="b2602c69:ProjectViewProjectNode" />
-              <item name="JAtcSimSolution" type="462c0819:PsiDirectoryNode" />
-              <item name="JAtcSimLib" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="jatcsimlib" type="462c0819:PsiDirectoryNode" />
-              <item name="commands" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="JAtcSimSolution" type="b2602c69:ProjectViewProjectNode" />
-              <item name="JAtcSimSolution" type="462c0819:PsiDirectoryNode" />
-              <item name="JAtcSimLib" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="jatcsimlib" type="462c0819:PsiDirectoryNode" />
-              <item name="commands" type="462c0819:PsiDirectoryNode" />
-              <item name="formatting" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="JAtcSimSolution" type="b2602c69:ProjectViewProjectNode" />
-              <item name="JAtcSimSolution" type="462c0819:PsiDirectoryNode" />
-              <item name="JAtcSimLib" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="jatcsimlib" type="462c0819:PsiDirectoryNode" />
-              <item name="commands" type="462c0819:PsiDirectoryNode" />
-              <item name="formatting" type="462c0819:PsiDirectoryNode" />
-              <item name="ShortParser.java" type="529ef68f:ClassesTreeStructureProvider$PsiClassOwnerTreeNode" />
-            </path>
-            <path>
-              <item name="JAtcSimSolution" type="b2602c69:ProjectViewProjectNode" />
-              <item name="JAtcSimSolution" type="462c0819:PsiDirectoryNode" />
-              <item name="JAtcSimLib" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="jatcsimlib" type="462c0819:PsiDirectoryNode" />
               <item name="messaging" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="JAtcSimSolution" type="b2602c69:ProjectViewProjectNode" />
+              <item name="JAtcSimSolution" type="462c0819:PsiDirectoryNode" />
+              <item name="JAtcSimLib" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="jatcsimlib" type="462c0819:PsiDirectoryNode" />
+              <item name="newMessaging" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="JAtcSimSolution" type="b2602c69:ProjectViewProjectNode" />
+              <item name="JAtcSimSolution" type="462c0819:PsiDirectoryNode" />
+              <item name="JAtcSimLib" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="jatcsimlib" type="462c0819:PsiDirectoryNode" />
+              <item name="speaking" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -326,7 +288,12 @@
     <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
-    <property name="settings.editor.selected.configurable" value="reference.settings.ide.settings.notifications" />
+    <property name="settings.editor.selected.configurable" value="editing.templates" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Marek Vajgl\Documents\IdeaProjects\JAtcSimSolution\JAtcSimLib\src\jatcsimlib\speaking\commands\specific" />
+    </key>
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -484,26 +451,26 @@
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="true" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33748442" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.20091027" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.43960148" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3985056" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32820514" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32820514" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2496749" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.43960148" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
   <component name="VcsContentAnnotationSettings">
@@ -546,396 +513,6 @@
     <select />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/Timer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="345">
-          <caret line="34" column="0" lean-forward="false" selection-start-line="34" selection-start-column="0" selection-end-line="34" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/JAtcSim/src/jatcsim/frmPacks/simple/Pack.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="163">
-          <caret line="38" column="0" lean-forward="false" selection-start-line="38" selection-start-column="0" selection-end-line="38" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/JAtcSimDraw/src/jatcsimdraw/mainRadar/canvases/EJComponent.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="225">
-          <caret line="24" column="0" lean-forward="false" selection-start-line="24" selection-start-column="0" selection-end-line="24" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://C:/Program Files/Java/jdk1.8.0_60/src.zip!/javax/swing/JComponent.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="15">
-          <caret line="888" column="0" lean-forward="false" selection-start-line="888" selection-start-column="0" selection-end-line="888" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/JAtcSimDraw/src/jatcsimdraw/mainRadar/canvases/EJComponentCanvas.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="345">
-          <caret line="48" column="0" lean-forward="false" selection-start-line="48" selection-start-column="0" selection-end-line="48" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/events/EventManager.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="390">
-          <caret line="35" column="0" lean-forward="false" selection-start-line="35" selection-start-column="0" selection-end-line="35" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/JAtcSimDraw/src/jatcsimdraw/mainRadar/canvases/EJComponentPaintListener.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="150">
-          <caret line="14" column="22" lean-forward="false" selection-start-line="14" selection-start-column="22" selection-end-line="14" selection-end-column="22" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/JAtcSimDraw/src/jatcsimdraw/mainRadar/BasicRadar.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="235">
-          <caret line="55" column="13" lean-forward="false" selection-start-line="55" selection-start-column="13" selection-end-line="55" selection-end-column="13" />
-          <folding>
-            <element signature="e#2056#2201#0" expanded="true" />
-            <element signature="e#2200#2201#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Diagrams/JAtcSim radar painting.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Diagrams/description.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="30">
-          <caret line="2" column="3" lean-forward="false" selection-start-line="2" selection-start-column="3" selection-end-line="2" selection-end-column="3" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Diagrams/Radar redraw.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/global/MustBeBinded.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="141">
-          <caret line="21" column="33" lean-forward="true" selection-start-line="21" selection-start-column="33" selection-end-line="21" selection-end-column="33" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/world/PublishedHold.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="12">
-          <caret line="16" column="39" lean-forward="false" selection-start-line="16" selection-start-column="39" selection-end-line="16" selection-end-column="39" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/JAtcSim/src/jatcsim/startup/StartupSettings.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="141">
-          <caret line="278" column="16" lean-forward="false" selection-start-line="278" selection-start-column="16" selection-end-line="278" selection-end-column="16" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/JAtcSimXml/src/jatcsimxml/serialization/Reflecter.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="81">
-          <caret line="33" column="18" lean-forward="false" selection-start-line="33" selection-start-column="18" selection-end-line="33" selection-end-column="18" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/JAtcSimXml/src/jatcsimxml/serialization/Serializer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="141">
-          <caret line="27" column="16" lean-forward="false" selection-start-line="27" selection-start-column="16" selection-end-line="27" selection-end-column="16" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/world/Navaid.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="150">
-          <caret line="15" column="15" lean-forward="true" selection-start-line="15" selection-start-column="15" selection-end-line="15" selection-end-column="15" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/messaging/Messenger.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1800">
-          <caret line="150" column="22" lean-forward="false" selection-start-line="150" selection-start-column="22" selection-end-line="150" selection-end-column="22" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/JAtcSim/src/jatcsim/JFrameThread.java" />
-    <entry file="file://$PROJECT_DIR$/JAtcSim/src/jatcsim/frmPacks/simple/FrmFlightList.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="192" column="48" lean-forward="false" selection-start-line="192" selection-start-column="48" selection-end-line="192" selection-end-column="48" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/atcs/ComputerAtc.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="214">
-          <caret line="31" column="14" lean-forward="false" selection-start-line="31" selection-start-column="14" selection-end-line="31" selection-end-column="14" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/commands/Answer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="105">
-          <caret line="11" column="22" lean-forward="false" selection-start-line="11" selection-start-column="22" selection-end-line="11" selection-end-column="22" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/commands/Rejection.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="105">
-          <caret line="11" column="13" lean-forward="false" selection-start-line="11" selection-start-column="13" selection-end-line="11" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/commands/Confirmation.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="105">
-          <caret line="11" column="13" lean-forward="false" selection-start-line="11" selection-start-column="13" selection-end-line="11" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/commands/ShortcutCommand.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="150">
-          <caret line="14" column="13" lean-forward="false" selection-start-line="14" selection-start-column="13" selection-end-line="14" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/commands/ToNavaidCommand.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="150">
-          <caret line="14" column="13" lean-forward="false" selection-start-line="14" selection-start-column="13" selection-end-line="14" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/commands/CommandFormat.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#20308#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Diagrams/Simulation.elapseSecond.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="477">
-          <caret line="74" column="0" lean-forward="true" selection-start-line="74" selection-start-column="0" selection-end-line="74" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/airplanes/Airplane.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="176">
-          <caret line="469" column="15" lean-forward="false" selection-start-line="469" selection-start-column="15" selection-end-line="469" selection-end-column="15" />
-          <folding>
-            <element signature="e#10333#10398#0" expanded="false" />
-            <element signature="e#10845#10846#0" expanded="false" />
-            <element signature="e#10875#10876#0" expanded="false" />
-            <element signature="e#11649#11650#0" expanded="false" />
-            <element signature="e#11690#11691#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/Simulation.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="181">
-          <caret line="206" column="18" lean-forward="false" selection-start-line="206" selection-start-column="18" selection-end-line="206" selection-end-column="18" />
-          <folding>
-            <element signature="e#1496#1737#0" expanded="true" />
-            <element signature="e#1736#1737#0" expanded="true" />
-            <marker date="1509546305830" expanded="false" signature="7411:7418" ph=" { " />
-            <marker date="1509546305830" expanded="false" signature="7460:7464" ph=" }" />
-            <marker date="1509546305830" expanded="false" signature="7495:7502" ph=" { " />
-            <marker date="1509546305830" expanded="false" signature="7517:7521" ph=" }" />
-            <marker date="1509546305830" expanded="false" signature="7551:7558" ph=" { " />
-            <marker date="1509546305830" expanded="false" signature="7572:7576" ph=" }" />
-            <marker date="1509546305830" expanded="false" signature="7607:7614" ph=" { " />
-            <marker date="1509546305830" expanded="false" signature="7628:7632" ph=" }" />
-            <marker date="1509546305830" expanded="false" signature="7664:7671" ph=" { " />
-            <marker date="1509546305830" expanded="false" signature="7685:7689" ph=" }" />
-            <marker date="1509546305830" expanded="false" signature="8259:8266" ph=" { " />
-            <marker date="1509546305830" expanded="false" signature="8308:8312" ph=" }" />
-            <marker date="1509546305830" expanded="false" signature="8579:8586" ph=" { " />
-            <marker date="1509546305830" expanded="false" signature="8609:8613" ph=" }" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/commands/StringCommand.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="105">
-          <caret line="11" column="13" lean-forward="false" selection-start-line="11" selection-start-column="13" selection-end-line="11" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/messaging/IContent.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="12" column="17" lean-forward="false" selection-start-line="12" selection-start-column="17" selection-end-line="12" selection-end-column="17" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/commands/CommandList.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="150">
-          <caret line="16" column="66" lean-forward="true" selection-start-line="16" selection-start-column="66" selection-end-line="16" selection-end-column="66" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/commands/ContactCommand.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="120">
-          <caret line="12" column="16" lean-forward="true" selection-start-line="12" selection-start-column="16" selection-end-line="12" selection-end-column="16" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/commands/RadarContactConfirmationCommand.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="90">
-          <caret line="6" column="38" lean-forward="true" selection-start-line="6" selection-start-column="38" selection-end-line="6" selection-end-column="38" />
-          <folding>
-            <element signature="e#133#134#0" expanded="true" />
-            <element signature="e#176#177#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/commands/RequestRadarContactCommand.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="90">
-          <caret line="6" column="31" lean-forward="false" selection-start-line="6" selection-start-column="31" selection-end-line="6" selection-end-column="31" />
-          <folding>
-            <element signature="e#128#129#0" expanded="true" />
-            <element signature="e#166#167#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/commands/ProceedDirectCommand.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="150">
-          <caret line="14" column="13" lean-forward="false" selection-start-line="14" selection-start-column="13" selection-end-line="14" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/messaging/Message.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="259">
-          <caret line="50" column="24" lean-forward="false" selection-start-line="50" selection-start-column="24" selection-end-line="50" selection-end-column="24" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/atcs/TowerAtc.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="330">
-          <caret line="107" column="15" lean-forward="false" selection-start-line="107" selection-start-column="15" selection-end-line="107" selection-end-column="15" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/JAtcSim/src/jatcsim/JAtcSim.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="75">
-          <caret line="40" column="34" lean-forward="true" selection-start-line="40" selection-start-column="34" selection-end-line="40" selection-end-column="34" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/JAtcSimDraw/src/jatcsimdraw/mainRadar/PaintManager.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="203">
-          <caret line="38" column="0" lean-forward="false" selection-start-line="38" selection-start-column="0" selection-end-line="38" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/JAtcSim/src/jatcsim/frmPacks/simple/FrmMain.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="23">
-          <caret line="148" column="23" lean-forward="true" selection-start-line="148" selection-start-column="23" selection-end-line="148" selection-end-column="23" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/commands/formatting/Formatters.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="180">
-          <caret line="70" column="24" lean-forward="false" selection-start-line="70" selection-start-column="24" selection-end-line="70" selection-end-column="24" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/commands/formatting/Formatter.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="30" column="55" lean-forward="true" selection-start-line="30" selection-start-column="55" selection-end-line="30" selection-end-column="55" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/commands/formatting/LongFormatter.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="284">
-          <caret line="198" column="0" lean-forward="true" selection-start-line="198" selection-start-column="0" selection-end-line="198" selection-end-column="0" />
-          <folding>
-            <element signature="docComment;class#LongFormatter#0" expanded="false" />
-            <element signature="method#getInstance#0;class#LongFormatter#0" expanded="false" />
-            <element signature="method#format#0;class#LongFormatter#0" expanded="false" />
-            <element signature="method#format#3;class#LongFormatter#0" expanded="false" />
-            <element signature="method#format#4;class#LongFormatter#0" expanded="false" />
-            <element signature="method#format#5;class#LongFormatter#0" expanded="false" />
-            <element signature="method#format#6;class#LongFormatter#0" expanded="false" />
-            <element signature="method#format#7;class#LongFormatter#0" expanded="false" />
-            <element signature="method#format#8;class#LongFormatter#0" expanded="false" />
-            <element signature="method#format#9;class#LongFormatter#0" expanded="false" />
-            <element signature="method#format#10;class#LongFormatter#0" expanded="false" />
-            <element signature="method#format#11;class#LongFormatter#0" expanded="false" />
-            <element signature="method#format#13;class#LongFormatter#0" expanded="false" />
-            <element signature="e#5107#5108#0" expanded="true" />
-            <element signature="e#5129#5130#0" expanded="true" />
-            <element signature="method#format#19;class#LongFormatter#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/commands/formatting/ShortFormatter.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="315">
-          <caret line="180" column="11" lean-forward="true" selection-start-line="180" selection-start-column="11" selection-end-line="180" selection-end-column="11" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/traffic/TestTrafficOneApproach.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="227">
@@ -1005,10 +582,18 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/messaging/GoingAroundStringMessageContent.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="120">
+          <caret line="12" column="13" lean-forward="false" selection-start-line="12" selection-start-column="13" selection-end-line="12" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/airplanes/pilots/Pilot.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="165">
-          <caret line="558" column="47" lean-forward="false" selection-start-line="558" selection-start-column="47" selection-end-line="558" selection-end-column="47" />
+        <state relative-caret-position="1455">
+          <caret line="551" column="7" lean-forward="true" selection-start-line="551" selection-start-column="7" selection-end-line="551" selection-end-column="7" />
           <folding>
             <element signature="docComment;class#Pilot#0" expanded="false" />
             <element signature="e#1145#1172#0" expanded="true" />
@@ -1035,6 +620,384 @@
             <element signature="method#expandThenCommands#0;class#Pilot#0" expanded="false" />
             <element signature="method#endrivePlane#0;class#Pilot#0" expanded="false" />
             <element signature="method#getBehaviorLogString#0;class#Pilot#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/Sentence.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="45">
+          <caret line="3" column="1" lean-forward="true" selection-start-line="3" selection-start-column="1" selection-end-line="3" selection-end-column="1" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/commands/Command.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="135">
+          <caret line="15" column="22" lean-forward="false" selection-start-line="15" selection-start-column="22" selection-end-line="15" selection-end-column="22" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/commands/Answer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="30">
+          <caret line="2" column="19" lean-forward="false" selection-start-line="2" selection-start-column="19" selection-end-line="2" selection-end-column="19" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/commands/Confirmation.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="30">
+          <caret line="2" column="25" lean-forward="false" selection-start-line="2" selection-start-column="25" selection-end-line="2" selection-end-column="25" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/commands/Rejection.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="30">
+          <caret line="2" column="22" lean-forward="false" selection-start-line="2" selection-start-column="22" selection-end-line="2" selection-end-column="22" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/Speech.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="30">
+          <caret line="2" column="28" lean-forward="false" selection-start-line="2" selection-start-column="28" selection-end-line="2" selection-end-column="28" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/commands/Command.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="60">
+          <caret line="4" column="41" lean-forward="false" selection-start-line="4" selection-start-column="41" selection-end-line="4" selection-end-column="41" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/notifications/Notification.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="5" column="0" lean-forward="false" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/commands/specific/Answer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/commands/afters.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="30">
+          <caret line="2" column="19" lean-forward="false" selection-start-line="2" selection-start-column="19" selection-end-line="2" selection-end-column="19" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/commands/AfterCommandList.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="135">
+          <caret line="28" column="13" lean-forward="false" selection-start-line="28" selection-start-column="13" selection-end-line="28" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/commands/specific/CommandFormat.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/commands/specific/Confirmation.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="135">
+          <caret line="13" column="2" lean-forward="true" selection-start-line="13" selection-start-column="2" selection-end-line="15" selection-end-column="3" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/commands/specific/Rejection.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="135">
+          <caret line="13" column="2" lean-forward="false" selection-start-line="13" selection-start-column="2" selection-end-line="13" selection-end-column="2" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/commands/CommandResponse.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="150">
+          <caret line="10" column="0" lean-forward="true" selection-start-line="10" selection-start-column="0" selection-end-line="10" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/notifications/Rejection.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="210">
+          <caret line="14" column="5" lean-forward="false" selection-start-line="14" selection-start-column="5" selection-end-line="14" selection-end-column="5" />
+          <folding>
+            <element signature="imports" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/notifications/Confirmation.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="135">
+          <caret line="11" column="1" lean-forward="true" selection-start-line="11" selection-start-column="1" selection-end-line="11" selection-end-column="1" />
+          <folding>
+            <element signature="imports" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/commands/afters/AfterAltitudeCommand.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="150">
+          <caret line="14" column="13" lean-forward="false" selection-start-line="14" selection-start-column="13" selection-end-line="14" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/commands/afters/AfterNavaidCommand.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="150">
+          <caret line="15" column="13" lean-forward="false" selection-start-line="15" selection-start-column="13" selection-end-line="15" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/commands/AfterCommand.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="150">
+          <caret line="14" column="1" lean-forward="true" selection-start-line="14" selection-start-column="1" selection-end-line="14" selection-end-column="1" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/commands/afters/AfterSpeedCommand.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="135">
+          <caret line="13" column="13" lean-forward="false" selection-start-line="13" selection-start-column="13" selection-end-line="13" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/commands/specific/ChangeAltitudeCommand.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="105">
+          <caret line="11" column="2" lean-forward="true" selection-start-line="11" selection-start-column="2" selection-end-line="11" selection-end-column="2" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/commands/specific/ChangeHeadingCommand.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="105">
+          <caret line="13" column="50" lean-forward="false" selection-start-line="13" selection-start-column="50" selection-end-line="13" selection-end-column="50" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/commands/specific/GoodDayCommand.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="375">
+          <caret line="33" column="3" lean-forward="true" selection-start-line="14" selection-start-column="1" selection-end-line="33" selection-end-column="3" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/notifications/specific/RadarContactConfirmationNotification.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="105">
+          <caret line="7" column="0" lean-forward="true" selection-start-line="7" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/commands/specific/RadarContactConfirmationCommand.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="30">
+          <caret line="2" column="13" lean-forward="false" selection-start-line="2" selection-start-column="13" selection-end-line="2" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/commands/specific/ProceedDirectCommand.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="150">
+          <caret line="14" column="13" lean-forward="false" selection-start-line="14" selection-start-column="13" selection-end-line="14" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/commands/specific/HoldCommand.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="135">
+          <caret line="14" column="13" lean-forward="false" selection-start-line="14" selection-start-column="13" selection-end-line="14" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/notifications/specific/GoodDayNotification.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="315">
+          <caret line="23" column="23" lean-forward="false" selection-start-line="23" selection-start-column="23" selection-end-line="23" selection-end-column="23" />
+          <folding>
+            <element signature="imports" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/commands/specific/ContactCommand.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="165">
+          <caret line="15" column="43" lean-forward="false" selection-start-line="15" selection-start-column="43" selection-end-line="15" selection-end-column="43" />
+          <folding>
+            <element signature="imports" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/commands/specific/ClearedToApproachCommand.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="165">
+          <caret line="15" column="53" lean-forward="false" selection-start-line="15" selection-start-column="53" selection-end-line="15" selection-end-column="53" />
+          <folding>
+            <element signature="imports" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/commands/specific/ClearedForTakeoffCommand.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="165">
+          <caret line="15" column="53" lean-forward="false" selection-start-line="15" selection-start-column="53" selection-end-line="15" selection-end-column="53" />
+          <folding>
+            <element signature="imports" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/commands/specific/ChangeSpeedCommand.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="135">
+          <caret line="15" column="47" lean-forward="false" selection-start-line="15" selection-start-column="47" selection-end-line="15" selection-end-column="47" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/commands/specific/RegexGrouper.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="135">
+          <caret line="14" column="13" lean-forward="false" selection-start-line="14" selection-start-column="13" selection-end-line="14" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/notifications/specific/RequestRadarContactNotification.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="60">
+          <caret line="4" column="65" lean-forward="false" selection-start-line="4" selection-start-column="65" selection-end-line="4" selection-end-column="65" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/commands/specific/RequestRadarContactCommand.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="30">
+          <caret line="2" column="13" lean-forward="false" selection-start-line="2" selection-start-column="13" selection-end-line="2" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/commands/specific/ShortcutCommand.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="150">
+          <caret line="14" column="13" lean-forward="false" selection-start-line="14" selection-start-column="13" selection-end-line="14" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/commands/specific/StringCommand.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="105">
+          <caret line="11" column="13" lean-forward="false" selection-start-line="11" selection-start-column="13" selection-end-line="11" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/commands/specific/ThenCommand.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="120">
+          <caret line="12" column="13" lean-forward="false" selection-start-line="12" selection-start-column="13" selection-end-line="12" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/commands/specific/ToNavaidCommand.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="165">
+          <caret line="15" column="44" lean-forward="false" selection-start-line="15" selection-start-column="44" selection-end-line="15" selection-end-column="44" />
+          <folding>
+            <element signature="imports" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/commands/CommandList.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="150">
+          <caret line="17" column="13" lean-forward="false" selection-start-line="17" selection-start-column="13" selection-end-line="17" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/messaging/Message.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1990">
+          <caret line="25" column="13" lean-forward="false" selection-start-line="25" selection-start-column="13" selection-end-line="25" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/newMessaging/IMessageParticipant.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="60">
+          <caret line="4" column="2" lean-forward="false" selection-start-line="4" selection-start-column="2" selection-end-line="4" selection-end-column="2" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/newMessaging/IMessageContent.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="60">
+          <caret line="4" column="0" lean-forward="true" selection-start-line="4" selection-start-column="0" selection-end-line="4" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/newMessaging/Message.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="555">
+          <caret line="63" column="0" lean-forward="true" selection-start-line="63" selection-start-column="0" selection-end-line="63" selection-end-column="0" />
+          <folding>
+            <element signature="method#getSource#0;class#Message#0" expanded="false" />
+            <element signature="method#getTarget#0;class#Message#0" expanded="false" />
+            <element signature="method#getContent#0;class#Message#0" expanded="false" />
           </folding>
         </state>
       </provider>
