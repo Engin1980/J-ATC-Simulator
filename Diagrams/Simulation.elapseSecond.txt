@@ -1,0 +1,74 @@
+title JAtcSim second elapse
+
+participant sim
+participant ctrAtc
+participant twrAtc
+participant messenger
+
+note right of sim
+  simulation running
+  elapsing second raising
+end note
+
+sim -> + sim : secondElapsed()
+
+sim -> +ctrAtc : elapseSecond()
+ctrAtc -> +ctrAtc : _elapseSecond()
+deactivate ctrAtc
+ctrAtc -> messenger : {waiting requests} \n addMessages(...)
+deactivate ctrAtc
+
+sim -> +twrAtc : elapseSecond()
+twrAtc -> +twrAtc : _elapseSecond()
+deactivate twrAtc
+twrAtc -> messenger : {waiting requests} \n addMessages(...)
+
+sim -> sim : generateNewPlanes()
+sim -> sim : removeOldPlanes()
+sim -> +sim : updatePlanes()
+loop forEach airplane
+    sim -> +plane : elapseSecond()
+
+    plane -> +plane : processMessages()
+    plane -> +messenger : getMyMessages()
+    messenger --> -plane : messages
+    loop forEach message
+        plane -> +plane : processMessage
+        plane -> +plane : processCommands
+        plane -> +pilot : addNewCommands(...)
+        deactivate pilot
+        deactivate plane
+        deactivate plane
+
+
+    end
+    deactivate plane
+
+    plane -> +plane : drivePlane()
+    plane -> +pilot : elapseSecond()
+    pilot -> +pilot : processStandardQueueCommands()
+    deactivate pilot
+    pilot -> +pilot : processAfterCommands()
+    deactivate pilot
+    pilot -> +pilot : endrivePlane()
+    deactivate pilot
+    pilot -> +pilot : sayToAtc()
+    deactivate pilot
+    pilot --> -plane :
+    deactivate plane
+
+    plane -> +plane : updateSHABySecond()
+    deactivate plane
+
+    plane -> +plane : updateCoordinates
+    deactivate plane
+
+    deactivate plane
+end
+deactivate sim
+
+
+sim -> sim : evalAirproxes()
+
+deactivate sim
+

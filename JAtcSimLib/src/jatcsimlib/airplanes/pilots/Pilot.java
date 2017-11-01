@@ -434,7 +434,7 @@ public class Pilot {
           this.approach.getRadial(), parent.getHeading());
       parent.setTargetHeading(newHeading);
     }
-    
+
     private void updateHeadingLanded() {
       int newHeading
         = (int) Coordinates.getHeadingToRadial(
@@ -488,12 +488,9 @@ public class Pilot {
   private final Airplane parent;
   private final String routeName;
   private final List<Command> queue = new LinkedList<>();
-
   private final AfterCommandList afterCommands = new AfterCommandList();
-
   private Coordinate targetCoordinate;
   private Behavior behavior;
-
   private final AutoThrust autoThrust;
   private final CommandList saidText = new CommandList();
 
@@ -567,12 +564,12 @@ public class Pilot {
   public void elapseSecond() {
 
     /*
-    
+
      1. zpracuji se prikazy ve fronte
      2. zkontroluje se, jestli neni neco "after"
      3. ridi se letadlo
      4. ridicimu se reknou potvrzeni a zpravy
-    
+
      */
     processStandardQueueCommands();
     processAfterCommands(); // udelat vlastni queue toho co se ma udelat a pak to provest pres processQueueCommands
@@ -768,13 +765,10 @@ public class Pilot {
 
     // change of atc
     this.atc = a;
-    Message m = Message.create(
-      parent,
-      a,
-      new GoodDayCommand(parent.getCallsign(), Acc.toAltS(parent.getAltitude(), true)),
-      5);
-    Acc.messenger().addMessage(m);
-
+    // rewritten
+    // TODO now switch is realised in no-time, there is no delay between "frequency change confirmation" and "new atc call"
+    Command cmd = new GoodDayCommand(parent.getCallsign(), Acc.toAltS(parent.getAltitude(), true));
+    say(cmd);
     return true;
   }
 
@@ -879,7 +873,7 @@ public class Pilot {
     Message m = Message.create(parent, atc, saidText.clone());
     Acc.messenger().addMessage(m);
 
-    System.out.println("Saying " + m.toString() + " // " + m.toContentString());
+    System.out.println("Saying to " + this.getTunedAtc().getName() + ": " + m.toString() + " // " + m.toContentString());
 
     saidText.clear();
   }
@@ -931,13 +925,6 @@ public class Pilot {
   }
 
   private void endrivePlane() {
-//    adjustSpeed();
-//    if (hold != null) {
-//      // fly hold
-//      flyHold();
-//    } else if (app != null) {
-//      // fly app
-//      flyApproach();
     if (behavior != null) {
       behavior.fly();
     } else if (targetCoordinate != null) {
