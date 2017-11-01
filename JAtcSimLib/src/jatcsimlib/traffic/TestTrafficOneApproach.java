@@ -50,10 +50,6 @@ public class TestTrafficOneApproach extends TestTraffic {
     // added command to contact CTR
     routeCmds.add(0, new ContactCommand(Atc.eType.ctr));
 
-    for (Command routeCmd : routeCmds) {
-      System.out.println(routeCmd.toString());
-    }
-
     ret = new Airplane(
       new Callsign("CSA", "1111"),
       coord,

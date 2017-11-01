@@ -10,6 +10,8 @@ import jatcsimlib.airplanes.Airplane;
 import jatcsimlib.airplanes.AirplaneList;
 import jatcsimlib.commands.ClearedForTakeoffCommand;
 import jatcsimlib.commands.CommandList;
+import jatcsimlib.commands.GoodDayCommand;
+import jatcsimlib.commands.RadarContactConfirmationCommand;
 import jatcsimlib.coordinates.Coordinates;
 import jatcsimlib.exceptions.ENotSupportedException;
 import jatcsimlib.exceptions.ERuntimeException;
@@ -20,33 +22,65 @@ import jatcsimlib.messaging.Message;
 import jatcsimlib.weathers.Weather;
 import jatcsimlib.world.Runway;
 import jatcsimlib.world.RunwayThreshold;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
- *
  * @author Marek
  */
 public class TowerAtc extends ComputerAtc {
 
   private static final int RUNWAY_CHANGE_INFO_UPDATE_INTERVAL = 10 * 60;
-
+  private static final int MAXIMAL_SPEED_FOR_PREFERRED_RUNWAY = 5;
   private final AirplaneList readyForTakeoff = new AirplaneList();
   private final AirplaneList departings = new AirplaneList();
+  private final LastDepartures lastDepartures = new LastDepartures();
   private RunwayChangeInfo runwayChangeInfo = null;
   private RunwayThreshold runwayThresholdInUse = null;
-  private final LastDepartures lastDepartures = new LastDepartures();
 
   public TowerAtc(AtcTemplate template) {
     super(template);
   }
 
-  @Override
-  protected void _registerNewPlane(Airplane plane) {
-    if (plane.isArrival()) {
-      throw new ERuntimeException("Arriving plane cannot be registered using this method.");
+  public static RunwayThreshold getSuggestedThreshold() {
+    Weather w = Acc.weather();
+
+    RunwayThreshold rt = null;
+
+    if (w.getWindSpeetInKts() <= MAXIMAL_SPEED_FOR_PREFERRED_RUNWAY) {
+      for (Runway r : Acc.airport().getRunways()) {
+        if (r.isActive() == false) {
+          continue; // skip inactive runways
+        }
+        for (RunwayThreshold t : r.getThresholds()) {
+          if (t.isPreferred()) {
+            rt = t;
+            break;
+          }
+        }
+        if (rt != null) {
+          break;
+        }
+      }
     }
+
+    int diff = Integer.MAX_VALUE;
+    if (rt == null) {
+      // select runway according to wind
+      for (Runway r : Acc.airport().getRunways()) {
+        for (RunwayThreshold t : r.getThresholds()) {
+          int localDiff = Headings.diff(w.getWindHeading(), (int) t.getCourse());
+          if (localDiff < diff) {
+            diff = localDiff;
+            rt = t;
+          }
+        }
+      }
+    }
+
+    return rt;
   }
 
   public RunwayThreshold getRunwayThresholdInUse() {
@@ -67,6 +101,13 @@ public class TowerAtc extends ComputerAtc {
           // predavame na APP
           super.requestSwitch((Airplane) m.source);
           waitingRequestsList.add((Airplane) m.source);
+        } else if (m.content instanceof GoodDayCommand) {
+          Message msg = Message.create(
+              this,
+              (Airplane) m.source,
+              new RadarContactConfirmationCommand());
+          Acc.messenger().addMessage(msg);
+          recorder.logMessage(msg);
         }
         continue;
       } else if (m.source != Acc.atcApp()) {
@@ -129,18 +170,18 @@ public class TowerAtc extends ComputerAtc {
     if (ld == null) {
       return true;
     }
-    
+
     TakeOffSeparation tos = TakeOffSeparation.create(
-      ld.plane.getType().category, 
-      this.readyForTakeoff.get(0).getType().category);
-    
+        ld.plane.getType().category,
+        this.readyForTakeoff.get(0).getType().category);
+
     if (ld.time.addSeconds(tos.seconds).isAfter(Acc.now())) {
       return false; // there are too close due to time
     }
-    if (Coordinates.getDistanceInNM(ld.plane.getCoordinate(), this.readyForTakeoff.get(0).getCoordinate()) < tos.nm){
+    if (Coordinates.getDistanceInNM(ld.plane.getCoordinate(), this.readyForTakeoff.get(0).getCoordinate()) < tos.nm) {
       return false; // they are too close due to distance
     }
-    
+
     final int MIN_ALTITUDE_FOR_NEXT = 300;
     if (Acc.airport().getAltitude() + MIN_ALTITUDE_FOR_NEXT > ld.plane.getAltitude()) {
       return false; // the first one is not high enough
@@ -174,7 +215,7 @@ public class TowerAtc extends ComputerAtc {
     AirplaneList plns = getPlanesReadyForApp();
     for (Airplane p : plns) {
       m = Message.create(this, Acc.atcApp(),
-        new PlaneSwitchMessage(p, " to you"));
+          new PlaneSwitchMessage(p, " to you"));
       Acc.messenger().addMessage(m);
       recorder.logMessage(m);
 
@@ -186,7 +227,7 @@ public class TowerAtc extends ComputerAtc {
     List<Airplane> awaitings = waitingRequestsList.getAwaitings();
     for (Airplane p : awaitings) {
       m = Message.create(this, Acc.atcApp(),
-        new PlaneSwitchMessage(p, " to you (repeated)"));
+          new PlaneSwitchMessage(p, " to you (repeated)"));
       Acc.messenger().addMessage(m);
       recorder.logMessage(m);
     }
@@ -231,9 +272,9 @@ public class TowerAtc extends ComputerAtc {
         if (this.runwayChangeInfo == null || this.runwayChangeInfo.newRunwayThreshold != suggestedThreshold) {
           this.runwayChangeInfo = rci;
           Message m = Message.create(
-            this,
-            Acc.atcApp(),
-            "Change to runway " + rci.newRunwayThreshold.getName() + " at " + rci.changeTime.toString());
+              this,
+              Acc.atcApp(),
+              "Change to runway " + rci.newRunwayThreshold.getName() + " at " + rci.changeTime.toString());
           Acc.messenger().addMessage(m);
           recorder.logMessage(m);
         }
@@ -250,52 +291,18 @@ public class TowerAtc extends ComputerAtc {
     changeRunwayInUse(suggestedThreshold);
   }
 
-  private static final int MAXIMAL_SPEED_FOR_PREFERRED_RUNWAY = 5;
-
-  public static RunwayThreshold getSuggestedThreshold() {
-    Weather w = Acc.weather();
-
-    RunwayThreshold rt = null;
-
-    if (w.getWindSpeetInKts() <= MAXIMAL_SPEED_FOR_PREFERRED_RUNWAY) {
-      for (Runway r : Acc.airport().getRunways()) {
-        if (r.isActive() == false) {
-          continue; // skip inactive runways
-        }
-        for (RunwayThreshold t : r.getThresholds()) {
-          if (t.isPreferred()) {
-            rt = t;
-            break;
-          }
-        }
-        if (rt != null) {
-          break;
-        }
-      }
+  @Override
+  protected void _registerNewPlane(Airplane plane) {
+    if (plane.isArrival()) {
+      throw new ERuntimeException("Arriving plane cannot be registered using this method.");
     }
-
-    int diff = Integer.MAX_VALUE;
-    if (rt == null) {
-      // select runway according to wind
-      for (Runway r : Acc.airport().getRunways()) {
-        for (RunwayThreshold t : r.getThresholds()) {
-          int localDiff = Headings.diff(w.getWindHeading(), (int) t.getCourse());
-          if (localDiff < diff) {
-            diff = localDiff;
-            rt = t;
-          }
-        }
-      }
-    }
-
-    return rt;
   }
 
   private void changeRunwayInUse(RunwayThreshold newRunwayInUseThreshold) {
     Message m = Message.create(
-      this,
-      Acc.atcApp(),
-      "Runway in use " + newRunwayInUseThreshold.getName());
+        this,
+        Acc.atcApp(),
+        "Runway in use " + newRunwayInUseThreshold.getName());
     Acc.messenger().addMessage(m);
     recorder.logMessage(m);
     this.runwayThresholdInUse = newRunwayInUseThreshold;
@@ -316,6 +323,20 @@ class RunwayChangeInfo {
 
 class TakeOffSeparation {
 
+  private final static int[][] sepDistanceNm = new int[][]{
+      new int[]{4, 5, 6, 6}, // A
+      new int[]{0, 3, 3, 5}, // B
+      new int[]{0, 0, 3, 4}, // C
+      new int[]{0, 0, 0, 0}}; // D
+  private final static int[][] sepTimeSeconds = new int[][]{
+      new int[]{120, 180, 180, 180}, // A
+      new int[]{0, 120, 120, 120}, // B
+      new int[]{0, 0, 120, 120}, // C
+      new int[]{0, 0, 0, 120}}; // D
+  /**
+   * Increase frequency of departures. Higher means higher frequency of take-offs.
+   */
+  private final static double DEPARTURE_ACCELERATOR_DIVIDER = 1.3;
   public final int nm;
   public final int seconds;
 
@@ -323,18 +344,6 @@ class TakeOffSeparation {
     this.nm = nm;
     this.seconds = seconds;
   }
-
-  private final static int[][] sepDistanceNm = new int[][]{
-    new int[]{4, 5, 6, 6}, // A
-    new int[]{0, 3, 3, 5}, // B
-    new int[]{0, 0, 3, 4}, // C
-    new int[]{0, 0, 0, 0}}; // D
-
-  private final static int[][] sepTimeSeconds = new int[][]{
-    new int[]{120, 180, 180, 180}, // A
-    new int[]{0, 120, 120, 120}, // B
-    new int[]{0, 0, 120, 120}, // C
-    new int[]{0, 0, 0, 120}}; // D
 
   private static int c2i(char c) {
     switch (c) {
@@ -351,19 +360,14 @@ class TakeOffSeparation {
     }
   }
 
-  /**
-   * Increase frequency of departures. Higher means higher frequency of take-offs.
-   */
-  private final static double DEPARTURE_ACCELERATOR_DIVIDER = 1.3;
-  
   public static TakeOffSeparation create(char leadingTypeCategory, char followingTypeCategory) {
     int a = c2i(leadingTypeCategory);
     int b = c2i(followingTypeCategory);
     int time = sepTimeSeconds[a][b];
     int dist = sepDistanceNm[a][b];
-    time = (int)(time * DEPARTURE_ACCELERATOR_DIVIDER);
-    dist = (int) (dist*DEPARTURE_ACCELERATOR_DIVIDER);
-    
+    time = (int) (time * DEPARTURE_ACCELERATOR_DIVIDER);
+    dist = (int) (dist * DEPARTURE_ACCELERATOR_DIVIDER);
+
     return new TakeOffSeparation(dist, time);
   }
 }

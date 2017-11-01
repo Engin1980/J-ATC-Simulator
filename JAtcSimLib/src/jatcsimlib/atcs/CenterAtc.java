@@ -8,10 +8,7 @@ package jatcsimlib.atcs;
 import jatcsimlib.Acc;
 import jatcsimlib.airplanes.Airplane;
 import jatcsimlib.airplanes.AirplaneList;
-import jatcsimlib.commands.ChangeAltitudeCommand;
-import jatcsimlib.commands.CommandList;
-import jatcsimlib.commands.ContactCommand;
-import jatcsimlib.commands.GoodDayCommand;
+import jatcsimlib.commands.*;
 import jatcsimlib.exceptions.ERuntimeException;
 import jatcsimlib.messaging.Message;
 import java.util.List;
@@ -54,13 +51,22 @@ public class CenterAtc extends ComputerAtc {
           continue;
         
         Airplane p = (Airplane) m.source;
+        Message msg;
+
+        msg = Message.create(
+            this,
+            p,
+            new RadarContactConfirmationCommand());
+        Acc.messenger().addMessage(msg);
+        recorder.logMessage(msg);
+
         if (p.isDeparture()) {
-          Message n = Message.create(
+          msg = Message.create(
             this,
             p,
             new ChangeAltitudeCommand(ChangeAltitudeCommand.eDirection.climb, getDepartureRandomTargetAltitude(p)));
-          Acc.messenger().addMessage(n);
-          recorder.logMessage(n);
+          Acc.messenger().addMessage(msg);
+          recorder.logMessage(msg);
         }
       }
       if (m.source != Acc.atcApp()) {

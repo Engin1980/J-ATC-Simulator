@@ -8,29 +8,7 @@ package jatcsimlib.airplanes.pilots;
 import jatcsimlib.Acc;
 import jatcsimlib.airplanes.Airplane;
 import jatcsimlib.atcs.Atc;
-import jatcsimlib.commands.AfterAltitudeCommand;
-import jatcsimlib.commands.AfterCommand;
-import jatcsimlib.commands.AfterCommandList;
-import jatcsimlib.commands.AfterNavaidCommand;
-import jatcsimlib.commands.AfterSpeedCommand;
-import jatcsimlib.commands.Answer;
-import jatcsimlib.commands.ChangeAltitudeCommand;
-import jatcsimlib.commands.ChangeHeadingCommand;
-import jatcsimlib.commands.ChangeSpeedCommand;
-import jatcsimlib.commands.ClearedForTakeoffCommand;
-import jatcsimlib.commands.ClearedToApproachCommand;
-import jatcsimlib.commands.Command;
-import jatcsimlib.commands.CommandList;
-import jatcsimlib.commands.Confirmation;
-import jatcsimlib.commands.ContactCommand;
-import jatcsimlib.commands.GoodDayCommand;
-import jatcsimlib.commands.HoldCommand;
-import jatcsimlib.commands.ProceedDirectCommand;
-import jatcsimlib.commands.Rejection;
-import jatcsimlib.commands.ShortcutCommand;
-import jatcsimlib.commands.StringCommand;
-import jatcsimlib.commands.ThenCommand;
-import jatcsimlib.commands.ToNavaidCommand;
+import jatcsimlib.commands.*;
 import jatcsimlib.commands.formatting.Formatter;
 import jatcsimlib.commands.formatting.LongFormatter;
 import jatcsimlib.coordinates.Coordinate;
@@ -485,6 +463,7 @@ public class Pilot {
   // </editor-fold>
 
   private Atc atc = null;
+  private boolean hasRadarContact = true;
   private final Airplane parent;
   private final String routeName;
   private final List<Command> queue = new LinkedList<>();
@@ -553,7 +532,8 @@ public class Pilot {
       || (c instanceof HoldCommand)) {
       this.afterCommands.removeByConsequent(c.getClass());
       this.queue.add(c);
-    } else if ((c instanceof ClearedForTakeoffCommand)) {
+    } else if ((c instanceof ClearedForTakeoffCommand) ||
+        (c instanceof  RadarContactConfirmationCommand)) {
       this.queue.add(c);
     } else {
       throw new ERuntimeException("Pilot cannot deal with command " + c.getClass().getSimpleName() + " - probably not implemented.");
@@ -562,7 +542,6 @@ public class Pilot {
   }
 
   public void elapseSecond() {
-
     /*
 
      1. zpracuji se prikazy ve fronte
@@ -578,9 +557,17 @@ public class Pilot {
   }
 
   private void processStandardQueueCommands() {
-    this.isConfirmationsNowRequested = true;
-    processQueueCommands(this.queue);
-    this.isConfirmationsNowRequested = false;
+    if (this.queue.isEmpty()) return;
+
+    // if has not confirmed radar contact and the first command in the queue is not radar contact confirmation
+    if (hasRadarContact == false && !(this.queue.get(0) instanceof RadarContactConfirmationCommand )){
+      say(new RequestRadarContactCommand());
+      this.queue.clear();
+    } else {
+      this.isConfirmationsNowRequested = true;
+      processQueueCommands(this.queue);
+      this.isConfirmationsNowRequested = false;
+    }
   }
 
   private void processAfterCommands() {
@@ -651,6 +638,11 @@ public class Pilot {
 
     targetCoordinate = c.getNavaid().getCoordinate();
     confirmIfReq(c);
+    return true;
+  }
+
+  private boolean processQueueCommand(RadarContactConfirmationCommand c){
+    this.hasRadarContact = true;
     return true;
   }
 
@@ -765,6 +757,7 @@ public class Pilot {
 
     // change of atc
     this.atc = a;
+    this.hasRadarContact = false;
     // rewritten
     // TODO now switch is realised in no-time, there is no delay between "frequency change confirmation" and "new atc call"
     Command cmd = new GoodDayCommand(parent.getCallsign(), Acc.toAltS(parent.getAltitude(), true));

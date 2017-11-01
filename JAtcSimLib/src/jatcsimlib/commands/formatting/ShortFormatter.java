@@ -172,7 +172,17 @@ public class ShortFormatter implements Formatter {
   public String format(StringCommand cmd){
     return cmd.getText();
   }
-  
+
+  @Override
+  public String format(RequestRadarContactCommand cmd) {
+    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+  }
+
+  @Override
+  public String format(RadarContactConfirmationCommand cmd) {
+    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+  }
+
   @Override
   public String format(GoodDayCommand cmd) {
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.

@@ -28,6 +28,8 @@ public interface Formatter {
   public String format(ThenCommand cmd);
   public String format(ToNavaidCommand cmd);
   public String format(StringCommand cmd);
+  public String format(RequestRadarContactCommand cmd);
+  public String format(RadarContactConfirmationCommand cmd);
   
   public String format(GoodDayCommand cmd);
   

@@ -48,6 +48,7 @@ public class ShortParser implements Parser {
     parsers.add(new ContactCmdParser());
 
     parsers.add(new ThenCmdParser());
+    parsers.add(new RadarContactConfirmationCmdParser());
   }
 // </editor-fold>
 
@@ -626,5 +627,28 @@ class HoldCmdParser extends CmdParser {
     return ret;
   }
 }
+
+class RadarContactConfirmationCmdParser extends CmdParser {
+
+  private static final String[] prefixes = new String[]{"RC"};
+  private static final String pattern = "RC";
+
+  @Override
+  String[] getPrefixes() {
+    return prefixes;
+  }
+
+  @Override
+  String getPattern() {
+    return pattern;
+  }
+
+  @Override
+  Command parse(RegexGrouper rg) {
+    Command ret = new RadarContactConfirmationCommand();
+    return ret;
+  }
+}
+
 
 // </editor-fold>

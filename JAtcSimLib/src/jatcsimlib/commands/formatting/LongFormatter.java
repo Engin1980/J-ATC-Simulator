@@ -7,24 +7,7 @@ package jatcsimlib.commands.formatting;
 
 import jatcsimlib.Acc;
 import jatcsimlib.atcs.Atc;
-import jatcsimlib.commands.AfterAltitudeCommand;
-import jatcsimlib.commands.AfterNavaidCommand;
-import jatcsimlib.commands.AfterSpeedCommand;
-import jatcsimlib.commands.ChangeAltitudeCommand;
-import jatcsimlib.commands.ChangeHeadingCommand;
-import jatcsimlib.commands.ChangeSpeedCommand;
-import jatcsimlib.commands.ClearedForTakeoffCommand;
-import jatcsimlib.commands.ClearedToApproachCommand;
-import jatcsimlib.commands.Confirmation;
-import jatcsimlib.commands.ContactCommand;
-import jatcsimlib.commands.GoodDayCommand;
-import jatcsimlib.commands.HoldCommand;
-import jatcsimlib.commands.ProceedDirectCommand;
-import jatcsimlib.commands.Rejection;
-import jatcsimlib.commands.ShortcutCommand;
-import jatcsimlib.commands.StringCommand;
-import jatcsimlib.commands.ThenCommand;
-import jatcsimlib.commands.ToNavaidCommand;
+import jatcsimlib.commands.*;
 import jatcsimlib.exceptions.ENotSupportedException;
 import jatcsimlib.global.Headings;
 
@@ -202,6 +185,16 @@ public class LongFormatter implements Formatter {
   @Override
   public String format(StringCommand cmd){
     return cmd.getText();
+  }
+
+  @Override
+  public String format(RequestRadarContactCommand cmd) {
+    return "Unable to follow ordered commands. Please confirm our radar contact first.";
+  }
+
+  @Override
+  public String format(RadarContactConfirmationCommand cmd) {
+    return "N/A";
   }
 
   private final String [] greetings = new String[]{"Good day", "Hello", "Hi"};
