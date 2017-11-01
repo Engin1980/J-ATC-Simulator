@@ -1,6 +1,8 @@
 package jatcsimlib.speaking.commands;
 
-public abstract class CommandResponse {
+import jatcsimlib.speaking.Speech;
+
+public abstract class CommandResponse extends Speech {
 
   private final Command origin;
 

@@ -6,11 +6,13 @@
 
 package jatcsimlib.speaking.commands.specific;
 
+import jatcsimlib.speaking.commands.Command;
+
 /**
  *
  * @author Marek
  */
-public class ThenCommand {
+public class ThenCommand extends Command {
  
     @Override
   public String toString() {

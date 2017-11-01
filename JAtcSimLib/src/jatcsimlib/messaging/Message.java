@@ -168,7 +168,7 @@ public class Message implements Comparable<Message> {
     } else if (source instanceof Airplane) {
       return planeVisibleTimeInSeconds;
     } else if (source instanceof UserAtc) {
-      return 10; // ai_ATC must be able to check the message
+      return 10; // ai_ATC must be able to check the speech
     } else if (source instanceof Atc) {
       return atcVisibleTimeInSeconds;
     } else {

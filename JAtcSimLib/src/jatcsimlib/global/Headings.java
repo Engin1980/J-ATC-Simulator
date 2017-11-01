@@ -6,7 +6,7 @@
 
 package jatcsimlib.global;
 
-import jatcsimlib.commands.ChangeHeadingCommand;
+import jatcsimlib.speaking.commands.specific.ChangeHeadingCommand;
 
 /**
  *

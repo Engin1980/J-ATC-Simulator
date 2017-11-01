@@ -8,9 +8,6 @@ package jatcsimlib.airplanes.pilots;
 import jatcsimlib.Acc;
 import jatcsimlib.airplanes.Airplane;
 import jatcsimlib.atcs.Atc;
-import jatcsimlib.commands.*;
-import jatcsimlib.commands.formatting.Formatter;
-import jatcsimlib.commands.formatting.LongFormatter;
 import jatcsimlib.coordinates.Coordinate;
 import jatcsimlib.coordinates.Coordinates;
 import jatcsimlib.exceptions.ENotSupportedException;
@@ -20,13 +17,22 @@ import jatcsimlib.global.ETime;
 import jatcsimlib.global.Headings;
 import jatcsimlib.global.SpeedRestriction;
 import jatcsimlib.messaging.GoingAroundStringMessageContent;
-import jatcsimlib.messaging.Message;
-import jatcsimlib.messaging.StringMessageContent;
+import jatcsimlib.newMessaging.Message;
+import jatcsimlib.speaking.Speech;
+import jatcsimlib.speaking.SpeechDelayer;
+import jatcsimlib.speaking.SpeechList;
+import jatcsimlib.speaking.commands.*;
+import jatcsimlib.speaking.commands.afters.AfterAltitudeCommand;
+import jatcsimlib.speaking.commands.afters.AfterNavaidCommand;
+import jatcsimlib.speaking.commands.afters.AfterSpeedCommand;
+import jatcsimlib.speaking.commands.specific.*;
+import jatcsimlib.speaking.notifications.Confirmation;
+import jatcsimlib.speaking.notifications.Rejection;
+import jatcsimlib.speaking.notifications.specific.*;
 import jatcsimlib.weathers.Weather;
 import jatcsimlib.world.Approach;
 import jatcsimlib.world.Navaid;
 import java.lang.reflect.Method;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -321,9 +327,8 @@ public class Pilot {
 
           // neni na twr, tak GA
           if (pilot.atc != Acc.atcTwr()) {
-            Acc.messenger().addMessage(Message.create(parent,
-              atc,
-              new StringMessageContent("Established on final.")));
+            Message m = new Message(parent, atc, new StringNotification("Established on final."));
+            Acc.newMessenger().add(m);
           }
 
           break;
@@ -437,11 +442,14 @@ public class Pilot {
     }
 
     private void goAround(String reason) {
-      Acc.messenger().addMessage(Message.create(parent,
-        atc,
-        new GoingAroundStringMessageContent(reason)));
+      Message m = new Message(parent, atc,
+          new GoingAroundNotification(reason));
+      Acc.newMessenger().add(m);
+
       parent.setTargetSpeed(parent.getType().vDep);
-      addNewCommands(this.approach.getGaCommands());
+
+      SpeechList lst = new SpeechList(this.approach.getGaCommands());
+      addNewSpeeches(lst);
 
       pilot.behavior = new TakeOffBehavior();
       pilot.autoThrust.setMode(AutoThrust.Mode.takeOff, true);
@@ -466,12 +474,15 @@ public class Pilot {
   private boolean hasRadarContact = true;
   private final Airplane parent;
   private final String routeName;
-  private final List<Command> queue = new LinkedList<>();
+  //private final SpeechList queue = new SpeechList();
+  private final SpeechDelayer queue = new SpeechDelayer(3, 10); //Min/max speech delay
   private final AfterCommandList afterCommands = new AfterCommandList();
   private Coordinate targetCoordinate;
   private Behavior behavior;
   private final AutoThrust autoThrust;
-  private final CommandList saidText = new CommandList();
+  private final SpeechList saidText = new SpeechList();
+
+  private static final int SPEECH_DELAY = 7;
 
   // <editor-fold defaultstate="collapsed" desc=" getters/setters ">
   public String getRouteName() {
@@ -483,12 +494,13 @@ public class Pilot {
   }
 
 // </editor-fold>
-  public Pilot(Airplane parent, String routeName, List<Command> routeCommandQueue) {
+  public Pilot(Airplane parent, String routeName, CommandList routeCommandQueue) {
+    SpeechList speeches = new SpeechList(routeCommandQueue); // incoming as command list, transfered to speech list
     this.parent = parent;
     this.routeName = routeName;
     this.autoThrust = new AutoThrust(parent, AutoThrust.Mode.idle);
-    expandThenCommands(routeCommandQueue);
-    this.queue.addAll(routeCommandQueue);
+    expandThenCommands(speeches);
+    this.queue.add(speeches, 0);
     if (parent.isArrival()) {
       autoThrust.setMode(AutoThrust.Mode.normalHigh, true);
     } else {
@@ -496,17 +508,17 @@ public class Pilot {
     }
   }
 
-  public void addNewCommands(List<Command> cmds) {
+  public void addNewSpeeches(SpeechList speeches) {
     int index = 0;
-    expandThenCommands(cmds);
-    while (index < cmds.size()) {
-      index = addNewCommand(cmds, index);
+    expandThenCommands(speeches);
+    while (index < speeches.size()) {
+      index = addNewSpeeches(speeches, index);
     }
   }
 
-  private int addNewCommand(List<Command> cmds, int index) {
+  private int addNewSpeeches(SpeechList cmds, int index) {
     int ret = index + 1;
-    Command c = cmds.get(index);
+    Speech c = cmds.get(index);
     if ((c instanceof ToNavaidCommand)) {
       Navaid n = ((ToNavaidCommand) c).getNavaid();
       // tady musí ještě být sekvenční promazání v afterCommands zpětně celé routy
@@ -523,7 +535,7 @@ public class Pilot {
         // zkontrolovat, jestli se letí přes tenhle navaid
         // jinak to nemá smysl
       }
-      this.afterCommands.add((AfterCommand) c, cmds.get(index + 1));
+      this.afterCommands.add((AfterCommand) c, cmds.getCommand(index + 1));
       ret += 1;
     } else if ((c instanceof ContactCommand)
       || (c instanceof ChangeSpeedCommand)
@@ -533,10 +545,10 @@ public class Pilot {
       this.afterCommands.removeByConsequent(c.getClass());
       this.queue.add(c);
     } else if ((c instanceof ClearedForTakeoffCommand) ||
-        (c instanceof  RadarContactConfirmationCommand)) {
+        (c instanceof RadarContactConfirmationNotification)) {
       this.queue.add(c);
     } else {
-      throw new ERuntimeException("Pilot cannot deal with command " + c.getClass().getSimpleName() + " - probably not implemented.");
+      throw new ERuntimeException("Pilot cannot deal with speech " + c.getClass().getSimpleName() + " - probably not implemented.");
     }
     return ret;
   }
@@ -557,15 +569,16 @@ public class Pilot {
   }
 
   private void processStandardQueueCommands() {
-    if (this.queue.isEmpty()) return;
+    SpeechList current = this.queue.get();
+    if (current.isEmpty()) return;
 
     // if has not confirmed radar contact and the first command in the queue is not radar contact confirmation
-    if (hasRadarContact == false && !(this.queue.get(0) instanceof RadarContactConfirmationCommand )){
-      say(new RequestRadarContactCommand());
+    if (hasRadarContact == false && !(current.get(0) instanceof RadarContactConfirmationNotification )){
+      say(new RequestRadarContactNotification());
       this.queue.clear();
     } else {
       this.isConfirmationsNowRequested = true;
-      processQueueCommands(this.queue);
+      processQueueSpeeches(current);
       this.isConfirmationsNowRequested = false;
     }
   }
@@ -574,16 +587,16 @@ public class Pilot {
     List<Command> cmdsToProcess
       = afterCommands.getAndRemoveSatisfiedCommands(parent, this.targetCoordinate);
 
-    processQueueCommands(cmdsToProcess);
+    processQueueSpeeches(cmdsToProcess);
   }
 
-  private void processQueueCommands(List<Command> queue) {
+  private void processQueueSpeeches(List<? extends Speech> queue) {
     while (!queue.isEmpty()) {
-      Command c = queue.get(0);
-      if (c instanceof AfterCommand) {
+      Speech s = queue.get(0);
+      if (s instanceof AfterCommand) {
         processAfterCommandFromQueue(queue);
       } else {
-        boolean res = tryProcessQueueCommand(c);
+        boolean res = tryProcessQueueSpeech(s);
         if (res) {
           queue.remove(0);
         }
@@ -591,39 +604,39 @@ public class Pilot {
     }
   }
 
-  private void processAfterCommandFromQueue(List<Command> queue) {
+  private void processAfterCommandFromQueue(List<? extends Speech> queue) {
     AfterCommand af = (AfterCommand) queue.get(0);
     queue.remove(0);
     while (!queue.isEmpty() && !(queue.get(0) instanceof AfterCommand)) {
-      afterCommands.add(af, queue.get(0));
+      afterCommands.add(af, (Command) queue.get(0));
       queue.remove(0);
     }
   }
 
-  private boolean tryProcessQueueCommand(Command c) {
+  private boolean tryProcessQueueSpeech(Speech s) {
     Method m;
-    m = tryGetProcessQueueCommandMethodToInvoke(c.getClass());
+    m = tryGetProcessQueueSpeechMethodToInvoke(s.getClass());
 
     if (m == null) {
-      throw new ERuntimeException("Method \"ProcessQueueCommand\" for command type \"" + c.getClass() + "\" not found.");
+      throw new ERuntimeException("Method \"ProcessQueueSpeech\" for speech type \"" + s.getClass() + "\" not found.");
     }
 
     boolean ret;
     try {
-      ret = (boolean) m.invoke(this, c);
+      ret = (boolean) m.invoke(this, s);
     } catch (Throwable ex) {
       throw new ERuntimeException(
-        String.format("processQueueCommand() execution failed for %s. Reason: %s",
-          c.getClass(),
+        String.format("processQueueSpeech() execution failed for %s. Reason: %s",
+          s.getClass(),
           eng.eSystem.Exceptions.toString(ex), ex));
     }
     return ret;
   }
 
-  private Method tryGetProcessQueueCommandMethodToInvoke(Class<? extends Command> commandType) {
+  private Method tryGetProcessQueueSpeechMethodToInvoke(Class<? extends Speech> commandType) {
     Method ret;
     try {
-      ret = Pilot.class.getDeclaredMethod("processQueueCommand", commandType);
+      ret = Pilot.class.getDeclaredMethod("processQueueSpeech", commandType);
     } catch (NoSuchMethodException | SecurityException ex) {
       ret = null;
     }
@@ -631,7 +644,7 @@ public class Pilot {
     return ret;
   }
 
-  private boolean processQueueCommand(ProceedDirectCommand c) {
+  private boolean processQueueSpeech(ProceedDirectCommand c) {
     if (behavior instanceof HoldBehavior || behavior instanceof ApproachBehavior) {
       behavior = null;
     }
@@ -641,12 +654,12 @@ public class Pilot {
     return true;
   }
 
-  private boolean processQueueCommand(RadarContactConfirmationCommand c){
+  private boolean processQueueSpeech(RadarContactConfirmationNotification c){
     this.hasRadarContact = true;
     return true;
   }
 
-  private boolean processQueueCommand(ChangeAltitudeCommand c) {
+  private boolean processQueueSpeech(ChangeAltitudeCommand c) {
     switch (c.getDirection()) {
       case climb:
         if (parent.getAltitude() > c.getAltitudeInFt()) {
@@ -675,7 +688,7 @@ public class Pilot {
     return true;
   }
 
-  private boolean processQueueCommand(ChangeSpeedCommand c) {
+  private boolean processQueueSpeech(ChangeSpeedCommand c) {
     if (c.isResumeOwnSpeed()) {
       this.autoThrust.cleanOrderedSpeed();
       confirmIfReq(c);
@@ -708,7 +721,7 @@ public class Pilot {
     }
   }
 
-  private boolean processQueueCommand(ChangeHeadingCommand c) {
+  private boolean processQueueSpeech(ChangeHeadingCommand c) {
     if (behavior instanceof HoldBehavior || behavior instanceof ApproachBehavior) {
       behavior = null;
     }
@@ -736,7 +749,7 @@ public class Pilot {
     return true;
   }
 
-  private boolean processQueueCommand(ContactCommand c) {
+  private boolean processQueueSpeech(ContactCommand c) {
     Atc a;
     switch (c.getAtcType()) {
       case app:
@@ -760,28 +773,28 @@ public class Pilot {
     this.hasRadarContact = false;
     // rewritten
     // TODO now switch is realised in no-time, there is no delay between "frequency change confirmation" and "new atc call"
-    Command cmd = new GoodDayCommand(parent.getCallsign(), Acc.toAltS(parent.getAltitude(), true));
-    say(cmd);
+    Speech s = new GoodDayNotification(parent.getCallsign(), Acc.toAltS(parent.getAltitude(), true));
+    say(s);
     return true;
   }
 
-  private boolean processQueueCommand(ShortcutCommand c) {
+  private boolean processQueueSpeech(ShortcutCommand c) {
     int pointIndex = getIndexOfNavaidInCommands(c.getNavaid());
     if (pointIndex < 0) {
-      Message m = Message.create(
-        parent, this.atc,
-        " Unable to shortcut to " + c.getNavaid().getName() + ", fix not on route!");
-      Acc.messenger().addMessage(m);
+      Message m = new Message(
+          parent, this.atc,
+          new StringNotification(" Unable to shortcut to " + c.getNavaid().getName() + ", fix not on our route!")      );
+      Acc.newMessenger().add(m);
     } else {
       for (int i = 0; i < pointIndex; i++) {
-        this.queue.remove(i);
+        this.queue.removeAt(i);
       }
     }
     confirmIfReq(c);
     return true;
   }
 
-  private boolean processQueueCommand(ClearedToApproachCommand c) {
+  private boolean processQueueSpeech(ClearedToApproachCommand c) {
     if (behavior instanceof HoldBehavior) {
       behavior = null;
     }
@@ -795,8 +808,9 @@ public class Pilot {
       Headings.add(c.getApproach().getRadial(), -30),
       radFromFix,
       Headings.add(c.getApproach().getRadial(), 30))) {
-      Message m = Message.create(parent, atc, "Cannot enter approach now. Difficult position.");
-      Acc.messenger().addMessage(m);
+      Message m = new Message(parent, atc,
+          new StringNotification("Cannot enter approach now. Difficult position."));
+      Acc.newMessenger().add(m);
     } else {
       this.behavior = new ApproachBehavior(c.getApproach());
 
@@ -806,7 +820,7 @@ public class Pilot {
     return true;
   }
 
-  private boolean processQueueCommand(HoldCommand c) {
+  private boolean processQueueSpeech(HoldCommand c) {
 
     if (targetCoordinate != null) {
       targetCoordinate = null;
@@ -823,7 +837,7 @@ public class Pilot {
     return true;
   }
 
-  private boolean processQueueCommand(ClearedForTakeoffCommand c) {
+  private boolean processQueueSpeech(ClearedForTakeoffCommand c) {
     this.behavior = new TakeOffBehavior();
     return true;
   }
@@ -842,14 +856,14 @@ public class Pilot {
     }
   }
 
-  private void sayIfReq(Answer cmd) {
+  private void sayIfReq(CommandResponse cmd) {
     if (isConfirmationsNowRequested) {
       say(cmd);
     }
   }
 
-  private void say(Command command) {
-    saidText.add(command);
+  private void say(Speech speech) {
+    saidText.add(speech);
   }
 
   private void sayToAtc() {
@@ -863,10 +877,10 @@ public class Pilot {
       return;
     }
 
-    Message m = Message.create(parent, atc, saidText.clone());
-    Acc.messenger().addMessage(m);
+    Message m = new Message(parent, atc, saidText.clone());
+    Acc.newMessenger().add(m);
 
-    System.out.println("Saying to " + this.getTunedAtc().getName() + ": " + m.toString() + " // " + m.toContentString());
+    System.out.println("Saying to " + this.getTunedAtc().getName() + ": " + m.toString());
 
     saidText.clear();
   }
@@ -884,21 +898,31 @@ public class Pilot {
 
   }
 
-  private void expandThenCommands(List<Command> cmds) {
-    if (cmds.isEmpty()) {
+  private void expandThenCommands(List<Speech> speeches) {
+    if (speeches.isEmpty()) {
       return;
     }
 
-    for (int i = 0; i < cmds.size(); i++) {
-      if (cmds.get(i) instanceof ThenCommand) {
-        if (i == 0 || i == cmds.size() - 1) {
-          Acc.messenger().addMessage(Message.create(
-            parent, atc, "\"THEN\" command cannot be first or last in queue. Whole command block is ignored."));
-          cmds.clear();
+    for (int i = 0; i < speeches.size(); i++) {
+      if (speeches.get(i) instanceof ThenCommand) {
+        if (i == 0 || i == speeches.size() - 1) {
+          Message message = new Message(
+              parent, atc,
+              new StringNotification("{Then} command cannot be first or last in queue. The whole command block is ignored."));
+          Acc.newMessenger().add(message);
+          speeches.clear();
           return;
         }
-        Command prev = cmds.get(i - 1);
+        Speech prev = speeches.get(i - 1);
+
         Command n; // new
+        if (!(prev instanceof Command)){
+          Message message = new Message(
+              parent, atc,
+              new StringNotification("{Then} command must be after another command. The whole command block is ignored."));
+          Acc.newMessenger().add(message);
+
+        }
         if (prev instanceof ProceedDirectCommand) {
           n = new AfterNavaidCommand(((ProceedDirectCommand) prev).getNavaid());
         } else if (prev instanceof ChangeAltitudeCommand) {
@@ -906,13 +930,15 @@ public class Pilot {
         } else if (prev instanceof ChangeSpeedCommand) {
           n = new AfterSpeedCommand(((ChangeSpeedCommand) prev).getSpeedInKts());
         } else {
-          Acc.messenger().addMessage(Message.create(
-            parent, atc, "\"THEN\" command is after strange command, it does not make sense. Whole command block is ignored."));
-          cmds.clear();
+          Message message = new Message(
+              parent, atc,
+              new StringNotification("{Then} command is after a strange command, it does not make sense. The whole command block is ignored."));
+          Acc.newMessenger().add(message);
+          speeches.clear();
           return;
         }
-        cmds.remove(i);
-        cmds.add(i, n);
+        speeches.remove(i);
+        speeches.add(i, n);
       }
     }
   }

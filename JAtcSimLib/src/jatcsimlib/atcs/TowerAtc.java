@@ -94,7 +94,7 @@ public class TowerAtc extends ComputerAtc {
     esRequestPlaneSwitchFromApp();
 
     for (Message m : msgs) {
-      recorder.logMessage(m); // incoming message
+      recorder.logMessage(m); // incoming speech
 
       if (m.source instanceof Airplane) {
         if (m.content instanceof GoingAroundStringMessageContent) {

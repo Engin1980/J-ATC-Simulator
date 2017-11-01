@@ -20,11 +20,11 @@ import java.util.Map;
 public class Messenger {
 
   /**
-   * Flag if is some new atc message for user added.
+   * Flag if is some new atc speech for user added.
    */
   private boolean newAtcMessageForUserAtc = false;
   /**
-   * Flag if is some new plane message for user added.
+   * Flag if is some new plane speech for user added.
    */
   private boolean newPlaneMessageForUserAtc = false;
   /**
@@ -122,7 +122,7 @@ public class Messenger {
   }
 
   /**
-   * Removes specific message
+   * Removes specific speech
    *
    * @param m Message to remove
    */

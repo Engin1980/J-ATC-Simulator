@@ -188,7 +188,7 @@ public class FrmMain extends javax.swing.JFrame {
         ret = true;
       }
     } catch (Throwable t) {
-      throw new ERuntimeException("Message invocation failed for message: " + msg, t);
+      throw new ERuntimeException("Message invocation failed for speech: " + msg, t);
     }
     return ret;
   }

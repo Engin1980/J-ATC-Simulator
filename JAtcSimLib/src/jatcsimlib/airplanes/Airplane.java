@@ -8,22 +8,26 @@ package jatcsimlib.airplanes;
 import jatcsimlib.Acc;
 import jatcsimlib.airplanes.pilots.Pilot;
 import jatcsimlib.atcs.Atc;
-import jatcsimlib.commands.ChangeHeadingCommand;
-import jatcsimlib.commands.Command;
 import jatcsimlib.coordinates.Coordinate;
 import jatcsimlib.coordinates.Coordinates;
 import jatcsimlib.exceptions.ERuntimeException;
 import jatcsimlib.global.Headings;
 import jatcsimlib.global.KeyItem;
-import jatcsimlib.messaging.Message;
-import java.util.ArrayList;
+import jatcsimlib.newMessaging.IMessageContent;
+import jatcsimlib.newMessaging.Message;
+import jatcsimlib.newMessaging.IMessageParticipant;
+import jatcsimlib.speaking.Speech;
+import jatcsimlib.speaking.SpeechList;
+import jatcsimlib.speaking.commands.CommandList;
+import jatcsimlib.speaking.commands.specific.ChangeHeadingCommand;
+
 import java.util.List;
 
 /**
  *
  * @author Marek
  */
-public class Airplane implements KeyItem<Callsign> {
+public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
 
   // <editor-fold defaultstate="collapsed" desc=" variables ">
   private final Callsign callsign;
@@ -343,7 +347,7 @@ public class Airplane implements KeyItem<Callsign> {
 
   public Airplane(Callsign callsign, Coordinate coordinate, Squawk sqwk, AirplaneType airplaneSpecification,
     int heading, int altitude, int speed, boolean isDeparture,
-    String routeName, List<Command> routeCommandQueue) {
+    String routeName, CommandList routeCommandQueue) {
 
     this.info = this.new AirplaneInfo();
 
@@ -471,7 +475,7 @@ public class Airplane implements KeyItem<Callsign> {
   }
 
   private void processMessages() {
-    List<Message> msgs = Acc.messenger().getMy(this, true);
+    List<Message> msgs = Acc.newMessenger().getByTarget(this, true); //Acc.messenger().getMy(this, true);
 
     for (Message m : msgs) {
       processMessage(m);
@@ -479,27 +483,27 @@ public class Airplane implements KeyItem<Callsign> {
   }
 
   private void processMessage(Message msg) {
-    // if message from non-tuned ATC, then is ignored
-    if (msg.source != this.pilot.getTunedAtc()){
+    // if speech from non-tuned ATC, then is ignored
+    if (msg.getSource() != this.pilot.getTunedAtc()){
       return;
     }
     
-    List<Command> cmds;
-    Object s = msg.content;
-    if (s instanceof Command) {
-      cmds = new ArrayList<>(1);
-      cmds.add((Command) s);
+    SpeechList cmds;
+    IMessageContent s = msg.getContent();
+    if (s instanceof Speech) {
+      cmds = new SpeechList();
+      cmds.add((Speech) s);
     } else if (s instanceof List) {
-      cmds = (List<Command>) s;
+      cmds = (SpeechList) s;
     } else {
-      throw new ERuntimeException("Airplane can only deal with messages containing \"Command\" or \"List<Command>\".");
+      throw new ERuntimeException("Airplane can only deal with messages containing \"Speech\" or \"List<Speech>\".");
     }
 
     processCommands(cmds);
   }
 
-  private void processCommands(List<Command> cmds) {
-    this.pilot.addNewCommands(cmds);
+  private void processCommands(SpeechList speeches) {
+    this.pilot.addNewSpeeches(speeches);
   }
 
   private void updateSHABySecond() {
@@ -665,6 +669,11 @@ public class Airplane implements KeyItem<Callsign> {
 
   public int getTargetSpeed() {
     return targetSpeed;
+  }
+
+  @Override
+  public String getName() {
+    return this.getCallsign().toString();
   }
 
   // </editor-fold>

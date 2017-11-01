@@ -71,6 +71,8 @@ public class Simulation {
 
   private final Traffic traffic;
 
+  private final jatcsimlib.newMessaging.Messenger newMessenger = new jatcsimlib.newMessaging.Messenger();
+
   private final EventManager<Simulation, EventListener<Simulation, Simulation>, Simulation> tickEM = new EventManager(this);
 
   //TODO shouldn't this be private?
@@ -110,6 +112,10 @@ public class Simulation {
 
   public Messenger getMessenger() {
     return messenger;
+  }
+
+  public jatcsimlib.newMessaging.Messenger getNewMessenger() {
+    return newMessenger;
   }
 
   private Simulation(Airport airport, AirplaneTypes types, Weather weather, Traffic traffic, Calendar now, int simulationSecondLengthInMs) {

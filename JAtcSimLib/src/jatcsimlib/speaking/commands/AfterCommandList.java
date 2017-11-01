@@ -29,7 +29,7 @@ public class AfterCommandList {
 
   private final List<Item> inner = new LinkedList<>();
 
-  public void add(AfterCommand afterCommand, jatcsimlib.speaking.commands.specific.Command consequent) {
+  public void add(AfterCommand afterCommand, Command consequent) {
     Item it = new Item(afterCommand, consequent);
     inner.add(it);
   }
@@ -72,7 +72,7 @@ public class AfterCommandList {
   }
 
   private List<Item> findPredecessors(Item item) {
-    jatcsimlib.speaking.commands.specific.Command predCmd;
+    Command predCmd;
     boolean consMustBeToNavaidCommand = false;
     if (item.consequent instanceof ProceedDirectCommand) {
       Navaid n = ((ProceedDirectCommand) item.consequent).getNavaid();
@@ -100,12 +100,12 @@ public class AfterCommandList {
     return ret;
   }
 
-  public List<jatcsimlib.speaking.commands.specific.Command> getAndRemoveSatisfiedCommands(Airplane referencePlane, Coordinate currentTargetCoordinateOrNull) {
+  public List<Command> getAndRemoveSatisfiedCommands(Airplane referencePlane, Coordinate currentTargetCoordinateOrNull) {
     int alt = referencePlane.getAltitude();
     int spd = referencePlane.getSpeed();
     Coordinate cor = referencePlane.getCoordinate();
 
-    List<jatcsimlib.speaking.commands.specific.Command> ret = new LinkedList<>();
+    List<Command> ret = new LinkedList<>();
 
     int i = 0;
     while (i < inner.size()) {
@@ -153,7 +153,7 @@ public class AfterCommandList {
 class Item {
 
   public final AfterCommand after;
-  public final jatcsimlib.speaking.commands.specific.Command consequent;
+  public final Command consequent;
 
   public Item(AfterCommand after, Command consequent) {
     this.after = after;
