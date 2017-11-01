@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package jatcsimlib.speaking.commands.specific;
+package jatcsimlib.speaking.parsing.shortParsing;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
  *
  * @author Marek
  */
-public class RegexGrouper {
+class RegexGrouper {
 
   private final Matcher m;
 

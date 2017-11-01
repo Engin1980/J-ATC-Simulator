@@ -1,4 +1,6 @@
 package jatcsimlib.speaking;
 
-public abstract class Speech {
+import jatcsimlib.newMessaging.IMessageContent;
+
+public abstract class Speech implements IMessageContent {
 }

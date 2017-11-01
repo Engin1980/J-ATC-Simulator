@@ -11,4 +11,8 @@ public abstract class CommandResponse {
 
     this.origin = origin;
   }
+
+  public Command getOrigin() {
+    return origin;
+  }
 }
