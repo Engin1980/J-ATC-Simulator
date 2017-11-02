@@ -32,7 +32,7 @@ loop forEach airplane
     plane -> +plane : processMessages()
     plane -> +messenger : getMyMessages()
     messenger --> -plane : messages
-    loop forEach message
+    loop forEach messageText
         plane -> +plane : processMessage
         plane -> +plane : processCommands
         plane -> +pilot : addNewCommands(...)

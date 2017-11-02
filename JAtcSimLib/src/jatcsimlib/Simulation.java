@@ -20,15 +20,17 @@ import jatcsimlib.events.EventManager;
 import jatcsimlib.global.ERandom;
 import jatcsimlib.global.ETime;
 import jatcsimlib.global.ReadOnlyList;
-import jatcsimlib.messaging.Message;
-import jatcsimlib.messaging.Messenger;
+import jatcsimlib.newMessaging.Message;
+import jatcsimlib.newMessaging.Messenger;
+import jatcsimlib.newMessaging.App;
+import jatcsimlib.newMessaging.StringMessageContent;
+import jatcsimlib.speaking.notifications.specific.StringNotification;
 import jatcsimlib.traffic.Movement;
 import jatcsimlib.traffic.Traffic;
 import jatcsimlib.weathers.Weather;
 import jatcsimlib.world.Airport;
 import jatcsimlib.world.RunwayThreshold;
 
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
@@ -301,7 +303,7 @@ public class Simulation {
   }
 
   private void processSystemMessages() {
-    List<Message> systemMessages = Acc.messenger().getSystems(true);
+    List<Message> systemMessages = Acc.newMessenger().getByTarget(App.me(),true);
 
     for (Message m : systemMessages) {
       processSystemMessage(m);
@@ -312,7 +314,7 @@ public class Simulation {
   private static final Pattern SYSMES_CHANGE_SPEED = Pattern.compile("tick=(\\d+)");
 
   private void processSystemMessage(Message m) {
-    String msgText = m.getAsString().text;
+    String msgText = m.<StringMessageContent>getContent().getMessageText();
     if (msgText.equals(SYSMES_COMMANDS)) {
       printCommandsHelps();
     } else if (SYSMES_CHANGE_SPEED.asPredicate().test(msgText)) {
@@ -328,20 +330,33 @@ public class Simulation {
     try {
       tickI = Integer.parseInt(tickS);
     } catch (NumberFormatException ex) {
-      Acc.messenger().addMessage(
-        Message.createFromSystem((UserAtc) m.source, "Unable to parse " + tickS + " to integer. Example: ?tick=750"));
+      Acc.newMessenger().add(
+          new Message(
+              App.me(),
+              m.<UserAtc>getSource(),
+              new StringMessageContent("Unable to parse %s to integer. Example: ?tick=750", tickS)));
       return;
     }
     this.tmr.stop();
     this.tmr.start(tickI);
-    Acc.messenger().addMessage(
-      Message.createFromSystem((UserAtc) m.source, "Tick speed changed to " + tickI + " miliseconds."));
+
+    Acc.newMessenger().add(
+        new Message(
+            App.me(),
+            m.<UserAtc>getSource(),
+            new StringMessageContent("Tick speed changed to %d milliseconds.", tickI))
+    );
   }
 
   private void printCommandsHelps() {
     String txt = new ShortParser().getHelp();
 
-    Acc.messenger().addMessage(Message.createFromSystem(Acc.atcApp(), txt));
+    Acc.newMessenger().add(
+        new Message(
+            App.me(),
+            Acc.atcApp(),
+            new StringNotification(txt))
+    );
   }
 
   private final static double MAX_VICINITY_DISTANCE_IN_NM = 10;
