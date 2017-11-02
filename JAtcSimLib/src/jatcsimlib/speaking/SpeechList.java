@@ -55,4 +55,12 @@ public class SpeechList extends ArrayList<Speech> implements IMessageContent {
     return ret;
   }
 
+  public boolean containsType(Class type){
+    for (Speech speech : this) {
+      if (speech.getClass().equals(type))
+        return true;
+    }
+    return false;
+  }
+
 }

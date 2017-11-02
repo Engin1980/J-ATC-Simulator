@@ -12,4 +12,14 @@ public class StringNotification extends Notification {
 
     this.text = text;
   }
+
+  public StringNotification(String text, Object ... params){
+    if (text == null) {
+        throw new IllegalArgumentException("Value of {text} cannot not be null.");
+    }
+
+    String txt =
+        String.format(text, params);
+    this.text = txt;
+  }
 }
