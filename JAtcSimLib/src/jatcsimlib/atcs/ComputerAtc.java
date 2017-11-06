@@ -7,7 +7,7 @@ package jatcsimlib.atcs;
 
 import jatcsimlib.Acc;
 import jatcsimlib.airplanes.Airplane;
-import jatcsimlib.newMessaging.Message;
+import jatcsimlib.messaging.Message;
 
 import java.util.List;
 
@@ -38,7 +38,7 @@ public abstract class ComputerAtc extends Atc {
     for (Airplane p : awaitings) {
       Message m = new Message(this, Acc.atcApp(),
         new PlaneSwitchMessage(p, " to you (repeated)"));
-      Acc.messenger().add(m);
+      Acc.messenger().send(m);
       recorder.logMessage(m);
     }
 
@@ -48,14 +48,14 @@ public abstract class ComputerAtc extends Atc {
     getPrm().requestSwitch(this, Acc.atcApp(), plane);
     Message m = new Message(this, Acc.atcApp(),
       new PlaneSwitchMessage(plane, " to you"));
-    Acc.messenger().add(m);
+    Acc.messenger().send(m);
   }
 
   protected void refuseSwitch(Airplane plane) {
     getPrm().refuseSwitch(this, plane);
     Message m = new Message(this, Acc.atcApp(),
       new PlaneSwitchMessage(plane, " refused. Not in my coverage."));
-    Acc.messenger().add(m);
+    Acc.messenger().send(m);
     recorder.logMessage(m);
   }
 
@@ -63,7 +63,7 @@ public abstract class ComputerAtc extends Atc {
     getPrm().confirmSwitch(this, plane);
     Message m = new Message(this, Acc.atcApp(),
       new PlaneSwitchMessage(plane, " accepted"));
-    Acc.messenger().add(m);
+    Acc.messenger().send(m);
     recorder.logMessage(m);
   }
 

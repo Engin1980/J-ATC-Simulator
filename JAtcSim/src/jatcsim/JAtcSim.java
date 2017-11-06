@@ -88,8 +88,8 @@ public class JAtcSim {
 
     // traffic
     Traffic traffic = getTrafficFromStartupSettings(sett);
-    traffic = new TestTrafficOneApproach();
-    //traffic = new TestTrafficOneDeparture();
+    //traffic = new TestTrafficOneApproach();
+    traffic = new TestTrafficOneDeparture();
 
     // sim init
     final Simulation sim = Simulation.create(

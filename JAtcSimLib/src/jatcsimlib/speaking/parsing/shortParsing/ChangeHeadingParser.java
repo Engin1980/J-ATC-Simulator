@@ -1,10 +1,10 @@
 package jatcsimlib.speaking.parsing.shortParsing;
 
 import jatcsimlib.exceptions.ENotSupportedException;
-import jatcsimlib.speaking.commands.Command;
-import jatcsimlib.speaking.commands.specific.ChangeHeadingCommand;
+import jatcsimlib.speaking.ICommand;
+import jatcsimlib.speaking.fromAtc.commands.ChangeHeadingCommand;
 
-class ChangeHeadingParser extends SpeechParser {
+class ChangeHeadingParser extends SpeechParser<ChangeHeadingCommand> {
 
   private static final String[] prefixes = new String[]{"FH", "TR", "TL"};
   private static final String pattern = "((FH)|(TR)|(TL)) ?(\\d{1,3})?";
@@ -20,7 +20,7 @@ class ChangeHeadingParser extends SpeechParser {
   }
 
   @Override
-  Command parse(RegexGrouper rg) {
+  ChangeHeadingCommand parse(RegexGrouper rg) {
     ChangeHeadingCommand.eDirection d;
     switch (rg.getString(1)) {
       case "FH":

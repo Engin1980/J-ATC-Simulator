@@ -182,7 +182,7 @@ public class FrmMain extends javax.swing.JFrame {
         ret = true;
 
       } else {
-        // plane commands
+        // plane fromAtc
         String[] spl = splitToCallsignAndMessages(msg);
         app.sendToPlane(spl[0], spl[1]);
         ret = true;

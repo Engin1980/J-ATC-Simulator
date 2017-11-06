@@ -16,6 +16,10 @@ public class ERuntimeException extends RuntimeException {
     super(message);
   }
 
+  public ERuntimeException(String text, Object ... params) {
+    super(String.format(text, params));
+  }
+
   public ERuntimeException(String message, Throwable cause) {
     super(message, cause);
   }

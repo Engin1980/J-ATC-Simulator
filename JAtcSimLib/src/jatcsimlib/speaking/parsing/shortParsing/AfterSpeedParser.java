@@ -1,9 +1,9 @@
 package jatcsimlib.speaking.parsing.shortParsing;
 
-import jatcsimlib.speaking.commands.Command;
-import jatcsimlib.speaking.commands.afters.AfterSpeedCommand;
+import jatcsimlib.speaking.ICommand;
+import jatcsimlib.speaking.fromAtc.commands.afters.AfterSpeedCommand;
 
-class AfterSpeedParser extends SpeechParser {
+class AfterSpeedParser extends SpeechParser<AfterSpeedCommand> {
 
   private static final String[] prefixes = new String[]{"AS"};
   private static final String pattern = "AS (\\d{1,3})";
@@ -19,9 +19,9 @@ class AfterSpeedParser extends SpeechParser {
   }
 
   @Override
-  Command parse(RegexGrouper rg) {
+  AfterSpeedCommand parse(RegexGrouper rg) {
     int s = rg.getInt(1);
-    Command ret = new AfterSpeedCommand(s);
+    AfterSpeedCommand ret = new AfterSpeedCommand(s);
     return ret;
   }
 }

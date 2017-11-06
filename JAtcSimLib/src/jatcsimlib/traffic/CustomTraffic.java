@@ -17,11 +17,12 @@ import jatcsimlib.exceptions.ERuntimeException;
 import jatcsimlib.global.ETime;
 import jatcsimlib.global.Global;
 import jatcsimlib.global.KeyList;
-import jatcsimlib.speaking.commands.*;
-import jatcsimlib.speaking.commands.afters.AfterAltitudeCommand;
-import jatcsimlib.speaking.commands.specific.ChangeAltitudeCommand;
-import jatcsimlib.speaking.commands.specific.ContactCommand;
-import jatcsimlib.speaking.commands.specific.ProceedDirectCommand;
+import jatcsimlib.speaking.SpeechList;
+import jatcsimlib.speaking.fromAtc.*;
+import jatcsimlib.speaking.fromAtc.commands.afters.AfterAltitudeCommand;
+import jatcsimlib.speaking.fromAtc.commands.ChangeAltitudeCommand;
+import jatcsimlib.speaking.fromAtc.commands.ContactCommand;
+import jatcsimlib.speaking.fromAtc.commands.ProceedDirectCommand;
 import jatcsimlib.world.*;
 
 import java.util.*;
@@ -277,7 +278,7 @@ public class CustomTraffic extends Traffic {
     int heading;
     int alt;
     int spd;
-    CommandList routeCmds;
+    SpeechList<IAtcCommand> routeCmds;
     String routeName;
 
     if (m.isIfr()) {
@@ -309,7 +310,7 @@ public class CustomTraffic extends Traffic {
       heading = (int) Coordinates.getBearing(coord, entryPoint.getCoordinate());
       alt = Acc.airport().getVfrAltitude();
 
-      routeCmds = new CommandList();
+      routeCmds = new SpeechList<>();
       routeCmds.add(0,
           new ProceedDirectCommand(Acc.airport().getMainAirportNavaid()));
       routeCmds.add(new ContactCommand(Atc.eType.app));
@@ -442,11 +443,11 @@ public class CustomTraffic extends Traffic {
     int alt = Acc.threshold().getParent().getParent().getAltitude();
     int spd = 0;
 
-    CommandList routeCmds;
+    SpeechList<IAtcCommand> routeCmds;
     if (r != null) {
       routeCmds = r.getCommandsListClone();
     } else {
-      routeCmds = new CommandList();
+      routeCmds = new SpeechList<>();
     }
 
     int indx = 0;
@@ -462,9 +463,9 @@ public class CustomTraffic extends Traffic {
     routeCmds.add(indx++, new ContactCommand(Atc.eType.app));
 
     // -- po vysce + 3000 rychlost na odlet
-//    routeCmds.add(indx++,
+//    routeCmds.send(indx++,
 //        new AfterAltitudeCommand(Acc.threshold().getParent().getParent().getAltitude() + 3000));
-//    routeCmds.add(indx++, new ChangeSpeedCommand(ChangeSpeedCommand.eDirection.increase, 250));
+//    routeCmds.send(indx++, new ChangeSpeedCommand(ChangeSpeedCommand.eDirection.increase, 250));
     String routeName;
     if (r != null) {
       routeName = r.getName();

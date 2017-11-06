@@ -1,10 +1,10 @@
 package jatcsimlib.speaking.parsing.shortParsing;
 
 import jatcsimlib.global.EStringBuilder;
-import jatcsimlib.speaking.Speech;
-import jatcsimlib.speaking.commands.Command;
+import jatcsimlib.speaking.IFromAtc;
+import jatcsimlib.speaking.ISpeech;
 
-public abstract class SpeechParser {
+public abstract class SpeechParser<T extends IFromAtc> {
 
   abstract String[] getPrefixes();
 
@@ -17,5 +17,5 @@ public abstract class SpeechParser {
     return sb.toString();
   }
 
-  abstract Speech parse(RegexGrouper line);
+  abstract T parse(RegexGrouper line);
 }

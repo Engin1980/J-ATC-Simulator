@@ -1,44 +1,38 @@
 package jatcsimlib.speaking;
 
 import jatcsimlib.exceptions.ERuntimeException;
-import jatcsimlib.newMessaging.IMessageContent;
-import jatcsimlib.speaking.commands.Command;
+import jatcsimlib.messaging.IMessageContent;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
-public class SpeechList extends ArrayList<Speech> implements IMessageContent {
+public class SpeechList<T extends ISpeech> extends ArrayList<T> implements IMessageContent {
 
-  /**
-   * Gets element at ith. index cast to Command. If its not command, exception is thrown
-   * @param index Index to get
-   * @return Element cast to Command
-   */
-  public Command getCommand(int index){
-//    Command ret;
-//    Speech tmp = this.get(index);
-//    if (tmp instanceof Command)
-//      ret = (Command) tmp;
-//    else
-//      throw new ERuntimeException("Element at index {" + index + "} is not of type Command, but is " + tmp.getClass().getName());
-    Command ret = getAs(index);
-
+  public ICommand getAsCommand(int index){
+    ICommand ret = getAs(index);
     return ret;
   }
 
-   public <T> T tryGetAs(int index){
-    T ret;
-    Speech tmp = this.get(index);
+  public INotification getAsNotification(int index){
+    INotification ret = getAs(index);
+    return ret;
+  }
+
+
+   public <U extends T> U tryGetAs(int index){
+    U ret;
+    ISpeech tmp = this.get(index);
     try{
-      ret = (T) tmp;
+      ret = (U) tmp;
     } catch (Exception ex){
       ret = null;
     }
     return ret;
    }
 
-  public <T> T getAs(int index){
-    T ret = this.tryGetAs(index);
+  public <U extends  T> U getAs(int index){
+    U ret = this.tryGetAs(index);
     if (ret == null)
       throw new ERuntimeException("Element at index {" + index +"} cannot be cast to requested type.");
     return ret;
@@ -46,21 +40,35 @@ public class SpeechList extends ArrayList<Speech> implements IMessageContent {
 
   public SpeechList(){}
 
-  public SpeechList(Collection<? extends Speech> lst){
+  public SpeechList(Collection<? extends T> lst){
     super(lst);
   }
 
-  public SpeechList clone(){
+  public SpeechList<T> clone(){
     SpeechList ret = new SpeechList(this);
     return ret;
   }
 
   public boolean containsType(Class type){
-    for (Speech speech : this) {
+    for (ISpeech speech : this) {
       if (speech.getClass().equals(type))
         return true;
     }
     return false;
+  }
+
+  public <T extends ISpeech> SpeechList<T> convertTo(){
+    SpeechList<T> ret = new SpeechList<>();
+    for (ISpeech item : this) {
+      T convertedItem = (T) item;
+      ret.add(convertedItem);
+    }
+    return ret;
+  }
+
+  @Override
+  public T get(int index){
+    return super.get(index);
   }
 
 }

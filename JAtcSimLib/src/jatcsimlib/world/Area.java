@@ -8,7 +8,8 @@ package jatcsimlib.world;
 import jatcsimlib.Acc;
 import jatcsimlib.exceptions.ERuntimeException;
 import jatcsimlib.global.KeyList;
-import jatcsimlib.speaking.commands.Command;
+import jatcsimlib.speaking.ICommand;
+import jatcsimlib.speaking.fromAtc.IAtcCommand;
 import jatcsimlib.speaking.parsing.Parser;
 import jatcsimlib.speaking.parsing.shortParsing.ShortParser;
 
@@ -98,7 +99,7 @@ public class Area {
 
   private void checkRouteCommands() {
     Parser parser = new ShortParser();
-    List<Command> cmds;
+    List<IAtcCommand> cmds;
     Navaid n;
     for (Airport a : this.getAirports()) {
       Acc.setAirport(a);
@@ -109,7 +110,7 @@ public class Area {
               cmds = parser.parseMultipleCommands(p.getGaRoute());
             } catch (Exception ex) {
               throw new ERuntimeException(
-                  String.format("Airport %s runway %s approach %s has invalid go-around route commands: %s (error: %s)",
+                  String.format("Airport %s runway %s approach %s has invalid go-around route fromAtc: %s (error: %s)",
                       a.getIcao(), t.getName(), p.getType(), p.getGaRoute(), ex.getMessage()));
             }
           } // for (Approach
@@ -119,7 +120,7 @@ public class Area {
               cmds = parser.parseMultipleCommands(o.getRoute());
             } catch (Exception ex) {
               throw new ERuntimeException(
-                  String.format("Airport %s runway %s route %s has invalid commands: %s (error: %s)",
+                  String.format("Airport %s runway %s route %s has invalid fromAtc: %s (error: %s)",
                       a.getIcao(), t.getName(), o.getName(), o.getRoute(), ex.getMessage()));
             }
             try {

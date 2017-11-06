@@ -9,12 +9,12 @@ import jatcsimlib.Acc;
 import jatcsimlib.airplanes.Airplane;
 import jatcsimlib.airplanes.AirplaneList;
 import jatcsimlib.exceptions.ERuntimeException;
-import jatcsimlib.newMessaging.Message;
+import jatcsimlib.messaging.Message;
 import jatcsimlib.speaking.SpeechList;
-import jatcsimlib.speaking.commands.specific.ChangeAltitudeCommand;
-import jatcsimlib.speaking.commands.specific.ContactCommand;
-import jatcsimlib.speaking.notifications.specific.GoodDayNotification;
-import jatcsimlib.speaking.notifications.specific.RadarContactConfirmationNotification;
+import jatcsimlib.speaking.fromAtc.commands.ChangeAltitudeCommand;
+import jatcsimlib.speaking.fromAtc.commands.ContactCommand;
+import jatcsimlib.speaking.fromAirplane.notifications.GoodDayNotification;
+import jatcsimlib.speaking.fromAtc.notifications.RadarContactConfirmationNotification;
 
 import java.util.List;
 
@@ -62,7 +62,7 @@ public class CenterAtc extends ComputerAtc {
             this,
             p,
             new RadarContactConfirmationNotification());
-        Acc.messenger().add(msg);
+        Acc.messenger().send(msg);
         recorder.logMessage(msg);
 
         if (p.isDeparture()) {
@@ -70,7 +70,7 @@ public class CenterAtc extends ComputerAtc {
             this,
             p,
             new ChangeAltitudeCommand(ChangeAltitudeCommand.eDirection.climb, getDepartureRandomTargetAltitude(p)));
-          Acc.messenger().add(msg);
+          Acc.messenger().send(msg);
           recorder.logMessage(msg);
         }
       }
@@ -99,7 +99,7 @@ public class CenterAtc extends ComputerAtc {
         waitingRequestsList.remove(p);
         super.approveSwitch(p);
         Message msg = new Message(this, p, new ContactCommand(eType.app));
-        Acc.messenger().add(msg);
+        Acc.messenger().send(msg);
         recorder.logMessage(msg);
       }
     }

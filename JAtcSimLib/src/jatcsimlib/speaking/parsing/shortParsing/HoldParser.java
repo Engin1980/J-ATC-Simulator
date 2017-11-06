@@ -2,12 +2,11 @@ package jatcsimlib.speaking.parsing.shortParsing;
 
 import jatcsimlib.Acc;
 import jatcsimlib.exceptions.EInvalidCommandException;
-import jatcsimlib.speaking.commands.Command;
-import jatcsimlib.speaking.commands.specific.HoldCommand;
+import jatcsimlib.speaking.fromAtc.commands.HoldCommand;
 import jatcsimlib.world.Navaid;
 import jatcsimlib.world.PublishedHold;
 
-class HoldParser extends SpeechParser {
+class HoldParser extends SpeechParser<HoldCommand> {
 
   private static final String[] prefixes = new String[]{"H"};
   private static final String pattern = "H (\\S{1,5})( (\\d{3}))?( (R|L))?";
@@ -23,7 +22,7 @@ class HoldParser extends SpeechParser {
   }
 
   @Override
-  Command parse(RegexGrouper rg) {
+  HoldCommand parse(RegexGrouper rg) {
     HoldCommand ret;
 
     String ns = rg.getString(1);

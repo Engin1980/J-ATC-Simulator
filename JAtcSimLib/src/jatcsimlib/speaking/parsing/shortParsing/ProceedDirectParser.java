@@ -2,11 +2,11 @@ package jatcsimlib.speaking.parsing.shortParsing;
 
 import jatcsimlib.Acc;
 import jatcsimlib.exceptions.EInvalidCommandException;
-import jatcsimlib.speaking.commands.Command;
-import jatcsimlib.speaking.commands.specific.ProceedDirectCommand;
+import jatcsimlib.speaking.ICommand;
+import jatcsimlib.speaking.fromAtc.commands.ProceedDirectCommand;
 import jatcsimlib.world.Navaid;
 
-class ProceedDirectParser extends SpeechParser {
+class ProceedDirectParser extends SpeechParser<ProceedDirectCommand> {
 
   private static final String[] prefixes = new String[]{"PD"};
   private static final String pattern = "PD (\\S+)";
@@ -22,14 +22,14 @@ class ProceedDirectParser extends SpeechParser {
   }
 
   @Override
-  Command parse(RegexGrouper rg) {
+  ProceedDirectCommand parse(RegexGrouper rg) {
     String ns = rg.getString(1);
 
     Navaid n = Acc.area().getNavaids().tryGet(ns);
     if (n == null) {
       throw new EInvalidCommandException("Unable to find navaid named \"" + ns + "\".", rg.getMatch());
     }
-    Command ret = new ProceedDirectCommand(n);
+    ProceedDirectCommand ret = new ProceedDirectCommand(n);
     return ret;
   }
 }

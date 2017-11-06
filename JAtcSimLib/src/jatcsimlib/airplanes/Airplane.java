@@ -13,55 +13,26 @@ import jatcsimlib.coordinates.Coordinates;
 import jatcsimlib.exceptions.ERuntimeException;
 import jatcsimlib.global.Headings;
 import jatcsimlib.global.KeyItem;
-import jatcsimlib.newMessaging.IMessageContent;
-import jatcsimlib.newMessaging.Message;
-import jatcsimlib.newMessaging.IMessageParticipant;
-import jatcsimlib.speaking.Speech;
+import jatcsimlib.messaging.IMessageContent;
+import jatcsimlib.messaging.IMessageParticipant;
+import jatcsimlib.messaging.Message;
+import jatcsimlib.speaking.IFromAtc;
+import jatcsimlib.speaking.ISpeech;
 import jatcsimlib.speaking.SpeechList;
-import jatcsimlib.speaking.commands.CommandList;
-import jatcsimlib.speaking.commands.specific.ChangeHeadingCommand;
+import jatcsimlib.speaking.fromAtc.IAtcCommand;
+import jatcsimlib.speaking.fromAtc.commands.ChangeHeadingCommand;
 
+import javax.swing.text.StyledEditorKit;
 import java.util.List;
 
 /**
- *
  * @author Marek
  */
 public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
 
-  // <editor-fold defaultstate="collapsed" desc=" variables ">
-  private final Callsign callsign;
-
-  private int targetHeading;
-  private boolean targetHeadingLeftTurn;
-  private int heading;
-
-  private int targetAltitude;
-  private int altitude;
-
-  private int targetSpeed;
-  private int speed;
-
-  private Coordinate coordinate;
-
-  private final Squawk sqwk;
-
-  private final boolean departure;
-
-  private final Pilot pilot;
-
-  private int lastVerticalSpeed;
-
-  private final AirplaneType airplaneType;
-
-  private final AirplaneInfo info;
-
-  private FlightRecorder flightRecorder = null;
-
-  // </editor-fold>
-  // <editor-fold defaultstate="collapsed" desc=" Nested ">
-  
   public class AirplaneInfo {
+
+    private boolean airprox = false;
 
     public Coordinate coordinate() {
       return Airplane.this.coordinate;
@@ -321,8 +292,6 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
       }
     }
 
-    private boolean airprox = false;
-
     public boolean isAirprox() {
       return airprox;
     }
@@ -340,14 +309,35 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     }
 
   }
-  
+  private final static double GROUND_MULTIPLIER = 1.0; //1.5; //3.0;
+  private static final double secondFraction = 1 / 60d / 60d;
+  // <editor-fold defaultstate="collapsed" desc=" variables ">
+  private final Callsign callsign;
+  private final Squawk sqwk;
+  private final boolean departure;
+  private final Pilot pilot;
+  private final AirplaneType airplaneType;
+  private final AirplaneInfo info;
+  private int targetHeading;
+  private boolean targetHeadingLeftTurn;
+  private int heading;
+  private int targetAltitude;
+  private int altitude;
+  private int targetSpeed;
+  private int speed;
+
+  // </editor-fold>
+  // <editor-fold defaultstate="collapsed" desc=" Nested ">
+  private Coordinate coordinate;
+
 // </editor-fold>
   // <editor-fold defaultstate="collapsed" desc=" .ctors ">
-  
+  private int lastVerticalSpeed;
+  private FlightRecorder flightRecorder = null;
 
   public Airplane(Callsign callsign, Coordinate coordinate, Squawk sqwk, AirplaneType airplaneSpecification,
-    int heading, int altitude, int speed, boolean isDeparture,
-    String routeName, CommandList routeCommandQueue) {
+                  int heading, int altitude, int speed, boolean isDeparture,
+                  String routeName, SpeechList<IAtcCommand> routeCommandQueue) {
 
     this.info = this.new AirplaneInfo();
 
@@ -484,22 +474,38 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
 
   private void processMessage(Message msg) {
     // if speech from non-tuned ATC, then is ignored
-    if (msg.getSource() != this.pilot.getTunedAtc()){
+    if (msg.getSource() != this.pilot.getTunedAtc()) {
       return;
     }
-    
+
     SpeechList cmds;
     IMessageContent s = msg.getContent();
-    if (s instanceof Speech) {
-      cmds = new SpeechList();
-      cmds.add((Speech) s);
-    } else if (s instanceof List) {
-      cmds = (SpeechList) s;
+    if (isValidMessageForAirplane(s)) {
+      if (s instanceof SpeechList)
+        cmds = (SpeechList) s;
+      else {
+        cmds = new SpeechList();
+        cmds.add(s);
+      }
     } else {
-      throw new ERuntimeException("Airplane can only deal with messages containing \"Speech\" or \"List<Speech>\".");
+      throw new ERuntimeException("Airplane can only deal with messages containing \"IFromAtc\" or \"List<IFromAtc>\".");
     }
 
     processCommands(cmds);
+  }
+
+  private boolean isValidMessageForAirplane(IMessageContent msg){
+    if (msg instanceof IFromAtc)
+      return true;
+    else if (msg instanceof  SpeechList){
+      for (ISpeech o : (SpeechList<ISpeech>) msg) {
+        if (!(o instanceof IFromAtc)){
+          return false;
+        }
+      }
+      return true;
+    }
+    return false;
   }
 
   private void processCommands(SpeechList speeches) {
@@ -540,8 +546,6 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
 
   }
 
-  private final static double GROUND_MULTIPLIER = 1.0; //1.5; //3.0;
-
   private double adjustSpeed(double energyLeft) {
     // this is faster:
     boolean onGround = speed < airplaneType.vMinApp && speed > 20;
@@ -550,7 +554,7 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
       int step = airplaneType.speedIncreaseRate;
       if (onGround) {
         step = (int) Math.ceil(step * GROUND_MULTIPLIER);
-      } else{
+      } else {
         step = (int) Math.ceil(step * energyLeft);
       }
       speed += step;
@@ -565,7 +569,7 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
       int step = airplaneType.speedDecreaseRate;
       if (onGround) {
         step = (int) Math.ceil(step * GROUND_MULTIPLIER);
-      }else{
+      } else {
         step = (int) Math.ceil(step * energyLeft);
       }
       speed -= step;
@@ -582,7 +586,7 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
 
   private void adjustHeading() {
     int newHeading
-      = Headings.turn(heading, airplaneType.headingChangeRate, targetHeadingLeftTurn, targetHeading);
+        = Headings.turn(heading, airplaneType.headingChangeRate, targetHeadingLeftTurn, targetHeading);
     this.heading = newHeading;
   }
 
@@ -631,19 +635,11 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     return getTAS();
   }
 
-  private static final double secondFraction = 1 / 60d / 60d;
-
   private void updateCoordinates() {
     double dist = this.getGS() * secondFraction;
     Coordinate newC
-      = Coordinates.getCoordinate(coordinate, heading, dist);
+        = Coordinates.getCoordinate(coordinate, heading, dist);
     this.coordinate = newC;
-  }
-
-  public void setTargetHeading(int targetHeading) {
-    boolean useLeft
-      = Headings.getBetterDirectionToTurn(heading, targetHeading) == ChangeHeadingCommand.eDirection.left;
-    setTargetHeading(targetHeading, useLeft);
   }
 
   public void setTargetHeading(int targetHeading, boolean useLeftTurn) {
@@ -651,24 +647,30 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     this.targetHeadingLeftTurn = useLeftTurn;
   }
 
-  public void setTargetSpeed(int targetSpeed) {
-    this.targetSpeed = targetSpeed;
-  }
-
-  public void setTargetAltitude(int targetAltitude) {
-    this.targetAltitude = targetAltitude;
-  }
-
   public int getTargetHeading() {
     return targetHeading;
+  }
+
+  public void setTargetHeading(int targetHeading) {
+    boolean useLeft
+        = Headings.getBetterDirectionToTurn(heading, targetHeading) == ChangeHeadingCommand.eDirection.left;
+    setTargetHeading(targetHeading, useLeft);
   }
 
   public int getTargetAltitude() {
     return targetAltitude;
   }
 
+  public void setTargetAltitude(int targetAltitude) {
+    this.targetAltitude = targetAltitude;
+  }
+
   public int getTargetSpeed() {
     return targetSpeed;
+  }
+
+  public void setTargetSpeed(int targetSpeed) {
+    this.targetSpeed = targetSpeed;
   }
 
   @Override

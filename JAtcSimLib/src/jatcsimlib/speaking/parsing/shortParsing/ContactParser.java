@@ -2,10 +2,10 @@ package jatcsimlib.speaking.parsing.shortParsing;
 
 import jatcsimlib.atcs.Atc;
 import jatcsimlib.exceptions.ENotSupportedException;
-import jatcsimlib.speaking.commands.Command;
-import jatcsimlib.speaking.commands.specific.ContactCommand;
+import jatcsimlib.speaking.ICommand;
+import jatcsimlib.speaking.fromAtc.commands.ContactCommand;
 
-class ContactParser extends SpeechParser {
+class ContactParser extends SpeechParser<ContactCommand> {
 
   private static final String[] prefixes = new String[]{"CT", "CA", "CC"};
   private static final String pattern = "(CT|CA|CC)";
@@ -21,7 +21,7 @@ class ContactParser extends SpeechParser {
   }
 
   @Override
-  Command parse(RegexGrouper rg) {
+  ContactCommand parse(RegexGrouper rg) {
     Atc.eType t;
     switch (rg.getString(1)) {
       case "CT":

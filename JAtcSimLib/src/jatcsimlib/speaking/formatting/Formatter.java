@@ -1,26 +1,29 @@
 package jatcsimlib.speaking.formatting;
 
 import jatcsimlib.exceptions.ERuntimeException;
-import jatcsimlib.speaking.Speech;
+import jatcsimlib.speaking.ISpeech;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 public abstract class Formatter {
 
-  public String format(Speech speech) {
+  public String format(ISpeech speech) {
     String ret =
         formatByReflection(speech);
     return ret;
   }
 
-  public String formatByReflection(Speech speech) {
+  public String formatByReflection(ISpeech speech) {
     Formatter fmt = this;
     Method m;
     m = tryGetFormatCommandMethodToInvoke(speech.getClass());
 
     if (m == null) {
-      throw new ERuntimeException("No \"format\" method found for type " + speech.getClass().getSimpleName());
+      throw new ERuntimeException(
+          "No {format(...)} method found for type {%s} in the formatter of type {%s}.",
+          speech.getClass().getName(),
+          this.getClass().getName());
     }
 
     String ret;
@@ -28,17 +31,17 @@ public abstract class Formatter {
       ret = (String) m.invoke(fmt, speech);
     } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
       throw new ERuntimeException(
-          String.format("Format-command invoke failed for class %s and parameter %s.",
-              fmt.getClass().getName(),
-              speech.getClass().getName()));
+          "Format-command invoke failed for class %s and parameter %s.",
+          fmt.getClass().getName(),
+          speech.getClass().getName());
     }
     return ret;
   }
 
-  private Method tryGetFormatCommandMethodToInvoke(Class<? extends Speech> speechClass) {
+  private Method tryGetFormatCommandMethodToInvoke(Class<? extends ISpeech> speechClass) {
     Method ret;
     try {
-      ret = Formatter.class.getDeclaredMethod("format", speechClass);
+      ret = this.getClass().getDeclaredMethod("format", speechClass);
     } catch (NoSuchMethodException | SecurityException ex) {
       ret = null;
     }

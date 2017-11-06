@@ -12,9 +12,9 @@ import jatcsimlib.airplanes.Callsign;
 import jatcsimlib.airplanes.Squawk;
 import jatcsimlib.exceptions.ENotSupportedException;
 import jatcsimlib.exceptions.ERuntimeException;
-import jatcsimlib.newMessaging.Message;
-import jatcsimlib.newMessaging.StringMessageContent;
-import jatcsimlib.newMessaging.App;
+import jatcsimlib.messaging.Message;
+import jatcsimlib.messaging.StringMessageContent;
+import jatcsimlib.messaging.App;
 import jatcsimlib.speaking.SpeechList;
 import jatcsimlib.speaking.parsing.Parser;
 import jatcsimlib.speaking.parsing.shortParsing.ShortParser;
@@ -107,7 +107,7 @@ public class UserAtc extends Atc {
 
   private void sendToPlane(Airplane plane, SpeechList speeches) {
     Message m = new Message(this, plane, speeches);
-    Acc.messenger().add(m);
+    Acc.messenger().send(m);
     recorder.logMessage(m);
   }
 
@@ -151,13 +151,13 @@ public class UserAtc extends Atc {
 
     PlaneSwitchMessage msg = new PlaneSwitchMessage(plane);
     Message m = new Message(this, atc, msg);
-    Acc.messenger().add(m);
+    Acc.messenger().send(m);
     recorder.logMessage(m);
   }
 
   public void sendError(String message) {
     Message m = new Message(App.me(), this, new StringMessageContent(message));
-    Acc.messenger().add(m);
+    Acc.messenger().send(m);
     recorder.logMessage(m);
   }
 
@@ -166,7 +166,7 @@ public class UserAtc extends Atc {
       message = "?";
     }
     Message m = new Message(this, App.me(), new StringMessageContent(message.trim()));
-    Acc.messenger().add(m);
+    Acc.messenger().send(m);
     recorder.logMessage(m);
   }
 

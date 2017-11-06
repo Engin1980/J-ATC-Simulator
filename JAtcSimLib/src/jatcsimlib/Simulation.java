@@ -19,11 +19,10 @@ import jatcsimlib.events.EventManager;
 import jatcsimlib.global.ERandom;
 import jatcsimlib.global.ETime;
 import jatcsimlib.global.ReadOnlyList;
-import jatcsimlib.newMessaging.Message;
-import jatcsimlib.newMessaging.Messenger;
-import jatcsimlib.newMessaging.App;
-import jatcsimlib.newMessaging.StringMessageContent;
-import jatcsimlib.speaking.notifications.specific.StringNotification;
+import jatcsimlib.messaging.Message;
+import jatcsimlib.messaging.Messenger;
+import jatcsimlib.messaging.App;
+import jatcsimlib.messaging.StringMessageContent;
 import jatcsimlib.speaking.parsing.shortParsing.ShortParser;
 import jatcsimlib.traffic.Movement;
 import jatcsimlib.traffic.Traffic;
@@ -73,8 +72,6 @@ public class Simulation {
 
   private final Traffic traffic;
 
-  private final jatcsimlib.newMessaging.Messenger newMessenger = new jatcsimlib.newMessaging.Messenger();
-
   private final EventManager<Simulation, EventListener<Simulation, Simulation>, Simulation> tickEM = new EventManager(this);
 
   //TODO shouldn't this be private?
@@ -114,10 +111,6 @@ public class Simulation {
 
   public Messenger getMessenger() {
     return messenger;
-  }
-
-  public jatcsimlib.newMessaging.Messenger getNewMessenger() {
-    return newMessenger;
   }
 
   private Simulation(Airport airport, AirplaneTypes types, Weather weather, Traffic traffic, Calendar now, int simulationSecondLengthInMs) {
@@ -330,7 +323,7 @@ public class Simulation {
     try {
       tickI = Integer.parseInt(tickS);
     } catch (NumberFormatException ex) {
-      Acc.messenger().add(
+      Acc.messenger().send(
           new Message(
               App.me(),
               m.<UserAtc>getSource(),
@@ -340,7 +333,7 @@ public class Simulation {
     this.tmr.stop();
     this.tmr.start(tickI);
 
-    Acc.messenger().add(
+    Acc.messenger().send(
         new Message(
             App.me(),
             m.<UserAtc>getSource(),
@@ -351,11 +344,11 @@ public class Simulation {
   private void printCommandsHelps() {
     String txt = new ShortParser().getHelp();
 
-    Acc.messenger().add(
+    Acc.messenger().send(
         new Message(
             App.me(),
             Acc.atcApp(),
-            new StringNotification(txt))
+            new StringMessageContent(txt))
     );
   }
 

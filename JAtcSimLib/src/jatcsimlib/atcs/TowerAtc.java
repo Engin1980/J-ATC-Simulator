@@ -13,12 +13,12 @@ import jatcsimlib.exceptions.ENotSupportedException;
 import jatcsimlib.exceptions.ERuntimeException;
 import jatcsimlib.global.ETime;
 import jatcsimlib.global.Headings;
-import jatcsimlib.newMessaging.Message;
-import jatcsimlib.speaking.commands.specific.ClearedForTakeoffCommand;
-import jatcsimlib.speaking.notifications.specific.GoingAroundNotification;
-import jatcsimlib.speaking.notifications.specific.GoodDayNotification;
-import jatcsimlib.speaking.notifications.specific.RadarContactConfirmationNotification;
-import jatcsimlib.speaking.notifications.specific.StringNotification;
+import jatcsimlib.messaging.Message;
+import jatcsimlib.messaging.StringMessageContent;
+import jatcsimlib.speaking.fromAirplane.notifications.GoingAroundNotification;
+import jatcsimlib.speaking.fromAirplane.notifications.GoodDayNotification;
+import jatcsimlib.speaking.fromAtc.commands.ClearedForTakeoffCommand;
+import jatcsimlib.speaking.fromAtc.notifications.RadarContactConfirmationNotification;
 import jatcsimlib.weathers.Weather;
 import jatcsimlib.world.Runway;
 import jatcsimlib.world.RunwayThreshold;
@@ -107,7 +107,7 @@ public class TowerAtc extends ComputerAtc {
               this,
               m.<Airplane>getSource(),
               new RadarContactConfirmationNotification());
-          Acc.messenger().add(msg);
+          Acc.messenger().send(msg);
           recorder.logMessage(msg);
         }
         continue;
@@ -151,9 +151,15 @@ public class TowerAtc extends ComputerAtc {
       departings.add(p);
       lastDepartures.set(runwayThresholdInUse, p, Acc.now());
 
-      Message m = new Message(this, p,
+      Message m;
+
+      m = new Message(this, p,
+          new RadarContactConfirmationNotification());
+      Acc.messenger().send(m);
+
+      m = new Message(this, p,
           new ClearedForTakeoffCommand(runwayThresholdInUse));
-      Acc.messenger().add(m);
+      Acc.messenger().send(m);
       recorder.logMessage(m);
     }
   }
@@ -217,7 +223,7 @@ public class TowerAtc extends ComputerAtc {
       // todo PlaneSwitchMessage are only several types, some enum should be used instead of fixed string message
       m = new Message(this, Acc.atcApp(),
           new PlaneSwitchMessage(p, " to you"));
-      Acc.messenger().add(m);
+      Acc.messenger().send(m);
       recorder.logMessage(m);
 
       getPrm().requestSwitch(this, Acc.atcApp(), p);
@@ -229,7 +235,7 @@ public class TowerAtc extends ComputerAtc {
     for (Airplane p : awaitings) {
       m = new Message(this, Acc.atcApp(),
           new PlaneSwitchMessage(p, " to you (repeated)"));
-      Acc.messenger().add(m);
+      Acc.messenger().send(m);
       recorder.logMessage(m);
     }
   }
@@ -275,9 +281,9 @@ public class TowerAtc extends ComputerAtc {
           Message m = new Message(
               this,
               Acc.atcApp(),
-              new StringNotification(
+              new StringMessageContent(
                   "Expect change to runway %s at %s.", rci.newRunwayThreshold.getName(), rci.changeTime.toString()));
-          Acc.messenger().add(m);
+          Acc.messenger().send(m);
           recorder.logMessage(m);
         }
       }
@@ -304,8 +310,8 @@ public class TowerAtc extends ComputerAtc {
     Message m = new Message(
         this,
         Acc.atcApp(),
-        new StringNotification("Runway in use %s from now.", newRunwayInUseThreshold.getName()));
-    Acc.messenger().add(m);
+        new StringMessageContent("Runway in use %s from now.", newRunwayInUseThreshold.getName()));
+    Acc.messenger().send(m);
     recorder.logMessage(m);
     this.runwayThresholdInUse = newRunwayInUseThreshold;
   }

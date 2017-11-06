@@ -58,8 +58,8 @@ public class Acc {
     return Acc.aip;
   }
 
-  public static jatcsimlib.newMessaging.Messenger messenger() {
-    return sim().getNewMessenger();
+  public static jatcsimlib.messaging.Messenger messenger() {
+    return sim().getMessenger();
   }
 
   public static Weather weather() {

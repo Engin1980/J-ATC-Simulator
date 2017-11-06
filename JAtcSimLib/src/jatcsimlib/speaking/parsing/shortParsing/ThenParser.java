@@ -1,9 +1,9 @@
 package jatcsimlib.speaking.parsing.shortParsing;
 
-import jatcsimlib.speaking.commands.Command;
-import jatcsimlib.speaking.commands.specific.ThenCommand;
+import jatcsimlib.speaking.ICommand;
+import jatcsimlib.speaking.fromAtc.commands.ThenCommand;
 
-class ThenParser extends SpeechParser {
+class ThenParser extends SpeechParser<ThenCommand> {
 
   private static final String[] prefixes = new String[]{"T"};
   private static final String pattern = "T";
@@ -19,8 +19,8 @@ class ThenParser extends SpeechParser {
   }
 
   @Override
-  Command parse(RegexGrouper rg) {
-    Command ret = new ThenCommand();
+  ThenCommand parse(RegexGrouper rg) {
+    ThenCommand ret = new ThenCommand();
     return ret;
   }
 }

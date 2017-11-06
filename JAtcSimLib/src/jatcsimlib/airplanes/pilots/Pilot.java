@@ -16,18 +16,25 @@ import jatcsimlib.global.EStringBuilder;
 import jatcsimlib.global.ETime;
 import jatcsimlib.global.Headings;
 import jatcsimlib.global.SpeedRestriction;
-import jatcsimlib.newMessaging.Message;
-import jatcsimlib.speaking.Speech;
+import jatcsimlib.messaging.Message;
+import jatcsimlib.speaking.ICommand;
+import jatcsimlib.speaking.ISpeech;
 import jatcsimlib.speaking.SpeechDelayer;
 import jatcsimlib.speaking.SpeechList;
-import jatcsimlib.speaking.commands.*;
-import jatcsimlib.speaking.commands.afters.AfterAltitudeCommand;
-import jatcsimlib.speaking.commands.afters.AfterNavaidCommand;
-import jatcsimlib.speaking.commands.afters.AfterSpeedCommand;
-import jatcsimlib.speaking.commands.specific.*;
-import jatcsimlib.speaking.notifications.Confirmation;
-import jatcsimlib.speaking.notifications.Rejection;
-import jatcsimlib.speaking.notifications.specific.*;
+import jatcsimlib.speaking.fromAirplane.notifications.EstablishedOnApproachNotification;
+import jatcsimlib.speaking.fromAirplane.notifications.commandResponses.CommandResponse;
+import jatcsimlib.speaking.fromAirplane.notifications.GoingAroundNotification;
+import jatcsimlib.speaking.fromAirplane.notifications.GoodDayNotification;
+import jatcsimlib.speaking.fromAirplane.notifications.RequestRadarContactNotification;
+import jatcsimlib.speaking.fromAirplane.notifications.commandResponses.IllegalThenCommandRejection;
+import jatcsimlib.speaking.fromAirplane.notifications.commandResponses.rejections.ShortCutToFixNotOnRoute;
+import jatcsimlib.speaking.fromAirplane.notifications.commandResponses.rejections.UnableToEnterApproachFromDifficultPosition;
+import jatcsimlib.speaking.fromAtc.IAtcCommand;
+import jatcsimlib.speaking.fromAtc.commands.*;
+import jatcsimlib.speaking.fromAtc.commands.afters.*;
+import jatcsimlib.speaking.fromAirplane.notifications.commandResponses.Confirmation;
+import jatcsimlib.speaking.fromAirplane.notifications.commandResponses.Rejection;
+import jatcsimlib.speaking.fromAtc.notifications.RadarContactConfirmationNotification;
 import jatcsimlib.weathers.Weather;
 import jatcsimlib.world.Approach;
 import jatcsimlib.world.Navaid;
@@ -326,8 +333,8 @@ public class Pilot {
 
           // neni na twr, tak GA
           if (pilot.atc != Acc.atcTwr()) {
-            Message m = new Message(parent, atc, new StringNotification("Established on final."));
-            Acc.messenger().add(m);
+            Message m = new Message(parent, atc, new EstablishedOnApproachNotification());
+            Acc.messenger().send(m);
           }
 
           break;
@@ -443,7 +450,7 @@ public class Pilot {
     private void goAround(String reason) {
       Message m = new Message(parent, atc,
           new GoingAroundNotification(reason));
-      Acc.messenger().add(m);
+      Acc.messenger().send(m);
 
       parent.setTargetSpeed(parent.getType().vDep);
 
@@ -493,8 +500,8 @@ public class Pilot {
   }
 
 // </editor-fold>
-  public Pilot(Airplane parent, String routeName, CommandList routeCommandQueue) {
-    SpeechList speeches = new SpeechList(routeCommandQueue); // incoming as command list, transfered to speech list
+  public Pilot(Airplane parent, String routeName, SpeechList<IAtcCommand> routeCommandQueue) {
+    SpeechList<IAtcCommand> speeches = routeCommandQueue.clone(); // need clone to expand "thens"
     this.parent = parent;
     this.routeName = routeName;
     this.autoThrust = new AutoThrust(parent, AutoThrust.Mode.idle);
@@ -517,7 +524,7 @@ public class Pilot {
 
   private int addNewSpeeches(SpeechList cmds, int index) {
     int ret = index + 1;
-    Speech c = cmds.get(index);
+    ISpeech c = cmds.get(index);
     if ((c instanceof ToNavaidCommand)) {
       Navaid n = ((ToNavaidCommand) c).getNavaid();
       // tady musí ještě být sekvenční promazání v afterCommands zpětně celé routy
@@ -534,7 +541,7 @@ public class Pilot {
         // zkontrolovat, jestli se letí přes tenhle navaid
         // jinak to nemá smysl
       }
-      this.afterCommands.add((AfterCommand) c, cmds.getCommand(index + 1));
+      this.afterCommands.add((AfterCommand) c, cmds.getAsCommand(index + 1));
       ret += 1;
     } else if ((c instanceof ContactCommand)
       || (c instanceof ChangeSpeedCommand)
@@ -583,15 +590,15 @@ public class Pilot {
   }
 
   private void processAfterCommands() {
-    List<Command> cmdsToProcess
+    List<ICommand> cmdsToProcess
       = afterCommands.getAndRemoveSatisfiedCommands(parent, this.targetCoordinate);
 
     processQueueSpeeches(cmdsToProcess);
   }
 
-  private void processQueueSpeeches(List<? extends Speech> queue) {
+  private void processQueueSpeeches(List<? extends ISpeech> queue) {
     while (!queue.isEmpty()) {
-      Speech s = queue.get(0);
+      ISpeech s = queue.get(0);
       if (s instanceof AfterCommand) {
         processAfterCommandFromQueue(queue);
       } else {
@@ -603,16 +610,16 @@ public class Pilot {
     }
   }
 
-  private void processAfterCommandFromQueue(List<? extends Speech> queue) {
+  private void processAfterCommandFromQueue(List<? extends ISpeech> queue) {
     AfterCommand af = (AfterCommand) queue.get(0);
     queue.remove(0);
     while (!queue.isEmpty() && !(queue.get(0) instanceof AfterCommand)) {
-      afterCommands.add(af, (Command) queue.get(0));
+      afterCommands.add(af, (ICommand) queue.get(0));
       queue.remove(0);
     }
   }
 
-  private boolean tryProcessQueueSpeech(Speech s) {
+  private boolean tryProcessQueueSpeech(ISpeech s) {
     Method m;
     m = tryGetProcessQueueSpeechMethodToInvoke(s.getClass());
 
@@ -632,7 +639,7 @@ public class Pilot {
     return ret;
   }
 
-  private Method tryGetProcessQueueSpeechMethodToInvoke(Class<? extends Speech> commandType) {
+  private Method tryGetProcessQueueSpeechMethodToInvoke(Class<? extends ISpeech> commandType) {
     Method ret;
     try {
       ret = Pilot.class.getDeclaredMethod("processQueueSpeech", commandType);
@@ -772,7 +779,7 @@ public class Pilot {
     this.hasRadarContact = false;
     // rewritten
     // TODO now switch is realised in no-time, there is no delay between "frequency change confirmation" and "new atc call"
-    Speech s = new GoodDayNotification(parent.getCallsign(), Acc.toAltS(parent.getAltitude(), true));
+    ISpeech s = new GoodDayNotification(parent.getCallsign(), Acc.toAltS(parent.getAltitude(), true));
     say(s);
     return true;
   }
@@ -782,8 +789,8 @@ public class Pilot {
     if (pointIndex < 0) {
       Message m = new Message(
           parent, this.atc,
-          new StringNotification(" Unable to shortcut to " + c.getNavaid().getName() + ", fix not on our route!")      );
-      Acc.messenger().add(m);
+          new ShortCutToFixNotOnRoute(c));
+      Acc.messenger().send(m);
     } else {
       for (int i = 0; i < pointIndex; i++) {
         this.queue.removeAt(i);
@@ -808,8 +815,8 @@ public class Pilot {
       radFromFix,
       Headings.add(c.getApproach().getRadial(), 30))) {
       Message m = new Message(parent, atc,
-          new StringNotification("Cannot enter approach now. Difficult position."));
-      Acc.messenger().add(m);
+          new UnableToEnterApproachFromDifficultPosition(c));
+      Acc.messenger().send(m);
     } else {
       this.behavior = new ApproachBehavior(c.getApproach());
 
@@ -841,14 +848,14 @@ public class Pilot {
     return true;
   }
 
-  private void sayOrError(Command c, String rejectionReason) {
+  private void sayOrError(IAtcCommand c, String rejectionReason) {
     Rejection r = new Rejection(rejectionReason, c);
     say(r);
   }
 
   private boolean isConfirmationsNowRequested = false;
 
-  private void confirmIfReq(Command originalCommandToBeConfirmed) {
+  private void confirmIfReq(IAtcCommand originalCommandToBeConfirmed) {
     if (isConfirmationsNowRequested) {
       Confirmation cmd = new Confirmation(originalCommandToBeConfirmed);
       sayIfReq(cmd);
@@ -861,7 +868,7 @@ public class Pilot {
     }
   }
 
-  private void say(Speech speech) {
+  private void say(ISpeech speech) {
     saidText.add(speech);
   }
 
@@ -877,7 +884,7 @@ public class Pilot {
     }
 
     Message m = new Message(parent, atc, saidText.clone());
-    Acc.messenger().add(m);
+    Acc.messenger().send(m);
 
     System.out.println("Saying to " + this.getTunedAtc().getName() + ": " + m.toString());
 
@@ -897,7 +904,7 @@ public class Pilot {
 
   }
 
-  private void expandThenCommands(List<Speech> speeches) {
+  private void expandThenCommands(SpeechList<IAtcCommand> speeches) {
     if (speeches.isEmpty()) {
       return;
     }
@@ -907,19 +914,19 @@ public class Pilot {
         if (i == 0 || i == speeches.size() - 1) {
           Message message = new Message(
               parent, atc,
-              new StringNotification("{Then} command cannot be first or last in queue. The whole command block is ignored."));
-          Acc.messenger().add(message);
+              new IllegalThenCommandRejection("{Then} command cannot be first or last in queue. The whole command block is ignored."));
+          Acc.messenger().send(message);
           speeches.clear();
           return;
         }
-        Speech prev = speeches.get(i - 1);
+        ISpeech prev = speeches.get(i - 1);
 
-        Command n; // new
-        if (!(prev instanceof Command)){
+        IAtcCommand n; // new
+        if (!(prev instanceof IAtcCommand)){
           Message message = new Message(
               parent, atc,
-              new StringNotification("{Then} command must be after another command. The whole command block is ignored."));
-          Acc.messenger().add(message);
+              new IllegalThenCommandRejection("{Then} command must be after another command. The whole command block is ignored."));
+          Acc.messenger().send(message);
 
         }
         if (prev instanceof ProceedDirectCommand) {
@@ -931,8 +938,8 @@ public class Pilot {
         } else {
           Message message = new Message(
               parent, atc,
-              new StringNotification("{Then} command is after a strange command, it does not make sense. The whole command block is ignored."));
-          Acc.messenger().add(message);
+              new IllegalThenCommandRejection("{Then} command is after a strange command, it does not make sense. The whole command block is ignored."));
+          Acc.messenger().send(message);
           speeches.clear();
           return;
         }

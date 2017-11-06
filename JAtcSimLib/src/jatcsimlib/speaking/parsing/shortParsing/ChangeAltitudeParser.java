@@ -1,10 +1,10 @@
 package jatcsimlib.speaking.parsing.shortParsing;
 
 import jatcsimlib.exceptions.ERuntimeException;
-import jatcsimlib.speaking.commands.Command;
-import jatcsimlib.speaking.commands.specific.ChangeAltitudeCommand;
+import jatcsimlib.speaking.ICommand;
+import jatcsimlib.speaking.fromAtc.commands.ChangeAltitudeCommand;
 
-class ChangeAltitudeParser extends SpeechParser {
+class ChangeAltitudeParser extends SpeechParser<ChangeAltitudeCommand> {
 
   private static final String[] prefixes = new String[]{"MA", "CM", "DM"};
   private static final String pattern = "((MA)|(CM)|(DM)) ?(\\d{1,3})";
@@ -20,7 +20,7 @@ class ChangeAltitudeParser extends SpeechParser {
   }
 
   @Override
-  Command parse(RegexGrouper rg) {
+  ChangeAltitudeCommand parse(RegexGrouper rg) {
     ChangeAltitudeCommand ret;
     ChangeAltitudeCommand.eDirection d;
     int a;

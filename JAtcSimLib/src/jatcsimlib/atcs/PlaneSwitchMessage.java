@@ -7,7 +7,7 @@
 package jatcsimlib.atcs;
 
 import jatcsimlib.airplanes.Airplane;
-import jatcsimlib.newMessaging.IMessageContent;
+import jatcsimlib.messaging.IMessageContent;
 
 /**
  *

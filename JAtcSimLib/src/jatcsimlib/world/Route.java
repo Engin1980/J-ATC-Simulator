@@ -10,18 +10,16 @@ import jatcsimlib.exceptions.EBindException;
 import jatcsimlib.global.KeyItem;
 import jatcsimlib.global.MustBeBinded;
 import jatcsimlib.global.XmlOptional;
-import jatcsimlib.speaking.Speech;
+import jatcsimlib.speaking.IFromAtc;
 import jatcsimlib.speaking.SpeechList;
-import jatcsimlib.speaking.commands.Command;
-import jatcsimlib.speaking.commands.CommandList;
-import jatcsimlib.speaking.commands.specific.ProceedDirectCommand;
-import jatcsimlib.speaking.commands.specific.ToNavaidCommand;
+import jatcsimlib.speaking.ICommand;
+import jatcsimlib.speaking.fromAtc.IAtcCommand;
+import jatcsimlib.speaking.fromAtc.commands.ProceedDirectCommand;
+import jatcsimlib.speaking.fromAtc.commands.ToNavaidCommand;
 import jatcsimlib.speaking.parsing.Parser;
 import jatcsimlib.speaking.parsing.shortParsing.ShortParser;
 
-import javax.swing.text.StyledEditorKit;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -35,7 +33,7 @@ public class Route extends MustBeBinded implements KeyItem<String> {
     
     ret.name = n.getName();
     
-    ret._routeCommands = new ArrayList<>();
+    ret._routeCommands = new SpeechList<>();
     if (arrival){
       ret._routeCommands.add(new ProceedDirectCommand(n));
     }
@@ -58,7 +56,7 @@ public class Route extends MustBeBinded implements KeyItem<String> {
     double ret = 0;
     Navaid prev = null;
     
-    for (Command cmd : this._routeCommands){
+    for (ICommand cmd : this._routeCommands){
       if ((cmd instanceof ProceedDirectCommand) == false) continue;
       
       if (prev == null)
@@ -92,7 +90,7 @@ public class Route extends MustBeBinded implements KeyItem<String> {
   private RunwayThreshold parent;
   @XmlOptional
   private String category = null;
-  private List<Command> _routeCommands = null;
+  private SpeechList<IAtcCommand> _routeCommands = null;
   private List<Navaid> _routeNavaids = null;
   private double _routeLength = -1;
   private Navaid _mainFix = null;
@@ -137,13 +135,10 @@ public class Route extends MustBeBinded implements KeyItem<String> {
   protected void _bind() {
     try {
       Parser p = new ShortParser();
-      SpeechList lst = p.parseMulti(this.route);
-      for (Speech speech : lst) {
-        Command cmd = (Command) speech;
-        _routeCommands.add(cmd);
-      }
+      SpeechList<IFromAtc> xlst = p.parseMulti(this.route);
+      _routeCommands =  xlst.convertTo();
     } catch (Exception ex) {
-      throw new EBindException("Parsing commands failed for route " + this.name + ". Route commands contain error (see cause).", ex);
+      throw new EBindException("Parsing fromAtc failed for route " + this.name + ". Route fromAtc contain error (see cause).", ex);
     }
 
     switch (type) {
@@ -159,11 +154,11 @@ public class Route extends MustBeBinded implements KeyItem<String> {
           throw new EBindException("\"Vectoing\" route must have set _mainFix explicitly.");
         break;
       default:
-        throw new EBindException("Failed to obtain main route fix of route " + this.name + ". SID last/STAR first command must be \"proceed direct\" (commands: " + this.route + ")");
+        throw new EBindException("Failed to obtain main route fix of route " + this.name + ". SID last/STAR first command must be \"proceed direct\" (fromAtc: " + this.route + ")");
     }
 
     _routeNavaids = new ArrayList<>();
-    for (Command c : _routeCommands) {
+    for (ICommand c : _routeCommands) {
       if (c instanceof ToNavaidCommand) {
         _routeNavaids.add(((ToNavaidCommand) c).getNavaid());
       }
@@ -178,16 +173,16 @@ public class Route extends MustBeBinded implements KeyItem<String> {
     _routeLength = calculateRouteLength();
   }
 
-  public List<Command> getCommands() {
+  public SpeechList<IAtcCommand> getCommands() {
     super.checkBinded();
 
     return _routeCommands;
   }
 
-  public CommandList getCommandsListClone() {
+  public SpeechList<IAtcCommand> getCommandsListClone() {
     super.checkBinded();
 
-    CommandList ret = new CommandList();
+    SpeechList<IAtcCommand> ret = new SpeechList<>();
     ret.addAll(_routeCommands);
     return ret;
   }
@@ -203,7 +198,7 @@ public class Route extends MustBeBinded implements KeyItem<String> {
   }
 
   private Navaid tryGetSidMainFix() {
-    Command c = _routeCommands.get(_routeCommands.size() - 1);
+    ICommand c = _routeCommands.get(_routeCommands.size() - 1);
     if (c instanceof ProceedDirectCommand) {
       return ((ProceedDirectCommand) c).getNavaid();
     } else {
@@ -212,7 +207,7 @@ public class Route extends MustBeBinded implements KeyItem<String> {
   }
 
   private Navaid tryGetStarMainFix() {
-    Command c = _routeCommands.get(0);
+    ICommand c = _routeCommands.get(0);
     if (c instanceof ProceedDirectCommand) {
       return ((ProceedDirectCommand) c).getNavaid();
     } else {

@@ -4,12 +4,12 @@ import jatcsimlib.Acc;
 import jatcsimlib.exceptions.EInvalidCommandException;
 import jatcsimlib.exceptions.ENotSupportedException;
 import jatcsimlib.global.EStringBuilder;
-import jatcsimlib.speaking.commands.Command;
-import jatcsimlib.speaking.commands.specific.ClearedToApproachCommand;
+import jatcsimlib.speaking.ICommand;
+import jatcsimlib.speaking.fromAtc.commands.ClearedToApproachCommand;
 import jatcsimlib.world.Approach;
 import jatcsimlib.world.RunwayThreshold;
 
-class ClearedToApproachParser extends SpeechParser {
+class ClearedToApproachParser extends SpeechParser<ClearedToApproachCommand> {
 
   private static final String[] prefixes = new String[]{"C "};
   private static final String pattern = "C (I|II|III|G|V|R) (\\S+)";
@@ -45,7 +45,7 @@ class ClearedToApproachParser extends SpeechParser {
   }
 
   @Override
-  Command parse(RegexGrouper rg) {
+  ClearedToApproachCommand parse(RegexGrouper rg) {
     String typeS = rg.getString(1);
     String runwayName = rg.getString(2);
 
@@ -90,7 +90,7 @@ class ClearedToApproachParser extends SpeechParser {
           rg.getMatch());
     }
 
-    Command ret = new ClearedToApproachCommand(app);
+    ClearedToApproachCommand ret = new ClearedToApproachCommand(app);
     return ret;
   }
 }

@@ -2,10 +2,10 @@ package jatcsimlib.speaking.parsing.shortParsing;
 
 import jatcsimlib.exceptions.ENotSupportedException;
 import jatcsimlib.global.SpeedRestriction;
-import jatcsimlib.speaking.commands.Command;
-import jatcsimlib.speaking.commands.specific.ChangeSpeedCommand;
+import jatcsimlib.speaking.ICommand;
+import jatcsimlib.speaking.fromAtc.commands.ChangeSpeedCommand;
 
-class ChangeSpeedParser extends SpeechParser {
+class ChangeSpeedParser extends SpeechParser<ChangeSpeedCommand> {
 
   private static final String[] prefixes = new String[]{"SM", "SL", "SE", "SR"};
   private static final String pattern = "(SR)|(?:(S[MLE]) ?(\\d{3}))";
@@ -21,7 +21,7 @@ class ChangeSpeedParser extends SpeechParser {
   }
 
   @Override
-  Command parse(RegexGrouper rg) {
+  ChangeSpeedCommand parse(RegexGrouper rg) {
 
     ChangeSpeedCommand ret;
 

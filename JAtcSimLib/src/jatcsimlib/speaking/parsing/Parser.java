@@ -1,23 +1,18 @@
 package jatcsimlib.speaking.parsing;
 
-import jatcsimlib.speaking.Speech;
+import jatcsimlib.speaking.IFromAtc;
+import jatcsimlib.speaking.ISpeech;
 import jatcsimlib.speaking.SpeechList;
-import jatcsimlib.speaking.commands.Command;
-import jatcsimlib.speaking.commands.CommandList;
-
-import java.util.List;
+import jatcsimlib.speaking.ICommand;
+import jatcsimlib.speaking.fromAtc.IAtcCommand;
 
 public abstract class Parser {
-  public abstract Speech parseOne(String text);
-  public abstract SpeechList parseMulti(String text);
+  public abstract ISpeech parseOne(String text);
+  public abstract SpeechList<IFromAtc> parseMulti(String text);
 
-  public CommandList parseMultipleCommands(String text){
+  public SpeechList<IAtcCommand> parseMultipleCommands(String text){
     SpeechList lst = this.parseMulti(text);
-    CommandList ret = new CommandList();
-    for (Speech speech : lst) {
-      Command cmd = (Command) speech;
-      ret.add(cmd);
-    }
+    SpeechList<IAtcCommand> ret = lst.convertTo();
     return ret;
   }
 

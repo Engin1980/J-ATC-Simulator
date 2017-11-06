@@ -4,12 +4,13 @@ import jatcsimlib.Acc;
 import jatcsimlib.atcs.Atc;
 import jatcsimlib.exceptions.ENotSupportedException;
 import jatcsimlib.global.Headings;
-import jatcsimlib.speaking.commands.afters.*;
-import jatcsimlib.speaking.commands.specific.*;
-import jatcsimlib.speaking.notifications.*;
-import jatcsimlib.speaking.notifications.specific.GoodDayNotification;
-import jatcsimlib.speaking.notifications.specific.RadarContactConfirmationNotification;
-import jatcsimlib.speaking.notifications.specific.RequestRadarContactNotification;
+import jatcsimlib.speaking.fromAirplane.notifications.commandResponses.Confirmation;
+import jatcsimlib.speaking.fromAirplane.notifications.commandResponses.Rejection;
+import jatcsimlib.speaking.fromAtc.commands.*;
+import jatcsimlib.speaking.fromAtc.commands.afters.*;
+import jatcsimlib.speaking.fromAirplane.notifications.GoodDayNotification;
+import jatcsimlib.speaking.fromAtc.notifications.RadarContactConfirmationNotification;
+import jatcsimlib.speaking.fromAirplane.notifications.RequestRadarContactNotification;
 
 public class LongFormatter extends Formatter {
 
@@ -179,7 +180,7 @@ public class LongFormatter extends Formatter {
 
    
   public String format(RequestRadarContactNotification cmd) {
-    return "Unable to follow ordered commands. Please confirm our radar contact first.";
+    return "Unable to follow ordered fromAtc. Please confirm our radar contact first.";
   }
 
    

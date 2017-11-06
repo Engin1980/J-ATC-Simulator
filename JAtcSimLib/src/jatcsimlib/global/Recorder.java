@@ -5,21 +5,21 @@
  */
 package jatcsimlib.global;
 
-import jatcsimlib.Acc;
 import jatcsimlib.airplanes.Airplane;
-import jatcsimlib.airplanes.Callsign;
 import jatcsimlib.atcs.Atc;
 import jatcsimlib.atcs.PlaneSwitchMessage;
 import jatcsimlib.exceptions.ENotSupportedException;
 import jatcsimlib.exceptions.ERuntimeException;
-import jatcsimlib.newMessaging.App;
-import jatcsimlib.newMessaging.IMessageContent;
-import jatcsimlib.newMessaging.IMessageParticipant;
-import jatcsimlib.newMessaging.StringMessageContent;
-import jatcsimlib.speaking.commands.Command;
-import jatcsimlib.speaking.commands.CommandList;
+import jatcsimlib.messaging.App;
+import jatcsimlib.messaging.IMessageContent;
+import jatcsimlib.messaging.IMessageParticipant;
+import jatcsimlib.messaging.StringMessageContent;
+import jatcsimlib.speaking.ICommand;
+import jatcsimlib.speaking.ISpeech;
+import jatcsimlib.speaking.SpeechList;
 import jatcsimlib.speaking.formatting.Formatter;
 import jatcsimlib.speaking.formatting.LongFormatter;
+import jatcsimlib.speaking.fromAtc.IAtcCommand;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -27,19 +27,19 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 /**
- *
  * @author Marek Vajgl
  */
 public abstract class Recorder {
 
-  public static final String GENERIC_LOG_PATH = "R:\\jatcsim\\FDRs\\";
+  public static final String GENERIC_LOG_PATH = "R:\\jatcsim\\recording\\";
   private static final String logPathDate = new SimpleDateFormat("yyyy_MM_dd_HH_mm").format(new Date());
-
+  private final static DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss,SSS");
+  private static Formatter fmt = new LongFormatter();
   private final boolean isConsole;
-
   private final boolean isFile;
   private final Path filePath;
   private BufferedWriter wrt;
@@ -71,6 +71,16 @@ public abstract class Recorder {
     if (isConsole) {
       System.out.print(line);
     }
+  }
+
+  public final void logLine(String line, boolean addTime) throws ERuntimeException {
+    String s;
+    if (addTime) {
+      java.time.LocalDateTime ldt = java.time.LocalDateTime.now();
+      s = ldt.format(dtf);
+    } else
+      s = line;
+    logLine(s + ": " + line);
   }
 
   public final void open() {
@@ -118,20 +128,18 @@ public abstract class Recorder {
     }
   }
 
-  private static Formatter fmt = new LongFormatter();
-
   protected String getMessageContentString(IMessageContent content) {
     if (content instanceof StringMessageContent) {
       return ((StringMessageContent) content).getMessageText();
-    } else if (content instanceof CommandList) {
-      CommandList cmds = (CommandList) content;
+    } else if (content instanceof SpeechList) {
+      SpeechList<ISpeech> cmds = (SpeechList) content;
       EStringBuilder sb = new EStringBuilder();
-      for (Command cmd : cmds) {
+      for (ISpeech cmd : cmds) {
         sb.append(fmt.format(cmd)).append(", ");
       }
       return sb.toString();
-    } else if (content instanceof Command) {
-      return fmt.format((Command) content);
+    } else if (content instanceof IAtcCommand) {
+      return fmt.format((ICommand) content);
     } else if (content instanceof PlaneSwitchMessage) {
       PlaneSwitchMessage m = (PlaneSwitchMessage) content;
       return m.getAsString();

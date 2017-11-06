@@ -9,7 +9,7 @@ import jatcsimlib.Acc;
 import jatcsimlib.global.EStringBuilder;
 import jatcsimlib.global.ETime;
 import jatcsimlib.global.Recorder;
-import jatcsimlib.newMessaging.Message;
+import jatcsimlib.messaging.Message;
 
 import java.nio.file.Path;
 

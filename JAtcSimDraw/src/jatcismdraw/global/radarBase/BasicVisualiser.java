@@ -15,6 +15,7 @@ import jatcsimdraw.mainRadar.settings.Settings;
 import jatcsimlib.airplanes.Airplane;
 import jatcsimlib.airplanes.Callsign;
 import jatcsimlib.atcs.Atc;
+import jatcsimlib.atcs.PlaneSwitchMessage;
 import jatcsimlib.exceptions.ERuntimeException;
 import jatcsimlib.coordinates.Coordinates;
 import jatcsimlib.coordinates.Coordinate;
@@ -22,9 +23,9 @@ import jatcsimlib.events.EventListener;
 import jatcsimlib.exceptions.ENotSupportedException;
 import jatcsimlib.global.ETime;
 import jatcsimlib.global.Headings;
-import jatcsimlib.newMessaging.App;
-import jatcsimlib.newMessaging.Message;
-import jatcsimlib.newMessaging.StringMessageContent;
+import jatcsimlib.messaging.App;
+import jatcsimlib.messaging.Message;
+import jatcsimlib.messaging.StringMessageContent;
 import jatcsimlib.world.Approach;
 import jatcsimlib.world.Border;
 import jatcsimlib.world.BorderArcPoint;
@@ -86,7 +87,7 @@ public class BasicVisualiser extends Visualiser {
   }
 
   @Override
-  public void drawMessages(List<Message> msgs) {
+  public void drawMessages(List<VisualisedMessage> msgs) {
     MessageSet ms = createMessageSet(msgs);
 
     DispText dt;
@@ -301,21 +302,16 @@ public class BasicVisualiser extends Visualiser {
     return ret;
   }
 
-  private MessageSet createMessageSet(List<Message> msgs) {
+  private MessageSet createMessageSet(List<VisualisedMessage> msgs) {
     MessageSet ret = new MessageSet();
 
-    for (Message m : msgs) {
+    for (VisualisedMessage m : msgs) {
       if (m.getSource() == App.me()) {
-        ret.system.add(">> " + m.<StringMessageContent>getContent().getMessageText());
+        ret.system.add(">> " + m.getText());
       } else if (m.getSource() instanceof Atc) {
-        Atc atc = m.getSource();
-        ret.atc.add(atc.getName() + ": " + m.<StringMessageContent>getContent().getMessageText());
-      } else if (m.getSource() instanceof  Airplane) {
-        // TODO tady je to principielně blbě
-        // zprávička se tu do stringu sestavuje až tady, což je blbost, protože pak se sestaví vždycky jindy
-        // měla by se sestavit do stringu, když ji říká pilot, a pak by se měla jenom říct.
-        Airplane p = m.getSource();
-        ret.plane.add(p.getCallsign().toString() + ": " + m.<StringMessageContent>getContent().getMessageText());
+          ret.atc.add(m.getText() + " [" + m.getSource().getName() + "]");
+      } else if (m.getSource() instanceof Airplane) {
+        ret.plane.add(m.getSource().getName() + ": " + m.getText());
       } else {
         throw new ENotSupportedException();
       }

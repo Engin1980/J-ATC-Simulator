@@ -1,9 +1,7 @@
 package jatcsimlib.speaking;
 
 import jatcsimlib.Acc;
-import jatcsimlib.newMessaging.Message;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -19,10 +17,10 @@ public class SpeechDelayer {
   }
 
   class DelayedSpeech {
-    public final Speech speech;
+    public final ISpeech speech;
     public int delayLeft;
 
-    public DelayedSpeech(Speech speech, int delay) {
+    public DelayedSpeech(ISpeech speech, int delay) {
       this.speech = speech;
       this.delayLeft = delay;
     }
@@ -34,20 +32,20 @@ public class SpeechDelayer {
    * Adds speech with random delay
    * @param speech
    */
-  public void add(Speech speech){
+  public void add(ISpeech speech){
     int delay = Acc.rnd().nextInt(minimalDelay,  maximalDelay+1);
     add(speech, delay);
   }
 
-  public void add (Speech speech, int delay){
+  public void add (ISpeech speech, int delay){
     int minDelay = getLastDelay() + delay; // todo here can be also "min" function
     DelayedSpeech delayedMessage = new DelayedSpeech(speech, minDelay);
     inner.add(delayedMessage);
   }
 
-  public void add (Collection<Speech> speeches, int delay){
+  public void add (Collection<? extends ISpeech> speeches, int delay){
     int minDelay = getLastDelay() + delay; // todo here can be also "min" function
-    for (Speech speech : speeches) {
+    for (ISpeech speech : speeches) {
       DelayedSpeech delayedMessage = new DelayedSpeech(speech, minDelay);
       inner.add(delayedMessage);
     }
@@ -60,6 +58,7 @@ public class SpeechDelayer {
       DelayedSpeech delayedMessage = inner.get(0);
       if (delayedMessage.delayLeft > 0) break;
 
+      inner.remove(0);
       ret.add(delayedMessage.speech);
     }
     return ret;
@@ -86,7 +85,7 @@ public class SpeechDelayer {
     return inner.size();
   }
 
-  public Speech get(int index){
+  public ISpeech get(int index){
     return inner.get(index).speech;
   }
 
