@@ -480,7 +480,6 @@ public class Pilot {
   private boolean hasRadarContact = true;
   private final Airplane parent;
   private final String routeName;
-  //private final SpeechList queue = new SpeechList();
   private final SpeechDelayer queue = new SpeechDelayer(3, 10); //Min/max speech delay
   private final AfterCommandList afterCommands = new AfterCommandList();
   private Coordinate targetCoordinate;
@@ -506,7 +505,7 @@ public class Pilot {
     this.routeName = routeName;
     this.autoThrust = new AutoThrust(parent, AutoThrust.Mode.idle);
     expandThenCommands(speeches);
-    this.queue.add(speeches, 0);
+    this.queue.addNoDelay(speeches);
     if (parent.isArrival()) {
       autoThrust.setMode(AutoThrust.Mode.normalHigh, true);
     } else {
@@ -515,6 +514,7 @@ public class Pilot {
   }
 
   public void addNewSpeeches(SpeechList speeches) {
+    this.queue.newRandomDelay();
     int index = 0;
     expandThenCommands(speeches);
     while (index < speeches.size()) {
@@ -571,7 +571,7 @@ public class Pilot {
     processStandardQueueCommands();
     processAfterCommands(); // udelat vlastni queue toho co se ma udelat a pak to provest pres processQueueCommands
     endrivePlane();
-    sayToAtc();
+    flushSaidTextToAtc();
   }
 
   private void processStandardQueueCommands() {
@@ -669,19 +669,19 @@ public class Pilot {
     switch (c.getDirection()) {
       case climb:
         if (parent.getAltitude() > c.getAltitudeInFt()) {
-          sayOrError(c, "we are higher.");
+          sayRejection(c, "we are higher.");
           return true;
         }
         break;
       case descend:
         if (parent.getAltitude() < c.getAltitudeInFt()) {
-          sayOrError(c, "we are lower.");
+          sayRejection(c, "we are lower.");
           return true;
         }
         break;
     } // switch
     if (c.getAltitudeInFt() > parent.getType().maxAltitude) {
-      sayOrError(c, "too high.");
+      sayRejection(c, "too high.");
       return true;
     }
 
@@ -712,11 +712,11 @@ public class Pilot {
       }
 
       if (sr.direction != SpeedRestriction.eDirection.atMost && sr.speedInKts > cMax) {
-        sayOrError(c,
+        sayRejection(c,
           "Unable to reach speed " + c.getSpeedInKts() + " kts, maximum is " + cMax + ".");
         return true;
       } else if (sr.direction != SpeedRestriction.eDirection.atLeast && sr.speedInKts < cMin) {
-        sayOrError(c,
+        sayRejection(c,
           "Unable to reach speed " + c.getSpeedInKts() + " kts, minimum is " + cMin + ".");
         return true;
       }
@@ -772,7 +772,7 @@ public class Pilot {
     }
     // confirmation to previous atc
     confirmIfReq(c);
-    sayToAtc();
+    flushSaidTextToAtc();
 
     // change of atc
     this.atc = a;
@@ -787,10 +787,7 @@ public class Pilot {
   private boolean processQueueSpeech(ShortcutCommand c) {
     int pointIndex = getIndexOfNavaidInCommands(c.getNavaid());
     if (pointIndex < 0) {
-      Message m = new Message(
-          parent, this.atc,
-          new ShortCutToFixNotOnRoute(c));
-      Acc.messenger().send(m);
+      say(new ShortCutToFixNotOnRoute(c));
     } else {
       for (int i = 0; i < pointIndex; i++) {
         this.queue.removeAt(i);
@@ -814,9 +811,7 @@ public class Pilot {
       Headings.add(c.getApproach().getRadial(), -30),
       radFromFix,
       Headings.add(c.getApproach().getRadial(), 30))) {
-      Message m = new Message(parent, atc,
-          new UnableToEnterApproachFromDifficultPosition(c));
-      Acc.messenger().send(m);
+      say(new UnableToEnterApproachFromDifficultPosition(c));
     } else {
       this.behavior = new ApproachBehavior(c.getApproach());
 
@@ -848,7 +843,7 @@ public class Pilot {
     return true;
   }
 
-  private void sayOrError(IAtcCommand c, String rejectionReason) {
+  private void sayRejection(IAtcCommand c, String rejectionReason) {
     Rejection r = new Rejection(rejectionReason, c);
     say(r);
   }
@@ -872,7 +867,7 @@ public class Pilot {
     saidText.add(speech);
   }
 
-  private void sayToAtc() {
+  private void flushSaidTextToAtc() {
 
     if (atc == null) {
       // nobody to speak to

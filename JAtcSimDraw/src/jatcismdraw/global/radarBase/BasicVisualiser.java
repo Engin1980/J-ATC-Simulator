@@ -15,7 +15,6 @@ import jatcsimdraw.mainRadar.settings.Settings;
 import jatcsimlib.airplanes.Airplane;
 import jatcsimlib.airplanes.Callsign;
 import jatcsimlib.atcs.Atc;
-import jatcsimlib.atcs.PlaneSwitchMessage;
 import jatcsimlib.exceptions.ERuntimeException;
 import jatcsimlib.coordinates.Coordinates;
 import jatcsimlib.coordinates.Coordinate;
@@ -23,9 +22,7 @@ import jatcsimlib.events.EventListener;
 import jatcsimlib.exceptions.ENotSupportedException;
 import jatcsimlib.global.ETime;
 import jatcsimlib.global.Headings;
-import jatcsimlib.messaging.App;
-import jatcsimlib.messaging.Message;
-import jatcsimlib.messaging.StringMessageContent;
+import jatcsimlib.messaging.Messenger;
 import jatcsimlib.world.Approach;
 import jatcsimlib.world.Border;
 import jatcsimlib.world.BorderArcPoint;
@@ -306,7 +303,7 @@ public class BasicVisualiser extends Visualiser {
     MessageSet ret = new MessageSet();
 
     for (VisualisedMessage m : msgs) {
-      if (m.getSource() == App.me()) {
+      if (m.getSource() == Messenger.SYSTEM) {
         ret.system.add(">> " + m.getText());
       } else if (m.getSource() instanceof Atc) {
           ret.atc.add(m.getText() + " [" + m.getSource().getName() + "]");

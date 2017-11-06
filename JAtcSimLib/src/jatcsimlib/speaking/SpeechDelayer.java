@@ -10,11 +10,18 @@ public class SpeechDelayer {
 
   private final int minimalDelay;
   private final int maximalDelay;
+  private int currentDelay = 0;
 
   public SpeechDelayer(int minimalDelay, int maximalDelay) {
     this.minimalDelay = minimalDelay;
     this.maximalDelay = maximalDelay;
+    newRandomDelay();
   }
+
+  public void newRandomDelay() {
+    this.currentDelay = Acc.rnd().nextInt(minimalDelay,  maximalDelay+1);
+  }
+
 
   class DelayedSpeech {
     public final ISpeech speech;
@@ -32,19 +39,22 @@ public class SpeechDelayer {
    * Adds speech with random delay
    * @param speech
    */
-  public void add(ISpeech speech){
-    int delay = Acc.rnd().nextInt(minimalDelay,  maximalDelay+1);
-    add(speech, delay);
-  }
-
-  public void add (ISpeech speech, int delay){
-    int minDelay = getLastDelay() + delay; // todo here can be also "min" function
+  public void add (ISpeech speech){
+    int minDelay = Math.min(getLastDelay(maximalDelay), currentDelay);
     DelayedSpeech delayedMessage = new DelayedSpeech(speech, minDelay);
     inner.add(delayedMessage);
   }
 
-  public void add (Collection<? extends ISpeech> speeches, int delay){
-    int minDelay = getLastDelay() + delay; // todo here can be also "min" function
+  public void add (Collection<? extends ISpeech> speeches){
+    int minDelay = Math.min(getLastDelay(maximalDelay), currentDelay);
+    for (ISpeech speech : speeches) {
+      DelayedSpeech delayedMessage = new DelayedSpeech(speech, minDelay);
+      inner.add(delayedMessage);
+    }
+  }
+
+  public void addNoDelay (Collection<? extends ISpeech> speeches){
+    int minDelay = 0;
     for (ISpeech speech : speeches) {
       DelayedSpeech delayedMessage = new DelayedSpeech(speech, minDelay);
       inner.add(delayedMessage);
@@ -70,9 +80,9 @@ public class SpeechDelayer {
     }
   }
 
-  private int getLastDelay(){
+  private int getLastDelay(int valueIfEmpty){
     if (inner.isEmpty())
-      return 0;
+      return valueIfEmpty;
     else
       return inner.get(inner.size()-1).delayLeft;
   }

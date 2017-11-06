@@ -136,9 +136,9 @@ public class LongFormatter extends Formatter {
     if (cmd.isPublished()) {
       sb.append(" as published");
     } else {
-      sb.append("inbound ");
+      sb.append(" inbound ");
       sb.append(Headings.format(cmd.getInboundRadial()));
-      sb.append(cmd.isLeftTurn() ? "left turns " : "right turns ");
+      sb.append(cmd.isLeftTurn() ? " left turns " : " right turns ");
     }
     return sb.toString();
   }

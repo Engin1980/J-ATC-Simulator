@@ -21,7 +21,6 @@ import jatcsimlib.global.ETime;
 import jatcsimlib.global.ReadOnlyList;
 import jatcsimlib.messaging.Message;
 import jatcsimlib.messaging.Messenger;
-import jatcsimlib.messaging.App;
 import jatcsimlib.messaging.StringMessageContent;
 import jatcsimlib.speaking.parsing.shortParsing.ShortParser;
 import jatcsimlib.traffic.Movement;
@@ -296,7 +295,7 @@ public class Simulation {
   }
 
   private void processSystemMessages() {
-    List<Message> systemMessages = Acc.messenger().getByTarget(App.me(),true);
+    List<Message> systemMessages = Acc.messenger().getByTarget(messenger.SYSTEM,true);
 
     for (Message m : systemMessages) {
       processSystemMessage(m);
@@ -325,7 +324,7 @@ public class Simulation {
     } catch (NumberFormatException ex) {
       Acc.messenger().send(
           new Message(
-              App.me(),
+              messenger.SYSTEM,
               m.<UserAtc>getSource(),
               new StringMessageContent("Unable to parse %s to integer. Example: ?tick=750", tickS)));
       return;
@@ -335,7 +334,7 @@ public class Simulation {
 
     Acc.messenger().send(
         new Message(
-            App.me(),
+            messenger.SYSTEM,
             m.<UserAtc>getSource(),
             new StringMessageContent("Tick speed changed to %d milliseconds.", tickI))
     );
@@ -346,7 +345,7 @@ public class Simulation {
 
     Acc.messenger().send(
         new Message(
-            App.me(),
+            messenger.SYSTEM,
             Acc.atcApp(),
             new StringMessageContent(txt))
     );

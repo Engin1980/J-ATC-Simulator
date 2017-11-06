@@ -123,7 +123,7 @@ public class PaintManager {
             esb.append(makeBeginSentence(sentence));
           } else
             esb.append(sentence);
-          if (i < lst.size() - 2)
+          if (i < lst.size() - 1)
             esb.append(", ");
           else
             esb.append(".");

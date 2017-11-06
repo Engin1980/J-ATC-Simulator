@@ -10,9 +10,9 @@ import jatcsimlib.atcs.Atc;
 import jatcsimlib.atcs.PlaneSwitchMessage;
 import jatcsimlib.exceptions.ENotSupportedException;
 import jatcsimlib.exceptions.ERuntimeException;
-import jatcsimlib.messaging.App;
 import jatcsimlib.messaging.IMessageContent;
 import jatcsimlib.messaging.IMessageParticipant;
+import jatcsimlib.messaging.Messenger;
 import jatcsimlib.messaging.StringMessageContent;
 import jatcsimlib.speaking.ICommand;
 import jatcsimlib.speaking.ISpeech;
@@ -152,7 +152,7 @@ public abstract class Recorder {
   }
 
   protected String getMessageObjectString(IMessageParticipant object) {
-    if (object == App.me()) {
+    if (object == Messenger.SYSTEM) {
       return "<SYSTEM>";
     } else if (object instanceof Atc) {
       Atc atc = (Atc) object;

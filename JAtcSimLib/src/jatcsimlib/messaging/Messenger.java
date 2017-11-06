@@ -7,6 +7,23 @@ import java.util.stream.Collectors;
 
 public class Messenger {
 
+  public static class XSystem implements  IMessageParticipant {
+    @Override
+    public String getName() {
+      return "SYSTEM";
+    }
+
+    public XSystem(){
+
+    }
+
+    @Override
+    public String toString() {
+      return "SYSTEM";
+    }
+  }
+
+  public static final XSystem SYSTEM = new XSystem();
   private List<Message> inner = new LinkedList<>();
   private MessageRecorder recorder = new MessageRecorder("messenger.txt", false, true);
 
@@ -24,7 +41,7 @@ public class Messenger {
           inner.stream().filter(q -> q.getTarget() == participant).collect(Collectors.toList());
       if (deleteRetrieved){
         inner.removeAll(ret);
-        inner.stream().forEach(q -> {recorder.recordMessage(MessageRecorder.eAction.GET, q) ;});
+        ret.stream().forEach(q -> {recorder.recordMessage(MessageRecorder.eAction.GET, q) ;});
       }
     }
     return ret;
