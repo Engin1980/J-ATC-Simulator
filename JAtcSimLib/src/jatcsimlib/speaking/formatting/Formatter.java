@@ -1,5 +1,7 @@
 package jatcsimlib.speaking.formatting;
 
+import jatcsimlib.atcs.Atc;
+import jatcsimlib.atcs.PlaneSwitchMessage;
 import jatcsimlib.exceptions.ERuntimeException;
 import jatcsimlib.speaking.ISpeech;
 
@@ -48,5 +50,7 @@ public abstract class Formatter {
 
     return ret;
   }
+
+  public abstract String format(Atc sender, PlaneSwitchMessage msg);
 
 }

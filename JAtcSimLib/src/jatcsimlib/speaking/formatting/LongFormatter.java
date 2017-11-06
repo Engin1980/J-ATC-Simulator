@@ -2,6 +2,7 @@ package jatcsimlib.speaking.formatting;
 
 import jatcsimlib.Acc;
 import jatcsimlib.atcs.Atc;
+import jatcsimlib.atcs.PlaneSwitchMessage;
 import jatcsimlib.exceptions.ENotSupportedException;
 import jatcsimlib.global.Headings;
 import jatcsimlib.speaking.fromAirplane.notifications.commandResponses.Confirmation;
@@ -197,5 +198,15 @@ public class LongFormatter extends Formatter {
     sb.append(greetings[(int)d]).append(", ").append(cmd.getCallsign().toString()).append(" with you at ").append(cmd.getAltitudeInfoText());
     return sb.toString();
   }
-  
+
+  @Override
+  public String format(Atc sender, PlaneSwitchMessage msg) {
+      String ret = String.format(
+          "%s {%s} %s",
+          msg.plane.getSqwk(),
+          msg.plane.getCallsign().toString(),
+          msg.message,
+          sender.getName());
+      return ret;
+  }
 }

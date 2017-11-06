@@ -12,33 +12,25 @@ import jatcsimlib.airplanes.Airplane;
 import jatcsimlib.atcs.Atc;
 import jatcsimlib.atcs.PlaneSwitchMessage;
 import jatcsimlib.exceptions.ENotSupportedException;
-import jatcsimlib.messaging.*;
+import jatcsimlib.global.EStringBuilder;
+import jatcsimlib.messaging.IMessageParticipant;
+import jatcsimlib.messaging.Message;
+import jatcsimlib.messaging.Messenger;
+import jatcsimlib.messaging.StringMessageContent;
 import jatcsimlib.speaking.ISpeech;
+import jatcsimlib.speaking.SpeechList;
 import jatcsimlib.speaking.formatting.Formatter;
-import jatcsimlib.world.Airport;
-import jatcsimlib.world.Approach;
-import jatcsimlib.world.Area;
-import jatcsimlib.world.Border;
-import jatcsimlib.world.Navaid;
-import jatcsimlib.world.Route;
-import jatcsimlib.world.Runway;
+import jatcsimlib.world.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
  * @author Marek
  */
 public class PaintManager {
 
-  private final Simulation simulation;
-  private final Area area;
-  private final Visualiser visualiser;
-  private final MessageManager messageManager;
-  private final Formatter formatter;
-
-  class MessageManager{
+  class MessageManager {
     private final int delay;
     private List<VisualisedMessage> items = new ArrayList<>();
 
@@ -46,22 +38,27 @@ public class PaintManager {
       this.delay = delay;
     }
 
-    public void add(IMessageParticipant source, String text){
+    public void add(IMessageParticipant source, String text) {
       VisualisedMessage di = new VisualisedMessage(source, text, delay);
       items.add(di);
     }
 
-    public void decreaseMessagesLifeCounter(){
+    public void decreaseMessagesLifeCounter() {
       for (VisualisedMessage item : items) {
         item.decreaseLifeCounter();
       }
-      items.removeIf(q->q.getLifeCounter() <= 0);
+      items.removeIf(q -> q.getLifeCounter() <= 0);
     }
 
-    public List<VisualisedMessage> getCurrent(){
+    public List<VisualisedMessage> getCurrent() {
       return items;
     }
   }
+  private final Simulation simulation;
+  private final Area area;
+  private final Visualiser visualiser;
+  private final MessageManager messageManager;
+  private final Formatter formatter;
 
   public PaintManager(Simulation simulation, Area area, Visualiser visualiser,
                       int messageDisplayInSeconds, Formatter formatter) {
@@ -98,13 +95,13 @@ public class PaintManager {
     }
 
     boolean containsAtcMessage =
-        msgs.stream().anyMatch(q->q.isSourceOfType(Atc.class));
+        msgs.stream().anyMatch(q -> q.isSourceOfType(Atc.class));
     boolean containsPlaneMessage =
-        msgs.stream().anyMatch(q->q.isSourceOfType(Airplane.class));
+        msgs.stream().anyMatch(q -> q.isSourceOfType(Airplane.class));
 
-    if (containsAtcMessage){
+    if (containsAtcMessage) {
       SoundManager.playAtcNewMessage();
-    } else if (containsPlaneMessage){
+    } else if (containsPlaneMessage) {
       SoundManager.playPlaneNewMessage();
     }
 
@@ -115,14 +112,32 @@ public class PaintManager {
 
   private String getMessageContentAsString(Message msg) {
     String ret;
-    if (msg.isSourceOfType(Airplane.class)){
-      ISpeech sp = msg.getContent();
-      ret = formatter.format(sp);
-    } else if (msg.isSourceOfType(Atc.class)){
-      if (msg.isContentOfType(PlaneSwitchMessage.class)){
-        PlaneSwitchMessage sp = msg.<PlaneSwitchMessage>getContent();
-        ret = sp.getAsString();
-      } else if (msg.isContentOfType(StringMessageContent.class)){
+    if (msg.isSourceOfType(Airplane.class)) {
+      if (msg.isContentOfType(List.class)) {
+        EStringBuilder esb = new EStringBuilder();
+        SpeechList<ISpeech> lst = msg.getContent();
+        for (int i = 0; i < lst.size(); i++) {
+          ISpeech sp = lst.get(i);
+          String sentence = formatter.format(sp);
+          if (i == 0) {
+            esb.append(makeBeginSentence(sentence));
+          } else
+            esb.append(sentence);
+          if (i < lst.size() - 2)
+            esb.append(", ");
+          else
+            esb.append(".");
+        }
+        ret = esb.toString();
+      } else {
+        ISpeech sp = msg.getContent();
+        ret = formatter.format(sp);
+      }
+    } else if (msg.isSourceOfType(Atc.class)) {
+      if (msg.isContentOfType(PlaneSwitchMessage.class)) {
+        PlaneSwitchMessage psm = msg.<PlaneSwitchMessage>getContent();
+        ret = formatter.format(msg.getSource(), psm);
+      } else if (msg.isContentOfType(StringMessageContent.class)) {
         ret = msg.<StringMessageContent>getContent().getMessageText();
       } else {
         throw new ENotSupportedException();
@@ -132,20 +147,18 @@ public class PaintManager {
       ret = msg.<StringMessageContent>getContent().getMessageText();
     }
     return ret;
+  }
 
-    /*
-    Atc atc = m.getSource();
-        if (m.isContentOfType(PlaneSwitchMessage.class)) {
-          ret.atc.add(atc.getName() + ": " + m.<PlaneSwitchMessage>getContent().getAsString());
-        } else if (m.isContentOfType(StringMessageContent.class)) {
-          ret.atc.add(atc.getName() + ": " + m.<StringMessageContent>getContent().getMessageText());
-        } else {
-          throw new ERuntimeException("I should do something here but I dont know what.");
-        }
+  private String makeBeginSentence(String sentence) {
+    StringBuilder ret = new StringBuilder();
 
+    if (sentence.length() > 0)
+      ret.append(Character.toUpperCase(sentence.charAt(0)));
 
+    if (sentence.length() > 1)
+      ret.append(sentence.substring(1));
 
-     */
+    return ret.toString();
   }
 
   private void drawBorders() {
@@ -188,9 +201,9 @@ public class PaintManager {
       visualiser.drawStar(r.getNavaids());
     }
   }
-  
+
   private void drawSids() {
-    for (Route r : simulation.getActiveRunwayThreshold().getRoutes()){
+    for (Route r : simulation.getActiveRunwayThreshold().getRoutes()) {
       if (r.getType() != Route.eType.sid) continue;
       visualiser.drawSid(r.getNavaids());
     }

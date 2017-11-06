@@ -20,6 +20,7 @@ import jatcsimlib.speaking.SpeechList;
 import jatcsimlib.speaking.formatting.Formatter;
 import jatcsimlib.speaking.formatting.LongFormatter;
 import jatcsimlib.speaking.fromAtc.IAtcCommand;
+import jatcsimlib.speaking.fromAtc.notifications.RadarContactConfirmationNotification;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -143,6 +144,8 @@ public abstract class Recorder {
     } else if (content instanceof PlaneSwitchMessage) {
       PlaneSwitchMessage m = (PlaneSwitchMessage) content;
       return m.getAsString();
+    } else if (content instanceof RadarContactConfirmationNotification) {
+      return "{Computer ATC} Radar contact confirmation.";
     } else {
       throw new ERuntimeException("Message content cannot be get for type " + content.getClass().getName());
     }
