@@ -7,14 +7,13 @@
 package jatcsimlib.atcs;
 
 import jatcsimlib.airplanes.Airplane;
-import jatcsimlib.messaging.IContent;
 import jatcsimlib.newMessaging.IMessageContent;
 
 /**
  *
  * @author Marek
  */
-public class PlaneSwitchMessage implements IContent, IMessageContent {
+public class PlaneSwitchMessage implements IMessageContent {
 
   public String getAsString() {
     

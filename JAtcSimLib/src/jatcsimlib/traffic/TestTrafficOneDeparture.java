@@ -12,13 +12,14 @@ import jatcsimlib.airplanes.AirplaneType;
 import jatcsimlib.airplanes.Callsign;
 import jatcsimlib.airplanes.Squawk;
 import jatcsimlib.atcs.Atc;
-import jatcsimlib.commands.AfterAltitudeCommand;
-import jatcsimlib.commands.ChangeAltitudeCommand;
-import jatcsimlib.commands.Command;
-import jatcsimlib.commands.ContactCommand;
 import jatcsimlib.coordinates.Coordinate;
 import jatcsimlib.coordinates.Coordinates;
 import jatcsimlib.global.Global;
+import jatcsimlib.speaking.commands.Command;
+import jatcsimlib.speaking.commands.CommandList;
+import jatcsimlib.speaking.commands.afters.AfterAltitudeCommand;
+import jatcsimlib.speaking.commands.specific.ChangeAltitudeCommand;
+import jatcsimlib.speaking.commands.specific.ContactCommand;
 import jatcsimlib.world.Route;
 import jatcsimlib.world.Routes;
 
@@ -57,11 +58,11 @@ public class TestTrafficOneDeparture extends TestTraffic {
     int alt = Acc.threshold().getParent().getParent().getAltitude();
     int spd = 0;
 
-    List<Command> routeCmds;
+    CommandList routeCmds;
     if (r != null) {
       routeCmds = r.getCommandsListClone();
     } else {
-      routeCmds = new ArrayList<>();
+      routeCmds = new CommandList();
     }
 
     int indx = 0;

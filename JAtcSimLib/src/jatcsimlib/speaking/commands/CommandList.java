@@ -6,8 +6,6 @@
 
 package jatcsimlib.speaking.commands;
 
-import jatcsimlib.messaging.IContent;
-
 import java.util.Collection;
 import java.util.LinkedList;
 
@@ -15,7 +13,7 @@ import java.util.LinkedList;
  *
  * @author Marek
  */
-public class CommandList extends LinkedList<Command> implements IContent {
+public class CommandList extends LinkedList<Command> {
  
   public CommandList(){}
   public CommandList(Collection<Command> commands){

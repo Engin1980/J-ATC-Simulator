@@ -8,8 +8,9 @@ package jatcsimdraw.mainRadar;
 import jatcismdraw.global.radarBase.Visualiser;
 import jatcsimlib.Simulation;
 import jatcsimlib.airplanes.Airplane;
-import jatcsimlib.messaging.Message;
-import jatcsimlib.messaging.Messenger;
+import jatcsimlib.atcs.Atc;
+import jatcsimlib.newMessaging.Message;
+import jatcsimlib.newMessaging.Messenger;
 import jatcsimlib.world.Airport;
 import jatcsimlib.world.Approach;
 import jatcsimlib.world.Area;
@@ -17,7 +18,10 @@ import jatcsimlib.world.Border;
 import jatcsimlib.world.Navaid;
 import jatcsimlib.world.Route;
 import jatcsimlib.world.Runway;
+
 import java.util.List;
+import java.util.Queue;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -52,13 +56,18 @@ public class PaintManager {
 
   private void drawCaptions() {
     Messenger ms = simulation.getMessenger();
-    if (ms.isNewAtcMessage()){
+    List<Message> msgs = ms.getByTarget(simulation.getAppAtc(), false);
+
+    boolean containsAtcMessage;
+    boolean containsPlaneMessage;
+    containsAtcMessage = msgs.stream().anyMatch(q -> q.getSource() instanceof Atc);
+    containsPlaneMessage = msgs.stream().anyMatch(q-> q.getSource() instanceof Airplane);
+    if (containsAtcMessage){
       SoundManager.playAtcNewMessage();
-    } else if (ms.isNewPlaneMessage()){
+    } else if (containsPlaneMessage){
       SoundManager.playPlaneNewMessage();
     }
-    ms.resetNewMessagesFlag();
-    List<Message> msgs = ms.getMy(simulation.getAppAtc(), false);
+
     visualiser.drawMessages(msgs);
   }
 

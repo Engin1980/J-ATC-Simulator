@@ -22,7 +22,9 @@ import jatcsimlib.events.EventListener;
 import jatcsimlib.exceptions.ENotSupportedException;
 import jatcsimlib.global.ETime;
 import jatcsimlib.global.Headings;
-import jatcsimlib.messaging.Message;
+import jatcsimlib.newMessaging.App;
+import jatcsimlib.newMessaging.Message;
+import jatcsimlib.newMessaging.StringMessageContent;
 import jatcsimlib.world.Approach;
 import jatcsimlib.world.Border;
 import jatcsimlib.world.BorderArcPoint;
@@ -303,17 +305,17 @@ public class BasicVisualiser extends Visualiser {
     MessageSet ret = new MessageSet();
 
     for (Message m : msgs) {
-      if (m.isFromSystemMessage()) {
-        ret.system.add(">> " + m.getAsString().text);
-      } else if (m.isFromAtcMessage()) {
-        Atc atc = (Atc) m.source;
-        ret.atc.add(atc.getName() + ": " + m.toContentString());
-      } else if (m.isFromPlaneMessage()) {
+      if (m.getSource() == App.me()) {
+        ret.system.add(">> " + m.<StringMessageContent>getContent().getMessageText());
+      } else if (m.getSource() instanceof Atc) {
+        Atc atc = m.getSource();
+        ret.atc.add(atc.getName() + ": " + m.<StringMessageContent>getContent().getMessageText());
+      } else if (m.getSource() instanceof  Airplane) {
         // TODO tady je to principielně blbě
         // zprávička se tu do stringu sestavuje až tady, což je blbost, protože pak se sestaví vždycky jindy
         // měla by se sestavit do stringu, když ji říká pilot, a pak by se měla jenom říct.
-        Airplane p = (Airplane) m.source;
-        ret.plane.add(p.getCallsign().toString() + ": " + m.toContentString());
+        Airplane p = m.getSource();
+        ret.plane.add(p.getCallsign().toString() + ": " + m.<StringMessageContent>getContent().getMessageText());
       } else {
         throw new ENotSupportedException();
       }

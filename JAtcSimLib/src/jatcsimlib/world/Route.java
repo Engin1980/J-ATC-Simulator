@@ -5,17 +5,21 @@
  */
 package jatcsimlib.world;
 
-import jatcsimlib.commands.ChangeHeadingCommand;
-import jatcsimlib.commands.Command;
-import jatcsimlib.commands.ProceedDirectCommand;
-import jatcsimlib.commands.ToNavaidCommand;
-import jatcsimlib.commands.formatting.Parser;
-import jatcsimlib.commands.formatting.ShortParser;
 import jatcsimlib.coordinates.Coordinates;
 import jatcsimlib.exceptions.EBindException;
 import jatcsimlib.global.KeyItem;
 import jatcsimlib.global.MustBeBinded;
 import jatcsimlib.global.XmlOptional;
+import jatcsimlib.speaking.Speech;
+import jatcsimlib.speaking.SpeechList;
+import jatcsimlib.speaking.commands.Command;
+import jatcsimlib.speaking.commands.CommandList;
+import jatcsimlib.speaking.commands.specific.ProceedDirectCommand;
+import jatcsimlib.speaking.commands.specific.ToNavaidCommand;
+import jatcsimlib.speaking.parsing.Parser;
+import jatcsimlib.speaking.parsing.shortParsing.ShortParser;
+
+import javax.swing.text.StyledEditorKit;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -133,7 +137,11 @@ public class Route extends MustBeBinded implements KeyItem<String> {
   protected void _bind() {
     try {
       Parser p = new ShortParser();
-      _routeCommands = p.parseMulti(this.route);
+      SpeechList lst = p.parseMulti(this.route);
+      for (Speech speech : lst) {
+        Command cmd = (Command) speech;
+        _routeCommands.add(cmd);
+      }
     } catch (Exception ex) {
       throw new EBindException("Parsing commands failed for route " + this.name + ". Route commands contain error (see cause).", ex);
     }
@@ -176,10 +184,10 @@ public class Route extends MustBeBinded implements KeyItem<String> {
     return _routeCommands;
   }
 
-  public List<Command> getCommandsListClone() {
+  public CommandList getCommandsListClone() {
     super.checkBinded();
 
-    List<Command> ret = new LinkedList<>();
+    CommandList ret = new CommandList();
     ret.addAll(_routeCommands);
     return ret;
   }

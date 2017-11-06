@@ -5,20 +5,23 @@
  */
 package jatcsimlib.traffic;
 
-import com.sun.org.apache.bcel.internal.generic.RET;
 import jatcsimlib.Acc;
 import jatcsimlib.airplanes.Airplane;
 import jatcsimlib.airplanes.AirplaneType;
 import jatcsimlib.airplanes.Callsign;
 import jatcsimlib.airplanes.Squawk;
 import jatcsimlib.atcs.Atc;
-import jatcsimlib.commands.*;
 import jatcsimlib.coordinates.Coordinate;
 import jatcsimlib.coordinates.Coordinates;
 import jatcsimlib.exceptions.ERuntimeException;
 import jatcsimlib.global.ETime;
 import jatcsimlib.global.Global;
 import jatcsimlib.global.KeyList;
+import jatcsimlib.speaking.commands.*;
+import jatcsimlib.speaking.commands.afters.AfterAltitudeCommand;
+import jatcsimlib.speaking.commands.specific.ChangeAltitudeCommand;
+import jatcsimlib.speaking.commands.specific.ContactCommand;
+import jatcsimlib.speaking.commands.specific.ProceedDirectCommand;
 import jatcsimlib.world.*;
 
 import java.util.*;
@@ -274,7 +277,7 @@ public class CustomTraffic extends Traffic {
     int heading;
     int alt;
     int spd;
-    List<Command> routeCmds;
+    CommandList routeCmds;
     String routeName;
 
     if (m.isIfr()) {
@@ -306,7 +309,7 @@ public class CustomTraffic extends Traffic {
       heading = (int) Coordinates.getBearing(coord, entryPoint.getCoordinate());
       alt = Acc.airport().getVfrAltitude();
 
-      routeCmds = new LinkedList<>();
+      routeCmds = new CommandList();
       routeCmds.add(0,
           new ProceedDirectCommand(Acc.airport().getMainAirportNavaid()));
       routeCmds.add(new ContactCommand(Atc.eType.app));
@@ -439,11 +442,11 @@ public class CustomTraffic extends Traffic {
     int alt = Acc.threshold().getParent().getParent().getAltitude();
     int spd = 0;
 
-    List<Command> routeCmds;
+    CommandList routeCmds;
     if (r != null) {
       routeCmds = r.getCommandsListClone();
     } else {
-      routeCmds = new ArrayList<>();
+      routeCmds = new CommandList();
     }
 
     int indx = 0;

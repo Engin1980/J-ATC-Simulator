@@ -13,7 +13,6 @@ import jatcsimlib.atcs.Atc;
 import jatcsimlib.atcs.CenterAtc;
 import jatcsimlib.atcs.TowerAtc;
 import jatcsimlib.atcs.UserAtc;
-import jatcsimlib.commands.formatting.ShortParser;
 import jatcsimlib.coordinates.Coordinates;
 import jatcsimlib.events.EventListener;
 import jatcsimlib.events.EventManager;
@@ -25,6 +24,7 @@ import jatcsimlib.newMessaging.Messenger;
 import jatcsimlib.newMessaging.App;
 import jatcsimlib.newMessaging.StringMessageContent;
 import jatcsimlib.speaking.notifications.specific.StringNotification;
+import jatcsimlib.speaking.parsing.shortParsing.ShortParser;
 import jatcsimlib.traffic.Movement;
 import jatcsimlib.traffic.Traffic;
 import jatcsimlib.weathers.Weather;
@@ -303,7 +303,7 @@ public class Simulation {
   }
 
   private void processSystemMessages() {
-    List<Message> systemMessages = Acc.newMessenger().getByTarget(App.me(),true);
+    List<Message> systemMessages = Acc.messenger().getByTarget(App.me(),true);
 
     for (Message m : systemMessages) {
       processSystemMessage(m);
@@ -330,7 +330,7 @@ public class Simulation {
     try {
       tickI = Integer.parseInt(tickS);
     } catch (NumberFormatException ex) {
-      Acc.newMessenger().add(
+      Acc.messenger().add(
           new Message(
               App.me(),
               m.<UserAtc>getSource(),
@@ -340,7 +340,7 @@ public class Simulation {
     this.tmr.stop();
     this.tmr.start(tickI);
 
-    Acc.newMessenger().add(
+    Acc.messenger().add(
         new Message(
             App.me(),
             m.<UserAtc>getSource(),
@@ -351,7 +351,7 @@ public class Simulation {
   private void printCommandsHelps() {
     String txt = new ShortParser().getHelp();
 
-    Acc.newMessenger().add(
+    Acc.messenger().add(
         new Message(
             App.me(),
             Acc.atcApp(),

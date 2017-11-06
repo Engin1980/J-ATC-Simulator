@@ -6,11 +6,12 @@
 package jatcsimlib.world;
 
 import jatcsimlib.Acc;
-import jatcsimlib.commands.Command;
-import jatcsimlib.commands.formatting.Parser;
-import jatcsimlib.commands.formatting.ShortParser;
 import jatcsimlib.exceptions.ERuntimeException;
 import jatcsimlib.global.KeyList;
+import jatcsimlib.speaking.commands.Command;
+import jatcsimlib.speaking.parsing.Parser;
+import jatcsimlib.speaking.parsing.shortParsing.ShortParser;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -105,7 +106,7 @@ public class Area {
         for (RunwayThreshold t : r.getThresholds()) {
           for (Approach p : t.getApproaches()) {
             try {
-              cmds = parser.parseMulti(p.getGaRoute());
+              cmds = parser.parseMultipleCommands(p.getGaRoute());
             } catch (Exception ex) {
               throw new ERuntimeException(
                   String.format("Airport %s runway %s approach %s has invalid go-around route commands: %s (error: %s)",
@@ -115,7 +116,7 @@ public class Area {
 
           for (Route o : t.getRoutes()) {
             try {
-              cmds = parser.parseMulti(o.getRoute());
+              cmds = parser.parseMultipleCommands(o.getRoute());
             } catch (Exception ex) {
               throw new ERuntimeException(
                   String.format("Airport %s runway %s route %s has invalid commands: %s (error: %s)",

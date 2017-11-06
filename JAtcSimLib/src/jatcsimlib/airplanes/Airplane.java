@@ -475,7 +475,7 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
   }
 
   private void processMessages() {
-    List<Message> msgs = Acc.newMessenger().getByTarget(this, true); //Acc.messenger().getMy(this, true);
+    List<Message> msgs = Acc.messenger().getByTarget(this, true); //Acc.messenger().getMy(this, true);
 
     for (Message m : msgs) {
       processMessage(m);

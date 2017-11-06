@@ -12,12 +12,12 @@ import jatcsimlib.airplanes.AirplaneType;
 import jatcsimlib.airplanes.Callsign;
 import jatcsimlib.airplanes.Squawk;
 import jatcsimlib.atcs.Atc;
-import jatcsimlib.commands.ChangeAltitudeCommand;
-import jatcsimlib.commands.Command;
-import jatcsimlib.commands.ContactCommand;
 import jatcsimlib.coordinates.Coordinate;
 import jatcsimlib.coordinates.Coordinates;
 import jatcsimlib.global.Global;
+import jatcsimlib.speaking.commands.CommandList;
+import jatcsimlib.speaking.commands.specific.ChangeAltitudeCommand;
+import jatcsimlib.speaking.commands.specific.ContactCommand;
 import jatcsimlib.world.Route;
 import jatcsimlib.world.Routes;
 import java.util.List;
@@ -40,7 +40,7 @@ public class TestTrafficOneApproach extends TestTraffic {
     int heading = 065; // (int) Coordinates.getBearing(coord, r.getMainFix().getCoordinate());
     int alt = 7000; // generateArrivingPlaneAltitude(r);
     int spd = pt.vCruise;
-    List<Command> routeCmds = r.getCommandsListClone();
+    CommandList routeCmds = r.getCommandsListClone();
     // added command to descend
     routeCmds.add(0,
       new ChangeAltitudeCommand(

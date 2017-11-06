@@ -1,6 +1,7 @@
 package jatcsimlib.speaking.parsing.shortParsing;
 
 import jatcsimlib.global.EStringBuilder;
+import jatcsimlib.speaking.Speech;
 import jatcsimlib.speaking.commands.Command;
 
 public abstract class SpeechParser {
@@ -16,5 +17,5 @@ public abstract class SpeechParser {
     return sb.toString();
   }
 
-  abstract Command parse(RegexGrouper line);
+  abstract Speech parse(RegexGrouper line);
 }

@@ -11,7 +11,6 @@ import jatcsimlib.exceptions.ENotSupportedException;
 import jatcsimlib.global.ERandom;
 import jatcsimlib.global.ETime;
 import jatcsimlib.global.ReadOnlyList;
-import jatcsimlib.messaging.Messenger;
 import jatcsimlib.weathers.Weather;
 import jatcsimlib.world.Airport;
 import jatcsimlib.world.Area;
@@ -59,11 +58,7 @@ public class Acc {
     return Acc.aip;
   }
 
-  public static Messenger messenger() {
-    return sim.getMessenger();
-  }
-
-  public static jatcsimlib.newMessaging.Messenger newMessenger() {
+  public static jatcsimlib.newMessaging.Messenger messenger() {
     return sim().getNewMessenger();
   }
 

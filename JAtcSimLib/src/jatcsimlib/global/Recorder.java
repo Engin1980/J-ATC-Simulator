@@ -10,16 +10,17 @@ import jatcsimlib.airplanes.Airplane;
 import jatcsimlib.airplanes.Callsign;
 import jatcsimlib.atcs.Atc;
 import jatcsimlib.atcs.PlaneSwitchMessage;
-import jatcsimlib.commands.Command;
-import jatcsimlib.commands.CommandList;
-import jatcsimlib.commands.formatting.Formatter;
-import jatcsimlib.commands.formatting.Formatters;
-import jatcsimlib.commands.formatting.LongFormatter;
 import jatcsimlib.exceptions.ENotSupportedException;
 import jatcsimlib.exceptions.ERuntimeException;
-import jatcsimlib.messaging.IContent;
-import jatcsimlib.messaging.Message;
-import jatcsimlib.messaging.StringMessageContent;
+import jatcsimlib.newMessaging.App;
+import jatcsimlib.newMessaging.IMessageContent;
+import jatcsimlib.newMessaging.IMessageParticipant;
+import jatcsimlib.newMessaging.StringMessageContent;
+import jatcsimlib.speaking.commands.Command;
+import jatcsimlib.speaking.commands.CommandList;
+import jatcsimlib.speaking.formatting.Formatter;
+import jatcsimlib.speaking.formatting.LongFormatter;
+
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -119,18 +120,18 @@ public abstract class Recorder {
 
   private static Formatter fmt = new LongFormatter();
 
-  protected String getMessageContentString(IContent content) {
+  protected String getMessageContentString(IMessageContent content) {
     if (content instanceof StringMessageContent) {
-      return ((StringMessageContent) content).text;
+      return ((StringMessageContent) content).getMessageText();
     } else if (content instanceof CommandList) {
       CommandList cmds = (CommandList) content;
       EStringBuilder sb = new EStringBuilder();
       for (Command cmd : cmds) {
-        sb.append(Formatters.format(cmd, fmt)).append(", ");
+        sb.append(fmt.format(cmd)).append(", ");
       }
       return sb.toString();
     } else if (content instanceof Command) {
-      return Formatters.format((Command) content, fmt);
+      return fmt.format((Command) content);
     } else if (content instanceof PlaneSwitchMessage) {
       PlaneSwitchMessage m = (PlaneSwitchMessage) content;
       return m.getAsString();
@@ -139,8 +140,8 @@ public abstract class Recorder {
     }
   }
 
-  protected String getMessageObjectString(Object object) {
-    if (object == Message.SYSTEM) {
+  protected String getMessageObjectString(IMessageParticipant object) {
+    if (object == App.me()) {
       return "<SYSTEM>";
     } else if (object instanceof Atc) {
       Atc atc = (Atc) object;

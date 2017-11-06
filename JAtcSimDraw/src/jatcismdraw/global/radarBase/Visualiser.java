@@ -9,7 +9,7 @@ package jatcismdraw.global.radarBase;
 import jatcsimdraw.mainRadar.settings.Settings;
 import jatcsimlib.airplanes.Airplane;
 import jatcsimlib.global.ETime;
-import jatcsimlib.messaging.Message;
+import jatcsimlib.newMessaging.Message;
 import jatcsimlib.world.Approach;
 import jatcsimlib.world.Border;
 import jatcsimlib.world.Navaid;

@@ -16,7 +16,6 @@ import jatcsimlib.global.EStringBuilder;
 import jatcsimlib.global.ETime;
 import jatcsimlib.global.Headings;
 import jatcsimlib.global.SpeedRestriction;
-import jatcsimlib.messaging.GoingAroundStringMessageContent;
 import jatcsimlib.newMessaging.Message;
 import jatcsimlib.speaking.Speech;
 import jatcsimlib.speaking.SpeechDelayer;
@@ -328,7 +327,7 @@ public class Pilot {
           // neni na twr, tak GA
           if (pilot.atc != Acc.atcTwr()) {
             Message m = new Message(parent, atc, new StringNotification("Established on final."));
-            Acc.newMessenger().add(m);
+            Acc.messenger().add(m);
           }
 
           break;
@@ -444,7 +443,7 @@ public class Pilot {
     private void goAround(String reason) {
       Message m = new Message(parent, atc,
           new GoingAroundNotification(reason));
-      Acc.newMessenger().add(m);
+      Acc.messenger().add(m);
 
       parent.setTargetSpeed(parent.getType().vDep);
 
@@ -784,7 +783,7 @@ public class Pilot {
       Message m = new Message(
           parent, this.atc,
           new StringNotification(" Unable to shortcut to " + c.getNavaid().getName() + ", fix not on our route!")      );
-      Acc.newMessenger().add(m);
+      Acc.messenger().add(m);
     } else {
       for (int i = 0; i < pointIndex; i++) {
         this.queue.removeAt(i);
@@ -810,7 +809,7 @@ public class Pilot {
       Headings.add(c.getApproach().getRadial(), 30))) {
       Message m = new Message(parent, atc,
           new StringNotification("Cannot enter approach now. Difficult position."));
-      Acc.newMessenger().add(m);
+      Acc.messenger().add(m);
     } else {
       this.behavior = new ApproachBehavior(c.getApproach());
 
@@ -878,7 +877,7 @@ public class Pilot {
     }
 
     Message m = new Message(parent, atc, saidText.clone());
-    Acc.newMessenger().add(m);
+    Acc.messenger().add(m);
 
     System.out.println("Saying to " + this.getTunedAtc().getName() + ": " + m.toString());
 
@@ -909,7 +908,7 @@ public class Pilot {
           Message message = new Message(
               parent, atc,
               new StringNotification("{Then} command cannot be first or last in queue. The whole command block is ignored."));
-          Acc.newMessenger().add(message);
+          Acc.messenger().add(message);
           speeches.clear();
           return;
         }
@@ -920,7 +919,7 @@ public class Pilot {
           Message message = new Message(
               parent, atc,
               new StringNotification("{Then} command must be after another command. The whole command block is ignored."));
-          Acc.newMessenger().add(message);
+          Acc.messenger().add(message);
 
         }
         if (prev instanceof ProceedDirectCommand) {
@@ -933,7 +932,7 @@ public class Pilot {
           Message message = new Message(
               parent, atc,
               new StringNotification("{Then} command is after a strange command, it does not make sense. The whole command block is ignored."));
-          Acc.newMessenger().add(message);
+          Acc.messenger().add(message);
           speeches.clear();
           return;
         }

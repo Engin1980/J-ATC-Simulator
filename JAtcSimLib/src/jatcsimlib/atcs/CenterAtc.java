@@ -41,7 +41,7 @@ public class CenterAtc extends ComputerAtc {
 
   @Override
   protected void _elapseSecond() {
-    List<Message> msgs = Acc.newMessenger().getByTarget(this,true);
+    List<Message> msgs = Acc.messenger().getByTarget(this,true);
 
     esRequestPlaneSwitchFromApp();
 
@@ -62,7 +62,7 @@ public class CenterAtc extends ComputerAtc {
             this,
             p,
             new RadarContactConfirmationNotification());
-        Acc.newMessenger().add(msg);
+        Acc.messenger().add(msg);
         recorder.logMessage(msg);
 
         if (p.isDeparture()) {
@@ -70,7 +70,7 @@ public class CenterAtc extends ComputerAtc {
             this,
             p,
             new ChangeAltitudeCommand(ChangeAltitudeCommand.eDirection.climb, getDepartureRandomTargetAltitude(p)));
-          Acc.newMessenger().add(msg);
+          Acc.messenger().add(msg);
           recorder.logMessage(msg);
         }
       }
@@ -99,7 +99,7 @@ public class CenterAtc extends ComputerAtc {
         waitingRequestsList.remove(p);
         super.approveSwitch(p);
         Message msg = new Message(this, p, new ContactCommand(eType.app));
-        Acc.newMessenger().add(msg);
+        Acc.messenger().add(msg);
         recorder.logMessage(msg);
       }
     }

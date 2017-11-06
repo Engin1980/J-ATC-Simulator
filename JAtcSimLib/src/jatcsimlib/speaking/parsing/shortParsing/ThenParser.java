@@ -2,7 +2,6 @@ package jatcsimlib.speaking.parsing.shortParsing;
 
 import jatcsimlib.speaking.commands.Command;
 import jatcsimlib.speaking.commands.specific.ThenCommand;
-import jatcsimlib.speaking.parsing.CmdParser;
 
 class ThenParser extends SpeechParser {
 

@@ -2,6 +2,8 @@ package jatcsimlib.speaking.parsing.shortParsing;
 
 import jatcsimlib.exceptions.EInvalidCommandException;
 import jatcsimlib.global.EStringBuilder;
+import jatcsimlib.speaking.Speech;
+import jatcsimlib.speaking.SpeechList;
 import jatcsimlib.speaking.commands.Command;
 import jatcsimlib.speaking.commands.CommandList;
 import jatcsimlib.speaking.parsing.Parser;
@@ -38,15 +40,15 @@ public class ShortParser extends Parser {
 // </editor-fold>
 
   @Override
-  public Command parseOne(String line) {
+  public Speech parseOne(String line) {
     line = normalizeCommandsInString(line);
     return parseMulti(line).get(0);
   }
 
   @Override
-  public CommandList parseMulti(String line) {
+  public SpeechList parseMulti(String line) {
     line = normalizeCommandsInString(line);
-    CommandList ret = new CommandList();
+    SpeechList ret = new SpeechList();
     String tmp = line;
     while (tmp != null && tmp.length() > 0) {
       SpeechParser p = getSpeechParser(tmp);
@@ -65,7 +67,7 @@ public class ShortParser extends Parser {
             tmp);
       }
 
-      Command cmd = p.parse(rg);
+      Speech cmd = p.parse(rg);
       ret.add(cmd);
       tmp = tmp.substring(rg.getIndexOfCharacterAfterMatch()).trim();
     }

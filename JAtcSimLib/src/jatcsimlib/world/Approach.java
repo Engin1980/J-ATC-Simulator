@@ -86,7 +86,7 @@ public class Approach extends MustBeBinded implements KeyItem<Approach.eType> {
   protected void _bind() {
     Parser p = new ShortParser();
     _gaCommands
-        = p.parseMulti(gaRoute);
+        = p.parseMultipleCommands(gaRoute);
   }
 
   public double getGlidePathPerNM() {

@@ -107,7 +107,7 @@ public class UserAtc extends Atc {
 
   private void sendToPlane(Airplane plane, SpeechList speeches) {
     Message m = new Message(this, plane, speeches);
-    Acc.newMessenger().add(m);
+    Acc.messenger().add(m);
     recorder.logMessage(m);
   }
 
@@ -151,13 +151,13 @@ public class UserAtc extends Atc {
 
     PlaneSwitchMessage msg = new PlaneSwitchMessage(plane);
     Message m = new Message(this, atc, msg);
-    Acc.newMessenger().add(m);
+    Acc.messenger().add(m);
     recorder.logMessage(m);
   }
 
   public void sendError(String message) {
     Message m = new Message(App.me(), this, new StringMessageContent(message));
-    Acc.newMessenger().add(m);
+    Acc.messenger().add(m);
     recorder.logMessage(m);
   }
 
@@ -166,7 +166,7 @@ public class UserAtc extends Atc {
       message = "?";
     }
     Message m = new Message(this, App.me(), new StringMessageContent(message.trim()));
-    Acc.newMessenger().add(m);
+    Acc.messenger().add(m);
     recorder.logMessage(m);
   }
 

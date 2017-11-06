@@ -38,7 +38,7 @@ public abstract class ComputerAtc extends Atc {
     for (Airplane p : awaitings) {
       Message m = new Message(this, Acc.atcApp(),
         new PlaneSwitchMessage(p, " to you (repeated)"));
-      Acc.newMessenger().add(m);
+      Acc.messenger().add(m);
       recorder.logMessage(m);
     }
 
@@ -48,14 +48,14 @@ public abstract class ComputerAtc extends Atc {
     getPrm().requestSwitch(this, Acc.atcApp(), plane);
     Message m = new Message(this, Acc.atcApp(),
       new PlaneSwitchMessage(plane, " to you"));
-    Acc.newMessenger().add(m);
+    Acc.messenger().add(m);
   }
 
   protected void refuseSwitch(Airplane plane) {
     getPrm().refuseSwitch(this, plane);
     Message m = new Message(this, Acc.atcApp(),
       new PlaneSwitchMessage(plane, " refused. Not in my coverage."));
-    Acc.newMessenger().add(m);
+    Acc.messenger().add(m);
     recorder.logMessage(m);
   }
 
@@ -63,7 +63,7 @@ public abstract class ComputerAtc extends Atc {
     getPrm().confirmSwitch(this, plane);
     Message m = new Message(this, Acc.atcApp(),
       new PlaneSwitchMessage(plane, " accepted"));
-    Acc.newMessenger().add(m);
+    Acc.messenger().add(m);
     recorder.logMessage(m);
   }
 
