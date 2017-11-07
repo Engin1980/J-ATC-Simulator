@@ -35,7 +35,7 @@ import javax.swing.JFrame;
  */
 public class JAtcSim {
 
-  private static final boolean FAST_START = true;
+  private static final boolean FAST_START = false;
 
   public static java.io.File resFolder = null;
   private static Area area = null;
@@ -201,38 +201,3 @@ public class JAtcSim {
   }
 }
 
-class JFrameThread extends Thread {
-
-  private JFrame frame;
-  private final Object LOCK = new Object();
-
-  public JFrameThread(JFrame frame) {
-    this.frame = frame;
-  }
-
-  @Override
-  public void run() {
-
-    frame.addWindowListener(new WindowAdapter() {
-
-      @Override
-      public void windowClosing(WindowEvent arg) {
-        synchronized (LOCK) {
-          System.out.println("Unlocking");
-          LOCK.notify();
-        }
-      }
-    }
-    );
-
-    frame.setVisible(true);
-    synchronized (LOCK) {
-      try {
-        System.out.println("Locking");
-        LOCK.wait();
-      } catch (InterruptedException ex) {
-      }
-    }
-  }
-
-}

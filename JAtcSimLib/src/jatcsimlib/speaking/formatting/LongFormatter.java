@@ -111,8 +111,30 @@ public class LongFormatter extends Formatter {
   public String format(ClearedToApproachCommand cmd) {
     StringBuilder sb = new StringBuilder();
     sb.append("cleared for ");
-    sb.append(cmd.getApproach().getType());
-    sb.append(" approach");
+    switch (cmd.getApproach().getType()){
+      case ILS_I:
+        sb.append("ILS");
+        break;
+      case ILS_II:
+        sb.append("ILS category II");
+        break;
+      case ILS_III:
+        sb.append("ILS category III");
+        break;
+      case NDB:
+        sb.append("NDB");
+        break;
+      case GNSS:
+        sb.append("GNSS");
+        break;
+      case VORDME:
+        sb.append("VOR-DME");
+        break;
+      case Visual:
+        sb.append("visual");
+        break;
+    }
+    sb.append(" approach at runway ");
     sb.append(cmd.getApproach().getParent().getName());
     return sb.toString();
   }
