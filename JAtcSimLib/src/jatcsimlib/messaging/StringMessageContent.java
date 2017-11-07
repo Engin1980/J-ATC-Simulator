@@ -1,24 +1,32 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package jatcsimlib.messaging;
 
-/**
- *
- * @author Marek
- */
-public class StringMessageContent implements IContent{
-  public final String text;
+public class StringMessageContent implements IMessageContent {
 
-  public StringMessageContent(String text) {
-    this.text = text;
+  private final String messageText;
+
+  public StringMessageContent(String messageText) {
+    if (messageText == null) {
+        throw new IllegalArgumentException("Value of {messageText} cannot not be null.");
+    }
+
+    this.messageText = messageText;
+  }
+
+  public StringMessageContent(String messageText, Object ... params){
+    if (messageText == null) {
+        throw new IllegalArgumentException("Value of {messageText} cannot not be null.");
+    }
+
+    String txt = String.format(messageText, params);
+    this.messageText = txt;
+  }
+
+  public String getMessageText() {
+    return messageText;
   }
 
   @Override
   public String toString() {
-    return "Msg{" + text + '}';
+    return messageText + "{StringMessageContent}";
   }
 }

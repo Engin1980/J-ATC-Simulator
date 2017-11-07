@@ -123,7 +123,7 @@ public class ETime implements Comparable<ETime> {
 
   /**
    * Returns clone of this time extended by minutes
-   * @param minutes Number of minutes to add.
+   * @param minutes Number of minutes to send.
    * @return This time extended by number of minutes.
    */
   public ETime addMinutes(int minutes) {

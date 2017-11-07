@@ -6,23 +6,17 @@
 package jatcsimlib;
 
 import jatcsimlib.airplanes.Airplane;
-import jatcsimlib.atcs.Atc;
-import jatcsimlib.atcs.CenterAtc;
-import jatcsimlib.atcs.PlaneResponsibilityManager;
-import jatcsimlib.atcs.TowerAtc;
-import jatcsimlib.atcs.UserAtc;
+import jatcsimlib.atcs.*;
 import jatcsimlib.exceptions.ENotSupportedException;
 import jatcsimlib.global.ERandom;
 import jatcsimlib.global.ETime;
 import jatcsimlib.global.ReadOnlyList;
-import jatcsimlib.messaging.Messenger;
 import jatcsimlib.weathers.Weather;
 import jatcsimlib.world.Airport;
 import jatcsimlib.world.Area;
 import jatcsimlib.world.RunwayThreshold;
 
 /**
- *
  * @author Marek
  */
 public class Acc {
@@ -34,8 +28,8 @@ public class Acc {
   public static void setArea(Area area) {
     Acc.area = area;
   }
-  
-  public static void setAirport(Airport aip){
+
+  public static void setAirport(Airport aip) {
     Acc.aip = aip;
   }
 
@@ -51,8 +45,8 @@ public class Acc {
   public static ReadOnlyList<Airplane> planes() {
     return prm().getAll();
   }
-  
-  public static PlaneResponsibilityManager prm(){
+
+  public static PlaneResponsibilityManager prm() {
     return PlaneResponsibilityManager.getInstance();
   }
 
@@ -64,8 +58,8 @@ public class Acc {
     return Acc.aip;
   }
 
-  public static Messenger messenger() {
-    return sim.getMessenger();
+  public static jatcsimlib.messaging.Messenger messenger() {
+    return sim().getMessenger();
   }
 
   public static Weather weather() {
@@ -108,8 +102,8 @@ public class Acc {
         throw new ENotSupportedException();
     }
   }
-  
-  public static ERandom rnd(){
+
+  public static ERandom rnd() {
     return Simulation.rnd;
   }
 }

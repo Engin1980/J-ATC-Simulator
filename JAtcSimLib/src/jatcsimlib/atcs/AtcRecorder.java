@@ -10,6 +10,7 @@ import jatcsimlib.global.EStringBuilder;
 import jatcsimlib.global.ETime;
 import jatcsimlib.global.Recorder;
 import jatcsimlib.messaging.Message;
+
 import java.nio.file.Path;
 
 /**
@@ -36,9 +37,9 @@ public class AtcRecorder extends Recorder {
   public void logMessage(Message m) {
     sb.clear();
 
-    String src = getMessageObjectString(m.source);
-    String trg = getMessageObjectString(m.target);
-    String cnt = getMessageContentString(m.content);
+    String src = getMessageObjectString(m.getSource());
+    String trg = getMessageObjectString(m.getTarget());
+    String cnt = getMessageContentString(m.getContent());
 
     ETime now = Acc.now();
     sb.clear();

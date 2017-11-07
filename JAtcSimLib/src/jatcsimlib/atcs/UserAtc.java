@@ -10,12 +10,14 @@ import jatcsimlib.airplanes.Airplane;
 import jatcsimlib.airplanes.Airplanes;
 import jatcsimlib.airplanes.Callsign;
 import jatcsimlib.airplanes.Squawk;
-import jatcsimlib.commands.CommandList;
-import jatcsimlib.commands.formatting.Parser;
-import jatcsimlib.commands.formatting.ShortParser;
 import jatcsimlib.exceptions.ENotSupportedException;
 import jatcsimlib.exceptions.ERuntimeException;
 import jatcsimlib.messaging.Message;
+import jatcsimlib.messaging.Messenger;
+import jatcsimlib.messaging.StringMessageContent;
+import jatcsimlib.speaking.SpeechList;
+import jatcsimlib.speaking.parsing.Parser;
+import jatcsimlib.speaking.parsing.shortParsing.ShortParser;
 
 /**
  *
@@ -84,7 +86,7 @@ public class UserAtc extends Atc {
       return;
     }
 
-    CommandList cmdList;
+    SpeechList cmdList;
     try {
       cmdList = parser.parseMulti(commands);
     } catch (Exception ex) {
@@ -94,18 +96,18 @@ public class UserAtc extends Atc {
     sendToPlane(p, cmdList);
   }
 
-  public void sendToPlane(Callsign c, CommandList commands) {
+  public void sendToPlane(Callsign c, SpeechList speeches) {
     Airplane pln = Airplanes.tryGetByCallsign(Acc.planes(), c);
     if (pln == null) {
       raiseError("No such plane for callsign \"" + c.toString() + "\".");
       return;
     }
-    sendToPlane(pln, commands);
+    sendToPlane(pln, speeches);
   }
 
-  private void sendToPlane(Airplane plane, CommandList commands) {
-    Message m = Message.create(this, plane, commands);
-    Acc.messenger().addMessage(m);
+  private void sendToPlane(Airplane plane, SpeechList speeches) {
+    Message m = new Message(this, plane, speeches);
+    Acc.messenger().send(m);
     recorder.logMessage(m);
   }
 
@@ -148,14 +150,14 @@ public class UserAtc extends Atc {
     }
 
     PlaneSwitchMessage msg = new PlaneSwitchMessage(plane);
-    Message m = Message.create(this, atc, msg);
-    Acc.messenger().addMessage(m);
+    Message m = new Message(this, atc, msg);
+    Acc.messenger().send(m);
     recorder.logMessage(m);
   }
 
   public void sendError(String message) {
-    Message m = Message.createFromSystem(this, message);
-    Acc.messenger().addMessage(m);
+    Message m = new Message(Messenger.SYSTEM, this, new StringMessageContent(message));
+    Acc.messenger().send(m);
     recorder.logMessage(m);
   }
 
@@ -163,8 +165,8 @@ public class UserAtc extends Atc {
     if (message.trim().isEmpty()) {
       message = "?";
     }
-    Message m = Message.createForSystem(this, message.trim());
-    Acc.messenger().addMessage(m);
+    Message m = new Message(this, Messenger.SYSTEM, new StringMessageContent(message.trim()));
+    Acc.messenger().send(m);
     recorder.logMessage(m);
   }
 

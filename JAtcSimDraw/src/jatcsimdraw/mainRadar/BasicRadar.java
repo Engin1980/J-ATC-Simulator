@@ -47,7 +47,9 @@ public class BasicRadar extends Radar {
     this.c = canvas;
     this.p = new BasicPainter(c, radarRange.topLeft, radarRange.bottomRight);
     this.v = new BasicVisualiser(p, displaySettings);
-    this.m = new PaintManager(sim, area, v);
+    this.m = new PaintManager(sim, area, v,
+        displaySettings.getMessageVisibleDelayInRadarCycles(),
+        displaySettings.getFormatter());
 
     this.paintEM.addListener(new EventListener<BasicRadar, Object>() {
 

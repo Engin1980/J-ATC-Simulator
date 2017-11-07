@@ -12,7 +12,9 @@ import jatcsimlib.exceptions.ENotSupportedException;
 import jatcsimlib.exceptions.ERuntimeException;
 import jatcsimlib.global.ReadOnlyList;
 import jatcsimlib.messaging.Message;
+import jatcsimlib.messaging.Messenger;
 import jatcsimlib.messaging.StringMessageContent;
+
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -143,8 +145,8 @@ public class PlaneResponsibilityManager {
       StringBuilder sb = new StringBuilder();
       sb.append("Code ").append(plane.getSqwk().toString()).append(" err: ");
       sb.append(" Cannot request switch. Atc ").append(from.getName()).append(" is not responsible for plane.");
-      Message m = Message.createFromSystem(Acc.atcApp(), sb.toString());
-      Acc.messenger().addMessage(m);
+      Message m = new Message(Messenger.SYSTEM, Acc.atcApp(), new StringMessageContent(sb.toString()));
+      Acc.messenger().send(m);
       return;
     }
 

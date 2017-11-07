@@ -33,7 +33,7 @@ public abstract class Visualiser {
   public abstract void drawRunway(Runway runway);
   public abstract void drawNavaid (Navaid navaid);
   public abstract void drawPlane(Airplane.AirplaneInfo planeInfo);
-  public abstract void drawMessages(List<Message> msgs);
+  public abstract void drawMessages(List<VisualisedMessage> msgs);
   public abstract void drawStar(List<Navaid> navaidPoints);
   public abstract void drawSid(List<Navaid> navaidPoints);
   public abstract void drawApproach(Approach approach);

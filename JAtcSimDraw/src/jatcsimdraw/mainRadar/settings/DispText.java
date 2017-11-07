@@ -22,7 +22,7 @@ public class DispText implements KeyItem<DispText.eType> {
   }
   public enum eType{
     atc,
-    plane, // message from plane
+    plane, // speech from plane
     system,
     time,
     navaid,

@@ -8,9 +8,14 @@ package jatcsimlib.atcs;
 import jatcsimlib.Acc;
 import jatcsimlib.airplanes.Airplane;
 import jatcsimlib.airplanes.AirplaneList;
-import jatcsimlib.commands.*;
 import jatcsimlib.exceptions.ERuntimeException;
 import jatcsimlib.messaging.Message;
+import jatcsimlib.speaking.SpeechList;
+import jatcsimlib.speaking.fromAtc.commands.ChangeAltitudeCommand;
+import jatcsimlib.speaking.fromAtc.commands.ContactCommand;
+import jatcsimlib.speaking.fromAirplane.notifications.GoodDayNotification;
+import jatcsimlib.speaking.fromAtc.notifications.RadarContactConfirmationNotification;
+
 import java.util.List;
 
 /**
@@ -36,44 +41,44 @@ public class CenterAtc extends ComputerAtc {
 
   @Override
   protected void _elapseSecond() {
-    List<Message> msgs = Acc.messenger().getMy(this, true);
+    List<Message> msgs = Acc.messenger().getByTarget(this,true);
 
     esRequestPlaneSwitchFromApp();
 
     for (Message m : msgs) {
-      recorder.logMessage(m); // incoming message
-      
-      if (m.source instanceof Airplane) {
+      recorder.logMessage(m); // incoming speech
+
+      if (m.isSourceOfType(Airplane.class)) {
         
-        CommandList cmds = (CommandList) m.content;
+        SpeechList cmds = m.getContent();
         
-        if (cmds.contains(GoodDayCommand.class) == false)
+        if (cmds.containsType(GoodDayNotification.class) == false)
           continue;
         
-        Airplane p = (Airplane) m.source;
+        Airplane p = m.getSource();
         Message msg;
 
-        msg = Message.create(
+        msg = new Message(
             this,
             p,
-            new RadarContactConfirmationCommand());
-        Acc.messenger().addMessage(msg);
+            new RadarContactConfirmationNotification());
+        Acc.messenger().send(msg);
         recorder.logMessage(msg);
 
         if (p.isDeparture()) {
-          msg = Message.create(
+          msg = new Message(
             this,
             p,
             new ChangeAltitudeCommand(ChangeAltitudeCommand.eDirection.climb, getDepartureRandomTargetAltitude(p)));
-          Acc.messenger().addMessage(msg);
+          Acc.messenger().send(msg);
           recorder.logMessage(msg);
         }
       }
-      if (m.source != Acc.atcApp()) {
+      if (m.getSource() != Acc.atcApp()) {
         continue;
       }
 
-      Airplane p = m.getAsPlaneSwitchMessage().plane;
+      Airplane p = m.<PlaneSwitchMessage>getContent().plane;
       if (waitingRequestsList.contains(p) == false) {
         p = null;
       }
@@ -81,7 +86,7 @@ public class CenterAtc extends ComputerAtc {
       if (p == null) {
         // APP -> CTR, muze?       
 
-        p = m.getAsPlaneSwitchMessage().plane;
+        p = m.<PlaneSwitchMessage>getContent().plane;
         if (canIAcceptFromApp(p)) {
           super.confirmSwitch(p);
           super.approveSwitch(p);
@@ -93,9 +98,9 @@ public class CenterAtc extends ComputerAtc {
         // CTR -> APP, potvrzene od APP
         waitingRequestsList.remove(p);
         super.approveSwitch(p);
-        Message n = Message.create(this, p, new ContactCommand(eType.app));
-        Acc.messenger().addMessage(n);
-        recorder.logMessage(n);
+        Message msg = new Message(this, p, new ContactCommand(eType.app));
+        Acc.messenger().send(msg);
+        recorder.logMessage(msg);
       }
     }
   }

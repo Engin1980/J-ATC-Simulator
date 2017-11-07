@@ -6,14 +6,14 @@
 
 package jatcsimlib.atcs;
 
-import jatcsimlib.Acc;
 import jatcsimlib.airplanes.Airplane;
+import jatcsimlib.messaging.IMessageParticipant;
 
 /**
  *
  * @author Marek
  */
-public abstract class Atc {
+public abstract class Atc implements IMessageParticipant {
   
   public enum eType{
     gnd,

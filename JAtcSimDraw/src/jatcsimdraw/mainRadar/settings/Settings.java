@@ -10,6 +10,8 @@ import jatcsimlib.atcs.Atc;
 import jatcsimlib.exceptions.ENotSupportedException;
 import jatcsimlib.exceptions.ERuntimeException;
 import jatcsimlib.global.KeyList;
+import jatcsimlib.speaking.formatting.Formatter;
+import jatcsimlib.speaking.formatting.LongFormatter;
 
 /**
  *
@@ -20,7 +22,17 @@ public class Settings {
   private final KeyList<DispItem, String> dispItems = new KeyList();
   private final KeyList<DispPlane, DispPlane.eBehavior> dispPlanes = new KeyList();
   private final KeyList<DispText, DispText.eType> dispTexts = new KeyList();
-  private int refreshRate;
+  private final int refreshRate = 3;
+  private final int _messageVisibleDelayInRadarCycles = 5; /* how many radar cycles, not seconds! /*/
+  private final Formatter _formatter = new LongFormatter();
+
+  public int getMessageVisibleDelayInRadarCycles() {
+    return _messageVisibleDelayInRadarCycles;
+  }
+
+  public Formatter getFormatter() {
+    return _formatter;
+  }
 
   public DispItem getDispItem(String key) {
 
@@ -71,5 +83,4 @@ public class Settings {
   public int getRefreshRate() {
     return refreshRate;
   }
-
 }

@@ -8,17 +8,17 @@ package jatcsimlib.atcs;
 import jatcsimlib.Acc;
 import jatcsimlib.airplanes.Airplane;
 import jatcsimlib.airplanes.AirplaneList;
-import jatcsimlib.commands.ClearedForTakeoffCommand;
-import jatcsimlib.commands.CommandList;
-import jatcsimlib.commands.GoodDayCommand;
-import jatcsimlib.commands.RadarContactConfirmationCommand;
 import jatcsimlib.coordinates.Coordinates;
 import jatcsimlib.exceptions.ENotSupportedException;
 import jatcsimlib.exceptions.ERuntimeException;
 import jatcsimlib.global.ETime;
 import jatcsimlib.global.Headings;
-import jatcsimlib.messaging.GoingAroundStringMessageContent;
 import jatcsimlib.messaging.Message;
+import jatcsimlib.messaging.StringMessageContent;
+import jatcsimlib.speaking.fromAirplane.notifications.GoingAroundNotification;
+import jatcsimlib.speaking.fromAirplane.notifications.GoodDayNotification;
+import jatcsimlib.speaking.fromAtc.commands.ClearedForTakeoffCommand;
+import jatcsimlib.speaking.fromAtc.notifications.RadarContactConfirmationNotification;
 import jatcsimlib.weathers.Weather;
 import jatcsimlib.world.Runway;
 import jatcsimlib.world.RunwayThreshold;
@@ -89,39 +89,40 @@ public class TowerAtc extends ComputerAtc {
 
   @Override
   protected void _elapseSecond() {
-    List<Message> msgs = Acc.messenger().getMy(this, true);
+    List<Message> msgs = Acc.messenger().getByTarget(this, true);
 
     esRequestPlaneSwitchFromApp();
 
     for (Message m : msgs) {
-      recorder.logMessage(m); // incoming message
+      recorder.logMessage(m); // incoming speech
 
-      if (m.source instanceof Airplane) {
-        if (m.content instanceof GoingAroundStringMessageContent) {
+      if (m.isSourceOfType(Airplane.class)) {
+        if (m.getContent() instanceof GoingAroundNotification) {
           // predavame na APP
-          super.requestSwitch((Airplane) m.source);
-          waitingRequestsList.add((Airplane) m.source);
-        } else if (m.content instanceof GoodDayCommand) {
-          Message msg = Message.create(
+          Airplane plane = m.getSource();
+          super.requestSwitch(plane);
+          waitingRequestsList.add(plane);
+        } else if (m.getContent() instanceof GoodDayNotification) {
+          Message msg = new Message(
               this,
-              (Airplane) m.source,
-              new RadarContactConfirmationCommand());
-          Acc.messenger().addMessage(msg);
+              m.<Airplane>getSource(),
+              new RadarContactConfirmationNotification());
+          Acc.messenger().send(msg);
           recorder.logMessage(msg);
         }
         continue;
-      } else if (m.source != Acc.atcApp()) {
+      } else if (m.getSource() != Acc.atcApp()) {
         continue;
       }
 
-      Airplane p = m.getAsPlaneSwitchMessage().plane;
+      Airplane p = m.<PlaneSwitchMessage>getContent().plane;
       if (waitingRequestsList.contains(p) == false) {
         p = null;
       }
 
       if (p == null) {
         // APP -> TWR, muze?
-        p = m.getAsPlaneSwitchMessage().plane;
+        p = m.<PlaneSwitchMessage>getContent().plane;
         if (canIAcceptFromApp(p)) {
           super.confirmSwitch(p);
           super.approveSwitch(p);
@@ -150,10 +151,15 @@ public class TowerAtc extends ComputerAtc {
       departings.add(p);
       lastDepartures.set(runwayThresholdInUse, p, Acc.now());
 
-      CommandList cmdList = new CommandList();
-      cmdList.add(new ClearedForTakeoffCommand(runwayThresholdInUse));
-      Message m = Message.create(this, p, cmdList);
-      Acc.messenger().addMessage(m);
+      Message m;
+
+      m = new Message(this, p,
+          new RadarContactConfirmationNotification());
+      Acc.messenger().send(m);
+
+      m = new Message(this, p,
+          new ClearedForTakeoffCommand(runwayThresholdInUse));
+      Acc.messenger().send(m);
       recorder.logMessage(m);
     }
   }
@@ -214,9 +220,10 @@ public class TowerAtc extends ComputerAtc {
     // TWR -> APP, zadost na APP
     AirplaneList plns = getPlanesReadyForApp();
     for (Airplane p : plns) {
-      m = Message.create(this, Acc.atcApp(),
+      // todo PlaneSwitchMessage are only several types, some enum should be used instead of fixed string message
+      m = new Message(this, Acc.atcApp(),
           new PlaneSwitchMessage(p, " to you"));
-      Acc.messenger().addMessage(m);
+      Acc.messenger().send(m);
       recorder.logMessage(m);
 
       getPrm().requestSwitch(this, Acc.atcApp(), p);
@@ -226,9 +233,9 @@ public class TowerAtc extends ComputerAtc {
     // opakovani starych zadosti
     List<Airplane> awaitings = waitingRequestsList.getAwaitings();
     for (Airplane p : awaitings) {
-      m = Message.create(this, Acc.atcApp(),
+      m = new Message(this, Acc.atcApp(),
           new PlaneSwitchMessage(p, " to you (repeated)"));
-      Acc.messenger().addMessage(m);
+      Acc.messenger().send(m);
       recorder.logMessage(m);
     }
   }
@@ -271,11 +278,12 @@ public class TowerAtc extends ComputerAtc {
         RunwayChangeInfo rci = new RunwayChangeInfo(suggestedThreshold, Acc.now().addSeconds(15 * 60)); // change in 15 minutes
         if (this.runwayChangeInfo == null || this.runwayChangeInfo.newRunwayThreshold != suggestedThreshold) {
           this.runwayChangeInfo = rci;
-          Message m = Message.create(
+          Message m = new Message(
               this,
               Acc.atcApp(),
-              "Change to runway " + rci.newRunwayThreshold.getName() + " at " + rci.changeTime.toString());
-          Acc.messenger().addMessage(m);
+              new StringMessageContent(
+                  "Expect change to runway %s at %s.", rci.newRunwayThreshold.getName(), rci.changeTime.toString()));
+          Acc.messenger().send(m);
           recorder.logMessage(m);
         }
       }
@@ -299,11 +307,11 @@ public class TowerAtc extends ComputerAtc {
   }
 
   private void changeRunwayInUse(RunwayThreshold newRunwayInUseThreshold) {
-    Message m = Message.create(
+    Message m = new Message(
         this,
         Acc.atcApp(),
-        "Runway in use " + newRunwayInUseThreshold.getName());
-    Acc.messenger().addMessage(m);
+        new StringMessageContent("Runway in use %s from now.", newRunwayInUseThreshold.getName()));
+    Acc.messenger().send(m);
     recorder.logMessage(m);
     this.runwayThresholdInUse = newRunwayInUseThreshold;
   }
