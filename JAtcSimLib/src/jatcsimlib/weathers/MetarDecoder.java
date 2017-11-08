@@ -37,10 +37,10 @@ public class MetarDecoder {
 
   private static Weather decodeWeather(String metarLine) {
     int[] wind = decodeWindDirSpeedGusts(metarLine);
-    int visibility = decodeVisibility(metarLine);
+    int visibilityInM = decodeVisibility(metarLine);
     CloudBaseResult cloudBaseInFt = decodeCloudBase(metarLine);
 
-    Weather w = new Weather(wind[0], wind[1], visibility, cloudBaseInFt.altitudeInFt, cloudBaseInFt.probability);
+    Weather w = new Weather(wind[0], wind[1], visibilityInM, cloudBaseInFt.altitudeInFt, cloudBaseInFt.probability);
 
     return w;
   }

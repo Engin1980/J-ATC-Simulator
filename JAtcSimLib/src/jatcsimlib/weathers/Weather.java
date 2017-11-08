@@ -35,7 +35,7 @@ public class Weather {
    * @return 
    */
   public double getVisibilityInMiles() {
-    return UnitProvider.kmToNM(visibilityInM);
+    return UnitProvider.mToNM(visibilityInM);
   }
 
   /**

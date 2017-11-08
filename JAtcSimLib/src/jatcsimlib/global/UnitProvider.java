@@ -15,6 +15,8 @@ public class UnitProvider {
     return value * 0.539968;
   }
 
+  public static double mToNM(double value) {return this.kmToNM(value * 1000)}
+
   public static double nmToKm(double value) {
     return value * 1.85196;
   }

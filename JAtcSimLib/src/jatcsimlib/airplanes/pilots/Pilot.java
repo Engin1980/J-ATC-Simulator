@@ -242,7 +242,6 @@ public class Pilot {
   }
 //  // </editor-fold>
   // <editor-fold defaultstate="collapsed" desc=" ApproachBehavior class">
-
   class ApproachBehavior extends Behavior {
 
     public Approach approach;
@@ -435,7 +434,7 @@ public class Pilot {
     private boolean canSeeRunwayFromCurrentPosition() {
       Weather w = Acc.weather();
 
-      if ((w.getCloudBaseInFt() + Acc.airport().getAltitude()) < parent.getAltitude()) {
+      if (w.getCloudBaseInFt() < parent.getAltitude()) {
         return false;
       }
 

@@ -7,7 +7,7 @@ import jatcsimlib.speaking.fromAtc.commands.ClearedToApproachCommand;
 public class UnableToEnterApproachFromDifficultPosition extends Rejection {
   public UnableToEnterApproachFromDifficultPosition(ClearedToApproachCommand origin) {
     super(
-        "Cannot enter approach now. Difficult position.",
+        "Cannot enter approach from current position.",
         origin);
   }
   @Override

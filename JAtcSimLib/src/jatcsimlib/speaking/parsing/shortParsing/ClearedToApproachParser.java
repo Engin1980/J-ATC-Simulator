@@ -12,7 +12,7 @@ import jatcsimlib.world.RunwayThreshold;
 class ClearedToApproachParser extends SpeechParser<ClearedToApproachCommand> {
 
   private static final String[] prefixes = new String[]{"C "};
-  private static final String pattern = "C (I|II|III|G|V|R) (\\S+)";
+  private static final String pattern = "C (I|II|III|G|V|R|N) (\\S+)";
 
   @Override
   public String getHelp() {
@@ -24,6 +24,7 @@ class ClearedToApproachParser extends SpeechParser<ClearedToApproachCommand> {
     sb.appendLine("\tII\t.. ILS cat II");
     sb.appendLine("\tIII\t.. ILS cat III");
     sb.appendLine("\tR\t.. VOR/DME");
+    sb.appendLine("\tN\t.. NDB");
     sb.appendLine("\tG\t.. GPS");
     sb.appendLine("\tV\t.. visual");
     sb.appendLine("Example:");
@@ -76,10 +77,11 @@ class ClearedToApproachParser extends SpeechParser<ClearedToApproachCommand> {
         throw new ENotSupportedException();
     }
 
+    //TODO this should be checked by the pilot, not by the
     RunwayThreshold rt = Acc.airport().tryGetRunwayThreshold(runwayName);
     if (rt == null) {
       throw new EInvalidCommandException(
-          "Cannot be cleared to approach. There is no runway name \"" + runwayName + "\".", rg.getMatch());
+          "Cannot be cleared to approach. There is no runway designated as \"" + runwayName + "\".", rg.getMatch());
     }
 
     Approach app = rt.tryGetApproachByTypeWithILSDerived(type);
