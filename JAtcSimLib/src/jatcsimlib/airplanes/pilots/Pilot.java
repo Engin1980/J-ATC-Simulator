@@ -480,14 +480,12 @@ public class Pilot {
   private boolean hasRadarContact = true;
   private final Airplane parent;
   private final String routeName;
-  private final SpeechDelayer queue = new SpeechDelayer(3, 10); //Min/max speech delay
+  private final SpeechDelayer queue = new SpeechDelayer(1, 7); //Min/max speech delay
   private final AfterCommandList afterCommands = new AfterCommandList();
   private Coordinate targetCoordinate;
   private Behavior behavior;
   private final AutoThrust autoThrust;
   private final SpeechList saidText = new SpeechList();
-
-  private static final int SPEECH_DELAY = 7;
 
   // <editor-fold defaultstate="collapsed" desc=" getters/setters ">
   public String getRouteName() {
@@ -798,9 +796,7 @@ public class Pilot {
   }
 
   private boolean processQueueSpeech(ClearedToApproachCommand c) {
-    if (behavior instanceof HoldBehavior) {
-      behavior = null;
-    }
+
 
     // zatim resim jen pozici letadla
     int radFromFix
@@ -813,8 +809,11 @@ public class Pilot {
       Headings.add(c.getApproach().getRadial(), 30))) {
       say(new UnableToEnterApproachFromDifficultPosition(c));
     } else {
-      this.behavior = new ApproachBehavior(c.getApproach());
+      if (behavior instanceof HoldBehavior) {
+        behavior = null;
+      }
 
+      this.behavior = new ApproachBehavior(c.getApproach());
       confirmIfReq(c);
     }
 
