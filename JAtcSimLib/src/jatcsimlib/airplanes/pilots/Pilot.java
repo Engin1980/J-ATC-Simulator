@@ -797,16 +797,22 @@ public class Pilot {
 
   private boolean processQueueSpeech(ClearedToApproachCommand c) {
 
+    final int MAXIMAL_DISTANCE_TO_ENTER_APPROACH_IN_NM = 17;
+    final int MAXIMAL_ONE_SIDE_ARC_FROM_APPROACH_RADIAL_TO_ENTER_APPROACH_IN_DEGREES = 30;
 
     // zatim resim jen pozici letadla
     int radFromFix
       = (int) Coordinates.getBearing(parent.getCoordinate(), c.getApproach().getPoint());
     int dist
       = (int) Coordinates.getDistanceInNM(c.getApproach().getPoint(), parent.getCoordinate());
-    if (dist > 17 || !Headings.isBetween(
-      Headings.add(c.getApproach().getRadial(), -30),
+    if (dist > MAXIMAL_DISTANCE_TO_ENTER_APPROACH_IN_NM || !Headings.isBetween(
+      Headings.add(
+          c.getApproach().getRadial(),
+          -MAXIMAL_ONE_SIDE_ARC_FROM_APPROACH_RADIAL_TO_ENTER_APPROACH_IN_DEGREES),
       radFromFix,
-      Headings.add(c.getApproach().getRadial(), 30))) {
+      Headings.add(
+          c.getApproach().getRadial(),
+          MAXIMAL_ONE_SIDE_ARC_FROM_APPROACH_RADIAL_TO_ENTER_APPROACH_IN_DEGREES))) {
       say(new UnableToEnterApproachFromDifficultPosition(c));
     } else {
       if (behavior instanceof HoldBehavior) {
