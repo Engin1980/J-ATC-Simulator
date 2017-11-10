@@ -22,27 +22,27 @@ import jatcsimlib.speaking.ISpeech;
 import jatcsimlib.speaking.SpeechDelayer;
 import jatcsimlib.speaking.SpeechList;
 import jatcsimlib.speaking.fromAirplane.notifications.EstablishedOnApproachNotification;
-import jatcsimlib.speaking.fromAirplane.notifications.commandResponses.CommandResponse;
 import jatcsimlib.speaking.fromAirplane.notifications.GoingAroundNotification;
 import jatcsimlib.speaking.fromAirplane.notifications.GoodDayNotification;
 import jatcsimlib.speaking.fromAirplane.notifications.RequestRadarContactNotification;
+import jatcsimlib.speaking.fromAirplane.notifications.commandResponses.CommandResponse;
+import jatcsimlib.speaking.fromAirplane.notifications.commandResponses.Confirmation;
 import jatcsimlib.speaking.fromAirplane.notifications.commandResponses.IllegalThenCommandRejection;
+import jatcsimlib.speaking.fromAirplane.notifications.commandResponses.Rejection;
 import jatcsimlib.speaking.fromAirplane.notifications.commandResponses.rejections.ShortCutToFixNotOnRoute;
 import jatcsimlib.speaking.fromAirplane.notifications.commandResponses.rejections.UnableToEnterApproachFromDifficultPosition;
 import jatcsimlib.speaking.fromAtc.IAtcCommand;
 import jatcsimlib.speaking.fromAtc.commands.*;
 import jatcsimlib.speaking.fromAtc.commands.afters.*;
-import jatcsimlib.speaking.fromAirplane.notifications.commandResponses.Confirmation;
-import jatcsimlib.speaking.fromAirplane.notifications.commandResponses.Rejection;
 import jatcsimlib.speaking.fromAtc.notifications.RadarContactConfirmationNotification;
 import jatcsimlib.weathers.Weather;
 import jatcsimlib.world.Approach;
 import jatcsimlib.world.Navaid;
+
 import java.lang.reflect.Method;
 import java.util.List;
 
 /**
- *
  * @author Marek
  */
 @SuppressWarnings("unused")
@@ -68,9 +68,8 @@ public class Pilot {
   // <editor-fold defaultstate="collapsed" desc=" TakeOffBehavior class">
   class TakeOffBehavior extends Behavior {
 
-    private boolean isFirstFly = true;
-
     private final static int TAKEOFF_ACCELERATION_ALTITUDE_AGL = 1500;
+    private boolean isFirstFly = true;
 
     @Override
     public void fly() {
@@ -146,7 +145,7 @@ public class Pilot {
             this.phase = eHoldPhase.firstTurn;
           } else {
             int newHeading = (int) Coordinates.getHeadingToRadial(
-              parent.getCoordinate(), this.fix, this.inboundRadial, parent.getHeading());
+                parent.getCoordinate(), this.fix, this.inboundRadial, parent.getHeading());
             parent.setTargetHeading(newHeading);
 
           }
@@ -174,8 +173,8 @@ public class Pilot {
 
             int newHeading;
             newHeading = this.isLeftTurned
-              ? Headings.add(this.inboundRadial, -150)
-              : Headings.add(this.inboundRadial, 150);
+                ? Headings.add(this.inboundRadial, -150)
+                : Headings.add(this.inboundRadial, 150);
             parent.setTargetHeading(newHeading);
             this.secondTurnTime = Acc.now().addSeconds(120);
 
@@ -208,8 +207,8 @@ public class Pilot {
         case parallelAgainst:
           if (Acc.now().isAfter(this.secondTurnTime)) {
             int newHeading = (this.isLeftTurned)
-              ? Headings.add(this.getOutboundHeading(), -210)
-              : Headings.add(this.getOutboundHeading(), +210);
+                ? Headings.add(this.getOutboundHeading(), -210)
+                : Headings.add(this.getOutboundHeading(), +210);
             parent.setTargetHeading(newHeading, !this.isLeftTurned);
             this.phase = eHoldPhase.parallelTurn;
           }
@@ -232,27 +231,27 @@ public class Pilot {
       EStringBuilder sb = new EStringBuilder();
 
       sb.appendFormat("HLD %s incrs: %03d/%s in: %s",
-        this.fix.toString(),
-        this.inboundRadial,
-        this.isLeftTurned ? "L" : "R",
-        this.phase.toString());
+          this.fix.toString(),
+          this.inboundRadial,
+          this.isLeftTurned ? "L" : "R",
+          this.phase.toString());
 
       return sb.toString();
     }
   }
-//  // </editor-fold>
+
+  //  // </editor-fold>
   // <editor-fold defaultstate="collapsed" desc=" ApproachBehavior class">
   class ApproachBehavior extends Behavior {
 
-    public Approach approach;
-    public eApproachPhase phase;
-    public final int finalAltitude;
-    public final int shortFinalAltitude;
-    public boolean isAtFinalDescend = false;
-    public Boolean isRunwayVisible = null;
-
     private final static int LONG_FINAL_ALTITUDE_AGL = 1000;
     private final static int SHORT_FINAL_ALTITUDE_AGL = 200;
+    public final int finalAltitude;
+    public final int shortFinalAltitude;
+    public Approach approach;
+    public eApproachPhase phase;
+    public boolean isAtFinalDescend = false;
+    public Boolean isRunwayVisible = null;
 
     public ApproachBehavior(Approach approach) {
       this.approach = approach;
@@ -262,7 +261,11 @@ public class Pilot {
       this.phase = eApproachPhase.enteringFirst;
     }
 
-    @Override
+    private int getAppHeadingDifference() {
+      int heading = (int) Coordinates.getBearing(parent.getCoordinate(), this.approach.getParent().getCoordinate());
+      int ret = Headings.subtract(heading, parent.getHeading());
+      return ret;
+    }    @Override
     public void fly() {
 
       if (this.phase != eApproachPhase.touchdownAndLanded && this.phase != eApproachPhase.touchdownAndLandedFirst) {
@@ -378,12 +381,6 @@ public class Pilot {
       }
     }
 
-    private int getAppHeadingDifference() {
-      int heading = (int) Coordinates.getBearing(parent.getCoordinate(), this.approach.getParent().getCoordinate());
-      int ret = Headings.subtract(heading, parent.getHeading());
-      return ret;
-    }
-
     /**
      * Adjusts plane target altitude on approach.
      *
@@ -402,9 +399,9 @@ public class Pilot {
 
       if (newAltitude == -1) {
         double distToLand = Coordinates.getDistanceInNM(
-          parent.getCoordinate(), this.approach.getParent().getCoordinate());
+            parent.getCoordinate(), this.approach.getParent().getCoordinate());
         newAltitude = (int) (this.approach.getParent().getParent().getParent().getAltitude()
-          + this.approach.getGlidePathPerNM() * distToLand);
+            + this.approach.getGlidePathPerNM() * distToLand);
       }
 
       newAltitude = (int) Math.min(newAltitude, parent.getTargetAltitude());
@@ -417,7 +414,7 @@ public class Pilot {
 
     private void updateHeadingOnApproach() {
       int newHeading
-        = (int) Coordinates.getHeadingToRadial(
+          = (int) Coordinates.getHeadingToRadial(
           parent.getCoordinate(), this.approach.getPoint(),
           this.approach.getRadial(), parent.getHeading());
       parent.setTargetHeading(newHeading);
@@ -425,7 +422,7 @@ public class Pilot {
 
     private void updateHeadingLanded() {
       int newHeading
-        = (int) Coordinates.getHeadingToRadial(
+          = (int) Coordinates.getHeadingToRadial(
           parent.getCoordinate(), this.approach.getParent().getOtherThreshold().getCoordinate(),
           this.approach.getRadial(), parent.getHeading());
       parent.setTargetHeading(newHeading);
@@ -460,42 +457,35 @@ public class Pilot {
       pilot.autoThrust.setMode(AutoThrust.Mode.takeOff, true);
     }
 
+
+
     @Override
     public String toLogString() {
 
       EStringBuilder sb = new EStringBuilder();
 
       sb.appendFormat("APP %s%s in %s",
-        this.approach.getType().toString(),
-        this.approach.getParent().getName(),
-        this.phase.toString());
+          this.approach.getType().toString(),
+          this.approach.getParent().getName(),
+          this.phase.toString());
 
       return sb.toString();
     }
   }
   // </editor-fold>
-
-  private Atc atc = null;
-  private boolean hasRadarContact = true;
   private final Airplane parent;
   private final String routeName;
   private final SpeechDelayer queue = new SpeechDelayer(1, 7); //Min/max speech delay
   private final AfterCommandList afterCommands = new AfterCommandList();
-  private Coordinate targetCoordinate;
-  private Behavior behavior;
   private final AutoThrust autoThrust;
   private final SpeechList saidText = new SpeechList();
+  private Atc atc = null;
+  private boolean hasRadarContact = true;
+  private Coordinate targetCoordinate;
+  private Behavior behavior;
+  private boolean isConfirmationsNowRequested = false;
 
-  // <editor-fold defaultstate="collapsed" desc=" getters/setters ">
-  public String getRouteName() {
-    return this.routeName;
-  }
-
-  public Coordinate getTargetCoordinate() {
-    return targetCoordinate;
-  }
-
-// </editor-fold>
+  // </editor-fold>
   public Pilot(Airplane parent, String routeName, SpeechList<IAtcCommand> routeCommandQueue) {
     SpeechList<IAtcCommand> speeches = routeCommandQueue.clone(); // need clone to expand "thens"
     this.parent = parent;
@@ -508,6 +498,15 @@ public class Pilot {
     } else {
       autoThrust.setMode(AutoThrust.Mode.idle, true);
     }
+  }
+
+  // <editor-fold defaultstate="collapsed" desc=" getters/setters ">
+  public String getRouteName() {
+    return this.routeName;
+  }
+
+  public Coordinate getTargetCoordinate() {
+    return targetCoordinate;
   }
 
   public void addNewSpeeches(SpeechList speeches) {
@@ -540,10 +539,10 @@ public class Pilot {
       this.afterCommands.add((AfterCommand) c, cmds.getAsCommand(index + 1));
       ret += 1;
     } else if ((c instanceof ContactCommand)
-      || (c instanceof ChangeSpeedCommand)
-      || (c instanceof ChangeAltitudeCommand)
-      || (c instanceof ClearedToApproachCommand)
-      || (c instanceof HoldCommand)) {
+        || (c instanceof ChangeSpeedCommand)
+        || (c instanceof ChangeAltitudeCommand)
+        || (c instanceof ClearedToApproachCommand)
+        || (c instanceof HoldCommand)) {
       this.afterCommands.removeByConsequent(c.getClass());
       this.queue.add(c);
     } else if ((c instanceof ClearedForTakeoffCommand) ||
@@ -575,7 +574,7 @@ public class Pilot {
     if (current.isEmpty()) return;
 
     // if has not confirmed radar contact and the first command in the queue is not radar contact confirmation
-    if (hasRadarContact == false && !(current.get(0) instanceof RadarContactConfirmationNotification )){
+    if (hasRadarContact == false && !(current.get(0) instanceof RadarContactConfirmationNotification)) {
       say(new RequestRadarContactNotification());
       this.queue.clear();
     } else {
@@ -587,7 +586,7 @@ public class Pilot {
 
   private void processAfterCommands() {
     List<ICommand> cmdsToProcess
-      = afterCommands.getAndRemoveSatisfiedCommands(parent, this.targetCoordinate);
+        = afterCommands.getAndRemoveSatisfiedCommands(parent, this.targetCoordinate);
 
     processQueueSpeeches(cmdsToProcess);
   }
@@ -628,9 +627,9 @@ public class Pilot {
       ret = (boolean) m.invoke(this, s);
     } catch (Throwable ex) {
       throw new ERuntimeException(
-        String.format("processQueueSpeech() execution failed for %s. Reason: %s",
-          s.getClass(),
-          eng.eSystem.Exceptions.toString(ex), ex));
+          String.format("processQueueSpeech() execution failed for %s. Reason: %s",
+              s.getClass(),
+              eng.eSystem.Exceptions.toString(ex), ex));
     }
     return ret;
   }
@@ -656,7 +655,7 @@ public class Pilot {
     return true;
   }
 
-  private boolean processQueueSpeech(RadarContactConfirmationNotification c){
+  private boolean processQueueSpeech(RadarContactConfirmationNotification c) {
     this.hasRadarContact = true;
     return true;
   }
@@ -709,11 +708,11 @@ public class Pilot {
 
       if (sr.direction != SpeedRestriction.eDirection.atMost && sr.speedInKts > cMax) {
         sayRejection(c,
-          "Unable to reach speed " + c.getSpeedInKts() + " kts, maximum is " + cMax + ".");
+            "Unable to reach speed " + c.getSpeedInKts() + " kts, maximum is " + cMax + ".");
         return true;
       } else if (sr.direction != SpeedRestriction.eDirection.atLeast && sr.speedInKts < cMin) {
         sayRejection(c,
-          "Unable to reach speed " + c.getSpeedInKts() + " kts, minimum is " + cMin + ".");
+            "Unable to reach speed " + c.getSpeedInKts() + " kts, minimum is " + cMin + ".");
         return true;
       }
 
@@ -739,10 +738,10 @@ public class Pilot {
 
     if (c.getDirection() == ChangeHeadingCommand.eDirection.any) {
       leftTurn
-        = (Headings.getBetterDirectionToTurn(parent.getHeading(), c.getHeading()) == ChangeHeadingCommand.eDirection.left);
+          = (Headings.getBetterDirectionToTurn(parent.getHeading(), c.getHeading()) == ChangeHeadingCommand.eDirection.left);
     } else {
       leftTurn
-        = c.getDirection() == ChangeHeadingCommand.eDirection.left;
+          = c.getDirection() == ChangeHeadingCommand.eDirection.left;
     }
 
     parent.setTargetHeading(targetHeading, leftTurn);
@@ -800,17 +799,17 @@ public class Pilot {
 
     // zatim resim jen pozici letadla
     int radFromFix
-      = (int) Coordinates.getBearing(parent.getCoordinate(), c.getApproach().getPoint());
+        = (int) Coordinates.getBearing(parent.getCoordinate(), c.getApproach().getPoint());
     int dist
-      = (int) Coordinates.getDistanceInNM(c.getApproach().getPoint(), parent.getCoordinate());
+        = (int) Coordinates.getDistanceInNM(c.getApproach().getPoint(), parent.getCoordinate());
     if (dist > MAXIMAL_DISTANCE_TO_ENTER_APPROACH_IN_NM || !Headings.isBetween(
-      Headings.add(
-          c.getApproach().getRadial(),
-          -MAXIMAL_ONE_SIDE_ARC_FROM_APPROACH_RADIAL_TO_ENTER_APPROACH_IN_DEGREES),
-      radFromFix,
-      Headings.add(
-          c.getApproach().getRadial(),
-          MAXIMAL_ONE_SIDE_ARC_FROM_APPROACH_RADIAL_TO_ENTER_APPROACH_IN_DEGREES))) {
+        Headings.add(
+            c.getApproach().getRadial(),
+            -MAXIMAL_ONE_SIDE_ARC_FROM_APPROACH_RADIAL_TO_ENTER_APPROACH_IN_DEGREES),
+        radFromFix,
+        Headings.add(
+            c.getApproach().getRadial(),
+            MAXIMAL_ONE_SIDE_ARC_FROM_APPROACH_RADIAL_TO_ENTER_APPROACH_IN_DEGREES))) {
       say(new UnableToEnterApproachFromDifficultPosition(c));
     } else {
       if (behavior instanceof HoldBehavior) {
@@ -850,8 +849,6 @@ public class Pilot {
     Rejection r = new Rejection(rejectionReason, c);
     say(r);
   }
-
-  private boolean isConfirmationsNowRequested = false;
 
   private void confirmIfReq(IAtcCommand originalCommandToBeConfirmed) {
     if (isConfirmationsNowRequested) {
@@ -918,7 +915,7 @@ public class Pilot {
         ISpeech prev = speeches.get(i - 1);
 
         IAtcCommand n; // new
-        if (!(prev instanceof IAtcCommand)){
+        if (!(prev instanceof IAtcCommand)) {
           Message message = new Message(
               parent, atc,
               new IllegalThenCommandRejection("{Then} command must be after another command. The whole command block is ignored."));
@@ -972,4 +969,5 @@ public class Pilot {
   public String getAutoThrustLogString() {
     return autoThrust.toLogString();
   }
+
 }

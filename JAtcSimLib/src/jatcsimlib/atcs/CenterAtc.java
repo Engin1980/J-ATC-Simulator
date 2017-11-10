@@ -10,11 +10,16 @@ import jatcsimlib.airplanes.Airplane;
 import jatcsimlib.airplanes.AirplaneList;
 import jatcsimlib.exceptions.ERuntimeException;
 import jatcsimlib.messaging.Message;
+import jatcsimlib.speaking.IFromAtc;
 import jatcsimlib.speaking.SpeechList;
+import jatcsimlib.speaking.fromAtc.IAtcCommand;
 import jatcsimlib.speaking.fromAtc.commands.ChangeAltitudeCommand;
+import jatcsimlib.speaking.fromAtc.commands.ChangeHeadingCommand;
 import jatcsimlib.speaking.fromAtc.commands.ContactCommand;
 import jatcsimlib.speaking.fromAirplane.notifications.GoodDayNotification;
+import jatcsimlib.speaking.fromAtc.commands.afters.AfterNavaidCommand;
 import jatcsimlib.speaking.fromAtc.notifications.RadarContactConfirmationNotification;
+import jatcsimlib.world.Navaid;
 
 import java.util.List;
 
@@ -49,30 +54,40 @@ public class CenterAtc extends ComputerAtc {
       recorder.logMessage(m); // incoming speech
 
       if (m.isSourceOfType(Airplane.class)) {
-        
-        SpeechList cmds = m.getContent();
-        
-        if (cmds.containsType(GoodDayNotification.class) == false)
-          continue;
-        
         Airplane p = m.getSource();
-        Message msg;
+        SpeechList spchs = m.getContent();
 
+        // only Good-Day speeches are available from planes, other are ignored
+        if (spchs.containsType(GoodDayNotification.class) == false)
+          continue;
+
+        SpeechList<IFromAtc> newCmds = new SpeechList<>();
+
+        newCmds.add(new RadarContactConfirmationNotification());
+
+        if (p.isDeparture()) {
+          // new departure
+
+          // order to climb
+          newCmds.add(
+            new ChangeAltitudeCommand(ChangeAltitudeCommand.eDirection.climb, getDepartureRandomTargetAltitude(p)));
+
+          // order to continue after last fix
+          Navaid n = p.getDepartureLastNavaid();
+          if (n != null) {
+            newCmds.add(new AfterNavaidCommand(n));
+            newCmds.add(new ChangeHeadingCommand());
+          }
+        } // if isDeparture
+
+        Message msg;
         msg = new Message(
             this,
             p,
-            new RadarContactConfirmationNotification());
+            newCmds);
         Acc.messenger().send(msg);
         recorder.logMessage(msg);
 
-        if (p.isDeparture()) {
-          msg = new Message(
-            this,
-            p,
-            new ChangeAltitudeCommand(ChangeAltitudeCommand.eDirection.climb, getDepartureRandomTargetAltitude(p)));
-          Acc.messenger().send(msg);
-          recorder.logMessage(msg);
-        }
       }
       if (m.getSource() != Acc.atcApp()) {
         continue;

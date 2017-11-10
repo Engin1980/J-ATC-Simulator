@@ -44,7 +44,7 @@ public class TestTrafficOneDeparture extends TestTraffic {
 
     Route r;
     Iterable<Route> rts = Acc.threshold().getRoutes();
-    List<Route> avails = Routes.getByFilter(rts, true, pt.category);
+    List<Route> avails = Routes.getByFilter(rts, false, pt.category);
     if (avails.isEmpty()) {
       return null; // if no route, return null
     }

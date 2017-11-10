@@ -15,7 +15,7 @@ and open the template in the editor.
         vMinClean="180" vMaxClean="330" vCruise="287"
         lowClimbRate="5000" highClimbRate="700"
         lowDescendRate="2000" highDescendRate="3500"
-        speedIncreaseRate="3" speedDecreaseRate="5"
+        speedIncreaseRate="3" speedDecreaseRate="3"
         headingChangeRate="3">
   </type>
   
@@ -25,7 +25,7 @@ and open the template in the editor.
         vMinClean="190" vMaxClean="330" vCruise="287"
         lowClimbRate="5000" highClimbRate="700"
         lowDescendRate="2000" highDescendRate="3500"
-        speedIncreaseRate="3" speedDecreaseRate="5"
+        speedIncreaseRate="3" speedDecreaseRate="3"
         headingChangeRate="3">
   </type>
   
@@ -35,7 +35,7 @@ and open the template in the editor.
         vMinClean="200" vMaxClean="330" vCruise="287"
         lowClimbRate="5000" highClimbRate="700"
         lowDescendRate="2000" highDescendRate="3500"
-        speedIncreaseRate="3" speedDecreaseRate="5"
+        speedIncreaseRate="3" speedDecreaseRate="3"
         headingChangeRate="3">
   </type>
   
@@ -45,7 +45,7 @@ and open the template in the editor.
         vMinClean="200" vMaxClean="330" vCruise="287"
         lowClimbRate="5000" highClimbRate="700"
         lowDescendRate="2000" highDescendRate="3500"
-        speedIncreaseRate="3" speedDecreaseRate="5"
+        speedIncreaseRate="3" speedDecreaseRate="3"
         headingChangeRate="3">
   </type>
   
@@ -56,7 +56,7 @@ and open the template in the editor.
         vMinClean="210" vMaxClean="330" vCruise="287"
         lowClimbRate="5000" highClimbRate="700"
         lowDescendRate="1800" highDescendRate="3500"
-        speedIncreaseRate="2" speedDecreaseRate="5"
+        speedIncreaseRate="2" speedDecreaseRate="3"
         headingChangeRate="3">
   </type>
   
@@ -66,7 +66,7 @@ and open the template in the editor.
         vMinClean="210" vMaxClean="330" vCruise="287"
         lowClimbRate="5000" highClimbRate="700"
         lowDescendRate="1500" highDescendRate="3500"
-        speedIncreaseRate="3" speedDecreaseRate="4"
+        speedIncreaseRate="3" speedDecreaseRate="2"
         headingChangeRate="3">
   </type>  
   
@@ -76,7 +76,7 @@ and open the template in the editor.
         vMinClean="210" vMaxClean="330" vCruise="287"
         lowClimbRate="5000" highClimbRate="700"
         lowDescendRate="1700" highDescendRate="3500"
-        speedIncreaseRate="3" speedDecreaseRate="5"
+        speedIncreaseRate="3" speedDecreaseRate="3"
         headingChangeRate="3">
   </type>
   
@@ -87,7 +87,7 @@ and open the template in the editor.
         vMinClean="190" vMaxClean="270" vCruise="255"
         lowClimbRate="3000" highClimbRate="600"
         lowDescendRate="1700" highDescendRate="1000"
-        speedIncreaseRate="2" speedDecreaseRate="3"
+        speedIncreaseRate="2" speedDecreaseRate="4"
         headingChangeRate="3" />
 
     <type name="AT42" category="B" maxAltitude="25000"
@@ -96,7 +96,7 @@ and open the template in the editor.
         vMinClean="170" vMaxClean="250" vCruise="230"
         lowClimbRate="2600" highClimbRate="500"
         lowDescendRate="1700" highDescendRate="1000"
-        speedIncreaseRate="2" speedDecreaseRate="3"
+        speedIncreaseRate="2" speedDecreaseRate="4"
         headingChangeRate="3" />
     
   <!-- other -->

@@ -14,6 +14,7 @@ import jatcsimlib.Simulation;
 import jatcsimlib.airplanes.AirplaneTypes;
 import jatcsimlib.exceptions.ERuntimeException;
 import jatcsimlib.traffic.CustomTraffic;
+import jatcsimlib.traffic.TestTrafficOneApproach;
 import jatcsimlib.traffic.TestTrafficOneDeparture;
 import jatcsimlib.traffic.Traffic;
 import jatcsimlib.weathers.Weather;

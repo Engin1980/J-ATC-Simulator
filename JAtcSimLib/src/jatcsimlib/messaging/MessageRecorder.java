@@ -24,7 +24,7 @@ public class MessageRecorder extends Recorder {
         msg.getContent().toString()
     );
 
-    System.out.println(line);
+    //System.out.println(line);
 
     super.logLine(
         line, true);

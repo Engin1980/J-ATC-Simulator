@@ -21,6 +21,7 @@ import jatcsimlib.speaking.ISpeech;
 import jatcsimlib.speaking.SpeechList;
 import jatcsimlib.speaking.fromAtc.IAtcCommand;
 import jatcsimlib.speaking.fromAtc.commands.ChangeHeadingCommand;
+import jatcsimlib.world.Navaid;
 
 import java.util.List;
 
@@ -327,9 +328,6 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
   private int altitude;
   private int targetSpeed;
   private int speed;
-
-  // </editor-fold>
-  // <editor-fold defaultstate="collapsed" desc=" Nested ">
   private Coordinate coordinate;
 
   // </editor-fold>
@@ -710,6 +708,17 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
   @Override
   public String getName() {
     return this.getCallsign().toString();
+  }
+
+  public Navaid getDepartureLastNavaid() {
+    if (isDeparture() == false)
+      throw new ERuntimeException("This method should not be called on departure aircraft %s.", this.getCallsign().toString());
+
+    String routeName = this.getInfo().routeNameOrFix();
+    if (routeName.length() > 2 && Character.isDigit(routeName.charAt(routeName.length()-2)))
+      routeName = routeName.substring(0, routeName.length() - 2);
+    Navaid ret = Acc.area().getNavaids().tryGet(routeName);
+    return ret;
   }
 
   // </editor-fold>

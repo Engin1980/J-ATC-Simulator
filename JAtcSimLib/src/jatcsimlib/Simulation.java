@@ -41,6 +41,8 @@ import java.util.regex.Pattern;
  */
 public class Simulation {
 
+  private static final int MINIMAL_DEPARTURE_REMOVE_DISTANCE = 100;
+
   /**
    * Public event informing surrounding about elapsed second.
    */
@@ -272,7 +274,7 @@ public class Simulation {
 
       // departed
       if (p.isDeparture() && Acc.prm().getResponsibleAtc(p).equals(Acc.atcCtr())
-        && (p.getAltitude() == p.getTargetAltitude() || p.getAltitude() > Acc.atcCtr().getReleaseAltitude() + 2000)) {
+          && Coordinates.getDistanceInNM(p.getCoordinate(), Acc.airport().getLocation()) > MINIMAL_DEPARTURE_REMOVE_DISTANCE) {
         rem.add(p);
       }
     }

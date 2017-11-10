@@ -10,6 +10,7 @@ import jatcsimlib.coordinates.Coordinate;
 import jatcsimlib.coordinates.Coordinates;
 import jatcsimlib.exceptions.ENotSupportedException;
 import jatcsimlib.speaking.ICommand;
+import jatcsimlib.speaking.fromAtc.IAtcCommand;
 import jatcsimlib.speaking.fromAtc.commands.ChangeAltitudeCommand;
 import jatcsimlib.speaking.fromAtc.commands.ChangeSpeedCommand;
 import jatcsimlib.speaking.fromAtc.commands.ProceedDirectCommand;
@@ -145,6 +146,14 @@ public class AfterCommandList {
       }
     }
     return ret;
+  }
+
+  public boolean isEmpty(){
+    return inner.isEmpty();
+  }
+
+  public ICommand getLast(){
+    return inner.get(inner.size()-1).consequent;
   }
 }
 
