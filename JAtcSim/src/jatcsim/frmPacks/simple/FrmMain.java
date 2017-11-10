@@ -29,7 +29,7 @@ public class FrmMain extends javax.swing.JFrame {
 
   private javax.swing.JTextField jTxtInput;
   private JPanel pnlContent;
-  private Simulation sim;
+  private Pack parent;
   private CommandJTextWraper wrp;
   private EJComponent radarComponent;
   private int refreshRate;
@@ -105,18 +105,19 @@ public class FrmMain extends javax.swing.JFrame {
     this.jTxtInput.requestFocus();
   }
 
-  void init(final Simulation sim, final Area area, Settings displaySettings) {
+  void init(Pack pack) {
 
-    this.sim = sim;
-    this.refreshRate = displaySettings.getRefreshRate();
+    this.parent = pack;
+    this.refreshRate = parent.getDisplaySettings().getRefreshRate();
     this.refreshRateCounter = 0;
 
-    Airport aip = sim.getActiveAirport();
+    Airport aip = this.parent.getSim().getActiveAirport();
 
     // generování hlavního radaru
     EJComponentCanvas canvas = new EJComponentCanvas();
-    BasicRadar r = new BasicRadar(canvas, aip.getRadarRange(), sim, area, displaySettings);
-    final EJComponent comp = canvas.getEJComponent();
+    BasicRadar r = new BasicRadar(
+        canvas, aip.getRadarRange(),
+        this.parent.getSim(), this.parent.getArea(), this.parent.getDisplaySettings());
     this.radarComponent = canvas.getEJComponent();
 
     // předávání kláves do textového pole z radaru
@@ -128,23 +129,11 @@ public class FrmMain extends javax.swing.JFrame {
     this.pnlContent.add(this.radarComponent);
     this.jTxtInput.requestFocus();
     this.setVisible(true);
-
-    // mouse coord on title
-    /*
-    final FrmMain f = this;
-    r.onMouseMove().addListener(new EventListener<BasicRadar, WithCoordinateEvent>() {
-
-      @Override
-      public void raise(BasicRadar parent, WithCoordinateEvent e) {
-        f.setTitle(e.coordinate.toString());
-      }
-    });
-    */
   }
 
   private boolean sendMessage(String msg) {
     boolean ret;
-    UserAtc app = sim.getAppAtc();
+    UserAtc app = this.parent.getSim().getAppAtc();
     try {
       if (msg.startsWith("+")) {
         // msg for CTR
@@ -163,7 +152,10 @@ public class FrmMain extends javax.swing.JFrame {
         msg = msg.substring(1);
         app.sendSystem(msg);
         ret = true;
-
+      } else if (msg.startsWith("!")){
+        // application
+        processApplicationMessage(msg);
+        ret = true;
       } else {
         // plane fromAtc
         String[] spl = splitToCallsignAndMessages(msg);
@@ -174,6 +166,15 @@ public class FrmMain extends javax.swing.JFrame {
       throw new ERuntimeException("Message invocation failed for speech: " + msg, t);
     }
     return ret;
+  }
+
+  private void processApplicationMessage(String msg) {
+    switch (msg){
+      case "!view":
+        FrmView f = new FrmView();
+        f.init(this.parent);
+        break;
+    }
   }
 
   private String[] splitToCallsignAndMessages(String msg) {

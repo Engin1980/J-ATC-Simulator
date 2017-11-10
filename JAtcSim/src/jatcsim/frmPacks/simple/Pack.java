@@ -9,6 +9,7 @@ package jatcsim.frmPacks.simple;
 import jatcsimdraw.mainRadar.settings.Settings;
 import jatcsimlib.Simulation;
 import jatcsimlib.events.EventListener;
+import jatcsimlib.events.EventManager;
 import jatcsimlib.traffic.Movement;
 import jatcsimlib.world.Area;
 
@@ -18,17 +19,38 @@ import jatcsimlib.world.Area;
 public class Pack extends jatcsim.frmPacks.Pack {
 
   private Simulation sim;
+  private Area area;
+  private Settings displaySettings;
   private FrmMain frmMain;
   private FrmFlightList frmList;
   private FrmScheduledTrafficListing frmScheduledTrafficListing;
   private int lastMovementCount = 0;
 
+  private final EventManager<jatcsim.frmPacks.Pack, EventListener, Object> em = new EventManager<>(this);
+  public EventManager<jatcsim.frmPacks.Pack, EventListener, Object> getElapseSecondEvent(){
+    return em;
+  }
+
   public Pack() {
+  }
+
+  Simulation getSim() {
+    return sim;
+  }
+
+  Area getArea() {
+    return area;
+  }
+
+  Settings getDisplaySettings() {
+    return displaySettings;
   }
 
   @Override
   public void initPack(Simulation sim, Area area, Settings displaySettings) {
     this.sim = sim;
+    this.area = area;
+    this.displaySettings = displaySettings;
     this.sim.secondElapsed = new EventListener<Simulation, Object>() {
 
       @Override
@@ -36,11 +58,12 @@ public class Pack extends jatcsim.frmPacks.Pack {
         frmMain.elapseSecond();
         frmList.elapseSecond();
         updateScheduledTrafficListing();
+        em.raise(null);
       }
     };
 
     this.frmMain = new FrmMain();
-    frmMain.init(sim, area, displaySettings);
+    frmMain.init(this);
 
     this.frmList = new FrmFlightList();
     frmList.init(sim);

@@ -28,7 +28,7 @@ public class AfterCommandList {
 
   private final List<Item> inner = new LinkedList<>();
 
-  public void add(AfterCommand afterCommand, ICommand consequent) {
+  public void add(AfterCommand afterCommand, IAtcCommand consequent) {
     Item it = new Item(afterCommand, consequent);
     inner.add(it);
   }
@@ -160,9 +160,9 @@ public class AfterCommandList {
 class Item {
 
   public final AfterCommand after;
-  public final ICommand consequent;
+  public final IAtcCommand consequent;
 
-  public Item(AfterCommand after, ICommand consequent) {
+  public Item(AfterCommand after, IAtcCommand consequent) {
     this.after = after;
     this.consequent = consequent;
   }

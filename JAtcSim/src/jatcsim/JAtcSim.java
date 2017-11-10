@@ -36,6 +36,7 @@ public class JAtcSim {
   private static final Traffic specificTraffic =
       //new TestTrafficOneApproach();
       new TestTrafficOneDeparture();
+      //null;
 
   public static java.io.File resFolder = null;
   private static Area area = null;
@@ -184,7 +185,7 @@ public class JAtcSim {
     } else {
       ret = new CustomTraffic(
           sett.getTrafficCustomMovements(),
-          sett.getTrafficCustomArrivals2Departures() / 10d, // 0-10 to 0.0-1.0
+          1 - sett.getTrafficCustomArrivals2Departures() / 10d, // 0-10 to 0.0-1.0
           sett.getTrafficCustomMaxPlanes(),
           sett.getTrafficCustomVfr2Ifr() / 10d, // dtto
           sett.getTrafficCustomWeightTypeA(),

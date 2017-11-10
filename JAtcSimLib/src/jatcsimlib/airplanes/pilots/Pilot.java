@@ -609,7 +609,7 @@ public class Pilot {
     AfterCommand af = (AfterCommand) queue.get(0);
     queue.remove(0);
     while (!queue.isEmpty() && !(queue.get(0) instanceof AfterCommand)) {
-      afterCommands.add(af, (ICommand) queue.get(0));
+      afterCommands.add(af, (IAtcCommand) queue.get(0));
       queue.remove(0);
     }
   }

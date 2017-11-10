@@ -2,6 +2,7 @@ package jatcsimlib.speaking;
 
 import jatcsimlib.exceptions.ERuntimeException;
 import jatcsimlib.messaging.IMessageContent;
+import jatcsimlib.speaking.fromAtc.IAtcCommand;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -9,8 +10,8 @@ import java.util.List;
 
 public class SpeechList<T extends ISpeech> extends ArrayList<T> implements IMessageContent {
 
-  public ICommand getAsCommand(int index){
-    ICommand ret = getAs(index);
+  public IAtcCommand getAsCommand(int index){
+    IAtcCommand ret = getAs(index);
     return ret;
   }
 

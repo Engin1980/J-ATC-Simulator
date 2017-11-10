@@ -10,6 +10,6 @@ package jatcsimlib.events;
  *
  * @author Marek
  */
-public abstract class EventListener<Tparent, CeventArg> {
-  public abstract void raise (Tparent parent, CeventArg e);
+public abstract class EventListener<Tsender, TeventArgs> {
+  public abstract void raise (Tsender parent, TeventArgs e);
 }
