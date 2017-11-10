@@ -7,12 +7,11 @@
     <list default="true" id="0a5135e5-75c5-448e-b07a-2ec70e5a6d00" name="Default" comment="Removed bug when hold is canceled even if approach clearance is rejected.">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/JAtcSim/resources/settings/config.ini" afterPath="$PROJECT_DIR$/JAtcSim/resources/settings/config.ini" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/JAtcSim/src/jatcsim/JAtcSim.java" afterPath="$PROJECT_DIR$/JAtcSim/src/jatcsim/JAtcSim.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/airplanes/Airplane.java" afterPath="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/airplanes/Airplane.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/airplanes/pilots/Pilot.java" afterPath="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/airplanes/pilots/Pilot.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/global/UnitProvider.java" afterPath="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/global/UnitProvider.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/fromAirplane/notifications/commandResponses/rejections/UnableToEnterApproachFromDifficultPosition.java" afterPath="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/fromAirplane/notifications/commandResponses/rejections/UnableToEnterApproachFromDifficultPosition.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/parsing/shortParsing/ClearedToApproachParser.java" afterPath="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/parsing/shortParsing/ClearedToApproachParser.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/weathers/MetarDecoder.java" afterPath="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/weathers/MetarDecoder.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/weathers/Weather.java" afterPath="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/weathers/Weather.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/atcs/TowerAtc.java" afterPath="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/atcs/TowerAtc.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/global/Headings.java" afterPath="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/global/Headings.java" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -24,136 +23,50 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="Pilot.java" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/airplanes/pilots/Pilot.java">
+      <file leaf-file-name="JAtcSim.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/JAtcSim/src/jatcsim/JAtcSim.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="194">
-              <caret line="438" column="7" lean-forward="true" selection-start-line="438" selection-start-column="7" selection-end-line="438" selection-end-column="7" />
+            <state relative-caret-position="465">
+              <caret line="58" column="5" lean-forward="false" selection-start-line="58" selection-start-column="5" selection-end-line="58" selection-end-column="5" />
               <folding>
-                <element signature="docComment;class#Pilot#0" expanded="false" />
-                <element signature="class#Behavior#0;class#Pilot#0" expanded="false" />
-                <element signature="method#Behavior#0;class#Behavior#0;class#Pilot#0" expanded="false" />
-                <element signature="class#TakeOffBehavior#0;class#Pilot#0" expanded="false" />
-                <element signature="method#fly#0;class#TakeOffBehavior#0;class#Pilot#0" expanded="false" />
-                <element signature="class#HoldBehavior#0;class#Pilot#0" expanded="false" />
-                <element signature="method#setHoldDataByEntry#0;class#HoldBehavior#0;class#Pilot#0" expanded="false" />
-                <element signature="method#fly#0;class#HoldBehavior#0;class#Pilot#0" expanded="false" />
-                <element signature="method#toLogString#0;class#HoldBehavior#0;class#Pilot#0" expanded="false" />
-                <element signature="e#9867#9910#0" expanded="false" />
-                <element signature="e#10221#10287#0" expanded="false" />
-                <element signature="e#10611#10636#0" expanded="false" />
-                <element signature="e#10943#10968#0" expanded="false" />
-                <element signature="e#11286#11315#0" expanded="false" />
-                <element signature="method#getAppHeadingDifference#0;class#ApproachBehavior#0;class#Pilot#0" expanded="false" />
-                <element signature="docComment;method#updateAltitudeOnApproach#0;class#ApproachBehavior#0;class#Pilot#0" expanded="false" />
-                <element signature="method#updateAltitudeOnApproach#0;class#ApproachBehavior#0;class#Pilot#0" expanded="false" />
-                <element signature="method#updateHeadingOnApproach#0;class#ApproachBehavior#0;class#Pilot#0" expanded="false" />
-                <element signature="method#updateHeadingLanded#0;class#ApproachBehavior#0;class#Pilot#0" expanded="false" />
-                <element signature="method#goAround#0;class#ApproachBehavior#0;class#Pilot#0" expanded="false" />
-                <element signature="method#toLogString#0;class#ApproachBehavior#0;class#Pilot#0" expanded="false" />
-                <element signature="method#Pilot#0;class#Pilot#0" expanded="false" />
-                <element signature="method#addNewSpeeches#0;class#Pilot#0" expanded="false" />
-                <element signature="method#addNewSpeeches#1;class#Pilot#0" expanded="false" />
-                <element signature="e#18728#18778#0" expanded="false" />
-                <element signature="method#elapseSecond#0;class#Pilot#0" expanded="false" />
-                <element signature="method#processStandardQueueCommands#0;class#Pilot#0" expanded="false" />
-                <element signature="method#processAfterCommands#0;class#Pilot#0" expanded="false" />
-                <element signature="method#processQueueSpeeches#0;class#Pilot#0" expanded="false" />
-                <element signature="method#processAfterCommandFromQueue#0;class#Pilot#0" expanded="false" />
-                <element signature="method#tryProcessQueueSpeech#0;class#Pilot#0" expanded="false" />
-                <element signature="method#tryGetProcessQueueSpeechMethodToInvoke#0;class#Pilot#0" expanded="false" />
-                <element signature="method#processQueueSpeech#0;class#Pilot#0" expanded="false" />
-                <element signature="method#processQueueSpeech#1;class#Pilot#0" expanded="false" />
-                <element signature="method#processQueueSpeech#2;class#Pilot#0" expanded="false" />
-                <element signature="method#processQueueSpeech#3;class#Pilot#0" expanded="false" />
-                <element signature="method#processQueueSpeech#4;class#Pilot#0" expanded="false" />
-                <element signature="method#processQueueSpeech#5;class#Pilot#0" expanded="false" />
-                <element signature="e#25978#25990#0" expanded="false" />
-                <element signature="method#processQueueSpeech#6;class#Pilot#0" expanded="false" />
-                <element signature="method#processQueueSpeech#7;class#Pilot#0" expanded="false" />
-                <element signature="method#processQueueSpeech#8;class#Pilot#0" expanded="false" />
-                <element signature="method#processQueueSpeech#9;class#Pilot#0" expanded="false" />
-                <element signature="method#sayRejection#0;class#Pilot#0" expanded="false" />
-                <element signature="method#confirmIfReq#0;class#Pilot#0" expanded="false" />
-                <element signature="method#sayIfReq#0;class#Pilot#0" expanded="false" />
-                <element signature="method#flushSaidTextToAtc#0;class#Pilot#0" expanded="false" />
-                <element signature="method#getIndexOfNavaidInCommands#0;class#Pilot#0" expanded="false" />
-                <element signature="method#expandThenCommands#0;class#Pilot#0" expanded="false" />
-                <element signature="method#endrivePlane#0;class#Pilot#0" expanded="false" />
-                <element signature="method#getBehaviorLogString#0;class#Pilot#0" expanded="false" />
+                <element signature="docComment;class#JAtcSim#0" expanded="false" />
+                <element signature="docComment;method#main#0;class#JAtcSim#0" expanded="false" />
+                <element signature="method#loadDataFromXmlFiles#0;class#JAtcSim#0" expanded="false" />
+                <element signature="method#initResourcesFolder#0;class#JAtcSim#0" expanded="false" />
+                <element signature="method#updateCalendarToSimTime#0;class#JAtcSim#0" expanded="false" />
+                <element signature="method#createPackInstance#0;class#JAtcSim#0" expanded="false" />
+                <element signature="method#getTrafficFromStartupSettings#0;class#JAtcSim#0" expanded="false" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Weather.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/weathers/Weather.java">
+      <file leaf-file-name="Airplane.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/airplanes/Airplane.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="352">
-              <caret line="37" column="19" lean-forward="true" selection-start-line="37" selection-start-column="19" selection-end-line="37" selection-end-column="19" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="MetarDecoder.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/weathers/MetarDecoder.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="255">
-              <caret line="44" column="13" lean-forward="true" selection-start-line="44" selection-start-column="13" selection-end-line="44" selection-end-column="13" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ClearedToApproachParser.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/parsing/shortParsing/ClearedToApproachParser.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="350">
-              <caret line="70" column="37" lean-forward="true" selection-start-line="70" selection-start-column="37" selection-end-line="70" selection-end-column="37" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="RunwayThreshold.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/world/RunwayThreshold.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="94">
-              <caret line="65" column="0" lean-forward="false" selection-start-line="65" selection-start-column="0" selection-end-line="65" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="lkpr.xml" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/JAtcSim/resources/areas/lkpr.xml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="225">
-              <caret line="66" column="22" lean-forward="true" selection-start-line="66" selection-start-column="22" selection-end-line="66" selection-end-column="22" />
+            <state relative-caret-position="15">
+              <caret line="605" column="0" lean-forward="false" selection-start-line="605" selection-start-column="0" selection-end-line="605" selection-end-column="0" />
               <folding>
-                <element signature="n#threshold#0;n#thresholds#0;n#runway#0;n#runways#0;n#airport#0;n#airports#0;n#area#0;n#!!top" expanded="false" />
+                <element signature="docComment;class#Airplane#0" expanded="false" />
+                <element signature="class#AirplaneInfo#0;class#Airplane#0" expanded="false" />
+                <element signature="method#climbDescendChar#0;class#AirplaneInfo#0;class#Airplane#0" expanded="false" />
+                <element signature="method#departureArrivalChar#0;class#AirplaneInfo#0;class#Airplane#0" expanded="false" />
+                <element signature="method#format#0;class#AirplaneInfo#0;class#Airplane#0" expanded="false" />
+                <element signature="method#updatePair#0;class#AirplaneInfo#0;class#Airplane#0" expanded="false" />
+                <element signature="method#getFormatValueByIndex#0;class#AirplaneInfo#0;class#Airplane#0" expanded="false" />
+                <element signature="method#Airplane#0;class#Airplane#0" expanded="false" />
+                <element signature="method#ensureSanity#0;class#Airplane#0" expanded="false" />
+                <element signature="method#elapseSecond#0;class#Airplane#0" expanded="false" />
+                <element signature="method#processMessages#0;class#Airplane#0" expanded="false" />
+                <element signature="method#processMessage#0;class#Airplane#0" expanded="false" />
+                <element signature="method#isValidMessageForAirplane#0;class#Airplane#0" expanded="false" />
+                <element signature="method#adjustSpeed#0;class#Airplane#0" expanded="false" />
+                <element signature="method#adjustAltitude#0;class#Airplane#0" expanded="false" />
+                <element signature="method#getTAS#0;class#Airplane#0" expanded="false" />
+                <element signature="method#updateCoordinates#0;class#Airplane#0" expanded="false" />
+                <element signature="method#setTargetHeading#0;class#Airplane#0" expanded="false" />
+                <element signature="method#setTargetHeading#1;class#Airplane#0" expanded="false" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Approach.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/world/Approach.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="499">
-              <caret line="76" column="22" lean-forward="false" selection-start-line="76" selection-start-column="22" selection-end-line="76" selection-end-column="22" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="BasicVisualiser.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/JAtcSimDraw/src/jatcismdraw/global/radarBase/BasicVisualiser.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="134">
-              <caret line="346" column="31" lean-forward="false" selection-start-line="346" selection-start-column="31" selection-end-line="346" selection-end-column="31" />
-              <folding />
             </state>
           </provider>
         </entry>
@@ -209,7 +122,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/fromEveryone/notifications/StringNotification.java" />
         <option value="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/exceptions/ERuntimeException.java" />
         <option value="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/fromAirplane/notifications/commandResponses/IllegalThenCommandRejection.java" />
         <option value="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/fromAirplane/notifications/commandResponses/CommandResponse.java" />
@@ -233,9 +145,7 @@
         <option value="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/fromAirplane/notifications/commandResponses/Confirmation.java" />
         <option value="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/fromAirplane/notifications/commandResponses/Rejection.java" />
         <option value="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/messaging/StringMessageContent.java" />
-        <option value="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/airplanes/Airplane.java" />
         <option value="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/messaging/MessageRecorder.java" />
-        <option value="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/atcs/TowerAtc.java" />
         <option value="$PROJECT_DIR$/JAtcSimDraw/src/jatcismdraw/global/radarBase/VisualisedMessage.java" />
         <option value="$PROJECT_DIR$/JAtcSimDraw/src/jatcismdraw/global/radarBase/Visualiser.java" />
         <option value="$PROJECT_DIR$/JAtcSimDraw/src/jatcsimdraw/mainRadar/BasicRadar.java" />
@@ -252,13 +162,16 @@
         <option value="$PROJECT_DIR$/JAtcSim/src/jatcsim/frmPacks/simple/FrmMain.java" />
         <option value="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/messaging/SystemMessages.java" />
         <option value="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/Simulation.java" />
-        <option value="$PROJECT_DIR$/JAtcSim/src/jatcsim/JAtcSim.java" />
         <option value="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/formatting/LongFormatter.java" />
         <option value="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/fromAirplane/notifications/commandResponses/rejections/UnableToEnterApproachFromDifficultPosition.java" />
         <option value="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/parsing/shortParsing/ClearedToApproachParser.java" />
         <option value="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/weathers/Weather.java" />
-        <option value="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/global/UnitProvider.java" />
         <option value="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/weathers/MetarDecoder.java" />
+        <option value="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/global/UnitProvider.java" />
+        <option value="$PROJECT_DIR$/JAtcSim/src/jatcsim/JAtcSim.java" />
+        <option value="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/airplanes/Airplane.java" />
+        <option value="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/atcs/TowerAtc.java" />
+        <option value="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/global/Headings.java" />
         <option value="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/airplanes/pilots/Pilot.java" />
       </list>
     </option>
@@ -309,13 +222,30 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
             <path>
               <item name="JAtcSimSolution" type="b2602c69:ProjectViewProjectNode" />
               <item name="JAtcSimSolution" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="JAtcSimSolution" type="b2602c69:ProjectViewProjectNode" />
+              <item name="JAtcSimSolution" type="462c0819:PsiDirectoryNode" />
+              <item name="JAtcSim" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="JAtcSimSolution" type="b2602c69:ProjectViewProjectNode" />
+              <item name="JAtcSimSolution" type="462c0819:PsiDirectoryNode" />
+              <item name="JAtcSim" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="JAtcSimSolution" type="b2602c69:ProjectViewProjectNode" />
+              <item name="JAtcSimSolution" type="462c0819:PsiDirectoryNode" />
+              <item name="JAtcSim" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="jatcsim" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="JAtcSimSolution" type="b2602c69:ProjectViewProjectNode" />
@@ -352,55 +282,13 @@
               <item name="airplanes" type="462c0819:PsiDirectoryNode" />
               <item name="pilots" type="462c0819:PsiDirectoryNode" />
             </path>
-            <path>
-              <item name="JAtcSimSolution" type="b2602c69:ProjectViewProjectNode" />
-              <item name="JAtcSimSolution" type="462c0819:PsiDirectoryNode" />
-              <item name="JAtcSimLib" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="jatcsimlib" type="462c0819:PsiDirectoryNode" />
-              <item name="speaking" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="JAtcSimSolution" type="b2602c69:ProjectViewProjectNode" />
-              <item name="JAtcSimSolution" type="462c0819:PsiDirectoryNode" />
-              <item name="JAtcSimLib" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="jatcsimlib" type="462c0819:PsiDirectoryNode" />
-              <item name="speaking" type="462c0819:PsiDirectoryNode" />
-              <item name="parsing" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="JAtcSimSolution" type="b2602c69:ProjectViewProjectNode" />
-              <item name="JAtcSimSolution" type="462c0819:PsiDirectoryNode" />
-              <item name="JAtcSimLib" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="jatcsimlib" type="462c0819:PsiDirectoryNode" />
-              <item name="speaking" type="462c0819:PsiDirectoryNode" />
-              <item name="parsing" type="462c0819:PsiDirectoryNode" />
-              <item name="shortParsing" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="JAtcSimSolution" type="b2602c69:ProjectViewProjectNode" />
-              <item name="JAtcSimSolution" type="462c0819:PsiDirectoryNode" />
-              <item name="JAtcSimLib" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="jatcsimlib" type="462c0819:PsiDirectoryNode" />
-              <item name="weathers" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="JAtcSimSolution" type="b2602c69:ProjectViewProjectNode" />
-              <item name="JAtcSimSolution" type="462c0819:PsiDirectoryNode" />
-              <item name="JAtcSimLib" type="462c0819:PsiDirectoryNode" />
-              <item name="src" type="462c0819:PsiDirectoryNode" />
-              <item name="jatcsimlib" type="462c0819:PsiDirectoryNode" />
-              <item name="world" type="462c0819:PsiDirectoryNode" />
-            </path>
           </expand>
           <select />
         </subPane>
       </pane>
-      <pane id="Scratches" />
       <pane id="Scope" />
+      <pane id="PackagesPane" />
+      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -572,7 +460,14 @@
       <option name="project" value="LOCAL" />
       <updated>1510142475404</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Fixed bug in UnitProvider">
+      <created>1510159129652</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1510159129652</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -585,32 +480,31 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1554" height="916" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3275218" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33748442" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.5491905" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.29323798" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Module Dependencies" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32964888" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.43960148" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.33374843" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33374843" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3275218" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.5491905" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2496749" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Module Dependencies" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32964888" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.43960148" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
   <component name="VcsContentAnnotationSettings">
@@ -619,7 +513,8 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Removed bug when hold is canceled even if approach clearance is rejected." />
     <MESSAGE value="Magic numbers replaced by constants." />
-    <option name="LAST_COMMIT_MESSAGE" value="Magic numbers replaced by constants." />
+    <MESSAGE value="Fixed bug in UnitProvider" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixed bug in UnitProvider" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -642,22 +537,18 @@
           <properties />
           <option name="timeStamp" value="87" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/weathers/MetarDecoder.java</url>
-          <line>39</line>
+        <line-breakpoint enabled="true" log-message="true" suspend="NONE" type="java-line">
+          <url>file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/airplanes/Airplane.java</url>
+          <line>620</line>
+          <log-expression expression="String.format(    &quot;Hit : heading: %d, targetHeading: %d, diff: %d, lastHeadingChange %d\n&quot;,    heading, targetHeading,    diff, lastHeadingChange )" language="JAVA" mode="CODE_FRAGMENT" />
           <properties />
-          <option name="timeStamp" value="89" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-method">
-          <url>file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/weathers/Weather.java</url>
-          <line>24</line>
-          <properties class="jatcsimlib.weathers.Weather" method="&lt;init&gt;">
-            <option name="EMULATED" value="true" />
-          </properties>
-          <option name="timeStamp" value="88" />
+          <option name="timeStamp" value="94" />
         </line-breakpoint>
       </breakpoints>
-      <option name="time" value="90" />
+      <breakpoints-dialog>
+        <breakpoints-dialog />
+      </breakpoints-dialog>
+      <option name="time" value="97" />
     </breakpoint-manager>
     <watches-manager>
       <configuration name="Application">
@@ -676,13 +567,6 @@
     <select />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/fromAirplane/notifications/commandResponses/Confirmation.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="210">
-          <caret line="16" column="3" lean-forward="false" selection-start-line="16" selection-start-column="3" selection-end-line="16" selection-end-column="3" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/fromAirplane/notifications/commandResponses/Rejection.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="357">
@@ -694,9 +578,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="195">
           <caret line="45" column="0" lean-forward="false" selection-start-line="45" selection-start-column="0" selection-end-line="45" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#1709#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -711,9 +592,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="152">
           <caret line="35" column="0" lean-forward="false" selection-start-line="35" selection-start-column="0" selection-end-line="35" selection-end-column="0" />
-          <folding>
-            <element signature="e#813#814#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -747,7 +625,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="165">
           <caret line="19" column="70" lean-forward="true" selection-start-line="19" selection-start-column="70" selection-end-line="19" selection-end-column="70" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -800,37 +677,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/atcs/TowerAtc.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="128" column="16" lean-forward="false" selection-start-line="128" selection-start-column="16" selection-end-line="128" selection-end-column="16" />
-          <folding>
-            <element signature="docComment;class#TowerAtc#0" expanded="false" />
-            <element signature="method#getSuggestedThreshold#0;class#TowerAtc#0" expanded="false" />
-            <element signature="method#canTakeOffNextPlane#0;class#TowerAtc#0" expanded="false" />
-            <element signature="method#canIAcceptFromApp#0;class#TowerAtc#0" expanded="false" />
-            <element signature="method#getPlanesReadyForApp#0;class#TowerAtc#0" expanded="false" />
-            <element signature="method#switchDepartings#0;class#TowerAtc#0" expanded="false" />
-            <element signature="method#checkForRunwayChange#0;class#TowerAtc#0" expanded="false" />
-            <element signature="method#init#0;class#TowerAtc#0" expanded="false" />
-            <element signature="method#_registerNewPlane#0;class#TowerAtc#0" expanded="false" />
-            <element signature="method#changeRunwayInUse#0;class#TowerAtc#0" expanded="false" />
-            <element signature="class#RunwayChangeInfo#0" expanded="false" />
-            <element signature="method#RunwayChangeInfo#0;class#RunwayChangeInfo#0" expanded="false" />
-            <element signature="class#TakeOffSeparation#0" expanded="false" />
-            <element signature="docComment;field#DEPARTURE_ACCELERATOR_DIVIDER#0;class#TakeOffSeparation#0" expanded="false" />
-            <element signature="method#TakeOffSeparation#0;class#TakeOffSeparation#0" expanded="false" />
-            <element signature="method#c2i#0;class#TakeOffSeparation#0" expanded="false" />
-            <element signature="method#create#0;class#TakeOffSeparation#0" expanded="false" />
-            <element signature="class#LastDeparture#0" expanded="false" />
-            <element signature="method#LastDeparture#0;class#LastDeparture#0" expanded="false" />
-            <element signature="class#LastDepartures#0" expanded="false" />
-            <element signature="method#set#1;class#LastDepartures#0" expanded="false" />
-            <element signature="method#get#0;class#LastDepartures#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/messaging/MessageRecorder.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="255">
@@ -857,7 +703,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="260">
           <caret line="156" column="34" lean-forward="true" selection-start-line="156" selection-start-column="34" selection-end-line="156" selection-end-column="34" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -865,7 +710,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="171">
           <caret line="147" column="46" lean-forward="false" selection-start-line="147" selection-start-column="46" selection-end-line="147" selection-end-column="46" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -880,7 +724,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="287">
           <caret line="90" column="0" lean-forward="false" selection-start-line="90" selection-start-column="0" selection-end-line="90" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -902,23 +745,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="105">
           <caret line="116" column="50" lean-forward="true" selection-start-line="116" selection-start-column="50" selection-end-line="116" selection-end-column="50" />
-          <folding>
-            <element signature="docComment;class#PaintManager#0" expanded="false" />
-            <element signature="class#MessageManager#0;class#PaintManager#0" expanded="false" />
-            <element signature="method#add#0;class#MessageManager#0;class#PaintManager#0" expanded="false" />
-            <element signature="method#decreaseMessagesLifeCounter#0;class#MessageManager#0;class#PaintManager#0" expanded="false" />
-            <element signature="method#PaintManager#0;class#PaintManager#0" expanded="false" />
-            <element signature="method#draw#0;class#PaintManager#0" expanded="false" />
-            <element signature="method#drawCaptions#0;class#PaintManager#0" expanded="false" />
-            <element signature="method#drawBorders#0;class#PaintManager#0" expanded="false" />
-            <element signature="method#drawNavaids#0;class#PaintManager#0" expanded="false" />
-            <element signature="method#drawAirports#0;class#PaintManager#0" expanded="false" />
-            <element signature="method#drawAirport#0;class#PaintManager#0" expanded="false" />
-            <element signature="method#drawAirplanes#0;class#PaintManager#0" expanded="false" />
-            <element signature="method#drawStars#0;class#PaintManager#0" expanded="false" />
-            <element signature="method#drawSids#0;class#PaintManager#0" expanded="false" />
-            <element signature="method#drawApproaches#0;class#PaintManager#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -957,26 +783,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="225">
           <caret line="42" column="0" lean-forward="false" selection-start-line="42" selection-start-column="0" selection-end-line="42" selection-end-column="0" />
-          <folding>
-            <element signature="docComment;class#EJComponentCanvas#0" expanded="false" />
-            <element signature="class#1449:3166" expanded="false" />
-            <element signature="method#mouseClicked#0;class#1449:3166" expanded="false" />
-            <element signature="method#mousePressed#0;class#1449:3166" expanded="false" />
-            <element signature="method#mouseReleased#0;class#1449:3166" expanded="false" />
-            <element signature="class#3596:3856" expanded="false" />
-            <element signature="method#mouseWheelMoved#0;class#3596:3856" expanded="false" />
-            <element signature="method#drawLine#0;class#EJComponentCanvas#0" expanded="false" />
-            <element signature="method#fillRectangle#0;class#EJComponentCanvas#0" expanded="false" />
-            <element signature="method#clear#0;class#EJComponentCanvas#0" expanded="false" />
-            <element signature="method#drawPoint#0;class#EJComponentCanvas#0" expanded="false" />
-            <element signature="method#drawCircleAround#0;class#EJComponentCanvas#0" expanded="false" />
-            <element signature="method#drawText#0;class#EJComponentCanvas#0" expanded="false" />
-            <element signature="method#drawTextBlock#0;class#EJComponentCanvas#0" expanded="false" />
-            <element signature="method#drawTriangleAround#0;class#EJComponentCanvas#0" expanded="false" />
-            <element signature="method#drawCross#0;class#EJComponentCanvas#0" expanded="false" />
-            <element signature="method#drawArc#0;class#EJComponentCanvas#0" expanded="false" />
-            <element signature="method#getPositionsForText#0;class#EJComponentCanvas#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -984,9 +790,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="225">
           <caret line="24" column="0" lean-forward="false" selection-start-line="24" selection-start-column="0" selection-end-line="24" selection-end-column="0" />
-          <folding>
-            <element signature="e#600#601#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -994,7 +797,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="335">
           <caret line="44" column="0" lean-forward="false" selection-start-line="44" selection-start-column="0" selection-end-line="44" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1003,7 +805,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="60">
           <caret line="6" column="6" lean-forward="false" selection-start-line="6" selection-start-column="6" selection-end-line="6" selection-end-column="6" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1011,39 +812,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="214">
           <caret line="116" column="14" lean-forward="true" selection-start-line="116" selection-start-column="14" selection-end-line="116" selection-end-column="14" />
-          <folding>
-            <element signature="method#getInstance#0;class#LongFormatter#0" expanded="false" />
-            <element signature="method#format#0;class#LongFormatter#0" expanded="false" />
-            <element signature="method#format#3;class#LongFormatter#0" expanded="false" />
-            <element signature="method#format#4;class#LongFormatter#0" expanded="false" />
-            <element signature="method#format#5;class#LongFormatter#0" expanded="false" />
-            <element signature="method#format#6;class#LongFormatter#0" expanded="false" />
-            <element signature="method#format#8;class#LongFormatter#0" expanded="false" />
-            <element signature="method#format#9;class#LongFormatter#0" expanded="false" />
-            <element signature="method#format#10;class#LongFormatter#0" expanded="false" />
-            <element signature="method#format#11;class#LongFormatter#0" expanded="false" />
-            <element signature="method#format#13;class#LongFormatter#0" expanded="false" />
-            <element signature="method#format#16;class#LongFormatter#0" expanded="false" />
-            <element signature="method#format#18;class#LongFormatter#0" expanded="false" />
-            <element signature="method#format#19;class#LongFormatter#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/JAtcSim/src/jatcsim/JAtcSim.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="210">
-          <caret line="43" column="0" lean-forward="false" selection-start-line="43" selection-start-column="0" selection-end-line="43" selection-end-column="0" />
-          <folding>
-            <element signature="docComment;class#JAtcSim#0" expanded="false" />
-            <element signature="docComment;method#main#0;class#JAtcSim#0" expanded="false" />
-            <element signature="e#2577#2619#0" expanded="false" />
-            <element signature="method#loadDataFromXmlFiles#0;class#JAtcSim#0" expanded="false" />
-            <element signature="method#initResourcesFolder#0;class#JAtcSim#0" expanded="false" />
-            <element signature="method#updateCalendarToSimTime#0;class#JAtcSim#0" expanded="false" />
-            <element signature="method#createPackInstance#0;class#JAtcSim#0" expanded="false" />
-            <element signature="method#getTrafficFromStartupSettings#0;class#JAtcSim#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1080,7 +848,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="105">
           <caret line="9" column="52" lean-forward="true" selection-start-line="9" selection-start-column="52" selection-end-line="9" selection-end-column="52" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1088,15 +855,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="195">
           <caret line="20" column="16" lean-forward="false" selection-start-line="20" selection-start-column="16" selection-end-line="20" selection-end-column="16" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/world/RunwayThreshold.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="94">
-          <caret line="65" column="0" lean-forward="false" selection-start-line="65" selection-start-column="0" selection-end-line="65" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1104,60 +862,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="134">
           <caret line="346" column="31" lean-forward="false" selection-start-line="346" selection-start-column="31" selection-end-line="346" selection-end-column="31" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/JAtcSim/resources/areas/lkpr.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="225">
-          <caret line="66" column="22" lean-forward="true" selection-start-line="66" selection-start-column="22" selection-end-line="66" selection-end-column="22" />
-          <folding>
-            <element signature="n#threshold#0;n#thresholds#0;n#runway#0;n#runways#0;n#airport#0;n#airports#0;n#area#0;n#!!top" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/world/Approach.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="499">
-          <caret line="76" column="22" lean-forward="false" selection-start-line="76" selection-start-column="22" selection-end-line="76" selection-end-column="22" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/airplanes/Airplane.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="85">
-          <caret line="473" column="0" lean-forward="true" selection-start-line="473" selection-start-column="0" selection-end-line="473" selection-end-column="0" />
-          <folding>
-            <element signature="e#11262#11263#0" expanded="false" />
-            <element signature="e#11292#11293#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/global/UnitProvider.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="210">
-          <caret line="22" column="2" lean-forward="true" selection-start-line="22" selection-start-column="2" selection-end-line="22" selection-end-column="2" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/weathers/Weather.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="352">
-          <caret line="37" column="19" lean-forward="true" selection-start-line="37" selection-start-column="19" selection-end-line="37" selection-end-column="19" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/weathers/MetarDecoder.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="44" column="13" lean-forward="true" selection-start-line="44" selection-start-column="13" selection-end-line="44" selection-end-column="13" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1165,14 +869,78 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="350">
           <caret line="70" column="37" lean-forward="true" selection-start-line="70" selection-start-column="37" selection-end-line="70" selection-end-column="37" />
-          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/world/RunwayThreshold.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="94">
+          <caret line="65" column="0" lean-forward="false" selection-start-line="65" selection-start-column="0" selection-end-line="65" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/world/Approach.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="499">
+          <caret line="76" column="22" lean-forward="false" selection-start-line="76" selection-start-column="22" selection-end-line="76" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/global/UnitProvider.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="165">
+          <caret line="17" column="23" lean-forward="false" selection-start-line="17" selection-start-column="23" selection-end-line="17" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/JAtcSim/resources/areas/lkpr.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="15">
+          <caret line="10" column="99" lean-forward="false" selection-start-line="10" selection-start-column="99" selection-end-line="10" selection-end-column="99" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/JAtcSim/src/jatcsim/JAtcSim.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="465">
+          <caret line="58" column="5" lean-forward="false" selection-start-line="58" selection-start-column="5" selection-end-line="58" selection-end-column="5" />
+          <folding>
+            <element signature="docComment;class#JAtcSim#0" expanded="false" />
+            <element signature="docComment;method#main#0;class#JAtcSim#0" expanded="false" />
+            <element signature="method#loadDataFromXmlFiles#0;class#JAtcSim#0" expanded="false" />
+            <element signature="method#initResourcesFolder#0;class#JAtcSim#0" expanded="false" />
+            <element signature="method#updateCalendarToSimTime#0;class#JAtcSim#0" expanded="false" />
+            <element signature="method#createPackInstance#0;class#JAtcSim#0" expanded="false" />
+            <element signature="method#getTrafficFromStartupSettings#0;class#JAtcSim#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/weathers/MetarDecoder.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="39" column="0" lean-forward="false" selection-start-line="39" selection-start-column="0" selection-end-line="39" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/weathers/Weather.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="155">
+          <caret line="23" column="0" lean-forward="true" selection-start-line="23" selection-start-column="0" selection-end-line="23" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/global/Headings.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="330">
+          <caret line="30" column="0" lean-forward="true" selection-start-line="30" selection-start-column="0" selection-end-line="30" selection-end-column="0" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/airplanes/pilots/Pilot.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="194">
-          <caret line="438" column="7" lean-forward="true" selection-start-line="438" selection-start-column="7" selection-end-line="438" selection-end-column="7" />
+        <state relative-caret-position="111">
+          <caret line="378" column="5" lean-forward="true" selection-start-line="378" selection-start-column="5" selection-end-line="378" selection-end-column="5" />
           <folding>
             <element signature="docComment;class#Pilot#0" expanded="false" />
             <element signature="class#Behavior#0;class#Pilot#0" expanded="false" />
@@ -1188,7 +956,6 @@
             <element signature="e#10611#10636#0" expanded="false" />
             <element signature="e#10943#10968#0" expanded="false" />
             <element signature="e#11286#11315#0" expanded="false" />
-            <element signature="method#getAppHeadingDifference#0;class#ApproachBehavior#0;class#Pilot#0" expanded="false" />
             <element signature="docComment;method#updateAltitudeOnApproach#0;class#ApproachBehavior#0;class#Pilot#0" expanded="false" />
             <element signature="method#updateAltitudeOnApproach#0;class#ApproachBehavior#0;class#Pilot#0" expanded="false" />
             <element signature="method#updateHeadingOnApproach#0;class#ApproachBehavior#0;class#Pilot#0" expanded="false" />
@@ -1198,7 +965,7 @@
             <element signature="method#Pilot#0;class#Pilot#0" expanded="false" />
             <element signature="method#addNewSpeeches#0;class#Pilot#0" expanded="false" />
             <element signature="method#addNewSpeeches#1;class#Pilot#0" expanded="false" />
-            <element signature="e#18728#18778#0" expanded="false" />
+            <element signature="e#18732#18782#0" expanded="false" />
             <element signature="method#elapseSecond#0;class#Pilot#0" expanded="false" />
             <element signature="method#processStandardQueueCommands#0;class#Pilot#0" expanded="false" />
             <element signature="method#processAfterCommands#0;class#Pilot#0" expanded="false" />
@@ -1212,7 +979,7 @@
             <element signature="method#processQueueSpeech#3;class#Pilot#0" expanded="false" />
             <element signature="method#processQueueSpeech#4;class#Pilot#0" expanded="false" />
             <element signature="method#processQueueSpeech#5;class#Pilot#0" expanded="false" />
-            <element signature="e#25978#25990#0" expanded="false" />
+            <element signature="e#25982#25994#0" expanded="false" />
             <element signature="method#processQueueSpeech#6;class#Pilot#0" expanded="false" />
             <element signature="method#processQueueSpeech#7;class#Pilot#0" expanded="false" />
             <element signature="method#processQueueSpeech#8;class#Pilot#0" expanded="false" />
@@ -1225,6 +992,41 @@
             <element signature="method#expandThenCommands#0;class#Pilot#0" expanded="false" />
             <element signature="method#endrivePlane#0;class#Pilot#0" expanded="false" />
             <element signature="method#getBehaviorLogString#0;class#Pilot#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/atcs/TowerAtc.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="141">
+          <caret line="71" column="51" lean-forward="true" selection-start-line="71" selection-start-column="51" selection-end-line="71" selection-end-column="51" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/airplanes/Airplane.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="15">
+          <caret line="605" column="0" lean-forward="false" selection-start-line="605" selection-start-column="0" selection-end-line="605" selection-end-column="0" />
+          <folding>
+            <element signature="docComment;class#Airplane#0" expanded="false" />
+            <element signature="class#AirplaneInfo#0;class#Airplane#0" expanded="false" />
+            <element signature="method#climbDescendChar#0;class#AirplaneInfo#0;class#Airplane#0" expanded="false" />
+            <element signature="method#departureArrivalChar#0;class#AirplaneInfo#0;class#Airplane#0" expanded="false" />
+            <element signature="method#format#0;class#AirplaneInfo#0;class#Airplane#0" expanded="false" />
+            <element signature="method#updatePair#0;class#AirplaneInfo#0;class#Airplane#0" expanded="false" />
+            <element signature="method#getFormatValueByIndex#0;class#AirplaneInfo#0;class#Airplane#0" expanded="false" />
+            <element signature="method#Airplane#0;class#Airplane#0" expanded="false" />
+            <element signature="method#ensureSanity#0;class#Airplane#0" expanded="false" />
+            <element signature="method#elapseSecond#0;class#Airplane#0" expanded="false" />
+            <element signature="method#processMessages#0;class#Airplane#0" expanded="false" />
+            <element signature="method#processMessage#0;class#Airplane#0" expanded="false" />
+            <element signature="method#isValidMessageForAirplane#0;class#Airplane#0" expanded="false" />
+            <element signature="method#adjustSpeed#0;class#Airplane#0" expanded="false" />
+            <element signature="method#adjustAltitude#0;class#Airplane#0" expanded="false" />
+            <element signature="method#getTAS#0;class#Airplane#0" expanded="false" />
+            <element signature="method#updateCoordinates#0;class#Airplane#0" expanded="false" />
+            <element signature="method#setTargetHeading#0;class#Airplane#0" expanded="false" />
+            <element signature="method#setTargetHeading#1;class#Airplane#0" expanded="false" />
           </folding>
         </state>
       </provider>

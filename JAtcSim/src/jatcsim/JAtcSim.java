@@ -14,28 +14,27 @@ import jatcsimlib.Simulation;
 import jatcsimlib.airplanes.AirplaneTypes;
 import jatcsimlib.exceptions.ERuntimeException;
 import jatcsimlib.traffic.CustomTraffic;
-import jatcsimlib.traffic.TestTrafficOneApproach;
 import jatcsimlib.traffic.TestTrafficOneDeparture;
 import jatcsimlib.traffic.Traffic;
 import jatcsimlib.weathers.Weather;
 import jatcsimlib.weathers.WeatherProvider;
-import jatcsimxml.serialization.Serializer;
 import jatcsimlib.world.Airport;
 import jatcsimlib.world.Area;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import jatcsimxml.serialization.Serializer;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Calendar;
-import javax.swing.JFrame;
 
 /**
- *
  * @author Marek
  */
 public class JAtcSim {
 
-  private static final boolean FAST_START = false;
+  private static final boolean FAST_START = true;
+  private static final Traffic specificTraffic =
+      //new TestTrafficOneApproach();
+      new TestTrafficOneDeparture();
 
   public static java.io.File resFolder = null;
   private static Area area = null;
@@ -88,18 +87,16 @@ public class JAtcSim {
 
     // traffic
     Traffic traffic = getTrafficFromStartupSettings(sett);
-    traffic = new TestTrafficOneApproach();
-    //traffic = new TestTrafficOneDeparture();
-
-    // sim init
+    if (specificTraffic != null)
+      traffic = specificTraffic;
     final Simulation sim = Simulation.create(
-      aip, types, weather, traffic, simTime, sett.getSimulationSecondLengthInMs());
+        aip, types, weather, traffic, simTime, sett.getSimulationSecondLengthInMs());
     SoundManager.init(resFolder.toString());
 
     // starting pack & simulation
     String packType = sett.getRadarPackClassName();
     jatcsim.frmPacks.Pack simPack
-      = createPackInstance(packType);
+        = createPackInstance(packType);
 
     simPack.initPack(sim, area, displaySettings);
     simPack.startPack();
@@ -117,22 +114,22 @@ public class JAtcSim {
       failMsg = "Failed to load area from " + fileName;
       area = Area.create();
       ser.fillObject(
-        fileName,
-        area);
+          fileName,
+          area);
 
       fileName = resFolder.toString() + "\\settings\\mainRadarSettings.xml";
       failMsg = "Failed to load area from " + fileName;
       displaySettings = new Settings();
       ser.fillObject(
-        fileName,
-        displaySettings);
+          fileName,
+          displaySettings);
 
       fileName = sett.getPlanesXmlFile();
       failMsg = "Failed to load plane types from " + fileName;
       types = new AirplaneTypes();
       ser.fillList(
-        fileName,
-        types);
+          fileName,
+          types);
 
     } catch (Exception ex) {
       throw ex;
@@ -185,15 +182,15 @@ public class JAtcSim {
       throw new UnsupportedOperationException("Traffic from XML files not supported yet.");
     } else {
       ret = new CustomTraffic(
-        sett.getTrafficCustomMovements(),
-        sett.getTrafficCustomArrivals2Departures() / 10d, // 0-10 to 0.0-1.0
-        sett.getTrafficCustomMaxPlanes(),
-        sett.getTrafficCustomVfr2Ifr() / 10d, // dtto
-        sett.getTrafficCustomWeightTypeA(),
-        sett.getTrafficCustomWeightTypeB(),
-        sett.getTrafficCustomWeightTypeC(),
-        sett.getTrafficCustomWeightTypeD(),
-        sett.isTrafficCustomUsingExtendedCallsigns()
+          sett.getTrafficCustomMovements(),
+          sett.getTrafficCustomArrivals2Departures() / 10d, // 0-10 to 0.0-1.0
+          sett.getTrafficCustomMaxPlanes(),
+          sett.getTrafficCustomVfr2Ifr() / 10d, // dtto
+          sett.getTrafficCustomWeightTypeA(),
+          sett.getTrafficCustomWeightTypeB(),
+          sett.getTrafficCustomWeightTypeC(),
+          sett.getTrafficCustomWeightTypeD(),
+          sett.isTrafficCustomUsingExtendedCallsigns()
       );
     }
 

@@ -71,7 +71,7 @@ public class TowerAtc extends ComputerAtc {
       // select runway according to wind
       for (Runway r : Acc.airport().getRunways()) {
         for (RunwayThreshold t : r.getThresholds()) {
-          int localDiff = Headings.diff(w.getWindHeading(), (int) t.getCourse());
+          int localDiff = Headings.getDifference(w.getWindHeading(), (int) t.getCourse(), true);
           if (localDiff < diff) {
             diff = localDiff;
             rt = t;

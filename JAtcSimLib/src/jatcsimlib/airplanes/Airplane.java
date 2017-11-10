@@ -22,7 +22,6 @@ import jatcsimlib.speaking.SpeechList;
 import jatcsimlib.speaking.fromAtc.IAtcCommand;
 import jatcsimlib.speaking.fromAtc.commands.ChangeHeadingCommand;
 
-import javax.swing.text.StyledEditorKit;
 import java.util.List;
 
 /**
@@ -309,8 +308,10 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     }
 
   }
+
   private final static double GROUND_MULTIPLIER = 1.0; //1.5; //3.0;
   private static final double secondFraction = 1 / 60d / 60d;
+  private final static int MAX_HEADING_CHANGE_DERIVATIVE_STEP = 1;
   // <editor-fold defaultstate="collapsed" desc=" variables ">
   private final Callsign callsign;
   private final Squawk sqwk;
@@ -318,6 +319,7 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
   private final Pilot pilot;
   private final AirplaneType airplaneType;
   private final AirplaneInfo info;
+  private int lastHeadingChange = 0;
   private int targetHeading;
   private boolean targetHeadingLeftTurn;
   private int heading;
@@ -330,7 +332,7 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
   // <editor-fold defaultstate="collapsed" desc=" Nested ">
   private Coordinate coordinate;
 
-// </editor-fold>
+  // </editor-fold>
   // <editor-fold defaultstate="collapsed" desc=" .ctors ">
   private int lastVerticalSpeed;
   private FlightRecorder flightRecorder = null;
@@ -494,12 +496,12 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     processCommands(cmds);
   }
 
-  private boolean isValidMessageForAirplane(IMessageContent msg){
+  private boolean isValidMessageForAirplane(IMessageContent msg) {
     if (msg instanceof IFromAtc)
       return true;
-    else if (msg instanceof  SpeechList){
+    else if (msg instanceof SpeechList) {
       for (ISpeech o : (SpeechList<ISpeech>) msg) {
-        if (!(o instanceof IFromAtc)){
+        if (!(o instanceof IFromAtc)) {
           return false;
         }
       }
@@ -585,9 +587,41 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
   }
 
   private void adjustHeading() {
-    int newHeading
-        = Headings.turn(heading, airplaneType.headingChangeRate, targetHeadingLeftTurn, targetHeading);
-    this.heading = newHeading;
+    // old
+//    int newHeading
+//        = Headings.turn(heading, airplaneType.headingChangeRate, targetHeadingLeftTurn, targetHeading);
+//
+//
+//    this.heading = newHeading;
+
+    // new implementation containing first derivative of heading change
+
+    // newer
+//    int changeSuggest = Headings.getSuggestedHeadingChangeForTurn(
+//        heading, airplaneType.headingChangeRate, targetHeadingLeftTurn, targetHeading);
+//
+//    int realChange = adjustHeadingWithDerivative(heading, changeSuggest, lastHeadingChange);
+//    this.heading = Headings.add(heading, realChange);
+//    this.lastHeadingChange = realChange;
+
+    // newest
+    int diff = Headings.getDifference(heading, targetHeading, true);
+    //TODO potential problem as "diff" function calculates difference in the shortest arc
+
+    if (diff > lastHeadingChange) {
+      lastHeadingChange += MAX_HEADING_CHANGE_DERIVATIVE_STEP;
+      if (lastHeadingChange > airplaneType.headingChangeRate) {
+        lastHeadingChange = airplaneType.headingChangeRate;
+      }
+    } else {
+      // this is to make slight adjustment, but at least equal to 1 degree
+      lastHeadingChange = Math.max(diff - MAX_HEADING_CHANGE_DERIVATIVE_STEP, 1);
+    }
+
+    if (targetHeadingLeftTurn)
+      this.heading = Headings.add(heading, -lastHeadingChange);
+    else
+      this.heading = Headings.add(heading, lastHeadingChange);
   }
 
   private double adjustAltitude(double energyLeft) {

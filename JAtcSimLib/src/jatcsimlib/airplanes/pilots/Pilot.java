@@ -380,7 +380,7 @@ public class Pilot {
 
     private int getAppHeadingDifference() {
       int heading = (int) Coordinates.getBearing(parent.getCoordinate(), this.approach.getParent().getCoordinate());
-      int ret = Headings.diff(heading, parent.getHeading());
+      int ret = Headings.subtract(heading, parent.getHeading());
       return ret;
     }
 
