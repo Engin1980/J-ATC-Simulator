@@ -6,12 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="0a5135e5-75c5-448e-b07a-2ec70e5a6d00" name="Default" comment="Removed bug when hold is canceled even if approach clearance is rejected.">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/JAtcSim/resources/settings/config.ini" afterPath="$PROJECT_DIR$/JAtcSim/resources/settings/config.ini" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/JAtcSim/src/jatcsim/JAtcSim.java" afterPath="$PROJECT_DIR$/JAtcSim/src/jatcsim/JAtcSim.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/airplanes/Airplane.java" afterPath="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/airplanes/Airplane.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/airplanes/pilots/Pilot.java" afterPath="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/airplanes/pilots/Pilot.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/atcs/TowerAtc.java" afterPath="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/atcs/TowerAtc.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/global/Headings.java" afterPath="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/global/Headings.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/messaging/MessageRecorder.java" afterPath="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/messaging/MessageRecorder.java" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -41,11 +37,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Airplane.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="Airplane.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/airplanes/Airplane.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="15">
-              <caret line="605" column="0" lean-forward="false" selection-start-line="605" selection-start-column="0" selection-end-line="605" selection-end-column="0" />
+            <state relative-caret-position="252">
+              <caret line="513" column="0" lean-forward="false" selection-start-line="513" selection-start-column="0" selection-end-line="513" selection-end-column="0" />
               <folding>
                 <element signature="docComment;class#Airplane#0" expanded="false" />
                 <element signature="class#AirplaneInfo#0;class#Airplane#0" expanded="false" />
@@ -57,9 +53,8 @@
                 <element signature="method#Airplane#0;class#Airplane#0" expanded="false" />
                 <element signature="method#ensureSanity#0;class#Airplane#0" expanded="false" />
                 <element signature="method#elapseSecond#0;class#Airplane#0" expanded="false" />
-                <element signature="method#processMessages#0;class#Airplane#0" expanded="false" />
-                <element signature="method#processMessage#0;class#Airplane#0" expanded="false" />
                 <element signature="method#isValidMessageForAirplane#0;class#Airplane#0" expanded="false" />
+                <element signature="e#12597#12598#0" expanded="true" />
                 <element signature="method#adjustSpeed#0;class#Airplane#0" expanded="false" />
                 <element signature="method#adjustAltitude#0;class#Airplane#0" expanded="false" />
                 <element signature="method#getTAS#0;class#Airplane#0" expanded="false" />
@@ -67,6 +62,42 @@
                 <element signature="method#setTargetHeading#0;class#Airplane#0" expanded="false" />
                 <element signature="method#setTargetHeading#1;class#Airplane#0" expanded="false" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Pilot.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/airplanes/pilots/Pilot.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="162">
+              <caret line="555" column="0" lean-forward="false" selection-start-line="555" selection-start-column="0" selection-end-line="555" selection-end-column="0" />
+              <folding>
+                <element signature="e#8447#8519#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Messenger.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/messaging/Messenger.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="285">
+              <caret line="36" column="35" lean-forward="true" selection-start-line="36" selection-start-column="35" selection-end-line="36" selection-end-column="35" />
+              <folding>
+                <element signature="class#XSystem#0;class#Messenger#0" expanded="false" />
+                <element signature="method#XSystem#0;class#XSystem#0;class#Messenger#0" expanded="false" />
+                <element signature="e#1115#1178#0" expanded="false" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="MessageRecorder.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/messaging/MessageRecorder.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="292">
+              <caret line="25" column="0" lean-forward="true" selection-start-line="25" selection-start-column="0" selection-end-line="25" selection-end-column="0" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -105,6 +136,7 @@
       <find>drawCaptio</find>
       <find>drawMessage</find>
       <find>HoldCom</find>
+      <find>Saying</find>
     </findStrings>
     <replaceStrings>
       <replace>lblTime</replace>
@@ -145,7 +177,6 @@
         <option value="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/fromAirplane/notifications/commandResponses/Confirmation.java" />
         <option value="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/speaking/fromAirplane/notifications/commandResponses/Rejection.java" />
         <option value="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/messaging/StringMessageContent.java" />
-        <option value="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/messaging/MessageRecorder.java" />
         <option value="$PROJECT_DIR$/JAtcSimDraw/src/jatcismdraw/global/radarBase/VisualisedMessage.java" />
         <option value="$PROJECT_DIR$/JAtcSimDraw/src/jatcismdraw/global/radarBase/Visualiser.java" />
         <option value="$PROJECT_DIR$/JAtcSimDraw/src/jatcsimdraw/mainRadar/BasicRadar.java" />
@@ -172,6 +203,7 @@
         <option value="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/airplanes/Airplane.java" />
         <option value="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/atcs/TowerAtc.java" />
         <option value="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/global/Headings.java" />
+        <option value="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/messaging/MessageRecorder.java" />
         <option value="$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/airplanes/pilots/Pilot.java" />
       </list>
     </option>
@@ -222,6 +254,8 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
+      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -282,13 +316,19 @@
               <item name="airplanes" type="462c0819:PsiDirectoryNode" />
               <item name="pilots" type="462c0819:PsiDirectoryNode" />
             </path>
+            <path>
+              <item name="JAtcSimSolution" type="b2602c69:ProjectViewProjectNode" />
+              <item name="JAtcSimSolution" type="462c0819:PsiDirectoryNode" />
+              <item name="JAtcSimLib" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="jatcsimlib" type="462c0819:PsiDirectoryNode" />
+              <item name="messaging" type="462c0819:PsiDirectoryNode" />
+            </path>
           </expand>
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
       <pane id="PackagesPane" />
-      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -480,31 +520,32 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1554" height="916" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3275218" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33748442" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.33748442" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.29323798" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.43960148" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33374843" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="true" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3275218" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Dependency Viewer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.5491905" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2496749" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Module Dependencies" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32964888" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.43960148" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
   <component name="VcsContentAnnotationSettings">
@@ -537,18 +578,18 @@
           <properties />
           <option name="timeStamp" value="87" />
         </line-breakpoint>
-        <line-breakpoint enabled="true" log-message="true" suspend="NONE" type="java-line">
-          <url>file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/airplanes/Airplane.java</url>
-          <line>620</line>
-          <log-expression expression="String.format(    &quot;Hit : heading: %d, targetHeading: %d, diff: %d, lastHeadingChange %d\n&quot;,    heading, targetHeading,    diff, lastHeadingChange )" language="JAVA" mode="CODE_FRAGMENT" />
+        <line-breakpoint enabled="true" type="java-line">
+          <condition expression="ret.size() != 0" language="JAVA" />
+          <url>file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/messaging/Messenger.java</url>
+          <line>46</line>
           <properties />
-          <option name="timeStamp" value="94" />
+          <option name="timeStamp" value="98" />
         </line-breakpoint>
       </breakpoints>
       <breakpoints-dialog>
         <breakpoints-dialog />
       </breakpoints-dialog>
-      <option name="time" value="97" />
+      <option name="time" value="99" />
     </breakpoint-manager>
     <watches-manager>
       <configuration name="Application">
@@ -677,13 +718,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/messaging/MessageRecorder.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="20" column="5" lean-forward="false" selection-start-line="20" selection-start-column="5" selection-end-line="20" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://C:/Program Files/Java/jdk1.8.0_60/src.zip!/java/util/LinkedList.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="220">
@@ -731,13 +765,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="255">
           <caret line="53" column="3" lean-forward="true" selection-start-line="53" selection-start-column="3" selection-end-line="53" selection-end-column="3" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/messaging/Messenger.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="232">
-          <caret line="39" column="0" lean-forward="false" selection-start-line="39" selection-start-column="0" selection-end-line="39" selection-end-column="0" />
         </state>
       </provider>
     </entry>
@@ -937,65 +964,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/airplanes/pilots/Pilot.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="111">
-          <caret line="378" column="5" lean-forward="true" selection-start-line="378" selection-start-column="5" selection-end-line="378" selection-end-column="5" />
-          <folding>
-            <element signature="docComment;class#Pilot#0" expanded="false" />
-            <element signature="class#Behavior#0;class#Pilot#0" expanded="false" />
-            <element signature="method#Behavior#0;class#Behavior#0;class#Pilot#0" expanded="false" />
-            <element signature="class#TakeOffBehavior#0;class#Pilot#0" expanded="false" />
-            <element signature="method#fly#0;class#TakeOffBehavior#0;class#Pilot#0" expanded="false" />
-            <element signature="class#HoldBehavior#0;class#Pilot#0" expanded="false" />
-            <element signature="method#setHoldDataByEntry#0;class#HoldBehavior#0;class#Pilot#0" expanded="false" />
-            <element signature="method#fly#0;class#HoldBehavior#0;class#Pilot#0" expanded="false" />
-            <element signature="method#toLogString#0;class#HoldBehavior#0;class#Pilot#0" expanded="false" />
-            <element signature="e#9867#9910#0" expanded="false" />
-            <element signature="e#10221#10287#0" expanded="false" />
-            <element signature="e#10611#10636#0" expanded="false" />
-            <element signature="e#10943#10968#0" expanded="false" />
-            <element signature="e#11286#11315#0" expanded="false" />
-            <element signature="docComment;method#updateAltitudeOnApproach#0;class#ApproachBehavior#0;class#Pilot#0" expanded="false" />
-            <element signature="method#updateAltitudeOnApproach#0;class#ApproachBehavior#0;class#Pilot#0" expanded="false" />
-            <element signature="method#updateHeadingOnApproach#0;class#ApproachBehavior#0;class#Pilot#0" expanded="false" />
-            <element signature="method#updateHeadingLanded#0;class#ApproachBehavior#0;class#Pilot#0" expanded="false" />
-            <element signature="method#goAround#0;class#ApproachBehavior#0;class#Pilot#0" expanded="false" />
-            <element signature="method#toLogString#0;class#ApproachBehavior#0;class#Pilot#0" expanded="false" />
-            <element signature="method#Pilot#0;class#Pilot#0" expanded="false" />
-            <element signature="method#addNewSpeeches#0;class#Pilot#0" expanded="false" />
-            <element signature="method#addNewSpeeches#1;class#Pilot#0" expanded="false" />
-            <element signature="e#18732#18782#0" expanded="false" />
-            <element signature="method#elapseSecond#0;class#Pilot#0" expanded="false" />
-            <element signature="method#processStandardQueueCommands#0;class#Pilot#0" expanded="false" />
-            <element signature="method#processAfterCommands#0;class#Pilot#0" expanded="false" />
-            <element signature="method#processQueueSpeeches#0;class#Pilot#0" expanded="false" />
-            <element signature="method#processAfterCommandFromQueue#0;class#Pilot#0" expanded="false" />
-            <element signature="method#tryProcessQueueSpeech#0;class#Pilot#0" expanded="false" />
-            <element signature="method#tryGetProcessQueueSpeechMethodToInvoke#0;class#Pilot#0" expanded="false" />
-            <element signature="method#processQueueSpeech#0;class#Pilot#0" expanded="false" />
-            <element signature="method#processQueueSpeech#1;class#Pilot#0" expanded="false" />
-            <element signature="method#processQueueSpeech#2;class#Pilot#0" expanded="false" />
-            <element signature="method#processQueueSpeech#3;class#Pilot#0" expanded="false" />
-            <element signature="method#processQueueSpeech#4;class#Pilot#0" expanded="false" />
-            <element signature="method#processQueueSpeech#5;class#Pilot#0" expanded="false" />
-            <element signature="e#25982#25994#0" expanded="false" />
-            <element signature="method#processQueueSpeech#6;class#Pilot#0" expanded="false" />
-            <element signature="method#processQueueSpeech#7;class#Pilot#0" expanded="false" />
-            <element signature="method#processQueueSpeech#8;class#Pilot#0" expanded="false" />
-            <element signature="method#processQueueSpeech#9;class#Pilot#0" expanded="false" />
-            <element signature="method#sayRejection#0;class#Pilot#0" expanded="false" />
-            <element signature="method#confirmIfReq#0;class#Pilot#0" expanded="false" />
-            <element signature="method#sayIfReq#0;class#Pilot#0" expanded="false" />
-            <element signature="method#flushSaidTextToAtc#0;class#Pilot#0" expanded="false" />
-            <element signature="method#getIndexOfNavaidInCommands#0;class#Pilot#0" expanded="false" />
-            <element signature="method#expandThenCommands#0;class#Pilot#0" expanded="false" />
-            <element signature="method#endrivePlane#0;class#Pilot#0" expanded="false" />
-            <element signature="method#getBehaviorLogString#0;class#Pilot#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/atcs/TowerAtc.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="141">
@@ -1003,10 +971,30 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/messaging/MessageRecorder.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="292">
+          <caret line="25" column="0" lean-forward="true" selection-start-line="25" selection-start-column="0" selection-end-line="25" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/messaging/Messenger.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="285">
+          <caret line="36" column="35" lean-forward="true" selection-start-line="36" selection-start-column="35" selection-end-line="36" selection-end-column="35" />
+          <folding>
+            <element signature="class#XSystem#0;class#Messenger#0" expanded="false" />
+            <element signature="method#XSystem#0;class#XSystem#0;class#Messenger#0" expanded="false" />
+            <element signature="e#1115#1178#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/airplanes/Airplane.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="15">
-          <caret line="605" column="0" lean-forward="false" selection-start-line="605" selection-start-column="0" selection-end-line="605" selection-end-column="0" />
+        <state relative-caret-position="252">
+          <caret line="513" column="0" lean-forward="false" selection-start-line="513" selection-start-column="0" selection-end-line="513" selection-end-column="0" />
           <folding>
             <element signature="docComment;class#Airplane#0" expanded="false" />
             <element signature="class#AirplaneInfo#0;class#Airplane#0" expanded="false" />
@@ -1018,15 +1006,24 @@
             <element signature="method#Airplane#0;class#Airplane#0" expanded="false" />
             <element signature="method#ensureSanity#0;class#Airplane#0" expanded="false" />
             <element signature="method#elapseSecond#0;class#Airplane#0" expanded="false" />
-            <element signature="method#processMessages#0;class#Airplane#0" expanded="false" />
-            <element signature="method#processMessage#0;class#Airplane#0" expanded="false" />
             <element signature="method#isValidMessageForAirplane#0;class#Airplane#0" expanded="false" />
+            <element signature="e#12597#12598#0" expanded="true" />
             <element signature="method#adjustSpeed#0;class#Airplane#0" expanded="false" />
             <element signature="method#adjustAltitude#0;class#Airplane#0" expanded="false" />
             <element signature="method#getTAS#0;class#Airplane#0" expanded="false" />
             <element signature="method#updateCoordinates#0;class#Airplane#0" expanded="false" />
             <element signature="method#setTargetHeading#0;class#Airplane#0" expanded="false" />
             <element signature="method#setTargetHeading#1;class#Airplane#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/JAtcSimLib/src/jatcsimlib/airplanes/pilots/Pilot.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="162">
+          <caret line="555" column="0" lean-forward="false" selection-start-line="555" selection-start-column="0" selection-end-line="555" selection-end-column="0" />
+          <folding>
+            <element signature="e#8447#8519#0" expanded="true" />
           </folding>
         </state>
       </provider>

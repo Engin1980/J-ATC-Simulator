@@ -16,13 +16,17 @@ public class MessageRecorder extends Recorder {
   }
 
   public void recordMessage(eAction action, Message msg){
+    String line = String.format(
+        "%S || FROM: %s; TO: %s; CONTENT: %s\n",
+        action.toString(),
+        msg.getSource().toString(),
+        msg.getTarget().toString(),
+        msg.getContent().toString()
+    );
+
+    System.out.println(line);
+
     super.logLine(
-        String.format(
-            "%S || FROM: %s; TO: %s; CONTENT: %s\n",
-            action.toString(),
-            msg.getSource().toString(),
-            msg.getTarget().toString(),
-            msg.getContent().toString()
-        ), true);
+        line, true);
   }
 }

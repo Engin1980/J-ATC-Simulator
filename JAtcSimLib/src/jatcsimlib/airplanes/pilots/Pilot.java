@@ -529,7 +529,6 @@ public class Pilot {
       this.afterCommands.removeByConsequent(ChangeHeadingCommand.class);
       this.queue.add(c);
     } else if (c instanceof ChangeHeadingCommand) {
-      this.queue.clear();
       this.afterCommands.removeByConsequent(ChangeHeadingCommand.class);
       this.afterCommands.removeByConsequent(ProceedDirectCommand.class);
       this.queue.add(c);
@@ -884,8 +883,6 @@ public class Pilot {
 
     Message m = new Message(parent, atc, saidText.clone());
     Acc.messenger().send(m);
-
-    System.out.println("Saying to " + this.getTunedAtc().getName() + ": " + m.toString());
 
     saidText.clear();
   }
