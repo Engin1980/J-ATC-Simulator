@@ -59,14 +59,16 @@ public class PaintManager {
   private final Visualiser visualiser;
   private final MessageManager messageManager;
   private final Formatter formatter;
+  private final boolean paintMessages;
 
   public PaintManager(Simulation simulation, Area area, Visualiser visualiser,
-                      int messageDisplayInSeconds, Formatter formatter) {
+                      int messageDisplayInSeconds, Formatter formatter, boolean paintMessages) {
     this.simulation = simulation;
     this.area = area;
     this.visualiser = visualiser;
     this.formatter = formatter;
     this.messageManager = new MessageManager(messageDisplayInSeconds);
+    this.paintMessages = paintMessages;
   }
 
   public void draw() {
@@ -79,7 +81,8 @@ public class PaintManager {
     drawNavaids();
     drawAirports();
     drawAirplanes();
-    drawCaptions();
+    if (paintMessages)
+      drawCaptions();
     drawTime();
     visualiser.afterDraw();
   }

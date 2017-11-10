@@ -13,7 +13,7 @@ public class FrmView extends JFrame {
 
   private static Dimension initDimension = new Dimension(500, 300);
   private Pack parent;
-  private int refreshRate;
+  private int refreshRate = 3;
   private int refreshRateCounter;
   private EJComponent radarComponent;
   private JPanel pnlContent;
@@ -57,7 +57,7 @@ public class FrmView extends JFrame {
         this.parent.getSim().getActiveAirport().getRadarRange(),
         this.parent.getSim(),
         this.parent.getArea(),
-        this.parent.getDisplaySettings());
+        this.parent.getDisplaySettings(), false);
     this.radarComponent = canvas.getEJComponent();
 
     // otevření hlavního formuláře

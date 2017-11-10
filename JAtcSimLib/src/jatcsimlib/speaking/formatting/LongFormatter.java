@@ -5,6 +5,7 @@ import jatcsimlib.atcs.Atc;
 import jatcsimlib.atcs.PlaneSwitchMessage;
 import jatcsimlib.exceptions.ENotSupportedException;
 import jatcsimlib.global.Headings;
+import jatcsimlib.speaking.fromAirplane.notifications.EstablishedOnApproachNotification;
 import jatcsimlib.speaking.fromAirplane.notifications.commandResponses.Confirmation;
 import jatcsimlib.speaking.fromAirplane.notifications.commandResponses.Rejection;
 import jatcsimlib.speaking.fromAtc.commands.*;
@@ -219,6 +220,10 @@ public class LongFormatter extends Formatter {
     StringBuilder sb = new StringBuilder();
     sb.append(greetings[(int)d]).append(", ").append(cmd.getCallsign().toString()).append(" with you at ").append(cmd.getAltitudeInfoText());
     return sb.toString();
+  }
+
+  public String format(EstablishedOnApproachNotification speech){
+    return "Established, short final.";
   }
 
   @Override

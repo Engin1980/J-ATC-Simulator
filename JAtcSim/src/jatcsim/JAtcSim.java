@@ -34,8 +34,8 @@ public class JAtcSim {
 
   private static final boolean FAST_START = true;
   private static final Traffic specificTraffic =
-      //new TestTrafficOneApproach();
-      new TestTrafficOneDeparture();
+      new TestTrafficOneApproach();
+      //new TestTrafficOneDeparture();
       //null;
 
   public static java.io.File resFolder = null;

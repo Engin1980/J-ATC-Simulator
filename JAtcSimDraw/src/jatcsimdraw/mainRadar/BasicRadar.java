@@ -43,13 +43,13 @@ public class BasicRadar extends Radar {
       BasicRadar, EventListener<BasicRadar, KeyEvent>, KeyEvent> keyPressEM = new EventManager(this);
 
   public BasicRadar(Canvas canvas, RadarRange radarRange,
-    Simulation sim, Area area, Settings displaySettings) {
+    Simulation sim, Area area, Settings displaySettings, boolean isMainRadar) {
     this.c = canvas;
     this.p = new BasicPainter(c, radarRange.topLeft, radarRange.bottomRight);
     this.v = new BasicVisualiser(p, displaySettings);
     this.m = new PaintManager(sim, area, v,
         displaySettings.getMessageVisibleDelayInRadarCycles(),
-        displaySettings.getFormatter());
+        displaySettings.getFormatter(), isMainRadar);
 
     this.paintEM.addListener(new EventListener<BasicRadar, Object>() {
 

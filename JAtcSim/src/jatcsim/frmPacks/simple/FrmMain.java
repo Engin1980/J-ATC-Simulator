@@ -117,7 +117,7 @@ public class FrmMain extends javax.swing.JFrame {
     EJComponentCanvas canvas = new EJComponentCanvas();
     BasicRadar r = new BasicRadar(
         canvas, aip.getRadarRange(),
-        this.parent.getSim(), this.parent.getArea(), this.parent.getDisplaySettings());
+        this.parent.getSim(), this.parent.getArea(), this.parent.getDisplaySettings(), true);
     this.radarComponent = canvas.getEJComponent();
 
     // předávání kláves do textového pole z radaru

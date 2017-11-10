@@ -15,31 +15,21 @@ import jatcsimdraw.mainRadar.settings.Settings;
 import jatcsimlib.airplanes.Airplane;
 import jatcsimlib.airplanes.Callsign;
 import jatcsimlib.atcs.Atc;
-import jatcsimlib.exceptions.ERuntimeException;
-import jatcsimlib.coordinates.Coordinates;
 import jatcsimlib.coordinates.Coordinate;
+import jatcsimlib.coordinates.Coordinates;
 import jatcsimlib.events.EventListener;
 import jatcsimlib.exceptions.ENotSupportedException;
+import jatcsimlib.exceptions.ERuntimeException;
 import jatcsimlib.global.ETime;
 import jatcsimlib.global.Headings;
 import jatcsimlib.messaging.Messenger;
-import jatcsimlib.world.Approach;
-import jatcsimlib.world.Border;
-import jatcsimlib.world.BorderArcPoint;
-import jatcsimlib.world.BorderExactPoint;
-import jatcsimlib.world.BorderPoint;
-import jatcsimlib.world.Navaid;
-import jatcsimlib.world.Runway;
-import java.awt.Color;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedList;
+import jatcsimlib.world.*;
+
+import java.awt.*;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 /**
- *
  * @author Marek
  */
 public class BasicVisualiser extends Visualiser {
@@ -84,22 +74,6 @@ public class BasicVisualiser extends Visualiser {
   }
 
   @Override
-  public void drawMessages(List<VisualisedMessage> msgs) {
-    MessageSet ms = createMessageSet(msgs);
-
-    DispText dt;
-
-    dt = sett.getDispText(DispText.eType.atc);
-    p.drawTextBlock(ms.atc, Painter.eTextBlockLocation.bottomRight, dt.getFont(), dt.getColor());
-
-    dt = sett.getDispText(DispText.eType.plane);
-    p.drawTextBlock(ms.plane, Painter.eTextBlockLocation.bottomLeft, dt.getFont(), dt.getColor());
-
-    dt = sett.getDispText(DispText.eType.system);
-    p.drawTextBlock(decodeSystemMultilines(ms.system), Painter.eTextBlockLocation.topRight, dt.getFont(), dt.getColor());
-  }
-
-  @Override
   public void drawBorder(Border border) {
 
     DispItem ds = getDispSettBy(border);
@@ -127,8 +101,8 @@ public class BasicVisualiser extends Visualiser {
       BorderExactPoint lastP = (BorderExactPoint) border.getPoints().get(border.getPoints().size() - 1);
       BorderExactPoint firstP = (BorderExactPoint) border.getPoints().get(0);
       p.drawLine(
-        lastP.getCoordinate(), firstP.getCoordinate(),
-        ds.getColor(), ds.getWidth());
+          lastP.getCoordinate(), firstP.getCoordinate(),
+          ds.getColor(), ds.getWidth());
     }
   }
 
@@ -137,9 +111,9 @@ public class BasicVisualiser extends Visualiser {
     DispItem ds = getDispSettBy(runway);
 
     p.drawLine(
-      runway.getThresholdA().getCoordinate(),
-      runway.getThresholdB().getCoordinate(),
-      ds.getColor(), ds.getWidth());
+        runway.getThresholdA().getCoordinate(),
+        runway.getThresholdB().getCoordinate(),
+        ds.getColor(), ds.getWidth());
   }
 
   @Override
@@ -172,6 +146,145 @@ public class BasicVisualiser extends Visualiser {
         break;
     }
 
+  }
+
+  @Override
+  public void drawPlane(Airplane.AirplaneInfo planeInfo) {
+
+    DispPlane dp = sett.getDispPlane(planeInfo);
+    DispText dt = sett.getDispText(DispText.eType.callsign);
+    Color c = dp.getColor();
+    if (planeInfo.isAirprox()) {
+      c = Color.RED;
+    }
+
+    if (dp.isVisible() == false) {
+      return;
+    }
+
+    // plane dot and direction line
+    p.drawPoint(planeInfo.coordinate(), c, dp.getPointWidth()); // point of plane
+    p.drawLineByHeadingAndDistance(planeInfo.coordinate(), planeInfo.heading(), dp.getHeadingLineLength(), c, 1);
+
+    // separation ring
+    if (planeInfo.speed() > 100 || planeInfo.verticalSpeed() != 0) {
+      p.drawCircleAroundInNM(planeInfo.coordinate(), dp.getSeparationRingRadius(),
+          c, 1);
+    }
+
+    // plane label
+    StringBuilder sb = new StringBuilder();
+    sb.append(
+        buildPlaneString(dp.getFirstLineFormat(), planeInfo));
+
+    if (planeInfo.tunedAtc() != planeInfo.responsibleAtc()) {
+      sb.append("*");
+    }
+
+    sb.append("\r\n");
+    sb.append(
+        buildPlaneString(dp.getSecondLineFormat(), planeInfo));
+    sb.append("\r\n");
+    sb.append(
+        buildPlaneString(dp.getThirdLineFormat(), planeInfo));
+
+    Point labelShift;
+    if (customPlaneLabelShift.containsKey(planeInfo.callsign())) {
+      labelShift = customPlaneLabelShift.get(planeInfo.callsign());
+    } else {
+      labelShift = new Point(3, 3);
+    }
+    p.drawText(sb.toString(), planeInfo.coordinate(), labelShift.x, labelShift.y, dt.getFont(), c);
+
+    // plane history
+    if (refreshTick % dp.getHistoryDotStep() == 0) {
+      this.planeDotHistory.add(planeInfo.callsign(), planeInfo.coordinate(), dp.getHistoryDotCount());
+    }
+    List<Coordinate> hist = planeDotHistory.get(planeInfo.callsign());
+    if (hist != null) {
+      for (Coordinate coordinate : hist) {
+        p.drawPoint(coordinate, c, 3);
+      }
+    }
+
+    // plane positions
+    lastPlanePositions.put(planeInfo.callsign(), planeInfo.coordinate());
+  }
+
+  @Override
+  public void drawMessages(List<VisualisedMessage> msgs) {
+    MessageSet ms = createMessageSet(msgs);
+
+    DispText dt;
+
+    dt = sett.getDispText(DispText.eType.atc);
+    p.drawTextBlock(ms.atc, Painter.eTextBlockLocation.bottomRight, dt.getFont(), dt.getColor());
+
+    dt = sett.getDispText(DispText.eType.plane);
+    p.drawTextBlock(ms.plane, Painter.eTextBlockLocation.bottomLeft, dt.getFont(), dt.getColor());
+
+    dt = sett.getDispText(DispText.eType.system);
+    p.drawTextBlock(decodeSystemMultilines(ms.system), Painter.eTextBlockLocation.topRight, dt.getFont(), dt.getColor());
+  }
+
+  @Override
+  public void drawStar(List<Navaid> navaidPoints) {
+    DispItem di = sett.getDispItem(DispItem.STAR);
+    for (int i = 0; i < navaidPoints.size() - 1; i++) {
+      p.drawLine(
+          navaidPoints.get(i).getCoordinate(),
+          navaidPoints.get(i + 1).getCoordinate(),
+          di.getColor());
+    }
+  }
+
+  @Override
+  public void drawSid(List<Navaid> navaidPoints) {
+    DispItem di = sett.getDispItem(DispItem.SID);
+    for (int i = 0; i < navaidPoints.size() - 1; i++) {
+      p.drawLine(
+          navaidPoints.get(i).getCoordinate(),
+          navaidPoints.get(i + 1).getCoordinate(),
+          di.getColor());
+    }
+  }
+
+  @Override
+  public void drawApproach(Approach approach) {
+    Coordinate start = Coordinates.getCoordinate(
+        approach.getPoint(),
+        Headings.add(approach.getRadial(), 180),
+        17);
+    p.drawLine(start, approach.getPoint(), Color.MAGENTA);
+    if (approach.getParent().getFafCross() != null) {
+      p.drawCross(approach.getParent().getFafCross(), Color.MAGENTA, 5, 1);
+    }
+
+  }
+
+  @Override
+  public void drawTime(ETime time) {
+    DispText dt = sett.getDispText(DispText.eType.time);
+    List<String> lst = new ArrayList();
+    lst.add(time.toString());
+    p.drawTextBlock(lst, Painter.eTextBlockLocation.topLeft, dt.getFont(), dt.getColor());
+
+    if (lastDrawnTimeTotalSeconds != time.getTotalSeconds()) {
+      lastDrawnTimeTotalSeconds = time.getTotalSeconds();
+      refreshTick++;
+    }
+  }
+
+  @Override
+  public void clear() {
+    DispItem ds = sett.getDispItem(DispItem.MAP_BACKCOLOR);
+    p.clear(ds.getColor());
+  }
+
+  @Override
+  public void afterDraw() {
+    super.afterDraw();
+    this.planeDotHistory.removeOneHistoryFromAll();
   }
 
   private DispItem getDispSettBy(Border border) {
@@ -212,12 +325,6 @@ public class BasicVisualiser extends Visualiser {
     }
   }
 
-  @Override
-  public void clear() {
-    DispItem ds = sett.getDispItem(DispItem.MAP_BACKCOLOR);
-    p.clear(ds.getColor());
-  }
-
   private void drawArc(BorderExactPoint bPrev, BorderArcPoint borderArcPoint, BorderExactPoint bNext, Color color) {
     double startBear = Coordinates.getBearing(borderArcPoint.getCoordinate(), bPrev.getCoordinate());
     double endBear = Coordinates.getBearing(borderArcPoint.getCoordinate(), bNext.getCoordinate());
@@ -229,69 +336,6 @@ public class BasicVisualiser extends Visualiser {
     }
 
     p.drawArc(borderArcPoint.getCoordinate(), startBear, endBear, distance, color);
-  }
-
-  @Override
-  public void drawPlane(Airplane.AirplaneInfo planeInfo) {
-
-    DispPlane dp = sett.getDispPlane(planeInfo);
-    DispText dt = sett.getDispText(DispText.eType.callsign);
-    Color c = dp.getColor();
-    if (planeInfo.isAirprox()) {
-      c = Color.RED;
-    }
-
-    if (dp.isVisible() == false) {
-      return;
-    }
-
-    // plane dot and direction line
-    p.drawPoint(planeInfo.coordinate(), c, dp.getPointWidth()); // point of plane
-    p.drawLineByHeadingAndDistance(planeInfo.coordinate(), planeInfo.heading(), dp.getHeadingLineLength(), c, 1);
-
-    // separation ring
-    if (planeInfo.speed() > 100 || planeInfo.verticalSpeed() != 0) {
-      p.drawCircleAroundInNM(planeInfo.coordinate(), dp.getSeparationRingRadius(),
-        c, 1);
-    }
-
-    // plane label
-    StringBuilder sb = new StringBuilder();
-    sb.append(
-      buildPlaneString(dp.getFirstLineFormat(), planeInfo));
-
-    if (planeInfo.tunedAtc() != planeInfo.responsibleAtc()) {
-      sb.append("*");
-    }
-
-    sb.append("\r\n");
-    sb.append(
-      buildPlaneString(dp.getSecondLineFormat(), planeInfo));
-    sb.append("\r\n");
-    sb.append(
-      buildPlaneString(dp.getThirdLineFormat(), planeInfo));
-
-    Point labelShift;
-    if (customPlaneLabelShift.containsKey(planeInfo.callsign())){
-      labelShift = customPlaneLabelShift.get(planeInfo.callsign());
-    } else {
-      labelShift = new Point(3,3);
-    }
-    p.drawText(sb.toString(), planeInfo.coordinate(), labelShift.x, labelShift.y, dt.getFont(), c);
-
-    // plane history
-    if (refreshTick % dp.getHistoryDotStep() == 0) {
-      this.planeDotHistory.add(planeInfo.callsign(), planeInfo.coordinate(), dp.getHistoryDotCount());
-    }
-    List<Coordinate> hist = planeDotHistory.get(planeInfo.callsign());
-    if (hist != null) {
-      for (Coordinate coordinate : hist) {
-        p.drawPoint(coordinate, c, 3);
-      }
-    }
-
-    // plane positions
-    lastPlanePositions.put(planeInfo.callsign(), planeInfo.coordinate());
   }
 
   private String buildPlaneString(String lineFormat, Airplane.AirplaneInfo planeInfo) {
@@ -306,7 +350,7 @@ public class BasicVisualiser extends Visualiser {
       if (m.getSource() == Messenger.SYSTEM) {
         ret.system.add(">> " + m.getText());
       } else if (m.getSource() instanceof Atc) {
-          ret.atc.add(m.getText() + " [" + m.getSource().getName() + "]");
+        ret.atc.add(m.getText() + " [" + m.getSource().getName() + "]");
       } else if (m.getSource() instanceof Airplane) {
         ret.plane.add(m.getSource().getName() + ": " + m.getText());
       } else {
@@ -314,60 +358,6 @@ public class BasicVisualiser extends Visualiser {
       }
     }
     return ret;
-  }
-
-  @Override
-  public void drawStar(List<Navaid> navaidPoints) {
-    DispItem di = sett.getDispItem(DispItem.STAR);
-    for (int i = 0; i < navaidPoints.size() - 1; i++) {
-      p.drawLine(
-        navaidPoints.get(i).getCoordinate(),
-        navaidPoints.get(i + 1).getCoordinate(),
-        di.getColor());
-    }
-  }
-
-  @Override
-  public void drawSid(List<Navaid> navaidPoints) {
-    DispItem di = sett.getDispItem(DispItem.SID);
-    for (int i = 0; i < navaidPoints.size() - 1; i++) {
-      p.drawLine(
-        navaidPoints.get(i).getCoordinate(),
-        navaidPoints.get(i + 1).getCoordinate(),
-        di.getColor());
-    }
-  }
-
-  @Override
-  public void drawApproach(Approach approach) {
-    Coordinate start = Coordinates.getCoordinate(
-      approach.getPoint(),
-      Headings.add(approach.getRadial(), 180),
-      17);
-    p.drawLine(start, approach.getPoint(), Color.MAGENTA);
-    if (approach.getParent().getFafCross() != null) {
-      p.drawCross(approach.getParent().getFafCross(), Color.MAGENTA, 5, 1);
-    }
-
-  }
-
-  @Override
-  public void afterDraw() {
-    super.afterDraw();
-    this.planeDotHistory.removeOneHistoryFromAll();
-  }
-
-  @Override
-  public void drawTime(ETime time) {
-    DispText dt = sett.getDispText(DispText.eType.time);
-    List<String> lst = new ArrayList();
-    lst.add(time.toString());
-    p.drawTextBlock(lst, Painter.eTextBlockLocation.topLeft, dt.getFont(), dt.getColor());
-
-    if (lastDrawnTimeTotalSeconds != time.getTotalSeconds()) {
-      lastDrawnTimeTotalSeconds = time.getTotalSeconds();
-      refreshTick++;
-    }
   }
 
   private List<String> decodeSystemMultilines(List<String> system) {
@@ -396,7 +386,7 @@ public class BasicVisualiser extends Visualiser {
   /**
    * Returns closest drawn airplane to coordinate position in maximal distance.
    *
-   * @param coordinate Coordinate where to look for planes.
+   * @param coordinate      Coordinate where to look for planes.
    * @param maxDistanceInNM Only planes at distance lower than this are taken into account.
    * @return Plane found at set coordinate, or null if no plane were found at coordinate in maxDistance.
    */
