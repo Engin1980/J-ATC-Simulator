@@ -1,0 +1,65 @@
+title Exact redraw
+
+note over System, Pack : I n i t i a l i z a t i o n
+
+System -->> +Pack : initPack(sim, area, displaySettings)
+note over Pack : set sim, area, displaySettings
+Pack ->* frmMain : .ctor()
+Pack ->+ frmMain : init(this)
+frmMain ->* EJComponentCanvas : .ctor()
+EJComponentCanvas ->* EJComponent : .ctor()
+frmMain ->*+ BasicRadar : .ctor(\ncanvas, radarRange, \nsim, area, displaySettings)
+BasicRadar ->* painter : .ctor()
+BasicRadar ->* visualiser : .ctor()
+BasicRadar ->* PaintManager  : .ctor()
+deactivate BasicRadar
+frmMain ->+ frmMain : setRadarComponent(\ncanvas.getEJComponent())
+deactivate frmMain
+deactivate frmMain
+deactivate Pack
+
+
+
+
+
+note over System, Pack, frmMain, BasicRadar, PaintManager  : R e d r a w i n g
+
+System -->> frmMain : secondElapsed()
+
+note over frmMain : checks for radar update interval here
+frmMain -->> EJComponent : paint()
+EJComponent -->> EJComponentCanvas :  <<event>>\npaint()
+EJComponentCanvas -->> BasicRadar : <<event>>\nonPaint()
+BasicRadar -->>+ BasicRadar : <<event>>\nonPaint()
+BasicRadar ->+ PaintManager: draw()
+PaintManager -> visualiser : beforeDraw()
+
+PaintManager ->+ PaintManager : drawBackground()
+PaintManager ->+ visualiser : clear()
+visualiser ->+ painter : clear()
+painter ->+ EJComponentCanvas : clear()
+deactivate EJComponentCanvas
+deactivate painter
+deactivate visualiser
+deactivate PaintManager
+
+PaintManager ->+ PaintManager : drawBorders()
+note over PaintManager : For each border "b"
+PaintManager ->+ visualiser : drawBorder(b)
+note over visualiser : decode border to lines, \nfor each line "l"
+visualiser ->+ painter : drawLine(l)
+note over painter : convert coordinates to points
+painter ->+ EJComponentCanvas : drawLine()
+deactivate EJComponentCanvas
+deactivate painter
+deactivate visualiser
+deactivate PaintManager
+
+note over BasicRadar, PaintManager: Other updating stuff\nOther updating stuff\nOther updating stuff
+
+
+
+
+PaintManager -> visualiser : afterDraw()
+
+

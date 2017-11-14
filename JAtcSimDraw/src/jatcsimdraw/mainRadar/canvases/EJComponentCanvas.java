@@ -6,8 +6,8 @@
 package jatcsimdraw.mainRadar.canvases;
 
 import jatcsimdraw.global.Point;
-import jatcismdraw.global.radarBase.Canvas;
-import jatcismdraw.global.radarBase.Painter;
+import jatcsimdraw.global.radarBase.Canvas;
+import jatcsimdraw.global.radarBase.Painter;
 import jatcsimdraw.global.events.EKeyboardModifier;
 import jatcsimlib.events.EventListener;
 import jatcsimdraw.global.events.EMouseEvent;

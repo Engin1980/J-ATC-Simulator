@@ -7,12 +7,12 @@ package jatcsimdraw.mainRadar;
 
 import jatcsimdraw.global.Point;
 import jatcsimdraw.mainRadar.settings.Settings;
-import jatcismdraw.global.radarBase.Canvas;
-import jatcismdraw.global.radarBase.Painter;
-import jatcismdraw.global.radarBase.Radar;
-import jatcismdraw.global.radarBase.Visualiser;
-import jatcismdraw.global.radarBase.BasicPainter;
-import jatcismdraw.global.radarBase.BasicVisualiser;
+import jatcsimdraw.global.radarBase.Canvas;
+import jatcsimdraw.global.radarBase.Painter;
+import jatcsimdraw.global.radarBase.Radar;
+import jatcsimdraw.global.radarBase.Visualiser;
+import jatcsimdraw.global.radarBase.BasicPainter;
+import jatcsimdraw.global.radarBase.BasicVisualiser;
 import jatcsimlib.events.EventListener;
 import jatcsimlib.events.EventManager;
 import jatcsimdraw.global.events.EMouseEvent;

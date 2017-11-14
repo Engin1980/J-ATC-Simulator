@@ -1,4 +1,4 @@
-package jatcismdraw.global.radarBase;
+package jatcsimdraw.global.radarBase;
 
 import jatcsimlib.messaging.IMessageParticipant;
 

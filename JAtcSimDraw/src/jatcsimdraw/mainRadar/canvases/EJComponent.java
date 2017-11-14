@@ -24,7 +24,10 @@ public class EJComponent extends JComponent {
   public void paint(Graphics g) {
     paintEM.raise(g);
   }
-  
+
+  /**
+   * Event raised when paint event over this JComponent is invoked.
+   */
   public final EventManager<EJComponent, EventListener<EJComponent, Graphics>, Graphics> paintEM = 
       new EventManager(this);
 }

@@ -5,8 +5,8 @@
  */
 package jatcsimdraw.mainRadar;
 
-import jatcismdraw.global.radarBase.VisualisedMessage;
-import jatcismdraw.global.radarBase.Visualiser;
+import jatcsimdraw.global.radarBase.VisualisedMessage;
+import jatcsimdraw.global.radarBase.Visualiser;
 import jatcsimlib.Simulation;
 import jatcsimlib.airplanes.Airplane;
 import jatcsimlib.atcs.Atc;
