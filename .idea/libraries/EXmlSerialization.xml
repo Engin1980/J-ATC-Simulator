@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="EXmlSerialization">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../Java-Simple-Xml-Serialization/out/artifacts/EXmlSerialization_jar/EXmlSerialization.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

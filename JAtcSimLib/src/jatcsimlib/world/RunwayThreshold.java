@@ -10,7 +10,7 @@ import jatcsimlib.coordinates.Coordinates;
 import jatcsimlib.global.KeyItem;
 import jatcsimlib.global.KeyList;
 import jatcsimlib.global.MustBeBinded;
-import jatcsimlib.global.XmlOptional;
+import eng.eSystem.xmlSerialization.XmlOptional;
 
 /**
  *
@@ -20,7 +20,9 @@ public class RunwayThreshold extends MustBeBinded implements KeyItem<String> {
 
   private String name;
   private Coordinate coordinate;
+  @XmlOptional
   private final KeyList<Approach, Approach.eType> approaches = new KeyList();
+  @XmlOptional
   private final KeyList<Route, String> routes = new KeyList();
   private Runway parent;
   private double _course;

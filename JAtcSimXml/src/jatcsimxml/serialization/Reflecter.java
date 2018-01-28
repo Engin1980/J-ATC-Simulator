@@ -5,23 +5,20 @@
  */
 package jatcsimxml.serialization;
 
+import jatcsimlib.coordinates.Coordinate;
 import jatcsimlib.exceptions.ERuntimeException;
 import jatcsimlib.global.XmlOptional;
-import jatcsimlib.coordinates.Coordinate;
-import jatcsimlib.global.KeyItem;
-import jatcsimlib.world.Airport;
-import jatcsimlib.world.Runway;
-import jatcsimlib.world.RunwayThreshold;
 import jatcsimxml.exceptions.XmlInvalidDataException;
-import java.awt.Color;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import java.awt.*;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 /**
  *
@@ -115,7 +112,7 @@ public class Reflecter {
       //field.set(this, Enum.valueOf((Class<Enum>) field.getType(), value));
       ret = Enum.valueOf((Class<Enum>) type, value);
     } else {
-      switch (type.getSimpleName()) {
+      switch (type.getName()) {
         case "int":
         case "Integer":
           ret = Integer.parseInt(value);

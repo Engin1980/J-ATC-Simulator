@@ -9,7 +9,7 @@ import jatcsimlib.coordinates.Coordinates;
 import jatcsimlib.exceptions.EBindException;
 import jatcsimlib.global.KeyItem;
 import jatcsimlib.global.MustBeBinded;
-import jatcsimlib.global.XmlOptional;
+import eng.eSystem.xmlSerialization.XmlOptional;
 import jatcsimlib.speaking.IFromAtc;
 import jatcsimlib.speaking.SpeechList;
 import jatcsimlib.speaking.ICommand;

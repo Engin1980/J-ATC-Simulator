@@ -13,5 +13,8 @@
     <orderEntry type="module" module-name="JAtcSimLib" />
     <orderEntry type="module" module-name="JAtcSimDraw" />
     <orderEntry type="module" module-name="JAtcSimXml" />
+    <orderEntry type="module" module-name="SwingRadar" />
+    <orderEntry type="module" module-name="JAtcSimRadarBase" />
+    <orderEntry type="library" name="EXmlSerialization" level="project" />
   </component>
 </module>

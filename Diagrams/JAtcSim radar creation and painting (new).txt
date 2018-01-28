@@ -24,13 +24,25 @@ deactivate Pack
 
 note over System, Pack, frmMain, BasicRadar, PaintManager  : R e d r a w i n g
 
-System -->> frmMain : secondElapsed()
+alt Component repaint request
 
+System -->> EJComponent  : <<event>>\npaint()
+
+
+else Simulation second elapsed
+System -->> Pack : <<event>>\nsecondElapsed()
+Pack ->+ frmMain : elapseSecond()
 note over frmMain : checks for radar update interval here
-frmMain -->> EJComponent : paint()
+frmMain ->+ EJComponent : repaint()
+deactivate frmMain
+EJComponent -->> EJComponent : <<event>>\npaint
+deactivate EJComponent
+end
+
 EJComponent -->> EJComponentCanvas :  <<event>>\npaint()
 EJComponentCanvas -->> BasicRadar : <<event>>\nonPaint()
 BasicRadar -->>+ BasicRadar : <<event>>\nonPaint()
+
 BasicRadar ->+ PaintManager: draw()
 PaintManager -> visualiser : beforeDraw()
 
@@ -61,5 +73,7 @@ note over BasicRadar, PaintManager: Other updating stuff\nOther updating stuff\n
 
 
 PaintManager -> visualiser : afterDraw()
+
+
 
 

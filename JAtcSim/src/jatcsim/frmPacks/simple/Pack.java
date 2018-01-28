@@ -65,6 +65,10 @@ public class Pack extends jatcsim.frmPacks.Pack {
     this.frmMain = new FrmMain();
     frmMain.init(this);
 
+    // New test
+    FrmTestNewRadar newRadar = new FrmTestNewRadar();
+    newRadar.init(this);
+
     this.frmList = new FrmFlightList();
     frmList.init(sim);
     this.frmList.setSize(this.frmList.getSize().width, frmMain.getSize().height);

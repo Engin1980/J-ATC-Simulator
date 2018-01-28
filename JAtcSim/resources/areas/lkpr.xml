@@ -269,9 +269,9 @@
         <hold navaidName="BOGTU" inboundRadial="042" turn="left" />
         <hold navaidName="EKMIT" inboundRadial="042" turn="right" />
       </holds> 
-      <VfrPoints>
+      <vfrPoints>
         <!-- TODO -->
-      </VfrPoints>    
+      </vfrPoints>
     </airport>
   </airports>
   <navaids>

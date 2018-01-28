@@ -5,6 +5,10 @@
  */
 package jatcsim;
 
+import JAtcSim.radarBase.DisplaySettings;
+import JAtcSim.radarBase.parsing.RadarColorParser;
+import JAtcSim.radarBase.parsing.RadarFontParser;
+import eng.eSystem.xmlSerialization.XmlListItemMapping;
 import jatcsim.frmPacks.Pack;
 import jatcsim.startup.StartupSettings;
 import jatcsim.startup.StartupWizard;
@@ -15,7 +19,6 @@ import jatcsimlib.airplanes.AirplaneTypes;
 import jatcsimlib.exceptions.ERuntimeException;
 import jatcsimlib.traffic.CustomTraffic;
 import jatcsimlib.traffic.TestTrafficOneApproach;
-import jatcsimlib.traffic.TestTrafficOneDeparture;
 import jatcsimlib.traffic.Traffic;
 import jatcsimlib.weathers.Weather;
 import jatcsimlib.weathers.WeatherProvider;
@@ -112,12 +115,23 @@ public class JAtcSim {
     String fileName;
 
     try {
+
+      fileName =
+          "C:\\Users\\Marek Vajgl\\Documents\\IdeaProjects\\JAtcSimSolution\\JAtcSim\\resources\\settings\\radarDisplaySettings.xml";
+      failMsg = "Failed to load radar display settings from " + fileName;
+      DisplaySettings ds = loadNewDisplaySettings(fileName);
+
       fileName = sett.getAreaXmlFile();
       failMsg = "Failed to load area from " + fileName;
-      area = Area.create();
-      ser.fillObject(
-          fileName,
-          area);
+      Area area = Area.create();
+      XmlLoading.lodaNewArea(fileName, area);
+
+//      fileName = sett.getAreaXmlFile();
+//      failMsg = "Failed to load area from " + fileName;
+//      area = Area.create();
+//      ser.fillObject(
+//          fileName,
+//          area);
 
       fileName = resFolder.toString() + "\\settings\\mainRadarSettings.xml";
       failMsg = "Failed to load area from " + fileName;
@@ -136,6 +150,34 @@ public class JAtcSim {
     } catch (Exception ex) {
       throw ex;
     }
+  }
+
+
+
+  private static DisplaySettings loadNewDisplaySettings(String fileName) {
+    eng.eSystem.xmlSerialization.Settings sett = new eng.eSystem.xmlSerialization.Settings();
+
+    // own parsers
+    sett.getValueParsers().add(new RadarColorParser());
+    sett.getElementParsers().add(new RadarFontParser());
+
+    eng.eSystem.xmlSerialization.XmlSerializer ser = new eng.eSystem.xmlSerialization.XmlSerializer(sett);
+    DisplaySettings ret;
+
+    ret = new DisplaySettings();
+    try {
+      ser.fillObject(fileName, ret);
+    } catch (Exception ex){
+      StringBuilder sb = new StringBuilder();
+      Throwable t = ex;
+      while (t != null){
+        sb.append(t.getMessage());
+        sb.append(" # # # # # ");
+        t = t.getCause();
+      }
+      throw new ERuntimeException(sb.toString(), ex);
+    }
+    return ret;
   }
 
   private static void initResourcesFolder() {

@@ -18,5 +18,6 @@
       </library>
     </orderEntry>
     <orderEntry type="library" name="JUnit 4" level="application" />
+    <orderEntry type="library" name="EXmlSerialization" level="project" />
   </component>
 </module>
