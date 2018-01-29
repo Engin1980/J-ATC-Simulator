@@ -5,15 +5,11 @@
  */
 package jatcsim;
 
-import JAtcSim.radarBase.DisplaySettings;
-import JAtcSim.radarBase.parsing.RadarColorParser;
-import JAtcSim.radarBase.parsing.RadarFontParser;
-import eng.eSystem.xmlSerialization.XmlListItemMapping;
+import JAtcSim.radarBase.global.SoundManager;
+import eng.eSystem.xmlSerialization.XmlSerializer;
 import jatcsim.frmPacks.Pack;
-import jatcsim.startup.StartupSettings;
+import jatcsim.startup.NewStartupSettings;
 import jatcsim.startup.StartupWizard;
-import jatcsimdraw.mainRadar.SoundManager;
-import jatcsimdraw.mainRadar.settings.Settings;
 import jatcsimlib.Simulation;
 import jatcsimlib.airplanes.AirplaneTypes;
 import jatcsimlib.exceptions.ERuntimeException;
@@ -24,7 +20,6 @@ import jatcsimlib.weathers.Weather;
 import jatcsimlib.weathers.WeatherProvider;
 import jatcsimlib.world.Airport;
 import jatcsimlib.world.Area;
-import jatcsimxml.serialization.Serializer;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -38,12 +33,11 @@ public class JAtcSim {
   private static final boolean FAST_START = true;
   private static final Traffic specificTraffic =
       new TestTrafficOneApproach();
-      //new TestTrafficOneDeparture();
-      //null;
+  //new TestTrafficOneDeparture();
+  //null;
 
-  public static java.io.File resFolder = null;
   private static Area area = null;
-  private static Settings displaySettings = null;
+  private static AppSettings appSettings = new AppSettings();
   private static AirplaneTypes types = null;
 
   /**
@@ -54,7 +48,8 @@ public class JAtcSim {
     initResourcesFolder();
 
     // startup wizard
-    StartupSettings sett = StartupSettings.tryLoad();
+    String file = appSettings.resFolder + "startupSettings.xml";
+    NewStartupSettings sett = XmlLoadHelper.loadStartupSettings(file);
     StartupWizard wizard = new StartupWizard(sett);
     if (FAST_START == false) {
       wizard.run();
@@ -63,7 +58,7 @@ public class JAtcSim {
       }
     }
 
-    sett.save();
+    XmlLoadHelper.saveStartupSettings(sett, file);
 
     // loading data from Xml files
     try {
@@ -77,17 +72,17 @@ public class JAtcSim {
     System.out.println("** Setting simulation");
 
     // area, airport and time
-    String icao = sett.getRecentIcao();
+    String icao = sett.recent.icao;
     Calendar simTime = Calendar.getInstance();
     updateCalendarToSimTime(simTime, sett);
     Airport aip = area.getAirports().get(icao);
 
     // weather
     Weather weather;
-    if (sett.isWeatherOnline()) {
+    if (sett.weather.useOnline) {
       weather = WeatherProvider.downloadAndDecodeMetar(aip.getIcao());
     } else {
-      weather = WeatherProvider.decodeMetar(sett.getWeatherUserMetar());
+      weather = WeatherProvider.decodeMetar(sett.weather.metar);
     }
 
     // traffic
@@ -95,110 +90,58 @@ public class JAtcSim {
     if (specificTraffic != null)
       traffic = specificTraffic;
     final Simulation sim = Simulation.create(
-        aip, types, weather, traffic, simTime, sett.getSimulationSecondLengthInMs());
-    SoundManager.init(resFolder.toString());
+        aip, types, weather, traffic, simTime, sett.simulation.secondLengthInMs);
+
+    // sound
+    SoundManager.init(appSettings.soundFolder);
 
     // starting pack & simulation
-    String packType = sett.getRadarPackClassName();
+    String packType = sett.radar.packClass;
     jatcsim.frmPacks.Pack simPack
         = createPackInstance(packType);
 
-    simPack.initPack(sim, area, displaySettings);
+    simPack.initPack(sim, area, appSettings);
     simPack.startPack();
   }
 
-  private static void loadDataFromXmlFiles(StartupSettings sett) throws Exception {
+
+
+
+  private static void loadDataFromXmlFiles(NewStartupSettings sett) throws Exception {
     System.out.println("*** Loading XML");
 
-    Serializer ser = new Serializer();
-    String failMsg;
-    String fileName;
+    String failMsg = null;
+    String fileName = null;
 
     try {
 
-      fileName =
-          "C:\\Users\\Marek Vajgl\\Documents\\IdeaProjects\\JAtcSimSolution\\JAtcSim\\resources\\settings\\radarDisplaySettings.xml";
-      failMsg = "Failed to load radar display settings from " + fileName;
-      DisplaySettings ds = loadNewDisplaySettings(fileName);
+//      fileName =
+//          resFolder.toString() + "\\settings\\radarDisplaySettings.xml";
+//          //"C:\\Users\\Marek Vajgl\\Documents\\IdeaProjects\\JAtcSimSolution\\JAtcSim\\resources\\settings\\radarDisplaySettings.xml";
+//      failMsg = "Failed to load radar display settings from " + fileName;
+//      JAtcSim.displaySettings = XmlLoadHelper.loadNewDisplaySettings(fileName);
 
-      fileName = sett.getAreaXmlFile();
+      fileName = sett.files.areaXmlFile;
       failMsg = "Failed to load area from " + fileName;
-      Area area = Area.create();
-      XmlLoading.lodaNewArea(fileName, area);
+      JAtcSim.area = XmlLoadHelper.loadNewArea(fileName);
 
-//      fileName = sett.getAreaXmlFile();
-//      failMsg = "Failed to load area from " + fileName;
-//      area = Area.create();
-//      ser.fillObject(
-//          fileName,
-//          area);
-
-      fileName = resFolder.toString() + "\\settings\\mainRadarSettings.xml";
-      failMsg = "Failed to load area from " + fileName;
-      displaySettings = new Settings();
-      ser.fillObject(
-          fileName,
-          displaySettings);
-
-      fileName = sett.getPlanesXmlFile();
+      fileName = sett.files.planesXmlFile;
       failMsg = "Failed to load plane types from " + fileName;
-      types = new AirplaneTypes();
-      ser.fillList(
-          fileName,
-          types);
+      JAtcSim.types = XmlLoadHelper.loadPlaneTypes(fileName);
 
     } catch (Exception ex) {
-      throw ex;
+      throw new ERuntimeException("Error reading XML file " + fileName + ". " + failMsg, ex);
     }
-  }
-
-
-
-  private static DisplaySettings loadNewDisplaySettings(String fileName) {
-    eng.eSystem.xmlSerialization.Settings sett = new eng.eSystem.xmlSerialization.Settings();
-
-    // own parsers
-    sett.getValueParsers().add(new RadarColorParser());
-    sett.getElementParsers().add(new RadarFontParser());
-
-    eng.eSystem.xmlSerialization.XmlSerializer ser = new eng.eSystem.xmlSerialization.XmlSerializer(sett);
-    DisplaySettings ret;
-
-    ret = new DisplaySettings();
-    try {
-      ser.fillObject(fileName, ret);
-    } catch (Exception ex){
-      StringBuilder sb = new StringBuilder();
-      Throwable t = ex;
-      while (t != null){
-        sb.append(t.getMessage());
-        sb.append(" # # # # # ");
-        t = t.getCause();
-      }
-      throw new ERuntimeException(sb.toString(), ex);
-    }
-    return ret;
   }
 
   private static void initResourcesFolder() {
     String curDir = System.getProperty("user.dir") + "\\";
-    java.io.File f;
-    f = new java.io.File(curDir + "\\resources");
-    if (f.exists()) {
-      resFolder = f;
-      return;
-    }
-    f = new java.io.File(curDir + "\\JatcSim\\resources");
-    if (f.exists()) {
-      resFolder = f;
-      return;
-    }
-
-    throw new ERuntimeException("Unable to find resources folder.");
+    appSettings.resFolder = curDir + "\\_SettingFiles\\";
+    appSettings.soundFolder =curDir + "\\_Sounds\\";
   }
 
-  private static void updateCalendarToSimTime(Calendar simTime, StartupSettings sett) {
-    String timeS = sett.getRecentTime();
+  private static void updateCalendarToSimTime(Calendar simTime, NewStartupSettings sett) {
+    String timeS = sett.recent.time;
     String[] pts = timeS.split(":");
     int hours = Integer.parseInt(pts[0]);
     int minutes = Integer.parseInt(pts[1]);
@@ -220,21 +163,21 @@ public class JAtcSim {
     return ret;
   }
 
-  private static Traffic getTrafficFromStartupSettings(StartupSettings sett) {
+  private static Traffic getTrafficFromStartupSettings(NewStartupSettings sett) {
     Traffic ret;
-    if (sett.isTrafficUseXml()) {
+    if (sett.traffic.useXml) {
       throw new UnsupportedOperationException("Traffic from XML files not supported yet.");
     } else {
       ret = new CustomTraffic(
-          sett.getTrafficCustomMovements(),
-          1 - sett.getTrafficCustomArrivals2Departures() / 10d, // 0-10 to 0.0-1.0
-          sett.getTrafficCustomMaxPlanes(),
-          sett.getTrafficCustomVfr2Ifr() / 10d, // dtto
-          sett.getTrafficCustomWeightTypeA(),
-          sett.getTrafficCustomWeightTypeB(),
-          sett.getTrafficCustomWeightTypeC(),
-          sett.getTrafficCustomWeightTypeD(),
-          sett.isTrafficCustomUsingExtendedCallsigns()
+          sett.traffic.movementsPerHour,
+          1 - sett.traffic.arrivals2departuresRatio / 10d, // 0-10 to 0.0-1.0
+          sett.traffic.maxPlanes,
+          sett.traffic.vfr2ifrRatio / 10d, // dtto
+          sett.traffic.weightTypeA,
+          sett.traffic.weightTypeB,
+          sett.traffic.weightTypeC,
+          sett.traffic.weightTypeD,
+          sett.traffic.useExtendedCallsigns
       );
     }
 

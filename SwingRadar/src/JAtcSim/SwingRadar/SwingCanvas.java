@@ -33,8 +33,8 @@ public class SwingCanvas implements JAtcSim.radarBase.ICanvas<JComponent> {
   private eng.eSystem.events.Event<ICanvas, EMouseEvent> mouseEvent =
       new eng.eSystem.events.Event<>(this);
 
-  private eng.eSystem.events.Event<ICanvas, Object> paintEvent =
-    new eng.eSystem.events.Event<>(this);
+  private eng.eSystem.events.EventSimple<ICanvas> paintEvent =
+    new eng.eSystem.events.EventSimple<>(this);
 
   private Event<ICanvas, Object> keyEvent =
       new Event<>(this);
@@ -44,7 +44,7 @@ public class SwingCanvas implements JAtcSim.radarBase.ICanvas<JComponent> {
       @Override
       public void paint(Graphics g) {
         SwingCanvas.this.g = g;
-        SwingCanvas.this.paintEvent.raise(null);
+        SwingCanvas.this.paintEvent.raise();
       }
     };
     this.c.setFocusable(true);
@@ -249,6 +249,7 @@ public class SwingCanvas implements JAtcSim.radarBase.ICanvas<JComponent> {
     Point[] pts = getPositionsForText(lines, location);
     for (int i = 0; i < lines.size(); i++) {
       g.drawString(lines.get(i), pts[i].x, pts[i].y);
+      System.out.println("printed line " + lines.get(i));
     }
   }
 
@@ -268,6 +269,11 @@ public class SwingCanvas implements JAtcSim.radarBase.ICanvas<JComponent> {
   }
 
   @Override
+  public void invokeRepaint() {
+    this.c.repaint();
+  }
+
+  @Override
   public JComponent getGuiControl(){
     return this.c;
   }
@@ -278,7 +284,7 @@ public class SwingCanvas implements JAtcSim.radarBase.ICanvas<JComponent> {
   }
 
   @Override
-  public eng.eSystem.events.Event<ICanvas, Object> getPaintEvent() {
+  public eng.eSystem.events.EventSimple<ICanvas> getPaintEvent() {
     return paintEvent;
   }
 

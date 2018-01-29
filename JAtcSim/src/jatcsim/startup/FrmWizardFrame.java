@@ -31,7 +31,7 @@ public abstract class FrmWizardFrame extends JFrame {
     Cancel
   }
 
-  protected StartupSettings settings;
+  protected NewStartupSettings settings;
   private DialogResult dialogResult = DialogResult.Cancel;
 
   protected final Dimension BUTTON_DIMENSION = new Dimension(150, 1);
@@ -39,7 +39,7 @@ public abstract class FrmWizardFrame extends JFrame {
   protected final Dimension LARGE_FRAME_FIELD_DIMENSION = new Dimension(900, 1);
   protected final int distance = 10;
 
-  public void initSettings(StartupSettings settings) {
+  public void initSettings(NewStartupSettings settings) {
     this.settings = settings;
     fillBySettings();
   }

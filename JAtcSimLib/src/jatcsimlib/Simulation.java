@@ -15,7 +15,6 @@ import jatcsimlib.atcs.TowerAtc;
 import jatcsimlib.atcs.UserAtc;
 import jatcsimlib.coordinates.Coordinates;
 import jatcsimlib.events.EventListener;
-import jatcsimlib.events.EventManager;
 import jatcsimlib.global.ERandom;
 import jatcsimlib.global.ETime;
 import jatcsimlib.global.ReadOnlyList;
@@ -46,7 +45,9 @@ public class Simulation {
   /**
    * Public event informing surrounding about elapsed second.
    */
-  public EventListener<Simulation, Object> secondElapsed = null;
+  //public EventListener<Simulation, Object> secondElapsedEvent = null;
+  public eng.eSystem.events.EventSimple<Simulation> secondElapsedEvent = new
+      eng.eSystem.events.EventSimple<>(this);
 
   /**
    * Internal timer used to make simulation ticks.
@@ -55,9 +56,6 @@ public class Simulation {
     @Override
     public void raise(Timer parent, Object e) {
       Simulation.this.elapseSecond();
-      if (secondElapsed != null) {
-        secondElapsed.raise(Simulation.this, null);
-      }
     }
   });
   public static final ERandom rnd = new ERandom();
@@ -70,10 +68,7 @@ public class Simulation {
   private final UserAtc appAtc;
   private final TowerAtc twrAtc;
   private final CenterAtc ctrAtc;
-
   private final Traffic traffic;
-
-  private final EventManager<Simulation, EventListener<Simulation, Simulation>, Simulation> tickEM = new EventManager(this);
 
   //TODO shouldn't this be private?
   public AirplaneTypes getPlaneTypes() {
@@ -200,8 +195,10 @@ public class Simulation {
     long end = System.currentTimeMillis();
     //System.out.println("## Sim elapse second: \t" + (end - start) + " at " + now.toString());
 
-    tickEM.raise(this);
     isBusy = false;
+
+    // raises event
+    this.secondElapsedEvent.raise();
   }
 
   private void updatePlanes() {

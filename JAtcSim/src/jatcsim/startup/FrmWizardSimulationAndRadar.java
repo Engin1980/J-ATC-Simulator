@@ -3,7 +3,6 @@ package jatcsim.startup;
 import jatcsim.startup.extenders.NumericUpDownExtender;
 
 import javax.swing.*;
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,6 +12,12 @@ import java.util.List;
 public class FrmWizardSimulationAndRadar extends FrmWizardFrame {
 
   private static List<String> packList = new ArrayList();
+  // Variables declaration - do not modify//GEN-BEGIN:variables
+  private javax.swing.JButton btnContinue;
+  private javax.swing.JLabel lblSimulationSpeed;
+  private javax.swing.JSpinner nudSecondLengthInMs;
+  // End of variables declaration//GEN-END:variables
+  private NumericUpDownExtender nudeSecondLength;
 
   static {
     packList.add("jatcsim.frmPacks.simple.Pack");
@@ -70,22 +75,15 @@ public class FrmWizardSimulationAndRadar extends FrmWizardFrame {
     super.closeDialogIfValid();
   }//GEN-LAST:event_btnContinueActionPerformed
 
-  // Variables declaration - do not modify//GEN-BEGIN:variables
-  private javax.swing.JButton btnContinue;
-  private javax.swing.JLabel lblSimulationSpeed;
-  private javax.swing.JSpinner nudSecondLengthInMs;
-  // End of variables declaration//GEN-END:variables
-  private NumericUpDownExtender nudeSecondLength;
-
   @Override
   protected void fillBySettings() {
-    this.nudeSecondLength.setValue(settings.getSimulationSecondLengthInMs());
+    this.nudeSecondLength.setValue(settings.simulation.secondLengthInMs);
   }
 
   @Override
   protected boolean isValidated() {
 
-    settings.setSimulationSecondLengthInMs(this.nudeSecondLength.getValue());
+    settings.simulation.secondLengthInMs = this.nudeSecondLength.getValue();
 
     return true;
   }

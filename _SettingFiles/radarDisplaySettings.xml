@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE settings SYSTEM "settings.dtd">
 
 <settings refreshRate="3">
 
@@ -19,8 +18,8 @@
 
   <mapBackcolor>000000</mapBackcolor>
 
-  <starColor color="990099" width="1" />
-  <sidColor color="009900" width="1" />
+  <star color="990099" width="1" />
+  <sid color="009900" width="1" />
 
   <!-- style: 0=plain, 1=bold, 2=italic -->
   <atc color="AAAAAA" >

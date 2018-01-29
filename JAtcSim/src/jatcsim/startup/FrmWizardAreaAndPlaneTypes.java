@@ -1,12 +1,11 @@
 package jatcsim.startup;
 
+import jatcsim.XmlLoadHelper;
 import jatcsim.startup.extenders.XmlFileSelectorExtender;
 import jatcsimlib.airplanes.AirplaneTypes;
 import jatcsimlib.world.Area;
-import jatcsimxml.serialization.Serializer;
 
 import javax.swing.*;
-import java.awt.*;
 
 public class FrmWizardAreaAndPlaneTypes extends FrmWizardFrame {
 
@@ -83,10 +82,8 @@ public class FrmWizardAreaAndPlaneTypes extends FrmWizardFrame {
     boolean ret;
     String fileName = txtAreaXml.getText();
 
-    Area area = Area.create();
-    Serializer ser = new Serializer();
     try {
-      ser.fillObject(fileName, area);
+      Area area = XmlLoadHelper.loadNewArea(fileName);
       ret = true;
     } catch (Exception ex) {
       MessageBox.show("Unable to load area file " + fileName + ". Reason: " + ex.getMessage(), "Error...");
@@ -99,10 +96,8 @@ public class FrmWizardAreaAndPlaneTypes extends FrmWizardFrame {
     boolean ret;
     String fileName = txtTypesXml.getText();
 
-    AirplaneTypes types = new AirplaneTypes();
-    Serializer ser = new Serializer();
     try {
-      ser.fillList(fileName, types);
+      AirplaneTypes types = XmlLoadHelper.loadPlaneTypes(fileName);
       ret = true;
     } catch (Exception ex) {
       MessageBox.show("Unable to load plane types file " + fileName + ". Reason: " + ex.getMessage(), "Error...");
@@ -113,8 +108,8 @@ public class FrmWizardAreaAndPlaneTypes extends FrmWizardFrame {
 
   @Override
   protected void fillBySettings() {
-    txtAreaXml.setText(settings.getAreaXmlFile());
-    txtTypesXml.setText(settings.getPlanesXmlFile());
+    txtAreaXml.setText(settings.files.areaXmlFile);
+    txtTypesXml.setText(settings.files.planesXmlFile);
   }
 
   @Override
@@ -126,8 +121,8 @@ public class FrmWizardAreaAndPlaneTypes extends FrmWizardFrame {
       return false;
     }
 
-    this.settings.setAreaXmlFile(txtAreaXml.getText());
-    this.settings.setPlanesXmlFile(txtTypesXml.getText());
+    this.settings.files.areaXmlFile = txtAreaXml.getText();
+    this.settings.files.planesXmlFile= txtTypesXml.getText();
 
     return true;
   }

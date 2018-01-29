@@ -5,6 +5,7 @@
  */
 package jatcsim.startup;
 
+import jatcsim.XmlLoadHelper;
 import jatcsim.startup.extenders.TimeExtender;
 import jatcsimlib.global.TryResult;
 import jatcsimlib.weathers.MetarDecoder;
@@ -13,7 +14,6 @@ import jatcsimlib.weathers.MetarDownloaderNoaaGov;
 import jatcsimlib.weathers.Weather;
 import jatcsimlib.world.Airport;
 import jatcsimlib.world.Area;
-import jatcsimxml.serialization.Serializer;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -61,11 +61,11 @@ public class FrmWizardAirportTimeAndWeather extends FrmWizardFrame {
 
   private void btnDownloadMetarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDownloadMetarActionPerformed
     MetarDownloader d = new MetarDownloaderNoaaGov();
-    TryResult<String> res = d.tryDownloadMetar(settings.getRecentIcao());
+    TryResult<String> res = d.tryDownloadMetar(settings.recent.icao);
     if (res.isSuccess)
       txtMetar.setText(res.result);
     else
-      MessageBox.show("Failed to download METAR for " + settings.getRecentIcao() + ". Reason: " + res.exceptionOrNull.getMessage(), "Error downloading METAR...");
+      MessageBox.show("Failed to download METAR for " + settings.recent.icao + ". Reason: " + res.exceptionOrNull.getMessage(), "Error downloading METAR...");
   }//GEN-LAST:event_btnDownloadMetarActionPerformed
 
   private javax.swing.JButton btnContinue;
@@ -211,20 +211,18 @@ public class FrmWizardAirportTimeAndWeather extends FrmWizardFrame {
   protected void fillBySettings() {
     fillAirportsComboBox();
 
-    txtTime.setText(settings.getRecentTime());
-    txtMetar.setText(settings.getWeatherUserMetar());
+    txtTime.setText(settings.recent.time.toString());
+    txtMetar.setText(settings.weather.metar);
 
-    cmbWeatherUpdate.setSelectedIndex(settings.getWeatherUserChanges());
-    if (settings.isWeatherOnline())
+    cmbWeatherUpdate.setSelectedIndex(settings.weather.userChanges);
+    if (settings.weather.useOnline)
       rdbWeatherFromWeb.setSelected(true);
     else
       rdbWeatherFromUser.setSelected(true);
   }
 
   private void fillAirportsComboBox() {
-    Area area = Area.create();
-    Serializer ser = new Serializer();
-    ser.fillObject(settings.getAreaXmlFile(), area);
+    Area area = XmlLoadHelper.loadNewArea(settings.files.areaXmlFile);
 
     int selectedIndex = -1;
     String[] data = new String[area.getAirports().size()];
@@ -232,7 +230,7 @@ public class FrmWizardAirportTimeAndWeather extends FrmWizardFrame {
       Airport aip = area.getAirports().get(i);
       data[i] = aip.getIcao() + " - " + aip.getName();
 
-      if (aip.getIcao().equals(settings.getRecentIcao()))
+      if (aip.getIcao().equals(settings.recent.icao))
         selectedIndex = i;
     }
     ComboBoxModel<String> model = new DefaultComboBoxModel<>(data);
@@ -272,13 +270,13 @@ public class FrmWizardAirportTimeAndWeather extends FrmWizardFrame {
       return false;
     }
 
-    this.settings.setRecentTime(txtTime.getText());
+    this.settings.recent.time = txtTime.getText();
     String selIcao = (String) cmbAirports.getSelectedItem();
     selIcao = selIcao.substring(0, 4);
-    this.settings.setRecentIcao(selIcao);
-    this.settings.setWeatherOnline(rdbWeatherFromWeb.isSelected());
-    this.settings.setWeatherUserChanges(cmbWeatherUpdate.getSelectedIndex());
-    this.settings.setWeatherUserMetar(txtMetar.getText());
+    this.settings.recent.icao = selIcao;
+    this.settings.weather.useOnline = rdbWeatherFromWeb.isSelected();
+    this.settings.weather.userChanges = cmbWeatherUpdate.getSelectedIndex();
+    this.settings.weather.metar = txtMetar.getText();
 
     return true;
   }

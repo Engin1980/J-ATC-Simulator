@@ -5,22 +5,17 @@
  */
 package jatcsim.frmPacks.simple;
 
-import jatcsimdraw.global.events.WithCoordinateEvent;
-import jatcsimdraw.mainRadar.BasicRadar;
-import jatcsimdraw.mainRadar.canvases.EJComponent;
-import jatcsimdraw.mainRadar.canvases.EJComponentCanvas;
-import jatcsimdraw.mainRadar.settings.Settings;
-import jatcsimlib.Simulation;
+import JAtcSim.SwingRadar.SwingCanvas;
+import JAtcSim.radarBase.BehaviorSettings;
 import jatcsimlib.atcs.Atc;
 import jatcsimlib.atcs.UserAtc;
-import jatcsimlib.events.EventListener;
 import jatcsimlib.exceptions.ERuntimeException;
-import jatcsimlib.world.Airport;
-import jatcsimlib.world.Area;
+import jatcsimlib.speaking.formatting.LongFormatter;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 /**
  * @author Marek
@@ -31,9 +26,9 @@ public class FrmMain extends javax.swing.JFrame {
   private JPanel pnlContent;
   private Pack parent;
   private CommandJTextWraper wrp;
-  private EJComponent radarComponent;
   private int refreshRate;
   private int refreshRateCounter = 0;
+  private JAtcSim.radarBase.Radar radar;
 
   public FrmMain() {
     initComponents();
@@ -86,11 +81,6 @@ public class FrmMain extends javax.swing.JFrame {
     });
   }
 
-  private void btn_click(ActionEvent actionEvent) {
-    System.out.println(this.radarComponent.getSize());
-    this.radarComponent.repaint();
-  }
-
   private void jTxtInputKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTxtInputKeyPressed
     if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
       String msg = jTxtInput.getText();
@@ -108,27 +98,28 @@ public class FrmMain extends javax.swing.JFrame {
   void init(Pack pack) {
 
     this.parent = pack;
-    this.refreshRate = parent.getDisplaySettings().getRefreshRate();
+    this.refreshRate = parent.getDisplaySettings().refreshRate;
     this.refreshRateCounter = 0;
 
-    Airport aip = this.parent.getSim().getActiveAirport();
+    // behavior settings for this radar
+    BehaviorSettings behSett = new BehaviorSettings(true, new LongFormatter(),10);
 
     // generování hlavního radaru
-    EJComponentCanvas canvas = new EJComponentCanvas();
-    BasicRadar r = new BasicRadar(
-        canvas, aip.getRadarRange(),
-        this.parent.getSim(), this.parent.getArea(), this.parent.getDisplaySettings(), true);
-    this.radarComponent = canvas.getEJComponent();
+    SwingCanvas canvas = new SwingCanvas();
+    this.radar = new JAtcSim.radarBase.Radar(
+        canvas,
+        this.parent.getSim().getActiveAirport().getRadarRange(),
+        this.parent.getSim(), this.parent.getArea(),
+        this.parent.getDisplaySettings(), behSett
+    );
 
-    // předávání kláves do textového pole z radaru
-    this.radarComponent.addKeyListener(new MyKeyListener(this.jTxtInput));
+    canvas.getGuiControl().addKeyListener(new MyKeyListener(this.jTxtInput));
+    this.pnlContent.add(canvas.getGuiControl());
+
     // zabalení chování textového pole s příkazy
     wrp = new CommandJTextWraper(jTxtInput);
 
-    // otevření hlavního formuláře
-    this.pnlContent.add(this.radarComponent);
     this.jTxtInput.requestFocus();
-    this.setVisible(true);
   }
 
   private boolean sendMessage(String msg) {
@@ -194,7 +185,7 @@ public class FrmMain extends javax.swing.JFrame {
     this.refreshRateCounter++;
     if (this.refreshRateCounter >= this.refreshRate) {
       this.refreshRateCounter = 0;
-      radarComponent.repaint();
+      radar.redraw();
     }
   }
 }

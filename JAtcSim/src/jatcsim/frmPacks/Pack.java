@@ -6,6 +6,7 @@
 
 package jatcsim.frmPacks;
 
+import jatcsim.AppSettings;
 import jatcsimdraw.mainRadar.settings.Settings;
 import jatcsimlib.Simulation;
 import jatcsimlib.events.EventListener;
@@ -17,7 +18,7 @@ import jatcsimlib.world.Area;
  * @author Marek
  */
 public abstract class Pack {
-  public abstract void initPack(Simulation sim, Area area, Settings displSettings);
+  public abstract void initPack(Simulation sim, Area area, AppSettings appSettings);
   public abstract void startPack();
 
   public abstract EventManager<Pack, EventListener, Object> getElapseSecondEvent();

@@ -267,19 +267,19 @@ public class FrmWizardTraffic extends FrmWizardFrame {
   @Override
   protected void fillBySettings() {
 
-    rdbCustom.setSelected(settings.isTrafficUseXml() == false);
-    rdbXml.setSelected(settings.isTrafficUseXml());
-    chkAllowDelays.setSelected(settings.isTrafficXmlDelayAllowed());
-    txtTrafficXmlFile.setText(settings.getTrafficXmlFile());
-    nudMovements.setValue(settings.getTrafficCustomMovements());
-    sldArrivalsDepartures.setValue(settings.getTrafficCustomArrivals2Departures());
-    sldVfrIfr.setValue(settings.getTrafficCustomVfr2Ifr());
-    sldA.setValue(settings.getTrafficCustomWeightTypeA());
-    sldB.setValue(settings.getTrafficCustomWeightTypeB());
-    sldC.setValue(settings.getTrafficCustomWeightTypeC());
-    sldD.setValue(settings.getTrafficCustomWeightTypeD());
-    chkCustomExtendedCallsigns.setSelected(settings.isTrafficCustomUsingExtendedCallsigns());
-    nudMaxPlanes.setValue(settings.getTrafficCustomMaxPlanes());
+    rdbCustom.setSelected(settings.traffic.useXml == false);
+    rdbXml.setSelected(settings.traffic.useXml);
+    chkAllowDelays.setSelected(settings.traffic.delayAllowed);
+    txtTrafficXmlFile.setText(settings.files.trafficXmlFile);
+    nudMovements.setValue(settings.traffic.movementsPerHour);
+    sldArrivalsDepartures.setValue(settings.traffic.arrivals2departuresRatio);
+    sldVfrIfr.setValue(settings.traffic.vfr2ifrRatio);
+    sldA.setValue(settings.traffic.weightTypeA);
+    sldB.setValue(settings.traffic.weightTypeB);
+    sldC.setValue(settings.traffic.weightTypeC);
+    sldD.setValue(settings.traffic.weightTypeD);
+    chkCustomExtendedCallsigns.setSelected(settings.traffic.useExtendedCallsigns);
+    nudMaxPlanes.setValue(settings.traffic.maxPlanes);
 
     updatePanelAccess();
   }
@@ -294,18 +294,18 @@ public class FrmWizardTraffic extends FrmWizardFrame {
       }
     }
 
-    settings.setTrafficUseXml(rdbXml.isSelected());
-    settings.setTrafficXmlDelayAllowed(chkAllowDelays.isSelected());
-    settings.setTrafficXmlFile(txtTrafficXmlFile.getText());
-    settings.setTrafficCustomMovements((int) nudMovements.getValue());
-    settings.setTrafficCustomArrivals2Departures(sldArrivalsDepartures.getValue());
-    settings.setTrafficCustomVfr2Ifr(sldVfrIfr.getValue());
-    settings.setTrafficCustomWeightTypeA(sldA.getValue());
-    settings.setTrafficCustomWeightTypeB(sldB.getValue());
-    settings.setTrafficCustomWeightTypeC(sldC.getValue());
-    settings.setTrafficCustomWeightTypeD(sldD.getValue());
-    settings.setTrafficCustomUsingExtendedCallsigns(chkCustomExtendedCallsigns.isSelected());
-    settings.setTrafficCustomMaxPlanes((int) nudMaxPlanes.getValue());
+    settings.traffic.useXml=rdbXml.isSelected();
+    settings.traffic.delayAllowed=chkAllowDelays.isSelected();
+    settings.files.trafficXmlFile=txtTrafficXmlFile.getText();
+    settings.traffic.movementsPerHour=(int) nudMovements.getValue();
+    settings.traffic.arrivals2departuresRatio=sldArrivalsDepartures.getValue();
+    settings.traffic.vfr2ifrRatio=sldVfrIfr.getValue();
+    settings.traffic.weightTypeA=sldA.getValue();
+    settings.traffic.weightTypeB=sldB.getValue();
+    settings.traffic.weightTypeC=sldC.getValue();
+    settings.traffic.weightTypeD=sldD.getValue();
+    settings.traffic.useExtendedCallsigns=chkCustomExtendedCallsigns.isSelected();
+    settings.traffic.maxPlanes=(int) nudMaxPlanes.getValue();
 
     return true;
   }

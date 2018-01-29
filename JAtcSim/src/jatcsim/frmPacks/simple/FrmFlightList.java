@@ -5,6 +5,7 @@
  */
 package jatcsim.frmPacks.simple;
 
+import eng.eSystem.events.IEventListenerSimple;
 import jatcsimlib.Simulation;
 import jatcsimlib.airplanes.Airplane;
 import jatcsimlib.exceptions.ENotSupportedException;
@@ -87,7 +88,7 @@ Simulation sim;
     Dimension d = new Dimension(ListItemComponent.WIDTH, ListItemComponent.HEIGHT * 5);
     this.setSize(d);
 
-    this.setVisible(true);
+    this.sim.secondElapsedEvent.add(o -> updateList());
   }
 
   private void updateList() {

@@ -6,10 +6,16 @@
 
 package jatcsim.frmPacks.simple;
 
+import JAtcSim.radarBase.DisplaySettings;
+import JAtcSim.radarBase.parsing.RadarColorParser;
+import JAtcSim.radarBase.parsing.RadarFontParser;
+import eng.eSystem.xmlSerialization.XmlSerializer;
+import jatcsim.AppSettings;
 import jatcsimdraw.mainRadar.settings.Settings;
 import jatcsimlib.Simulation;
 import jatcsimlib.events.EventListener;
 import jatcsimlib.events.EventManager;
+import jatcsimlib.exceptions.ERuntimeException;
 import jatcsimlib.traffic.Movement;
 import jatcsimlib.world.Area;
 
@@ -18,20 +24,66 @@ import jatcsimlib.world.Area;
  */
 public class Pack extends jatcsim.frmPacks.Pack {
 
+  private final EventManager<jatcsim.frmPacks.Pack, EventListener, Object> em = new EventManager<>(this);
   private Simulation sim;
   private Area area;
-  private Settings displaySettings;
+  private DisplaySettings displaySettings;
   private FrmMain frmMain;
   private FrmFlightList frmList;
   private FrmScheduledTrafficListing frmScheduledTrafficListing;
   private int lastMovementCount = 0;
 
-  private final EventManager<jatcsim.frmPacks.Pack, EventListener, Object> em = new EventManager<>(this);
-  public EventManager<jatcsim.frmPacks.Pack, EventListener, Object> getElapseSecondEvent(){
-    return em;
+  public Pack() {
   }
 
-  public Pack() {
+  @Override
+  public void initPack(Simulation sim, Area area, AppSettings appSettings) {
+
+    String fileName = appSettings.resFolder + "radarDisplaySettings.xml";
+    this.displaySettings = jatcsim.XmlLoadHelper.loadNewDisplaySettings(fileName);
+
+    // init sim & area
+    this.sim = sim;
+    this.area = area;
+
+    // create windows
+    this.frmMain = new FrmMain();
+    frmMain.init(this);
+
+    this.frmList = new FrmFlightList();
+    frmList.init(sim);
+
+    this.frmScheduledTrafficListing = new FrmScheduledTrafficListing();
+
+    // adjust window layout
+    this.frmList.setSize(this.frmList.getSize().width, frmMain.getSize().height);
+    this.frmMain.setLocation((this.frmList.getSize().width), this.frmMain.getLocation().y);
+
+    // show windows
+    this.frmList.setVisible(true);
+    this.frmMain.setVisible(true);
+    this.frmScheduledTrafficListing.setVisible(true);
+
+    // TODO update this
+//    // join listeners on second elapsed
+//    this.sim.secondElapsedEvent = new EventListener<Simulation, Object>() {
+//      @Override
+//      public void raise(Simulation parent, Object e) {
+//        frmMain.elapseSecond();
+//        frmList.elapseSecond();
+//        updateScheduledTrafficListing();
+//        em.raise(null);
+//      }
+//    };
+  }
+
+  @Override
+  public void startPack() {
+    this.sim.start();
+  }
+
+  public EventManager<jatcsim.frmPacks.Pack, EventListener, Object> getElapseSecondEvent() {
+    return em;
   }
 
   Simulation getSim() {
@@ -42,46 +94,8 @@ public class Pack extends jatcsim.frmPacks.Pack {
     return area;
   }
 
-  Settings getDisplaySettings() {
+  DisplaySettings getDisplaySettings() {
     return displaySettings;
-  }
-
-  @Override
-  public void initPack(Simulation sim, Area area, Settings displaySettings) {
-    this.sim = sim;
-    this.area = area;
-    this.displaySettings = displaySettings;
-    this.sim.secondElapsed = new EventListener<Simulation, Object>() {
-
-      @Override
-      public void raise(Simulation parent, Object e) {
-        frmMain.elapseSecond();
-        frmList.elapseSecond();
-        updateScheduledTrafficListing();
-        em.raise(null);
-      }
-    };
-
-    this.frmMain = new FrmMain();
-    frmMain.init(this);
-
-    // New test
-    FrmTestNewRadar newRadar = new FrmTestNewRadar();
-    newRadar.init(this);
-
-    this.frmList = new FrmFlightList();
-    frmList.init(sim);
-    this.frmList.setSize(this.frmList.getSize().width, frmMain.getSize().height);
-
-    this.frmMain.setLocation((this.frmList.getSize().width), this.frmMain.getLocation().y);
-
-    this.frmScheduledTrafficListing = new FrmScheduledTrafficListing();
-    this.frmScheduledTrafficListing.setVisible(true);
-  }
-
-  @Override
-  public void startPack() {
-    this.sim.start();
   }
 
   private void updateScheduledTrafficListing() {

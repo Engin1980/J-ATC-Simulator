@@ -19,5 +19,6 @@
     </orderEntry>
     <orderEntry type="library" name="JUnit 4" level="application" />
     <orderEntry type="library" name="EXmlSerialization" level="project" />
+    <orderEntry type="module" module-name="Events" />
   </component>
 </module>

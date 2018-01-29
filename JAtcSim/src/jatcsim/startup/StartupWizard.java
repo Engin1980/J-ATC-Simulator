@@ -12,12 +12,12 @@ package jatcsim.startup;
 public class StartupWizard {
 
   private boolean finished = false;
-  private StartupSettings settings = null;
+  private NewStartupSettings settings = null;
 
   public StartupWizard() {
   }
 
-  public StartupWizard(StartupSettings settings) {
+  public StartupWizard(NewStartupSettings settings) {
     this.settings = settings;
   }
 
@@ -26,7 +26,7 @@ public class StartupWizard {
     FrmWizardFrame.DialogResult res;
 
     if (settings == null) {
-      settings = new StartupSettings();
+      settings = new NewStartupSettings();
     }
 
     res = doStep1();
