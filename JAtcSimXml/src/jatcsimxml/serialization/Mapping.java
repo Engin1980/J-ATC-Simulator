@@ -6,24 +6,12 @@
 
 package jatcsimxml.serialization;
 
-import jatcsimdraw.mainRadar.settings.DispItem;
-import jatcsimdraw.mainRadar.settings.DispPlane;
-import jatcsimdraw.mainRadar.settings.DispText;
 import jatcsimlib.airplanes.AirplaneType;
 import jatcsimlib.atcs.AtcTemplate;
 import jatcsimlib.coordinates.Coordinate;
-import jatcsimlib.world.Airport;
-import jatcsimlib.world.Approach;
-import jatcsimlib.world.Border;
-import jatcsimlib.world.BorderArcPoint;
-import jatcsimlib.world.BorderExactPoint;
-import jatcsimlib.world.Navaid;
-import jatcsimlib.world.PublishedHold;
-import jatcsimlib.world.Route;
-import jatcsimlib.world.Runway;
-import jatcsimlib.world.RunwayThreshold;
-import jatcsimlib.world.VfrPoint;
-import java.awt.Color;
+import jatcsimlib.world.*;
+
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
