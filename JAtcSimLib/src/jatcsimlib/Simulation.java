@@ -5,6 +5,7 @@
  */
 package jatcsimlib;
 
+import eng.eSystem.events.IEventListenerSimple;
 import jatcsimlib.airplanes.Airplane;
 import jatcsimlib.airplanes.AirplaneList;
 import jatcsimlib.airplanes.AirplaneTypes;
@@ -14,7 +15,6 @@ import jatcsimlib.atcs.CenterAtc;
 import jatcsimlib.atcs.TowerAtc;
 import jatcsimlib.atcs.UserAtc;
 import jatcsimlib.coordinates.Coordinates;
-import jatcsimlib.events.EventListener;
 import jatcsimlib.global.ERandom;
 import jatcsimlib.global.ETime;
 import jatcsimlib.global.ReadOnlyList;
@@ -52,12 +52,7 @@ public class Simulation {
   /**
    * Internal timer used to make simulation ticks.
    */
-  private final Timer tmr = new Timer(new EventListener<Timer, Object>() {
-    @Override
-    public void raise(Timer parent, Object e) {
-      Simulation.this.elapseSecond();
-    }
-  });
+  private final Timer tmr = new Timer(o -> Simulation.this.elapseSecond());
   public static final ERandom rnd = new ERandom();
   private final ETime now;
   private int simulationSecondLengthInMs;

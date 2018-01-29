@@ -5,7 +5,8 @@
  */
 package jatcsimlib;
 
-import jatcsimlib.events.EventListener;
+import eng.eSystem.events.EventSimple;
+import eng.eSystem.events.IEventListenerSimple;
 import jatcsimlib.exceptions.ERuntimeException;
 import java.util.TimerTask;
 
@@ -16,10 +17,11 @@ import java.util.TimerTask;
 public class Timer {
 
   private java.util.Timer tmr = null;
-  private final EventListener<Timer, Object> tick;
+  private final EventSimple<Timer> tick = new EventSimple<>(this);
 
-  public Timer(EventListener<Timer, Object> tickEvent) {
-    this.tick = tickEvent;
+  public Timer(IEventListenerSimple<Timer> listener) {
+
+    this.tick.add(listener);
   }
 
   public synchronized void start(int ms) {
@@ -28,10 +30,9 @@ public class Timer {
     }
 
     TimerTask tt = new TimerTask() {
-
       @Override
       public void run() {
-        tick.raise(Timer.this, null);
+        tick.raise();
       }
     };
     

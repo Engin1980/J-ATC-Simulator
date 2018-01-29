@@ -7,13 +7,12 @@
 package jatcsimdraw.global.events;
 
 import jatcsimdraw.global.Point;
-import jatcsimlib.events.EventArgument;
 
 /**
  *
  * @author Marek
  */
-public class MousePointEventArg implements EventArgument {
+public class MousePointEventArg{
   public final Point point;
 
   public MousePointEventArg(Point point) {

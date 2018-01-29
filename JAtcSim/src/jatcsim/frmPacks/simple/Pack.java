@@ -7,15 +7,9 @@
 package jatcsim.frmPacks.simple;
 
 import JAtcSim.radarBase.DisplaySettings;
-import JAtcSim.radarBase.parsing.RadarColorParser;
-import JAtcSim.radarBase.parsing.RadarFontParser;
-import eng.eSystem.xmlSerialization.XmlSerializer;
+import eng.eSystem.events.EventSimple;
 import jatcsim.AppSettings;
-import jatcsimdraw.mainRadar.settings.Settings;
 import jatcsimlib.Simulation;
-import jatcsimlib.events.EventListener;
-import jatcsimlib.events.EventManager;
-import jatcsimlib.exceptions.ERuntimeException;
 import jatcsimlib.traffic.Movement;
 import jatcsimlib.world.Area;
 
@@ -24,7 +18,7 @@ import jatcsimlib.world.Area;
  */
 public class Pack extends jatcsim.frmPacks.Pack {
 
-  private final EventManager<jatcsim.frmPacks.Pack, EventListener, Object> em = new EventManager<>(this);
+  private final EventSimple<jatcsim.frmPacks.Pack> em = new EventSimple<>(this);
   private Simulation sim;
   private Area area;
   private DisplaySettings displaySettings;
@@ -82,7 +76,7 @@ public class Pack extends jatcsim.frmPacks.Pack {
     this.sim.start();
   }
 
-  public EventManager<jatcsim.frmPacks.Pack, EventListener, Object> getElapseSecondEvent() {
+  public EventSimple<jatcsim.frmPacks.Pack> getElapseSecondEvent() {
     return em;
   }
 

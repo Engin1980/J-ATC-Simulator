@@ -1,7 +1,6 @@
 package jatcsim.frmPacks.simple;
 
 
-import jatcsimdraw.mainRadar.canvases.EJComponent;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,7 +11,6 @@ public class FrmView extends JFrame {
   private Pack parent;
   private int refreshRate = 3;
   private int refreshRateCounter;
-  private EJComponent radarComponent;
   private JPanel pnlContent;
 
   public FrmView() {
@@ -39,7 +37,7 @@ public class FrmView extends JFrame {
     this.refreshRateCounter++;
     if (this.refreshRateCounter >= this.refreshRate) {
       this.refreshRateCounter = 0;
-      radarComponent.repaint();
+      //radarComponent.repaint();
     }
   }
 
