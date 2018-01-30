@@ -6,7 +6,7 @@ import eng.jAtcSim.radarBase.global.Font;
 import eng.jAtcSim.radarBase.global.Point;
 import eng.jAtcSim.radarBase.global.TextBlockLocation;
 import eng.jAtcSim.radarBase.global.events.EKeyboardModifier;
-import eng.jAtcSim.radarBase.global.events.EMouseEvent;
+import eng.jAtcSim.radarBase.global.events.EMouseEventArg;
 import eng.eSystem.events.Event;
 import eng.jAtcSim.lib.exceptions.ENotSupportedException;
 
@@ -30,7 +30,7 @@ public class SwingCanvas implements ICanvas<JComponent> {
 
   private Graphics g;
 
-  private eng.eSystem.events.Event<ICanvas, EMouseEvent> mouseEvent =
+  private eng.eSystem.events.Event<ICanvas, EMouseEventArg> mouseEvent =
       new eng.eSystem.events.Event<>(this);
 
   private eng.eSystem.events.EventSimple<ICanvas> paintEvent =
@@ -58,18 +58,18 @@ public class SwingCanvas implements ICanvas<JComponent> {
 
       @Override
       public void mouseClicked(MouseEvent e) {
-        EMouseEvent eme;
-        EMouseEvent.eType type;
+        EMouseEventArg eme;
+        EMouseEventArg.eType type;
         if (e.getClickCount() == 2) {
           // TODO dopsat key modifikatory alt/shift/ctr
-          type = EMouseEvent.eType.DoubleClick;
+          type = EMouseEventArg.eType.DoubleClick;
         } else {
-          type = EMouseEvent.eType.Click;
+          type = EMouseEventArg.eType.Click;
 
         }
-        eme = EMouseEvent.createClick(
+        eme = EMouseEventArg.createClick(
             e.getPoint().x, e.getPoint().y, type,
-            EMouseEvent.eButton.convertFromSpringButton(e.getButton()), EKeyboardModifier.NONE);
+            EMouseEventArg.eButton.convertFromSpringButton(e.getButton()), EKeyboardModifier.NONE);
         SwingCanvas.this.mouseEvent.raise(eme);
       }
 
@@ -92,9 +92,9 @@ public class SwingCanvas implements ICanvas<JComponent> {
           mouseClicked(e); // if move not enough big for drag, then it is a click
         }
 
-        EMouseEvent eme = EMouseEvent.createDrag(
+        EMouseEventArg eme = EMouseEventArg.createDrag(
             dragStartPoint.x, dragStartPoint.y, dragEndPoint.x, dragEndPoint.y,
-            EMouseEvent.eButton.convertFromSpringButton(e.getButton()),
+            EMouseEventArg.eButton.convertFromSpringButton(e.getButton()),
             new EKeyboardModifier(dragStartModifiers));
         dragStartModifiers = 0;
         dragStartPoint = null;
@@ -108,7 +108,7 @@ public class SwingCanvas implements ICanvas<JComponent> {
 
       @Override
       public void mouseMoved(MouseEvent e) {
-        EMouseEvent eme = EMouseEvent.createMove(e.getPoint().x, e.getPoint().y);
+        EMouseEventArg eme = EMouseEventArg.createMove(e.getPoint().x, e.getPoint().y);
         SwingCanvas.this.mouseEvent.raise(eme);
       }
     };
@@ -128,7 +128,7 @@ public class SwingCanvas implements ICanvas<JComponent> {
     mw = new MouseWheelListener() {
       @Override
       public void mouseWheelMoved(MouseWheelEvent e) {
-        EMouseEvent eme = EMouseEvent.createScroll(
+        EMouseEventArg eme = EMouseEventArg.createScroll(
             e.getPoint().x, e.getPoint().y, e.getWheelRotation());
         SwingCanvas.this.mouseEvent.raise(eme);
       }
@@ -279,7 +279,7 @@ public class SwingCanvas implements ICanvas<JComponent> {
   }
 
   @Override
-  public eng.eSystem.events.Event<ICanvas, EMouseEvent> getMouseEvent() {
+  public eng.eSystem.events.Event<ICanvas, EMouseEventArg> getMouseEvent() {
     return mouseEvent;
   }
 
