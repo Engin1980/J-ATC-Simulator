@@ -1,0 +1,36 @@
+title New redraw
+
+participant Simulation
+participant Form
+participant Radar
+participant GPSLayer
+participant XYLayer
+participant Canvas
+participant JComponent
+
+note over Simulation, Form, Radar: I N I T
+
+Form ->* JComponent : .ctor
+Form ->* Radar : .ctor(jComponent)
+Radar ->* GPSLayer : .ctor()
+Radar ->* XYLayer : .ctor()
+Radar ->* Canvas : .ctor()
+
+note over Simulation, Form, Radar: R E P A I N T
+
+alt OS repaint request
+JComponent -->> Radar : <<event>>\npaint()
+else Simulation update
+Simulation -->> Radar : <<event>>\nsecondElapsed()
+end
+
+Radar ->+ GPSLayer : draw with GPS coordinates
+GPSLayer ->+ GPSLayer : convert GPS to XY coordinates
+deactivate GPSLayer
+GPSLayer ->+ XYLayer : draw with XY coordinates
+XYLayer ->+ Canvas : drawLineOrSt
+Canvas ->+ JComponent : draw....
+deactivate JComponent
+deactivate Canvas
+deactivate XYLayer
+deactivate GPSLayer
