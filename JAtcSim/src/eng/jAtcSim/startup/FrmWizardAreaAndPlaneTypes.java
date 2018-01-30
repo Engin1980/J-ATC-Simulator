@@ -2,8 +2,8 @@ package eng.jAtcSim.startup;
 
 import eng.jAtcSim.XmlLoadHelper;
 import eng.jAtcSim.startup.extenders.XmlFileSelectorExtender;
-import jatcsimlib.airplanes.AirplaneTypes;
-import jatcsimlib.world.Area;
+import eng.jAtcSim.lib.airplanes.AirplaneTypes;
+import eng.jAtcSim.lib.world.Area;
 
 import javax.swing.*;
 

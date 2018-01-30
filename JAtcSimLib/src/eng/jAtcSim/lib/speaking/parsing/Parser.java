@@ -3,11 +3,11 @@ package eng.jAtcSim.lib.speaking.parsing;
 import eng.jAtcSim.lib.speaking.ISpeech;
 import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
-import jatcsimlib.speaking.IFromAtc;
-import jatcsimlib.speaking.ISpeech;
-import jatcsimlib.speaking.SpeechList;
-import jatcsimlib.speaking.ICommand;
-import jatcsimlib.speaking.fromAtc.IAtcCommand;
+import eng.jAtcSim.lib.speaking.IFromAtc;
+import eng.jAtcSim.lib.speaking.ISpeech;
+import eng.jAtcSim.lib.speaking.SpeechList;
+import eng.jAtcSim.lib.speaking.ICommand;
+import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
 
 public abstract class Parser {
   public abstract ISpeech parseOne(String text);

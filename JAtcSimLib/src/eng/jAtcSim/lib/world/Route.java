@@ -5,6 +5,7 @@
  */
 package eng.jAtcSim.lib.world;
 
+import eng.eSystem.xmlSerialization.XmlOptional;
 import eng.jAtcSim.lib.coordinates.Coordinates;
 import eng.jAtcSim.lib.exceptions.EBindException;
 import eng.jAtcSim.lib.global.KeyItem;
@@ -15,19 +16,8 @@ import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ProceedDirectCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ToNavaidCommand;
-import jatcsimlib.coordinates.Coordinates;
-import jatcsimlib.exceptions.EBindException;
-import jatcsimlib.global.KeyItem;
-import jatcsimlib.global.MustBeBinded;
-import eng.eSystem.xmlSerialization.XmlOptional;
-import jatcsimlib.speaking.IFromAtc;
-import jatcsimlib.speaking.SpeechList;
-import jatcsimlib.speaking.ICommand;
-import jatcsimlib.speaking.fromAtc.IAtcCommand;
-import jatcsimlib.speaking.fromAtc.commands.ProceedDirectCommand;
-import jatcsimlib.speaking.fromAtc.commands.ToNavaidCommand;
-import jatcsimlib.speaking.parsing.Parser;
-import jatcsimlib.speaking.parsing.shortParsing.ShortParser;
+import eng.jAtcSim.lib.speaking.parsing.Parser;
+import eng.jAtcSim.lib.speaking.parsing.shortParsing.ShortParser;
 
 import java.util.ArrayList;
 import java.util.List;

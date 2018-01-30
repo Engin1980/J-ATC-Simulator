@@ -5,16 +5,16 @@
  */
 package eng.jAtcSim.lib;
 
-import jatcsimlib.airplanes.Airplane;
-import jatcsimlib.atcs.*;
-import jatcsimlib.exceptions.ENotSupportedException;
-import jatcsimlib.global.ERandom;
-import jatcsimlib.global.ETime;
-import jatcsimlib.global.ReadOnlyList;
-import jatcsimlib.weathers.Weather;
-import jatcsimlib.world.Airport;
-import jatcsimlib.world.Area;
-import jatcsimlib.world.RunwayThreshold;
+import eng.jAtcSim.lib.airplanes.Airplane;
+import eng.jAtcSim.lib.atcs.*;
+import eng.jAtcSim.lib.exceptions.ENotSupportedException;
+import eng.jAtcSim.lib.global.ERandom;
+import eng.jAtcSim.lib.global.ETime;
+import eng.jAtcSim.lib.global.ReadOnlyList;
+import eng.jAtcSim.lib.weathers.Weather;
+import eng.jAtcSim.lib.world.Airport;
+import eng.jAtcSim.lib.world.Area;
+import eng.jAtcSim.lib.world.RunwayThreshold;
 
 /**
  * @author Marek
@@ -58,7 +58,7 @@ public class Acc {
     return Acc.aip;
   }
 
-  public static jatcsimlib.messaging.Messenger messenger() {
+  public static eng.jAtcSim.lib.messaging.Messenger messenger() {
     return sim().getMessenger();
   }
 

@@ -8,7 +8,7 @@ import eng.jAtcSim.radarBase.global.TextBlockLocation;
 import eng.jAtcSim.radarBase.global.events.EKeyboardModifier;
 import eng.jAtcSim.radarBase.global.events.EMouseEvent;
 import eng.eSystem.events.Event;
-import jatcsimlib.exceptions.ENotSupportedException;
+import eng.jAtcSim.lib.exceptions.ENotSupportedException;
 
 import javax.swing.*;
 import java.awt.*;

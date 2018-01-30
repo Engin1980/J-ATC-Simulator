@@ -6,7 +6,7 @@
 package eng.jAtcSim.lib.weathers;
 
 import eng.jAtcSim.lib.global.TryResult;
-import jatcsimlib.global.TryResult;
+import eng.jAtcSim.lib.global.TryResult;
 
 /**
  *

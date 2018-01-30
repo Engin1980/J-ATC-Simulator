@@ -1,6 +1,6 @@
 package eng.jAtcSim.lib.speaking.parsing.shortParsing;
 
-import jatcsimlib.speaking.fromAtc.notifications.RadarContactConfirmationNotification;
+import eng.jAtcSim.lib.speaking.fromAtc.notifications.RadarContactConfirmationNotification;
 
 class RadarContactConfirmationParser extends SpeechParser<RadarContactConfirmationNotification> {
 

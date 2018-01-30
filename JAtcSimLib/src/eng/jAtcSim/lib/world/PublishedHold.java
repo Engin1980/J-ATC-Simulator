@@ -9,9 +9,6 @@ package eng.jAtcSim.lib.world;
 import eng.jAtcSim.lib.exceptions.EBindException;
 import eng.jAtcSim.lib.global.KeyItem;
 import eng.jAtcSim.lib.global.MustBeBinded;
-import jatcsimlib.exceptions.EBindException;
-import jatcsimlib.global.KeyItem;
-import jatcsimlib.global.MustBeBinded;
 
 /**
  *

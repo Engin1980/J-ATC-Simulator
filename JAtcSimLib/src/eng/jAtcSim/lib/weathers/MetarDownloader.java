@@ -7,8 +7,8 @@ package eng.jAtcSim.lib.weathers;
 
 import eng.jAtcSim.lib.exceptions.ERuntimeException;
 import eng.jAtcSim.lib.global.TryResult;
-import jatcsimlib.exceptions.ERuntimeException;
-import jatcsimlib.global.TryResult;
+import eng.jAtcSim.lib.exceptions.ERuntimeException;
+import eng.jAtcSim.lib.global.TryResult;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;

@@ -1,8 +1,8 @@
 
 package eng.jAtcSim.lib.airplanes.pilots;
 
-import jatcsimlib.Acc;
-import jatcsimlib.world.Approach;
+import eng.jAtcSim.lib.Acc;
+import eng.jAtcSim.lib.world.Approach;
 
 /**
  * Only supporting function for Pilot class. Not used outside.

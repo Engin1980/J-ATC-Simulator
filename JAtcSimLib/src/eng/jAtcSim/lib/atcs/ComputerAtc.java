@@ -8,9 +8,9 @@ package eng.jAtcSim.lib.atcs;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.messaging.Message;
-import jatcsimlib.Acc;
-import jatcsimlib.airplanes.Airplane;
-import jatcsimlib.messaging.Message;
+import eng.jAtcSim.lib.Acc;
+import eng.jAtcSim.lib.airplanes.Airplane;
+import eng.jAtcSim.lib.messaging.Message;
 
 import java.util.List;
 

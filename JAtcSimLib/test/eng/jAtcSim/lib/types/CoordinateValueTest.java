@@ -7,8 +7,8 @@
 package eng.jAtcSim.lib.types;
 
 import eng.jAtcSim.lib.global.Global;
-import jatcsimlib.coordinates.CoordinateValue;
-import jatcsimlib.global.Global;
+import eng.jAtcSim.lib.coordinates.CoordinateValue;
+import eng.jAtcSim.lib.global.Global;
 import org.junit.Test;
 import static org.junit.Assert.*;
 

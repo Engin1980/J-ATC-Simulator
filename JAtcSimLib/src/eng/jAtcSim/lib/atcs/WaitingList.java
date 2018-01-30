@@ -8,9 +8,9 @@ package eng.jAtcSim.lib.atcs;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.global.ETime;
-import jatcsimlib.Acc;
-import jatcsimlib.airplanes.Airplane;
-import jatcsimlib.global.ETime;
+import eng.jAtcSim.lib.Acc;
+import eng.jAtcSim.lib.airplanes.Airplane;
+import eng.jAtcSim.lib.global.ETime;
 import java.util.LinkedList;
 import java.util.List;
 

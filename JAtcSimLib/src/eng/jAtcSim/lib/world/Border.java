@@ -6,7 +6,6 @@
 
 package eng.jAtcSim.lib.world;
 
-import jatcsimlib.coordinates.Coordinate;
 import java.util.ArrayList;
 import java.util.List;
 

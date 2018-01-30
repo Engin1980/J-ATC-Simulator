@@ -4,10 +4,10 @@ import eng.jAtcSim.lib.atcs.Atc;
 import eng.jAtcSim.lib.atcs.PlaneSwitchMessage;
 import eng.jAtcSim.lib.exceptions.ERuntimeException;
 import eng.jAtcSim.lib.speaking.ISpeech;
-import jatcsimlib.atcs.Atc;
-import jatcsimlib.atcs.PlaneSwitchMessage;
-import jatcsimlib.exceptions.ERuntimeException;
-import jatcsimlib.speaking.ISpeech;
+import eng.jAtcSim.lib.atcs.Atc;
+import eng.jAtcSim.lib.atcs.PlaneSwitchMessage;
+import eng.jAtcSim.lib.exceptions.ERuntimeException;
+import eng.jAtcSim.lib.speaking.ISpeech;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

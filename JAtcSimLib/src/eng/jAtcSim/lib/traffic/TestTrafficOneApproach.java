@@ -7,26 +7,21 @@ package eng.jAtcSim.lib.traffic;
 
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.Simulation;
+import eng.jAtcSim.lib.airplanes.Airplane;
+import eng.jAtcSim.lib.airplanes.AirplaneType;
+import eng.jAtcSim.lib.airplanes.Callsign;
+import eng.jAtcSim.lib.airplanes.Squawk;
+import eng.jAtcSim.lib.atcs.Atc;
+import eng.jAtcSim.lib.coordinates.Coordinate;
+import eng.jAtcSim.lib.coordinates.Coordinates;
+import eng.jAtcSim.lib.global.Global;
 import eng.jAtcSim.lib.speaking.SpeechList;
+import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeAltitudeCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ContactCommand;
-import jatcsimlib.Acc;
-import static jatcsimlib.Simulation.rnd;
-import jatcsimlib.airplanes.Airplane;
-import jatcsimlib.airplanes.AirplaneType;
-import jatcsimlib.airplanes.Callsign;
-import jatcsimlib.airplanes.Squawk;
-import jatcsimlib.atcs.Atc;
-import jatcsimlib.coordinates.Coordinate;
-import jatcsimlib.coordinates.Coordinates;
-import jatcsimlib.global.Global;
-import jatcsimlib.speaking.ISpeech;
-import jatcsimlib.speaking.SpeechList;
-import jatcsimlib.speaking.fromAtc.IAtcCommand;
-import jatcsimlib.speaking.fromAtc.commands.ChangeAltitudeCommand;
-import jatcsimlib.speaking.fromAtc.commands.ContactCommand;
-import jatcsimlib.world.Route;
-import jatcsimlib.world.Routes;
+import eng.jAtcSim.lib.world.Route;
+import eng.jAtcSim.lib.world.Routes;
+
 import java.util.List;
 
 /**

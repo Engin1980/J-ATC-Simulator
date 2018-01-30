@@ -4,12 +4,12 @@ import eng.jAtcSim.lib.exceptions.EInvalidCommandException;
 import eng.jAtcSim.lib.global.EStringBuilder;
 import eng.jAtcSim.lib.speaking.ISpeech;
 import eng.jAtcSim.lib.speaking.SpeechList;
-import jatcsimlib.exceptions.EInvalidCommandException;
-import jatcsimlib.global.EStringBuilder;
-import jatcsimlib.speaking.IFromAtc;
-import jatcsimlib.speaking.ISpeech;
-import jatcsimlib.speaking.SpeechList;
-import jatcsimlib.speaking.parsing.Parser;
+import eng.jAtcSim.lib.exceptions.EInvalidCommandException;
+import eng.jAtcSim.lib.global.EStringBuilder;
+import eng.jAtcSim.lib.speaking.IFromAtc;
+import eng.jAtcSim.lib.speaking.ISpeech;
+import eng.jAtcSim.lib.speaking.SpeechList;
+import eng.jAtcSim.lib.speaking.parsing.Parser;
 
 import java.util.ArrayList;
 import java.util.List;

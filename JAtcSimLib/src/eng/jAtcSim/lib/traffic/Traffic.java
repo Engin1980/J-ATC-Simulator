@@ -5,8 +5,8 @@
  */
 package eng.jAtcSim.lib.traffic;
 
-import jatcsimlib.airplanes.Airplane;
-import jatcsimlib.global.ETime;
+import eng.jAtcSim.lib.airplanes.Airplane;
+import eng.jAtcSim.lib.global.ETime;
 
 /**
  *

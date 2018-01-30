@@ -8,17 +8,9 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../../NetBeansProjects/ESystem/dist/ESystem.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
     <orderEntry type="library" name="JUnit 4" level="application" />
     <orderEntry type="library" name="EXmlSerialization" level="project" />
-    <orderEntry type="module" module-name="Events" />
+    <orderEntry type="library" name="eng.eSystem.events" level="project" />
+    <orderEntry type="library" name="ESystem" level="project" />
   </component>
 </module>

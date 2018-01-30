@@ -16,19 +16,19 @@ import eng.jAtcSim.lib.messaging.Message;
 import eng.jAtcSim.lib.messaging.Messenger;
 import eng.jAtcSim.lib.messaging.StringMessageContent;
 import eng.jAtcSim.lib.speaking.SpeechList;
-import jatcsimlib.Acc;
-import jatcsimlib.airplanes.Airplane;
-import jatcsimlib.airplanes.Airplanes;
-import jatcsimlib.airplanes.Callsign;
-import jatcsimlib.airplanes.Squawk;
-import jatcsimlib.exceptions.ENotSupportedException;
-import jatcsimlib.exceptions.ERuntimeException;
-import jatcsimlib.messaging.Message;
-import jatcsimlib.messaging.Messenger;
-import jatcsimlib.messaging.StringMessageContent;
-import jatcsimlib.speaking.SpeechList;
-import jatcsimlib.speaking.parsing.Parser;
-import jatcsimlib.speaking.parsing.shortParsing.ShortParser;
+import eng.jAtcSim.lib.Acc;
+import eng.jAtcSim.lib.airplanes.Airplane;
+import eng.jAtcSim.lib.airplanes.Airplanes;
+import eng.jAtcSim.lib.airplanes.Callsign;
+import eng.jAtcSim.lib.airplanes.Squawk;
+import eng.jAtcSim.lib.exceptions.ENotSupportedException;
+import eng.jAtcSim.lib.exceptions.ERuntimeException;
+import eng.jAtcSim.lib.messaging.Message;
+import eng.jAtcSim.lib.messaging.Messenger;
+import eng.jAtcSim.lib.messaging.StringMessageContent;
+import eng.jAtcSim.lib.speaking.SpeechList;
+import eng.jAtcSim.lib.speaking.parsing.Parser;
+import eng.jAtcSim.lib.speaking.parsing.shortParsing.ShortParser;
 
 /**
  *

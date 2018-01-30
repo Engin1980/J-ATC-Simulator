@@ -1,7 +1,6 @@
 package eng.jAtcSim.lib.speaking;
 
 import eng.jAtcSim.lib.Acc;
-import jatcsimlib.Acc;
 
 import java.util.Collection;
 import java.util.LinkedList;

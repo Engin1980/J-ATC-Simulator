@@ -11,14 +11,8 @@ import eng.jAtcSim.lib.exceptions.ERuntimeException;
 import eng.jAtcSim.lib.global.KeyItem;
 import eng.jAtcSim.lib.global.KeyList;
 import eng.jAtcSim.lib.global.TrafficCategories;
-import jatcsimlib.atcs.Atc;
-import jatcsimlib.atcs.AtcTemplate;
-import jatcsimlib.coordinates.RadarRange;
-import jatcsimlib.coordinates.Coordinate;
-import jatcsimlib.exceptions.ERuntimeException;
-import jatcsimlib.global.KeyItem;
-import jatcsimlib.global.KeyList;
-import jatcsimlib.global.TrafficCategories;
+import eng.jAtcSim.lib.atcs.Atc;
+import eng.jAtcSim.lib.atcs.AtcTemplate;
 
 /**
  *

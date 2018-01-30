@@ -8,12 +8,12 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="eINI" level="project" />
     <orderEntry type="library" name="ESystem" level="project" />
     <orderEntry type="module" module-name="JAtcSimLib" />
     <orderEntry type="module" module-name="SwingRadar" />
     <orderEntry type="module" module-name="JAtcSimRadarBase" />
     <orderEntry type="library" name="EXmlSerialization" level="project" />
     <orderEntry type="module" module-name="Events" />
+    <orderEntry type="library" name="eng.eSystem.events" level="project" />
   </component>
 </module>

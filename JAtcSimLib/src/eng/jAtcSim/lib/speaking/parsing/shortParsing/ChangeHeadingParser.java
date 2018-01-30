@@ -2,9 +2,9 @@ package eng.jAtcSim.lib.speaking.parsing.shortParsing;
 
 import eng.jAtcSim.lib.exceptions.ENotSupportedException;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeHeadingCommand;
-import jatcsimlib.exceptions.ENotSupportedException;
-import jatcsimlib.speaking.ICommand;
-import jatcsimlib.speaking.fromAtc.commands.ChangeHeadingCommand;
+import eng.jAtcSim.lib.exceptions.ENotSupportedException;
+import eng.jAtcSim.lib.speaking.ICommand;
+import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeHeadingCommand;
 
 class ChangeHeadingParser extends SpeechParser<ChangeHeadingCommand> {
 

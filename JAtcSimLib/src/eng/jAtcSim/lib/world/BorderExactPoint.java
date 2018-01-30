@@ -6,7 +6,7 @@
 
 package eng.jAtcSim.lib.world;
 
-import jatcsimlib.coordinates.Coordinate;
+import eng.jAtcSim.lib.coordinates.Coordinate;
 import java.util.Objects;
 
 /**

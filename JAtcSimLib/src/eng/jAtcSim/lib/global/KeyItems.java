@@ -6,7 +6,7 @@
 package eng.jAtcSim.lib.global;
 
 import eng.jAtcSim.lib.exceptions.ERuntimeException;
-import jatcsimlib.exceptions.ERuntimeException;
+import eng.jAtcSim.lib.exceptions.ERuntimeException;
 
 /**
  *

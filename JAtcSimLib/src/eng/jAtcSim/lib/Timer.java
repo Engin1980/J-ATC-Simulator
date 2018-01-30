@@ -7,7 +7,7 @@ package eng.jAtcSim.lib;
 
 import eng.eSystem.events.EventSimple;
 import eng.eSystem.events.IEventListenerSimple;
-import jatcsimlib.exceptions.ERuntimeException;
+import eng.jAtcSim.lib.exceptions.ERuntimeException;
 import java.util.TimerTask;
 
 /**

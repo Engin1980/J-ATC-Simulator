@@ -7,10 +7,6 @@
 package eng.jAtcSim.lib.global;
 
 import eng.jAtcSim.lib.exceptions.ERuntimeException;
-import jatcsimlib.exceptions.ERuntimeException;
-import jatcsimlib.world.Route;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  *

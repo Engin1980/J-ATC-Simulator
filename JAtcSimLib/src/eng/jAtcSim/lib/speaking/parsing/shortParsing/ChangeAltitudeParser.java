@@ -2,9 +2,9 @@ package eng.jAtcSim.lib.speaking.parsing.shortParsing;
 
 import eng.jAtcSim.lib.exceptions.ERuntimeException;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeAltitudeCommand;
-import jatcsimlib.exceptions.ERuntimeException;
-import jatcsimlib.speaking.ICommand;
-import jatcsimlib.speaking.fromAtc.commands.ChangeAltitudeCommand;
+import eng.jAtcSim.lib.exceptions.ERuntimeException;
+import eng.jAtcSim.lib.speaking.ICommand;
+import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeAltitudeCommand;
 
 class ChangeAltitudeParser extends SpeechParser<ChangeAltitudeCommand> {
 

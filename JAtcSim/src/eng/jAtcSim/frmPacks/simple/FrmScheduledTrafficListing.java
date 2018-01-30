@@ -1,7 +1,7 @@
 package eng.jAtcSim.frmPacks.simple;
 
 import eng.jAtcSim.startup.LayoutManager;
-import jatcsimlib.traffic.Movement;
+import eng.jAtcSim.lib.traffic.Movement;
 
 import javax.swing.*;
 import java.awt.*;

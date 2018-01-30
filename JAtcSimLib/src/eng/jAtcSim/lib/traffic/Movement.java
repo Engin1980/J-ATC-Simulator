@@ -5,8 +5,8 @@
  */
 package eng.jAtcSim.lib.traffic;
 
-import jatcsimlib.airplanes.Callsign;
-import jatcsimlib.global.ETime;
+import eng.jAtcSim.lib.airplanes.Callsign;
+import eng.jAtcSim.lib.global.ETime;
 
 import java.util.Comparator;
 

@@ -5,21 +5,15 @@
  */
 package eng.jAtcSim.lib.world;
 
+import eng.eSystem.xmlSerialization.XmlOptional;
 import eng.jAtcSim.lib.coordinates.Coordinate;
 import eng.jAtcSim.lib.global.KeyItem;
 import eng.jAtcSim.lib.global.MustBeBinded;
 import eng.jAtcSim.lib.global.UnitProvider;
 import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
-import jatcsimlib.coordinates.Coordinate;
-import jatcsimlib.global.KeyItem;
-import jatcsimlib.global.MustBeBinded;
-import jatcsimlib.global.UnitProvider;
-import eng.eSystem.xmlSerialization.XmlOptional;
-import jatcsimlib.speaking.SpeechList;
-import jatcsimlib.speaking.fromAtc.IAtcCommand;
-import jatcsimlib.speaking.parsing.Parser;
-import jatcsimlib.speaking.parsing.shortParsing.ShortParser;
+import eng.jAtcSim.lib.speaking.parsing.Parser;
+import eng.jAtcSim.lib.speaking.parsing.shortParsing.ShortParser;
 
 /**
  *

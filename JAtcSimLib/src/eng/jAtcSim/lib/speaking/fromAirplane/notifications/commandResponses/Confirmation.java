@@ -1,8 +1,8 @@
 package eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses;
 
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
-import jatcsimlib.speaking.ICommand;
-import jatcsimlib.speaking.fromAtc.IAtcCommand;
+import eng.jAtcSim.lib.speaking.ICommand;
+import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
 
 public class Confirmation extends CommandResponse {
 

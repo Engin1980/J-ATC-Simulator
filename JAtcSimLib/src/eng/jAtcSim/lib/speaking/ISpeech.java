@@ -1,6 +1,6 @@
 package eng.jAtcSim.lib.speaking;
 
-import jatcsimlib.messaging.IMessageContent;
+import eng.jAtcSim.lib.messaging.IMessageContent;
 
 public interface ISpeech extends IMessageContent {
 }

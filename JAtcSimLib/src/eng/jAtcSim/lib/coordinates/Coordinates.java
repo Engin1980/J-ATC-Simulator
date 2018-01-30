@@ -3,8 +3,8 @@
  */
 package eng.jAtcSim.lib.coordinates;
 
-import jatcsimlib.global.UnitProvider;
-import jatcsimlib.coordinates.Coordinate;
+import eng.jAtcSim.lib.global.UnitProvider;
+import eng.jAtcSim.lib.coordinates.Coordinate;
 
 /**
  *

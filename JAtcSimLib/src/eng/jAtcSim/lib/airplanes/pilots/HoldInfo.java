@@ -1,9 +1,9 @@
 
 package eng.jAtcSim.lib.airplanes.pilots;
 
-import jatcsimlib.coordinates.Coordinate;
-import jatcsimlib.global.ETime;
-import jatcsimlib.global.Headings;
+import eng.jAtcSim.lib.coordinates.Coordinate;
+import eng.jAtcSim.lib.global.ETime;
+import eng.jAtcSim.lib.global.Headings;
 
 /**
  * Only supporting function for Pilot class. Not used outside.

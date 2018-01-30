@@ -5,7 +5,7 @@
  */
 package eng.jAtcSim.lib.coordinates;
 
-import jatcsimlib.exceptions.ERuntimeException;
+import eng.jAtcSim.lib.exceptions.ERuntimeException;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

@@ -1,6 +1,6 @@
 package eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses;
 
-import jatcsimlib.speaking.fromAirplane.IAirplaneNotification;
+import eng.jAtcSim.lib.speaking.fromAirplane.IAirplaneNotification;
 
 public class IllegalThenCommandRejection implements IAirplaneNotification {
 

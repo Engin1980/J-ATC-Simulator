@@ -7,7 +7,7 @@
 package eng.jAtcSim.lib.weathers;
 
 import eng.jAtcSim.lib.exceptions.ERuntimeException;
-import jatcsimlib.exceptions.ERuntimeException;
+import eng.jAtcSim.lib.exceptions.ERuntimeException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.logging.Level;

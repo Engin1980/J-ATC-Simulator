@@ -5,11 +5,10 @@
  */
 package eng.jAtcSim.lib.airplanes.pilots;
 
+import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.exceptions.ENotSupportedException;
-import jatcsimlib.airplanes.Airplane;
-import jatcsimlib.exceptions.ENotSupportedException;
-import jatcsimlib.global.EStringBuilder;
-import jatcsimlib.global.SpeedRestriction;
+import eng.jAtcSim.lib.global.EStringBuilder;
+import eng.jAtcSim.lib.global.SpeedRestriction;
 
 /**
  *

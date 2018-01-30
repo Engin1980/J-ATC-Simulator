@@ -9,13 +9,8 @@ import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.exceptions.ERuntimeException;
 import eng.jAtcSim.lib.global.KeyList;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
-import jatcsimlib.Acc;
-import jatcsimlib.exceptions.ERuntimeException;
-import jatcsimlib.global.KeyList;
-import jatcsimlib.speaking.ICommand;
-import jatcsimlib.speaking.fromAtc.IAtcCommand;
-import jatcsimlib.speaking.parsing.Parser;
-import jatcsimlib.speaking.parsing.shortParsing.ShortParser;
+import eng.jAtcSim.lib.speaking.parsing.Parser;
+import eng.jAtcSim.lib.speaking.parsing.shortParsing.ShortParser;
 
 import java.util.ArrayList;
 import java.util.List;

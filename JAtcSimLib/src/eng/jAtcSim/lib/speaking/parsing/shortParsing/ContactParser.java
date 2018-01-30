@@ -3,10 +3,6 @@ package eng.jAtcSim.lib.speaking.parsing.shortParsing;
 import eng.jAtcSim.lib.atcs.Atc;
 import eng.jAtcSim.lib.exceptions.ENotSupportedException;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ContactCommand;
-import jatcsimlib.atcs.Atc;
-import jatcsimlib.exceptions.ENotSupportedException;
-import jatcsimlib.speaking.ICommand;
-import jatcsimlib.speaking.fromAtc.commands.ContactCommand;
 
 class ContactParser extends SpeechParser<ContactCommand> {
 

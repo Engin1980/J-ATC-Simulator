@@ -1,8 +1,8 @@
 package eng.jAtcSim.lib.speaking.parsing.shortParsing;
 
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ThenCommand;
-import jatcsimlib.speaking.ICommand;
-import jatcsimlib.speaking.fromAtc.commands.ThenCommand;
+import eng.jAtcSim.lib.speaking.ICommand;
+import eng.jAtcSim.lib.speaking.fromAtc.commands.ThenCommand;
 
 class ThenParser extends SpeechParser<ThenCommand> {
 

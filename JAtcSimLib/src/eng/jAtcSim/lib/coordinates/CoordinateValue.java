@@ -5,9 +5,8 @@
  */
 package eng.jAtcSim.lib.coordinates;
 
+import eng.jAtcSim.lib.global.EMath;
 import eng.jAtcSim.lib.global.Global;
-import jatcsimlib.global.EMath;
-import jatcsimlib.global.Global;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 

@@ -6,8 +6,6 @@
 
 package eng.jAtcSim.lib.coordinates;
 
-import jatcsimlib.coordinates.Coordinate;
-
 /**
  *
  * @author Marek

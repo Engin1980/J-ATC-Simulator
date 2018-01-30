@@ -7,7 +7,6 @@
 package eng.jAtcSim.lib.atcs;
 
 import eng.jAtcSim.lib.global.KeyItem;
-import jatcsimlib.global.KeyItem;
 
 /**
  *

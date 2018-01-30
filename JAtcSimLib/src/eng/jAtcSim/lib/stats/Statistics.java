@@ -6,10 +6,10 @@
 package eng.jAtcSim.lib.stats;
 
 import eng.jAtcSim.lib.Acc;
-import jatcsimlib.Acc;
-import jatcsimlib.airplanes.Airplane;
-import jatcsimlib.atcs.Atc;
-import jatcsimlib.global.ETime;
+import eng.jAtcSim.lib.Acc;
+import eng.jAtcSim.lib.airplanes.Airplane;
+import eng.jAtcSim.lib.atcs.Atc;
+import eng.jAtcSim.lib.global.ETime;
 
 /**
  *

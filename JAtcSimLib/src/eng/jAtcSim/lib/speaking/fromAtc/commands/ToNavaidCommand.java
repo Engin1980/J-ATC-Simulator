@@ -6,9 +6,8 @@
 
 package eng.jAtcSim.lib.speaking.fromAtc.commands;
 
-import jatcsimlib.speaking.ICommand;
-import jatcsimlib.speaking.fromAtc.IAtcCommand;
-import jatcsimlib.world.Navaid;
+import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
+import eng.jAtcSim.lib.world.Navaid;
 
 /**
  *

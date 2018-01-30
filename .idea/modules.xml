@@ -2,12 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Events/Events.iml" filepath="$PROJECT_DIR$/Events/Events.iml" />
       <module fileurl="file://$PROJECT_DIR$/JAtcSim/JAtcSim.iml" filepath="$PROJECT_DIR$/JAtcSim/JAtcSim.iml" />
       <module fileurl="file://$PROJECT_DIR$/JAtcSimLib/JAtcSimLib.iml" filepath="$PROJECT_DIR$/JAtcSimLib/JAtcSimLib.iml" />
       <module fileurl="file://$PROJECT_DIR$/JAtcSimRadarBase/JAtcSimRadarBase.iml" filepath="$PROJECT_DIR$/JAtcSimRadarBase/JAtcSimRadarBase.iml" />
       <module fileurl="file://$PROJECT_DIR$/JAtcSimSolution.iml" filepath="$PROJECT_DIR$/JAtcSimSolution.iml" />
-      <module fileurl="file://$PROJECT_DIR$/JAtcSimSwingRadar/JAtcSimSwingRadar.iml" filepath="$PROJECT_DIR$/JAtcSimSwingRadar/JAtcSimSwingRadar.iml" />
       <module fileurl="file://$PROJECT_DIR$/SwingRadar/SwingRadar.iml" filepath="$PROJECT_DIR$/SwingRadar/SwingRadar.iml" />
     </modules>
   </component>

@@ -9,10 +9,10 @@ import eng.jAtcSim.lib.coordinates.Coordinates;
 import eng.jAtcSim.lib.global.KeyItems;
 import eng.jAtcSim.lib.global.ReadOnlyList;
 import eng.jAtcSim.lib.global.Strings;
-import jatcsimlib.coordinates.Coordinates;
-import jatcsimlib.global.KeyItems;
-import jatcsimlib.global.ReadOnlyList;
-import jatcsimlib.global.Strings;
+import eng.jAtcSim.lib.coordinates.Coordinates;
+import eng.jAtcSim.lib.global.KeyItems;
+import eng.jAtcSim.lib.global.ReadOnlyList;
+import eng.jAtcSim.lib.global.Strings;
 
 /**
  *

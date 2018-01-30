@@ -8,10 +8,10 @@ package eng.jAtcSim.frmPacks.simple;
 import eng.jAtcSim.SwingRadar.SwingCanvas;
 import eng.jAtcSim.radarBase.BehaviorSettings;
 import eng.jAtcSim.radarBase.Radar;
-import jatcsimlib.atcs.Atc;
-import jatcsimlib.atcs.UserAtc;
-import jatcsimlib.exceptions.ERuntimeException;
-import jatcsimlib.speaking.formatting.LongFormatter;
+import eng.jAtcSim.lib.atcs.Atc;
+import eng.jAtcSim.lib.atcs.UserAtc;
+import eng.jAtcSim.lib.exceptions.ERuntimeException;
+import eng.jAtcSim.lib.speaking.formatting.LongFormatter;
 
 import javax.swing.*;
 import java.awt.*;

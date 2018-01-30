@@ -3,19 +3,19 @@ package eng.jAtcSim.lib.speaking.formatting;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.*;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.afters.AfterNavaidCommand;
-import jatcsimlib.Acc;
-import jatcsimlib.atcs.Atc;
-import jatcsimlib.atcs.PlaneSwitchMessage;
-import jatcsimlib.exceptions.ENotSupportedException;
-import jatcsimlib.global.Headings;
-import jatcsimlib.speaking.fromAirplane.notifications.EstablishedOnApproachNotification;
-import jatcsimlib.speaking.fromAirplane.notifications.commandResponses.Confirmation;
-import jatcsimlib.speaking.fromAirplane.notifications.commandResponses.Rejection;
-import jatcsimlib.speaking.fromAtc.commands.*;
-import jatcsimlib.speaking.fromAtc.commands.afters.*;
-import jatcsimlib.speaking.fromAirplane.notifications.GoodDayNotification;
-import jatcsimlib.speaking.fromAtc.notifications.RadarContactConfirmationNotification;
-import jatcsimlib.speaking.fromAirplane.notifications.RequestRadarContactNotification;
+import eng.jAtcSim.lib.Acc;
+import eng.jAtcSim.lib.atcs.Atc;
+import eng.jAtcSim.lib.atcs.PlaneSwitchMessage;
+import eng.jAtcSim.lib.exceptions.ENotSupportedException;
+import eng.jAtcSim.lib.global.Headings;
+import eng.jAtcSim.lib.speaking.fromAirplane.notifications.EstablishedOnApproachNotification;
+import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.Confirmation;
+import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.Rejection;
+import eng.jAtcSim.lib.speaking.fromAtc.commands.*;
+import eng.jAtcSim.lib.speaking.fromAtc.commands.afters.*;
+import eng.jAtcSim.lib.speaking.fromAirplane.notifications.GoodDayNotification;
+import eng.jAtcSim.lib.speaking.fromAtc.notifications.RadarContactConfirmationNotification;
+import eng.jAtcSim.lib.speaking.fromAirplane.notifications.RequestRadarContactNotification;
 
 public class LongFormatter extends Formatter {
 

@@ -5,11 +5,11 @@ import eng.jAtcSim.lib.exceptions.EInvalidCommandException;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.HoldCommand;
 import eng.jAtcSim.lib.world.Navaid;
 import eng.jAtcSim.lib.world.PublishedHold;
-import jatcsimlib.Acc;
-import jatcsimlib.exceptions.EInvalidCommandException;
-import jatcsimlib.speaking.fromAtc.commands.HoldCommand;
-import jatcsimlib.world.Navaid;
-import jatcsimlib.world.PublishedHold;
+import eng.jAtcSim.lib.Acc;
+import eng.jAtcSim.lib.exceptions.EInvalidCommandException;
+import eng.jAtcSim.lib.speaking.fromAtc.commands.HoldCommand;
+import eng.jAtcSim.lib.world.Navaid;
+import eng.jAtcSim.lib.world.PublishedHold;
 
 class HoldParser extends SpeechParser<HoldCommand> {
 

@@ -7,7 +7,7 @@
 package eng.jAtcSim.lib.global;
 
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeHeadingCommand;
-import jatcsimlib.speaking.fromAtc.commands.ChangeHeadingCommand;
+import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeHeadingCommand;
 
 /**
  * @author Marek

@@ -8,8 +8,8 @@ package eng.jAtcSim.frmPacks;
 
 import eng.eSystem.events.EventSimple;
 import eng.jAtcSim.AppSettings;
-import jatcsimlib.Simulation;
-import jatcsimlib.world.Area;
+import eng.jAtcSim.lib.Simulation;
+import eng.jAtcSim.lib.world.Area;
 
 /**
  *

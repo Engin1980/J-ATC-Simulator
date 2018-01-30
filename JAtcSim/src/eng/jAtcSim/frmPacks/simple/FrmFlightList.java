@@ -5,10 +5,10 @@
  */
 package eng.jAtcSim.frmPacks.simple;
 
-import jatcsimlib.Simulation;
-import jatcsimlib.airplanes.Airplane;
-import jatcsimlib.exceptions.ENotSupportedException;
-import jatcsimlib.global.ReadOnlyList;
+import eng.jAtcSim.lib.Simulation;
+import eng.jAtcSim.lib.airplanes.Airplane;
+import eng.jAtcSim.lib.exceptions.ENotSupportedException;
+import eng.jAtcSim.lib.global.ReadOnlyList;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;

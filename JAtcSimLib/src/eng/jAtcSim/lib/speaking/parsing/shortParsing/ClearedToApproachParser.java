@@ -7,14 +7,14 @@ import eng.jAtcSim.lib.global.EStringBuilder;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ClearedToApproachCommand;
 import eng.jAtcSim.lib.world.Approach;
 import eng.jAtcSim.lib.world.RunwayThreshold;
-import jatcsimlib.Acc;
-import jatcsimlib.exceptions.EInvalidCommandException;
-import jatcsimlib.exceptions.ENotSupportedException;
-import jatcsimlib.global.EStringBuilder;
-import jatcsimlib.speaking.ICommand;
-import jatcsimlib.speaking.fromAtc.commands.ClearedToApproachCommand;
-import jatcsimlib.world.Approach;
-import jatcsimlib.world.RunwayThreshold;
+import eng.jAtcSim.lib.Acc;
+import eng.jAtcSim.lib.exceptions.EInvalidCommandException;
+import eng.jAtcSim.lib.exceptions.ENotSupportedException;
+import eng.jAtcSim.lib.global.EStringBuilder;
+import eng.jAtcSim.lib.speaking.ICommand;
+import eng.jAtcSim.lib.speaking.fromAtc.commands.ClearedToApproachCommand;
+import eng.jAtcSim.lib.world.Approach;
+import eng.jAtcSim.lib.world.RunwayThreshold;
 
 class ClearedToApproachParser extends SpeechParser<ClearedToApproachCommand> {
 

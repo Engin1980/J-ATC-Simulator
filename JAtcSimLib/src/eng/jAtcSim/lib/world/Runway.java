@@ -8,8 +8,6 @@ package eng.jAtcSim.lib.world;
 
 import eng.jAtcSim.lib.global.KeyItem;
 import eng.jAtcSim.lib.global.KeyList;
-import jatcsimlib.global.KeyItem;
-import jatcsimlib.global.KeyList;
 
 /**
  *

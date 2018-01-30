@@ -7,8 +7,6 @@ package eng.jAtcSim.lib.world;
 
 import eng.jAtcSim.lib.coordinates.Coordinate;
 import eng.jAtcSim.lib.global.KeyItem;
-import jatcsimlib.coordinates.Coordinate;
-import jatcsimlib.global.KeyItem;
 
 /**
  *

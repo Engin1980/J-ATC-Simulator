@@ -10,9 +10,9 @@ import eng.jAtcSim.radarBase.DisplaySettings;
 import eng.eSystem.events.EventSimple;
 import eng.jAtcSim.AppSettings;
 import eng.jAtcSim.XmlLoadHelper;
-import jatcsimlib.Simulation;
-import jatcsimlib.traffic.Movement;
-import jatcsimlib.world.Area;
+import eng.jAtcSim.lib.Simulation;
+import eng.jAtcSim.lib.traffic.Movement;
+import eng.jAtcSim.lib.world.Area;
 
 /**
  * @author Marek

@@ -5,9 +5,9 @@
  */
 package eng.jAtcSim.lib.providers;
 
-import jatcsimlib.coordinates.Coordinates;
-import jatcsimlib.coordinates.Coordinate;
-import jatcsimlib.coordinates.CoordinateValue;
+import eng.jAtcSim.lib.coordinates.Coordinates;
+import eng.jAtcSim.lib.coordinates.Coordinate;
+import eng.jAtcSim.lib.coordinates.CoordinateValue;
 import org.junit.Test;
 import static org.junit.Assert.*;
 

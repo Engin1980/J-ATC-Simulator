@@ -6,9 +6,9 @@
 package eng.jAtcSim.lib.airplanes;
 
 import eng.jAtcSim.lib.Acc;
-import jatcsimlib.Acc;
-import jatcsimlib.exceptions.ENotSupportedException;
-import jatcsimlib.global.TrafficCategories;
+import eng.jAtcSim.lib.Acc;
+import eng.jAtcSim.lib.exceptions.ENotSupportedException;
+import eng.jAtcSim.lib.global.TrafficCategories;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

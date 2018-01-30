@@ -4,8 +4,8 @@ import eng.jAtcSim.radarBase.BehaviorSettings;
 import eng.jAtcSim.radarBase.DisplaySettings;
 import eng.jAtcSim.radarBase.Radar;
 import eng.jAtcSim.SwingRadar.SwingCanvas;
-import jatcsimlib.speaking.formatting.LongFormatter;
-import jatcsimlib.world.Airport;
+import eng.jAtcSim.lib.speaking.formatting.LongFormatter;
+import eng.jAtcSim.lib.world.Airport;
 
 import javax.swing.*;
 import java.awt.*;

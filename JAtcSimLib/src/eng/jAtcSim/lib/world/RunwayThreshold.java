@@ -5,17 +5,12 @@
  */
 package eng.jAtcSim.lib.world;
 
+import eng.eSystem.xmlSerialization.XmlOptional;
 import eng.jAtcSim.lib.coordinates.Coordinate;
 import eng.jAtcSim.lib.coordinates.Coordinates;
 import eng.jAtcSim.lib.global.KeyItem;
 import eng.jAtcSim.lib.global.KeyList;
 import eng.jAtcSim.lib.global.MustBeBinded;
-import jatcsimlib.coordinates.Coordinate;
-import jatcsimlib.coordinates.Coordinates;
-import jatcsimlib.global.KeyItem;
-import jatcsimlib.global.KeyList;
-import jatcsimlib.global.MustBeBinded;
-import eng.eSystem.xmlSerialization.XmlOptional;
 
 /**
  *

@@ -1,6 +1,6 @@
 package eng.jAtcSim.lib.messaging;
 
-import jatcsimlib.global.Recorder;
+import eng.jAtcSim.lib.global.Recorder;
 
 import java.nio.file.Path;
 

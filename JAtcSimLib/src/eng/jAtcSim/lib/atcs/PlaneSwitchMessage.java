@@ -8,8 +8,8 @@ package eng.jAtcSim.lib.atcs;
 
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.messaging.IMessageContent;
-import jatcsimlib.airplanes.Airplane;
-import jatcsimlib.messaging.IMessageContent;
+import eng.jAtcSim.lib.airplanes.Airplane;
+import eng.jAtcSim.lib.messaging.IMessageContent;
 
 /**
  *

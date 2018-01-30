@@ -1,7 +1,7 @@
 package eng.jAtcSim.lib.speaking.parsing.shortParsing;
 
-import jatcsimlib.speaking.ICommand;
-import jatcsimlib.speaking.fromAtc.commands.afters.AfterAltitudeCommand;
+import eng.jAtcSim.lib.speaking.ICommand;
+import eng.jAtcSim.lib.speaking.fromAtc.commands.afters.AfterAltitudeCommand;
 
 class AfterAltitudeParser extends SpeechParser<AfterAltitudeCommand> {
 

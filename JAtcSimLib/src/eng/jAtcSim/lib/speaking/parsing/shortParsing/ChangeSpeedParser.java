@@ -3,10 +3,10 @@ package eng.jAtcSim.lib.speaking.parsing.shortParsing;
 import eng.jAtcSim.lib.exceptions.ENotSupportedException;
 import eng.jAtcSim.lib.global.SpeedRestriction;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeSpeedCommand;
-import jatcsimlib.exceptions.ENotSupportedException;
-import jatcsimlib.global.SpeedRestriction;
-import jatcsimlib.speaking.ICommand;
-import jatcsimlib.speaking.fromAtc.commands.ChangeSpeedCommand;
+import eng.jAtcSim.lib.exceptions.ENotSupportedException;
+import eng.jAtcSim.lib.global.SpeedRestriction;
+import eng.jAtcSim.lib.speaking.ICommand;
+import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeSpeedCommand;
 
 class ChangeSpeedParser extends SpeechParser<ChangeSpeedCommand> {
 

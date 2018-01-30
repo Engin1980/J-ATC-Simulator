@@ -10,5 +10,6 @@
     <orderEntry type="module" module-name="JAtcSimRadarBase" />
     <orderEntry type="module" module-name="Events" />
     <orderEntry type="module" module-name="JAtcSimLib" />
+    <orderEntry type="library" name="eng.eSystem.events" level="project" />
   </component>
 </module>

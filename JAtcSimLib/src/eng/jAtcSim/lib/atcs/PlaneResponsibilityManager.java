@@ -14,16 +14,6 @@ import eng.jAtcSim.lib.global.ReadOnlyList;
 import eng.jAtcSim.lib.messaging.Message;
 import eng.jAtcSim.lib.messaging.Messenger;
 import eng.jAtcSim.lib.messaging.StringMessageContent;
-import jatcsimlib.Acc;
-import jatcsimlib.airplanes.Airplane;
-import jatcsimlib.airplanes.AirplaneList;
-import jatcsimlib.exceptions.ENotSupportedException;
-import jatcsimlib.exceptions.ERuntimeException;
-import jatcsimlib.global.ReadOnlyList;
-import jatcsimlib.messaging.Message;
-import jatcsimlib.messaging.Messenger;
-import jatcsimlib.messaging.StringMessageContent;
-
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;

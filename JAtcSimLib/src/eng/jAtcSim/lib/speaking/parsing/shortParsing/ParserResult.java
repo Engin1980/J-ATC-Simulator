@@ -1,7 +1,7 @@
 package eng.jAtcSim.lib.speaking.parsing.shortParsing;
 
 import eng.jAtcSim.lib.speaking.ICommand;
-import jatcsimlib.speaking.ICommand;
+import eng.jAtcSim.lib.speaking.ICommand;
 
 class ParserResult {
 

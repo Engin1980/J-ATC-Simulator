@@ -1,5 +1,6 @@
 package eng.jAtcSim;
 
+import eng.jAtcSim.lib.world.*;
 import eng.jAtcSim.radarBase.DisplaySettings;
 import eng.jAtcSim.radarBase.parsing.RadarColorParser;
 import eng.jAtcSim.radarBase.parsing.RadarFontParser;
@@ -8,11 +9,11 @@ import eng.eSystem.xmlSerialization.Settings;
 import eng.eSystem.xmlSerialization.XmlListItemMapping;
 import eng.eSystem.xmlSerialization.XmlSerializer;
 import eng.jAtcSim.startup.NewStartupSettings;
-import jatcsimlib.airplanes.AirplaneType;
-import jatcsimlib.airplanes.AirplaneTypes;
-import jatcsimlib.atcs.AtcTemplate;
-import jatcsimlib.coordinates.Coordinate;
-import jatcsimlib.exceptions.ERuntimeException;
+import eng.jAtcSim.lib.airplanes.AirplaneType;
+import eng.jAtcSim.lib.airplanes.AirplaneTypes;
+import eng.jAtcSim.lib.atcs.AtcTemplate;
+import eng.jAtcSim.lib.coordinates.Coordinate;
+import eng.jAtcSim.lib.exceptions.ERuntimeException;
 
 public class XmlLoadHelper {
 

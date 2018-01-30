@@ -1,7 +1,7 @@
 <component name="libraryTable">
   <library name="ESystem">
     <CLASSES>
-      <root url="jar://$USER_HOME$/Documents/NetBeansProjects/ESystem/dist/ESystem.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../eng.eSystem/ESystem/out/artifacts/eng_eSystem/eng.eSystem.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
