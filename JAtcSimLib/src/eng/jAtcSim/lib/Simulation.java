@@ -298,6 +298,7 @@ public class Simulation {
 
   private static final String SYSMES_COMMANDS = "?";
   private static final Pattern SYSMES_CHANGE_SPEED = Pattern.compile("tick=(\\d+)");
+  private static final Pattern SYSMES_METAR = Pattern.compile("metar");
 
   private void processSystemMessage(Message m) {
     String msgText = m.<StringMessageContent>getContent().getMessageText();
@@ -305,6 +306,10 @@ public class Simulation {
       printCommandsHelps();
     } else if (SYSMES_CHANGE_SPEED.asPredicate().test(msgText)) {
       processSystemMessageTick(msgText, m);
+    } else if (SYSMES_METAR.asPredicate().test(msgText)){
+      String metarText = Acc.sim().getWeather().toInfoString();
+      Acc.messenger().send(
+          new Message(Messenger.SYSTEM, Acc.atcApp(), new StringMessageContent(metarText)));
     }
   }
 

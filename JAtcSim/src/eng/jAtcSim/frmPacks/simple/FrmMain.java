@@ -6,12 +6,12 @@
 package eng.jAtcSim.frmPacks.simple;
 
 import eng.jAtcSim.SwingRadar.SwingCanvas;
-import eng.jAtcSim.radarBase.BehaviorSettings;
-import eng.jAtcSim.radarBase.Radar;
 import eng.jAtcSim.lib.atcs.Atc;
 import eng.jAtcSim.lib.atcs.UserAtc;
 import eng.jAtcSim.lib.exceptions.ERuntimeException;
 import eng.jAtcSim.lib.speaking.formatting.LongFormatter;
+import eng.jAtcSim.radarBase.BehaviorSettings;
+import eng.jAtcSim.radarBase.Radar;
 
 import javax.swing.*;
 import java.awt.*;
@@ -61,7 +61,7 @@ public class FrmMain extends javax.swing.JFrame {
     pnlContent = new JPanel();
     pnlContent.setLayout(new BorderLayout());
     pnlContent.setBackground(Color.white);
-    Dimension prefferedSize = new Dimension(1032,607);
+    Dimension prefferedSize = new Dimension(1032, 607);
     pnlContent.setPreferredSize(prefferedSize);
 
 
@@ -103,7 +103,7 @@ public class FrmMain extends javax.swing.JFrame {
     this.refreshRateCounter = 0;
 
     // behavior settings for this radar
-    BehaviorSettings behSett = new BehaviorSettings(true, new LongFormatter(),10);
+    BehaviorSettings behSett = new BehaviorSettings(true, new LongFormatter(), 10);
 
     // generování hlavního radaru
     SwingCanvas canvas = new SwingCanvas();
@@ -144,7 +144,7 @@ public class FrmMain extends javax.swing.JFrame {
         msg = msg.substring(1);
         app.sendSystem(msg);
         ret = true;
-      } else if (msg.startsWith("!")){
+      } else if (msg.startsWith("!")) {
         // application
         processApplicationMessage(msg);
         ret = true;
@@ -161,7 +161,7 @@ public class FrmMain extends javax.swing.JFrame {
   }
 
   private void processApplicationMessage(String msg) {
-    switch (msg){
+    switch (msg) {
       case "!view":
         FrmView f = new FrmView();
         f.init(this.parent);
@@ -230,14 +230,18 @@ class CommandJTextWraper {
 
       private void setText(String text) {
         parent.setText(text);
-      }      @Override
-      public void keyTyped(KeyEvent e) {
-
       }
 
       private void addText(String text) {
         parent.setText(parent.getText() + text);
-      }      @Override
+      }
+
+      @Override
+      public void keyTyped(KeyEvent e) {
+
+      }
+
+      @Override
       public void keyPressed(KeyEvent e) {
         switch (e.getKeyCode()) {
           case java.awt.event.KeyEvent.VK_ESCAPE:
@@ -267,9 +271,6 @@ class CommandJTextWraper {
       @Override
       public void keyReleased(KeyEvent e) {
       }
-
-
-
 
 
     });

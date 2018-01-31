@@ -8,7 +8,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="JAtcSimLib" />
-    <orderEntry type="library" name="EXmlSerialization" level="project" />
+    <orderEntry type="library" name="eng.eSystem.xmlSerialization" level="project" />
     <orderEntry type="library" name="eng.eSystem.events" level="project" />
   </component>
 </module>

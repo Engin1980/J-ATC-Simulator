@@ -8,7 +8,7 @@ import eng.eSystem.xmlSerialization.IValueParser;
 import eng.eSystem.xmlSerialization.Settings;
 import eng.eSystem.xmlSerialization.XmlListItemMapping;
 import eng.eSystem.xmlSerialization.XmlSerializer;
-import eng.jAtcSim.startup.NewStartupSettings;
+import eng.jAtcSim.startup.StartupSettings;
 import eng.jAtcSim.lib.airplanes.AirplaneType;
 import eng.jAtcSim.lib.airplanes.AirplaneTypes;
 import eng.jAtcSim.lib.atcs.AtcTemplate;
@@ -43,22 +43,22 @@ public class XmlLoadHelper {
 
   }
 
-  public static NewStartupSettings loadStartupSettings(String fileName) {
+  public static StartupSettings loadStartupSettings(String fileName) {
     XmlSerializer ser = new XmlSerializer();
 
-    NewStartupSettings ret;
+    StartupSettings ret;
 
     try {
-      ret = (NewStartupSettings) deserialize(fileName, NewStartupSettings.class);
+      ret = (StartupSettings) deserialize(fileName, StartupSettings.class);
     } catch (Exception ex) {
       System.out.println("Failed to load startup settings from " + fileName + ". Defaults used. Reason: " + ex.getMessage());
-      ret = new NewStartupSettings();
+      ret = new StartupSettings();
     }
 
     return ret;
   }
 
-  public static void saveStartupSettings(NewStartupSettings sett, String fileName) {
+  public static void saveStartupSettings(StartupSettings sett, String fileName) {
     XmlSerializer ser = new XmlSerializer();
 
     try {

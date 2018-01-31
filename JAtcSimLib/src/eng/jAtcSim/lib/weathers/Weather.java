@@ -6,6 +6,7 @@
 
 package eng.jAtcSim.lib.weathers;
 
+import eng.jAtcSim.lib.global.EStringBuilder;
 import eng.jAtcSim.lib.global.UnitProvider;
 import eng.jAtcSim.lib.global.UnitProvider;
 
@@ -18,7 +19,7 @@ public class Weather {
   private int windSpeetInKts;
   private int visibilityInM;
   private int cloudBaseInFt;
-  public double cloudBaseHitProbability;
+  private double cloudBaseHitProbability;
 
   public Weather() {
   }
@@ -70,5 +71,16 @@ public class Weather {
   public double getCloudBaseHitProbability() {
     return cloudBaseHitProbability;
   }
-  
+
+  public String toInfoString(){
+    EStringBuilder sb = new EStringBuilder();
+    sb.appendFormatLine("Wind %d° at %d kts, visibility %1.0f miles, cloud base at %d ft at %1.0f %%.",
+        this.getWindHeading(),
+        this.getWindSpeetInKts(),
+        this.getVisibilityInMiles(),
+        this.getCloudBaseInFt(),
+        this.getCloudBaseHitProbability() * 100
+        );
+    return sb.toString();
+  }
 }

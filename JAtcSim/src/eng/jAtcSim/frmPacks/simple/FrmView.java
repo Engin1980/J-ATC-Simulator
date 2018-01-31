@@ -2,6 +2,11 @@ package eng.jAtcSim.frmPacks.simple;
 
 
 
+import eng.jAtcSim.SwingRadar.SwingCanvas;
+import eng.jAtcSim.lib.speaking.formatting.LongFormatter;
+import eng.jAtcSim.radarBase.BehaviorSettings;
+import eng.jAtcSim.radarBase.Radar;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -9,6 +14,7 @@ public class FrmView extends JFrame {
 
   private static Dimension initDimension = new Dimension(500, 300);
   private Pack parent;
+  private Radar radar;
   private int refreshRate = 3;
   private int refreshRateCounter;
   private JPanel pnlContent;
@@ -33,41 +39,22 @@ public class FrmView extends JFrame {
     pack();
   }
 
-  void elapseSecond() {
-    this.refreshRateCounter++;
-    if (this.refreshRateCounter >= this.refreshRate) {
-      this.refreshRateCounter = 0;
-      //radarComponent.repaint();
-    }
-  }
-
   void init(Pack pack) {
-    throw new UnsupportedOperationException("TODO");
-//    this.parent = pack;
-//
-//    this.refreshRateCounter = 0;
-//
-//    // generování hlavního radaru
-//    EJComponentCanvas canvas = new EJComponentCanvas();
-//    BasicRadar r = new BasicRadar(canvas,
-//        this.parent.getSim().getActiveAirport().getRadarRange(),
-//        this.parent.getSim(),
-//        this.parent.getArea(),
-//        this.parent.getDisplaySettings(), false);
-//    this.radarComponent = canvas.getEJComponent();
-//
-//    // otevření hlavního formuláře
-//    this.pnlContent.add(this.radarComponent);
-//    this.setVisible(true);
-//
-//    FrmView me = this;
-//
-//    EventListener el = new EventListener<Pack, Object>() {
-//      @Override
-//      public void raise(Pack parent, Object e) {
-//        me.elapseSecond();
-//      }
-//    };
-//    parent.getElapseSecondEvent().addListener(el);
+
+    this.parent = pack;
+
+    this.refreshRateCounter = 0;
+
+    BehaviorSettings behSett = new BehaviorSettings(false, new LongFormatter(),10);
+
+    SwingCanvas canvas = new SwingCanvas();
+    this.radar = new Radar(
+        canvas,
+        this.parent.getSim().getActiveAirport().getRadarRange(),
+        this.parent.getSim(), this.parent.getArea(),
+        this.parent.getDisplaySettings(), behSett
+    );
+
+    this.pnlContent.add(canvas.getGuiControl());
   }
 }

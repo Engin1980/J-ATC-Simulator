@@ -7,7 +7,7 @@ package eng.jAtcSim;
 
 import eng.jAtcSim.radarBase.global.SoundManager;
 import eng.jAtcSim.frmPacks.Pack;
-import eng.jAtcSim.startup.NewStartupSettings;
+import eng.jAtcSim.startup.StartupSettings;
 import eng.jAtcSim.startup.StartupWizard;
 import eng.jAtcSim.lib.Simulation;
 import eng.jAtcSim.lib.airplanes.AirplaneTypes;
@@ -48,8 +48,8 @@ public class JAtcSim {
 
     // startup wizard
     String file = appSettings.resFolder + "startupSettings.xml";
-    NewStartupSettings sett = XmlLoadHelper.loadStartupSettings(file);
-    StartupWizard wizard = new StartupWizard(sett);
+    StartupSettings startupSettings = XmlLoadHelper.loadStartupSettings(file);
+    StartupWizard wizard = new StartupWizard(startupSettings);
     if (FAST_START == false) {
       wizard.run();
       if (wizard.isFinished() == false) {
@@ -57,11 +57,11 @@ public class JAtcSim {
       }
     }
 
-    XmlLoadHelper.saveStartupSettings(sett, file);
+    XmlLoadHelper.saveStartupSettings(startupSettings, file);
 
     // loading data from Xml files
     try {
-      loadDataFromXmlFiles(sett);
+      loadDataFromXmlFiles(startupSettings);
     } catch (Exception ex) {
       throw (ex);
     }
@@ -71,31 +71,31 @@ public class JAtcSim {
     System.out.println("** Setting simulation");
 
     // area, airport and time
-    String icao = sett.recent.icao;
+    String icao = startupSettings.recent.icao;
     Calendar simTime = Calendar.getInstance();
-    updateCalendarToSimTime(simTime, sett);
+    updateCalendarToSimTime(simTime, startupSettings);
     Airport aip = area.getAirports().get(icao);
 
     // weather
     Weather weather;
-    if (sett.weather.useOnline) {
+    if (startupSettings.weather.useOnline) {
       weather = WeatherProvider.downloadAndDecodeMetar(aip.getIcao());
     } else {
-      weather = WeatherProvider.decodeMetar(sett.weather.metar);
+      weather = WeatherProvider.decodeMetar(startupSettings.weather.metar);
     }
 
     // traffic
-    Traffic traffic = getTrafficFromStartupSettings(sett);
+    Traffic traffic = getTrafficFromStartupSettings(startupSettings);
     if (specificTraffic != null)
       traffic = specificTraffic;
     final Simulation sim = Simulation.create(
-        aip, types, weather, traffic, simTime, sett.simulation.secondLengthInMs);
+        aip, types, weather, traffic, simTime, startupSettings.simulation.secondLengthInMs);
 
     // sound
     SoundManager.init(appSettings.soundFolder);
 
     // starting pack & simulation
-    String packType = sett.radar.packClass;
+    String packType = startupSettings.radar.packClass;
     Pack simPack
         = createPackInstance(packType);
 
@@ -106,7 +106,7 @@ public class JAtcSim {
 
 
 
-  private static void loadDataFromXmlFiles(NewStartupSettings sett) throws Exception {
+  private static void loadDataFromXmlFiles(StartupSettings sett) throws Exception {
     System.out.println("*** Loading XML");
 
     String failMsg = null;
@@ -139,7 +139,7 @@ public class JAtcSim {
     appSettings.soundFolder =curDir + "\\_Sounds\\";
   }
 
-  private static void updateCalendarToSimTime(Calendar simTime, NewStartupSettings sett) {
+  private static void updateCalendarToSimTime(Calendar simTime, StartupSettings sett) {
     String timeS = sett.recent.time;
     String[] pts = timeS.split(":");
     int hours = Integer.parseInt(pts[0]);
@@ -156,13 +156,15 @@ public class JAtcSim {
       Constructor<?> ctor = clazz.getConstructor();
       object = ctor.newInstance();
     } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException ex) {
-      throw new RuntimeException("Failed to create instance of radar pack " + packTypeName + ". Reason: " + ex.getMessage(), ex);
+      throw new ERuntimeException(
+          ex,
+          "Failed to create instance of radar pack '%s'.", packTypeName);
     }
     Pack ret = (Pack) object;
     return ret;
   }
 
-  private static Traffic getTrafficFromStartupSettings(NewStartupSettings sett) {
+  private static Traffic getTrafficFromStartupSettings(StartupSettings sett) {
     Traffic ret;
     if (sett.traffic.useXml) {
       throw new UnsupportedOperationException("Traffic from XML files not supported yet.");

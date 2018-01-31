@@ -7,7 +7,6 @@
 package eng.jAtcSim.lib.exceptions;
 
 /**
- *
  * @author Marek
  */
 public class ERuntimeException extends RuntimeException {
@@ -16,12 +15,16 @@ public class ERuntimeException extends RuntimeException {
     super(message);
   }
 
-  public ERuntimeException(String text, Object ... params) {
+  public ERuntimeException(String text, Object... params) {
     super(String.format(text, params));
   }
 
   public ERuntimeException(String message, Throwable cause) {
     super(message, cause);
   }
-  
+
+  public ERuntimeException(Throwable cause, String text, Object... params) {
+    super(String.format(text, params), cause);
+  }
+
 }

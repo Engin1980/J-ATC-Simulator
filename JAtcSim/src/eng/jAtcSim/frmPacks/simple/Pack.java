@@ -6,6 +6,7 @@
 
 package eng.jAtcSim.frmPacks.simple;
 
+import eng.eSystem.events.IEventListenerSimple;
 import eng.jAtcSim.radarBase.DisplaySettings;
 import eng.eSystem.events.EventSimple;
 import eng.jAtcSim.AppSettings;
@@ -59,17 +60,11 @@ public class Pack extends eng.jAtcSim.frmPacks.Pack {
     this.frmMain.setVisible(true);
     this.frmScheduledTrafficListing.setVisible(true);
 
-    // TODO update this
-//    // join listeners on second elapsed
-//    this.sim.secondElapsedEvent = new EventListener<Simulation, Object>() {
-//      @Override
-//      public void raise(Simulation parent, Object e) {
-//        frmMain.elapseSecond();
-//        frmList.elapseSecond();
-//        updateScheduledTrafficListing();
-//        em.raise(null);
-//      }
-//    };
+    // added updates of non-radar windows
+    this.sim.secondElapsedEvent.add(o -> {
+      frmList.elapseSecond();
+      updateScheduledTrafficListing();
+    });
   }
 
   @Override

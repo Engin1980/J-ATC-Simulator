@@ -249,7 +249,6 @@ public class SwingCanvas implements ICanvas<JComponent> {
     Point[] pts = getPositionsForText(lines, location);
     for (int i = 0; i < lines.size(); i++) {
       g.drawString(lines.get(i), pts[i].x, pts[i].y);
-      System.out.println("printed line " + lines.get(i));
     }
   }
 

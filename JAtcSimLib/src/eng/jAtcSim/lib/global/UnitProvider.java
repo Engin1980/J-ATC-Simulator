@@ -15,7 +15,7 @@ public class UnitProvider {
   }
 
   public static double mToNM(double value) {
-    return UnitProvider.kmToNM(value * 1000);
+    return UnitProvider.kmToNM(value / 1000d);
   }
 
   public static double nmToKm(double value) {

@@ -12,12 +12,12 @@ package eng.jAtcSim.startup;
 public class StartupWizard {
 
   private boolean finished = false;
-  private NewStartupSettings settings = null;
+  private StartupSettings settings = null;
 
   public StartupWizard() {
   }
 
-  public StartupWizard(NewStartupSettings settings) {
+  public StartupWizard(StartupSettings settings) {
     this.settings = settings;
   }
 
@@ -26,7 +26,7 @@ public class StartupWizard {
     FrmWizardFrame.DialogResult res;
 
     if (settings == null) {
-      settings = new NewStartupSettings();
+      settings = new StartupSettings();
     }
 
     res = doStep1();

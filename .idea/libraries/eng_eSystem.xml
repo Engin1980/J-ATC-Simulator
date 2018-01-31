@@ -1,5 +1,5 @@
 <component name="libraryTable">
-  <library name="ESystem">
+  <library name="eng.eSystem">
     <CLASSES>
       <root url="jar://$PROJECT_DIR$/../eng.eSystem/ESystem/out/artifacts/eng_eSystem/eng.eSystem.jar!/" />
     </CLASSES>
