@@ -12,6 +12,7 @@ import eng.jAtcSim.lib.exceptions.ERuntimeException;
 import eng.jAtcSim.lib.speaking.formatting.LongFormatter;
 import eng.jAtcSim.radarBase.BehaviorSettings;
 import eng.jAtcSim.radarBase.Radar;
+import eng.jAtcSim.startup.LayoutManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -30,6 +31,7 @@ public class FrmMain extends javax.swing.JFrame {
   private int refreshRate;
   private int refreshRateCounter = 0;
   private Radar radar;
+  private JPanel pnlTop;
 
   public FrmMain() {
     initComponents();
@@ -38,7 +40,7 @@ public class FrmMain extends javax.swing.JFrame {
   private void initComponents() {
 
     // top panel
-    JPanel pnlTop = new JPanel();
+    pnlTop = new JPanel();
     pnlTop.setLayout(new BoxLayout(pnlTop, BoxLayout.Y_AXIS));
     //JButton btn = new JButton("test");
     //btn.addActionListener(this::btn_click);
@@ -114,13 +116,51 @@ public class FrmMain extends javax.swing.JFrame {
         this.parent.getDisplaySettings(), behSett
     );
 
-    canvas.getGuiControl().addKeyListener(new MyKeyListener(this.jTxtInput));
     this.pnlContent.add(canvas.getGuiControl());
+    canvas.getGuiControl().addKeyListener(new MyKeyListener(this.jTxtInput));
 
     // zabalení chování textového pole s příkazy
     wrp = new CommandJTextWraper(jTxtInput);
 
     this.jTxtInput.requestFocus();
+
+    // create radar panel
+    //
+    createRadarPanel();
+  }
+
+  private void createRadarPanel( ) {
+    JLabel lbl = new JLabel();
+    lbl.setText("Demo text");
+
+    JTextField txt = new JTextField();
+    txt.setText("???");
+
+    JButton btn = new JButton();
+    btn.setText("Set");
+
+    setDarkStyle(pnlTop, lbl, txt, btn);
+    this.setBackground(Color.black);
+    this.setForeground(Color.yellow);
+
+
+
+    pnlTop.add(
+        LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.top, 25, lbl, txt, btn)
+    );
+
+    java.awt.Container ct = lbl;
+    while (ct != null){
+      setDarkStyle(ct);
+      ct = ct.getParent();
+    }
+  }
+
+  private void setDarkStyle(java.awt.Container ... components) {
+    for (java.awt.Container component : components) {
+      component.setBackground(Color.black);
+      component.setForeground(Color.yellow);
+    }
   }
 
   private boolean sendMessage(String msg) {

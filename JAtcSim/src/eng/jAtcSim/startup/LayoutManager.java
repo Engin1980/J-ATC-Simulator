@@ -1,6 +1,7 @@
 package eng.jAtcSim.startup;
 
 import javax.swing.*;
+import javax.swing.text.StyledEditorKit;
 import java.awt.*;
 
 public class LayoutManager {
@@ -98,8 +99,17 @@ public class LayoutManager {
 
   public static JPanel createGridPanel(int rowCount, int columnCount, int distance, Component... components) {
     JPanel panel = new JPanel();
-    fillBorderedPanel(panel, rowCount, columnCount, distance, components);
+    fillGridPanel(panel, rowCount, columnCount, distance, components);
     return panel;
+  }
+
+  public static void fillGridPanel(Container panel, int rowCount, int columnCount, int distance, Component... components) {
+    panel.setLayout(new GridLayout(rowCount, columnCount, distance, distance));
+
+    for (Component component : components) {
+      panel.add(component);
+    }
+
   }
 
   public static void fillBorderedPanel(JComponent panel, int rowCount, int columnCount, int distance, Component... components) {

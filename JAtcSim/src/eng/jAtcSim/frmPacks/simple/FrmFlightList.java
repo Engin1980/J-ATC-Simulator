@@ -87,7 +87,7 @@ Simulation sim;
     Dimension d = new Dimension(ListItemComponent.WIDTH, ListItemComponent.HEIGHT * 5);
     this.setSize(d);
 
-    this.sim.secondElapsedEvent.add(o -> updateList());
+    this.sim.getSecondElapsedEvent().add(o -> updateList());
   }
 
   private void updateList() {

@@ -178,7 +178,7 @@ public class Radar {
         (c, o) -> Radar.this.canvas_onKeyPress((ICanvas) c, (KeyEventArg) o));
 
     // listen to simulation seconds for redraw
-    this.simulation.secondElapsedEvent.add(o -> redraw());
+    this.simulation.getSecondElapsedEvent().add(o -> redraw());
   }
 
   public void zoomIn() {

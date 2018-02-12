@@ -103,9 +103,6 @@ public class JAtcSim {
     simPack.startPack();
   }
 
-
-
-
   private static void loadDataFromXmlFiles(StartupSettings sett) throws Exception {
     System.out.println("*** Loading XML");
 

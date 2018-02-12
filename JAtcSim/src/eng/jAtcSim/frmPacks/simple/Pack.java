@@ -6,7 +6,6 @@
 
 package eng.jAtcSim.frmPacks.simple;
 
-import eng.eSystem.events.IEventListenerSimple;
 import eng.jAtcSim.radarBase.DisplaySettings;
 import eng.eSystem.events.EventSimple;
 import eng.jAtcSim.AppSettings;
@@ -61,7 +60,7 @@ public class Pack extends eng.jAtcSim.frmPacks.Pack {
     this.frmScheduledTrafficListing.setVisible(true);
 
     // added updates of non-radar windows
-    this.sim.secondElapsedEvent.add(o -> {
+    this.sim.getSecondElapsedEvent().add(o -> {
       frmList.elapseSecond();
       updateScheduledTrafficListing();
     });

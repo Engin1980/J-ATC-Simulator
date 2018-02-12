@@ -5,7 +5,7 @@
  */
 package eng.jAtcSim.lib;
 
-import eng.eSystem.events.IEventListenerSimple;
+import eng.eSystem.events.EventSimple;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.AirplaneList;
 import eng.jAtcSim.lib.airplanes.AirplaneTypes;
@@ -45,9 +45,12 @@ public class Simulation {
   /**
    * Public event informing surrounding about elapsed second.
    */
-  //public EventListener<Simulation, Object> secondElapsedEvent = null;
-  public eng.eSystem.events.EventSimple<Simulation> secondElapsedEvent = new
-      eng.eSystem.events.EventSimple<>(this);
+  private EventSimple<Simulation> secondElapsedEvent =
+      new EventSimple<>(this);
+
+  public EventSimple<Simulation> getSecondElapsedEvent() {
+    return secondElapsedEvent;
+  }
 
   /**
    * Internal timer used to make simulation ticks.
