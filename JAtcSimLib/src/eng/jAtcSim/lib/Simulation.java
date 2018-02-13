@@ -162,6 +162,10 @@ public class Simulation {
     this.tmr.stop();
   }
 
+  public boolean isRunning(){
+    return this.tmr.isRunning();
+  }
+
   private void elapseSecond() {
     if (isBusy) {
       System.out.println("## -- elapse second is busy!");

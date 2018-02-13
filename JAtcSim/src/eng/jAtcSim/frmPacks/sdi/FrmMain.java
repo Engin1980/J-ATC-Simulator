@@ -1,10 +1,11 @@
 package eng.jAtcSim.frmPacks.sdi;
 
 import eng.jAtcSim.frmPacks.shared.FlightListPanel;
+import eng.jAtcSim.frmPacks.shared.ScheduledFlightListPanel;
 import eng.jAtcSim.frmPacks.shared.SwingRadarPanel;
 import eng.jAtcSim.lib.speaking.formatting.LongFormatter;
 import eng.jAtcSim.radarBase.BehaviorSettings;
-import sun.java2d.SurfaceDataProxy;
+import eng.jAtcSim.startup.LayoutManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -17,6 +18,8 @@ public class FrmMain extends JFrame {
   private JPanel pnlContent;
   private JPanel pnlBottom;
   private JPanel pnlLeft;
+  private JPanel pnlTop;
+  private JPanel pnlRight;
 
   public FrmMain(){
     initComponents();
@@ -24,12 +27,19 @@ public class FrmMain extends JFrame {
 
   private void initComponents() {
 
+    this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     this.setTitle("SDI");
+
+    Color bgColor = new Color(50,50,50);
+
+    // top
+    pnlTop = buildTopPanel();
+    pnlTop.setBackground(bgColor);
 
     // bottom
     pnlBottom = new JPanel();
     pnlBottom.setName("pnlBottom");
-    pnlBottom.setBackground(Color.yellow);
+    pnlBottom.setBackground(bgColor);
     JButton btn = new JButton("Nazdar");
     pnlBottom.add(btn);
 
@@ -38,7 +48,7 @@ public class FrmMain extends JFrame {
     pnlContent = new JPanel();
     pnlContent.setName("pnlContent");
     pnlContent.setLayout(new BorderLayout());
-    pnlContent.setBackground(Color.white);
+    pnlContent.setBackground(bgColor);
     Dimension prefferedSize = new Dimension(1032, 607);
     pnlContent.setPreferredSize(prefferedSize);
     pnlContent.setBackground(Color.BLUE);
@@ -46,22 +56,60 @@ public class FrmMain extends JFrame {
     // left panel
     pnlLeft = new JPanel();
     pnlLeft.setName("pnlLeft");
-    pnlLeft.setBackground(Color.orange);
+    pnlLeft.setBackground(bgColor);
     pnlLeft.setLayout(new BorderLayout());
 
-
-    // flight list panel - left
+    // right panel
+    pnlRight = new JPanel();
+    pnlRight.setName("pnlRight");
+    pnlRight.setBackground(bgColor);
+    pnlRight.setLayout(new BorderLayout());
 
     // content pane
     BorderLayout layout = new BorderLayout();
     this.getContentPane().setLayout(layout);
-    //this.getContentPane().add(pnlTop, BorderLayout.PAGE_START);
-    //this.getContentPane().add(pnlBottom, BorderLayout.PAGE_END);
+    this.getContentPane().add(pnlTop, BorderLayout.PAGE_START);
+    this.getContentPane().add(pnlBottom, BorderLayout.PAGE_END);
     this.getContentPane().add(pnlContent, BorderLayout.CENTER);
     this.getContentPane().add(pnlLeft, BorderLayout.LINE_START);
+    this.getContentPane().add(pnlRight, BorderLayout.LINE_END);
 
     pack();
 
+  }
+
+  private JPanel buildTopPanel() {
+
+    JButton btnStrips = new JButton("Strips");
+    adjustJComponentColors(btnStrips);
+    btnStrips.addActionListener(o -> {
+      boolean isVis = pnlLeft.isVisible();
+      isVis = ! isVis;
+      pnlLeft.setVisible(isVis);
+    });
+
+    JButton btnPause = new JButton("Pause");
+    adjustJComponentColors(btnPause);
+    btnPause.addActionListener(o -> {
+      if (parent.getSim().isRunning()) {
+        parent.getSim().stop();
+        btnPause.setText("Resume");
+      }
+      else {
+        parent.getSim().start();
+        btnPause.setText("Pause");
+      }
+    });
+
+    JPanel ret = LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.middle, 4,
+        btnStrips, btnPause );
+    ret.setName("pnlTop");
+    return ret;
+  }
+
+  private void adjustJComponentColors(JComponent component){
+    component.setBackground(new Color(50,50,50));
+    component.setForeground(new Color(200,200,200));
   }
 
   void init(Pack pack) {
@@ -91,11 +139,13 @@ public class FrmMain extends JFrame {
 
     // Flight list to left panel
     FlightListPanel flightListPanel = new FlightListPanel();
-    //flightListPanel.setPreferredSize(new Dimension(200, 200));
     flightListPanel.init(this.parent.getSim());
     pnlLeft.add(flightListPanel);
 
-    // pack();
+    // Scheduled flights to right panel
+    ScheduledFlightListPanel scheduledPanel = new ScheduledFlightListPanel();
+    scheduledPanel.init(this.parent.getSim());
+    pnlRight.add(scheduledPanel);
 
     this.parent.getSim().getSecondElapsedEvent().add(o -> printGuiTree());
 
