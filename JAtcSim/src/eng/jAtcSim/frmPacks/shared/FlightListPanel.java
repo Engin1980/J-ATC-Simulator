@@ -69,7 +69,7 @@ public class FlightListPanel extends JPanel {
 }
 
 class FlightStripPanel extends JPanel {
-  private static final int WIDTH = 200;
+  public static final int WIDTH = 200;
   private static final int HEIGHT = 50;
 
   private static final int A = 75; // adjust colors

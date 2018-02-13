@@ -97,6 +97,26 @@ public class LayoutManager {
     panel.add(content, BorderLayout.CENTER);
   }
 
+  public static JPanel createBorderedPanel(Container top, Container bottom, Container left, Container right, Container content){
+    JPanel ret = new JPanel();
+    fillBorderedPanel(ret, top, bottom, left, right, content);
+    return ret;
+  }
+
+  public static void fillBorderedPanel(JPanel panel, Container top, Container bottom, Container left, Container right, Container content) {
+    panel.setLayout(new BorderLayout());
+    if (top != null)
+      panel.add(top, BorderLayout.PAGE_START);
+    if (bottom != null)
+      panel.add(bottom, BorderLayout.PAGE_END);
+    if (left != null)
+      panel.add(left, BorderLayout.LINE_START);
+    if (right != null)
+      panel.add(right, BorderLayout.LINE_END);
+    if (content != null)
+      panel.add(content, BorderLayout.CENTER);
+  }
+
   public static JPanel createGridPanel(int rowCount, int columnCount, int distance, Component... components) {
     JPanel panel = new JPanel();
     fillGridPanel(panel, rowCount, columnCount, distance, components);
@@ -215,7 +235,7 @@ public class LayoutManager {
     return ret;
   }
 
-  private static JPanel createHorizontalPlaceholder(int width){
+  public static JPanel createHorizontalPlaceholder(int width){
     JPanel ret = createPlaceholder(width, 1);
     return ret;
   }

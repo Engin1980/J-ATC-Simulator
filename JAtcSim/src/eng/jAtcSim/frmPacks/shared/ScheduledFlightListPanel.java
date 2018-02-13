@@ -5,7 +5,6 @@ import eng.jAtcSim.lib.traffic.Movement;
 import eng.jAtcSim.startup.LayoutManager;
 
 import javax.swing.*;
-import javax.swing.text.StyledEditorKit;
 import java.awt.*;
 
 public class ScheduledFlightListPanel extends JPanel {
@@ -56,7 +55,7 @@ public class ScheduledFlightListPanel extends JPanel {
 
 class ScheduledFlightStripPanel extends JPanel {
   private static final int WIDTH = 200;
-  private static final int HEIGHT = 20;
+  private static final int HEIGHT = 40;
 
   private static final int A = 75; // adjust colors
   private static final int B = 125; // adjust colors
@@ -103,29 +102,47 @@ class ScheduledFlightStripPanel extends JPanel {
     return ret;
   }
 
+  private static final Dimension CALLSIGN_DIMENSION = new Dimension(75,15);
+  private static final Dimension FLAG_DIMENSION = new Dimension(25, 15);
+  private static final Dimension TIME_DIMENSION = new Dimension(75,15);
+  private static final Dimension DELAY_DIMENSION = FLAG_DIMENSION;
+
   private void fillContent(Movement movement, Color frColor, Color bgColor) {
     JLabel lblCallsign = new JLabel(movement.getCallsign().toString());
-    //lblCallsign.setPreferredSize(CALLSIGN_DIMENSION);
+    setLabelFixedSize(lblCallsign, CALLSIGN_DIMENSION);
+
     JLabel lblDepartureArrival = new JLabel(movement.isDeparture() ? "DEP" : "ARR");
-    //lblDepartureArrival.setPreferredSize(FLAG_DIMENSION);
+    setLabelFixedSize(lblDepartureArrival,FLAG_DIMENSION);
     JLabel lblIfrVfr = new JLabel(movement.isIfr() ? "IFR" : "VFR");
-    //lblIfrVfr.setPreferredSize(FLAG_DIMENSION);
+    setLabelFixedSize(lblIfrVfr,FLAG_DIMENSION);
     JLabel lblTime = new JLabel(movement.getInitTime().toTimeString());
-    //lblTime.setPreferredSize(TIME_DIMENSION);
+    setLabelFixedSize(lblTime,TIME_DIMENSION);
     JLabel lblDelay = new JLabel(Integer.toString(movement.getDelayInMinutes()));
-    //lblDelay.setPreferredSize(DELAY_DIMENSION);
+    setLabelFixedSize(lblDelay,DELAY_DIMENSION);
+
+
+    JPanel firstLine = LayoutManager.createFlowPanel(
+        LayoutManager.eVerticalAlign.middle, 0, lblCallsign, lblDepartureArrival, lblIfrVfr);
+    JPanel secondLine = LayoutManager.createFlowPanel(
+        LayoutManager.eVerticalAlign.middle, 0, lblTime, lblDelay);
+    JPanel pnl = LayoutManager.createBoxPanel(LayoutManager.eHorizontalAlign.left, 0, firstLine, secondLine );
+
+    adjustComponentStyle(bgColor, frColor, NORMAL_FONT,
+      firstLine, secondLine);
 
     adjustComponentStyle(bgColor, frColor, NORMAL_FONT,
         lblCallsign,lblDepartureArrival,lblIfrVfr,lblTime,lblDelay);
 
-    JPanel pnl = eng.jAtcSim.startup.LayoutManager.createFlowPanel(eng.jAtcSim.startup.LayoutManager.eVerticalAlign.baseline,  10,
-        lblCallsign,  lblDepartureArrival,  lblIfrVfr,  lblTime,  lblDelay);
     lblCallsign.setFont(BOLD_FONT);
 
     pnl.setBackground(bgColor);
-
-    //pnl.setPreferredSize(ROW_PREFFERED_DIMENSION);
     this.add(pnl);
+  }
+
+  private void setLabelFixedSize(JLabel lbl, Dimension dimension) {
+    lbl.setLayout(new BorderLayout());
+    lbl.setMinimumSize(dimension);
+    lbl.setMaximumSize(dimension);
   }
 
   private void adjustComponentStyle(Color bgColor, Color frColor, Font font, JComponent ... components ){

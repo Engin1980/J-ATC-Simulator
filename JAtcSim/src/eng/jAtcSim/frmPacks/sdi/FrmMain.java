@@ -49,15 +49,13 @@ public class FrmMain extends JFrame {
     pnlContent.setName("pnlContent");
     pnlContent.setLayout(new BorderLayout());
     pnlContent.setBackground(bgColor);
-    Dimension prefferedSize = new Dimension(1032, 607);
-    pnlContent.setPreferredSize(prefferedSize);
-    pnlContent.setBackground(Color.BLUE);
 
     // left panel
     pnlLeft = new JPanel();
     pnlLeft.setName("pnlLeft");
     pnlLeft.setBackground(bgColor);
     pnlLeft.setLayout(new BorderLayout());
+    pnlLeft.setPreferredSize(new Dimension(200, 200));
 
     // right panel
     pnlRight = new JPanel();
