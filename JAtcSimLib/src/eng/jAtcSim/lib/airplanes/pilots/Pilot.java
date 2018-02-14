@@ -102,17 +102,17 @@ public class Pilot {
     public ETime secondTurnTime;
     public boolean isLeftTurned;
 
-    public int getOutboundHeading() {
+    public double getOutboundHeading() {
       return Headings.add(inboundRadial, 180);
     }
 
     private void setHoldDataByEntry() {
-      int y = (int) Coordinates.getBearing(parent.getCoordinate(), this.fix);
-      int yy = Headings.add(y, 180);
+      double y = Coordinates.getBearing(parent.getCoordinate(), this.fix);
+      double yy = Headings.add(y, 180);
 
       int h = this.inboundRadial;
-      int a = Headings.add(h, -75);
-      int b = Headings.add(h, 110);
+      double a = Headings.add(h, -75);
+      double b = Headings.add(h, 110);
 
       if (Headings.isBetween(b, yy, a)) {
         this.phase = eHoldPhase.directEntry;
@@ -144,8 +144,8 @@ public class Pilot {
             parent.setTargetHeading(this.getOutboundHeading(), this.isLeftTurned);
             this.phase = eHoldPhase.firstTurn;
           } else {
-            int newHeading = (int) Coordinates.getHeadingToRadial(
-                parent.getCoordinate(), this.fix, this.inboundRadial, parent.getHeading());
+            double newHeading = Coordinates.getHeadingToRadial(
+                parent.getCoordinate(), this.fix, this.inboundRadial);
             parent.setTargetHeading(newHeading);
 
           }
@@ -171,7 +171,7 @@ public class Pilot {
         case tearEntry:
           if (Coordinates.getDistanceInNM(parent.getCoordinate(), this.fix) < NEAR_FIX_DISTANCE) {
 
-            int newHeading;
+            double newHeading;
             newHeading = this.isLeftTurned
                 ? Headings.add(this.inboundRadial, -150)
                 : Headings.add(this.inboundRadial, 150);
@@ -180,7 +180,7 @@ public class Pilot {
 
             this.phase = eHoldPhase.tearAgainst;
           } else {
-            int newHeading = (int) Coordinates.getBearing(parent.getCoordinate(), this.fix);
+            double newHeading = Coordinates.getBearing(parent.getCoordinate(), this.fix);
             parent.setTargetHeading(newHeading);
           }
           break;
@@ -206,7 +206,7 @@ public class Pilot {
 
         case parallelAgainst:
           if (Acc.now().isAfter(this.secondTurnTime)) {
-            int newHeading = (this.isLeftTurned)
+             double newHeading = (this.isLeftTurned)
                 ? Headings.add(this.getOutboundHeading(), -210)
                 : Headings.add(this.getOutboundHeading(), +210);
             parent.setTargetHeading(newHeading, !this.isLeftTurned);
@@ -261,11 +261,13 @@ public class Pilot {
       this.phase = eApproachPhase.enteringFirst;
     }
 
-    private int getAppHeadingDifference() {
+    private double getAppHeadingDifference() {
       int heading = (int) Coordinates.getBearing(parent.getCoordinate(), this.approach.getParent().getCoordinate());
-      int ret = Headings.subtract(heading, parent.getHeading());
+      double ret = Headings.subtract(heading, parent.getHeading());
       return ret;
-    }    @Override
+    }
+
+    @Override
     public void fly() {
 
       if (this.phase != eApproachPhase.touchdownAndLanded && this.phase != eApproachPhase.touchdownAndLandedFirst) {
@@ -391,7 +393,7 @@ public class Pilot {
       int currentTargetAlttiude = parent.getTargetAltitude();
       int newAltitude = -1;
       if (checkIfIsAfterThreshold) {
-        int diff = getAppHeadingDifference();
+        double diff = getAppHeadingDifference();
         if (diff > 90) {
           newAltitude = Acc.airport().getAltitude();
         }
@@ -413,10 +415,10 @@ public class Pilot {
     }
 
     private void updateHeadingOnApproach() {
-      int newHeading
-          = (int) Coordinates.getHeadingToRadial(
+      double newHeading
+          = Coordinates.getHeadingToRadial(
           parent.getCoordinate(), this.approach.getPoint(),
-          this.approach.getRadial(), parent.getHeading());
+          this.approach.getRadial());
       parent.setTargetHeading(newHeading);
     }
 
@@ -424,7 +426,7 @@ public class Pilot {
       int newHeading
           = (int) Coordinates.getHeadingToRadial(
           parent.getCoordinate(), this.approach.getParent().getOtherThreshold().getCoordinate(),
-          this.approach.getRadial(), parent.getHeading());
+          this.approach.getRadial());
       parent.setTargetHeading(newHeading);
     }
 
@@ -728,7 +730,7 @@ public class Pilot {
     }
 
     targetCoordinate = null;
-    int targetHeading;
+    double targetHeading;
     if (c.isCurrentHeading()) {
       targetHeading = parent.getHeading();
     } else {
@@ -744,7 +746,7 @@ public class Pilot {
           = c.getDirection() == ChangeHeadingCommand.eDirection.left;
     }
 
-    parent.setTargetHeading(targetHeading, leftTurn);
+    parent.setTargetHeading((int) targetHeading, leftTurn);
 
     confirmIfReq(c);
     return true;
@@ -946,7 +948,7 @@ public class Pilot {
     if (behavior != null) {
       behavior.fly();
     } else if (targetCoordinate != null) {
-      int heading = (int) Coordinates.getBearing(parent.getCoordinate(), targetCoordinate);
+      double heading = Coordinates.getBearing(parent.getCoordinate(), targetCoordinate);
       heading = Headings.to(heading);
       if (heading != parent.getTargetHeading()) {
         parent.setTargetHeading(heading);

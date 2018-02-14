@@ -23,7 +23,7 @@ public final class Coordinates {
    * @param distanceInNM Distance in nauctional miles
    * @return New point
    */
-  public static Coordinate getCoordinate(Coordinate coordinate, int heading, double distanceInNM) {
+  public static Coordinate getCoordinate(Coordinate coordinate, double heading, double distanceInNM) {
     double lat = toRadians(coordinate.getLatitude().get());
     double lon = toRadians(coordinate.getLongitude().get());
     double bear = toRadians(heading);
@@ -97,7 +97,7 @@ public final class Coordinates {
   
   private static final double RADIAL_APPROACH_MULTIPLIER = 7; // 1.3;
   private static final double RADIAL_MAX_DIFF = 30;
-  public static double getHeadingToRadial (Coordinate from, Coordinate to, int radialTo, int currentHeading){
+  public static double getHeadingToRadial (Coordinate from, Coordinate to, double radialTo){
     double heading = Coordinates.getBearing(from, to);
     double diff = heading - radialTo;
     diff *= RADIAL_APPROACH_MULTIPLIER;

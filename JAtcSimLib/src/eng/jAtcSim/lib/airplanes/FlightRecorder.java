@@ -65,10 +65,10 @@ public class FlightRecorder extends Recorder {
     sb.appendFormat(" H:%5s => %5s ", plane.getHeadingS(), plane.getTargetHeadingS()).append(SEPARATOR);
 
     // alt
-    sb.appendFormat(" A:%7d (%5d) => %7d ", plane.getAltitude(), plane.getVerticalSpeed(), plane.getTargetAltitude()).append(SEPARATOR);
+    sb.appendFormat(" A:%7.0f (%5.0f) => %7d ", plane.getAltitude(), plane.getVerticalSpeed(), plane.getTargetAltitude()).append(SEPARATOR);
 
     // spd
-    sb.appendFormat(" S:%5d (%5d) => %5d ", plane.getSpeed(), plane.getGS(), plane.getTargetSpeed()).append(SEPARATOR);
+    sb.appendFormat(" S:%5.0f (%5.0f) => %5d ", plane.getSpeed(), plane.getGS(), plane.getTargetSpeed()).append(SEPARATOR);
     sb.appendFormat("AT: " + pilot.getAutoThrustLogString()).append(SEPARATOR);
     
     // from pilot

@@ -2,6 +2,7 @@ package eng.jAtcSim.frmPacks.sdi;
 
 import eng.jAtcSim.frmPacks.shared.FlightListPanel;
 import eng.jAtcSim.frmPacks.shared.ScheduledFlightListPanel;
+import eng.jAtcSim.frmPacks.shared.StatsPanel;
 import eng.jAtcSim.frmPacks.shared.SwingRadarPanel;
 import eng.jAtcSim.lib.speaking.formatting.LongFormatter;
 import eng.jAtcSim.radarBase.BehaviorSettings;
@@ -40,8 +41,6 @@ public class FrmMain extends JFrame {
     pnlBottom = new JPanel();
     pnlBottom.setName("pnlBottom");
     pnlBottom.setBackground(bgColor);
-    JButton btn = new JButton("Nazdar");
-    pnlBottom.add(btn);
 
 
     // content (radar) panel
@@ -62,15 +61,13 @@ public class FrmMain extends JFrame {
     pnlRight.setName("pnlRight");
     pnlRight.setBackground(bgColor);
     pnlRight.setLayout(new BorderLayout());
+    pnlRight.setPreferredSize(new Dimension(200, 200));
 
     // content pane
-    BorderLayout layout = new BorderLayout();
-    this.getContentPane().setLayout(layout);
-    this.getContentPane().add(pnlTop, BorderLayout.PAGE_START);
-    this.getContentPane().add(pnlBottom, BorderLayout.PAGE_END);
-    this.getContentPane().add(pnlContent, BorderLayout.CENTER);
-    this.getContentPane().add(pnlLeft, BorderLayout.LINE_START);
-    this.getContentPane().add(pnlRight, BorderLayout.LINE_END);
+
+    LayoutManager.fillBorderedPanel(
+        this.getContentPane(),
+        pnlTop, pnlBottom, pnlLeft, pnlRight, pnlContent);
 
     pack();
 
@@ -112,21 +109,12 @@ public class FrmMain extends JFrame {
 
   void init(Pack pack) {
 
-//    JButton btn = new JButton("Dudlajda");
-//    pnlContent.add(btn );
-
-//    JButton btn = new JButton("Dudlajda");
-//    pnlContent.add(btn );
-
     this.parent = pack;
     this.refreshRate = parent.getDisplaySettings().refreshRate;
     this.refreshRateCounter = 0;
 
-    // behavior settings for this radar
+    // radar
     BehaviorSettings behSett = new BehaviorSettings(true, new LongFormatter(), 10);
-
-
-    // Radar to center panel
     SwingRadarPanel pnlSRP = new SwingRadarPanel();
     pnlSRP.init(
         this.parent.getSim().getActiveAirport().getRadarRange(),
@@ -135,27 +123,28 @@ public class FrmMain extends JFrame {
     );
     this.pnlContent.add(pnlSRP);
 
-    // Flight list to left panel
+    // Left panel
     FlightListPanel flightListPanel = new FlightListPanel();
     flightListPanel.init(this.parent.getSim());
     pnlLeft.add(flightListPanel);
 
-    // Scheduled flights to right panel
+    // Right panel
     ScheduledFlightListPanel scheduledPanel = new ScheduledFlightListPanel();
     scheduledPanel.init(this.parent.getSim());
-    pnlRight.add(scheduledPanel);
+    pnlRight.add(scheduledPanel, BorderLayout.CENTER);
+    StatsPanel statsPanel = new StatsPanel();
+    pnlRight.add(statsPanel, BorderLayout.PAGE_END);
 
-    this.parent.getSim().getSecondElapsedEvent().add(o -> printGuiTree());
-
-    printGuiTree();
+    //this.parent.getSim().getSecondElapsedEvent().add(o -> printGuiTree());
+    //printGuiTree();
   }
 
   private void printGuiTree() {
     System.out.println(" * * * ");
-    printJComponent(this.getContentPane(), 0);
+    printGuiTreeJComponent(this.getContentPane(), 0);
   }
 
-  private void printJComponent(Container component, int index) {
+  private void printGuiTreeJComponent(Container component, int index) {
     for (int i = 0; i < index; i++) {
       System.out.print(" ");
     }
@@ -177,7 +166,7 @@ public class FrmMain extends JFrame {
             ));
     for (Component item : component.getComponents()) {
       if (item instanceof Container)
-        printJComponent((Container) item, index+1);
+        printGuiTreeJComponent((Container) item, index+1);
     }
   }
 }

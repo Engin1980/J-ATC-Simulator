@@ -83,14 +83,14 @@ public class Simulation {
     return airport;
   }
 
-  public String toAltitudeString(int altInFt, boolean appendFt) {
+  public String toAltitudeString(double altInFt, boolean appendFt) {
     if (altInFt > getActiveAirport().getTransitionAltitude()) {
-      return String.format("FL%03d", altInFt / 100);
+      return String.format("FL%03d", ((int)altInFt) / 100);
     } else {
       if (appendFt) {
-        return String.format("%04d ft", altInFt);
+        return String.format("%04d ft", (int) altInFt);
       } else {
-        return String.format("%04d", altInFt);
+        return String.format("%04d", (int) altInFt);
       }
     }
   }

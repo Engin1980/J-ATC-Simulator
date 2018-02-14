@@ -104,7 +104,7 @@ public class AirplaneType {
   private RateInfo _climb = null;
   private RateInfo _descend = null;
 
-  public double getClimbRateForAltitude(int altitude) {
+  public double getClimbRateForAltitude(double altitude) {
     if (_climb == null) {
       double a = (this.lowClimbRate/60d - this.highClimbRate/60d) / (double) (0 - this.maxAltitude);
       double b = this.highClimbRate/60d - a * this.maxAltitude;
@@ -114,7 +114,7 @@ public class AirplaneType {
     return _climb.a * altitude + _climb.b;
   }
 
-  public double getDescendRateForAltitude(int altitude) {
+  public double getDescendRateForAltitude(double altitude) {
     if (_descend == null) {
       double a = (this.lowDescendRate/60d - this.highDescendRate/60d) / (double) (0 - this.maxAltitude);
       double b = this.highDescendRate/60d - a * this.maxAltitude;

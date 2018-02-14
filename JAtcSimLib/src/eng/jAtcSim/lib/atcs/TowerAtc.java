@@ -58,6 +58,10 @@ public class TowerAtc extends ComputerAtc {
     super(template);
   }
 
+  /**
+   * Returns suggested runway threshold according to current weather.
+   * @return
+   */
   public static RunwayThreshold getSuggestedThreshold() {
     Weather w = Acc.weather();
 
@@ -80,12 +84,12 @@ public class TowerAtc extends ComputerAtc {
       }
     }
 
-    int diff = Integer.MAX_VALUE;
+    double diff = Integer.MAX_VALUE;
     if (rt == null) {
       // select runway according to wind
       for (Runway r : Acc.airport().getRunways()) {
         for (RunwayThreshold t : r.getThresholds()) {
-          int localDiff = Headings.getDifference(w.getWindHeading(), (int) t.getCourse(), true);
+          double localDiff = Headings.getDifference(w.getWindHeading(), (int) t.getCourse(), true);
           if (localDiff < diff) {
             diff = localDiff;
             rt = t;

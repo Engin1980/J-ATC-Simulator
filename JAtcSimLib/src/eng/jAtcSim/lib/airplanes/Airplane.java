@@ -82,15 +82,15 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     }
 
     public int altitude() {
-      return Airplane.this.altitude;
+      return (int) Airplane.this.altitude;
     }
 
     public String altitudeSLong() {
-      return Acc.toAltS(Airplane.this.altitude, true);
+      return Acc.toAltS((int) Airplane.this.altitude, true);
     }
 
     public String altitudeSInFtShort() {
-      return Integer.toString(Airplane.this.altitude);
+      return Integer.toString((int) Airplane.this.altitude);
     }
 
     public String targetAltitudeSInFtShort() {
@@ -98,11 +98,11 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     }
 
     public String altitudeSShort() {
-      return Integer.toString(Airplane.this.altitude / 100);
+      return Integer.toString((int)Airplane.this.altitude / 100);
     }
 
     public String altitudeSFixed() {
-      return String.format("%1$03d", Airplane.this.altitude / 100);
+      return String.format("%1$03.0f", Airplane.this.altitude / 100);
     }
 
     public String targetAltitudeSFixed() {
@@ -136,15 +136,15 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     }
 
     public int heading() {
-      return Airplane.this.heading;
+      return (int) Airplane.this.heading;
     }
 
     public String headingSLong() {
-      return String.format("%1$03d", Airplane.this.heading);
+      return String.format("%1$03d", (int) Airplane.this.heading);
     }
 
     public String headingSShort() {
-      return Integer.toString(Airplane.this.heading);
+      return Integer.toString((int) Airplane.this.heading);
     }
 
     public String targetHeadingSLong() {
@@ -156,15 +156,15 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     }
 
     public int speed() {
-      return Airplane.this.speed;
+      return (int) Airplane.this.speed;
     }
 
     public String speedSLong() {
-      return Airplane.this.speed + " kt";
+      return ((int)Airplane.this.speed) + " kt";
     }
 
     public String speedSShort() {
-      return Integer.toString(Airplane.this.speed);
+      return Integer.toString((int) Airplane.this.speed);
     }
 
     public String speedSShortAligned() {
@@ -204,7 +204,7 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     }
 
     public int verticalSpeed() {
-      return Airplane.this.lastVerticalSpeed;
+      return (int) Airplane.this.lastVerticalSpeed;
     }
 
     public String verticalSpeedSLong() {
@@ -212,7 +212,7 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     }
 
     public String verticalSpeedSShort() {
-      return Integer.toString(Airplane.this.lastVerticalSpeed);
+      return Integer.toString((int)Airplane.this.lastVerticalSpeed);
     }
 
     public String format(String pattern) {
@@ -335,19 +335,19 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
   private final Pilot pilot;
   private final AirplaneType airplaneType;
   private final AirplaneInfo info;
-  private int lastHeadingChange = 0;
+  private double lastHeadingChange = 0;
   private int targetHeading;
   private boolean targetHeadingLeftTurn;
-  private int heading;
+  private double heading;
   private int targetAltitude;
-  private int altitude;
+  private double altitude;
   private int targetSpeed;
-  private int speed;
+  private double speed;
   private Coordinate coordinate;
 
   // </editor-fold>
   // <editor-fold defaultstate="collapsed" desc=" .ctors ">
-  private int lastVerticalSpeed;
+  private double lastVerticalSpeed;
   private FlightRecorder flightRecorder = null;
 
   public Airplane(Callsign callsign, Coordinate coordinate, Squawk sqwk, AirplaneType airplaneSpecification,
@@ -367,9 +367,9 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     this.altitude = altitude;
     this.speed = speed;
     this.ensureSanity();
-    this.targetAltitude = this.altitude;
-    this.targetHeading = this.heading;
-    this.targetSpeed = this.speed;
+    this.targetAltitude = altitude;
+    this.targetHeading = heading;
+    this.targetSpeed = speed;
 
     this.pilot = new Pilot(this, routeName, routeCommandQueue);
 
@@ -403,7 +403,7 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     return !departure;
   }
 
-  public int getVerticalSpeed() {
+  public double getVerticalSpeed() {
     return lastVerticalSpeed;
   }
 
@@ -411,15 +411,15 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     return callsign;
   }
 
-  public int getHeading() {
+  public double getHeading() {
     return heading;
   }
 
   public String getHeadingS() {
-    return String.format("%1$03d", this.heading);
+    return String.format("%1$03d", (int) this.heading);
   }
 
-  public int getAltitude() {
+  public double getAltitude() {
     return altitude;
   }
 
@@ -439,7 +439,7 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     return airplaneType;
   }
 
-  public int getSpeed() {
+  public double getSpeed() {
     return speed;
   }
 
@@ -600,25 +600,7 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
   }
 
   private void adjustHeading() {
-    // old
-//    int newHeading
-//        = Headings.turn(heading, airplaneType.headingChangeRate, targetHeadingLeftTurn, targetHeading);
-//
-//
-//    this.heading = newHeading;
-
-    // new implementation containing first derivative of heading change
-
-    // newer
-//    int changeSuggest = Headings.getSuggestedHeadingChangeForTurn(
-//        heading, airplaneType.headingChangeRate, targetHeadingLeftTurn, targetHeading);
-//
-//    int realChange = adjustHeadingWithDerivative(heading, changeSuggest, lastHeadingChange);
-//    this.heading = Headings.add(heading, realChange);
-//    this.lastHeadingChange = realChange;
-
-    // newest
-    int diff = Headings.getDifference(heading, targetHeading, true);
+    double diff = Headings.getDifference(heading, targetHeading, true);
     //TODO potential problem as "diff" function calculates difference in the shortest arc
 
     if (diff > lastHeadingChange) {
@@ -644,7 +626,7 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
       }
     }
 
-    int origAlt = altitude;
+    double origAlt = altitude;
 
     double step;
     if (targetAltitude > altitude) {
@@ -672,13 +654,13 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     return pilot.getTunedAtc();
   }
 
-  public int getTAS() {
+  public double getTAS() {
     double m = 1 + this.altitude / 100000d;
-    int ret = (int) (this.speed * m);
+    double ret = this.speed * m;
     return ret;
   }
 
-  public int getGS() {
+  public double getGS() {
     return getTAS();
   }
 
@@ -694,6 +676,10 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     this.targetHeadingLeftTurn = useLeftTurn;
   }
 
+  public void setTargetHeading(double targetHeading, boolean useLeftTurn) {
+    this.setTargetHeading((int)(Math.round(targetHeading)), useLeftTurn);
+  }
+
   public int getTargetHeading() {
     return targetHeading;
   }
@@ -702,6 +688,10 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     boolean useLeft
         = Headings.getBetterDirectionToTurn(heading, targetHeading) == ChangeHeadingCommand.eDirection.left;
     setTargetHeading(targetHeading, useLeft);
+  }
+
+  public void setTargetHeading(double targetHeading){
+    this.setTargetHeading((int) Math.round(targetHeading));
   }
 
   public int getTargetAltitude() {

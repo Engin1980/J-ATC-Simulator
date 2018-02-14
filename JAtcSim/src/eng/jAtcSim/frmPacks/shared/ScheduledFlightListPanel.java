@@ -136,6 +136,8 @@ class ScheduledFlightStripPanel extends JPanel {
     lblCallsign.setFont(BOLD_FONT);
 
     pnl.setBackground(bgColor);
+    pnl = LayoutManager.createBorderedPanel(4, pnl);
+    pnl.setBackground(bgColor);
     this.add(pnl);
   }
 

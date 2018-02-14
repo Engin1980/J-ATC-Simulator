@@ -86,7 +86,7 @@ public class Acc {
     return sim.getCtrAtc();
   }
 
-  public static String toAltS(int altitudeInFt, boolean appendFt) {
+  public static String toAltS(double altitudeInFt, boolean appendFt) {
     return Acc.sim().toAltitudeString(altitudeInFt, appendFt);
   }
 

@@ -21,8 +21,8 @@ public class Headings {
     return String.format("%03d", heading);
   }
 
-  public static int getDifference(int a, int b, boolean useShortestArc) {
-    int ret;
+  public static double getDifference(double a, double b, boolean useShortestArc) {
+    double ret;
     if (useShortestArc)
       ret = getDifferenceShortestArc(a, b);
     else
@@ -30,18 +30,18 @@ public class Headings {
     return ret;
   }
 
-  public static int subtract(int a, int b) {
-    int ret = a - b;
+  public static double subtract(double a, double b) {
+    double ret = a - b;
     ret = to(ret);
     return ret;
   }
 
-  private static int getDifferenceShortestArc(int a, int b) {
-    int ret;
+  private static double getDifferenceShortestArc(double a, double b) {
+    double ret;
 
     // ensure a <= b
     if (a > b) {
-      int c = a;
+      double c = a;
       a = b;
       b = c;
     }
@@ -55,13 +55,13 @@ public class Headings {
     return ret;
   }
 
-  private static int getDifferenceAnyArc(int a, int b) {
-    int ret = a - b;
+  private static double getDifferenceAnyArc(double a, double b) {
+    double ret = a - b;
     ret = to(ret);
     return ret;
   }
 
-  public static ChangeHeadingCommand.eDirection getBetterDirectionToTurn(int current, int target) {
+  public static ChangeHeadingCommand.eDirection getBetterDirectionToTurn(double current, double target) {
     target = target - current;
     target = to(target);
     if (target > 180)
@@ -71,11 +71,11 @@ public class Headings {
   }
 
   @Deprecated
-  public static int turn(int current, int amount, boolean toLeft, int targetValue) {
+  public static double turn(double current, double amount, boolean toLeft, double targetValue) {
     //TODO this should be responsibility of airplane, not of headings class.
     // should be rebuilt in different way
 
-    int ret;
+    double ret;
     boolean targeted;
     if (toLeft) {
       ret = Headings.add(current, -amount);
@@ -90,7 +90,7 @@ public class Headings {
     return ret;
   }
 
-  public static boolean isBetween(int leftBorder, int value, int rightBorder) {
+  public static boolean isBetween(double leftBorder, double value, double rightBorder) {
     value -= leftBorder;
     rightBorder -= leftBorder;
 
@@ -101,8 +101,8 @@ public class Headings {
     return leftBorder <= value && value <= rightBorder;
   }
 
-  public static int to(int value) {
-    int ret = value;
+  public static double to(double value) {
+    double ret = value;
     while (ret < 0)
       ret += 360;
     while (ret > 360)
@@ -110,8 +110,8 @@ public class Headings {
     return ret;
   }
 
-  public static int add(int current, int amount) {
-    int ret = current + amount;
+  public static double add(double current, double amount) {
+    double ret = current + amount;
     ret = to(ret);
     return ret;
   }

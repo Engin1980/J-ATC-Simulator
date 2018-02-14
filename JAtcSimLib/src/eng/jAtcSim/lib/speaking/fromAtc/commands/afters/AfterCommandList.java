@@ -111,8 +111,8 @@ public class AfterCommandList {
   }
 
   public List<ICommand> getAndRemoveSatisfiedCommands(Airplane referencePlane, Coordinate currentTargetCoordinateOrNull) {
-    int alt = referencePlane.getAltitude();
-    int spd = referencePlane.getSpeed();
+    double alt = referencePlane.getAltitude();
+    double spd = referencePlane.getSpeed();
     Coordinate cor = referencePlane.getCoordinate();
 
     List<ICommand> ret = new LinkedList<>();

@@ -146,7 +146,7 @@ class FlightStripPanel extends JPanel {
     lbl.setForeground(TEXT_COLOR);
     cmps[3] = lbl;
 
-    lbl = new JLabel(ai.headingSLong() + "° // " + ai.speedSLong());
+    lbl = new JLabel(ai.headingSLong() + "°//" + ai.speedSLong());
     lbl.setName("lblHeadingAndSpeed");
     lbl.setFont(NORMAL_FONT);
     lbl.setForeground(TEXT_COLOR);

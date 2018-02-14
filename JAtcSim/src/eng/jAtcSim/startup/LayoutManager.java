@@ -103,7 +103,7 @@ public class LayoutManager {
     return ret;
   }
 
-  public static void fillBorderedPanel(JPanel panel, Container top, Container bottom, Container left, Container right, Container content) {
+  public static void fillBorderedPanel(Container panel, Container top, Container bottom, Container left, Container right, Container content) {
     panel.setLayout(new BorderLayout());
     if (top != null)
       panel.add(top, BorderLayout.PAGE_START);
