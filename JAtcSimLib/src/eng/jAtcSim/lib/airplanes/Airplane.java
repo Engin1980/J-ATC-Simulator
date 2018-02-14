@@ -19,21 +19,6 @@ import eng.jAtcSim.lib.messaging.Message;
 import eng.jAtcSim.lib.speaking.IFromAtc;
 import eng.jAtcSim.lib.speaking.ISpeech;
 import eng.jAtcSim.lib.speaking.SpeechList;
-import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeHeadingCommand;
-import eng.jAtcSim.lib.Acc;
-import eng.jAtcSim.lib.airplanes.pilots.Pilot;
-import eng.jAtcSim.lib.atcs.Atc;
-import eng.jAtcSim.lib.coordinates.Coordinate;
-import eng.jAtcSim.lib.coordinates.Coordinates;
-import eng.jAtcSim.lib.exceptions.ERuntimeException;
-import eng.jAtcSim.lib.global.Headings;
-import eng.jAtcSim.lib.global.KeyItem;
-import eng.jAtcSim.lib.messaging.IMessageContent;
-import eng.jAtcSim.lib.messaging.IMessageParticipant;
-import eng.jAtcSim.lib.messaging.Message;
-import eng.jAtcSim.lib.speaking.IFromAtc;
-import eng.jAtcSim.lib.speaking.ISpeech;
-import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeHeadingCommand;
 import eng.jAtcSim.lib.world.Navaid;
@@ -98,7 +83,7 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     }
 
     public String altitudeSShort() {
-      return Integer.toString((int)Airplane.this.altitude / 100);
+      return Integer.toString((int) Airplane.this.altitude / 100);
     }
 
     public String altitudeSFixed() {
@@ -160,8 +145,9 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     }
 
     public String speedSLong() {
-      return ((int)Airplane.this.speed) + " kt";
+      return ((int) Airplane.this.speed) + " kt";
     }
+
 
     public String speedSShort() {
       return Integer.toString((int) Airplane.this.speed);
@@ -212,7 +198,7 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     }
 
     public String verticalSpeedSShort() {
-      return Integer.toString((int)Airplane.this.lastVerticalSpeed);
+      return Integer.toString((int) Airplane.this.lastVerticalSpeed);
     }
 
     public String format(String pattern) {
@@ -239,6 +225,22 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
 
     public String typeCategory() {
       return Character.toString(Airplane.this.airplaneType.category);
+    }
+
+    public boolean isAirprox() {
+      return airprox;
+    }
+
+    void setAirprox(boolean airprox) {
+      this.airprox = airprox;
+    }
+
+    public boolean isDeparture() {
+      return Airplane.this.departure;
+    }
+
+    public String routeNameOrFix() {
+      return Airplane.this.pilot.getRouteName();
     }
 
     private void updatePair(StringBuilder ret, int[] p) {
@@ -307,22 +309,6 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
       }
     }
 
-    public boolean isAirprox() {
-      return airprox;
-    }
-
-    void setAirprox(boolean airprox) {
-      this.airprox = airprox;
-    }
-
-    public boolean isDeparture() {
-      return Airplane.this.departure;
-    }
-
-    public String routeNameOrFix() {
-      return Airplane.this.pilot.getRouteName();
-    }
-
   }
 
   private final static double GROUND_MULTIPLIER = 1.0; //1.5; //3.0;
@@ -375,18 +361,6 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
 
     // flight recorders on
     this.flightRecorder = FlightRecorder.create(this.callsign, false, true);
-  }
-
-  private void ensureSanity() {
-    heading = Headings.to(heading);
-
-    if (speed < 0) {
-      speed = 0;
-    }
-
-    if (altitude < 0) {
-      altitude = 0;
-    }
   }
 
   // </editor-fold>
@@ -462,7 +436,8 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
 
     processMessages();
     drivePlane();
-    updateSHABySecond();
+    //updateSHABySecond();
+    updateSHABySecondNew();
     updateCoordinates();
 
     flightRecorder.logFDR(this, this.pilot);
@@ -471,6 +446,88 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
   @Override
   public String toString() {
     return this.callsign.toString();
+  }
+
+  public Atc getTunedAtc() {
+    return pilot.getTunedAtc();
+  }
+
+  public double getTAS() {
+    double m = 1 + this.altitude / 100000d;
+    double ret = this.speed * m;
+    return ret;
+  }
+
+  public double getGS() {
+    return getTAS();
+  }
+
+  public void setTargetHeading(int targetHeading, boolean useLeftTurn) {
+    this.targetHeading = targetHeading;
+    this.targetHeadingLeftTurn = useLeftTurn;
+  }
+
+  public void setTargetHeading(double targetHeading, boolean useLeftTurn) {
+    this.setTargetHeading((int) (Math.round(targetHeading)), useLeftTurn);
+  }
+
+  public int getTargetHeading() {
+    return targetHeading;
+  }
+
+  public void setTargetHeading(int targetHeading) {
+    boolean useLeft
+        = Headings.getBetterDirectionToTurn(heading, targetHeading) == ChangeHeadingCommand.eDirection.left;
+    setTargetHeading(targetHeading, useLeft);
+  }
+
+  public void setTargetHeading(double targetHeading) {
+    this.setTargetHeading((int) Math.round(targetHeading));
+  }
+
+  public int getTargetAltitude() {
+    return targetAltitude;
+  }
+
+  public void setTargetAltitude(int targetAltitude) {
+    this.targetAltitude = targetAltitude;
+  }
+
+  public int getTargetSpeed() {
+    return targetSpeed;
+  }
+
+  public void setTargetSpeed(int targetSpeed) {
+    this.targetSpeed = targetSpeed;
+  }
+
+  @Override
+  public String getName() {
+    return this.getCallsign().toString();
+  }
+
+  public Navaid getDepartureLastNavaid() {
+    if (isDeparture() == false)
+      throw new ERuntimeException("This method should not be called on departure aircraft %s.", this.getCallsign().toString());
+
+    String routeName = this.getInfo().routeNameOrFix();
+    if (routeName.length() > 2 && Character.isDigit(routeName.charAt(routeName.length() - 2)))
+      routeName = routeName.substring(0, routeName.length() - 2);
+    Navaid ret = Acc.area().getNavaids().tryGet(routeName);
+    return ret;
+  }
+
+
+  private void ensureSanity() {
+    heading = Headings.to(heading);
+
+    if (speed < 0) {
+      speed = 0;
+    }
+
+    if (altitude < 0) {
+      altitude = 0;
+    }
   }
 
   // </editor-fold>
@@ -650,18 +707,124 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     return energyLeft;
   }
 
-  public Atc getTunedAtc() {
-    return pilot.getTunedAtc();
+  private void updateSHABySecondNew() {
+    // TODO here is && or || ???
+    boolean isSpeedPreffered = getVerticalSpeed() > 0 && speed < this.getType().vDep;
+
+    ValueRequest speedRequest = getSpeedRequest();
+    ValueRequest altitudeRequest = getAltitudeRequest();
+
+    double totalEnergy = Math.abs(speedRequest.energy + altitudeRequest.energy);
+    if (totalEnergy > 1) {
+      if (!isSpeedPreffered) {
+        double energyMultiplier = 1 / totalEnergy;
+        speedRequest.multiply(energyMultiplier);
+        altitudeRequest.multiply(energyMultiplier);
+      } else {
+        // when speed is preferred
+        double energyLeft = 1 - speedRequest.energy;
+        altitudeRequest.multiply(energyLeft);
+      }
+    }
+
+    adjustSpeed(speedRequest);
+    adjustAltitude(altitudeRequest);
+
+    //TODO verify behavior as targetHeading is int and heading is double
+    if (targetHeading != heading) {
+      adjustHeading();
+    }
   }
 
-  public double getTAS() {
-    double m = 1 + this.altitude / 100000d;
-    double ret = this.speed * m;
+
+  private ValueRequest getSpeedRequest() {
+    // this is faster:
+    boolean onGround = speed < airplaneType.vMinApp && speed > 20;
+
+    double delta = targetSpeed - speed;
+    if (delta == 0) {
+      // no change required
+      return new ValueRequest();
+    }
+
+    double absDelta = delta;
+    double availableStep;
+    if (delta > 0) {
+      // needs to accelerate
+      availableStep = airplaneType.speedIncreaseRate;
+    } else {
+      availableStep = airplaneType.speedDecreaseRate;
+      absDelta = -delta;
+    }
+    if (onGround) {
+      availableStep = availableStep * GROUND_MULTIPLIER;
+    }
+
+    ValueRequest ret = new ValueRequest();
+    if (absDelta < availableStep) {
+      ret.value = absDelta;
+      ret.energy = absDelta / availableStep;
+    } else {
+      ret.value = availableStep;
+      ret.energy = 1;
+    }
+    if (delta < 0)
+      ret.multiply(-1);
+
     return ret;
   }
 
-  public double getGS() {
-    return getTAS();
+  private ValueRequest getAltitudeRequest() {
+    // if on ground, nothing required
+    if (speed < airplaneType.vR) {
+      if (altitude == Acc.airport().getAltitude()) {
+        ValueRequest ret = new ValueRequest();
+        ret.energy = 0;
+        ret.value = 0;
+      }
+    }
+
+    double delta = targetAltitude - altitude;
+    if (delta == 0){
+      return new ValueRequest();
+      // no change required
+    }
+
+    double absDelta = delta;
+    double availableStep;
+    if (delta > 0) {
+      // needs to accelerate
+      availableStep = airplaneType.getClimbRateForAltitude(this.altitude);
+    } else {
+      availableStep = airplaneType.getDescendRateForAltitude(this.altitude);
+      absDelta = -delta;
+    }
+
+    ValueRequest ret = new ValueRequest();
+    if (absDelta < availableStep) {
+      ret.value = absDelta;
+      ret.energy = absDelta / availableStep;
+    } else {
+      ret.value = availableStep;
+      ret.energy = 1;
+    }
+    if (delta < 0)
+      ret.multiply(-1);
+
+    return ret;
+  }
+
+  private void adjustSpeed(ValueRequest speedRequest){
+    this.speed += speedRequest.value;
+    if (this.speed<0)
+      this.speed = 0;
+  }
+
+  private void adjustAltitude(ValueRequest altitudeRequest){
+    this.altitude += altitudeRequest.value;
+    if (this.altitude < Acc.airport().getAltitude())
+      this.altitude = Acc.airport().getAltitude();
+    this.lastVerticalSpeed = altitudeRequest.value * 60;
   }
 
   private void updateCoordinates() {
@@ -671,60 +834,23 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     this.coordinate = newC;
   }
 
-  public void setTargetHeading(int targetHeading, boolean useLeftTurn) {
-    this.targetHeading = targetHeading;
-    this.targetHeadingLeftTurn = useLeftTurn;
-  }
+  // </editor-fold>
+}
 
-  public void setTargetHeading(double targetHeading, boolean useLeftTurn) {
-    this.setTargetHeading((int)(Math.round(targetHeading)), useLeftTurn);
-  }
+class ValueRequest {
+  public double value;
+  public double energy;
 
-  public int getTargetHeading() {
-    return targetHeading;
-  }
-
-  public void setTargetHeading(int targetHeading) {
-    boolean useLeft
-        = Headings.getBetterDirectionToTurn(heading, targetHeading) == ChangeHeadingCommand.eDirection.left;
-    setTargetHeading(targetHeading, useLeft);
-  }
-
-  public void setTargetHeading(double targetHeading){
-    this.setTargetHeading((int) Math.round(targetHeading));
-  }
-
-  public int getTargetAltitude() {
-    return targetAltitude;
-  }
-
-  public void setTargetAltitude(int targetAltitude) {
-    this.targetAltitude = targetAltitude;
-  }
-
-  public int getTargetSpeed() {
-    return targetSpeed;
-  }
-
-  public void setTargetSpeed(int targetSpeed) {
-    this.targetSpeed = targetSpeed;
+  public void multiply(double multiplier) {
+    this.value *= multiplier;
+    this.energy *= multiplier;
   }
 
   @Override
-  public String getName() {
-    return this.getCallsign().toString();
+  public String toString() {
+    return "ValueRequest{" +
+        "value=" + value +
+        ", energy=" + energy +
+        '}';
   }
-
-  public Navaid getDepartureLastNavaid() {
-    if (isDeparture() == false)
-      throw new ERuntimeException("This method should not be called on departure aircraft %s.", this.getCallsign().toString());
-
-    String routeName = this.getInfo().routeNameOrFix();
-    if (routeName.length() > 2 && Character.isDigit(routeName.charAt(routeName.length()-2)))
-      routeName = routeName.substring(0, routeName.length() - 2);
-    Navaid ret = Acc.area().getNavaids().tryGet(routeName);
-    return ret;
-  }
-
-  // </editor-fold>
 }
