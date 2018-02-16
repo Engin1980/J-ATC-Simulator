@@ -10,12 +10,7 @@ import eng.jAtcSim.lib.airplanes.pilots.Pilot;
 import eng.jAtcSim.lib.global.EStringBuilder;
 import eng.jAtcSim.lib.global.Recorder;
 import eng.jAtcSim.lib.messaging.Message;
-import eng.jAtcSim.lib.Acc;
-import eng.jAtcSim.lib.airplanes.pilots.Pilot;
-import eng.jAtcSim.lib.global.EStringBuilder;
 import eng.jAtcSim.lib.global.ETime;
-import eng.jAtcSim.lib.global.Recorder;
-import eng.jAtcSim.lib.messaging.Message;
 
 import java.nio.file.Path;
 
@@ -69,7 +64,7 @@ public class FlightRecorder extends Recorder {
 
     // spd
     sb.appendFormat(" S:%5.0f (%5.0f) => %5d ", plane.getSpeed(), plane.getGS(), plane.getTargetSpeed()).append(SEPARATOR);
-    sb.appendFormat("AT: " + pilot.getAutoThrustLogString()).append(SEPARATOR);
+    sb.appendFormat("AT: " + pilot.getStateString()).append(SEPARATOR);
     
     // from pilot
     sb.appendFormat(" BEH: {%s} ", pilot.getBehaviorLogString());

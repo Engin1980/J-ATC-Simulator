@@ -19,6 +19,8 @@ import eng.jAtcSim.lib.messaging.Message;
 import eng.jAtcSim.lib.speaking.IFromAtc;
 import eng.jAtcSim.lib.speaking.ISpeech;
 import eng.jAtcSim.lib.speaking.SpeechList;
+import eng.jAtcSim.lib.speaking.fromAirplane.IAirplaneNotification;
+import eng.jAtcSim.lib.speaking.fromAirplane.notifications.GoingAroundNotification;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeHeadingCommand;
 import eng.jAtcSim.lib.world.Navaid;
@@ -311,11 +313,146 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
 
   }
 
-  private final static double GROUND_MULTIPLIER = 1.0; //1.5; //3.0;
+  public class Airplane4Pilot {
+    public State getState() {
+      return state;
+    }
+    public void setState(State state){
+      Airplane.this.state = state;
+    }
+    public AirplaneType getType(){
+      return airplaneType;
+    }
+    public double getSpeed(){
+      return speed;
+    }
+    public Coordinate getCoordinate(){
+      return coordinate;
+    }
+    public double getAltitude(){
+      return altitude;
+    }
+    public double getTargetHeading(){
+      return targetHeading;
+    }
+    public void setTargetHeading(double value){
+      Airplane.this.setTargetHeading(value);
+    }
+    public void setTargetHeading(double value, boolean useLeftTurn){
+      Airplane.this.setTargetHeading(value, useLeftTurn);
+    }
+    public double getHeading(){
+      return heading;
+    }
+    public int getTargetAltitude(){
+      return targetAltitude;
+    }
+    public void setTargetAltitude(int altitudeInFt){
+      Airplane.this.setTargetAltitude(altitudeInFt);
+    }
+    public void adviceGoAroundToAtc(Atc targetAtc, String reason){
+      IAirplaneNotification notification =new GoingAroundNotification(reason);
+      adviceToAtc(targetAtc, notification);
+    }
+    public void adviceToAtc(Atc targetAtc, IAirplaneNotification notification){
+      Message m = new Message(Airplane.this, targetAtc,
+          notification);
+      Acc.messenger().send(m);
+    }
+    public void setTargetSpeed(int speed){
+      Airplane.this.targetSpeed = speed;
+    }
+    public boolean isArrival(){
+      return !departure;
+    }
+    public Airplane getMe(){
+      return Airplane.this;
+    }
+    public Callsign getCallsign(){
+      return callsign;
+    }
+  }
+
+  public enum State {
+
+    /**
+     * On arrival above FL100
+     */
+    arrivingHigh,
+    /**
+     * On arrival below FL100
+     */
+    arrivingLow,
+    /**
+     * On arrival < 15nm to FAF
+     */
+    arrivingCloseFaf,
+    /**
+     * Entering approach, before descend
+     */
+    approachEnter,
+    /**
+     * Descending in approach
+     */
+    approachDescend,
+    /**
+     * Long final on approach
+     */
+    longFinal,
+    /**
+     * Short final on approach
+     */
+    shortFinal,
+    /**
+     * Landed, breaking to zero
+     */
+    landed,
+
+    /**
+     * Waiting for take-off clearance
+     */
+    holdingPoint,
+    /**
+     * Taking off roll on the ground
+     */
+    takeOffRoll,
+    /**
+     * Take-off airborne or go-around until acceleration altitude
+     */
+    takeOffGoAround,
+    /**
+     * Departure below FL100
+     */
+    departingLow,
+    /**
+     * Departure above FL100
+     */
+    departingHigh,
+    /**
+     * In hold
+     */
+    holding;
+
+    public boolean isOnGround() {
+      return this == takeOffRoll || this == landed || this == holdingPoint;
+    }
+
+    public boolean is (State ... values){
+      boolean ret = false;
+      for (int i = 0; i < values.length; i++) {
+        if (this == values[i]){
+          ret = true;
+          break;
+        }
+      }
+      return ret;
+    }
+  }
+
+  private final static double GROUND_SPEED_CHANGE_MULTIPLIER = 1.5; //1.5; //3.0;
   private static final double secondFraction = 1 / 60d / 60d;
   private final static int MAX_HEADING_CHANGE_DERIVATIVE_STEP = 1;
   private static final double DELTA_WEIGHT = 3;
-  // <editor-fold defaultstate="collapsed" desc=" variables ">
   private final Callsign callsign;
   private final Squawk sqwk;
   private final boolean departure;
@@ -331,11 +468,13 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
   private int targetSpeed;
   private double speed;
   private Coordinate coordinate;
-  // </editor-fold>
-  // <editor-fold defaultstate="collapsed" desc=" .ctors ">
+
+  private State state;
+
   private double lastVerticalSpeed;
   private FlightRecorder flightRecorder = null;
   private double altitudeDelta = 0;
+  private double speedDelta = 0;
 
   public Airplane(Callsign callsign, Coordinate coordinate, Squawk sqwk, AirplaneType airplaneSpecification,
                   int heading, int altitude, int speed, boolean isDeparture,
@@ -349,11 +488,11 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     this.airplaneType = airplaneSpecification;
 
     this.departure = isDeparture;
+    this.state = isDeparture ? State.holdingPoint : State.arrivingHigh;
 
     this.heading = heading;
     this.altitude = altitude;
     this.speed = speed;
-    this.ensureSanity();
     this.targetAltitude = altitude;
     this.targetHeading = heading;
     this.targetSpeed = speed;
@@ -364,8 +503,6 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     this.flightRecorder = FlightRecorder.create(this.callsign, false, true);
   }
 
-  // </editor-fold>
-  // <editor-fold defaultstate="collapsed" desc=" getters / setters ">
   public AirplaneInfo getInfo() {
     return info;
   }
@@ -386,6 +523,10 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     return callsign;
   }
 
+  public State getState() {
+    return state;
+  }
+
   public double getHeading() {
     return heading;
   }
@@ -396,10 +537,6 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
 
   public double getAltitude() {
     return altitude;
-  }
-
-  public boolean isFlying() {
-    return altitude > Acc.airport().getAltitude();
   }
 
   public Coordinate getCoordinate() {
@@ -426,8 +563,6 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     return String.format("%1$03d", this.targetHeading);
   }
 
-  // </editor-fold>
-  // <editor-fold defaultstate="collapsed" desc=" public methods ">
   @Override
   public Callsign getKey() {
     return this.callsign;
@@ -475,14 +610,14 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     return targetHeading;
   }
 
-  public void setTargetHeading(double targetHeading) {
-    this.setTargetHeading((int) Math.round(targetHeading));
-  }
-
   public void setTargetHeading(int targetHeading) {
     boolean useLeft
         = Headings.getBetterDirectionToTurn(heading, targetHeading) == ChangeHeadingCommand.eDirection.left;
     setTargetHeading(targetHeading, useLeft);
+  }
+
+  public void setTargetHeading(double targetHeading) {
+    this.setTargetHeading((int) Math.round(targetHeading));
   }
 
   public int getTargetAltitude() {
@@ -517,18 +652,6 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     return ret;
   }
 
-  private void ensureSanity() {
-    heading = Headings.to(heading);
-
-    if (speed < 0) {
-      speed = 0;
-    }
-
-    if (altitude < 0) {
-      altitude = 0;
-    }
-  }
-
   // </editor-fold>
   // <editor-fold defaultstate="collapsed" desc=" private methods ">
   private void drivePlane() {
@@ -536,8 +659,7 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
   }
 
   private void processMessages() {
-    List<Message> msgs = Acc.messenger().getByTarget(this, true); //Acc.messenger().getMy(this, true);
-
+    List<Message> msgs = Acc.messenger().getByTarget(this, true);
     for (Message m : msgs) {
       processMessage(m);
     }
@@ -565,114 +687,6 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     processCommands(cmds);
   }
 
-  /*
-  private void updateSHABySecond() {
-    double energy = 1;
-    // when climb, first energy goes for altitude, then for speed
-    // when descend, first energy goes for speed, then for altitude
-    boolean isSpeedPreffered = getVerticalSpeed() > 0 || speed < this.getType().vDep;
-
-    if (lastVerticalSpeed != 0 && targetAltitude == altitude) {
-      lastVerticalSpeed = 0;
-    }
-
-    if (isSpeedPreffered) {
-      if (targetSpeed != speed) {
-        energy = adjustSpeed(energy);
-      }
-      energy = Math.max(energy, 0.2);
-      if (targetAltitude != altitude) {
-        adjustAltitude(energy);
-      }
-    } else {
-      if (targetAltitude != altitude) {
-        energy = adjustAltitude(energy);
-      }
-      energy = Math.max(energy, 0.2);
-      if (targetSpeed != speed) {
-        energy = adjustSpeed(energy);
-      }
-    }
-
-    if (targetHeading != heading) {
-      adjustHeading();
-    }
-
-  }
-
-  private double adjustSpeed(double energyLeft) {
-    // this is faster:
-    boolean onGround = speed < airplaneType.vMinApp && speed > 20;
-    // in flight
-    if (targetSpeed > speed) {
-      int step = airplaneType.speedIncreaseRate;
-      if (onGround) {
-        step = (int) Math.ceil(step * GROUND_MULTIPLIER);
-      } else {
-        step = (int) Math.ceil(step * energyLeft);
-      }
-      speed += step;
-      if (targetSpeed < speed) {
-        double diff = speed - targetSpeed;
-        energyLeft = energyLeft - diff / step;
-        speed = targetSpeed;
-      } else {
-        energyLeft = 0;
-      }
-    } else if (targetSpeed < speed) {
-      int step = airplaneType.speedDecreaseRate;
-      if (onGround) {
-        step = (int) Math.ceil(step * GROUND_MULTIPLIER);
-      } else {
-        step = (int) Math.ceil(step * energyLeft);
-      }
-      speed -= step;
-      if (targetSpeed > speed) {
-        double diff = targetSpeed - speed;
-        energyLeft = energyLeft - diff / step;
-        speed = targetSpeed;
-      } else {
-        energyLeft = 0;
-      }
-    } // else if (targetSpeed < speed)
-    return energyLeft;
-  }
-
-
-
-  private double adjustAltitude(double energyLeft) {
-    if (speed < airplaneType.vR) {
-      if (altitude == Acc.airport().getAltitude()) {
-        return energyLeft;
-      }
-    }
-
-    double origAlt = altitude;
-
-    double step;
-    if (targetAltitude > altitude) {
-      step = airplaneType.getClimbRateForAltitude(this.altitude);
-    } else {
-      step = -airplaneType.getDescendRateForAltitude(this.altitude);
-    }
-    step = step * energyLeft;
-    double neededStep = targetAltitude - altitude;
-
-    if (Math.abs(step) < Math.abs(neededStep)) {
-      energyLeft = 0;
-      altitude += step;
-    } else {
-      energyLeft = energyLeft - neededStep / step;
-      altitude = targetAltitude;
-    }
-
-    this.lastVerticalSpeed = (altitude - origAlt) * 60;
-
-    return energyLeft;
-  }
-
-  */
-
   private boolean isValidMessageForAirplane(IMessageContent msg) {
     if (msg instanceof IFromAtc)
       return true;
@@ -693,26 +707,31 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
 
   private void updateSHABySecondNew() {
     // TODO here is && or || ???
-    boolean isSpeedPreffered = getVerticalSpeed() > 0 && speed < this.getType().vDep;
+    boolean isSpeedPreffered =
+        this.state == State.takeOffGoAround || this.state == State.takeOffGoAround;
 
-    ValueRequest speedRequest = getSpeedRequest();
-    ValueRequest altitudeRequest = getAltitudeRequest();
+    if (targetHeading != heading || targetSpeed != speed) {
 
-    double totalEnergy = Math.abs(speedRequest.energy + altitudeRequest.energy);
-    if (totalEnergy > 1) {
-      if (!isSpeedPreffered) {
-        double energyMultiplier = 1 / totalEnergy;
-        speedRequest.multiply(energyMultiplier);
-        altitudeRequest.multiply(energyMultiplier);
-      } else {
-        // when speed is preferred
-        double energyLeft = 1 - speedRequest.energy;
-        altitudeRequest.multiply(energyLeft);
+      ValueRequest speedRequest = getSpeedRequest();
+      ValueRequest altitudeRequest = getAltitudeRequest();
+
+      double totalEnergy = Math.abs(speedRequest.energy + altitudeRequest.energy);
+      if (totalEnergy > 1) {
+        if (!isSpeedPreffered) {
+          double energyMultiplier = 1 / totalEnergy;
+          speedRequest.multiply(energyMultiplier);
+          altitudeRequest.multiply(energyMultiplier);
+        } else {
+          // when speed is preferred
+          double energyLeft = 1 - speedRequest.energy;
+          altitudeRequest.multiply(energyLeft);
+        }
       }
-    }
 
-    adjustSpeed(speedRequest);
-    adjustAltitude(altitudeRequest);
+      adjustSpeed(speedRequest);
+      adjustAltitude(altitudeRequest);
+
+    }
 
     //TODO verify behavior as targetHeading is int and heading is double
     if (targetHeading != heading) {
@@ -721,8 +740,6 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
   }
 
   private ValueRequest getSpeedRequest() {
-    // this is faster:
-    boolean onGround = speed < airplaneType.vMinApp && speed > 20;
 
     double delta = targetSpeed - speed;
     if (delta == 0) {
@@ -739,8 +756,8 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
       availableStep = airplaneType.speedDecreaseRate;
       absDelta = -delta;
     }
-    if (onGround) {
-      availableStep = availableStep * GROUND_MULTIPLIER;
+    if (this.state.isOnGround()) {
+      availableStep = availableStep * GROUND_SPEED_CHANGE_MULTIPLIER;
     }
 
     ValueRequest ret = new ValueRequest();
@@ -759,7 +776,7 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
 
   private ValueRequest getAltitudeRequest() {
     // if on ground, nothing required
-    if (speed < airplaneType.vR) {
+    if (this.state.isOnGround()) {
       if (altitude == Acc.airport().getAltitude()) {
         ValueRequest ret = new ValueRequest();
         ret.energy = 0;
@@ -804,7 +821,6 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     return ret;
   }
 
-  private double speedDelta = 0;
   private void adjustSpeed(ValueRequest speedRequest) {
 
     double adjustedValue;
@@ -894,9 +910,4 @@ class ValueRequest {
         ", energy=" + energy +
         '}';
   }
-}
-
-class ValueAdjust {
-  public double adjustedValue;
-  public double adjustedDelta;
 }
