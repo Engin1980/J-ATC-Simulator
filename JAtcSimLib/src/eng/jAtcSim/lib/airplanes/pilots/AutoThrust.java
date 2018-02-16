@@ -31,7 +31,7 @@ public class AutoThrust {
      */
     approach,
     /**
-     * Used for planes with clearence to approach, on descend sclope
+     * Used for planes with clearance to approach, on descend slope
      */
     atFinal,
     /**
@@ -41,7 +41,11 @@ public class AutoThrust {
     /**
      * Normal flight below FL100
      */
-    normalLow
+    normalLow,
+    /**
+     * Only for arrivals when close to FAF to slow down
+     */
+    normalCloseFAF
   }
 
   private final Airplane parent;
@@ -73,6 +77,10 @@ public class AutoThrust {
     updateTargetSpeed();
   }
 
+  public Mode getMode(){
+    return mode;
+  }
+
   private void updateTargetSpeed() {
     int s = getBestSpeedByMode();
     s = updateSpeedBySpeedRestriction(s);
@@ -90,6 +98,9 @@ public class AutoThrust {
         break;
       case normalLow:
         ret = Math.min(parent.getType().vCruise, 250);
+        break;
+      case normalCloseFAF:
+        ret = parent.getType().vMinClean + 10; // minimum clean speed + something
         break;
       case approach:
         ret = parent.getType().vMinClean;

@@ -1,6 +1,7 @@
 package eng.jAtcSim.lib.speaking.formatting;
 
 import eng.jAtcSim.lib.Acc;
+import eng.jAtcSim.lib.speaking.fromAirplane.notifications.GoingAroundNotification;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.*;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.afters.AfterNavaidCommand;
 import eng.jAtcSim.lib.Acc;
@@ -227,6 +228,10 @@ public class LongFormatter extends Formatter {
 
   public String format(EstablishedOnApproachNotification speech){
     return "Established, short final.";
+  }
+
+  public String format(GoingAroundNotification cmd){
+    return "Missed approach. " + cmd.getReason();
   }
 
   @Override

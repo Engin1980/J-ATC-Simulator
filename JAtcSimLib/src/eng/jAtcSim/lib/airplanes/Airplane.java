@@ -314,6 +314,7 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
   private final static double GROUND_MULTIPLIER = 1.0; //1.5; //3.0;
   private static final double secondFraction = 1 / 60d / 60d;
   private final static int MAX_HEADING_CHANGE_DERIVATIVE_STEP = 1;
+  private static final double DELTA_WEIGHT = 3;
   // <editor-fold defaultstate="collapsed" desc=" variables ">
   private final Callsign callsign;
   private final Squawk sqwk;
@@ -330,11 +331,11 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
   private int targetSpeed;
   private double speed;
   private Coordinate coordinate;
-
   // </editor-fold>
   // <editor-fold defaultstate="collapsed" desc=" .ctors ">
   private double lastVerticalSpeed;
   private FlightRecorder flightRecorder = null;
+  private double altitudeDelta = 0;
 
   public Airplane(Callsign callsign, Coordinate coordinate, Squawk sqwk, AirplaneType airplaneSpecification,
                   int heading, int altitude, int speed, boolean isDeparture,
@@ -436,7 +437,6 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
 
     processMessages();
     drivePlane();
-    //updateSHABySecond();
     updateSHABySecondNew();
     updateCoordinates();
 
@@ -475,14 +475,14 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     return targetHeading;
   }
 
+  public void setTargetHeading(double targetHeading) {
+    this.setTargetHeading((int) Math.round(targetHeading));
+  }
+
   public void setTargetHeading(int targetHeading) {
     boolean useLeft
         = Headings.getBetterDirectionToTurn(heading, targetHeading) == ChangeHeadingCommand.eDirection.left;
     setTargetHeading(targetHeading, useLeft);
-  }
-
-  public void setTargetHeading(double targetHeading) {
-    this.setTargetHeading((int) Math.round(targetHeading));
   }
 
   public int getTargetAltitude() {
@@ -516,7 +516,6 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     Navaid ret = Acc.area().getNavaids().tryGet(routeName);
     return ret;
   }
-
 
   private void ensureSanity() {
     heading = Headings.to(heading);
@@ -566,24 +565,7 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     processCommands(cmds);
   }
 
-  private boolean isValidMessageForAirplane(IMessageContent msg) {
-    if (msg instanceof IFromAtc)
-      return true;
-    else if (msg instanceof SpeechList) {
-      for (ISpeech o : (SpeechList<ISpeech>) msg) {
-        if (!(o instanceof IFromAtc)) {
-          return false;
-        }
-      }
-      return true;
-    }
-    return false;
-  }
-
-  private void processCommands(SpeechList speeches) {
-    this.pilot.addNewSpeeches(speeches);
-  }
-
+  /*
   private void updateSHABySecond() {
     double energy = 1;
     // when climb, first energy goes for altitude, then for speed
@@ -656,25 +638,7 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     return energyLeft;
   }
 
-  private void adjustHeading() {
-    double diff = Headings.getDifference(heading, targetHeading, true);
-    //TODO potential problem as "diff" function calculates difference in the shortest arc
 
-    if (diff > lastHeadingChange) {
-      lastHeadingChange += MAX_HEADING_CHANGE_DERIVATIVE_STEP;
-      if (lastHeadingChange > airplaneType.headingChangeRate) {
-        lastHeadingChange = airplaneType.headingChangeRate;
-      }
-    } else {
-      // this is to make slight adjustment, but at least equal to 1 degree
-      lastHeadingChange = Math.max(diff - MAX_HEADING_CHANGE_DERIVATIVE_STEP, 1);
-    }
-
-    if (targetHeadingLeftTurn)
-      this.heading = Headings.add(heading, -lastHeadingChange);
-    else
-      this.heading = Headings.add(heading, lastHeadingChange);
-  }
 
   private double adjustAltitude(double energyLeft) {
     if (speed < airplaneType.vR) {
@@ -707,6 +671,26 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     return energyLeft;
   }
 
+  */
+
+  private boolean isValidMessageForAirplane(IMessageContent msg) {
+    if (msg instanceof IFromAtc)
+      return true;
+    else if (msg instanceof SpeechList) {
+      for (ISpeech o : (SpeechList<ISpeech>) msg) {
+        if (!(o instanceof IFromAtc)) {
+          return false;
+        }
+      }
+      return true;
+    }
+    return false;
+  }
+
+  private void processCommands(SpeechList speeches) {
+    this.pilot.addNewSpeeches(speeches);
+  }
+
   private void updateSHABySecondNew() {
     // TODO here is && or || ???
     boolean isSpeedPreffered = getVerticalSpeed() > 0 && speed < this.getType().vDep;
@@ -735,7 +719,6 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
       adjustHeading();
     }
   }
-
 
   private ValueRequest getSpeedRequest() {
     // this is faster:
@@ -785,7 +768,7 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     }
 
     double delta = targetAltitude - altitude;
-    if (delta == 0){
+    if (delta == 0) {
       return new ValueRequest();
       // no change required
     }
@@ -807,6 +790,13 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     } else {
       ret.value = availableStep;
       ret.energy = 1;
+      double deltaPress = absDelta / availableStep;
+      if (deltaPress < 2) {
+        // this lowers the adjust before achieving target
+        ret.multiply(0.30);
+      } else if (deltaPress < 7) {
+        ret.multiply(0.70);
+      }
     }
     if (delta < 0)
       ret.multiply(-1);
@@ -814,17 +804,68 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     return ret;
   }
 
-  private void adjustSpeed(ValueRequest speedRequest){
-    this.speed += speedRequest.value;
-    if (this.speed<0)
+  private double speedDelta = 0;
+  private void adjustSpeed(ValueRequest speedRequest) {
+
+    double adjustedValue;
+    if (Math.abs(speedRequest.value) < 1) {
+      adjustedValue = speedRequest.value;
+    } else {
+      adjustedValue = (speedRequest.value + speedDelta * DELTA_WEIGHT) / (DELTA_WEIGHT + 1);
+    }
+
+    this.speedDelta = adjustedValue;
+    this.speed += speedDelta;
+
+    if (this.speed < 0) {
       this.speed = 0;
+      this.speedDelta = 0;
+    }
   }
 
-  private void adjustAltitude(ValueRequest altitudeRequest){
-    this.altitude += altitudeRequest.value;
-    if (this.altitude < Acc.airport().getAltitude())
-      this.altitude = Acc.airport().getAltitude();
-    this.lastVerticalSpeed = altitudeRequest.value * 60;
+  private void adjustAltitude(ValueRequest altitudeRequest) {
+    if (altitudeRequest.value > 0 && this.speed < this.airplaneType.vR) {
+      // not fast enough to adjust speed
+      //TODO this is not good. What happens in go-around?
+      this.lastVerticalSpeed = 0;
+      this.altitudeDelta = 0;
+    } else {
+      double adjustedValue;
+      if (Math.abs(altitudeRequest.value) < 7) { // cca 400ft/min
+        adjustedValue = altitudeRequest.value;
+      } else {
+        adjustedValue = (altitudeRequest.value + altitudeDelta * DELTA_WEIGHT) / (DELTA_WEIGHT + 1);
+      }
+
+      this.altitudeDelta = adjustedValue;
+      this.altitude += altitudeDelta;
+
+      if (this.altitude < Acc.airport().getAltitude()) {
+        this.altitude = Acc.airport().getAltitude();
+        this.altitudeDelta = 0;
+      }
+      this.lastVerticalSpeed = altitudeDelta * 60;
+    }
+  }
+
+  private void adjustHeading() {
+    double diff = Headings.getDifference(heading, targetHeading, true);
+    //TODO potential problem as "diff" function calculates difference in the shortest arc
+
+    if (diff > lastHeadingChange) {
+      lastHeadingChange += MAX_HEADING_CHANGE_DERIVATIVE_STEP;
+      if (lastHeadingChange > airplaneType.headingChangeRate) {
+        lastHeadingChange = airplaneType.headingChangeRate;
+      }
+    } else {
+      // this is to make slight adjustment, but at least equal to 1 degree
+      lastHeadingChange = Math.max(diff - MAX_HEADING_CHANGE_DERIVATIVE_STEP, 1);
+    }
+
+    if (targetHeadingLeftTurn)
+      this.heading = Headings.add(heading, -lastHeadingChange);
+    else
+      this.heading = Headings.add(heading, lastHeadingChange);
   }
 
   private void updateCoordinates() {
@@ -853,4 +894,9 @@ class ValueRequest {
         ", energy=" + energy +
         '}';
   }
+}
+
+class ValueAdjust {
+  public double adjustedValue;
+  public double adjustedDelta;
 }

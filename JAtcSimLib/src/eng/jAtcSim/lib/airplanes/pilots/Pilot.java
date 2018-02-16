@@ -6,24 +6,21 @@
 package eng.jAtcSim.lib.airplanes.pilots;
 
 import eng.jAtcSim.lib.Acc;
+import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.atcs.Atc;
 import eng.jAtcSim.lib.coordinates.Coordinate;
 import eng.jAtcSim.lib.coordinates.Coordinates;
 import eng.jAtcSim.lib.exceptions.ENotSupportedException;
 import eng.jAtcSim.lib.exceptions.ERuntimeException;
+import eng.jAtcSim.lib.global.EStringBuilder;
+import eng.jAtcSim.lib.global.ETime;
+import eng.jAtcSim.lib.global.Headings;
+import eng.jAtcSim.lib.global.SpeedRestriction;
 import eng.jAtcSim.lib.messaging.Message;
 import eng.jAtcSim.lib.speaking.ICommand;
 import eng.jAtcSim.lib.speaking.ISpeech;
 import eng.jAtcSim.lib.speaking.SpeechDelayer;
 import eng.jAtcSim.lib.speaking.SpeechList;
-import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
-import eng.jAtcSim.lib.speaking.fromAtc.commands.*;
-import eng.jAtcSim.lib.speaking.fromAtc.commands.afters.*;
-import eng.jAtcSim.lib.airplanes.Airplane;
-import eng.jAtcSim.lib.global.EStringBuilder;
-import eng.jAtcSim.lib.global.ETime;
-import eng.jAtcSim.lib.global.Headings;
-import eng.jAtcSim.lib.global.SpeedRestriction;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.EstablishedOnApproachNotification;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.GoingAroundNotification;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.GoodDayNotification;
@@ -34,6 +31,9 @@ import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.Ille
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.Rejection;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.rejections.ShortCutToFixNotOnRoute;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.rejections.UnableToEnterApproachFromDifficultPosition;
+import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
+import eng.jAtcSim.lib.speaking.fromAtc.commands.*;
+import eng.jAtcSim.lib.speaking.fromAtc.commands.afters.*;
 import eng.jAtcSim.lib.speaking.fromAtc.notifications.RadarContactConfirmationNotification;
 import eng.jAtcSim.lib.weathers.Weather;
 import eng.jAtcSim.lib.world.Approach;
@@ -48,7 +48,6 @@ import java.util.List;
 @SuppressWarnings("unused")
 public class Pilot {
 
-  // <editor-fold defaultstate="collapsed" desc=" Behavior class">
   abstract class Behavior {
 
     public final Pilot pilot;
@@ -64,8 +63,6 @@ public class Pilot {
     public abstract String toLogString();
   }
 
-  // </editor-fold>
-  // <editor-fold defaultstate="collapsed" desc=" TakeOffBehavior class">
   class TakeOffBehavior extends Behavior {
 
     private final static int TAKEOFF_ACCELERATION_ALTITUDE_AGL = 1500;
@@ -79,7 +76,7 @@ public class Pilot {
       } else {
         if (airplane.getAltitude() > Acc.airport().getAltitude() + TAKEOFF_ACCELERATION_ALTITUDE_AGL) {
           pilot.autoThrust.setMode(AutoThrust.Mode.normalLow, isFirstFly);
-          pilot.behavior = null;
+          pilot.behavior = defaultBehavior;
         }
       }
     }
@@ -90,8 +87,76 @@ public class Pilot {
     }
   }
 
-  // </editor-fold>
-  //  // <editor-fold defaultstate="collapsed" desc=" HoldBehavior class">
+  abstract class BasicBehavior extends Behavior {
+    abstract void _fly();
+
+    @Override
+    public void fly() {
+      if (targetCoordinate != null) {
+        double heading = Coordinates.getBearing(parent.getCoordinate(), targetCoordinate);
+        heading = Headings.to(heading);
+        if (heading != parent.getTargetHeading()) {
+          parent.setTargetHeading(heading);
+        }
+      }
+      _fly();
+    }
+
+
+  }
+
+  class ArrivalBehavior extends BasicBehavior {
+
+    /**
+     * State of slow-down.
+     * 0 ... not slown down
+     * 1 ... slow down under FL100
+     * 2 ... slow down to FAF
+     */
+    private int state = 0;
+
+    @Override
+    void _fly() {
+      switch (state) {
+        case 0: // not slowed down
+          if (parent.getAltitude() < 11000) {
+            state = 1;
+            autoThrust.setMode(AutoThrust.Mode.normalLow, true);
+          }
+          break;
+        case 1: // slowed down under FL100
+          // TODO this will not work for runways with FAF above FL100
+          double distToFaf =
+              Coordinates.getDistanceInNM(parent.getCoordinate(), Acc.threshold().getFafCross());
+          if (distToFaf < 15) {
+            autoThrust.setMode(AutoThrust.Mode.normalCloseFAF, true);
+            state = 2;
+          }
+          break;
+      }
+    }
+
+    @Override
+    public String toLogString() {
+      return "ARR (" + state + ")";
+    }
+
+  }
+
+  class DepartureBehavior extends BasicBehavior {
+
+    @Override
+    public void _fly() {
+      if (parent.getAltitude() > 10000 && autoThrust.getMode() == AutoThrust.Mode.normalLow)
+        autoThrust.setMode(AutoThrust.Mode.normalHigh, false);
+    }
+
+    @Override
+    public String toLogString() {
+      return "DEP";
+    }
+  }
+
   class HoldBehavior extends Behavior {
 
     private static final double NEAR_FIX_DISTANCE = 0.5;
@@ -206,7 +271,7 @@ public class Pilot {
 
         case parallelAgainst:
           if (Acc.now().isAfter(this.secondTurnTime)) {
-             double newHeading = (this.isLeftTurned)
+            double newHeading = (this.isLeftTurned)
                 ? Headings.add(this.getOutboundHeading(), -210)
                 : Headings.add(this.getOutboundHeading(), +210);
             parent.setTargetHeading(newHeading, !this.isLeftTurned);
@@ -240,8 +305,6 @@ public class Pilot {
     }
   }
 
-  //  // </editor-fold>
-  // <editor-fold defaultstate="collapsed" desc=" ApproachBehavior class">
   class ApproachBehavior extends Behavior {
 
     private final static int LONG_FINAL_ALTITUDE_AGL = 1000;
@@ -267,7 +330,52 @@ public class Pilot {
       return ret;
     }
 
-    @Override
+    /**
+     * Adjusts plane target altitude on approach.
+     *
+     * @param checkIfIsAfterThreshold
+     * @return True if plane is descending to the runway, false otherwise.
+     */
+    private boolean updateAltitudeOnApproach(boolean checkIfIsAfterThreshold) {
+      int currentTargetAlttiude = parent.getTargetAltitude();
+      int newAltitude = -1;
+      if (checkIfIsAfterThreshold) {
+        double diff = getAppHeadingDifference();
+        if (diff > 90) {
+          newAltitude = Acc.airport().getAltitude();
+        }
+      }
+
+      if (newAltitude == -1) {
+        double distToLand = Coordinates.getDistanceInNM(
+            parent.getCoordinate(), this.approach.getParent().getCoordinate());
+        newAltitude = (int) (this.approach.getParent().getParent().getParent().getAltitude()
+            + this.approach.getGlidePathPerNM() * distToLand);
+      }
+
+      newAltitude = (int) Math.min(newAltitude, parent.getTargetAltitude());
+      newAltitude = (int) Math.max(newAltitude, Acc.airport().getAltitude());
+
+      parent.setTargetAltitude(newAltitude);
+      boolean ret = currentTargetAlttiude > parent.getTargetAltitude();
+      return ret;
+    }
+
+    private void updateHeadingOnApproach() {
+      double newHeading
+          = Coordinates.getHeadingToRadial(
+          parent.getCoordinate(), this.approach.getPoint(),
+          this.approach.getRadial());
+      parent.setTargetHeading(newHeading);
+    }
+
+    private void updateHeadingLanded() {
+      int newHeading
+          = (int) Coordinates.getHeadingToRadial(
+          parent.getCoordinate(), this.approach.getParent().getOtherThreshold().getCoordinate(),
+          this.approach.getRadial());
+      parent.setTargetHeading(newHeading);
+    }    @Override
     public void fly() {
 
       if (this.phase != eApproachPhase.touchdownAndLanded && this.phase != eApproachPhase.touchdownAndLandedFirst) {
@@ -383,53 +491,6 @@ public class Pilot {
       }
     }
 
-    /**
-     * Adjusts plane target altitude on approach.
-     *
-     * @param checkIfIsAfterThreshold
-     * @return True if plane is descending to the runway, false otherwise.
-     */
-    private boolean updateAltitudeOnApproach(boolean checkIfIsAfterThreshold) {
-      int currentTargetAlttiude = parent.getTargetAltitude();
-      int newAltitude = -1;
-      if (checkIfIsAfterThreshold) {
-        double diff = getAppHeadingDifference();
-        if (diff > 90) {
-          newAltitude = Acc.airport().getAltitude();
-        }
-      }
-
-      if (newAltitude == -1) {
-        double distToLand = Coordinates.getDistanceInNM(
-            parent.getCoordinate(), this.approach.getParent().getCoordinate());
-        newAltitude = (int) (this.approach.getParent().getParent().getParent().getAltitude()
-            + this.approach.getGlidePathPerNM() * distToLand);
-      }
-
-      newAltitude = (int) Math.min(newAltitude, parent.getTargetAltitude());
-      newAltitude = (int) Math.max(newAltitude, Acc.airport().getAltitude());
-
-      parent.setTargetAltitude(newAltitude);
-      boolean ret = currentTargetAlttiude > parent.getTargetAltitude();
-      return ret;
-    }
-
-    private void updateHeadingOnApproach() {
-      double newHeading
-          = Coordinates.getHeadingToRadial(
-          parent.getCoordinate(), this.approach.getPoint(),
-          this.approach.getRadial());
-      parent.setTargetHeading(newHeading);
-    }
-
-    private void updateHeadingLanded() {
-      int newHeading
-          = (int) Coordinates.getHeadingToRadial(
-          parent.getCoordinate(), this.approach.getParent().getOtherThreshold().getCoordinate(),
-          this.approach.getRadial());
-      parent.setTargetHeading(newHeading);
-    }
-
     private boolean canSeeRunwayFromCurrentPosition() {
       Weather w = Acc.weather();
 
@@ -457,9 +518,9 @@ public class Pilot {
 
       pilot.behavior = new TakeOffBehavior();
       pilot.autoThrust.setMode(AutoThrust.Mode.takeOff, true);
+      // reset arrival behavior to new
+      pilot.defaultBehavior = new ArrivalBehavior();
     }
-
-
 
     @Override
     public String toLogString() {
@@ -474,7 +535,7 @@ public class Pilot {
       return sb.toString();
     }
   }
-  // </editor-fold>
+
   private final Airplane parent;
   private final String routeName;
   private final SpeechDelayer queue = new SpeechDelayer(1, 7); //Min/max speech delay
@@ -485,9 +546,9 @@ public class Pilot {
   private boolean hasRadarContact = true;
   private Coordinate targetCoordinate;
   private Behavior behavior;
+  private Behavior defaultBehavior;
   private boolean isConfirmationsNowRequested = false;
 
-  // </editor-fold>
   public Pilot(Airplane parent, String routeName, SpeechList<IAtcCommand> routeCommandQueue) {
     SpeechList<IAtcCommand> speeches = routeCommandQueue.clone(); // need clone to expand "thens"
     this.parent = parent;
@@ -497,12 +558,14 @@ public class Pilot {
     this.queue.addNoDelay(speeches);
     if (parent.isArrival()) {
       autoThrust.setMode(AutoThrust.Mode.normalHigh, true);
+      this.defaultBehavior = new ArrivalBehavior();
     } else {
       autoThrust.setMode(AutoThrust.Mode.idle, true);
+      this.defaultBehavior = new DepartureBehavior();
     }
+    this.behavior = defaultBehavior;
   }
 
-  // <editor-fold defaultstate="collapsed" desc=" getters/setters ">
   public String getRouteName() {
     return this.routeName;
   }
@@ -518,6 +581,37 @@ public class Pilot {
     while (index < speeches.size()) {
       index = addNewSpeeches(speeches, index);
     }
+  }
+
+  public void elapseSecond() {
+    /*
+
+     1. zpracuji se prikazy ve fronte
+     2. zkontroluje se, jestli neni neco "after"
+     3. ridi se letadlo
+     4. ridicimu se reknou potvrzeni a zpravy
+
+     */
+    processStandardQueueCommands();
+    processAfterCommands(); // udelat vlastni queue toho co se ma udelat a pak to provest pres processQueueCommands
+    endrivePlane();
+    flushSaidTextToAtc();
+  }
+
+  public Atc getTunedAtc() {
+    return this.atc;
+  }
+
+  public String getBehaviorLogString() {
+    if (behavior == null) {
+      return "null";
+    } else {
+      return behavior.toLogString();
+    }
+  }
+
+  public String getAutoThrustLogString() {
+    return autoThrust.toLogString();
   }
 
   private int addNewSpeeches(SpeechList cmds, int index) {
@@ -554,21 +648,6 @@ public class Pilot {
       throw new ERuntimeException("Pilot cannot deal with speech " + c.getClass().getSimpleName() + " - probably not implemented.");
     }
     return ret;
-  }
-
-  public void elapseSecond() {
-    /*
-
-     1. zpracuji se prikazy ve fronte
-     2. zkontroluje se, jestli neni neco "after"
-     3. ridi se letadlo
-     4. ridicimu se reknou potvrzeni a zpravy
-
-     */
-    processStandardQueueCommands();
-    processAfterCommands(); // udelat vlastni queue toho co se ma udelat a pak to provest pres processQueueCommands
-    endrivePlane();
-    flushSaidTextToAtc();
   }
 
   private void processStandardQueueCommands() {
@@ -649,7 +728,7 @@ public class Pilot {
 
   private boolean processQueueSpeech(ProceedDirectCommand c) {
     if (behavior instanceof HoldBehavior || behavior instanceof ApproachBehavior) {
-      behavior = null;
+      behavior = defaultBehavior;
     }
 
     targetCoordinate = c.getNavaid().getCoordinate();
@@ -683,7 +762,7 @@ public class Pilot {
     }
 
     if (behavior instanceof ApproachBehavior) {
-      behavior = null;
+      behavior = defaultBehavior;
     }
 
     parent.setTargetAltitude(c.getAltitudeInFt());
@@ -726,7 +805,7 @@ public class Pilot {
 
   private boolean processQueueSpeech(ChangeHeadingCommand c) {
     if (behavior instanceof HoldBehavior || behavior instanceof ApproachBehavior) {
-      behavior = null;
+      behavior = defaultBehavior;
     }
 
     targetCoordinate = null;
@@ -814,10 +893,6 @@ public class Pilot {
             MAXIMAL_ONE_SIDE_ARC_FROM_APPROACH_RADIAL_TO_ENTER_APPROACH_IN_DEGREES))) {
       say(new UnableToEnterApproachFromDifficultPosition(c));
     } else {
-      if (behavior instanceof HoldBehavior) {
-        behavior = null;
-      }
-
       this.behavior = new ApproachBehavior(c.getApproach());
       confirmIfReq(c);
     }
@@ -945,31 +1020,7 @@ public class Pilot {
   }
 
   private void endrivePlane() {
-    if (behavior != null) {
-      behavior.fly();
-    } else if (targetCoordinate != null) {
-      double heading = Coordinates.getBearing(parent.getCoordinate(), targetCoordinate);
-      heading = Headings.to(heading);
-      if (heading != parent.getTargetHeading()) {
-        parent.setTargetHeading(heading);
-      }
-    }
-  }
-
-  public Atc getTunedAtc() {
-    return this.atc;
-  }
-
-  public String getBehaviorLogString() {
-    if (behavior == null) {
-      return "null";
-    } else {
-      return behavior.toLogString();
-    }
-  }
-
-  public String getAutoThrustLogString() {
-    return autoThrust.toLogString();
+    behavior.fly();
   }
 
 }

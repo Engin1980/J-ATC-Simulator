@@ -89,12 +89,12 @@ public class AirplaneType {
   /**
    * Rate of increase speed kts/sec
    */
-  public int speedIncreaseRate;
+  public double speedIncreaseRate;
 
   /**
    * Rate of decrease speed kts/sec
    */
-  public int speedDecreaseRate;
+  public double speedDecreaseRate;
 
   /**
    * Rate of heading change in degrees/second.

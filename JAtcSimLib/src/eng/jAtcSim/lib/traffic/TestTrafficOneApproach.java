@@ -40,10 +40,11 @@ public class TestTrafficOneApproach extends TestTraffic {
     Route r = tryGetRandomRoute(true, pt);
     //Coordinate coord = new Coordinate(50.217994, 14.307286);
     //int heading = 065;
+    //int alt = 7000;
 
     Coordinate coord = generateArrivalCoordinate(r.getMainFix().getCoordinate(), Acc.threshold().getCoordinate());
     int heading = (int) Coordinates.getBearing(coord, r.getMainFix().getCoordinate());
-    int alt = 7000; // generateArrivingPlaneAltitude(r);
+    int alt =generateArrivingPlaneAltitude(r);
     int spd = pt.vCruise;
     SpeechList<IAtcCommand> routeCmds = r.getCommandsListClone();
     // added command to descend
