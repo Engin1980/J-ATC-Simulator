@@ -2,6 +2,7 @@ package eng.jAtcSim.lib.speaking.formatting;
 
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.GoingAroundNotification;
+import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.rejections.UnableToEnterApproachFromDifficultPosition;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.*;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.afters.AfterNavaidCommand;
 import eng.jAtcSim.lib.Acc;
@@ -209,6 +210,10 @@ public class LongFormatter extends Formatter {
    
   public String format(RequestRadarContactNotification cmd) {
     return "Unable to follow ordered fromAtc. Please confirm our radar contact first.";
+  }
+
+  public String format(UnableToEnterApproachFromDifficultPosition cmd){
+    return "Unable to enter approach from current position." ;
   }
 
    

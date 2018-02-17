@@ -16,11 +16,13 @@ import eng.jAtcSim.lib.global.KeyItem;
 import eng.jAtcSim.lib.messaging.IMessageContent;
 import eng.jAtcSim.lib.messaging.IMessageParticipant;
 import eng.jAtcSim.lib.messaging.Message;
+import eng.jAtcSim.lib.speaking.IFromAirplane;
 import eng.jAtcSim.lib.speaking.IFromAtc;
 import eng.jAtcSim.lib.speaking.ISpeech;
 import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.speaking.fromAirplane.IAirplaneNotification;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.GoingAroundNotification;
+import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.IllegalThenCommandRejection;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeHeadingCommand;
 import eng.jAtcSim.lib.world.Navaid;
@@ -317,7 +319,7 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     public State getState() {
       return state;
     }
-    public void setState(State state){
+    public void setxState(State state){
       Airplane.this.state = state;
     }
     public AirplaneType getType(){
@@ -350,6 +352,12 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     public void setTargetAltitude(int altitudeInFt){
       Airplane.this.setTargetAltitude(altitudeInFt);
     }
+    public void setTargetSpeed(int speed){
+      Airplane.this.setTargetSpeed(speed);
+    }
+    public int getTargetSpeed(){
+      return targetSpeed;
+    }
     public void adviceGoAroundToAtc(Atc targetAtc, String reason){
       IAirplaneNotification notification =new GoingAroundNotification(reason);
       adviceToAtc(targetAtc, notification);
@@ -359,9 +367,6 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
           notification);
       Acc.messenger().send(m);
     }
-    public void setTargetSpeed(int speed){
-      Airplane.this.targetSpeed = speed;
-    }
     public boolean isArrival(){
       return !departure;
     }
@@ -370,6 +375,16 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     }
     public Callsign getCallsign(){
       return callsign;
+    }
+    public void passMessageToAtc(Atc atc, SpeechList saidText){
+      Message m = new Message(Airplane.this, atc, saidText);
+      Acc.messenger().send(m);
+    }
+    public void passMessageToAtc(Atc atc, IFromAirplane content){
+      Message message = new Message(
+          Airplane.this, atc,
+          content);
+      Acc.messenger().send(message);
     }
   }
 
@@ -497,7 +512,7 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     this.targetHeading = heading;
     this.targetSpeed = speed;
 
-    this.pilot = new Pilot(this, routeName, routeCommandQueue);
+    this.pilot = new Pilot(this.new Airplane4Pilot(), routeName, routeCommandQueue);
 
     // flight recorders on
     this.flightRecorder = FlightRecorder.create(this.callsign, false, true);
@@ -710,7 +725,7 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     boolean isSpeedPreffered =
         this.state == State.takeOffGoAround || this.state == State.takeOffGoAround;
 
-    if (targetHeading != heading || targetSpeed != speed) {
+    if (targetAltitude != altitude || targetSpeed != speed) {
 
       ValueRequest speedRequest = getSpeedRequest();
       ValueRequest altitudeRequest = getAltitudeRequest();

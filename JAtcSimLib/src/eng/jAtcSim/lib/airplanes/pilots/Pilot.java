@@ -16,7 +16,6 @@ import eng.jAtcSim.lib.global.EStringBuilder;
 import eng.jAtcSim.lib.global.ETime;
 import eng.jAtcSim.lib.global.Headings;
 import eng.jAtcSim.lib.global.SpeedRestriction;
-import eng.jAtcSim.lib.messaging.Message;
 import eng.jAtcSim.lib.speaking.ICommand;
 import eng.jAtcSim.lib.speaking.ISpeech;
 import eng.jAtcSim.lib.speaking.SpeechDelayer;
@@ -64,7 +63,12 @@ public class Pilot {
     protected void setBehaviorAndState(
         Behavior behavior, Airplane.State state) {
       Pilot.this.behavior = behavior;
-      Pilot.this.parent.setState(state);
+      this.setState(state);
+    }
+
+    protected void setState(Airplane.State state) {
+      parent.setxState(state);
+      Pilot.this.adjustTargetSpeed();
     }
 
     protected void throwIllegalStateException() {
@@ -93,7 +97,7 @@ public class Pilot {
           parent.setTargetHeading(targetHeading);
 
           if (parent.getSpeed() > parent.getType().vR) {
-            parent.setState(Airplane.State.takeOffGoAround);
+            super.setState(Airplane.State.takeOffGoAround);
           }
           break;
         case takeOffGoAround:
@@ -139,19 +143,29 @@ public class Pilot {
 
   class ArrivalBehavior extends BasicBehavior {
 
+    private final double LOW_SPEED_DOWN_ALTITUDE = 11000;
+    private final double FAF_SPEED_DOWN_DISTANCE_IN_NM = 15;
+
     @Override
     void _fly() {
       switch (parent.getState()) {
         case arrivingHigh:
-          if (parent.getAltitude() < 11000)
-            parent.setState(Airplane.State.arrivingLow);
+          if (parent.getAltitude() < LOW_SPEED_DOWN_ALTITUDE)
+            super.setState(Airplane.State.arrivingLow);
+          else {
+            double distToFaf =
+                Coordinates.getDistanceInNM(parent.getCoordinate(), Acc.threshold().getFafCross());
+            if (distToFaf < FAF_SPEED_DOWN_DISTANCE_IN_NM) {
+              super.setState(Airplane.State.arrivingCloseFaf);
+            }
+          }
           break;
         case arrivingLow:
           // TODO this will not work for runways with FAF above FL100
           double distToFaf =
               Coordinates.getDistanceInNM(parent.getCoordinate(), Acc.threshold().getFafCross());
-          if (distToFaf < 15) {
-            parent.setState(Airplane.State.arrivingCloseFaf);
+          if (distToFaf < FAF_SPEED_DOWN_DISTANCE_IN_NM) {
+            super.setState(Airplane.State.arrivingCloseFaf);
           }
           break;
         case arrivingCloseFaf:
@@ -174,7 +188,7 @@ public class Pilot {
     public void _fly() {
       switch (parent.getState()) {
         case departingLow:
-          if (parent.getAltitude() > 1000) parent.setState(Airplane.State.departingHigh);
+          if (parent.getAltitude() > 1000) super.setState(Airplane.State.departingHigh);
           break;
         case departingHigh:
           break;
@@ -462,7 +476,7 @@ public class Pilot {
 
           if (isDescending) {
             isAfterStateChange = true;
-            parent.setState(Airplane.State.approachDescend);
+            super.setState(Airplane.State.approachDescend);
           }
           break;
         case approachDescend:
@@ -473,7 +487,7 @@ public class Pilot {
           updateAltitudeOnApproach(false);
           if (parent.getAltitude() < this.finalAltitude) {
             isAfterStateChange = true;
-            parent.setState(Airplane.State.longFinal);
+            super.setState(Airplane.State.longFinal);
           }
           break;
         case longFinal:
@@ -500,7 +514,7 @@ public class Pilot {
 
           if (parent.getAltitude() < this.shortFinalAltitude) {
             isAfterStateChange = true;
-            parent.setState(Airplane.State.shortFinal);
+            super.setState(Airplane.State.shortFinal);
           }
           break;
         case shortFinal:
@@ -524,7 +538,7 @@ public class Pilot {
 
           if (parent.getAltitude() == Acc.airport().getAltitude()) {
             isAfterStateChange = true;
-            parent.setState(Airplane.State.landed);
+            super.setState(Airplane.State.landed);
           }
           break;
         case landed:
@@ -544,8 +558,7 @@ public class Pilot {
 
       sb.appendFormat("APP %s%s in %s",
           this.approach.getType().toString(),
-          this.approach.getParent().getName(),
-          this.phase.toString());
+          this.approach.getParent().getName());
 
       return sb.toString();
     }
@@ -623,11 +636,12 @@ public class Pilot {
   private void abortHolding() {
     if (parent.isArrival()) {
       this.behavior = new ArrivalBehavior();
-      parent.setState(Airplane.State.arrivingHigh);
+      parent.setxState(Airplane.State.arrivingHigh);
     } else {
       this.behavior = new DepartureBehavior();
-      parent.setState(Airplane.State.departingLow);
+      parent.setxState(Airplane.State.departingLow);
     }
+    adjustTargetSpeed();
   }
 
   private int addNewSpeeches(SpeechList cmds, int index) {
@@ -817,6 +831,7 @@ public class Pilot {
     if (c.isResumeOwnSpeed()) {
       this.speedRestriction = null;
       confirmIfReq(c);
+      adjustTargetSpeed();
       return true;
     } else {
       // not resume speed
@@ -846,6 +861,7 @@ public class Pilot {
 
       this.speedRestriction = sr;
       confirmIfReq(c);
+      adjustTargetSpeed();
       return true;
     }
   }
@@ -982,6 +998,7 @@ public class Pilot {
       }
 
       this.behavior = new ApproachBehavior(c.getApproach());
+      parent.setxState(Airplane.State.approachEnter);
       confirmIfReq(c);
     }
 
@@ -1009,7 +1026,7 @@ public class Pilot {
     hold.isLeftTurned = c.isLeftTurn();
     hold.phase = eHoldPhase.beginning;
 
-    parent.setState(Airplane.State.holding);
+    parent.setxState(Airplane.State.holding);
     this.behavior = hold;
 
     confirmIfReq(c);
@@ -1067,8 +1084,7 @@ public class Pilot {
       return;
     }
 
-    Message m = new Message(parent, atc, saidText.clone());
-    Acc.messenger().send(m);
+    parent.passMessageToAtc(atc, saidText.clone());
 
     saidText.clear();
   }
@@ -1094,10 +1110,10 @@ public class Pilot {
     for (int i = 0; i < speeches.size(); i++) {
       if (speeches.get(i) instanceof ThenCommand) {
         if (i == 0 || i == speeches.size() - 1) {
-          Message message = new Message(
-              parent, atc,
-              new IllegalThenCommandRejection("{Then} command cannot be first or last in queue. The whole command block is ignored."));
-          Acc.messenger().send(message);
+          parent.passMessageToAtc(
+              atc,
+              new IllegalThenCommandRejection("{Then} command cannot be first or last in queue. The whole command block is ignored.")
+          );
           speeches.clear();
           return;
         }
@@ -1105,11 +1121,8 @@ public class Pilot {
 
         IAtcCommand n; // new
         if (!(prev instanceof IAtcCommand)) {
-          Message message = new Message(
-              parent, atc,
+          parent.passMessageToAtc(atc,
               new IllegalThenCommandRejection("{Then} command must be after another command. The whole command block is ignored."));
-          Acc.messenger().send(message);
-
         }
         if (prev instanceof ProceedDirectCommand) {
           n = new AfterNavaidCommand(((ProceedDirectCommand) prev).getNavaid());
@@ -1118,10 +1131,8 @@ public class Pilot {
         } else if (prev instanceof ChangeSpeedCommand) {
           n = new AfterSpeedCommand(((ChangeSpeedCommand) prev).getSpeedInKts());
         } else {
-          Message message = new Message(
-              parent, atc,
+          parent.passMessageToAtc(atc,
               new IllegalThenCommandRejection("{Then} command is after a strange command, it does not make sense. The whole command block is ignored."));
-          Acc.messenger().send(message);
           speeches.clear();
           return;
         }
@@ -1129,6 +1140,81 @@ public class Pilot {
         speeches.add(i, n);
       }
     }
+  }
+
+  private void adjustTargetSpeed() {
+    int minOrdered;
+    int maxOrdered;
+    if (speedRestriction != null) {
+      switch (speedRestriction.direction) {
+        case exactly:
+          minOrdered = speedRestriction.speedInKts;
+          maxOrdered = speedRestriction.speedInKts;
+          break;
+        case atLeast:
+          minOrdered = speedRestriction.speedInKts;
+          maxOrdered = Integer.MAX_VALUE;
+          break;
+        case atMost:
+          minOrdered = Integer.MIN_VALUE;
+          maxOrdered = speedRestriction.speedInKts;
+          break;
+        default:
+          throw new ERuntimeException("Not supported.");
+      }
+    } else {
+      minOrdered = Integer.MIN_VALUE;
+      maxOrdered = Integer.MAX_VALUE;
+    }
+    int ts;
+    switch (parent.getState()) {
+      case holdingPoint:
+        ts = 0;
+        break;
+      case takeOffRoll:
+        ts = parent.getType().vR + 10;
+        break;
+      case takeOffGoAround:
+        ts = parent.getType().vR + 10;
+        break;
+      case departingLow:
+      case arrivingLow:
+        ts = getBoundedValueIn(minOrdered,  Math.min(250, parent.getType().vCruise), maxOrdered);
+        break;
+      case departingHigh:
+      case arrivingHigh:
+        ts = getBoundedValueIn(minOrdered, Math.min(287, parent.getType().vCruise), maxOrdered);
+        break;
+      case arrivingCloseFaf:
+        ts = getBoundedValueIn(minOrdered, Math.min(287, parent.getType().vMinClean + 15), maxOrdered);
+        break;
+      case approachEnter:
+        ts = getBoundedValueIn(minOrdered, Math.min(parent.getType().vMaxApp, parent.getType().vMinClean), maxOrdered);
+        break;
+      case approachDescend:
+        ts = getBoundedValueIn(minOrdered, parent.getType().vApp, maxOrdered);
+        break;
+      case longFinal:
+      case shortFinal:
+        minOrdered = Math.max(minOrdered, parent.getType().vMinApp);
+        maxOrdered = Math.min(maxOrdered, parent.getType().vMaxApp);
+        ts = getBoundedValueIn(minOrdered, parent.getType().vApp, maxOrdered);
+        break;
+      case holding:
+        ts = parent.getTargetSpeed();
+        break;
+      default:
+        throw new UnsupportedOperationException();
+    }
+    parent.setTargetSpeed(ts);
+  }
+
+  private int getBoundedValueIn(int min, int value, int max) {
+    if (value < min)
+      value = min;
+    if (value > max)
+      value = max;
+    return value;
   }
 
   private void endrivePlane() {
