@@ -22,6 +22,7 @@ import eng.jAtcSim.lib.speaking.SpeechDelayer;
 import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.EstablishedOnApproachNotification;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.GoodDayNotification;
+import eng.jAtcSim.lib.speaking.fromAirplane.notifications.HighOrderedSpeedForApproach;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.RequestRadarContactNotification;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.CommandResponse;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.Confirmation;
@@ -556,7 +557,7 @@ public class Pilot {
 
       EStringBuilder sb = new EStringBuilder();
 
-      sb.appendFormat("APP %s%s in %s",
+      sb.appendFormat("APP %s%s",
           this.approach.getType().toString(),
           this.approach.getParent().getName());
 
@@ -995,6 +996,13 @@ public class Pilot {
       // hold abort only if fix was found
       if (parent.getState() == Airplane.State.holding) {
         abortHolding();
+      }
+
+      if (this.speedRestriction != null &&
+          (this.speedRestriction.direction == SpeedRestriction.eDirection.atLeast ||
+              this.speedRestriction.direction == SpeedRestriction.eDirection.exactly) &&
+          this.speedRestriction.speedInKts > parent.getType().vApp){
+        say(new HighOrderedSpeedForApproach(this.speedRestriction.speedInKts, parent.getType().vApp));
       }
 
       this.behavior = new ApproachBehavior(c.getApproach());

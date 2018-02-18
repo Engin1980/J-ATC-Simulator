@@ -1,7 +1,7 @@
 package eng.jAtcSim.lib.speaking.formatting;
 
 import eng.jAtcSim.lib.Acc;
-import eng.jAtcSim.lib.speaking.fromAirplane.notifications.GoingAroundNotification;
+import eng.jAtcSim.lib.speaking.fromAirplane.notifications.*;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.rejections.UnableToEnterApproachFromDifficultPosition;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.*;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.afters.AfterNavaidCommand;
@@ -10,14 +10,11 @@ import eng.jAtcSim.lib.atcs.Atc;
 import eng.jAtcSim.lib.atcs.PlaneSwitchMessage;
 import eng.jAtcSim.lib.exceptions.ENotSupportedException;
 import eng.jAtcSim.lib.global.Headings;
-import eng.jAtcSim.lib.speaking.fromAirplane.notifications.EstablishedOnApproachNotification;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.Confirmation;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.Rejection;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.*;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.afters.*;
-import eng.jAtcSim.lib.speaking.fromAirplane.notifications.GoodDayNotification;
 import eng.jAtcSim.lib.speaking.fromAtc.notifications.RadarContactConfirmationNotification;
-import eng.jAtcSim.lib.speaking.fromAirplane.notifications.RequestRadarContactNotification;
 
 public class LongFormatter extends Formatter {
 
@@ -216,6 +213,14 @@ public class LongFormatter extends Formatter {
     return "Unable to enter approach from current position." ;
   }
 
+  public String format(HighOrderedSpeedForApproach cmd){
+    return
+        String.format(
+            "We have ordered to high speed %d for approach, but we need %d at most.",
+            cmd.getOrderedSpeed(),
+            cmd.getRequiredSpeed()
+        );
+  }
    
   public String format(RadarContactConfirmationNotification cmd) {
     return "Radar contact.";
