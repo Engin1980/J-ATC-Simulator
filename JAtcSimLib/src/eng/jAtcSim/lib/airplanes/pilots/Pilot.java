@@ -7,6 +7,9 @@ package eng.jAtcSim.lib.airplanes.pilots;
 
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
+import eng.jAtcSim.lib.airplanes.commandApplications.ApplicationManager;
+import eng.jAtcSim.lib.airplanes.commandApplications.ApplicationResult;
+import eng.jAtcSim.lib.airplanes.commandApplications.ConfirmationResult;
 import eng.jAtcSim.lib.atcs.Atc;
 import eng.jAtcSim.lib.coordinates.Coordinate;
 import eng.jAtcSim.lib.coordinates.Coordinates;
@@ -18,15 +21,11 @@ import eng.jAtcSim.lib.global.Headings;
 import eng.jAtcSim.lib.global.SpeedRestriction;
 import eng.jAtcSim.lib.speaking.*;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.EstablishedOnApproachNotification;
-import eng.jAtcSim.lib.speaking.fromAirplane.notifications.GoodDayNotification;
-import eng.jAtcSim.lib.speaking.fromAirplane.notifications.HighOrderedSpeedForApproach;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.RequestRadarContactNotification;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.CommandResponse;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.Confirmation;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.IllegalThenCommandRejection;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.Rejection;
-import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.rejections.ShortCutToFixNotOnRoute;
-import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.rejections.UnableToEnterApproachFromDifficultPosition;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.*;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.afters.*;
@@ -35,8 +34,7 @@ import eng.jAtcSim.lib.weathers.Weather;
 import eng.jAtcSim.lib.world.Approach;
 import eng.jAtcSim.lib.world.Navaid;
 
-import javax.swing.text.StyledEditorKit;
-import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,12 +45,12 @@ import java.util.Map;
 @SuppressWarnings("unused")
 public class Pilot {
 
-  public class Pilot4Command{
-    public void abortHolding(){
+  public class Pilot4Command {
+    public void abortHolding() {
       Pilot.this.abortHolding();
     }
 
-    public void setTargetCoordinate(Coordinate coordinate){
+    public void setTargetCoordinate(Coordinate coordinate) {
       Pilot.this.targetCoordinate = coordinate;
     }
 
@@ -60,14 +58,14 @@ public class Pilot {
       return speedRestriction;
     }
 
-    public void setApproachBehavior(Approach app) {
-      Pilot.this.behavior = Pilot.this.new ApproachBehavior(app);
-      parent.setxState(Airplane.State.approachEnter);
+    public void setSpeedRestriction(SpeedRestriction speedRestriction) {
+      Pilot.this.speedRestriction = speedRestriction;
       Pilot.this.adjustTargetSpeed();
     }
 
-    public void setSpeedRestriction(SpeedRestriction speedRestriction) {
-      Pilot.this.speedRestriction = speedRestriction;
+    public void setApproachBehavior(Approach app) {
+      Pilot.this.behavior = Pilot.this.new ApproachBehavior(app);
+      parent.setxState(Airplane.State.approachEnter);
       Pilot.this.adjustTargetSpeed();
     }
 
@@ -646,7 +644,7 @@ public class Pilot {
   private final String routeName;
   private final SpeechDelayer queue = new SpeechDelayer(1, 7); //Min/max speech delay
   private final AfterCommandList afterCommands = new AfterCommandList();
-  private final Map<Atc,SpeechList> saidText = new HashMap<>();
+  private final Map<Atc, SpeechList> saidText = new HashMap<>();
   private SpeedRestriction speedRestriction = null;
   private Atc atc = null;
   private boolean hasRadarContact = true;
@@ -693,8 +691,8 @@ public class Pilot {
      4. ridicimu se reknou potvrzeni a zpravy
 
      */
-    processStandardQueueCommands();
-    processAfterCommands(); // udelat vlastni queue toho co se ma udelat a pak to provest pres processQueueCommands
+    processNewSpeeches();
+    processAfterSpeeches(); // udelat vlastni queue toho co se ma udelat a pak to provest pres processQueueCommands
     endrivePlane();
     flushSaidTextToAtc();
   }
@@ -758,7 +756,7 @@ public class Pilot {
     return ret;
   }
 
-  private void processStandardQueueCommands() {
+  private void processNewSpeeches() {
     SpeechList current = this.queue.get();
     if (current.isEmpty()) return;
 
@@ -767,34 +765,59 @@ public class Pilot {
       say(new RequestRadarContactNotification());
       this.queue.clear();
     } else {
-      this.isConfirmationsNowRequested = true;
-      processQueueSpeeches(current);
-      this.isConfirmationsNowRequested = false;
+      processSpeeches(current, true);
     }
   }
 
-  private void processAfterCommands() {
+  private void processAfterSpeeches() {
     List<ICommand> cmdsToProcess
         = afterCommands.getAndRemoveSatisfiedCommands(parent.getMe(), this.targetCoordinate);
 
-    processQueueSpeeches(cmdsToProcess);
+    processSpeeches(cmdsToProcess, false);
   }
 
-  private void processQueueSpeeches(List<? extends ISpeech> queue) {
+  private void processSpeeches(List<? extends ISpeech> queue, boolean sayConfirmations) {
+    List<IFromAirplane> rejects = new ArrayList<>();
+
+    Airplane.Airplane4Command plane = this.parent.getPlane4Command();
     while (!queue.isEmpty()) {
       ISpeech s = queue.get(0);
+      IFromAtc sa = (IFromAtc) s;
       if (s instanceof AfterCommand) {
-        processAfterCommandFromQueue(queue);
+        processAfterSpeechWithConsequents(queue, true);
       } else {
-        boolean res = tryProcessQueueSpeech(s);
-        if (res) {
-          queue.remove(0);
-        }
+        ConfirmationResult cres = ApplicationManager.confirm(plane, sa, true);
+        if (cres.confirmation != null)
+          say(cres.confirmation);
+        else if (cres.rejection != null) {
+          ApplicationResult ares = ApplicationManager.apply(plane, sa);
+          if (ares.rejection != null) {
+            throw new ERuntimeException("This should not be rejected as was confirmed a few moments before.");
+          } else {
+            ares.informations.forEach(q -> say(q));
+          }
+        } else
+          throw new ERuntimeException("Either confirmation or rejection should be set.");
+
+        queue.remove(0);
       }
+    }
+
+    for (IFromAirplane reject : rejects) {
+      say(reject);
     }
   }
 
-  private void processAfterCommandFromQueue(List<? extends ISpeech> queue) {
+  private void processAfterSpeechWithConsequents(List<? extends ISpeech> queue, boolean sayConfirmations) {
+    Airplane.Airplane4Command plane = this.parent.getPlane4Command();
+    if (sayConfirmations) {
+      for (ISpeech iSpeech : queue) {
+        IFromAtc sa = (IFromAtc) iSpeech;
+        ConfirmationResult cres = ApplicationManager.confirm(plane, sa, false);
+        say(cres.confirmation);
+      }
+    }
+
     AfterCommand af = (AfterCommand) queue.get(0);
     queue.remove(0);
     while (!queue.isEmpty() && !(queue.get(0) instanceof AfterCommand)) {
@@ -803,6 +826,7 @@ public class Pilot {
     }
   }
 
+  /*
   private boolean tryProcessQueueSpeech(ISpeech s) {
     Method m;
     m = tryGetProcessQueueSpeechMethodToInvoke(s.getClass());
@@ -1122,7 +1146,7 @@ public class Pilot {
     this.behavior = new TakeOffBehavior();
     return true;
   }
-
+*/
   private void sayRejection(IAtcCommand c, String rejectionReason) {
     Rejection r = new Rejection(rejectionReason, c);
     say(r);
@@ -1163,8 +1187,8 @@ public class Pilot {
     // if no tuned atc, nothing is said
     if (atc == null) return;
 
-    if (saidText.containsKey(atc) == false){
-      saidText.put( atc, new SpeechList());
+    if (saidText.containsKey(atc) == false) {
+      saidText.put(atc, new SpeechList());
     }
 
     saidText.get(atc).add(speech);

@@ -405,6 +405,10 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
           content);
       Acc.messenger().send(message);
     }
+
+    public Airplane4Command getPlane4Command() {
+      return Airplane.this.new Airplane4Command();
+    }
   }
 
   public class Airplane4Command {

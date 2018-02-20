@@ -32,12 +32,12 @@ public class ProceedDirectApplication extends CommandApplication<ProceedDirectCo
   }
 
   @Override
-  protected ConfirmationResult adjustAirplane(Airplane.Airplane4Command plane, ProceedDirectCommand c) {
+  protected ApplicationResult adjustAirplane(Airplane.Airplane4Command plane, ProceedDirectCommand c) {
     if (plane.getState() == Airplane.State.holding) {
       plane.getPilot().abortHolding();
     }
 
     plane.getPilot().setTargetCoordinate(c.getNavaid().getCoordinate());
-    return new ConfirmationResult();
+    return ApplicationResult.getEmpty();
   }
 }

@@ -2,9 +2,11 @@ package eng.jAtcSim.lib.airplanes.commandApplications;
 
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.speaking.IFromAtc;
+import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.Confirmation;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcNotification;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.*;
+import eng.jAtcSim.lib.speaking.fromAtc.commands.afters.AfterCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.notifications.RadarContactConfirmationNotification;
 
 import java.util.HashMap;
@@ -34,7 +36,10 @@ public class ApplicationManager {
   public static ConfirmationResult confirm(Airplane.Airplane4Command plane, IFromAtc c, boolean checkSanity) {
     ConfirmationResult ret;
 
-    if (c instanceof IAtcCommand) {
+    if (c instanceof AfterCommand){
+      ret = new ConfirmationResult();
+      ret.confirmation = new Confirmation((AfterCommand) c);
+    } else if (c instanceof IAtcCommand) {
       ret = cmdApps.get(c).confirm(plane, (IAtcCommand) c, checkSanity);
     } else if (c instanceof IAtcNotification){
       ret = notApps.get(c).confirm(plane, (IAtcNotification)c);
