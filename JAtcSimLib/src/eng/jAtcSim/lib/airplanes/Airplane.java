@@ -22,7 +22,6 @@ import eng.jAtcSim.lib.speaking.ISpeech;
 import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.speaking.fromAirplane.IAirplaneNotification;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.GoingAroundNotification;
-import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.IllegalThenCommandRejection;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeHeadingCommand;
 import eng.jAtcSim.lib.world.Navaid;
@@ -319,72 +318,135 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     public State getState() {
       return state;
     }
-    public void setxState(State state){
+
+    public void setxState(State state) {
       Airplane.this.state = state;
     }
-    public AirplaneType getType(){
+
+    public AirplaneType getType() {
       return airplaneType;
     }
-    public double getSpeed(){
+
+    public double getSpeed() {
       return speed;
     }
-    public Coordinate getCoordinate(){
+
+    public Coordinate getCoordinate() {
       return coordinate;
     }
-    public double getAltitude(){
+
+    public double getAltitude() {
       return altitude;
     }
-    public double getTargetHeading(){
+
+    public double getTargetHeading() {
       return targetHeading;
     }
-    public void setTargetHeading(double value){
+
+    public void setTargetHeading(double value) {
       Airplane.this.setTargetHeading(value);
     }
-    public void setTargetHeading(double value, boolean useLeftTurn){
+
+    public void setTargetHeading(double value, boolean useLeftTurn) {
       Airplane.this.setTargetHeading(value, useLeftTurn);
     }
-    public double getHeading(){
+
+    public double getHeading() {
       return heading;
     }
-    public int getTargetAltitude(){
+
+    public int getTargetAltitude() {
       return targetAltitude;
     }
-    public void setTargetAltitude(int altitudeInFt){
+
+    public void setTargetAltitude(int altitudeInFt) {
       Airplane.this.setTargetAltitude(altitudeInFt);
     }
-    public void setTargetSpeed(int speed){
-      Airplane.this.setTargetSpeed(speed);
-    }
-    public int getTargetSpeed(){
+
+    public int getTargetSpeed() {
       return targetSpeed;
     }
-    public void adviceGoAroundToAtc(Atc targetAtc, String reason){
-      IAirplaneNotification notification =new GoingAroundNotification(reason);
+
+    public void setTargetSpeed(int speed) {
+      Airplane.this.setTargetSpeed(speed);
+    }
+
+    public void adviceGoAroundToAtc(Atc targetAtc, String reason) {
+      IAirplaneNotification notification = new GoingAroundNotification(reason);
       adviceToAtc(targetAtc, notification);
     }
-    public void adviceToAtc(Atc targetAtc, IAirplaneNotification notification){
+
+    public void adviceToAtc(Atc targetAtc, IAirplaneNotification notification) {
       Message m = new Message(Airplane.this, targetAtc,
           notification);
       Acc.messenger().send(m);
     }
-    public boolean isArrival(){
+
+    public boolean isArrival() {
       return !departure;
     }
-    public Airplane getMe(){
+
+    public Airplane getMe() {
       return Airplane.this;
     }
-    public Callsign getCallsign(){
+
+    public Callsign getCallsign() {
       return callsign;
     }
-    public void passMessageToAtc(Atc atc, SpeechList saidText){
+
+    public void passMessageToAtc(Atc atc, SpeechList saidText) {
       Message m = new Message(Airplane.this, atc, saidText);
       Acc.messenger().send(m);
     }
-    public void passMessageToAtc(Atc atc, IFromAirplane content){
+
+    public void passMessageToAtc(Atc atc, IFromAirplane content) {
       Message message = new Message(
           Airplane.this, atc,
           content);
       Acc.messenger().send(message);
+    }
+  }
+
+  public class Airplane4Command {
+    private Coordinate coordinate;
+    private double altitude;
+    private double heading;
+    private Callsign callsign;
+
+    public State getState() {
+      return state;
+    }
+
+    public Pilot.Pilot4Command getPilot(){
+      return pilot.new Pilot4Command();
+    }
+
+    public Coordinate getCoordinate() {
+      return coordinate;
+    }
+
+    public AirplaneType getType() {
+      return airplaneType;
+    }
+
+    public double getAltitude() {
+      return altitude;
+    }
+
+    public void setTargetAltitude(int targetAltitude) {
+      Airplane.this.targetAltitude = targetAltitude;
+    }
+
+    public double getHeading() {
+      return heading;
+    }
+
+    public void setTargetHeading(double value, boolean useLeftTurn) {
+      Airplane.this.setTargetHeading(value, useLeftTurn);
+    }
+
+    public Callsign getCallsign() {
+      return callsign;
     }
   }
 
@@ -452,10 +514,10 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
       return this == takeOffRoll || this == landed || this == holdingPoint;
     }
 
-    public boolean is (State ... values){
+    public boolean is(State... values) {
       boolean ret = false;
       for (int i = 0; i < values.length; i++) {
-        if (this == values[i]){
+        if (this == values[i]) {
           ret = true;
           break;
         }
@@ -625,14 +687,14 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     return targetHeading;
   }
 
+  public void setTargetHeading(double targetHeading) {
+    this.setTargetHeading((int) Math.round(targetHeading));
+  }
+
   public void setTargetHeading(int targetHeading) {
     boolean useLeft
         = Headings.getBetterDirectionToTurn(heading, targetHeading) == ChangeHeadingCommand.eDirection.left;
     setTargetHeading(targetHeading, useLeft);
-  }
-
-  public void setTargetHeading(double targetHeading) {
-    this.setTargetHeading((int) Math.round(targetHeading));
   }
 
   public int getTargetAltitude() {

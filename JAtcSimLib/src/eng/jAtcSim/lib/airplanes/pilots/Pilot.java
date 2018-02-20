@@ -16,10 +16,7 @@ import eng.jAtcSim.lib.global.EStringBuilder;
 import eng.jAtcSim.lib.global.ETime;
 import eng.jAtcSim.lib.global.Headings;
 import eng.jAtcSim.lib.global.SpeedRestriction;
-import eng.jAtcSim.lib.speaking.ICommand;
-import eng.jAtcSim.lib.speaking.ISpeech;
-import eng.jAtcSim.lib.speaking.SpeechDelayer;
-import eng.jAtcSim.lib.speaking.SpeechList;
+import eng.jAtcSim.lib.speaking.*;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.EstablishedOnApproachNotification;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.GoodDayNotification;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.HighOrderedSpeedForApproach;
@@ -38,14 +35,93 @@ import eng.jAtcSim.lib.weathers.Weather;
 import eng.jAtcSim.lib.world.Approach;
 import eng.jAtcSim.lib.world.Navaid;
 
+import javax.swing.text.StyledEditorKit;
 import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Marek
  */
 @SuppressWarnings("unused")
 public class Pilot {
+
+  public class Pilot4Command{
+    public void abortHolding(){
+      Pilot.this.abortHolding();
+    }
+
+    public void setTargetCoordinate(Coordinate coordinate){
+      Pilot.this.targetCoordinate = coordinate;
+    }
+
+    public SpeedRestriction getSpeedRestriction() {
+      return speedRestriction;
+    }
+
+    public void setApproachBehavior(Approach app) {
+      Pilot.this.behavior = Pilot.this.new ApproachBehavior(app);
+      parent.setxState(Airplane.State.approachEnter);
+      Pilot.this.adjustTargetSpeed();
+    }
+
+    public void setSpeedRestriction(SpeedRestriction speedRestriction) {
+      Pilot.this.speedRestriction = speedRestriction;
+      Pilot.this.adjustTargetSpeed();
+    }
+
+    public void setResponsibleAtc(Atc responsibleAtc) {
+      Pilot.this.atc = responsibleAtc;
+      Pilot.this.hasRadarContact = false;
+    }
+
+    public void say(ISpeech s) {
+      Pilot.this.say(s);
+    }
+
+    public int getIndexOfNavaidInCommands(Navaid navaid) {
+      for (int i = 0; i < Pilot.this.queue.size(); i++) {
+        if (Pilot.this.queue.get(i) instanceof ProceedDirectCommand) {
+          ProceedDirectCommand pdc = (ProceedDirectCommand) Pilot.this.queue.get(i);
+          if (pdc.getNavaid() == navaid) {
+            return i;
+          }
+        }
+      }
+      return -1;
+    }
+
+    public void removeAllItemsInQueueUntilIndex(int pointIndex) {
+      for (int i = 0; i < pointIndex; i++) {
+        Pilot.this.queue.removeAt(i);
+      }
+    }
+
+    public void setHoldBehavior(Coordinate coordinate, int inboundRadial, boolean leftTurn) {
+      Pilot.HoldBehavior hold = new Pilot.HoldBehavior();
+      hold.fix = coordinate;
+      hold.inboundRadial = inboundRadial;
+      hold.isLeftTurned = leftTurn;
+      hold.phase = eHoldPhase.beginning;
+
+      parent.setxState(Airplane.State.holding);
+      Pilot.this.behavior = hold;
+    }
+
+    public void setTakeOffBehavior() {
+      Pilot.this.behavior = new Pilot.TakeOffBehavior();
+    }
+
+    public void setHasRadarContact() {
+      Pilot.this.hasRadarContact = true;
+    }
+
+    protected void setState(Airplane.State state) {
+      parent.setxState(state);
+      Pilot.this.adjustTargetSpeed();
+    }
+  }
 
   abstract class Behavior {
 
@@ -565,11 +641,12 @@ public class Pilot {
     }
   }
 
+
   private final Airplane.Airplane4Pilot parent;
   private final String routeName;
   private final SpeechDelayer queue = new SpeechDelayer(1, 7); //Min/max speech delay
   private final AfterCommandList afterCommands = new AfterCommandList();
-  private final SpeechList saidText = new SpeechList();
+  private final Map<Atc,SpeechList> saidText = new HashMap<>();
   private SpeedRestriction speedRestriction = null;
   private Atc atc = null;
   private boolean hasRadarContact = true;
@@ -1001,7 +1078,7 @@ public class Pilot {
       if (this.speedRestriction != null &&
           (this.speedRestriction.direction == SpeedRestriction.eDirection.atLeast ||
               this.speedRestriction.direction == SpeedRestriction.eDirection.exactly) &&
-          this.speedRestriction.speedInKts > parent.getType().vApp){
+          this.speedRestriction.speedInKts > parent.getType().vApp) {
         say(new HighOrderedSpeedForApproach(this.speedRestriction.speedInKts, parent.getType().vApp));
       }
 
@@ -1071,6 +1148,11 @@ public class Pilot {
     }
   }
 
+  private void confirm(IAtcCommand originalCommandToBeConfirmed) {
+    Confirmation cmd = new Confirmation(originalCommandToBeConfirmed);
+    say(cmd);
+  }
+
   private void sayIfReq(CommandResponse cmd) {
     if (isConfirmationsNowRequested) {
       say(cmd);
@@ -1078,23 +1160,21 @@ public class Pilot {
   }
 
   private void say(ISpeech speech) {
-    saidText.add(speech);
+    // if no tuned atc, nothing is said
+    if (atc == null) return;
+
+    if (saidText.containsKey(atc) == false){
+      saidText.put( atc, new SpeechList());
+    }
+
+    saidText.get(atc).add(speech);
   }
 
   private void flushSaidTextToAtc() {
-
-    if (atc == null) {
-      // nobody to speak to
-      return;
+    for (Atc a : saidText.keySet()) {
+      parent.passMessageToAtc(a, saidText.get(a));
+      saidText.get(a).clear();
     }
-
-    if (saidText.isEmpty()) {
-      return;
-    }
-
-    parent.passMessageToAtc(atc, saidText.clone());
-
-    saidText.clear();
   }
 
   private int getIndexOfNavaidInCommands(Navaid navaid) {
@@ -1187,7 +1267,7 @@ public class Pilot {
         break;
       case departingLow:
       case arrivingLow:
-        ts = getBoundedValueIn(minOrdered,  Math.min(250, parent.getType().vCruise), maxOrdered);
+        ts = getBoundedValueIn(minOrdered, Math.min(250, parent.getType().vCruise), maxOrdered);
         break;
       case departingHigh:
       case arrivingHigh:
