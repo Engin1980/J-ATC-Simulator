@@ -22,10 +22,7 @@ import eng.jAtcSim.lib.global.SpeedRestriction;
 import eng.jAtcSim.lib.speaking.*;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.EstablishedOnApproachNotification;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.RequestRadarContactNotification;
-import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.CommandResponse;
-import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.Confirmation;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.IllegalThenCommandRejection;
-import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.Rejection;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.*;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.afters.*;
@@ -34,7 +31,6 @@ import eng.jAtcSim.lib.weathers.Weather;
 import eng.jAtcSim.lib.world.Approach;
 import eng.jAtcSim.lib.world.Navaid;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -659,10 +655,13 @@ public class Pilot {
     expandThenCommands(speeches);
     this.queue.addNoDelay(speeches);
     if (parent.isArrival()) {
+      this.atc = Acc.atcCtr();
       this.behavior = new ArrivalBehavior();
     } else {
+      this.atc = Acc.atcTwr();
       this.behavior = new TakeOffBehavior();
     }
+    this.hasRadarContact = true;
   }
 
   public String getRouteName() {
@@ -777,7 +776,6 @@ public class Pilot {
   }
 
   private void processSpeeches(List<? extends ISpeech> queue, boolean sayConfirmations) {
-    List<IFromAirplane> rejects = new ArrayList<>();
 
     Airplane.Airplane4Command plane = this.parent.getPlane4Command();
     while (!queue.isEmpty()) {
@@ -787,24 +785,24 @@ public class Pilot {
         processAfterSpeechWithConsequents(queue, true);
       } else {
         ConfirmationResult cres = ApplicationManager.confirm(plane, sa, true);
-        if (cres.confirmation != null)
-          say(cres.confirmation);
-        else if (cres.rejection != null) {
+        if (cres.rejection != null) {
+          // command was rejected
+          say(cres.rejection);
+        } else {
+          // command was not confirmed
+          // notifications do not have confirmation
+          if (sayConfirmations && cres.confirmation != null)
+            say(cres.confirmation);
           ApplicationResult ares = ApplicationManager.apply(plane, sa);
           if (ares.rejection != null) {
             throw new ERuntimeException("This should not be rejected as was confirmed a few moments before.");
           } else {
             ares.informations.forEach(q -> say(q));
           }
-        } else
-          throw new ERuntimeException("Either confirmation or rejection should be set.");
+        }
 
         queue.remove(0);
       }
-    }
-
-    for (IFromAirplane reject : rejects) {
-      say(reject);
     }
   }
 
@@ -826,363 +824,6 @@ public class Pilot {
     }
   }
 
-  /*
-  private boolean tryProcessQueueSpeech(ISpeech s) {
-    Method m;
-    m = tryGetProcessQueueSpeechMethodToInvoke(s.getClass());
-
-    if (m == null) {
-      throw new ERuntimeException("Method \"ProcessQueueSpeech\" for speech type \"" + s.getClass() + "\" not found.");
-    }
-
-    boolean ret;
-    try {
-      ret = (boolean) m.invoke(this, s);
-    } catch (Throwable ex) {
-      throw new ERuntimeException(
-          String.format("processQueueSpeech() execution failed for %s. Reason: %s",
-              s.getClass(),
-              eng.eSystem.Exceptions.toString(ex), ex));
-    }
-    return ret;
-  }
-
-  private Method tryGetProcessQueueSpeechMethodToInvoke(Class<? extends ISpeech> commandType) {
-    Method ret;
-    try {
-      ret = Pilot.class.getDeclaredMethod("processQueueSpeech", commandType);
-    } catch (NoSuchMethodException | SecurityException ex) {
-      ret = null;
-    }
-
-    return ret;
-  }
-
-  private boolean processQueueSpeech(ProceedDirectCommand c) {
-
-    if (isUnableAndAdvice(c,
-        Airplane.State.holdingPoint,
-        Airplane.State.takeOffRoll,
-        Airplane.State.takeOffGoAround,
-        Airplane.State.approachEnter,
-        Airplane.State.approachDescend,
-        Airplane.State.longFinal,
-        Airplane.State.shortFinal,
-        Airplane.State.landed))
-      return true;
-
-    if (parent.getState() == Airplane.State.holding) {
-      abortHolding();
-    }
-
-    targetCoordinate = c.getNavaid().getCoordinate();
-    confirmIfReq(c);
-    return true;
-  }
-
-  private boolean processQueueSpeech(RadarContactConfirmationNotification c) {
-    this.hasRadarContact = true;
-    return true;
-  }
-
-  private boolean processQueueSpeech(ChangeAltitudeCommand c) {
-    //TODO now changing is not possible for approach
-    if (isUnableAndAdvice(c,
-        Airplane.State.holdingPoint,
-        Airplane.State.takeOffRoll,
-        Airplane.State.approachEnter,
-        Airplane.State.approachDescend,
-        Airplane.State.longFinal,
-        Airplane.State.shortFinal,
-        Airplane.State.landed))
-      return true;
-
-    switch (c.getDirection()) {
-      case climb:
-        if (parent.getAltitude() > c.getAltitudeInFt()) {
-          sayRejection(c, "we are higher.");
-          return true;
-        }
-        break;
-      case descend:
-        if (parent.getAltitude() < c.getAltitudeInFt()) {
-          sayRejection(c, "we are lower.");
-          return true;
-        }
-        break;
-    } // switch
-    if (c.getAltitudeInFt() > parent.getType().maxAltitude) {
-      sayRejection(c, "too high.");
-      return true;
-    }
-
-    parent.setTargetAltitude(c.getAltitudeInFt());
-    confirmIfReq(c);
-    return true;
-  }
-
-  private boolean processQueueSpeech(ChangeSpeedCommand c) {
-    if (isUnableAndAdvice(c,
-        Airplane.State.holdingPoint,
-        Airplane.State.takeOffRoll,
-        Airplane.State.longFinal,
-        Airplane.State.shortFinal,
-        Airplane.State.landed))
-      return true;
-
-    if (c.isResumeOwnSpeed()) {
-      this.speedRestriction = null;
-      confirmIfReq(c);
-      adjustTargetSpeed();
-      return true;
-    } else {
-      // not resume speed
-
-      SpeedRestriction sr = c.getSpeedRestriction();
-      boolean isInApproach = parent.getState().is(
-          Airplane.State.approachEnter,
-          Airplane.State.approachDescend
-      );
-
-      int cMax = !isInApproach ? parent.getType().vMaxClean : parent.getType().vMaxApp;
-      int cMin = !isInApproach ? parent.getType().vMinClean : parent.getType().vMinApp;
-      // next "if" allows speed under vMinClean (like flaps-1) near the FAF
-      if (!isInApproach && Coordinates.getDistanceInNM(this.parent.getCoordinate(), Acc.threshold().getFafCross()) < 10) {
-        cMin = (int) (cMin * 0.85);
-      }
-
-      if (sr.direction != SpeedRestriction.eDirection.atMost && sr.speedInKts > cMax) {
-        sayRejection(c,
-            "Unable to reach speed " + c.getSpeedInKts() + " kts, maximum is " + cMax + ".");
-        return true;
-      } else if (sr.direction != SpeedRestriction.eDirection.atLeast && sr.speedInKts < cMin) {
-        sayRejection(c,
-            "Unable to reach speed " + c.getSpeedInKts() + " kts, minimum is " + cMin + ".");
-        return true;
-      }
-
-      this.speedRestriction = sr;
-      confirmIfReq(c);
-      adjustTargetSpeed();
-      return true;
-    }
-  }
-
-  private boolean processQueueSpeech(ChangeHeadingCommand c) {
-    if (isUnableAndAdvice(c,
-        Airplane.State.holdingPoint,
-        Airplane.State.takeOffRoll,
-        Airplane.State.approachEnter,
-        Airplane.State.approachDescend,
-        Airplane.State.longFinal,
-        Airplane.State.shortFinal,
-        Airplane.State.landed))
-      return true;
-
-    if (parent.getState() == Airplane.State.holding)
-      abortHolding();
-
-    targetCoordinate = null;
-    double targetHeading;
-    if (c.isCurrentHeading()) {
-      targetHeading = parent.getHeading();
-    } else {
-      targetHeading = c.getHeading();
-    }
-    boolean leftTurn;
-
-    if (c.getDirection() == ChangeHeadingCommand.eDirection.any) {
-      leftTurn
-          = (Headings.getBetterDirectionToTurn(parent.getHeading(), c.getHeading()) == ChangeHeadingCommand.eDirection.left);
-    } else {
-      leftTurn
-          = c.getDirection() == ChangeHeadingCommand.eDirection.left;
-    }
-
-    parent.setTargetHeading((int) targetHeading, leftTurn);
-
-    confirmIfReq(c);
-    return true;
-  }
-
-  private boolean processQueueSpeech(ContactCommand c) {
-    Atc a;
-    switch (c.getAtcType()) {
-      case app:
-        a = Acc.atcApp();
-        break;
-      case ctr:
-        a = Acc.atcCtr();
-        break;
-      case twr:
-        a = Acc.atcTwr();
-        break;
-      default:
-        throw new ENotSupportedException();
-    }
-    // confirmation to previous atc
-    confirmIfReq(c);
-    flushSaidTextToAtc();
-
-    // change of atc
-    this.atc = a;
-    this.hasRadarContact = false;
-    // rewritten
-    // TODO now switch is realised in no-time, there is no delay between "frequency change confirmation" and "new atc call"
-    ISpeech s = new GoodDayNotification(parent.getCallsign(), Acc.toAltS(parent.getAltitude(), true));
-    say(s);
-    return true;
-  }
-
-  private boolean processQueueSpeech(ShortcutCommand c) {
-    if (isUnableAndAdvice(c,
-        Airplane.State.holdingPoint,
-        Airplane.State.takeOffRoll,
-        Airplane.State.approachEnter,
-        Airplane.State.approachDescend,
-        Airplane.State.longFinal,
-        Airplane.State.shortFinal,
-        Airplane.State.landed))
-      return true;
-
-    int pointIndex = getIndexOfNavaidInCommands(c.getNavaid());
-    if (pointIndex < 0) {
-      say(new ShortCutToFixNotOnRoute(c));
-    } else {
-      // hold abort only if fix was found
-      if (parent.getState() == Airplane.State.holding) {
-        abortHolding();
-      }
-
-      for (int i = 0; i < pointIndex; i++) {
-        this.queue.removeAt(i);
-      }
-    }
-    confirmIfReq(c);
-    return true;
-  }
-
-  private boolean processQueueSpeech(ClearedToApproachCommand c) {
-    if (isUnableAndAdvice(c,
-        Airplane.State.holdingPoint,
-        Airplane.State.takeOffRoll,
-        Airplane.State.takeOffGoAround,
-        Airplane.State.departingLow,
-        Airplane.State.departingHigh,
-        Airplane.State.approachEnter,
-        Airplane.State.approachDescend,
-        Airplane.State.longFinal,
-        Airplane.State.shortFinal,
-        Airplane.State.landed))
-      return true;
-
-    final int MAXIMAL_DISTANCE_TO_ENTER_APPROACH_IN_NM = 17;
-    final int MAXIMAL_ONE_SIDE_ARC_FROM_APPROACH_RADIAL_TO_ENTER_APPROACH_IN_DEGREES = 30;
-
-    // zatim resim jen pozici letadla
-    int radFromFix
-        = (int) Coordinates.getBearing(parent.getCoordinate(), c.getApproach().getPoint());
-    int dist
-        = (int) Coordinates.getDistanceInNM(c.getApproach().getPoint(), parent.getCoordinate());
-    if (dist > MAXIMAL_DISTANCE_TO_ENTER_APPROACH_IN_NM || !Headings.isBetween(
-        Headings.add(
-            c.getApproach().getRadial(),
-            -MAXIMAL_ONE_SIDE_ARC_FROM_APPROACH_RADIAL_TO_ENTER_APPROACH_IN_DEGREES),
-        radFromFix,
-        Headings.add(
-            c.getApproach().getRadial(),
-            MAXIMAL_ONE_SIDE_ARC_FROM_APPROACH_RADIAL_TO_ENTER_APPROACH_IN_DEGREES))) {
-      say(new UnableToEnterApproachFromDifficultPosition(c));
-    } else {
-      // hold abort only if fix was found
-      if (parent.getState() == Airplane.State.holding) {
-        abortHolding();
-      }
-
-      if (this.speedRestriction != null &&
-          (this.speedRestriction.direction == SpeedRestriction.eDirection.atLeast ||
-              this.speedRestriction.direction == SpeedRestriction.eDirection.exactly) &&
-          this.speedRestriction.speedInKts > parent.getType().vApp) {
-        say(new HighOrderedSpeedForApproach(this.speedRestriction.speedInKts, parent.getType().vApp));
-      }
-
-      this.behavior = new ApproachBehavior(c.getApproach());
-      parent.setxState(Airplane.State.approachEnter);
-      confirmIfReq(c);
-    }
-
-    return true;
-  }
-
-  private boolean processQueueSpeech(HoldCommand c) {
-    if (isUnableAndAdvice(c,
-        Airplane.State.holdingPoint,
-        Airplane.State.takeOffRoll,
-        Airplane.State.takeOffGoAround,
-        Airplane.State.approachEnter,
-        Airplane.State.approachDescend,
-        Airplane.State.longFinal,
-        Airplane.State.shortFinal,
-        Airplane.State.landed))
-      return true;
-
-    if (targetCoordinate != null) {
-      targetCoordinate = null;
-    }
-    HoldBehavior hold = new HoldBehavior();
-    hold.fix = c.getNavaid().getCoordinate();
-    hold.inboundRadial = c.getInboundRadial();
-    hold.isLeftTurned = c.isLeftTurn();
-    hold.phase = eHoldPhase.beginning;
-
-    parent.setxState(Airplane.State.holding);
-    this.behavior = hold;
-
-    confirmIfReq(c);
-    return true;
-  }
-
-  private boolean processQueueSpeech(ClearedForTakeoffCommand c) {
-    this.behavior = new TakeOffBehavior();
-    return true;
-  }
-*/
-  private void sayRejection(IAtcCommand c, String rejectionReason) {
-    Rejection r = new Rejection(rejectionReason, c);
-    say(r);
-  }
-
-  private boolean isUnableAndAdvice(IAtcCommand c, Airplane.State... states) {
-    boolean ret = false;
-    if (parent.getState().is(states)) {
-      sayUnable(c);
-      ret = true;
-    }
-    return ret;
-  }
-
-  private void sayUnable(IAtcCommand c) {
-    sayRejection(c, "Unable to comply the command at current state.");
-  }
-
-  private void confirmIfReq(IAtcCommand originalCommandToBeConfirmed) {
-    if (isConfirmationsNowRequested) {
-      Confirmation cmd = new Confirmation(originalCommandToBeConfirmed);
-      sayIfReq(cmd);
-    }
-  }
-
-  private void confirm(IAtcCommand originalCommandToBeConfirmed) {
-    Confirmation cmd = new Confirmation(originalCommandToBeConfirmed);
-    say(cmd);
-  }
-
-  private void sayIfReq(CommandResponse cmd) {
-    if (isConfirmationsNowRequested) {
-      say(cmd);
-    }
-  }
-
   private void say(ISpeech speech) {
     // if no tuned atc, nothing is said
     if (atc == null) return;
@@ -1196,8 +837,13 @@ public class Pilot {
 
   private void flushSaidTextToAtc() {
     for (Atc a : saidText.keySet()) {
-      parent.passMessageToAtc(a, saidText.get(a));
-      saidText.get(a).clear();
+      SpeechList saidTextToAtc = saidText.get(a);
+      if (!saidTextToAtc.isEmpty()) {
+        parent.passMessageToAtc(a, saidText.get(a));
+        saidText.put(a, new SpeechList());
+        // here new list must be created
+        // the old one is send to messenger for further processing
+      }
     }
   }
 

@@ -412,10 +412,6 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
   }
 
   public class Airplane4Command {
-    private Coordinate coordinate;
-    private double altitude;
-    private double heading;
-    private Callsign callsign;
 
     public State getState() {
       return state;

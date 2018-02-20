@@ -301,8 +301,6 @@ public class CustomTraffic extends Traffic {
               ChangeAltitudeCommand.eDirection.descend,
               Acc.atcCtr().getOrderedAltitude()
           ));
-      // added command to contact CTR
-      routeCmds.add(0, new ContactCommand(Atc.eType.ctr));
 
       routeName = r.getName();
     } else {
@@ -315,7 +313,6 @@ public class CustomTraffic extends Traffic {
       routeCmds = new SpeechList<>();
       routeCmds.add(0,
           new ProceedDirectCommand(Acc.airport().getMainAirportNavaid()));
-      routeCmds.add(new ContactCommand(Atc.eType.app));
 
       routeName = "(vfr)";
     }
@@ -453,9 +450,6 @@ public class CustomTraffic extends Traffic {
     }
 
     int indx = 0;
-    // added command to contact after departure
-    routeCmds.add(indx++, new ContactCommand(Atc.eType.twr));
-
     routeCmds.add(indx++, new ChangeAltitudeCommand(
         ChangeAltitudeCommand.eDirection.climb, Acc.threshold().getInitialDepartureAltitude()));
 

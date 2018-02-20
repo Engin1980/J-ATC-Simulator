@@ -53,8 +53,6 @@ public class TestTrafficOneApproach extends TestTraffic {
         ChangeAltitudeCommand.eDirection.descend,
         Acc.atcCtr().getOrderedAltitude()
       ));
-    // added command to contact CTR
-    routeCmds.add(0, new ContactCommand(Atc.eType.ctr));
 
     ret = new Airplane(
       new Callsign("CSA", "1111"),

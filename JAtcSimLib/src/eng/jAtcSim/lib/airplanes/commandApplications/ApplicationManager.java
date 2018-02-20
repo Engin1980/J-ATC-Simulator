@@ -27,6 +27,8 @@ public class ApplicationManager {
     cmdApps.put(HoldCommand.class, new HoldCommandApplication());
     cmdApps.put(ProceedDirectCommand.class, new ProceedDirectApplication());
     cmdApps.put(ShortcutCommand.class, new ShortcutCommandApplication());
+    cmdApps.put(ContactCommand.class, new ContactCommandApplication());
+
 
     notApps = new HashMap<>();
     notApps.put(RadarContactConfirmationNotification.class, new RadarContactConfirmationNotificationApplication());
@@ -40,9 +42,13 @@ public class ApplicationManager {
       ret = new ConfirmationResult();
       ret.confirmation = new Confirmation((AfterCommand) c);
     } else if (c instanceof IAtcCommand) {
-      ret = cmdApps.get(c).confirm(plane, (IAtcCommand) c, checkSanity);
+      CommandApplication ca = cmdApps.get(c.getClass());
+      assert ca != null;
+      ret = ca.confirm(plane, (IAtcCommand) c, checkSanity);
     } else if (c instanceof IAtcNotification){
-      ret = notApps.get(c).confirm(plane, (IAtcNotification)c);
+      NotificationApplication na = notApps.get(c.getClass());
+      assert na != null;
+      ret = na.confirm(plane, (IAtcNotification)c);
     } else {
       throw new UnsupportedOperationException();
     }
@@ -55,9 +61,9 @@ public class ApplicationManager {
     ApplicationResult ret;
 
     if (c instanceof IAtcCommand) {
-      ret = cmdApps.get(c).apply(plane, (IAtcCommand) c);
+      ret = cmdApps.get(c.getClass()).apply(plane, (IAtcCommand) c);
     } else if (c instanceof IAtcNotification){
-      ret = notApps.get(c).apply(plane, (IAtcNotification) c);
+      ret = notApps.get(c.getClass()).apply(plane, (IAtcNotification) c);
     }else {
       throw new UnsupportedOperationException();
     }

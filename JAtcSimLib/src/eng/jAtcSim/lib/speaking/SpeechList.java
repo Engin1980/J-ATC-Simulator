@@ -9,6 +9,12 @@ import java.util.Collection;
 
 public class SpeechList<T extends ISpeech> extends ArrayList<T> implements IMessageContent {
 
+  @Override
+  public void clear(){
+    assert false;
+    super.clear();
+  }
+
   public IAtcCommand getAsCommand(int index){
     IAtcCommand ret = getAs(index);
     return ret;

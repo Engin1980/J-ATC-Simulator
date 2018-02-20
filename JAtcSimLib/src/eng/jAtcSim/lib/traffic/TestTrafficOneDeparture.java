@@ -65,9 +65,6 @@ public class TestTrafficOneDeparture extends TestTraffic {
     }
 
     int indx = 0;
-    // added command to contact after departure
-    routeCmds.add(indx++, new ContactCommand(Atc.eType.twr));
-
     routeCmds.add(indx++, new ChangeAltitudeCommand(
         ChangeAltitudeCommand.eDirection.climb, Acc.threshold().getInitialDepartureAltitude()));
 
