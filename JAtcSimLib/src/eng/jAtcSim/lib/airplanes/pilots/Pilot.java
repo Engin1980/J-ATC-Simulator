@@ -982,6 +982,9 @@ public class Pilot {
       case holding:
         ts = parent.getTargetSpeed();
         break;
+      case landed:
+        ts = 0;
+        break;
       default:
         throw new UnsupportedOperationException();
     }
