@@ -109,6 +109,10 @@ public class Pilot {
 
     public void setTakeOffBehavior() {
       Pilot.this.behavior = new Pilot.TakeOffBehavior();
+      Pilot.this.parent.setTargetSpeed(Pilot.this.parent.getType().vR+15);
+      Pilot.this.parent.setTargetAltitude(Acc.threshold().getInitialDepartureAltitude());
+      Pilot.this.parent.setTargetHeading(Acc.threshold().getCourse());
+      Pilot.this.parent.setxState(Airplane.State.takeOffRoll);
     }
 
     public void setHasRadarContact() {
@@ -263,7 +267,7 @@ public class Pilot {
     public void _fly() {
       switch (parent.getState()) {
         case departingLow:
-          if (parent.getAltitude() > 1000) super.setState(Airplane.State.departingHigh);
+          if (parent.getAltitude() > 10000) super.setState(Airplane.State.departingHigh);
           break;
         case departingHigh:
           break;
