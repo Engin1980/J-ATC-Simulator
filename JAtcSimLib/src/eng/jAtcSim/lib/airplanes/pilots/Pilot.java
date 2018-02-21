@@ -19,7 +19,10 @@ import eng.jAtcSim.lib.global.EStringBuilder;
 import eng.jAtcSim.lib.global.ETime;
 import eng.jAtcSim.lib.global.Headings;
 import eng.jAtcSim.lib.global.SpeedRestriction;
-import eng.jAtcSim.lib.speaking.*;
+import eng.jAtcSim.lib.speaking.IFromAtc;
+import eng.jAtcSim.lib.speaking.ISpeech;
+import eng.jAtcSim.lib.speaking.SpeechDelayer;
+import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.EstablishedOnApproachNotification;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.RequestRadarContactNotification;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.IllegalThenCommandRejection;
@@ -31,6 +34,7 @@ import eng.jAtcSim.lib.weathers.Weather;
 import eng.jAtcSim.lib.world.Approach;
 import eng.jAtcSim.lib.world.Navaid;
 
+import javax.swing.text.StyledEditorKit;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -642,18 +646,22 @@ public class Pilot {
   private final AfterCommandList afterCommands = new AfterCommandList();
   private final Map<Atc, SpeechList> saidText = new HashMap<>();
   private SpeedRestriction speedRestriction = null;
-  private Atc atc = null;
-  private boolean hasRadarContact = true;
+  private Atc atc;
+  private boolean hasRadarContact;
   private Coordinate targetCoordinate;
   private Behavior behavior;
   private boolean isConfirmationsNowRequested = false;
 
   public Pilot(Airplane.Airplane4Pilot parent, String routeName, SpeechList<IAtcCommand> routeCommandQueue) {
-    SpeechList<IAtcCommand> speeches = routeCommandQueue.clone(); // need clone to expand "thens"
+
     this.parent = parent;
     this.routeName = routeName;
-    expandThenCommands(speeches);
-    this.queue.addNoDelay(speeches);
+    {
+      SpeechList<IFromAtc> speeches =
+          new SpeechList<>(routeCommandQueue); // need clone to expand "thens"
+      expandThenCommands(speeches);
+      this.queue.addNoDelay(speeches);
+    }
     if (parent.isArrival()) {
       this.atc = Acc.atcCtr();
       this.behavior = new ArrivalBehavior();
@@ -672,13 +680,16 @@ public class Pilot {
     return targetCoordinate;
   }
 
-  public void addNewSpeeches(SpeechList speeches) {
+  public void addNewSpeeches(SpeechList<IFromAtc> speeches) {
     this.queue.newRandomDelay();
     int index = 0;
     expandThenCommands(speeches);
-    while (index < speeches.size()) {
-      index = addNewSpeeches(speeches, index);
+    for (ISpeech speech : speeches) {
+      this.queue.add(speech);
     }
+//    while (index < speeches.size()) {
+//      index = addNewSpeeches(speeches, index);
+//    }
   }
 
   public void elapseSecond() {
@@ -700,6 +711,7 @@ public class Pilot {
     return this.atc;
   }
 
+  //TODO this should be in flight recorder class
   public String getBehaviorLogString() {
     if (behavior == null) {
       return "null";
@@ -719,42 +731,6 @@ public class Pilot {
     adjustTargetSpeed();
   }
 
-  private int addNewSpeeches(SpeechList cmds, int index) {
-    int ret = index + 1;
-    ISpeech c = cmds.get(index);
-    if ((c instanceof ToNavaidCommand)) {
-      Navaid n = ((ToNavaidCommand) c).getNavaid();
-      // tady musí ještě být sekvenční promazání v afterCommands zpětně celé routy
-      this.afterCommands.removeByNavaidConsequentRecursively(n);
-      this.afterCommands.removeByConsequent(ChangeHeadingCommand.class);
-      this.queue.add(c);
-    } else if (c instanceof ChangeHeadingCommand) {
-      this.afterCommands.removeByConsequent(ChangeHeadingCommand.class);
-      this.afterCommands.removeByConsequent(ProceedDirectCommand.class);
-      this.queue.add(c);
-    } else if (c instanceof AfterCommand) {
-      if (c instanceof AfterNavaidCommand) {
-        // zkontrolovat, jestli se letí přes tenhle navaid
-        // jinak to nemá smysl
-      }
-      this.afterCommands.add((AfterCommand) c, cmds.getAsCommand(index + 1));
-      ret += 1;
-    } else if ((c instanceof ContactCommand)
-        || (c instanceof ChangeSpeedCommand)
-        || (c instanceof ChangeAltitudeCommand)
-        || (c instanceof ClearedToApproachCommand)
-        || (c instanceof HoldCommand)) {
-      this.afterCommands.removeByConsequent(c.getClass());
-      this.queue.add(c);
-    } else if ((c instanceof ClearedForTakeoffCommand) ||
-        (c instanceof RadarContactConfirmationNotification)) {
-      this.queue.add(c);
-    } else {
-      throw new ERuntimeException("Pilot cannot deal with speech " + c.getClass().getSimpleName() + " - probably not implemented.");
-    }
-    return ret;
-  }
-
   private void processNewSpeeches() {
     SpeechList current = this.queue.get();
     if (current.isEmpty()) return;
@@ -764,18 +740,18 @@ public class Pilot {
       say(new RequestRadarContactNotification());
       this.queue.clear();
     } else {
-      processSpeeches(current, true);
+      processSpeeches(current, true, false);
     }
   }
 
   private void processAfterSpeeches() {
-    List<ICommand> cmdsToProcess
+    List<IAtcCommand> cmdsToProcess
         = afterCommands.getAndRemoveSatisfiedCommands(parent.getMe(), this.targetCoordinate);
 
-    processSpeeches(cmdsToProcess, false);
+    processSpeeches(cmdsToProcess, false, true);
   }
 
-  private void processSpeeches(List<? extends ISpeech> queue, boolean sayConfirmations) {
+  private void processSpeeches(List<? extends ISpeech> queue, boolean sayConfirmations, boolean isAfterCommandProcessing) {
 
     Airplane.Airplane4Command plane = this.parent.getPlane4Command();
     while (!queue.isEmpty()) {
@@ -789,6 +765,7 @@ public class Pilot {
           // command was rejected
           say(cres.rejection);
         } else {
+          if (!isAfterCommandProcessing && (sa instanceof IAtcCommand)) removeUnecessaryAfterCommands((IAtcCommand) sa);
           // command was not confirmed
           // notifications do not have confirmation
           if (sayConfirmations && cres.confirmation != null)
@@ -804,23 +781,67 @@ public class Pilot {
         queue.remove(0);
       }
     }
+
+    consolePrintSpeeches("AFTER");
+  }
+
+  private void consolePrintSpeeches(String txt) {
+    System.out.println();
+    System.out.println();
+    System.out.println("speech print " + txt);
+
+    this.afterCommands.consolePrint();;
+  }
+
+  private void removeUnecessaryAfterCommands(IAtcCommand c) {
+    if (c instanceof ProceedDirectCommand ||
+        c instanceof ChangeHeadingCommand) {
+      this.afterCommands.removeByConsequent(ProceedDirectCommand.class, true);
+      this.afterCommands.removeByConsequent(ChangeHeadingCommand.class, true);
+      this.afterCommands.removeByAntecedent(AfterNavaidCommand.class, true);
+    } else if (c instanceof ShortcutCommand){
+      this.afterCommands.removeByConsequent(ProceedDirectCommand.class, true);
+      this.afterCommands.removeByConsequent(ChangeHeadingCommand.class, true);
+    } else if (c instanceof ChangeAltitudeCommand) {
+      this.afterCommands.removeByConsequent(ChangeAltitudeCommand.class, true);
+    } else if ((c instanceof ContactCommand)
+        || (c instanceof ChangeSpeedCommand)
+        || (c instanceof ChangeAltitudeCommand)
+        || (c instanceof ClearedToApproachCommand)
+        || (c instanceof HoldCommand)) {
+      //this.afterCommands.removeByConsequent(c.getClass());
+    }
   }
 
   private void processAfterSpeechWithConsequents(List<? extends ISpeech> queue, boolean sayConfirmations) {
     Airplane.Airplane4Command plane = this.parent.getPlane4Command();
-    if (sayConfirmations) {
-      for (ISpeech iSpeech : queue) {
-        IFromAtc sa = (IFromAtc) iSpeech;
-        ConfirmationResult cres = ApplicationManager.confirm(plane, sa, false);
-        say(cres.confirmation);
-      }
-    }
-
     AfterCommand af = (AfterCommand) queue.get(0);
     queue.remove(0);
-    while (!queue.isEmpty() && !(queue.get(0) instanceof AfterCommand)) {
-      afterCommands.add(af, (IAtcCommand) queue.get(0));
+
+    ConfirmationResult cres;
+
+    cres = ApplicationManager.confirm(plane, af, false);
+    if (sayConfirmations) say(cres.confirmation);
+
+    while (queue.isEmpty() == false) {
+      IAtcCommand cmd = (IAtcCommand) queue.get(0);
+      if (cmd instanceof AfterCommand)
+        break;
       queue.remove(0);
+
+      cres = ApplicationManager.confirm(plane, cmd, false);
+      if (sayConfirmations) say(cres.confirmation);
+
+      afterCommands.add(af, cmd);
+
+    }
+  }
+
+  private void sayAfterCommandConfirmations(List<? extends ISpeech> queue, Airplane.Airplane4Command plane) {
+    for (ISpeech iSpeech : queue) {
+      IFromAtc sa = (IFromAtc) iSpeech;
+      ConfirmationResult cres = ApplicationManager.confirm(plane, sa, false);
+      say(cres.confirmation);
     }
   }
 
@@ -860,7 +881,7 @@ public class Pilot {
 
   }
 
-  private void expandThenCommands(SpeechList<IAtcCommand> speeches) {
+  private void expandThenCommands(SpeechList<IFromAtc> speeches) {
     if (speeches.isEmpty()) {
       return;
     }
@@ -875,9 +896,9 @@ public class Pilot {
           speeches.clear();
           return;
         }
-        ISpeech prev = speeches.get(i - 1);
+        IAtcCommand prev = (IAtcCommand) speeches.get(i - 1);
 
-        IAtcCommand n; // new
+        AfterCommand n; // new
         if (!(prev instanceof IAtcCommand)) {
           parent.passMessageToAtc(atc,
               new IllegalThenCommandRejection("{Then} command must be after another command. The whole command block is ignored."));
@@ -894,8 +915,8 @@ public class Pilot {
           speeches.clear();
           return;
         }
-        speeches.remove(i);
-        speeches.add(i, n);
+        n.setDerivationSource(prev);
+        speeches.set(i, n);
       }
     }
   }

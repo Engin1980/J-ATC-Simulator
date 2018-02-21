@@ -15,6 +15,7 @@ import eng.jAtcSim.lib.atcs.Atc;
 import eng.jAtcSim.lib.coordinates.Coordinate;
 import eng.jAtcSim.lib.coordinates.Coordinates;
 import eng.jAtcSim.lib.global.Global;
+import eng.jAtcSim.lib.speaking.IFromAtc;
 import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeAltitudeCommand;

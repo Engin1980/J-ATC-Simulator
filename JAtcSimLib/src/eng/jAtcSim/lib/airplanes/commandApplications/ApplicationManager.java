@@ -23,7 +23,7 @@ public class ApplicationManager {
     cmdApps.put(ChangeHeadingCommand.class, new ChangeHeadingApplication());
     cmdApps.put(ChangeSpeedCommand.class, new ChangeSpeedApplication());
     cmdApps.put(ClearedForTakeoffCommand.class, new ClearedForTakeOffCommandApplication());
-    cmdApps.put(ClearedToApproachCommand.class, new ClearedForTakeOffCommandApplication());
+    cmdApps.put(ClearedToApproachCommand.class, new ClearedToApproachApplication());
     cmdApps.put(HoldCommand.class, new HoldCommandApplication());
     cmdApps.put(ProceedDirectCommand.class, new ProceedDirectApplication());
     cmdApps.put(ShortcutCommand.class, new ShortcutCommandApplication());

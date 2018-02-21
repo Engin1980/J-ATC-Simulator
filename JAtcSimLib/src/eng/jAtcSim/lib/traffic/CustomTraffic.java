@@ -18,6 +18,7 @@ import eng.jAtcSim.lib.exceptions.ERuntimeException;
 import eng.jAtcSim.lib.global.ETime;
 import eng.jAtcSim.lib.global.Global;
 import eng.jAtcSim.lib.global.KeyList;
+import eng.jAtcSim.lib.speaking.IFromAtc;
 import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeAltitudeCommand;

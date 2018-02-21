@@ -14,5 +14,13 @@ import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
  * @author Marek
  */
 public abstract class AfterCommand implements IAtcCommand {
-  
+  private IAtcCommand derivationSource;
+
+  public IAtcCommand getDerivationSource() {
+    return derivationSource;
+  }
+
+  public void setDerivationSource(IAtcCommand derivationSource) {
+    this.derivationSource = derivationSource;
+  }
 }

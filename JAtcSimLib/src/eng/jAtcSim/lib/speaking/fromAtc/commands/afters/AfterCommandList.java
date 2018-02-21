@@ -11,31 +11,23 @@ import eng.jAtcSim.lib.coordinates.Coordinates;
 import eng.jAtcSim.lib.exceptions.ENotSupportedException;
 import eng.jAtcSim.lib.speaking.ICommand;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
-import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeAltitudeCommand;
-import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeSpeedCommand;
-import eng.jAtcSim.lib.speaking.fromAtc.commands.ProceedDirectCommand;
-import eng.jAtcSim.lib.speaking.fromAtc.commands.ToNavaidCommand;
-import eng.jAtcSim.lib.world.Navaid;
-import eng.jAtcSim.lib.airplanes.Airplane;
-import eng.jAtcSim.lib.coordinates.Coordinate;
-import eng.jAtcSim.lib.coordinates.Coordinates;
-import eng.jAtcSim.lib.exceptions.ENotSupportedException;
-import eng.jAtcSim.lib.speaking.ICommand;
-import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
-import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeAltitudeCommand;
-import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeSpeedCommand;
-import eng.jAtcSim.lib.speaking.fromAtc.commands.ProceedDirectCommand;
-import eng.jAtcSim.lib.speaking.fromAtc.commands.ToNavaidCommand;
-import eng.jAtcSim.lib.world.Navaid;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
- *
  * @author Marek
  */
 public class AfterCommandList {
+
+  public void consolePrint(){
+    for (Item item : inner) {
+      String s = String.format("%s -> %s", item.after.toString(), item.consequent.toString());
+      System.out.println(s);
+    }
+  }
 
   private final List<Item> inner = new LinkedList<>();
 
@@ -44,78 +36,40 @@ public class AfterCommandList {
     inner.add(it);
   }
 
-  public void removeByConsequent(Class commandType) {
-    int index = 0;
-    while (index < inner.size()) {
-      if (inner.get(index).consequent.getClass().equals(commandType)) {
-        inner.remove(index);
+  public void removeByAntecedent(Class commandType, boolean removeWholeSequence) {
+    List<Item> toRem = new ArrayList<>();
+    for (Item item : inner) {
+      if (item.after.getClass().equals(commandType))
+        toRem.add(item);
+    }
+
+    for (Item item : toRem) {
+      if (removeWholeSequence) {
+        removeWithSequenceForward(item);
       } else {
-        index++;
+        inner.remove(item);
       }
     }
   }
 
-  public void removeByNavaidConsequentRecursively(Navaid navaid) {
-    List<Item> toRem = new LinkedList<>();
-    for (Item it : inner) {
-      if (it.consequent instanceof ToNavaidCommand) {
-        Navaid cmdNavaid = ((ToNavaidCommand) it.consequent).getNavaid();
-        if (cmdNavaid.equals(navaid)) {
-          toRem.add(it);
-        }
+  public void removeByConsequent(Class commandType, boolean removeSequenceBackward) {
+    List<Item> toRem = inner.stream().filter(q -> q.consequent.getClass().equals(commandType)).collect(Collectors.toList());
+
+    for (Item item : toRem) {
+      if (removeSequenceBackward) {
+        removeWithSequenceBackward(item);
+      } else {
+        inner.remove(item);
       }
     }
-
-    removePath(toRem);
   }
 
-  private void removePath(List<Item> items) {
-    inner.removeAll(items);
-    for (Item it : items) {
-      removePath(it);
-    }
-  }
-
-  private void removePath(Item item) {
-    List<Item> preds = findPredecessors(item);
-    removePath(preds);
-  }
-
-  private List<Item> findPredecessors(Item item) {
-    ICommand predCmd;
-    boolean consMustBeToNavaidCommand = false;
-    if (item.consequent instanceof ProceedDirectCommand) {
-      Navaid n = ((ProceedDirectCommand) item.consequent).getNavaid();
-      predCmd = new AfterNavaidCommand(n);
-    } else if (item.consequent instanceof ChangeAltitudeCommand) {
-      int alt = ((ChangeAltitudeCommand) item.consequent).getAltitudeInFt();
-      predCmd = new AfterAltitudeCommand(alt);
-      consMustBeToNavaidCommand = true;
-    } else if (item.consequent instanceof ChangeSpeedCommand) {
-      int spd = ((ChangeSpeedCommand) item.consequent).getSpeedInKts();
-      predCmd = new AfterSpeedCommand((spd));
-      consMustBeToNavaidCommand = true;
-    } else {
-      return new LinkedList<>();
-    }
-
-    List<Item> ret = new LinkedList<>();
-    for (Item it : inner) {
-      if (it.after.equals(predCmd)
-          && (!consMustBeToNavaidCommand || (item.consequent instanceof ToNavaidCommand))) {
-        ret.add(it);
-      }
-    }
-
-    return ret;
-  }
-
-  public List<ICommand> getAndRemoveSatisfiedCommands(Airplane referencePlane, Coordinate currentTargetCoordinateOrNull) {
+  public List<IAtcCommand> getAndRemoveSatisfiedCommands(Airplane referencePlane, Coordinate currentTargetCoordinateOrNull) {
     double alt = referencePlane.getAltitude();
     double spd = referencePlane.getSpeed();
     Coordinate cor = referencePlane.getCoordinate();
 
-    List<ICommand> ret = new LinkedList<>();
+    List<IAtcCommand> ret = new LinkedList<>();
 
     int i = 0;
     while (i < inner.size()) {
@@ -143,8 +97,8 @@ public class AfterCommandList {
         } else {
           double dist
               = Coordinates.getDistanceInNM(
-                  ((AfterNavaidCommand) inner.get(i).after).getNavaid().getCoordinate(),
-                  cor);
+              ((AfterNavaidCommand) inner.get(i).after).getNavaid().getCoordinate(),
+              cor);
           if (dist < 2) {
             ret.add(inner.get(i).consequent);
             inner.remove(i);
@@ -159,13 +113,34 @@ public class AfterCommandList {
     return ret;
   }
 
-  public boolean isEmpty(){
+  public boolean isEmpty() {
     return inner.isEmpty();
   }
 
-  public ICommand getLast(){
-    return inner.get(inner.size()-1).consequent;
+  public ICommand getLast() {
+    return inner.get(inner.size() - 1).consequent;
   }
+
+  private void removeWithSequenceForward(Item item) {
+    inner.remove(item);
+
+    List<Item> toRems = inner.stream().filter(q -> q.after.getDerivationSource() == item.consequent).collect(Collectors.toList());
+    for (Item toRem : toRems) {
+      removeWithSequenceForward(toRem);
+    }
+  }
+
+  private void removeWithSequenceBackward(Item item) {
+    inner.remove(item);
+
+    if (item.after.getDerivationSource() == null) return;
+
+    List<Item> toRems = inner.stream().filter(q -> item.after.getDerivationSource() == q.consequent).collect(Collectors.toList());
+    for (Item toRem : toRems) {
+      removeWithSequenceBackward(toRem);
+    }
+  }
+
 }
 
 class Item {
