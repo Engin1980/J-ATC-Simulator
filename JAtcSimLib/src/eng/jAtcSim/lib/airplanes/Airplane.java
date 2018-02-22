@@ -94,7 +94,7 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     }
 
     public int speed() {
-      return (int) Airplane.this.speed;
+      return (int) Airplane.this.speed.getValue();
     }
 
     public int targetHeading() {
@@ -116,7 +116,7 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     }
 
     public double getSpeed() {
-      return speed;
+      return speed.getValue();
     }
 
     public Coordinate getCoordinate() {
@@ -330,15 +330,15 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
   private int targetAltitude;
   //private double altitude;
   private int targetSpeed;
-  private double speed;
+  private InertialValue speed;
   private Coordinate coordinate;
 
   private State state;
 
   private double lastVerticalSpeed;
   private FlightRecorder flightRecorder = null;
-  private double speedDelta = 0;
   private boolean airprox;
+  private InertialValue altitude;
 
   public Airplane(Callsign callsign, Coordinate coordinate, Squawk sqwk, AirplaneType airplaneSpecification,
                   int heading, int altitude, int speed, boolean isDeparture,
@@ -353,8 +353,19 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     this.state = isDeparture ? State.holdingPoint : State.arrivingHigh;
 
     this.heading = heading;
-    this.altitude.reset(altitude);
-    this.speed = speed;
+
+    this.altitude = new InertialValue(
+        altitude,
+        this.getType().lowClimbRate / 7d / 60,
+        this.getType().highDescendRate / 7d / 60,
+        (double) Acc.airport().getAltitude());
+
+    this.speed = new InertialValue(
+        speed,
+        this.getType().speedIncreaseRate / 4d,
+        this.getType().speedDecreaseRate / 6d,
+        0d);
+
     this.targetAltitude = altitude;
     this.targetHeading = heading;
     this.targetSpeed = speed;
@@ -363,6 +374,47 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
 
     // flight recorders on
     this.flightRecorder = FlightRecorder.create(this.callsign, false, true);
+  }
+
+  private static ValueRequest getRequest(double current, double target, double maxIncreaseStep, double maxDecreaseStep) {
+    // if on ground, nothing required
+    final double RUN_OUT_COEFF = 0.2;
+    final double RUN_OUT_DISTANCE = 3;
+
+    double delta = target - current;
+    if (delta == 0) {
+      return new ValueRequest();
+      // no change required
+    }
+
+    double absDelta = delta;
+    double availableStep;
+    if (delta > 0) {
+      // needs to accelerate
+      availableStep = maxIncreaseStep;
+    } else {
+      availableStep = maxDecreaseStep;
+      absDelta = -delta;
+    }
+
+    ValueRequest ret = new ValueRequest();
+    double deltaPress = absDelta / availableStep;
+    if (deltaPress > RUN_OUT_DISTANCE) {
+      ret.value = availableStep;
+      ret.energy = 1;
+    } else if (deltaPress > 1) {
+      ret.value = availableStep * RUN_OUT_COEFF;
+      ret.energy = RUN_OUT_COEFF;
+    } else {
+      absDelta = Math.min(absDelta, availableStep * RUN_OUT_COEFF);
+      ret.value = absDelta;
+      ret.energy = absDelta / availableStep;
+    }
+
+    if (delta < 0)
+      ret.multiply(-1);
+
+    return ret;
   }
 
   public boolean isDeparture() {
@@ -410,7 +462,7 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
   }
 
   public double getSpeed() {
-    return speed;
+    return speed.getValue();
   }
 
   public FlightRecorder getFlightRecorder() {
@@ -447,7 +499,7 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
 
   public double getTAS() {
     double m = 1 + this.altitude.getValue() / 100000d;
-    double ret = this.speed * m;
+    double ret = this.speed.getValue() * m;
     return ret;
   }
 
@@ -579,12 +631,47 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     this.pilot.addNewSpeeches(speeches);
   }
 
+//  private ValueRequest getSpeedRequest() {
+//
+//    double delta = targetSpeed - speed.getValue();
+//    if (delta == 0) {
+//      // no change required
+//      return new ValueRequest();
+//    }
+//
+//    double absDelta = delta;
+//    double availableStep;
+//    if (delta > 0) {
+//      // needs to accelerate
+//      availableStep = airplaneType.speedIncreaseRate;
+//    } else {
+//      availableStep = airplaneType.speedDecreaseRate;
+//      absDelta = -delta;
+//    }
+//    if (this.state.isOnGround()) {
+//      availableStep = availableStep * GROUND_SPEED_CHANGE_MULTIPLIER;
+//    }
+//
+//    ValueRequest ret = new ValueRequest();
+//    if (absDelta < availableStep) {
+//      ret.value = absDelta;
+//      ret.energy = absDelta / availableStep;
+//    } else {
+//      ret.value = availableStep;
+//      ret.energy = 1;
+//    }
+//    if (delta < 0)
+//      ret.multiply(-1);
+//
+//    return ret;
+//  }
+
   private void updateSHABySecondNew() {
     // TODO here is && or || ???
     boolean isSpeedPreffered =
         this.state == State.takeOffGoAround || this.state == State.takeOffGoAround;
 
-    if (targetAltitude != altitude.getValue() || targetSpeed != speed) {
+    if (targetAltitude != altitude.getValue() || targetSpeed != speed.getValue()) {
 
       ValueRequest speedRequest = getSpeedRequest();
       ValueRequest altitudeRequest = getAltitudeRequest();
@@ -605,7 +692,8 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
       adjustSpeed(speedRequest);
       adjustAltitude(altitudeRequest);
 
-    }
+    } else if (this.lastVerticalSpeed != 0)
+      this.lastVerticalSpeed = 0;
 
     //TODO verify behavior as targetHeading is int and heading is double
     if (targetHeading != heading) {
@@ -614,136 +702,57 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
   }
 
   private ValueRequest getSpeedRequest() {
-
-    double delta = targetSpeed - speed;
+    ValueRequest ret;
+    double delta = targetSpeed - speed.getValue();
     if (delta == 0) {
       // no change required
-      return new ValueRequest();
-    }
-
-    double absDelta = delta;
-    double availableStep;
-    if (delta > 0) {
-      // needs to accelerate
-      availableStep = airplaneType.speedIncreaseRate;
+      ret = new ValueRequest();
+      ret.energy = 0;
+      ret.value = 0;
     } else {
-      availableStep = airplaneType.speedDecreaseRate;
-      absDelta = -delta;
+      double incStep = airplaneType.speedIncreaseRate;
+      double decStep = airplaneType.speedDecreaseRate;
+      if (this.state.isOnGround()) {
+        incStep *= GROUND_SPEED_CHANGE_MULTIPLIER;
+        decStep *= GROUND_SPEED_CHANGE_MULTIPLIER;
+      }
+      ret = getRequest(
+          this.speed.getValue(),
+          this.targetSpeed,
+          incStep, decStep);
     }
-    if (this.state.isOnGround()) {
-      availableStep = availableStep * GROUND_SPEED_CHANGE_MULTIPLIER;
-    }
-
-    ValueRequest ret = new ValueRequest();
-    if (absDelta < availableStep) {
-      ret.value = absDelta;
-      ret.energy = absDelta / availableStep;
-    } else {
-      ret.value = availableStep;
-      ret.energy = 1;
-    }
-    if (delta < 0)
-      ret.multiply(-1);
 
     return ret;
   }
 
   private ValueRequest getAltitudeRequest() {
+    ValueRequest ret;
     // if on ground, nothing required
-    if (this.state.isOnGround()) {
-      if (altitude.getValue() == Acc.airport().getAltitude()) {
-        ValueRequest ret = new ValueRequest();
-        ret.energy = 0;
-        ret.value = 0;
-      }
-    }
-
-    double delta = targetAltitude - altitude.getValue();
-    if (delta == 0) {
-      return new ValueRequest();
-      // no change required
-    }
-
-    double absDelta = delta;
-    double availableStep;
-    if (delta > 0) {
-      // needs to accelerate
-      availableStep = airplaneType.getClimbRateForAltitude(this.altitude.getValue());
+    if (this.state.isOnGround() && altitude.getValue() == Acc.airport().getAltitude()) {
+      ret = new ValueRequest();
+      ret.energy = 0;
+      ret.value = 0;
     } else {
-      availableStep = airplaneType.getDescendRateForAltitude(this.altitude.getValue());
-      absDelta = -delta;
+      ret = getRequest(
+          this.altitude.getValue(),
+          this.targetAltitude,
+          airplaneType.getClimbRateForAltitude(this.altitude.getValue()),
+          airplaneType.getDescendRateForAltitude(this.altitude.getValue()));
     }
-
-    ValueRequest ret = new ValueRequest();
-    if (absDelta < availableStep) {
-      ret.value = absDelta;
-      ret.energy = absDelta / availableStep;
-    } else {
-      ret.value = availableStep;
-      ret.energy = 1;
-      double deltaPress = absDelta / availableStep;
-      if (deltaPress < 5) {
-        // this lowers the adjust before achieving target
-        ret.multiply(0.25);
-      } else if (deltaPress < 7) {
-        ret.multiply(0.70);
-      }
-    }
-    if (delta < 0)
-      ret.multiply(-1);
 
     return ret;
   }
 
   private void adjustSpeed(ValueRequest speedRequest) {
-
-    double adjustedValue;
-    if (Math.abs(speedRequest.value) < 1) {
-      adjustedValue = speedRequest.value;
-    } else {
-      adjustedValue = (speedRequest.value + speedDelta * DELTA_WEIGHT) / (DELTA_WEIGHT + 1);
-    }
-
-    this.speedDelta = adjustedValue;
-    this.speed += speedDelta;
-
-    if (this.speed < 0) {
-      this.speed = 0;
-      this.speedDelta = 0;
-    }
+    this.speed.add(speedRequest.value);
   }
 
-//  private void adjustAltitude(ValueRequest altitudeRequest) {
-//    if (this.getState().is(State.takeOffRoll, State.landed, State.holdingPoint)) {
-//      // not adjusting altitude at this states
-//      this.lastVerticalSpeed = 0;
-//      this.altitudeDelta = 0;
-//    } else {
-//      double adjustedValue;
-//      if (Math.abs(altitudeRequest.value) < 7) { // cca 400ft/min
-//        adjustedValue = altitudeRequest.value;
-//      } else {
-//        adjustedValue = (altitudeRequest.value + altitudeDelta * DELTA_WEIGHT) / (DELTA_WEIGHT + 1);
-//      }
-//
-//      this.altitudeDelta = adjustedValue;
-//      this.altitude += altitudeDelta;
-//
-//      if (this.altitude < Acc.airport().getAltitude()) {
-//        this.altitude = Acc.airport().getAltitude();
-//        this.altitudeDelta = 0;
-//      }
-//      this.lastVerticalSpeed = altitudeDelta * 60;
-//    }
-//  }
-
-  private IntertialValue altitude = new IntertialValue(0, 7, (double) Acc.airport().getAltitude());
   private void adjustAltitude(ValueRequest altitudeRequest) {
     if (this.getState().is(State.takeOffRoll, State.landed, State.holdingPoint)) {
       // not adjusting altitude at this states
       this.altitude.reset(Acc.airport().getAltitude());
     } else {
-      this.altitude.add (altitudeRequest.value);
+      this.altitude.add(altitudeRequest.value);
       this.lastVerticalSpeed = this.altitude.getInertia() * 60;
     }
   }
@@ -808,31 +817,34 @@ class ValueRequest {
   }
 }
 
-class IntertialValue{
+class InertialValue {
+  private static final double INERTIA_WEIGHT = 3;
+  private final double maxPositiveInertiaChange;
+  private final double maxNegativeInertiaChange;
   private double value;
   private double inertia;
-  private final double instantThreshold;
   private Double minimum;
-  private static final double INERTIA_WEIGHT = 3;
 
-  public IntertialValue(double value, double instantThreshold, @Nullable Double minimum) {
+  public InertialValue(double value,
+                       double maxPositiveInertiaChange, double maxNegativeInertiaChange,
+                       @Nullable Double minimum) {
     this.value = value;
     this.inertia = 0;
-    this.instantThreshold = instantThreshold;
     this.minimum = minimum;
+    this.maxPositiveInertiaChange = maxPositiveInertiaChange;
+    this.maxNegativeInertiaChange = maxNegativeInertiaChange;
   }
 
-  public void reset(double value){
+  public void reset(double value) {
     this.value = value;
   }
 
-  public void add(double val){
+  public void add(double val) {
     double adjustedValue;
-    if (Math.abs(val) < this.instantThreshold) {
-      adjustedValue = val;
-    } else {
-      adjustedValue = (val + this.inertia * INERTIA_WEIGHT) / (INERTIA_WEIGHT + 1);
-    }
+    if (val > inertia)
+      adjustedValue = Math.min(val, inertia + maxPositiveInertiaChange);
+    else
+      adjustedValue = Math.max(val, inertia - maxNegativeInertiaChange);
 
     this.inertia = adjustedValue;
     this.value += this.inertia;
@@ -844,7 +856,7 @@ class IntertialValue{
     System.out.println("Inert " + this.value + " of " + this.inertia + " - asked " + val);
   }
 
-  public void set(double value){
+  public void set(double value) {
     double diff = value - this.value;
     this.add(diff);
   }
