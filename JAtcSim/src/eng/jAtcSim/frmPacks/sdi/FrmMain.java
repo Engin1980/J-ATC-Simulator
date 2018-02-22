@@ -14,8 +14,6 @@ import java.awt.*;
 public class FrmMain extends JFrame {
 
   private Pack parent;
-  private int refreshRate;
-  private int refreshRateCounter;
   private JPanel pnlContent;
   private JPanel pnlBottom;
   private JPanel pnlLeft;
@@ -110,8 +108,6 @@ public class FrmMain extends JFrame {
   void init(Pack pack) {
 
     this.parent = pack;
-    this.refreshRate = parent.getDisplaySettings().refreshRate;
-    this.refreshRateCounter = 0;
 
     // radar
     BehaviorSettings behSett = new BehaviorSettings(true, new LongFormatter(), 10);
@@ -125,12 +121,12 @@ public class FrmMain extends JFrame {
 
     // Left panel
     FlightListPanel flightListPanel = new FlightListPanel();
-    flightListPanel.init(this.parent.getSim());
+    flightListPanel.init(this.parent.getSim(), parent.getAppSettings());
     pnlLeft.add(flightListPanel);
 
     // Right panel
     ScheduledFlightListPanel scheduledPanel = new ScheduledFlightListPanel();
-    scheduledPanel.init(this.parent.getSim());
+    scheduledPanel.init(this.parent.getSim(), parent.getAppSettings());
     pnlRight.add(scheduledPanel, BorderLayout.CENTER);
     StatsPanel statsPanel = new StatsPanel();
     pnlRight.add(statsPanel, BorderLayout.PAGE_END);

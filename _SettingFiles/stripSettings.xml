@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<settings>
+    <size width="200" height="50" />
+    <textColor>E6E6E6</textColor>
+    <twr even="6E6E00" odd="4F4F00" />
+    <ctr even="000080" odd="000040" />
+    <app even="004800" odd="007D00" />
+    <airprox>AA0000</airprox>
+    <font family="Consolas" size="12" style="0" />
+</settings>

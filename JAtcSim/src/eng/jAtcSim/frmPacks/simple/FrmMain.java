@@ -28,8 +28,6 @@ public class FrmMain extends javax.swing.JFrame {
   private JPanel pnlContent;
   private Pack parent;
   private CommandJTextWraper wrp;
-  private int refreshRate;
-  private int refreshRateCounter = 0;
   private Radar radar;
   private JPanel pnlTop;
 
@@ -101,8 +99,6 @@ public class FrmMain extends javax.swing.JFrame {
   void init(Pack pack) {
 
     this.parent = pack;
-    this.refreshRate = parent.getDisplaySettings().refreshRate;
-    this.refreshRateCounter = 0;
 
     // behavior settings for this radar
     BehaviorSettings behSett = new BehaviorSettings(true, new LongFormatter(), 10);
@@ -129,7 +125,7 @@ public class FrmMain extends javax.swing.JFrame {
     createRadarPanel();
   }
 
-  private void createRadarPanel( ) {
+  private void createRadarPanel() {
     JLabel lbl = new JLabel();
     lbl.setText("Demo text");
 
@@ -144,19 +140,18 @@ public class FrmMain extends javax.swing.JFrame {
     this.setForeground(Color.yellow);
 
 
-
     pnlTop.add(
         LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.top, 25, lbl, txt, btn)
     );
 
     java.awt.Container ct = lbl;
-    while (ct != null){
+    while (ct != null) {
       setDarkStyle(ct);
       ct = ct.getParent();
     }
   }
 
-  private void setDarkStyle(java.awt.Container ... components) {
+  private void setDarkStyle(java.awt.Container... components) {
     for (java.awt.Container component : components) {
       component.setBackground(Color.black);
       component.setForeground(Color.yellow);
@@ -223,11 +218,7 @@ public class FrmMain extends javax.swing.JFrame {
   }
 
   void elapseSecond() {
-    this.refreshRateCounter++;
-    if (this.refreshRateCounter >= this.refreshRate) {
-      this.refreshRateCounter = 0;
-      radar.redraw();
-    }
+    radar.redraw(false);
   }
 }
 

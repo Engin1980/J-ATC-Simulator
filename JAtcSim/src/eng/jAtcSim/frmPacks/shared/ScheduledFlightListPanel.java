@@ -1,5 +1,7 @@
 package eng.jAtcSim.frmPacks.shared;
 
+import eng.jAtcSim.AppSettings;
+import eng.jAtcSim.XmlLoadHelper;
 import eng.jAtcSim.lib.Simulation;
 import eng.jAtcSim.lib.traffic.Movement;
 import eng.jAtcSim.startup.LayoutManager;
@@ -14,8 +16,10 @@ public class ScheduledFlightListPanel extends JPanel {
   private Simulation sim;
 
 
-  public void init(Simulation sim) {
+  public void init(Simulation sim, AppSettings appSettings) {
     this.sim = sim;
+    ScheduledFlightStripPanel.setStripSettings(
+        XmlLoadHelper.loadStripSettings(appSettings.resFolder + "stripSettings.xml"));
 
     pnlContent = LayoutManager.createBoxPanel(LayoutManager.eHorizontalAlign.left, 4);
     pnlContent.setName("ScheduledFlightListPanel_ContentPanel");
@@ -54,36 +58,32 @@ public class ScheduledFlightListPanel extends JPanel {
 }
 
 class ScheduledFlightStripPanel extends JPanel {
-  private static final int WIDTH = 200;
-  private static final int HEIGHT = 40;
-
-  private static final int A = 75; // adjust colors
-  private static final int B = 125; // adjust colors
-  private static final Color TEXT_COLOR = new Color(230, 230, 230);
-  private static final Color DEPARTURE_EVEN = new Color(0, 0, A);
-  private static final Color DEPARTURE_ODD = new Color(0, 0, B);
-  private static final Color ARRIVAL_EVEN = new Color(0, A, A);
-  private static final Color ARRIVAL_ODD = new Color(0, B, B);
+  private static FlightStripSettings stripSettings;
   private static int index = 0;
-  private static String FONT_NAME = "Consolas"; // "Consolas"; // "Cambria" // "Calibri"; //"PxPlus IMG VGA9";
-  private static int FONT_SIZE = 12;
-  private static final Font NORMAL_FONT = new Font(FONT_NAME, 0, FONT_SIZE);
-  private static final Font BOLD_FONT = new Font(FONT_NAME, Font.BOLD, FONT_SIZE);
+  private static Font normalFont;
+  private static Font boldFont;
+
+  public static void setStripSettings(FlightStripSettings stripSettings) {
+    ScheduledFlightStripPanel.stripSettings = stripSettings;
+
+    normalFont = new Font(stripSettings.font.getName(), 0, stripSettings.font.getSize());
+    boldFont = new Font(stripSettings.font.getName(), Font.BOLD, stripSettings.font.getSize());
+  }
 
   public ScheduledFlightStripPanel(Movement mvm) {
 
     this.setLayout(new BorderLayout());
 
-    Dimension dim = new Dimension(WIDTH, HEIGHT);
+    Dimension dim = stripSettings.size;
     this.setPreferredSize(dim);
     this.setMinimumSize(dim);
     this.setMaximumSize(dim);
 
     Color color = ScheduledFlightStripPanel.getColor(mvm);
     this.setBackground(color);
-    this.setForeground(TEXT_COLOR);
+    this.setForeground(stripSettings.textColor);
 
-    fillContent(mvm, TEXT_COLOR, color);
+    fillContent(mvm, stripSettings.textColor, color);
   }
 
   public static void resetIndex() {
@@ -95,9 +95,9 @@ class ScheduledFlightStripPanel extends JPanel {
     // pozadi
     boolean isEven = index++ % 2 == 0;
     if (mvm.isDeparture()) {
-      ret = isEven ? DEPARTURE_EVEN : DEPARTURE_ODD;
+      ret = isEven ? stripSettings.twr.even : stripSettings.twr.odd;
     } else {
-      ret = isEven ? ARRIVAL_EVEN : ARRIVAL_ODD;
+      ret = isEven ? stripSettings.ctr.even: stripSettings.ctr.odd;
     }
     return ret;
   }
@@ -127,13 +127,13 @@ class ScheduledFlightStripPanel extends JPanel {
         LayoutManager.eVerticalAlign.middle, 0, lblTime, lblDelay);
     JPanel pnl = LayoutManager.createBoxPanel(LayoutManager.eHorizontalAlign.left, 0, firstLine, secondLine );
 
-    adjustComponentStyle(bgColor, frColor, NORMAL_FONT,
+    adjustComponentStyle(bgColor, frColor, normalFont,
       firstLine, secondLine);
 
-    adjustComponentStyle(bgColor, frColor, NORMAL_FONT,
+    adjustComponentStyle(bgColor, frColor, normalFont,
         lblCallsign,lblDepartureArrival,lblIfrVfr,lblTime,lblDelay);
 
-    lblCallsign.setFont(BOLD_FONT);
+    lblCallsign.setFont(boldFont);
 
     pnl.setBackground(bgColor);
     pnl = LayoutManager.createBorderedPanel(4, pnl);

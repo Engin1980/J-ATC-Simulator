@@ -1,13 +1,5 @@
 package eng.jAtcSim.radarBase;
 
-import eng.jAtcSim.lib.world.*;
-import eng.jAtcSim.radarBase.global.Color;
-import eng.jAtcSim.radarBase.global.Point;
-import eng.jAtcSim.radarBase.global.SoundManager;
-import eng.jAtcSim.radarBase.global.TextBlockLocation;
-import eng.jAtcSim.radarBase.global.events.EMouseEventArg;
-import eng.jAtcSim.radarBase.global.events.KeyEventArg;
-import eng.jAtcSim.radarBase.global.events.WithCoordinateEventArg;
 import eng.eSystem.events.Event;
 import eng.eSystem.events.EventSimple;
 import eng.jAtcSim.lib.Simulation;
@@ -28,6 +20,14 @@ import eng.jAtcSim.lib.messaging.Messenger;
 import eng.jAtcSim.lib.messaging.StringMessageContent;
 import eng.jAtcSim.lib.speaking.ISpeech;
 import eng.jAtcSim.lib.speaking.SpeechList;
+import eng.jAtcSim.lib.world.*;
+import eng.jAtcSim.radarBase.global.Color;
+import eng.jAtcSim.radarBase.global.Point;
+import eng.jAtcSim.radarBase.global.SoundManager;
+import eng.jAtcSim.radarBase.global.TextBlockLocation;
+import eng.jAtcSim.radarBase.global.events.EMouseEventArg;
+import eng.jAtcSim.radarBase.global.events.KeyEventArg;
+import eng.jAtcSim.radarBase.global.events.WithCoordinateEventArg;
 
 import java.util.*;
 
@@ -39,6 +39,7 @@ public class Radar {
     public final List<String> plane = new ArrayList<>();
     public final List<String> system = new ArrayList<>();
   }
+
   static class MessageManager {
     private final int delay;
     private List<VisualisedMessage> items = new ArrayList<>();
@@ -63,7 +64,8 @@ public class Radar {
       return items;
     }
   }
-  static class VisualisedMessage{
+
+  static class VisualisedMessage {
     private final IMessageParticipant source;
     private final String text;
     private int lifeCounter;
@@ -86,7 +88,7 @@ public class Radar {
       return lifeCounter;
     }
 
-    public void decreaseLifeCounter(){
+    public void decreaseLifeCounter() {
       this.lifeCounter--;
     }
   }
@@ -140,11 +142,8 @@ public class Radar {
 
   private final DisplaySettings displaySettings;
   private final BehaviorSettings behaviorSettings;
-
   private final Simulation simulation;
   private final Area area;
-
-
   private final PlaneHistoryDotManager planeDotHistory = new PlaneHistoryDotManager();
   /**
    * Last drawn positions of planes.
@@ -154,8 +153,8 @@ public class Radar {
    * Definition of the shift of the airplane info label
    */
   private final Map<Callsign, Point> customPlaneLabelShift = new HashMap();
-
   private final MessageManager messageManager;
+  private int redrawTick = 0;
 
   public Radar(ICanvas canvas, RadarRange radarRange,
                Simulation sim, Area area,
@@ -178,7 +177,7 @@ public class Radar {
         (c, o) -> Radar.this.canvas_onKeyPress((ICanvas) c, (KeyEventArg) o));
 
     // listen to simulation seconds for redraw
-    this.simulation.getSecondElapsedEvent().add(o -> redraw());
+    this.simulation.getSecondElapsedEvent().add(o -> redraw(false));
   }
 
   public void zoomIn() {
@@ -205,12 +204,21 @@ public class Radar {
         new Coordinate(
             coordinate.getLatitude().get() - distLat,
             coordinate.getLongitude().get() - distLon));
-    redraw();
+    redraw(true);
   }
 
-  public void redraw() {
+  public void redraw(boolean force) {
 
-    this.c.invokeRepaint();
+    if (force)
+      this.c.invokeRepaint();
+    else {
+      if (redrawTick <= 0) {
+        this.c.invokeRepaint();
+        this.redrawTick = displaySettings.refreshRate;
+      } else {
+        this.redrawTick--;
+      }
+    }
 
   }
 
@@ -249,7 +257,7 @@ public class Radar {
     drawBackground();
     drawBorders();
     drawRoutes(true, false);
-    drawRoutes(false,true);
+    drawRoutes(false, true);
     drawApproaches();
     drawNavaids();
     drawAirports();
@@ -295,7 +303,7 @@ public class Radar {
             tl.getBottomRight().getLatitude().get() - distShiftLat,
             tl.getBottomRight().getLongitude().get() - distShiftLon));
 
-    redraw();
+    redraw(true);
 
   }
 
@@ -303,7 +311,7 @@ public class Radar {
     tl.setCoordinates(
         tl.getTopLeft().add(c),
         tl.getBottomRight().add(c));
-    redraw();
+    redraw(true);
   }
 
   private void drawBackground() {
@@ -514,7 +522,7 @@ public class Radar {
     // plane history
     // TODO implement
     //if (refreshTick % dp.getHistoryDotStep() == 0) {
-      this.planeDotHistory.add(planeInfo.callsign(), planeInfo.coordinate(), dp.getHistoryDotCount());
+    this.planeDotHistory.add(planeInfo.callsign(), planeInfo.coordinate(), dp.getHistoryDotCount());
     //}
     List<Coordinate> hist = planeDotHistory.get(planeInfo.callsign());
     if (hist != null) {

@@ -15,7 +15,7 @@ public class Pack extends eng.jAtcSim.frmPacks.Pack {
   private Simulation sim;
   private Area area;
   private Airport aip;
-  private AppSettings sett;
+  private AppSettings appSettings;
   private DisplaySettings displaySettings;
   private FrmMain frmMain;
 
@@ -25,7 +25,7 @@ public class Pack extends eng.jAtcSim.frmPacks.Pack {
     this.sim = sim;
     this.area = area;
     this.aip = sim.getActiveAirport();
-    this.sett = appSettings;
+    this.appSettings = appSettings;
 
     String fileName = appSettings.resFolder + "radarDisplaySettings.xml";
     this.displaySettings = XmlLoadHelper.loadNewDisplaySettings(fileName);
@@ -62,5 +62,9 @@ public class Pack extends eng.jAtcSim.frmPacks.Pack {
 
   public DisplaySettings getDisplaySettings() {
     return displaySettings;
+  }
+
+  public AppSettings getAppSettings() {
+    return appSettings;
   }
 }

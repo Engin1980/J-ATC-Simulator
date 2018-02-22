@@ -75,13 +75,13 @@
 
   <app color="00FF00"
              pointWidth="7" headingLineLength="10"
-             historyDotCount="37" historyDotStep="5"
+             historyDotCount="10" historyDotStep="5"
              separationRingRadius="3"
              firstLineFormat="{1}"
              secondLineFormat="{34}{43}{37} {22}"
              thirdLineFormat="{8} {4}" />
 
-  <ctr color="008800"
+  <ctr color="000080"
              separationRingRadius="5"
              pointWidth="5" headingLineLength="7"
              historyDotCount="10" historyDotStep="5"
@@ -89,7 +89,7 @@
              secondLineFormat="{34} {22}"
              thirdLineFormat="{8} {4}" />
 
-  <twr color="008888"
+  <twr color="4F4F00"
              separationRingRadius="3"
              pointWidth="5" headingLineLength="7"
              historyDotCount="10" historyDotStep="5"

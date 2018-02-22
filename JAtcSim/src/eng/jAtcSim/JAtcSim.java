@@ -5,7 +5,6 @@
  */
 package eng.jAtcSim;
 
-import eng.jAtcSim.lib.traffic.TestTrafficOneDeparture;
 import eng.jAtcSim.radarBase.global.SoundManager;
 import eng.jAtcSim.frmPacks.Pack;
 import eng.jAtcSim.startup.StartupSettings;
@@ -14,7 +13,6 @@ import eng.jAtcSim.lib.Simulation;
 import eng.jAtcSim.lib.airplanes.AirplaneTypes;
 import eng.jAtcSim.lib.exceptions.ERuntimeException;
 import eng.jAtcSim.lib.traffic.CustomTraffic;
-import eng.jAtcSim.lib.traffic.TestTrafficOneApproach;
 import eng.jAtcSim.lib.traffic.Traffic;
 import eng.jAtcSim.lib.weathers.Weather;
 import eng.jAtcSim.lib.weathers.WeatherProvider;
@@ -111,13 +109,6 @@ public class JAtcSim {
     String fileName = null;
 
     try {
-
-//      fileName =
-//          resFolder.toString() + "\\settings\\radarDisplaySettings.xml";
-//          //"C:\\Users\\Marek Vajgl\\Documents\\IdeaProjects\\JAtcSimSolution\\JAtcSim\\resources\\settings\\radarDisplaySettings.xml";
-//      failMsg = "Failed to load radar display settings from " + fileName;
-//      JAtcSim.displaySettings = XmlLoadHelper.loadNewDisplaySettings(fileName);
-
       fileName = sett.files.areaXmlFile;
       failMsg = "Failed to load area from " + fileName;
       JAtcSim.area = XmlLoadHelper.loadNewArea(fileName);

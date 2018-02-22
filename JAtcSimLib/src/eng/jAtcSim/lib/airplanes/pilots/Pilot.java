@@ -785,16 +785,6 @@ public class Pilot {
         queue.remove(0);
       }
     }
-
-    consolePrintSpeeches("AFTER");
-  }
-
-  private void consolePrintSpeeches(String txt) {
-    System.out.println();
-    System.out.println();
-    System.out.println("speech print " + txt);
-
-    this.afterCommands.consolePrint();;
   }
 
   private void removeUnecessaryAfterCommands(IAtcCommand c) {

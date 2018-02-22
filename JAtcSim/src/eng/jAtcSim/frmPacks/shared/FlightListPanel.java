@@ -1,5 +1,7 @@
 package eng.jAtcSim.frmPacks.shared;
 
+import eng.jAtcSim.AppSettings;
+import eng.jAtcSim.XmlLoadHelper;
 import eng.jAtcSim.lib.Simulation;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.exceptions.ENotSupportedException;
@@ -18,8 +20,10 @@ public class FlightListPanel extends JPanel {
   private JScrollPane pnlScroll;
   private JPanel pnlContent;
 
-  public void init(Simulation sim) {
+  public void init(Simulation sim, AppSettings appSettings) {
     this.sim = sim;
+    FlightStripPanel.setStripSettings(
+        XmlLoadHelper.loadStripSettings(appSettings.resFolder + "stripSettings.xml"));
 
     pnlContent = LayoutManager.createBoxPanel(LayoutManager.eHorizontalAlign.left, 4);
     pnlContent.setName("FlightListPanel_ContentPanel");
@@ -30,7 +34,7 @@ public class FlightListPanel extends JPanel {
     this.setLayout(new BorderLayout());
     this.add(pnlScroll);
 
-    pnlContent.setBackground(new Color(50,50,50));
+    pnlContent.setBackground(new Color(50, 50, 50));
 
     this.sim.getSecondElapsedEvent().add(o -> updateList());
   }
@@ -54,7 +58,7 @@ public class FlightListPanel extends JPanel {
     FlightStripPanel.resetIndex();
     for (Airplane.AirplaneInfo pln : plns) {
       JPanel pnlItem = createFlightStrip(pln);
-      pnlItem.setName("FlightStrip_"+pln.callsignS());
+      pnlItem.setName("FlightStrip_" + pln.callsignS());
       pnlContent.add(pnlItem);
     }
 
@@ -69,47 +73,61 @@ public class FlightListPanel extends JPanel {
 }
 
 class FlightStripPanel extends JPanel {
-  public static final int WIDTH = 200;
-  private static final int HEIGHT = 50;
 
-  private static final int A = 75; // adjust colors
-  private static final int B = 125; // adjust colors
-
+  private static FlightStripSettings stripSettings;
   private static int index = 0;
-
-  private static final Color TEXT_COLOR = new Color(230, 230, 230);
-
-  private static final Color TWR_EVEN = new Color(0, 0, A);
-  private static final Color TWR_ODD = new Color(0, 0, B);
-  private static final Color CTR_EVEN = new Color(0, A, A);
-  private static final Color CTR_ODD = new Color(0, B, B);
-  private static final Color APP_EVEN = new Color(0, A, 0);
-  private static final Color APP_ODD = new Color(0, B, 0);
-  private static final Color AIRPROX = new Color(155, 0, 0);
-
-  private static String FONT_NAME = "Consolas"; // "Consolas"; // "Cambria" // "Calibri"; //"PxPlus IMG VGA9";
-  private static int FONT_SIZE = 12;
-  private static final Font NORMAL_FONT = new Font(FONT_NAME, 0, FONT_SIZE);
-  private static final Font BOLD_FONT = new Font(FONT_NAME, Font.BOLD, FONT_SIZE);
-
-  public static void resetIndex(){
-    index = 0;
-  }
+  private static Font normalFont;
+  private static Font boldFont;
 
   public FlightStripPanel(Airplane.AirplaneInfo ai) {
 
     this.setLayout(new BorderLayout());
 
-    Dimension dim = new Dimension(WIDTH, HEIGHT);
+    Dimension dim = stripSettings.size;
     this.setPreferredSize(dim);
     this.setMinimumSize(dim);
     this.setMaximumSize(dim);
 
     Color color = FlightStripPanel.getColor(ai);
     this.setBackground(color);
-    this.setForeground(TEXT_COLOR);
+    this.setForeground(stripSettings.textColor);
 
     fillContent(ai);
+  }
+
+  public static void setStripSettings(FlightStripSettings stripSettings) {
+    FlightStripPanel.stripSettings = stripSettings;
+
+    normalFont = new Font(stripSettings.font.getName(), 0, stripSettings.font.getSize());
+    boldFont = new Font(stripSettings.font.getName(), Font.BOLD, stripSettings.font.getSize());
+  }
+
+  public static void resetIndex() {
+    index = 0;
+  }
+
+  private static Color getColor(Airplane.AirplaneInfo ai) {
+    Color ret;
+    // pozadi
+    if (ai.isAirprox()) {
+      ret = stripSettings.airprox;
+    } else {
+      boolean isEven = index++ % 2 == 0;
+      switch (ai.responsibleAtcType()) {
+        case app:
+          ret = isEven ? stripSettings.app.even : stripSettings.app.odd;
+          break;
+        case twr:
+          ret = isEven ? stripSettings.twr.even : stripSettings.twr.odd;
+          break;
+        case ctr:
+          ret = isEven ? stripSettings.ctr.even : stripSettings.ctr.odd;
+          break;
+        default:
+          throw new ENotSupportedException();
+      }
+    }
+    return ret;
   }
 
   private void fillContent(Airplane.AirplaneInfo ai) {
@@ -118,64 +136,40 @@ class FlightStripPanel extends JPanel {
 
     lbl = new JLabel(ai.callsignS());
     lbl.setName("lblCallsign");
-    lbl.setFont(BOLD_FONT);
-    lbl.setForeground(TEXT_COLOR);
+    lbl.setFont(boldFont);
+    lbl.setForeground(stripSettings.textColor);
     cmps[0] = lbl;
 
     lbl = new JLabel(ai.planeType() + " (" + ai.typeCategory() + ")");
     lbl.setName("lblPlaneType");
-    lbl.setFont(NORMAL_FONT);
-    lbl.setForeground(TEXT_COLOR);
+    lbl.setFont(normalFont);
+    lbl.setForeground(stripSettings.textColor);
     cmps[2] = lbl;
 
     lbl = new JLabel(ai.sqwkS());
     lbl.setName("lblSquawk");
-    lbl.setFont(BOLD_FONT);
-    lbl.setForeground(TEXT_COLOR);
+    lbl.setFont(boldFont);
+    lbl.setForeground(stripSettings.textColor);
     cmps[4] = lbl;
 
     lbl = new JLabel(ai.departureArrivalChar() + " " + ai.routeNameOrFix());
     lbl.setName("lblRoute");
-    lbl.setFont(NORMAL_FONT);
-    lbl.setForeground(TEXT_COLOR);
+    lbl.setFont(normalFont);
+    lbl.setForeground(stripSettings.textColor);
     cmps[1] = lbl;
 
     lbl = new JLabel(ai.altitudeSFixed() + " " + ai.climbDescendChar() + " " + ai.targetAltitudeSFixed());
     lbl.setName("lblAltitude");
-    lbl.setFont(NORMAL_FONT);
-    lbl.setForeground(TEXT_COLOR);
+    lbl.setFont(normalFont);
+    lbl.setForeground(stripSettings.textColor);
     cmps[3] = lbl;
 
     lbl = new JLabel(ai.headingSLong() + "°//" + ai.speedSLong());
     lbl.setName("lblHeadingAndSpeed");
-    lbl.setFont(NORMAL_FONT);
-    lbl.setForeground(TEXT_COLOR);
+    lbl.setFont(normalFont);
+    lbl.setForeground(stripSettings.textColor);
     cmps[5] = lbl;
 
     LayoutManager.fillGridPanel(this, 3, 2, 0, cmps);
-  }
-
-  private static Color getColor(Airplane.AirplaneInfo ai) {
-    Color ret;
-    // pozadi
-    if (ai.isAirprox()) {
-      ret = AIRPROX;
-    } else {
-      boolean isEven = index++ % 2 == 0;
-      switch (ai.responsibleAtcType()) {
-        case app:
-          ret = isEven ? APP_EVEN : APP_ODD;
-          break;
-        case twr:
-          ret = isEven ? TWR_EVEN : TWR_ODD;
-          break;
-        case ctr:
-          ret = isEven ? CTR_EVEN : CTR_ODD;
-          break;
-        default:
-          throw new ENotSupportedException();
-      }
-    }
-    return ret;
   }
 }

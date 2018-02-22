@@ -1,5 +1,6 @@
 package eng.jAtcSim;
 
+import eng.jAtcSim.frmPacks.shared.FlightStripSettings;
 import eng.jAtcSim.lib.world.*;
 import eng.jAtcSim.radarBase.DisplaySettings;
 import eng.jAtcSim.radarBase.parsing.RadarColorParser;
@@ -142,6 +143,18 @@ public class XmlLoadHelper {
     sett.getValueParsers().add(new CoordinateValueParser());
 
     AirplaneTypes ret = (AirplaneTypes) deserialize(fileName, AirplaneTypes.class,sett);
+    return ret;
+  }
+
+  public static FlightStripSettings loadStripSettings(String fileName) {
+    eng.eSystem.xmlSerialization.Settings sett = new eng.eSystem.xmlSerialization.Settings();
+
+    sett.getValueParsers().add(
+        new eng.eSystem.xmlSerialization.common.parsers.HexToAwtColorValueParser());
+    sett.getElementParsers().add(
+        new eng.eSystem.xmlSerialization.common.parsers.AwtFontElementParser());
+
+    FlightStripSettings ret = (FlightStripSettings) deserialize(fileName, FlightStripSettings.class, sett);
     return ret;
   }
 }
