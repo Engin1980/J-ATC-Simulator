@@ -33,9 +33,7 @@ import java.util.List;
  */
 public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
 
-  public class AirplaneInfo {
-
-    private boolean airprox = false;
+  public class Airplane4Display {
 
     public Coordinate coordinate() {
       return Airplane.this.coordinate;
@@ -45,20 +43,8 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
       return Airplane.this.callsign;
     }
 
-    public String callsignS() {
-      return Airplane.this.callsign.toString();
-    }
-
-    public String callsignCompany() {
-      return Airplane.this.callsign.getCompany();
-    }
-
-    public String callsignNumber() {
-      return Airplane.this.callsign.getNumber();
-    }
-
-    public String sqwkS() {
-      return Airplane.this.sqwk.toString();
+    public Squawk squawk(){
+      return Airplane.this.sqwk;
     }
 
     public Atc tunedAtc() {
@@ -69,173 +55,24 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
       return Acc.prm().getResponsibleAtc(Airplane.this);
     }
 
-    public int altitude() {
-      return (int) Airplane.this.altitude;
-    }
-
-    public String altitudeSLong() {
-      return Acc.toAltS((int) Airplane.this.altitude, true);
-    }
-
-    public String altitudeSInFtShort() {
-      return Integer.toString((int) Airplane.this.altitude);
-    }
-
-    public String targetAltitudeSInFtShort() {
-      return Integer.toString(Airplane.this.targetAltitude);
-    }
-
-    public String altitudeSShort() {
-      return Integer.toString((int) Airplane.this.altitude / 100);
-    }
-
-    public String altitudeSFixed() {
-      return String.format("%1$03.0f", Airplane.this.altitude / 100);
-    }
-
-    public String targetAltitudeSFixed() {
-      return String.format("%1$03d", Airplane.this.targetAltitude / 100);
-    }
-
-    public String targetAltitudeSLong() {
-      return Acc.toAltS(Airplane.this.targetAltitude, true);
-    }
-
-    public String targetAltitudeSShort() {
-      return Integer.toString(Airplane.this.targetAltitude / 100);
-    }
-
-    public String climbDescendChar() {
-      if (Airplane.this.targetAltitude > Airplane.this.altitude) {
-        return "↑"; //"▲";
-      } else if (Airplane.this.targetAltitude < Airplane.this.altitude) {
-        return "↓"; // "▼";
-      } else {
-        return "=";
-      }
-    }
-
-    public String departureArrivalChar() {
-      if (isDeparture()) {
-        return "▲"; //"↑"; //
-      } else {
-        return "▼"; // "↓";
-      }
-    }
-
     public int heading() {
       return (int) Airplane.this.heading;
-    }
-
-    public String headingSLong() {
-      return String.format("%1$03d", (int) Airplane.this.heading);
-    }
-
-    public String headingSShort() {
-      return Integer.toString((int) Airplane.this.heading);
-    }
-
-    public String targetHeadingSLong() {
-      return String.format("%1$03d", Airplane.this.targetHeading);
-    }
-
-    public String targetHeadingSShort() {
-      return Integer.toString(Airplane.this.targetHeading);
-    }
-
-    public int speed() {
-      return (int) Airplane.this.speed;
-    }
-
-    public String speedSLong() {
-      return ((int) Airplane.this.speed) + " kt";
-    }
-
-
-    public String speedSShort() {
-      return Integer.toString((int) Airplane.this.speed);
-    }
-
-    public String speedSShortAligned() {
-      return String.format("%1# 3d", Airplane.this.speed);
     }
 
     public int targetSpeed() {
       return Airplane.this.targetSpeed;
     }
 
-    public String targetSpeedSLong() {
-      return Airplane.this.targetSpeed + " kt";
-    }
-
-    public String targetSpeedSShort() {
-      return Integer.toString(Airplane.this.targetSpeed);
-    }
-
-    public String planeAtcName() {
-      return tunedAtc().getName();
-    }
-
-    public Atc.eType planeAtcType() {
-      return tunedAtc().getType();
-    }
-
-    public String responsibleAtcName() {
-      return responsibleAtc().getName();
-    }
-
-    public Atc.eType responsibleAtcType() {
-      return responsibleAtc().getType();
-    }
-
-    public String planeType() {
-      return Airplane.this.airplaneType.name;
+    public AirplaneType planeType() {
+      return Airplane.this.airplaneType;
     }
 
     public int verticalSpeed() {
       return (int) Airplane.this.lastVerticalSpeed;
     }
 
-    public String verticalSpeedSLong() {
-      return Airplane.this.lastVerticalSpeed + " ft/m";
-    }
-
-    public String verticalSpeedSShort() {
-      return Integer.toString((int) Airplane.this.lastVerticalSpeed);
-    }
-
-    public String format(String pattern) {
-      StringBuilder sb = new StringBuilder(pattern);
-      int[] p = new int[2];
-
-      while (true) {
-        updatePair(sb, p);
-        if (p[0] < 0) {
-          break;
-        }
-
-        String tmp = sb.substring(p[0] + 1, p[1]);
-        int index = Integer.parseInt(tmp);
-        sb.replace(p[0], p[1] + 1, getFormatValueByIndex(index));
-      }
-
-      return sb.toString();
-    }
-
-    public String typeName() {
-      return Airplane.this.airplaneType.name;
-    }
-
-    public String typeCategory() {
-      return Character.toString(Airplane.this.airplaneType.category);
-    }
-
     public boolean isAirprox() {
       return airprox;
-    }
-
-    void setAirprox(boolean airprox) {
-      this.airprox = airprox;
     }
 
     public boolean isDeparture() {
@@ -246,72 +83,21 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
       return Airplane.this.pilot.getRouteName();
     }
 
-    private void updatePair(StringBuilder ret, int[] p) {
-      int start = ret.indexOf("{");
-      if (start < 0) {
-        p[0] = -1;
-        return;
-      }
-      p[0] = start;
-      int end = ret.indexOf("}", start);
-      p[1] = end;
+    public int altitude() {
+      return (int) Airplane.this.altitude;
     }
 
-    private String getFormatValueByIndex(int index) {
-      switch (index) {
-        case 1:
-          return this.callsignS();
-        case 2:
-          return this.callsignCompany();
-        case 3:
-          return this.callsignNumber();
-        case 4:
-          return this.typeName();
-        case 5:
-          return this.typeCategory();
-        case 8:
-          return this.sqwkS();
-        case 11:
-          return this.headingSLong();
-        case 12:
-          return this.headingSShort();
-        case 15:
-          return this.targetHeadingSLong();
-        case 16:
-          return this.targetHeadingSShort();
-        case 21:
-          return this.speedSLong();
-        case 22:
-          return this.speedSShort();
-        case 23:
-          return this.speedSShortAligned();
-        case 31:
-          return this.targetSpeedSLong();
-        case 32:
-          return this.targetSpeedSShort();
-        case 33:
-          return this.altitudeSLong();
-        case 34:
-          return this.altitudeSShort();
-        case 35:
-          return this.altitudeSInFtShort();
-        case 36:
-          return this.targetAltitudeSLong();
-        case 37:
-          return this.targetAltitudeSShort();
-        case 38:
-          return this.targetAltitudeSInFtShort();
-        case 41:
-          return this.verticalSpeedSLong();
-        case 42:
-          return this.verticalSpeedSShort();
-        case 43:
-          return this.climbDescendChar();
-        default:
-          return "???";
-      }
+    public int targetAltitude() {
+      return (int) Airplane.this.targetAltitude;
     }
 
+    public int speed() {
+      return (int) Airplane.this.speed;
+    }
+
+    public int targetHeading() {
+      return (int) Airplane.this.targetHeading;
+    }
   }
 
   public class Airplane4Pilot {
@@ -417,7 +203,7 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
       return state;
     }
 
-    public Pilot.Pilot4Command getPilot(){
+    public Pilot.Pilot4Command getPilot() {
       return pilot.new Pilot4Command();
     }
 
@@ -535,7 +321,6 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
   private final boolean departure;
   private final Pilot pilot;
   private final AirplaneType airplaneType;
-  private final AirplaneInfo info;
   private double lastHeadingChange = 0;
   private int targetHeading;
   private boolean targetHeadingLeftTurn;
@@ -552,12 +337,11 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
   private FlightRecorder flightRecorder = null;
   private double altitudeDelta = 0;
   private double speedDelta = 0;
+  private boolean airprox;
 
   public Airplane(Callsign callsign, Coordinate coordinate, Squawk sqwk, AirplaneType airplaneSpecification,
                   int heading, int altitude, int speed, boolean isDeparture,
                   String routeName, SpeechList<IAtcCommand> routeCommandQueue) {
-
-    this.info = this.new AirplaneInfo();
 
     this.callsign = callsign;
     this.coordinate = coordinate;
@@ -578,10 +362,6 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
 
     // flight recorders on
     this.flightRecorder = FlightRecorder.create(this.callsign, false, true);
-  }
-
-  public AirplaneInfo getInfo() {
-    return info;
   }
 
   public boolean isDeparture() {
@@ -687,14 +467,14 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     return targetHeading;
   }
 
-  public void setTargetHeading(double targetHeading) {
-    this.setTargetHeading((int) Math.round(targetHeading));
-  }
-
   public void setTargetHeading(int targetHeading) {
     boolean useLeft
         = Headings.getBetterDirectionToTurn(heading, targetHeading) == ChangeHeadingCommand.eDirection.left;
     setTargetHeading(targetHeading, useLeft);
+  }
+
+  public void setTargetHeading(double targetHeading) {
+    this.setTargetHeading((int) Math.round(targetHeading));
   }
 
   public int getTargetAltitude() {
@@ -722,11 +502,27 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     if (isDeparture() == false)
       throw new ERuntimeException("This method should not be called on departure aircraft %s.", this.getCallsign().toString());
 
-    String routeName = this.getInfo().routeNameOrFix();
+    String routeName = this.pilot.getRouteName();
     if (routeName.length() > 2 && Character.isDigit(routeName.charAt(routeName.length() - 2)))
       routeName = routeName.substring(0, routeName.length() - 2);
     Navaid ret = Acc.area().getNavaids().tryGet(routeName);
     return ret;
+  }
+
+  public void setAirprox(boolean airprox) {
+    this.airprox = airprox;
+  }
+
+  public boolean isAirprox(){
+    return this.airprox;
+  }
+
+  public String getRouteNameorFix() {
+    return this.pilot.getRouteName();
+  }
+
+  public Airplane4Display getInfo() {
+    return this.new Airplane4Display();
   }
 
   // </editor-fold>

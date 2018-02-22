@@ -99,8 +99,8 @@ public class Simulation {
     return now;
   }
 
-  public ReadOnlyList<Airplane.AirplaneInfo> getPlaneInfos() {
-    return Acc.prm().getInfos();
+  public ReadOnlyList<Airplane> getAirplanes() {
+    return Acc.prm().getAll();
   }
 
   public Messenger getMessenger() {
@@ -164,6 +164,10 @@ public class Simulation {
 
   public boolean isRunning(){
     return this.tmr.isRunning();
+  }
+
+  public ReadOnlyList<Airplane.Airplane4Display> getPlanesToDisplay() {
+    return Acc.prm().getPlanesToDisplay();
   }
 
   private void elapseSecond() {

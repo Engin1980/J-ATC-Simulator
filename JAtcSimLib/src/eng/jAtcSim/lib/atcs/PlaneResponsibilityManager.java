@@ -31,6 +31,12 @@ public class PlaneResponsibilityManager {
     return me;
   }
 
+  public ReadOnlyList<Airplane.Airplane4Display> getPlanesToDisplay() {
+    ReadOnlyList<Airplane.Airplane4Display> ret
+        = new ReadOnlyList<>(this.infos);
+    return ret;
+  }
+
   boolean isToSwitch(Airplane p) {
     eState s = map.get(p);
     return s == eState.app2ctr
@@ -62,12 +68,6 @@ public class PlaneResponsibilityManager {
     }
   }
 
-  public ReadOnlyList<Airplane.AirplaneInfo> getInfos() {
-    ReadOnlyList<Airplane.AirplaneInfo> ret
-      = new ReadOnlyList<>(this.infos);
-    return ret;
-  }
-
   public enum eState {
 
     ctr,
@@ -86,7 +86,7 @@ public class PlaneResponsibilityManager {
   private final Map<Airplane, eState> map = new HashMap<>();
   private final Map<Atc, AirplaneList> lst = new HashMap<>();
   private final AirplaneList all = new AirplaneList();
-  private final List<Airplane.AirplaneInfo> infos = new LinkedList<>();
+  private final List<Airplane.Airplane4Display> infos = new LinkedList<>();
 
   private PlaneResponsibilityManager() {
     lst.put(Acc.atcApp(), new AirplaneList());

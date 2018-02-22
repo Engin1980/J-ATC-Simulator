@@ -4,6 +4,7 @@ import eng.jAtcSim.AppSettings;
 import eng.jAtcSim.XmlLoadHelper;
 import eng.jAtcSim.lib.Simulation;
 import eng.jAtcSim.lib.airplanes.Airplane;
+import eng.jAtcSim.lib.airplanes.AirplaneDataFormatter;
 import eng.jAtcSim.lib.exceptions.ENotSupportedException;
 import eng.jAtcSim.lib.global.ReadOnlyList;
 import eng.jAtcSim.startup.LayoutManager;
@@ -15,7 +16,7 @@ import java.util.List;
 
 public class FlightListPanel extends JPanel {
 
-  private static List<Airplane.AirplaneInfo> plns;
+  private static List<Airplane.Airplane4Display> plns;
   private Simulation sim;
   private JScrollPane pnlScroll;
   private JPanel pnlContent;
@@ -46,26 +47,26 @@ public class FlightListPanel extends JPanel {
     }
 
     // znovunaplneni, kdyz nesedi pocet
-    ReadOnlyList<Airplane.AirplaneInfo> pi = sim.getPlaneInfos();
+    ReadOnlyList<Airplane.Airplane4Display> pi = sim.getPlanesToDisplay();
     if (plns.size() != pi.size()) {
       plns.clear();
-      for (Airplane.AirplaneInfo ai : pi) {
+      for (Airplane.Airplane4Display ai : pi) {
         plns.add(ai);
       }
     }
 
     pnlContent.removeAll();
     FlightStripPanel.resetIndex();
-    for (Airplane.AirplaneInfo pln : plns) {
+    for (Airplane.Airplane4Display pln : plns) {
       JPanel pnlItem = createFlightStrip(pln);
-      pnlItem.setName("FlightStrip_" + pln.callsignS());
+      pnlItem.setName("FlightStrip_" + pln.callsign());
       pnlContent.add(pnlItem);
     }
 
     this.revalidate();
   }
 
-  private JPanel createFlightStrip(Airplane.AirplaneInfo ai) {
+  private JPanel createFlightStrip(Airplane.Airplane4Display ai) {
     JPanel ret = new FlightStripPanel(ai);
     return ret;
   }
@@ -79,7 +80,7 @@ class FlightStripPanel extends JPanel {
   private static Font normalFont;
   private static Font boldFont;
 
-  public FlightStripPanel(Airplane.AirplaneInfo ai) {
+  public FlightStripPanel(Airplane.Airplane4Display ai) {
 
     this.setLayout(new BorderLayout());
 
@@ -106,14 +107,14 @@ class FlightStripPanel extends JPanel {
     index = 0;
   }
 
-  private static Color getColor(Airplane.AirplaneInfo ai) {
+  private static Color getColor(Airplane.Airplane4Display ai) {
     Color ret;
     // pozadi
     if (ai.isAirprox()) {
       ret = stripSettings.airprox;
     } else {
       boolean isEven = index++ % 2 == 0;
-      switch (ai.responsibleAtcType()) {
+      switch (ai.responsibleAtc().getType()) {
         case app:
           ret = isEven ? stripSettings.app.even : stripSettings.app.odd;
           break;
@@ -130,41 +131,49 @@ class FlightStripPanel extends JPanel {
     return ret;
   }
 
-  private void fillContent(Airplane.AirplaneInfo ai) {
+  private void fillContent(Airplane.Airplane4Display ai) {
     Component[] cmps = new Component[6];
     JLabel lbl;
 
-    lbl = new JLabel(ai.callsignS());
+    lbl = new JLabel(ai.callsign().toString());
     lbl.setName("lblCallsign");
     lbl.setFont(boldFont);
     lbl.setForeground(stripSettings.textColor);
     cmps[0] = lbl;
 
-    lbl = new JLabel(ai.planeType() + " (" + ai.typeCategory() + ")");
+    lbl = new JLabel(ai.planeType().name + " (" + ai.planeType().category + ")");
     lbl.setName("lblPlaneType");
     lbl.setFont(normalFont);
     lbl.setForeground(stripSettings.textColor);
     cmps[2] = lbl;
 
-    lbl = new JLabel(ai.sqwkS());
+    lbl = new JLabel(AirplaneDataFormatter.formatSqwk(ai.squawk()));
     lbl.setName("lblSquawk");
     lbl.setFont(boldFont);
     lbl.setForeground(stripSettings.textColor);
     cmps[4] = lbl;
 
-    lbl = new JLabel(ai.departureArrivalChar() + " " + ai.routeNameOrFix());
+    lbl = new JLabel(AirplaneDataFormatter.getDepartureArrivalChar(ai.isDeparture()) + " " + ai.routeNameOrFix());
     lbl.setName("lblRoute");
     lbl.setFont(normalFont);
     lbl.setForeground(stripSettings.textColor);
     cmps[1] = lbl;
 
-    lbl = new JLabel(ai.altitudeSFixed() + " " + ai.climbDescendChar() + " " + ai.targetAltitudeSFixed());
+    lbl = new JLabel(
+        AirplaneDataFormatter.formatAltitudeShort(ai.altitude())
+        + " " +
+            AirplaneDataFormatter.getClimbDescendChar(ai.verticalSpeed())
+        + " " +
+            AirplaneDataFormatter.formatAltitudeLong(ai.targetAltitude()));
     lbl.setName("lblAltitude");
     lbl.setFont(normalFont);
     lbl.setForeground(stripSettings.textColor);
     cmps[3] = lbl;
 
-    lbl = new JLabel(ai.headingSLong() + "°//" + ai.speedSLong());
+    lbl = new JLabel(
+        AirplaneDataFormatter.formatHeadingLong(ai.heading())
+        + " // " +
+            AirplaneDataFormatter.formatSpeedLong(ai.speed()));
     lbl.setName("lblHeadingAndSpeed");
     lbl.setFont(normalFont);
     lbl.setForeground(stripSettings.textColor);

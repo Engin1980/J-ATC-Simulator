@@ -13,6 +13,7 @@ import eng.jAtcSim.radarBase.Radar;
 import eng.jAtcSim.startup.LayoutManager;
 
 import javax.swing.*;
+import javax.tools.JavaCompiler;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -26,6 +27,12 @@ public class SwingRadarPanel extends JPanel {
   private DisplaySettings displaySettings;
   private BehaviorSettings behaviorSettings;
   private RadarRange defaultRadarRange;
+private JButtonExtender extBtn = new JButtonExtender(
+    new Color(0,0,0),
+    new Color(0,255,0),
+    new Color(0,0,0),
+    new Color(150,150,150)
+);
 
   public void init(RadarRange radarRange,
                    Simulation sim, Area area,
@@ -87,6 +94,52 @@ public class SwingRadarPanel extends JPanel {
 
   private JPanel buildTopPanel() {
     JPanel ret = new JPanel();
+    LayoutManager.fillFlowPanel(ret, LayoutManager.eVerticalAlign.middle  , 4);
+
+    JButton btn;
+    JTextField txt;
+
+    btn = new JButton("C-bdr");
+    extBtn.set(btn, true);
+    ret.add(btn);
+
+    btn = new JButton("T-bdr");
+    extBtn.set(btn, true);
+    ret.add(btn);
+
+    btn = new JButton("VOR");
+    extBtn.set(btn, true);
+    ret.add(btn);
+    btn = new JButton("NDB");
+    extBtn.set(btn, true);
+    ret.add(btn);
+    btn = new JButton("I-FIX");
+    extBtn.set(btn, false);
+    ret.add(btn);
+    btn = new JButton("R-FIX");
+    extBtn.set(btn, false);
+    ret.add(btn);
+    btn = new JButton("FIX");
+    extBtn.set(btn, true);
+    ret.add(btn);
+    btn = new JButton("AIP");
+    extBtn.set(btn, true);
+    ret.add(btn);
+    btn = new JButton("SID");
+    extBtn.set(btn, true);
+    ret.add(btn);
+    btn = new JButton("STAR");
+    extBtn.set(btn, true);
+    ret.add(btn);
+
+    txt = new JTextField("0");
+    ret.add(txt);
+    txt = new JTextField("380");
+    ret.add(txt);
+    btn = new JButton("(set)");
+    extBtn.set(btn, false);
+    ret.add(btn);
+
     return ret;
   }
 
@@ -140,7 +193,6 @@ public class SwingRadarPanel extends JPanel {
     }
     return ret;
   }
-
 
   private void processApplicationMessage(String msg) {
 
@@ -245,4 +297,28 @@ class CommandJTextWraper {
     });
   }
 
+}
+
+class JButtonExtender{
+  public final Color backOff;
+  public final Color backOn;
+  public final Color foreOff;
+  public final Color foreOn;
+
+  public JButtonExtender(Color backOff, Color foreOff, Color backOn, Color foreOn) {
+    this.backOff = backOff;
+    this.backOn = backOn;
+    this.foreOff = foreOff;
+    this.foreOn = foreOn;
+  }
+
+  public void set(JButton btn, boolean state){
+    if (state) {
+      btn.setBackground(backOn);
+      btn.setForeground(foreOn);
+    } else {
+      btn.setBackground(backOff);
+      btn.setForeground(foreOff);
+    }
+  }
 }

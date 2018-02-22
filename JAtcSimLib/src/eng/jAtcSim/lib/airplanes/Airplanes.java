@@ -87,7 +87,7 @@ public class Airplanes {
 
   public static void evaluateAirproxes(ReadOnlyList<Airplane> planes) {
     for (Airplane p : planes) {
-      p.getInfo().setAirprox(false);
+      p.setAirprox(false);
     }
 
     for (int i = 0; i < planes.size() - 1; i++) {
@@ -98,8 +98,8 @@ public class Airplanes {
         if (b.getSpeed() == 0) continue;
 
         if (isInAirprox(a, b)) {
-          a.getInfo().setAirprox(true);
-          b.getInfo().setAirprox(true);
+          a.setAirprox(true);
+          b.setAirprox(true);
         }
       }
 

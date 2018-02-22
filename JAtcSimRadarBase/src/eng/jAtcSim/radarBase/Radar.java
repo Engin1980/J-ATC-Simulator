@@ -3,8 +3,7 @@ package eng.jAtcSim.radarBase;
 import eng.eSystem.events.Event;
 import eng.eSystem.events.EventSimple;
 import eng.jAtcSim.lib.Simulation;
-import eng.jAtcSim.lib.airplanes.Airplane;
-import eng.jAtcSim.lib.airplanes.Callsign;
+import eng.jAtcSim.lib.airplanes.*;
 import eng.jAtcSim.lib.atcs.Atc;
 import eng.jAtcSim.lib.atcs.PlaneSwitchMessage;
 import eng.jAtcSim.lib.coordinates.Coordinate;
@@ -14,6 +13,7 @@ import eng.jAtcSim.lib.exceptions.ENotSupportedException;
 import eng.jAtcSim.lib.exceptions.ERuntimeException;
 import eng.jAtcSim.lib.global.EStringBuilder;
 import eng.jAtcSim.lib.global.Headings;
+import eng.jAtcSim.lib.global.ReadOnlyList;
 import eng.jAtcSim.lib.messaging.IMessageParticipant;
 import eng.jAtcSim.lib.messaging.Message;
 import eng.jAtcSim.lib.messaging.Messenger;
@@ -30,6 +30,7 @@ import eng.jAtcSim.radarBase.global.events.KeyEventArg;
 import eng.jAtcSim.radarBase.global.events.WithCoordinateEventArg;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 public class Radar {
 
@@ -93,43 +94,219 @@ public class Radar {
     }
   }
 
-  static class PlaneHistoryDotManager {
+//  static class PlaneHistoryDotManager {
+//
+//    private final Map<Callsign, List<Coordinate>> inner = new HashMap<>();
+//    private final Map<Callsign, Integer> maxCount = new HashMap<>();
+//
+//    public void add(Callsign cs, Coordinate c, int maxHistory) {
+//      if (inner.containsKey(cs) == false) {
+//        inner.put(cs, new LinkedList<Coordinate>());
+//        maxCount.put(cs, maxHistory);
+//      }
+//
+//      inner.get(cs).add(c);
+//      if (maxCount.get(cs) != maxHistory) {
+//        maxCount.put(cs, maxHistory);
+//      }
+//    }
+//
+//    public void removeOneHistoryFromAll() {
+//      List<Callsign> tr = new LinkedList<>();
+//      for (Callsign cs : inner.keySet()) {
+//        List<Coordinate> l = inner.get(cs);
+//        if (l.size() > maxCount.get(cs)) {
+//          l.remove(0);
+//        }
+//        if (l.isEmpty()) {
+//          tr.add(cs);
+//        }
+//      }
+//
+//      for (Callsign cs : tr) {
+//        inner.remove(cs);
+//        maxCount.remove(cs);
+//      }
+//    }
+//
+//    List<Coordinate> get(Callsign callsign) {
+//      return inner.get(callsign);
+//    }
+//  }
 
-    private final Map<Callsign, List<Coordinate>> inner = new HashMap<>();
-    private final Map<Callsign, Integer> maxCount = new HashMap<>();
+  static class AirplaneDisplayInfo {
+    private static final int DEFAULT_LABEL_SHIFT = 3;
+    public final List<Coordinate> planeDotHistory = new LinkedList<>();
+    public boolean wasUpdatedFlag = false;
+    public Callsign callsign;
+    public boolean isAirprox;
+    public Coordinate coordinate;
+    public int heading;
+    public int speed;
+    public int verticalSpeed;
+    public Atc tunedAtc;
+    public Atc responsibleAtc;
+    public AirplaneType type;
+    public Point labelShift;
+    private Squawk squawk;
+    private int targetHeading;
+    private double targetSpeed;
+    private int altitude;
+    private int targetAltitude;
 
-    public void add(Callsign cs, Coordinate c, int maxHistory) {
-      if (inner.containsKey(cs) == false) {
-        inner.put(cs, new LinkedList<Coordinate>());
-        maxCount.put(cs, maxHistory);
+    public AirplaneDisplayInfo(Airplane.Airplane4Display planeInfo) {
+      this.labelShift = new Point(DEFAULT_LABEL_SHIFT, DEFAULT_LABEL_SHIFT);
+
+      this.callsign = planeInfo.callsign();
+      this.type = planeInfo.planeType();
+      this.squawk = planeInfo.squawk();
+    }
+
+    public void updateInfo(Airplane.Airplane4Display plane) {
+      wasUpdatedFlag = true;
+
+      this.speed = plane.speed();
+      this.targetSpeed = plane.targetSpeed();
+      this.altitude = plane.altitude();
+      this.targetAltitude = plane.targetAltitude();
+      this.verticalSpeed = plane.verticalSpeed();
+      this.heading = plane.heading();
+      this.targetHeading = plane.targetHeading();
+
+      this.tunedAtc = plane.tunedAtc();
+      this.responsibleAtc = plane.responsibleAtc();
+
+      this.isAirprox = plane.isAirprox();
+
+      this.coordinate = plane.coordinate();
+
+      planeDotHistory.add(plane.coordinate());
+    }
+
+    public String format(String pattern) {
+      StringBuilder sb = new StringBuilder(pattern);
+      int[] p = new int[2];
+
+      while (true) {
+        updatePair(sb, p);
+        if (p[0] < 0) {
+          break;
+        }
+
+        String tmp = sb.substring(p[0] + 1, p[1]);
+        int index = Integer.parseInt(tmp);
+        sb.replace(p[0], p[1] + 1, getFormatValueByIndex(index));
       }
 
-      inner.get(cs).add(c);
-      if (maxCount.get(cs) != maxHistory) {
-        maxCount.put(cs, maxHistory);
+      return sb.toString();
+    }
+
+    private String getFormatValueByIndex(int index) {
+      switch (index) {
+        case 1:
+          return this.callsign.toString();
+        case 2:
+          return this.callsign.getCompany();
+        case 3:
+          return this.callsign.getNumber();
+        case 4:
+          return this.type.name;
+        case 5:
+          return AirplaneDataFormatter.formatTypeCategory(this.type);
+        case 8:
+          return AirplaneDataFormatter.formatSqwk(this.squawk);
+        case 11:
+          return AirplaneDataFormatter.formatHeadingLong(this.heading);
+        case 12:
+          return AirplaneDataFormatter.formatHeadingShort(this.heading);
+        case 15:
+          return AirplaneDataFormatter.formatHeadingLong(this.targetHeading);
+        case 16:
+          return AirplaneDataFormatter.formatHeadingShort(this.targetHeading);
+        case 21:
+          return AirplaneDataFormatter.formatSpeedLong(this.speed);
+        case 22:
+          return AirplaneDataFormatter.formatSpeedShort(this.speed);
+        case 23:
+          return AirplaneDataFormatter.formatSpeedAligned(this.speed);
+        case 31:
+          return AirplaneDataFormatter.formatSpeedLong(this.targetSpeed);
+        case 32:
+          return AirplaneDataFormatter.formatSpeedShort(this.targetSpeed);
+        case 33:
+          return AirplaneDataFormatter.formatAltitudeLong(this.altitude);
+        case 34:
+          return AirplaneDataFormatter.formatAltitudeShort(this.altitude);
+        case 35:
+          return AirplaneDataFormatter.formatAltitudeInFtShort(this.altitude);
+        case 36:
+          return AirplaneDataFormatter.formatAltitudeLong(this.targetAltitude);
+        case 37:
+          return AirplaneDataFormatter.formatAltitudeShort(this.targetAltitude);
+        case 38:
+          return AirplaneDataFormatter.formatAltitudeInFtShort(this.targetAltitude);
+        case 41:
+          return AirplaneDataFormatter.formatVerticalSpeedLong(this.verticalSpeed);
+        case 42:
+          return AirplaneDataFormatter.formatVerticalSpeedShort(this.verticalSpeed);
+        case 43:
+          return AirplaneDataFormatter.getClimbDescendChar(this.verticalSpeed);
+        default:
+          return "???";
       }
     }
 
-    public void removeOneHistoryFromAll() {
-      List<Callsign> tr = new LinkedList<>();
-      for (Callsign cs : inner.keySet()) {
-        List<Coordinate> l = inner.get(cs);
-        if (l.size() > maxCount.get(cs)) {
-          l.remove(0);
-        }
-        if (l.isEmpty()) {
-          tr.add(cs);
-        }
+    private void updatePair(StringBuilder ret, int[] p) {
+      int start = ret.indexOf("{");
+      if (start < 0) {
+        p[0] = -1;
+        return;
       }
-
-      for (Callsign cs : tr) {
-        inner.remove(cs);
-        maxCount.remove(cs);
-      }
+      p[0] = start;
+      int end = ret.indexOf("}", start);
+      p[1] = end;
     }
 
-    List<Coordinate> get(Callsign callsign) {
-      return inner.get(callsign);
+  }
+
+  static class AirplaneDisplayInfoList {
+
+    private Map<Callsign, AirplaneDisplayInfo> inner = new HashMap<>();
+
+    public void update(ReadOnlyList<Airplane.Airplane4Display> planes) {
+      resetWasUpdatedFlag();
+
+      for (Airplane.Airplane4Display plane : planes) {
+        AirplaneDisplayInfo adi = tryGetOrAdd(plane);
+        adi.updateInfo(plane);
+      }
+
+      removeUnupdated();
+    }
+
+    public Collection<AirplaneDisplayInfo> getList() {
+      return inner.values();
+    }
+
+    private void removeUnupdated() {
+      Stream<Callsign> toRem =
+          inner.keySet().stream().filter(q -> inner.get(q).wasUpdatedFlag == false);
+      toRem.forEach(q -> inner.remove(q));
+    }
+
+    private AirplaneDisplayInfo tryGetOrAdd(Airplane.Airplane4Display plane) {
+      AirplaneDisplayInfo ret;
+      if (inner.containsKey(plane.callsign()))
+        ret = inner.get(plane.callsign());
+      else {
+        ret = new AirplaneDisplayInfo(plane);
+        inner.put(plane.callsign(), ret);
+      }
+      return ret;
+    }
+
+    private void resetWasUpdatedFlag() {
+      inner.values().stream().forEach(q -> q.wasUpdatedFlag = false);
     }
   }
 
@@ -142,18 +319,11 @@ public class Radar {
 
   private final DisplaySettings displaySettings;
   private final BehaviorSettings behaviorSettings;
+  private final LocalSettings localSettings;
   private final Simulation simulation;
   private final Area area;
-  private final PlaneHistoryDotManager planeDotHistory = new PlaneHistoryDotManager();
-  /**
-   * Last drawn positions of planes.
-   */
-  private final Map<Callsign, Coordinate> lastPlanePositions = new HashMap();
-  /**
-   * Definition of the shift of the airplane info label
-   */
-  private final Map<Callsign, Point> customPlaneLabelShift = new HashMap();
   private final MessageManager messageManager;
+  private final AirplaneDisplayInfoList planeInfos = new AirplaneDisplayInfoList();
   private int redrawTick = 0;
 
   public Radar(ICanvas canvas, RadarRange radarRange,
@@ -164,6 +334,8 @@ public class Radar {
     this.tl = new TransformationLayer(this.c, radarRange.topLeft, radarRange.bottomRight);
     this.displaySettings = displaySettings;
     this.behaviorSettings = behaviorSettings;
+    this.localSettings = new LocalSettings();
+    this.localSettings.getUpdatedEvent().add(q -> localSettings_updated());
     this.simulation = sim;
     this.area = area;
 
@@ -209,16 +381,18 @@ public class Radar {
 
   public void redraw(boolean force) {
 
-    if (force)
-      this.c.invokeRepaint();
-    else {
+    if (!force) {
       if (redrawTick <= 0) {
-        this.c.invokeRepaint();
+        planeInfos.update(simulation.getPlanesToDisplay());
         this.redrawTick = displaySettings.refreshRate;
       } else {
         this.redrawTick--;
       }
     }
+    this.c.invokeRepaint();
+  }
+
+  private void localSettings_updated() {
 
   }
 
@@ -467,17 +641,17 @@ public class Radar {
   }
 
   private void drawAirplanes() {
-    for (Airplane.AirplaneInfo ai : simulation.getPlaneInfos()) {
-      drawPlane(ai);
+    for (AirplaneDisplayInfo adi : this.planeInfos.getList()) {
+      drawPlane(adi);
     }
   }
 
-  private void drawPlane(Airplane.AirplaneInfo planeInfo) {
+  private void drawPlane(AirplaneDisplayInfo adi) {
 
-    DisplaySettings.PlaneLabelSettings dp = getPlaneLabelDisplaySettingsBy(planeInfo);
+    DisplaySettings.PlaneLabelSettings dp = getPlaneLabelDisplaySettingsBy(adi);
     DisplaySettings.TextSettings dt = displaySettings.callsign;
     Color c = dp.getColor();
-    if (planeInfo.isAirprox()) {
+    if (adi.isAirprox) {
       c = new Color(0xFF, 0, 0);
     }
 
@@ -486,65 +660,50 @@ public class Radar {
     }
 
     // plane dot and direction line
-    tl.drawPoint(planeInfo.coordinate(), c, dp.getPointWidth()); // point of plane
-    tl.drawLineByHeadingAndDistance(planeInfo.coordinate(), planeInfo.heading(), dp.getHeadingLineLength(), c, 1);
+    tl.drawPoint(adi.coordinate, c, dp.getPointWidth()); // point of plane
+    tl.drawLineByHeadingAndDistance(adi.coordinate, adi.heading, dp.getHeadingLineLength(), c, 1);
 
     // separation ring
-    if (planeInfo.speed() > 100 || planeInfo.verticalSpeed() != 0) {
-      tl.drawCircleAroundInNM(planeInfo.coordinate(), dp.getSeparationRingRadius(),
+    if (adi.speed > 100 || adi.verticalSpeed != 0) {
+      tl.drawCircleAroundInNM(adi.coordinate, dp.getSeparationRingRadius(),
           c, 1);
     }
 
     // plane label
     StringBuilder sb = new StringBuilder();
     sb.append(
-        buildPlaneString(dp.getFirstLineFormat(), planeInfo));
+        buildPlaneString(dp.getFirstLineFormat(), adi));
 
-    if (planeInfo.tunedAtc() != planeInfo.responsibleAtc()) {
+    if (adi.tunedAtc != adi.responsibleAtc) {
       sb.append("*");
     }
 
     sb.append("\r\n");
     sb.append(
-        buildPlaneString(dp.getSecondLineFormat(), planeInfo));
+        buildPlaneString(dp.getSecondLineFormat(), adi));
     sb.append("\r\n");
     sb.append(
-        buildPlaneString(dp.getThirdLineFormat(), planeInfo));
+        buildPlaneString(dp.getThirdLineFormat(), adi));
 
-    Point labelShift;
-    if (customPlaneLabelShift.containsKey(planeInfo.callsign())) {
-      labelShift = customPlaneLabelShift.get(planeInfo.callsign());
-    } else {
-      labelShift = new Point(3, 3);
+    Point labelShift = adi.labelShift;
+    tl.drawText(sb.toString(), adi.coordinate, labelShift.x, labelShift.y, dt.getFont(), c);
+
+    List<Coordinate> hist = adi.planeDotHistory;
+    for (Coordinate coordinate : hist) {
+      tl.drawPoint(coordinate, c, 3);
     }
-    tl.drawText(sb.toString(), planeInfo.coordinate(), labelShift.x, labelShift.y, dt.getFont(), c);
-
-    // plane history
-    // TODO implement
-    //if (refreshTick % dp.getHistoryDotStep() == 0) {
-    this.planeDotHistory.add(planeInfo.callsign(), planeInfo.coordinate(), dp.getHistoryDotCount());
-    //}
-    List<Coordinate> hist = planeDotHistory.get(planeInfo.callsign());
-    if (hist != null) {
-      for (Coordinate coordinate : hist) {
-        tl.drawPoint(coordinate, c, 3);
-      }
-    }
-
-    // plane positions
-    lastPlanePositions.put(planeInfo.callsign(), planeInfo.coordinate());
   }
 
-  private DisplaySettings.PlaneLabelSettings getPlaneLabelDisplaySettingsBy(Airplane.AirplaneInfo planeInfo) {
+  private DisplaySettings.PlaneLabelSettings getPlaneLabelDisplaySettingsBy(AirplaneDisplayInfo adi) {
     DisplaySettings.PlaneLabelSettings ret;
 
-    if (planeInfo.speed() == 0)
+    if (adi.speed == 0)
       ret = displaySettings.stopped;
-    else if (planeInfo.responsibleAtc().getType() == Atc.eType.app)
+    else if (adi.responsibleAtc.getType() == Atc.eType.app)
       ret = displaySettings.app;
-    else if (planeInfo.responsibleAtc().getType() == Atc.eType.twr)
+    else if (adi.responsibleAtc.getType() == Atc.eType.twr)
       ret = displaySettings.twr;
-    else if (planeInfo.responsibleAtc().getType() == Atc.eType.ctr)
+    else if (adi.responsibleAtc.getType() == Atc.eType.ctr)
       ret = displaySettings.ctr;
     else
       throw new ENotSupportedException();
@@ -680,8 +839,8 @@ public class Radar {
     }
   }
 
-  private String buildPlaneString(String lineFormat, Airplane.AirplaneInfo planeInfo) {
-    String ret = planeInfo.format(lineFormat);
+  private String buildPlaneString(String lineFormat, AirplaneDisplayInfo adi) {
+    String ret = adi.format(lineFormat);
     return ret;
   }
 

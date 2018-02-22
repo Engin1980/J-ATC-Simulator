@@ -5,6 +5,7 @@
  */
 package eng.jAtcSim;
 
+import eng.jAtcSim.lib.traffic.TestTrafficOneApproach;
 import eng.jAtcSim.radarBase.global.SoundManager;
 import eng.jAtcSim.frmPacks.Pack;
 import eng.jAtcSim.startup.StartupSettings;
@@ -30,9 +31,9 @@ public class JAtcSim {
 
   private static final boolean FAST_START = true;
   private static final Traffic specificTraffic =
-//      new TestTrafficOneApproach();
+      new TestTrafficOneApproach();
 //  new TestTrafficOneDeparture();
-  null;
+//  null;
 
   private static Area area = null;
   private static AppSettings appSettings = new AppSettings();
