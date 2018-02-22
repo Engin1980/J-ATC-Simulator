@@ -689,9 +689,17 @@ public class Radar {
     tl.drawText(sb.toString(), adi.coordinate, labelShift.x, labelShift.y, dt.getFont(), c);
 
     List<Coordinate> hist = adi.planeDotHistory;
-    for (Coordinate coordinate : hist) {
-      tl.drawPoint(coordinate, c, 3);
+    int printedDots = 0;
+    int index = hist.size()-1;
+    while (printedDots < dp.getHistoryDotCount()) {
+      if (index % dp.getHistoryDotStep() == 0){
+        tl.drawPoint(hist.get(index), c, 3);
+        printedDots++;
+      }
+      index--;
+      if (index < 0) break;
     }
+    System.out.println();
   }
 
   private DisplaySettings.PlaneLabelSettings getPlaneLabelDisplaySettingsBy(AirplaneDisplayInfo adi) {
