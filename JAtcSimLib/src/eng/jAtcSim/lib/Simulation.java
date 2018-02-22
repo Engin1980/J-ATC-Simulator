@@ -175,7 +175,7 @@ public class Simulation {
       System.out.println("## -- elapse second is busy!");
       return;
     }
-    long start = System.currentTimeMillis();
+    //long start = System.currentTimeMillis();
     isBusy = true;
     now.increaseSecond();
 
@@ -198,7 +198,7 @@ public class Simulation {
     updatePlanes();
     evalAirproxes();
 
-    long end = System.currentTimeMillis();
+    //long end = System.currentTimeMillis();
     //System.out.println("## Sim elapse second: \t" + (end - start) + " at " + now.toString());
 
     isBusy = false;
