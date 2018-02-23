@@ -28,6 +28,7 @@ import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeHeadingCommand;
 import eng.jAtcSim.lib.world.Navaid;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -58,7 +59,7 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     }
 
     public int heading() {
-      return (int) Airplane.this.heading;
+      return (int) Airplane.this.heading.getValue();
     }
 
     public int targetSpeed() {
@@ -140,7 +141,7 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     }
 
     public double getHeading() {
-      return heading;
+      return heading.getValue();
     }
 
     public int getTargetAltitude() {
@@ -226,7 +227,7 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     }
 
     public double getHeading() {
-      return heading;
+      return heading.getValue();
     }
 
     public void setTargetHeading(double value, boolean useLeftTurn) {
@@ -316,19 +317,15 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
 
   private final static double GROUND_SPEED_CHANGE_MULTIPLIER = 1.5; //1.5; //3.0;
   private static final double secondFraction = 1 / 60d / 60d;
-  private final static int MAX_HEADING_CHANGE_DERIVATIVE_STEP = 1;
-  private static final double DELTA_WEIGHT = 3;
   private final Callsign callsign;
   private final Squawk sqwk;
   private final boolean departure;
   private final Pilot pilot;
   private final AirplaneType airplaneType;
-  private double lastHeadingChange = 0;
   private int targetHeading;
   private boolean targetHeadingLeftTurn;
-  private double heading;
+  private HeadingInertialValue heading;
   private int targetAltitude;
-  //private double altitude;
   private int targetSpeed;
   private InertialValue speed;
   private Coordinate coordinate;
@@ -352,7 +349,26 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     this.departure = isDeparture;
     this.state = isDeparture ? State.holdingPoint : State.arrivingHigh;
 
-    this.heading = heading;
+    double headingChangeDenominator;
+    switch (this.getType().category){
+      case 'A':
+      case 'B':
+        headingChangeDenominator = 4;
+        break;
+      case 'C':
+        headingChangeDenominator = 5;
+        break;
+      case 'D':
+      case 'E':
+        headingChangeDenominator = 7;
+        break;
+      default:
+        throw new UnsupportedOperationException("Heading-change-denominator for category " + this.getType().category + " cannot be determined.");
+    }
+    this.heading = new HeadingInertialValue(
+        heading,
+        this.getType().headingChangeRate,
+        this.getType().headingChangeRate / headingChangeDenominator);
 
     this.altitude = new InertialValue(
         altitude,
@@ -438,11 +454,11 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
   }
 
   public double getHeading() {
-    return heading;
+    return heading.getValue();
   }
 
   public String getHeadingS() {
-    return String.format("%1$03d", (int) this.heading);
+    return String.format("%1$03d", (int) this.heading.getValue());
   }
 
   public double getAltitude() {
@@ -520,14 +536,14 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     return targetHeading;
   }
 
-  public void setTargetHeading(double targetHeading) {
-    this.setTargetHeading((int) Math.round(targetHeading));
-  }
-
   public void setTargetHeading(int targetHeading) {
     boolean useLeft
-        = Headings.getBetterDirectionToTurn(heading, targetHeading) == ChangeHeadingCommand.eDirection.left;
+        = Headings.getBetterDirectionToTurn(heading.getValue(), targetHeading) == ChangeHeadingCommand.eDirection.left;
     setTargetHeading(targetHeading, useLeft);
+  }
+
+  public void setTargetHeading(double targetHeading) {
+    this.setTargetHeading((int) Math.round(targetHeading));
   }
 
   public int getTargetAltitude() {
@@ -631,41 +647,6 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     this.pilot.addNewSpeeches(speeches);
   }
 
-//  private ValueRequest getSpeedRequest() {
-//
-//    double delta = targetSpeed - speed.getValue();
-//    if (delta == 0) {
-//      // no change required
-//      return new ValueRequest();
-//    }
-//
-//    double absDelta = delta;
-//    double availableStep;
-//    if (delta > 0) {
-//      // needs to accelerate
-//      availableStep = airplaneType.speedIncreaseRate;
-//    } else {
-//      availableStep = airplaneType.speedDecreaseRate;
-//      absDelta = -delta;
-//    }
-//    if (this.state.isOnGround()) {
-//      availableStep = availableStep * GROUND_SPEED_CHANGE_MULTIPLIER;
-//    }
-//
-//    ValueRequest ret = new ValueRequest();
-//    if (absDelta < availableStep) {
-//      ret.value = absDelta;
-//      ret.energy = absDelta / availableStep;
-//    } else {
-//      ret.value = availableStep;
-//      ret.energy = 1;
-//    }
-//    if (delta < 0)
-//      ret.multiply(-1);
-//
-//    return ret;
-//  }
-
   private void updateSHABySecondNew() {
     // TODO here is && or || ???
     boolean isSpeedPreffered =
@@ -696,7 +677,7 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
       this.lastVerticalSpeed = 0;
 
     //TODO verify behavior as targetHeading is int and heading is double
-    if (targetHeading != heading) {
+    if (targetHeading != heading.getValue()) {
       adjustHeading();
     }
   }
@@ -758,29 +739,18 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
   }
 
   private void adjustHeading() {
-    double diff = Headings.getDifference(heading, targetHeading, true);
-    //TODO potential problem as "diff" function calculates difference in the shortest arc
-
-    if (diff > lastHeadingChange) {
-      lastHeadingChange += MAX_HEADING_CHANGE_DERIVATIVE_STEP;
-      if (lastHeadingChange > airplaneType.headingChangeRate) {
-        lastHeadingChange = airplaneType.headingChangeRate;
-      }
-    } else {
-      // this is to make slight adjustment, but at least equal to 1 degree
-      lastHeadingChange = Math.max(diff - MAX_HEADING_CHANGE_DERIVATIVE_STEP, 1);
-    }
+    double diff = Headings.getDifference(heading.getValue(), targetHeading, true);
 
     if (targetHeadingLeftTurn)
-      this.heading = Headings.add(heading, -lastHeadingChange);
+      this.heading.add(-diff);
     else
-      this.heading = Headings.add(heading, lastHeadingChange);
+      this.heading.add(diff);
   }
 
   private void updateCoordinates() {
     double dist = this.getGS() * secondFraction;
     Coordinate newC
-        = Coordinates.getCoordinate(coordinate, heading, dist);
+        = Coordinates.getCoordinate(coordinate, heading.getValue(), dist);
 
     // add wind if flying
     if (this.getState().is(
@@ -818,10 +788,9 @@ class ValueRequest {
 }
 
 class InertialValue {
-  private static final double INERTIA_WEIGHT = 3;
   private final double maxPositiveInertiaChange;
   private final double maxNegativeInertiaChange;
-  private double value;
+  protected double value;
   private double inertia;
   private Double minimum;
 
@@ -837,6 +806,7 @@ class InertialValue {
 
   public void reset(double value) {
     this.value = value;
+    this.inertia = 0;
   }
 
   public void add(double val) {
@@ -853,7 +823,6 @@ class InertialValue {
       this.value = this.minimum;
       this.inertia = 0;
     }
-    System.out.println("Inert " + this.value + " of " + this.inertia + " - asked " + val);
   }
 
   public void set(double value) {
@@ -867,5 +836,107 @@ class InertialValue {
 
   public double getInertia() {
     return inertia;
+  }
+
+  public double getMaxPositiveInertiaChange() {
+    return maxPositiveInertiaChange;
+  }
+
+  public double getMaxNegativeInertiaChange() {
+    return maxNegativeInertiaChange;
+  }
+}
+
+class HeadingInertialValue {
+  private final double maxInertia;
+  private final double maxInertiaChange;
+  protected double value;
+  private List<Double> thresholds = new ArrayList();
+  private int inertiaStep = 0;
+
+  public HeadingInertialValue(double value,
+                              double maxInertia, double maxInertiaChange) {
+    this.value = value;
+    this.maxInertia = maxInertia;
+    this.maxInertiaChange = maxInertiaChange;
+    buildHashMap();
+  }
+
+  public void reset(double value) {
+    this.value = value;
+    this.inertiaStep = 0;
+  }
+
+  public void add(double val) {
+    if (val < maxInertiaChange && inertiaStep == 1) {
+      this.value += val;
+      this.inertiaStep = 0;
+    } else {
+      int stepBlock = getFromHashMap(val);
+      if (stepBlock < inertiaStep)
+        inertiaStep--;
+      else if (stepBlock > inertiaStep)
+        inertiaStep++;
+
+      double step = inertiaStep * maxInertiaChange;
+      step = Math.min(step, this.maxInertia);
+      if (val > 0)
+        step = Math.min(step, val);
+      else
+        step = Math.max(step, val);
+
+      this.value += step;
+    }
+
+    this.value = Headings.to(this.value);
+  }
+
+  public double getValue() {
+    return value;
+  }
+
+  public double getInertia() {
+    return inertiaStep * maxInertiaChange;
+  }
+
+  public double getMaxInertia() {
+    return maxInertia;
+  }
+
+  private void buildHashMap() {
+    List<Double> tmp = new ArrayList<>();
+    int index = 1;
+    int cumIndex = 1;
+    double maxThr = maxInertia / maxInertiaChange + 1;
+    double thr = 0;
+    while (thr <= maxThr) {
+      thr = cumIndex * this.maxInertiaChange;
+      tmp.add(thr);
+      index++;
+      cumIndex += index;
+    }
+
+    tmp.remove(0);
+
+    this.thresholds = tmp;
+  }
+
+  private int getFromHashMap(double val) {
+    boolean isNeg = false;
+    if (val < 0) {
+      isNeg = true;
+      val = -val;
+    }
+    int ret = 0;
+    while (ret < this.thresholds.size()) {
+      if (val >= this.thresholds.get(ret))
+        ret++;
+      else
+        break;
+    }
+    ret = ret + 1;
+    if (isNeg)
+      ret = -ret;
+    return ret;
   }
 }

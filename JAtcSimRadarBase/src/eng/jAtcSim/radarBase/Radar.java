@@ -699,7 +699,6 @@ public class Radar {
       index--;
       if (index < 0) break;
     }
-    System.out.println();
   }
 
   private DisplaySettings.PlaneLabelSettings getPlaneLabelDisplaySettingsBy(AirplaneDisplayInfo adi) {
