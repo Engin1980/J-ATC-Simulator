@@ -10,6 +10,33 @@ public class LocalSettings {
   private boolean airportVisible = true;
   private boolean sidVisible = true;
   private boolean starVisible = true;
+  private boolean fixVisible = true;
+  private boolean fixRouteVisible = true;
+  private boolean fixMinorVisible = false;
+
+  public boolean isFixVisible() {
+    return fixVisible;
+  }
+
+  public void setFixVisible(boolean fixVisible) {
+    this.fixVisible = fixVisible;
+  }
+
+  public boolean isFixRouteVisible() {
+    return fixRouteVisible;
+  }
+
+  public void setFixRouteVisible(boolean fixRouteVisible) {
+    this.fixRouteVisible = fixRouteVisible;
+  }
+
+  public boolean isFixMinorVisible() {
+    return fixMinorVisible;
+  }
+
+  public void setFixMinorVisible(boolean fixMinorVisible) {
+    this.fixMinorVisible = fixMinorVisible;
+  }
 
   public boolean isSidVisible() {
     return sidVisible;

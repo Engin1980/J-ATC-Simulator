@@ -18,6 +18,8 @@ import eng.jAtcSim.lib.messaging.Messenger;
 import eng.jAtcSim.lib.messaging.StringMessageContent;
 import eng.jAtcSim.lib.speaking.ISpeech;
 import eng.jAtcSim.lib.speaking.SpeechList;
+import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
+import eng.jAtcSim.lib.speaking.fromAtc.commands.ProceedDirectCommand;
 import eng.jAtcSim.lib.world.*;
 import eng.jAtcSim.radarBase.global.Color;
 import eng.jAtcSim.radarBase.global.Point;
@@ -268,6 +270,35 @@ public class Radar {
     }
   }
 
+  static class NavaidDisplayInfo {
+    public Navaid navaid;
+    public boolean isRoute;
+  }
+
+  static class NavaidDisplayInfoList implements Iterable<NavaidDisplayInfo>{
+    private List<NavaidDisplayInfo> inner = new ArrayList<>();
+
+    public void add(NavaidDisplayInfo ndi) {
+      inner.add(ndi);
+    }
+
+    public NavaidDisplayInfo getByNavaid(Navaid navaid) {
+      NavaidDisplayInfo ret = null;
+      for (NavaidDisplayInfo navaidDisplayInfo : inner) {
+        if (navaidDisplayInfo.navaid == navaid){
+          ret = navaidDisplayInfo;
+          break;
+        }
+      }
+      return ret;
+    }
+
+    @Override
+    public Iterator<NavaidDisplayInfo> iterator() {
+      return inner.iterator();
+    }
+  }
+
   private final TransformationLayer tl;
   private final ICanvas c;
   private final Event<Radar, WithCoordinateEventArg> mouseMoveEvent = new Event(this);
@@ -281,6 +312,7 @@ public class Radar {
   private final Area area;
   private final MessageManager messageManager;
   private final AirplaneDisplayInfoList planeInfos = new AirplaneDisplayInfoList();
+  private final NavaidDisplayInfoList navaids = new NavaidDisplayInfoList();
   private int redrawTick = 0;
 
   public Radar(ICanvas canvas, InitialPosition initialPosition,
@@ -295,6 +327,8 @@ public class Radar {
     this.localSettings = new LocalSettings();
     this.simulation = sim;
     this.area = area;
+    
+    buildLocalNavaidList();
 
     this.messageManager = new MessageManager(this.behaviorSettings.getDisplayTextDelay());
 
@@ -308,6 +342,31 @@ public class Radar {
 
     // listen to simulation seconds for redraw
     this.simulation.getSecondElapsedEvent().add(o -> redraw(false));
+  }
+
+  private void buildLocalNavaidList() {
+
+    for (Navaid navaid : area.getNavaids()) {
+      NavaidDisplayInfo ndi = new NavaidDisplayInfo();
+      ndi.navaid = navaid;
+      ndi.isRoute = false;
+      this.navaids.add(ndi);
+    }
+
+    for (Runway runway : simulation.getActiveAirport().getRunways()) {
+      for (RunwayThreshold runwayThreshold : runway.getThresholds()) {
+        for (Route route : runwayThreshold.getRoutes()) {
+          //TODO this is incredibly time consuming, do it better way?
+          for (IAtcCommand command : route.getCommands()) {
+            if (command instanceof ProceedDirectCommand){
+              ProceedDirectCommand pdc = (ProceedDirectCommand) command;
+              NavaidDisplayInfo ndi = this.navaids.getByNavaid(pdc.getNavaid());
+              ndi.isRoute = true;
+            }
+          }
+        }
+      }
+    }
   }
 
   public void zoomIn() {
@@ -551,19 +610,31 @@ public class Radar {
   }
 
   private void drawNavaids() {
-    for (Navaid n : area.getNavaids()) {
-      switch (n.getType()) {
+    //for (Navaid n : area.getNavaids()) {
+    for (NavaidDisplayInfo ndi : this.navaids){
+      switch (ndi.navaid.getType()) {
         case NDB:
-          if (localSettings.isNdbVisible()) drawNavaid(n);
+          if (localSettings.isNdbVisible()) drawNavaid(ndi.navaid);
           break;
         case Airport:
-          if (localSettings.isAirportVisible()) drawNavaid(n);
+          if (localSettings.isAirportVisible()) drawNavaid(ndi.navaid);
           break;
         case VOR:
-          if (localSettings.isVorVisible()) drawNavaid(n);
+          if (localSettings.isVorVisible()) drawNavaid(ndi.navaid);
+          break;
+        case Fix:
+        case FixMinor:
+          boolean isVisible = false;
+          if (ndi.navaid.getType() == Navaid.eType.Fix && localSettings.isFixVisible())
+            isVisible = true;
+          if (ndi.navaid.getType() == Navaid.eType.FixMinor && localSettings.isFixMinorVisible())
+            isVisible = true;
+          if (ndi.isRoute && localSettings.isFixRouteVisible())
+            isVisible = true;
+          if (isVisible) drawNavaid(ndi.navaid);
           break;
         default:
-          drawNavaid(n);
+          drawNavaid(ndi.navaid);
       }
     }
   }
@@ -590,6 +661,7 @@ public class Radar {
         break;
       case FixMinor:
         tl.drawPoint(navaid.getCoordinate(), ds.getColor(), ds.getWidth());
+        tl.drawText(navaid.getName(), navaid.getCoordinate(), 3, 0, dt.getFont(), ds.getColor());
         break;
       case Airport:
         tl.drawPoint(navaid.getCoordinate(), ds.getColor(), ds.getWidth());

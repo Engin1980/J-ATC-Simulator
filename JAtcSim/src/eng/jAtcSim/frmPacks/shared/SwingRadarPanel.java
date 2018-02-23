@@ -122,14 +122,17 @@ private JButtonExtender extBtn = new JButtonExtender(
     btn.addActionListener(e -> btnNdb_click(e));
     extBtn.set(btn, true);
     ret.add(btn);
-    btn = new JButton("I-FIX");
-    extBtn.set(btn, false);
-    ret.add(btn);
-    btn = new JButton("R-FIX");
-    extBtn.set(btn, false);
-    ret.add(btn);
     btn = new JButton("FIX");
+    btn.addActionListener(e -> btnFix_click(e));
     extBtn.set(btn, true);
+    ret.add(btn);
+    btn = new JButton("FIX-R");
+    btn.addActionListener(e -> btnFixRoute_click(e));
+    extBtn.set(btn, true);
+    ret.add(btn);
+    btn = new JButton("FIX-M");
+    btn.addActionListener(e -> btnFixMinor_click(e));
+    extBtn.set(btn, false);
     ret.add(btn);
     btn = new JButton("AIP");
     btn.addActionListener(e -> btnAirport_click(e));
@@ -215,6 +218,30 @@ private JButtonExtender extBtn = new JButtonExtender(
     boolean cur = radar.getLocalSettings().isStarVisible();
     cur = ! cur;
     radar.getLocalSettings().setStarVisible(cur);
+    extBtn.set((JButton) e.getSource(), cur);
+    radar.redraw(true);
+  }
+
+  private void btnFix_click(ActionEvent e) {
+    boolean cur = radar.getLocalSettings().isFixVisible();
+    cur = ! cur;
+    radar.getLocalSettings().setFixVisible(cur);
+    extBtn.set((JButton) e.getSource(), cur);
+    radar.redraw(true);
+  }
+
+  private void btnFixRoute_click(ActionEvent e) {
+    boolean cur = radar.getLocalSettings().isFixRouteVisible();
+    cur = ! cur;
+    radar.getLocalSettings().setFixRouteVisible(cur);
+    extBtn.set((JButton) e.getSource(), cur);
+    radar.redraw(true);
+  }
+
+  private void btnFixMinor_click(ActionEvent e) {
+    boolean cur = radar.getLocalSettings().isFixMinorVisible();
+    cur = ! cur;
+    radar.getLocalSettings().setFixMinorVisible(cur);
     extBtn.set((JButton) e.getSource(), cur);
     radar.redraw(true);
   }
