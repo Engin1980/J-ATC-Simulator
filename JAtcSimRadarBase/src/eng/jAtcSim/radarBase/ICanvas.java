@@ -10,6 +10,7 @@ import java.util.List;
 public interface ICanvas<T> {
   int getWidth();
   int getHeight();
+  boolean isReady();
 
   default void drawLine (Point from, Point to, Color color, int width){
     drawLine(from.x, from.y, to.x, to.y, color, width);
@@ -52,30 +53,5 @@ public interface ICanvas<T> {
   Event<ICanvas, EMouseEventArg> getMouseEvent();
   EventSimple<ICanvas> getPaintEvent();
   Event<ICanvas, Object> getKeyEvent();
-
-
-
-//
-//  /**
-//   * Forces canvas to invoke "paint" event.
-//   */
-//  public abstract void repaint();
-//
-//  private final EventManager<Canvas, EventListener<Canvas, EMouseEvent>, EMouseEvent> mouseEventManager =
-//      new EventManager<>(this);
-//  public final EventManager<Canvas, EventListener<Canvas, EMouseEvent>, EMouseEvent> onMouseEvent(){
-//    return this.mouseEventManager;
-//  }
-//
-//  private final EventManager<Canvas, EventListener<Canvas, Object>, Object> paintEventManager =
-//      new EventManager<>(this);
-//  public final EventManager<Canvas, EventListener<Canvas, Object>, Object> onPaint(){
-//    return this.paintEventManager;
-//  }
-//
-//  private final EventManager<Canvas, EventListener<Canvas, KeyEvent>, KeyEvent> keyEventManager =
-//      new EventManager<>(this);
-//  public final EventManager<Canvas, EventListener<Canvas, KeyEvent>, KeyEvent> onKeyPress(){
-//    return this.keyEventManager;
-//  }
+  EventSimple<ICanvas> getResizedEvent();
 }

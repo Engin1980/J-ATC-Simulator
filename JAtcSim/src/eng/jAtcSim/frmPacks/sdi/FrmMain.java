@@ -113,7 +113,7 @@ public class FrmMain extends JFrame {
     BehaviorSettings behSett = new BehaviorSettings(true, new LongFormatter(), 10);
     SwingRadarPanel pnlSRP = new SwingRadarPanel();
     pnlSRP.init(
-        this.parent.getSim().getActiveAirport().getRadarRange(),
+        this.parent.getSim().getActiveAirport().getInitialPosition(),
         this.parent.getSim(), this.parent.getArea(),
         this.parent.getDisplaySettings(), behSett
     );

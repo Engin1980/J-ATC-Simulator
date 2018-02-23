@@ -1,5 +1,8 @@
 package eng.jAtcSim.SwingRadar;
 
+import eng.eSystem.events.Event;
+import eng.eSystem.events.EventSimple;
+import eng.jAtcSim.lib.exceptions.ENotSupportedException;
 import eng.jAtcSim.radarBase.ICanvas;
 import eng.jAtcSim.radarBase.global.Color;
 import eng.jAtcSim.radarBase.global.Font;
@@ -7,8 +10,6 @@ import eng.jAtcSim.radarBase.global.Point;
 import eng.jAtcSim.radarBase.global.TextBlockLocation;
 import eng.jAtcSim.radarBase.global.events.EKeyboardModifier;
 import eng.jAtcSim.radarBase.global.events.EMouseEventArg;
-import eng.eSystem.events.Event;
-import eng.jAtcSim.lib.exceptions.ENotSupportedException;
 
 import javax.swing.*;
 import java.awt.*;
@@ -34,13 +35,16 @@ public class SwingCanvas implements ICanvas<JComponent> {
       new eng.eSystem.events.Event<>(this);
 
   private eng.eSystem.events.EventSimple<ICanvas> paintEvent =
-    new eng.eSystem.events.EventSimple<>(this);
+      new eng.eSystem.events.EventSimple<>(this);
 
   private Event<ICanvas, Object> keyEvent =
       new Event<>(this);
 
+  private eng.eSystem.events.EventSimple<ICanvas> resizedEvent =
+      new eng.eSystem.events.EventSimple<>(this);
+
   public SwingCanvas() {
-    this.c = new JPanel(){
+    this.c = new JPanel() {
       @Override
       public void paint(Graphics g) {
         SwingCanvas.this.g = g;
@@ -125,25 +129,35 @@ public class SwingCanvas implements ICanvas<JComponent> {
     c.addKeyListener(ka);
 
     MouseWheelListener mw;
-    mw = new MouseWheelListener() {
-      @Override
-      public void mouseWheelMoved(MouseWheelEvent e) {
-        EMouseEventArg eme = EMouseEventArg.createScroll(
-            e.getPoint().x, e.getPoint().y, e.getWheelRotation());
-        SwingCanvas.this.mouseEvent.raise(eme);
-      }
+    mw = e -> {
+      EMouseEventArg eme = EMouseEventArg.createScroll(
+          e.getPoint().x, e.getPoint().y, e.getWheelRotation());
+      SwingCanvas.this.mouseEvent.raise(eme);
     };
     c.addMouseWheelListener(mw);
+
+    c.addComponentListener(new ComponentAdapter() {
+      @Override
+      public void componentResized(ComponentEvent e) {
+        resizedEvent.raise();
+      }
+    });
   }
 
   @Override
   public int getWidth() {
-    return g.getClipBounds().width;
+    if (g != null)
+      return g.getClipBounds().width;
+    else
+      return 1;
   }
 
   @Override
   public int getHeight() {
-    return g.getClipBounds().height;
+    if (g != null)
+      return g.getClipBounds().height;
+    else
+      return 1;
   }
 
   @Override
@@ -273,8 +287,13 @@ public class SwingCanvas implements ICanvas<JComponent> {
   }
 
   @Override
-  public JComponent getGuiControl(){
+  public JComponent getGuiControl() {
     return this.c;
+  }
+
+  @Override
+  public boolean isReady() {
+    return g != null;
   }
 
   @Override
@@ -290,6 +309,11 @@ public class SwingCanvas implements ICanvas<JComponent> {
   @Override
   public Event<ICanvas, Object> getKeyEvent() {
     return keyEvent;
+  }
+
+  @Override
+  public EventSimple<ICanvas> getResizedEvent() {
+    return resizedEvent;
   }
 
   private int toEJComponentAngle(int angle) {

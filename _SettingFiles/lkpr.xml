@@ -12,7 +12,7 @@
         <trafficDefinition company="TVS" probability="0.2" categoryA="0.01" categoryB="0.01" categoryC="0.8" categoryD="0.18" />
       </trafficDefinitions>
       -->
-      <radarRange topLeft="50.5 13.0" bottomRight="49.5 15.5" />
+      <initialPosition coordinate="50.095867 14.265608" range="85" />
       <atcTemplates>
         <atcTemplate type="ctr" name="LKAA_CTR" frequency="127.12" 
                      releaseAltitude="19000" acceptAltitude="7000" orderedAltitude="17000" />
@@ -193,7 +193,7 @@
     </airport>
     <airport icao="LKMT" name="Ostrava Mošnov" altitude="844" transitionAltitude="5000" vfrAltitude="2500" mainAirportNavaidName="OTA">
       <trafficCategories categoryA="0.6" categoryB="0.3" categoryC="0.08" categoryD="0.02" />
-      <radarRange topLeft="50.0 17.0" bottomRight="49.0 19.0" />
+      <initialPosition coordinate="49.697492 18.109075" range="85" />
       <atcTemplates>
         <atcTemplate type="ctr" name="LKAA_CTR" frequency="127.12" 
                      releaseAltitude="14000" acceptAltitude="7000" orderedAltitude="10000" />

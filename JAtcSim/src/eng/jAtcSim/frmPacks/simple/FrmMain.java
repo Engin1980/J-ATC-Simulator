@@ -107,7 +107,7 @@ public class FrmMain extends javax.swing.JFrame {
     SwingCanvas canvas = new SwingCanvas();
     this.radar = new Radar(
         canvas,
-        this.parent.getSim().getActiveAirport().getRadarRange(),
+        this.parent.getSim().getActiveAirport().getInitialPosition(),
         this.parent.getSim(), this.parent.getArea(),
         this.parent.getDisplaySettings(), behSett
     );

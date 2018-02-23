@@ -1,22 +1,37 @@
 package eng.jAtcSim.radarBase;
 
 import eng.jAtcSim.lib.coordinates.Coordinate;
+import eng.jAtcSim.lib.coordinates.CoordinateValue;
 import eng.jAtcSim.lib.coordinates.Coordinates;
-import eng.jAtcSim.lib.exceptions.ERuntimeException;
 import eng.jAtcSim.radarBase.global.*;
 
 import java.util.List;
 
 class TransformationLayer {
 
-  private ICanvas c;
-  protected Coordinate topLeft;
-  protected Coordinate bottomRight;
+  class InitialData {
+    final Coordinate center;
+    final double widthInNm;
 
-  TransformationLayer(ICanvas c, Coordinate topLeft, Coordinate bottomRight) {
+    public InitialData(Coordinate center, double widthInNm) {
+      this.center = center;
+      this.widthInNm = widthInNm;
+    }
+  }
+  private ICanvas c;
+  private Coordinate topLeft;
+  private Coordinate bottomRight;
+  private double scale = 75 / 1000d;
+  private InitialData initialData;
+
+  TransformationLayer(ICanvas c, Coordinate center, double widthInNm) {
     this.c = c;
-    this.topLeft = topLeft;
-    this.bottomRight = bottomRight;
+    this.initialData = new InitialData(center, widthInNm);
+    topLeft = center;
+    bottomRight = new Coordinate(
+        center.getLatitude().add(1),
+        center.getLongitude().add(1)
+    );
   }
 
   Coordinate getTopLeft() {
@@ -25,6 +40,14 @@ class TransformationLayer {
 
   Coordinate getBottomRight() {
     return bottomRight;
+  }
+
+  double getWidthInNM() {
+    return c.getWidth() * scale;
+  }
+
+  double getHeightInNm(){
+    return c.getHeight() * scale;
   }
 
   void drawLine(Coordinate from, Coordinate to, Color color, int width) {
@@ -101,17 +124,61 @@ class TransformationLayer {
     c.drawTriangleAround(p, distanceInPixels, color, width);
   }
 
-  void setCoordinates(Coordinate topLeft, Coordinate bottomRight) {
-    //TODO tady kontrola jestli jsou u sebe
-    if (topLeft.getLongitude().get() > bottomRight.getLongitude().get()) {
-      throw new ERuntimeException("Cannot set painter coordinates. Square made of " + topLeft.toString() + " and " + bottomRight.toString() + " does not define square (longitude error).");
+//  void setCoordinates(Coordinate topLeft, Coordinate bottomRight) {
+//    //TODO tady kontrola jestli jsou u sebe
+//    if (topLeft.getLongitude().get() > bottomRight.getLongitude().get()) {
+//      throw new ERuntimeException("Cannot set painter coordinates. Square made of " + topLeft.toString() + " and " + bottomRight.toString() + " does not define square (longitude error).");
+//    }
+//    if (topLeft.getLatitude().get() < bottomRight.getLatitude().get()) {
+//      throw new ERuntimeException("Cannot set painter coordinates. Square made of " + topLeft.toString() + " and " + bottomRight.toString() + " does not define square (longitude error).");
+//    }
+//
+//    this.topLeft = topLeft;
+//    this.bottomRight = bottomRight;
+//  }
+
+
+  final void setPosition(Coordinate topLeft, double widthInNM) {
+    if (widthInNM <= 0) {
+      throw new IllegalArgumentException("Value of {widthInNM} must be greater than zero.");
     }
-    if (topLeft.getLatitude().get() < bottomRight.getLatitude().get()) {
-      throw new ERuntimeException("Cannot set painter coordinates. Square made of " + topLeft.toString() + " and " + bottomRight.toString() + " does not define square (longitude error).");
+    this.scale = widthInNM / c.getWidth();
+    setPosition(topLeft);
+  }
+
+  final void setPosition(Coordinate topLeft) {
+    if (topLeft == null) {
+      throw new IllegalArgumentException("Value of {topLeft} cannot not be null.");
     }
 
     this.topLeft = topLeft;
-    this.bottomRight = bottomRight;
+    resetBottomRight();
+  }
+
+  void resetPosition() {
+    resetBottomRight();
+  }
+
+  private void resetBottomRight() {
+    //if (c.isReady() == false) return;
+    if (c.isReady() && initialData != null){
+      this.scale = initialData.widthInNm / c.getWidth();
+
+      Coordinate localTopLeft = Coordinates.getCoordinate(
+          initialData.center  , 270, initialData.widthInNm / 2);
+      localTopLeft = Coordinates.getCoordinate(
+          localTopLeft, 0, this.getHeightInNm() / 2);
+      this.topLeft = localTopLeft;
+      this.initialData = null;
+    }
+
+    double widthInNm = c.getWidth() * scale;
+    Coordinate tmp = Coordinates.getCoordinate(topLeft, 90, widthInNm);
+    double realRatio = c.getHeight() / (double) c.getWidth();
+    double heightInNM = realRatio * widthInNm;
+    tmp = Coordinates.getCoordinate(tmp, 180, heightInNM);
+
+    this.bottomRight = tmp;
   }
 
   Coordinate toCoordinateDelta(Point point) {

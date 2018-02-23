@@ -15,8 +15,6 @@ public class FrmView extends JFrame {
   private static Dimension initDimension = new Dimension(500, 300);
   private Pack parent;
   private Radar radar;
-  private int refreshRate = 3;
-  private int refreshRateCounter;
   private JPanel pnlContent;
 
   public FrmView() {
@@ -43,14 +41,12 @@ public class FrmView extends JFrame {
 
     this.parent = pack;
 
-    this.refreshRateCounter = 0;
-
     BehaviorSettings behSett = new BehaviorSettings(false, new LongFormatter(),10);
 
     SwingCanvas canvas = new SwingCanvas();
     this.radar = new Radar(
         canvas,
-        this.parent.getSim().getActiveAirport().getRadarRange(),
+        this.parent.getSim().getActiveAirport().getInitialPosition(),
         this.parent.getSim(), this.parent.getArea(),
         this.parent.getDisplaySettings(), behSett
     );

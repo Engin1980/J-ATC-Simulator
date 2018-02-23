@@ -6,7 +6,6 @@
 package eng.jAtcSim.lib.world;
 
 import eng.jAtcSim.lib.coordinates.Coordinate;
-import eng.jAtcSim.lib.coordinates.RadarRange;
 import eng.jAtcSim.lib.exceptions.ERuntimeException;
 import eng.jAtcSim.lib.global.KeyItem;
 import eng.jAtcSim.lib.global.KeyList;
@@ -27,7 +26,7 @@ public class Airport implements KeyItem<String> {
   private int vfrAltitude;
   private String mainAirportNavaidName;
   private Navaid _mainAirportNavaid;
-  private final RadarRange radarRange = new RadarRange();
+  private final InitialPosition initialPosition = new InitialPosition();
   private final KeyList<Runway, String> runways = new KeyList();
   private final KeyList<AtcTemplate, Atc.eType> atcTemplates = new KeyList();
   private final KeyList<PublishedHold, Navaid> holds = new KeyList();
@@ -63,10 +62,6 @@ public class Airport implements KeyItem<String> {
 
   public int getAltitude() {
     return altitude;
-  }
-
-  public RadarRange getRadarRange() {
-    return radarRange;
   }
 
   public Area getParent() {
@@ -119,5 +114,8 @@ public class Airport implements KeyItem<String> {
     
     return this._mainAirportNavaid;
   }
-  
+
+  public InitialPosition getInitialPosition() {
+    return this.initialPosition;
+  }
 }

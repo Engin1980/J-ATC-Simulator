@@ -4,17 +4,17 @@ import eng.jAtcSim.SwingRadar.SwingCanvas;
 import eng.jAtcSim.lib.Simulation;
 import eng.jAtcSim.lib.atcs.Atc;
 import eng.jAtcSim.lib.atcs.UserAtc;
-import eng.jAtcSim.lib.coordinates.RadarRange;
 import eng.jAtcSim.lib.exceptions.ERuntimeException;
 import eng.jAtcSim.lib.world.Area;
+import eng.jAtcSim.lib.world.InitialPosition;
 import eng.jAtcSim.radarBase.BehaviorSettings;
 import eng.jAtcSim.radarBase.DisplaySettings;
 import eng.jAtcSim.radarBase.Radar;
 import eng.jAtcSim.startup.LayoutManager;
 
 import javax.swing.*;
-import javax.tools.JavaCompiler;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
@@ -26,20 +26,20 @@ public class SwingRadarPanel extends JPanel {
   private Area area;
   private DisplaySettings displaySettings;
   private BehaviorSettings behaviorSettings;
-  private RadarRange defaultRadarRange;
+  private InitialPosition initialPosition;
 private JButtonExtender extBtn = new JButtonExtender(
     new Color(0,0,0),
-    new Color(0,255,0),
+    new Color(150,150,150),
     new Color(0,0,0),
-    new Color(150,150,150)
+    new Color(0,255,0)
 );
 
-  public void init(RadarRange radarRange,
+  public void init(InitialPosition initialPosition,
                    Simulation sim, Area area,
                    DisplaySettings dispSett, BehaviorSettings behSett) {
     this.sim = sim;
     this.area = area;
-    this.defaultRadarRange = radarRange;
+    this.initialPosition = initialPosition;
     this.displaySettings = dispSett;
     this.behaviorSettings = behSett;
 
@@ -83,7 +83,7 @@ private JButtonExtender extBtn = new JButtonExtender(
     SwingCanvas canvas = new SwingCanvas();
     this.radar = new Radar(
         canvas,
-        this.defaultRadarRange,
+        this.initialPosition,
         this.sim, this.area,
         this.displaySettings, this.behaviorSettings);
 
@@ -99,18 +99,27 @@ private JButtonExtender extBtn = new JButtonExtender(
     JButton btn;
     JTextField txt;
 
-    btn = new JButton("C-bdr");
+    btn = new JButton("Cntr");
+    btn.addActionListener(e->btnCountryBorder_click(e));
     extBtn.set(btn, true);
     ret.add(btn);
 
-    btn = new JButton("T-bdr");
+    btn = new JButton("CTR");
+    btn.addActionListener(e->btnCtrBorder_click(e));
+    extBtn.set(btn, true);
+    ret.add(btn);
+
+    btn = new JButton("TMA");
+    btn.addActionListener(e -> btnTmaBorder_click(e));
     extBtn.set(btn, true);
     ret.add(btn);
 
     btn = new JButton("VOR");
+    btn.addActionListener(e -> btnVor_click(e));
     extBtn.set(btn, true);
     ret.add(btn);
     btn = new JButton("NDB");
+    btn.addActionListener(e -> btnNdb_click(e));
     extBtn.set(btn, true);
     ret.add(btn);
     btn = new JButton("I-FIX");
@@ -123,12 +132,15 @@ private JButtonExtender extBtn = new JButtonExtender(
     extBtn.set(btn, true);
     ret.add(btn);
     btn = new JButton("AIP");
+    btn.addActionListener(e -> btnAirport_click(e));
     extBtn.set(btn, true);
     ret.add(btn);
     btn = new JButton("SID");
+    btn.addActionListener(e -> btnSid_click(e));
     extBtn.set(btn, true);
     ret.add(btn);
     btn = new JButton("STAR");
+    btn.addActionListener(e -> btnStar_click(e));
     extBtn.set(btn, true);
     ret.add(btn);
 
@@ -141,6 +153,70 @@ private JButtonExtender extBtn = new JButtonExtender(
     ret.add(btn);
 
     return ret;
+  }
+
+  private void btnTmaBorder_click(ActionEvent e) {
+    boolean cur = radar.getLocalSettings().isTmaBorderVisible();
+    cur = ! cur;
+    radar.getLocalSettings().setTmaBorderVisible(cur);
+    extBtn.set((JButton) e.getSource(), cur);
+    radar.redraw(true);
+  }
+
+  private void btnCountryBorder_click(ActionEvent e) {
+    boolean cur = radar.getLocalSettings().isCountryBorderVisible();
+    cur = ! cur;
+    radar.getLocalSettings().setCountryBorderVisible(cur);
+    extBtn.set((JButton) e.getSource(), cur);
+    radar.redraw(true);
+  }
+
+  private void btnCtrBorder_click(ActionEvent e) {
+    boolean cur = radar.getLocalSettings().isCtrBorderVisible();
+    cur = ! cur;
+    radar.getLocalSettings().setCtrBorderVisible(cur);
+    extBtn.set((JButton) e.getSource(), cur);
+    radar.redraw(true);
+  }
+
+  private void btnVor_click(ActionEvent e) {
+    boolean cur = radar.getLocalSettings().isVorVisible();
+    cur = ! cur;
+    radar.getLocalSettings().setVorVisible(cur);
+    extBtn.set((JButton) e.getSource(), cur);
+    radar.redraw(true);
+  }
+
+  private void btnNdb_click(ActionEvent e) {
+    boolean cur = radar.getLocalSettings().isNdbVisible();
+    cur = ! cur;
+    radar.getLocalSettings().setNdbVisible(cur);
+    extBtn.set((JButton) e.getSource(), cur);
+    radar.redraw(true);
+  }
+
+  private void btnAirport_click(ActionEvent e) {
+    boolean cur = radar.getLocalSettings().isAirportVisible();
+    cur = ! cur;
+    radar.getLocalSettings().setAirportVisible(cur);
+    extBtn.set((JButton) e.getSource(), cur);
+    radar.redraw(true);
+  }
+
+  private void btnSid_click(ActionEvent e) {
+    boolean cur = radar.getLocalSettings().isSidVisible();
+    cur = ! cur;
+    radar.getLocalSettings().setSidVisible(cur);
+    extBtn.set((JButton) e.getSource(), cur);
+    radar.redraw(true);
+  }
+
+  private void btnStar_click(ActionEvent e) {
+    boolean cur = radar.getLocalSettings().isStarVisible();
+    cur = ! cur;
+    radar.getLocalSettings().setStarVisible(cur);
+    extBtn.set((JButton) e.getSource(), cur);
+    radar.redraw(true);
   }
 
   public Radar getRadar() {

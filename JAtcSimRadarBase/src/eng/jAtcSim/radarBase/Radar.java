@@ -1,14 +1,12 @@
 package eng.jAtcSim.radarBase;
 
 import eng.eSystem.events.Event;
-import eng.eSystem.events.EventSimple;
 import eng.jAtcSim.lib.Simulation;
 import eng.jAtcSim.lib.airplanes.*;
 import eng.jAtcSim.lib.atcs.Atc;
 import eng.jAtcSim.lib.atcs.PlaneSwitchMessage;
 import eng.jAtcSim.lib.coordinates.Coordinate;
 import eng.jAtcSim.lib.coordinates.Coordinates;
-import eng.jAtcSim.lib.coordinates.RadarRange;
 import eng.jAtcSim.lib.exceptions.ENotSupportedException;
 import eng.jAtcSim.lib.exceptions.ERuntimeException;
 import eng.jAtcSim.lib.global.EStringBuilder;
@@ -93,46 +91,6 @@ public class Radar {
       this.lifeCounter--;
     }
   }
-
-//  static class PlaneHistoryDotManager {
-//
-//    private final Map<Callsign, List<Coordinate>> inner = new HashMap<>();
-//    private final Map<Callsign, Integer> maxCount = new HashMap<>();
-//
-//    public void add(Callsign cs, Coordinate c, int maxHistory) {
-//      if (inner.containsKey(cs) == false) {
-//        inner.put(cs, new LinkedList<Coordinate>());
-//        maxCount.put(cs, maxHistory);
-//      }
-//
-//      inner.get(cs).add(c);
-//      if (maxCount.get(cs) != maxHistory) {
-//        maxCount.put(cs, maxHistory);
-//      }
-//    }
-//
-//    public void removeOneHistoryFromAll() {
-//      List<Callsign> tr = new LinkedList<>();
-//      for (Callsign cs : inner.keySet()) {
-//        List<Coordinate> l = inner.get(cs);
-//        if (l.size() > maxCount.get(cs)) {
-//          l.remove(0);
-//        }
-//        if (l.isEmpty()) {
-//          tr.add(cs);
-//        }
-//      }
-//
-//      for (Callsign cs : tr) {
-//        inner.remove(cs);
-//        maxCount.remove(cs);
-//      }
-//    }
-//
-//    List<Coordinate> get(Callsign callsign) {
-//      return inner.get(callsign);
-//    }
-//  }
 
   static class AirplaneDisplayInfo {
     private static final int DEFAULT_LABEL_SHIFT = 3;
@@ -314,7 +272,6 @@ public class Radar {
   private final ICanvas c;
   private final Event<Radar, WithCoordinateEventArg> mouseMoveEvent = new Event(this);
   private final Event<Radar, WithCoordinateEventArg> mouseClickEvent = new Event(this);
-  private final EventSimple<Radar> paintEvent = new EventSimple(this);
   private final Event<Radar, KeyEventArg> keyPressEvent = new Event(this);
 
   private final DisplaySettings displaySettings;
@@ -326,16 +283,16 @@ public class Radar {
   private final AirplaneDisplayInfoList planeInfos = new AirplaneDisplayInfoList();
   private int redrawTick = 0;
 
-  public Radar(ICanvas canvas, RadarRange radarRange,
+  public Radar(ICanvas canvas, InitialPosition initialPosition,
                Simulation sim, Area area,
                DisplaySettings displaySettings,
                BehaviorSettings behaviorSettings) {
     this.c = canvas;
-    this.tl = new TransformationLayer(this.c, radarRange.topLeft, radarRange.bottomRight);
+
+    this.tl = new TransformationLayer(this.c, initialPosition.coordinate, initialPosition.range);
     this.displaySettings = displaySettings;
     this.behaviorSettings = behaviorSettings;
     this.localSettings = new LocalSettings();
-    this.localSettings.getUpdatedEvent().add(q -> localSettings_updated());
     this.simulation = sim;
     this.area = area;
 
@@ -347,6 +304,7 @@ public class Radar {
         (c) -> Radar.this.canvas_onPaint((ICanvas) c));
     this.c.getKeyEvent().add(
         (c, o) -> Radar.this.canvas_onKeyPress((ICanvas) c, (KeyEventArg) o));
+    this.c.getResizedEvent().add(o -> tl.resetPosition());
 
     // listen to simulation seconds for redraw
     this.simulation.getSecondElapsedEvent().add(o -> redraw(false));
@@ -369,13 +327,10 @@ public class Radar {
     distLat = distLat / 2d;
     distLon = distLon / 2d;
 
-    tl.setCoordinates(
+    tl.setPosition(
         new Coordinate(
             coordinate.getLatitude().get() + distLat,
-            coordinate.getLongitude().get() + distLon),
-        new Coordinate(
-            coordinate.getLatitude().get() - distLat,
-            coordinate.getLongitude().get() - distLon));
+            coordinate.getLongitude().get() + distLon));
     redraw(true);
   }
 
@@ -392,8 +347,8 @@ public class Radar {
     this.c.invokeRepaint();
   }
 
-  private void localSettings_updated() {
-
+  public LocalSettings getLocalSettings() {
+    return localSettings;
   }
 
   private void canvas_onMouseMove(ICanvas sender, EMouseEventArg e) {
@@ -469,22 +424,19 @@ public class Radar {
     double distShiftLat = distLat * multiplier - distLat;
     double distShiftLon = distLon * multiplier - distLon;
 
-    tl.setCoordinates(
+    tl.setPosition(
         new Coordinate(
             tl.getTopLeft().getLatitude().get() + distShiftLat,
             tl.getTopLeft().getLongitude().get() + distShiftLon),
-        new Coordinate(
-            tl.getBottomRight().getLatitude().get() - distShiftLat,
-            tl.getBottomRight().getLongitude().get() - distShiftLon));
+        tl.getWidthInNM() * multiplier);
 
     redraw(true);
 
   }
 
   private void moveMapBy(Coordinate c) {
-    tl.setCoordinates(
-        tl.getTopLeft().add(c),
-        tl.getBottomRight().add(c));
+    tl.setPosition(
+        tl.getTopLeft().add(c));
     redraw(true);
   }
 
@@ -495,7 +447,22 @@ public class Radar {
 
   private void drawBorders() {
     for (Border b : area.getBorders()) {
-      drawBorder(b);
+      switch (b.getType()) {
+        case TMA:
+          if (localSettings.isTmaBorderVisible())
+            drawBorder(b);
+          break;
+        case CTR:
+          if (localSettings.isCtrBorderVisible())
+            drawBorder(b);
+          break;
+        case Country:
+          if (localSettings.isCountryBorderVisible())
+            drawBorder(b);
+          break;
+        default:
+          drawBorder(b);
+      }
     }
   }
 
@@ -533,10 +500,11 @@ public class Radar {
 
   private void drawRoutes(boolean drawArrivalRoutes, boolean drawDepartureRoutes) {
     for (Route r : simulation.getActiveRunwayThreshold().getRoutes()) {
-      if (drawArrivalRoutes && (r.getType() == Route.eType.star || r.getType() == Route.eType.transition))
-        drawStar(r.getNavaids());
-      else if (drawDepartureRoutes && r.getType() == Route.eType.sid)
-        drawSid(r.getNavaids());
+      if (drawArrivalRoutes && (r.getType() == Route.eType.star || r.getType() == Route.eType.transition)) {
+        if (localSettings.isStarVisible()) drawStar(r.getNavaids());
+      } else if (drawDepartureRoutes && r.getType() == Route.eType.sid) {
+        if (localSettings.isSidVisible()) drawSid(r.getNavaids());
+      }
     }
   }
 
@@ -584,7 +552,19 @@ public class Radar {
 
   private void drawNavaids() {
     for (Navaid n : area.getNavaids()) {
-      drawNavaid(n);
+      switch (n.getType()) {
+        case NDB:
+          if (localSettings.isNdbVisible()) drawNavaid(n);
+          break;
+        case Airport:
+          if (localSettings.isAirportVisible()) drawNavaid(n);
+          break;
+        case VOR:
+          if (localSettings.isVorVisible()) drawNavaid(n);
+          break;
+        default:
+          drawNavaid(n);
+      }
     }
   }
 
@@ -690,9 +670,9 @@ public class Radar {
 
     List<Coordinate> hist = adi.planeDotHistory;
     int printedDots = 0;
-    int index = hist.size()-1;
+    int index = hist.size() - 1;
     while (printedDots < dp.getHistoryDotCount()) {
-      if (index % dp.getHistoryDotStep() == 0){
+      if (index % dp.getHistoryDotStep() == 0) {
         tl.drawPoint(hist.get(index), c, 3);
         printedDots++;
       }
