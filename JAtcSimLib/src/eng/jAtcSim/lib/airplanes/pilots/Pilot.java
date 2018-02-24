@@ -34,7 +34,6 @@ import eng.jAtcSim.lib.weathers.Weather;
 import eng.jAtcSim.lib.world.Approach;
 import eng.jAtcSim.lib.world.Navaid;
 
-import javax.swing.text.StyledEditorKit;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -109,7 +108,7 @@ public class Pilot {
 
     public void setTakeOffBehavior() {
       Pilot.this.behavior = new Pilot.TakeOffBehavior();
-      Pilot.this.parent.setTargetSpeed(Pilot.this.parent.getType().vR+15);
+      Pilot.this.parent.setTargetSpeed(Pilot.this.parent.getType().vR + 15);
       Pilot.this.parent.setTargetAltitude(Acc.threshold().getInitialDepartureAltitude());
       Pilot.this.parent.setTargetHeading(Acc.threshold().getCourse());
       Pilot.this.parent.setxState(Airplane.State.takeOffRoll);
@@ -538,6 +537,7 @@ public class Pilot {
           if (canSeeRunwayFromCurrentPosition() == false) {
             this.isRunwayVisible = false;
             goAround("Not runway in sight.");
+            return;
           } else {
             this.isRunwayVisible = true;
           }
@@ -793,7 +793,7 @@ public class Pilot {
       this.afterCommands.removeByConsequent(ProceedDirectCommand.class, true);
       this.afterCommands.removeByConsequent(ChangeHeadingCommand.class, true);
       this.afterCommands.removeByAntecedent(AfterNavaidCommand.class, true);
-    } else if (c instanceof ShortcutCommand){
+    } else if (c instanceof ShortcutCommand) {
       this.afterCommands.removeByConsequent(ProceedDirectCommand.class, true);
       this.afterCommands.removeByConsequent(ChangeHeadingCommand.class, true);
     } else if (c instanceof ChangeAltitudeCommand) {

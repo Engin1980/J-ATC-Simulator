@@ -166,8 +166,9 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     }
 
     public void adviceToAtc(Atc targetAtc, IAirplaneNotification notification) {
+      SpeechList lst = new SpeechList(notification);
       Message m = new Message(Airplane.this, targetAtc,
-          notification);
+          lst);
       Acc.messenger().send(m);
     }
 
@@ -189,10 +190,9 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     }
 
     public void passMessageToAtc(Atc atc, IFromAirplane content) {
-      Message message = new Message(
-          Airplane.this, atc,
-          content);
-      Acc.messenger().send(message);
+      SpeechList saidText = new SpeechList();
+      saidText.add(content);
+      passMessageToAtc(atc, saidText);
     }
 
     public Airplane4Command getPlane4Command() {

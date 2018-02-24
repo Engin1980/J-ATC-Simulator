@@ -15,23 +15,11 @@ import eng.jAtcSim.lib.global.ETime;
 import eng.jAtcSim.lib.global.Headings;
 import eng.jAtcSim.lib.messaging.Message;
 import eng.jAtcSim.lib.messaging.StringMessageContent;
-import eng.jAtcSim.lib.speaking.fromAtc.commands.ClearedForTakeoffCommand;
-import eng.jAtcSim.lib.weathers.Weather;
-import eng.jAtcSim.lib.world.Runway;
-import eng.jAtcSim.lib.world.RunwayThreshold;
-import eng.jAtcSim.lib.Acc;
-import eng.jAtcSim.lib.airplanes.Airplane;
-import eng.jAtcSim.lib.airplanes.AirplaneList;
-import eng.jAtcSim.lib.coordinates.Coordinates;
-import eng.jAtcSim.lib.exceptions.ENotSupportedException;
-import eng.jAtcSim.lib.exceptions.ERuntimeException;
-import eng.jAtcSim.lib.global.ETime;
-import eng.jAtcSim.lib.global.Headings;
-import eng.jAtcSim.lib.messaging.Message;
-import eng.jAtcSim.lib.messaging.StringMessageContent;
+import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.GoingAroundNotification;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.GoodDayNotification;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ClearedForTakeoffCommand;
+import eng.jAtcSim.lib.speaking.fromAtc.commands.ContactCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.notifications.RadarContactConfirmationNotification;
 import eng.jAtcSim.lib.weathers.Weather;
 import eng.jAtcSim.lib.world.Runway;
@@ -48,7 +36,7 @@ public class TowerAtc extends ComputerAtc {
 
   private static final int RUNWAY_CHANGE_INFO_UPDATE_INTERVAL = 10 * 60;
   private static final int MAXIMAL_SPEED_FOR_PREFERRED_RUNWAY = 5;
-  private final AirplaneList readyForTakeoff = new AirplaneList();
+  private final AirplaneList readyForHangOff = new AirplaneList();
   private final AirplaneList departings = new AirplaneList();
   private final LastDepartures lastDepartures = new LastDepartures();
   private RunwayChangeInfo runwayChangeInfo = null;
@@ -60,6 +48,7 @@ public class TowerAtc extends ComputerAtc {
 
   /**
    * Returns suggested runway threshold according to current weather.
+   *
    * @return
    */
   public static RunwayThreshold getSuggestedThreshold() {
@@ -106,6 +95,19 @@ public class TowerAtc extends ComputerAtc {
   }
 
   @Override
+  public void init() {
+    RunwayThreshold suggestedThreshold = getSuggestedThreshold();
+    changeRunwayInUse(suggestedThreshold);
+  }
+
+  @Override
+  protected void _registerNewPlane(Airplane plane) {
+    if (plane.isArrival()) {
+      throw new ERuntimeException("Arriving plane cannot be registered using this method.");
+    }
+  }
+
+  @Override
   protected void _elapseSecond() {
     List<Message> msgs = Acc.messenger().getByTarget(this, true);
 
@@ -115,16 +117,21 @@ public class TowerAtc extends ComputerAtc {
       recorder.logMessage(m); // incoming speech
 
       if (m.isSourceOfType(Airplane.class)) {
-        if (m.getContent() instanceof GoingAroundNotification) {
+        Airplane p = m.getSource();
+        SpeechList spchs = m.getContent();
+
+
+        if (spchs.containsType(GoingAroundNotification.class)) {
           // predavame na APP
           Airplane plane = m.getSource();
           super.requestSwitch(plane);
           waitingRequestsList.add(plane);
-        } else if (m.getContent() instanceof GoodDayNotification) {
+        } else if (spchs.containsType(GoodDayNotification.class)) {
           Message msg = new Message(
               this,
               m.<Airplane>getSource(),
-              new RadarContactConfirmationNotification());
+              new SpeechList<>(new RadarContactConfirmationNotification())
+              );
           Acc.messenger().send(msg);
           recorder.logMessage(msg);
         }
@@ -151,34 +158,45 @@ public class TowerAtc extends ComputerAtc {
       } else {
         // potvrzene od APP, TWR predava na APP
         waitingRequestsList.remove(p);
-        readyForTakeoff.add(p);
+        readyForHangOff.add(p);
       }
     }
 
-    processReadyForTakeoff();
+    processReadyForHangOff();
     switchDepartings();
 
     // runway change
     checkForRunwayChange();
   }
 
-  private void processReadyForTakeoff() {
-    if (readyForTakeoff.isEmpty() == false && canTakeOffNextPlane()) {
-      Airplane p = readyForTakeoff.get(0);
-      readyForTakeoff.remove(0);
+  private void processReadyForHangOff() {
+    if (readyForHangOff.isEmpty() == false && canTakeOffNextPlane()) {
+      Airplane p = readyForHangOff.get(0);
+      readyForHangOff.remove(0);
       departings.add(p);
       lastDepartures.set(runwayThresholdInUse, p, Acc.now());
+      if (p.isDeparture()) {
+        // is new departure
+        SpeechList lst = new SpeechList();
 
-      Message m;
+        lst.add(new RadarContactConfirmationNotification());
+        lst.add(new ClearedForTakeoffCommand(runwayThresholdInUse));
 
-      m = new Message(this, p,
-          new RadarContactConfirmationNotification());
-      Acc.messenger().send(m);
+        Message m = new Message(this, p, lst);
+        Acc.messenger().send(m);
+        recorder.logMessage(m);
+      } else {
+        SpeechList lst = new SpeechList();
 
-      m = new Message(this, p,
-          new ClearedForTakeoffCommand(runwayThresholdInUse));
-      Acc.messenger().send(m);
-      recorder.logMessage(m);
+        lst.add(new ContactCommand(eType.app));
+
+        Message m = new Message(this, p, lst);
+        Acc.messenger().send(m);
+        recorder.logMessage(m);
+        // is go around
+        // probably nothing there as go-around commands
+        // must be processed when go-around occurred in airplane()
+      }
     }
   }
 
@@ -197,12 +215,12 @@ public class TowerAtc extends ComputerAtc {
 
     TakeOffSeparation tos = TakeOffSeparation.create(
         ld.plane.getType().category,
-        this.readyForTakeoff.get(0).getType().category);
+        this.readyForHangOff.get(0).getType().category);
 
     if (ld.time.addSeconds(tos.seconds).isAfter(Acc.now())) {
       return false; // there are too close due to time
     }
-    if (Coordinates.getDistanceInNM(ld.plane.getCoordinate(), this.readyForTakeoff.get(0).getCoordinate()) < tos.nm) {
+    if (Coordinates.getDistanceInNM(ld.plane.getCoordinate(), this.readyForHangOff.get(0).getCoordinate()) < tos.nm) {
       return false; // they are too close due to distance
     }
 
@@ -311,19 +329,6 @@ public class TowerAtc extends ComputerAtc {
     }
   }
 
-  @Override
-  public void init() {
-    RunwayThreshold suggestedThreshold = getSuggestedThreshold();
-    changeRunwayInUse(suggestedThreshold);
-  }
-
-  @Override
-  protected void _registerNewPlane(Airplane plane) {
-    if (plane.isArrival()) {
-      throw new ERuntimeException("Arriving plane cannot be registered using this method.");
-    }
-  }
-
   private void changeRunwayInUse(RunwayThreshold newRunwayInUseThreshold) {
     Message m = new Message(
         this,
@@ -371,6 +376,17 @@ class TakeOffSeparation {
     this.seconds = seconds;
   }
 
+  public static TakeOffSeparation create(char leadingTypeCategory, char followingTypeCategory) {
+    int a = c2i(leadingTypeCategory);
+    int b = c2i(followingTypeCategory);
+    int time = sepTimeSeconds[a][b];
+    int dist = sepDistanceNm[a][b];
+    time = (int) (time * DEPARTURE_ACCELERATOR_DIVIDER);
+    dist = (int) (dist * DEPARTURE_ACCELERATOR_DIVIDER);
+
+    return new TakeOffSeparation(dist, time);
+  }
+
   private static int c2i(char c) {
     switch (c) {
       case 'A':
@@ -384,17 +400,6 @@ class TakeOffSeparation {
       default:
         throw new ENotSupportedException("Unknown plane type category " + c);
     }
-  }
-
-  public static TakeOffSeparation create(char leadingTypeCategory, char followingTypeCategory) {
-    int a = c2i(leadingTypeCategory);
-    int b = c2i(followingTypeCategory);
-    int time = sepTimeSeconds[a][b];
-    int dist = sepDistanceNm[a][b];
-    time = (int) (time * DEPARTURE_ACCELERATOR_DIVIDER);
-    dist = (int) (dist * DEPARTURE_ACCELERATOR_DIVIDER);
-
-    return new TakeOffSeparation(dist, time);
   }
 }
 

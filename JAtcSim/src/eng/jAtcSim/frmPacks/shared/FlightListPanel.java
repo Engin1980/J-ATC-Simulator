@@ -164,7 +164,7 @@ class FlightStripPanel extends JPanel {
         + " " +
             AirplaneDataFormatter.getClimbDescendChar(ai.verticalSpeed())
         + " " +
-            AirplaneDataFormatter.formatAltitudeLong(ai.targetAltitude()));
+            AirplaneDataFormatter.formatAltitudeShort(ai.targetAltitude()));
     lbl.setName("lblAltitude");
     lbl.setFont(normalFont);
     lbl.setForeground(stripSettings.textColor);

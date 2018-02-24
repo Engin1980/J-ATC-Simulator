@@ -1,5 +1,6 @@
 package eng.jAtcSim.lib.messaging;
 
+import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.global.Recorder;
 
 import java.nio.file.Path;
@@ -17,16 +18,15 @@ public class MessageRecorder extends Recorder {
 
   public void recordMessage(eAction action, Message msg){
     String line = String.format(
-        "%S || FROM: %s; TO: %s; CONTENT: %s\n",
+        "%S; %S || FROM: %-10s; TO: %-10s; CONTENT: %s\n",
+        Acc.sim().getNow().toTimeString(),
         action.toString(),
         msg.getSource().toString(),
         msg.getTarget().toString(),
         msg.getContent().toString()
     );
 
-    //System.out.println(line);
-
     super.logLine(
-        line, true);
+        line);
   }
 }

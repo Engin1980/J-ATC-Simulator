@@ -15,6 +15,8 @@ import eng.jAtcSim.lib.speaking.ICommand;
 import eng.jAtcSim.lib.speaking.ISpeech;
 import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.speaking.formatting.LongFormatter;
+import eng.jAtcSim.lib.speaking.fromAirplane.notifications.GoingAroundNotification;
+import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.Confirmation;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.atcs.Atc;
@@ -146,6 +148,10 @@ public abstract class Recorder {
       return m.getAsString();
     } else if (content instanceof RadarContactConfirmationNotification) {
       return "{Computer ATC} Radar contact confirmation.";
+    } else if (content instanceof GoingAroundNotification) {
+      return "Going around. " + ((GoingAroundNotification) content).getReason();
+    } else if (content instanceof Confirmation){
+      return "Confirmation (???)" + content.toString();
     } else {
       throw new ERuntimeException("Message content cannot be get for type " + content.getClass().getName());
     }

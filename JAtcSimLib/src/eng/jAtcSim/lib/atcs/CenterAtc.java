@@ -125,7 +125,9 @@ public class CenterAtc extends ComputerAtc {
         // CTR -> APP, potvrzene od APP
         waitingRequestsList.remove(p);
         super.approveSwitch(p);
-        Message msg = new Message(this, p, new ContactCommand(eType.app));
+        Message msg = new Message(this, p,
+            new SpeechList<>(new ContactCommand(eType.app))
+            );
         Acc.messenger().send(msg);
         recorder.logMessage(msg);
       }
