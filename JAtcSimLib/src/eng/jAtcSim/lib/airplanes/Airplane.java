@@ -337,6 +337,8 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
   private boolean airprox;
   private InertialValue altitude;
 
+  private final Airplane4Display plane4Display;
+
   public Airplane(Callsign callsign, Coordinate coordinate, Squawk sqwk, AirplaneType airplaneSpecification,
                   int heading, int altitude, int speed, boolean isDeparture,
                   String routeName, SpeechList<IAtcCommand> routeCommandQueue) {
@@ -387,6 +389,8 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     this.targetSpeed = speed;
 
     this.pilot = new Pilot(this.new Airplane4Pilot(), routeName, routeCommandQueue);
+
+    this.plane4Display = this.new Airplane4Display();
 
     // flight recorders on
     this.flightRecorder = FlightRecorder.create(this.callsign, false, true);
@@ -590,8 +594,8 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     return this.pilot.getRouteName();
   }
 
-  public Airplane4Display getInfo() {
-    return this.new Airplane4Display();
+  public Airplane4Display getPlane4Display() {
+    return this.plane4Display;
   }
 
   // </editor-fold>

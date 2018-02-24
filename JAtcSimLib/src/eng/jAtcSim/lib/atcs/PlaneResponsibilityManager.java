@@ -122,7 +122,7 @@ public class PlaneResponsibilityManager {
     map.put(plane, typeToState(atc));
     lst.get(atc).add(plane);
     all.add(plane);
-    infos.add(plane.getInfo());
+    infos.add(plane.getPlane4Display());
   }
 
   public void unregisterPlane(Airplane plane) {
@@ -135,7 +135,7 @@ public class PlaneResponsibilityManager {
     map.remove(plane);
     lst.get(atc).remove(plane);
     all.remove(plane);
-    infos.remove(plane.getInfo());
+    infos.remove(plane.getPlane4Display());
   }
 
   public void requestSwitch(Atc from, Atc to, Airplane plane) {

@@ -38,7 +38,7 @@ import java.util.Date;
  */
 public abstract class Recorder {
 
-  public static final String GENERIC_LOG_PATH = "R:\\jatcsim\\recording\\";
+  private static String logPathBase = "recording\\";
   private static final String logPathDate = new SimpleDateFormat("yyyy_MM_dd_HH_mm").format(new Date());
   private final static DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss,SSS");
   private static Formatter fmt = new LongFormatter();
@@ -46,6 +46,10 @@ public abstract class Recorder {
   private final boolean isFile;
   private final Path filePath;
   private BufferedWriter wrt;
+
+  public static void setLogPathBase(String folder){
+    Recorder.logPathBase = folder;
+  }
 
   public Recorder(Path filePath, boolean toConsole, boolean autoOpenFile) {
     this.isFile = (filePath != null);
@@ -57,7 +61,7 @@ public abstract class Recorder {
   }
 
   protected static Path buildGenericLogFilePath(String fileName) {
-    Path ret = Paths.get(GENERIC_LOG_PATH, logPathDate, fileName);
+    Path ret = Paths.get(logPathBase, logPathDate, fileName);
     return ret;
   }
 

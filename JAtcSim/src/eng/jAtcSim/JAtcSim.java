@@ -5,6 +5,8 @@
  */
 package eng.jAtcSim;
 
+import com.sun.prism.impl.Disposer;
+import eng.jAtcSim.lib.global.Recorder;
 import eng.jAtcSim.lib.traffic.TestTrafficOneApproach;
 import eng.jAtcSim.radarBase.global.SoundManager;
 import eng.jAtcSim.frmPacks.Pack;
@@ -93,6 +95,9 @@ public class JAtcSim {
 
     // sound
     SoundManager.init(appSettings.soundFolder);
+
+    // logging
+    Recorder.setLogPathBase(appSettings.logFolder);
 
     // starting pack & simulation
     String packType = startupSettings.radar.packClass;

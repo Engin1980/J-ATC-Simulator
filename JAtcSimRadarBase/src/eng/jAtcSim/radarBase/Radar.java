@@ -30,6 +30,7 @@ import eng.jAtcSim.radarBase.global.events.KeyEventArg;
 import eng.jAtcSim.radarBase.global.events.WithCoordinateEventArg;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Radar {
@@ -249,8 +250,8 @@ public class Radar {
     }
 
     private void removeUnupdated() {
-      Stream<Callsign> toRem =
-          inner.keySet().stream().filter(q -> inner.get(q).wasUpdatedFlag == false);
+      List<Callsign> toRem =
+          inner.keySet().stream().filter(q -> inner.get(q).wasUpdatedFlag == false).collect(Collectors.toList());
       toRem.forEach(q -> inner.remove(q));
     }
 

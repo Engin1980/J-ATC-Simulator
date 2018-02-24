@@ -17,11 +17,16 @@ import java.util.TimerTask;
 public class Timer {
 
   private java.util.Timer tmr = null;
-  private final EventSimple<Timer> tick = new EventSimple<>(this);
+  private final EventSimple<Timer> tickEvent = new EventSimple<>(this);
+  private int tickLength;
 
   public Timer(IEventListenerSimple<Timer> listener) {
 
-    this.tick.add(listener);
+    this.tickEvent.add(listener);
+  }
+
+  public int getTickLength() {
+    return this.tickLength;
   }
 
   public synchronized void start(int ms) {
@@ -29,10 +34,12 @@ public class Timer {
       throw new ERuntimeException("Cannot start the timer, its not stopped.");
     }
 
+    this.tickLength = ms;
+
     TimerTask tt = new TimerTask() {
       @Override
       public void run() {
-        tick.raise();
+        tickEvent.raise();
       }
     };
     

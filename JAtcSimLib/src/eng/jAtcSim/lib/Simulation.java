@@ -35,77 +35,38 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- *
  * @author Marek
  */
 public class Simulation {
 
-  private static final int MINIMAL_DEPARTURE_REMOVE_DISTANCE = 100;
-
-  /**
-   * Public event informing surrounding about elapsed second.
-   */
-  private EventSimple<Simulation> secondElapsedEvent =
-      new EventSimple<>(this);
-
-  public EventSimple<Simulation> getSecondElapsedEvent() {
-    return secondElapsedEvent;
-  }
-
-  /**
-   * Internal timer used to make simulation ticks.
-   */
-  private final Timer tmr = new Timer(o -> Simulation.this.elapseSecond());
   public static final ERandom rnd = new ERandom();
+  private static final int MINIMAL_DEPARTURE_REMOVE_DISTANCE = 100;
+  private static final String SYSMES_COMMANDS = "?";
+  private static final Pattern SYSMES_CHANGE_SPEED = Pattern.compile("tick (\\d+)");
+  private static final Pattern SYSMES_METAR = Pattern.compile("metar");
+  private static final Pattern SYSMES_REMOVE = Pattern.compile("remove (\\d{4})");
+  private final static double MAX_VICINITY_DISTANCE_IN_NM = 10;
   private final ETime now;
-  private int simulationSecondLengthInMs;
   private final AirplaneTypes planeTypes;
   private final Airport airport;
-  private Weather weather;
   private final Messenger messenger = new Messenger();
   private final UserAtc appAtc;
   private final TowerAtc twrAtc;
   private final CenterAtc ctrAtc;
   private final Traffic traffic;
-
-  //TODO shouldn't this be private?
-  public AirplaneTypes getPlaneTypes() {
-    return planeTypes;
-  }
-
-  public Movement[] getScheduledMovements(){
-    Movement [] ret;
-    ret = traffic.getScheduledMovements();
-    return ret;
-  }
-
-  public Airport getActiveAirport() {
-    return airport;
-  }
-
-  public String toAltitudeString(double altInFt, boolean appendFt) {
-    if (altInFt > getActiveAirport().getTransitionAltitude()) {
-      return String.format("FL%03d", ((int)altInFt) / 100);
-    } else {
-      if (appendFt) {
-        return String.format("%04d ft", (int) altInFt);
-      } else {
-        return String.format("%04d", (int) altInFt);
-      }
-    }
-  }
-
-  public ETime getNow() {
-    return now;
-  }
-
-  public ReadOnlyList<Airplane> getAirplanes() {
-    return Acc.prm().getAll();
-  }
-
-  public Messenger getMessenger() {
-    return messenger;
-  }
+  private final List<Airplane> newPlanesDelayedToAvoidCollision = new LinkedList();
+  /**
+   * Public event informing surrounding about elapsed second.
+   */
+  private EventSimple<Simulation> secondElapsedEvent =
+      new EventSimple<>(this);
+  private int simulationSecondLengthInMs;
+  private Weather weather;
+  private boolean isBusy = false;
+  /**
+   * Internal timer used to make simulation ticks.
+   */
+  private final Timer tmr = new Timer(o -> Simulation.this.elapseSecond());
 
   private Simulation(Airport airport, AirplaneTypes types, Weather weather, Traffic traffic, Calendar now, int simulationSecondLengthInMs) {
     if (airport == null) {
@@ -150,7 +111,48 @@ public class Simulation {
     return ret;
   }
 
-  private boolean isBusy = false;
+  public EventSimple<Simulation> getSecondElapsedEvent() {
+    return secondElapsedEvent;
+  }
+
+  //TODO shouldn't this be private?
+  public AirplaneTypes getPlaneTypes() {
+    return planeTypes;
+  }
+
+  public Movement[] getScheduledMovements() {
+    Movement[] ret;
+    ret = traffic.getScheduledMovements();
+    return ret;
+  }
+
+  public Airport getActiveAirport() {
+    return airport;
+  }
+
+  public String toAltitudeString(double altInFt, boolean appendFt) {
+    if (altInFt > getActiveAirport().getTransitionAltitude()) {
+      return String.format("FL%03d", ((int) altInFt) / 100);
+    } else {
+      if (appendFt) {
+        return String.format("%04d ft", (int) altInFt);
+      } else {
+        return String.format("%04d", (int) altInFt);
+      }
+    }
+  }
+
+  public ETime getNow() {
+    return now;
+  }
+
+  public ReadOnlyList<Airplane> getAirplanes() {
+    return Acc.prm().getAll();
+  }
+
+  public Messenger getMessenger() {
+    return messenger;
+  }
 
   public void start() {
     if (this.tmr.isRunning() == false) {
@@ -162,12 +164,40 @@ public class Simulation {
     this.tmr.stop();
   }
 
-  public boolean isRunning(){
+  public boolean isRunning() {
     return this.tmr.isRunning();
   }
 
   public ReadOnlyList<Airplane.Airplane4Display> getPlanesToDisplay() {
     return Acc.prm().getPlanesToDisplay();
+  }
+
+  public Atc getResponsibleAtc(Airplane plane) {
+    return Acc.prm().getResponsibleAtc(plane);
+  }
+
+  public Weather getWeather() {
+    return weather;
+  }
+
+  public UserAtc getAppAtc() {
+    return appAtc;
+  }
+
+  public TowerAtc getTwrAtc() {
+    return twrAtc;
+  }
+
+  public CenterAtc getCtrAtc() {
+    return ctrAtc;
+  }
+
+  public RunwayThreshold getActiveRunwayThreshold() {
+    return Acc.threshold();
+  }
+
+  public void setActiveRunwayThreshold(RunwayThreshold newRunwayThreshold) {
+    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
 
   private void elapseSecond() {
@@ -213,8 +243,6 @@ public class Simulation {
     }
   }
 
-  private final List<Airplane> newPlanesDelayedToAvoidCollision = new LinkedList();
-
   private void generateNewPlanes() {
     Airplane[] newPlanes = traffic.getNewAirplanes();
 
@@ -247,26 +275,6 @@ public class Simulation {
     }
   }
 
-  public Atc getResponsibleAtc(Airplane plane) {
-    return Acc.prm().getResponsibleAtc(plane);
-  }
-
-  public Weather getWeather() {
-    return weather;
-  }
-
-  public UserAtc getAppAtc() {
-    return appAtc;
-  }
-
-  public TowerAtc getTwrAtc() {
-    return twrAtc;
-  }
-
-  public CenterAtc getCtrAtc() {
-    return ctrAtc;
-  }
-
   private void removeOldPlanes() {
     AirplaneList rem = new AirplaneList();
     for (Airplane p : Acc.planes()) {
@@ -291,40 +299,69 @@ public class Simulation {
     Airplanes.evaluateAirproxes(Acc.planes());
   }
 
-  public void setActiveRunwayThreshold(RunwayThreshold newRunwayThreshold) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-  }
-
-  public RunwayThreshold getActiveRunwayThreshold() {
-    return Acc.threshold();
-  }
-
   private void processSystemMessages() {
-    List<Message> systemMessages = Acc.messenger().getByTarget(messenger.SYSTEM,true);
+    List<Message> systemMessages = Acc.messenger().getByTarget(messenger.SYSTEM, true);
 
     for (Message m : systemMessages) {
       processSystemMessage(m);
     }
   }
 
-  private static final String SYSMES_COMMANDS = "?";
-  private static final Pattern SYSMES_CHANGE_SPEED = Pattern.compile("tick=(\\d+)");
-  private static final Pattern SYSMES_METAR = Pattern.compile("metar");
-
   private void processSystemMessage(Message m) {
     String msgText = m.<StringMessageContent>getContent().getMessageText();
     if (msgText.equals(SYSMES_COMMANDS)) {
       printCommandsHelps();
     } else if (SYSMES_CHANGE_SPEED.asPredicate().test(msgText)) {
-      processSystemMessageTick(msgText, m);
-    } else if (SYSMES_METAR.asPredicate().test(msgText)){
+      processSystemMessageTick(m);
+    } else if (SYSMES_METAR.asPredicate().test(msgText)) {
       String metarText = Acc.sim().getWeather().toInfoString();
       Acc.messenger().send(
           new Message(Messenger.SYSTEM, Acc.atcApp(), new StringMessageContent(metarText)));
+    } else if (SYSMES_REMOVE.asPredicate().test(msgText)) {
+      processSystemMessageRemove(m);
     }
   }
 
-  private void processSystemMessageTick(String msgText, Message m) {
+  private void processSystemMessageRemove(Message m) {
+    String msgText = m.<StringMessageContent>getContent().getMessageText();
+    Matcher matcher = SYSMES_REMOVE.matcher(msgText);
+    if (!matcher.find()){
+      Acc.messenger().send(
+          new Message(
+              messenger.SYSTEM,
+              m.<UserAtc>getSource(),
+              new StringMessageContent("Illegal {remove} command format. Try ?remove <squawk>.")));
+    }
+    String sqwk = matcher.group(1);
+
+    Airplane plane = null;
+    for (Airplane airplane : Acc.planes()) {
+      if (airplane.getSqwk().toString().equals(sqwk)) {
+        plane = airplane;
+        break;
+      }
+    }
+
+    if (plane == null){
+      Acc.messenger().send(
+          new Message(
+              messenger.SYSTEM,
+              m.<UserAtc>getSource(),
+              new StringMessageContent("Unable to remove airplane from game. Squawk {%s} not found.", sqwk)));
+    } else {
+      Acc.prm().unregisterPlane(plane);
+      Acc.messenger().send(
+          new Message(
+              messenger.SYSTEM,
+              m.<UserAtc>getSource(),
+              new StringMessageContent("Airplane %s {%s} removed from game.",
+                  plane.getCallsign().toString(),
+                  plane.getSqwk().toString())));
+    }
+  }
+
+  private void processSystemMessageTick(Message m) {
+    String msgText = m.<StringMessageContent>getContent().getMessageText();
     Matcher matcher = SYSMES_CHANGE_SPEED.matcher(msgText);
     matcher.find();
     String tickS = matcher.group(1);
@@ -336,7 +373,7 @@ public class Simulation {
           new Message(
               messenger.SYSTEM,
               m.<UserAtc>getSource(),
-              new StringMessageContent("Unable to parse %s to integer. Example: ?tick=750", tickS)));
+              new StringMessageContent("Current tick speed is " + tmr.getTickLength() + ". To change use ?tick <value>.", tickS)));
       return;
     }
     this.tmr.stop();
@@ -360,8 +397,6 @@ public class Simulation {
             new StringMessageContent(txt))
     );
   }
-
-  private final static double MAX_VICINITY_DISTANCE_IN_NM = 10;
 
   private boolean isInVicinityOfSomeOtherPlane(Airplane checkedPlane) {
     boolean ret = false;
