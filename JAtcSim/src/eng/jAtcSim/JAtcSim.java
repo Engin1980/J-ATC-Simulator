@@ -47,6 +47,7 @@ public class JAtcSim {
   public static void main(String[] args) throws Exception {
 
     initResourcesFolder();
+    Recorder.setLogPathBase(appSettings.logFolder);
 
     // startup wizard
     String file = appSettings.resFolder + "startupSettings.xml";
@@ -95,9 +96,6 @@ public class JAtcSim {
 
     // sound
     SoundManager.init(appSettings.soundFolder);
-
-    // logging
-    Recorder.setLogPathBase(appSettings.logFolder);
 
     // starting pack & simulation
     String packType = startupSettings.radar.packClass;
