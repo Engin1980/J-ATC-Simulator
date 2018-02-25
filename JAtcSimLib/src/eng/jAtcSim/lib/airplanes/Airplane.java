@@ -241,6 +241,10 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     public void setTakeOffPosition(Coordinate coordinate) {
       Airplane.this.coordinate = coordinate;
     }
+
+    public boolean isArrival() {
+      return this.isArrival();
+    }
   }
 
   public enum State {

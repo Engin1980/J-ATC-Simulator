@@ -60,6 +60,7 @@ public class ContactCommandApplication extends CommandApplication<ContactCommand
     // TODO now switch is realised in no-time, there is no delay between "frequency change confirmation" and "new atc call"
     ISpeech s = new GoodDayNotification(plane.getCallsign(), Acc.toAltS(plane.getAltitude(), true));
     plane.getPilot().say(s);
+    if (plane.isArrival()) plane.getPilot().adviceGoAroundReasonToAtcIfAny();
     return ApplicationResult.getEmpty();
   }
 }

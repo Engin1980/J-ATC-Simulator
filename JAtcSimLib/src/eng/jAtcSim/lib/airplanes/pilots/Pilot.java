@@ -24,6 +24,7 @@ import eng.jAtcSim.lib.speaking.ISpeech;
 import eng.jAtcSim.lib.speaking.SpeechDelayer;
 import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.EstablishedOnApproachNotification;
+import eng.jAtcSim.lib.speaking.fromAirplane.notifications.GoingAroundNotification;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.RequestRadarContactNotification;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.IllegalThenCommandRejection;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
@@ -116,6 +117,13 @@ public class Pilot {
 
     public void setHasRadarContact() {
       Pilot.this.hasRadarContact = true;
+    }
+
+    public void adviceGoAroundReasonToAtcIfAny() {
+      if (gaReason != null){
+        GoingAroundNotification gan = new GoingAroundNotification(gaReason);
+        say(gan);
+      }
     }
 
     protected void setState(Airplane.State state) {
@@ -236,8 +244,12 @@ public class Pilot {
           if (parent.getAltitude() < LOW_SPEED_DOWN_ALTITUDE)
             super.setState(Airplane.State.arrivingLow);
           else {
-            double distToFaf =
-                Coordinates.getDistanceInNM(parent.getCoordinate(), Acc.threshold().getFafCross());
+            double distToFaf;
+            if (Acc.threshold().getFafCross() == null){
+              distToFaf = Coordinates.getDistanceInNM(parent.getCoordinate(), Acc.threshold().getCoordinate());
+            } else {
+              distToFaf = Coordinates.getDistanceInNM(parent.getCoordinate(), Acc.threshold().getFafCross());
+            }
             if (distToFaf < FAF_SPEED_DOWN_DISTANCE_IN_NM) {
               super.setState(Airplane.State.arrivingCloseFaf);
             }
@@ -456,6 +468,7 @@ public class Pilot {
       this.finalAltitude = Acc.airport().getAltitude() + LONG_FINAL_ALTITUDE_AGL;
       this.shortFinalAltitude = Acc.airport().getAltitude() + SHORT_FINAL_ALTITUDE_AGL;
       this.isAfterStateChange = true;
+      Pilot.this.gaReason = null;
     }
 
     private double getAppHeadingDifference() {
@@ -525,6 +538,7 @@ public class Pilot {
     }
 
     private void goAround(String reason) {
+      Pilot.this.gaReason = reason;
       parent.adviceGoAroundToAtc(atc, reason);
 
       parent.setTargetSpeed(parent.getType().vDep);
@@ -663,6 +677,7 @@ public class Pilot {
   private Coordinate targetCoordinate;
   private Behavior behavior;
   private boolean isConfirmationsNowRequested = false;
+  private String gaReason = null;
 
   public Pilot(Airplane.Airplane4Pilot parent, String routeName, SpeechList<IAtcCommand> routeCommandQueue) {
 

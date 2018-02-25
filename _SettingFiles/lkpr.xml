@@ -192,7 +192,7 @@
       </vfrPoints>   
     </airport>
     <airport icao="LKMT" name="Ostrava Mošnov" altitude="844" transitionAltitude="5000" vfrAltitude="2500" mainAirportNavaidName="OTA">
-      <trafficCategories categoryA="0.6" categoryB="0.3" categoryC="0.08" categoryD="0.02" />
+      <trafficCategories categoryA="0.01" categoryB="0.3" categoryC="0.8" categoryD="0.1" />
       <initialPosition coordinate="49.697492 18.109075" range="85" />
       <atcTemplates>
         <atcTemplate type="ctr" name="LKAA_CTR" frequency="127.12" 

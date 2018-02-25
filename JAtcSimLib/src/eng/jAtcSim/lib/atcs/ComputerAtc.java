@@ -93,8 +93,9 @@ public abstract class ComputerAtc extends Atc {
           p,
           new SpeechList(new RadarContactConfirmationNotification()));
       sendMessage(msg);
+
+      doAfterGoodDayNotificationConfirmation(p);
     }
-    doAfterGoodDayNotificationConfirmation(p);
   }
 
   /**

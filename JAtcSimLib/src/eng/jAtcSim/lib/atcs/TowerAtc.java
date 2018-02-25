@@ -78,6 +78,13 @@ public class TowerAtc extends ComputerAtc {
     super.elapseSecond();
 
     tryTakeOffPlane();
+    
+    if (Acc.now().getTotalSeconds() % RUNWAY_CHANGE_INFO_UPDATE_INTERVAL == 0){
+      checkForRunwayChange();
+    }
+  }
+
+  private void checkForRunwayChange() {
   }
 
   @Override
@@ -231,7 +238,7 @@ class TakeOffInfo {
   public TakeOffSeparation separation;
 
   public TakeOffInfo(ETime takeOffTime, Airplane airplane) {
-    this.takeOffTime = takeOffTime;
+    this.takeOffTime = takeOffTime.clone();
     this.airplane = airplane;
     this.randomReadyToSwitchAltitude = Acc.airport().getAltitude() + Acc.rnd().nextInt(250, 1000);
   }
