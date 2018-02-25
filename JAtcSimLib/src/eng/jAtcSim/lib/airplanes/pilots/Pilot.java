@@ -183,8 +183,8 @@ public class Pilot {
           // altitude already set
           // speed set
           if (parent.getAltitude() > this.accelerationAltitude)
-            if (parent.isArrival()){
-            // after G/A
+            if (parent.isArrival()) {
+              // after G/A
               super.setBehaviorAndState(new ArrivalBehavior(), Airplane.State.arrivingHigh);
             } else {
               super.setBehaviorAndState(
@@ -245,8 +245,11 @@ public class Pilot {
           break;
         case arrivingLow:
           // TODO this will not work for runways with FAF above FL100
-          double distToFaf =
-              Coordinates.getDistanceInNM(parent.getCoordinate(), Acc.threshold().getFafCross());
+          double distToFaf;
+          if (Acc.threshold().getFafCross() == null)
+            distToFaf = Coordinates.getDistanceInNM(parent.getCoordinate(), Acc.threshold().getCoordinate());
+          else
+            distToFaf = Coordinates.getDistanceInNM(parent.getCoordinate(), Acc.threshold().getFafCross());
           if (distToFaf < FAF_SPEED_DOWN_DISTANCE_IN_NM) {
             super.setState(Airplane.State.arrivingCloseFaf);
           }
