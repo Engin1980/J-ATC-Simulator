@@ -183,10 +183,15 @@ public class Pilot {
           // altitude already set
           // speed set
           if (parent.getAltitude() > this.accelerationAltitude)
-            super.setBehaviorAndState(
-                new DepartureBehavior(),
-                Airplane.State.departingLow
-            );
+            if (parent.isArrival()){
+            // after G/A
+              super.setBehaviorAndState(new ArrivalBehavior(), Airplane.State.arrivingHigh);
+            } else {
+              super.setBehaviorAndState(
+                  new DepartureBehavior(),
+                  Airplane.State.departingLow
+              );
+            }
           break;
         default:
           super.throwIllegalStateException();

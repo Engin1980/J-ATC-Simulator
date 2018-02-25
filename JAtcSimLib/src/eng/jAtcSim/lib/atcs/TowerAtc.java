@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package eng.jAtcSim.lib.atcs;
 
 import eng.jAtcSim.lib.Acc;
@@ -10,48 +5,37 @@ import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.AirplaneList;
 import eng.jAtcSim.lib.coordinates.Coordinates;
 import eng.jAtcSim.lib.exceptions.ENotSupportedException;
-import eng.jAtcSim.lib.exceptions.ERuntimeException;
 import eng.jAtcSim.lib.global.ETime;
 import eng.jAtcSim.lib.global.Headings;
 import eng.jAtcSim.lib.messaging.Message;
 import eng.jAtcSim.lib.messaging.StringMessageContent;
 import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.GoingAroundNotification;
-import eng.jAtcSim.lib.speaking.fromAirplane.notifications.GoodDayNotification;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ClearedForTakeoffCommand;
-import eng.jAtcSim.lib.speaking.fromAtc.commands.ContactCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.notifications.RadarContactConfirmationNotification;
 import eng.jAtcSim.lib.weathers.Weather;
 import eng.jAtcSim.lib.world.Runway;
 import eng.jAtcSim.lib.world.RunwayThreshold;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-/**
- * @author Marek
- */
 public class TowerAtc extends ComputerAtc {
 
   private static final int RUNWAY_CHANGE_INFO_UPDATE_INTERVAL = 10 * 60;
   private static final int MAXIMAL_SPEED_FOR_PREFERRED_RUNWAY = 5;
-  private final AirplaneList readyForHangOff = new AirplaneList();
-  private final AirplaneList departings = new AirplaneList();
-  private final LastDepartures lastDepartures = new LastDepartures();
-  private RunwayChangeInfo runwayChangeInfo = null;
+  private static final double MAXIMAL_ACCEPT_DISTANCE_IN_NM = 15;
+  private AirplaneList goAroundedPlanesToSwitch = new AirplaneList();
+  private AirplaneList holdingPointList = new AirplaneList();
+  private final Map<RunwayThreshold, TakeOffInfo> takeOffInfos = new HashMap<>();
+
   private RunwayThreshold runwayThresholdInUse = null;
 
   public TowerAtc(AtcTemplate template) {
     super(template);
   }
 
-  /**
-   * Returns suggested runway threshold according to current weather.
-   *
-   * @return
-   */
-  public static RunwayThreshold getSuggestedThreshold() {
+  private static RunwayThreshold getSuggestedThreshold() {
     Weather w = Acc.weather();
 
     RunwayThreshold rt = null;
@@ -90,243 +74,84 @@ public class TowerAtc extends ComputerAtc {
     return rt;
   }
 
-  public RunwayThreshold getRunwayThresholdInUse() {
-    return runwayThresholdInUse;
+  @Override
+  public void elapseSecond() {
+    super.elapseSecond();
+
+    tryTakeOffPlane();
+  }
+
+  @Override
+  protected boolean shouldBeSwitched(Airplane plane) {
+    if (plane.isArrival())
+      return true; // this should be go-arounded arrivals
+
+    // as this plane is asked for switch, it is confirmed
+    // from APP
+    if (holdingPointList.contains(plane) == false)
+      holdingPointList.add(plane);
+
+    for (TakeOffInfo toi : takeOffInfos.values()) {
+      if (toi.airplane == plane && !plane.getState().is(Airplane.State.holdingPoint, Airplane.State.takeOffRoll)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  @Override
+  protected boolean canIAcceptPlane(Airplane p) {
+    if (p.isDeparture()) {
+      return false;
+    }
+    if (Acc.prm().getResponsibleAtc(p) != Acc.atcApp()) {
+      return false;
+    }
+    if (p.getAltitude() > this.acceptAltitude) {
+      return false;
+    }
+    double dist = Coordinates.getDistanceInNM(p.getCoordinate(), Acc.airport().getLocation());
+    if (dist > MAXIMAL_ACCEPT_DISTANCE_IN_NM) {
+      return false;
+    }
+
+    return true;
+  }
+
+  @Override
+  protected void doAfterGoodDayNotificationConfirmation(Airplane p) {
+    // nothing to do
+  }
+
+  @Override
+  protected void processMessagesFromPlane(Airplane plane, SpeechList spchs) {
+    if (spchs.containsType(GoingAroundNotification.class)) {
+      goAroundedPlanesToSwitch.add(plane);
+    }
+  }
+
+  @Override
+  protected Atc getTargetAtcIfPlaneIsReadyToSwitch(Airplane plane) {
+    Atc ret = null;
+    if (this.goAroundedPlanesToSwitch.contains(plane)) {
+      this.goAroundedPlanesToSwitch.remove(plane);
+      ret = Acc.atcApp();
+    } else if (plane.isDeparture()) {
+      ret = Acc.atcApp();
+    }
+    return ret;
   }
 
   @Override
   public void init() {
+    super.init();
     RunwayThreshold suggestedThreshold = getSuggestedThreshold();
     changeRunwayInUse(suggestedThreshold);
   }
 
-  @Override
-  protected void _registerNewPlane(Airplane plane) {
-    if (plane.isArrival()) {
-      throw new ERuntimeException("Arriving plane cannot be registered using this method.");
-    }
-  }
-
-  @Override
-  protected void _elapseSecond() {
-    List<Message> msgs = Acc.messenger().getByTarget(this, true);
-
-    esRequestPlaneSwitchFromApp();
-
-    for (Message m : msgs) {
-      recorder.logMessage(m); // incoming speech
-
-      if (m.isSourceOfType(Airplane.class)) {
-        Airplane p = m.getSource();
-        SpeechList spchs = m.getContent();
-
-
-        if (spchs.containsType(GoingAroundNotification.class)) {
-          // predavame na APP
-          Airplane plane = m.getSource();
-          super.requestSwitch(plane);
-          waitingRequestsList.add(plane);
-        } else if (spchs.containsType(GoodDayNotification.class)) {
-          Message msg = new Message(
-              this,
-              m.<Airplane>getSource(),
-              new SpeechList<>(new RadarContactConfirmationNotification())
-              );
-          Acc.messenger().send(msg);
-          recorder.logMessage(msg);
-        }
-        continue;
-      } else if (m.getSource() != Acc.atcApp()) {
-        continue;
-      }
-
-      Airplane p = m.<PlaneSwitchMessage>getContent().plane;
-      if (waitingRequestsList.contains(p) == false) {
-        p = null;
-      }
-
-      if (p == null) {
-        // APP -> TWR, muze?
-        p = m.<PlaneSwitchMessage>getContent().plane;
-        if (canIAcceptFromApp(p)) {
-          super.confirmSwitch(p);
-          super.approveSwitch(p);
-        } else {
-          super.refuseSwitch(p);
-        }
-
-      } else {
-        // potvrzene od APP, TWR predava na APP
-        waitingRequestsList.remove(p);
-        readyForHangOff.add(p);
-      }
-    }
-
-    processReadyForHangOff();
-    switchDepartings();
-
-    // runway change
-    checkForRunwayChange();
-  }
-
-  private void processReadyForHangOff() {
-    if (readyForHangOff.isEmpty() == false && canTakeOffNextPlane()) {
-      Airplane p = readyForHangOff.get(0);
-      readyForHangOff.remove(0);
-      departings.add(p);
-      lastDepartures.set(runwayThresholdInUse, p, Acc.now());
-      if (p.isDeparture()) {
-        // is new departure
-        SpeechList lst = new SpeechList();
-
-        lst.add(new RadarContactConfirmationNotification());
-        lst.add(new ClearedForTakeoffCommand(runwayThresholdInUse));
-
-        Message m = new Message(this, p, lst);
-        Acc.messenger().send(m);
-        recorder.logMessage(m);
-      } else {
-        SpeechList lst = new SpeechList();
-
-        lst.add(new ContactCommand(eType.app));
-
-        Message m = new Message(this, p, lst);
-        Acc.messenger().send(m);
-        recorder.logMessage(m);
-        // is go around
-        // probably nothing there as go-around commands
-        // must be processed when go-around occurred in airplane()
-      }
-    }
-  }
-
-  private boolean canTakeOffNextPlane() {
-    for (Airplane p : getPrm().getPlanes(this)) {
-      double dst = Coordinates.getDistanceInNM(p.getCoordinate(), Acc.threshold().getCoordinate());
-      if (p.isArrival() && dst < 5) { // ... with distance closer than 5nm
-        return false;
-      }
-    } // for
-
-    LastDeparture ld = lastDepartures.get(runwayThresholdInUse);
-    if (ld == null) {
-      return true;
-    }
-
-    TakeOffSeparation tos = TakeOffSeparation.create(
-        ld.plane.getType().category,
-        this.readyForHangOff.get(0).getType().category);
-
-    if (ld.time.addSeconds(tos.seconds).isAfter(Acc.now())) {
-      return false; // there are too close due to time
-    }
-    if (Coordinates.getDistanceInNM(ld.plane.getCoordinate(), this.readyForHangOff.get(0).getCoordinate()) < tos.nm) {
-      return false; // they are too close due to distance
-    }
-
-    final int MIN_ALTITUDE_FOR_NEXT = 300;
-    if (Acc.airport().getAltitude() + MIN_ALTITUDE_FOR_NEXT > ld.plane.getAltitude()) {
-      return false; // the first one is not high enough
-    }
-
-    return true;
-  }
-
-  private boolean canIAcceptFromApp(Airplane p) {
-    if (p.isDeparture()) {
-      return false;
-    }
-    if (Acc.atcApp().isControllingAirplane(p) == false) {
-      return false;
-    }
-    if (p.getAltitude() > super.acceptAltitude) {
-      return false;
-    }
-    double dist = Coordinates.getDistanceInNM(p.getCoordinate(), Acc.airport().getLocation());
-    if (dist > 15) {
-      return false;
-    }
-
-    return true;
-  }
-
-  private void esRequestPlaneSwitchFromApp() {
-    Message m;
-
-    // TWR -> APP, zadost na APP
-    AirplaneList plns = getPlanesReadyForApp();
-    for (Airplane p : plns) {
-      // todo PlaneSwitchMessage are only several types, some enum should be used instead of fixed string message
-      m = new Message(this, Acc.atcApp(),
-          new PlaneSwitchMessage(p, " to you"));
-      Acc.messenger().send(m);
-      recorder.logMessage(m);
-
-      getPrm().requestSwitch(this, Acc.atcApp(), p);
-
-      waitingRequestsList.add(p);
-    }
-    // opakovani starych zadosti
-    List<Airplane> awaitings = waitingRequestsList.getAwaitings();
-    for (Airplane p : awaitings) {
-      m = new Message(this, Acc.atcApp(),
-          new PlaneSwitchMessage(p, " to you (repeated)"));
-      Acc.messenger().send(m);
-      recorder.logMessage(m);
-    }
-  }
-
-  private AirplaneList getPlanesReadyForApp() {
-    AirplaneList ret = new AirplaneList();
-
-    for (Airplane p : getPrm().getPlanes(this)) {
-      if (p.isArrival()) {
-        continue;
-      }
-      if (getPrm().isAskedToSwitch(p)) {
-        continue;
-      }
-
-      ret.add(p);
-    }
-
-    return ret;
-  }
-
-  private void switchDepartings() {
-    AirplaneList tmp = new AirplaneList();
-    for (Airplane p : departings) {
-      if (p.getAltitude() > Acc.airport().getAltitude()) {
-        tmp.add(p);
-      }
-    }
-
-    for (Airplane p : tmp) {
-      super.approveSwitch(p);
-      departings.remove(p);
-    }
-  }
-
-  private void checkForRunwayChange() {
-    if (Acc.now().getTotalSeconds() % RUNWAY_CHANGE_INFO_UPDATE_INTERVAL == 0) {
-      RunwayThreshold suggestedThreshold = getSuggestedThreshold();
-      if (suggestedThreshold != Acc.threshold()) {
-        RunwayChangeInfo rci = new RunwayChangeInfo(suggestedThreshold, Acc.now().addSeconds(15 * 60)); // change in 15 minutes
-        if (this.runwayChangeInfo == null || this.runwayChangeInfo.newRunwayThreshold != suggestedThreshold) {
-          this.runwayChangeInfo = rci;
-          Message m = new Message(
-              this,
-              Acc.atcApp(),
-              new StringMessageContent(
-                  "Expect change to runway %s at %s.", rci.newRunwayThreshold.getName(), rci.changeTime.toString()));
-          Acc.messenger().send(m);
-          recorder.logMessage(m);
-        }
-      }
-    } else if (this.runwayChangeInfo != null && this.runwayChangeInfo.changeTime.isBefore(Acc.now())) {
-      changeRunwayInUse(this.runwayChangeInfo.newRunwayThreshold);
-      this.runwayChangeInfo = null;
-    }
+  public RunwayThreshold getRunwayThresholdInUse() {
+    return runwayThresholdInUse;
   }
 
   private void changeRunwayInUse(RunwayThreshold newRunwayInUseThreshold) {
@@ -334,21 +159,81 @@ public class TowerAtc extends ComputerAtc {
         this,
         Acc.atcApp(),
         new StringMessageContent("Runway in use %s from now.", newRunwayInUseThreshold.getName()));
-    Acc.messenger().send(m);
-    recorder.logMessage(m);
+    super.sendMessage(m);
     this.runwayThresholdInUse = newRunwayInUseThreshold;
+  }
+
+  private void tryTakeOffPlane() {
+    if (holdingPointList.isEmpty())
+      return;
+
+    Airplane toReadyPlane = holdingPointList.get(0);
+
+    TakeOffInfo toi = null;
+    if (takeOffInfos.containsKey(this.runwayThresholdInUse)) {
+      toi = takeOffInfos.get(this.runwayThresholdInUse);
+    }
+
+    if (toi != null) {
+      if (toi.airplane.getAltitude() + 300 < Acc.airport().getAltitude())
+        return;
+
+      if (toi.separation == null) {
+        toi.separation = TakeOffSeparation.create(toi.airplane.getType().category, toReadyPlane.getType().category);
+      }
+
+      if (toi.takeOffTime.addSeconds(toi.separation.seconds).isAfter(Acc.now()))
+        return;
+
+      double distance = Coordinates.getDistanceInNM(toi.airplane.getCoordinate(), Acc.threshold().getCoordinate());
+      if (distance < toi.separation.nm)
+        return;
+    }
+
+    if (closestLandingPlaneDistance() < 5)
+      return;
+
+    // if it gets here, the "toReadyPlane" can proceed take-off
+    holdingPointList.remove(0);
+
+    toi = new TakeOffInfo(
+        Acc.now(), toReadyPlane);
+    this.takeOffInfos.put(this.runwayThresholdInUse, toi);
+
+    SpeechList lst = new SpeechList();
+    lst.add(new RadarContactConfirmationNotification());
+    lst.add(new ClearedForTakeoffCommand(runwayThresholdInUse));
+    Message m = new Message(this, toReadyPlane, lst);
+    super.sendMessage(m);
+  }
+
+  private double closestLandingPlaneDistance() {
+    double ret = Double.MAX_VALUE;
+    for (Airplane plane : Acc.planes()) {
+      if (plane.getState().is(
+          Airplane.State.landed,
+          Airplane.State.shortFinal,
+          Airplane.State.longFinal,
+          Airplane.State.approachDescend
+      )) {
+        double dist = Coordinates.getDistanceInNM(plane.getCoordinate(), Acc.threshold().getCoordinate());
+        if (dist < ret)
+          ret = dist;
+      }
+    }
+    return ret;
   }
 
 }
 
-class RunwayChangeInfo {
+class TakeOffInfo {
+  public final ETime takeOffTime;
+  public final Airplane airplane;
+  public TakeOffSeparation separation;
 
-  public final RunwayThreshold newRunwayThreshold;
-  public final ETime changeTime;
-
-  public RunwayChangeInfo(RunwayThreshold newRunwayThreshold, ETime changeTime) {
-    this.newRunwayThreshold = newRunwayThreshold;
-    this.changeTime = changeTime;
+  public TakeOffInfo(ETime takeOffTime, Airplane airplane) {
+    this.takeOffTime = takeOffTime;
+    this.airplane = airplane;
   }
 }
 
@@ -399,38 +284,6 @@ class TakeOffSeparation {
         return 3;
       default:
         throw new ENotSupportedException("Unknown plane type category " + c);
-    }
-  }
-}
-
-class LastDeparture {
-
-  public final Airplane plane;
-  public final ETime time;
-
-  public LastDeparture(Airplane plane, ETime time) {
-    this.plane = plane;
-    this.time = time;
-  }
-}
-
-class LastDepartures {
-
-  private final Map<RunwayThreshold, LastDeparture> inner = new HashMap<>();
-
-  public void set(RunwayThreshold runwayThreshold, LastDeparture departure) {
-    inner.put(runwayThreshold, departure);
-  }
-
-  public void set(RunwayThreshold runwayThreshold, Airplane plane, ETime time) {
-    this.set(runwayThreshold, new LastDeparture(plane, time.clone()));
-  }
-
-  public LastDeparture get(RunwayThreshold runwayThreshold) {
-    if (inner.containsKey(runwayThreshold)) {
-      return inner.get(runwayThreshold);
-    } else {
-      return null;
     }
   }
 }

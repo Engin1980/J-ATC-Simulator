@@ -63,11 +63,6 @@ public abstract class Atc implements IMessageParticipant {
     return getPrm().getResponsibleAtc(plane) == this;
   }
   
-  public void registerNewPlane (Airplane plane){
-    _registerNewPlane(plane);
-  }
-  protected abstract void _registerNewPlane(Airplane plane);
-
   public int getReleaseAltitude() {
     return releaseAltitude;
   }

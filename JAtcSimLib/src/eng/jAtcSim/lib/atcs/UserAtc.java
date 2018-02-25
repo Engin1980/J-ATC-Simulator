@@ -80,11 +80,6 @@ public class UserAtc extends Atc {
     return true;
   }
 
-  @Override
-  protected void _registerNewPlane(Airplane plane) {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
-
   public void elapseSecond() {
 
   }

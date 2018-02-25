@@ -29,6 +29,7 @@ public class ClearedForTakeOffCommandApplication extends CommandApplication<Clea
 
   @Override
   protected ApplicationResult adjustAirplane(Airplane.Airplane4Command plane, ClearedForTakeoffCommand c) {
+    plane.setTakeOffPosition(c.getRunwayThreshold().getCoordinate());
     plane.getPilot().setTakeOffBehavior();
     return ApplicationResult.getEmpty();
   }

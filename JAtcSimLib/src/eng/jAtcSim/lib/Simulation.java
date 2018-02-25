@@ -251,7 +251,6 @@ public class Simulation {
         if (isInVicinityOfSomeOtherPlane(newPlane) == false) {
           newPlanesDelayedToAvoidCollision.remove(newPlane);
           Acc.prm().registerPlane(ctrAtc, newPlane);
-          ctrAtc.registerNewPlane(newPlane);
         }
       }
     }
@@ -259,7 +258,6 @@ public class Simulation {
     for (Airplane newPlane : newPlanes) {
       if (newPlane.isDeparture()) {
         Acc.prm().registerPlane(twrAtc, newPlane);
-        twrAtc.registerNewPlane(newPlane);
       } else {
         // here are two possibilities
         // 1. new airplanes are delayed to avoid current airplanes. That is, as far as new plane is in vicinity of an other plane, it is added to "delayed" collection.
@@ -269,7 +267,6 @@ public class Simulation {
           newPlanesDelayedToAvoidCollision.add(newPlane);
         } else {
           Acc.prm().registerPlane(ctrAtc, newPlane);
-          ctrAtc.registerNewPlane(newPlane);
         }
       }
     }
