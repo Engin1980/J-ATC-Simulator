@@ -2,6 +2,7 @@ package eng.jAtcSim.lib.airplanes.commandApplications;
 
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.speaking.IFromAtc;
+import eng.jAtcSim.lib.speaking.fromAirplane.notifications.PassingClearanceLimitNotification;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.Confirmation;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcNotification;
@@ -29,10 +30,8 @@ public class ApplicationManager {
     cmdApps.put(ShortcutCommand.class, new ShortcutCommandApplication());
     cmdApps.put(ContactCommand.class, new ContactCommandApplication());
 
-
     notApps = new HashMap<>();
     notApps.put(RadarContactConfirmationNotification.class, new RadarContactConfirmationNotificationApplication());
-
   }
 
   public static ConfirmationResult confirm(Airplane.Airplane4Command plane, IFromAtc c, boolean checkSanity) {

@@ -25,6 +25,7 @@ import eng.jAtcSim.lib.speaking.SpeechDelayer;
 import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.EstablishedOnApproachNotification;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.GoingAroundNotification;
+import eng.jAtcSim.lib.speaking.fromAirplane.notifications.PassingClearanceLimitNotification;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.RequestRadarContactNotification;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.IllegalThenCommandRejection;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
@@ -218,12 +219,20 @@ public class Pilot {
     @Override
     public void fly() {
       if (targetCoordinate != null) {
-        // TODO if target is too close and there is no next target, alert ATC and continue current heading
-        // TODO but watch out for behavior for departures passing last SID navaid
-        double heading = Coordinates.getBearing(parent.getCoordinate(), targetCoordinate);
-        heading = Headings.to(heading);
-        if (heading != parent.getTargetHeading()) {
-          parent.setTargetHeading(heading);
+
+        double dist = Coordinates.getDistanceInNM(parent.getCoordinate(), targetCoordinate);
+        if (dist < 1){
+          say(new PassingClearanceLimitNotification());
+          targetCoordinate = null;
+        } else {
+
+          // TODO if target is too close and there is no next target, alert ATC and continue current heading
+          // TODO but watch out for behavior for departures passing last SID navaid (this should be now fixed by CTR_ who gives AN... command
+          double heading = Coordinates.getBearing(parent.getCoordinate(), targetCoordinate);
+          heading = Headings.to(heading);
+          if (heading != parent.getTargetHeading()) {
+            parent.setTargetHeading(heading);
+          }
         }
       }
       _fly();

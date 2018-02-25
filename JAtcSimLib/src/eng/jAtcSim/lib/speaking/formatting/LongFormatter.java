@@ -194,6 +194,10 @@ public class LongFormatter extends Formatter {
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
 
+  public String format(PassingClearanceLimitNotification cmd){
+    return "Passing clearance limit, continuing on current heading";
+  }
+
    
   public String format(Confirmation cmd) {
     return super.format(cmd.getOrigin());
@@ -223,7 +227,7 @@ public class LongFormatter extends Formatter {
   }
    
   public String format(RadarContactConfirmationNotification cmd) {
-    return "Radar contact.";
+    return "Radar contact";
   }
 
   private final String [] greetings = new String[]{"Good day", "Hello", "Hi"};

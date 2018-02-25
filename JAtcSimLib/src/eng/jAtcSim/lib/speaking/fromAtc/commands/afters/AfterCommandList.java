@@ -99,7 +99,7 @@ public class AfterCommandList {
               = Coordinates.getDistanceInNM(
               ((AfterNavaidCommand) inner.get(i).after).getNavaid().getCoordinate(),
               cor);
-          if (dist < 2) {
+          if (dist < 1.5) {
             ret.add(inner.get(i).consequent);
             inner.remove(i);
           } else {
