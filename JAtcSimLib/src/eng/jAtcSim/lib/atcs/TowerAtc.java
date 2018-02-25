@@ -25,10 +25,9 @@ public class TowerAtc extends ComputerAtc {
   private static final int RUNWAY_CHANGE_INFO_UPDATE_INTERVAL = 10 * 60;
   private static final int MAXIMAL_SPEED_FOR_PREFERRED_RUNWAY = 5;
   private static final double MAXIMAL_ACCEPT_DISTANCE_IN_NM = 15;
+  private final Map<RunwayThreshold, TakeOffInfo> takeOffInfos = new HashMap<>();
   private AirplaneList goAroundedPlanesToSwitch = new AirplaneList();
   private AirplaneList holdingPointList = new AirplaneList();
-  private final Map<RunwayThreshold, TakeOffInfo> takeOffInfos = new HashMap<>();
-
   private RunwayThreshold runwayThresholdInUse = null;
 
   public TowerAtc(AtcTemplate template) {
@@ -92,9 +91,8 @@ public class TowerAtc extends ComputerAtc {
       holdingPointList.add(plane);
 
     for (TakeOffInfo toi : takeOffInfos.values()) {
-      if (toi.airplane == plane && !plane.getState().is(Airplane.State.holdingPoint, Airplane.State.takeOffRoll)) {
+      if (toi.airplane == plane && toi.airplane.getAltitude() > toi.randomReadyToSwitchAltitude)
         return true;
-      }
     }
 
     return false;
@@ -229,11 +227,13 @@ public class TowerAtc extends ComputerAtc {
 class TakeOffInfo {
   public final ETime takeOffTime;
   public final Airplane airplane;
+  public final int randomReadyToSwitchAltitude;
   public TakeOffSeparation separation;
 
   public TakeOffInfo(ETime takeOffTime, Airplane airplane) {
     this.takeOffTime = takeOffTime;
     this.airplane = airplane;
+    this.randomReadyToSwitchAltitude = Acc.airport().getAltitude() + Acc.rnd().nextInt(250, 1000);
   }
 }
 

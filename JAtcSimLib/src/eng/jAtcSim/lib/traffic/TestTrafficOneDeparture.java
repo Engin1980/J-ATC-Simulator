@@ -68,11 +68,6 @@ public class TestTrafficOneDeparture extends TestTraffic {
     routeCmds.add(indx++, new ChangeAltitudeCommand(
         ChangeAltitudeCommand.eDirection.climb, Acc.threshold().getInitialDepartureAltitude()));
 
-    // -- po vysce+300 ma kontaktovat APP
-    routeCmds.add(indx++,
-        new AfterAltitudeCommand(Acc.threshold().getParent().getParent().getAltitude() + Acc.rnd().nextInt(150, 450)));
-    routeCmds.add(indx++, new ContactCommand(Atc.eType.app));
-
     String routeName;
     if (r != null) {
       routeName = r.getName();

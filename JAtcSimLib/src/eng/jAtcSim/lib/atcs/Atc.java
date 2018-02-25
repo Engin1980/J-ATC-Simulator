@@ -6,8 +6,10 @@
 
 package eng.jAtcSim.lib.atcs;
 
+import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.messaging.IMessageParticipant;
+import eng.jAtcSim.lib.messaging.Message;
 
 /**
  *
@@ -84,6 +86,9 @@ public abstract class Atc implements IMessageParticipant {
     return this.name;
   }
 
+  protected void sendMessage(Message msg){
+    Acc.messenger().send(msg);
+    recorder.logMessage(msg);
+  }
 
-  
 }

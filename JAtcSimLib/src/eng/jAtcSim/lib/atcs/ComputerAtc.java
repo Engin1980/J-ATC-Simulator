@@ -131,11 +131,6 @@ public abstract class ComputerAtc extends Atc {
   @Nullable
   protected abstract Atc getTargetAtcIfPlaneIsReadyToSwitch(@NotNull Airplane plane);
 
-  protected void sendMessage(Message msg){
-    Acc.messenger().send(msg);
-    recorder.logMessage(msg);
-  }
-
   private void repeatOldSwitchRequests() {
     // opakovani starych zadosti
     List<Airplane> awaitings = this.waitingRequestsList.getAwaitings();

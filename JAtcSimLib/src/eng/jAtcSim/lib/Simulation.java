@@ -39,6 +39,8 @@ import java.util.regex.Pattern;
  */
 public class Simulation {
 
+  private static final boolean DEBUG_STYLE_TIMER = false;
+
   public static final ERandom rnd = new ERandom();
   private static final int MINIMAL_DEPARTURE_REMOVE_DISTANCE = 100;
   private static final String SYSMES_COMMANDS = "?";
@@ -201,6 +203,9 @@ public class Simulation {
   }
 
   private void elapseSecond() {
+    if (DEBUG_STYLE_TIMER)
+      tmr.stop();
+
     if (isBusy) {
       System.out.println("## -- elapse second is busy!");
       return;
@@ -235,6 +240,9 @@ public class Simulation {
 
     // raises event
     this.secondElapsedEvent.raise();
+
+    if (DEBUG_STYLE_TIMER)
+      tmr.start(tmr.getTickLength());
   }
 
   private void updatePlanes() {
