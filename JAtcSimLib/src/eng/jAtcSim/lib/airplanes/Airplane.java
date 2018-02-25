@@ -243,7 +243,7 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     }
 
     public boolean isArrival() {
-      return this.isArrival();
+      return Airplane.this.isArrival();
     }
   }
 

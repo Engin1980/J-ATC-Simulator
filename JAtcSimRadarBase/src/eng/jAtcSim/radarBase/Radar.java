@@ -31,7 +31,6 @@ import eng.jAtcSim.radarBase.global.events.WithCoordinateEventArg;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class Radar {
 
@@ -197,15 +196,15 @@ public class Radar {
         case 33:
           return AirplaneDataFormatter.formatAltitudeLong(this.altitude);
         case 34:
-          return AirplaneDataFormatter.formatAltitudeShort(this.altitude);
+          return AirplaneDataFormatter.formatAltitudeShort(this.altitude, true);
         case 35:
-          return AirplaneDataFormatter.formatAltitudeInFtShort(this.altitude);
+          return AirplaneDataFormatter.formatAltitudeInFt(this.altitude, true);
         case 36:
           return AirplaneDataFormatter.formatAltitudeLong(this.targetAltitude);
         case 37:
-          return AirplaneDataFormatter.formatAltitudeShort(this.targetAltitude);
+          return AirplaneDataFormatter.formatAltitudeShort(this.targetAltitude, true);
         case 38:
-          return AirplaneDataFormatter.formatAltitudeInFtShort(this.targetAltitude);
+          return AirplaneDataFormatter.formatAltitudeInFt(this.targetAltitude, true);
         case 41:
           return AirplaneDataFormatter.formatVerticalSpeedLong(this.verticalSpeed);
         case 42:

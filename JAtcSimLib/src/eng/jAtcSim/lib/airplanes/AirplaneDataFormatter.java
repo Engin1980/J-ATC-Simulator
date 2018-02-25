@@ -40,12 +40,20 @@ public class AirplaneDataFormatter {
     return Acc.toAltS(value, true);
   }
 
-  public static String formatAltitudeInFtShort(int value) {
-    return Integer.toString(value);
+  public static String formatAltitudeInFt(int value, boolean addFt) {
+    String ret = Integer.toString(value);
+    if (addFt)
+      ret += "ft";
+    return ret;
   }
 
-  public static String formatAltitudeShort(int value) {
-    return Integer.toString(value / 100);
+  public static String formatAltitudeShort(int value, boolean fixedLength) {
+    String ret;
+    if (fixedLength)
+      ret = String.format("%03d", value / 100);
+    else
+      ret = Integer.toString(value / 100);
+    return ret;
   }
 
   public static String altitudeSFixed(int value) {

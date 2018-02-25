@@ -160,11 +160,11 @@ class FlightStripPanel extends JPanel {
     cmps[1] = lbl;
 
     lbl = new JLabel(
-        AirplaneDataFormatter.formatAltitudeShort(ai.altitude())
+        AirplaneDataFormatter.formatAltitudeShort(ai.altitude(),true)
         + " " +
             AirplaneDataFormatter.getClimbDescendChar(ai.verticalSpeed())
         + " " +
-            AirplaneDataFormatter.formatAltitudeShort(ai.targetAltitude()));
+            AirplaneDataFormatter.formatAltitudeShort(ai.targetAltitude(), true));
     lbl.setName("lblAltitude");
     lbl.setFont(normalFont);
     lbl.setForeground(stripSettings.textColor);
