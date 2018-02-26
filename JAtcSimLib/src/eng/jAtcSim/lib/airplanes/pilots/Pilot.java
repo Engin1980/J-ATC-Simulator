@@ -227,7 +227,7 @@ public class Pilot {
         } else {
 
           // TODO if target is too close and there is no next target, alert ATC and continue current heading
-          // TODO but watch out for behavior for departures passing last SID navaid (this should be now fixed by CTR_ who gives AN... command
+          // TODO but watch out for behavior for arrivals passing last SID navaid (this should be now fixed by CTR_ who gives AN... command
           double heading = Coordinates.getBearing(parent.getCoordinate(), targetCoordinate);
           heading = Headings.to(heading);
           if (heading != parent.getTargetHeading()) {

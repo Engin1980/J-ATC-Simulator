@@ -22,6 +22,7 @@ import eng.jAtcSim.lib.messaging.Message;
 import eng.jAtcSim.lib.messaging.Messenger;
 import eng.jAtcSim.lib.messaging.StringMessageContent;
 import eng.jAtcSim.lib.speaking.parsing.shortParsing.ShortParser;
+import eng.jAtcSim.lib.stats.Statistics;
 import eng.jAtcSim.lib.traffic.Movement;
 import eng.jAtcSim.lib.traffic.Traffic;
 import eng.jAtcSim.lib.weathers.Weather;
@@ -64,6 +65,7 @@ public class Simulation {
       new EventSimple<>(this);
   private int simulationSecondLengthInMs;
   private Weather weather;
+  private Statistics stats = new Statistics();
   private boolean isBusy = false;
   /**
    * Internal timer used to make simulation ticks.
@@ -194,6 +196,10 @@ public class Simulation {
     return ctrAtc;
   }
 
+  public Statistics getStats() {
+    return stats;
+  }
+
   public RunwayThreshold getActiveRunwayThreshold() {
     return Acc.threshold();
   }
@@ -203,6 +209,9 @@ public class Simulation {
   }
 
   private void elapseSecond() {
+
+    long elapseStartMs = System.currentTimeMillis();
+
     if (DEBUG_STYLE_TIMER)
       tmr.stop();
 
@@ -210,7 +219,6 @@ public class Simulation {
       System.out.println("## -- elapse second is busy!");
       return;
     }
-    //long start = System.currentTimeMillis();
     isBusy = true;
     now.increaseSecond();
 
@@ -225,7 +233,6 @@ public class Simulation {
     // atc stuff
     this.ctrAtc.elapseSecond();
     this.twrAtc.elapseSecond();
-    //this.appAtc.elapseSecond();
 
     // planes stuff
     generateNewPlanes();
@@ -233,8 +240,9 @@ public class Simulation {
     updatePlanes();
     evalAirproxes();
 
-    //long end = System.currentTimeMillis();
-    //System.out.println("## Sim elapse second: \t" + (end - start) + " at " + now.toString());
+    stats.secondElapsed();
+    long elapseEndMs = System.currentTimeMillis();
+    stats.durationOfSecondElapse.add((elapseEndMs - elapseStartMs)/1000d);
 
     isBusy = false;
 

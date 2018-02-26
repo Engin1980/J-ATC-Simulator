@@ -138,6 +138,7 @@ public class FrmMain extends JFrame {
     scheduledPanel.init(this.parent.getSim(), parent.getAppSettings());
     pnlRight.add(scheduledPanel, BorderLayout.CENTER);
     StatsPanel statsPanel = new StatsPanel();
+    statsPanel.init(this.parent.getSim());
     pnlRight.add(statsPanel, BorderLayout.PAGE_END);
 
     //this.parent.getSim().getSecondElapsedEvent().add(o -> printGuiTree());

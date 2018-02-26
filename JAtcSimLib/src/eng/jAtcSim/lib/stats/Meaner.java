@@ -11,10 +11,10 @@ package eng.jAtcSim.lib.stats;
  */
 public class Meaner {
 
-  private long sum = 0;
-  private long count = 0;
+  private double sum = 0;
+  private int count = 0;
 
-  public void add(int value) {
+  public void add(double value) {
     sum += value;
     count++;
   }
@@ -28,9 +28,9 @@ public class Meaner {
   }
   
   public int getCount(){
-    return (int) count;
+    return  count;
   }
-  public int getSum(){
-    return (int) sum;
+  public double getSum(){
+    return sum;
   }
 }

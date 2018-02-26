@@ -257,7 +257,7 @@ class TakeOffSeparation {
       new int[]{0, 0, 120, 120}, // C
       new int[]{0, 0, 0, 120}}; // D
   /**
-   * Increase frequency of departures. Higher means higher frequency of take-offs.
+   * Increase frequency of arrivals. Higher means higher frequency of take-offs.
    */
   private final static double DEPARTURE_ACCELERATOR_DIVIDER = 1.3;
   public final int nm;
