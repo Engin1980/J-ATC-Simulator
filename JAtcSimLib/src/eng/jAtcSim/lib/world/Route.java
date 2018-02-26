@@ -214,4 +214,11 @@ public class Route extends MustBeBinded implements KeyItem<String> {
       throw null;
     }
   }
+
+  @Override
+  public String toString() {
+    return "Route{" +
+        type +
+        ",'" + name + "'}";
+  }
 }

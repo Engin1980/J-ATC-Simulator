@@ -32,14 +32,16 @@ import java.util.List;
 public class TestTrafficOneDeparture extends TestTraffic {
 
   Airplane a = null;
+  Airplane b = null;
+  Airplane c = null;
   boolean done = false;
 
-  private Airplane generatePlane() {
+  private Airplane generatePlane(String number) {
 
     Airplane ret;
 
     Callsign cs;
-    cs = new Callsign("CSA", "001");
+    cs = new Callsign("CSA", number);
     AirplaneType pt = Acc.sim().getPlaneTypes().getRandomByTraffic(Acc.airport().getTrafficCategories(), true);
 
     Route r;
@@ -51,7 +53,7 @@ public class TestTrafficOneDeparture extends TestTraffic {
     r = eng.eSystem.Lists.getRandom(avails);
 
     Coordinate coord = Acc.threshold().getCoordinate();
-    Squawk sqwk = Squawk.create("0001");
+    Squawk sqwk = Squawk.create(number);
 
     int heading = (int) Acc.threshold().getCourse();
     int alt = Acc.threshold().getParent().getParent().getAltitude();
@@ -81,59 +83,13 @@ public class TestTrafficOneDeparture extends TestTraffic {
     return ret;
   }
 
-  private Route tryGetRandomRoute(boolean arrival, AirplaneType planeType) {
-
-    Iterable<Route> rts = Acc.threshold().getRoutes();
-    List<Route> avails = Routes.getByFilter(rts, arrival, planeType.category);
-
-    if (avails.isEmpty()) {
-      return null; // if no route, return null
-    }
-    int index = Simulation.rnd.nextInt(avails.size());
-
-    Route ret = avails.get(index);
-
-    return ret;
-  }
-
-  private int generateArrivingPlaneAltitude(Route r) {
-    double thousandsFeetPerMile = 0.30;
-
-    double dist = r.getRouteLength();
-    if (dist < 0) {
-      dist = Coordinates.getDistanceInNM(r.getMainFix().getCoordinate(), Acc.airport().getLocation());
-    }
-
-    int ret = (int) (dist * thousandsFeetPerMile) + Simulation.rnd.nextInt(1, 5); //5, 12);
-    ret = ret * 1000;
-    return ret;
-  }
-
-  private Coordinate generateArrivalCoordinate(Coordinate navFix, Coordinate aipFix) {
-    double radial = Coordinates.getBearing(aipFix, navFix);
-    radial += Simulation.rnd.nextDouble() * 50 - 25; // nahodne zatoceni priletoveho radialu
-    double dist = Simulation.rnd.nextDouble() * Global.MAX_ARRIVING_PLANE_DISTANCE; // vzdalenost od prvniho bodu STARu
-    Coordinate ret = null;
-    while (ret == null) {
-
-      ret = Coordinates.getCoordinate(navFix, (int) radial, dist);
-      for (Airplane p : Acc.planes()) {
-        double delta = Coordinates.getDistanceInNM(ret, p.getCoordinate());
-        if (delta < 5d) {
-          ret = null;
-          break;
-        }
-      }
-      dist += Simulation.rnd.nextDouble() * 10;
-    }
-    return ret;
-  }
-
   @Override
   public Airplane[] getNewAirplanes() {
     if (a != null) {
-      Airplane[] ret = new Airplane[]{a};
+      Airplane[] ret = new Airplane[]{a, b,c};
       a = null;
+      b = null;
+      c = null;
       return ret;
     } else {
       return new Airplane[0];
@@ -143,7 +99,9 @@ public class TestTrafficOneDeparture extends TestTraffic {
   @Override
   public void generateNewMovementsIfRequired() {
     if (!done) {
-      a = generatePlane();
+      a = generatePlane("0000");
+      b = generatePlane("7777");
+      c = generatePlane("5555");
       done = true;
     }
   }

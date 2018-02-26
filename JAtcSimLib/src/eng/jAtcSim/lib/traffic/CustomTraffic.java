@@ -328,15 +328,14 @@ public class CustomTraffic extends Traffic {
   }
 
   private int generateArrivingPlaneAltitude(Route r) {
-    double thousandsFeetPerMile = 0.30;
+    double thousandsFeetPerMile = 500;
 
     double dist = r.getRouteLength();
     if (dist < 0) {
       dist = Coordinates.getDistanceInNM(r.getMainFix().getCoordinate(), Acc.airport().getLocation());
     }
 
-    int ret = (int) (dist * thousandsFeetPerMile) + Simulation.rnd.nextInt(1, 5); //5, 12);
-    ret = ret * 1000;
+    int ret = (int) (dist * thousandsFeetPerMile) + Simulation.rnd.nextInt(-3000, 5000); //5, 12);
     return ret;
   }
 

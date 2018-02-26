@@ -1,6 +1,5 @@
 package eng.jAtcSim.radarBase;
 
-import com.sun.corba.se.spi.protocol.RequestDispatcherRegistry;
 import eng.eSystem.events.Event;
 import eng.jAtcSim.lib.Simulation;
 import eng.jAtcSim.lib.airplanes.*;
@@ -764,9 +763,11 @@ public class Radar {
     tl.drawLineByHeadingAndDistance(adi.coordinate, adi.heading, dp.getHeadingLineLength(), c, 1);
 
     // separation ring
-    if (adi.speed > 100 || adi.verticalSpeed != 0) {
-      tl.drawCircleAroundInNM(adi.coordinate, dp.getSeparationRingRadius(),
-          c, 1);
+    if (localSettings.isRingsVisible()) {
+      if (adi.speed > 100 || adi.verticalSpeed != 0) {
+        tl.drawCircleAroundInNM(adi.coordinate, dp.getSeparationRingRadius(),
+            c, 1);
+      }
     }
 
     // plane label
@@ -1020,12 +1021,12 @@ class InfoLine {
     this.seconds280 = this.distanceInNm / 280d * 3600d;
   }
 
-  public static String toIntegerMinutes(double value){
-    int tmp =  (int) (value / 60);
+  public static String toIntegerMinutes(double value) {
+    int tmp = (int) (value / 60);
     return Integer.toString(tmp);
   }
 
-  public static String toIntegerSeconds(double value){
+  public static String toIntegerSeconds(double value) {
     double tmp = value % 60;
     return String.format("%02.0f", tmp);
   }

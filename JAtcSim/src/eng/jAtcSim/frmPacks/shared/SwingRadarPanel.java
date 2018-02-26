@@ -27,12 +27,12 @@ public class SwingRadarPanel extends JPanel {
   private DisplaySettings displaySettings;
   private BehaviorSettings behaviorSettings;
   private InitialPosition initialPosition;
-private JButtonExtender extBtn = new JButtonExtender(
-    new Color(0,0,0),
-    new Color(150,150,150),
-    new Color(0,0,0),
-    new Color(0,255,0)
-);
+  private JButtonExtender extBtn = new JButtonExtender(
+      new Color(0, 0, 0),
+      new Color(150, 150, 150),
+      new Color(0, 0, 0),
+      new Color(0, 255, 0)
+  );
 
   public void init(InitialPosition initialPosition,
                    Simulation sim, Area area,
@@ -47,16 +47,20 @@ private JButtonExtender extBtn = new JButtonExtender(
 
     JPanel pnlTop = buildTopPanel();
     JPanel pnlContent = buildRadarPanel();
-    JPanel pnlBottom = buildTextPanel();
 
-    this.add(pnlTop, BorderLayout.PAGE_START);
-    this.add(pnlBottom, BorderLayout.PAGE_END);
     this.add(pnlContent, BorderLayout.CENTER);
+    this.add(pnlTop, BorderLayout.PAGE_START);
 
-    // zabalení chování textového pole s příkazy
-    wrp = new CommandJTextWraper(txtInput);
+    if (behaviorSettings.isPaintMessages()) {
+      JPanel pnlBottom = buildTextPanel();
+      this.add(pnlBottom, BorderLayout.PAGE_END);
+      wrp = new CommandJTextWraper(txtInput);
+      this.txtInput.requestFocus();
+    }
+  }
 
-    this.txtInput.requestFocus();
+  public Radar getRadar() {
+    return radar;
   }
 
   private JPanel buildTextPanel() {
@@ -94,18 +98,18 @@ private JButtonExtender extBtn = new JButtonExtender(
 
   private JPanel buildTopPanel() {
     JPanel ret = new JPanel();
-    LayoutManager.fillFlowPanel(ret, LayoutManager.eVerticalAlign.middle  , 4);
+    LayoutManager.fillFlowPanel(ret, LayoutManager.eVerticalAlign.middle, 4);
 
     JButton btn;
     JTextField txt;
 
     btn = new JButton("Cntr");
-    btn.addActionListener(e->btnCountryBorder_click(e));
+    btn.addActionListener(e -> btnCountryBorder_click(e));
     extBtn.set(btn, true);
     ret.add(btn);
 
     btn = new JButton("CTR");
-    btn.addActionListener(e->btnCtrBorder_click(e));
+    btn.addActionListener(e -> btnCtrBorder_click(e));
     extBtn.set(btn, true);
     ret.add(btn);
 
@@ -146,6 +150,10 @@ private JButtonExtender extBtn = new JButtonExtender(
     btn.addActionListener(e -> btnStar_click(e));
     extBtn.set(btn, true);
     ret.add(btn);
+    btn = new JButton("(rngs)");
+    btn.addActionListener(e -> btnRings_click(e));
+    extBtn.set(btn, true);
+    ret.add(btn);
 
     txt = new JTextField("0");
     ret.add(txt);
@@ -160,7 +168,7 @@ private JButtonExtender extBtn = new JButtonExtender(
 
   private void btnTmaBorder_click(ActionEvent e) {
     boolean cur = radar.getLocalSettings().isTmaBorderVisible();
-    cur = ! cur;
+    cur = !cur;
     radar.getLocalSettings().setTmaBorderVisible(cur);
     extBtn.set((JButton) e.getSource(), cur);
     radar.redraw(true);
@@ -168,7 +176,7 @@ private JButtonExtender extBtn = new JButtonExtender(
 
   private void btnCountryBorder_click(ActionEvent e) {
     boolean cur = radar.getLocalSettings().isCountryBorderVisible();
-    cur = ! cur;
+    cur = !cur;
     radar.getLocalSettings().setCountryBorderVisible(cur);
     extBtn.set((JButton) e.getSource(), cur);
     radar.redraw(true);
@@ -176,7 +184,7 @@ private JButtonExtender extBtn = new JButtonExtender(
 
   private void btnCtrBorder_click(ActionEvent e) {
     boolean cur = radar.getLocalSettings().isCtrBorderVisible();
-    cur = ! cur;
+    cur = !cur;
     radar.getLocalSettings().setCtrBorderVisible(cur);
     extBtn.set((JButton) e.getSource(), cur);
     radar.redraw(true);
@@ -184,7 +192,7 @@ private JButtonExtender extBtn = new JButtonExtender(
 
   private void btnVor_click(ActionEvent e) {
     boolean cur = radar.getLocalSettings().isVorVisible();
-    cur = ! cur;
+    cur = !cur;
     radar.getLocalSettings().setVorVisible(cur);
     extBtn.set((JButton) e.getSource(), cur);
     radar.redraw(true);
@@ -192,7 +200,7 @@ private JButtonExtender extBtn = new JButtonExtender(
 
   private void btnNdb_click(ActionEvent e) {
     boolean cur = radar.getLocalSettings().isNdbVisible();
-    cur = ! cur;
+    cur = !cur;
     radar.getLocalSettings().setNdbVisible(cur);
     extBtn.set((JButton) e.getSource(), cur);
     radar.redraw(true);
@@ -200,7 +208,7 @@ private JButtonExtender extBtn = new JButtonExtender(
 
   private void btnAirport_click(ActionEvent e) {
     boolean cur = radar.getLocalSettings().isAirportVisible();
-    cur = ! cur;
+    cur = !cur;
     radar.getLocalSettings().setAirportVisible(cur);
     extBtn.set((JButton) e.getSource(), cur);
     radar.redraw(true);
@@ -208,7 +216,7 @@ private JButtonExtender extBtn = new JButtonExtender(
 
   private void btnSid_click(ActionEvent e) {
     boolean cur = radar.getLocalSettings().isSidVisible();
-    cur = ! cur;
+    cur = !cur;
     radar.getLocalSettings().setSidVisible(cur);
     extBtn.set((JButton) e.getSource(), cur);
     radar.redraw(true);
@@ -216,7 +224,7 @@ private JButtonExtender extBtn = new JButtonExtender(
 
   private void btnStar_click(ActionEvent e) {
     boolean cur = radar.getLocalSettings().isStarVisible();
-    cur = ! cur;
+    cur = !cur;
     radar.getLocalSettings().setStarVisible(cur);
     extBtn.set((JButton) e.getSource(), cur);
     radar.redraw(true);
@@ -224,7 +232,7 @@ private JButtonExtender extBtn = new JButtonExtender(
 
   private void btnFix_click(ActionEvent e) {
     boolean cur = radar.getLocalSettings().isFixVisible();
-    cur = ! cur;
+    cur = !cur;
     radar.getLocalSettings().setFixVisible(cur);
     extBtn.set((JButton) e.getSource(), cur);
     radar.redraw(true);
@@ -232,7 +240,7 @@ private JButtonExtender extBtn = new JButtonExtender(
 
   private void btnFixRoute_click(ActionEvent e) {
     boolean cur = radar.getLocalSettings().isFixRouteVisible();
-    cur = ! cur;
+    cur = !cur;
     radar.getLocalSettings().setFixRouteVisible(cur);
     extBtn.set((JButton) e.getSource(), cur);
     radar.redraw(true);
@@ -240,14 +248,18 @@ private JButtonExtender extBtn = new JButtonExtender(
 
   private void btnFixMinor_click(ActionEvent e) {
     boolean cur = radar.getLocalSettings().isFixMinorVisible();
-    cur = ! cur;
+    cur = !cur;
     radar.getLocalSettings().setFixMinorVisible(cur);
     extBtn.set((JButton) e.getSource(), cur);
     radar.redraw(true);
   }
 
-  public Radar getRadar() {
-    return radar;
+  private void btnRings_click(ActionEvent e) {
+    boolean cur = radar.getLocalSettings().isRingsVisible();
+    cur = !cur;
+    radar.getLocalSettings().setRingsVisible(cur);
+    extBtn.set((JButton) e.getSource(), cur);
+    radar.redraw(true);
   }
 
   private void jTxtInputKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTxtInputKeyPressed
@@ -402,7 +414,7 @@ class CommandJTextWraper {
 
 }
 
-class JButtonExtender{
+class JButtonExtender {
   public final Color backOff;
   public final Color backOn;
   public final Color foreOff;
@@ -415,7 +427,7 @@ class JButtonExtender{
     this.foreOn = foreOn;
   }
 
-  public void set(JButton btn, boolean state){
+  public void set(JButton btn, boolean state) {
     if (state) {
       btn.setBackground(backOn);
       btn.setForeground(foreOn);

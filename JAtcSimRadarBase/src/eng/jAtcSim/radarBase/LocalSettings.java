@@ -13,6 +13,7 @@ public class LocalSettings {
   private boolean fixVisible = true;
   private boolean fixRouteVisible = true;
   private boolean fixMinorVisible = false;
+  private boolean ringsVisible = true;
 
   public boolean isFixVisible() {
     return fixVisible;
@@ -100,5 +101,13 @@ public class LocalSettings {
 
   public void setAirportVisible(boolean airportVisible) {
     this.airportVisible = airportVisible;
+  }
+
+  public boolean isRingsVisible() {
+    return ringsVisible;
+  }
+
+  public void setRingsVisible(boolean ringsVisible) {
+    this.ringsVisible = ringsVisible;
   }
 }
