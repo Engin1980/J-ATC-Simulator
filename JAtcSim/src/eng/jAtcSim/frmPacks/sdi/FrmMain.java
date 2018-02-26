@@ -20,16 +20,17 @@ public class FrmMain extends JFrame {
   private JPanel pnlTop;
   private JPanel pnlRight;
 
-  public FrmMain(){
+  public FrmMain() {
     initComponents();
   }
 
   private void initComponents() {
 
+    this.setPreferredSize(new Dimension(1000, 600));
     this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     this.setTitle("SDI");
 
-    Color bgColor = new Color(50,50,50);
+    Color bgColor = new Color(50, 50, 50);
 
     // top
     pnlTop = buildTopPanel();
@@ -77,7 +78,7 @@ public class FrmMain extends JFrame {
     adjustJComponentColors(btnStrips);
     btnStrips.addActionListener(o -> {
       boolean isVis = pnlLeft.isVisible();
-      isVis = ! isVis;
+      isVis = !isVis;
       pnlLeft.setVisible(isVis);
     });
 
@@ -87,22 +88,21 @@ public class FrmMain extends JFrame {
       if (parent.getSim().isRunning()) {
         parent.getSim().stop();
         btnPause.setText("Resume");
-      }
-      else {
+      } else {
         parent.getSim().start();
         btnPause.setText("Pause");
       }
     });
 
     JPanel ret = LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.middle, 4,
-        btnStrips, btnPause );
+        btnStrips, btnPause);
     ret.setName("pnlTop");
     return ret;
   }
 
-  private void adjustJComponentColors(JComponent component){
-    component.setBackground(new Color(50,50,50));
-    component.setForeground(new Color(200,200,200));
+  private void adjustJComponentColors(JComponent component) {
+    component.setBackground(new Color(50, 50, 50));
+    component.setForeground(new Color(200, 200, 200));
   }
 
   void init(Pack pack) {
@@ -159,10 +159,10 @@ public class FrmMain extends JFrame {
             component.getHeight(),
             layoutName,
             Boolean.toString(component.isVisible())
-            ));
+        ));
     for (Component item : component.getComponents()) {
       if (item instanceof Container)
-        printGuiTreeJComponent((Container) item, index+1);
+        printGuiTreeJComponent((Container) item, index + 1);
     }
   }
 }

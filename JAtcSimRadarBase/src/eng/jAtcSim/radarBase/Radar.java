@@ -1,5 +1,6 @@
 package eng.jAtcSim.radarBase;
 
+import com.sun.corba.se.spi.protocol.RequestDispatcherRegistry;
 import eng.eSystem.events.Event;
 import eng.jAtcSim.lib.Simulation;
 import eng.jAtcSim.lib.airplanes.*;
@@ -275,7 +276,7 @@ public class Radar {
     public boolean isRoute;
   }
 
-  static class NavaidDisplayInfoList implements Iterable<NavaidDisplayInfo>{
+  static class NavaidDisplayInfoList implements Iterable<NavaidDisplayInfo> {
     private List<NavaidDisplayInfo> inner = new ArrayList<>();
 
     public void add(NavaidDisplayInfo ndi) {
@@ -285,7 +286,7 @@ public class Radar {
     public NavaidDisplayInfo getByNavaid(Navaid navaid) {
       NavaidDisplayInfo ret = null;
       for (NavaidDisplayInfo navaidDisplayInfo : inner) {
-        if (navaidDisplayInfo.navaid == navaid){
+        if (navaidDisplayInfo.navaid == navaid) {
           ret = navaidDisplayInfo;
           break;
         }
@@ -314,6 +315,7 @@ public class Radar {
   private final AirplaneDisplayInfoList planeInfos = new AirplaneDisplayInfoList();
   private final NavaidDisplayInfoList navaids = new NavaidDisplayInfoList();
   private int redrawTick = 0;
+  private InfoLine infoLine;
 
   public Radar(ICanvas canvas, InitialPosition initialPosition,
                Simulation sim, Area area,
@@ -327,7 +329,7 @@ public class Radar {
     this.localSettings = new LocalSettings();
     this.simulation = sim;
     this.area = area;
-    
+
     buildLocalNavaidList();
 
     this.messageManager = new MessageManager(this.behaviorSettings.getDisplayTextDelay());
@@ -342,31 +344,6 @@ public class Radar {
 
     // listen to simulation seconds for redraw
     this.simulation.getSecondElapsedEvent().add(o -> redraw(false));
-  }
-
-  private void buildLocalNavaidList() {
-
-    for (Navaid navaid : area.getNavaids()) {
-      NavaidDisplayInfo ndi = new NavaidDisplayInfo();
-      ndi.navaid = navaid;
-      ndi.isRoute = false;
-      this.navaids.add(ndi);
-    }
-
-    for (Runway runway : simulation.getActiveAirport().getRunways()) {
-      for (RunwayThreshold runwayThreshold : runway.getThresholds()) {
-        for (Route route : runwayThreshold.getRoutes()) {
-          //TODO this is incredibly time consuming, do it better way?
-          for (IAtcCommand command : route.getCommands()) {
-            if (command instanceof ProceedDirectCommand){
-              ProceedDirectCommand pdc = (ProceedDirectCommand) command;
-              NavaidDisplayInfo ndi = this.navaids.getByNavaid(pdc.getNavaid());
-              ndi.isRoute = true;
-            }
-          }
-        }
-      }
-    }
   }
 
   public void zoomIn() {
@@ -410,31 +387,67 @@ public class Radar {
     return localSettings;
   }
 
+  private void buildLocalNavaidList() {
+
+    for (Navaid navaid : area.getNavaids()) {
+      NavaidDisplayInfo ndi = new NavaidDisplayInfo();
+      ndi.navaid = navaid;
+      ndi.isRoute = false;
+      this.navaids.add(ndi);
+    }
+
+    for (Runway runway : simulation.getActiveAirport().getRunways()) {
+      for (RunwayThreshold runwayThreshold : runway.getThresholds()) {
+        for (Route route : runwayThreshold.getRoutes()) {
+          //TODO this is incredibly time consuming, do it better way?
+          for (IAtcCommand command : route.getCommands()) {
+            if (command instanceof ProceedDirectCommand) {
+              ProceedDirectCommand pdc = (ProceedDirectCommand) command;
+              NavaidDisplayInfo ndi = this.navaids.getByNavaid(pdc.getNavaid());
+              ndi.isRoute = true;
+            }
+          }
+        }
+      }
+    }
+  }
+
   private void canvas_onMouseMove(ICanvas sender, EMouseEventArg e) {
     Point pt = e.getPoint();
     Coordinate coord = tl.toCoordinate(pt);
     switch (e.type) {
-      case WheelScroll:
+      case wheelScroll:
         if (e.wheel > 0) {
           zoomOut();
         } else {
           zoomIn();
         }
         break;
-      case Click:
+      case click:
         this.mouseClickEvent.raise(new WithCoordinateEventArg(coord));
         break;
-      case DoubleClick:
+      case doubleClick:
         centerAt(coord);
         break;
-      case Move:
+      case move:
         this.mouseMoveEvent.raise(new WithCoordinateEventArg(coord));
         break;
-      case Drag:
-        // drag bez priznaku je posun mapy, jinak je to posun letadla
+      case dragged:
         if (e.modifiers.is(false, false, false) && e.button == EMouseEventArg.eButton.right) {
           coord = tl.toCoordinateDelta(e.getDropRangePoint());
           moveMapBy(coord);
+        } else if (e.modifiers.is(false, false, false) && e.button == EMouseEventArg.eButton.left) {
+          this.infoLine = null;
+          this.redraw(true);
+        } else {
+        }
+        break;
+      case dragging:
+        if (e.modifiers.is(false, false, false) && e.button == EMouseEventArg.eButton.left) {
+          Coordinate fromCoordinate = tl.toCoordinate(e.getPoint());
+          Coordinate toCoordinate = tl.toCoordinate(e.getDropPoint());
+          infoLine = new InfoLine(fromCoordinate, toCoordinate);
+          this.redraw(true);
         }
         break;
     }
@@ -453,7 +466,42 @@ public class Radar {
     if (behaviorSettings.isPaintMessages())
       drawCaptions();
     drawTime();
+
+    drawInfoLine();
+
     c.afterDraw();
+  }
+
+  private void drawInfoLine() {
+    if (this.infoLine != null) {
+
+      DisplaySettings.ColorWidthFontSettings cwfs = this.displaySettings.infoLine;
+
+      tl.drawLine(
+          this.infoLine.from,
+          this.infoLine.to,
+          cwfs.getColor(),
+          cwfs.getWidth()
+      );
+
+      String distS = String.format("%.3f", this.infoLine.distanceInNm);
+      String timeS = String.format("%s:%s/%s:%s/%s:%s",
+          InfoLine.toIntegerMinutes(this.infoLine.seconds280),
+          infoLine.toIntegerSeconds(this.infoLine.seconds280),
+          InfoLine.toIntegerMinutes(this.infoLine.seconds250),
+          infoLine.toIntegerSeconds(this.infoLine.seconds250),
+          InfoLine.toIntegerMinutes(this.infoLine.seconds200),
+          infoLine.toIntegerSeconds(this.infoLine.seconds200));
+
+
+      tl.drawText(distS, this.infoLine.to,
+          3, -cwfs.getFont().getSize() * 2 - 3,
+          cwfs.getFont(), cwfs.getColor());
+
+      tl.drawText(timeS, this.infoLine.to,
+          3, -cwfs.getFont().getSize(),
+          cwfs.getFont(), cwfs.getColor());
+    }
   }
 
   private void canvas_onKeyPress(ICanvas sender, KeyEventArg e) {
@@ -611,7 +659,7 @@ public class Radar {
 
   private void drawNavaids() {
     //for (Navaid n : area.getNavaids()) {
-    for (NavaidDisplayInfo ndi : this.navaids){
+    for (NavaidDisplayInfo ndi : this.navaids) {
       switch (ndi.navaid.getType()) {
         case NDB:
           if (localSettings.isNdbVisible()) drawNavaid(ndi.navaid);
@@ -952,5 +1000,33 @@ public class Radar {
       ret.append(sentence.substring(1));
 
     return ret.toString();
+  }
+}
+
+class InfoLine {
+  public final Coordinate from;
+  public final Coordinate to;
+  public final double distanceInNm;
+  public final double seconds200;
+  public final double seconds250;
+  public final double seconds280;
+
+  public InfoLine(Coordinate from, Coordinate to) {
+    this.from = from;
+    this.to = to;
+    this.distanceInNm = Coordinates.getDistanceInNM(from, to);
+    this.seconds200 = this.distanceInNm / 200d * 3600d;
+    this.seconds250 = this.distanceInNm / 250d * 3600d;
+    this.seconds280 = this.distanceInNm / 280d * 3600d;
+  }
+
+  public static String toIntegerMinutes(double value){
+    int tmp =  (int) (value / 60);
+    return Integer.toString(tmp);
+  }
+
+  public static String toIntegerSeconds(double value){
+    double tmp = value % 60;
+    return String.format("%02.0f", tmp);
   }
 }

@@ -10,11 +10,12 @@ public class EMouseEventArg {
 
   public enum eType {
 
-    Click,
-    DoubleClick,
-    Drag,
-    Move,
-    WheelScroll;
+    click,
+    doubleClick,
+    dragged,
+    dragging,
+    move,
+    wheelScroll;
   }
 
   public enum eButton {
@@ -59,14 +60,15 @@ public class EMouseEventArg {
 
   private EMouseEventArg(int x, int y, int dropX, int dropY, int wheel, eButton button, EKeyboardModifier modifiers, eType type) {
 
-    if (wheel != 0 && type != eType.WheelScroll){
-      throw new IllegalArgumentException("Wheel parameter can be set only for WheelScroll type. Otherwise it should be 0.");
+    if (wheel != 0 && type != eType.wheelScroll){
+      throw new IllegalArgumentException("Wheel parameter can be set only for wheelScroll type. Otherwise it should be 0.");
     }
-    if (type == eType.Move && button != eButton.none){
+    if (type == eType.move && button != eButton.none){
       throw new IllegalArgumentException("Cannot set button type other than \"none\" for mouse event type \"move\".");
     }
-    if ((dropX != 0 || dropY != 0) && type != type.Drag){
-      throw new IllegalArgumentException("Parameters \"dropX/Y\" can be set only for type \"Drag\", otherwise they should be 0.");
+    if ((dropX != 0 || dropY != 0) && type != type.dragged && type != type.dragging){
+      throw new IllegalArgumentException("Parameters \"dropX/Y\" can be set only for type \"dragged\", otherwise they should be 0." +
+      " (type " + type + ")");
     }
 
     this.x = x;
@@ -85,17 +87,22 @@ public class EMouseEventArg {
   }
 
   public static EMouseEventArg createScroll(int x, int y, int wheel) {
-    EMouseEventArg ret = new EMouseEventArg(x, y, 0, 0, wheel, eButton.other, EKeyboardModifier.NONE, eType.WheelScroll);
+    EMouseEventArg ret = new EMouseEventArg(x, y, 0, 0, wheel, eButton.other, EKeyboardModifier.NONE, eType.wheelScroll);
     return ret;
   }
 
-  public static EMouseEventArg createDrag(int x, int y, int dropX, int dropY, eButton button, EKeyboardModifier modifiers) {
-    EMouseEventArg ret = new EMouseEventArg(x, y, dropX, dropY, 0, button, modifiers, eType.Drag);
+  public static EMouseEventArg createDragged(int x, int y, int dropX, int dropY, eButton button, EKeyboardModifier modifiers) {
+    EMouseEventArg ret = new EMouseEventArg(x, y, dropX, dropY, 0, button, modifiers, eType.dragged);
+    return ret;
+  }
+
+  public static EMouseEventArg createDragging(int x, int y, int dropX, int dropY, eButton button, EKeyboardModifier modifiers){
+    EMouseEventArg ret = new EMouseEventArg(x, y, dropX, dropY, 0, button, modifiers, eType.dragging);
     return ret;
   }
 
   public static EMouseEventArg createMove(int x, int y){
-    EMouseEventArg ret = new EMouseEventArg(x, y, 0, 0, 0, eButton.none, EKeyboardModifier.NONE, eType.Move);
+    EMouseEventArg ret = new EMouseEventArg(x, y, 0, 0, 0, eButton.none, EKeyboardModifier.NONE, eType.move);
     return ret;
   }
 
@@ -104,7 +111,7 @@ public class EMouseEventArg {
   }
 
   public Point getDropPoint() {
-    if (type == eType.Drag) {
+    if (type == eType.dragged || type == eType.dragging) {
       return new Point(this.dropX, this.dropY);
     } else {
       return null;

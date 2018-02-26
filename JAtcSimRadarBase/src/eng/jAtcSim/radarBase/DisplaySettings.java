@@ -37,6 +37,18 @@ public class DisplaySettings {
     }
   }
 
+  public static class ColorWidthFontSettings extends ColorWidthSettings{
+    private Font font;
+
+    public Font getFont() {
+      return font;
+    }
+
+    public void setFont(Font font) {
+      this.font = font;
+    }
+  }
+
   public static class ColorWidthBorderSettings extends ColorWidthSettings {
     private int borderWidth;
     private int borderDistance;
@@ -178,6 +190,8 @@ public class DisplaySettings {
 
   // general
   public int refreshRate;
+
+  public ColorWidthFontSettings infoLine;
 
   // runways
   public ColorWidthSettings activeRunway;

@@ -16,6 +16,10 @@
     <borderCtr color="44AAFF" width="1"/>
     <borderTma color="44AAFF" width="1"/>
 
+    <infoLine color="FFFF00" width="4">
+        <font name="Consolas" size="14" style="0" />
+    </infoLine>
+
     <mapBackcolor>000000</mapBackcolor>
 
     <star color="990099" width="1"/>
