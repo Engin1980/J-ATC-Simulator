@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package eng.jAtcSim.frmPacks.simple;
+package eng.jAtcSim.frmPacks.mdi;
 
 import java.awt.event.KeyEvent;
 import static java.awt.event.KeyEvent.VK_ESCAPE;

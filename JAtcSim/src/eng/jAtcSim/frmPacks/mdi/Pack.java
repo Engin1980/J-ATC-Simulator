@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package eng.jAtcSim.frmPacks.simple;
+package eng.jAtcSim.frmPacks.mdi;
 
 import eng.jAtcSim.radarBase.DisplaySettings;
 import eng.eSystem.events.EventSimple;
@@ -46,9 +46,10 @@ public class Pack extends eng.jAtcSim.frmPacks.Pack {
     frmMain.init(this);
 
     this.frmList = new FrmFlightList();
-    frmList.init(sim);
+    frmList.init(sim, appSettings);
 
     this.frmScheduledTrafficListing = new FrmScheduledTrafficListing();
+    this.frmScheduledTrafficListing.init(sim, appSettings);
 
     // adjust window layout
     this.frmList.setSize(this.frmList.getSize().width, frmMain.getSize().height);
@@ -58,12 +59,6 @@ public class Pack extends eng.jAtcSim.frmPacks.Pack {
     this.frmList.setVisible(true);
     this.frmMain.setVisible(true);
     this.frmScheduledTrafficListing.setVisible(true);
-
-    // added updates of non-radar windows
-    this.sim.getSecondElapsedEvent().add(o -> {
-      frmList.elapseSecond();
-      updateScheduledTrafficListing();
-    });
   }
 
   @Override
@@ -87,12 +82,4 @@ public class Pack extends eng.jAtcSim.frmPacks.Pack {
     return displaySettings;
   }
 
-  private void updateScheduledTrafficListing() {
-    // todo always creates an array as a copy of list of scheduled movements, what can be time consuming
-    Movement[] movements = this.sim.getScheduledMovements();
-    if (movements.length != lastMovementCount) {
-      frmScheduledTrafficListing.refresh(movements);
-      lastMovementCount = movements.length;
-    }
-  }
 }

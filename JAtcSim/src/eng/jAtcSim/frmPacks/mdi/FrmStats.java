@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package eng.jAtcSim.frmPacks.simple;
+package eng.jAtcSim.frmPacks.mdi;
 
 /**
  *
