@@ -10,4 +10,7 @@ public class Maxim {
   public double get() {
     return value;
   }
+  public int getInt(){
+    return (int) value;
+  }
 }

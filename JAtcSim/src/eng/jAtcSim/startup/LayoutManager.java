@@ -94,7 +94,8 @@ public class LayoutManager {
     panel.add(Box.createVerticalStrut(distance), BorderLayout.PAGE_END);
     panel.add(Box.createHorizontalStrut(distance), BorderLayout.LINE_START);
     panel.add(Box.createHorizontalStrut(distance), BorderLayout.LINE_END);
-    panel.add(content, BorderLayout.CENTER);
+    if (content != null)
+      panel.add(content, BorderLayout.CENTER);
   }
 
   public static JPanel createBorderedPanel(Container top, Container bottom, Container left, Container right, Container content){

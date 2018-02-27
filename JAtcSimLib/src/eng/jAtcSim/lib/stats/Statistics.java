@@ -15,18 +15,52 @@ import eng.jAtcSim.lib.global.ETime;
  */
 public class Statistics {
 
+  public static class MaximumPlanes {
+    public final Maxim arrivals = new Maxim();
+    public final Maxim departures = new Maxim();
+    public final Maxim total = new Maxim();
+  }
+
+  public static class CurrentPlanes {
+
+    public int total;
+    public int arrivals;
+    public int departures;
+    public int appTotal;
+    public int appArrivals;
+    public int appDepartures;
+
+    public void update() {
+      total = Acc.planes().size();
+      arrivals = 0;
+      departures = 0;
+      appTotal = 0;
+      appArrivals = 0;
+      appDepartures = 0;
+      for (Airplane airplane : Acc.planes()) {
+        if (airplane.isArrival()) {
+          arrivals++;
+          if (airplane.getTunedAtc().getType() == Atc.eType.app) {
+            appArrivals++;
+            appTotal++;
+          }
+        } else {
+          departures++;
+          if (airplane.getTunedAtc().getType() == Atc.eType.app) {
+            appDepartures++;
+            appTotal++;
+          }
+        }
+      }
+    }
+  }
   public final Counter finishedDepartures = new Counter();
   public final Counter finishedArrivals = new Counter();
   public final Counter secondsElapsed = new Counter();
-  public final Planes responsiblePlanes = new Planes();
-  public final Planes totalPlanes = new Planes();
+  public final MaximumPlanes maximumResponsiblePlanes = new MaximumPlanes();
+  public final MaximumPlanes maxumumTotalPlanes = new MaximumPlanes();
   public final Meaner durationOfSecondElapse = new Meaner();
-
-  static class Planes {
-    public final Maxim total = new Maxim();
-    public final Maxim arrivals = new Maxim();
-    public final Maxim departures = new Maxim();
-  }
+  public final CurrentPlanes currentPlanes = new CurrentPlanes();
 
   public Statistics() {
   }
@@ -38,22 +72,19 @@ public class Statistics {
     return ret;
   }
 
-  public void secondElapsed(){
+  public void secondElapsed() {
 
     secondsElapsed.add();
 
-    int arrs = StatisticHelper.getCountOfPlanesResponsibleFor(Atc.eType.app, true);
-    int deps = StatisticHelper.getCountOfPlanesResponsibleFor(Atc.eType.app,  false );
-    this.responsiblePlanes.arrivals.set(arrs);
-    this.responsiblePlanes.departures.set(deps);
-    this.responsiblePlanes.total.set(arrs+deps);
+    this.currentPlanes.update();
 
-    arrs = StatisticHelper.getCountOfPlanes( true);
-    deps = StatisticHelper.getCountOfPlanes(  false );
-    this.totalPlanes.arrivals.set(arrs);
-    this.totalPlanes.departures.set(deps);
-    this.totalPlanes.total.set(arrs+deps);
+    this.maximumResponsiblePlanes.arrivals.set(this.currentPlanes.appArrivals);
+    this.maximumResponsiblePlanes.departures.set(this.currentPlanes.appDepartures);
+    this.maximumResponsiblePlanes.total.set(this.currentPlanes.appTotal);
 
+    this.maxumumTotalPlanes.arrivals.set(this.currentPlanes.arrivals);
+    this.maxumumTotalPlanes.departures.set(this.currentPlanes.departures);
+    this.maxumumTotalPlanes.total.set(this.currentPlanes.total);
   }
 
   public ETime getRunTime() {
@@ -66,24 +97,6 @@ public class Statistics {
   }
 }
 
-class StatisticHelper{
-  public static int getCountOfPlanesResponsibleFor(Atc.eType atcType, boolean arrivals) {
-    int cnt = 0;
-    for (Airplane p : Acc.planes()) {
-      if (Acc.prm().getResponsibleAtc(p).getType() == atcType && p.isArrival() == arrivals) {
-        cnt++;
-      }
-    }
-    return cnt;
-  }
+class StatisticHelper {
 
-  public static int getCountOfPlanes(boolean arrivals) {
-    int cnt = 0;
-    for (Airplane p : Acc.planes()) {
-      if (p.isArrival() == arrivals) {
-        cnt++;
-      }
-    }
-    return cnt;
-  }
 }
