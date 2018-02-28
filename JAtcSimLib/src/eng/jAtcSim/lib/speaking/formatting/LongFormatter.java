@@ -144,13 +144,9 @@ public class LongFormatter extends Formatter {
 
    
   public String format(ContactCommand cmd) {
-    StringBuilder sb = new StringBuilder();
-    sb.append("contact ");
-    sb.append(cmd.getAtcType());
     Atc atc = Acc.atc(cmd.getAtcType());
-    sb.append(" at ");
-    sb.append(atc.getFrequency());
-    return sb.toString();
+    String ret = String.format("Contact %s at %.3f", atc.getName(), atc.getFrequency());
+    return ret;
   }
 
    

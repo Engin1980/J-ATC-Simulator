@@ -27,8 +27,6 @@ public abstract class ComputerAtc extends Atc {
 
     List<Message> msgs = Acc.messenger().getByTarget(this, true);
 
-    checkAndProcessPlanesReadyToSwitch();
-
     for (Message m : msgs) {
       recorder.logMessage(m); // incoming speech
 
@@ -71,13 +69,20 @@ public abstract class ComputerAtc extends Atc {
     }
     for (SwitchRequest sr : srs) {
       this.confirmedRequestList.remove(sr);
-      this.approveSwitch(sr.airplane);
-      Message nm = new Message(this, sr.airplane,
-          new SpeechList<>(new ContactCommand(sr.atc.getType()))
-      );
-      this.sendMessage(nm);
+      if (Acc.prm().isApprovedToSwitch(sr.airplane)) {
+        this.approveSwitch(sr.airplane);
+        Message nm = new Message(this, sr.airplane,
+            new SpeechList<>(new ContactCommand(sr.atc.getType()))
+        );
+        this.sendMessage(nm);
+      } else {
+        Message nm = new Message(this, sr.atc,
+            new PlaneSwitchMessage(sr.airplane, " refused. This airplane is not intended to be switched."));
+        this.sendMessage(nm);
+      }
     }
 
+    checkAndProcessPlanesReadyToSwitch();
     repeatOldSwitchRequests();
   }
 

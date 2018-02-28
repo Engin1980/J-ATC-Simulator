@@ -253,7 +253,7 @@ public class PlaneResponsibilityManager {
     lst.get(newAtc).add(plane);
   }
 
-  private boolean isApprovedToSwitch(Airplane plane) {
+  public boolean isApprovedToSwitch(Airplane plane) {
     eState s = map.get(plane);
     return s == eState.app2ctrReady
       || s == eState.app2twrReady
