@@ -193,7 +193,7 @@ class TransformationLayer {
     return ret;
   }
 
-  Coordinate toCoordinate(Point point) {
+  public Coordinate toCoordinate(Point point) {
     Coordinate ret = toCoordinateDelta(point);
     ret = ret.negate();
     ret = topLeft.add(ret);

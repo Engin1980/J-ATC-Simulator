@@ -231,5 +231,6 @@ public class DisplaySettings {
   public PlaneLabelSettings app;
   public PlaneLabelSettings ctr;
   public PlaneLabelSettings twr;
+  public PlaneLabelSettings selected;
 
 }

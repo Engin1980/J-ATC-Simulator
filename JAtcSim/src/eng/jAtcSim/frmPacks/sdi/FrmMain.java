@@ -4,8 +4,10 @@ import eng.jAtcSim.frmPacks.shared.FlightListPanel;
 import eng.jAtcSim.frmPacks.shared.ScheduledFlightListPanel;
 import eng.jAtcSim.frmPacks.shared.StatsPanel;
 import eng.jAtcSim.frmPacks.shared.SwingRadarPanel;
+import eng.jAtcSim.lib.airplanes.Callsign;
 import eng.jAtcSim.lib.speaking.formatting.LongFormatter;
 import eng.jAtcSim.radarBase.BehaviorSettings;
+import eng.jAtcSim.radarBase.Radar;
 import eng.jAtcSim.startup.LayoutManager;
 
 import javax.swing.*;
@@ -19,6 +21,8 @@ public class FrmMain extends JFrame {
   private JPanel pnlLeft;
   private JPanel pnlTop;
   private JPanel pnlRight;
+  private Radar radar;
+  private FlightListPanel flightListPanel;
 
   public FrmMain() {
     initComponents();
@@ -134,9 +138,10 @@ public class FrmMain extends JFrame {
         this.parent.getDisplaySettings(), behSett
     );
     this.pnlContent.add(pnlSRP);
+    this.radar = pnlSRP.getRadar();
 
     // Left panel
-    FlightListPanel flightListPanel = new FlightListPanel();
+    flightListPanel = new FlightListPanel();
     flightListPanel.init(this.parent.getSim(), parent.getAppSettings());
     pnlLeft.add(flightListPanel);
 
@@ -150,6 +155,9 @@ public class FrmMain extends JFrame {
 
     //this.parent.getSim().getSecondElapsedEvent().add(o -> printGuiTree());
     //printGuiTree();
+
+    radar.getSelectedAirplaneChangedEvent().add((sender, callsign) -> flightListPanel.setSelectedCallsign((Callsign) callsign));
+    flightListPanel.getSelectedCallsignChangedEvent().add((sender, callsign) -> radar.setSelectedCallsign((Callsign) callsign));
   }
 
   private void printGuiTree() {

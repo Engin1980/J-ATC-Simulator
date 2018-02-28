@@ -1,16 +1,21 @@
 package eng.jAtcSim.frmPacks.shared;
 
+import eng.eSystem.events.Event;
+import eng.eSystem.events.EventSimple;
 import eng.jAtcSim.AppSettings;
 import eng.jAtcSim.XmlLoadHelper;
 import eng.jAtcSim.lib.Simulation;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.AirplaneDataFormatter;
+import eng.jAtcSim.lib.airplanes.Callsign;
 import eng.jAtcSim.lib.exceptions.ENotSupportedException;
 import eng.jAtcSim.lib.global.ReadOnlyList;
 import eng.jAtcSim.startup.LayoutManager;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -20,6 +25,7 @@ public class FlightListPanel extends JPanel {
   private Simulation sim;
   private JScrollPane pnlScroll;
   private JPanel pnlContent;
+  private Callsign selectedCallsign;
 
   public void init(Simulation sim, AppSettings appSettings) {
     this.sim = sim;
@@ -40,6 +46,25 @@ public class FlightListPanel extends JPanel {
     this.sim.getSecondElapsedEvent().add(o -> updateList());
   }
 
+  public eng.eSystem.events.Event<FlightListPanel, Callsign> selectedCallsignChangedEvent = new eng.eSystem.events.Event(this);
+
+  public Event<FlightListPanel, Callsign> getSelectedCallsignChangedEvent() {
+    return selectedCallsignChangedEvent;
+  }
+
+  public Callsign getSelectedCallsign() {
+    return selectedCallsign;
+  }
+
+  public void setSelectedCallsign(Callsign selectedCallsign) {
+    Callsign bef = this.selectedCallsign;
+    this.selectedCallsign = selectedCallsign;
+    if(bef != this.selectedCallsign) {
+      selectedCallsignChangedEvent.raise(this.selectedCallsign);
+      updateList();
+    }
+  }
+
   private void updateList() {
     // init pri prvnim volani
     if (plns == null) {
@@ -58,16 +83,22 @@ public class FlightListPanel extends JPanel {
     pnlContent.removeAll();
     FlightStripPanel.resetIndex();
     for (Airplane.Airplane4Display pln : plns) {
-      JPanel pnlItem = createFlightStrip(pln);
+      FlightStripPanel pnlItem = createFlightStrip(pln);
       pnlItem.setName("FlightStrip_" + pln.callsign());
       pnlContent.add(pnlItem);
+      pnlItem.getClickEvent().add((sender, callsign) -> {
+        if (this.getSelectedCallsign() == callsign)
+          this.setSelectedCallsign(null);
+        else
+          this.setSelectedCallsign((Callsign) callsign);
+      });
     }
 
     this.revalidate();
   }
 
-  private JPanel createFlightStrip(Airplane.Airplane4Display ai) {
-    JPanel ret = new FlightStripPanel(ai);
+  private FlightStripPanel createFlightStrip(Airplane.Airplane4Display ai) {
+    FlightStripPanel ret = new FlightStripPanel(this, ai);
     return ret;
   }
 
@@ -79,8 +110,18 @@ class FlightStripPanel extends JPanel {
   private static int index = 0;
   private static Font normalFont;
   private static Font boldFont;
+  private Callsign callsign;
+  private FlightListPanel parent;
+  private final Event<FlightStripPanel, Callsign> clickEvent = new Event<>(this);
 
-  public FlightStripPanel(Airplane.Airplane4Display ai) {
+  public Event<FlightStripPanel, Callsign> getClickEvent() {
+    return clickEvent;
+  }
+
+  public FlightStripPanel(FlightListPanel parent, Airplane.Airplane4Display ai) {
+
+    this.parent = parent;
+    this.callsign = ai.callsign();
 
     this.setLayout(new BorderLayout());
 
@@ -89,11 +130,18 @@ class FlightStripPanel extends JPanel {
     this.setMinimumSize(dim);
     this.setMaximumSize(dim);
 
-    Color color = FlightStripPanel.getColor(ai);
+    Color color = this.getColor(ai);
     this.setBackground(color);
     this.setForeground(stripSettings.textColor);
 
     fillContent(ai);
+
+    this.addMouseListener(new MouseAdapter() {
+      @Override
+      public void mouseClicked(MouseEvent e) {
+        clickEvent.raise(FlightStripPanel.this.callsign);
+      }
+    });
   }
 
   public static void setStripSettings(FlightStripSettings stripSettings) {
@@ -107,12 +155,14 @@ class FlightStripPanel extends JPanel {
     index = 0;
   }
 
-  private static Color getColor(Airplane.Airplane4Display ai) {
+  private Color getColor(Airplane.Airplane4Display ai) {
     Color ret;
     // pozadi
     if (ai.isAirprox()) {
       ret = stripSettings.airprox;
-    } else {
+    } else if (ai.callsign() == parent.getSelectedCallsign()) {
+      ret = stripSettings.selected;
+    }else{
       boolean isEven = index++ % 2 == 0;
       switch (ai.responsibleAtc().getType()) {
         case app:
@@ -181,4 +231,6 @@ class FlightStripPanel extends JPanel {
 
     LayoutManager.fillGridPanel(this, 3, 2, 0, cmps);
   }
+
+
 }

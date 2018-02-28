@@ -35,7 +35,6 @@ public class Pack extends eng.jAtcSim.frmPacks.Pack {
     frmMain.init(this);
     this.frmMain.setVisible(true);
     this.frmMain.setExtendedState(this.frmMain.getExtendedState() | JFrame.MAXIMIZED_BOTH);
-
   }
 
   @Override
