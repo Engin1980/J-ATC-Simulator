@@ -23,9 +23,9 @@ public abstract class ComputerAtc extends Atc {
     super(template);
   }
 
-  public void elapseSecond(){
+  public void elapseSecond() {
 
-    List<Message> msgs = Acc.messenger().getByTarget(this,true);
+    List<Message> msgs = Acc.messenger().getByTarget(this, true);
 
     checkAndProcessPlanesReadyToSwitch();
 
@@ -39,16 +39,16 @@ public abstract class ComputerAtc extends Atc {
 
         confirmGoodDayNotificationIfRequired(p, spchs);
         processMessagesFromPlane(p, spchs);
-      } else if (m.getSource() instanceof Atc){
+      } else if (m.getSource() instanceof Atc) {
         // messages from ATCs
         Airplane plane = m.<PlaneSwitchMessage>getContent().plane;
         Atc targetAtc = m.getSource();
-        if (this.waitingRequestsList.contains(plane)){
+        if (this.waitingRequestsList.contains(plane)) {
           // p is waiting to be switch-confirmed
 
-            this.waitingRequestsList.remove(plane);
-            this.confirmedRequestList.add(
-                new SwitchRequest(targetAtc, plane));
+          this.waitingRequestsList.remove(plane);
+          this.confirmedRequestList.add(
+              new SwitchRequest(targetAtc, plane));
 
         } else {
           // p is not in waiting list, so other ATC asks ...
@@ -70,15 +70,24 @@ public abstract class ComputerAtc extends Atc {
         srs.add(sr);
     }
     for (SwitchRequest sr : srs) {
-        this.confirmedRequestList.remove(sr);
-        this.approveSwitch(sr.airplane);
-        Message nm = new Message(this, sr.airplane,
-            new SpeechList<>(new ContactCommand(sr.atc.getType()))
-        );
-        this.sendMessage(nm);
+      this.confirmedRequestList.remove(sr);
+      this.approveSwitch(sr.airplane);
+      Message nm = new Message(this, sr.airplane,
+          new SpeechList<>(new ContactCommand(sr.atc.getType()))
+      );
+      this.sendMessage(nm);
     }
 
     repeatOldSwitchRequests();
+  }
+
+  @Override
+  public void init() {
+  }
+
+  @Override
+  public boolean isHuman() {
+    return false;
   }
 
   protected abstract boolean shouldBeSwitched(Airplane plane);
@@ -86,12 +95,13 @@ public abstract class ComputerAtc extends Atc {
   protected abstract boolean canIAcceptPlane(Airplane p);
 
   private void confirmGoodDayNotificationIfRequired(Airplane p, SpeechList spchs) {
-    if (spchs.containsType(GoodDayNotification.class)){
-      Message msg;
-      msg = new Message(
-          this,
-          p,
-          new SpeechList(new RadarContactConfirmationNotification()));
+    if (spchs.containsType(GoodDayNotification.class)) {
+      SpeechList lst = new SpeechList();
+      lst.add(new RadarContactConfirmationNotification());
+      if (Acc.prm().getResponsibleAtc(p) != this) {
+        lst.add(new ContactCommand(eType.app));
+      }
+      Message msg = new Message(this, p, lst);
       sendMessage(msg);
     }
   }
@@ -118,6 +128,7 @@ public abstract class ComputerAtc extends Atc {
 
   /**
    * Returns target atc if plane is ready for switch.
+   *
    * @param plane Plane checked if ready to switch
    * @return Target atc, or null if plane not ready to switch.
    */
@@ -160,18 +171,9 @@ public abstract class ComputerAtc extends Atc {
         new PlaneSwitchMessage(plane, " refused. Not in my coverage."));
     sendMessage(m);
   }
-
-  @Override
-  public void init() {
-  }
-
-  @Override
-  public boolean isHuman() {
-    return false;
-  }
 }
 
-class SwitchRequest{
+class SwitchRequest {
   public final Atc atc;
   public final Airplane airplane;
 
