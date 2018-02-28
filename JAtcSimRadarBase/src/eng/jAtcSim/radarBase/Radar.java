@@ -483,7 +483,7 @@ public class Radar {
           cwfs.getWidth()
       );
 
-      String distS = String.format("%.3f", this.infoLine.distanceInNm);
+      String distS = String.format("%03d %.1fnm", this.infoLine.heading, this.infoLine.distanceInNm);
       String timeS = String.format("%s:%s/%s:%s/%s:%s",
           InfoLine.toIntegerMinutes(this.infoLine.seconds280),
           infoLine.toIntegerSeconds(this.infoLine.seconds280),
@@ -1007,6 +1007,7 @@ public class Radar {
 class InfoLine {
   public final Coordinate from;
   public final Coordinate to;
+  public final int heading;
   public final double distanceInNm;
   public final double seconds200;
   public final double seconds250;
@@ -1016,6 +1017,7 @@ class InfoLine {
     this.from = from;
     this.to = to;
     this.distanceInNm = Coordinates.getDistanceInNM(from, to);
+    this.heading = (int) Coordinates.getBearing(from, to);
     this.seconds200 = this.distanceInNm / 200d * 3600d;
     this.seconds250 = this.distanceInNm / 250d * 3600d;
     this.seconds280 = this.distanceInNm / 280d * 3600d;
