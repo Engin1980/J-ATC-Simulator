@@ -93,16 +93,8 @@ public abstract class ComputerAtc extends Atc {
           p,
           new SpeechList(new RadarContactConfirmationNotification()));
       sendMessage(msg);
-
-      doAfterGoodDayNotificationConfirmation(p);
     }
   }
-
-  /**
-   * Do things when new airplane is switched to me.
-   * @param p
-   */
-  protected abstract void doAfterGoodDayNotificationConfirmation(Airplane p);
 
   protected abstract void processMessagesFromPlane(Airplane p, SpeechList spchs);
 

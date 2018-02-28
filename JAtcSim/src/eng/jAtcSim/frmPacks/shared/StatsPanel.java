@@ -7,25 +7,33 @@ import eng.jAtcSim.startup.LayoutManager;
 import javax.swing.*;
 import java.awt.*;
 
+import static eng.jAtcSim.lib.stats.Statistics.toTime;
+
 public class StatsPanel extends JPanel {
 
   private static Color bgColor = new Color(50, 50, 50);
   private static Color frColor = new Color(200, 200, 200);
   Statistics stats;
   JLabel lblElapsed = new JLabel("Seconds elapsed:");
-  JLabel lvlElapsed = new JLabel("???");
+  JLabel lvlElapsed = new JLabel("-");
   JLabel lblBusyDuration = new JLabel("Recalc duration:");
-  JLabel lvlBusyDuration = new JLabel("???");
+  JLabel lvlBusyDuration = new JLabel("-");
   JLabel lblFinished = new JLabel("Served planes:");
-  JLabel lvlFinished = new JLabel("0");
+  JLabel lvlFinished = new JLabel("-");
   JLabel lblMaxInGame = new JLabel("Max in game:");
-  JLabel lvlMaxInGame = new JLabel("0");
+  JLabel lvlMaxInGame = new JLabel("-");
+  JLabel lblMovementsGame = new JLabel("Moves/hour:");
+  JLabel lvlMovementsGame = new JLabel("-");
   JLabel lblMaxApp = new JLabel("max under APP:");
-  JLabel lvlMaxApp = new JLabel("0");
+  JLabel lvlMaxApp = new JLabel("-");
   JLabel lblCurInGame = new JLabel("Now in game:");
-  JLabel lvlCurInGame = new JLabel("0");
+  JLabel lvlCurInGame = new JLabel("-");
   JLabel lblCurApp = new JLabel("Now under APP:");
-  JLabel lvlCurApp = new JLabel("0");
+  JLabel lvlCurApp = new JLabel("-");
+  JLabel lblHpCount = new JLabel("H-P count:");
+  JLabel lvlHpCount = new JLabel("-");
+  JLabel lblHpTime = new JLabel("H-P time:");
+  JLabel lvlHpTime = new JLabel("-");
 
   public StatsPanel() {
     initComponents();
@@ -52,20 +60,26 @@ public class StatsPanel extends JPanel {
         lblElapsed,
         lblBusyDuration,
         lblFinished,
+        lblMovementsGame,
         lblMaxInGame,
         lblCurInGame,
         lblMaxApp,
-        lblCurApp
+        lblCurApp,
+        lblHpCount,
+        lblHpTime
     );
 
     JPanel pnlValues = LayoutManager.createBoxPanel(LayoutManager.eHorizontalAlign.left, 0,
         lvlElapsed,
         lvlBusyDuration,
         lvlFinished,
+        lvlMovementsGame,
         lvlMaxInGame,
         lvlCurInGame,
         lvlMaxApp,
-        lvlCurApp
+        lvlCurApp,
+        lvlHpCount,
+        lvlHpTime
     );
 
     JPanel pnlStats = LayoutManager.createBorderedPanel(null, null, pnlLabels, pnlValues, null);
@@ -92,16 +106,39 @@ public class StatsPanel extends JPanel {
 
   private void update() {
 
-    setLblText(stats.secondsElapsed.get(), "%d", lvlElapsed);
-    setLblText(stats.durationOfSecondElapse.get(), "%.3f", lvlBusyDuration);
+    lvlElapsed.setText(toTime(stats.secondsElapsed.get()));
+    lvlBusyDuration.setText(String.format("%.3f", stats.durationOfSecondElapse.get()));
 
     updateFinished();
     updateMaxAll();
     updateMaxApp();
     updateCurAll();
     updateCurApp();
+    updateMovementsPerHour();
+    updateHoldingPointInfo();
 
+  }
 
+  private void updateHoldingPointInfo() {
+    String tmp = String.format("%d / %d",
+        stats.holdingPointInfo.currentHoldingPointCount,
+        stats.holdingPointInfo.maximumHoldingPointCount.getInt());
+    lvlHpCount.setText(tmp);
+
+    tmp = String.format("%s / %s",
+        toTime(stats.holdingPointInfo.meanHoldingPointTime.get()),
+        toTime(stats.holdingPointInfo.maximumHoldingPointTime.get())
+    );
+    lvlHpTime.setText(tmp);
+  }
+
+  private void updateMovementsPerHour() {
+    String s = String.format("%.1f / %.1f / %.1f",
+        stats.movementsPerHour.getDepartures(),
+        stats.movementsPerHour.getArrivals(),
+        stats.movementsPerHour.getTotal()
+    );
+    lvlMovementsGame.setText(s);
   }
 
   private void updateCurApp() {
@@ -147,10 +184,5 @@ public class StatsPanel extends JPanel {
         stats.finishedDepartures.get() + stats.finishedArrivals.get()
     );
     lvlFinished.setText(s);
-  }
-
-  private void setLblText(Object value, String format, JLabel target) {
-    String s = String.format(format, value);
-    target.setText(s);
   }
 }

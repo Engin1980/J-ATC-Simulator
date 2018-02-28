@@ -123,6 +123,7 @@ public class PlaneResponsibilityManager {
     lst.get(atc).add(plane);
     all.add(plane);
     infos.add(plane.getPlane4Display());
+    atc.registerNewPlaneUnderControl(plane);
   }
 
   public void unregisterPlane(Airplane plane) {
@@ -136,6 +137,7 @@ public class PlaneResponsibilityManager {
     lst.get(atc).remove(plane);
     all.remove(plane);
     infos.remove(plane.getPlane4Display());
+    atc.unregisterPlaneUnderControl(plane);
   }
 
   public void requestSwitch(Atc from, Atc to, Airplane plane) {

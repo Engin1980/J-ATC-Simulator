@@ -33,7 +33,11 @@ public abstract class Atc implements IMessageParticipant {
   protected final int orderedAltitude;
   
   protected final AtcRecorder recorder;
-  
+
+  public abstract void unregisterPlaneUnderControl(Airplane plane);
+
+  public abstract void registerNewPlaneUnderControl(Airplane plane);
+
   protected PlaneResponsibilityManager getPrm(){
     return PlaneResponsibilityManager.getInstance();
   }

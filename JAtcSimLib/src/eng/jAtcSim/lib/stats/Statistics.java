@@ -21,6 +21,41 @@ public class Statistics {
     public final Maxim total = new Maxim();
   }
 
+  public class MovementsPerHour{
+    public double getArrivals(){
+      return finishedArrivals.get() / (double) secondsElapsed.get() * 3600;
+    }
+    public double getDepartures(){
+      return finishedDepartures.get() / (double) secondsElapsed.get() * 3600;
+    }
+    public double getTotal(){
+      return (finishedDepartures.get() + (double) finishedArrivals.get()) / secondsElapsed.get() * 3600;
+    }
+  }
+
+  public static class HoldingPointInfo{
+    public final Maxim maximumHoldingPointCount = new Maxim();
+    public int currentHoldingPointCount = 0;
+    public final Maxim maximumHoldingPointTime = new Maxim();
+    public final Meaner meanHoldingPointTime = new Meaner();
+  }
+
+  public static String toTime(double seconds){
+    String ret;
+    int tmp = (int) Math.floor(seconds);
+    int hrs = tmp / 3600;
+    tmp = tmp % 3600;
+    int min = tmp / 60;
+    tmp = tmp % 60;
+    int sec = tmp;
+    if (hrs == 0){
+      ret = String.format("%d:%02d", min, sec);
+    } else {
+      ret = String.format("%d:%02d:%02d",hrs, min, sec);
+    }
+    return ret;
+  }
+
   public static class CurrentPlanes {
 
     public int total;
@@ -61,6 +96,8 @@ public class Statistics {
   public final MaximumPlanes maxumumTotalPlanes = new MaximumPlanes();
   public final Meaner durationOfSecondElapse = new Meaner();
   public final CurrentPlanes currentPlanes = new CurrentPlanes();
+  public final MovementsPerHour movementsPerHour = new MovementsPerHour();
+  public final HoldingPointInfo holdingPointInfo = new HoldingPointInfo();
 
   public Statistics() {
   }
@@ -85,6 +122,10 @@ public class Statistics {
     this.maxumumTotalPlanes.arrivals.set(this.currentPlanes.arrivals);
     this.maxumumTotalPlanes.departures.set(this.currentPlanes.departures);
     this.maxumumTotalPlanes.total.set(this.currentPlanes.total);
+
+    int hpCount = Acc.atcTwr().getNumberOfPlanesAtHoldingPoint();
+    this.holdingPointInfo.currentHoldingPointCount = hpCount;
+    this.holdingPointInfo.maximumHoldingPointCount.set(hpCount);
   }
 
   public ETime getRunTime() {

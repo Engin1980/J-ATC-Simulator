@@ -7,9 +7,9 @@
 
     <navVOR color="55FF55" width="3" borderWidth="1" borderDistance="9"/>
     <navNDB color="5555FF" width="3" borderWidth="1" borderDistance="10"/>
-    <navFix color="FF00FF" width="3" borderWidth="0" borderDistance="0"/>
+    <navFix color="999999" width="3" borderWidth="0" borderDistance="0"/>
     <fafFix color="5555FF" width="10" borderWidth="0" borderDistance="0"/>
-    <navFixMinor color="770077" width="3" borderWidth="0" borderDistance="0"/>
+    <navFixMinor color="666666" width="3" borderWidth="0" borderDistance="0"/>
     <navAirport color="AAAAFF" width="7" borderWidth="0" borderDistance="0"/>
 
     <borderCountry color="4444FF" width="1"/>

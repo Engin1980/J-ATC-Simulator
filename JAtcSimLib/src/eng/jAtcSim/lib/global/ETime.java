@@ -130,4 +130,11 @@ public class ETime implements Comparable<ETime> {
     // TODO check for midnight
     return new ETime(this.getTotalSeconds() + minutes*60);
   }
+
+  public static ETime getDifference(ETime a, ETime b) {
+    int diff = a.getTotalSeconds() - b.getTotalSeconds();
+    diff = Math.abs(diff);
+    ETime ret = new ETime(diff);
+    return ret;
+  }
 }

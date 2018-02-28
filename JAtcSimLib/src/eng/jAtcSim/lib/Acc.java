@@ -11,6 +11,7 @@ import eng.jAtcSim.lib.exceptions.ENotSupportedException;
 import eng.jAtcSim.lib.global.ERandom;
 import eng.jAtcSim.lib.global.ETime;
 import eng.jAtcSim.lib.global.ReadOnlyList;
+import eng.jAtcSim.lib.stats.Statistics;
 import eng.jAtcSim.lib.weathers.Weather;
 import eng.jAtcSim.lib.world.Airport;
 import eng.jAtcSim.lib.world.Area;
@@ -105,5 +106,9 @@ public class Acc {
 
   public static ERandom rnd() {
     return Simulation.rnd;
+  }
+
+  public static Statistics stats() {
+    return sim().getStats();
   }
 }

@@ -82,6 +82,14 @@ public class FrmMain extends JFrame {
       pnlLeft.setVisible(isVis);
     });
 
+    JButton btnMovs = new JButton("Movs & Stats");
+    adjustJComponentColors(btnMovs);
+    btnMovs.addActionListener(o -> {
+      boolean isVis = pnlRight.isVisible();
+      isVis = !isVis;
+      pnlRight.setVisible(isVis);
+    });
+
     JButton btnPause = new JButton("Pause");
     adjustJComponentColors(btnPause);
     btnPause.addActionListener(o -> {
@@ -96,15 +104,14 @@ public class FrmMain extends JFrame {
 
     JButton btnView = new JButton("Add view");
     adjustJComponentColors(btnView);
-    adjustJComponentColors(btnPause);
-    btnPause.addActionListener(o -> {
+    btnView.addActionListener(o -> {
       FrmView f = new FrmView();
       f.init(this.parent);
       f.setVisible(true);
     });
 
     JPanel ret = LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.middle, 4,
-        btnStrips, btnPause, btnView);
+        btnStrips, btnMovs, btnPause, btnView);
     ret.setName("pnlTop");
     return ret;
   }
@@ -143,10 +150,6 @@ public class FrmMain extends JFrame {
 
     //this.parent.getSim().getSecondElapsedEvent().add(o -> printGuiTree());
     //printGuiTree();
-
-    FrmView f = new FrmView();
-    f.init(this.parent);
-    f.setVisible(true);
   }
 
   private void printGuiTree() {

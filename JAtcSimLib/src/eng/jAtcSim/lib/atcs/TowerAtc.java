@@ -26,8 +26,13 @@ public class TowerAtc extends ComputerAtc {
   private static final int MAXIMAL_SPEED_FOR_PREFERRED_RUNWAY = 5;
   private static final double MAXIMAL_ACCEPT_DISTANCE_IN_NM = 15;
   private final Map<RunwayThreshold, TakeOffInfo> takeOffInfos = new HashMap<>();
+  private AirplaneList landingPlanes = new AirplaneList();
   private AirplaneList goAroundedPlanesToSwitch = new AirplaneList();
-  private AirplaneList holdingPointList = new AirplaneList();
+  private AirplaneList holdingPointPlanesList = new AirplaneList();
+  private AirplaneList linedUpPlanesList = new AirplaneList();
+  private AirplaneList departingPlanesList = new AirplaneList();
+
+  private Map<Airplane, ETime> holdingPointWaitingTimeMap = new HashMap<>();
   private RunwayThreshold runwayThresholdInUse = null;
 
   public TowerAtc(AtcTemplate template) {
@@ -74,17 +79,41 @@ public class TowerAtc extends ComputerAtc {
   }
 
   @Override
+  public void unregisterPlaneUnderControl(Airplane plane) {
+    if (landingPlanes.contains(plane))
+      landingPlanes.remove(plane);
+    if (goAroundedPlanesToSwitch.contains(plane))
+      goAroundedPlanesToSwitch.remove(plane);
+    if (holdingPointPlanesList.contains(plane)) {
+      holdingPointPlanesList.remove(plane);
+    }
+    if (linedUpPlanesList.contains(plane))
+      linedUpPlanesList.remove(plane);
+    if (departingPlanesList.contains(plane))
+      departingPlanesList.remove(plane);
+    if (holdingPointWaitingTimeMap.containsKey(plane))
+      holdingPointWaitingTimeMap.remove(plane);
+  }
+
+  @Override
+  public void registerNewPlaneUnderControl(Airplane plane) {
+    if (plane.isArrival()) {
+      landingPlanes.add(plane);
+    } else {
+      holdingPointPlanesList.add(plane);
+      holdingPointWaitingTimeMap.put(plane, Acc.now().clone());
+    }
+  }
+
+  @Override
   public void elapseSecond() {
     super.elapseSecond();
 
     tryTakeOffPlane();
-    
-    if (Acc.now().getTotalSeconds() % RUNWAY_CHANGE_INFO_UPDATE_INTERVAL == 0){
+
+    if (Acc.now().getTotalSeconds() % RUNWAY_CHANGE_INFO_UPDATE_INTERVAL == 0) {
       checkForRunwayChange();
     }
-  }
-
-  private void checkForRunwayChange() {
   }
 
   @Override
@@ -93,13 +122,16 @@ public class TowerAtc extends ComputerAtc {
       return true; // this should be go-arounded arrivals
 
     // as this plane is asked for switch, it is confirmed
-    // from APP
-    if (holdingPointList.contains(plane) == false)
-      holdingPointList.add(plane);
+    // from APP, so can be moved from holding-point to line-up
+    if (holdingPointPlanesList.contains(plane)) {
+      holdingPointPlanesList.remove(plane);
+      linedUpPlanesList.add(plane);
+    }
 
     for (TakeOffInfo toi : takeOffInfos.values()) {
-      if (toi.airplane == plane && toi.airplane.getAltitude() > toi.randomReadyToSwitchAltitude)
-        return true;
+      if (toi.airplane == plane && toi.airplane.getAltitude() > toi.randomReadyToSwitchAltitude) {
+        return true; // true = airplane can be switched
+      }
     }
 
     return false;
@@ -125,13 +157,9 @@ public class TowerAtc extends ComputerAtc {
   }
 
   @Override
-  protected void doAfterGoodDayNotificationConfirmation(Airplane p) {
-    // nothing to do
-  }
-
-  @Override
   protected void processMessagesFromPlane(Airplane plane, SpeechList spchs) {
     if (spchs.containsType(GoingAroundNotification.class)) {
+      landingPlanes.remove(plane);
       goAroundedPlanesToSwitch.add(plane);
     }
   }
@@ -155,8 +183,15 @@ public class TowerAtc extends ComputerAtc {
     changeRunwayInUse(suggestedThreshold);
   }
 
+  public int getNumberOfPlanesAtHoldingPoint() {
+    return holdingPointPlanesList.size() + linedUpPlanesList.size();
+  }
+
   public RunwayThreshold getRunwayThresholdInUse() {
     return runwayThresholdInUse;
+  }
+
+  private void checkForRunwayChange() {
   }
 
   private void changeRunwayInUse(RunwayThreshold newRunwayInUseThreshold) {
@@ -169,10 +204,10 @@ public class TowerAtc extends ComputerAtc {
   }
 
   private void tryTakeOffPlane() {
-    if (holdingPointList.isEmpty())
+    if (linedUpPlanesList.isEmpty())
       return;
 
-    Airplane toReadyPlane = holdingPointList.get(0);
+    Airplane toReadyPlane = linedUpPlanesList.get(0);
 
     TakeOffInfo toi = null;
     if (takeOffInfos.containsKey(this.runwayThresholdInUse)) {
@@ -199,8 +234,17 @@ public class TowerAtc extends ComputerAtc {
       return;
 
     // if it gets here, the "toReadyPlane" can proceed take-off
-    holdingPointList.remove(0);
+    linedUpPlanesList.remove(0);
+    departingPlanesList.add(toReadyPlane);
 
+    // add to stats
+    double diffSecs = ETime.getDifference(Acc.now(), this.holdingPointWaitingTimeMap.get(toReadyPlane)).getTotalSeconds();
+    diffSecs -= 15; // generally let TWR atc asks APP atc to switch 15 seconds before HP.
+    if (diffSecs < 0) diffSecs = 0;
+    Acc.stats().holdingPointInfo.maximumHoldingPointTime.set(diffSecs);
+    Acc.stats().holdingPointInfo.meanHoldingPointTime.add(diffSecs);
+
+    // process the T-O
     toi = new TakeOffInfo(
         Acc.now(), toReadyPlane);
     this.takeOffInfos.put(this.runwayThresholdInUse, toi);

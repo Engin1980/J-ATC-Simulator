@@ -294,12 +294,14 @@ public class Simulation {
       // landed
       if (p.isArrival() && p.getSpeed() < 11) {
         rem.add(p);
+        this.stats.finishedArrivals.add();
       }
 
       // departed
       if (p.isDeparture() && Acc.prm().getResponsibleAtc(p).equals(Acc.atcCtr())
           && Coordinates.getDistanceInNM(p.getCoordinate(), Acc.airport().getLocation()) > MINIMAL_DEPARTURE_REMOVE_DISTANCE) {
         rem.add(p);
+        this.stats.finishedDepartures.add();
       }
     }
 

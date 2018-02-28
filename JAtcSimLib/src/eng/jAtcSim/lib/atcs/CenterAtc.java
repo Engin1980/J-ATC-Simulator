@@ -11,6 +11,31 @@ import eng.jAtcSim.lib.world.Navaid;
 
 public class CenterAtc extends ComputerAtc {
 
+  @Override
+  public void unregisterPlaneUnderControl(Airplane plane) {
+
+  }
+
+  @Override
+  public void registerNewPlaneUnderControl(Airplane plane) {
+    if (plane.isDeparture()) {
+      SpeechList cmds = new SpeechList();
+
+      cmds.add(
+          new ChangeAltitudeCommand(ChangeAltitudeCommand.eDirection.climb, getDepartureRandomTargetAltitude(plane)));
+
+      // order to continue after last fix
+      Navaid n = plane.getDepartureLastNavaid();
+      if (n != null) {
+        cmds.add(new AfterNavaidCommand(n));
+        cmds.add(new ChangeHeadingCommand());
+      }
+
+      Message m = new Message(this, plane, cmds);
+      super.sendMessage(m);
+    }
+  }
+
   public CenterAtc(AtcTemplate template) {
     super(template);
   }
@@ -30,26 +55,6 @@ public class CenterAtc extends ComputerAtc {
       ret = false;
     }
     return ret;
-  }
-
-  @Override
-  protected void doAfterGoodDayNotificationConfirmation(Airplane p) {
-    if (p.isDeparture()) {
-      SpeechList cmds = new SpeechList();
-
-      cmds.add(
-          new ChangeAltitudeCommand(ChangeAltitudeCommand.eDirection.climb, getDepartureRandomTargetAltitude(p)));
-
-      // order to continue after last fix
-      Navaid n = p.getDepartureLastNavaid();
-      if (n != null) {
-        cmds.add(new AfterNavaidCommand(n));
-        cmds.add(new ChangeHeadingCommand());
-      }
-
-      Message m = new Message(this, p, cmds);
-      super.sendMessage(m);
-    }
   }
 
   @Override

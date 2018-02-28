@@ -71,6 +71,16 @@ public class UserAtc extends Atc {
     this.errorBehavior = errorBehavior;
   }
 
+  @Override
+  public void unregisterPlaneUnderControl(Airplane plane) {
+
+  }
+
+  @Override
+  public void registerNewPlaneUnderControl(Airplane plane) {
+
+  }
+
   public UserAtc(AtcTemplate template) {
     super(template);
   }
