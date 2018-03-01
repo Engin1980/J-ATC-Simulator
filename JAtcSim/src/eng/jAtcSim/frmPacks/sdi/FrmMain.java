@@ -20,6 +20,7 @@ public class FrmMain extends JFrame {
   private JPanel pnlRight;
   private SwingRadarPanel srpRadar;
   private FlightListPanel flightListPanel;
+  private CommandButtonsPanel pnlCommands;
 
   public FrmMain() {
     initComponents();
@@ -83,6 +84,14 @@ public class FrmMain extends JFrame {
       pnlLeft.setVisible(isVis);
     });
 
+    JButton btnCommands = new JButton("Cmds");
+    adjustJComponentColors(btnCommands);
+    btnCommands.addActionListener(o -> {
+      boolean isVis = pnlCommands.isVisible();
+      isVis = !isVis;
+      pnlCommands.setVisible(isVis);
+    });
+
     JButton btnMovs = new JButton("Movs & Stats");
     adjustJComponentColors(btnMovs);
     btnMovs.addActionListener(o -> {
@@ -112,7 +121,7 @@ public class FrmMain extends JFrame {
     });
 
     JPanel ret = LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.middle, 4,
-        btnStrips, btnMovs, btnPause, btnView);
+        btnStrips, btnCommands, btnMovs, btnPause, btnView);
     ret.setName("pnlTop");
     return ret;
   }
@@ -140,8 +149,9 @@ public class FrmMain extends JFrame {
     this.flightListPanel = new FlightListPanel();
     this.flightListPanel.init(this.parent.getSim(), parent.getAppSettings());
     pnlLeft.add(flightListPanel, BorderLayout.CENTER);
-    CommandButtonsPanel pnlButtons = new CommandButtonsPanel();
-    pnlLeft.add(pnlButtons, BorderLayout.PAGE_END);
+    pnlCommands = new CommandButtonsPanel();
+    pnlCommands.setVisible(false);
+    pnlLeft.add(pnlCommands, BorderLayout.PAGE_END);
 
     // Right panel
     ScheduledFlightListPanel scheduledPanel = new ScheduledFlightListPanel();
@@ -156,16 +166,16 @@ public class FrmMain extends JFrame {
 
     srpRadar.getRadar().getSelectedAirplaneChangedEvent().add((sender, callsign) -> {
       flightListPanel.setSelectedCallsign((Callsign) callsign);
-      pnlButtons.setPlane((Callsign)callsign);
+      pnlCommands.setPlane((Callsign)callsign);
     });
     flightListPanel.getSelectedCallsignChangedEvent().add((sender, callsign) -> {
       srpRadar.getRadar().setSelectedCallsign((Callsign) callsign);
-      pnlButtons.setPlane((Callsign)callsign);
+      pnlCommands.setPlane((Callsign)callsign);
     });
 
-    pnlButtons.getGeneratedEvent().add(s -> srpRadar.addCommandTextToLine((String) s));
-    pnlButtons.getSendEvent().add(() -> srpRadar.sendCommand());
-    pnlButtons.getEraseEvent().add(() -> srpRadar.eraseCommand());
+    pnlCommands.getGeneratedEvent().add(s -> srpRadar.addCommandTextToLine((String) s));
+    pnlCommands.getSendEvent().add(() -> srpRadar.sendCommand());
+    pnlCommands.getEraseEvent().add(() -> srpRadar.eraseCommand());
   }
 
   private void printGuiTree() {
