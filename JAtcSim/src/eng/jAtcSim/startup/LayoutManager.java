@@ -6,6 +6,10 @@ import java.awt.*;
 
 public class LayoutManager {
 
+  public interface Action{
+    void apply(Component component);
+  }
+
   public enum eHorizontalAlign {
     left,
     center,
@@ -17,6 +21,17 @@ public class LayoutManager {
     middle,
     bottom,
     baseline
+  }
+
+  public static void adjustComponents(Component mostParentComponent, Action action){
+    action.apply(mostParentComponent);
+
+    if (mostParentComponent instanceof Container){
+      Container container = (Container) mostParentComponent;
+      for (Component component : container.getComponents()) {
+        adjustComponents(component, action);
+      }
+    }
   }
 
   public static JPanel createFlowPanel(eVerticalAlign align, int distance, JComponent... components) {
@@ -85,6 +100,11 @@ public class LayoutManager {
   public static JPanel createBorderedPanel(int distance, JComponent content) {
     JPanel panel = new JPanel();
     fillBorderedPanel(panel, distance, content);
+    return panel;
+  }
+  public static JPanel createBorderedPanel(int distance) {
+    JPanel panel = new JPanel();
+    fillBorderedPanel(panel, distance, null);
     return panel;
   }
 

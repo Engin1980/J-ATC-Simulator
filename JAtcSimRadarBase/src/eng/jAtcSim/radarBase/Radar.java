@@ -425,10 +425,8 @@ public class Radar {
   public void setSelectedCallsign(Callsign selectedCallsign) {
     Callsign bef = this.selectedCallsign;
     this.selectedCallsign = selectedCallsign;
-    if (bef != this.selectedCallsign) {
+    if (bef != this.selectedCallsign)
       this.selectedAirplaneChangedEvent.raise(this.selectedCallsign);
-      redraw(true);
-    }
   }
 
   private void canvas_onMouseMove(ICanvas sender, EMouseEventArg e) {

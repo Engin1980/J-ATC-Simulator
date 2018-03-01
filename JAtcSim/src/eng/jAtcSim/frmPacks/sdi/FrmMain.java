@@ -1,9 +1,6 @@
 package eng.jAtcSim.frmPacks.sdi;
 
-import eng.jAtcSim.frmPacks.shared.FlightListPanel;
-import eng.jAtcSim.frmPacks.shared.ScheduledFlightListPanel;
-import eng.jAtcSim.frmPacks.shared.StatsPanel;
-import eng.jAtcSim.frmPacks.shared.SwingRadarPanel;
+import eng.jAtcSim.frmPacks.shared.*;
 import eng.jAtcSim.lib.airplanes.Callsign;
 import eng.jAtcSim.lib.speaking.formatting.LongFormatter;
 import eng.jAtcSim.radarBase.BehaviorSettings;
@@ -21,7 +18,7 @@ public class FrmMain extends JFrame {
   private JPanel pnlLeft;
   private JPanel pnlTop;
   private JPanel pnlRight;
-  private Radar radar;
+  private SwingRadarPanel srpRadar;
   private FlightListPanel flightListPanel;
 
   public FrmMain() {
@@ -131,19 +128,20 @@ public class FrmMain extends JFrame {
 
     // radar
     BehaviorSettings behSett = new BehaviorSettings(true, new LongFormatter(), 10);
-    SwingRadarPanel pnlSRP = new SwingRadarPanel();
-    pnlSRP.init(
+    this.srpRadar = new SwingRadarPanel();
+    this.srpRadar.init(
         this.parent.getSim().getActiveAirport().getInitialPosition(),
         this.parent.getSim(), this.parent.getArea(),
         this.parent.getDisplaySettings(), behSett
     );
-    this.pnlContent.add(pnlSRP);
-    this.radar = pnlSRP.getRadar();
+    this.pnlContent.add(srpRadar);
 
     // Left panel
-    flightListPanel = new FlightListPanel();
-    flightListPanel.init(this.parent.getSim(), parent.getAppSettings());
-    pnlLeft.add(flightListPanel);
+    this.flightListPanel = new FlightListPanel();
+    this.flightListPanel.init(this.parent.getSim(), parent.getAppSettings());
+    pnlLeft.add(flightListPanel, BorderLayout.CENTER);
+    CommandButtonsPanel pnlButtons = new CommandButtonsPanel();
+    pnlLeft.add(pnlButtons, BorderLayout.PAGE_END);
 
     // Right panel
     ScheduledFlightListPanel scheduledPanel = new ScheduledFlightListPanel();
@@ -156,8 +154,18 @@ public class FrmMain extends JFrame {
     //this.parent.getSim().getSecondElapsedEvent().add(o -> printGuiTree());
     //printGuiTree();
 
-    radar.getSelectedAirplaneChangedEvent().add((sender, callsign) -> flightListPanel.setSelectedCallsign((Callsign) callsign));
-    flightListPanel.getSelectedCallsignChangedEvent().add((sender, callsign) -> radar.setSelectedCallsign((Callsign) callsign));
+    srpRadar.getRadar().getSelectedAirplaneChangedEvent().add((sender, callsign) -> {
+      flightListPanel.setSelectedCallsign((Callsign) callsign);
+      pnlButtons.setPlane((Callsign)callsign);
+    });
+    flightListPanel.getSelectedCallsignChangedEvent().add((sender, callsign) -> {
+      srpRadar.getRadar().setSelectedCallsign((Callsign) callsign);
+      pnlButtons.setPlane((Callsign)callsign);
+    });
+
+    pnlButtons.getGeneratedEvent().add(s -> srpRadar.addCommandTextToLine((String) s));
+    pnlButtons.getSendEvent().add(() -> srpRadar.sendCommand());
+    pnlButtons.getEraseEvent().add(() -> srpRadar.eraseCommand());
   }
 
   private void printGuiTree() {

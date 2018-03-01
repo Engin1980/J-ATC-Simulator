@@ -4,7 +4,7 @@ SETLOCAL
 
 ECHO Library eSystem
 SET PF=eng.eSystem.jar
-SET TCPF=C:\Users\Marek Vajgl\Documents\IdeaProjects\eng.eSystem\ESystem\out\artifacts\eng_eSystem\%PF%
+SET TCPF=C:\Users\Marek Vajgl\Documents\IdeaProjects\_eSystem\eng.eSystem\out\artifacts\eng_eSystem\%PF%
 IF EXIST "%TCPF%" (
     ECHO    Library found, updating
     COPY "%TCPF%" "%PF%" /Y
@@ -14,7 +14,7 @@ IF EXIST "%TCPF%" (
 
 ECHO Library eSystem.events
 SET PF=eng.eSystem.events.jar
-SET TCPF=C:\Users\Marek Vajgl\Documents\IdeaProjects\eng.eSystem\events\out\artifacts\eng_eSystem_events\%PF%
+SET TCPF=C:\Users\Marek Vajgl\Documents\IdeaProjects\_eSystem\events\out\artifacts\eng_eSystem_events\%PF%
 IF EXIST "%TCPF%" (
     ECHO    Library found, updating
     COPY "%TCPF%" "%PF%" /Y
@@ -24,7 +24,7 @@ IF EXIST "%TCPF%" (
 
 ECHO Library xmlSerialization
 SET PF=EXmlSerialization.jar
-SET TCPF=C:\Users\Marek Vajgl\Documents\IdeaProjects\eng.eSystem\xmlSerialization\out\artifacts\EXmlSerialization_jar\%PF%
+SET TCPF=C:\Users\Marek Vajgl\Documents\IdeaProjects\_eSystem\eng.eSystem.xmlSerialization\out\artifacts\EXmlSerialization_jar\%PF%
 IF EXIST "%TCPF%" (
     ECHO    Library found, updating
     COPY "%TCPF%" "%PF%" /Y

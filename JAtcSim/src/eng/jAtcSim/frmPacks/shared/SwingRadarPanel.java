@@ -63,6 +63,26 @@ public class SwingRadarPanel extends JPanel {
     return radar;
   }
 
+  public void addCommandTextToLine(String text) {
+    String tmp = txtInput.getText() + " " + text + " ";
+    txtInput.setText(tmp);
+    txtInput.requestFocus();
+  }
+
+  public void sendCommand() {
+    String msg = txtInput.getText();
+    boolean accepted = sendMessage(msg);
+    if (accepted) {
+      eraseCommand();
+    }
+    txtInput.requestFocus();
+  }
+
+  public void eraseCommand() {
+    txtInput.setText("");
+    txtInput.requestFocus();
+  }
+
   private JPanel buildTextPanel() {
 
     // textove pole
@@ -71,7 +91,7 @@ public class SwingRadarPanel extends JPanel {
     txtInput.setFont(font);
     txtInput.addKeyListener(new java.awt.event.KeyAdapter() {
       public void keyPressed(java.awt.event.KeyEvent evt) {
-        jTxtInputKeyPressed(evt);
+        jTxtInput_keyPressed(evt);
       }
     });
     JPanel ret = LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.middle,
@@ -262,17 +282,14 @@ public class SwingRadarPanel extends JPanel {
     radar.redraw(true);
   }
 
-  private void jTxtInputKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTxtInputKeyPressed
+  private void jTxtInput_keyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTxtInputKeyPressed
     if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
-      String msg = txtInput.getText();
-      boolean accepted = sendMessage(msg);
-      if (accepted) {
-        txtInput.setText("");
-      }
+      this.sendCommand();
     }
   }
 
   private boolean sendMessage(String msg) {
+    msg = normalizeMsg(msg);
     boolean ret;
     UserAtc app = sim.getAppAtc();
     try {
@@ -307,6 +324,17 @@ public class SwingRadarPanel extends JPanel {
       throw new ERuntimeException("Message invocation failed for speech: " + msg, t);
     }
     return ret;
+  }
+
+  private String normalizeMsg(String txt) {
+    txt = txt.trim();
+    StringBuilder sb = new StringBuilder(txt);
+    int doubleSpaceIndex = sb.toString().indexOf("  ");
+    while (doubleSpaceIndex >= 0) {
+      sb.replace(doubleSpaceIndex, doubleSpaceIndex + 2, " ");
+      doubleSpaceIndex = sb.toString().indexOf("  ");
+    }
+    return sb.toString();
   }
 
   private void processApplicationMessage(String msg) {
