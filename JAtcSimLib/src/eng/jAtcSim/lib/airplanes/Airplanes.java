@@ -106,7 +106,11 @@ public class Airplanes {
     }
   }
 
+  private static final double AIRPROX_STANDARD_DISTANCE = 5;
+  private static final double AIRPROX_APPROACH_DISTANCE = 2.5;
+
   private static boolean isInAirprox(Airplane a, Airplane b) {
+    boolean ret;
     if (Math.abs(a.getAltitude() - b.getAltitude()) >= 1000) {
       return false;
     }
@@ -114,10 +118,16 @@ public class Airplanes {
     double d = Coordinates.getDistanceInNM(
         a.getCoordinate(), b.getCoordinate());
 
-    if (d > 5) {
-      return false;
-    }
+    if (d < AIRPROX_STANDARD_DISTANCE) {
+      boolean isAinApp = a.getState().is(Airplane.State.approachDescend, Airplane.State.longFinal, Airplane.State.shortFinal, Airplane.State.landed, Airplane.State.takeOffRoll, Airplane.State.takeOffGoAround);
+      boolean isBinApp = b.getState().is(Airplane.State.approachDescend, Airplane.State.longFinal, Airplane.State.shortFinal, Airplane.State.landed, Airplane.State.takeOffRoll, Airplane.State.takeOffGoAround);
+      if (isAinApp && isBinApp)
+        ret = d < AIRPROX_APPROACH_DISTANCE;
+      else
+        ret = true;
+    }else
+      ret = false;
 
-    return true;
+    return ret;
   }
 }

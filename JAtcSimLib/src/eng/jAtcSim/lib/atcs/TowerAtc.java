@@ -230,7 +230,7 @@ public class TowerAtc extends ComputerAtc {
         return;
     }
 
-    if (closestLandingPlaneDistance() < 5)
+    if (closestLandingPlaneDistance() < 2.5)
       return;
 
     // if it gets here, the "toReadyPlane" can proceed take-off

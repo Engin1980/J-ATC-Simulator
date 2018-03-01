@@ -28,7 +28,6 @@ import eng.jAtcSim.radarBase.global.TextBlockLocation;
 import eng.jAtcSim.radarBase.global.events.EMouseEventArg;
 import eng.jAtcSim.radarBase.global.events.KeyEventArg;
 import eng.jAtcSim.radarBase.global.events.WithCoordinateEventArg;
-import jdk.nashorn.internal.codegen.CompilerConstants;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -299,14 +298,13 @@ public class Radar {
       return inner.iterator();
     }
   }
-
+  private static final double MAX_NM_DIFFERENCE_FOR_SELECTION = 2.5;
   private final TransformationLayer tl;
   private final ICanvas c;
   private final Event<Radar, WithCoordinateEventArg> mouseMoveEvent = new Event(this);
   private final Event<Radar, WithCoordinateEventArg> mouseClickEvent = new Event(this);
   private final Event<Radar, KeyEventArg> keyPressEvent = new Event(this);
   private final Event<Radar, Callsign> selectedAirplaneChangedEvent = new Event<>(this);
-
   private final DisplaySettings displaySettings;
   private final BehaviorSettings behaviorSettings;
   private final LocalSettings localSettings;
@@ -377,7 +375,7 @@ public class Radar {
     if (!force) {
       if (redrawTick <= 0) {
         planeInfos.update(simulation.getPlanesToDisplay());
-        this.redrawTick = displaySettings.refreshRate;
+        this.redrawTick = displaySettings.refreshRate - 1;
       } else {
         this.redrawTick--;
       }
@@ -387,6 +385,21 @@ public class Radar {
 
   public LocalSettings getLocalSettings() {
     return localSettings;
+  }
+
+  public Event<Radar, Callsign> getSelectedAirplaneChangedEvent() {
+    return selectedAirplaneChangedEvent;
+  }
+
+  public Callsign getSelectedCallsign() {
+    return selectedCallsign;
+  }
+
+  public void setSelectedCallsign(Callsign selectedCallsign) {
+    Callsign bef = this.selectedCallsign;
+    this.selectedCallsign = selectedCallsign;
+    if (bef != this.selectedCallsign)
+      this.selectedAirplaneChangedEvent.raise(this.selectedCallsign);
   }
 
   private void buildLocalNavaidList() {
@@ -414,21 +427,6 @@ public class Radar {
     }
   }
 
-  public Event<Radar, Callsign> getSelectedAirplaneChangedEvent() {
-    return selectedAirplaneChangedEvent;
-  }
-
-  public Callsign getSelectedCallsign() {
-    return selectedCallsign;
-  }
-
-  public void setSelectedCallsign(Callsign selectedCallsign) {
-    Callsign bef = this.selectedCallsign;
-    this.selectedCallsign = selectedCallsign;
-    if (bef != this.selectedCallsign)
-      this.selectedAirplaneChangedEvent.raise(this.selectedCallsign);
-  }
-
   private void canvas_onMouseMove(ICanvas sender, EMouseEventArg e) {
     Point pt = e.getPoint();
     Coordinate coord = tl.toCoordinate(pt);
@@ -441,7 +439,7 @@ public class Radar {
         }
         break;
       case click:
-        if (e.modifiers.is(false, false, false) && e.button == EMouseEventArg.eButton.left){
+        if (e.modifiers.is(false, false, false) && e.button == EMouseEventArg.eButton.left) {
           // try to select an airplane
           Point p = e.getPoint();
           Coordinate c = tl.toCoordinate(p);
@@ -482,14 +480,12 @@ public class Radar {
     }
   }
 
-  private static final double MAX_NM_DIFFERENCE_FOR_SELECTION = 2.5;
-
   private AirplaneDisplayInfo tryGetSelectedAirplane(Coordinate c) {
     AirplaneDisplayInfo bestAdi = null;
     double bestDiff = Double.MAX_VALUE;
     for (AirplaneDisplayInfo adi : this.planeInfos.getList()) {
       double tmpDif = Coordinates.getDistanceInNM(c, adi.coordinate);
-      if (tmpDif < bestDiff){
+      if (tmpDif < bestDiff) {
         bestDiff = tmpDif;
         bestAdi = adi;
       }
@@ -806,7 +802,7 @@ public class Radar {
     Color c = dp.getColor();
     if (adi.isAirprox) {
       c = new Color(0xFF, 0, 0);
-    } else if (this.selectedCallsign == adi.callsign){
+    } else if (this.selectedCallsign == adi.callsign) {
       c = displaySettings.selected.getColor();
     }
 
