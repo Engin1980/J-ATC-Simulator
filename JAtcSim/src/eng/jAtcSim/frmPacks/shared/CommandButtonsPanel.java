@@ -10,6 +10,7 @@ import eng.jAtcSim.radarBase.global.Color;
 import eng.jAtcSim.startup.LayoutManager;
 
 import javax.swing.*;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,6 +66,45 @@ public class CommandButtonsPanel extends JPanel {
 
   private void initComponents() {
 
+//    //this.setLayout(new FlowLayout());
+//    this.setLayout(new FlowLayout());
+    this.setPreferredSize(new Dimension(200, 300));
+//
+//    JButton btn;
+//
+//    btn = new JButton("A");
+//    this.add(btn);
+//    btn = new JButton("A");
+//    this.add(btn);
+//    btn = new JButton("A");
+//    this.add(btn);
+//    btn = new JButton("A");
+//    this.add(btn);
+//    btn = new JButton("A");
+//    this.add(btn);
+//    btn = new JButton("A");
+//    this.add(btn);
+//    btn = new JButton("A");
+//    this.add(btn);
+//    btn = new JButton("A");
+//    this.add(btn);
+//    btn = new JButton("A");
+//    this.add(btn);
+//    btn = new JButton("A");
+//    this.add(btn);
+//    btn = new JButton("A");
+//    this.add(btn);
+//    btn = new JButton("A");
+//    this.add(btn);
+//    btn = new JButton("A");
+//    this.add(btn);
+//    btn = new JButton("A");
+//    this.add(btn);
+//    btn = new JButton("A");
+//    this.add(btn);
+//    btn = new JButton("A");
+//    this.add(btn);
+
     JButton btn;
 
     JPanel pnlPlane = LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.middle, 4);
@@ -104,7 +144,10 @@ public class CommandButtonsPanel extends JPanel {
     btn.addActionListener(o -> buildAltitudePanel(false));
     pnlHSA.add(btn);
 
-    pnlSub = LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.middle, 4);
+    pnlSub = new JPanel();
+    pnlSub.setLayout(new FlowLayout());
+    pnlSub.setPreferredSize(new Dimension(200, 200));
+    pnlSub.setVisible(false);
 
     JPanel pnlSend = LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.middle, 4);
 
@@ -116,7 +159,7 @@ public class CommandButtonsPanel extends JPanel {
     btn.addActionListener(o -> eraseEvent.raise());
     pnlSend.add(btn);
 
-    LayoutManager.fillBoxPanel(this, LayoutManager.eHorizontalAlign.center, 4,
+    LayoutManager.fillBoxPanel(this, LayoutManager.eHorizontalAlign.center, 0,
         pnlPlane, pnlAtc, pnlHSA, pnlSub, pnlSend);
 
     LayoutManager.adjustComponents(this, (c) -> {
@@ -125,35 +168,43 @@ public class CommandButtonsPanel extends JPanel {
       c.setEnabled(false);
     });
     this.setBackground(Coloring.get(frColor));
+    pnlSub.setBackground(Coloring.get(frColor));
   }
 
   private void buildAltitudePanel(boolean isDescend) {
+    pnlSub.setVisible(true);
     List<Integer> alts = new ArrayList();
 
-    if (isDescend){
+    if (isDescend) {
       int alt = plane.altitude() / 1000 * 10;
-      while (alt >= 30){
+      while (alt >= 30) {
         alts.add(alt);
-        alt-=10;
+        alt -= 10;
       }
     } else {
-      int alt = plane.altitude() / 1000*10;
-      while (alt >= 170){
+      int alt = plane.altitude() / 1000 * 10;
+      while (alt >= 170) {
         alts.add(alt);
-        alt+=10;
+        alt += 10;
       }
     }
 
     pnlSub.removeAll();
     for (Integer alt : alts) {
       JButton btn = new JButton(Integer.toString(alt));
-
+      btn.addActionListener(o -> {
+        String cmd = (isDescend ? "DM " : "CM ") + btn.getText();
+        this.getGeneratedEvent().raise(cmd);
+        pnlSub.removeAll();
+        pnlSub.setVisible(false);
+      });
       pnlSub.add(btn);
     }
     LayoutManager.adjustComponents(pnlSub, (c) -> {
       c.setBackground(Coloring.get(bgColor));
       c.setForeground(Coloring.get(frColor));
     });
+    pnlSub.setBackground(Coloring.get(frColor));
   }
 
   private void buildSpeedPanel() {
