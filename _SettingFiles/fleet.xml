@@ -1,0 +1,67 @@
+<fleets>
+    <company icao="EZY">
+        <type name="A319" weight="99" />
+        <type name="A320" weight="98" />
+    </company>
+    <company icao="CSA">
+        <type name="A319" weight="7" />
+        <type name="A330" weight="1" />
+        <type name="ATR42" weight="3" />
+        <type name="ATR72" weight="5" />
+    </company>
+    <company icao="BAW">
+        <type name="A318" weight="1" />
+        <type name="A319" weight="44" />
+        <type name="A320" weight="67" />
+        <type name="A321" weight="18" />
+        <type name="A380" weight="12" />
+        <type name="B747" weight="36" />
+        <type name="B777" weight="58" />
+        <type name="B767" weight="7" />
+        <type name="B787" weight="25" />
+    </company>
+    <company icao="AZA">
+        <type name="A319" weight="22" />
+        <type name="A320" weight="38" />
+        <type name="A321" weight="12" />
+        <type name="A330" weight="14" />
+        <type name="B777" weight="12" />
+    </company>
+    <company icao="EGW" name="Eurowings">
+        <type name="A319" weight="41" />
+        <type name="A320" weight="43" />
+        <type name="A330" weight="7" />
+        <type name="B737NG" weight="12" />
+    </company>
+    <company icao="RYR">
+        <type name="B737NG" weight="422" />
+    </company>
+    <company icao="KLM">
+        <type name="A330" weight="13" />
+        <type name="B737NG" weight="50" />
+        <type name="B747" weight="16" />
+        <type name="B777" weight="29" />
+        <type name="B787" weight="11" />
+    </company>
+    <company icao="DLH">
+        <type name="MD-11" weight="12" />
+        <type name="A319" weight="30" />
+        <type name="A320" weight="77" />
+        <type name="A321" weight="62" />
+        <type name="A330" weight="19" />
+        <type name="A340" weight="27" />
+        <type name="A350" weight="8" />
+        <type name="B747" weight="32" />
+        <type name="B777" weight="5" />
+    </company>
+    <company icao="EXS" name="Jet2.com">
+        <type name="A321" weight="1" />
+        <type name="B737" weight="18" />
+        <type name="B737NG" weight="49" />
+        <type name="B757" weight="11" />
+    </company>
+    <company icao="TVS">
+        <type name="A330" weight="1" />
+        <type name="B737NG" weight="7" />
+    </company>
+</fleets>
