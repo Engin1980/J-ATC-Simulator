@@ -39,9 +39,11 @@ public class GenericTraffic extends Traffic {
   private final double[] probabilityOfCategory = new double[4];
 
 
-
   private int nextHourToGenerateTraffic = -1;
 
+  public GenericTraffic() {
+    this.probabilityOfDeparture = 0.5;
+  }
 
   public GenericTraffic(int movementsPerHour, double probabilityOfDeparture,
                         int trafficCustomWeightTypeA, int trafficCustomWeightTypeB, int trafficCustomWeightTypeC, int trafficCustomWeightTypeD,
@@ -73,7 +75,6 @@ public class GenericTraffic extends Traffic {
   }
 
 
-
   @Override
   public void generateNewMovementsIfRequired() {
     if (nextHourToGenerateTraffic != -1 && Acc.now().getHours() != nextHourToGenerateTraffic) {
@@ -100,11 +101,11 @@ public class GenericTraffic extends Traffic {
     }
     double tmp = Acc.rnd().nextDouble(sum);
     int index = -1;
-    while (index < probabilityOfCategory.length){
+    while (index < probabilityOfCategory.length) {
       index++;
-      if (tmp < probabilityOfCategory[index]){
-        ret = (char) ((int)ret + index);
-      }else {
+      if (tmp < probabilityOfCategory[index]) {
+        ret = (char) ((int) ret + index);
+      } else {
         tmp -= probabilityOfCategory[index];
       }
     }
@@ -129,7 +130,7 @@ public class GenericTraffic extends Traffic {
     char category = getRandomCategory();
     if (isNonCommercial) {
       type = Acc.sim().getPlaneTypes().getRandomFromCategory(category);
-    } else{
+    } else {
       type = getTypeByCategoryAndCompany(prefix, category);
     }
 

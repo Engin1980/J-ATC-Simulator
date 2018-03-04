@@ -1,14 +1,15 @@
 package eng.jAtcSim;
 
+import eng.eSystem.xmlSerialization.*;
 import eng.jAtcSim.frmPacks.shared.FlightStripSettings;
+import eng.jAtcSim.lib.traffic.DensityBasedTraffic;
+import eng.jAtcSim.lib.traffic.FlightListTraffic;
+import eng.jAtcSim.lib.traffic.GenericTraffic;
+import eng.jAtcSim.lib.traffic.Traffic;
 import eng.jAtcSim.lib.world.*;
 import eng.jAtcSim.radarBase.DisplaySettings;
 import eng.jAtcSim.radarBase.parsing.RadarColorParser;
 import eng.jAtcSim.radarBase.parsing.RadarFontParser;
-import eng.eSystem.xmlSerialization.IValueParser;
-import eng.eSystem.xmlSerialization.Settings;
-import eng.eSystem.xmlSerialization.XmlListItemMapping;
-import eng.eSystem.xmlSerialization.XmlSerializer;
 import eng.jAtcSim.startup.StartupSettings;
 import eng.jAtcSim.lib.airplanes.AirplaneType;
 import eng.jAtcSim.lib.airplanes.AirplaneTypes;
@@ -122,6 +123,14 @@ public class XmlLoadHelper {
 
     // instance creators
     sett.getInstanceCreators().add(new AreaCreator());
+
+    // traffic inherited parsers
+    sett.getCustomMappings().add(
+        new XmlCustomFieldMapping(Airport.class, "traffic", "genericTraffic", GenericTraffic.class));
+    sett.getCustomMappings().add(
+        new XmlCustomFieldMapping(Airport.class, "traffic", "densityTraffic", DensityBasedTraffic.class));
+    sett.getCustomMappings().add(
+        new XmlCustomFieldMapping(Airport.class, "traffic", "flightListTraffic", FlightListTraffic.class));
 
     Area ret = (Area) deserialize(fileName, Area.class, sett);
     return ret;
