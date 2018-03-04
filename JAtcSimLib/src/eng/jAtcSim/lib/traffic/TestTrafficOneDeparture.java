@@ -42,7 +42,8 @@ public class TestTrafficOneDeparture extends TestTraffic {
 
     Callsign cs;
     cs = new Callsign("CSA", number);
-    AirplaneType pt = Acc.sim().getPlaneTypes().getRandomByTraffic(Acc.airport().getTrafficCategories(), true);
+    AirplaneType pt = Acc.sim().getPlaneTypes().tryGetByName("A319");
+    assert pt != null;
 
     Route r;
     Iterable<Route> rts = Acc.threshold().getRoutes();

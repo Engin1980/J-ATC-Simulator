@@ -24,4 +24,12 @@ public class ERandom extends Random {
     else 
       return super.nextInt(maximum);
   }
+
+  public double nextDouble(double fromInclusive, double toExclusive) {
+    return nextDouble(toExclusive - fromInclusive) + fromInclusive;
+  }
+
+  public double nextDouble(double maximum){
+    return super.nextDouble() * maximum;
+  }
 }

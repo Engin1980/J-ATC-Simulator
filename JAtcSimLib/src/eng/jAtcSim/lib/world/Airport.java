@@ -9,9 +9,9 @@ import eng.jAtcSim.lib.coordinates.Coordinate;
 import eng.jAtcSim.lib.exceptions.ERuntimeException;
 import eng.jAtcSim.lib.global.KeyItem;
 import eng.jAtcSim.lib.global.KeyList;
-import eng.jAtcSim.lib.global.TrafficCategories;
 import eng.jAtcSim.lib.atcs.Atc;
 import eng.jAtcSim.lib.atcs.AtcTemplate;
+import eng.jAtcSim.lib.traffic.Traffic;
 
 /**
  *
@@ -31,7 +31,7 @@ public class Airport implements KeyItem<String> {
   private final KeyList<AtcTemplate, Atc.eType> atcTemplates = new KeyList();
   private final KeyList<PublishedHold, Navaid> holds = new KeyList();
   private final KeyList<VfrPoint, String> vfrPoints = new KeyList();
-  private TrafficCategories trafficCategories;
+  private Traffic traffic;
   
   private Area parent;
 
@@ -76,6 +76,18 @@ public class Airport implements KeyItem<String> {
     this.parent = parent;
   }
 
+  public Traffic getTraffic() {
+    return traffic;
+  }
+
+  public void setTraffic(Traffic traffic) {
+    if (traffic == null) {
+        throw new IllegalArgumentException("Value of {traffic} cannot not be null.");
+    }
+    
+    this.traffic = traffic;
+  }
+
   public RunwayThreshold tryGetRunwayThreshold(String runwayThresholdName) {
     for (Runway r : runways) {
       for (RunwayThreshold t : r.getThresholds()) {
@@ -91,10 +103,6 @@ public class Airport implements KeyItem<String> {
     return atcTemplates;
   }
   
-  public TrafficCategories getTrafficCategories(){
-    return this.trafficCategories;
-  }
-
   public KeyList<VfrPoint, String> getVfrPoints() {
     return this.vfrPoints;
   }

@@ -6,6 +6,8 @@
 package eng.jAtcSim.lib;
 
 import eng.jAtcSim.lib.airplanes.Airplane;
+import eng.jAtcSim.lib.airplanes.AirplaneType;
+import eng.jAtcSim.lib.airplanes.AirplaneTypes;
 import eng.jAtcSim.lib.atcs.*;
 import eng.jAtcSim.lib.exceptions.ENotSupportedException;
 import eng.jAtcSim.lib.global.ERandom;
@@ -110,5 +112,9 @@ public class Acc {
 
   public static Statistics stats() {
     return sim().getStats();
+  }
+
+  public static AirplaneTypes types() {
+    return sim.getPlaneTypes();
   }
 }

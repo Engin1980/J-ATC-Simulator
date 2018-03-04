@@ -113,25 +113,21 @@ class ScheduledFlightStripPanel extends JPanel {
 
     JLabel lblDepartureArrival = new JLabel(movement.isDeparture() ? "DEP" : "ARR");
     setLabelFixedSize(lblDepartureArrival,FLAG_DIMENSION);
-    JLabel lblIfrVfr = new JLabel(movement.isIfr() ? "IFR" : "VFR");
-    setLabelFixedSize(lblIfrVfr,FLAG_DIMENSION);
     JLabel lblTime = new JLabel(movement.getInitTime().toTimeString());
     setLabelFixedSize(lblTime,TIME_DIMENSION);
     JLabel lblDelay = new JLabel(Integer.toString(movement.getDelayInMinutes()));
     setLabelFixedSize(lblDelay,DELAY_DIMENSION);
 
 
-    JPanel firstLine = LayoutManager.createFlowPanel(
-        LayoutManager.eVerticalAlign.middle, 0, lblCallsign, lblDepartureArrival, lblIfrVfr);
     JPanel secondLine = LayoutManager.createFlowPanel(
         LayoutManager.eVerticalAlign.middle, 0, lblTime, lblDelay);
-    JPanel pnl = LayoutManager.createBoxPanel(LayoutManager.eHorizontalAlign.left, 0, firstLine, secondLine );
+    JPanel pnl = LayoutManager.createBoxPanel(LayoutManager.eHorizontalAlign.left, 0, secondLine );
 
     adjustComponentStyle(bgColor, frColor, normalFont,
-      firstLine, secondLine);
+      secondLine);
 
     adjustComponentStyle(bgColor, frColor, normalFont,
-        lblCallsign,lblDepartureArrival,lblIfrVfr,lblTime,lblDelay);
+        lblCallsign,lblDepartureArrival,lblTime,lblDelay);
 
     lblCallsign.setFont(boldFont);
 

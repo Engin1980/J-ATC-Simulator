@@ -5,6 +5,7 @@
  */
 package eng.jAtcSim.lib.traffic;
 
+import eng.jAtcSim.lib.airplanes.AirplaneType;
 import eng.jAtcSim.lib.airplanes.Callsign;
 import eng.jAtcSim.lib.global.ETime;
 
@@ -25,18 +26,21 @@ public class Movement {
   }
 
   private final Callsign callsign;
+  private final AirplaneType airplaneType;
   private final boolean departure;
-  private final boolean ifr;
   private final ETime initTime;
   private final int delayInMinutes;
 
-  public Movement(Callsign callsign, ETime initTime, int delayInMinutes, boolean isDeparture, boolean isIfr) {
+  public Movement(Callsign callsign, AirplaneType type, ETime initTime, int delayInMinutes, boolean isDeparture) {
     this.callsign = callsign;
     this.departure = isDeparture;
     this.initTime = initTime;
-    this.ifr = isIfr;
-
+    this.airplaneType = type;
     this.delayInMinutes = delayInMinutes;
+  }
+
+  public AirplaneType getAirplaneType() {
+    return airplaneType;
   }
 
   public Callsign getCallsign() {
@@ -55,13 +59,9 @@ public class Movement {
     return delayInMinutes;
   }
 
-  public boolean isIfr() {
-    return ifr;
-  }
-
   @Override
   public String toString() {
-    return "Movement{" + "callsign=" + callsign + ", departure=" + departure + ", ifr=" + ifr + ", initTime=" + initTime + '}';
+    return "Movement{" + "callsign=" + callsign + ", departure=" + departure + ", initTime=" + initTime + '}';
   }
 
 }

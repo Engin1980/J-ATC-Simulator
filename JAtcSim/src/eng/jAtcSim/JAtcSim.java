@@ -5,9 +5,7 @@
  */
 package eng.jAtcSim;
 
-import com.sun.prism.impl.Disposer;
 import eng.jAtcSim.lib.global.Recorder;
-import eng.jAtcSim.lib.traffic.TestTrafficOneApproach;
 import eng.jAtcSim.lib.traffic.TestTrafficOneDeparture;
 import eng.jAtcSim.radarBase.global.SoundManager;
 import eng.jAtcSim.frmPacks.Pack;
@@ -16,7 +14,7 @@ import eng.jAtcSim.startup.StartupWizard;
 import eng.jAtcSim.lib.Simulation;
 import eng.jAtcSim.lib.airplanes.AirplaneTypes;
 import eng.jAtcSim.lib.exceptions.ERuntimeException;
-import eng.jAtcSim.lib.traffic.CustomTraffic;
+import eng.jAtcSim.lib.traffic.GenericTraffic;
 import eng.jAtcSim.lib.traffic.Traffic;
 import eng.jAtcSim.lib.weathers.Weather;
 import eng.jAtcSim.lib.weathers.WeatherProvider;
@@ -163,11 +161,9 @@ public class JAtcSim {
     if (sett.traffic.useXml) {
       throw new UnsupportedOperationException("Traffic from XML files not supported yet.");
     } else {
-      ret = new CustomTraffic(
+      ret = new GenericTraffic(
           sett.traffic.movementsPerHour,
           1 - sett.traffic.arrivals2departuresRatio / 10d, // 0-10 to 0.0-1.0
-          sett.traffic.maxPlanes,
-          sett.traffic.vfr2ifrRatio / 10d, // dtto
           sett.traffic.weightTypeA,
           sett.traffic.weightTypeB,
           sett.traffic.weightTypeC,

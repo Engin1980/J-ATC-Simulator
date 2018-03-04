@@ -37,7 +37,8 @@ public class TestTrafficOneApproach extends TestTraffic {
   private Airplane generatePlane() {
     Airplane ret;
 
-    AirplaneType pt = Acc.sim().getPlaneTypes().getRandomByTraffic(Acc.airport().getTrafficCategories(), true);
+    AirplaneType pt = Acc.sim().getPlaneTypes().tryGetByName("A319");
+    assert pt != null;
     Route r = tryGetRandomRoute(true, pt);
     //Coordinate coord = new Coordinate(50.217994, 14.307286);
     //int heading = 065;
