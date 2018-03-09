@@ -2,8 +2,10 @@ package eng.jAtcSim.lib.traffic.fleets;
 
 import eng.eSystem.xmlSerialization.XmlIgnore;
 import eng.jAtcSim.lib.Acc;
+import eng.jAtcSim.lib.Log;
 import eng.jAtcSim.lib.airplanes.AirplaneType;
 import eng.jAtcSim.lib.airplanes.AirplaneTypes;
+import eng.jAtcSim.lib.global.MustBeBinded;
 
 public class FleetType {
   public String name;
@@ -20,5 +22,12 @@ public class FleetType {
       }
     }
     return this.referencedAirplaneType;
+  }
+
+
+  public void bindFleetType(AirplaneTypes types) {
+    this.referencedAirplaneType = types.tryGetByName(name);
+    if (referencedAirplaneType == null)
+      Acc.log().log(Log.eType.warning, "Airplane type not found for %s", name);
   }
 }

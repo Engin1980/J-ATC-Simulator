@@ -3,6 +3,8 @@ package eng.jAtcSim.lib.traffic.fleets;
 import eng.eSystem.xmlSerialization.XmlIgnore;
 import eng.jAtcSim.lib.Acc;
 import eng.eSystem.utilites.CollectionUtil;
+import eng.jAtcSim.lib.airplanes.AirplaneType;
+import eng.jAtcSim.lib.airplanes.AirplaneTypes;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -73,6 +75,12 @@ public class CompanyFleet {
     return ret;
   }
 
+  public void bindFleetTypes(AirplaneTypes types) {
+    for (FleetType type : this.types) {
+      type.bindFleetType(types);
+    }
+  }
+
   private void updateFleetWeightSum() {
     this.fleetWeightSum = CollectionUtil.sum(this.types, o -> o.weight);
   }
@@ -90,5 +98,10 @@ public class CompanyFleet {
               fleetType.weight;
       this.categoryFleetWeightSum.put(fleetType.getAirplaneType().category, tmp);
     }
+  }
+
+  @Override
+  public String toString() {
+    return String.format("%s (%d types)", this.icao, this.types.size());
   }
 }

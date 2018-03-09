@@ -124,6 +124,10 @@ public class AirplaneType {
     return _descend.a * altitude + _descend.b;
   }
 
+  @Override
+  public String toString() {
+    return String.format("%s {airplaneType}", this.name);
+  }
 }
 
 class RateInfo {

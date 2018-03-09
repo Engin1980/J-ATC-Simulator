@@ -18,11 +18,47 @@ public class DensityBasedTraffic extends Traffic {
   public static class CodeWeight {
     public String code;
     public double weight;
+
+    @Override
+    public String toString() {
+      return String.format("%s -> %.3f", code, weight);
+    }
+  }
+
+  public static class CodeWeightList extends ArrayList<CodeWeight>{
+    @XmlIgnore
+    private double weightSum = -1;
+
+    public CodeWeight getRandomCode() {
+      if (weightSum < 0)
+        weightSum = CollectionUtil.sum(this, o-> o.weight);
+      double rnd = Acc.rnd().nextDouble(0, weightSum);
+      int index = 0;
+      CodeWeight ret = null;
+      while (rnd > 0) {
+        CodeWeight cw = this.get(index);
+        if (rnd < cw.weight){
+          ret = cw;
+          break;
+        }else {
+          rnd -= cw.weight;
+          index++;
+        }
+      }
+      assert ret != null;
+
+      return ret;
+    }
   }
 
   public static class DirectionWeight{
     public int heading;
     public double weight;
+
+    @Override
+    public String toString() {
+      return String.format("%03d -> %.3f", heading, weight);
+    }
   }
 
   public static class HourBlockMovements implements Comparable<HourBlockMovements> {
@@ -34,10 +70,15 @@ public class DensityBasedTraffic extends Traffic {
     public int compareTo(HourBlockMovements o) {
       return Integer.compare(hour, o.hour);
     }
+
+    @Override
+    public String toString() {
+      return String.format("%s:00 -> %d / %d", hour, departures, arrivals);
+    }
   }
 
-  private List<CodeWeight> companies = null; // XML
-  private List<CodeWeight> countries = null; // XML
+  private CodeWeightList companies = null; // XML
+  private CodeWeightList countries = null; // XML
   private List<HourBlockMovements> density = null; //XMl
   private List<DirectionWeight> directions = new ArrayList<>(); // XML
   private double nonCommercialFlightProbability = 0; // XML
@@ -91,9 +132,9 @@ public class DensityBasedTraffic extends Traffic {
     String prefix;
     boolean isNonCommercial = Acc.rnd().nextDouble() < nonCommercialFlightProbability;
     if (isNonCommercial)
-      prefix = getRandomCode(this.countries);
+      prefix = this.countries.getRandomCode().code;
     else
-      prefix = getRandomCode(this.companies);
+      prefix = this.companies.getRandomCode().code;
 
     Callsign cls = super.generateCallsign(prefix, isNonCommercial);
     ETime initTime = new ETime(hour, Acc.rnd().nextInt(0, 59), Acc.rnd().nextInt(0, 59));
@@ -104,7 +145,7 @@ public class DensityBasedTraffic extends Traffic {
       //TODO here should be some like category probability
       type = Acc.types().getRandom();
     else{
-      CompanyFleet cf =Acc.fleets().tryGetByIcao(prefix);
+      CompanyFleet cf = Acc.fleets().tryGetByIcao(prefix);
       if (cf == null) cf = Acc.fleets().getDefaultCompanyFleet();
       type = cf.getRandom().getAirplaneType();
     }
@@ -114,16 +155,5 @@ public class DensityBasedTraffic extends Traffic {
     super.addScheduledMovement(m);
   }
 
-  private String getRandomCode(List<CodeWeight> lst) {
-    double sum = CollectionUtil.sum(lst, o-> o.weight);
-    double rnd = Acc.rnd().nextDouble(0, sum);
-    int index = -1;
-    while (rnd > 0) {
-      index++;
-      rnd -= lst.get(index).weight;
-    }
-    if (index >= lst.size()) index = lst.size() - 1;
-    String ret = lst.get(index).code;
-    return ret;
-  }
+
 }

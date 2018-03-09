@@ -5,6 +5,8 @@
  */
 package eng.jAtcSim;
 
+import eng.jAtcSim.lib.Acc;
+import eng.jAtcSim.lib.Log;
 import eng.jAtcSim.lib.global.Recorder;
 import eng.jAtcSim.lib.traffic.TestTrafficOneDeparture;
 import eng.jAtcSim.lib.traffic.fleets.Fleets;
@@ -44,6 +46,8 @@ public class JAtcSim {
    */
   public static void main(String[] args) throws Exception {
 
+    Acc.setLog(new Log());
+
     initResourcesFolder();
     Recorder.setLogPathBase(appSettings.logFolder);
 
@@ -70,6 +74,7 @@ public class JAtcSim {
     }
 
     data.area.initAfterLoad();
+    data.fleets.initAfterLoad(data.types);
 
     System.out.println("** Setting simulation");
 

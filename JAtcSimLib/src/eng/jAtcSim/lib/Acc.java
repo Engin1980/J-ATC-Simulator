@@ -27,6 +27,15 @@ public class Acc {
   private static Area area;
   private static Simulation sim;
   private static Airport aip;
+  private static Log log;
+
+  public static void setLog(Log log){
+   Acc.log = log;
+  }
+
+  public static Log log(){
+    return log;
+  }
 
   public static void setArea(Area area) {
     Acc.area = area;

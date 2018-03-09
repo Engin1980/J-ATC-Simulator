@@ -22,8 +22,8 @@ public class AirplaneTypes extends ArrayList<AirplaneType> {
 
   private Map<Character, List<AirplaneType>> inner = new HashMap();
 
-  public AirplaneType tryGetByTypeName(String typeName) {
-    AirplaneType ret = CollectionUtil.tryGetFirst(this, o -> o.name.equals(typeName));
+  public AirplaneType tryGetByName(String name) {
+    AirplaneType ret = CollectionUtil.tryGetFirst(this, o -> o.name.equals(name));
     return ret;
   }
 
@@ -59,10 +59,7 @@ public class AirplaneTypes extends ArrayList<AirplaneType> {
     return ret;
   }
 
-  public AirplaneType tryGetByName(String name) {
-    AirplaneType ret = CollectionUtil.tryGetFirst(this, o -> o.name.equals(name));
-    return ret;
-  }
+
 
   public AirplaneType getRandom() {
     AirplaneType ret = CollectionUtil.getRandom(this);

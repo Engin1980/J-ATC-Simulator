@@ -46,9 +46,9 @@ public class Simulation {
   public static final ERandom rnd = new ERandom();
   private static final int MINIMAL_DEPARTURE_REMOVE_DISTANCE = 100;
   private static final String SYSMES_COMMANDS = "?";
-  private static final Pattern SYSMES_CHANGE_SPEED = Pattern.compile("tick (\\d+)");
-  private static final Pattern SYSMES_METAR = Pattern.compile("metar");
-  private static final Pattern SYSMES_REMOVE = Pattern.compile("remove (\\d{4})");
+  private static final Pattern SYSMES_CHANGE_SPEED = Pattern.compile("TICK (\\d+)");
+  private static final Pattern SYSMES_METAR = Pattern.compile("METAR");
+  private static final Pattern SYSMES_REMOVE = Pattern.compile("REMOVE (\\d{4})");
   private final static double MAX_VICINITY_DISTANCE_IN_NM = 10;
   private final ETime now;
   private final AirplaneTypes planeTypes;

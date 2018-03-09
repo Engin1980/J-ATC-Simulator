@@ -71,6 +71,7 @@ public class SwingRadarPanel extends JPanel {
 
   public void sendCommand() {
     String msg = txtInput.getText();
+    msg = msg.toUpperCase();
     boolean accepted = sendMessage(msg);
     if (accepted) {
       eraseCommand();

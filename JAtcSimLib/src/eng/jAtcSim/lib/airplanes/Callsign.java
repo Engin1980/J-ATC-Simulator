@@ -101,6 +101,6 @@ public class Callsign {
    */
   @Override
   public String toString() {
-    return company + number;
+    return company +  " " + number;
   }
 }
