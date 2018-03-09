@@ -6,6 +6,7 @@
 package eng.jAtcSim;
 
 import eng.jAtcSim.lib.global.Recorder;
+import eng.jAtcSim.lib.traffic.TestTrafficOneDeparture;
 import eng.jAtcSim.lib.traffic.fleets.Fleets;
 import eng.jAtcSim.radarBase.global.SoundManager;
 import eng.jAtcSim.frmPacks.Pack;

@@ -4,10 +4,7 @@ import eng.jAtcSim.lib.exceptions.ERuntimeException;
 import eng.jAtcSim.lib.messaging.IMessageContent;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 public class SpeechList<T extends ISpeech> extends ArrayList<T> implements IMessageContent {
 
@@ -43,9 +40,7 @@ public class SpeechList<T extends ISpeech> extends ArrayList<T> implements IMess
   public SpeechList(){}
 
   public SpeechList(T ... speeches){
-    for (T speech : speeches) {
-      super.add(speech);
-    }
+    Collections.addAll(this, speeches);
   }
 
   public SpeechList(Collection<? extends T> lst){

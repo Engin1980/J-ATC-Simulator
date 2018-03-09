@@ -1,6 +1,6 @@
 package eng.jAtcSim.lib.speaking.parsing.shortParsing;
 
-import eng.jAtcSim.lib.global.EStringBuilder;
+import eng.eSystem.EStringBuilder;
 import eng.jAtcSim.lib.speaking.IFromAtc;
 
 public abstract class SpeechParser<T extends IFromAtc> {

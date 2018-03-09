@@ -1,6 +1,5 @@
 package eng.jAtcSim.SwingRadar;
 
-import com.sun.xml.internal.ws.resources.SenderMessages;
 import eng.eSystem.events.Event;
 import eng.eSystem.events.EventSimple;
 import eng.jAtcSim.lib.exceptions.ENotSupportedException;

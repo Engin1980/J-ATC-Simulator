@@ -5,14 +5,10 @@
  */
 package eng.jAtcSim.lib.airplanes;
 
+import eng.eSystem.collections.ReadOnlyList;
+import eng.eSystem.utilites.StringUtil;
 import eng.jAtcSim.lib.coordinates.Coordinates;
 import eng.jAtcSim.lib.global.KeyItems;
-import eng.jAtcSim.lib.global.ReadOnlyList;
-import eng.jAtcSim.lib.global.Strings;
-import eng.jAtcSim.lib.coordinates.Coordinates;
-import eng.jAtcSim.lib.global.KeyItems;
-import eng.jAtcSim.lib.global.ReadOnlyList;
-import eng.jAtcSim.lib.global.Strings;
 
 /**
  *
@@ -22,7 +18,7 @@ public class Airplanes {
 
   public static Airplane tryGetByCallsingOrNumber(Iterable<Airplane> planes, String callsignOrNumber) {
     Airplane ret = null;
-    if (Strings.isEmpty(callsignOrNumber)) return null;
+    if (StringUtil.isEmpty(callsignOrNumber)) return null;
     char f = callsignOrNumber.charAt(0);
     if (f >= '0' && f <= '9') {
       // only partial callsign

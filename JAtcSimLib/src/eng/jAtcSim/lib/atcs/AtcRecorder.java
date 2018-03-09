@@ -6,7 +6,7 @@
 package eng.jAtcSim.lib.atcs;
 
 import eng.jAtcSim.lib.Acc;
-import eng.jAtcSim.lib.global.EStringBuilder;
+import eng.eSystem.EStringBuilder;
 import eng.jAtcSim.lib.global.ETime;
 import eng.jAtcSim.lib.global.Recorder;
 import eng.jAtcSim.lib.messaging.Message;

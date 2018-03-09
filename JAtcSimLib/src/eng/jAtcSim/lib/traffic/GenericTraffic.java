@@ -5,6 +5,7 @@
  */
 package eng.jAtcSim.lib.traffic;
 
+import eng.eSystem.utilites.NumberUtil;
 import eng.eSystem.xmlSerialization.XmlOptional;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.AirplaneType;
@@ -54,7 +55,7 @@ public class GenericTraffic extends Traffic {
       throw new IllegalArgumentException("Argument \"movementsPerHour\" must be equal or greater than 0.");
     }
 
-    if (eng.eSystem.Number.isBetweenOrEqual(0, probabilityOfDeparture, 1) == false) {
+    if (NumberUtil.isBetweenOrEqual(0, probabilityOfDeparture, 1) == false) {
       throw new IllegalArgumentException("\"probabilityOfDeparture\" must be between 0 and 1.");
     }
 

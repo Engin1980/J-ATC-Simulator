@@ -1,11 +1,7 @@
 package eng.jAtcSim.lib.speaking.parsing.shortParsing;
 
+import eng.eSystem.EStringBuilder;
 import eng.jAtcSim.lib.exceptions.EInvalidCommandException;
-import eng.jAtcSim.lib.global.EStringBuilder;
-import eng.jAtcSim.lib.speaking.ISpeech;
-import eng.jAtcSim.lib.speaking.SpeechList;
-import eng.jAtcSim.lib.exceptions.EInvalidCommandException;
-import eng.jAtcSim.lib.global.EStringBuilder;
 import eng.jAtcSim.lib.speaking.IFromAtc;
 import eng.jAtcSim.lib.speaking.ISpeech;
 import eng.jAtcSim.lib.speaking.SpeechList;

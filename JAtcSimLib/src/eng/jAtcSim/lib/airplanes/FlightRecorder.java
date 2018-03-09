@@ -7,7 +7,7 @@ package eng.jAtcSim.lib.airplanes;
 
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.pilots.Pilot;
-import eng.jAtcSim.lib.global.EStringBuilder;
+import eng.eSystem.EStringBuilder;
 import eng.jAtcSim.lib.global.Recorder;
 import eng.jAtcSim.lib.messaging.Message;
 import eng.jAtcSim.lib.global.ETime;

@@ -5,14 +5,13 @@
  */
 package eng.jAtcSim.lib;
 
+import eng.eSystem.collections.ReadOnlyList;
 import eng.jAtcSim.lib.airplanes.Airplane;
-import eng.jAtcSim.lib.airplanes.AirplaneType;
 import eng.jAtcSim.lib.airplanes.AirplaneTypes;
 import eng.jAtcSim.lib.atcs.*;
 import eng.jAtcSim.lib.exceptions.ENotSupportedException;
 import eng.jAtcSim.lib.global.ERandom;
 import eng.jAtcSim.lib.global.ETime;
-import eng.jAtcSim.lib.global.ReadOnlyList;
 import eng.jAtcSim.lib.stats.Statistics;
 import eng.jAtcSim.lib.traffic.fleets.Fleets;
 import eng.jAtcSim.lib.weathers.Weather;

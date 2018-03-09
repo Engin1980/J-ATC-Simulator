@@ -5,6 +5,7 @@
  */
 package eng.jAtcSim.lib;
 
+import eng.eSystem.collections.ReadOnlyList;
 import eng.eSystem.events.EventSimple;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.AirplaneList;
@@ -17,7 +18,6 @@ import eng.jAtcSim.lib.atcs.UserAtc;
 import eng.jAtcSim.lib.coordinates.Coordinates;
 import eng.jAtcSim.lib.global.ERandom;
 import eng.jAtcSim.lib.global.ETime;
-import eng.jAtcSim.lib.global.ReadOnlyList;
 import eng.jAtcSim.lib.messaging.Message;
 import eng.jAtcSim.lib.messaging.Messenger;
 import eng.jAtcSim.lib.messaging.StringMessageContent;

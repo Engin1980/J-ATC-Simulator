@@ -2,7 +2,7 @@ package eng.jAtcSim.lib.traffic.fleets;
 
 import eng.eSystem.xmlSerialization.XmlIgnore;
 import eng.jAtcSim.lib.Acc;
-import eng.jAtcSim.lib.global.ECollections;
+import eng.eSystem.utilites.CollectionUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -74,7 +74,7 @@ public class CompanyFleet {
   }
 
   private void updateFleetWeightSum() {
-    this.fleetWeightSum = ECollections.sum(this.types, o -> o.weight);
+    this.fleetWeightSum = CollectionUtil.sum(this.types, o -> o.weight);
   }
 
   private void updateCategoryWeightSum() {

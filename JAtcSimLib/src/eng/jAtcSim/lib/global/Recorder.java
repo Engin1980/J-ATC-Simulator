@@ -5,6 +5,7 @@
  */
 package eng.jAtcSim.lib.global;
 
+import eng.eSystem.EStringBuilder;
 import eng.jAtcSim.lib.exceptions.ENotSupportedException;
 import eng.jAtcSim.lib.exceptions.ERuntimeException;
 import eng.jAtcSim.lib.messaging.IMessageContent;

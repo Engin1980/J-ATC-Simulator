@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="eng.eSystem.events">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/_Libs/eng.eSystem.events.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>

@@ -5,7 +5,7 @@ import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.AirplaneType;
 import eng.jAtcSim.lib.airplanes.Callsign;
 import eng.jAtcSim.lib.exceptions.ERuntimeException;
-import eng.jAtcSim.lib.global.ECollections;
+import eng.eSystem.utilites.CollectionUtil;
 import eng.jAtcSim.lib.global.ETime;
 import eng.jAtcSim.lib.traffic.fleets.CompanyFleet;
 
@@ -115,7 +115,7 @@ public class DensityBasedTraffic extends Traffic {
   }
 
   private String getRandomCode(List<CodeWeight> lst) {
-    double sum = ECollections.sum(lst, o-> o.weight);
+    double sum = CollectionUtil.sum(lst, o-> o.weight);
     double rnd = Acc.rnd().nextDouble(0, sum);
     int index = -1;
     while (rnd > 0) {

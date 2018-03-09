@@ -6,7 +6,7 @@
 package eng.jAtcSim.lib.airplanes;
 
 import eng.jAtcSim.lib.Acc;
-import eng.jAtcSim.lib.global.ECollections;
+import eng.eSystem.utilites.CollectionUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,7 +23,7 @@ public class AirplaneTypes extends ArrayList<AirplaneType> {
   private Map<Character, List<AirplaneType>> inner = new HashMap();
 
   public AirplaneType tryGetByTypeName(String typeName) {
-    AirplaneType ret = ECollections.tryGetFirst(this, o -> o.name.equals(typeName));
+    AirplaneType ret = CollectionUtil.tryGetFirst(this, o -> o.name.equals(typeName));
     return ret;
   }
 
@@ -60,12 +60,12 @@ public class AirplaneTypes extends ArrayList<AirplaneType> {
   }
 
   public AirplaneType tryGetByName(String name) {
-    AirplaneType ret = ECollections.tryGetFirst(this, o -> o.name.equals(name));
+    AirplaneType ret = CollectionUtil.tryGetFirst(this, o -> o.name.equals(name));
     return ret;
   }
 
   public AirplaneType getRandom() {
-    AirplaneType ret = ECollections.getRandom(this);
+    AirplaneType ret = CollectionUtil.getRandom(this);
     return ret;
   }
 

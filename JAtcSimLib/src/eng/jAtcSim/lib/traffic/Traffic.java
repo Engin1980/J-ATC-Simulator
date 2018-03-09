@@ -6,6 +6,7 @@
 package eng.jAtcSim.lib.traffic;
 
 import com.sun.istack.internal.Nullable;
+import eng.eSystem.utilites.CollectionUtil;
 import eng.eSystem.xmlSerialization.XmlOptional;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.Simulation;
@@ -316,7 +317,7 @@ public abstract class Traffic {
     if (avails.isEmpty()) {
       return null; // if no route, return null
     }
-    Route ret = eng.eSystem.Lists.getRandom(avails);
+    Route ret = CollectionUtil.getRandom(avails);
 
     return ret;
   }

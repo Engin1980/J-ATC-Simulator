@@ -6,8 +6,7 @@
 
 package eng.jAtcSim.lib.weathers;
 
-import eng.jAtcSim.lib.global.EStringBuilder;
-import eng.jAtcSim.lib.global.UnitProvider;
+import eng.eSystem.EStringBuilder;
 import eng.jAtcSim.lib.global.UnitProvider;
 
 /**
