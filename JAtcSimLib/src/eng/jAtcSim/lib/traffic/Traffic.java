@@ -17,17 +17,12 @@ import eng.jAtcSim.lib.airplanes.Squawk;
 import eng.jAtcSim.lib.atcs.Atc;
 import eng.jAtcSim.lib.coordinates.Coordinate;
 import eng.jAtcSim.lib.coordinates.Coordinates;
-import eng.jAtcSim.lib.exceptions.ERuntimeException;
 import eng.jAtcSim.lib.global.Global;
-import eng.jAtcSim.lib.global.KeyList;
 import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeAltitudeCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ContactCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.afters.AfterAltitudeCommand;
-import eng.jAtcSim.lib.traffic.fleets.CompanyFleet;
-import eng.jAtcSim.lib.traffic.fleets.FleetType;
-import eng.jAtcSim.lib.traffic.fleets.Fleets;
 import eng.jAtcSim.lib.world.*;
 
 import java.util.ArrayList;
@@ -40,7 +35,8 @@ import java.util.List;
  */
 public abstract class Traffic {
 
-  private static final double EXTENDED_CALLSIGN_PROBABILITY = 0.7;
+  private static final double COMPANY_THREE_CHAR_NUMBER_PROBABILITY = 0.3;
+  private static final double EXTENDED_CALLSIGN_PROBABILITY = 0.3;
   private String title;
   @XmlOptional
   private String description;
@@ -322,12 +318,12 @@ public abstract class Traffic {
     return ret;
   }
 
-  protected Callsign generateCallsign(String companyOrCountryPrefix, boolean isPrefixCountryCode) {
+  protected Callsign generateUnusedCallsign(String companyOrCountryPrefix, boolean isPrefixCountryCode) {
     Callsign ret = null;
 
     while (ret == null) {
 
-      ret = buildRandomCallsign(companyOrCountryPrefix, isPrefixCountryCode);
+      ret = generateRandomCallsign(companyOrCountryPrefix, isPrefixCountryCode);
       for (Airplane p : Acc.planes()) { // check not existing in current planes
         if (ret.equals(p.getCallsign())) {
           ret = null;
@@ -346,25 +342,38 @@ public abstract class Traffic {
     return ret;
   }
 
-  private Callsign buildRandomCallsign(@Nullable String prefix, boolean isPrefixCountryCode) {
-    StringBuilder sb = new StringBuilder();
+  private Callsign generateRandomCallsign(@Nullable String prefix, boolean isPrefixCountryCode) {
+    String number;
+    boolean useExtendedNow = this.useExtendedCallsigns && Acc.rnd().nextDouble() < EXTENDED_CALLSIGN_PROBABILITY;
+
     if (!isPrefixCountryCode) {
-      if (this.useExtendedCallsigns && Acc.rnd().nextDouble() < EXTENDED_CALLSIGN_PROBABILITY) {
-        sb.append(getRandomCallsignChar('0', '9'));
-        sb.append(getRandomCallsignChar('A', 'Z'));
-        sb.append(getRandomCallsignChar('A', 'Z'));
-      } else {
-        sb.append(getRandomCallsignChar('0', '9'));
-        sb.append(getRandomCallsignChar('0', '9'));
-        sb.append(getRandomCallsignChar('0', '9'));
-        sb.append(getRandomCallsignChar('0', '9'));
-      }
+      int length = (Acc.rnd().nextDouble() < COMPANY_THREE_CHAR_NUMBER_PROBABILITY) ? 3 : 4;
+      number = getRandomCallsignNumber(true, useExtendedNow, length);
     } else {
-      sb.append(getRandomCallsignChar('A', 'Z'));
-      sb.append(getRandomCallsignChar('A', 'Z'));
-      sb.append(getRandomCallsignChar('A', 'Z'));
+      number = getRandomCallsignNumber(false, true, 5 - prefix.length());
     }
-    Callsign ret = new Callsign(prefix, sb.toString());
+    Callsign ret = new Callsign(prefix, number);
+    return ret;
+  }
+
+  private String getRandomCallsignNumber(boolean useNumbers, boolean useChars, int length) {
+    char[] tmp = new char[length];
+    boolean isNumber = useNumbers;
+
+    for (int i = 0; i < length; i++) {
+      if (isNumber)
+        tmp[i] = getRandomCallsignChar('0','9' );
+      else
+        tmp[i] = getRandomCallsignChar('A','Z' );
+      if (useChars && useNumbers){
+        if ((i+2) == length)
+          isNumber = false;
+        else if ((length == 4 && i == 1) || length == 3)
+          isNumber = Math.random() > 0.5;
+      }
+    }
+
+    String ret = new String(tmp);
     return ret;
   }
 

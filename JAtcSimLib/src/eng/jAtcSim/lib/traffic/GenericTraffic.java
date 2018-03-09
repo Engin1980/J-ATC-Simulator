@@ -124,7 +124,7 @@ public class GenericTraffic extends Traffic {
       prefix = this.PLANE_COUNTRY_CODES[Acc.rnd().nextInt(this.PLANE_COUNTRY_CODES.length)];
     else
       prefix = this.COMPANIES[Acc.rnd().nextInt(this.COMPANIES.length)];
-    Callsign cls = generateCallsign(prefix, isNonCommercial);
+    Callsign cls = generateUnusedCallsign(prefix, isNonCommercial);
 
     int delayInMinutes = generateDelayMinutes();
 

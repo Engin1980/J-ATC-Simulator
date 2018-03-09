@@ -136,7 +136,7 @@ public class DensityBasedTraffic extends Traffic {
     else
       prefix = this.companies.getRandomCode().code;
 
-    Callsign cls = super.generateCallsign(prefix, isNonCommercial);
+    Callsign cls = super.generateUnusedCallsign(prefix, isNonCommercial);
     ETime initTime = new ETime(hour, Acc.rnd().nextInt(0, 59), Acc.rnd().nextInt(0, 59));
     int delay = super.generateDelayMinutes();
 
