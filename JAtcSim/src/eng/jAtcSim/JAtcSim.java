@@ -6,7 +6,7 @@
 package eng.jAtcSim;
 
 import eng.jAtcSim.lib.global.Recorder;
-import eng.jAtcSim.lib.traffic.TestTrafficOneDeparture;
+import eng.jAtcSim.lib.traffic.fleets.Fleets;
 import eng.jAtcSim.radarBase.global.SoundManager;
 import eng.jAtcSim.frmPacks.Pack;
 import eng.jAtcSim.startup.StartupSettings;
@@ -33,12 +33,10 @@ public class JAtcSim {
   private static final boolean FAST_START = true;
   private static final Traffic specificTraffic =
 //      new TestTrafficOneApproach();
-  new TestTrafficOneDeparture();
-//  null;
+//  new TestTrafficOneDeparture();
+  null;
 
-  private static Area area = null;
   private static AppSettings appSettings = new AppSettings();
-  private static AirplaneTypes types = null;
 
   /**
    * @param args the command line arguments
@@ -61,14 +59,16 @@ public class JAtcSim {
 
     XmlLoadHelper.saveStartupSettings(startupSettings, file);
 
+    XmlLoadedData data;
+
     // loading data from Xml files
     try {
-      loadDataFromXmlFiles(startupSettings);
+      data = loadDataFromXmlFiles(startupSettings);
     } catch (Exception ex) {
       throw (ex);
     }
 
-    area.initAfterLoad();
+    data.area.initAfterLoad();
 
     System.out.println("** Setting simulation");
 
@@ -76,7 +76,7 @@ public class JAtcSim {
     String icao = startupSettings.recent.icao;
     Calendar simTime = Calendar.getInstance();
     updateCalendarToSimTime(simTime, startupSettings);
-    Airport aip = area.getAirports().get(icao);
+    Airport aip = data.area.getAirports().get(icao);
 
     // weather
     Weather weather;
@@ -87,11 +87,13 @@ public class JAtcSim {
     }
 
     // traffic
-    Traffic traffic = getTrafficFromStartupSettings(startupSettings);
+    Traffic traffic = aip.getTrafficDefinitions().get(0); //getTrafficFromStartupSettings(startupSettings);
     if (specificTraffic != null)
       traffic = specificTraffic;
+
+    // simulation creation
     final Simulation sim = Simulation.create(
-        aip, types, weather, traffic, simTime, startupSettings.simulation.secondLengthInMs);
+        aip, data.types, weather, data.fleets, traffic, simTime, startupSettings.simulation.secondLengthInMs);
 
     // sound
     SoundManager.init(appSettings.soundFolder);
@@ -101,12 +103,14 @@ public class JAtcSim {
     Pack simPack
         = createPackInstance(packType);
 
-    simPack.initPack(sim, area, appSettings);
+    simPack.initPack(sim, data.area, appSettings);
     simPack.startPack();
   }
 
-  private static void loadDataFromXmlFiles(StartupSettings sett) throws Exception {
+  private static XmlLoadedData loadDataFromXmlFiles(StartupSettings sett) throws Exception {
     System.out.println("*** Loading XML");
+
+    XmlLoadedData ret = new XmlLoadedData();
 
     String failMsg = null;
     String fileName = null;
@@ -114,15 +118,27 @@ public class JAtcSim {
     try {
       fileName = sett.files.areaXmlFile;
       failMsg = "Failed to load area from " + fileName;
-      JAtcSim.area = XmlLoadHelper.loadNewArea(fileName);
+      ret.area = XmlLoadHelper.loadNewArea(fileName);
 
       fileName = sett.files.planesXmlFile;
       failMsg = "Failed to load plane types from " + fileName;
-      JAtcSim.types = XmlLoadHelper.loadPlaneTypes(fileName);
+      ret.types = XmlLoadHelper.loadPlaneTypes(fileName);
+
+      fileName = sett.files.fleetsXmlFile;
+      failMsg = "Failed to load fleet from "+ fileName;
+      ret.fleets = XmlLoadHelper.loadFleets(fileName);
 
     } catch (Exception ex) {
       throw new ERuntimeException("Error reading XML file " + fileName + ". " + failMsg, ex);
     }
+
+    return ret;
+  }
+
+  static class XmlLoadedData{
+    public Area area;
+    public AirplaneTypes types;
+    public Fleets fleets;
   }
 
   private static void initResourcesFolder() {

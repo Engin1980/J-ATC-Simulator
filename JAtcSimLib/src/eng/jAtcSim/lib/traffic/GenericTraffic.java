@@ -5,6 +5,7 @@
  */
 package eng.jAtcSim.lib.traffic;
 
+import eng.eSystem.xmlSerialization.XmlOptional;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.AirplaneType;
 import eng.jAtcSim.lib.airplanes.Callsign;
@@ -38,7 +39,7 @@ public class GenericTraffic extends Traffic {
    */
   private final double[] probabilityOfCategory = new double[4];
 
-
+  @XmlOptional
   private int nextHourToGenerateTraffic = -1;
 
   public GenericTraffic() {
@@ -140,12 +141,12 @@ public class GenericTraffic extends Traffic {
   }
 
   private AirplaneType getTypeByCategoryAndCompany(String companyCode, char category) {
-    CompanyFleet cf = super.getFleets().tryGetByIcao(companyCode);
+    CompanyFleet cf = Acc.fleets().tryGetByIcao(companyCode);
     if (cf == null) cf = Fleets.getDefaultCompanyFleet();
 
     AirplaneType ret = cf.tryGetRandomByCategory(category).getAirplaneType();
     if (ret == null)
-      ret = cf.tryGetRandom().getAirplaneType();
+      ret = cf.getRandom().getAirplaneType();
 
     return ret;
   }

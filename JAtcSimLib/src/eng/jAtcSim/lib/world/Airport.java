@@ -13,6 +13,9 @@ import eng.jAtcSim.lib.atcs.Atc;
 import eng.jAtcSim.lib.atcs.AtcTemplate;
 import eng.jAtcSim.lib.traffic.Traffic;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  *
  * @author Marek
@@ -31,7 +34,7 @@ public class Airport implements KeyItem<String> {
   private final KeyList<AtcTemplate, Atc.eType> atcTemplates = new KeyList();
   private final KeyList<PublishedHold, Navaid> holds = new KeyList();
   private final KeyList<VfrPoint, String> vfrPoints = new KeyList();
-  private Traffic traffic;
+  private List<Traffic> trafficDefinitions = new ArrayList<>();
   
   private Area parent;
 
@@ -76,16 +79,8 @@ public class Airport implements KeyItem<String> {
     this.parent = parent;
   }
 
-  public Traffic getTraffic() {
-    return traffic;
-  }
-
-  public void setTraffic(Traffic traffic) {
-    if (traffic == null) {
-        throw new IllegalArgumentException("Value of {traffic} cannot not be null.");
-    }
-    
-    this.traffic = traffic;
+  public List<Traffic> getTrafficDefinitions() {
+    return trafficDefinitions;
   }
 
   public RunwayThreshold tryGetRunwayThreshold(String runwayThresholdName) {

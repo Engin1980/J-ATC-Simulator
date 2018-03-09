@@ -2,20 +2,23 @@ package eng.jAtcSim;
 
 import eng.eSystem.xmlSerialization.*;
 import eng.jAtcSim.frmPacks.shared.FlightStripSettings;
-import eng.jAtcSim.lib.traffic.DensityBasedTraffic;
-import eng.jAtcSim.lib.traffic.FlightListTraffic;
-import eng.jAtcSim.lib.traffic.GenericTraffic;
-import eng.jAtcSim.lib.traffic.Traffic;
-import eng.jAtcSim.lib.world.*;
-import eng.jAtcSim.radarBase.DisplaySettings;
-import eng.jAtcSim.radarBase.parsing.RadarColorParser;
-import eng.jAtcSim.radarBase.parsing.RadarFontParser;
-import eng.jAtcSim.startup.StartupSettings;
 import eng.jAtcSim.lib.airplanes.AirplaneType;
 import eng.jAtcSim.lib.airplanes.AirplaneTypes;
 import eng.jAtcSim.lib.atcs.AtcTemplate;
 import eng.jAtcSim.lib.coordinates.Coordinate;
 import eng.jAtcSim.lib.exceptions.ERuntimeException;
+import eng.jAtcSim.lib.traffic.DensityBasedTraffic;
+import eng.jAtcSim.lib.traffic.FlightListTraffic;
+import eng.jAtcSim.lib.traffic.GenericTraffic;
+import eng.jAtcSim.lib.traffic.Traffic;
+import eng.jAtcSim.lib.traffic.fleets.CompanyFleet;
+import eng.jAtcSim.lib.traffic.fleets.FleetType;
+import eng.jAtcSim.lib.traffic.fleets.Fleets;
+import eng.jAtcSim.lib.world.*;
+import eng.jAtcSim.radarBase.DisplaySettings;
+import eng.jAtcSim.radarBase.parsing.RadarColorParser;
+import eng.jAtcSim.radarBase.parsing.RadarFontParser;
+import eng.jAtcSim.startup.StartupSettings;
 
 public class XmlLoadHelper {
 
@@ -28,9 +31,9 @@ public class XmlLoadHelper {
     XmlSerializer ser = new XmlSerializer(xmlSerializationSettings);
 
     Object ret;
-    try{
+    try {
       ret = ser.deserialize(fileName, type);
-    } catch (Exception ex){
+    } catch (Exception ex) {
       StringBuilder sb = new StringBuilder();
       Throwable t = ex;
       while (t != null) {
@@ -70,7 +73,6 @@ public class XmlLoadHelper {
     }
   }
 
-
   public static DisplaySettings loadNewDisplaySettings(String fileName) {
     eng.eSystem.xmlSerialization.Settings sett = new eng.eSystem.xmlSerialization.Settings();
 
@@ -83,7 +85,6 @@ public class XmlLoadHelper {
     return ret;
   }
 
-
   public static Area loadNewArea(String fileName) {
     eng.eSystem.xmlSerialization.Settings sett = new eng.eSystem.xmlSerialization.Settings();
 
@@ -92,45 +93,51 @@ public class XmlLoadHelper {
     sett.getIgnoredFieldsRegex().add("^parent$");
     sett.getIgnoredFieldsRegex().add("^binded$");
 
-    // mappings
-    sett.getListItemMapping().add(
-        new XmlListItemMapping("airports", Airport.class));
-    sett.getListItemMapping().add(
-        new XmlListItemMapping("runways", Runway.class));
-    sett.getListItemMapping().add(
-        new XmlListItemMapping("thresholds", RunwayThreshold.class));
-    sett.getListItemMapping().add(
-        new XmlListItemMapping("approaches", Approach.class));
-    sett.getListItemMapping().add(
-        new XmlListItemMapping("routes", Route.class));
-    sett.getListItemMapping().add(
-        new XmlListItemMapping("atcTemplates", AtcTemplate.class));
-    sett.getListItemMapping().add(
-        new XmlListItemMapping("holds", PublishedHold.class));
-    sett.getListItemMapping().add(
-        new XmlListItemMapping("vfrPoints", VfrPoint.class));
-    sett.getListItemMapping().add(
-        new XmlListItemMapping("navaids", Navaid.class));
-    sett.getListItemMapping().add(
-        new XmlListItemMapping("borders", Border.class));
-    sett.getListItemMapping().add(
-        new XmlListItemMapping("points", "point", BorderExactPoint.class));
-    sett.getListItemMapping().add(
-        new XmlListItemMapping("points", "arc", BorderArcPoint.class));
+    // list mappings
+    sett.getListItemMappings().add(
+        new XmlListItemMapping("/airports$", Airport.class));
+    sett.getListItemMappings().add(
+        new XmlListItemMapping("/runways$", Runway.class));
+    sett.getListItemMappings().add(
+        new XmlListItemMapping("/thresholds$", RunwayThreshold.class));
+    sett.getListItemMappings().add(
+        new XmlListItemMapping("/approaches$", Approach.class));
+    sett.getListItemMappings().add(
+        new XmlListItemMapping("/routes$", Route.class));
+    sett.getListItemMappings().add(
+        new XmlListItemMapping("/atcTemplates$", AtcTemplate.class));
+    sett.getListItemMappings().add(
+        new XmlListItemMapping("/holds$", PublishedHold.class));
+    sett.getListItemMappings().add(
+        new XmlListItemMapping("/vfrPoints$", VfrPoint.class));
+    sett.getListItemMappings().add(
+        new XmlListItemMapping("/navaids$", Navaid.class));
+    sett.getListItemMappings().add(
+        new XmlListItemMapping("/borders$", Border.class));
+    sett.getListItemMappings().add(
+        new XmlListItemMapping("/points$", "point", BorderExactPoint.class));
+    sett.getListItemMappings().add(
+        new XmlListItemMapping("/points$", "arc", BorderArcPoint.class));
+    sett.getListItemMappings().add(
+        new XmlListItemMapping("/companies$", DensityBasedTraffic.CodeWeight.class));
+    sett.getListItemMappings().add(
+        new XmlListItemMapping("/countries$", DensityBasedTraffic.CodeWeight.class));
+    sett.getListItemMappings().add(
+        new XmlListItemMapping("/density$", DensityBasedTraffic.HourBlockMovements.class));
+    sett.getListItemMappings().add(
+        new XmlListItemMapping("/directions$", DensityBasedTraffic.DirectionWeight.class));
+    sett.getListItemMappings().add(
+        new XmlListItemMapping("/trafficDefinitions$", "genericTraffic", GenericTraffic.class));
+    sett.getListItemMappings().add(
+        new XmlListItemMapping("/trafficDefinitions$", "densityTraffic", DensityBasedTraffic.class));
+    sett.getListItemMappings().add(
+        new XmlListItemMapping( "/trafficDefinitions$", "flightListTraffic", FlightListTraffic.class));
 
     // own parsers
     sett.getValueParsers().add(new CoordinateValueParser());
 
     // instance creators
     sett.getInstanceCreators().add(new AreaCreator());
-
-    // traffic inherited parsers
-    sett.getCustomMappings().add(
-        new XmlCustomFieldMapping(Airport.class, "traffic", "genericTraffic", GenericTraffic.class));
-    sett.getCustomMappings().add(
-        new XmlCustomFieldMapping(Airport.class, "traffic", "densityTraffic", DensityBasedTraffic.class));
-    sett.getCustomMappings().add(
-        new XmlCustomFieldMapping(Airport.class, "traffic", "flightListTraffic", FlightListTraffic.class));
 
     Area ret = (Area) deserialize(fileName, Area.class, sett);
     return ret;
@@ -145,13 +152,26 @@ public class XmlLoadHelper {
     sett.getIgnoredFieldsRegex().add("^binded$");
 
     // mappings
-    sett.getListItemMapping().add(
-        new XmlListItemMapping("planeTypes", AirplaneType.class));
+    sett.getListItemMappings().add(
+        new XmlListItemMapping("planeTypes$", AirplaneType.class));
 
     // own parsers
     sett.getValueParsers().add(new CoordinateValueParser());
 
-    AirplaneTypes ret = (AirplaneTypes) deserialize(fileName, AirplaneTypes.class,sett);
+    AirplaneTypes ret = (AirplaneTypes) deserialize(fileName, AirplaneTypes.class, sett);
+    return ret;
+  }
+
+  public static Fleets loadFleets(String fileName) {
+    eng.eSystem.xmlSerialization.Settings sett = new eng.eSystem.xmlSerialization.Settings();
+
+    // mappings
+    sett.getListItemMappings().add(
+        new XmlListItemMapping("fleets$", CompanyFleet.class));
+    sett.getListItemMappings().add(
+        new XmlListItemMapping("/company/types$", FleetType.class));
+
+    Fleets ret = (Fleets) deserialize(fileName, Fleets.class, sett);
     return ret;
   }
 
@@ -171,8 +191,8 @@ public class XmlLoadHelper {
 class CoordinateValueParser implements IValueParser<Coordinate> {
 
   @Override
-  public String getTypeName() {
-    return Coordinate.class.getName();
+  public Class getType() {
+    return Coordinate.class;
   }
 
   @Override
@@ -186,11 +206,11 @@ class CoordinateValueParser implements IValueParser<Coordinate> {
   }
 }
 
-class AreaCreator implements eng.eSystem.xmlSerialization.IInstanceCreator<Area>{
+class AreaCreator implements eng.eSystem.xmlSerialization.IInstanceCreator<Area> {
 
   @Override
-  public String getTypeName() {
-    return Area.class.getName();
+  public Class getType() {
+    return Area.class;
   }
 
   @Override

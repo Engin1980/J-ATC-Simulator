@@ -25,6 +25,7 @@ import eng.jAtcSim.lib.speaking.parsing.shortParsing.ShortParser;
 import eng.jAtcSim.lib.stats.Statistics;
 import eng.jAtcSim.lib.traffic.Movement;
 import eng.jAtcSim.lib.traffic.Traffic;
+import eng.jAtcSim.lib.traffic.fleets.Fleets;
 import eng.jAtcSim.lib.weathers.Weather;
 import eng.jAtcSim.lib.world.Airport;
 import eng.jAtcSim.lib.world.RunwayThreshold;
@@ -57,6 +58,7 @@ public class Simulation {
   private final TowerAtc twrAtc;
   private final CenterAtc ctrAtc;
   private final Traffic traffic;
+  private final Fleets fleets;
   private final List<Airplane> newPlanesDelayedToAvoidCollision = new LinkedList();
   /**
    * Public event informing surrounding about elapsed second.
@@ -72,7 +74,7 @@ public class Simulation {
    */
   private final Timer tmr = new Timer(o -> Simulation.this.elapseSecond());
 
-  private Simulation(Airport airport, AirplaneTypes types, Weather weather, Traffic traffic, Calendar now, int simulationSecondLengthInMs) {
+  private Simulation(Airport airport, AirplaneTypes types, Weather weather, Fleets fleets, Traffic traffic, Calendar now, int simulationSecondLengthInMs) {
     if (airport == null) {
       throw new IllegalArgumentException("Argument \"airport\" cannot be null.");
     }
@@ -81,6 +83,9 @@ public class Simulation {
     }
     if (weather == null) {
       throw new IllegalArgumentException("Argument \"weather\" cannot be null.");
+    }
+    if (fleets == null) {
+        throw new IllegalArgumentException("Value of {fleets} cannot not be null.");
     }
     if (traffic == null) {
       throw new IllegalArgumentException("Argument \"traffic\" cannot be null.");
@@ -92,6 +97,7 @@ public class Simulation {
     this.airport = airport;
     this.planeTypes = types;
     this.weather = weather;
+    this.fleets = fleets;
     this.traffic = traffic;
     this.twrAtc = new TowerAtc(airport.getAtcTemplates().get(Atc.eType.twr));
     this.ctrAtc = new CenterAtc(airport.getAtcTemplates().get(Atc.eType.ctr));
@@ -101,8 +107,8 @@ public class Simulation {
     this.simulationSecondLengthInMs = simulationSecondLengthInMs;
   }
 
-  public static Simulation create(Airport airport, AirplaneTypes types, Weather weather, Traffic traffic, Calendar now, int simulationSecondLengthInMs) {
-    Simulation ret = new Simulation(airport, types, weather, traffic, now, simulationSecondLengthInMs);
+  public static Simulation create(Airport airport, AirplaneTypes types, Weather weather, Fleets fleets, Traffic traffic, Calendar now, int simulationSecondLengthInMs) {
+    Simulation ret = new Simulation(airport, types, weather, fleets, traffic, now, simulationSecondLengthInMs);
 
     Acc.setSimulation(ret);
 
@@ -148,6 +154,10 @@ public class Simulation {
 
   public ETime getNow() {
     return now;
+  }
+
+  public Fleets getFleets() {
+    return fleets;
   }
 
   public ReadOnlyList<Airplane> getAirplanes() {

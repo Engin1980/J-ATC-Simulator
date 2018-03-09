@@ -58,17 +58,14 @@ public class ScheduledFlightListPanel extends JPanel {
 }
 
 class ScheduledFlightStripPanel extends JPanel {
+  private static final Dimension CALLSIGN_DIMENSION = new Dimension(75, 15);
+  private static final Dimension FLAG_DIMENSION = new Dimension(25, 15);
+  private static final Dimension TIME_DIMENSION = new Dimension(75, 15);
+  private static final Dimension DELAY_DIMENSION = FLAG_DIMENSION;
   private static FlightStripSettings stripSettings;
   private static int index = 0;
   private static Font normalFont;
   private static Font boldFont;
-
-  public static void setStripSettings(FlightStripSettings stripSettings) {
-    ScheduledFlightStripPanel.stripSettings = stripSettings;
-
-    normalFont = new Font(stripSettings.font.getName(), 0, stripSettings.font.getSize());
-    boldFont = new Font(stripSettings.font.getName(), Font.BOLD, stripSettings.font.getSize());
-  }
 
   public ScheduledFlightStripPanel(Movement mvm) {
 
@@ -86,6 +83,13 @@ class ScheduledFlightStripPanel extends JPanel {
     fillContent(mvm, stripSettings.textColor, color);
   }
 
+  public static void setStripSettings(FlightStripSettings stripSettings) {
+    ScheduledFlightStripPanel.stripSettings = stripSettings;
+
+    normalFont = new Font(stripSettings.font.getName(), 0, stripSettings.font.getSize());
+    boldFont = new Font(stripSettings.font.getName(), Font.BOLD, stripSettings.font.getSize());
+  }
+
   public static void resetIndex() {
     index = 0;
   }
@@ -97,37 +101,34 @@ class ScheduledFlightStripPanel extends JPanel {
     if (mvm.isDeparture()) {
       ret = isEven ? stripSettings.twr.even : stripSettings.twr.odd;
     } else {
-      ret = isEven ? stripSettings.ctr.even: stripSettings.ctr.odd;
+      ret = isEven ? stripSettings.ctr.even : stripSettings.ctr.odd;
     }
     return ret;
   }
-
-  private static final Dimension CALLSIGN_DIMENSION = new Dimension(75,15);
-  private static final Dimension FLAG_DIMENSION = new Dimension(25, 15);
-  private static final Dimension TIME_DIMENSION = new Dimension(75,15);
-  private static final Dimension DELAY_DIMENSION = FLAG_DIMENSION;
 
   private void fillContent(Movement movement, Color frColor, Color bgColor) {
     JLabel lblCallsign = new JLabel(movement.getCallsign().toString());
     setLabelFixedSize(lblCallsign, CALLSIGN_DIMENSION);
 
     JLabel lblDepartureArrival = new JLabel(movement.isDeparture() ? "DEP" : "ARR");
-    setLabelFixedSize(lblDepartureArrival,FLAG_DIMENSION);
+    setLabelFixedSize(lblDepartureArrival, FLAG_DIMENSION);
     JLabel lblTime = new JLabel(movement.getInitTime().toTimeString());
-    setLabelFixedSize(lblTime,TIME_DIMENSION);
+    setLabelFixedSize(lblTime, TIME_DIMENSION);
     JLabel lblDelay = new JLabel(Integer.toString(movement.getDelayInMinutes()));
-    setLabelFixedSize(lblDelay,DELAY_DIMENSION);
+    setLabelFixedSize(lblDelay, DELAY_DIMENSION);
 
 
+    JPanel firstLine = LayoutManager.createFlowPanel(
+        LayoutManager.eVerticalAlign.middle, 0, lblCallsign, lblDepartureArrival);
     JPanel secondLine = LayoutManager.createFlowPanel(
         LayoutManager.eVerticalAlign.middle, 0, lblTime, lblDelay);
-    JPanel pnl = LayoutManager.createBoxPanel(LayoutManager.eHorizontalAlign.left, 0, secondLine );
+    JPanel pnl = LayoutManager.createBoxPanel(LayoutManager.eHorizontalAlign.left, 0, firstLine, secondLine);
 
     adjustComponentStyle(bgColor, frColor, normalFont,
-      secondLine);
+        firstLine, secondLine);
 
     adjustComponentStyle(bgColor, frColor, normalFont,
-        lblCallsign,lblDepartureArrival,lblTime,lblDelay);
+        lblCallsign, lblDepartureArrival, lblTime, lblDelay);
 
     lblCallsign.setFont(boldFont);
 
@@ -143,7 +144,7 @@ class ScheduledFlightStripPanel extends JPanel {
     lbl.setMaximumSize(dimension);
   }
 
-  private void adjustComponentStyle(Color bgColor, Color frColor, Font font, JComponent ... components ){
+  private void adjustComponentStyle(Color bgColor, Color frColor, Font font, JComponent... components) {
     for (JComponent component : components) {
       component.setForeground(frColor);
       component.setBackground(bgColor);

@@ -14,6 +14,7 @@ import eng.jAtcSim.lib.global.ERandom;
 import eng.jAtcSim.lib.global.ETime;
 import eng.jAtcSim.lib.global.ReadOnlyList;
 import eng.jAtcSim.lib.stats.Statistics;
+import eng.jAtcSim.lib.traffic.fleets.Fleets;
 import eng.jAtcSim.lib.weathers.Weather;
 import eng.jAtcSim.lib.world.Airport;
 import eng.jAtcSim.lib.world.Area;
@@ -116,5 +117,9 @@ public class Acc {
 
   public static AirplaneTypes types() {
     return sim.getPlaneTypes();
+  }
+
+  public static Fleets fleets() {
+    return sim.getFleets();
   }
 }

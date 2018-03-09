@@ -6,6 +6,7 @@
 package eng.jAtcSim.lib.traffic;
 
 import com.sun.istack.internal.Nullable;
+import eng.eSystem.xmlSerialization.XmlOptional;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.Simulation;
 import eng.jAtcSim.lib.airplanes.Airplane;
@@ -38,9 +39,10 @@ import java.util.List;
  */
 public abstract class Traffic {
 
-
-
   private static final double EXTENDED_CALLSIGN_PROBABILITY = 0.7;
+  private String title;
+  @XmlOptional
+  private String description;
   /**
    * Specifies delay probability, range 0.0-1.0.
    */
@@ -49,15 +51,19 @@ public abstract class Traffic {
    * Max delay in minutes per step.
    */
   private final int maxDelayInMinutesPerStep = 15;
+  @XmlOptional
   private final List<Movement> scheduledMovements = new LinkedList();
   /**
    * Specifies if extended callsigns containing characters at the end can be used.
    */
   private boolean useExtendedCallsigns = true;
-  private Fleets fleets;
 
-  protected Fleets getFleets() {
-    return fleets;
+  public String getTitle() {
+    return title;
+  }
+
+  public String getDescription() {
+    return description;
   }
 
   /**
@@ -65,7 +71,7 @@ public abstract class Traffic {
    *
    * @return New airplanes
    */
-  public Airplane[] getNewAirplanes() {
+  public final Airplane[] getNewAirplanes() {
 
     List<Airplane> ret = new ArrayList();
     while (scheduledMovements.size() > 0) {
@@ -81,6 +87,8 @@ public abstract class Traffic {
 //        }
 
         scheduledMovements.remove(m);
+        Airplane a = this.convertMovementToAirplane(m);
+        ret.add(a);
       } else {
         break; // exit while if no more airplanes are ready
       }
@@ -94,7 +102,7 @@ public abstract class Traffic {
     this.useExtendedCallsigns = useExtendedCallsigns;
   }
 
-  public Movement[] getScheduledMovements() {
+  public final Movement[] getScheduledMovements() {
     Movement[] ret = scheduledMovements.toArray(new Movement[0]);
     return ret;
   }

@@ -1,28 +1,67 @@
 package eng.jAtcSim.lib.traffic.fleets;
 
+import eng.eSystem.xmlSerialization.XmlIgnore;
 import eng.jAtcSim.lib.Acc;
-import eng.jAtcSim.lib.airplanes.AirplaneType;
 import eng.jAtcSim.lib.global.ECollections;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-public class CompanyFleet extends ArrayList<FleetType>{
+public class CompanyFleet {
+  private static final String DEFAULT_AIRPLANE_TYPE_NAME = "A319";
   public String icao;
+  private List<FleetType> types = new ArrayList<>();
 
+  @XmlIgnore
   private double fleetWeightSum = -1;
+  @XmlIgnore
   private Map<Character, Double> categoryFleetWeightSum = null;
 
-  public FleetType tryGetRandom() {
+  public static CompanyFleet getDefault() {
+    CompanyFleet ret = new CompanyFleet();
+    ret.icao = "(DEF)";
+    FleetType ft = new FleetType();
+    ft.name = DEFAULT_AIRPLANE_TYPE_NAME;
+    ft.weight = 1;
+    ret.types.add(ft);
+    return ret;
+  }
+
+  public FleetType getRandom() {
     FleetType ret = null;
 
     if (fleetWeightSum < 0) updateFleetWeightSum();
 
     double tmp = Acc.rnd().nextDouble(this.fleetWeightSum);
-    for (int i = 0; i < this.size(); i++) {
-      FleetType ft = this.get(i);
-      if (tmp < ft.weight){
+    for (int i = 0; i < this.types.size(); i++) {
+      FleetType ft = this.types.get(i);
+      if (tmp < ft.weight) {
+        ret = ft;
+        break;
+      } else {
+        tmp -= ft.weight;
+      }
+    }
+
+    assert ret != null;
+    return ret;
+  }
+
+  public FleetType tryGetRandomByCategory(char category) {
+    FleetType ret = null;
+    if (categoryFleetWeightSum == null) updateCategoryWeightSum();
+
+    double catWeight = this.categoryFleetWeightSum.get(category);
+    if (catWeight == 0)
+      return null; // no types for category
+
+    double tmp = Acc.rnd().nextDouble(catWeight);
+    for (int i = 0; i < this.types.size(); i++) {
+      FleetType ft = this.types.get(i);
+      if (ft.getAirplaneType().category != category) continue;
+      if (tmp < ft.weight) {
         ret = ft;
         break;
       } else {
@@ -35,31 +74,7 @@ public class CompanyFleet extends ArrayList<FleetType>{
   }
 
   private void updateFleetWeightSum() {
-    this.fleetWeightSum = ECollections.sum(this, o->o.weight);
-  }
-
-  public FleetType tryGetRandomByCategory(char category) {
-    FleetType ret = null;
-    if (categoryFleetWeightSum == null) updateCategoryWeightSum();
-
-    double catWeight = this.categoryFleetWeightSum.get(category);
-    if (catWeight == 0)
-      return null; // no types for category
-
-    double tmp = Acc.rnd().nextDouble(catWeight);
-    for (int i = 0; i < this.size(); i++) {
-      FleetType ft = this.get(i);
-      if (ft.getAirplaneType().category != category) continue;
-      if (tmp < ft.weight){
-        ret = ft;
-        break;
-      } else {
-        tmp -= ft.weight;
-      }
-    }
-
-    assert ret != null;
-    return ret;
+    this.fleetWeightSum = ECollections.sum(this.types, o -> o.weight);
   }
 
   private void updateCategoryWeightSum() {
@@ -69,7 +84,7 @@ public class CompanyFleet extends ArrayList<FleetType>{
     this.categoryFleetWeightSum.put('C', 0d);
     this.categoryFleetWeightSum.put('D', 0d);
 
-    for (FleetType fleetType : this) {
+    for (FleetType fleetType : this.types) {
       double tmp =
           this.categoryFleetWeightSum.get(fleetType.getAirplaneType().category) +
               fleetType.weight;

@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <root>
-  <files areaXmlFile="C:\Users\Marek Vajgl\Documents\IdeaProjects\JAtcSimSolution\_SettingFiles\lkpr.xml" planesXmlFile="C:\Users\Marek Vajgl\Documents\IdeaProjects\JAtcSimSolution\_SettingFiles\planeTypes.xml" trafficXmlFile="8"/>
+  <files areaXmlFile="C:\Users\Marek Vajgl\Documents\IdeaProjects\JAtcSimSolution\_SettingFiles\lkpr.xml" fleetsXmlFile="C:\Users\Marek Vajgl\Documents\IdeaProjects\JAtcSimSolution\_SettingFiles\fleets.xml" planesXmlFile="C:\Users\Marek Vajgl\Documents\IdeaProjects\JAtcSimSolution\_SettingFiles\planeTypes.xml" trafficXmlFile="8"/>
   <recent icao="LKPR" time="6:00"/>
   <weather metar="METAR LKPR 121200Z 23012KT 5000 OVC050 13/10 Q1011" useOnline="false" userChanges="0"/>
   <traffic arrivals2departuresRatio="6" delayAllowed="false" maxPlanes="60" movementsPerHour="40" useExtendedCallsigns="false" useXml="false" vfr2ifrRatio="10" weightTypeA="3" weightTypeB="8" weightTypeC="6" weightTypeD="1"/>
   <radar packClass="eng.jAtcSim.frmPacks.sdi.Pack"/>
   <simulation secondLengthInMs="1000"/>
+  <__typeMap/>
 </root>

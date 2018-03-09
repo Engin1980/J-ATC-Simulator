@@ -3,111 +3,117 @@
   <airports>
     <airport icao="LKPR" name="Praha Ruzyně" altitude="1247" transitionAltitude="5000" vfrAltitude="2500"
              mainAirportNavaidName="OKL">
-      <densityTraffic useExtendedCallsigns="true" nonCommercialFlightProbability="0.05">
-        <companies isFullDayTraffic="true">
-          <company code="JAI" weight="3"/>
-          <company code="AEE" weight="2"/>
-          <company code="HOP" weight="2"/>
-          <company code="TGZ" weight="2"/>
-          <company code="ACA" weight="5"/>
-          <company code="AFR" weight="5"/>
-          <company code="FIN" weight="4"/>
-          <company code="AZA" weight="16"/>
-          <company code="BRU" weight="2"/>
-          <company code="BAW" weight="8"/>
-          <company code="BEE" weight="3"/>
-          <company code="BTI" weight="7"/>
-          <company code="CFE" weight="2"/>
-          <company code="IKB" weight="4"/>
-          <company code="DAL" weight="9"/>
-          <company code="EZS" weight="2"/>
-          <company code="NAX" weight="7"/>
-          <company code="EIN" weight="2"/>
-          <company code="UAE" weight="1"/>
-          <company code="EGW" weight="10"/>
-          <company code="EZY" weight="29"/>
-          <company code="LZB" weight="2"/>
-          <company code="RYR" weight="21"/>
-          <company code="SDM" weight="4"/>
-          <company code="FDB" weight="1"/>
-          <company code="GIA" weight="1"/>
-          <company code="CHH" weight="4"/>
-          <company code="TRA" weight="3"/>
-          <company code="IBE" weight="4"/>
-          <company code="ADR" weight="2"/>
-          <company code="ASL" weight="5"/>
-          <company code="KAL" weight="7"/>
-          <company code="KLM" weight="11"/>
-          <company code="LGL" weight="1"/>
-          <company code="DLH" weight="11"/>
-          <company code="LOT" weight="9"/>
-          <company code="EXS" weight="10"/>
-          <company code="SWR" weight="8"/>
-          <company code="ELY" weight="2"/>
-          <company code="ANA" weight="1"/>
-          <company code="CSA" weight="69"/>
-          <company code="AUA" weight="8"/>
-          <company code="CTN" weight="1"/>
-          <company code="PGT" weight="2"/>
-          <company code="AUI" weight="7"/>
-          <company code="QFA" weight="2"/>
-          <company code="QTR" weight="4"/>
-          <company code="TVS" weight="60"/>
-          <company code="ROT" weight="3"/>
-          <company code="SBI" weight="2"/>
-          <company code="SAS" weight="5"/>
-          <company code="BEL" weight="5"/>
-          <company code="AFL" weight="9"/>
-          <company code="THY" weight="6"/>
-          <company code="TVF" weight="3"/>
-          <company code="TAP" weight="5"/>
-          <company code="SVR" weight="2"/>
-          <company code="USA" weight="4"/>
-          <company code="AEA" weight="1"/>
-          <company code="VOE" weight="8"/>
-          <company code="HVN" weight="1"/>
-          <company code="VLG" weight="9"/>
-          <company code="WZZ" weight="6"/>
-        </companies>
-        <countries>
-          <country code="OK" weight="70" />
-          <country code="OM" weight="10" />
-          <country code="G" weight="10" />
-          <country code="D" weight="10" />
-        </countries>
-        <density>
-          <item hour="0" departures="2" arrivals="0"/>
-          <item hour="1" departures="0" arrivals="1"/>
-          <item hour="2" departures="0" arrivals="0"/>
-          <item hour="3" departures="0" arrivals="0"/>
-          <item hour="4" departures="0" arrivals="0"/>
-          <item hour="5" departures="0" arrivals="1"/>
-          <item hour="6" departures="16" arrivals="7"/>
-          <item hour="7" departures="15" arrivals="2"/>
-          <item hour="8" departures="5" arrivals="9"/>
-          <item hour="9" departures="9" arrivals="14"/>
-          <item hour="10" departures="15" arrivals="29"/>
-          <item hour="11" departures="28" arrivals="21"/>
-          <item hour="12" departures="21" arrivals="14"/>
-          <item hour="13" departures="10" arrivals="9"/>
-          <item hour="14" departures="12" arrivals="11"/>
-          <item hour="15" departures="10" arrivals="6"/>
-          <item hour="16" departures="9" arrivals="15"/>
-          <item hour="17" departures="24" arrivals="28"/>
-          <item hour="18" departures="13" arrivals="9"/>
-          <item hour="19" departures="8" arrivals="5"/>
-          <item hour="20" departures="7" arrivals="26"/>
-          <item hour="21" departures="0" arrivals="7"/>
-          <item hour="22" departures="13" arrivals="15"/>
-          <item hour="23" departures="1" arrivals="7"/>
-        </density>
-        <directions>
-          <direction heading="280" weight="0.4" />
-          <direction heading="030" weight="0.1" />
-          <direction heading="140" weight="0.3" />
-          <direction heading="220" weight="0.2" />
-        </directions>
-      </densityTraffic>
+      <trafficDefinitions>
+        <densityTraffic title="Normal traffic" useExtendedCallsigns="true" nonCommercialFlightProbability="0.05"
+                        delayProbability="0.1" maxDelayInMinutesPerStep="45">
+          <description>
+            This is normal traffic.
+          </description>
+          <companies isFullDayTraffic="true">
+            <company code="JAI" weight="3"/>
+            <company code="AEE" weight="2"/>
+            <company code="HOP" weight="2"/>
+            <company code="TGZ" weight="2"/>
+            <company code="ACA" weight="5"/>
+            <company code="AFR" weight="5"/>
+            <company code="FIN" weight="4"/>
+            <company code="AZA" weight="16"/>
+            <company code="BRU" weight="2"/>
+            <company code="BAW" weight="8"/>
+            <company code="BEE" weight="3"/>
+            <company code="BTI" weight="7"/>
+            <company code="CFE" weight="2"/>
+            <company code="IKB" weight="4"/>
+            <company code="DAL" weight="9"/>
+            <company code="EZS" weight="2"/>
+            <company code="NAX" weight="7"/>
+            <company code="EIN" weight="2"/>
+            <company code="UAE" weight="1"/>
+            <company code="EGW" weight="10"/>
+            <company code="EZY" weight="29"/>
+            <company code="LZB" weight="2"/>
+            <company code="RYR" weight="21"/>
+            <company code="SDM" weight="4"/>
+            <company code="FDB" weight="1"/>
+            <company code="GIA" weight="1"/>
+            <company code="CHH" weight="4"/>
+            <company code="TRA" weight="3"/>
+            <company code="IBE" weight="4"/>
+            <company code="ADR" weight="2"/>
+            <company code="ASL" weight="5"/>
+            <company code="KAL" weight="7"/>
+            <company code="KLM" weight="11"/>
+            <company code="LGL" weight="1"/>
+            <company code="DLH" weight="11"/>
+            <company code="LOT" weight="9"/>
+            <company code="EXS" weight="10"/>
+            <company code="SWR" weight="8"/>
+            <company code="ELY" weight="2"/>
+            <company code="ANA" weight="1"/>
+            <company code="CSA" weight="69"/>
+            <company code="AUA" weight="8"/>
+            <company code="CTN" weight="1"/>
+            <company code="PGT" weight="2"/>
+            <company code="AUI" weight="7"/>
+            <company code="QFA" weight="2"/>
+            <company code="QTR" weight="4"/>
+            <company code="TVS" weight="60"/>
+            <company code="ROT" weight="3"/>
+            <company code="SBI" weight="2"/>
+            <company code="SAS" weight="5"/>
+            <company code="BEL" weight="5"/>
+            <company code="AFL" weight="9"/>
+            <company code="THY" weight="6"/>
+            <company code="TVF" weight="3"/>
+            <company code="TAP" weight="5"/>
+            <company code="SVR" weight="2"/>
+            <company code="USA" weight="4"/>
+            <company code="AEA" weight="1"/>
+            <company code="VOE" weight="8"/>
+            <company code="HVN" weight="1"/>
+            <company code="VLG" weight="9"/>
+            <company code="WZZ" weight="6"/>
+          </companies>
+          <countries>
+            <country code="OK" weight="70"/>
+            <country code="OM" weight="10"/>
+            <country code="G" weight="10"/>
+            <country code="D" weight="10"/>
+          </countries>
+          <density>
+            <item hour="0" departures="2" arrivals="0"/>
+            <item hour="1" departures="0" arrivals="1"/>
+            <item hour="2" departures="0" arrivals="0"/>
+            <item hour="3" departures="0" arrivals="0"/>
+            <item hour="4" departures="0" arrivals="0"/>
+            <item hour="5" departures="0" arrivals="1"/>
+            <item hour="6" departures="16" arrivals="7"/>
+            <item hour="7" departures="15" arrivals="2"/>
+            <item hour="8" departures="5" arrivals="9"/>
+            <item hour="9" departures="9" arrivals="14"/>
+            <item hour="10" departures="15" arrivals="29"/>
+            <item hour="11" departures="28" arrivals="21"/>
+            <item hour="12" departures="21" arrivals="14"/>
+            <item hour="13" departures="10" arrivals="9"/>
+            <item hour="14" departures="12" arrivals="11"/>
+            <item hour="15" departures="10" arrivals="6"/>
+            <item hour="16" departures="9" arrivals="15"/>
+            <item hour="17" departures="24" arrivals="28"/>
+            <item hour="18" departures="13" arrivals="9"/>
+            <item hour="19" departures="8" arrivals="5"/>
+            <item hour="20" departures="7" arrivals="26"/>
+            <item hour="21" departures="0" arrivals="7"/>
+            <item hour="22" departures="13" arrivals="15"/>
+            <item hour="23" departures="1" arrivals="7"/>
+          </density>
+          <directions>
+            <direction heading="280" weight="0.4"/>
+            <direction heading="030" weight="0.1"/>
+            <direction heading="140" weight="0.3"/>
+            <direction heading="220" weight="0.2"/>
+          </directions>
+        </densityTraffic>
+      </trafficDefinitions>
       <initialPosition coordinate="50.095867 14.265608" range="85"/>
       <atcTemplates>
         <atcTemplate type="ctr" name="LKAA_CTR" frequency="127.12"
@@ -320,40 +326,43 @@
     </airport>
     <airport icao="LKMT" name="Ostrava Mošnov" altitude="844" transitionAltitude="5000" vfrAltitude="2500"
              mainAirportNavaidName="OTA">
-      <genericTraffic probabilityOfNonCommercialFlight="0.7" probabilityOfDeparture="0.5">
-        <movementsPerHour>
-          <item>0</item>
-          <item>0</item>
-          <item>0</item>
-          <item>0</item>
-          <item>0</item>
-          <item>0</item>
-          <item>2</item>
-          <item>0</item>
-          <item>4</item>
-          <item>2</item>
-          <item>7</item>
-          <item>12</item>
-          <item>3</item>
-          <item>3</item>
-          <item>5</item>
-          <item>17</item>
-          <item>13</item>
-          <item>11</item>
-          <item>3</item>
-          <item>1</item>
-          <item>0</item>
-          <item>0</item>
-          <item>0</item>
-          <item>0</item>
-        </movementsPerHour>
-        <probabilityOfCategory>
-          <item>0.3</item>
-          <item>0.3</item>
-          <item>0.2</item>
-          <item>0.2</item>
-        </probabilityOfCategory>
-      </genericTraffic>
+      <trafficDefinitions>
+        <genericTraffic title="Very lite generated traffic" probabilityOfNonCommercialFlight="0.7" probabilityOfDeparture="0.5"
+                        delayProbability="0.03" maxDelayInMinutesPerStep="30" useExtendedCallsigns="true">
+          <movementsPerHour>
+            <item>0</item>
+            <item>0</item>
+            <item>0</item>
+            <item>0</item>
+            <item>0</item>
+            <item>0</item>
+            <item>2</item>
+            <item>0</item>
+            <item>4</item>
+            <item>2</item>
+            <item>7</item>
+            <item>12</item>
+            <item>3</item>
+            <item>3</item>
+            <item>5</item>
+            <item>17</item>
+            <item>13</item>
+            <item>11</item>
+            <item>3</item>
+            <item>1</item>
+            <item>0</item>
+            <item>0</item>
+            <item>0</item>
+            <item>0</item>
+          </movementsPerHour>
+          <probabilityOfCategory>
+            <item>0.3</item>
+            <item>0.3</item>
+            <item>0.2</item>
+            <item>0.2</item>
+          </probabilityOfCategory>
+        </genericTraffic>
+      </trafficDefinitions>
       <trafficCategories categoryA="0.01" categoryB="0.3" categoryC="0.8" categoryD="0.1"/>
       <initialPosition coordinate="49.697492 18.109075" range="85"/>
       <atcTemplates>

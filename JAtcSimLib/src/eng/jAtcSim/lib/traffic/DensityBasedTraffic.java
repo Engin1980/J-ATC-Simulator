@@ -1,7 +1,7 @@
 package eng.jAtcSim.lib.traffic;
 
+import eng.eSystem.xmlSerialization.XmlIgnore;
 import eng.jAtcSim.lib.Acc;
-import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.AirplaneType;
 import eng.jAtcSim.lib.airplanes.Callsign;
 import eng.jAtcSim.lib.exceptions.ERuntimeException;
@@ -20,6 +20,11 @@ public class DensityBasedTraffic extends Traffic {
     public double weight;
   }
 
+  public static class DirectionWeight{
+    public int heading;
+    public double weight;
+  }
+
   public static class HourBlockMovements implements Comparable<HourBlockMovements> {
     public int hour;
     public int arrivals;
@@ -33,29 +38,12 @@ public class DensityBasedTraffic extends Traffic {
 
   private List<CodeWeight> companies = null; // XML
   private List<CodeWeight> countries = null; // XML
-  private List<HourBlockMovements> density;
-  private List<Movement> scheduledMovements = new ArrayList<>();
-  private Integer lastGeneratedHour = null;
+  private List<HourBlockMovements> density = null; //XMl
+  private List<DirectionWeight> directions = new ArrayList<>(); // XML
   private double nonCommercialFlightProbability = 0; // XML
 
-  @Override
-  public Airplane[] getNewAirplanes() {
-    List<Movement> readyMovements = new ArrayList<>();
-    for (Movement readyMovement : scheduledMovements) {
-      if (readyMovement.getInitTime().isBefore(Acc.now())) {
-        readyMovements.add(readyMovement);
-      }
-    }
-
-    Airplane[] ret = new Airplane[readyMovements.size()];
-    for (int i = 0; i < ret.length; i++) {
-      Movement m = readyMovements.get(i);
-      scheduledMovements.remove(m);
-      Airplane a = super.convertMovementToAirplane(m);
-      ret[i] = a;
-    }
-    return ret;
-  }
+  @XmlIgnore
+  private Integer lastGeneratedHour = null;
 
   @Override
   public void generateNewMovementsIfRequired() {
@@ -86,6 +74,7 @@ public class DensityBasedTraffic extends Traffic {
         hbm = density.get(index);
       else
         break;
+      index++;
     }
     assert hbm != null;
 
@@ -114,30 +103,16 @@ public class DensityBasedTraffic extends Traffic {
     if (isNonCommercial)
       //TODO here should be some like category probability
       type = Acc.types().getRandom();
-    else
-      type = getFleets().tryGetByIcao(prefix).tryGetRandom().getAirplaneType();
+    else{
+      CompanyFleet cf =Acc.fleets().tryGetByIcao(prefix);
+      if (cf == null) cf = Acc.fleets().getDefaultCompanyFleet();
+      type = cf.getRandom().getAirplaneType();
+    }
+
 
     Movement m = new Movement(cls, type, initTime, delay, isDeparture);
-    this.scheduledMovements.add(m);
+    super.addScheduledMovement(m);
   }
-
-//  public AirplaneType getRandomByTraffic(String companyIcao) {
-//
-//    CompanyFleet fleet = getFleets().tryGetByIcao(companyIcao);
-//    if (fleet == null)
-//      fleet = getDefaultCompanyFleet();
-//
-//    String typeName = fleet.tryGetRandomTypeName();
-//    if (typeName == null)
-//      typeName = DEFAULT_AIRPLANE_TYPE_NAME;
-//
-//    AirplaneType ret;
-//    ret = Acc.sim().getPlaneTypes().tryGetByTypeName(typeName);
-//    if (ret == null)
-//      ret = Acc.sim().getPlaneTypes().getDefaultType();
-//
-//    return ret;
-//  }
 
   private String getRandomCode(List<CodeWeight> lst) {
     double sum = ECollections.sum(lst, o-> o.weight);

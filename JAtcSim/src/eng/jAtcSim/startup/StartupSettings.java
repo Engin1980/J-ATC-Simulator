@@ -5,6 +5,7 @@ public class StartupSettings {
     public String trafficXmlFile;
     public String planesXmlFile;
     public String areaXmlFile;
+    public String fleetsXmlFile;
   }
 
   public static class Recent{

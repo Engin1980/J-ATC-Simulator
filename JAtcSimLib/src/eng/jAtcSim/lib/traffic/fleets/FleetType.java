@@ -1,5 +1,6 @@
 package eng.jAtcSim.lib.traffic.fleets;
 
+import eng.eSystem.xmlSerialization.XmlIgnore;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.AirplaneType;
 import eng.jAtcSim.lib.airplanes.AirplaneTypes;
@@ -8,6 +9,7 @@ public class FleetType {
   public String name;
   public int weight;
 
+  @XmlIgnore
   private AirplaneType referencedAirplaneType = null;
 
   public AirplaneType getAirplaneType() {
