@@ -5,6 +5,8 @@
  */
 package eng.jAtcSim.startup;
 
+import eng.jAtcSim.JAtcSim;
+
 /**
  *
  * @author Marek Vajgl
@@ -23,29 +25,29 @@ public class StartupWizard {
 
   public void run() {
 
-    FrmWizardFrame.DialogResult res;
+    DialogResult res;
 
     if (settings == null) {
       settings = new StartupSettings();
     }
 
     res = doStep1();
-    if (res != FrmWizardFrame.DialogResult.Ok) {
+    if (res != DialogResult.ok) {
       return;
     }
 
     res = doStep2();
-    if (res != FrmWizardFrame.DialogResult.Ok) {
+    if (res != DialogResult.ok) {
       return;
     }
 
     res = doStep3();
-    if (res != FrmWizardFrame.DialogResult.Ok) {
+    if (res != DialogResult.ok) {
       return;
     }
     
     res = doStep4();
-    if (res != FrmWizardFrame.DialogResult.Ok) {
+    if (res != DialogResult.ok) {
       return;
     }
 
@@ -56,31 +58,32 @@ public class StartupWizard {
     return this.finished;
   }
 
-  private FrmWizardFrame.DialogResult doStep1() {
+  private DialogResult doStep1() {
     FrmWizardFrame frm = new FrmWizardAreaAndPlaneTypes();
     frm.initSettings(settings);
-    frm.showDialog();
+    frm.setVisible(true);
+    JAtcSim.waitFor(frm, f->f.isVisible() == false);
     return frm.getDialogResult();
   }
 
-  private FrmWizardFrame.DialogResult doStep2() {
+  private DialogResult doStep2() {
     FrmWizardFrame frm = new FrmWizardAirportTimeAndWeather();
     frm.initSettings(settings);
-    frm.showDialog();
+    JAtcSim.waitFor(frm, f->f.isVisible() == false);
     return frm.getDialogResult();
   }
 
-  private FrmWizardFrame.DialogResult doStep3() {
+  private DialogResult doStep3() {
     FrmWizardFrame frm = new FrmWizardTraffic();
     frm.initSettings(settings);
-    frm.showDialog();
+    JAtcSim.waitFor(frm, f->f.isVisible() == false);
     return frm.getDialogResult();
   }
   
-  private FrmWizardFrame.DialogResult doStep4() {
+  private DialogResult doStep4() {
     FrmWizardFrame frm = new FrmWizardSimulationAndRadar();
     frm.initSettings(settings);
-    frm.showDialog();
+    JAtcSim.waitFor(frm, f->f.isVisible() == false);
     return frm.getDialogResult();
   }
 }

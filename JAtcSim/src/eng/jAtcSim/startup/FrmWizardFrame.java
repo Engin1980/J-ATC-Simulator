@@ -25,14 +25,12 @@ public abstract class FrmWizardFrame extends JFrame {
     return ret;
   }
 
-  public enum DialogResult {
-
-    Ok,
-    Cancel
+  public FrmWizardFrame(){
+    this.setDefaultCloseOperation(EXIT_ON_CLOSE);
   }
 
   protected StartupSettings settings;
-  private DialogResult dialogResult = DialogResult.Cancel;
+  private DialogResult dialogResult = DialogResult.cancel;
 
   protected final Dimension BUTTON_DIMENSION = new Dimension(150, 1);
   protected final Dimension FILE_FIELD_DIMENSION = new Dimension(500, 1);
@@ -52,7 +50,7 @@ public abstract class FrmWizardFrame extends JFrame {
   public void setVisible(boolean value) {
     if (value) {
       setFontAll(this.getComponents());
-      this.dialogResult = DialogResult.Cancel;
+      this.dialogResult = DialogResult.cancel;
       this.setLocationRelativeTo(null);  // *** this will center your app ***
     }
     super.setVisible(value);
@@ -79,7 +77,7 @@ public abstract class FrmWizardFrame extends JFrame {
   
   protected void closeDialogIfValid(){
     if (isValidated()){
-      this.dialogResult = DialogResult.Ok;
+      this.dialogResult = DialogResult.ok;
       this.setVisible(false);
     }
       

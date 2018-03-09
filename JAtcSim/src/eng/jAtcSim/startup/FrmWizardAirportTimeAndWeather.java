@@ -95,7 +95,7 @@ public class FrmWizardAirportTimeAndWeather extends FrmWizardFrame {
 
     pack();
 
-    setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+    setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
   }
 
   private void createLayout() {

@@ -27,7 +27,7 @@ public class Pack extends eng.jAtcSim.frmPacks.Pack {
     this.aip = sim.getActiveAirport();
     this.appSettings = appSettings;
 
-    String fileName = appSettings.resFolder + "radarDisplaySettings.xml";
+    String fileName = appSettings.resourcesFolder + "radarDisplaySettings.xml";
     this.displaySettings = XmlLoadHelper.loadNewDisplaySettings(fileName);
 
     // create windows

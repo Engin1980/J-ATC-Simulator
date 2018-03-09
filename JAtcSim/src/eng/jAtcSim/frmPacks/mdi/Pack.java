@@ -11,7 +11,6 @@ import eng.eSystem.events.EventSimple;
 import eng.jAtcSim.AppSettings;
 import eng.jAtcSim.XmlLoadHelper;
 import eng.jAtcSim.lib.Simulation;
-import eng.jAtcSim.lib.traffic.Movement;
 import eng.jAtcSim.lib.world.Area;
 
 /**
@@ -34,7 +33,7 @@ public class Pack extends eng.jAtcSim.frmPacks.Pack {
   @Override
   public void initPack(Simulation sim, Area area, AppSettings appSettings) {
 
-    String fileName = appSettings.resFolder + "radarDisplaySettings.xml";
+    String fileName = appSettings.resourcesFolder + "radarDisplaySettings.xml";
     this.displaySettings = XmlLoadHelper.loadNewDisplaySettings(fileName);
 
     // init sim & area

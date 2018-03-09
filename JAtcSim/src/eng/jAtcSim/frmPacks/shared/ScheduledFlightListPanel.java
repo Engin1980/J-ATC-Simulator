@@ -19,7 +19,7 @@ public class ScheduledFlightListPanel extends JPanel {
   public void init(Simulation sim, AppSettings appSettings) {
     this.sim = sim;
     ScheduledFlightStripPanel.setStripSettings(
-        XmlLoadHelper.loadStripSettings(appSettings.resFolder + "stripSettings.xml"));
+        XmlLoadHelper.loadStripSettings(appSettings.resourcesFolder + "stripSettings.xml"));
 
     pnlContent = LayoutManager.createBoxPanel(LayoutManager.eHorizontalAlign.left, 4);
     pnlContent.setName("ScheduledFlightListPanel_ContentPanel");
@@ -29,6 +29,7 @@ public class ScheduledFlightListPanel extends JPanel {
 
     this.setLayout(new BorderLayout());
     this.add(pnlScroll);
+    this.setDoubleBuffered(true);
 
     pnlContent.setBackground(new Color(50, 50, 50));
 

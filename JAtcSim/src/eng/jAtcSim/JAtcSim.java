@@ -5,41 +5,47 @@
  */
 package eng.jAtcSim;
 
+import eng.jAtcSim.frmPacks.Pack;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.Log;
-import eng.jAtcSim.lib.global.Recorder;
-import eng.jAtcSim.lib.traffic.TestTrafficOneDeparture;
-import eng.jAtcSim.lib.traffic.fleets.Fleets;
-import eng.jAtcSim.radarBase.global.SoundManager;
-import eng.jAtcSim.frmPacks.Pack;
-import eng.jAtcSim.startup.StartupSettings;
-import eng.jAtcSim.startup.StartupWizard;
 import eng.jAtcSim.lib.Simulation;
 import eng.jAtcSim.lib.airplanes.AirplaneTypes;
 import eng.jAtcSim.lib.exceptions.ERuntimeException;
+import eng.jAtcSim.lib.global.Recorder;
 import eng.jAtcSim.lib.traffic.GenericTraffic;
 import eng.jAtcSim.lib.traffic.Traffic;
+import eng.jAtcSim.lib.traffic.fleets.Fleets;
 import eng.jAtcSim.lib.weathers.Weather;
 import eng.jAtcSim.lib.weathers.WeatherProvider;
 import eng.jAtcSim.lib.world.Airport;
 import eng.jAtcSim.lib.world.Area;
+import eng.jAtcSim.radarBase.global.SoundManager;
+import eng.jAtcSim.startup.DialogResult;
+import eng.jAtcSim.startup.FrmIntro;
+import eng.jAtcSim.startup.StartupSettings;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.file.Paths;
 import java.util.Calendar;
+import java.util.function.Predicate;
 
 /**
  * @author Marek
  */
 public class JAtcSim {
 
-  private static final boolean FAST_START = true;
+  static class XmlLoadedData {
+    public Area area;
+    public AirplaneTypes types;
+    public Fleets fleets;
+  }
+  private static final boolean FAST_START = false;
   private static final Traffic specificTraffic =
 //      new TestTrafficOneApproach();
 //  new TestTrafficOneDeparture();
-  null;
-
-  private static AppSettings appSettings = new AppSettings();
+      null;
+  private static AppSettings appSettings;
 
   /**
    * @param args the command line arguments
@@ -48,19 +54,26 @@ public class JAtcSim {
 
     Acc.setLog(new Log());
 
-    initResourcesFolder();
-    Recorder.setLogPathBase(appSettings.logFolder);
+    appSettings = new AppSettings();
+
+    Recorder.setLogPathBase(appSettings.logFolder.toString());
 
     // startup wizard
-    String file = appSettings.resFolder + "startupSettings.xml";
+    String file = Paths.get(appSettings.resourcesFolder.toString(), "startupSettings.xml").toString();
     StartupSettings startupSettings = XmlLoadHelper.loadStartupSettings(file);
-    StartupWizard wizard = new StartupWizard(startupSettings);
-    if (FAST_START == false) {
-      wizard.run();
-      if (wizard.isFinished() == false) {
-        return;
-      }
+
+    FrmIntro frmIntro = new FrmIntro();
+    frmIntro.setStartupSettings(startupSettings);
+    frmIntro.setVisible(true);
+    waitFor(frmIntro, o -> o.isVisible() == false);
+
+
+    System.out.println("Dialog finished" + frmIntro.getDialogResult());
+    if (DialogResult.cancel == frmIntro.getDialogResult()) {
+      return;
     }
+
+    startupSettings = frmIntro.getStartupSettings();
 
     XmlLoadHelper.saveStartupSettings(startupSettings, file);
 
@@ -102,7 +115,7 @@ public class JAtcSim {
         aip, data.types, weather, data.fleets, traffic, simTime, startupSettings.simulation.secondLengthInMs);
 
     // sound
-    SoundManager.init(appSettings.soundFolder);
+    SoundManager.init(appSettings.soundFolder.toString());
 
     // starting pack & simulation
     String packType = startupSettings.radar.packClass;
@@ -131,7 +144,7 @@ public class JAtcSim {
       ret.types = XmlLoadHelper.loadPlaneTypes(fileName);
 
       fileName = sett.files.fleetsXmlFile;
-      failMsg = "Failed to load fleet from "+ fileName;
+      failMsg = "Failed to load fleet from " + fileName;
       ret.fleets = XmlLoadHelper.loadFleets(fileName);
 
     } catch (Exception ex) {
@@ -139,18 +152,6 @@ public class JAtcSim {
     }
 
     return ret;
-  }
-
-  static class XmlLoadedData{
-    public Area area;
-    public AirplaneTypes types;
-    public Fleets fleets;
-  }
-
-  private static void initResourcesFolder() {
-    String curDir = System.getProperty("user.dir") + "\\";
-    appSettings.resFolder = curDir + "\\_SettingFiles\\";
-    appSettings.soundFolder =curDir + "\\_Sounds\\";
   }
 
   private static void updateCalendarToSimTime(Calendar simTime, StartupSettings sett) {
@@ -195,6 +196,15 @@ public class JAtcSim {
     }
 
     return ret;
+  }
+
+  public static <T> void waitFor(T object, Predicate<T> condition) {
+    while (!condition.test(object)) {
+      try {
+        Thread.sleep(100);
+      } catch (InterruptedException e) {
+      }
+    }
   }
 }
 

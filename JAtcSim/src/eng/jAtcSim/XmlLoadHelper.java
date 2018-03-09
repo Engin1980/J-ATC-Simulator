@@ -1,5 +1,6 @@
 package eng.jAtcSim;
 
+import eng.eSystem.utilites.ExceptionUtil;
 import eng.eSystem.xmlSerialization.*;
 import eng.jAtcSim.frmPacks.shared.FlightStripSettings;
 import eng.jAtcSim.lib.airplanes.AirplaneType;
@@ -34,14 +35,7 @@ public class XmlLoadHelper {
     try {
       ret = ser.deserialize(fileName, type);
     } catch (Exception ex) {
-      StringBuilder sb = new StringBuilder();
-      Throwable t = ex;
-      while (t != null) {
-        sb.append(t.getMessage());
-        sb.append(" # # # # # ");
-        t = t.getCause();
-      }
-      throw new ERuntimeException(sb.toString(), ex);
+      throw new ERuntimeException("Failed to deserialize the file '" + fileName + "'.", ex);
     }
 
     return ret;
@@ -184,6 +178,12 @@ public class XmlLoadHelper {
         new eng.eSystem.xmlSerialization.common.parsers.AwtFontElementParser());
 
     FlightStripSettings ret = (FlightStripSettings) deserialize(fileName, FlightStripSettings.class, sett);
+    return ret;
+  }
+
+  public static AppSettings loadApplicationSettings(String fileName) {
+    XmlSerializer ser = new XmlSerializer();
+    AppSettings ret = (AppSettings) ser.deserialize(fileName, AppSettings.class);
     return ret;
   }
 }
