@@ -103,4 +103,11 @@ public class Callsign {
   public String toString() {
     return company +  " " + number;
   }
+
+  public String toString(boolean separateCompanyAndNumber) {
+    if (separateCompanyAndNumber)
+      return company + " " + number;
+    else
+      return company + number;
+  }
 }

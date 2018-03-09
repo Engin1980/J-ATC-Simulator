@@ -6,36 +6,32 @@
 package eng.jAtcSim.lib.airplanes;
 
 import eng.eSystem.collections.ReadOnlyList;
+import eng.eSystem.utilites.CollectionUtil;
 import eng.eSystem.utilites.StringUtil;
 import eng.jAtcSim.lib.coordinates.Coordinates;
 import eng.jAtcSim.lib.global.KeyItems;
 
+import java.util.List;
+
 /**
- *
  * @author Marek
  */
 public class Airplanes {
 
+  private static final double AIRPROX_STANDARD_DISTANCE = 5;
+  private static final double AIRPROX_APPROACH_DISTANCE = 2.5;
+
   public static Airplane tryGetByCallsingOrNumber(Iterable<Airplane> planes, String callsignOrNumber) {
-    Airplane ret = null;
     if (StringUtil.isEmpty(callsignOrNumber)) return null;
-    char f = callsignOrNumber.charAt(0);
-    if (f >= '0' && f <= '9') {
-      // only partial callsign
-      for (Airplane p : planes) {
-        if (p.getCallsign().getNumber().equals(callsignOrNumber)) {
-          if (ret == null) {
-            ret = p;
-          } else {
-            ret = null;
-            break;
-          }
-        }
-      }
-    } else {
-      // full callsign
-      ret = Airplanes.tryGetByCallsign(planes, callsignOrNumber);
+
+    Airplane ret = CollectionUtil.tryGetFirst(planes, p -> p.getCallsign().toString(false).equals(callsignOrNumber));
+    if (ret == null) {
+      List<Airplane> byPart = CollectionUtil.where(planes,
+          p -> p.getCallsign().getNumber().equals(callsignOrNumber));
+      if (byPart.size() == 1)
+        ret = byPart.get(0);
     }
+
     return ret;
   }
 
@@ -102,9 +98,6 @@ public class Airplanes {
     }
   }
 
-  private static final double AIRPROX_STANDARD_DISTANCE = 5;
-  private static final double AIRPROX_APPROACH_DISTANCE = 2.5;
-
   private static boolean isInAirprox(Airplane a, Airplane b) {
     boolean ret;
     if (Math.abs(a.getAltitude() - b.getAltitude()) >= 1000) {
@@ -121,7 +114,7 @@ public class Airplanes {
         ret = d < AIRPROX_APPROACH_DISTANCE;
       else
         ret = true;
-    }else
+    } else
       ret = false;
 
     return ret;
