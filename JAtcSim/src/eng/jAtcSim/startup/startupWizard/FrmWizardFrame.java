@@ -3,7 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package eng.jAtcSim.startup;
+package eng.jAtcSim.startup.startupWizard;
+
+import eng.jAtcSim.startup.DialogResult;
+import eng.jAtcSim.startup.LayoutManager;
+import eng.jAtcSim.startup.StartupSettings;
 
 import java.awt.*;
 import javax.swing.*;
@@ -20,7 +24,7 @@ public abstract class FrmWizardFrame extends JFrame {
     btnContinue.setMinimumSize(d);
     btnContinue.setMaximumSize(d);
 
-    JPanel ret = LayoutManager.createBoxPanel(LayoutManager.eHorizontalAlign.center, 0,
+    JPanel ret = eng.jAtcSim.startup.LayoutManager.createBoxPanel(eng.jAtcSim.startup.LayoutManager.eHorizontalAlign.center, 0,
         pnl, LayoutManager.createBorderedPanel(10, btnContinue));
     return ret;
   }

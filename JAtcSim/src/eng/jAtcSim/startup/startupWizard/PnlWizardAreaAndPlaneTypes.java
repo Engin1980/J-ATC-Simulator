@@ -1,14 +1,15 @@
-package eng.jAtcSim.startup;
+package eng.jAtcSim.startup.startupWizard;
 
 import eng.eSystem.utilites.ExceptionUtil;
 import eng.jAtcSim.XmlLoadHelper;
-import eng.jAtcSim.lib.airplanes.AirplaneTypes;
-import eng.jAtcSim.lib.world.Area;
+import eng.jAtcSim.startup.LayoutManager;
+import eng.jAtcSim.startup.MessageBox;
+import eng.jAtcSim.startup.StartupSettings;
 import eng.jAtcSim.startup.extenders.XmlFileSelectorExtender;
 
 import javax.swing.*;
 
-public class FrmWizardAreaAndPlaneTypes extends FrmWizardFrame {
+public class PnlWizardAreaAndPlaneTypes extends JWizardPanel {
 
   private javax.swing.JButton btnAreaXml;
   private javax.swing.JButton btnContinue;
@@ -23,7 +24,8 @@ public class FrmWizardAreaAndPlaneTypes extends FrmWizardFrame {
   private XmlFileSelectorExtender fsAreaFile;
   private XmlFileSelectorExtender fsTypesFile;
   private XmlFileSelectorExtender fsFleetsFile;
-  public FrmWizardAreaAndPlaneTypes() {
+
+  public PnlWizardAreaAndPlaneTypes() {
     super();
     initComponents();
     initExtenders();
@@ -36,15 +38,8 @@ public class FrmWizardAreaAndPlaneTypes extends FrmWizardFrame {
   }
 
   private void initComponents() {
-    this.setTitle("");
-    this.setMinimumSize(LARGE_FRAME_FIELD_DIMENSION);
-
     createComponents();
     createLayout();
-
-    pack();
-
-    setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
   }
 
   private void createLayout() {
@@ -53,18 +48,12 @@ public class FrmWizardAreaAndPlaneTypes extends FrmWizardFrame {
         jLabel3, txtFleetsXml, btnFleetsXml,
         jLabel2, txtTypesXml, btnTypesXml);
 
-    pnl = super.wrapWithContinueButton(pnl, btnContinue);
-
-    this.getContentPane().add(pnl);
+    this.add(pnl);
   }
 
   private void createComponents() {
     btnAreaXml = new JButton("(browse)");
     btnAreaXml.setMinimumSize(BUTTON_DIMENSION);
-
-    btnContinue = new JButton("Continue");
-    btnContinue.addActionListener(this::btnContinueActionPerformed);
-    btnContinue.setMinimumSize(BUTTON_DIMENSION);
 
     btnTypesXml = new JButton("(browse)");
     btnTypesXml.setMinimumSize(BUTTON_DIMENSION);
@@ -84,10 +73,6 @@ public class FrmWizardAreaAndPlaneTypes extends FrmWizardFrame {
 
     txtFleetsXml = new JTextField();
     txtFleetsXml.setMinimumSize(FILE_FIELD_DIMENSION);
-  }
-
-  private void btnContinueActionPerformed(java.awt.event.ActionEvent evt) {
-    super.closeDialogIfValid();
   }
 
   private boolean checkAreaSanity() {
@@ -136,13 +121,13 @@ public class FrmWizardAreaAndPlaneTypes extends FrmWizardFrame {
   }
 
   @Override
-  protected void fillBySettings() {
+  protected void fillBySettings(StartupSettings settings) {
     txtAreaXml.setText(settings.files.areaXmlFile);
     txtTypesXml.setText(settings.files.planesXmlFile);
   }
 
   @Override
-  protected boolean isValidated() {
+  protected boolean doWizardValidation() {
     if (checkAreaSanity() == false) {
       return false;
     }
@@ -153,12 +138,16 @@ public class FrmWizardAreaAndPlaneTypes extends FrmWizardFrame {
     if (checkFleetsSanity() == false) {
       return false;
     }
-
-    this.settings.files.areaXmlFile = txtAreaXml.getText();
-    this.settings.files.planesXmlFile = txtTypesXml.getText();
-    this.settings.files.fleetsXmlFile = txtFleetsXml.getText();
-
     return true;
+  }
+
+  @Override
+  void fillSettingsBy(StartupSettings settings) {
+
+    settings.files.areaXmlFile = txtAreaXml.getText();
+    settings.files.planesXmlFile = txtTypesXml.getText();
+    settings.files.fleetsXmlFile = txtFleetsXml.getText();
+
   }
 
 }

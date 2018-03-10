@@ -50,8 +50,7 @@ public class JAtcSim {
   /**
    * @param args the command line arguments
    */
-  public static void main(String[] args) throws Exception {
-
+  public static void main(String[] args) {
     Acc.setLog(new Log());
 
     appSettings = new AppSettings();
@@ -59,23 +58,16 @@ public class JAtcSim {
     Recorder.setLogPathBase(appSettings.logFolder.toString());
 
     // startup wizard
-    String file = Paths.get(appSettings.resourcesFolder.toString(), "startupSettings.xml").toString();
-    StartupSettings startupSettings = XmlLoadHelper.loadStartupSettings(file);
+    StartupSettings startupSettings = XmlLoadHelper.loadStartupSettings(appSettings.getStartupSettingsFile());
 
-    FrmIntro frmIntro = new FrmIntro();
-    frmIntro.setStartupSettings(startupSettings);
+    FrmIntro frmIntro = new FrmIntro(startupSettings);
     frmIntro.setVisible(true);
-    waitFor(frmIntro, o -> o.isVisible() == false);
+  }
+
+    public static void startSimulation(StartupSettings startupSettings) {
 
 
-    System.out.println("Dialog finished" + frmIntro.getDialogResult());
-    if (DialogResult.cancel == frmIntro.getDialogResult()) {
-      return;
-    }
-
-    startupSettings = frmIntro.getStartupSettings();
-
-    XmlLoadHelper.saveStartupSettings(startupSettings, file);
+    XmlLoadHelper.saveStartupSettings(startupSettings, appSettings.getStartupSettingsFile());
 
     XmlLoadedData data;
 
@@ -83,7 +75,7 @@ public class JAtcSim {
     try {
       data = loadDataFromXmlFiles(startupSettings);
     } catch (Exception ex) {
-      throw (ex);
+      throw new RuntimeException(ex);
     }
 
     data.area.initAfterLoad();
@@ -198,13 +190,8 @@ public class JAtcSim {
     return ret;
   }
 
-  public static <T> void waitFor(T object, Predicate<T> condition) {
-    while (!condition.test(object)) {
-      try {
-        Thread.sleep(100);
-      } catch (InterruptedException e) {
-      }
-    }
+  public static void quit() {
+
   }
 }
 

@@ -3,9 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package eng.jAtcSim.startup;
+package eng.jAtcSim.startup.startupWizard;
 
+import eng.eSystem.xmlSerialization.Settings;
 import eng.jAtcSim.XmlLoadHelper;
+import eng.jAtcSim.startup.LayoutManager;
+import eng.jAtcSim.startup.MessageBox;
+import eng.jAtcSim.startup.StartupSettings;
 import eng.jAtcSim.startup.extenders.TimeExtender;
 import eng.jAtcSim.lib.global.TryResult;
 import eng.jAtcSim.lib.weathers.MetarDecoder;
@@ -24,7 +28,10 @@ import javax.swing.*;
 /**
  * @author Marek Vajgl
  */
-public class FrmWizardAirportTimeAndWeather extends FrmWizardFrame {
+public class PnlWizardAirportTimeAndWeather extends JWizardPanel {
+
+  //TODO get rid of this
+  private StartupSettings settings;
 
   private static List<PresetMetar> presetMetars = new ArrayList();
 
@@ -39,7 +46,7 @@ public class FrmWizardAirportTimeAndWeather extends FrmWizardFrame {
   /**
    * Creates new form FrmWizardAirportAndTraffic
    */
-  public FrmWizardAirportTimeAndWeather() {
+  public PnlWizardAirportTimeAndWeather() {
     super();
     initComponents();
     initExtenders();
@@ -68,7 +75,6 @@ public class FrmWizardAirportTimeAndWeather extends FrmWizardFrame {
       MessageBox.show("Failed to download METAR for " + settings.recent.icao + ". Reason: " + res.exceptionOrNull.getMessage(), "Error downloading METAR...");
   }//GEN-LAST:event_btnDownloadMetarActionPerformed
 
-  private javax.swing.JButton btnContinue;
   private javax.swing.JButton btnDownloadMetar;
   private javax.swing.JButton btnSetCurrentTime;
   private javax.swing.JComboBox cmbAirports;
@@ -87,26 +93,21 @@ public class FrmWizardAirportTimeAndWeather extends FrmWizardFrame {
   private TimeExtender timeExtender;
 
   private void initComponents() {
-    this.setTitle("");
     this.setMinimumSize(LARGE_FRAME_FIELD_DIMENSION);
 
     createComponents();
     createLayout();
-
-    pack();
-
-    setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
   }
 
   private void createLayout() {
 
-    JPanel wp = LayoutManager.createBoxPanel(LayoutManager.eHorizontalAlign.left, distance,
-        LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.top, distance, txtMetar, btnDownloadMetar),
-        LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.top , distance, jLabel2, cmbPresetMetars),
-        LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.top, distance, jLabel1, cmbWeatherUpdate)
+    JPanel wp = LayoutManager.createBoxPanel(LayoutManager.eHorizontalAlign.left, DISTANCE,
+        LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.top, DISTANCE, txtMetar, btnDownloadMetar),
+        LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.top , DISTANCE, jLabel2, cmbPresetMetars),
+        LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.top, DISTANCE, jLabel1, cmbWeatherUpdate)
     );
     wp = LayoutManager.indentPanel(wp, 30);
-    wp = LayoutManager.createBoxPanel(LayoutManager.eHorizontalAlign.left, distance,
+    wp = LayoutManager.createBoxPanel(LayoutManager.eHorizontalAlign.left, DISTANCE,
         rdbWeatherFromWeb,
         rdbWeatherFromUser,
         wp
@@ -115,13 +116,11 @@ public class FrmWizardAirportTimeAndWeather extends FrmWizardFrame {
 
     wp = LayoutManager.createFormPanel(3, 2,
         jLabel4, cmbAirports,
-        jLabel5, LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.top, distance, txtTime,  btnSetCurrentTime),
+        jLabel5, LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.top, DISTANCE, txtTime,  btnSetCurrentTime),
         jLabel6, wp
     );
 
-    wp = super.wrapWithContinueButton(wp, btnContinue);
-
-    this.getContentPane().add(wp);
+    this.add(wp);
   }
 
   private void createComponents() {
@@ -134,14 +133,11 @@ public class FrmWizardAirportTimeAndWeather extends FrmWizardFrame {
     rdbWeatherFromUser = new JRadioButton();
     txtMetar = new JTextField();
     btnDownloadMetar = new JButton();
-    btnContinue = new JButton();
     jLabel1 = new JLabel();
     cmbWeatherUpdate = new JComboBox();
     btnSetCurrentTime = new JButton();
     jLabel2 = new JLabel();
     cmbPresetMetars = new JComboBox();
-
-    setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
     jLabel4.setText("Select airport:");
 
@@ -159,8 +155,6 @@ public class FrmWizardAirportTimeAndWeather extends FrmWizardFrame {
 
     jLabel6.setText("Weather:");
 
-
-
     rdbWeatherFromWeb.setText("use real weather continously downloaded from web");
 
     rdbWeatherFromUser.setSelected(true);
@@ -176,13 +170,6 @@ public class FrmWizardAirportTimeAndWeather extends FrmWizardFrame {
     btnDownloadMetar.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent evt) {
         btnDownloadMetarActionPerformed(evt);
-      }
-    });
-
-    btnContinue.setText("Continue");
-    btnContinue.addActionListener(new java.awt.event.ActionListener() {
-      public void actionPerformed(java.awt.event.ActionEvent evt) {
-        btnContinueActionPerformed(evt);
       }
     });
 
@@ -208,7 +195,8 @@ public class FrmWizardAirportTimeAndWeather extends FrmWizardFrame {
   }
 
   @Override
-  protected void fillBySettings() {
+  protected void fillBySettings(StartupSettings startupSettings) {
+    this.settings = startupSettings;
     fillAirportsComboBox();
 
     txtTime.setText(settings.recent.time.toString());
@@ -262,7 +250,7 @@ public class FrmWizardAirportTimeAndWeather extends FrmWizardFrame {
   }
 
   @Override
-  protected boolean isValidated() {
+  protected boolean doWizardValidation() {
     if (checkTimeSanity() == false) {
       return false;
     }
@@ -270,6 +258,11 @@ public class FrmWizardAirportTimeAndWeather extends FrmWizardFrame {
       return false;
     }
 
+    return true;
+  }
+
+  @Override
+  void fillSettingsBy(StartupSettings settings) {
     this.settings.recent.time = txtTime.getText();
     String selIcao = (String) cmbAirports.getSelectedItem();
     selIcao = selIcao.substring(0, 4);
@@ -277,15 +270,9 @@ public class FrmWizardAirportTimeAndWeather extends FrmWizardFrame {
     this.settings.weather.useOnline = rdbWeatherFromWeb.isSelected();
     this.settings.weather.userChanges = cmbWeatherUpdate.getSelectedIndex();
     this.settings.weather.metar = txtMetar.getText();
-
-    return true;
   }
 
   private void txtTimeKeyReleased(java.awt.event.KeyEvent evt) {
-  }
-
-  private void btnContinueActionPerformed(java.awt.event.ActionEvent evt) {
-    super.closeDialogIfValid();
   }
 
   private void btnSetCurrentTimeActionPerformed(java.awt.event.ActionEvent evt) {

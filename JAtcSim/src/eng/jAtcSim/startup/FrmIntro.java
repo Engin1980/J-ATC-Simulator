@@ -1,6 +1,7 @@
 package eng.jAtcSim.startup;
 
-import eng.eSystem.utilites.awt.ComponentUtils;
+import eng.jAtcSim.JAtcSim;
+import eng.jAtcSim.startup.startupWizard.StartupWizard;
 
 import javax.swing.*;
 import java.awt.*;
@@ -8,20 +9,11 @@ import java.awt.*;
 public class FrmIntro extends JFrame {
 
   private StartupSettings startupSettings;
-  private DialogResult dialogResult = DialogResult.cancel;
-
   private static final Dimension BUTTON_DIMENSION = new Dimension(100, 15);
 
-  public FrmIntro(){
+  public FrmIntro(StartupSettings startupSettings){
     initializeComponents();
-  }
-
-  public void setStartupSettings(StartupSettings startupSettings) {
     this.startupSettings = startupSettings;
-  }
-
-  public DialogResult getDialogResult() {
-    return dialogResult;
   }
 
   public StartupSettings getStartupSettings() {
@@ -54,20 +46,21 @@ public class FrmIntro extends JFrame {
   }
 
   private void btnWizard_click(){
-    ComponentUtils.adjustComponentTree(this, o -> o.setEnabled(false));
     StartupWizard wizard = new StartupWizard(startupSettings);
     wizard.run();
-    ComponentUtils.adjustComponentTree(this, o -> o.setEnabled(true));
+    this.setVisible(false);
   }
 
   private void btnRun_click(){
-    this.dialogResult = DialogResult.ok;
+    this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     this.setVisible(false);
+    JAtcSim.startSimulation(this.startupSettings);
   }
 
   private void btnExit_click(){
-    this.dialogResult = DialogResult.cancel;
     this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     this.setVisible(false);
+    this.dispose();
+    JAtcSim.quit();
   }
 }

@@ -18,6 +18,10 @@ public class AppSettings {
     this.logFolder = Paths.get(this.applicationFolder.toString(), "_Log");
   }
 
+  public String getStartupSettingsFile(){
+    return Paths.get(this.resourcesFolder.toString(), "startupSettings.xml").toString();
+  }
+
   public static Path getApplicationFolder(){
     String curDir = System.getProperty("user.dir") + "\\";
     Path ret = Paths.get(curDir);

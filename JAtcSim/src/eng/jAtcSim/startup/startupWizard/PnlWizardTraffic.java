@@ -3,18 +3,22 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package eng.jAtcSim.startup;
+package eng.jAtcSim.startup.startupWizard;
 
+import eng.jAtcSim.startup.LayoutManager;
+import eng.jAtcSim.startup.MessageBox;
+import eng.jAtcSim.startup.StartupSettings;
 import eng.jAtcSim.startup.extenders.XmlFileSelectorExtender;
+import eng.jAtcSim.startup.startupWizard.FrmWizardFrame;
 
 import javax.swing.*;
 
 /**
  * @author Marek Vajgl
  */
-public class FrmWizardTraffic extends FrmWizardFrame {
+public class PnlWizardTraffic extends JWizardPanel {
 
-  public FrmWizardTraffic() {
+  public PnlWizardTraffic() {
     initComponents();
     initExtenders();
 
@@ -22,15 +26,10 @@ public class FrmWizardTraffic extends FrmWizardFrame {
   }
 
   private void initComponents() {
-    this.setTitle("");
     this.setMinimumSize(LARGE_FRAME_FIELD_DIMENSION);
 
     createComponents();
     createLayout();
-
-    pack();
-
-    setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
   }
 
   private void createLayout() {
@@ -45,31 +44,29 @@ public class FrmWizardTraffic extends FrmWizardFrame {
     );
     JPanel pnlU = LayoutManager.createBoxPanel(
         LayoutManager.eHorizontalAlign.left,
-        distance,
+        DISTANCE,
         LayoutManager.createFormPanel(2, 2, lblMovementsPerHour, nudMovements, lblMaxPlanesCount, nudMaxPlanes),
         chkCustomExtendedCallsigns
     );
-    JPanel pnlC = LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.top, distance, pnlU, pnlS);
+    JPanel pnlC = LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.top, DISTANCE, pnlU, pnlS);
     JPanel pnlM = LayoutManager.createBoxPanel(
         LayoutManager.eHorizontalAlign.left,
-        distance,
+        DISTANCE,
         rdbXml,
         LayoutManager.indentPanel(
             LayoutManager.createBoxPanel(
                 LayoutManager.eHorizontalAlign.left,
-                distance,
-                LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.top, distance, lblTraffixXmlFile, txtTrafficXmlFile, btnTrafficXmlFileBrowse),
+                DISTANCE,
+                LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.top, DISTANCE, lblTraffixXmlFile, txtTrafficXmlFile, btnTrafficXmlFileBrowse),
                 chkAllowDelays
-            ), distance),
+            ), DISTANCE),
         rdbCustom,
-        LayoutManager.indentPanel(pnlC, distance)
+        LayoutManager.indentPanel(pnlC, DISTANCE)
     );
 
-    pnlM = super.wrapWithContinueButton(pnlM, btnContinue);
+    pnlM = LayoutManager.createBorderedPanel(DISTANCE, pnlM);
 
-    pnlM = LayoutManager.createBorderedPanel(distance, pnlM);
-
-    this.getContentPane().add(pnlM);
+    this.add(pnlM);
   }
 
   private void createComponents() {
@@ -101,13 +98,6 @@ public class FrmWizardTraffic extends FrmWizardFrame {
     chkCustomExtendedCallsigns = new javax.swing.JCheckBox();
     nudMaxPlanes = new javax.swing.JSpinner();
     lblMaxPlanesCount = new javax.swing.JLabel();
-    btnContinue = new javax.swing.JButton();
-    btnContinue.setText("Continue");
-    btnContinue.addActionListener(new java.awt.event.ActionListener() {
-      public void actionPerformed(java.awt.event.ActionEvent evt) {
-        btnContinueActionPerformed(evt);
-      }
-    });
 
     rdbCustom.setText("Use custom traffic");
     rdbCustom.addActionListener(new java.awt.event.ActionListener() {
@@ -222,16 +212,11 @@ public class FrmWizardTraffic extends FrmWizardFrame {
     }
   }//GEN-LAST:event_nudMovementsStateChanged
 
-  private void btnContinueActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnContinueActionPerformed
-    super.closeDialogIfValid();
-  }//GEN-LAST:event_btnContinueActionPerformed
-
   private void nudMaxPlanesStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_nudMaxPlanesStateChanged
     // TODO add your handling code here:
   }//GEN-LAST:event_nudMaxPlanesStateChanged
 
   // Variables declaration - do not modify//GEN-BEGIN:variables
-  private javax.swing.JButton btnContinue;
   private javax.swing.JButton btnTrafficXmlFileBrowse;
   private javax.swing.JCheckBox chkAllowDelays;
   private javax.swing.JCheckBox chkCustomExtendedCallsigns;
@@ -264,7 +249,7 @@ public class FrmWizardTraffic extends FrmWizardFrame {
   XmlFileSelectorExtender xmlFile;
 
   @Override
-  protected void fillBySettings() {
+  protected void fillBySettings(StartupSettings settings) {
 
     rdbCustom.setSelected(settings.traffic.useXml == false);
     rdbXml.setSelected(settings.traffic.useXml);
@@ -284,7 +269,7 @@ public class FrmWizardTraffic extends FrmWizardFrame {
   }
 
   @Override
-  protected boolean isValidated() {
+  protected boolean doWizardValidation() {
 
     if (rdbXml.isSelected()) {
       if (xmlFile.isValid() == false) {
@@ -293,6 +278,11 @@ public class FrmWizardTraffic extends FrmWizardFrame {
       }
     }
 
+    return true;
+  }
+
+  @Override
+  void fillSettingsBy(StartupSettings settings) {
     settings.traffic.useXml=rdbXml.isSelected();
     settings.traffic.delayAllowed=chkAllowDelays.isSelected();
     settings.files.trafficXmlFile=txtTrafficXmlFile.getText();
@@ -306,7 +296,6 @@ public class FrmWizardTraffic extends FrmWizardFrame {
     settings.traffic.useExtendedCallsigns=chkCustomExtendedCallsigns.isSelected();
     settings.traffic.maxPlanes=(int) nudMaxPlanes.getValue();
 
-    return true;
   }
 
   private void initExtenders() {
