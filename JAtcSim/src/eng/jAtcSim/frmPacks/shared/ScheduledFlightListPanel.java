@@ -8,6 +8,7 @@ import eng.jAtcSim.startup.LayoutManager;
 
 import javax.swing.*;
 import java.awt.*;
+import java.nio.file.Paths;
 
 public class ScheduledFlightListPanel extends JPanel {
 
@@ -19,7 +20,10 @@ public class ScheduledFlightListPanel extends JPanel {
   public void init(Simulation sim, AppSettings appSettings) {
     this.sim = sim;
     ScheduledFlightStripPanel.setStripSettings(
-        XmlLoadHelper.loadStripSettings(appSettings.resourcesFolder + "stripSettings.xml"));
+        XmlLoadHelper.loadStripSettings(
+            Paths.get(
+                appSettings.resourcesFolder.toString(),
+                "stripSettings.xml").toString()));
 
     pnlContent = LayoutManager.createBoxPanel(LayoutManager.eHorizontalAlign.left, 4);
     pnlContent.setName("ScheduledFlightListPanel_ContentPanel");

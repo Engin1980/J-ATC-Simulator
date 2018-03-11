@@ -20,7 +20,21 @@ public class StartupSettings {
   }
 
   public static class Traffic{
+    public enum eTrafficType{
+      custom,
+      xml,
+      airportDefined
+    }
+
+    public eTrafficType type;
+    public String trafficAirportDefinedTitle;
+    public CustomTraffic customTraffic;
     public int maxPlanes;
+    public double densityPercentage;
+  }
+
+  public static class CustomTraffic{
+
     public boolean useExtendedCallsigns;
     public boolean delayAllowed;
     public int weightTypeD;
@@ -28,9 +42,7 @@ public class StartupSettings {
     public int weightTypeB;
     public int weightTypeA;
     public int arrivals2departuresRatio;
-    public int vfr2ifrRatio;
     public int movementsPerHour;
-    public boolean useXml;
 
   }
 

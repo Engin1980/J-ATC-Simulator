@@ -9,6 +9,7 @@ import eng.jAtcSim.lib.world.Area;
 import eng.jAtcSim.radarBase.DisplaySettings;
 
 import javax.swing.*;
+import java.nio.file.Paths;
 
 public class Pack extends eng.jAtcSim.frmPacks.Pack {
 
@@ -27,7 +28,7 @@ public class Pack extends eng.jAtcSim.frmPacks.Pack {
     this.aip = sim.getActiveAirport();
     this.appSettings = appSettings;
 
-    String fileName = appSettings.resourcesFolder + "radarDisplaySettings.xml";
+    String fileName = Paths.get(appSettings.resourcesFolder.toString() , "radarDisplaySettings.xml").toString();
     this.displaySettings = XmlLoadHelper.loadNewDisplaySettings(fileName);
 
     // create windows

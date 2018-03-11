@@ -15,6 +15,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -29,7 +30,8 @@ public class FlightListPanel extends JPanel {
   public void init(Simulation sim, AppSettings appSettings) {
     this.sim = sim;
     FlightStripPanel.setStripSettings(
-        XmlLoadHelper.loadStripSettings(appSettings.resourcesFolder + "stripSettings.xml"));
+        XmlLoadHelper.loadStripSettings(
+            Paths.get(appSettings.resourcesFolder.toString(), "stripSettings.xml").toString()));
 
     pnlContent = LayoutManager.createBoxPanel(LayoutManager.eHorizontalAlign.left, 4);
     pnlContent.setName("FlightListPanel_ContentPanel");

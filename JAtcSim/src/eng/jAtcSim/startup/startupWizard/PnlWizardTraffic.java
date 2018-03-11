@@ -5,11 +5,14 @@
  */
 package eng.jAtcSim.startup.startupWizard;
 
+import eng.eSystem.utilites.CollectionUtil;
+import eng.jAtcSim.XmlLoadHelper;
+import eng.jAtcSim.lib.world.Airport;
+import eng.jAtcSim.lib.world.Area;
 import eng.jAtcSim.startup.LayoutManager;
 import eng.jAtcSim.startup.MessageBox;
 import eng.jAtcSim.startup.StartupSettings;
 import eng.jAtcSim.startup.extenders.XmlFileSelectorExtender;
-import eng.jAtcSim.startup.startupWizard.FrmWizardFrame;
 
 import javax.swing.*;
 
@@ -18,6 +21,38 @@ import javax.swing.*;
  */
 public class PnlWizardTraffic extends JWizardPanel {
 
+  XmlFileSelectorExtender xmlFile;
+  private javax.swing.JButton btnTrafficXmlFileBrowse;
+  private javax.swing.JCheckBox chkAllowDelays;
+  private javax.swing.JCheckBox chkCustomExtendedCallsigns;
+  private javax.swing.ButtonGroup grpRdb;
+  private javax.swing.JLabel lblTraffixXmlFile;
+  private javax.swing.JLabel lblDPlaneWeight;
+  private javax.swing.JLabel lblMaxPlanesCount;
+  private javax.swing.JLabel lblMovementsPerHour;
+  private javax.swing.JLabel lblVFR;
+  private javax.swing.JLabel lblArrivals;
+  private javax.swing.JLabel lblDepartures;
+  private javax.swing.JLabel lblIFR;
+  private javax.swing.JLabel lblAPlaneWeight;
+  private javax.swing.JLabel lblBPlaneWeight;
+  private javax.swing.JLabel lblCPlaneWeight;
+  private javax.swing.JSpinner nudMaxPlanes;
+  private javax.swing.JSpinner nudMovements;
+  private javax.swing.JPanel pnlCustom;
+  private javax.swing.JPanel pnlXml;
+  private javax.swing.JRadioButton rdbAirportDefined;
+  private javax.swing.JRadioButton rdbCustom;
+  private javax.swing.JRadioButton rdbXml;
+  private javax.swing.JSlider sldA;
+  private javax.swing.JSlider sldArrivalsDepartures;
+  private javax.swing.JSlider sldB;
+  private javax.swing.JSlider sldC;
+  private javax.swing.JSlider sldD;
+  private javax.swing.JTextField txtTrafficXmlFile;
+  private javax.swing.JComboBox<String> cmbAirportDefined;
+  private javax.swing.JSlider sldTrafficDensity;
+  private javax.swing.JLabel lblTrafficDensity;
   public PnlWizardTraffic() {
     initComponents();
     initExtenders();
@@ -34,45 +69,51 @@ public class PnlWizardTraffic extends JWizardPanel {
 
   private void createLayout() {
 
-    JPanel pnlS = LayoutManager.createFormPanel(6, 3,
+    JPanel pnlGlobalTrafficSettings = LayoutManager.createFormPanel(2, 2,
+        lblMaxPlanesCount, nudMaxPlanes,
+        lblTrafficDensity, sldTrafficDensity);
+    pnlGlobalTrafficSettings.setBorder(BorderFactory.createTitledBorder("Global traffic settings:"));
+
+
+    JPanel pnlTrafficSource = LayoutManager.createBoxPanel(LayoutManager.eHorizontalAlign.left, DISTANCE);
+    pnlTrafficSource.setBorder(BorderFactory.createTitledBorder("Used traffic:"));
+    pnlTrafficSource.add(
+        LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.middle, DISTANCE,
+            rdbXml, lblTraffixXmlFile, txtTrafficXmlFile, btnTrafficXmlFileBrowse));
+    pnlTrafficSource.add(
+        LayoutManager.createBorderedPanel(0,
+            LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.middle, DISTANCE,
+                rdbAirportDefined,
+                cmbAirportDefined)));
+    pnlTrafficSource.add(
+        LayoutManager.createBorderedPanel(0, rdbCustom));
+
+    JPanel pnlCustomGenericTrafficSettings = LayoutManager.createFormPanel(7, 3,
+        null, chkCustomExtendedCallsigns, null,
+        lblMovementsPerHour, nudMovements, null,
         lblArrivals, sldArrivalsDepartures, lblDepartures,
-        lblVFR, sldVfrIfr, lblIFR,
         null, sldA, lblAPlaneWeight,
         null, sldB, lblBPlaneWeight,
         null, sldC, lblCPlaneWeight,
         null, sldD, lblDPlaneWeight
     );
-    JPanel pnlU = LayoutManager.createBoxPanel(
-        LayoutManager.eHorizontalAlign.left,
-        DISTANCE,
-        LayoutManager.createFormPanel(2, 2, lblMovementsPerHour, nudMovements, lblMaxPlanesCount, nudMaxPlanes),
-        chkCustomExtendedCallsigns
-    );
-    JPanel pnlC = LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.top, DISTANCE, pnlU, pnlS);
-    JPanel pnlM = LayoutManager.createBoxPanel(
-        LayoutManager.eHorizontalAlign.left,
-        DISTANCE,
-        rdbXml,
-        LayoutManager.indentPanel(
-            LayoutManager.createBoxPanel(
-                LayoutManager.eHorizontalAlign.left,
-                DISTANCE,
-                LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.top, DISTANCE, lblTraffixXmlFile, txtTrafficXmlFile, btnTrafficXmlFileBrowse),
-                chkAllowDelays
-            ), DISTANCE),
-        rdbCustom,
-        LayoutManager.indentPanel(pnlC, DISTANCE)
-    );
+    pnlCustomGenericTrafficSettings.setBorder(BorderFactory.createTitledBorder("Custom generic traffic settings (if used):"));
 
-    pnlM = LayoutManager.createBorderedPanel(DISTANCE, pnlM);
 
-    this.add(pnlM);
+    JPanel pnlMain = LayoutManager.createBoxPanel(LayoutManager.eHorizontalAlign.left, DISTANCE,
+        pnlGlobalTrafficSettings, pnlTrafficSource, pnlCustomGenericTrafficSettings);
+
+
+    pnlMain = LayoutManager.createBorderedPanel(DISTANCE, pnlMain);
+
+    this.add(pnlMain);
   }
 
   private void createComponents() {
     grpRdb = new javax.swing.ButtonGroup();
     rdbXml = new javax.swing.JRadioButton();
     pnlXml = new javax.swing.JPanel();
+    rdbAirportDefined = new javax.swing.JRadioButton();
     lblTraffixXmlFile = new javax.swing.JLabel();
     txtTrafficXmlFile = new javax.swing.JTextField();
     btnTrafficXmlFileBrowse = new javax.swing.JButton();
@@ -84,7 +125,6 @@ public class PnlWizardTraffic extends JWizardPanel {
     sldArrivalsDepartures = new javax.swing.JSlider();
     lblArrivals = new javax.swing.JLabel();
     lblDepartures = new javax.swing.JLabel();
-    sldVfrIfr = new javax.swing.JSlider();
     lblVFR = new javax.swing.JLabel();
     lblIFR = new javax.swing.JLabel();
     sldA = new javax.swing.JSlider();
@@ -98,13 +138,20 @@ public class PnlWizardTraffic extends JWizardPanel {
     chkCustomExtendedCallsigns = new javax.swing.JCheckBox();
     nudMaxPlanes = new javax.swing.JSpinner();
     lblMaxPlanesCount = new javax.swing.JLabel();
+    cmbAirportDefined = new JComboBox<>();
+    lblTrafficDensity = new JLabel();
+    sldTrafficDensity = new JSlider();
+
+    lblTrafficDensity.setText("Traffic density %:");
+    sldTrafficDensity.setMinimum(0);
+    sldTrafficDensity.setMajorTickSpacing(10);
+    sldTrafficDensity.setMaximum(100);
+    sldTrafficDensity.setValue(100);
+    sldTrafficDensity.setPaintTicks(true);
+    sldTrafficDensity.setSnapToTicks(false);
+    sldTrafficDensity.setEnabled(false);
 
     rdbCustom.setText("Use custom traffic");
-    rdbCustom.addActionListener(new java.awt.event.ActionListener() {
-      public void actionPerformed(java.awt.event.ActionEvent evt) {
-        rdbCustomActionPerformed(evt);
-      }
-    });
 
     lblMovementsPerHour.setText("Movements / hour:");
 
@@ -124,12 +171,6 @@ public class PnlWizardTraffic extends JWizardPanel {
     lblArrivals.setText("Arrivals");
 
     lblDepartures.setText("Departures");
-
-    sldVfrIfr.setMajorTickSpacing(1);
-    sldVfrIfr.setMaximum(10);
-    sldVfrIfr.setPaintTicks(true);
-    sldVfrIfr.setSnapToTicks(true);
-    sldVfrIfr.setEnabled(false);
 
     lblVFR.setText("VFR");
 
@@ -179,11 +220,6 @@ public class PnlWizardTraffic extends JWizardPanel {
     lblMaxPlanesCount.setText("Max planes count:");
 
     rdbXml.setText("Use XML defined traffic");
-    rdbXml.addActionListener(new java.awt.event.ActionListener() {
-      public void actionPerformed(java.awt.event.ActionEvent evt) {
-        rdbXmlActionPerformed(evt);
-      }
-    });
 
     lblTraffixXmlFile.setText("Traffic XML file:");
 
@@ -195,77 +231,41 @@ public class PnlWizardTraffic extends JWizardPanel {
 
     grpRdb.add(rdbXml);
     grpRdb.add(rdbCustom);
+    grpRdb.add(rdbAirportDefined);
+
+    rdbAirportDefined.setText("Defined by active airport");
   }
-
-  private void rdbXmlActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rdbXmlActionPerformed
-    updatePanelAccess();
-  }//GEN-LAST:event_rdbXmlActionPerformed
-
-  private void rdbCustomActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rdbCustomActionPerformed
-    updatePanelAccess();
-  }//GEN-LAST:event_rdbCustomActionPerformed
 
   private void nudMovementsStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_nudMovementsStateChanged
     int val = (int) nudMovements.getValue();
     if (val < 1) {
       nudMovements.setValue(1);
     }
-  }//GEN-LAST:event_nudMovementsStateChanged
+  }
 
   private void nudMaxPlanesStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_nudMaxPlanesStateChanged
     // TODO add your handling code here:
-  }//GEN-LAST:event_nudMaxPlanesStateChanged
+  }
 
-  // Variables declaration - do not modify//GEN-BEGIN:variables
-  private javax.swing.JButton btnTrafficXmlFileBrowse;
-  private javax.swing.JCheckBox chkAllowDelays;
-  private javax.swing.JCheckBox chkCustomExtendedCallsigns;
-  private javax.swing.ButtonGroup grpRdb;
-  private javax.swing.JLabel lblTraffixXmlFile;
-  private javax.swing.JLabel lblDPlaneWeight;
-  private javax.swing.JLabel lblMaxPlanesCount;
-  private javax.swing.JLabel lblMovementsPerHour;
-  private javax.swing.JLabel lblVFR;
-  private javax.swing.JLabel lblArrivals;
-  private javax.swing.JLabel lblDepartures;
-  private javax.swing.JLabel lblIFR;
-  private javax.swing.JLabel lblAPlaneWeight;
-  private javax.swing.JLabel lblBPlaneWeight;
-  private javax.swing.JLabel lblCPlaneWeight;
-  private javax.swing.JSpinner nudMaxPlanes;
-  private javax.swing.JSpinner nudMovements;
-  private javax.swing.JPanel pnlCustom;
-  private javax.swing.JPanel pnlXml;
-  private javax.swing.JRadioButton rdbCustom;
-  private javax.swing.JRadioButton rdbXml;
-  private javax.swing.JSlider sldA;
-  private javax.swing.JSlider sldArrivalsDepartures;
-  private javax.swing.JSlider sldB;
-  private javax.swing.JSlider sldC;
-  private javax.swing.JSlider sldD;
-  private javax.swing.JSlider sldVfrIfr;
-  private javax.swing.JTextField txtTrafficXmlFile;
-  // End of variables declaration//GEN-END:variables
-  XmlFileSelectorExtender xmlFile;
+  private void fillAirportDefinedTraffic(StartupSettings settings) {
+    Area area = XmlLoadHelper.loadNewArea(settings.files.areaXmlFile);
 
-  @Override
-  protected void fillBySettings(StartupSettings settings) {
-
-    rdbCustom.setSelected(settings.traffic.useXml == false);
-    rdbXml.setSelected(settings.traffic.useXml);
-    chkAllowDelays.setSelected(settings.traffic.delayAllowed);
-    txtTrafficXmlFile.setText(settings.files.trafficXmlFile);
-    nudMovements.setValue(settings.traffic.movementsPerHour);
-    sldArrivalsDepartures.setValue(settings.traffic.arrivals2departuresRatio);
-    sldVfrIfr.setValue(settings.traffic.vfr2ifrRatio);
-    sldA.setValue(settings.traffic.weightTypeA);
-    sldB.setValue(settings.traffic.weightTypeB);
-    sldC.setValue(settings.traffic.weightTypeC);
-    sldD.setValue(settings.traffic.weightTypeD);
-    chkCustomExtendedCallsigns.setSelected(settings.traffic.useExtendedCallsigns);
-    nudMaxPlanes.setValue(settings.traffic.maxPlanes);
-
-    updatePanelAccess();
+    int selectedIndex = -1;
+    String[] data = new String[0];
+    ComboBoxModel<String> model;
+    Airport airport = CollectionUtil.tryGetFirst(area.getAirports(), o -> o.getIcao().equals(settings.recent.icao));
+    if (airport != null) {
+      data = new String[airport.getTrafficDefinitions().size()];
+      for (int i = 0; i < data.length; i++) {
+        data[i] = airport.getTrafficDefinitions().get(i).getTitle();
+        if (data[i].equals(settings.traffic.trafficAirportDefinedTitle))
+          selectedIndex = i;
+      }
+    }
+    model = new DefaultComboBoxModel<>(data);
+    cmbAirportDefined.setModel(model);
+    if (selectedIndex >= 0)
+      cmbAirportDefined.setSelectedIndex(selectedIndex);
   }
 
   @Override
@@ -282,28 +282,60 @@ public class PnlWizardTraffic extends JWizardPanel {
   }
 
   @Override
-  void fillSettingsBy(StartupSettings settings) {
-    settings.traffic.useXml=rdbXml.isSelected();
-    settings.traffic.delayAllowed=chkAllowDelays.isSelected();
-    settings.files.trafficXmlFile=txtTrafficXmlFile.getText();
-    settings.traffic.movementsPerHour=(int) nudMovements.getValue();
-    settings.traffic.arrivals2departuresRatio=sldArrivalsDepartures.getValue();
-    settings.traffic.vfr2ifrRatio=sldVfrIfr.getValue();
-    settings.traffic.weightTypeA=sldA.getValue();
-    settings.traffic.weightTypeB=sldB.getValue();
-    settings.traffic.weightTypeC=sldC.getValue();
-    settings.traffic.weightTypeD=sldD.getValue();
-    settings.traffic.useExtendedCallsigns=chkCustomExtendedCallsigns.isSelected();
-    settings.traffic.maxPlanes=(int) nudMaxPlanes.getValue();
+  protected void fillBySettings(StartupSettings settings) {
 
+    txtTrafficXmlFile.setText(settings.files.trafficXmlFile);
+    nudMaxPlanes.setValue(settings.traffic.maxPlanes);
+    sldTrafficDensity.setValue((int) (settings.traffic.densityPercentage * 100));
+    adjustSelectedRdb(settings);
+    fillAirportDefinedTraffic(settings);
+
+    chkAllowDelays.setSelected(settings.traffic.customTraffic.delayAllowed);
+    nudMovements.setValue(settings.traffic.customTraffic.movementsPerHour);
+    sldArrivalsDepartures.setValue(settings.traffic.customTraffic.arrivals2departuresRatio);
+    sldA.setValue(settings.traffic.customTraffic.weightTypeA);
+    sldB.setValue(settings.traffic.customTraffic.weightTypeB);
+    sldC.setValue(settings.traffic.customTraffic.weightTypeC);
+    sldD.setValue(settings.traffic.customTraffic.weightTypeD);
+    chkCustomExtendedCallsigns.setSelected(settings.traffic.customTraffic.useExtendedCallsigns);
+  }
+
+  private void adjustSelectedRdb(StartupSettings settings) {
+    rdbAirportDefined.setSelected(settings.traffic.type ==  StartupSettings.Traffic.eTrafficType.airportDefined);
+    rdbXml.setSelected(settings.traffic.type ==  StartupSettings.Traffic.eTrafficType.xml);
+    rdbCustom.setSelected(settings.traffic.type ==  StartupSettings.Traffic.eTrafficType.custom);
+  }
+
+  @Override
+  void fillSettingsBy(StartupSettings settings) {
+    settings.files.trafficXmlFile = txtTrafficXmlFile.getText();
+    settings.traffic.maxPlanes = (int) nudMaxPlanes.getValue();
+    settings.traffic.trafficAirportDefinedTitle = (String) cmbAirportDefined.getSelectedItem();
+    settings.traffic.densityPercentage = sldTrafficDensity.getValue() / 100d;
+    adjustRdbSelected(settings);
+
+    settings.traffic.customTraffic.delayAllowed = chkAllowDelays.isSelected();
+    settings.traffic.customTraffic.movementsPerHour = (int) nudMovements.getValue();
+    settings.traffic.customTraffic.arrivals2departuresRatio = sldArrivalsDepartures.getValue();
+    settings.traffic.customTraffic.weightTypeA = sldA.getValue();
+    settings.traffic.customTraffic.weightTypeB = sldB.getValue();
+    settings.traffic.customTraffic.weightTypeC = sldC.getValue();
+    settings.traffic.customTraffic.weightTypeD = sldD.getValue();
+    settings.traffic.customTraffic.useExtendedCallsigns = chkCustomExtendedCallsigns.isSelected();
+  }
+
+  private void adjustRdbSelected(StartupSettings settings) {
+    if (rdbXml.isSelected())
+      settings.traffic.type = StartupSettings.Traffic.eTrafficType.xml;
+    else if (rdbAirportDefined.isSelected())
+      settings.traffic.type = StartupSettings.Traffic.eTrafficType.airportDefined;
+    else if (rdbCustom.isSelected())
+      settings.traffic.type = StartupSettings.Traffic.eTrafficType.custom;
+    else
+      throw new UnsupportedOperationException();
   }
 
   private void initExtenders() {
     xmlFile = new XmlFileSelectorExtender(txtTrafficXmlFile, btnTrafficXmlFileBrowse);
-  }
-
-  private void updatePanelAccess() {
-    pnlCustom.setEnabled(rdbCustom.isSelected());
-    pnlXml.setEnabled(rdbXml.isSelected());
   }
 }

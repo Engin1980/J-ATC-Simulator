@@ -124,6 +124,7 @@ public class PnlWizardAreaAndPlaneTypes extends JWizardPanel {
   protected void fillBySettings(StartupSettings settings) {
     txtAreaXml.setText(settings.files.areaXmlFile);
     txtTypesXml.setText(settings.files.planesXmlFile);
+    txtFleetsXml.setText(settings.files.fleetsXmlFile);
   }
 
   @Override

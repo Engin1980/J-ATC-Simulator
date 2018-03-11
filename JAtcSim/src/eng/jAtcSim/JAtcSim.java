@@ -5,6 +5,7 @@
  */
 package eng.jAtcSim;
 
+import eng.eSystem.utilites.CollectionUtil;
 import eng.jAtcSim.frmPacks.Pack;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.Log;
@@ -20,15 +21,12 @@ import eng.jAtcSim.lib.weathers.WeatherProvider;
 import eng.jAtcSim.lib.world.Airport;
 import eng.jAtcSim.lib.world.Area;
 import eng.jAtcSim.radarBase.global.SoundManager;
-import eng.jAtcSim.startup.DialogResult;
 import eng.jAtcSim.startup.FrmIntro;
 import eng.jAtcSim.startup.StartupSettings;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.nio.file.Paths;
 import java.util.Calendar;
-import java.util.function.Predicate;
 
 /**
  * @author Marek
@@ -40,6 +38,7 @@ public class JAtcSim {
     public AirplaneTypes types;
     public Fleets fleets;
   }
+
   private static final boolean FAST_START = false;
   private static final Traffic specificTraffic =
 //      new TestTrafficOneApproach();
@@ -64,7 +63,7 @@ public class JAtcSim {
     frmIntro.setVisible(true);
   }
 
-    public static void startSimulation(StartupSettings startupSettings) {
+  public static void startSimulation(StartupSettings startupSettings) {
 
 
     XmlLoadHelper.saveStartupSettings(startupSettings, appSettings.getStartupSettingsFile());
@@ -116,6 +115,10 @@ public class JAtcSim {
 
     simPack.initPack(sim, data.area, appSettings);
     simPack.startPack();
+  }
+
+  public static void quit() {
+
   }
 
   private static XmlLoadedData loadDataFromXmlFiles(StartupSettings sett) throws Exception {
@@ -173,25 +176,30 @@ public class JAtcSim {
 
   private static Traffic getTrafficFromStartupSettings(StartupSettings sett) {
     Traffic ret;
-    if (sett.traffic.useXml) {
-      throw new UnsupportedOperationException("Traffic from XML files not supported yet.");
-    } else {
-      ret = new GenericTraffic(
-          sett.traffic.movementsPerHour,
-          1 - sett.traffic.arrivals2departuresRatio / 10d, // 0-10 to 0.0-1.0
-          sett.traffic.weightTypeA,
-          sett.traffic.weightTypeB,
-          sett.traffic.weightTypeC,
-          sett.traffic.weightTypeD,
-          sett.traffic.useExtendedCallsigns
-      );
+    switch (sett.traffic.type) {
+      case xml:
+        ret = XmlLoadHelper.loadTraffic(sett.files.trafficXmlFile);
+        break;
+      case airportDefined:
+        Area area = XmlLoadHelper.loadNewArea(sett.files.areaXmlFile);
+        Airport airport = CollectionUtil.tryGetFirst(area.getAirports(), o -> o.getIcao().equals(sett.recent.icao));
+        ret = CollectionUtil.tryGetFirst(airport.getTrafficDefinitions(), o -> o.getTitle().equals(sett.traffic.trafficAirportDefinedTitle));
+        break;
+      case custom:
+        ret = new GenericTraffic(
+            sett.traffic.customTraffic.movementsPerHour,
+            1 - sett.traffic.customTraffic.arrivals2departuresRatio / 10d, // 0-10 to 0.0-1.0
+            sett.traffic.customTraffic.weightTypeA,
+            sett.traffic.customTraffic.weightTypeB,
+            sett.traffic.customTraffic.weightTypeC,
+            sett.traffic.customTraffic.weightTypeD,
+            sett.traffic.customTraffic.useExtendedCallsigns
+        );
+      default:
+        throw new UnsupportedOperationException();
     }
 
     return ret;
-  }
-
-  public static void quit() {
-
   }
 }
 

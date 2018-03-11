@@ -50,7 +50,7 @@ public class XmlLoadHelper {
     try {
       ret = (StartupSettings) deserialize(fileName, StartupSettings.class);
     } catch (Exception ex) {
-      System.out.println("Failed to load startup settings from " + fileName + ". Defaults used. Reason: " + ex.getMessage());
+      System.out.println("Failed to load startup settings from " + fileName + ". Defaults used. Reason: " + ExceptionUtil.toFullString(ex, "\n"));
       ret = new StartupSettings();
     }
 
@@ -185,6 +185,13 @@ public class XmlLoadHelper {
     XmlSerializer ser = new XmlSerializer();
     AppSettings ret = (AppSettings) ser.deserialize(fileName, AppSettings.class);
     return ret;
+  }
+
+  public static Traffic loadTraffic(String trafficXmlFile) {
+    XmlSerializer ser = new XmlSerializer();
+    // todo I dont know how to do this as I do not have support for element->type mapping in XMlSerializing for root element
+    // it can be probably done via ICUstomElementParser with extension for .deserialize(Element... )?
+    throw new  UnsupportedOperationException();
   }
 }
 
