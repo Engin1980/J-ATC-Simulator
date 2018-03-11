@@ -1,0 +1,15 @@
+<component name="ArtifactManager">
+  <artifact name="JAtcSim">
+    <output-path>$PROJECT_DIR$/out/artifacts/JAtcSim</output-path>
+    <root id="root">
+      <element id="archive" name="JAtcSim.jar">
+        <element id="module-output" name="JAtcSim" />
+        <element id="module-output" name="JAtcSimLib" />
+        <element id="module-output" name="SwingRadar" />
+        <element id="module-output" name="JAtcSimRadarBase" />
+      </element>
+      <element id="library" level="project" name="eng.eSystem.xmlSerialization" />
+      <element id="library" level="project" name="eng.eSystem" />
+    </root>
+  </artifact>
+</component>

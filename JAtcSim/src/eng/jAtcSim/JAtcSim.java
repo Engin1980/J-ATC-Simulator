@@ -26,6 +26,8 @@ import eng.jAtcSim.startup.StartupSettings;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Calendar;
 
 /**
@@ -66,6 +68,7 @@ public class JAtcSim {
   public static void startSimulation(StartupSettings startupSettings) {
 
 
+    resolveShortXmlFileNamesInStartupSettings(appSettings, startupSettings);
     XmlLoadHelper.saveStartupSettings(startupSettings, appSettings.getStartupSettingsFile());
 
     XmlLoadedData data;
@@ -115,6 +118,36 @@ public class JAtcSim {
 
     simPack.initPack(sim, data.area, appSettings);
     simPack.startPack();
+  }
+
+  private static void resolveShortXmlFileNamesInStartupSettings(AppSettings appSettings, StartupSettings startupSettings) {
+    Path tmp;
+    Path appPath;
+    appPath = appSettings.applicationFolder;
+
+    tmp = Paths.get(startupSettings.files.areaXmlFile);
+    if (tmp.isAbsolute()) {
+      tmp = appPath.relativize(tmp);
+      startupSettings.files.areaXmlFile = tmp.toString();
+    }
+
+    tmp = Paths.get(startupSettings.files.fleetsXmlFile);
+    if (tmp.isAbsolute()) {
+      tmp = appPath.relativize(tmp);
+      startupSettings.files.fleetsXmlFile = tmp.toString();
+    }
+
+    tmp = Paths.get(startupSettings.files.planesXmlFile);
+    if (tmp.isAbsolute()) {
+      tmp = appPath.relativize(tmp);
+      startupSettings.files.planesXmlFile = tmp.toString();
+    }
+
+    tmp = Paths.get(startupSettings.files.trafficXmlFile);
+    if (tmp.isAbsolute()) {
+      tmp = appPath.relativize(tmp);
+      startupSettings.files.trafficXmlFile = tmp.toString();
+    }
   }
 
   public static void quit() {
