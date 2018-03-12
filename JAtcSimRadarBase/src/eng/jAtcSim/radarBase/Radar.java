@@ -28,6 +28,7 @@ import eng.jAtcSim.radarBase.global.TextBlockLocation;
 import eng.jAtcSim.radarBase.global.events.EMouseEventArg;
 import eng.jAtcSim.radarBase.global.events.KeyEventArg;
 import eng.jAtcSim.radarBase.global.events.WithCoordinateEventArg;
+import sun.text.resources.cldr.ia.FormatData_ia;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -1004,21 +1005,15 @@ public class Radar {
     String ret;
     if (msg.isSourceOfType(Airplane.class)) {
       if (msg.isContentOfType(List.class)) {
-        EStringBuilder esb = new EStringBuilder();
+        //EStringBuilder esb = new EStringBuilder();
+        List<String> sentences = new ArrayList();
         SpeechList<ISpeech> lst = msg.getContent();
-        for (int i = 0; i < lst.size(); i++) {
-          ISpeech sp = lst.get(i);
-          String sentence = behaviorSettings.getFormatter().format(sp);
-          if (i == 0) {
-            esb.append(makeBeginSentence(sentence));
-          } else
-            esb.append(sentence);
-          if (i < lst.size() - 1)
-            esb.append(", ");
-          else
-            esb.append(".");
+        for (ISpeech iSpeech : lst) {
+          String sentence = behaviorSettings.getFormatter().format(iSpeech);
+          if (sentence == null || sentence.trim().length() == 0) continue;
+          sentences.add(sentence);
         }
-        ret = esb.toString();
+        ret = formatToVisualSentence(sentences);
       } else {
         ISpeech sp = msg.getContent();
         ret = behaviorSettings.getFormatter().format(sp);
@@ -1037,6 +1032,21 @@ public class Radar {
       ret = msg.<StringMessageContent>getContent().getMessageText();
     }
     return ret;
+  }
+
+  private String formatToVisualSentence(List<String> sentences) {
+    EStringBuilder ret = new EStringBuilder();
+    for (int i = 0; i < sentences.size(); i++) {
+      String sentence = sentences.get(i);
+      if (sentence.trim().length() == 0) continue;
+      if (i == 0)
+        sentence = makeBeginSentence(sentence);
+      else
+        ret.append(", ");
+      ret.append(sentence);
+    }
+    ret.append(".");
+    return ret.toString();
   }
 
   private String makeBeginSentence(String sentence) {

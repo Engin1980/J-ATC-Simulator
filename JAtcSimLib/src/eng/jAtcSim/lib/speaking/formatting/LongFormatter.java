@@ -213,7 +213,7 @@ public class LongFormatter extends Formatter {
   }
 
   public String format(RadarContactConfirmationNotification cmd) {
-    return "Radar contact";
+    return "radar contact";
   }
 
   public String format(GoodDayNotification cmd) {
@@ -225,19 +225,34 @@ public class LongFormatter extends Formatter {
   }
 
   public String format(EstablishedOnApproachNotification speech) {
-    return "Established, short final.";
+    return "established, short final";
   }
 
   public String format(DivertTimeNotification speech) {
     StringBuilder sb = new StringBuilder();
-    sb.append("We will need to divert in ");
+    sb.append("we will need to divert in ");
     sb.append(speech.getMinutesToDivert());
-    sb.append(" minutes.");
+    sb.append(" minutes");
     return sb.toString();
   }
 
   public String format(GoingAroundNotification cmd) {
     String ret = "Missed approach. " + cmd.getReason() == null ? "" : cmd.getReason();
+    return ret;
+  }
+
+  public String format(ReportDivertTime cmd){
+    String ret =  ""; // this is empty as this is used as a confirmation.
+    return ret;
+  }
+
+  public String format(DivertCommand cmd){
+    String ret = "divert now";
+    return ret;
+  }
+
+  public String format(DivertingNotification cmd){
+    String ret = "we are diverting via " + cmd.getExitNavaid().getName();
     return ret;
   }
 

@@ -830,6 +830,7 @@ public class Pilot {
     this.behavior  = new DepartureBehavior();
     this.divertInfo = null;
     this.routeName = n.getName();
+    this.parent.setxState(Airplane.State.departingLow);
 
     this.say(new DivertingNotification(n));
 

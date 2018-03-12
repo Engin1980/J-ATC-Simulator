@@ -35,6 +35,11 @@ public class ShortParser extends Parser {
 
     parsers.add(new ThenParser());
     parsers.add(new RadarContactConfirmationParser());
+
+    parsers.add(new GoAroundParser());
+
+    parsers.add(new ReportDivertTimeParser());
+    parsers.add(new DivertParser());
   }
 // </editor-fold>
 
@@ -86,10 +91,9 @@ public class ShortParser extends Parser {
   }
 
   private static SpeechParser getSpeechParser(String line) {
-    line = line.toUpperCase();
     for (SpeechParser tmp : parsers) {
       for (String pref : tmp.getPrefixes()) {
-        if (line.startsWith(pref)) {
+        if (line.startsWith(pref+" ")) {
           return tmp;
         }
       }
