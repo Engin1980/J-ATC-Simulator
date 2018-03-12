@@ -11,7 +11,7 @@ public class ProceedDirectApplication extends CommandApplication<ProceedDirectCo
     IFromAirplane ret = null;
 
     // check state ok
-    ret = super.checkValidState(plane, c,
+    ret = super.checkInvalidState(plane, c,
         Airplane.State.holdingPoint,
         Airplane.State.takeOffRoll,
         Airplane.State.approachEnter,

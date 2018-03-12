@@ -9,7 +9,7 @@ public class ChangeHeadingApplication extends CommandApplication<ChangeHeadingCo
   @Override
   protected IFromAirplane checkSanity(Airplane.Airplane4Command plane, ChangeHeadingCommand c) {
     IFromAirplane ret;
-    ret = super.checkValidState(plane,c,
+    ret = super.checkInvalidState(plane,c,
         Airplane.State.holdingPoint,
         Airplane.State.takeOffRoll,
         Airplane.State.approachEnter,

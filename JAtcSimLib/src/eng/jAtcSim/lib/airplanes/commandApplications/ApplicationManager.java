@@ -29,6 +29,9 @@ public class ApplicationManager {
     cmdApps.put(ProceedDirectCommand.class, new ProceedDirectApplication());
     cmdApps.put(ShortcutCommand.class, new ShortcutCommandApplication());
     cmdApps.put(ContactCommand.class, new ContactCommandApplication());
+    cmdApps.put(GoAroundCommand.class, new GoAroundCommandApplication());
+    cmdApps.put(ReportDivertTime.class, new ReportDivertTimeCommandApplication());
+    cmdApps.put(DivertCommand.class, new DivertCommandApplication());
 
     notApps = new HashMap<>();
     notApps.put(RadarContactConfirmationNotification.class, new RadarContactConfirmationNotificationApplication());

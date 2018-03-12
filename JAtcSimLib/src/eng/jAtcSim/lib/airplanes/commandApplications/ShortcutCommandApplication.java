@@ -9,7 +9,7 @@ public class ShortcutCommandApplication extends CommandApplication<ShortcutComma
   @Override
   protected IFromAirplane checkSanity(Airplane.Airplane4Command plane, ShortcutCommand c) {
     IFromAirplane ret;
-    ret = super.checkValidState(plane,c,
+    ret = super.checkInvalidState(plane,c,
         Airplane.State.holdingPoint,
         Airplane.State.takeOffRoll,
         Airplane.State.approachEnter,

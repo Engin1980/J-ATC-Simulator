@@ -8,7 +8,7 @@ public class ClearedForTakeOffCommandApplication extends CommandApplication<Clea
   @Override
   protected IFromAirplane checkSanity(Airplane.Airplane4Command plane, ClearedForTakeoffCommand c) {
     IFromAirplane ret;
-    ret = super.checkValidState(plane, c,
+    ret = super.checkInvalidState(plane, c,
         Airplane.State.takeOffRoll,
         Airplane.State.takeOffGoAround,
         Airplane.State.departingLow,

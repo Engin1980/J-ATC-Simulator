@@ -137,4 +137,12 @@ public class ETime implements Comparable<ETime> {
     ETime ret = new ETime(diff);
     return ret;
   }
+
+  /**
+   * Returns rounded total minutes
+   * @return
+   */
+  public int getTotalMinutes() {
+    return getTotalSeconds() / 60;
+  }
 }

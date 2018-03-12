@@ -32,9 +32,9 @@ public abstract class CommandApplication<T extends IAtcCommand> {
     return ret;
   }
 
-  protected IFromAirplane checkValidState(Airplane.Airplane4Command plane, IAtcCommand c, Airplane.State... states) {
+  protected IFromAirplane checkInvalidState(Airplane.Airplane4Command plane, IAtcCommand c, Airplane.State... invalidState) {
     IFromAirplane ret;
-    if (plane.getState().is(states)) {
+    if (plane.getState().is(invalidState)) {
       ret = new Rejection("Unable to comply a command now.", c);
     } else
       ret = null;

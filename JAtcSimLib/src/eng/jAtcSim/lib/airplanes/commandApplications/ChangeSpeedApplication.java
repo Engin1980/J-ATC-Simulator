@@ -13,7 +13,7 @@ public class ChangeSpeedApplication extends CommandApplication<ChangeSpeedComman
   protected IFromAirplane checkSanity(Airplane.Airplane4Command plane, ChangeSpeedCommand c) {
     IFromAirplane ret;
 
-    ret = super.checkValidState(plane, c,
+    ret = super.checkInvalidState(plane, c,
         Airplane.State.holdingPoint,
         Airplane.State.takeOffRoll,
         Airplane.State.longFinal,

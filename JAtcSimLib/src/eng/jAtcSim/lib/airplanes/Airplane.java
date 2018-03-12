@@ -12,6 +12,7 @@ import eng.jAtcSim.lib.atcs.Atc;
 import eng.jAtcSim.lib.coordinates.Coordinate;
 import eng.jAtcSim.lib.coordinates.Coordinates;
 import eng.jAtcSim.lib.exceptions.ERuntimeException;
+import eng.jAtcSim.lib.global.ETime;
 import eng.jAtcSim.lib.global.Headings;
 import eng.jAtcSim.lib.global.KeyItem;
 import eng.jAtcSim.lib.global.UnitProvider;
@@ -35,6 +36,9 @@ import java.util.List;
  * @author Marek
  */
 public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
+
+  private static final int MINIMAL_DIVERT_TIME_MINUTES = 45;
+  private static final int MAXIMAL_DIVERT_TIME_MINUTES = 120;
 
   public class Airplane4Display {
 
@@ -198,6 +202,10 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     public Airplane4Command getPlane4Command() {
       return Airplane.this.new Airplane4Command();
     }
+
+    public void divert() {
+      Airplane.this.departure = true;
+    }
   }
 
   public class Airplane4Command {
@@ -327,9 +335,10 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
   private static final double secondFraction = 1 / 60d / 60d;
   private final Callsign callsign;
   private final Squawk sqwk;
-  private final boolean departure;
   private final Pilot pilot;
   private final AirplaneType airplaneType;
+  private final Airplane4Display plane4Display;
+  private boolean departure;
   private int targetHeading;
   private boolean targetHeadingLeftTurn;
   private HeadingInertialValue heading;
@@ -337,15 +346,11 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
   private int targetSpeed;
   private InertialValue speed;
   private Coordinate coordinate;
-
   private State state;
-
   private double lastVerticalSpeed;
   private FlightRecorder flightRecorder = null;
   private boolean airprox;
   private InertialValue altitude;
-
-  private final Airplane4Display plane4Display;
 
   public Airplane(Callsign callsign, Coordinate coordinate, Squawk sqwk, AirplaneType airplaneSpecification,
                   int heading, int altitude, int speed, boolean isDeparture,
@@ -360,7 +365,7 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     this.state = isDeparture ? State.holdingPoint : State.arrivingHigh;
 
     double headingChangeDenominator;
-    switch (this.getType().category){
+    switch (this.getType().category) {
       case 'A':
       case 'B':
         headingChangeDenominator = 4;
@@ -396,7 +401,13 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     this.targetHeading = heading;
     this.targetSpeed = speed;
 
-    this.pilot = new Pilot(this.new Airplane4Pilot(), routeName, routeCommandQueue);
+    int divertTimeMinutes = Acc.rnd().nextInt(MINIMAL_DIVERT_TIME_MINUTES, MAXIMAL_DIVERT_TIME_MINUTES);
+    ETime divertTime = null;
+    if (this.isArrival()) {
+      divertTime = Acc.now().addMinutes(divertTimeMinutes);
+    }
+
+    this.pilot = new Pilot(this.new Airplane4Pilot(), routeName, routeCommandQueue, divertTime);
 
     this.plane4Display = this.new Airplane4Display();
 

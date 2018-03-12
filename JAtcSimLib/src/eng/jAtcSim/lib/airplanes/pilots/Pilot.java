@@ -5,6 +5,9 @@
  */
 package eng.jAtcSim.lib.airplanes.pilots;
 
+import com.sun.istack.internal.Nullable;
+import eng.eSystem.EStringBuilder;
+import eng.eSystem.utilites.CollectionUtil;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.commandApplications.ApplicationManager;
@@ -15,7 +18,6 @@ import eng.jAtcSim.lib.coordinates.Coordinate;
 import eng.jAtcSim.lib.coordinates.Coordinates;
 import eng.jAtcSim.lib.exceptions.ENotSupportedException;
 import eng.jAtcSim.lib.exceptions.ERuntimeException;
-import eng.eSystem.EStringBuilder;
 import eng.jAtcSim.lib.global.ETime;
 import eng.jAtcSim.lib.global.Headings;
 import eng.jAtcSim.lib.global.SpeedRestriction;
@@ -23,10 +25,7 @@ import eng.jAtcSim.lib.speaking.IFromAtc;
 import eng.jAtcSim.lib.speaking.ISpeech;
 import eng.jAtcSim.lib.speaking.SpeechDelayer;
 import eng.jAtcSim.lib.speaking.SpeechList;
-import eng.jAtcSim.lib.speaking.fromAirplane.notifications.EstablishedOnApproachNotification;
-import eng.jAtcSim.lib.speaking.fromAirplane.notifications.GoingAroundNotification;
-import eng.jAtcSim.lib.speaking.fromAirplane.notifications.PassingClearanceLimitNotification;
-import eng.jAtcSim.lib.speaking.fromAirplane.notifications.RequestRadarContactNotification;
+import eng.jAtcSim.lib.speaking.fromAirplane.notifications.*;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.IllegalThenCommandRejection;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.*;
@@ -35,6 +34,8 @@ import eng.jAtcSim.lib.speaking.fromAtc.notifications.RadarContactConfirmationNo
 import eng.jAtcSim.lib.weathers.Weather;
 import eng.jAtcSim.lib.world.Approach;
 import eng.jAtcSim.lib.world.Navaid;
+import eng.jAtcSim.lib.world.Route;
+import eng.jAtcSim.lib.world.Routes;
 
 import java.util.HashMap;
 import java.util.List;
@@ -45,6 +46,20 @@ import java.util.Map;
  */
 @SuppressWarnings("unused")
 public class Pilot {
+
+  static class DivertInfo {
+    public ETime divertTime;
+    public int lastAnnouncedMinute = Integer.MAX_VALUE;
+
+    public DivertInfo(ETime divertTime) {
+      this.divertTime = divertTime;
+    }
+
+    public int getMinutesLeft() {
+      int diff = divertTime.getTotalMinutes() - Acc.now().getTotalMinutes();
+      return diff;
+    }
+  }
 
   public class Pilot4Command {
     public void abortHolding() {
@@ -121,10 +136,23 @@ public class Pilot {
     }
 
     public void adviceGoAroundReasonToAtcIfAny() {
-      if (gaReason != null){
+      if (gaReason != null) {
         GoingAroundNotification gan = new GoingAroundNotification(gaReason);
         say(gan);
       }
+    }
+
+    public void processOrderedGoAround() {
+      ApproachBehavior app = (ApproachBehavior) Pilot.this.behavior;
+      app.goAround(null);
+    }
+
+    public int getDivertMinutesLeft() {
+      return Pilot.this.divertInfo.getMinutesLeft();
+    }
+
+    public void processOrderedDivert() {
+      Pilot.this.processDivert();
     }
 
     protected void setState(Airplane.State state) {
@@ -221,7 +249,7 @@ public class Pilot {
       if (targetCoordinate != null) {
 
         double dist = Coordinates.getDistanceInNM(parent.getCoordinate(), targetCoordinate);
-        if (dist < 1){
+        if (dist < 1) {
           say(new PassingClearanceLimitNotification());
           targetCoordinate = null;
         } else {
@@ -245,6 +273,7 @@ public class Pilot {
 
     private final double LOW_SPEED_DOWN_ALTITUDE = 11000;
     private final double FAF_SPEED_DOWN_DISTANCE_IN_NM = 15;
+    private int[] divertAnnounceTimes = new int[]{30, 15, 10, 5};
 
     @Override
     void _fly() {
@@ -254,7 +283,7 @@ public class Pilot {
             super.setState(Airplane.State.arrivingLow);
           else {
             double distToFaf;
-            if (Acc.threshold().getFafCross() == null){
+            if (Acc.threshold().getFafCross() == null) {
               distToFaf = Coordinates.getDistanceInNM(parent.getCoordinate(), Acc.threshold().getCoordinate());
             } else {
               distToFaf = Coordinates.getDistanceInNM(parent.getCoordinate(), Acc.threshold().getFafCross());
@@ -279,6 +308,32 @@ public class Pilot {
           break;
         default:
           super.throwIllegalStateException();
+      }
+
+      if (this.divertIfRequested() == false)
+        this.adviceDivertTimeIfRequested();
+    }
+
+    private void adviceDivertTimeIfRequested() {
+      DivertInfo di = Pilot.this.divertInfo;
+
+      for (int dit : divertAnnounceTimes) {
+        int minLeft = di.getMinutesLeft();
+        if (di.lastAnnouncedMinute > dit && minLeft < dit) {
+          Pilot.this.say(
+              new DivertTimeNotification(di.getMinutesLeft()));
+          di.lastAnnouncedMinute = minLeft;
+          break;
+        }
+      }
+    }
+
+    private boolean divertIfRequested() {
+      if (divertInfo.getMinutesLeft() <= 0) {
+        Pilot.this.processDivert();
+        return true;
+      } else {
+        return false;
       }
     }
 
@@ -480,6 +535,20 @@ public class Pilot {
       Pilot.this.gaReason = null;
     }
 
+    public void goAround(String reason) {
+      Pilot.this.gaReason = reason;
+      parent.adviceGoAroundToAtc(atc, reason);
+
+      parent.setTargetSpeed(parent.getType().vDep);
+      parent.setTargetAltitude(Acc.threshold().getInitialDepartureAltitude());
+      // altitude should be set by go-around route in next line
+      SpeechList lst = new SpeechList(this.approach.getGaCommands());
+      addNewSpeeches(lst);
+
+      super.setBehaviorAndState(
+          new TakeOffBehavior(), Airplane.State.takeOffGoAround);
+    }
+
     private double getAppHeadingDifference() {
       int heading = (int) Coordinates.getBearing(parent.getCoordinate(), this.approach.getParent().getCoordinate());
       double ret = Headings.subtract(heading, parent.getHeading());
@@ -544,20 +613,6 @@ public class Pilot {
         return false;
       }
       return true;
-    }
-
-    private void goAround(String reason) {
-      Pilot.this.gaReason = reason;
-      parent.adviceGoAroundToAtc(atc, reason);
-
-      parent.setTargetSpeed(parent.getType().vDep);
-      parent.setTargetAltitude(Acc.threshold().getInitialDepartureAltitude());
-      // altitude should be set by go-around route in next line
-      SpeechList lst = new SpeechList(this.approach.getGaCommands());
-      addNewSpeeches(lst);
-
-      super.setBehaviorAndState(
-          new TakeOffBehavior(), Airplane.State.takeOffGoAround);
     }
 
     @Override
@@ -674,9 +729,8 @@ public class Pilot {
     }
   }
 
-
   private final Airplane.Airplane4Pilot parent;
-  private final String routeName;
+  private String routeName;
   private final SpeechDelayer queue = new SpeechDelayer(1, 7); //Min/max speech delay
   private final AfterCommandList afterCommands = new AfterCommandList();
   private final Map<Atc, SpeechList> saidText = new HashMap<>();
@@ -685,10 +739,10 @@ public class Pilot {
   private boolean hasRadarContact;
   private Coordinate targetCoordinate;
   private Behavior behavior;
-  private boolean isConfirmationsNowRequested = false;
   private String gaReason = null;
+  private DivertInfo divertInfo;
 
-  public Pilot(Airplane.Airplane4Pilot parent, String routeName, SpeechList<IAtcCommand> routeCommandQueue) {
+  public Pilot(Airplane.Airplane4Pilot parent, String routeName, SpeechList<IAtcCommand> routeCommandQueue, @Nullable ETime divertTime) {
 
     this.parent = parent;
     this.routeName = routeName;
@@ -701,10 +755,13 @@ public class Pilot {
     if (parent.isArrival()) {
       this.atc = Acc.atcCtr();
       this.behavior = new ArrivalBehavior();
+      this.divertInfo = new DivertInfo(divertTime.clone());
     } else {
       this.atc = Acc.atcTwr();
       this.behavior = new TakeOffBehavior();
+      this.divertInfo = null;
     }
+
     this.hasRadarContact = true;
   }
 
@@ -754,6 +811,28 @@ public class Pilot {
     } else {
       return behavior.toLogString();
     }
+  }
+
+  public Navaid getDivertNavaid() {
+    Iterable<Route> rts = Acc.threshold().getRoutes();
+    List<Route> avails = Routes.getByFilter(rts, false, this.parent.getType().category);
+    Route r = CollectionUtil.getRandom(avails, Acc.rnd());
+    Navaid ret = r.getMainFix();
+    return ret;
+  }
+
+  private void processDivert() {
+
+    Navaid n = getDivertNavaid();
+
+    this.parent.divert();
+    this.afterCommands.clear();
+    this.behavior  = new DepartureBehavior();
+    this.divertInfo = null;
+    this.routeName = n.getName();
+
+    this.say(new DivertingNotification(n));
+
   }
 
   private void abortHolding() {

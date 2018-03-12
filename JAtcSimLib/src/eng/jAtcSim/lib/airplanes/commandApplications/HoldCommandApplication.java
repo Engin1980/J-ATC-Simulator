@@ -8,7 +8,7 @@ public class HoldCommandApplication extends CommandApplication<HoldCommand> {
   @Override
   protected IFromAirplane checkSanity(Airplane.Airplane4Command plane, HoldCommand c) {
     IFromAirplane ret;
-    ret = super.checkValidState(plane, c,
+    ret = super.checkInvalidState(plane, c,
         Airplane.State.holdingPoint,
         Airplane.State.takeOffRoll,
         Airplane.State.takeOffGoAround,

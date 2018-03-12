@@ -13,9 +13,10 @@ public class ClearedToApproachApplication extends CommandApplication<ClearedToAp
 
   @Override
   protected IFromAirplane checkSanity(Airplane.Airplane4Command plane, ClearedToApproachCommand c) {
+
     IFromAirplane ret = null;
 
-    ret = super.checkValidState(plane, c,
+    ret = super.checkInvalidState(plane, c,
         Airplane.State.holdingPoint,
         Airplane.State.takeOffRoll,
         Airplane.State.takeOffGoAround,

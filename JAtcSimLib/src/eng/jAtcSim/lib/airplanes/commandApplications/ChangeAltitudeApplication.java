@@ -11,7 +11,7 @@ public class ChangeAltitudeApplication extends CommandApplication<ChangeAltitude
     IFromAirplane ret;
 
     //TODO now changing is not possible for approach
-    ret = super.checkValidState(plane, c,
+    ret = super.checkInvalidState(plane, c,
         Airplane.State.holdingPoint,
         Airplane.State.takeOffRoll,
         Airplane.State.approachEnter,

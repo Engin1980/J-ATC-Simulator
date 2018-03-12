@@ -29,6 +29,10 @@ public class AfterCommandList {
     }
   }
 
+  public void clear(){
+    inner.clear();
+  }
+
   private final List<Item> inner = new LinkedList<>();
 
   public void add(AfterCommand afterCommand, IAtcCommand consequent) {
