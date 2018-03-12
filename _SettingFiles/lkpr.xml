@@ -127,7 +127,7 @@
         <runway active="true">
           <thresholds>
             <threshold name="06" coordinate="50 06 06.61 N 014 13 34.58 E" initialDepartureAltitude="5000"
-                       fafCross="50 03 44.80 N 014 08 14.12 E">
+                       fafCross="50.0458188038 14.02143275136">
               <approaches>
                 <approach type="ILS_I" point="50 06 06.61 N 014 13 34.58 E" radial="063" da="1380"
                           gaRoute="CM 040"/>
@@ -166,7 +166,7 @@
             </threshold>
             <threshold name="24" coordinate="50 06 57.43 N 014 16 24.12 E" initialDepartureAltitude="5000"
                        preferred="true"
-                       fafCross="50.14389457717 14.37693911194">
+                       fafCross="50.17477974614 14.4491404134">
               <approaches>
                 <approach type="ILS_I" point="50 06 57.43 N 014 16 24.12 E" radial="242" da="1330"
                           gaRoute="FH 242 CM 040"/>
@@ -211,7 +211,7 @@
         <runway active="true">
           <thresholds>
             <threshold name="12" coordinate="50 06 28.84 N 014 14 43.32 E" initialDepartureAltitude="5000"
-                       fafCross="50.04654820513 14.37903063684">
+                       fafCross="50.18700402851 14.06212639577">
               <approaches>
                 <approach type="GNSS" point="50 06 28.84 N 014 14 43.32 E" radial="124" da="1550"
                           gaRoute="FH 124 CM 040"/>
@@ -250,7 +250,7 @@
               </routes>
             </threshold>
             <threshold name="30" coordinate="50 05 25.68 N 014 16 53.02 E" initialDepartureAltitude="5000"
-                       fafCross="50.00877 14.47320">
+                       fafCross="50.01825863609 14.45479721918">
               <approaches>
                 <approach type="ILS_I" point="50 06 28.84 N 014 14 43.32 E" radial="304" da="1380"
                           gaRoute="FH 304 CM 040"/>
