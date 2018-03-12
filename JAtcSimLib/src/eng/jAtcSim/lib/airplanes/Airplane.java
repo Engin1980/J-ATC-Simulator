@@ -699,9 +699,10 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     } else if (this.lastVerticalSpeed != 0)
       this.lastVerticalSpeed = 0;
 
-    //TODO verify behavior as targetHeading is int and heading is double
     if (targetHeading != heading.getValue()) {
       adjustHeading();
+    } else {
+      this.heading.resetInertia();
     }
   }
 
@@ -891,7 +892,7 @@ class HeadingInertialValue {
   }
 
   public void add(double val) {
-    if (val < maxInertiaChange && inertiaStep == 1) {
+    if (Math.abs(val) < maxInertiaChange) {
       this.value += val;
       this.inertiaStep = 0;
     } else {
@@ -924,6 +925,11 @@ class HeadingInertialValue {
 
   public double getMaxInertia() {
     return maxInertia;
+  }
+
+  public void resetInertia() {
+    if (this.inertiaStep != 0)
+      this.inertiaStep = 0;
   }
 
   private void buildHashMap() {

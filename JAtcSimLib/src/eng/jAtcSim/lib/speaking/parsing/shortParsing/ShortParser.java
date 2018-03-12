@@ -73,7 +73,7 @@ public class ShortParser extends Parser {
 
       ISpeech cmd = p.parse(rg);
       ret.add(cmd);
-      tmp = tmp.substring(rg.getIndexOfCharacterAfterMatch()).trim();
+      tmp = tmp.substring(rg.getIndexOfCharacterAfterMatch() + 1);
     }
 
     return ret;
