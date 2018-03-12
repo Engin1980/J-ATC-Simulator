@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<area icao="LON_S_CTR">
+  <airports>
+    <airport icao="EGKK" name="London Gatwick" altitude="203" transitionAltitude="6000" vfrAltitude="2500"
+             mainAirportNavaidName="MAY">
+      <trafficDefinitions>
+        <densityTraffic title="Normal traffic" useExtendedCallsigns="true" nonCommercialFlightProbability="0.05"
+                        delayProbability="0.1" maxDelayInMinutesPerStep="45">
+          <description>
+            This is normal traffic.
+          </description>
+          <companies isFullDayTraffic="true">
+            <company code="JAI" weight="3"/>
+            <company code="AEE" weight="2"/>
+            <company code="HOP" weight="2"/>
+            <company code="TGZ" weight="2"/>
+            <company code="ACA" weight="5"/>
+            <company code="AFR" weight="5"/>
+            <company code="FIN" weight="4"/>
+            <company code="AZA" weight="16"/>
+            <company code="BRU" weight="2"/>
+            <company code="BAW" weight="8"/>
+            <company code="BEE" weight="3"/>
+            <company code="BTI" weight="7"/>
+            <company code="CFE" weight="2"/>
+            <company code="IKB" weight="4"/>
+            <company code="DAL" weight="9"/>
+            <company code="EZS" weight="2"/>
+            <company code="NAX" weight="7"/>
+            <company code="EIN" weight="2"/>
+            <company code="UAE" weight="1"/>
+            <company code="EGW" weight="10"/>
+            <company code="EZY" weight="29"/>
+            <company code="LZB" weight="2"/>
+            <company code="RYR" weight="21"/>
+            <company code="SDM" weight="4"/>
+            <company code="FDB" weight="1"/>
+            <company code="GIA" weight="1"/>
+            <company code="CHH" weight="4"/>
+            <company code="TRA" weight="3"/>
+            <company code="IBE" weight="4"/>
+            <company code="ADR" weight="2"/>
+            <company code="ASL" weight="5"/>
+            <company code="KAL" weight="7"/>
+            <company code="KLM" weight="11"/>
+            <company code="LGL" weight="1"/>
+            <company code="DLH" weight="11"/>
+            <company code="LOT" weight="9"/>
+            <company code="EXS" weight="10"/>
+            <company code="SWR" weight="8"/>
+            <company code="ELY" weight="2"/>
+            <company code="ANA" weight="1"/>
+            <company code="CSA" weight="69"/>
+            <company code="AUA" weight="8"/>
+            <company code="CTN" weight="1"/>
+            <company code="PGT" weight="2"/>
+            <company code="AUI" weight="7"/>
+            <company code="QFA" weight="2"/>
+            <company code="QTR" weight="4"/>
+            <company code="TVS" weight="60"/>
+            <company code="ROT" weight="3"/>
+            <company code="SBI" weight="2"/>
+            <company code="SAS" weight="5"/>
+            <company code="BEL" weight="5"/>
+            <company code="AFL" weight="9"/>
+            <company code="THY" weight="6"/>
+            <company code="TVF" weight="3"/>
+            <company code="TAP" weight="5"/>
+            <company code="SVR" weight="2"/>
+            <company code="USA" weight="4"/>
+            <company code="AEA" weight="1"/>
+            <company code="VOE" weight="8"/>
+            <company code="HVN" weight="1"/>
+            <company code="VLG" weight="9"/>
+            <company code="WZZ" weight="6"/>
+          </companies>
+          <countries>
+            <country code="OK" weight="70"/>
+            <country code="OM" weight="10"/>
+            <country code="G" weight="10"/>
+            <country code="D" weight="10"/>
+          </countries>
+          <density>
+            <item hour="0" departures="2" arrivals="0"/>
+            <item hour="1" departures="0" arrivals="1"/>
+            <item hour="2" departures="0" arrivals="0"/>
+            <item hour="3" departures="0" arrivals="0"/>
+            <item hour="4" departures="0" arrivals="0"/>
+            <item hour="5" departures="0" arrivals="1"/>
+            <item hour="6" departures="16" arrivals="7"/>
+            <item hour="7" departures="15" arrivals="2"/>
+            <item hour="8" departures="5" arrivals="9"/>
+            <item hour="9" departures="9" arrivals="14"/>
+            <item hour="10" departures="15" arrivals="29"/>
+            <item hour="11" departures="28" arrivals="21"/>
+            <item hour="12" departures="21" arrivals="14"/>
+            <item hour="13" departures="10" arrivals="9"/>
+            <item hour="14" departures="12" arrivals="11"/>
+            <item hour="15" departures="10" arrivals="6"/>
+            <item hour="16" departures="9" arrivals="15"/>
+            <item hour="17" departures="24" arrivals="28"/>
+            <item hour="18" departures="13" arrivals="9"/>
+            <item hour="19" departures="8" arrivals="5"/>
+            <item hour="20" departures="7" arrivals="26"/>
+            <item hour="21" departures="0" arrivals="7"/>
+            <item hour="22" departures="13" arrivals="15"/>
+            <item hour="23" departures="1" arrivals="7"/>
+          </density>
+          <directions>
+            <direction heading="280" weight="0.4"/>
+            <direction heading="030" weight="0.1"/>
+            <direction heading="140" weight="0.3"/>
+            <direction heading="220" weight="0.2"/>
+          </directions>
+        </densityTraffic>
+      </trafficDefinitions>
+      <initialPosition coordinate="51 08 53 N 0 11 25 W" range="85"/>
+      <atcTemplates>
+        <atcTemplate type="ctr" name="LON_S_CTR" frequency="129.42"
+                     releaseAltitude="19000" acceptAltitude="7000" orderedAltitude="17000"/>
+        <atcTemplate type="twr" name="EGKK_TWR" frequency="124.225"
+                     releaseAltitude="300" acceptAltitude="2000" orderedAltitude="4000"/>
+        <atcTemplate type="app" name="EGKK_DIR" frequency="126.825"
+                     releaseAltitude="-1" acceptAltitude="-1" orderedAltitude="-1"/>
+      </atcTemplates>
+      <runways>
+        <runway active="true">
+          <thresholds>
+            <threshold name="08R" coordinate="51 08 45.10 N 000 12 24.59 W" initialDepartureAltitude="4000"
+                       fafCross="50.0458188038 14.02143275136">
+              <approaches>
+                <approach type="ILS_I" point="51 08 45.10 N 000 12 24.59 W" radial="078" da="357"
+                          gaRoute="CM 30 AA 20 TR 179"/>
+              </approaches>
+              <routes>
+                <route type="star" name="TIMBA3F"
+                       route="PD KONAN T PD ARNUN T SL 250 PD KKE63 T PD LARCK T PD TIMBA" />
+                <route type="sid" name="VOZ1E" category="ABCD"
+                       route="SL 220 AA 015 PD DET31 T SL 250 PD DET29 T SR CM 50 PD NEXOS T CM 60 PD DVR33 T PD DOVER" />
+              </routes>
+            </threshold>
+            <threshold name="26L" coordinate="51 09 02.43 N 000 10 18.93 W" initialDepartureAltitude="4000"
+                       preferred="true"
+                       fafCross="50.17477974614 14.4491404134">
+              <approaches>
+                <approach type="ILS_I" point="51 09 02.43 N 000 10 18.93 W" radial="258" da="356"
+                          gaRoute="CM 30 AA 20 TL 179"/>
+              </approaches>
+              <routes>
+                <route type="star" name="TIMBA3F"
+                       route="PD KONAN T PD ARNUN T SL 250 PD KKE63 T PD LARCK T PD TIMBA" />
+                <route type="sid" name="VOZ1E" category="ABCD"
+                       route="SL 220 AA 015 PD DET31 T SL 250 PD DET29 T SR CM 50 PD NEXOS T CM 60 PD DVR33 T PD DOVER" />
+              </routes>
+            </threshold>
+          </thresholds>
+        </runway>
+        <runway active="false">
+          <thresholds>
+            <threshold name="08L" coordinate="51 08 51.04 N 000 12 29.18 W" />
+            <threshold name="26R" coordinate="51 09 03.69 N 000 10 57.40 W" />
+          </thresholds>
+        </runway>
+      </runways>
+      <holds>
+        <!-- generic -->
+        <!--
+          <hold navaidName="LOMKI" inboundRadial="091" turn="right"/>
+        -->
+      </holds>
+      <vfrPoints>
+        <!--
+          <vfrPoint name="A" coordinate="50 08 17 N 014 14 38 E" forArrivals="false" forDepartures="false"/>
+        -->
+      </vfrPoints>
+    </airport>
+  </airports>
+  <navaids>
+    <navaid name="MAY" type="VOR" coordinate="51 01 02 N 000 06 58 E"/>
+
+
+    <navaid name="DET31" type="FixMinor" coordinate="51.2164407593 -1.29821090255"/>
+    <navaid name="DET29" type="FixMinor" coordinate="51.22220902433 -1.25306653712"/>
+    <navaid name="DVR33" type="FixMinor" coordinate="51.21809599856 0.60466674227"/>
+
+    <navaid name="KONAN" type="Fix" coordinate="51 07 50.75 N 002 00 00.00 E" />
+    <navaid name="ARNUN" type="Fix" coordinate="51 03 25.98 N 000 55 52.98 E" />
+    <navaid name="KKE63" type="FixMinor" coordinate="50 58 56.70 N 000 40 51.78 E" />
+    <navaid name="LARCK" type="Fix" coordinate="50 54 41.83 N 000 26 47.93 E" />
+    <navaid name="TIMBA" type="Fix" coordinate="50 56 43.99 N 000 15 42.25 E" />
+
+    <navaid name="NEXOS" type="Fix" coordinate="51 15 01 N 000 11 38 E" />
+    <navaid name="DOVER" type="Fix" coordinate="51 09 45 N 001 21 33 E" />
+
+
+
+    <!-- Airports -->
+
+    <!-- VORs -->
+
+
+    <!-- NDBs -->
+
+
+    <!-- FIXes -->
+
+
+  </navaids>
+  <borders>
+
+  </borders>
+</area>

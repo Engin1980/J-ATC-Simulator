@@ -20,17 +20,18 @@ public class RunwayThreshold extends MustBeBinded implements KeyItem<String> {
 
   private String name;
   private Coordinate coordinate;
-  @XmlOptional
+  @XmlOptional // as inactive runway do not have this
   private final KeyList<Approach, Approach.eType> approaches = new KeyList();
-  @XmlOptional
+  @XmlOptional // as inactive runway do not have this
   private final KeyList<Route, String> routes = new KeyList();
   private Runway parent;
   private double _course;
+  @XmlOptional // as inactive runway do not have this
   private int initialDepartureAltitude;
   private RunwayThreshold _other;
-  @XmlOptional
+  @XmlOptional // as inactive runway do not have this
   private boolean preferred = false;
-  @XmlOptional
+  @XmlOptional // as inactive runway do not have this
   private Coordinate fafCross;
 
   public int getInitialDepartureAltitude() {

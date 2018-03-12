@@ -50,7 +50,7 @@ public final class Coordinate {
   private static Coordinate tryParseB(String value) {
     Coordinate ret = null;
 
-    String patternString = "(\\d{2}) (\\d{2}) (\\d{2}(?:\\.\\d{2})?) ([NS]) (\\d{3}) (\\d{2}) (\\d{2}(?:\\.\\d{2})?) ([EW])";
+    String patternString = "(\\d{2}) (\\d{2}) (\\d{2}(?:\\.\\d{2})?) ([NS]) (\\d{1,3}) (\\d{2}) (\\d{2}(?:\\.\\d{2})?) ([EW])";
     Pattern p = Pattern.compile(patternString);
     Matcher m = p.matcher(value);
     if (m.find()) {
