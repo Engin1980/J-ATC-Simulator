@@ -19,6 +19,7 @@ public class Border {
     TMA,
     CTR,
     Restricted,
+    Shore,
     Other
   }
   
