@@ -5,13 +5,14 @@
  */
 package eng.jAtcSim.lib.coordinates;
 
+import eng.jAtcSim.lib.exceptions.ERuntimeException;
 import eng.jAtcSim.lib.global.EMath;
 import eng.jAtcSim.lib.global.Global;
+
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
 /**
- *
  * @author Marek
  */
 public final class CoordinateValue {
@@ -24,18 +25,39 @@ public final class CoordinateValue {
     this.value = Math.abs(value);
   }
 
-  public CoordinateValue(int degrees, int minutes, double seconds) {
-    this(degrees + minutes / 60d + seconds / 3600d);
-  }
-
   public CoordinateValue(int degrees, int minutes, double seconds, boolean isSouthOrWest) {
-    this((isSouthOrWest
-        ? -(degrees + minutes / 60d + seconds / 3600d)
-        : degrees + minutes / 60d + seconds / 3600d));
+    this(
+        toNumber(
+            degrees,
+            minutes,
+            seconds,
+            isSouthOrWest));
   }
 
-  public CoordinateValue(int degrees, double minutesSeconds) {
-    this(degrees + minutesSeconds / 60d);
+  public CoordinateValue(int degrees, double minutesSeconds, boolean isSouthOrWest) {
+    this(toNumber(degrees, minutesSeconds, isSouthOrWest));
+  }
+
+  private static double toNumber(int degrees, int minutes, double seconds, boolean isNegative) {
+    if (degrees < 0 || minutes < 0 || seconds < 0)
+      throw new ERuntimeException("All numeric parameters must be positive values.");
+    double ret;
+    if (isNegative)
+      ret = -degrees - minutes / 60d - seconds / 3600d;
+    else
+      ret = degrees + minutes / 60d + seconds / 3600d;
+    return ret;
+  }
+
+  private static double toNumber(int degrees, double minutesSeconds, boolean isNegative) {
+    if (degrees < 0 || minutesSeconds < 0)
+      throw new ERuntimeException("All numeric parameters must be positive values.");
+    double ret;
+    if (!isNegative)
+      ret = degrees + minutesSeconds / 60d;
+    else
+      ret = -degrees - minutesSeconds / 60d;
+    return ret;
   }
 
   public CoordinateValue add(double value) {
@@ -62,7 +84,7 @@ public final class CoordinateValue {
   }
 
   public int getDegrees() {
-    return (int) EMath.down(value);
+    return EMath.down(value);
   }
 
   /**
@@ -77,7 +99,7 @@ public final class CoordinateValue {
   public int getMinutes() {
     double pom = value - getDegrees();
     pom = pom * 60;
-    int ret = (int) EMath.down(pom);
+    int ret = EMath.down(pom);
     return ret;
   }
 
@@ -88,30 +110,18 @@ public final class CoordinateValue {
     return ret;
   }
 
-  @Override
-  @SuppressWarnings("CloneDoesntCallSuperClone")
-  public CoordinateValue clone() {
-    return new CoordinateValue(value);
-  }
-
-  @Override
-  public String toString() {
-    return toString(true);
-  }
-
   public String toString(boolean useSign) {
     String ret;
     if (Global.COORDINATE_LONG) {
-      ret = toDegreeString();
+      ret = toDegreeString(useSign);
     } else {
-      ret = toDecimalString();
+      ret = toDecimalString(useSign);
     }
     return ret;
   }
 
-  public String toDegreeString() {
+  public String toDegreeString(boolean useSign) {
     String ret;
-    boolean useSign = false;
     NumberFormat nfa = new DecimalFormat("00");
     NumberFormat nfb = new DecimalFormat("00.00");
 
@@ -119,20 +129,19 @@ public final class CoordinateValue {
     if (useSign && neg) {
       sb.append("-");
     }
-    sb.append(nfa.format(getDegrees()));
+    sb.append(nfa.format(Math.abs(getDegrees())));
     sb.append("°");
-    sb.append(nfa.format(getMinutes()));
+    sb.append(nfa.format(Math.abs(getMinutes())));
     sb.append("'");
-    sb.append(nfb.format(getSeconds()));
+    sb.append(nfb.format(Math.abs(getSeconds())));
     sb.append("\"");
     ret = sb.toString();
     return ret;
   }
 
-  public String toDecimalString() {
-    boolean useSign = true;
+  public String toDecimalString(boolean useSign) {
     NumberFormat nf = new DecimalFormat("00.00000");
-    String ret = nf.format(this.value);
+    String ret = nf.format(Math.abs(this.value));
     if (useSign && neg) {
       ret = "-" + ret;
     }
@@ -167,6 +176,17 @@ public final class CoordinateValue {
       return false;
     }
     return true;
+  }
+
+  @Override
+  @SuppressWarnings("CloneDoesntCallSuperClone")
+  public CoordinateValue clone() {
+    return new CoordinateValue(value);
+  }
+
+  @Override
+  public String toString() {
+    return toString(true);
   }
 
 }

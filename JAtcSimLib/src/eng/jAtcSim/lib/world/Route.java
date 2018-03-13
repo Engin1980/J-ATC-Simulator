@@ -8,6 +8,7 @@ package eng.jAtcSim.lib.world;
 import eng.eSystem.xmlSerialization.XmlOptional;
 import eng.jAtcSim.lib.coordinates.Coordinates;
 import eng.jAtcSim.lib.exceptions.EBindException;
+import eng.jAtcSim.lib.exceptions.ERuntimeException;
 import eng.jAtcSim.lib.global.KeyItem;
 import eng.jAtcSim.lib.global.MustBeBinded;
 import eng.jAtcSim.lib.speaking.ICommand;
@@ -23,54 +24,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
  * @author Marek
  */
 public class Route extends MustBeBinded implements KeyItem<String> {
-
-  public static Route createNewByFix(Navaid n, boolean arrival) {
-    Route ret = new Route();
-    
-    ret.name = n.getName();
-    
-    ret._routeCommands = new SpeechList<>();
-    if (arrival){
-      ret._routeCommands.add(new ProceedDirectCommand(n));
-    }
-    ret._mainFix = n;
-    ret.type = eType.vectoring;
-    ret._routeCommands.add(new ProceedDirectCommand(n));
-    ret.route = "";
-
-    ret.bind();
-    
-    return ret;
-  }
-
-  @Override
-  public String getKey() {
-    return name;
-  }
-
-  private double calculateRouteLength() {
-    double ret = 0;
-    Navaid prev = null;
-    
-    for (ICommand cmd : this._routeCommands){
-      if ((cmd instanceof ProceedDirectCommand) == false) continue;
-      
-      if (prev == null)
-        prev = ((ProceedDirectCommand) cmd).getNavaid();
-      else{
-        Navaid curr = ((ProceedDirectCommand)cmd).getNavaid();
-        double dist = Coordinates.getDistanceInNM(prev.getCoordinate(), curr.getCoordinate());
-        ret += dist;
-        prev = curr;
-      }
-    }
-
-    return ret;
-  }
 
   public enum eType {
 
@@ -83,7 +39,6 @@ public class Route extends MustBeBinded implements KeyItem<String> {
       return this == star || this == transition;
     }
   }
-
   private eType type;
   private String name;
   private String route;
@@ -95,11 +50,35 @@ public class Route extends MustBeBinded implements KeyItem<String> {
   private double _routeLength = -1;
   private Navaid _mainFix = null;
 
+  public static Route createNewByFix(Navaid n, boolean arrival) {
+    Route ret = new Route();
+
+    ret.name = n.getName();
+
+    ret._routeCommands = new SpeechList<>();
+    if (arrival) {
+      ret._routeCommands.add(new ProceedDirectCommand(n));
+    }
+    ret._mainFix = n;
+    ret.type = eType.vectoring;
+    ret._routeCommands.add(new ProceedDirectCommand(n));
+    ret.route = "";
+
+    ret.bind();
+
+    return ret;
+  }
+
+  @Override
+  public String getKey() {
+    return name;
+  }
+
   public eType getType() {
     return type;
   }
-  
-  public double getRouteLength(){
+
+  public double getRouteLength() {
     return _routeLength;
   }
 
@@ -131,12 +110,63 @@ public class Route extends MustBeBinded implements KeyItem<String> {
     }
   }
 
+  public SpeechList<IAtcCommand> getCommands() {
+    super.checkBinded();
+
+    return _routeCommands;
+  }
+
+  public SpeechList<IAtcCommand> getCommandsListClone() {
+    super.checkBinded();
+
+    SpeechList<IAtcCommand> ret = new SpeechList<>();
+    ret.addAll(_routeCommands);
+    return ret;
+  }
+
+  public List<Navaid> getNavaids() {
+    return this._routeNavaids;
+  }
+
+  public Navaid getMainFix() {
+    super.checkBinded();
+
+    return _mainFix;
+  }
+
+  @Override
+  public String toString() {
+    return "Route{" +
+        type +
+        ",'" + name + "'}";
+  }
+
+  private double calculateRouteLength() {
+    double ret = 0;
+    Navaid prev = null;
+
+    for (ICommand cmd : this._routeCommands) {
+      if ((cmd instanceof ProceedDirectCommand) == false) continue;
+
+      if (prev == null)
+        prev = ((ProceedDirectCommand) cmd).getNavaid();
+      else {
+        Navaid curr = ((ProceedDirectCommand) cmd).getNavaid();
+        double dist = Coordinates.getDistanceInNM(prev.getCoordinate(), curr.getCoordinate());
+        ret += dist;
+        prev = curr;
+      }
+    }
+
+    return ret;
+  }
+
   @Override
   protected void _bind() {
     try {
       Parser p = new ShortParser();
       SpeechList<IFromAtc> xlst = p.parseMulti(this.route);
-      _routeCommands =  xlst.convertTo();
+      _routeCommands = xlst.convertTo();
     } catch (Exception ex) {
       throw new EBindException("Parsing fromAtc failed for route " + this.name + ". Route fromAtc contain error (see cause).", ex);
     }
@@ -169,56 +199,31 @@ public class Route extends MustBeBinded implements KeyItem<String> {
     } else {
       this.category = this.category.toUpperCase();
     }
-    
+
     _routeLength = calculateRouteLength();
   }
 
-  public SpeechList<IAtcCommand> getCommands() {
-    super.checkBinded();
-
-    return _routeCommands;
-  }
-
-  public SpeechList<IAtcCommand> getCommandsListClone() {
-    super.checkBinded();
-
-    SpeechList<IAtcCommand> ret = new SpeechList<>();
-    ret.addAll(_routeCommands);
-    return ret;
-  }
-
-  public List<Navaid> getNavaids() {
-    return this._routeNavaids;
-  }
-
-  public Navaid getMainFix() {
-    super.checkBinded();
-
-    return _mainFix;
-  }
-
   private Navaid tryGetSidMainFix() {
-    ICommand c = _routeCommands.get(_routeCommands.size() - 1);
-    if (c instanceof ProceedDirectCommand) {
-      return ((ProceedDirectCommand) c).getNavaid();
-    } else {
-      throw null;
+    int index = _routeCommands.size() - 1;
+    while (index >= 0 && !(_routeCommands.get(index) instanceof ProceedDirectCommand)) {
+      index--;
     }
+    if (index < 0)
+      throw new ERuntimeException("Failed to find main navaid for route " + this.name + ". Route commands probably not well defined.");
+
+    ProceedDirectCommand c = (ProceedDirectCommand) _routeCommands.get(index);
+    return c.getNavaid();
   }
 
   private Navaid tryGetStarMainFix() {
-    ICommand c = _routeCommands.get(0);
-    if (c instanceof ProceedDirectCommand) {
-      return ((ProceedDirectCommand) c).getNavaid();
-    } else {
-      throw null;
-    }
-  }
+    int index = 0;
+    while (index < _routeCommands.size() && !(_routeCommands.get(index) instanceof ProceedDirectCommand))
+      index++;
 
-  @Override
-  public String toString() {
-    return "Route{" +
-        type +
-        ",'" + name + "'}";
+    if (index >= _routeCommands.size())
+      throw new ERuntimeException("Failed to find main navaid for route " + this.name + ". Route commands probably not well defined.");
+
+    ProceedDirectCommand c = (ProceedDirectCommand) _routeCommands.get(index);
+    return c.getNavaid();
   }
 }

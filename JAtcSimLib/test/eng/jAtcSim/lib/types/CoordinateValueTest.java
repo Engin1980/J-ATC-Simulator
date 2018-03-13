@@ -35,7 +35,7 @@ public class CoordinateValueTest {
     int degrees = 79;
     int minutes = 54;
     double seconds = 23.32;
-    CoordinateValue instance = new CoordinateValue(degrees, minutes, seconds);
+    CoordinateValue instance = new CoordinateValue(degrees, minutes, seconds, false);
     
     int actDegrees = instance.getDegrees();
     int actMinutes = instance.getMinutes();
@@ -51,7 +51,7 @@ public class CoordinateValueTest {
     int degrees = 0;
     int minutes = 11;
     double seconds = 14.32;
-    CoordinateValue instance = new CoordinateValue(degrees, minutes, seconds);
+    CoordinateValue instance = new CoordinateValue(degrees, minutes, seconds, false);
     
     int actDegrees = instance.getDegrees();
     int actMinutes = instance.getMinutes();
@@ -66,7 +66,7 @@ public class CoordinateValueTest {
   public void testSet_2args() {
     int degrees = 0;
     double minutes = 11.25;
-    CoordinateValue instance = new CoordinateValue(degrees, minutes);
+    CoordinateValue instance = new CoordinateValue(degrees, minutes, false);
     
     double actValue = instance.get();
     
@@ -123,7 +123,7 @@ public class CoordinateValueTest {
 
   @Test
   public void testToString() {
-    CoordinateValue instance = new CoordinateValue(30, 12, 12.23);
+    CoordinateValue instance = new CoordinateValue(30, 12, 12.23, false);
     String expResult = "30°12'12,23\"";
     if (Global.COORDINATE_LONG == false){
       expResult = "30,20340";

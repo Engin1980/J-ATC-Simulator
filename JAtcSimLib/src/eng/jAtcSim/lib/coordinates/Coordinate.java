@@ -5,25 +5,84 @@
  */
 package eng.jAtcSim.lib.coordinates;
 
+import eng.eSystem.utilites.ExceptionUtil;
 import eng.jAtcSim.lib.exceptions.ERuntimeException;
+
+import java.text.NumberFormat;
+import java.text.ParseException;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- *
  * @author Marek
  */
 public final class Coordinate {
+
+  private final CoordinateValue latitude;
+  private final CoordinateValue longitude;
+
+  public Coordinate(int aDegrees, int aMinutes, double aSeconds, boolean isSouth,
+                    int bDegrees, int bMinutes, double bSeconds, boolean isWest) {
+    this(
+        new CoordinateValue(aDegrees, aMinutes, aSeconds, isSouth),
+        new CoordinateValue(bDegrees, bMinutes, bSeconds, isWest));
+  }
+
+  public Coordinate(int aDegrees, double aMinutesSeconds, boolean isSouth,
+                    int bDegrees, double bMinutesSeconds, boolean isWest) {
+    this(
+        new CoordinateValue(aDegrees, aMinutesSeconds, isSouth),
+        new CoordinateValue(bDegrees, bMinutesSeconds, isWest));
+  }
+
+  public Coordinate(double lat, double lon) {
+    this(
+        new CoordinateValue(lat), new CoordinateValue(lon));
+  }
+  public Coordinate(CoordinateValue lat, CoordinateValue lon) {
+    this.latitude = lat;
+    this.longitude = lon;
+  }
 
   public static Coordinate parse(String value) {
     Coordinate ret = tryParseA(value);
     if (ret == null) {
       ret = tryParseB(value);
     }
+    if (ret == null) {
+      ret = tryParseC(value);
+    }
 
     if (ret == null) {
       throw new ERuntimeException("Unable to parse " + value + " into Coordinate.");
+    }
+
+    return ret;
+  }
+
+  private static Coordinate tryParseC(String value) {
+    Coordinate ret = null;
+
+    String patternString = "(\\d{2})(\\d{2})(\\d{2}(\\.\\d+)?)([NS]) (\\d{3})(\\d{2})(\\d{2}(\\.\\d+)?)([EW])";
+    Pattern p = Pattern.compile(patternString);
+    Matcher m = p.matcher(value);
+    if (m.find()) {
+      try {
+        int latH = Integer.parseInt(m.group(1));
+        int latM = Integer.parseInt(m.group(2));
+        double latS = Double.parseDouble(m.group(3));
+        int lonH = Integer.parseInt(m.group(6));
+        int lonM = Integer.parseInt(m.group(7));
+        double lonS = Double.parseDouble(m.group(8));
+        ret = new Coordinate(
+            new CoordinateValue(latH, latM, latS, m.group(5).equals("S")),
+            new CoordinateValue(lonH, lonM, lonS,m.group(10).equals("W"))
+        );
+      } catch (Exception ex) {
+        ret = null;
+      }
     }
 
     return ret;
@@ -72,36 +131,10 @@ public final class Coordinate {
     return ret;
   }
 
-  private final CoordinateValue latitude;
-  private final CoordinateValue longitude;
-
-  public Coordinate(int aDegrees, int aMinutes, double aSeconds,
-      int bDegrees, int bMinutes, double bSeconds) {
-    this(
-        new CoordinateValue(aDegrees, aMinutes, aSeconds),
-        new CoordinateValue(bDegrees, bMinutes, bSeconds));
-  }
-  
-  public Coordinate(int aDegrees, double aMinutesSeconds,
-      int bDegrees, double bMinutesSeconds) {
-    this(
-        new CoordinateValue(aDegrees, aMinutesSeconds),
-        new CoordinateValue(bDegrees, bMinutesSeconds));
-  }
-
-  public Coordinate(double lat, double lon) {
-    this(
-      new CoordinateValue(lat), new CoordinateValue(lon));
-  }
-
-  public Coordinate(CoordinateValue lat, CoordinateValue lon) {
-    this.latitude = lat;
-    this.longitude = lon;
-  }
-
-  public Coordinate add(Coordinate other){
+  public Coordinate add(Coordinate other) {
     return add(other.getLatitude().get(), other.getLongitude().get());
   }
+
   public Coordinate add(double lat, double lon) {
     CoordinateValue clat = getLatitude();
     CoordinateValue clon = getLongitude();
@@ -119,21 +152,13 @@ public final class Coordinate {
     return longitude;
   }
 
-  @Override
-  @SuppressWarnings("CloneDoesntCallSuperClone")
-  public Coordinate clone() {
-    return new Coordinate(
-        this.latitude.clone(),
-        this.longitude.clone());
-  }
-
   public boolean isSame(Coordinate other) {
     return this.equals(other);
   }
 
   @Override
   public int hashCode() {
-    int hash =  5;
+    int hash = 5;
     hash = 29 * hash + Objects.hashCode(this.latitude);
     hash = 29 * hash + Objects.hashCode(this.longitude);
     return hash;
@@ -155,6 +180,14 @@ public final class Coordinate {
       return false;
     }
     return true;
+  }
+
+  @Override
+  @SuppressWarnings("CloneDoesntCallSuperClone")
+  public Coordinate clone() {
+    return new Coordinate(
+        this.latitude.clone(),
+        this.longitude.clone());
   }
 
   @Override

@@ -19,8 +19,8 @@ public class CoordinateProviderTest {
 
   @Test
   public void testGetDistanceInNM() {
-    Coordinate a = new Coordinate(50, 06, 03, 14, 15, 36);
-    Coordinate b = new Coordinate(51, 8.88, 0, -11.42);
+    Coordinate a = new Coordinate(50, 06, 03, false, 14, 15, 36, false);
+    Coordinate b = new Coordinate(51, 8.88,false, 0, -11.42, true);
     double expResult = 553.07926;
     double result = Coordinates.getDistanceInNM(a, b);
     assertEquals(expResult, result, 0.1);
@@ -28,9 +28,9 @@ public class CoordinateProviderTest {
 
   @Test
   public void testGetBearing() {
-    Coordinate a = new Coordinate(50, 06, 03, 14, 15, 36);
-    Coordinate b = new Coordinate(51, 8, 52.8, 0, -11, 25.2);
-    double expResult = new CoordinateValue(282, 04, 46).get();
+    Coordinate a = new Coordinate(50, 06, 03, false, 14, 15, 36, false);
+    Coordinate b = new Coordinate(51, 8, 52.8, false, 0, 11, 25.2, true);
+    double expResult = new CoordinateValue(282, 04, 46, false).get();
     double result = Coordinates.getBearing(a, b);
     assertEquals(expResult, result, 0.01);
   }
@@ -42,7 +42,7 @@ public class CoordinateProviderTest {
     double distanceInNM = 0.094722222;
 
     Coordinate result = Coordinates.getCoordinate(point, bearing, distanceInNM);
-    Coordinate expResult = new Coordinate(50, 0, 0, 14, 0, 8);
+    Coordinate expResult = new Coordinate(50, 0, 0, false, 14, 0, 8, false);
 
     assertEquals(expResult.getLatitude().get(), result.getLatitude().get(), 0.0001);
     assertEquals(expResult.getLongitude().get(), result.getLongitude().get(), 0.001);
@@ -81,7 +81,7 @@ public class CoordinateProviderTest {
     double distanceInNM = 53.99568; // 100/3600;
 
     Coordinate result = Coordinates.getCoordinate(point, bearing, distanceInNM);
-    Coordinate expResult = new Coordinate(49, 50, 8, 11, 22, 24);
+    Coordinate expResult = new Coordinate(49, 50, 8,false, 11, 22, 24,false);
 
     assertEquals(expResult.getLatitude().get(), result.getLatitude().get(), 0.001);
     assertEquals(expResult.getLongitude().get(), result.getLongitude().get(), 0.001);
