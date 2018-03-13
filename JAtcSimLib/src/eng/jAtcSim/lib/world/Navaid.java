@@ -20,11 +20,12 @@ public class Navaid implements KeyItem<String> {
     return name;
   }
   public enum eType{
-    VOR,
-    NDB,
-    Fix,
-    FixMinor,
-    Airport
+    vor,
+    ndb,
+    fix,
+    fixMinor,
+    airport,
+    auxiliary
   }
   
   private Coordinate coordinate;

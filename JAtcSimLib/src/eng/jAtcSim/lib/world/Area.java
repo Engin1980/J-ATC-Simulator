@@ -109,7 +109,7 @@ public class Area {
               cmds = parser.parseMultipleCommands(p.getGaRoute());
             } catch (Exception ex) {
               throw new ERuntimeException(
-                  String.format("Airport %s runway %s approach %s has invalid go-around route fromAtc: %s (error: %s)",
+                  String.format("airport %s runway %s approach %s has invalid go-around route fromAtc: %s (error: %s)",
                       a.getIcao(), t.getName(), p.getType(), p.getGaRoute(), ex.getMessage()));
             }
           } // for (Approach
@@ -119,7 +119,7 @@ public class Area {
               cmds = parser.parseMultipleCommands(o.getRoute());
             } catch (Exception ex) {
               throw new ERuntimeException(
-                  String.format("Airport %s runway %s route %s has invalid fromAtc: %s (error: %s)",
+                  String.format("airport %s runway %s route %s has invalid fromAtc: %s (error: %s)",
                       a.getIcao(), t.getName(), o.getName(), o.getRoute(), ex.getMessage()));
             }
             try {
@@ -127,13 +127,13 @@ public class Area {
             } catch (ERuntimeException ex) {
               throw new ERuntimeException(
                   String.format(
-                      "Airport %s runway %s route %s has no main fix. SID last/STAR first command must be PD FIX (error: %s)",
+                      "airport %s runway %s route %s has no main fix. SID last/STAR first command must be PD FIX (error: %s)",
                       a.getIcao(), t.getName(), o.getName(), o.getRoute()));
             }
           }
         } // for (RunwayThreshold
       } // for (Runway
-    } // for (Airport
+    } // for (airport
     Acc.setAirport(null);
   }
 

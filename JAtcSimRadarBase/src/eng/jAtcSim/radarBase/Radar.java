@@ -28,7 +28,6 @@ import eng.jAtcSim.radarBase.global.TextBlockLocation;
 import eng.jAtcSim.radarBase.global.events.EMouseEventArg;
 import eng.jAtcSim.radarBase.global.events.KeyEventArg;
 import eng.jAtcSim.radarBase.global.events.WithCoordinateEventArg;
-import sun.text.resources.cldr.ia.FormatData_ia;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -706,21 +705,21 @@ public class Radar {
     //for (Navaid n : area.getNavaids()) {
     for (NavaidDisplayInfo ndi : this.navaids) {
       switch (ndi.navaid.getType()) {
-        case NDB:
+        case ndb:
           if (localSettings.isNdbVisible()) drawNavaid(ndi.navaid);
           break;
-        case Airport:
+        case airport:
           if (localSettings.isAirportVisible()) drawNavaid(ndi.navaid);
           break;
-        case VOR:
+        case vor:
           if (localSettings.isVorVisible()) drawNavaid(ndi.navaid);
           break;
-        case Fix:
-        case FixMinor:
+        case fix:
+        case fixMinor:
           boolean isVisible = false;
-          if (ndi.navaid.getType() == Navaid.eType.Fix && localSettings.isFixVisible())
+          if (ndi.navaid.getType() == Navaid.eType.fix && localSettings.isFixVisible())
             isVisible = true;
-          if (ndi.navaid.getType() == Navaid.eType.FixMinor && localSettings.isFixMinorVisible())
+          if (ndi.navaid.getType() == Navaid.eType.fixMinor && localSettings.isFixMinorVisible())
             isVisible = true;
           if (ndi.isRoute && localSettings.isFixRouteVisible())
             isVisible = true;
@@ -737,26 +736,26 @@ public class Radar {
     DisplaySettings.TextSettings dt = displaySettings.navaid;
 
     switch (navaid.getType()) {
-      case VOR:
+      case vor:
         tl.drawPoint(navaid.getCoordinate(), ds.getColor(), ds.getWidth());
         tl.drawCircleAround(navaid.getCoordinate(), ds.getBorderDistance(), ds.getColor(), ds.getBorderWidth());
         tl.drawText(navaid.getName(), navaid.getCoordinate(), 3, 3, dt.getFont(), ds.getColor());
         break;
-      case NDB:
+      case ndb:
         tl.drawPoint(navaid.getCoordinate(), ds.getColor(), ds.getWidth());
         tl.drawTriangleAround(navaid.getCoordinate(), ds.getBorderDistance(), ds.getColor(), ds.getBorderWidth());
         tl.drawText(navaid.getName(), navaid.getCoordinate(), 3, 3, dt.getFont(), ds.getColor());
         break;
-      case Fix:
+      case fix:
         tl.drawPoint(navaid.getCoordinate(), ds.getColor(), ds.getWidth());
         //p.drawCircleAround(navaid.getCoordinate(), 9, ds.getColor(), 1);
         tl.drawText(navaid.getName(), navaid.getCoordinate(), 3, 0, dt.getFont(), ds.getColor());
         break;
-      case FixMinor:
+      case fixMinor:
         tl.drawPoint(navaid.getCoordinate(), ds.getColor(), ds.getWidth());
         tl.drawText(navaid.getName(), navaid.getCoordinate(), 3, 0, dt.getFont(), ds.getColor());
         break;
-      case Airport:
+      case airport:
         tl.drawPoint(navaid.getCoordinate(), ds.getColor(), ds.getWidth());
         tl.drawText(navaid.getName(), navaid.getCoordinate(), 3, 3, dt.getFont(), ds.getColor());
         break;
@@ -981,15 +980,15 @@ public class Radar {
 
   private DisplaySettings.ColorWidthBorderSettings getDispSettBy(Navaid navaid) {
     switch (navaid.getType()) {
-      case Fix:
+      case fix:
         return displaySettings.navFix;
-      case FixMinor:
+      case fixMinor:
         return displaySettings.navFixMinor;
-      case NDB:
+      case ndb:
         return displaySettings.navNDB;
-      case VOR:
+      case vor:
         return displaySettings.navVOR;
-      case Airport:
+      case airport:
         return displaySettings.navAirport;
       default:
         throw new ERuntimeException("Navaid type " + navaid.getType() + " is not supported.");

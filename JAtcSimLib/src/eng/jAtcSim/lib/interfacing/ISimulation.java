@@ -2,10 +2,10 @@
 //
 //import eng.eSystem.events.EventSimple;
 //import eng.jAtcSim.lib.traffic.Movement;
-//import eng.jAtcSim.lib.world.Airport;
+//import eng.jAtcSim.lib.world.airport;
 //
 //public interface ISimulation {
-//  Airport getActiveAirport();
+//  airport getActiveAirport();
 //
 //  void start();
 //

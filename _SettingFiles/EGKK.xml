@@ -176,23 +176,25 @@
     </airport>
   </airports>
   <navaids>
-    <navaid name="MAY" type="VOR" coordinate="51 01 02 N 000 06 58 E"/>
+    <navaid name="MAY" type="vor" coordinate="51 01 02 N 000 06 58 E"/>
 
 
-    <navaid name="DET31" type="FixMinor" coordinate="51.2164407593 -1.29821090255"/>
-    <navaid name="DET29" type="FixMinor" coordinate="51.22220902433 -1.25306653712"/>
-    <navaid name="DVR33" type="FixMinor" coordinate="51.21809599856 0.60466674227"/>
+    <navaid name="DET31" type="fixMinor" coordinate="51.2164407593 -1.29821090255"/>
+    <navaid name="DET29" type="fixMinor" coordinate="51.22220902433 -1.25306653712"/>
+    <navaid name="DVR33" type="fixMinor" coordinate="51.21809599856 0.60466674227"/>
 
-    <navaid name="KONAN" type="Fix" coordinate="51 07 50.75 N 002 00 00.00 E" />
-    <navaid name="ARNUN" type="Fix" coordinate="51 03 25.98 N 000 55 52.98 E" />
-    <navaid name="KKE63" type="FixMinor" coordinate="50 58 56.70 N 000 40 51.78 E" />
-    <navaid name="LARCK" type="Fix" coordinate="50 54 41.83 N 000 26 47.93 E" />
-    <navaid name="TIMBA" type="Fix" coordinate="50 56 43.99 N 000 15 42.25 E" />
+    <navaid name="KONAN" type="fix" coordinate="51 07 50.75 N 002 00 00.00 E" />
+    <navaid name="ARNUN" type="fix" coordinate="51 03 25.98 N 000 55 52.98 E" />
+    <navaid name="KKE63" type="fixMinor" coordinate="50 58 56.70 N 000 40 51.78 E" />
+    <navaid name="LARCK" type="fix" coordinate="50 54 41.83 N 000 26 47.93 E" />
+    <navaid name="TIMBA" type="fix" coordinate="50 56 43.99 N 000 15 42.25 E" />
 
-    <navaid name="NEXOS" type="Fix" coordinate="51 15 01 N 000 11 38 E" />
-    <navaid name="DOVER" type="Fix" coordinate="51 09 45 N 001 21 33 E" />
+    <navaid name="NEXOS" type="fix" coordinate="51 15 01 N 000 11 38 E" />
+    <navaid name="DOVER" type="fix" coordinate="51 09 45 N 001 21 33 E" />
 
 
+    <navaid name="OTSID" type="fix" coordinate="51.17305383552473 -0.230833452211901" />
+<!-- https://gitlab.asap.dsna.fr/4ME/4me.env/raw/master/4Flight/LFEE/POINTS.SVG -->
 
     <!-- Airports -->
 

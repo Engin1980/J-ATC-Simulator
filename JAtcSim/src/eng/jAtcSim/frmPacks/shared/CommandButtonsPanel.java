@@ -151,7 +151,7 @@ public class CommandButtonsPanel extends JPanel {
     pnlSub.add(lbtn);
 
     for (Navaid navaid : Acc.area().getNavaids()) {
-      if (navaid.getType() != Navaid.eType.Fix) continue;
+      if (navaid.getType() != Navaid.eType.fix) continue;
 
       JButton btn = new JButton(navaid.getName());
       btn.addActionListener(o -> {

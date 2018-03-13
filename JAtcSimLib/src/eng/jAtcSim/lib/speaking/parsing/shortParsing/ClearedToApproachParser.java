@@ -22,13 +22,13 @@ class ClearedToApproachParser extends SpeechParser<ClearedToApproachCommand> {
     sb.appendLine("\tI\t.. ILS cat I");
     sb.appendLine("\tII\t.. ILS cat II");
     sb.appendLine("\tIII\t.. ILS cat III");
-    sb.appendLine("\tR\t.. VOR/DME");
-    sb.appendLine("\tN\t.. NDB");
+    sb.appendLine("\tR\t.. vor/DME");
+    sb.appendLine("\tN\t.. ndb");
     sb.appendLine("\tG\t.. GPS");
     sb.appendLine("\tV\t.. visual");
     sb.appendLine("Example:");
     sb.appendLine("\t C I 24 \t - cleared ILS category I 24");
-    sb.appendLine("\t C R 24 \t - cleared VOR/DME 24");
+    sb.appendLine("\t C R 24 \t - cleared vor/DME 24");
     sb.appendLine("\t C V 24 \t - cleared visual 24");
 
     return sb.toString();
