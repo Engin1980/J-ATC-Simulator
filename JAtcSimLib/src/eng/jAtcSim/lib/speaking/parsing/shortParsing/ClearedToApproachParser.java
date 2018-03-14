@@ -10,7 +10,7 @@ import eng.jAtcSim.lib.world.RunwayThreshold;
 
 class ClearedToApproachParser extends SpeechParser<ClearedToApproachCommand> {
 
-  private static final String[] prefixes = new String[]{"C "};
+  private static final String[] prefixes = new String[]{"C"};
   private static final String pattern = "C (I|II|III|G|V|R|N) (\\S+)";
 
   @Override
@@ -47,7 +47,7 @@ class ClearedToApproachParser extends SpeechParser<ClearedToApproachCommand> {
   @Override
   ClearedToApproachCommand parse(RegexGrouper rg) {
     String typeS = rg.getString(1);
-    String runwayName = rg.getString(2);
+    String runwayName = rg.getString(2).toUpperCase();
 
     Approach.eType type;
     switch (typeS) {
