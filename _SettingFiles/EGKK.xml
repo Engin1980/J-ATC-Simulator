@@ -119,7 +119,7 @@
         <atcTemplate type="ctr" name="LON_S_CTR" frequency="129.42"
                      releaseAltitude="19000" acceptAltitude="7000" orderedAltitude="17000"/>
         <atcTemplate type="twr" name="EGKK_TWR" frequency="124.225"
-                     releaseAltitude="300" acceptAltitude="2000" orderedAltitude="4000"/>
+                     releaseAltitude="300" acceptAltitude="3000" orderedAltitude="4000"/>
         <atcTemplate type="app" name="EGKK_DIR" frequency="126.825"
                      releaseAltitude="-1" acceptAltitude="-1" orderedAltitude="-1"/>
       </atcTemplates>
@@ -2414,6 +2414,31 @@
         <point coordinate="50.7084732055663 -2.97194504737848" />
         <point coordinate="50.7062492370608 -2.97916698455805" />
         <point coordinate="50.7048606872559 -2.99027800559998" />
+      </points>
+    </border>
+
+    <border name="London Gatwick CTR" type="TMA" enclosed="true" minAltitude="0" maxAltitude="2000">
+      <points>
+        <point coordinate="511258N 0001129W"/>
+        <point coordinate="511200N 0000341E"/>
+        <arc coordinate="510853N 0001125W" direction="clockwise"/>
+        <point coordinate="510550N 0000342E"/>
+        <point coordinate="510240N 0001923W"/>
+        <arc coordinate="510853N 0001125W" direction="clockwise"/>
+        <point coordinate="511118N 0002332W"/>
+        <point coordinate="511258N 0001129W"/>
+      </points>
+    </border>
+
+    <border name="London Gatwick CTA" type="TMA" enclosed="true" minAltitude="1500" maxAltitude="2500">
+      <points>
+        <point coordinate="510100N 0000458E"/>
+        <point coordinate="510100N 0002545W"/>
+        <arc coordinate="510853N 0001125W" direction="clockwise"/>
+        <point coordinate="511124N 0003003W"/>
+        <point coordinate="511618N 0000533E"/>
+        <arc coordinate="510853N 0001125W" direction="clockwise"/>
+        <point coordinate="510100N 0000458E"/>
       </points>
     </border>
 
