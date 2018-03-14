@@ -9,7 +9,7 @@ import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeHeadingCommand;
 class ChangeHeadingParser extends SpeechParser<ChangeHeadingCommand> {
 
   private static final String[] prefixes = new String[]{"FH", "TR", "TL"};
-  private static final String pattern = "((FH)|(TR)|(TL)) ?(\\d{1,3})?";
+  private static final String pattern = "((FH)|(TR)|(TL)) ?(\\d{1,3})";
 
   @Override
   String[] getPrefixes() {

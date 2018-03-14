@@ -59,7 +59,7 @@ public class ShortParser extends Parser {
 
       if (p == null) {
         throw new EInvalidCommandException("Failed to parse command prefix.",
-            line.substring(0, line.length() - tmp.length() - 1),
+            line.substring(0, line.length() - tmp.length()),
             tmp);
       }
 
@@ -67,7 +67,7 @@ public class ShortParser extends Parser {
 
       if (rg == null) {
         throw new EInvalidCommandException("Failed to parse command. Probably invalid syntax?",
-            line.substring(0, line.length() - tmp.length() - 1),
+            line.substring(0, line.length() - tmp.length()),
             tmp);
       }
 
