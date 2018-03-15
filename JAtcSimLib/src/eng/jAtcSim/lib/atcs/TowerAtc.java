@@ -7,6 +7,7 @@ import eng.jAtcSim.lib.coordinates.Coordinates;
 import eng.jAtcSim.lib.exceptions.ENotSupportedException;
 import eng.jAtcSim.lib.global.ETime;
 import eng.jAtcSim.lib.global.Headings;
+import eng.jAtcSim.lib.global.logging.CommonRecorder;
 import eng.jAtcSim.lib.messaging.Message;
 import eng.jAtcSim.lib.messaging.StringMessageContent;
 import eng.jAtcSim.lib.speaking.SpeechList;
@@ -26,18 +27,14 @@ public class TowerAtc extends ComputerAtc {
   private static final int MAXIMAL_SPEED_FOR_PREFERRED_RUNWAY = 5;
   private static final double MAXIMAL_ACCEPT_DISTANCE_IN_NM = 15;
   private final Map<RunwayThreshold, TakeOffInfo> takeOffInfos = new HashMap<>();
+  private final CommonRecorder toRecorder;
   private AirplaneList landingPlanes = new AirplaneList();
   private AirplaneList goAroundedPlanesToSwitch = new AirplaneList();
   private AirplaneList holdingPointPlanesList = new AirplaneList();
   private AirplaneList linedUpPlanesList = new AirplaneList();
   private AirplaneList departingPlanesList = new AirplaneList();
-
   private Map<Airplane, ETime> holdingPointWaitingTimeMap = new HashMap<>();
   private RunwayThreshold runwayThresholdInUse = null;
-
-  public TowerAtc(AtcTemplate template) {
-    super(template);
-  }
 
   private static RunwayThreshold getSuggestedThreshold() {
     Weather w = Acc.weather();
@@ -78,6 +75,11 @@ public class TowerAtc extends ComputerAtc {
     return rt;
   }
 
+  public TowerAtc(AtcTemplate template) {
+    super(template);
+    toRecorder = new CommonRecorder(template.getName() + " - TO", template.getName() + "_to.log", "\t");
+  }
+
   @Override
   public void unregisterPlaneUnderControl(Airplane plane) {
     if (landingPlanes.contains(plane))
@@ -114,6 +116,13 @@ public class TowerAtc extends ComputerAtc {
     if (Acc.now().getTotalSeconds() % RUNWAY_CHANGE_INFO_UPDATE_INTERVAL == 0) {
       checkForRunwayChange();
     }
+  }
+
+  @Override
+  public void init() {
+    super.init();
+    RunwayThreshold suggestedThreshold = getSuggestedThreshold();
+    changeRunwayInUse(suggestedThreshold);
   }
 
   @Override
@@ -176,13 +185,6 @@ public class TowerAtc extends ComputerAtc {
     return ret;
   }
 
-  @Override
-  public void init() {
-    super.init();
-    RunwayThreshold suggestedThreshold = getSuggestedThreshold();
-    changeRunwayInUse(suggestedThreshold);
-  }
-
   public int getNumberOfPlanesAtHoldingPoint() {
     return holdingPointPlanesList.size() + linedUpPlanesList.size();
   }
@@ -203,11 +205,20 @@ public class TowerAtc extends ComputerAtc {
     this.runwayThresholdInUse = newRunwayInUseThreshold;
   }
 
+  private void tryToLog(String format, Object... params) {
+    if (toRecorder != null)
+      toRecorder.write(format, params);
+  }
+
   private void tryTakeOffPlane() {
-    if (linedUpPlanesList.isEmpty())
+    tryToLog("tryTakeOffPlane");
+    if (linedUpPlanesList.isEmpty()) {
+      tryToLog("lineUp list empty");
       return;
+    }
 
     Airplane toReadyPlane = linedUpPlanesList.get(0);
+    tryToLog("Plane to take off: %s", toReadyPlane.getCallsign().toString());
 
     TakeOffInfo toi = null;
     if (takeOffInfos.containsKey(this.runwayThresholdInUse)) {
@@ -215,23 +226,47 @@ public class TowerAtc extends ComputerAtc {
     }
 
     if (toi != null) {
-      if (toi.airplane.getAltitude() + 300 < Acc.airport().getAltitude())
-        return;
+      tryToLog("\tprevious departure: %s", toi.airplane.getCallsign().toString());
 
       if (toi.separation == null) {
         toi.separation = TakeOffSeparation.create(toi.airplane.getType().category, toReadyPlane.getType().category);
+        tryToLog("\tnew separation created");
+        tryToLog("\t\tmin %.2f nm, min %d seconds", toi.separation.nm, toi.separation.seconds);
       }
 
-      if (toi.takeOffTime.addSeconds(toi.separation.seconds).isAfter(Acc.now()))
+      if (toi.airplane.getAltitude() < Acc.airport().getAltitude() + 300) {
+        tryToLog(
+            "\tprevious departure altitude: %.0f, airport altitude: %d, less than 300, T-O denied",
+            toi.airplane.getAltitude(),
+            Acc.airport().getAltitude());
         return;
+      }
+
+      ETime lastDepartureSeparatedTime = toi.takeOffTime.addSeconds(toi.separation.seconds);
+      tryToLog("\tlast departure separation time: %s", lastDepartureSeparatedTime.toString());
+      if (lastDepartureSeparatedTime.isAfter(Acc.now())) {
+        tryToLog("\ttime separation not achieved yet, T-O denied");
+        return;
+      }
 
       double distance = Coordinates.getDistanceInNM(toi.airplane.getCoordinate(), Acc.threshold().getCoordinate());
-      if (distance < toi.separation.nm)
+      tryToLog("\tlast departure separation distance: %.2f nm, minimal distance: %.2f", distance, toi.separation.nm);
+      if (distance < toi.separation.nm) {
+        tryToLog("\tdistance separation not achieved yet, T-O denied");
         return;
+      }
+    } else {
+      tryToLog("\tno previous departure found.");
     }
 
-    if (closestLandingPlaneDistance() < 2.5)
+    double closestLandingPlaneDistance =closestLandingPlaneDistance();
+    tryToLog("\tclosest landing plane distance: %.2f nm", closestLandingPlaneDistance);
+    if (closestLandingPlaneDistance < 2.5) {
+      tryToLog("\tdistance from arrival not achieved, T_O denied");
       return;
+    }
+
+    tryToLog("\ttaking off %s", toReadyPlane.getCallsign().toString());
 
     // if it gets here, the "toReadyPlane" can proceed take-off
     linedUpPlanesList.remove(0);
@@ -291,34 +326,29 @@ class TakeOffInfo {
 class TakeOffSeparation {
 
   private final static int[][] sepDistanceNm = new int[][]{
-      new int[]{4, 5, 6, 6}, // A
-      new int[]{0, 3, 3, 5}, // B
-      new int[]{0, 0, 3, 4}, // C
-      new int[]{0, 0, 0, 0}}; // D
+      new int[]{0, 0, 0, 0}, // A
+      new int[]{4, 3, 0, 0}, // B
+      new int[]{5, 3, 3, 0}, // C
+      new int[]{6, 6, 5, 4}}; // D
   private final static int[][] sepTimeSeconds = new int[][]{
-      new int[]{120, 180, 180, 180}, // A
-      new int[]{0, 120, 120, 120}, // B
-      new int[]{0, 0, 120, 120}, // C
-      new int[]{0, 0, 0, 120}}; // D
+      new int[]{120,   0,   0,   0}, // A
+      new int[]{120, 120,   0,   0}, // B
+      new int[]{120, 120, 120,   0}, // C
+      new int[]{180, 180, 180, 120}}; // D
   /**
    * Increase frequency of arrivals. Higher means higher frequency of take-offs.
    */
-  private final static double DEPARTURE_ACCELERATOR_DIVIDER = 1.3;
-  public final int nm;
+  private final static double DEPARTURE_ACCELERATOR_DIVIDER = 1.0;
+  public final double nm;
   public final int seconds;
-
-  private TakeOffSeparation(int nm, int seconds) {
-    this.nm = nm;
-    this.seconds = seconds;
-  }
 
   public static TakeOffSeparation create(char leadingTypeCategory, char followingTypeCategory) {
     int a = c2i(leadingTypeCategory);
     int b = c2i(followingTypeCategory);
     int time = sepTimeSeconds[a][b];
-    int dist = sepDistanceNm[a][b];
+    double dist = sepDistanceNm[a][b];
     time = (int) (time * DEPARTURE_ACCELERATOR_DIVIDER);
-    dist = (int) (dist * DEPARTURE_ACCELERATOR_DIVIDER);
+    dist = dist * DEPARTURE_ACCELERATOR_DIVIDER;
 
     return new TakeOffSeparation(dist, time);
   }
@@ -336,5 +366,10 @@ class TakeOffSeparation {
       default:
         throw new ENotSupportedException("Unknown plane type category " + c);
     }
+  }
+
+  private TakeOffSeparation(double nm, int seconds) {
+    this.nm = nm;
+    this.seconds = seconds;
   }
 }

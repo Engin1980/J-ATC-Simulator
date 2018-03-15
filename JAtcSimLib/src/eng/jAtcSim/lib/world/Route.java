@@ -49,6 +49,12 @@ public class Route extends MustBeBinded implements KeyItem<String> {
   private List<Navaid> _routeNavaids = null;
   private double _routeLength = -1;
   private Navaid _mainFix = null;
+  @XmlOptional
+  private Integer entryFL;
+
+  public Integer getEntryFL() {
+    return entryFL;
+  }
 
   public static Route createNewByFix(Navaid n, boolean arrival) {
     Route ret = new Route();

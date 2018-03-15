@@ -145,9 +145,9 @@ public class Simulation {
       return String.format("FL%03d", ((int) altInFt) / 100);
     } else {
       if (appendFt) {
-        return String.format("%04d ft", (int) altInFt);
+        return String.format("%d ft", (int) altInFt);
       } else {
-        return String.format("%04d", (int) altInFt);
+        return String.format("%d", (int) altInFt);
       }
     }
   }

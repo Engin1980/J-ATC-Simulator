@@ -139,11 +139,11 @@ public class SwingRadarPanel extends JPanel {
     extBtn.set(btn, true);
     ret.add(btn);
 
-    btn = new JButton("vor");
+    btn = new JButton("VOR");
     btn.addActionListener(e -> btnVor_click(e));
     extBtn.set(btn, true);
     ret.add(btn);
-    btn = new JButton("ndb");
+    btn = new JButton("NDB");
     btn.addActionListener(e -> btnNdb_click(e));
     extBtn.set(btn, true);
     ret.add(btn);

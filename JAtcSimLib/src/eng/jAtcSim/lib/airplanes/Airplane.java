@@ -412,7 +412,7 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     this.plane4Display = this.new Airplane4Display();
 
     // flight recorders on
-    this.flightRecorder = FlightRecorder.create(this.callsign, false, true);
+    this.flightRecorder = FlightRecorder.create(this.callsign);
   }
 
   private static ValueRequest getRequest(double current, double target, double maxIncreaseStep, double maxDecreaseStep) {

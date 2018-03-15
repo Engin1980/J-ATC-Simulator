@@ -124,13 +124,13 @@ public class LongFormatter extends Formatter {
         sb.append("ILS category III");
         break;
       case NDB:
-        sb.append("ndb");
+        sb.append("NDB");
         break;
       case GNSS:
         sb.append("GNSS");
         break;
       case VORDME:
-        sb.append("vor-DME");
+        sb.append("VOR-DME");
         break;
       case Visual:
         sb.append("visual");

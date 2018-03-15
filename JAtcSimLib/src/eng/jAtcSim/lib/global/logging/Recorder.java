@@ -3,9 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package eng.jAtcSim.lib.global;
+package eng.jAtcSim.lib.global.logging;
 
 import eng.eSystem.EStringBuilder;
+import eng.jAtcSim.lib.airplanes.Airplane;
+import eng.jAtcSim.lib.atcs.Atc;
+import eng.jAtcSim.lib.atcs.PlaneSwitchMessage;
 import eng.jAtcSim.lib.exceptions.ENotSupportedException;
 import eng.jAtcSim.lib.exceptions.ERuntimeException;
 import eng.jAtcSim.lib.messaging.IMessageContent;
@@ -15,125 +18,83 @@ import eng.jAtcSim.lib.messaging.StringMessageContent;
 import eng.jAtcSim.lib.speaking.ICommand;
 import eng.jAtcSim.lib.speaking.ISpeech;
 import eng.jAtcSim.lib.speaking.SpeechList;
+import eng.jAtcSim.lib.speaking.formatting.Formatter;
 import eng.jAtcSim.lib.speaking.formatting.LongFormatter;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.GoingAroundNotification;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.Confirmation;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
-import eng.jAtcSim.lib.airplanes.Airplane;
-import eng.jAtcSim.lib.atcs.Atc;
-import eng.jAtcSim.lib.atcs.PlaneSwitchMessage;
-import eng.jAtcSim.lib.speaking.formatting.Formatter;
 import eng.jAtcSim.lib.speaking.fromAtc.notifications.RadarContactConfirmationNotification;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 /**
  * @author Marek Vajgl
  */
-public abstract class Recorder {
+public abstract class Recorder extends SimulationLog {
 
-  private static String logPathBase = "recording\\";
   private static final String logPathDate = new SimpleDateFormat("yyyy_MM_dd_HH_mm").format(new Date());
-  private final static DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss,SSS");
+  private static String logPathBase = null;
   private static Formatter fmt = new LongFormatter();
-  private final boolean isConsole;
-  private final boolean isFile;
-  private final Path filePath;
-  private BufferedWriter wrt;
+  private final OutputStream os;
 
-  public static void setLogPathBase(String folder){
+  public static void init(String folder) {
+    if (folder == null) {
+      throw new IllegalArgumentException("Value of {folder} cannot not be null.");
+    }
     Recorder.logPathBase = folder;
   }
 
-  public Recorder(Path filePath, boolean toConsole, boolean autoOpenFile) {
-    this.isFile = (filePath != null);
-    this.filePath = filePath;
-    this.isConsole = toConsole;
-    if (autoOpenFile) {
-      openFile();
-    }
-  }
+  public static OutputStream createRecorderFileOutputStream(String name) {
 
-  protected static Path buildGenericLogFilePath(String fileName) {
-    Path ret = Paths.get(logPathBase, logPathDate, fileName);
-    return ret;
-  }
+    Path full = Paths.get(logPathBase, logPathDate, name);
 
-  public final void logLine(String line) throws ERuntimeException {
-    if (isFile) {
-      try {
-        wrt.write(line);
-        wrt.flush();
-      } catch (IOException ex) {
-        throw new ERuntimeException("Failed to write to flight recorder FDR - file " + filePath.toString(), ex);
-      }
-    }
-
-    if (isConsole) {
-      System.out.print(line);
-    }
-  }
-
-  public final void logLine(String line, boolean addTime) throws ERuntimeException {
-    String s;
-    if (addTime) {
-      java.time.LocalDateTime ldt = java.time.LocalDateTime.now();
-      s = ldt.format(dtf);
-    } else
-      s = line;
-    logLine(s + ": " + line);
-  }
-
-  public final void open() {
-    if (isFile && wrt == null) {
-      openFile();
-    }
-  }
-
-  public final void close() {
-    closeFile();
-  }
-
-  private void openFile() {
-
-    Path dir = filePath.getParent();
+    Path parent = full.getParent();
     try {
-      java.nio.file.Files.createDirectories(dir);
+      java.nio.file.Files.createDirectories(parent);
     } catch (IOException ex) {
-      throw new ERuntimeException("Failed to create directory for flight recorder. Required directory: " + dir.toString(), ex);
+      throw new ERuntimeException("Failed to create directory for flight recorder. Required directory: " + parent.toString(), ex);
     }
     try {
-      java.nio.file.Files.deleteIfExists(filePath);
+      java.nio.file.Files.deleteIfExists(full);
     } catch (IOException ex) {
-      throw new ERuntimeException("Failed to try delete existing flight recorder. Tested file: " + filePath.toString(), ex);
+      throw new ERuntimeException("Failed to try delete existing flight recorder. File: " + full.toString(), ex);
     }
 
-    java.io.FileWriter fw;
+    OutputStream fw;
     try {
-      fw = new FileWriter(filePath.toFile());
+      fw = new FileOutputStream(full.toFile());
     } catch (IOException ex) {
-      throw new ERuntimeException("Failed to open flight recorder file: " + filePath.toString(), ex);
+      throw new ERuntimeException("Failed to open flight recorder file: " + full.toString(), ex);
     }
-
-    wrt = new BufferedWriter(fw);
-
+    return fw;
   }
 
-  private void closeFile() {
+  public Recorder(String recorderName, OutputStream os, String fromTimeSeparator) {
+    super(
+        recorderName,
+        os);
+    super.setAddSimulationTime(true);
+    super.setSimulationTimeSeparator(fromTimeSeparator);
+    this.os = os;
+  }
+
+  public void close() {
     try {
-      wrt.flush();
-      wrt.close();
-      wrt = null;
-    } catch (IOException ex) {
-      throw new ERuntimeException("Failed to close flight recorder file " + filePath.toString(), ex);
+      os.close();
+    } catch (IOException e) {
+      throw new ERuntimeException("Failed to close recorder " + super.getName());
     }
+  }
+
+  @Override
+  protected void writeLine(String format, Object... params) {
+    super.writeLine(format, params);
   }
 
   protected String getMessageContentString(IMessageContent content) {
@@ -155,7 +116,7 @@ public abstract class Recorder {
       return "{Computer ATC} Radar contact confirmation.";
     } else if (content instanceof GoingAroundNotification) {
       return "Going around. " + ((GoingAroundNotification) content).getReason();
-    } else if (content instanceof Confirmation){
+    } else if (content instanceof Confirmation) {
       return "Confirmation (???)" + content.toString();
     } else {
       throw new ERuntimeException("Message content cannot be get for type " + content.getClass().getName());

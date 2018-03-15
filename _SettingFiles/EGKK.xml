@@ -134,17 +134,17 @@
               </approaches>
               <routes>
                 <!-- STARs are shared for both runways -->
-                <route type="star" name="TELTU1G"
+                <route type="star" name="TELTU1G" entryFL="220"
                        route="PD TELTU T SL 220 PD SFD T PD TIMBA T H TIMBA"/>
-                <route type="star" name="AMDUT1G"
+                <route type="star" name="AMDUT1G" entryFL="220"
                        route="PD AMDUT T SL 220 PD SFD T PD WILLO T H WILLO"/>
-                <route type="star" name="ARNUN1G"
+                <route type="star" name="ARNUN1G" entryFL="220"
                        route="PD ARNUN T PD HASTY T SL 220 PD SFD T PD WILLO T H WILLO"/>
-                <route type="star" name="OTMET1G"
+                <route type="star" name="OTMET1G" entryFL="220"
                        route="PD OTMET T PD SOKDU T PD NEDUL T SL 250 PD TELTU T SL 220 PD HOLLY T PD WILLO T H WILLO"/>
-                <route type="star" name="VASUX1G"
+                <route type="star" name="VASUX1G" entryFL="220"
                        route="PD VASUX T PD DISVO T SL 250 PD TELTU T SL 220 PD HOLLY T PD WILLO T H WILLO"/>
-                <route type="star" name="TIMBA2G"
+                <route type="star" name="TIMBA2G" entryFL="220"
                        route="PD NEVIL T PD OSPOL T PD NETVU T PD ELDAX T PD AMDUT T SL 250 PD KKE64 T PD TIMBA T H TIMBA"/>
                 <route type="star" name="TIMBA4B"
                        route="PD KUNAV T PD AMDUT T SL 250 PD KKE64 T PD TIMBA T H TIMBA"/>

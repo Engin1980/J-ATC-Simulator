@@ -1,6 +1,5 @@
 package eng.jAtcSim.lib.messaging;
 
-import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,12 +24,12 @@ public class Messenger {
 
   public static final XSystem SYSTEM = new XSystem();
   private List<Message> inner = new LinkedList<>();
-  private MessageRecorder recorder = new MessageRecorder("messenger.txt", false, true);
+  private MessengerRecorder recorder = new MessengerRecorder("Messenger log", "messenger.log");
 
   public void send(Message msg) {
     synchronized (inner) {
       inner.add(msg);
-      recorder.recordMessage(MessageRecorder.eAction.ADD, msg);
+      recorder.recordMessage(MessengerRecorder.eAction.ADD, msg);
     }
   }
 
@@ -41,7 +40,7 @@ public class Messenger {
           inner.stream().filter(q -> q.getTarget() == participant).collect(Collectors.toList());
       if (deleteRetrieved){
         inner.removeAll(ret);
-        ret.stream().forEach(q -> {recorder.recordMessage(MessageRecorder.eAction.GET, q) ;});
+        ret.stream().forEach(q -> {recorder.recordMessage(MessengerRecorder.eAction.GET, q) ;});
       }
     }
     return ret;

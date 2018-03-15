@@ -8,10 +8,11 @@ package eng.jAtcSim.lib.airplanes;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.pilots.Pilot;
 import eng.eSystem.EStringBuilder;
-import eng.jAtcSim.lib.global.Recorder;
+import eng.jAtcSim.lib.global.logging.Recorder;
 import eng.jAtcSim.lib.messaging.Message;
 import eng.jAtcSim.lib.global.ETime;
 
+import java.io.OutputStream;
 import java.nio.file.Path;
 
 /**
@@ -25,25 +26,22 @@ public class FlightRecorder extends Recorder {
 
   private final EStringBuilder sb = new EStringBuilder(DEFAULT_STRING_BUILDER_SIZE);
 
-  public static FlightRecorder create(Callsign callsign, boolean logToConsole, boolean logToFile){
-    Path filePath = null;
-
-    if (logToFile) {
-      filePath = Recorder.buildGenericLogFilePath(callsign.toString() + ".log");
-    }
-    
-    FlightRecorder ret = new FlightRecorder(filePath);
+  public static FlightRecorder create(Callsign callsign){
+    FlightRecorder ret = new FlightRecorder(
+        callsign,
+        Recorder.createRecorderFileOutputStream(
+            callsign.toString(false)+".log"));
     return ret;
   }
 
-  private FlightRecorder(Path filePath) {
-    super(filePath, false, true);
+  private FlightRecorder(Callsign cls, OutputStream os) {
+    super(cls.toString(), os, SEPARATOR);
   }
 
   /**
    * Logs common information reported every second.
    *
-   * @param plane Plane to log about.
+   * @param plane Plane to write about.
    */
   void logFDR(Airplane plane, Pilot pilot) {
     ETime now = Acc.now();
@@ -70,7 +68,7 @@ public class FlightRecorder extends Recorder {
     sb.appendFormat(" BEH: {%s} ", pilot.getBehaviorLogString());
 
     sb.appendLine();
-    logLine(sb.toString());
+    super.writeLine(sb.toString());
   }
 
   public void logCVR(Message m) {
@@ -90,7 +88,7 @@ public class FlightRecorder extends Recorder {
     sb.appendFormat(" %s ", cnt);
 
     sb.appendLine();
-    logLine(sb.toString());
+    super.writeLine(sb.toString());
   }
 
 }

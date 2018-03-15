@@ -8,14 +8,13 @@ package eng.jAtcSim;
 import eng.eSystem.utilites.CollectionUtil;
 import eng.jAtcSim.frmPacks.Pack;
 import eng.jAtcSim.lib.Acc;
-import eng.jAtcSim.lib.Log;
+import eng.jAtcSim.lib.global.logging.ApplicationLog;
+import eng.jAtcSim.lib.global.logging.Log;
 import eng.jAtcSim.lib.Simulation;
 import eng.jAtcSim.lib.airplanes.AirplaneTypes;
 import eng.jAtcSim.lib.exceptions.ERuntimeException;
-import eng.jAtcSim.lib.global.Recorder;
+import eng.jAtcSim.lib.global.logging.Recorder;
 import eng.jAtcSim.lib.traffic.GenericTraffic;
-import eng.jAtcSim.lib.traffic.TestTrafficOneApproach;
-import eng.jAtcSim.lib.traffic.TestTrafficOneDeparture;
 import eng.jAtcSim.lib.traffic.Traffic;
 import eng.jAtcSim.lib.traffic.fleets.Fleets;
 import eng.jAtcSim.lib.weathers.Weather;
@@ -54,11 +53,11 @@ public class JAtcSim {
    * @param args the command line arguments
    */
   public static void main(String[] args) {
-    Acc.setLog(new Log());
+    Acc.setLog(new ApplicationLog());
 
     appSettings = new AppSettings();
 
-    Recorder.setLogPathBase(appSettings.logFolder.toString());
+    Recorder.init(appSettings.logFolder.toString());
 
     // startup wizard
     StartupSettings startupSettings = XmlLoadHelper.loadStartupSettings(appSettings.getStartupSettingsFile());

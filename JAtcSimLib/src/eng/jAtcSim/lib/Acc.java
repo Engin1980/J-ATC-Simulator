@@ -12,6 +12,8 @@ import eng.jAtcSim.lib.atcs.*;
 import eng.jAtcSim.lib.exceptions.ENotSupportedException;
 import eng.jAtcSim.lib.global.ERandom;
 import eng.jAtcSim.lib.global.ETime;
+import eng.jAtcSim.lib.global.logging.ApplicationLog;
+import eng.jAtcSim.lib.global.logging.Log;
 import eng.jAtcSim.lib.stats.Statistics;
 import eng.jAtcSim.lib.traffic.fleets.Fleets;
 import eng.jAtcSim.lib.weathers.Weather;
@@ -27,13 +29,13 @@ public class Acc {
   private static Area area;
   private static Simulation sim;
   private static Airport aip;
-  private static Log log;
+  private static ApplicationLog log;
 
-  public static void setLog(Log log){
+  public static void setLog(ApplicationLog log){
    Acc.log = log;
   }
 
-  public static Log log(){
+  public static ApplicationLog log(){
     return log;
   }
 

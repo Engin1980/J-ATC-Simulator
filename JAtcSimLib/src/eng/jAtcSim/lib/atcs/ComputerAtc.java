@@ -28,7 +28,7 @@ public abstract class ComputerAtc extends Atc {
     List<Message> msgs = Acc.messenger().getByTarget(this, true);
 
     for (Message m : msgs) {
-      recorder.logMessage(m); // incoming speech
+      recorder.write(m); // incoming speech
 
       if (m.isSourceOfType(Airplane.class)) {
         // messages from planes
@@ -147,7 +147,7 @@ public abstract class ComputerAtc extends Atc {
       Message m = new Message(this, Acc.atcApp(),
           new PlaneSwitchMessage(p, " to you (repeated)"));
       Acc.messenger().send(m);
-      recorder.logMessage(m);
+      recorder.write(m);
     }
   }
 
@@ -160,7 +160,7 @@ public abstract class ComputerAtc extends Atc {
 
   protected void approveSwitch(Airplane plane) {
     getPrm().approveSwitch(plane);
-    recorder.log(this, "OTH", "approveSwitch " + plane.getCallsign().toString());
+    recorder.write(this, "OTH", "approveSwitch " + plane.getCallsign().toString());
   }
 
   protected void confirmSwitch(Airplane plane, Atc targetAtc) {

@@ -8,9 +8,10 @@ package eng.jAtcSim.lib.atcs;
 import eng.jAtcSim.lib.Acc;
 import eng.eSystem.EStringBuilder;
 import eng.jAtcSim.lib.global.ETime;
-import eng.jAtcSim.lib.global.Recorder;
+import eng.jAtcSim.lib.global.logging.Recorder;
 import eng.jAtcSim.lib.messaging.Message;
 
+import java.io.OutputStream;
 import java.nio.file.Path;
 
 /**
@@ -24,17 +25,16 @@ public class AtcRecorder extends Recorder {
   private final EStringBuilder sb = new EStringBuilder(DEFAULT_STRING_BUILDER_SIZE);
 
   public static AtcRecorder create(Atc atc) {
-    Path filePath;
-    filePath = Recorder.buildGenericLogFilePath(atc.getName() + ".log");
-    AtcRecorder ret = new AtcRecorder(filePath);
+    OutputStream os = Recorder.createRecorderFileOutputStream(atc.getName() + ".log");
+    AtcRecorder ret = new AtcRecorder(atc, os);
     return ret;
   }
 
-  private AtcRecorder(Path filePath) {
-    super(filePath, false, true);
+  private AtcRecorder(Atc atc, OutputStream os) {
+    super(atc.getName(), os, SEPARATOR);
   }
 
-  public void logMessage(Message m) {
+  public void write(Message m) {
     sb.clear();
 
     String src = getMessageObjectString(m.getSource());
@@ -51,10 +51,10 @@ public class AtcRecorder extends Recorder {
     sb.appendFormat(" %s ", cnt);
 
     sb.appendLine();
-    logLine(sb.toString());
+    super.writeLine(sb.toString());
   }
 
-  public void log (Atc atc, String type, String content){
+  public void write(Atc atc, String type, String content){
     String s = String.format("%s %s %s %s %s %s %s\r\n",
       type,
       SEPARATOR,
@@ -63,6 +63,6 @@ public class AtcRecorder extends Recorder {
       atc.getName(),
       SEPARATOR,
       content);
-    super.logLine(s);
+    super.writeLine(s);
   }
 }

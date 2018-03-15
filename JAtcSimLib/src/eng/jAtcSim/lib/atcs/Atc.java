@@ -92,7 +92,7 @@ public abstract class Atc implements IMessageParticipant {
 
   protected void sendMessage(Message msg){
     Acc.messenger().send(msg);
-    recorder.logMessage(msg);
+    recorder.write(msg);
   }
 
 }

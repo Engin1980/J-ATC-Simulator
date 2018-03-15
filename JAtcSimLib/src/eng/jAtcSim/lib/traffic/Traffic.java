@@ -201,7 +201,7 @@ public abstract class Traffic {
     }
     coord = generateArrivalCoordinate(r.getMainFix().getCoordinate(), Acc.threshold().getCoordinate());
     heading = (int) Coordinates.getBearing(coord, r.getMainFix().getCoordinate());
-    alt = generateArrivingPlaneAltitude(r);
+    alt = generateArrivingPlaneAltitude(r, pt);
 
     routeCmds = r.getCommandsListClone();
     // added command to descend
@@ -223,15 +223,31 @@ public abstract class Traffic {
     return ret;
   }
 
-  private int generateArrivingPlaneAltitude(Route r) {
-    double thousandsFeetPerMile = 500;
+  private int generateArrivingPlaneAltitude(Route r, AirplaneType type) {
 
-    double dist = r.getRouteLength();
-    if (dist < 0) {
-      dist = Coordinates.getDistanceInNM(r.getMainFix().getCoordinate(), Acc.airport().getLocation());
+    int ret;
+    if (r.getEntryFL() != null) {
+      ret = r.getEntryFL() * 100;
+    }
+    else {
+      double thousandsFeetPerMile = 500;
+      double dist = r.getRouteLength();
+      if (dist < 0) {
+        dist = Coordinates.getDistanceInNM(r.getMainFix().getCoordinate(), Acc.airport().getLocation());
+      }
+      ret = (int) (dist * thousandsFeetPerMile); //+ Simulation.rnd.nextInt(-3000, 5000); //5, 12);
     }
 
-    int ret = (int) (dist * thousandsFeetPerMile) + Simulation.rnd.nextInt(-3000, 5000); //5, 12);
+    // update by random value
+    ret += Acc.rnd().nextInt(-3000, 5000 );
+    if (ret > type.maxAltitude) {
+      if (ret < 12000)
+        ret = type.maxAltitude - Acc.rnd().nextInt(4) * 1000;
+      else if (ret < 20000)
+        ret = type.maxAltitude - Acc.rnd().nextInt(7) * 1000;
+      else
+        ret = type.maxAltitude - Acc.rnd().nextInt(11) * 1000;
+    }
     return ret;
   }
 
