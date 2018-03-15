@@ -11,6 +11,9 @@ import eng.jAtcSim.lib.coordinates.Coordinates;
 import eng.jAtcSim.lib.exceptions.ENotSupportedException;
 import eng.jAtcSim.lib.speaking.ICommand;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
+import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeHeadingCommand;
+import eng.jAtcSim.lib.speaking.fromAtc.commands.ProceedDirectCommand;
+import eng.jAtcSim.lib.speaking.fromAtc.commands.ShortcutCommand;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -24,7 +27,7 @@ public class AfterCommandList {
 
   public void consolePrint(){
     for (Item item : inner) {
-      String s = String.format("%s -> %s", item.after.toString(), item.consequent.toString());
+      String s = String.format("%s -> %s", item.antecedent.toString(), item.consequent.toString());
       System.out.println(s);
     }
   }
@@ -43,7 +46,7 @@ public class AfterCommandList {
   public void removeByAntecedent(Class commandType, boolean removeWholeSequence) {
     List<Item> toRem = new ArrayList<>();
     for (Item item : inner) {
-      if (item.after.getClass().equals(commandType))
+      if (item.antecedent.getClass().equals(commandType))
         toRem.add(item);
     }
 
@@ -77,31 +80,31 @@ public class AfterCommandList {
 
     int i = 0;
     while (i < inner.size()) {
-      if (inner.get(i).after instanceof AfterAltitudeCommand) {
-        int trgAlt = ((AfterAltitudeCommand) inner.get(i).after).getAltitudeInFt();
+      if (inner.get(i).antecedent instanceof AfterAltitudeCommand) {
+        int trgAlt = ((AfterAltitudeCommand) inner.get(i).antecedent).getAltitudeInFt();
         if (Math.abs(trgAlt - alt) < 100) {
           ret.add(inner.get(i).consequent);
           inner.remove(i);
         } else {
           i++;
         }
-      } else if (inner.get(i).after instanceof AfterSpeedCommand) {
-        int trgSpd = ((AfterSpeedCommand) inner.get(i).after).getSpeedInKts();
+      } else if (inner.get(i).antecedent instanceof AfterSpeedCommand) {
+        int trgSpd = ((AfterSpeedCommand) inner.get(i).antecedent).getSpeedInKts();
         if (Math.abs(trgSpd - spd) < 10) {
           ret.add(inner.get(i).consequent);
           inner.remove(i);
         } else {
           i++;
         }
-      } else if (inner.get(i).after instanceof AfterNavaidCommand) {
-        AfterNavaidCommand anc = (AfterNavaidCommand) inner.get(i).after;
+      } else if (inner.get(i).antecedent instanceof AfterNavaidCommand) {
+        AfterNavaidCommand anc = (AfterNavaidCommand) inner.get(i).antecedent;
         if (anc.getNavaid().getCoordinate().equals(currentTargetCoordinateOrNull) == false) {
           // flying over some navaid, but not over current targeted by plane(pilot)
           i++;
         } else {
           double dist
               = Coordinates.getDistanceInNM(
-              ((AfterNavaidCommand) inner.get(i).after).getNavaid().getCoordinate(),
+              ((AfterNavaidCommand) inner.get(i).antecedent).getNavaid().getCoordinate(),
               cor);
           if (dist < 1.5) {
             ret.add(inner.get(i).consequent);
@@ -128,7 +131,7 @@ public class AfterCommandList {
   private void removeWithSequenceForward(Item item) {
     inner.remove(item);
 
-    List<Item> toRems = inner.stream().filter(q -> q.after.getDerivationSource() == item.consequent).collect(Collectors.toList());
+    List<Item> toRems = inner.stream().filter(q -> q.antecedent.getDerivationSource() == item.consequent).collect(Collectors.toList());
     for (Item toRem : toRems) {
       removeWithSequenceForward(toRem);
     }
@@ -137,23 +140,43 @@ public class AfterCommandList {
   private void removeWithSequenceBackward(Item item) {
     inner.remove(item);
 
-    if (item.after.getDerivationSource() == null) return;
+    if (item.antecedent.getDerivationSource() == null) return;
 
-    List<Item> toRems = inner.stream().filter(q -> item.after.getDerivationSource() == q.consequent).collect(Collectors.toList());
+    List<Item> toRems = inner.stream().filter(q -> item.antecedent.getDerivationSource() == q.consequent).collect(Collectors.toList());
     for (Item toRem : toRems) {
       removeWithSequenceBackward(toRem);
     }
+  }
+
+  public boolean hasLateralDirectionAfterCoordinate(Coordinate coordinate){
+    boolean ret = this.inner.stream().anyMatch(
+        o -> isLateralDirectionAfterNavaidCommand(coordinate, o ));
+    return ret;
+  }
+
+  private boolean isLateralDirectionAfterNavaidCommand(Coordinate coordinate, Item item){
+    boolean ret = false;
+    if (item.antecedent instanceof AfterNavaidCommand){
+      AfterNavaidCommand anc = (AfterNavaidCommand) item.antecedent;
+      if (anc.getNavaid().getCoordinate().equals(coordinate)){
+        if (item.consequent instanceof ChangeHeadingCommand ||
+            item.consequent instanceof ProceedDirectCommand ||
+            item.consequent instanceof ShortcutCommand)
+          ret = true;
+      }
+    }
+    return ret;
   }
 
 }
 
 class Item {
 
-  public final AfterCommand after;
+  public final AfterCommand antecedent;
   public final IAtcCommand consequent;
 
-  public Item(AfterCommand after, IAtcCommand consequent) {
-    this.after = after;
+  public Item(AfterCommand antecedent, IAtcCommand consequent) {
+    this.antecedent = antecedent;
     this.consequent = consequent;
   }
 

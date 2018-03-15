@@ -24,7 +24,7 @@ public class CenterAtc extends ComputerAtc {
       cmds.add(
           new ChangeAltitudeCommand(ChangeAltitudeCommand.eDirection.climb, getDepartureRandomTargetAltitude(plane)));
 
-      // order to continue after last fix
+      // order to continue antecedent last fix
       Navaid n = plane.getDepartureLastNavaid();
       if (n != null) {
         cmds.add(new AfterNavaidCommand(n));

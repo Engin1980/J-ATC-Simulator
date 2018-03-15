@@ -64,7 +64,7 @@ public abstract class Traffic {
   }
 
   /**
-   * Returns new airplanes after specified time.
+   * Returns new airplanes antecedent specified time.
    *
    * @return New airplanes
    */

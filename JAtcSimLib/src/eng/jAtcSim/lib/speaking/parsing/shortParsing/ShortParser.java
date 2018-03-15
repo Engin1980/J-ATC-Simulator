@@ -109,7 +109,7 @@ public class ShortParser extends Parser {
     sb.appendLine("FH - fly heading; TL - turn left; TR - turn right");
     sb.appendLine("MA - maintain altitude; CM - climb; DM - descend");
     sb.appendLine("SE - speed exact; SM - speed at most; SL - speed at least; SR - own speed");
-    sb.appendLine("T - then; AA - after altitude; AN - after fix; AS - after speed");
+    sb.appendLine("T - then; AA - antecedent altitude; AN - antecedent fix; AS - antecedent speed");
     sb.appendLine("CT - contact tower; CA - contact approach; CC - contact center");
     sb.appendLine("C - cleared for approach (see details); C (I|II|III|G|V|R) [runway]");
     sb.appendLine("PD - proceed direct");

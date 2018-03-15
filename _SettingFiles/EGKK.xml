@@ -205,28 +205,28 @@
                 <route type="star" name="TIMBA1K"
                        route="PD TEBRA T PD ABTUM T PD ARNUN T SL 250 PD KKE63 T PD LARCK T PD TIMBA T H TIMBA"/>
 
-                <route type="sid" name="DVR9M"
-                       route="SL 220 AA 015 PD DET31 T SL 250 PD DET29 T SR CM 50 PD NEXOX T CM 60 PD DVR33 T PD DVR"/>
-                <route type="sid" name="LAM2X"
-                       route="SL 220 PD KKW02 T PD KKE09 T SL 250 PD KKE11 T CM 50 PD SUNAV T PD KKE35 T PD KKN43 T CM 60 PD KKN48 T PD LAM"/>
-                <route type="sid" name="BIG2X"
-                       route="SL 220 PD KKW02 T PD KKE09 T SL 230 PD KKE11 T PD KKE15 T CM 50 PD SUNAV T CM 60 PD KKE38 T PD BIG T SR"/>
-                <route type="sid" name="CLN4X"
-                       route="SL 220 PD KKW02 T PD KKE09 T SR PD KKE11 T PD KKE15 T CM 50 PD SUNAV T PD KKE42 T PD DET T CM 60 PD KKN52 T PD DAGGA T PD CLN"/>
-                <route type="sid" name="HARDY1X"
-                       route="SL 220 PD KKW06 T PD KKW08 T PD KKS11 T SR CM 50 PD KKS17 T CM 60 PD KKS20 T PD KKS25 T PD BOGNA T PD HARDY"/>
-                <route type="sid" name="KENET1X"
-                       route="PD KKW07 T PD KKW09 T PD MID T PD KKW28 T PD KENET"/>
-                <route type="sid" name="SAM1X"
-                       route="PD KKW07 T PD KKW09 T PD MID T PD SAM"/>
-                <route type="sid" name="SFD1X"
-                       route="SL 220 PD KKW06 T PD KKW10 T PD KKW11 T SR PD KKS13 T CM 50 PD KKS19 T CM 60 PD KKS21 T PD SFD"/>
-                <route type="sid" name="WIZAD1X"
-                       route="SL 220 PD KKW04 T PD KKS06 T SR PD KKS09 T PD KKS14 T CM 50 PD MAY T CM 60 PD KKS33 T PD WIZAD"/>
-                <route type="sid" name="ADMAG2X"
-                       route="SL 220 PD KKW02 T PD KKW09 T SR PD KKE11 T PD KKE15 T CM 50 PD SUNAV T CM 60 PD ADMAG"/>
-                <route type="sid" name="TIGER1X"
-                       route="SL 220 PD KKW04 T PD KKS06 T SR PD KKS09 T PD KKS14 T CM 50 PD MAY T PD KKS36 T PD LAM"/>
+                <!--<route type="sid" name="DVR9M"-->
+                       <!--route="SL 220 AA 015 PD DET31 T SL 250 PD DET29 T SR CM 50 PD NEXOX T CM 60 PD DVR33 T PD DVR"/>-->
+                <!--<route type="sid" name="LAM2X"-->
+                       <!--route="SL 220 PD KKW02 T PD KKE09 T SL 250 PD KKE11 T CM 50 PD SUNAV T PD KKE35 T PD KKN43 T CM 60 PD KKN48 T PD LAM"/>-->
+                <!--<route type="sid" name="BIG2X"-->
+                       <!--route="SL 220 PD KKW02 T PD KKE09 T SL 230 PD KKE11 T PD KKE15 T CM 50 PD SUNAV T CM 60 PD KKE38 T PD BIG T SR"/>-->
+                <!--<route type="sid" name="CLN4X"-->
+                       <!--route="SL 220 PD KKW02 T PD KKE09 T SR PD KKE11 T PD KKE15 T CM 50 PD SUNAV T PD KKE42 T PD DET T CM 60 PD KKN52 T PD DAGGA T PD CLN"/>-->
+                <!--<route type="sid" name="HARDY1X"-->
+                       <!--route="SL 220 PD KKW06 T PD KKW08 T PD KKS11 T SR CM 50 PD KKS17 T CM 60 PD KKS20 T PD KKS25 T PD BOGNA T PD HARDY"/>-->
+                <!--<route type="sid" name="KENET1X"-->
+                       <!--route="PD KKW07 T PD KKW09 T PD MID T PD KKW28 T PD KENET"/>-->
+                <!--<route type="sid" name="SAM1X"-->
+                       <!--route="PD KKW07 T PD KKW09 T PD MID T PD SAM"/>-->
+                <!--<route type="sid" name="SFD1X"-->
+                       <!--route="SL 220 PD KKW06 T PD KKW10 T PD KKW11 T SR PD KKS13 T CM 50 PD KKS19 T CM 60 PD KKS21 T PD SFD"/>-->
+                <!--<route type="sid" name="WIZAD1X"-->
+                       <!--route="SL 220 PD KKW04 T PD KKS06 T SR PD KKS09 T PD KKS14 T CM 50 PD MAY T CM 60 PD KKS33 T PD WIZAD"/>-->
+                <!--<route type="sid" name="ADMAG2X"-->
+                       <!--route="SL 220 PD KKW02 T PD KKW09 T SR PD KKE11 T PD KKE15 T CM 50 PD SUNAV T CM 60 PD ADMAG"/>-->
+                <!--<route type="sid" name="TIGER1X"-->
+                       <!--route="SL 220 PD KKW04 T PD KKS06 T SR PD KKS09 T PD KKS14 T CM 50 PD MAY T PD KKS36 T PD LAM"/>-->
                 <route type="sid" name="DAGGA1X"
                        route="SL 220 PD KKW04 T PD KKS06 T SR PD KKS09 T PD KKS14 T CM 50 PD MAY T PD KKS36 T PD DET T PD DAGGA T PD CLN"/>
               </routes>

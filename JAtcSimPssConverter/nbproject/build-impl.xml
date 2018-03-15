@@ -894,11 +894,11 @@ is divided into following sections:
             <entry key="${basedir}" value=""/>
         </propertyfile>
     </target>
-    <target depends="init,-check-automatic-build,-clean-after-automatic-build" name="-verify-automatic-build"/>
+    <target depends="init,-check-automatic-build,-clean-antecedent-automatic-build" name="-verify-automatic-build"/>
     <target depends="init" name="-check-automatic-build">
         <available file="${build.classes.dir}/.netbeans_automatic_build" property="netbeans.automatic.build"/>
     </target>
-    <target depends="init" if="netbeans.automatic.build" name="-clean-after-automatic-build">
+    <target depends="init" if="netbeans.automatic.build" name="-clean-antecedent-automatic-build">
         <antcall target="clean"/>
     </target>
     <target depends="init,deps-jar" name="-pre-pre-compile">

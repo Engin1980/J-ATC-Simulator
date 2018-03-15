@@ -221,7 +221,7 @@ public class Pilot {
           // speed set
           if (parent.getAltitude() > this.accelerationAltitude)
             if (parent.isArrival()) {
-              // after G/A
+              // antecedent G/A
               super.setBehaviorAndState(new ArrivalBehavior(), Airplane.State.arrivingHigh);
             } else {
               super.setBehaviorAndState(
@@ -249,7 +249,7 @@ public class Pilot {
       if (targetCoordinate != null) {
 
         double dist = Coordinates.getDistanceInNM(parent.getCoordinate(), targetCoordinate);
-        if (dist < 0.5) {
+        if (dist < 5 && !pilot.afterCommands.hasLateralDirectionAfterCoordinate(targetCoordinate)) {
           say(new PassingClearanceLimitNotification());
           targetCoordinate = null;
         } else {
@@ -786,7 +786,7 @@ public class Pilot {
     /*
 
      1. zpracuji se prikazy ve fronte
-     2. zkontroluje se, jestli neni neco "after"
+     2. zkontroluje se, jestli neni neco "antecedent"
      3. ridi se letadlo
      4. ridicimu se reknou potvrzeni a zpravy
 
@@ -1004,7 +1004,7 @@ public class Pilot {
         AfterCommand n; // new
         if (!(prev instanceof IAtcCommand)) {
           parent.passMessageToAtc(atc,
-              new IllegalThenCommandRejection("{Then} command must be after another command. The whole command block is ignored."));
+              new IllegalThenCommandRejection("{Then} command must be antecedent another command. The whole command block is ignored."));
         }
         if (prev instanceof ProceedDirectCommand) {
           n = new AfterNavaidCommand(((ProceedDirectCommand) prev).getNavaid());
@@ -1014,7 +1014,7 @@ public class Pilot {
           n = new AfterSpeedCommand(((ChangeSpeedCommand) prev).getSpeedInKts());
         } else {
           parent.passMessageToAtc(atc,
-              new IllegalThenCommandRejection("{Then} command is after a strange command, it does not make sense. The whole command block is ignored."));
+              new IllegalThenCommandRejection("{Then} command is antecedent a strange command, it does not make sense. The whole command block is ignored."));
           speeches.clear();
           return;
         }

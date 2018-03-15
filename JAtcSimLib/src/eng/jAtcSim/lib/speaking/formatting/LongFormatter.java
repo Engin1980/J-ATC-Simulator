@@ -31,7 +31,7 @@ public class LongFormatter extends Formatter {
   }
 
   public String format(AfterNavaidCommand cmd) {
-    return "after " + cmd.getNavaid().getName() + " ";
+    return "antecedent " + cmd.getNavaid().getName() + " ";
   }
 
   public String format(AfterSpeedCommand cmd) {

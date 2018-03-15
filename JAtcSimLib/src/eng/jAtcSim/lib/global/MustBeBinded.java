@@ -19,7 +19,7 @@ public abstract class MustBeBinded {
     if (!binded){
       throw new ERuntimeException(
           "Object " + this.getClass().getSimpleName() + 
-              " has not been binded. Did you call \"bind()\" method over area after loading?");
+              " has not been binded. Did you call \"bind()\" method over area antecedent loading?");
     }
   }
   
