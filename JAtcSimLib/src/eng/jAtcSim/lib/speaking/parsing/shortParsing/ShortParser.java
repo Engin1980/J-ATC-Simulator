@@ -1,19 +1,24 @@
 package eng.jAtcSim.lib.speaking.parsing.shortParsing;
 
 import eng.eSystem.EStringBuilder;
+import eng.eSystem.utilites.StringUtil;
 import eng.jAtcSim.lib.exceptions.EInvalidCommandException;
 import eng.jAtcSim.lib.speaking.IFromAtc;
 import eng.jAtcSim.lib.speaking.ISpeech;
 import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.speaking.parsing.Parser;
+import eng.jAtcSim.lib.speaking.parsing.ShortcutList;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class ShortParser extends Parser {
 
   // <editor-fold defaultstate="collapsed" desc=" Parsers static init ">
   private static final List<SpeechParser> parsers;
+  private ShortcutList shortcuts = new ShortcutList();
+// </editor-fold>
 
   static {
     parsers = new ArrayList<>();
@@ -41,7 +46,29 @@ public class ShortParser extends Parser {
     parsers.add(new ReportDivertTimeParser());
     parsers.add(new DivertParser());
   }
-// </editor-fold>
+
+  private static String normalizeCommandsInString(String line) {
+    if (line == null || line.isEmpty()) {
+      return "";
+    }
+    line = line.trim();
+    while (line.contains("  ")) {
+      line = line.replace("  ", " ");
+    }
+    return line.toUpperCase() + " ";
+  }
+
+  private static SpeechParser getSpeechParser(String line) {
+    for (SpeechParser tmp : parsers) {
+      for (String pref : tmp.getPrefixes()) {
+        if (line.startsWith(pref + " ")) {
+          return tmp;
+        }
+      }
+    }
+
+    return null;
+  }
 
   @Override
   public ISpeech parseOne(String line) {
@@ -58,9 +85,17 @@ public class ShortParser extends Parser {
       SpeechParser p = getSpeechParser(tmp);
 
       if (p == null) {
-        throw new EInvalidCommandException("Failed to parse command prefix.",
-            line.substring(0, line.length() - tmp.length()),
-            tmp);
+        // try shortcuts
+        String trs = tryExpandByShortcut(tmp);
+        if (trs != null) {
+          tmp = trs;
+          p = getSpeechParser(tmp);
+        }
+
+        if (p == null)
+          throw new EInvalidCommandException("Failed to parse command prefix.",
+              line.substring(0, line.length() - tmp.length()),
+              tmp);
       }
 
       RegexGrouper rg = RegexGrouper.apply(tmp, p.getPattern());
@@ -79,31 +114,13 @@ public class ShortParser extends Parser {
     return ret;
   }
 
-  private static String normalizeCommandsInString(String line) {
-    if (line == null || line.isEmpty()) {
-      return "";
-    }
-    line = line.trim();
-    while (line.contains("  ")) {
-      line = line.replace("  ", " ");
-    }
-    return line.toUpperCase() + " ";
-  }
-
-  private static SpeechParser getSpeechParser(String line) {
-    for (SpeechParser tmp : parsers) {
-      for (String pref : tmp.getPrefixes()) {
-        if (line.startsWith(pref+" ")) {
-          return tmp;
-        }
-      }
-    }
-
-    return null;
+  @Override
+  public ShortcutList getShortcuts() {
+    return shortcuts;
   }
 
   @Override
-  public String getHelp(){
+  public String getHelp() {
     EStringBuilder sb = new EStringBuilder();
 
     sb.appendLine("FH - fly heading; TL - turn left; TR - turn right");
@@ -122,6 +139,21 @@ public class ShortParser extends Parser {
   @Override
   public String getHelp(String commandPrefix) {
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+  }
+
+  private String tryExpandByShortcut(String txt) {
+    String ret;
+    String firstWord = StringUtil.getUntil(txt, " ");
+    String rest;
+    if (firstWord.length() < txt.length())
+      rest = txt.substring(firstWord.length() );
+     else rest = "";
+    String exp = this.getShortcuts().tryGet(firstWord);
+    if (exp != null)
+      ret = exp + rest;
+    else
+      ret = null;
+    return ret;
   }
 
 }

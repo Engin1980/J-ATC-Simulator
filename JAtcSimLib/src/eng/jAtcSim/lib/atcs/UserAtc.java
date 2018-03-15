@@ -171,4 +171,7 @@ public class UserAtc extends Atc {
     super.sendMessage(m);
   }
 
+  public Parser getParser() {
+    return parser;
+  }
 }

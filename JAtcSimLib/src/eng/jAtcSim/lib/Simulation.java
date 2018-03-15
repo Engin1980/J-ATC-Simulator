@@ -5,12 +5,10 @@
  */
 package eng.jAtcSim.lib;
 
+import eng.eSystem.EStringBuilder;
 import eng.eSystem.collections.ReadOnlyList;
 import eng.eSystem.events.EventSimple;
-import eng.jAtcSim.lib.airplanes.Airplane;
-import eng.jAtcSim.lib.airplanes.AirplaneList;
-import eng.jAtcSim.lib.airplanes.AirplaneTypes;
-import eng.jAtcSim.lib.airplanes.Airplanes;
+import eng.jAtcSim.lib.airplanes.*;
 import eng.jAtcSim.lib.atcs.Atc;
 import eng.jAtcSim.lib.atcs.CenterAtc;
 import eng.jAtcSim.lib.atcs.TowerAtc;
@@ -30,9 +28,7 @@ import eng.jAtcSim.lib.weathers.Weather;
 import eng.jAtcSim.lib.world.Airport;
 import eng.jAtcSim.lib.world.RunwayThreshold;
 
-import java.util.Calendar;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -49,6 +45,7 @@ public class Simulation {
   private static final Pattern SYSMES_CHANGE_SPEED = Pattern.compile("TICK (\\d+)");
   private static final Pattern SYSMES_METAR = Pattern.compile("METAR");
   private static final Pattern SYSMES_REMOVE = Pattern.compile("REMOVE (\\d{4})");
+  private static final Pattern SYSMES_SHORTCUT = Pattern.compile("SHORTCUT ([\\\\?A-Z0-9]+)( (.+))?");
   private final static double MAX_VICINITY_DISTANCE_IN_NM = 10;
   private final ETime now;
   private final AirplaneTypes planeTypes;
@@ -344,6 +341,15 @@ public class Simulation {
           new Message(Messenger.SYSTEM, Acc.atcApp(), new StringMessageContent(metarText)));
     } else if (SYSMES_REMOVE.asPredicate().test(msgText)) {
       processSystemMessageRemove(m);
+    } else if (SYSMES_SHORTCUT.asPredicate().test(msgText)){
+      processSystemMessageShortcut(m);
+    } else {
+      String msg = m.<StringMessageContent>getContent().getMessageText();
+      Acc.messenger().send(
+          new Message(
+              messenger.SYSTEM,
+              m.<UserAtc>getSource(),
+              new StringMessageContent("Unknown system command '%s'.", msg)));
     }
   }
 
@@ -410,6 +416,55 @@ public class Simulation {
             m.<UserAtc>getSource(),
             new StringMessageContent("Tick speed changed to %d milliseconds.", tickI))
     );
+  }
+
+  private void processSystemMessageShortcut(Message m){
+    String msgText = m.<StringMessageContent>getContent().getMessageText();
+    Matcher matcher = SYSMES_SHORTCUT.matcher(msgText);
+    matcher.find();
+    String key = matcher.group(1);
+    if (matcher.group(2) == null){
+      if (key.equals("?")){
+        // print all keys
+        EStringBuilder sb = new EStringBuilder();
+        sb.appendLine("Printing all shortcuts:");
+        Set<Map.Entry<String, String>> shortcuts = Acc.atcApp().getParser().getShortcuts().getAll();
+        for (Map.Entry<String, String> shortcut : shortcuts) {
+          sb.appendFormatLine("Shortcut key '%s' is expanded as '%s'.", shortcut.getKey(), shortcut.getValue());
+        }
+        Acc.messenger().send(
+            new Message(
+                messenger.SYSTEM,
+                m.<UserAtc>getSource(),
+                new StringMessageContent(sb.toString())));
+      } else {
+        // delete key
+        Acc.atcApp().getParser().getShortcuts().remove(key);
+        Acc.messenger().send(
+            new Message(
+                messenger.SYSTEM,
+                m.<UserAtc>getSource(),
+                new StringMessageContent("Command shortcut key '%s' removed.", key)));
+      }
+    } else {
+      String value = matcher.group(3);
+      if (value.equals("?")){
+        // print current
+        value = Acc.atcApp().getParser().getShortcuts().tryGet(key);
+        Acc.messenger().send(
+            new Message(
+                messenger.SYSTEM,
+                m.<UserAtc>getSource(),
+                new StringMessageContent("Command shortcut '%s' has expansion '%s'.", key, value)));
+      } else {
+        Acc.atcApp().getParser().getShortcuts().add(key, value );
+        Acc.messenger().send(
+            new Message(
+                messenger.SYSTEM,
+                m.<UserAtc>getSource(),
+                new StringMessageContent("Command shortcut '%s' is now defined as '%s'.", key, value)));
+      }
+    }
   }
 
   private void printCommandsHelps() {

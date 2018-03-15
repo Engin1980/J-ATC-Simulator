@@ -1,5 +1,6 @@
 package eng.jAtcSim.lib.speaking.parsing;
 
+import eng.eSystem.collections.ReadOnlyList;
 import eng.jAtcSim.lib.speaking.ISpeech;
 import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
@@ -18,6 +19,8 @@ public abstract class Parser {
     SpeechList<IAtcCommand> ret = lst.convertTo();
     return ret;
   }
+
+  public abstract ShortcutList getShortcuts();
 
   public abstract String getHelp();
   public abstract String getHelp(String commandPrefix);
