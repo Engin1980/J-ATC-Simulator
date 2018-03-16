@@ -230,17 +230,17 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
       return altitude.getValue();
     }
 
-    public void setTargetAltitude(int targetAltitude) {
-      Airplane.this.targetAltitude = targetAltitude;
-    }
+//    public void setTargetAltitude(int targetAltitude) {
+//      Airplane.this.targetAltitude = targetAltitude;
+//    }
 
     public double getHeading() {
       return heading.getValue();
     }
 
-    public void setTargetHeading(double value, boolean useLeftTurn) {
-      Airplane.this.setTargetHeading(value, useLeftTurn);
-    }
+//    public void setTargetHeading(double value, boolean useLeftTurn) {
+//      Airplane.this.setTargetHeading(value, useLeftTurn);
+//    }
 
     public Callsign getCallsign() {
       return callsign;

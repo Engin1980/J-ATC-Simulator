@@ -8,7 +8,7 @@ package eng.jAtcSim.lib.airplanes.pilots;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.exceptions.ENotSupportedException;
 import eng.eSystem.EStringBuilder;
-import eng.jAtcSim.lib.global.SpeedRestriction;
+import eng.jAtcSim.lib.global.Restriction;
 
 /**
  *
@@ -49,7 +49,7 @@ public class AutoThrust {
   }
 
   private final Airplane parent;
-  private SpeedRestriction orderedSpeed;
+  private Restriction orderedSpeed;
   private Mode mode;
 
   public AutoThrust(Airplane parentPlane, Mode mode) {
@@ -67,7 +67,7 @@ public class AutoThrust {
     updateTargetSpeed();
   }
 
-  public void setOrderedSpeed(SpeedRestriction speedRestriction) {
+  public void setOrderedSpeed(Restriction speedRestriction) {
     this.orderedSpeed = speedRestriction;
     updateTargetSpeed();
   }
@@ -129,11 +129,11 @@ public class AutoThrust {
         default:
           switch (this.orderedSpeed.direction) {
             case exactly:
-              return this.orderedSpeed.speedInKts;
+              return this.orderedSpeed.value;
             case atMost:
-              return Math.min(this.orderedSpeed.speedInKts, speedInKts);
+              return Math.min(this.orderedSpeed.value, speedInKts);
             case atLeast:
-              return Math.max(this.orderedSpeed.speedInKts, speedInKts);
+              return Math.max(this.orderedSpeed.value, speedInKts);
             default:
               throw new ENotSupportedException();
           }
@@ -148,7 +148,7 @@ public class AutoThrust {
     if (orderedSpeed != null) {
       sb.appendFormat(" (%s %4d)",
         orderedSpeed.direction.toString(),
-        orderedSpeed.speedInKts);
+        orderedSpeed.value);
     }
 
     return sb.toString();

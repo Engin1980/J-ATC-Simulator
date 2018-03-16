@@ -1,11 +1,7 @@
 package eng.jAtcSim.lib.speaking.parsing.shortParsing;
 
 import eng.jAtcSim.lib.exceptions.ENotSupportedException;
-import eng.jAtcSim.lib.global.SpeedRestriction;
-import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeSpeedCommand;
-import eng.jAtcSim.lib.exceptions.ENotSupportedException;
-import eng.jAtcSim.lib.global.SpeedRestriction;
-import eng.jAtcSim.lib.speaking.ICommand;
+import eng.jAtcSim.lib.global.Restriction;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeSpeedCommand;
 
 class ChangeSpeedParser extends SpeechParser<ChangeSpeedCommand> {
@@ -38,13 +34,13 @@ class ChangeSpeedParser extends SpeechParser<ChangeSpeedCommand> {
       char c = rg.getString(2).charAt(1);
       switch (c) {
         case 'L':
-          ret = new ChangeSpeedCommand(SpeedRestriction.eDirection.atMost, speed);
+          ret = new ChangeSpeedCommand(Restriction.eDirection.atMost, speed);
           break;
         case 'M':
-          ret = new ChangeSpeedCommand(SpeedRestriction.eDirection.atLeast, speed);
+          ret = new ChangeSpeedCommand(Restriction.eDirection.atLeast, speed);
           break;
         case 'E':
-          ret = new ChangeSpeedCommand(SpeedRestriction.eDirection.exactly, speed);
+          ret = new ChangeSpeedCommand(Restriction.eDirection.exactly, speed);
           break;
         default:
           throw new ENotSupportedException();

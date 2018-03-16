@@ -10,7 +10,7 @@ package eng.jAtcSim.lib.global;
  *
  * @author Marek
  */
-public class SpeedRestriction {
+public class Restriction {
   
   public enum eDirection{
     atMost,
@@ -19,16 +19,16 @@ public class SpeedRestriction {
   }
   
   public final eDirection direction;
-  public final int speedInKts;
+  public final int value;
 
-  public SpeedRestriction(eDirection direction, int speedInKts) {
+  public Restriction(eDirection direction, int value) {
     this.direction = direction;
-    this.speedInKts = speedInKts;
+    this.value = value;
   }
 
   @Override
   public String toString() {
-    return direction + " " + speedInKts;
+    return direction + " " + value;
   }
   
 }

@@ -1,6 +1,7 @@
 package eng.jAtcSim.lib.speaking.formatting;
 
 import eng.jAtcSim.lib.Acc;
+import eng.jAtcSim.lib.airplanes.AirplaneDataFormatter;
 import eng.jAtcSim.lib.atcs.Atc;
 import eng.jAtcSim.lib.atcs.PlaneSwitchMessage;
 import eng.jAtcSim.lib.exceptions.ENotSupportedException;
@@ -95,6 +96,27 @@ public class LongFormatter extends Formatter {
       sb.append(cmd.getSpeedInKts());
       sb.append(" kts");
       switch (cmd.getDirection()) {
+        case atLeast:
+          sb.append(" or more");
+          break;
+        case atMost:
+          sb.append(" or less");
+          break;
+      }
+      return sb.toString();
+    }
+  }
+
+  public String format(SetAltitudeRestriction cmd) {
+    if (cmd.getRestriction() == null){
+      return "cancel altitude restrictions";
+    } else {
+      StringBuilder sb = new StringBuilder();
+      sb.append("altitude ");
+      sb.append(
+          AirplaneDataFormatter.formatAltitudeShort(
+              cmd.getRestriction().value, false));
+      switch (cmd.getRestriction().direction) {
         case atLeast:
           sb.append(" or more");
           break;

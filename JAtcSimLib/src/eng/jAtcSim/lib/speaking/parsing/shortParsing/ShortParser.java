@@ -45,6 +45,8 @@ public class ShortParser extends Parser {
 
     parsers.add(new ReportDivertTimeParser());
     parsers.add(new DivertParser());
+
+    parsers.add(new SetAltitudeRestrictionParser());
   }
 
   private static String normalizeCommandsInString(String line) {

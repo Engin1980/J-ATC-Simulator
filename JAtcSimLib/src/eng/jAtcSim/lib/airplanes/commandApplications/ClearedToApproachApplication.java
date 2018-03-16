@@ -3,7 +3,7 @@ package eng.jAtcSim.lib.airplanes.commandApplications;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.coordinates.Coordinates;
 import eng.jAtcSim.lib.global.Headings;
-import eng.jAtcSim.lib.global.SpeedRestriction;
+import eng.jAtcSim.lib.global.Restriction;
 import eng.jAtcSim.lib.speaking.IFromAirplane;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.HighOrderedSpeedForApproach;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.rejections.UnableToEnterApproachFromDifficultPosition;
@@ -63,13 +63,13 @@ public class ClearedToApproachApplication extends CommandApplication<ClearedToAp
       plane.getPilot().abortHolding();
     }
 
-    SpeedRestriction sr = plane.getPilot().getSpeedRestriction();
+    Restriction sr = plane.getPilot().getSpeedRestriction();
 
     if (sr != null &&
-        (sr.direction == SpeedRestriction.eDirection.atLeast ||
-            sr.direction == SpeedRestriction.eDirection.exactly) &&
-        sr.speedInKts > plane.getType().vApp) {
-      IFromAirplane tmp = new HighOrderedSpeedForApproach(sr.speedInKts, plane.getType().vApp);
+        (sr.direction == Restriction.eDirection.atLeast ||
+            sr.direction == Restriction.eDirection.exactly) &&
+        sr.value > plane.getType().vApp) {
+      IFromAirplane tmp = new HighOrderedSpeedForApproach(sr.value, plane.getType().vApp);
       ret.informations.add(tmp);
     }
 

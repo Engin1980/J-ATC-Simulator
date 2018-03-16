@@ -180,4 +180,8 @@ class Item {
     this.consequent = consequent;
   }
 
+  @Override
+  public String toString() {
+    return String.format("%s ==> %s", antecedent, consequent);
+  }
 }

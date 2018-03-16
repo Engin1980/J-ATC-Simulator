@@ -20,7 +20,7 @@ import eng.jAtcSim.lib.exceptions.ENotSupportedException;
 import eng.jAtcSim.lib.exceptions.ERuntimeException;
 import eng.jAtcSim.lib.global.ETime;
 import eng.jAtcSim.lib.global.Headings;
-import eng.jAtcSim.lib.global.SpeedRestriction;
+import eng.jAtcSim.lib.global.Restriction;
 import eng.jAtcSim.lib.speaking.IFromAtc;
 import eng.jAtcSim.lib.speaking.ISpeech;
 import eng.jAtcSim.lib.speaking.SpeechDelayer;
@@ -70,11 +70,11 @@ public class Pilot {
       Pilot.this.targetCoordinate = coordinate;
     }
 
-    public SpeedRestriction getSpeedRestriction() {
+    public Restriction getSpeedRestriction() {
       return speedRestriction;
     }
 
-    public void setSpeedRestriction(SpeedRestriction speedRestriction) {
+    public void setSpeedRestriction(Restriction speedRestriction) {
       Pilot.this.speedRestriction = speedRestriction;
       Pilot.this.adjustTargetSpeed();
     }
@@ -126,7 +126,7 @@ public class Pilot {
     public void setTakeOffBehavior() {
       Pilot.this.behavior = new Pilot.TakeOffBehavior();
       Pilot.this.parent.setTargetSpeed(Pilot.this.parent.getType().vR + 15);
-      Pilot.this.parent.setTargetAltitude(Acc.threshold().getInitialDepartureAltitude());
+      this.setTargetAltitude(Acc.threshold().getInitialDepartureAltitude());
       Pilot.this.parent.setTargetHeading(Acc.threshold().getCourse());
       Pilot.this.parent.setxState(Airplane.State.takeOffRoll);
     }
@@ -153,6 +153,23 @@ public class Pilot {
 
     public void processOrderedDivert() {
       Pilot.this.processDivert();
+    }
+
+    public void setTargetAltitude(int targetAltitude) {
+      Pilot.this.altitudeOrderedByAtc = targetAltitude;
+      adjustTargetAltitude();
+    }
+
+    public void setAltitudeRestriction(Restriction altitudeRestriction) {
+      Pilot.this.altitudeRestriction = altitudeRestriction;
+      if (altitudeRestriction == null)
+        Pilot.this.afterCommands.removeByConsequent(
+            SetAltitudeRestriction.class, false);
+      adjustTargetAltitude();
+    }
+
+    public void setTargetHeading(double value, boolean useLeftTurn) {
+      parent.setTargetHeading(value, useLeftTurn);
     }
 
     protected void setState(Airplane.State state) {
@@ -727,11 +744,13 @@ public class Pilot {
   }
 
   private final Airplane.Airplane4Pilot parent;
-  private String routeName;
   private final SpeechDelayer queue = new SpeechDelayer(1, 7); //Min/max speech delay
   private final AfterCommandList afterCommands = new AfterCommandList();
   private final Map<Atc, SpeechList> saidText = new HashMap<>();
-  private SpeedRestriction speedRestriction = null;
+  private String routeName;
+  private Restriction speedRestriction = null;
+  private Restriction altitudeRestriction = null;
+  private int altitudeOrderedByAtc;
   private Atc atc;
   private boolean hasRadarContact;
   private Coordinate targetCoordinate;
@@ -824,7 +843,7 @@ public class Pilot {
 
     this.parent.divert();
     this.afterCommands.clear();
-    this.behavior  = new DepartureBehavior();
+    this.behavior = new DepartureBehavior();
     this.divertInfo = null;
     this.routeName = n.getName();
     this.parent.setxState(Airplane.State.departingLow);
@@ -1024,22 +1043,51 @@ public class Pilot {
     }
   }
 
+  private void adjustTargetAltitude() {
+    if (altitudeRestriction != null) {
+      int minAllowed;
+      int maxAllowed;
+      switch (altitudeRestriction.direction) {
+        case exactly:
+          minAllowed = altitudeRestriction.value;
+          maxAllowed = altitudeRestriction.value;
+          break;
+        case atLeast:
+          minAllowed = altitudeRestriction.value;
+          maxAllowed = Integer.MAX_VALUE;
+          break;
+        case atMost:
+          minAllowed = Integer.MIN_VALUE;
+          maxAllowed = altitudeRestriction.value;
+          break;
+        default:
+          throw new ERuntimeException("Not supported.");
+      }
+      int ta =
+          getBoundedValueIn(minAllowed, altitudeOrderedByAtc, maxAllowed);
+      parent.setTargetAltitude(ta);
+    } else {
+      if (parent.getTargetAltitude() != altitudeOrderedByAtc)
+        parent.setTargetAltitude(altitudeOrderedByAtc);
+    }
+  }
+
   private void adjustTargetSpeed() {
     int minOrdered;
     int maxOrdered;
     if (speedRestriction != null) {
       switch (speedRestriction.direction) {
         case exactly:
-          minOrdered = speedRestriction.speedInKts;
-          maxOrdered = speedRestriction.speedInKts;
+          minOrdered = speedRestriction.value;
+          maxOrdered = speedRestriction.value;
           break;
         case atLeast:
-          minOrdered = speedRestriction.speedInKts;
+          minOrdered = speedRestriction.value;
           maxOrdered = Integer.MAX_VALUE;
           break;
         case atMost:
           minOrdered = Integer.MIN_VALUE;
-          maxOrdered = speedRestriction.speedInKts;
+          maxOrdered = speedRestriction.value;
           break;
         default:
           throw new ERuntimeException("Not supported.");

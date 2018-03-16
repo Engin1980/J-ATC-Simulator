@@ -40,7 +40,7 @@ public class ChangeAltitudeApplication extends CommandApplication<ChangeAltitude
 
   @Override
   protected ApplicationResult adjustAirplane(Airplane.Airplane4Command plane, ChangeAltitudeCommand c) {
-    plane.setTargetAltitude(c.getAltitudeInFt());
+    plane.getPilot().setTargetAltitude(c.getAltitudeInFt());
     return ApplicationResult.getEmpty();
   }
 }

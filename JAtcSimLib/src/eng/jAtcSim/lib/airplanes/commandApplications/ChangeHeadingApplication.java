@@ -46,7 +46,7 @@ public class ChangeHeadingApplication extends CommandApplication<ChangeHeadingCo
           = c.getDirection() == ChangeHeadingCommand.eDirection.left;
     }
 
-    plane.setTargetHeading((int) targetHeading, leftTurn);
+    plane.getPilot().setTargetHeading((int) targetHeading, leftTurn);
 
     return ApplicationResult.getEmpty();
   }

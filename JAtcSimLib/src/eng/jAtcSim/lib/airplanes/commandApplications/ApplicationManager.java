@@ -2,7 +2,6 @@ package eng.jAtcSim.lib.airplanes.commandApplications;
 
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.speaking.IFromAtc;
-import eng.jAtcSim.lib.speaking.fromAirplane.notifications.PassingClearanceLimitNotification;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.Confirmation;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcNotification;
@@ -32,6 +31,7 @@ public class ApplicationManager {
     cmdApps.put(GoAroundCommand.class, new GoAroundCommandApplication());
     cmdApps.put(ReportDivertTime.class, new ReportDivertTimeCommandApplication());
     cmdApps.put(DivertCommand.class, new DivertCommandApplication());
+    cmdApps.put(SetAltitudeRestriction.class, new SetAltitudeRestrictionApplication());
 
     notApps = new HashMap<>();
     notApps.put(RadarContactConfirmationNotification.class, new RadarContactConfirmationNotificationApplication());
@@ -40,17 +40,17 @@ public class ApplicationManager {
   public static ConfirmationResult confirm(Airplane.Airplane4Command plane, IFromAtc c, boolean checkSanity) {
     ConfirmationResult ret;
 
-    if (c instanceof AfterCommand){
+    if (c instanceof AfterCommand) {
       ret = new ConfirmationResult();
       ret.confirmation = new Confirmation((AfterCommand) c);
     } else if (c instanceof IAtcCommand) {
       CommandApplication ca = cmdApps.get(c.getClass());
       assert ca != null;
       ret = ca.confirm(plane, (IAtcCommand) c, checkSanity);
-    } else if (c instanceof IAtcNotification){
+    } else if (c instanceof IAtcNotification) {
       NotificationApplication na = notApps.get(c.getClass());
       assert na != null;
-      ret = na.confirm(plane, (IAtcNotification)c);
+      ret = na.confirm(plane, (IAtcNotification) c);
     } else {
       throw new UnsupportedOperationException();
     }
@@ -59,14 +59,14 @@ public class ApplicationManager {
 
   }
 
-  public static ApplicationResult apply(Airplane.Airplane4Command plane, IFromAtc c){
+  public static ApplicationResult apply(Airplane.Airplane4Command plane, IFromAtc c) {
     ApplicationResult ret;
 
     if (c instanceof IAtcCommand) {
       ret = cmdApps.get(c.getClass()).apply(plane, (IAtcCommand) c);
-    } else if (c instanceof IAtcNotification){
+    } else if (c instanceof IAtcNotification) {
       ret = notApps.get(c.getClass()).apply(plane, (IAtcNotification) c);
-    }else {
+    } else {
       throw new UnsupportedOperationException();
     }
 

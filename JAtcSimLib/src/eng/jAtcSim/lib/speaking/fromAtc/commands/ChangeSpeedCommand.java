@@ -6,8 +6,7 @@
 package eng.jAtcSim.lib.speaking.fromAtc.commands;
 
 import eng.jAtcSim.lib.exceptions.ENotSupportedException;
-import eng.jAtcSim.lib.global.SpeedRestriction;
-import eng.jAtcSim.lib.speaking.ICommand;
+import eng.jAtcSim.lib.global.Restriction;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
 
 /**
@@ -16,27 +15,27 @@ import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
  */
 public class ChangeSpeedCommand implements IAtcCommand {
 
-  private final SpeedRestriction value;
+  private final Restriction value;
 
   public ChangeSpeedCommand() {
     value = null;
   }
 
-  public ChangeSpeedCommand(SpeedRestriction.eDirection direction, int speedInKts) {
-    SpeedRestriction sr = new SpeedRestriction(direction, speedInKts);
+  public ChangeSpeedCommand(Restriction.eDirection direction, int speedInKts) {
+    Restriction sr = new Restriction(direction, speedInKts);
     this.value = sr;
   }
 
-  public ChangeSpeedCommand(SpeedRestriction value) {
+  public ChangeSpeedCommand(Restriction value) {
     this.value = value;
   }
 
-  public SpeedRestriction.eDirection getDirection() {
+  public Restriction.eDirection getDirection() {
     return value.direction;
   }
 
   public int getSpeedInKts() {
-    return value.speedInKts;
+    return value.value;
   }
 
   public boolean isResumeOwnSpeed() {
@@ -50,18 +49,18 @@ public class ChangeSpeedCommand implements IAtcCommand {
     } else {
       switch (value.direction){
         case atLeast:
-          return "Speed at least " + value.speedInKts + "kts {command}";
+          return "Speed at least " + value.value + "kts {command}";
         case atMost:
-          return "Speed at most " + value.speedInKts + "kts {command}";
+          return "Speed at most " + value.value + "kts {command}";
         case exactly:
-          return "Speed exactly " + value.speedInKts + "kts {command}";
+          return "Speed exactly " + value.value + "kts {command}";
         default:
           throw new ENotSupportedException();
       }
     }
   }
 
-  public SpeedRestriction getSpeedRestriction() {
+  public Restriction getSpeedRestriction() {
     return value;
   }
 }
