@@ -14,6 +14,7 @@ import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeHeadingCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ProceedDirectCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ShortcutCommand;
+import eng.jAtcSim.lib.world.Navaid;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -126,6 +127,13 @@ public class AfterCommandList {
 
   public ICommand getLast() {
     return inner.get(inner.size() - 1).consequent;
+  }
+
+  public boolean hasLateralDirectionToNavaid(Navaid navaid) {
+    boolean ret = this.inner.stream().anyMatch(q ->
+        q.consequent instanceof ProceedDirectCommand &&
+            ((ProceedDirectCommand) q.consequent).getNavaid().equals(navaid));
+    return ret;
   }
 
   private void removeWithSequenceForward(Item item) {

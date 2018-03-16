@@ -6,6 +6,7 @@
 
 package eng.jAtcSim.lib.atcs;
 
+import eng.eSystem.xmlSerialization.XmlOptional;
 import eng.jAtcSim.lib.global.KeyItem;
 
 /**
@@ -19,6 +20,10 @@ public class AtcTemplate implements KeyItem<Atc.eType> {
   private int acceptAltitude;
   private int releaseAltitude;
   private int orderedAltitude;
+  @XmlOptional
+  private Integer ctrAcceptDistance = null;
+  @XmlOptional
+  private Integer ctrNavaidAcceptDistance = null;
 
   @Override
   public Atc.eType getKey() {
@@ -48,5 +53,12 @@ public class AtcTemplate implements KeyItem<Atc.eType> {
   public int getOrderedAltitude() {
     return orderedAltitude;
   }
-  
+
+  public Integer getCtrAcceptDistance() {
+    return ctrAcceptDistance;
+  }
+
+  public Integer getCtrNavaidAcceptDistance() {
+    return ctrNavaidAcceptDistance;
+  }
 }

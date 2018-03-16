@@ -837,6 +837,22 @@ public class Pilot {
     return ret;
   }
 
+  public boolean isOnWayToPassPoint(Navaid navaid) {
+    boolean ret = this.afterCommands.hasLateralDirectionToNavaid(navaid);
+    return ret;
+  }
+
+  private String extractNavaidNameFromRouteOrFix() {
+    String ret;
+    int len = this.routeName.length();
+    boolean hasDigit = Character.isDigit(this.routeName.charAt(len-2));
+    if (!hasDigit)
+      ret = this.routeName;
+    else
+      ret = this.routeName.substring(0, len-2);
+    return ret;
+  }
+
   private void processDivert() {
 
     Navaid n = getDivertNavaid();

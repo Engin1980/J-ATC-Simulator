@@ -117,7 +117,8 @@
       <initialPosition coordinate="51 08 53 N 0 11 25 W" range="85"/>
       <atcTemplates>
         <atcTemplate type="ctr" name="LON_S_CTR" frequency="129.42"
-                     releaseAltitude="19000" acceptAltitude="7000" orderedAltitude="17000"/>
+                     releaseAltitude="19000" acceptAltitude="7000" orderedAltitude="17000"
+                      ctrAcceptDistance="20" ctrNavaidAcceptDistance="20" />
         <atcTemplate type="twr" name="EGKK_TWR" frequency="124.225"
                      releaseAltitude="300" acceptAltitude="3000" orderedAltitude="4000"/>
         <atcTemplate type="app" name="EGKK_DIR" frequency="126.825"

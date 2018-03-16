@@ -597,7 +597,7 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     String routeName = this.pilot.getRouteName();
     if (routeName.length() > 2 && Character.isDigit(routeName.charAt(routeName.length() - 2)))
       routeName = routeName.substring(0, routeName.length() - 2);
-    Navaid ret = Acc.area().getNavaids().tryGet(routeName);
+    Navaid ret = Acc.area().getNavaids().get(routeName);
     return ret;
   }
 
@@ -615,6 +615,12 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
 
   public Airplane4Display getPlane4Display() {
     return this.plane4Display;
+  }
+
+  public boolean isOnWayToPassDeparturePoint() {
+    Navaid n = this.getDepartureLastNavaid();
+    boolean ret = this.pilot.isOnWayToPassPoint(n);
+    return ret;
   }
 
   // </editor-fold>

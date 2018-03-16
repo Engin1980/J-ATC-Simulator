@@ -2,14 +2,36 @@ package eng.jAtcSim.lib.atcs;
 
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
+import eng.jAtcSim.lib.coordinates.Coordinates;
 import eng.jAtcSim.lib.messaging.Message;
 import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeAltitudeCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeHeadingCommand;
+import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeSpeedCommand;
+import eng.jAtcSim.lib.speaking.fromAtc.commands.SetAltitudeRestriction;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.afters.AfterNavaidCommand;
 import eng.jAtcSim.lib.world.Navaid;
 
 public class CenterAtc extends ComputerAtc {
+
+  private int ctrAcceptDistance = 40;
+  private int ctrNavaidAcceptDistance = 15;
+
+  public CenterAtc(AtcTemplate template) {
+    super(template);
+    if (template.getCtrAcceptDistance() != null)
+      this.ctrAcceptDistance = template.getCtrAcceptDistance();
+    if (template.getCtrNavaidAcceptDistance() != null)
+      this.ctrNavaidAcceptDistance = template.getCtrNavaidAcceptDistance();
+  }
+
+  public int getCtrAcceptDistance() {
+    return ctrAcceptDistance;
+  }
+
+  public int getCtrNavaidAcceptDistance() {
+    return ctrNavaidAcceptDistance;
+  }
 
   @Override
   public void unregisterPlaneUnderControl(Airplane plane) {
@@ -23,21 +45,19 @@ public class CenterAtc extends ComputerAtc {
 
       cmds.add(
           new ChangeAltitudeCommand(ChangeAltitudeCommand.eDirection.climb, getDepartureRandomTargetAltitude(plane)));
+      cmds.add(
+          new SetAltitudeRestriction(null)); // to abort altitude restriction
+      cmds.add(
+          new ChangeSpeedCommand()); // to abort speeed restriction
 
-      // order to continue antecedent last fix
+      // order to continue after last fix
       Navaid n = plane.getDepartureLastNavaid();
-      if (n != null) {
-        cmds.add(new AfterNavaidCommand(n));
-        cmds.add(new ChangeHeadingCommand());
-      }
+      cmds.add(new AfterNavaidCommand(n));
+      cmds.add(new ChangeHeadingCommand());
 
       Message m = new Message(this, plane, cmds);
       super.sendMessage(m);
     }
-  }
-
-  public CenterAtc(AtcTemplate template) {
-    super(template);
   }
 
   @Override
@@ -47,19 +67,36 @@ public class CenterAtc extends ComputerAtc {
 
   @Override
   protected boolean canIAcceptPlane(Airplane p) {
-    boolean ret = true;
+    boolean ret;
     if (p.isArrival()) {
       ret = false;
-    }
-    if (p.getAltitude() < super.acceptAltitude) {
-      ret = false;
+    } else {
+      if (p.isOnWayToPassDeparturePoint() == false) {
+        ret = false;
+      } else {
+        if (p.getAltitude() > super.acceptAltitude) {
+          ret = false;
+        } else {
+          double aipDist = Coordinates.getDistanceInNM(p.getCoordinate(), Acc.airport().getLocation());
+          if (aipDist > this.ctrAcceptDistance) {
+            ret = true;
+          } else {
+            double navDist = Coordinates.getDistanceInNM(p.getCoordinate(), p.getDepartureLastNavaid().getCoordinate());
+            if (navDist < this.ctrNavaidAcceptDistance) {
+              ret = true;
+            } else {
+              ret = false;
+            }
+          }
+        }
+      }
     }
     return ret;
   }
 
   @Override
   protected void processMessagesFromPlane(Airplane p, SpeechList spchs) {
-// nothing to process
+    // nothing to process
   }
 
   @Override
