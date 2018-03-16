@@ -162,10 +162,6 @@ public abstract class Traffic {
         new AfterAltitudeCommand(Acc.threshold().getParent().getParent().getAltitude() + Acc.rnd().nextInt(150, 450)));
     routeCmds.add(indx++, new ContactCommand(Atc.eType.app));
 
-    // -- po vysce + 3000 rychlost na odlet
-//    routeCmds.send(indx++,
-//        new AfterAltitudeCommand(Acc.threshold().getParent().getParent().getAltitude() + 3000));
-//    routeCmds.send(indx++, new ChangeSpeedCommand(ChangeSpeedCommand.eDirection.increase, 250));
     String routeName;
     if (r != null) {
       routeName = r.getName();
@@ -235,7 +231,7 @@ public abstract class Traffic {
       if (dist < 0) {
         dist = Coordinates.getDistanceInNM(r.getMainFix().getCoordinate(), Acc.airport().getLocation());
       }
-      ret = (int) (dist * thousandsFeetPerMile); //+ Simulation.rnd.nextInt(-3000, 5000); //5, 12);
+      ret = (int) (dist * thousandsFeetPerMile);
     }
 
     // update by random value
