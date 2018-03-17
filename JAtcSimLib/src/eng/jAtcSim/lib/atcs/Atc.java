@@ -34,9 +34,9 @@ public abstract class Atc implements IMessageParticipant {
   
   protected final AtcRecorder recorder;
 
-  public abstract void unregisterPlaneUnderControl(Airplane plane);
+  public abstract void unregisterPlaneUnderControl(Airplane plane, boolean finalUnregistration);
 
-  public abstract void registerNewPlaneUnderControl(Airplane plane);
+  public abstract void registerNewPlaneUnderControl(Airplane plane, boolean initialRegistration);
 
   protected PlaneResponsibilityManager getPrm(){
     return PlaneResponsibilityManager.getInstance();

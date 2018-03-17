@@ -3,13 +3,16 @@ package eng.jAtcSim.lib.atcs;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.coordinates.Coordinates;
+import eng.jAtcSim.lib.global.logging.ApplicationLog;
 import eng.jAtcSim.lib.messaging.Message;
 import eng.jAtcSim.lib.speaking.SpeechList;
+import eng.jAtcSim.lib.speaking.fromAirplane.notifications.GoodDayNotification;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeAltitudeCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeHeadingCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeSpeedCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.SetAltitudeRestriction;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.afters.AfterNavaidCommand;
+import eng.jAtcSim.lib.speaking.fromAtc.notifications.RadarContactConfirmationNotification;
 import eng.jAtcSim.lib.world.Navaid;
 
 public class CenterAtc extends ComputerAtc {
@@ -34,30 +37,13 @@ public class CenterAtc extends ComputerAtc {
   }
 
   @Override
-  public void unregisterPlaneUnderControl(Airplane plane) {
+  public void unregisterPlaneUnderControl(Airplane plane, boolean finalUnregistration) {
 
   }
 
   @Override
-  public void registerNewPlaneUnderControl(Airplane plane) {
-    if (plane.isDeparture()) {
-      SpeechList cmds = new SpeechList();
+  public void registerNewPlaneUnderControl(Airplane plane, boolean finalRegistration) {
 
-      cmds.add(
-          new ChangeAltitudeCommand(ChangeAltitudeCommand.eDirection.climb, getDepartureRandomTargetAltitude(plane)));
-      cmds.add(
-          new SetAltitudeRestriction(null)); // to abort altitude restriction
-      cmds.add(
-          new ChangeSpeedCommand()); // to abort speeed restriction
-
-      // order to continue after last fix
-      Navaid n = plane.getDepartureLastNavaid();
-      cmds.add(new AfterNavaidCommand(n));
-      cmds.add(new ChangeHeadingCommand());
-
-      Message m = new Message(this, plane, cmds);
-      super.sendMessage(m);
-    }
   }
 
   @Override
@@ -75,7 +61,7 @@ public class CenterAtc extends ComputerAtc {
         ret = false;
       } else {
         if (p.getAltitude() > super.acceptAltitude) {
-          ret = false;
+          ret = true;
         } else {
           double aipDist = Coordinates.getDistanceInNM(p.getCoordinate(), Acc.airport().getLocation());
           if (aipDist > this.ctrAcceptDistance) {
@@ -95,7 +81,32 @@ public class CenterAtc extends ComputerAtc {
   }
 
   @Override
-  protected void processMessagesFromPlane(Airplane p, SpeechList spchs) {
+  protected void processMessagesFromPlane(Airplane plane, SpeechList spchs) {
+    for (Object o : spchs) {
+      if (o instanceof GoodDayNotification){
+        if (plane.isDeparture()) {
+          SpeechList cmds = new SpeechList();
+
+          cmds.add(
+              new RadarContactConfirmationNotification());
+          cmds.add(
+              new ChangeAltitudeCommand(ChangeAltitudeCommand.eDirection.climb, getDepartureRandomTargetAltitude(plane)));
+          cmds.add(
+              new SetAltitudeRestriction(null)); // to abort altitude restriction
+          cmds.add(
+              new ChangeSpeedCommand()); // to abort speeed restriction
+
+          // order to continue after last fix
+          Navaid n = plane.getDepartureLastNavaid();
+          cmds.add(new AfterNavaidCommand(n));
+          cmds.add(new ChangeHeadingCommand());
+
+          Message m = new Message(this, plane, cmds);
+          super.sendMessage(m);
+        }
+      }
+
+    }
     // nothing to process
   }
 

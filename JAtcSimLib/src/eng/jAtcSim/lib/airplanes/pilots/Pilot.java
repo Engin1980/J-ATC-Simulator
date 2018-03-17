@@ -838,18 +838,23 @@ public class Pilot {
   }
 
   public boolean isOnWayToPassPoint(Navaid navaid) {
-    boolean ret = this.afterCommands.hasLateralDirectionToNavaid(navaid);
+    boolean ret;
+    if (this.targetCoordinate != null && this.targetCoordinate.equals(navaid.getCoordinate())) {
+      ret = true;
+    } else {
+      ret = this.afterCommands.hasLateralDirectionToNavaid(navaid);
+    }
     return ret;
   }
 
   private String extractNavaidNameFromRouteOrFix() {
     String ret;
     int len = this.routeName.length();
-    boolean hasDigit = Character.isDigit(this.routeName.charAt(len-2));
+    boolean hasDigit = Character.isDigit(this.routeName.charAt(len - 2));
     if (!hasDigit)
       ret = this.routeName;
     else
-      ret = this.routeName.substring(0, len-2);
+      ret = this.routeName.substring(0, len - 2);
     return ret;
   }
 

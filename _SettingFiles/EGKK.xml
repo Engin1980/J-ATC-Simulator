@@ -355,8 +355,8 @@
     <navaid name="VASUX" type="fix" coordinate="503009.23N 0011516.99W"/>
     <navaid name="WILLO" type="fix" coordinate="505905.88N 0001130.30W"/>
     <navaid name="WIZAD" type="fix" coordinate="510700.00N 0005711.00E"/>
-    <navaid name="DET31" type="fix" coordinate="51.20582975921482 -0.2102778551925172"/>
-    <navaid name="DET29" type="fix" coordinate="51.2205543491044 -0.1605556296941767"/>
+    <navaid name="DET31" type="fixMinor" coordinate="51.20582975921482 -0.2102778551925172"/>
+    <navaid name="DET29" type="fixMinor" coordinate="51.2205543491044 -0.1605556296941767"/>
     <navaid name="DVR33" type="fixMinor" coordinate="51.21809599856 0.60466674227"/>
     <navaid name="NEXOX" type="fix" coordinate="51 15 01 N 000 11 38 E"/>
     <navaid name="DVR" type="fix" coordinate="51 09 45 N 001 21 33 E"/>

@@ -61,12 +61,12 @@ public class UserAtc extends Atc {
   }
 
   @Override
-  public void unregisterPlaneUnderControl(Airplane plane) {
+  public void unregisterPlaneUnderControl(Airplane plane, boolean finalUnergistration) {
 
   }
 
   @Override
-  public void registerNewPlaneUnderControl(Airplane plane) {
+  public void registerNewPlaneUnderControl(Airplane plane, boolean finalRegistration) {
 
   }
 

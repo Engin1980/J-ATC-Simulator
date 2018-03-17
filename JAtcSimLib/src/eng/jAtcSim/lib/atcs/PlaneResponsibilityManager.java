@@ -14,59 +14,16 @@ import eng.jAtcSim.lib.exceptions.ERuntimeException;
 import eng.jAtcSim.lib.messaging.Message;
 import eng.jAtcSim.lib.messaging.Messenger;
 import eng.jAtcSim.lib.messaging.StringMessageContent;
+
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 /**
- *
  * @author Marek
  */
 public class PlaneResponsibilityManager {
-
-  private static final PlaneResponsibilityManager me = new PlaneResponsibilityManager();
-
-  public static PlaneResponsibilityManager getInstance() {
-    return me;
-  }
-
-  public ReadOnlyList<Airplane.Airplane4Display> getPlanesToDisplay() {
-    ReadOnlyList<Airplane.Airplane4Display> ret
-        = new ReadOnlyList<>(this.infos);
-    return ret;
-  }
-
-  boolean isToSwitch(Airplane p) {
-    eState s = map.get(p);
-    return s == eState.app2ctr
-      || s == eState.app2twr
-      || s == eState.ctr2app
-      || s == eState.twr2app;
-  }
-
-  boolean isAskedToSwitch(Airplane p) {
-    eState s = map.get(p);
-    boolean ret = s == eState.app
-      || s == eState.ctr
-      || s == eState.twr;
-    ret = !ret;
-    return ret;
-  }
-
-  private Atc getApprovedAtc(Airplane p) {
-    switch (map.get(p)) {
-      case app2ctrReady:
-        return Acc.atcCtr();
-      case app2twrReady:
-        return Acc.atcTwr();
-      case ctr2appReady:
-      case twr2appReady:
-        return Acc.atcApp();
-      default:
-        throw new ENotSupportedException();
-    }
-  }
 
   public enum eState {
 
@@ -82,11 +39,15 @@ public class PlaneResponsibilityManager {
     twr2appReady,
     twr
   }
-
+  private static final PlaneResponsibilityManager me = new PlaneResponsibilityManager();
   private final Map<Airplane, eState> map = new HashMap<>();
   private final Map<Atc, AirplaneList> lst = new HashMap<>();
   private final AirplaneList all = new AirplaneList();
   private final List<Airplane.Airplane4Display> infos = new LinkedList<>();
+
+  public static PlaneResponsibilityManager getInstance() {
+    return me;
+  }
 
   private PlaneResponsibilityManager() {
     lst.put(Acc.atcApp(), new AirplaneList());
@@ -94,24 +55,10 @@ public class PlaneResponsibilityManager {
     lst.put(Acc.atcTwr(), new AirplaneList());
   }
 
-  protected AirplaneList getPlanes(Atc atc) {
-    //TODO není to moc pomalé?
-    AirplaneList nw = new AirplaneList();
-    nw.addAll(lst.get(atc));
-    return nw;
-  }
-
-  private eState typeToState(Atc atc) {
-    switch (atc.getType()) {
-      case ctr:
-        return eState.ctr;
-      case app:
-        return eState.app;
-      case twr:
-        return eState.twr;
-      default:
-        throw new ENotSupportedException();
-    }
+  public ReadOnlyList<Airplane.Airplane4Display> getPlanesToDisplay() {
+    ReadOnlyList<Airplane.Airplane4Display> ret
+        = new ReadOnlyList<>(this.infos);
+    return ret;
   }
 
   public void registerPlane(Atc atc, Airplane plane) {
@@ -123,7 +70,7 @@ public class PlaneResponsibilityManager {
     lst.get(atc).add(plane);
     all.add(plane);
     infos.add(plane.getPlane4Display());
-    atc.registerNewPlaneUnderControl(plane);
+    atc.registerNewPlaneUnderControl(plane, true);
   }
 
   public void unregisterPlane(Airplane plane) {
@@ -137,7 +84,7 @@ public class PlaneResponsibilityManager {
     lst.get(atc).remove(plane);
     all.remove(plane);
     infos.remove(plane.getPlane4Display());
-    atc.unregisterPlaneUnderControl(plane);
+    atc.unregisterPlaneUnderControl(plane, true);
   }
 
   public void requestSwitch(Atc from, Atc to, Airplane plane) {
@@ -206,15 +153,6 @@ public class PlaneResponsibilityManager {
     }
   }
 
-  private boolean isIn(eState value, eState... set) {
-    for (eState e : set) {
-      if (e == value) {
-        return true;
-      }
-    }
-    return false;
-  }
-
   public void confirmSwitch(Atc atc, Airplane plane) {
     if (isToSwitchToAtc(atc, plane)) {
       switch (map.get(plane)) {
@@ -249,16 +187,20 @@ public class PlaneResponsibilityManager {
     eState newState = typeToState(newAtc);
     map.put(plane, newState);
 
+    oldAtc.unregisterPlaneUnderControl(plane, false);
     lst.get(oldAtc).remove(plane);
     lst.get(newAtc).add(plane);
+    newAtc.registerNewPlaneUnderControl(plane, false);
+
+    // this is the place, THE place!
   }
 
   public boolean isApprovedToSwitch(Airplane plane) {
     eState s = map.get(plane);
     return s == eState.app2ctrReady
-      || s == eState.app2twrReady
-      || s == eState.ctr2appReady
-      || s == eState.twr2appReady;
+        || s == eState.app2twrReady
+        || s == eState.ctr2appReady
+        || s == eState.twr2appReady;
   }
 
   public Atc getResponsibleAtc(Airplane plane) {
@@ -311,5 +253,65 @@ public class PlaneResponsibilityManager {
 
   public ReadOnlyList<Airplane> getAll() {
     return new ReadOnlyList<>(all);
+  }
+
+  boolean isToSwitch(Airplane p) {
+    eState s = map.get(p);
+    return s == eState.app2ctr
+        || s == eState.app2twr
+        || s == eState.ctr2app
+        || s == eState.twr2app;
+  }
+
+  boolean isAskedToSwitch(Airplane p) {
+    eState s = map.get(p);
+    boolean ret = s == eState.app
+        || s == eState.ctr
+        || s == eState.twr;
+    ret = !ret;
+    return ret;
+  }
+
+  private Atc getApprovedAtc(Airplane p) {
+    switch (map.get(p)) {
+      case app2ctrReady:
+        return Acc.atcCtr();
+      case app2twrReady:
+        return Acc.atcTwr();
+      case ctr2appReady:
+      case twr2appReady:
+        return Acc.atcApp();
+      default:
+        throw new ENotSupportedException();
+    }
+  }
+
+  protected AirplaneList getPlanes(Atc atc) {
+    //TODO není to moc pomalé?
+    AirplaneList nw = new AirplaneList();
+    nw.addAll(lst.get(atc));
+    return nw;
+  }
+
+  private eState typeToState(Atc atc) {
+    switch (atc.getType()) {
+      case ctr:
+        return eState.ctr;
+      case app:
+        return eState.app;
+      case twr:
+        return eState.twr;
+      default:
+        throw new ENotSupportedException();
+    }
+  }
+
+  private boolean isIn(eState value, eState... set) {
+    for (eState e : set) {
+      if (e == value) {
+        return true;
+      }
+    }
+    return false;
   }
 }

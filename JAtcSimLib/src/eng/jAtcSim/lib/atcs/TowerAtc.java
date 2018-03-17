@@ -81,7 +81,8 @@ public class TowerAtc extends ComputerAtc {
   }
 
   @Override
-  public void unregisterPlaneUnderControl(Airplane plane) {
+  public void unregisterPlaneUnderControl(Airplane plane, boolean finalUnregistration) {
+    //TODO the Tower ATC does some unregistration operations probably somewhere here in the code, should be checked
     if (landingPlanes.contains(plane))
       landingPlanes.remove(plane);
     if (goAroundedPlanesToSwitch.contains(plane))
@@ -98,7 +99,7 @@ public class TowerAtc extends ComputerAtc {
   }
 
   @Override
-  public void registerNewPlaneUnderControl(Airplane plane) {
+  public void registerNewPlaneUnderControl(Airplane plane, boolean initialRegistration) {
     if (plane.isArrival()) {
       landingPlanes.add(plane);
     } else {
