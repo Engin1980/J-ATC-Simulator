@@ -3,6 +3,7 @@ package eng.jAtcSim.radarBase;
 import eng.eSystem.EStringBuilder;
 import eng.eSystem.collections.ReadOnlyList;
 import eng.eSystem.events.Event;
+import eng.eSystem.utilites.CollectionUtil;
 import eng.jAtcSim.lib.Simulation;
 import eng.jAtcSim.lib.airplanes.*;
 import eng.jAtcSim.lib.atcs.Atc;
@@ -18,6 +19,7 @@ import eng.jAtcSim.lib.messaging.Messenger;
 import eng.jAtcSim.lib.messaging.StringMessageContent;
 import eng.jAtcSim.lib.speaking.ISpeech;
 import eng.jAtcSim.lib.speaking.SpeechList;
+import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.Rejection;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ProceedDirectCommand;
 import eng.jAtcSim.lib.world.*;
@@ -901,13 +903,21 @@ public class Radar {
 
     boolean containsAtcMessage =
         msgs.stream().anyMatch(q -> q.isSourceOfType(Atc.class));
-    boolean containsPlaneMessage =
-        msgs.stream().anyMatch(q -> q.isSourceOfType(Airplane.class));
+
+    List<Message> planeMsgs = CollectionUtil.where(msgs, q->q.isSourceOfType(Airplane.class));
+    boolean containsPlaneMessage = planeMsgs.isEmpty() == false;
+    boolean isPlaneMessageNegative = false;
+    if (containsPlaneMessage){
+      for (Message planeMsg : planeMsgs) {
+        isPlaneMessageNegative = ((SpeechList)planeMsg.getContent()).stream().anyMatch(q->q instanceof Rejection);
+        if (isPlaneMessageNegative) break;
+      }
+    }
 
     if (containsAtcMessage) {
-      SoundManager.playAtcNewMessage();
+      SoundManager.playAtcNewMessage(false);
     } else if (containsPlaneMessage) {
-      SoundManager.playPlaneNewMessage();
+      SoundManager.playPlaneNewMessage(isPlaneMessageNegative);
     }
 
     drawMessages(messageManager.getCurrent());
