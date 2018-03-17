@@ -42,7 +42,11 @@ public abstract class Log {
   }
 
   private void write(String format, Object... params) {
-    String tmp = String.format(format, params);
+    String tmp;
+    if (params.length == 0)
+      tmp = format;
+    else
+      tmp = String.format(format, params);
     for (OutputStreamWriter os : writers) {
       tryWrite(os, tmp);
     }

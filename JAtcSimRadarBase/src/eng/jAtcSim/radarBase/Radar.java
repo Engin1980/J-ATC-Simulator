@@ -812,6 +812,9 @@ public class Radar {
     for (AirplaneDisplayInfo adi : this.planeInfos.getList()) {
       drawPlane(adi);
     }
+    boolean isAirprox = this.planeInfos.getList().stream().anyMatch(p -> p.isAirprox);
+    if (isAirprox)
+      SoundManager.playAirprox();
   }
 
   private void drawPlane(AirplaneDisplayInfo adi) {
@@ -901,6 +904,9 @@ public class Radar {
       messageManager.add(msg.getSource(), formattedText);
     }
 
+    boolean containsSystemMessage =
+        msgs.stream().anyMatch(q -> q.isSourceOfType(Messenger.XSystem.class));
+
     boolean containsAtcMessage =
         msgs.stream().anyMatch(q -> q.isSourceOfType(Atc.class));
 
@@ -918,6 +924,8 @@ public class Radar {
       SoundManager.playAtcNewMessage(false);
     } else if (containsPlaneMessage) {
       SoundManager.playPlaneNewMessage(isPlaneMessageNegative);
+    } else if (containsSystemMessage){
+      SoundManager.playSystemMessage();
     }
 
     drawMessages(messageManager.getCurrent());
