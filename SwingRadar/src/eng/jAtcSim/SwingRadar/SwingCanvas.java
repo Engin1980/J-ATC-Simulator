@@ -28,7 +28,6 @@ public class SwingCanvas implements ICanvas<JComponent> {
       EMouseEventArg eme;
       EMouseEventArg.eType type;
       if (e.getClickCount() == 2) {
-        // TODO dopsat key modifikatory alt/shift/ctr
         type = EMouseEventArg.eType.doubleClick;
       } else {
         type = EMouseEventArg.eType.click;
@@ -36,7 +35,8 @@ public class SwingCanvas implements ICanvas<JComponent> {
       }
       eme = EMouseEventArg.createClick(
           e.getPoint().x, e.getPoint().y, type,
-          EMouseEventArg.eButton.convertFromSpringButton(e.getButton()), EKeyboardModifier.NONE);
+          EMouseEventArg.eButton.convertFromSpringButton(e.getButton()),
+          new EKeyboardModifier(dragStartModifiers));
       raiseEvent(eme);
     }
 

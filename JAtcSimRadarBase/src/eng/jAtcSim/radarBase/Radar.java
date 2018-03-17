@@ -1,5 +1,6 @@
 package eng.jAtcSim.radarBase;
 
+import eng.eSystem.EStringBuilder;
 import eng.eSystem.collections.ReadOnlyList;
 import eng.eSystem.events.Event;
 import eng.jAtcSim.lib.Simulation;
@@ -10,7 +11,6 @@ import eng.jAtcSim.lib.coordinates.Coordinate;
 import eng.jAtcSim.lib.coordinates.Coordinates;
 import eng.jAtcSim.lib.exceptions.ENotSupportedException;
 import eng.jAtcSim.lib.exceptions.ERuntimeException;
-import eng.eSystem.EStringBuilder;
 import eng.jAtcSim.lib.global.Headings;
 import eng.jAtcSim.lib.messaging.IMessageParticipant;
 import eng.jAtcSim.lib.messaging.Message;
@@ -115,11 +115,10 @@ public class Radar {
     private int targetAltitude;
 
     public AirplaneDisplayInfo(Airplane.Airplane4Display planeInfo) {
-      this.labelShift = new Point(DEFAULT_LABEL_SHIFT, DEFAULT_LABEL_SHIFT);
-
       this.callsign = planeInfo.callsign();
       this.type = planeInfo.planeType();
       this.squawk = planeInfo.squawk();
+      this.setDefaultLabelPosition();
     }
 
     public void updateInfo(Airplane.Airplane4Display plane) {
@@ -159,6 +158,10 @@ public class Radar {
       }
 
       return sb.toString();
+    }
+
+    public void setDefaultLabelPosition() {
+      this.labelShift = new Point(DEFAULT_LABEL_SHIFT, DEFAULT_LABEL_SHIFT);
     }
 
     private String getFormatValueByIndex(int index) {
@@ -298,6 +301,7 @@ public class Radar {
       return inner.iterator();
     }
   }
+
   private static final double MAX_NM_DIFFERENCE_FOR_SELECTION = 2.5;
   private final TransformationLayer tl;
   private final ICanvas c;
@@ -441,20 +445,26 @@ public class Radar {
       case click:
         if (e.modifiers.is(false, false, false) && e.button == EMouseEventArg.eButton.left) {
           // try to select an airplane
-          Point p = e.getPoint();
-          Coordinate c = tl.toCoordinate(p);
-          AirplaneDisplayInfo plane = tryGetSelectedAirplane(c);
+          AirplaneDisplayInfo plane = tryGetAirplaneDisplayInfoByPoint(e.getPoint());
           if (plane == null)
             this.setSelectedCallsign(null);
           else if (this.selectedCallsign == plane.callsign)
             this.setSelectedCallsign(null);
           else
             this.setSelectedCallsign(plane.callsign);
+          this.redraw(true);
         }
         this.mouseClickEvent.raise(new WithCoordinateEventArg(coord));
         break;
       case doubleClick:
-        centerAt(coord);
+        if (e.modifiers.is(false, true, false) && e.button == EMouseEventArg.eButton.left) {
+          // recenter plane label
+          AirplaneDisplayInfo adi = tryGetAirplaneDisplayInfoByPoint(e.getPoint());
+          if (adi != null)
+            adi.setDefaultLabelPosition();
+        } else {
+          centerAt(coord);
+        }
         break;
       case move:
         this.mouseMoveEvent.raise(new WithCoordinateEventArg(coord));
@@ -463,10 +473,16 @@ public class Radar {
         if (e.modifiers.is(false, false, false) && e.button == EMouseEventArg.eButton.right) {
           coord = tl.toCoordinateDelta(e.getDropRangePoint());
           moveMapBy(coord);
-        } else if (e.modifiers.is(false, false, false) && e.button == EMouseEventArg.eButton.left) {
-          this.infoLine = null;
-          this.redraw(true);
         } else {
+          if (infoLine != null) this.infoLine = null;
+
+          if (e.modifiers.is(false, true, false) && e.button == EMouseEventArg.eButton.left) {
+            AirplaneDisplayInfo adi = tryGetAirplaneDisplayInfoByPoint(e.getPoint());
+            if (adi != null) {
+              adi.labelShift = e.getDropRangePoint();
+            }
+          }
+          this.redraw(true);
         }
         break;
       case dragging:
@@ -478,6 +494,12 @@ public class Radar {
         }
         break;
     }
+
+  }
+
+  private AirplaneDisplayInfo tryGetAirplaneDisplayInfoByPoint(Point p) {
+    Coordinate c = tl.toCoordinate(p);
+    return tryGetSelectedAirplane(c);
   }
 
   private AirplaneDisplayInfo tryGetSelectedAirplane(Coordinate c) {
@@ -1070,16 +1092,6 @@ class InfoLine {
   public final double seconds250;
   public final double seconds280;
 
-  public InfoLine(Coordinate from, Coordinate to) {
-    this.from = from;
-    this.to = to;
-    this.distanceInNm = Coordinates.getDistanceInNM(from, to);
-    this.heading = (int) Coordinates.getBearing(from, to);
-    this.seconds200 = this.distanceInNm / 200d * 3600d;
-    this.seconds250 = this.distanceInNm / 250d * 3600d;
-    this.seconds280 = this.distanceInNm / 280d * 3600d;
-  }
-
   public static String toIntegerMinutes(double value) {
     int tmp = (int) (value / 60);
     return Integer.toString(tmp);
@@ -1088,5 +1100,15 @@ class InfoLine {
   public static String toIntegerSeconds(double value) {
     double tmp = value % 60;
     return String.format("%02.0f", tmp);
+  }
+
+  public InfoLine(Coordinate from, Coordinate to) {
+    this.from = from;
+    this.to = to;
+    this.distanceInNm = Coordinates.getDistanceInNM(from, to);
+    this.heading = (int) Coordinates.getBearing(from, to);
+    this.seconds200 = this.distanceInNm / 200d * 3600d;
+    this.seconds250 = this.distanceInNm / 250d * 3600d;
+    this.seconds280 = this.distanceInNm / 280d * 3600d;
   }
 }
