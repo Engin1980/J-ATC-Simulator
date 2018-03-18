@@ -78,7 +78,7 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
       return (int) Airplane.this.lastVerticalSpeed;
     }
 
-    public boolean isAirprox() {
+    public AirproxType getAirprox() {
       return airprox;
     }
 
@@ -349,7 +349,7 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
   private State state;
   private double lastVerticalSpeed;
   private FlightRecorder flightRecorder = null;
-  private boolean airprox;
+  private AirproxType airprox;
   private InertialValue altitude;
 
   public Airplane(Callsign callsign, Coordinate coordinate, Squawk sqwk, AirplaneType airplaneSpecification,
@@ -601,11 +601,11 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     return ret;
   }
 
-  public boolean isAirprox() {
+  public AirproxType getAirprox() {
     return this.airprox;
   }
 
-  public void setAirprox(boolean airprox) {
+  public void setAirprox(AirproxType airprox) {
     this.airprox = airprox;
   }
 

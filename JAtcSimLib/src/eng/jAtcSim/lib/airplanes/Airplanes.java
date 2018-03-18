@@ -8,6 +8,7 @@ package eng.jAtcSim.lib.airplanes;
 import eng.eSystem.collections.ReadOnlyList;
 import eng.eSystem.utilites.CollectionUtil;
 import eng.eSystem.utilites.StringUtil;
+import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.coordinates.Coordinates;
 import eng.jAtcSim.lib.global.KeyItems;
 
@@ -79,7 +80,7 @@ public class Airplanes {
 
   public static void evaluateAirproxes(ReadOnlyList<Airplane> planes) {
     for (Airplane p : planes) {
-      p.setAirprox(false);
+      p.setAirprox(AirproxType.none);
     }
 
     for (int i = 0; i < planes.size() - 1; i++) {
@@ -90,8 +91,14 @@ public class Airplanes {
         if (b.getSpeed() == 0) continue;
 
         if (isInAirprox(a, b)) {
-          a.setAirprox(true);
-          b.setAirprox(true);
+          if (Acc.prm().getResponsibleAtc(a) == Acc.atcApp() &&
+              Acc.prm().getResponsibleAtc(b) == Acc.atcApp()) {
+            a.setAirprox(AirproxType.full);
+            b.setAirprox(AirproxType.full);
+          } else {
+            a.setAirprox(AirproxType.partial);
+            b.setAirprox(AirproxType.partial);
+          }
         }
       }
 

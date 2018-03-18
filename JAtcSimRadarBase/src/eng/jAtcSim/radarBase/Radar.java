@@ -101,7 +101,7 @@ public class Radar {
     public final List<Coordinate> planeDotHistory = new LinkedList<>();
     public boolean wasUpdatedFlag = false;
     public Callsign callsign;
-    public boolean isAirprox;
+    public AirproxType airprox;
     public Coordinate coordinate;
     public int heading;
     public int speed;
@@ -137,7 +137,7 @@ public class Radar {
       this.tunedAtc = plane.tunedAtc();
       this.responsibleAtc = plane.responsibleAtc();
 
-      this.isAirprox = plane.isAirprox();
+      this.airprox = plane.getAirprox();
 
       this.coordinate = plane.coordinate();
 
@@ -812,8 +812,8 @@ public class Radar {
     for (AirplaneDisplayInfo adi : this.planeInfos.getList()) {
       drawPlane(adi);
     }
-    boolean isAirprox = this.planeInfos.getList().stream().anyMatch(p -> p.isAirprox);
-    if (isAirprox)
+    boolean isFullAirprox = this.planeInfos.getList().stream().anyMatch(p -> p.airprox == AirproxType.full);
+    if (isFullAirprox)
       SoundManager.playAirprox();
   }
 
@@ -827,8 +827,10 @@ public class Radar {
 
     // eval special color for airproxes and selected plane
     Color c = dp.getColor();
-    if (adi.isAirprox) {
-      c = new Color(0xFF, 0, 0);
+    if (adi.airprox == AirproxType.full) {
+      c = displaySettings.airproxFull;
+    } else if (adi.airprox == AirproxType.partial) {
+      c = displaySettings.airproxPartial;
     } else if (this.selectedCallsign == adi.callsign) {
       c = displaySettings.selected.getColor();
     }
@@ -910,12 +912,12 @@ public class Radar {
     boolean containsAtcMessage =
         msgs.stream().anyMatch(q -> q.isSourceOfType(Atc.class));
 
-    List<Message> planeMsgs = CollectionUtil.where(msgs, q->q.isSourceOfType(Airplane.class));
+    List<Message> planeMsgs = CollectionUtil.where(msgs, q -> q.isSourceOfType(Airplane.class));
     boolean containsPlaneMessage = planeMsgs.isEmpty() == false;
     boolean isPlaneMessageNegative = false;
-    if (containsPlaneMessage){
+    if (containsPlaneMessage) {
       for (Message planeMsg : planeMsgs) {
-        isPlaneMessageNegative = ((SpeechList)planeMsg.getContent()).stream().anyMatch(q->q instanceof Rejection);
+        isPlaneMessageNegative = ((SpeechList) planeMsg.getContent()).stream().anyMatch(q -> q instanceof Rejection);
         if (isPlaneMessageNegative) break;
       }
     }
@@ -924,7 +926,7 @@ public class Radar {
       SoundManager.playAtcNewMessage(false);
     } else if (containsPlaneMessage) {
       SoundManager.playPlaneNewMessage(isPlaneMessageNegative);
-    } else if (containsSystemMessage){
+    } else if (containsSystemMessage) {
       SoundManager.playSystemMessage();
     }
 

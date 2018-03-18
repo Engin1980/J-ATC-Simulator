@@ -7,6 +7,7 @@ import eng.jAtcSim.XmlLoadHelper;
 import eng.jAtcSim.lib.Simulation;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.AirplaneDataFormatter;
+import eng.jAtcSim.lib.airplanes.AirproxType;
 import eng.jAtcSim.lib.airplanes.Callsign;
 import eng.jAtcSim.lib.exceptions.ENotSupportedException;
 import eng.jAtcSim.startup.LayoutManager;
@@ -160,7 +161,7 @@ class FlightStripPanel extends JPanel {
   private Color getColor(Airplane.Airplane4Display ai) {
     Color ret;
     // pozadi
-    if (ai.isAirprox()) {
+    if (ai.getAirprox() == AirproxType.full) {
       ret = stripSettings.airprox;
     } else if (ai.callsign() == parent.getSelectedCallsign()) {
       ret = stripSettings.selected;
