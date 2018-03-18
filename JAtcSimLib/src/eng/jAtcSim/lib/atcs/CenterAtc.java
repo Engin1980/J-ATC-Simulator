@@ -13,6 +13,7 @@ import eng.jAtcSim.lib.speaking.fromAtc.commands.SetAltitudeRestriction;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.afters.AfterNavaidCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.notifications.RadarContactConfirmationNotification;
 import eng.jAtcSim.lib.world.Navaid;
+import eng.jAtcSim.lib.world.Route;
 
 public class CenterAtc extends ComputerAtc {
 
@@ -111,16 +112,19 @@ public class CenterAtc extends ComputerAtc {
 
   @Override
   protected Atc getTargetAtcIfPlaneIsReadyToSwitch(Airplane plane) {
-    Atc ret;
-    if (plane.isArrival() && (
-        plane.getAltitude() <= this.releaseAltitude) || (
-            Coordinates.getDistanceInNM(
-                plane.getCoordinate(),
-                Acc.area().getNavaids().get(plane.getRouteNameorFix()).getCoordinate()) < 10
-        ))
-      ret = Acc.atcApp();
-    else
-      ret = null;
+    Atc ret = null;
+    if (plane.isArrival()) {
+      if (plane.getAltitude() <= this.releaseAltitude) {
+        ret = Acc.atcApp();
+      } else {
+        Route r = Acc.threshold().getRoutes().get(plane.getRouteNameorFix());
+        Navaid n = r.getMainFix();
+        double dist = Coordinates.getDistanceInNM(plane.getCoordinate(), n.getCoordinate());
+        if (dist < 15) {
+          ret = Acc.atcApp();
+        }
+      }
+    }
     return ret;
   }
 
