@@ -53,7 +53,7 @@ public class ShortParser extends Parser {
     atcParsers.add(new RunwayCheckParser());
   }
 
-  private static String normalizeCommandsInString(String line) {
+  private static String normalizeCommandsInString(String line, boolean appendSpace) {
     if (line == null || line.isEmpty()) {
       return "";
     }
@@ -61,7 +61,10 @@ public class ShortParser extends Parser {
     while (line.contains("  ")) {
       line = line.replace("  ", " ");
     }
-    return line.toUpperCase() + " ";
+    if (appendSpace)
+      return line.toUpperCase() + " ";
+    else
+      return line.toUpperCase();
   }
 
   private static SpeechParser getSpeechParser(String line) {
@@ -76,15 +79,21 @@ public class ShortParser extends Parser {
     return null;
   }
 
-  @Override
-  public ISpeech parseOne(String line) {
-    line = normalizeCommandsInString(line);
-    return parseMulti(line).get(0);
+  private static SpeechParser getAtcSpeechParser(String line) {
+    for (SpeechParser tmp : atcParsers) {
+      for (String pref : tmp.getPrefixes()) {
+        if (line.startsWith(pref + " ")) {
+          return tmp;
+        }
+      }
+    }
+
+    return null;
   }
 
   @Override
   public SpeechList<IFromAtc> parseMulti(String line) {
-    line = normalizeCommandsInString(line);
+    line = normalizeCommandsInString(line, true);
     SpeechList ret = new SpeechList();
     String tmp = line;
     while (tmp != null && tmp.length() > 0) {
@@ -149,8 +158,8 @@ public class ShortParser extends Parser {
 
   @Override
   public IAtc2Atc parseAtc(String text) {
-    text = normalizeCommandsInString(text);
-    SpeechParser p = getSpeechParser(text);
+    text = normalizeCommandsInString(text,false);
+    SpeechParser p = getAtcSpeechParser(text);
 
     if (p == null)
       throw new EInvalidCommandException("Failed to parse atc message prefix.",

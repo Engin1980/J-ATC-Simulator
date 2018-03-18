@@ -8,7 +8,7 @@ package eng.jAtcSim.lib.global.logging;
 import eng.eSystem.EStringBuilder;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.atcs.Atc;
-import eng.jAtcSim.lib.atcs.PlaneSwitchMessage;
+import eng.jAtcSim.lib.speaking.fromAtc.atc2atc.PlaneSwitchMessage;
 import eng.jAtcSim.lib.exceptions.ENotSupportedException;
 import eng.jAtcSim.lib.exceptions.ERuntimeException;
 import eng.jAtcSim.lib.messaging.IMessageContent;
@@ -22,6 +22,7 @@ import eng.jAtcSim.lib.speaking.formatting.Formatter;
 import eng.jAtcSim.lib.speaking.formatting.LongFormatter;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.GoingAroundNotification;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.Confirmation;
+import eng.jAtcSim.lib.speaking.fromAtc.IAtc2Atc;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.notifications.RadarContactConfirmationNotification;
 
@@ -118,6 +119,8 @@ public abstract class Recorder extends SimulationLog {
       return "Going around. " + ((GoingAroundNotification) content).getReason();
     } else if (content instanceof Confirmation) {
       return "Confirmation (???)" + content.toString();
+    } else if (content instanceof IAtc2Atc) {
+      return "{ATC->ATC}" + content.toString();
     } else {
       throw new ERuntimeException("Message content cannot be get for type " + content.getClass().getName());
     }

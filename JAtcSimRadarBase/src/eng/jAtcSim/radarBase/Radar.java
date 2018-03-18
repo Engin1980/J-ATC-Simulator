@@ -7,7 +7,8 @@ import eng.eSystem.utilites.CollectionUtil;
 import eng.jAtcSim.lib.Simulation;
 import eng.jAtcSim.lib.airplanes.*;
 import eng.jAtcSim.lib.atcs.Atc;
-import eng.jAtcSim.lib.atcs.PlaneSwitchMessage;
+import eng.jAtcSim.lib.speaking.fromAtc.IAtc2Atc;
+import eng.jAtcSim.lib.speaking.fromAtc.atc2atc.PlaneSwitchMessage;
 import eng.jAtcSim.lib.coordinates.Coordinate;
 import eng.jAtcSim.lib.coordinates.Coordinates;
 import eng.jAtcSim.lib.exceptions.ENotSupportedException;
@@ -21,6 +22,7 @@ import eng.jAtcSim.lib.speaking.ISpeech;
 import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.Rejection;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
+import eng.jAtcSim.lib.speaking.fromAtc.atc2atc.StringResponse;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ProceedDirectCommand;
 import eng.jAtcSim.lib.world.*;
 import eng.jAtcSim.radarBase.global.Color;
@@ -1063,6 +1065,8 @@ public class Radar {
       if (msg.isContentOfType(PlaneSwitchMessage.class)) {
         PlaneSwitchMessage psm = msg.<PlaneSwitchMessage>getContent();
         ret = behaviorSettings.getFormatter().format(msg.getSource(), psm);
+      } else if (msg.isContentOfType(StringResponse.class)) {
+        ret = msg.<StringResponse>getContent().text;
       } else if (msg.isContentOfType(StringMessageContent.class)) {
         ret = msg.<StringMessageContent>getContent().getMessageText();
       } else {

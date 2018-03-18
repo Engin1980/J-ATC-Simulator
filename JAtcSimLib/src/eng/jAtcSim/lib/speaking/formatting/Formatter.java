@@ -1,11 +1,7 @@
 package eng.jAtcSim.lib.speaking.formatting;
 
 import eng.jAtcSim.lib.atcs.Atc;
-import eng.jAtcSim.lib.atcs.PlaneSwitchMessage;
-import eng.jAtcSim.lib.exceptions.ERuntimeException;
-import eng.jAtcSim.lib.speaking.ISpeech;
-import eng.jAtcSim.lib.atcs.Atc;
-import eng.jAtcSim.lib.atcs.PlaneSwitchMessage;
+import eng.jAtcSim.lib.speaking.fromAtc.atc2atc.PlaneSwitchMessage;
 import eng.jAtcSim.lib.exceptions.ERuntimeException;
 import eng.jAtcSim.lib.speaking.ISpeech;
 

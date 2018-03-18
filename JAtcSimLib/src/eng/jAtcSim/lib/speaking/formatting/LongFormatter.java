@@ -3,7 +3,7 @@ package eng.jAtcSim.lib.speaking.formatting;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.AirplaneDataFormatter;
 import eng.jAtcSim.lib.atcs.Atc;
-import eng.jAtcSim.lib.atcs.PlaneSwitchMessage;
+import eng.jAtcSim.lib.speaking.fromAtc.atc2atc.PlaneSwitchMessage;
 import eng.jAtcSim.lib.exceptions.ENotSupportedException;
 import eng.jAtcSim.lib.global.Headings;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.*;

@@ -9,16 +9,14 @@ import eng.jAtcSim.lib.global.ETime;
 import eng.jAtcSim.lib.global.Headings;
 import eng.jAtcSim.lib.global.logging.CommonRecorder;
 import eng.jAtcSim.lib.messaging.Message;
-import eng.jAtcSim.lib.messaging.StringMessageContent;
 import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.GoingAroundNotification;
-import eng.jAtcSim.lib.speaking.fromAtc.atc2atc.RunwayCheck;
+import eng.jAtcSim.lib.speaking.fromAtc.atc2atc.StringResponse;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ClearedForTakeoffCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.notifications.RadarContactConfirmationNotification;
 import eng.jAtcSim.lib.weathers.Weather;
 import eng.jAtcSim.lib.world.Runway;
 import eng.jAtcSim.lib.world.RunwayThreshold;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,9 +24,13 @@ import java.util.Map;
 public class TowerAtc extends ComputerAtc {
 
   public static class RunwayCheck {
-    public final ETime latestScheduledTime;
-    public final int expectedDurationInMinutes;
-    public int lastAnnouncedMinute;
+    private ETime latestScheduledTime;
+    private int expectedDurationInMinutes;
+    private int lastAnnouncedSecond;
+    private boolean isActive;
+    private ETime realDurationEnd;
+    private boolean approvedByAppAtc;
+
 
     public static RunwayCheck createNormal(boolean isInitial) {
       int maxTime = 4 * 60;
@@ -50,7 +52,7 @@ public class TowerAtc extends ComputerAtc {
 
     public RunwayCheck(ETime latestScheduledTime, int expectedDurationInMinutes) {
       this.latestScheduledTime = latestScheduledTime;
-      this.lastAnnouncedMinute = Integer.MAX_VALUE;
+      this.lastAnnouncedSecond = Integer.MAX_VALUE;
       this.expectedDurationInMinutes = expectedDurationInMinutes;
     }
 
@@ -58,12 +60,22 @@ public class TowerAtc extends ComputerAtc {
       ETime et = Acc.now().addMinutes(minutesToNextCheck);
       this.latestScheduledTime = et;
       this.expectedDurationInMinutes = expectedDurationInMinutes;
-      this.lastAnnouncedMinute = Integer.MAX_VALUE;
+      this.lastAnnouncedSecond = Integer.MAX_VALUE;
     }
 
-    public int getMinutesLeft() {
-      int diff = latestScheduledTime.getTotalMinutes() - Acc.now().getTotalMinutes();
+    public int getSecondsLeft() {
+      int diff = latestScheduledTime.getTotalSeconds() - Acc.now().getTotalSeconds();
       return diff;
+    }
+
+    public void start() {
+      double durationRangeSeconds = expectedDurationInMinutes * 60 * 0.2d;
+      int realDurationSeconds = (int) Acc.rnd().nextDouble(
+          expectedDurationInMinutes * 60 - durationRangeSeconds,
+          expectedDurationInMinutes * 60 + durationRangeSeconds);
+      realDurationEnd = Acc.now().addSeconds(realDurationSeconds);
+      isActive = true;
+      latestScheduledTime = null;
     }
   }
 
@@ -72,15 +84,15 @@ public class TowerAtc extends ComputerAtc {
   private static final double MAXIMAL_ACCEPT_DISTANCE_IN_NM = 15;
   private final Map<RunwayThreshold, TakeOffInfo> takeOffInfos = new HashMap<>();
   private final CommonRecorder toRecorder;
-  private AirplaneList landingPlanes = new AirplaneList();
-  private AirplaneList goAroundedPlanesToSwitch = new AirplaneList();
+  private AirplaneList landingPlanesList = new AirplaneList();
+  private AirplaneList goAroundedPlanesToSwitchList = new AirplaneList();
   private AirplaneList holdingPointPlanesList = new AirplaneList();
   private AirplaneList linedUpPlanesList = new AirplaneList();
   private AirplaneList departingPlanesList = new AirplaneList();
   private Map<Airplane, ETime> holdingPointWaitingTimeMap = new HashMap<>();
   private RunwayThreshold runwayThresholdInUse = null;
   private Map<Runway, RunwayCheck> runwayChecks = null;
-  private int[] runwayCheckAnnounceTimes = new int[]{30, 15, 10, 5};
+  private int[] runwayCheckAnnounceTimes = new int[]{30 * 60, 15 * 60, 10 * 60, 5 * 60};
 
   private static RunwayThreshold getSuggestedThreshold() {
     Weather w = Acc.weather();
@@ -124,17 +136,15 @@ public class TowerAtc extends ComputerAtc {
   public TowerAtc(AtcTemplate template) {
     super(template);
     toRecorder = new CommonRecorder(template.getName() + " - TO", template.getName() + "_to.log", "\t");
-
-
   }
 
   @Override
   public void unregisterPlaneUnderControl(Airplane plane, boolean finalUnregistration) {
     //TODO the Tower ATC does some unregistration operations probably somewhere here in the code, should be checked
-    if (landingPlanes.contains(plane))
-      landingPlanes.remove(plane);
-    if (goAroundedPlanesToSwitch.contains(plane))
-      goAroundedPlanesToSwitch.remove(plane);
+    if (landingPlanesList.contains(plane))
+      landingPlanesList.remove(plane);
+    if (goAroundedPlanesToSwitchList.contains(plane))
+      goAroundedPlanesToSwitchList.remove(plane);
     if (holdingPointPlanesList.contains(plane)) {
       holdingPointPlanesList.remove(plane);
     }
@@ -149,7 +159,7 @@ public class TowerAtc extends ComputerAtc {
   @Override
   public void registerNewPlaneUnderControl(Airplane plane, boolean initialRegistration) {
     if (plane.isArrival()) {
-      landingPlanes.add(plane);
+      landingPlanesList.add(plane);
     } else {
       holdingPointPlanesList.add(plane);
       holdingPointWaitingTimeMap.put(plane, Acc.now().clone());
@@ -166,7 +176,8 @@ public class TowerAtc extends ComputerAtc {
       checkForRunwayChange();
     }
 
-    adviseRunwayCheckIfRequired();
+    processRunwayCheckBackground();
+
   }
 
   @Override
@@ -179,11 +190,35 @@ public class TowerAtc extends ComputerAtc {
           announceScheduledRunwayCheck(rrct.runway, rc);
         else {
           for (Runway runway : this.runwayChecks.keySet()) {
+            rc = this.runwayChecks.get(runway);
             announceScheduledRunwayCheck(runway, rc);
           }
         }
-      } else if (rrct.type == eng.jAtcSim.lib.speaking.fromAtc.atc2atc.RunwayCheck.eType.doCheck){
-        throw new NotImplementedException();
+      } else if (rrct.type == eng.jAtcSim.lib.speaking.fromAtc.atc2atc.RunwayCheck.eType.doCheck) {
+        Runway rwy = rrct.runway;
+        RunwayCheck rc = this.runwayChecks.get(rwy);
+        if (rc == null && rrct.runway == null && this.runwayChecks.size()==1){
+          rwy = runwayThresholdInUse.getParent();
+          rc = this.runwayChecks.get(rwy);
+        }
+        if (rc == null) {
+          Message msg = new Message(this, Acc.atcApp(),
+              StringResponse.createRejection("Sorry, you must specify exact runway (threshold) at which I can start the maintenance."));
+          super.sendMessage(msg);
+        } else {
+          if (rc.getSecondsLeft() > 30 * 60) {
+            Message msg = new Message(this, Acc.atcApp(),
+                StringResponse.createRejection("Sorry, the runway %s is scheduled for the maintenance in more than 30 minutes.",
+                    rwy.getName()));
+            super.sendMessage(msg);
+          } else {
+            Message msg = new Message(this, Acc.atcApp(),
+                StringResponse.createRejection("The maintenance of the runway %s is approved and will start shortly.",
+                    rwy.getName()));
+            super.sendMessage(msg);
+            rc.approvedByAppAtc = true;
+          }
+        }
       }
     }
   }
@@ -191,8 +226,6 @@ public class TowerAtc extends ComputerAtc {
   @Override
   public void init() {
     super.init();
-    RunwayThreshold suggestedThreshold = getSuggestedThreshold();
-    changeRunwayInUse(suggestedThreshold);
 
     runwayChecks = new HashMap<>();
     for (Runway runway : Acc.airport().getRunways()) {
@@ -200,6 +233,9 @@ public class TowerAtc extends ComputerAtc {
       RunwayCheck rc = TowerAtc.RunwayCheck.createNormal(true);
       runwayChecks.put(runway, rc);
     }
+
+    RunwayThreshold suggestedThreshold = getSuggestedThreshold();
+    changeRunwayInUse(suggestedThreshold);
   }
 
   @Override
@@ -224,41 +260,50 @@ public class TowerAtc extends ComputerAtc {
   }
 
   @Override
-  protected boolean canIAcceptPlane(Airplane p) {
+  protected ComputerAtc.RequestResult canIAcceptPlane(Airplane p) {
+    if (isActiveRunwayClosed()){
+      return new RequestResult(false, "Active runway is closed now.");
+    }
     if (p.isDeparture()) {
-      return false;
+      return new ComputerAtc.RequestResult(false, String.format("%s is a departure.", p.getCallsign()));
     }
     if (Acc.prm().getResponsibleAtc(p) != Acc.atcApp()) {
-      return false;
+      return new ComputerAtc.RequestResult(false, String.format("%s is not from APP.", p.getCallsign()));
     }
     if (p.getAltitude() > this.acceptAltitude) {
-      return false;
+      return new ComputerAtc.RequestResult(false, String.format("%s is too high.", p.getCallsign()));
     }
     double dist = Coordinates.getDistanceInNM(p.getCoordinate(), Acc.airport().getLocation());
     if (dist > MAXIMAL_ACCEPT_DISTANCE_IN_NM) {
-      return false;
+      return new ComputerAtc.RequestResult(false, String.format("%s is too far.", p.getCallsign()));
     }
 
-    return true;
+    return new RequestResult(true, null);
   }
 
   @Override
   protected void processMessagesFromPlane(Airplane plane, SpeechList spchs) {
     if (spchs.containsType(GoingAroundNotification.class)) {
-      landingPlanes.remove(plane);
-      goAroundedPlanesToSwitch.add(plane);
+      landingPlanesList.remove(plane);
+      goAroundedPlanesToSwitchList.add(plane);
     }
   }
 
   @Override
   protected Atc getTargetAtcIfPlaneIsReadyToSwitch(Airplane plane) {
     Atc ret = null;
-    if (this.goAroundedPlanesToSwitch.contains(plane)) {
-      this.goAroundedPlanesToSwitch.remove(plane);
+    if (this.goAroundedPlanesToSwitchList.contains(plane)) {
+      this.goAroundedPlanesToSwitchList.remove(plane);
       ret = Acc.atcApp();
     } else if (plane.isDeparture()) {
       ret = Acc.atcApp();
     }
+    return ret;
+  }
+
+  public boolean isActiveRunwayClosed() {
+    RunwayCheck rc = runwayChecks.get(this.runwayThresholdInUse.getParent());
+    boolean ret = rc.isActive;
     return ret;
   }
 
@@ -270,31 +315,67 @@ public class TowerAtc extends ComputerAtc {
     return runwayThresholdInUse;
   }
 
-  private void adviseRunwayCheckIfRequired() {
+  private void processRunwayCheckBackground() {
     for (Runway runway : runwayChecks.keySet()) {
       RunwayCheck rc = runwayChecks.get(runway);
-
-      for (int dit : runwayCheckAnnounceTimes) {
-        int minLeft = rc.getMinutesLeft();
-        if (rc.lastAnnouncedMinute > dit && minLeft < dit) {
-          announceScheduledRunwayCheck(runway, rc);
-          break;
+      if (rc.isActive) {
+        if (rc.realDurationEnd.isBeforeOrEq(Acc.now()))
+          finishRunwayMaintenance(runway, rc);
+      } else {
+        int secLeft = rc.getSecondsLeft();
+        if (secLeft < 0 || (secLeft < (30 * 60) && rc.approvedByAppAtc)) {
+          if (this.departingPlanesList.isEmpty() && this.landingPlanesList.isEmpty())
+            beginRunwayMaintenance(runway, rc);
+        }else {
+          for (int dit : runwayCheckAnnounceTimes) {
+            if (rc.lastAnnouncedSecond > dit && secLeft < dit) {
+              announceScheduledRunwayCheck(runway, rc);
+              break;
+            }
+          }
         }
       }
     }
   }
 
+  private void beginRunwayMaintenance(Runway runway, RunwayCheck rc) {
+    StringResponse cnt = StringResponse.create(
+        "Maintenance of the runway %s is now in progress.", runway.getName());
+    Message m = new Message(this, Acc.atcApp(), cnt);
+    super.sendMessage(m);
+
+    rc.start();
+  }
+
+  private void finishRunwayMaintenance(Runway runway, RunwayCheck rc) {
+    StringResponse cnt = StringResponse.create(
+        "Maintenance of the runway %s has ended.", runway.getName()
+    );
+    Message m = new Message(this, Acc.atcApp(), cnt);
+    super.sendMessage(m);
+
+    rc = TowerAtc.RunwayCheck.createNormal(true);
+    runwayChecks.put(runway, rc);
+  }
+
   private void announceScheduledRunwayCheck(Runway rwy, RunwayCheck rc) {
-    Message msg = new Message(
-        this,
-        Acc.atcApp(),
-        new StringMessageContent("Runway %s cleaning is scheduled at %s for approx %d minutes",
-            rwy.getName(),
-            rc.latestScheduledTime.toString(),
-            rc.expectedDurationInMinutes));
+    StringResponse cnt;
+    if (rc.isActive)
+      cnt = StringResponse.create( "Runway %s is under maintenance right now until approximately %d:%02d.",
+          rwy.getName(),
+          rc.realDurationEnd.getHours(), rc.realDurationEnd.getMinutes()
+      );
+    else {
+      cnt = StringResponse.create( "Runway %s maintenance is scheduled at %s for approximately %d minutes.",
+          rwy.getName(),
+          rc.latestScheduledTime.toTimeString(),
+          rc.expectedDurationInMinutes);
+      rc.lastAnnouncedSecond = rc.getSecondsLeft();
+    }
+
+    Message msg = new Message(this, Acc.atcApp(), cnt);
     super.sendMessage(msg);
 
-    rc.lastAnnouncedMinute = rc.getMinutesLeft();
   }
 
   private void checkForRunwayChange() {
@@ -304,9 +385,12 @@ public class TowerAtc extends ComputerAtc {
     Message m = new Message(
         this,
         Acc.atcApp(),
-        new StringMessageContent("Runway in use %s from now.", newRunwayInUseThreshold.getName()));
+        StringResponse.create( "Runway in use %s from now.", newRunwayInUseThreshold.getName()));
     super.sendMessage(m);
     this.runwayThresholdInUse = newRunwayInUseThreshold;
+
+    announceScheduledRunwayCheck(newRunwayInUseThreshold.getParent(),
+        this.runwayChecks.get(newRunwayInUseThreshold.getParent()));
   }
 
   private void tryToLog(String format, Object... params) {
@@ -315,6 +399,8 @@ public class TowerAtc extends ComputerAtc {
   }
 
   private void tryTakeOffPlane() {
+    if (isActiveRunwayClosed()) return;
+
     tryToLog("tryTakeOffPlane");
     if (linedUpPlanesList.isEmpty()) {
       tryToLog("lineUp list empty");

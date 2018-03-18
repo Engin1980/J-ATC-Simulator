@@ -29,16 +29,6 @@ public class CenterAtc extends ComputerAtc {
       this.ctrNavaidAcceptDistance = template.getCtrNavaidAcceptDistance();
   }
 
-  @Override
-  protected void processMessageFromAtc(Message m) {
-    // do nothing , CTR has no messages acceptable from ATC
-    super.sendMessage(new Message(
-        this,
-        m.getSource(),
-        new StringMessageContent("Unable.")
-    ));
-  }
-
   public int getCtrAcceptDistance() {
     return ctrAcceptDistance;
   }
@@ -58,31 +48,47 @@ public class CenterAtc extends ComputerAtc {
   }
 
   @Override
+  protected void processMessageFromAtc(Message m) {
+    // do nothing , CTR has no messages acceptable from ATC
+    super.sendMessage(new Message(
+        this,
+        m.getSource(),
+        new StringMessageContent("Unable.")
+    ));
+  }
+
+  @Override
   protected boolean shouldBeSwitched(Airplane plane) {
     return true;
   }
 
   @Override
-  protected boolean canIAcceptPlane(Airplane p) {
-    boolean ret;
+  protected RequestResult canIAcceptPlane(Airplane p) {
+    RequestResult ret;
     if (p.isArrival()) {
-      ret = false;
+      ret = new RequestResult(false, String.format("%s is an arrival.", p.getCallsign().toString()));
     } else {
       if (p.isOnWayToPassDeparturePoint() == false) {
-        ret = false;
+        ret = new RequestResult(false,
+            String.format("%s is not heading (or on the route to) departure fix %s",
+                p.getCallsign().toString(),
+                p.getAssigneRoute().getMainFix().getName()));
       } else {
         if (p.getAltitude() > super.acceptAltitude) {
-          ret = true;
+          ret = new RequestResult(true, null);
         } else {
           double aipDist = Coordinates.getDistanceInNM(p.getCoordinate(), Acc.airport().getLocation());
           if (aipDist > this.ctrAcceptDistance) {
-            ret = true;
+            ret = new RequestResult(true, null);
           } else {
             double navDist = Coordinates.getDistanceInNM(p.getCoordinate(), p.getDepartureLastNavaid().getCoordinate());
             if (navDist < this.ctrNavaidAcceptDistance) {
-              ret = true;
+              ret = new RequestResult(true, null);
             } else {
-              ret = false;
+              ret = new RequestResult(false, String.format(
+                  "%s is too far from departure fix %s, or not enough far from airport, or not enough high.",
+                  p.getCallsign().toString()
+              ));
             }
           }
         }

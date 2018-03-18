@@ -6,8 +6,10 @@ import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.AirplaneList;
 import eng.jAtcSim.lib.messaging.Message;
+import eng.jAtcSim.lib.speaking.ISpeech;
 import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.GoodDayNotification;
+import eng.jAtcSim.lib.speaking.fromAtc.atc2atc.PlaneSwitchMessage;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ContactCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.notifications.RadarContactConfirmationNotification;
 
@@ -16,8 +18,19 @@ import java.util.List;
 
 public abstract class ComputerAtc extends Atc {
 
+  public static class RequestResult {
+    public final boolean isAccepted;
+    public final String message;
+
+    public RequestResult(boolean isAccepted, String message) {
+      this.isAccepted = isAccepted;
+      this.message = message;
+    }
+  }
+
   private final WaitingList waitingRequestsList = new WaitingList();
   private final List<SwitchRequest> confirmedRequestList = new ArrayList<>();
+
 
   public ComputerAtc(AtcTemplate template) {
     super(template);
@@ -38,34 +51,9 @@ public abstract class ComputerAtc extends Atc {
         confirmGoodDayNotificationIfRequired(p, spchs);
         processMessagesFromPlane(p, spchs);
       } else if (m.getSource() instanceof Atc) {
-        if (isPlaneSwitchMessage(m)) {
-          // messages from ATCs
-          Airplane plane = m.<PlaneSwitchMessage>getContent().plane;
-          Atc targetAtc = m.getSource();
-          if (this.waitingRequestsList.contains(plane)) {
-            // p is waiting to be switch-confirmed
-
-            this.waitingRequestsList.remove(plane);
-            this.confirmedRequestList.add(
-                new SwitchRequest(targetAtc, plane));
-
-          } else {
-            // p is not in waiting list, so other ATC asks ...
-            // to let us accept the plane
-
-            if (canIAcceptPlane(plane)) {
-              this.confirmSwitch(plane, targetAtc);
-              this.approveSwitch(plane);
-            } else {
-              this.refuseSwitch(plane, targetAtc);
-            }
-          }
-        } else {
-          processMessageFromAtc(m);
-        }
+        elapseSecondProcessMessageFromAtc(m);
       }
     }
-
     List<SwitchRequest> srs = new ArrayList<>();
     for (SwitchRequest sr : this.confirmedRequestList) {
       if (shouldBeSwitched(sr.airplane))
@@ -81,7 +69,7 @@ public abstract class ComputerAtc extends Atc {
         this.sendMessage(nm);
       } else {
         Message nm = new Message(this, sr.atc,
-            new PlaneSwitchMessage(sr.airplane, " refused. This airplane is not intended to be switched."));
+            new PlaneSwitchMessage(sr.airplane, true, " refused. This airplane is not intended to be switched."));
         this.sendMessage(nm);
       }
     }
@@ -90,11 +78,29 @@ public abstract class ComputerAtc extends Atc {
     repeatOldSwitchRequests();
   }
 
-  protected abstract void processMessageFromAtc(Message m);
-
-  private boolean isPlaneSwitchMessage(Message m){
-    boolean ret = m.getContent() instanceof  PlaneSwitchMessage;
-    return ret;
+  private void elapseSecondProcessMessageFromAtc(Message m) {
+    if (m.getContent() instanceof PlaneSwitchMessage) {
+      // messages from ATCs
+      Airplane plane = m.<PlaneSwitchMessage>getContent().plane;
+      Atc targetAtc = m.getSource();
+      if (this.waitingRequestsList.contains(plane)) {
+        // p is waiting to be switch-confirmed
+        this.waitingRequestsList.remove(plane);
+        this.confirmedRequestList.add(
+            new SwitchRequest(targetAtc, plane));
+      } else {
+        // other ATC asks to let us accept the plane
+        RequestResult planeAcceptance = canIAcceptPlane(plane);
+        if (planeAcceptance.isAccepted) {
+          this.confirmSwitch(plane, targetAtc);
+          this.approveSwitch(plane);
+        } else {
+          this.refuseSwitch(plane, targetAtc, planeAcceptance.message);
+        }
+      }
+    } else {
+      processMessageFromAtc(m);
+    }
   }
 
   @Override
@@ -106,9 +112,11 @@ public abstract class ComputerAtc extends Atc {
     return false;
   }
 
+  protected abstract void processMessageFromAtc(Message m);
+
   protected abstract boolean shouldBeSwitched(Airplane plane);
 
-  protected abstract boolean canIAcceptPlane(Airplane p);
+  protected abstract RequestResult canIAcceptPlane(Airplane p);
 
   private void confirmGoodDayNotificationIfRequired(Airplane p, SpeechList spchs) {
     if (spchs.containsType(GoodDayNotification.class)) {
@@ -156,7 +164,7 @@ public abstract class ComputerAtc extends Atc {
     List<Airplane> awaitings = this.waitingRequestsList.getAwaitings();
     for (Airplane p : awaitings) {
       Message m = new Message(this, Acc.atcApp(),
-          new PlaneSwitchMessage(p, " to you (repeated)"));
+          new PlaneSwitchMessage(p, false, " to you (repeated)"));
       Acc.messenger().send(m);
       recorder.write(m);
     }
@@ -165,7 +173,7 @@ public abstract class ComputerAtc extends Atc {
   protected void requestSwitch(Airplane plane, Atc targetAtc) {
     getPrm().requestSwitch(this, targetAtc, plane);
     Message m = new Message(this, targetAtc,
-        new PlaneSwitchMessage(plane, " to you"));
+        new PlaneSwitchMessage(plane, false, " to you"));
     sendMessage(m);
   }
 
@@ -177,14 +185,14 @@ public abstract class ComputerAtc extends Atc {
   protected void confirmSwitch(Airplane plane, Atc targetAtc) {
     getPrm().confirmSwitch(this, plane);
     Message m = new Message(this, targetAtc,
-        new PlaneSwitchMessage(plane, " accepted"));
+        new PlaneSwitchMessage(plane, false, "accepted"));
     sendMessage(m);
   }
 
-  protected void refuseSwitch(Airplane plane, Atc targetAtc) {
+  protected void refuseSwitch(Airplane plane, Atc targetAtc, String message) {
     getPrm().refuseSwitch(this, plane);
     Message m = new Message(this, targetAtc,
-        new PlaneSwitchMessage(plane, " refused. Not in my coverage."));
+        new PlaneSwitchMessage(plane, true, " refused. " + message));
     sendMessage(m);
   }
 }
