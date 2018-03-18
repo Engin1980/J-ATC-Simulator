@@ -128,7 +128,7 @@
         <runway active="true">
           <thresholds>
             <threshold name="08R" coordinate="51 08 45.10 N 000 12 24.59 W" initialDepartureAltitude="4000"
-                       fafCross="51.11929358035, -0.40470030817">
+                       fafCross="51.11929358035 -0.40470030817">
               <approaches>
                 <approach type="ILS_I" point="51 08 45.10 N 000 12 24.59 W" radial="078" da="357"
                           gaRoute="CM 30 AA 20 TR 179"/>
@@ -178,7 +178,7 @@
             </threshold>
             <threshold name="26L" coordinate="51 09 02.43 N 000 10 18.93 W" initialDepartureAltitude="4000"
                        preferred="true"
-                       fafCross="51.16710957872, -0.04812869274">
+                       fafCross="51.16710957872 -0.04812869274">
               <approaches>
                 <approach type="ILS_I" point="51 09 02.43 N 000 10 18.93 W" radial="258" da="356"
                           gaRoute="CM 30 AA 20 TL 179"/>
@@ -226,7 +226,7 @@
                        route="SL 220 AL 40 PD KKW04 T PD KKS06 T SR PD KKS09 T PD KKS14 T AL 50 PD MAY T AL 60 PD KKS33 T PD WIZAD T SR AR"/>
                 <route type="sid" name="ADMAG2X"
                        route="SL 220 AL 40 PD KKW02 T PD KKW09 T SR PD KKE11 T PD KKE15 T AL 50 PD SUNAV T AL 60 PD ADMAG T SR AR"/>
-                <route type="sid" name="TIGER1X" fix="LAM"
+                <route type="sid" name="TIGER1X" mainFix="LAM"
                        route="SL 220 AL 40 PD KKW04 T PD KKS06 T SR PD KKS09 T PD KKS14 T AL 50 PD MAY T PD KKS36 T PD LAM T SR AR"/>
                 <route type="sid" name="DAGGA1X"
                        route="SL 220 AL 40 PD KKW04 T PD KKS06 T SR PD KKS09 T PD KKS14 T AL 50 PD MAY T PD KKS36 T PD DET T PD DAGGA T PD CLN T SR AR"/>

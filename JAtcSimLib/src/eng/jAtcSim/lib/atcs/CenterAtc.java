@@ -3,7 +3,6 @@ package eng.jAtcSim.lib.atcs;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.coordinates.Coordinates;
-import eng.jAtcSim.lib.global.logging.ApplicationLog;
 import eng.jAtcSim.lib.messaging.Message;
 import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.GoodDayNotification;
@@ -83,7 +82,7 @@ public class CenterAtc extends ComputerAtc {
   @Override
   protected void processMessagesFromPlane(Airplane plane, SpeechList spchs) {
     for (Object o : spchs) {
-      if (o instanceof GoodDayNotification){
+      if (o instanceof GoodDayNotification) {
         if (plane.isDeparture()) {
           SpeechList cmds = new SpeechList();
 
@@ -113,7 +112,12 @@ public class CenterAtc extends ComputerAtc {
   @Override
   protected Atc getTargetAtcIfPlaneIsReadyToSwitch(Airplane plane) {
     Atc ret;
-    if (plane.isArrival() && plane.getAltitude() < this.releaseAltitude)
+    if (plane.isArrival() && (
+        plane.getAltitude() <= this.releaseAltitude) || (
+            Coordinates.getDistanceInNM(
+                plane.getCoordinate(),
+                Acc.area().getNavaids().get(plane.getRouteNameorFix()).getCoordinate()) < 10
+        ))
       ret = Acc.atcApp();
     else
       ret = null;

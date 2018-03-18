@@ -16,7 +16,6 @@ public class Global {
    */
   public static boolean COORDINATE_LONG = false;
   
-  public static double MAX_ARRIVING_PLANE_DISTANCE = 15;
 
   public static <T> T as (Object obj){
     T ret;

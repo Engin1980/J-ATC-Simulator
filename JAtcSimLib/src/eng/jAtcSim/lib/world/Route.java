@@ -48,7 +48,8 @@ public class Route extends MustBeBinded implements KeyItem<String> {
   private SpeechList<IAtcCommand> _routeCommands = null;
   private List<Navaid> _routeNavaids = null;
   private double _routeLength = -1;
-  private Navaid _mainFix = null;
+  @XmlOptional
+  private Navaid mainFix = null;
   @XmlOptional
   private Integer entryFL;
 
@@ -65,7 +66,7 @@ public class Route extends MustBeBinded implements KeyItem<String> {
     if (arrival) {
       ret._routeCommands.add(new ProceedDirectCommand(n));
     }
-    ret._mainFix = n;
+    ret.mainFix = n;
     ret.type = eType.vectoring;
     ret._routeCommands.add(new ProceedDirectCommand(n));
     ret.route = "";
@@ -137,7 +138,7 @@ public class Route extends MustBeBinded implements KeyItem<String> {
   public Navaid getMainFix() {
     super.checkBinded();
 
-    return _mainFix;
+    return mainFix;
   }
 
   @Override
@@ -177,20 +178,23 @@ public class Route extends MustBeBinded implements KeyItem<String> {
       throw new EBindException("Parsing fromAtc failed for route " + this.name + ". Route fromAtc contain error (see cause).", ex);
     }
 
-    switch (type) {
-      case sid:
-        _mainFix = tryGetSidMainFix();
-        break;
-      case star:
-      case transition:
-        _mainFix = tryGetStarMainFix();
-        break;
-      case vectoring:
-        if (_mainFix == null)
-          throw new EBindException("\"Vectoing\" route must have set _mainFix explicitly.");
-        break;
-      default:
-        throw new EBindException("Failed to obtain main route fix of route " + this.name + ". SID last/STAR first command must be \"proceed direct\" (fromAtc: " + this.route + ")");
+    // when "main fix" was not explicitly specified
+    if (mainFix == null) {
+      switch (type) {
+        case sid:
+          mainFix = tryGetSidMainFix();
+          break;
+        case star:
+        case transition:
+          mainFix = tryGetStarMainFix();
+          break;
+        case vectoring:
+          if (mainFix == null)
+            throw new EBindException("\"Vectoing\" route must have set mainFix explicitly.");
+          break;
+        default:
+          throw new EBindException("Failed to obtain main route fix of route " + this.name + ". SID last/STAR first command must be \"proceed direct\" (fromAtc: " + this.route + ")");
+      }
     }
 
     _routeNavaids = new ArrayList<>();

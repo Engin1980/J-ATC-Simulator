@@ -37,6 +37,8 @@ public abstract class Traffic {
 
   private static final double COMPANY_THREE_CHAR_NUMBER_PROBABILITY = 0.3;
   private static final double EXTENDED_CALLSIGN_PROBABILITY = 0.3;
+  public static double MAX_ARRIVING_PLANE_DISTANCE = 30;
+  public static double MIN_ARRIVING_PLANE_DISTANCE = 15;
   private String title;
   @XmlOptional
   private String description;
@@ -249,8 +251,8 @@ public abstract class Traffic {
 
   private Coordinate generateArrivalCoordinate(Coordinate navFix, Coordinate aipFix) {
     double radial = Coordinates.getBearing(aipFix, navFix);
-    radial += Simulation.rnd.nextDouble() * 50 - 25; // nahodne zatoceni priletoveho radialu
-    double dist = Simulation.rnd.nextDouble() * Global.MAX_ARRIVING_PLANE_DISTANCE + 5; // vzdalenost od prvniho bodu STARu
+    radial += Simulation.rnd.nextDouble(-25,25); // nahodne zatoceni priletoveho radialu
+    double dist = Simulation.rnd.nextDouble(MIN_ARRIVING_PLANE_DISTANCE, MAX_ARRIVING_PLANE_DISTANCE); // vzdalenost od prvniho bodu STARu
     Coordinate ret = null;
     while (ret == null) {
 
