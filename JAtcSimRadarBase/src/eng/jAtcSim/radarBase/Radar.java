@@ -7,8 +7,6 @@ import eng.eSystem.utilites.CollectionUtil;
 import eng.jAtcSim.lib.Simulation;
 import eng.jAtcSim.lib.airplanes.*;
 import eng.jAtcSim.lib.atcs.Atc;
-import eng.jAtcSim.lib.speaking.fromAtc.IAtc2Atc;
-import eng.jAtcSim.lib.speaking.fromAtc.atc2atc.PlaneSwitchMessage;
 import eng.jAtcSim.lib.coordinates.Coordinate;
 import eng.jAtcSim.lib.coordinates.Coordinates;
 import eng.jAtcSim.lib.exceptions.ENotSupportedException;
@@ -21,7 +19,9 @@ import eng.jAtcSim.lib.messaging.StringMessageContent;
 import eng.jAtcSim.lib.speaking.ISpeech;
 import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.Rejection;
+import eng.jAtcSim.lib.speaking.fromAtc.IAtc2Atc;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
+import eng.jAtcSim.lib.speaking.fromAtc.atc2atc.PlaneSwitchMessage;
 import eng.jAtcSim.lib.speaking.fromAtc.atc2atc.StringResponse;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ProceedDirectCommand;
 import eng.jAtcSim.lib.world.*;
@@ -911,8 +911,13 @@ public class Radar {
     boolean containsSystemMessage =
         msgs.stream().anyMatch(q -> q.isSourceOfType(Messenger.XSystem.class));
 
-    boolean containsAtcMessage =
-        msgs.stream().anyMatch(q -> q.isSourceOfType(Atc.class));
+    List<Message> atcMsgs = CollectionUtil.where(msgs, q -> q.isSourceOfType(Atc.class));
+    boolean containsAtcMessage = atcMsgs.isEmpty() == false;
+    boolean isAtcMessageNegative = false;
+    if (containsAtcMessage) {
+      atcMsgs = CollectionUtil.where(atcMsgs, q -> q.isContentOfType(IAtc2Atc.class));
+      isAtcMessageNegative = atcMsgs.stream().anyMatch(q -> q.<IAtc2Atc>getContent().isRejection());
+    }
 
     List<Message> planeMsgs = CollectionUtil.where(msgs, q -> q.isSourceOfType(Airplane.class));
     boolean containsPlaneMessage = planeMsgs.isEmpty() == false;
@@ -925,7 +930,7 @@ public class Radar {
     }
 
     if (containsAtcMessage) {
-      SoundManager.playAtcNewMessage(false);
+      SoundManager.playAtcNewMessage(isAtcMessageNegative);
     } else if (containsPlaneMessage) {
       SoundManager.playPlaneNewMessage(isPlaneMessageNegative);
     } else if (containsSystemMessage) {
