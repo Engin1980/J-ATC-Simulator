@@ -1,28 +1,27 @@
-package eng.jAtcSim.lib.speaking.parsing.shortParsing;
+package eng.jAtcSim.lib.speaking.parsing.shortParsing.fromPlaneParsers;
 
 import eng.jAtcSim.lib.exceptions.ERuntimeException;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeAltitudeCommand;
-import eng.jAtcSim.lib.exceptions.ERuntimeException;
-import eng.jAtcSim.lib.speaking.ICommand;
-import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeAltitudeCommand;
+import eng.jAtcSim.lib.speaking.parsing.shortParsing.RegexGrouper;
+import eng.jAtcSim.lib.speaking.parsing.shortParsing.SpeechParser;
 
-class ChangeAltitudeParser extends SpeechParser<ChangeAltitudeCommand> {
+public class ChangeAltitudeParser extends SpeechParser<ChangeAltitudeCommand> {
 
   private static final String[] prefixes = new String[]{"MA", "CM", "DM"};
   private static final String pattern = "((MA)|(CM)|(DM)) ?(\\d{1,3})";
 
   @Override
-  String[] getPrefixes() {
+  public String[] getPrefixes() {
     return prefixes;
   }
 
   @Override
-  String getPattern() {
+  public String getPattern() {
     return pattern;
   }
 
   @Override
-  ChangeAltitudeCommand parse(RegexGrouper rg) {
+  public ChangeAltitudeCommand parse(RegexGrouper rg) {
     ChangeAltitudeCommand ret;
     ChangeAltitudeCommand.eDirection d;
     int a;

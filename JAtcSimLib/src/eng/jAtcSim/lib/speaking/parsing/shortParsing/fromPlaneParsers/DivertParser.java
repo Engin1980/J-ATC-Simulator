@@ -1,6 +1,8 @@
-package eng.jAtcSim.lib.speaking.parsing.shortParsing;
+package eng.jAtcSim.lib.speaking.parsing.shortParsing.fromPlaneParsers;
 
 import eng.jAtcSim.lib.speaking.fromAtc.commands.DivertCommand;
+import eng.jAtcSim.lib.speaking.parsing.shortParsing.RegexGrouper;
+import eng.jAtcSim.lib.speaking.parsing.shortParsing.SpeechParser;
 
 public class DivertParser extends SpeechParser<DivertCommand> {
 
@@ -8,17 +10,17 @@ public class DivertParser extends SpeechParser<DivertCommand> {
   private static final String pattern = "(DVT)";
 
   @Override
-  String[] getPrefixes() {
+  public String[] getPrefixes() {
     return prefixes;
   }
 
   @Override
-  String getPattern() {
+  public String getPattern() {
     return pattern;
   }
 
   @Override
-  DivertCommand parse(RegexGrouper line) {
+  public DivertCommand parse(RegexGrouper line) {
     return new DivertCommand();
   }
 }

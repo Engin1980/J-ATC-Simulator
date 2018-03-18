@@ -5,9 +5,9 @@ import eng.jAtcSim.lib.speaking.IFromAtc;
 
 public abstract class SpeechParser<T extends IFromAtc> {
 
-  abstract String[] getPrefixes();
+  public abstract String[] getPrefixes();
 
-  abstract String getPattern();
+  public abstract String getPattern();
 
   public String getHelp() {
     EStringBuilder sb = new EStringBuilder();
@@ -16,5 +16,5 @@ public abstract class SpeechParser<T extends IFromAtc> {
     return sb.toString();
   }
 
-  abstract T parse(RegexGrouper line);
+  public abstract T parse(RegexGrouper line);
 }

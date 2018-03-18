@@ -1,17 +1,29 @@
-package eng.jAtcSim.lib.speaking.parsing.shortParsing;
+package eng.jAtcSim.lib.speaking.parsing.shortParsing.fromPlaneParsers;
 
 import eng.eSystem.EStringBuilder;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.exceptions.EInvalidCommandException;
 import eng.jAtcSim.lib.exceptions.ENotSupportedException;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ClearedToApproachCommand;
+import eng.jAtcSim.lib.speaking.parsing.shortParsing.RegexGrouper;
+import eng.jAtcSim.lib.speaking.parsing.shortParsing.SpeechParser;
 import eng.jAtcSim.lib.world.Approach;
 import eng.jAtcSim.lib.world.RunwayThreshold;
 
-class ClearedToApproachParser extends SpeechParser<ClearedToApproachCommand> {
+public class ClearedToApproachParser extends SpeechParser<ClearedToApproachCommand> {
 
   private static final String[] prefixes = new String[]{"C"};
   private static final String pattern = "C (I|II|III|G|V|R|N) (\\S+)";
+
+  @Override
+  public String[] getPrefixes() {
+    return prefixes;
+  }
+
+  @Override
+  public String getPattern() {
+    return pattern;
+  }
 
   @Override
   public String getHelp() {
@@ -35,17 +47,7 @@ class ClearedToApproachParser extends SpeechParser<ClearedToApproachCommand> {
   }
 
   @Override
-  String[] getPrefixes() {
-    return prefixes;
-  }
-
-  @Override
-  String getPattern() {
-    return pattern;
-  }
-
-  @Override
-  ClearedToApproachCommand parse(RegexGrouper rg) {
+  public ClearedToApproachCommand parse(RegexGrouper rg) {
     String typeS = rg.getString(1);
     String runwayName = rg.getString(2).toUpperCase();
 

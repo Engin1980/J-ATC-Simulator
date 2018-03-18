@@ -1,33 +1,30 @@
-package eng.jAtcSim.lib.speaking.parsing.shortParsing;
+package eng.jAtcSim.lib.speaking.parsing.shortParsing.fromPlaneParsers;
 
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.exceptions.EInvalidCommandException;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.HoldCommand;
-import eng.jAtcSim.lib.world.Navaid;
-import eng.jAtcSim.lib.world.PublishedHold;
-import eng.jAtcSim.lib.Acc;
-import eng.jAtcSim.lib.exceptions.EInvalidCommandException;
-import eng.jAtcSim.lib.speaking.fromAtc.commands.HoldCommand;
+import eng.jAtcSim.lib.speaking.parsing.shortParsing.RegexGrouper;
+import eng.jAtcSim.lib.speaking.parsing.shortParsing.SpeechParser;
 import eng.jAtcSim.lib.world.Navaid;
 import eng.jAtcSim.lib.world.PublishedHold;
 
-class HoldParser extends SpeechParser<HoldCommand> {
+public class HoldParser extends SpeechParser<HoldCommand> {
 
   private static final String[] prefixes = new String[]{"H"};
   private static final String pattern = "H (\\S{1,5})( (\\d{3}))?( (R|L))?";
 
   @Override
-  String[] getPrefixes() {
+  public String[] getPrefixes() {
     return prefixes;
   }
 
   @Override
-  String getPattern() {
+  public String getPattern() {
     return pattern;
   }
 
   @Override
-  HoldCommand parse(RegexGrouper rg) {
+  public HoldCommand parse(RegexGrouper rg) {
     HoldCommand ret;
 
     String ns = rg.getString(1);

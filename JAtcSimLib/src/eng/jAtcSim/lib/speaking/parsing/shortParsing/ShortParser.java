@@ -6,47 +6,51 @@ import eng.jAtcSim.lib.exceptions.EInvalidCommandException;
 import eng.jAtcSim.lib.speaking.IFromAtc;
 import eng.jAtcSim.lib.speaking.ISpeech;
 import eng.jAtcSim.lib.speaking.SpeechList;
+import eng.jAtcSim.lib.speaking.fromAtc.IAtc2Atc;
 import eng.jAtcSim.lib.speaking.parsing.Parser;
 import eng.jAtcSim.lib.speaking.parsing.ShortcutList;
+import eng.jAtcSim.lib.speaking.parsing.shortParsing.fromAtcParsers.RunwayCheckParser;
+import eng.jAtcSim.lib.speaking.parsing.shortParsing.fromPlaneParsers.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class ShortParser extends Parser {
 
-  // <editor-fold defaultstate="collapsed" desc=" Parsers static init ">
-  private static final List<SpeechParser> parsers;
+  private static final List<SpeechParser> planeParsers;
+  private static final List<SpeechParser> atcParsers;
   private ShortcutList shortcuts = new ShortcutList();
-// </editor-fold>
 
   static {
-    parsers = new ArrayList<>();
-    parsers.add(new ChangeHeadingParser());
-    parsers.add(new ChangeAltitudeParser());
-    parsers.add(new ChangeSpeedParser());
+    planeParsers = new ArrayList<>();
+    planeParsers.add(new ChangeHeadingParser());
+    planeParsers.add(new ChangeAltitudeParser());
+    planeParsers.add(new ChangeSpeedParser());
 
-    parsers.add(new AfterAltitudeParser());
-    parsers.add(new AfterSpeedParser());
-    parsers.add(new AfterNavaidParser());
+    planeParsers.add(new AfterAltitudeParser());
+    planeParsers.add(new AfterSpeedParser());
+    planeParsers.add(new AfterNavaidParser());
 
-    parsers.add(new ProceedDirectParser());
-    parsers.add(new ShortcutParser());
-    parsers.add(new HoldParser());
+    planeParsers.add(new ProceedDirectParser());
+    planeParsers.add(new ShortcutParser());
+    planeParsers.add(new HoldParser());
 
-    parsers.add(new ClearedToApproachParser());
+    planeParsers.add(new ClearedToApproachParser());
 
-    parsers.add(new ContactParser());
+    planeParsers.add(new ContactParser());
 
-    parsers.add(new ThenParser());
-    parsers.add(new RadarContactConfirmationParser());
+    planeParsers.add(new ThenParser());
+    planeParsers.add(new RadarContactConfirmationParser());
 
-    parsers.add(new GoAroundParser());
+    planeParsers.add(new GoAroundParser());
 
-    parsers.add(new ReportDivertTimeParser());
-    parsers.add(new DivertParser());
+    planeParsers.add(new ReportDivertTimeParser());
+    planeParsers.add(new DivertParser());
 
-    parsers.add(new SetAltitudeRestrictionParser());
+    planeParsers.add(new SetAltitudeRestrictionParser());
+
+    atcParsers = new ArrayList<>();
+    atcParsers.add(new RunwayCheckParser());
   }
 
   private static String normalizeCommandsInString(String line) {
@@ -61,7 +65,7 @@ public class ShortParser extends Parser {
   }
 
   private static SpeechParser getSpeechParser(String line) {
-    for (SpeechParser tmp : parsers) {
+    for (SpeechParser tmp : planeParsers) {
       for (String pref : tmp.getPrefixes()) {
         if (line.startsWith(pref + " ")) {
           return tmp;
@@ -143,13 +147,35 @@ public class ShortParser extends Parser {
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
 
+  @Override
+  public IAtc2Atc parseAtc(String text) {
+    text = normalizeCommandsInString(text);
+    SpeechParser p = getSpeechParser(text);
+
+    if (p == null)
+      throw new EInvalidCommandException("Failed to parse atc message prefix.",
+          text.substring(0, text.length() - text.length()),
+          text);
+
+    RegexGrouper rg = RegexGrouper.apply(text, p.getPattern());
+
+    if (rg == null) {
+      throw new EInvalidCommandException("Failed to parse command. Probably invalid syntax?",
+          text.substring(0, text.length() - text.length()),
+          text);
+    }
+
+    IAtc2Atc ret = (IAtc2Atc) p.parse(rg);
+    return ret;
+  }
+
   private String tryExpandByShortcut(String txt) {
     String ret;
     String firstWord = StringUtil.getUntil(txt, " ");
     String rest;
     if (firstWord.length() < txt.length())
-      rest = txt.substring(firstWord.length() );
-     else rest = "";
+      rest = txt.substring(firstWord.length());
+    else rest = "";
     String exp = this.getShortcuts().tryGet(firstWord);
     if (exp != null)
       ret = exp + rest;

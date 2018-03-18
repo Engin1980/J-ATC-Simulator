@@ -1,6 +1,8 @@
-package eng.jAtcSim.lib.speaking.parsing.shortParsing;
+package eng.jAtcSim.lib.speaking.parsing.shortParsing.fromPlaneParsers;
 
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ReportDivertTime;
+import eng.jAtcSim.lib.speaking.parsing.shortParsing.RegexGrouper;
+import eng.jAtcSim.lib.speaking.parsing.shortParsing.SpeechParser;
 
 public class ReportDivertTimeParser extends SpeechParser<ReportDivertTime> {
 
@@ -8,17 +10,17 @@ public class ReportDivertTimeParser extends SpeechParser<ReportDivertTime> {
   private static final String pattern = "(RDVT)";
 
   @Override
-  String[] getPrefixes() {
+  public String[] getPrefixes() {
     return prefixes;
   }
 
   @Override
-  String getPattern() {
+  public String getPattern() {
     return pattern;
   }
 
   @Override
-  ReportDivertTime parse(RegexGrouper line) {
+  public ReportDivertTime parse(RegexGrouper line) {
     return new ReportDivertTime();
   }
 }

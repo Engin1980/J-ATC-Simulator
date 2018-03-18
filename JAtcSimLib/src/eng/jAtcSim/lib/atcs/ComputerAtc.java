@@ -38,26 +38,30 @@ public abstract class ComputerAtc extends Atc {
         confirmGoodDayNotificationIfRequired(p, spchs);
         processMessagesFromPlane(p, spchs);
       } else if (m.getSource() instanceof Atc) {
-        // messages from ATCs
-        Airplane plane = m.<PlaneSwitchMessage>getContent().plane;
-        Atc targetAtc = m.getSource();
-        if (this.waitingRequestsList.contains(plane)) {
-          // p is waiting to be switch-confirmed
+        if (isPlaneSwitchMessage(m)) {
+          // messages from ATCs
+          Airplane plane = m.<PlaneSwitchMessage>getContent().plane;
+          Atc targetAtc = m.getSource();
+          if (this.waitingRequestsList.contains(plane)) {
+            // p is waiting to be switch-confirmed
 
-          this.waitingRequestsList.remove(plane);
-          this.confirmedRequestList.add(
-              new SwitchRequest(targetAtc, plane));
+            this.waitingRequestsList.remove(plane);
+            this.confirmedRequestList.add(
+                new SwitchRequest(targetAtc, plane));
 
-        } else {
-          // p is not in waiting list, so other ATC asks ...
-          // to let us accept the plane
-
-          if (canIAcceptPlane(plane)) {
-            this.confirmSwitch(plane, targetAtc);
-            this.approveSwitch(plane);
           } else {
-            this.refuseSwitch(plane, targetAtc);
+            // p is not in waiting list, so other ATC asks ...
+            // to let us accept the plane
+
+            if (canIAcceptPlane(plane)) {
+              this.confirmSwitch(plane, targetAtc);
+              this.approveSwitch(plane);
+            } else {
+              this.refuseSwitch(plane, targetAtc);
+            }
           }
+        } else {
+          processMessageFromAtc(m);
         }
       }
     }
@@ -84,6 +88,13 @@ public abstract class ComputerAtc extends Atc {
 
     checkAndProcessPlanesReadyToSwitch();
     repeatOldSwitchRequests();
+  }
+
+  protected abstract void processMessageFromAtc(Message m);
+
+  private boolean isPlaneSwitchMessage(Message m){
+    boolean ret = m.getContent() instanceof  PlaneSwitchMessage;
+    return ret;
   }
 
   @Override

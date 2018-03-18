@@ -1,7 +1,9 @@
-package eng.jAtcSim.lib.speaking.parsing.shortParsing;
+package eng.jAtcSim.lib.speaking.parsing.shortParsing.fromPlaneParsers;
 
 import eng.jAtcSim.lib.global.Restriction;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.SetAltitudeRestriction;
+import eng.jAtcSim.lib.speaking.parsing.shortParsing.RegexGrouper;
+import eng.jAtcSim.lib.speaking.parsing.shortParsing.SpeechParser;
 
 public class SetAltitudeRestrictionParser extends SpeechParser<SetAltitudeRestriction> {
 
@@ -9,21 +11,21 @@ public class SetAltitudeRestrictionParser extends SpeechParser<SetAltitudeRestri
   private static final String pattern = "((AM)|(AL)|(AE)|(AR))( (\\d{1,3}))?";
 
   @Override
-  String[] getPrefixes() {
+  public String[] getPrefixes() {
     return prefixes;
   }
 
   @Override
-  String getPattern() {
+  public String getPattern() {
     return pattern;
   }
 
   @Override
-  SetAltitudeRestriction parse(RegexGrouper rg) {
+  public SetAltitudeRestriction parse(RegexGrouper rg) {
     Restriction res;
     SetAltitudeRestriction ret;
     String dirS = rg.getString(1);
-    if (dirS.equals("AR")){
+    if (dirS.equals("AR")) {
       res = null;
     } else {
       int val = rg.getInt(7) * 100;

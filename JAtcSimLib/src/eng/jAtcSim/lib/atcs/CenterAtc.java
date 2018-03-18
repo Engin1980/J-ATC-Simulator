@@ -4,6 +4,7 @@ import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.coordinates.Coordinates;
 import eng.jAtcSim.lib.messaging.Message;
+import eng.jAtcSim.lib.messaging.StringMessageContent;
 import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.GoodDayNotification;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeAltitudeCommand;
@@ -26,6 +27,16 @@ public class CenterAtc extends ComputerAtc {
       this.ctrAcceptDistance = template.getCtrAcceptDistance();
     if (template.getCtrNavaidAcceptDistance() != null)
       this.ctrNavaidAcceptDistance = template.getCtrNavaidAcceptDistance();
+  }
+
+  @Override
+  protected void processMessageFromAtc(Message m) {
+    // do nothing , CTR has no messages acceptable from ATC
+    super.sendMessage(new Message(
+        this,
+        m.getSource(),
+        new StringMessageContent("Unable.")
+    ));
   }
 
   public int getCtrAcceptDistance() {

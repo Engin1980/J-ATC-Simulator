@@ -1,6 +1,8 @@
-package eng.jAtcSim.lib.speaking.parsing.shortParsing;
+package eng.jAtcSim.lib.speaking.parsing.shortParsing.fromPlaneParsers;
 
 import eng.jAtcSim.lib.speaking.fromAtc.commands.GoAroundCommand;
+import eng.jAtcSim.lib.speaking.parsing.shortParsing.RegexGrouper;
+import eng.jAtcSim.lib.speaking.parsing.shortParsing.SpeechParser;
 
 public class GoAroundParser extends SpeechParser<GoAroundCommand> {
 
@@ -9,17 +11,17 @@ public class GoAroundParser extends SpeechParser<GoAroundCommand> {
 
 
   @Override
-  String[] getPrefixes() {
+  public String[] getPrefixes() {
     return prefixes;
   }
 
   @Override
-  String getPattern() {
+  public String getPattern() {
     return pattern;
   }
 
   @Override
-  GoAroundCommand parse(RegexGrouper line) {
+  public GoAroundCommand parse(RegexGrouper line) {
     return new GoAroundCommand();
   }
 }

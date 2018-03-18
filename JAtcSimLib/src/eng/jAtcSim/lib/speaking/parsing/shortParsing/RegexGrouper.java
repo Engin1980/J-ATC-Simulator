@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
  *
  * @author Marek
  */
-class RegexGrouper {
+public class RegexGrouper {
 
   private final Matcher m;
 

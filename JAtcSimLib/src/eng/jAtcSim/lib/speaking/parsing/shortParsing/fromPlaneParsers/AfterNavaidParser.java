@@ -1,32 +1,29 @@
-package eng.jAtcSim.lib.speaking.parsing.shortParsing;
+package eng.jAtcSim.lib.speaking.parsing.shortParsing.fromPlaneParsers;
 
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.exceptions.EInvalidCommandException;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.afters.AfterNavaidCommand;
-import eng.jAtcSim.lib.world.Navaid;
-import eng.jAtcSim.lib.Acc;
-import eng.jAtcSim.lib.exceptions.EInvalidCommandException;
-import eng.jAtcSim.lib.speaking.ICommand;
-import eng.jAtcSim.lib.speaking.fromAtc.commands.afters.AfterNavaidCommand;
+import eng.jAtcSim.lib.speaking.parsing.shortParsing.RegexGrouper;
+import eng.jAtcSim.lib.speaking.parsing.shortParsing.SpeechParser;
 import eng.jAtcSim.lib.world.Navaid;
 
-class AfterNavaidParser extends SpeechParser<AfterNavaidCommand> {
+public class AfterNavaidParser extends SpeechParser<AfterNavaidCommand> {
 
   private static final String[] prefixes = new String[]{"AN"};
   private static final String pattern = "AN (\\S+)";
 
   @Override
-  String[] getPrefixes() {
+  public String[] getPrefixes() {
     return prefixes;
   }
 
   @Override
-  String getPattern() {
+  public String getPattern() {
     return pattern;
   }
 
   @Override
-  AfterNavaidCommand parse(RegexGrouper rg) {
+  public AfterNavaidCommand parse(RegexGrouper rg) {
     String ns = rg.getString(1);
     Navaid n = Acc.area().getNavaids().tryGet(ns);
     if (n == null) {

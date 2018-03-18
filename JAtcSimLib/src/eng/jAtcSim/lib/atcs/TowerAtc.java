@@ -12,16 +12,60 @@ import eng.jAtcSim.lib.messaging.Message;
 import eng.jAtcSim.lib.messaging.StringMessageContent;
 import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.GoingAroundNotification;
+import eng.jAtcSim.lib.speaking.fromAtc.atc2atc.RunwayCheck;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ClearedForTakeoffCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.notifications.RadarContactConfirmationNotification;
 import eng.jAtcSim.lib.weathers.Weather;
 import eng.jAtcSim.lib.world.Runway;
 import eng.jAtcSim.lib.world.RunwayThreshold;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class TowerAtc extends ComputerAtc {
+
+  public static class RunwayCheck {
+    public final ETime latestScheduledTime;
+    public final int expectedDurationInMinutes;
+    public int lastAnnouncedMinute;
+
+    public static RunwayCheck createNormal(boolean isInitial) {
+      int maxTime = 4 * 60;
+      if (isInitial)
+        maxTime = Acc.rnd().nextInt(maxTime);
+
+      RunwayCheck ret = new RunwayCheck(maxTime, 5);
+      return ret;
+    }
+
+    public static RunwayCheck createSnowCleaning(boolean isInitial) {
+      int maxTime = Acc.rnd().nextInt(30, 180);
+      if (isInitial)
+        maxTime = Acc.rnd().nextInt(maxTime);
+
+      RunwayCheck ret = new RunwayCheck(maxTime, 20);
+      return ret;
+    }
+
+    public RunwayCheck(ETime latestScheduledTime, int expectedDurationInMinutes) {
+      this.latestScheduledTime = latestScheduledTime;
+      this.lastAnnouncedMinute = Integer.MAX_VALUE;
+      this.expectedDurationInMinutes = expectedDurationInMinutes;
+    }
+
+    public RunwayCheck(int minutesToNextCheck, int expectedDurationInMinutes) {
+      ETime et = Acc.now().addMinutes(minutesToNextCheck);
+      this.latestScheduledTime = et;
+      this.expectedDurationInMinutes = expectedDurationInMinutes;
+      this.lastAnnouncedMinute = Integer.MAX_VALUE;
+    }
+
+    public int getMinutesLeft() {
+      int diff = latestScheduledTime.getTotalMinutes() - Acc.now().getTotalMinutes();
+      return diff;
+    }
+  }
 
   private static final int RUNWAY_CHANGE_INFO_UPDATE_INTERVAL = 10 * 60;
   private static final int MAXIMAL_SPEED_FOR_PREFERRED_RUNWAY = 5;
@@ -35,6 +79,8 @@ public class TowerAtc extends ComputerAtc {
   private AirplaneList departingPlanesList = new AirplaneList();
   private Map<Airplane, ETime> holdingPointWaitingTimeMap = new HashMap<>();
   private RunwayThreshold runwayThresholdInUse = null;
+  private Map<Runway, RunwayCheck> runwayChecks = null;
+  private int[] runwayCheckAnnounceTimes = new int[]{30, 15, 10, 5};
 
   private static RunwayThreshold getSuggestedThreshold() {
     Weather w = Acc.weather();
@@ -78,6 +124,8 @@ public class TowerAtc extends ComputerAtc {
   public TowerAtc(AtcTemplate template) {
     super(template);
     toRecorder = new CommonRecorder(template.getName() + " - TO", template.getName() + "_to.log", "\t");
+
+
   }
 
   @Override
@@ -117,6 +165,27 @@ public class TowerAtc extends ComputerAtc {
     if (Acc.now().getTotalSeconds() % RUNWAY_CHANGE_INFO_UPDATE_INTERVAL == 0) {
       checkForRunwayChange();
     }
+
+    adviseRunwayCheckIfRequired();
+  }
+
+  @Override
+  protected void processMessageFromAtc(Message m) {
+    if (m.getContent() instanceof eng.jAtcSim.lib.speaking.fromAtc.atc2atc.RunwayCheck) {
+      eng.jAtcSim.lib.speaking.fromAtc.atc2atc.RunwayCheck rrct = m.getContent();
+      if (rrct.type == eng.jAtcSim.lib.speaking.fromAtc.atc2atc.RunwayCheck.eType.askForTime) {
+        RunwayCheck rc = this.runwayChecks.get(rrct.runway);
+        if (rc != null)
+          announceScheduledRunwayCheck(rrct.runway, rc);
+        else {
+          for (Runway runway : this.runwayChecks.keySet()) {
+            announceScheduledRunwayCheck(runway, rc);
+          }
+        }
+      } else if (rrct.type == eng.jAtcSim.lib.speaking.fromAtc.atc2atc.RunwayCheck.eType.doCheck){
+        throw new NotImplementedException();
+      }
+    }
   }
 
   @Override
@@ -124,6 +193,13 @@ public class TowerAtc extends ComputerAtc {
     super.init();
     RunwayThreshold suggestedThreshold = getSuggestedThreshold();
     changeRunwayInUse(suggestedThreshold);
+
+    runwayChecks = new HashMap<>();
+    for (Runway runway : Acc.airport().getRunways()) {
+      if (runway.isActive() == false) continue;
+      RunwayCheck rc = TowerAtc.RunwayCheck.createNormal(true);
+      runwayChecks.put(runway, rc);
+    }
   }
 
   @Override
@@ -194,6 +270,33 @@ public class TowerAtc extends ComputerAtc {
     return runwayThresholdInUse;
   }
 
+  private void adviseRunwayCheckIfRequired() {
+    for (Runway runway : runwayChecks.keySet()) {
+      RunwayCheck rc = runwayChecks.get(runway);
+
+      for (int dit : runwayCheckAnnounceTimes) {
+        int minLeft = rc.getMinutesLeft();
+        if (rc.lastAnnouncedMinute > dit && minLeft < dit) {
+          announceScheduledRunwayCheck(runway, rc);
+          break;
+        }
+      }
+    }
+  }
+
+  private void announceScheduledRunwayCheck(Runway rwy, RunwayCheck rc) {
+    Message msg = new Message(
+        this,
+        Acc.atcApp(),
+        new StringMessageContent("Runway %s cleaning is scheduled at %s for approx %d minutes",
+            rwy.getName(),
+            rc.latestScheduledTime.toString(),
+            rc.expectedDurationInMinutes));
+    super.sendMessage(msg);
+
+    rc.lastAnnouncedMinute = rc.getMinutesLeft();
+  }
+
   private void checkForRunwayChange() {
   }
 
@@ -260,7 +363,7 @@ public class TowerAtc extends ComputerAtc {
       tryToLog("\tno previous departure found.");
     }
 
-    double closestLandingPlaneDistance =closestLandingPlaneDistance();
+    double closestLandingPlaneDistance = closestLandingPlaneDistance();
     tryToLog("\tclosest landing plane distance: %.2f nm", closestLandingPlaneDistance);
     if (closestLandingPlaneDistance < 2.5) {
       tryToLog("\tdistance from arrival not achieved, T_O denied");
@@ -332,9 +435,9 @@ class TakeOffSeparation {
       new int[]{5, 3, 3, 0}, // C
       new int[]{6, 6, 5, 4}}; // D
   private final static int[][] sepTimeSeconds = new int[][]{
-      new int[]{120,   0,   0,   0}, // A
-      new int[]{120, 120,   0,   0}, // B
-      new int[]{120, 120, 120,   0}, // C
+      new int[]{120, 0, 0, 0}, // A
+      new int[]{120, 120, 0, 0}, // B
+      new int[]{120, 120, 120, 0}, // C
       new int[]{180, 180, 180, 120}}; // D
   /**
    * Increase frequency of arrivals. Higher means higher frequency of take-offs.

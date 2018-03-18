@@ -16,40 +16,25 @@ import eng.jAtcSim.lib.messaging.Message;
 import eng.jAtcSim.lib.messaging.Messenger;
 import eng.jAtcSim.lib.messaging.StringMessageContent;
 import eng.jAtcSim.lib.speaking.SpeechList;
+import eng.jAtcSim.lib.speaking.fromAtc.IAtc2Atc;
 import eng.jAtcSim.lib.speaking.parsing.Parser;
 import eng.jAtcSim.lib.speaking.parsing.shortParsing.ShortParser;
 
 /**
- *
  * @author Marek
  */
 public class UserAtc extends Atc {
-
-  private final Parser parser = new ShortParser();
-
-  private void raiseError(String text) {
-    recorder.write(this, "ERR", text);
-    switch (this.errorBehavior) {
-      case sendSystemErrors:
-        sendError(text);
-        break;
-      case throwExceptions:
-        throw new ERuntimeException(text);
-      default:
-        throw new ENotSupportedException();
-    }
-  }
 
   public enum eErrorBehavior {
 
     throwExceptions,
     sendSystemErrors
   }
-
+  private final Parser parser = new ShortParser();
   private eErrorBehavior errorBehavior = eErrorBehavior.sendSystemErrors;
 
-  @Override
-  public void init() {
+  public UserAtc(AtcTemplate template) {
+    super(template);
   }
 
   public eErrorBehavior getErrorBehavior() {
@@ -70,8 +55,8 @@ public class UserAtc extends Atc {
 
   }
 
-  public UserAtc(AtcTemplate template) {
-    super(template);
+  @Override
+  public void init() {
   }
 
   @Override
@@ -87,7 +72,7 @@ public class UserAtc extends Atc {
     Airplane p = Airplanes.tryGetByCallsingOrNumber(Acc.planes(), airplaneCallsignOrPart);
     if (p == null) {
       raiseError(
-        "Cannot identify airplane under callsign (or part) \"" + airplaneCallsignOrPart + "\" . None or multiple planes identified.");
+          "Cannot identify airplane under callsign (or part) \"" + airplaneCallsignOrPart + "\" . None or multiple planes identified.");
       return;
     }
 
@@ -110,31 +95,33 @@ public class UserAtc extends Atc {
     sendToPlane(pln, speeches);
   }
 
-  private void sendToPlane(Airplane plane, SpeechList speeches) {
-    Message m = new Message(this, plane, speeches);
+  public void sendToAtc(Atc.eType type, String message) {
+    if (message.matches("\\d{4}")) {
+      Squawk s = Squawk.tryCreate(message);
+      if (s == null) {
+        raiseError("\"" + message + "\" is not valid transponder code.");
+      } else
+        sendToAtc(type, s);
+    } else {
+      try {
+        IAtc2Atc content = parser.parseAtc(message);
+        sendToAtc(type, content);
+      } catch (Exception ex) {
+        raiseError("\"" + message + "\" has invalid syntax as message for ATC");
+      }
+    }
+  }
+
+  public void sendToAtc(Atc.eType type, IAtc2Atc msg) {
+    Atc atc = Acc.atc(type);
+    Message m = new Message(this, atc, msg);
     super.sendMessage(m);
   }
 
-  public void sendToAtc(Atc.eType type, String sqwkAsString) {
-    Squawk s;
-
-    s = Squawk.tryCreate(sqwkAsString);
-    if (s == null) {
-      raiseError("\"" + sqwkAsString + "\" is not valid transponder code.");
-      return;
-    }
-    sendToAtc(type, s);
-  }
-
   public void sendToAtc(Atc.eType type, Squawk squawk) {
-    Airplane pln = Airplanes.tryGetBySqwk(Acc.planes(), squawk);
-    if (pln == null) {
-      raiseError("No such plane with callsign " + squawk.toString());
-    }
-    sendToAtc(type, pln);
-  }
+    Airplane plane = Airplanes.tryGetBySqwk(Acc.planes(), squawk);
+    assert plane != null;
 
-  private void sendToAtc(Atc.eType type, Airplane plane) {
     Atc atc = Acc.atc(type);
 
     if (getPrm().isToSwitch(plane)) {
@@ -173,5 +160,23 @@ public class UserAtc extends Atc {
 
   public Parser getParser() {
     return parser;
+  }
+
+  private void raiseError(String text) {
+    recorder.write(this, "ERR", text);
+    switch (this.errorBehavior) {
+      case sendSystemErrors:
+        sendError(text);
+        break;
+      case throwExceptions:
+        throw new ERuntimeException(text);
+      default:
+        throw new ENotSupportedException();
+    }
+  }
+
+  private void sendToPlane(Airplane plane, SpeechList speeches) {
+    Message m = new Message(this, plane, speeches);
+    super.sendMessage(m);
   }
 }

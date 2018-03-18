@@ -1,26 +1,28 @@
-package eng.jAtcSim.lib.speaking.parsing.shortParsing;
+package eng.jAtcSim.lib.speaking.parsing.shortParsing.fromPlaneParsers;
 
 import eng.jAtcSim.lib.exceptions.ENotSupportedException;
 import eng.jAtcSim.lib.global.Restriction;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeSpeedCommand;
+import eng.jAtcSim.lib.speaking.parsing.shortParsing.RegexGrouper;
+import eng.jAtcSim.lib.speaking.parsing.shortParsing.SpeechParser;
 
-class ChangeSpeedParser extends SpeechParser<ChangeSpeedCommand> {
+public class ChangeSpeedParser extends SpeechParser<ChangeSpeedCommand> {
 
   private static final String[] prefixes = new String[]{"SM", "SL", "SE", "SR"};
   private static final String pattern = "(SR)|(?:(S[MLE]) ?(\\d{3}))";
 
   @Override
-  String[] getPrefixes() {
+  public String[] getPrefixes() {
     return prefixes;
   }
 
   @Override
-  String getPattern() {
+  public String getPattern() {
     return pattern;
   }
 
   @Override
-  ChangeSpeedCommand parse(RegexGrouper rg) {
+  public ChangeSpeedCommand parse(RegexGrouper rg) {
 
     ChangeSpeedCommand ret;
 

@@ -1,28 +1,27 @@
-package eng.jAtcSim.lib.speaking.parsing.shortParsing;
+package eng.jAtcSim.lib.speaking.parsing.shortParsing.fromPlaneParsers;
 
 import eng.jAtcSim.lib.exceptions.ENotSupportedException;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeHeadingCommand;
-import eng.jAtcSim.lib.exceptions.ENotSupportedException;
-import eng.jAtcSim.lib.speaking.ICommand;
-import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeHeadingCommand;
+import eng.jAtcSim.lib.speaking.parsing.shortParsing.RegexGrouper;
+import eng.jAtcSim.lib.speaking.parsing.shortParsing.SpeechParser;
 
-class ChangeHeadingParser extends SpeechParser<ChangeHeadingCommand> {
+public class ChangeHeadingParser extends SpeechParser<ChangeHeadingCommand> {
 
   private static final String[] prefixes = new String[]{"FH", "TR", "TL"};
   private static final String pattern = "((FH)|(TR)|(TL)) ?(\\d{1,3})";
 
   @Override
-  String[] getPrefixes() {
+  public String[] getPrefixes() {
     return prefixes;
   }
 
   @Override
-  String getPattern() {
+  public String getPattern() {
     return pattern;
   }
 
   @Override
-  ChangeHeadingCommand parse(RegexGrouper rg) {
+  public ChangeHeadingCommand parse(RegexGrouper rg) {
     ChangeHeadingCommand.eDirection d;
     switch (rg.getString(1)) {
       case "FH":

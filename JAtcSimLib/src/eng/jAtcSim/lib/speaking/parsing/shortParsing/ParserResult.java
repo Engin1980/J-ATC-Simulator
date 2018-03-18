@@ -3,7 +3,7 @@ package eng.jAtcSim.lib.speaking.parsing.shortParsing;
 import eng.jAtcSim.lib.speaking.ICommand;
 import eng.jAtcSim.lib.speaking.ICommand;
 
-class ParserResult {
+public class ParserResult {
 
   public final ICommand command;
   public final String restOfLine;

@@ -1,26 +1,28 @@
-package eng.jAtcSim.lib.speaking.parsing.shortParsing;
+package eng.jAtcSim.lib.speaking.parsing.shortParsing.fromPlaneParsers;
 
 import eng.jAtcSim.lib.atcs.Atc;
 import eng.jAtcSim.lib.exceptions.ENotSupportedException;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ContactCommand;
+import eng.jAtcSim.lib.speaking.parsing.shortParsing.RegexGrouper;
+import eng.jAtcSim.lib.speaking.parsing.shortParsing.SpeechParser;
 
-class ContactParser extends SpeechParser<ContactCommand> {
+public class ContactParser extends SpeechParser<ContactCommand> {
 
   private static final String[] prefixes = new String[]{"CT", "CA", "CC"};
   private static final String pattern = "(CT|CA|CC)";
 
   @Override
-  String[] getPrefixes() {
+  public String[] getPrefixes() {
     return prefixes;
   }
 
   @Override
-  String getPattern() {
+  public String getPattern() {
     return pattern;
   }
 
   @Override
-  ContactCommand parse(RegexGrouper rg) {
+  public ContactCommand parse(RegexGrouper rg) {
     Atc.eType t;
     switch (rg.getString(1)) {
       case "CT":
