@@ -28,6 +28,7 @@ import eng.jAtcSim.lib.speaking.fromAirplane.notifications.GoingAroundNotificati
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeHeadingCommand;
 import eng.jAtcSim.lib.world.Navaid;
+import eng.jAtcSim.lib.world.Route;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -86,8 +87,8 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
       return Airplane.this.departure;
     }
 
-    public String routeNameOrFix() {
-      return Airplane.this.pilot.getRouteName();
+    public Route getAssignedRoute() {
+      return Airplane.this.pilot.getAssignedRoute();
     }
 
     public int altitude() {
@@ -354,7 +355,7 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
 
   public Airplane(Callsign callsign, Coordinate coordinate, Squawk sqwk, AirplaneType airplaneSpecification,
                   int heading, int altitude, int speed, boolean isDeparture,
-                  String routeName, SpeechList<IAtcCommand> routeCommandQueue) {
+                  Route assignedRoute, SpeechList<IAtcCommand> routeCommandQueue) {
 
     this.callsign = callsign;
     this.coordinate = coordinate;
@@ -407,7 +408,7 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
       divertTime = Acc.now().addMinutes(divertTimeMinutes);
     }
 
-    this.pilot = new Pilot(this.new Airplane4Pilot(), routeName, routeCommandQueue, divertTime);
+    this.pilot = new Pilot(this.new Airplane4Pilot(), assignedRoute, routeCommandQueue, divertTime);
 
     this.plane4Display = this.new Airplane4Display();
 
@@ -594,10 +595,7 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     if (isDeparture() == false)
       throw new ERuntimeException("This method should not be called on departure aircraft %s.", this.getCallsign().toString());
 
-    String routeName = this.pilot.getRouteName();
-    if (routeName.length() > 2 && Character.isDigit(routeName.charAt(routeName.length() - 2)))
-      routeName = routeName.substring(0, routeName.length() - 2);
-    Navaid ret = Acc.area().getNavaids().get(routeName);
+    Navaid ret = this.pilot.getAssignedRoute().getMainFix();
     return ret;
   }
 
@@ -609,8 +607,8 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     this.airprox = airprox;
   }
 
-  public String getRouteNameorFix() {
-    return this.pilot.getRouteName();
+  public Route getAssigneRoute() {
+    return this.pilot.getAssignedRoute();
   }
 
   public Airplane4Display getPlane4Display() {

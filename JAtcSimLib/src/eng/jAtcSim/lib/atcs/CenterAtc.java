@@ -117,7 +117,7 @@ public class CenterAtc extends ComputerAtc {
       if (plane.getAltitude() <= this.releaseAltitude) {
         ret = Acc.atcApp();
       } else {
-        Route r = Acc.threshold().getRoutes().get(plane.getRouteNameorFix());
+        Route r = plane.getAssigneRoute();
         Navaid n = r.getMainFix();
         double dist = Coordinates.getDistanceInNM(plane.getCoordinate(), n.getCoordinate());
         if (dist < 15) {

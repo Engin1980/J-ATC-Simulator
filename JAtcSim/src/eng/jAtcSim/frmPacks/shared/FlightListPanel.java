@@ -206,7 +206,7 @@ class FlightStripPanel extends JPanel {
     lbl.setForeground(stripSettings.textColor);
     cmps[4] = lbl;
 
-    lbl = new JLabel(AirplaneDataFormatter.getDepartureArrivalChar(ai.isDeparture()) + " " + ai.routeNameOrFix());
+    lbl = new JLabel(AirplaneDataFormatter.getDepartureArrivalChar(ai.isDeparture()) + " " + ai.getAssignedRoute().getName());
     lbl.setName("lblRoute");
     lbl.setFont(normalFont);
     lbl.setForeground(stripSettings.textColor);

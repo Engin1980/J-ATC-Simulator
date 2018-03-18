@@ -747,7 +747,7 @@ public class Pilot {
   private final SpeechDelayer queue = new SpeechDelayer(1, 7); //Min/max speech delay
   private final AfterCommandList afterCommands = new AfterCommandList();
   private final Map<Atc, SpeechList> saidText = new HashMap<>();
-  private String routeName;
+  private Route assignedRoute;
   private Restriction speedRestriction = null;
   private Restriction altitudeRestriction = null;
   private int altitudeOrderedByAtc;
@@ -758,10 +758,10 @@ public class Pilot {
   private String gaReason = null;
   private DivertInfo divertInfo;
 
-  public Pilot(Airplane.Airplane4Pilot parent, String routeName, SpeechList<IAtcCommand> routeCommandQueue, @Nullable ETime divertTime) {
+  public Pilot(Airplane.Airplane4Pilot parent, Route assignedRoute, SpeechList<IAtcCommand> routeCommandQueue, @Nullable ETime divertTime) {
 
     this.parent = parent;
-    this.routeName = routeName;
+    this.assignedRoute = assignedRoute;
     {
       SpeechList<IFromAtc> speeches =
           new SpeechList<>(routeCommandQueue); // need clone to expand "thens"
@@ -781,8 +781,8 @@ public class Pilot {
     this.hasRadarContact = true;
   }
 
-  public String getRouteName() {
-    return this.routeName;
+  public Route getAssignedRoute() {
+    return this.assignedRoute;
   }
 
   public Coordinate getTargetCoordinate() {
@@ -847,17 +847,6 @@ public class Pilot {
     return ret;
   }
 
-  private String extractNavaidNameFromRouteOrFix() {
-    String ret;
-    int len = this.routeName.length();
-    boolean hasDigit = Character.isDigit(this.routeName.charAt(len - 2));
-    if (!hasDigit)
-      ret = this.routeName;
-    else
-      ret = this.routeName.substring(0, len - 2);
-    return ret;
-  }
-
   private void processDivert() {
 
     Navaid n = getDivertNavaid();
@@ -866,7 +855,7 @@ public class Pilot {
     this.afterCommands.clear();
     this.behavior = new DepartureBehavior();
     this.divertInfo = null;
-    this.routeName = n.getName();
+    this.assignedRoute = Route.createNewByFix(n, false);
     this.parent.setxState(Airplane.State.departingLow);
 
     this.say(new DivertingNotification(n));

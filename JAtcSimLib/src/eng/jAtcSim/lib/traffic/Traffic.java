@@ -164,15 +164,9 @@ public abstract class Traffic {
         new AfterAltitudeCommand(Acc.threshold().getParent().getParent().getAltitude() + Acc.rnd().nextInt(150, 450)));
     routeCmds.add(indx++, new ContactCommand(Atc.eType.app));
 
-    String routeName;
-    if (r != null) {
-      routeName = r.getName();
-    } else {
-      routeName = "(vfr)";
-    }
     ret = new Airplane(
         cs, coord, sqwk, pt, heading, alt, spd, true,
-        routeName, routeCmds);
+        r, routeCmds);
 
     return ret;
   }
@@ -216,7 +210,7 @@ public abstract class Traffic {
 
     ret = new Airplane(
         cs, coord, sqwk, pt, heading, alt, spd, false,
-        routeName, routeCmds);
+        r, routeCmds);
 
     return ret;
   }
