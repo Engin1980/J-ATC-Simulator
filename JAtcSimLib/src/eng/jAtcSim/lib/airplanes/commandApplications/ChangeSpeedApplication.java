@@ -34,8 +34,9 @@ public class ChangeSpeedApplication extends CommandApplication<ChangeSpeedComman
       int cMax = !isInApproach ? plane.getType().vMaxClean : plane.getType().vMaxApp;
       int cMin = !isInApproach ? plane.getType().vMinClean : plane.getType().vMinApp;
       // next "if" allows speed under vMinClean (like flaps-1) near the FAF
-      if (!isInApproach && Coordinates.getDistanceInNM(plane.getCoordinate(), Acc.threshold().getFafCross()) < 10) {
-        cMin = (int) (cMin * 0.85);
+      if (!isInApproach && Coordinates.getDistanceInNM(plane.getCoordinate(), Acc.threshold().getFafCross()) < 20) {
+        //cMin = (int) (cMin * 0.85);
+        cMin = plane.getType().vMaxApp;
       }
 
       if (sr.direction != Restriction.eDirection.atMost && sr.value > cMax) {

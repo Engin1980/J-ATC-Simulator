@@ -85,7 +85,11 @@ public class Airplanes {
 
     for (int i = 0; i < planes.size() - 1; i++) {
       Airplane a = planes.get(i);
-      if (a.getSpeed() == 0) continue;
+      if (a.getState().is(
+          Airplane.State.holdingPoint,
+          Airplane.State.landed,
+          Airplane.State.takeOffRoll
+      )) continue;
       for (int j = i + 1; j < planes.size(); j++) {
         Airplane b = planes.get(j);
         if (b.getSpeed() == 0) continue;

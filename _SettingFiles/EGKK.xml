@@ -128,7 +128,7 @@
         <runway active="true">
           <thresholds>
             <threshold name="08R" coordinate="51 08 45.10 N 000 12 24.59 W" initialDepartureAltitude="4000"
-                       fafCross="50.0458188038 14.02143275136">
+                       fafCross="51.11929358035, -0.40470030817">
               <approaches>
                 <approach type="ILS_I" point="51 08 45.10 N 000 12 24.59 W" radial="078" da="357"
                           gaRoute="CM 30 AA 20 TR 179"/>
@@ -178,7 +178,7 @@
             </threshold>
             <threshold name="26L" coordinate="51 09 02.43 N 000 10 18.93 W" initialDepartureAltitude="4000"
                        preferred="true"
-                       fafCross="50.17477974614 14.4491404134">
+                       fafCross="51.16710957872, -0.04812869274">
               <approaches>
                 <approach type="ILS_I" point="51 09 02.43 N 000 10 18.93 W" radial="258" da="356"
                           gaRoute="CM 30 AA 20 TL 179"/>
@@ -226,7 +226,7 @@
                        route="SL 220 AL 40 PD KKW04 T PD KKS06 T SR PD KKS09 T PD KKS14 T AL 50 PD MAY T AL 60 PD KKS33 T PD WIZAD T SR AR"/>
                 <route type="sid" name="ADMAG2X"
                        route="SL 220 AL 40 PD KKW02 T PD KKW09 T SR PD KKE11 T PD KKE15 T AL 50 PD SUNAV T AL 60 PD ADMAG T SR AR"/>
-                <route type="sid" name="TIGER1X"
+                <route type="sid" name="TIGER1X" fix="LAM"
                        route="SL 220 AL 40 PD KKW04 T PD KKS06 T SR PD KKS09 T PD KKS14 T AL 50 PD MAY T PD KKS36 T PD LAM T SR AR"/>
                 <route type="sid" name="DAGGA1X"
                        route="SL 220 AL 40 PD KKW04 T PD KKS06 T SR PD KKS09 T PD KKS14 T AL 50 PD MAY T PD KKS36 T PD DET T PD DAGGA T PD CLN T SR AR"/>
@@ -250,7 +250,7 @@
         <hold navaidName="GOKTU" inboundRadial="018" turn="right"/>
         <hold navaidName="KATHY" inboundRadial="040" turn="left"/>
         <hold navaidName="WILLO" inboundRadial="284" turn="left"/>
-
+        <hold navaidName="MAY" inboundRadial="088" turn="left"/>
 
         <!-- generic -->
         <!--
@@ -271,11 +271,8 @@
     <navaid name="ADMAG" type="fix" coordinate="511401.91N 0002933.64E"/>
     <navaid name="AMDUT" type="fix" coordinate="504027.90N 0004746.38E"/>
     <navaid name="ARNUN" type="fix" coordinate="510325.98N 0005552.98E"/>
-    <navaid name="BIG" type="fix" coordinate="511951.15N 0000205.32E"/>
     <navaid name="BOGNA" type="fix" coordinate="504207.00N 0001506.00W"/>
-    <navaid name="CLN" type="fix" coordinate="515054.50N 0010851.32E"/>
     <navaid name="DAGGA" type="fix" coordinate="514919.00N 0004739.00E"/>
-    <navaid name="DET" type="fix" coordinate="511814.41N 0003550.19E"/>
     <navaid name="DISVO" type="fix" coordinate="503931.38N 0010257.16W"/>
     <navaid name="ELDAX" type="fix" coordinate="502918.36N 0003930.42E"/>
     <navaid name="ELDER" type="fix" coordinate="503948.10N 0012013.93W"/>
@@ -335,9 +332,7 @@
     <navaid name="KKW44" type="fixMinor" coordinate="510332.85N 0005750.20W"/>
     <navaid name="KONAN" type="fix" coordinate="510750.75N 0020000.00E"/>
     <navaid name="KUNAV" type="fix" coordinate="503054.00N 0010356.00E"/>
-    <navaid name="LAM" type="fix" coordinate="513845.69N 0000906.13E"/>
     <navaid name="LARCK" type="fix" coordinate="505441.83N 0002647.93E"/>
-    <navaid name="MAY" type="fix" coordinate="510101.86N 0000658.04E"/>
     <navaid name="MID" type="fix" coordinate="510314.23N 0003730.01W"/>
     <navaid name="NEDUL" type="fix" coordinate="503958.00N 0013251.86W"/>
     <navaid name="NETVU" type="fix" coordinate="502445.00N 0002854.00E"/>
@@ -345,8 +340,6 @@
     <navaid name="ODVIK" type="fix" coordinate="510957.40N 0002909.33E"/>
     <navaid name="OSPOL" type="fix" coordinate="500900.00N 0001107.84W"/>
     <navaid name="OTMET" type="fix" coordinate="504055.06N 0023053.37W"/>
-    <navaid name="SAM" type="fix" coordinate="505718.90N 0012042.20W"/>
-    <navaid name="SFD" type="fix" coordinate="504538.49N 0000718.89E"/>
     <navaid name="SOKDU" type="fix" coordinate="503939.22N 0020133.06W"/>
     <navaid name="SUNAV" type="fix" coordinate="511536.90N 0001139.80E"/>
     <navaid name="TEBRA" type="fix" coordinate="512920.30N 0013643.00E"/>

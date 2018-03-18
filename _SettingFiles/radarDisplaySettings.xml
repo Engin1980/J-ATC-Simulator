@@ -2,8 +2,8 @@
 
 <settings refreshRate="3">
 
-    <airproxFull color="FF0000" />
-    <airproxPartial color="FFA500" />
+    <airproxFull>FF0000</airproxFull>
+    <airproxPartial>FFA500</airproxPartial>
 
     <activeRunway color="FFFFFF" width="3"/>
     <closedRunway color="FFAAAA" width="3"/>

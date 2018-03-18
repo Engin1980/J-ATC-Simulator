@@ -12,6 +12,7 @@ import eng.jAtcSim.lib.exceptions.ENotSupportedException;
 import eng.jAtcSim.lib.speaking.ICommand;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeHeadingCommand;
+import eng.jAtcSim.lib.speaking.fromAtc.commands.HoldCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ProceedDirectCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ShortcutCommand;
 import eng.jAtcSim.lib.world.Navaid;
@@ -169,6 +170,7 @@ public class AfterCommandList {
       if (anc.getNavaid().getCoordinate().equals(coordinate)){
         if (item.consequent instanceof ChangeHeadingCommand ||
             item.consequent instanceof ProceedDirectCommand ||
+            item.consequent instanceof HoldCommand ||
             item.consequent instanceof ShortcutCommand)
           ret = true;
       }
