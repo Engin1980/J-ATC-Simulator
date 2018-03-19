@@ -16,6 +16,7 @@ import eng.jAtcSim.lib.speaking.fromAtc.commands.HoldCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ProceedDirectCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ShortcutCommand;
 import eng.jAtcSim.lib.world.Navaid;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -83,8 +84,9 @@ public class AfterCommandList {
     int i = 0;
     while (i < inner.size()) {
       if (inner.get(i).antecedent instanceof AfterAltitudeCommand) {
-        int trgAlt = ((AfterAltitudeCommand) inner.get(i).antecedent).getAltitudeInFt();
-        if (Math.abs(trgAlt - alt) < 100) {
+        AfterAltitudeCommand cmd = (AfterAltitudeCommand) inner.get(i).antecedent;
+        boolean isPassed = isAfterAltitudePassed(cmd, referencePlane.getAltitude());
+        if (isPassed) {
           ret.add(inner.get(i).consequent);
           inner.remove(i);
         } else {
@@ -119,6 +121,26 @@ public class AfterCommandList {
         throw new ENotSupportedException();
       }
     }
+    return ret;
+  }
+
+  private boolean isAfterAltitudePassed(AfterAltitudeCommand cmd, double altitudeInFt) {
+    int trgAlt = cmd.getAltitudeInFt();
+    boolean ret;
+    switch (cmd.getRestriction()){
+      case exact:
+        ret =Math.abs(trgAlt - altitudeInFt) < 100;
+        break;
+      case andAbove:
+        ret = altitudeInFt > trgAlt;
+        break;
+      case andBelow:
+        ret = altitudeInFt<trgAlt;
+        break;
+      default:
+        throw new UnsupportedOperationException();
+    }
+
     return ret;
   }
 

@@ -131,9 +131,9 @@
                        fafCross="51.11929358035 -0.40470030817">
               <approaches>
                 <approach type="ILS_I" point="51 08 45.10 N 000 12 24.59 W" radial="078" da="357"
-                          gaRoute="CM 30 AA 20 TR 179"/>
+                          gaRoute="CM 30 AA 20+ TR 179"/>
                 <approach type="ILS_II" point="51 08 45.10 N 000 12 24.59 W" radial="078" da="2687"
-                          gaRoute="CM 30 AA 20 TR 179"/>
+                          gaRoute="CM 30 AA 20+ TR 179"/>
               </approaches>
               <routes>
                 <!-- STARs are shared for both runways -->
@@ -183,9 +183,9 @@
                        fafCross="51.16710957872 -0.04812869274">
               <approaches>
                 <approach type="ILS_I" point="51 09 02.43 N 000 10 18.93 W" radial="258" da="356"
-                          gaRoute="CM 30 AA 20 TL 179"/>
+                          gaRoute="CM 30 AA 20+ TL 179"/>
                 <approach type="ILS_II" point="51 09 02.43 N 000 10 18.93 W" radial="258" da="268"
-                          gaRoute="CM 30 AA 20 TL 179"/>
+                          gaRoute="CM 30 AA 20+ TL 179"/>
               </approaches>
               <routes>
                 <!-- STARs are shared for both runways -->

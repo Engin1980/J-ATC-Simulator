@@ -8,6 +8,7 @@ package eng.jAtcSim.lib.airplanes.pilots;
 import com.sun.istack.internal.Nullable;
 import eng.eSystem.EStringBuilder;
 import eng.eSystem.utilites.CollectionUtil;
+import eng.eSystem.utilites.ConversionUtils;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.commandApplications.ApplicationManager;
@@ -553,15 +554,21 @@ public class Pilot {
       Pilot.this.gaReason = reason;
       parent.adviceGoAroundToAtc(atc, reason);
 
-      parent.setTargetSpeed(parent.getType().vDep);
-      parent.setTargetAltitude(Acc.threshold().getInitialDepartureAltitude());
-      // altitude should be set by go-around route in next line
-      SpeechList lst = new SpeechList(this.approach.getGaCommands());
-      addNewSpeeches(lst);
-
       super.setBehaviorAndState(
           new TakeOffBehavior(), Airplane.State.takeOffGoAround);
+
+      parent.setTargetSpeed(parent.getType().vDep);
+      parent.setTargetAltitude(0);
+      parent.setTargetHeading(approach.getParent().getCourse());
+
+      Pilot.this.afterCommands.clear();
+      SpeechList<IFromAtc> gas = new SpeechList<>(this.approach.getGaCommands());
+      expandThenCommands(gas);
+      processSpeeches(gas, false, false);
+
+
     }
+
 
     private double getAppHeadingDifference() {
       int heading = (int) Coordinates.getBearing(parent.getCoordinate(), this.approach.getParent().getCoordinate());
@@ -744,7 +751,7 @@ public class Pilot {
   }
 
   private final Airplane.Airplane4Pilot parent;
-  private final SpeechDelayer queue = new SpeechDelayer(1, 7); //Min/max speech delay
+  private final SpeechDelayer queue = new SpeechDelayer(2, 7); //Min/max speech delay
   private final AfterCommandList afterCommands = new AfterCommandList();
   private final Map<Atc, SpeechList> saidText = new HashMap<>();
   private Route assignedRoute;
@@ -791,14 +798,10 @@ public class Pilot {
 
   public void addNewSpeeches(SpeechList<IFromAtc> speeches) {
     this.queue.newRandomDelay();
-    int index = 0;
     expandThenCommands(speeches);
     for (ISpeech speech : speeches) {
       this.queue.add(speech);
     }
-//    while (index < speeches.size()) {
-//      index = addNewSpeeches(speeches, index);
-//    }
   }
 
   public void elapseSecond() {
@@ -844,6 +847,16 @@ public class Pilot {
     } else {
       ret = this.afterCommands.hasLateralDirectionToNavaid(navaid);
     }
+    return ret;
+  }
+
+  public Approach tryGetAssignedApproach() {
+    Approach ret;
+    ApproachBehavior ap = ConversionUtils.convertOrNull(this.behavior);
+    if (ap != null)
+      ret = ap.approach;
+    else
+      ret = null;
     return ret;
   }
 
@@ -900,7 +913,8 @@ public class Pilot {
       ISpeech s = queue.get(0);
       IFromAtc sa = (IFromAtc) s;
       if (s instanceof AfterCommand) {
-        processAfterSpeechWithConsequents(queue, true);
+        // TODO what is the last parameter of the next is?
+        processAfterSpeechWithConsequents(queue, sayConfirmations);
       } else {
         ConfirmationResult cres = ApplicationManager.confirm(plane, sa, true);
         if (cres.rejection != null) {
@@ -1038,7 +1052,22 @@ public class Pilot {
         if (prev instanceof ProceedDirectCommand) {
           n = new AfterNavaidCommand(((ProceedDirectCommand) prev).getNavaid());
         } else if (prev instanceof ChangeAltitudeCommand) {
-          n = new AfterAltitudeCommand(((ChangeAltitudeCommand) prev).getAltitudeInFt());
+          ChangeAltitudeCommand ca = (ChangeAltitudeCommand) prev;
+          AfterAltitudeCommand.ERestriction restriction;
+          switch (ca.getDirection()) {
+            case any:
+              restriction = AfterAltitudeCommand.ERestriction.exact;
+              break;
+            case climb:
+              restriction = AfterAltitudeCommand.ERestriction.andAbove;
+              break;
+            case descend:
+              restriction = AfterAltitudeCommand.ERestriction.andBelow;
+              break;
+            default:
+              throw new UnsupportedOperationException();
+          }
+          n = new AfterAltitudeCommand(ca.getAltitudeInFt(), restriction );
         } else if (prev instanceof ChangeSpeedCommand) {
           n = new AfterSpeedCommand(((ChangeSpeedCommand) prev).getSpeedInKts());
         } else {

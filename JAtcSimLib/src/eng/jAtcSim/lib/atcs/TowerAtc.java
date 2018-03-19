@@ -270,6 +270,9 @@ public class TowerAtc extends ComputerAtc {
     if (Acc.prm().getResponsibleAtc(p) != Acc.atcApp()) {
       return new ComputerAtc.RequestResult(false, String.format("%s is not from APP.", p.getCallsign()));
     }
+    if (isOnApproachOfTheRunwayInUse(p) == false){
+      return new ComputerAtc.RequestResult(false, String.format("%s is cleared to approach on the inactive runway.", p.getCallsign()));
+    }
     if (p.getAltitude() > this.acceptAltitude) {
       return new ComputerAtc.RequestResult(false, String.format("%s is too high.", p.getCallsign()));
     }
@@ -279,6 +282,11 @@ public class TowerAtc extends ComputerAtc {
     }
 
     return new RequestResult(true, null);
+  }
+
+  private boolean isOnApproachOfTheRunwayInUse(Airplane p) {
+    boolean ret = runwayThresholdInUse == p.tryGetCurrentApproachRunwayThreshold();
+    return ret;
   }
 
   @Override

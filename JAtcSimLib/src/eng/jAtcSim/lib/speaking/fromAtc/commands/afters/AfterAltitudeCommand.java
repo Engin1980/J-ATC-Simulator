@@ -11,19 +11,33 @@ package eng.jAtcSim.lib.speaking.fromAtc.commands.afters;
  * @author Marek
  */
 public class AfterAltitudeCommand extends AfterCommand {
-  private final int altitudeInFt;
 
-  public AfterAltitudeCommand(int altitudeInFt) {
+  public enum ERestriction{
+    exact,
+    andAbove,
+    andBelow
+  }
+
+  private final int altitudeInFt;
+  private final ERestriction restriction;
+
+  public AfterAltitudeCommand(int altitudeInFt, ERestriction restriction) {
+
     this.altitudeInFt = altitudeInFt;
+    this.restriction = restriction;
   }
 
   public int getAltitudeInFt() {
     return altitudeInFt;
   }
 
+  public ERestriction getRestriction() {
+    return restriction;
+  }
+
   @Override
   public String toString() {
-    return "AA{"+ altitudeInFt + '}';
+    return "AA{"+ altitudeInFt + " " + restriction.toString() + '}';
   }
   
 }

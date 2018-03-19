@@ -9,7 +9,7 @@ import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
 
 public abstract class CommandApplication<T extends IAtcCommand> {
 
-  // TODO BIG one! "confirm" and "apply" shoudl have Pilot as parameter, not Airplane
+  // TODO BIG one! "confirm" and "apply" should have Pilot as parameter, not Airplane
   public ConfirmationResult confirm(Airplane.Airplane4Command plane, T c, boolean checkSanity) {
     ConfirmationResult ret = new ConfirmationResult();
     if (checkSanity) {
@@ -22,8 +22,7 @@ public abstract class CommandApplication<T extends IAtcCommand> {
 
   public ApplicationResult apply(Airplane.Airplane4Command plane, T c) {
     ApplicationResult ret;
-    IFromAirplane rejection = null;
-    rejection = checkSanity(plane, c);
+    IFromAirplane rejection = checkSanity(plane, c);
     if (rejection == null) {
       ret = adjustAirplane(plane, c);
     } else {

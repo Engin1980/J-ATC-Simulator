@@ -27,8 +27,10 @@ import eng.jAtcSim.lib.speaking.fromAirplane.IAirplaneNotification;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.GoingAroundNotification;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeHeadingCommand;
+import eng.jAtcSim.lib.world.Approach;
 import eng.jAtcSim.lib.world.Navaid;
 import eng.jAtcSim.lib.world.Route;
+import eng.jAtcSim.lib.world.RunwayThreshold;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -618,6 +620,16 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
   public boolean isOnWayToPassDeparturePoint() {
     Navaid n = this.getDepartureLastNavaid();
     boolean ret = this.pilot.isOnWayToPassPoint(n);
+    return ret;
+  }
+
+  public RunwayThreshold tryGetCurrentApproachRunwayThreshold() {
+    Approach app = this.pilot.tryGetAssignedApproach();
+    RunwayThreshold ret;
+    if (app == null)
+      ret = null;
+    else
+      ret = app.getParent();
     return ret;
   }
 

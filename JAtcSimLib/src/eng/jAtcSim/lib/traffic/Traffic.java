@@ -161,7 +161,9 @@ public abstract class Traffic {
 
     // -- po vysce+300 ma kontaktovat APP
     routeCmds.add(indx++,
-        new AfterAltitudeCommand(Acc.threshold().getParent().getParent().getAltitude() + Acc.rnd().nextInt(150, 450)));
+        new AfterAltitudeCommand(
+            Acc.threshold().getParent().getParent().getAltitude() + Acc.rnd().nextInt(150, 450),
+            AfterAltitudeCommand.ERestriction.andAbove));
     routeCmds.add(indx++, new ContactCommand(Atc.eType.app));
 
     ret = new Airplane(

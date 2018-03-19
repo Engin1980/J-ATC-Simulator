@@ -15,6 +15,7 @@ import eng.jAtcSim.lib.airplanes.AirplaneTypes;
 import eng.jAtcSim.lib.exceptions.ERuntimeException;
 import eng.jAtcSim.lib.global.logging.Recorder;
 import eng.jAtcSim.lib.traffic.GenericTraffic;
+import eng.jAtcSim.lib.traffic.TestTrafficOneApproach;
 import eng.jAtcSim.lib.traffic.TestTrafficOneDeparture;
 import eng.jAtcSim.lib.traffic.Traffic;
 import eng.jAtcSim.lib.traffic.fleets.Fleets;
@@ -45,9 +46,9 @@ public class JAtcSim {
 
   private static final boolean FAST_START = false;
   private static final Traffic specificTraffic =
-//      new TestTrafficOneApproach();
+      new TestTrafficOneApproach();
 //  new TestTrafficOneDeparture();
-      null;
+//      null;
   private static AppSettings appSettings;
 
   /**
