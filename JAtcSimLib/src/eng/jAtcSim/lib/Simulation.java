@@ -207,8 +207,8 @@ public class Simulation {
     return stats;
   }
 
-  public RunwayThreshold getActiveRunwayThreshold() {
-    return Acc.threshold();
+  public List<RunwayThreshold> getActiveRunwayThresholds() {
+    return Acc.thresholds();
   }
 
   public void setActiveRunwayThreshold(RunwayThreshold newRunwayThreshold) {

@@ -5,26 +5,28 @@
  */
 package eng.jAtcSim.lib.world;
 
-import eng.eSystem.xmlSerialization.XmlIgnore;
 import eng.eSystem.xmlSerialization.XmlOptional;
 import eng.jAtcSim.lib.coordinates.Coordinate;
 import eng.jAtcSim.lib.coordinates.Coordinates;
+import eng.jAtcSim.lib.global.Headings;
 import eng.jAtcSim.lib.global.KeyItem;
 import eng.jAtcSim.lib.global.KeyList;
 import eng.jAtcSim.lib.global.MustBeBinded;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
- *
  * @author Marek
  */
 public class RunwayThreshold extends MustBeBinded implements KeyItem<String> {
 
-  private String name;
-  private Coordinate coordinate;
   @XmlOptional // as inactive runway do not have this
   private final KeyList<Approach, Approach.eType> approaches = new KeyList();
   @XmlOptional // as inactive runway do not have this
   private final KeyList<Route, String> routes = new KeyList();
+  private String name;
+  private Coordinate coordinate;
   private Runway parent;
   private double _course;
   @XmlOptional // as inactive runway do not have this
@@ -42,7 +44,7 @@ public class RunwayThreshold extends MustBeBinded implements KeyItem<String> {
   public boolean isPreferred() {
     return preferred;
   }
-  
+
   public String getName() {
     return name;
   }
@@ -54,7 +56,7 @@ public class RunwayThreshold extends MustBeBinded implements KeyItem<String> {
   public Coordinate getFafCross() {
     return fafCross;
   }
-  
+
   public KeyList<Approach, Approach.eType> getApproaches() {
     return approaches;
   }
@@ -113,6 +115,30 @@ public class RunwayThreshold extends MustBeBinded implements KeyItem<String> {
     return ret;
   }
 
+  public List<RunwayThreshold> getParallelGroup() {
+    List<RunwayThreshold> ret = new ArrayList<>();
+
+    double crs = this.getCourse();
+    for (Runway runway : this.getParent().getParent().getRunways()) {
+      if (runway.isActive() == false) continue;
+      for (RunwayThreshold threshold : runway.getThresholds()) {
+        //TODO this may fail for
+        if (Headings.isBetween(crs - 1, threshold.getCourse(), crs + 1)) {
+          ret.add(threshold);
+          break;
+        }
+      }
+    }
+
+    assert ret.contains(this) : "Parallel thresholds group should contains the invoking one.";
+
+    return ret;
+  }
+
+  public RunwayThreshold getOtherThreshold() {
+    return _other;
+  }
+
   @Override
   protected void _bind() {
     this._other
@@ -123,8 +149,8 @@ public class RunwayThreshold extends MustBeBinded implements KeyItem<String> {
         = Coordinates.getBearing(this.coordinate, _other.coordinate);
   }
 
-  public RunwayThreshold getOtherThreshold() {
-    return _other;
+  @Override
+  public String toString() {
+    return this.getName() + "{rwyThr}";
   }
-
 }

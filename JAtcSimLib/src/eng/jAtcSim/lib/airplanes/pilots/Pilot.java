@@ -33,10 +33,7 @@ import eng.jAtcSim.lib.speaking.fromAtc.commands.*;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.afters.*;
 import eng.jAtcSim.lib.speaking.fromAtc.notifications.RadarContactConfirmationNotification;
 import eng.jAtcSim.lib.weathers.Weather;
-import eng.jAtcSim.lib.world.Approach;
-import eng.jAtcSim.lib.world.Navaid;
-import eng.jAtcSim.lib.world.Route;
-import eng.jAtcSim.lib.world.Routes;
+import eng.jAtcSim.lib.world.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -124,11 +121,11 @@ public class Pilot {
       Pilot.this.behavior = hold;
     }
 
-    public void setTakeOffBehavior() {
-      Pilot.this.behavior = new Pilot.TakeOffBehavior();
+    public void setTakeOffBehavior(RunwayThreshold thrs) {
+      Pilot.this.behavior = new Pilot.TakeOffBehavior(thrs);
       Pilot.this.parent.setTargetSpeed(Pilot.this.parent.getType().vR + 15);
-      this.setTargetAltitude(Acc.threshold().getInitialDepartureAltitude());
-      Pilot.this.parent.setTargetHeading(Acc.threshold().getCourse());
+      this.setTargetAltitude(thrs.getInitialDepartureAltitude());
+      Pilot.this.parent.setTargetHeading(thrs.getCourse());
       Pilot.this.parent.setxState(Airplane.State.takeOffRoll);
     }
 
@@ -212,12 +209,31 @@ public class Pilot {
 
   }
 
+  class HoldingPointBehavior extends Behavior{
+
+    @Override
+    public void fly() {
+
+    }
+
+    @Override
+    public String toLogString() {
+      return "{HP}";
+    }
+  }
+
   class TakeOffBehavior extends Behavior {
+
+    private RunwayThreshold toThreshold;
+
+    public TakeOffBehavior(RunwayThreshold toThreshold) {
+      this.toThreshold = toThreshold;
+    }
 
     private final static int TAKEOFF_ACCELERATION_ALTITUDE_AGL = 1500;
     //TODO add to confing the acceleration altitude and use it here
     private final int accelerationAltitude =
-        Acc.threshold().getParent().getParent().getAltitude() + TAKEOFF_ACCELERATION_ALTITUDE_AGL;
+        Acc.airport().getAltitude() + TAKEOFF_ACCELERATION_ALTITUDE_AGL;
 
     @Override
     public void fly() {
@@ -226,7 +242,7 @@ public class Pilot {
           break;
         case takeOffRoll:
           double targetHeading = Coordinates.getBearing(
-              parent.getCoordinate(), Acc.threshold().getOtherThreshold().getCoordinate());
+              parent.getCoordinate(), toThreshold.getOtherThreshold().getCoordinate());
           parent.setTargetHeading(targetHeading);
 
           if (parent.getSpeed() > parent.getType().vR) {
@@ -257,6 +273,7 @@ public class Pilot {
     public String toLogString() {
       return "TKO";
     }
+
   }
 
   abstract class BasicBehavior extends Behavior {
@@ -298,10 +315,11 @@ public class Pilot {
             super.setState(Airplane.State.arrivingLow);
           else {
             double distToFaf;
-            if (Acc.threshold().getFafCross() == null) {
-              distToFaf = Coordinates.getDistanceInNM(parent.getCoordinate(), Acc.threshold().getCoordinate());
+            RunwayThreshold anyActiveThreshold = Acc.thresholds().get(0);
+            if (anyActiveThreshold.getFafCross() == null) {
+              distToFaf = Coordinates.getDistanceInNM(parent.getCoordinate(), anyActiveThreshold.getCoordinate());
             } else {
-              distToFaf = Coordinates.getDistanceInNM(parent.getCoordinate(), Acc.threshold().getFafCross());
+              distToFaf = Coordinates.getDistanceInNM(parent.getCoordinate(), anyActiveThreshold.getFafCross());
             }
             if (distToFaf < FAF_SPEED_DOWN_DISTANCE_IN_NM) {
               super.setState(Airplane.State.arrivingCloseFaf);
@@ -311,10 +329,11 @@ public class Pilot {
         case arrivingLow:
           // TODO this will not work for runways with FAF above FL100
           double distToFaf;
-          if (Acc.threshold().getFafCross() == null)
-            distToFaf = Coordinates.getDistanceInNM(parent.getCoordinate(), Acc.threshold().getCoordinate());
+          RunwayThreshold anyActiveThreshold = Acc.thresholds().get(0);
+          if (anyActiveThreshold.getFafCross() == null)
+            distToFaf = Coordinates.getDistanceInNM(parent.getCoordinate(), anyActiveThreshold.getCoordinate());
           else
-            distToFaf = Coordinates.getDistanceInNM(parent.getCoordinate(), Acc.threshold().getFafCross());
+            distToFaf = Coordinates.getDistanceInNM(parent.getCoordinate(), anyActiveThreshold.getFafCross());
           if (distToFaf < FAF_SPEED_DOWN_DISTANCE_IN_NM) {
             super.setState(Airplane.State.arrivingCloseFaf);
           }
@@ -555,7 +574,7 @@ public class Pilot {
       parent.adviceGoAroundToAtc(atc, reason);
 
       super.setBehaviorAndState(
-          new TakeOffBehavior(), Airplane.State.takeOffGoAround);
+          new TakeOffBehavior(null), Airplane.State.takeOffGoAround);
 
       parent.setTargetSpeed(parent.getType().vDep);
       parent.setTargetAltitude(0);
@@ -629,7 +648,7 @@ public class Pilot {
       if (w.getCloudBaseInFt() < parent.getAltitude()) {
         return false;
       }
-      double d = Coordinates.getDistanceInNM(parent.getCoordinate(), Acc.threshold().getCoordinate());
+      double d = Coordinates.getDistanceInNM(parent.getCoordinate(), approach.getParent().getCoordinate());
       if (w.getVisibilityInMiles() < d) {
         return false;
       }
@@ -781,7 +800,7 @@ public class Pilot {
       this.divertInfo = new DivertInfo(divertTime.clone());
     } else {
       this.atc = Acc.atcTwr();
-      this.behavior = new TakeOffBehavior();
+      this.behavior = new HoldingPointBehavior();
       this.divertInfo = null;
     }
 
@@ -833,7 +852,7 @@ public class Pilot {
   }
 
   public Navaid getDivertNavaid() {
-    Iterable<Route> rts = Acc.threshold().getRoutes();
+    Iterable<Route> rts = Acc.thresholds().get(0).getRoutes(); // get random active threshold
     List<Route> avails = Routes.getByFilter(rts, false, this.parent.getType().category);
     Route r = CollectionUtil.getRandom(avails, Acc.rnd());
     Navaid ret = r.getMainFix();
@@ -852,7 +871,7 @@ public class Pilot {
 
   public Approach tryGetAssignedApproach() {
     Approach ret;
-    ApproachBehavior ap = ConversionUtils.convertOrNull(this.behavior);
+    ApproachBehavior ap = ConversionUtils.tryConvert(this.behavior);
     if (ap != null)
       ret = ap.approach;
     else

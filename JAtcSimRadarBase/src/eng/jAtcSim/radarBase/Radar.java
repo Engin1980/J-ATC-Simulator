@@ -676,11 +676,13 @@ public class Radar {
   }
 
   private void drawRoutes(boolean drawArrivalRoutes, boolean drawDepartureRoutes) {
-    for (Route r : simulation.getActiveRunwayThreshold().getRoutes()) {
-      if (drawArrivalRoutes && (r.getType() == Route.eType.star || r.getType() == Route.eType.transition)) {
-        if (localSettings.isStarVisible()) drawStar(r.getNavaids());
-      } else if (drawDepartureRoutes && r.getType() == Route.eType.sid) {
-        if (localSettings.isSidVisible()) drawSid(r.getNavaids());
+    for (RunwayThreshold threshold : simulation.getActiveRunwayThresholds()) {
+      for (Route r : threshold.getRoutes()) {
+        if (drawArrivalRoutes && (r.getType() == Route.eType.star || r.getType() == Route.eType.transition)) {
+          if (localSettings.isStarVisible()) drawStar(r.getNavaids());
+        } else if (drawDepartureRoutes && r.getType() == Route.eType.sid) {
+          if (localSettings.isSidVisible()) drawSid(r.getNavaids());
+        }
       }
     }
   }
@@ -708,9 +710,11 @@ public class Radar {
   }
 
   private void drawApproaches() {
-    Approach a = simulation.getActiveRunwayThreshold().getHighestApproach();
-    if (a != null) {
-      drawApproach(a);
+    for (RunwayThreshold threshold : simulation.getActiveRunwayThresholds()) {
+      Approach a = threshold.getHighestApproach();
+      if (a != null) {
+        drawApproach(a);
+      }
     }
   }
 

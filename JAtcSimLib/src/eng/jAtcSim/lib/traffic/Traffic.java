@@ -141,11 +141,11 @@ public abstract class Traffic {
     AirplaneType pt = m.getAirplaneType();
 
     Route r = tryGetRandomIfrRoute(false, pt);
-    Coordinate coord = Acc.threshold().getCoordinate();
+    Coordinate coord = Acc.airport().getLocation();
     Squawk sqwk = generateSqwk();
 
-    int heading = (int) Acc.threshold().getCourse();
-    int alt = Acc.threshold().getParent().getParent().getAltitude();
+    int heading = 0;
+    int alt = Acc.airport().getAltitude();
     int spd = 0;
 
     SpeechList<IAtcCommand> routeCmds;
@@ -154,17 +154,6 @@ public abstract class Traffic {
     } else {
       routeCmds = new SpeechList<>();
     }
-
-    int indx = 0;
-    routeCmds.add(indx++, new ChangeAltitudeCommand(
-        ChangeAltitudeCommand.eDirection.climb, Acc.threshold().getInitialDepartureAltitude()));
-
-    // -- po vysce+300 ma kontaktovat APP
-    routeCmds.add(indx++,
-        new AfterAltitudeCommand(
-            Acc.threshold().getParent().getParent().getAltitude() + Acc.rnd().nextInt(150, 450),
-            AfterAltitudeCommand.ERestriction.andAbove));
-    routeCmds.add(indx++, new ContactCommand(Atc.eType.app));
 
     ret = new Airplane(
         cs, coord, sqwk, pt, heading, alt, spd, true,
@@ -193,7 +182,7 @@ public abstract class Traffic {
     if (r == null) {
       r = generatePointRoute(true);
     }
-    coord = generateArrivalCoordinate(r.getMainFix().getCoordinate(), Acc.threshold().getCoordinate());
+    coord = generateArrivalCoordinate(r.getMainFix().getCoordinate(), Acc.airport().getLocation());
     heading = (int) Coordinates.getBearing(coord, r.getMainFix().getCoordinate());
     alt = generateArrivingPlaneAltitude(r, pt);
 
@@ -317,7 +306,10 @@ public abstract class Traffic {
 
   private Route tryGetRandomIfrRoute(boolean isArrival, AirplaneType planeType) {
 
-    Iterable<Route> rts = Acc.threshold().getRoutes();
+    List<Route> rts = new ArrayList<>();
+    for (RunwayThreshold threshold : Acc.thresholds()) {
+      rts.addAll(threshold.getRoutes());
+    }
     List<Route> avails = Routes.getByFilter(rts, isArrival, planeType.category);
 
     if (avails.isEmpty()) {

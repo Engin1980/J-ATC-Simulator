@@ -633,6 +633,12 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     return ret;
   }
 
+  public void setHoldingPointState(Coordinate coordinate, double course) {
+    assert  this.state == State.holdingPoint;
+    this.coordinate = coordinate;
+    this.heading.reset(course);
+  }
+
   // </editor-fold>
   // <editor-fold defaultstate="collapsed" desc=" private methods ">
   private void drivePlane() {

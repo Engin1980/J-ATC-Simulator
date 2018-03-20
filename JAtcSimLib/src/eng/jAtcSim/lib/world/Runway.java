@@ -55,5 +55,9 @@ public class Runway implements KeyItem<String> {
   public void setParent(Airport parent) {
     this.parent = parent;
   }
-  
+
+  @Override
+  public String toString() {
+    return this.getName() + "{rwy}";
+  }
 }

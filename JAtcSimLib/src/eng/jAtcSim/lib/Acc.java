@@ -21,6 +21,8 @@ import eng.jAtcSim.lib.world.Airport;
 import eng.jAtcSim.lib.world.Area;
 import eng.jAtcSim.lib.world.RunwayThreshold;
 
+import java.util.List;
+
 /**
  * @author Marek
  */
@@ -80,8 +82,8 @@ public class Acc {
     return sim.getWeather();
   }
 
-  public static RunwayThreshold threshold() {
-    return atcTwr().getRunwayThresholdInUse();
+  public static List<RunwayThreshold> thresholds() {
+    return atcTwr().getRunwayThresholdsInUse();
   }
 
   public static Area area() {
