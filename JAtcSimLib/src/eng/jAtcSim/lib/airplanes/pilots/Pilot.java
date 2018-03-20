@@ -784,13 +784,13 @@ public class Pilot {
   private String gaReason = null;
   private DivertInfo divertInfo;
 
-  public Pilot(Airplane.Airplane4Pilot parent, Route assignedRoute, SpeechList<IAtcCommand> routeCommandQueue, @Nullable ETime divertTime) {
+  public Pilot(Airplane.Airplane4Pilot parent, Route assignedRoute, SpeechList<IAtcCommand> initialCommands, @Nullable ETime divertTime) {
 
     this.parent = parent;
     this.assignedRoute = assignedRoute;
     {
       SpeechList<IFromAtc> speeches =
-          new SpeechList<>(routeCommandQueue); // need clone to expand "thens"
+          new SpeechList<>(initialCommands); // need clone to expand "thens"
       expandThenCommands(speeches);
       this.queue.addNoDelay(speeches);
     }

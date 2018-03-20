@@ -243,7 +243,7 @@ public class TowerAtc extends ComputerAtc {
             super.sendMessage(msg);
           } else {
             Message msg = new Message(this, Acc.atcApp(),
-                StringResponse.createRejection("The maintenance of the runway %s is approved and will start shortly.",
+                StringResponse.create("The maintenance of the runway %s is approved and will start shortly.",
                     rwy.getName()));
             super.sendMessage(msg);
             rc.scheduler.setApprovedTrue();
@@ -524,6 +524,9 @@ public class TowerAtc extends ComputerAtc {
         Acc.airport().getAltitude() + Acc.rnd().nextInt(150, 450),
         AfterAltitudeCommand.ERestriction.andAbove));
     lst.add(new ContactCommand(Atc.eType.app));
+
+    SpeechList route = toReadyPlane.getAssigneRoute().getCommandsListClone();
+    lst.addAll(route);
 
     Message m = new Message(this, toReadyPlane, lst);
     super.sendMessage(m);

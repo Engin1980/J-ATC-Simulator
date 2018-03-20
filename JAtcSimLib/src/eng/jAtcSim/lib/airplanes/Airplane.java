@@ -40,9 +40,6 @@ import java.util.List;
  */
 public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
 
-  private static final int MINIMAL_DIVERT_TIME_MINUTES = 45;
-  private static final int MAXIMAL_DIVERT_TIME_MINUTES = 120;
-
   public class Airplane4Display {
 
     public Coordinate coordinate() {
@@ -233,17 +230,9 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
       return altitude.getValue();
     }
 
-//    public void setTargetAltitude(int targetAltitude) {
-//      Airplane.this.targetAltitude = targetAltitude;
-//    }
-
     public double getHeading() {
       return heading.getValue();
     }
-
-//    public void setTargetHeading(double value, boolean useLeftTurn) {
-//      Airplane.this.setTargetHeading(value, useLeftTurn);
-//    }
 
     public Callsign getCallsign() {
       return callsign;
@@ -333,7 +322,8 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
       return ret;
     }
   }
-
+  private static final int MINIMAL_DIVERT_TIME_MINUTES = 45;
+  private static final int MAXIMAL_DIVERT_TIME_MINUTES = 120;
   private final static double GROUND_SPEED_CHANGE_MULTIPLIER = 1.5; //1.5; //3.0;
   private static final double secondFraction = 1 / 60d / 60d;
   private final Callsign callsign;
@@ -355,9 +345,50 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
   private AirproxType airprox;
   private InertialValue altitude;
 
+  private static ValueRequest getRequest(double current, double target, double maxIncreaseStep, double maxDecreaseStep) {
+    // if on ground, nothing required
+    final double RUN_OUT_COEFF = 0.2;
+    final double RUN_OUT_DISTANCE = 3;
+
+    double delta = target - current;
+    if (delta == 0) {
+      return new ValueRequest();
+      // no change required
+    }
+
+    double absDelta = delta;
+    double availableStep;
+    if (delta > 0) {
+      // needs to accelerate
+      availableStep = maxIncreaseStep;
+    } else {
+      availableStep = maxDecreaseStep;
+      absDelta = -delta;
+    }
+
+    ValueRequest ret = new ValueRequest();
+    double deltaPress = absDelta / availableStep;
+    if (deltaPress > RUN_OUT_DISTANCE) {
+      ret.value = availableStep;
+      ret.energy = 1;
+    } else if (deltaPress > 1) {
+      ret.value = availableStep * RUN_OUT_COEFF;
+      ret.energy = RUN_OUT_COEFF;
+    } else {
+      absDelta = Math.min(absDelta, availableStep * RUN_OUT_COEFF);
+      ret.value = absDelta;
+      ret.energy = absDelta / availableStep;
+    }
+
+    if (delta < 0)
+      ret.multiply(-1);
+
+    return ret;
+  }
+
   public Airplane(Callsign callsign, Coordinate coordinate, Squawk sqwk, AirplaneType airplaneSpecification,
                   int heading, int altitude, int speed, boolean isDeparture,
-                  Route assignedRoute, SpeechList<IAtcCommand> routeCommandQueue) {
+                  Route assignedRoute, SpeechList<IAtcCommand> initialCommands) {
 
     this.callsign = callsign;
     this.coordinate = coordinate;
@@ -410,53 +441,11 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
       divertTime = Acc.now().addMinutes(divertTimeMinutes);
     }
 
-    this.pilot = new Pilot(this.new Airplane4Pilot(), assignedRoute, routeCommandQueue, divertTime);
-
+    this.pilot = new Pilot(this.new Airplane4Pilot(), assignedRoute, initialCommands, divertTime);
     this.plane4Display = this.new Airplane4Display();
 
     // flight recorders on
     this.flightRecorder = FlightRecorder.create(this.callsign);
-  }
-
-  private static ValueRequest getRequest(double current, double target, double maxIncreaseStep, double maxDecreaseStep) {
-    // if on ground, nothing required
-    final double RUN_OUT_COEFF = 0.2;
-    final double RUN_OUT_DISTANCE = 3;
-
-    double delta = target - current;
-    if (delta == 0) {
-      return new ValueRequest();
-      // no change required
-    }
-
-    double absDelta = delta;
-    double availableStep;
-    if (delta > 0) {
-      // needs to accelerate
-      availableStep = maxIncreaseStep;
-    } else {
-      availableStep = maxDecreaseStep;
-      absDelta = -delta;
-    }
-
-    ValueRequest ret = new ValueRequest();
-    double deltaPress = absDelta / availableStep;
-    if (deltaPress > RUN_OUT_DISTANCE) {
-      ret.value = availableStep;
-      ret.energy = 1;
-    } else if (deltaPress > 1) {
-      ret.value = availableStep * RUN_OUT_COEFF;
-      ret.energy = RUN_OUT_COEFF;
-    } else {
-      absDelta = Math.min(absDelta, availableStep * RUN_OUT_COEFF);
-      ret.value = absDelta;
-      ret.energy = absDelta / availableStep;
-    }
-
-    if (delta < 0)
-      ret.multiply(-1);
-
-    return ret;
   }
 
   public boolean isDeparture() {
@@ -562,14 +551,14 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     return targetHeading;
   }
 
+  public void setTargetHeading(double targetHeading) {
+    this.setTargetHeading((int) Math.round(targetHeading));
+  }
+
   public void setTargetHeading(int targetHeading) {
     boolean useLeft
         = Headings.getBetterDirectionToTurn(heading.getValue(), targetHeading) == ChangeHeadingCommand.eDirection.left;
     setTargetHeading(targetHeading, useLeft);
-  }
-
-  public void setTargetHeading(double targetHeading) {
-    this.setTargetHeading((int) Math.round(targetHeading));
   }
 
   public int getTargetAltitude() {
@@ -634,9 +623,10 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
   }
 
   public void setHoldingPointState(Coordinate coordinate, double course) {
-    assert  this.state == State.holdingPoint;
+    assert this.state == State.holdingPoint;
     this.coordinate = coordinate;
     this.heading.reset(course);
+    this.targetHeading = (int) course;
   }
 
   // </editor-fold>

@@ -148,16 +148,11 @@ public abstract class Traffic {
     int alt = Acc.airport().getAltitude();
     int spd = 0;
 
-    SpeechList<IAtcCommand> routeCmds;
-    if (r != null) {
-      routeCmds = r.getCommandsListClone();
-    } else {
-      routeCmds = new SpeechList<>();
-    }
+    SpeechList<IAtcCommand> initialCommands = new SpeechList<>();
 
     ret = new Airplane(
         cs, coord, sqwk, pt, heading, alt, spd, true,
-        r, routeCmds);
+        r, initialCommands);
 
     return ret;
   }
@@ -175,8 +170,7 @@ public abstract class Traffic {
     int heading;
     int alt;
     int spd;
-    SpeechList<IAtcCommand> routeCmds;
-    String routeName;
+    SpeechList<IAtcCommand> initialCommands;
 
     r = tryGetRandomIfrRoute(true, pt);
     if (r == null) {
@@ -186,22 +180,21 @@ public abstract class Traffic {
     heading = (int) Coordinates.getBearing(coord, r.getMainFix().getCoordinate());
     alt = generateArrivingPlaneAltitude(r, pt);
 
-    routeCmds = r.getCommandsListClone();
+    initialCommands = r.getCommandsListClone();
     // added command to descend
-    routeCmds.add(0,
+    //TODO following should say CTR ATC, not this here
+    initialCommands.add(0,
         new ChangeAltitudeCommand(
             ChangeAltitudeCommand.eDirection.descend,
             Acc.atcCtr().getOrderedAltitude()
         ));
-
-    routeName = r.getName();
 
     Squawk sqwk = generateSqwk();
     spd = pt.vCruise;
 
     ret = new Airplane(
         cs, coord, sqwk, pt, heading, alt, spd, false,
-        r, routeCmds);
+        r, initialCommands);
 
     return ret;
   }
