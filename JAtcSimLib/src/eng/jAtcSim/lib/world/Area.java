@@ -23,7 +23,7 @@ public class Area {
 
   private String icao;
   private final KeyList<Airport, String> airports = new KeyList();
-  private final KeyList<Navaid, String> navaids = new KeyList();
+  private final NavaidKeyList navaids = new NavaidKeyList();
   private final List<Border> borders = new ArrayList();
 
   public KeyList<Airport, String> getAirports() {
@@ -34,7 +34,7 @@ public class Area {
     return icao;
   }
 
-  public KeyList<Navaid, String> getNavaids() {
+  public NavaidKeyList getNavaids() {
     return navaids;
   }
 

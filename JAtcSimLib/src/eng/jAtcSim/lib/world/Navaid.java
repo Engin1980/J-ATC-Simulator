@@ -32,6 +32,16 @@ public class Navaid implements KeyItem<String> {
   private String name;
   private eType type;
 
+  // Must be because of XML parsing
+  public Navaid() {
+  }
+
+  public Navaid(String name, eType type, Coordinate coordinate) {
+    this.coordinate = coordinate;
+    this.name = name;
+    this.type = type;
+  }
+
   public Coordinate getCoordinate() {
     return coordinate;
   }

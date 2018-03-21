@@ -132,7 +132,16 @@
                        fafCross="?">
               <approaches>
                 <approach type="ILS_I" point="43 39 06.50 N 007 12 14.55 E" radial="045" da="210"
-                          gaRoute="SM 220 AA 20+ SR PD NERAS"/>
+                          gaRoute="SM 220 AA 20+ SR PD NERAS">
+                  <entries>
+                    <entry>
+                      PD NERAS/299/7 T DM 30 PD NIZ/200/24 T PD NIZ/205/24 T PD NIZ/211/24
+                    </entry>
+                    <entry>
+                      PD MUS/090/9.9 T PD AZR/045/12
+                    </entry>
+                  </entries>
+                </approach>
               </approaches>
               <routes>
                 <route type="star" name="VEVAR5C" entryFL="250"

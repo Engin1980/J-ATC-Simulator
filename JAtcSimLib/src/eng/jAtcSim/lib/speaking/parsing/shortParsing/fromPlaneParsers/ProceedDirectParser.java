@@ -26,7 +26,7 @@ public class ProceedDirectParser extends SpeechParser<ProceedDirectCommand> {
   public ProceedDirectCommand parse(RegexGrouper rg) {
     String ns = rg.getString(1);
 
-    Navaid n = Acc.area().getNavaids().tryGet(ns);
+    Navaid n = Acc.area().getNavaids().getOrGenerate(ns);
     if (n == null) {
       throw new EInvalidCommandException("Unable to find navaid named \"" + ns + "\".", rg.getMatch());
     }
