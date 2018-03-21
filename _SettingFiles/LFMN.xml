@@ -117,7 +117,7 @@
       </trafficDefinitions>
       <initialPosition coordinate="43 39.9 N 07 12.9 E" range="75"/>
       <atcTemplates>
-        <atcTemplate type="ctr" name="LFFF" frequency="?"
+        <atcTemplate type="ctr" name="LFFF" frequency="128.10"
                      releaseAltitude="19000" acceptAltitude="11000" orderedAltitude="17000"
                      ctrAcceptDistance="20" ctrNavaidAcceptDistance="20"/>
         <atcTemplate type="twr" name="LFMN_TWR" frequency="118.70"
@@ -135,12 +135,65 @@
                           gaRoute="SM 220 AA 20+ SR PD NERAS"/>
               </approaches>
               <routes>
-                <!-- STARs are shared for both runways -->
-                <!--<route type="star" name="TELTU1G" entryFL="220"-->
-                <!--route="SL 220 AL 40 AA 015 PD DET31 T SL 250 PD DET29 T SR AL 50 PD NEXOX T AL 60 PD DVR33 T PD DVR T SR AR"/>-->
+                <route type="star" name="VEVAR5C" entryFL="250"
+                       route="PD VEVAR T PD MOTUR T PD NIZ T PD MIKRU T PD PIRAM T PD OKODI T PD NERAS T H NERAS" />
+                <route type="star" name="BORDI5C" entryFL="170"
+                       route="PD BORDI T PD AMGEL T PD MIKRU T PD PIRAM T PD OKODI T PD NERAS T H NERAS" />
+                <route type="star" name="KERIT5C" entryFL="170"
+                       route="PD KERIT T PD NIZ/113/39 T PD OKODI T PD NERAS T H NERAS" />
+                <route type="star" name="SODRI5R"
+                       route="PD SODRI T PD OKODI T PD NERAS T H NERAS" />
+                <route type="star" name="MERLU5R"
+                       route="PD MERLU T PD NIZ/150/42 T PD OKODI T PD NERAS T H NERAS" />
+                <route type="star" name="LONSU5R"
+                       route="PD LONSU T PD OKODI T PD NERAS T H NERAS" />
+                <route type="star" name="AMFLOU5R" entryFL="150"
+                       route="PD AMFLOU T PD TIPIK T PD MUS T H MUS" />
+                <route type="star" name="LUC5C"  entryFL="80"
+                       route="PD LUC T PD LU T PD MUS T H MUS" />
 
-                <!--<route type="sid" name="DVR2P"-->
-                <!--route="SL 220 AL 40 AA 015 PD DET31 T SL 250 PD DET29 T SR AL 50 PD NEXOX T AL 60 PD DVR33 T PD DVR T SR AR"/>-->
+                <route type="sid" name="BASIP2E" category="CD"
+                       route="CM 100 AA 420 PD CSG/089/9 T PD USANO/229/7 T PD USANO T PD BASIP" />
+                <route type="sid" name="BASIP2E" category="AB"
+                       route="CM 70 AA 420 PD CSG/089/9 T PD USANO/229/7 T PD USANO T PD BASIP" />
+                <route type="sid" name="BODRU2E" category="CD"
+                       route="CM 140 AA 420 PD NIZ/160/8 T PD NIZ/160/11 T PD NC T PD AMIRO T PD BODRU" />
+                <route type="sid" name="BODRU2L" category="AB"
+                       route="CM 140 AA 420 PD NIZ/160/8 T PD NIZ/160/11 T PD CNM T PD AMIRO T PD BODRU" />
+                <route type="sid" name="EPOLO2E" category="CD"
+                       route="CM 100 AA 420 PD NIZ/160/8 T PD NIZ/160/11 T PD STP/59/34 T PD STP/59/26 T PD RESBO T PD EPOLO" />
+                <route type="sid" name="EPOLO2L" category="AB"
+                       route="CM 70 AA 420 PD NIZ/160/8 T PD NIZ/160/11 T PD NIZ/184/31 T PD NIZ/184/34 T PD LERMA T PD EPOLO" />
+                <route type="sid" name="IRMAR2M" category="CD"
+                       route="AA 420 PD NIZ/160/8 T PD CSG/089/14 T PD NIZ T PD BARSO T PD IRMAR" />
+                <route type="sid" name="IRMAR2E" category="AB"
+                       route="CM 140 AA 420 PD NIZ/160/8 T PD NIZ/160/11 T PD NC T PD BARSO T PD IRMAR" />
+                <route type="sid" name="LONSU2E" category="CD"
+                       route="CM 100 AA 420 PD NIZ/160/8 T PD NIZ/160/11 T PD OMARD T PD MERLU T PD LONSU" />
+                <route type="sid" name="LONSU2L" category="AB"
+                       route="CM 70 AA 420 PD NIZ/160/8 T PD NIZ/160/11 T PD NIZ/172/18 T PD NIZ/172/36 T PD OMARD T PD MERLU T PD LONSU" />
+                <route type="sid" name="OKTET2E" category="AB"
+                       route="CM 140 AA 420 PD NIZ/160/8 T PD NIZ/160/11 T PD NC T PD AMIRO T PD OKTET" />
+                <route type="sid" name="OKTET2M" category="CD"
+                       route="AA 420 PD NIZ/160/8 T PD CGS/089/14 T PD NIZ T PD BARSO T PD OKTET" />
+                <route type="sid" name="PERUS2E" category="CD"
+                       route="CM 140 AA 420 PD NIZ/160/8 T PD NIZ/160/11 T PD NC T PD AMIRO T PD PERUS" />
+                <route type="sid" name="PERUS2L" category="AB"
+                       route="CM 140 AA 420 PD NIZ/160/8 T PD NIZ/160/11 T PD CNM T PD AMIRO T PD PERUS" />
+                <route type="sid" name="RUBAS2E"
+                       route="CM 100 AA 420 PD NIZ/160/8 T PD NIZ/160/11 T PD STP/059/34 T PD STP/059/26 T PD RUBAS" />
+                <route type="sid" name="SODRI2E" category="CD"
+                       route="CM 100 AA 420 PD NIZ/160/8 T PD NIZ/160/11 T PD OMARD T PD MERLU T PD SODRI" />
+                <route type="sid" name="SODRI2L" category="AB"
+                       route="CM 70 AA 420 PD NIZ/160/8 T PD NIZ/160/11 T PD NIZ/172/18 T PD NIZ/172/36 T PD OMARD T PD MERLU T PD SODRI" />
+                <route type="sid" name="STP2E" category="CD"
+                       route="CM 100 AA 420 PD NIZ/160/8 T PD NIZ/160/11 T PD STP/059/34 T PD STP/059/26 T PD NIZ/200/34 T PD STP" />
+                <route type="sid" name="STP2L" category="AB"
+                       route="CM 100 AA 420 PD NIZ/160/8 T PD NIZ/160/11 T PD NIZ/184/31 T PD NIZ/184/34 T PD LERMA T STP" />
+                <route type="sid" name="VAREK2E" category="CD"
+                       route="CM 100 AA 420 PD NIZ/160/8 T PD NIZ/160/11 T PD OMARD T PD VAREK" />
+                <route type="sid" name="VAREK2L" category="AB"
+                       route="CM 70 AA 420 PD NIZ/160/8 T PD NIZ/160/11 T PD NIZ/172/18 T PD NIZ/172/36 T PD OMARD T PD VAREK" />
               </routes>
             </threshold>
             <threshold name="22R" coordinate="43 40 06.76 N 007 13 37.42 E" initialDepartureAltitude="4000"
@@ -148,6 +201,67 @@
               <approaches>
                 <!-- No published approach except visual, only SALEYA, not possible to in sim -->
               </approaches>
+              <routes>
+                <route type="star" name="VEVAR5C" entryFL="250"
+                       route="PD VEVAR T PD MOTUR T PD NIZ T PD MIKRU T PD PIRAM T PD OKODI T PD NERAS T H NERAS" />
+                <route type="star" name="BORDI5C" entryFL="170"
+                       route="PD BORDI T PD AMGEL T PD MIKRU T PD PIRAM T PD OKODI T PD NERAS T H NERAS" />
+                <route type="star" name="KERIT5C" entryFL="170"
+                       route="PD KERIT T PD NIZ/113/39 T PD OKODI T PD NERAS T H NERAS" />
+                <route type="star" name="SODRI5R"
+                       route="PD SODRI T PD OKODI T PD NERAS T H NERAS" />
+                <route type="star" name="MERLU5R"
+                       route="PD MERLU T PD NIZ/150/42 T PD OKODI T PD NERAS T H NERAS" />
+                <route type="star" name="LONSU5R"
+                       route="PD LONSU T PD OKODI T PD NERAS T H NERAS" />
+                <route type="star" name="AMFLOU5R" entryFL="150"
+                       route="PD AMFLOU T PD TIPIK T PD MUS T H MUS" />
+                <route type="star" name="LUC5C"  entryFL="80"
+                       route="PD LUC T PD LU T PD MUS T H MUS" />
+
+                <route type="sid" name="BASIP2W" category="CD"
+                       route="CM 100 AA 520 PD CSG/089/6.5 T PD USANO/229/15 T PD USANO/229/7 T PD USANO T PD BASIP" />
+                <route type="sid" name="BASIP2T" category="AB"
+                       route="SL 210 AA 520 PD AZR/195/6 T PD AZR/195/8 T PD CSC T SR PD NIC/233/13 T PD NIZ T PD USANO T PD BASIP" />
+                <route type="sid" name="BODRU2W" category="CD"
+                       route="CM 140 AA 520 PD AZR/195/6 T PD AZR/195/8 T PD AMIRO T PD BODRU" />
+                <route type="sid" name="BODRU2S" category="AB"
+                       route="CM 140 AA 520 PD AZR/195/6 T PD AZR/195/8 T PD CNM T PD AMIRO T PD BODRU" />
+                <route type="sid" name="EPOLO2W" category="CD"
+                       route="CM 100 AA 520 PD CSG/135/8 T PD STP/059/26 T PD RESBO T PD EPOLO" />
+                <route type="sid" name="EPOLO2S" category="AB"
+                       route="CM 70 AA 520 PD CSG/135/8 T PD STP/059/34 T PD NIZ/184/31 T PD NIZ/184/34 T PD LERMA T PD EPOLO" />
+                <route type="sid" name="IRMAR2T" category="CD"
+                       route="AA 520 PD CSC/135/6.5 T PD CGS/089/13 T PD CGS13 PD NIZ T PD BARSO T PD IRMAR" />
+                <route type="sid" name="IRMAR2W" category="AB"
+                       route="CM 140 AA 520 PD AZR/195/6 T PD AZR/195/8 T PD CSC T PD BARSO T PD IRMAR" />
+                <route type="sid" name="LONSU2W" category="CD"
+                       route="CM 100 AA 520 PD CGS/135/8 T PD NIZ/160/40 T PD OMARD T PD MERLU T PD LONSU" />
+                <route type="sid" name="LONSU2S" category="AB"
+                       route="CM 70 AA 520 PD CGS/135/8 T PD NIZ/172/18 T PD NIZ/172/36 T PD OMARD T PD MERLU T PD LONSU" />
+                <route type="sid" name="OKTET2W" category="AB"
+                       route="CM 140 AA 520 PD AZR/195/6 T PD AZR/195/8 T PD CSC T PD AMIRO T PD OKTET" />
+                <route type="sid" name="OKTET2T" category="CD"
+                       route="AA 420 PD CGS/135/6.5 T PD CGS13 T PD NIZ T PD BARSO T PD OKTET" />
+                <route type="sid" name="PERUS2W" category="CD"
+                       route="CM 140 AA 520 PD AZR/195/6 T PD AZR/195/8 T PD CSC T PD AMIRO T PD PERUS" />
+                <route type="sid" name="PERUS2S" category="AB"
+                       route="CM 140 AA 520 PD AZR/195/6 T PD AZR/195/8 T PD CSC T PD CNM T PD AMIRO T PD PERUS" />
+                <route type="sid" name="RUBAS2W"
+                       route="CM 100 AA 520 PD CGS/135/8 T PD STP/65/30 T PD STP/065/24 T PD RUBAS" />
+                <route type="sid" name="SODRI2W" category="CD"
+                       route="CM 100 AA 520 PD CGS/135/8 T PD NIZ/160/40 T PD OMARD T PD MERLU T PD SODRI" />
+                <route type="sid" name="SODRI2S" category="AB"
+                       route="CM 70 AA 520 PD CGS/135/8 T PD NIZ/172/18 T PD NIZ/172/36 T PD OMARD T PD MERLU T PD SODRI" />
+                <route type="sid" name="STP2W" category="CD"
+                       route="CM 100 AA 520 PD CGS/135/8 T PD STP/065/30 T PD STP/065/24 T PD NIZ/200/34 T PD STP" />
+                <route type="sid" name="STP2S" category="AB"
+                       route="CM 100 AA 520 PD CGS/135/8 T PD STP/059/34 T PD NIZ/184/31 T PD NIZ/184/34 T PD LERMA T PD STP" />
+                <route type="sid" name="VAREK2W" category="CD"
+                       route="CM 100 AA 520 PD CGS/135/8 T PD NIZ/160/40 T PD OMARD T PD VAREK" />
+                <route type="sid" name="VAREK2S" category="AB"
+                       route="CM 70 AA 520 PD CGS/135/8 T PD NIZ/172/18 T PD NIZ/172/36 T PD OMARD T PD VAREK" />
+              </routes>
             </threshold>
           </thresholds>
         </runway>
@@ -165,7 +279,9 @@
         </runway>
       </runways>
       <holds>
-        <!--<hold navaidName="MAY" inboundRadial="088" turn="left"/>-->
+        <hold navaidName="NERAS" inboundRadial="299" turn="right"/>
+        <hold navaidName="NIZ" inboundRadial="189" turn="left"/>
+        <hold navaidName="MUS" inboundRadial="150" turn="left"/>
 
         <!-- generic -->
         <!--
@@ -179,6 +295,8 @@
     </airport>
   </airports>
   <navaids>
+    <navaid name="CSG13" type="invisible" coordinate="N43 34.0 E007 25.4" />
+
     <navaid name="NIZ" type="vor" coordinate="N43 46.2 E007 15.3"/>
     <!--<navaid name="MAY" type="vor" coordinate="51 01 02 N 000 06 58 E"/>-->
 
