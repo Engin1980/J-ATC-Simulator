@@ -626,7 +626,7 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     assert this.state == State.holdingPoint;
     this.coordinate = coordinate;
     this.heading.reset(course);
-    this.targetHeading = (int) course;
+    this.targetHeading = (int) Math.round(course);
   }
 
   // </editor-fold>

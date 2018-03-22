@@ -87,7 +87,8 @@ public class CenterAtc extends ComputerAtc {
             } else {
               ret = new RequestResult(false, String.format(
                   "%s is too far from departure fix %s, or not enough far from airport, or not enough high.",
-                  p.getCallsign().toString()
+                  p.getCallsign().toString(),
+                  p.getAssigneRoute().getName()
               ));
             }
           }

@@ -24,7 +24,7 @@ public class StatsPanel extends JPanel {
   JLabel lvlMaxInGame = new JLabel("-");
   JLabel lblMovementsGame = new JLabel("Moves/hour:");
   JLabel lvlMovementsGame = new JLabel("-");
-  JLabel lblMaxApp = new JLabel("max under APP:");
+  JLabel lblMaxApp = new JLabel("Max under APP:");
   JLabel lvlMaxApp = new JLabel("-");
   JLabel lblCurInGame = new JLabel("Now in game:");
   JLabel lvlCurInGame = new JLabel("-");

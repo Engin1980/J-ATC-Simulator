@@ -2,7 +2,7 @@
 <root>
   <files areaXmlFile=".\_SettingFiles\lfmn.xml" fleetsXmlFile=".\_SettingFiles\fleets.xml" planesXmlFile=".\_SettingFiles\planeTypes.xml" trafficXmlFile=""/>
   <recent icao="LFMN" time="6:00"/>
-  <weather metar="METAR LFMN 121200Z 23012KT 5000 OVC050 13/10 Q1011" useOnline="false" userChanges="0"/>
+  <weather metar="METAR LFMN 121200Z 11012KT 9999 OVC850 13/10 Q1011" useOnline="false" userChanges="0"/>
   <traffic densityPercentage="1.0" maxPlanes="60" trafficAirportDefinedTitle="Normal traffic" type="airportDefined">
     <customTraffic arrivals2departuresRatio="6" delayAllowed="false" movementsPerHour="40" useExtendedCallsigns="false" weightTypeA="3" weightTypeB="8" weightTypeC="6" weightTypeD="1"/>
   </traffic>

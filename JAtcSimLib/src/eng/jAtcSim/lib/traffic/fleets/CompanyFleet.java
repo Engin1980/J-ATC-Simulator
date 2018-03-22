@@ -82,7 +82,7 @@ public class CompanyFleet {
   }
 
   private void updateFleetWeightSum() {
-    this.fleetWeightSum = CollectionUtil.sum(this.types, o -> o.weight);
+    this.fleetWeightSum = CollectionUtil.sum(this.types, o -> (double) o.weight);
   }
 
   private void updateCategoryWeightSum() {

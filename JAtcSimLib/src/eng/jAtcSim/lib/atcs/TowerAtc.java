@@ -2,6 +2,7 @@ package eng.jAtcSim.lib.atcs;
 
 import eng.eSystem.EStringBuilder;
 import eng.eSystem.collections.EMap;
+import eng.eSystem.utilites.CollectionUtil;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.AirplaneList;
@@ -24,6 +25,7 @@ import eng.jAtcSim.lib.speaking.fromAtc.notifications.RadarContactConfirmationNo
 import eng.jAtcSim.lib.weathers.Weather;
 import eng.jAtcSim.lib.world.Runway;
 import eng.jAtcSim.lib.world.RunwayThreshold;
+import sun.util.locale.provider.AvailableLanguageTags;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -42,7 +44,7 @@ public class TowerAtc extends ComputerAtc {
     }
 
     public static RunwayCheck createNormal(boolean isInitial) {
-      int maxTime = 30; //4 * 60;
+      int maxTime = 4 * 60;
       if (isInitial)
         maxTime = Acc.rnd().nextInt(maxTime);
 
@@ -320,7 +322,7 @@ public class TowerAtc extends ComputerAtc {
   }
 
   public boolean isRunwayThresholdUnderMaintenance(RunwayThreshold threshold) {
-    boolean ret = runwayChecks.get(threshold.getParent()).isActive();
+    boolean ret = runwayChecks.get(threshold.getParent()).isActive() == false;
     return ret;
   }
 
@@ -475,7 +477,6 @@ public class TowerAtc extends ComputerAtc {
 
     // tryToLog("\tChecked threshold %s", inUseInfo.current.get(0));
 
-    RunwayThreshold availableThreshold = null;
 
     if (takeOffInfos.isLatestDepartureBelow(inUseInfo.current, Acc.airport().getAltitude() + 300)) {
       return;
@@ -484,15 +485,21 @@ public class TowerAtc extends ComputerAtc {
       return;
     }
 
+    List<RunwayThreshold> availableThresholds = new ArrayList<>();
     for (RunwayThreshold threshold : inUseInfo.current) {
       double closestLandingPlaneDistance = closestLandingPlaneDistance(threshold);
-      if (closestLandingPlaneDistance > 2.5) {
-        availableThreshold = threshold;
-        break;
+      if (closestLandingPlaneDistance > 2.5 && this.runwayChecks.get(threshold.getParent()).isActive() == false) {
+        availableThresholds.add(threshold);
       }
     }
-    if (availableThreshold == null)
+    RunwayThreshold availableThreshold;
+    if (availableThresholds.isEmpty()) {
       return;
+    } else {
+      availableThreshold = CollectionUtil.getRandom(availableThresholds);
+    }
+
+
 
     // if it gets here, the "toReadyPlane" can proceed take-off
     linedUpPlanesList.remove(0);
