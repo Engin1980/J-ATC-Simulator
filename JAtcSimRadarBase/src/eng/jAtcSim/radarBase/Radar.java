@@ -755,6 +755,9 @@ public class Radar {
             isVisible = true;
           if (isVisible) drawNavaid(ndi.navaid);
           break;
+        case auxiliary:
+          // not drawn
+          break;
         default:
           drawNavaid(ndi.navaid);
       }

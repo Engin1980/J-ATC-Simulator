@@ -54,6 +54,9 @@ public final class Coordinate {
     if (ret == null) {
       ret = tryParseC(value);
     }
+    if (ret == null) {
+      ret = tryParseD(value);
+    }
 
     if (ret == null) {
       throw new ERuntimeException("Unable to parse " + value + " into Coordinate.");
@@ -62,6 +65,11 @@ public final class Coordinate {
     return ret;
   }
 
+  /**
+   * Parses 503113.59N 0012000.23W to coordinate.
+   * @param value
+   * @return
+   */
   private static Coordinate tryParseC(String value) {
     Coordinate ret = null;
 
@@ -88,6 +96,11 @@ public final class Coordinate {
     return ret;
   }
 
+  /**
+   * Parses 50.257243 7.07292 to coordinate
+   * @param value
+   * @return
+   */
   private static Coordinate tryParseA(String value) {
     Coordinate ret = null;
 
@@ -106,6 +119,44 @@ public final class Coordinate {
     return ret;
   }
 
+  private static Coordinate tryParseD(String value){
+    Coordinate ret = null;
+
+    String patternString = "(N|S)(\\d+) (\\d{1,2}(\\.\\d+)) (E|W)(\\d+) (\\d{1,2}(\\.\\d+))";
+    Pattern p = Pattern.compile(patternString);
+    Matcher m = p.matcher(value);
+    if (m.find()) {
+      char latA = m.group(1).charAt(0);
+      int latDeg = Integer.parseInt(m.group(2));
+      double latMins = Double.parseDouble(m.group(3));
+
+
+      char lngtA = m.group(5).charAt(0);
+      int lngDeg = Integer.parseInt(m.group(6));
+      double lngMins = Double.parseDouble(m.group(7));
+
+      double lat = latDeg + latMins / 60d;
+      if (latA == 'S')
+        lat = -lat;
+
+      double lng = lngDeg + lngMins / 60d;
+      if (lngtA == 'W')
+        lng =-lng;
+
+      ret = new Coordinate(
+          new CoordinateValue(lat),
+          new CoordinateValue(lng)
+      );
+    }
+
+    return ret;
+  }
+
+  /**
+   * Parses 50 23 29.24 N 1 12 29.52 E to coordinate.
+   * @param value
+   * @return
+   */
   private static Coordinate tryParseB(String value) {
     Coordinate ret = null;
 
