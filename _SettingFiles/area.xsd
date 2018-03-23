@@ -1,0 +1,406 @@
+<?xml version="1.0"?>
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           targetNamespace="https://www.w3schools.com"
+           xmlns="https://www.w3schools.com"
+           elementFormDefault="qualified">
+
+
+  <xs:element name="area" type="area"/>
+
+  <xs:complexType name="area">
+    <xs:sequence>
+      <xs:element name="airports">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="airport" type="airport"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="navaids">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="navaid" type="navaid"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="borders">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="border" type="border"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute name="icao" type="xs:string"/>
+  </xs:complexType>
+
+  <xs:complexType name="navaid">
+    <xs:attribute name="name" type="xs:string" use="required"/>
+    <xs:attribute name="type" use="required">
+      <xs:simpleType>
+        <xs:restriction>
+          <xs:enumeration value="airport"/>
+          <xs:enumeration value="ndb"/>
+          <xs:enumeration value="vor"/>
+          <xs:enumeration value="fix"/>
+          <xs:enumeration value="fixMinor"/>
+          <xs:enumeration value="auxaliary"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="coordinate" type="xs:string" use="required"/>
+  </xs:complexType>
+
+  <xs:complexType name="border">
+    <xs:sequence>
+      <xs:element name="points">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="point" type="point"/>
+            <xs:element name="arc" type="arc"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute name="name" type="xs:string" use="required"/>
+    <xs:attribute name="type" use="required">
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="TMA"/>
+          <xs:enumeration value="CTR"/>
+          <xs:enumeration value="Country"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="enclosed" type="xs:boolean" use="required"/>
+    <xs:attribute name="minAltitude" type="xs:string" use="optional"/>
+    <xs:attribute name="maxAltitude" type="xs:string" use="optional"/>
+  </xs:complexType>
+
+  <xs:complexType name="point">
+    <xs:attribute name="coordinate" type="xs:string" use="required"/>
+  </xs:complexType>
+
+  <xs:complexType name="arc">
+    <xs:attribute name="coordinate" type="xs:string" use="required"/>
+    <xs:attribute name="direction">
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="clockwise"/>
+          <xs:enumeration value="counterclockwise"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:complexType>
+
+  <xs:complexType name="airport">
+    <xs:sequence>
+      <xs:element name="initialPosition" type="initialPosition"/>
+      <xs:element name="trafficDefinitions">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="genericTraffic" type="genericTraffic"/>
+            <xs:element name="densityTraffic" type="densityTraffic"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="atcTemplates">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="atcTemplate" type="atcTemplate"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="runways">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="runway" type="runway"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="holds">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="hold" type="hold"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute name="icao" type="xs:string" use="required"/>
+    <xs:attribute name="name" type="xs:string" use="required"/>
+    <xs:attribute name="altitude" type="xs:int" use="required"/>
+    <xs:attribute name="transitionAltitude" type="xs:integer" use="required"/>
+    <xs:attribute name="vfrAltitude" type="xs:integer" use="optional"/>
+    <xs:attribute name="mainAirportNavaidName" type="xs:string" use="required"/>
+  </xs:complexType>
+
+  <xs:complexType name="traffic">
+    <xs:sequence>
+      <xs:element name="description" minOccurs="0" maxOccurs="1">
+        <xs:simpleType>
+          <xs:restriction base="xs:string"/>
+        </xs:simpleType>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute name="title" type="nonEmptyString" use="required"/>
+    <xs:attribute name="delayProbability" type="xs:double" use="required"/>
+    <xs:attribute name="maxDelayInMinutesPerStep" type="xs:int" use="required"/>
+  </xs:complexType>
+
+  <xs:complexType name="densityTraffic">
+    <xs:complexContent>
+      <xs:extension base="traffic">
+        <xs:sequence>
+          <xs:element name="companies">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="company" type="codeWeight"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="countries">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="company" type="codeWeight"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="density">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="item">
+                  <xs:complexType>
+                    <xs:attribute name="hour" type="xs:int" use="required" />
+                    <xs:attribute name="departures" type="xs:int" use="required" />
+                    <xs:attribute name="arrivals" type="xs:int" use="required" />
+                  </xs:complexType>
+                </xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+        <xs:attribute name="probabilityOfNonCommercialFlight" type="xs:double" use="required"/>
+        <xs:attribute name="probabilityOfDeparture" type="xs:double" use="required"/>
+        <xs:attribute name="useExtendedCallsigns" type="xs:boolean" use="required"/>
+      </xs:extension>
+    </xs:complexContent>
+
+  </xs:complexType>
+
+  <xs:complexType name="codeWeight">
+    <xs:attribute name="code" type="xs:string" use="required" />
+    <xs:attribute name="weight" type="xs:double" use="required" />
+  </xs:complexType>
+
+  <xs:complexType name="genericTraffic">
+    <xs:complexContent>
+      <xs:extension base="traffic">
+        <xs:sequence>
+          <xs:element name="movementsPerHour">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="item">
+                  <xs:simpleType>
+                    <xs:restriction base="xs:int"/>
+                  </xs:simpleType>
+                </xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="probabilityOfCategory">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="item">
+                  <xs:simpleType>
+                    <xs:restriction base="xs:double"/>
+                  </xs:simpleType>
+                </xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+        <xs:attribute name="probabilityOfNonCommercialFlight" type="xs:double" use="required"/>
+        <xs:attribute name="probabilityOfDeparture" type="xs:double" use="required"/>
+        <xs:attribute name="useExtendedCallsigns" type="xs:boolean" use="required"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="runway">
+    <xs:sequence>
+      <xs:element name="thresholds">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="threshold" type="threshold"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute name="active" type="xs:boolean"/>
+  </xs:complexType>
+
+  <xs:complexType name="threshold">
+    <xs:sequence>
+      <xs:element name="iafRoutes" type="iafRoutes"/>
+      <xs:element name="approaches">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="ilsApproach" type="ilsApproach"/>
+            <xs:element name="unpreciseApproach" type="unpreciseApproach"/>
+            <xs:element name="gnssApproach" type="gnssApproach"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="routes">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="route" type="route"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute name="name" type="nonEmptyString" use="required"/>
+    <xs:attribute name="coordinate" type="nonEmptyString" use="required"/>
+    <xs:attribute name="initialDepartureAltitude" type="xs:int" use="required"/>
+    <xs:attribute name="preferred" type="xs:boolean" use="optional"/>
+  </xs:complexType>
+
+  <xs:complexType name="route">
+    <xs:attribute name="type" use="required">
+      <xs:simpleType>
+        <xs:restriction>
+          <xs:enumeration value="sid"/>
+          <xs:enumeration value="star"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="name" type="nonEmptyString" use="required"/>
+    <xs:attribute name="route" type="nonEmptyString" use="required"/>
+  </xs:complexType>
+
+  <xs:simpleType name="nonEmptyString">
+    <xs:restriction base="xs:string">
+      <xs:minLength value="1"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="approach">
+    <xs:sequence>
+      <xs:element name="iafRoutes" type="iafRoutes"/>
+    </xs:sequence>
+    <xs:attribute name="gaRoute" type="xs:string" use="required"/>
+    <xs:attribute name="radial" type="xs:int" use="required"/>
+  </xs:complexType>
+
+  <xs:complexType name="gnssApproach">
+    <xs:complexContent>
+      <xs:extension base="approach">
+        <xs:attribute name="daA" type="xs:int" use="required"/>
+        <xs:attribute name="daB" type="xs:int" use="required"/>
+        <xs:attribute name="daC" type="xs:int" use="required"/>
+        <xs:attribute name="daD" type="xs:int" use="required"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="unpreciseApproach">
+    <xs:complexContent>
+      <xs:extension base="approach">
+        <xs:attribute name="type" use="required">
+          <xs:simpleType>
+            <xs:restriction>
+              <xs:enumeration value="vor"/>
+              <xs:enumeration value="ndb"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="fix" type="xs:string" use="required"/>
+        <xs:attribute name="mdaA" type="xs:int" use="required"/>
+        <xs:attribute name="mdaB" type="xs:int" use="required"/>
+        <xs:attribute name="mdaC" type="xs:int" use="required"/>
+        <xs:attribute name="mdaD" type="xs:int" use="required"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="ilsApproach">
+    <xs:complexContent>
+      <xs:extension base="approach">
+        <xs:sequence>
+          <xs:element name="categories">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="category" type="ilsCategory"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="ilsCategory">
+    <xs:attribute name="type">
+      <xs:simpleType>
+        <xs:restriction>
+          <xs:enumeration value="I"/>
+          <xs:enumeration value="II"/>
+          <xs:enumeration value="III"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="daA" type="xs:int" use="required"/>
+    <xs:attribute name="daB" type="xs:int" use="required"/>
+    <xs:attribute name="daC" type="xs:int" use="required"/>
+    <xs:attribute name="daD" type="xs:int" use="required"/>
+  </xs:complexType>
+
+  <xs:complexType name="iafRoutes">
+    <xs:sequence>
+      <xs:element name="route" type="iafRoute"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="iafRoute">
+    <xs:attribute name="iaf" type="xs:string" use="required"/>
+    <xs:attribute name="route" type="xs:string" use="required"/>
+  </xs:complexType>
+
+
+  <xs:complexType name="hold">
+    <xs:attribute name="navaidName" type="xs:string" use="required"/>
+    <xs:attribute name="inboundRadial" type="xs:int" use="required"/>
+    <xs:attribute name="turn">
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="left"/>
+          <xs:enumeration value="right"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:complexType>
+
+  <xs:complexType name="atcTemplate">
+    <xs:attribute name="type">
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="ctr"/>
+          <xs:enumeration value="app"/>
+          <xs:enumeration value="twr"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="name" type="xs:string"/>
+    <xs:attribute name="frequency" type="xs:double"/>
+    <xs:attribute name="releaseAltitude" type="xs:int"/>
+    <xs:attribute name="acceptAltitude" type="xs:int"/>
+    <xs:attribute name="orderedAltitude" type="xs:int"/>
+  </xs:complexType>
+
+  <xs:complexType name="initialPosition">
+    <xs:attribute name="coordinate" type="xs:string" use="required"/>
+    <xs:attribute name="range" type="xs:int" use="required"/>
+  </xs:complexType>
+
+</xs:schema>
