@@ -13,21 +13,21 @@
       <xs:element name="airports">
         <xs:complexType>
           <xs:sequence>
-            <xs:element name="airport" type="airport"/>
+            <xs:element name="airport" type="airport" maxOccurs="unbounded"/>
           </xs:sequence>
         </xs:complexType>
       </xs:element>
       <xs:element name="navaids">
         <xs:complexType>
           <xs:sequence>
-            <xs:element name="navaid" type="navaid"/>
+            <xs:element name="navaid" type="navaid" maxOccurs="unbounded"/>
           </xs:sequence>
         </xs:complexType>
       </xs:element>
       <xs:element name="borders">
         <xs:complexType>
           <xs:sequence>
-            <xs:element name="border" type="border"/>
+            <xs:element name="border" type="border" maxOccurs="unbounded"/>
           </xs:sequence>
         </xs:complexType>
       </xs:element>
@@ -56,10 +56,10 @@
     <xs:sequence>
       <xs:element name="points">
         <xs:complexType>
-          <xs:sequence>
+          <xs:choice maxOccurs="unbounded">
             <xs:element name="point" type="point"/>
             <xs:element name="arc" type="arc"/>
-          </xs:sequence>
+          </xs:choice>
         </xs:complexType>
       </xs:element>
     </xs:sequence>
@@ -97,32 +97,39 @@
   <xs:complexType name="airport">
     <xs:sequence>
       <xs:element name="initialPosition" type="initialPosition"/>
-      <xs:element name="trafficDefinitions">
+      <xs:element name="trafficDefinitions" maxOccurs="unbounded" minOccurs="0">
         <xs:complexType>
-          <xs:sequence>
+          <xs:choice  maxOccurs="unbounded">
             <xs:element name="genericTraffic" type="genericTraffic"/>
             <xs:element name="densityTraffic" type="densityTraffic"/>
-          </xs:sequence>
+          </xs:choice>
         </xs:complexType>
       </xs:element>
       <xs:element name="atcTemplates">
         <xs:complexType>
           <xs:sequence>
-            <xs:element name="atcTemplate" type="atcTemplate"/>
+            <xs:element name="atcTemplate" type="atcTemplate" minOccurs="3" maxOccurs="3"/>
           </xs:sequence>
         </xs:complexType>
       </xs:element>
       <xs:element name="runways">
         <xs:complexType>
-          <xs:sequence>
-            <xs:element name="runway" type="runway"/>
+          <xs:choice minOccurs="1" maxOccurs="unbounded">
+            <xs:element name="runway" type="runway" maxOccurs="unbounded"/>
+          </xs:choice>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="inactiveRunways" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence minOccurs="1" maxOccurs="unbounded">
+            <xs:element name="runway" type="inactiveRunway" maxOccurs="unbounded"/>
           </xs:sequence>
         </xs:complexType>
       </xs:element>
       <xs:element name="holds">
         <xs:complexType>
           <xs:sequence>
-            <xs:element name="hold" type="hold"/>
+            <xs:element name="hold" type="hold" maxOccurs="unbounded"/>
           </xs:sequence>
         </xs:complexType>
       </xs:element>
@@ -155,21 +162,22 @@
           <xs:element name="companies">
             <xs:complexType>
               <xs:sequence>
-                <xs:element name="company" type="codeWeight"/>
+                <xs:element name="company" type="codeWeight"  maxOccurs="unbounded" minOccurs="1"/>
               </xs:sequence>
+              <xs:attribute name="isFullDayTraffic" type="xs:boolean" use="required" />
             </xs:complexType>
           </xs:element>
           <xs:element name="countries">
             <xs:complexType>
               <xs:sequence>
-                <xs:element name="company" type="codeWeight"/>
+                <xs:element name="country" type="codeWeight"  maxOccurs="unbounded" minOccurs="1"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
           <xs:element name="density">
             <xs:complexType>
               <xs:sequence>
-                <xs:element name="item">
+                <xs:element name="item" maxOccurs="24">
                   <xs:complexType>
                     <xs:attribute name="hour" type="xs:int" use="required" />
                     <xs:attribute name="departures" type="xs:int" use="required" />
@@ -179,9 +187,20 @@
               </xs:sequence>
             </xs:complexType>
           </xs:element>
+          <xs:element name="directions">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="direction"  maxOccurs="unbounded">
+                  <xs:complexType>
+                    <xs:attribute name="heading" type="xs:int" use="required" />
+                    <xs:attribute name="weight" type="xs:double" use="required" />
+                  </xs:complexType>
+                </xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
         </xs:sequence>
-        <xs:attribute name="probabilityOfNonCommercialFlight" type="xs:double" use="required"/>
-        <xs:attribute name="probabilityOfDeparture" type="xs:double" use="required"/>
+        <xs:attribute name="nonCommercialFlightProbability" type="xs:double" use="required"/>
         <xs:attribute name="useExtendedCallsigns" type="xs:boolean" use="required"/>
       </xs:extension>
     </xs:complexContent>
@@ -200,7 +219,7 @@
           <xs:element name="movementsPerHour">
             <xs:complexType>
               <xs:sequence>
-                <xs:element name="item">
+                <xs:element name="item" maxOccurs="24"  minOccurs="24">
                   <xs:simpleType>
                     <xs:restriction base="xs:int"/>
                   </xs:simpleType>
@@ -208,10 +227,10 @@
               </xs:sequence>
             </xs:complexType>
           </xs:element>
-          <xs:element name="probabilityOfCategory">
+          <xs:element name="probabilityOfCategory" >
             <xs:complexType>
               <xs:sequence>
-                <xs:element name="item">
+                <xs:element name="item" minOccurs="4" maxOccurs="4">
                   <xs:simpleType>
                     <xs:restriction base="xs:double"/>
                   </xs:simpleType>
@@ -232,33 +251,51 @@
       <xs:element name="thresholds">
         <xs:complexType>
           <xs:sequence>
-            <xs:element name="threshold" type="threshold"/>
+            <xs:element name="threshold" type="threshold" minOccurs="2" maxOccurs="2"/>
           </xs:sequence>
         </xs:complexType>
       </xs:element>
     </xs:sequence>
-    <xs:attribute name="active" type="xs:boolean"/>
+    <xs:attribute name="active" type="xs:boolean" fixed="true" use="required"/>
+  </xs:complexType>
+
+  <xs:complexType name="inactiveRunway">
+    <xs:sequence>
+      <xs:element name="thresholds">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="threshold" type="inactiveThreshold" minOccurs="2" maxOccurs="2"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute name="active" type="xs:boolean" fixed="false" use="required" />
+  </xs:complexType>
+  
+  <xs:complexType name="inactiveThreshold">
+    <xs:attribute name="name" type="nonEmptyString" use="required"/>
+    <xs:attribute name="coordinate" type="nonEmptyString" use="required"/>
   </xs:complexType>
 
   <xs:complexType name="threshold">
     <xs:sequence>
-      <xs:element name="iafRoutes" type="iafRoutes"/>
-      <xs:element name="approaches">
+      <xs:element name="iafRoutes" type="iafRoutes" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="approaches" minOccurs="1" maxOccurs="1">
         <xs:complexType>
-          <xs:sequence>
-            <xs:element name="ilsApproach" type="ilsApproach"/>
-            <xs:element name="unpreciseApproach" type="unpreciseApproach"/>
-            <xs:element name="gnssApproach" type="gnssApproach"/>
-          </xs:sequence>
+          <xs:choice maxOccurs="unbounded">
+            <xs:element name="ilsApproach" type="ilsApproach"  minOccurs="0" maxOccurs="1"/>
+            <xs:element name="unpreciseApproach" type="unpreciseApproach"  minOccurs="0" maxOccurs="2"/>
+            <xs:element name="gnssApproach" type="gnssApproach"  minOccurs="0" maxOccurs="1"/>
+          </xs:choice>
         </xs:complexType>
       </xs:element>
-      <xs:element name="routes">
+      <xs:element name="routes" minOccurs="1" maxOccurs="1">
         <xs:complexType>
           <xs:sequence>
-            <xs:element name="route" type="route"/>
+            <xs:element name="route" type="route" minOccurs="0" maxOccurs="unbounded"/>
           </xs:sequence>
         </xs:complexType>
-      </xs:element>
+      </xs:element >
     </xs:sequence>
     <xs:attribute name="name" type="nonEmptyString" use="required"/>
     <xs:attribute name="coordinate" type="nonEmptyString" use="required"/>
@@ -277,6 +314,7 @@
     </xs:attribute>
     <xs:attribute name="name" type="nonEmptyString" use="required"/>
     <xs:attribute name="route" type="nonEmptyString" use="required"/>
+    <xs:attribute name="category" type="nonEmptyString" use="optional" />
   </xs:complexType>
 
   <xs:simpleType name="nonEmptyString">
@@ -287,7 +325,7 @@
 
   <xs:complexType name="approach">
     <xs:sequence>
-      <xs:element name="iafRoutes" type="iafRoutes"/>
+      <xs:element name="iafRoutes" type="iafRoutes" minOccurs="0"  maxOccurs="unbounded"/>
     </xs:sequence>
     <xs:attribute name="gaRoute" type="xs:string" use="required"/>
     <xs:attribute name="radial" type="xs:int" use="required"/>
@@ -328,10 +366,10 @@
     <xs:complexContent>
       <xs:extension base="approach">
         <xs:sequence>
-          <xs:element name="categories">
+          <xs:element name="categories" minOccurs="1" maxOccurs="1">
             <xs:complexType>
               <xs:sequence>
-                <xs:element name="category" type="ilsCategory"/>
+                <xs:element name="category" type="ilsCategory" minOccurs="1" maxOccurs="3"/>
               </xs:sequence>
             </xs:complexType>
           </xs:element>
@@ -341,7 +379,7 @@
   </xs:complexType>
 
   <xs:complexType name="ilsCategory">
-    <xs:attribute name="type">
+    <xs:attribute name="type" use="required">
       <xs:simpleType>
         <xs:restriction>
           <xs:enumeration value="I"/>
@@ -358,7 +396,7 @@
 
   <xs:complexType name="iafRoutes">
     <xs:sequence>
-      <xs:element name="route" type="iafRoute"/>
+      <xs:element name="route" type="iafRoute" minOccurs="0"  maxOccurs="unbounded"/>
     </xs:sequence>
   </xs:complexType>
 
