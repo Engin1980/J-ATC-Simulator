@@ -115,4 +115,10 @@ public class Headings {
     ret = to(ret);
     return ret;
   }
+
+  public static double getOpposite(double course) {
+    double ret = course - 180;
+    ret = Headings.to(ret);
+    return ret;
+  }
 }

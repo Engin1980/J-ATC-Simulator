@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package eng.jAtcSim.lib.world;
+package eng.jAtcSim.lib.world.approaches;
 
 import eng.eSystem.xmlSerialization.XmlOptional;
 import eng.jAtcSim.lib.coordinates.Coordinate;
@@ -14,12 +14,14 @@ import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
 import eng.jAtcSim.lib.speaking.parsing.Parser;
 import eng.jAtcSim.lib.speaking.parsing.shortParsing.ShortParser;
+import eng.jAtcSim.lib.world.RunwayThreshold;
 
 /**
  *
  * @author Marek
  */
-public class Approach extends MustBeBinded implements KeyItem<Approach.eType> {
+@Deprecated
+public class ApproachOld extends MustBeBinded implements KeyItem<ApproachOld.eType> {
 
   public enum eType {
 

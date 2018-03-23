@@ -11,6 +11,8 @@ import eng.jAtcSim.lib.global.KeyList;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
 import eng.jAtcSim.lib.speaking.parsing.Parser;
 import eng.jAtcSim.lib.speaking.parsing.shortParsing.ShortParser;
+import eng.jAtcSim.lib.world.approaches.Approach;
+import eng.jAtcSim.lib.world.approaches.ApproachOld;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -110,7 +112,7 @@ public class Area {
             } catch (Exception ex) {
               throw new ERuntimeException(
                   String.format("airport %s runway %s approach %s has invalid go-around route fromAtc: %s (error: %s)",
-                      a.getIcao(), t.getName(), p.getType(), p.getGaRoute(), ex.getMessage()));
+                      a.getIcao(), t.getName(), p.toString(), p.getGaRoute(), ex.getMessage()));
             }
           } // for (Approach
 

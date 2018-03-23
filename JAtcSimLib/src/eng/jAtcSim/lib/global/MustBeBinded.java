@@ -7,6 +7,8 @@
 package eng.jAtcSim.lib.global;
 
 import eng.jAtcSim.lib.exceptions.ERuntimeException;
+import eng.jAtcSim.lib.world.approaches.Approach;
+import eng.jAtcSim.lib.world.approaches.CurrentApproachInfo;
 
 /**
  *
@@ -27,6 +29,7 @@ public abstract class MustBeBinded {
     _bind();
     binded = true;
   }
+
   protected abstract void _bind();
 
   public boolean isBinded() {

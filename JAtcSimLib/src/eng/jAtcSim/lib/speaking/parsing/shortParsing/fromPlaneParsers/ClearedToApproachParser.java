@@ -1,14 +1,11 @@
 package eng.jAtcSim.lib.speaking.parsing.shortParsing.fromPlaneParsers;
 
 import eng.eSystem.EStringBuilder;
-import eng.jAtcSim.lib.Acc;
-import eng.jAtcSim.lib.exceptions.EInvalidCommandException;
 import eng.jAtcSim.lib.exceptions.ENotSupportedException;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ClearedToApproachCommand;
 import eng.jAtcSim.lib.speaking.parsing.shortParsing.RegexGrouper;
 import eng.jAtcSim.lib.speaking.parsing.shortParsing.SpeechParser;
-import eng.jAtcSim.lib.world.Approach;
-import eng.jAtcSim.lib.world.RunwayThreshold;
+import eng.jAtcSim.lib.world.approaches.Approach;
 
 public class ClearedToApproachParser extends SpeechParser<ClearedToApproachCommand> {
 
@@ -36,7 +33,7 @@ public class ClearedToApproachParser extends SpeechParser<ClearedToApproachComma
     sb.appendLine("\tIII\t.. ILS cat III");
     sb.appendLine("\tR\t.. VOR/DME");
     sb.appendLine("\tN\t.. NDB");
-    sb.appendLine("\tG\t.. GPS");
+    sb.appendLine("\tG\t.. GPS/GNSS");
     sb.appendLine("\tV\t.. visual");
     sb.appendLine("Example:");
     sb.appendLine("\t C I 24 \t - cleared ILS category I 24");
@@ -51,49 +48,34 @@ public class ClearedToApproachParser extends SpeechParser<ClearedToApproachComma
     String typeS = rg.getString(1);
     String runwayName = rg.getString(2).toUpperCase();
 
-    Approach.eType type;
+    Approach.ApproachType type;
     switch (typeS) {
       case "G":
-        type = Approach.eType.GNSS;
+        type = Approach.ApproachType.gnss;
         break;
       case "I":
-        type = Approach.eType.ILS_I;
+        type = Approach.ApproachType.ils_I;
         break;
       case "II":
-        type = Approach.eType.ILS_II;
+        type = Approach.ApproachType.ils_II;
         break;
       case "III":
-        type = Approach.eType.ILS_III;
+        type = Approach.ApproachType.ils_III;
         break;
       case "N":
-        type = Approach.eType.NDB;
+        type = Approach.ApproachType.ndb;
         break;
       case "R":
-        type = Approach.eType.VORDME;
+        type = Approach.ApproachType.vor;
         break;
       case "V":
-        type = Approach.eType.Visual;
+        type = Approach.ApproachType.visual;
         break;
       default:
         throw new ENotSupportedException();
     }
 
-    //TODO this should be checked by the pilot, not by the
-    RunwayThreshold rt = Acc.airport().tryGetRunwayThreshold(runwayName);
-    if (rt == null) {
-      throw new EInvalidCommandException(
-          "Cannot be cleared to approach. There is no runway designated as \"" + runwayName + "\".", rg.getMatch());
-    }
-
-    Approach app = rt.tryGetApproachByTypeWithILSDerived(type);
-    if (app == null) {
-      throw new EInvalidCommandException(
-          "Cannot be cleared to approach. There is no approach type "
-              + type + " for runway " + rt.getName(),
-          rg.getMatch());
-    }
-
-    ClearedToApproachCommand ret = new ClearedToApproachCommand(app);
+    ClearedToApproachCommand ret = new ClearedToApproachCommand(runwayName, type);
     return ret;
   }
 }

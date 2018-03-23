@@ -33,7 +33,11 @@ import eng.jAtcSim.lib.speaking.fromAtc.commands.*;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.afters.*;
 import eng.jAtcSim.lib.speaking.fromAtc.notifications.RadarContactConfirmationNotification;
 import eng.jAtcSim.lib.weathers.Weather;
-import eng.jAtcSim.lib.world.*;
+import eng.jAtcSim.lib.world.Navaid;
+import eng.jAtcSim.lib.world.Route;
+import eng.jAtcSim.lib.world.Routes;
+import eng.jAtcSim.lib.world.RunwayThreshold;
+import eng.jAtcSim.lib.world.approaches.CurrentApproachInfo;
 
 import java.util.HashMap;
 import java.util.List;
@@ -77,7 +81,7 @@ public class Pilot {
       Pilot.this.adjustTargetSpeed();
     }
 
-    public void setApproachBehavior(Approach app) {
+    public void setApproachBehavior(CurrentApproachInfo app) {
       Pilot.this.behavior = Pilot.this.new ApproachBehavior(app);
       parent.setxState(Airplane.State.approachEnter);
       Pilot.this.adjustTargetSpeed();
@@ -170,6 +174,31 @@ public class Pilot {
       parent.setTargetHeading(value, useLeftTurn);
     }
 
+    public Navaid tryGetIaf() {
+      Navaid ret;
+
+      Navaid main = getLastAssignedRouteFix();
+      if (afterCommands.hasLateralDirectionToNavaid(main))
+        ret = main;
+      else
+        ret = null;
+
+      return ret;
+    }
+
+    public Navaid getLastAssignedRouteFix() {
+      Navaid ret;
+      SpeechList<IAtcCommand> lst = Pilot.this.assignedRoute.getCommands();
+      for (int i = lst.size() - 1; i <= 0; i++) {
+        IAtcCommand cmd = lst.get(i);
+        if (cmd instanceof ProceedDirectCommand) {
+          ret = ((ProceedDirectCommand) cmd).getNavaid();
+          break;
+        }
+      }
+      return ret;
+    }
+
     protected void setState(Airplane.State state) {
       parent.setxState(state);
       Pilot.this.adjustTargetSpeed();
@@ -209,7 +238,7 @@ public class Pilot {
 
   }
 
-  class HoldingPointBehavior extends Behavior{
+  class HoldingPointBehavior extends Behavior {
 
     @Override
     public void fly() {
@@ -224,16 +253,15 @@ public class Pilot {
 
   class TakeOffBehavior extends Behavior {
 
+    private final static int TAKEOFF_ACCELERATION_ALTITUDE_AGL = 1500;
+    //TODO add to confing the acceleration altitude and use it here
+    private final int accelerationAltitude =
+        Acc.airport().getAltitude() + TAKEOFF_ACCELERATION_ALTITUDE_AGL;
     private RunwayThreshold toThreshold;
 
     public TakeOffBehavior(RunwayThreshold toThreshold) {
       this.toThreshold = toThreshold;
     }
-
-    private final static int TAKEOFF_ACCELERATION_ALTITUDE_AGL = 1500;
-    //TODO add to confing the acceleration altitude and use it here
-    private final int accelerationAltitude =
-        Acc.airport().getAltitude() + TAKEOFF_ACCELERATION_ALTITUDE_AGL;
 
     @Override
     public void fly() {
@@ -316,11 +344,7 @@ public class Pilot {
           else {
             double distToFaf;
             RunwayThreshold anyActiveThreshold = Acc.thresholds().get(0);
-            if (anyActiveThreshold.getFafCross() == null) {
-              distToFaf = Coordinates.getDistanceInNM(parent.getCoordinate(), anyActiveThreshold.getCoordinate());
-            } else {
-              distToFaf = Coordinates.getDistanceInNM(parent.getCoordinate(), anyActiveThreshold.getFafCross());
-            }
+            distToFaf = Coordinates.getDistanceInNM(parent.getCoordinate(), anyActiveThreshold.getEstimatedFafPoint());
             if (distToFaf < FAF_SPEED_DOWN_DISTANCE_IN_NM) {
               super.setState(Airplane.State.arrivingCloseFaf);
             }
@@ -330,10 +354,7 @@ public class Pilot {
           // TODO this will not work for runways with FAF above FL100
           double distToFaf;
           RunwayThreshold anyActiveThreshold = Acc.thresholds().get(0);
-          if (anyActiveThreshold.getFafCross() == null)
-            distToFaf = Coordinates.getDistanceInNM(parent.getCoordinate(), anyActiveThreshold.getCoordinate());
-          else
-            distToFaf = Coordinates.getDistanceInNM(parent.getCoordinate(), anyActiveThreshold.getFafCross());
+          distToFaf = Coordinates.getDistanceInNM(parent.getCoordinate(), anyActiveThreshold.getEstimatedFafPoint());
           if (distToFaf < FAF_SPEED_DOWN_DISTANCE_IN_NM) {
             super.setState(Airplane.State.arrivingCloseFaf);
           }
@@ -556,12 +577,12 @@ public class Pilot {
     private final static int SHORT_FINAL_ALTITUDE_AGL = 200;
     private final int finalAltitude;
     private final int shortFinalAltitude;
-    public Approach approach;
+    public CurrentApproachInfo approach;
     private boolean isAfterStateChange;
     private boolean isAtFinalDescend = false;
     private Boolean isRunwayVisible = null;
 
-    public ApproachBehavior(Approach approach) {
+    public ApproachBehavior(CurrentApproachInfo approach) {
       this.approach = approach;
       this.finalAltitude = Acc.airport().getAltitude() + LONG_FINAL_ALTITUDE_AGL;
       this.shortFinalAltitude = Acc.airport().getAltitude() + SHORT_FINAL_ALTITUDE_AGL;
@@ -578,10 +599,10 @@ public class Pilot {
 
       parent.setTargetSpeed(parent.getType().vDep);
       parent.setTargetAltitude(0);
-      parent.setTargetHeading(approach.getParent().getCourse());
+      parent.setTargetHeading(approach.getCourse());
 
       Pilot.this.afterCommands.clear();
-      SpeechList<IFromAtc> gas = new SpeechList<>(this.approach.getGaCommands());
+      SpeechList<IFromAtc> gas = new SpeechList<>(this.approach.getGaRoute());
       expandThenCommands(gas);
       processSpeeches(gas, false, false);
 
@@ -614,7 +635,7 @@ public class Pilot {
       if (newAltitude == -1) {
         double distToLand = Coordinates.getDistanceInNM(
             parent.getCoordinate(), this.approach.getParent().getCoordinate());
-        newAltitude = (int) (this.approach.getParent().getParent().getParent().getAltitude()
+        newAltitude = (int) (this.approach.getThreshold().getParent().getParent().getAltitude()
             + this.approach.getGlidePathPerNM() * distToLand);
       }
 
@@ -630,7 +651,7 @@ public class Pilot {
       double newHeading
           = Coordinates.getHeadingToRadial(
           parent.getCoordinate(), this.approach.getPoint(),
-          this.approach.getRadial());
+          this.approach.getCourse());
       parent.setTargetHeading(newHeading);
     }
 
@@ -639,7 +660,7 @@ public class Pilot {
       int newHeading
           = (int) Coordinates.getHeadingToRadial(
           parent.getCoordinate(), this.approach.getParent().getOtherThreshold().getCoordinate(),
-          this.approach.getRadial());
+          this.approach.getCourse());
       parent.setTargetHeading(newHeading);
     }
 
@@ -705,7 +726,7 @@ public class Pilot {
           if (isAfterStateChange) {
             // moc nizko, uz pod stabilized altitude
             int MAX_APP_HEADING_DIFF = 3;
-            if (Math.abs(parent.getTargetHeading() - this.approach.getRadial()) > MAX_APP_HEADING_DIFF) {
+            if (Math.abs(parent.getTargetHeading() - this.approach.getCourse()) > MAX_APP_HEADING_DIFF) {
               goAround("Not stabilized in approach.");
               return;
             }
@@ -730,7 +751,7 @@ public class Pilot {
 //            parent.setTargetHeading(newxHeading);
             // now replaced by dynamic looking for runway threshold
             double newHeading = Coordinates.getBearing(
-                parent.getCoordinate(), approach.getParent().getCoordinate());
+                parent.getCoordinate(), approach.getThreshold().getCoordinate());
             parent.setTargetHeading(newHeading);
 
             // neni na twr, tak GA
@@ -763,7 +784,7 @@ public class Pilot {
 
       sb.appendFormat("APP %s%s",
           this.approach.getType().toString(),
-          this.approach.getParent().getName());
+          this.approach.getThreshold().getName());
 
       return sb.toString();
     }
@@ -869,8 +890,8 @@ public class Pilot {
     return ret;
   }
 
-  public Approach tryGetAssignedApproach() {
-    Approach ret;
+  public CurrentApproachInfo tryGetAssignedApproach() {
+    CurrentApproachInfo ret;
     ApproachBehavior ap = ConversionUtils.tryConvert(this.behavior);
     if (ap != null)
       ret = ap.approach;
@@ -1086,7 +1107,7 @@ public class Pilot {
             default:
               throw new UnsupportedOperationException();
           }
-          n = new AfterAltitudeCommand(ca.getAltitudeInFt(), restriction );
+          n = new AfterAltitudeCommand(ca.getAltitudeInFt(), restriction);
         } else if (prev instanceof ChangeSpeedCommand) {
           n = new AfterSpeedCommand(((ChangeSpeedCommand) prev).getSpeedInKts());
         } else {

@@ -172,7 +172,7 @@
                 <route type="sid" name="EPOLO2E" category="CD"
                        route="CM 100 AA 004+ PD NIZ/160/8 T PD NIZ/160/11 T PD STP/59/34 T PD STP/59/26 T PD RESBO T PD EPOLO"/>
                 <route type="sid" name="EPOLO2L" category="AB"
-                       route="CM 70 AA 004+ PD NIZ/160/8 T PD NIZ/160/11 T PD NIZ/184/31 T PD NIZ/184/34 T PD LERMA T PD EPOLO"/>
+                       route="CM 70 AA 004+ PD NIZ/160/8 T PD NIZ/160/11 T PD NIZ/184/21 T PD NIZ/184/34 T PD LERMA T PD EPOLO"/>
                 <route type="sid" name="IRMAR2M" category="CD"
                        route="AA 004+ PD NIZ/160/8 T PD CGS/089/14 T PD NIZ T PD BARSO T PD IRMAR"/>
                 <route type="sid" name="IRMAR2E" category="AB"
@@ -198,7 +198,7 @@
                 <route type="sid" name="STP2E" category="CD"
                        route="CM 100 AA 004+ PD NIZ/160/8 T PD NIZ/160/11 T PD STP/059/34 T PD STP/059/26 T PD NIZ/200/34 T PD STP"/>
                 <route type="sid" name="STP2L" category="AB"
-                       route="CM 100 AA 004+ PD NIZ/160/8 T PD NIZ/160/11 T PD NIZ/184/31 T PD NIZ/184/34 T PD LERMA T PD STP"/>
+                       route="CM 100 AA 004+ PD NIZ/160/8 T PD NIZ/160/11 T PD NIZ/184/21 T PD NIZ/184/34 T PD LERMA T PD STP"/>
                 <route type="sid" name="VAREK2E" category="CD"
                        route="CM 100 AA 004+ PD NIZ/160/8 T PD NIZ/160/11 T PD OMARD T PD VAREK"/>
                 <route type="sid" name="VAREK2L" category="AB"
@@ -238,7 +238,7 @@
                 <route type="sid" name="EPOLO2W" category="CD"
                        route="CM 100 AA 005+ PD CGS/135/8 T PD STP/059/26 T PD RESBO T PD EPOLO"/>
                 <route type="sid" name="EPOLO2S" category="AB"
-                       route="CM 70 AA 005+ PD CGS/135/8 T PD STP/059/34 T PD NIZ/184/31 T PD NIZ/184/34 T PD LERMA T PD EPOLO"/>
+                       route="CM 70 AA 005+ PD CGS/135/8 T PD STP/059/34 T PD NIZ/184/21 T PD NIZ/184/34 T PD LERMA T PD EPOLO"/>
                 <route type="sid" name="IRMAR2T" category="CD"
                        route="AA 005+ PD CSC/135/6.5 T PD CGS/089/13 T PD CGS13 PD NIZ T PD BARSO T PD IRMAR"/>
                 <route type="sid" name="IRMAR2W" category="AB"
@@ -264,7 +264,7 @@
                 <route type="sid" name="STP2W" category="CD"
                        route="CM 100 AA 005+ PD CGS/135/8 T PD STP/065/30 T PD STP/065/24 T PD NIZ/200/34 T PD STP"/>
                 <route type="sid" name="STP2S" category="AB"
-                       route="CM 100 AA 005+ PD CGS/135/8 T PD STP/059/34 T PD NIZ/184/31 T PD NIZ/184/34 T PD LERMA T PD STP"/>
+                       route="CM 100 AA 005+ PD CGS/135/8 T PD STP/059/34 T PD NIZ/184/21 T PD NIZ/184/34 T PD LERMA T PD STP"/>
                 <route type="sid" name="VAREK2W" category="CD"
                        route="CM 100 AA 005+ PD CGS/135/8 T PD NIZ/160/40 T PD OMARD T PD VAREK"/>
                 <route type="sid" name="VAREK2S" category="AB"
@@ -311,7 +311,7 @@
                 <route type="sid" name="EPOLO2E" category="CD"
                        route="CM 100 AA 004+ PD NIZ/160/8 T PD NIZ/160/11 T PD STP/59/34 T PD STP/59/26 T PD RESBO T PD EPOLO"/>
                 <route type="sid" name="EPOLO2L" category="AB"
-                       route="CM 70 AA 004+ PD NIZ/160/8 T PD NIZ/160/11 T PD NIZ/184/31 T PD NIZ/184/34 T PD LERMA T PD EPOLO"/>
+                       route="CM 70 AA 004+ PD NIZ/160/8 T PD NIZ/160/11 T PD NIZ/184/21 T PD NIZ/184/34 T PD LERMA T PD EPOLO"/>
                 <route type="sid" name="IRMAR2M" category="CD"
                        route="AA 004+ PD NIZ/160/8 T PD CGS/089/14 T PD NIZ T PD BARSO T PD IRMAR"/>
                 <route type="sid" name="IRMAR2E" category="AB"
@@ -337,7 +337,7 @@
                 <route type="sid" name="STP2E" category="CD"
                        route="CM 100 AA 004+ PD NIZ/160/8 T PD NIZ/160/11 T PD STP/059/34 T PD STP/059/26 T PD NIZ/200/34 T PD STP"/>
                 <route type="sid" name="STP2L" category="AB"
-                       route="CM 100 AA 004+ PD NIZ/160/8 T PD NIZ/160/11 T PD NIZ/184/31 T PD NIZ/184/34 T PD LERMA T PD STP"/>
+                       route="CM 100 AA 004+ PD NIZ/160/8 T PD NIZ/160/11 T PD NIZ/184/21 T PD NIZ/184/34 T PD LERMA T PD STP"/>
                 <route type="sid" name="VAREK2E" category="CD"
                        route="CM 100 AA 004+ PD NIZ/160/8 T PD NIZ/160/11 T PD OMARD T PD VAREK"/>
                 <route type="sid" name="VAREK2L" category="AB"
@@ -377,7 +377,7 @@
                 <route type="sid" name="EPOLO2W" category="CD"
                        route="CM 100 AA 005+ PD CGS/135/8 T PD STP/059/26 T PD RESBO T PD EPOLO"/>
                 <route type="sid" name="EPOLO2S" category="AB"
-                       route="CM 70 AA 005+ PD CGS/135/8 T PD STP/059/34 T PD NIZ/184/31 T PD NIZ/184/34 T PD LERMA T PD EPOLO"/>
+                       route="CM 70 AA 005+ PD CGS/135/8 T PD STP/059/34 T PD NIZ/184/21 T PD NIZ/184/34 T PD LERMA T PD EPOLO"/>
                 <route type="sid" name="IRMAR2T" category="CD"
                        route="AA 005+ PD CSC/135/6.5 T PD CGS/089/13 T PD CGS13 PD NIZ T PD BARSO T PD IRMAR"/>
                 <route type="sid" name="IRMAR2W" category="AB"
@@ -403,7 +403,7 @@
                 <route type="sid" name="STP2W" category="CD"
                        route="CM 100 AA 005+ PD CGS/135/8 T PD STP/065/30 T PD STP/065/24 T PD NIZ/200/34 T PD STP"/>
                 <route type="sid" name="STP2S" category="AB"
-                       route="CM 100 AA 005+ PD CGS/135/8 T PD STP/059/34 T PD NIZ/184/31 T PD NIZ/184/34 T PD LERMA T PD STP"/>
+                       route="CM 100 AA 005+ PD CGS/135/8 T PD STP/059/34 T PD NIZ/184/21 T PD NIZ/184/34 T PD LERMA T PD STP"/>
                 <route type="sid" name="VAREK2W" category="CD"
                        route="CM 100 AA 005+ PD CGS/135/8 T PD NIZ/160/40 T PD OMARD T PD VAREK"/>
                 <route type="sid" name="VAREK2S" category="AB"

@@ -16,6 +16,7 @@ import eng.jAtcSim.lib.traffic.fleets.CompanyFleet;
 import eng.jAtcSim.lib.traffic.fleets.FleetType;
 import eng.jAtcSim.lib.traffic.fleets.Fleets;
 import eng.jAtcSim.lib.world.*;
+import eng.jAtcSim.lib.world.approaches.ApproachOld;
 import eng.jAtcSim.radarBase.DisplaySettings;
 import eng.jAtcSim.radarBase.parsing.RadarColorParser;
 import eng.jAtcSim.radarBase.parsing.RadarFontParser;
@@ -95,7 +96,7 @@ public class XmlLoadHelper {
     sett.getListItemMappings().add(
         new XmlListItemMapping("/thresholds$", RunwayThreshold.class));
     sett.getListItemMappings().add(
-        new XmlListItemMapping("/approaches$", Approach.class));
+        new XmlListItemMapping("/approaches$", ApproachOld.class));
     sett.getListItemMappings().add(
         new XmlListItemMapping("/routes$", Route.class));
     sett.getListItemMappings().add(

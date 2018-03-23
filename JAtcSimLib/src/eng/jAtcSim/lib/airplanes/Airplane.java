@@ -27,10 +27,10 @@ import eng.jAtcSim.lib.speaking.fromAirplane.IAirplaneNotification;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.GoingAroundNotification;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeHeadingCommand;
-import eng.jAtcSim.lib.world.Approach;
 import eng.jAtcSim.lib.world.Navaid;
 import eng.jAtcSim.lib.world.Route;
 import eng.jAtcSim.lib.world.RunwayThreshold;
+import eng.jAtcSim.lib.world.approaches.CurrentApproachInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -244,6 +244,10 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
 
     public boolean isArrival() {
       return Airplane.this.isArrival();
+    }
+
+    public Navaid tryGetIaf() {
+      return this.getPilot().tryGetIaf();
     }
   }
 
@@ -613,12 +617,12 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
   }
 
   public RunwayThreshold tryGetCurrentApproachRunwayThreshold() {
-    Approach app = this.pilot.tryGetAssignedApproach();
+    CurrentApproachInfo app = this.pilot.tryGetAssignedApproach();
     RunwayThreshold ret;
     if (app == null)
       ret = null;
     else
-      ret = app.getParent();
+      ret = app.getThreshold();
     return ret;
   }
 

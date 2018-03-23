@@ -5,6 +5,8 @@
  */
 package eng.jAtcSim.lib.world;
 
+import com.sun.istack.internal.Nullable;
+import eng.eSystem.utilites.CollectionUtil;
 import eng.eSystem.xmlSerialization.XmlOptional;
 import eng.jAtcSim.lib.coordinates.Coordinate;
 import eng.jAtcSim.lib.coordinates.Coordinates;
@@ -12,6 +14,7 @@ import eng.jAtcSim.lib.global.Headings;
 import eng.jAtcSim.lib.global.KeyItem;
 import eng.jAtcSim.lib.global.KeyList;
 import eng.jAtcSim.lib.global.MustBeBinded;
+import eng.jAtcSim.lib.world.approaches.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,8 +24,10 @@ import java.util.List;
  */
 public class RunwayThreshold extends MustBeBinded implements KeyItem<String> {
 
+
   @XmlOptional // as inactive runway do not have this
-  private final KeyList<Approach, Approach.eType> approaches = new KeyList();
+  private final List<Approach> approaches = new ArrayList<>();
+
   @XmlOptional // as inactive runway do not have this
   private final KeyList<Route, String> routes = new KeyList();
   private String name;
@@ -34,8 +39,10 @@ public class RunwayThreshold extends MustBeBinded implements KeyItem<String> {
   private RunwayThreshold _other;
   @XmlOptional // as inactive runway do not have this
   private boolean preferred = false;
-  @XmlOptional // as inactive runway do not have this
-  private Coordinate fafCross;
+  @XmlOptional
+  private Coordinate estimatedFafPoint;
+
+  private KeyList<IafRoute, Navaid> iafRoutes = new KeyList<>();
 
   public int getInitialDepartureAltitude() {
     return initialDepartureAltitude;
@@ -53,11 +60,7 @@ public class RunwayThreshold extends MustBeBinded implements KeyItem<String> {
     return coordinate;
   }
 
-  public Coordinate getFafCross() {
-    return fafCross;
-  }
-
-  public KeyList<Approach, Approach.eType> getApproaches() {
+  public List<Approach> getApproaches() {
     return approaches;
   }
 
@@ -84,33 +87,25 @@ public class RunwayThreshold extends MustBeBinded implements KeyItem<String> {
     return this._course;
   }
 
-  public Approach tryGetApproachByTypeWithILSDerived(Approach.eType type) {
-    Approach ret = getApproaches().tryGet(type);
-    if (ret == null) {
-      switch (type) {
-        case ILS_I:
-          ret = tryGetApproachByTypeWithILSDerived(Approach.eType.ILS_II);
-          break;
-        case ILS_II:
-          ret = tryGetApproachByTypeWithILSDerived(Approach.eType.ILS_III);
-      }
-    }
+
+  public CurrentApproachInfo tryGetCurrentApproachInfo(Approach.ApproachType type, char category, @Nullable  Navaid iafOrNull) {
+    CurrentApproachInfo ret =
+        Approach.tryGetCurrentApproachInfo(this.approaches, category, type, iafOrNull);
     return ret;
   }
 
   public Approach getHighestApproach() {
     Approach ret;
 
-    ret = tryGetApproachByTypeWithILSDerived(Approach.eType.ILS_I);
-    if (ret == null) {
-      ret = approaches.tryGet(Approach.eType.GNSS);
-    }
-    if (ret == null) {
-      ret = approaches.tryGet(Approach.eType.VORDME);
-    }
-    if (ret == null) {
-      ret = approaches.tryGet(Approach.eType.NDB);
-    }
+    ret = CollectionUtil.tryGetFirst(this.approaches, o -> o instanceof IlsApproach);
+    if (ret == null)
+      ret = CollectionUtil.tryGetFirst(this.approaches, o -> o instanceof GnssApproach);
+    if (ret == null)
+      ret = CollectionUtil.tryGetFirst(this.approaches, o -> o instanceof UnpreciseApproach);
+    if (ret == null)
+      ret = CollectionUtil.tryGetFirst(this.approaches, o -> o instanceof VisualApproach);
+
+    assert ret != null;
 
     return ret;
   }
@@ -139,6 +134,15 @@ public class RunwayThreshold extends MustBeBinded implements KeyItem<String> {
     return _other;
   }
 
+  public Coordinate getEstimatedFafPoint() {
+    return estimatedFafPoint;
+  }
+
+  @Override
+  public String toString() {
+    return this.getName() + "{rwyThr}";
+  }
+
   @Override
   protected void _bind() {
     this._other
@@ -147,10 +151,14 @@ public class RunwayThreshold extends MustBeBinded implements KeyItem<String> {
         : this.getParent().getThresholdA();
     this._course
         = Coordinates.getBearing(this.coordinate, _other.coordinate);
-  }
 
-  @Override
-  public String toString() {
-    return this.getName() + "{rwyThr}";
+    this.estimatedFafPoint = Coordinates.getCoordinate(
+        this.coordinate,
+        Headings.getOpposite(this._course),
+        9);
+
+    for (IafRoute iafRoute : iafRoutes) {
+      iafRoute.bind();
+    }
   }
 }

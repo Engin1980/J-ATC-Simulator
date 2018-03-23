@@ -6,27 +6,32 @@
 
 package eng.jAtcSim.lib.speaking.fromAtc.commands;
 
-import eng.jAtcSim.lib.speaking.ICommand;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
-import eng.jAtcSim.lib.world.Approach;
+import eng.jAtcSim.lib.world.approaches.Approach;
 
 /**
  *
  * @author Marek
  */
 public class ClearedToApproachCommand implements IAtcCommand {
-  private final Approach approach;
+  private String thresholdName;
+  private Approach.ApproachType type;
 
-  public ClearedToApproachCommand(Approach approach) {
-    this.approach = approach;
-  }
-
-  public Approach getApproach() {
-    return approach;
+  public ClearedToApproachCommand(String thresholdName, Approach.ApproachType type) {
+    this.thresholdName = thresholdName;
+    this.type = type;
   }
 
   @Override
   public String toString() {
-    return "Cleared for approach " + approach.getType() + " at " + approach.getParent().getName() + " {command}";
+    return "Cleared for approach " + type + " at " + thresholdName + " {command}";
+  }
+
+  public String getThresholdName() {
+    return thresholdName;
+  }
+
+  public Approach.ApproachType getType() {
+    return type;
   }
 }

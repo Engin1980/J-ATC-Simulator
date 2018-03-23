@@ -25,6 +25,8 @@ import eng.jAtcSim.lib.speaking.fromAtc.atc2atc.PlaneSwitchMessage;
 import eng.jAtcSim.lib.speaking.fromAtc.atc2atc.StringResponse;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ProceedDirectCommand;
 import eng.jAtcSim.lib.world.*;
+import eng.jAtcSim.lib.world.approaches.Approach;
+import eng.jAtcSim.lib.world.approaches.ApproachOld;
 import eng.jAtcSim.radarBase.global.Color;
 import eng.jAtcSim.radarBase.global.Point;
 import eng.jAtcSim.radarBase.global.SoundManager;
@@ -720,14 +722,14 @@ public class Radar {
 
   private void drawApproach(Approach approach) {
     Coordinate start = Coordinates.getCoordinate(
-        approach.getPoint(),
-        Headings.add(approach.getRadial(), 180),
-        17);
+        approach.getParent().getCoordinate(),
+        Headings.getOpposite(approach.getRadial()),
+        15);
     //TODO colors should be configurable
-    tl.drawLine(start, approach.getPoint(), Color.MAGENTA, 1);
-    if (approach.getParent().getFafCross() != null) {
-      tl.drawCross(approach.getParent().getFafCross(), Color.MAGENTA, 5, 1);
-    }
+    tl.drawLine(start, approach.getParent().getCoordinate(), Color.MAGENTA, 1);
+//    if (approach.getParent().getFafCross() != null) {
+//      tl.drawCross(approach.getParent().getFafCross(), Color.MAGENTA, 5, 1);
+//    }
 
   }
 

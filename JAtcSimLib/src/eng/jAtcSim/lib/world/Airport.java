@@ -31,6 +31,7 @@ public class Airport implements KeyItem<String> {
   private Navaid _mainAirportNavaid;
   private final InitialPosition initialPosition = new InitialPosition();
   private final KeyList<Runway, String> runways = new KeyList();
+  private final KeyList<Runway, String> inactiveRunways = new KeyList();
   private final KeyList<AtcTemplate, Atc.eType> atcTemplates = new KeyList();
   private final KeyList<PublishedHold, Navaid> holds = new KeyList();
   private final KeyList<VfrPoint, String> vfrPoints = new KeyList();
