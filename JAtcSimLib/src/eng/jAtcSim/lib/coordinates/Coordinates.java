@@ -95,16 +95,16 @@ public final class Coordinates {
     return ret;
   }
   
-  private static final double RADIAL_APPROACH_MULTIPLIER = 7; // 1.3;
+  private static final double RADIAL_APPROACH_MULTIPLIER = 7;
   private static final double RADIAL_MAX_DIFF = 30;
   public static double getHeadingToRadial (Coordinate from, Coordinate to, double radialTo){
     double heading = Coordinates.getBearing(from, to);
     double diff = heading - radialTo;
-    diff *= RADIAL_APPROACH_MULTIPLIER;
+      diff *= RADIAL_APPROACH_MULTIPLIER;
     if (Math.abs(diff) > RADIAL_MAX_DIFF){
       diff = Math.signum(diff) * RADIAL_MAX_DIFF;
     }
-    
+
     double ret =  radialTo + diff;
     return ret;
   }

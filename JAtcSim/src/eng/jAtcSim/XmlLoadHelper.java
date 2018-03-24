@@ -16,7 +16,10 @@ import eng.jAtcSim.lib.traffic.fleets.CompanyFleet;
 import eng.jAtcSim.lib.traffic.fleets.FleetType;
 import eng.jAtcSim.lib.traffic.fleets.Fleets;
 import eng.jAtcSim.lib.world.*;
-import eng.jAtcSim.lib.world.approaches.ApproachOld;
+import eng.jAtcSim.lib.world.approaches.GnssApproach;
+import eng.jAtcSim.lib.world.approaches.IafRoute;
+import eng.jAtcSim.lib.world.approaches.IlsApproach;
+import eng.jAtcSim.lib.world.approaches.UnpreciseApproach;
 import eng.jAtcSim.radarBase.DisplaySettings;
 import eng.jAtcSim.radarBase.parsing.RadarColorParser;
 import eng.jAtcSim.radarBase.parsing.RadarFontParser;
@@ -94,9 +97,19 @@ public class XmlLoadHelper {
     sett.getListItemMappings().add(
         new XmlListItemMapping("/runways$", Runway.class));
     sett.getListItemMappings().add(
+        new XmlListItemMapping("/inactiveRunways$", Runway.class));
+    sett.getListItemMappings().add(
         new XmlListItemMapping("/thresholds$", RunwayThreshold.class));
     sett.getListItemMappings().add(
-        new XmlListItemMapping("/approaches$", ApproachOld.class));
+        new XmlListItemMapping("/approaches$", "ilsApproach", IlsApproach.class));
+    sett.getListItemMappings().add(
+        new XmlListItemMapping("/approaches$", "unpreciseApproach", UnpreciseApproach.class));
+    sett.getListItemMappings().add(
+        new XmlListItemMapping("/approaches$", "gnssApproach", GnssApproach.class));
+    sett.getListItemMappings().add(
+        new XmlListItemMapping("/ilsApproach/categories$",  IlsApproach.Category.class));
+    sett.getListItemMappings().add(
+        new XmlListItemMapping("/iafRoutes$",  IafRoute.class));
     sett.getListItemMappings().add(
         new XmlListItemMapping("/routes$", Route.class));
     sett.getListItemMappings().add(

@@ -7,8 +7,14 @@ import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.Reje
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ReportDivertTime;
 
 public class ReportDivertTimeCommandApplication extends CommandApplication<ReportDivertTime> {
+
   @Override
-  protected IFromAirplane checkSanity(Airplane.Airplane4Command plane, ReportDivertTime c) {
+  protected Airplane.State[] getInvalidStates() {
+    return new Airplane.State[0];
+  }
+
+  @Override
+  protected IFromAirplane checkCommandSanity(Airplane.Airplane4Command plane, ReportDivertTime c) {
     IFromAirplane ret;
 
     if (plane.isArrival() == false)

@@ -6,7 +6,7 @@
 package eng.jAtcSim.lib.world;
 
 import com.sun.istack.internal.Nullable;
-import eng.eSystem.utilites.CollectionUtil;
+import eng.eSystem.utilites.CollectionUtils;
 import eng.eSystem.xmlSerialization.XmlOptional;
 import eng.jAtcSim.lib.coordinates.Coordinate;
 import eng.jAtcSim.lib.coordinates.Coordinates;
@@ -41,8 +41,12 @@ public class RunwayThreshold extends MustBeBinded implements KeyItem<String> {
   private boolean preferred = false;
   @XmlOptional
   private Coordinate estimatedFafPoint;
-
+  @XmlOptional
   private KeyList<IafRoute, Navaid> iafRoutes = new KeyList<>();
+
+  public KeyList<IafRoute, Navaid> getIafRoutes() {
+    return iafRoutes;
+  }
 
   public int getInitialDepartureAltitude() {
     return initialDepartureAltitude;
@@ -88,22 +92,22 @@ public class RunwayThreshold extends MustBeBinded implements KeyItem<String> {
   }
 
 
-  public CurrentApproachInfo tryGetCurrentApproachInfo(Approach.ApproachType type, char category, @Nullable  Navaid iafOrNull) {
+  public CurrentApproachInfo tryGetCurrentApproachInfo(Approach.ApproachType type, char category, Coordinate planePosition) {
     CurrentApproachInfo ret =
-        Approach.tryGetCurrentApproachInfo(this.approaches, category, type, iafOrNull);
+        Approach.tryGetCurrentApproachInfo(this.approaches, category, type, planePosition);
     return ret;
   }
 
   public Approach getHighestApproach() {
     Approach ret;
 
-    ret = CollectionUtil.tryGetFirst(this.approaches, o -> o instanceof IlsApproach);
+    ret = CollectionUtils.tryGetFirst(this.approaches, o -> o instanceof IlsApproach);
     if (ret == null)
-      ret = CollectionUtil.tryGetFirst(this.approaches, o -> o instanceof GnssApproach);
+      ret = CollectionUtils.tryGetFirst(this.approaches, o -> o instanceof GnssApproach);
     if (ret == null)
-      ret = CollectionUtil.tryGetFirst(this.approaches, o -> o instanceof UnpreciseApproach);
+      ret = CollectionUtils.tryGetFirst(this.approaches, o -> o instanceof UnpreciseApproach);
     if (ret == null)
-      ret = CollectionUtil.tryGetFirst(this.approaches, o -> o instanceof VisualApproach);
+      ret = CollectionUtils.tryGetFirst(this.approaches, o -> o instanceof VisualApproach);
 
     assert ret != null;
 

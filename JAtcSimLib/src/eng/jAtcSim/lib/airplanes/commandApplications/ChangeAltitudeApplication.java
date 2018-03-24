@@ -6,20 +6,24 @@ import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.Reje
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeAltitudeCommand;
 
 public class ChangeAltitudeApplication extends CommandApplication<ChangeAltitudeCommand> {
-  @Override
-  protected IFromAirplane checkSanity(Airplane.Airplane4Command plane, ChangeAltitudeCommand c) {
-    IFromAirplane ret;
 
-    //TODO now changing is not possible for approach
-    ret = super.checkInvalidState(plane, c,
+  @Override
+  protected Airplane.State[] getInvalidStates() {
+    return new Airplane.State[]{
         Airplane.State.holdingPoint,
         Airplane.State.takeOffRoll,
+        Airplane.State.flyingIaf2Faf,
         Airplane.State.approachEnter,
         Airplane.State.approachDescend,
         Airplane.State.longFinal,
         Airplane.State.shortFinal,
-        Airplane.State.landed);
-    if (ret != null) return ret;
+        Airplane.State.landed
+    };
+  }
+
+  @Override
+  protected IFromAirplane checkCommandSanity(Airplane.Airplane4Command plane, ChangeAltitudeCommand c) {
+    IFromAirplane ret;
 
     if ((c.getDirection() == ChangeAltitudeCommand.eDirection.climb) && (plane.getAltitude() > c.getAltitudeInFt())) {
       ret = new Rejection("we are higher.", c);
@@ -28,7 +32,6 @@ public class ChangeAltitudeApplication extends CommandApplication<ChangeAltitude
       ret = new Rejection("we are lower.", c);
       return ret;
     }
-
 
     if (c.getAltitudeInFt() > plane.getType().maxAltitude) {
       ret = new Rejection("too high.", c);

@@ -17,22 +17,26 @@ import eng.jAtcSim.lib.world.approaches.CurrentApproachInfo;
 public class ClearedToApproachApplication extends CommandApplication<ClearedToApproachCommand> {
 
   @Override
-  protected IFromAirplane checkSanity(Airplane.Airplane4Command plane, ClearedToApproachCommand c) {
-
-    IFromAirplane ret;
-
-    ret = super.checkInvalidState(plane, c,
+  protected Airplane.State[] getInvalidStates() {
+    return new Airplane.State[]{
         Airplane.State.holdingPoint,
         Airplane.State.takeOffRoll,
         Airplane.State.takeOffGoAround,
         Airplane.State.departingLow,
         Airplane.State.departingHigh,
+        Airplane.State.flyingIaf2Faf,
         Airplane.State.approachEnter,
         Airplane.State.approachDescend,
         Airplane.State.longFinal,
         Airplane.State.shortFinal,
-        Airplane.State.landed);
-    if (ret != null) return ret;
+        Airplane.State.landed
+    };
+  }
+
+  @Override
+  protected IFromAirplane checkCommandSanity(Airplane.Airplane4Command plane, ClearedToApproachCommand c) {
+
+    IFromAirplane ret = null;
 
     RunwayThreshold rt = Acc.airport().tryGetRunwayThreshold(c.getThresholdName());
     CurrentApproachInfo cai = null;
@@ -40,7 +44,7 @@ public class ClearedToApproachApplication extends CommandApplication<ClearedToAp
       ret = new Rejection(
           "Cannot be cleared to approach. There is no runway designated as " + c.getThresholdName(), c);
     } else {
-      cai = rt.tryGetCurrentApproachInfo(c.getType(), plane.getType().category, null);
+      cai = rt.tryGetCurrentApproachInfo(c.getType(), plane.getType().category, plane.getCoordinate());
       if (cai == null) {
         ret = new Rejection(
             "Cannot be cleared to approach. There is no approach type "
@@ -49,25 +53,27 @@ public class ClearedToApproachApplication extends CommandApplication<ClearedToAp
     }
     if (ret != null) return ret;
 
+    if (!cai.willUseIafRouting()) {
 
-    final int MAXIMAL_DISTANCE_TO_ENTER_APPROACH_IN_NM = 17;
-    final int MAXIMAL_ONE_SIDE_ARC_FROM_APPROACH_RADIAL_TO_ENTER_APPROACH_IN_DEGREES = 30;
+      final int MAXIMAL_DISTANCE_TO_ENTER_APPROACH_IN_NM = 17;
+      final int MAXIMAL_ONE_SIDE_ARC_FROM_APPROACH_RADIAL_TO_ENTER_APPROACH_IN_DEGREES = 30;
 
-    // zatim resim jen pozici letadla
-    int currentHeading
-        = (int) Coordinates.getBearing(plane.getCoordinate(), cai.getMapt());
-    int dist
-        = (int) Coordinates.getDistanceInNM(cai.getMapt(), plane.getCoordinate());
-    double minHeading = Headings.add(
-        cai.getCourse(),
-        -MAXIMAL_ONE_SIDE_ARC_FROM_APPROACH_RADIAL_TO_ENTER_APPROACH_IN_DEGREES);
-    double maxHeading = Headings.add(
-        cai.getCourse(),
-        MAXIMAL_ONE_SIDE_ARC_FROM_APPROACH_RADIAL_TO_ENTER_APPROACH_IN_DEGREES);
+      // zatim resim jen pozici letadla
+      int currentHeading
+          = (int) Coordinates.getBearing(plane.getCoordinate(), cai.getMapt());
+      int dist
+          = (int) Coordinates.getDistanceInNM(cai.getMapt(), plane.getCoordinate());
+      double minHeading = Headings.add(
+          cai.getCourse(),
+          -MAXIMAL_ONE_SIDE_ARC_FROM_APPROACH_RADIAL_TO_ENTER_APPROACH_IN_DEGREES);
+      double maxHeading = Headings.add(
+          cai.getCourse(),
+          MAXIMAL_ONE_SIDE_ARC_FROM_APPROACH_RADIAL_TO_ENTER_APPROACH_IN_DEGREES);
 
-    if (dist > MAXIMAL_DISTANCE_TO_ENTER_APPROACH_IN_NM ||
-        !Headings.isBetween(minHeading, currentHeading, maxHeading)) {
-      ret = new UnableToEnterApproachFromDifficultPosition(c);
+      if (dist > MAXIMAL_DISTANCE_TO_ENTER_APPROACH_IN_NM ||
+          !Headings.isBetween(minHeading, currentHeading, maxHeading)) {
+        ret = new UnableToEnterApproachFromDifficultPosition(c);
+      }
     }
     if (ret != null) return ret;
 
@@ -93,13 +99,11 @@ public class ClearedToApproachApplication extends CommandApplication<ClearedToAp
       ret.informations.add(tmp);
     }
 
-
-    Navaid iaf = plane.tryGetIaf();
     RunwayThreshold rt = Acc.airport().tryGetRunwayThreshold(c.getThresholdName());
     CurrentApproachInfo cai = rt.tryGetCurrentApproachInfo(
         c.getType(),
         plane.getType().category,
-        iaf);
+        plane.getCoordinate());
     assert cai != null;
 
     plane.getPilot().setApproachBehavior(cai);

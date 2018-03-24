@@ -6,21 +6,24 @@ import eng.jAtcSim.lib.speaking.IFromAirplane;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeHeadingCommand;
 
 public class ChangeHeadingApplication extends CommandApplication<ChangeHeadingCommand> {
+
   @Override
-  protected IFromAirplane checkSanity(Airplane.Airplane4Command plane, ChangeHeadingCommand c) {
-    IFromAirplane ret;
-    ret = super.checkInvalidState(plane,c,
+  protected Airplane.State[] getInvalidStates() {
+    return new Airplane.State[]{
         Airplane.State.holdingPoint,
         Airplane.State.takeOffRoll,
+        Airplane.State.flyingIaf2Faf,
         Airplane.State.approachEnter,
         Airplane.State.approachDescend,
         Airplane.State.longFinal,
         Airplane.State.shortFinal,
-        Airplane.State.landed);
-      if (ret != null) return ret;
+        Airplane.State.landed
+    };
+  }
 
+  @Override
+  protected IFromAirplane checkCommandSanity(Airplane.Airplane4Command plane, ChangeHeadingCommand c) {
     return null;
-
   }
 
   @Override

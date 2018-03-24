@@ -7,19 +7,23 @@ import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.Reje
 import eng.jAtcSim.lib.speaking.fromAtc.commands.SetAltitudeRestriction;
 
 public class SetAltitudeRestrictionApplication extends CommandApplication<SetAltitudeRestriction> {
-  @Override
-  protected IFromAirplane checkSanity(Airplane.Airplane4Command plane, SetAltitudeRestriction c) {
-    IFromAirplane ret;
 
-    //TODO now changing is not possible for approach
-    ret = super.checkInvalidState(plane, c,
+  @Override
+  protected Airplane.State[] getInvalidStates() {
+    return new Airplane.State[]{
         Airplane.State.takeOffRoll,
+        Airplane.State.flyingIaf2Faf,
         Airplane.State.approachEnter,
         Airplane.State.approachDescend,
         Airplane.State.longFinal,
         Airplane.State.shortFinal,
-        Airplane.State.landed);
-    if (ret != null) return ret;
+        Airplane.State.landed
+    };
+  }
+
+  @Override
+  protected IFromAirplane checkCommandSanity(Airplane.Airplane4Command plane, SetAltitudeRestriction c) {
+    IFromAirplane ret;
 
     if (c.getRestriction() != null &&
         (c.getRestriction().direction == Restriction.eDirection.atLeast ||

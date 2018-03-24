@@ -6,25 +6,27 @@ import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.Reje
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ProceedDirectCommand;
 
 public class ProceedDirectApplication extends CommandApplication<ProceedDirectCommand> {
-  @Override
-  protected IFromAirplane checkSanity(Airplane.Airplane4Command plane, ProceedDirectCommand c) {
-    IFromAirplane ret = null;
 
-    // check state ok
-    ret = super.checkInvalidState(plane, c,
+  @Override
+  protected Airplane.State[] getInvalidStates() {
+    return new Airplane.State[]{
         Airplane.State.holdingPoint,
         Airplane.State.takeOffRoll,
+        Airplane.State.flyingIaf2Faf,
         Airplane.State.approachEnter,
         Airplane.State.approachDescend,
         Airplane.State.longFinal,
         Airplane.State.shortFinal,
-        Airplane.State.landed);
-    if (ret != null) return ret;
+        Airplane.State.landed
+    };
+  }
 
-    // check navaid ok
+  @Override
+  protected IFromAirplane checkCommandSanity(Airplane.Airplane4Command plane, ProceedDirectCommand c) {
+    IFromAirplane ret = null;
+
     if (c.getNavaid() == null)
       ret = new Rejection("Unknown point.", c);
-    if (ret != null) return ret;
 
     return ret;
 

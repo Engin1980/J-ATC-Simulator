@@ -6,7 +6,7 @@
 package eng.jAtcSim.lib.airplanes;
 
 import eng.eSystem.collections.ReadOnlyList;
-import eng.eSystem.utilites.CollectionUtil;
+import eng.eSystem.utilites.CollectionUtils;
 import eng.eSystem.utilites.StringUtil;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.coordinates.Coordinates;
@@ -25,9 +25,9 @@ public class Airplanes {
   public static Airplane tryGetByCallsingOrNumber(Iterable<Airplane> planes, String callsignOrNumber) {
     if (StringUtil.isEmpty(callsignOrNumber)) return null;
 
-    Airplane ret = CollectionUtil.tryGetFirst(planes, p -> p.getCallsign().toString(false).equals(callsignOrNumber));
+    Airplane ret = CollectionUtils.tryGetFirst(planes, p -> p.getCallsign().toString(false).equals(callsignOrNumber));
     if (ret == null) {
-      List<Airplane> byPart = CollectionUtil.where(planes,
+      List<Airplane> byPart = CollectionUtils.where(planes,
           p -> p.getCallsign().getNumber().equals(callsignOrNumber));
       if (byPart.size() == 1)
         ret = byPart.get(0);

@@ -2,7 +2,7 @@ package eng.jAtcSim.lib.atcs;
 
 import eng.eSystem.EStringBuilder;
 import eng.eSystem.collections.EMap;
-import eng.eSystem.utilites.CollectionUtil;
+import eng.eSystem.utilites.CollectionUtils;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.AirplaneList;
@@ -496,7 +496,7 @@ public class TowerAtc extends ComputerAtc {
     if (availableThresholds.isEmpty()) {
       return;
     } else {
-      availableThreshold = CollectionUtil.getRandom(availableThresholds);
+      availableThreshold = CollectionUtils.getRandom(availableThresholds);
     }
 
 

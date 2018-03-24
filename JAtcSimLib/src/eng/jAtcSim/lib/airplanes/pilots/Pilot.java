@@ -7,7 +7,7 @@ package eng.jAtcSim.lib.airplanes.pilots;
 
 import com.sun.istack.internal.Nullable;
 import eng.eSystem.EStringBuilder;
-import eng.eSystem.utilites.CollectionUtil;
+import eng.eSystem.utilites.CollectionUtils;
 import eng.eSystem.utilites.ConversionUtils;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
@@ -83,7 +83,6 @@ public class Pilot {
 
     public void setApproachBehavior(CurrentApproachInfo app) {
       Pilot.this.behavior = Pilot.this.new ApproachBehavior(app);
-      parent.setxState(Airplane.State.approachEnter);
       Pilot.this.adjustTargetSpeed();
     }
 
@@ -172,31 +171,6 @@ public class Pilot {
 
     public void setTargetHeading(double value, boolean useLeftTurn) {
       parent.setTargetHeading(value, useLeftTurn);
-    }
-
-    public Navaid tryGetIaf() {
-      Navaid ret;
-
-      Navaid main = getLastAssignedRouteFix();
-      if (afterCommands.hasLateralDirectionToNavaid(main))
-        ret = main;
-      else
-        ret = null;
-
-      return ret;
-    }
-
-    public Navaid getLastAssignedRouteFix() {
-      Navaid ret;
-      SpeechList<IAtcCommand> lst = Pilot.this.assignedRoute.getCommands();
-      for (int i = lst.size() - 1; i <= 0; i++) {
-        IAtcCommand cmd = lst.get(i);
-        if (cmd instanceof ProceedDirectCommand) {
-          ret = ((ProceedDirectCommand) cmd).getNavaid();
-          break;
-        }
-      }
-      return ret;
     }
 
     protected void setState(Airplane.State state) {
@@ -577,10 +551,11 @@ public class Pilot {
     private final static int SHORT_FINAL_ALTITUDE_AGL = 200;
     private final int finalAltitude;
     private final int shortFinalAltitude;
+
     public CurrentApproachInfo approach;
     private boolean isAfterStateChange;
     private boolean isAtFinalDescend = false;
-    private Boolean isRunwayVisible = null;
+    private ApproachLocation location = ApproachLocation.unset;
 
     public ApproachBehavior(CurrentApproachInfo approach) {
       this.approach = approach;
@@ -588,6 +563,14 @@ public class Pilot {
       this.shortFinalAltitude = Acc.airport().getAltitude() + SHORT_FINAL_ALTITUDE_AGL;
       this.isAfterStateChange = true;
       Pilot.this.gaReason = null;
+
+      if (approach.getIafRoute().isEmpty() == false) {
+        expandThenCommands(approach.getIafRoute());
+        Pilot.this.processSpeeches(approach.getIafRoute(), SpeechProcessingType.afterCommands);
+        this.setState(Airplane.State.flyingIaf2Faf);
+      } else {
+        this.setState(Airplane.State.approachEnter);
+      }
     }
 
     public void goAround(String reason) {
@@ -604,63 +587,107 @@ public class Pilot {
       Pilot.this.afterCommands.clear();
       SpeechList<IFromAtc> gas = new SpeechList<>(this.approach.getGaRoute());
       expandThenCommands(gas);
-      processSpeeches(gas, false, false);
+      processSpeeches(gas, SpeechProcessingType.goAround);
 
 
     }
 
-
     private double getAppHeadingDifference() {
-      int heading = (int) Coordinates.getBearing(parent.getCoordinate(), this.approach.getParent().getCoordinate());
+      int heading = (int) Coordinates.getBearing(parent.getCoordinate(), this.approach.getThreshold().getCoordinate());
       double ret = Headings.subtract(heading, parent.getHeading());
       return ret;
     }
 
-    /**
-     * Adjusts plane target altitude on approach.
-     *
-     * @param checkIfIsAfterThreshold
-     * @return True if plane is descending to the runway, false otherwise.
-     */
     private boolean updateAltitudeOnApproach(boolean checkIfIsAfterThreshold) {
       int currentTargetAlttiude = parent.getTargetAltitude();
+      double distToLand;
       int newAltitude = -1;
-      if (checkIfIsAfterThreshold) {
-        double diff = getAppHeadingDifference();
-        if (diff > 90) {
-          newAltitude = Acc.airport().getAltitude();
-        }
+      if (location == ApproachLocation.afterThreshold) {
+        newAltitude = Acc.airport().getAltitude() - 100; // I need to lock the airplane on runway
       }
 
       if (newAltitude == -1) {
-        double distToLand = Coordinates.getDistanceInNM(
-            parent.getCoordinate(), this.approach.getParent().getCoordinate());
-        newAltitude = (int) (this.approach.getThreshold().getParent().getParent().getAltitude()
-            + this.approach.getGlidePathPerNM() * distToLand);
+        switch (approach.getType()) {
+          case ils_I:
+          case ils_III:
+          case ils_II:
+          case gnss:
+            distToLand = Coordinates.getDistanceInNM(
+                parent.getCoordinate(), this.approach.getThreshold().getCoordinate());
+            newAltitude = (int) (this.approach.getThreshold().getParent().getParent().getAltitude()
+                + this.approach.getGlidePathPerNM() * distToLand);
+            break;
+          case ndb:
+          case vor:
+            if (location == ApproachLocation.beforeFaf) {
+              // nothing
+            } else if (location == ApproachLocation.beforeMapt) {
+              double delta = approach.getAltitudeDeltaPerSecond(parent.getSpeed());
+              newAltitude = (int) (parent.getTargetAltitude() - delta);
+              if (newAltitude < approach.getDecisionAltitude()) newAltitude = approach.getDecisionAltitude();
+            } else {
+              distToLand = Coordinates.getDistanceInNM(
+                  parent.getCoordinate(), this.approach.getThreshold().getCoordinate());
+              newAltitude = (int) (this.approach.getThreshold().getParent().getParent().getAltitude()
+                  + this.approach.getGlidePathPerNM() * distToLand);
+            }
+            break;
+          case visual:
+            distToLand = Coordinates.getDistanceInNM(
+                parent.getCoordinate(), this.approach.getThreshold().getCoordinate());
+            newAltitude = (int) (this.approach.getThreshold().getParent().getParent().getAltitude()
+                + this.approach.getGlidePathPerNM() * distToLand);
+            break;
+        }
+        newAltitude = Math.min(newAltitude, parent.getTargetAltitude());
+        newAltitude = Math.max(newAltitude, Acc.airport().getAltitude());
       }
-
-      newAltitude = (int) Math.min(newAltitude, parent.getTargetAltitude());
-      newAltitude = (int) Math.max(newAltitude, Acc.airport().getAltitude());
-
       parent.setTargetAltitude(newAltitude);
-      boolean ret = currentTargetAlttiude > parent.getTargetAltitude();
+      boolean ret = (location != ApproachLocation.beforeFaf) && (currentTargetAlttiude > parent.getTargetAltitude());
+
+      return ret;
+    }
+
+    private boolean isBehindFaf() {
+      double courseToFaf = Coordinates.getBearing(parent.getCoordinate(), approach.getFaf());
+      boolean ret = Headings.getDifference(courseToFaf, approach.getThreshold().getCourse(), true) > 90;
+      return ret;
+    }
+
+    private boolean isPassingFaf() {
+      double dist = Coordinates.getDistanceInNM(parent.getCoordinate(), approach.getFaf());
+      boolean ret = dist < 2;
+      return ret;
+    }
+
+    private boolean isBehindThreshold() {
+      double courseToFaf = Coordinates.getBearing(parent.getCoordinate(), approach.getThreshold().getCoordinate());
+      boolean ret = Headings.getDifference(courseToFaf, approach.getThreshold().getCourse(), true) > 90;
+      return ret;
+    }
+
+    private boolean isBehindMAPt() {
+      double courseToFaf = Coordinates.getBearing(parent.getCoordinate(), approach.getMapt());
+      boolean ret = Headings.getDifference(courseToFaf, approach.getThreshold().getCourse(), true) > 90;
       return ret;
     }
 
     private void updateHeadingOnApproach() {
-      double newHeading
-          = Coordinates.getHeadingToRadial(
-          parent.getCoordinate(), this.approach.getPoint(),
-          this.approach.getCourse());
-      parent.setTargetHeading(newHeading);
-    }
-
-    private void updateHeadingLanded() {
-      // TODO this should be its own "LandedBehavior"
-      int newHeading
-          = (int) Coordinates.getHeadingToRadial(
-          parent.getCoordinate(), this.approach.getParent().getOtherThreshold().getCoordinate(),
-          this.approach.getCourse());
+      double newHeading;
+      Coordinate planePos = parent.getCoordinate();
+      if (location == ApproachLocation.beforeFaf) {
+        newHeading = Coordinates.getBearing(planePos, approach.getFaf());
+      } else if (location == ApproachLocation.beforeMapt) {
+        Coordinate point = approach.getMapt();
+        int course = approach.getCourse();
+        newHeading = Coordinates.getHeadingToRadial(
+            planePos, point, course);
+      } else if (location == ApproachLocation.beforeThreshold) {
+        newHeading = Coordinates.getBearing(planePos, this.approach.getThreshold().getCoordinate());
+      } else {
+        // afther threshold
+        newHeading = (int) Coordinates.getBearing(planePos, this.approach.getThreshold().getOtherThreshold().getCoordinate());
+      }
       parent.setTargetHeading(newHeading);
     }
 
@@ -669,29 +696,59 @@ public class Pilot {
       if (w.getCloudBaseInFt() < parent.getAltitude()) {
         return false;
       }
-      double d = Coordinates.getDistanceInNM(parent.getCoordinate(), approach.getParent().getCoordinate());
+      double d = Coordinates.getDistanceInNM(parent.getCoordinate(), approach.getThreshold().getCoordinate());
       if (w.getVisibilityInMiles() < d) {
         return false;
       }
       return true;
     }
 
-    @Override
-    public void fly() {
+    private void updateApproachLocation() {
+      if (location == ApproachLocation.unset) {
+        if (isBehindFaf())
+          location = ApproachLocation.beforeMapt;
+        else
+          location = ApproachLocation.beforeFaf;
+      } else if (location == ApproachLocation.beforeFaf && isPassingFaf())
+        location = ApproachLocation.beforeMapt;
+      else if (location == ApproachLocation.beforeMapt && isBehindMAPt())
+        location = ApproachLocation.beforeThreshold;
+      else if (location == ApproachLocation.beforeThreshold && isBehindThreshold())
+        location = ApproachLocation.afterThreshold;
+    }
 
-      if (this.isRunwayVisible == null) {
-        if (parent.getAltitude() < this.approach.getDecisionAltitude()) {
-          if (canSeeRunwayFromCurrentPosition() == false) {
-            this.isRunwayVisible = false;
-            goAround("Not runway in sight.");
-            return;
-          } else {
-            this.isRunwayVisible = true;
-          }
+    private void flyIAFtoFAFPhase() {
+      if (targetCoordinate != null) {
+
+        double heading = Coordinates.getBearing(parent.getCoordinate(), targetCoordinate);
+        heading = Headings.to(heading);
+        if (heading != parent.getTargetHeading()) {
+          parent.setTargetHeading(heading);
+        }
+      }
+
+      if (Pilot.this.afterCommands.isEmpty()) {
+        this.setState(Airplane.State.approachEnter);
+        this.isAfterStateChange = true;
+        // TODO here he probably should again check the position against the runway
+      }
+    }
+
+    private void flyApproachingPhase() {
+      ApproachLocation last = this.location;
+      updateApproachLocation();
+
+      if (last == ApproachLocation.beforeMapt && this.location == ApproachLocation.beforeThreshold) {
+        if (canSeeRunwayFromCurrentPosition() == false) {
+          goAround("Not runway in sight.");
+          return;
         }
       }
 
       switch (parent.getState()) {
+
+        case flyingIaf2Faf:
+          throw new UnsupportedOperationException("Not supposed to be here. See flyIAFtoFAFPhase()");
 
         case approachEnter:
           isAfterStateChange = false;
@@ -735,8 +792,8 @@ public class Pilot {
             if (pilot.atc != Acc.atcTwr()) {
               parent.adviceToAtc(atc, new EstablishedOnApproachNotification());
             }
+            isAfterStateChange = false;
           }
-          isAfterStateChange = false;
 
           if (parent.getAltitude() < this.shortFinalAltitude) {
             isAfterStateChange = true;
@@ -745,22 +802,16 @@ public class Pilot {
           break;
         case shortFinal:
           updateAltitudeOnApproach(true);
+          updateHeadingOnApproach();
           if (isAfterStateChange) {
-            // here was fixed update in next two lines
-//            int newxHeading = (int) this.approach.getRadial();
-//            parent.setTargetHeading(newxHeading);
-            // now replaced by dynamic looking for runway threshold
-            double newHeading = Coordinates.getBearing(
-                parent.getCoordinate(), approach.getThreshold().getCoordinate());
-            parent.setTargetHeading(newHeading);
 
             // neni na twr, tak GA
             if (pilot.atc != Acc.atcTwr()) {
               goAround("Not cleared to land. We expected to be switched to tower controller here.");
               return;
             }
+            isAfterStateChange = false;
           }
-          isAfterStateChange = false;
 
           if (parent.getAltitude() == Acc.airport().getAltitude()) {
             isAfterStateChange = true;
@@ -769,11 +820,19 @@ public class Pilot {
           break;
         case landed:
           isAfterStateChange = false;
-          updateHeadingLanded();
+          updateHeadingOnApproach();
           break;
         default:
           super.throwIllegalStateException();
       }
+    }
+
+    @Override
+    public void fly() {
+      if (parent.getState() == Airplane.State.flyingIaf2Faf) {
+        flyIAFtoFAFPhase();
+      } else
+        flyApproachingPhase();
     }
 
 
@@ -790,20 +849,35 @@ public class Pilot {
     }
   }
 
+  private enum ApproachLocation {
+    unset,
+    beforeFaf,
+    beforeMapt,
+    beforeThreshold,
+    afterThreshold
+  }
+
+
+  private enum SpeechProcessingType {
+    normal,
+    afterCommands,
+    goAround
+  }
+
   private final Airplane.Airplane4Pilot parent;
   private final SpeechDelayer queue = new SpeechDelayer(2, 7); //Min/max speech delay
   private final AfterCommandList afterCommands = new AfterCommandList();
   private final Map<Atc, SpeechList> saidText = new HashMap<>();
-  private Route assignedRoute;
-  private Restriction speedRestriction = null;
-  private Restriction altitudeRestriction = null;
+  private String gaReason = null;
+  private DivertInfo divertInfo;
   private int altitudeOrderedByAtc;
   private Atc atc;
   private boolean hasRadarContact;
   private Coordinate targetCoordinate;
   private Behavior behavior;
-  private String gaReason = null;
-  private DivertInfo divertInfo;
+  private Route assignedRoute;
+  private Restriction speedRestriction = null;
+  private Restriction altitudeRestriction = null;
 
   public Pilot(Airplane.Airplane4Pilot parent, Route assignedRoute, SpeechList<IAtcCommand> initialCommands, @Nullable ETime divertTime) {
 
@@ -857,6 +931,9 @@ public class Pilot {
     processAfterSpeeches(); // udelat vlastni queue toho co se ma udelat a pak to provest pres processQueueCommands
     endrivePlane();
     flushSaidTextToAtc();
+
+    this.afterCommands.consolePrint();
+    System.out.println(" / / / / / ");
   }
 
   public Atc getTunedAtc() {
@@ -875,7 +952,7 @@ public class Pilot {
   public Navaid getDivertNavaid() {
     Iterable<Route> rts = Acc.thresholds().get(0).getRoutes(); // get random active threshold
     List<Route> avails = Routes.getByFilter(rts, false, this.parent.getType().category);
-    Route r = CollectionUtil.getRandom(avails, Acc.rnd());
+    Route r = CollectionUtils.getRandom(avails, Acc.rnd());
     Navaid ret = r.getMainFix();
     return ret;
   }
@@ -935,7 +1012,7 @@ public class Pilot {
       say(new RequestRadarContactNotification());
       this.queue.clear();
     } else {
-      processSpeeches(current, true, false);
+      processSpeeches(current, SpeechProcessingType.normal);
     }
   }
 
@@ -943,25 +1020,46 @@ public class Pilot {
     List<IAtcCommand> cmdsToProcess
         = afterCommands.getAndRemoveSatisfiedCommands(parent.getMe(), this.targetCoordinate);
 
-    processSpeeches(cmdsToProcess, false, true);
+    processSpeeches(cmdsToProcess, SpeechProcessingType.afterCommands);
   }
 
-  private void processSpeeches(List<? extends ISpeech> queue, boolean sayConfirmations, boolean isAfterCommandProcessing) {
+  private void processSpeeches(List<? extends ISpeech> queue, SpeechProcessingType processingType) {
+    boolean sayConfirmations;
+    boolean isAfterCommandProcessing;
+
+    switch (processingType) {
+      case normal:
+        sayConfirmations = true;
+        isAfterCommandProcessing = false;
+        break;
+      case afterCommands:
+        sayConfirmations = false;
+        isAfterCommandProcessing = true;
+        break;
+      case goAround:
+        sayConfirmations = false;
+        isAfterCommandProcessing = false;
+        break;
+      default:
+        throw new UnsupportedOperationException();
+    }
+
 
     Airplane.Airplane4Command plane = this.parent.getPlane4Command();
     while (!queue.isEmpty()) {
       ISpeech s = queue.get(0);
       IFromAtc sa = (IFromAtc) s;
       if (s instanceof AfterCommand) {
-        // TODO what is the last parameter of the next is?
+        // TODO what is the last parameter of the next cmd?
         processAfterSpeechWithConsequents(queue, sayConfirmations);
       } else {
-        ConfirmationResult cres = ApplicationManager.confirm(plane, sa, true);
+        ConfirmationResult cres = ApplicationManager.confirm(plane, sa, !isAfterCommandProcessing, true);
         if (cres.rejection != null) {
           // command was rejected
           say(cres.rejection);
         } else {
-          if (!isAfterCommandProcessing && (sa instanceof IAtcCommand)) removeUnecessaryAfterCommands((IAtcCommand) sa);
+          if (!isAfterCommandProcessing && (sa instanceof IAtcCommand))
+            removeUnecessaryAfterCommands((IAtcCommand) sa);
           // command was not confirmed
           // notifications do not have confirmation
           if (sayConfirmations && cres.confirmation != null)
@@ -1006,7 +1104,7 @@ public class Pilot {
 
     ConfirmationResult cres;
 
-    cres = ApplicationManager.confirm(plane, af, false);
+    cres = ApplicationManager.confirm(plane, af, true, false);
     if (sayConfirmations) say(cres.confirmation);
 
     while (queue.isEmpty() == false) {
@@ -1015,22 +1113,14 @@ public class Pilot {
         break;
       queue.remove(0);
 
-      cres = ApplicationManager.confirm(plane, cmd, false);
+      cres = ApplicationManager.confirm(plane, cmd, true, false);
       if (sayConfirmations) say(cres.confirmation);
 
       afterCommands.add(af, cmd);
 
     }
   }
-
-  private void sayAfterCommandConfirmations(List<? extends ISpeech> queue, Airplane.Airplane4Command plane) {
-    for (ISpeech iSpeech : queue) {
-      IFromAtc sa = (IFromAtc) iSpeech;
-      ConfirmationResult cres = ApplicationManager.confirm(plane, sa, false);
-      say(cres.confirmation);
-    }
-  }
-
+  
   private void say(ISpeech speech) {
     // if no tuned atc, nothing is said
     if (atc == null) return;
@@ -1195,6 +1285,7 @@ public class Pilot {
         ts = getBoundedValueIn(minOrdered, Math.min(287, parent.getType().vCruise), maxOrdered);
         break;
       case arrivingCloseFaf:
+      case flyingIaf2Faf:
         ts = getBoundedValueIn(minOrdered, Math.min(287, parent.getType().vMinClean + 15), maxOrdered);
         break;
       case approachEnter:

@@ -5,7 +5,7 @@
  */
 package eng.jAtcSim.startup.startupWizard;
 
-import eng.eSystem.utilites.CollectionUtil;
+import eng.eSystem.utilites.CollectionUtils;
 import eng.jAtcSim.XmlLoadHelper;
 import eng.jAtcSim.lib.world.Airport;
 import eng.jAtcSim.lib.world.Area;
@@ -253,7 +253,7 @@ public class PnlWizardTraffic extends JWizardPanel {
     int selectedIndex = -1;
     String[] data = new String[0];
     ComboBoxModel<String> model;
-    Airport airport = CollectionUtil.tryGetFirst(area.getAirports(), o -> o.getIcao().equals(settings.recent.icao));
+    Airport airport = CollectionUtils.tryGetFirst(area.getAirports(), o -> o.getIcao().equals(settings.recent.icao));
     if (airport != null) {
       data = new String[airport.getTrafficDefinitions().size()];
       for (int i = 0; i < data.length; i++) {

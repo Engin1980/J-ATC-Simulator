@@ -6,7 +6,7 @@
 package eng.jAtcSim.lib.traffic;
 
 import com.sun.istack.internal.Nullable;
-import eng.eSystem.utilites.CollectionUtil;
+import eng.eSystem.utilites.CollectionUtils;
 import eng.eSystem.xmlSerialization.XmlOptional;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.Simulation;
@@ -14,15 +14,11 @@ import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.AirplaneType;
 import eng.jAtcSim.lib.airplanes.Callsign;
 import eng.jAtcSim.lib.airplanes.Squawk;
-import eng.jAtcSim.lib.atcs.Atc;
 import eng.jAtcSim.lib.coordinates.Coordinate;
 import eng.jAtcSim.lib.coordinates.Coordinates;
-import eng.jAtcSim.lib.global.Global;
 import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeAltitudeCommand;
-import eng.jAtcSim.lib.speaking.fromAtc.commands.ContactCommand;
-import eng.jAtcSim.lib.speaking.fromAtc.commands.afters.AfterAltitudeCommand;
 import eng.jAtcSim.lib.world.*;
 
 import java.util.ArrayList;
@@ -224,6 +220,7 @@ public abstract class Traffic {
       else
         ret = type.maxAltitude - Acc.rnd().nextInt(11) * 1000;
     }
+    ret = ret / 1000 * 1000;
     return ret;
   }
 
@@ -308,7 +305,7 @@ public abstract class Traffic {
     if (avails.isEmpty()) {
       return null; // if no route, return null
     }
-    Route ret = CollectionUtil.getRandom(avails);
+    Route ret = CollectionUtils.getRandom(avails);
 
     return ret;
   }

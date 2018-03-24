@@ -12,25 +12,12 @@ import eng.jAtcSim.lib.speaking.fromAtc.commands.ContactCommand;
 public class ContactCommandApplication extends CommandApplication<ContactCommand> {
 
   @Override
-  protected IFromAirplane checkSanity(Airplane.Airplane4Command plane, ContactCommand c) {
-    // I hope confirmation is done automatically
-//    Atc a;
-//    switch (c.getAtcType()) {
-//      case app:
-//        a = Acc.atcApp();
-//        break;
-//      case ctr:
-//        a = Acc.atcCtr();
-//        break;
-//      case twr:
-//        a = Acc.atcTwr();
-//        break;
-//      default:
-//        throw new ENotSupportedException();
-//    }
-//    // confirmation to previous atc
-//    confirmIfReq(c);
-//    flushSaidTextToAtc();
+  protected Airplane.State[] getInvalidStates() {
+    return new Airplane.State[0];
+  }
+
+  @Override
+  protected IFromAirplane checkCommandSanity(Airplane.Airplane4Command plane, ContactCommand c) {
 
     return null;
   }

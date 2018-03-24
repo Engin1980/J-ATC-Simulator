@@ -5,20 +5,21 @@ import eng.jAtcSim.lib.speaking.IFromAirplane;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.GoAroundCommand;
 
 public class GoAroundCommandApplication extends CommandApplication<GoAroundCommand>{
+
   @Override
-  protected IFromAirplane checkSanity(Airplane.Airplane4Command plane, GoAroundCommand c) {
-
-    IFromAirplane ret = null;
-
-    ret = super.checkInvalidState(plane, c,
+  protected Airplane.State[] getInvalidStates() {
+    return new Airplane.State[]{
         Airplane.State.holdingPoint,
         Airplane.State.takeOffRoll,
         Airplane.State.takeOffGoAround,
         Airplane.State.departingLow,
         Airplane.State.departingHigh,
-        Airplane.State.landed);
-    if (ret != null) return ret;
+        Airplane.State.landed
+    };
+  }
 
+  @Override
+  protected IFromAirplane checkCommandSanity(Airplane.Airplane4Command plane, GoAroundCommand c) {
     return null;
   }
 

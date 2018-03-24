@@ -37,7 +37,7 @@ public class ApplicationManager {
     notApps.put(RadarContactConfirmationNotification.class, new RadarContactConfirmationNotificationApplication());
   }
 
-  public static ConfirmationResult confirm(Airplane.Airplane4Command plane, IFromAtc c, boolean checkSanity) {
+  public static ConfirmationResult confirm(Airplane.Airplane4Command plane, IFromAtc c, boolean checkStateSanity, boolean checkCommandSanity) {
     ConfirmationResult ret;
 
     if (c instanceof AfterCommand) {
@@ -46,7 +46,9 @@ public class ApplicationManager {
     } else if (c instanceof IAtcCommand) {
       CommandApplication ca = cmdApps.get(c.getClass());
       assert ca != null;
-      ret = ca.confirm(plane, (IAtcCommand) c, checkSanity);
+      assert plane != null;
+      assert c != null;
+      ret = ca.confirm(plane, (IAtcCommand) c, checkStateSanity, checkCommandSanity);
     } else if (c instanceof IAtcNotification) {
       NotificationApplication na = notApps.get(c.getClass());
       assert na != null;
@@ -63,7 +65,7 @@ public class ApplicationManager {
     ApplicationResult ret;
 
     if (c instanceof IAtcCommand) {
-      ret = cmdApps.get(c.getClass()).apply(plane, (IAtcCommand) c);
+      ret = cmdApps.get(c.getClass()).apply(plane, (IAtcCommand) c, false);
     } else if (c instanceof IAtcNotification) {
       ret = notApps.get(c.getClass()).apply(plane, (IAtcNotification) c);
     } else {

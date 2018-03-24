@@ -108,6 +108,7 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
   }
 
   public class Airplane4Pilot {
+
     public State getState() {
       return state;
     }
@@ -246,9 +247,9 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
       return Airplane.this.isArrival();
     }
 
-    public Navaid tryGetIaf() {
-      return this.getPilot().tryGetIaf();
-    }
+//    public Navaid tryGetIaf() {
+//      return this.getPilot().tryGetIaf();
+//    }
   }
 
   public enum State {
@@ -265,6 +266,10 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
      * On arrival < 15nm to FAF
      */
     arrivingCloseFaf,
+    /**
+     * When cleared to approach flying from IAF to FAF
+     */
+    flyingIaf2Faf,
     /**
      * Entering approach, before descend
      */
@@ -775,6 +780,9 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     } else {
       this.altitude.add(altitudeRequest.value);
       this.lastVerticalSpeed = this.altitude.getInertia() * 60;
+      if (this.altitude.getValue() < Acc.airport().getAltitude()){
+        this.altitude.reset(Acc.airport().getAltitude());
+      }
     }
   }
 

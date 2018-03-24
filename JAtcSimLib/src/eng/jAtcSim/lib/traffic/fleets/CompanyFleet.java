@@ -2,7 +2,7 @@ package eng.jAtcSim.lib.traffic.fleets;
 
 import eng.eSystem.xmlSerialization.XmlIgnore;
 import eng.jAtcSim.lib.Acc;
-import eng.eSystem.utilites.CollectionUtil;
+import eng.eSystem.utilites.CollectionUtils;
 import eng.jAtcSim.lib.airplanes.AirplaneType;
 import eng.jAtcSim.lib.airplanes.AirplaneTypes;
 
@@ -82,7 +82,7 @@ public class CompanyFleet {
   }
 
   private void updateFleetWeightSum() {
-    this.fleetWeightSum = CollectionUtil.sum(this.types, o -> (double) o.weight);
+    this.fleetWeightSum = CollectionUtils.sum(this.types, o -> (double) o.weight);
   }
 
   private void updateCategoryWeightSum() {

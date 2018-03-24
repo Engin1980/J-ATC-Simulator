@@ -2,7 +2,6 @@ package eng.jAtcSim.lib.airplanes.commandApplications;
 
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.speaking.IFromAirplane;
-import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.Confirmation;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.Rejection;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
@@ -10,19 +9,25 @@ import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
 public abstract class CommandApplication<T extends IAtcCommand> {
 
   // TODO BIG one! "confirm" and "apply" should have Pilot as parameter, not Airplane
-  public ConfirmationResult confirm(Airplane.Airplane4Command plane, T c, boolean checkSanity) {
+  public ConfirmationResult confirm(Airplane.Airplane4Command plane, T c, boolean checkStateSanity, boolean checkCommandSanity) {
     ConfirmationResult ret = new ConfirmationResult();
-    if (checkSanity) {
-      ret.rejection = checkSanity(plane, c);
+    if (checkStateSanity)
+      ret.rejection = checkStateSanity(plane.getState(), c);
+    if (ret.rejection == null && checkCommandSanity) {
+      ret.rejection = checkCommandSanity(plane, c);
     }
     if (ret.rejection == null)
       ret.confirmation = new Confirmation(c);
     return ret;
   }
 
-  public ApplicationResult apply(Airplane.Airplane4Command plane, T c) {
+  public ApplicationResult apply(Airplane.Airplane4Command plane, T c, boolean checkStateSanity) {
     ApplicationResult ret;
-    IFromAirplane rejection = checkSanity(plane, c);
+    IFromAirplane rejection = null;
+    if (checkStateSanity)
+      rejection = checkStateSanity(plane.getState(), c);
+    if (rejection == null)
+      rejection = checkCommandSanity(plane, c);
     if (rejection == null) {
       ret = adjustAirplane(plane, c);
     } else {
@@ -32,16 +37,19 @@ public abstract class CommandApplication<T extends IAtcCommand> {
     return ret;
   }
 
-  protected IFromAirplane checkInvalidState(Airplane.Airplane4Command plane, IAtcCommand c, Airplane.State... invalidState) {
+  protected abstract IFromAirplane checkCommandSanity(Airplane.Airplane4Command plane, T c);
+
+  private IFromAirplane checkStateSanity(Airplane.State state, IAtcCommand cmd){
     IFromAirplane ret;
-    if (plane.getState().is(invalidState)) {
-      ret = new Rejection("Unable to comply a command now.", c);
+    Airplane.State [] invalidStates = getInvalidStates();
+    if (state.is(invalidStates)) {
+      ret = new Rejection("Unable to comply a command now, does not fit our state.", cmd);
     } else
       ret = null;
     return ret;
   }
 
-  protected abstract IFromAirplane checkSanity(Airplane.Airplane4Command plane, T c);
+  protected abstract Airplane.State [] getInvalidStates();
 
   protected abstract ApplicationResult adjustAirplane(Airplane.Airplane4Command plane, T c);
 

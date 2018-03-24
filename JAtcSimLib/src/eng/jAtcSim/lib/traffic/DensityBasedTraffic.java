@@ -5,7 +5,7 @@ import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.AirplaneType;
 import eng.jAtcSim.lib.airplanes.Callsign;
 import eng.jAtcSim.lib.exceptions.ERuntimeException;
-import eng.eSystem.utilites.CollectionUtil;
+import eng.eSystem.utilites.CollectionUtils;
 import eng.jAtcSim.lib.global.ETime;
 import eng.jAtcSim.lib.traffic.fleets.CompanyFleet;
 
@@ -31,7 +31,7 @@ public class DensityBasedTraffic extends Traffic {
 
     public CodeWeight getRandomCode() {
       if (weightSum < 0)
-        weightSum = CollectionUtil.sum(this, o-> o.weight);
+        weightSum = CollectionUtils.sum(this, o-> o.weight);
       double rnd = Acc.rnd().nextDouble(0, weightSum);
       int index = 0;
       CodeWeight ret = null;

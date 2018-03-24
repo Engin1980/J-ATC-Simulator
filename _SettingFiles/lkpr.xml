@@ -143,12 +143,12 @@
                 </ilsApproach>
                 <gnssApproach gaRoute="FH 061 CM 40" radial="061" daA="1515" daB="1515" daC="1515" daD="1515">
                   <iafRoutes>
-                    <route iaf="KUVIX" route="DM 40 PD PR741 T PD PR742 T PD FH 061"/>
-                    <route iaf="BAROX" route="DM 40 PD PR742 T PD FH 061"/>
-                    <route iaf="AKEVA" route="DM 40 PD PR740 T PD PR742 T PD FH 061"/>
+                    <route iaf="KUVIX" route="DM 40 PD PR741 T PD PR742 T FH 061"/>
+                    <route iaf="BAROX" route="DM 40 PD PR742 T FH 061"/>
+                    <route iaf="AKEVA" route="DM 40 PD PR740 T PD PR742 T  FH 061"/>
                   </iafRoutes>
                 </gnssApproach>
-                <unpreciseApproach gaRoute="CM 40 FH 061" radial="061" type="ndb" fix="PH" mdaA="1600" mdaB="1600"
+                <unpreciseApproach gaRoute="CM 40 FH 061" radial="061" type="ndb" faf="PH/061/8.8" mapt="PH/061/0.5" mdaA="1600" mdaB="1600"
                                    mdaC="1600" mdaD="1600">
                 </unpreciseApproach>
               </approaches>
@@ -195,7 +195,7 @@
                 </ilsApproach>
                 <gnssApproach gaRoute="FH 241 CM 40" radial="241" daA="1479" daB="1479" daC="1479" daD="1479">
                 </gnssApproach>
-                <unpreciseApproach gaRoute="FH 241 CM 40" radial="241" type="ndb" fix="L" mdaA="1460" mdaB="1460"
+                <unpreciseApproach gaRoute="FH 241 CM 40" radial="241" type="ndb" faf="PH/241/10.6" mapt="L" mdaA="1460" mdaB="1460"
                                    mdaC="1460" mdaD="1460">
                 </unpreciseApproach>
               </approaches>
@@ -390,10 +390,10 @@
                               radial="042" daA="1190" daB="1190" daC="1190" daD="1190">
                 </gnssApproach>
                 <unpreciseApproach gaRoute="FH 039 CM 025 AA 025+ PD MT598 CM 035 AN MT598 PD ODRAN"
-                                   radial="042" type="ndb" fix="L" mdaA="1220" mdaB="1220" mdaC="1220" mdaD="1220">
+                                   radial="042" type="ndb" mapt="N" faf="OTA/222/8.2" mdaA="1220" mdaB="1220" mdaC="1220" mdaD="1220">
                 </unpreciseApproach>
                 <unpreciseApproach gaRoute="FH 039 CM 025 AA 025+ PD MT598 CM 035 AN MT598 PD ODRAN"
-                                   radial="039" type="vor" fix="OTA" mdaA="1220" mdaB="1220" mdaC="1220" mdaD="1220">
+                                   radial="039" type="vor" mapt="OTA/219/1.7" faf="OTA/219/8.2" mdaA="1220" mdaB="1220" mdaC="1220" mdaD="1220">
                 </unpreciseApproach>
               </approaches>
               <routes>
@@ -420,23 +420,24 @@
             <threshold name="22" coordinate="49 42 25.65 N 018 07 42.41 E" initialDepartureAltitude="4000"
                        preferred="true">
               <iafRoutes>
-                <route iaf="OTA" route="DM 30 PD OTA/015/10 T TR 200"/>
-                <route iaf="BOGTU" route="DM 30 PD MT821 T PD MT 827 T FH 226"/>
+                <route iaf="OTA" route="AN OTA DM 30 PD OTA/015/10 T TR 200"/>
+                <route iaf="BOGTU" route="AN BOGTU DM 30 PD MT821 T PD MT827 T FH 226"/>
               </iafRoutes>
               <approaches>
                 <ilsApproach radial="222" gaRoute="CM 30 FH 222 AA 25+ PD MT598 T PD BOGTU">
                   <iafRoutes>
                     <route iaf="OTA" route="DM 30 PD OTA/015/10 T TR 200"/>
-                    <route iaf="BOGTU" route="DM 30 PD MT821 T PD MT 827 T FH 226"/>
+                    <route iaf="BOGTU" route="DM 30 PD MT821 T PD MT827 T FH 226"/>
+                    <route iaf="EKMIT" route="DM 30 PD MT823 T PD MT825 T PD MT22F T FH 222"/>
                   </iafRoutes>
                   <categories>
                     <category type="I" daA="955" daB="968" daC="975" daD="992"/>
                     <category type="II" daA="867" daB="884" daC="895" daD="910"/>
                   </categories>
                 </ilsApproach>
-                <unpreciseApproach type="vor" fix="OTA" radial="226" mdaA="1170" mdaB="1170" mdaC="1170" mdaD="1170"
+                <unpreciseApproach type="vor" mapt="OTA/046/1.7" faf="OTA/046/7.7" radial="226" mdaA="1170" mdaB="1170" mdaC="1170" mdaD="1170"
                                    gaRoute="FH 226 AA 025+ PD MT598 T PD BOGTU"/>
-                <unpreciseApproach type="ndb" fix="L" radial="222" mdaA="1170" mdaB="1170" mdaC="1170" mdaD="1170"
+                <unpreciseApproach type="ndb" mapt="N" faf="OTA/042/7.7" radial="222" mdaA="1170" mdaB="1170" mdaC="1170" mdaD="1170"
                                    gaRoute="FH 226 AA 025+ PD MT598 T PD BOGTU"/>
                 <gnssApproach daA="1062" daB="1074" daC="1083" daD="1093" radial="222"
                               gaRoute="CM 30 PD MT597 T PD MT598 T PD BOGTU">
@@ -656,6 +657,8 @@
     <navaid name="ZLA" type="ndb" coordinate="49.202889 18.510445"/>
 
     <!-- FIXes -->
+    <navaid name="PH" type="fixMinor" coordinate="50 06 15.26 N 14 13 49.23 E" />
+
     <navaid name="ABERU" type="fix" coordinate="50.069194 12.093719"/>
     <navaid name="ABKIS" type="fix" coordinate="50.629695 13.057186"/>
     <navaid name="ABRAX" type="fix" coordinate="49.697703 15.894884"/>

@@ -5,7 +5,7 @@ import eng.jAtcSim.lib.global.KeyList;
 
 public class IlsApproach extends Approach {
 
-  public class Category implements KeyItem<Type>{
+  public static class Category implements KeyItem<Type> {
 
     private Type type;
     private int daA;
@@ -55,6 +55,9 @@ public class IlsApproach extends Approach {
       }
       return ret;
     }
+
+    public Category() {
+    }
   }
 
   public enum Type {
@@ -65,15 +68,14 @@ public class IlsApproach extends Approach {
 
   private KeyList<Category, Type> categories = new KeyList<IlsApproach.Category, Type>();
 
-  @Override
-  protected void _bind() {
-
-  }
-
   public KeyList<Category, Type> getCategories() {
     return categories;
   }
 
+  @Override
+  protected void _bind() {
+
+  }
 
 
 }

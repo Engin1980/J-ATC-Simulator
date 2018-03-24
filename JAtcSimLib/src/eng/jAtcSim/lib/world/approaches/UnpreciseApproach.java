@@ -1,6 +1,7 @@
 package eng.jAtcSim.lib.world.approaches;
 
 import eng.jAtcSim.lib.Acc;
+import eng.jAtcSim.lib.coordinates.Coordinate;
 import eng.jAtcSim.lib.world.Navaid;
 
 public class UnpreciseApproach extends Approach {
@@ -16,10 +17,10 @@ public class UnpreciseApproach extends Approach {
   private String faf;
   private Navaid _faf;
   /**
-   * Name of fix where course is relative to.
+   * Name of mapt where course is relative to.
    */
-  private String fix;
-  private Navaid _navaid;
+  private String mapt;
+  private Navaid _mapt;
   private int mdaA;
   private int mdaB;
   private int mdaC;
@@ -28,6 +29,14 @@ public class UnpreciseApproach extends Approach {
 
   public Type getType() {
     return type;
+  }
+
+  public Navaid getFaf() {
+    return _faf;
+  }
+
+  public Coordinate getMAPt() {
+    return _mapt.getCoordinate();
   }
 
   public int getMDA(char category) {
@@ -47,7 +56,7 @@ public class UnpreciseApproach extends Approach {
 
   @Override
   protected void _bind() {
-    _faf = Acc.area().getNavaids().get(faf);
-    _navaid = Acc.area().getNavaids().get(fix);
+    _faf = Acc.area().getNavaids().getOrGenerate(faf);
+    _mapt = Acc.area().getNavaids().getOrGenerate(mapt);
   }
 }

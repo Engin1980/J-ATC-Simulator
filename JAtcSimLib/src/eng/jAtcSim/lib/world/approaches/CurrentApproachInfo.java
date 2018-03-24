@@ -1,9 +1,9 @@
 package eng.jAtcSim.lib.world.approaches;
 
 import eng.jAtcSim.lib.coordinates.Coordinate;
+import eng.jAtcSim.lib.global.UnitProvider;
 import eng.jAtcSim.lib.speaking.IFromAtc;
 import eng.jAtcSim.lib.speaking.SpeechList;
-import eng.jAtcSim.lib.world.Navaid;
 import eng.jAtcSim.lib.world.RunwayThreshold;
 
 public class CurrentApproachInfo {
@@ -11,12 +11,13 @@ public class CurrentApproachInfo {
   private SpeechList<IFromAtc> iafRoute;
   private SpeechList<IFromAtc> gaRoute;
   private Approach.ApproachType type;
-  private Navaid faf;
+  private Coordinate faf;
   private Coordinate mapt;
   private int course;
   private int decisionAltitude;
+  private double glidePathPercentage = 3;
 
-  public CurrentApproachInfo(RunwayThreshold threshold, SpeechList<IFromAtc> iafRoute, SpeechList<IFromAtc> gaRoute, Approach.ApproachType type, Navaid faf, Coordinate mapt, int course, int decisionAltitude) {
+  public CurrentApproachInfo(RunwayThreshold threshold, SpeechList<IFromAtc> iafRoute, SpeechList<IFromAtc> gaRoute, Approach.ApproachType type, Coordinate faf, Coordinate mapt, int course, int decisionAltitude) {
     this.threshold = threshold;
     this.iafRoute = iafRoute;
     this.gaRoute = gaRoute;
@@ -43,7 +44,7 @@ public class CurrentApproachInfo {
     return type;
   }
 
-  public Navaid getFaf() {
+  public Coordinate getFaf() {
     return faf;
   }
 
@@ -57,5 +58,18 @@ public class CurrentApproachInfo {
 
   public int getDecisionAltitude() {
     return decisionAltitude;
+  }
+
+  public double getGlidePathPerNM() {
+    return UnitProvider.nmToFt(Math.tan(glidePathPercentage * Math.PI / 180));
+  }
+
+  public double getAltitudeDeltaPerSecond(double gs){
+    // add glidePathPercentage here somehow
+    return gs * 5;
+  }
+
+  public boolean willUseIafRouting() {
+    return !this.iafRoute.isEmpty();
   }
 }

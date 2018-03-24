@@ -1,6 +1,7 @@
 package eng.jAtcSim.lib.world.approaches;
 
-import eng.eSystem.utilites.CollectionUtil;
+import eng.eSystem.utilites.CollectionUtils;
+import eng.eSystem.xmlSerialization.XmlOptional;
 import eng.jAtcSim.lib.coordinates.Coordinate;
 import eng.jAtcSim.lib.coordinates.Coordinates;
 import eng.jAtcSim.lib.global.Headings;
@@ -14,7 +15,6 @@ import eng.jAtcSim.lib.world.Navaid;
 import eng.jAtcSim.lib.world.RunwayThreshold;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
-import java.util.Collections;
 import java.util.List;
 
 public abstract class Approach {
@@ -31,28 +31,29 @@ public abstract class Approach {
 
   private String gaRoute;
   private SpeechList<IAtcCommand> _gaCommands;
-  private KeyList<IafRoute, Navaid> iafRoutes;
+  @XmlOptional
+  private KeyList<IafRoute, Navaid> iafRoutes = null;
   private int radial;
   private RunwayThreshold parent;
 
-  public static CurrentApproachInfo tryGetCurrentApproachInfo(List<Approach> apps, char category, ApproachType type, Navaid iafOrNull) {
+  public static CurrentApproachInfo tryGetCurrentApproachInfo(List<Approach> apps, char category, ApproachType type, Coordinate currentPlaneLocation) {
     CurrentApproachInfo ret;
 
     switch (type) {
       case ils_I:
       case ils_II:
       case ils_III:
-        ret = tryGetFromILS(apps, category, iafOrNull, type);
+        ret = tryGetFromILS(apps, category, type, currentPlaneLocation);
         break;
       case gnss:
-        ret = tryGetFromGnss(apps, category, iafOrNull);
+        ret = tryGetFromGnss(apps, category, currentPlaneLocation);
         break;
       case visual:
-        ret = tryGetFromVisual(apps, category);
+        ret = tryGetFromVisual(apps, category, currentPlaneLocation);
         break;
       case ndb:
       case vor:
-        ret = tryGetFromUnprecise(apps, category, iafOrNull, type);
+        ret = tryGetFromUnprecise(apps, category, type, currentPlaneLocation);
         break;
       default:
         throw new UnsupportedOperationException();
@@ -66,20 +67,29 @@ public abstract class Approach {
     return ret;
   }
 
-  private static CurrentApproachInfo tryGetFromILS(List<Approach> apps, char category, Navaid iafOrNull, ApproachType type) {
+  private static Navaid tryGetIafNavaidCloseToPlaneLocation(Approach approach, Coordinate planeLocation){
+    List<Navaid> iafNavs = CollectionUtils.select(approach.getIafRoutes(), q->q.getNavaid());
+    Navaid ret = CollectionUtils.tryGetFirst(iafNavs, o -> Coordinates.getDistanceInNM(planeLocation, o.getCoordinate()) < 2);
+    return ret;
+  }
+
+  private static CurrentApproachInfo tryGetFromILS(List<Approach> apps, char category, ApproachType type, Coordinate planeLocation) {
     CurrentApproachInfo ret;
-    IlsApproach tmp = (IlsApproach) CollectionUtil.tryGetFirst(apps, o -> o instanceof IlsApproach);
+    IlsApproach tmp = (IlsApproach) CollectionUtils.tryGetFirst(apps, o -> o instanceof IlsApproach);
     IlsApproach.Type catKey = typeToIlsType(type);
     IlsApproach.Category cat = tmp.getCategories().get(catKey);
 
-    IafRoute iafRoute = tmp.getIafRoutes().tryGet(iafOrNull);
+    Navaid iaf = tryGetIafNavaidCloseToPlaneLocation(tmp, planeLocation);
+
+    IafRoute iafRoute = tmp.getIafRoutes().tryGet(iaf);
     SpeechList<IFromAtc> iafCommands;
     if (iafRoute != null)
       iafCommands = new SpeechList<>(iafRoute.getRouteCommands());
     else
       iafCommands = new SpeechList<>();
     SpeechList<IFromAtc> gaCommands = new SpeechList<>(tmp.getGaCommands());
-    Navaid faf = null;
+    Coordinate faf = Coordinates.getCoordinate(
+        tmp.getParent().getCoordinate(), Headings.getOpposite(tmp.getRadial()), 10);
     Coordinate mapt = tmp.getParent().getCoordinate();
     int course = tmp.getRadial();
     int mda = cat.getDA(category);
@@ -90,14 +100,14 @@ public abstract class Approach {
     return ret;
   }
 
-  private static CurrentApproachInfo tryGetFromVisual(List<Approach> apps, char category) {
+  private static CurrentApproachInfo tryGetFromVisual(List<Approach> apps, char category, Coordinate currentLocation) {
     CurrentApproachInfo ret;
-    VisualApproach tmp = (VisualApproach) CollectionUtil.tryGetFirst(apps, o -> o instanceof VisualApproach);
+    VisualApproach tmp = (VisualApproach) CollectionUtils.tryGetFirst(apps, o -> o instanceof VisualApproach);
 
     SpeechList<IFromAtc> iafCommands = new SpeechList<>();
     SpeechList<IFromAtc> gaCommands = new SpeechList<>(tmp.getGaCommands());
 
-    Navaid faf = null;
+    Coordinate faf = currentLocation;
     Coordinate mapt = Coordinates.getCoordinate(
         tmp.getParent().getCoordinate(),
         Headings.getOpposite(tmp.getParent().getCourse()),
@@ -111,21 +121,23 @@ public abstract class Approach {
     return ret;
   }
 
-  private static CurrentApproachInfo tryGetFromUnprecise(List<Approach> apps, char category, Navaid iafOrNull, Approach.ApproachType type) {
+  private static CurrentApproachInfo tryGetFromUnprecise(List<Approach> apps, char category, Approach.ApproachType type, Coordinate planeLocation) {
     CurrentApproachInfo ret;
-    List<Approach> lst = CollectionUtil.where(apps, o -> o instanceof UnpreciseApproach );
+    List<Approach> lst = CollectionUtils.where(apps, o -> o instanceof UnpreciseApproach );
     UnpreciseApproach.Type utype = typeToUnpreciseType(type);
-    UnpreciseApproach tmp = (UnpreciseApproach) CollectionUtil.tryGetFirst(lst, o -> ((UnpreciseApproach) o).getType() == utype);
+    UnpreciseApproach tmp = (UnpreciseApproach) CollectionUtils.tryGetFirst(lst, o -> ((UnpreciseApproach) o).getType() == utype);
 
-    IafRoute iafRoute = tmp.getIafRoutes().tryGet(iafOrNull);
+    Navaid iaf = tryGetIafNavaidCloseToPlaneLocation(tmp, planeLocation);
+
+    IafRoute iafRoute = tmp.getIafRoutes().tryGet(iaf);
     SpeechList<IFromAtc> iafCommands;
     if (iafRoute != null)
       iafCommands = new SpeechList<>(iafRoute.getRouteCommands());
     else
       iafCommands = new SpeechList<>();
     SpeechList<IFromAtc> gaCommands = new SpeechList<>(tmp.getGaCommands());
-    Navaid faf = null;
-    Coordinate mapt = tmp.getParent().getCoordinate();
+    Coordinate faf = tmp.getFaf().getCoordinate();
+    Coordinate mapt =  tmp.getMAPt();
     int course = tmp.getRadial();
     int mda = tmp.getMDA(category);
 
@@ -134,18 +146,20 @@ public abstract class Approach {
     return ret;
   }
 
-  private static CurrentApproachInfo tryGetFromGnss(List<Approach> apps, char category, Navaid iafOrNull) {
+  private static CurrentApproachInfo tryGetFromGnss(List<Approach> apps, char category, Coordinate planeLocation) {
     CurrentApproachInfo ret;
-    GnssApproach tmp = (GnssApproach) CollectionUtil.tryGetFirst(apps, o -> o instanceof  GnssApproach);
+    GnssApproach tmp = (GnssApproach) CollectionUtils.tryGetFirst(apps, o -> o instanceof  GnssApproach);
 
-    IafRoute iafRoute = tmp.getIafRoutes().tryGet(iafOrNull);
+    Navaid iaf = tryGetIafNavaidCloseToPlaneLocation(tmp, planeLocation);
+    IafRoute iafRoute = tmp.getIafRoutes().tryGet(iaf);
     SpeechList<IFromAtc> iafCommands;
     if (iafRoute != null)
       iafCommands = new SpeechList<>(iafRoute.getRouteCommands());
     else
       iafCommands = new SpeechList<>();
     SpeechList<IFromAtc> gaCommands = new SpeechList<>(tmp.getGaCommands());
-    Navaid faf = null;
+    Coordinate faf = Coordinates.getCoordinate(
+        tmp.getParent().getCoordinate(), Headings.getOpposite(tmp.getRadial()), 10);;
     Coordinate mapt = tmp.getParent().getCoordinate();
     int course = tmp.getRadial();
     int mda = tmp.getDA(category);
@@ -193,6 +207,12 @@ public abstract class Approach {
 
   public void bind() {
     _gaCommands = parseRoute(gaRoute);
+
+    if (this.iafRoutes == null){
+      this.iafRoutes = new KeyList<>();
+      this.iafRoutes.addAll(this.getParent().getIafRoutes());
+    }
+
     for (IafRoute iafRoute : iafRoutes) {
       iafRoute.bind();
     }

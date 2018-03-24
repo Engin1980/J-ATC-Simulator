@@ -3,7 +3,7 @@ package eng.jAtcSim.radarBase;
 import eng.eSystem.EStringBuilder;
 import eng.eSystem.collections.ReadOnlyList;
 import eng.eSystem.events.Event;
-import eng.eSystem.utilites.CollectionUtil;
+import eng.eSystem.utilites.CollectionUtils;
 import eng.jAtcSim.lib.Simulation;
 import eng.jAtcSim.lib.airplanes.*;
 import eng.jAtcSim.lib.atcs.Atc;
@@ -26,7 +26,6 @@ import eng.jAtcSim.lib.speaking.fromAtc.atc2atc.StringResponse;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ProceedDirectCommand;
 import eng.jAtcSim.lib.world.*;
 import eng.jAtcSim.lib.world.approaches.Approach;
-import eng.jAtcSim.lib.world.approaches.ApproachOld;
 import eng.jAtcSim.radarBase.global.Color;
 import eng.jAtcSim.radarBase.global.Point;
 import eng.jAtcSim.radarBase.global.SoundManager;
@@ -920,15 +919,15 @@ public class Radar {
     boolean containsSystemMessage =
         msgs.stream().anyMatch(q -> q.isSourceOfType(Messenger.XSystem.class));
 
-    List<Message> atcMsgs = CollectionUtil.where(msgs, q -> q.isSourceOfType(Atc.class));
+    List<Message> atcMsgs = CollectionUtils.where(msgs, q -> q.isSourceOfType(Atc.class));
     boolean containsAtcMessage = atcMsgs.isEmpty() == false;
     boolean isAtcMessageNegative = false;
     if (containsAtcMessage) {
-      atcMsgs = CollectionUtil.where(atcMsgs, q -> q.isContentOfType(IAtc2Atc.class));
+      atcMsgs = CollectionUtils.where(atcMsgs, q -> q.isContentOfType(IAtc2Atc.class));
       isAtcMessageNegative = atcMsgs.stream().anyMatch(q -> q.<IAtc2Atc>getContent().isRejection());
     }
 
-    List<Message> planeMsgs = CollectionUtil.where(msgs, q -> q.isSourceOfType(Airplane.class));
+    List<Message> planeMsgs = CollectionUtils.where(msgs, q -> q.isSourceOfType(Airplane.class));
     boolean containsPlaneMessage = planeMsgs.isEmpty() == false;
     boolean isPlaneMessageNegative = false;
     if (containsPlaneMessage) {

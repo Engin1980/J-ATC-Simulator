@@ -6,18 +6,23 @@ import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.reje
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ShortcutCommand;
 
 public class ShortcutCommandApplication extends CommandApplication<ShortcutCommand> {
+
   @Override
-  protected IFromAirplane checkSanity(Airplane.Airplane4Command plane, ShortcutCommand c) {
-    IFromAirplane ret;
-    ret = super.checkInvalidState(plane,c,
+  protected Airplane.State[] getInvalidStates() {
+    return new Airplane.State[]{
         Airplane.State.holdingPoint,
         Airplane.State.takeOffRoll,
         Airplane.State.approachEnter,
         Airplane.State.approachDescend,
         Airplane.State.longFinal,
         Airplane.State.shortFinal,
-        Airplane.State.landed);
-    if (ret != null) return ret;
+        Airplane.State.landed
+    };
+  }
+
+  @Override
+  protected IFromAirplane checkCommandSanity(Airplane.Airplane4Command plane, ShortcutCommand c) {
+    IFromAirplane ret;
 
     int pointIndex = plane.getPilot().getIndexOfNavaidInCommands(c.getNavaid());
     if (pointIndex < 0) {

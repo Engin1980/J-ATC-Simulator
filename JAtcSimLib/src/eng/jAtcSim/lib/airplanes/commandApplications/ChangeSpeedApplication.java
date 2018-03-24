@@ -9,18 +9,21 @@ import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.Reje
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeSpeedCommand;
 
 public class ChangeSpeedApplication extends CommandApplication<ChangeSpeedCommand> {
-  @Override
-  protected IFromAirplane checkSanity(Airplane.Airplane4Command plane, ChangeSpeedCommand c) {
-    IFromAirplane ret;
 
-    ret = super.checkInvalidState(plane, c,
+  @Override
+  protected Airplane.State[] getInvalidStates() {
+    return new Airplane.State[]{
         Airplane.State.holdingPoint,
         Airplane.State.takeOffRoll,
         Airplane.State.longFinal,
         Airplane.State.shortFinal,
-        Airplane.State.landed);
-    if (ret != null) return ret;
+        Airplane.State.landed
+    };
+  }
 
+  @Override
+  protected IFromAirplane checkCommandSanity(Airplane.Airplane4Command plane, ChangeSpeedCommand c) {
+    IFromAirplane ret;
 
     if (c.isResumeOwnSpeed() == false) {
       // not resume speed

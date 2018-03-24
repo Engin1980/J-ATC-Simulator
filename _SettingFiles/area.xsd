@@ -353,7 +353,8 @@
             </xs:restriction>
           </xs:simpleType>
         </xs:attribute>
-        <xs:attribute name="fix" type="xs:string" use="required"/>
+        <xs:attribute name="faf" type="xs:string" use="required"/>
+        <xs:attribute name="mapt" type="xs:string" use="required"/>
         <xs:attribute name="mdaA" type="xs:int" use="required"/>
         <xs:attribute name="mdaB" type="xs:int" use="required"/>
         <xs:attribute name="mdaC" type="xs:int" use="required"/>

@@ -5,10 +5,10 @@ import eng.jAtcSim.lib.speaking.IFromAirplane;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ClearedForTakeoffCommand;
 
 public class ClearedForTakeOffCommandApplication extends CommandApplication<ClearedForTakeoffCommand> {
+
   @Override
-  protected IFromAirplane checkSanity(Airplane.Airplane4Command plane, ClearedForTakeoffCommand c) {
-    IFromAirplane ret;
-    ret = super.checkInvalidState(plane, c,
+  protected Airplane.State[] getInvalidStates() {
+    return new Airplane.State[]{
         Airplane.State.takeOffRoll,
         Airplane.State.takeOffGoAround,
         Airplane.State.departingLow,
@@ -16,14 +16,18 @@ public class ClearedForTakeOffCommandApplication extends CommandApplication<Clea
         Airplane.State.arrivingHigh,
         Airplane.State.arrivingLow,
         Airplane.State.arrivingCloseFaf,
+        Airplane.State.flyingIaf2Faf,
         Airplane.State.approachEnter,
         Airplane.State.approachDescend,
         Airplane.State.longFinal,
         Airplane.State.shortFinal,
         Airplane.State.landed,
-        Airplane.State.holding);
-    if (ret != null) return ret;
+        Airplane.State.holding
+    };
+  }
 
+  @Override
+  protected IFromAirplane checkCommandSanity(Airplane.Airplane4Command plane, ClearedForTakeoffCommand c) {
     return null;
   }
 

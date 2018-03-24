@@ -5,7 +5,7 @@
  */
 package eng.jAtcSim;
 
-import eng.eSystem.utilites.CollectionUtil;
+import eng.eSystem.utilites.CollectionUtils;
 import eng.jAtcSim.frmPacks.Pack;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.global.logging.ApplicationLog;
@@ -46,9 +46,9 @@ public class JAtcSim {
 
   private static final boolean FAST_START = false;
   private static final Traffic specificTraffic =
-//      new TestTrafficOneApproach();
+      new TestTrafficOneApproach();
   //new TestTrafficOneDeparture();
-      null;
+      //null;
   private static AppSettings appSettings;
 
   /**
@@ -218,8 +218,8 @@ public class JAtcSim {
         break;
       case airportDefined:
         Area area = XmlLoadHelper.loadNewArea(sett.files.areaXmlFile);
-        Airport airport = CollectionUtil.tryGetFirst(area.getAirports(), o -> o.getIcao().equals(sett.recent.icao));
-        ret = CollectionUtil.tryGetFirst(airport.getTrafficDefinitions(), o -> o.getTitle().equals(sett.traffic.trafficAirportDefinedTitle));
+        Airport airport = CollectionUtils.tryGetFirst(area.getAirports(), o -> o.getIcao().equals(sett.recent.icao));
+        ret = CollectionUtils.tryGetFirst(airport.getTrafficDefinitions(), o -> o.getTitle().equals(sett.traffic.trafficAirportDefinedTitle));
         break;
       case custom:
         ret = new GenericTraffic(

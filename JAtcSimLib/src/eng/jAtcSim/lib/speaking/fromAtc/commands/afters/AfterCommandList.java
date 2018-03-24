@@ -16,7 +16,6 @@ import eng.jAtcSim.lib.speaking.fromAtc.commands.HoldCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ProceedDirectCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ShortcutCommand;
 import eng.jAtcSim.lib.world.Navaid;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -28,18 +27,18 @@ import java.util.stream.Collectors;
  */
 public class AfterCommandList {
 
-  public void consolePrint(){
+  private final List<Item> inner = new LinkedList<>();
+
+  public void consolePrint() {
     for (Item item : inner) {
       String s = String.format("%s -> %s", item.antecedent.toString(), item.consequent.toString());
       System.out.println(s);
     }
   }
 
-  public void clear(){
+  public void clear() {
     inner.clear();
   }
-
-  private final List<Item> inner = new LinkedList<>();
 
   public void add(AfterCommand afterCommand, IAtcCommand consequent) {
     Item it = new Item(afterCommand, consequent);
@@ -75,7 +74,6 @@ public class AfterCommandList {
   }
 
   public List<IAtcCommand> getAndRemoveSatisfiedCommands(Airplane referencePlane, Coordinate currentTargetCoordinateOrNull) {
-    double alt = referencePlane.getAltitude();
     double spd = referencePlane.getSpeed();
     Coordinate cor = referencePlane.getCoordinate();
 
@@ -124,38 +122,55 @@ public class AfterCommandList {
     return ret;
   }
 
-  private boolean isAfterAltitudePassed(AfterAltitudeCommand cmd, double altitudeInFt) {
-    int trgAlt = cmd.getAltitudeInFt();
-    boolean ret;
-    switch (cmd.getRestriction()){
-      case exact:
-        ret =Math.abs(trgAlt - altitudeInFt) < 100;
-        break;
-      case andAbove:
-        ret = altitudeInFt > trgAlt;
-        break;
-      case andBelow:
-        ret = altitudeInFt<trgAlt;
-        break;
-      default:
-        throw new UnsupportedOperationException();
-    }
-
-    return ret;
-  }
+//  public Navaid getLastLateralConsequent() {
+//    Navaid ret = null;
+//    for (int i = inner.size() - 1; i <= 0; i--) {
+//      Item it = inner.get(i);
+//      IAtcCommand cons = it.consequent;
+//      if (it.consequent instanceof hold)
+//    }
+//
+//    return ret;
+//  }
 
   public boolean isEmpty() {
     return inner.isEmpty();
   }
 
-  public ICommand getLast() {
-    return inner.get(inner.size() - 1).consequent;
-  }
+//  public ICommand getLast() {
+//    return inner.get(inner.size() - 1).consequent;
+//  }
 
   public boolean hasLateralDirectionToNavaid(Navaid navaid) {
     boolean ret = this.inner.stream().anyMatch(q ->
         q.consequent instanceof ProceedDirectCommand &&
             ((ProceedDirectCommand) q.consequent).getNavaid().equals(navaid));
+    return ret;
+  }
+
+  public boolean hasLateralDirectionAfterCoordinate(Coordinate coordinate) {
+    boolean ret = this.inner.stream().anyMatch(
+        o -> isLateralDirectionAfterNavaidCommand(coordinate, o));
+    return ret;
+  }
+
+  private boolean isAfterAltitudePassed(AfterAltitudeCommand cmd, double altitudeInFt) {
+    int trgAlt = cmd.getAltitudeInFt();
+    boolean ret;
+    switch (cmd.getRestriction()) {
+      case exact:
+        ret = Math.abs(trgAlt - altitudeInFt) < 100;
+        break;
+      case andAbove:
+        ret = altitudeInFt > trgAlt;
+        break;
+      case andBelow:
+        ret = altitudeInFt < trgAlt;
+        break;
+      default:
+        throw new UnsupportedOperationException();
+    }
+
     return ret;
   }
 
@@ -179,17 +194,11 @@ public class AfterCommandList {
     }
   }
 
-  public boolean hasLateralDirectionAfterCoordinate(Coordinate coordinate){
-    boolean ret = this.inner.stream().anyMatch(
-        o -> isLateralDirectionAfterNavaidCommand(coordinate, o ));
-    return ret;
-  }
-
-  private boolean isLateralDirectionAfterNavaidCommand(Coordinate coordinate, Item item){
+  private boolean isLateralDirectionAfterNavaidCommand(Coordinate coordinate, Item item) {
     boolean ret = false;
-    if (item.antecedent instanceof AfterNavaidCommand){
+    if (item.antecedent instanceof AfterNavaidCommand) {
       AfterNavaidCommand anc = (AfterNavaidCommand) item.antecedent;
-      if (anc.getNavaid().getCoordinate().equals(coordinate)){
+      if (anc.getNavaid().getCoordinate().equals(coordinate)) {
         if (item.consequent instanceof ChangeHeadingCommand ||
             item.consequent instanceof ProceedDirectCommand ||
             item.consequent instanceof HoldCommand ||
