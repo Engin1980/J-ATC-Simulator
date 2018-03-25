@@ -782,8 +782,9 @@ public class Pilot {
 
           if (isAfterStateChange) {
             // moc nizko, uz pod stabilized altitude
-            int MAX_APP_HEADING_DIFF = 3;
-            if (Math.abs(parent.getTargetHeading() - this.approach.getCourse()) > MAX_APP_HEADING_DIFF) {
+            int MAX_LONG_FINAL_HEADING_DIFF = 30;
+            if (Math.abs(parent.getTargetHeading() - this.approach.getCourse()) > MAX_LONG_FINAL_HEADING_DIFF) {
+              System.out.println("stab-fail " + (Math.abs(parent.getTargetHeading() - this.approach.getCourse()) > MAX_LONG_FINAL_HEADING_DIFF));
               goAround("Not stabilized in approach.");
               return;
             }
@@ -804,6 +805,11 @@ public class Pilot {
           updateAltitudeOnApproach(true);
           updateHeadingOnApproach();
           if (isAfterStateChange) {
+            int MAX_SHORT_FINAL_HEADING_DIFF = 3;
+            if (Math.abs(parent.getTargetHeading() - this.approach.getCourse()) > MAX_SHORT_FINAL_HEADING_DIFF) {
+              goAround("Not stabilized in approach.");
+              return;
+            }
 
             // neni na twr, tak GA
             if (pilot.atc != Acc.atcTwr()) {
@@ -932,8 +938,8 @@ public class Pilot {
     endrivePlane();
     flushSaidTextToAtc();
 
-    this.afterCommands.consolePrint();
-    System.out.println(" / / / / / ");
+    // this.afterCommands.consolePrint();
+    // System.out.println(" / / / / / ");
   }
 
   public Atc getTunedAtc() {
@@ -1120,7 +1126,7 @@ public class Pilot {
 
     }
   }
-  
+
   private void say(ISpeech speech) {
     // if no tuned atc, nothing is said
     if (atc == null) return;

@@ -5,7 +5,6 @@
  */
 package eng.jAtcSim.lib.world;
 
-import com.sun.istack.internal.Nullable;
 import eng.eSystem.utilites.CollectionUtils;
 import eng.eSystem.xmlSerialization.XmlOptional;
 import eng.jAtcSim.lib.coordinates.Coordinate;
@@ -93,8 +92,13 @@ public class RunwayThreshold extends MustBeBinded implements KeyItem<String> {
 
 
   public CurrentApproachInfo tryGetCurrentApproachInfo(Approach.ApproachType type, char category, Coordinate planePosition) {
-    CurrentApproachInfo ret =
-        Approach.tryGetCurrentApproachInfo(this.approaches, category, type, planePosition);
+
+    CurrentApproachInfo ret;
+    if (type == Approach.ApproachType.visual)
+      ret = Approach.createVisualApproachInfo(this, type, planePosition);
+    else
+      ret =
+          Approach.tryGetCurrentApproachInfo(this.approaches, category, type, planePosition);
     return ret;
   }
 

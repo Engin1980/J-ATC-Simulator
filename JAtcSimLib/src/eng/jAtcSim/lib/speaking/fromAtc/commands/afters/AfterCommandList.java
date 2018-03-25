@@ -122,24 +122,9 @@ public class AfterCommandList {
     return ret;
   }
 
-//  public Navaid getLastLateralConsequent() {
-//    Navaid ret = null;
-//    for (int i = inner.size() - 1; i <= 0; i--) {
-//      Item it = inner.get(i);
-//      IAtcCommand cons = it.consequent;
-//      if (it.consequent instanceof hold)
-//    }
-//
-//    return ret;
-//  }
-
   public boolean isEmpty() {
     return inner.isEmpty();
   }
-
-//  public ICommand getLast() {
-//    return inner.get(inner.size() - 1).consequent;
-//  }
 
   public boolean hasLateralDirectionToNavaid(Navaid navaid) {
     boolean ret = this.inner.stream().anyMatch(q ->
