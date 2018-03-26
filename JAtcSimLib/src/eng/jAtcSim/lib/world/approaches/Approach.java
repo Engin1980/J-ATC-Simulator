@@ -80,25 +80,49 @@ public abstract class Approach {
     int gaa = fafa;
     Coordinate faf = Coordinates.getCoordinate(threshold.getCoordinate(), hdg, 3.3);
     Coordinate mapt = Coordinates.getCoordinate(threshold.getCoordinate(), hdg, 1);
-    Navaid ptpNavaid =  null;
+    Navaid ptpNavaid = null;
+    Navaid rwyNavaid = null;
 
     {
       double hdgToFaf = Coordinates.getBearing(planeLocation, faf);
       double deltaHdgAbs = Headings.getDifference(hdgToFaf, threshold.getCourse(), true);
-      if (deltaHdgAbs > 100){
+      if (deltaHdgAbs > 100) {
         // needs ptp
         Coordinate ptp = null;
-        double deltaHdg = Headings.getDifference(hdgToFaf, threshold.getCourse(),false);
+        double deltaHdg = Headings.getDifference(hdgToFaf, threshold.getCourse(), false);
         boolean isRight = (deltaHdgAbs != deltaHdg) ? true : false;
-        double ptpRad =  isRight ? threshold.getCourse() + 90 : threshold.getCourse() - 90;
+        double ptpRad = isRight ? threshold.getCourse() + 120 : threshold.getCourse() - 120;
         ptpRad = Headings.to(ptpRad);
-        ptp = Coordinates.getCoordinate(faf, ptpRad, 1.7);
+        ptp = Coordinates.getCoordinate(faf, ptpRad, 2.0);
 
-        String ptpNavaidName = threshold.getParent().getParent().getIcao() + threshold.getName() + (isRight ? "R" : "L");
+        String ptpNavaidName = threshold.getParent().getParent().getIcao() + threshold.getName() + (isRight ? "_RBE" : "_LBE");
         ptpNavaid = Acc.area().getNavaids().tryGet(ptpNavaidName);
         if (ptpNavaid == null) {
-          ptpNavaid = new Navaid(ptpNavaidName, Navaid.eType.fix, ptp);
+          ptpNavaid = new Navaid(ptpNavaidName, Navaid.eType.auxiliary, ptp);
           Acc.area().getNavaids().add(ptpNavaid);
+        }
+      }
+    }
+
+    {
+      double hdgToRwy = Coordinates.getBearing(planeLocation, threshold.getOtherThreshold().getCoordinate());
+      double deltaHdgAbs = Headings.getDifference(hdgToRwy, threshold.getCourse(), true);
+      if (deltaHdgAbs > 100) {
+        // needs rwy
+        Coordinate rwy = null;
+        double deltaHdg = Headings.getDifference(hdgToRwy, threshold.getCourse(), false);
+        boolean isRight = (deltaHdgAbs != deltaHdg) ? true : false;
+        double rwyRad = isRight ? threshold.getCourse() + 90 : threshold.getCourse() - 90;
+        rwyRad = Headings.to(rwyRad);
+        rwy = Coordinates.getCoordinate(
+            threshold.getOtherThreshold().getCoordinate(),
+            rwyRad, 1.7);
+
+        String rwyNavaidName = threshold.getParent().getParent().getIcao() + threshold.getName() + (isRight ? "_RBS" : "_LBS");
+        rwyNavaid = Acc.area().getNavaids().tryGet(rwyNavaidName);
+        if (rwyNavaid == null) {
+          rwyNavaid = new Navaid(rwyNavaidName, Navaid.eType.auxiliary, rwy);
+          Acc.area().getNavaids().add(rwyNavaid);
         }
       }
     }
@@ -108,7 +132,12 @@ public abstract class Approach {
 
     SpeechList<IFromAtc> iafCmds = new SpeechList<>();
     iafCmds.add(new ChangeAltitudeCommand(ChangeAltitudeCommand.eDirection.descend, fafa));
-    if (ptpNavaid != null){
+    if (rwyNavaid != null) {
+      assert ptpNavaid != null;
+      iafCmds.add(new ProceedDirectCommand(rwyNavaid));
+      iafCmds.add(new ThenCommand());
+    }
+    if (ptpNavaid != null) {
       iafCmds.add(new ProceedDirectCommand(ptpNavaid));
       iafCmds.add(new ThenCommand());
       iafCmds.add(new ChangeHeadingCommand());

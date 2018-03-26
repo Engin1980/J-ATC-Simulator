@@ -650,13 +650,14 @@ public class Pilot {
 
     private boolean isBehindFaf() {
       double courseToFaf = Coordinates.getBearing(parent.getCoordinate(), approach.getFaf());
-      boolean ret = Headings.getDifference(courseToFaf, approach.getThreshold().getCourse(), true) > 90;
+      double diff = Headings.getDifference(courseToFaf, approach.getThreshold().getCourse(), true);
+      boolean ret = diff > 90;
       return ret;
     }
 
     private boolean isPassingFaf() {
       double dist = Coordinates.getDistanceInNM(parent.getCoordinate(), approach.getFaf());
-      boolean ret = dist < 2;
+      boolean ret = dist < 1.0;
       return ret;
     }
 
@@ -705,7 +706,7 @@ public class Pilot {
 
     private void updateApproachLocation() {
       if (location == ApproachLocation.unset) {
-        if (isBehindFaf())
+        if (isPassingFaf())
           location = ApproachLocation.beforeMapt;
         else
           location = ApproachLocation.beforeFaf;
@@ -735,6 +736,9 @@ public class Pilot {
     }
 
     private void flyApproachingPhase() {
+
+      System.out.println("stt: " + parent.getState() + " // " + this.location);
+
       ApproachLocation last = this.location;
       updateApproachLocation();
 
@@ -805,8 +809,10 @@ public class Pilot {
           updateAltitudeOnApproach(true);
           updateHeadingOnApproach();
           if (isAfterStateChange) {
-            int MAX_SHORT_FINAL_HEADING_DIFF = 3;
-            if (Math.abs(parent.getTargetHeading() - this.approach.getCourse()) > MAX_SHORT_FINAL_HEADING_DIFF) {
+            int MAX_SHORT_FINAL_HEADING_DIFF = 10;
+            double diff = Math.abs(parent.getTargetHeading() - this.approach.getCourse());
+            if ( diff > MAX_SHORT_FINAL_HEADING_DIFF) {
+              System.out.println("stab-fail " + diff);
               goAround("Not stabilized in approach.");
               return;
             }
@@ -938,8 +944,8 @@ public class Pilot {
     endrivePlane();
     flushSaidTextToAtc();
 
-    // this.afterCommands.consolePrint();
-    // System.out.println(" / / / / / ");
+    this.afterCommands.consolePrint();
+    System.out.println(" / / / / / ");
   }
 
   public Atc getTunedAtc() {

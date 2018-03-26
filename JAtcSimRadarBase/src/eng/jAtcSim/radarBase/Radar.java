@@ -424,6 +424,7 @@ public class Radar {
       for (RunwayThreshold runwayThreshold : runway.getThresholds()) {
         for (Route route : runwayThreshold.getRoutes()) {
           //TODO this is incredibly time consuming, do it better way?
+          // YES! There is, route has something like "getNavaids()", try to do this that way
           for (IAtcCommand command : route.getCommands()) {
             if (command instanceof ProceedDirectCommand) {
               ProceedDirectCommand pdc = (ProceedDirectCommand) command;
@@ -731,6 +732,7 @@ public class Radar {
 //    }
 
   }
+
 
   private void drawNavaids() {
     //for (Navaid n : area.getNavaids()) {
