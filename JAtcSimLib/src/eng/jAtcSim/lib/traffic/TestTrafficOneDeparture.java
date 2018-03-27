@@ -45,8 +45,8 @@ public class TestTrafficOneDeparture extends TestTraffic {
   public void generateNewMovementsIfRequired() {
     if (!done) {
       super.addScheduledMovement(generateMovement("0000"));
-      super.addScheduledMovement(generateMovement("5555"));
-      super.addScheduledMovement(generateMovement("7777"));
+//      super.addScheduledMovement(generateMovement("5555"));
+//      super.addScheduledMovement(generateMovement("7777"));
       done = true;
     }
   }

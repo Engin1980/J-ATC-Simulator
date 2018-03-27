@@ -522,7 +522,6 @@ public class TowerAtc extends ComputerAtc {
     lst.add(new RadarContactConfirmationNotification());
     lst.add(new ClearedForTakeoffCommand(availableThreshold));
 
-
     lst.add(new ChangeAltitudeCommand(
         ChangeAltitudeCommand.eDirection.climb, availableThreshold.getInitialDepartureAltitude()));
 
@@ -531,9 +530,6 @@ public class TowerAtc extends ComputerAtc {
         Acc.airport().getAltitude() + Acc.rnd().nextInt(150, 450),
         AfterAltitudeCommand.ERestriction.andAbove));
     lst.add(new ContactCommand(Atc.eType.app));
-
-    SpeechList route = toReadyPlane.getAssigneRoute().getCommandsListClone();
-    lst.add(route);
 
     Message m = new Message(this, toReadyPlane, lst);
     super.sendMessage(m);
