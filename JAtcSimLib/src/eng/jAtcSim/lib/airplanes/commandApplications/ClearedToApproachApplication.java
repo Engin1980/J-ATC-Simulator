@@ -12,6 +12,7 @@ import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.reje
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ClearedToApproachCommand;
 import eng.jAtcSim.lib.world.Navaid;
 import eng.jAtcSim.lib.world.RunwayThreshold;
+import eng.jAtcSim.lib.world.approaches.Approach;
 import eng.jAtcSim.lib.world.approaches.CurrentApproachInfo;
 
 public class ClearedToApproachApplication extends CommandApplication<ClearedToApproachCommand> {
@@ -53,9 +54,10 @@ public class ClearedToApproachApplication extends CommandApplication<ClearedToAp
     }
     if (ret != null) return ret;
 
-    if (!cai.willUseIafRouting()) {
+    boolean isVisual = cai.getType() == Approach.ApproachType.visual;
+    if (isVisual || !cai.willUseIafRouting()) {
 
-      final int MAXIMAL_DISTANCE_TO_ENTER_APPROACH_IN_NM = 17;
+      final int MAXIMAL_DISTANCE_TO_ENTER_APPROACH_IN_NM = isVisual ? 12 : 17;
       final int MAXIMAL_ONE_SIDE_ARC_FROM_APPROACH_RADIAL_TO_ENTER_APPROACH_IN_DEGREES = 30;
 
       // zatim resim jen pozici letadla
@@ -70,9 +72,10 @@ public class ClearedToApproachApplication extends CommandApplication<ClearedToAp
           cai.getCourse(),
           MAXIMAL_ONE_SIDE_ARC_FROM_APPROACH_RADIAL_TO_ENTER_APPROACH_IN_DEGREES);
 
-      if (dist > MAXIMAL_DISTANCE_TO_ENTER_APPROACH_IN_NM ||
-          !Headings.isBetween(minHeading, currentHeading, maxHeading)) {
-        ret = new UnableToEnterApproachFromDifficultPosition(c);
+      if (dist > MAXIMAL_DISTANCE_TO_ENTER_APPROACH_IN_NM)
+        ret = new UnableToEnterApproachFromDifficultPosition(c, "We are too far.");
+      else if (!isVisual && !Headings.isBetween(minHeading, currentHeading, maxHeading)) {
+        ret = new UnableToEnterApproachFromDifficultPosition(c, "We need to be heading moreless for the runway.");
       }
     }
     if (ret != null) return ret;

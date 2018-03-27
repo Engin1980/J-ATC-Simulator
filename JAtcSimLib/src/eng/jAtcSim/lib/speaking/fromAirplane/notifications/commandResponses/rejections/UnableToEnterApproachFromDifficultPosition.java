@@ -6,9 +6,9 @@ import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.Reje
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ClearedToApproachCommand;
 
 public class UnableToEnterApproachFromDifficultPosition extends Rejection {
-  public UnableToEnterApproachFromDifficultPosition(ClearedToApproachCommand origin) {
+  public UnableToEnterApproachFromDifficultPosition(ClearedToApproachCommand origin, String reason) {
     super(
-        "Cannot enter approach from current position.",
+        "Unable to enter approach from current position. " + reason,
         origin);
   }
   @Override

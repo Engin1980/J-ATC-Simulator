@@ -222,7 +222,7 @@ public class LongFormatter extends Formatter {
   }
 
   public String format(UnableToEnterApproachFromDifficultPosition cmd) {
-    return "Unable to enter approach from current position.";
+    return cmd.reason;
   }
 
   public String format(HighOrderedSpeedForApproach cmd) {
