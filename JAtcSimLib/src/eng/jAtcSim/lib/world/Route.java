@@ -127,7 +127,7 @@ public class Route extends MustBeBinded implements KeyItem<String> {
     super.checkBinded();
 
     SpeechList<IAtcCommand> ret = new SpeechList<>();
-    ret.addAll(_routeCommands);
+    ret.add(_routeCommands);
     return ret;
   }
 

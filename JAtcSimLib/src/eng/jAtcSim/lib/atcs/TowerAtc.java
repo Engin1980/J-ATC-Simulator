@@ -197,7 +197,7 @@ public class TowerAtc extends ComputerAtc {
     for (Runway runway : Acc.airport().getRunways()) {
       if (runway.isActive() == false) continue;
       RunwayCheck rc = TowerAtc.RunwayCheck.createNormal(true);
-      runwayChecks.put(runway, rc);
+      runwayChecks.add(runway, rc);
     }
 
     inUseInfo = new RunwaysInUseInfo();
@@ -401,7 +401,7 @@ public class TowerAtc extends ComputerAtc {
     super.sendMessage(m);
 
     rc = TowerAtc.RunwayCheck.createNormal(true);
-    runwayChecks.put(runway, rc);
+    runwayChecks.add(runway, rc);
   }
 
   private void announceScheduledRunwayCheck(Runway rwy, RunwayCheck rc) {
@@ -533,7 +533,7 @@ public class TowerAtc extends ComputerAtc {
     lst.add(new ContactCommand(Atc.eType.app));
 
     SpeechList route = toReadyPlane.getAssigneRoute().getCommandsListClone();
-    lst.addAll(route);
+    lst.add(route);
 
     Message m = new Message(this, toReadyPlane, lst);
     super.sendMessage(m);

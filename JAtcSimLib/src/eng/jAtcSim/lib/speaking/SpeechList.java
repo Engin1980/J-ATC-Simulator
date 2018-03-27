@@ -1,12 +1,13 @@
 package eng.jAtcSim.lib.speaking;
 
+import eng.eSystem.collections.EList;
 import eng.jAtcSim.lib.exceptions.ERuntimeException;
 import eng.jAtcSim.lib.messaging.IMessageContent;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
 
 import java.util.*;
 
-public class SpeechList<T extends ISpeech> extends ArrayList<T> implements IMessageContent {
+public class SpeechList<T extends ISpeech> extends EList<T> implements IMessageContent {
 
   public IAtcCommand getAsCommand(int index){
     IAtcCommand ret = getAs(index);
@@ -40,10 +41,10 @@ public class SpeechList<T extends ISpeech> extends ArrayList<T> implements IMess
   public SpeechList(){}
 
   public SpeechList(T ... speeches){
-    Collections.addAll(this, speeches);
+    super(speeches);
   }
 
-  public SpeechList(Collection<? extends T> lst){
+  public SpeechList(Iterable<? extends T> lst){
     super(lst);
   }
 

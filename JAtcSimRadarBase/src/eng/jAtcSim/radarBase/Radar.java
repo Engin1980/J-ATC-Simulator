@@ -1,6 +1,7 @@
 package eng.jAtcSim.radarBase;
 
 import eng.eSystem.EStringBuilder;
+import eng.eSystem.collections.IList;
 import eng.eSystem.collections.ReadOnlyList;
 import eng.eSystem.events.Event;
 import eng.eSystem.utilites.CollectionUtils;
@@ -934,7 +935,7 @@ public class Radar {
     boolean isPlaneMessageNegative = false;
     if (containsPlaneMessage) {
       for (Message planeMsg : planeMsgs) {
-        isPlaneMessageNegative = ((SpeechList) planeMsg.getContent()).stream().anyMatch(q -> q instanceof Rejection);
+        isPlaneMessageNegative = ((SpeechList) planeMsg.getContent()).isAny(q -> q instanceof Rejection);
         if (isPlaneMessageNegative) break;
       }
     }
@@ -1062,8 +1063,7 @@ public class Radar {
   private String getMessageContentAsString(Message msg) {
     String ret;
     if (msg.isSourceOfType(Airplane.class)) {
-      if (msg.isContentOfType(List.class)) {
-        //EStringBuilder esb = new EStringBuilder();
+      if (msg.isContentOfType(IList.class)) {
         List<String> sentences = new ArrayList();
         SpeechList<ISpeech> lst = msg.getContent();
         for (ISpeech iSpeech : lst) {

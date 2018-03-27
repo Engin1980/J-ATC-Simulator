@@ -7,6 +7,7 @@ package eng.jAtcSim.lib.airplanes.pilots;
 
 import com.sun.istack.internal.Nullable;
 import eng.eSystem.EStringBuilder;
+import eng.eSystem.collections.IList;
 import eng.eSystem.utilites.CollectionUtils;
 import eng.eSystem.utilites.ConversionUtils;
 import eng.jAtcSim.lib.Acc;
@@ -163,10 +164,11 @@ public class Pilot {
 
     public void setAltitudeRestriction(Restriction altitudeRestriction) {
       Pilot.this.altitudeRestriction = altitudeRestriction;
-      if (altitudeRestriction == null)
-        Pilot.this.afterCommands.removeByConsequent(
-            SetAltitudeRestriction.class, false);
-      adjustTargetAltitude();
+      throw new UnsupportedOperationException("AF");
+//      if (altitudeRestriction == null)
+//        Pilot.this.afterCommands.removeByConsequent(
+//            SetAltitudeRestriction.class, false);
+//      adjustTargetAltitude();
     }
 
     public void setTargetHeading(double value, boolean useLeftTurn) {
@@ -566,7 +568,7 @@ public class Pilot {
 
       if (approach.getIafRoute().isEmpty() == false) {
         expandThenCommands(approach.getIafRoute());
-        Pilot.this.processSpeeches(approach.getIafRoute(), SpeechProcessingType.afterCommands);
+        Pilot.this.processSpeeches(approach.getIafRoute(), CommandSource.procedure);
         this.setState(Airplane.State.flyingIaf2Faf);
       } else {
         this.setState(Airplane.State.approachEnter);
@@ -584,10 +586,10 @@ public class Pilot {
       parent.setTargetAltitude(0);
       parent.setTargetHeading(approach.getCourse());
 
-      Pilot.this.afterCommands.clear();
+      Pilot.this.afterCommands.clearAll();
       SpeechList<IFromAtc> gas = new SpeechList<>(this.approach.getGaRoute());
       expandThenCommands(gas);
-      processSpeeches(gas, SpeechProcessingType.goAround);
+      processSpeeches(gas, CommandSource.procedure);
 
 
     }
@@ -728,7 +730,7 @@ public class Pilot {
         }
       }
 
-      if (Pilot.this.afterCommands.isEmpty()) {
+      if (Pilot.this.afterCommands.isRouteEmpty()) {
         this.setState(Airplane.State.approachEnter);
         this.isAfterStateChange = true;
         // TODO here he probably should again check the position against the runway
@@ -795,7 +797,7 @@ public class Pilot {
 
             // neni na twr, tak GA
             if (pilot.atc != Acc.atcTwr()) {
-              parent.adviceToAtc(atc, new EstablishedOnApproachNotification());
+              parent.adviceToAtc(atc, new EstablishedOnApproachNotification(this.approach.getThreshold()));
             }
             isAfterStateChange = false;
           }
@@ -811,7 +813,7 @@ public class Pilot {
           if (isAfterStateChange) {
             int MAX_SHORT_FINAL_HEADING_DIFF = 10;
             double diff = Math.abs(parent.getTargetHeading() - this.approach.getCourse());
-            if ( diff > MAX_SHORT_FINAL_HEADING_DIFF) {
+            if (diff > MAX_SHORT_FINAL_HEADING_DIFF) {
               System.out.println("stab-fail " + diff);
               goAround("Not stabilized in approach.");
               return;
@@ -869,11 +871,18 @@ public class Pilot {
     afterThreshold
   }
 
-
   private enum SpeechProcessingType {
     normal,
     afterCommands,
-    goAround
+    goAround,
+    routeInsert
+  }
+
+  private enum CommandSource {
+    procedure,
+    atc,
+    route,
+    extension
   }
 
   private final Airplane.Airplane4Pilot parent;
@@ -891,16 +900,11 @@ public class Pilot {
   private Restriction speedRestriction = null;
   private Restriction altitudeRestriction = null;
 
-  public Pilot(Airplane.Airplane4Pilot parent, Route assignedRoute, SpeechList<IAtcCommand> initialCommands, @Nullable ETime divertTime) {
+  public Pilot(Airplane.Airplane4Pilot parent, Route assignedRoute, @Nullable ETime divertTime) {
 
     this.parent = parent;
     this.assignedRoute = assignedRoute;
-    {
-      SpeechList<IFromAtc> speeches =
-          new SpeechList<>(initialCommands); // need clone to expand "thens"
-      expandThenCommands(speeches);
-      this.queue.addNoDelay(speeches);
-    }
+
     if (parent.isArrival()) {
       this.atc = Acc.atcCtr();
       this.behavior = new ArrivalBehavior();
@@ -912,6 +916,21 @@ public class Pilot {
     }
 
     this.hasRadarContact = true;
+  }
+
+  public void initSpeeches(SpeechList<IAtcCommand> initialCommands) {
+    SpeechList<IFromAtc> cmds;
+
+    // route
+    cmds = new SpeechList<>();
+    cmds.add(assignedRoute.getCommands());
+    expandThenCommands(cmds);
+    processSpeeches(cmds, CommandSource.procedure);
+
+    // initial ATC commands
+    cmds = new SpeechList<>(initialCommands);
+    expandThenCommands(cmds);
+    processSpeeches(cmds, CommandSource.atc);
   }
 
   public Route getAssignedRoute() {
@@ -974,7 +993,7 @@ public class Pilot {
     if (this.targetCoordinate != null && this.targetCoordinate.equals(navaid.getCoordinate())) {
       ret = true;
     } else {
-      ret = this.afterCommands.hasLateralDirectionToNavaid(navaid);
+      ret = this.afterCommands.hasProceedDirectToNavaidAsConseqent(navaid);
     }
     return ret;
   }
@@ -994,7 +1013,7 @@ public class Pilot {
     Navaid n = getDivertNavaid();
 
     this.parent.divert();
-    this.afterCommands.clear();
+    this.afterCommands.clearAll();
     this.behavior = new DepartureBehavior();
     this.divertInfo = null;
     this.assignedRoute = Route.createNewByFix(n, false);
@@ -1024,97 +1043,158 @@ public class Pilot {
       say(new RequestRadarContactNotification());
       this.queue.clear();
     } else {
-      processSpeeches(current, SpeechProcessingType.normal);
+      processSpeeches(current, CommandSource.atc);
     }
   }
 
   private void processAfterSpeeches() {
-    List<IAtcCommand> cmdsToProcess
-        = afterCommands.getAndRemoveSatisfiedCommands(parent.getMe(), this.targetCoordinate);
 
-    processSpeeches(cmdsToProcess, SpeechProcessingType.afterCommands);
+    SpeechList<IAtcCommand> cmds;
+
+    cmds = afterCommands.getAndRemoveSatisfiedCommands(
+        parent.getMe(), this.targetCoordinate, AfterCommandList.Type.extensions);
+    processSpeeches(cmds, CommandSource.extension);
+
+    cmds = afterCommands.getAndRemoveSatisfiedCommands(
+        parent.getMe(), this.targetCoordinate, AfterCommandList.Type.route);
+    processSpeeches(cmds, CommandSource.route);
   }
 
-  private void processSpeeches(List<? extends ISpeech> queue, SpeechProcessingType processingType) {
-    boolean sayConfirmations;
-    boolean isAfterCommandProcessing;
-
-    switch (processingType) {
-      case normal:
-        sayConfirmations = true;
-        isAfterCommandProcessing = false;
-        break;
-      case afterCommands:
-        sayConfirmations = false;
-        isAfterCommandProcessing = true;
-        break;
-      case goAround:
-        sayConfirmations = false;
-        isAfterCommandProcessing = false;
-        break;
-      default:
-        throw new UnsupportedOperationException();
-    }
-
+  private void processSpeeches(SpeechList<? extends IFromAtc> queue, CommandSource cs) {
 
     Airplane.Airplane4Command plane = this.parent.getPlane4Command();
     while (!queue.isEmpty()) {
-      ISpeech s = queue.get(0);
-      IFromAtc sa = (IFromAtc) s;
-      if (s instanceof AfterCommand) {
-        // TODO what is the last parameter of the next cmd?
-        processAfterSpeechWithConsequents(queue, sayConfirmations);
+      IFromAtc cmd = queue.get(0);
+      if (cmd instanceof AfterCommand) {
+        processAfterSpeechWithConsequents(queue, cs);
       } else {
-        ConfirmationResult cres = ApplicationManager.confirm(plane, sa, !isAfterCommandProcessing, true);
-        if (cres.rejection != null) {
-          // command was rejected
-          say(cres.rejection);
-        } else {
-          if (!isAfterCommandProcessing && (sa instanceof IAtcCommand))
-            removeUnecessaryAfterCommands((IAtcCommand) sa);
-          // command was not confirmed
-          // notifications do not have confirmation
-          if (sayConfirmations && cres.confirmation != null)
-            say(cres.confirmation);
-          ApplicationResult ares = ApplicationManager.apply(plane, sa);
-          if (ares.rejection != null) {
-            throw new ERuntimeException("This should not be rejected as was confirmed a few moments before.");
-          } else {
-            ares.informations.forEach(q -> say(q));
-          }
-        }
-
-        queue.remove(0);
+        processNormalSpeech(queue, cmd, cs, plane);
       }
     }
   }
 
-  private void removeUnecessaryAfterCommands(IAtcCommand c) {
-    if (c instanceof ProceedDirectCommand ||
-        c instanceof ChangeHeadingCommand) {
-      this.afterCommands.removeByConsequent(ProceedDirectCommand.class, true);
-      this.afterCommands.removeByConsequent(ChangeHeadingCommand.class, true);
-      this.afterCommands.removeByAntecedent(AfterNavaidCommand.class, true);
-    } else if (c instanceof ShortcutCommand) {
-      this.afterCommands.removeByConsequent(ProceedDirectCommand.class, true);
-      this.afterCommands.removeByConsequent(ChangeHeadingCommand.class, true);
-    } else if (c instanceof ChangeAltitudeCommand) {
-      this.afterCommands.removeByConsequent(ChangeAltitudeCommand.class, true);
-    } else if ((c instanceof ContactCommand)
-        || (c instanceof ChangeSpeedCommand)
-        || (c instanceof ChangeAltitudeCommand)
-        || (c instanceof ClearedToApproachCommand)
-        || (c instanceof HoldCommand)) {
-      //this.afterCommands.removeByConsequent(c.getClass());
+  private void processNormalSpeech(
+      SpeechList<? extends IFromAtc> queue, IFromAtc cmd,
+      CommandSource cs, Airplane.Airplane4Command plane) {
+
+    ConfirmationResult cres = ApplicationManager.confirm(plane, cmd, cs == CommandSource.atc, true);
+    if (cres.rejection != null) {
+      // command was rejected
+      say(cres.rejection);
+    } else {
+      affectAfterCommands(cmd, cs);
+      // new commands from atc when needs to be confirmed, are confirmed
+      if (cs == CommandSource.atc && cres.confirmation != null)
+        say(cres.confirmation);
+      // command is applied
+      ApplicationResult ares = ApplicationManager.apply(plane, cmd);
+      assert ares.rejection == null : "This should not be rejected as was confirmed a few moments before.";
+      ares.informations.forEach(q -> say(q));
+    }
+
+    queue.removeAt(0);
+  }
+
+
+  private void affectAfterCommands(IFromAtc cmd, CommandSource cs) {
+    final Class[] lateralCommands = new Class[]{ProceedDirectCommand.class, ChangeHeadingCommand.class, HoldCommand.class};
+    switch (cs) {
+      case procedure:
+        // nothing
+        break;
+      case route:
+        // nothing
+        break;
+      case atc:
+
+        if (ConversionUtils.isInstanceOf(cmd, lateralCommands)) {
+          // rule 2
+          this.afterCommands.clearRoute();
+          this.afterCommands.clearExtensionsByConsequent(lateralCommands);
+        } else if (cmd instanceof ShortcutCommand) {
+          // rule 3
+          throw new UnsupportedOperationException();
+        } else if (cmd instanceof ChangeAltitudeCommand) {
+          // rule 4
+          ChangeAltitudeCommand tmp = (ChangeAltitudeCommand) cmd;
+          this.afterCommands.clearChangeAltitudeClass(tmp.getAltitudeInFt(), this.parent.isArrival());
+        } else if (cmd instanceof ChangeSpeedCommand) {
+          ChangeSpeedCommand tmp = (ChangeSpeedCommand) cmd;
+          if (tmp.isResumeOwnSpeed() == false) {
+            // rule 5
+            this.afterCommands.clearChangeSpeedClass(tmp.getSpeedInKts(), this.parent.isArrival(), AfterCommandList.Type.route);
+            this.afterCommands.clearChangeSpeedClass(tmp.getSpeedInKts(), this.parent.isArrival(), AfterCommandList.Type.extensions);
+          } else {
+            // rule 6
+            this.afterCommands.clearChangeSpeedClassOfRouteWithTransferConsequent(
+                tmp.getSpeedInKts(), this.parent.isArrival());
+            this.afterCommands.clearExtensionsByConsequent(ChangeSpeedCommand.class);
+          }
+        } else if (cmd instanceof ClearedToApproachCommand) {
+          // rule 12
+          this.afterCommands.clearAll();
+        }
+        break;
+      case extension:
+        if (ConversionUtils.isInstanceOf(cmd, lateralCommands)) {
+          // rule 7
+          this.afterCommands.clearRoute();
+        } else if (cmd instanceof ShortcutCommand) {
+          // rule 8
+          throw new UnsupportedOperationException();
+        } else if (cmd instanceof AfterAltitudeCommand) {
+          // rule 9
+          ChangeAltitudeCommand tmp = (ChangeAltitudeCommand) cmd;
+          this.afterCommands.clearChangeAltitudeClass(tmp.getAltitudeInFt(), this.parent.isArrival());
+        } else if (cmd instanceof ChangeSpeedCommand) {
+          ChangeSpeedCommand tmp = (ChangeSpeedCommand) cmd;
+          if (tmp.isResumeOwnSpeed() == false) {
+            // rule 10
+            this.afterCommands.clearChangeSpeedClass(tmp.getSpeedInKts(), this.parent.isArrival(), AfterCommandList.Type.extensions);
+          } else {
+            // rule 11
+            this.afterCommands.clearChangeSpeedClassOfRouteWithTransferConsequent(
+                tmp.getSpeedInKts(), this.parent.isArrival());
+            this.afterCommands.clearExtensionsByConsequent(ChangeSpeedCommand.class);
+          }
+        } else if (cmd instanceof ClearedToApproachCommand) {
+          // rule 13
+          this.afterCommands.clearAll();
+        }
+        break;
+      default:
+        throw new UnsupportedOperationException();
     }
   }
 
-  private void processAfterSpeechWithConsequents(List<? extends ISpeech> queue, boolean sayConfirmations) {
+  private void removeUnecessaryAfterCommands(IAtcCommand c) {
+    throw new UnsupportedOperationException("AF");
+//    if (c instanceof ProceedDirectCommand ||
+//        c instanceof ChangeHeadingCommand) {
+//      this.afterCommands.removeByConsequent(ProceedDirectCommand.class, true);
+//      this.afterCommands.removeByConsequent(ChangeHeadingCommand.class, true);
+//      this.afterCommands.removeByAntecedent(AfterNavaidCommand.class, true);
+//    } else if (c instanceof ShortcutCommand) {
+//      this.afterCommands.removeByConsequent(ProceedDirectCommand.class, true);
+//      this.afterCommands.removeByConsequent(ChangeHeadingCommand.class, true);
+//    } else if (c instanceof ChangeAltitudeCommand) {
+//      this.afterCommands.removeByConsequent(ChangeAltitudeCommand.class, true);
+//    } else if ((c instanceof ContactCommand)
+//        || (c instanceof ChangeSpeedCommand)
+//        || (c instanceof ChangeAltitudeCommand)
+//        || (c instanceof ClearedToApproachCommand)
+//        || (c instanceof HoldCommand)) {
+//      //this.afterCommands.removeByConsequent(c.getClass());
+//    }
+  }
+
+  private void processAfterSpeechWithConsequents(IList<? extends ISpeech> queue, CommandSource cs) {
     Airplane.Airplane4Command plane = this.parent.getPlane4Command();
     AfterCommand af = (AfterCommand) queue.get(0);
-    queue.remove(0);
+    queue.removeAt(0);
 
     ConfirmationResult cres;
+    boolean sayConfirmations = cs == CommandSource.atc;
 
     cres = ApplicationManager.confirm(plane, af, true, false);
     if (sayConfirmations) say(cres.confirmation);
@@ -1123,12 +1203,15 @@ public class Pilot {
       IAtcCommand cmd = (IAtcCommand) queue.get(0);
       if (cmd instanceof AfterCommand)
         break;
-      queue.remove(0);
+      queue.removeAt(0);
 
       cres = ApplicationManager.confirm(plane, cmd, true, false);
       if (sayConfirmations) say(cres.confirmation);
 
-      afterCommands.add(af, cmd);
+      if (cs == CommandSource.procedure){
+        afterCommands.addRoute(af, cmd);
+      } else
+        afterCommands.addExtension(af, cmd);
 
     }
   }

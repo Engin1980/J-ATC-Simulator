@@ -247,7 +247,7 @@ public class LongFormatter extends Formatter {
   }
 
   public String format(EstablishedOnApproachNotification speech) {
-    return "established, short final";
+    return "Short final " + speech.getThreshold().getName();
   }
 
   public String format(DivertTimeNotification speech) {
@@ -259,7 +259,7 @@ public class LongFormatter extends Formatter {
   }
 
   public String format(GoingAroundNotification cmd) {
-    String ret = "Missed approach. " + cmd.getReason() == null ? "" : cmd.getReason();
+    String ret = "Missed approach. " + (cmd.getReason() == null ? "" : cmd.getReason());
     return ret;
   }
 

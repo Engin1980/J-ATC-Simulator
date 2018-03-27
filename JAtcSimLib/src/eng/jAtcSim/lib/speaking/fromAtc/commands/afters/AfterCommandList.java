@@ -5,112 +5,94 @@
  */
 package eng.jAtcSim.lib.speaking.fromAtc.commands.afters;
 
+import eng.eSystem.collections.EList;
+import eng.eSystem.collections.IList;
+import eng.eSystem.utilites.ConversionUtils;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.coordinates.Coordinate;
 import eng.jAtcSim.lib.coordinates.Coordinates;
 import eng.jAtcSim.lib.exceptions.ENotSupportedException;
-import eng.jAtcSim.lib.speaking.ICommand;
+import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
-import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeHeadingCommand;
-import eng.jAtcSim.lib.speaking.fromAtc.commands.HoldCommand;
-import eng.jAtcSim.lib.speaking.fromAtc.commands.ProceedDirectCommand;
-import eng.jAtcSim.lib.speaking.fromAtc.commands.ShortcutCommand;
+import eng.jAtcSim.lib.speaking.fromAtc.commands.*;
 import eng.jAtcSim.lib.world.Navaid;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.function.Predicate;
 
 /**
  * @author Marek
  */
 public class AfterCommandList {
 
-  private final List<Item> inner = new LinkedList<>();
-
-  public void consolePrint() {
-    for (Item item : inner) {
-      String s = String.format("%s -> %s", item.antecedent.toString(), item.consequent.toString());
-      System.out.println(s);
-    }
+  public enum Type {
+    route,
+    extensions
   }
 
-  public void clear() {
-    inner.clear();
-  }
+  private final IList<AFItem> rt = new EList<>();
+  private final IList<AFItem> ex = new EList<>();
 
-  public void add(AfterCommand afterCommand, IAtcCommand consequent) {
-    Item it = new Item(afterCommand, consequent);
-    inner.add(it);
-  }
-
-  public void removeByAntecedent(Class commandType, boolean removeWholeSequence) {
-    List<Item> toRem = new ArrayList<>();
-    for (Item item : inner) {
-      if (item.antecedent.getClass().equals(commandType))
-        toRem.add(item);
-    }
-
-    for (Item item : toRem) {
-      if (removeWholeSequence) {
-        removeWithSequenceForward(item);
-      } else {
-        inner.remove(item);
+  private static boolean isLateralDirectionAfterNavaidCommand(Coordinate coordinate, AFItem item) {
+    boolean ret = false;
+    if (item.antecedent instanceof AfterNavaidCommand) {
+      AfterNavaidCommand anc = (AfterNavaidCommand) item.antecedent;
+      if (anc.getNavaid().getCoordinate().equals(coordinate)) {
+        if (item.consequent instanceof ChangeHeadingCommand ||
+            item.consequent instanceof ProceedDirectCommand ||
+            item.consequent instanceof HoldCommand ||
+            item.consequent instanceof ShortcutCommand ||
+            item.consequent instanceof ClearedToApproachCommand)
+          ret = true;
       }
     }
+    return ret;
   }
 
-  public void removeByConsequent(Class commandType, boolean removeSequenceBackward) {
-    List<Item> toRem = inner.stream().filter(q -> q.consequent.getClass().equals(commandType)).collect(Collectors.toList());
-
-    for (Item item : toRem) {
-      if (removeSequenceBackward) {
-        removeWithSequenceBackward(item);
-      } else {
-        inner.remove(item);
-      }
-    }
-  }
-
-  public List<IAtcCommand> getAndRemoveSatisfiedCommands(Airplane referencePlane, Coordinate currentTargetCoordinateOrNull) {
+  private static SpeechList<IAtcCommand> getAndRemoveSatisfiedCommands(
+      IList<AFItem> lst,
+      Airplane referencePlane, Coordinate currentTargetCoordinateOrNull,
+      boolean removeAllPreviousToAcceptedOne) {
     double spd = referencePlane.getSpeed();
     Coordinate cor = referencePlane.getCoordinate();
+    int firstAccepted = -1;
 
-    List<IAtcCommand> ret = new LinkedList<>();
+    SpeechList<IAtcCommand> ret = new SpeechList<>();
 
     int i = 0;
-    while (i < inner.size()) {
-      if (inner.get(i).antecedent instanceof AfterAltitudeCommand) {
-        AfterAltitudeCommand cmd = (AfterAltitudeCommand) inner.get(i).antecedent;
+    while (i < lst.size()) {
+      if (lst.get(i).antecedent instanceof AfterAltitudeCommand) {
+        AfterAltitudeCommand cmd = (AfterAltitudeCommand) lst.get(i).antecedent;
         boolean isPassed = isAfterAltitudePassed(cmd, referencePlane.getAltitude());
         if (isPassed) {
-          ret.add(inner.get(i).consequent);
-          inner.remove(i);
+          if (firstAccepted < 0) firstAccepted = 0;
+          ret.add(lst.get(i).consequent);
+          lst.removeAt(i);
         } else {
           i++;
         }
-      } else if (inner.get(i).antecedent instanceof AfterSpeedCommand) {
-        int trgSpd = ((AfterSpeedCommand) inner.get(i).antecedent).getSpeedInKts();
+      } else if (lst.get(i).antecedent instanceof AfterSpeedCommand) {
+        int trgSpd = ((AfterSpeedCommand) lst.get(i).antecedent).getSpeedInKts();
         if (Math.abs(trgSpd - spd) < 10) {
-          ret.add(inner.get(i).consequent);
-          inner.remove(i);
+          if (firstAccepted < 0) firstAccepted = 0;
+          ret.add(lst.get(i).consequent);
+          lst.removeAt(i);
         } else {
           i++;
         }
-      } else if (inner.get(i).antecedent instanceof AfterNavaidCommand) {
-        AfterNavaidCommand anc = (AfterNavaidCommand) inner.get(i).antecedent;
+      } else if (lst.get(i).antecedent instanceof AfterNavaidCommand) {
+        AfterNavaidCommand anc = (AfterNavaidCommand) lst.get(i).antecedent;
         if (anc.getNavaid().getCoordinate().equals(currentTargetCoordinateOrNull) == false) {
           // flying over some navaid, but not over current targeted by plane(pilot)
           i++;
         } else {
           double dist
               = Coordinates.getDistanceInNM(
-              ((AfterNavaidCommand) inner.get(i).antecedent).getNavaid().getCoordinate(),
+              ((AfterNavaidCommand) lst.get(i).antecedent).getNavaid().getCoordinate(),
               cor);
           if (dist < 1.5) {
-            ret.add(inner.get(i).consequent);
-            inner.remove(i);
+            if (firstAccepted < 0) firstAccepted = 0;
+            ret.add(lst.get(i).consequent);
+            lst.removeAt(i);
           } else {
             i++;
           }
@@ -119,27 +101,17 @@ public class AfterCommandList {
         throw new ENotSupportedException();
       }
     }
+
+    if (removeAllPreviousToAcceptedOne && !ret.isEmpty()) {
+      for (int j = 0; j < firstAccepted; j++) {
+        lst.removeAt(0);
+      }
+    }
+
     return ret;
   }
 
-  public boolean isEmpty() {
-    return inner.isEmpty();
-  }
-
-  public boolean hasLateralDirectionToNavaid(Navaid navaid) {
-    boolean ret = this.inner.stream().anyMatch(q ->
-        q.consequent instanceof ProceedDirectCommand &&
-            ((ProceedDirectCommand) q.consequent).getNavaid().equals(navaid));
-    return ret;
-  }
-
-  public boolean hasLateralDirectionAfterCoordinate(Coordinate coordinate) {
-    boolean ret = this.inner.stream().anyMatch(
-        o -> isLateralDirectionAfterNavaidCommand(coordinate, o));
-    return ret;
-  }
-
-  private boolean isAfterAltitudePassed(AfterAltitudeCommand cmd, double altitudeInFt) {
+  private static boolean isAfterAltitudePassed(AfterAltitudeCommand cmd, double altitudeInFt) {
     int trgAlt = cmd.getAltitudeInFt();
     boolean ret;
     switch (cmd.getRestriction()) {
@@ -159,49 +131,159 @@ public class AfterCommandList {
     return ret;
   }
 
-  private void removeWithSequenceForward(Item item) {
-    inner.remove(item);
-
-    List<Item> toRems = inner.stream().filter(q -> q.antecedent.getDerivationSource() == item.consequent).collect(Collectors.toList());
-    for (Item toRem : toRems) {
-      removeWithSequenceForward(toRem);
-    }
+  private static void clearChangeSpeedClass(IList<AFItem> lst, int referenceSpeed, boolean isArrival) {
+    IList<AFItem> tmp = lst.where(q -> q.consequent instanceof ChangeSpeedCommand);
+    Predicate<AFItem> prd;
+    if (isArrival)
+      prd = afItem -> {
+        ChangeSpeedCommand c = (ChangeSpeedCommand) afItem.consequent;
+        boolean ret = c.getSpeedInKts() >= referenceSpeed;
+        return ret;
+      };
+    else
+      prd = afItem -> {
+        ChangeSpeedCommand c = (ChangeSpeedCommand) afItem.consequent;
+        boolean ret = c.getSpeedInKts() <= referenceSpeed;
+        return ret;
+      };
+    tmp.retain(prd);
+    lst.remove(tmp);
   }
 
-  private void removeWithSequenceBackward(Item item) {
-    inner.remove(item);
-
-    if (item.antecedent.getDerivationSource() == null) return;
-
-    List<Item> toRems = inner.stream().filter(q -> item.antecedent.getDerivationSource() == q.consequent).collect(Collectors.toList());
-    for (Item toRem : toRems) {
-      removeWithSequenceBackward(toRem);
-    }
+  public void consolePrint() {
+    System.out.println("After commands:");
+    System.out.println("\troute");
+    rt.forEach(q -> System.out.println("\t\t" + q.toString()));
+    System.out.println("\textensions");
+    ex.forEach(q -> System.out.println("\t\t" + q.toString()));
   }
 
-  private boolean isLateralDirectionAfterNavaidCommand(Coordinate coordinate, Item item) {
-    boolean ret = false;
-    if (item.antecedent instanceof AfterNavaidCommand) {
-      AfterNavaidCommand anc = (AfterNavaidCommand) item.antecedent;
-      if (anc.getNavaid().getCoordinate().equals(coordinate)) {
-        if (item.consequent instanceof ChangeHeadingCommand ||
-            item.consequent instanceof ProceedDirectCommand ||
-            item.consequent instanceof HoldCommand ||
-            item.consequent instanceof ShortcutCommand)
-          ret = true;
-      }
-    }
+  public void clearAll() {
+    this.rt.clear();
+    this.ex.clear();
+  }
+
+  public void addExtension(AfterCommand afterCommand, IAtcCommand consequent) {
+    AFItem it = new AFItem(afterCommand, consequent);
+    ex.add(it);
+  }
+
+  public boolean hasLateralDirectionAfterCoordinate(Coordinate coordinate) {
+    boolean ret =
+        this.rt.isAny(q -> isLateralDirectionAfterNavaidCommand(coordinate, q))
+            ||
+            this.ex.isAll(q -> isLateralDirectionAfterNavaidCommand(coordinate, q));
     return ret;
   }
 
+  public boolean isRouteEmpty() {
+    return this.rt.isEmpty();
+  }
+
+  public boolean hasProceedDirectToNavaidAsConseqent(Navaid navaid) {
+    Predicate<AFItem> cond = new Predicate<AFItem>() {
+      @Override
+      public boolean test(AFItem q) {
+        boolean ret =
+            q.consequent instanceof ProceedDirectCommand &&
+                ((ProceedDirectCommand) q.consequent).getNavaid().equals(navaid);
+        return ret;
+      }
+    };
+    boolean ret =
+        this.rt.isAny(q -> cond.test(q)) || this.ex.isAny(q -> cond.test(q));
+    return ret;
+  }
+
+  public SpeechList<IAtcCommand> getAndRemoveSatisfiedCommands(Airplane referencePlane, Coordinate currentTargetCoordinateOrNull, Type type) {
+    IList<AFItem> src;
+    SpeechList<IAtcCommand> ret;
+    boolean remPrev;
+    switch (type) {
+      case extensions:
+        src = this.ex;
+        remPrev = false;
+        break;
+      case route:
+        src = this.rt;
+        remPrev = true;
+        break;
+      default:
+        throw new UnsupportedOperationException();
+    }
+    ret = getAndRemoveSatisfiedCommands(src, referencePlane, currentTargetCoordinateOrNull, remPrev);
+    return ret;
+  }
+
+  public void clearRoute() {
+    this.rt.clear();
+  }
+
+  public void clearExtensionsByConsequent(Class[] cmdTypes) {
+    this.ex.remove(q -> ConversionUtils.isInstanceOf(q.consequent, cmdTypes));
+  }
+
+  public void clearExtensionsByConsequent(Class cmdType) {
+    Class[] tmp = new Class[]{cmdType};
+    this.clearExtensionsByConsequent(tmp);
+  }
+
+  public void clearChangeAltitudeClass(int referenceAltitudeInFt, boolean isArrival) {
+    IList<AFItem> tmp = this.ex.where(q -> q.consequent instanceof ChangeAltitudeCommand);
+    Predicate<AFItem> prd;
+    if (isArrival)
+      prd = afItem -> {
+        ChangeAltitudeCommand c = (ChangeAltitudeCommand) afItem.consequent;
+        boolean ret = c.getAltitudeInFt() >= referenceAltitudeInFt;
+        return ret;
+      };
+    else
+      prd = afItem -> {
+        ChangeAltitudeCommand c = (ChangeAltitudeCommand) afItem.consequent;
+        boolean ret = c.getAltitudeInFt() <= referenceAltitudeInFt;
+        return ret;
+      };
+    tmp.retain(prd);
+    this.ex.remove(tmp);
+  }
+
+  public void clearChangeSpeedClass(int referenceSpeed, boolean isArrival, Type type) {
+    IList<AFItem> tmp = (type == Type.route) ? this.rt : this.ex;
+    clearChangeSpeedClass(tmp, referenceSpeed, isArrival);
+  }
+
+  public void clearChangeSpeedClassOfRouteWithTransferConsequent(int referenceSpeed, boolean isArrival) {
+    int i = 1;
+    while (i < this.rt.size()) {
+      AFItem it = this.rt.get(i);
+      i++;
+      if ((it.antecedent instanceof AfterSpeedCommand) == false) continue;
+      AfterSpeedCommand tmp = (AfterSpeedCommand) it.antecedent;
+      if (isArrival && tmp.getSpeedInKts() < referenceSpeed) continue;
+      if (!isArrival && tmp.getSpeedInKts() > referenceSpeed) continue;
+
+      i--;
+      AfterCommand a = this.rt.get(i - 1).antecedent;
+      IAtcCommand c = this.rt.get(i).consequent;
+
+      AFItem af = new AFItem(a, c);
+      this.rt.add(af);
+      this.rt.remove(it);
+    }
+  }
+
+  public void addRoute(AfterCommand afterCommand, IAtcCommand consequent) {
+    AFItem it = new AFItem(afterCommand, consequent);
+    this.rt.add(it);
+  }
 }
 
-class Item {
+class AFItem {
 
   public final AfterCommand antecedent;
   public final IAtcCommand consequent;
 
-  public Item(AfterCommand antecedent, IAtcCommand consequent) {
+  public AFItem(AfterCommand antecedent, IAtcCommand consequent) {
     this.antecedent = antecedent;
     this.consequent = consequent;
   }

@@ -5,6 +5,7 @@
  */
 package eng.jAtcSim.lib.world;
 
+import eng.eSystem.collections.IList;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.exceptions.ERuntimeException;
 import eng.jAtcSim.lib.global.KeyList;
@@ -12,7 +13,6 @@ import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
 import eng.jAtcSim.lib.speaking.parsing.Parser;
 import eng.jAtcSim.lib.speaking.parsing.shortParsing.ShortParser;
 import eng.jAtcSim.lib.world.approaches.Approach;
-import eng.jAtcSim.lib.world.approaches.ApproachOld;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -100,7 +100,7 @@ public class Area {
 
   private void checkRouteCommands() {
     Parser parser = new ShortParser();
-    List<IAtcCommand> cmds;
+    IList<IAtcCommand> cmds;
     Navaid n;
     for (Airport a : this.getAirports()) {
       Acc.setAirport(a);

@@ -450,7 +450,8 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
       divertTime = Acc.now().addMinutes(divertTimeMinutes);
     }
 
-    this.pilot = new Pilot(this.new Airplane4Pilot(), assignedRoute, initialCommands, divertTime);
+    this.pilot = new Pilot(this.new Airplane4Pilot(), assignedRoute, divertTime);
+    this.pilot.initSpeeches(initialCommands);
     this.plane4Display = this.new Airplane4Display();
 
     // flight recorders on

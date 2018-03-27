@@ -136,7 +136,7 @@ public abstract class Traffic {
     cs = m.getCallsign();
     AirplaneType pt = m.getAirplaneType();
 
-    Route r = tryGetRandomIfrRoute(false, pt);
+    Route route = tryGetRandomIfrRoute(false, pt);
     Coordinate coord = Acc.airport().getLocation();
     Squawk sqwk = generateSqwk();
 
@@ -148,7 +148,7 @@ public abstract class Traffic {
 
     ret = new Airplane(
         cs, coord, sqwk, pt, heading, alt, spd, true,
-        r, initialCommands);
+        route, initialCommands);
 
     return ret;
   }
@@ -176,11 +176,10 @@ public abstract class Traffic {
     heading = (int) Coordinates.getBearing(coord, r.getMainFix().getCoordinate());
     alt = generateArrivingPlaneAltitude(r, pt);
 
-    initialCommands = r.getCommandsListClone();
+    initialCommands = new SpeechList<>();
     // added command to descend
     //TODO following should say CTR ATC, not this here
-    initialCommands.add(0,
-        new ChangeAltitudeCommand(
+    initialCommands.add(new ChangeAltitudeCommand(
             ChangeAltitudeCommand.eDirection.descend,
             Acc.atcCtr().getOrderedAltitude()
         ));
