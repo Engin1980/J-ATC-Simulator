@@ -12,6 +12,7 @@ import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.coordinates.Coordinate;
 import eng.jAtcSim.lib.coordinates.Coordinates;
 import eng.jAtcSim.lib.exceptions.ENotSupportedException;
+import eng.jAtcSim.lib.global.Headings;
 import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.*;
@@ -48,63 +49,65 @@ public class AfterCommandList {
     return ret;
   }
 
+  private static boolean isAFItemPassed(AFItem item, Airplane plane, Coordinate currentTargetCoordinateOrNull) {
+    boolean ret;
+
+    if (item.antecedent instanceof AfterAltitudeCommand) {
+      AfterAltitudeCommand cmd = (AfterAltitudeCommand) item.antecedent;
+      ret  = isAfterAltitudePassed(cmd, plane.getAltitude());
+    } else if (item.antecedent instanceof AfterSpeedCommand) {
+      int trgSpd = ((AfterSpeedCommand) item.antecedent).getSpeedInKts();
+      ret = (Math.abs(trgSpd - plane.getSpeed()) < 10);
+    } else if (item.antecedent instanceof AfterNavaidCommand) {
+      AfterNavaidCommand anc = (AfterNavaidCommand) item.antecedent;
+      if (anc.getNavaid().getCoordinate().equals(currentTargetCoordinateOrNull) == false) {
+        // flying over some navaid, but not over current targeted by plane(pilot)
+        ret = false;
+      } else {
+        double dist
+            = Coordinates.getDistanceInNM(
+            ((AfterNavaidCommand) item.antecedent).getNavaid().getCoordinate(),
+            plane.getCoordinate());
+        ret = (dist < 1.5);
+      }
+    } else if (item.antecedent instanceof AfterHeadingCommand) {
+      AfterHeadingCommand anc = (AfterHeadingCommand) item.antecedent;
+      double diff = Headings.getDifference(plane.getHeading(), anc.getHeading(), true);
+      ret = (diff < 3);
+    } else if (item.antecedent instanceof AfterDistanceCommand) {
+      AfterDistanceCommand anc = (AfterDistanceCommand) item.antecedent;
+      double dist = Coordinates.getDistanceInNM(plane.getCoordinate(), anc.getNavaid().getCoordinate());
+      double diff = Math.abs(dist - anc.getDistanceInNm());
+      ret = (diff < 0.3);
+    } else if (item.antecedent instanceof AfterRadialCommand) {
+      AfterRadialCommand anc = (AfterRadialCommand) item.antecedent;
+      double rad = Coordinates.getBearing(anc.getNavaid().getCoordinate(), plane.getCoordinate());
+      double diff = Headings.getDifference(rad, anc.getRadial(), true);
+      ret = (diff < 3);
+    } else {
+      throw new ENotSupportedException();
+    }
+    return ret;
+  }
+
   private static SpeechList<IAtcCommand> getAndRemoveSatisfiedCommands(
       IList<AFItem> lst,
       Airplane referencePlane, Coordinate currentTargetCoordinateOrNull,
-      boolean removeAllPreviousToAcceptedOne) {
-    double spd = referencePlane.getSpeed();
-    Coordinate cor = referencePlane.getCoordinate();
-    int firstAccepted = -1;
+      boolean untilFirstNotSatisfied) {
 
     SpeechList<IAtcCommand> ret = new SpeechList<>();
 
     int i = 0;
     while (i < lst.size()) {
-      if (lst.get(i).antecedent instanceof AfterAltitudeCommand) {
-        AfterAltitudeCommand cmd = (AfterAltitudeCommand) lst.get(i).antecedent;
-        boolean isPassed = isAfterAltitudePassed(cmd, referencePlane.getAltitude());
-        if (isPassed) {
-          if (firstAccepted < 0) firstAccepted = 0;
-          ret.add(lst.get(i).consequent);
-          lst.removeAt(i);
-        } else {
-          i++;
-        }
-      } else if (lst.get(i).antecedent instanceof AfterSpeedCommand) {
-        int trgSpd = ((AfterSpeedCommand) lst.get(i).antecedent).getSpeedInKts();
-        if (Math.abs(trgSpd - spd) < 10) {
-          if (firstAccepted < 0) firstAccepted = 0;
-          ret.add(lst.get(i).consequent);
-          lst.removeAt(i);
-        } else {
-          i++;
-        }
-      } else if (lst.get(i).antecedent instanceof AfterNavaidCommand) {
-        AfterNavaidCommand anc = (AfterNavaidCommand) lst.get(i).antecedent;
-        if (anc.getNavaid().getCoordinate().equals(currentTargetCoordinateOrNull) == false) {
-          // flying over some navaid, but not over current targeted by plane(pilot)
-          i++;
-        } else {
-          double dist
-              = Coordinates.getDistanceInNM(
-              ((AfterNavaidCommand) lst.get(i).antecedent).getNavaid().getCoordinate(),
-              cor);
-          if (dist < 1.5) {
-            if (firstAccepted < 0) firstAccepted = 0;
-            ret.add(lst.get(i).consequent);
-            lst.removeAt(i);
-          } else {
-            i++;
-          }
-        }
+      AFItem item = lst.get(i);
+      if (isAFItemPassed(item, referencePlane, currentTargetCoordinateOrNull)) {
+        ret.add(item.consequent);
+        lst.removeAt(i);
       } else {
-        throw new ENotSupportedException();
-      }
-    }
-
-    if (removeAllPreviousToAcceptedOne && !ret.isEmpty()) {
-      for (int j = 0; j < firstAccepted; j++) {
-        lst.removeAt(0);
+        if (untilFirstNotSatisfied)
+          break;
+        else
+          i++;
       }
     }
 
@@ -196,22 +199,24 @@ public class AfterCommandList {
   }
 
   public SpeechList<IAtcCommand> getAndRemoveSatisfiedCommands(Airplane referencePlane, Coordinate currentTargetCoordinateOrNull, Type type) {
-    IList<AFItem> src;
     SpeechList<IAtcCommand> ret;
-    boolean remPrev;
+    IList<AFItem> tmp;
+    boolean untilFirstNotSatisfied;
     switch (type) {
       case extensions:
-        src = this.ex;
-        remPrev = false;
+        tmp = this.ex;
+        untilFirstNotSatisfied = false;
         break;
       case route:
-        src = this.rt;
-        remPrev = true;
+        tmp = this.rt;
+        untilFirstNotSatisfied = true;
         break;
       default:
         throw new UnsupportedOperationException();
     }
-    ret = getAndRemoveSatisfiedCommands(src, referencePlane, currentTargetCoordinateOrNull, remPrev);
+
+    ret = getAndRemoveSatisfiedCommands(this.ex, referencePlane, currentTargetCoordinateOrNull, untilFirstNotSatisfied);
+
     return ret;
   }
 

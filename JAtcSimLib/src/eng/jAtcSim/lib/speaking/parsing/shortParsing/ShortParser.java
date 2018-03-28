@@ -1,6 +1,8 @@
 package eng.jAtcSim.lib.speaking.parsing.shortParsing;
 
 import eng.eSystem.EStringBuilder;
+import eng.eSystem.collections.EList;
+import eng.eSystem.collections.IList;
 import eng.eSystem.utilites.StringUtil;
 import eng.jAtcSim.lib.exceptions.EInvalidCommandException;
 import eng.jAtcSim.lib.speaking.IFromAtc;
@@ -17,12 +19,12 @@ import java.util.List;
 
 public class ShortParser extends Parser {
 
-  private static final List<SpeechParser> planeParsers;
+  private static final IList<SpeechParser> planeParsers;
   private static final List<SpeechParser> atcParsers;
   private ShortcutList shortcuts = new ShortcutList();
 
   static {
-    planeParsers = new ArrayList<>();
+    planeParsers = new EList<>();
     planeParsers.add(new ChangeHeadingParser());
     planeParsers.add(new ChangeAltitudeParser());
     planeParsers.add(new ChangeSpeedParser());
@@ -30,6 +32,9 @@ public class ShortParser extends Parser {
     planeParsers.add(new AfterAltitudeParser());
     planeParsers.add(new AfterSpeedParser());
     planeParsers.add(new AfterNavaidParser());
+    planeParsers.add(new AfterRadialParser());
+    planeParsers.add(new AfterDistanceParser());
+    planeParsers.add(new AfterHeadingParser());
 
     planeParsers.add(new ProceedDirectParser());
     planeParsers.add(new ShortcutParser());

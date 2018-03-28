@@ -231,7 +231,18 @@
         <runway active="true">
           <thresholds>
             <threshold name="12" coordinate="50 06 28.84 N 014 14 43.32 E" initialDepartureAltitude="5000">
+              <iafRoutes>
+
+              </iafRoutes>
               <approaches>
+                <unpreciseApproach gaRoute="FH 123 CM 40" radial="127" type="vor" faf="OKL/127/9.8" mapt="OKL/127/1.8"
+                                   mdaA="1530" mdaB="1530" mdaC="1530" mdaD="1530">
+                  <iafRoutes>
+                    <route iaf="EVEMI" route="FH 303 AD OKL/14.2 FH 213 AR OKL/313 PD OKL/127/12.9 T FH 127" />
+                    <route iaf="SOMIS" route="FH 303 AD OKL/13.9 FH 033 AR OKL/300 PD OKL/127/12.9 T FH 127" />
+                  </iafRoutes>
+                </unpreciseApproach>
+                <gnssApproach gaRoute="FH 123 CM 40" radial="123" daA="1453" daB="1453" daC="1453" daD="1453" />
               </approaches>
               <routes>
                 <route type="star" name="GOLOP1P"
