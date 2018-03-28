@@ -74,8 +74,14 @@ public class ClearedToApproachApplication extends CommandApplication<ClearedToAp
 
       if (dist > MAXIMAL_DISTANCE_TO_ENTER_APPROACH_IN_NM)
         ret = new UnableToEnterApproachFromDifficultPosition(c, "We are too far.");
-      else if (!isVisual && !Headings.isBetween(minHeading, currentHeading, maxHeading)) {
+      else if (!isVisual && !Headings.isBetween(minHeading, currentHeading, maxHeading))
         ret = new UnableToEnterApproachFromDifficultPosition(c, "We need to be heading moreless for the runway.");
+      else if (isVisual){
+        // check if ground is visible now
+        double alt = plane.getAltitude();
+        if (alt > Acc.weather().getCloudBaseInFt())
+          if (Acc.weather().getCloudBaseHitProbability() > Acc.rnd().nextDouble())
+            ret = new UnableToEnterApproachFromDifficultPosition(c, "We don't have ground in sight.");
       }
     }
     if (ret != null) return ret;

@@ -38,6 +38,7 @@ import eng.jAtcSim.lib.world.Navaid;
 import eng.jAtcSim.lib.world.Route;
 import eng.jAtcSim.lib.world.Routes;
 import eng.jAtcSim.lib.world.RunwayThreshold;
+import eng.jAtcSim.lib.world.approaches.Approach;
 import eng.jAtcSim.lib.world.approaches.CurrentApproachInfo;
 
 import java.util.HashMap;
@@ -757,6 +758,12 @@ public class Pilot {
           throw new UnsupportedOperationException("Not supposed to be here. See flyIAFtoFAFPhase()");
 
         case approachEnter:
+          if (isAfterStateChange && this.approach.getType() == Approach.ApproachType.visual ){
+            if (canSeeRunwayFromCurrentPosition() == false) {
+              goAround("Not airport in sight.");
+              return;
+            }
+          }
           isAfterStateChange = false;
           // this is when app is cleared for approach
           // this only updates speed and changes to "entering"
