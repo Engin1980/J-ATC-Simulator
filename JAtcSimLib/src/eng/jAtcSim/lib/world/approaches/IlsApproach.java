@@ -1,5 +1,6 @@
 package eng.jAtcSim.lib.world.approaches;
 
+import eng.eSystem.xmlSerialization.XmlOptional;
 import eng.jAtcSim.lib.global.KeyItem;
 import eng.jAtcSim.lib.global.KeyList;
 
@@ -12,6 +13,9 @@ public class IlsApproach extends Approach {
     private int daB;
     private int daC;
     private int daD;
+
+    public Category() {
+    }
 
     @Override
     public Type getKey() {
@@ -55,9 +59,6 @@ public class IlsApproach extends Approach {
       }
       return ret;
     }
-
-    public Category() {
-    }
   }
 
   public enum Type {
@@ -67,9 +68,15 @@ public class IlsApproach extends Approach {
   }
 
   private KeyList<Category, Type> categories = new KeyList<IlsApproach.Category, Type>();
+  @XmlOptional
+  private double glidePathPercentage = 3;
 
   public KeyList<Category, Type> getCategories() {
     return categories;
+  }
+
+  public double getGlidePathPercentage() {
+    return glidePathPercentage;
   }
 
   @Override

@@ -8,6 +8,7 @@ import eng.jAtcSim.lib.coordinates.Coordinate;
 import eng.jAtcSim.lib.coordinates.Coordinates;
 import eng.jAtcSim.lib.global.Headings;
 import eng.jAtcSim.lib.global.KeyList;
+import eng.jAtcSim.lib.global.UnitProvider;
 import eng.jAtcSim.lib.speaking.IFromAtc;
 import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
@@ -42,6 +43,11 @@ public abstract class Approach {
   private int radial;
   private RunwayThreshold parent;
   private boolean includeSharedIafRoutes;
+  private int initialAltitude;
+
+  public int getInitialAltitude() {
+    return initialAltitude;
+  }
 
   public static CurrentApproachInfo tryGetCurrentApproachInfo(List<Approach> apps, char category, ApproachType type, Coordinate currentPlaneLocation) {
     CurrentApproachInfo ret;
@@ -148,8 +154,11 @@ public abstract class Approach {
     gaCmds.add(new ChangeHeadingCommand(crs, ChangeHeadingCommand.eDirection.any));
     gaCmds.add(new ChangeAltitudeCommand(ChangeAltitudeCommand.eDirection.climb, gaa));
 
+    // 3 is glide-path-default-percentage, rest of the formula is unknown source :-)
+    double slope = UnitProvider.nmToFt(Math.tan(3 * Math.PI / 180));
+
     CurrentApproachInfo ret = new CurrentApproachInfo(
-        threshold, iafCmds, gaCmds, ApproachType.visual, faf, mapt, crs, mda);
+        threshold, iafCmds, gaCmds, ApproachType.visual, faf, mapt, crs, mda, slope);
 
     return ret;
   }
@@ -158,6 +167,10 @@ public abstract class Approach {
     List<Navaid> iafNavs = CollectionUtils.select(approach.getIafRoutes(), q -> q.getNavaid());
     Navaid ret = CollectionUtils.tryGetFirst(iafNavs, o -> Coordinates.getDistanceInNM(planeLocation, o.getCoordinate()) < 2);
     return ret;
+  }
+
+  private static double getSlope(double glidePathPercentage) {
+    return UnitProvider.nmToFt(Math.tan(glidePathPercentage * Math.PI / 180));
   }
 
   private static CurrentApproachInfo tryGetFromILS(List<Approach> apps, char category, ApproachType type, Coordinate planeLocation) {
@@ -173,40 +186,20 @@ public abstract class Approach {
     if (iafRoute != null)
       iafCommands = new SpeechList<>(iafRoute.getRouteCommands());
     else
-      iafCommands = new SpeechList<>();
+      iafCommands = new SpeechList<>(new ChangeAltitudeCommand( ChangeAltitudeCommand.eDirection.descend, tmp.getInitialAltitude()));
     SpeechList<IFromAtc> gaCommands = new SpeechList<>(tmp.getGaCommands());
     Coordinate faf = Coordinates.getCoordinate(
         tmp.getParent().getCoordinate(), Headings.getOpposite(tmp.getRadial()), 10);
     Coordinate mapt = tmp.getParent().getCoordinate();
     int course = tmp.getRadial();
     int mda = cat.getDA(category);
+    double slope = getSlope(tmp.getGlidePathPercentage());
 
 
     ret = new CurrentApproachInfo(
-        tmp.getParent(), iafCommands, gaCommands, type, faf, mapt, course, mda);
+        tmp.getParent(), iafCommands, gaCommands, type, faf, mapt, course, mda, slope);
     return ret;
   }
-//
-//  private static CurrentApproachInfo tryGetFromVisual(List<Approach> apps, Coordinate currentLocation) {
-//    CurrentApproachInfo ret;
-//    VisualApproach tmp = (VisualApproach) CollectionUtils.tryGetFirst(apps, o -> o instanceof VisualApproach);
-//
-//    SpeechList<IFromAtc> iafCommands = new SpeechList<>();
-//    SpeechList<IFromAtc> gaCommands = new SpeechList<>(tmp.getGaCommands());
-//
-//    Coordinate faf = currentLocation;
-//    Coordinate mapt = Coordinates.getCoordinate(
-//        tmp.getParent().getCoordinate(),
-//        Headings.getOpposite(tmp.getParent().getCourse()),
-//        4);
-//    int course = (int) Math.round(tmp.getParent().getCourse());
-//    int mda = tmp.getParent().getParent().getParent().getAltitude() + 500;
-//
-//
-//    ret = new CurrentApproachInfo(
-//        tmp.getParent(), iafCommands, gaCommands, ApproachType.visual, faf, mapt, course, mda);
-//    return ret;
-//  }
 
   private static CurrentApproachInfo tryGetFromUnprecise(List<Approach> apps, char category, Approach.ApproachType type, Coordinate planeLocation) {
     CurrentApproachInfo ret;
@@ -221,15 +214,19 @@ public abstract class Approach {
     if (iafRoute != null)
       iafCommands = new SpeechList<>(iafRoute.getRouteCommands());
     else
-      iafCommands = new SpeechList<>();
+      iafCommands = new SpeechList<>(new ChangeAltitudeCommand( ChangeAltitudeCommand.eDirection.descend, tmp.getInitialAltitude()));
     SpeechList<IFromAtc> gaCommands = new SpeechList<>(tmp.getGaCommands());
     Coordinate faf = tmp.getFaf().getCoordinate();
     Coordinate mapt = tmp.getMAPt();
     int course = tmp.getRadial();
     int mda = tmp.getMDA(category);
 
+    double faf2maptDistance = Coordinates.getDistanceInNM(faf, mapt );
+    double faf2maptAltitude = tmp.getInitialAltitude() - mda;
+    double slope = faf2maptAltitude / faf2maptDistance;
+
     ret = new CurrentApproachInfo(
-        tmp.getParent(), iafCommands, gaCommands, ApproachType.visual, faf, mapt, course, mda);
+        tmp.getParent(), iafCommands, gaCommands, type, faf, mapt, course, mda, slope);
     return ret;
   }
 
@@ -243,7 +240,7 @@ public abstract class Approach {
     if (iafRoute != null)
       iafCommands = new SpeechList<>(iafRoute.getRouteCommands());
     else
-      iafCommands = new SpeechList<>();
+      iafCommands = new SpeechList<>(new ChangeAltitudeCommand( ChangeAltitudeCommand.eDirection.descend, tmp.getInitialAltitude()));
     SpeechList<IFromAtc> gaCommands = new SpeechList<>(tmp.getGaCommands());
     Coordinate faf = Coordinates.getCoordinate(
         tmp.getParent().getCoordinate(), Headings.getOpposite(tmp.getRadial()), 10);
@@ -251,9 +248,10 @@ public abstract class Approach {
     Coordinate mapt = tmp.getParent().getCoordinate();
     int course = tmp.getRadial();
     int mda = tmp.getDA(category);
+    double slope = getSlope(tmp.getGlidePathPercentage());
 
     ret = new CurrentApproachInfo(
-        tmp.getParent(), iafCommands, gaCommands, ApproachType.visual, faf, mapt, course, mda);
+        tmp.getParent(), iafCommands, gaCommands, ApproachType.visual, faf, mapt, course, mda, slope);
     return ret;
   }
 

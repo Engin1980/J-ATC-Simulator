@@ -1,6 +1,8 @@
 package eng.jAtcSim.lib.speaking;
 
+import eng.eSystem.EStringBuilder;
 import eng.eSystem.collections.EList;
+import eng.eSystem.utilites.StringUtil;
 import eng.jAtcSim.lib.exceptions.ERuntimeException;
 import eng.jAtcSim.lib.messaging.IMessageContent;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
@@ -74,4 +76,10 @@ public class SpeechList<T extends ISpeech> extends EList<T> implements IMessageC
     return super.get(index);
   }
 
+  @Override
+  public String toString(){
+    EStringBuilder sb = new EStringBuilder();
+    sb.appendItems(this, q -> q.toString(), ";");
+    return sb.toString();
+  }
 }

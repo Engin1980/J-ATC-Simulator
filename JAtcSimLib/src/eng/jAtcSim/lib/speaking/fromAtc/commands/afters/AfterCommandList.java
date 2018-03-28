@@ -215,7 +215,7 @@ public class AfterCommandList {
         throw new UnsupportedOperationException();
     }
 
-    ret = getAndRemoveSatisfiedCommands(this.ex, referencePlane, currentTargetCoordinateOrNull, untilFirstNotSatisfied);
+    ret = getAndRemoveSatisfiedCommands(tmp, referencePlane, currentTargetCoordinateOrNull, untilFirstNotSatisfied);
 
     return ret;
   }

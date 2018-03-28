@@ -334,6 +334,7 @@
     <xs:attribute name="gaRoute" type="xs:string" use="required"/>
     <xs:attribute name="radial" type="xs:int" use="required"/>
     <xs:attribute name="includeSharedIafRoutes" type="xs:boolean" use="required" />
+    <xs:attribute name="initialAltitude" type="xs:int" use="required" />
   </xs:complexType>
 
   <xs:complexType name="gnssApproach">
@@ -343,6 +344,7 @@
         <xs:attribute name="daB" type="xs:int" use="required"/>
         <xs:attribute name="daC" type="xs:int" use="required"/>
         <xs:attribute name="daD" type="xs:int" use="required"/>
+        <xs:attribute name="glidePathPercentage" type="xs:double" use="optional" />
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -380,6 +382,7 @@
             </xs:complexType>
           </xs:element>
         </xs:sequence>
+        <xs:attribute name="glidePathPercentage" type="xs:double" use="optional" />
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>

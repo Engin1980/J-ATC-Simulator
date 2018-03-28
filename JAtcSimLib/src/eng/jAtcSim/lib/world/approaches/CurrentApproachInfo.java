@@ -15,9 +15,9 @@ public class CurrentApproachInfo {
   private Coordinate mapt;
   private int course;
   private int decisionAltitude;
-  private double glidePathPercentage = 3;
+  private double slope;
 
-  public CurrentApproachInfo(RunwayThreshold threshold, SpeechList<IFromAtc> iafRoute, SpeechList<IFromAtc> gaRoute, Approach.ApproachType type, Coordinate faf, Coordinate mapt, int course, int decisionAltitude) {
+  public CurrentApproachInfo(RunwayThreshold threshold, SpeechList<IFromAtc> iafRoute, SpeechList<IFromAtc> gaRoute, Approach.ApproachType type, Coordinate faf, Coordinate mapt, int course, int decisionAltitude, double slope) {
     this.threshold = threshold;
     this.iafRoute = iafRoute;
     this.gaRoute = gaRoute;
@@ -26,6 +26,7 @@ public class CurrentApproachInfo {
     this.mapt = mapt;
     this.course = course;
     this.decisionAltitude = decisionAltitude;
+    this.slope = slope;
   }
 
   public RunwayThreshold getThreshold() {
@@ -60,8 +61,8 @@ public class CurrentApproachInfo {
     return decisionAltitude;
   }
 
-  public double getGlidePathPerNM() {
-    return UnitProvider.nmToFt(Math.tan(glidePathPercentage * Math.PI / 180));
+  public double getSlope() {
+    return slope;
   }
 
   public double getAltitudeDeltaPerSecond(double gs){

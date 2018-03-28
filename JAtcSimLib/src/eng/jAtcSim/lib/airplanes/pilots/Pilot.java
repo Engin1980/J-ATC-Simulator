@@ -559,6 +559,7 @@ public class Pilot {
     private boolean isAfterStateChange;
     private boolean isAtFinalDescend = false;
     private ApproachLocation location = ApproachLocation.unset;
+    private double slope = -1;
 
     public ApproachBehavior(CurrentApproachInfo approach) {
       this.approach = approach;
@@ -611,38 +612,51 @@ public class Pilot {
 
       if (newAltitude == -1) {
         switch (approach.getType()) {
-          case ils_I:
-          case ils_III:
-          case ils_II:
-          case gnss:
-            distToLand = Coordinates.getDistanceInNM(
-                parent.getCoordinate(), this.approach.getThreshold().getCoordinate());
-            newAltitude = (int) (this.approach.getThreshold().getParent().getParent().getAltitude()
-                + this.approach.getGlidePathPerNM() * distToLand);
-            break;
-          case ndb:
-          case vor:
-            if (location == ApproachLocation.beforeFaf) {
-              // nothing
-            } else if (location == ApproachLocation.beforeMapt) {
-              double delta = approach.getAltitudeDeltaPerSecond(parent.getSpeed());
-              newAltitude = (int) (parent.getTargetAltitude() - delta);
-              if (newAltitude < approach.getDecisionAltitude()) newAltitude = approach.getDecisionAltitude();
-            } else {
-              distToLand = Coordinates.getDistanceInNM(
-                  parent.getCoordinate(), this.approach.getThreshold().getCoordinate());
-              newAltitude = (int) (this.approach.getThreshold().getParent().getParent().getAltitude()
-                  + this.approach.getGlidePathPerNM() * distToLand);
+//          case ils_I:
+//          case ils_III:
+//          case ils_II:
+//          case gnss:
+//            distToLand = Coordinates.getDistanceInNM(
+//                parent.getCoordinate(), this.approach.getThreshold().getCoordinate());
+//            newAltitude = (int) (this.approach.getThreshold().getParent().getParent().getAltitude()
+//                + this.approach.getGlidePathPerNM() * distToLand);
+//            break;
+//          case ndb:
+//          case vor:
+//            if (location == ApproachLocation.beforeFaf) {
+//              newAltitude = parent.getTargetAltitude();
+//            } else if (location == ApproachLocation.beforeMapt) {
+//              double delta = approach.getAltitudeDeltaPerSecond(parent.getSpeed());
+//              newAltitude = (int) (parent.getTargetAltitude() - delta);
+//              if (newAltitude < approach.getDecisionAltitude()) newAltitude = approach.getDecisionAltitude();
+//            } else {
+//              distToLand = Coordinates.getDistanceInNM(
+//                  parent.getCoordinate(), this.approach.getThreshold().getCoordinate());
+//              newAltitude = (int) (this.approach.getThreshold().getParent().getParent().getAltitude()
+//                  + this.approach.getGlidePathPerNM() * distToLand);
+//            }
+//            break;
+          case visual:
+            if (location == ApproachLocation.beforeFaf)
+              newAltitude = parent.getTargetAltitude();
+            else{
+              double dist = Coordinates.getDistanceInNM(parent.getCoordinate(), approach.getThreshold().getCoordinate());
+              double delta = dist * this.approach.getSlope();
+              newAltitude = (int) delta + Acc.airport().getAltitude();
             }
             break;
-          case visual:
-            distToLand = Coordinates.getDistanceInNM(
-                parent.getCoordinate(), this.approach.getThreshold().getCoordinate());
-            newAltitude = (int) (this.approach.getThreshold().getParent().getParent().getAltitude()
-                + this.approach.getGlidePathPerNM() * distToLand);
-            break;
+          default:
+            if (location == ApproachLocation.beforeFaf)
+              newAltitude = parent.getTargetAltitude();
+            else{
+              double dist = Coordinates.getDistanceInNM(parent.getCoordinate(), approach.getMapt() );
+              double delta = dist * this.approach.getSlope();
+              newAltitude = (int) delta + Acc.airport().getAltitude();
+            }
         }
         newAltitude = Math.min(newAltitude, parent.getTargetAltitude());
+        if (location == ApproachLocation.beforeMapt)
+          newAltitude = Math.max(newAltitude, approach.getDecisionAltitude());
         newAltitude = Math.max(newAltitude, Acc.airport().getAltitude());
       }
       parent.setTargetAltitude(newAltitude);
