@@ -128,29 +128,31 @@
       <runways>
         <runway active="true">
           <thresholds>
-            <threshold name="06" coordinate="50 06 06.61 N 014 13 34.58 E" initialDepartureAltitude="5000">
-              <iafRoutes>
+            <threshold name="06" coordinate="50 06 06.61 N 014 13 34.58 E" initialDepartureAltitude="5000"
+                       includeSharedRoutes="false">
+              <sharedIafRoutes>
                 <route iaf="OKL" route="DM 40 PD OKL/247/9.9 T PD OKL/260/13 T PD PR742 T FH 061"/>
                 <route iaf="KUVIX" route="DM 40 PD PR741 T PD PR742 T FH 061"/>
                 <route iaf="BAROX" route="DM 40 PD PR742 T FH 061"/>
                 <route iaf="AKEVA" route="DM 40 PD PR740 T PD PR742 T FH 061"/>
-              </iafRoutes>
+              </sharedIafRoutes>
               <approaches>
-                <ilsApproach gaRoute="FH 061 CM 40" radial="061">
+                <ilsApproach gaRoute="FH 061 CM 40" radial="061" includeSharedIafRoutes="true">
                   <categories>
                     <category type="I" daA="1247" daB="1357" daC="1367" daD="1380"/>
                   </categories>
                 </ilsApproach>
-                <gnssApproach gaRoute="FH 061 CM 40" radial="061" daA="1515" daB="1515" daC="1515" daD="1515">
+                <gnssApproach gaRoute="FH 061 CM 40" radial="061" daA="1515" daB="1515" daC="1515" daD="1515"
+                              includeSharedIafRoutes="false">
                   <iafRoutes>
                     <route iaf="KUVIX" route="DM 40 PD PR741 T PD PR742 T FH 061"/>
                     <route iaf="BAROX" route="DM 40 PD PR742 T FH 061"/>
                     <route iaf="AKEVA" route="DM 40 PD PR740 T PD PR742 T  FH 061"/>
                   </iafRoutes>
                 </gnssApproach>
-                <unpreciseApproach gaRoute="CM 40 FH 061" radial="061" type="ndb" faf="PH/061/8.8" mapt="PH/061/0.5" mdaA="1600" mdaB="1600"
-                                   mdaC="1600" mdaD="1600">
-                </unpreciseApproach>
+                <unpreciseApproach gaRoute="CM 40 FH 061" radial="061" type="ndb" faf="PH/061/8.8" mapt="PH/061/0.5"
+                                   mdaA="1600" mdaB="1600"
+                                   mdaC="1600" mdaD="1600" includeSharedIafRoutes="true"/>
               </approaches>
               <routes>
                 <route type="star" name="LOMKI5T"
@@ -181,22 +183,24 @@
               </routes>
             </threshold>
             <threshold name="24" coordinate="50 06 57.43 N 014 16 24.12 E" initialDepartureAltitude="5000"
-                       preferred="true">
-              <iafRoutes>
+                       preferred="true" includeSharedRoutes="false">
+              <sharedIafRoutes>
                 <route iaf="ERASU" route="DM 40 PD PR531 T PD PR531 T FH 241"/>
                 <route iaf="RATEV" route="DM 40 PD PR530 T PD PR532 T FH 241"/>
-              </iafRoutes>
+              </sharedIafRoutes>
               <approaches>
-                <ilsApproach gaRoute="FH 241 CM 40" radial="241">
+                <ilsApproach gaRoute="FH 241 CM 40" radial="241" includeSharedIafRoutes="true">
                   <categories>
                     <category type="I" daA="1295" daB="1303" daC="1313" daD="1321"/>
                     <category type="II" daA="1207" daB="1218" daC="1231" daD="1244"/>
                   </categories>
                 </ilsApproach>
-                <gnssApproach gaRoute="FH 241 CM 40" radial="241" daA="1479" daB="1479" daC="1479" daD="1479">
+                <gnssApproach gaRoute="FH 241 CM 40" radial="241" daA="1479" daB="1479" daC="1479" daD="1479"
+                              includeSharedIafRoutes="true">
                 </gnssApproach>
-                <unpreciseApproach gaRoute="FH 241 CM 40" radial="241" type="ndb" faf="PH/241/10.6" mapt="L" mdaA="1460" mdaB="1460"
-                                   mdaC="1460" mdaD="1460">
+                <unpreciseApproach gaRoute="FH 241 CM 40" radial="241" type="ndb" faf="PH/241/10.6" mapt="L" mdaA="1460"
+                                   mdaB="1460"
+                                   mdaC="1460" mdaD="1460" includeSharedIafRoutes="true">
                 </unpreciseApproach>
               </approaches>
               <routes>
@@ -230,19 +234,30 @@
         </runway>
         <runway active="true">
           <thresholds>
-            <threshold name="12" coordinate="50 06 28.84 N 014 14 43.32 E" initialDepartureAltitude="5000">
-              <iafRoutes>
-
-              </iafRoutes>
+            <threshold name="12" coordinate="50 06 28.84 N 014 14 43.32 E" initialDepartureAltitude="5000"
+                       includeSharedRoutes="false">
+              <sharedIafRoutes>
+                <route iaf="EVEMI" route="PD PR961 T PD PR962 T FH 123"/>
+                <route iaf="SOMIS" route="PD PR960 T PD PR962 T FH 123"/>
+              </sharedIafRoutes>
               <approaches>
                 <unpreciseApproach gaRoute="FH 123 CM 40" radial="127" type="vor" faf="OKL/127/9.8" mapt="OKL/127/1.8"
-                                   mdaA="1530" mdaB="1530" mdaC="1530" mdaD="1530">
+                                   mdaA="1530" mdaB="1530" mdaC="1530" mdaD="1530" includeSharedIafRoutes="false">
                   <iafRoutes>
-                    <route iaf="EVEMI" route="FH 303 AD OKL/14.2 FH 213 AR OKL/313 PD OKL/127/12.9 T FH 127" />
-                    <route iaf="SOMIS" route="FH 303 AD OKL/13.9 FH 033 AR OKL/300 PD OKL/127/12.9 T FH 127" />
+                    <route iaf="EVEMI" route="FH 303 AD OKL/14.2 FH 213 AR OKL/313 PD OKL/127/12.9 T FH 127"/>
+                    <route iaf="SOMIS" route="FH 303 AD OKL/13.9 FH 033 AR OKL/300 PD OKL/127/12.9 T FH 127"/>
                   </iafRoutes>
                 </unpreciseApproach>
-                <gnssApproach gaRoute="FH 123 CM 40" radial="123" daA="1453" daB="1453" daC="1453" daD="1453" />
+                <gnssApproach gaRoute="FH 123 CM 40" radial="123" daA="1453" daB="1453" daC="1453" daD="1453"
+                              includeSharedIafRoutes="true"/>
+                <ilsApproach gaRoute="FH 123 CM 40" radial="123" includeSharedIafRoutes="true">
+                  <categories>
+                    <category type="I" daA="1310" daB="1325" daC="1341" daD="1357"/>
+                  </categories>
+                  <iafRoutes>
+                    <route iaf="OKL" route="PD OKL/302/9.8 T FH 348 T PD PR962 T FH 123" />
+                  </iafRoutes>
+                </ilsApproach>
               </approaches>
               <routes>
                 <route type="star" name="GOLOP1P"
@@ -273,8 +288,31 @@
                        route="PD PR626 T PD PR861 T PD ARTUP"/>
               </routes>
             </threshold>
-            <threshold name="30" coordinate="50 05 25.68 N 014 16 53.02 E" initialDepartureAltitude="5000">
+            <threshold name="30" coordinate="50 05 25.68 N 014 16 53.02 E" initialDepartureAltitude="5000" includeSharedRoutes="false">
+              <sharedIafRoutes>
+                <route iaf="ARVEG" route="PD PR905 T PD PR906 T PD PR912 T FH 303" />
+                <route iaf="OKL" route="PD OKL/123/9.2 T FH 168 T PD PR912 T FH 303" />
+                <route iaf="KENOK" route="PD PR906 T PD PR912 T FH 303" />
+              </sharedIafRoutes>
               <approaches>
+                <unpreciseApproach gaRoute="FH 303 CM 40" radial="299" includeSharedIafRoutes="false" type="vor"
+                                   faf="OKL/119/9.3"
+                                   mapt="OKL/119/1.5" mdaA="1630"
+                                   mdaB="1630" mdaC="1630" mdaD="1630">
+                  <iafRoutes>
+                    <route iaf="ARVEG" route="FH 123 AD OKL/19.3 PD OKL/119/13.5 T FH 299" />
+                    <route iaf="OKL" route="PD OKL/119/9.3 T TR 164 T PD OKL/119/13.5 T FH 299" />
+                    <route iaf="KENOK" route="FH 343 AD VOZ/21.8 PD OKL/119/13.5 T FH 299" />
+                  </iafRoutes>
+                </unpreciseApproach>
+                <gnssApproach gaRoute="FH 303 CM 40" radial="303" includeSharedIafRoutes="true" daA="1516" daB="1516"
+                              daC="1516"
+                              daD="1516" />
+                <ilsApproach gaRoute="FH 303 CM 40" radial="303" includeSharedIafRoutes="true">
+                  <categories>
+                    <category type="I" daA="1369" daB="1377" daC="1387" daD="1395"/>
+                  </categories>
+                </ilsApproach>
               </approaches>
               <routes>
                 <route type="star" name="GOLOP2R"
@@ -395,16 +433,29 @@
       <runways>
         <runway active="true">
           <thresholds>
-            <threshold name="04" coordinate="49 41 07.16 N 018 05 35.69 E" initialDepartureAltitude="4000">
+            <threshold name="04" coordinate="49 41 07.16 N 018 05 35.69 E" initialDepartureAltitude="4000" includeSharedRoutes="false">
+              <sharedIafRoutes>
+                <route iaf="OTA" route="PD ODRAN T PD MT603 T PD MT604 T FH 042" />
+                <route iaf="ODRAN" route="PD MT603 T PD MT604 T FH 042" />
+                <route iaf="MORUV" route="PD MT716 T PD MT604 T FH 042" />
+                <route iaf="POLOM" route="PD MT604" />
+              </sharedIafRoutes>
               <approaches>
                 <gnssApproach gaRoute="FH 039 CM 025 AA 025+ PD MT598 CM 035 AN MT598 PD ODRAN"
-                              radial="042" daA="1190" daB="1190" daC="1190" daD="1190">
-                </gnssApproach>
+                              radial="042" daA="1190" daB="1190" daC="1190" daD="1190" includeSharedIafRoutes="true" />
                 <unpreciseApproach gaRoute="FH 039 CM 025 AA 025+ PD MT598 CM 035 AN MT598 PD ODRAN"
-                                   radial="042" type="ndb" mapt="N" faf="OTA/222/8.2" mdaA="1220" mdaB="1220" mdaC="1220" mdaD="1220">
-                </unpreciseApproach>
+                                   radial="042" type="ndb" mapt="N" faf="OTA/222/8.2" mdaA="1220" mdaB="1220"
+                                   mdaC="1220" mdaD="1220" includeSharedIafRoutes="true" />
                 <unpreciseApproach gaRoute="FH 039 CM 025 AA 025+ PD MT598 CM 035 AN MT598 PD ODRAN"
-                                   radial="039" type="vor" mapt="OTA/219/1.7" faf="OTA/219/8.2" mdaA="1220" mdaB="1220" mdaC="1220" mdaD="1220">
+                                   radial="039" type="vor" mapt="OTA/219/1.7" faf="OTA/219/8.2" mdaA="1220" mdaB="1220"
+                                   mdaC="1220" mdaD="1220" includeSharedIafRoutes="false">
+                  <iafRoutes>
+                    <route iaf="MORUV" route="PD MT716 T PD MT718 T FH 039" />
+                    <route iaf="POLOM" route="PD MT718 T FH 039" />
+                    <route iaf="ODRAN" route="PD MT603 T PD MT718 T FH 039" />
+                    <route iaf="OTA" category="CD" route="PD OTA/245/10 T TL 039 T FH 039" />
+                    <route iaf="OTA" category="AB" route="PD OTA/229/10 T TL 039 T FH 039" />
+                  </iafRoutes>
                 </unpreciseApproach>
               </approaches>
               <routes>
@@ -429,13 +480,13 @@
               </routes>
             </threshold>
             <threshold name="22" coordinate="49 42 25.65 N 018 07 42.41 E" initialDepartureAltitude="4000"
-                       preferred="true">
-              <iafRoutes>
+                       preferred="true" includeSharedRoutes="false">
+              <sharedIafRoutes>
                 <route iaf="OTA" route="AN OTA DM 30 PD OTA/015/10 T TR 200"/>
                 <route iaf="BOGTU" route="AN BOGTU DM 30 PD MT821 T PD MT827 T FH 226"/>
-              </iafRoutes>
+              </sharedIafRoutes>
               <approaches>
-                <ilsApproach radial="222" gaRoute="CM 30 FH 222 AA 25+ PD MT598 T PD BOGTU">
+                <ilsApproach radial="222" gaRoute="CM 30 FH 222 AA 25+ PD MT598 T PD BOGTU" includeSharedIafRoutes="false">
                   <iafRoutes>
                     <route iaf="OTA" route="DM 30 PD OTA/015/10 T TR 200"/>
                     <route iaf="BOGTU" route="DM 30 PD MT821 T PD MT827 T FH 226"/>
@@ -446,12 +497,14 @@
                     <category type="II" daA="867" daB="884" daC="895" daD="910"/>
                   </categories>
                 </ilsApproach>
-                <unpreciseApproach type="vor" mapt="OTA/046/1.7" faf="OTA/046/7.7" radial="226" mdaA="1170" mdaB="1170" mdaC="1170" mdaD="1170"
-                                   gaRoute="FH 226 AA 025+ PD MT598 T PD BOGTU"/>
-                <unpreciseApproach type="ndb" mapt="N" faf="OTA/042/7.7" radial="222" mdaA="1170" mdaB="1170" mdaC="1170" mdaD="1170"
-                                   gaRoute="FH 226 AA 025+ PD MT598 T PD BOGTU"/>
+                <unpreciseApproach type="vor" mapt="OTA/046/1.7" faf="OTA/046/7.7" radial="226" mdaA="1170" mdaB="1170"
+                                   mdaC="1170" mdaD="1170"
+                                   gaRoute="FH 226 AA 025+ PD MT598 T PD BOGTU" includeSharedIafRoutes="true"/>
+                <unpreciseApproach type="ndb" mapt="N" faf="OTA/042/7.7" radial="222" mdaA="1170" mdaB="1170"
+                                   mdaC="1170" mdaD="1170"
+                                   gaRoute="FH 226 AA 025+ PD MT598 T PD BOGTU" includeSharedIafRoutes="true"/>
                 <gnssApproach daA="1062" daB="1074" daC="1083" daD="1093" radial="222"
-                              gaRoute="CM 30 PD MT597 T PD MT598 T PD BOGTU">
+                              gaRoute="CM 30 PD MT597 T PD MT598 T PD BOGTU" includeSharedIafRoutes="false">
                   <iafRoutes>
                     <route iaf="OTA" route="DM 30 PD BOGTU T PD MT821 T PD MT825 T PD MT22F T FH 222"/>
                     <route iaf="BOGTU" route="DM 30 PD MT821 T PD MT825 T PD MT22F T FH 222"/>
@@ -668,7 +721,7 @@
     <navaid name="ZLA" type="ndb" coordinate="49.202889 18.510445"/>
 
     <!-- FIXes -->
-    <navaid name="PH" type="fixMinor" coordinate="50 06 15.26 N 14 13 49.23 E" />
+    <navaid name="PH" type="fixMinor" coordinate="50 06 15.26 N 14 13 49.23 E"/>
 
     <navaid name="ABERU" type="fix" coordinate="50.069194 12.093719"/>
     <navaid name="ABKIS" type="fix" coordinate="50.629695 13.057186"/>

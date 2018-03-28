@@ -1,5 +1,6 @@
 package eng.jAtcSim.lib.world.approaches;
 
+import eng.eSystem.xmlSerialization.XmlOptional;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.global.KeyItem;
 import eng.jAtcSim.lib.speaking.SpeechList;
@@ -11,6 +12,8 @@ public class IafRoute implements KeyItem<Navaid> {
   private Navaid _navaid;
   private String route;
   private SpeechList<IAtcCommand> _routeCommands;
+  @XmlOptional
+  private String category;
 
   @Override
   public Navaid getKey() {

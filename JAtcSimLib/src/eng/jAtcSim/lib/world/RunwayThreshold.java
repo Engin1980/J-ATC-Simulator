@@ -41,10 +41,10 @@ public class RunwayThreshold extends MustBeBinded implements KeyItem<String> {
   @XmlOptional
   private Coordinate estimatedFafPoint;
   @XmlOptional
-  private KeyList<IafRoute, Navaid> iafRoutes = new KeyList<>();
+  private KeyList<IafRoute, Navaid> sharedIafRoutes = new KeyList<>();
 
-  public KeyList<IafRoute, Navaid> getIafRoutes() {
-    return iafRoutes;
+  public KeyList<IafRoute, Navaid> getSharedIafRoutes() {
+    return sharedIafRoutes;
   }
 
   public int getInitialDepartureAltitude() {
@@ -165,7 +165,7 @@ public class RunwayThreshold extends MustBeBinded implements KeyItem<String> {
         Headings.getOpposite(this._course),
         9);
 
-    for (IafRoute iafRoute : iafRoutes) {
+    for (IafRoute iafRoute : sharedIafRoutes) {
       iafRoute.bind();
     }
   }

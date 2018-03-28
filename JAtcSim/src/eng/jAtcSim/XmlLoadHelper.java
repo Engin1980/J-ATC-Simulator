@@ -111,6 +111,8 @@ public class XmlLoadHelper {
     sett.getListItemMappings().add(
         new XmlListItemMapping("/iafRoutes$",  IafRoute.class));
     sett.getListItemMappings().add(
+        new XmlListItemMapping("/sharedIafRoutes$",  IafRoute.class));
+    sett.getListItemMappings().add(
         new XmlListItemMapping("/routes$", Route.class));
     sett.getListItemMappings().add(
         new XmlListItemMapping("/atcTemplates$", AtcTemplate.class));

@@ -41,6 +41,7 @@ public abstract class Approach {
   private KeyList<IafRoute, Navaid> iafRoutes = null;
   private int radial;
   private RunwayThreshold parent;
+  private boolean includeSharedIafRoutes;
 
   public static CurrentApproachInfo tryGetCurrentApproachInfo(List<Approach> apps, char category, ApproachType type, Coordinate currentPlaneLocation) {
     CurrentApproachInfo ret;
@@ -295,9 +296,9 @@ public abstract class Approach {
   public void bind() {
     _gaCommands = parseRoute(gaRoute);
 
-    if (this.iafRoutes == null) {
+    if (includeSharedIafRoutes) {
       this.iafRoutes = new KeyList<>();
-      this.iafRoutes.addAll(this.getParent().getIafRoutes());
+      this.iafRoutes.addAll(this.getParent().getSharedIafRoutes());
     }
 
     for (IafRoute iafRoute : iafRoutes) {

@@ -9,7 +9,7 @@ import eng.jAtcSim.lib.world.Navaid;
 
 public class AfterRadialParser extends SpeechParser<AfterRadialCommand> {
   private static final String[] prefixes = new String[]{"AR"};
-  private static final String pattern = "AR (\\S+)/(\\d{1,3)";
+  private static final String pattern = "AR (\\S+)/(\\d{1,3})";
 
   @Override
   public String[] getPrefixes() {

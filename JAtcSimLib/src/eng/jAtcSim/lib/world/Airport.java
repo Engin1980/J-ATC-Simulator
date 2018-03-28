@@ -37,6 +37,8 @@ public class Airport implements KeyItem<String> {
   private final KeyList<AtcTemplate, Atc.eType> atcTemplates = new KeyList();
   private final KeyList<PublishedHold, Navaid> holds = new KeyList();
   private List<Traffic> trafficDefinitions = new ArrayList<>();
+  @XmlOptional
+  private final KeyList<Route, String> sharedRoutes = new KeyList<>();
   
   private Area parent;
 
@@ -118,5 +120,9 @@ public class Airport implements KeyItem<String> {
 
   public InitialPosition getInitialPosition() {
     return this.initialPosition;
+  }
+
+  public KeyList<Route, String> getSharedRoutes() {
+    return sharedRoutes;
   }
 }

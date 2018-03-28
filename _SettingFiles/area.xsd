@@ -133,6 +133,7 @@
           </xs:sequence>
         </xs:complexType>
       </xs:element>
+      <xs:element name="sharedRoutes" type="routes" minOccurs="0" maxOccurs="1" />
     </xs:sequence>
     <xs:attribute name="icao" type="xs:string" use="required"/>
     <xs:attribute name="name" type="xs:string" use="required"/>
@@ -279,7 +280,7 @@
 
   <xs:complexType name="threshold">
     <xs:sequence>
-      <xs:element name="iafRoutes" type="iafRoutes" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="sharedIafRoutes" type="iafRoutes" minOccurs="0" maxOccurs="1"/>
       <xs:element name="approaches" minOccurs="1" maxOccurs="1">
         <xs:complexType>
           <xs:choice maxOccurs="unbounded">
@@ -289,18 +290,19 @@
           </xs:choice>
         </xs:complexType>
       </xs:element>
-      <xs:element name="routes" minOccurs="1" maxOccurs="1">
-        <xs:complexType>
-          <xs:sequence>
-            <xs:element name="route" type="route" minOccurs="0" maxOccurs="unbounded"/>
-          </xs:sequence>
-        </xs:complexType>
-      </xs:element >
+      <xs:element name="routes" type="routes" minOccurs="1" maxOccurs="1" />
     </xs:sequence>
+    <xs:attribute name="includeSharedRoutes" type="xs:boolean" use="required"/>
     <xs:attribute name="name" type="nonEmptyString" use="required"/>
     <xs:attribute name="coordinate" type="nonEmptyString" use="required"/>
     <xs:attribute name="initialDepartureAltitude" type="xs:int" use="required"/>
     <xs:attribute name="preferred" type="xs:boolean" use="optional"/>
+  </xs:complexType>
+
+  <xs:complexType name="routes">
+    <xs:sequence>
+      <xs:element name="route" type="route" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
   </xs:complexType>
 
   <xs:complexType name="route">
@@ -315,6 +317,8 @@
     <xs:attribute name="name" type="nonEmptyString" use="required"/>
     <xs:attribute name="route" type="nonEmptyString" use="required"/>
     <xs:attribute name="category" type="nonEmptyString" use="optional" />
+    <xs:attribute name="entryFL" type="xs:int" use="optional" />
+    <xs:attribute name="mainFix" type="nonEmptyString" use="optional" />
   </xs:complexType>
 
   <xs:simpleType name="nonEmptyString">
@@ -329,6 +333,7 @@
     </xs:sequence>
     <xs:attribute name="gaRoute" type="xs:string" use="required"/>
     <xs:attribute name="radial" type="xs:int" use="required"/>
+    <xs:attribute name="includeSharedIafRoutes" type="xs:boolean" use="required" />
   </xs:complexType>
 
   <xs:complexType name="gnssApproach">
@@ -403,6 +408,7 @@
 
   <xs:complexType name="iafRoute">
     <xs:attribute name="iaf" type="xs:string" use="required"/>
+    <xs:attribute name="category" type="nonEmptyString" use="optional" />
     <xs:attribute name="route" type="xs:string" use="required"/>
   </xs:complexType>
 
@@ -435,6 +441,8 @@
     <xs:attribute name="releaseAltitude" type="xs:int"/>
     <xs:attribute name="acceptAltitude" type="xs:int"/>
     <xs:attribute name="orderedAltitude" type="xs:int"/>
+    <xs:attribute name="ctrAcceptDistance" type="xs:int"/>
+    <xs:attribute name="ctrNavaidAcceptDistance" type="xs:int"/>
   </xs:complexType>
 
   <xs:complexType name="initialPosition">

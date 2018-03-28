@@ -1302,6 +1302,8 @@ public class Pilot {
           n = new AfterAltitudeCommand(ca.getAltitudeInFt(), restriction);
         } else if (prev instanceof ChangeSpeedCommand) {
           n = new AfterSpeedCommand(((ChangeSpeedCommand) prev).getSpeedInKts());
+        } else if (prev instanceof ChangeHeadingCommand){
+          n = new AfterHeadingCommand(((ChangeHeadingCommand) prev).getHeading());
         } else {
           parent.passMessageToAtc(atc,
               new IllegalThenCommandRejection("{Then} command is antecedent a strange command, it does not make sense. The whole command block is ignored."));
