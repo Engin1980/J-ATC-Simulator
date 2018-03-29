@@ -612,30 +612,6 @@ public class Pilot {
 
       if (newAltitude == -1) {
         switch (approach.getType()) {
-//          case ils_I:
-//          case ils_III:
-//          case ils_II:
-//          case gnss:
-//            distToLand = Coordinates.getDistanceInNM(
-//                parent.getCoordinate(), this.approach.getThreshold().getCoordinate());
-//            newAltitude = (int) (this.approach.getThreshold().getParent().getParent().getAltitude()
-//                + this.approach.getGlidePathPerNM() * distToLand);
-//            break;
-//          case ndb:
-//          case vor:
-//            if (location == ApproachLocation.beforeFaf) {
-//              newAltitude = parent.getTargetAltitude();
-//            } else if (location == ApproachLocation.beforeMapt) {
-//              double delta = approach.getAltitudeDeltaPerSecond(parent.getSpeed());
-//              newAltitude = (int) (parent.getTargetAltitude() - delta);
-//              if (newAltitude < approach.getDecisionAltitude()) newAltitude = approach.getDecisionAltitude();
-//            } else {
-//              distToLand = Coordinates.getDistanceInNM(
-//                  parent.getCoordinate(), this.approach.getThreshold().getCoordinate());
-//              newAltitude = (int) (this.approach.getThreshold().getParent().getParent().getAltitude()
-//                  + this.approach.getGlidePathPerNM() * distToLand);
-//            }
-//            break;
           case visual:
             if (location == ApproachLocation.beforeFaf)
               newAltitude = parent.getTargetAltitude();
@@ -984,8 +960,8 @@ public class Pilot {
     endrivePlane();
     flushSaidTextToAtc();
 
-    this.afterCommands.consolePrint();
-    System.out.println(" / / / / / ");
+//    this.afterCommands.consolePrint();
+//    System.out.println(" / / / / / ");
   }
 
   public Atc getTunedAtc() {

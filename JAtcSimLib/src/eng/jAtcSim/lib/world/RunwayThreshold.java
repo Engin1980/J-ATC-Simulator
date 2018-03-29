@@ -5,6 +5,8 @@
  */
 package eng.jAtcSim.lib.world;
 
+import eng.eSystem.collections.EList;
+import eng.eSystem.collections.IList;
 import eng.eSystem.utilites.CollectionUtils;
 import eng.eSystem.xmlSerialization.XmlOptional;
 import eng.jAtcSim.lib.coordinates.Coordinate;
@@ -28,7 +30,7 @@ public class RunwayThreshold extends MustBeBinded implements KeyItem<String> {
   private final List<Approach> approaches = new ArrayList<>();
 
   @XmlOptional // as inactive runway do not have this
-  private final KeyList<Route, String> routes = new KeyList();
+  private final IList<Route> routes = new EList<>();
   private String name;
   private Coordinate coordinate;
   private Runway parent;
@@ -41,9 +43,9 @@ public class RunwayThreshold extends MustBeBinded implements KeyItem<String> {
   @XmlOptional
   private Coordinate estimatedFafPoint;
   @XmlOptional
-  private KeyList<IafRoute, Navaid> sharedIafRoutes = new KeyList<>();
+  private IList<IafRoute> sharedIafRoutes = new EList<>();
 
-  public KeyList<IafRoute, Navaid> getSharedIafRoutes() {
+  public IList<IafRoute> getSharedIafRoutes() {
     return sharedIafRoutes;
   }
 
@@ -67,7 +69,7 @@ public class RunwayThreshold extends MustBeBinded implements KeyItem<String> {
     return approaches;
   }
 
-  public KeyList<Route, String> getRoutes() {
+  public IList<Route> getRoutes() {
     return routes;
   }
 

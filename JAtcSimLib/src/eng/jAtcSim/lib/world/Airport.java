@@ -5,6 +5,8 @@
  */
 package eng.jAtcSim.lib.world;
 
+import eng.eSystem.collections.EList;
+import eng.eSystem.collections.IList;
 import eng.eSystem.xmlSerialization.XmlOptional;
 import eng.jAtcSim.lib.coordinates.Coordinate;
 import eng.jAtcSim.lib.exceptions.ERuntimeException;
@@ -38,7 +40,7 @@ public class Airport implements KeyItem<String> {
   private final KeyList<PublishedHold, Navaid> holds = new KeyList();
   private List<Traffic> trafficDefinitions = new ArrayList<>();
   @XmlOptional
-  private final KeyList<Route, String> sharedRoutes = new KeyList<>();
+  private final IList<Route> sharedRoutes = new EList<>();
   
   private Area parent;
 
@@ -122,7 +124,7 @@ public class Airport implements KeyItem<String> {
     return this.initialPosition;
   }
 
-  public KeyList<Route, String> getSharedRoutes() {
+  public IList<Route> getSharedRoutes() {
     return sharedRoutes;
   }
 }

@@ -6,6 +6,8 @@
 package eng.jAtcSim.lib.traffic;
 
 import com.sun.istack.internal.Nullable;
+import eng.eSystem.collections.EList;
+import eng.eSystem.collections.IList;
 import eng.eSystem.utilites.CollectionUtils;
 import eng.eSystem.xmlSerialization.XmlOptional;
 import eng.jAtcSim.lib.Acc;
@@ -295,9 +297,9 @@ public abstract class Traffic {
 
   private Route tryGetRandomIfrRoute(boolean isArrival, AirplaneType planeType) {
 
-    List<Route> rts = new ArrayList<>();
+    IList<Route> rts = new EList<>();
     for (RunwayThreshold threshold : Acc.thresholds()) {
-      rts.addAll(threshold.getRoutes());
+      rts.add(threshold.getRoutes());
     }
     List<Route> avails = Routes.getByFilter(rts, isArrival, planeType.category);
 

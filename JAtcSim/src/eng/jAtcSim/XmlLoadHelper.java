@@ -8,6 +8,7 @@ import eng.jAtcSim.lib.airplanes.AirplaneTypes;
 import eng.jAtcSim.lib.atcs.AtcTemplate;
 import eng.jAtcSim.lib.coordinates.Coordinate;
 import eng.jAtcSim.lib.exceptions.ERuntimeException;
+import eng.jAtcSim.lib.global.PlaneCategoryDefinitions;
 import eng.jAtcSim.lib.traffic.DensityBasedTraffic;
 import eng.jAtcSim.lib.traffic.FlightListTraffic;
 import eng.jAtcSim.lib.traffic.GenericTraffic;
@@ -145,6 +146,7 @@ public class XmlLoadHelper {
 
     // own parsers
     sett.getValueParsers().add(new CoordinateValueParser());
+    sett.getValueParsers().add(new TrafficCategoryDefinitionParser());
 
     // instance creators
     sett.getInstanceCreators().add(new AreaCreator());
@@ -226,6 +228,25 @@ class CoordinateValueParser implements IValueParser<Coordinate> {
   @Override
   public String format(Coordinate coordinate) {
     throw new UnsupportedOperationException();
+  }
+}
+
+class TrafficCategoryDefinitionParser implements IValueParser<PlaneCategoryDefinitions>{
+
+  @Override
+  public Class getType() {
+    return PlaneCategoryDefinitions.class;
+  }
+
+  @Override
+  public PlaneCategoryDefinitions parse(String s) throws XmlDeserializationException {
+    PlaneCategoryDefinitions ret = new PlaneCategoryDefinitions(s);
+    return ret;
+  }
+
+  @Override
+  public String format(PlaneCategoryDefinitions trafficCategoryDefinition) throws XmlSerializationException {
+    return trafficCategoryDefinition.toString();
   }
 }
 

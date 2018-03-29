@@ -11,6 +11,7 @@ import eng.jAtcSim.lib.exceptions.EBindException;
 import eng.jAtcSim.lib.exceptions.ERuntimeException;
 import eng.jAtcSim.lib.global.KeyItem;
 import eng.jAtcSim.lib.global.MustBeBinded;
+import eng.jAtcSim.lib.global.PlaneCategoryDefinitions;
 import eng.jAtcSim.lib.speaking.ICommand;
 import eng.jAtcSim.lib.speaking.IFromAtc;
 import eng.jAtcSim.lib.speaking.SpeechList;
@@ -26,7 +27,7 @@ import java.util.List;
 /**
  * @author Marek
  */
-public class Route extends MustBeBinded implements KeyItem<String> {
+public class Route extends MustBeBinded {
 
   public enum eType {
 
@@ -44,7 +45,7 @@ public class Route extends MustBeBinded implements KeyItem<String> {
   private String route;
   private RunwayThreshold parent;
   @XmlOptional
-  private String category = null;
+  private PlaneCategoryDefinitions category = PlaneCategoryDefinitions.getAll();
   private SpeechList<IAtcCommand> _routeCommands = null;
   private List<Navaid> _routeNavaids = null;
   private double _routeLength = -1;
@@ -76,11 +77,6 @@ public class Route extends MustBeBinded implements KeyItem<String> {
     return ret;
   }
 
-  @Override
-  public String getKey() {
-    return name;
-  }
-
   public eType getType() {
     return type;
   }
@@ -105,16 +101,13 @@ public class Route extends MustBeBinded implements KeyItem<String> {
     this.parent = parent;
   }
 
-  public String getCategory() {
+  public PlaneCategoryDefinitions getCategory() {
     return this.category;
   }
 
   public boolean isValidForCategory(char categoryChar) {
-    if (this.category.indexOf(categoryChar) > -1) {
-      return true;
-    } else {
-      return false;
-    }
+    boolean ret = this.category.contains(categoryChar);
+    return ret;
   }
 
   public SpeechList<IAtcCommand> getCommands() {
@@ -202,12 +195,6 @@ public class Route extends MustBeBinded implements KeyItem<String> {
       if (c instanceof ToNavaidCommand) {
         _routeNavaids.add(((ToNavaidCommand) c).getNavaid());
       }
-    }
-
-    if (this.category == null || this.category.isEmpty()) {
-      this.category = "ABCD";
-    } else {
-      this.category = this.category.toUpperCase();
     }
 
     _routeLength = calculateRouteLength();

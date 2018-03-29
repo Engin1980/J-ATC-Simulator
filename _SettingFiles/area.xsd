@@ -316,7 +316,7 @@
     </xs:attribute>
     <xs:attribute name="name" type="nonEmptyString" use="required"/>
     <xs:attribute name="route" type="nonEmptyString" use="required"/>
-    <xs:attribute name="category" type="nonEmptyString" use="optional" />
+    <xs:attribute name="category" type="planeCategory" use="optional" />
     <xs:attribute name="entryFL" type="xs:int" use="optional" />
     <xs:attribute name="mainFix" type="nonEmptyString" use="optional" />
   </xs:complexType>
@@ -411,7 +411,7 @@
 
   <xs:complexType name="iafRoute">
     <xs:attribute name="iaf" type="xs:string" use="required"/>
-    <xs:attribute name="category" type="nonEmptyString" use="optional" />
+    <xs:attribute name="category" type="planeCategory" use="optional" />
     <xs:attribute name="route" type="xs:string" use="required"/>
   </xs:complexType>
 
@@ -452,5 +452,11 @@
     <xs:attribute name="coordinate" type="xs:string" use="required"/>
     <xs:attribute name="range" type="xs:int" use="required"/>
   </xs:complexType>
+
+  <xs:simpleType name="planeCategory">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="A?B?C?D?" />
+    </xs:restriction>
+  </xs:simpleType>
 
 </xs:schema>

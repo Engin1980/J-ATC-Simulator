@@ -1,5 +1,8 @@
 package eng.jAtcSim.lib.world.approaches;
 
+import com.sun.javafx.iio.common.ImageLoaderImpl;
+import eng.eSystem.collections.EList;
+import eng.eSystem.collections.IList;
 import eng.eSystem.utilites.CollectionUtils;
 import eng.eSystem.utilites.NumberUtils;
 import eng.eSystem.xmlSerialization.XmlOptional;
@@ -39,7 +42,7 @@ public abstract class Approach {
   private String gaRoute;
   private SpeechList<IAtcCommand> _gaCommands;
   @XmlOptional
-  private KeyList<IafRoute, Navaid> iafRoutes = null;
+  private IList<IafRoute> iafRoutes = null;
   private int radial;
   private RunwayThreshold parent;
   private boolean includeSharedIafRoutes;
@@ -173,6 +176,11 @@ public abstract class Approach {
     return UnitProvider.nmToFt(Math.tan(glidePathPercentage * Math.PI / 180));
   }
 
+  private static IafRoute tryGetIafRoute(IList<IafRoute> routes, Navaid iaf, char category){
+    IafRoute ret = routes.tryGetFirst(q->q.getNavaid().equals(iaf) && q.getCategory().contains(category));
+    return ret;
+  }
+
   private static CurrentApproachInfo tryGetFromILS(List<Approach> apps, char category, ApproachType type, Coordinate planeLocation) {
     CurrentApproachInfo ret;
     IlsApproach tmp = (IlsApproach) CollectionUtils.tryGetFirst(apps, o -> o instanceof IlsApproach);
@@ -181,7 +189,7 @@ public abstract class Approach {
 
     Navaid iaf = tryGetIafNavaidCloseToPlaneLocation(tmp, planeLocation);
 
-    IafRoute iafRoute = tmp.getIafRoutes().tryGet(iaf);
+    IafRoute iafRoute = tryGetIafRoute(tmp.getIafRoutes(), iaf, category);
     SpeechList<IFromAtc> iafCommands;
     if (iafRoute != null)
       iafCommands = new SpeechList<>(iafRoute.getRouteCommands());
@@ -209,7 +217,7 @@ public abstract class Approach {
 
     Navaid iaf = tryGetIafNavaidCloseToPlaneLocation(tmp, planeLocation);
 
-    IafRoute iafRoute = tmp.getIafRoutes().tryGet(iaf);
+    IafRoute iafRoute = tryGetIafRoute(tmp.getIafRoutes(), iaf, category);
     SpeechList<IFromAtc> iafCommands;
     if (iafRoute != null)
       iafCommands = new SpeechList<>(iafRoute.getRouteCommands());
@@ -235,7 +243,7 @@ public abstract class Approach {
     GnssApproach tmp = (GnssApproach) CollectionUtils.tryGetFirst(apps, o -> o instanceof GnssApproach);
 
     Navaid iaf = tryGetIafNavaidCloseToPlaneLocation(tmp, planeLocation);
-    IafRoute iafRoute = tmp.getIafRoutes().tryGet(iaf);
+    IafRoute iafRoute = tryGetIafRoute(tmp.getIafRoutes(), iaf, category);
     SpeechList<IFromAtc> iafCommands;
     if (iafRoute != null)
       iafCommands = new SpeechList<>(iafRoute.getRouteCommands());
@@ -279,7 +287,7 @@ public abstract class Approach {
     }
   }
 
-  public KeyList<IafRoute, Navaid> getIafRoutes() {
+  public IList<IafRoute> getIafRoutes() {
     return iafRoutes;
   }
 
@@ -295,8 +303,8 @@ public abstract class Approach {
     _gaCommands = parseRoute(gaRoute);
 
     if (includeSharedIafRoutes) {
-      this.iafRoutes = new KeyList<>();
-      this.iafRoutes.addAll(this.getParent().getSharedIafRoutes());
+      this.iafRoutes = new EList<>();
+      this.iafRoutes.add(this.getParent().getSharedIafRoutes());
     }
 
     for (IafRoute iafRoute : iafRoutes) {
