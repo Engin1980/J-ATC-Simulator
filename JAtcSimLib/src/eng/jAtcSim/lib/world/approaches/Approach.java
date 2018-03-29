@@ -194,7 +194,8 @@ public abstract class Approach {
     if (iafRoute != null)
       iafCommands = new SpeechList<>(iafRoute.getRouteCommands());
     else
-      iafCommands = new SpeechList<>(new ChangeAltitudeCommand( ChangeAltitudeCommand.eDirection.descend, tmp.getInitialAltitude()));
+      iafCommands = new SpeechList<>();
+    iafCommands.add(new ChangeAltitudeCommand( ChangeAltitudeCommand.eDirection.descend, tmp.getInitialAltitude()));
     SpeechList<IFromAtc> gaCommands = new SpeechList<>(tmp.getGaCommands());
     Coordinate faf = Coordinates.getCoordinate(
         tmp.getParent().getCoordinate(), Headings.getOpposite(tmp.getRadial()), 10);
@@ -222,7 +223,8 @@ public abstract class Approach {
     if (iafRoute != null)
       iafCommands = new SpeechList<>(iafRoute.getRouteCommands());
     else
-      iafCommands = new SpeechList<>(new ChangeAltitudeCommand( ChangeAltitudeCommand.eDirection.descend, tmp.getInitialAltitude()));
+      iafCommands = new SpeechList<>();
+    iafCommands.add(new ChangeAltitudeCommand( ChangeAltitudeCommand.eDirection.descend, tmp.getInitialAltitude()));
     SpeechList<IFromAtc> gaCommands = new SpeechList<>(tmp.getGaCommands());
     Coordinate faf = tmp.getFaf().getCoordinate();
     Coordinate mapt = tmp.getMAPt();
@@ -248,11 +250,11 @@ public abstract class Approach {
     if (iafRoute != null)
       iafCommands = new SpeechList<>(iafRoute.getRouteCommands());
     else
-      iafCommands = new SpeechList<>(new ChangeAltitudeCommand( ChangeAltitudeCommand.eDirection.descend, tmp.getInitialAltitude()));
+      iafCommands = new SpeechList<>();
+    iafCommands.add(new ChangeAltitudeCommand( ChangeAltitudeCommand.eDirection.descend, tmp.getInitialAltitude()));
     SpeechList<IFromAtc> gaCommands = new SpeechList<>(tmp.getGaCommands());
     Coordinate faf = Coordinates.getCoordinate(
         tmp.getParent().getCoordinate(), Headings.getOpposite(tmp.getRadial()), 10);
-    ;
     Coordinate mapt = tmp.getParent().getCoordinate();
     int course = tmp.getRadial();
     int mda = tmp.getDA(category);

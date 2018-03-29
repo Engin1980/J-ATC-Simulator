@@ -160,8 +160,8 @@
               <approaches>
                 <gnssApproach gaRoute="CM 30 AA 20+ TR 179" radial="078" includeSharedIafRoutes="true" daA="700"
                               daB="700"
-                              daC="700" daD="700" />
-                <ilsApproach gaRoute="CM 30 AA 20+ TR 179" radial="078" includeSharedIafRoutes="true">
+                              daC="700" daD="700" initialAltitude="3000" />
+                <ilsApproach gaRoute="CM 30 AA 20+ TR 179" radial="078" includeSharedIafRoutes="true" initialAltitude="3000">
                   <categories>
                     <category type="I" daA="336" daB="345" daC="357" daD="370"/>
                     <category type="II" daA="244" daB="255" daC="268" daD="280" />
@@ -197,7 +197,7 @@
                 <route iaf="WILLO" route="DM 40 PD MID/117/22 T PD MAY T DM 20 PD MAY/003/8.5 T FH 290" />
               </sharedIafRoutes>
               <approaches>
-                <ilsApproach gaRoute="CM 30 AA 20+ FH 179" radial="258" includeSharedIafRoutes="true">
+                <ilsApproach gaRoute="CM 30 AA 20+ FH 179" radial="258" includeSharedIafRoutes="true" initialAltitude="3000">
                   <categories>
                     <category type="I" daA="335" daB="344" daC="356" daD="370"/>
                     <category type="II" daA="245" daB="255" daC="268" daD="281" />
@@ -205,7 +205,7 @@
                 </ilsApproach>
                 <gnssApproach gaRoute="CM 30 AN 20+ FH 179" radial="258" includeSharedIafRoutes="true" daA="580"
                               daB="580"
-                              daC="580" daD="580" />
+                              daC="580" daD="580" initialAltitude="3000" />
               </approaches>
               <routes>
 

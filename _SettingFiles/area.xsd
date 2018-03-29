@@ -9,7 +9,7 @@
   <xs:element name="area" type="area"/>
 
   <xs:complexType name="area">
-    <xs:sequence>
+    <xs:choice maxOccurs="unbounded">
       <xs:element name="airports">
         <xs:complexType>
           <xs:sequence>
@@ -17,13 +17,13 @@
           </xs:sequence>
         </xs:complexType>
       </xs:element>
-      <xs:element name="navaids">
+      <xs:element name="navaids" >
         <xs:complexType>
           <xs:sequence>
             <xs:element name="navaid" type="navaid" maxOccurs="unbounded"/>
           </xs:sequence>
         </xs:complexType>
-      </xs:element>
+      </xs:element >
       <xs:element name="borders">
         <xs:complexType>
           <xs:sequence>
@@ -31,7 +31,7 @@
           </xs:sequence>
         </xs:complexType>
       </xs:element>
-    </xs:sequence>
+    </xs:choice>
     <xs:attribute name="icao" type="xs:string"/>
   </xs:complexType>
 
@@ -95,7 +95,7 @@
   </xs:complexType>
 
   <xs:complexType name="airport">
-    <xs:sequence>
+    <xs:choice maxOccurs="unbounded">
       <xs:element name="initialPosition" type="initialPosition"/>
       <xs:element name="trafficDefinitions" maxOccurs="unbounded" minOccurs="0">
         <xs:complexType>
@@ -134,7 +134,7 @@
         </xs:complexType>
       </xs:element>
       <xs:element name="sharedRoutes" type="routes" minOccurs="0" maxOccurs="1" />
-    </xs:sequence>
+    </xs:choice>
     <xs:attribute name="icao" type="xs:string" use="required"/>
     <xs:attribute name="name" type="xs:string" use="required"/>
     <xs:attribute name="altitude" type="xs:int" use="required"/>
