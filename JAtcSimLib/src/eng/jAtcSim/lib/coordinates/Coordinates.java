@@ -3,6 +3,7 @@
  */
 package eng.jAtcSim.lib.coordinates;
 
+import eng.jAtcSim.lib.global.Headings;
 import eng.jAtcSim.lib.global.UnitProvider;
 import eng.jAtcSim.lib.coordinates.Coordinate;
 
@@ -96,16 +97,17 @@ public final class Coordinates {
   }
   
   private static final double RADIAL_APPROACH_MULTIPLIER = 7;
-  private static final double RADIAL_MAX_DIFF = 30;
-  public static double getHeadingToRadial (Coordinate from, Coordinate to, double radialTo){
-    double heading = Coordinates.getBearing(from, to);
-    double diff = heading - radialTo;
+  private static final double RADIAL_MAX_DIFF = 45; //30;
+  public static double getHeadingToRadial (Coordinate current, Coordinate target, double radialToTarget){
+    double heading = Coordinates.getBearing(current, target);
+    double diff = Headings.subtract(heading, radialToTarget);
       diff *= RADIAL_APPROACH_MULTIPLIER;
     if (Math.abs(diff) > RADIAL_MAX_DIFF){
       diff = Math.signum(diff) * RADIAL_MAX_DIFF;
     }
 
-    double ret =  radialTo + diff;
+    double ret =  radialToTarget + diff;
+    ret = Headings.to(ret);
     return ret;
   }
 

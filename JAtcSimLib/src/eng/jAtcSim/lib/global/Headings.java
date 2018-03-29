@@ -31,8 +31,13 @@ public class Headings {
   }
 
   public static double subtract(double a, double b) {
+    if (Math.abs(a-b) > 180){
+      if (a < b)
+        a += 360;
+      else
+        b += 360;
+    }
     double ret = a - b;
-    ret = to(ret);
     return ret;
   }
 
@@ -68,26 +73,6 @@ public class Headings {
       return ChangeHeadingCommand.eDirection.left;
     else
       return ChangeHeadingCommand.eDirection.right;
-  }
-
-  @Deprecated
-  public static double turn(double current, double amount, boolean toLeft, double targetValue) {
-    //TODO this should be responsibility of airplane, not of headings class.
-    // should be rebuilt in different way
-
-    double ret;
-    boolean targeted;
-    if (toLeft) {
-      ret = Headings.add(current, -amount);
-      targeted = Headings.isBetween(ret, targetValue, current);
-    } else {
-      ret = Headings.add(current, amount);
-      targeted = Headings.isBetween(current, targetValue, ret);
-    }
-
-    if (targeted)
-      ret = targetValue;
-    return ret;
   }
 
   public static boolean isBetween(double leftBorder, double value, double rightBorder) {

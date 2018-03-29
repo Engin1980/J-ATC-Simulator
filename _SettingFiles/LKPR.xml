@@ -126,7 +126,7 @@
                      releaseAltitude="-1" acceptAltitude="-1" orderedAltitude="-1"/>
       </atcTemplates>
       <runways>
-        <runway active="true">
+        <runway>
           <thresholds>
             <threshold name="06" coordinate="50 06 06.61 N 014 13 34.58 E" initialDepartureAltitude="5000"
                        includeSharedRoutes="false">
@@ -232,7 +232,7 @@
             </threshold>
           </thresholds>
         </runway>
-        <runway active="true">
+        <runway>
           <thresholds>
             <threshold name="12" coordinate="50 06 28.84 N 014 14 43.32 E" initialDepartureAltitude="5000"
                        includeSharedRoutes="false">
@@ -346,7 +346,7 @@
         </runway>
       </runways>
       <inactiveRunways>
-        <runway active="false">
+        <runway>
           <thresholds>
             <threshold name="04" coordinate="50 05 15.77 N 014 16 00.06 E"/>
             <threshold name="22" coordinate="50 06 10.50 N 014 17 04.00 E"/>
@@ -432,7 +432,7 @@
                      releaseAltitude="-1" acceptAltitude="-1" orderedAltitude="-1"/>
       </atcTemplates>
       <runways>
-        <runway active="true">
+        <runway>
           <thresholds>
             <threshold name="04" coordinate="49 41 07.16 N 018 05 35.69 E" initialDepartureAltitude="4000"
                        includeSharedRoutes="false">

@@ -10,7 +10,6 @@ import eng.eSystem.EStringBuilder;
 import eng.jAtcSim.lib.global.UnitProvider;
 
 /**
- *
  * @author Marek
  */
 public class Weather {
@@ -33,15 +32,24 @@ public class Weather {
 
   /**
    * Returns visibility in nauctional miles
-   * @return 
+   *
+   * @return
    */
   public double getVisibilityInMiles() {
     return UnitProvider.mToNM(visibilityInM);
   }
 
+  public double getVisibilityInMilesReal(){
+    if (visibilityInM == 9999)
+      return Double.MAX_VALUE;
+    else
+      return getVisibilityInMiles();
+  }
+
   /**
    * Returns lowest cloud altitude in ft above AGL
-   * @return 
+   *
+   * @return
    */
   public int getCloudBaseInFt() {
     return cloudBaseInFt;
@@ -49,7 +57,8 @@ public class Weather {
 
   /**
    * Returns heading from which is incoming.
-   * @return 
+   *
+   * @return
    */
   public int getWindHeading() {
     return windHeading;
@@ -57,7 +66,8 @@ public class Weather {
 
   /**
    * Returns speed of wind in kts.
-   * @return 
+   *
+   * @return
    */
   public int getWindSpeetInKts() {
     return windSpeetInKts;
@@ -65,13 +75,14 @@ public class Weather {
 
   /**
    * Return 0..1 probability that pilot will not see through the clouds.
+   *
    * @return 0 if no clouds are covering ground view, 1 if clouds are covering ground view
    */
   public double getCloudBaseHitProbability() {
     return cloudBaseHitProbability;
   }
 
-  public String toInfoString(){
+  public String toInfoString() {
     EStringBuilder sb = new EStringBuilder();
     sb.appendFormatLine("Wind %d° at %d kts, visibility %1.0f miles, cloud base at %d ft at %1.0f %%.",
         this.getWindHeading(),
@@ -79,7 +90,7 @@ public class Weather {
         this.getVisibilityInMiles(),
         this.getCloudBaseInFt(),
         this.getCloudBaseHitProbability() * 100
-        );
+    );
     return sb.toString();
   }
 }

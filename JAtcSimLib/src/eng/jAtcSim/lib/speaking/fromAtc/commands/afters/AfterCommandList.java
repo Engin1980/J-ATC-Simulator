@@ -175,7 +175,7 @@ public class AfterCommandList {
     boolean ret =
         this.rt.isAny(q -> isLateralDirectionAfterNavaidCommand(coordinate, q))
             ||
-            this.ex.isAll(q -> isLateralDirectionAfterNavaidCommand(coordinate, q));
+            this.ex.isAny(q -> isLateralDirectionAfterNavaidCommand(coordinate, q));
     return ret;
   }
 

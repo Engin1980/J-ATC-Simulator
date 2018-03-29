@@ -42,7 +42,7 @@ public abstract class Approach {
   private String gaRoute;
   private SpeechList<IAtcCommand> _gaCommands;
   @XmlOptional
-  private IList<IafRoute> iafRoutes = null;
+  private IList<IafRoute> iafRoutes = new EList<>();
   private int radial;
   private RunwayThreshold parent;
   private boolean includeSharedIafRoutes;

@@ -8,6 +8,7 @@ package eng.jAtcSim;
 import eng.eSystem.utilites.CollectionUtils;
 import eng.jAtcSim.frmPacks.Pack;
 import eng.jAtcSim.lib.Acc;
+import eng.jAtcSim.lib.global.Headings;
 import eng.jAtcSim.lib.global.logging.ApplicationLog;
 import eng.jAtcSim.lib.global.logging.Log;
 import eng.jAtcSim.lib.Simulation;
@@ -55,6 +56,7 @@ public class JAtcSim {
    * @param args the command line arguments
    */
   public static void main(String[] args) {
+
     Acc.setLog(new ApplicationLog());
 
     appSettings = new AppSettings();

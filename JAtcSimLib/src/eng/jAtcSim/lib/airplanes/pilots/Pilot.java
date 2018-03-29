@@ -282,6 +282,7 @@ public class Pilot {
   }
 
   abstract class BasicBehavior extends Behavior {
+    private boolean clearanceLimitWarningSent = false;
     abstract void _fly();
 
     @Override
@@ -289,9 +290,12 @@ public class Pilot {
       if (targetCoordinate != null) {
 
         double dist = Coordinates.getDistanceInNM(parent.getCoordinate(), targetCoordinate);
-        if (dist < 5 && !pilot.afterCommands.hasLateralDirectionAfterCoordinate(targetCoordinate)) {
+        if (!clearanceLimitWarningSent && dist < 5 && !pilot.afterCommands.hasLateralDirectionAfterCoordinate(targetCoordinate)) {
           say(new PassingClearanceLimitNotification());
+          clearanceLimitWarningSent = true;
+        } else if (dist < 1){
           targetCoordinate = null;
+          clearanceLimitWarningSent = false;
         } else {
           double heading = Coordinates.getBearing(parent.getCoordinate(), targetCoordinate);
           heading = Headings.to(heading);
@@ -596,12 +600,6 @@ public class Pilot {
 
     }
 
-    private double getAppHeadingDifference() {
-      int heading = (int) Coordinates.getBearing(parent.getCoordinate(), this.approach.getThreshold().getCoordinate());
-      double ret = Headings.subtract(heading, parent.getHeading());
-      return ret;
-    }
-
     private boolean updateAltitudeOnApproach(boolean checkIfIsAfterThreshold) {
       int currentTargetAlttiude = parent.getTargetAltitude();
       double distToLand;
@@ -655,8 +653,8 @@ public class Pilot {
     }
 
     private boolean isBehindThreshold() {
-      double courseToFaf = Coordinates.getBearing(parent.getCoordinate(), approach.getThreshold().getCoordinate());
-      boolean ret = Headings.getDifference(courseToFaf, approach.getThreshold().getCourse(), true) > 90;
+      double course = Coordinates.getBearing(parent.getCoordinate(), approach.getThreshold().getCoordinate());
+      boolean ret = Headings.getDifference(course, approach.getThreshold().getCourse(), true) > 90;
       return ret;
     }
 
@@ -673,11 +671,15 @@ public class Pilot {
         newHeading = Coordinates.getBearing(planePos, approach.getFaf());
       } else if (location == ApproachLocation.beforeMapt) {
         Coordinate point = approach.getMapt();
-        int course = approach.getCourse();
+        double course = approach.getFaf2MaptCourse();
         newHeading = Coordinates.getHeadingToRadial(
             planePos, point, course);
       } else if (location == ApproachLocation.beforeThreshold) {
-        newHeading = Coordinates.getBearing(planePos, this.approach.getThreshold().getCoordinate());
+        double dist = Coordinates.getDistanceInNM(planePos, this.approach.getThreshold().getCoordinate());
+        if (dist < 2)
+          newHeading = Coordinates.getBearing(planePos, this.approach.getThreshold().getCoordinate());
+        else
+          newHeading = Coordinates.getHeadingToRadial(planePos, this.approach.getThreshold().getCoordinate(), this.approach.getThreshold().getCourse() );
       } else {
         // afther threshold
         newHeading = (int) Coordinates.getBearing(planePos, this.approach.getThreshold().getOtherThreshold().getCoordinate());
@@ -691,7 +693,7 @@ public class Pilot {
         return false;
       }
       double d = Coordinates.getDistanceInNM(parent.getCoordinate(), approach.getThreshold().getCoordinate());
-      if (w.getVisibilityInMiles() < d) {
+      if (w.getVisibilityInMilesReal() < d) {
         return false;
       }
       return true;
@@ -958,8 +960,8 @@ public class Pilot {
     endrivePlane();
     flushSaidTextToAtc();
 
-//    this.afterCommands.consolePrint();
-//    System.out.println(" / / / / / ");
+    this.afterCommands.consolePrint();
+    System.out.println(" / / / / / ");
   }
 
   public Atc getTunedAtc() {

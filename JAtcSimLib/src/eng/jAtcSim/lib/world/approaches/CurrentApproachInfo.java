@@ -1,6 +1,7 @@
 package eng.jAtcSim.lib.world.approaches;
 
 import eng.jAtcSim.lib.coordinates.Coordinate;
+import eng.jAtcSim.lib.coordinates.Coordinates;
 import eng.jAtcSim.lib.global.UnitProvider;
 import eng.jAtcSim.lib.speaking.IFromAtc;
 import eng.jAtcSim.lib.speaking.SpeechList;
@@ -16,6 +17,7 @@ public class CurrentApproachInfo {
   private int course;
   private int decisionAltitude;
   private double slope;
+  private double faf2maptCourse;
 
   public CurrentApproachInfo(RunwayThreshold threshold, SpeechList<IFromAtc> iafRoute, SpeechList<IFromAtc> gaRoute, Approach.ApproachType type, Coordinate faf, Coordinate mapt, int course, int decisionAltitude, double slope) {
     this.threshold = threshold;
@@ -27,6 +29,7 @@ public class CurrentApproachInfo {
     this.course = course;
     this.decisionAltitude = decisionAltitude;
     this.slope = slope;
+    this.faf2maptCourse = Coordinates.getBearing(this.faf, this.mapt );
   }
 
   public RunwayThreshold getThreshold() {
@@ -72,5 +75,9 @@ public class CurrentApproachInfo {
 
   public boolean willUseIafRouting() {
     return !this.iafRoute.isEmpty();
+  }
+
+  public double getFaf2MaptCourse() {
+    return this.faf2maptCourse;
   }
 }
