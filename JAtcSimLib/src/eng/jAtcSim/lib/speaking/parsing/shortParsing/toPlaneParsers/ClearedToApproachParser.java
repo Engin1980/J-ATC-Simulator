@@ -1,4 +1,4 @@
-package eng.jAtcSim.lib.speaking.parsing.shortParsing.fromPlaneParsers;
+package eng.jAtcSim.lib.speaking.parsing.shortParsing.toPlaneParsers;
 
 import eng.eSystem.EStringBuilder;
 import eng.jAtcSim.lib.exceptions.ENotSupportedException;

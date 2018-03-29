@@ -1,4 +1,4 @@
-package eng.jAtcSim.lib.speaking.parsing.shortParsing.fromPlaneParsers;
+package eng.jAtcSim.lib.speaking.parsing.shortParsing.toPlaneParsers;
 
 import eng.jAtcSim.lib.global.Restriction;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.SetAltitudeRestriction;
@@ -7,8 +7,8 @@ import eng.jAtcSim.lib.speaking.parsing.shortParsing.SpeechParser;
 
 public class SetAltitudeRestrictionParser extends SpeechParser<SetAltitudeRestriction> {
 
-  private static final String[] prefixes = new String[]{"AM", "AL", "AE", "AR"};
-  private static final String pattern = "((AM)|(AL)|(AE)|(AR))( (\\d{1,3}))?";
+  private static final String[] prefixes = new String[]{"AM", "AL", "AE", "AC"};
+  private static final String pattern = "((AM)|(AL)|(AE)|(AC))( (\\d{1,3}))?";
 
   @Override
   public String[] getPrefixes() {

@@ -1,4 +1,4 @@
-package eng.jAtcSim.lib.speaking.parsing.shortParsing.fromPlaneParsers;
+package eng.jAtcSim.lib.speaking.parsing.shortParsing.toPlaneParsers;
 
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.exceptions.EInvalidCommandException;

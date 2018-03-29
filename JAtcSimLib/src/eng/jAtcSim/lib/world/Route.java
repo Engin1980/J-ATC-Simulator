@@ -168,7 +168,7 @@ public class Route extends MustBeBinded {
       SpeechList<IFromAtc> xlst = p.parseMulti(this.route);
       _routeCommands = xlst.convertTo();
     } catch (Exception ex) {
-      throw new EBindException("Parsing fromAtc failed for route " + this.name + ". Route fromAtc contain error (see cause).", ex);
+      throw new EBindException("Parsing fromAtc failed for route " + this.name + ". Route fromAtc contains error (see cause).", ex);
     }
 
     // when "main fix" was not explicitly specified

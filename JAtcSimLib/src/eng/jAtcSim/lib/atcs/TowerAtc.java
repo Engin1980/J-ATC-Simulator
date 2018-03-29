@@ -109,9 +109,6 @@ public class TowerAtc extends ComputerAtc {
 
     if (w.getWindSpeetInKts() <= MAXIMAL_SPEED_FOR_PREFERRED_RUNWAY) {
       for (Runway r : Acc.airport().getRunways()) {
-        if (r.isActive() == false) {
-          continue; // skip inactive runways
-        }
         for (RunwayThreshold t : r.getThresholds()) {
           if (t.isPreferred()) {
             rt = t;
@@ -195,7 +192,6 @@ public class TowerAtc extends ComputerAtc {
 
     runwayChecks = new EMap<>();
     for (Runway runway : Acc.airport().getRunways()) {
-      if (runway.isActive() == false) continue;
       RunwayCheck rc = TowerAtc.RunwayCheck.createNormal(true);
       runwayChecks.add(runway, rc);
     }

@@ -149,7 +149,7 @@
                route="PD TEBRA T PD ABTUM T PD ARNUN T SL 250 PD KKE63 T PD LARCK T PD TIMBA T H TIMBA"/>
       </sharedRoutes>
       <runways>
-        <runway active="true">
+        <runway>
           <thresholds>
             <threshold name="08R" coordinate="51 08 45.10 N 000 12 24.59 W" initialDepartureAltitude="4000"
                        includeSharedRoutes="true">
@@ -170,23 +170,23 @@
               </approaches>
               <routes>
                 <route type="sid" name="DVR2P"
-                       route="SL 220 AL 40 AA 015 PD DET31 T SL 250 PD DET29 T SR AL 50 PD NEXOX T AL 60 PD DVR33 T PD DVR T SR AR"/>
+                       route="SL 220 AL 40 AA 015 PD DET31 T SL 250 PD DET29 T SC AL 50 PD NEXOX T AL 60 PD DVR33 T PD DVR"/>
                 <route type="sid" name="LAM1Z"
-                       route="AL 40 PD KKE02 T PD KKE12 T AL 50 PD SUNAV T PD KKE35 T PD KKN43 T AL 60 PD KKN48 T PD LAM T SR AR"/>
+                       route="AL 40 PD KKE02 T PD KKE12 T AL 50 PD SUNAV T PD KKE35 T PD KKN43 T AL 60 PD KKN48 T PD LAM"/>
                 <route type="sid" name="BIG2Z"
-                       route="AL 40 PD KKE04 T PD KKE10 T AL 50 PD KKE17 T SL 210 AL 60 PD KKE23 T PD BIG T SR T SR AR"/>
+                       route="AL 40 PD KKE04 T PD KKE10 T AL 50 PD KKE17 T SL 210 AL 60 PD KKE23 T PD BIG"/>
                 <route type="sid" name="CLN2Z"
-                       route="AL 40 PD KKE04 T PD KKE10 T AL 50 PD KKE17 T PD KKE25 T PD DET T AL 60 PD KKN52 T PD DAGGA T PD CLN T SR AR"/>
+                       route="AL 40 PD KKE04 T PD KKE10 T AL 50 PD KKE17 T PD KKE25 T PD DET T AL 60 PD KKN52 T PD DAGGA T PD CLN"/>
                 <route type="sid" name="BOGNA1X"
-                       route="SL 220 AL 40 PD KKW06 T PD KKW08 T PD KKS11 T AL 50 SR PD KKS17 T AL 60 PD KKS20 T PD KKS25 T PD BOGNA T SR AR"/>
+                       route="SL 220 AL 40 PD KKW06 T PD KKW08 T PD KKS11 T AL 50 SC PD KKS17 T AL 60 PD KKS20 T PD KKS25 T PD BOGNA"/>
                 <route type="sid" name="KENET1Z"
-                       route="SL 220 AL 40 PD KKE05 T PD KKN09 T SR PD KKW19 T PD KKW26 T PD KKW44 T PD KENET T SR AR"/>
+                       route="SL 220 AL 40 PD KKE05 T PD KKN09 T SC PD KKW19 T PD KKW26 T PD KKW44 T PD KENET"/>
                 <route type="sid" name="SAM3Z"
-                       route="SL 220 AL 40 PD KKE05 T PD KKN09 T SR PD KKW19 T PD KKW26 T PD SAM T SR AR"/>
+                       route="SL 220 AL 40 PD KKE05 T PD KKN09 T SC PD KKW19 T PD KKW26 T PD SAM"/>
                 <route type="sid" name="SFD4Z"
-                       route="SL 220 AL 40 PD KKE03 T SR PD KKS08 T PD KKS12 T AL 50 PD KKS16 T AL 60 PD KKS22 T PD SFD T SR AR"/>
+                       route="SL 220 AL 40 PD KKE03 T SC PD KKS08 T PD KKS12 T AL 50 PD KKS16 T AL 60 PD KKS22 T PD SFD"/>
                 <route type="sid" name="ODVIK2Z"
-                       route="AL 40 PD KKE04 T PD KKE10 T AL 50 PD KKE17 T AL 60 PD ODVIK T SR AR"/>
+                       route="AL 40 PD KKE04 T PD KKE10 T AL 50 PD KKE17 T AL 60 PD ODVIK"/>
               </routes>
             </threshold>
             <threshold name="26L" coordinate="51 09 02.43 N 000 10 18.93 W" initialDepartureAltitude="4000"
@@ -203,43 +203,42 @@
                     <category type="II" daA="245" daB="255" daC="268" daD="281" />
                   </categories>
                 </ilsApproach>
-                <gnssApproach gaRoute="CM 30 AN 20+ FH 179" radial="258" includeSharedIafRoutes="true" daA="580"
+                <gnssApproach gaRoute="CM 30 AA 20+ FH 179" radial="258" includeSharedIafRoutes="true" daA="580"
                               daB="580"
                               daC="580" daD="580" initialAltitude="3000" />
               </approaches>
               <routes>
-
                 <route type="sid" name="DVR9M"
-                       route="SL 220 AL 50 AA 015 PD DET31 T SL 250 PD DET29 T SR AL 50 PD NEXOX T AL 60 PD DVR33 T PD DVR T SR AR"/>
+                       route="SL 220 AL 50 AA 015 PD DET31 T SL 250 PD DET29 T SC AL 50 PD NEXOX T AL 60 PD DVR33 T PD DVR"/>
                 <route type="sid" name="LAM2X"
-                       route="SL 220 AL 40 PD KKW02 T PD KKE09 T SL 250 PD KKE11 T AL 50 PD SUNAV T PD KKE35 T PD KKN43 T AL 60 PD KKN48 T PD LAM T SR AR"/>
+                       route="SL 220 AL 40 PD KKW02 T PD KKE09 T SL 250 PD KKE11 T AL 50 PD SUNAV T PD KKE35 T PD KKN43 T AL 60 PD KKN48 T PD LAM"/>
                 <route type="sid" name="BIG2X"
-                       route="SL 220 AL 40 PD KKW02 T PD KKE09 T SL 230 PD KKE11 T PD KKE15 T AL 50 PD SUNAV T AL 60 PD KKE38 T PD BIG T SR AR"/>
+                       route="SL 220 AL 40 PD KKW02 T PD KKE09 T SL 230 PD KKE11 T PD KKE15 T AL 50 PD SUNAV T AL 60 PD KKE38 T PD BIG"/>
                 <route type="sid" name="CLN4X"
-                       route="SL 220 AL 40 PD KKW02 T PD KKE09 T SR PD KKE11 T PD KKE15 T AL 50 PD SUNAV T PD KKE42 T PD DET T AL 60 PD KKN52 T PD DAGGA T PD CLN T AR SR"/>
+                       route="SL 220 AL 40 PD KKW02 T PD KKE09 T SC PD KKE11 T PD KKE15 T AL 50 PD SUNAV T PD KKE42 T PD DET T AL 60 PD KKN52 T PD DAGGA T PD CLN"/>
                 <route type="sid" name="HARDY1X"
-                       route="SL 220 AL 40 PD KKW06 T PD KKW08 T PD KKS11 T SR AL 50 PD KKS17 T AL 60 PD KKS20 T PD KKS25 T PD BOGNA T PD HARDY T AR SR"/>
+                       route="SL 220 AL 40 PD KKW06 T PD KKW08 T PD KKS11 T SC AL 50 PD KKS17 T AL 60 PD KKS20 T PD KKS25 T PD BOGNA T PD HARDY"/>
                 <route type="sid" name="KENET1X"
                        route="PD KKW07 T PD KKW09 T PD MID T PD KKW28 T PD KENET"/>
                 <route type="sid" name="SAM1X"
                        route="PD KKW07 T PD KKW09 T PD MID T PD SAM"/>
                 <route type="sid" name="SFD1X"
-                       route="SL 220 AL 40 PD KKW06 T PD KKW10 T PD KKW11 T SR PD KKS13 T AL 50 PD KKS19 T AL 60 PD KKS21 T PD SFD T AR SR"/>
+                       route="SL 220 AL 40 PD KKW06 T PD KKW10 T PD KKW11 T SC PD KKS13 T AL 50 PD KKS19 T AL 60 PD KKS21 T PD SFD"/>
                 <route type="sid" name="WIZAD1X"
-                       route="SL 220 AL 40 PD KKW04 T PD KKS06 T SR PD KKS09 T PD KKS14 T AL 50 PD MAY T AL 60 PD KKS33 T PD WIZAD T SR AR"/>
+                       route="SL 220 AL 40 PD KKW04 T PD KKS06 T SC PD KKS09 T PD KKS14 T AL 50 PD MAY T AL 60 PD KKS33 T PD WIZAD"/>
                 <route type="sid" name="ADMAG2X"
-                       route="SL 220 AL 40 PD KKW02 T PD KKW09 T SR PD KKE11 T PD KKE15 T AL 50 PD SUNAV T AL 60 PD ADMAG T SR AR"/>
+                       route="SL 220 AL 40 PD KKW02 T PD KKW09 T SC PD KKE11 T PD KKE15 T AL 50 PD SUNAV T AL 60 PD ADMAG"/>
                 <route type="sid" name="TIGER1X" mainFix="LAM"
-                       route="SL 220 AL 40 PD KKW04 T PD KKS06 T SR PD KKS09 T PD KKS14 T AL 50 PD MAY T PD KKS36 T PD LAM T SR AR"/>
+                       route="SL 220 AL 40 PD KKW04 T PD KKS06 T SC PD KKS09 T PD KKS14 T AL 50 PD MAY T PD KKS36 T PD LAM"/>
                 <route type="sid" name="DAGGA1X"
-                       route="SL 220 AL 40 PD KKW04 T PD KKS06 T SR PD KKS09 T PD KKS14 T AL 50 PD MAY T PD KKS36 T PD DET T PD DAGGA T PD CLN T SR AR"/>
+                       route="SL 220 AL 40 PD KKW04 T PD KKS06 T SC PD KKS09 T PD KKS14 T AL 50 PD MAY T PD KKS36 T PD DET T PD DAGGA T PD CLN"/>
               </routes>
             </threshold>
           </thresholds>
         </runway>
       </runways>
       <inactiveRunways>
-        <runway active="false">
+        <runway>
           <thresholds>
             <threshold name="08L" coordinate="51 08 51.04 N 000 12 29.18 W"/>
             <threshold name="26R" coordinate="51 09 03.69 N 000 10 57.40 W"/>
@@ -333,7 +332,6 @@
     <navaid name="KONAN" type="fix" coordinate="510750.75N 0020000.00E"/>
     <navaid name="KUNAV" type="fix" coordinate="503054.00N 0010356.00E"/>
     <navaid name="LARCK" type="fix" coordinate="505441.83N 0002647.93E"/>
-    <navaid name="MID" type="fix" coordinate="510314.23N 0003730.01W"/>
     <navaid name="NEDUL" type="fix" coordinate="503958.00N 0013251.86W"/>
     <navaid name="NETVU" type="fix" coordinate="502445.00N 0002854.00E"/>
     <navaid name="NEVIL" type="fix" coordinate="500000.00N 0002205.64W"/>
@@ -352,7 +350,6 @@
     <navaid name="DET29" type="fixMinor" coordinate="51.2205543491044 -0.1605556296941767"/>
     <navaid name="DVR33" type="fixMinor" coordinate="51.21809599856 0.60466674227"/>
     <navaid name="NEXOX" type="fix" coordinate="51 15 01 N 000 11 38 E"/>
-    <navaid name="DVR" type="fix" coordinate="51 09 45 N 001 21 33 E"/>
     <navaid name="BILNI" type="fix" coordinate="504031.08N 0020732.56W"/>
     <navaid name="DOMUT" type="fix" coordinate="501542.57N 0014008.65W"/>
     <navaid name="GOKTU" type="fix" coordinate="501504.87N 0012244.57W"/>

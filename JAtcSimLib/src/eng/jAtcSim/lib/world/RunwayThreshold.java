@@ -8,6 +8,7 @@ package eng.jAtcSim.lib.world;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.utilites.CollectionUtils;
+import eng.eSystem.xmlSerialization.XmlIgnore;
 import eng.eSystem.xmlSerialization.XmlOptional;
 import eng.jAtcSim.lib.coordinates.Coordinate;
 import eng.jAtcSim.lib.coordinates.Coordinates;
@@ -26,24 +27,22 @@ import java.util.List;
 public class RunwayThreshold extends MustBeBinded implements KeyItem<String> {
 
 
-  @XmlOptional // as inactive runway do not have this
   private final List<Approach> approaches = new ArrayList<>();
 
-  @XmlOptional // as inactive runway do not have this
   private final IList<Route> routes = new EList<>();
   private String name;
   private Coordinate coordinate;
   private Runway parent;
   private double _course;
-  @XmlOptional // as inactive runway do not have this
   private int initialDepartureAltitude;
   private RunwayThreshold _other;
   @XmlOptional // as inactive runway do not have this
   private boolean preferred = false;
-  @XmlOptional
+  @XmlIgnore
   private Coordinate estimatedFafPoint;
   @XmlOptional
   private IList<IafRoute> sharedIafRoutes = new EList<>();
+  private boolean includeSharedRoutes;
 
   public IList<IafRoute> getSharedIafRoutes() {
     return sharedIafRoutes;
@@ -125,7 +124,6 @@ public class RunwayThreshold extends MustBeBinded implements KeyItem<String> {
 
     double crs = this.getCourse();
     for (Runway runway : this.getParent().getParent().getRunways()) {
-      if (runway.isActive() == false) continue;
       for (RunwayThreshold threshold : runway.getThresholds()) {
         //TODO this may fail for
         if (Headings.isBetween(crs - 1, threshold.getCourse(), crs + 1)) {
@@ -166,6 +164,10 @@ public class RunwayThreshold extends MustBeBinded implements KeyItem<String> {
         this.coordinate,
         Headings.getOpposite(this._course),
         9);
+
+    if (this.includeSharedRoutes){
+      this.routes.add(this.getParent().getParent().getSharedRoutes());
+    }
 
     for (IafRoute iafRoute : sharedIafRoutes) {
       iafRoute.bind();

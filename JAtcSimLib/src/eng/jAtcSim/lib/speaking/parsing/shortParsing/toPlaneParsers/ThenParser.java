@@ -1,7 +1,5 @@
-package eng.jAtcSim.lib.speaking.parsing.shortParsing.fromPlaneParsers;
+package eng.jAtcSim.lib.speaking.parsing.shortParsing.toPlaneParsers;
 
-import eng.jAtcSim.lib.speaking.fromAtc.commands.ThenCommand;
-import eng.jAtcSim.lib.speaking.ICommand;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ThenCommand;
 import eng.jAtcSim.lib.speaking.parsing.shortParsing.RegexGrouper;
 import eng.jAtcSim.lib.speaking.parsing.shortParsing.SpeechParser;

@@ -257,7 +257,6 @@
         </xs:complexType>
       </xs:element>
     </xs:sequence>
-    <xs:attribute name="active" type="xs:boolean" fixed="true" use="required"/>
   </xs:complexType>
 
   <xs:complexType name="inactiveRunway">
@@ -270,7 +269,6 @@
         </xs:complexType>
       </xs:element>
     </xs:sequence>
-    <xs:attribute name="active" type="xs:boolean" fixed="false" use="required" />
   </xs:complexType>
   
   <xs:complexType name="inactiveThreshold">

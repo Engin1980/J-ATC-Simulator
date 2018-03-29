@@ -11,8 +11,8 @@ import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtc2Atc;
 import eng.jAtcSim.lib.speaking.parsing.Parser;
 import eng.jAtcSim.lib.speaking.parsing.ShortcutList;
-import eng.jAtcSim.lib.speaking.parsing.shortParsing.fromAtcParsers.RunwayCheckParser;
-import eng.jAtcSim.lib.speaking.parsing.shortParsing.fromPlaneParsers.*;
+import eng.jAtcSim.lib.speaking.parsing.shortParsing.toAtcParsers.RunwayCheckParser;
+import eng.jAtcSim.lib.speaking.parsing.shortParsing.toPlaneParsers.*;
 
 import java.util.ArrayList;
 import java.util.List;

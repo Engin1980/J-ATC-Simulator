@@ -730,8 +730,6 @@ public class Pilot {
 
     private void flyApproachingPhase() {
 
-      System.out.println("stt: " + parent.getState() + " // " + this.location);
-
       ApproachLocation last = this.location;
       updateApproachLocation();
 

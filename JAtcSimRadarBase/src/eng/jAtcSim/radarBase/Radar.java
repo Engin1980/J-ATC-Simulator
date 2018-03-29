@@ -807,12 +807,25 @@ public class Radar {
   }
 
   private void drawAirport(Airport a) {
+    for (InactiveRunway r : a.getInactiveRunways()) {
+      drawInactiveRunway(r);
+    }
+
     for (Runway r : a.getRunways()) {
       drawRunway(r);
     }
   }
 
   private void drawRunway(Runway runway) {
+    DisplaySettings.ColorWidthSettings ds = getDispSettBy(runway);
+
+    tl.drawLine(
+        runway.getThresholdA().getCoordinate(),
+        runway.getThresholdB().getCoordinate(),
+        ds.getColor(), ds.getWidth());
+  }
+
+  private void drawInactiveRunway(InactiveRunway runway) {
     DisplaySettings.ColorWidthSettings ds = getDispSettBy(runway);
 
     tl.drawLine(
@@ -1031,11 +1044,11 @@ public class Radar {
   }
 
   private DisplaySettings.ColorWidthSettings getDispSettBy(Runway runway) {
-    if (runway.isActive()) {
-      return displaySettings.activeRunway;
-    } else {
-      return displaySettings.closedRunway;
-    }
+    return displaySettings.activeRunway;
+  }
+
+  private DisplaySettings.ColorWidthSettings getDispSettBy(InactiveRunway runway) {
+    return displaySettings.closedRunway;
   }
 
   private DisplaySettings.ColorWidthBorderSettings getDispSettBy(Navaid navaid) {

@@ -1,4 +1,4 @@
-package eng.jAtcSim.lib.speaking.parsing.shortParsing.fromPlaneParsers;
+package eng.jAtcSim.lib.speaking.parsing.shortParsing.toPlaneParsers;
 
 import eng.jAtcSim.lib.speaking.fromAtc.commands.afters.AfterAltitudeCommand;
 import eng.jAtcSim.lib.speaking.parsing.shortParsing.RegexGrouper;

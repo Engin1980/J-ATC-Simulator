@@ -1,4 +1,4 @@
-package eng.jAtcSim.lib.speaking.parsing.shortParsing.fromAtcParsers;
+package eng.jAtcSim.lib.speaking.parsing.shortParsing.toAtcParsers;
 
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.exceptions.ERuntimeException;

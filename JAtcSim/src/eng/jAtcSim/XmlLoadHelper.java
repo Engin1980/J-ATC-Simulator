@@ -98,9 +98,11 @@ public class XmlLoadHelper {
     sett.getListItemMappings().add(
         new XmlListItemMapping("/runways$", Runway.class));
     sett.getListItemMappings().add(
-        new XmlListItemMapping("/inactiveRunways$", Runway.class));
+        new XmlListItemMapping("/runways/runway/thresholds$", RunwayThreshold.class));
     sett.getListItemMappings().add(
-        new XmlListItemMapping("/thresholds$", RunwayThreshold.class));
+        new XmlListItemMapping("/inactiveRunways$", InactiveRunway.class));
+    sett.getListItemMappings().add(
+        new XmlListItemMapping("/inactiveRunways/runway/thresholds$", InactiveRunwayThreshold.class));
     sett.getListItemMappings().add(
         new XmlListItemMapping("/approaches$", "ilsApproach", IlsApproach.class));
     sett.getListItemMappings().add(
@@ -115,6 +117,8 @@ public class XmlLoadHelper {
         new XmlListItemMapping("/sharedIafRoutes$",  IafRoute.class));
     sett.getListItemMappings().add(
         new XmlListItemMapping("/routes$", Route.class));
+    sett.getListItemMappings().add(
+        new XmlListItemMapping("/sharedRoutes$", Route.class));
     sett.getListItemMappings().add(
         new XmlListItemMapping("/atcTemplates$", AtcTemplate.class));
     sett.getListItemMappings().add(
