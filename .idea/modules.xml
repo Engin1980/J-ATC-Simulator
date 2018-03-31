@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/CoordinatesViewer/CoordinatesViewer.iml" filepath="$PROJECT_DIR$/CoordinatesViewer/CoordinatesViewer.iml" />
       <module fileurl="file://$PROJECT_DIR$/JAtcSim/JAtcSim.iml" filepath="$PROJECT_DIR$/JAtcSim/JAtcSim.iml" />
       <module fileurl="file://$PROJECT_DIR$/JAtcSimLib/JAtcSimLib.iml" filepath="$PROJECT_DIR$/JAtcSimLib/JAtcSimLib.iml" />
       <module fileurl="file://$PROJECT_DIR$/JAtcSimRadarBase/JAtcSimRadarBase.iml" filepath="$PROJECT_DIR$/JAtcSimRadarBase/JAtcSimRadarBase.iml" />

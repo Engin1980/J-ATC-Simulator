@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="eng.coordinatesViewer.Main">
+   <children>
+      <BorderPane layoutX="121.0" layoutY="73.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <top>
+            <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+              <items>
+                <Button mnemonicParsing="false" onAction="#btnLoadImage_click" text="Load image" />
+                  <ComboBox fx:id="chkMode" prefWidth="150.0" />
+                  <Button mnemonicParsing="false" onAction="#btnZoomIn_click" text="Zoom in" />
+                  <Button mnemonicParsing="false" onAction="#btnZoomOut_click" text="Zoom out" />
+              </items>
+            </ToolBar>
+         </top>
+         <center>
+            <SplitPane dividerPositions="0.7960893854748603" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0" BorderPane.alignment="CENTER">
+              <items>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="255.0" prefWidth="598.0">
+                     <children>
+                        <ScrollPane fx:id="pnlScr" layoutX="161.0" layoutY="32.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                          <content>
+                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" />
+                          </content>
+                        </ScrollPane>
+                     </children>
+                  </AnchorPane>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+                     <children>
+                        <TextArea prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                     </children>
+                  </AnchorPane>
+              </items>
+            </SplitPane>
+         </center>
+         <bottom>
+            <FlowPane BorderPane.alignment="CENTER">
+               <children>
+                  <Label fx:id="lblPoint" text="Label">
+                     <FlowPane.margin>
+                        <Insets left="4.0" right="4.0" />
+                     </FlowPane.margin>
+                  </Label>
+                  <Label fx:id="lblGps" text="(no GPS)">
+                     <FlowPane.margin>
+                        <Insets left="4.0" right="4.0" />
+                     </FlowPane.margin>
+                  </Label>
+               </children>
+            </FlowPane>
+         </bottom>
+      </BorderPane>
+   </children>
+</AnchorPane>
