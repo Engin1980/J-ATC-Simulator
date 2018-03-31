@@ -3671,5 +3671,20 @@
     <!--</points>-->
     <!--</border>-->
 
+    <border name="MRVA 7000" type="TMA" enclosed="true">
+      <points>
+        <point coordinate="43.720501 6.720304" />
+        <point coordinate="43.680236 6.728506" />
+        <point coordinate="43.642611 6.736708" />
+        <point coordinate="43.767366 7.196009" />
+        <point coordinate="43.764726 7.423838" />
+        <point coordinate="43.811592 7.509501" />
+        <point coordinate="43.867038 7.491275" />
+        <point coordinate="43.894102 7.528639" />
+        <point coordinate="43.959450 7.083007" />
+        <point coordinate="43.799710 7.017392" />
+      </points>
+    </border>
+
   </borders>
 </area>

@@ -13,9 +13,13 @@
          <top>
             <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
               <items>
+                  <Button mnemonicParsing="false" onAction="#btnLoadProject_click" text="Load project" />
+                  <Button mnemonicParsing="false" onAction="#btnSaveProject_click" text="Save project" />
+                  <Separator orientation="VERTICAL" prefWidth="17.0" />
                 <Button mnemonicParsing="false" onAction="#btnLoadImage_click" text="Load image" />
                   <ComboBox fx:id="chkMode" prefWidth="150.0" />
                   <Button mnemonicParsing="false" onAction="#btnZoomIn_click" text="Zoom in" />
+                  <Button mnemonicParsing="false" onAction="#btnZoomReset_click" text="Zoom reset" />
                   <Button mnemonicParsing="false" onAction="#btnZoomOut_click" text="Zoom out" />
               </items>
             </ToolBar>
@@ -34,7 +38,7 @@
                   </AnchorPane>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
                      <children>
-                        <TextArea prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+                        <TextArea fx:id="txtOut" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                      </children>
                   </AnchorPane>
               </items>

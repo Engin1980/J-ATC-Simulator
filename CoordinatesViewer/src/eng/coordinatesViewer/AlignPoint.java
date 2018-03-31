@@ -9,4 +9,8 @@ public class AlignPoint extends Point {
     this.lat = lat;
     this.lng = lng;
   }
+
+  public AlignPoint(Point p, double lat, double lng){
+    this (p.x, p.y, lat, lng);
+  }
 }

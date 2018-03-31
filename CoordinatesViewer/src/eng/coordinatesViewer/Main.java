@@ -1,6 +1,6 @@
 package eng.coordinatesViewer;
 
-import eng.eSystem.utilites.ExceptionUtil;
+import eng.eSystem.xmlSerialization.XmlSerializer;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -9,14 +9,17 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import java.io.File;
 import java.io.IOException;
 
 public class Main {
@@ -27,17 +30,15 @@ public class Main {
     align
   }
 
-  private AlignPoint[] aps = new AlignPoint[2];
-  private String imgUrl = "file:D:/lfmm_mrva.png";
-  private Image imgOrg;
-  private Image imgRes;
-  private double ratio = 1;
+  @FXML
+  TextArea txtOut;
+  private Project project;
+  private AlignPoint[] aps = null;
+  private String url = "file:D:/lfmm_mrva.png";
   @FXML
   private ComboBox<Mode> chkMode;
-
   @FXML
   private ScrollPane pnlScr;
-
   @FXML
   private Label lblPoint;
   @FXML
@@ -46,50 +47,64 @@ public class Main {
   @FXML
   public void initialize() {
     System.out.println(".init");
-
     chkMode.getItems().addAll(Mode.navaid, Mode.border, Mode.align);
+    chkMode.setValue(Mode.navaid);
   }
 
   @FXML
   public void btnLoadImage_click() {
-    imgOrg = new Image(imgUrl);
+    project = Project.create(url);
+    project.getRedrawRequiredEvent().add(() -> updateView());
+    updateView();
+  }
 
-    if (imgOrg.getException() != null) {
-      System.out.println("Failed: " + ExceptionUtil.toFullString(imgOrg.getException()));
-    } else {
-      ratio = 1;
-      updateRatio();
+  @FXML
+  public void btnZoomReset_click() {
+    project.zoomReset();
+  }
+
+  @FXML
+  public void btnLoadProject_click() {
+    FileChooser fileChooser = new FileChooser();
+    fileChooser.setTitle("Load project from:");
+    File file = fileChooser.showOpenDialog(null);
+    if (file != null) {
+      XmlSerializer ser = new XmlSerializer();
+      this.project = (Project) ser.deserialize(file.toString(), Project.class);
+      this.project.reinit();
+      project.getRedrawRequiredEvent().add(() -> updateView());
       updateView();
     }
   }
 
   @FXML
+  public void btnSaveProject_click() {
+    FileChooser fileChooser = new FileChooser();
+    fileChooser.setTitle("Save project as: ");
+
+    File res = fileChooser.showSaveDialog(null);
+    if (res != null) {
+      XmlSerializer ser = new XmlSerializer();
+      ser.serialize(res.toString(), this.project);
+    }
+  }
+
+  @FXML
   void btnZoomIn_click() {
-    ratio *= 0.9;
-    updateRatio();
-    updateView();
+    project.zoomIn();
   }
 
   @FXML
   void btnZoomOut_click() {
-    ratio /= 0.9;
-    updateRatio();
-    updateView();
-  }
-
-  private void updateRatio() {
-    double w = imgOrg.getWidth();
-    double h = imgOrg.getHeight();
-    w *= ratio;
-    h *= ratio;
-    imgRes = new Image(imgUrl, w, h, true, false);
+    project.zoomOut();
   }
 
   private void updateView() {
+    Image imgRes = project.getImage();
+
     Canvas cMap = new Canvas(imgRes.getWidth(), imgRes.getHeight());
     GraphicsContext gc = cMap.getGraphicsContext2D();
     gc.drawImage(imgRes, 0, 0);
-
 
     Canvas cPoint = new Canvas(imgRes.getWidth(), imgRes.getHeight());
     final GraphicsContext gcPoint = cPoint.getGraphicsContext2D();
@@ -106,50 +121,92 @@ public class Main {
 
     pnlScr.setContent(pane);
 
+    project.getBorderPoints().forEach(q-> drawPoint(q, Color.DARKBLUE, gc ));
+    project.getNavaidPoints().forEach(q-> drawPoint(q, Color.DARKRED, gc ));
   }
 
   private void updateLocationLabel(double x, double y) {
+    Point p = new Point(x, y);
+    p = project.convertRelativeToAbsolutePoint(p);
     lblPoint.setText(
-        String.format("%.1f x %.1f", x, y));
+        String.format("%.0f x %.0f", p.x, p.y));
 
-    if (aps != null && aps[1] != null) {
-      Point crds = convertPointToCoordinates(x, y);
-      lblGps.setText(
-          String.format("%.8f x %.8f", crds.x, crds.y));
-    }
-  }
-
-  private Point convertPointToCoordinates(double x, double y) {
-    Point p = null;
-
-    AlignPoint u = aps[0];
-    AlignPoint v = aps[1];
-
-    double latA = (u.lat - v.lat) / (u.y - v.y);
-    double latB = u.lat - latA * u.y;
-
-    double lngA = (u.lng - v.lng) / (u.x - v.x);
-    double lngB = u.lng - lngA * u.x;
-
-    Point ret = new Point( latA * y + latB, lngA * x + lngB);
-    return ret;
+    p = project.convertPointToCoordinate(p);
+    lblGps.setText(
+        String.format("%.8f x %.8f", p.x, p.y));
   }
 
   private void mapClicked(double x, double y, GraphicsContext gc) {
+    switch (chkMode.getValue()) {
+      case align:
+        doAlignPoint(new Point(x, y));
+        break;
+      case navaid:
+        doNavaidPoint(new Point(x, y), gc);
+        break;
+      case border:
+        doBorderPoint(new Point(x, y), gc);
+        break;
+      default:
+        throw new UnsupportedOperationException();
+    }
+  }
+
+  private void doNavaidPoint(Point point, GraphicsContext gc) {
+    String name = askForName();
+    if (name == null) return;
+
+    Point absolutePoint = project.convertRelativeToAbsolutePoint(point);
+    Point aligned = project.getNavaidPoints().tryAlignToExisting(absolutePoint, project.getZoomRatio());
+    if (aligned != null) {
+      absolutePoint = aligned;
+    } else {
+      drawPoint(absolutePoint, Color.RED, gc);
+      project.getNavaidPoints().add(absolutePoint);
+    }
+    Point coordinate = project.convertPointToCoordinate(absolutePoint);
+    String line = String.format("<navaid name=\"%s\" type=\"fix\" coordinate=\"%.6f %.6f\" />", name, coordinate.x, coordinate.y);
+    printLine(line);
+  }
+
+  private void doBorderPoint(Point point, GraphicsContext gc) {
+    Point absolutePoint = project.convertRelativeToAbsolutePoint(point);
+    Point aligned = project.getBorderPoints().tryAlignToExisting(absolutePoint, project.getZoomRatio());
+    if (aligned != null) {
+      absolutePoint = aligned;
+    } else {
+      drawPoint(absolutePoint, Color.BLUE, gc);
+      project.getBorderPoints().add(absolutePoint);
+    }
+    Point coordinate = project.convertPointToCoordinate(absolutePoint);
+    String line = String.format("<point coordinate=\"%.6f %.6f\" />", coordinate.x, coordinate.y);
+    printLine(line);
+  }
+
+  private void drawPoint(Point absolutePoint, Color color, GraphicsContext gc) {
+    Point relativePoint = project.convertAbsoluteToRelativepoint(absolutePoint);
+    gc.setFill(color);
+    gc.fillOval(relativePoint.x - 10, relativePoint.y - 10, 20, 20);
+  }
+
+  private void printLine(String line) {
+    txtOut.appendText("\n" + line);
+  }
+
+  private void doAlignPoint(Point point) {
     double[] latLng = askForLatLng();
     if (latLng == null)
       return;
 
-    if (aps[1] != null) {
-      aps[0] = null;
-      aps[1] = null;
-    }
-
-    if (aps[0] == null)
-      aps[0] = new AlignPoint(x, y, latLng[0], latLng[1]);
-    else {
-      aps[1] = new AlignPoint(x, y, latLng[0], latLng[1]);
+    point = project.convertRelativeToAbsolutePoint(point);
+    if (aps == null) {
+      aps = new AlignPoint[2];
+      aps[0] = new AlignPoint(point.x, point.y, latLng[0], latLng[1]);
+    } else {
+      aps[1] = new AlignPoint(point.x, point.y, latLng[0], latLng[1]);
+      project.alignGps(aps[0], aps[1]);
       chkMode.setValue(Mode.navaid);
+      aps = null;
     }
   }
 
@@ -158,7 +215,7 @@ public class Main {
     loader.setLocation(Main.class.getResource("LatLngDialog.fxml"));
     AnchorPane page = null;
     try {
-      page = (AnchorPane) loader.load();
+      page = loader.load();
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -179,5 +236,32 @@ public class Main {
     dialogStage.showAndWait();
 
     return controller.getLatLng();
+  }
+
+  private String askForName() {
+    FXMLLoader loader = new FXMLLoader();
+    loader.setLocation(Main.class.getResource("NavaidDialog.fxml"));
+    AnchorPane page = null;
+    try {
+      page = loader.load();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
+    // Create the dialog Stage.
+    Stage dialogStage = new Stage();
+    dialogStage.setTitle("Enter navaid info");
+    dialogStage.initModality(Modality.WINDOW_MODAL);
+    Scene scene = new Scene(page);
+    dialogStage.setScene(scene);
+
+    // Set the person into the controller.
+    NavaidDialog controller = loader.getController();
+    controller.setDialogStage(dialogStage);
+
+    // Show the dialog and wait until the user closes it
+    dialogStage.showAndWait();
+
+    return controller.getNavaidName();
   }
 }
