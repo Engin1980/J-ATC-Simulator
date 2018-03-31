@@ -53,6 +53,10 @@ public class Main {
 
   @FXML
   public void btnLoadImage_click() {
+    FileChooser fileChooser = new FileChooser();
+    fileChooser.setTitle("Load project from:");
+    File file = fileChooser.showOpenDialog(null);
+    String url = "file:" + file.toString().replace("\\", "/");
     project = Project.create(url);
     project.getRedrawRequiredEvent().add(() -> updateView());
     updateView();
