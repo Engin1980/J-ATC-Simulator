@@ -257,15 +257,15 @@ public class AfterCommandList {
     clearChangeSpeedClass(tmp, referenceSpeed, isArrival);
   }
 
-  public void clearChangeSpeedClassOfRouteWithTransferConsequent(int referenceSpeed, boolean isArrival) {
+  public void clearChangeSpeedClassOfRouteWithTransferConsequent(Integer referenceSpeedOrNull, boolean isArrival) {
     int i = 1;
     while (i < this.rt.size()) {
       AFItem it = this.rt.get(i);
       i++;
       if ((it.antecedent instanceof AfterSpeedCommand) == false) continue;
       AfterSpeedCommand tmp = (AfterSpeedCommand) it.antecedent;
-      if (isArrival && tmp.getSpeedInKts() < referenceSpeed) continue;
-      if (!isArrival && tmp.getSpeedInKts() > referenceSpeed) continue;
+      if (referenceSpeedOrNull != null && (isArrival && tmp.getSpeedInKts() < referenceSpeedOrNull)) continue;
+      if (referenceSpeedOrNull != null && (!isArrival && tmp.getSpeedInKts() > referenceSpeedOrNull)) continue;
 
       i--;
       AfterCommand a = this.rt.get(i - 1).antecedent;
