@@ -165,11 +165,11 @@ public class Pilot {
 
     public void setAltitudeRestriction(Restriction altitudeRestriction) {
       Pilot.this.altitudeRestriction = altitudeRestriction;
-      throw new UnsupportedOperationException("AF");
-//      if (altitudeRestriction == null)
-//        Pilot.this.afterCommands.removeByConsequent(
-//            SetAltitudeRestriction.class, false);
-//      adjustTargetAltitude();
+
+      if (altitudeRestriction == null){
+        Pilot.this.afterCommands.clearAllAltitudeRestrictions();
+      }
+      adjustTargetAltitude();
     }
 
     public void setTargetHeading(double value, boolean useLeftTurn) {
@@ -1162,27 +1162,6 @@ public class Pilot {
       default:
         throw new UnsupportedOperationException();
     }
-  }
-
-  private void removeUnecessaryAfterCommands(IAtcCommand c) {
-    throw new UnsupportedOperationException("AF");
-//    if (c instanceof ProceedDirectCommand ||
-//        c instanceof ChangeHeadingCommand) {
-//      this.afterCommands.removeByConsequent(ProceedDirectCommand.class, true);
-//      this.afterCommands.removeByConsequent(ChangeHeadingCommand.class, true);
-//      this.afterCommands.removeByAntecedent(AfterNavaidCommand.class, true);
-//    } else if (c instanceof ShortcutCommand) {
-//      this.afterCommands.removeByConsequent(ProceedDirectCommand.class, true);
-//      this.afterCommands.removeByConsequent(ChangeHeadingCommand.class, true);
-//    } else if (c instanceof ChangeAltitudeCommand) {
-//      this.afterCommands.removeByConsequent(ChangeAltitudeCommand.class, true);
-//    } else if ((c instanceof ContactCommand)
-//        || (c instanceof ChangeSpeedCommand)
-//        || (c instanceof ChangeAltitudeCommand)
-//        || (c instanceof ClearedToApproachCommand)
-//        || (c instanceof HoldCommand)) {
-//      //this.afterCommands.removeByConsequent(c.getClass());
-//    }
   }
 
   private void processAfterSpeechWithConsequents(IList<? extends ISpeech> queue, CommandSource cs) {

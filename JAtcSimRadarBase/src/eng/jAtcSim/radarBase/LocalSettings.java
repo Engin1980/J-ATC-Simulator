@@ -4,6 +4,8 @@ public class LocalSettings {
 
   private boolean tmaBorderVisible = true;
   private boolean countryBorderVisible = true;
+  private boolean mrvaBorderVisible = true;
+  private boolean mrvaBorderAltitudeVisible = true;
   private boolean ctrBorderVisible = true;
   private boolean vorVisible = true;
   private boolean ndbVisible = true;
@@ -14,6 +16,22 @@ public class LocalSettings {
   private boolean fixRouteVisible = true;
   private boolean fixMinorVisible = false;
   private boolean ringsVisible = true;
+
+  public boolean isMrvaBorderVisible() {
+    return mrvaBorderVisible;
+  }
+
+  public void setMrvaBorderVisible(boolean mrvaBorderVisible) {
+    this.mrvaBorderVisible = mrvaBorderVisible;
+  }
+
+  public boolean isMrvaBorderAltitudeVisible() {
+    return mrvaBorderAltitudeVisible;
+  }
+
+  public void setMrvaBorderAltitudeVisible(boolean mrvaBorderAltitudeVisible) {
+    this.mrvaBorderAltitudeVisible = mrvaBorderAltitudeVisible;
+  }
 
   public boolean isFixVisible() {
     return fixVisible;

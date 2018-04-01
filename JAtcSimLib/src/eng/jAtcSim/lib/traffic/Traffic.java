@@ -180,7 +180,7 @@ public abstract class Traffic {
 
     initialCommands = new SpeechList<>();
     // added command to descend
-    //TODO following should say CTR ATC, not this here
+    //TODO following should say ctr ATC, not this here
     initialCommands.add(new ChangeAltitudeCommand(
             ChangeAltitudeCommand.eDirection.descend,
             Acc.atcCtr().getOrderedAltitude()

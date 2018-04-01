@@ -104,7 +104,7 @@ public class PlaneResponsibilityManager {
           throw new ERuntimeException("Invalid request direction.");
         }
         if (map.get(plane) != eState.ctr) {
-          throw new ERuntimeException("Not in CTR state, cannot switch.");
+          throw new ERuntimeException("Not in ctr state, cannot switch.");
         }
 
         map.put(plane, eState.ctr2app);

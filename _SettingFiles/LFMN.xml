@@ -169,15 +169,15 @@
               </approaches>
               <routes>
                 <route type="sid" name="IRMAR6A" category="CD"
-                       route="SM 210 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD NC T SC PD BARSO T PD IRMAR"/>
+                       route="CM 130 SM 210 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD NC T SC PD BARSO T PD IRMAR"/>
                 <route type="sid" name="BADOD6A" category="CD"
-                       route="SM 210 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD NC T SC PD AMIRO T PD BADOD"/>
+                       route="CM 130 SM 210 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD NC T SC PD AMIRO T PD BADOD"/>
                 <route type="sid" name="OKTET6A" category="CD"
-                       route="SM 210 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD NC T SC PD AMIRO T PD OKTET"/>
+                       route="CM 130 SM 210 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD NC T SC PD AMIRO T PD OKTET"/>
                 <route type="sid" name="BODRU6A" category="ABCD"
-                       route="SM 210 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD NC T SC PD AMIRO T PD BODRU"/>
+                       route="CM 130 SM 210 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD NC T SC PD AMIRO T PD BODRU"/>
                 <route type="sid" name="PERUS6A" category="ABCD"
-                       route="SM 210 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD NC T SC PD AMIRO T PD PERUS"/>
+                       route="CM 130 SM 210 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD NC T SC PD AMIRO T PD PERUS"/>
                 <route type="sid" name="IRMAR6C" category="AB"
                        route=" AA 4+ FH 138 AD NIZ/8 PD MN052 T PD NIZ T PD BARSO T PD IRMAR"/>
                 <route type="sid" name="OKTET6C" category="AB"
@@ -185,37 +185,37 @@
                 <route type="sid" name="BADOD6C" category="AB"
                        route=" AA 4+ FH 138 AD NIZ/8 PD MN052 T PD NIZ T PD BADOD"/>
                 <route type="sid" name="BASIP6A" category="AB"
-                       route=" AA 4+ FH 138 AD NIZ/8 PD MN052 T PD MN054 T PD USANO T PD TIVNO T PD BASIP"/>
+                       route="CM 70 AA 4+ FH 138 AD NIZ/8 PD MN052 T PD MN054 T PD USANO T PD TIVNO T PD BASIP"/>
                 <route type="sid" name="RUBIT6A" category="CD"
-                       route=" AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD MN236 T PD RESBO T PD STP T PD RUBIT"/>
+                       route="CM 100 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD MN236 T PD RESBO T PD STP T PD RUBIT"/>
                 <route type="sid" name="LANKO6A" category="CD"
-                       route=" AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD MN236 T PD RESBO T PD STP T PD RUBIT T PD LANKO"/>
+                       route="CM 100 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD MN236 T PD RESBO T PD STP T PD RUBIT T PD LANKO"/>
                 <route type="sid" name="TURIL6A" category="CD"
-                       route=" AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD MN236 T PD RESBO T PD STP T PD RUBIT T PD TURIL"/>
+                       route="CM 100 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD MN236 T PD RESBO T PD STP T PD RUBIT T PD TURIL"/>
                 <route type="sid" name="EPOLO6A" category="CD"
-                       route=" AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD MN236 T PD RESBO T PD EPOLO"/>
+                       route="CM 100 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD MN236 T PD RESBO T PD EPOLO"/>
                 <route type="sid" name="RUBAS6A" category="ABCD"
-                       route=" AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD MN236 T PD RESBO T PD RUBAS"/>
+                       route="CM 100 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD MN236 T PD RESBO T PD RUBAS"/>
                 <route type="sid" name="RUBIT6B" category="AB"
-                       route=" AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD MN234 T PD MN238 T PD RESBO T PD RUBIT"/>
+                       route="CM 70 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD MN234 T PD MN238 T PD RESBO T PD STP T PD RUBIT"/>
                 <route type="sid" name="LANKO6B" category="AB"
-                       route=" AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD MN234 T PD MN238 T PD RESBO T PD RUBIT T PD LANKO"/>
+                       route="CM 70 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD MN234 T PD MN238 T PD RESBO T PD STP T PD RUBIT T PD LANKO"/>
                 <route type="sid" name="TURIL6B" category="AB"
-                       route=" AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD MN234 T PD MN238 T PD RESBO T PD RUBIT T PD TURIL"/>
+                       route="CM 70 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD MN234 T PD MN238 T PD RESBO T PD STP T PD RUBIT T PD TURIL"/>
                 <route type="sid" name="EPOLO6B" category="AB"
                        route=" AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD MN234 T PD MN238 T PD LERMA T PD EPOLO"/>
                 <route type="sid" name="VAREK6A" category="CD"
-                       route=" AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN046 T PD OMARD T PD VAREK"/>
+                       route="CM 100 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN046 T PD OMARD T PD VAREK"/>
                 <route type="sid" name="LONSU6A" category="CD"
-                       route=" AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN046 T PD OMARD T PD MERLU T PD LONSU"/>
+                       route="CM 70 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN046 T PD OMARD T PD MERLU T PD LONSU"/>
                 <route type="sid" name="SODRI6A" category="CD"
-                       route=" AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN046 T PD OMARD T PD MERLU T PD SODRI"/>
+                       route="CM 100 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN046 T PD OMARD T PD MERLU T PD SODRI"/>
                 <route type="sid" name="VAREK6B" category="AB"
-                       route=" AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD MN244 T PD OMARD T PD VAREK"/>
-                <route type="sid" name="LONSU6A" category="CD"
-                       route=" AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD MN244 T PD OMARD T PD MERLU T PD LONSU"/>
-                <route type="sid" name="SODRI6A" category="CD"
-                       route=" AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD MN244 T PD OMARD T PD MERLU T PD SODRI"/>
+                       route="CM 70 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD MN244 T PD OMARD T PD VAREK"/>
+                <route type="sid" name="LONSU6B" category="CD"
+                       route="CM 70 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD MN244 T PD OMARD T PD MERLU T PD LONSU"/>
+                <route type="sid" name="SODRI6B" category="CD"
+                       route="CM 70 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD MN244 T PD OMARD T PD MERLU T PD SODRI"/>
               </routes>
             </threshold>
             <threshold name="22R" coordinate="43 40 06.76 N 007 13 37.42 E" initialDepartureAltitude="4000"
@@ -233,15 +233,15 @@
               </approaches>
               <routes>
                 <route type="sid" name="IRMAR6X" category="AB"
-                       route="PD MN222 T PD MN223 T SL 210 PD MN224 T PD MN226 T SC PD MN228 T PD BARSO T PD IRMAR"/>
+                       route="CM 130 PD MN222 T PD MN223 T SL 210 PD MN224 T PD MN226 T SC PD MN228 T PD BARSO T PD IRMAR"/>
                 <route type="sid" name="BADOD6X" category="AB"
-                       route="PD MN222 T PD MN223 T SL 210 PD MN224 T PD MN226 T SC PD AMIRO T PD BADOD"/>
+                       route="CM 130 PD MN222 T PD MN223 T SL 210 PD MN224 T PD MN226 T SC PD AMIRO T PD BADOD"/>
                 <route type="sid" name="OKTET6X" category="AB"
-                       route="PD MN222 T PD MN223 T SL 210 PD MN224 T PD MN226 T SC PD AMIRO T PD OKTET"/>
+                       route="CM 130 PD MN222 T PD MN223 T SL 210 PD MN224 T PD MN226 T SC PD AMIRO T PD OKTET"/>
                 <route type="sid" name="BODRU6X" category="AB"
-                       route="PD MN222 T PD MN223 T SL 210 PD MN224 T PD MN226 T SC PD AMIRO T PD BODRU"/>
+                       route="CM 130 PD MN222 T PD MN223 T SL 210 PD MN224 T PD MN226 T SC PD AMIRO T PD BODRU"/>
                 <route type="sid" name="PERUS6X" category="AB"
-                       route="PD MN222 T PD MN223 T SL 210 PD MN224 T PD MN226 T SC PD AMIRO T PD PERUS"/>
+                       route="CM 130 PD MN222 T PD MN223 T SL 210 PD MN224 T PD MN226 T SC PD AMIRO T PD PERUS"/>
                 <route type="sid" name="IRMAR6Z" category="CD"
                        route="PD MN222 T PD MN223 T PD MN246 T PD MN248 T PD NIZ T PD BARSO T PD IRMAR"/>
                 <route type="sid" name="OKTET6Z" category="CD"
@@ -249,37 +249,37 @@
                 <route type="sid" name="BADOD6Z" category="CD"
                        route="PD MN222 T PD MN223 T PD MN246 T PD MN248 T PD NIZ T PD BADOD"/>
                 <route type="sid" name="BASIP6X" category="ABCD"
-                       route="PD MN222 T PD MN223 T PD MN246 T PD MN248 T PD USANO T PD TIVNO T PD BASIP"/>
+                       route="CM 70 PD MN222 T PD MN223 T PD MN246 T PD MN248 T PD USANO T PD TIVNO T PD BASIP"/>
                 <route type="sid" name="RUBIT6X" category="CD"
-                       route="PD MN222 T PD MN223 T PD MN232 T PD MN234 T PD MN236 T PD RESBO T PD STP T PD RUBIT"/>
+                       route="CM 100 PD MN222 T PD MN223 T PD MN232 T PD MN234 T PD MN236 T PD RESBO T PD STP T PD RUBIT"/>
                 <route type="sid" name="LANKO6X" category="CD"
-                       route="PD MN222 T PD MN223 T PD MN232 T PD MN234 T PD MN236 T PD RESBO T PD STP T PD RUBIT T PD LANKO"/>
+                       route="CM 100 PD MN222 T PD MN223 T PD MN232 T PD MN234 T PD MN236 T PD RESBO T PD STP T PD RUBIT T PD LANKO"/>
                 <route type="sid" name="TURIL6X" category="CD"
-                       route="PD MN222 T PD MN223 T PD MN232 T PD MN234 T PD MN236 T PD RESBO T PD STP T PD RUBIT T PD TURIL"/>
+                       route="CM 100 PD MN222 T PD MN223 T PD MN232 T PD MN234 T PD MN236 T PD RESBO T PD STP T PD RUBIT T PD TURIL"/>
                 <route type="sid" name="EPOLO6X" category="CD"
-                       route="PD MN222 T PD MN223 T PD MN232 T PD MN234 T PD MN236 T PD RESBO T PD EPOLO"/>
+                       route="CM 100 PD MN222 T PD MN223 T PD MN232 T PD MN234 T PD MN236 T PD RESBO T PD EPOLO"/>
                 <route type="sid" name="RUBAS6X" category="ABCD"
-                       route="PD MN222 T PD MN223 T PD MN232 T PD MN234 T PD MN236 T PD RESBO T PD RUBAS"/>
+                       route="CM 100 PD MN222 T PD MN223 T PD MN232 T PD MN234 T PD MN236 T PD RESBO T PD RUBAS"/>
                 <route type="sid" name="RUBIT6Y" category="AB"
-                       route="PD MN222 T PD MN223 T PD MN232 T PD MN234 T PD MN238 T PD RESBO T PD STP T PD RUBIT"/>
+                       route="CM 70 PD MN222 T PD MN223 T PD MN232 T PD MN234 T PD MN238 T PD RESBO T PD STP T PD RUBIT"/>
                 <route type="sid" name="LANKO6Y" category="AB"
-                       route="PD MN222 T PD MN223 T PD MN232 T PD MN234 T PD MN238 T PD RESBO T PD STP T PD RUBIT T PD LANKO"/>
+                       route="CM 70 PD MN222 T PD MN223 T PD MN232 T PD MN234 T PD MN238 T PD RESBO T PD STP T PD RUBIT T PD LANKO"/>
                 <route type="sid" name="TURIL6Y" category="AB"
-                       route="PD MN222 T PD MN223 T PD MN232 T PD MN234 T PD MN238 T PD RESBO T PD STP T PD RUBIT T PD TURIL"/>
+                       route="CM 70 PD MN222 T PD MN223 T PD MN232 T PD MN234 T PD MN238 T PD RESBO T PD STP T PD RUBIT T PD TURIL"/>
                 <route type="sid" name="EPOLO6Y" category="AB"
-                       route="PD MN222 T PD MN223 T PD MN232 T PD MN234 T PD MN238 T PD LERMA T PD EPOLO"/>
+                       route="CM 70 PD MN222 T PD MN223 T PD MN232 T PD MN234 T PD MN238 T PD LERMA T PD EPOLO"/>
                 <route type="sid" name="VAREK6X" category="CD"
-                       route="PD MN222 T PD MN223 T PD MN232 T PD MN242 T PD OMARD T PD VAREK"/>
+                       route="CM 100 PD MN222 T PD MN223 T PD MN232 T PD MN242 T PD OMARD T PD VAREK"/>
                 <route type="sid" name="LONSU6X" category="CD"
-                       route="PD MN222 T PD MN223 T PD MN232 T PD MN242 T PD OMARD T PD MERLU T PD LONSU"/>
+                       route="CM 100 PD MN222 T PD MN223 T PD MN232 T PD MN242 T PD OMARD T PD MERLU T PD LONSU"/>
                 <route type="sid" name="SODRI6X" category="CD"
-                       route="PD MN222 T PD MN223 T PD MN232 T PD MN242 T PD OMARD T PD MERLU T PD SODRI"/>
+                       route="CM 100 PD MN222 T PD MN223 T PD MN232 T PD MN242 T PD OMARD T PD MERLU T PD SODRI"/>
                 <route type="sid" name="VAREK6Y" category="CD"
-                       route="PD MN222 T PD MN223 T PD MN232 T PD MN244 T PD OMARD T PD VAREK"/>
+                       route="CM 70 PD MN222 T PD MN223 T PD MN232 T PD MN244 T PD OMARD T PD VAREK"/>
                 <route type="sid" name="LONSU6Y" category="CD"
-                       route="PD MN222 T PD MN223 T PD MN232 T PD MN244 T PD OMARD T PD MERLU T PD LONSU"/>
+                       route="CM 70 PD MN222 T PD MN223 T PD MN232 T PD MN244 T PD OMARD T PD MERLU T PD LONSU"/>
                 <route type="sid" name="SODRI6Y" category="CD"
-                       route="PD MN222 T PD MN223 T PD MN232 T PD MN244 T PD OMARD T PD MERLU T PD SODRI"/>
+                       route="CM 70 PD MN222 T PD MN223 T PD MN232 T PD MN244 T PD OMARD T PD MERLU T PD SODRI"/>
               </routes>
             </threshold>
           </thresholds>
@@ -550,7 +550,7 @@
 
   </navaids>
   <borders>
-    <border name="France" type="Country" enclosed="false" minAltitude="0" maxAltitude="FL990">
+    <border name="France" type="country" enclosed="false">
       <points>
         <point coordinate="44.4292488098145 6.95336484909058"/>
         <point coordinate="44.4249954223635 6.92768383026123"/>
@@ -3646,43 +3646,157 @@
       </points>
     </border>
 
-    <!--<border name="London Gatwick CTR" type="TMA" enclosed="true" minAltitude="0" maxAltitude="2000">-->
-    <!--<points>-->
-    <!--<point coordinate="511258N 0001129W"/>-->
-    <!--<point coordinate="511200N 0000341E"/>-->
-    <!--<arc coordinate="510853N 0001125W" direction="clockwise"/>-->
-    <!--<point coordinate="510550N 0000342E"/>-->
-    <!--<point coordinate="510240N 0001923W"/>-->
-    <!--<arc coordinate="510853N 0001125W" direction="clockwise"/>-->
-    <!--<point coordinate="511118N 0002332W"/>-->
-    <!--<point coordinate="511258N 0001129W"/>-->
-    <!--</points>-->
-    <!--</border>-->
-
-    <!--<border name="London Gatwick CTA" type="TMA" enclosed="true" minAltitude="1500" maxAltitude="2500">-->
-    <!--<points>-->
-    <!--<point coordinate="510100N 0000458E"/>-->
-    <!--<point coordinate="510100N 0002545W"/>-->
-    <!--<arc coordinate="510853N 0001125W" direction="clockwise"/>-->
-    <!--<point coordinate="511124N 0003003W"/>-->
-    <!--<point coordinate="511618N 0000533E"/>-->
-    <!--<arc coordinate="510853N 0001125W" direction="clockwise"/>-->
-    <!--<point coordinate="510100N 0000458E"/>-->
-    <!--</points>-->
-    <!--</border>-->
-
-    <border name="MRVA 7000" type="TMA" enclosed="true">
+    <border name="-" type="mrva" enclosed="true" minAltitude="0" maxAltitude="13100">
       <points>
-        <point coordinate="43.720501 6.720304" />
-        <point coordinate="43.680236 6.728506" />
-        <point coordinate="43.642611 6.736708" />
+        <point coordinate="43.937007 6.676561" />
+        <point coordinate="43.959450 7.080273" />
+        <point coordinate="43.894102 7.530461" />
+        <point coordinate="44.065062 7.708167" />
+        <point coordinate="44.174636 7.671715" />
+        <point coordinate="44.117869 7.358223" />
+        <point coordinate="44.231402 7.070248" />
+        <point coordinate="44.230082 7.000077" />
+        <point coordinate="44.078924 6.644665" />
+      </points>
+    </border>
+
+    <border name="-" type="mrva" enclosed="true" minAltitude="0" maxAltitude="7800">
+      <points>
+        <point coordinate="43.937007 6.676561" />
+        <point coordinate="43.721161 6.722127" />
+        <point coordinate="43.799050 7.017392" />
+        <point coordinate="43.959450 7.080273" />
+      </points>
+    </border>
+    
+    <border name="-" type="mrva" enclosed="true" minAltitude="0" maxAltitude="7000">
+      <points>
+        <point coordinate="43.721161 6.722127" />
+        <point coordinate="43.680896 6.729417" />
+        <point coordinate="43.643931 6.736708" />
         <point coordinate="43.767366 7.196009" />
-        <point coordinate="43.764726 7.423838" />
-        <point coordinate="43.811592 7.509501" />
-        <point coordinate="43.867038 7.491275" />
-        <point coordinate="43.894102 7.528639" />
-        <point coordinate="43.959450 7.083007" />
-        <point coordinate="43.799710 7.017392" />
+        <point coordinate="43.764066 7.423838" />
+        <point coordinate="43.812252 7.509501" />
+        <point coordinate="43.894102 7.530461" />
+        <point coordinate="43.959450 7.080273" />
+        <point coordinate="43.799050 7.017392" />
+      </points>
+    </border>
+
+    <border name="-" type="mrva" enclosed="true" minAltitude="0" maxAltitude="5500">
+      <points>
+        <point coordinate="43.680896 6.729417" />
+        <point coordinate="43.626769 6.500678" />
+        <point coordinate="43.629410 6.315681" />
+        <point coordinate="43.679576 6.217259" />
+        <point coordinate="43.629410 5.978495" />
+        <point coordinate="43.480232 5.974850" />
+        <point coordinate="43.478911 6.333907" />
+        <point coordinate="43.583204 6.750377" />
+        <point coordinate="43.643931 7.004634" />
+        <point coordinate="43.714560 7.209679" />
+        <point coordinate="43.710599 7.446620" />
+        <point coordinate="43.773967 7.561446" />
+        <point coordinate="43.785188 7.523171" />
+        <point coordinate="43.812252 7.509501" />
+        <point coordinate="43.764066 7.423838" />
+        <point coordinate="43.767366 7.196009" />
+        <point coordinate="43.643931 6.736708" />
+      </points>
+    </border>
+
+    <border name="-" type="mrva" enclosed="true" minAltitude="0" maxAltitude="4000">
+      <points>
+        <point coordinate="43.480232 5.974850" />
+        <point coordinate="43.151512 6.009480" />
+        <point coordinate="43.145571 6.288342" />
+        <point coordinate="43.225441 6.401345" />
+        <point coordinate="43.317192 6.493387" />
+        <point coordinate="43.332374 6.476983" />
+        <point coordinate="43.478911 6.333907" />
+      </points>
+    </border>
+
+    <border name="-" type="mrva" enclosed="true" minAltitude="0" maxAltitude="3500">
+      <points>
+        <point coordinate="43.478911 6.333907" />
+        <point coordinate="43.332374 6.476983" />
+        <point coordinate="43.498714 6.841509" />
+        <point coordinate="43.583204 6.750377" />
+      </points>
+    </border>
+
+    <border name="-" type="mrva" enclosed="true" maxAltitude="3000" labelCoordinate="43.589497 6.858005">
+      <points>
+        <point coordinate="43.583204 6.750377" />
+        <point coordinate="43.498714 6.841509" />
+        <point coordinate="43.332374 6.476983" />
+        <point coordinate="43.317192 6.493387" />
+        <point coordinate="43.225441 6.401345" />
+        <point coordinate="43.145571 6.288342" />
+        <point coordinate="43.138970 6.539864" />
+        <point coordinate="43.069662 6.656512" />
+        <point coordinate="43.123128 6.718481" />
+        <point coordinate="43.295409 6.723038" />
+        <point coordinate="43.414884 6.749466" />
+        <point coordinate="43.422145 6.908946" />
+        <point coordinate="43.460429 6.961802" />
+        <point coordinate="43.547560 6.949044" />
+        <point coordinate="43.573303 7.030150" />
+        <point coordinate="43.630070 7.135863" />
+        <point coordinate="43.677595 7.227905" />
+        <point coordinate="43.661753 7.314480" />
+        <point coordinate="43.680896 7.544131" />
+        <point coordinate="43.736343 7.703611" />
+        <point coordinate="43.773967 7.561446" />
+        <point coordinate="43.710599 7.446620" />
+        <point coordinate="43.714560 7.209679" />
+        <point coordinate="43.643931 7.004634" />
+      </points>
+    </border>
+
+    <border name="" type="mrva" enclosed="true" maxAltitude="1300">
+      <points>
+        <point coordinate="43.630070 7.135863" />
+        <point coordinate="43.587164 7.124016" />
+        <point coordinate="43.551520 7.170493" />
+        <point coordinate="43.661753 7.314480" />
+        <point coordinate="43.677595 7.227905" />
+      </points>
+    </border>
+
+    <border name="" type="mrva" enclosed="true" maxAltitude="1500">
+      <points>
+        <point coordinate="43.069662 6.656512" />
+        <point coordinate="42.835334 6.653778" />
+        <point coordinate="42.868998 7.249777" />
+        <point coordinate="42.647211 7.704522" />
+        <point coordinate="42.824772 8.133750" />
+        <point coordinate="43.515876 8.542018" />
+        <point coordinate="43.736343 7.703611" />
+        <point coordinate="43.680896 7.544131" />
+        <point coordinate="43.661753 7.314480" />
+        <point coordinate="43.551520 7.170493" />
+        <point coordinate="43.587164 7.124016" />
+        <point coordinate="43.418844 6.986407" />
+        <point coordinate="43.367358 6.793209" />
+        <point coordinate="43.295409 6.723038" />
+        <point coordinate="43.123128 6.718481" />
+      </points>
+    </border>
+
+    <border name="" type="mrva" enclosed="true" maxAltitude="2000" labelCoordinate="43.528774 6.985662">
+      <points>
+        <point coordinate="43.630070 7.135863" />
+        <point coordinate="43.573303 7.030150" />
+        <point coordinate="43.547560 6.949044" />
+        <point coordinate="43.460429 6.961802" />
+        <point coordinate="43.422145 6.908946" />
+        <point coordinate="43.414884 6.749466" />
+        <point coordinate="43.295409 6.723038" />
+        <point coordinate="43.367358 6.793209" />
+        <point coordinate="43.418844 6.986407" />
+        <point coordinate="43.587164 7.124016" />
       </points>
     </border>
 

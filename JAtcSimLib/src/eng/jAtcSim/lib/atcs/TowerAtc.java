@@ -193,7 +193,7 @@ public class TowerAtc extends ComputerAtc {
     runwayChecks = new EMap<>();
     for (Runway runway : Acc.airport().getRunways()) {
       RunwayCheck rc = TowerAtc.RunwayCheck.createNormal(true);
-      runwayChecks.add(runway, rc);
+      runwayChecks.set(runway, rc);
     }
 
     inUseInfo = new RunwaysInUseInfo();
@@ -397,7 +397,7 @@ public class TowerAtc extends ComputerAtc {
     super.sendMessage(m);
 
     rc = TowerAtc.RunwayCheck.createNormal(true);
-    runwayChecks.add(runway, rc);
+    runwayChecks.set(runway, rc);
   }
 
   private void announceScheduledRunwayCheck(Runway rwy, RunwayCheck rc) {

@@ -978,7 +978,7 @@
 
   </navaids>
   <borders>
-    <border name="UK" type="Country" enclosed="false" minAltitude="0" maxAltitude="FL990">
+    <border name="UK" type="country" enclosed="false" minAltitude="0" maxAltitude="FL990">
       <points>
         <point coordinate="52.4845848083498 1.76249897480011"/>
         <point coordinate="52.4737510681153 1.76027703285217"/>
@@ -2406,7 +2406,7 @@
       </points>
     </border>
 
-    <border name="London Gatwick CTR" type="TMA" enclosed="true" minAltitude="0" maxAltitude="2000">
+    <border name="London Gatwick CTR" type="tma" enclosed="true" minAltitude="0" maxAltitude="2000">
       <points>
         <point coordinate="511258N 0001129W"/>
         <point coordinate="511200N 0000341E"/>
@@ -2419,7 +2419,7 @@
       </points>
     </border>
 
-    <border name="London Gatwick CTA" type="TMA" enclosed="true" minAltitude="1500" maxAltitude="2500">
+    <border name="London Gatwick CTA" type="tma" enclosed="true" minAltitude="1500" maxAltitude="2500">
       <points>
         <point coordinate="510100N 0000458E"/>
         <point coordinate="510100N 0002545W"/>

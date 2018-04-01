@@ -105,6 +105,10 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     public int targetHeading() {
       return (int) Airplane.this.targetHeading;
     }
+
+    public boolean isMrvaError(){
+      return Airplane.this.mrvaError;
+    }
   }
 
   public class Airplane4Pilot {
@@ -352,6 +356,7 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
   private double lastVerticalSpeed;
   private FlightRecorder flightRecorder = null;
   private AirproxType airprox;
+  private boolean mrvaError;
   private InertialValue altitude;
 
   private static ValueRequest getRequest(double current, double target, double maxIncreaseStep, double maxDecreaseStep) {
@@ -637,6 +642,14 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     this.coordinate = coordinate;
     this.heading.reset(course);
     this.targetHeading = (int) Math.round(course);
+  }
+
+  public boolean isMrvaError() {
+    return mrvaError;
+  }
+
+  public void setMrvaError(boolean mrvaError) {
+    this.mrvaError = mrvaError;
   }
 
   // </editor-fold>

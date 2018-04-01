@@ -49,7 +49,7 @@ public class CenterAtc extends ComputerAtc {
 
   @Override
   protected void processMessageFromAtc(Message m) {
-    // do nothing , CTR has no messages acceptable from ATC
+    // do nothing , ctr has no messages acceptable from ATC
     super.sendMessage(new Message(
         this,
         m.getSource(),

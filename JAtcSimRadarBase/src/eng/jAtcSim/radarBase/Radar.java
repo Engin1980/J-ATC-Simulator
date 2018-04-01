@@ -106,6 +106,7 @@ public class Radar {
     public boolean wasUpdatedFlag = false;
     public Callsign callsign;
     public AirproxType airprox;
+    public boolean mrvaError;
     public Coordinate coordinate;
     public int heading;
     public int speed;
@@ -142,6 +143,7 @@ public class Radar {
       this.responsibleAtc = plane.responsibleAtc();
 
       this.airprox = plane.getAirprox();
+      this.mrvaError = plane.isMrvaError();
 
       this.coordinate = plane.coordinate();
 
@@ -628,22 +630,36 @@ public class Radar {
   private void drawBorders() {
     for (Border b : area.getBorders()) {
       switch (b.getType()) {
-        case TMA:
+        case tma:
           if (localSettings.isTmaBorderVisible())
             drawBorder(b);
           break;
-        case CTR:
+        case ctr:
           if (localSettings.isCtrBorderVisible())
             drawBorder(b);
           break;
-        case Country:
+        case country:
           if (localSettings.isCountryBorderVisible())
             drawBorder(b);
           break;
+        case mrva:
+          if (localSettings.isMrvaBorderVisible()){
+            drawBorder(b);
+            if (localSettings.isMrvaBorderAltitudeVisible()){
+              drawBorderAltitude(b);
+            }
+          }
         default:
           drawBorder(b);
       }
     }
+  }
+
+  private void drawBorderAltitude(Border border) {
+    Coordinate c = border.getLabelCoordinate();
+    String s =  AirplaneDataFormatter.formatAltitudeShort(border.getMaxAltitude(), true);
+    DisplaySettings.ColorWidthFontSettings ds = (DisplaySettings.ColorWidthFontSettings) getDispSettBy(border);
+    tl.drawText(s, border.getLabelCoordinate(), 0,0, ds.getFont(), ds.getColor());
   }
 
   private void drawBorder(Border border) {
@@ -857,6 +873,8 @@ public class Radar {
       c = displaySettings.airproxFull;
     } else if (adi.airprox == AirproxType.partial) {
       c = displaySettings.airproxPartial;
+    } else if (adi.mrvaError){
+      c = displaySettings.mrvaError;
     } else if (this.selectedCallsign == adi.callsign) {
       c = displaySettings.selected.getColor();
     }
@@ -1032,12 +1050,14 @@ public class Radar {
 
   private DisplaySettings.ColorWidthSettings getDispSettBy(Border border) {
     switch (border.getType()) {
-      case CTR:
+      case ctr:
         return displaySettings.borderCtr;
-      case Country:
+      case country:
         return displaySettings.borderCountry;
-      case TMA:
+      case tma:
         return displaySettings.borderTma;
+      case mrva:
+        return displaySettings.borderMrva;
       default:
         throw new ERuntimeException("Border type " + border.getType() + " not implemented.");
     }

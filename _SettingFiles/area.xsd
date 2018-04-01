@@ -67,15 +67,17 @@
     <xs:attribute name="type" use="required">
       <xs:simpleType>
         <xs:restriction base="xs:string">
-          <xs:enumeration value="TMA"/>
-          <xs:enumeration value="CTR"/>
-          <xs:enumeration value="Country"/>
+          <xs:enumeration value="tma"/>
+          <xs:enumeration value="ctr"/>
+          <xs:enumeration value="country"/>
+          <xs:enumeration value="mrva" />
         </xs:restriction>
       </xs:simpleType>
     </xs:attribute>
     <xs:attribute name="enclosed" type="xs:boolean" use="required"/>
     <xs:attribute name="minAltitude" type="xs:string" use="optional"/>
     <xs:attribute name="maxAltitude" type="xs:string" use="optional"/>
+    <xs:attribute name="labelCoordinate" type="xs:string" use="optional" />
   </xs:complexType>
 
   <xs:complexType name="point">
@@ -412,7 +414,6 @@
     <xs:attribute name="category" type="planeCategory" use="optional" />
     <xs:attribute name="route" type="xs:string" use="required"/>
   </xs:complexType>
-
 
   <xs:complexType name="hold">
     <xs:attribute name="navaidName" type="xs:string" use="required"/>

@@ -83,7 +83,7 @@ public class CommandButtonsPanel extends JPanel {
 
     JPanel pnlAtc = LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.middle, 4);
 
-    btn = new JButton("-> CTR");
+    btn = new JButton("-> ctr");
     btn.addActionListener(o -> generatedEvent.raise("+" + plane.squawk().toString()));
     pnlAtc.add(btn);
 

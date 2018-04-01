@@ -3,7 +3,7 @@ package eng.coordinatesViewer;
 import eng.eSystem.collections.EList;
 
 public class PointList extends EList<Point> {
-  private static final double MAX_AXIS_DISTANCE = 10;
+  private static final double MAX_AXIS_DISTANCE = 5;
 
 
   public Point tryAlignToExisting(Point p, double zoomRatio) {

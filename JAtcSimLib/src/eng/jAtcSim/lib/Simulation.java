@@ -6,6 +6,8 @@
 package eng.jAtcSim.lib;
 
 import eng.eSystem.EStringBuilder;
+import eng.eSystem.collections.EList;
+import eng.eSystem.collections.IList;
 import eng.eSystem.collections.ReadOnlyList;
 import eng.eSystem.events.EventSimple;
 import eng.jAtcSim.lib.airplanes.*;
@@ -16,6 +18,7 @@ import eng.jAtcSim.lib.atcs.UserAtc;
 import eng.jAtcSim.lib.coordinates.Coordinates;
 import eng.jAtcSim.lib.global.ERandom;
 import eng.jAtcSim.lib.global.ETime;
+import eng.jAtcSim.lib.managers.MrvaManager;
 import eng.jAtcSim.lib.messaging.Message;
 import eng.jAtcSim.lib.messaging.Messenger;
 import eng.jAtcSim.lib.messaging.StringMessageContent;
@@ -26,6 +29,7 @@ import eng.jAtcSim.lib.traffic.Traffic;
 import eng.jAtcSim.lib.traffic.fleets.Fleets;
 import eng.jAtcSim.lib.weathers.Weather;
 import eng.jAtcSim.lib.world.Airport;
+import eng.jAtcSim.lib.world.Border;
 import eng.jAtcSim.lib.world.RunwayThreshold;
 
 import java.util.*;
@@ -56,7 +60,7 @@ public class Simulation {
   private final CenterAtc ctrAtc;
   private final Traffic traffic;
   private final Fleets fleets;
-  private final List<Airplane> newPlanesDelayedToAvoidCollision = new LinkedList();
+  private final IList<Airplane> newPlanesDelayedToAvoidCollision = new EList<>();
   /**
    * Public event informing surrounding about elapsed second.
    */
@@ -70,8 +74,10 @@ public class Simulation {
    * Internal timer used to make simulation ticks.
    */
   private final Timer tmr = new Timer(o -> Simulation.this.elapseSecond());
+  private final MrvaManager mrvaManager;
 
-  private Simulation(Airport airport, AirplaneTypes types, Weather weather, Fleets fleets, Traffic traffic, Calendar now, int simulationSecondLengthInMs) {
+  private Simulation(Airport airport, AirplaneTypes types, Weather weather, Fleets fleets, Traffic traffic, Calendar now, int simulationSecondLengthInMs,
+                     IList<Border> mrvaAreas) {
     if (airport == null) {
       throw new IllegalArgumentException("Argument \"airport\" cannot be null.");
     }
@@ -100,12 +106,14 @@ public class Simulation {
     this.ctrAtc = new CenterAtc(airport.getAtcTemplates().get(Atc.eType.ctr));
     this.appAtc = new UserAtc(airport.getAtcTemplates().get(Atc.eType.app));
 
+    this.mrvaManager = new MrvaManager(mrvaAreas);
+
     this.now = new ETime(now);
     this.simulationSecondLengthInMs = simulationSecondLengthInMs;
   }
 
-  public static Simulation create(Airport airport, AirplaneTypes types, Weather weather, Fleets fleets, Traffic traffic, Calendar now, int simulationSecondLengthInMs) {
-    Simulation ret = new Simulation(airport, types, weather, fleets, traffic, now, simulationSecondLengthInMs);
+  public static Simulation create(Airport airport, AirplaneTypes types, Weather weather, Fleets fleets, Traffic traffic, Calendar now, int simulationSecondLengthInMs, IList<Border> mrvaAreas) {
+    Simulation ret = new Simulation(airport, types, weather, fleets, traffic, now, simulationSecondLengthInMs, mrvaAreas);
 
     Acc.setSimulation(ret);
 
@@ -246,6 +254,7 @@ public class Simulation {
     removeOldPlanes();
     updatePlanes();
     evalAirproxes();
+    evalMrvas();
 
     stats.secondElapsed();
     long elapseEndMs = System.currentTimeMillis();
@@ -290,6 +299,7 @@ public class Simulation {
           newPlanesDelayedToAvoidCollision.add(newPlane);
         } else {
           Acc.prm().registerPlane(ctrAtc, newPlane);
+          this.mrvaManager.registerPlane(newPlane);
         }
       }
     }
@@ -314,11 +324,15 @@ public class Simulation {
 
     for (Airplane p : rem) {
       Acc.prm().unregisterPlane(p);
+      this.mrvaManager.unregisterPlane(p);
     }
   }
 
   private void evalAirproxes() {
     Airplanes.evaluateAirproxes(Acc.planes());
+  }
+
+  private void evalMrvas(){this.mrvaManager.evaluateMrvaFails();
   }
 
   private void processSystemMessages() {

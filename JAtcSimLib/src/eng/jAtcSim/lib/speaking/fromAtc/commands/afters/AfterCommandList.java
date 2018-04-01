@@ -281,6 +281,10 @@ public class AfterCommandList {
     AFItem it = new AFItem(afterCommand, consequent);
     this.rt.add(it);
   }
+
+  public void clearAllAltitudeRestrictions() {
+    this.rt.remove(q->q.consequent instanceof SetAltitudeRestriction);
+  }
 }
 
 class AFItem {

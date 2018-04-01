@@ -5,25 +5,24 @@
  */
 package eng.jAtcSim;
 
+import eng.eSystem.collections.IList;
 import eng.eSystem.utilites.CollectionUtils;
 import eng.jAtcSim.frmPacks.Pack;
 import eng.jAtcSim.lib.Acc;
-import eng.jAtcSim.lib.global.Headings;
-import eng.jAtcSim.lib.global.logging.ApplicationLog;
-import eng.jAtcSim.lib.global.logging.Log;
 import eng.jAtcSim.lib.Simulation;
 import eng.jAtcSim.lib.airplanes.AirplaneTypes;
 import eng.jAtcSim.lib.exceptions.ERuntimeException;
+import eng.jAtcSim.lib.global.logging.ApplicationLog;
 import eng.jAtcSim.lib.global.logging.Recorder;
 import eng.jAtcSim.lib.traffic.GenericTraffic;
 import eng.jAtcSim.lib.traffic.TestTrafficOneApproach;
-import eng.jAtcSim.lib.traffic.TestTrafficOneDeparture;
 import eng.jAtcSim.lib.traffic.Traffic;
 import eng.jAtcSim.lib.traffic.fleets.Fleets;
 import eng.jAtcSim.lib.weathers.Weather;
 import eng.jAtcSim.lib.weathers.WeatherProvider;
 import eng.jAtcSim.lib.world.Airport;
 import eng.jAtcSim.lib.world.Area;
+import eng.jAtcSim.lib.world.Border;
 import eng.jAtcSim.radarBase.global.SoundManager;
 import eng.jAtcSim.startup.FrmIntro;
 import eng.jAtcSim.startup.StartupSettings;
@@ -47,9 +46,9 @@ public class JAtcSim {
 
   private static final boolean FAST_START = false;
   private static final Traffic specificTraffic =
-     new TestTrafficOneApproach();
-//  new TestTrafficOneDeparture();
-      //null;
+  //    new TestTrafficOneApproach();
+  //  new TestTrafficOneDeparture();
+  null;
   private static AppSettings appSettings;
 
   /**
@@ -109,9 +108,12 @@ public class JAtcSim {
     if (specificTraffic != null)
       traffic = specificTraffic;
 
+    IList<Border> mrvaAreas = data.area.getBorders().where(q -> q.getType() == Border.eType.mrva);
+
     // simulation creation
     final Simulation sim = Simulation.create(
-        aip, data.types, weather, data.fleets, traffic, simTime, startupSettings.simulation.secondLengthInMs);
+        aip, data.types, weather, data.fleets, traffic, simTime, startupSettings.simulation.secondLengthInMs,
+        mrvaAreas);
 
     // sound
     SoundManager.init(appSettings.soundFolder.toString());
@@ -123,6 +125,10 @@ public class JAtcSim {
 
     simPack.initPack(sim, data.area, appSettings);
     simPack.startPack();
+  }
+
+  public static void quit() {
+
   }
 
   private static void resolveShortXmlFileNamesInStartupSettings(AppSettings appSettings, StartupSettings startupSettings) {
@@ -153,10 +159,6 @@ public class JAtcSim {
       tmp = appPath.relativize(tmp);
       startupSettings.files.trafficXmlFile = tmp.toString();
     }
-  }
-
-  public static void quit() {
-
   }
 
   private static XmlLoadedData loadDataFromXmlFiles(StartupSettings sett) throws Exception {

@@ -139,6 +139,16 @@ public class SwingRadarPanel extends JPanel {
     extBtn.set(btn, true);
     ret.add(btn);
 
+    btn = new JButton("MRVA");
+    btn.addActionListener(e -> btnMrvaBorder_click(e));
+    extBtn.set(btn, true);
+    ret.add(btn);
+
+    btn = new JButton("MRVA(lbl)");
+    btn.addActionListener(e -> btnMrvaLblBorder_click(e));
+    extBtn.set(btn, true);
+    ret.add(btn);
+
     btn = new JButton("VOR");
     btn.addActionListener(e -> btnVor_click(e));
     extBtn.set(btn, true);
@@ -191,6 +201,22 @@ public class SwingRadarPanel extends JPanel {
     boolean cur = radar.getLocalSettings().isTmaBorderVisible();
     cur = !cur;
     radar.getLocalSettings().setTmaBorderVisible(cur);
+    extBtn.set((JButton) e.getSource(), cur);
+    radar.redraw(true);
+  }
+
+  private void btnMrvaBorder_click(ActionEvent e) {
+    boolean cur = radar.getLocalSettings().isMrvaBorderVisible();
+    cur = !cur;
+    radar.getLocalSettings().setMrvaBorderVisible(cur);
+    extBtn.set((JButton) e.getSource(), cur);
+    radar.redraw(true);
+  }
+
+  private void btnMrvaLblBorder_click(ActionEvent e) {
+    boolean cur = radar.getLocalSettings().isMrvaBorderAltitudeVisible();
+    cur = !cur;
+    radar.getLocalSettings().setMrvaBorderAltitudeVisible(cur);
     extBtn.set((JButton) e.getSource(), cur);
     radar.redraw(true);
   }
@@ -295,7 +321,7 @@ public class SwingRadarPanel extends JPanel {
     UserAtc app = sim.getAppAtc();
     try {
       if (msg.startsWith("+")) {
-        // msg for CTR
+        // msg for ctr
         msg = msg.substring(1);
         app.sendToAtc(Atc.eType.ctr, msg);
         ret = true;

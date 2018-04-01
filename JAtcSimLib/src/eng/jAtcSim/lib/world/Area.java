@@ -5,6 +5,7 @@
  */
 package eng.jAtcSim.lib.world;
 
+import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.exceptions.ERuntimeException;
@@ -26,7 +27,7 @@ public class Area {
   private String icao;
   private final KeyList<Airport, String> airports = new KeyList();
   private final NavaidKeyList navaids = new NavaidKeyList();
-  private final List<Border> borders = new ArrayList();
+  private final IList<Border> borders = new EList();
 
   public KeyList<Airport, String> getAirports() {
     return airports;
@@ -40,7 +41,7 @@ public class Area {
     return navaids;
   }
 
-  public List<Border> getBorders() {
+  public IList<Border> getBorders() {
     return borders;
   }
 

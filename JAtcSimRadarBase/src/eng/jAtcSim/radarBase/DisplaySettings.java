@@ -201,7 +201,6 @@ public class DisplaySettings {
   public ColorWidthBorderSettings navVOR;
   public ColorWidthBorderSettings navNDB;
   public ColorWidthBorderSettings navFix;
-  public ColorWidthBorderSettings fafFix;
   public ColorWidthBorderSettings navFixMinor;
   public ColorWidthBorderSettings navAirport;
 
@@ -209,6 +208,7 @@ public class DisplaySettings {
   public ColorWidthSettings borderCountry;
   public ColorWidthSettings borderCtr;
   public ColorWidthSettings borderTma;
+  public ColorWidthFontSettings borderMrva;
 
   // mapBack
   /** Map background color in hex */
@@ -236,5 +236,7 @@ public class DisplaySettings {
   // airproxes
   public Color airproxFull;
   public Color airproxPartial;
+
+  public Color mrvaError;
 
 }
