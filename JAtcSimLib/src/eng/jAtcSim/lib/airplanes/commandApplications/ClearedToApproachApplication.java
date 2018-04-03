@@ -37,7 +37,7 @@ public class ClearedToApproachApplication extends CommandApplication<ClearedToAp
     if (ret != null) return ret;
 
     boolean isVisual = cai.getType() == Approach.ApproachType.visual;
-    if (isVisual || !cai.willUseIafRouting()) {
+    if (isVisual || !cai.isUsingIafRoute()) {
 
       final int MAXIMAL_DISTANCE_TO_ENTER_APPROACH_IN_NM = isVisual ? 12 : 7;
       final int MAXIMAL_ONE_SIDE_ARC_FROM_APPROACH_RADIAL_TO_ENTER_APPROACH_IN_DEGREES = 30;

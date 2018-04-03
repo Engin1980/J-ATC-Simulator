@@ -30,7 +30,7 @@ public class HoldCommandApplication extends CommandApplication<HoldCommand> {
   protected ApplicationResult adjustAirplane(Airplane.Airplane4Command plane, HoldCommand c) {
     plane.getPilot().setTargetCoordinate(null);
 
-    plane.getPilot().setHoldBehavior(c.getNavaid().getCoordinate(), c.getInboundRadial(), c.isLeftTurn());
+    plane.getPilot().setHoldBehavior(c.getNavaid(), c.getInboundRadial(), c.isLeftTurn());
 
     return ApplicationResult.getEmpty();
   }

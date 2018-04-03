@@ -161,7 +161,7 @@ public abstract class Approach {
     double slope = UnitProvider.nmToFt(Math.tan(3 * Math.PI / 180));
 
     CurrentApproachInfo ret = new CurrentApproachInfo(
-        threshold, iafCmds, gaCmds, ApproachType.visual, faf, mapt, crs, mda, slope);
+        threshold, false, iafCmds, gaCmds, ApproachType.visual, faf, mapt, crs, mda, slope);
 
     return ret;
   }
@@ -191,6 +191,7 @@ public abstract class Approach {
 
     IafRoute iafRoute = tryGetIafRoute(tmp.getIafRoutes(), iaf, category);
     SpeechList<IFromAtc> iafCommands;
+    boolean usingIaf = iafRoute != null;
     if (iafRoute != null)
       iafCommands = new SpeechList<>(iafRoute.getRouteCommands());
     else
@@ -206,7 +207,7 @@ public abstract class Approach {
 
 
     ret = new CurrentApproachInfo(
-        tmp.getParent(), iafCommands, gaCommands, type, faf, mapt, course, mda, slope);
+        tmp.getParent(), usingIaf, iafCommands, gaCommands, type, faf, mapt, course, mda, slope);
     return ret;
   }
 
@@ -219,6 +220,7 @@ public abstract class Approach {
     Navaid iaf = tryGetIafNavaidCloseToPlaneLocation(tmp, planeLocation);
 
     IafRoute iafRoute = tryGetIafRoute(tmp.getIafRoutes(), iaf, category);
+    boolean usingIaf = iafRoute != null;
     SpeechList<IFromAtc> iafCommands;
     if (iafRoute != null)
       iafCommands = new SpeechList<>(iafRoute.getRouteCommands());
@@ -236,7 +238,7 @@ public abstract class Approach {
     double slope = faf2maptAltitude / faf2maptDistance;
 
     ret = new CurrentApproachInfo(
-        tmp.getParent(), iafCommands, gaCommands, type, faf, mapt, course, mda, slope);
+        tmp.getParent(), usingIaf, iafCommands, gaCommands, type, faf, mapt, course, mda, slope);
     return ret;
   }
 
@@ -246,6 +248,7 @@ public abstract class Approach {
 
     Navaid iaf = tryGetIafNavaidCloseToPlaneLocation(tmp, planeLocation);
     IafRoute iafRoute = tryGetIafRoute(tmp.getIafRoutes(), iaf, category);
+    boolean usingIaf = iafRoute != null;
     SpeechList<IFromAtc> iafCommands;
     if (iafRoute != null)
       iafCommands = new SpeechList<>(iafRoute.getRouteCommands());
@@ -261,7 +264,7 @@ public abstract class Approach {
     double slope = getSlope(tmp.getGlidePathPercentage());
 
     ret = new CurrentApproachInfo(
-        tmp.getParent(), iafCommands, gaCommands, ApproachType.visual, faf, mapt, course, mda, slope);
+        tmp.getParent(), usingIaf, iafCommands, gaCommands, ApproachType.visual, faf, mapt, course, mda, slope);
     return ret;
   }
 

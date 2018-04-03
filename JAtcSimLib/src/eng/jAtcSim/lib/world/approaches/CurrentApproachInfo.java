@@ -18,9 +18,15 @@ public class CurrentApproachInfo {
   private int decisionAltitude;
   private double slope;
   private double faf2maptCourse;
+  private boolean usingIafRoute;
 
-  public CurrentApproachInfo(RunwayThreshold threshold, SpeechList<IFromAtc> iafRoute, SpeechList<IFromAtc> gaRoute, Approach.ApproachType type, Coordinate faf, Coordinate mapt, int course, int decisionAltitude, double slope) {
+  public boolean isUsingIafRoute() {
+    return usingIafRoute;
+  }
+
+  public CurrentApproachInfo(RunwayThreshold threshold, boolean usingIafRoute, SpeechList<IFromAtc> iafRoute, SpeechList<IFromAtc> gaRoute, Approach.ApproachType type, Coordinate faf, Coordinate mapt, int course, int decisionAltitude, double slope) {
     this.threshold = threshold;
+    this.usingIafRoute = usingIafRoute;
     this.iafRoute = iafRoute;
     this.gaRoute = gaRoute;
     this.type = type;
@@ -71,10 +77,6 @@ public class CurrentApproachInfo {
   public double getAltitudeDeltaPerSecond(double gs){
     // add glidePathPercentage here somehow
     return gs * 5;
-  }
-
-  public boolean willUseIafRouting() {
-    return !this.iafRoute.isEmpty();
   }
 
   public double getFaf2MaptCourse() {

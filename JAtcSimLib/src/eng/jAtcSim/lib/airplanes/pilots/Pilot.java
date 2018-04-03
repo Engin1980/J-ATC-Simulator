@@ -115,9 +115,9 @@ public class Pilot {
       }
     }
 
-    public void setHoldBehavior(Coordinate coordinate, int inboundRadial, boolean leftTurn) {
+    public void setHoldBehavior(Navaid navaid, int inboundRadial, boolean leftTurn) {
       Pilot.HoldBehavior hold = new Pilot.HoldBehavior();
-      hold.fix = coordinate;
+      hold.navaid = navaid;
       hold.inboundRadial = inboundRadial;
       hold.isLeftTurned = leftTurn;
       hold.phase = eHoldPhase.beginning;
@@ -165,7 +165,7 @@ public class Pilot {
     public void setAltitudeRestriction(Restriction altitudeRestriction) {
       Pilot.this.altitudeRestriction = altitudeRestriction;
 
-      if (altitudeRestriction == null){
+      if (altitudeRestriction == null) {
         Pilot.this.afterCommands.clearAllAltitudeRestrictions();
       }
       adjustTargetAltitude();
@@ -282,6 +282,7 @@ public class Pilot {
 
   abstract class BasicBehavior extends Behavior {
     private boolean clearanceLimitWarningSent = false;
+
     abstract void _fly();
 
     @Override
@@ -292,7 +293,7 @@ public class Pilot {
         if (!clearanceLimitWarningSent && dist < 5 && !pilot.afterCommands.hasLateralDirectionAfterCoordinate(targetCoordinate)) {
           say(new PassingClearanceLimitNotification());
           clearanceLimitWarningSent = true;
-        } else if (dist < 1){
+        } else if (dist < 1) {
           targetCoordinate = null;
           clearanceLimitWarningSent = false;
         } else {
@@ -404,7 +405,7 @@ public class Pilot {
 
     private static final double NEAR_FIX_DISTANCE = 0.5;
 
-    public Coordinate fix;
+    public Navaid navaid;
     public int inboundRadial;
     public eHoldPhase phase;
     public ETime secondTurnTime;
@@ -415,7 +416,7 @@ public class Pilot {
     }
 
     private void setHoldDataByEntry() {
-      double y = Coordinates.getBearing(parent.getCoordinate(), this.fix);
+      double y = Coordinates.getBearing(parent.getCoordinate(), this.navaid.getCoordinate());
       double yy = Headings.add(y, 180);
 
       int h = this.inboundRadial;
@@ -442,21 +443,21 @@ public class Pilot {
 
       switch (this.phase) {
         case directEntry:
-          if (Coordinates.getDistanceInNM(parent.getCoordinate(), this.fix) < NEAR_FIX_DISTANCE) {
+          if (Coordinates.getDistanceInNM(parent.getCoordinate(), this.navaid.getCoordinate()) < NEAR_FIX_DISTANCE) {
             parent.setTargetHeading(this.getOutboundHeading(), this.isLeftTurned);
             this.phase = eHoldPhase.firstTurn;
           } else {
-            int newHeading = (int) Coordinates.getBearing(parent.getCoordinate(), this.fix);
+            int newHeading = (int) Coordinates.getBearing(parent.getCoordinate(), this.navaid.getCoordinate());
             parent.setTargetHeading(newHeading);
           }
           break;
         case inbound:
-          if (Coordinates.getDistanceInNM(parent.getCoordinate(), this.fix) < NEAR_FIX_DISTANCE) {
+          if (Coordinates.getDistanceInNM(parent.getCoordinate(), this.navaid.getCoordinate()) < NEAR_FIX_DISTANCE) {
             parent.setTargetHeading(this.getOutboundHeading(), this.isLeftTurned);
             this.phase = eHoldPhase.firstTurn;
           } else {
             double newHeading = Coordinates.getHeadingToRadial(
-                parent.getCoordinate(), this.fix, this.inboundRadial);
+                parent.getCoordinate(), this.navaid.getCoordinate(), this.inboundRadial);
             parent.setTargetHeading(newHeading);
 
           }
@@ -480,7 +481,7 @@ public class Pilot {
           break;
 
         case tearEntry:
-          if (Coordinates.getDistanceInNM(parent.getCoordinate(), this.fix) < NEAR_FIX_DISTANCE) {
+          if (Coordinates.getDistanceInNM(parent.getCoordinate(), this.navaid.getCoordinate()) < NEAR_FIX_DISTANCE) {
 
             double newHeading;
             newHeading = this.isLeftTurned
@@ -491,7 +492,7 @@ public class Pilot {
 
             this.phase = eHoldPhase.tearAgainst;
           } else {
-            double newHeading = Coordinates.getBearing(parent.getCoordinate(), this.fix);
+            double newHeading = Coordinates.getBearing(parent.getCoordinate(), this.navaid.getCoordinate());
             parent.setTargetHeading(newHeading);
           }
           break;
@@ -505,12 +506,12 @@ public class Pilot {
           break;
 
         case parallelEntry:
-          if (Coordinates.getDistanceInNM(parent.getCoordinate(), this.fix) < NEAR_FIX_DISTANCE) {
+          if (Coordinates.getDistanceInNM(parent.getCoordinate(), this.navaid.getCoordinate()) < NEAR_FIX_DISTANCE) {
             parent.setTargetHeading(this.getOutboundHeading(), !this.isLeftTurned);
             this.secondTurnTime = Acc.now().addSeconds(60);
             this.phase = eHoldPhase.parallelAgainst;
           } else {
-            int newHeading = (int) Coordinates.getBearing(parent.getCoordinate(), this.fix);
+            int newHeading = (int) Coordinates.getBearing(parent.getCoordinate(), this.navaid.getCoordinate());
             parent.setTargetHeading(newHeading);
           }
           break;
@@ -542,7 +543,7 @@ public class Pilot {
       EStringBuilder sb = new EStringBuilder();
 
       sb.appendFormat("HLD %s incrs: %03d/%s in: %s",
-          this.fix.toString(),
+          this.navaid.getName(),
           this.inboundRadial,
           this.isLeftTurned ? "L" : "R",
           this.phase.toString());
@@ -612,7 +613,7 @@ public class Pilot {
           case visual:
             if (location == ApproachLocation.beforeFaf)
               newAltitude = parent.getTargetAltitude();
-            else{
+            else {
               double dist = Coordinates.getDistanceInNM(parent.getCoordinate(), approach.getThreshold().getCoordinate());
               double delta = dist * this.approach.getSlope();
               newAltitude = (int) delta + Acc.airport().getAltitude();
@@ -621,8 +622,8 @@ public class Pilot {
           default:
             if (location == ApproachLocation.beforeFaf)
               newAltitude = parent.getTargetAltitude();
-            else{
-              double dist = Coordinates.getDistanceInNM(parent.getCoordinate(), approach.getMapt() );
+            else {
+              double dist = Coordinates.getDistanceInNM(parent.getCoordinate(), approach.getMapt());
               double delta = dist * this.approach.getSlope();
               newAltitude = (int) delta + Acc.airport().getAltitude();
             }
@@ -678,7 +679,7 @@ public class Pilot {
         if (dist < 2)
           newHeading = Coordinates.getBearing(planePos, this.approach.getThreshold().getCoordinate());
         else
-          newHeading = Coordinates.getHeadingToRadial(planePos, this.approach.getThreshold().getCoordinate(), this.approach.getThreshold().getCourse() );
+          newHeading = Coordinates.getHeadingToRadial(planePos, this.approach.getThreshold().getCoordinate(), this.approach.getThreshold().getCourse());
       } else {
         // afther threshold
         newHeading = (int) Coordinates.getBearing(planePos, this.approach.getThreshold().getOtherThreshold().getCoordinate());
@@ -747,7 +748,7 @@ public class Pilot {
           throw new UnsupportedOperationException("Not supposed to be here. See flyIAFtoFAFPhase()");
 
         case approachEnter:
-          if (isAfterStateChange && this.approach.getType() == Approach.ApproachType.visual ){
+          if (isAfterStateChange && this.approach.getType() == Approach.ApproachType.visual) {
             if (canSeeRunwayFromCurrentPosition() == false) {
               goAround("Not airport in sight.");
               return;
@@ -986,11 +987,12 @@ public class Pilot {
 
   public boolean isOnWayToPassPoint(Navaid navaid) {
     boolean ret;
-    if (this.targetCoordinate != null && this.targetCoordinate.equals(navaid.getCoordinate())) {
+    if (this.targetCoordinate != null && this.targetCoordinate.equals(navaid.getCoordinate()))
       ret = true;
-    } else {
+    else if ((this.behavior instanceof HoldBehavior) && ((HoldBehavior) this.behavior).navaid.equals(navaid))
+      ret = true;
+    else
       ret = this.afterCommands.hasProceedDirectToNavaidAsConseqent(navaid);
-    }
     return ret;
   }
 
@@ -1047,12 +1049,16 @@ public class Pilot {
 
     SpeechList<IAtcCommand> cmds;
 
+    Coordinate targetCoordinate = this.targetCoordinate;
+    if (targetCoordinate == null && this.behavior instanceof HoldBehavior)
+      targetCoordinate = ((HoldBehavior) this.behavior).navaid.getCoordinate();
+
     cmds = afterCommands.getAndRemoveSatisfiedCommands(
-        parent.getMe(), this.targetCoordinate, AfterCommandList.Type.extensions);
+        parent.getMe(), targetCoordinate, AfterCommandList.Type.extensions);
     processSpeeches(cmds, CommandSource.extension);
 
     cmds = afterCommands.getAndRemoveSatisfiedCommands(
-        parent.getMe(), this.targetCoordinate, AfterCommandList.Type.route);
+        parent.getMe(), targetCoordinate, AfterCommandList.Type.route);
     processSpeeches(cmds, CommandSource.route);
   }
 
@@ -1183,7 +1189,7 @@ public class Pilot {
       cres = ApplicationManager.confirm(plane, cmd, true, false);
       if (sayConfirmations) say(cres.confirmation);
 
-      if (cs == CommandSource.procedure){
+      if (cs == CommandSource.procedure) {
         afterCommands.addRoute(af, cmd);
       } else
         afterCommands.addExtension(af, cmd);
@@ -1270,7 +1276,7 @@ public class Pilot {
           n = new AfterAltitudeCommand(ca.getAltitudeInFt(), restriction);
         } else if (prev instanceof ChangeSpeedCommand) {
           n = new AfterSpeedCommand(((ChangeSpeedCommand) prev).getSpeedInKts());
-        } else if (prev instanceof ChangeHeadingCommand){
+        } else if (prev instanceof ChangeHeadingCommand) {
           n = new AfterHeadingCommand(((ChangeHeadingCommand) prev).getHeading());
         } else {
           parent.passMessageToAtc(atc,

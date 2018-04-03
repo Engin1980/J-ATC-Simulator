@@ -48,9 +48,9 @@ public class JAtcSim {
 
   private static final boolean FAST_START = false;
   private static final Traffic specificTraffic =
-  //  new TestTrafficOneApproach();
+    new TestTrafficOneApproach();
   //  new TestTrafficOneDeparture();
-   null;
+  // null;
   private static AppSettings appSettings;
 
   /**

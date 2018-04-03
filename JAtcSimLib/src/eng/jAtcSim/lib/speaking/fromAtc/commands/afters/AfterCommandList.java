@@ -60,7 +60,7 @@ public class AfterCommandList {
       ret = (Math.abs(trgSpd - plane.getSpeed()) < 10);
     } else if (item.antecedent instanceof AfterNavaidCommand) {
       AfterNavaidCommand anc = (AfterNavaidCommand) item.antecedent;
-      if (anc.getNavaid().getCoordinate().equals(currentTargetCoordinateOrNull) == false) {
+      if ((anc.getNavaid().getCoordinate().equals(currentTargetCoordinateOrNull) == false)) {
         // flying over some navaid, but not over current targeted by plane(pilot)
         ret = false;
       } else {
@@ -184,14 +184,11 @@ public class AfterCommandList {
   }
 
   public boolean hasProceedDirectToNavaidAsConseqent(Navaid navaid) {
-    Predicate<AFItem> cond = new Predicate<AFItem>() {
-      @Override
-      public boolean test(AFItem q) {
-        boolean ret =
-            q.consequent instanceof ProceedDirectCommand &&
-                ((ProceedDirectCommand) q.consequent).getNavaid().equals(navaid);
-        return ret;
-      }
+    Predicate<AFItem> cond = q -> {
+      boolean ret =
+          (q.consequent instanceof ToNavaidCommand &&
+              ((ToNavaidCommand) q.consequent).getNavaid().equals(navaid));
+      return ret;
     };
     boolean ret =
         this.rt.isAny(q -> cond.test(q)) || this.ex.isAny(q -> cond.test(q));

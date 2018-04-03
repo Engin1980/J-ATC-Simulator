@@ -129,13 +129,13 @@
       </atcTemplates>
       <sharedRoutes>
         <route type="star" name="NISAR6R"
-               route="PD NISAR T PD XIRBI T PD ABDIL T PD GIROL T PD AMFOU T SL 250 PD TIPIK T PD MUS" entryFL="340"/>
-        <route type="star" name="ABDIL6R" route="PD ABDIL T PD GIROL T PD AMFOU T PD AMFOU T SL 250 PD TIPIK T PD MUS"
+               route="PD NISAR T PD XIRBI T PD ABDIL T PD GIROL T PD AMFOU T SL 250 PD TIPIK T PD MUS T H MUS" entryFL="340"/>
+        <route type="star" name="ABDIL6R" route="PD ABDIL T PD GIROL T PD AMFOU T PD AMFOU T SL 250 PD TIPIK T PD MUS T H MUS"
                entryFL="190"/>
-        <route type="star" name="ABLAK6R" route="PD ABLAK T PD ABILI T PD AMFOU T SL 250 PD TIPIK T PD MUS"
+        <route type="star" name="ABLAK6R" route="PD ABLAK T PD ABILI T PD AMFOU T SL 250 PD TIPIK T PD MUS T H MUS"
                entryFL="200"/>
-        <route type="star" name="PERUS6R" route="PD PERUS T PD AMFOU T SL 210 PD TIPIK T PD MUS" entryFL="190"/>
-        <route type="star" name="BIRGO6C" route="PD BIRGO T PD LUC T PD MUS" entryFL="110"/>
+        <route type="star" name="PERUS6R" route="PD PERUS T PD AMFOU T SL 210 PD TIPIK T PD MUS T H MUS" entryFL="190"/>
+        <route type="star" name="BIRGO6C" route="PD BIRGO T PD LUC T PD MUS T H MUS" entryFL="110"/>
         <route type="star" name="VEVAR6R"
                route="PD VEVAR T PD GAPDO T PD AMGEL T PD MIKRU T PD PIRAM T PD AZR/112/35 T PD NERAS T H NERAS"/>
         <route type="star" name="BORDI6R"
