@@ -124,19 +124,14 @@ class TransformationLayer {
     c.drawTriangleAround(p, distanceInPixels, color, width);
   }
 
-//  void setCoordinates(Coordinate topLeft, Coordinate bottomRight) {
-//    //TODO tady kontrola jestli jsou u sebe
-//    if (topLeft.getLongitude().get() > bottomRight.getLongitude().get()) {
-//      throw new ERuntimeException("Cannot set painter coordinates. Square made of " + topLeft.toString() + " and " + bottomRight.toString() + " does not define square (longitude error).");
-//    }
-//    if (topLeft.getLatitude().get() < bottomRight.getLatitude().get()) {
-//      throw new ERuntimeException("Cannot set painter coordinates. Square made of " + topLeft.toString() + " and " + bottomRight.toString() + " does not define square (longitude error).");
-//    }
-//
-//    this.topLeft = topLeft;
-//    this.bottomRight = bottomRight;
-//  }
+  RadarViewPort getViewPort(){
+    RadarViewPort ret = new RadarViewPort(this.topLeft, this.scale * c.getWidth());
+    return ret;
+  }
 
+  void setViewPort(RadarViewPort viewPort){
+    setPosition(viewPort.getTopLeft(), viewPort.getWidthInNm());
+  }
 
   final void setPosition(Coordinate topLeft, double widthInNM) {
     if (widthInNM <= 0) {

@@ -382,6 +382,15 @@ public class Radar {
     redraw(true);
   }
 
+  public void setViewPort(RadarViewPort viewPort){
+    tl.setViewPort(viewPort);
+    redraw(true);
+  }
+
+  public RadarViewPort getViewPort(){
+    return tl.getViewPort();
+  }
+
   public void redraw(boolean force) {
 
     if (!force) {

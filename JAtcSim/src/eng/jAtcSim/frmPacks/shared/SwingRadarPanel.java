@@ -1,5 +1,9 @@
 package eng.jAtcSim.frmPacks.shared;
 
+import eng.eSystem.collections.EMap;
+import eng.eSystem.collections.IMap;
+import eng.eSystem.events.EventAnonymous;
+import eng.eSystem.events.EventAnonymousSimple;
 import eng.jAtcSim.SwingRadar.SwingCanvas;
 import eng.jAtcSim.lib.Simulation;
 import eng.jAtcSim.lib.atcs.Atc;
@@ -10,6 +14,7 @@ import eng.jAtcSim.lib.world.InitialPosition;
 import eng.jAtcSim.radarBase.BehaviorSettings;
 import eng.jAtcSim.radarBase.DisplaySettings;
 import eng.jAtcSim.radarBase.Radar;
+import eng.jAtcSim.radarBase.RadarViewPort;
 import eng.jAtcSim.startup.LayoutManager;
 
 import javax.swing.*;
@@ -20,7 +25,6 @@ import java.awt.event.KeyListener;
 
 public class SwingRadarPanel extends JPanel {
   private Radar radar;
-  private javax.swing.JTextField txtInput;
   private CommandJTextWraper wrp;
   private Simulation sim;
   private Area area;
@@ -33,6 +37,7 @@ public class SwingRadarPanel extends JPanel {
       new Color(0, 0, 0),
       new Color(0, 255, 0)
   );
+  private IMap<Integer, RadarViewPort> storedRadarPositions = new EMap<>();
 
   public void init(InitialPosition initialPosition,
                    Simulation sim, Area area,
@@ -54,8 +59,6 @@ public class SwingRadarPanel extends JPanel {
     if (behaviorSettings.isPaintMessages()) {
       JPanel pnlBottom = buildTextPanel();
       this.add(pnlBottom, BorderLayout.PAGE_END);
-      wrp = new CommandJTextWraper(txtInput);
-      this.txtInput.requestFocus();
     }
   }
 
@@ -64,30 +67,22 @@ public class SwingRadarPanel extends JPanel {
   }
 
   public void addCommandTextToLine(String text) {
-    String tmp = txtInput.getText() + " " + text + " ";
-    txtInput.setText(tmp);
-    txtInput.requestFocus();
+    wrp.appendText(text);
+    wrp.focus();
   }
 
   public void sendCommand() {
-    String msg = txtInput.getText();
-    msg = msg.toUpperCase();
-    boolean accepted = sendMessage(msg);
-    if (accepted) {
-      eraseCommand();
-    }
-    txtInput.requestFocus();
+    wrp.send();
   }
 
   public void eraseCommand() {
-    txtInput.setText("");
-    txtInput.requestFocus();
+    wrp.erase();
   }
 
   private JPanel buildTextPanel() {
 
     // textove pole
-    txtInput = new JTextField();
+    JTextField txtInput = new JTextField();
     Font font = new Font("Courier New", Font.PLAIN, txtInput.getFont().getSize());
     txtInput.setFont(font);
     txtInput.addKeyListener(new java.awt.event.KeyAdapter() {
@@ -99,7 +94,34 @@ public class SwingRadarPanel extends JPanel {
         3,
         txtInput);
 
+    wrp = new CommandJTextWraper(txtInput);
+    wrp.getSendEvent().add(() -> this.wrp_send());
+    wrp.getRecallRadarPosition().add(pos -> this.recallRadarPosition((int) pos));
+    wrp.getStoreRadarPosition().add(pos -> this.storeRadarPosition((int) pos));
+    wrp.focus();
+
     return ret;
+  }
+
+  private void storeRadarPosition(int index) {
+    RadarViewPort rp = radar.getViewPort();
+    storedRadarPositions.set(index, rp);
+  }
+
+  private void recallRadarPosition(int index) {
+    RadarViewPort rp = storedRadarPositions.tryGet(index);
+    if (rp != null) {
+      radar.setViewPort(rp);
+    }
+  }
+
+  private void wrp_send() {
+    String msg = wrp.getText();
+    boolean accepted = sendMessage(msg);
+    if (accepted) {
+      wrp.erase();
+    }
+    wrp.focus();
   }
 
   private JPanel buildRadarPanel() {
@@ -113,7 +135,8 @@ public class SwingRadarPanel extends JPanel {
         this.displaySettings, this.behaviorSettings);
 
     ret.add(canvas.getGuiControl());
-    canvas.getGuiControl().addKeyListener(new MyKeyListener(this.txtInput));
+    // TODO this redirects text events to jtextfield. However not working now.
+//    canvas.getGuiControl().addKeyListener(new MyKeyListener(this.txtInput));
     return ret;
   }
 
@@ -412,20 +435,15 @@ class MyKeyListener implements KeyListener {
 class CommandJTextWraper {
 
   private final JTextField parent;
-  private String lastMessage = "";
+  private boolean isCtr = false;
+  private EventAnonymousSimple sendEvent = new EventAnonymousSimple();
+  private EventAnonymous<Integer> storeRadarPosition = new EventAnonymous<>();
+  private EventAnonymous<Integer> recallRadarPosition = new EventAnonymous<>();
 
   public CommandJTextWraper(JTextField parentJTextField) {
     parent = parentJTextField;
 
     parent.addKeyListener(new KeyListener() {
-
-      private void setText(String text) {
-        parent.setText(text);
-      }
-
-      private void addText(String text) {
-        parent.setText(parent.getText() + text);
-      }
 
       @Override
       public void keyTyped(KeyEvent e) {
@@ -435,38 +453,105 @@ class CommandJTextWraper {
       @Override
       public void keyPressed(KeyEvent e) {
         switch (e.getKeyCode()) {
+          case KeyEvent.VK_CONTROL:
+            isCtr = true;
+            break;
           case java.awt.event.KeyEvent.VK_ESCAPE:
-            setText("");
+            erase();
             break;
           case java.awt.event.KeyEvent.VK_LEFT:
-            addText(" TL ");
+            if (isCtr) appendText("TL");
             break;
           case java.awt.event.KeyEvent.VK_RIGHT:
-            addText(" TR ");
+            if (isCtr) appendText("TR");
             break;
           case java.awt.event.KeyEvent.VK_UP:
-            addText(" CM ");
+            if (isCtr) appendText("CM");
             break;
           case java.awt.event.KeyEvent.VK_DOWN:
-            addText(" DM ");
+            if (isCtr) appendText("DM");
             break;
           case java.awt.event.KeyEvent.VK_ENTER:
-            lastMessage = parent.getText();
+            send();
             break;
-          case java.awt.event.KeyEvent.VK_PAGE_UP:
-            setText(lastMessage);
+          case KeyEvent.VK_F2:
+            if (isCtr)
+              storeRadarPosition.raise(2);
+            else
+              recallRadarPosition.raise(2);
+            break;
+          case KeyEvent.VK_F3:
+            if (isCtr)
+              storeRadarPosition.raise(3);
+            else
+              recallRadarPosition.raise(3);
+            break;
+          case KeyEvent.VK_F4:
+            if (isCtr)
+              storeRadarPosition.raise(4);
+            else
+              recallRadarPosition.raise(4);
+            break;
+          case KeyEvent.VK_F5:
+            if (isCtr)
+              storeRadarPosition.raise(5);
+            else
+              recallRadarPosition.raise(5);
+            break;
+          case KeyEvent.VK_F6:
+            if (isCtr)
+              storeRadarPosition.raise(6);
+            else
+              recallRadarPosition.raise(6);
             break;
         }
       }
 
       @Override
       public void keyReleased(KeyEvent e) {
+        switch (e.getKeyCode()) {
+          case KeyEvent.VK_CONTROL:
+            isCtr = false;
+            break;
+        }
       }
 
 
     });
   }
 
+  public void focus() {
+    parent.requestFocus();
+  }
+
+  public void appendText(String text) {
+    String tmp = parent.getText() + " " + text + " ";
+    parent.setText(tmp);
+  }
+
+  public String getText() {
+    return parent.getText().trim().toUpperCase();
+  }
+
+  public void send() {
+    sendEvent.raise();
+  }
+
+  public void erase() {
+    parent.setText("");
+  }
+
+  public EventAnonymousSimple getSendEvent() {
+    return sendEvent;
+  }
+
+  public EventAnonymous<Integer> getStoreRadarPosition() {
+    return storeRadarPosition;
+  }
+
+  public EventAnonymous<Integer> getRecallRadarPosition() {
+    return recallRadarPosition;
+  }
 }
 
 class JButtonExtender {
@@ -491,4 +576,8 @@ class JButtonExtender {
       btn.setForeground(foreOff);
     }
   }
+}
+
+class RadarPosition {
+
 }

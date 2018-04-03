@@ -2,6 +2,7 @@ package eng.jAtcSim.lib.atcs;
 
 import eng.eSystem.EStringBuilder;
 import eng.eSystem.collections.EMap;
+import eng.eSystem.collections.IMap;
 import eng.eSystem.utilites.CollectionUtils;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
@@ -88,7 +89,7 @@ public class TowerAtc extends ComputerAtc {
 
   }
 
-  private static final int RUNWAY_CHANGE_INFO_UPDATE_INTERVAL = 10 * 60;
+  private static final int RUNWAY_CHANGE_INFO_UPDATE_INTERVAL = 5 * 60;
   private static final int MAXIMAL_SPEED_FOR_PREFERRED_RUNWAY = 5;
   private static final double MAXIMAL_ACCEPT_DISTANCE_IN_NM = 15;
   private final TakeOffInfos takeOffInfos = new TakeOffInfos();
@@ -160,7 +161,11 @@ public class TowerAtc extends ComputerAtc {
       departingPlanesList.remove(plane);
     if (holdingPointWaitingTimeMap.containsKey(plane))
       holdingPointWaitingTimeMap.remove(plane);
-  }
+
+
+    IMap<RunwayThreshold, TakeOffInfo> tmp = takeOffInfos.whereValue(q->q.airplane == plane);
+    tmp.keySet().forEach(q->takeOffInfos.remove(q));
+}
 
   @Override
   public void registerNewPlaneUnderControl(Airplane plane, boolean initialRegistration) {
@@ -177,13 +182,8 @@ public class TowerAtc extends ComputerAtc {
     super.elapseSecond();
 
     tryTakeOffPlane();
-
-    if (Acc.now().getTotalSeconds() % RUNWAY_CHANGE_INFO_UPDATE_INTERVAL == 0) {
-      checkForRunwayChange();
-    }
-
     processRunwayCheckBackground();
-
+    processRunwayChangeBackground();
   }
 
   @Override
@@ -332,9 +332,10 @@ public class TowerAtc extends ComputerAtc {
   }
 
   private void processRunwayChangeBackground() {
-
     if (inUseInfo.scheduler == null) {
-      checkForRunwayChange();
+      if (Acc.now().getTotalSeconds() % RUNWAY_CHANGE_INFO_UPDATE_INTERVAL == 0) {
+        checkForRunwayChange();
+      }
     } else {
       if (inUseInfo.scheduler.isElapsed()) {
         changeRunwayInUse();
@@ -512,7 +513,7 @@ public class TowerAtc extends ComputerAtc {
     // process the T-O
     TakeOffInfo toi = new TakeOffInfo(
         Acc.now(), toReadyPlane);
-    this.takeOffInfos.put(availableThreshold, toi);
+    this.takeOffInfos.set(availableThreshold, toi);
 
     SpeechList lst = new SpeechList();
     lst.add(new RadarContactConfirmationNotification());
@@ -564,7 +565,7 @@ class TakeOffInfo {
   }
 }
 
-class TakeOffInfos extends HashMap<RunwayThreshold, TakeOffInfo> {
+class TakeOffInfos extends EMap<RunwayThreshold, TakeOffInfo> {
 
   private final static int[][] sepDistanceNm = new int[][]{
       new int[]{0, 0, 0, 0}, // A
