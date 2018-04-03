@@ -28,6 +28,7 @@ import eng.jAtcSim.lib.traffic.Movement;
 import eng.jAtcSim.lib.traffic.Traffic;
 import eng.jAtcSim.lib.traffic.fleets.Fleets;
 import eng.jAtcSim.lib.weathers.Weather;
+import eng.jAtcSim.lib.weathers.WeatherProvider;
 import eng.jAtcSim.lib.world.Airport;
 import eng.jAtcSim.lib.world.Border;
 import eng.jAtcSim.lib.world.RunwayThreshold;
@@ -67,7 +68,7 @@ public class Simulation {
   private EventSimple<Simulation> secondElapsedEvent =
       new EventSimple<>(this);
   private int simulationSecondLengthInMs;
-  private Weather weather;
+  private WeatherProvider weatherProvider;
   private Statistics stats = new Statistics();
   private boolean isBusy = false;
   /**
@@ -76,7 +77,7 @@ public class Simulation {
   private final Timer tmr = new Timer(o -> Simulation.this.elapseSecond());
   private final MrvaManager mrvaManager;
 
-  private Simulation(Airport airport, AirplaneTypes types, Weather weather, Fleets fleets, Traffic traffic, Calendar now, int simulationSecondLengthInMs,
+  private Simulation(Airport airport, AirplaneTypes types, WeatherProvider weatherProvider, Fleets fleets, Traffic traffic, Calendar now, int simulationSecondLengthInMs,
                      IList<Border> mrvaAreas) {
     if (airport == null) {
       throw new IllegalArgumentException("Argument \"airport\" cannot be null.");
@@ -84,8 +85,8 @@ public class Simulation {
     if (types == null) {
       throw new IllegalArgumentException("Argument \"types\" cannot be null.");
     }
-    if (weather == null) {
-      throw new IllegalArgumentException("Argument \"weather\" cannot be null.");
+    if (weatherProvider == null) {
+      throw new IllegalArgumentException("Argument \"weatherProvider\" cannot be null.");
     }
     if (fleets == null) {
         throw new IllegalArgumentException("Value of {fleets} cannot not be null.");
@@ -99,7 +100,7 @@ public class Simulation {
 
     this.airport = airport;
     this.planeTypes = types;
-    this.weather = weather;
+    this.weatherProvider = weatherProvider;
     this.fleets = fleets;
     this.traffic = traffic;
     this.twrAtc = new TowerAtc(airport.getAtcTemplates().get(Atc.eType.twr));
@@ -112,8 +113,8 @@ public class Simulation {
     this.simulationSecondLengthInMs = simulationSecondLengthInMs;
   }
 
-  public static Simulation create(Airport airport, AirplaneTypes types, Weather weather, Fleets fleets, Traffic traffic, Calendar now, int simulationSecondLengthInMs, IList<Border> mrvaAreas) {
-    Simulation ret = new Simulation(airport, types, weather, fleets, traffic, now, simulationSecondLengthInMs, mrvaAreas);
+  public static Simulation create(Airport airport, AirplaneTypes types, WeatherProvider weatherProvider, Fleets fleets, Traffic traffic, Calendar now, int simulationSecondLengthInMs, IList<Border> mrvaAreas) {
+    Simulation ret = new Simulation(airport, types, weatherProvider, fleets, traffic, now, simulationSecondLengthInMs, mrvaAreas);
 
     Acc.setSimulation(ret);
 
@@ -196,7 +197,7 @@ public class Simulation {
   }
 
   public Weather getWeather() {
-    return weather;
+    return weatherProvider.getWeather();
   }
 
   public UserAtc getAppAtc() {
@@ -219,11 +220,17 @@ public class Simulation {
     return Acc.thresholds();
   }
 
-  public void setActiveRunwayThreshold(RunwayThreshold newRunwayThreshold) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+  public void sendTextMessageForUser(String text) {
+    Message m = new Message(Messenger.SYSTEM, appAtc,
+        new StringMessageContent(text));
+    this.messenger.send(m);
   }
 
-  private void elapseSecond() {
+  public WeatherProvider getWeatherProvider() {
+    return this.weatherProvider;
+  }
+
+  private synchronized void elapseSecond() {
 
     long elapseStartMs = System.currentTimeMillis();
 
@@ -255,6 +262,9 @@ public class Simulation {
     updatePlanes();
     evalAirproxes();
     evalMrvas();
+
+    // weather stuff
+    weatherProvider.elapseSecond();
 
     stats.secondElapsed();
     long elapseEndMs = System.currentTimeMillis();
