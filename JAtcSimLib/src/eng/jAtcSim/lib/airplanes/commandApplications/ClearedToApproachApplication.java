@@ -10,29 +10,11 @@ import eng.jAtcSim.lib.speaking.fromAirplane.notifications.HighOrderedSpeedForAp
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.Rejection;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.rejections.UnableToEnterApproachFromDifficultPosition;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ClearedToApproachCommand;
-import eng.jAtcSim.lib.world.Navaid;
 import eng.jAtcSim.lib.world.RunwayThreshold;
 import eng.jAtcSim.lib.world.approaches.Approach;
 import eng.jAtcSim.lib.world.approaches.CurrentApproachInfo;
 
 public class ClearedToApproachApplication extends CommandApplication<ClearedToApproachCommand> {
-
-  @Override
-  protected Airplane.State[] getInvalidStates() {
-    return new Airplane.State[]{
-        Airplane.State.holdingPoint,
-        Airplane.State.takeOffRoll,
-        Airplane.State.takeOffGoAround,
-        Airplane.State.departingLow,
-        Airplane.State.departingHigh,
-        Airplane.State.flyingIaf2Faf,
-        Airplane.State.approachEnter,
-        Airplane.State.approachDescend,
-        Airplane.State.longFinal,
-        Airplane.State.shortFinal,
-        Airplane.State.landed
-    };
-  }
 
   @Override
   protected IFromAirplane checkCommandSanity(Airplane.Airplane4Command plane, ClearedToApproachCommand c) {
@@ -57,14 +39,17 @@ public class ClearedToApproachApplication extends CommandApplication<ClearedToAp
     boolean isVisual = cai.getType() == Approach.ApproachType.visual;
     if (isVisual || !cai.willUseIafRouting()) {
 
-      final int MAXIMAL_DISTANCE_TO_ENTER_APPROACH_IN_NM = isVisual ? 12 : 17;
+      final int MAXIMAL_DISTANCE_TO_ENTER_APPROACH_IN_NM = isVisual ? 12 : 7;
       final int MAXIMAL_ONE_SIDE_ARC_FROM_APPROACH_RADIAL_TO_ENTER_APPROACH_IN_DEGREES = 30;
 
       // zatim resim jen pozici letadla
       int currentHeading
           = (int) Coordinates.getBearing(plane.getCoordinate(), cai.getMapt());
-      int dist
-          = (int) Coordinates.getDistanceInNM(cai.getMapt(), plane.getCoordinate());
+      double dist;
+      if (isVisual)
+        dist = Coordinates.getDistanceInNM(cai.getMapt(), plane.getCoordinate());
+      else
+        dist = Coordinates.getDistanceInNM(cai.getFaf(), plane.getCoordinate());
       double minHeading = Headings.add(
           cai.getCourse(),
           -MAXIMAL_ONE_SIDE_ARC_FROM_APPROACH_RADIAL_TO_ENTER_APPROACH_IN_DEGREES);
@@ -76,7 +61,7 @@ public class ClearedToApproachApplication extends CommandApplication<ClearedToAp
         ret = new UnableToEnterApproachFromDifficultPosition(c, "We are too far.");
       else if (!isVisual && !Headings.isBetween(minHeading, currentHeading, maxHeading))
         ret = new UnableToEnterApproachFromDifficultPosition(c, "We need to be heading moreless for the runway.");
-      else if (isVisual){
+      else if (isVisual) {
         // check if ground is visible now
         double alt = plane.getAltitude();
         if (alt > Acc.weather().getCloudBaseInFt())
@@ -87,6 +72,23 @@ public class ClearedToApproachApplication extends CommandApplication<ClearedToAp
     if (ret != null) return ret;
 
     return ret;
+  }
+
+  @Override
+  protected Airplane.State[] getInvalidStates() {
+    return new Airplane.State[]{
+        Airplane.State.holdingPoint,
+        Airplane.State.takeOffRoll,
+        Airplane.State.takeOffGoAround,
+        Airplane.State.departingLow,
+        Airplane.State.departingHigh,
+        Airplane.State.flyingIaf2Faf,
+        Airplane.State.approachEnter,
+        Airplane.State.approachDescend,
+        Airplane.State.longFinal,
+        Airplane.State.shortFinal,
+        Airplane.State.landed
+    };
   }
 
   @Override

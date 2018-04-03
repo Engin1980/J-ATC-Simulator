@@ -120,10 +120,10 @@
       <initialPosition coordinate="N43 39.9 E007 12.9" range="75"/>
       <atcTemplates>
         <atcTemplate type="ctr" name="LFFF_CTR" frequency="128.10"
-                     releaseAltitude="19000" acceptAltitude="11000" orderedAltitude="17000"
+                     releaseAltitude="19000" acceptAltitude="14000" orderedAltitude="17000"
                      ctrAcceptDistance="20" ctrNavaidAcceptDistance="20"/>
         <atcTemplate type="twr" name="LFMN_TWR" frequency="118.70"
-                     releaseAltitude="150" acceptAltitude="3000" orderedAltitude="5000"/>
+                     releaseAltitude="150" acceptAltitude="4000" orderedAltitude="5000"/>
         <atcTemplate type="app" name="LFMN_APP" frequency="134.475"
                      releaseAltitude="-1" acceptAltitude="-1" orderedAltitude="-1"/>
       </atcTemplates>

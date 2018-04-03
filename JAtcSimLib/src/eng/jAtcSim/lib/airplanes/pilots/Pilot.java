@@ -129,7 +129,6 @@ public class Pilot {
     public void setTakeOffBehavior(RunwayThreshold thrs) {
       Pilot.this.behavior = new Pilot.TakeOffBehavior(thrs);
       Pilot.this.parent.setTargetSpeed(Pilot.this.parent.getType().vR + 15);
-      this.setTargetAltitude(thrs.getInitialDepartureAltitude());
       Pilot.this.parent.setTargetHeading(thrs.getCourse());
       Pilot.this.parent.setxState(Airplane.State.takeOffRoll);
     }
@@ -960,8 +959,8 @@ public class Pilot {
     endrivePlane();
     flushSaidTextToAtc();
 
-    this.afterCommands.consolePrint();
-    System.out.println(" / / / / / ");
+//    this.afterCommands.consolePrint();
+//    System.out.println(" / / / / / ");
   }
 
   public Atc getTunedAtc() {
@@ -1124,7 +1123,7 @@ public class Pilot {
           } else {
             // rule 6
             this.afterCommands.clearChangeSpeedClassOfRouteWithTransferConsequent(
-                tmp.getSpeedInKts(), this.parent.isArrival());
+                null, this.parent.isArrival());
             this.afterCommands.clearExtensionsByConsequent(ChangeSpeedCommand.class);
           }
         } else if (cmd instanceof ClearedToApproachCommand) {
@@ -1151,7 +1150,7 @@ public class Pilot {
           } else {
             // rule 11
             this.afterCommands.clearChangeSpeedClassOfRouteWithTransferConsequent(
-                tmp.getSpeedInKts(), this.parent.isArrival());
+                null, this.parent.isArrival());
             this.afterCommands.clearExtensionsByConsequent(ChangeSpeedCommand.class);
           }
         } else if (cmd instanceof ClearedToApproachCommand) {

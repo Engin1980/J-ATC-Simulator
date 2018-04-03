@@ -5,6 +5,7 @@
  */
 package eng.jAtcSim;
 
+import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IList;
 import eng.eSystem.utilites.CollectionUtils;
 import eng.jAtcSim.frmPacks.Pack;
@@ -16,6 +17,7 @@ import eng.jAtcSim.lib.global.logging.ApplicationLog;
 import eng.jAtcSim.lib.global.logging.Recorder;
 import eng.jAtcSim.lib.traffic.GenericTraffic;
 import eng.jAtcSim.lib.traffic.TestTrafficOneApproach;
+import eng.jAtcSim.lib.traffic.TestTrafficOneDeparture;
 import eng.jAtcSim.lib.traffic.Traffic;
 import eng.jAtcSim.lib.traffic.fleets.Fleets;
 import eng.jAtcSim.lib.weathers.Weather;
@@ -46,9 +48,9 @@ public class JAtcSim {
 
   private static final boolean FAST_START = false;
   private static final Traffic specificTraffic =
-  //    new TestTrafficOneApproach();
+  //  new TestTrafficOneApproach();
   //  new TestTrafficOneDeparture();
-  null;
+   null;
   private static AppSettings appSettings;
 
   /**

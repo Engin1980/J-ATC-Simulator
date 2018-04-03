@@ -290,6 +290,7 @@ public class Simulation {
     for (Airplane newPlane : newPlanes) {
       if (newPlane.isDeparture()) {
         Acc.prm().registerPlane(twrAtc, newPlane);
+        this.mrvaManager.registerPlane(newPlane);
       } else {
         // here are two possibilities
         // 1. new airplanes are delayed to avoid current airplanes. That is, as far as new plane is in vicinity of an other plane, it is added to "delayed" collection.
