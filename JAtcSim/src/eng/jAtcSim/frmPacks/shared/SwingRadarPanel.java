@@ -85,11 +85,6 @@ public class SwingRadarPanel extends JPanel {
     JTextField txtInput = new JTextField();
     Font font = new Font("Courier New", Font.PLAIN, txtInput.getFont().getSize());
     txtInput.setFont(font);
-    txtInput.addKeyListener(new java.awt.event.KeyAdapter() {
-      public void keyPressed(java.awt.event.KeyEvent evt) {
-        jTxtInput_keyPressed(evt);
-      }
-    });
     JPanel ret = LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.middle,
         3,
         txtInput);
@@ -332,11 +327,11 @@ public class SwingRadarPanel extends JPanel {
     radar.redraw(true);
   }
 
-  private void jTxtInput_keyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTxtInputKeyPressed
-    if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
-      this.sendCommand();
-    }
-  }
+//  private void jTxtInput_keyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTxtInputKeyPressed
+//    if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+//      this.sendCommand();
+//    }
+//  }
 
   private boolean sendMessage(String msg) {
     msg = normalizeMsg(msg);

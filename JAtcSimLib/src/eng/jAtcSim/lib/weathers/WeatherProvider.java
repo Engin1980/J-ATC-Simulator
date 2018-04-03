@@ -1,40 +1,37 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package eng.jAtcSim.lib.weathers;
 
-import eng.jAtcSim.lib.global.TryResult;
-import eng.jAtcSim.lib.global.TryResult;
+import eng.eSystem.events.EventAnonymousSimple;
+import eng.jAtcSim.lib.Acc;
+import eng.jAtcSim.lib.weathers.downloaders.MetarDecoder;
 
-/**
- *
- * @author Marek Vajgl
- */
-public class WeatherProvider {
-  public static Weather downloadAndDecodeMetar(String icao){
-    Weather ret;
-    MetarDownloader downloader = new MetarDownloaderNoaaGov();
-    TryResult<String> downResult = downloader.tryDownloadMetar(icao);
-    if (downResult.isSuccess == false) {
-      System.out.println("Error downloading metar from " + downloader.getClass().getSimpleName() + ". Reason: " + downResult.exceptionOrNull.getMessage());
-      ret = new Weather();
-    } else {
-      ret = decodeMetar(downResult.result);
+public abstract class WeatherProvider {
+  private static final boolean EXCEPTION_ON_DECODE_FAIL = true;
+  private Weather weather;
+  private EventAnonymousSimple weatherUpdatedEvent = new EventAnonymousSimple();
+
+  public EventAnonymousSimple getWeatherUpdatedEvent() {
+    return weatherUpdatedEvent;
+  }
+
+  public Weather getWeather() {
+    return weather;
+  }
+
+  public void setWeather(Weather weather) {
+    assert weather != null;
+    this.weather = weather;
+    weatherUpdatedEvent.raise();
+  }
+
+  public void setWeatherByMetarString(String metarString) {
+    Weather tmp;
+    try {
+      tmp = MetarDecoder.decode(metarString);
+      this.setWeather(tmp);
+    } catch (Exception ex){
+      Acc.sim().sendTextMessageForUser("Failed to decode metar. " + ex.getMessage());
     }
-    return ret;
   }
-  
-  public static Weather decodeMetar (String metar){
-    Weather ret;
-    TryResult<Weather> decResult = MetarDecoder.tryDecode(metar);
-      if (decResult.isSuccess == false) {
-        System.out.println("Error decoding metar \"" + metar + "\". Reason: " + decResult.exceptionOrNull.getMessage());
-        ret = new Weather();
-      } else {
-        ret = decResult.result;
-      }
-      return ret;
-  }
+
+  public abstract void elapseSecond();
 }

@@ -4,14 +4,12 @@
  * and open the template in the editor.
  */
 
-package eng.jAtcSim.lib.weathers;
+package eng.jAtcSim.lib.weathers.downloaders;
 
 import eng.jAtcSim.lib.exceptions.ERuntimeException;
-import eng.jAtcSim.lib.exceptions.ERuntimeException;
+
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *

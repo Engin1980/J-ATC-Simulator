@@ -24,9 +24,9 @@ import eng.jAtcSim.lib.speaking.fromAtc.commands.ContactCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.afters.AfterAltitudeCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.notifications.RadarContactConfirmationNotification;
 import eng.jAtcSim.lib.weathers.Weather;
+import eng.jAtcSim.lib.weathers.WeatherProvider;
 import eng.jAtcSim.lib.world.Runway;
 import eng.jAtcSim.lib.world.RunwayThreshold;
-import sun.util.locale.provider.AvailableLanguageTags;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,10 +39,6 @@ public class TowerAtc extends ComputerAtc {
     private int expectedDurationInMinutes;
     private ETime realDurationEnd;
     private SchedulerForAdvice scheduler;
-
-    public boolean isActive(){
-      return scheduler == null;
-    }
 
     public static RunwayCheck createNormal(boolean isInitial) {
       int maxTime = 4 * 60;
@@ -66,6 +62,10 @@ public class TowerAtc extends ComputerAtc {
       ETime et = Acc.now().addMinutes(minutesToNextCheck);
       this.scheduler = new SchedulerForAdvice(et);
       this.expectedDurationInMinutes = expectedDurationInMinutes;
+    }
+
+    public boolean isActive() {
+      return scheduler == null;
     }
 
     public void start() {
@@ -102,6 +102,7 @@ public class TowerAtc extends ComputerAtc {
   private Map<Airplane, ETime> holdingPointWaitingTimeMap = new HashMap<>();
   private RunwaysInUseInfo inUseInfo = null;
   private EMap<Runway, RunwayCheck> runwayChecks = null;
+  private boolean isUpdatedWeather;
 
   private static List<RunwayThreshold> getSuggestedThresholds() {
     Weather w = Acc.weather();
@@ -163,9 +164,9 @@ public class TowerAtc extends ComputerAtc {
       holdingPointWaitingTimeMap.remove(plane);
 
 
-    IMap<RunwayThreshold, TakeOffInfo> tmp = takeOffInfos.whereValue(q->q.airplane == plane);
-    tmp.keySet().forEach(q->takeOffInfos.remove(q));
-}
+    IMap<RunwayThreshold, TakeOffInfo> tmp = takeOffInfos.whereValue(q -> q.airplane == plane);
+    tmp.keySet().forEach(q -> takeOffInfos.remove(q));
+  }
 
   @Override
   public void registerNewPlaneUnderControl(Airplane plane, boolean initialRegistration) {
@@ -200,6 +201,9 @@ public class TowerAtc extends ComputerAtc {
     inUseInfo.scheduled = getSuggestedThresholds();
     inUseInfo.scheduler = new SchedulerForAdvice(Acc.now().clone());
     processRunwayChangeBackground();
+
+    WeatherProvider wp = Acc.weatherProvider();
+    wp.getWeatherUpdatedEvent().add(() -> weatherUpdated());
   }
 
   @Override
@@ -228,13 +232,12 @@ public class TowerAtc extends ComputerAtc {
               StringResponse.createRejection("Sorry, you must specify exact runway (threshold) at which I can start the maintenance."));
           super.sendMessage(msg);
         } else {
-          if (rc.isActive()){
+          if (rc.isActive()) {
             Message msg = new Message(this, Acc.atcApp(),
                 StringResponse.createRejection("The runway %s is already under maintenance right now.",
                     rwy.getName()));
             super.sendMessage(msg);
-          }
-          else if (rc.scheduler.getMinutesLeft() > 30) {
+          } else if (rc.scheduler.getMinutesLeft() > 30) {
             Message msg = new Message(this, Acc.atcApp(),
                 StringResponse.createRejection("Sorry, the runway %s is scheduled for the maintenance in more than 30 minutes.",
                     rwy.getName()));
@@ -331,10 +334,15 @@ public class TowerAtc extends ComputerAtc {
     return ret;
   }
 
+  private void weatherUpdated() {
+    this.isUpdatedWeather = true;
+  }
+
   private void processRunwayChangeBackground() {
     if (inUseInfo.scheduler == null) {
-      if (Acc.now().getTotalSeconds() % RUNWAY_CHANGE_INFO_UPDATE_INTERVAL == 0) {
+      if (isUpdatedWeather) {
         checkForRunwayChange();
+        isUpdatedWeather = false;
       }
     } else {
       if (inUseInfo.scheduler.isElapsed()) {
@@ -348,8 +356,8 @@ public class TowerAtc extends ComputerAtc {
   private void announceChangeRunwayInUse() {
     EStringBuilder sb = new EStringBuilder();
 
-    sb.append("Expected runway change to ");
-    sb.appendItems(this.inUseInfo.scheduled, q -> q.getParent().getName(), ", ");
+    sb.append("Expected runway change to: ");
+    sb.appendItems(this.inUseInfo.scheduled, q -> q.getName(), ", ");
     sb.appendFormat(" at %s.", this.inUseInfo.scheduler.getScheduledTime().toTimeString());
 
     Message m = new Message(
@@ -422,13 +430,20 @@ public class TowerAtc extends ComputerAtc {
   }
 
   private void checkForRunwayChange() {
+    List<RunwayThreshold> newSuggested = getSuggestedThresholds();
+
+    boolean isSame = CollectionUtils.containsSameItems(newSuggested, inUseInfo.current);
+    if (!isSame){
+      inUseInfo.scheduler = new SchedulerForAdvice(Acc.now().addSeconds(10*60));
+      inUseInfo.scheduled = newSuggested;
+    }
   }
 
   private void changeRunwayInUse() {
 
     EStringBuilder str = new EStringBuilder();
-    str.appendLine("Changed runway(s) in use now(!) to: ");
-    str.appendItems(inUseInfo.scheduled, q -> q.getParent().getName(), ", ");
+    str.appendLine("Changed runway(s) in use now to: ");
+    str.appendItems(inUseInfo.scheduled, q -> q.getName(), ", ");
     str.append(".");
 
     Message m = new Message(
@@ -495,7 +510,6 @@ public class TowerAtc extends ComputerAtc {
     } else {
       availableThreshold = CollectionUtils.getRandom(availableThresholds);
     }
-
 
 
     // if it gets here, the "toReadyPlane" can proceed take-off

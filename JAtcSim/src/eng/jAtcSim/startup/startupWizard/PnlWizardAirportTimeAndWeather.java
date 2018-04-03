@@ -5,16 +5,17 @@
  */
 package eng.jAtcSim.startup.startupWizard;
 
-import eng.eSystem.xmlSerialization.Settings;
+import eng.eSystem.EStringBuilder;
+import eng.eSystem.utilites.ExceptionUtil;
 import eng.jAtcSim.XmlLoadHelper;
 import eng.jAtcSim.startup.LayoutManager;
 import eng.jAtcSim.startup.MessageBox;
 import eng.jAtcSim.startup.StartupSettings;
 import eng.jAtcSim.startup.extenders.TimeExtender;
 import eng.jAtcSim.lib.global.TryResult;
-import eng.jAtcSim.lib.weathers.MetarDecoder;
-import eng.jAtcSim.lib.weathers.MetarDownloader;
-import eng.jAtcSim.lib.weathers.MetarDownloaderNoaaGov;
+import eng.jAtcSim.lib.weathers.downloaders.MetarDecoder;
+import eng.jAtcSim.lib.weathers.downloaders.MetarDownloader;
+import eng.jAtcSim.lib.weathers.downloaders.MetarDownloaderNoaaGov;
 import eng.jAtcSim.lib.weathers.Weather;
 import eng.jAtcSim.lib.world.Airport;
 import eng.jAtcSim.lib.world.Area;
@@ -64,16 +65,22 @@ public class PnlWizardAirportTimeAndWeather extends JWizardPanel {
     PresetMetar pm = (PresetMetar) cmbPresetMetars.getSelectedItem();
     txtMetar.setText(pm.metar);
     cmbPresetMetars.setSelectedIndex(0);
-  }//GEN-LAST:event_cmbPresetMetarsActionPerformed
+  }
 
-  private void btnDownloadMetarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDownloadMetarActionPerformed
+  private void btnDownloadMetarActionPerformed(java.awt.event.ActionEvent evt) {
     MetarDownloader d = new MetarDownloaderNoaaGov();
-    TryResult<String> res = d.tryDownloadMetar(settings.recent.icao);
-    if (res.isSuccess)
-      txtMetar.setText(res.result);
-    else
-      MessageBox.show("Failed to download METAR for " + settings.recent.icao + ". Reason: " + res.exceptionOrNull.getMessage(), "Error downloading METAR...");
-  }//GEN-LAST:event_btnDownloadMetarActionPerformed
+    String s;
+
+    try{
+      s = d.downloadMetar(settings.recent.icao);
+      txtMetar.setText(s);
+    } catch (Exception ex){
+      EStringBuilder sb = new EStringBuilder();
+      sb.appendFormatLine("Failed to download METAR for %s. Reason:", settings.recent.icao);
+      sb.appendLine(ExceptionUtil.toFullString(ex, "\n" ));
+      MessageBox.show(sb.toString(), "Error...");
+    }
+  }
 
   private javax.swing.JButton btnDownloadMetar;
   private javax.swing.JButton btnSetCurrentTime;
@@ -241,12 +248,13 @@ public class PnlWizardAirportTimeAndWeather extends JWizardPanel {
   }
 
   private boolean checkMetarSanity() {
-    TryResult<Weather> res = MetarDecoder.tryDecode(txtMetar.getText());
-    if (res.isSuccess == false) {
-      MessageBox.show("Failed to decode METAR to weather. Reason: " + res.exceptionOrNull.getMessage() + ".", "Error...");
+    try {
+      Weather res = MetarDecoder.decode(txtMetar.getText());
+      return true;
+    }catch (Exception ex){
+      MessageBox.show("Failed to decode METAR to weather. Reason: " + ExceptionUtil.toFullString(ex) + ".", "Error...");
       return false;
     }
-    return true;
   }
 
   @Override

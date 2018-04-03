@@ -3,15 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package eng.jAtcSim.lib.weathers;
+package eng.jAtcSim.lib.weathers.downloaders;
 
-import eng.jAtcSim.lib.global.TryResult;
-import eng.jAtcSim.lib.global.TryResult;
+import eng.jAtcSim.lib.exceptions.ERuntimeException;
+import eng.jAtcSim.lib.weathers.Weather;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- *
  * @author Marek Vajgl
  */
 public class MetarDecoder {
@@ -22,15 +22,14 @@ public class MetarDecoder {
    * @param metarLine Metar string. Should include "METAR" prefix.
    * @return Decoded weather, or exception description.
    */
-  public static TryResult<Weather> tryDecode(String metarLine) {
-    TryResult<Weather> ret;
+  public static Weather decode(String metarLine) {
+    Weather ret;
 
     metarLine = cutOutPostfix(metarLine); // cut out TEMPO/BECMG
     try {
-      Weather w = decodeWeather(metarLine);
-      ret = new TryResult(w);
+      ret = decodeWeather(metarLine);
     } catch (Exception ex) {
-      ret = new TryResult(new Weather(), ex);
+      throw new ERuntimeException("Failed to decode metar from string " + metarLine + ".", ex);
     }
 
     return ret;

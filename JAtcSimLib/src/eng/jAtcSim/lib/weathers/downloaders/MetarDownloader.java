@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package eng.jAtcSim.lib.weathers;
+package eng.jAtcSim.lib.weathers.downloaders;
 
 import eng.jAtcSim.lib.exceptions.ERuntimeException;
 import eng.jAtcSim.lib.global.TryResult;
@@ -25,18 +25,17 @@ import java.util.regex.Pattern;
 public abstract class MetarDownloader {
 
   /**
-   * Tries to download metar from the internet.
+   * Downloads metar from the internet.
    * @param icao ICAO of the airport to download metar of
    * @return Metar string, or exception.
    */
-  public TryResult<String> tryDownloadMetar(String icao) {
-    TryResult<String> ret;
+  public String downloadMetar(String icao) {
+    String ret;
 
     try {
-      String str = downloadMetarString(icao);
-      ret = new TryResult<>(str);
+      ret = downloadMetarString(icao);
     } catch (Exception ex) {
-      ret = new TryResult<>(null, ex);
+      throw new ERuntimeException("Failed to download metar.", ex);
     }
 
     return ret;

@@ -5,7 +5,6 @@
  */
 package eng.jAtcSim;
 
-import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IList;
 import eng.eSystem.utilites.CollectionUtils;
 import eng.jAtcSim.frmPacks.Pack;
@@ -17,11 +16,9 @@ import eng.jAtcSim.lib.global.logging.ApplicationLog;
 import eng.jAtcSim.lib.global.logging.Recorder;
 import eng.jAtcSim.lib.traffic.GenericTraffic;
 import eng.jAtcSim.lib.traffic.TestTrafficOneApproach;
-import eng.jAtcSim.lib.traffic.TestTrafficOneDeparture;
 import eng.jAtcSim.lib.traffic.Traffic;
 import eng.jAtcSim.lib.traffic.fleets.Fleets;
-import eng.jAtcSim.lib.weathers.Weather;
-import eng.jAtcSim.lib.weathers.WeatherProvider;
+import eng.jAtcSim.lib.weathers.*;
 import eng.jAtcSim.lib.world.Airport;
 import eng.jAtcSim.lib.world.Area;
 import eng.jAtcSim.lib.world.Border;
@@ -98,11 +95,16 @@ public class JAtcSim {
     Airport aip = data.area.getAirports().get(icao);
 
     // weather
-    Weather weather;
+    WeatherProvider weatherProvider;
     if (startupSettings.weather.useOnline) {
-      weather = WeatherProvider.downloadAndDecodeMetar(aip.getIcao());
+      DynamicWeatherProvider dwp = new NoaaDynamicWeatherProvider(aip.getIcao());
+      //dwp.updateWeather(false);
+      Weather w = new Weather(200, 20, 9999, 5400, 0.8);
+      dwp.setWeather(w);
+      weatherProvider = dwp;
     } else {
-      weather = WeatherProvider.decodeMetar(startupSettings.weather.metar);
+      StaticWeatherProvider swp = new StaticWeatherProvider(startupSettings.weather.metar);
+      weatherProvider = swp;
     }
 
     // traffic
@@ -114,7 +116,7 @@ public class JAtcSim {
 
     // simulation creation
     final Simulation sim = Simulation.create(
-        aip, data.types, weather, data.fleets, traffic, simTime, startupSettings.simulation.secondLengthInMs,
+        aip, data.types, weatherProvider, data.fleets, traffic, simTime, startupSettings.simulation.secondLengthInMs,
         mrvaAreas);
 
     // sound

@@ -18,6 +18,7 @@ import eng.jAtcSim.lib.managers.MrvaManager;
 import eng.jAtcSim.lib.stats.Statistics;
 import eng.jAtcSim.lib.traffic.fleets.Fleets;
 import eng.jAtcSim.lib.weathers.Weather;
+import eng.jAtcSim.lib.weathers.WeatherProvider;
 import eng.jAtcSim.lib.world.Airport;
 import eng.jAtcSim.lib.world.Area;
 import eng.jAtcSim.lib.world.RunwayThreshold;
@@ -134,5 +135,9 @@ public class Acc {
 
   public static Fleets fleets() {
     return sim.getFleets();
+  }
+
+  public static WeatherProvider weatherProvider() {
+    return sim.getWeatherProvider();
   }
 }
