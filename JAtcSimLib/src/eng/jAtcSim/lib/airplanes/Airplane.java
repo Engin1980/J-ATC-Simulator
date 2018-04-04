@@ -119,9 +119,11 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
 
     public void setxState(State state) {
       Airplane.this.state = state;
-      if ((Airplane.this.isArrival() && state == State.landed)
-          || (Airplane.this.isDeparture() && state == State.departingLow)) {
-        Airplane.this.delayResult = Acc.now().getTotalMinutes() - Airplane.this.delayExpectedTime.getTotalMinutes();
+      if (delayResult != null) {
+        if ((Airplane.this.isArrival() && state == State.landed)
+            || (Airplane.this.isDeparture() && state == State.departingLow)) {
+          Airplane.this.delayResult = Acc.now().getTotalMinutes() - Airplane.this.delayExpectedTime.getTotalMinutes();
+        }
       }
     }
 
@@ -365,7 +367,7 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
   private AirproxType airprox;
   private boolean mrvaError;
   private InertialValue altitude;
-  private int delayResult;
+  private Integer delayResult = null;
 
   private static ValueRequest getRequest(double current, double target, double maxIncreaseStep, double maxDecreaseStep) {
     // if on ground, nothing required
@@ -578,14 +580,14 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     return targetHeading;
   }
 
+  public void setTargetHeading(double targetHeading) {
+    this.setTargetHeading((int) Math.round(targetHeading));
+  }
+
   public void setTargetHeading(int targetHeading) {
     boolean useLeft
         = Headings.getBetterDirectionToTurn(heading.getValue(), targetHeading) == ChangeHeadingCommand.eDirection.left;
     setTargetHeading(targetHeading, useLeft);
-  }
-
-  public void setTargetHeading(double targetHeading) {
-    this.setTargetHeading((int) Math.round(targetHeading));
   }
 
   public int getTargetAltitude() {

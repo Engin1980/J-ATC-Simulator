@@ -1051,7 +1051,7 @@ public class Pilot {
     if (current.isEmpty()) return;
 
     // if has not confirmed radar contact and the first command in the queue is not radar contact confirmation
-    if (secondsWithoutRadarContact < 0 && !(current.get(0) instanceof RadarContactConfirmationNotification)) {
+    if (secondsWithoutRadarContact > 0 && !(current.get(0) instanceof RadarContactConfirmationNotification)) {
       say(new RequestRadarContactNotification());
       this.queue.clear();
     } else {
