@@ -90,7 +90,7 @@ public class Pilot {
 
     public void setResponsibleAtc(Atc responsibleAtc) {
       Pilot.this.atc = responsibleAtc;
-      Pilot.this.hasRadarContact = false;
+      Pilot.this.secondsWithoutRadarContact = 1;
     }
 
     public void say(ISpeech s) {
@@ -121,7 +121,7 @@ public class Pilot {
     }
 
     public void setHasRadarContact() {
-      Pilot.this.hasRadarContact = true;
+      Pilot.this.secondsWithoutRadarContact = 0;
     }
 
     public void adviceGoAroundReasonToAtcIfAny() {
@@ -887,7 +887,7 @@ public class Pilot {
   private DivertInfo divertInfo;
   private int altitudeOrderedByAtc;
   private Atc atc;
-  private boolean hasRadarContact;
+  private int secondsWithoutRadarContact;
   private Coordinate targetCoordinate;
   private Behavior behavior;
   private Route assignedRoute;
@@ -909,7 +909,7 @@ public class Pilot {
       this.divertInfo = null;
     }
 
-    this.hasRadarContact = true;
+    this.secondsWithoutRadarContact = 0;
   }
 
   public void initSpeeches(SpeechList<IAtcCommand> initialCommands) {
@@ -955,6 +955,7 @@ public class Pilot {
     processNewSpeeches();
     processAfterSpeeches(); // udelat vlastni queue toho co se ma udelat a pak to provest pres processQueueCommands
     endrivePlane();
+    requestRadarContactIfRequired();
     flushSaidTextToAtc();
 
 //    this.afterCommands.consolePrint();
@@ -1008,6 +1009,17 @@ public class Pilot {
     return ret;
   }
 
+  private void requestRadarContactIfRequired() {
+    if (secondsWithoutRadarContact > 0) {
+      secondsWithoutRadarContact++;
+      if (secondsWithoutRadarContact % 20 == 0) {
+        this.say(
+            new GoodDayNotification(
+                this.parent.getCallsign(), this.parent.getAltitude()));
+      }
+    }
+  }
+
   private void processDivert() {
 
     Navaid n = getDivertNavaid();
@@ -1017,7 +1029,7 @@ public class Pilot {
     this.behavior = new DepartureBehavior();
     this.divertInfo = null;
     this.assignedRoute = Route.createNewByFix(n, false);
-    this.parent.setxState(Airplane.State.departingLow);
+    this.parent.setxState(Airplane.State.departingLow); // here must be departureLow, this us later used to evaluate delay
 
     this.say(new DivertingNotification(n));
 
@@ -1039,7 +1051,7 @@ public class Pilot {
     if (current.isEmpty()) return;
 
     // if has not confirmed radar contact and the first command in the queue is not radar contact confirmation
-    if (hasRadarContact == false && !(current.get(0) instanceof RadarContactConfirmationNotification)) {
+    if (secondsWithoutRadarContact < 0 && !(current.get(0) instanceof RadarContactConfirmationNotification)) {
       say(new RequestRadarContactNotification());
       this.queue.clear();
     } else {

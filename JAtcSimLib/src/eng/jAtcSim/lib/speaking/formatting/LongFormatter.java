@@ -4,6 +4,7 @@ import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.AirplaneDataFormatter;
 import eng.jAtcSim.lib.atcs.Atc;
 import eng.jAtcSim.lib.exceptions.ENotSupportedException;
+import eng.jAtcSim.lib.global.DataFormat;
 import eng.jAtcSim.lib.global.Headings;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.*;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.Confirmation;
@@ -228,7 +229,7 @@ public class LongFormatter extends Formatter {
   }
 
   public String format(RequestRadarContactNotification cmd) {
-    return "Unable to follow ordered fromAtc. Please confirm our radar contact first.";
+    return "Unable to follow ordered fromAtc, please confirm our radar contact first";
   }
 
   public String format(UnableToEnterApproachFromDifficultPosition cmd) {
@@ -238,7 +239,7 @@ public class LongFormatter extends Formatter {
   public String format(HighOrderedSpeedForApproach cmd) {
     return
         String.format(
-            "We have ordered to high speed %d for approach, but we need %d at most.",
+            "we have ordered to high speed %d for approach, but we need %d at most",
             cmd.getOrderedSpeed(),
             cmd.getRequiredSpeed()
         );
@@ -252,7 +253,12 @@ public class LongFormatter extends Formatter {
     double d = Acc.rnd().nextDouble();
     d = d * greetings.length;
     StringBuilder sb = new StringBuilder();
-    sb.append(greetings[(int) d]).append(", ").append(cmd.getCallsign().toString()).append(" with you at ").append(cmd.getAltitudeInfoText());
+    sb
+        .append(greetings[(int) d])
+        .append(", ")
+        .append(cmd.getCallsign().toString())
+        .append(" with you at ")
+        .append(DataFormat.Altitude.toStandardAltitudeOrFL(cmd.getAltitude(), Acc.airport().getTransitionAltitude()));
     return sb.toString();
   }
 

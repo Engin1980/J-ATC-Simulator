@@ -150,7 +150,7 @@ public abstract class Traffic {
 
     ret = new Airplane(
         cs, coord, sqwk, pt, heading, alt, spd, true,
-        route, initialCommands);
+        route, initialCommands, m.getDelayInMinutes(), m.getInitTime().addMinutes(3));
 
     return ret;
   }
@@ -191,7 +191,7 @@ public abstract class Traffic {
 
     ret = new Airplane(
         cs, coord, sqwk, pt, heading, alt, spd, false,
-        r, initialCommands);
+        r, initialCommands, m.getDelayInMinutes(), m.getInitTime().addMinutes(25));
 
     return ret;
   }

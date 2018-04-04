@@ -15,7 +15,8 @@ public class Meaner {
   private int count = 0;
 
   public void add(double value) {
-    sum += value;
+    if (value != 0)
+      sum += value;
     count++;
   }
 

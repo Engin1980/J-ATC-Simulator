@@ -145,4 +145,8 @@ public class ETime implements Comparable<ETime> {
   public int getTotalMinutes() {
     return getTotalSeconds() / 60;
   }
+
+  public String toMinuteSecondString() {
+    return String.format("%d:%02d", this.getMinutes(), this.getSeconds());
+  }
 }

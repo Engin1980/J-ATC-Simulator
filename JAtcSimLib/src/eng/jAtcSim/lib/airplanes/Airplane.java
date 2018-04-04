@@ -106,7 +106,7 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
       return (int) Airplane.this.targetHeading;
     }
 
-    public boolean isMrvaError(){
+    public boolean isMrvaError() {
       return Airplane.this.mrvaError;
     }
   }
@@ -119,6 +119,10 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
 
     public void setxState(State state) {
       Airplane.this.state = state;
+      if ((Airplane.this.isArrival() && state == State.landed)
+          || (Airplane.this.isDeparture() && state == State.departingLow)) {
+        Airplane.this.delayResult = Acc.now().getTotalMinutes() - Airplane.this.delayExpectedTime.getTotalMinutes();
+      }
     }
 
     public AirplaneType getType() {
@@ -335,6 +339,7 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
       return ret;
     }
   }
+
   private static final int MINIMAL_DIVERT_TIME_MINUTES = 45;
   private static final int MAXIMAL_DIVERT_TIME_MINUTES = 120;
   private final static double GROUND_SPEED_CHANGE_MULTIPLIER = 1.5; //1.5; //3.0;
@@ -344,6 +349,8 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
   private final Pilot pilot;
   private final AirplaneType airplaneType;
   private final Airplane4Display plane4Display;
+  private final int delayInitialMinutes;
+  private final ETime delayExpectedTime;
   private boolean departure;
   private int targetHeading;
   private boolean targetHeadingLeftTurn;
@@ -358,6 +365,7 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
   private AirproxType airprox;
   private boolean mrvaError;
   private InertialValue altitude;
+  private int delayResult;
 
   private static ValueRequest getRequest(double current, double target, double maxIncreaseStep, double maxDecreaseStep) {
     // if on ground, nothing required
@@ -402,12 +410,16 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
 
   public Airplane(Callsign callsign, Coordinate coordinate, Squawk sqwk, AirplaneType airplaneSpecification,
                   int heading, int altitude, int speed, boolean isDeparture,
-                  Route assignedRoute, SpeechList<IAtcCommand> initialCommands) {
+                  Route assignedRoute, SpeechList<IAtcCommand> initialCommands,
+                  int delayInitialMinutes, ETime delayExpectedTime) {
 
     this.callsign = callsign;
     this.coordinate = coordinate;
     this.sqwk = sqwk;
     this.airplaneType = airplaneSpecification;
+
+    this.delayExpectedTime = delayExpectedTime;
+    this.delayInitialMinutes = delayInitialMinutes;
 
     this.departure = isDeparture;
     this.state = isDeparture ? State.holdingPoint : State.arrivingHigh;
@@ -566,14 +578,14 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     return targetHeading;
   }
 
-  public void setTargetHeading(double targetHeading) {
-    this.setTargetHeading((int) Math.round(targetHeading));
-  }
-
   public void setTargetHeading(int targetHeading) {
     boolean useLeft
         = Headings.getBetterDirectionToTurn(heading.getValue(), targetHeading) == ChangeHeadingCommand.eDirection.left;
     setTargetHeading(targetHeading, useLeft);
+  }
+
+  public void setTargetHeading(double targetHeading) {
+    this.setTargetHeading((int) Math.round(targetHeading));
   }
 
   public int getTargetAltitude() {
@@ -650,6 +662,10 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
 
   public void setMrvaError(boolean mrvaError) {
     this.mrvaError = mrvaError;
+  }
+
+  public int getDelayDifference() {
+    return delayResult;
   }
 
   // </editor-fold>
@@ -794,7 +810,7 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     } else {
       this.altitude.add(altitudeRequest.value);
       this.lastVerticalSpeed = this.altitude.getInertia() * 60;
-      if (this.altitude.getValue() < Acc.airport().getAltitude()){
+      if (this.altitude.getValue() < Acc.airport().getAltitude()) {
         this.altitude.reset(Acc.airport().getAltitude());
       }
     }

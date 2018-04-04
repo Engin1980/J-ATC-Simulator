@@ -115,7 +115,7 @@ public class Simulation {
   }
 
   private void weatherProvider_weatherUpdated() {
-    Acc.sim().sendTextMessageForUser("Weather updated:" + weatherProvider.getWeather().toInfoString());
+    Acc.sim().sendTextMessageForUser("Weather updated: " + weatherProvider.getWeather().toInfoString());
   }
 
   public static Simulation create(Airport airport, AirplaneTypes types, WeatherProvider weatherProvider, Fleets fleets, Traffic traffic, Calendar now, int simulationSecondLengthInMs, IList<Border> mrvaAreas) {
@@ -336,6 +336,8 @@ public class Simulation {
         rem.add(p);
         this.stats.finishedDepartures.add();
       }
+
+      this.stats.delays.add(p.getDelayDifference());
     }
 
     for (Airplane p : rem) {

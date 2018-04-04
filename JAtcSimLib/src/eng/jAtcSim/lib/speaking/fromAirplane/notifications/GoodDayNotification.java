@@ -7,24 +7,22 @@ import eng.jAtcSim.lib.speaking.fromAirplane.IAirplaneNotification;
 public class GoodDayNotification implements IAirplaneNotification {
   // TODO here callsign should not be, as it is known from the sender.
   private final Callsign callsign;
-  private final String altitudeInfoText;
+  private final double altitude;
 
-  public GoodDayNotification(Callsign callsign, String altitudeInfoText) {
+  public GoodDayNotification(Callsign callsign, double altitude) {
     if (callsign == null)
       throw new IllegalArgumentException("Argument \"callsign\" cannot be null.");
-    if (altitudeInfoText == null)
-      throw new IllegalArgumentException("Argument \"altitudeInfoText\" cannot be null.");
 
     this.callsign = callsign;
-    this.altitudeInfoText = altitudeInfoText;
+    this.altitude = altitude;
   }
 
   public Callsign getCallsign() {
     return callsign;
   }
 
-  public String getAltitudeInfoText() {
-    return altitudeInfoText;
+  public double getAltitude() {
+    return altitude;
   }
 
   @Override

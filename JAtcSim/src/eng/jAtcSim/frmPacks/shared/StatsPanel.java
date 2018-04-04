@@ -1,6 +1,7 @@
 package eng.jAtcSim.frmPacks.shared;
 
 import eng.jAtcSim.lib.Simulation;
+import eng.jAtcSim.lib.global.ETime;
 import eng.jAtcSim.lib.stats.Statistics;
 import eng.jAtcSim.startup.LayoutManager;
 
@@ -35,6 +36,12 @@ public class StatsPanel extends JPanel {
   JLabel lblHpTime = new JLabel("H-P time:");
   JLabel lvlHpTime = new JLabel("-");
 
+  JLabel lblErrors = new JLabel("Errs (a/m):");
+  JLabel lvlErrors = new JLabel("-");
+
+  JLabel lblDelay = new JLabel("Delay:");
+  JLabel lvlDelay = new JLabel("-");
+
   public StatsPanel() {
     initComponents();
   }
@@ -65,6 +72,8 @@ public class StatsPanel extends JPanel {
         lblCurInGame,
         lblMaxApp,
         lblCurApp,
+        lblErrors,
+        lblDelay,
         lblHpCount,
         lblHpTime
     );
@@ -78,6 +87,8 @@ public class StatsPanel extends JPanel {
         lvlCurInGame,
         lvlMaxApp,
         lvlCurApp,
+        lvlErrors,
+        lvlDelay,
         lvlHpCount,
         lvlHpTime
     );
@@ -116,7 +127,24 @@ public class StatsPanel extends JPanel {
     updateCurApp();
     updateMovementsPerHour();
     updateHoldingPointInfo();
+    updateDelays();
+    updateAirproxAndMrvas();
 
+  }
+
+  private void updateAirproxAndMrvas() {
+    double air = stats.airproxes.get() * 1000;
+    double mrv = stats.mrvaErrors.get() * 1000;
+    String s = String.format("%.1f‰ / %.1f‰", air, mrv);
+    lvlErrors.setText(s);
+  }
+
+  private void updateDelays() {
+    ETime tmean = new ETime((int) stats.delays.mean.get());
+    ETime tmax = new ETime((int) stats.delays.max.get());
+
+    String s = String.format("%s / %s", tmean.toMinuteSecondString(), tmax.toMinuteSecondString());
+    lvlDelay.setText(s);
   }
 
   private void updateHoldingPointInfo() {

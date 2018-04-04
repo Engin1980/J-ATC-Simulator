@@ -5,8 +5,10 @@
  */
 package eng.jAtcSim.lib.stats;
 
+import eng.eSystem.utilites.CollectionUtils;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
+import eng.jAtcSim.lib.airplanes.AirproxType;
 import eng.jAtcSim.lib.atcs.Atc;
 import eng.jAtcSim.lib.global.ETime;
 
@@ -38,6 +40,16 @@ public class Statistics {
     public int currentHoldingPointCount = 0;
     public final Maxim maximumHoldingPointTime = new Maxim();
     public final Meaner meanHoldingPointTime = new Meaner();
+  }
+
+  public static class Delays{
+    public final Maxim max = new Maxim();
+    public final Meaner mean = new Meaner();
+
+    public void add(int d) {
+      max.set(d);
+      mean.add(d);
+    }
   }
 
   public static String toTime(double seconds){
@@ -98,6 +110,9 @@ public class Statistics {
   public final CurrentPlanes currentPlanes = new CurrentPlanes();
   public final MovementsPerHour movementsPerHour = new MovementsPerHour();
   public final HoldingPointInfo holdingPointInfo = new HoldingPointInfo();
+  public final Meaner airproxes = new Meaner();
+  public final Meaner mrvaErrors = new Meaner();
+  public final Delays delays = new Delays();
 
   public Statistics() {
   }
@@ -126,6 +141,14 @@ public class Statistics {
     int hpCount = Acc.atcTwr().getNumberOfPlanesAtHoldingPoint();
     this.holdingPointInfo.currentHoldingPointCount = hpCount;
     this.holdingPointInfo.maximumHoldingPointCount.set(hpCount);
+
+    int tmp;
+
+    tmp = CollectionUtils.where(Acc.planes(), q -> q.getAirprox()==AirproxType.full).size();
+    airproxes.add(tmp);
+
+    tmp = CollectionUtils.where(Acc.planes(), q -> q.isMrvaError()).size();
+    mrvaErrors.add(tmp);
   }
 
   public ETime getRunTime() {
