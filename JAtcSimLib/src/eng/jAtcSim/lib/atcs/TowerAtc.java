@@ -310,7 +310,7 @@ public class TowerAtc extends ComputerAtc {
       sb.append("Scheduled runway change to ");
       sb.appendItems(inUseInfo.scheduled, q -> q.getName(), ", ");
       sb.append(" at ");
-      sb.append(inUseInfo.scheduler.getScheduledTime().toString());
+      sb.append(inUseInfo.scheduler.getScheduledTime().toHourMinuteString());
 
       msg = new Message(this, Acc.atcApp(),
           new StringMessageContent(sb.toString()));
@@ -440,14 +440,14 @@ public class TowerAtc extends ComputerAtc {
   private void announceScheduledRunwayCheck(Runway rwy, RunwayCheck rc) {
     StringResponse cnt;
     if (rc.isActive())
-      cnt = StringResponse.create("Runway %s is under maintenance right now until approximately %d:%02d.",
+      cnt = StringResponse.create("Runway %s is under maintenance right now until approximately %s.",
           rwy.getName(),
-          rc.realDurationEnd.getHours(), rc.realDurationEnd.getMinutes()
+          rc.realDurationEnd.toHourMinuteString()
       );
     else {
       cnt = StringResponse.create("Runway %s maintenance is scheduled at %s for approximately %d minutes.",
           rwy.getName(),
-          rc.scheduler.getScheduledTime().toTimeString(),
+          rc.scheduler.getScheduledTime().toHourMinuteString(),
           rc.expectedDurationInMinutes);
       rc.scheduler.nowAnnounced();
     }
