@@ -5,7 +5,6 @@ import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.weathers.downloaders.MetarDecoder;
 
 public abstract class WeatherProvider {
-  private static final boolean EXCEPTION_ON_DECODE_FAIL = true;
   private Weather weather;
   private EventAnonymousSimple weatherUpdatedEvent = new EventAnonymousSimple();
 

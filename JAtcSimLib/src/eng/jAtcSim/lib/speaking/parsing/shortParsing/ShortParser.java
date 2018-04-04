@@ -12,6 +12,7 @@ import eng.jAtcSim.lib.speaking.fromAtc.IAtc2Atc;
 import eng.jAtcSim.lib.speaking.parsing.Parser;
 import eng.jAtcSim.lib.speaking.parsing.ShortcutList;
 import eng.jAtcSim.lib.speaking.parsing.shortParsing.toAtcParsers.RunwayCheckParser;
+import eng.jAtcSim.lib.speaking.parsing.shortParsing.toAtcParsers.RunwayUseParser;
 import eng.jAtcSim.lib.speaking.parsing.shortParsing.toPlaneParsers.*;
 
 import java.util.ArrayList;
@@ -56,6 +57,7 @@ public class ShortParser extends Parser {
 
     atcParsers = new ArrayList<>();
     atcParsers.add(new RunwayCheckParser());
+    atcParsers.add(new RunwayUseParser());
   }
 
   private static String normalizeCommandsInString(String line, boolean appendSpace) {
@@ -87,7 +89,7 @@ public class ShortParser extends Parser {
   private static SpeechParser getAtcSpeechParser(String line) {
     for (SpeechParser tmp : atcParsers) {
       for (String pref : tmp.getPrefixes()) {
-        if (line.startsWith(pref + " ")) {
+        if (line.equals(pref) ||  (line.startsWith(pref + " "))) {
           return tmp;
         }
       }

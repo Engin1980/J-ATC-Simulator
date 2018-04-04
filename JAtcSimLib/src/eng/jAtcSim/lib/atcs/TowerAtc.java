@@ -17,6 +17,8 @@ import eng.jAtcSim.lib.messaging.Message;
 import eng.jAtcSim.lib.messaging.StringMessageContent;
 import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.GoingAroundNotification;
+import eng.jAtcSim.lib.speaking.fromAtc.atc2atc.RunwayCheck;
+import eng.jAtcSim.lib.speaking.fromAtc.atc2atc.RunwayUse;
 import eng.jAtcSim.lib.speaking.fromAtc.atc2atc.StringResponse;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeAltitudeCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ClearedForTakeoffCommand;
@@ -210,45 +212,73 @@ public class TowerAtc extends ComputerAtc {
   protected void processMessageFromAtc(Message m) {
     if (m.getContent() instanceof eng.jAtcSim.lib.speaking.fromAtc.atc2atc.RunwayCheck) {
       eng.jAtcSim.lib.speaking.fromAtc.atc2atc.RunwayCheck rrct = m.getContent();
-      if (rrct.type == eng.jAtcSim.lib.speaking.fromAtc.atc2atc.RunwayCheck.eType.askForTime) {
-        RunwayCheck rc = this.runwayChecks.tryGet(rrct.runway);
-        if (rc != null)
-          announceScheduledRunwayCheck(rrct.runway, rc);
-        else {
-          for (Runway runway : this.runwayChecks.keySet()) {
-            rc = this.runwayChecks.get(runway);
-            announceScheduledRunwayCheck(runway, rc);
-          }
+      processMessageFromAtc(rrct);
+    } else if (m.getContent() instanceof RunwayUse) {
+      RunwayUse ru = m.getContent();
+      processMessageFromAtc(ru);
+    }
+  }
+
+  private void processMessageFromAtc(RunwayUse ru) {
+    EStringBuilder sb = new EStringBuilder();
+    sb.append("Runway(s) in use: ");
+    sb.appendItems(inUseInfo.current, q->q.getName(), ", ");
+    Message msg = new Message(this, Acc.atcApp(),
+        new StringMessageContent(sb.toString()));
+    super.sendMessage(msg);
+
+    if (inUseInfo.scheduled != null){
+      sb = new EStringBuilder();
+      sb.append("Scheduled runway change to ");
+      sb.appendItems(inUseInfo.scheduled, q->q.getName(), ", ");
+      sb.append(" at ");
+      sb.append(inUseInfo.scheduler.getScheduledTime().toString());
+
+      msg = new Message(this, Acc.atcApp(),
+          new StringMessageContent(sb.toString()));
+      super.sendMessage(msg);
+    }
+  }
+
+  private void processMessageFromAtc(eng.jAtcSim.lib.speaking.fromAtc.atc2atc.RunwayCheck rrct) {
+    if (rrct.type == eng.jAtcSim.lib.speaking.fromAtc.atc2atc.RunwayCheck.eType.askForTime) {
+      RunwayCheck rc = this.runwayChecks.tryGet(rrct.runway);
+      if (rc != null)
+        announceScheduledRunwayCheck(rrct.runway, rc);
+      else {
+        for (Runway runway : this.runwayChecks.keySet()) {
+          rc = this.runwayChecks.get(runway);
+          announceScheduledRunwayCheck(runway, rc);
         }
-      } else if (rrct.type == eng.jAtcSim.lib.speaking.fromAtc.atc2atc.RunwayCheck.eType.doCheck) {
-        Runway rwy = rrct.runway;
-        RunwayCheck rc = this.runwayChecks.tryGet(rwy);
-        if (rwy == null && this.runwayChecks.size() == 1) {
-          rwy = inUseInfo.current.get(0).getParent();
-          rc = this.runwayChecks.get(rwy);
-        }
-        if (rc == null) {
+      }
+    } else if (rrct.type == eng.jAtcSim.lib.speaking.fromAtc.atc2atc.RunwayCheck.eType.doCheck) {
+      Runway rwy = rrct.runway;
+      RunwayCheck rc = this.runwayChecks.tryGet(rwy);
+      if (rwy == null && this.runwayChecks.size() == 1) {
+        rwy = inUseInfo.current.get(0).getParent();
+        rc = this.runwayChecks.get(rwy);
+      }
+      if (rc == null) {
+        Message msg = new Message(this, Acc.atcApp(),
+            StringResponse.createRejection("Sorry, you must specify exact runway (threshold) at which I can start the maintenance."));
+        super.sendMessage(msg);
+      } else {
+        if (rc.isActive()) {
           Message msg = new Message(this, Acc.atcApp(),
-              StringResponse.createRejection("Sorry, you must specify exact runway (threshold) at which I can start the maintenance."));
+              StringResponse.createRejection("The runway %s is already under maintenance right now.",
+                  rwy.getName()));
+          super.sendMessage(msg);
+        } else if (rc.scheduler.getMinutesLeft() > 30) {
+          Message msg = new Message(this, Acc.atcApp(),
+              StringResponse.createRejection("Sorry, the runway %s is scheduled for the maintenance in more than 30 minutes.",
+                  rwy.getName()));
           super.sendMessage(msg);
         } else {
-          if (rc.isActive()) {
-            Message msg = new Message(this, Acc.atcApp(),
-                StringResponse.createRejection("The runway %s is already under maintenance right now.",
-                    rwy.getName()));
-            super.sendMessage(msg);
-          } else if (rc.scheduler.getMinutesLeft() > 30) {
-            Message msg = new Message(this, Acc.atcApp(),
-                StringResponse.createRejection("Sorry, the runway %s is scheduled for the maintenance in more than 30 minutes.",
-                    rwy.getName()));
-            super.sendMessage(msg);
-          } else {
-            Message msg = new Message(this, Acc.atcApp(),
-                StringResponse.create("The maintenance of the runway %s is approved and will start shortly.",
-                    rwy.getName()));
-            super.sendMessage(msg);
-            rc.scheduler.setApprovedTrue();
-          }
+          Message msg = new Message(this, Acc.atcApp(),
+              StringResponse.create("The maintenance of the runway %s is approved and will start shortly.",
+                  rwy.getName()));
+          super.sendMessage(msg);
+          rc.scheduler.setApprovedTrue();
         }
       }
     }

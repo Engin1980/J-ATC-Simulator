@@ -101,6 +101,7 @@ public class Simulation {
     this.airport = airport;
     this.planeTypes = types;
     this.weatherProvider = weatherProvider;
+    this.weatherProvider.getWeatherUpdatedEvent().add(() -> weatherProvider_weatherUpdated());
     this.fleets = fleets;
     this.traffic = traffic;
     this.twrAtc = new TowerAtc(airport.getAtcTemplates().get(Atc.eType.twr));
@@ -111,6 +112,10 @@ public class Simulation {
 
     this.now = new ETime(now);
     this.simulationSecondLengthInMs = simulationSecondLengthInMs;
+  }
+
+  private void weatherProvider_weatherUpdated() {
+    Acc.sim().sendTextMessageForUser("Weather updated:" + weatherProvider.getWeather().toInfoString());
   }
 
   public static Simulation create(Airport airport, AirplaneTypes types, WeatherProvider weatherProvider, Fleets fleets, Traffic traffic, Calendar now, int simulationSecondLengthInMs, IList<Border> mrvaAreas) {
