@@ -97,22 +97,9 @@ public class Pilot {
       Pilot.this.say(s);
     }
 
-    public int getIndexOfNavaidInCommands(Navaid navaid) {
-      for (int i = 0; i < Pilot.this.queue.size(); i++) {
-        if (Pilot.this.queue.get(i) instanceof ProceedDirectCommand) {
-          ProceedDirectCommand pdc = (ProceedDirectCommand) Pilot.this.queue.get(i);
-          if (pdc.getNavaid() == navaid) {
-            return i;
-          }
-        }
-      }
-      return -1;
-    }
-
-    public void removeAllItemsInQueueUntilIndex(int pointIndex) {
-      for (int i = 0; i < pointIndex; i++) {
-        Pilot.this.queue.removeAt(i);
-      }
+    public void applyShortcut(Navaid n) {
+      SpeechList<IFromAtc> skippedCommands = Pilot.this.afterCommands.doShortcutTo(n);
+      Pilot.this.processSpeeches(skippedCommands, CommandSource.procedure);
     }
 
     public void setHoldBehavior(Navaid navaid, int inboundRadial, boolean leftTurn) {
@@ -173,6 +160,16 @@ public class Pilot {
 
     public void setTargetHeading(double value, boolean useLeftTurn) {
       parent.setTargetHeading(value, useLeftTurn);
+    }
+
+    public boolean isFlyingOverNavaid(Navaid navaid) {
+      boolean ret = Pilot.this.isOnWayToPassPoint(navaid);
+      return ret;
+    }
+
+    public boolean isFlyingOverNavaidInFuture(Navaid navaid) {
+      boolean ret = Pilot.this.isOnWayToPassPointInFuture(navaid);
+      return ret;
     }
 
     protected void setState(Airplane.State state) {
@@ -996,6 +993,11 @@ public class Pilot {
     return ret;
   }
 
+  public boolean isOnWayToPassPointInFuture(Navaid navaid) {
+    boolean ret = this.afterCommands.hasProceedDirectToNavaidAsConseqent(navaid);
+    return ret;
+  }
+
   public CurrentApproachInfo tryGetAssignedApproach() {
     CurrentApproachInfo ret;
     ApproachBehavior ap = ConversionUtils.tryConvert(this.behavior);
@@ -1115,7 +1117,7 @@ public class Pilot {
           this.afterCommands.clearExtensionsByConsequent(lateralCommands);
         } else if (cmd instanceof ShortcutCommand) {
           // rule 3
-          throw new UnsupportedOperationException();
+          // does nothing as everything is done in ShortcutCommandApplication
         } else if (cmd instanceof ChangeAltitudeCommand) {
           // rule 4
           ChangeAltitudeCommand tmp = (ChangeAltitudeCommand) cmd;
@@ -1143,7 +1145,7 @@ public class Pilot {
           this.afterCommands.clearRoute();
         } else if (cmd instanceof ShortcutCommand) {
           // rule 8
-          throw new UnsupportedOperationException();
+          // does nothing as everything is done in ShortcutCommandApplication
         } else if (cmd instanceof AfterAltitudeCommand) {
           // rule 9
           ChangeAltitudeCommand tmp = (ChangeAltitudeCommand) cmd;

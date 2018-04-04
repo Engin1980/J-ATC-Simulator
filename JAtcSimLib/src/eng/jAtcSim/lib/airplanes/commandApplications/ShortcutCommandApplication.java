@@ -22,26 +22,23 @@ public class ShortcutCommandApplication extends CommandApplication<ShortcutComma
 
   @Override
   protected IFromAirplane checkCommandSanity(Airplane.Airplane4Command plane, ShortcutCommand c) {
-    IFromAirplane ret;
+    IFromAirplane ret = null;
 
-    int pointIndex = plane.getPilot().getIndexOfNavaidInCommands(c.getNavaid());
-    if (pointIndex < 0) {
+    if (!plane.getPilot().isFlyingOverNavaidInFuture(c.getNavaid())) {
       ret = new ShortCutToFixNotOnRoute(c);
-      return ret;
     }
 
-    return null;
+    return ret;
   }
 
   @Override
   protected ApplicationResult adjustAirplane(Airplane.Airplane4Command plane, ShortcutCommand c) {
-    int pointIndex = plane.getPilot().getIndexOfNavaidInCommands(c.getNavaid());
     // hold abort only if fix was found
     if (plane.getState() == Airplane.State.holding) {
       plane.getPilot().abortHolding();
     }
 
-    plane.getPilot().removeAllItemsInQueueUntilIndex(pointIndex);
+    plane.getPilot().applyShortcut(c.getNavaid());
 
     return ApplicationResult.getEmpty();
   }

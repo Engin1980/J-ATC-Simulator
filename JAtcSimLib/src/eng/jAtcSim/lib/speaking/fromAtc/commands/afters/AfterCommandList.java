@@ -13,6 +13,7 @@ import eng.jAtcSim.lib.coordinates.Coordinate;
 import eng.jAtcSim.lib.coordinates.Coordinates;
 import eng.jAtcSim.lib.exceptions.ENotSupportedException;
 import eng.jAtcSim.lib.global.Headings;
+import eng.jAtcSim.lib.speaking.IFromAtc;
 import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.*;
@@ -54,7 +55,7 @@ public class AfterCommandList {
 
     if (item.antecedent instanceof AfterAltitudeCommand) {
       AfterAltitudeCommand cmd = (AfterAltitudeCommand) item.antecedent;
-      ret  = isAfterAltitudePassed(cmd, plane.getAltitude());
+      ret = isAfterAltitudePassed(cmd, plane.getAltitude());
     } else if (item.antecedent instanceof AfterSpeedCommand) {
       int trgSpd = ((AfterSpeedCommand) item.antecedent).getSpeedInKts();
       ret = (Math.abs(trgSpd - plane.getSpeed()) < 10);
@@ -153,6 +154,17 @@ public class AfterCommandList {
     lst.remove(tmp);
   }
 
+  private static boolean hasProceedDirectToNavaidAsConseqent(IList<AFItem> items, Navaid navaid) {
+    Predicate<AFItem> cond = q -> {
+      boolean ret =
+          (q.consequent instanceof ToNavaidCommand &&
+              ((ToNavaidCommand) q.consequent).getNavaid().equals(navaid));
+      return ret;
+    };
+    boolean ret = items.isAny(q -> cond.test(q));
+    return ret;
+  }
+
   public void consolePrint() {
     System.out.println("After commands:");
     System.out.println("\troute");
@@ -190,8 +202,7 @@ public class AfterCommandList {
               ((ToNavaidCommand) q.consequent).getNavaid().equals(navaid));
       return ret;
     };
-    boolean ret =
-        this.rt.isAny(q -> cond.test(q)) || this.ex.isAny(q -> cond.test(q));
+    boolean ret = hasProceedDirectToNavaidAsConseqent(this.rt, navaid) || hasProceedDirectToNavaidAsConseqent(this.ex, navaid);
     return ret;
   }
 
@@ -280,7 +291,32 @@ public class AfterCommandList {
   }
 
   public void clearAllAltitudeRestrictions() {
-    this.rt.remove(q->q.consequent instanceof SetAltitudeRestriction);
+    this.rt.remove(q -> q.consequent instanceof SetAltitudeRestriction);
+  }
+
+  public SpeechList<IFromAtc> doShortcutTo(Navaid n) {
+    SpeechList<IFromAtc> ret;
+    if (hasProceedDirectToNavaidAsConseqent(this.rt, n))
+      ret = doShortcutTo(this.rt, n);
+    else if (hasProceedDirectToNavaidAsConseqent(this.ex, n))
+      ret = doShortcutTo(this.ex, n);
+    else
+      throw new UnsupportedOperationException();
+    return ret;
+  }
+
+  private SpeechList<IFromAtc> doShortcutTo(IList<AFItem> lst, Navaid n) {
+    SpeechList<IFromAtc> ret = new SpeechList<>();
+
+    while (lst.size() > 0) {
+      AFItem it = lst.get(0);
+      lst.removeAt(0);
+      ret.add(it.consequent);
+      if ((it.consequent instanceof ToNavaidCommand) && ((ToNavaidCommand) it.consequent).getNavaid().equals(n))
+        break;
+    }
+
+    return ret;
   }
 }
 
