@@ -15,7 +15,6 @@ import eng.jAtcSim.lib.exceptions.ERuntimeException;
 import eng.jAtcSim.lib.global.logging.ApplicationLog;
 import eng.jAtcSim.lib.global.logging.Recorder;
 import eng.jAtcSim.lib.traffic.GenericTraffic;
-import eng.jAtcSim.lib.traffic.TestTrafficOneApproach;
 import eng.jAtcSim.lib.traffic.Traffic;
 import eng.jAtcSim.lib.traffic.fleets.Fleets;
 import eng.jAtcSim.lib.weathers.*;
@@ -45,9 +44,9 @@ public class JAtcSim {
 
   private static final boolean FAST_START = false;
   private static final Traffic specificTraffic =
- //   new TestTrafficOneApproach();
-  //  new TestTrafficOneDeparture();
-   null;
+//    new eng.jAtcSim.lib.traffic.TestTrafficOneApproach();
+    new eng.jAtcSim.lib.traffic.TestTrafficOneDeparture();
+ //  null;
   private static AppSettings appSettings;
 
   /**
@@ -99,7 +98,7 @@ public class JAtcSim {
     if (startupSettings.weather.useOnline) {
       DynamicWeatherProvider dwp = new NoaaDynamicWeatherProvider(aip.getIcao());
       //dwp.updateWeather(false);
-      Weather w = new Weather(200, 20, 9999, 5400, 0.8);
+      Weather w = new Weather(50, 20, 9999, 5400, 0.8);
       dwp.setWeather(w);
       weatherProvider = dwp;
     } else {

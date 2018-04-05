@@ -454,7 +454,7 @@
 
   <xs:simpleType name="planeCategory">
     <xs:restriction base="xs:string">
-      <xs:pattern value="A?B?C?D?" />
+      <xs:pattern value="[aA]?[bB]?[cC]?[dD]?" />
     </xs:restriction>
   </xs:simpleType>
 

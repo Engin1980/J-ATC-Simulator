@@ -111,10 +111,12 @@ public class RunwayThreshold extends MustBeBinded implements KeyItem<String> {
       ret = CollectionUtils.tryGetFirst(this.approaches, o -> o instanceof GnssApproach);
     if (ret == null)
       ret = CollectionUtils.tryGetFirst(this.approaches, o -> o instanceof UnpreciseApproach);
-    if (ret == null)
-      ret = CollectionUtils.tryGetFirst(this.approaches, o -> o instanceof VisualApproach);
+    //TODO original idea was that visual approaches will be generated and put into list of approaches
+    //now it is not done such way, so this method returns null
+//    if (ret == null)
+//      ret = CollectionUtils.tryGetFirst(this.approaches, o -> o instanceof VisualApproach);
 
-    assert ret != null;
+//    assert ret != null;
 
     return ret;
   }

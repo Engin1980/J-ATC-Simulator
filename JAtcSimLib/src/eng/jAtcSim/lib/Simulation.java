@@ -221,7 +221,7 @@ public class Simulation {
     return stats;
   }
 
-  public List<RunwayThreshold> getActiveRunwayThresholds() {
+  public IList<RunwayThreshold> getActiveRunwayThresholds() {
     return Acc.thresholds();
   }
 
@@ -336,13 +336,12 @@ public class Simulation {
         rem.add(p);
         this.stats.finishedDepartures.add();
       }
-
-      this.stats.delays.add(p.getDelayDifference());
     }
 
     for (Airplane p : rem) {
       Acc.prm().unregisterPlane(p);
       this.mrvaManager.unregisterPlane(p);
+      this.stats.delays.add(p.getDelayDifference());
     }
   }
 

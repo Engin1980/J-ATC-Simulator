@@ -22,6 +22,7 @@ import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeAltitudeCommand;
 import eng.jAtcSim.lib.world.*;
+import sun.security.x509.IssuingDistributionPointExtension;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -182,9 +183,9 @@ public abstract class Traffic {
     // added command to descend
     //TODO following should say ctr ATC, not this here
     initialCommands.add(new ChangeAltitudeCommand(
-            ChangeAltitudeCommand.eDirection.descend,
-            Acc.atcCtr().getOrderedAltitude()
-        ));
+        ChangeAltitudeCommand.eDirection.descend,
+        Acc.atcCtr().getOrderedAltitude()
+    ));
 
     Squawk sqwk = generateSqwk();
     spd = pt.vCruise;
@@ -205,7 +206,7 @@ public abstract class Traffic {
     else {
       double thousandsFeetPerMile = 500;
       double dist = r.getRouteLength();
-      if (dist < 0) {
+      if (dist <= 0) {
         dist = Coordinates.getDistanceInNM(r.getMainFix().getCoordinate(), Acc.airport().getLocation());
       }
       ret = (int) (dist * thousandsFeetPerMile);
@@ -298,15 +299,33 @@ public abstract class Traffic {
   private Route tryGetRandomIfrRoute(boolean isArrival, AirplaneType planeType) {
 
     IList<Route> rts = new EList<>();
-    for (RunwayThreshold threshold : Acc.thresholds()) {
+
+    IList<RunwayThreshold> thresholds;
+    if (!isArrival){
+      thresholds = Acc.thresholds();
+    } else {
+      // if is arrival, scheduled thresholds are taken into account
+      thresholds = Acc.atcTwr().getRunwayThresholdsScheduled();
+      if (thresholds.isEmpty())
+        thresholds = Acc.thresholds();
+    }
+
+    for (RunwayThreshold threshold : thresholds) {
       rts.add(threshold.getRoutes());
     }
-    List<Route> avails = Routes.getByFilter(rts, isArrival, planeType.category);
+    if (isArrival)
+      rts = rts.where(q->q.getType() != Route.eType.sid);
+    else
+      rts = rts.where(q->q.getType() == Route.eType.sid);
 
-    if (avails.isEmpty()) {
-      return null; // if no route, return null
-    }
-    Route ret = CollectionUtils.getRandom(avails);
+    rts = rts.where(q->q.isValidForCategory(planeType.category));
+
+    Route ret;
+
+    if (rts.isEmpty())
+      ret = null;
+    else
+      ret = rts.getRandom();
 
     return ret;
   }

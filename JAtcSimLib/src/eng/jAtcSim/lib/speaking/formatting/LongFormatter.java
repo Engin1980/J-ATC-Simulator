@@ -232,6 +232,24 @@ public class LongFormatter extends Formatter {
     return "Unable to follow ordered fromAtc, please confirm our radar contact first";
   }
 
+  public String format(ClearedToRouteCommand cmd){
+    String type;
+    switch (cmd.getRoute().getType()){
+      case sid:
+        type = "departure";
+        break;
+      case star:
+        type = "arrival";
+        break;
+      case transition:
+        type = "transition";
+        break;
+      default:
+        throw new UnsupportedOperationException();
+    }
+    return "Clear to proceed " + cmd.getRoute().getName() + " " + type;
+  }
+
   public String format(UnableToEnterApproachFromDifficultPosition cmd) {
     return cmd.reason;
   }

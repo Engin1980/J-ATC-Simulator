@@ -5,6 +5,7 @@
  */
 package eng.jAtcSim.lib;
 
+import eng.eSystem.collections.IList;
 import eng.eSystem.collections.ReadOnlyList;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.AirplaneTypes;
@@ -84,7 +85,7 @@ public class Acc {
     return sim.getWeather();
   }
 
-  public static List<RunwayThreshold> thresholds() {
+  public static IList<RunwayThreshold> thresholds() {
     return atcTwr().getRunwayThresholdsInUse();
   }
 

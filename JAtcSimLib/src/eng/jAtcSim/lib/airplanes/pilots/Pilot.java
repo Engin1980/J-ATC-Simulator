@@ -8,7 +8,6 @@ package eng.jAtcSim.lib.airplanes.pilots;
 import com.sun.istack.internal.Nullable;
 import eng.eSystem.EStringBuilder;
 import eng.eSystem.collections.IList;
-import eng.eSystem.utilites.CollectionUtils;
 import eng.eSystem.utilites.ConversionUtils;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
@@ -36,13 +35,11 @@ import eng.jAtcSim.lib.speaking.fromAtc.notifications.RadarContactConfirmationNo
 import eng.jAtcSim.lib.weathers.Weather;
 import eng.jAtcSim.lib.world.Navaid;
 import eng.jAtcSim.lib.world.Route;
-import eng.jAtcSim.lib.world.Routes;
 import eng.jAtcSim.lib.world.RunwayThreshold;
 import eng.jAtcSim.lib.world.approaches.Approach;
 import eng.jAtcSim.lib.world.approaches.CurrentApproachInfo;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -170,6 +167,10 @@ public class Pilot {
     public boolean isFlyingOverNavaidInFuture(Navaid navaid) {
       boolean ret = Pilot.this.isOnWayToPassPointInFuture(navaid);
       return ret;
+    }
+
+    public void setRoute(Route route) {
+      Pilot.this.setAssignedRoute(route);
     }
 
     protected void setState(Airplane.State state) {
@@ -894,10 +895,9 @@ public class Pilot {
   private Restriction speedRestriction = null;
   private Restriction altitudeRestriction = null;
 
-  public Pilot(Airplane.Airplane4Pilot parent, Route assignedRoute, @Nullable ETime divertTime) {
+  public Pilot(Airplane.Airplane4Pilot parent, @Nullable ETime divertTime) {
 
     this.parent = parent;
-    this.assignedRoute = assignedRoute;
 
     if (parent.isArrival()) {
       this.atc = Acc.atcCtr();
@@ -914,17 +914,20 @@ public class Pilot {
 
   public void initSpeeches(SpeechList<IAtcCommand> initialCommands) {
     SpeechList<IFromAtc> cmds;
+    cmds = new SpeechList<>(initialCommands);
+    expandThenCommands(cmds);
+    processSpeeches(cmds, CommandSource.atc);
+  }
 
-    // route
+  public void setAssignedRoute(Route newRoute){
+    this.assignedRoute = newRoute;
+    this.afterCommands.clearRoute();
+
+    SpeechList<IFromAtc> cmds;
     cmds = new SpeechList<>();
     cmds.add(assignedRoute.getCommands());
     expandThenCommands(cmds);
     processSpeeches(cmds, CommandSource.procedure);
-
-    // initial ATC commands
-    cmds = new SpeechList<>(initialCommands);
-    expandThenCommands(cmds);
-    processSpeeches(cmds, CommandSource.atc);
   }
 
   public Route getAssignedRoute() {
@@ -976,9 +979,11 @@ public class Pilot {
   }
 
   public Navaid getDivertNavaid() {
-    Iterable<Route> rts = Acc.thresholds().get(0).getRoutes(); // get random active threshold
-    List<Route> avails = Routes.getByFilter(rts, false, this.parent.getType().category);
-    Route r = CollectionUtils.getRandom(avails, Acc.rnd());
+    IList<Route> rts = Acc.thresholds().get(0).getRoutes(); // get random active threshold
+    rts = rts.where(q->q.getType() == Route.eType.sid);
+    rts = rts.where(q->q.isValidForCategory(this.parent.getType().category));
+    Route r = rts.getRandom();
+    //TODO here can null-pointer-exception occur when no route is found for threshold and category
     Navaid ret = r.getMainFix();
     return ret;
   }

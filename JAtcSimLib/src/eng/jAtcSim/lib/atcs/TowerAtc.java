@@ -1,7 +1,9 @@
 package eng.jAtcSim.lib.atcs;
 
 import eng.eSystem.EStringBuilder;
+import eng.eSystem.collections.EList;
 import eng.eSystem.collections.EMap;
+import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IMap;
 import eng.eSystem.utilites.CollectionUtils;
 import eng.jAtcSim.lib.Acc;
@@ -26,6 +28,7 @@ import eng.jAtcSim.lib.speaking.fromAtc.commands.afters.AfterAltitudeCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.notifications.RadarContactConfirmationNotification;
 import eng.jAtcSim.lib.weathers.Weather;
 import eng.jAtcSim.lib.weathers.WeatherProvider;
+import eng.jAtcSim.lib.world.Route;
 import eng.jAtcSim.lib.world.Runway;
 import eng.jAtcSim.lib.world.RunwayThreshold;
 
@@ -292,8 +295,15 @@ public class TowerAtc extends ComputerAtc {
     return holdingPointPlanesList.size() + linedUpPlanesList.size();
   }
 
-  public List<RunwayThreshold> getRunwayThresholdsInUse() {
-    List<RunwayThreshold> ret = new ArrayList<>(inUseInfo.current);
+  public IList<RunwayThreshold> getRunwayThresholdsInUse() {
+    IList<RunwayThreshold> ret = new EList<>(inUseInfo.current);
+    return ret;
+  }
+
+  public IList<RunwayThreshold> getRunwayThresholdsScheduled() {
+    IList<RunwayThreshold> ret = new EList<>();
+    if (inUseInfo.scheduled != null)
+      ret.add(inUseInfo.scheduled);
     return ret;
   }
 
@@ -537,6 +547,21 @@ public class TowerAtc extends ComputerAtc {
       return;
     } else {
       availableThreshold = CollectionUtils.getRandom(availableThresholds);
+    }
+
+    if (toReadyPlane.getAssigneRoute().getParent().equals(availableThreshold) == false) {
+      // plane has SID for different threshold
+      // may occur in runway change or parallel runways
+      // first try to get route for the same navaid, then try to find any route
+      Route r = availableThreshold.getRoutes().tryGetFirst(q ->
+          q.getType() == Route.eType.sid &&
+              q.getMainFix().equals(toReadyPlane.getAssigneRoute().getMainFix()) &&
+              q.isValidForCategory(toReadyPlane.getType().category));
+      if (r == null)
+        r = availableThreshold.getRoutes().where(q ->
+            q.getType() == Route.eType.sid &&
+                q.isValidForCategory(toReadyPlane.getType().category)).getRandom();
+      toReadyPlane.updateAssignedRoute(r);
     }
 
 

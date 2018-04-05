@@ -119,7 +119,7 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
 
     public void setxState(State state) {
       Airplane.this.state = state;
-      if (delayResult != null) {
+      if (delayResult == null) {
         if ((Airplane.this.isArrival() && state == State.landed)
             || (Airplane.this.isDeparture() && state == State.departingLow)) {
           Airplane.this.delayResult = Acc.now().getTotalMinutes() - Airplane.this.delayExpectedTime.getTotalMinutes();
@@ -257,9 +257,6 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
       return Airplane.this.isArrival();
     }
 
-//    public Navaid tryGetIaf() {
-//      return this.getPilot().tryGetIaf();
-//    }
   }
 
   public enum State {
@@ -469,7 +466,9 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
       divertTime = Acc.now().addMinutes(divertTimeMinutes);
     }
 
-    this.pilot = new Pilot(this.new Airplane4Pilot(), assignedRoute, divertTime);
+    this.pilot = new Pilot(this.new Airplane4Pilot(), divertTime);
+    if (assignedRoute != null)
+      this.pilot.setAssignedRoute(assignedRoute);
     this.pilot.initSpeeches(initialCommands);
     this.plane4Display = this.new Airplane4Display();
 
@@ -668,6 +667,10 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
 
   public int getDelayDifference() {
     return delayResult;
+  }
+
+  public void updateAssignedRoute(Route r) {
+    pilot.setAssignedRoute(r);
   }
 
   // </editor-fold>
