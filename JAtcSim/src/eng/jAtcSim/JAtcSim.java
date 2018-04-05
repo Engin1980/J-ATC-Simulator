@@ -97,9 +97,9 @@ public class JAtcSim {
     WeatherProvider weatherProvider;
     if (startupSettings.weather.useOnline) {
       DynamicWeatherProvider dwp = new NoaaDynamicWeatherProvider(aip.getIcao());
-      //dwp.updateWeather(false);
-      Weather w = new Weather(50, 20, 9999, 5400, 0.8);
-      dwp.setWeather(w);
+      dwp.updateWeather(false);
+//      Weather w = new Weather(50, 20, 9999, 5400, 0.8);
+//      dwp.setWeather(w);
       weatherProvider = dwp;
     } else {
       StaticWeatherProvider swp = new StaticWeatherProvider(startupSettings.weather.metar);

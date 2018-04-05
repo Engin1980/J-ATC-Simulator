@@ -296,7 +296,7 @@
                        route="DM 40 PD AZR/117/26 T PD AZR/130/27 T PD AZR/150/27 T PD AZR/170/27 T PD AZR/190/27 T PD AZR/210/27 T PD AZR/223/17 T FH 041"/>
               </sharedIafRoutes>
               <approaches>
-                <ilsApproach gaRoute="SM 220 AA 20+ SC PD NERAS" radial="043" includeSharedIafRoutes="true"
+                <ilsApproach gaRoute="SM 220 AA 20+ SC PD NERAS" radial="041" includeSharedIafRoutes="true"
                              initialAltitude="4000">
                   <categories>
                     <category type="I" daA="260" daB="260" daC="260" daD="280"/>
