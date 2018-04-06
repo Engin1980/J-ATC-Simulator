@@ -6,6 +6,7 @@
 package eng.jAtcSim.lib;
 
 import eng.eSystem.collections.IList;
+import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.collections.ReadOnlyList;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.AirplaneTypes;
@@ -61,7 +62,7 @@ public class Acc {
     return sim;
   }
 
-  public static ReadOnlyList<Airplane> planes() {
+  public static IReadOnlyList<Airplane> planes() {
     return prm().getAll();
   }
 

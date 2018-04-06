@@ -5,6 +5,7 @@
  */
 package eng.jAtcSim.lib.airplanes;
 
+import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.collections.ReadOnlyList;
 import eng.eSystem.utilites.CollectionUtils;
 import eng.eSystem.utilites.StringUtil;
@@ -78,7 +79,7 @@ public class Airplanes {
     return null;
   }
 
-  public static void evaluateAirproxes(ReadOnlyList<Airplane> planes) {
+  public static void evaluateAirproxes(IReadOnlyList<Airplane> planes) {
     for (Airplane p : planes) {
       p.setAirprox(AirproxType.none);
     }

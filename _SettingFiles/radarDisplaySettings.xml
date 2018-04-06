@@ -115,4 +115,12 @@
             firstLineFormat="{1}"
             secondLineFormat="{34}{43}{37} {22}"
             thirdLineFormat="{8} {4}"/>
+
+  <emergency color="FF0000"
+             pointWidth="7" headingLineLength="5"
+             historyDotCount="10" historyDotStep="3"
+             separationRingRadius="5"
+             firstLineFormat="{1}"
+             secondLineFormat="{34}{43}{37} {22}"
+             thirdLineFormat="{8} {4}"/>
 </settings>

@@ -52,6 +52,7 @@ public class StartupSettings {
 
   public static class Simulation{
     public int secondLengthInMs = 1000;
+    public double emergencyPerDayProbability = 1/7d;
   }
 
 

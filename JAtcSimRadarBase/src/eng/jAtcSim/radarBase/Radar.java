@@ -120,6 +120,7 @@ public class Radar {
     private double targetSpeed;
     private int altitude;
     private int targetAltitude;
+    private boolean emergency;
 
     public AirplaneDisplayInfo(Airplane.Airplane4Display planeInfo) {
       this.callsign = planeInfo.callsign();
@@ -144,6 +145,7 @@ public class Radar {
 
       this.airprox = plane.getAirprox();
       this.mrvaError = plane.isMrvaError();
+this.emergency = plane.isEmergency();
 
       this.coordinate = plane.coordinate();
 
@@ -382,13 +384,13 @@ public class Radar {
     redraw(true);
   }
 
-  public void setViewPort(RadarViewPort viewPort){
-    tl.setViewPort(viewPort);
-    redraw(true);
+  public RadarViewPort getViewPort() {
+    return tl.getViewPort();
   }
 
-  public RadarViewPort getViewPort(){
-    return tl.getViewPort();
+  public void setViewPort(RadarViewPort viewPort) {
+    tl.setViewPort(viewPort);
+    redraw(true);
   }
 
   public void redraw(boolean force) {
@@ -652,9 +654,9 @@ public class Radar {
             drawBorder(b);
           break;
         case mrva:
-          if (localSettings.isMrvaBorderVisible()){
+          if (localSettings.isMrvaBorderVisible()) {
             drawBorder(b);
-            if (localSettings.isMrvaBorderAltitudeVisible()){
+            if (localSettings.isMrvaBorderAltitudeVisible()) {
               drawBorderAltitude(b);
             }
           }
@@ -666,9 +668,9 @@ public class Radar {
 
   private void drawBorderAltitude(Border border) {
     Coordinate c = border.getLabelCoordinate();
-    String s =  AirplaneDataFormatter.formatAltitudeShort(border.getMaxAltitude(), true);
+    String s = AirplaneDataFormatter.formatAltitudeShort(border.getMaxAltitude(), true);
     DisplaySettings.ColorWidthFontSettings ds = (DisplaySettings.ColorWidthFontSettings) getDispSettBy(border);
-    tl.drawText(s, border.getLabelCoordinate(), 0,0, ds.getFont(), ds.getColor());
+    tl.drawText(s, border.getLabelCoordinate(), 0, 0, ds.getFont(), ds.getColor());
   }
 
   private void drawBorder(Border border) {
@@ -882,7 +884,7 @@ public class Radar {
       c = displaySettings.airproxFull;
     } else if (adi.airprox == AirproxType.partial) {
       c = displaySettings.airproxPartial;
-    } else if (adi.mrvaError){
+    } else if (adi.mrvaError) {
       c = displaySettings.mrvaError;
     } else if (this.selectedCallsign == adi.callsign) {
       c = displaySettings.selected.getColor();
@@ -935,7 +937,9 @@ public class Radar {
   private DisplaySettings.PlaneLabelSettings getPlaneLabelDisplaySettingsBy(AirplaneDisplayInfo adi) {
     DisplaySettings.PlaneLabelSettings ret;
 
-    if (adi.speed == 0)
+    if (adi.emergency)
+      ret = displaySettings.emergency;
+    else if (adi.speed == 0)
       ret = displaySettings.stopped;
     else if (adi.responsibleAtc.getType() == Atc.eType.app)
       ret = displaySettings.app;

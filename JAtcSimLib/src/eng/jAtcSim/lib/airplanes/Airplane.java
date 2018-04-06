@@ -109,6 +109,10 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     public boolean isMrvaError() {
       return Airplane.this.mrvaError;
     }
+
+    public boolean isEmergency(){
+      return Airplane.this.emergency;
+    }
   }
 
   public class Airplane4Pilot {
@@ -216,6 +220,10 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
 
     public void divert() {
       Airplane.this.departure = true;
+    }
+
+    public boolean isEmergency() {
+      return Airplane.this.emergency;
     }
   }
 
@@ -344,7 +352,7 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
   private final static double GROUND_SPEED_CHANGE_MULTIPLIER = 1.5; //1.5; //3.0;
   private static final double secondFraction = 1 / 60d / 60d;
   private final Callsign callsign;
-  private final Squawk sqwk;
+  private Squawk sqwk;
   private final Pilot pilot;
   private final AirplaneType airplaneType;
   private final Airplane4Display plane4Display;
@@ -365,6 +373,11 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
   private boolean mrvaError;
   private InertialValue altitude;
   private Integer delayResult = null;
+  private boolean emergency = false;
+
+  public boolean isEmergency() {
+    return emergency;
+  }
 
   private static ValueRequest getRequest(double current, double target, double maxIncreaseStep, double maxDecreaseStep) {
     // if on ground, nothing required
@@ -671,6 +684,17 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
 
   public void updateAssignedRoute(Route r) {
     pilot.setAssignedRoute(r);
+  }
+
+  public void raiseEmergency() {
+    this.sqwk = Squawk.create("7777");
+    this.emergency = true;
+    this.departure = false;
+    this.pilot.raiseEmergency();
+  }
+
+  public boolean hasElapsedDivertTime() {
+    return pilot.hasElapsedDivertTime();
   }
 
   // </editor-fold>

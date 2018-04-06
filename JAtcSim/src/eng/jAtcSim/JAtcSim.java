@@ -116,7 +116,7 @@ public class JAtcSim {
     // simulation creation
     final Simulation sim = Simulation.create(
         aip, data.types, weatherProvider, data.fleets, traffic, simTime, startupSettings.simulation.secondLengthInMs,
-        mrvaAreas);
+        mrvaAreas, startupSettings.simulation.emergencyPerDayProbability);
 
     // sound
     SoundManager.init(appSettings.soundFolder.toString());

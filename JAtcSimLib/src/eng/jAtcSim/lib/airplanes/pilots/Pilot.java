@@ -363,7 +363,7 @@ public class Pilot {
     }
 
     private boolean divertIfRequested() {
-      if (divertInfo.getMinutesLeft() <= 0) {
+      if (divertInfo.getMinutesLeft() <= 0 && parent.isEmergency() == false) {
         Pilot.this.processDivert();
         return true;
       } else {
@@ -912,6 +912,10 @@ public class Pilot {
     this.secondsWithoutRadarContact = 0;
   }
 
+  public void setDivertTime(ETime divertTime){
+    this.divertInfo = new DivertInfo(divertTime);
+  }
+
   public void initSpeeches(SpeechList<IAtcCommand> initialCommands) {
     SpeechList<IFromAtc> cmds;
     cmds = new SpeechList<>(initialCommands);
@@ -1012,6 +1016,18 @@ public class Pilot {
     else
       ret = null;
     return ret;
+  }
+
+  public void raiseEmergency() {
+    int divertMinutes = Acc.rnd().nextInt(15, 45);
+    this.divertInfo = new DivertInfo(Acc.now().addMinutes(divertMinutes));
+    this.afterCommands.clearAll();
+    this.behavior = new ArrivalBehavior();
+    this.parent.setxState(Airplane.State.arrivingHigh);
+  }
+
+  public boolean hasElapsedDivertTime() {
+    return divertInfo.getMinutesLeft() <= 0;
   }
 
   private void requestRadarContactIfRequired() {

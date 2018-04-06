@@ -232,6 +232,7 @@ public class DisplaySettings {
   public PlaneLabelSettings ctr;
   public PlaneLabelSettings twr;
   public PlaneLabelSettings selected;
+  public PlaneLabelSettings emergency;
 
   // airproxes
   public Color airproxFull;

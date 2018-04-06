@@ -8,9 +8,13 @@ package eng.jAtcSim.lib;
 import eng.eSystem.EStringBuilder;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
+import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.collections.ReadOnlyList;
 import eng.eSystem.events.EventSimple;
-import eng.jAtcSim.lib.airplanes.*;
+import eng.jAtcSim.lib.airplanes.Airplane;
+import eng.jAtcSim.lib.airplanes.AirplaneList;
+import eng.jAtcSim.lib.airplanes.AirplaneTypes;
+import eng.jAtcSim.lib.airplanes.Airplanes;
 import eng.jAtcSim.lib.atcs.Atc;
 import eng.jAtcSim.lib.atcs.CenterAtc;
 import eng.jAtcSim.lib.atcs.TowerAtc;
@@ -33,7 +37,10 @@ import eng.jAtcSim.lib.world.Airport;
 import eng.jAtcSim.lib.world.Border;
 import eng.jAtcSim.lib.world.RunwayThreshold;
 
-import java.util.*;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -42,9 +49,8 @@ import java.util.regex.Pattern;
  */
 public class Simulation {
 
-  private static final boolean DEBUG_STYLE_TIMER = false;
-
   public static final ERandom rnd = new ERandom();
+  private static final boolean DEBUG_STYLE_TIMER = false;
   private static final int MINIMAL_DEPARTURE_REMOVE_DISTANCE = 100;
   private static final String SYSMES_COMMANDS = "?";
   private static final Pattern SYSMES_CHANGE_SPEED = Pattern.compile("TICK (\\d+)");
@@ -62,6 +68,7 @@ public class Simulation {
   private final Traffic traffic;
   private final Fleets fleets;
   private final IList<Airplane> newPlanesDelayedToAvoidCollision = new EList<>();
+  private final MrvaManager mrvaManager;
   /**
    * Public event informing surrounding about elapsed second.
    */
@@ -71,14 +78,29 @@ public class Simulation {
   private WeatherProvider weatherProvider;
   private Statistics stats = new Statistics();
   private boolean isBusy = false;
+  private ETime nextEmergencyTime;
   /**
    * Internal timer used to make simulation ticks.
    */
   private final Timer tmr = new Timer(o -> Simulation.this.elapseSecond());
-  private final MrvaManager mrvaManager;
+  private double emergencyPerDayProbability;
+
+  public static Simulation create(Airport airport, AirplaneTypes types, WeatherProvider weatherProvider, Fleets fleets, Traffic traffic, Calendar now, int simulationSecondLengthInMs, IList<Border> mrvaAreas, double emergencyPerDayProbability) {
+    Simulation ret = new Simulation(airport, types, weatherProvider, fleets, traffic, now, simulationSecondLengthInMs, mrvaAreas, emergencyPerDayProbability);
+
+    Acc.setSimulation(ret);
+
+    Acc.atcTwr().init();
+    Acc.atcApp().init();
+    Acc.atcCtr().init();
+
+    traffic.generateNewMovementsIfRequired(); // this must be here, antecedent "simTime" init
+
+    return ret;
+  }
 
   private Simulation(Airport airport, AirplaneTypes types, WeatherProvider weatherProvider, Fleets fleets, Traffic traffic, Calendar now, int simulationSecondLengthInMs,
-                     IList<Border> mrvaAreas) {
+                     IList<Border> mrvaAreas, double emergencyPerDayProbability) {
     if (airport == null) {
       throw new IllegalArgumentException("Argument \"airport\" cannot be null.");
     }
@@ -89,7 +111,7 @@ public class Simulation {
       throw new IllegalArgumentException("Argument \"weatherProvider\" cannot be null.");
     }
     if (fleets == null) {
-        throw new IllegalArgumentException("Value of {fleets} cannot not be null.");
+      throw new IllegalArgumentException("Value of {fleets} cannot not be null.");
     }
     if (traffic == null) {
       throw new IllegalArgumentException("Argument \"traffic\" cannot be null.");
@@ -112,24 +134,9 @@ public class Simulation {
 
     this.now = new ETime(now);
     this.simulationSecondLengthInMs = simulationSecondLengthInMs;
-  }
 
-  private void weatherProvider_weatherUpdated() {
-    Acc.sim().sendTextMessageForUser("Weather updated: " + weatherProvider.getWeather().toInfoString());
-  }
-
-  public static Simulation create(Airport airport, AirplaneTypes types, WeatherProvider weatherProvider, Fleets fleets, Traffic traffic, Calendar now, int simulationSecondLengthInMs, IList<Border> mrvaAreas) {
-    Simulation ret = new Simulation(airport, types, weatherProvider, fleets, traffic, now, simulationSecondLengthInMs, mrvaAreas);
-
-    Acc.setSimulation(ret);
-
-    Acc.atcTwr().init();
-    Acc.atcApp().init();
-    Acc.atcCtr().init();
-
-    traffic.generateNewMovementsIfRequired(); // this must be here, antecedent "simTime" init
-
-    return ret;
+    this.emergencyPerDayProbability = emergencyPerDayProbability;
+    generateEmergencyTime();
   }
 
   public EventSimple<Simulation> getSecondElapsedEvent() {
@@ -171,7 +178,7 @@ public class Simulation {
     return fleets;
   }
 
-  public ReadOnlyList<Airplane> getAirplanes() {
+  public IReadOnlyList<Airplane> getAirplanes() {
     return Acc.prm().getAll();
   }
 
@@ -235,6 +242,17 @@ public class Simulation {
     return this.weatherProvider;
   }
 
+  private void generateEmergencyTime() {
+    if (emergencyPerDayProbability > 0) {
+      int secondsToNextEmerg = (int) ((60 * 60 * 24) / emergencyPerDayProbability);
+      this.nextEmergencyTime = Acc.now().addSeconds(secondsToNextEmerg);
+    }
+  }
+
+  private void weatherProvider_weatherUpdated() {
+    Acc.sim().sendTextMessageForUser("Weather updated: " + weatherProvider.getWeather().toInfoString());
+  }
+
   private synchronized void elapseSecond() {
 
     long elapseStartMs = System.currentTimeMillis();
@@ -264,6 +282,7 @@ public class Simulation {
     // planes stuff
     generateNewPlanes();
     removeOldPlanes();
+    generateEmergencyIfRequired();
     updatePlanes();
     evalAirproxes();
     evalMrvas();
@@ -273,7 +292,7 @@ public class Simulation {
 
     stats.secondElapsed();
     long elapseEndMs = System.currentTimeMillis();
-    stats.durationOfSecondElapse.add((elapseEndMs - elapseStartMs)/1000d);
+    stats.durationOfSecondElapse.add((elapseEndMs - elapseStartMs) / 1000d);
 
     isBusy = false;
 
@@ -282,6 +301,15 @@ public class Simulation {
 
     if (DEBUG_STYLE_TIMER)
       tmr.start(tmr.getTickLength());
+  }
+
+  private void generateEmergencyIfRequired() {
+    if (this.nextEmergencyTime != null && this.nextEmergencyTime.isBefore(Acc.now())) {
+      Airplane p = Acc.planes().where(q -> q.getState().is(Airplane.State.departingLow,
+          Airplane.State.departingHigh, Airplane.State.arrivingHigh, Airplane.State.arrivingLow, Airplane.State.arrivingCloseFaf)).getRandom();
+      p.raiseEmergency();
+      generateEmergencyTime();
+    }
   }
 
   private void updatePlanes() {
@@ -336,6 +364,11 @@ public class Simulation {
         rem.add(p);
         this.stats.finishedDepartures.add();
       }
+
+      if (p.isEmergency() && p.hasElapsedDivertTime()){
+        rem.add(p);
+
+      }
     }
 
     for (Airplane p : rem) {
@@ -349,7 +382,8 @@ public class Simulation {
     Airplanes.evaluateAirproxes(Acc.planes());
   }
 
-  private void evalMrvas(){this.mrvaManager.evaluateMrvaFails();
+  private void evalMrvas() {
+    this.mrvaManager.evaluateMrvaFails();
   }
 
   private void processSystemMessages() {
@@ -372,7 +406,7 @@ public class Simulation {
           new Message(Messenger.SYSTEM, Acc.atcApp(), new StringMessageContent(metarText)));
     } else if (SYSMES_REMOVE.asPredicate().test(msgText)) {
       processSystemMessageRemove(m);
-    } else if (SYSMES_SHORTCUT.asPredicate().test(msgText)){
+    } else if (SYSMES_SHORTCUT.asPredicate().test(msgText)) {
       processSystemMessageShortcut(m);
     } else {
       String msg = m.<StringMessageContent>getContent().getMessageText();
@@ -387,7 +421,7 @@ public class Simulation {
   private void processSystemMessageRemove(Message m) {
     String msgText = m.<StringMessageContent>getContent().getMessageText();
     Matcher matcher = SYSMES_REMOVE.matcher(msgText);
-    if (!matcher.find()){
+    if (!matcher.find()) {
       Acc.messenger().send(
           new Message(
               messenger.SYSTEM,
@@ -404,7 +438,7 @@ public class Simulation {
       }
     }
 
-    if (plane == null){
+    if (plane == null) {
       Acc.messenger().send(
           new Message(
               messenger.SYSTEM,
@@ -449,13 +483,13 @@ public class Simulation {
     );
   }
 
-  private void processSystemMessageShortcut(Message m){
+  private void processSystemMessageShortcut(Message m) {
     String msgText = m.<StringMessageContent>getContent().getMessageText();
     Matcher matcher = SYSMES_SHORTCUT.matcher(msgText);
     matcher.find();
     String key = matcher.group(1);
-    if (matcher.group(2) == null){
-      if (key.equals("?")){
+    if (matcher.group(2) == null) {
+      if (key.equals("?")) {
         // print all keys
         EStringBuilder sb = new EStringBuilder();
         sb.appendLine("Printing all shortcuts:");
@@ -479,7 +513,7 @@ public class Simulation {
       }
     } else {
       String value = matcher.group(3);
-      if (value.equals("?")){
+      if (value.equals("?")) {
         // print current
         value = Acc.atcApp().getParser().getShortcuts().tryGet(key);
         Acc.messenger().send(
@@ -488,7 +522,7 @@ public class Simulation {
                 m.<UserAtc>getSource(),
                 new StringMessageContent("Command shortcut '%s' has expansion '%s'.", key, value)));
       } else {
-        Acc.atcApp().getParser().getShortcuts().add(key, value );
+        Acc.atcApp().getParser().getShortcuts().add(key, value);
         Acc.messenger().send(
             new Message(
                 messenger.SYSTEM,

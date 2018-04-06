@@ -5,6 +5,8 @@
  */
 package eng.jAtcSim.lib.atcs;
 
+import eng.eSystem.collections.EList;
+import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.collections.ReadOnlyList;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
@@ -251,8 +253,8 @@ public class PlaneResponsibilityManager {
     return map.containsKey(plane);
   }
 
-  public ReadOnlyList<Airplane> getAll() {
-    return new ReadOnlyList<>(all);
+  public IReadOnlyList<Airplane> getAll() {
+    return new EList<>(all);
   }
 
   boolean isToSwitch(Airplane p) {
