@@ -232,6 +232,10 @@ public class LongFormatter extends Formatter {
     return "Unable to follow ordered fromAtc, please confirm our radar contact first";
   }
 
+  public String format(EmergencyNotification cmd){
+    return "Pan-Pan-Pan, we have an emergency situation, request landing at " + Acc.airport().getIcao() + " immediately";
+  }
+
   public String format(ClearedToRouteCommand cmd){
     String type;
     switch (cmd.getRoute().getType()){

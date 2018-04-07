@@ -110,8 +110,8 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
       return Airplane.this.mrvaError;
     }
 
-    public boolean isEmergency(){
-      return Airplane.this.emergency;
+    public boolean isEmergency() {
+      return Airplane.this.isEmergency();
     }
   }
 
@@ -223,7 +223,7 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     }
 
     public boolean isEmergency() {
-      return Airplane.this.emergency;
+      return Airplane.this.isEmergency();
     }
   }
 
@@ -346,13 +346,12 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
       return ret;
     }
   }
-
   private static final int MINIMAL_DIVERT_TIME_MINUTES = 45;
   private static final int MAXIMAL_DIVERT_TIME_MINUTES = 120;
   private final static double GROUND_SPEED_CHANGE_MULTIPLIER = 1.5; //1.5; //3.0;
   private static final double secondFraction = 1 / 60d / 60d;
   private final Callsign callsign;
-  private Squawk sqwk;
+  private final Squawk sqwk;
   private final Pilot pilot;
   private final AirplaneType airplaneType;
   private final Airplane4Display plane4Display;
@@ -373,11 +372,7 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
   private boolean mrvaError;
   private InertialValue altitude;
   private Integer delayResult = null;
-  private boolean emergency = false;
-
-  public boolean isEmergency() {
-    return emergency;
-  }
+  private ETime emergencyWanishTime = null;
 
   private static ValueRequest getRequest(double current, double target, double maxIncreaseStep, double maxDecreaseStep) {
     // if on ground, nothing required
@@ -489,6 +484,10 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     this.flightRecorder = FlightRecorder.create(this.callsign);
   }
 
+  public boolean isEmergency() {
+    return this.emergencyWanishTime != null;
+  }
+
   public boolean isDeparture() {
     return departure;
   }
@@ -592,14 +591,14 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     return targetHeading;
   }
 
-  public void setTargetHeading(double targetHeading) {
-    this.setTargetHeading((int) Math.round(targetHeading));
-  }
-
   public void setTargetHeading(int targetHeading) {
     boolean useLeft
         = Headings.getBetterDirectionToTurn(heading.getValue(), targetHeading) == ChangeHeadingCommand.eDirection.left;
     setTargetHeading(targetHeading, useLeft);
+  }
+
+  public void setTargetHeading(double targetHeading) {
+    this.setTargetHeading((int) Math.round(targetHeading));
   }
 
   public int getTargetAltitude() {
@@ -687,14 +686,21 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
   }
 
   public void raiseEmergency() {
-    this.sqwk = Squawk.create("7777");
-    this.emergency = true;
+    int minsE = Acc.rnd().nextInt(5, 60);
+    double distToAip = Coordinates.getDistanceInNM(this.coordinate, Acc.airport().getLocation());
+    int minA = (int) (distToAip / 250d * 60);
+    ETime wt = Acc.now().addMinutes(minsE + minA);
+
+    this.emergencyWanishTime = wt;
     this.departure = false;
     this.pilot.raiseEmergency();
   }
 
-  public boolean hasElapsedDivertTime() {
-    return pilot.hasElapsedDivertTime();
+  public boolean hasElapsedEmergencyTime() {
+
+    assert this.emergencyWanishTime != null;
+    boolean ret = this.emergencyWanishTime.isBefore(Acc.now());
+    return ret;
   }
 
   // </editor-fold>

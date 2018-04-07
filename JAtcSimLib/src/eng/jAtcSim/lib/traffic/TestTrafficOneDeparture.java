@@ -6,18 +6,8 @@
 package eng.jAtcSim.lib.traffic;
 
 import eng.jAtcSim.lib.Acc;
-import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.AirplaneType;
 import eng.jAtcSim.lib.airplanes.Callsign;
-import eng.jAtcSim.lib.airplanes.Squawk;
-import eng.jAtcSim.lib.coordinates.Coordinate;
-import eng.jAtcSim.lib.speaking.SpeechList;
-import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
-import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeAltitudeCommand;
-import eng.jAtcSim.lib.world.Route;
-import eng.jAtcSim.lib.world.Routes;
-
-import java.util.List;
 
 /**
  *

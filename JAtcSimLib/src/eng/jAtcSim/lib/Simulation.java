@@ -79,11 +79,11 @@ public class Simulation {
   private Statistics stats = new Statistics();
   private boolean isBusy = false;
   private ETime nextEmergencyTime;
+  private double emergencyPerDayProbability;
   /**
    * Internal timer used to make simulation ticks.
    */
   private final Timer tmr = new Timer(o -> Simulation.this.elapseSecond());
-  private double emergencyPerDayProbability;
 
   public static Simulation create(Airport airport, AirplaneTypes types, WeatherProvider weatherProvider, Fleets fleets, Traffic traffic, Calendar now, int simulationSecondLengthInMs, IList<Border> mrvaAreas, double emergencyPerDayProbability) {
     Simulation ret = new Simulation(airport, types, weatherProvider, fleets, traffic, now, simulationSecondLengthInMs, mrvaAreas, emergencyPerDayProbability);
@@ -245,7 +245,8 @@ public class Simulation {
   private void generateEmergencyTime() {
     if (emergencyPerDayProbability > 0) {
       int secondsToNextEmerg = (int) ((60 * 60 * 24) / emergencyPerDayProbability);
-      this.nextEmergencyTime = Acc.now().addSeconds(secondsToNextEmerg);
+      secondsToNextEmerg = Acc.rnd().nextInt(secondsToNextEmerg);
+      this.nextEmergencyTime = this.now.addSeconds(secondsToNextEmerg);
     }
   }
 
@@ -305,9 +306,11 @@ public class Simulation {
 
   private void generateEmergencyIfRequired() {
     if (this.nextEmergencyTime != null && this.nextEmergencyTime.isBefore(Acc.now())) {
-      Airplane p = Acc.planes().where(q -> q.getState().is(Airplane.State.departingLow,
-          Airplane.State.departingHigh, Airplane.State.arrivingHigh, Airplane.State.arrivingLow, Airplane.State.arrivingCloseFaf)).getRandom();
-      p.raiseEmergency();
+      if (!Acc.planes().isAny(q -> q.isEmergency())) {
+        Airplane p = Acc.planes().where(q -> q.getState().is(Airplane.State.departingLow,
+            Airplane.State.departingHigh, Airplane.State.arrivingHigh, Airplane.State.arrivingLow, Airplane.State.arrivingCloseFaf)).getRandom();
+        p.raiseEmergency();
+      }
       generateEmergencyTime();
     }
   }
@@ -365,16 +368,16 @@ public class Simulation {
         this.stats.finishedDepartures.add();
       }
 
-      if (p.isEmergency() && p.hasElapsedDivertTime()){
+      if (p.isEmergency() && p.hasElapsedEmergencyTime()) {
         rem.add(p);
-
       }
     }
 
     for (Airplane p : rem) {
       Acc.prm().unregisterPlane(p);
       this.mrvaManager.unregisterPlane(p);
-      this.stats.delays.add(p.getDelayDifference());
+      if (!p.isEmergency())
+        this.stats.delays.add(p.getDelayDifference());
     }
   }
 

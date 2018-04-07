@@ -45,8 +45,8 @@ public class JAtcSim {
   private static final boolean FAST_START = false;
   private static final Traffic specificTraffic =
 //    new eng.jAtcSim.lib.traffic.TestTrafficOneApproach();
-    new eng.jAtcSim.lib.traffic.TestTrafficOneDeparture();
- //  null;
+  //  new eng.jAtcSim.lib.traffic.TestTrafficOneDeparture();
+   null;
   private static AppSettings appSettings;
 
   /**
@@ -98,8 +98,6 @@ public class JAtcSim {
     if (startupSettings.weather.useOnline) {
       DynamicWeatherProvider dwp = new NoaaDynamicWeatherProvider(aip.getIcao());
       dwp.updateWeather(false);
-//      Weather w = new Weather(50, 20, 9999, 5400, 0.8);
-//      dwp.setWeather(w);
       weatherProvider = dwp;
     } else {
       StaticWeatherProvider swp = new StaticWeatherProvider(startupSettings.weather.metar);

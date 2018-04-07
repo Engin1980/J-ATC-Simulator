@@ -7,6 +7,6 @@
     <customTraffic arrivals2departuresRatio="6" delayAllowed="false" movementsPerHour="40" useExtendedCallsigns="false" weightTypeA="3" weightTypeB="8" weightTypeC="6" weightTypeD="1"/>
   </traffic>
   <radar packClass="eng.jAtcSim.frmPacks.sdi.Pack"/>
-  <simulation secondLengthInMs="1000" emergencyPerDayProbability="1" />
+  <simulation emergencyPerDayProbability="96.0" secondLengthInMs="1000"/>
   <__typeMap/>
 </root>

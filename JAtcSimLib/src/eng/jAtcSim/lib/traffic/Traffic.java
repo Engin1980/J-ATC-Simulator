@@ -8,6 +8,7 @@ package eng.jAtcSim.lib.traffic;
 import com.sun.istack.internal.Nullable;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
+import eng.eSystem.utilites.ArrayUtils;
 import eng.eSystem.utilites.CollectionUtils;
 import eng.eSystem.xmlSerialization.XmlOptional;
 import eng.jAtcSim.lib.Acc;
@@ -247,6 +248,10 @@ public abstract class Traffic {
   }
 
   private Squawk generateSqwk() {
+    String [] illegals = new String[]{
+      "7500", "7600", "7700"
+    };
+
     int len = 4;
     char[] tmp;
     Squawk ret = null;
@@ -255,6 +260,8 @@ public abstract class Traffic {
       for (int i = 0; i < len; i++) {
         tmp[i] = Integer.toString(Simulation.rnd.nextInt(8)).charAt(0);
       }
+      if (ArrayUtils.contains(illegals, tmp.toString()))
+        continue;
       ret = Squawk.create(tmp);
       for (Airplane p : Acc.planes()) {
         if (p.getSqwk().equals(ret)) {

@@ -322,7 +322,7 @@
                 <route type="sid" name="OKTET6C" category="AB"
                        route=" AA 4+ FH 138 AD NIZ/8 PD MN052 T PD NIZ T PD BARSO T PD OKTET"/>
                 <route type="sid" name="BADOD6C" category="AB"
-                       route=" AA 4+ FH 138 AD NIZ/8 PD MN052 T PD NIZ T PD BADOD"/>
+                       route="AA 4+ FH 138 AD NIZ/8 PD MN052 T PD NIZ T PD BADOD"/>
                 <route type="sid" name="BASIP6A" category="AB"
                        route="CM 70 AA 4+ FH 138 AD NIZ/8 PD MN052 T PD MN054 T PD USANO T PD TIVNO T PD BASIP"/>
                 <route type="sid" name="RUBIT6A" category="CD"

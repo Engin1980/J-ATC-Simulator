@@ -344,8 +344,9 @@ public class Pilot {
           super.throwIllegalStateException();
       }
 
-      if (this.divertIfRequested() == false)
-        this.adviceDivertTimeIfRequested();
+      if (!parent.isEmergency())
+        if (this.divertIfRequested() == false)
+          this.adviceDivertTimeIfRequested();
     }
 
     private void adviceDivertTimeIfRequested() {
@@ -363,7 +364,7 @@ public class Pilot {
     }
 
     private boolean divertIfRequested() {
-      if (divertInfo.getMinutesLeft() <= 0 && parent.isEmergency() == false) {
+      if (divertInfo.getMinutesLeft() <= 0) {
         Pilot.this.processDivert();
         return true;
       } else {
@@ -912,10 +913,6 @@ public class Pilot {
     this.secondsWithoutRadarContact = 0;
   }
 
-  public void setDivertTime(ETime divertTime){
-    this.divertInfo = new DivertInfo(divertTime);
-  }
-
   public void initSpeeches(SpeechList<IAtcCommand> initialCommands) {
     SpeechList<IFromAtc> cmds;
     cmds = new SpeechList<>(initialCommands);
@@ -923,7 +920,11 @@ public class Pilot {
     processSpeeches(cmds, CommandSource.atc);
   }
 
-  public void setAssignedRoute(Route newRoute){
+  public Route getAssignedRoute() {
+    return this.assignedRoute;
+  }
+
+  public void setAssignedRoute(Route newRoute) {
     this.assignedRoute = newRoute;
     this.afterCommands.clearRoute();
 
@@ -932,10 +933,6 @@ public class Pilot {
     cmds.add(assignedRoute.getCommands());
     expandThenCommands(cmds);
     processSpeeches(cmds, CommandSource.procedure);
-  }
-
-  public Route getAssignedRoute() {
-    return this.assignedRoute;
   }
 
   public Coordinate getTargetCoordinate() {
@@ -984,8 +981,8 @@ public class Pilot {
 
   public Navaid getDivertNavaid() {
     IList<Route> rts = Acc.thresholds().get(0).getRoutes(); // get random active threshold
-    rts = rts.where(q->q.getType() == Route.eType.sid);
-    rts = rts.where(q->q.isValidForCategory(this.parent.getType().category));
+    rts = rts.where(q -> q.getType() == Route.eType.sid);
+    rts = rts.where(q -> q.isValidForCategory(this.parent.getType().category));
     Route r = rts.getRandom();
     //TODO here can null-pointer-exception occur when no route is found for threshold and category
     Navaid ret = r.getMainFix();
@@ -1019,15 +1016,11 @@ public class Pilot {
   }
 
   public void raiseEmergency() {
-    int divertMinutes = Acc.rnd().nextInt(15, 45);
-    this.divertInfo = new DivertInfo(Acc.now().addMinutes(divertMinutes));
+    this.divertInfo = null;
     this.afterCommands.clearAll();
     this.behavior = new ArrivalBehavior();
     this.parent.setxState(Airplane.State.arrivingHigh);
-  }
-
-  public boolean hasElapsedDivertTime() {
-    return divertInfo.getMinutesLeft() <= 0;
+    this.say(new EmergencyNotification());
   }
 
   private void requestRadarContactIfRequired() {
@@ -1073,6 +1066,11 @@ public class Pilot {
 
     // if has not confirmed radar contact and the first command in the queue is not radar contact confirmation
     if (secondsWithoutRadarContact > 0 && !(current.get(0) instanceof RadarContactConfirmationNotification)) {
+      System.out.println("## before RC commands:");
+      for (Object o : current) {
+        System.out.println(o.toString());
+      }
+      System.out.println("## end");
       say(new RequestRadarContactNotification());
       this.queue.clear();
     } else {
