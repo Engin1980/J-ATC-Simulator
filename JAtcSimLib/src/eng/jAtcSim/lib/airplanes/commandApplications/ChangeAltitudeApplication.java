@@ -10,7 +10,6 @@ public class ChangeAltitudeApplication extends CommandApplication<ChangeAltitude
   @Override
   protected Airplane.State[] getInvalidStates() {
     return new Airplane.State[]{
-        Airplane.State.holdingPoint,
         Airplane.State.takeOffRoll,
         Airplane.State.flyingIaf2Faf,
         Airplane.State.approachEnter,

@@ -584,12 +584,13 @@ public class TowerAtc extends ComputerAtc {
 
     SpeechList lst = new SpeechList();
     lst.add(new RadarContactConfirmationNotification());
-    lst.add(new ClearedForTakeoffCommand(availableThreshold));
 
     // TO altitude only when no altitude from SID already processed
     if (toReadyPlane.getTargetAltitude() <= availableThreshold.getParent().getParent().getAltitude())
       lst.add(new ChangeAltitudeCommand(
           ChangeAltitudeCommand.eDirection.climb, availableThreshold.getInitialDepartureAltitude()));
+
+    lst.add(new ClearedForTakeoffCommand(availableThreshold));
 
     // -- po vysce+300 ma kontaktovat APP
     lst.add(new AfterAltitudeCommand(
