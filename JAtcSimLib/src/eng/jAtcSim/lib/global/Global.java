@@ -6,6 +6,8 @@
 
 package eng.jAtcSim.lib.global;
 
+import eng.eSystem.utilites.ConversionUtils;
+
 /**
  *
  * @author Marek
@@ -17,13 +19,8 @@ public class Global {
   public static boolean COORDINATE_LONG = false;
   
 
-  public static <T> T as (Object obj){
-    T ret;
-    try{
-      ret = (T) obj;
-    } catch (Throwable ex){
-      ret = null;
-    }
+  public static <T> T as (Object obj, Class<T> type){
+    T ret = ConversionUtils.tryConvert(obj, type);
     return ret;
   }
 }

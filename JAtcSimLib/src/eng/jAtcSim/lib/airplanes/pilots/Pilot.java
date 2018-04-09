@@ -1014,7 +1014,7 @@ public class Pilot {
 
   public CurrentApproachInfo tryGetAssignedApproach() {
     CurrentApproachInfo ret;
-    ApproachBehavior ap = ConversionUtils.tryConvert(this.behavior);
+    ApproachBehavior ap = ConversionUtils.tryConvert(this.behavior, ApproachBehavior.class);
     if (ap != null)
       ret = ap.approach;
     else
