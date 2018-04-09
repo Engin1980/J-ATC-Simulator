@@ -277,8 +277,11 @@ public class LongFormatter extends Formatter {
     StringBuilder sb = new StringBuilder();
     sb
         .append(greetings[(int) d])
-        .append(", ")
-        .append(cmd.getCallsign().toString())
+        .append(", ");
+    if (cmd.isEmergency())
+      sb.append("mayday ");
+
+    sb.append(cmd.getCallsign().toString())
         .append(" with you at ")
         .append(DataFormat.Altitude.toStandardAltitudeOrFL(cmd.getAltitude(), Acc.airport().getTransitionAltitude()));
     return sb.toString();

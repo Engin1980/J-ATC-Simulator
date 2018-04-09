@@ -410,6 +410,15 @@ public class Pilot {
     public ETime secondTurnTime;
     public boolean isLeftTurned;
 
+    public int getAfterSecondTurnHeading() {
+      int ret;
+      if (isLeftTurned)
+        ret = (int) Headings.to(inboundRadial + 30);
+      else
+        ret = (int) Headings.to(inboundRadial - 30);
+      return ret;
+    }
+
     private double getOutboundHeading() {
       return Headings.add(inboundRadial, 180);
     }
@@ -469,7 +478,7 @@ public class Pilot {
           break;
         case outbound:
           if (Acc.now().isAfter(this.secondTurnTime)) {
-            parent.setTargetHeading(this.inboundRadial, this.isLeftTurned);
+            parent.setTargetHeading(this.getAfterSecondTurnHeading(), this.isLeftTurned);
             this.phase = eHoldPhase.secondTurn;
           }
           break;
@@ -786,7 +795,6 @@ public class Pilot {
             // moc nizko, uz pod stabilized altitude
             int MAX_LONG_FINAL_HEADING_DIFF = 30;
             if (Math.abs(parent.getTargetHeading() - this.approach.getCourse()) > MAX_LONG_FINAL_HEADING_DIFF) {
-              System.out.println("stab-fail " + (Math.abs(parent.getTargetHeading() - this.approach.getCourse()) > MAX_LONG_FINAL_HEADING_DIFF));
               goAround("Not stabilized in approach.");
               return;
             }
@@ -810,7 +818,6 @@ public class Pilot {
             int MAX_SHORT_FINAL_HEADING_DIFF = 10;
             double diff = Math.abs(parent.getTargetHeading() - this.approach.getCourse());
             if (diff > MAX_SHORT_FINAL_HEADING_DIFF) {
-              System.out.println("stab-fail " + diff);
               goAround("Not stabilized in approach.");
               return;
             }
@@ -1029,7 +1036,7 @@ public class Pilot {
       if (secondsWithoutRadarContact % 20 == 0) {
         this.say(
             new GoodDayNotification(
-                this.parent.getCallsign(), this.parent.getAltitude()));
+                this.parent.getCallsign(), this.parent.getAltitude(), this.parent.isEmergency()));
       }
     }
   }

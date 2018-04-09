@@ -6,7 +6,6 @@
 package eng.jAtcSim.lib.airplanes;
 
 import eng.eSystem.collections.IReadOnlyList;
-import eng.eSystem.collections.ReadOnlyList;
 import eng.eSystem.utilites.CollectionUtils;
 import eng.eSystem.utilites.StringUtil;
 import eng.jAtcSim.lib.Acc;
@@ -21,6 +20,7 @@ import java.util.List;
 public class Airplanes {
 
   private static final double AIRPROX_STANDARD_DISTANCE = 5;
+  private static final double AIRPROX_WARNING_DISTANCE = 7.5;
   private static final double AIRPROX_APPROACH_DISTANCE = 2.5;
 
   public static Airplane tryGetByCallsingOrNumber(Iterable<Airplane> planes, String callsignOrNumber) {
@@ -93,42 +93,61 @@ public class Airplanes {
       )) continue;
       for (int j = i + 1; j < planes.size(); j++) {
         Airplane b = planes.get(j);
-        if (b.getSpeed() == 0) continue;
+        if (b.getState().is(
+            Airplane.State.holdingPoint,
+            Airplane.State.landed,
+            Airplane.State.takeOffRoll
+        )) continue;
 
-        if (isInAirprox(a, b)) {
-          if (Acc.prm().getResponsibleAtc(a) == Acc.atcApp() &&
-              Acc.prm().getResponsibleAtc(b) == Acc.atcApp()) {
-            a.setAirprox(AirproxType.full);
-            b.setAirprox(AirproxType.full);
-          } else {
-            a.setAirprox(AirproxType.partial);
-            b.setAirprox(AirproxType.partial);
-          }
-        }
+        AirproxType at = isInAirprox(a, b);
+
+        if (at == AirproxType.full && !(Acc.prm().getResponsibleAtc(a) == Acc.atcApp() &&
+            Acc.prm().getResponsibleAtc(b) == Acc.atcApp()))
+          at = AirproxType.partial;
+
+        a.setAirprox(at);
+        b.setAirprox(at);
       }
-
     }
   }
 
-  private static boolean isInAirprox(Airplane a, Airplane b) {
-    boolean ret;
-    if (Math.abs(a.getAltitude() - b.getAltitude()) >= 1000) {
-      return false;
+  private static AirproxType isInAirprox(Airplane a, Airplane b) {
+    AirproxType ret;
+
+    double alt = Math.abs(a.getAltitude() - b.getAltitude());
+
+    if (alt >= 1500) {
+      return AirproxType.none;
     }
 
-    double d = Coordinates.getDistanceInNM(
+    double dist = Coordinates.getDistanceInNM(
         a.getCoordinate(), b.getCoordinate());
 
-    if (d < AIRPROX_STANDARD_DISTANCE) {
+    if (alt < 1000) {
       boolean isAinApp = a.getState().is(Airplane.State.approachDescend, Airplane.State.longFinal, Airplane.State.shortFinal, Airplane.State.landed, Airplane.State.takeOffRoll, Airplane.State.takeOffGoAround);
       boolean isBinApp = b.getState().is(Airplane.State.approachDescend, Airplane.State.longFinal, Airplane.State.shortFinal, Airplane.State.landed, Airplane.State.takeOffRoll, Airplane.State.takeOffGoAround);
-      if (isAinApp && isBinApp)
-        ret = d < AIRPROX_APPROACH_DISTANCE;
+      if (isAinApp && isBinApp) {
+        if (dist < AIRPROX_APPROACH_DISTANCE) {
+          ret = AirproxType.full;
+        } else {
+          ret = AirproxType.none;
+        }
+      } else {
+        if (dist < AIRPROX_STANDARD_DISTANCE)
+          ret = AirproxType.full;
+        else if (dist < AIRPROX_WARNING_DISTANCE)
+          ret = AirproxType.warning;
+        else
+          ret = AirproxType.none;
+      }
+    } else {
+      if (dist < AIRPROX_STANDARD_DISTANCE)
+        ret = AirproxType.warning;
       else
-        ret = true;
-    } else
-      ret = false;
+        ret = AirproxType.none;
+    }
 
     return ret;
   }
+
 }

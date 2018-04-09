@@ -237,7 +237,7 @@ public class DisplaySettings {
   // airproxes
   public Color airproxFull;
   public Color airproxPartial;
-
+  public Color airproxWarning;
   public Color mrvaError;
 
 }

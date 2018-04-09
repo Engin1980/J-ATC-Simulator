@@ -177,7 +177,10 @@ this.emergency = plane.isEmergency();
     private String getFormatValueByIndex(int index) {
       switch (index) {
         case 1:
-          return this.callsign.toString();
+          if (this.emergency)
+            return this.callsign.toString() + " !";
+          else
+            return this.callsign.toString();
         case 2:
           return this.callsign.getCompany();
         case 3:
@@ -886,6 +889,8 @@ this.emergency = plane.isEmergency();
       c = displaySettings.airproxPartial;
     } else if (adi.mrvaError) {
       c = displaySettings.mrvaError;
+    } else if (adi.airprox == AirproxType.warning){
+      c = displaySettings.airproxWarning;
     } else if (this.selectedCallsign == adi.callsign) {
       c = displaySettings.selected.getColor();
     }

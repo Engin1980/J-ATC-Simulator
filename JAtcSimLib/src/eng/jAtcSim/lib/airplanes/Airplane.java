@@ -229,6 +229,10 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
 
   public class Airplane4Command {
 
+    public boolean isEmergency(){
+      return Airplane.this.isEmergency();
+    }
+
     public State getState() {
       return state;
     }

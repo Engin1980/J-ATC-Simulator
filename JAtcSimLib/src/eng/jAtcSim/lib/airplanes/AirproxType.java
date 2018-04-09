@@ -5,6 +5,8 @@ public enum AirproxType {
   none,
   /** Air proximity of APP and non-APP airplane */
   partial,
+  /** Air proximity warning */
+  warning,
   /** Air proximity betwen APP and APP airplane */
   full
 }

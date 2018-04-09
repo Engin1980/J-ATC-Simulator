@@ -3,7 +3,8 @@
 <settings refreshRate="3">
 
   <airproxFull>FF0000</airproxFull>
-  <airproxPartial>FFA500</airproxPartial>
+  <airproxWarning>FFA500</airproxWarning>
+  <airproxPartial>880000</airproxPartial>
   <mrvaError>FF0066</mrvaError>
 
   <activeRunway color="FFFFFF" width="3"/>
