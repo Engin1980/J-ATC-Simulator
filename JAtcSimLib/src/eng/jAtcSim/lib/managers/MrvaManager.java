@@ -134,7 +134,7 @@ class XMRVA {
   }
 
   public boolean isIn(double altitude) {
-    boolean ret = NumberUtils.isBetweenOrEqual(this.min, altitude, this.max);
+    boolean ret = NumberUtils.isBetween(this.min, altitude, this.max);
     return ret;
   }
 }

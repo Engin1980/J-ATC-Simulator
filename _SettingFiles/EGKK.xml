@@ -978,7 +978,7 @@
 
   </navaids>
   <borders>
-    <border name="UK" type="country" enclosed="false" minAltitude="0" maxAltitude="FL990">
+    <border name="UK" type="country" enclosed="false" minAltitude="0" maxAltitude="99000">
       <points>
         <point coordinate="52.4845848083498 1.76249897480011"/>
         <point coordinate="52.4737510681153 1.76027703285217"/>
@@ -2428,6 +2428,134 @@
         <point coordinate="511618N 0000533E"/>
         <arc coordinate="510853N 0001125W" direction="clockwise"/>
         <point coordinate="510100N 0000458E"/>
+      </points>
+    </border>
+
+    <border name="" type="mrva" enclosed="true" minAltitude="0" maxAltitude="2100">
+      <points>
+        <point coordinate="51.372877 -0.165014" />
+        <point coordinate="51.269364 -0.110967" />
+        <point coordinate="51.237476 -0.074449" />
+        <point coordinate="51.223250 -0.009446" />
+        <point coordinate="51.233552 0.039488" />
+        <point coordinate="51.254647 0.071625" />
+        <point coordinate="51.290459 0.089884" />
+        <point coordinate="51.318422 0.083310" />
+        <point coordinate="51.366499 0.049714" />
+        <point coordinate="51.376311 0.008813" />
+        <point coordinate="51.381707 -0.049616" />
+        <point coordinate="51.381217 -0.105855" />
+      </points>
+    </border>
+    <border name="" type="mrva" enclosed="true" minAltitude="0" maxAltitude="2300">
+      <points>
+        <point coordinate="51.456276 -0.217601" />
+        <point coordinate="51.365518 -0.212488" />
+        <point coordinate="51.372877 -0.165014" />
+        <point coordinate="51.381217 -0.105855" />
+        <point coordinate="51.381707 -0.049616" />
+        <point coordinate="51.376311 0.008813" />
+        <point coordinate="51.366990 0.052635" />
+        <point coordinate="51.348838 0.101570" />
+        <point coordinate="51.328725 0.141740" />
+        <point coordinate="51.305667 0.173876" />
+        <point coordinate="51.280648 0.200900" />
+        <point coordinate="51.252684 0.221350" />
+        <point coordinate="51.215400 0.238879" />
+        <point coordinate="51.184984 0.246913" />
+        <point coordinate="51.166833 0.244722" />
+        <point coordinate="51.170757 0.385683" />
+        <point coordinate="51.455295 0.384222" />
+      </points>
+    </border>
+
+    <border name="" type="mrva" enclosed="true" minAltitude="0" maxAltitude="2200">
+      <points>
+        <point coordinate="51.454804 -0.218331" />
+        <point coordinate="51.365518 -0.212488" />
+        <point coordinate="51.331177 -0.422834" />
+        <point coordinate="51.301743 -0.509748" />
+        <point coordinate="51.262005 -0.567447" />
+        <point coordinate="51.171248 -0.630989" />
+        <point coordinate="51.135926 -0.636832" />
+        <point coordinate="51.129548 -0.798973" />
+        <point coordinate="51.457257 -0.798243" />
+      </points>
+    </border>
+    <border name="" type="mrva" enclosed="true" minAltitude="0" maxAltitude="2000">
+      <points>
+        <point coordinate="51.129548 -0.798973" />
+        <point coordinate="51.135926 -0.636832" />
+        <point coordinate="51.105510 -0.636101" />
+        <point coordinate="51.068226 -0.622955" />
+        <point coordinate="51.029960 -0.599583" />
+        <point coordinate="51.001016 -0.571829" />
+        <point coordinate="50.971581 -0.530198" />
+        <point coordinate="50.946561 -0.476881" />
+        <point coordinate="50.930372 -0.425025" />
+        <point coordinate="50.919579 -0.345415" />
+        <point coordinate="50.921051 -0.277491" />
+        <point coordinate="50.935769 -0.180352" />
+        <point coordinate="50.827841 -0.173049" />
+        <point coordinate="50.828822 -0.797513" />
+      </points>
+    </border>
+
+    <border name="" type="mrva" enclosed="true" minAltitude="0" maxAltitude="2000">
+      <points>
+        <point coordinate="50.827841 -0.173049" />
+        <point coordinate="50.936750 -0.178161" />
+        <point coordinate="50.969619 0.020499" />
+        <point coordinate="50.991695 0.093536" />
+        <point coordinate="51.020149 0.150504" />
+        <point coordinate="51.056452 0.195057" />
+        <point coordinate="51.098642 0.226462" />
+        <point coordinate="51.132982 0.240339" />
+        <point coordinate="51.166833 0.244722" />
+        <point coordinate="51.170757 0.385683" />
+        <point coordinate="50.828822 0.382761" />
+      </points>
+    </border>
+    <border name="" type="mrva" enclosed="true" minAltitude="0" maxAltitude="2000">
+      <points>
+        <point coordinate="51.372877 -0.165014" />
+        <point coordinate="51.365518 -0.212488" />
+        <point coordinate="51.331177 -0.422834" />
+        <point coordinate="51.301743 -0.509748" />
+        <point coordinate="51.262005 -0.567447" />
+        <point coordinate="51.171248 -0.630989" />
+        <point coordinate="51.135926 -0.636832" />
+        <point coordinate="51.105510 -0.636101" />
+        <point coordinate="51.068226 -0.622955" />
+        <point coordinate="51.029960 -0.599583" />
+        <point coordinate="51.001016 -0.571829" />
+        <point coordinate="50.971581 -0.530198" />
+        <point coordinate="50.946561 -0.476881" />
+        <point coordinate="50.930372 -0.425025" />
+        <point coordinate="50.919579 -0.345415" />
+        <point coordinate="50.921051 -0.277491" />
+        <point coordinate="50.935769 -0.180352" />
+        <point coordinate="50.969619 0.020499" />
+        <point coordinate="51.020149 0.150504" />
+        <point coordinate="51.056452 0.195057" />
+        <point coordinate="51.098642 0.226462" />
+        <point coordinate="51.132982 0.240339" />
+        <point coordinate="51.166833 0.244722" />
+        <point coordinate="51.184984 0.246913" />
+        <point coordinate="51.215400 0.238879" />
+        <point coordinate="51.252684 0.221350" />
+        <point coordinate="51.280648 0.200900" />
+        <point coordinate="51.306158 0.171685" />
+        <point coordinate="51.328725 0.141740" />
+        <point coordinate="51.348838 0.101570" />
+        <point coordinate="51.366499 0.049714" />
+        <point coordinate="51.318422 0.083310" />
+        <point coordinate="51.290459 0.089884" />
+        <point coordinate="51.254647 0.071625" />
+        <point coordinate="51.233552 0.039488" />
+        <point coordinate="51.223250 -0.009446" />
+        <point coordinate="51.237476 -0.074449" />
+        <point coordinate="51.269364 -0.110967" />
       </points>
     </border>
 

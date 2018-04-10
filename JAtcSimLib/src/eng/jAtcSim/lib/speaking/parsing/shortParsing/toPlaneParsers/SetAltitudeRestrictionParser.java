@@ -25,7 +25,7 @@ public class SetAltitudeRestrictionParser extends SpeechParser<SetAltitudeRestri
     Restriction res;
     SetAltitudeRestriction ret;
     String dirS = rg.getString(1);
-    if (dirS.equals("AR")) {
+    if (dirS.equals("AC")) {
       res = null;
     } else {
       int val = rg.getInt(7) * 100;
