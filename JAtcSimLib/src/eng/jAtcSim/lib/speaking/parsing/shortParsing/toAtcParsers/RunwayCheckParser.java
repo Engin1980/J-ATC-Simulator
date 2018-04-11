@@ -1,7 +1,7 @@
 package eng.jAtcSim.lib.speaking.parsing.shortParsing.toAtcParsers;
 
+import eng.eSystem.exceptions.EApplicationException;
 import eng.jAtcSim.lib.Acc;
-import eng.jAtcSim.lib.exceptions.ERuntimeException;
 import eng.jAtcSim.lib.speaking.fromAtc.atc2atc.RunwayCheck;
 import eng.jAtcSim.lib.speaking.parsing.shortParsing.RegexGrouper;
 import eng.jAtcSim.lib.speaking.parsing.shortParsing.SpeechParser;
@@ -33,7 +33,7 @@ public class RunwayCheckParser extends SpeechParser<RunwayCheck> {
     else{
       RunwayThreshold rt = Acc.airport().tryGetRunwayThreshold(rwyName);
       if (rt == null){
-        throw new ERuntimeException("Unable to find threshold name " + rwyName + ".");
+        throw new EApplicationException("Unable to find threshold name " + rwyName + ".");
       } else {
         rwy = rt.getParent();
       }

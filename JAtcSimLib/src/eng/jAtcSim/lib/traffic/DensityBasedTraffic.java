@@ -1,10 +1,10 @@
 package eng.jAtcSim.lib.traffic;
 
+import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.xmlSerialization.XmlIgnore;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.AirplaneType;
 import eng.jAtcSim.lib.airplanes.Callsign;
-import eng.jAtcSim.lib.exceptions.ERuntimeException;
 import eng.eSystem.utilites.CollectionUtils;
 import eng.jAtcSim.lib.global.ETime;
 import eng.jAtcSim.lib.traffic.fleets.CompanyFleet;
@@ -96,7 +96,7 @@ public class DensityBasedTraffic extends Traffic {
   private void generateNewMovements() {
     if (lastGeneratedHour == null) {
       if (density.size() == 0)
-        throw new ERuntimeException("Unable to use generic traffic without density specified.");
+        throw new EApplicationException("Unable to use generic traffic without density specified.");
       // init things
       Collections.sort(density);
       generateTrafficForHour(Acc.now().getHours());

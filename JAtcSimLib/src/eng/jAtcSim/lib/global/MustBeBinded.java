@@ -6,9 +6,7 @@
 
 package eng.jAtcSim.lib.global;
 
-import eng.jAtcSim.lib.exceptions.ERuntimeException;
-import eng.jAtcSim.lib.world.approaches.Approach;
-import eng.jAtcSim.lib.world.approaches.CurrentApproachInfo;
+import eng.jAtcSim.lib.exceptions.EBindException;
 
 /**
  *
@@ -19,7 +17,7 @@ public abstract class MustBeBinded {
   
   public void checkBinded(){
     if (!binded){
-      throw new ERuntimeException(
+      throw new EBindException(
           "Object " + this.getClass().getSimpleName() + 
               " has not been binded. Did you call \"bind()\" method over area antecedent loading?");
     }

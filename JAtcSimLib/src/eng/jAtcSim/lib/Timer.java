@@ -7,7 +7,8 @@ package eng.jAtcSim.lib;
 
 import eng.eSystem.events.EventSimple;
 import eng.eSystem.events.IEventListenerSimple;
-import eng.jAtcSim.lib.exceptions.ERuntimeException;
+import eng.eSystem.exceptions.EApplicationException;
+
 import java.util.TimerTask;
 
 /**
@@ -31,7 +32,7 @@ public class Timer {
 
   public synchronized void start(int ms) {
     if (tmr != null) {
-      throw new ERuntimeException("Cannot start the timer, its not stopped.");
+      throw new EApplicationException("Cannot start the timer, its not stopped.");
     }
 
     this.tickLength = ms;

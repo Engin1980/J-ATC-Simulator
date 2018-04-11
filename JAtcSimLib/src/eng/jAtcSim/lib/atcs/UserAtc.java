@@ -5,13 +5,12 @@
  */
 package eng.jAtcSim.lib.atcs;
 
+import eng.eSystem.exceptions.ERuntimeException;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.Airplanes;
 import eng.jAtcSim.lib.airplanes.Callsign;
 import eng.jAtcSim.lib.airplanes.Squawk;
-import eng.jAtcSim.lib.exceptions.ENotSupportedException;
-import eng.jAtcSim.lib.exceptions.ERuntimeException;
 import eng.jAtcSim.lib.messaging.Message;
 import eng.jAtcSim.lib.messaging.Messenger;
 import eng.jAtcSim.lib.messaging.StringMessageContent;
@@ -172,7 +171,7 @@ public class UserAtc extends Atc {
       case throwExceptions:
         throw new ERuntimeException(text);
       default:
-        throw new ENotSupportedException();
+        throw new UnsupportedOperationException();
     }
   }
 

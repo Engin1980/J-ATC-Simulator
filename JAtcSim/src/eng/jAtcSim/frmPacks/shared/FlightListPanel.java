@@ -2,6 +2,7 @@ package eng.jAtcSim.frmPacks.shared;
 
 import eng.eSystem.collections.ReadOnlyList;
 import eng.eSystem.events.Event;
+import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.jAtcSim.AppSettings;
 import eng.jAtcSim.XmlLoadHelper;
 import eng.jAtcSim.lib.Simulation;
@@ -9,7 +10,6 @@ import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.AirplaneDataFormatter;
 import eng.jAtcSim.lib.airplanes.AirproxType;
 import eng.jAtcSim.lib.airplanes.Callsign;
-import eng.jAtcSim.lib.exceptions.ENotSupportedException;
 import eng.jAtcSim.startup.LayoutManager;
 
 import javax.swing.*;
@@ -178,7 +178,7 @@ class FlightStripPanel extends JPanel {
           ret = isEven ? stripSettings.ctr.even : stripSettings.ctr.odd;
           break;
         default:
-          throw new ENotSupportedException();
+          throw new EEnumValueUnsupportedException(ai.responsibleAtc().getType());
       }
     }
     return ret;

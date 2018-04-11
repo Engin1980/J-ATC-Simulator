@@ -5,8 +5,8 @@
  */
 package eng.jAtcSim.lib.airplanes.pilots;
 
+import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.jAtcSim.lib.airplanes.Airplane;
-import eng.jAtcSim.lib.exceptions.ENotSupportedException;
 import eng.eSystem.EStringBuilder;
 import eng.jAtcSim.lib.global.Restriction;
 
@@ -112,7 +112,7 @@ public class AutoThrust {
         ret = parent.getType().vDep;
         break;
       default:
-        throw new ENotSupportedException();
+        throw new EEnumValueUnsupportedException(mode);
     }
     return ret;
   }
@@ -135,7 +135,7 @@ public class AutoThrust {
             case atLeast:
               return Math.max(this.orderedSpeed.value, speedInKts);
             default:
-              throw new ENotSupportedException();
+              throw new EEnumValueUnsupportedException(this.orderedSpeed.direction);
           }
       }
     }

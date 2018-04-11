@@ -2,8 +2,7 @@ package eng.jAtcSim.lib.speaking;
 
 import eng.eSystem.EStringBuilder;
 import eng.eSystem.collections.EList;
-import eng.eSystem.utilites.StringUtil;
-import eng.jAtcSim.lib.exceptions.ERuntimeException;
+import eng.eSystem.exceptions.EApplicationException;
 import eng.jAtcSim.lib.messaging.IMessageContent;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
 
@@ -45,7 +44,7 @@ public class SpeechList<T extends ISpeech> extends EList<T> implements IMessageC
   public <U extends T> U getAs(int index) {
     U ret = this.tryGetAs(index);
     if (ret == null)
-      throw new ERuntimeException("Element at index {" + index + "} cannot be cast to requested type.");
+      throw new EApplicationException("Element at index {" + index + "} cannot be cast to requested type.");
     return ret;
   }
 

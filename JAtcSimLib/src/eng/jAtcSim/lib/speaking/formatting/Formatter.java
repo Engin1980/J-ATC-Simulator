@@ -1,12 +1,14 @@
 package eng.jAtcSim.lib.speaking.formatting;
 
+import eng.eSystem.exceptions.EApplicationException;
 import eng.jAtcSim.lib.atcs.Atc;
 import eng.jAtcSim.lib.speaking.fromAtc.atc2atc.PlaneSwitchMessage;
-import eng.jAtcSim.lib.exceptions.ERuntimeException;
 import eng.jAtcSim.lib.speaking.ISpeech;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+
+import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public abstract class Formatter {
 
@@ -22,20 +24,20 @@ public abstract class Formatter {
     m = tryGetFormatCommandMethodToInvoke(speech.getClass());
 
     if (m == null) {
-      throw new ERuntimeException(
+      throw new EApplicationException(sf(
           "No {format(...)} method found for type {%s} in the formatter of type {%s}.",
           speech.getClass().getName(),
-          this.getClass().getName());
+          this.getClass().getName()));
     }
 
     String ret;
     try {
       ret = (String) m.invoke(fmt, speech);
     } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
-      throw new ERuntimeException(
+      throw new EApplicationException(sf(
           "Format-command invoke failed for class %s and parameter %s.",
           fmt.getClass().getName(),
-          speech.getClass().getName());
+          speech.getClass().getName()));
     }
     return ret;
   }

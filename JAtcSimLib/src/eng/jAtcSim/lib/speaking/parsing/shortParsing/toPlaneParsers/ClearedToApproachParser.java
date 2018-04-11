@@ -1,7 +1,7 @@
 package eng.jAtcSim.lib.speaking.parsing.shortParsing.toPlaneParsers;
 
 import eng.eSystem.EStringBuilder;
-import eng.jAtcSim.lib.exceptions.ENotSupportedException;
+import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ClearedToApproachCommand;
 import eng.jAtcSim.lib.speaking.parsing.shortParsing.RegexGrouper;
 import eng.jAtcSim.lib.speaking.parsing.shortParsing.SpeechParser;
@@ -72,7 +72,7 @@ public class ClearedToApproachParser extends SpeechParser<ClearedToApproachComma
         type = Approach.ApproachType.visual;
         break;
       default:
-        throw new ENotSupportedException();
+        throw new EEnumValueUnsupportedException(typeS);
     }
 
     ClearedToApproachCommand ret = new ClearedToApproachCommand(runwayName, type);

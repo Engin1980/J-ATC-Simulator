@@ -10,7 +10,6 @@ import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.AirplaneList;
 import eng.jAtcSim.lib.coordinates.Coordinates;
-import eng.jAtcSim.lib.exceptions.ENotSupportedException;
 import eng.jAtcSim.lib.global.ETime;
 import eng.jAtcSim.lib.global.Headings;
 import eng.jAtcSim.lib.global.SchedulerForAdvice;
@@ -670,7 +669,7 @@ class TakeOffInfos extends EMap<RunwayThreshold, TakeOffInfo> {
       case 'D':
         return 3;
       default:
-        throw new ENotSupportedException("Unknown plane type category " + c);
+        throw new UnsupportedOperationException("Unknown plane type category " + c);
     }
   }
 

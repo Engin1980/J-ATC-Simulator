@@ -4,7 +4,6 @@ import eng.eSystem.EStringBuilder;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
-import eng.jAtcSim.lib.exceptions.ERuntimeException;
 
 public class PlaneCategoryDefinitions {
   private final static PlaneCategoryDefinitions ALL = new PlaneCategoryDefinitions("ABCD");
@@ -41,7 +40,7 @@ public class PlaneCategoryDefinitions {
 
   private char ensureValidAndNormalize(char category) {
     if (category < 'A' || category > 'E')
-      throw new ERuntimeException("Category must be between A-E.");
+      throw new IllegalArgumentException("Category must be between A-E.");
     if (Character.isLowerCase(category))
       category = Character.toUpperCase(category);
     return category;

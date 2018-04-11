@@ -6,19 +6,19 @@
 package eng.jAtcSim.lib.atcs;
 
 import eng.eSystem.collections.*;
+import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.AirplaneList;
-import eng.jAtcSim.lib.exceptions.ENotSupportedException;
-import eng.jAtcSim.lib.exceptions.ERuntimeException;
 import eng.jAtcSim.lib.messaging.Message;
 import eng.jAtcSim.lib.messaging.Messenger;
 import eng.jAtcSim.lib.messaging.StringMessageContent;
 
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
+
+import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 /**
  * @author Marek
@@ -63,7 +63,7 @@ public class PlaneResponsibilityManager {
 
   public void registerPlane(Atc atc, Airplane plane) {
     if (map.containsKey(plane)) {
-      throw new ERuntimeException("Second registration of already registered plane!");
+      throw new EApplicationException(sf("Second registration of already registered plane %s!", plane.getCallsign()));
     }
 
     map.set(plane, typeToState(atc));
@@ -75,7 +75,7 @@ public class PlaneResponsibilityManager {
 
   public void unregisterPlane(Airplane plane) {
     if (!map.containsKey(plane)) {
-      throw new ERuntimeException("Plane is not registered, cannot be unregistered!");
+      throw new EApplicationException(sf("Plane %s is not registered, cannot be unregistered!", plane.getCallsign()));
     }
 
     Atc atc = getResponsibleAtc(plane);
@@ -101,10 +101,10 @@ public class PlaneResponsibilityManager {
     switch (from.getType()) {
       case ctr:
         if (to.getType() != Atc.eType.app) {
-          throw new ERuntimeException("Invalid request direction.");
+          throw new EApplicationException("Invalid request direction.");
         }
         if (map.get(plane) != eState.ctr) {
-          throw new ERuntimeException("Not in ctr state, cannot switch.");
+          throw new EApplicationException("Not in ctr state, cannot switch.");
         }
 
         map.set(plane, eState.ctr2app);
@@ -112,7 +112,7 @@ public class PlaneResponsibilityManager {
       case app:
 
         if (map.get(plane) != eState.app) {
-          throw new ERuntimeException("Not int APP state, cannot switch.");
+          throw new EApplicationException("Not int APP state, cannot switch.");
         }
 
         if (to.getType() == Atc.eType.ctr) {
@@ -120,22 +120,22 @@ public class PlaneResponsibilityManager {
         } else if (to.getType() == Atc.eType.twr) {
           map.set(plane, eState.app2twr);
         } else {
-          throw new ENotSupportedException();
+          throw new UnsupportedOperationException();
         }
 
         break;
       case twr:
         if (to.getType() != Atc.eType.app) {
-          throw new ERuntimeException("Invalid request direction.");
+          throw new EApplicationException("Invalid request direction.");
         }
         if (map.get(plane) != eState.twr) {
-          throw new ERuntimeException("Not in TWR state, cannot switch.");
+          throw new EApplicationException("Not in TWR state, cannot switch.");
         }
 
         map.set(plane, eState.twr2app);
         break;
       default:
-        throw new ENotSupportedException();
+        throw new EEnumValueUnsupportedException(from.getType());
     }
   }
 
@@ -149,7 +149,7 @@ public class PlaneResponsibilityManager {
       case ctr:
         return isIn(s, eState.app2ctr);
       default:
-        throw new ENotSupportedException();
+        throw new EEnumValueUnsupportedException(targetAtc.getType());
     }
   }
 
@@ -169,16 +169,16 @@ public class PlaneResponsibilityManager {
           map.set(plane, eState.twr2appReady);
           break;
         default:
-          throw new ENotSupportedException();
+          throw new EEnumValueUnsupportedException(map.get(plane));
       }
     } else {
-      throw new ERuntimeException("Cannot switch plane, not ready to switch.");
+      throw new EApplicationException(sf("Cannot switch plane %s, not ready to switch.", plane.getCallsign()));
     }
   }
 
   public void approveSwitch(Airplane plane) {
     if (isApprovedToSwitch(plane) == false) {
-      throw new ERuntimeException("Plane not approved to switch!");
+      throw new IllegalArgumentException(sf("Plane %s not approved to switch!", plane.getCallsign()));
     }
 
     Atc oldAtc = getResponsibleAtc(plane);
@@ -221,7 +221,7 @@ public class PlaneResponsibilityManager {
       case twr2appReady:
         return Acc.atcTwr();
       default:
-        throw new ENotSupportedException();
+        throw new EEnumValueUnsupportedException(s);
     }
   }
 
@@ -240,7 +240,7 @@ public class PlaneResponsibilityManager {
           map.set(plane, eState.twr);
           break;
         default:
-          throw new ENotSupportedException();
+          throw new EEnumValueUnsupportedException(s);
       }
     } else {
 
@@ -282,7 +282,7 @@ public class PlaneResponsibilityManager {
       case twr2appReady:
         return Acc.atcApp();
       default:
-        throw new ENotSupportedException();
+        throw new EEnumValueUnsupportedException(map.get(p));
     }
   }
 
@@ -302,7 +302,7 @@ public class PlaneResponsibilityManager {
       case twr:
         return eState.twr;
       default:
-        throw new ENotSupportedException();
+        throw new EEnumValueUnsupportedException(atc.getType());
     }
   }
 

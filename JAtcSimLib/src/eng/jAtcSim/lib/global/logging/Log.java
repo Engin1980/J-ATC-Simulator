@@ -1,7 +1,7 @@
 package eng.jAtcSim.lib.global.logging;
 
+import eng.eSystem.exceptions.ERuntimeException;
 import eng.eSystem.utilites.ExceptionUtil;
-import eng.jAtcSim.lib.exceptions.ERuntimeException;
 
 import java.io.*;
 import java.nio.charset.Charset;

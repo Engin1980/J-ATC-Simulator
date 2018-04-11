@@ -6,11 +6,11 @@
 package eng.jAtcSim.lib.global.logging;
 
 import eng.eSystem.EStringBuilder;
+import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.ERuntimeException;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.atcs.Atc;
 import eng.jAtcSim.lib.speaking.fromAtc.atc2atc.PlaneSwitchMessage;
-import eng.jAtcSim.lib.exceptions.ENotSupportedException;
-import eng.jAtcSim.lib.exceptions.ERuntimeException;
 import eng.jAtcSim.lib.messaging.IMessageContent;
 import eng.jAtcSim.lib.messaging.IMessageParticipant;
 import eng.jAtcSim.lib.messaging.Messenger;
@@ -59,19 +59,19 @@ public abstract class Recorder extends SimulationLog {
     try {
       java.nio.file.Files.createDirectories(parent);
     } catch (IOException ex) {
-      throw new ERuntimeException("Failed to create directory for flight recorder. Required directory: " + parent.toString(), ex);
+      throw new EApplicationException("Failed to create directory for flight recorder. Required directory: " + parent.toString(), ex);
     }
     try {
       java.nio.file.Files.deleteIfExists(full);
     } catch (IOException ex) {
-      throw new ERuntimeException("Failed to try delete existing flight recorder. File: " + full.toString(), ex);
+      throw new EApplicationException("Failed to try delete existing flight recorder. File: " + full.toString(), ex);
     }
 
     OutputStream fw;
     try {
       fw = new FileOutputStream(full.toFile());
     } catch (IOException ex) {
-      throw new ERuntimeException("Failed to open flight recorder file: " + full.toString(), ex);
+      throw new EApplicationException("Failed to open flight recorder file: " + full.toString(), ex);
     }
     return fw;
   }
@@ -122,7 +122,7 @@ public abstract class Recorder extends SimulationLog {
     } else if (content instanceof IAtc2Atc) {
       return "{ATC->ATC}" + content.toString();
     } else {
-      throw new ERuntimeException("Message content cannot be get for type " + content.getClass().getName());
+      throw new UnsupportedOperationException("Message content cannot be get for type " + content.getClass().getName());
     }
   }
 
@@ -136,7 +136,7 @@ public abstract class Recorder extends SimulationLog {
       Airplane plane = (Airplane) object;
       return plane.getCallsign().toString();
     } else {
-      throw new ENotSupportedException("Unknown object type.");
+      throw new UnsupportedOperationException("Unknown object {" + object + "}.");
     }
   }
 }

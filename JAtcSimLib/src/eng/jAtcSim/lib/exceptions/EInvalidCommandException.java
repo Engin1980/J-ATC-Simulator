@@ -10,7 +10,7 @@ package eng.jAtcSim.lib.exceptions;
  *
  * @author Marek
  */
-public class EInvalidCommandException extends ERuntimeException {
+public class EInvalidCommandException extends RuntimeException {
 
   public EInvalidCommandException(String message, String processedCommandLinePart, String errorCommandLinePart) {
     super(message + " (processed: " + processedCommandLinePart + "; failed command: " + errorCommandLinePart + ")");

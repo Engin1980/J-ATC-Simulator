@@ -8,6 +8,8 @@ package eng.jAtcSim.lib.airplanes.pilots;
 import com.sun.istack.internal.Nullable;
 import eng.eSystem.EStringBuilder;
 import eng.eSystem.collections.IList;
+import eng.eSystem.exceptions.EEnumValueUnsupportedException;
+import eng.eSystem.exceptions.ERuntimeException;
 import eng.eSystem.utilites.ConversionUtils;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
@@ -17,8 +19,6 @@ import eng.jAtcSim.lib.airplanes.commandApplications.ConfirmationResult;
 import eng.jAtcSim.lib.atcs.Atc;
 import eng.jAtcSim.lib.coordinates.Coordinate;
 import eng.jAtcSim.lib.coordinates.Coordinates;
-import eng.jAtcSim.lib.exceptions.ENotSupportedException;
-import eng.jAtcSim.lib.exceptions.ERuntimeException;
 import eng.jAtcSim.lib.global.ETime;
 import eng.jAtcSim.lib.global.Headings;
 import eng.jAtcSim.lib.global.Restriction;
@@ -541,7 +541,7 @@ public class Pilot {
           break;
 
         default:
-          throw new ENotSupportedException();
+          throw new EEnumValueUnsupportedException(this.phase);
       }
     }
 
@@ -1348,7 +1348,7 @@ public class Pilot {
           maxAllowed = altitudeRestriction.value;
           break;
         default:
-          throw new ERuntimeException("Not supported.");
+          throw new EEnumValueUnsupportedException(altitudeRestriction.direction);
       }
       int ta =
           getBoundedValueIn(minAllowed, altitudeOrderedByAtc, maxAllowed);
@@ -1377,7 +1377,7 @@ public class Pilot {
           maxOrdered = speedRestriction.value;
           break;
         default:
-          throw new ERuntimeException("Not supported.");
+          throw new EEnumValueUnsupportedException(speedRestriction.direction);
       }
     } else {
       minOrdered = Integer.MIN_VALUE;
@@ -1425,7 +1425,7 @@ public class Pilot {
         ts = 0;
         break;
       default:
-        throw new UnsupportedOperationException();
+        throw new EEnumValueUnsupportedException(parent.getState());
     }
     parent.setTargetSpeed(ts);
   }

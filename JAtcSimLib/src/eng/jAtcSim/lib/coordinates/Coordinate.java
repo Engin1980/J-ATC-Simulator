@@ -5,12 +5,6 @@
  */
 package eng.jAtcSim.lib.coordinates;
 
-import eng.eSystem.utilites.ExceptionUtil;
-import eng.jAtcSim.lib.exceptions.ERuntimeException;
-
-import java.text.NumberFormat;
-import java.text.ParseException;
-import java.util.Locale;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -59,7 +53,7 @@ public final class Coordinate {
     }
 
     if (ret == null) {
-      throw new ERuntimeException("Unable to parse " + value + " into Coordinate.");
+      throw new IllegalArgumentException("Unable to parse " + value + " into Coordinate.");
     }
 
     return ret;

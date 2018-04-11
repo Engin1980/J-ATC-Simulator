@@ -1,6 +1,5 @@
 package eng.jAtcSim.lib.speaking.parsing.shortParsing.toPlaneParsers;
 
-import eng.jAtcSim.lib.exceptions.ENotSupportedException;
 import eng.jAtcSim.lib.global.Restriction;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeSpeedCommand;
 import eng.jAtcSim.lib.speaking.parsing.shortParsing.RegexGrouper;
@@ -45,7 +44,7 @@ public class ChangeSpeedParser extends SpeechParser<ChangeSpeedCommand> {
           ret = new ChangeSpeedCommand(Restriction.eDirection.exactly, speed);
           break;
         default:
-          throw new ENotSupportedException();
+          throw new UnsupportedOperationException();
       }
     }
     return ret;

@@ -3,7 +3,6 @@ package eng.jAtcSim.lib.speaking.formatting;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.AirplaneDataFormatter;
 import eng.jAtcSim.lib.atcs.Atc;
-import eng.jAtcSim.lib.exceptions.ENotSupportedException;
 import eng.jAtcSim.lib.global.DataFormat;
 import eng.jAtcSim.lib.global.Headings;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.*;
@@ -63,7 +62,7 @@ public class LongFormatter extends Formatter {
         sb.append("descend and maintain ");
         break;
       default:
-        throw new ENotSupportedException();
+        throw new UnsupportedOperationException();
     }
     sb.append(Acc.toAltS(cmd.getAltitudeInFt(), true));
     return sb.toString();
@@ -86,7 +85,7 @@ public class LongFormatter extends Formatter {
           sb.append("turn right ");
           break;
         default:
-          throw new ENotSupportedException();
+          throw new UnsupportedOperationException();
       }
       sb.append(Headings.format(cmd.getHeading()));
     }

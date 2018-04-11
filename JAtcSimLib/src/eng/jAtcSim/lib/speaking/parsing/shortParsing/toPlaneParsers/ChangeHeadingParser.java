@@ -1,6 +1,6 @@
 package eng.jAtcSim.lib.speaking.parsing.shortParsing.toPlaneParsers;
 
-import eng.jAtcSim.lib.exceptions.ENotSupportedException;
+import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeHeadingCommand;
 import eng.jAtcSim.lib.speaking.parsing.shortParsing.RegexGrouper;
 import eng.jAtcSim.lib.speaking.parsing.shortParsing.SpeechParser;
@@ -34,7 +34,7 @@ public class ChangeHeadingParser extends SpeechParser<ChangeHeadingCommand> {
         d = ChangeHeadingCommand.eDirection.right;
         break;
       default:
-        throw new ENotSupportedException();
+        throw new UnsupportedOperationException();
     }
     ChangeHeadingCommand ret;
 

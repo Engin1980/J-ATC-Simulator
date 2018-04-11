@@ -6,9 +6,6 @@
 package eng.jAtcSim.lib.airplanes;
 
 import eng.jAtcSim.lib.global.KeyList;
-import eng.jAtcSim.lib.exceptions.ERuntimeException;
-import eng.jAtcSim.lib.global.KeyList;
-import java.util.Arrays;
 
 /**
  *

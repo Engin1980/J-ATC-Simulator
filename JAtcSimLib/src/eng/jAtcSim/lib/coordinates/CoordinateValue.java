@@ -5,7 +5,6 @@
  */
 package eng.jAtcSim.lib.coordinates;
 
-import eng.jAtcSim.lib.exceptions.ERuntimeException;
 import eng.jAtcSim.lib.global.EMath;
 import eng.jAtcSim.lib.global.Global;
 
@@ -40,7 +39,7 @@ public final class CoordinateValue {
 
   private static double toNumber(int degrees, int minutes, double seconds, boolean isNegative) {
     if (degrees < 0 || minutes < 0 || seconds < 0)
-      throw new ERuntimeException("All numeric parameters must be positive values.");
+      throw new IllegalArgumentException("All numeric parameters must be positive values.");
     double ret;
     if (isNegative)
       ret = -degrees - minutes / 60d - seconds / 3600d;
@@ -51,7 +50,7 @@ public final class CoordinateValue {
 
   private static double toNumber(int degrees, double minutesSeconds, boolean isNegative) {
     if (degrees < 0 || minutesSeconds < 0)
-      throw new ERuntimeException("All numeric parameters must be positive values.");
+      throw new IllegalArgumentException("All numeric parameters must be positive values.");
     double ret;
     if (!isNegative)
       ret = degrees + minutesSeconds / 60d;

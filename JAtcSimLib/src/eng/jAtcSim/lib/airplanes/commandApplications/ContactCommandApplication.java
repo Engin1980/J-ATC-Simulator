@@ -1,9 +1,9 @@
 package eng.jAtcSim.lib.airplanes.commandApplications;
 
+import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.atcs.Atc;
-import eng.jAtcSim.lib.exceptions.ENotSupportedException;
 import eng.jAtcSim.lib.speaking.IFromAirplane;
 import eng.jAtcSim.lib.speaking.ISpeech;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.GoodDayNotification;
@@ -36,7 +36,7 @@ public class ContactCommandApplication extends CommandApplication<ContactCommand
         a = Acc.atcTwr();
         break;
       default:
-        throw new ENotSupportedException();
+        throw new EEnumValueUnsupportedException(c.getAtcType());
     }
     // confirmation to previous atc
 

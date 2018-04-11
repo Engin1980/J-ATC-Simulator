@@ -4,14 +4,14 @@ import eng.eSystem.EStringBuilder;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.ReadOnlyList;
 import eng.eSystem.events.Event;
+import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.utilites.CollectionUtils;
 import eng.jAtcSim.lib.Simulation;
 import eng.jAtcSim.lib.airplanes.*;
 import eng.jAtcSim.lib.atcs.Atc;
 import eng.jAtcSim.lib.coordinates.Coordinate;
 import eng.jAtcSim.lib.coordinates.Coordinates;
-import eng.jAtcSim.lib.exceptions.ENotSupportedException;
-import eng.jAtcSim.lib.exceptions.ERuntimeException;
 import eng.jAtcSim.lib.global.Headings;
 import eng.jAtcSim.lib.messaging.IMessageParticipant;
 import eng.jAtcSim.lib.messaging.Message;
@@ -953,7 +953,7 @@ this.emergency = plane.isEmergency();
     else if (adi.responsibleAtc.getType() == Atc.eType.ctr)
       ret = displaySettings.ctr;
     else
-      throw new ENotSupportedException();
+      throw new UnsupportedOperationException();
 
     return ret;
   }
@@ -1037,7 +1037,7 @@ this.emergency = plane.isEmergency();
       } else if (m.getSource() instanceof Airplane) {
         ret.plane.add(m.getSource().getName() + ": " + m.getText());
       } else {
-        throw new ENotSupportedException();
+        throw new UnsupportedOperationException();
       }
     }
     return ret;
@@ -1077,7 +1077,7 @@ this.emergency = plane.isEmergency();
       case mrva:
         return displaySettings.borderMrva;
       default:
-        throw new ERuntimeException("Border type " + border.getType() + " not implemented.");
+        throw new EEnumValueUnsupportedException(border.getType());
     }
   }
 
@@ -1102,7 +1102,7 @@ this.emergency = plane.isEmergency();
       case airport:
         return displaySettings.navAirport;
       default:
-        throw new ERuntimeException("Navaid type " + navaid.getType() + " is not supported.");
+        throw new EEnumValueUnsupportedException(navaid.getType());
     }
   }
 
@@ -1136,7 +1136,7 @@ this.emergency = plane.isEmergency();
       } else if (msg.isContentOfType(StringMessageContent.class)) {
         ret = msg.<StringMessageContent>getContent().getMessageText();
       } else {
-        throw new ENotSupportedException();
+        throw new UnsupportedOperationException();
       }
     } else {
       // system messages

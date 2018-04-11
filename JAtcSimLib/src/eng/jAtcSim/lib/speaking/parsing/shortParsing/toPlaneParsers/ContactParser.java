@@ -1,7 +1,7 @@
 package eng.jAtcSim.lib.speaking.parsing.shortParsing.toPlaneParsers;
 
+import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.jAtcSim.lib.atcs.Atc;
-import eng.jAtcSim.lib.exceptions.ENotSupportedException;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ContactCommand;
 import eng.jAtcSim.lib.speaking.parsing.shortParsing.RegexGrouper;
 import eng.jAtcSim.lib.speaking.parsing.shortParsing.SpeechParser;
@@ -35,7 +35,7 @@ public class ContactParser extends SpeechParser<ContactCommand> {
         t = Atc.eType.ctr;
         break;
       default:
-        throw new ENotSupportedException();
+        throw new EEnumValueUnsupportedException(rg.getString(1));
     }
     ContactCommand ret = new ContactCommand(t);
     return ret;

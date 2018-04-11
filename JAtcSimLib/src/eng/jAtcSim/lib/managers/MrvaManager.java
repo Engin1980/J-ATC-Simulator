@@ -5,8 +5,10 @@ import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IMap;
 import eng.eSystem.utilites.NumberUtils;
+import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.coordinates.Coordinate;
+import eng.jAtcSim.lib.coordinates.Coordinates;
 import eng.jAtcSim.lib.world.Border;
 import eng.jAtcSim.lib.world.BorderExactPoint;
 import eng.jAtcSim.lib.world.BorderPoint;
@@ -61,6 +63,12 @@ public class MrvaManager {
 
       boolean isOutOfAltitude = false;
       if (m != null) isOutOfAltitude = m.isIn(airplane.getAltitude());
+      if (isOutOfAltitude && airplane.getState().is(Airplane.State.arrivingLow, Airplane.State.departingLow)){
+        // this is for departures/goarounds when close to runway, very low, so are omitted
+        double d = Coordinates.getDistanceInNM(airplane.getCoordinate(), Acc.airport().getLocation());
+        if (d > 2)
+          isOutOfAltitude = false;
+      }
       airplane.setMrvaError(isOutOfAltitude);
     }
   }

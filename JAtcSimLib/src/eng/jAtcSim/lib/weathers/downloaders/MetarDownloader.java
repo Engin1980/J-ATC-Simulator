@@ -5,18 +5,15 @@
  */
 package eng.jAtcSim.lib.weathers.downloaders;
 
-import eng.jAtcSim.lib.exceptions.ERuntimeException;
-import eng.jAtcSim.lib.global.TryResult;
-import eng.jAtcSim.lib.exceptions.ERuntimeException;
-import eng.jAtcSim.lib.global.TryResult;
+import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.ERuntimeException;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  *
@@ -48,12 +45,12 @@ public abstract class MetarDownloader {
     try {
       url = new URL(urlString);
     } catch (MalformedURLException ex) {
-      throw new ERuntimeException("Cannot open reader to URL: " + urlString + " cos it is not valid.", ex);
+      throw new EApplicationException("Cannot open reader to URL: " + urlString + " cos it is not valid.", ex);
     }
     try {
       is = url.openStream();
     } catch (IOException ex) {
-      throw new ERuntimeException("Failed to open stream to " + urlString + ".", ex);
+      throw new ERuntimeException("Failed to open stream to " + urlString + ".",ex);
     }
 
     ret = new BufferedReader(new InputStreamReader(is));

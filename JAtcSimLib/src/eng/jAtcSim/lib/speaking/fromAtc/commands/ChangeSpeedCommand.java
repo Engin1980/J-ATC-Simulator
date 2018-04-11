@@ -5,7 +5,7 @@
  */
 package eng.jAtcSim.lib.speaking.fromAtc.commands;
 
-import eng.jAtcSim.lib.exceptions.ENotSupportedException;
+import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.jAtcSim.lib.global.Restriction;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
 
@@ -55,7 +55,7 @@ public class ChangeSpeedCommand implements IAtcCommand {
         case exactly:
           return "Speed exactly " + value.value + "kts {command}";
         default:
-          throw new ENotSupportedException();
+          throw new EEnumValueUnsupportedException(value.direction);
       }
     }
   }

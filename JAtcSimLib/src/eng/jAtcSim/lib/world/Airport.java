@@ -7,11 +7,12 @@ package eng.jAtcSim.lib.world;
 
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
+import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.ERuntimeException;
 import eng.eSystem.xmlSerialization.XmlOptional;
 import eng.jAtcSim.lib.atcs.Atc;
 import eng.jAtcSim.lib.atcs.AtcTemplate;
 import eng.jAtcSim.lib.coordinates.Coordinate;
-import eng.jAtcSim.lib.exceptions.ERuntimeException;
 import eng.jAtcSim.lib.global.KeyItem;
 import eng.jAtcSim.lib.global.KeyList;
 import eng.jAtcSim.lib.traffic.Traffic;
@@ -115,7 +116,7 @@ public class Airport implements KeyItem<String> {
       try {
         this._mainAirportNavaid = this.getParent().getNavaids().get(this.mainAirportNavaidName);
       } catch (ERuntimeException ex) {
-        throw new ERuntimeException("Failed to find main navaid named " + this.mainAirportNavaidName + " for aiport " + this.name + ". Invalid area file?", ex);
+        throw new EApplicationException("Failed to find main navaid named " + this.mainAirportNavaidName + " for aiport " + this.name + ". Invalid area file?", ex);
       }
     }
 

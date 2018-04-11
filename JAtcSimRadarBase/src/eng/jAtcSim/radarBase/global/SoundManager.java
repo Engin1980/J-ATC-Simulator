@@ -1,6 +1,6 @@
 package eng.jAtcSim.radarBase.global;
 
-import eng.jAtcSim.lib.exceptions.ERuntimeException;
+import eng.eSystem.exceptions.EApplicationException;
 
 import javax.sound.sampled.*;
 import java.io.File;
@@ -56,7 +56,7 @@ public class SoundManager {
       airproxClip.open(audioStream);
 
     } catch (UnsupportedAudioFileException | IOException | LineUnavailableException ex) {
-      throw new ERuntimeException("Sound area init fail!", ex);
+      throw new EApplicationException("Sound area init fail!", ex);
     }
   }
 

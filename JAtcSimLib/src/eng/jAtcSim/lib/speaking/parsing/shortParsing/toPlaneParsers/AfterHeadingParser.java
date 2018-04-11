@@ -7,7 +7,7 @@ import eng.jAtcSim.lib.speaking.parsing.shortParsing.SpeechParser;
 public class AfterHeadingParser extends SpeechParser<AfterHeadingCommand> {
 
   private static final String[] prefixes = new String[]{"AH"};
-  private static final String pattern = "AH (\\d{1,3)";
+  private static final String pattern = "AH (\\d{1,3))";
 
   @Override
   public String[] getPrefixes() {

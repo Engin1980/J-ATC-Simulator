@@ -7,16 +7,13 @@ package eng.jAtcSim.lib;
 
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
-import eng.eSystem.collections.ReadOnlyList;
+import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.AirplaneTypes;
 import eng.jAtcSim.lib.atcs.*;
-import eng.jAtcSim.lib.exceptions.ENotSupportedException;
 import eng.jAtcSim.lib.global.ERandom;
 import eng.jAtcSim.lib.global.ETime;
 import eng.jAtcSim.lib.global.logging.ApplicationLog;
-import eng.jAtcSim.lib.global.logging.Log;
-import eng.jAtcSim.lib.managers.MrvaManager;
 import eng.jAtcSim.lib.stats.Statistics;
 import eng.jAtcSim.lib.traffic.fleets.Fleets;
 import eng.jAtcSim.lib.weathers.Weather;
@@ -24,8 +21,6 @@ import eng.jAtcSim.lib.weathers.WeatherProvider;
 import eng.jAtcSim.lib.world.Airport;
 import eng.jAtcSim.lib.world.Area;
 import eng.jAtcSim.lib.world.RunwayThreshold;
-
-import java.util.List;
 
 /**
  * @author Marek
@@ -119,7 +114,7 @@ public class Acc {
       case twr:
         return atcTwr();
       default:
-        throw new ENotSupportedException();
+        throw new EEnumValueUnsupportedException(type);
     }
   }
 

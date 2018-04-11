@@ -10,7 +10,7 @@ package eng.jAtcSim.lib.exceptions;
  *
  * @author Marek
  */
-public class EBindException extends ERuntimeException {
+public class EBindException extends RuntimeException {
 
   public EBindException(String message) {
     super(message);

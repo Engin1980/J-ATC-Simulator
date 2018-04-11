@@ -11,7 +11,6 @@ import eng.eSystem.utilites.ConversionUtils;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.coordinates.Coordinate;
 import eng.jAtcSim.lib.coordinates.Coordinates;
-import eng.jAtcSim.lib.exceptions.ENotSupportedException;
 import eng.jAtcSim.lib.global.Headings;
 import eng.jAtcSim.lib.speaking.IFromAtc;
 import eng.jAtcSim.lib.speaking.SpeechList;
@@ -86,7 +85,7 @@ public class AfterCommandList {
       double diff = Headings.getDifference(rad, anc.getRadial(), true);
       ret = (diff < 3);
     } else {
-      throw new ENotSupportedException();
+      throw new UnsupportedOperationException();
     }
     return ret;
   }

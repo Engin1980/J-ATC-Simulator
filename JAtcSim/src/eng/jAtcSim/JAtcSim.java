@@ -6,12 +6,12 @@
 package eng.jAtcSim;
 
 import eng.eSystem.collections.IList;
+import eng.eSystem.exceptions.ERuntimeException;
 import eng.eSystem.utilites.CollectionUtils;
 import eng.jAtcSim.frmPacks.Pack;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.Simulation;
 import eng.jAtcSim.lib.airplanes.AirplaneTypes;
-import eng.jAtcSim.lib.exceptions.ERuntimeException;
 import eng.jAtcSim.lib.global.logging.ApplicationLog;
 import eng.jAtcSim.lib.global.logging.Recorder;
 import eng.jAtcSim.lib.traffic.GenericTraffic;
@@ -31,6 +31,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Calendar;
 
+import static eng.eSystem.utilites.FunctionShortcuts.sf;
+
 /**
  * @author Marek
  */
@@ -44,9 +46,9 @@ public class JAtcSim {
 
   private static final boolean FAST_START = false;
   private static final Traffic specificTraffic =
-    new eng.jAtcSim.lib.traffic.TestTrafficOneApproach();
- //   new eng.jAtcSim.lib.traffic.TestTrafficOneDeparture();
- //  null;
+  //  new eng.jAtcSim.lib.traffic.TestTrafficOneApproach();
+  //  new eng.jAtcSim.lib.traffic.TestTrafficOneDeparture();
+    null;
   private static AppSettings appSettings;
 
   /**
@@ -208,8 +210,7 @@ public class JAtcSim {
       object = ctor.newInstance();
     } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException ex) {
       throw new ERuntimeException(
-          ex,
-          "Failed to create instance of radar pack '%s'.", packTypeName);
+          sf("Failed to create instance of radar pack '%s'.", packTypeName), ex);
     }
     Pack ret = (Pack) object;
     return ret;

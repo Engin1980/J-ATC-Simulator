@@ -1,9 +1,9 @@
 package eng.jAtcSim.lib.world;
 
+import eng.eSystem.exceptions.EApplicationException;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.coordinates.Coordinate;
 import eng.jAtcSim.lib.coordinates.Coordinates;
-import eng.jAtcSim.lib.exceptions.ERuntimeException;
 import eng.jAtcSim.lib.global.Headings;
 import eng.jAtcSim.lib.global.KeyList;
 import eng.jAtcSim.lib.speaking.parsing.shortParsing.RegexGrouper;
@@ -20,7 +20,7 @@ public class NavaidKeyList extends KeyList<Navaid, String> {
         super.add(n);
         ret = n;
       } catch (Exception ex){
-        throw new ERuntimeException("Failed to get / decode navaid with name " + name);
+        throw new EApplicationException("Failed to get / decode navaid with name " + name);
       }
     }
     return ret;

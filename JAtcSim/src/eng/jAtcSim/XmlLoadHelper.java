@@ -1,5 +1,6 @@
 package eng.jAtcSim;
 
+import eng.eSystem.exceptions.ERuntimeException;
 import eng.eSystem.utilites.ExceptionUtil;
 import eng.eSystem.xmlSerialization.*;
 import eng.jAtcSim.frmPacks.shared.FlightStripSettings;
@@ -7,7 +8,6 @@ import eng.jAtcSim.lib.airplanes.AirplaneType;
 import eng.jAtcSim.lib.airplanes.AirplaneTypes;
 import eng.jAtcSim.lib.atcs.AtcTemplate;
 import eng.jAtcSim.lib.coordinates.Coordinate;
-import eng.jAtcSim.lib.exceptions.ERuntimeException;
 import eng.jAtcSim.lib.global.PlaneCategoryDefinitions;
 import eng.jAtcSim.lib.traffic.DensityBasedTraffic;
 import eng.jAtcSim.lib.traffic.FlightListTraffic;

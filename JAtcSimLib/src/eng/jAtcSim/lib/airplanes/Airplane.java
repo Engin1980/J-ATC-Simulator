@@ -6,13 +6,13 @@
 package eng.jAtcSim.lib.airplanes;
 
 import com.sun.istack.internal.Nullable;
+import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.utilites.NumberUtils;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.pilots.Pilot;
 import eng.jAtcSim.lib.atcs.Atc;
 import eng.jAtcSim.lib.coordinates.Coordinate;
 import eng.jAtcSim.lib.coordinates.Coordinates;
-import eng.jAtcSim.lib.exceptions.ERuntimeException;
 import eng.jAtcSim.lib.global.*;
 import eng.jAtcSim.lib.messaging.IMessageContent;
 import eng.jAtcSim.lib.messaging.IMessageParticipant;
@@ -27,12 +27,13 @@ import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeHeadingCommand;
 import eng.jAtcSim.lib.world.Navaid;
 import eng.jAtcSim.lib.world.Route;
-import eng.jAtcSim.lib.world.Runway;
 import eng.jAtcSim.lib.world.RunwayThreshold;
 import eng.jAtcSim.lib.world.approaches.CurrentApproachInfo;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 /**
  * @author Marek
@@ -627,7 +628,7 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
 
   public Navaid getDepartureLastNavaid() {
     if (isDeparture() == false)
-      throw new ERuntimeException("This method should not be called on departure aircraft %s.", this.getCallsign().toString());
+      throw new EApplicationException(sf("This method should not be called on departure aircraft %s.", this.getCallsign().toString()));
 
     Navaid ret = this.pilot.getAssignedRoute().getMainFix();
     return ret;
@@ -695,7 +696,7 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     ETime wt = Acc.now().addMinutes(minsE + minA);
 
     int alt = Math.max((int) this.getAltitude(), Acc.airport().getAltitude() + 4000);
-    alt = (int) NumberUtils.ceil(alt, 2);
+    alt = (int) NumberUtils.ceil(alt, 3);
     this.setTargetAltitude(alt);
 
     this.emergencyWanishTime = wt;
@@ -744,7 +745,7 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
         cmds.add(s);
       }
     } else {
-      throw new ERuntimeException("Airplane can only deal with messages containing \"IFromAtc\" or \"List<IFromAtc>\".");
+      throw new EApplicationException("Airplane can only deal with messages containing \"IFromAtc\" or \"List<IFromAtc>\".");
     }
 
     processCommands(cmds);

@@ -7,16 +7,14 @@ package eng.jAtcSim.lib.world;
 
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
+import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.ERuntimeException;
 import eng.jAtcSim.lib.Acc;
-import eng.jAtcSim.lib.exceptions.ERuntimeException;
 import eng.jAtcSim.lib.global.KeyList;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
 import eng.jAtcSim.lib.speaking.parsing.Parser;
 import eng.jAtcSim.lib.speaking.parsing.shortParsing.ShortParser;
 import eng.jAtcSim.lib.world.approaches.Approach;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  *
@@ -111,7 +109,7 @@ public class Area {
             try {
               cmds = parser.parseMultipleCommands(p.getGaRoute());
             } catch (Exception ex) {
-              throw new ERuntimeException(
+              throw new EApplicationException(
                   String.format("airport %s runway %s approach %s has invalid go-around route fromAtc: %s (error: %s)",
                       a.getIcao(), t.getName(), p.toString(), p.getGaRoute(), ex.getMessage()));
             }
@@ -121,14 +119,14 @@ public class Area {
             try {
               cmds = parser.parseMultipleCommands(o.getRoute());
             } catch (Exception ex) {
-              throw new ERuntimeException(
+              throw new EApplicationException(
                   String.format("airport %s runway %s route %s has invalid fromAtc: %s (error: %s)",
                       a.getIcao(), t.getName(), o.getName(), o.getRoute(), ex.getMessage()));
             }
             try {
               n = o.getMainFix();
             } catch (ERuntimeException ex) {
-              throw new ERuntimeException(
+              throw new EApplicationException(
                   String.format(
                       "airport %s runway %s route %s has no main fix. SID last/STAR first command must be PD FIX (error: %s)",
                       a.getIcao(), t.getName(), o.getName(), o.getRoute()));

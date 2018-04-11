@@ -8,7 +8,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="JAtcSimRadarBase" />
-    <orderEntry type="module" module-name="JAtcSimLib" />
     <orderEntry type="library" name="eng.eSystem" level="project" />
   </component>
 </module>

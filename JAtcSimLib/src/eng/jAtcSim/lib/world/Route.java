@@ -5,11 +5,10 @@
  */
 package eng.jAtcSim.lib.world;
 
+import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.xmlSerialization.XmlOptional;
 import eng.jAtcSim.lib.coordinates.Coordinates;
 import eng.jAtcSim.lib.exceptions.EBindException;
-import eng.jAtcSim.lib.exceptions.ERuntimeException;
-import eng.jAtcSim.lib.global.KeyItem;
 import eng.jAtcSim.lib.global.MustBeBinded;
 import eng.jAtcSim.lib.global.PlaneCategoryDefinitions;
 import eng.jAtcSim.lib.speaking.ICommand;
@@ -206,7 +205,7 @@ public class Route extends MustBeBinded {
       index--;
     }
     if (index < 0)
-      throw new ERuntimeException("Failed to find main navaid for route " + this.name + ". Route commands probably not well defined.");
+      throw new EApplicationException("Failed to find main navaid for route " + this.name + ". Route commands probably not well defined.");
 
     ProceedDirectCommand c = (ProceedDirectCommand) _routeCommands.get(index);
     return c.getNavaid();
@@ -218,7 +217,7 @@ public class Route extends MustBeBinded {
       index++;
 
     if (index >= _routeCommands.size())
-      throw new ERuntimeException("Failed to find main navaid for route " + this.name + ". Route commands probably not well defined.");
+      throw new EApplicationException("Failed to find main navaid for route " + this.name + ". Route commands probably not well defined.");
 
     ProceedDirectCommand c = (ProceedDirectCommand) _routeCommands.get(index);
     return c.getNavaid();

@@ -2,7 +2,6 @@ package eng.jAtcSim.SwingRadar;
 
 import eng.eSystem.events.Event;
 import eng.eSystem.events.EventSimple;
-import eng.jAtcSim.lib.exceptions.ENotSupportedException;
 import eng.jAtcSim.radarBase.ICanvas;
 import eng.jAtcSim.radarBase.global.Color;
 import eng.jAtcSim.radarBase.global.Font;
@@ -296,7 +295,7 @@ public class SwingCanvas implements ICanvas<JComponent> {
         || location == TextBlockLocation.topMiddle) {
       //TODO remove this, move this exception to somewhere shared and remove
       // dependency on JAtcSimLib
-      throw new ENotSupportedException();
+      throw new UnsupportedOperationException();
     }
     if (lines.isEmpty()) {
       return;
@@ -406,7 +405,7 @@ public class SwingCanvas implements ICanvas<JComponent> {
         }
         break;
       default:
-        throw new ENotSupportedException();
+        throw new UnsupportedOperationException();
     } // switch
     return ret;
   }
