@@ -6,16 +6,14 @@
 package eng.jAtcSim.lib.airplanes;
 
 import com.sun.istack.internal.Nullable;
+import eng.eSystem.utilites.NumberUtils;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.pilots.Pilot;
 import eng.jAtcSim.lib.atcs.Atc;
 import eng.jAtcSim.lib.coordinates.Coordinate;
 import eng.jAtcSim.lib.coordinates.Coordinates;
 import eng.jAtcSim.lib.exceptions.ERuntimeException;
-import eng.jAtcSim.lib.global.ETime;
-import eng.jAtcSim.lib.global.Headings;
-import eng.jAtcSim.lib.global.KeyItem;
-import eng.jAtcSim.lib.global.UnitProvider;
+import eng.jAtcSim.lib.global.*;
 import eng.jAtcSim.lib.messaging.IMessageContent;
 import eng.jAtcSim.lib.messaging.IMessageParticipant;
 import eng.jAtcSim.lib.messaging.Message;
@@ -695,6 +693,10 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     double distToAip = Coordinates.getDistanceInNM(this.coordinate, Acc.airport().getLocation());
     int minA = (int) (distToAip / 250d * 60);
     ETime wt = Acc.now().addMinutes(minsE + minA);
+
+    int alt = Math.max((int) this.getAltitude(), Acc.airport().getAltitude() + 4000);
+    alt = (int) NumberUtils.ceil(alt, 2);
+    this.setTargetAltitude(alt);
 
     this.emergencyWanishTime = wt;
     this.departure = false;
