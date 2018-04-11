@@ -66,7 +66,7 @@ public class MrvaManager {
       if (isOutOfAltitude && airplane.getState().is(Airplane.State.arrivingLow, Airplane.State.departingLow)){
         // this is for departures/goarounds when close to runway, very low, so are omitted
         double d = Coordinates.getDistanceInNM(airplane.getCoordinate(), Acc.airport().getLocation());
-        if (d > 2)
+        if (d > 3)
           isOutOfAltitude = false;
       }
       airplane.setMrvaError(isOutOfAltitude);

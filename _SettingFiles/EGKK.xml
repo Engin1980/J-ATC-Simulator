@@ -118,12 +118,12 @@
       </trafficDefinitions>
       <initialPosition coordinate="51 08 53 N 0 11 25 W" range="85"/>
       <atcTemplates>
-        <atcTemplate type="ctr" name="LON_S_CTR" frequency="129.42"
-                     releaseAltitude="19000" acceptAltitude="7000" orderedAltitude="17000"
+        <atcTemplate type="ctr" name="LON S CTR" frequency="129.42"
+                     releaseAltitude="19000" acceptAltitude="11000" orderedAltitude="17000"
                       ctrAcceptDistance="20" ctrNavaidAcceptDistance="20" />
-        <atcTemplate type="twr" name="EGKK_TWR" frequency="124.225"
+        <atcTemplate type="twr" name="EGKK TWR" frequency="124.225"
                      releaseAltitude="300" acceptAltitude="3000" orderedAltitude="4000"/>
-        <atcTemplate type="app" name="EGKK_DIR" frequency="126.825"
+        <atcTemplate type="app" name="EGKK DIR" frequency="126.825"
                      releaseAltitude="-1" acceptAltitude="-1" orderedAltitude="-1"/>
       </atcTemplates>
       <sharedRoutes>
@@ -154,8 +154,8 @@
             <threshold name="08R" coordinate="51 08 45.10 N 000 12 24.59 W" initialDepartureAltitude="4000"
                        includeSharedRoutes="true">
               <sharedIafRoutes>
-                <route iaf="TIMBA" route="PD MAY T PD MAY/275/23 T TR 050 T FH 080" />
-                <route iaf="WILLO" route="PD MID/105/5 T TR 050 T FH 080" />
+                <route iaf="TIMBA" route="DM 40 PD MAY T PD MAY/275/23 T TR 050 T DM 20 FH 080" />
+                <route iaf="WILLO" route="DM 40 PD MID/105/5 T TR 050 T DM 20 FH 080" />
               </sharedIafRoutes>
               <approaches>
                 <gnssApproach gaRoute="CM 30 AA 20+ TR 179" radial="078" includeSharedIafRoutes="true" daA="700"
@@ -170,7 +170,7 @@
               </approaches>
               <routes>
                 <route type="sid" name="DVR2P"
-                       route="SL 220 AL 40 AA 015 PD DET31 T SL 250 PD DET29 T SC AL 50 PD NEXOX T AL 60 PD DVR33 T PD DVR"/>
+                       route="AL 60 AA 015+ PD TUNBY/270/10 T PD TUNBY T PD DVR/270/33 T AC PD DVR"/>
                 <route type="sid" name="LAM1Z"
                        route="AL 40 PD KKE02 T PD KKE12 T AL 50 PD SUNAV T PD KKE35 T PD KKN43 T AL 60 PD KKN48 T PD LAM"/>
                 <route type="sid" name="BIG2Z"
@@ -209,7 +209,7 @@
               </approaches>
               <routes>
                 <route type="sid" name="DVR9M"
-                       route="SL 220 AL 50 AA 015 PD DET31 T SL 250 PD DET29 T SC AL 50 PD NEXOX T AL 60 PD DVR33 T PD DVR"/>
+                       route="SL 220 AL 50 AA 015 PD DET31 T SL 250 PD DET29 T SC AL 50 PD NEXOX T AL 60 PD DVR33 T AC PD DVR"/>
                 <route type="sid" name="LAM2X"
                        route="SL 220 AL 40 PD KKW02 T PD KKE09 T SL 250 PD KKE11 T AL 50 PD SUNAV T PD KKE35 T PD KKN43 T AL 60 PD KKN48 T PD LAM"/>
                 <route type="sid" name="BIG2X"
