@@ -663,6 +663,7 @@ this.emergency = plane.isEmergency();
               drawBorderAltitude(b);
             }
           }
+          break;
         default:
           drawBorder(b);
       }

@@ -328,11 +328,10 @@ public class Simulation {
     Airplane[] newPlanes = traffic.getNewAirplanes();
 
     if (newPlanesDelayedToAvoidCollision.isEmpty() == false) {
-      for (Airplane newPlane : newPlanesDelayedToAvoidCollision) {
-        if (isInVicinityOfSomeOtherPlane(newPlane) == false) {
-          newPlanesDelayedToAvoidCollision.remove(newPlane);
-          Acc.prm().registerPlane(ctrAtc, newPlane);
-        }
+      Airplane newPlane = newPlanesDelayedToAvoidCollision.tryGetFirst(q -> isInVicinityOfSomeOtherPlane(q) == false);
+      if (newPlane != null){
+        newPlanesDelayedToAvoidCollision.remove(newPlane);
+        Acc.prm().registerPlane(ctrAtc, newPlane);
       }
     }
 

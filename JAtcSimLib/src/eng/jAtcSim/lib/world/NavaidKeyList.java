@@ -20,7 +20,7 @@ public class NavaidKeyList extends KeyList<Navaid, String> {
         super.add(n);
         ret = n;
       } catch (Exception ex){
-        throw new EApplicationException("Failed to get / decode navaid with name " + name);
+        throw new EApplicationException("Failed to get / decode navaid with name " + name, ex);
       }
     }
     return ret;

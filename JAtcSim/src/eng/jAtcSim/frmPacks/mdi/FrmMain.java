@@ -67,7 +67,7 @@ public class FrmMain extends javax.swing.JFrame {
     this.parent = pack;
 
     // behavior settings for this radar
-    BehaviorSettings behSett = new BehaviorSettings(true, new LongFormatter(), 10);
+    BehaviorSettings behSett = new BehaviorSettings(true, new LongFormatter(), 20);
 
     this.pnlRadar = new SwingRadarPanel();
     this.pnlRadar.init(this.parent.getSim().getActiveAirport().getInitialPosition(),

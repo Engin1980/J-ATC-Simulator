@@ -266,6 +266,7 @@
     <navaid name="MAY" type="vor" coordinate="51 01 02 N 000 06 58 E"/>
 
     <!-- navaids for SIDs & STARs extracted from charts -->
+    <navaid name="TUNBY" type="fix" coordinate="511008.00N 0001929.00E"/>
     <navaid name="ABTUM" type="fix" coordinate="512603.66N 0012228.98E"/>
     <navaid name="ADMAG" type="fix" coordinate="511401.91N 0002933.64E"/>
     <navaid name="AMDUT" type="fix" coordinate="504027.90N 0004746.38E"/>
