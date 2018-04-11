@@ -307,9 +307,12 @@ public class Simulation {
   private void generateEmergencyIfRequired() {
     if (this.nextEmergencyTime != null && this.nextEmergencyTime.isBefore(Acc.now())) {
       if (!Acc.planes().isAny(q -> q.isEmergency())) {
-        Airplane p = Acc.planes().where(q -> q.getState().is(Airplane.State.departingLow,
-            Airplane.State.departingHigh, Airplane.State.arrivingHigh, Airplane.State.arrivingLow, Airplane.State.arrivingCloseFaf)).getRandom();
-        p.raiseEmergency();
+        Airplane p = Acc.planes()
+            .where(q -> q.getState().is(Airplane.State.departingLow,
+                Airplane.State.departingHigh, Airplane.State.arrivingHigh, Airplane.State.arrivingLow, Airplane.State.arrivingCloseFaf))
+            .tryGetRandom();
+        if (p != null)
+          p.raiseEmergency();
       }
       generateEmergencyTime();
     }

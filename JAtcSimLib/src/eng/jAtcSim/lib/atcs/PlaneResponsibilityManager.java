@@ -5,9 +5,7 @@
  */
 package eng.jAtcSim.lib.atcs;
 
-import eng.eSystem.collections.EList;
-import eng.eSystem.collections.IReadOnlyList;
-import eng.eSystem.collections.ReadOnlyList;
+import eng.eSystem.collections.*;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.AirplaneList;
@@ -42,8 +40,8 @@ public class PlaneResponsibilityManager {
     twr
   }
   private static final PlaneResponsibilityManager me = new PlaneResponsibilityManager();
-  private final Map<Airplane, eState> map = new HashMap<>();
-  private final Map<Atc, AirplaneList> lst = new HashMap<>();
+  private final IMap<Airplane, eState> map = new EMap<>();
+  private final IMap<Atc, AirplaneList> lst = new EMap<>();
   private final AirplaneList all = new AirplaneList();
   private final List<Airplane.Airplane4Display> infos = new LinkedList<>();
 
@@ -52,9 +50,9 @@ public class PlaneResponsibilityManager {
   }
 
   private PlaneResponsibilityManager() {
-    lst.put(Acc.atcApp(), new AirplaneList());
-    lst.put(Acc.atcCtr(), new AirplaneList());
-    lst.put(Acc.atcTwr(), new AirplaneList());
+    lst.set(Acc.atcApp(), new AirplaneList());
+    lst.set(Acc.atcCtr(), new AirplaneList());
+    lst.set(Acc.atcTwr(), new AirplaneList());
   }
 
   public ReadOnlyList<Airplane.Airplane4Display> getPlanesToDisplay() {
@@ -68,7 +66,7 @@ public class PlaneResponsibilityManager {
       throw new ERuntimeException("Second registration of already registered plane!");
     }
 
-    map.put(plane, typeToState(atc));
+    map.set(plane, typeToState(atc));
     lst.get(atc).add(plane);
     all.add(plane);
     infos.add(plane.getPlane4Display());
@@ -109,7 +107,7 @@ public class PlaneResponsibilityManager {
           throw new ERuntimeException("Not in ctr state, cannot switch.");
         }
 
-        map.put(plane, eState.ctr2app);
+        map.set(plane, eState.ctr2app);
         break;
       case app:
 
@@ -118,9 +116,9 @@ public class PlaneResponsibilityManager {
         }
 
         if (to.getType() == Atc.eType.ctr) {
-          map.put(plane, eState.app2ctr);
+          map.set(plane, eState.app2ctr);
         } else if (to.getType() == Atc.eType.twr) {
-          map.put(plane, eState.app2twr);
+          map.set(plane, eState.app2twr);
         } else {
           throw new ENotSupportedException();
         }
@@ -134,7 +132,7 @@ public class PlaneResponsibilityManager {
           throw new ERuntimeException("Not in TWR state, cannot switch.");
         }
 
-        map.put(plane, eState.twr2app);
+        map.set(plane, eState.twr2app);
         break;
       default:
         throw new ENotSupportedException();
@@ -159,16 +157,16 @@ public class PlaneResponsibilityManager {
     if (isToSwitchToAtc(atc, plane)) {
       switch (map.get(plane)) {
         case app2ctr:
-          map.put(plane, eState.app2ctrReady);
+          map.set(plane, eState.app2ctrReady);
           break;
         case app2twr:
-          map.put(plane, eState.app2twrReady);
+          map.set(plane, eState.app2twrReady);
           break;
         case ctr2app:
-          map.put(plane, eState.ctr2appReady);
+          map.set(plane, eState.ctr2appReady);
           break;
         case twr2app:
-          map.put(plane, eState.twr2appReady);
+          map.set(plane, eState.twr2appReady);
           break;
         default:
           throw new ENotSupportedException();
@@ -187,7 +185,7 @@ public class PlaneResponsibilityManager {
 
     Atc newAtc = getApprovedAtc(plane);
     eState newState = typeToState(newAtc);
-    map.put(plane, newState);
+    map.set(plane, newState);
 
     oldAtc.unregisterPlaneUnderControl(plane, false);
     lst.get(oldAtc).remove(plane);
@@ -233,13 +231,13 @@ public class PlaneResponsibilityManager {
       switch (s) {
         case app2ctr:
         case app2twr:
-          map.put(plane, eState.app);
+          map.set(plane, eState.app);
           break;
         case ctr2app:
-          map.put(plane, eState.ctr);
+          map.set(plane, eState.ctr);
           break;
         case twr2app:
-          map.put(plane, eState.twr);
+          map.set(plane, eState.twr);
           break;
         default:
           throw new ENotSupportedException();

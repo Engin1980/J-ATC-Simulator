@@ -62,6 +62,12 @@ public class TowerAtc extends ComputerAtc {
       return ret;
     }
 
+    public static RunwayCheck createImmediateAfterEmergency() {
+      int closeDuration = Acc.rnd().nextInt(5*60, 20*60);
+      RunwayCheck ret = new RunwayCheck(0, closeDuration);
+      return ret;
+    }
+
     private RunwayCheck(int minutesToNextCheck, int expectedDurationInMinutes) {
       ETime et = Acc.now().addMinutes(minutesToNextCheck);
       this.scheduler = new SchedulerForAdvice(et);
@@ -169,6 +175,13 @@ public class TowerAtc extends ComputerAtc {
 
     IMap<RunwayThreshold, TakeOffInfo> tmp = takeOffInfos.whereValue(q -> q.airplane == plane);
     tmp.keySet().forEach(q -> takeOffInfos.remove(q));
+
+    if (plane.isEmergency() && plane.getState() == Airplane.State.landed){
+      // if it is landed emergency, close runway for amount of time
+      Runway rwy = plane.getAssignedRunwayThreshold().getParent();
+      RunwayCheck rwyCheck = RunwayCheck.createImmediateAfterEmergency();
+      runwayChecks.set(rwy, rwyCheck);
+    }
   }
 
   @Override

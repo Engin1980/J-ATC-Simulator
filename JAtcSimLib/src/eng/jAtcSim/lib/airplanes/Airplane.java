@@ -29,6 +29,7 @@ import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeHeadingCommand;
 import eng.jAtcSim.lib.world.Navaid;
 import eng.jAtcSim.lib.world.Route;
+import eng.jAtcSim.lib.world.Runway;
 import eng.jAtcSim.lib.world.RunwayThreshold;
 import eng.jAtcSim.lib.world.approaches.CurrentApproachInfo;
 
@@ -704,6 +705,11 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
 
     assert this.emergencyWanishTime != null;
     boolean ret = this.emergencyWanishTime.isBefore(Acc.now());
+    return ret;
+  }
+
+  public RunwayThreshold getAssignedRunwayThreshold() {
+    RunwayThreshold ret = pilot.tryGetAssignedApproach().getThreshold();
     return ret;
   }
 

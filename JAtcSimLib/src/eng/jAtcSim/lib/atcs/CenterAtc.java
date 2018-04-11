@@ -132,7 +132,7 @@ public class CenterAtc extends ComputerAtc {
   protected Atc getTargetAtcIfPlaneIsReadyToSwitch(Airplane plane) {
     Atc ret = null;
     if (plane.isArrival()) {
-      if (plane.getAltitude() <= this.releaseAltitude) {
+      if (plane.getAltitude() <= this.releaseAltitude || plane.isEmergency()) {
         ret = Acc.atcApp();
       } else {
         Route r = plane.getAssigneRoute();
