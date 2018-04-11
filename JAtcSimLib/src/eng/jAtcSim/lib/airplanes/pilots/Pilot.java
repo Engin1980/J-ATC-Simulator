@@ -697,7 +697,7 @@ public class Pilot {
 
     private boolean canSeeRunwayFromCurrentPosition() {
       Weather w = Acc.weather();
-      if (w.getCloudBaseInFt() < parent.getAltitude()) {
+      if ((w.getCloudBaseInFt() + Acc.airport().getAltitude()) < parent.getAltitude()) {
         return false;
       }
       double d = Coordinates.getDistanceInNM(parent.getCoordinate(), approach.getThreshold().getCoordinate());

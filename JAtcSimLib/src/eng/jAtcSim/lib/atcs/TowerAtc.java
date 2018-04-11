@@ -63,7 +63,7 @@ public class TowerAtc extends ComputerAtc {
     }
 
     public static RunwayCheck createImmediateAfterEmergency() {
-      int closeDuration = Acc.rnd().nextInt(5*60, 20*60);
+      int closeDuration = Acc.rnd().nextInt(5, 33);
       RunwayCheck ret = new RunwayCheck(0, closeDuration);
       return ret;
     }
