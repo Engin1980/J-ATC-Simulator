@@ -120,7 +120,10 @@ public class UserAtc extends Atc {
 
   public void sendToAtc(Atc.eType type, Squawk squawk) {
     Airplane plane = Airplanes.tryGetBySqwk(Acc.planes(), squawk);
-    assert plane != null;
+    if (plane == null){
+      sendError("SQWK " + squawk.toString() + " does not exist.");
+      return;
+    }
 
     Atc atc = Acc.atc(type);
 
