@@ -169,16 +169,15 @@
                 </ilsApproach>
               </approaches>
               <routes>
-                <route type="sid" name="DVR2P"
-                       route="AL 60 AA 015+ PD TUNBY/270/10 T PD TUNBY T PD DVR/270/33 T AC PD DVR"/>
+                <!--<route type="sid" name="DVR2P"-->
+                       <!--route="AL 60 AA 015+ PD TUNBY/270/10 T PD TUNBY T PD DVR/270/33 T AC PD DVR"/>-->
                 <route type="sid" name="LAM1Z"
                        route="AL 40 PD KKE02 T PD KKE12 T AL 50 PD SUNAV T PD KKE35 T PD KKN43 T AL 60 PD KKN48 T PD LAM"/>
                 <route type="sid" name="BIG2Z"
                        route="AL 40 PD KKE04 T PD KKE10 T AL 50 PD KKE17 T SL 210 AL 60 PD KKE23 T PD BIG"/>
                 <route type="sid" name="CLN2Z"
                        route="AL 40 PD KKE04 T PD KKE10 T AL 50 PD KKE17 T PD KKE25 T PD DET T AL 60 PD KKN52 T PD DAGGA T PD CLN"/>
-                <route type="sid" name="BOGNA1X"
-                       route="SL 220 AL 40 PD KKW06 T PD KKW08 T PD KKS11 T AL 50 SC PD KKS17 T AL 60 PD KKS20 T PD KKS25 T PD BOGNA"/>
+
                 <route type="sid" name="KENET1Z"
                        route="SL 220 AL 40 PD KKE05 T PD KKN09 T SC PD KKW19 T PD KKW26 T PD KKW44 T PD KENET"/>
                 <route type="sid" name="SAM3Z"
@@ -208,8 +207,10 @@
                               daC="580" daD="580" initialAltitude="3000" />
               </approaches>
               <routes>
-                <route type="sid" name="DVR9M"
-                       route="SL 220 AL 50 AA 015 PD DET31 T SL 250 PD DET29 T SC AL 50 PD NEXOX T AL 60 PD DVR33 T AC PD DVR"/>
+                <!--<route type="sid" name="DVR9M"-->
+                       <!--route="SL 220 AL 50 AA 015 PD DET31 T SL 250 PD DET29 T SC AL 50 PD NEXOX T AL 60 PD DVR33 T AC PD DVR"/>-->
+                <route type="sid" name="BOGNA1X"
+                       route="SL 220 AL 40 PD KKW06 T PD KKW08 T PD KKS11 T AL 50 SC PD KKS17 T AL 60 PD KKS20 T PD KKS25 T PD BOGNA"/>
                 <route type="sid" name="LAM2X"
                        route="SL 220 AL 40 PD KKW02 T PD KKE09 T SL 250 PD KKE11 T AL 50 PD SUNAV T PD KKE35 T PD KKN43 T AL 60 PD KKN48 T PD LAM"/>
                 <route type="sid" name="BIG2X"

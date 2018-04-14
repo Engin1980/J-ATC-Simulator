@@ -38,7 +38,7 @@ public class MrvaManager {
   }
 
   public void evaluateMrvaFails() {
-    for (Airplane airplane : maps.keySet()) {
+    for (Airplane airplane : maps.getKeys()) {
       evaluateMrvaFail(airplane);
     }
   }

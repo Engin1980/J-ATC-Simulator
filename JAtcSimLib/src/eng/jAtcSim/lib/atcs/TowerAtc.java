@@ -173,7 +173,7 @@ public class TowerAtc extends ComputerAtc {
 
 
     IMap<RunwayThreshold, TakeOffInfo> tmp = takeOffInfos.whereValue(q -> q.airplane == plane);
-    tmp.keySet().forEach(q -> takeOffInfos.remove(q));
+    tmp.getKeys().forEach(q -> takeOffInfos.remove(q));
 
     if (plane.isEmergency() && plane.getState() == Airplane.State.landed){
       // if it is landed emergency, close runway for amount of time
@@ -244,7 +244,7 @@ public class TowerAtc extends ComputerAtc {
       linedUpPlanesList.add(plane);
     }
 
-    for (TakeOffInfo toi : takeOffInfos.values()) {
+    for (TakeOffInfo toi : takeOffInfos.getValues()) {
       if (toi.airplane == plane && toi.airplane.getAltitude() > toi.randomReadyToSwitchAltitude) {
         return true; // true = airplane can be switched
       }
@@ -346,7 +346,7 @@ public class TowerAtc extends ComputerAtc {
       if (rc != null)
         announceScheduledRunwayCheck(rrct.runway, rc);
       else {
-        for (Runway runway : this.runwayChecks.keySet()) {
+        for (Runway runway : this.runwayChecks.getKeys()) {
           rc = this.runwayChecks.get(runway);
           announceScheduledRunwayCheck(runway, rc);
         }
@@ -423,7 +423,7 @@ public class TowerAtc extends ComputerAtc {
   }
 
   private void processRunwayCheckBackground() {
-    for (Runway runway : runwayChecks.keySet()) {
+    for (Runway runway : runwayChecks.getKeys()) {
       RunwayCheck rc = runwayChecks.get(runway);
       if (rc.isActive()) {
         if (rc.realDurationEnd.isBeforeOrEq(Acc.now()))
@@ -441,7 +441,7 @@ public class TowerAtc extends ComputerAtc {
 
   private void beginRunwayMaintenance(Runway runway, RunwayCheck rc) {
     StringResponse cnt = StringResponse.create(
-        "Maintenance of the runway %s is now in progress.", runway.getName());
+        "Maintenance of the runway %s is now in progress for approx %d minutes.", runway.getName(), rc.expectedDurationInMinutes);
     Message m = new Message(this, Acc.atcApp(), cnt);
     super.sendMessage(m);
 
