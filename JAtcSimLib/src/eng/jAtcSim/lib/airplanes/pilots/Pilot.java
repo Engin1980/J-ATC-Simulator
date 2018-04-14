@@ -212,6 +212,35 @@ public class Pilot {
 
   }
 
+  abstract class DivertableBehavior extends Behavior{
+
+    private int[] divertAnnounceTimes = new int[]{30, 15, 10, 5};
+
+    protected void adviceDivertTimeIfRequested() {
+      DivertInfo di = Pilot.this.divertInfo;
+      if (di == null) return;
+
+      for (int dit : divertAnnounceTimes) {
+        int minLeft = di.getMinutesLeft();
+        if (di.lastAnnouncedMinute > dit && minLeft < dit) {
+          Pilot.this.say(
+              new DivertTimeNotification(di.getMinutesLeft()));
+          di.lastAnnouncedMinute = minLeft;
+          break;
+        }
+      }
+    }
+
+    protected boolean divertIfRequested() {
+      if (divertInfo != null && divertInfo.getMinutesLeft() <= 0) {
+        Pilot.this.processDivert();
+        return true;
+      } else {
+        return false;
+      }
+    }
+  }
+
   class HoldingPointBehavior extends Behavior {
 
     @Override
@@ -278,7 +307,7 @@ public class Pilot {
 
   }
 
-  abstract class BasicBehavior extends Behavior {
+  abstract class BasicBehavior extends DivertableBehavior {
     private boolean clearanceLimitWarningSent = false;
 
     abstract void _fly();
@@ -312,7 +341,6 @@ public class Pilot {
 
     private final double LOW_SPEED_DOWN_ALTITUDE = 11000;
     private final double FAF_SPEED_DOWN_DISTANCE_IN_NM = 15;
-    private int[] divertAnnounceTimes = new int[]{30, 15, 10, 5};
 
     @Override
     void _fly() {
@@ -349,28 +377,7 @@ public class Pilot {
           this.adviceDivertTimeIfRequested();
     }
 
-    private void adviceDivertTimeIfRequested() {
-      DivertInfo di = Pilot.this.divertInfo;
 
-      for (int dit : divertAnnounceTimes) {
-        int minLeft = di.getMinutesLeft();
-        if (di.lastAnnouncedMinute > dit && minLeft < dit) {
-          Pilot.this.say(
-              new DivertTimeNotification(di.getMinutesLeft()));
-          di.lastAnnouncedMinute = minLeft;
-          break;
-        }
-      }
-    }
-
-    private boolean divertIfRequested() {
-      if (divertInfo.getMinutesLeft() <= 0) {
-        Pilot.this.processDivert();
-        return true;
-      } else {
-        return false;
-      }
-    }
 
     @Override
     public String toLogString() {
@@ -400,7 +407,7 @@ public class Pilot {
     }
   }
 
-  class HoldBehavior extends Behavior {
+  class HoldBehavior extends DivertableBehavior {
 
     private static final double NEAR_FIX_DISTANCE = 0.5;
 
@@ -543,6 +550,10 @@ public class Pilot {
         default:
           throw new EEnumValueUnsupportedException(this.phase);
       }
+
+      if (!parent.isEmergency())
+        if (this.divertIfRequested() == false)
+          this.adviceDivertTimeIfRequested();
     }
 
     @Override
@@ -1419,7 +1430,10 @@ public class Pilot {
         ts = getBoundedValueIn(minOrdered, parent.getType().vApp, maxOrdered);
         break;
       case holding:
-        ts = parent.getTargetSpeed();
+        if (parent.getTargetAltitude() > 10000)
+          ts = getBoundedValueIn(minOrdered, Math.min(250, parent.getType().vCruise), maxOrdered);
+        else
+          ts = getBoundedValueIn(minOrdered, Math.min(220, parent.getType().vCruise), maxOrdered);
         break;
       case landed:
         ts = 0;
