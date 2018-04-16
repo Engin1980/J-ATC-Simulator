@@ -127,26 +127,26 @@
                      releaseAltitude="-1" acceptAltitude="-1" orderedAltitude="-1"/>
       </atcTemplates>
       <sharedRoutes>
-        <!--<route type="star" name="TELTU1G" entryFL="220"-->
-               <!--route="PD TELTU T SL 220 PD SFD T PD TIMBA T H TIMBA"/>-->
-        <!--<route type="star" name="AMDUT1G" entryFL="220"-->
-               <!--route="PD AMDUT T SL 220 PD SFD T PD WILLO T H WILLO"/>-->
-        <!--<route type="star" name="ARNUN1G" entryFL="220"-->
-               <!--route="PD ARNUN T PD HASTY T SL 220 PD SFD T PD WILLO T H WILLO"/>-->
-        <!--<route type="star" name="OTMET1G" entryFL="220"-->
-               <!--route="PD OTMET T PD SOKDU T PD NEDUL T SL 250 PD TELTU T SL 220 PD HOLLY T PD WILLO T H WILLO"/>-->
+        <route type="star" name="TELTU1G" entryFL="220"
+               route="PD TELTU T SL 220 PD SFD T PD TIMBA T H TIMBA"/>
+        <route type="star" name="AMDUT1G" entryFL="220"
+               route="PD AMDUT T SL 220 PD SFD T PD WILLO T H WILLO"/>
+        <route type="star" name="ARNUN1G" entryFL="220"
+               route="PD ARNUN T PD HASTY T SL 220 PD SFD T PD WILLO T H WILLO"/>
+        <route type="star" name="OTMET1G" entryFL="220"
+               route="PD OTMET T PD SOKDU T PD NEDUL T SL 250 PD TELTU T SL 220 PD HOLLY T PD WILLO T H WILLO"/>
         <route type="star" name="VASUX1G" entryFL="220"
                route="PD VASUX T PD DISVO T SL 250 PD TELTU T SL 220 PD HOLLY T PD WILLO T H WILLO"/>
-        <!--<route type="star" name="TIMBA2G" entryFL="220"-->
-               <!--route="PD NEVIL T PD OSPOL T PD NETVU T PD ELDAX T PD AMDUT T SL 250 PD KKE64 T PD TIMBA T H TIMBA"/>-->
-        <!--<route type="star" name="TIMBA4B"-->
-               <!--route="PD KUNAV T PD AMDUT T SL 250 PD KKE64 T PD TIMBA T H TIMBA"/>-->
-        <!--<route type="star" name="TIMBA3F"-->
-               <!--route="PD KONAN T PD ARNUN T SL 250 PD KKE63 T PD LARCK T PD TIMBA T H TIMBA"/>-->
-        <!--<route type="star" name="TIMBA1J"-->
-               <!--route="PD ERING T PD ABTUM T PD ARNUN T SL 250 PD KKE63 T PD LARCK T PD TIMBA T H TIMBA"/>-->
-        <!--<route type="star" name="TIMBA1K"-->
-               <!--route="PD TEBRA T PD ABTUM T PD ARNUN T SL 250 PD KKE63 T PD LARCK T PD TIMBA T H TIMBA"/>-->
+        <route type="star" name="TIMBA2G" entryFL="220"
+               route="PD NEVIL T PD OSPOL T PD NETVU T PD ELDAX T PD AMDUT T SL 250 PD KKE64 T PD TIMBA T H TIMBA"/>
+        <route type="star" name="TIMBA4B"
+               route="PD KUNAV T PD AMDUT T SL 250 PD KKE64 T PD TIMBA T H TIMBA"/>
+        <route type="star" name="TIMBA3F"
+               route="PD KONAN T PD ARNUN T SL 250 PD KKE63 T PD LARCK T PD TIMBA T H TIMBA"/>
+        <route type="star" name="TIMBA1J"
+               route="PD ERING T PD ABTUM T PD ARNUN T SL 250 PD KKE63 T PD LARCK T PD TIMBA T H TIMBA"/>
+        <route type="star" name="TIMBA1K"
+               route="PD TEBRA T PD ABTUM T PD ARNUN T SL 250 PD KKE63 T PD LARCK T PD TIMBA T H TIMBA"/>
       </sharedRoutes>
       <runways>
         <runway>
