@@ -3,24 +3,28 @@
  */
 package eng.jAtcSim.lib.coordinates;
 
+import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.jAtcSim.lib.global.Headings;
 import eng.jAtcSim.lib.global.UnitProvider;
-import eng.jAtcSim.lib.coordinates.Coordinate;
 
 /**
- *
  * @author Marek
  */
 public final class Coordinates {
 
+  public enum eHeadingToRadialBehavior {
+    gentle,
+    standard,
+    aggresive
+  }
   private final static double R = 6371;
 
   /**
    * Returns new Coordinate based on initial point, distance
    * and heading.
    *
-   * @param coordinate Original point
-   * @param heading Heading
+   * @param coordinate   Original point
+   * @param heading      Heading
    * @param distanceInNM Distance in nauctional miles
    * @return New point
    */
@@ -41,9 +45,6 @@ public final class Coordinates {
 
     Coordinate ret = new Coordinate(rLat, rLon);
     return ret;
-  }
-
-  private Coordinates() {
   }
 
   /**
@@ -77,7 +78,7 @@ public final class Coordinates {
    * Returns initial bearing
    *
    * @param from Initial point
-   * @param to Target point
+   * @param to   Target point
    * @return Bearing in degrees
    */
   public static double getBearing(Coordinate from, Coordinate to) {
@@ -95,18 +96,37 @@ public final class Coordinates {
     ret = (ret + 360) % 360;
     return ret;
   }
-  
-  private static final double RADIAL_APPROACH_MULTIPLIER = 7;
-  private static final double RADIAL_MAX_DIFF = 45; //30;
-  public static double getHeadingToRadial (Coordinate current, Coordinate target, double radialToTarget){
+
+  //  private static final double RADIAL_APPROACH_MULTIPLIER = 7;
+//  private static final double RADIAL_MAX_DIFF = 45; //30;
+  public static double getHeadingToRadial(Coordinate current, Coordinate target, double radialToTarget, eHeadingToRadialBehavior behavior) {
+    double RADIAL_APPROACH_MULTIPLIER;
+    double RADIAL_MAX_DIFF;
+    switch (behavior) {
+      case gentle:
+        RADIAL_APPROACH_MULTIPLIER = 4;
+        RADIAL_MAX_DIFF = 15;
+        break;
+      case standard:
+        RADIAL_APPROACH_MULTIPLIER = 4;
+        RADIAL_MAX_DIFF = 30;
+        break;
+      case aggresive:
+        RADIAL_APPROACH_MULTIPLIER = 7;
+        RADIAL_MAX_DIFF = 45;
+        break;
+      default:
+        throw new EEnumValueUnsupportedException(behavior);
+    }
+
     double heading = Coordinates.getBearing(current, target);
     double diff = Headings.subtract(heading, radialToTarget);
-      diff *= RADIAL_APPROACH_MULTIPLIER;
-    if (Math.abs(diff) > RADIAL_MAX_DIFF){
+    diff *= RADIAL_APPROACH_MULTIPLIER;
+    if (Math.abs(diff) > RADIAL_MAX_DIFF) {
       diff = Math.signum(diff) * RADIAL_MAX_DIFF;
     }
 
-    double ret =  radialToTarget + diff;
+    double ret = radialToTarget + diff;
     ret = Headings.to(ret);
     return ret;
   }
@@ -117,5 +137,8 @@ public final class Coordinates {
 
   private static double toDegrees(double radians) {
     return radians * 180 / Math.PI;
+  }
+
+  private Coordinates() {
   }
 }

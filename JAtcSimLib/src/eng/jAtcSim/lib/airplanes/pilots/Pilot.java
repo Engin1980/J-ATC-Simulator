@@ -472,7 +472,8 @@ public class Pilot {
             this.phase = eHoldPhase.firstTurn;
           } else {
             double newHeading = Coordinates.getHeadingToRadial(
-                parent.getCoordinate(), this.navaid.getCoordinate(), this.inboundRadial);
+                parent.getCoordinate(), this.navaid.getCoordinate(), this.inboundRadial,
+                Coordinates.eHeadingToRadialBehavior.standard);
             parent.setTargetHeading(newHeading);
 
           }
@@ -683,7 +684,7 @@ public class Pilot {
       return ret;
     }
 
-    private void updateHeadingOnApproach() {
+    private void updateHeadingOnApproach(Coordinates.eHeadingToRadialBehavior radialBehavior) {
       double newHeading;
       Coordinate planePos = parent.getCoordinate();
       if (location == ApproachLocation.beforeFaf) {
@@ -692,13 +693,13 @@ public class Pilot {
         Coordinate point = approach.getMapt();
         double course = approach.getFaf2MaptCourse();
         newHeading = Coordinates.getHeadingToRadial(
-            planePos, point, course);
+            planePos, point, course, radialBehavior);
       } else if (location == ApproachLocation.beforeThreshold) {
         double dist = Coordinates.getDistanceInNM(planePos, this.approach.getThreshold().getCoordinate());
         if (dist < 2)
           newHeading = Coordinates.getBearing(planePos, this.approach.getThreshold().getCoordinate());
         else
-          newHeading = Coordinates.getHeadingToRadial(planePos, this.approach.getThreshold().getCoordinate(), this.approach.getThreshold().getCourse());
+          newHeading = Coordinates.getHeadingToRadial(planePos, this.approach.getThreshold().getCoordinate(), this.approach.getThreshold().getCourse(), radialBehavior);
       } else {
         // afther threshold
         newHeading = (int) Coordinates.getBearing(planePos, this.approach.getThreshold().getOtherThreshold().getCoordinate());
@@ -776,7 +777,7 @@ public class Pilot {
           isAfterStateChange = false;
           // this is when app is cleared for approach
           // this only updates speed and changes to "entering"
-          updateHeadingOnApproach();
+          updateHeadingOnApproach(Coordinates.eHeadingToRadialBehavior.standard);
           boolean isDescending = updateAltitudeOnApproach(false);
 
           if (isDescending) {
@@ -788,7 +789,7 @@ public class Pilot {
           // plane on descend slope
           // updates speed, then changes to "descending"
           isAfterStateChange = false;
-          updateHeadingOnApproach();
+          updateHeadingOnApproach(Coordinates.eHeadingToRadialBehavior.standard);
           updateAltitudeOnApproach(false);
           if (parent.getAltitude() < this.finalAltitude) {
             isAfterStateChange = true;
@@ -799,7 +800,7 @@ public class Pilot {
           // plane under final altitude
           // yells if it have not own speed or if not switched to atc
           // TODO see above
-          updateHeadingOnApproach();
+          updateHeadingOnApproach(Coordinates.eHeadingToRadialBehavior.aggresive);
           updateAltitudeOnApproach(false);
 
           if (isAfterStateChange) {
@@ -824,7 +825,7 @@ public class Pilot {
           break;
         case shortFinal:
           updateAltitudeOnApproach(true);
-          updateHeadingOnApproach();
+          updateHeadingOnApproach(Coordinates.eHeadingToRadialBehavior.aggresive);
           if (isAfterStateChange) {
             int MAX_SHORT_FINAL_HEADING_DIFF = 10;
             double diff = Math.abs(parent.getTargetHeading() - this.approach.getCourse());
@@ -848,7 +849,7 @@ public class Pilot {
           break;
         case landed:
           isAfterStateChange = false;
-          updateHeadingOnApproach();
+          updateHeadingOnApproach(Coordinates.eHeadingToRadialBehavior.gentle);
           break;
         default:
           super.throwIllegalStateException();

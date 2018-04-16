@@ -127,26 +127,26 @@
                      releaseAltitude="-1" acceptAltitude="-1" orderedAltitude="-1"/>
       </atcTemplates>
       <sharedRoutes>
-        <route type="star" name="TELTU1G" entryFL="220"
-               route="PD TELTU T SL 220 PD SFD T PD TIMBA T H TIMBA"/>
-        <route type="star" name="AMDUT1G" entryFL="220"
-               route="PD AMDUT T SL 220 PD SFD T PD WILLO T H WILLO"/>
-        <route type="star" name="ARNUN1G" entryFL="220"
-               route="PD ARNUN T PD HASTY T SL 220 PD SFD T PD WILLO T H WILLO"/>
-        <route type="star" name="OTMET1G" entryFL="220"
-               route="PD OTMET T PD SOKDU T PD NEDUL T SL 250 PD TELTU T SL 220 PD HOLLY T PD WILLO T H WILLO"/>
+        <!--<route type="star" name="TELTU1G" entryFL="220"-->
+               <!--route="PD TELTU T SL 220 PD SFD T PD TIMBA T H TIMBA"/>-->
+        <!--<route type="star" name="AMDUT1G" entryFL="220"-->
+               <!--route="PD AMDUT T SL 220 PD SFD T PD WILLO T H WILLO"/>-->
+        <!--<route type="star" name="ARNUN1G" entryFL="220"-->
+               <!--route="PD ARNUN T PD HASTY T SL 220 PD SFD T PD WILLO T H WILLO"/>-->
+        <!--<route type="star" name="OTMET1G" entryFL="220"-->
+               <!--route="PD OTMET T PD SOKDU T PD NEDUL T SL 250 PD TELTU T SL 220 PD HOLLY T PD WILLO T H WILLO"/>-->
         <route type="star" name="VASUX1G" entryFL="220"
                route="PD VASUX T PD DISVO T SL 250 PD TELTU T SL 220 PD HOLLY T PD WILLO T H WILLO"/>
-        <route type="star" name="TIMBA2G" entryFL="220"
-               route="PD NEVIL T PD OSPOL T PD NETVU T PD ELDAX T PD AMDUT T SL 250 PD KKE64 T PD TIMBA T H TIMBA"/>
-        <route type="star" name="TIMBA4B"
-               route="PD KUNAV T PD AMDUT T SL 250 PD KKE64 T PD TIMBA T H TIMBA"/>
-        <route type="star" name="TIMBA3F"
-               route="PD KONAN T PD ARNUN T SL 250 PD KKE63 T PD LARCK T PD TIMBA T H TIMBA"/>
-        <route type="star" name="TIMBA1J"
-               route="PD ERING T PD ABTUM T PD ARNUN T SL 250 PD KKE63 T PD LARCK T PD TIMBA T H TIMBA"/>
-        <route type="star" name="TIMBA1K"
-               route="PD TEBRA T PD ABTUM T PD ARNUN T SL 250 PD KKE63 T PD LARCK T PD TIMBA T H TIMBA"/>
+        <!--<route type="star" name="TIMBA2G" entryFL="220"-->
+               <!--route="PD NEVIL T PD OSPOL T PD NETVU T PD ELDAX T PD AMDUT T SL 250 PD KKE64 T PD TIMBA T H TIMBA"/>-->
+        <!--<route type="star" name="TIMBA4B"-->
+               <!--route="PD KUNAV T PD AMDUT T SL 250 PD KKE64 T PD TIMBA T H TIMBA"/>-->
+        <!--<route type="star" name="TIMBA3F"-->
+               <!--route="PD KONAN T PD ARNUN T SL 250 PD KKE63 T PD LARCK T PD TIMBA T H TIMBA"/>-->
+        <!--<route type="star" name="TIMBA1J"-->
+               <!--route="PD ERING T PD ABTUM T PD ARNUN T SL 250 PD KKE63 T PD LARCK T PD TIMBA T H TIMBA"/>-->
+        <!--<route type="star" name="TIMBA1K"-->
+               <!--route="PD TEBRA T PD ABTUM T PD ARNUN T SL 250 PD KKE63 T PD LARCK T PD TIMBA T H TIMBA"/>-->
       </sharedRoutes>
       <runways>
         <runway>
@@ -154,8 +154,8 @@
             <threshold name="08R" coordinate="51 08 45.10 N 000 12 24.59 W" initialDepartureAltitude="4000"
                        includeSharedRoutes="true">
               <sharedIafRoutes>
-                <route iaf="TIMBA" route="DM 40 PD MAY T PD MAY/275/23 T TR 050 T DM 20 FH 080" />
-                <route iaf="WILLO" route="DM 40 PD MID/105/5 T TR 050 T DM 20 FH 080" />
+                <route iaf="TIMBA" route="DM 40 PD MAY T PD MAY/275/23 T TR 050 T DM 30 FH 080" />
+                <route iaf="WILLO" route="DM 40 PD MID/105/5 T TR 050 T DM 30 FH 080" />
               </sharedIafRoutes>
               <approaches>
                 <gnssApproach gaRoute="CM 30 AA 20+ TR 179" radial="078" includeSharedIafRoutes="true" daA="700"
@@ -192,8 +192,8 @@
                        preferred="true"
                        includeSharedRoutes="true">
               <sharedIafRoutes>
-                <route iaf="TIMBA" route="DM 40 PD MAY T DM 20 PD MAY/003/8.5 T FH 290" />
-                <route iaf="WILLO" route="DM 40 PD MID/117/22 T PD MAY T DM 20 PD MAY/003/8.5 T FH 290" />
+                <route iaf="TIMBA" route="DM 40 PD MAY T DM 30 PD MAY/003/8.5 T FH 290" />
+                <route iaf="WILLO" route="DM 40 PD MID/117/22 T PD MAY T DM 30 PD MAY/003/8.5 T FH 290" />
               </sharedIafRoutes>
               <approaches>
                 <ilsApproach gaRoute="CM 30 AA 20+ FH 179" radial="258" includeSharedIafRoutes="true" initialAltitude="3000">
