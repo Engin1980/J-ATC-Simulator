@@ -6,7 +6,6 @@ import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.AirplaneList;
 import eng.jAtcSim.lib.messaging.Message;
-import eng.jAtcSim.lib.speaking.ISpeech;
 import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.GoodDayNotification;
 import eng.jAtcSim.lib.speaking.fromAtc.atc2atc.PlaneSwitchMessage;

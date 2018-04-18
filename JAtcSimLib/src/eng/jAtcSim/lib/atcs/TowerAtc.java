@@ -604,11 +604,13 @@ public class TowerAtc extends ComputerAtc {
 
     lst.add(new ClearedForTakeoffCommand(availableThreshold));
 
-    // -- po vysce+300 ma kontaktovat APP
-    lst.add(new AfterAltitudeCommand(
-        Acc.airport().getAltitude() + Acc.rnd().nextInt(150, 450),
-        AfterAltitudeCommand.ERestriction.andAbove));
-    lst.add(new ContactCommand(Atc.eType.app));
+    // this is done automatically when atc is switched
+    // the altitude depends on the switch altitude of the airplane
+//    // -- po vysce+300 ma kontaktovat APP
+//    lst.add(new AfterAltitudeCommand(
+//        Acc.airport().getAltitude() + Acc.rnd().nextInt(5,10), //(150, 450),
+//        AfterAltitudeCommand.ERestriction.andAbove));
+//    lst.add(new ContactCommand(Atc.eType.app));
 
     Message m = new Message(this, toReadyPlane, lst);
     super.sendMessage(m);
@@ -641,7 +643,8 @@ class TakeOffInfo {
   public TakeOffInfo(ETime takeOffTime, Airplane airplane) {
     this.takeOffTime = takeOffTime.clone();
     this.airplane = airplane;
-    this.randomReadyToSwitchAltitude = Acc.airport().getAltitude() + Acc.rnd().nextInt(250, 1000);
+    //TODO here should be "release altitude" + rnd(0-500);
+    this.randomReadyToSwitchAltitude = Acc.airport().getAltitude() + Acc.rnd().nextInt(200, 750);
   }
 }
 

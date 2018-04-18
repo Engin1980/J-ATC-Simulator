@@ -1081,15 +1081,11 @@ public class Pilot {
 
   private void processNewSpeeches() {
     SpeechList current = this.queue.get();
+
     if (current.isEmpty()) return;
 
     // if has not confirmed radar contact and the first command in the queue is not radar contact confirmation
     if (secondsWithoutRadarContact > 0 && !(current.get(0) instanceof RadarContactConfirmationNotification)) {
-      System.out.println("## before RC commands:");
-      for (Object o : current) {
-        System.out.println(o.toString());
-      }
-      System.out.println("## end");
       say(new RequestRadarContactNotification());
       this.queue.clear();
     } else {
