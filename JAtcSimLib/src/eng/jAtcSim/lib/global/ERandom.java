@@ -6,7 +6,11 @@
 
 package eng.jAtcSim.lib.global;
 
+import eng.eSystem.exceptions.EApplicationException;
+
 import java.util.Random;
+
+import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 /**
  *
@@ -14,7 +18,13 @@ import java.util.Random;
  */
 public class ERandom extends Random {
   public int nextInt (int fromInclusive, int toExclusive){
-    return nextInt(toExclusive - fromInclusive) + fromInclusive;
+    int ret;
+    try{
+      ret = nextInt(toExclusive - fromInclusive) + fromInclusive;
+    } catch (Exception ex){
+      throw new EApplicationException(sf("Unable to generate random number from %d to %d.", fromInclusive, toExclusive));
+    }
+    return ret;
   }
   
   @Override

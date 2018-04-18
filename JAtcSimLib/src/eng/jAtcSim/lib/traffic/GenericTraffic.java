@@ -107,6 +107,7 @@ public class GenericTraffic extends Traffic {
       index++;
       if (tmp < probabilityOfCategory[index]) {
         ret = (char) ((int) ret + index);
+        break;
       } else {
         tmp -= probabilityOfCategory[index];
       }

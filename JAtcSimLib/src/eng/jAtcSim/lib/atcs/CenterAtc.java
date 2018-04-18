@@ -147,8 +147,23 @@ public class CenterAtc extends ComputerAtc {
   }
 
   private int getDepartureRandomTargetAltitude(Airplane p) {
-    //TODO this will not work for VFR and "A"-type planes, for which this is too high
-    int ret = Acc.rnd().nextInt(20, p.getType().maxAltitude / 1000);
+    int min;
+    switch (p.getType().category){
+      case 'A':
+        min = 4;
+        break;
+      case 'B':
+        min = 14;
+        break;
+      case 'C':
+      case 'D':
+        min = 20;
+        break;
+        default:
+          throw new UnsupportedOperationException();
+    }
+    min = (int) Math.max(p.getAltitude() / 1000, min);
+    int ret = Acc.rnd().nextInt(min, p.getType().maxAltitude / 1000);
     ret = ret * 1000;
     return ret;
   }
