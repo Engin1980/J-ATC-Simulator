@@ -8,6 +8,7 @@
       <module fileurl="file://$PROJECT_DIR$/JAtcSimLib/JAtcSimLib.iml" filepath="$PROJECT_DIR$/JAtcSimLib/JAtcSimLib.iml" />
       <module fileurl="file://$PROJECT_DIR$/JAtcSimRadarBase/JAtcSimRadarBase.iml" filepath="$PROJECT_DIR$/JAtcSimRadarBase/JAtcSimRadarBase.iml" />
       <module fileurl="file://$PROJECT_DIR$/JAtcSimSolution.iml" filepath="$PROJECT_DIR$/JAtcSimSolution.iml" />
+      <module fileurl="file://$PROJECT_DIR$/JavaFXRadar/JavaFXRadar.iml" filepath="$PROJECT_DIR$/JavaFXRadar/JavaFXRadar.iml" />
       <module fileurl="file://$PROJECT_DIR$/SwingRadar/SwingRadar.iml" filepath="$PROJECT_DIR$/SwingRadar/SwingRadar.iml" />
     </modules>
   </component>
