@@ -8,13 +8,12 @@ package eng.jAtcSim.lib.world;
 
 import eng.jAtcSim.lib.exceptions.EBindException;
 import eng.jAtcSim.lib.global.KeyItem;
-import eng.jAtcSim.lib.global.MustBeBinded;
 
 /**
  *
  * @author Marek
  */
-public class PublishedHold extends MustBeBinded implements KeyItem<Navaid> {
+public class PublishedHold implements KeyItem<Navaid> {
   private String navaidName;
   private Navaid _navaid;
   private int inboundRadial;
@@ -37,8 +36,7 @@ public class PublishedHold extends MustBeBinded implements KeyItem<Navaid> {
     return !_leftTurn;
   }
   
-  @Override
-  protected void _bind(){
+  public void bind(){
     Navaid n = getParent().getParent().getNavaids().get(navaidName);
     if (n == null){
       throw new EBindException("Published hold cannot be created. Unknown navaid " + navaidName);

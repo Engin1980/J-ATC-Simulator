@@ -45,11 +45,11 @@ public class Area {
 
   public void initAfterLoad() {
     rebuildParentReferences();
-    _bind();
+    bind();
     checkRouteCommands();
   }
 
-  private void _bind() {
+  private void bind() {
     for (Airport a : this.getAirports()) {
       Acc.setAirport(a);
       for (PublishedHold h : a.getHolds()) {

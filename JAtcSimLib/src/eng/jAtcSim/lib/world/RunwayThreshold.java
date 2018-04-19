@@ -15,7 +15,6 @@ import eng.jAtcSim.lib.coordinates.Coordinates;
 import eng.jAtcSim.lib.global.Headings;
 import eng.jAtcSim.lib.global.KeyItem;
 import eng.jAtcSim.lib.global.KeyList;
-import eng.jAtcSim.lib.global.MustBeBinded;
 import eng.jAtcSim.lib.world.approaches.*;
 
 import java.util.ArrayList;
@@ -24,7 +23,7 @@ import java.util.List;
 /**
  * @author Marek
  */
-public class RunwayThreshold extends MustBeBinded implements KeyItem<String> {
+public class RunwayThreshold implements KeyItem<String> {
 
 
   private final List<Approach> approaches = new ArrayList<>();
@@ -86,8 +85,6 @@ public class RunwayThreshold extends MustBeBinded implements KeyItem<String> {
   }
 
   public double getCourse() {
-    checkBinded();
-
     return this._course;
   }
 
@@ -153,8 +150,7 @@ public class RunwayThreshold extends MustBeBinded implements KeyItem<String> {
     return this.getName() + "{rwyThr}";
   }
 
-  @Override
-  protected void _bind() {
+  public void bind() {
     this._other
         = this.getParent().getThresholdA().equals(this)
         ? this.getParent().getThresholdB()

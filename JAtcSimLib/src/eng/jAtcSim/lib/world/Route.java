@@ -9,7 +9,6 @@ import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.xmlSerialization.XmlOptional;
 import eng.jAtcSim.lib.coordinates.Coordinates;
 import eng.jAtcSim.lib.exceptions.EBindException;
-import eng.jAtcSim.lib.global.MustBeBinded;
 import eng.jAtcSim.lib.global.PlaneCategoryDefinitions;
 import eng.jAtcSim.lib.speaking.ICommand;
 import eng.jAtcSim.lib.speaking.IFromAtc;
@@ -26,7 +25,7 @@ import java.util.List;
 /**
  * @author Marek
  */
-public class Route extends MustBeBinded {
+public class Route {
 
   public enum eType {
 
@@ -110,14 +109,10 @@ public class Route extends MustBeBinded {
   }
 
   public SpeechList<IAtcCommand> getCommands() {
-    super.checkBinded();
-
     return _routeCommands;
   }
 
   public SpeechList<IAtcCommand> getCommandsListClone() {
-    super.checkBinded();
-
     SpeechList<IAtcCommand> ret = new SpeechList<>();
     ret.add(_routeCommands);
     return ret;
@@ -128,8 +123,6 @@ public class Route extends MustBeBinded {
   }
 
   public Navaid getMainFix() {
-    super.checkBinded();
-
     return mainFix;
   }
 
@@ -160,8 +153,7 @@ public class Route extends MustBeBinded {
     return ret;
   }
 
-  @Override
-  protected void _bind() {
+  public void bind() {
     try {
       Parser p = new ShortParser();
       SpeechList<IFromAtc> xlst = p.parseMulti(this.route);

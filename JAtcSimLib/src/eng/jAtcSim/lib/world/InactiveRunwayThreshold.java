@@ -3,9 +3,8 @@ package eng.jAtcSim.lib.world;
 import eng.jAtcSim.lib.coordinates.Coordinate;
 import eng.jAtcSim.lib.coordinates.Coordinates;
 import eng.jAtcSim.lib.global.KeyItem;
-import eng.jAtcSim.lib.global.MustBeBinded;
 
-public class InactiveRunwayThreshold extends MustBeBinded implements KeyItem<String> {
+public class InactiveRunwayThreshold implements KeyItem<String> {
   private String name;
   private Coordinate coordinate;
   private InactiveRunway parent;
@@ -34,8 +33,6 @@ public class InactiveRunwayThreshold extends MustBeBinded implements KeyItem<Str
   }
 
   public double getCourse() {
-    checkBinded();
-
     return this._course;
   }
 
@@ -48,8 +45,7 @@ public class InactiveRunwayThreshold extends MustBeBinded implements KeyItem<Str
     return this.getName() + "{inactive-rwyThr}";
   }
 
-  @Override
-  protected void _bind() {
+  public void bind() {
     this._other
         = this.getParent().getThresholdA().equals(this)
         ? this.getParent().getThresholdB()
