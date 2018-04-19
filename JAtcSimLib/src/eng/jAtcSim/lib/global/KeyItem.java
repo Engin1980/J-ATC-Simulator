@@ -13,5 +13,5 @@ package eng.jAtcSim.lib.global;
  * @param <T>
  */
 public interface KeyItem<T> {
-  public T getKey();
+  T getKey();
 }

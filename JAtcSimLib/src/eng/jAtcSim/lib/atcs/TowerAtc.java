@@ -578,7 +578,7 @@ public class TowerAtc extends ComputerAtc {
 
 
     // if it gets here, the "toReadyPlane" can proceed take-off
-    linedUpPlanesList.remove(0);
+    linedUpPlanesList.removeAt(0);
     departingPlanesList.add(toReadyPlane);
     toReadyPlane.setHoldingPointState(availableThreshold.getCoordinate(), availableThreshold.getCourse());
 

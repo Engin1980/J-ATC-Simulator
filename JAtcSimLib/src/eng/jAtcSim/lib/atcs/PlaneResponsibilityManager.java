@@ -289,7 +289,7 @@ public class PlaneResponsibilityManager {
   protected AirplaneList getPlanes(Atc atc) {
     //TODO není to moc pomalé?
     AirplaneList nw = new AirplaneList();
-    nw.addAll(lst.get(atc));
+    nw.add(lst.get(atc));
     return nw;
   }
 

@@ -11,6 +11,7 @@ import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.collections.ReadOnlyList;
 import eng.eSystem.events.EventSimple;
+import eng.eSystem.xmlSerialization.XmlIgnore;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.AirplaneList;
 import eng.jAtcSim.lib.airplanes.AirplaneTypes;
@@ -22,6 +23,7 @@ import eng.jAtcSim.lib.atcs.UserAtc;
 import eng.jAtcSim.lib.coordinates.Coordinates;
 import eng.jAtcSim.lib.global.ERandom;
 import eng.jAtcSim.lib.global.ETime;
+import eng.jAtcSim.lib.managers.EmergencyManager;
 import eng.jAtcSim.lib.managers.MrvaManager;
 import eng.jAtcSim.lib.messaging.Message;
 import eng.jAtcSim.lib.messaging.Messenger;
@@ -34,6 +36,7 @@ import eng.jAtcSim.lib.traffic.fleets.Fleets;
 import eng.jAtcSim.lib.weathers.Weather;
 import eng.jAtcSim.lib.weathers.WeatherProvider;
 import eng.jAtcSim.lib.world.Airport;
+import eng.jAtcSim.lib.world.Area;
 import eng.jAtcSim.lib.world.Border;
 import eng.jAtcSim.lib.world.RunwayThreshold;
 
@@ -59,7 +62,11 @@ public class Simulation {
   private static final Pattern SYSMES_SHORTCUT = Pattern.compile("SHORTCUT ([\\\\?A-Z0-9]+)( (.+))?");
   private final static double MAX_VICINITY_DISTANCE_IN_NM = 10;
   private final ETime now;
+  @XmlIgnore
+  private final Area area;
+  @XmlIgnore
   private final AirplaneTypes planeTypes;
+  @XmlIgnore
   private final Airport airport;
   private final Messenger messenger = new Messenger();
   private final UserAtc appAtc;
@@ -69,24 +76,24 @@ public class Simulation {
   private final Fleets fleets;
   private final IList<Airplane> newPlanesDelayedToAvoidCollision = new EList<>();
   private final MrvaManager mrvaManager;
+  private final WeatherProvider weatherProvider;
+  private final Statistics stats = new Statistics();
+  private final EmergencyManager emergencyManager;
   /**
    * Public event informing surrounding about elapsed second.
    */
   private EventSimple<Simulation> secondElapsedEvent =
       new EventSimple<>(this);
   private int simulationSecondLengthInMs;
-  private WeatherProvider weatherProvider;
-  private Statistics stats = new Statistics();
   private boolean isBusy = false;
-  private ETime nextEmergencyTime;
-  private double emergencyPerDayProbability;
+
   /**
    * Internal timer used to make simulation ticks.
    */
   private final Timer tmr = new Timer(o -> Simulation.this.elapseSecond());
 
-  public static Simulation create(Airport airport, AirplaneTypes types, WeatherProvider weatherProvider, Fleets fleets, Traffic traffic, Calendar now, int simulationSecondLengthInMs, IList<Border> mrvaAreas, double emergencyPerDayProbability) {
-    Simulation ret = new Simulation(airport, types, weatherProvider, fleets, traffic, now, simulationSecondLengthInMs, mrvaAreas, emergencyPerDayProbability);
+  public static Simulation create(Area area, Airport airport, AirplaneTypes types, WeatherProvider weatherProvider, Fleets fleets, Traffic traffic, Calendar now, int simulationSecondLengthInMs, IList<Border> mrvaAreas, double emergencyPerDayProbability) {
+    Simulation ret = new Simulation(area, airport, types, weatherProvider, fleets, traffic, now, simulationSecondLengthInMs, mrvaAreas, emergencyPerDayProbability);
 
     Acc.setSimulation(ret);
 
@@ -99,8 +106,14 @@ public class Simulation {
     return ret;
   }
 
-  private Simulation(Airport airport, AirplaneTypes types, WeatherProvider weatherProvider, Fleets fleets, Traffic traffic, Calendar now, int simulationSecondLengthInMs,
+  private Simulation(Area area, Airport airport, AirplaneTypes types, WeatherProvider weatherProvider, Fleets fleets, Traffic traffic, Calendar now, int simulationSecondLengthInMs,
                      IList<Border> mrvaAreas, double emergencyPerDayProbability) {
+    if (area == null) {
+        throw new IllegalArgumentException("Value of {area} cannot not be null.");
+    }
+    if (area.getAirports().contains(airport) == false){
+      throw new IllegalArgumentException("Airport is not in the area.");
+    }
     if (airport == null) {
       throw new IllegalArgumentException("Argument \"airport\" cannot be null.");
     }
@@ -120,6 +133,10 @@ public class Simulation {
       throw new IllegalArgumentException("Argument \"now\" cannot be null.");
     }
 
+    this.now = new ETime(now);
+    this.simulationSecondLengthInMs = simulationSecondLengthInMs;
+
+    this.area = area;
     this.airport = airport;
     this.planeTypes = types;
     this.weatherProvider = weatherProvider;
@@ -130,13 +147,9 @@ public class Simulation {
     this.ctrAtc = new CenterAtc(airport.getAtcTemplates().get(Atc.eType.ctr));
     this.appAtc = new UserAtc(airport.getAtcTemplates().get(Atc.eType.app));
 
+    this.emergencyManager = new EmergencyManager(emergencyPerDayProbability);
+    this.emergencyManager.generateEmergencyTime(this.now);
     this.mrvaManager = new MrvaManager(mrvaAreas);
-
-    this.now = new ETime(now);
-    this.simulationSecondLengthInMs = simulationSecondLengthInMs;
-
-    this.emergencyPerDayProbability = emergencyPerDayProbability;
-    generateEmergencyTime();
   }
 
   public EventSimple<Simulation> getSecondElapsedEvent() {
@@ -238,16 +251,12 @@ public class Simulation {
     this.messenger.send(m);
   }
 
-  public WeatherProvider getWeatherProvider() {
-    return this.weatherProvider;
+  public Area getArea() {
+    return area;
   }
 
-  private void generateEmergencyTime() {
-    if (emergencyPerDayProbability > 0) {
-      int secondsToNextEmerg = (int) ((60 * 60 * 24) / emergencyPerDayProbability);
-      secondsToNextEmerg = Acc.rnd().nextInt(secondsToNextEmerg);
-      this.nextEmergencyTime = this.now.addSeconds(secondsToNextEmerg);
-    }
+  public WeatherProvider getWeatherProvider() {
+    return this.weatherProvider;
   }
 
   private void weatherProvider_weatherUpdated() {
@@ -305,7 +314,7 @@ public class Simulation {
   }
 
   private void generateEmergencyIfRequired() {
-    if (this.nextEmergencyTime != null && this.nextEmergencyTime.isBefore(Acc.now())) {
+    if (this.emergencyManager.isEmergencyTimeElapsed()) {
       if (!Acc.planes().isAny(q -> q.isEmergency())) {
         Airplane p = Acc.planes()
             .where(q -> q.getState().is(Airplane.State.departingLow,
@@ -314,7 +323,7 @@ public class Simulation {
         if (p != null)
           p.raiseEmergency();
       }
-      generateEmergencyTime();
+      this.emergencyManager.generateEmergencyTime(this.now);
     }
   }
 
@@ -329,7 +338,7 @@ public class Simulation {
 
     if (newPlanesDelayedToAvoidCollision.isEmpty() == false) {
       Airplane newPlane = newPlanesDelayedToAvoidCollision.tryGetFirst(q -> isInVicinityOfSomeOtherPlane(q) == false);
-      if (newPlane != null){
+      if (newPlane != null) {
         newPlanesDelayedToAvoidCollision.remove(newPlane);
         Acc.prm().registerPlane(ctrAtc, newPlane);
       }

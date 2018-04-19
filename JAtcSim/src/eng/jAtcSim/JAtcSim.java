@@ -12,6 +12,7 @@ import eng.jAtcSim.frmPacks.Pack;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.Simulation;
 import eng.jAtcSim.lib.airplanes.AirplaneTypes;
+import eng.jAtcSim.lib.global.KeyList;
 import eng.jAtcSim.lib.global.logging.ApplicationLog;
 import eng.jAtcSim.lib.global.logging.Recorder;
 import eng.jAtcSim.lib.traffic.GenericTraffic;
@@ -71,6 +72,7 @@ public class JAtcSim {
 
   public static void startSimulation(StartupSettings startupSettings) {
 
+    KeyList.setDuplicatesChecking(false);
 
     resolveShortXmlFileNamesInStartupSettings(appSettings, startupSettings);
     XmlLoadHelper.saveStartupSettings(startupSettings, appSettings.getStartupSettingsFile());
@@ -113,9 +115,12 @@ public class JAtcSim {
 
     IList<Border> mrvaAreas = data.area.getBorders().where(q -> q.getType() == Border.eType.mrva);
 
+    // enable duplicates
+    KeyList.setDuplicatesChecking(true);
+
     // simulation creation
     final Simulation sim = Simulation.create(
-        aip, data.types, weatherProvider, data.fleets, traffic, simTime, startupSettings.simulation.secondLengthInMs,
+        data.area, aip, data.types, weatherProvider, data.fleets, traffic, simTime, startupSettings.simulation.secondLengthInMs,
         mrvaAreas, startupSettings.simulation.emergencyPerDayProbability);
 
     // sound

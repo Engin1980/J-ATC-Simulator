@@ -6,27 +6,54 @@
 
 package eng.jAtcSim.lib.global;
 
+import eng.eSystem.collections.EDistinctList;
+import eng.eSystem.collections.EList;
+import eng.eSystem.collections.IList;
 import eng.eSystem.exceptions.ERuntimeException;
 
 /**
- *
- * @author Marek
  * @param <TValue> Type of item in Collection.
- * @param <TKey> Type of key of the item.
+ * @param <TKey>   Type of key of the item.
+ * @author Marek
  */
-public class KeyList<TValue extends KeyItem<TKey>, TKey> extends java.util.ArrayList<TValue> {
-  public TValue tryGet(TKey key){
-    for (TValue item : this){
-      if (item.getKey().equals(key)){
+public class KeyList<TValue extends KeyItem<TKey>, TKey> extends EDistinctList<TValue> {
+
+  private static IList<KeyList> instances = new EList<>();
+  private static boolean enabled = false;
+
+  public static void setDuplicatesChecking(boolean enable) {
+    KeyList.enabled = enable;
+
+    if (enable){
+      for (KeyList instance : instances) {
+        instance.setOnDuplicitBehavior(Behavior.exception, true );
+      }
+    }
+    else
+      instances.forEach(q -> q.setOnDuplicitBehavior(Behavior.ignore, false));
+  }
+
+  public KeyList() {
+    super(
+        tValue -> tValue.getKey(),
+        KeyList.enabled ? Behavior.exception : Behavior.ignore
+    );
+
+    instances.add(this);
+  }
+
+  public TValue tryGet(TKey key) {
+    for (TValue item : this) {
+      if (item.getKey().equals(key)) {
         return item;
       }
     }
     return null;
   }
-  
-  public TValue get(TKey key){
-    for (TValue item : this){
-      if (item.getKey().equals(key)){
+
+  public TValue get(TKey key) {
+    for (TValue item : this) {
+      if (item.getKey().equals(key)) {
         return item;
       }
     }

@@ -720,9 +720,9 @@
     <navaid name="KD" type="ndb" coordinate="50.152608 14.636608"/>
     <navaid name="KNE" type="ndb" coordinate="49.046486 17.452153"/>
     <navaid name="KUN" type="ndb" coordinate="49.113922 17.501397"/>
-    <navaid name="L" type="ndb" coordinate="49.150531 16.153561"/>
+    <!--<navaid name="L" type="ndb" coordinate="49.150531 16.153561"/>-->
     <navaid name="L" type="ndb" coordinate="50.119928 14.286597"/>
-    <navaid name="L" type="ndb" coordinate="50.195789 12.941686"/>
+    <!--<navaid name="L" type="ndb" coordinate="50.195789 12.941686"/>-->
     <navaid name="LA" type="ndb" coordinate="49.136506 16.179611"/>
     <navaid name="N" type="ndb" coordinate="49.713200 18.138031"/>
     <navaid name="P" type="ndb" coordinate="50.012472 15.770506"/>
@@ -810,7 +810,7 @@
     <navaid name="CF28" type="fixMinor" coordinate="50.184525 14.583306"/>
     <navaid name="CF31" type="fixMinor" coordinate="49.047778 16.348611"/>
     <navaid name="CI06" type="fixMinor" coordinate="49.161397 18.382270"/>
-    <navaid name="CI06" type="fixMinor" coordinate="50.030772 13.990747"/>
+    <!--<navaid name="CI06" type="fixMinor" coordinate="50.030772 13.990747"/>-->
     <navaid name="CI12" type="fixMinor" coordinate="50.195247 14.064122"/>
     <navaid name="CI22" type="fixMinor" coordinate="49.807483 18.291092"/>
     <navaid name="CI24" type="fixMinor" coordinate="50.176972 14.477950"/>
@@ -941,7 +941,7 @@
     <navaid name="EVRUX" type="fix" coordinate="50.501389 18.690000"/>
     <navaid name="EXUSI" type="fix" coordinate="49.222778 12.657222"/>
     <navaid name="FD04" type="fixMinor" coordinate="49.597542 17.965806"/>
-    <navaid name="FD04" type="fixMinor" coordinate="51.000822 13.577881"/>
+    <!--<navaid name="FD04" type="fixMinor" coordinate="51.000822 13.577881"/>-->
     <navaid name="FD10" type="fixMinor" coordinate="49.171883 16.502486"/>
     <navaid name="FD12Z" type="fixMinor" coordinate="50.201667 14.075706"/>
     <navaid name="FD22" type="fixMinor" coordinate="49.779806 18.260750"/>
@@ -950,15 +950,15 @@
     <navaid name="FF06" type="fixMinor" coordinate="50.040886 14.024089"/>
     <navaid name="FF24" type="fixMinor" coordinate="50.175694 14.705533"/>
     <navaid name="FF28" type="fixMinor" coordinate="49.135903 16.884372"/>
-    <navaid name="FF28" type="fixMinor" coordinate="50.193139 14.533206"/>
+    <!--<navaid name="FF28" type="fixMinor" coordinate="50.193139 14.533206"/>-->
     <navaid name="FF31" type="fixMinor" coordinate="49.078889 16.291945"/>
-    <navaid name="FF31" type="fixMinor" coordinate="49.827500 15.542222"/>
+    <!--<navaid name="FF31" type="fixMinor" coordinate="49.827500 15.542222"/>-->
     <navaid name="FI04" type="fixMinor" coordinate="51.075428 13.687042"/>
     <navaid name="FI06" type="fixMinor" coordinate="49.175722 18.428083"/>
     <navaid name="FI12" type="fixMinor" coordinate="50.146367 14.165828"/>
     <navaid name="FI22" type="fixMinor" coordinate="49.784536 18.253811"/>
     <navaid name="FI24" type="fixMinor" coordinate="50.142667 14.362725"/>
-    <navaid name="FI29" type="fixMinor" coordinate="50.148450 13.113575"/>
+    <!--<navaid name="FI29" type="fixMinor" coordinate="50.148450 13.113575"/>-->
     <navaid name="FI29" type="fixMinor" coordinate="51.047333 17.065778"/>
     <navaid name="FI30" type="fixMinor" coordinate="50.052478 14.360086"/>
     <navaid name="FL12Z" type="fixMinor" coordinate="50.193244 14.068267"/>

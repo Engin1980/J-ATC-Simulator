@@ -2,7 +2,6 @@ package eng.jAtcSim.lib.world.approaches;
 
 import eng.eSystem.xmlSerialization.XmlOptional;
 import eng.jAtcSim.lib.Acc;
-import eng.jAtcSim.lib.global.KeyItem;
 import eng.jAtcSim.lib.global.PlaneCategoryDefinitions;
 import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
