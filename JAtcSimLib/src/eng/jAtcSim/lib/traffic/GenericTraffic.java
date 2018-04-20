@@ -132,7 +132,7 @@ public class GenericTraffic extends Traffic {
     AirplaneType type;
     char category = getRandomCategory();
     if (isNonCommercial) {
-      type = Acc.sim().getPlaneTypes().getRandomFromCategory(category);
+      type = Acc.sim().getAirplaneTypes().getRandomFromCategory(category);
     } else {
       type = getTypeByCategoryAndCompany(prefix, category);
     }

@@ -43,7 +43,7 @@ public class Area {
     return borders;
   }
 
-  public void initAfterLoad() {
+  public void init() {
     rebuildParentReferences();
     bind();
     checkRouteCommands();

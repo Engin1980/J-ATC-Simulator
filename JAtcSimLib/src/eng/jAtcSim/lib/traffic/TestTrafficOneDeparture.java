@@ -23,7 +23,7 @@ public class TestTrafficOneDeparture extends TestTraffic {
 
     Callsign cs;
     cs = new Callsign("CSA", number);
-    AirplaneType pt = Acc.sim().getPlaneTypes().tryGetByName("A319");
+    AirplaneType pt = Acc.sim().getAirplaneTypes().tryGetByName("A319");
     assert pt != null;
 
     ret = new Movement(cs, pt, Acc.now().clone(), 0, true);

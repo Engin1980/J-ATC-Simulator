@@ -127,7 +127,7 @@ public class Acc {
   }
 
   public static AirplaneTypes types() {
-    return sim.getPlaneTypes();
+    return sim.getAirplaneTypes();
   }
 
   public static Fleets fleets() {

@@ -5,7 +5,6 @@
  */
 package eng.jAtcSim;
 
-import eng.eSystem.collections.IList;
 import eng.eSystem.exceptions.ERuntimeException;
 import eng.eSystem.utilites.CollectionUtils;
 import eng.jAtcSim.frmPacks.Pack;
@@ -15,13 +14,16 @@ import eng.jAtcSim.lib.airplanes.AirplaneTypes;
 import eng.jAtcSim.lib.global.KeyList;
 import eng.jAtcSim.lib.global.logging.ApplicationLog;
 import eng.jAtcSim.lib.global.logging.Recorder;
+import eng.jAtcSim.lib.global.xmlSources.AirplaneTypesXmlSource;
+import eng.jAtcSim.lib.global.xmlSources.AreaXmlSource;
+import eng.jAtcSim.lib.global.xmlSources.FleetsXmlSource;
+import eng.jAtcSim.lib.global.xmlSources.TrafficXmlSource;
 import eng.jAtcSim.lib.traffic.GenericTraffic;
 import eng.jAtcSim.lib.traffic.Traffic;
 import eng.jAtcSim.lib.traffic.fleets.Fleets;
 import eng.jAtcSim.lib.weathers.*;
 import eng.jAtcSim.lib.world.Airport;
 import eng.jAtcSim.lib.world.Area;
-import eng.jAtcSim.lib.world.Border;
 import eng.jAtcSim.radarBase.global.SoundManager;
 import eng.jAtcSim.startup.FrmIntro;
 import eng.jAtcSim.startup.StartupSettings;
@@ -77,30 +79,30 @@ public class JAtcSim {
     resolveShortXmlFileNamesInStartupSettings(appSettings, startupSettings);
     XmlLoadHelper.saveStartupSettings(startupSettings, appSettings.getStartupSettingsFile());
 
-    XmlLoadedData data;
+    System.out.println("* Loading area");
+    AreaXmlSource areaXmlSource = new AreaXmlSource(startupSettings.files.areaXmlFile);
+    areaXmlSource.load();
+    areaXmlSource.init(startupSettings.recent.icao);
 
-    // loading data from Xml files
-    try {
-      data = loadDataFromXmlFiles(startupSettings);
-    } catch (Exception ex) {
-      throw new RuntimeException(ex);
-    }
+    System.out.println("* Loading plane types");
+    AirplaneTypesXmlSource airplaneTypesXmlSource = new AirplaneTypesXmlSource(startupSettings.files.planesXmlFile);
+    airplaneTypesXmlSource.load();
+    airplaneTypesXmlSource.init();
 
-    data.area.initAfterLoad();
-    data.fleets.initAfterLoad(data.types);
+    System.out.println("* Loading fleets");
+    FleetsXmlSource fleetsXmlSource = new FleetsXmlSource(startupSettings.files.fleetsXmlFile);
+    fleetsXmlSource.load();
+    fleetsXmlSource.init(airplaneTypesXmlSource.getContent());
 
-    System.out.println("** Setting simulation");
+    System.out.println("* Loading traffic");
+    TrafficXmlSource trafficXmlSource = new TrafficXmlSource(startupSettings.files.trafficXmlFile);
+    trafficXmlSource.load();
+    trafficXmlSource.init(areaXmlSource.getActiveAirport(), specificTraffic);
 
-    // area, airport and time
-    String icao = startupSettings.recent.icao;
-    Calendar simTime = Calendar.getInstance();
-    updateCalendarToSimTime(simTime, startupSettings);
-    Airport aip = data.area.getAirports().get(icao);
-
-    // weather
+    System.out.println("* Initializing weather");
     WeatherProvider weatherProvider;
     if (startupSettings.weather.useOnline) {
-      DynamicWeatherProvider dwp = new NoaaDynamicWeatherProvider(aip.getIcao());
+      DynamicWeatherProvider dwp = new NoaaDynamicWeatherProvider(areaXmlSource.getActiveAirport().getIcao());
       dwp.updateWeather(false);
       weatherProvider = dwp;
     } else {
@@ -108,30 +110,38 @@ public class JAtcSim {
       weatherProvider = swp;
     }
 
-    // traffic
-    Traffic traffic = aip.getTrafficDefinitions().get(0); //getTrafficFromStartupSettings(startupSettings);
+    System.out.println("* Preparing the simulation");
+    Calendar simTime = Calendar.getInstance();
+    updateCalendarToSimTime(simTime, startupSettings);
     if (specificTraffic != null)
-      traffic = specificTraffic;
-
-    IList<Border> mrvaAreas = data.area.getBorders().where(q -> q.getType() == Border.eType.mrva);
+      trafficXmlSource.setActiveTraffic(TrafficXmlSource.TrafficSource.specificTraffic, 0 );
+     else
+       trafficXmlSource.setActiveTraffic(TrafficXmlSource.TrafficSource.activeAirportTraffic, 0 );
 
     // enable duplicates
     KeyList.setDuplicatesChecking(true);
 
-    // simulation creation
-    final Simulation sim = Simulation.create(
-        data.area, aip, data.types, weatherProvider, data.fleets, traffic, simTime, startupSettings.simulation.secondLengthInMs,
-        mrvaAreas, startupSettings.simulation.emergencyPerDayProbability);
+    System.out.println("* Creating the simulation");
 
+    // simulation creation
+    final Simulation sim = new Simulation(
+        areaXmlSource, airplaneTypesXmlSource, fleetsXmlSource, trafficXmlSource,
+        weatherProvider, simTime,
+        startupSettings.simulation.secondLengthInMs,
+        startupSettings.simulation.emergencyPerDayProbability);
+    sim.init();
+
+    System.out.println("* Initializing sound environment");
     // sound
     SoundManager.init(appSettings.soundFolder.toString());
 
+    System.out.println("* Starting a GUI");
     // starting pack & simulation
     String packType = startupSettings.radar.packClass;
     Pack simPack
         = createPackInstance(packType);
 
-    simPack.initPack(sim, data.area, appSettings);
+    simPack.initPack(sim, sim.getArea(), appSettings);
     simPack.startPack();
   }
 
@@ -167,34 +177,6 @@ public class JAtcSim {
       tmp = appPath.relativize(tmp);
       startupSettings.files.trafficXmlFile = tmp.toString();
     }
-  }
-
-  private static XmlLoadedData loadDataFromXmlFiles(StartupSettings sett) throws Exception {
-    System.out.println("*** Loading XML");
-
-    XmlLoadedData ret = new XmlLoadedData();
-
-    String failMsg = null;
-    String fileName = null;
-
-    try {
-      fileName = sett.files.areaXmlFile;
-      failMsg = "Failed to load area from " + fileName;
-      ret.area = XmlLoadHelper.loadNewArea(fileName);
-
-      fileName = sett.files.planesXmlFile;
-      failMsg = "Failed to load plane types from " + fileName;
-      ret.types = XmlLoadHelper.loadPlaneTypes(fileName);
-
-      fileName = sett.files.fleetsXmlFile;
-      failMsg = "Failed to load fleet from " + fileName;
-      ret.fleets = XmlLoadHelper.loadFleets(fileName);
-
-    } catch (Exception ex) {
-      throw new ERuntimeException("Error reading XML file " + fileName + ". " + failMsg, ex);
-    }
-
-    return ret;
   }
 
   private static void updateCalendarToSimTime(Calendar simTime, StartupSettings sett) {

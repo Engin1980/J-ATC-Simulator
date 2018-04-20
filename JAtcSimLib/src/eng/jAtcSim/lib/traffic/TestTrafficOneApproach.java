@@ -20,7 +20,7 @@ public class TestTrafficOneApproach extends TestTraffic {
   private Movement generateMovement() {
     Movement ret;
 
-    AirplaneType pt = Acc.sim().getPlaneTypes().tryGetByName("A319");
+    AirplaneType pt = Acc.sim().getAirplaneTypes().tryGetByName("A319");
     assert pt != null;
 
     ret = new Movement(

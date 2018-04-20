@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 public class Fleets extends ArrayList<CompanyFleet> {
 
-  public void initAfterLoad (AirplaneTypes types){
+  public void init(AirplaneTypes types){
     for (CompanyFleet companyFleet : this) {
       companyFleet.bindFleetTypes(types);
     }

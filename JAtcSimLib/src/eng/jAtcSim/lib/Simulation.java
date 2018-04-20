@@ -23,6 +23,10 @@ import eng.jAtcSim.lib.atcs.UserAtc;
 import eng.jAtcSim.lib.coordinates.Coordinates;
 import eng.jAtcSim.lib.global.ERandom;
 import eng.jAtcSim.lib.global.ETime;
+import eng.jAtcSim.lib.global.xmlSources.AirplaneTypesXmlSource;
+import eng.jAtcSim.lib.global.xmlSources.AreaXmlSource;
+import eng.jAtcSim.lib.global.xmlSources.FleetsXmlSource;
+import eng.jAtcSim.lib.global.xmlSources.TrafficXmlSource;
 import eng.jAtcSim.lib.managers.EmergencyManager;
 import eng.jAtcSim.lib.managers.MrvaManager;
 import eng.jAtcSim.lib.messaging.Message;
@@ -65,7 +69,7 @@ public class Simulation {
   @XmlIgnore
   private final Area area;
   @XmlIgnore
-  private final AirplaneTypes planeTypes;
+  private final AirplaneTypes airplaneTypes;
   @XmlIgnore
   private final Airport airport;
   private final Messenger messenger = new Messenger();
@@ -79,6 +83,10 @@ public class Simulation {
   private final WeatherProvider weatherProvider;
   private final Statistics stats = new Statistics();
   private final EmergencyManager emergencyManager;
+  private final AreaXmlSource areaXmlSource;
+  private final AirplaneTypesXmlSource airplaneTypesXmlSource;
+  private final FleetsXmlSource fleetsXmlSource;
+  private final TrafficXmlSource trafficXmlSource;
   /**
    * Public event informing surrounding about elapsed second.
    */
@@ -92,64 +100,67 @@ public class Simulation {
    */
   private final Timer tmr = new Timer(o -> Simulation.this.elapseSecond());
 
-  public static Simulation create(Area area, Airport airport, AirplaneTypes types, WeatherProvider weatherProvider, Fleets fleets, Traffic traffic, Calendar now, int simulationSecondLengthInMs, IList<Border> mrvaAreas, double emergencyPerDayProbability) {
-    Simulation ret = new Simulation(area, airport, types, weatherProvider, fleets, traffic, now, simulationSecondLengthInMs, mrvaAreas, emergencyPerDayProbability);
 
-    Acc.setSimulation(ret);
+  public Simulation(
+      AreaXmlSource areaXmlSource, AirplaneTypesXmlSource airplaneTypesXmlSource, FleetsXmlSource fleetXmlSource, TrafficXmlSource trafficXmlSource,
+      WeatherProvider weatherProvider, Calendar now, int simulationSecondLengthInMs, double emergencyPerDayProbability) {
 
-    Acc.atcTwr().init();
-    Acc.atcApp().init();
-    Acc.atcCtr().init();
-
-    traffic.generateNewMovementsIfRequired(); // this must be here, antecedent "simTime" init
-
-    return ret;
-  }
-
-  private Simulation(Area area, Airport airport, AirplaneTypes types, WeatherProvider weatherProvider, Fleets fleets, Traffic traffic, Calendar now, int simulationSecondLengthInMs,
-                     IList<Border> mrvaAreas, double emergencyPerDayProbability) {
-    if (area == null) {
-        throw new IllegalArgumentException("Value of {area} cannot not be null.");
+    if (areaXmlSource == null) {
+        throw new IllegalArgumentException("Value of {areaXmlSource} cannot not be null.");
     }
-    if (area.getAirports().contains(airport) == false){
-      throw new IllegalArgumentException("Airport is not in the area.");
+    if (airplaneTypesXmlSource == null) {
+        throw new IllegalArgumentException("Value of {airplaneTypesXmlSource} cannot not be null.");
     }
-    if (airport == null) {
-      throw new IllegalArgumentException("Argument \"airport\" cannot be null.");
+    if (fleetXmlSource == null) {
+        throw new IllegalArgumentException("Value of {fleetXmlSource} cannot not be null.");
     }
-    if (types == null) {
-      throw new IllegalArgumentException("Argument \"types\" cannot be null.");
+    if (trafficXmlSource == null) {
+        throw new IllegalArgumentException("Value of {trafficXmlSource} cannot not be null.");
     }
     if (weatherProvider == null) {
-      throw new IllegalArgumentException("Argument \"weatherProvider\" cannot be null.");
-    }
-    if (fleets == null) {
-      throw new IllegalArgumentException("Value of {fleets} cannot not be null.");
-    }
-    if (traffic == null) {
-      throw new IllegalArgumentException("Argument \"traffic\" cannot be null.");
+        throw new IllegalArgumentException("Value of {weatherProvider} cannot not be null.");
     }
     if (now == null) {
-      throw new IllegalArgumentException("Argument \"now\" cannot be null.");
+        throw new IllegalArgumentException("Value of {now} cannot not be null.");
     }
 
     this.now = new ETime(now);
     this.simulationSecondLengthInMs = simulationSecondLengthInMs;
 
-    this.area = area;
-    this.airport = airport;
-    this.planeTypes = types;
+    this.areaXmlSource = areaXmlSource;
+    this.area = areaXmlSource.getContent();
+    this.airport = areaXmlSource.getActiveAirport();
+
+    this.airplaneTypesXmlSource = airplaneTypesXmlSource;
+    this.airplaneTypes = airplaneTypesXmlSource.getContent();
+
+    this.fleetsXmlSource = fleetXmlSource;
+    this.fleets = fleetXmlSource.getContent();
+
+    this.trafficXmlSource = trafficXmlSource;
+    this.traffic = trafficXmlSource.getActiveTraffic();
+
     this.weatherProvider = weatherProvider;
     this.weatherProvider.getWeatherUpdatedEvent().add(() -> weatherProvider_weatherUpdated());
-    this.fleets = fleets;
-    this.traffic = traffic;
+
     this.twrAtc = new TowerAtc(airport.getAtcTemplates().get(Atc.eType.twr));
     this.ctrAtc = new CenterAtc(airport.getAtcTemplates().get(Atc.eType.ctr));
     this.appAtc = new UserAtc(airport.getAtcTemplates().get(Atc.eType.app));
 
     this.emergencyManager = new EmergencyManager(emergencyPerDayProbability);
     this.emergencyManager.generateEmergencyTime(this.now);
+
+    IList<Border> mrvaAreas =
+        areaXmlSource.getContent().getBorders().where(q -> q.getType() == Border.eType.mrva);
     this.mrvaManager = new MrvaManager(mrvaAreas);
+  }
+
+  public void init() {
+    Acc.setSimulation(this);
+    Acc.atcTwr().init();
+    Acc.atcApp().init();
+    Acc.atcCtr().init();
+    traffic.generateNewMovementsIfRequired(); // this must be here, after "simTime" init
   }
 
   public EventSimple<Simulation> getSecondElapsedEvent() {
@@ -157,8 +168,8 @@ public class Simulation {
   }
 
   //TODO shouldn't this be private?
-  public AirplaneTypes getPlaneTypes() {
-    return planeTypes;
+  public AirplaneTypes getAirplaneTypes() {
+    return airplaneTypes;
   }
 
   public Movement[] getScheduledMovements() {
