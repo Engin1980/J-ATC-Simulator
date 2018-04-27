@@ -6,6 +6,7 @@ import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IMap;
 import eng.eSystem.utilites.CollectionUtils;
+import eng.eSystem.xmlSerialization.XmlIgnore;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.AirplaneList;
@@ -101,6 +102,7 @@ public class TowerAtc extends ComputerAtc {
   private static final int MAXIMAL_SPEED_FOR_PREFERRED_RUNWAY = 5;
   private static final double MAXIMAL_ACCEPT_DISTANCE_IN_NM = 15;
   private final TakeOffInfos takeOffInfos = new TakeOffInfos();
+  @XmlIgnore
   private final CommonRecorder toRecorder;
   private AirplaneList landingPlanesList = new AirplaneList();
   private AirplaneList goAroundedPlanesToSwitchList = new AirplaneList();
@@ -537,7 +539,7 @@ public class TowerAtc extends ComputerAtc {
     Airplane toReadyPlane = linedUpPlanesList.get(0);
     // tryToLog("Plane to take off: %s", toReadyPlane.getCallsign().toString());
 
-    // tryToLog("\tChecked threshold %s", inUseInfo.current.get(0));
+    // tryToLog("\tChecked threshold %s", inUseInfo.current.getContent(0));
 
 
     if (takeOffInfos.isLatestDepartureBelow(inUseInfo.current, Acc.airport().getAltitude() + 300)) {
@@ -564,7 +566,7 @@ public class TowerAtc extends ComputerAtc {
     if (toReadyPlane.getAssigneRoute().getParent().equals(availableThreshold) == false) {
       // plane has SID for different threshold
       // may occur in runway change or parallel runways
-      // first try to get route for the same navaid, then try to find any route
+      // first try to getContent route for the same navaid, then try to find any route
       Route r = availableThreshold.getRoutes().tryGetFirst(q ->
           q.getType() == Route.eType.sid &&
               q.getMainFix().equals(toReadyPlane.getAssigneRoute().getMainFix()) &&

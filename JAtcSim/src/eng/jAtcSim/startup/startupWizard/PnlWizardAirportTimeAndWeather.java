@@ -31,7 +31,7 @@ import javax.swing.*;
  */
 public class PnlWizardAirportTimeAndWeather extends JWizardPanel {
 
-  //TODO get rid of this
+  //TODO getContent rid of this
   private StartupSettings settings;
 
   private static List<PresetMetar> presetMetars = new ArrayList();

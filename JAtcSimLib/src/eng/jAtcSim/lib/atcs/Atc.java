@@ -6,6 +6,7 @@
 
 package eng.jAtcSim.lib.atcs;
 
+import eng.eSystem.xmlSerialization.XmlIgnore;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.messaging.IMessageParticipant;
@@ -31,7 +32,8 @@ public abstract class Atc implements IMessageParticipant {
   protected final int acceptAltitude;
   protected final int releaseAltitude;
   protected final int orderedAltitude;
-  
+
+  @XmlIgnore
   protected final AtcRecorder recorder;
 
   public abstract void unregisterPlaneUnderControl(Airplane plane, boolean finalUnregistration);
@@ -39,7 +41,7 @@ public abstract class Atc implements IMessageParticipant {
   public abstract void registerNewPlaneUnderControl(Airplane plane, boolean initialRegistration);
 
   protected PlaneResponsibilityManager getPrm(){
-    return PlaneResponsibilityManager.getInstance();
+    return Acc.prm();
   }
 
   public Atc(AtcTemplate template) {

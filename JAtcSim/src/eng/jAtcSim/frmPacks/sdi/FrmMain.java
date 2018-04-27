@@ -134,12 +134,7 @@ public class FrmMain extends JFrame {
 
   private void saveSimulation(){
     String fileName = "R:\\simSave.xml";
-    Settings sett = new Settings();
-    sett.getIgnoredFieldsRegex().add("parent");
-    sett.getIgnoredFieldsRegex().add("_.+");
-    sett.setVerbose(true);
-    XmlSerializer ser = new XmlSerializer(sett);
-    ser.serialize(fileName, this.parent.getSim());
+    this.parent.getSim().save(fileName);
   }
 
   private void adjustJComponentColors(JComponent component) {

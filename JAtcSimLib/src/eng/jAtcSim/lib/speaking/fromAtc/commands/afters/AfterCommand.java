@@ -6,6 +6,7 @@
 
 package eng.jAtcSim.lib.speaking.fromAtc.commands.afters;
 
+import eng.eSystem.xmlSerialization.XmlIgnore;
 import eng.jAtcSim.lib.speaking.ICommand;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
 
@@ -14,6 +15,7 @@ import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
  * @author Marek
  */
 public abstract class AfterCommand implements IAtcCommand {
+  @XmlIgnore
   private IAtcCommand derivationSource;
 
   public IAtcCommand getDerivationSource() {

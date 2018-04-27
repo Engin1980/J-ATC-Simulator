@@ -8,9 +8,11 @@ package eng.jAtcSim.lib.airplanes.pilots;
 import com.sun.istack.internal.Nullable;
 import eng.eSystem.EStringBuilder;
 import eng.eSystem.collections.IList;
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.exceptions.ERuntimeException;
 import eng.eSystem.utilites.ConversionUtils;
+import eng.eSystem.xmlSerialization.XmlIgnore;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.commandApplications.ApplicationManager;
@@ -22,6 +24,7 @@ import eng.jAtcSim.lib.coordinates.Coordinates;
 import eng.jAtcSim.lib.global.ETime;
 import eng.jAtcSim.lib.global.Headings;
 import eng.jAtcSim.lib.global.Restriction;
+import eng.jAtcSim.lib.serialization.LoadSave;
 import eng.jAtcSim.lib.speaking.IFromAtc;
 import eng.jAtcSim.lib.speaking.ISpeech;
 import eng.jAtcSim.lib.speaking.SpeechDelayer;
@@ -181,7 +184,9 @@ public class Pilot {
 
   abstract class Behavior {
 
+    @XmlIgnore
     public final Pilot pilot;
+    @XmlIgnore
     public final Airplane.Airplane4Pilot airplane;
 
     public Behavior() {
@@ -212,7 +217,7 @@ public class Pilot {
 
   }
 
-  abstract class DivertableBehavior extends Behavior{
+  abstract class DivertableBehavior extends Behavior {
 
     private int[] divertAnnounceTimes = new int[]{30, 15, 10, 5};
 
@@ -376,7 +381,6 @@ public class Pilot {
         if (this.divertIfRequested() == false)
           this.adviceDivertTimeIfRequested();
     }
-
 
 
     @Override
@@ -900,6 +904,7 @@ public class Pilot {
     extension
   }
 
+  @XmlIgnore
   private final Airplane.Airplane4Pilot parent;
   private final SpeechDelayer queue = new SpeechDelayer(2, 7); //Min/max speech delay
   private final AfterCommandList afterCommands = new AfterCommandList();
@@ -999,7 +1004,7 @@ public class Pilot {
   }
 
   public Navaid getDivertNavaid() {
-    IList<Route> rts = Acc.thresholds().get(0).getRoutes(); // get random active threshold
+    IList<Route> rts = Acc.thresholds().get(0).getRoutes(); // getContent random active threshold
     rts = rts.where(q -> q.getType() == Route.eType.sid);
     rts = rts.where(q -> q.isValidForCategory(this.parent.getType().category));
     Route r = rts.getRandom();
@@ -1041,6 +1046,28 @@ public class Pilot {
     this.parent.setxState(Airplane.State.arrivingHigh);
     this.say(new EmergencyNotification());
   }
+
+  public void save(XElement tmp) {
+  /*
+  private final Map<Atc, SpeechList> saidText = new HashMap<>();
+  private Behavior behavior;
+
+   */
+
+    LoadSave.saveField(tmp, this, "queue");
+    LoadSave.saveField(tmp, this, "gaReason");
+    LoadSave.saveField(tmp, this, "divertInfo");
+    LoadSave.saveField(tmp, this, "altitudeOrderedByAtc");
+    LoadSave.saveAsElement(tmp, "atc", atc.getName());
+    LoadSave.saveField(tmp, this, "secondsWithoutRadarContact");
+    LoadSave.saveField(tmp, this, "targetCoordinate");
+    LoadSave.saveField(tmp, this, "speedRestriction");
+    LoadSave.saveField(tmp, this, "altitudeRestriction");
+    LoadSave.saveField(tmp, this, "assignedRoute");
+    LoadSave.saveField(tmp, this, "afterCommands");
+    LoadSave.saveField(tmp, this, "saidText");
+  }
+
 
   private void requestRadarContactIfRequired() {
     if (secondsWithoutRadarContact > 0) {

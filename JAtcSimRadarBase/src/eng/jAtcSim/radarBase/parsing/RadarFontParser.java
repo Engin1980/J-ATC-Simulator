@@ -1,6 +1,8 @@
 package eng.jAtcSim.radarBase.parsing;
 
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.xmlSerialization.XmlDeserializationException;
+import eng.eSystem.xmlSerialization.XmlSerializer;
 import eng.jAtcSim.radarBase.global.Font;
 import eng.eSystem.xmlSerialization.IElementParser;
 import eng.eSystem.xmlSerialization.XmlSerializationException;
@@ -18,7 +20,12 @@ public class RadarFontParser implements IElementParser<Font> {
   }
 
   @Override
-  public Font parse(Element element)  throws XmlDeserializationException{
+  public boolean isApplicableOnDescendants() {
+    return false;
+  }
+
+  @Override
+  public Font parse(XElement element, XmlSerializer.Deserializer xmlSerializer)  throws XmlDeserializationException{
     String familyName = getAttributeValue(element, ATTR_FAMILY);
     String styleS = getAttributeValue(element, ATTR_STYLE);
     String sizeS = getAttributeValue(element, ATTR_SIZE);
@@ -31,7 +38,7 @@ public class RadarFontParser implements IElementParser<Font> {
   }
 
   @Override
-  public void format(Font value, Element element) {
+  public void format(Font value, XElement element, XmlSerializer.Serializer xmlSerializer) {
     element.setAttribute(ATTR_FAMILY, value.getName());
     element.setAttribute(ATTR_STYLE, Integer.toString(value.getStyle()));
     element.setAttribute(ATTR_SIZE, Integer.toString(value.getSize()));
@@ -47,10 +54,10 @@ public class RadarFontParser implements IElementParser<Font> {
     return ret;
   }
 
-  private String getAttributeValue(Element el, String key)throws XmlDeserializationException {
-    if (el.hasAttribute(key) == false)
+  private String getAttributeValue(XElement el, String key)throws XmlDeserializationException {
+    if (el.getAttributes().containsKey(key) == false)
       throw new XmlDeserializationException("Failed to find required attribute " + key + " for " + this.getClass().getName() + " parsing.");
-    String ret = el.getAttribute(key);
+    String ret = el.getAttributes().get(key);
     return ret;
   }
 }

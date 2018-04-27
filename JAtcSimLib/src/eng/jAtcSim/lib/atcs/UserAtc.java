@@ -6,6 +6,7 @@
 package eng.jAtcSim.lib.atcs;
 
 import eng.eSystem.exceptions.ERuntimeException;
+import eng.eSystem.xmlSerialization.XmlIgnore;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.Airplanes;

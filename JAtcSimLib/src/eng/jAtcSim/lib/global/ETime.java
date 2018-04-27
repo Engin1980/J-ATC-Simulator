@@ -13,7 +13,7 @@ import java.util.Calendar;
  */
 public class ETime implements Comparable<ETime> {
 
-  private final int DAY_SECONDS = 60 * 60 * 24;
+  private static final int DAY_SECONDS = 60 * 60 * 24;
   private int value = 0;
 
   public ETime(int value) {

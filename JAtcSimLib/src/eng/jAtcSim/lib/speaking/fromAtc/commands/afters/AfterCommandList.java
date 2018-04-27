@@ -321,12 +321,20 @@ public class AfterCommandList {
 
 class AFItem {
 
+  private final int antecedentDerivativeSourceHex; // used for saving/loading
+  private final int consequentHex; // used for saving/loading
   public final AfterCommand antecedent;
   public final IAtcCommand consequent;
 
   public AFItem(AfterCommand antecedent, IAtcCommand consequent) {
     this.antecedent = antecedent;
     this.consequent = consequent;
+    if (antecedent.getDerivationSource() != null){
+      antecedentDerivativeSourceHex = antecedent.getDerivationSource().hashCode();
+    } else {
+      this.antecedentDerivativeSourceHex = -1;
+    }
+    this.consequentHex = consequent.hashCode();
   }
 
   @Override

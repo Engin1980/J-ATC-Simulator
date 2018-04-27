@@ -1,11 +1,14 @@
 package eng.jAtcSim.lib.weathers;
 
 import eng.eSystem.events.EventAnonymousSimple;
+import eng.eSystem.xmlSerialization.XmlIgnore;
+import eng.eSystem.xmlSerialization.XmlOptional;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.weathers.downloaders.MetarDecoder;
 
 public abstract class WeatherProvider {
   private Weather weather;
+  @XmlIgnore
   private EventAnonymousSimple weatherUpdatedEvent = new EventAnonymousSimple();
 
   public EventAnonymousSimple getWeatherUpdatedEvent() {

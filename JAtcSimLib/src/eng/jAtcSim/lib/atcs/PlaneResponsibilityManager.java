@@ -6,8 +6,12 @@
 package eng.jAtcSim.lib.atcs;
 
 import eng.eSystem.collections.*;
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
+import eng.eSystem.xmlSerialization.XmlIgnore;
+import eng.eSystem.xmlSerialization.XmlSerializationException;
+import eng.eSystem.xmlSerialization.XmlSerializer;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.AirplaneList;
@@ -39,17 +43,17 @@ public class PlaneResponsibilityManager {
     twr2appReady,
     twr
   }
-  private static final PlaneResponsibilityManager me = new PlaneResponsibilityManager();
+
   private final IMap<Airplane, eState> map = new EMap<>();
   private final IMap<Atc, AirplaneList> lst = new EMap<>();
   private final AirplaneList all = new AirplaneList();
+  @XmlIgnore
   private final List<Airplane.Airplane4Display> infos = new LinkedList<>();
 
-  public static PlaneResponsibilityManager getInstance() {
-    return me;
+  public PlaneResponsibilityManager() {
   }
 
-  private PlaneResponsibilityManager() {
+  public void init(){
     lst.set(Acc.atcApp(), new AirplaneList());
     lst.set(Acc.atcCtr(), new AirplaneList());
     lst.set(Acc.atcTwr(), new AirplaneList());
@@ -253,6 +257,43 @@ public class PlaneResponsibilityManager {
 
   public IReadOnlyList<Airplane> getAll() {
     return new EList<>(all);
+  }
+
+  public void save(XElement elm) {
+/*
+  private final IMap<Airplane, eState> map = new EMap<>();
+  private final IMap<Atc, AirplaneList> lst = new EMap<>();
+  private final AirplaneList all = new AirplaneList();
+ */
+
+    XmlSerializer ser = new XmlSerializer();
+
+    XElement tmp;
+
+    try {
+
+      tmp = new XElement("planes");
+      for (Airplane airplane : all) {
+        XElement tmpAp = new XElement("plane");
+        airplane.save(tmpAp);
+        tmp.addElement(tmpAp);
+      }
+
+      tmp = new XElement("states");
+      IMap<String, String> remap = map.select(q -> q.getCallsign().toString(), q -> q.toString());
+      ser.serialize(tmp, remap);
+      elm.addElement(tmp);
+
+      tmp = new XElement("atc");
+      IMap<String, IList<String>> relst = lst.select(q -> q.getName(), q -> q.select(o -> o.getCallsign().toString()));
+      ser.serialize(tmp, relst);
+      elm.addElement(tmp);
+
+      // infos not serialized, should be created during deserialization
+
+    } catch (XmlSerializationException e) {
+      throw new EApplicationException("Failed to store PlaneResponsibilityManager.", e);
+    }
   }
 
   boolean isToSwitch(Airplane p) {

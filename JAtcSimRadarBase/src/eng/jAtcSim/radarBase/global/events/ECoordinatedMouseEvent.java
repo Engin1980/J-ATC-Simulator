@@ -29,15 +29,15 @@
 //
 //  public static ECoordinatedMouseEvent create(Coordinate coord, Coordinate dropCoord, EMouseEvent e) {
 //    ECoordinatedMouseEvent ret = new ECoordinatedMouseEvent(
-//      coord.getLatitude().get(), coord.getLongitude().get(),
-//      dropCoord.getLatitude().get(), dropCoord.getLongitude().get(),
+//      coord.getLatitude().getContent(), coord.getLongitude().getContent(),
+//      dropCoord.getLatitude().getContent(), dropCoord.getLongitude().getContent(),
 //      e.x, e.y, e.dropX, e.dropY, e.wheel, e.button, e.modifiers, e.type);
 //    return ret;
 //  }
 //
 //  public static ECoordinatedMouseEvent create(Coordinate coord, EMouseEvent e) {
 //    ECoordinatedMouseEvent ret = new ECoordinatedMouseEvent(
-//      coord.getLatitude().get(), coord.getLongitude().get(),
+//      coord.getLatitude().getContent(), coord.getLongitude().getContent(),
 //      0,0,
 //      e.x, e.y, e.dropX, e.dropY, e.wheel, e.button, e.modifiers, e.type);
 //    return ret;

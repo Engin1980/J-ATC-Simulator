@@ -62,7 +62,7 @@ public class Acc {
   }
 
   public static PlaneResponsibilityManager prm() {
-    return PlaneResponsibilityManager.getInstance();
+    return sim.getPrm();
   }
 
   public static ETime now() {

@@ -6,17 +6,25 @@
 package eng.jAtcSim.lib.airplanes;
 
 import com.sun.istack.internal.Nullable;
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.utilites.NumberUtils;
+import eng.eSystem.xmlSerialization.XmlIgnore;
+import eng.eSystem.xmlSerialization.XmlSerializationException;
+import eng.eSystem.xmlSerialization.XmlSerializer;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.pilots.Pilot;
 import eng.jAtcSim.lib.atcs.Atc;
 import eng.jAtcSim.lib.coordinates.Coordinate;
 import eng.jAtcSim.lib.coordinates.Coordinates;
-import eng.jAtcSim.lib.global.*;
+import eng.jAtcSim.lib.global.ETime;
+import eng.jAtcSim.lib.global.Headings;
+import eng.jAtcSim.lib.global.KeyItem;
+import eng.jAtcSim.lib.global.UnitProvider;
 import eng.jAtcSim.lib.messaging.IMessageContent;
 import eng.jAtcSim.lib.messaging.IMessageParticipant;
 import eng.jAtcSim.lib.messaging.Message;
+import eng.jAtcSim.lib.serialization.LoadSave;
 import eng.jAtcSim.lib.speaking.IFromAirplane;
 import eng.jAtcSim.lib.speaking.IFromAtc;
 import eng.jAtcSim.lib.speaking.ISpeech;
@@ -229,7 +237,7 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
 
   public class Airplane4Command {
 
-    public boolean isEmergency(){
+    public boolean isEmergency() {
       return Airplane.this.isEmergency();
     }
 
@@ -350,6 +358,7 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
       return ret;
     }
   }
+
   private static final int MINIMAL_DIVERT_TIME_MINUTES = 45;
   private static final int MAXIMAL_DIVERT_TIME_MINUTES = 120;
   private final static double GROUND_SPEED_CHANGE_MULTIPLIER = 1.5; //1.5; //3.0;
@@ -358,6 +367,7 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
   private final Squawk sqwk;
   private final Pilot pilot;
   private final AirplaneType airplaneType;
+  @XmlIgnore
   private final Airplane4Display plane4Display;
   private final int delayInitialMinutes;
   private final ETime delayExpectedTime;
@@ -371,6 +381,7 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
   private Coordinate coordinate;
   private State state;
   private double lastVerticalSpeed;
+  @XmlIgnore
   private FlightRecorder flightRecorder = null;
   private AirproxType airprox;
   private boolean mrvaError;
@@ -595,14 +606,14 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
     return targetHeading;
   }
 
+  public void setTargetHeading(double targetHeading) {
+    this.setTargetHeading((int) Math.round(targetHeading));
+  }
+
   public void setTargetHeading(int targetHeading) {
     boolean useLeft
         = Headings.getBetterDirectionToTurn(heading.getValue(), targetHeading) == ChangeHeadingCommand.eDirection.left;
     setTargetHeading(targetHeading, useLeft);
-  }
-
-  public void setTargetHeading(double targetHeading) {
-    this.setTargetHeading((int) Math.round(targetHeading));
   }
 
   public int getTargetAltitude() {
@@ -714,6 +725,37 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
   public RunwayThreshold getAssignedRunwayThreshold() {
     RunwayThreshold ret = pilot.tryGetAssignedApproach().getThreshold();
     return ret;
+  }
+
+  public void save(XElement elm) {
+    /*
+  private FlightRecorder flightRecorder = null;
+     */
+    LoadSave.saveField(elm,this, "callsign");
+    LoadSave.saveField(elm,this, "sqwk");
+    LoadSave.saveAsAttribute(elm, "type", this.getType().name);
+    LoadSave.saveField(elm,this, "delayInitialMinutes");
+    LoadSave.saveField(elm,this, "delayExpectedTime");
+    LoadSave.saveField(elm,this, "departure");
+    LoadSave.saveField(elm,this, "targetHeading");
+    LoadSave.saveField(elm,this, "targetHeadingLeftTurn");
+    LoadSave.saveField(elm,this, "targetAltitude");
+    LoadSave.saveField(elm,this, "targetSpeed");
+    LoadSave.saveField(elm,this, "state");
+    LoadSave.saveField(elm,this, "lastVerticalSpeed");
+    LoadSave.saveField(elm,this, "airprox");
+    LoadSave.saveField(elm,this, "mrvaError");
+    LoadSave.saveField(elm,this, "delayResult");
+    LoadSave.saveField(elm,this, "emergencyWanishTime");
+    LoadSave.saveField(elm, this, "coordinate");
+    LoadSave.saveField(elm, this, "heading");
+    LoadSave.saveField(elm, this, "speed");
+    LoadSave.saveField(elm, this, "altitude");
+
+    XElement tmp = new XElement("pilot");
+    this.pilot.save(tmp);
+    elm.addElement(tmp);
+
   }
 
   // </editor-fold>

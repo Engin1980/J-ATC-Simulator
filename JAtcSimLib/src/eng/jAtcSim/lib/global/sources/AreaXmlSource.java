@@ -1,4 +1,4 @@
-package eng.jAtcSim.lib.global.xmlSources;
+package eng.jAtcSim.lib.global.sources;
 
 import eng.eSystem.xmlSerialization.*;
 import eng.jAtcSim.lib.atcs.AtcTemplate;

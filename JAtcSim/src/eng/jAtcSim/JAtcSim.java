@@ -14,10 +14,7 @@ import eng.jAtcSim.lib.airplanes.AirplaneTypes;
 import eng.jAtcSim.lib.global.KeyList;
 import eng.jAtcSim.lib.global.logging.ApplicationLog;
 import eng.jAtcSim.lib.global.logging.Recorder;
-import eng.jAtcSim.lib.global.xmlSources.AirplaneTypesXmlSource;
-import eng.jAtcSim.lib.global.xmlSources.AreaXmlSource;
-import eng.jAtcSim.lib.global.xmlSources.FleetsXmlSource;
-import eng.jAtcSim.lib.global.xmlSources.TrafficXmlSource;
+import eng.jAtcSim.lib.global.sources.*;
 import eng.jAtcSim.lib.traffic.GenericTraffic;
 import eng.jAtcSim.lib.traffic.Traffic;
 import eng.jAtcSim.lib.traffic.fleets.Fleets;
@@ -50,8 +47,8 @@ public class JAtcSim {
   private static final boolean FAST_START = false;
   private static final Traffic specificTraffic =
   //  new eng.jAtcSim.lib.traffic.TestTrafficOneApproach();
-  // new eng.jAtcSim.lib.traffic.TestTrafficOneDeparture();
-    null;
+   new eng.jAtcSim.lib.traffic.TestTrafficOneDeparture();
+  //  null;
   private static AppSettings appSettings;
 
   /**
@@ -134,6 +131,10 @@ public class JAtcSim {
     System.out.println("* Initializing sound environment");
     // sound
     SoundManager.init(appSettings.soundFolder.toString());
+
+
+    //sim.saveBinary("R:\\simTest.dat");
+    //sim.save("R:\\simTest.xml");
 
     System.out.println("* Starting a GUI");
     // starting pack & simulation

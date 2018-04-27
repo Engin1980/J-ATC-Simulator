@@ -10,28 +10,30 @@ import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.collections.ReadOnlyList;
+import eng.eSystem.eXml.XDocument;
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.events.EventSimple;
+import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.EXmlException;
 import eng.eSystem.xmlSerialization.XmlIgnore;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.AirplaneList;
 import eng.jAtcSim.lib.airplanes.AirplaneTypes;
 import eng.jAtcSim.lib.airplanes.Airplanes;
-import eng.jAtcSim.lib.atcs.Atc;
-import eng.jAtcSim.lib.atcs.CenterAtc;
-import eng.jAtcSim.lib.atcs.TowerAtc;
-import eng.jAtcSim.lib.atcs.UserAtc;
+import eng.jAtcSim.lib.atcs.*;
 import eng.jAtcSim.lib.coordinates.Coordinates;
 import eng.jAtcSim.lib.global.ERandom;
 import eng.jAtcSim.lib.global.ETime;
-import eng.jAtcSim.lib.global.xmlSources.AirplaneTypesXmlSource;
-import eng.jAtcSim.lib.global.xmlSources.AreaXmlSource;
-import eng.jAtcSim.lib.global.xmlSources.FleetsXmlSource;
-import eng.jAtcSim.lib.global.xmlSources.TrafficXmlSource;
+import eng.jAtcSim.lib.global.sources.AirplaneTypesXmlSource;
+import eng.jAtcSim.lib.global.sources.AreaXmlSource;
+import eng.jAtcSim.lib.global.sources.FleetsXmlSource;
+import eng.jAtcSim.lib.global.sources.TrafficXmlSource;
 import eng.jAtcSim.lib.managers.EmergencyManager;
 import eng.jAtcSim.lib.managers.MrvaManager;
 import eng.jAtcSim.lib.messaging.Message;
 import eng.jAtcSim.lib.messaging.Messenger;
 import eng.jAtcSim.lib.messaging.StringMessageContent;
+import eng.jAtcSim.lib.serialization.LoadSave;
 import eng.jAtcSim.lib.speaking.parsing.shortParsing.ShortParser;
 import eng.jAtcSim.lib.stats.Statistics;
 import eng.jAtcSim.lib.traffic.Movement;
@@ -44,6 +46,9 @@ import eng.jAtcSim.lib.world.Area;
 import eng.jAtcSim.lib.world.Border;
 import eng.jAtcSim.lib.world.RunwayThreshold;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
@@ -73,16 +78,27 @@ public class Simulation {
   @XmlIgnore
   private final Airport airport;
   private final Messenger messenger = new Messenger();
+  @XmlIgnore
   private final UserAtc appAtc;
+  @XmlIgnore
   private final TowerAtc twrAtc;
+  @XmlIgnore
   private final CenterAtc ctrAtc;
+  @XmlIgnore
   private final Traffic traffic;
+  @XmlIgnore
   private final Fleets fleets;
+  @XmlIgnore
   private final IList<Airplane> newPlanesDelayedToAvoidCollision = new EList<>();
+  @XmlIgnore
   private final MrvaManager mrvaManager;
   private final WeatherProvider weatherProvider;
+  @XmlIgnore
   private final Statistics stats = new Statistics();
+  @XmlIgnore
   private final EmergencyManager emergencyManager;
+  @XmlIgnore
+  private final PlaneResponsibilityManager prm;
   private final AreaXmlSource areaXmlSource;
   private final AirplaneTypesXmlSource airplaneTypesXmlSource;
   private final FleetsXmlSource fleetsXmlSource;
@@ -90,38 +106,39 @@ public class Simulation {
   /**
    * Public event informing surrounding about elapsed second.
    */
+  @XmlIgnore
   private EventSimple<Simulation> secondElapsedEvent =
       new EventSimple<>(this);
   private int simulationSecondLengthInMs;
+  @XmlIgnore
   private boolean isBusy = false;
-
   /**
    * Internal timer used to make simulation ticks.
    */
+  @XmlIgnore
   private final Timer tmr = new Timer(o -> Simulation.this.elapseSecond());
-
 
   public Simulation(
       AreaXmlSource areaXmlSource, AirplaneTypesXmlSource airplaneTypesXmlSource, FleetsXmlSource fleetXmlSource, TrafficXmlSource trafficXmlSource,
       WeatherProvider weatherProvider, Calendar now, int simulationSecondLengthInMs, double emergencyPerDayProbability) {
 
     if (areaXmlSource == null) {
-        throw new IllegalArgumentException("Value of {areaXmlSource} cannot not be null.");
+      throw new IllegalArgumentException("Value of {areaXmlSource} cannot not be null.");
     }
     if (airplaneTypesXmlSource == null) {
-        throw new IllegalArgumentException("Value of {airplaneTypesXmlSource} cannot not be null.");
+      throw new IllegalArgumentException("Value of {airplaneTypesXmlSource} cannot not be null.");
     }
     if (fleetXmlSource == null) {
-        throw new IllegalArgumentException("Value of {fleetXmlSource} cannot not be null.");
+      throw new IllegalArgumentException("Value of {fleetXmlSource} cannot not be null.");
     }
     if (trafficXmlSource == null) {
-        throw new IllegalArgumentException("Value of {trafficXmlSource} cannot not be null.");
+      throw new IllegalArgumentException("Value of {trafficXmlSource} cannot not be null.");
     }
     if (weatherProvider == null) {
-        throw new IllegalArgumentException("Value of {weatherProvider} cannot not be null.");
+      throw new IllegalArgumentException("Value of {weatherProvider} cannot not be null.");
     }
     if (now == null) {
-        throw new IllegalArgumentException("Value of {now} cannot not be null.");
+      throw new IllegalArgumentException("Value of {now} cannot not be null.");
     }
 
     this.now = new ETime(now);
@@ -141,11 +158,12 @@ public class Simulation {
     this.traffic = trafficXmlSource.getActiveTraffic();
 
     this.weatherProvider = weatherProvider;
-    this.weatherProvider.getWeatherUpdatedEvent().add(() -> weatherProvider_weatherUpdated());
 
     this.twrAtc = new TowerAtc(airport.getAtcTemplates().get(Atc.eType.twr));
     this.ctrAtc = new CenterAtc(airport.getAtcTemplates().get(Atc.eType.ctr));
     this.appAtc = new UserAtc(airport.getAtcTemplates().get(Atc.eType.app));
+
+    this.prm = new PlaneResponsibilityManager();
 
     this.emergencyManager = new EmergencyManager(emergencyPerDayProbability);
     this.emergencyManager.generateEmergencyTime(this.now);
@@ -155,11 +173,18 @@ public class Simulation {
     this.mrvaManager = new MrvaManager(mrvaAreas);
   }
 
+  public PlaneResponsibilityManager getPrm() {
+    return prm;
+  }
+
   public void init() {
     Acc.setSimulation(this);
     Acc.atcTwr().init();
     Acc.atcApp().init();
     Acc.atcCtr().init();
+    this.prm.init();
+    this.weatherProvider.getWeatherUpdatedEvent().add(() -> weatherProvider_weatherUpdated());
+
     traffic.generateNewMovementsIfRequired(); // this must be here, after "simTime" init
   }
 
@@ -268,6 +293,47 @@ public class Simulation {
 
   public WeatherProvider getWeatherProvider() {
     return this.weatherProvider;
+  }
+
+  public void save(String fileName) {
+    XElement root = new XElement("simulation");
+
+    LoadSave.saveField(root, this, "areaXmlSource");
+    LoadSave.saveField(root, this, "airplaneTypesXmlSource");
+    LoadSave.saveField(root, this, "fleetsXmlSource");
+    LoadSave.saveField(root, this, "trafficXmlSource");
+
+    LoadSave.saveAsAttribute(root, "icao", this.getActiveAirport().getIcao());
+
+    {
+      IReadOnlyList<Airplane> planes = this.prm.getAll();
+      XElement tmp = new XElement("planes");
+      root.addElement(tmp);
+      for (Airplane plane : planes) {
+        plane.save(tmp);
+      }
+    }
+
+    // atcs ignored, now fixed, will be detected from area file
+
+    LoadSave.saveField(root, this, "prm");
+
+
+    XDocument doc = new XDocument(root);
+    try {
+      doc.save(fileName);
+    } catch (EXmlException e) {
+      throw new EApplicationException("Failed to save simulation.", e);
+    }
+
+  }
+
+  public void saveBinary(String fileName) {
+    try (ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(fileName))) {
+      os.writeObject(this);
+    } catch (IOException ex) {
+      throw new EApplicationException("Failed to save binary simulation into " + fileName + ".", ex);
+    }
   }
 
   private void weatherProvider_weatherUpdated() {

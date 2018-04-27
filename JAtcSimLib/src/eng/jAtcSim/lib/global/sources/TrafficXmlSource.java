@@ -1,4 +1,4 @@
-package eng.jAtcSim.lib.global.xmlSources;
+package eng.jAtcSim.lib.global.sources;
 
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
@@ -35,8 +35,10 @@ public class TrafficXmlSource extends XmlSource<IList<Traffic>> {
         break;
       case xmlFileTraffic:
         assert super.getContent().size() > this.activeTrafficIndex;
+        break;
       case specificTraffic:
         assert this.specificTraffic.size() > this.activeTrafficIndex;
+        break;
       default:
         throw new EEnumValueUnsupportedException(source);
     }

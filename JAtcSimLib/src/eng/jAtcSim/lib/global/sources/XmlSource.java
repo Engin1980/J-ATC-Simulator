@@ -1,6 +1,5 @@
-package eng.jAtcSim.lib.global.xmlSources;
+package eng.jAtcSim.lib.global.sources;
 
-import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.ERuntimeException;
 import eng.eSystem.utilites.StringUtils;
 import eng.eSystem.xmlSerialization.XmlIgnore;
@@ -8,16 +7,19 @@ import eng.eSystem.xmlSerialization.XmlIgnore;
 import java.io.IOException;
 import java.nio.file.Paths;
 
-public abstract class XmlSource<T> {
+public abstract class XmlSource<T> extends Source<T> {
   private String xmlFileName;
   private int xmlFileHash;
-  @XmlIgnore
-  private boolean initialized;
   @XmlIgnore
   private T content;
 
   public XmlSource(String xmlFileName) {
     this.xmlFileName = xmlFileName;
+  }
+
+  @Override
+  public T _get() {
+    return content;
   }
 
   public void load(){
@@ -46,10 +48,6 @@ public abstract class XmlSource<T> {
    return sum;
  }
 
- protected void setInitialized(){
-    this.initialized = true;
- }
-
   protected abstract T _load();
 
   public String getXmlFileName() {
@@ -60,9 +58,4 @@ public abstract class XmlSource<T> {
     return xmlFileHash;
   }
 
-  public T getContent() {
-    if (!this.initialized)
-      throw new EApplicationException("Cannot access content of XmlSource before it is initialized.");
-    return content;
-  }
 }
