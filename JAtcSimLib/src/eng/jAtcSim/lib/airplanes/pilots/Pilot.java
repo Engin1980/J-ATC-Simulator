@@ -344,8 +344,8 @@ public class Pilot {
 
   class ArrivalBehavior extends BasicBehavior {
 
-    private final double LOW_SPEED_DOWN_ALTITUDE = 11000;
-    private final double FAF_SPEED_DOWN_DISTANCE_IN_NM = 15;
+    private final static double LOW_SPEED_DOWN_ALTITUDE = 11000;
+    private final static double FAF_SPEED_DOWN_DISTANCE_IN_NM = 15;
 
     @Override
     void _fly() {
@@ -1066,6 +1066,7 @@ public class Pilot {
     LoadSave.saveField(tmp, this, "assignedRoute");
     LoadSave.saveField(tmp, this, "afterCommands");
     LoadSave.saveField(tmp, this, "saidText");
+    LoadSave.saveField(tmp, this, "behavior");
   }
 
 

@@ -22,6 +22,8 @@ public class LoadSave {
     sett.getElementParsers().add(new AirplaneParser());
     sett.getElementParsers().add(new AtcParser());
 
+    sett.getIgnoredFieldsRegex().add("this\\$0"); // parent of inner class
+
     sett.setVerbose(true);
     ser = new XmlSerializer(sett);
   }
