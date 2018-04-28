@@ -29,13 +29,15 @@ public class FrmIntro extends JFrame {
     btnSave.setEnabled(false);
     JButton btnLoad = new JButton("Load startup settings");
     btnLoad.setEnabled(false);
+    JButton btnLoadSim = new JButton("Load simulation");
+    btnLoadSim.addActionListener(q->btnLoadSim_click());
     JButton btnExit = new JButton("Quit");
     btnExit.addActionListener(o->btnExit_click());
 
     JPanel pnl = LayoutManager.createBorderedPanel(16);
     pnl.add(
         LayoutManager.createBoxPanel(LayoutManager.eHorizontalAlign.center , 16,
-            btnWizard, btnRun, btnSave, btnLoad, btnExit));
+            btnWizard, btnRun, btnSave, btnLoad, btnLoadSim, btnExit));
 
     //ComponentUtils.adjustComponentTree(pnl, o->o instanceof  JButton, o-> { o.setPreferredSize(BUTTON_DIMENSION); o.setMinimumSize(BUTTON_DIMENSION);});
 
@@ -55,6 +57,12 @@ public class FrmIntro extends JFrame {
     this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     this.setVisible(false);
     JAtcSim.startSimulation(this.startupSettings);
+  }
+
+  private void btnLoadSim_click(){
+    this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+    this.setVisible(false);
+    JAtcSim.loadSimulation("R:\\simSave.xml");
   }
 
   private void btnExit_click(){

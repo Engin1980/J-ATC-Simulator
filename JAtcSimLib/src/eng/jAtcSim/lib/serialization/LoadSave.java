@@ -3,8 +3,10 @@ package eng.jAtcSim.lib.serialization;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.xmlSerialization.Settings;
+import eng.eSystem.xmlSerialization.XmlDeserializationException;
 import eng.eSystem.xmlSerialization.XmlSerializationException;
 import eng.eSystem.xmlSerialization.XmlSerializer;
+import eng.jAtcSim.lib.Simulation;
 
 import java.lang.reflect.Field;
 
@@ -42,6 +44,15 @@ public class LoadSave {
     else
       elm.setAttribute(name, value.toString());
   }
+  public static Object loadFromAttribute(XElement elm, String name) {
+    Object ret;
+    String s = elm.getContent();
+    if (s.equals("(null)"))
+      ret = null;
+    else
+      ret = elm.getAttributes().get(name);
+    return ret;
+  }
 
   public static void saveAsElement(XElement elm, String name, Object obj) {
     XElement tmp = new XElement(name);
@@ -50,6 +61,39 @@ public class LoadSave {
       ser.serialize(tmp, obj);
     } catch (XmlSerializationException e) {
       throw new EApplicationException("Failed to save object " + obj + ".", e);
+    }
+  }
+
+  public static Object loadFromElement(XElement elm, String name, Class type) {
+    XElement tmp = elm.getChildren().getFirst(q->q.getName().equals(name));
+    Object ret;
+    try {
+      ret = ser.deserialize(tmp, type);
+    } catch (Exception e) {
+      throw new EApplicationException("Failed to load object " + name + " of type " + type.getClass().getName() + ".", e);
+    }
+    return ret;
+  }
+
+  public static void loadField(XElement elm, Object src, String fieldName) {
+    Field f;
+    try {
+      f = getField(src.getClass(), fieldName);
+    } catch (NoSuchFieldException e) {
+      throw new EApplicationException("Unable to find field " + fieldName + " in type " + src.getClass().getName());
+    }
+
+    Object v;
+    if (f.getType().isPrimitive() || f.getType().isEnum())
+      v = LoadSave.loadFromAttribute(elm, fieldName);
+    else
+      v = LoadSave.loadFromElement(elm, fieldName, f.getType());
+
+    try {
+      f.setAccessible(true);
+      f.set(src,v);
+    } catch (IllegalAccessException e) {
+      throw new EApplicationException("Unable to set value " + v + " into " + src.getClass().getName() + "." + f.getName());
     }
   }
 

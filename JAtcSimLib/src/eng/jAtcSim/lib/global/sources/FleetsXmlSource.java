@@ -13,6 +13,8 @@ public class FleetsXmlSource extends XmlSource<Fleets> {
     super(xmlFile);
   }
 
+  public FleetsXmlSource(){super(null);}
+
   @Override
   protected Fleets _load() {
     eng.eSystem.xmlSerialization.Settings sett = new eng.eSystem.xmlSerialization.Settings();

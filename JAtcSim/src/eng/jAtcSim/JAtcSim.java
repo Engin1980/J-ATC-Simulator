@@ -69,6 +69,10 @@ public class JAtcSim {
     frmIntro.setVisible(true);
   }
 
+  public static void loadSimulation(String xmlFileName){
+    Simulation sim = Simulation.load(xmlFileName);
+  }
+
   public static void startSimulation(StartupSettings startupSettings) {
 
     KeyList.setDuplicatesChecking(false);

@@ -17,6 +17,10 @@ public class AreaXmlSource extends XmlSource<Area> {
 
   private int activeAirportIndex = 0;
 
+  public int getActiveAirportIndex() {
+    return activeAirportIndex;
+  }
+
   public void setActiveAirport(String icao){
     this.activeAirportIndex =
         super.getContent().getAirports().getIndexOf(q->q.getIcao().equals(icao));
@@ -31,6 +35,8 @@ public class AreaXmlSource extends XmlSource<Area> {
   public AreaXmlSource(String xmlFile) {
     super(xmlFile);
   }
+
+  public AreaXmlSource(){super(null);}
 
   @Override
   protected Area _load() {
@@ -116,6 +122,12 @@ public class AreaXmlSource extends XmlSource<Area> {
     super.setInitialized();
     super.getContent().init();
     this.setActiveAirport(icao);
+  }
+
+  public void init(int index){
+    super.setInitialized();
+    super.getContent().init();
+    this.setActiveAirport(super.getContent().getAirports().get(index).getIcao());
   }
 }
 

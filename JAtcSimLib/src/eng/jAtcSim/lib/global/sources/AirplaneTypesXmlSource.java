@@ -11,6 +11,8 @@ public class AirplaneTypesXmlSource extends XmlSource<AirplaneTypes> {
     super(xmlFile);
   }
 
+  public AirplaneTypesXmlSource(){super(null);}
+
   @Override
   protected AirplaneTypes _load() {
     eng.eSystem.xmlSerialization.Settings sett = new eng.eSystem.xmlSerialization.Settings();

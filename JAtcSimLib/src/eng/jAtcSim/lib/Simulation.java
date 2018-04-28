@@ -71,33 +71,20 @@ public class Simulation {
   private static final Pattern SYSMES_SHORTCUT = Pattern.compile("SHORTCUT ([\\\\?A-Z0-9]+)( (.+))?");
   private final static double MAX_VICINITY_DISTANCE_IN_NM = 10;
   private final ETime now;
-  @XmlIgnore
   private final Area area;
-  @XmlIgnore
   private final AirplaneTypes airplaneTypes;
-  @XmlIgnore
   private final Airport airport;
   private final Messenger messenger = new Messenger();
-  @XmlIgnore
   private final UserAtc appAtc;
-  @XmlIgnore
   private final TowerAtc twrAtc;
-  @XmlIgnore
   private final CenterAtc ctrAtc;
-  @XmlIgnore
   private final Traffic traffic;
-  @XmlIgnore
   private final Fleets fleets;
-  @XmlIgnore
   private final IList<Airplane> newPlanesDelayedToAvoidCollision = new EList<>();
-  @XmlIgnore
   private final MrvaManager mrvaManager;
   private final WeatherProvider weatherProvider;
-  @XmlIgnore
   private final Statistics stats = new Statistics();
-  @XmlIgnore
   private final EmergencyManager emergencyManager;
-  @XmlIgnore
   private final PlaneResponsibilityManager prm;
   private final AreaXmlSource areaXmlSource;
   private final AirplaneTypesXmlSource airplaneTypesXmlSource;
@@ -295,6 +282,56 @@ public class Simulation {
     return this.weatherProvider;
   }
 
+  private Simulation(){
+
+    now = null;
+    area = null;
+    airplaneTypes = null;
+    airport = null;
+    appAtc = null;
+    twrAtc = null;
+    ctrAtc = null;
+    traffic = null;
+    fleets = null;
+    mrvaManager = null;
+    weatherProvider = null;
+    emergencyManager = null;
+    prm = null;
+    areaXmlSource = null;
+    airplaneTypesXmlSource = null;
+    fleetsXmlSource = null;
+    trafficXmlSource = null;
+  }
+
+  public static Simulation load(String fileName) {
+
+    Simulation ret = new Simulation();
+
+    XDocument doc;
+    try {
+      doc = XDocument.load(fileName);
+    } catch (EXmlException e) {
+      throw new EApplicationException("Unable to load xml document.", e);
+    }
+    
+    XElement root= doc.getRoot();
+    LoadSave.loadField(root, ret, "areaXmlSource");
+    LoadSave.loadField(root, ret, "airplaneTypesXmlSource");
+    LoadSave.loadField(root, ret, "fleetsXmlSource");
+    LoadSave.loadField(root, ret, "trafficXmlSource");
+
+    ret.areaXmlSource.load();
+    ret.areaXmlSource.init(ret.areaXmlSource.getActiveAirportIndex());
+    ret.airplaneTypesXmlSource.load();
+    ret.airplaneTypesXmlSource.init();
+    ret.fleetsXmlSource.load();
+    ret.fleetsXmlSource.init(ret.airplaneTypesXmlSource.getContent());
+    ret.trafficXmlSource.load();
+    ret.trafficXmlSource.init(ret.areaXmlSource.getActiveAirport(), new Traffic[]{});
+
+    return ret;
+  }
+
   public void save(String fileName) {
     XElement root = new XElement("simulation");
 
@@ -303,7 +340,6 @@ public class Simulation {
     LoadSave.saveField(root, this, "fleetsXmlSource");
     LoadSave.saveField(root, this, "trafficXmlSource");
 
-    LoadSave.saveAsAttribute(root, "icao", this.getActiveAirport().getIcao());
 
     {
       IReadOnlyList<Airplane> planes = this.prm.getAll();
@@ -322,9 +358,15 @@ public class Simulation {
       this.appAtc.save(tmp);
     }
 
-    // atcs ignored, now fixed, will be detected from area file
-
     LoadSave.saveField(root, this, "prm");
+
+    LoadSave.saveField(root, this, "now");
+    LoadSave.saveAsAttribute(root, "icao", this.getActiveAirport().getIcao());
+    LoadSave.saveField(root, this, "newPlanesDelayedToAvoidCollision");
+//mrvaManager
+    LoadSave.saveField(root, this, "weatherProvider");
+    LoadSave.saveField(root, this, "stats");
+    LoadSave.saveField(root, this, "emergencyManager");
 
 
     XDocument doc = new XDocument(root);

@@ -46,6 +46,8 @@ public class WeatherSource extends Source<WeatherProvider> {
     this.weatherProviderClassName = weatherProviderClassName;
   }
 
+  public WeatherSource(){}
+
   public void init(){
     super.setInitialized();
 
