@@ -6,11 +6,13 @@
 
 package eng.jAtcSim.lib.atcs;
 
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.xmlSerialization.XmlIgnore;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.messaging.IMessageParticipant;
 import eng.jAtcSim.lib.messaging.Message;
+import eng.jAtcSim.lib.serialization.LoadSave;
 
 /**
  *
@@ -32,6 +34,16 @@ public abstract class Atc implements IMessageParticipant {
   protected final int acceptAltitude;
   protected final int releaseAltitude;
   protected final int orderedAltitude;
+
+  public final void save(XElement elm){
+    XElement tmp =new XElement("atc");
+    elm.addElement(tmp);
+
+    LoadSave.saveField(tmp, this, "name");
+    _save(tmp);
+  }
+
+  protected abstract void _save(XElement elm);
 
   @XmlIgnore
   protected final AtcRecorder recorder;

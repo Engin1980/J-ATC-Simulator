@@ -5,6 +5,7 @@ import eng.eSystem.collections.EList;
 import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IMap;
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.utilites.CollectionUtils;
 import eng.eSystem.xmlSerialization.XmlIgnore;
 import eng.jAtcSim.lib.Acc;
@@ -17,14 +18,13 @@ import eng.jAtcSim.lib.global.SchedulerForAdvice;
 import eng.jAtcSim.lib.global.logging.CommonRecorder;
 import eng.jAtcSim.lib.messaging.Message;
 import eng.jAtcSim.lib.messaging.StringMessageContent;
+import eng.jAtcSim.lib.serialization.LoadSave;
 import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.GoingAroundNotification;
 import eng.jAtcSim.lib.speaking.fromAtc.atc2atc.RunwayUse;
 import eng.jAtcSim.lib.speaking.fromAtc.atc2atc.StringResponse;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeAltitudeCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ClearedForTakeoffCommand;
-import eng.jAtcSim.lib.speaking.fromAtc.commands.ContactCommand;
-import eng.jAtcSim.lib.speaking.fromAtc.commands.afters.AfterAltitudeCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.notifications.RadarContactConfirmationNotification;
 import eng.jAtcSim.lib.weathers.Weather;
 import eng.jAtcSim.lib.weathers.WeatherProvider;
@@ -157,45 +157,6 @@ public class TowerAtc extends ComputerAtc {
   }
 
   @Override
-  public void unregisterPlaneUnderControl(Airplane plane, boolean finalUnregistration) {
-    //TODO the Tower ATC does some unregistration operations probably somewhere here in the code, should be checked
-    if (landingPlanesList.contains(plane))
-      landingPlanesList.remove(plane);
-    if (goAroundedPlanesToSwitchList.contains(plane))
-      goAroundedPlanesToSwitchList.remove(plane);
-    if (holdingPointPlanesList.contains(plane)) {
-      holdingPointPlanesList.remove(plane);
-    }
-    if (linedUpPlanesList.contains(plane))
-      linedUpPlanesList.remove(plane);
-    if (departingPlanesList.contains(plane))
-      departingPlanesList.remove(plane);
-    if (holdingPointWaitingTimeMap.containsKey(plane))
-      holdingPointWaitingTimeMap.remove(plane);
-
-
-    IMap<RunwayThreshold, TakeOffInfo> tmp = takeOffInfos.whereValue(q -> q.airplane == plane);
-    tmp.getKeys().forEach(q -> takeOffInfos.remove(q));
-
-    if (plane.isEmergency() && plane.getState() == Airplane.State.landed){
-      // if it is landed emergency, close runway for amount of time
-      Runway rwy = plane.getAssignedRunwayThreshold().getParent();
-      RunwayCheck rwyCheck = RunwayCheck.createImmediateAfterEmergency();
-      runwayChecks.set(rwy, rwyCheck);
-    }
-  }
-
-  @Override
-  public void registerNewPlaneUnderControl(Airplane plane, boolean initialRegistration) {
-    if (plane.isArrival()) {
-      landingPlanesList.add(plane);
-    } else {
-      holdingPointPlanesList.add(plane);
-      holdingPointWaitingTimeMap.put(plane, Acc.now().clone());
-    }
-  }
-
-  @Override
   public void elapseSecond() {
     super.elapseSecond();
 
@@ -319,6 +280,59 @@ public class TowerAtc extends ComputerAtc {
     if (inUseInfo.scheduled != null)
       ret.add(inUseInfo.scheduled);
     return ret;
+  }
+
+  @Override
+  protected void _save(XElement elm) {
+    LoadSave.saveField(elm, this, "takeOffInfos");
+    LoadSave.saveField(elm, this, "landingPlanesList");
+    LoadSave.saveField(elm, this, "goAroundedPlanesToSwitchList");
+    LoadSave.saveField(elm, this, "holdingPointPlanesList");
+    LoadSave.saveField(elm, this, "linedUpPlanesList");
+    LoadSave.saveField(elm, this, "departingPlanesList");
+    LoadSave.saveField(elm, this, "holdingPointWaitingTimeMap");
+    LoadSave.saveField(elm, this, "inUseInfo");
+    LoadSave.saveField(elm, this, "runwayChecks");
+    LoadSave.saveField(elm, this, "isUpdatedWeather");
+  }
+
+  @Override
+  public void unregisterPlaneUnderControl(Airplane plane, boolean finalUnregistration) {
+    //TODO the Tower ATC does some unregistration operations probably somewhere here in the code, should be checked
+    if (landingPlanesList.contains(plane))
+      landingPlanesList.remove(plane);
+    if (goAroundedPlanesToSwitchList.contains(plane))
+      goAroundedPlanesToSwitchList.remove(plane);
+    if (holdingPointPlanesList.contains(plane)) {
+      holdingPointPlanesList.remove(plane);
+    }
+    if (linedUpPlanesList.contains(plane))
+      linedUpPlanesList.remove(plane);
+    if (departingPlanesList.contains(plane))
+      departingPlanesList.remove(plane);
+    if (holdingPointWaitingTimeMap.containsKey(plane))
+      holdingPointWaitingTimeMap.remove(plane);
+
+
+    IMap<RunwayThreshold, TakeOffInfo> tmp = takeOffInfos.whereValue(q -> q.airplane == plane);
+    tmp.getKeys().forEach(q -> takeOffInfos.remove(q));
+
+    if (plane.isEmergency() && plane.getState() == Airplane.State.landed) {
+      // if it is landed emergency, close runway for amount of time
+      Runway rwy = plane.getAssignedRunwayThreshold().getParent();
+      RunwayCheck rwyCheck = RunwayCheck.createImmediateAfterEmergency();
+      runwayChecks.set(rwy, rwyCheck);
+    }
+  }
+
+  @Override
+  public void registerNewPlaneUnderControl(Airplane plane, boolean initialRegistration) {
+    if (plane.isArrival()) {
+      landingPlanesList.add(plane);
+    } else {
+      holdingPointPlanesList.add(plane);
+      holdingPointWaitingTimeMap.put(plane, Acc.now().clone());
+    }
   }
 
   private void processMessageFromAtc(RunwayUse ru) {

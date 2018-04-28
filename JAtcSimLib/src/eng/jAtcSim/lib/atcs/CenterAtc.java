@@ -1,5 +1,6 @@
 package eng.jAtcSim.lib.atcs;
 
+import eng.eSystem.eXml.XElement;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.coordinates.Coordinates;
@@ -27,6 +28,11 @@ public class CenterAtc extends ComputerAtc {
       this.ctrAcceptDistance = template.getCtrAcceptDistance();
     if (template.getCtrNavaidAcceptDistance() != null)
       this.ctrNavaidAcceptDistance = template.getCtrNavaidAcceptDistance();
+  }
+
+  @Override
+  protected void _save(XElement elm){
+
   }
 
   public int getCtrAcceptDistance() {

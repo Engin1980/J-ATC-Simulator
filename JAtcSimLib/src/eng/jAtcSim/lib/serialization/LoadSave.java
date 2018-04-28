@@ -56,13 +56,27 @@ public class LoadSave {
     Field f;
     Object v;
     try {
-      f = cls.getDeclaredField(fieldName);
+      f = getField(cls, fieldName);
       f.setAccessible(true);
       v = f.get(src);
     } catch (NoSuchFieldException | IllegalAccessException ex) {
-      throw new EApplicationException("Unreadable field " + fieldName + " on object " + src.getClass(), ex);
+        throw new EApplicationException("Unreadable field " + fieldName + " on object " + src.getClass(), ex);
     }
     return v;
   }
 
+  private static Field getField(Class type, String name) throws NoSuchFieldException {
+    Field f;
+    try {
+      f = type.getDeclaredField(name);
+    } catch (NoSuchFieldException e) {
+      if (type.equals(Object.class))
+        throw e;
+      else {
+        type = type.getSuperclass();
+        f = getField(type, name);
+      }
+    }
+    return f;
+  }
 }

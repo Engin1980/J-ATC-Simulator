@@ -314,6 +314,14 @@ public class Simulation {
       }
     }
 
+    {
+      XElement tmp = new XElement("atcs");
+      root.addElement(tmp);
+      this.ctrAtc.save(tmp);
+      this.twrAtc.save(tmp);
+      this.appAtc.save(tmp);
+    }
+
     // atcs ignored, now fixed, will be detected from area file
 
     LoadSave.saveField(root, this, "prm");

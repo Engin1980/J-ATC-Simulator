@@ -5,6 +5,7 @@
  */
 package eng.jAtcSim.lib.atcs;
 
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.ERuntimeException;
 import eng.eSystem.xmlSerialization.XmlIgnore;
 import eng.jAtcSim.lib.Acc;
@@ -33,6 +34,11 @@ public class UserAtc extends Atc {
   }
   private final Parser parser = new ShortParser();
   private eErrorBehavior errorBehavior = eErrorBehavior.sendSystemErrors;
+
+  @Override
+  protected void _save(XElement elm){
+
+  }
 
   public UserAtc(AtcTemplate template) {
     super(template);
