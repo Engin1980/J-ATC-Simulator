@@ -30,17 +30,20 @@ public class CenterAtc extends ComputerAtc {
       this.ctrNavaidAcceptDistance = template.getCtrNavaidAcceptDistance();
   }
 
-  @Override
-  protected void _save(XElement elm){
-
-  }
-
   public int getCtrAcceptDistance() {
     return ctrAcceptDistance;
   }
 
   public int getCtrNavaidAcceptDistance() {
     return ctrNavaidAcceptDistance;
+  }
+
+  @Override
+  protected void _save(XElement elm) {
+  }
+
+  @Override
+  protected void _load(XElement elm) {
   }
 
   @Override
@@ -154,7 +157,7 @@ public class CenterAtc extends ComputerAtc {
 
   private int getDepartureRandomTargetAltitude(Airplane p) {
     int min;
-    switch (p.getType().category){
+    switch (p.getType().category) {
       case 'A':
         min = 4;
         break;
@@ -165,8 +168,8 @@ public class CenterAtc extends ComputerAtc {
       case 'D':
         min = 20;
         break;
-        default:
-          throw new UnsupportedOperationException();
+      default:
+        throw new UnsupportedOperationException();
     }
     min = (int) Math.max(p.getAltitude() / 1000, min);
     int ret = Acc.rnd().nextInt(min, p.getType().maxAltitude / 1000);

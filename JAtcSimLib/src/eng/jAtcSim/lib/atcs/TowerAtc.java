@@ -295,6 +295,20 @@ public class TowerAtc extends ComputerAtc {
     LoadSave.saveField(elm, this, "runwayChecks");
     LoadSave.saveField(elm, this, "isUpdatedWeather");
   }
+  
+  @Override
+  protected void _load(XElement elm){
+    LoadSave.loadField(elm, this, "takeOffInfos");
+    LoadSave.loadField(elm, this, "landingPlanesList");
+    LoadSave.loadField(elm, this, "goAroundedPlanesToSwitchList");
+    LoadSave.loadField(elm, this, "holdingPointPlanesList");
+    LoadSave.loadField(elm, this, "linedUpPlanesList");
+    LoadSave.loadField(elm, this, "departingPlanesList");
+    LoadSave.loadField(elm, this, "holdingPointWaitingTimeMap");
+    LoadSave.loadField(elm, this, "inUseInfo");
+    LoadSave.loadField(elm, this, "runwayChecks");
+    LoadSave.loadField(elm, this, "isUpdatedWeather");
+  }
 
   @Override
   public void unregisterPlaneUnderControl(Airplane plane, boolean finalUnregistration) {

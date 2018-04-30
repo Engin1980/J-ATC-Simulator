@@ -1,13 +1,16 @@
 package eng.jAtcSim.lib.serialization;
 
 import eng.eSystem.collections.EList;
+import eng.eSystem.collections.IList;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.xmlSerialization.IInstanceCreator;
 import eng.eSystem.xmlSerialization.Settings;
 import eng.eSystem.xmlSerialization.XmlSerializationException;
 import eng.eSystem.xmlSerialization.XmlSerializer;
+import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.AirplaneTypes;
+import eng.jAtcSim.lib.airplanes.pilots.Pilot;
 import eng.jAtcSim.lib.atcs.Atc;
 import eng.jAtcSim.lib.speaking.fromAtc.atc2atc.PlaneSwitchMessage;
 import eng.jAtcSim.lib.speaking.fromAtc.atc2atc.RunwayCheck;
@@ -127,11 +130,25 @@ public class LoadSave {
     RouteParser rp = (RouteParser) ser.getSettings().getElementParsers().getFirst(q -> q instanceof RouteParser);
     rp.setRelative(aip);
 
+    RunwayParser rwp = (RunwayParser) ser.getSettings().getElementParsers().getFirst(q -> q instanceof RunwayParser);
+    rwp.setRelative(aip);
+
+    RunwayThresholdParser rtp = (RunwayThresholdParser) ser.getSettings().getElementParsers().getFirst(q -> q instanceof RunwayThresholdParser);
+    rtp.setRelative(aip);
   }
 
   public static void setRelativeAirplaneTypes(AirplaneTypes types) {
     AirplaneTypeParser atp = (AirplaneTypeParser) ser.getSettings().getElementParsers().getFirst(q -> q instanceof AirplaneTypeParser);
     atp.setRelative(types);
+  }
+
+  public static void loadFromElement(XElement elm, Object object) {
+    ser.deserializeContent(elm, object);
+  }
+
+  public static void setRelativeAirplanes(IList<Airplane> lst) {
+    AirplaneParser ap = (AirplaneParser) ser.getSettings().getElementParsers().getFirst(q -> q instanceof AirplaneParser);
+    ap.setRelative(lst);
   }
 
   private static Object getFieldValue(Object src, String fieldName) {

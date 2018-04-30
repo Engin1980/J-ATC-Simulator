@@ -6,6 +6,7 @@
 
 package eng.jAtcSim.lib.atcs;
 
+import eng.eSystem.eXml.XDocument;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.xmlSerialization.XmlIgnore;
 import eng.jAtcSim.lib.Acc;
@@ -43,7 +44,21 @@ public abstract class Atc implements IMessageParticipant {
     _save(tmp);
   }
 
+  public void load(XElement elm) {
+      XElement tmp = null;
+      for (XElement item : elm.getChildren()) {
+        if (item.getChild("name").getContent().equals(name)){
+          tmp = item;
+          break;
+        }
+      }
+      assert tmp != null;
+
+      _load(tmp);
+  }
+
   protected abstract void _save(XElement elm);
+  protected abstract void _load(XElement elm);
 
   @XmlIgnore
   protected final AtcRecorder recorder;

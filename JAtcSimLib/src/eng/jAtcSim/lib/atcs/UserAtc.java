@@ -40,6 +40,11 @@ public class UserAtc extends Atc {
 
   }
 
+  @Override
+  protected void _load(XElement elm){
+
+  }
+
   public UserAtc(AtcTemplate template) {
     super(template);
   }

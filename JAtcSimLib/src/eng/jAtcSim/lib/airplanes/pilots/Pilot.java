@@ -9,6 +9,7 @@ import com.sun.istack.internal.Nullable;
 import eng.eSystem.EStringBuilder;
 import eng.eSystem.collections.IList;
 import eng.eSystem.eXml.XElement;
+import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.exceptions.ERuntimeException;
 import eng.eSystem.utilites.ConversionUtils;
@@ -42,6 +43,8 @@ import eng.jAtcSim.lib.world.RunwayThreshold;
 import eng.jAtcSim.lib.world.approaches.Approach;
 import eng.jAtcSim.lib.world.approaches.CurrentApproachInfo;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -1086,8 +1089,36 @@ public class Pilot {
     LoadSave.loadField(tmp, ret, "assignedRoute");
     LoadSave.loadField(tmp, ret, "afterCommands");
     LoadSave.loadField(tmp, ret, "saidText");
-    LoadSave.loadField(tmp, ret, "behavior");
-    
+
+    {
+      XElement behEl = tmp.getChild("behavior");
+      ret.behavior = getBehaviorInstance(behEl, ret);
+      LoadSave.loadFromElement(behEl, ret.behavior);
+    }
+
+    return ret;
+  }
+
+  private static Behavior getBehaviorInstance(XElement behEl, Pilot parent) {
+    String clsName = behEl.getAttribute("__class");
+    Class cls;
+    Constructor ctor;
+    Behavior ret;
+    try {
+      cls = Class.forName(clsName);
+    } catch (ClassNotFoundException e) {
+      throw new EApplicationException("Unable to find behavior class " + clsName + ".", e);
+    }
+    try {
+      ctor = cls.getDeclaredConstructor(Pilot.class);
+    } catch (NoSuchMethodException e) {
+      throw new EApplicationException("Unable to find parameter-less constructor for " + cls.getName() + ".", e);
+    }
+    try {
+      ret = (Behavior) ctor.newInstance(parent);
+    } catch (InstantiationException | IllegalAccessException | InvocationTargetException ex) {
+      throw new EApplicationException("Unable to create new instance of " + cls.getName() + ".", ex);
+    }
     return ret;
   }
 

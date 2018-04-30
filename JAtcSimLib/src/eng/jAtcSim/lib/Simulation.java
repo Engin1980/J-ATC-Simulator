@@ -146,7 +146,17 @@ public class Simulation {
         Airplane plane = Airplane.load(elm);
         lst.add(plane);
       }
+      LoadSave.setRelativeAirplanes(lst);
     }
+
+
+    {
+      XElement tmp = root.getChild("atcs");
+      ret.ctrAtc.load(tmp);
+      ret.appAtc.load(tmp);
+      ret.twrAtc.load(tmp);
+    }
+
 
     return ret;
   }
