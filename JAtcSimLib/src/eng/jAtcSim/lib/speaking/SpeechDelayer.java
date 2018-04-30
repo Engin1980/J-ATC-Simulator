@@ -12,6 +12,11 @@ public class SpeechDelayer {
   private final int maximalDelay;
   private int currentDelay = 0;
 
+  private SpeechDelayer() {
+    minimalDelay = 0;
+    maximalDelay = 0;
+  }
+
   public SpeechDelayer(int minimalDelay, int maximalDelay) {
     this.minimalDelay = minimalDelay;
     this.maximalDelay = maximalDelay;

@@ -19,6 +19,10 @@ public final class CoordinateValue {
   private final boolean neg;
   private final double value;
 
+  private CoordinateValue() {
+    this(Double.MIN_VALUE);
+  }
+
   public CoordinateValue(double value) {
     this.neg = value < 0;
     this.value = Math.abs(value);

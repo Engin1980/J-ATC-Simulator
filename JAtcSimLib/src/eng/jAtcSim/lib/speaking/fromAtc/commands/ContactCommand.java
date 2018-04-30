@@ -16,6 +16,10 @@ import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
 public class ContactCommand implements IAtcCommand {
   private final Atc.eType atcType;
 
+  private ContactCommand() {
+    atcType = Atc.eType.gnd;
+  }
+
   public ContactCommand(Atc.eType atcType) {
     this.atcType = atcType;
   }

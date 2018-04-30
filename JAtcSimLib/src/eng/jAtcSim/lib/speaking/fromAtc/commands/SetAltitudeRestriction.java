@@ -5,8 +5,11 @@ import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
 
 public class SetAltitudeRestriction implements IAtcCommand {
 
-private final Restriction restriction;
+  private final Restriction restriction;
 
+  public SetAltitudeRestriction() {
+    this.restriction = null;
+  }
 
   public SetAltitudeRestriction(Restriction restriction) {
     this.restriction = restriction;
@@ -19,7 +22,7 @@ private final Restriction restriction;
   @Override
   public String toString() {
     if (restriction != null)
-    return "Altitude restriction " + restriction.toString() + " {command}";
+      return "Altitude restriction " + restriction.toString() + " {command}";
     else
       return "Altitude restriction remove {command}";
   }

@@ -1,12 +1,19 @@
 package eng.jAtcSim.lib.serialization;
 
+import eng.eSystem.collections.EList;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.xmlSerialization.IInstanceCreator;
 import eng.eSystem.xmlSerialization.Settings;
-import eng.eSystem.xmlSerialization.XmlDeserializationException;
 import eng.eSystem.xmlSerialization.XmlSerializationException;
 import eng.eSystem.xmlSerialization.XmlSerializer;
-import eng.jAtcSim.lib.Simulation;
+import eng.jAtcSim.lib.airplanes.AirplaneTypes;
+import eng.jAtcSim.lib.atcs.Atc;
+import eng.jAtcSim.lib.speaking.fromAtc.atc2atc.PlaneSwitchMessage;
+import eng.jAtcSim.lib.speaking.fromAtc.atc2atc.RunwayCheck;
+import eng.jAtcSim.lib.speaking.fromAtc.atc2atc.StringResponse;
+import eng.jAtcSim.lib.world.Airport;
+import eng.jAtcSim.lib.world.Area;
 
 import java.lang.reflect.Field;
 
@@ -23,6 +30,12 @@ public class LoadSave {
     sett.getElementParsers().add(new RouteParser());
     sett.getElementParsers().add(new AirplaneParser());
     sett.getElementParsers().add(new AtcParser());
+    sett.getElementParsers().add(new AirportParser());
+
+    sett.getInstanceCreators().add(new PlaneSwitchMessageIC());
+    sett.getInstanceCreators().add(new RunwayCheckIC());
+    sett.getInstanceCreators().add(new StringResponseIC());
+    // TODO here should be all classes with private constructors defined for xml loading
 
     sett.getIgnoredFieldsRegex().add("this\\$0"); // parent of inner class
 
@@ -32,27 +45,28 @@ public class LoadSave {
 
   public static void saveField(XElement elm, Object src, String fieldName) {
     Object v = getFieldValue(src, fieldName);
-    if (v == null || v.getClass().isPrimitive() || v.getClass().isEnum())
-      LoadSave.saveAsAttribute(elm, fieldName, v);
-    else
-      LoadSave.saveAsElement(elm, fieldName, v);
+//    if (v == null || v.getClass().isPrimitive() || v.getClass().isEnum())
+//      LoadSave.saveAsAttribute(elm, fieldName, v);
+//    else
+    LoadSave.saveAsElement(elm, fieldName, v);
   }
 
-  public static void saveAsAttribute(XElement elm, String name, Object value) {
-    if (value == null)
-      elm.setAttribute(name, "(null)");
-    else
-      elm.setAttribute(name, value.toString());
-  }
-  public static Object loadFromAttribute(XElement elm, String name) {
-    Object ret;
-    String s = elm.getContent();
-    if (s.equals("(null)"))
-      ret = null;
-    else
-      ret = elm.getAttributes().get(name);
-    return ret;
-  }
+//  public static void saveAsAttribute(XElement elm, String name, Object value) {
+//    if (value == null)
+//      elm.setAttribute(name, "(null)");
+//    else
+//      elm.setAttribute(name, value.toString());
+//  }
+//
+//  public static Object loadFromAttribute(XElement elm, String name) {
+//    Object ret;
+//    String s = elm.getContent();
+//    if (s.equals("(null)"))
+//      ret = null;
+//    else
+//      ret = elm.getAttributes().get(name);
+//    return ret;
+//  }
 
   public static void saveAsElement(XElement elm, String name, Object obj) {
     XElement tmp = new XElement(name);
@@ -65,7 +79,7 @@ public class LoadSave {
   }
 
   public static Object loadFromElement(XElement elm, String name, Class type) {
-    XElement tmp = elm.getChildren().getFirst(q->q.getName().equals(name));
+    XElement tmp = elm.getChildren().getFirst(q -> q.getName().equals(name));
     Object ret;
     try {
       ret = ser.deserialize(tmp, type);
@@ -84,17 +98,40 @@ public class LoadSave {
     }
 
     Object v;
-    if (f.getType().isPrimitive() || f.getType().isEnum())
-      v = LoadSave.loadFromAttribute(elm, fieldName);
-    else
-      v = LoadSave.loadFromElement(elm, fieldName, f.getType());
+//    if ((f.getType().isPrimitive() || f.getType().isEnum())
+//        &&
+//        elm.getAttributes().containsKey(fieldName))
+//      v = LoadSave.loadFromAttribute(elm, fieldName);
+//    else
+    v = LoadSave.loadFromElement(elm, fieldName, f.getType());
 
     try {
       f.setAccessible(true);
-      f.set(src,v);
+      f.set(src, v);
     } catch (IllegalAccessException e) {
       throw new EApplicationException("Unable to set value " + v + " into " + src.getClass().getName() + "." + f.getName());
     }
+  }
+
+  public static void setRelativeArea(Area area, Airport aip, Atc[] atcs) {
+
+    NavaidParser np = (NavaidParser) ser.getSettings().getElementParsers().getFirst(q -> q instanceof NavaidParser);
+    np.setRelative(area.getNavaids());
+
+    AirportParser ap = (AirportParser) ser.getSettings().getElementParsers().getFirst(q -> q instanceof AirportParser);
+    ap.setRelative(area.getAirports());
+
+    AtcParser atp = (AtcParser) ser.getSettings().getElementParsers().getFirst(q -> q instanceof AtcParser);
+    atp.setRelative(new EList<Atc>(atcs));
+
+    RouteParser rp = (RouteParser) ser.getSettings().getElementParsers().getFirst(q -> q instanceof RouteParser);
+    rp.setRelative(aip);
+
+  }
+
+  public static void setRelativeAirplaneTypes(AirplaneTypes types) {
+    AirplaneTypeParser atp = (AirplaneTypeParser) ser.getSettings().getElementParsers().getFirst(q -> q instanceof AirplaneTypeParser);
+    atp.setRelative(types);
   }
 
   private static Object getFieldValue(Object src, String fieldName) {
@@ -106,7 +143,7 @@ public class LoadSave {
       f.setAccessible(true);
       v = f.get(src);
     } catch (NoSuchFieldException | IllegalAccessException ex) {
-        throw new EApplicationException("Unreadable field " + fieldName + " on object " + src.getClass(), ex);
+      throw new EApplicationException("Unreadable field " + fieldName + " on object " + src.getClass(), ex);
     }
     return v;
   }
@@ -124,5 +161,45 @@ public class LoadSave {
       }
     }
     return f;
+  }
+}
+
+
+class PlaneSwitchMessageIC implements IInstanceCreator<PlaneSwitchMessage> {
+
+  @Override
+  public Class getType() {
+    return PlaneSwitchMessage.class;
+  }
+
+  @Override
+  public PlaneSwitchMessage createInstance() {
+    return new PlaneSwitchMessage(null);
+  }
+}
+
+class RunwayCheckIC implements IInstanceCreator<RunwayCheck> {
+
+  @Override
+  public Class getType() {
+    return RunwayCheck.class;
+  }
+
+  @Override
+  public RunwayCheck createInstance() {
+    return new RunwayCheck(null, RunwayCheck.eType.askForTime);
+  }
+}
+
+class StringResponseIC implements IInstanceCreator<StringResponse> {
+
+  @Override
+  public Class getType() {
+    return StringResponse.class;
+  }
+
+  @Override
+  public StringResponse createInstance() {
+    return new StringResponse(false, "");
   }
 }

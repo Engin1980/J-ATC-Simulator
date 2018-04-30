@@ -15,6 +15,10 @@ import eng.jAtcSim.lib.world.Navaid;
 public class AfterNavaidCommand extends AfterCommand {
   private final Navaid navaid;
 
+  private AfterNavaidCommand() {
+    navaid = null;
+  }
+
   public AfterNavaidCommand(Navaid navaid) {
     if (navaid == null) {
       throw new IllegalArgumentException("Argument \"navaid\" cannot be null.");

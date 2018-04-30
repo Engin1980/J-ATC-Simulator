@@ -5,6 +5,7 @@
  */
 package eng.jAtcSim.lib.coordinates;
 
+import java.awt.geom.RoundRectangle2D;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -29,6 +30,10 @@ public final class Coordinate {
     this(
         new CoordinateValue(aDegrees, aMinutesSeconds, isSouth),
         new CoordinateValue(bDegrees, bMinutesSeconds, isWest));
+  }
+
+  private Coordinate(){
+    this(Double.MIN_VALUE, Double.MIN_VALUE);
   }
 
   public Coordinate(double lat, double lon) {

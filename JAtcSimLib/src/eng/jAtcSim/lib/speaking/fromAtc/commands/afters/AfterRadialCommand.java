@@ -7,6 +7,10 @@ public class AfterRadialCommand extends AfterCommand {
   private Navaid navaid;
   private int radial;
 
+  private AfterRadialCommand(){
+
+  }
+
   public AfterRadialCommand(Navaid navaid, int radial) {
     this.navaid = navaid;
     this.radial = radial;

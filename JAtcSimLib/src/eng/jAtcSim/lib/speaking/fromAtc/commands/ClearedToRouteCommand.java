@@ -7,6 +7,9 @@ public class ClearedToRouteCommand implements IAtcCommand {
 
   private Route route;
 
+  private ClearedToRouteCommand() {
+  }
+
   public ClearedToRouteCommand(Route route) {
     this.route = route;
   }

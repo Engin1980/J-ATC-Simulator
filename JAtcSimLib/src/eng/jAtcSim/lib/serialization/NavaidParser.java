@@ -10,11 +10,8 @@ import eng.jAtcSim.lib.world.NavaidKeyList;
 
 public class NavaidParser implements IElementParser<Navaid> {
 
-//  private NavaidKeyList known;
+  private NavaidKeyList known;
 
-//  public NavaidParser(NavaidKeyList known) {
-//    this.known = known;
-//  }
 
   @Override
   public Class getType() {
@@ -24,9 +21,8 @@ public class NavaidParser implements IElementParser<Navaid> {
   @Override
   public Navaid parse(XElement xElement, XmlSerializer.Deserializer xmlSerializer) throws XmlDeserializationException {
     String name = xElement.getContent();
-    throw new UnsupportedOperationException();
-//    Navaid ret = known.getOrGenerate(name);
-//    return ret;
+    Navaid ret = known.getOrGenerate(name);
+    return ret;
   }
 
   @Override
@@ -37,5 +33,9 @@ public class NavaidParser implements IElementParser<Navaid> {
   @Override
   public boolean isApplicableOnDescendants() {
     return false;
+  }
+
+  public void setRelative(NavaidKeyList navaids) {
+    this.known = navaids;
   }
 }

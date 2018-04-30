@@ -3,6 +3,9 @@ package eng.jAtcSim.lib.speaking.fromAtc.commands.afters;
 public class AfterHeadingCommand extends AfterCommand {
   private int heading;
 
+  private AfterHeadingCommand() {
+  }
+
   public AfterHeadingCommand(int heading) {
     this.heading = heading;
   }

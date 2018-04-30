@@ -905,7 +905,7 @@ public class Pilot {
   }
 
   @XmlIgnore
-  private final Airplane.Airplane4Pilot parent;
+  private Airplane.Airplane4Pilot parent;
   private final SpeechDelayer queue = new SpeechDelayer(2, 7); //Min/max speech delay
   private final AfterCommandList afterCommands = new AfterCommandList();
   private final Map<Atc, SpeechList> saidText = new HashMap<>();
@@ -1058,7 +1058,7 @@ public class Pilot {
     LoadSave.saveField(tmp, this, "gaReason");
     LoadSave.saveField(tmp, this, "divertInfo");
     LoadSave.saveField(tmp, this, "altitudeOrderedByAtc");
-    LoadSave.saveAsElement(tmp, "atc", atc.getName());
+    LoadSave.saveField(tmp, this, "atc");
     LoadSave.saveField(tmp, this, "secondsWithoutRadarContact");
     LoadSave.saveField(tmp, this, "targetCoordinate");
     LoadSave.saveField(tmp, this, "speedRestriction");
@@ -1067,6 +1067,32 @@ public class Pilot {
     LoadSave.saveField(tmp, this, "afterCommands");
     LoadSave.saveField(tmp, this, "saidText");
     LoadSave.saveField(tmp, this, "behavior");
+  }
+
+  public static Pilot load(XElement tmp, Airplane.Airplane4Pilot parent) {
+    Pilot ret = new Pilot();
+
+    ret.parent = parent;
+
+    LoadSave.loadField(tmp, ret, "queue");
+    LoadSave.loadField(tmp, ret, "gaReason");
+    LoadSave.loadField(tmp, ret, "divertInfo");
+    LoadSave.loadField(tmp, ret, "altitudeOrderedByAtc");
+    LoadSave.loadField(tmp, ret, "atc");
+    LoadSave.loadField(tmp, ret, "secondsWithoutRadarContact");
+    LoadSave.loadField(tmp, ret, "targetCoordinate");
+    LoadSave.loadField(tmp, ret, "speedRestriction");
+    LoadSave.loadField(tmp, ret, "altitudeRestriction");
+    LoadSave.loadField(tmp, ret, "assignedRoute");
+    LoadSave.loadField(tmp, ret, "afterCommands");
+    LoadSave.loadField(tmp, ret, "saidText");
+    LoadSave.loadField(tmp, ret, "behavior");
+    
+    return ret;
+  }
+
+  private Pilot(){
+
   }
 
 

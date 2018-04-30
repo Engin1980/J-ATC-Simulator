@@ -326,6 +326,13 @@ class AFItem {
   public final AfterCommand antecedent;
   public final IAtcCommand consequent;
 
+  private AFItem() {
+    antecedentDerivativeSourceHex =0;
+    consequentHex = 0;
+    antecedent = null;
+    consequent = null;
+  }
+
   public AFItem(AfterCommand antecedent, IAtcCommand consequent) {
     this.antecedent = antecedent;
     this.consequent = consequent;

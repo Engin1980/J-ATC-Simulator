@@ -13,6 +13,10 @@ public class AfterSpeedCommand extends AfterCommand {
 
   private final int speedInKts;
 
+  private AfterSpeedCommand() {
+    speedInKts = 0;
+  }
+
   public AfterSpeedCommand(int speedInKts) {
     this.speedInKts = speedInKts;
   }

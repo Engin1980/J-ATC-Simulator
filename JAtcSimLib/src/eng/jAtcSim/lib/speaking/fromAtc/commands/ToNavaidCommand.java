@@ -16,6 +16,10 @@ import eng.jAtcSim.lib.world.Navaid;
 public class ToNavaidCommand implements IAtcCommand {
   protected final Navaid navaid;
 
+  protected ToNavaidCommand() {
+    this.navaid = null;
+  }
+
   public ToNavaidCommand(Navaid navaid) {
     if (navaid == null) {
       throw new IllegalArgumentException("Argument \"navaid\" cannot be null.");

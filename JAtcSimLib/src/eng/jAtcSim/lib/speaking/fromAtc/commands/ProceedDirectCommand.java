@@ -14,6 +14,10 @@ import eng.jAtcSim.lib.world.Navaid;
  */
 public class ProceedDirectCommand extends ToNavaidCommand {
 
+  private ProceedDirectCommand() {
+    super();
+  }
+
   public ProceedDirectCommand(Navaid navaid) {
     super(navaid);
   }

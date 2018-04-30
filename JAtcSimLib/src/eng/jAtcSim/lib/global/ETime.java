@@ -16,6 +16,10 @@ public class ETime implements Comparable<ETime> {
   private static final int DAY_SECONDS = 60 * 60 * 24;
   private int value = 0;
 
+  private ETime(){
+    this(0);
+  }
+
   public ETime(int value) {
     this.value = value;
   }

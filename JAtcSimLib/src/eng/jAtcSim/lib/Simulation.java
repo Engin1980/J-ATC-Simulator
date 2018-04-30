@@ -75,9 +75,9 @@ public class Simulation {
   private final AirplaneTypes airplaneTypes;
   private final Airport airport;
   private final Messenger messenger = new Messenger();
-  private final UserAtc appAtc;
-  private final TowerAtc twrAtc;
-  private final CenterAtc ctrAtc;
+  private UserAtc appAtc;
+  private TowerAtc twrAtc;
+  private CenterAtc ctrAtc;
   private final Traffic traffic;
   private final Fleets fleets;
   private final IList<Airplane> newPlanesDelayedToAvoidCollision = new EList<>();
@@ -104,6 +104,52 @@ public class Simulation {
    */
   @XmlIgnore
   private final Timer tmr = new Timer(o -> Simulation.this.elapseSecond());
+
+  public static Simulation load(String fileName) {
+
+    Simulation ret = new Simulation();
+
+    XDocument doc;
+    try {
+      doc = XDocument.load(fileName);
+    } catch (EXmlException e) {
+      throw new EApplicationException("Unable to load xml document.", e);
+    }
+
+    XElement root = doc.getRoot();
+    LoadSave.loadField(root, ret, "areaXmlSource");
+    LoadSave.loadField(root, ret, "airplaneTypesXmlSource");
+    LoadSave.loadField(root, ret, "fleetsXmlSource");
+    LoadSave.loadField(root, ret, "trafficXmlSource");
+
+    ret.areaXmlSource.load();
+    ret.areaXmlSource.init(ret.areaXmlSource.getActiveAirportIndex());
+    Airport aip = ret.areaXmlSource.getActiveAirport();
+    ret.twrAtc = new TowerAtc(aip.getAtcTemplates().get(Atc.eType.twr));
+    ret.ctrAtc = new CenterAtc(aip.getAtcTemplates().get(Atc.eType.ctr));
+    ret.appAtc = new UserAtc(aip.getAtcTemplates().get(Atc.eType.app));
+    LoadSave.setRelativeArea(ret.areaXmlSource.getContent(), aip, new Atc[]{ret.twrAtc, ret.ctrAtc, ret.appAtc});
+
+    ret.airplaneTypesXmlSource.load();
+    ret.airplaneTypesXmlSource.init();
+    LoadSave.setRelativeAirplaneTypes(ret.airplaneTypesXmlSource.getContent());
+
+    ret.fleetsXmlSource.load();
+    ret.fleetsXmlSource.init(ret.airplaneTypesXmlSource.getContent());
+    ret.trafficXmlSource.load();
+    ret.trafficXmlSource.init(ret.areaXmlSource.getActiveAirport(), new Traffic[]{});
+
+    {
+      IList<Airplane> lst = new EList<>();
+      XElement tmp = root.getChildren().getFirst(q -> q.getName().equals("planes"));
+      for (XElement elm : tmp.getChildren()) {
+        Airplane plane = Airplane.load(elm);
+        lst.add(plane);
+      }
+    }
+
+    return ret;
+  }
 
   public Simulation(
       AreaXmlSource areaXmlSource, AirplaneTypesXmlSource airplaneTypesXmlSource, FleetsXmlSource fleetXmlSource, TrafficXmlSource trafficXmlSource,
@@ -158,6 +204,27 @@ public class Simulation {
     IList<Border> mrvaAreas =
         areaXmlSource.getContent().getBorders().where(q -> q.getType() == Border.eType.mrva);
     this.mrvaManager = new MrvaManager(mrvaAreas);
+  }
+
+  private Simulation() {
+
+    now = null;
+    area = null;
+    airplaneTypes = null;
+    airport = null;
+    appAtc = null;
+    twrAtc = null;
+    ctrAtc = null;
+    traffic = null;
+    fleets = null;
+    mrvaManager = null;
+    weatherProvider = null;
+    emergencyManager = null;
+    prm = null;
+    areaXmlSource = null;
+    airplaneTypesXmlSource = null;
+    fleetsXmlSource = null;
+    trafficXmlSource = null;
   }
 
   public PlaneResponsibilityManager getPrm() {
@@ -282,56 +349,6 @@ public class Simulation {
     return this.weatherProvider;
   }
 
-  private Simulation(){
-
-    now = null;
-    area = null;
-    airplaneTypes = null;
-    airport = null;
-    appAtc = null;
-    twrAtc = null;
-    ctrAtc = null;
-    traffic = null;
-    fleets = null;
-    mrvaManager = null;
-    weatherProvider = null;
-    emergencyManager = null;
-    prm = null;
-    areaXmlSource = null;
-    airplaneTypesXmlSource = null;
-    fleetsXmlSource = null;
-    trafficXmlSource = null;
-  }
-
-  public static Simulation load(String fileName) {
-
-    Simulation ret = new Simulation();
-
-    XDocument doc;
-    try {
-      doc = XDocument.load(fileName);
-    } catch (EXmlException e) {
-      throw new EApplicationException("Unable to load xml document.", e);
-    }
-    
-    XElement root= doc.getRoot();
-    LoadSave.loadField(root, ret, "areaXmlSource");
-    LoadSave.loadField(root, ret, "airplaneTypesXmlSource");
-    LoadSave.loadField(root, ret, "fleetsXmlSource");
-    LoadSave.loadField(root, ret, "trafficXmlSource");
-
-    ret.areaXmlSource.load();
-    ret.areaXmlSource.init(ret.areaXmlSource.getActiveAirportIndex());
-    ret.airplaneTypesXmlSource.load();
-    ret.airplaneTypesXmlSource.init();
-    ret.fleetsXmlSource.load();
-    ret.fleetsXmlSource.init(ret.airplaneTypesXmlSource.getContent());
-    ret.trafficXmlSource.load();
-    ret.trafficXmlSource.init(ret.areaXmlSource.getActiveAirport(), new Traffic[]{});
-
-    return ret;
-  }
-
   public void save(String fileName) {
     XElement root = new XElement("simulation");
 
@@ -346,7 +363,9 @@ public class Simulation {
       XElement tmp = new XElement("planes");
       root.addElement(tmp);
       for (Airplane plane : planes) {
-        plane.save(tmp);
+        XElement pln = new XElement("plane");
+        plane.save(pln);
+        tmp.addElement(pln);
       }
     }
 
@@ -361,9 +380,8 @@ public class Simulation {
     LoadSave.saveField(root, this, "prm");
 
     LoadSave.saveField(root, this, "now");
-    LoadSave.saveAsAttribute(root, "icao", this.getActiveAirport().getIcao());
     LoadSave.saveField(root, this, "newPlanesDelayedToAvoidCollision");
-//mrvaManager
+    //mrvaManager
     LoadSave.saveField(root, this, "weatherProvider");
     LoadSave.saveField(root, this, "stats");
     LoadSave.saveField(root, this, "emergencyManager");

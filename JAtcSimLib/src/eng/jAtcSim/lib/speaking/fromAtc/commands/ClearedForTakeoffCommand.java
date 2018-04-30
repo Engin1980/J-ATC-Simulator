@@ -17,6 +17,10 @@ import eng.jAtcSim.lib.world.RunwayThreshold;
 public class ClearedForTakeoffCommand implements IAtcCommand {
   private final RunwayThreshold runwayThreshold;
 
+  private ClearedForTakeoffCommand() {
+    runwayThreshold = null;
+  }
+
   public ClearedForTakeoffCommand(RunwayThreshold runwayThreshold) {
     this.runwayThreshold = runwayThreshold;
   }

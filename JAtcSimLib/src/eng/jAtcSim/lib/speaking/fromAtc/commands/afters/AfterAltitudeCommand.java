@@ -21,6 +21,11 @@ public class AfterAltitudeCommand extends AfterCommand {
   private final int altitudeInFt;
   private final ERestriction restriction;
 
+  private AfterAltitudeCommand() {
+    this.altitudeInFt = 0;
+    this.restriction = null;
+  }
+
   public AfterAltitudeCommand(int altitudeInFt, ERestriction restriction) {
 
     this.altitudeInFt = altitudeInFt;

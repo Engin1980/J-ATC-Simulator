@@ -17,6 +17,9 @@ public class ClearedToApproachCommand implements IAtcCommand {
   private String thresholdName;
   private Approach.ApproachType type;
 
+  private ClearedToApproachCommand() {
+  }
+
   public ClearedToApproachCommand(String thresholdName, Approach.ApproachType type) {
     this.thresholdName = thresholdName;
     this.type = type;

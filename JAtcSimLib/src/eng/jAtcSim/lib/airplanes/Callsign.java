@@ -23,6 +23,11 @@ public class Callsign {
     this.number = number;
   }
 
+  private Callsign() {
+    this.company = "???";
+    this.number = "????";
+  }
+
   public Callsign(String value) {
     if (value == null)
       throw new IllegalArgumentException("Callsign string cannot be null");

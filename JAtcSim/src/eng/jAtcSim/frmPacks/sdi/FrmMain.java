@@ -3,6 +3,7 @@ package eng.jAtcSim.frmPacks.sdi;
 import eng.eSystem.xmlSerialization.Settings;
 import eng.eSystem.xmlSerialization.XmlSerializer;
 import eng.jAtcSim.frmPacks.shared.*;
+import eng.jAtcSim.lib.Simulation;
 import eng.jAtcSim.lib.airplanes.Callsign;
 import eng.jAtcSim.lib.speaking.formatting.LongFormatter;
 import eng.jAtcSim.radarBase.BehaviorSettings;
@@ -118,6 +119,10 @@ public class FrmMain extends JFrame {
     adjustJComponentColors(btnSave);
     btnSave.addActionListener(o -> saveSimulation());
 
+    JButton btnLoad = new JButton("Load");
+    adjustJComponentColors(btnLoad);
+    btnLoad.addActionListener(o -> loadSimulation());
+
     JButton btnView = new JButton("Add view");
     adjustJComponentColors(btnView);
     btnView.addActionListener(o -> {
@@ -127,7 +132,7 @@ public class FrmMain extends JFrame {
     });
 
     JPanel ret = LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.middle, 4,
-        btnStrips, btnCommands, btnMovs, btnPause, btnSave, btnView);
+        btnStrips, btnCommands, btnMovs, btnPause, btnSave, btnLoad, btnView);
     ret.setName("pnlTop");
     return ret;
   }
@@ -135,6 +140,10 @@ public class FrmMain extends JFrame {
   private void saveSimulation(){
     String fileName = "R:\\simSave.xml";
     this.parent.getSim().save(fileName);
+  }
+
+  private void loadSimulation(){
+    Simulation sim = Simulation.load("R:\\simSave.xml");
   }
 
   private void adjustJComponentColors(JComponent component) {

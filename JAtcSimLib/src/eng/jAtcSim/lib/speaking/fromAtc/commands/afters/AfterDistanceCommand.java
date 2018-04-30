@@ -7,6 +7,9 @@ public class AfterDistanceCommand extends AfterCommand {
   private Navaid navaid;
   private double distanceInNm;
 
+  private AfterDistanceCommand() {
+  }
+
   public AfterDistanceCommand(Navaid navaid, double distanceInNm) {
     this.navaid = navaid;
     this.distanceInNm = distanceInNm;

@@ -17,6 +17,7 @@ public class PlaneSwitchMessage implements IAtc2Atc {
   public final Airplane plane;
   public final String message;
   public final boolean rejection;
+
   public PlaneSwitchMessage(Airplane plane) {
     this(plane, false, "");
   }

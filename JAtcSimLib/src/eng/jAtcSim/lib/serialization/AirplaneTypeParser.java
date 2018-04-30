@@ -10,11 +10,7 @@ import eng.jAtcSim.lib.airplanes.AirplaneTypes;
 
 public class AirplaneTypeParser implements IElementParser<AirplaneType> {
 
-//  private AirplaneTypes known;
-
-//  public AirplaneTypeParser(AirplaneTypes known) {
-//    this.known = known;
-//  }
+ private AirplaneTypes known;
 
   @Override
   public Class getType() {
@@ -25,11 +21,10 @@ public class AirplaneTypeParser implements IElementParser<AirplaneType> {
   public AirplaneType parse(XElement xElement, XmlSerializer.Deserializer xmlSerializer) throws XmlDeserializationException {
     AirplaneType ret;
     String name = xElement.getContent();
-    throw new UnsupportedOperationException();
-//    ret = known.tryGetByName(name);
-//    if (ret == null)
-//      throw new XmlDeserializationException("Failed to find airplane type name %s.", name);
-//    return ret;
+    ret = known.tryGetByName(name);
+    if (ret == null)
+      throw new XmlDeserializationException("Failed to find airplane type name %s.", name);
+    return ret;
   }
 
   @Override
@@ -40,5 +35,9 @@ public class AirplaneTypeParser implements IElementParser<AirplaneType> {
   @Override
   public boolean isApplicableOnDescendants() {
     return false;
+  }
+
+  public void setRelative(AirplaneTypes types) {
+    this.known = types;
   }
 }

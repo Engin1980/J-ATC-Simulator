@@ -14,6 +14,10 @@ import eng.jAtcSim.lib.world.Navaid;
  */
 public class ShortcutCommand extends ToNavaidCommand {
 
+  private ShortcutCommand() {
+    super();
+  }
+
   public ShortcutCommand(Navaid navaid) {
     super(navaid);
   }

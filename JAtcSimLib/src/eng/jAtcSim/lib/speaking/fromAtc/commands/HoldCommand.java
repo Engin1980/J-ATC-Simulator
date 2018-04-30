@@ -18,6 +18,13 @@ public class HoldCommand extends ToNavaidCommand {
   private final boolean leftTurn;
   private final PublishedHold publishedHold;
 
+  private HoldCommand() {
+    super();
+    this.inboundHeading = 0;
+    this.leftTurn = false;
+    this.publishedHold = null;
+  }
+
   public HoldCommand(PublishedHold publishedHold) {
     super(publishedHold.getNavaid());
     if (publishedHold == null) {

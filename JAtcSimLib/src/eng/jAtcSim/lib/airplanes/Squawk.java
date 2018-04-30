@@ -15,6 +15,10 @@ public class Squawk {
 
   private final char[] code;
 
+  private Squawk() {
+    this(new char[]{'7', '7','7','7'});
+  }
+
   public static Squawk create(String code) {
     char[] c = code.toCharArray();
     Squawk ret = Squawk.create(c);
