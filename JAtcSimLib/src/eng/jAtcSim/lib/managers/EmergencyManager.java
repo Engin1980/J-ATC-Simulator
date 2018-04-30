@@ -8,6 +8,9 @@ public class EmergencyManager {
   private ETime nextEmergencyTime;
   private double emergencyPerDayProbability;
 
+  private EmergencyManager() {
+  }
+
   public EmergencyManager(double emergencyPerDayProbability) {
     this.emergencyPerDayProbability = emergencyPerDayProbability;
   }

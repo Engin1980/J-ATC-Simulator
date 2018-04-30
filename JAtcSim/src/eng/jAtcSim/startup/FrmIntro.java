@@ -62,7 +62,7 @@ public class FrmIntro extends JFrame {
   private void btnLoadSim_click(){
     this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     this.setVisible(false);
-    JAtcSim.loadSimulation("R:\\simSave.xml");
+    JAtcSim.loadSimulation(this.startupSettings,"R:\\simSave.xml");
   }
 
   private void btnExit_click(){

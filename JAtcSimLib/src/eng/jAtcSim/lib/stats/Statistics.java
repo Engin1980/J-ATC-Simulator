@@ -6,6 +6,7 @@
 package eng.jAtcSim.lib.stats;
 
 import eng.eSystem.utilites.CollectionUtils;
+import eng.eSystem.xmlSerialization.XmlIgnore;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.AirproxType;
@@ -108,6 +109,7 @@ public class Statistics {
   public final MaximumPlanes maxumumTotalPlanes = new MaximumPlanes();
   public final Meaner durationOfSecondElapse = new Meaner();
   public final CurrentPlanes currentPlanes = new CurrentPlanes();
+  @XmlIgnore
   public final MovementsPerHour movementsPerHour = new MovementsPerHour();
   public final HoldingPointInfo holdingPointInfo = new HoldingPointInfo();
   public final Meaner airproxes = new Meaner();

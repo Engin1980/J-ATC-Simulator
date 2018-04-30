@@ -6,6 +6,9 @@ public class StaticWeatherProvider extends WeatherProvider {
     super.setWeatherByMetarString(metarString);
   }
 
+  private StaticWeatherProvider() {
+  }
+
   @Override
   public void elapseSecond() {
 

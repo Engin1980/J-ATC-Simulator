@@ -44,6 +44,9 @@ public class TowerAtc extends ComputerAtc {
     private ETime realDurationEnd;
     private SchedulerForAdvice scheduler;
 
+    private RunwayCheck() {
+    }
+
     public static RunwayCheck createNormal(boolean isInitial) {
       int maxTime = 4 * 60;
       if (isInitial)

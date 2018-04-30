@@ -17,6 +17,9 @@ public abstract class DynamicWeatherProvider extends WeatherProvider {
   private int updateIntervalInRealTimeSeconds;
   private java.time.LocalDateTime nextUpdateTime = null;
 
+  private DynamicWeatherProvider() {
+    this.icao = "????";
+  }
 
   public DynamicWeatherProvider(String icao, int updateIntervalInRealTimeSeconds) {
     this.updateIntervalInRealTimeSeconds = updateIntervalInRealTimeSeconds;

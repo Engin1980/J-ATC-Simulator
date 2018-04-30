@@ -71,17 +71,17 @@ public class Simulation {
   private static final Pattern SYSMES_SHORTCUT = Pattern.compile("SHORTCUT ([\\\\?A-Z0-9]+)( (.+))?");
   private final static double MAX_VICINITY_DISTANCE_IN_NM = 10;
   private final ETime now;
-  private final Area area;
-  private final AirplaneTypes airplaneTypes;
-  private final Airport airport;
+  private Area area;
+  private AirplaneTypes airplaneTypes;
+  private Airport airport;
   private final Messenger messenger = new Messenger();
   private UserAtc appAtc;
   private TowerAtc twrAtc;
   private CenterAtc ctrAtc;
-  private final Traffic traffic;
-  private final Fleets fleets;
+  private Traffic traffic;
+  private Fleets fleets;
   private final IList<Airplane> newPlanesDelayedToAvoidCollision = new EList<>();
-  private final MrvaManager mrvaManager;
+  private MrvaManager mrvaManager;
   private final WeatherProvider weatherProvider;
   private final Statistics stats = new Statistics();
   private final EmergencyManager emergencyManager;
@@ -136,8 +136,10 @@ public class Simulation {
 
     ret.fleetsXmlSource.load();
     ret.fleetsXmlSource.init(ret.airplaneTypesXmlSource.getContent());
+
+    IList<Traffic> loadedSpecificTraffic = ret.trafficXmlSource.getSpecificTraffic();
     ret.trafficXmlSource.load();
-    ret.trafficXmlSource.init(ret.areaXmlSource.getActiveAirport(), new Traffic[]{});
+    ret.trafficXmlSource.init(ret.areaXmlSource.getActiveAirport(), loadedSpecificTraffic.toArray(Traffic.class));
 
     {
       IList<Airplane> lst = new EList<>();
@@ -149,7 +151,6 @@ public class Simulation {
       LoadSave.setRelativeAirplanes(lst);
     }
 
-
     {
       XElement tmp = root.getChild("atcs");
       ret.ctrAtc.load(tmp);
@@ -157,6 +158,23 @@ public class Simulation {
       ret.twrAtc.load(tmp);
     }
 
+    LoadSave.loadField(root, ret, "prm");
+
+    LoadSave.loadField(root, ret, "now");
+    LoadSave.loadField(root, ret, "newPlanesDelayedToAvoidCollision");
+    LoadSave.loadField(root, ret, "weatherProvider");
+    LoadSave.loadField(root, ret, "stats");
+    LoadSave.loadField(root, ret, "emergencyManager");
+    LoadSave.loadField(root, ret, "simulationSecondLengthInMs");
+
+    ret.area = ret.areaXmlSource.getContent();
+    ret.airport = ret.areaXmlSource.getActiveAirport();
+    ret.airplaneTypes = ret.airplaneTypesXmlSource.getContent();
+    ret.fleets = ret.fleetsXmlSource.getContent();
+    ret.traffic = ret.trafficXmlSource.getActiveTraffic();
+    IList<Border> mrvaAreas =
+        ret.areaXmlSource.getContent().getBorders().where(q -> q.getType() == Border.eType.mrva);
+    ret.mrvaManager = new MrvaManager(mrvaAreas);
 
     return ret;
   }
@@ -367,7 +385,6 @@ public class Simulation {
     LoadSave.saveField(root, this, "fleetsXmlSource");
     LoadSave.saveField(root, this, "trafficXmlSource");
 
-
     {
       IReadOnlyList<Airplane> planes = this.prm.getAll();
       XElement tmp = new XElement("planes");
@@ -395,7 +412,7 @@ public class Simulation {
     LoadSave.saveField(root, this, "weatherProvider");
     LoadSave.saveField(root, this, "stats");
     LoadSave.saveField(root, this, "emergencyManager");
-
+    LoadSave.saveField(root, this, "simulationSecondLengthInMs");
 
     XDocument doc = new XDocument(root);
     try {

@@ -7,6 +7,7 @@ package eng.jAtcSim;
 
 import eng.eSystem.exceptions.ERuntimeException;
 import eng.eSystem.utilites.CollectionUtils;
+import eng.eSystem.utilites.StringUtils;
 import eng.jAtcSim.frmPacks.Pack;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.Simulation;
@@ -69,8 +70,25 @@ public class JAtcSim {
     frmIntro.setVisible(true);
   }
 
-  public static void loadSimulation(String xmlFileName){
+  public static void loadSimulation(StartupSettings startupSettings, String xmlFileName){
+    System.out.println("* Loading simulation");
     Simulation sim = Simulation.load(xmlFileName);
+
+    System.out.println("* Initialization of the simulation");
+    sim.init();
+
+    System.out.println("* Initializing sound environment");
+    // sound
+    SoundManager.init(appSettings.soundFolder.toString());
+
+    System.out.println("* Starting a GUI");
+    // starting pack & simulation
+    String packType = startupSettings.radar.packClass;
+    Pack simPack
+        = createPackInstance(packType);
+
+    simPack.initPack(sim, sim.getArea(), appSettings);
+    simPack.startPack();
   }
 
   public static void startSimulation(StartupSettings startupSettings) {
@@ -135,10 +153,6 @@ public class JAtcSim {
     System.out.println("* Initializing sound environment");
     // sound
     SoundManager.init(appSettings.soundFolder.toString());
-
-
-    //sim.saveBinary("R:\\simTest.dat");
-    //sim.save("R:\\simTest.xml");
 
     System.out.println("* Starting a GUI");
     // starting pack & simulation

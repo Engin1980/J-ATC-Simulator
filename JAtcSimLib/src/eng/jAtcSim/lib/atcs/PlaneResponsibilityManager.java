@@ -57,6 +57,10 @@ public class PlaneResponsibilityManager {
     lst.set(Acc.atcApp(), new AirplaneList());
     lst.set(Acc.atcCtr(), new AirplaneList());
     lst.set(Acc.atcTwr(), new AirplaneList());
+
+    for (Airplane plane : all) {
+      infos.add(plane.getPlane4Display());
+    }
   }
 
   public ReadOnlyList<Airplane.Airplane4Display> getPlanesToDisplay() {

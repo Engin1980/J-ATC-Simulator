@@ -42,7 +42,7 @@ public class LoadSave {
 
     sett.getIgnoredFieldsRegex().add("this\\$0"); // parent of inner class
 
-    sett.setVerbose(true);
+    sett.setVerbose(false);
     ser = new XmlSerializer(sett);
   }
 

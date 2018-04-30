@@ -9,6 +9,9 @@ public class SchedulerForAdvice {
   private int[] checkIntervals = new int[]{30 * 60, 15 * 60, 10 * 60, 5 * 60};
   private boolean approved;
 
+  private SchedulerForAdvice() {
+  }
+
   public SchedulerForAdvice(ETime scheduledTime) {
     resetScheduledTime(scheduledTime);
     this.scheduledTime = scheduledTime;

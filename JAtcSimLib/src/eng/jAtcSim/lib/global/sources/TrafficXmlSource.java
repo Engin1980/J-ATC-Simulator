@@ -27,6 +27,10 @@ public class TrafficXmlSource extends XmlSource<IList<Traffic>> {
 
   public TrafficXmlSource(){super(null);}
 
+  public IList<Traffic> getSpecificTraffic() {
+    return specificTraffic;
+  }
+
   public void setActiveTraffic(TrafficSource source, int activeTrafficIndexInSource) {
     this.source = source;
     this.activeTrafficIndex = activeTrafficIndexInSource;
