@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+
+<AnchorPane prefHeight="300.0" prefWidth="200.0" style="-fx-background-color: 000;" stylesheets="@../theme/main.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="StartupMenu">
+   <children>
+      <VBox alignment="TOP_CENTER" layoutX="190.0" layoutY="68.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <Accordion>
+              <panes>
+                <TitledPane text="Startup settings">
+                     <content>
+                        <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0">
+                           <children>
+                              <Button mnemonicParsing="false" text="Adjust startup settings" />
+                              <Button mnemonicParsing="false" text="Load startup settings" />
+                              <Button mnemonicParsing="false" text="Save startup settings" />
+                           </children>
+                        </VBox>
+                     </content>
+                  </TitledPane>
+              </panes>
+            </Accordion>
+            <Button mnemonicParsing="false" text="Start new simulation" />
+            <Button mnemonicParsing="false" text="Load simulation" />
+            <Button mnemonicParsing="false" text="Quit" />
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>
