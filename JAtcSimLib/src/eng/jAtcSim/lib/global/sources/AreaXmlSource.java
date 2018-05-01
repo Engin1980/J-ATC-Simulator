@@ -46,6 +46,7 @@ public class AreaXmlSource extends XmlSource<Area> {
     sett.getIgnoredFieldsRegex().add("^_.+");
     sett.getIgnoredFieldsRegex().add("^parent$");
     sett.getIgnoredFieldsRegex().add("^binded$");
+    sett.getIgnoredFieldsRegex().add("^scheduledMovements$");
 
     // list mappings
     sett.getListItemMappings().add(

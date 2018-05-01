@@ -174,7 +174,9 @@ public class Simulation {
     ret.traffic = ret.trafficXmlSource.getActiveTraffic();
     IList<Border> mrvaAreas =
         ret.areaXmlSource.getContent().getBorders().where(q -> q.getType() == Border.eType.mrva);
+
     ret.mrvaManager = new MrvaManager(mrvaAreas);
+    ret.prm.getAll().forEach(q->ret.mrvaManager.registerPlane(q));
 
     return ret;
   }

@@ -50,7 +50,6 @@ public abstract class Traffic {
    * Max delay in minutes per step.
    */
   private final int maxDelayInMinutesPerStep = 15;
-  @XmlOptional
   private final List<Movement> scheduledMovements = new LinkedList();
   /**
    * Specifies if extended callsigns containing characters at the end can be used.

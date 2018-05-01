@@ -54,9 +54,11 @@ public class PlaneResponsibilityManager {
   }
 
   public void init(){
-    lst.set(Acc.atcApp(), new AirplaneList());
-    lst.set(Acc.atcCtr(), new AirplaneList());
-    lst.set(Acc.atcTwr(), new AirplaneList());
+    if (lst.isEmpty()) { // non-empty after load
+      lst.set(Acc.atcApp(), new AirplaneList());
+      lst.set(Acc.atcCtr(), new AirplaneList());
+      lst.set(Acc.atcTwr(), new AirplaneList());
+    }
 
     for (Airplane plane : all) {
       infos.add(plane.getPlane4Display());

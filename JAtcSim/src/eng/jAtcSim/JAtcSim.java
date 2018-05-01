@@ -7,7 +7,6 @@ package eng.jAtcSim;
 
 import eng.eSystem.exceptions.ERuntimeException;
 import eng.eSystem.utilites.CollectionUtils;
-import eng.eSystem.utilites.StringUtils;
 import eng.jAtcSim.frmPacks.Pack;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.Simulation;
@@ -48,8 +47,8 @@ public class JAtcSim {
   private static final boolean FAST_START = false;
   private static final Traffic specificTraffic =
   //  new eng.jAtcSim.lib.traffic.TestTrafficOneApproach();
-   new eng.jAtcSim.lib.traffic.TestTrafficOneDeparture();
-  //  null;
+  // new eng.jAtcSim.lib.traffic.TestTrafficOneDeparture();
+    null;
   private static AppSettings appSettings;
 
   /**

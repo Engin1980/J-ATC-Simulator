@@ -21,6 +21,11 @@ public class Restriction {
   public final eDirection direction;
   public final int value;
 
+  private Restriction() {
+    direction = eDirection.exactly;
+    value = 0;
+  }
+
   public Restriction(eDirection direction, int value) {
     this.direction = direction;
     this.value = value;

@@ -58,6 +58,9 @@ public class Pilot {
     public ETime divertTime;
     public int lastAnnouncedMinute = Integer.MAX_VALUE;
 
+    private DivertInfo() {
+    }
+
     public DivertInfo(ETime divertTime) {
       this.divertTime = divertTime;
     }
@@ -592,6 +595,11 @@ public class Pilot {
     private ApproachLocation location = ApproachLocation.unset;
     private double slope = -1;
 
+    private ApproachBehavior() {
+      finalAltitude = 0;
+      shortFinalAltitude = 0;
+    }
+
     public ApproachBehavior(CurrentApproachInfo approach) {
       this.approach = approach;
       this.finalAltitude = Acc.airport().getAltitude() + LONG_FINAL_ALTITUDE_AGL;
@@ -1115,6 +1123,7 @@ public class Pilot {
       throw new EApplicationException("Unable to find parameter-less constructor for " + cls.getName() + ".", e);
     }
     try {
+      ctor.setAccessible(true);
       ret = (Behavior) ctor.newInstance(parent);
     } catch (InstantiationException | IllegalAccessException | InvocationTargetException ex) {
       throw new EApplicationException("Unable to create new instance of " + cls.getName() + ".", ex);

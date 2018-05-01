@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><root __class="StartupSettings">
   <files areaXmlFile=".\_SettingFiles\lkpr.xml" fleetsXmlFile=".\_SettingFiles\fleets.xml" planesXmlFile=".\_SettingFiles\planeTypes.xml" trafficXmlFile=""/>
-  <recent icao="LKMT" time="6:00"/>
-  <weather metar="METAR lkmt 121200Z 21012KT 9999 OVC080 13/10 Q1011" useOnline="false" userChanges="0"/>
+  <recent icao="LKPR" time="6:40"/>
+  <weather metar="METAR LKPR 121200Z 21012KT 9999 OVC080 13/10 Q1011" useOnline="false" userChanges="0"/>
   <traffic densityPercentage="1.0" maxPlanes="60" trafficAirportDefinedTitle="Normal traffic" type="airportDefined">
     <customTraffic arrivals2departuresRatio="6" delayAllowed="false" movementsPerHour="40" useExtendedCallsigns="false" weightTypeA="3" weightTypeB="8" weightTypeC="6" weightTypeD="1"/>
   </traffic>

@@ -2,7 +2,6 @@ package eng.jAtcSim.lib.world.approaches;
 
 import eng.jAtcSim.lib.coordinates.Coordinate;
 import eng.jAtcSim.lib.coordinates.Coordinates;
-import eng.jAtcSim.lib.global.UnitProvider;
 import eng.jAtcSim.lib.speaking.IFromAtc;
 import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.world.RunwayThreshold;
@@ -20,8 +19,7 @@ public class CurrentApproachInfo {
   private double faf2maptCourse;
   private boolean usingIafRoute;
 
-  public boolean isUsingIafRoute() {
-    return usingIafRoute;
+  private CurrentApproachInfo() {
   }
 
   public CurrentApproachInfo(RunwayThreshold threshold, boolean usingIafRoute, SpeechList<IFromAtc> iafRoute, SpeechList<IFromAtc> gaRoute, Approach.ApproachType type, Coordinate faf, Coordinate mapt, int course, int decisionAltitude, double slope) {
@@ -35,7 +33,11 @@ public class CurrentApproachInfo {
     this.course = course;
     this.decisionAltitude = decisionAltitude;
     this.slope = slope;
-    this.faf2maptCourse = Coordinates.getBearing(this.faf, this.mapt );
+    this.faf2maptCourse = Coordinates.getBearing(this.faf, this.mapt);
+  }
+
+  public boolean isUsingIafRoute() {
+    return usingIafRoute;
   }
 
   public RunwayThreshold getThreshold() {
@@ -74,7 +76,7 @@ public class CurrentApproachInfo {
     return slope;
   }
 
-  public double getAltitudeDeltaPerSecond(double gs){
+  public double getAltitudeDeltaPerSecond(double gs) {
     // add glidePathPercentage here somehow
     return gs * 5;
   }
