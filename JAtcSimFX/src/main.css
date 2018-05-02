@@ -1,0 +1,10 @@
+.root {
+    -fx-font-size: 10pt;
+    -fx-font-family: "Museo 300; Verdana";
+    -fx-base: rgb(100, 100, 100);
+    -fx-background: rgb(50, 50, 50);
+}
+
+.button{
+-fx-width:100%;
+}

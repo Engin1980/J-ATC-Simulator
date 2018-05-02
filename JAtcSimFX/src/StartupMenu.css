@@ -1,0 +1,15 @@
+.root{
+    -fx-font-size: 12pt;
+    -fx-pref-width: 220px;
+    -fx-pref-height:400px;
+}
+
+
+
+.button{
+     -fx-pref-width: 200px;
+}
+
+.vbox{
+  -fx-spacing: 25px;
+}
