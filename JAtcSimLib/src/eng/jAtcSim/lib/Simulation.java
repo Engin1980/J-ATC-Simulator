@@ -37,6 +37,7 @@ import eng.jAtcSim.lib.serialization.LoadSave;
 import eng.jAtcSim.lib.speaking.parsing.shortParsing.ShortParser;
 import eng.jAtcSim.lib.stats.Statistics;
 import eng.jAtcSim.lib.traffic.Movement;
+import eng.jAtcSim.lib.traffic.TrafficManager;
 import eng.jAtcSim.lib.traffic.Traffic;
 import eng.jAtcSim.lib.traffic.fleets.Fleets;
 import eng.jAtcSim.lib.weathers.Weather;
@@ -46,9 +47,6 @@ import eng.jAtcSim.lib.world.Area;
 import eng.jAtcSim.lib.world.Border;
 import eng.jAtcSim.lib.world.RunwayThreshold;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
@@ -71,20 +69,16 @@ public class Simulation {
   private static final Pattern SYSMES_SHORTCUT = Pattern.compile("SHORTCUT ([\\\\?A-Z0-9]+)( (.+))?");
   private final static double MAX_VICINITY_DISTANCE_IN_NM = 10;
   private final ETime now;
-  private Area area;
-  private AirplaneTypes airplaneTypes;
-  private Airport airport;
   private final Messenger messenger = new Messenger();
   private UserAtc appAtc;
   private TowerAtc twrAtc;
   private CenterAtc ctrAtc;
-  private Traffic traffic;
-  private Fleets fleets;
   private final IList<Airplane> newPlanesDelayedToAvoidCollision = new EList<>();
   private MrvaManager mrvaManager;
   private final WeatherProvider weatherProvider;
   private final Statistics stats = new Statistics();
   private final EmergencyManager emergencyManager;
+  private final TrafficManager trafficManager;
   private final PlaneResponsibilityManager prm;
   private final AreaXmlSource areaXmlSource;
   private final AirplaneTypesXmlSource airplaneTypesXmlSource;
@@ -165,13 +159,9 @@ public class Simulation {
     LoadSave.loadField(root, ret, "weatherProvider");
     LoadSave.loadField(root, ret, "stats");
     LoadSave.loadField(root, ret, "emergencyManager");
+    LoadSave.loadField(root, ret, "movementsManager");
     LoadSave.loadField(root, ret, "simulationSecondLengthInMs");
 
-    ret.area = ret.areaXmlSource.getContent();
-    ret.airport = ret.areaXmlSource.getActiveAirport();
-    ret.airplaneTypes = ret.airplaneTypesXmlSource.getContent();
-    ret.fleets = ret.fleetsXmlSource.getContent();
-    ret.traffic = ret.trafficXmlSource.getActiveTraffic();
     IList<Border> mrvaAreas =
         ret.areaXmlSource.getContent().getBorders().where(q -> q.getType() == Border.eType.mrva);
 
@@ -208,20 +198,13 @@ public class Simulation {
     this.simulationSecondLengthInMs = simulationSecondLengthInMs;
 
     this.areaXmlSource = areaXmlSource;
-    this.area = areaXmlSource.getContent();
-    this.airport = areaXmlSource.getActiveAirport();
-
     this.airplaneTypesXmlSource = airplaneTypesXmlSource;
-    this.airplaneTypes = airplaneTypesXmlSource.getContent();
-
     this.fleetsXmlSource = fleetXmlSource;
-    this.fleets = fleetXmlSource.getContent();
-
     this.trafficXmlSource = trafficXmlSource;
-    this.traffic = trafficXmlSource.getActiveTraffic();
 
     this.weatherProvider = weatherProvider;
 
+    Airport airport = areaXmlSource.getActiveAirport();
     this.twrAtc = new TowerAtc(airport.getAtcTemplates().get(Atc.eType.twr));
     this.ctrAtc = new CenterAtc(airport.getAtcTemplates().get(Atc.eType.ctr));
     this.appAtc = new UserAtc(airport.getAtcTemplates().get(Atc.eType.app));
@@ -231,6 +214,8 @@ public class Simulation {
     this.emergencyManager = new EmergencyManager(emergencyPerDayProbability);
     this.emergencyManager.generateEmergencyTime(this.now);
 
+    this.trafficManager = new TrafficManager();
+
     IList<Border> mrvaAreas =
         areaXmlSource.getContent().getBorders().where(q -> q.getType() == Border.eType.mrva);
     this.mrvaManager = new MrvaManager(mrvaAreas);
@@ -239,17 +224,13 @@ public class Simulation {
   private Simulation() {
 
     now = null;
-    area = null;
-    airplaneTypes = null;
-    airport = null;
     appAtc = null;
     twrAtc = null;
     ctrAtc = null;
-    traffic = null;
-    fleets = null;
     mrvaManager = null;
     weatherProvider = null;
     emergencyManager = null;
+    trafficManager = null;
     prm = null;
     areaXmlSource = null;
     airplaneTypesXmlSource = null;
@@ -269,7 +250,8 @@ public class Simulation {
     this.prm.init();
     this.weatherProvider.getWeatherUpdatedEvent().add(() -> weatherProvider_weatherUpdated());
 
-    traffic.generateNewMovementsIfRequired(); // this must be here, after "simTime" init
+    trafficManager.setTraffic(trafficXmlSource.getActiveTraffic());
+    trafficManager.generateNewTrafficIfRequired();
   }
 
   public EventSimple<Simulation> getSecondElapsedEvent() {
@@ -278,17 +260,21 @@ public class Simulation {
 
   //TODO shouldn't this be private?
   public AirplaneTypes getAirplaneTypes() {
-    return airplaneTypes;
+    return airplaneTypesXmlSource.getContent();
   }
 
-  public Movement[] getScheduledMovements() {
-    Movement[] ret;
-    ret = traffic.getScheduledMovements();
+  public IReadOnlyList<Movement> getScheduledMovements() {
+    IReadOnlyList<Movement> ret;
+    ret = trafficManager.getScheduledMovements();
     return ret;
   }
 
+  public TrafficManager getTrafficManager() {
+    return trafficManager;
+  }
+
   public Airport getActiveAirport() {
-    return airport;
+    return areaXmlSource.getActiveAirport();
   }
 
   public String toAltitudeString(double altInFt, boolean appendFt) {
@@ -308,7 +294,7 @@ public class Simulation {
   }
 
   public Fleets getFleets() {
-    return fleets;
+    return fleetsXmlSource.getContent();
   }
 
   public IReadOnlyList<Airplane> getAirplanes() {
@@ -372,7 +358,7 @@ public class Simulation {
   }
 
   public Area getArea() {
-    return area;
+    return areaXmlSource.getContent();
   }
 
   public WeatherProvider getWeatherProvider() {
@@ -414,6 +400,7 @@ public class Simulation {
     LoadSave.saveField(root, this, "weatherProvider");
     LoadSave.saveField(root, this, "stats");
     LoadSave.saveField(root, this, "emergencyManager");
+    LoadSave.saveField(root, this, "movementsManager");
     LoadSave.saveField(root, this, "simulationSecondLengthInMs");
 
     XDocument doc = new XDocument(root);
@@ -423,14 +410,6 @@ public class Simulation {
       throw new EApplicationException("Failed to save simulation.", e);
     }
 
-  }
-
-  public void saveBinary(String fileName) {
-    try (ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(fileName))) {
-      os.writeObject(this);
-    } catch (IOException ex) {
-      throw new EApplicationException("Failed to save binary simulation into " + fileName + ".", ex);
-    }
   }
 
   private void weatherProvider_weatherUpdated() {
@@ -455,9 +434,7 @@ public class Simulation {
     this.processSystemMessages();
 
     // traffic stuff
-    if (now.isIntegralMinute()) {
-      traffic.generateNewMovementsIfRequired();
-    }
+    trafficManager.generateNewTrafficIfRequired();
 
     // atc stuff
     this.ctrAtc.elapseSecond();
@@ -508,7 +485,7 @@ public class Simulation {
   }
 
   private void generateNewPlanes() {
-    Airplane[] newPlanes = traffic.getNewAirplanes();
+    Airplane[] newPlanes = trafficManager.getNewAirplanes();
 
     if (newPlanesDelayedToAvoidCollision.isEmpty() == false) {
       Airplane newPlane = newPlanesDelayedToAvoidCollision.tryGetFirst(q -> isInVicinityOfSomeOtherPlane(q) == false);

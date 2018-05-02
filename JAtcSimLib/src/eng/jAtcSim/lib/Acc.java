@@ -15,6 +15,7 @@ import eng.jAtcSim.lib.global.ERandom;
 import eng.jAtcSim.lib.global.ETime;
 import eng.jAtcSim.lib.global.logging.ApplicationLog;
 import eng.jAtcSim.lib.stats.Statistics;
+import eng.jAtcSim.lib.traffic.Movement;
 import eng.jAtcSim.lib.traffic.fleets.Fleets;
 import eng.jAtcSim.lib.weathers.Weather;
 import eng.jAtcSim.lib.weathers.WeatherProvider;
@@ -136,5 +137,9 @@ public class Acc {
 
   public static WeatherProvider weatherProvider() {
     return sim.getWeatherProvider();
+  }
+
+  public static IReadOnlyList<Movement> scheduledMovements(){
+    return sim.getTrafficManager().getScheduledMovements();
   }
 }

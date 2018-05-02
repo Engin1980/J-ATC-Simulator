@@ -5,6 +5,9 @@
  */
 package eng.jAtcSim.lib.traffic;
 
+import com.sun.org.apache.bcel.internal.generic.RET;
+import eng.eSystem.collections.EList;
+import eng.eSystem.collections.IList;
 import eng.eSystem.utilites.NumberUtils;
 import eng.eSystem.xmlSerialization.XmlOptional;
 import eng.jAtcSim.lib.Acc;
@@ -40,9 +43,6 @@ public class GenericTraffic extends Traffic {
    */
   private final double[] probabilityOfCategory = new double[4];
 
-  @XmlOptional
-  private int nextHourToGenerateTraffic = -1;
-
   public GenericTraffic() {
     this.probabilityOfDeparture = 0.5;
   }
@@ -76,24 +76,43 @@ public class GenericTraffic extends Traffic {
     super.setUseExtendedCallsigns(useExtendedCallsigns);
   }
 
-
   @Override
-  public void generateNewMovementsIfRequired() {
-    if (nextHourToGenerateTraffic != -1 && Acc.now().getHours() != nextHourToGenerateTraffic) {
-      return;
-    }
+  public GeneratedMovementsResponse generateMovements(Object syncObject) {
+    IList<Movement> lst = new EList<>();
 
     int currentHour = Acc.now().getHours();
     int expMovs = movementsPerHour[currentHour];
     for (int i = 0; i < expMovs; i++) {
       Movement m = generateMovement(currentHour);
-      super.addScheduledMovement(m);
+      lst.add(m);
     }
-    nextHourToGenerateTraffic = currentHour + 1;
-    if (nextHourToGenerateTraffic > 23) {
-      nextHourToGenerateTraffic = 0;
-    }
+
+    // what will this to over midnight?
+    ETime nextGenTime = Acc.now().getRoundedToNextHour();
+
+    GeneratedMovementsResponse ret = new GeneratedMovementsResponse(
+        nextGenTime, null, lst);
+    return ret;
   }
+
+//
+//  @Override
+//  public void generateNewMovementsIfRequired() {
+//    if (nextHourToGenerateTraffic != -1 && Acc.now().getHours() != nextHourToGenerateTraffic) {
+//      return;
+//    }
+//
+//    int currentHour = Acc.now().getHours();
+//    int expMovs = movementsPerHour[currentHour];
+//    for (int i = 0; i < expMovs; i++) {
+//      Movement m = generateMovement(currentHour);
+//      super.addScheduledMovement(m);
+//    }
+//    nextHourToGenerateTraffic = currentHour + 1;
+//    if (nextHourToGenerateTraffic > 23) {
+//      nextHourToGenerateTraffic = 0;
+//    }
+//  }
 
   private char getRandomCategory() {
     char ret = 'A';

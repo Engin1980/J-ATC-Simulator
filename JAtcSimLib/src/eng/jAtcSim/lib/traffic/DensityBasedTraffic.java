@@ -1,5 +1,10 @@
 package eng.jAtcSim.lib.traffic;
 
+import com.sun.javafx.iio.common.ImageLoaderImpl;
+import eng.eSystem.Tuple;
+import eng.eSystem.collections.EList;
+import eng.eSystem.collections.IList;
+import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.xmlSerialization.XmlIgnore;
 import eng.jAtcSim.lib.Acc;
@@ -25,22 +30,22 @@ public class DensityBasedTraffic extends Traffic {
     }
   }
 
-  public static class CodeWeightList extends ArrayList<CodeWeight>{
+  public static class CodeWeightList extends ArrayList<CodeWeight> {
     @XmlIgnore
     private double weightSum = -1;
 
     public CodeWeight getRandomCode() {
       if (weightSum < 0)
-        weightSum = CollectionUtils.sum(this, o-> o.weight);
+        weightSum = CollectionUtils.sum(this, o -> o.weight);
       double rnd = Acc.rnd().nextDouble(0, weightSum);
       int index = 0;
       CodeWeight ret = null;
       while (rnd > 0) {
         CodeWeight cw = this.get(index);
-        if (rnd < cw.weight){
+        if (rnd < cw.weight) {
           ret = cw;
           break;
-        }else {
+        } else {
           rnd -= cw.weight;
           index++;
         }
@@ -51,7 +56,7 @@ public class DensityBasedTraffic extends Traffic {
     }
   }
 
-  public static class DirectionWeight{
+  public static class DirectionWeight {
     public int heading;
     public double weight;
 
@@ -87,27 +92,57 @@ public class DensityBasedTraffic extends Traffic {
   private Integer lastGeneratedHour = null;
 
   @Override
-  public void generateNewMovementsIfRequired() {
+  public GeneratedMovementsResponse generateMovements(Object syncObject) {
+    Tuple<Integer, IReadOnlyList<Movement>> tmp = null;
+    GeneratedMovementsResponse ret;
+
+    Integer lastGeneratedHour = (Integer) syncObject;
     if (lastGeneratedHour == null || lastGeneratedHour == Acc.now().getHours()) {
-      generateNewMovements();
-    }
+      tmp = generateNewMovements();
+
+      ret = new GeneratedMovementsResponse(
+          Acc.now().getRoundedToNextHour(),
+          tmp.getA(),
+          tmp.getB());
+    }  else
+      ret = new GeneratedMovementsResponse(
+          Acc.now().getRoundedToNextHour(),
+          syncObject,
+          new EList<>());
+
+    return ret;
   }
 
-  private void generateNewMovements() {
+//  @Override
+//  public void generateNewMovementsIfRequired() {
+//    if (lastGeneratedHour == null || lastGeneratedHour == Acc.now().getHours()) {
+//      generateNewMovements();
+//    }
+//  }
+
+  private Tuple<Integer,IReadOnlyList<Movement>> generateNewMovements() {
+    IList<Movement> ret = new EList<>();
+
     if (lastGeneratedHour == null) {
       if (density.size() == 0)
         throw new EApplicationException("Unable to use generic traffic without density specified.");
       // init things
       Collections.sort(density);
-      generateTrafficForHour(Acc.now().getHours());
+      IReadOnlyList<Movement> tmp = generateTrafficForHour(Acc.now().getHours());
+      ret.add(tmp);
       lastGeneratedHour = Acc.now().getHours();
     }
     lastGeneratedHour++;
     if (lastGeneratedHour > 23) lastGeneratedHour = 0;
-    generateTrafficForHour(lastGeneratedHour);
+    ret.add(
+        generateTrafficForHour(lastGeneratedHour));
+
+    return new Tuple<>(lastGeneratedHour, ret);
   }
 
-  private void generateTrafficForHour(int hour) {
+  private IReadOnlyList<Movement> generateTrafficForHour(int hour) {
+    IList<Movement> ret = new EList<>();
+
     HourBlockMovements hbm = density.get(0);
     int index = 0;
     while (index < density.size()) {
@@ -118,17 +153,21 @@ public class DensityBasedTraffic extends Traffic {
       index++;
     }
     assert hbm != null;
+    Movement m;
 
     for (int i = 0; i < hbm.arrivals; i++) {
-      generateNewScheduledMovement(hour, false);
+      m = generateNewScheduledMovement(hour, false);
+      ret.add(m);
     }
     for (int i = 0; i < hbm.departures; i++) {
-      generateNewScheduledMovement(hour, true);
+      m = generateNewScheduledMovement(hour, true);
+      ret.add(m);
     }
 
+    return ret;
   }
 
-  private void generateNewScheduledMovement(int hour, boolean isDeparture) {
+  private Movement generateNewScheduledMovement(int hour, boolean isDeparture) {
     String prefix;
     boolean isNonCommercial = Acc.rnd().nextDouble() < nonCommercialFlightProbability;
     if (isNonCommercial)
@@ -144,7 +183,7 @@ public class DensityBasedTraffic extends Traffic {
     if (isNonCommercial)
       //TODO here should be some like category probability
       type = Acc.types().getRandom();
-    else{
+    else {
       CompanyFleet cf = Acc.fleets().tryGetByIcao(prefix);
       if (cf == null) cf = Acc.fleets().getDefaultCompanyFleet();
       type = cf.getRandom().getAirplaneType();
@@ -152,8 +191,6 @@ public class DensityBasedTraffic extends Traffic {
 
 
     Movement m = new Movement(cls, type, initTime, delay, isDeparture);
-    super.addScheduledMovement(m);
+    return m;
   }
-
-
 }

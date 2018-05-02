@@ -13,7 +13,8 @@ import java.util.Calendar;
  */
 public class ETime implements Comparable<ETime> {
 
-  private static final int DAY_SECONDS = 60 * 60 * 24;
+  private static final int HOUR_SECONDS = 60*60;
+  private static final int DAY_SECONDS = HOUR_SECONDS * 24;
   private int value = 0;
 
   private ETime(){
@@ -156,5 +157,14 @@ public class ETime implements Comparable<ETime> {
 
   public String toHourMinuteString(){
     return String.format("%d:%02d", this.getHours(), this.getMinutes());
+  }
+
+  public ETime getRoundedToNextHour() {
+    int val = this.value;
+    int hrs = val / HOUR_SECONDS;
+    hrs++;
+    hrs = hrs * HOUR_SECONDS;
+    ETime ret = new ETime(hrs);
+    return ret;
   }
 }
