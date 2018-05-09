@@ -167,4 +167,8 @@ public class ETime implements Comparable<ETime> {
     ETime ret = new ETime(hrs);
     return ret;
   }
+
+  public ETime addHours(int hours) {
+    return new ETime(this.value + hours * HOUR_SECONDS);
+  }
 }

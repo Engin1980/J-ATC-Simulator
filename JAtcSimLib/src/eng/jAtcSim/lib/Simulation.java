@@ -485,7 +485,7 @@ public class Simulation {
   }
 
   private void generateNewPlanes() {
-    Airplane[] newPlanes = trafficManager.getNewAirplanes();
+    IReadOnlyList<Airplane> newPlanes = trafficManager.getNewAirplanes();
 
     if (newPlanesDelayedToAvoidCollision.isEmpty() == false) {
       Airplane newPlane = newPlanesDelayedToAvoidCollision.tryGetFirst(q -> isInVicinityOfSomeOtherPlane(q) == false);

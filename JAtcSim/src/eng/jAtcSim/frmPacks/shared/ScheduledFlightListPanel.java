@@ -1,5 +1,6 @@
 package eng.jAtcSim.frmPacks.shared;
 
+import eng.eSystem.collections.IReadOnlyList;
 import eng.jAtcSim.AppSettings;
 import eng.jAtcSim.XmlLoadHelper;
 import eng.jAtcSim.lib.Simulation;
@@ -41,7 +42,7 @@ public class ScheduledFlightListPanel extends JPanel {
   }
 
   private void updateList() {
-    Movement[] movements =
+    IReadOnlyList<Movement> movements =
         this.sim.getScheduledMovements();
 
     pnlContent.removeAll();

@@ -5,6 +5,8 @@
  */
 package eng.jAtcSim.lib.traffic;
 
+import eng.eSystem.collections.EList;
+import eng.eSystem.collections.IList;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.AirplaneType;
 import eng.jAtcSim.lib.airplanes.Callsign;
@@ -15,27 +17,35 @@ import eng.jAtcSim.lib.airplanes.Callsign;
  */
 public class TestTrafficOneApproach extends TestTraffic {
 
-  boolean done = false;
+  private String[] clsgnNumbers = new String[]{"5555", "6666", "7777"};
 
-  private Movement generateMovement() {
+  @Override
+  public GeneratedMovementsResponse generateMovements(Object syncObject) {
+    Boolean done = (Boolean) syncObject;
+    IList<Movement> lst =new EList<>();
+    if (done == null || done == false) {
+      Movement mov;
+      for (String clsgnNumber : clsgnNumbers) {
+        mov = generateMovement(clsgnNumber);
+        lst.add(mov);
+      }
+    }
+
+    GeneratedMovementsResponse ret = new GeneratedMovementsResponse(Acc.now().addHours(10), true, lst);
+    return ret;
+  }
+
+  private Movement generateMovement(String number) {
     Movement ret;
 
     AirplaneType pt = Acc.sim().getAirplaneTypes().tryGetByName("A319");
     assert pt != null;
 
     ret = new Movement(
-      new Callsign("CSA", "1111"),
+      new Callsign("CSA", number),
       pt,
         Acc.now().clone(), 0, false);
 
     return ret;
-  }
-
-  @Override
-  public void generateNewMovementsIfRequired() {
-    if (!done) {
-      super.addScheduledMovement(generateMovement());
-      done = true;
-    }
   }
 }

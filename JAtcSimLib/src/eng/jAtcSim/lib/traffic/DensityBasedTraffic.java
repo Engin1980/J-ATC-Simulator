@@ -1,16 +1,15 @@
 package eng.jAtcSim.lib.traffic;
 
-import com.sun.javafx.iio.common.ImageLoaderImpl;
 import eng.eSystem.Tuple;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.utilites.CollectionUtils;
 import eng.eSystem.xmlSerialization.XmlIgnore;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.AirplaneType;
 import eng.jAtcSim.lib.airplanes.Callsign;
-import eng.eSystem.utilites.CollectionUtils;
 import eng.jAtcSim.lib.global.ETime;
 import eng.jAtcSim.lib.traffic.fleets.CompanyFleet;
 
