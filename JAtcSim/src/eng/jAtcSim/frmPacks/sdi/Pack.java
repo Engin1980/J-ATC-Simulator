@@ -22,6 +22,10 @@ public class Pack extends eng.jAtcSim.frmPacks.Pack {
   private DisplaySettings displaySettings;
   private FrmMain frmMain;
 
+  public Game getGame() {
+    return game;
+  }
+
   @Override
   public void initPack(Game game, AppSettings appSettings) {
 

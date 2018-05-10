@@ -8,8 +8,13 @@ public class NoaaDynamicWeatherProvider extends DynamicWeatherProvider {
 
   private static final int UPDATE_INTERVAL_IN_REAL_TIME_SECONDS = 60*5;
 
-  public NoaaDynamicWeatherProvider(String icao) {
+  public NoaaDynamicWeatherProvider(String icao, boolean downloadInstantly) {
     super(icao, UPDATE_INTERVAL_IN_REAL_TIME_SECONDS);
+    if (downloadInstantly)
+    {
+      Weather w = getUpdatedWeather();
+      super.setWeather(w);
+    }
   }
 
   @Override

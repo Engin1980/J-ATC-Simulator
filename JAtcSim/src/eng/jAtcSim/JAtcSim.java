@@ -111,9 +111,6 @@ public class JAtcSim {
       weatherProvider = swp;
     }
 
-    // enable duplicates
-    KeyList.setDuplicatesChecking(true);
-
     System.out.println("* Creating the simulation");
 
     Game.GameStartupInfo gsi = new Game.GameStartupInfo();
@@ -131,6 +128,9 @@ public class JAtcSim {
 
     Game g;
     g = Game.create(gsi);
+
+    // enable duplicates
+    KeyList.setDuplicatesChecking(true);
 
     System.out.println("* Initializing sound environment");
     // sound

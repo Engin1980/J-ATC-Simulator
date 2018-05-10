@@ -8,16 +8,10 @@ import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EXmlException;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.global.ETime;
-import eng.jAtcSim.lib.global.sources.AirplaneTypesXmlSource;
-import eng.jAtcSim.lib.global.sources.AreaXmlSource;
-import eng.jAtcSim.lib.global.sources.FleetsXmlSource;
-import eng.jAtcSim.lib.global.sources.TrafficXmlSource;
+import eng.jAtcSim.lib.global.sources.*;
 import eng.jAtcSim.lib.serialization.LoadSave;
 import eng.jAtcSim.lib.traffic.Traffic;
-import eng.jAtcSim.lib.weathers.DynamicWeatherProvider;
-import eng.jAtcSim.lib.weathers.NoaaDynamicWeatherProvider;
-import eng.jAtcSim.lib.weathers.StaticWeatherProvider;
-import eng.jAtcSim.lib.weathers.WeatherProvider;
+import eng.jAtcSim.lib.weathers.*;
 
 import java.util.Calendar;
 
@@ -33,13 +27,16 @@ public class Game {
     public ETime startTime;
     public int secondLengthInMs;
     public double emergencyPerDayProbability;
-    private WeatherProvider weatherProvider;
+    public Weather initialWeather;
+    public WeatherSource.ProviderType weatherProviderType;
+
   }
 
   private AreaXmlSource areaXmlSource;
   private AirplaneTypesXmlSource airplaneTypesXmlSource;
   private FleetsXmlSource fleetsXmlSource;
   private TrafficXmlSource trafficXmlSource;
+  private WeatherSource weatherSource;
   private Simulation simulation;
 
   public static Game create(GameStartupInfo gsi) {
@@ -65,16 +62,23 @@ public class Game {
     g.trafficXmlSource.load();
     g.trafficXmlSource.init(g.areaXmlSource.getActiveAirport(), gsi.specificTraffic);
 
+    System.out.println("* Initialializing weather");
+    g.weatherSource = new WeatherSource(
+        gsi.weatherProviderType,
+        g.areaXmlSource.getActiveAirport().getIcao(),
+        gsi.initialWeather);
+
     System.out.println("* Generating traffic");
     if (gsi.specificTraffic != null)
       g.trafficXmlSource.setActiveTraffic(TrafficXmlSource.TrafficSource.specificTraffic, 0);
     else
       g.trafficXmlSource.setActiveTraffic(TrafficXmlSource.TrafficSource.activeAirportTraffic, 0);
 
+    System.out.println("* Creating simulation");
     g.simulation = new Simulation(
         g.areaXmlSource.getContent(), g.airplaneTypesXmlSource.getContent(), g.fleetsXmlSource.getContent(), g.trafficXmlSource.getActiveTraffic(),
         g.areaXmlSource.getActiveAirport(),
-        gsi.weatherProvider, gsi.startTime,
+        g.weatherSource.getContent(), gsi.startTime,
         gsi.secondLengthInMs,
         gsi.emergencyPerDayProbability);
     g.simulation.init();
@@ -98,6 +102,7 @@ public class Game {
     LoadSave.loadField(root, ret, "airplaneTypesXmlSource");
     LoadSave.loadField(root, ret, "fleetsXmlSource");
     LoadSave.loadField(root, ret, "trafficXmlSource");
+    LoadSave.loadField(root, ret, "weatherSource");
 
     ret.areaXmlSource.load();
     ret.areaXmlSource.init(ret.areaXmlSource.getActiveAirportIndex());
@@ -112,7 +117,12 @@ public class Game {
     ret.trafficXmlSource.load();
     ret.trafficXmlSource.init(ret.areaXmlSource.getActiveAirport(), loadedSpecificTraffic.toArray(Traffic.class));
 
-    Simulation sim = new Simulation(bubla dopsat parametry);
+    Simulation sim = new Simulation(
+        ret.areaXmlSource.getContent(), ret.airplaneTypesXmlSource.getContent(),
+        ret.fleetsXmlSource.getContent(), ret.trafficXmlSource.getActiveTraffic(),
+        ret.areaXmlSource.getActiveAirport(),
+        ret.weatherSource.getContent(), new ETime(0), 0, 0);
+    sim.init();
 
     XElement tmp = root.getChild("simulation");
     sim.load(tmp);

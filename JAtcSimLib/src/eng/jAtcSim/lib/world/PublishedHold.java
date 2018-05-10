@@ -59,5 +59,9 @@ public class PublishedHold implements KeyItem<Navaid> {
   public Airport getParent(){
     return this._parent;
   }
-  
+
+  @Override
+  public String toString() {
+    return "Published hold {" + navaidName + "}";
+  }
 }

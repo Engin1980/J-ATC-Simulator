@@ -3,6 +3,7 @@ package eng.jAtcSim.frmPacks.sdi;
 import eng.eSystem.xmlSerialization.Settings;
 import eng.eSystem.xmlSerialization.XmlSerializer;
 import eng.jAtcSim.frmPacks.shared.*;
+import eng.jAtcSim.lib.Game;
 import eng.jAtcSim.lib.Simulation;
 import eng.jAtcSim.lib.airplanes.Callsign;
 import eng.jAtcSim.lib.speaking.formatting.LongFormatter;
@@ -139,11 +140,11 @@ public class FrmMain extends JFrame {
 
   private void saveSimulation(){
     String fileName = "R:\\simSave.xml";
-    this.parent.getSim().save(fileName);
+    this.parent.getGame().save(fileName);
   }
 
   private void loadSimulation(){
-    Simulation sim = Simulation.load("R:\\simSave.xml");
+    Game game = Game.load("R:\\simSave.xml");
   }
 
   private void adjustJComponentColors(JComponent component) {

@@ -5,8 +5,11 @@ import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IMap;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.xmlSerialization.XmlIgnore;
 import eng.jAtcSim.lib.Simulation;
+import eng.jAtcSim.lib.weathers.NoaaDynamicWeatherProvider;
+import eng.jAtcSim.lib.weathers.StaticWeatherProvider;
 import eng.jAtcSim.lib.weathers.Weather;
 import eng.jAtcSim.lib.weathers.WeatherProvider;
 
@@ -21,44 +24,65 @@ import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class WeatherSource extends Source<WeatherProvider> {
 
-  private static IMap<String, Class> providers = new EMap<>();
-  @XmlIgnore
-  private WeatherProvider provider;
-  private String weatherProviderClassName;
-  private Weather weather;
-
-  static {
-    IReadOnlyList<Class> providers;
-    try {
-      providers = HelpMe.getClasses("eng.jAtcSim.lib.weathers");
-    } catch (ClassNotFoundException | IOException e) {
-      throw new EApplicationException(e);
-    }
-
-    providers = providers.where(q -> WeatherProvider.class.isAssignableFrom(q));
-
-    for (Class provider : providers) {
-      WeatherSource.providers.set(provider.getSimpleName(), provider);
-    }
+  public enum ProviderType{
+    staticProvider,
+    dynamicNovGoaaProvider
   }
 
-  public WeatherSource(String weatherProviderClassName) {
-    this.weatherProviderClassName = weatherProviderClassName;
+  @XmlIgnore
+  private WeatherProvider provider;
+  private ProviderType type;
+  //private String weatherProviderClassName;
+  private Weather weather;
+
+  // Loading providers dynamically, probably may be used in future
+//  static {
+//    IReadOnlyList<Class> providers;
+//    try {
+//      providers = HelpMe.getClasses("eng.jAtcSim.lib.weathers");
+//    } catch (ClassNotFoundException | IOException e) {
+//      throw new EApplicationException(e);
+//    }
+//
+//    providers = providers.where(q -> WeatherProvider.class.isAssignableFrom(q));
+//
+//    for (Class provider : providers) {
+//      WeatherSource.providers.set(provider.getSimpleName(), provider);
+//    }
+//  }
+
+//  public WeatherSource(String weatherProviderClassName) {
+//    this.weatherProviderClassName = weatherProviderClassName;
+//  }
+
+  public WeatherSource (ProviderType type, String icao, Weather initialWeather){
+    switch (type){
+      case dynamicNovGoaaProvider:
+        provider = new NoaaDynamicWeatherProvider(icao, true);
+        break;
+      case staticProvider:
+        provider = new StaticWeatherProvider();
+        provider.setWeather(initialWeather);
+        break;
+      default:
+        throw new EEnumValueUnsupportedException(type);
+    }
+
   }
 
   public WeatherSource(){}
 
-  public void init(){
-    super.setInitialized();
-
-    Class c = providers.tryGet(weatherProviderClassName);
-    try {
-      this.provider = (WeatherProvider) c.newInstance();
-    } catch (InstantiationException | IllegalAccessException e) {
-      throw new EApplicationException(sf("Weather provider %s probably does not have public parameter-less constructor.", weatherProviderClassName), e);
-    }
-    provider.getWeatherUpdatedEvent().add(()-> this.weather = provider.getWeather());
-  }
+//  public void init(){
+//    super.setInitialized();
+//
+//    Class c = providers.tryGet(weatherProviderClassName);
+//    try {
+//      this.provider = (WeatherProvider) c.newInstance();
+//    } catch (InstantiationException | IllegalAccessException e) {
+//      throw new EApplicationException(sf("Weather provider %s probably does not have public parameter-less constructor.", weatherProviderClassName), e);
+//    }
+//    provider.getWeatherUpdatedEvent().add(()-> this.weather = provider.getWeather());
+//  }
 
   public void elapseSecond(){
     provider.elapseSecond();
