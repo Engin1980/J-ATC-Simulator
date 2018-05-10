@@ -6,6 +6,7 @@
 
 package eng.jAtcSim.frmPacks.mdi;
 
+import eng.jAtcSim.lib.Game;
 import eng.jAtcSim.radarBase.DisplaySettings;
 import eng.eSystem.events.EventSimple;
 import eng.jAtcSim.AppSettings;
@@ -19,6 +20,7 @@ import eng.jAtcSim.lib.world.Area;
 public class Pack extends eng.jAtcSim.frmPacks.Pack {
 
   private final EventSimple<eng.jAtcSim.frmPacks.Pack> em = new EventSimple<>(this);
+  private Game game;
   private Simulation sim;
   private Area area;
   private DisplaySettings displaySettings;
@@ -31,14 +33,15 @@ public class Pack extends eng.jAtcSim.frmPacks.Pack {
   }
 
   @Override
-  public void initPack(Simulation sim, Area area, AppSettings appSettings) {
+  public void initPack(Game game, AppSettings appSettings) {
 
     String fileName = appSettings.resourcesFolder + "radarDisplaySettings.xml";
     this.displaySettings = XmlLoadHelper.loadNewDisplaySettings(fileName);
 
     // init sim & area
-    this.sim = sim;
-    this.area = area;
+    this.game = game;
+    this.sim = game.getSimulation();
+    this.area = game.getSimulation().getArea();
 
     // create windows
     this.frmMain = new FrmMain();

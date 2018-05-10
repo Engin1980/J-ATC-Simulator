@@ -8,6 +8,7 @@ package eng.jAtcSim.frmPacks;
 
 import eng.eSystem.events.EventSimple;
 import eng.jAtcSim.AppSettings;
+import eng.jAtcSim.lib.Game;
 import eng.jAtcSim.lib.Simulation;
 import eng.jAtcSim.lib.world.Area;
 
@@ -16,7 +17,7 @@ import eng.jAtcSim.lib.world.Area;
  * @author Marek
  */
 public abstract class Pack {
-  public abstract void initPack(Simulation sim, Area area, AppSettings appSettings);
+  public abstract void initPack(Game g, AppSettings appSettings);
   public abstract void startPack();
 
   public abstract EventSimple<Pack> getElapseSecondEvent();

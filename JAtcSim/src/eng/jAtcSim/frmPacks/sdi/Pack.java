@@ -3,6 +3,7 @@ package eng.jAtcSim.frmPacks.sdi;
 import eng.eSystem.events.EventSimple;
 import eng.jAtcSim.AppSettings;
 import eng.jAtcSim.XmlLoadHelper;
+import eng.jAtcSim.lib.Game;
 import eng.jAtcSim.lib.Simulation;
 import eng.jAtcSim.lib.world.Airport;
 import eng.jAtcSim.lib.world.Area;
@@ -13,6 +14,7 @@ import java.nio.file.Paths;
 
 public class Pack extends eng.jAtcSim.frmPacks.Pack {
 
+  private Game game;
   private Simulation sim;
   private Area area;
   private Airport aip;
@@ -21,10 +23,11 @@ public class Pack extends eng.jAtcSim.frmPacks.Pack {
   private FrmMain frmMain;
 
   @Override
-  public void initPack(Simulation sim, Area area, AppSettings appSettings) {
+  public void initPack(Game game, AppSettings appSettings) {
 
-    this.sim = sim;
-    this.area = area;
+    this.game = game;
+    this.sim = game.getSimulation();
+    this.area = game.getSimulation().getArea();
     this.aip = sim.getActiveAirport();
     this.appSettings = appSettings;
 

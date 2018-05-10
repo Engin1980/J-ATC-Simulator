@@ -9,8 +9,10 @@ import eng.eSystem.exceptions.ERuntimeException;
 import eng.eSystem.utilites.CollectionUtils;
 import eng.jAtcSim.frmPacks.Pack;
 import eng.jAtcSim.lib.Acc;
+import eng.jAtcSim.lib.Game;
 import eng.jAtcSim.lib.Simulation;
 import eng.jAtcSim.lib.airplanes.AirplaneTypes;
+import eng.jAtcSim.lib.global.ETime;
 import eng.jAtcSim.lib.global.KeyList;
 import eng.jAtcSim.lib.global.logging.ApplicationLog;
 import eng.jAtcSim.lib.global.logging.Recorder;
@@ -70,24 +72,25 @@ public class JAtcSim {
   }
 
   public static void loadSimulation(StartupSettings startupSettings, String xmlFileName){
-    System.out.println("* Loading simulation");
-    Simulation sim = Simulation.load(xmlFileName);
-
-    System.out.println("* Initialization of the simulation");
-    sim.init();
-
-    System.out.println("* Initializing sound environment");
-    // sound
-    SoundManager.init(appSettings.soundFolder.toString());
-
-    System.out.println("* Starting a GUI");
-    // starting pack & simulation
-    String packType = startupSettings.radar.packClass;
-    Pack simPack
-        = createPackInstance(packType);
-
-    simPack.initPack(sim, sim.getArea(), appSettings);
-    simPack.startPack();
+    throw new UnsupportedOperationException("TODO");
+//    System.out.println("* Loading simulation");
+//    Simulation sim = Simulation.load(xmlFileName);
+//
+//    System.out.println("* Initialization of the simulation");
+//    sim.init();
+//
+//    System.out.println("* Initializing sound environment");
+//    // sound
+//    SoundManager.init(appSettings.soundFolder.toString());
+//
+//    System.out.println("* Starting a GUI");
+//    // starting pack & simulation
+//    String packType = startupSettings.radar.packClass;
+//    Pack simPack
+//        = createPackInstance(packType);
+//
+//    simPack.initPack(sim, sim.getArea(), appSettings);
+//    simPack.startPack();
   }
 
   public static void startSimulation(StartupSettings startupSettings) {
@@ -97,30 +100,10 @@ public class JAtcSim {
     resolveShortXmlFileNamesInStartupSettings(appSettings, startupSettings);
     XmlLoadHelper.saveStartupSettings(startupSettings, appSettings.getStartupSettingsFile());
 
-    System.out.println("* Loading area");
-    AreaXmlSource areaXmlSource = new AreaXmlSource(startupSettings.files.areaXmlFile);
-    areaXmlSource.load();
-    areaXmlSource.init(startupSettings.recent.icao);
-
-    System.out.println("* Loading plane types");
-    AirplaneTypesXmlSource airplaneTypesXmlSource = new AirplaneTypesXmlSource(startupSettings.files.planesXmlFile);
-    airplaneTypesXmlSource.load();
-    airplaneTypesXmlSource.init();
-
-    System.out.println("* Loading fleets");
-    FleetsXmlSource fleetsXmlSource = new FleetsXmlSource(startupSettings.files.fleetsXmlFile);
-    fleetsXmlSource.load();
-    fleetsXmlSource.init(airplaneTypesXmlSource.getContent());
-
-    System.out.println("* Loading traffic");
-    TrafficXmlSource trafficXmlSource = new TrafficXmlSource(startupSettings.files.trafficXmlFile);
-    trafficXmlSource.load();
-    trafficXmlSource.init(areaXmlSource.getActiveAirport(), specificTraffic);
-
     System.out.println("* Initializing weather");
     WeatherProvider weatherProvider;
     if (startupSettings.weather.useOnline) {
-      DynamicWeatherProvider dwp = new NoaaDynamicWeatherProvider(areaXmlSource.getActiveAirport().getIcao());
+      DynamicWeatherProvider dwp = new NoaaDynamicWeatherProvider(startupSettings.recent.icao);
       dwp.updateWeather(false);
       weatherProvider = dwp;
     } else {
@@ -128,26 +111,26 @@ public class JAtcSim {
       weatherProvider = swp;
     }
 
-    System.out.println("* Preparing the simulation");
-    Calendar simTime = Calendar.getInstance();
-    updateCalendarToSimTime(simTime, startupSettings);
-    if (specificTraffic != null)
-      trafficXmlSource.setActiveTraffic(TrafficXmlSource.TrafficSource.specificTraffic, 0 );
-     else
-       trafficXmlSource.setActiveTraffic(TrafficXmlSource.TrafficSource.activeAirportTraffic, 0 );
-
     // enable duplicates
     KeyList.setDuplicatesChecking(true);
 
     System.out.println("* Creating the simulation");
 
-    // simulation creation
-    final Simulation sim = new Simulation(
-        areaXmlSource, airplaneTypesXmlSource, fleetsXmlSource, trafficXmlSource,
-        weatherProvider, simTime,
-        startupSettings.simulation.secondLengthInMs,
-        startupSettings.simulation.emergencyPerDayProbability);
-    sim.init();
+    Game.GameStartupInfo gsi = new Game.GameStartupInfo();
+    gsi.areaXmlFile = startupSettings.files.areaXmlFile;
+    gsi.emergencyPerDayProbability = startupSettings.simulation.emergencyPerDayProbability;
+    gsi.fleetsXmlFile = startupSettings.files.fleetsXmlFile;
+    gsi.icao = startupSettings.recent.icao;
+    gsi.planesXmlFile = startupSettings.files.planesXmlFile;
+    gsi.secondLengthInMs = startupSettings.simulation.secondLengthInMs;
+    gsi.specificTraffic = specificTraffic;
+    Calendar simTime = Calendar.getInstance();
+    updateCalendarToSimTime(simTime, startupSettings);
+    gsi.startTime = new ETime(simTime);
+    gsi.trafficXmlFile = startupSettings.files.trafficXmlFile;
+
+    Game g;
+    g = Game.create(gsi);
 
     System.out.println("* Initializing sound environment");
     // sound
@@ -159,7 +142,7 @@ public class JAtcSim {
     Pack simPack
         = createPackInstance(packType);
 
-    simPack.initPack(sim, sim.getArea(), appSettings);
+    simPack.initPack(g, appSettings);
     simPack.startPack();
   }
 

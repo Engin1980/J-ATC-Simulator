@@ -70,20 +70,21 @@ public class Simulation {
   private final static double MAX_VICINITY_DISTANCE_IN_NM = 10;
   private final ETime now;
   private final Messenger messenger = new Messenger();
-  private UserAtc appAtc;
-  private TowerAtc twrAtc;
-  private CenterAtc ctrAtc;
   private final IList<Airplane> newPlanesDelayedToAvoidCollision = new EList<>();
-  private MrvaManager mrvaManager;
   private final WeatherProvider weatherProvider;
   private final Statistics stats = new Statistics();
   private final EmergencyManager emergencyManager;
   private final TrafficManager trafficManager;
   private final PlaneResponsibilityManager prm;
-  private final AreaXmlSource areaXmlSource;
-  private final AirplaneTypesXmlSource airplaneTypesXmlSource;
-  private final FleetsXmlSource fleetsXmlSource;
-  private final TrafficXmlSource trafficXmlSource;
+  private final Area area;
+  private final AirplaneTypes airplaneTypes;
+  private final Fleets fleets;
+  private final Traffic traffic;
+  private UserAtc appAtc;
+  private TowerAtc twrAtc;
+  private CenterAtc ctrAtc;
+  private MrvaManager mrvaManager;
+  private final Airport activeAirport;
   /**
    * Public event informing surrounding about elapsed second.
    */
@@ -99,41 +100,11 @@ public class Simulation {
   @XmlIgnore
   private final Timer tmr = new Timer(o -> Simulation.this.elapseSecond());
 
-  public static Simulation load(String fileName) {
-
+  public static Simulation load(XElement root) {
     Simulation ret = new Simulation();
 
-    XDocument doc;
-    try {
-      doc = XDocument.load(fileName);
-    } catch (EXmlException e) {
-      throw new EApplicationException("Unable to load xml document.", e);
-    }
-
-    XElement root = doc.getRoot();
-    LoadSave.loadField(root, ret, "areaXmlSource");
-    LoadSave.loadField(root, ret, "airplaneTypesXmlSource");
-    LoadSave.loadField(root, ret, "fleetsXmlSource");
-    LoadSave.loadField(root, ret, "trafficXmlSource");
-
-    ret.areaXmlSource.load();
-    ret.areaXmlSource.init(ret.areaXmlSource.getActiveAirportIndex());
-    Airport aip = ret.areaXmlSource.getActiveAirport();
-    ret.twrAtc = new TowerAtc(aip.getAtcTemplates().get(Atc.eType.twr));
-    ret.ctrAtc = new CenterAtc(aip.getAtcTemplates().get(Atc.eType.ctr));
-    ret.appAtc = new UserAtc(aip.getAtcTemplates().get(Atc.eType.app));
-    LoadSave.setRelativeArea(ret.areaXmlSource.getContent(), aip, new Atc[]{ret.twrAtc, ret.ctrAtc, ret.appAtc});
-
-    ret.airplaneTypesXmlSource.load();
-    ret.airplaneTypesXmlSource.init();
-    LoadSave.setRelativeAirplaneTypes(ret.airplaneTypesXmlSource.getContent());
-
-    ret.fleetsXmlSource.load();
-    ret.fleetsXmlSource.init(ret.airplaneTypesXmlSource.getContent());
-
-    IList<Traffic> loadedSpecificTraffic = ret.trafficXmlSource.getSpecificTraffic();
-    ret.trafficXmlSource.load();
-    ret.trafficXmlSource.init(ret.areaXmlSource.getActiveAirport(), loadedSpecificTraffic.toArray(Traffic.class));
+    LoadSave.setRelativeArea(ret.area, ret.activeAirport, new Atc[]{ret.twrAtc, ret.ctrAtc, ret.appAtc});
+    LoadSave.setRelativeAirplaneTypes(ret.airplaneTypes);
 
     {
       IList<Airplane> lst = new EList<>();
@@ -163,7 +134,7 @@ public class Simulation {
     LoadSave.loadField(root, ret, "simulationSecondLengthInMs");
 
     IList<Border> mrvaAreas =
-        ret.areaXmlSource.getContent().getBorders().where(q -> q.getType() == Border.eType.mrva);
+        ret.area.getBorders().where(q -> q.getType() == Border.eType.mrva);
 
     ret.mrvaManager = new MrvaManager(mrvaAreas);
     ret.prm.getAll().forEach(q->ret.mrvaManager.registerPlane(q));
@@ -172,20 +143,20 @@ public class Simulation {
   }
 
   public Simulation(
-      AreaXmlSource areaXmlSource, AirplaneTypesXmlSource airplaneTypesXmlSource, FleetsXmlSource fleetXmlSource, TrafficXmlSource trafficXmlSource,
-      WeatherProvider weatherProvider, Calendar now, int simulationSecondLengthInMs, double emergencyPerDayProbability) {
+      Area area, AirplaneTypes airplaneTypes, Fleets fleets, Traffic traffic, Airport activeAirport,
+      WeatherProvider weatherProvider, ETime now, int simulationSecondLengthInMs, double emergencyPerDayProbability) {
 
-    if (areaXmlSource == null) {
-      throw new IllegalArgumentException("Value of {areaXmlSource} cannot not be null.");
+    if (area == null) {
+        throw new IllegalArgumentException("Value of {area} cannot not be null.");
     }
-    if (airplaneTypesXmlSource == null) {
-      throw new IllegalArgumentException("Value of {airplaneTypesXmlSource} cannot not be null.");
+    if (airplaneTypes == null) {
+        throw new IllegalArgumentException("Value of {airplaneTypes} cannot not be null.");
     }
-    if (fleetXmlSource == null) {
-      throw new IllegalArgumentException("Value of {fleetXmlSource} cannot not be null.");
+    if (fleets == null) {
+        throw new IllegalArgumentException("Value of {fleets} cannot not be null.");
     }
-    if (trafficXmlSource == null) {
-      throw new IllegalArgumentException("Value of {trafficXmlSource} cannot not be null.");
+    if (traffic == null) {
+        throw new IllegalArgumentException("Value of {traffic} cannot not be null.");
     }
     if (weatherProvider == null) {
       throw new IllegalArgumentException("Value of {weatherProvider} cannot not be null.");
@@ -193,21 +164,25 @@ public class Simulation {
     if (now == null) {
       throw new IllegalArgumentException("Value of {now} cannot not be null.");
     }
+    if (activeAirport == null) {
+        throw new IllegalArgumentException("Value of {activeAirport} cannot not be null.");
+    }
 
-    this.now = new ETime(now);
+
+    this.now = now.clone();
     this.simulationSecondLengthInMs = simulationSecondLengthInMs;
 
-    this.areaXmlSource = areaXmlSource;
-    this.airplaneTypesXmlSource = airplaneTypesXmlSource;
-    this.fleetsXmlSource = fleetXmlSource;
-    this.trafficXmlSource = trafficXmlSource;
+    this.area = area;
+    this.airplaneTypes = airplaneTypes;
+    this.traffic = traffic;
+    this.fleets = fleets;
 
     this.weatherProvider = weatherProvider;
 
-    Airport airport = areaXmlSource.getActiveAirport();
-    this.twrAtc = new TowerAtc(airport.getAtcTemplates().get(Atc.eType.twr));
-    this.ctrAtc = new CenterAtc(airport.getAtcTemplates().get(Atc.eType.ctr));
-    this.appAtc = new UserAtc(airport.getAtcTemplates().get(Atc.eType.app));
+    this.activeAirport = activeAirport;
+    this.twrAtc = new TowerAtc(this.activeAirport.getAtcTemplates().get(Atc.eType.twr));
+    this.ctrAtc = new CenterAtc(this.activeAirport.getAtcTemplates().get(Atc.eType.ctr));
+    this.appAtc = new UserAtc(this.activeAirport.getAtcTemplates().get(Atc.eType.app));
 
     this.prm = new PlaneResponsibilityManager();
 
@@ -217,7 +192,7 @@ public class Simulation {
     this.trafficManager = new TrafficManager();
 
     IList<Border> mrvaAreas =
-        areaXmlSource.getContent().getBorders().where(q -> q.getType() == Border.eType.mrva);
+        area.getBorders().where(q -> q.getType() == Border.eType.mrva);
     this.mrvaManager = new MrvaManager(mrvaAreas);
   }
 
@@ -232,10 +207,11 @@ public class Simulation {
     emergencyManager = null;
     trafficManager = null;
     prm = null;
-    areaXmlSource = null;
-    airplaneTypesXmlSource = null;
-    fleetsXmlSource = null;
-    trafficXmlSource = null;
+    area = null;
+    airplaneTypes= null;
+    fleets = null;
+    traffic = null;
+    activeAirport = null;
   }
 
   public PlaneResponsibilityManager getPrm() {
@@ -250,7 +226,7 @@ public class Simulation {
     this.prm.init();
     this.weatherProvider.getWeatherUpdatedEvent().add(() -> weatherProvider_weatherUpdated());
 
-    trafficManager.setTraffic(trafficXmlSource.getActiveTraffic());
+    trafficManager.setTraffic(traffic);
     trafficManager.generateNewTrafficIfRequired();
   }
 
@@ -260,7 +236,7 @@ public class Simulation {
 
   //TODO shouldn't this be private?
   public AirplaneTypes getAirplaneTypes() {
-    return airplaneTypesXmlSource.getContent();
+    return airplaneTypes;
   }
 
   public IReadOnlyList<Movement> getScheduledMovements() {
@@ -274,7 +250,7 @@ public class Simulation {
   }
 
   public Airport getActiveAirport() {
-    return areaXmlSource.getActiveAirport();
+    return activeAirport;
   }
 
   public String toAltitudeString(double altInFt, boolean appendFt) {
@@ -294,7 +270,7 @@ public class Simulation {
   }
 
   public Fleets getFleets() {
-    return fleetsXmlSource.getContent();
+    return fleets;
   }
 
   public IReadOnlyList<Airplane> getAirplanes() {
@@ -358,20 +334,14 @@ public class Simulation {
   }
 
   public Area getArea() {
-    return areaXmlSource.getContent();
+    return area;
   }
 
   public WeatherProvider getWeatherProvider() {
     return this.weatherProvider;
   }
 
-  public void save(String fileName) {
-    XElement root = new XElement("simulation");
-
-    LoadSave.saveField(root, this, "areaXmlSource");
-    LoadSave.saveField(root, this, "airplaneTypesXmlSource");
-    LoadSave.saveField(root, this, "fleetsXmlSource");
-    LoadSave.saveField(root, this, "trafficXmlSource");
+  public void save(XElement root) {
 
     {
       IReadOnlyList<Airplane> planes = this.prm.getAll();
@@ -402,14 +372,6 @@ public class Simulation {
     LoadSave.saveField(root, this, "emergencyManager");
     LoadSave.saveField(root, this, "movementsManager");
     LoadSave.saveField(root, this, "simulationSecondLengthInMs");
-
-    XDocument doc = new XDocument(root);
-    try {
-      doc.save(fileName);
-    } catch (EXmlException e) {
-      throw new EApplicationException("Failed to save simulation.", e);
-    }
-
   }
 
   private void weatherProvider_weatherUpdated() {
