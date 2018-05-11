@@ -4,6 +4,7 @@ import com.sun.istack.internal.NotNull;
 import com.sun.istack.internal.Nullable;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
+import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.eXml.XElement;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
@@ -164,7 +165,7 @@ public abstract class ComputerAtc extends Atc {
 
   private void repeatOldSwitchRequests() {
     // opakovani starych zadosti
-    List<Airplane> awaitings = this.waitingRequestsList.getAwaitings();
+    IReadOnlyList<Airplane> awaitings = this.waitingRequestsList.getAwaitings();
     for (Airplane p : awaitings) {
       Message m = new Message(this, Acc.atcApp(),
           new PlaneSwitchMessage(p, false, " to you (repeated)"));

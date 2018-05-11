@@ -5,45 +5,47 @@
  */
 package eng.jAtcSim.lib.atcs;
 
+import eng.eSystem.Tuple;
+import eng.eSystem.collections.EList;
+import eng.eSystem.collections.IList;
+import eng.eSystem.collections.IReadOnlyList;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.global.ETime;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.global.ETime;
+
 import java.util.LinkedList;
 import java.util.List;
 
 /**
- *
  * @author Marek
  */
 public class WaitingList {
 
   private static final int AWAITING_SECONDS = 20;
 
-  private final List<ETime> times = new LinkedList<>();
-  private final List<Airplane> planes = new LinkedList<>();
+  private final IList<Tuple<ETime, Airplane>> inner = new EList<>();
 
   public void add(Airplane plane) {
-    this.times.add(Acc.now().addSeconds(AWAITING_SECONDS));
-    this.planes.add(plane);
+    this.inner.add(new Tuple<>(Acc.now().addSeconds(AWAITING_SECONDS), plane));
   }
 
   public void remove(Airplane plane) {
-    int index = planes.indexOf(plane);
-    planes.remove(index);
-    times.remove(index);
+    int index = inner.getIndexOf(q -> q.getB().equals(plane));
+    inner.removeAt(index);
   }
 
-  List<Airplane> getAwaitings() {
-    List<Airplane> ret = new LinkedList<>();
-
+  IReadOnlyList<Airplane> getAwaitings() {
     ETime now = Acc.now();
-    for (int i = 0; i < planes.size(); i++) {
-      if (now.isAfter(times.get(i))) {
-        times.set(i, now.addSeconds(AWAITING_SECONDS));
-        ret.add(planes.get(i));
+
+    IList<Airplane> ret = new EList<>();
+
+    for (int i = 0; i < inner.size(); i++) {
+      if (now.isAfter(inner.get(i).getA())) {
+        inner.get(i).setA(now.addSeconds(AWAITING_SECONDS));
+        ret.add(inner.get(i).getB());
       }
     }
 
@@ -51,6 +53,6 @@ public class WaitingList {
   }
 
   boolean contains(Airplane plane) {
-    return planes.contains(plane);
+    return inner.isAny(q -> q.getB().equals(plane));
   }
 }
