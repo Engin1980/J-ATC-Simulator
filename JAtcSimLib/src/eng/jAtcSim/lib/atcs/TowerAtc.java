@@ -287,6 +287,7 @@ public class TowerAtc extends ComputerAtc {
 
   @Override
   protected void _save(XElement elm) {
+    super._save(elm);
     LoadSave.saveField(elm, this, "takeOffInfos");
     LoadSave.saveField(elm, this, "landingPlanesList");
     LoadSave.saveField(elm, this, "goAroundedPlanesToSwitchList");
@@ -301,6 +302,7 @@ public class TowerAtc extends ComputerAtc {
   
   @Override
   protected void _load(XElement elm){
+    super._load(elm);
     LoadSave.loadField(elm, this, "takeOffInfos");
     LoadSave.loadField(elm, this, "landingPlanesList");
     LoadSave.loadField(elm, this, "goAroundedPlanesToSwitchList");

@@ -2,10 +2,14 @@ package eng.jAtcSim.lib.atcs;
 
 import com.sun.istack.internal.NotNull;
 import com.sun.istack.internal.Nullable;
+import eng.eSystem.collections.EList;
+import eng.eSystem.collections.IList;
+import eng.eSystem.eXml.XElement;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.AirplaneList;
 import eng.jAtcSim.lib.messaging.Message;
+import eng.jAtcSim.lib.serialization.LoadSave;
 import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.GoodDayNotification;
 import eng.jAtcSim.lib.speaking.fromAtc.atc2atc.PlaneSwitchMessage;
@@ -28,7 +32,7 @@ public abstract class ComputerAtc extends Atc {
   }
 
   private final WaitingList waitingRequestsList = new WaitingList();
-  private final List<SwitchRequest> confirmedRequestList = new ArrayList<>();
+  private final IList<SwitchRequest> confirmedRequestList = new EList<>();
 
 
   public ComputerAtc(AtcTemplate template) {
@@ -193,6 +197,18 @@ public abstract class ComputerAtc extends Atc {
     Message m = new Message(this, targetAtc,
         new PlaneSwitchMessage(plane, true, " refused. " + message));
     sendMessage(m);
+  }
+
+  @Override
+  protected void _save(XElement elm) {
+    LoadSave.saveField(elm, this, "waitingRequestsList");
+    LoadSave.saveField(elm, this, "confirmedRequestList");
+  }
+
+  @Override
+  protected void _load(XElement elm) {
+    LoadSave.loadField(elm, this, "waitingRequestsList");
+    LoadSave.loadField(elm, this, "confirmedRequestList");
   }
 }
 

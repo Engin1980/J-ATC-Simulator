@@ -40,10 +40,12 @@ public class CenterAtc extends ComputerAtc {
 
   @Override
   protected void _save(XElement elm) {
+    super._save(elm);
   }
 
   @Override
   protected void _load(XElement elm) {
+    super._load(elm);
   }
 
   @Override
