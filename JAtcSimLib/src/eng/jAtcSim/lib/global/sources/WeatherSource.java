@@ -1,17 +1,10 @@
 package eng.jAtcSim.lib.global.sources;
 
 import eng.eSystem.collections.EList;
-import eng.eSystem.collections.EMap;
-import eng.eSystem.collections.IMap;
 import eng.eSystem.collections.IReadOnlyList;
-import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.xmlSerialization.XmlIgnore;
-import eng.jAtcSim.lib.Simulation;
-import eng.jAtcSim.lib.weathers.NoaaDynamicWeatherProvider;
-import eng.jAtcSim.lib.weathers.StaticWeatherProvider;
-import eng.jAtcSim.lib.weathers.Weather;
-import eng.jAtcSim.lib.weathers.WeatherProvider;
+import eng.jAtcSim.lib.weathers.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,8 +12,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
-
-import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class WeatherSource extends Source<WeatherProvider> {
 
@@ -32,6 +23,7 @@ public class WeatherSource extends Source<WeatherProvider> {
   @XmlIgnore
   private WeatherProvider provider;
   private ProviderType type;
+  private String icao;
   //private String weatherProviderClassName;
   private Weather weather;
 
@@ -55,19 +47,9 @@ public class WeatherSource extends Source<WeatherProvider> {
 //    this.weatherProviderClassName = weatherProviderClassName;
 //  }
 
-  public WeatherSource (ProviderType type, String icao, Weather initialWeather){
-    switch (type){
-      case dynamicNovGoaaProvider:
-        provider = new NoaaDynamicWeatherProvider(icao, true);
-        break;
-      case staticProvider:
-        provider = new StaticWeatherProvider();
-        provider.setWeather(initialWeather);
-        break;
-      default:
-        throw new EEnumValueUnsupportedException(type);
-    }
-
+  public WeatherSource (ProviderType type, String icao){
+    this.type = type;
+    this.icao = icao;
   }
 
   public WeatherSource(){}
@@ -84,13 +66,33 @@ public class WeatherSource extends Source<WeatherProvider> {
 //    provider.getWeatherUpdatedEvent().add(()-> this.weather = provider.getWeather());
 //  }
 
-  public void elapseSecond(){
-    provider.elapseSecond();
-  }
-
   @Override
   public WeatherProvider _get() {
     return provider;
+  }
+
+  public void init(Weather initialWeather) {
+
+    switch (type){
+      case dynamicNovGoaaProvider:
+        provider = new NoaaDynamicWeatherProvider(icao);
+        break;
+      case staticProvider:
+        provider = new StaticWeatherProvider();
+        break;
+      default:
+        throw new EEnumValueUnsupportedException(type);
+    }
+    provider.getWeatherUpdatedEvent().add(w -> this.weather = w);
+
+    provider.setWeather(initialWeather);
+    if (provider instanceof DynamicWeatherProvider)
+    {
+      DynamicWeatherProvider tmp = (DynamicWeatherProvider) provider;
+      tmp.updateWeather(false);
+    }
+
+    super.setInitialized();
   }
 }
 

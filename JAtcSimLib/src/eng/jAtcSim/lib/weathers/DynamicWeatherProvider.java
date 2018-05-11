@@ -13,27 +13,6 @@ import eng.jAtcSim.lib.Acc;
  */
 public abstract class DynamicWeatherProvider extends WeatherProvider {
 
-  protected final String icao;
-  private int updateIntervalInRealTimeSeconds;
-  private java.time.LocalDateTime nextUpdateTime = null;
-
-  private DynamicWeatherProvider() {
-    this.icao = "????";
-  }
-
-  public DynamicWeatherProvider(String icao, int updateIntervalInRealTimeSeconds) {
-    this.updateIntervalInRealTimeSeconds = updateIntervalInRealTimeSeconds;
-    this.icao = icao;
-  }
-
-  @Override
-  public void elapseSecond() {
-    if ((nextUpdateTime == null) || (java.time.LocalDateTime.now().isAfter(nextUpdateTime))) {
-      nextUpdateTime = java.time.LocalDateTime.now().plusSeconds(updateIntervalInRealTimeSeconds);
-      updateWeather(true);
-    }
-  }
-
   public final void updateWeather(boolean async) {
     UpdateThread t = new UpdateThread(this);
     if (async) {

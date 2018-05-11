@@ -100,17 +100,6 @@ public class JAtcSim {
     resolveShortXmlFileNamesInStartupSettings(appSettings, startupSettings);
     XmlLoadHelper.saveStartupSettings(startupSettings, appSettings.getStartupSettingsFile());
 
-    System.out.println("* Initializing weather");
-    WeatherProvider weatherProvider;
-    if (startupSettings.weather.useOnline) {
-      DynamicWeatherProvider dwp = new NoaaDynamicWeatherProvider(startupSettings.recent.icao);
-      dwp.updateWeather(false);
-      weatherProvider = dwp;
-    } else {
-      StaticWeatherProvider swp = new StaticWeatherProvider(startupSettings.weather.metar);
-      weatherProvider = swp;
-    }
-
     System.out.println("* Creating the simulation");
 
     Game.GameStartupInfo gsi = new Game.GameStartupInfo();
@@ -125,6 +114,9 @@ public class JAtcSim {
     updateCalendarToSimTime(simTime, startupSettings);
     gsi.startTime = new ETime(simTime);
     gsi.trafficXmlFile = startupSettings.files.trafficXmlFile;
+    gsi.initialWeather = Weather.createClear();
+    gsi.weatherProviderType = startupSettings.weather.useOnline ?
+        WeatherSource.ProviderType.dynamicNovGoaaProvider : WeatherSource.ProviderType.staticProvider;
 
     Game g;
     g = Game.create(gsi);

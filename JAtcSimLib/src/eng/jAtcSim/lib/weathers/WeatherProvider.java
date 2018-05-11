@@ -1,5 +1,6 @@
 package eng.jAtcSim.lib.weathers;
 
+import eng.eSystem.events.EventAnonymous;
 import eng.eSystem.events.EventAnonymousSimple;
 import eng.eSystem.xmlSerialization.XmlIgnore;
 import eng.eSystem.xmlSerialization.XmlOptional;
@@ -8,21 +9,20 @@ import eng.jAtcSim.lib.weathers.downloaders.MetarDecoder;
 
 public abstract class WeatherProvider {
   private Weather weather;
-  @XmlIgnore
-  private EventAnonymousSimple weatherUpdatedEvent = new EventAnonymousSimple();
+  private EventAnonymous<Weather> weatherUpdatedEvent = new EventAnonymous<>();
 
-  public EventAnonymousSimple getWeatherUpdatedEvent() {
+  public EventAnonymous<Weather> getWeatherUpdatedEvent() {
     return weatherUpdatedEvent;
-  }
-
-  public Weather getWeather() {
-    return weather;
   }
 
   public void setWeather(Weather weather) {
     assert weather != null;
     this.weather = weather;
-    weatherUpdatedEvent.raise();
+    weatherUpdatedEvent.raise(weather);
+  }
+
+  public Weather getWeather() {
+    return weather;
   }
 
   public void setWeatherByMetarString(String metarString) {
@@ -34,6 +34,4 @@ public abstract class WeatherProvider {
       Acc.sim().sendTextMessageForUser("Failed to decode metar. " + ex.getMessage());
     }
   }
-
-  public abstract void elapseSecond();
 }

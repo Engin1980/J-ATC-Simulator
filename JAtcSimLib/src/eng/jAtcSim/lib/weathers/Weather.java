@@ -19,6 +19,13 @@ public class Weather {
   private int cloudBaseInFt;
   private double cloudBaseHitProbability;
 
+  public static Weather createClear() {
+    Weather ret = new Weather(
+        210, 4, 9999, 13000, .2
+    );
+    return ret;
+  }
+
   public Weather() {
   }
 

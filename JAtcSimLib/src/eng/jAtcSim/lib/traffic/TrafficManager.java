@@ -21,7 +21,6 @@ import eng.jAtcSim.lib.world.Route;
 import eng.jAtcSim.lib.world.Runway;
 import eng.jAtcSim.lib.world.RunwayThreshold;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -32,10 +31,10 @@ public class TrafficManager {
   private IList<Movement> scheduledMovements = new EList<>();
   private Traffic traffic;
   private Object lastRelativeInfo;
-  private ETime nextGenerateTime;
+  private ETime nextGenerateTime = new ETime(0);
 
   public void generateNewTrafficIfRequired() {
-    if (Acc.now().isBefore(nextGenerateTime)) {
+    if (Acc.now().isAfterOrEq(nextGenerateTime)) {
       GeneratedMovementsResponse gmr = traffic.generateMovements(lastRelativeInfo);
       this.scheduledMovements.add(gmr.getNewMovements());
       this.scheduledMovements.sort(q -> q.getInitTime()); // Movement has inner class comparer

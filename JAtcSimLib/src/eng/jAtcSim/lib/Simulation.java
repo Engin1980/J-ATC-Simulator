@@ -80,10 +80,10 @@ public class Simulation {
   private final AirplaneTypes airplaneTypes;
   private final Fleets fleets;
   private final Traffic traffic;
-  private UserAtc appAtc;
-  private TowerAtc twrAtc;
-  private CenterAtc ctrAtc;
-  private MrvaManager mrvaManager;
+  private final UserAtc appAtc;
+  private final TowerAtc twrAtc;
+  private final CenterAtc ctrAtc;
+  private final MrvaManager mrvaManager;
   private final Airport activeAirport;
   /**
    * Public event informing surrounding about elapsed second.
@@ -130,13 +130,12 @@ public class Simulation {
     LoadSave.loadField(root, ret, "weatherProvider");
     LoadSave.loadField(root, ret, "stats");
     LoadSave.loadField(root, ret, "emergencyManager");
-    LoadSave.loadField(root, ret, "movementsManager");
+    LoadSave.loadField(root, ret, "trafficManager");
     LoadSave.loadField(root, ret, "simulationSecondLengthInMs");
 
     IList<Border> mrvaAreas =
         ret.area.getBorders().where(q -> q.getType() == Border.eType.mrva);
 
-    ret.mrvaManager = new MrvaManager(mrvaAreas);
     ret.prm.getAll().forEach(q->ret.mrvaManager.registerPlane(q));
 
     return ret;
@@ -176,7 +175,6 @@ public class Simulation {
     this.airplaneTypes = airplaneTypes;
     this.traffic = traffic;
     this.fleets = fleets;
-
     this.weatherProvider = weatherProvider;
 
     this.activeAirport = activeAirport;
@@ -196,14 +194,14 @@ public class Simulation {
     this.mrvaManager = new MrvaManager(mrvaAreas);
   }
 
-  private Simulation() {
 
+  private Simulation() {
+    //TODO delete when able
     now = null;
     appAtc = null;
     twrAtc = null;
     ctrAtc = null;
     mrvaManager = null;
-    weatherProvider = null;
     emergencyManager = null;
     trafficManager = null;
     prm = null;
@@ -212,6 +210,7 @@ public class Simulation {
     fleets = null;
     traffic = null;
     activeAirport = null;
+    weatherProvider = null;
   }
 
   public PlaneResponsibilityManager getPrm() {
@@ -224,7 +223,7 @@ public class Simulation {
     Acc.atcApp().init();
     Acc.atcCtr().init();
     this.prm.init();
-    this.weatherProvider.getWeatherUpdatedEvent().add(() -> weatherProvider_weatherUpdated());
+    this.weatherProvider.getWeatherUpdatedEvent().add(w -> weatherProvider_weatherUpdated(w));
 
     trafficManager.setTraffic(traffic);
     trafficManager.generateNewTrafficIfRequired();
@@ -304,7 +303,11 @@ public class Simulation {
   }
 
   public Weather getWeather() {
-    return weatherProvider.getWeather();
+    return this.weatherProvider.getWeather();
+  }
+
+  public WeatherProvider getWeatherProvider() {
+    return weatherProvider;
   }
 
   public UserAtc getAppAtc() {
@@ -337,10 +340,6 @@ public class Simulation {
     return area;
   }
 
-  public WeatherProvider getWeatherProvider() {
-    return this.weatherProvider;
-  }
-
   public void save(XElement root) {
 
     {
@@ -367,15 +366,15 @@ public class Simulation {
     LoadSave.saveField(root, this, "now");
     LoadSave.saveField(root, this, "newPlanesDelayedToAvoidCollision");
     //mrvaManager
-    LoadSave.saveField(root, this, "weatherProvider");
+    //LoadSave.saveField(root, this, "weatherProvider");
     LoadSave.saveField(root, this, "stats");
     LoadSave.saveField(root, this, "emergencyManager");
-    LoadSave.saveField(root, this, "movementsManager");
+    LoadSave.saveField(root, this, "trafficManager");
     LoadSave.saveField(root, this, "simulationSecondLengthInMs");
   }
 
-  private void weatherProvider_weatherUpdated() {
-    Acc.sim().sendTextMessageForUser("Weather updated: " + weatherProvider.getWeather().toInfoString());
+  private void weatherProvider_weatherUpdated(Weather w) {
+    Acc.sim().sendTextMessageForUser("Weather updated: " + w.toInfoString());
   }
 
   private synchronized void elapseSecond() {
@@ -409,9 +408,6 @@ public class Simulation {
     updatePlanes();
     evalAirproxes();
     evalMrvas();
-
-    // weather stuff
-    weatherProvider.elapseSecond();
 
     stats.secondElapsed();
     long elapseEndMs = System.currentTimeMillis();

@@ -62,11 +62,11 @@ public class Game {
     g.trafficXmlSource.load();
     g.trafficXmlSource.init(g.areaXmlSource.getActiveAirport(), gsi.specificTraffic);
 
-    System.out.println("* Initialializing weather");
+    System.out.println("* Initializing weather");
     g.weatherSource = new WeatherSource(
         gsi.weatherProviderType,
-        g.areaXmlSource.getActiveAirport().getIcao(),
-        gsi.initialWeather);
+        g.areaXmlSource.getActiveAirport().getIcao());
+    g.weatherSource.init(gsi.initialWeather);
 
     System.out.println("* Generating traffic");
     if (gsi.specificTraffic != null)
@@ -117,6 +117,8 @@ public class Game {
     ret.trafficXmlSource.load();
     ret.trafficXmlSource.init(ret.areaXmlSource.getActiveAirport(), loadedSpecificTraffic.toArray(Traffic.class));
 
+    ret.weatherSource.init(null);
+
     Simulation sim = new Simulation(
         ret.areaXmlSource.getContent(), ret.airplaneTypesXmlSource.getContent(),
         ret.fleetsXmlSource.getContent(), ret.trafficXmlSource.getActiveTraffic(),
@@ -137,6 +139,7 @@ public class Game {
     LoadSave.saveField(root, this, "airplaneTypesXmlSource");
     LoadSave.saveField(root, this, "fleetsXmlSource");
     LoadSave.saveField(root, this, "trafficXmlSource");
+    LoadSave.saveField(root, this, "weatherSource");
 
     {
       XElement tmp = new XElement("simulation");

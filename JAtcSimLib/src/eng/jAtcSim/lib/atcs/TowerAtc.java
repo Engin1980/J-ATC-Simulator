@@ -184,7 +184,7 @@ public class TowerAtc extends ComputerAtc {
     processRunwayChangeBackground();
 
     WeatherProvider wp = Acc.weatherProvider();
-    wp.getWeatherUpdatedEvent().add(() -> weatherUpdated());
+    wp.getWeatherUpdatedEvent().add(w -> weatherUpdated(w));
   }
 
   @Override
@@ -417,7 +417,7 @@ public class TowerAtc extends ComputerAtc {
     }
   }
 
-  private void weatherUpdated() {
+  private void weatherUpdated(Weather w) {
     this.isUpdatedWeather = true;
   }
 

@@ -90,6 +90,10 @@ public class ETime implements Comparable<ETime> {
   }
 
   public boolean isBefore(ETime otherTime) {
+    if (otherTime == null) {
+        throw new IllegalArgumentException("Value of {otherTime} cannot not be null.");
+    }
+    
     return this.value < otherTime.value;
   }
 

@@ -4,9 +4,4 @@ public class StaticWeatherProvider extends WeatherProvider {
 
   public StaticWeatherProvider() {
   }
-
-  @Override
-  public void elapseSecond() {
-
-  }
 }
