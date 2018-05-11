@@ -39,6 +39,14 @@ public class Movement {
     this.delayInMinutes = delayInMinutes;
   }
 
+  private Movement(){
+    callsign = null;
+    airplaneType = null;
+    departure= false;
+    initTime = null;
+    delayInMinutes = 0;
+  }
+
   public AirplaneType getAirplaneType() {
     return airplaneType;
   }

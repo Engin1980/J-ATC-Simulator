@@ -72,25 +72,27 @@ public class JAtcSim {
   }
 
   public static void loadSimulation(StartupSettings startupSettings, String xmlFileName){
-    throw new UnsupportedOperationException("TODO");
-//    System.out.println("* Loading simulation");
-//    Simulation sim = Simulation.load(xmlFileName);
-//
-//    System.out.println("* Initialization of the simulation");
-//    sim.init();
-//
-//    System.out.println("* Initializing sound environment");
-//    // sound
-//    SoundManager.init(appSettings.soundFolder.toString());
-//
-//    System.out.println("* Starting a GUI");
-//    // starting pack & simulation
-//    String packType = startupSettings.radar.packClass;
-//    Pack simPack
-//        = createPackInstance(packType);
-//
-//    simPack.initPack(sim, sim.getArea(), appSettings);
-//    simPack.startPack();
+    KeyList.setDuplicatesChecking(false);
+
+    System.out.println("* Loading the simulation");
+
+    Game g = Game.load(xmlFileName);
+
+    // enable duplicates
+    KeyList.setDuplicatesChecking(true);
+
+    System.out.println("* Initializing sound environment");
+    // sound
+    SoundManager.init(appSettings.soundFolder.toString());
+
+    System.out.println("* Starting a GUI");
+    // starting pack & simulation
+    String packType = startupSettings.radar.packClass;
+    Pack simPack
+        = createPackInstance(packType);
+
+    simPack.initPack(g, appSettings);
+    simPack.startPack();
   }
 
   public static void startSimulation(StartupSettings startupSettings) {

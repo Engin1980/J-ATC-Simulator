@@ -15,6 +15,10 @@ public abstract class CommandResponse implements IAirplaneNotification {
     this.origin = origin;
   }
 
+  protected CommandResponse(){
+    origin = null;
+  }
+
   public IAtcCommand getOrigin() {
     return origin;
   }

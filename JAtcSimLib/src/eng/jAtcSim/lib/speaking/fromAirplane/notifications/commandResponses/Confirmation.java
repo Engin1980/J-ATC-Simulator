@@ -6,6 +6,8 @@ import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
 
 public class Confirmation extends CommandResponse {
 
+  private Confirmation (){super();}
+
   public Confirmation(IAtcCommand origin) {
     super(origin);
   }

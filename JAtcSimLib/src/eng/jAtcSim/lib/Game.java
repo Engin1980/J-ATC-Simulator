@@ -117,17 +117,17 @@ public class Game {
     ret.trafficXmlSource.load();
     ret.trafficXmlSource.init(ret.areaXmlSource.getActiveAirport(), loadedSpecificTraffic.toArray(Traffic.class));
 
-    ret.weatherSource.init(null);
+    ret.weatherSource.init(ret.weatherSource.getWeather());
 
-    Simulation sim = new Simulation(
+    ret.simulation = new Simulation(
         ret.areaXmlSource.getContent(), ret.airplaneTypesXmlSource.getContent(),
         ret.fleetsXmlSource.getContent(), ret.trafficXmlSource.getActiveTraffic(),
         ret.areaXmlSource.getActiveAirport(),
         ret.weatherSource.getContent(), new ETime(0), 0, 0);
-    sim.init();
+    ret.simulation.init();
 
     XElement tmp = root.getChild("simulation");
-    sim.load(tmp);
+    ret.simulation.load(tmp);
 
     return ret;
   }

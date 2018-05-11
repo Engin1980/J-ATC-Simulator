@@ -54,7 +54,11 @@ public class WeatherSource extends Source<WeatherProvider> {
 
   public WeatherSource(){}
 
-//  public void init(){
+  public Weather getWeather() {
+    return weather;
+  }
+
+  //  public void init(){
 //    super.setInitialized();
 //
 //    Class c = providers.tryGet(weatherProviderClassName);

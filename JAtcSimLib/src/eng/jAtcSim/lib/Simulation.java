@@ -100,11 +100,10 @@ public class Simulation {
   @XmlIgnore
   private final Timer tmr = new Timer(o -> Simulation.this.elapseSecond());
 
-  public static Simulation load(XElement root) {
-    Simulation ret = new Simulation();
+  public void load(XElement root) {
 
-    LoadSave.setRelativeArea(ret.area, ret.activeAirport, new Atc[]{ret.twrAtc, ret.ctrAtc, ret.appAtc});
-    LoadSave.setRelativeAirplaneTypes(ret.airplaneTypes);
+    LoadSave.setRelativeArea(this.area, this.activeAirport, new Atc[]{this.twrAtc, this.ctrAtc, this.appAtc});
+    LoadSave.setRelativeAirplaneTypes(this.airplaneTypes);
 
     {
       IList<Airplane> lst = new EList<>();
@@ -118,27 +117,34 @@ public class Simulation {
 
     {
       XElement tmp = root.getChild("atcs");
-      ret.ctrAtc.load(tmp);
-      ret.appAtc.load(tmp);
-      ret.twrAtc.load(tmp);
+      this.ctrAtc.load(tmp);
+      this.appAtc.load(tmp);
+      this.twrAtc.load(tmp);
     }
 
-    LoadSave.loadField(root, ret, "prm");
+    LoadSave.loadField(root, this, "prm");
 
-    LoadSave.loadField(root, ret, "now");
-    LoadSave.loadField(root, ret, "newPlanesDelayedToAvoidCollision");
-    LoadSave.loadField(root, ret, "weatherProvider");
-    LoadSave.loadField(root, ret, "stats");
-    LoadSave.loadField(root, ret, "emergencyManager");
-    LoadSave.loadField(root, ret, "trafficManager");
-    LoadSave.loadField(root, ret, "simulationSecondLengthInMs");
+    LoadSave.loadField(root, this, "now");
+    LoadSave.loadField(root, this, "stats");
+    LoadSave.loadField(root, this, "emergencyManager");
+    LoadSave.loadField(root, this, "trafficManager");
+    LoadSave.loadField(root, this, "simulationSecondLengthInMs");
+
+    {
+      IList<Airplane> lst = new EList<>();
+      XElement tmp = root.getChildren().getFirst(q -> q.getName().equals("delayedPlanes"));
+      for (XElement elm : tmp.getChildren()) {
+        Airplane plane = Airplane.load(elm);
+        this.newPlanesDelayedToAvoidCollision.add(plane);
+      }
+      LoadSave.setRelativeAirplanes(lst);
+    }
 
     IList<Border> mrvaAreas =
-        ret.area.getBorders().where(q -> q.getType() == Border.eType.mrva);
+        this.area.getBorders().where(q -> q.getType() == Border.eType.mrva);
 
-    ret.prm.getAll().forEach(q->ret.mrvaManager.registerPlane(q));
-
-    return ret;
+    this.prm.getAll().forEach(q->this.mrvaManager.registerPlane(q));
+    this.prm.init();
   }
 
   public Simulation(
@@ -364,9 +370,18 @@ public class Simulation {
     LoadSave.saveField(root, this, "prm");
 
     LoadSave.saveField(root, this, "now");
-    LoadSave.saveField(root, this, "newPlanesDelayedToAvoidCollision");
+
+    {
+      XElement tmp = new XElement("delayedPlanes");
+      root.addElement(tmp);
+      for (Airplane plane : this.newPlanesDelayedToAvoidCollision) {
+        XElement pln = new XElement("plane");
+        plane.save(pln);
+        tmp.addElement(pln);
+      }
+    }
+
     //mrvaManager
-    //LoadSave.saveField(root, this, "weatherProvider");
     LoadSave.saveField(root, this, "stats");
     LoadSave.saveField(root, this, "emergencyManager");
     LoadSave.saveField(root, this, "trafficManager");
