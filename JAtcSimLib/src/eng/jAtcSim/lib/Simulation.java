@@ -200,25 +200,6 @@ public class Simulation {
     this.mrvaManager = new MrvaManager(mrvaAreas);
   }
 
-
-  private Simulation() {
-    //TODO delete when able
-    now = null;
-    appAtc = null;
-    twrAtc = null;
-    ctrAtc = null;
-    mrvaManager = null;
-    emergencyManager = null;
-    trafficManager = null;
-    prm = null;
-    area = null;
-    airplaneTypes= null;
-    fleets = null;
-    traffic = null;
-    activeAirport = null;
-    weatherProvider = null;
-  }
-
   public PlaneResponsibilityManager getPrm() {
     return prm;
   }

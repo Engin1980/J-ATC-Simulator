@@ -1,6 +1,8 @@
 package eng.jAtcSim.startup;
 
 import eng.jAtcSim.JAtcSim;
+import eng.jAtcSim.Stylist;
+import eng.jAtcSim.startup.startupWizard.FrmTest;
 import eng.jAtcSim.startup.startupWizard.StartupWizard;
 
 import javax.swing.*;
@@ -14,6 +16,7 @@ public class FrmIntro extends JFrame {
   public FrmIntro(StartupSettings startupSettings){
     initializeComponents();
     this.startupSettings = startupSettings;
+
   }
 
   public StartupSettings getStartupSettings() {
@@ -21,6 +24,9 @@ public class FrmIntro extends JFrame {
   }
 
   private void initializeComponents() {
+    JButton btnTest = new JButton("test");
+    btnTest.addActionListener(q->btnTest_click());
+
     JButton btnWizard = new JButton("Adjust startup settings");
     btnWizard.addActionListener(o->btnWizard_click());
     JButton btnRun = new JButton("Start simulation");
@@ -37,7 +43,7 @@ public class FrmIntro extends JFrame {
     JPanel pnl = LayoutManager.createBorderedPanel(16);
     pnl.add(
         LayoutManager.createBoxPanel(LayoutManager.eHorizontalAlign.center , 16,
-            btnWizard, btnRun, btnSave, btnLoad, btnLoadSim, btnExit));
+            btnTest, btnWizard, btnRun, btnSave, btnLoad, btnLoadSim, btnExit));
 
     //ComponentUtils.adjustComponentTree(pnl, o->o instanceof  JButton, o-> { o.setPreferredSize(BUTTON_DIMENSION); o.setMinimumSize(BUTTON_DIMENSION);});
 
@@ -45,6 +51,13 @@ public class FrmIntro extends JFrame {
     this.getContentPane().setLayout(new BorderLayout());
     this.getContentPane().add(pnl);
     this.pack();
+  }
+
+  private void btnTest_click() {
+    FrmTest frm = new FrmTest();
+    Stylist.apply(frm, true);
+    frm.pack();
+    frm.setVisible(true);
   }
 
   private void btnWizard_click(){

@@ -16,6 +16,10 @@ import javax.swing.SpinnerNumberModel;
 public class NumericUpDownExtender {
   private final JSpinner nud;
 
+  public JSpinner getControl(){
+    return nud;
+  }
+
   public NumericUpDownExtender(JSpinner nud, int minimum, int maximum, int value, int step) {
     if (nud == null)
       throw new IllegalArgumentException("Argument \"nud\" cannot be null.");

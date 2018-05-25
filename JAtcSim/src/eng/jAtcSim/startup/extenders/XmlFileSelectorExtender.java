@@ -8,9 +8,7 @@ package eng.jAtcSim.startup.extenders;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
-import javax.swing.JTextField;
+import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
@@ -23,16 +21,18 @@ public class XmlFileSelectorExtender {
   private final JButton btn;
   private File file = null;
 
+  public JTextField getTextControl(){
+    return txt;
+  }
+
+  public JButton getButtonControl(){
+    return btn;
+  }
+
   public XmlFileSelectorExtender(JTextField txt, JButton btn, File file) {
     this.txt = txt;
     this.btn = btn;
-    this.btn.addActionListener(new ActionListener() {
-
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        processDialog();
-      }
-    });
+    this.btn.addActionListener(e -> processDialog());
     this.file = file;
     this.txt.setEditable(false);
     this.txt.setText("< browse for file >");
@@ -43,6 +43,10 @@ public class XmlFileSelectorExtender {
     this(txt, btn, null);
   }
 
+  public XmlFileSelectorExtender() {
+    this(new JTextField(), new JButton("(browse)"));
+  }
+
   public final void setFile(String file) {
     File f = new File(file);
     setFile(f);
@@ -51,6 +55,13 @@ public class XmlFileSelectorExtender {
   public final void setFile(File file) {
     this.file = file;
     txt.setText(file.getAbsolutePath());
+  }
+
+  public final String getFileName(){
+    if (file == null)
+      return null;
+    else
+      return file.toString();
   }
 
   public final File getFile() {

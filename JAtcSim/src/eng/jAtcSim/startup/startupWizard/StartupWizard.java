@@ -5,6 +5,7 @@
  */
 package eng.jAtcSim.startup.startupWizard;
 
+import eng.jAtcSim.Stylist;
 import eng.jAtcSim.startup.*;
 
 /**
@@ -37,6 +38,10 @@ public class StartupWizard {
     panels[1] = new PnlWizardAirportTimeAndWeather();
     panels[2] = new PnlWizardTraffic();
     panels[3] = new PnlWizardSimulationAndRadar();
+
+//    for (JWizardPanel panel : panels) {
+//      Stylist.apply(panel, true);
+//    }
   }
 
   public void navigateToPage(int newPageIndex) {
@@ -56,6 +61,7 @@ public class StartupWizard {
       FrmWizardFrameNew frm = new FrmWizardFrameNew(
           this, newPageIndex, pnl
       );
+      Stylist.apply(frm, true);
       frm.setVisible(true);
     }
   }

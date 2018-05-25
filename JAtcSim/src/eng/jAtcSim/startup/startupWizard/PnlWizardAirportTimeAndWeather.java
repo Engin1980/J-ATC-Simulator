@@ -19,6 +19,7 @@ import eng.jAtcSim.lib.weathers.downloaders.MetarDownloaderNoaaGov;
 import eng.jAtcSim.lib.weathers.Weather;
 import eng.jAtcSim.lib.world.Airport;
 import eng.jAtcSim.lib.world.Area;
+import eng.jAtcSim.startup.startupWizard.panels.StaticWeatherPanel;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -108,12 +109,12 @@ public class PnlWizardAirportTimeAndWeather extends JWizardPanel {
 
   private void createLayout() {
 
-    JPanel wp = LayoutManager.createBoxPanel(LayoutManager.eHorizontalAlign.left, DISTANCE,
+    JPanel wp; /* = LayoutManager.createBoxPanel(LayoutManager.eHorizontalAlign.left, DISTANCE,
         LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.top, DISTANCE, txtMetar, btnDownloadMetar),
         LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.top , DISTANCE, jLabel2, cmbPresetMetars),
         LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.top, DISTANCE, jLabel1, cmbWeatherUpdate)
-    );
-    wp = LayoutManager.indentPanel(wp, 30);
+    ); */
+    wp = LayoutManager.indentPanel(new StaticWeatherPanel(), 30);
     wp = LayoutManager.createBoxPanel(LayoutManager.eHorizontalAlign.left, DISTANCE,
         rdbWeatherFromWeb,
         rdbWeatherFromUser,

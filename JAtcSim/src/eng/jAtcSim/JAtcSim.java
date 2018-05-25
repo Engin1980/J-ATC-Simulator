@@ -27,6 +27,8 @@ import eng.jAtcSim.radarBase.global.SoundManager;
 import eng.jAtcSim.startup.FrmIntro;
 import eng.jAtcSim.startup.StartupSettings;
 
+import javax.swing.border.TitledBorder;
+import java.awt.*;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Path;
@@ -48,15 +50,17 @@ public class JAtcSim {
 
   private static final boolean FAST_START = false;
   private static final Traffic specificTraffic =
-  //  new eng.jAtcSim.lib.traffic.TestTrafficOneApproach();
-   new eng.jAtcSim.lib.traffic.TestTrafficOneDeparture();
-  //  null;
+      //  new eng.jAtcSim.lib.traffic.TestTrafficOneApproach();
+      // new eng.jAtcSim.lib.traffic.TestTrafficOneDeparture();
+      null;
   private static AppSettings appSettings;
 
   /**
    * @param args the command line arguments
    */
   public static void main(String[] args) {
+
+    initStylist();
 
     Acc.setLog(new ApplicationLog());
 
@@ -68,10 +72,11 @@ public class JAtcSim {
     StartupSettings startupSettings = XmlLoadHelper.loadStartupSettings(appSettings.getStartupSettingsFile());
 
     FrmIntro frmIntro = new FrmIntro(startupSettings);
+    Stylist.apply(frmIntro, true);
     frmIntro.setVisible(true);
   }
 
-  public static void loadSimulation(StartupSettings startupSettings, String xmlFileName){
+  public static void loadSimulation(StartupSettings startupSettings, String xmlFileName) {
     KeyList.setDuplicatesChecking(false);
 
     System.out.println("* Loading the simulation");
@@ -141,6 +146,51 @@ public class JAtcSim {
   }
 
   public static void quit() {
+
+  }
+
+  private static void initStylist() {
+    // default theme
+    Stylist.add(
+        new Stylist.TypeFilter(java.awt.Component.class, true),
+        q -> {
+          q.setBackground(new Color(50, 50, 50));
+          q.setForeground(new Color(255, 255, 255));
+          Font fnt = new Font("Verdana", 0, 12);
+          q.setFont(fnt);
+        });
+
+    Stylist.add(
+        new Stylist.TypeFilter(javax.swing.JPanel.class, false)
+        ,
+        q -> {
+          javax.swing.JPanel p = (javax.swing.JPanel) q;
+          TitledBorder b = (TitledBorder) p.getBorder();
+          if (b != null) b.setTitleColor(new Color(222, 222, 255));
+        });
+
+    // intro page
+    Stylist.add(
+        new Stylist.TypeFilter(FrmIntro.class, false),
+        q -> {
+          Dimension d = new Dimension(500, 360);
+          q.setMinimumSize(d);
+          q.setPreferredSize(d);
+        });
+
+    Stylist.add(
+        new Stylist.AndFilter(
+            new Stylist.TypeFilter(javax.swing.JButton.class, false),
+            new Stylist.ParentTypeFilter(FrmIntro.class, true)
+        )
+        ,
+        q -> {
+          Dimension d = new Dimension(450, 32);
+          q.setPreferredSize(d);
+          q.setMinimumSize(d);
+          q.setMaximumSize(d);
+        });
+
 
   }
 
