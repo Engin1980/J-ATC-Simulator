@@ -9,9 +9,12 @@ import java.awt.Color;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.time.format.DateTimeFormatter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.JTextField;
+
+import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 /**
  *
@@ -19,36 +22,60 @@ import javax.swing.JTextField;
  */
 public class TimeExtender {
 
-  private JTextField txt;
+  private final JTextField txt;
   private Color okColor;
+  private Color failColor = Color.red;
+  private static final String pattern = "H:mm";
 
-  public TimeExtender(JTextField txt) {
-    if (txt == null) {
-      throw new IllegalArgumentException("Argument \"txt\" cannot be null.");
-    }
+  public TimeExtender(java.time.LocalTime time){
+    this(new JTextField(), time);
+  }
+
+  public TimeExtender(JTextField txt, java.time.LocalTime time) {
     this.txt = txt;
-    this.okColor = txt.getForeground();
     this.txt.addKeyListener(new KeyAdapter() {
       @Override
-      public void keyTyped(KeyEvent e) {
+      public void keyReleased(KeyEvent e) {
         checkSanity();
       }
     });
+    if (time != null){
+      setTime(time);
+    }
+    okColor = this.txt.getForeground();
     checkSanity();
   }
 
   private boolean checkSanity() {
-    Pattern p = Pattern.compile("^([01]?\\d):(\\d{2})$");
-    String input = txt.getText();
-    Matcher m = p.matcher(input);
-
-    if (m.find() == false) {
-      txt.setForeground(Color.red);
-      return false;
-    } else {
+    boolean ret = getTime() != null;
+    if (ret){
       txt.setForeground(okColor);
-      return true;
+    } else
+    {
+      if (txt.getForeground().equals(failColor) == false)
+        okColor = txt.getForeground();
+      txt.setForeground(failColor);
     }
+    return ret;
+  }
+
+  public JTextField getControl(){
+    return txt;
+  }
+
+  public void setTime(java.time.LocalTime time){
+    String h = time.format(DateTimeFormatter.ofPattern(pattern));
+    txt.setText(h);
+  }
+
+  public java.time.LocalTime getTime(){
+    java.time.LocalTime ret;
+    try{
+      ret = java.time.LocalTime.parse(txt.getText(), DateTimeFormatter.ofPattern(pattern));
+    } catch (Exception ex){
+      ret = null;
+    }
+    return ret;
   }
 
   public boolean isValid() {

@@ -2,8 +2,7 @@ package eng.jAtcSim.startup;
 
 import eng.jAtcSim.JAtcSim;
 import eng.jAtcSim.Stylist;
-import eng.jAtcSim.startup.startupWizard.FrmTest;
-import eng.jAtcSim.startup.startupWizard.StartupWizard;
+import eng.jAtcSim.startup.startupWizard.FrmStartupSettings;
 
 import javax.swing.*;
 import java.awt.*;
@@ -24,17 +23,10 @@ public class FrmIntro extends JFrame {
   }
 
   private void initializeComponents() {
-    JButton btnTest = new JButton("test");
-    btnTest.addActionListener(q->btnTest_click());
-
-    JButton btnWizard = new JButton("Adjust startup settings");
-    btnWizard.addActionListener(o->btnWizard_click());
+    JButton btnStartupSettings = new JButton("Adjust startup settings");
+    btnStartupSettings.addActionListener(o-> btnStartupSettings_click());
     JButton btnRun = new JButton("Start simulation");
     btnRun.addActionListener(o->btnRun_click());
-    JButton btnSave = new JButton("Save startup settings");
-    btnSave.setEnabled(false);
-    JButton btnLoad = new JButton("Load startup settings");
-    btnLoad.setEnabled(false);
     JButton btnLoadSim = new JButton("Load simulation");
     btnLoadSim.addActionListener(q->btnLoadSim_click());
     JButton btnExit = new JButton("Quit");
@@ -43,27 +35,20 @@ public class FrmIntro extends JFrame {
     JPanel pnl = LayoutManager.createBorderedPanel(16);
     pnl.add(
         LayoutManager.createBoxPanel(LayoutManager.eHorizontalAlign.center , 16,
-            btnTest, btnWizard, btnRun, btnSave, btnLoad, btnLoadSim, btnExit));
+            btnStartupSettings, btnRun, btnLoadSim, btnExit));
 
-    //ComponentUtils.adjustComponentTree(pnl, o->o instanceof  JButton, o-> { o.setPreferredSize(BUTTON_DIMENSION); o.setMinimumSize(BUTTON_DIMENSION);});
-
-    // this.setPreferredSize(new Dimension(300, 500));
     this.getContentPane().setLayout(new BorderLayout());
     this.getContentPane().add(pnl);
     this.pack();
   }
 
-  private void btnTest_click() {
-    FrmTest frm = new FrmTest();
+
+  private void btnStartupSettings_click(){
+    FrmStartupSettings frm = new FrmStartupSettings();
     Stylist.apply(frm, true);
     frm.pack();
+    frm.fillBySettings(this.startupSettings);
     frm.setVisible(true);
-  }
-
-  private void btnWizard_click(){
-    StartupWizard wizard = new StartupWizard(startupSettings);
-    wizard.run();
-    this.setVisible(false);
   }
 
   private void btnRun_click(){

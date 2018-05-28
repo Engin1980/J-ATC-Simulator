@@ -154,8 +154,8 @@ public class JAtcSim {
     Stylist.add(
         new Stylist.TypeFilter(java.awt.Component.class, true),
         q -> {
-          q.setBackground(new Color(50, 50, 50));
-          q.setForeground(new Color(255, 255, 255));
+          //q.setBackground(new Color(50, 50, 50));
+          //q.setForeground(new Color(255, 255, 255));
           Font fnt = new Font("Verdana", 0, 12);
           q.setFont(fnt);
         });
@@ -166,7 +166,7 @@ public class JAtcSim {
         q -> {
           javax.swing.JPanel p = (javax.swing.JPanel) q;
           TitledBorder b = (TitledBorder) p.getBorder();
-          if (b != null) b.setTitleColor(new Color(222, 222, 255));
+          //if (b != null) b.setTitleColor(new Color(222, 222, 255));
         });
 
     // intro page

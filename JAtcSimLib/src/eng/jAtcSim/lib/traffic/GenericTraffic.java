@@ -20,7 +20,7 @@ import eng.jAtcSim.lib.traffic.fleets.Fleets;
 /**
  * @author Marek Vajgl
  */
-public class GenericTraffic extends Traffic {
+public class  GenericTraffic extends Traffic {
 
   private static final String[] COMPANIES = new String[]{"CSA", "EZY", "BAW", "RYR"};
   private static final String[] PLANE_COUNTRY_CODES = new String[]{"OK", "OM"};

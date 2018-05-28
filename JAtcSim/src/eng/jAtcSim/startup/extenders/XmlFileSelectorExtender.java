@@ -5,8 +5,6 @@
  */
 package eng.jAtcSim.startup.extenders;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -19,7 +17,7 @@ public class XmlFileSelectorExtender {
 
   private final JTextField txt;
   private final JButton btn;
-  private File file = null;
+  private File file;
 
   public JTextField getTextControl(){
     return txt;
@@ -33,9 +31,8 @@ public class XmlFileSelectorExtender {
     this.txt = txt;
     this.btn = btn;
     this.btn.addActionListener(e -> processDialog());
-    this.file = file;
     this.txt.setEditable(false);
-    this.txt.setText("< browse for file >");
+    setFile(file);
     this.btn.setText("(browse)");
   }
 
@@ -47,14 +44,19 @@ public class XmlFileSelectorExtender {
     this(new JTextField(), new JButton("(browse)"));
   }
 
-  public final void setFile(String file) {
-    File f = new File(file);
-    setFile(f);
+  public final void setFileName(String fileName) {
+    if (fileName == null)
+      setFile(null);
+    else
+      setFile(new File(fileName));
   }
 
   public final void setFile(File file) {
     this.file = file;
-    txt.setText(file.getAbsolutePath());
+    if (this.file == null)
+      this.txt.setText("< browse for file >");
+    else
+      this.txt.setText(this.file.getPath());
   }
 
   public final String getFileName(){

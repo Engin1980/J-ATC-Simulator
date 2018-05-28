@@ -29,6 +29,10 @@ public class Weather {
   public Weather() {
   }
 
+  public int getVisibilityInMeters() {
+    return visibilityInM;
+  }
+
   public Weather(int windHeading, int windSpeetInKts, int visibilityInM, int cloudBaseInFt, double cloudBaseHitProbability) {
     this.windHeading = windHeading;
     this.windSpeetInKts = windSpeetInKts;

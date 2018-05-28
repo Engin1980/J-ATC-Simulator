@@ -1,0 +1,124 @@
+package eng.jAtcSim.startup.startupWizard.panels;
+
+import eng.eSystem.EStringBuilder;
+import eng.eSystem.collections.EList;
+import eng.eSystem.collections.IList;
+import eng.eSystem.utilites.ExceptionUtil;
+import eng.jAtcSim.lib.weathers.Weather;
+import eng.jAtcSim.lib.weathers.downloaders.MetarDecoder;
+import eng.jAtcSim.lib.weathers.downloaders.MetarDownloader;
+import eng.jAtcSim.lib.weathers.downloaders.MetarDownloaderNoaaGov;
+import eng.jAtcSim.startup.LayoutManager;
+import eng.jAtcSim.startup.MessageBox;
+import eng.jAtcSim.startup.extenders.ComboBoxExtender;
+import eng.jAtcSim.startup.extenders.NumericUpDownExtender;
+import eng.jAtcSim.startup.extenders.XComboBoxExtender;
+
+import javax.swing.*;
+
+public class WeatherPanel extends JPanel {
+
+  private static final int SPACE = 4;
+
+  private NumericUpDownExtender txtWindHeading = new NumericUpDownExtender(new JSpinner(), 0, 360, 40, 1);
+  private NumericUpDownExtender txtWindSpeed = new NumericUpDownExtender(new JSpinner(), 0, 100, 4, 1);
+  private NumericUpDownExtender txtVisibility = new NumericUpDownExtender(new JSpinner(), 0, 9999, 9999, 100);
+  private NumericUpDownExtender txtHitProbability = new NumericUpDownExtender(new JSpinner(), 0, 100, 0, 1);
+  private ComboBoxExtender cmbClouds = new ComboBoxExtender(new JComboBox(),
+      new EList(new String[]{"CLR", "FEW", "BKN", "SCT", "OVC"})
+  );
+  private XComboBoxExtender<Weather> cmbPreset = new XComboBoxExtender<>(new JComboBox(), getPredefinedWeathers());
+  private NumericUpDownExtender txtBaseAltitude = new NumericUpDownExtender(new JSpinner(), 0, 20000, 8000, 1000);
+  private String icao;
+
+  private static IList<XComboBoxExtender.Item<Weather>> getPredefinedWeathers() {
+    IList<XComboBoxExtender.Item<Weather>> ret = new EList<>();
+
+    String k;
+    Weather w;
+    XComboBoxExtender.Item<Weather> item;
+
+    k = "Clear";
+    w = new Weather(34, 4, 9999, 12_000, .1);
+    item = new XComboBoxExtender.Item(k, w);
+    ret.add(item);
+
+    k = "Foggy";
+    w = new Weather(61, 2, 100, 100, 1);
+    item = new XComboBoxExtender.Item(k, w);
+    ret.add(item);
+
+    k = "Windy";
+    w = new Weather(281, 31, 7000, 8_000, .7);
+    item = new XComboBoxExtender.Item(k, w);
+    ret.add(item);
+
+    k = "Rainy";
+    w = new Weather(174, 17, 1_500, 1000, .8);
+    item = new XComboBoxExtender.Item(k, w);
+    ret.add(item);
+
+    return ret;
+  }
+
+  public WeatherPanel() {
+
+    JPanel pnlA = LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.baseline, SPACE,
+        new JLabel("Wind direction (°):"),
+        txtWindHeading.getControl(),
+        new JLabel("Wind speed (kts):"),
+        txtWindSpeed.getControl());
+
+    JPanel pnlB = LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.baseline, SPACE,
+        new JLabel("Visibility (meters):"),
+        txtVisibility.getControl());
+
+    JPanel pnlC = LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.baseline, SPACE,
+        new JLabel("Cloud intensity (%):"),
+        cmbClouds.getControl(),
+        txtHitProbability.getControl(),
+        new JLabel("Base cloud altitude (ft):"),
+        txtBaseAltitude.getControl()
+    );
+
+    JButton btnDownload = new JButton("Download and use current");
+    btnDownload.addActionListener(q -> btnDownload_click(q));
+
+    JPanel pnlD = LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.baseline, SPACE,
+        new JLabel("Choose preset:"),
+        cmbPreset.getControl(),
+        btnDownload
+    );
+
+    LayoutManager.fillBoxPanel(this, LayoutManager.eHorizontalAlign.left, SPACE, pnlA, pnlB, pnlC, pnlD);
+  }
+
+  public void setRelativeIcao(String icao) {
+    this.icao = icao;
+  }
+
+  private void btnDownload_click(java.awt.event.ActionEvent evt) {
+    MetarDownloader down = new MetarDownloaderNoaaGov();
+    String s;
+    Weather w;
+
+    try {
+      s = down.downloadMetar(icao);
+      w = MetarDecoder.decode(s);
+      setWeather(w);
+    } catch (Exception ex) {
+      EStringBuilder sb = new EStringBuilder();
+      sb.appendFormatLine("Failed to download METAR for airport with code: %s. Reason:", icao);
+      sb.appendLine(ExceptionUtil.toFullString(ex, "\n"));
+      MessageBox.show(sb.toString(), "Error...");
+    }
+  }
+
+  private void setWeather(Weather w) {
+    txtBaseAltitude.setValue(w.getCloudBaseInFt());
+    txtVisibility.setValue(w.getVisibilityInMeters());
+    txtWindHeading.setValue(w.getWindHeading());
+    txtWindSpeed.setValue(w.getWindSpeetInKts());
+    txtHitProbability.setValue((int) (w.getCloudBaseHitProbability() * 100));
+  }
+}
