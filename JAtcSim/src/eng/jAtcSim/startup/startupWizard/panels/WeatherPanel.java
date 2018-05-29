@@ -3,6 +3,7 @@ package eng.jAtcSim.startup.startupWizard.panels;
 import eng.eSystem.EStringBuilder;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
+import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.utilites.ExceptionUtil;
 import eng.jAtcSim.lib.weathers.Weather;
 import eng.jAtcSim.lib.weathers.downloaders.MetarDecoder;
@@ -10,7 +11,6 @@ import eng.jAtcSim.lib.weathers.downloaders.MetarDownloader;
 import eng.jAtcSim.lib.weathers.downloaders.MetarDownloaderNoaaGov;
 import eng.jAtcSim.startup.LayoutManager;
 import eng.jAtcSim.startup.MessageBox;
-import eng.jAtcSim.startup.extenders.ComboBoxExtender;
 import eng.jAtcSim.startup.extenders.NumericUpDownExtender;
 import eng.jAtcSim.startup.extenders.XComboBoxExtender;
 
@@ -24,10 +24,10 @@ public class WeatherPanel extends JPanel {
   private NumericUpDownExtender txtWindSpeed = new NumericUpDownExtender(new JSpinner(), 0, 100, 4, 1);
   private NumericUpDownExtender txtVisibility = new NumericUpDownExtender(new JSpinner(), 0, 9999, 9999, 100);
   private NumericUpDownExtender txtHitProbability = new NumericUpDownExtender(new JSpinner(), 0, 100, 0, 1);
-  private ComboBoxExtender cmbClouds = new ComboBoxExtender(new JComboBox(),
-      new EList(new String[]{"CLR", "FEW", "BKN", "SCT", "OVC"})
+  private XComboBoxExtender<String> cmbClouds = new XComboBoxExtender(
+      new String[]{"CLR", "FEW", "SCT", "BKN",  "OVC"}
   );
-  private XComboBoxExtender<Weather> cmbPreset = new XComboBoxExtender<>(new JComboBox(), getPredefinedWeathers());
+  private XComboBoxExtender<Weather> cmbPreset = new XComboBoxExtender<>(getPredefinedWeathers());
   private NumericUpDownExtender txtBaseAltitude = new NumericUpDownExtender(new JSpinner(), 0, 20000, 8000, 1000);
   private String icao;
 
@@ -91,6 +91,31 @@ public class WeatherPanel extends JPanel {
     );
 
     LayoutManager.fillBoxPanel(this, LayoutManager.eHorizontalAlign.left, SPACE, pnlA, pnlB, pnlC, pnlD);
+
+    cmbClouds.getControl().addActionListener(q->cmbCloudsChanged());
+  }
+
+  private void cmbCloudsChanged() {
+    String item = cmbClouds.getSelectedItem();
+    switch (item){
+      case "CLR":
+        txtHitProbability.setValue(0);
+        break;
+      case "FEW":
+        txtHitProbability.setValue(1000/80);
+        break;
+      case "SCT":
+        txtHitProbability.setValue(4000/80);
+        break;
+      case "BKN":
+        txtHitProbability.setValue(6000/80);
+        break;
+      case "OVC":
+        txtHitProbability.setValue(100);
+        break;
+      default:
+        throw new EEnumValueUnsupportedException(item);
+    }
   }
 
   public void setRelativeIcao(String icao) {
@@ -120,5 +145,20 @@ public class WeatherPanel extends JPanel {
     txtWindHeading.setValue(w.getWindHeading());
     txtWindSpeed.setValue(w.getWindSpeetInKts());
     txtHitProbability.setValue((int) (w.getCloudBaseHitProbability() * 100));
+    selectHitProbabilityComboBoxByValue(w.getCloudBaseHitProbability());
+  }
+
+  private void selectHitProbabilityComboBoxByValue(double value){
+    value = value * .8;
+    if (value == 0)
+      cmbClouds.setSelectedItem("CLR");
+    else if (value < .2)
+      cmbClouds.setSelectedItem("FEW");
+    else if (value < .4)
+      cmbClouds.setSelectedItem("SCT");
+    else if (value < .8)
+      cmbClouds.setSelectedItem("BKN");
+    else
+      cmbClouds.setSelectedItem("OVC");
   }
 }

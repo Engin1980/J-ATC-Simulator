@@ -52,7 +52,7 @@ public class TrafficPanel extends JStartupPanel {
     nudTrafficDensity.setValue((int) (settings.traffic.densityPercentage * 100));
     adjustSelectedRdb(settings);
 
-    chkAllowDelays.setSelected(settings.traffic.customTraffic.delayAllowed);
+    chkAllowDelays.setSelected(settings.traffic.allowDelays);
     nudMovements.setValue(settings.traffic.customTraffic.movementsPerHour);
     sldArrivalsDepartures.setValue(settings.traffic.customTraffic.arrivals2departuresRatio);
     nudA.setValue(settings.traffic.customTraffic.weightTypeA);
@@ -68,12 +68,12 @@ public class TrafficPanel extends JStartupPanel {
   public void fillSettingsBy(StartupSettings settings) {
     settings.files.trafficXmlFile = fleTraffic.getFileName();
     settings.traffic.maxPlanes = nudMaxPlanes.getValue();
-    settings.traffic.trafficAirportDefinedTitle = (String) cmbAirportDefinedTraffic.getSelectedItem();
+    settings.traffic.trafficAirportDefinedTitle = cmbAirportDefinedTraffic.getSelectedItem();
     settings.traffic.densityPercentage = nudTrafficDensity.getValue() / 100d;
+    settings.traffic.customTraffic.movementsPerHour = nudMovements.getValue();
     adjustRdbSelected(settings);
 
-    settings.traffic.customTraffic.delayAllowed = chkAllowDelays.isSelected();
-    settings.traffic.customTraffic.movementsPerHour = nudMovements.getValue();
+    settings.traffic.allowDelays = chkAllowDelays.isSelected();
     settings.traffic.customTraffic.arrivals2departuresRatio = sldArrivalsDepartures.getValue();
     settings.traffic.customTraffic.weightTypeA = nudA.getValue();
     settings.traffic.customTraffic.weightTypeB = nudB.getValue();
@@ -111,7 +111,8 @@ public class TrafficPanel extends JStartupPanel {
         LayoutManager.eVerticalAlign.baseline,
         super.DISTANCE,
         new JLabel("Max planes count:"), nudMaxPlanes.getControl(),
-        new JLabel("Traffic density (%):"), nudTrafficDensity.getControl());
+        new JLabel("Traffic density (%):"), nudTrafficDensity.getControl(),
+        chkAllowDelays);
     pnlGlobalTrafficSettings.setBorder(BorderFactory.createTitledBorder("Global traffic settings:"));
 
     JPanel pnlTrafficSource = LayoutManager.createBoxPanel(LayoutManager.eHorizontalAlign.left, DISTANCE);
@@ -153,7 +154,7 @@ public class TrafficPanel extends JStartupPanel {
     rdbAirportDefined = new javax.swing.JRadioButton("Defined by active airport");
 
     rdbCustom = new javax.swing.JRadioButton("Use custom traffic");
-    rdbCustom.addChangeListener(q-> updateCustomPanelState());
+    rdbCustom.addChangeListener(q -> updateCustomPanelState());
 
     fleTraffic = new XmlFileSelectorExtender();
 

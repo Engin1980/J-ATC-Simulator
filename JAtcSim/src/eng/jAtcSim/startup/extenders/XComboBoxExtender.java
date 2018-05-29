@@ -1,14 +1,13 @@
 package eng.jAtcSim.startup.extenders;
 
+import com.sun.javafx.iio.common.ImageLoaderImpl;
 import eng.eSystem.Tuple;
-import eng.eSystem.collections.EList;
-import eng.eSystem.collections.EMap;
-import eng.eSystem.collections.IList;
-import eng.eSystem.collections.IMap;
+import eng.eSystem.collections.*;
 import eng.eSystem.events.EventAnonymousSimple;
 import eng.eSystem.events.EventSimple;
 
 import javax.swing.*;
+import java.util.Map;
 
 public class XComboBoxExtender<T> {
 
@@ -27,27 +26,77 @@ public class XComboBoxExtender<T> {
     }
   }
 
-  private final JComboBox cmb;
-  private DefaultComboBoxModel model;
-
+  private final JComboBox<T> cmb;
   private final EventSimple<XComboBoxExtender> selectedItemChanged = new EventSimple(this);
 
   public XComboBoxExtender() {
-    this(new JComboBox(), new EList<>());
+    this(new EList<>());
   }
 
-  public EventSimple<XComboBoxExtender> getSelectedItemChanged() {
-    return selectedItemChanged;
+  public XComboBoxExtender(String[] items){
+    this(
+        new JComboBox<>(),
+        convertToModel(items)
+    );
   }
 
-  public XComboBoxExtender(JComboBox cmb, IList<Item<T>> items) {
+  public XComboBoxExtender(IList<Item<T>> items){
+    this(
+        new JComboBox<>(),
+        convertToModel(items)
+    );
+  }
+
+  public XComboBoxExtender(IMap<String, T> items){
+    this(
+        new JComboBox<>(),
+        convertToModel(items)
+    );
+  }
+
+  private XComboBoxExtender(JComboBox<T> cmb, ComboBoxModel<T> model){
     this.cmb = cmb;
     this.cmb.addActionListener(q -> selectedItemChanged.raise());
-    setModel(items);
+    this.setModel(model);
+  }
+
+  private static <T> ComboBoxModel<T> convertToModel(IMap<String, T> map){
+    DefaultComboBoxModel model = new DefaultComboBoxModel();
+
+    for (Map.Entry<String, T> entry : map) {
+      Item<T> item = new Item<>(entry.getKey(), entry.getValue());
+      model.addElement(item);
+    }
+
+    return model;
+  }
+
+  private static <T> ComboBoxModel<T> convertToModel(String[] items){
+    DefaultComboBoxModel model = new DefaultComboBoxModel();
+
+    for (String item : items) {
+      model.addElement(new Item(item, item));
+    }
+
+    return model;
+  }
+
+  private static <T> ComboBoxModel<T> convertToModel(IList<Item<T>> lst){
+    DefaultComboBoxModel model = new DefaultComboBoxModel();
+
+    for (Item<T> item : lst) {
+        model.addElement(item);
+    }
+
+    return model;
   }
 
   public JComboBox getControl(){
     return cmb;
+  }
+
+  public EventSimple<XComboBoxExtender> getSelectedItemChanged() {
+    return selectedItemChanged;
   }
 
   public T getSelectedItem(){
@@ -68,12 +117,23 @@ public class XComboBoxExtender<T> {
       cmb.setSelectedIndex(index);
   }
 
-  public final void setModel(IList<Item<T>> items) {
-    model = new DefaultComboBoxModel();
-    for (Item<T> item : items) {
-      model.addElement(item);
-    }
+  public final void setModel(String[] items) {
+    ComboBoxModel model = convertToModel(items);
     cmb.setModel(model);
+  }
+
+  public final void setModel(IList<Item<T>> items) {
+    ComboBoxModel model = convertToModel(items);
+    cmb.setModel(model);
+  }
+
+  public final void setModel(IMap<String, T> map){
+    ComboBoxModel model = convertToModel(map);
+    cmb.setModel(model);
+  }
+
+  public final void setModel(ComboBoxModel<T> model){
+    this.cmb.setModel(model);
   }
 
   public void setSelectedItem(T item){

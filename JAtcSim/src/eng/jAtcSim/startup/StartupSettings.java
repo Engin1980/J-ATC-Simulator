@@ -36,15 +36,15 @@ public class StartupSettings {
 
     public eTrafficType type;
     public String trafficAirportDefinedTitle;
-    public CustomTraffic customTraffic;
+    public CustomTraffic customTraffic = new CustomTraffic();
     public int maxPlanes;
     public double densityPercentage;
+    public boolean allowDelays;
   }
 
   public static class CustomTraffic {
 
     public boolean useExtendedCallsigns;
-    public boolean delayAllowed;
     public int weightTypeD;
     public int weightTypeC;
     public int weightTypeB;

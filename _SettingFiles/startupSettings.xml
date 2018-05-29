@@ -2,8 +2,8 @@
   <files areaXmlFile=".\_SettingFiles\lkpr.xml" fleetsXmlFile=".\_SettingFiles\fleets.xml" planesXmlFile=".\_SettingFiles\planeTypes.xml" trafficXmlFile=""/>
   <recent icao="LKPR" time="6:40"/>
   <weather metar="METAR LKPR 121200Z 21012KT 9999 OVC080 13/10 Q1011" useOnline="false" userChanges="0"/>
-  <traffic densityPercentage="1.0" maxPlanes="60" trafficAirportDefinedTitle="Normal traffic" type="airportDefined">
-    <customTraffic arrivals2departuresRatio="6" delayAllowed="false" movementsPerHour="40" useExtendedCallsigns="false" weightTypeA="3" weightTypeB="8" weightTypeC="6" weightTypeD="1"/>
+  <traffic densityPercentage="1.0" maxPlanes="60" trafficAirportDefinedTitle="Normal traffic" type="airportDefined" allowDelays="false">
+    <customTraffic arrivals2departuresRatio="6" movementsPerHour="40" useExtendedCallsigns="false" weightTypeA="3" weightTypeB="8" weightTypeC="6" weightTypeD="1"/>
   </traffic>
   <radar packClass="eng.jAtcSim.frmPacks.sdi.Pack"/>
   <simulation emergencyPerDayProbability="1.0" secondLengthInMs="1000"/>

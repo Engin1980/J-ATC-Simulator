@@ -1,12 +1,16 @@
 package eng.jAtcSim.startup.startupWizard;
 
 import eng.eSystem.utilites.awt.ComponentUtils;
+import eng.jAtcSim.XmlLoadHelper;
 import eng.jAtcSim.startup.LayoutManager;
 import eng.jAtcSim.startup.StartupSettings;
+import eng.jAtcSim.startup.extenders.SwingFactory;
 import eng.jAtcSim.startup.startupWizard.panels.*;
+import sun.management.snmp.jvmmib.JvmRTBootClassPathTableMeta;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
 
 public class FrmStartupSettings extends JFrame {
   private JPanel pnlContent;
@@ -45,18 +49,56 @@ public class FrmStartupSettings extends JFrame {
   }
 
   private JPanel createBottomPanel() {
+
+    JButton btnSave = new JButton("Save");
+    JButton btnLoad = new JButton("Load");
+    JButton btnApply = new JButton("Apply");
+    JButton btnCancel = new JButton("Discard changes");
+
+    btnSave.addActionListener(q -> btnSave_click());
+    btnLoad.addActionListener(q->btnLoad_click());
+
     JPanel ret = LayoutManager.createBorderedPanel(
         null,
         null,
         LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.bottom, 4,
-            new JButton("Save"),
-            new JButton("Load")),
-        new JButton("Apply"),
+            btnSave,
+            btnLoad),
+        LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.bottom, 4,
+            btnApply,
+            btnCancel),
         null);
 
     ret = LayoutManager.createBorderedPanel(4, ret);
 
     return ret;
+  }
+
+  private void btnLoad_click() {
+    JFileChooser jfc = SwingFactory.createFileDialog();
+
+    int res = jfc.showOpenDialog(this);
+    if (res != JFileChooser.APPROVE_OPTION) return;
+
+    File file = jfc.getSelectedFile();
+
+    StartupSettings sett;
+    sett = XmlLoadHelper.loadStartupSettings(file.getAbsolutePath());
+    this.fillBySettings(sett);
+  }
+
+  private void btnSave_click() {
+    JFileChooser jfc = SwingFactory.createFileDialog();
+
+    int res = jfc.showSaveDialog(this);
+    if (res != JFileChooser.APPROVE_OPTION) return;
+
+    File file = jfc.getSelectedFile();
+
+    StartupSettings sett = new StartupSettings();
+    this.fillSettingsBy(sett);
+
+    XmlLoadHelper.saveStartupSettings(sett, file.getAbsolutePath());
   }
 
   private JPanel createContentPanel() {
