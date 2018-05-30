@@ -1,4 +1,4 @@
-package eng.jAtcSim.startup.startupWizard.panels;
+package eng.jAtcSim.startup.startupSettings.panels;
 
 import eng.eSystem.EStringBuilder;
 import eng.eSystem.collections.EList;
@@ -11,7 +11,7 @@ import eng.jAtcSim.lib.weathers.downloaders.MetarDownloader;
 import eng.jAtcSim.lib.weathers.downloaders.MetarDownloaderNoaaGov;
 import eng.jAtcSim.startup.LayoutManager;
 import eng.jAtcSim.startup.MessageBox;
-import eng.jAtcSim.startup.StartupSettings;
+import eng.jAtcSim.startup.startupSettings.StartupSettings;
 import eng.jAtcSim.startup.extenders.NumericUpDownExtender;
 import eng.jAtcSim.startup.extenders.XComboBoxExtender;
 

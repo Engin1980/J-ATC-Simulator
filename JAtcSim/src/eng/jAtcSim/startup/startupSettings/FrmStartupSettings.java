@@ -1,11 +1,10 @@
-package eng.jAtcSim.startup.startupWizard;
+package eng.jAtcSim.startup.startupSettings;
 
 import eng.eSystem.utilites.awt.ComponentUtils;
 import eng.jAtcSim.XmlLoadHelper;
 import eng.jAtcSim.startup.LayoutManager;
-import eng.jAtcSim.startup.StartupSettings;
 import eng.jAtcSim.startup.extenders.SwingFactory;
-import eng.jAtcSim.startup.startupWizard.panels.*;
+import eng.jAtcSim.startup.startupSettings.panels.*;
 
 import javax.swing.*;
 import java.awt.*;

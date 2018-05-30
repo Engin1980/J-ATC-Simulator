@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?><root __class="StartupSettings">
-  <files areaXmlFile=".\_SettingFiles\lkpr.xml" fleetsXmlFile=".\_SettingFiles\fleets.xml" planesXmlFile=".\_SettingFiles\planeTypes.xml" trafficXmlFile=""/>
-  <recent icao="LKPR" time="6:40"/>
-  <weather useOnline="false" />
-  <traffic densityPercentage="1.0" maxPlanes="60" trafficAirportDefinedTitle="Normal traffic" type="airportDefined" allowDelays="false">
-    <customTraffic arrivals2departuresRatio="6" movementsPerHour="40" useExtendedCallsigns="false" weightTypeA="3" weightTypeB="8" weightTypeC="6" weightTypeD="1"/>
+  <files areaXmlFile="_SettingFiles\LKPR.ar.xml" fleetsXmlFile="_SettingFiles\fleets.fl.xml" planesXmlFile="_SettingFiles\planeTypes.tp.xml" trafficXmlFile="(null)"/>
+  <recent icao="LKPR" time="14:32"/>
+  <weather cloudBaseAltitudeFt="3500" cloudBaseProbability="0.75" useOnline="false" visibilityInM="9999" windDirection="0" windSpeed="3"/>
+  <traffic allowDelays="true" densityPercentage="1.0" maxPlanes="60" trafficAirportDefinedTitle="----" type="custom">
+    <customTraffic arrivals2departuresRatio="5" movementsPerHour="30" useExtendedCallsigns="false" weightTypeA="1" weightTypeB="3" weightTypeC="20" weightTypeD="7"/>
   </traffic>
   <radar packClass="eng.jAtcSim.frmPacks.sdi.Pack"/>
-  <simulation emergencyPerDayProbability="1.0" secondLengthInMs="1000"/>
+  <simulation emergencyPerDayProbability="0.14285714285714285" secondLengthInMs="1000"/>
   <__typeMap>
-    <item class="eng.jAtcSim.startup.StartupSettings" key="StartupSettings"/>
+    <item class="eng.jAtcSim.startup.startupSettings.StartupSettings" key="StartupSettings"/>
   </__typeMap>
 </root>

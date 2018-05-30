@@ -5,12 +5,12 @@
  */
 package eng.jAtcSim;
 
+import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.ERuntimeException;
 import eng.eSystem.utilites.CollectionUtils;
 import eng.jAtcSim.frmPacks.Pack;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.Game;
-import eng.jAtcSim.lib.Simulation;
 import eng.jAtcSim.lib.airplanes.AirplaneTypes;
 import eng.jAtcSim.lib.global.ETime;
 import eng.jAtcSim.lib.global.KeyList;
@@ -25,7 +25,7 @@ import eng.jAtcSim.lib.world.Airport;
 import eng.jAtcSim.lib.world.Area;
 import eng.jAtcSim.radarBase.global.SoundManager;
 import eng.jAtcSim.startup.FrmIntro;
-import eng.jAtcSim.startup.StartupSettings;
+import eng.jAtcSim.startup.startupSettings.StartupSettings;
 
 import javax.swing.border.TitledBorder;
 import java.awt.*;
@@ -33,8 +33,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.LocalTime;
-import java.util.Calendar;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
@@ -69,7 +67,7 @@ public class JAtcSim {
 
     Recorder.init(appSettings.logFolder.toString());
 
-    // startup wizard
+    // startupSettings wizard
     StartupSettings startupSettings = XmlLoadHelper.loadStartupSettings(appSettings.getStartupSettingsFile());
 
     FrmIntro frmIntro = new FrmIntro(startupSettings);
@@ -105,8 +103,12 @@ public class JAtcSim {
 
     KeyList.setDuplicatesChecking(false);
 
-    resolveShortXmlFileNamesInStartupSettings(appSettings, startupSettings);
-    XmlLoadHelper.saveStartupSettings(startupSettings, appSettings.getStartupSettingsFile());
+    try {
+      resolveShortXmlFileNamesInStartupSettings(appSettings, startupSettings);
+      XmlLoadHelper.saveStartupSettings(startupSettings, appSettings.getStartupSettingsFile());
+    } catch (EApplicationException ex) {
+      throw new EApplicationException("Failed to normalize or save default settings.", ex);
+    }
 
     System.out.println("* Creating the simulation");
 
@@ -118,7 +120,6 @@ public class JAtcSim {
     gsi.planesXmlFile = startupSettings.files.planesXmlFile;
     gsi.secondLengthInMs = startupSettings.simulation.secondLengthInMs;
     gsi.specificTraffic = specificTraffic;
-    Calendar simTime = Calendar.getInstance();
     gsi.startTime = new ETime(startupSettings.recent.time);
     gsi.trafficXmlFile = startupSettings.files.trafficXmlFile;
     gsi.initialWeather = Weather.createClear();
@@ -129,7 +130,11 @@ public class JAtcSim {
     g = Game.create(gsi);
 
     // enable duplicates
-    KeyList.setDuplicatesChecking(true);
+    try {
+      KeyList.setDuplicatesChecking(true);
+    } catch (Exception ex){
+      throw new EApplicationException("Some element in source XML files is not unique. Some of the input XML files is not valid.", ex);
+    }
 
     System.out.println("* Initializing sound environment");
     // sound
@@ -217,10 +222,12 @@ public class JAtcSim {
       startupSettings.files.planesXmlFile = tmp.toString();
     }
 
-    tmp = Paths.get(startupSettings.files.trafficXmlFile);
-    if (tmp.isAbsolute()) {
-      tmp = appPath.relativize(tmp);
-      startupSettings.files.trafficXmlFile = tmp.toString();
+    if (startupSettings.files.trafficXmlFile != null) {
+      tmp = Paths.get(startupSettings.files.trafficXmlFile);
+      if (tmp.isAbsolute()) {
+        tmp = appPath.relativize(tmp);
+        startupSettings.files.trafficXmlFile = tmp.toString();
+      }
     }
   }
 

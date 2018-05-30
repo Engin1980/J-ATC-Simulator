@@ -24,7 +24,7 @@ import eng.jAtcSim.lib.world.approaches.UnpreciseApproach;
 import eng.jAtcSim.radarBase.DisplaySettings;
 import eng.jAtcSim.radarBase.parsing.RadarColorParser;
 import eng.jAtcSim.radarBase.parsing.RadarFontParser;
-import eng.jAtcSim.startup.StartupSettings;
+import eng.jAtcSim.startup.startupSettings.StartupSettings;
 
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -60,7 +60,7 @@ public class XmlLoadHelper {
     try {
       ret = (StartupSettings) ser.deserialize(fileName, StartupSettings.class);
     } catch (Exception ex) {
-      System.out.println("Failed to load startup settings from " + fileName + ". Defaults used. Reason: " + ExceptionUtil.toFullString(ex, "\n"));
+      System.out.println("Failed to load startupSettings settings from " + fileName + ". Defaults used. Reason: " + ExceptionUtil.toFullString(ex, "\n"));
       ret = new StartupSettings();
     }
 
@@ -75,7 +75,7 @@ public class XmlLoadHelper {
     try {
       ser.serialize(fileName, sett);
     } catch (Exception ex) {
-      System.out.println("Failed to save startup settings into " + fileName + ". Reason: " + ex.getMessage());
+      System.out.println("Failed to save startupSettings settings into " + fileName + ". Reason: " + ex.getMessage());
     }
   }
 

@@ -1,4 +1,4 @@
-package eng.jAtcSim.startup;
+package eng.jAtcSim.startup.startupSettings;
 
 import eng.eSystem.xmlSerialization.XmlIgnore;
 import eng.jAtcSim.XmlLoadHelper;
@@ -60,7 +60,7 @@ public class StartupSettings {
   }
 
   public static class Radar {
-    public String packClass = "Pack";
+    public String packClass = null;
   }
 
   public static class Simulation {
@@ -126,5 +126,6 @@ public class StartupSettings {
     this.weather = new Weather();
     this.traffic = new Traffic();
     this.simulation = new Simulation();
+    this.radar = new Radar();
   }
 }

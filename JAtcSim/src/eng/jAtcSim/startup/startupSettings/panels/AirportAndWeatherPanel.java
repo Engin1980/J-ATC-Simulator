@@ -1,11 +1,11 @@
-package eng.jAtcSim.startup.startupWizard.panels;
+package eng.jAtcSim.startup.startupSettings.panels;
 
 import eng.eSystem.collections.EList;
 import eng.eSystem.utilites.awt.ComponentUtils;
 import eng.jAtcSim.lib.world.Airport;
 import eng.jAtcSim.lib.world.Area;
 import eng.jAtcSim.startup.LayoutManager;
-import eng.jAtcSim.startup.StartupSettings;
+import eng.jAtcSim.startup.startupSettings.StartupSettings;
 import eng.jAtcSim.startup.extenders.XComboBoxExtender;
 
 import javax.swing.*;

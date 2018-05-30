@@ -1,12 +1,11 @@
-package eng.jAtcSim.startup.startupWizard.panels;
+package eng.jAtcSim.startup.startupSettings.panels;
 
-import eng.eSystem.events.EventAnonymousSimple;
 import eng.eSystem.utilites.ExceptionUtil;
 import eng.jAtcSim.XmlLoadHelper;
 import eng.jAtcSim.lib.world.Area;
 import eng.jAtcSim.startup.LayoutManager;
 import eng.jAtcSim.startup.MessageBox;
-import eng.jAtcSim.startup.StartupSettings;
+import eng.jAtcSim.startup.startupSettings.StartupSettings;
 import eng.jAtcSim.startup.extenders.SwingFactory;
 import eng.jAtcSim.startup.extenders.XmlFileSelectorExtender;
 
