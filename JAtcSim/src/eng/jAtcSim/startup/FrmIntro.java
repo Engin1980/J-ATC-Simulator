@@ -29,7 +29,7 @@ public class FrmIntro extends JFrame {
   }
 
   private void initializeComponents() {
-    JButton btnStartupSettings = new JButton("Adjust startupSettings settings");
+    JButton btnStartupSettings = new JButton("Adjust startup settings");
     btnStartupSettings.addActionListener(o -> btnStartupSettings_click());
     JButton btnRun = new JButton("Start simulation");
     btnRun.addActionListener(o -> btnRun_click());
@@ -68,7 +68,8 @@ public class FrmIntro extends JFrame {
     try {
       JAtcSim.startSimulation(this.startupSettings);
     } catch (Exception ex) {
-      MessageBox.show("Failed to start up the simulation. Something is wrong. Check the startupSettings settings. \n\n" +
+      ex.printStackTrace();
+      MessageBox.show("Failed to start up the simulation. Something is wrong. Check the startup settings. \n\n" +
           ExceptionUtil.toFullString(ex, "\n"), "Error during simulation start-up.");
       this.setVisible(true);
     }
@@ -86,6 +87,7 @@ public class FrmIntro extends JFrame {
     try {
       JAtcSim.loadSimulation(this.startupSettings, jf.getSelectedFile().getAbsolutePath());
     } catch (Exception ex) {
+      ex.printStackTrace();
       MessageBox.show("Failed to load the simulation. \n\n" +
           ExceptionUtil.toFullString(ex, "\n"), "Error during simulation load.");
       this.setVisible(true);

@@ -388,7 +388,8 @@
       <trafficDefinitions>
         <genericTraffic title="Very lite generated traffic" probabilityOfNonCommercialFlight="0.7"
                         probabilityOfDeparture="0.5"
-                        delayProbability="0.03" maxDelayInMinutesPerStep="30" useExtendedCallsigns="true">
+                        delayProbability="0.03" maxDelayInMinutesPerStep="30" useExtendedCallsigns="true"
+                        >
           <movementsPerHour>
             <item>0</item>
             <item>0</item>
@@ -421,6 +422,14 @@
             <item>0.2</item>
             <item>0.2</item>
           </probabilityOfCategory>
+          <companies>
+            <item>CSA</item>
+            <item>EZY</item>
+          </companies>
+          <countryCodes>
+            <item>OK</item>
+            <item>OM</item>
+          </countryCodes>
         </genericTraffic>
       </trafficDefinitions>
       <atcTemplates>

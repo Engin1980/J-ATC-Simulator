@@ -248,7 +248,9 @@ public class JAtcSim {
   }
 
   private static GenericTraffic generateCustomTraffic(StartupSettings.Traffic trf) {
-    GenericTraffic ret = new GenericTraffic(trf.customTraffic.movementsPerHour,
+    GenericTraffic ret = new GenericTraffic(
+        trf.customTraffic.companies, trf.customTraffic.countryCodes,
+        trf.customTraffic.movementsPerHour,
         trf.customTraffic.arrivals2departuresRatio / 10d,
         trf.customTraffic.nonCommercialFlightProbability,
         trf.customTraffic.weightTypeA,

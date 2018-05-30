@@ -1,5 +1,8 @@
 package eng.jAtcSim.startup.startupSettings;
 
+import eng.eSystem.EStringBuilder;
+import eng.eSystem.collections.EList;
+import eng.eSystem.collections.IList;
 import eng.eSystem.xmlSerialization.XmlIgnore;
 import eng.jAtcSim.XmlLoadHelper;
 import eng.jAtcSim.lib.airplanes.AirplaneTypes;
@@ -57,6 +60,39 @@ public class StartupSettings {
     public int arrivals2departuresRatio;
     public int movementsPerHour;
     public double nonCommercialFlightProbability;
+    public String countryCodes = "OK";
+    public String companies = "CSA;EZY";
+
+    public String[] getCountryCodes() {
+      return toModel(this.countryCodes);
+    }
+
+    public void setCountryCodes(String[] countryCodes) {
+      this.countryCodes = fromModel(countryCodes);
+    }
+
+    public String[] getCompanies() {
+      return toModel(companies);
+    }
+
+    public void setCompanies(String[] companies) {
+      this.companies = fromModel(companies);
+    }
+
+    private String[] toModel(String value){
+      String[] ret = value.split(";");
+      IList<String> lst = new EList<>(ret);
+      lst = lst.where(q->q != null).select(q->q.trim()).where(q->q.length() > 0);
+      ret = lst.toArray(String.class);
+      return ret;
+    }
+
+    private String fromModel(String[] values){
+      IList<String> lst = new EList<>(values);
+      EStringBuilder sb = new EStringBuilder();
+      sb.appendItems(lst, q->q, ";");
+      return sb.toString();
+    }
   }
 
   public static class Radar {

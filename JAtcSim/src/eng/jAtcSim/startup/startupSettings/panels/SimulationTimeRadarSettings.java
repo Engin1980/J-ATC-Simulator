@@ -9,6 +9,7 @@ import eng.jAtcSim.startup.extenders.NumericUpDownExtender;
 import eng.jAtcSim.startup.extenders.TimeExtender;
 
 import javax.swing.*;
+import java.time.LocalTime;
 
 /**
  * @author Marek Vajgl
@@ -46,10 +47,15 @@ public class SimulationTimeRadarSettings extends JStartupPanel {
 
   private void createLayout() {
 
+    JButton btnNow = new JButton("Set current");
+    btnNow.addActionListener(q->{
+      tmeTime.setTime(LocalTime.now());
+    });
+
     JPanel pnl =
         LayoutManager.createFormPanel(3, 2,
             new JLabel("Simulation speed:"), this.nudSecondLength.getControl(),
-            new JLabel("Startup time:"), tmeTime.getControl(),
+            new JLabel("Startup time:"), LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.baseline, DISTANCE, tmeTime.getControl(), btnNow),
             new JLabel("Radar screen type:"), cmbRadarClass.getControl()
         );
 

@@ -241,6 +241,28 @@
               </xs:sequence>
             </xs:complexType>
           </xs:element>
+          <xs:element name="companies">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="item" minOccurs="1" maxOccurs="unbounded">
+                  <xs:simpleType>
+                    <xs:restriction base="xs:string" />
+                  </xs:simpleType>
+                </xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="countryCodes">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="item" minOccurs="1" maxOccurs="unbounded">
+                  <xs:simpleType>
+                    <xs:restriction base="xs:string" />
+                  </xs:simpleType>
+                </xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
         </xs:sequence>
         <xs:attribute name="probabilityOfNonCommercialFlight" type="xs:double" use="required"/>
         <xs:attribute name="probabilityOfDeparture" type="xs:double" use="required"/>

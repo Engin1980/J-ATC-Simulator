@@ -8,13 +8,16 @@ package eng.jAtcSim.lib.traffic;
 import com.sun.org.apache.bcel.internal.generic.RET;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
+import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.utilites.NumberUtils;
+import eng.eSystem.xmlSerialization.XmlIgnore;
 import eng.eSystem.xmlSerialization.XmlOptional;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.AirplaneType;
 import eng.jAtcSim.lib.airplanes.Callsign;
 import eng.jAtcSim.lib.global.ETime;
 import eng.jAtcSim.lib.traffic.fleets.CompanyFleet;
+import eng.jAtcSim.lib.traffic.fleets.FleetType;
 import eng.jAtcSim.lib.traffic.fleets.Fleets;
 
 /**
@@ -22,8 +25,8 @@ import eng.jAtcSim.lib.traffic.fleets.Fleets;
  */
 public class GenericTraffic extends Traffic {
 
-  private static final String[] COMPANIES = new String[]{"CSA", "EZY", "BAW", "RYR"};
-  private static final String[] PLANE_COUNTRY_CODES = new String[]{"OK", "OM"};
+  private final String[] companies;
+  private final String[] countryCodes;
 
   private final double probabilityOfNonCommercialFlight;
 
@@ -46,9 +49,11 @@ public class GenericTraffic extends Traffic {
   private GenericTraffic() {
     this.probabilityOfDeparture = 0.5;
     this.probabilityOfNonCommercialFlight = 0;
+    this.companies = new String[0];
+    this.countryCodes = new String[0];
   }
 
-  public GenericTraffic(int movementsPerHour, double probabilityOfDeparture, double probabilityOfNonCommercialFlight,
+  public GenericTraffic(String companies, String countryCodes, int movementsPerHour, double probabilityOfDeparture, double probabilityOfNonCommercialFlight,
                         int trafficCustomWeightTypeA, int trafficCustomWeightTypeB, int trafficCustomWeightTypeC, int trafficCustomWeightTypeD,
                         boolean useExtendedCallsigns) {
 
@@ -59,6 +64,9 @@ public class GenericTraffic extends Traffic {
     if (NumberUtils.isBetweenOrEqual(0, probabilityOfDeparture, 1) == false) {
       throw new IllegalArgumentException("\"probabilityOfDeparture\" must be between 0 and 1.");
     }
+
+    this.companies = companies.split(";");
+    this.countryCodes = countryCodes.split(";");
 
     for (int i = 0; i < this.movementsPerHour.length; i++) {
       this.movementsPerHour[i] = movementsPerHour;
@@ -116,7 +124,7 @@ public class GenericTraffic extends Traffic {
 //    }
 //  }
 
-  private char getRandomCategory() {
+  private char getRandomCategory(String companyName) {
     char ret = 'A';
     double sum = 0;
     for (double v : probabilityOfCategory) {
@@ -143,15 +151,15 @@ public class GenericTraffic extends Traffic {
     boolean isNonCommercial = Acc.rnd().nextDouble() < this.probabilityOfNonCommercialFlight;
     String prefix;
     if (isNonCommercial)
-      prefix = this.PLANE_COUNTRY_CODES[Acc.rnd().nextInt(this.PLANE_COUNTRY_CODES.length)];
+      prefix = this.countryCodes[Acc.rnd().nextInt(this.countryCodes.length)];
     else
-      prefix = this.COMPANIES[Acc.rnd().nextInt(this.COMPANIES.length)];
+      prefix = this.companies[Acc.rnd().nextInt(this.companies.length)];
     Callsign cls = generateUnusedCallsign(prefix, isNonCommercial);
 
     int delayInMinutes = generateDelayMinutes();
 
     AirplaneType type;
-    char category = getRandomCategory();
+    char category = getRandomCategory(prefix);
     if (isNonCommercial) {
       type = Acc.sim().getAirplaneTypes().getRandomFromCategory(category);
     } else {
@@ -167,7 +175,11 @@ public class GenericTraffic extends Traffic {
     CompanyFleet cf = Acc.fleets().tryGetByIcao(companyCode);
     if (cf == null) cf = Fleets.getDefaultCompanyFleet();
 
-    AirplaneType ret = cf.tryGetRandomByCategory(category).getAirplaneType();
+    FleetType available = cf.tryGetRandomByCategory(category);
+    if (available == null){
+      throw new EApplicationException("Unable to find any type for category " + category + " for company " + companyCode + " in loaded fleet. Check fleet?");
+    }
+    AirplaneType ret = available.getAirplaneType();
     if (ret == null)
       ret = cf.getRandom().getAirplaneType();
 

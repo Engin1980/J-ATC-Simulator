@@ -140,9 +140,6 @@ public class Simulation {
       LoadSave.setRelativeAirplanes(lst);
     }
 
-    IList<Border> mrvaAreas =
-        this.area.getBorders().where(q -> q.getType() == Border.eType.mrva);
-
     this.prm.getAll().forEach(q->this.mrvaManager.registerPlane(q));
     this.prm.init();
   }
@@ -214,6 +211,7 @@ public class Simulation {
 
     trafficManager.setTraffic(traffic);
     trafficManager.generateNewTrafficIfRequired();
+    trafficManager.throwOutElapsedMovements(this.now.addMinutes(-5));
   }
 
   public EventSimple<Simulation> getSecondElapsedEvent() {

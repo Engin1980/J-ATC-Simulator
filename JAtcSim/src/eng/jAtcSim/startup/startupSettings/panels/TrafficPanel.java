@@ -15,11 +15,8 @@ import eng.jAtcSim.lib.world.Airport;
 import eng.jAtcSim.lib.world.Area;
 import eng.jAtcSim.shared.LayoutManager;
 import eng.jAtcSim.shared.MessageBox;
+import eng.jAtcSim.startup.extenders.*;
 import eng.jAtcSim.startup.startupSettings.StartupSettings;
-import eng.jAtcSim.startup.extenders.NumericUpDownExtender;
-import eng.jAtcSim.startup.extenders.SwingFactory;
-import eng.jAtcSim.startup.extenders.XComboBoxExtender;
-import eng.jAtcSim.startup.extenders.XmlFileSelectorExtender;
 
 import javax.swing.*;
 
@@ -43,10 +40,13 @@ public class TrafficPanel extends JStartupPanel {
   private XComboBoxExtender<String> cmbAirportDefinedTraffic;
   private NumericUpDownExtender nudTrafficDensity;
   private JPanel pnlCustomTraffic;
+  private ItemTextFieldExtender txtCompanies;
+  private ItemTextFieldExtender txtCountryCodes;
 
   public TrafficPanel() {
     initComponents();
     Sources.getAreaChanged().add(() -> areaChanged());
+    Sources.getFleetsChanged().add(() -> fleetsChanged());
   }
 
   @Override
@@ -65,6 +65,8 @@ public class TrafficPanel extends JStartupPanel {
     nudC.setValue(settings.traffic.customTraffic.weightTypeC);
     nudD.setValue(settings.traffic.customTraffic.weightTypeD);
     chkCustomExtendedCallsigns.setSelected(settings.traffic.customTraffic.useExtendedCallsigns);
+    txtCompanies.setItems(settings.traffic.customTraffic.getCompanies());
+    txtCountryCodes.setItems(settings.traffic.customTraffic.getCountryCodes());
 
     areaChanged();
   }
@@ -86,6 +88,8 @@ public class TrafficPanel extends JStartupPanel {
     settings.traffic.customTraffic.weightTypeC = nudC.getValue();
     settings.traffic.customTraffic.weightTypeD = nudD.getValue();
     settings.traffic.customTraffic.useExtendedCallsigns = chkCustomExtendedCallsigns.isSelected();
+    settings.traffic.customTraffic.setCompanies(txtCompanies.getItems());
+    settings.traffic.customTraffic.setCountryCodes(txtCountryCodes.getItems());
   }
 
   public void areaChanged() {
@@ -103,6 +107,10 @@ public class TrafficPanel extends JStartupPanel {
     else
       mp.add(new XComboBoxExtender.Item<>("Area not loaded", "----"));
     cmbAirportDefinedTraffic.setModel(mp);
+  }
+
+  private void fleetsChanged() {
+    txtCompanies.setModel(Sources.getFleets().getIcaos());
   }
 
   private void initComponents() {
@@ -147,11 +155,13 @@ public class TrafficPanel extends JStartupPanel {
 //        LayoutManager.createBorderedPanel(0, rdbCustom));
 
 
-    this.pnlCustomTraffic = LayoutManager.createFormPanel(5, 2,
+    this.pnlCustomTraffic = LayoutManager.createFormPanel(7, 2,
         null, chkCustomExtendedCallsigns,
         new JLabel("Movements / hour:"), nudMovements.getControl(),
         new JLabel("Non-commercial flights (%):"), nudNonCommercials.getControl(),
         new JLabel("Arrivals <-> Departures"), sldArrivalsDepartures,
+        new JLabel("Companies (ICAO;ICAO;...):"), txtCompanies.getControl(),
+        new JLabel("Country codes (as above):"), txtCountryCodes.getControl(),
         new JLabel("Plane weights A/B/C/D"), LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.baseline, DISTANCE,
             nudA.getControl(), nudB.getControl(), nudC.getControl(), nudD.getControl())
     );
@@ -200,6 +210,8 @@ public class TrafficPanel extends JStartupPanel {
     cmbAirportDefinedTraffic = new XComboBoxExtender<>();
     nudTrafficDensity = new NumericUpDownExtender(new JSpinner(), 0, 100, 100, 1);
     nudNonCommercials = new NumericUpDownExtender(new JSpinner(), 0, 100, 0, 10);
+    txtCompanies = new ItemTextFieldExtender();
+    txtCountryCodes = new ItemTextFieldExtender();
 
     grpRdb.add(rdbXml);
     grpRdb.add(rdbCustom);

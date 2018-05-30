@@ -73,6 +73,7 @@ public class FilesPanel extends JStartupPanel {
       ret = true;
       Sources.setArea(area);
     } catch (Exception ex) {
+      ex.printStackTrace();
       MessageBox.show("Unable to load area file " + fileName + ".\n\nReason:\n" + ExceptionUtil.toFullString(ex, "\n"),
           "Error...");
       ret = false;

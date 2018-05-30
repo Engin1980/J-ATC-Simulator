@@ -71,6 +71,10 @@ public class TrafficManager {
     this.traffic = traffic;
   }
 
+  public void throwOutElapsedMovements(ETime minTime) {
+    scheduledMovements.remove(q->q.getInitTime().isBefore(minTime));
+  }
+
   private Airplane convertMovementToAirplane(Movement m) {
     if (m.isDeparture()) {
       return generateNewDepartureAirplaneFromMovement(m);

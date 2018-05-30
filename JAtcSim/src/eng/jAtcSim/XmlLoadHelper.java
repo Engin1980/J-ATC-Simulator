@@ -1,5 +1,8 @@
 package eng.jAtcSim;
 
+import com.sun.xml.internal.bind.v2.model.core.EnumLeafInfo;
+import eng.eSystem.EStringBuilder;
+import eng.eSystem.collections.EList;
 import eng.eSystem.exceptions.ERuntimeException;
 import eng.eSystem.utilites.ExceptionUtil;
 import eng.eSystem.xmlSerialization.*;
@@ -60,7 +63,7 @@ public class XmlLoadHelper {
     try {
       ret = (StartupSettings) ser.deserialize(fileName, StartupSettings.class);
     } catch (Exception ex) {
-      System.out.println("Failed to load startupSettings settings from " + fileName + ". Defaults used. Reason: " + ExceptionUtil.toFullString(ex, "\n"));
+      System.out.println("Failed to load startup settings from " + fileName + ". Defaults used. Reason: " + ExceptionUtil.toFullString(ex, "\n"));
       ret = new StartupSettings();
     }
 
@@ -75,7 +78,7 @@ public class XmlLoadHelper {
     try {
       ser.serialize(fileName, sett);
     } catch (Exception ex) {
-      System.out.println("Failed to save startupSettings settings into " + fileName + ". Reason: " + ex.getMessage());
+      System.out.println("Failed to save startup settings into " + fileName + ". Reason: " + ex.getMessage());
     }
   }
 
