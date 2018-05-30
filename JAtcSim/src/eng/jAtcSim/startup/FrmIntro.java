@@ -2,6 +2,7 @@ package eng.jAtcSim.startup;
 
 import eng.jAtcSim.JAtcSim;
 import eng.jAtcSim.Stylist;
+import eng.jAtcSim.startup.extenders.SwingFactory;
 import eng.jAtcSim.startup.startupWizard.FrmStartupSettings;
 
 import javax.swing.*;
@@ -40,15 +41,20 @@ public class FrmIntro extends JFrame {
     this.getContentPane().setLayout(new BorderLayout());
     this.getContentPane().add(pnl);
     this.pack();
+    this.setLocationRelativeTo(null);
   }
 
 
   private void btnStartupSettings_click(){
     FrmStartupSettings frm = new FrmStartupSettings();
     Stylist.apply(frm, true);
-    frm.pack();
     frm.fillBySettings(this.startupSettings);
-    frm.setVisible(true);
+    SwingFactory.showDialog(frm, "Startup settings", this);
+
+    if (frm.isDialogResultOk()){
+      frm.fillSettingsBy(this.startupSettings);
+    }
+
   }
 
   private void btnRun_click(){

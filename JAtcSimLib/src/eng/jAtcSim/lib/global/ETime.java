@@ -5,6 +5,7 @@
  */
 package eng.jAtcSim.lib.global;
 
+import java.time.LocalTime;
 import java.util.Calendar;
 
 /**
@@ -29,10 +30,10 @@ public class ETime implements Comparable<ETime> {
     set(hour, minute, second);
   }
 
-  public ETime(Calendar c) {
-    int h = c.get(Calendar.HOUR_OF_DAY);
-    int m = c.get(Calendar.MINUTE);
-    int s = c.get(Calendar.SECOND);
+  public ETime(LocalTime localTime) {
+    int h = localTime.getHour();
+    int m = localTime.getMinute();
+    int s = localTime.getSecond();
 
     set(h, m, s);
   }

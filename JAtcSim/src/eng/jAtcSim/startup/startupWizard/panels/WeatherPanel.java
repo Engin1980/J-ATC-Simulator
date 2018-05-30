@@ -11,12 +11,13 @@ import eng.jAtcSim.lib.weathers.downloaders.MetarDownloader;
 import eng.jAtcSim.lib.weathers.downloaders.MetarDownloaderNoaaGov;
 import eng.jAtcSim.startup.LayoutManager;
 import eng.jAtcSim.startup.MessageBox;
+import eng.jAtcSim.startup.StartupSettings;
 import eng.jAtcSim.startup.extenders.NumericUpDownExtender;
 import eng.jAtcSim.startup.extenders.XComboBoxExtender;
 
 import javax.swing.*;
 
-public class WeatherPanel extends JPanel {
+public class WeatherPanel extends JStartupPanel {
 
   private static final int SPACE = 4;
 
@@ -93,6 +94,29 @@ public class WeatherPanel extends JPanel {
     LayoutManager.fillBoxPanel(this, LayoutManager.eHorizontalAlign.left, SPACE, pnlA, pnlB, pnlC, pnlD);
 
     cmbClouds.getControl().addActionListener(q->cmbCloudsChanged());
+  }
+
+  @Override
+  public void fillBySettings(StartupSettings settings) {
+    StartupSettings.Weather w = settings.weather;
+
+    txtBaseAltitude.setValue(w.cloudBaseAltitudeFt);
+    txtVisibility.setValue(w.visibilityInM);
+    txtHitProbability.setValue((int) (w.cloudBaseProbability * 100));
+    txtWindHeading.setValue(w.windDirection);
+    txtWindSpeed.setValue(w.windSpeed);
+    selectHitProbabilityComboBoxByValue(w.cloudBaseProbability);
+  }
+
+  @Override
+  public void fillSettingsBy(StartupSettings settings) {
+    StartupSettings.Weather w = settings.weather;
+
+    w.cloudBaseAltitudeFt = txtBaseAltitude.getValue();
+    w.visibilityInM = txtVisibility.getValue();
+    w.cloudBaseProbability  = txtHitProbability.getValue() / 100d;
+    w.windDirection = txtWindHeading.getValue();
+    w.windSpeed = txtWindSpeed.getValue();
   }
 
   private void cmbCloudsChanged() {

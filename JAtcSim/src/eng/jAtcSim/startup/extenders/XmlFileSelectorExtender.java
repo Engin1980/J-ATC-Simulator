@@ -5,9 +5,11 @@
  */
 package eng.jAtcSim.startup.extenders;
 
+import java.awt.*;
 import java.io.File;
 import javax.swing.*;
-import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 /**
  *
@@ -15,6 +17,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
  */
 public class XmlFileSelectorExtender {
 
+  private final SwingFactory.FileDialogType fileType;
   private final JTextField txt;
   private final JButton btn;
   private File file;
@@ -27,21 +30,52 @@ public class XmlFileSelectorExtender {
     return btn;
   }
 
-  public XmlFileSelectorExtender(JTextField txt, JButton btn, File file) {
+  public XmlFileSelectorExtender(JTextField txt, JButton btn, File file, SwingFactory.FileDialogType type) {
+    this.fileType = type;
     this.txt = txt;
     this.btn = btn;
     this.btn.addActionListener(e -> processDialog());
     this.txt.setEditable(false);
     setFile(file);
     this.btn.setText("(browse)");
+
+    this.txt.getDocument().addDocumentListener(new DocumentListener() {
+      @Override
+      public void insertUpdate(DocumentEvent e) {
+        checkFileExists();
+      }
+
+      @Override
+      public void removeUpdate(DocumentEvent e) {
+        checkFileExists();
+      }
+
+      @Override
+      public void changedUpdate(DocumentEvent e) {
+        checkFileExists();
+      }
+    });
   }
 
-  public XmlFileSelectorExtender(JTextField txt, JButton btn) {
-    this(txt, btn, null);
+  private static final Color FAIL_COLOR = new Color(255, 150, 150);
+  private Color okColor = null;
+  private void checkFileExists (){
+    File f = this.getFile();
+    if (f == null || !f.exists()){
+      if (okColor == null) okColor = txt.getBackground();
+      txt.setBackground(FAIL_COLOR);
+    } else {
+      txt.setBackground(okColor);
+      okColor = null;
+    }
   }
 
-  public XmlFileSelectorExtender() {
-    this(new JTextField(), new JButton("(browse)"));
+  public XmlFileSelectorExtender(JTextField txt, JButton btn, SwingFactory.FileDialogType type) {
+    this(txt, btn, null, type);
+  }
+
+  public XmlFileSelectorExtender(SwingFactory.FileDialogType type) {
+    this(new JTextField(), new JButton("(browse)"), type);
   }
 
   public final void setFileName(String fileName) {
@@ -71,9 +105,7 @@ public class XmlFileSelectorExtender {
   }
 
   private void processDialog() {
-    JFileChooser jfc = new JFileChooser();
-
-    jfc.setFileFilter(new FileNameExtensionFilter("XML file", "xml"));
+    JFileChooser jfc = SwingFactory.createFileDialog(fileType, this.getFileName());
 
     int res = jfc.showOpenDialog(txt);
 

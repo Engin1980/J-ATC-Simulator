@@ -6,6 +6,8 @@ import eng.jAtcSim.lib.airplanes.AirplaneTypes;
 import eng.jAtcSim.lib.traffic.fleets.Fleets;
 import eng.jAtcSim.lib.world.Area;
 
+import java.time.LocalTime;
+
 public class StartupSettings {
 
 
@@ -17,14 +19,17 @@ public class StartupSettings {
   }
 
   public static class Recent {
-    public String time; // TODO time should be local-time
+    public LocalTime time;
     public String icao;
   }
 
   public static class Weather {
-    public int userChanges;
     public boolean useOnline;
-    public String metar;
+    public int windDirection;
+    public int windSpeed;
+    public int cloudBaseAltitudeFt;
+    public double cloudBaseProbability;
+    public int visibilityInM;
   }
 
   public static class Traffic {

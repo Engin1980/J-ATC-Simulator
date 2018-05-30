@@ -7,6 +7,7 @@ import eng.jAtcSim.lib.world.Area;
 import eng.jAtcSim.startup.LayoutManager;
 import eng.jAtcSim.startup.MessageBox;
 import eng.jAtcSim.startup.StartupSettings;
+import eng.jAtcSim.startup.extenders.SwingFactory;
 import eng.jAtcSim.startup.extenders.XmlFileSelectorExtender;
 
 import javax.swing.*;
@@ -19,15 +20,15 @@ public class FilesPanel extends JStartupPanel {
   private final XmlFileSelectorExtender fleTypes;
 
   public FilesPanel() {
-    fleArea = new XmlFileSelectorExtender();
-    fleFleet = new XmlFileSelectorExtender();
-    fleTypes = new XmlFileSelectorExtender();
+    fleArea = new XmlFileSelectorExtender(SwingFactory.FileDialogType.area);
+    fleFleet = new XmlFileSelectorExtender(SwingFactory.FileDialogType.fleets);
+    fleTypes = new XmlFileSelectorExtender(SwingFactory.FileDialogType.types);
 
     this.setBorder(new TitledBorder("Source XML files:"));
     this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
     this.add(
         LayoutManager.createFormPanel(3, 3,
-            new JLabel("Area XML file:"),
+            new JLabel("area XML file:"),
             fleArea.getTextControl(),
             fleArea.getButtonControl(),
             new JLabel("Company fleets XML file:"),

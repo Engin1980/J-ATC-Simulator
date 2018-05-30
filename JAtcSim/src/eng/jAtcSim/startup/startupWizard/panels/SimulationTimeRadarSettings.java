@@ -8,6 +8,8 @@ import eng.jAtcSim.startup.extenders.TimeExtender;
 
 import javax.swing.*;
 import java.text.SimpleDateFormat;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -27,11 +29,13 @@ public class SimulationTimeRadarSettings extends JStartupPanel {
   @Override
   public void fillBySettings(StartupSettings settings) {
     this.nudSecondLength.setValue(settings.simulation.secondLengthInMs);
+    this.tmeTime.setTime(settings.recent.time);
   }
 
   @Override
   public void fillSettingsBy(StartupSettings settings) {
     settings.simulation.secondLengthInMs = this.nudSecondLength.getValue();
+    settings.recent.time = this.tmeTime.getTime();
   }
 
   private void initComponents() {

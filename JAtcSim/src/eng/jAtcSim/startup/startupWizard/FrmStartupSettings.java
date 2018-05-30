@@ -6,14 +6,18 @@ import eng.jAtcSim.startup.LayoutManager;
 import eng.jAtcSim.startup.StartupSettings;
 import eng.jAtcSim.startup.extenders.SwingFactory;
 import eng.jAtcSim.startup.startupWizard.panels.*;
-import sun.management.snmp.jvmmib.JvmRTBootClassPathTableMeta;
 
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 
-public class FrmStartupSettings extends JFrame {
+public class FrmStartupSettings extends JPanel {
   private JPanel pnlContent;
+  private boolean dialogResultOk;
+
+  public boolean isDialogResultOk() {
+    return dialogResultOk;
+  }
 
   public FrmStartupSettings() throws HeadlessException {
 
@@ -26,10 +30,8 @@ public class FrmStartupSettings extends JFrame {
     // bottom
     JPanel pnlBottom = createBottomPanel();
 
-    JPanel pnl = LayoutManager.createBorderedPanel(pnlTop, pnlBottom, null, null, pnlContent);
-
-    this.setContentPane(pnl);
-    this.pack();
+    //JPanel pnl = LayoutManager.createBorderedPanel(pnlTop, pnlBottom, null, null, pnlContent);
+    LayoutManager.fillBorderedPanel(this, pnlTop, pnlBottom, null, null, pnlContent);
   }
 
   public void fillBySettings(StartupSettings settings) {
@@ -53,7 +55,9 @@ public class FrmStartupSettings extends JFrame {
     JButton btnSave = new JButton("Save");
     JButton btnLoad = new JButton("Load");
     JButton btnApply = new JButton("Apply");
+    btnApply.addActionListener(q->{this.dialogResultOk = true; this.getRootPane().getParent().setVisible(false);});
     JButton btnCancel = new JButton("Discard changes");
+    btnCancel.addActionListener(q->{this.dialogResultOk = false; this.getRootPane().getParent().setVisible(false);});
 
     btnSave.addActionListener(q -> btnSave_click());
     btnLoad.addActionListener(q->btnLoad_click());
@@ -74,8 +78,9 @@ public class FrmStartupSettings extends JFrame {
     return ret;
   }
 
+  private String lastStartupSettingsFileName = null;
   private void btnLoad_click() {
-    JFileChooser jfc = SwingFactory.createFileDialog();
+    JFileChooser jfc = SwingFactory.createFileDialog(SwingFactory.FileDialogType.startupSettings, lastStartupSettingsFileName);
 
     int res = jfc.showOpenDialog(this);
     if (res != JFileChooser.APPROVE_OPTION) return;
@@ -85,10 +90,11 @@ public class FrmStartupSettings extends JFrame {
     StartupSettings sett;
     sett = XmlLoadHelper.loadStartupSettings(file.getAbsolutePath());
     this.fillBySettings(sett);
+    this.lastStartupSettingsFileName = file.getAbsolutePath();
   }
 
   private void btnSave_click() {
-    JFileChooser jfc = SwingFactory.createFileDialog();
+    JFileChooser jfc = SwingFactory.createFileDialog(SwingFactory.FileDialogType.startupSettings, lastStartupSettingsFileName);
 
     int res = jfc.showSaveDialog(this);
     if (res != JFileChooser.APPROVE_OPTION) return;
@@ -99,6 +105,7 @@ public class FrmStartupSettings extends JFrame {
     this.fillSettingsBy(sett);
 
     XmlLoadHelper.saveStartupSettings(sett, file.getAbsolutePath());
+    this.lastStartupSettingsFileName = file.getAbsolutePath();
   }
 
   private JPanel createContentPanel() {

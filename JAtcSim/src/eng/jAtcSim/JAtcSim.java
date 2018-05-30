@@ -33,6 +33,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalTime;
 import java.util.Calendar;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
@@ -118,8 +119,7 @@ public class JAtcSim {
     gsi.secondLengthInMs = startupSettings.simulation.secondLengthInMs;
     gsi.specificTraffic = specificTraffic;
     Calendar simTime = Calendar.getInstance();
-    updateCalendarToSimTime(simTime, startupSettings);
-    gsi.startTime = new ETime(simTime);
+    gsi.startTime = new ETime(startupSettings.recent.time);
     gsi.trafficXmlFile = startupSettings.files.trafficXmlFile;
     gsi.initialWeather = Weather.createClear();
     gsi.weatherProviderType = startupSettings.weather.useOnline ?
@@ -222,15 +222,6 @@ public class JAtcSim {
       tmp = appPath.relativize(tmp);
       startupSettings.files.trafficXmlFile = tmp.toString();
     }
-  }
-
-  private static void updateCalendarToSimTime(Calendar simTime, StartupSettings sett) {
-    String timeS = sett.recent.time;
-    String[] pts = timeS.split(":");
-    int hours = Integer.parseInt(pts[0]);
-    int minutes = Integer.parseInt(pts[1]);
-    simTime.set(Calendar.HOUR_OF_DAY, hours);
-    simTime.set(Calendar.MINUTE, minutes);
   }
 
   private static Pack createPackInstance(String packTypeName) {

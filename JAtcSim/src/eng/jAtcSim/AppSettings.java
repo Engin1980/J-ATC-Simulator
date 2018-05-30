@@ -19,7 +19,7 @@ public class AppSettings {
   }
 
   public String getStartupSettingsFile(){
-    return Paths.get(this.resourcesFolder.toString(), "startupSettings.xml").toString();
+    return Paths.get(this.resourcesFolder.toString(), "defaultStartupSettings.ss.xml").toString();
   }
 
   public static Path getApplicationFolder(){

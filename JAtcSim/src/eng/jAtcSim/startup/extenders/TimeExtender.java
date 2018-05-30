@@ -9,6 +9,7 @@ import java.awt.Color;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -64,6 +65,8 @@ public class TimeExtender {
   }
 
   public void setTime(java.time.LocalTime time){
+    if (time == null)
+      time = LocalTime.now();
     String h = time.format(DateTimeFormatter.ofPattern(pattern));
     txt.setText(h);
   }

@@ -7,11 +7,14 @@ package eng.jAtcSim.startup.startupWizard.panels;
 
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
+import eng.eSystem.utilites.ExceptionUtil;
 import eng.eSystem.utilites.awt.ComponentUtils;
+import eng.jAtcSim.XmlLoadHelper;
 import eng.jAtcSim.lib.traffic.Traffic;
 import eng.jAtcSim.lib.world.Airport;
 import eng.jAtcSim.lib.world.Area;
 import eng.jAtcSim.startup.LayoutManager;
+import eng.jAtcSim.startup.MessageBox;
 import eng.jAtcSim.startup.StartupSettings;
 import eng.jAtcSim.startup.extenders.NumericUpDownExtender;
 import eng.jAtcSim.startup.extenders.SwingFactory;
@@ -115,11 +118,14 @@ public class TrafficPanel extends JStartupPanel {
         chkAllowDelays);
     pnlGlobalTrafficSettings.setBorder(BorderFactory.createTitledBorder("Global traffic settings:"));
 
+    JButton btnCheckTraffic = new JButton("Check");
+    btnCheckTraffic.addActionListener(q -> btnCheckTraffic_click());
+
     JPanel pnlTrafficSource = LayoutManager.createBoxPanel(LayoutManager.eHorizontalAlign.left, DISTANCE);
     pnlTrafficSource.setBorder(BorderFactory.createTitledBorder("Used traffic:"));
     pnlTrafficSource.add(
         LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.middle, DISTANCE,
-            rdbXml, new JLabel(), fleTraffic.getTextControl(), fleTraffic.getButtonControl()));
+            rdbXml, new JLabel(), fleTraffic.getTextControl(), fleTraffic.getButtonControl(), btnCheckTraffic));
     pnlTrafficSource.add(
         LayoutManager.createBorderedPanel(0,
             LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.middle, DISTANCE,
@@ -146,6 +152,16 @@ public class TrafficPanel extends JStartupPanel {
     this.add(pnlMain);
   }
 
+  private void btnCheckTraffic_click() {
+    try {
+      String file = fleTraffic.getFileName();
+      XmlLoadHelper.loadTraffic(file);
+      MessageBox.show("Traffic file seems ok.", "Traffic file check");
+    } catch (Exception ex) {
+      MessageBox.show("Error occurred when loading traffic file. \n\n" + ExceptionUtil.toFullString(ex, "\n"), "Traffic file check");
+    }
+  }
+
   private void createComponents() {
     grpRdb = new javax.swing.ButtonGroup();
 
@@ -156,7 +172,7 @@ public class TrafficPanel extends JStartupPanel {
     rdbCustom = new javax.swing.JRadioButton("Use custom traffic");
     rdbCustom.addChangeListener(q -> updateCustomPanelState());
 
-    fleTraffic = new XmlFileSelectorExtender();
+    fleTraffic = new XmlFileSelectorExtender(SwingFactory.FileDialogType.traffic);
 
     chkAllowDelays = new javax.swing.JCheckBox("Allow traffic delays");
 

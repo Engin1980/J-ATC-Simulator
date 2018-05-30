@@ -24,11 +24,6 @@ public class AirportAndWeatherPanel extends JStartupPanel {
     cmbAirports.getSelectedItemChanged().add(this::cmbAirports_changed);
   }
 
-  private void cmbAirports_changed(Object e) {
-    Object o = cmbAirports.getSelectedItem();
-    weatherPanel.setRelativeIcao((String) o);
-  }
-
   @Override
   public void fillBySettings(StartupSettings settings) {
     fillAirportsComboBox();
@@ -45,6 +40,11 @@ public class AirportAndWeatherPanel extends JStartupPanel {
   public void fillSettingsBy(StartupSettings settings) {
     settings.recent.icao = cmbAirports.getSelectedItem();
     settings.weather.useOnline = rdbWeatherFromWeb.isSelected();
+  }
+
+  private void cmbAirports_changed(Object e) {
+    Object o = cmbAirports.getSelectedItem();
+    weatherPanel.setRelativeIcao((String) o);
   }
 
   private void initComponents() {
@@ -78,14 +78,14 @@ public class AirportAndWeatherPanel extends JStartupPanel {
   private void createComponents() {
 
     rdbWeatherFromWeb = new JRadioButton();
-    rdbWeatherFromWeb.addActionListener((e)->{
-      ComponentUtils.adjustComponentTree(this.weatherPanel, q->q.setEnabled(false));
+    rdbWeatherFromWeb.addActionListener((e) -> {
+      ComponentUtils.adjustComponentTree(this.weatherPanel, q -> q.setEnabled(false));
     });
     rdbWeatherFromWeb.setText("use real weather continuously downloaded from web");
 
     rdbWeatherFromUser = new JRadioButton();
-    rdbWeatherFromUser.addActionListener((e)->{
-      ComponentUtils.adjustComponentTree(this.weatherPanel, q->q.setEnabled(true));
+    rdbWeatherFromUser.addActionListener((e) -> {
+      ComponentUtils.adjustComponentTree(this.weatherPanel, q -> q.setEnabled(true));
     });
     rdbWeatherFromUser.setSelected(true);
     rdbWeatherFromUser.setText("user set - insert METAR string:");
@@ -100,17 +100,17 @@ public class AirportAndWeatherPanel extends JStartupPanel {
   private void fillAirportsComboBox() {
     EList<XComboBoxExtender.Item<String>> aips = new EList<>();
     Area area = Sources.getArea();
-    if (area != null){
+    if (area != null) {
       for (Airport airport : area.getAirports()) {
         aips.add(
             new XComboBoxExtender.Item<>(
-            airport.getName() + " [" + airport.getIcao() + "]",
-            airport.getIcao()));
+                airport.getName() + " [" + airport.getIcao() + "]",
+                airport.getIcao()));
       }
     } else {
       aips.add(
           new XComboBoxExtender.Item<>(
-          "Area not loaded", "----"));
+              "Area not loaded", "----"));
     }
 
     cmbAirports.setModel(aips);
