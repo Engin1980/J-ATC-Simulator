@@ -2,7 +2,7 @@ package eng.jAtcSim.startup.startupSettings;
 
 import eng.eSystem.utilites.awt.ComponentUtils;
 import eng.jAtcSim.XmlLoadHelper;
-import eng.jAtcSim.startup.LayoutManager;
+import eng.jAtcSim.shared.LayoutManager;
 import eng.jAtcSim.startup.extenders.SwingFactory;
 import eng.jAtcSim.startup.startupSettings.panels.*;
 
@@ -65,11 +65,11 @@ public class FrmStartupSettings extends JPanel {
         null,
         null,
         LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.bottom, 4,
-            btnSave,
-            btnLoad),
+            btnLoad,
+            btnSave),
         LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.bottom, 4,
-            btnApply,
-            btnCancel),
+            btnCancel,
+            btnApply),
         null);
 
     ret = LayoutManager.createBorderedPanel(4, ret);

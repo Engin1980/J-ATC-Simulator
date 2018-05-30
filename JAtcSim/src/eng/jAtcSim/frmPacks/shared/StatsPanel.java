@@ -3,7 +3,7 @@ package eng.jAtcSim.frmPacks.shared;
 import eng.jAtcSim.lib.Simulation;
 import eng.jAtcSim.lib.global.ETime;
 import eng.jAtcSim.lib.stats.Statistics;
-import eng.jAtcSim.startup.LayoutManager;
+import eng.jAtcSim.shared.LayoutManager;
 
 import javax.swing.*;
 import java.awt.*;

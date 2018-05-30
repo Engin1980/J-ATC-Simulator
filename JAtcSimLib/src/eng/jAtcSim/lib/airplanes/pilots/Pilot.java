@@ -268,10 +268,13 @@ public class Pilot {
   class TakeOffBehavior extends Behavior {
 
     private final static int TAKEOFF_ACCELERATION_ALTITUDE_AGL = 1500;
-    //TODO add to confing the acceleration altitude and use it here
+    //TODO add to config the acceleration altitude and use it here
     private final int accelerationAltitude =
         Acc.airport().getAltitude() + TAKEOFF_ACCELERATION_ALTITUDE_AGL;
     private RunwayThreshold toThreshold;
+
+    private TakeOffBehavior() {
+    }
 
     public TakeOffBehavior(RunwayThreshold toThreshold) {
       this.toThreshold = toThreshold;
@@ -914,12 +917,11 @@ public class Pilot {
     route,
     extension
   }
-
-  @XmlIgnore
-  private Airplane.Airplane4Pilot parent;
   private final SpeechDelayer queue = new SpeechDelayer(2, 7); //Min/max speech delay
   private final AfterCommandList afterCommands = new AfterCommandList();
   private final Map<Atc, SpeechList> saidText = new HashMap<>();
+  @XmlIgnore
+  private Airplane.Airplane4Pilot parent;
   private String gaReason = null;
   private DivertInfo divertInfo;
   private int altitudeOrderedByAtc;
@@ -930,6 +932,57 @@ public class Pilot {
   private Route assignedRoute;
   private Restriction speedRestriction = null;
   private Restriction altitudeRestriction = null;
+
+  public static Pilot load(XElement tmp, Airplane.Airplane4Pilot parent) {
+    Pilot ret = new Pilot();
+
+    ret.parent = parent;
+
+    LoadSave.loadField(tmp, ret, "queue");
+    LoadSave.loadField(tmp, ret, "gaReason");
+    LoadSave.loadField(tmp, ret, "divertInfo");
+    LoadSave.loadField(tmp, ret, "altitudeOrderedByAtc");
+    LoadSave.loadField(tmp, ret, "atc");
+    LoadSave.loadField(tmp, ret, "secondsWithoutRadarContact");
+    LoadSave.loadField(tmp, ret, "targetCoordinate");
+    LoadSave.loadField(tmp, ret, "speedRestriction");
+    LoadSave.loadField(tmp, ret, "altitudeRestriction");
+    LoadSave.loadField(tmp, ret, "assignedRoute");
+    LoadSave.loadField(tmp, ret, "afterCommands");
+    LoadSave.loadField(tmp, ret, "saidText");
+
+    {
+      XElement behEl = tmp.getChild("behavior");
+      ret.behavior = getBehaviorInstance(behEl, ret);
+      LoadSave.loadFromElement(behEl, ret.behavior);
+    }
+
+    return ret;
+  }
+
+  private static Behavior getBehaviorInstance(XElement behEl, Pilot parent) {
+    String clsName = behEl.getAttribute("__class");
+    Class cls;
+    Constructor ctor;
+    Behavior ret;
+    try {
+      cls = Class.forName(clsName);
+    } catch (ClassNotFoundException e) {
+      throw new EApplicationException("Unable to find behavior class " + clsName + ".", e);
+    }
+    try {
+      ctor = cls.getDeclaredConstructor(Pilot.class);
+    } catch (NoSuchMethodException e) {
+      throw new EApplicationException("Unable to find parameter-less constructor for " + cls.getName() + ".", e);
+    }
+    try {
+      ctor.setAccessible(true);
+      ret = (Behavior) ctor.newInstance(parent);
+    } catch (InstantiationException | IllegalAccessException | InvocationTargetException ex) {
+      throw new EApplicationException("Unable to create new instance of " + cls.getName() + ".", ex);
+    }
+    return ret;
+  }
 
   public Pilot(Airplane.Airplane4Pilot parent, @Nullable ETime divertTime) {
 
@@ -946,6 +999,10 @@ public class Pilot {
     }
 
     this.secondsWithoutRadarContact = 0;
+  }
+
+  private Pilot() {
+
   }
 
   public void initSpeeches(SpeechList<IAtcCommand> initialCommands) {
@@ -1079,62 +1136,6 @@ public class Pilot {
     LoadSave.saveField(tmp, this, "saidText");
     LoadSave.saveField(tmp, this, "behavior");
   }
-
-  public static Pilot load(XElement tmp, Airplane.Airplane4Pilot parent) {
-    Pilot ret = new Pilot();
-
-    ret.parent = parent;
-
-    LoadSave.loadField(tmp, ret, "queue");
-    LoadSave.loadField(tmp, ret, "gaReason");
-    LoadSave.loadField(tmp, ret, "divertInfo");
-    LoadSave.loadField(tmp, ret, "altitudeOrderedByAtc");
-    LoadSave.loadField(tmp, ret, "atc");
-    LoadSave.loadField(tmp, ret, "secondsWithoutRadarContact");
-    LoadSave.loadField(tmp, ret, "targetCoordinate");
-    LoadSave.loadField(tmp, ret, "speedRestriction");
-    LoadSave.loadField(tmp, ret, "altitudeRestriction");
-    LoadSave.loadField(tmp, ret, "assignedRoute");
-    LoadSave.loadField(tmp, ret, "afterCommands");
-    LoadSave.loadField(tmp, ret, "saidText");
-
-    {
-      XElement behEl = tmp.getChild("behavior");
-      ret.behavior = getBehaviorInstance(behEl, ret);
-      LoadSave.loadFromElement(behEl, ret.behavior);
-    }
-
-    return ret;
-  }
-
-  private static Behavior getBehaviorInstance(XElement behEl, Pilot parent) {
-    String clsName = behEl.getAttribute("__class");
-    Class cls;
-    Constructor ctor;
-    Behavior ret;
-    try {
-      cls = Class.forName(clsName);
-    } catch (ClassNotFoundException e) {
-      throw new EApplicationException("Unable to find behavior class " + clsName + ".", e);
-    }
-    try {
-      ctor = cls.getDeclaredConstructor(Pilot.class);
-    } catch (NoSuchMethodException e) {
-      throw new EApplicationException("Unable to find parameter-less constructor for " + cls.getName() + ".", e);
-    }
-    try {
-      ctor.setAccessible(true);
-      ret = (Behavior) ctor.newInstance(parent);
-    } catch (InstantiationException | IllegalAccessException | InvocationTargetException ex) {
-      throw new EApplicationException("Unable to create new instance of " + cls.getName() + ".", ex);
-    }
-    return ret;
-  }
-
-  private Pilot(){
-
-  }
-
 
   private void requestRadarContactIfRequired() {
     if (secondsWithoutRadarContact > 0) {

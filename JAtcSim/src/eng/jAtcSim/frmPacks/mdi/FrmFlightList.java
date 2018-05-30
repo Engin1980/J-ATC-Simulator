@@ -8,12 +8,8 @@ package eng.jAtcSim.frmPacks.mdi;
 import eng.jAtcSim.AppSettings;
 import eng.jAtcSim.frmPacks.shared.FlightListPanel;
 import eng.jAtcSim.lib.Simulation;
-import eng.jAtcSim.lib.airplanes.Airplane;
-import eng.jAtcSim.startup.LayoutManager;
 
-import javax.swing.*;
 import java.awt.*;
-import java.util.List;
 
 /**
  * @author Marek

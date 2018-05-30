@@ -56,7 +56,7 @@ public class StartupSettings {
     public int weightTypeA;
     public int arrivals2departuresRatio;
     public int movementsPerHour;
-
+    public double nonCommercialFlightProbability;
   }
 
   public static class Radar {

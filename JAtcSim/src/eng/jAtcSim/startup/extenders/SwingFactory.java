@@ -20,6 +20,7 @@ public class SwingFactory {
     fleets,
     types,
     traffic,
+    game,
     startupSettings
   }
 
@@ -42,6 +43,9 @@ public class SwingFactory {
         break;
       case startupSettings:
         ret.addChoosableFileFilter(new FileTypeFilter(".ss.xml", "Startup settings"));
+        break;
+      case game:
+        ret.addChoosableFileFilter(new FileTypeFilter(".sm.xml", "Saved simulation"));
         break;
       case traffic:
         ret.addChoosableFileFilter(new FileTypeFilter(".tr.xml", "Traffic files"));

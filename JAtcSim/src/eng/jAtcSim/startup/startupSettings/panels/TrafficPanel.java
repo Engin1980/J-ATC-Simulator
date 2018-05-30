@@ -13,8 +13,8 @@ import eng.jAtcSim.XmlLoadHelper;
 import eng.jAtcSim.lib.traffic.Traffic;
 import eng.jAtcSim.lib.world.Airport;
 import eng.jAtcSim.lib.world.Area;
-import eng.jAtcSim.startup.LayoutManager;
-import eng.jAtcSim.startup.MessageBox;
+import eng.jAtcSim.shared.LayoutManager;
+import eng.jAtcSim.shared.MessageBox;
 import eng.jAtcSim.startup.startupSettings.StartupSettings;
 import eng.jAtcSim.startup.extenders.NumericUpDownExtender;
 import eng.jAtcSim.startup.extenders.SwingFactory;
@@ -30,6 +30,7 @@ public class TrafficPanel extends JStartupPanel {
   private javax.swing.ButtonGroup grpRdb;
   private NumericUpDownExtender nudMaxPlanes;
   private NumericUpDownExtender nudMovements;
+  private NumericUpDownExtender nudNonCommercials;
   private javax.swing.JRadioButton rdbAirportDefined;
   private javax.swing.JRadioButton rdbCustom;
   private javax.swing.JRadioButton rdbXml;
@@ -58,6 +59,7 @@ public class TrafficPanel extends JStartupPanel {
     chkAllowDelays.setSelected(settings.traffic.allowDelays);
     nudMovements.setValue(settings.traffic.customTraffic.movementsPerHour);
     sldArrivalsDepartures.setValue(settings.traffic.customTraffic.arrivals2departuresRatio);
+    nudNonCommercials.setValue((int) (settings.traffic.customTraffic.nonCommercialFlightProbability * 100));
     nudA.setValue(settings.traffic.customTraffic.weightTypeA);
     nudB.setValue(settings.traffic.customTraffic.weightTypeB);
     nudC.setValue(settings.traffic.customTraffic.weightTypeC);
@@ -77,6 +79,7 @@ public class TrafficPanel extends JStartupPanel {
     adjustRdbSelected(settings);
 
     settings.traffic.allowDelays = chkAllowDelays.isSelected();
+    settings.traffic.customTraffic.nonCommercialFlightProbability = nudNonCommercials.getValue() / 100d;
     settings.traffic.customTraffic.arrivals2departuresRatio = sldArrivalsDepartures.getValue();
     settings.traffic.customTraffic.weightTypeA = nudA.getValue();
     settings.traffic.customTraffic.weightTypeB = nudB.getValue();
@@ -121,23 +124,33 @@ public class TrafficPanel extends JStartupPanel {
     JButton btnCheckTraffic = new JButton("Check");
     btnCheckTraffic.addActionListener(q -> btnCheckTraffic_click());
 
-    JPanel pnlTrafficSource = LayoutManager.createBoxPanel(LayoutManager.eHorizontalAlign.left, DISTANCE);
+    JPanel pnlTrafficSource = LayoutManager.createFormPanel(3, 2,
+        rdbXml,
+        LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.baseline, DISTANCE,
+            fleTraffic.getTextControl(), fleTraffic.getButtonControl(), btnCheckTraffic),
+        rdbAirportDefined,
+        cmbAirportDefinedTraffic.getControl(),
+        rdbCustom, null);
     pnlTrafficSource.setBorder(BorderFactory.createTitledBorder("Used traffic:"));
-    pnlTrafficSource.add(
-        LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.middle, DISTANCE,
-            rdbXml, new JLabel(), fleTraffic.getTextControl(), fleTraffic.getButtonControl(), btnCheckTraffic));
-    pnlTrafficSource.add(
-        LayoutManager.createBorderedPanel(0,
-            LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.middle, DISTANCE,
-                rdbAirportDefined,
-                cmbAirportDefinedTraffic.getControl())));
-    pnlTrafficSource.add(
-        LayoutManager.createBorderedPanel(0, rdbCustom));
+
+//    JPanel pnlTrafficSource = LayoutManager.createBoxPanel(LayoutManager.eHorizontalAlign.left, DISTANCE);
+//    pnlTrafficSource.setBorder(BorderFactory.createTitledBorder("Used traffic:"));
+//    pnlTrafficSource.add(
+//        LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.middle, DISTANCE,
+//            rdbXml, new JLabel(), fleTraffic.getTextControl(), fleTraffic.getButtonControl(), btnCheckTraffic));
+//    pnlTrafficSource.add(
+//        LayoutManager.createBorderedPanel(0,
+//            LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.middle, DISTANCE,
+//                rdbAirportDefined,
+//                cmbAirportDefinedTraffic.getControl())));
+//    pnlTrafficSource.add(
+//        LayoutManager.createBorderedPanel(0, rdbCustom));
 
 
-    this.pnlCustomTraffic = LayoutManager.createFormPanel(4, 2,
+    this.pnlCustomTraffic = LayoutManager.createFormPanel(5, 2,
         null, chkCustomExtendedCallsigns,
         new JLabel("Movements / hour:"), nudMovements.getControl(),
+        new JLabel("Non-commercial flights (%):"), nudNonCommercials.getControl(),
         new JLabel("Arrivals <-> Departures"), sldArrivalsDepartures,
         new JLabel("Plane weights A/B/C/D"), LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.baseline, DISTANCE,
             nudA.getControl(), nudB.getControl(), nudC.getControl(), nudD.getControl())
@@ -186,6 +199,7 @@ public class TrafficPanel extends JStartupPanel {
     nudMaxPlanes = new NumericUpDownExtender(new JSpinner(), 1, 100, 15, 1);
     cmbAirportDefinedTraffic = new XComboBoxExtender<>();
     nudTrafficDensity = new NumericUpDownExtender(new JSpinner(), 0, 100, 100, 1);
+    nudNonCommercials = new NumericUpDownExtender(new JSpinner(), 0, 100, 0, 10);
 
     grpRdb.add(rdbXml);
     grpRdb.add(rdbCustom);

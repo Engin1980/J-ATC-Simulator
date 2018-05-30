@@ -20,12 +20,12 @@ import eng.jAtcSim.lib.traffic.fleets.Fleets;
 /**
  * @author Marek Vajgl
  */
-public class  GenericTraffic extends Traffic {
+public class GenericTraffic extends Traffic {
 
   private static final String[] COMPANIES = new String[]{"CSA", "EZY", "BAW", "RYR"};
   private static final String[] PLANE_COUNTRY_CODES = new String[]{"OK", "OM"};
 
-  private final double probabilityOfNonCommercialFlight = 0;
+  private final double probabilityOfNonCommercialFlight;
 
   /**
    * Probability that generated plane is departure (arrival otherwise), range 0.0-1.0 .
@@ -43,11 +43,12 @@ public class  GenericTraffic extends Traffic {
    */
   private final double[] probabilityOfCategory = new double[4];
 
-  public GenericTraffic() {
+  private GenericTraffic() {
     this.probabilityOfDeparture = 0.5;
+    this.probabilityOfNonCommercialFlight = 0;
   }
 
-  public GenericTraffic(int movementsPerHour, double probabilityOfDeparture,
+  public GenericTraffic(int movementsPerHour, double probabilityOfDeparture, double probabilityOfNonCommercialFlight,
                         int trafficCustomWeightTypeA, int trafficCustomWeightTypeB, int trafficCustomWeightTypeC, int trafficCustomWeightTypeD,
                         boolean useExtendedCallsigns) {
 
@@ -63,6 +64,7 @@ public class  GenericTraffic extends Traffic {
       this.movementsPerHour[i] = movementsPerHour;
     }
     this.probabilityOfDeparture = probabilityOfDeparture;
+    this.probabilityOfNonCommercialFlight = probabilityOfNonCommercialFlight;
 
     // category probabilities init
     {
@@ -138,7 +140,7 @@ public class  GenericTraffic extends Traffic {
 
     ETime initTime = new ETime(hour, Acc.rnd().nextInt(0, 60), Acc.rnd().nextInt(0, 60));
     boolean isDeparture = (Acc.rnd().nextDouble() <= this.probabilityOfDeparture);
-    boolean isNonCommercial = Acc.rnd().nextDouble() > this.probabilityOfNonCommercialFlight;
+    boolean isNonCommercial = Acc.rnd().nextDouble() < this.probabilityOfNonCommercialFlight;
     String prefix;
     if (isNonCommercial)
       prefix = this.PLANE_COUNTRY_CODES[Acc.rnd().nextInt(this.PLANE_COUNTRY_CODES.length)];

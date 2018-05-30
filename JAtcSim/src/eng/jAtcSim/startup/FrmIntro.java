@@ -3,6 +3,8 @@ package eng.jAtcSim.startup;
 import eng.eSystem.utilites.ExceptionUtil;
 import eng.jAtcSim.JAtcSim;
 import eng.jAtcSim.Stylist;
+import eng.jAtcSim.shared.LayoutManager;
+import eng.jAtcSim.shared.MessageBox;
 import eng.jAtcSim.startup.extenders.SwingFactory;
 import eng.jAtcSim.startup.startupSettings.FrmStartupSettings;
 import eng.jAtcSim.startup.startupSettings.StartupSettings;
@@ -36,9 +38,9 @@ public class FrmIntro extends JFrame {
     JButton btnExit = new JButton("Quit");
     btnExit.addActionListener(o -> btnExit_click());
 
-    JPanel pnl = LayoutManager.createBorderedPanel(16);
+    JPanel pnl = eng.jAtcSim.shared.LayoutManager.createBorderedPanel(16);
     pnl.add(
-        LayoutManager.createBoxPanel(LayoutManager.eHorizontalAlign.center, 16,
+        eng.jAtcSim.shared.LayoutManager.createBoxPanel(LayoutManager.eHorizontalAlign.center, 16,
             btnStartupSettings, btnRun, btnLoadSim, btnExit));
 
     this.getContentPane().setLayout(new BorderLayout());
@@ -74,8 +76,20 @@ public class FrmIntro extends JFrame {
 
   private void btnLoadSim_click() {
     this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+
+    JFileChooser jf = SwingFactory.createFileDialog(SwingFactory.FileDialogType.game, null);
+    int res = jf.showOpenDialog(this);
+    if (res != JFileChooser.APPROVE_OPTION) return;
+
+
     this.setVisible(false);
-    JAtcSim.loadSimulation(this.startupSettings, "R:\\simSave.xml");
+    try {
+      JAtcSim.loadSimulation(this.startupSettings, jf.getSelectedFile().getAbsolutePath());
+    } catch (Exception ex) {
+      MessageBox.show("Failed to load the simulation. \n\n" +
+          ExceptionUtil.toFullString(ex, "\n"), "Error during simulation load.");
+      this.setVisible(true);
+    }
   }
 
   private void btnExit_click() {

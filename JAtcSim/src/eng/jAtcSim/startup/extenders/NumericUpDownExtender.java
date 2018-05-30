@@ -23,6 +23,8 @@ public class NumericUpDownExtender {
   public NumericUpDownExtender(JSpinner nud, int minimum, int maximum, int value, int step) {
     if (nud == null)
       throw new IllegalArgumentException("Argument \"nud\" cannot be null.");
+    assert value >= minimum;
+    assert value <= maximum;
 
     this.nud = nud;
     

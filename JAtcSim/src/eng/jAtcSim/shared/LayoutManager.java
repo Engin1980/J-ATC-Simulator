@@ -1,7 +1,6 @@
-package eng.jAtcSim.startup;
+package eng.jAtcSim.shared;
 
 import javax.swing.*;
-import javax.swing.text.StyledEditorKit;
 import java.awt.*;
 
 public class LayoutManager {

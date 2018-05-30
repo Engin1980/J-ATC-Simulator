@@ -4,7 +4,7 @@ import eng.eSystem.collections.EList;
 import eng.eSystem.utilites.awt.ComponentUtils;
 import eng.jAtcSim.lib.world.Airport;
 import eng.jAtcSim.lib.world.Area;
-import eng.jAtcSim.startup.LayoutManager;
+import eng.jAtcSim.shared.LayoutManager;
 import eng.jAtcSim.startup.startupSettings.StartupSettings;
 import eng.jAtcSim.startup.extenders.XComboBoxExtender;
 

@@ -217,6 +217,11 @@ class SwitchRequest {
   public final Atc atc;
   public final Airplane airplane;
 
+  private SwitchRequest(){
+    atc = null;
+    airplane = null;
+  }
+
   public SwitchRequest(Atc atc, Airplane airplane) {
     this.atc = atc;
     this.airplane = airplane;

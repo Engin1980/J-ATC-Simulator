@@ -1,15 +1,12 @@
 package eng.jAtcSim.frmPacks.sdi;
 
-import eng.eSystem.xmlSerialization.Settings;
-import eng.eSystem.xmlSerialization.XmlSerializer;
 import eng.jAtcSim.frmPacks.shared.*;
 import eng.jAtcSim.lib.Game;
-import eng.jAtcSim.lib.Simulation;
 import eng.jAtcSim.lib.airplanes.Callsign;
 import eng.jAtcSim.lib.speaking.formatting.LongFormatter;
 import eng.jAtcSim.radarBase.BehaviorSettings;
-import eng.jAtcSim.radarBase.Radar;
-import eng.jAtcSim.startup.LayoutManager;
+import eng.jAtcSim.shared.LayoutManager;
+import eng.jAtcSim.startup.extenders.SwingFactory;
 
 import javax.swing.*;
 import java.awt.*;
@@ -120,10 +117,6 @@ public class FrmMain extends JFrame {
     adjustJComponentColors(btnSave);
     btnSave.addActionListener(o -> saveSimulation());
 
-    JButton btnLoad = new JButton("Load");
-    adjustJComponentColors(btnLoad);
-    btnLoad.addActionListener(o -> loadSimulation());
-
     JButton btnView = new JButton("Add view");
     adjustJComponentColors(btnView);
     btnView.addActionListener(o -> {
@@ -133,18 +126,21 @@ public class FrmMain extends JFrame {
     });
 
     JPanel ret = LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.middle, 4,
-        btnStrips, btnCommands, btnMovs, btnPause, btnSave, btnLoad, btnView);
+        btnStrips, btnCommands, btnMovs, btnPause, btnSave, btnView);
     ret.setName("pnlTop");
     return ret;
   }
 
-  private void saveSimulation(){
-    String fileName = "R:\\simSave.xml";
-    this.parent.getGame().save(fileName);
-  }
+  private String lastFileName = null;
 
-  private void loadSimulation(){
-    Game game = Game.load("R:\\simSave.xml");
+  private void saveSimulation(){
+    JFileChooser jf = SwingFactory.createFileDialog(SwingFactory.FileDialogType.game, lastFileName);
+    int res = jf.showSaveDialog(this);
+    if (res != JFileChooser.APPROVE_OPTION) return;
+
+    String fileName = jf.getSelectedFile().getAbsolutePath();
+    this.parent.getGame().save(fileName);
+    lastFileName = fileName;
   }
 
   private void adjustJComponentColors(JComponent component) {

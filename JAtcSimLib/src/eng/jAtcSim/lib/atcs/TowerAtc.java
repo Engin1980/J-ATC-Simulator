@@ -675,6 +675,12 @@ class TakeOffInfo {
   public final Airplane airplane;
   public final int randomReadyToSwitchAltitude;
 
+  public TakeOffInfo() {
+    takeOffTime = null;
+    airplane = null;
+    randomReadyToSwitchAltitude = 0;
+  }
+
   public TakeOffInfo(ETime takeOffTime, Airplane airplane) {
     this.takeOffTime = takeOffTime.clone();
     this.airplane = airplane;

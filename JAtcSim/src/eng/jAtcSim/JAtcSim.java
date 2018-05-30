@@ -7,7 +7,6 @@ package eng.jAtcSim;
 
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.ERuntimeException;
-import eng.eSystem.utilites.CollectionUtils;
 import eng.jAtcSim.frmPacks.Pack;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.Game;
@@ -21,7 +20,6 @@ import eng.jAtcSim.lib.traffic.GenericTraffic;
 import eng.jAtcSim.lib.traffic.Traffic;
 import eng.jAtcSim.lib.traffic.fleets.Fleets;
 import eng.jAtcSim.lib.weathers.*;
-import eng.jAtcSim.lib.world.Airport;
 import eng.jAtcSim.lib.world.Area;
 import eng.jAtcSim.radarBase.global.SoundManager;
 import eng.jAtcSim.startup.FrmIntro;
@@ -48,7 +46,7 @@ public class JAtcSim {
   }
 
   private static final boolean FAST_START = false;
-  private static final Traffic specificTraffic =
+  private static final Traffic enginSpecificTraffic =
       //  new eng.jAtcSim.lib.traffic.TestTrafficOneApproach();
       // new eng.jAtcSim.lib.traffic.TestTrafficOneDeparture();
       null;
@@ -119,7 +117,10 @@ public class JAtcSim {
     gsi.icao = startupSettings.recent.icao;
     gsi.planesXmlFile = startupSettings.files.planesXmlFile;
     gsi.secondLengthInMs = startupSettings.simulation.secondLengthInMs;
-    gsi.specificTraffic = specificTraffic;
+    if (startupSettings.traffic.type == StartupSettings.Traffic.eTrafficType.custom)
+      gsi.specificTraffic = generateCustomTraffic(startupSettings.traffic);
+    if (enginSpecificTraffic != null)
+      gsi.specificTraffic = enginSpecificTraffic;
     gsi.startTime = new ETime(startupSettings.recent.time);
     gsi.trafficXmlFile = startupSettings.files.trafficXmlFile;
     gsi.initialWeather = Weather.createClear();
@@ -246,32 +247,41 @@ public class JAtcSim {
     return ret;
   }
 
-  private static Traffic getTrafficFromStartupSettings(StartupSettings sett) {
-    Traffic ret;
-    switch (sett.traffic.type) {
-      case xml:
-        ret = XmlLoadHelper.loadTraffic(sett.files.trafficXmlFile);
-        break;
-      case airportDefined:
-        Area area = XmlLoadHelper.loadNewArea(sett.files.areaXmlFile);
-        Airport airport = CollectionUtils.tryGetFirst(area.getAirports(), o -> o.getIcao().equals(sett.recent.icao));
-        ret = CollectionUtils.tryGetFirst(airport.getTrafficDefinitions(), o -> o.getTitle().equals(sett.traffic.trafficAirportDefinedTitle));
-        break;
-      case custom:
-        ret = new GenericTraffic(
-            sett.traffic.customTraffic.movementsPerHour,
-            1 - sett.traffic.customTraffic.arrivals2departuresRatio / 10d, // 0-10 to 0.0-1.0
-            sett.traffic.customTraffic.weightTypeA,
-            sett.traffic.customTraffic.weightTypeB,
-            sett.traffic.customTraffic.weightTypeC,
-            sett.traffic.customTraffic.weightTypeD,
-            sett.traffic.customTraffic.useExtendedCallsigns
-        );
-      default:
-        throw new UnsupportedOperationException();
-    }
-
+  private static GenericTraffic generateCustomTraffic(StartupSettings.Traffic trf) {
+    GenericTraffic ret = new GenericTraffic(trf.customTraffic.movementsPerHour,
+        trf.customTraffic.arrivals2departuresRatio / 10d,
+        trf.customTraffic.nonCommercialFlightProbability,
+        trf.customTraffic.weightTypeA,
+        trf.customTraffic.weightTypeB,
+        trf.customTraffic.weightTypeC,
+        trf.customTraffic.weightTypeD,
+        trf.customTraffic.useExtendedCallsigns);
     return ret;
+//    Traffic ret;
+//    switch (sett.traffic.type) {
+//      case xml:
+//        ret = XmlLoadHelper.loadTraffic(sett.files.trafficXmlFile);
+//        break;
+//      case airportDefined:
+//        Area area = XmlLoadHelper.loadNewArea(sett.files.areaXmlFile);
+//        Airport airport = CollectionUtils.tryGetFirst(area.getAirports(), o -> o.getIcao().equals(sett.recent.icao));
+//        ret = CollectionUtils.tryGetFirst(airport.getTrafficDefinitions(), o -> o.getTitle().equals(sett.traffic.trafficAirportDefinedTitle));
+//        break;
+//      case custom:
+//        ret = new GenericTraffic(
+//            sett.traffic.customTraffic.movementsPerHour,
+//            1 - sett.traffic.customTraffic.arrivals2departuresRatio / 10d, // 0-10 to 0.0-1.0
+//            sett.traffic.customTraffic.weightTypeA,
+//            sett.traffic.customTraffic.weightTypeB,
+//            sett.traffic.customTraffic.weightTypeC,
+//            sett.traffic.customTraffic.weightTypeD,
+//            sett.traffic.customTraffic.useExtendedCallsigns
+//        );
+//      default:
+//        throw new UnsupportedOperationException();
+//    }
+//
+//    return ret;
   }
 }
 

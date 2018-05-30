@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package eng.jAtcSim.startup;
+package eng.jAtcSim.shared;
 
 import javax.swing.JOptionPane;
 

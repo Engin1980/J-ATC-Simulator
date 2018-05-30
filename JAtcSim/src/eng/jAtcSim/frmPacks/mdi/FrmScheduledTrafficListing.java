@@ -3,8 +3,6 @@ package eng.jAtcSim.frmPacks.mdi;
 import eng.jAtcSim.AppSettings;
 import eng.jAtcSim.frmPacks.shared.ScheduledFlightListPanel;
 import eng.jAtcSim.lib.Simulation;
-import eng.jAtcSim.startup.LayoutManager;
-import eng.jAtcSim.lib.traffic.Movement;
 
 import javax.swing.*;
 import java.awt.*;

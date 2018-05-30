@@ -1,4 +1,4 @@
-package eng.jAtcSim.startup;
+package eng.jAtcSim.shared;
 
 import com.sun.javafx.iio.common.ImageLoaderImpl;
 import eng.eSystem.collections.EMap;

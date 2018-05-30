@@ -15,7 +15,7 @@ import eng.jAtcSim.radarBase.BehaviorSettings;
 import eng.jAtcSim.radarBase.DisplaySettings;
 import eng.jAtcSim.radarBase.Radar;
 import eng.jAtcSim.radarBase.RadarViewPort;
-import eng.jAtcSim.startup.LayoutManager;
+import eng.jAtcSim.shared.LayoutManager;
 
 import javax.swing.*;
 import java.awt.*;
