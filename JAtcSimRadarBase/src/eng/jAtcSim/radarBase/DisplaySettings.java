@@ -76,6 +76,7 @@ public class DisplaySettings {
     private boolean visible = true;
 
     private Color color;
+    private Color connectorColor;
     private int pointWidth;
     private int headingLineLength;
     private int historyDotCount;
@@ -95,6 +96,10 @@ public class DisplaySettings {
 
     public Color getColor() {
       return color;
+    }
+
+    public Color getConnectorColor() {
+      return connectorColor;
     }
 
     public void setColor(Color color) {

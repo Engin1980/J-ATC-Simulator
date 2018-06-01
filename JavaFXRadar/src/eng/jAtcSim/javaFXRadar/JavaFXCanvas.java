@@ -4,6 +4,7 @@ import eng.eSystem.events.Event;
 import eng.eSystem.events.EventSimple;
 import eng.jAtcSim.radarBase.ICanvas;
 import eng.jAtcSim.radarBase.global.Point;
+import eng.jAtcSim.radarBase.global.Size;
 import eng.jAtcSim.radarBase.global.TextBlockLocation;
 import eng.jAtcSim.radarBase.global.events.EKeyboardModifier;
 import eng.jAtcSim.radarBase.global.events.EMouseEventArg;
@@ -371,6 +372,11 @@ public class JavaFXCanvas implements ICanvas<Canvas> {
   @Override
   public EventSimple<ICanvas> getResizedEvent() {
     return resizedEvent;
+  }
+
+  @Override
+  public Size getEstimatedTextSize(eng.jAtcSim.radarBase.global.Font font, int rowsCount, int columnsCount) {
+    throw new UnsupportedOperationException("This method is not implemented, but should be.");
   }
 
   public Bounds getTextBounds(String s, Font font) {

@@ -1,10 +1,8 @@
 package eng.jAtcSim.radarBase;
 
 import eng.eSystem.EStringBuilder;
-import eng.eSystem.collections.IList;
-import eng.eSystem.collections.ReadOnlyList;
+import eng.eSystem.collections.*;
 import eng.eSystem.events.Event;
-import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.utilites.CollectionUtils;
 import eng.jAtcSim.lib.Simulation;
@@ -27,10 +25,7 @@ import eng.jAtcSim.lib.speaking.fromAtc.atc2atc.StringResponse;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ProceedDirectCommand;
 import eng.jAtcSim.lib.world.*;
 import eng.jAtcSim.lib.world.approaches.Approach;
-import eng.jAtcSim.radarBase.global.Color;
-import eng.jAtcSim.radarBase.global.Point;
-import eng.jAtcSim.radarBase.global.SoundManager;
-import eng.jAtcSim.radarBase.global.TextBlockLocation;
+import eng.jAtcSim.radarBase.global.*;
 import eng.jAtcSim.radarBase.global.events.EMouseEventArg;
 import eng.jAtcSim.radarBase.global.events.KeyEventArg;
 import eng.jAtcSim.radarBase.global.events.WithCoordinateEventArg;
@@ -115,6 +110,7 @@ public class Radar {
     public Atc responsibleAtc;
     public AirplaneType type;
     public Point labelShift;
+    public boolean fixedLabelShift = false;
     private Squawk squawk;
     private int targetHeading;
     private double targetSpeed;
@@ -145,7 +141,7 @@ public class Radar {
 
       this.airprox = plane.getAirprox();
       this.mrvaError = plane.isMrvaError();
-this.emergency = plane.isEmergency();
+      this.emergency = plane.isEmergency();
 
       this.coordinate = plane.coordinate();
 
@@ -247,7 +243,11 @@ this.emergency = plane.isEmergency();
 
   static class AirplaneDisplayInfoList {
 
-    private Map<Callsign, AirplaneDisplayInfo> inner = new HashMap<>();
+    private IMap<Callsign, AirplaneDisplayInfo> inner = new EMap<>();
+
+    public boolean isEmpty() {
+      return inner.isEmpty();
+    }
 
     public void update(ReadOnlyList<Airplane.Airplane4Display> planes) {
       resetWasUpdatedFlag();
@@ -260,13 +260,14 @@ this.emergency = plane.isEmergency();
       removeUnupdated();
     }
 
-    public Collection<AirplaneDisplayInfo> getList() {
-      return inner.values();
+    public ICollection<AirplaneDisplayInfo> getList() {
+      return inner.getValues();
     }
 
     private void removeUnupdated() {
-      List<Callsign> toRem =
-          inner.keySet().stream().filter(q -> inner.get(q).wasUpdatedFlag == false).collect(Collectors.toList());
+      // todo rewrite with ISet.remove(predicate) function
+      ISet<Callsign> toRem =
+          inner.getKeys().where(q -> inner.get(q).wasUpdatedFlag == false);
       toRem.forEach(q -> inner.remove(q));
     }
 
@@ -276,13 +277,13 @@ this.emergency = plane.isEmergency();
         ret = inner.get(plane.callsign());
       else {
         ret = new AirplaneDisplayInfo(plane);
-        inner.put(plane.callsign(), ret);
+        inner.set(plane.callsign(), ret);
       }
       return ret;
     }
 
     private void resetWasUpdatedFlag() {
-      inner.values().stream().forEach(q -> q.wasUpdatedFlag = false);
+      inner.forEach(q -> q.getValue().wasUpdatedFlag = false);
     }
   }
 
@@ -765,7 +766,6 @@ this.emergency = plane.isEmergency();
 
   }
 
-
   private void drawNavaids() {
     //for (Navaid n : area.getNavaids()) {
     for (NavaidDisplayInfo ndi : this.navaids) {
@@ -865,39 +865,84 @@ this.emergency = plane.isEmergency();
         ds.getColor(), ds.getWidth());
   }
 
+  private boolean isUserControlledPlane(AirplaneDisplayInfo adi){
+    boolean ret = adi.tunedAtc.getType() == Atc.eType.app;
+    return ret;
+  }
+
   private void drawAirplanes() {
+    if (this.planeInfos.isEmpty()) return;
+
+    DisplaySettings.TextSettings dt = displaySettings.callsign;
+    Size s = c.getEstimatedTextSize(dt.getFont(), 12, 3);
+    tl.adjustPlaneLabelOverlying(s.width, s.height);
+
+    // first draw non-user controlled planes
     for (AirplaneDisplayInfo adi : this.planeInfos.getList()) {
-      drawPlane(adi);
+      if (isUserControlledPlane(adi)) continue;
+      drawPlanePoint(adi);
     }
-    boolean isFullAirprox = this.planeInfos.getList().stream().anyMatch(p -> p.airprox == AirproxType.full);
+    for (AirplaneDisplayInfo adi : this.planeInfos.getList()) {
+      if (isUserControlledPlane(adi)) continue;
+      drawPlaneLabel(adi);
+    }
+    // over them draw user-controlled planes
+    for (AirplaneDisplayInfo adi : this.planeInfos.getList()) {
+      if (!isUserControlledPlane(adi)) continue;
+      drawPlanePoint(adi);
+    }
+    for (AirplaneDisplayInfo adi : this.planeInfos.getList()) {
+      if (!isUserControlledPlane(adi)) continue;
+      drawPlaneLabel(adi);
+    }
+
+    boolean isFullAirprox = this.planeInfos.getList().isAny(
+        p -> p.airprox == AirproxType.full);
     if (isFullAirprox)
       SoundManager.playAirprox();
   }
 
-  private void drawPlane(AirplaneDisplayInfo adi) {
-
+  private void drawPlaneLabel(AirplaneDisplayInfo adi) {
     DisplaySettings.PlaneLabelSettings dp = getPlaneLabelDisplaySettingsBy(adi);
     if (dp.isVisible() == false) {
       return;
     }
     DisplaySettings.TextSettings dt = displaySettings.callsign;
 
-    // eval special color for airproxes and selected plane
-    Color c = dp.getColor();
-    if (adi.airprox == AirproxType.full) {
-      c = displaySettings.airproxFull;
-    } else if (adi.airprox == AirproxType.partial) {
-      c = displaySettings.airproxPartial;
-    } else if (adi.mrvaError) {
-      c = displaySettings.mrvaError;
-    } else if (adi.airprox == AirproxType.warning){
-      c = displaySettings.airproxWarning;
-    } else if (this.selectedCallsign == adi.callsign) {
-      c = displaySettings.selected.getColor();
+    Color c = resolvePlaneDrawColor(adi, dp);
+    Color cc = dp.getConnectorColor();
+
+    // plane label
+    StringBuilder sb = new StringBuilder();
+    sb.append(buildPlaneString(dp.getFirstLineFormat(), adi));
+    if (adi.tunedAtc != adi.responsibleAtc) {
+      sb.append("*");
+    }
+    sb.append("\r\n");
+    sb.append(buildPlaneString(dp.getSecondLineFormat(), adi));
+    sb.append("\r\n");
+    sb.append(buildPlaneString(dp.getThirdLineFormat(), adi));
+
+    // if is of ATC, intelligent drawing with respect to the other radar labels
+    // silly drawing otherwise
+    if (adi.tunedAtc.getType() == Atc.eType.app)
+      tl.drawPlaneLabel(sb.toString(), adi.fixedLabelShift, adi.coordinate, adi.labelShift, dt.getFont(), c, cc);
+    else
+      tl.drawText(sb.toString(), adi.coordinate, adi.labelShift.x, adi.labelShift.y, dt.getFont(), c);
+  }
+
+  private void drawPlanePoint(AirplaneDisplayInfo adi) {
+
+    DisplaySettings.PlaneLabelSettings dp = getPlaneLabelDisplaySettingsBy(adi);
+    if (dp.isVisible() == false) {
+      return;
     }
 
+    // eval special color for airproxes and selected plane
+    Color c = resolvePlaneDrawColor(adi, dp);
+
     // plane dot and direction line
-    tl.drawPoint(adi.coordinate, c, dp.getPointWidth()); // point of plane
+    tl.drawPlanePoint(adi.coordinate, c, dp.getPointWidth()); // point of plane
     tl.drawLineByHeadingAndDistance(adi.coordinate, adi.heading, dp.getHeadingLineLength(), c, 1);
 
     // separation ring
@@ -907,25 +952,6 @@ this.emergency = plane.isEmergency();
             c, 1);
       }
     }
-
-    // plane label
-    StringBuilder sb = new StringBuilder();
-    sb.append(
-        buildPlaneString(dp.getFirstLineFormat(), adi));
-
-    if (adi.tunedAtc != adi.responsibleAtc) {
-      sb.append("*");
-    }
-
-    sb.append("\r\n");
-    sb.append(
-        buildPlaneString(dp.getSecondLineFormat(), adi));
-    sb.append("\r\n");
-    sb.append(
-        buildPlaneString(dp.getThirdLineFormat(), adi));
-
-    Point labelShift = adi.labelShift;
-    tl.drawText(sb.toString(), adi.coordinate, labelShift.x, labelShift.y, dt.getFont(), c);
 
     List<Coordinate> hist = adi.planeDotHistory;
     int printedDots = 0;
@@ -938,6 +964,22 @@ this.emergency = plane.isEmergency();
       index--;
       if (index < 0) break;
     }
+  }
+
+  private Color resolvePlaneDrawColor(AirplaneDisplayInfo adi, DisplaySettings.PlaneLabelSettings dp) {
+    Color c = dp.getColor();
+    if (adi.airprox == AirproxType.full) {
+      c = displaySettings.airproxFull;
+    } else if (adi.airprox == AirproxType.partial) {
+      c = displaySettings.airproxPartial;
+    } else if (adi.mrvaError) {
+      c = displaySettings.mrvaError;
+    } else if (adi.airprox == AirproxType.warning) {
+      c = displaySettings.airproxWarning;
+    } else if (this.selectedCallsign == adi.callsign) {
+      c = displaySettings.selected.getColor();
+    }
+    return c;
   }
 
   private DisplaySettings.PlaneLabelSettings getPlaneLabelDisplaySettingsBy(AirplaneDisplayInfo adi) {

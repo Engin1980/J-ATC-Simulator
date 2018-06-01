@@ -9,19 +9,22 @@ import java.util.List;
 
 public interface ICanvas<T> {
   int getWidth();
+
   int getHeight();
+
   boolean isReady();
 
-  default void drawLine (Point from, Point to, Color color, int width){
+  default void drawLine(Point from, Point to, Color color, int width) {
     drawLine(from.x, from.y, to.x, to.y, color, width);
   }
-  void drawLine (int x1, int y1, int x2, int y2, Color color, int width);
 
-  default void fillRectangle (Point topLeft, Size size, Color color){
+  void drawLine(int x1, int y1, int x2, int y2, Color color, int width);
+
+  default void fillRectangle(Point topLeft, Size size, Color color) {
     fillRectangle(topLeft.x, topLeft.y, size.width, size.height, color);
   }
 
-  void fillRectangle (int x, int y, int width, int height, Color color);
+  void fillRectangle(int x, int y, int width, int height, Color color);
 
   default void drawPoint(Point p, Color color, int width) {
     drawPoint(p.x, p.y, color, width);
@@ -44,6 +47,7 @@ public interface ICanvas<T> {
   void clear(Color backColor);
 
   void beforeDraw();
+
   void afterDraw();
 
   void invokeRepaint();
@@ -51,7 +55,12 @@ public interface ICanvas<T> {
   T getGuiControl();
 
   Event<ICanvas, EMouseEventArg> getMouseEvent();
+
   EventSimple<ICanvas> getPaintEvent();
+
   Event<ICanvas, Object> getKeyEvent();
+
   EventSimple<ICanvas> getResizedEvent();
+
+  Size getEstimatedTextSize(Font font, int rowsCount, int columnsCount);
 }

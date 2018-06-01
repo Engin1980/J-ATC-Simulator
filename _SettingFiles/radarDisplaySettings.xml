@@ -78,6 +78,7 @@
   -->
 
   <stopped visible="false" color="000000"
+           connectorColor="000000"
            pointWidth="0" headingLineLength="0"
            historyDotCount="0" historyDotStep="5"
            separationRingRadius="0"
@@ -85,7 +86,7 @@
            secondLineFormat=""
            thirdLineFormat=""/>
 
-  <app color="00FF00"
+  <app color="00FF00" connectorColor="008800"
        pointWidth="7" headingLineLength="5"
        historyDotCount="10" historyDotStep="3"
        separationRingRadius="5"
@@ -93,7 +94,7 @@
        secondLineFormat="{34}{43}{37} {22}"
        thirdLineFormat="{8} {4}"/>
 
-  <ctr color="000080"
+  <ctr color="000080" connectorColor="000040"
        pointWidth="5" headingLineLength="3"
        historyDotCount="5" historyDotStep="3"
        separationRingRadius="5"
@@ -101,7 +102,7 @@
        secondLineFormat="{34} {22}"
        thirdLineFormat="{8} {4}"/>
 
-  <twr color="4F4F00"
+  <twr color="4F4F00" connectorColor="282800"
        pointWidth="5" headingLineLength="3"
        historyDotCount="5" historyDotStep="3"
        separationRingRadius="5"
@@ -109,7 +110,7 @@
        secondLineFormat="{34} {22}"
        thirdLineFormat="{8} {4}"/>
 
-  <selected color="FFFF00"
+  <selected color="FFFF00" connectorColor="888800"
             pointWidth="7" headingLineLength="5"
             historyDotCount="10" historyDotStep="3"
             separationRingRadius="5"
@@ -117,7 +118,7 @@
             secondLineFormat="{34}{43}{37} {22}"
             thirdLineFormat="{8} {4}"/>
 
-  <emergency color="FF0000"
+  <emergency color="FF0000" connectorColor="880000"
              pointWidth="7" headingLineLength="5"
              historyDotCount="10" historyDotStep="3"
              separationRingRadius="5"

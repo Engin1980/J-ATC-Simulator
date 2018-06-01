@@ -13,6 +13,7 @@ import eng.jAtcSim.radarBase.global.events.EMouseEventArg;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.geom.Rectangle2D;
 import java.util.List;
 
 public class SwingCanvas implements ICanvas<JComponent> {
@@ -353,6 +354,28 @@ public class SwingCanvas implements ICanvas<JComponent> {
   @Override
   public EventSimple<ICanvas> getResizedEvent() {
     return resizedEvent;
+  }
+
+  @Override
+  public eng.jAtcSim.radarBase.global.Size getEstimatedTextSize(Font font, int rowsCount, int columnsCount) {
+    FontMetrics fm = g.getFontMetrics();
+
+//    StringBuilder sb = new StringBuilder();
+//    for (int i = 0; i < columnsCount; i++) {
+//      for (int j = 0; j < rowsCount; j++) {
+//        sb.append("0");
+//      }
+//      sb.append("\n");
+//    }
+    String str = "0";
+    Rectangle2D r = fm.getStringBounds(str, g);
+
+
+    eng.jAtcSim.radarBase.global.Size ret = new eng.jAtcSim.radarBase.global.Size(
+        (int) r.getWidth() * rowsCount,
+        (int) r.getHeight() * columnsCount);
+
+    return ret;
   }
 
   private int toEJComponentAngle(int angle) {
