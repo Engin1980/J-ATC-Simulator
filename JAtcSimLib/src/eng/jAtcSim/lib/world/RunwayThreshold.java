@@ -13,8 +13,6 @@ import eng.eSystem.xmlSerialization.XmlOptional;
 import eng.jAtcSim.lib.coordinates.Coordinate;
 import eng.jAtcSim.lib.coordinates.Coordinates;
 import eng.jAtcSim.lib.global.Headings;
-import eng.jAtcSim.lib.global.KeyItem;
-import eng.jAtcSim.lib.global.KeyList;
 import eng.jAtcSim.lib.world.approaches.*;
 
 import java.util.ArrayList;
@@ -23,11 +21,9 @@ import java.util.List;
 /**
  * @author Marek
  */
-public class RunwayThreshold implements KeyItem<String> {
-
+public class RunwayThreshold {
 
   private final List<Approach> approaches = new ArrayList<>();
-
   private final IList<Route> routes = new EList<>();
   private String name;
   private Coordinate coordinate;
@@ -69,11 +65,6 @@ public class RunwayThreshold implements KeyItem<String> {
 
   public IList<Route> getRoutes() {
     return routes;
-  }
-
-  @Override
-  public String getKey() {
-    return getName();
   }
 
   public Runway getParent() {

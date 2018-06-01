@@ -2,9 +2,8 @@ package eng.jAtcSim.lib.world;
 
 import eng.jAtcSim.lib.coordinates.Coordinate;
 import eng.jAtcSim.lib.coordinates.Coordinates;
-import eng.jAtcSim.lib.global.KeyItem;
 
-public class InactiveRunwayThreshold implements KeyItem<String> {
+public class InactiveRunwayThreshold {
   private String name;
   private Coordinate coordinate;
   private InactiveRunway parent;
@@ -17,11 +16,6 @@ public class InactiveRunwayThreshold implements KeyItem<String> {
 
   public Coordinate getCoordinate() {
     return coordinate;
-  }
-
-  @Override
-  public String getKey() {
-    return getName();
   }
 
   public InactiveRunway getParent() {

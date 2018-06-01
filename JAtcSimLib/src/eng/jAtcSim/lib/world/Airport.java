@@ -7,30 +7,25 @@ package eng.jAtcSim.lib.world;
 
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
+import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.ERuntimeException;
 import eng.eSystem.xmlSerialization.XmlOptional;
-import eng.jAtcSim.lib.atcs.Atc;
 import eng.jAtcSim.lib.atcs.AtcTemplate;
 import eng.jAtcSim.lib.coordinates.Coordinate;
-import eng.jAtcSim.lib.global.KeyItem;
-import eng.jAtcSim.lib.global.KeyList;
 import eng.jAtcSim.lib.traffic.Traffic;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author Marek
  */
-public class Airport implements KeyItem<String> {
+public class Airport {
 
   private final InitialPosition initialPosition = new InitialPosition();
-  private final KeyList<Runway, String> runways = new KeyList();
+  private final IList<Runway> runways = new EList<>();
   @XmlOptional
-  private final KeyList<InactiveRunway, String> inactiveRunways = new KeyList();
-  private final KeyList<AtcTemplate, Atc.eType> atcTemplates = new KeyList();
-  private final KeyList<PublishedHold, Navaid> holds = new KeyList();
+  private final IList<InactiveRunway> inactiveRunways = new EList<>();
+  private final IList<AtcTemplate> atcTemplates = new EList<>();
+  private final IList<PublishedHold> holds = new EList<>();
   @XmlOptional
   private final IList<Route> sharedRoutes = new EList<>();
   private String icao;
@@ -40,13 +35,8 @@ public class Airport implements KeyItem<String> {
   private int vfrAltitude;
   private String mainAirportNavaidName;
   private Navaid _mainAirportNavaid;
-  private List<Traffic> trafficDefinitions = new ArrayList<>();
+  private IList<Traffic> trafficDefinitions = new EList<>();
   private Area parent;
-
-  @Override
-  public String getKey() {
-    return icao;
-  }
 
   public String getIcao() {
     return icao;
@@ -64,11 +54,11 @@ public class Airport implements KeyItem<String> {
     return runways.get(0).getThresholdA().getCoordinate();
   }
 
-  public KeyList<Runway, String> getRunways() {
+  public IReadOnlyList<Runway> getRunways() {
     return runways;
   }
 
-  public KeyList<InactiveRunway, String> getInactiveRunways() {
+  public IReadOnlyList<InactiveRunway> getInactiveRunways() {
     return inactiveRunways;
   }
 
@@ -84,11 +74,11 @@ public class Airport implements KeyItem<String> {
     this.parent = parent;
   }
 
-  public KeyList<PublishedHold, Navaid> getHolds() {
+  public IReadOnlyList<PublishedHold> getHolds() {
     return holds;
   }
 
-  public List<Traffic> getTrafficDefinitions() {
+  public IReadOnlyList<Traffic> getTrafficDefinitions() {
     return trafficDefinitions;
   }
 
@@ -103,7 +93,7 @@ public class Airport implements KeyItem<String> {
     return null;
   }
 
-  public KeyList<AtcTemplate, Atc.eType> getAtcTemplates() {
+  public IReadOnlyList<AtcTemplate> getAtcTemplates() {
     return atcTemplates;
   }
 

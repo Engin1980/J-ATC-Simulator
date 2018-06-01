@@ -6,7 +6,6 @@ import eng.eSystem.xmlSerialization.IElementParser;
 import eng.eSystem.xmlSerialization.XmlDeserializationException;
 import eng.eSystem.xmlSerialization.XmlSerializationException;
 import eng.eSystem.xmlSerialization.XmlSerializer;
-import eng.jAtcSim.lib.global.KeyList;
 import eng.jAtcSim.lib.world.Airport;
 
 public class AirportParser implements IElementParser<Airport> {
@@ -36,7 +35,7 @@ public class AirportParser implements IElementParser<Airport> {
     return false;
   }
 
-  public void setRelative(KeyList<Airport,String> airports) {
+  public void setRelative(IList<Airport> airports) {
     this.known = airports;
   }
 }

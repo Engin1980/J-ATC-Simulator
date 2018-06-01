@@ -10,7 +10,6 @@ import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.coordinates.Coordinate;
 import eng.jAtcSim.lib.coordinates.Coordinates;
 import eng.jAtcSim.lib.global.Headings;
-import eng.jAtcSim.lib.global.KeyList;
 import eng.jAtcSim.lib.global.UnitProvider;
 import eng.jAtcSim.lib.speaking.IFromAtc;
 import eng.jAtcSim.lib.speaking.SpeechList;
@@ -185,7 +184,7 @@ public abstract class Approach {
     CurrentApproachInfo ret;
     IlsApproach tmp = (IlsApproach) CollectionUtils.tryGetFirst(apps, o -> o instanceof IlsApproach);
     IlsApproach.Type catKey = typeToIlsType(type);
-    IlsApproach.Category cat = tmp.getCategories().get(catKey);
+    IlsApproach.Category cat = tmp.getCategories().getFirst(q->q.getType() == catKey);
 
     Navaid iaf = tryGetIafNavaidCloseToPlaneLocation(tmp, planeLocation);
 

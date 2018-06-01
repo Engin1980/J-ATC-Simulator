@@ -46,7 +46,7 @@ public class PlaneResponsibilityManager {
 
   private final IMap<Airplane, eState> map = new EMap<>();
   private final IMap<Atc, AirplaneList> lst = new EMap<>();
-  private final AirplaneList all = new AirplaneList();
+  private final AirplaneList all = new AirplaneList(true);
   @XmlIgnore
   private final List<Airplane.Airplane4Display> infos = new LinkedList<>();
 
@@ -55,9 +55,9 @@ public class PlaneResponsibilityManager {
 
   public void init(){
     if (lst.isEmpty()) { // non-empty after load
-      lst.set(Acc.atcApp(), new AirplaneList());
-      lst.set(Acc.atcCtr(), new AirplaneList());
-      lst.set(Acc.atcTwr(), new AirplaneList());
+      lst.set(Acc.atcApp(), new AirplaneList(true));
+      lst.set(Acc.atcCtr(), new AirplaneList(true));
+      lst.set(Acc.atcTwr(), new AirplaneList(true));
     }
 
     for (Airplane plane : all) {
@@ -335,7 +335,7 @@ public class PlaneResponsibilityManager {
 
   protected AirplaneList getPlanes(Atc atc) {
     //TODO není to moc pomalé?
-    AirplaneList nw = new AirplaneList();
+    AirplaneList nw = new AirplaneList(false);
     nw.add(lst.get(atc));
     return nw;
   }

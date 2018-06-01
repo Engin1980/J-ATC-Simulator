@@ -7,18 +7,13 @@
 package eng.jAtcSim.lib.world;
 
 import eng.jAtcSim.lib.coordinates.Coordinate;
-import eng.jAtcSim.lib.global.KeyItem;
 
 /**
  *
  * @author Marek
  */
-public class Navaid implements KeyItem<String> {
+public class Navaid {
 
-  @Override
-  public String getKey() {
-    return name;
-  }
   public enum eType{
     vor,
     ndb,

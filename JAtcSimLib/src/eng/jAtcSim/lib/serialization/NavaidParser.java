@@ -6,11 +6,11 @@ import eng.eSystem.xmlSerialization.XmlDeserializationException;
 import eng.eSystem.xmlSerialization.XmlSerializationException;
 import eng.eSystem.xmlSerialization.XmlSerializer;
 import eng.jAtcSim.lib.world.Navaid;
-import eng.jAtcSim.lib.world.NavaidKeyList;
+import eng.jAtcSim.lib.world.NavaidList;
 
 public class NavaidParser implements IElementParser<Navaid> {
 
-  private NavaidKeyList known;
+  private NavaidList known;
 
 
   @Override
@@ -35,7 +35,7 @@ public class NavaidParser implements IElementParser<Navaid> {
     return false;
   }
 
-  public void setRelative(NavaidKeyList navaids) {
+  public void setRelative(NavaidList navaids) {
     this.known = navaids;
   }
 }

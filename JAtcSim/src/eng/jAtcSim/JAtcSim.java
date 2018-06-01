@@ -10,17 +10,13 @@ import eng.eSystem.exceptions.ERuntimeException;
 import eng.jAtcSim.frmPacks.Pack;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.Game;
-import eng.jAtcSim.lib.airplanes.AirplaneTypes;
 import eng.jAtcSim.lib.global.ETime;
-import eng.jAtcSim.lib.global.KeyList;
 import eng.jAtcSim.lib.global.logging.ApplicationLog;
 import eng.jAtcSim.lib.global.logging.Recorder;
-import eng.jAtcSim.lib.global.sources.*;
+import eng.jAtcSim.lib.global.sources.WeatherSource;
 import eng.jAtcSim.lib.traffic.GenericTraffic;
 import eng.jAtcSim.lib.traffic.Traffic;
-import eng.jAtcSim.lib.traffic.fleets.Fleets;
-import eng.jAtcSim.lib.weathers.*;
-import eng.jAtcSim.lib.world.Area;
+import eng.jAtcSim.lib.weathers.Weather;
 import eng.jAtcSim.radarBase.global.SoundManager;
 import eng.jAtcSim.startup.FrmIntro;
 import eng.jAtcSim.startup.startupSettings.StartupSettings;
@@ -38,12 +34,6 @@ import static eng.eSystem.utilites.FunctionShortcuts.sf;
  * @author Marek
  */
 public class JAtcSim {
-
-  static class XmlLoadedData {
-    public Area area;
-    public AirplaneTypes types;
-    public Fleets fleets;
-  }
 
   private static final boolean FAST_START = false;
   private static final Traffic enginSpecificTraffic =
@@ -74,14 +64,16 @@ public class JAtcSim {
   }
 
   public static void loadSimulation(StartupSettings startupSettings, String xmlFileName) {
-    KeyList.setDuplicatesChecking(false);
-
     System.out.println("* Loading the simulation");
 
     Game g = Game.load(xmlFileName);
 
     // enable duplicates
-    KeyList.setDuplicatesChecking(true);
+    try {
+      g.getSimulation().getArea().checkForDuplicits();
+    } catch (Exception ex){
+      throw new EApplicationException("Some element in source XML files is not unique. Some of the input XML files is not valid.", ex);
+    }
 
     System.out.println("* Initializing sound environment");
     // sound
@@ -98,8 +90,6 @@ public class JAtcSim {
   }
 
   public static void startSimulation(StartupSettings startupSettings) {
-
-    KeyList.setDuplicatesChecking(false);
 
     try {
       resolveShortXmlFileNamesInStartupSettings(appSettings, startupSettings);
@@ -132,7 +122,7 @@ public class JAtcSim {
 
     // enable duplicates
     try {
-      KeyList.setDuplicatesChecking(true);
+      g.getSimulation().getArea().checkForDuplicits();
     } catch (Exception ex){
       throw new EApplicationException("Some element in source XML files is not unique. Some of the input XML files is not valid.", ex);
     }

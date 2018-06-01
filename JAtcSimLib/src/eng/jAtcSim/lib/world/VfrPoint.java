@@ -6,23 +6,17 @@
 package eng.jAtcSim.lib.world;
 
 import eng.jAtcSim.lib.coordinates.Coordinate;
-import eng.jAtcSim.lib.global.KeyItem;
 
 /**
  *
  * @author Marek Vajgl
  */
-public class VfrPoint implements KeyItem<String> {
+public class VfrPoint {
 
   private Coordinate coordinate;
   private String name;
   private boolean forArrivals;
   private boolean forDepartures;
-
-  @Override
-  public String getKey() {
-    return name;
-  }
 
   public Coordinate getCoordinate() {
     return coordinate;

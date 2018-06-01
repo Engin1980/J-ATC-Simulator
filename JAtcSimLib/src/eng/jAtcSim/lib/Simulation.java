@@ -181,9 +181,9 @@ public class Simulation {
     this.weatherProvider = weatherProvider;
 
     this.activeAirport = activeAirport;
-    this.twrAtc = new TowerAtc(this.activeAirport.getAtcTemplates().get(Atc.eType.twr));
-    this.ctrAtc = new CenterAtc(this.activeAirport.getAtcTemplates().get(Atc.eType.ctr));
-    this.appAtc = new UserAtc(this.activeAirport.getAtcTemplates().get(Atc.eType.app));
+    this.twrAtc = new TowerAtc(this.activeAirport.getAtcTemplates().getFirst(q->q.getType() == Atc.eType.twr));
+    this.ctrAtc = new CenterAtc(this.activeAirport.getAtcTemplates().getFirst(q->q.getType() == Atc.eType.ctr));
+    this.appAtc = new UserAtc(this.activeAirport.getAtcTemplates().getFirst(q->q.getType() == Atc.eType.app));
 
     this.prm = new PlaneResponsibilityManager();
 
@@ -467,7 +467,7 @@ public class Simulation {
   }
 
   private void removeOldPlanes() {
-    AirplaneList rem = new AirplaneList();
+    AirplaneList rem = new AirplaneList(true);
     for (Airplane p : Acc.planes()) {
       // landed
       if (p.isArrival() && p.getSpeed() < 11) {

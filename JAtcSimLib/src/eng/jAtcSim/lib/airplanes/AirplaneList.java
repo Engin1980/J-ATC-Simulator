@@ -5,13 +5,15 @@
  */
 package eng.jAtcSim.lib.airplanes;
 
-import eng.jAtcSim.lib.global.KeyList;
+import eng.eSystem.collections.EDistinctList;
 
 /**
  *
  * @author Marek
  */
-public class AirplaneList extends KeyList<Airplane, Callsign> {
+public class AirplaneList extends EDistinctList<Airplane> {
 
-  
+  public AirplaneList(boolean duplicitCheckEnabled) {
+    super(duplicitCheckEnabled ? Behavior.exception : Behavior.ignore);
+  }
 }

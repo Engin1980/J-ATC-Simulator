@@ -37,7 +37,7 @@ public class HoldParser extends SpeechParser<HoldCommand> {
     String leftOrRight = rg.tryGetString(5);
 
     if (heading == null) {
-      PublishedHold h = Acc.airport().getHolds().get(n);
+      PublishedHold h = Acc.airport().getHolds().tryGetFirst(q->q.getNavaid().equals(n));
 
       if (h == null) {
         throw new EInvalidCommandException(

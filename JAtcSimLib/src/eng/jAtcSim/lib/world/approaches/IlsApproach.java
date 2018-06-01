@@ -1,12 +1,13 @@
 package eng.jAtcSim.lib.world.approaches;
 
+import eng.eSystem.collections.EList;
+import eng.eSystem.collections.IList;
+import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.xmlSerialization.XmlOptional;
-import eng.jAtcSim.lib.global.KeyItem;
-import eng.jAtcSim.lib.global.KeyList;
 
 public class IlsApproach extends Approach {
 
-  public static class Category implements KeyItem<Type> {
+  public static class Category {
 
     private Type type;
     private int daA;
@@ -17,8 +18,7 @@ public class IlsApproach extends Approach {
     public Category() {
     }
 
-    @Override
-    public Type getKey() {
+    public Type getType() {
       return type;
     }
 
@@ -67,11 +67,11 @@ public class IlsApproach extends Approach {
     III
   }
 
-  private KeyList<Category, Type> categories = new KeyList<IlsApproach.Category, Type>();
+  private IList<Category> categories = new EList<>();
   @XmlOptional
   private double glidePathPercentage = 3;
 
-  public KeyList<Category, Type> getCategories() {
+  public IReadOnlyList<Category> getCategories() {
     return categories;
   }
 

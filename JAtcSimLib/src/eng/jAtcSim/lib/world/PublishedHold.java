@@ -7,13 +7,12 @@
 package eng.jAtcSim.lib.world;
 
 import eng.jAtcSim.lib.exceptions.EBindException;
-import eng.jAtcSim.lib.global.KeyItem;
 
 /**
  *
  * @author Marek
  */
-public class PublishedHold implements KeyItem<Navaid> {
+public class PublishedHold{
   private String navaidName;
   private Navaid _navaid;
   private int inboundRadial;
@@ -45,11 +44,6 @@ public class PublishedHold implements KeyItem<Navaid> {
     this._navaid = n;
     
     this._leftTurn = this.turn.equals("left");
-  }
-
-  @Override
-  public Navaid getKey() {
-    return _navaid;
   }
 
   void setParent(Airport airport) {

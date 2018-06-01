@@ -10,7 +10,6 @@ import eng.eSystem.utilites.CollectionUtils;
 import eng.eSystem.utilites.StringUtil;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.coordinates.Coordinates;
-import eng.jAtcSim.lib.global.KeyItems;
 
 import java.util.List;
 
@@ -37,7 +36,7 @@ public class Airplanes {
     return ret;
   }
 
-  public static Airplane tryGetByCallsign(Iterable<Airplane> planes, String callsign) {
+  public static Airplane tryGetByCallsign(IReadOnlyList<Airplane> planes, String callsign) {
     Callsign cs;
     try {
       cs = new Callsign(callsign);
@@ -47,20 +46,20 @@ public class Airplanes {
     return tryGetByCallsign(planes, cs);
   }
 
-  public static Airplane tryGetByCallsign(Iterable<Airplane> planes, Callsign callsign) {
-    return KeyItems.tryGet(planes, callsign);
+  public static Airplane tryGetByCallsign(IReadOnlyList<Airplane> planes, Callsign callsign) {
+    return planes.tryGetFirst(q->q.getCallsign().equals(callsign));
   }
 
-  public static Airplane getByCallsing(Iterable<Airplane> planes, String callsign) {
+  public static Airplane getByCallsing(IReadOnlyList<Airplane> planes, String callsign) {
     Callsign cs = new Callsign(callsign);
     return getByCallsing(planes, cs);
   }
 
-  public static Airplane getByCallsing(Iterable<Airplane> planes, Callsign callsign) {
-    return KeyItems.get(planes, callsign);
+  public static Airplane getByCallsing(IReadOnlyList<Airplane> planes, Callsign callsign) {
+    return planes.getFirst(q->q.getCallsign().equals(callsign));
   }
 
-  public static Airplane tryGetBySqwk(Iterable<Airplane> planes, String sqwk) {
+  public static Airplane tryGetBySqwk(IReadOnlyList<Airplane> planes, String sqwk) {
     Squawk s;
     try {
       s = Squawk.create(sqwk);
@@ -70,13 +69,9 @@ public class Airplanes {
     return Airplanes.tryGetBySqwk(planes, s);
   }
 
-  public static Airplane tryGetBySqwk(Iterable<Airplane> planes, Squawk sqwk) {
-    for (Airplane p : planes) {
-      if (p.getSqwk().equals(sqwk)) {
-        return p;
-      }
-    }
-    return null;
+  public static Airplane tryGetBySqwk(IReadOnlyList<Airplane> planes, Squawk sqwk) {
+    Airplane ret = planes.tryGetFirst(q->q.getSqwk().equals(sqwk));
+    return ret;
   }
 
   public static void evaluateAirproxes(IReadOnlyList<Airplane> planes) {

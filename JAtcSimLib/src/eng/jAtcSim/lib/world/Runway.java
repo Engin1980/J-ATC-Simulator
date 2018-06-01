@@ -6,15 +6,16 @@
 
 package eng.jAtcSim.lib.world;
 
-import eng.jAtcSim.lib.global.KeyItem;
-import eng.jAtcSim.lib.global.KeyList;
+import eng.eSystem.collections.EList;
+import eng.eSystem.collections.IList;
+import eng.eSystem.collections.IReadOnlyList;
 
 /**
  *
  * @author Marek
  */
-public class Runway implements KeyItem<String> {
-  private final KeyList<RunwayThreshold, String> thresholds = new KeyList();
+public class Runway {
+  private final IList<RunwayThreshold> thresholds = new EList<>();
 
   private Airport parent;
 
@@ -22,7 +23,7 @@ public class Runway implements KeyItem<String> {
     return thresholds.get(index);
   }
   
-  public KeyList<RunwayThreshold,String> getThresholds(){
+  public IReadOnlyList<RunwayThreshold> getThresholds(){
     return this.thresholds;
   }
   
@@ -38,11 +39,6 @@ public class Runway implements KeyItem<String> {
     return getThresholdA().getName() + "-" + getThresholdB().getName();
   }
   
-  @Override
-  public String getKey() {
-    return getName();
-  }
-
   public Airport getParent() {
     return parent;
   }

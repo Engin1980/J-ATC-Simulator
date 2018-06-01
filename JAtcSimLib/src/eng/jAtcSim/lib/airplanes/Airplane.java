@@ -17,7 +17,6 @@ import eng.jAtcSim.lib.coordinates.Coordinate;
 import eng.jAtcSim.lib.coordinates.Coordinates;
 import eng.jAtcSim.lib.global.ETime;
 import eng.jAtcSim.lib.global.Headings;
-import eng.jAtcSim.lib.global.KeyItem;
 import eng.jAtcSim.lib.global.UnitProvider;
 import eng.jAtcSim.lib.messaging.IMessageContent;
 import eng.jAtcSim.lib.messaging.IMessageParticipant;
@@ -44,7 +43,7 @@ import static eng.eSystem.utilites.FunctionShortcuts.sf;
 /**
  * @author Marek
  */
-public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
+public class Airplane implements IMessageParticipant {
 
   public class Airplane4Display {
 
@@ -555,11 +554,6 @@ public class Airplane implements KeyItem<Callsign>, IMessageParticipant {
 
   public String getTargetHeadingS() {
     return String.format("%1$03d", this.targetHeading);
-  }
-
-  @Override
-  public Callsign getKey() {
-    return this.callsign;
   }
 
   public void elapseSecond() {

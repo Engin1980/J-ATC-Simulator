@@ -24,7 +24,7 @@ public class AfterRadialParser extends SpeechParser<AfterRadialCommand> {
   @Override
   public AfterRadialCommand parse(RegexGrouper rg) {
     String ns = rg.getString(1);
-    Navaid n = Acc.area().getNavaids().tryGet(ns);
+    Navaid n = Acc.area().getNavaids().tryGetFirst(q->q.getName().equals(ns));
     if (n == null) {
       throw new EInvalidCommandException("Unable to find navaid named \"" + ns + "\".", rg.getMatch());
     }

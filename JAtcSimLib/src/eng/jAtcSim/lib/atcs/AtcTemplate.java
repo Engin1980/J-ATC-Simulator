@@ -7,13 +7,12 @@
 package eng.jAtcSim.lib.atcs;
 
 import eng.eSystem.xmlSerialization.XmlOptional;
-import eng.jAtcSim.lib.global.KeyItem;
 
 /**
  *
  * @author Marek
  */
-public class AtcTemplate implements KeyItem<Atc.eType> {
+public class AtcTemplate {
   private Atc.eType type;
   private String name;
   private double frequency;
@@ -24,11 +23,6 @@ public class AtcTemplate implements KeyItem<Atc.eType> {
   private Integer ctrAcceptDistance = null;
   @XmlOptional
   private Integer ctrNavaidAcceptDistance = null;
-
-  @Override
-  public Atc.eType getKey() {
-    return type;
-  }
 
   public Atc.eType getType() {
     return type;

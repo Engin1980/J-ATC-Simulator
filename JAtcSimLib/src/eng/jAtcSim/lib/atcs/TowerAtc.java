@@ -107,11 +107,11 @@ public class TowerAtc extends ComputerAtc {
   private final TakeOffInfos takeOffInfos = new TakeOffInfos();
   @XmlIgnore
   private final CommonRecorder toRecorder;
-  private AirplaneList landingPlanesList = new AirplaneList();
-  private AirplaneList goAroundedPlanesToSwitchList = new AirplaneList();
-  private AirplaneList holdingPointPlanesList = new AirplaneList();
-  private AirplaneList linedUpPlanesList = new AirplaneList();
-  private AirplaneList departingPlanesList = new AirplaneList();
+  private AirplaneList landingPlanesList = new AirplaneList(true);
+  private AirplaneList goAroundedPlanesToSwitchList = new AirplaneList(true);
+  private AirplaneList holdingPointPlanesList = new AirplaneList(true);
+  private AirplaneList linedUpPlanesList = new AirplaneList(true);
+  private AirplaneList departingPlanesList = new AirplaneList(true);
   private Map<Airplane, ETime> holdingPointWaitingTimeMap = new HashMap<>();
   private RunwaysInUseInfo inUseInfo = null;
   private EMap<Runway, RunwayCheck> runwayChecks = null;

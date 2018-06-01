@@ -1,17 +1,17 @@
 package eng.jAtcSim.lib.world;
 
+import eng.eSystem.collections.EList;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.coordinates.Coordinate;
 import eng.jAtcSim.lib.coordinates.Coordinates;
 import eng.jAtcSim.lib.global.Headings;
-import eng.jAtcSim.lib.global.KeyList;
 import eng.jAtcSim.lib.speaking.parsing.shortParsing.RegexGrouper;
 
-public class NavaidKeyList extends KeyList<Navaid, String> {
+public class NavaidList extends EList<Navaid> {
 
   public Navaid getOrGenerate(String name) {
-    Navaid ret = super.tryGet(name);
+    Navaid ret = this.tryGet(name);
     if (ret == null && name.contains("/")) {
       try {
         PBD pdb = PBD.decode(name);
@@ -23,6 +23,16 @@ public class NavaidKeyList extends KeyList<Navaid, String> {
         throw new EApplicationException("Failed to getContent / decode navaid with name " + name, ex);
       }
     }
+    return ret;
+  }
+
+  public Navaid get(String name){
+    Navaid ret = this.getFirst(q->q.getName().equals(name));
+    return ret;
+  }
+
+  public Navaid tryGet(String name){
+    Navaid ret = this.tryGetFirst(q->q.getName().equals(name));
     return ret;
   }
 }
