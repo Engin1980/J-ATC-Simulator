@@ -5,6 +5,7 @@ import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import java.awt.*;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
@@ -21,7 +22,8 @@ public class SwingFactory {
     types,
     traffic,
     game,
-    startupSettings
+    startupSettings,
+    folder
   }
 
   public static JScrollBar createHorizontalBar(int minimum, int maximum, int value) {
@@ -52,6 +54,9 @@ public class SwingFactory {
         break;
       case types:
         ret.addChoosableFileFilter(new FileTypeFilter(".tp.xml", "Airplane types files"));
+        break;
+      case folder:
+        ret.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         break;
       default:
         throw new EEnumValueUnsupportedException(type);
@@ -86,6 +91,12 @@ public class SwingFactory {
     dlg.setLocationRelativeTo(null);
     dlg.setTitle(title);
     dlg.setVisible(true);
+  }
+
+  public static JButton createButton(String title, ActionListener action){
+    JButton ret = new JButton(title);
+    ret.addActionListener(action);
+    return ret;
   }
 }
 

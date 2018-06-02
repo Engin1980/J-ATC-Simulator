@@ -125,10 +125,19 @@ public class FrmMain extends JFrame {
       f.setVisible(true);
     });
 
+    JButton btnRecording = new JButton("Recording");
+    adjustJComponentColors(btnRecording);
+    btnRecording.addActionListener(q->btnRecording_click());
+
     JPanel ret = LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.middle, 4,
-        btnStrips, btnCommands, btnMovs, btnPause, btnSave, btnView);
+        btnStrips, btnCommands, btnMovs, btnPause, btnSave, btnView, btnRecording);
     ret.setName("pnlTop");
     return ret;
+  }
+
+  private void btnRecording_click() {
+    RecordingPanel pnl = new RecordingPanel(null);
+    SwingFactory.show(pnl, "Recording");
   }
 
   private String lastFileName = null;

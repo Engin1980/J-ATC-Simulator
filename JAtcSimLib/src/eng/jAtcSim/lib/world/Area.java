@@ -105,7 +105,7 @@ public class Area {
 
   private void tryFailDuplicits(String type, ISet<String> items) {
     if (items.isEmpty()) return;
-    
+
     EStringBuilder sb = new EStringBuilder();
     sb.append(items.size() + " duplicate record(s) were found in " + type + ". E.g.: ");
     sb.appendItems(items, q->q, "; ");
