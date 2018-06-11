@@ -258,6 +258,10 @@ public class Airplane implements IMessageParticipant {
       return altitude.getValue();
     }
 
+    public int getTargetAltitude() {
+      return targetAltitude;
+    }
+
     public double getHeading() {
       return heading.getValue();
     }
@@ -362,12 +366,12 @@ public class Airplane implements IMessageParticipant {
   private static final double secondFraction = 1 / 60d / 60d;
   private final Callsign callsign;
   private final Squawk sqwk;
-  private Pilot pilot;
   private final AirplaneType airplaneType;
   @XmlIgnore
   private final Airplane4Display plane4Display;
   private final int delayInitialMinutes;
   private final ETime delayExpectedTime;
+  private Pilot pilot;
   private boolean departure;
   private int targetHeading;
   private boolean targetHeadingLeftTurn;
@@ -385,6 +389,40 @@ public class Airplane implements IMessageParticipant {
   private InertialValue altitude;
   private Integer delayResult = null;
   private ETime emergencyWanishTime = null;
+
+  public static Airplane load(XElement elm) {
+
+    Airplane ret = new Airplane();
+
+    LoadSave.loadField(elm, ret, "callsign");
+    LoadSave.loadField(elm, ret, "sqwk");
+    LoadSave.loadField(elm, ret, "airplaneType");
+    LoadSave.loadField(elm, ret, "delayInitialMinutes");
+    LoadSave.loadField(elm, ret, "delayExpectedTime");
+    LoadSave.loadField(elm, ret, "departure");
+    LoadSave.loadField(elm, ret, "targetHeading");
+    LoadSave.loadField(elm, ret, "targetHeadingLeftTurn");
+    LoadSave.loadField(elm, ret, "targetAltitude");
+    LoadSave.loadField(elm, ret, "targetSpeed");
+    LoadSave.loadField(elm, ret, "state");
+    LoadSave.loadField(elm, ret, "lastVerticalSpeed");
+    LoadSave.loadField(elm, ret, "airprox");
+    LoadSave.loadField(elm, ret, "mrvaError");
+    LoadSave.loadField(elm, ret, "delayResult");
+    LoadSave.loadField(elm, ret, "emergencyWanishTime");
+    LoadSave.loadField(elm, ret, "coordinate");
+    LoadSave.loadField(elm, ret, "heading");
+    LoadSave.loadField(elm, ret, "speed");
+    LoadSave.loadField(elm, ret, "altitude");
+
+    ret.flightRecorder = FlightRecorder.create(ret.callsign);
+
+    XElement tmp = elm.getChildren().getFirst(q -> q.getName().equals("pilot"));
+
+    ret.pilot = Pilot.load(tmp, ret.new Airplane4Pilot());
+
+    return ret;
+  }
 
   private static ValueRequest getRequest(double current, double target, double maxIncreaseStep, double maxDecreaseStep) {
     // if on ground, nothing required
@@ -496,6 +534,15 @@ public class Airplane implements IMessageParticipant {
     this.flightRecorder = FlightRecorder.create(this.callsign);
   }
 
+  private Airplane() {
+    this.callsign = null;
+    this.sqwk = null;
+    this.airplaneType = null;
+    this.plane4Display = new Airplane4Display();
+    this.delayInitialMinutes = 0;
+    this.delayExpectedTime = null;
+  }
+
   public boolean isEmergency() {
     return this.emergencyWanishTime != null;
   }
@@ -598,14 +645,14 @@ public class Airplane implements IMessageParticipant {
     return targetHeading;
   }
 
+  public void setTargetHeading(double targetHeading) {
+    this.setTargetHeading((int) Math.round(targetHeading));
+  }
+
   public void setTargetHeading(int targetHeading) {
     boolean useLeft
         = Headings.getBetterDirectionToTurn(heading.getValue(), targetHeading) == ChangeHeadingCommand.eDirection.left;
     setTargetHeading(targetHeading, useLeft);
-  }
-
-  public void setTargetHeading(double targetHeading) {
-    this.setTargetHeading((int) Math.round(targetHeading));
   }
 
   public int getTargetAltitude() {
@@ -749,49 +796,6 @@ public class Airplane implements IMessageParticipant {
     this.pilot.save(tmp);
     elm.addElement(tmp);
 
-  }
-
-  private Airplane (){
-    this.callsign = null;
-    this.sqwk = null;
-    this.airplaneType = null;
-    this.plane4Display = new Airplane4Display();
-    this.delayInitialMinutes = 0;
-    this.delayExpectedTime = null;
-  }
-
-  public static Airplane load(XElement elm) {
-
-    Airplane ret = new Airplane();
-
-    LoadSave.loadField(elm, ret, "callsign");
-    LoadSave.loadField(elm, ret, "sqwk");
-    LoadSave.loadField(elm, ret, "airplaneType");
-    LoadSave.loadField(elm, ret, "delayInitialMinutes");
-    LoadSave.loadField(elm, ret, "delayExpectedTime");
-    LoadSave.loadField(elm, ret, "departure");
-    LoadSave.loadField(elm, ret, "targetHeading");
-    LoadSave.loadField(elm, ret, "targetHeadingLeftTurn");
-    LoadSave.loadField(elm, ret, "targetAltitude");
-    LoadSave.loadField(elm, ret, "targetSpeed");
-    LoadSave.loadField(elm, ret, "state");
-    LoadSave.loadField(elm, ret, "lastVerticalSpeed");
-    LoadSave.loadField(elm, ret, "airprox");
-    LoadSave.loadField(elm, ret, "mrvaError");
-    LoadSave.loadField(elm, ret, "delayResult");
-    LoadSave.loadField(elm, ret, "emergencyWanishTime");
-    LoadSave.loadField(elm, ret, "coordinate");
-    LoadSave.loadField(elm, ret, "heading");
-    LoadSave.loadField(elm, ret, "speed");
-    LoadSave.loadField(elm, ret, "altitude");
-
-    ret.flightRecorder = FlightRecorder.create(ret.callsign);
-
-    XElement tmp = elm.getChildren().getFirst(q->q.getName().equals("pilot"));
-
-    ret.pilot = Pilot.load(tmp, ret.new Airplane4Pilot());
-
-    return ret;
   }
 
   // </editor-fold>

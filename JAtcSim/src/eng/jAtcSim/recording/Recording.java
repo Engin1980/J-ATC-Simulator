@@ -71,8 +71,9 @@ public class Recording {
       fullFileName = Paths.get(settings.getPath(), fullFileName).toString();
       try {
         ImageIO.write(img, imgType, new File(fullFileName));
-      } catch (IOException e) {
+      } catch (Exception e) {
         System.out.println(ExceptionUtil.toFullString(e, "\n\t"));
+        this.stop();
       }
     }
   }

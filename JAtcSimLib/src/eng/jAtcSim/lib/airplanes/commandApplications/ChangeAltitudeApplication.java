@@ -26,8 +26,12 @@ public class ChangeAltitudeApplication extends CommandApplication<ChangeAltitude
 
     if ((c.getDirection() == ChangeAltitudeCommand.eDirection.climb) && (plane.getAltitude() > c.getAltitudeInFt())) {
       ret = new Rejection("we are higher.", c);
+      if (plane.getTargetAltitude() < c.getAltitudeInFt())
+        plane.getPilot().setTargetAltitude(c.getAltitudeInFt());
       return ret;
     } else if ((c.getDirection() == ChangeAltitudeCommand.eDirection.descend) && (plane.getAltitude() < c.getAltitudeInFt())) {
+      if (plane.getTargetAltitude() > c.getAltitudeInFt())
+        plane.getPilot().setTargetAltitude(c.getAltitudeInFt());
       ret = new Rejection("we are lower.", c);
       return ret;
     }
