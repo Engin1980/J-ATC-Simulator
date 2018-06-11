@@ -185,7 +185,7 @@
             <threshold name="24" coordinate="50 06 57.43 N 014 16 24.12 E" initialDepartureAltitude="5000"
                        preferred="true" includeSharedRoutes="false">
               <sharedIafRoutes>
-                <route iaf="ERASU" route="DM 40 PD PR531 T PD PR531 T FH 241"/>
+                <route iaf="ERASU" route="DM 40 PD PR531 T PD PR532 T FH 241"/>
                 <route iaf="RATEV" route="DM 40 PD PR530 T PD PR532 T FH 241"/>
               </sharedIafRoutes>
               <approaches>

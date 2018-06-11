@@ -5,6 +5,8 @@
  */
 package eng.jAtcSim.startup.extenders;
 
+import eng.jAtcSim.shared.LayoutManager;
+
 import java.awt.*;
 import java.io.File;
 import javax.swing.*;
@@ -28,6 +30,12 @@ public class XmlFileSelectorExtender {
 
   public JButton getButtonControl(){
     return btn;
+  }
+
+  public JPanel getControl(){
+    JPanel ret = LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.baseline, 4,
+        txt, btn);
+    return ret;
   }
 
   public XmlFileSelectorExtender(JTextField txt, JButton btn, File file, SwingFactory.FileDialogType type) {

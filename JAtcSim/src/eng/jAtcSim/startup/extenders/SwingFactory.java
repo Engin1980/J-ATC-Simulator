@@ -23,7 +23,9 @@ public class SwingFactory {
     traffic,
     game,
     startupSettings,
-    folder
+    folder,
+    ffmpeg,
+    video
   }
 
   public static JScrollBar createHorizontalBar(int minimum, int maximum, int value) {
@@ -57,6 +59,12 @@ public class SwingFactory {
         break;
       case folder:
         ret.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        break;
+      case ffmpeg:
+        ret.addChoosableFileFilter(new FileTypeFilter("ffmpeg.exe", "ffmpeg.exe"));
+        break;
+      case video:
+        ret.addChoosableFileFilter(new FileTypeFilter(".mp4", "MP4 video file"));
         break;
       default:
         throw new EEnumValueUnsupportedException(type);
