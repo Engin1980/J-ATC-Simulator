@@ -15,6 +15,8 @@ import javax.swing.SpinnerNumberModel;
  */
 public class NumericUpDownExtender {
   private final JSpinner nud;
+  private final int minimum;
+  private final int maximum;
 
   public JSpinner getControl(){
     return nud;
@@ -27,10 +29,19 @@ public class NumericUpDownExtender {
     assert value <= maximum;
 
     this.nud = nud;
-    
+
+    this.minimum = minimum;
+    this.maximum = maximum;
     SpinnerModel model =
         new SpinnerNumberModel(value, minimum, maximum, step);
     this.nud.setModel(model);
+  }
+
+  public int getMinimum(){
+    return this.minimum;
+  }
+  public int getMaximum(){
+    return this.maximum;
   }
   
   public int getValue(){

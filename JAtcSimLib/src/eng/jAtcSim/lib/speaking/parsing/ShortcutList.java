@@ -1,20 +1,37 @@
 package eng.jAtcSim.lib.speaking.parsing;
 
+import eng.eSystem.collections.EMap;
+import eng.eSystem.collections.IMap;
+import eng.eSystem.collections.ISet;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
 public class ShortcutList {
 
-  public HashMap m;
-  private Map<String, String> inner = new HashMap<>();
+  private IMap<String, String> inner = new EMap<>();
 
   public void add(String key, String value) {
     assert key.contains(" ") == false;
     if (value != null) {
-      inner.put(key, value);
+      inner.set(key, value);
     } else {
       remove(key);
+    }
+  }
+
+  public IMap<String, String> getAll2(){
+    eng.eSystem.collections.IMap<String, String> ret = new EMap<>();
+    for (Map.Entry<String, String> stringStringEntry : inner) {
+      ret.set(stringStringEntry.getKey(), stringStringEntry.getValue());
+    }
+    return ret;
+  }
+
+  public void setAll2(IMap<String, String> shortcuts){
+    for (Map.Entry<String, String> shortcut : shortcuts) {
+      inner.set(shortcut.getKey(), shortcut.getValue());
     }
   }
 
@@ -23,12 +40,12 @@ public class ShortcutList {
   }
 
   public String tryGet(String key){
-    String ret = inner.getOrDefault(key, null);
+    String ret = inner.tryGet(key);
     return ret;
   }
 
-  public Set<Map.Entry<String, String>> getAll(){
-    Set<Map.Entry<String, String>> ret = inner.entrySet();
+  public ISet<Map.Entry<String, String>> getEntries(){
+    ISet<Map.Entry<String, String>> ret = inner.getEntries();
     return ret;
   }
 }

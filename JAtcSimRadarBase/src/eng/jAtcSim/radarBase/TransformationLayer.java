@@ -175,6 +175,7 @@ class TransformationLayer {
         center.getLatitude().add(1),
         center.getLongitude().add(1)
     );
+    resetPosition();
   }
 
   public Coordinate toCoordinate(Point point) {
@@ -207,6 +208,14 @@ class TransformationLayer {
   public void registerPlanePoint(Coordinate coordinate) {
     Point p = toPoint(coordinate);
     labelManager.addPoint(p);
+  }
+
+  public Coordinate getMiddle() {
+    Coordinate ret = new Coordinate(
+        (topLeft.getLatitude().getTotalDegrees() + bottomRight.getLatitude().getTotalDegrees()) / 2d,
+        (topLeft.getLongitude().getTotalDegrees() + bottomRight.getLongitude().getTotalDegrees()) / 2d
+         );
+    return ret;
   }
 
   Coordinate getTopLeft() {

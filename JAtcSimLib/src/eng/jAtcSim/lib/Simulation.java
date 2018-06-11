@@ -6,15 +6,9 @@
 package eng.jAtcSim.lib;
 
 import eng.eSystem.EStringBuilder;
-import eng.eSystem.collections.EList;
-import eng.eSystem.collections.IList;
-import eng.eSystem.collections.IReadOnlyList;
-import eng.eSystem.collections.ReadOnlyList;
-import eng.eSystem.eXml.XDocument;
+import eng.eSystem.collections.*;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.events.EventSimple;
-import eng.eSystem.exceptions.EApplicationException;
-import eng.eSystem.exceptions.EXmlException;
 import eng.eSystem.xmlSerialization.XmlIgnore;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.AirplaneList;
@@ -24,10 +18,6 @@ import eng.jAtcSim.lib.atcs.*;
 import eng.jAtcSim.lib.coordinates.Coordinates;
 import eng.jAtcSim.lib.global.ERandom;
 import eng.jAtcSim.lib.global.ETime;
-import eng.jAtcSim.lib.global.sources.AirplaneTypesXmlSource;
-import eng.jAtcSim.lib.global.sources.AreaXmlSource;
-import eng.jAtcSim.lib.global.sources.FleetsXmlSource;
-import eng.jAtcSim.lib.global.sources.TrafficXmlSource;
 import eng.jAtcSim.lib.managers.EmergencyManager;
 import eng.jAtcSim.lib.managers.MrvaManager;
 import eng.jAtcSim.lib.messaging.Message;
@@ -47,7 +37,6 @@ import eng.jAtcSim.lib.world.Area;
 import eng.jAtcSim.lib.world.Border;
 import eng.jAtcSim.lib.world.RunwayThreshold;
 
-import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -600,6 +589,14 @@ public class Simulation {
     );
   }
 
+  public IMap<String, String> getCommandShortcuts(){
+    return this.appAtc.getParser().getShortcuts().getAll2();
+  }
+
+  public void setCommandShortcuts(IMap<String, String> shortcuts){
+    this.appAtc.getParser().getShortcuts().setAll2(shortcuts);
+  }
+
   private void processSystemMessageShortcut(Message m) {
     String msgText = m.<StringMessageContent>getContent().getMessageText();
     Matcher matcher = SYSMES_SHORTCUT.matcher(msgText);
@@ -610,7 +607,7 @@ public class Simulation {
         // print all keys
         EStringBuilder sb = new EStringBuilder();
         sb.appendLine("Printing all shortcuts:");
-        Set<Map.Entry<String, String>> shortcuts = Acc.atcApp().getParser().getShortcuts().getAll();
+        ISet<Map.Entry<String, String>> shortcuts = Acc.atcApp().getParser().getShortcuts().getEntries();
         for (Map.Entry<String, String> shortcut : shortcuts) {
           sb.appendFormatLine("Shortcut key '%s' is expanded as '%s'.", shortcut.getKey(), shortcut.getValue());
         }

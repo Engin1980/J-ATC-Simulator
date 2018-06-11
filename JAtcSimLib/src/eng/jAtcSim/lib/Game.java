@@ -1,10 +1,13 @@
 package eng.jAtcSim.lib;
 
 import eng.eSystem.collections.IList;
+import eng.eSystem.collections.IMap;
 import eng.eSystem.collections.IReadOnlyList;
+import eng.eSystem.collections.ISet;
 import eng.eSystem.eXml.XDocument;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.ERuntimeException;
 import eng.eSystem.exceptions.EXmlException;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.global.ETime;
@@ -14,6 +17,7 @@ import eng.jAtcSim.lib.traffic.Traffic;
 import eng.jAtcSim.lib.weathers.*;
 
 import java.util.Calendar;
+import java.util.Map;
 
 public class Game {
 
@@ -86,7 +90,7 @@ public class Game {
     return g;
   }
 
-  public static Game load(String fileName) {
+  public static Game load(String fileName, IMap<String, Object> customData) {
     Game ret = new Game();
 
     XDocument doc;
@@ -129,10 +133,24 @@ public class Game {
     XElement tmp = root.getChild("simulation");
     ret.simulation.load(tmp);
 
+    {
+      IMap<String, String> shortcuts = (IMap<String, String>) LoadSave.loadFromElement(root, "shortcuts", IMap.class);
+      ret.simulation.setCommandShortcuts(shortcuts);
+    }
+
+    {
+      XElement elm = root.getChild("custom");
+      for (XElement child : elm.getChildren()) {
+        String key = child.getName();
+        Object obj = LoadSave.loadFromElement(elm, key, Object.class);
+        customData.set(key, obj);
+      }
+    }
+
     return ret;
   }
 
-  public void save(String fileName) {
+  public void save(String fileName, IMap<String, Object> customData) {
     XElement root = new XElement("game");
 
     LoadSave.saveField(root, this, "areaXmlSource");
@@ -144,6 +162,23 @@ public class Game {
     {
       XElement tmp = new XElement("simulation");
       simulation.save(tmp);
+      root.addElement(tmp);
+    }
+
+    {
+      XElement tmp = new XElement("simulation");
+      LoadSave.saveAsElement(root, "shortcuts", simulation.getCommandShortcuts());
+    }
+
+    {
+      XElement tmp = new XElement("custom");
+      for (Map.Entry<String, Object> entry : customData) {
+        try {
+          LoadSave.saveAsElement(tmp, entry.getKey(), entry.getValue());
+        } catch (Exception ex) {
+          throw new ERuntimeException("Failed to save custom data to game. Data key: " + entry.getKey() + ", data value: " + entry.getValue(), ex);
+        }
+      }
       root.addElement(tmp);
     }
 

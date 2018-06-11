@@ -5,6 +5,8 @@
  */
 package eng.jAtcSim;
 
+import eng.eSystem.collections.EMap;
+import eng.eSystem.collections.IMap;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.ERuntimeException;
 import eng.jAtcSim.frmPacks.Pack;
@@ -66,7 +68,8 @@ public class JAtcSim {
   public static void loadSimulation(StartupSettings startupSettings, String xmlFileName) {
     System.out.println("* Loading the simulation");
 
-    Game g = Game.load(xmlFileName);
+    IMap<String, Object> map = new EMap<>();
+    Game g = Game.load(xmlFileName, map);
 
     // enable duplicates
     try {

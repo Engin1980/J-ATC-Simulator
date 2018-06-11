@@ -315,6 +315,7 @@ public class SwingCanvas implements ICanvas<JComponent> {
   public void clear(Color backColor) {
     int h = getHeight();
     int w = getWidth();
+    g.setColor(Coloring.get(backColor));
     g.fillRect(0, 0, w, h);
   }
 

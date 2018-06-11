@@ -429,6 +429,13 @@ public class Radar {
       this.selectedAirplaneChangedEvent.raise(this.selectedCallsign);
   }
 
+  public InitialPosition getPosition() {
+    InitialPosition ret = new InitialPosition();
+    ret.coordinate = this.tl.getMiddle();
+    ret.range = this.tl.getWidthInNM();
+    return ret;
+  }
+
   private void buildLocalNavaidList() {
 
     for (Navaid navaid : area.getNavaids()) {

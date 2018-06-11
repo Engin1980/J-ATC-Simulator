@@ -1,18 +1,28 @@
 package eng.jAtcSim.frmPacks.sdi;
 
+import eng.eSystem.collections.EMap;
+import eng.eSystem.collections.IMap;
 import eng.jAtcSim.frmPacks.shared.*;
 import eng.jAtcSim.lib.Game;
 import eng.jAtcSim.lib.airplanes.Callsign;
+import eng.jAtcSim.lib.coordinates.Coordinate;
 import eng.jAtcSim.lib.speaking.formatting.LongFormatter;
+import eng.jAtcSim.lib.world.InitialPosition;
 import eng.jAtcSim.radarBase.BehaviorSettings;
+import eng.jAtcSim.recording.Recording;
+import eng.jAtcSim.recording.Settings;
 import eng.jAtcSim.shared.LayoutManager;
+import eng.jAtcSim.shared.MessageBox;
 import eng.jAtcSim.startup.extenders.SwingFactory;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
+import java.io.IOException;
 
 public class FrmMain extends JFrame {
 
+  private Recording recording = null;
   private Pack parent;
   private JPanel pnlContent;
   private JPanel pnlBottom;
@@ -22,6 +32,7 @@ public class FrmMain extends JFrame {
   private SwingRadarPanel srpRadar;
   private FlightListPanel flightListPanel;
   private CommandButtonsPanel pnlCommands;
+  private String lastFileName = null;
 
   public FrmMain() {
     initComponents();
@@ -127,7 +138,7 @@ public class FrmMain extends JFrame {
 
     JButton btnRecording = new JButton("Recording");
     adjustJComponentColors(btnRecording);
-    btnRecording.addActionListener(q->btnRecording_click());
+    btnRecording.addActionListener(q -> btnRecording_click());
 
     JPanel ret = LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.middle, 4,
         btnStrips, btnCommands, btnMovs, btnPause, btnSave, btnView, btnRecording);
@@ -136,19 +147,50 @@ public class FrmMain extends JFrame {
   }
 
   private void btnRecording_click() {
-    RecordingPanel pnl = new RecordingPanel(null);
+    RecordingPanel pnl;
+    if (recording != null)
+      pnl = new RecordingPanel(recording.getSettings());
+    else
+      pnl = new RecordingPanel(null);
+    pnl.getRecordingStarted().add(q -> recording_recordingStarted(q));
+    pnl.getRecordingStopped().add(() -> recording_recordingStopped());
+    pnl.getViewRecordingFolderRequest().add(() -> recording_viewRecordingFolderRequest());
     SwingFactory.show(pnl, "Recording");
   }
 
-  private String lastFileName = null;
+  private void recording_viewRecordingFolderRequest() {
+    String path = recording.getSettings().getPath();
+    try {
+      Desktop.getDesktop().open(new File(path));
+    } catch (IOException e) {
+      MessageBox.show("Unable to open target recording folder " + path + ". Reason: " + e.getMessage(), "Error opening explorer");
+    }
+  }
 
-  private void saveSimulation(){
+  private void recording_recordingStopped() {
+    this.recording.stop();
+    this.recording = null;
+  }
+
+  private void recording_recordingStarted(Settings q) {
+    BehaviorSettings bs = new BehaviorSettings(false, new LongFormatter(), 0);
+
+    InitialPosition initPos = srpRadar.getRadar().getPosition();
+
+    recording = new Recording(q,
+        this.parent.getSim(), this.parent.getArea(), initPos, this.parent.getDisplaySettings(), bs);
+  }
+
+  private void saveSimulation() {
     JFileChooser jf = SwingFactory.createFileDialog(SwingFactory.FileDialogType.game, lastFileName);
     int res = jf.showSaveDialog(this);
     if (res != JFileChooser.APPROVE_OPTION) return;
 
     String fileName = jf.getSelectedFile().getAbsolutePath();
-    this.parent.getGame().save(fileName);
+
+    IMap<String, Object> tmp = new EMap<>();
+
+    this.parent.getGame().save(fileName, tmp);
     lastFileName = fileName;
   }
 
@@ -187,16 +229,13 @@ public class FrmMain extends JFrame {
     statsPanel.init(this.parent.getSim());
     pnlRight.add(statsPanel, BorderLayout.PAGE_END);
 
-    //this.parent.getSim().getSecondElapsedEvent().add(o -> printGuiTree());
-    //printGuiTree();
-
     srpRadar.getRadar().getSelectedAirplaneChangedEvent().add((sender, callsign) -> {
       flightListPanel.setSelectedCallsign((Callsign) callsign);
-      pnlCommands.setPlane((Callsign)callsign);
+      pnlCommands.setPlane((Callsign) callsign);
     });
     flightListPanel.getSelectedCallsignChangedEvent().add((sender, callsign) -> {
       srpRadar.getRadar().setSelectedCallsign((Callsign) callsign);
-      pnlCommands.setPlane((Callsign)callsign);
+      pnlCommands.setPlane((Callsign) callsign);
     });
 
     pnlCommands.getGeneratedEvent().add(s -> srpRadar.addCommandTextToLine((String) s));
@@ -204,34 +243,5 @@ public class FrmMain extends JFrame {
     pnlCommands.getEraseEvent().add(() -> srpRadar.eraseCommand());
   }
 
-  private void printGuiTree() {
-    System.out.println(" * * * ");
-    printGuiTreeJComponent(this.getContentPane(), 0);
-  }
 
-  private void printGuiTreeJComponent(Container component, int index) {
-    for (int i = 0; i < index; i++) {
-      System.out.print(" ");
-    }
-    String layoutName;
-    if (component.getLayout() != null)
-      layoutName = component.getLayout().getClass().getSimpleName();
-    else
-      layoutName = "N/A";
-    System.out.println(
-        String.format("%s -- %s : %d x %d :: %d x %d using %s - visible? %s",
-            component.getClass().getName(),
-            component.getName(),
-            component.getX(),
-            component.getY(),
-            component.getWidth(),
-            component.getHeight(),
-            layoutName,
-            Boolean.toString(component.isVisible())
-        ));
-    for (Component item : component.getComponents()) {
-      if (item instanceof Container)
-        printGuiTreeJComponent((Container) item, index + 1);
-    }
-  }
 }

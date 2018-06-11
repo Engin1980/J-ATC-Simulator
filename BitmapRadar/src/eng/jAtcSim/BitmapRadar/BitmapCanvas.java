@@ -20,6 +20,8 @@ public class BitmapCanvas implements ICanvas<BufferedImage> {
    * Margin on y axis for text prints.
    */
   private static final int yMargin = -2;
+  private final int width;
+  private final int height;
   private BufferedImage c;
   private Graphics g;
   private eng.eSystem.events.Event<ICanvas, EMouseEventArg> mouseEvent =
@@ -31,19 +33,21 @@ public class BitmapCanvas implements ICanvas<BufferedImage> {
   private eng.eSystem.events.EventSimple<ICanvas> resizedEvent =
       new eng.eSystem.events.EventSimple<>(this);
 
-  public BitmapCanvas(int width, int height){
-    c = new BufferedImage(width,height, BufferedImage.TYPE_INT_RGB);
-    g = c.createGraphics();
+  public BitmapCanvas(int width, int height) {
+    this.width = width;
+    this.height = height;
+    c = null;
+    g = null;
   }
 
   @Override
   public int getWidth() {
-    return c.getWidth();
+    return this.width;
   }
 
   @Override
   public int getHeight() {
-    return c.getHeight();
+    return this.height;
   }
 
   @Override
@@ -159,9 +163,8 @@ public class BitmapCanvas implements ICanvas<BufferedImage> {
 
   @Override
   public void clear(eng.jAtcSim.radarBase.global.Color backColor) {
-    int h = getHeight();
-    int w = getWidth();
-    g.fillRect(0, 0, w, h);
+    g.setColor(Coloring.get(backColor));
+    g.fillRect(0, 0, this.width, this.height);
   }
 
   @Override
@@ -174,7 +177,9 @@ public class BitmapCanvas implements ICanvas<BufferedImage> {
 
   @Override
   public void invokeRepaint() {
-    // does nothing
+    c = new BufferedImage(this.width, this.height, BufferedImage.TYPE_INT_RGB);
+    g = c.createGraphics();
+    this.paintEvent.raise();
   }
 
   @Override
@@ -184,7 +189,7 @@ public class BitmapCanvas implements ICanvas<BufferedImage> {
 
   @Override
   public eng.eSystem.events.Event<ICanvas, EMouseEventArg> getMouseEvent() {
-    return null;
+    return mouseEvent;
   }
 
   @Override
