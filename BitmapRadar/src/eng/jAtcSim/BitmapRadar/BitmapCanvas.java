@@ -1,6 +1,7 @@
 package eng.jAtcSim.BitmapRadar;
 
 import eng.eSystem.events.Event;
+import eng.eSystem.events.EventAnonymousSimple;
 import eng.eSystem.events.EventSimple;
 import eng.jAtcSim.radarBase.ICanvas;
 import eng.jAtcSim.radarBase.global.TextBlockLocation;
@@ -32,6 +33,17 @@ public class BitmapCanvas implements ICanvas<BufferedImage> {
       new eng.eSystem.events.Event<>(this);
   private eng.eSystem.events.EventSimple<ICanvas> resizedEvent =
       new eng.eSystem.events.EventSimple<>(this);
+
+  private final EventSimple<BitmapCanvas> imageDrawn = new EventSimple(this);
+  private final EventSimple<BitmapCanvas> imageDrawing = new EventSimple(this);
+
+  public EventSimple<BitmapCanvas> getImageDrawn() {
+    return imageDrawn;
+  }
+
+  public EventSimple<BitmapCanvas> getImageDrawing() {
+    return imageDrawing;
+  }
 
   public BitmapCanvas(int width, int height) {
     this.width = width;
@@ -169,10 +181,12 @@ public class BitmapCanvas implements ICanvas<BufferedImage> {
 
   @Override
   public void beforeDraw() {
+    this.imageDrawing.raise();
   }
 
   @Override
   public void afterDraw() {
+    this.imageDrawn.raise();
   }
 
   @Override

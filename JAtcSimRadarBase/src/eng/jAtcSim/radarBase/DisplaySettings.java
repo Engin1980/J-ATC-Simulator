@@ -5,15 +5,17 @@
  */
 package eng.jAtcSim.radarBase;
 
+import eng.eSystem.xmlSerialization.XmlOptional;
 import eng.jAtcSim.radarBase.global.Color;
 import eng.jAtcSim.radarBase.global.Font;
-import eng.eSystem.xmlSerialization.XmlOptional;
 
 /**
  *
  * @author Marek
  */
 public class DisplaySettings {
+
+
 
   ///region Inner classes
   public static class ColorWidthSettings {
@@ -244,5 +246,4 @@ public class DisplaySettings {
   public Color airproxPartial;
   public Color airproxWarning;
   public Color mrvaError;
-
 }

@@ -334,6 +334,7 @@ public class Radar {
   private int redrawTick = 0;
   private InfoLine infoLine;
   private Callsign selectedCallsign;
+  private int simulationSecondListenerHandler = -1;
 
   public Radar(ICanvas canvas, InitialPosition initialPosition,
                Simulation sim, Area area,
@@ -360,8 +361,16 @@ public class Radar {
         (c, o) -> Radar.this.canvas_onKeyPress((ICanvas) c, (KeyEventArg) o));
     this.c.getResizedEvent().add(o -> tl.resetPosition());
 
+
+  }
+
+  public void start() {
     // listen to simulation seconds for redraw
-    this.simulation.getSecondElapsedEvent().add(o -> redraw(false));
+    this.simulationSecondListenerHandler = this.simulation.getSecondElapsedEvent().add(o -> redraw(false));
+  }
+
+  public void stop() {
+    this.simulation.getSecondElapsedEvent().remove(this.simulationSecondListenerHandler);
   }
 
   public void zoomIn() {
@@ -679,7 +688,6 @@ public class Radar {
   }
 
   private void drawBorderAltitude(Border border) {
-    Coordinate c = border.getLabelCoordinate();
     String s = AirplaneDataFormatter.formatAltitudeShort(border.getMaxAltitude(), true);
     DisplaySettings.ColorWidthFontSettings ds = (DisplaySettings.ColorWidthFontSettings) getDispSettBy(border);
     tl.drawText(s, border.getLabelCoordinate(), 0, 0, ds.getFont(), ds.getColor());
@@ -767,14 +775,9 @@ public class Radar {
         15);
     //TODO colors should be configurable
     tl.drawLine(start, approach.getParent().getCoordinate(), Color.MAGENTA, 1);
-//    if (approach.getParent().getFafCross() != null) {
-//      tl.drawCross(approach.getParent().getFafCross(), Color.MAGENTA, 5, 1);
-//    }
-
   }
 
   private void drawNavaids() {
-    //for (Navaid n : area.getNavaids()) {
     for (NavaidDisplayInfo ndi : this.navaids) {
       switch (ndi.navaid.getType()) {
         case ndb:
@@ -823,7 +826,6 @@ public class Radar {
         break;
       case fix:
         tl.drawPoint(navaid.getCoordinate(), ds.getColor(), ds.getWidth());
-        //p.drawCircleAround(navaid.getCoordinate(), 9, ds.getColor(), 1);
         tl.drawText(navaid.getName(), navaid.getCoordinate(), 3, 0, dt.getFont(), ds.getColor());
         break;
       case fixMinor:
@@ -872,7 +874,7 @@ public class Radar {
         ds.getColor(), ds.getWidth());
   }
 
-  private boolean isUserControlledPlane(AirplaneDisplayInfo adi){
+  private boolean isUserControlledPlane(AirplaneDisplayInfo adi) {
     boolean ret = adi.tunedAtc.getType() == Atc.eType.app;
     return ret;
   }

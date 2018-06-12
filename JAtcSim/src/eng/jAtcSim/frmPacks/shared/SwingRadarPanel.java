@@ -91,8 +91,8 @@ public class SwingRadarPanel extends JPanel {
 
     wrp = new CommandJTextWraper(txtInput);
     wrp.getSendEvent().add(() -> this.wrp_send());
-    wrp.getRecallRadarPosition().add(pos -> this.recallRadarPosition((int) pos));
-    wrp.getStoreRadarPosition().add(pos -> this.storeRadarPosition((int) pos));
+    wrp.getRecallRadarPosition().add(pos -> this.recallRadarPosition(pos));
+    wrp.getStoreRadarPosition().add(pos -> this.storeRadarPosition(pos));
     wrp.focus();
 
     return ret;
@@ -128,6 +128,8 @@ public class SwingRadarPanel extends JPanel {
         this.initialPosition,
         this.sim, this.area,
         this.displaySettings, this.behaviorSettings);
+
+    this.radar.start();
 
     ret.add(canvas.getGuiControl());
     // TODO this redirects text events to jtextfield. However not working now.

@@ -2,11 +2,11 @@
   <files areaXmlFile="_SettingFiles\LKPR.ar.xml" fleetsXmlFile="_SettingFiles\fleets.fl.xml" planesXmlFile="_SettingFiles\planeTypes.tp.xml" trafficXmlFile="(null)"/>
   <recent icao="LKPR" time="6:35"/>
   <weather cloudBaseAltitudeFt="10000" cloudBaseProbability="0.0" useOnline="false" visibilityInM="9999" windDirection="20" windSpeed="7"/>
-  <traffic allowDelays="true" densityPercentage="1.0" maxPlanes="60" trafficAirportDefinedTitle="LKPR:Normal traffic" type="airportDefined">
-    <customTraffic arrivals2departuresRatio="10" companies="CSA" countryCodes="OK;OM" movementsPerHour="30" nonCommercialFlightProbability="0.0" useExtendedCallsigns="false" weightTypeA="0" weightTypeB="0" weightTypeC="5" weightTypeD="0"/>
+  <traffic allowDelays="true" densityPercentage="1.0" maxPlanes="60" trafficAirportDefinedTitle="LKPR:Normal traffic" type="custom">
+    <customTraffic arrivals2departuresRatio="5" companies="CSA;EZY;BAW" countryCodes="OK;OM" movementsPerHour="30" nonCommercialFlightProbability="0.0" useExtendedCallsigns="false" weightTypeA="0" weightTypeB="0" weightTypeC="5" weightTypeD="0"/>
   </traffic>
   <radar packClass="eng.jAtcSim.frmPacks.sdi.Pack"/>
-  <simulation emergencyPerDayProbability="0.14285714285714285" secondLengthInMs="1000"/>
+  <simulation emergencyPerDayProbability="0.14285714285714285" secondLengthInMs="500"/>
   <__typeMap>
     <item class="eng.jAtcSim.startup.startupSettings.StartupSettings" key="StartupSettings"/>
   </__typeMap>
