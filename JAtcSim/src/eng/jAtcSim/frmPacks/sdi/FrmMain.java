@@ -9,6 +9,7 @@ import eng.jAtcSim.lib.coordinates.Coordinate;
 import eng.jAtcSim.lib.speaking.formatting.LongFormatter;
 import eng.jAtcSim.lib.world.InitialPosition;
 import eng.jAtcSim.radarBase.BehaviorSettings;
+import eng.jAtcSim.radarBase.RadarViewPort;
 import eng.jAtcSim.recording.Recording;
 import eng.jAtcSim.recording.Settings;
 import eng.jAtcSim.shared.LayoutManager;
@@ -188,10 +189,18 @@ public class FrmMain extends JFrame {
 
     String fileName = jf.getSelectedFile().getAbsolutePath();
 
-    IMap<String, Object> tmp = new EMap<>();
+    IMap<String, Object> tmp = this.parent.getDataToStore();
 
     this.parent.getGame().save(fileName, tmp);
     lastFileName = fileName;
+  }
+
+  public IMap<Integer, RadarViewPort> getRadarStoredPositions(){
+    return srpRadar.getRadarStoredPositions();
+  }
+
+  public void setRadarStoredPositions(IMap<Integer, RadarViewPort> positions){
+    srpRadar.setRadarStoredPositions(positions);
   }
 
   private void adjustJComponentColors(JComponent component) {

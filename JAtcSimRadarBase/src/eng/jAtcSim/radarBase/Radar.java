@@ -31,7 +31,6 @@ import eng.jAtcSim.radarBase.global.events.KeyEventArg;
 import eng.jAtcSim.radarBase.global.events.WithCoordinateEventArg;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class Radar {
 

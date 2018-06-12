@@ -11,6 +11,9 @@ public class RadarViewPort {
     this.widthInNm = widthInNm;
   }
 
+  private RadarViewPort() {
+  }
+
   public Coordinate getTopLeft() {
     return topLeft;
   }

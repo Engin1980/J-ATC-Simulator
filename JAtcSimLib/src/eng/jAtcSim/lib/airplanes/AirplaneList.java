@@ -16,4 +16,7 @@ public class AirplaneList extends EDistinctList<Airplane> {
   public AirplaneList(boolean duplicitCheckEnabled) {
     super(duplicitCheckEnabled ? Behavior.exception : Behavior.ignore);
   }
+
+  private AirplaneList() {
+  }
 }

@@ -19,6 +19,7 @@ import eng.jAtcSim.lib.global.sources.WeatherSource;
 import eng.jAtcSim.lib.traffic.GenericTraffic;
 import eng.jAtcSim.lib.traffic.Traffic;
 import eng.jAtcSim.lib.weathers.Weather;
+import eng.jAtcSim.radarBase.RadarViewPort;
 import eng.jAtcSim.radarBase.global.SoundManager;
 import eng.jAtcSim.startup.FrmIntro;
 import eng.jAtcSim.startup.startupSettings.StartupSettings;
@@ -90,6 +91,8 @@ public class JAtcSim {
 
     simPack.initPack(g, appSettings);
     simPack.startPack();
+
+    simPack.applyStoredData(map);
   }
 
   public static void startSimulation(StartupSettings startupSettings) {

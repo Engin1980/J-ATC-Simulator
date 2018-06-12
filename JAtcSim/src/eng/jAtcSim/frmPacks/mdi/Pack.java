@@ -6,6 +6,8 @@
 
 package eng.jAtcSim.frmPacks.mdi;
 
+import eng.eSystem.collections.EMap;
+import eng.eSystem.collections.IMap;
 import eng.jAtcSim.lib.Game;
 import eng.jAtcSim.radarBase.DisplaySettings;
 import eng.eSystem.events.EventSimple;
@@ -70,6 +72,16 @@ public class Pack extends eng.jAtcSim.frmPacks.Pack {
 
   public EventSimple<eng.jAtcSim.frmPacks.Pack> getElapseSecondEvent() {
     return em;
+  }
+
+  @Override
+  public IMap<String, Object> getDataToStore() {
+    return new EMap<>();
+  }
+
+  @Override
+  public void applyStoredData(IMap<String, Object> map) {
+// nothing to do
   }
 
   Simulation getSim() {

@@ -103,6 +103,15 @@ public class SwingRadarPanel extends JPanel {
     storedRadarPositions.set(index, rp);
   }
 
+  public IMap<Integer, RadarViewPort> getRadarStoredPositions(){
+    IMap<Integer, RadarViewPort> ret = new EMap<>(this.storedRadarPositions);
+    return ret;
+  }
+
+  public void setRadarStoredPositions(IMap<Integer, RadarViewPort> positions){
+    this.storedRadarPositions.set(positions);
+  }
+
   private void recallRadarPosition(int index) {
     RadarViewPort rp = storedRadarPositions.tryGet(index);
     if (rp != null) {
@@ -329,12 +338,6 @@ public class SwingRadarPanel extends JPanel {
     radar.redraw(true);
   }
 
-//  private void jTxtInput_keyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTxtInputKeyPressed
-//    if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
-//      this.sendCommand();
-//    }
-//  }
-
   private boolean sendMessage(String msg) {
     msg = normalizeMsg(msg);
     boolean ret;
@@ -400,33 +403,6 @@ public class SwingRadarPanel extends JPanel {
     }
     return ret;
   }
-}
-
-class MyKeyListener implements KeyListener {
-
-  private final JTextField cmdTextField;
-
-  public MyKeyListener(JTextField cmdTextField) {
-    this.cmdTextField = cmdTextField;
-  }
-
-  @Override
-  public void keyTyped(KeyEvent e) {
-    this.cmdTextField.dispatchEvent(new KeyEvent(cmdTextField,
-        KeyEvent.KEY_TYPED, System.currentTimeMillis(),
-        e.getModifiers(), KeyEvent.VK_UNDEFINED, e.getKeyChar()));
-    this.cmdTextField.requestFocus();
-  }
-
-  @Override
-  public void keyPressed(KeyEvent e) {
-  }
-
-  @Override
-  public void keyReleased(KeyEvent e) {
-
-  }
-
 }
 
 class CommandJTextWraper {
