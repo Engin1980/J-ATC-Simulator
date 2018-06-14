@@ -195,9 +195,6 @@ public class DisplaySettings {
   }
   ///end region
 
-  // general
-  public int refreshRate;
-
   public ColorWidthFontSettings infoLine;
 
   // runways

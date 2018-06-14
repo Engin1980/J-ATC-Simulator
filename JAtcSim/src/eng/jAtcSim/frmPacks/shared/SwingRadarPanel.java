@@ -138,7 +138,7 @@ public class SwingRadarPanel extends JPanel {
         this.sim, this.area,
         this.displaySettings, this.behaviorSettings);
 
-    this.radar.start();
+    this.radar.start(1, 3);
 
     ret.add(canvas.getGuiControl());
     // TODO this redirects text events to jtextfield. However not working now.

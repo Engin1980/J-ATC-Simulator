@@ -330,10 +330,11 @@ public class Radar {
   private final MessageManager messageManager;
   private final AirplaneDisplayInfoList planeInfos = new AirplaneDisplayInfoList();
   private final NavaidDisplayInfoList navaids = new NavaidDisplayInfoList();
-  private int redrawTick = 0;
   private InfoLine infoLine;
   private Callsign selectedCallsign;
   private int simulationSecondListenerHandler = -1;
+  private Counter planeRedrawCounter;
+  private Counter radarRedrawCounter;
 
   public Radar(ICanvas canvas, InitialPosition initialPosition,
                Simulation sim, Area area,
@@ -363,7 +364,11 @@ public class Radar {
 
   }
 
-  public void start() {
+  public void start(int redrawInterval, int planeRepositionInterval) {
+    assert redrawInterval > 0;
+    assert planeRepositionInterval > 0;
+    this.planeRedrawCounter = new Counter(planeRepositionInterval);
+    this.radarRedrawCounter = new Counter(redrawInterval);
     // listen to simulation seconds for redraw
     this.simulationSecondListenerHandler = this.simulation.getSecondElapsedEvent().add(o -> redraw(false));
   }
@@ -405,17 +410,19 @@ public class Radar {
     redraw(true);
   }
 
+  /**
+   * Redraws radar. If redraw is caused by simulation second elapsing, it is not forced (it is normal).
+   * Forced redraw occurs when e.g. radar canvas has changed its size or became visible.
+   * Forced redraw will occur allays but will not update message positions.
+   * @param force True if radar should be redrawn not due to simulation second elapsed state.
+   */
   public void redraw(boolean force) {
 
-    if (!force) {
-      if (redrawTick <= 0) {
+    if (force || radarRedrawCounter.increase()) { // if is forced or second is elapsed
+      if (!force && planeRedrawCounter.increase()) // if is only second elapsed
         planeInfos.update(simulation.getPlanesToDisplay());
-        this.redrawTick = displaySettings.refreshRate - 1;
-      } else {
-        this.redrawTick--;
-      }
+      this.c.invokeRepaint();
     }
-    this.c.invokeRepaint();
   }
 
   public LocalSettings getLocalSettings() {
@@ -1251,5 +1258,25 @@ class InfoLine {
     this.seconds200 = this.distanceInNm / 200d * 3600d;
     this.seconds250 = this.distanceInNm / 250d * 3600d;
     this.seconds280 = this.distanceInNm / 280d * 3600d;
+  }
+}
+
+class Counter {
+  private final int maximum;
+  private int value;
+
+  public Counter(int maximum) {
+    assert maximum > 0;
+    this.maximum = maximum;
+    this.value = 0;
+  }
+
+  public boolean increase() {
+    value++;
+    if (value == maximum) {
+      value = 0;
+      return true;
+    } else
+      return false;
   }
 }

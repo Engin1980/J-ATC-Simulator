@@ -24,9 +24,7 @@ public class Recording {
   private final Simulation simulation;
   private final Radar radar;
   private final BitmapCanvas bmpCanvas;
-  private final IEventListenerSimple<Simulation> listener;
   private int imgCounter;
-  private int secondCounter;
   private boolean isActive;
 
   public boolean isActive() {
@@ -47,13 +45,9 @@ public class Recording {
     bmpCanvas = new BitmapCanvas(settings.getWidth(), settings.getHeight());
     bmpCanvas.getImageDrawn().add(this::bmpCanvas_imageDrawn);
 
-    ds.refreshRate = settings.getInterval(); // set custom refresh rate
     radar = new Radar(bmpCanvas, initialPosition, simulation, area, ds, bs);
 
-    listener = s -> simulationSecondElapsed();
-    this.secondCounter = 0;
-    simulation.getSecondElapsedEvent().add(listener);
-    this.radar.start();
+    this.radar.start(settings.getInterval(), settings.getInterval());
     this.isActive = true;
   }
 
@@ -78,18 +72,7 @@ public class Recording {
   }
 
   public void stop() {
-    simulation.getSecondElapsedEvent().remove(listener);
-    isActive = false;
     radar.stop();
-  }
-
-  private void simulationSecondElapsed() {
-    assert isActive;
-
-    secondCounter++;
-    if (secondCounter >= this.settings.getInterval()) {
-      secondCounter = 0;
-      radar.redraw(true);
-    }
+    isActive = false;
   }
 }

@@ -96,7 +96,8 @@ public final class CoordinateValue {
    * @return Positive total degrees deicmal value
    */
   public double getTotalDegrees() {
-    return value;
+    double ret = neg ? -value : value;
+    return ret;
   }
 
   public int getMinutes() {
