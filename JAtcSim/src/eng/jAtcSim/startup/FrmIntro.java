@@ -5,6 +5,7 @@ import eng.jAtcSim.JAtcSim;
 import eng.jAtcSim.Stylist;
 import eng.jAtcSim.shared.LayoutManager;
 import eng.jAtcSim.shared.MessageBox;
+import eng.jAtcSim.startup.controls.IntroButton;
 import eng.jAtcSim.startup.extenders.SwingFactory;
 import eng.jAtcSim.startup.startupSettings.FrmStartupSettings;
 import eng.jAtcSim.startup.startupSettings.StartupSettings;
@@ -38,10 +39,12 @@ public class FrmIntro extends JFrame {
     JButton btnExit = new JButton("Quit");
     btnExit.addActionListener(o -> btnExit_click());
 
+    IntroButton btn = new IntroButton("Nazdar");
+
     JPanel pnl = eng.jAtcSim.shared.LayoutManager.createBorderedPanel(16);
     pnl.add(
         eng.jAtcSim.shared.LayoutManager.createBoxPanel(LayoutManager.eHorizontalAlign.center, 16,
-            btnStartupSettings, btnRun, btnLoadSim, btnExit));
+            btn, btnStartupSettings, btnRun, btnLoadSim, btnExit));
 
     this.getContentPane().setLayout(new BorderLayout());
     this.getContentPane().add(pnl);
