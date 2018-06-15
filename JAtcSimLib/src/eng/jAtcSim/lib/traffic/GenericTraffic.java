@@ -6,9 +6,12 @@
 package eng.jAtcSim.lib.traffic;
 
 import com.sun.org.apache.bcel.internal.generic.RET;
+import eng.eSystem.Triple;
+import eng.eSystem.Tuple;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.utilites.ArrayUtils;
 import eng.eSystem.utilites.NumberUtils;
 import eng.eSystem.xmlSerialization.XmlIgnore;
 import eng.eSystem.xmlSerialization.XmlOptional;
@@ -45,6 +48,9 @@ public class GenericTraffic extends Traffic {
    * Specifies probability thresholds of each category. By indices 0, 1, 2, 3 for categories A, B, C, D.
    */
   private final double[] probabilityOfCategory = new double[4];
+
+  @XmlIgnore
+  private char[] orderedCategoriesByProbabilityDesc = null;
 
   private GenericTraffic() {
     this.probabilityOfDeparture = 0.5;
@@ -105,26 +111,7 @@ public class GenericTraffic extends Traffic {
     return ret;
   }
 
-//
-//  @Override
-//  public void generateNewMovementsIfRequired() {
-//    if (nextHourToGenerateTraffic != -1 && Acc.now().getHours() != nextHourToGenerateTraffic) {
-//      return;
-//    }
-//
-//    int currentHour = Acc.now().getHours();
-//    int expMovs = movementsPerHour[currentHour];
-//    for (int i = 0; i < expMovs; i++) {
-//      Movement m = generateMovement(currentHour);
-//      super.addScheduledMovement(m);
-//    }
-//    nextHourToGenerateTraffic = currentHour + 1;
-//    if (nextHourToGenerateTraffic > 23) {
-//      nextHourToGenerateTraffic = 0;
-//    }
-//  }
-
-  private char getRandomCategory(String companyName) {
+  private char getRandomCategory() {
     char ret = 'A';
     double sum = 0;
     for (double v : probabilityOfCategory) {
@@ -149,42 +136,79 @@ public class GenericTraffic extends Traffic {
     ETime initTime = new ETime(hour, Acc.rnd().nextInt(0, 60), Acc.rnd().nextInt(0, 60));
     boolean isDeparture = (Acc.rnd().nextDouble() <= this.probabilityOfDeparture);
     boolean isNonCommercial = Acc.rnd().nextDouble() < this.probabilityOfNonCommercialFlight;
+    char category = getRandomCategory();
+
     String prefix;
-    if (isNonCommercial)
-      prefix = this.countryCodes[Acc.rnd().nextInt(this.countryCodes.length)];
-    else
-      prefix = this.companies[Acc.rnd().nextInt(this.companies.length)];
-    Callsign cls = generateUnusedCallsign(prefix, isNonCommercial);
-
-    int delayInMinutes = generateDelayMinutes();
-
     AirplaneType type;
-    char category = getRandomCategory(prefix);
     if (isNonCommercial) {
+      prefix = this.countryCodes[Acc.rnd().nextInt(this.countryCodes.length)];
       type = Acc.sim().getAirplaneTypes().getRandomFromCategory(category);
     } else {
-      type = getTypeByCategoryAndCompany(prefix, category);
+      Tuple<String, AirplaneType> tmp = getCompanyPrefixAndAirplaneType(category);
+      prefix = tmp.getA();
+      type = tmp.getB();
     }
 
+    Callsign cls = generateUnusedCallsign(prefix, isNonCommercial);
+    int delayInMinutes = generateDelayMinutes();
     Movement ret = new Movement(cls, type, initTime, delayInMinutes, isDeparture);
     return ret;
-
   }
 
-  private AirplaneType getTypeByCategoryAndCompany(String companyCode, char category) {
-    CompanyFleet cf = Acc.fleets().tryGetByIcao(companyCode);
-    if (cf == null) cf = Fleets.getDefaultCompanyFleet();
+  private Tuple<String, AirplaneType> getCompanyPrefixAndAirplaneType(char category) {
+    CompanyFleet companyFleet = null;
+    String icao = null;
+    AirplaneType type = null;
 
-    FleetType available = cf.tryGetRandomByCategory(category);
-    if (available == null){
-      throw new EApplicationException("Unable to find any type for category " + category + " for company " + companyCode + " in loaded fleet. Check fleet?");
+    IList<CompanyFleet> flts = Acc.fleets().where(
+        q ->
+            ArrayUtils.contains(this.companies, q.icao));
+
+    // this will try restrict to required category
+    IList<CompanyFleet> tmp = flts.where(q -> q.getTypes().isAny(p -> p.getAirplaneType().category == category));
+    if (tmp.isEmpty()) {
+      if (this.orderedCategoriesByProbabilityDesc == null) fillOrderedCategories();
+      for (char c : this.orderedCategoriesByProbabilityDesc) {
+        tmp = flts.where(q -> q.getTypes().isAny(p -> p.getAirplaneType().category == c));
+        if (!tmp.isEmpty()) {
+          companyFleet = tmp.getRandom();
+          icao = companyFleet.icao;
+          type = companyFleet.getTypes().where(q -> q.getAirplaneType().category == c).getRandom().getAirplaneType();
+          break;
+        }
+      }
+      if (companyFleet == null) {
+        companyFleet = flts.getRandom();
+        icao = companyFleet.icao;
+        type = companyFleet.getTypes().getRandom().getAirplaneType();
+      }
+      if (companyFleet == null)
+        throw new EApplicationException("There is no plane type matching requested category and company.");
+    } else {
+      companyFleet = tmp.getRandom();
+      icao = companyFleet.icao;
+      type = companyFleet.getTypes().where(q -> q.getAirplaneType().category == category).getRandom().getAirplaneType();
     }
-    AirplaneType ret = available.getAirplaneType();
-    if (ret == null)
-      ret = cf.getRandom().getAirplaneType();
 
+//those should be set
+    assert icao != null;
+    assert type != null;
+
+    Tuple<String, AirplaneType> ret = new Tuple<>(icao, type);
     return ret;
   }
 
+  private void fillOrderedCategories() {
+    IList<Tuple<Character, Double>> tmp = new EList<>();
+    tmp.add(new Tuple('A', probabilityOfCategory[0]));
+    tmp.add(new Tuple('B', probabilityOfCategory[1]));
+    tmp.add(new Tuple('C', probabilityOfCategory[2]));
+    tmp.add(new Tuple('D', probabilityOfCategory[3]));
+    tmp.sort(q->-q.getB());
+    this.orderedCategoriesByProbabilityDesc = new char[4];
+    for (int i = 0; i < tmp.size(); i++) {
+      this.orderedCategoriesByProbabilityDesc[i] = tmp.get(i).getA();
+    }
+  }
 }
 

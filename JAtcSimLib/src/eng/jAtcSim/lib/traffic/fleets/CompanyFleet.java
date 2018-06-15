@@ -1,5 +1,8 @@
 package eng.jAtcSim.lib.traffic.fleets;
 
+import eng.eSystem.collections.EList;
+import eng.eSystem.collections.IList;
+import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.xmlSerialization.XmlIgnore;
 import eng.jAtcSim.lib.Acc;
 import eng.eSystem.utilites.CollectionUtils;
@@ -14,7 +17,11 @@ import java.util.Map;
 public class CompanyFleet {
   private static final String DEFAULT_AIRPLANE_TYPE_NAME = "A319";
   public String icao;
-  private List<FleetType> types = new ArrayList<>();
+  private IList<FleetType> types = new EList<>();
+
+  public IReadOnlyList<FleetType> getTypes() {
+    return types;
+  }
 
   @XmlIgnore
   private double fleetWeightSum = -1;

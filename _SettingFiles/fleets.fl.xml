@@ -4067,7 +4067,7 @@
       <type name="B737" weight="1" />
       <type name="ATR72" weight="8" />
       <type name="A330" weight="1" />
-      <type name="B737NG" weight="1" />
+      <type name="B737NG" weight="2" />
     </types>
   </company>
   <company icao="CUB" name="Cubana">
