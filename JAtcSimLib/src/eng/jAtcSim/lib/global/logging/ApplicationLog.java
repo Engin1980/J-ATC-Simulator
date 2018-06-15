@@ -4,7 +4,7 @@ package eng.jAtcSim.lib.global.logging;
 public class ApplicationLog extends Log {
 
   public ApplicationLog() {
-    super("Applicatoin write", false, System.out);
+    super("Applicatoin write", false, new WriterSaver(System.out, false));
   }
 
   public enum eType{

@@ -8,6 +8,8 @@ package eng.jAtcSim.lib.atcs;
 import eng.jAtcSim.lib.Acc;
 import eng.eSystem.EStringBuilder;
 import eng.jAtcSim.lib.global.ETime;
+import eng.jAtcSim.lib.global.logging.AbstractSaver;
+import eng.jAtcSim.lib.global.logging.FileSaver;
 import eng.jAtcSim.lib.global.logging.Recorder;
 import eng.jAtcSim.lib.messaging.Message;
 
@@ -25,12 +27,12 @@ public class AtcRecorder extends Recorder {
   private final EStringBuilder sb = new EStringBuilder(DEFAULT_STRING_BUILDER_SIZE);
 
   public static AtcRecorder create(Atc atc) {
-    OutputStream os = Recorder.createRecorderFileOutputStream(atc.getName() + ".log");
-    AtcRecorder ret = new AtcRecorder(atc, os);
+    String fileName = Recorder.getRecorderFileName(atc.getName() + ".log");
+    AtcRecorder ret = new AtcRecorder(atc, new FileSaver(fileName));
     return ret;
   }
 
-  private AtcRecorder(Atc atc, OutputStream os) {
+  private AtcRecorder(Atc atc, AbstractSaver os) {
     super(atc.getName(), os, SEPARATOR);
   }
 

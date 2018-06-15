@@ -1,6 +1,7 @@
 package eng.jAtcSim.lib.messaging;
 
 import eng.jAtcSim.lib.Acc;
+import eng.jAtcSim.lib.global.logging.FileSaver;
 import eng.jAtcSim.lib.global.logging.Recorder;
 
 public class MessengerRecorder extends Recorder {
@@ -13,7 +14,8 @@ public class MessengerRecorder extends Recorder {
   public MessengerRecorder(String name, String file) {
     super(
         name,
-        Recorder.createRecorderFileOutputStream(file), "; ");
+        new FileSaver(Recorder.getRecorderFileName(file)),
+        "; ");
   }
 
   public void recordMessage(eAction action, Message msg) {

@@ -39,10 +39,8 @@ import java.util.Date;
  */
 public abstract class Recorder extends SimulationLog {
 
-  private static final String logPathDate = new SimpleDateFormat("yyyy_MM_dd_HH_mm").format(new Date());
   private static String logPathBase = null;
   private static Formatter fmt = new LongFormatter();
-  private final OutputStream os;
 
   public static void init(String folder) {
     if (folder == null) {
@@ -51,9 +49,9 @@ public abstract class Recorder extends SimulationLog {
     Recorder.logPathBase = folder;
   }
 
-  public static OutputStream createRecorderFileOutputStream(String name) {
+  public static String getRecorderFileName(String name) {
 
-    Path full = Paths.get(logPathBase, logPathDate, name);
+    Path full = Paths.get(logPathBase, name);
 
     Path parent = full.getParent();
     try {
@@ -67,30 +65,19 @@ public abstract class Recorder extends SimulationLog {
       throw new EApplicationException("Failed to try delete existing flight recorder. File: " + full.toString(), ex);
     }
 
-    OutputStream fw;
-    try {
-      fw = new FileOutputStream(full.toFile());
-    } catch (IOException ex) {
-      throw new EApplicationException("Failed to open flight recorder file: " + full.toString(), ex);
-    }
-    return fw;
+    return full.toString();
   }
 
-  public Recorder(String recorderName, OutputStream os, String fromTimeSeparator) {
+  public Recorder(String recorderName, AbstractSaver os, String fromTimeSeparator) {
     super(
         recorderName,
         os);
     super.setAddSimulationTime(true);
     super.setSimulationTimeSeparator(fromTimeSeparator);
-    this.os = os;
   }
 
   public void close() {
-    try {
-      os.close();
-    } catch (IOException e) {
-      throw new ERuntimeException("Failed to close recorder " + super.getName());
-    }
+    super.close();
   }
 
   @Override

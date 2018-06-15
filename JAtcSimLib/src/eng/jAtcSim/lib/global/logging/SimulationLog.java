@@ -25,8 +25,8 @@ public abstract class SimulationLog extends Log {
     this.simulationTimeSeparator = simulationTimeSeparator;
   }
 
-  public SimulationLog(String name, OutputStream ... os) {
-    super(name, true, os);
+  public SimulationLog(String name, AbstractSaver ... savers) {
+    super(name, true, savers);
   }
 
   public String getSimulationTimeString() {

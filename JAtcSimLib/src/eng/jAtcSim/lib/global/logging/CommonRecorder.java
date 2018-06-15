@@ -3,7 +3,7 @@ package eng.jAtcSim.lib.global.logging;
 public class CommonRecorder extends Recorder {
   public CommonRecorder(String recorderName, String fileName, String fromTimeSeparator) {
     super(recorderName,
-        Recorder.createRecorderFileOutputStream(fileName),
+        new FileSaver(Recorder.getRecorderFileName(fileName)),
         fromTimeSeparator);
   }
 

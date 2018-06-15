@@ -11,11 +11,15 @@ import eng.eSystem.xmlSerialization.common.parsers.PathValueParser;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class AppSettings {
 
   @XmlIgnore
   private static Path applicationFolder;
+  @XmlIgnore
+  private static java.time.LocalDateTime startDateTime;
   @XmlIgnore
   private static boolean initialized = false;
   private Path startupSettingsFile;
@@ -28,20 +32,9 @@ public class AppSettings {
     return applicationFolder;
   }
 
-  public Path getStartupSettingsFile() {
-    return startupSettingsFile;
-  }
-
-  public Path getSoundFolder() {
-    return soundFolder;
-  }
-
-  public Path getLogFolder() {
-    return logFolder;
-  }
-
   public static void init() {
     applicationFolder = Paths.get(System.getProperty("user.dir"));
+    startDateTime = LocalDateTime.now();
     initialized = true;
   }
 
@@ -93,6 +86,10 @@ public class AppSettings {
   }
 
   private static Path decodePath(String tmp) {
+    if (tmp.contains("$time$")) {
+      String timeString = startDateTime.format(DateTimeFormatter.ofPattern("yyyy_MM_dd_HH_mm_ss"));
+      tmp = tmp.replaceAll("\\$time\\$", timeString);
+    }
     Path ret;
     if (tmp.startsWith("$app$"))
       ret = Paths.get(applicationFolder.toAbsolutePath().toString(), tmp.substring(5));
@@ -100,6 +97,7 @@ public class AppSettings {
       ret = Paths.get(System.getProperty("user.dir"), tmp.substring(5));
     else
       ret = Paths.get(tmp);
+
     return ret;
   }
 
@@ -117,6 +115,18 @@ public class AppSettings {
     this.logFolder = getUnderAppFolder("_Log");
     this.stripSettings = getUnderAppFolder("stripSettings.at.xml");
     this.radarStyleSettings = getUnderAppFolder("radarStyleSettings.at.xml");
+  }
+
+  public Path getStartupSettingsFile() {
+    return startupSettingsFile;
+  }
+
+  public Path getSoundFolder() {
+    return soundFolder;
+  }
+
+  public Path getLogFolder() {
+    return logFolder;
   }
 
   public Path getStripSettings() {

@@ -5,11 +5,11 @@ import eng.eSystem.utilites.ExceptionUtil;
 
 import java.io.*;
 import java.nio.charset.Charset;
+import java.util.Arrays;
 
 public abstract class Log {
 
-  private static final Charset CHARSET = Charset.forName("UTF-8");
-  private final OutputStreamWriter[] writers;
+  private final AbstractSaver[] writers;
   private final String name;
   private final boolean errorKind;
 
@@ -17,23 +17,10 @@ public abstract class Log {
     return name;
   }
 
-  public Log(String name, boolean errorKind, OutputStream... outputStreams) {
-    this.writers = new OutputStreamWriter[outputStreams.length];
-    for (int i = 0; i < this.writers.length; i++) {
-      this.writers[i] = new OutputStreamWriter(outputStreams[i], CHARSET);
-    }
+  public Log(String name, boolean errorKind, AbstractSaver ... outputStreams) {
+    this.writers = Arrays.copyOf(outputStreams, outputStreams.length);
     this.name = name;
     this.errorKind = errorKind;
-  }
-
-  public static OutputStream openFileStream(String fileName) {
-    OutputStream ret;
-    try {
-      ret = new BufferedOutputStream(new FileOutputStream((fileName)));
-    } catch (IOException e) {
-      throw new ERuntimeException("Failed to open file " + fileName + " as write for writing.");
-    }
-    return ret;
   }
 
   protected void writeLine(String format, Object... params) {
@@ -47,15 +34,20 @@ public abstract class Log {
       tmp = format;
     else
       tmp = String.format(format, params);
-    for (OutputStreamWriter os : writers) {
+    for (AbstractSaver os : writers) {
       tryWrite(os, tmp);
     }
   }
 
-  private void tryWrite(OutputStreamWriter wrt, String tmp) {
+  public void close(){
+    for (AbstractSaver writer : writers) {
+      writer.close();
+    }
+  }
+
+  private void tryWrite(AbstractSaver wrt, String tmp) {
     try {
       wrt.write(tmp);
-      wrt.flush();
     } catch (IOException ex) {
       if (errorKind)
         System.out.println("Log " + this.name + " write failed: " + ExceptionUtil.toFullString(ex, " ==> "));
