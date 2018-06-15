@@ -6,8 +6,10 @@
 package eng.jAtcSim.lib.traffic;
 
 import com.sun.istack.internal.Nullable;
+import com.sun.javafx.iio.common.ImageLoaderImpl;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
+import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.utilites.ArrayUtils;
 import eng.eSystem.utilites.CollectionUtils;
 import eng.eSystem.xmlSerialization.XmlOptional;
@@ -34,13 +36,7 @@ import java.util.List;
  * @author Marek Vajgl
  */
 public abstract class Traffic {
-
-  private static final double COMPANY_THREE_CHAR_NUMBER_PROBABILITY = 0.3;
-  private static final double EXTENDED_CALLSIGN_PROBABILITY = 0.3;
-
-  private String title;
-  @XmlOptional
-  private String description;
+  private static final char[] CALLSIGN_NUMBERS = new char[]{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
   /**
    * Specifies delay probability, range 0.0-1.0.
    */
@@ -49,6 +45,9 @@ public abstract class Traffic {
    * Max delay in minutes per step.
    */
   private final int maxDelayInMinutesPerStep = 15;
+  private String title;
+  @XmlOptional
+  private String description;
   /**
    * Specifies if extended callsigns containing characters at the end can be used.
    */
@@ -102,43 +101,105 @@ public abstract class Traffic {
   }
 
   private Callsign generateRandomCallsign(@Nullable String prefix, boolean isPrefixCountryCode) {
-    String number;
-    boolean useExtendedNow = this.useExtendedCallsigns && Acc.rnd().nextDouble() < EXTENDED_CALLSIGN_PROBABILITY;
+    Callsign ret =
+        CallsignGenerator.generateCallsign(prefix, !isPrefixCountryCode, useExtendedCallsigns);
+    return ret;
+  }
+}
 
-    if (!isPrefixCountryCode) {
-      int length = (Acc.rnd().nextDouble() < COMPANY_THREE_CHAR_NUMBER_PROBABILITY) ? 3 : 4;
-      number = getRandomCallsignNumber(true, useExtendedNow, length);
-    } else {
-      number = getRandomCallsignNumber(false, true, 5 - prefix.length());
+class CallsignGenerator {
+
+  public enum Type {
+    NXX,
+    NNX,
+    NNN
+  }
+  public static Character[]numericalChars;
+
+  static{
+    IList<Character> tmp = new EList<>();
+    for (int i = 'A'; i <= 'Z'; i++) {
+      tmp.add((char)i);
     }
+    tmp.remove('I');
+    tmp.remove('O');
+    tmp.remove('Q');
+    numericalChars = tmp.toArray(Character.class);
+  }
+
+  private static final double COMPANY_THREE_CHAR_NUMBER_PROBABILITY = 0.3;
+  private static final double EXTENDED_CALLSIGN_PROBABILITY = 0.3;
+
+  public static Callsign generateCallsign(String prefix, boolean isCommercial, boolean useExtended) {
+    String number;
+    if (!isCommercial)
+      number = generateNonCommercial(prefix);
+    else {
+      Type type = getCallsignType(useExtended);
+      number = generateCommercial(type);
+    }
+
     Callsign ret = new Callsign(prefix, number);
     return ret;
   }
 
-  private String getRandomCallsignNumber(boolean useNumbers, boolean useChars, int length) {
-    char[] tmp = new char[length];
-    boolean isNumber = useNumbers;
-
-    for (int i = 0; i < length; i++) {
-      if (isNumber)
-        tmp[i] = getRandomCallsignChar('0','9' );
+  private static Type getCallsignType(boolean useExtended) {
+    Type ret;
+    if (!useExtended)
+      ret = Type.NNN;
+    else{
+      if (Acc.rnd().nextDouble() > EXTENDED_CALLSIGN_PROBABILITY)
+        ret = Type.NNN;
+      else if (Acc.rnd().nextDouble() < .5)
+        ret = Type.NNX;
       else
-        tmp[i] = getRandomCallsignChar('A','Z' );
-      if (useChars && useNumbers){
-        if ((i+2) == length)
-          isNumber = false;
-        else if ((length == 4 && i == 1) || length == 3)
-          isNumber = Math.random() > 0.5;
-      }
+        ret = Type.NXX;
+    }
+    return ret;
+  }
+
+  private static String generateCommercial(Type type) {
+    StringBuilder ret = new StringBuilder();
+    boolean addFourth = Acc.rnd().nextDouble() > COMPANY_THREE_CHAR_NUMBER_PROBABILITY;
+    switch (type) {
+      case NNN:
+        ret.append((char) Acc.rnd().nextDouble('0', '9'));
+        ret.append((char) Acc.rnd().nextDouble('0', '9'));
+        ret.append((char) Acc.rnd().nextDouble('0', '9'));
+        if (addFourth) ret.append((char) Acc.rnd().nextDouble('0', '9'));
+        break;
+      case NNX:
+        ret.append((char) Acc.rnd().nextDouble('0', '9'));
+        ret.append((char) Acc.rnd().nextDouble('0', '9'));
+        ret.append(getNumericalChar());
+        if (addFourth) ret.append(getNumericalChar());
+        break;
+      case NXX:
+        ret.append((char) Acc.rnd().nextDouble('0', '9'));
+        ret.append(getNumericalChar());
+        ret.append(getNumericalChar());
+        if (addFourth) ret.append(getNumericalChar());
+        break;
+      default:
+        throw new EEnumValueUnsupportedException(type);
     }
 
-    String ret = new String(tmp);
+    return ret.toString();
+  }
+
+  private static char getNumericalChar() {
+    char ret = ArrayUtils.getRandom(numericalChars);
     return ret;
   }
 
-  private char getRandomCallsignChar(char from, char to) {
-    int val = Acc.rnd().nextInt(from, to + 1);
-    char ret = (char) val;
-    return ret;
+  private static String generateNonCommercial(String prefix) {
+    StringBuilder ret = new StringBuilder();
+    for (int i = prefix.length(); i < 5; i++) {
+      char c = (char) Acc.rnd().nextInt('A', 'Z');
+      ret.append(c);
+    }
+    return ret.toString();
   }
+
 }
+
