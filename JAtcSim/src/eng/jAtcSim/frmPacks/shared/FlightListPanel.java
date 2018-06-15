@@ -31,8 +31,7 @@ public class FlightListPanel extends JPanel {
   public void init(Simulation sim, AppSettings appSettings) {
     this.sim = sim;
     FlightStripPanel.setStripSettings(
-        XmlLoadHelper.loadStripSettings(
-            Paths.get(appSettings.resourcesFolder.toString(), "stripSettings.xml").toString()));
+        XmlLoadHelper.loadStripSettings(appSettings.getStripSettings().toString()));
 
     pnlContent = LayoutManager.createBoxPanel(LayoutManager.eHorizontalAlign.left, 4);
     pnlContent.setName("FlightListPanel_ContentPanel");

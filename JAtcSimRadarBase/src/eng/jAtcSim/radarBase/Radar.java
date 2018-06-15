@@ -322,7 +322,7 @@ public class Radar {
   private final Event<Radar, WithCoordinateEventArg> mouseClickEvent = new Event(this);
   private final Event<Radar, KeyEventArg> keyPressEvent = new Event(this);
   private final Event<Radar, Callsign> selectedAirplaneChangedEvent = new Event<>(this);
-  private final DisplaySettings displaySettings;
+  private final RadarStyleSettings displaySettings;
   private final BehaviorSettings behaviorSettings;
   private final LocalSettings localSettings;
   private final Simulation simulation;
@@ -338,7 +338,7 @@ public class Radar {
 
   public Radar(ICanvas canvas, InitialPosition initialPosition,
                Simulation sim, Area area,
-               DisplaySettings displaySettings,
+               RadarStyleSettings displaySettings,
                BehaviorSettings behaviorSettings) {
     this.c = canvas;
 
@@ -587,7 +587,7 @@ public class Radar {
   private void drawInfoLine() {
     if (this.infoLine != null) {
 
-      DisplaySettings.ColorWidthFontSettings cwfs = this.displaySettings.infoLine;
+      RadarStyleSettings.ColorWidthFontSettings cwfs = this.displaySettings.infoLine;
 
       tl.drawLine(
           this.infoLine.from,
@@ -695,13 +695,13 @@ public class Radar {
 
   private void drawBorderAltitude(Border border) {
     String s = AirplaneDataFormatter.formatAltitudeShort(border.getMaxAltitude(), true);
-    DisplaySettings.ColorWidthFontSettings ds = (DisplaySettings.ColorWidthFontSettings) getDispSettBy(border);
+    RadarStyleSettings.ColorWidthFontSettings ds = (RadarStyleSettings.ColorWidthFontSettings) getDispSettBy(border);
     tl.drawText(s, border.getLabelCoordinate(), 0, 0, ds.getFont(), ds.getColor());
   }
 
   private void drawBorder(Border border) {
 
-    DisplaySettings.ColorWidthSettings ds = getDispSettBy(border);
+    RadarStyleSettings.ColorWidthSettings ds = getDispSettBy(border);
 
     Coordinate last = null;
     for (int i = 0; i < border.getPoints().size(); i++) {
@@ -744,7 +744,7 @@ public class Radar {
   }
 
   private void drawStar(List<Navaid> navaidPoints) {
-    DisplaySettings.ColorWidthSettings sett = displaySettings.star;
+    RadarStyleSettings.ColorWidthSettings sett = displaySettings.star;
     for (int i = 0; i < navaidPoints.size() - 1; i++) {
       tl.drawLine(
           navaidPoints.get(i).getCoordinate(),
@@ -755,7 +755,7 @@ public class Radar {
   }
 
   private void drawSid(List<Navaid> navaidPoints) {
-    DisplaySettings.ColorWidthSettings sett = displaySettings.sid;
+    RadarStyleSettings.ColorWidthSettings sett = displaySettings.sid;
     for (int i = 0; i < navaidPoints.size() - 1; i++) {
       tl.drawLine(
           navaidPoints.get(i).getCoordinate(),
@@ -816,8 +816,8 @@ public class Radar {
   }
 
   private void drawNavaid(Navaid navaid) {
-    DisplaySettings.ColorWidthBorderSettings ds = getDispSettBy(navaid);
-    DisplaySettings.TextSettings dt = displaySettings.navaid;
+    RadarStyleSettings.ColorWidthBorderSettings ds = getDispSettBy(navaid);
+    RadarStyleSettings.TextSettings dt = displaySettings.navaid;
 
     switch (navaid.getType()) {
       case vor:
@@ -863,7 +863,7 @@ public class Radar {
   }
 
   private void drawRunway(Runway runway) {
-    DisplaySettings.ColorWidthSettings ds = getDispSettBy(runway);
+    RadarStyleSettings.ColorWidthSettings ds = getDispSettBy(runway);
 
     tl.drawLine(
         runway.getThresholdA().getCoordinate(),
@@ -872,7 +872,7 @@ public class Radar {
   }
 
   private void drawInactiveRunway(InactiveRunway runway) {
-    DisplaySettings.ColorWidthSettings ds = getDispSettBy(runway);
+    RadarStyleSettings.ColorWidthSettings ds = getDispSettBy(runway);
 
     tl.drawLine(
         runway.getThresholdA().getCoordinate(),
@@ -888,7 +888,7 @@ public class Radar {
   private void drawAirplanes() {
     if (this.planeInfos.isEmpty()) return;
 
-    DisplaySettings.TextSettings dt = displaySettings.callsign;
+    RadarStyleSettings.TextSettings dt = displaySettings.callsign;
     Size s = c.getEstimatedTextSize(dt.getFont(), 12, 3);
     tl.adjustPlaneLabelOverlying(s.width, s.height);
 
@@ -918,11 +918,11 @@ public class Radar {
   }
 
   private void drawPlaneLabel(AirplaneDisplayInfo adi) {
-    DisplaySettings.PlaneLabelSettings dp = getPlaneLabelDisplaySettingsBy(adi);
+    RadarStyleSettings.PlaneLabelSettings dp = getPlaneLabelDisplaySettingsBy(adi);
     if (dp.isVisible() == false) {
       return;
     }
-    DisplaySettings.TextSettings dt = displaySettings.callsign;
+    RadarStyleSettings.TextSettings dt = displaySettings.callsign;
 
     Color c = resolvePlaneDrawColor(adi, dp);
     Color cc = dp.getConnectorColor();
@@ -948,7 +948,7 @@ public class Radar {
 
   private void drawPlanePoint(AirplaneDisplayInfo adi) {
 
-    DisplaySettings.PlaneLabelSettings dp = getPlaneLabelDisplaySettingsBy(adi);
+    RadarStyleSettings.PlaneLabelSettings dp = getPlaneLabelDisplaySettingsBy(adi);
     if (dp.isVisible() == false) {
       return;
     }
@@ -981,7 +981,7 @@ public class Radar {
     }
   }
 
-  private Color resolvePlaneDrawColor(AirplaneDisplayInfo adi, DisplaySettings.PlaneLabelSettings dp) {
+  private Color resolvePlaneDrawColor(AirplaneDisplayInfo adi, RadarStyleSettings.PlaneLabelSettings dp) {
     Color c = dp.getColor();
     if (adi.airprox == AirproxType.full) {
       c = displaySettings.airproxFull;
@@ -997,8 +997,8 @@ public class Radar {
     return c;
   }
 
-  private DisplaySettings.PlaneLabelSettings getPlaneLabelDisplaySettingsBy(AirplaneDisplayInfo adi) {
-    DisplaySettings.PlaneLabelSettings ret;
+  private RadarStyleSettings.PlaneLabelSettings getPlaneLabelDisplaySettingsBy(AirplaneDisplayInfo adi) {
+    RadarStyleSettings.PlaneLabelSettings ret;
 
     if (adi.emergency)
       ret = displaySettings.emergency;
@@ -1063,7 +1063,7 @@ public class Radar {
   private void drawMessages(List<VisualisedMessage> msgs) {
     MessageSet ms = createMessageSet(msgs);
 
-    DisplaySettings.TextSettings dt;
+    RadarStyleSettings.TextSettings dt;
 
     dt = displaySettings.atc;
     tl.drawTextBlock(ms.atc, TextBlockLocation.bottomRight, dt.getFont(), dt.getColor());
@@ -1078,7 +1078,7 @@ public class Radar {
   private void drawTime() {
 
     // todo rewritten, check
-    DisplaySettings.TextSettings dt = displaySettings.time;
+    RadarStyleSettings.TextSettings dt = displaySettings.time;
     List<String> lst = new ArrayList(1);
     lst.add(simulation.getNow().toString());
     tl.drawTextBlock(lst, TextBlockLocation.topLeft, dt.getFont(), dt.getColor());
@@ -1124,7 +1124,7 @@ public class Radar {
     tl.drawArc(borderArcPoint.getCoordinate(), startBear, endBear, distance, color);
   }
 
-  private DisplaySettings.ColorWidthSettings getDispSettBy(Border border) {
+  private RadarStyleSettings.ColorWidthSettings getDispSettBy(Border border) {
     switch (border.getType()) {
       case ctr:
         return displaySettings.borderCtr;
@@ -1139,15 +1139,15 @@ public class Radar {
     }
   }
 
-  private DisplaySettings.ColorWidthSettings getDispSettBy(Runway runway) {
+  private RadarStyleSettings.ColorWidthSettings getDispSettBy(Runway runway) {
     return displaySettings.activeRunway;
   }
 
-  private DisplaySettings.ColorWidthSettings getDispSettBy(InactiveRunway runway) {
+  private RadarStyleSettings.ColorWidthSettings getDispSettBy(InactiveRunway runway) {
     return displaySettings.closedRunway;
   }
 
-  private DisplaySettings.ColorWidthBorderSettings getDispSettBy(Navaid navaid) {
+  private RadarStyleSettings.ColorWidthBorderSettings getDispSettBy(Navaid navaid) {
     switch (navaid.getType()) {
       case fix:
         return displaySettings.navFix;

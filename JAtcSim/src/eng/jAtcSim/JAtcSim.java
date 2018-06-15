@@ -50,16 +50,18 @@ public class JAtcSim {
    */
   public static void main(String[] args) {
 
+    AppSettings.init();
+
     initStylist();
 
     Acc.setLog(new ApplicationLog());
 
-    appSettings = new AppSettings();
+    appSettings = AppSettings.create();
 
-    Recorder.init(appSettings.logFolder.toString());
+    Recorder.init(appSettings.getLogFolder().toString());
 
     // startupSettings wizard
-    StartupSettings startupSettings = XmlLoadHelper.loadStartupSettings(appSettings.getStartupSettingsFile());
+    StartupSettings startupSettings = XmlLoadHelper.loadStartupSettings(appSettings.getStartupSettingsFile().toString());
 
     FrmIntro frmIntro = new FrmIntro(startupSettings);
     Stylist.apply(frmIntro, true);
@@ -81,7 +83,7 @@ public class JAtcSim {
 
     System.out.println("* Initializing sound environment");
     // sound
-    SoundManager.init(appSettings.soundFolder.toString());
+    SoundManager.init(appSettings.getSoundFolder().toString());
 
     System.out.println("* Starting a GUI");
     // starting pack & simulation
@@ -99,7 +101,7 @@ public class JAtcSim {
 
     try {
       resolveShortXmlFileNamesInStartupSettings(appSettings, startupSettings);
-      XmlLoadHelper.saveStartupSettings(startupSettings, appSettings.getStartupSettingsFile());
+      XmlLoadHelper.saveStartupSettings(startupSettings, appSettings.getStartupSettingsFile().toString());
     } catch (EApplicationException ex) {
       throw new EApplicationException("Failed to normalize or save default settings.", ex);
     }
@@ -135,7 +137,7 @@ public class JAtcSim {
 
     System.out.println("* Initializing sound environment");
     // sound
-    SoundManager.init(appSettings.soundFolder.toString());
+    SoundManager.init(appSettings.getSoundFolder().toString());
 
     System.out.println("* Starting a GUI");
     // starting pack & simulation
@@ -199,7 +201,7 @@ public class JAtcSim {
   private static void resolveShortXmlFileNamesInStartupSettings(AppSettings appSettings, StartupSettings startupSettings) {
     Path tmp;
     Path appPath;
-    appPath = appSettings.applicationFolder;
+    appPath = appSettings.getApplicationFolder();
 
     tmp = Paths.get(startupSettings.files.areaXmlFile);
     if (tmp.isAbsolute()) {

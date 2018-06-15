@@ -1,8 +1,5 @@
 package eng.jAtcSim;
 
-import com.sun.xml.internal.bind.v2.model.core.EnumLeafInfo;
-import eng.eSystem.EStringBuilder;
-import eng.eSystem.collections.EList;
 import eng.eSystem.exceptions.ERuntimeException;
 import eng.eSystem.utilites.ExceptionUtil;
 import eng.eSystem.xmlSerialization.*;
@@ -24,7 +21,7 @@ import eng.jAtcSim.lib.world.approaches.GnssApproach;
 import eng.jAtcSim.lib.world.approaches.IafRoute;
 import eng.jAtcSim.lib.world.approaches.IlsApproach;
 import eng.jAtcSim.lib.world.approaches.UnpreciseApproach;
-import eng.jAtcSim.radarBase.DisplaySettings;
+import eng.jAtcSim.radarBase.RadarStyleSettings;
 import eng.jAtcSim.radarBase.parsing.RadarColorParser;
 import eng.jAtcSim.radarBase.parsing.RadarFontParser;
 import eng.jAtcSim.startup.startupSettings.StartupSettings;
@@ -82,7 +79,7 @@ public class XmlLoadHelper {
     }
   }
 
-  public static DisplaySettings loadNewDisplaySettings(String fileName) {
+  public static RadarStyleSettings loadNewDisplaySettings(String fileName) {
     eng.eSystem.xmlSerialization.Settings sett = new eng.eSystem.xmlSerialization.Settings();
 
     // own parsers
@@ -90,7 +87,7 @@ public class XmlLoadHelper {
     sett.getElementParsers().add(new RadarFontParser());
 
     eng.eSystem.xmlSerialization.XmlSerializer ser = new eng.eSystem.xmlSerialization.XmlSerializer(sett);
-    DisplaySettings ret = (DisplaySettings) deserialize(fileName, DisplaySettings.class, sett);
+    RadarStyleSettings ret = (RadarStyleSettings) deserialize(fileName, RadarStyleSettings.class, sett);
     return ret;
   }
 

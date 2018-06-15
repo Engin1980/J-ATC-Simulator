@@ -9,7 +9,7 @@ package eng.jAtcSim.frmPacks.mdi;
 import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IMap;
 import eng.jAtcSim.lib.Game;
-import eng.jAtcSim.radarBase.DisplaySettings;
+import eng.jAtcSim.radarBase.RadarStyleSettings;
 import eng.eSystem.events.EventSimple;
 import eng.jAtcSim.AppSettings;
 import eng.jAtcSim.XmlLoadHelper;
@@ -25,11 +25,10 @@ public class Pack extends eng.jAtcSim.frmPacks.Pack {
   private Game game;
   private Simulation sim;
   private Area area;
-  private DisplaySettings displaySettings;
+  private RadarStyleSettings displaySettings;
   private FrmMain frmMain;
   private FrmFlightList frmList;
   private FrmScheduledTrafficListing frmScheduledTrafficListing;
-  private int lastMovementCount = 0;
 
   public Pack() {
   }
@@ -37,7 +36,7 @@ public class Pack extends eng.jAtcSim.frmPacks.Pack {
   @Override
   public void initPack(Game game, AppSettings appSettings) {
 
-    String fileName = appSettings.resourcesFolder + "radarDisplaySettings.xml";
+    String fileName = appSettings.getRadarStyleSettings().toString();
     this.displaySettings = XmlLoadHelper.loadNewDisplaySettings(fileName);
 
     // init sim & area
@@ -92,7 +91,7 @@ public class Pack extends eng.jAtcSim.frmPacks.Pack {
     return area;
   }
 
-  DisplaySettings getDisplaySettings() {
+  RadarStyleSettings getDisplaySettings() {
     return displaySettings;
   }
 

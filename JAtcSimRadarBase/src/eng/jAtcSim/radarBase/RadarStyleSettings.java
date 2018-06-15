@@ -13,9 +13,7 @@ import eng.jAtcSim.radarBase.global.Font;
  *
  * @author Marek
  */
-public class DisplaySettings {
-
-
+public class RadarStyleSettings {
 
   ///region Inner classes
   public static class ColorWidthSettings {

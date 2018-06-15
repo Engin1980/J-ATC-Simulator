@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<settings>
+  <soundFolder>$app$\_Sounds</soundFolder>
+  <logFolder>R:\_AtcLog</logFolder>
+  <startupSettingsFile>$app$\_SettingFiles\defaultStartupSettings.ss.xml</startupSettingsFile>
+  <stripSettings>$app$\_SettingFiles\stripSettings.at.xml</stripSettings>
+  <radarStyleSettings>$app$\_SettingFiles\radarStyleSettings.at.xml</radarStyleSettings>
+</settings>

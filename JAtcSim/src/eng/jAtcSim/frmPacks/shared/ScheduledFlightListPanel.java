@@ -21,10 +21,7 @@ public class ScheduledFlightListPanel extends JPanel {
   public void init(Simulation sim, AppSettings appSettings) {
     this.sim = sim;
     ScheduledFlightStripPanel.setStripSettings(
-        XmlLoadHelper.loadStripSettings(
-            Paths.get(
-                appSettings.resourcesFolder.toString(),
-                "stripSettings.xml").toString()));
+        XmlLoadHelper.loadStripSettings(appSettings.getStripSettings().toString()));
 
     pnlContent = LayoutManager.createBoxPanel(LayoutManager.eHorizontalAlign.left, 4);
     pnlContent.setName("ScheduledFlightListPanel_ContentPanel");

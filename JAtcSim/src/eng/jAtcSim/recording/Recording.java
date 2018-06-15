@@ -1,6 +1,5 @@
 package eng.jAtcSim.recording;
 
-import eng.eSystem.events.IEventListenerSimple;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.utilites.ExceptionUtil;
 import eng.jAtcSim.BitmapRadar.BitmapCanvas;
@@ -8,13 +7,12 @@ import eng.jAtcSim.lib.Simulation;
 import eng.jAtcSim.lib.world.Area;
 import eng.jAtcSim.lib.world.InitialPosition;
 import eng.jAtcSim.radarBase.BehaviorSettings;
-import eng.jAtcSim.radarBase.DisplaySettings;
+import eng.jAtcSim.radarBase.RadarStyleSettings;
 import eng.jAtcSim.radarBase.Radar;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Paths;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
@@ -32,7 +30,7 @@ public class Recording {
   }
 
   public Recording(Settings settings, Simulation sim, Area area, InitialPosition initialPosition,
-                   DisplaySettings ds, BehaviorSettings bs) {
+                   RadarStyleSettings ds, BehaviorSettings bs) {
 
     File f = new File(settings.getPath());
     if (f.exists() == false || f.canWrite() == false){

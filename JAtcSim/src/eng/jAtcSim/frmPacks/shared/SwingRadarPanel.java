@@ -12,7 +12,7 @@ import eng.jAtcSim.lib.atcs.UserAtc;
 import eng.jAtcSim.lib.world.Area;
 import eng.jAtcSim.lib.world.InitialPosition;
 import eng.jAtcSim.radarBase.BehaviorSettings;
-import eng.jAtcSim.radarBase.DisplaySettings;
+import eng.jAtcSim.radarBase.RadarStyleSettings;
 import eng.jAtcSim.radarBase.Radar;
 import eng.jAtcSim.radarBase.RadarViewPort;
 import eng.jAtcSim.shared.LayoutManager;
@@ -28,7 +28,7 @@ public class SwingRadarPanel extends JPanel {
   private CommandJTextWraper wrp;
   private Simulation sim;
   private Area area;
-  private DisplaySettings displaySettings;
+  private RadarStyleSettings displaySettings;
   private BehaviorSettings behaviorSettings;
   private InitialPosition initialPosition;
   private JButtonExtender extBtn = new JButtonExtender(
@@ -41,7 +41,7 @@ public class SwingRadarPanel extends JPanel {
 
   public void init(InitialPosition initialPosition,
                    Simulation sim, Area area,
-                   DisplaySettings dispSett, BehaviorSettings behSett) {
+                   RadarStyleSettings dispSett, BehaviorSettings behSett) {
     this.sim = sim;
     this.area = area;
     this.initialPosition = initialPosition;
