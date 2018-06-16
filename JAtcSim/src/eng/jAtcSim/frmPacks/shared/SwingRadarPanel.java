@@ -19,9 +19,7 @@ import eng.jAtcSim.shared.LayoutManager;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.event.*;
 
 public class SwingRadarPanel extends JPanel {
   private Radar radar;
@@ -60,6 +58,13 @@ public class SwingRadarPanel extends JPanel {
       JPanel pnlBottom = buildTextPanel();
       this.add(pnlBottom, BorderLayout.PAGE_END);
     }
+
+    this.addFocusListener(new FocusAdapter() {
+      @Override
+      public void focusGained(FocusEvent e) {
+        setFocus(null);
+      }
+    });
   }
 
   public Radar getRadar() {
@@ -67,7 +72,7 @@ public class SwingRadarPanel extends JPanel {
   }
 
   public void addCommandTextToLine(String text) {
-    wrp.appendText(text);
+    wrp.appendText(text, true);
     wrp.focus();
   }
 
@@ -77,6 +82,23 @@ public class SwingRadarPanel extends JPanel {
 
   public void eraseCommand() {
     wrp.erase();
+  }
+
+  public void setFocus(Character keyChar) {
+    if (wrp != null) {
+      wrp.focus();
+      if (keyChar != null)
+        wrp.appendText(keyChar.toString(), false);
+    }
+  }
+
+  public IMap<Integer, RadarViewPort> getRadarStoredPositions() {
+    IMap<Integer, RadarViewPort> ret = new EMap<>(this.storedRadarPositions);
+    return ret;
+  }
+
+  public void setRadarStoredPositions(IMap<Integer, RadarViewPort> positions) {
+    this.storedRadarPositions.set(positions);
   }
 
   private JPanel buildTextPanel() {
@@ -101,15 +123,6 @@ public class SwingRadarPanel extends JPanel {
   private void storeRadarPosition(int index) {
     RadarViewPort rp = radar.getViewPort();
     storedRadarPositions.set(index, rp);
-  }
-
-  public IMap<Integer, RadarViewPort> getRadarStoredPositions(){
-    IMap<Integer, RadarViewPort> ret = new EMap<>(this.storedRadarPositions);
-    return ret;
-  }
-
-  public void setRadarStoredPositions(IMap<Integer, RadarViewPort> positions){
-    this.storedRadarPositions.set(positions);
   }
 
   private void recallRadarPosition(int index) {
@@ -433,16 +446,16 @@ class CommandJTextWraper {
             erase();
             break;
           case java.awt.event.KeyEvent.VK_LEFT:
-            if (isCtr) appendText("TL");
+            if (isCtr) appendText("TL", true);
             break;
           case java.awt.event.KeyEvent.VK_RIGHT:
-            if (isCtr) appendText("TR");
+            if (isCtr) appendText("TR", true);
             break;
           case java.awt.event.KeyEvent.VK_UP:
-            if (isCtr) appendText("CM");
+            if (isCtr) appendText("CM", true);
             break;
           case java.awt.event.KeyEvent.VK_DOWN:
-            if (isCtr) appendText("DM");
+            if (isCtr) appendText("DM", true);
             break;
           case java.awt.event.KeyEvent.VK_ENTER:
             send();
@@ -497,8 +510,12 @@ class CommandJTextWraper {
     parent.requestFocus();
   }
 
-  public void appendText(String text) {
-    String tmp = parent.getText() + " " + text + " ";
+  public void appendText(String text, boolean separate) {
+    String tmp;
+    if (separate)
+      tmp = parent.getText() + " " + text + " ";
+    else
+      tmp = parent.getText() + text;
     parent.setText(tmp);
   }
 
@@ -549,8 +566,4 @@ class JButtonExtender {
       btn.setForeground(foreOff);
     }
   }
-}
-
-class RadarPosition {
-
 }

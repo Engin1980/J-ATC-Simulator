@@ -225,16 +225,8 @@ public class BitmapCanvas implements ICanvas<BufferedImage> {
   public eng.jAtcSim.radarBase.global.Size getEstimatedTextSize(eng.jAtcSim.radarBase.global.Font font, int rowsCount, int columnsCount) {
     FontMetrics fm = g.getFontMetrics();
 
-//    StringBuilder sb = new StringBuilder();
-//    for (int i = 0; i < columnsCount; i++) {
-//      for (int j = 0; j < rowsCount; j++) {
-//        sb.append("0");
-//      }
-//      sb.append("\n");
-//    }
     String str = "0";
     Rectangle2D r = fm.getStringBounds(str, g);
-
 
     eng.jAtcSim.radarBase.global.Size ret = new eng.jAtcSim.radarBase.global.Size(
         (int) r.getWidth() * rowsCount,

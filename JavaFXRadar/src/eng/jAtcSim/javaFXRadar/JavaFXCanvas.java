@@ -1,6 +1,7 @@
 package eng.jAtcSim.javaFXRadar;
 
 import eng.eSystem.events.Event;
+import eng.eSystem.events.EventAnonymousSimple;
 import eng.eSystem.events.EventSimple;
 import eng.jAtcSim.radarBase.ICanvas;
 import eng.jAtcSim.radarBase.global.Point;

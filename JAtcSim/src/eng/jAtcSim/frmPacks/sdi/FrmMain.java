@@ -2,6 +2,7 @@ package eng.jAtcSim.frmPacks.sdi;
 
 import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IMap;
+import eng.eSystem.utilites.awt.ComponentUtils;
 import eng.jAtcSim.frmPacks.shared.*;
 import eng.jAtcSim.lib.Game;
 import eng.jAtcSim.lib.airplanes.Callsign;
@@ -18,6 +19,8 @@ import eng.jAtcSim.startup.extenders.SwingFactory;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 
@@ -37,6 +40,27 @@ public class FrmMain extends JFrame {
 
   public FrmMain() {
     initComponents();
+  }
+
+  public IMap<Integer, RadarViewPort> getRadarStoredPositions() {
+    return srpRadar.getRadarStoredPositions();
+  }
+
+  public void setRadarStoredPositions(IMap<Integer, RadarViewPort> positions) {
+    srpRadar.setRadarStoredPositions(positions);
+  }
+
+  private void appendListenerForKeyToRadar() {
+    ComponentUtils.adjustComponentTree(this,
+        q -> q.getClass().equals(JTextField.class) == false,
+        q -> q.addKeyListener(new KeyAdapter() {
+          @Override
+          public void keyReleased(KeyEvent e) {
+            System.out.println("FRMMAIN keypress detected");
+            srpRadar.setFocus(e.getKeyChar());
+          }
+        })
+    );
   }
 
   private void initComponents() {
@@ -195,14 +219,6 @@ public class FrmMain extends JFrame {
     lastFileName = fileName;
   }
 
-  public IMap<Integer, RadarViewPort> getRadarStoredPositions(){
-    return srpRadar.getRadarStoredPositions();
-  }
-
-  public void setRadarStoredPositions(IMap<Integer, RadarViewPort> positions){
-    srpRadar.setRadarStoredPositions(positions);
-  }
-
   private void adjustJComponentColors(JComponent component) {
     component.setBackground(new Color(50, 50, 50));
     component.setForeground(new Color(200, 200, 200));
@@ -247,9 +263,11 @@ public class FrmMain extends JFrame {
       pnlCommands.setPlane((Callsign) callsign);
     });
 
-    pnlCommands.getGeneratedEvent().add(s -> srpRadar.addCommandTextToLine((String) s));
+    pnlCommands.getGeneratedEvent().add(s -> srpRadar.addCommandTextToLine(s));
     pnlCommands.getSendEvent().add(() -> srpRadar.sendCommand());
     pnlCommands.getEraseEvent().add(() -> srpRadar.eraseCommand());
+
+    appendListenerForKeyToRadar();
   }
 
 

@@ -3,6 +3,7 @@ package eng.jAtcSim.radarBase;
 import eng.eSystem.EStringBuilder;
 import eng.eSystem.collections.*;
 import eng.eSystem.events.Event;
+import eng.eSystem.events.EventSimple;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.utilites.CollectionUtils;
 import eng.jAtcSim.lib.Simulation;
@@ -322,6 +323,7 @@ public class Radar {
   private final Event<Radar, WithCoordinateEventArg> mouseClickEvent = new Event(this);
   private final Event<Radar, KeyEventArg> keyPressEvent = new Event(this);
   private final Event<Radar, Callsign> selectedAirplaneChangedEvent = new Event<>(this);
+  private final EventSimple<Radar> gotFocusEvent = new EventSimple(this);
   private final RadarStyleSettings displaySettings;
   private final BehaviorSettings behaviorSettings;
   private final LocalSettings localSettings;
@@ -360,8 +362,6 @@ public class Radar {
     this.c.getKeyEvent().add(
         (c, o) -> Radar.this.canvas_onKeyPress((ICanvas) c, (KeyEventArg) o));
     this.c.getResizedEvent().add(o -> tl.resetPosition());
-
-
   }
 
   public void start(int redrawInterval, int planeRepositionInterval) {
@@ -414,6 +414,7 @@ public class Radar {
    * Redraws radar. If redraw is caused by simulation second elapsing, it is not forced (it is normal).
    * Forced redraw occurs when e.g. radar canvas has changed its size or became visible.
    * Forced redraw will occur allays but will not update message positions.
+   *
    * @param force True if radar should be redrawn not due to simulation second elapsed state.
    */
   public void redraw(boolean force) {
@@ -449,6 +450,10 @@ public class Radar {
     ret.coordinate = this.tl.getMiddle();
     ret.range = this.tl.getWidthInNM();
     return ret;
+  }
+
+  public EventSimple<Radar> getGotFocusEvent() {
+    return gotFocusEvent;
   }
 
   private void buildLocalNavaidList() {
