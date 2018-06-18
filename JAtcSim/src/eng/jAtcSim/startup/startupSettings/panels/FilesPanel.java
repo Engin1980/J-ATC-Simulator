@@ -3,6 +3,7 @@ package eng.jAtcSim.startup.startupSettings.panels;
 import eng.eSystem.utilites.ExceptionUtil;
 import eng.jAtcSim.XmlLoadHelper;
 import eng.jAtcSim.lib.world.Area;
+import eng.jAtcSim.shared.BackgroundWorker;
 import eng.jAtcSim.shared.LayoutManager;
 import eng.jAtcSim.shared.MessageBox;
 import eng.jAtcSim.startup.startupSettings.StartupSettings;
@@ -17,11 +18,15 @@ public class FilesPanel extends JStartupPanel {
   private final XmlFileSelectorExtender fleArea;
   private final XmlFileSelectorExtender fleFleet;
   private final XmlFileSelectorExtender fleTypes;
+  private final JButton btnLoad;
+  private static final String LOAD_FILES_LABEL = "Load XML files";
+  private static final String LOADING_FILES_LABEL = "...loading";
 
   public FilesPanel() {
     fleArea = new XmlFileSelectorExtender(SwingFactory.FileDialogType.area);
     fleFleet = new XmlFileSelectorExtender(SwingFactory.FileDialogType.fleets);
     fleTypes = new XmlFileSelectorExtender(SwingFactory.FileDialogType.types);
+    btnLoad = new JButton(LOAD_FILES_LABEL);
 
     this.setBorder(new TitledBorder("Source XML files:"));
     this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
@@ -38,9 +43,25 @@ public class FilesPanel extends JStartupPanel {
             fleTypes.getButtonControl()
         ));
 
-    JButton btn = new JButton("Load XML files");
-    btn.addActionListener(q -> btnLoadXml_click());
-    this.add(btn);
+    final BackgroundWorker<Object> bw = new BackgroundWorker<>(this::xmlFilesLoading, this::xmlFilesLoaded);
+    btnLoad.addActionListener(q -> {
+      btnLoad.setText(LOADING_FILES_LABEL);
+      btnLoad.setEnabled(false);
+      bw.start();
+    });
+    this.add(btnLoad);
+  }
+
+  private Object xmlFilesLoading() {
+    if (!loadArea()) return new Object();
+    if (!loadFleet()) return new Object();
+    if (!loadTypes()) return new Object();
+    return new Object();
+  }
+
+  private void xmlFilesLoaded(Object res, Exception ex) {
+    btnLoad.setText(LOAD_FILES_LABEL);
+    btnLoad.setEnabled(true);
   }
 
   @Override
