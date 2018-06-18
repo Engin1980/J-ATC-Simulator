@@ -1,27 +1,35 @@
 package eng.jAtcSim.startup;
 
 import eng.eSystem.utilites.ExceptionUtil;
+import eng.eSystem.utilites.awt.ComponentUtils;
 import eng.jAtcSim.JAtcSim;
 import eng.jAtcSim.Stylist;
 import eng.jAtcSim.shared.LayoutManager;
 import eng.jAtcSim.shared.MessageBox;
-import eng.jAtcSim.startup.controls.IntroButton;
 import eng.jAtcSim.startup.extenders.SwingFactory;
 import eng.jAtcSim.startup.startupSettings.FrmStartupSettings;
 import eng.jAtcSim.startup.startupSettings.StartupSettings;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 
 public class FrmIntro extends JFrame {
 
-  private static final Dimension BUTTON_DIMENSION = new Dimension(100, 15);
   private StartupSettings startupSettings;
 
   public FrmIntro(StartupSettings startupSettings) {
     initializeComponents();
     this.setTitle("JAtcSim - Main menu");
     this.startupSettings = startupSettings;
+
+    ComponentUtils.adjustComponentTree(
+        this.getContentPane(),
+        q -> q.getClass().equals(JButton.class) == false,
+        q -> q.setBackground(Color.DARK_GRAY));
 
   }
 
@@ -30,6 +38,14 @@ public class FrmIntro extends JFrame {
   }
 
   private void initializeComponents() {
+
+    JAtcSim.setAppIconToFrame(this);
+
+    URL url = this.getClass().getResource("/intro.png");
+    Toolkit tk = this.getToolkit();
+    Image img = tk.getImage(url);
+    JLabel lblImage = new JLabel(new ImageIcon(img));
+
     JButton btnStartupSettings = new JButton("Adjust startup settings");
     btnStartupSettings.addActionListener(o -> btnStartupSettings_click());
     JButton btnRun = new JButton("Start simulation");
@@ -39,12 +55,10 @@ public class FrmIntro extends JFrame {
     JButton btnExit = new JButton("Quit");
     btnExit.addActionListener(o -> btnExit_click());
 
-    IntroButton btn = new IntroButton("Nazdar");
 
-    JPanel pnl = eng.jAtcSim.shared.LayoutManager.createBorderedPanel(16);
-    pnl.add(
+    JPanel pnl = eng.jAtcSim.shared.LayoutManager.createBorderedPanel(16,
         eng.jAtcSim.shared.LayoutManager.createBoxPanel(LayoutManager.eHorizontalAlign.center, 16,
-            btn, btnStartupSettings, btnRun, btnLoadSim, btnExit));
+            lblImage, btnStartupSettings, btnRun, btnLoadSim, btnExit));
 
     this.getContentPane().setLayout(new BorderLayout());
     this.getContentPane().add(pnl);
@@ -102,5 +116,19 @@ public class FrmIntro extends JFrame {
     this.setVisible(false);
     this.dispose();
     JAtcSim.quit();
+  }
+}
+
+class ImagedPanel extends JPanel {
+  private final Image bgImg;
+
+  public ImagedPanel(String imageFileName) throws IOException {
+    bgImg = ImageIO.read(new File(imageFileName));
+  }
+
+  @Override
+  protected void paintComponent(Graphics g) {
+    super.paintComponent(g);
+    g.drawImage(bgImg, 0, 0, g.getClipBounds().width, g.getClipBounds().height, null);
   }
 }

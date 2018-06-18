@@ -24,10 +24,12 @@ import eng.jAtcSim.radarBase.global.SoundManager;
 import eng.jAtcSim.startup.FrmIntro;
 import eng.jAtcSim.startup.startupSettings.StartupSettings;
 
+import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -77,7 +79,7 @@ public class JAtcSim {
     // enable duplicates
     try {
       g.getSimulation().getArea().checkForDuplicits();
-    } catch (Exception ex){
+    } catch (Exception ex) {
       throw new EApplicationException("Some element in source XML files is not unique. Some of the input XML files is not valid.", ex);
     }
 
@@ -131,7 +133,7 @@ public class JAtcSim {
     // enable duplicates
     try {
       g.getSimulation().getArea().checkForDuplicits();
-    } catch (Exception ex){
+    } catch (Exception ex) {
       throw new EApplicationException("Some element in source XML files is not unique. Some of the input XML files is not valid.", ex);
     }
 
@@ -151,6 +153,14 @@ public class JAtcSim {
 
   public static void quit() {
 
+  }
+
+
+  public static void setAppIconToFrame(JFrame frm) {
+    URL url = frm.getClass().getResource("/icon.png");
+    Toolkit tk = frm.getToolkit();
+    Image img = tk.getImage(url);
+    frm.setIconImage(img);
   }
 
   private static void initStylist() {
@@ -177,7 +187,7 @@ public class JAtcSim {
     Stylist.add(
         new Stylist.TypeFilter(FrmIntro.class, false),
         q -> {
-          Dimension d = new Dimension(500, 360);
+          Dimension d = new Dimension(500, 420);
           q.setMinimumSize(d);
           q.setPreferredSize(d);
         });
