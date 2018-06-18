@@ -26,10 +26,7 @@ public class FrmIntro extends JFrame {
     this.setTitle("JAtcSim - Main menu");
     this.startupSettings = startupSettings;
 
-    ComponentUtils.adjustComponentTree(
-        this.getContentPane(),
-        q -> q.getClass().equals(JButton.class) == false,
-        q -> q.setBackground(Color.DARK_GRAY));
+
 
   }
 

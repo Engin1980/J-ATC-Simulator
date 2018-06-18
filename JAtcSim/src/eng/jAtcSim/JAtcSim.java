@@ -22,6 +22,7 @@ import eng.jAtcSim.lib.weathers.Weather;
 import eng.jAtcSim.radarBase.RadarViewPort;
 import eng.jAtcSim.radarBase.global.SoundManager;
 import eng.jAtcSim.startup.FrmIntro;
+import eng.jAtcSim.startup.startupSettings.FrmStartupSettings;
 import eng.jAtcSim.startup.startupSettings.StartupSettings;
 
 import javax.swing.*;
@@ -164,25 +165,60 @@ public class JAtcSim {
   }
 
   private static void initStylist() {
-    // default theme
-    Stylist.add(
-        new Stylist.TypeFilter(java.awt.Component.class, true),
-        q -> {
-          //q.setBackground(new Color(50, 50, 50));
-          //q.setForeground(new Color(255, 255, 255));
-          Font fnt = new Font("Verdana", 0, 12);
-          q.setFont(fnt);
-        });
+    initDefault();
+    initIntro();
+    initStartupSettings();
+  }
+
+  private static void initStartupSettings() {
 
     Stylist.add(
-        new Stylist.TypeFilter(javax.swing.JPanel.class, false)
-        ,
+        new Stylist.TypeFilter(JPanel.class, true),
+        q -> q.setBackground(Color.DARK_GRAY)
+    );
+
+    Stylist.add(
+        new Stylist.TypeFilter(javax.swing.JPanel.class, true),
         q -> {
           javax.swing.JPanel p = (javax.swing.JPanel) q;
           TitledBorder b = (TitledBorder) p.getBorder();
-          //if (b != null) b.setTitleColor(new Color(222, 222, 255));
+          if (b != null) b.setTitleColor(Color.LIGHT_GRAY);
         });
 
+    Stylist.add(
+        new Stylist.TypeFilter(JLabel.class, false),
+        q -> {
+          q.setForeground(Color.LIGHT_GRAY);
+        }
+    );
+
+    Stylist.add(
+        new Stylist.TypeFilter(JRadioButton.class, false),
+        q -> {
+          q.setForeground(Color.LIGHT_GRAY);
+          q.setBackground(Color.DARK_GRAY);
+        }
+    );
+    Stylist.add(
+        new Stylist.TypeFilter(JCheckBox.class, false),
+        q -> {
+          q.setForeground(Color.LIGHT_GRAY);
+          q.setBackground(Color.DARK_GRAY);
+        }
+    );
+    Stylist.add(
+        new Stylist.TypeFilter(JTextField.class, false),
+        q -> {
+          JTextField txt = (JTextField) q;
+          if (txt.isEditable() == false) {
+            q.setForeground(Color.LIGHT_GRAY);
+            q.setBackground(Color.DARK_GRAY);
+          }
+        }
+    );
+  }
+
+  private static void initIntro() {
     // intro page
     Stylist.add(
         new Stylist.TypeFilter(FrmIntro.class, false),
@@ -205,7 +241,23 @@ public class JAtcSim {
           q.setMaximumSize(d);
         });
 
+    Stylist.add(
+        new Stylist.AndFilter(
+            new Stylist.TypeFilter(JPanel.class, true),
+            new Stylist.ParentTypeFilter(FrmIntro.class, true)
+        ),
+        q -> q.setBackground(Color.DARK_GRAY)
+    );
+  }
 
+  private static void initDefault() {
+    // default theme
+    Stylist.add(
+        new Stylist.TypeFilter(java.awt.Component.class, true),
+        q -> {
+          Font fnt = new Font("Verdana", 0, 12);
+          q.setFont(fnt);
+        });
   }
 
   private static void resolveShortXmlFileNamesInStartupSettings(AppSettings appSettings, StartupSettings startupSettings) {
