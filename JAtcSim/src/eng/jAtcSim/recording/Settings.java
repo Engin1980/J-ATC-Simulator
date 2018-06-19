@@ -6,17 +6,19 @@ public class Settings {
   private int width;
   private int height;
   private String imageType;
+  private float jpgQuality;
 
-  public String getImageType() {
-    return imageType;
-  }
-
-  public Settings(String path, int interval, int windowWidth, int windowHeight, String imageType) {
+  public Settings(String path, int interval, int windowWidth, int windowHeight, String imageType, float jpgQuality) {
     this.path = path;
     this.interval = interval;
     this.width = windowWidth;
     this.height = windowHeight;
     this.imageType = imageType;
+    this.jpgQuality = jpgQuality;
+  }
+
+  public String getImageType() {
+    return imageType;
   }
 
   public String getPath() {
@@ -33,5 +35,9 @@ public class Settings {
 
   public int getHeight() {
     return height;
+  }
+
+  public float getJpgQuality() {
+    return jpgQuality;
   }
 }

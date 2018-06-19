@@ -18,6 +18,7 @@ import eng.jAtcSim.startup.extenders.NumericUpDownExtender;
 import eng.jAtcSim.startup.extenders.XComboBoxExtender;
 
 import javax.swing.*;
+import java.awt.event.ActionEvent;
 
 public class WeatherPanel extends JStartupPanel {
 
@@ -102,6 +103,12 @@ public class WeatherPanel extends JStartupPanel {
     LayoutManager.fillBoxPanel(this, LayoutManager.eHorizontalAlign.left, SPACE, pnlA, pnlB, pnlC, pnlD, lblMetar);
 
     cmbClouds.getControl().addActionListener(q -> cmbCloudsChanged());
+    cmbPreset.getControl().addActionListener(this::cmbPreset_selectedItemChanged);
+  }
+
+  private void cmbPreset_selectedItemChanged(ActionEvent actionEvent) {
+    Weather w = cmbPreset.getSelectedItem();
+    this.setWeather(w);
   }
 
   @Override

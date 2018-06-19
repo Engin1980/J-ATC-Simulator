@@ -10,9 +10,15 @@ import eng.jAtcSim.radarBase.BehaviorSettings;
 import eng.jAtcSim.radarBase.RadarStyleSettings;
 import eng.jAtcSim.radarBase.Radar;
 
+import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
+import javax.imageio.stream.FileImageOutputStream;
+import javax.imageio.stream.ImageOutputStream;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Paths;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
@@ -25,15 +31,11 @@ public class Recording {
   private int imgCounter;
   private boolean isActive;
 
-  public boolean isActive() {
-    return isActive;
-  }
-
   public Recording(Settings settings, Simulation sim, Area area, InitialPosition initialPosition,
                    RadarStyleSettings ds, BehaviorSettings bs) {
 
     File f = new File(settings.getPath());
-    if (f.exists() == false || f.canWrite() == false){
+    if (f.exists() == false || f.canWrite() == false) {
       throw new EApplicationException("Unable to create a new recorder to the folder " + settings.getPath() + ". Folder does not exist or write-access is not granted.");
     }
 
@@ -49,20 +51,8 @@ public class Recording {
     this.isActive = true;
   }
 
-  private void bmpCanvas_imageDrawn(BitmapCanvas o) {
-    assert isActive;
-
-    BufferedImage img = bmpCanvas.getGuiControl();
-    imgCounter++;
-    String imgType = this.settings.getImageType();
-    String fullFileName = sf("%05d.%s", imgCounter, imgType);
-    fullFileName = Paths.get(settings.getPath(), fullFileName).toString();
-    try {
-      ImageIO.write(img, imgType, new File(fullFileName));
-    } catch (Exception e) {
-      System.out.println("Recording error. " + ExceptionUtil.toFullString(e, "\n\t"));
-      this.stop();
-    }
+  public boolean isActive() {
+    return isActive;
   }
 
   public Settings getSettings() {
@@ -72,5 +62,47 @@ public class Recording {
   public void stop() {
     radar.stop();
     isActive = false;
+  }
+
+  private void bmpCanvas_imageDrawn(BitmapCanvas o) {
+    assert isActive;
+
+    BufferedImage img = bmpCanvas.getGuiControl();
+    imgCounter++;
+    String imgType = this.settings.getImageType();
+    String fullFileName = sf("%05d.%s", imgCounter, imgType);
+    fullFileName = Paths.get(settings.getPath(), fullFileName).toString();
+    try {
+      switch (imgType) {
+        case "jpg":
+          saveJpg(img, fullFileName, this.settings.getJpgQuality());
+          break;
+        default:
+          saveOther(img, imgType, fullFileName);
+          break;
+      }
+    } catch (Exception e) {
+      System.out.println("Recording error. " + ExceptionUtil.toFullString(e, "\n\t"));
+      this.stop();
+    }
+  }
+
+  private void saveOther(BufferedImage img, String imageType, String fullFileName) throws IOException {
+    ImageIO.write(img, imageType, new File(fullFileName));
+  }
+
+  private void saveJpg(BufferedImage image, String fullFileName, double quality) throws IOException {
+    ImageWriter jpgWriter = ImageIO.getImageWritersByFormatName("jpg").next();
+    ImageWriteParam jpgWriteParam = jpgWriter.getDefaultWriteParam();
+    jpgWriteParam.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+    jpgWriteParam.setCompressionQuality((float) quality);
+
+    ImageOutputStream outputStream = new FileImageOutputStream(new File(fullFileName));
+    jpgWriter.setOutput(outputStream);
+    IIOImage outputImage = new IIOImage(image, null, null);
+    jpgWriter.write(null, outputImage, jpgWriteParam);
+    jpgWriter.dispose();
+    outputStream.flush();
+    outputStream.close();
   }
 }

@@ -8,10 +8,7 @@ import eng.eSystem.utilites.awt.ComponentUtils;
 import eng.jAtcSim.recording.Settings;
 import eng.jAtcSim.shared.LayoutManager;
 import eng.jAtcSim.shared.MessageBox;
-import eng.jAtcSim.startup.extenders.NumericUpDownExtender;
-import eng.jAtcSim.startup.extenders.SwingFactory;
-import eng.jAtcSim.startup.extenders.XComboBoxExtender;
-import eng.jAtcSim.startup.extenders.XmlFileSelectorExtender;
+import eng.jAtcSim.startup.extenders.*;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -24,6 +21,7 @@ public class RecordingPanel extends JPanel {
   private NumericUpDownExtender nudInterval;
   private NumericUpDownExtender nudWidth;
   private NumericUpDownExtender nudHeight;
+  private NumericUpDownExtender nudJpgQuality;
   private XmlFileSelectorExtender fleFolder;
   private JPanel pnlBefore;
   private JPanel pnlDuring;
@@ -83,6 +81,7 @@ public class RecordingPanel extends JPanel {
     fleFolder = new XmlFileSelectorExtender(SwingFactory.FileDialogType.folder);
     nudWidth = new NumericUpDownExtender(new JSpinner(), 100, 4000, 1600, 100);
     nudHeight = new NumericUpDownExtender(new JSpinner(), 100, 4000, 900, 100);
+    nudJpgQuality = new NumericUpDownExtender(new JSpinner(), 0, 100, 95, 5);
     cmbImageType = new XComboBoxExtender<>(new String[]{"jpg", "png", "bmp"});
     if (sett != null) {
       nudInterval.setValue(sett.getInterval());
@@ -92,7 +91,7 @@ public class RecordingPanel extends JPanel {
       cmbImageType.setSelectedItem(sett.getImageType());
     }
 
-    JPanel tmpA = LayoutManager.createFormPanel(5, 2,
+    JPanel tmpA = LayoutManager.createFormPanel(6, 2,
         new JLabel("Target folder:"),
         LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.baseline, 4, fleFolder.getTextControl(), fleFolder.getButtonControl()),
         new JLabel("Interval (sim sec):"),
@@ -102,7 +101,9 @@ public class RecordingPanel extends JPanel {
         new JLabel("Window height (px):"),
         nudHeight.getControl(),
         new JLabel("Image type:"),
-        cmbImageType.getControl()
+        cmbImageType.getControl(),
+        new JLabel("JPG quality %:"),
+        nudJpgQuality.getControl()
     );
 
     JPanel tmpB = LayoutManager.createBorderedPanel(4,
@@ -169,7 +170,10 @@ public class RecordingPanel extends JPanel {
 
   private void btnStartRecording_click(ActionEvent actionEvent) {
     if (!checkSanity()) return;
-    Settings sett = new Settings(fleFolder.getFileName(), nudInterval.getValue(), nudWidth.getValue(), nudHeight.getValue(), cmbImageType.getSelectedItem());
+    Settings sett = new Settings(
+        fleFolder.getFileName(), nudInterval.getValue(), nudWidth.getValue(), nudHeight.getValue(),
+        cmbImageType.getSelectedItem(),
+        nudJpgQuality.getValue() / 100f);
     recordingStarted.raise(sett);
     adjustAvailibility(true);
   }
