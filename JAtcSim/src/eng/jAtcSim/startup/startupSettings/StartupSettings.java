@@ -48,6 +48,7 @@ public class StartupSettings {
     public int maxPlanes;
     public double densityPercentage;
     public boolean allowDelays;
+    public double emergencyPerDayProbability = 1 / 7d;
   }
 
   public static class CustomTraffic {
@@ -101,7 +102,6 @@ public class StartupSettings {
 
   public static class Simulation {
     public int secondLengthInMs = 1000;
-    public double emergencyPerDayProbability = 1 / 7d;
   }
 
   public class Loaded {

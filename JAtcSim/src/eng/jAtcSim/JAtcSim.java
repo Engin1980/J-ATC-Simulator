@@ -19,10 +19,8 @@ import eng.jAtcSim.lib.global.sources.WeatherSource;
 import eng.jAtcSim.lib.traffic.GenericTraffic;
 import eng.jAtcSim.lib.traffic.Traffic;
 import eng.jAtcSim.lib.weathers.Weather;
-import eng.jAtcSim.radarBase.RadarViewPort;
 import eng.jAtcSim.radarBase.global.SoundManager;
 import eng.jAtcSim.startup.FrmIntro;
-import eng.jAtcSim.startup.startupSettings.FrmStartupSettings;
 import eng.jAtcSim.startup.startupSettings.StartupSettings;
 
 import javax.swing.*;
@@ -113,7 +111,7 @@ public class JAtcSim {
 
     Game.GameStartupInfo gsi = new Game.GameStartupInfo();
     gsi.areaXmlFile = startupSettings.files.areaXmlFile;
-    gsi.emergencyPerDayProbability = startupSettings.simulation.emergencyPerDayProbability;
+    gsi.emergencyPerDayProbability = startupSettings.traffic.emergencyPerDayProbability;
     gsi.fleetsXmlFile = startupSettings.files.fleetsXmlFile;
     gsi.icao = startupSettings.recent.icao;
     gsi.planesXmlFile = startupSettings.files.planesXmlFile;

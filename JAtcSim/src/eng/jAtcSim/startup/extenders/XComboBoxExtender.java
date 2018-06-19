@@ -157,4 +157,14 @@ public class XComboBoxExtender<T> {
   public final void setModel(ComboBoxModel<T> model) {
     this.cmb.setModel(model);
   }
+
+  public int getCount() {
+    return cmb.getModel().getSize();
+  }
+
+  public T getItem(int i) {
+    Item<T> item = (Item<T>) cmb.getModel().getElementAt(i);
+    T ret = item.value;
+    return ret;
+  }
 }

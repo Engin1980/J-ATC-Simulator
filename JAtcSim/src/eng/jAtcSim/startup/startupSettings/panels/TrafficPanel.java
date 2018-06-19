@@ -6,7 +6,9 @@
 package eng.jAtcSim.startup.startupSettings.panels;
 
 import eng.eSystem.collections.EList;
+import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IList;
+import eng.eSystem.collections.IMap;
 import eng.eSystem.utilites.ExceptionUtil;
 import eng.eSystem.utilites.awt.ComponentUtils;
 import eng.jAtcSim.XmlLoadHelper;
@@ -23,6 +25,7 @@ import javax.swing.*;
 public class TrafficPanel extends JStartupPanel {
 
   private javax.swing.JCheckBox chkAllowDelays;
+  private XComboBoxExtender<Double> cmbEmergencyProbability;
   private javax.swing.JCheckBox chkCustomExtendedCallsigns;
   private javax.swing.ButtonGroup grpRdb;
   private NumericUpDownExtender nudMaxPlanes;
@@ -68,6 +71,8 @@ public class TrafficPanel extends JStartupPanel {
     txtCompanies.setItems(settings.traffic.customTraffic.getCompanies());
     txtCountryCodes.setItems(settings.traffic.customTraffic.getCountryCodes());
 
+    setCmbEmergencyProbabilityByClosestValue(settings.traffic.emergencyPerDayProbability);
+
     areaChanged();
   }
 
@@ -90,6 +95,8 @@ public class TrafficPanel extends JStartupPanel {
     settings.traffic.customTraffic.useExtendedCallsigns = chkCustomExtendedCallsigns.isSelected();
     settings.traffic.customTraffic.setCompanies(txtCompanies.getItems());
     settings.traffic.customTraffic.setCountryCodes(txtCountryCodes.getItems());
+
+    settings.traffic.emergencyPerDayProbability = cmbEmergencyProbability.getSelectedItem();
   }
 
   public void areaChanged() {
@@ -109,6 +116,19 @@ public class TrafficPanel extends JStartupPanel {
     cmbAirportDefinedTraffic.setModel(mp);
   }
 
+  private void setCmbEmergencyProbabilityByClosestValue(double emergencyPerDayProbability) {
+    double minDiff = Double.MAX_VALUE;
+    int bestIndex = 0;
+    for (int i = 0; i < cmbEmergencyProbability.getCount(); i++) {
+      double item = cmbEmergencyProbability.getItem(i);
+      if (Math.abs(item - emergencyPerDayProbability) < minDiff){
+        minDiff = Math.abs(item - emergencyPerDayProbability);
+        bestIndex = i;
+      }
+    }
+    cmbEmergencyProbability.setSelectedIndex(bestIndex);
+  }
+
   private void fleetsChanged() {
     txtCompanies.setModel(Sources.getFleets().getIcaos());
   }
@@ -121,12 +141,25 @@ public class TrafficPanel extends JStartupPanel {
 
   private void createLayout() {
 
-    JPanel pnlGlobalTrafficSettings = LayoutManager.createFlowPanel(
-        LayoutManager.eVerticalAlign.baseline,
-        super.DISTANCE,
-        new JLabel("Max planes count:"), nudMaxPlanes.getControl(),
-        new JLabel("Traffic density (%):"), nudTrafficDensity.getControl(),
-        chkAllowDelays);
+    JPanel pnlGlobalTrafficSettings = LayoutManager.createBoxPanel(LayoutManager.eHorizontalAlign.left , 4,
+        LayoutManager.createFlowPanel(
+          LayoutManager.eVerticalAlign.baseline,
+          super.DISTANCE,
+          new JLabel("Max planes count:"), nudMaxPlanes.getControl(),
+          new JLabel("Traffic density (%):"), nudTrafficDensity.getControl(),
+          chkAllowDelays),
+        LayoutManager.createFlowPanel(
+            LayoutManager.eVerticalAlign.baseline,
+            super.DISTANCE,
+            new JLabel("Emergencies probabilty:"),
+            cmbEmergencyProbability.getControl()));
+
+//    JPanel pnlGlobalTrafficSettings = LayoutManager.createFlowPanel(
+//        LayoutManager.eVerticalAlign.baseline,
+//        super.DISTANCE,
+//        new JLabel("Max planes count:"), nudMaxPlanes.getControl(),
+//        new JLabel("Traffic density (%):"), nudTrafficDensity.getControl(),
+//        chkAllowDelays);
     pnlGlobalTrafficSettings.setBorder(BorderFactory.createTitledBorder("Global traffic settings:"));
 
     JButton btnCheckTraffic = new JButton("Check");
@@ -213,10 +246,30 @@ public class TrafficPanel extends JStartupPanel {
     txtCompanies = new ItemTextFieldExtender();
     txtCountryCodes = new ItemTextFieldExtender();
 
+    cmbEmergencyProbability = new XComboBoxExtender<>();
+    setCmbEmergencyProbabilityModel();
+
     grpRdb.add(rdbXml);
     grpRdb.add(rdbCustom);
     grpRdb.add(rdbAirportDefined);
     rdbCustom.setSelected(true);
+  }
+
+  private void setCmbEmergencyProbabilityModel() {
+IList<XComboBoxExtender.Item<Double>> lst = new EList<>();
+
+    lst.add(new XComboBoxExtender.Item<>("Off", -1d));
+    lst.add(new XComboBoxExtender.Item<>("Once per hour", 24d));
+    lst.add(new XComboBoxExtender.Item<>("Once per three hours", 8d));
+    lst.add(new XComboBoxExtender.Item<>("Once per six hours", 4d));
+    lst.add(new XComboBoxExtender.Item<>("Once per twelve hours", 2d));
+    lst.add(new XComboBoxExtender.Item<>("Once per day", 1d));
+    lst.add(new XComboBoxExtender.Item<>("Once per three days", 1 / 3d));
+    lst.add(new XComboBoxExtender.Item<>("Once per week", 1 / 7d));
+    lst.add(new XComboBoxExtender.Item<>("Once per two weeks", 1 / 14d));
+    lst.add(new XComboBoxExtender.Item<>("Once per month", 1 / 30d));
+
+    cmbEmergencyProbability.setModel(lst);
   }
 
   private void updateCustomPanelState() {
