@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><root __class="StartupSettings">
   <files areaXmlFile="_SettingFiles\LKPR.ar.xml" fleetsXmlFile="_SettingFiles\fleets.fl.xml" planesXmlFile="_SettingFiles\planeTypes.tp.xml" trafficXmlFile="(null)"/>
   <recent icao="LKPR" time="6:35"/>
-  <weather cloudBaseAltitudeFt="10000" cloudBaseProbability="0.0" useOnline="false" visibilityInM="9999" windDirection="300" windSpeed="7"/>
+  <weather cloudBaseAltitudeFt="10000" cloudBaseProbability="0.0" useOnline="false" visibilityInM="9999" windDirection="310" windSpeed="13"/>
   <traffic allowDelays="true" densityPercentage="1.0" maxPlanes="60" trafficAirportDefinedTitle="LKPR:Normal traffic" type="airportDefined">
     <customTraffic arrivals2departuresRatio="5" companies="CSA;EZY;BAW" countryCodes="OK;OM" movementsPerHour="30" nonCommercialFlightProbability="0.0" useExtendedCallsigns="false" weightTypeA="5" weightTypeB="5" weightTypeC="0" weightTypeD="0"/>
   </traffic>
