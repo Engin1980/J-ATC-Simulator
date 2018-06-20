@@ -9,6 +9,8 @@ import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.coordinates.Coordinate;
 import eng.jAtcSim.lib.coordinates.Coordinates;
+import eng.jAtcSim.lib.global.logging.CommonRecorder;
+import eng.jAtcSim.lib.global.logging.Recorder;
 import eng.jAtcSim.lib.world.Border;
 import eng.jAtcSim.lib.world.BorderExactPoint;
 import eng.jAtcSim.lib.world.BorderPoint;
@@ -17,6 +19,9 @@ public class MrvaManager {
 
   private IList<XMRVA> mrvas = new EList<>();
   private IMap<Airplane, XMRVA> maps = new EMap<>();
+  //TODO remove when bug has been found
+  private CommonRecorder tmpRecorder = new CommonRecorder("MRVA manager recorder", "mrvaRecorder.log",
+      "-");
 
   public MrvaManager(IList<Border> mrvas) {
     for (Border mrva : mrvas) {
@@ -30,10 +35,12 @@ public class MrvaManager {
   }
 
   public void registerPlane(Airplane plane) {
+    tmpRecorder.write("%s (%s) registered request", plane.getCallsign().toString(), plane.getSqwk().toString());
     maps.set(plane, null);
   }
 
   public void unregisterPlane(Airplane plane) {
+    tmpRecorder.write("%s (%s) unregister request", plane.getCallsign().toString(), plane.getSqwk().toString());
     maps.remove(plane);
   }
 
@@ -63,7 +70,7 @@ public class MrvaManager {
 
       boolean isOutOfAltitude = false;
       if (m != null) isOutOfAltitude = m.isIn(airplane.getAltitude());
-      if (isOutOfAltitude && airplane.getState().is(Airplane.State.arrivingLow, Airplane.State.departingLow)){
+      if (isOutOfAltitude && airplane.getState().is(Airplane.State.arrivingLow, Airplane.State.departingLow)) {
         // this is for departures/goarounds when close to runway, very low, so are omitted
         double d = Coordinates.getDistanceInNM(airplane.getCoordinate(), Acc.airport().getLocation());
         if (d < 3)
