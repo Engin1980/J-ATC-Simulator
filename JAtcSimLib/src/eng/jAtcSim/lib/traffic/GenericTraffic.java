@@ -23,6 +23,9 @@ import eng.jAtcSim.lib.traffic.fleets.CompanyFleet;
 import eng.jAtcSim.lib.traffic.fleets.FleetType;
 import eng.jAtcSim.lib.traffic.fleets.Fleets;
 
+import javax.crypto.AEADBadTagException;
+import java.util.Arrays;
+
 /**
  * @author Marek Vajgl
  */
@@ -59,12 +62,20 @@ public class GenericTraffic extends Traffic {
     this.countryCodes = new String[0];
   }
 
-  public GenericTraffic(String companies, String countryCodes, int movementsPerHour, double probabilityOfDeparture, double probabilityOfNonCommercialFlight,
+  public GenericTraffic(String companies, String countryCodes, int[] movementsPerHour, double probabilityOfDeparture, double probabilityOfNonCommercialFlight,
                         int trafficCustomWeightTypeA, int trafficCustomWeightTypeB, int trafficCustomWeightTypeC, int trafficCustomWeightTypeD,
                         boolean useExtendedCallsigns) {
 
-    if (movementsPerHour < 0) {
-      throw new IllegalArgumentException("Argument \"movementsPerHour\" must be equal or greater than 0.");
+    if (movementsPerHour == null) {
+      throw new IllegalArgumentException("Value of {movementsPerHour} cannot not be null.");
+    }
+    if (movementsPerHour.length != 24) {
+      throw new IllegalArgumentException("Argument \"movementsPerHour\" must have length = 24.");
+    }
+
+    for (int i = 0; i < movementsPerHour.length; i++) {
+      if (movementsPerHour[i] < 0)
+        throw new IllegalArgumentException("Argument \"movementsPerHour\" must have all elements equal or greater than 0.");
     }
 
     if (NumberUtils.isBetweenOrEqual(0, probabilityOfDeparture, 1) == false) {
@@ -75,8 +86,9 @@ public class GenericTraffic extends Traffic {
     this.countryCodes = countryCodes.split(";");
 
     for (int i = 0; i < this.movementsPerHour.length; i++) {
-      this.movementsPerHour[i] = movementsPerHour;
+      this.movementsPerHour[i] = movementsPerHour[i];
     }
+
     this.probabilityOfDeparture = probabilityOfDeparture;
     this.probabilityOfNonCommercialFlight = probabilityOfNonCommercialFlight;
 
@@ -204,7 +216,7 @@ public class GenericTraffic extends Traffic {
     tmp.add(new Tuple('B', probabilityOfCategory[1]));
     tmp.add(new Tuple('C', probabilityOfCategory[2]));
     tmp.add(new Tuple('D', probabilityOfCategory[3]));
-    tmp.sort(q->-q.getB());
+    tmp.sort(q -> -q.getB());
     this.orderedCategoriesByProbabilityDesc = new char[4];
     for (int i = 0; i < tmp.size(); i++) {
       this.orderedCategoriesByProbabilityDesc[i] = tmp.get(i).getA();

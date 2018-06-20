@@ -4,6 +4,7 @@ import eng.eSystem.EStringBuilder;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.xmlSerialization.XmlIgnore;
+import eng.eSystem.xmlSerialization.XmlOptional;
 import eng.jAtcSim.XmlLoadHelper;
 import eng.jAtcSim.lib.airplanes.AirplaneTypes;
 import eng.jAtcSim.lib.traffic.fleets.Fleets;
@@ -59,7 +60,7 @@ public class StartupSettings {
     public int weightTypeB;
     public int weightTypeA;
     public int arrivals2departuresRatio;
-    public int movementsPerHour;
+    public int[] movementsPerHour;
     public double nonCommercialFlightProbability;
     public String countryCodes = "OK";
     public String companies = "CSA;EZY";

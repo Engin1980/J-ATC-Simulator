@@ -2,12 +2,40 @@
   <files areaXmlFile="_SettingFiles\LKPR.ar.xml" fleetsXmlFile="_SettingFiles\fleets.fl.xml" planesXmlFile="_SettingFiles\planeTypes.tp.xml" trafficXmlFile="(null)"/>
   <recent icao="LKPR" time="8:30"/>
   <weather cloudBaseAltitudeFt="10000" cloudBaseProbability="0.0" useOnline="false" visibilityInM="9999" windDirection="310" windSpeed="13"/>
-  <traffic allowDelays="true" densityPercentage="1.0" emergencyPerDayProbability="0.14285714285714285" maxPlanes="60" trafficAirportDefinedTitle="----" type="airportDefined">
-    <customTraffic arrivals2departuresRatio="5" companies="CSA;EZY;BAW" countryCodes="OK;OM" movementsPerHour="30" nonCommercialFlightProbability="0.0" useExtendedCallsigns="false" weightTypeA="5" weightTypeB="5" weightTypeC="0" weightTypeD="0"/>
+  <traffic allowDelays="true" densityPercentage="1.0" emergencyPerDayProbability="0.14285714285714285" maxPlanes="60" trafficAirportDefinedTitle="----" type="custom">
+    <customTraffic arrivals2departuresRatio="5" companies="CSA;EZY;BAW" countryCodes="OK;OM" nonCommercialFlightProbability="0.0" useExtendedCallsigns="false" weightTypeA="5" weightTypeB="5" weightTypeC="0" weightTypeD="0">
+      <movementsPerHour>
+        <int __class="Integer">5</int>
+        <int __class="Integer">3</int>
+        <int __class="Integer">5</int>
+        <int __class="Integer">0</int>
+        <int __class="Integer">5</int>
+        <int __class="Integer">5</int>
+        <int __class="Integer">5</int>
+        <int __class="Integer">5</int>
+        <int __class="Integer">5</int>
+        <int __class="Integer">5</int>
+        <int __class="Integer">5</int>
+        <int __class="Integer">5</int>
+        <int __class="Integer">5</int>
+        <int __class="Integer">5</int>
+        <int __class="Integer">5</int>
+        <int __class="Integer">5</int>
+        <int __class="Integer">5</int>
+        <int __class="Integer">5</int>
+        <int __class="Integer">5</int>
+        <int __class="Integer">5</int>
+        <int __class="Integer">5</int>
+        <int __class="Integer">5</int>
+        <int __class="Integer">5</int>
+        <int __class="Integer">5</int>
+      </movementsPerHour>
+    </customTraffic>
   </traffic>
   <radar packClass="eng.jAtcSim.frmPacks.sdi.Pack"/>
   <simulation secondLengthInMs="500"/>
   <__typeMap>
+    <item class="java.lang.Integer" key="Integer"/>
     <item class="eng.jAtcSim.startup.startupSettings.StartupSettings" key="StartupSettings"/>
   </__typeMap>
 </root>

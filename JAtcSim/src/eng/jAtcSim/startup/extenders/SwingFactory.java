@@ -100,6 +100,14 @@ public class SwingFactory {
     dlg.setTitle(title);
     dlg.setVisible(true);
   }
+  public static void showDialog(JPanel pnl, String title, JDialog owner){
+    JDialog dlg = new JDialog(owner, Dialog.ModalityType.DOCUMENT_MODAL);
+    dlg.getContentPane().add(pnl);
+    dlg.pack();
+    dlg.setLocationRelativeTo(null);
+    dlg.setTitle(title);
+    dlg.setVisible(true);
+  }
 
   public static JButton createButton(String title, ActionListener action){
     JButton ret = new JButton(title);
