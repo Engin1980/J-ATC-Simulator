@@ -56,7 +56,6 @@ public class FrmMain extends JFrame {
         q -> q.addKeyListener(new KeyAdapter() {
           @Override
           public void keyReleased(KeyEvent e) {
-            System.out.println("FRMMAIN keypress detected");
             srpRadar.setFocus(e.getKeyChar());
           }
         })

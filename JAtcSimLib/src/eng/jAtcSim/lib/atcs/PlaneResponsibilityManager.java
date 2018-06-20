@@ -74,7 +74,7 @@ private CommonRecorder tmpRecorder = new CommonRecorder("Plane-responsibility-ma
   }
 
   public void registerPlane(Atc atc, Airplane plane) {
-    tmpRecorder.write("%s (%s) recording request to ATC %s", plane.getCallsign().toString(), plane.getSqwk().toString(), atc.getName());
+    tmpRecorder.write("%s (%s) register request to ATC %s", plane.getCallsign().toString(), plane.getSqwk().toString(), atc.getName());
     if (map.containsKey(plane)) {
       throw new EApplicationException(sf("Second registration of already registered plane %s!", plane.getCallsign()));
     }
@@ -87,7 +87,9 @@ private CommonRecorder tmpRecorder = new CommonRecorder("Plane-responsibility-ma
   }
 
   public void unregisterPlane(Airplane plane) {
-    tmpRecorder.write("%s (%s) recording request to ATC %s", plane.getCallsign().toString(), plane.getSqwk().toString());
+    tmpRecorder.write("%s (%s) unregister request",
+        plane.getCallsign().toString(),
+        plane.getSqwk().toString());
     if (!map.containsKey(plane)) {
       throw new EApplicationException(sf("Plane %s is not registered, cannot be unregistered!", plane.getCallsign()));
     }

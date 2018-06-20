@@ -216,7 +216,7 @@ public class LongFormatter extends Formatter {
   }
 
   public String format(PassingClearanceLimitNotification cmd) {
-    return "Passing clearance limit, continuing on current heading";
+    return "Approaching to clearance limit, will continue on current heading";
   }
 
   public String format(Confirmation cmd) {

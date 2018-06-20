@@ -84,4 +84,11 @@ public class CurrentApproachInfo {
   public double getFaf2MaptCourse() {
     return this.faf2maptCourse;
   }
+
+  public boolean isPrecise() {
+    return type == Approach.ApproachType.ils_I ||
+        type == Approach.ApproachType.ils_II ||
+        type == Approach.ApproachType.ils_III ||
+        type == Approach.ApproachType.gnss;
+  }
 }

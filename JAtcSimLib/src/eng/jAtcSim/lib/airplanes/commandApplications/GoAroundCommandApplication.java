@@ -14,6 +14,9 @@ public class GoAroundCommandApplication extends CommandApplication<GoAroundComma
         Airplane.State.takeOffGoAround,
         Airplane.State.departingLow,
         Airplane.State.departingHigh,
+        Airplane.State.arrivingHigh,
+        Airplane.State.arrivingLow,
+        Airplane.State.arrivingCloseFaf,
         Airplane.State.landed
     };
   }

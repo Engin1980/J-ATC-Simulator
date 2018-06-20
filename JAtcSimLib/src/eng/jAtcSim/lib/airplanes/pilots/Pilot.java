@@ -737,9 +737,9 @@ public class Pilot {
       return true;
     }
 
-    private void updateApproachLocation() {
+    private void updateApproachLocation(boolean isPrecise) {
       if (location == ApproachLocation.unset) {
-        if (isPassingFaf())
+        if (isPassingFaf() || isPrecise)
           location = ApproachLocation.beforeMapt;
         else
           location = ApproachLocation.beforeFaf;
@@ -771,7 +771,7 @@ public class Pilot {
     private void flyApproachingPhase() {
 
       ApproachLocation last = this.location;
-      updateApproachLocation();
+      updateApproachLocation(this.approach.isPrecise());
 
       if (last == ApproachLocation.beforeMapt && this.location == ApproachLocation.beforeThreshold) {
         if (canSeeRunwayFromCurrentPosition() == false) {
@@ -797,13 +797,23 @@ public class Pilot {
           // this only updates speed and changes to "entering"
           updateHeadingOnApproach(Coordinates.eHeadingToRadialBehavior.standard);
           boolean isDescending = updateAltitudeOnApproach(false);
-
           if (isDescending) {
             isAfterStateChange = true;
             super.setState(Airplane.State.approachDescend);
           }
           break;
         case approachDescend:
+          if (isAfterStateChange) {
+            if (this.approach.isPrecise()) {
+              // check if not descending to ILS path and not yet established in ILS LOC
+              if (Headings.getDifference(
+                  parent.getTargetHeading(), this.approach.getFaf2MaptCourse(), true) > 10) {
+                goAround("Not established in LOC when GP is captured.");
+                return;
+              }
+            }
+            this.isAfterStateChange = false;
+          }
           // plane on descend slope
           // updates speed, then changes to "descending"
           isAfterStateChange = false;
@@ -917,6 +927,7 @@ public class Pilot {
     route,
     extension
   }
+
   private final SpeechDelayer queue = new SpeechDelayer(2, 7); //Min/max speech delay
   private final AfterCommandList afterCommands = new AfterCommandList();
   private final Map<Atc, SpeechList> saidText = new HashMap<>();
