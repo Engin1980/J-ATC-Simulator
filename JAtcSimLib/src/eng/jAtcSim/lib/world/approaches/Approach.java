@@ -1,6 +1,5 @@
 package eng.jAtcSim.lib.world.approaches;
 
-import com.sun.javafx.iio.common.ImageLoaderImpl;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.utilites.CollectionUtils;
@@ -20,7 +19,6 @@ import eng.jAtcSim.lib.speaking.fromAtc.commands.ProceedDirectCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ThenCommand;
 import eng.jAtcSim.lib.speaking.parsing.Parser;
 import eng.jAtcSim.lib.speaking.parsing.shortBlockParser.ShortBlockParser;
-import eng.jAtcSim.lib.speaking.parsing.shortParsing.ShortParser;
 import eng.jAtcSim.lib.world.Navaid;
 import eng.jAtcSim.lib.world.RunwayThreshold;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;

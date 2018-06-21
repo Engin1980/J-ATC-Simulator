@@ -18,7 +18,6 @@ import eng.jAtcSim.lib.speaking.fromAtc.commands.ProceedDirectCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ToNavaidCommand;
 import eng.jAtcSim.lib.speaking.parsing.Parser;
 import eng.jAtcSim.lib.speaking.parsing.shortBlockParser.ShortBlockParser;
-import eng.jAtcSim.lib.speaking.parsing.shortParsing.ShortParser;
 
 import java.util.ArrayList;
 import java.util.List;

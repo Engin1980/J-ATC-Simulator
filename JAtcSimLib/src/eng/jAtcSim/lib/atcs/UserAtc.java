@@ -7,7 +7,6 @@ package eng.jAtcSim.lib.atcs;
 
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.ERuntimeException;
-import eng.eSystem.xmlSerialization.XmlIgnore;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.Airplanes;
@@ -21,7 +20,6 @@ import eng.jAtcSim.lib.speaking.fromAtc.IAtc2Atc;
 import eng.jAtcSim.lib.speaking.fromAtc.atc2atc.PlaneSwitchMessage;
 import eng.jAtcSim.lib.speaking.parsing.Parser;
 import eng.jAtcSim.lib.speaking.parsing.shortBlockParser.ShortBlockParser;
-import eng.jAtcSim.lib.speaking.parsing.shortParsing.ShortParser;
 
 /**
  * @author Marek
