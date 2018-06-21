@@ -189,7 +189,7 @@
                 <route iaf="RATEV" route="DM 40 PD PR530 T PD PR532 T FH 241"/>
               </sharedIafRoutes>
               <approaches>
-                <ilsApproach gaRoute="FH 241 CM 40" radial="241" includeSharedIafRoutes="true"  initialAltitude="4000">
+                <ilsApproach gaRoute="FH 241 CM 40" radial="241" includeSharedIafRoutes="true" initialAltitude="4000">
                   <categories>
                     <category type="I" daA="1295" daB="1303" daC="1313" daD="1321"/>
                     <category type="II" daA="1207" daB="1218" daC="1231" daD="1244"/>
@@ -242,7 +242,8 @@
               </sharedIafRoutes>
               <approaches>
                 <unpreciseApproach gaRoute="FH 123 CM 40" radial="127" type="vor" faf="OKL/127/9.8" mapt="OKL/127/1.8"
-                                   mdaA="1530" mdaB="1530" mdaC="1530" mdaD="1530" includeSharedIafRoutes="false" initialAltitude="4000">
+                                   mdaA="1530" mdaB="1530" mdaC="1530" mdaD="1530" includeSharedIafRoutes="false"
+                                   initialAltitude="4000">
                   <iafRoutes>
                     <route iaf="EVEMI" route="FH 303 AD OKL/14.2 FH 213 AR OKL/313 PD OKL/127/12.9 T FH 127"/>
                     <route iaf="SOMIS" route="FH 303 AD OKL/13.9 FH 033 AR OKL/300 PD OKL/127/12.9 T FH 127"/>
@@ -389,7 +390,7 @@
         <genericTraffic title="Very lite generated traffic" probabilityOfNonCommercialFlight="0.7"
                         probabilityOfDeparture="0.5"
                         delayProbability="0.03" maxDelayInMinutesPerStep="30" useExtendedCallsigns="true"
-                        >
+        >
           <movementsPerHour>
             <item>0</item>
             <item>0</item>
@@ -453,7 +454,8 @@
               </sharedIafRoutes>
               <approaches>
                 <gnssApproach gaRoute="FH 039 CM 025 AA 025+ PD MT598 CM 035 AN MT598 PD ODRAN"
-                              radial="042" daA="1190" daB="1190" daC="1190" daD="1190" includeSharedIafRoutes="true" initialAltitude="3200"/>
+                              radial="042" daA="1190" daB="1190" daC="1190" daD="1190" includeSharedIafRoutes="true"
+                              initialAltitude="3200"/>
                 <unpreciseApproach gaRoute="FH 039 CM 025 AA 025+ PD MT598 CM 035 AN MT598 PD ODRAN"
                                    radial="042" type="ndb" mapt="N" faf="OTA/222/8.2" mdaA="1220" mdaB="1220"
                                    mdaC="1220" mdaD="1220" includeSharedIafRoutes="true" initialAltitude="3200"/>
@@ -511,26 +513,29 @@
                 </ilsApproach>
                 <unpreciseApproach type="vor" mapt="OTA/046/1.7" faf="OTA/046/7.7" radial="226" mdaA="1170" mdaB="1170"
                                    mdaC="1170" mdaD="1170"
-                                   gaRoute="FH 226 AA 025+ PD MT598 T PD BOGTU" includeSharedIafRoutes="true" initialAltitude="3000">
+                                   gaRoute="FH 226 AA 025+ PD MT598 T PD BOGTU" includeSharedIafRoutes="true"
+                                   initialAltitude="3000">
                   <iafRoutes>
-                    <route iaf="BOGTU" route="DM 30 PD MT821 T PD MT827 T FH 226" />
-                    <route iaf="EKMIT" route="DM 30 PD MT823 T PD MT827 T FH 226" />
-                    <route iaf="OTA" category="CD" route="DM 30 PD OTA/020/10 T PD MT827 T FH 226" />
-                    <route iaf="OTA" category="AB" route="DM 30 PD OTA/036/10 T PD MT827 T FH 226" />
+                    <route iaf="BOGTU" route="DM 30 PD MT821 T PD MT827 T FH 226"/>
+                    <route iaf="EKMIT" route="DM 30 PD MT823 T PD MT827 T FH 226"/>
+                    <route iaf="OTA" category="CD" route="DM 30 PD OTA/020/10 T PD MT827 T FH 226"/>
+                    <route iaf="OTA" category="AB" route="DM 30 PD OTA/036/10 T PD MT827 T FH 226"/>
                   </iafRoutes>
                 </unpreciseApproach>
                 <unpreciseApproach type="ndb" mapt="N" faf="OTA/042/7.7" radial="222" mdaA="1170" mdaB="1170"
                                    mdaC="1170" mdaD="1170"
-                                   gaRoute="FH 226 AA 025+ PD MT598 T PD BOGTU" includeSharedIafRoutes="true" initialAltitude="3000">
+                                   gaRoute="FH 226 AA 025+ PD MT598 T PD BOGTU" includeSharedIafRoutes="true"
+                                   initialAltitude="3000">
                   <iafRoutes>
-                    <route iaf="BOGTU" route="DM 30 PD MT821 T PD MT825 T FH 222" />
-                    <route iaf="EKMIT" route="DM 30 PD MT823 T PD MT825 T FH 222" />
-                    <route iaf="OTA" category="CD" route="DM 30 PD OTA/015/10 T PD MT825 T FH 222" />
-                    <route iaf="OTA" category="AB" route="DM 30 T PD OTA/033/10 T PD MT825 T FH 222" />
+                    <route iaf="BOGTU" route="DM 30 PD MT821 T PD MT825 T FH 222"/>
+                    <route iaf="EKMIT" route="DM 30 PD MT823 T PD MT825 T FH 222"/>
+                    <route iaf="OTA" category="CD" route="DM 30 PD OTA/015/10 T PD MT825 T FH 222"/>
+                    <route iaf="OTA" category="AB" route="DM 30 T PD OTA/033/10 T PD MT825 T FH 222"/>
                   </iafRoutes>
                 </unpreciseApproach>
                 <gnssApproach daA="1062" daB="1074" daC="1083" daD="1093" radial="222"
-                              gaRoute="CM 30 PD MT597 T PD MT598 T PD BOGTU" includeSharedIafRoutes="false" initialAltitude="3000">
+                              gaRoute="CM 30 PD MT597 T PD MT598 T PD BOGTU" includeSharedIafRoutes="false"
+                              initialAltitude="3000">
                   <iafRoutes>
                     <route iaf="OTA" route="DM 30 PD BOGTU T PD MT821 T PD MT825 T PD MT22F T FH 222"/>
                     <route iaf="BOGTU" route="DM 30 PD MT821 T PD MT825 T PD MT22F T FH 222"/>
@@ -7152,363 +7157,386 @@
     </border>
 
     <!--<border name="LKPR CTR" type="ctr" enclosed="true" minAltitude="0" maxAltitude="FL140">-->
-      <!--<points>-->
-        <!--<point coordinate="50 14 04.29 N 014 10 38.63 E"/>-->
-        <!--<point coordinate="50 10 03.83 N 014 36 20.64 E"/>-->
-        <!--<point coordinate="50 06 53.19 N 014 25 52.18 E"/>-->
-        <!--<arc coordinate="50.096478 14.262808" direction="clockwise"/>-->
-        <!--<point coordinate="50 04 28.51 N 014 25 49.61 E"/>-->
-        <!--<point coordinate="50 03 10.76 N 014 28 30.42 E"/>-->
-        <!--<arc coordinate="50.096478 14.262808" direction="clockwise"/>-->
-        <!--<point coordinate="49 58 49.31 N 014 23 33.64 E"/>-->
-        <!--<point coordinate="50 00 06.26 N 014 20 55.29 E"/>-->
-        <!--<arc coordinate="50.096478 14.262808" direction="clockwise"/>-->
-        <!--<point coordinate="50 01 41.98 N 014 08 02.50 E"/>-->
-        <!--<point coordinate="50 00 38.57 N 014 04 26.05 E"/>-->
-        <!--<arc coordinate="50.096478 14.262808" direction="clockwise"/>-->
-        <!--<point coordinate="50 05 24.42 N 014 01 57.87 E"/>-->
-        <!--<point coordinate="50 06 52.69 N 014 06 59.37 E"/>-->
-        <!--<point coordinate="50 08 54.07 N 014 02 50.10 E"/>-->
-        <!--<arc coordinate="50.096478 14.262808" direction="clockwise"/>-->
-        <!--<point coordinate="50 14 04.29 N 014 10 38.63 E"/>-->
+    <!--<points>-->
+    <!--<point coordinate="50 14 04.29 N 014 10 38.63 E"/>-->
+    <!--<point coordinate="50 10 03.83 N 014 36 20.64 E"/>-->
+    <!--<point coordinate="50 06 53.19 N 014 25 52.18 E"/>-->
+    <!--<arc coordinate="50.096478 14.262808" direction="clockwise"/>-->
+    <!--<point coordinate="50 04 28.51 N 014 25 49.61 E"/>-->
+    <!--<point coordinate="50 03 10.76 N 014 28 30.42 E"/>-->
+    <!--<arc coordinate="50.096478 14.262808" direction="clockwise"/>-->
+    <!--<point coordinate="49 58 49.31 N 014 23 33.64 E"/>-->
+    <!--<point coordinate="50 00 06.26 N 014 20 55.29 E"/>-->
+    <!--<arc coordinate="50.096478 14.262808" direction="clockwise"/>-->
+    <!--<point coordinate="50 01 41.98 N 014 08 02.50 E"/>-->
+    <!--<point coordinate="50 00 38.57 N 014 04 26.05 E"/>-->
+    <!--<arc coordinate="50.096478 14.262808" direction="clockwise"/>-->
+    <!--<point coordinate="50 05 24.42 N 014 01 57.87 E"/>-->
+    <!--<point coordinate="50 06 52.69 N 014 06 59.37 E"/>-->
+    <!--<point coordinate="50 08 54.07 N 014 02 50.10 E"/>-->
+    <!--<arc coordinate="50.096478 14.262808" direction="clockwise"/>-->
+    <!--<point coordinate="50 14 04.29 N 014 10 38.63 E"/>-->
 
-      <!--</points>-->
+    <!--</points>-->
     <!--</border>-->
 
     <!--<border name="LKPR TMA I" type="tma" enclosed="true" minAltitude="1000" maxAltitude="FL145">-->
-      <!--<points>-->
-        <!--<point coordinate="50 14 59.89 N 014 06 41.85 E"/>-->
-        <!--<point coordinate="50 14 04.29 N 014 10 38.63 E"/>-->
-        <!--<arc coordinate="50.096478 14.262808" direction="counterclockwise"/>-->
-        <!--<point coordinate="50 08 54.07 N 014 02 50.10 E"/>-->
-        <!--<point coordinate="50 06 52.69 N 014 06 59.37 E"/>-->
-        <!--<point coordinate="50 05 24.42 N 014 01 57.87 E"/>-->
-        <!--<arc coordinate="50.096478 14.262808" direction="counterclockwise"/>-->
-        <!--<point coordinate="50 00 38.57 N 014 04 26.05 E"/>-->
-        <!--<point coordinate="50 01 41.98 N 014 08 02.50 E"/>-->
-        <!--<arc coordinate="50.096478 14.262808" direction="counterclockwise"/>-->
-        <!--<point coordinate="50 00 06.26 N 014 20 55.29 E"/>-->
-        <!--<point coordinate="49 58 49.31 N 014 23 33.64 E"/>-->
-        <!--<arc coordinate="50.096478 14.262808" direction="counterclockwise"/>-->
-        <!--<point coordinate="50 03 10.76 N 014 28 30.42 E"/>-->
-        <!--<point coordinate="49 58 47.84 N 014 37 27.62 E"/>-->
-        <!--<point coordinate="49 56 40.06 N 014 41 48.10 E"/>-->
-        <!--<arc coordinate="50.096478 14.262808" direction="clockwise"/>-->
-        <!--<point coordinate="49 49 51.20 N 014 32 01.05 E"/>-->
-        <!--<point coordinate="49 55 30.15 N 014 13 50.49 E"/>-->
-        <!--<point coordinate="49 59 00.37 N 014 02 27.29 E"/>-->
-        <!--<arc coordinate="50.096478 14.262808" direction="clockwise"/>-->
-        <!--<point coordinate="50 14 59.89 N 014 06 41.85 E"/>-->
-      <!--</points>-->
+    <!--<points>-->
+    <!--<point coordinate="50 14 59.89 N 014 06 41.85 E"/>-->
+    <!--<point coordinate="50 14 04.29 N 014 10 38.63 E"/>-->
+    <!--<arc coordinate="50.096478 14.262808" direction="counterclockwise"/>-->
+    <!--<point coordinate="50 08 54.07 N 014 02 50.10 E"/>-->
+    <!--<point coordinate="50 06 52.69 N 014 06 59.37 E"/>-->
+    <!--<point coordinate="50 05 24.42 N 014 01 57.87 E"/>-->
+    <!--<arc coordinate="50.096478 14.262808" direction="counterclockwise"/>-->
+    <!--<point coordinate="50 00 38.57 N 014 04 26.05 E"/>-->
+    <!--<point coordinate="50 01 41.98 N 014 08 02.50 E"/>-->
+    <!--<arc coordinate="50.096478 14.262808" direction="counterclockwise"/>-->
+    <!--<point coordinate="50 00 06.26 N 014 20 55.29 E"/>-->
+    <!--<point coordinate="49 58 49.31 N 014 23 33.64 E"/>-->
+    <!--<arc coordinate="50.096478 14.262808" direction="counterclockwise"/>-->
+    <!--<point coordinate="50 03 10.76 N 014 28 30.42 E"/>-->
+    <!--<point coordinate="49 58 47.84 N 014 37 27.62 E"/>-->
+    <!--<point coordinate="49 56 40.06 N 014 41 48.10 E"/>-->
+    <!--<arc coordinate="50.096478 14.262808" direction="clockwise"/>-->
+    <!--<point coordinate="49 49 51.20 N 014 32 01.05 E"/>-->
+    <!--<point coordinate="49 55 30.15 N 014 13 50.49 E"/>-->
+    <!--<point coordinate="49 59 00.37 N 014 02 27.29 E"/>-->
+    <!--<arc coordinate="50.096478 14.262808" direction="clockwise"/>-->
+    <!--<point coordinate="50 14 59.89 N 014 06 41.85 E"/>-->
+    <!--</points>-->
     <!--</border>-->
 
     <!--<border name="LKPR TMA II" type="tma" enclosed="true" minAltitude="3000" maxAltitude="FL145">-->
-      <!--<points>-->
-        <!--<point coordinate="50 22 42.62 N 013 57 08.79 E"/>-->
-        <!--<point coordinate="50 26 19.68 N 014 38 25.44 E"/>-->
-        <!--<point coordinate="50 12 13.78 N 014 43 31.74 E"/>-->
-        <!--<point coordinate="50 11 07.99 N 014 58 38.36 E"/>-->
-        <!--<point coordinate="50 08 05.37 N 014 43 28.32 E"/>-->
-        <!--<arc coordinate="50.121367 14.543642" direction="clockwise"/>-->
-        <!--<point coordinate="50 03 40.36 N 014 41 59.32 E"/>-->
-        <!--<point coordinate="49 58 47.84 N 014 37 27.62 E"/>-->
-        <!--<point coordinate="50 03 10.76 N 014 28 30.42 E"/>-->
-        <!--<arc coordinate="50.096478 14.262808" direction="clockwise"/>-->
-        <!--<point coordinate="49 58 49.31 N 014 23 33.64 E"/>-->
-        <!--<point coordinate="50 00 06.26 N 014 20 55.29 E"/>-->
-        <!--<arc coordinate="50.096478 14.262808" direction="clockwise"/>-->
-        <!--<point coordinate="50 01 41.98 N 014 08 02.50 E"/>-->
-        <!--<point coordinate="50 00 38.57 N 014 04 26.05 E"/>-->
-        <!--<arc coordinate="50.096478 14.262808" direction="clockwise"/>-->
-        <!--<point coordinate="50 05 24.42 N 014 01 57.87 E"/>-->
-        <!--<point coordinate="50 06 52.69 N 014 06 59.37 E"/>-->
-        <!--<point coordinate="50 08 54.07 N 014 02 50.10 E"/>-->
-        <!--<arc coordinate="50.096478 14.262808" direction="clockwise"/>-->
-        <!--<point coordinate="50 14 04.29 N 014 10 38.63 E"/>-->
-        <!--<point coordinate="50 14 59.89 N 014 06 41.85 E"/>-->
-        <!--<arc coordinate="50.096478 14.262808" direction="counterclockwise"/>-->
-        <!--<point coordinate="49 59 00.37 N 014 02 27.29 E"/>-->
-        <!--<point coordinate="49 55 30.15 N 014 13 50.49 E"/>-->
-        <!--<point coordinate="49 47 53.90 N 014 05 56.05 E"/>-->
-        <!--<point coordinate="49 51 39.91 N 013 57 59.41 E"/>-->
-        <!--<point coordinate="49 54 17.09 N 013 52 27.51 E"/>-->
-        <!--<arc coordinate="50.096478 14.262808" direction="clockwise"/>-->
-        <!--<point coordinate="50 17 49.56 N 013 53 07.43 E"/>-->
-        <!--<point coordinate="50 17 57.71 N 013 54 14.58 E"/>-->
-        <!--<point coordinate="50 22 42.62 N 013 57 08.79 E"/>-->
-      <!--</points>-->
+    <!--<points>-->
+    <!--<point coordinate="50 22 42.62 N 013 57 08.79 E"/>-->
+    <!--<point coordinate="50 26 19.68 N 014 38 25.44 E"/>-->
+    <!--<point coordinate="50 12 13.78 N 014 43 31.74 E"/>-->
+    <!--<point coordinate="50 11 07.99 N 014 58 38.36 E"/>-->
+    <!--<point coordinate="50 08 05.37 N 014 43 28.32 E"/>-->
+    <!--<arc coordinate="50.121367 14.543642" direction="clockwise"/>-->
+    <!--<point coordinate="50 03 40.36 N 014 41 59.32 E"/>-->
+    <!--<point coordinate="49 58 47.84 N 014 37 27.62 E"/>-->
+    <!--<point coordinate="50 03 10.76 N 014 28 30.42 E"/>-->
+    <!--<arc coordinate="50.096478 14.262808" direction="clockwise"/>-->
+    <!--<point coordinate="49 58 49.31 N 014 23 33.64 E"/>-->
+    <!--<point coordinate="50 00 06.26 N 014 20 55.29 E"/>-->
+    <!--<arc coordinate="50.096478 14.262808" direction="clockwise"/>-->
+    <!--<point coordinate="50 01 41.98 N 014 08 02.50 E"/>-->
+    <!--<point coordinate="50 00 38.57 N 014 04 26.05 E"/>-->
+    <!--<arc coordinate="50.096478 14.262808" direction="clockwise"/>-->
+    <!--<point coordinate="50 05 24.42 N 014 01 57.87 E"/>-->
+    <!--<point coordinate="50 06 52.69 N 014 06 59.37 E"/>-->
+    <!--<point coordinate="50 08 54.07 N 014 02 50.10 E"/>-->
+    <!--<arc coordinate="50.096478 14.262808" direction="clockwise"/>-->
+    <!--<point coordinate="50 14 04.29 N 014 10 38.63 E"/>-->
+    <!--<point coordinate="50 14 59.89 N 014 06 41.85 E"/>-->
+    <!--<arc coordinate="50.096478 14.262808" direction="counterclockwise"/>-->
+    <!--<point coordinate="49 59 00.37 N 014 02 27.29 E"/>-->
+    <!--<point coordinate="49 55 30.15 N 014 13 50.49 E"/>-->
+    <!--<point coordinate="49 47 53.90 N 014 05 56.05 E"/>-->
+    <!--<point coordinate="49 51 39.91 N 013 57 59.41 E"/>-->
+    <!--<point coordinate="49 54 17.09 N 013 52 27.51 E"/>-->
+    <!--<arc coordinate="50.096478 14.262808" direction="clockwise"/>-->
+    <!--<point coordinate="50 17 49.56 N 013 53 07.43 E"/>-->
+    <!--<point coordinate="50 17 57.71 N 013 54 14.58 E"/>-->
+    <!--<point coordinate="50 22 42.62 N 013 57 08.79 E"/>-->
+    <!--</points>-->
     <!--</border>-->
     <!--<border name="LKPR TMA III" type="tma" enclosed="true" minAltitude="4000" maxAltitude="FL145">-->
-      <!--<points>-->
-        <!--<point coordinate="49 55 30.15 N 014 13 50.49 E"/>-->
-        <!--<point coordinate="49 49 51.20 N 014 32 01.05 E"/>-->
-        <!--<arc coordinate="50.096478 14.262808" direction="counterclockwise"/>-->
-        <!--<point coordinate="49 56 40.06 N 014 41 48.10 E"/>-->
-        <!--<point coordinate="49 58 47.84 N 014 37 27.62 E"/>-->
-        <!--<point coordinate="50 03 40.36 N 014 41 59.32 E"/>-->
-        <!--<arc coordinate="50.121367 14.543642" direction="counterclockwise"/>-->
-        <!--<point coordinate="50 08 05.37 N 014 43 28.32 E"/>-->
-        <!--<point coordinate="50 11 07.99 N 014 58 38.36 E"/>-->
-        <!--<arc coordinate="50.096478 14.262808" direction="clockwise"/>-->
-        <!--<point coordinate="49 55 03.85 N 014 56 02.60 E"/>-->
-        <!--<arc coordinate="50.096478 14.262808" direction="clockwise"/>-->
-        <!--<point coordinate="49 51 10.30 N 014 52 57.05 E"/>-->
-        <!--<arc coordinate="50.096478 14.262808" direction="clockwise"/>-->
-        <!--<point coordinate="49 41 57.91 N 014 38 43.85 E"/>-->
-        <!--<point coordinate="49 41 46.52 N 014 25 09.57 E"/>-->
-        <!--<point coordinate="49 46 49.29 N 014 14 37.56 E"/>-->
-        <!--<point coordinate="49 47 53.90 N 014 05 56.05 E"/>-->
-        <!--<point coordinate="49 55 30.15 N 014 13 50.49 E"/>-->
-      <!--</points>-->
+    <!--<points>-->
+    <!--<point coordinate="49 55 30.15 N 014 13 50.49 E"/>-->
+    <!--<point coordinate="49 49 51.20 N 014 32 01.05 E"/>-->
+    <!--<arc coordinate="50.096478 14.262808" direction="counterclockwise"/>-->
+    <!--<point coordinate="49 56 40.06 N 014 41 48.10 E"/>-->
+    <!--<point coordinate="49 58 47.84 N 014 37 27.62 E"/>-->
+    <!--<point coordinate="50 03 40.36 N 014 41 59.32 E"/>-->
+    <!--<arc coordinate="50.121367 14.543642" direction="counterclockwise"/>-->
+    <!--<point coordinate="50 08 05.37 N 014 43 28.32 E"/>-->
+    <!--<point coordinate="50 11 07.99 N 014 58 38.36 E"/>-->
+    <!--<arc coordinate="50.096478 14.262808" direction="clockwise"/>-->
+    <!--<point coordinate="49 55 03.85 N 014 56 02.60 E"/>-->
+    <!--<arc coordinate="50.096478 14.262808" direction="clockwise"/>-->
+    <!--<point coordinate="49 51 10.30 N 014 52 57.05 E"/>-->
+    <!--<arc coordinate="50.096478 14.262808" direction="clockwise"/>-->
+    <!--<point coordinate="49 41 57.91 N 014 38 43.85 E"/>-->
+    <!--<point coordinate="49 41 46.52 N 014 25 09.57 E"/>-->
+    <!--<point coordinate="49 46 49.29 N 014 14 37.56 E"/>-->
+    <!--<point coordinate="49 47 53.90 N 014 05 56.05 E"/>-->
+    <!--<point coordinate="49 55 30.15 N 014 13 50.49 E"/>-->
+    <!--</points>-->
     <!--</border>-->
     <!--<border name="LKPR TMA IV" type="tma" enclosed="true" minAltitude="5000" maxAltitude="FL145">-->
-      <!--<points>-->
-        <!--<point coordinate="50 18 09.62 N 013 36 52.95 E"/>-->
-        <!--<point coordinate="50 19 42.98 N 013 50 15.03 E"/>-->
-        <!--<point coordinate="50 22 42.62 N 013 57 08.79 E"/>-->
-        <!--<point coordinate="50 17 57.71 N 013 54 14.58 E"/>-->
-        <!--<point coordinate="50 17 49.56 N 013 53 07.43 E"/>-->
-        <!--<arc coordinate="50.096478 14.262808" direction="counterclockwise"/>-->
-        <!--<point coordinate="49 54 17.09 N 013 52 27.51 E"/>-->
-        <!--<point coordinate="49 50 55.63 N 013 39 08.89 E"/>-->
-        <!--<arc coordinate="50.096478 14.262808" direction="clockwise"/>-->
-        <!--<point coordinate="50 18 09.62 N 013 36 52.95 E"/>-->
-      <!--</points>-->
+    <!--<points>-->
+    <!--<point coordinate="50 18 09.62 N 013 36 52.95 E"/>-->
+    <!--<point coordinate="50 19 42.98 N 013 50 15.03 E"/>-->
+    <!--<point coordinate="50 22 42.62 N 013 57 08.79 E"/>-->
+    <!--<point coordinate="50 17 57.71 N 013 54 14.58 E"/>-->
+    <!--<point coordinate="50 17 49.56 N 013 53 07.43 E"/>-->
+    <!--<arc coordinate="50.096478 14.262808" direction="counterclockwise"/>-->
+    <!--<point coordinate="49 54 17.09 N 013 52 27.51 E"/>-->
+    <!--<point coordinate="49 50 55.63 N 013 39 08.89 E"/>-->
+    <!--<arc coordinate="50.096478 14.262808" direction="clockwise"/>-->
+    <!--<point coordinate="50 18 09.62 N 013 36 52.95 E"/>-->
+    <!--</points>-->
     <!--</border>-->
     <!--<border name="LKPR TMA V" type="tma" enclosed="true" minAltitude="FL75" maxAltitude="FL145">-->
-      <!--<points>-->
-        <!--<point coordinate="49 55 03.85 N 014 56 02.60 E"/>-->
-        <!--<point coordinate="49 49 40.04 N 015 01 51.09 E"/>-->
-        <!--<point coordinate="49 44 35.18 N 015 12 02.87 E"/>-->
-        <!--<arc coordinate="50.096478 14.262808" direction="clockwise"/>-->
-        <!--<point coordinate="49 29 54.69 N 014 49 39.12 E"/>-->
-        <!--<point coordinate="49 39 23.60 N 014 30 06.44 E"/>-->
-        <!--<point coordinate="49 41 46.52 N 014 25 09.57 E"/>-->
-        <!--<point coordinate="49 41 57.91 N 014 38 43.85 E"/>-->
-        <!--<arc coordinate="50.096478 14.262808" direction="counterclockwise"/>-->
-        <!--<point coordinate="49 51 10.30 N 014 52 57.05 E"/>-->
-        <!--<arc coordinate="50.096478 14.262808" direction="counterclockwise"/>-->
-        <!--<point coordinate="49 55 03.85 N 014 56 02.60 E"/>-->
-      <!--</points>-->
+    <!--<points>-->
+    <!--<point coordinate="49 55 03.85 N 014 56 02.60 E"/>-->
+    <!--<point coordinate="49 49 40.04 N 015 01 51.09 E"/>-->
+    <!--<point coordinate="49 44 35.18 N 015 12 02.87 E"/>-->
+    <!--<arc coordinate="50.096478 14.262808" direction="clockwise"/>-->
+    <!--<point coordinate="49 29 54.69 N 014 49 39.12 E"/>-->
+    <!--<point coordinate="49 39 23.60 N 014 30 06.44 E"/>-->
+    <!--<point coordinate="49 41 46.52 N 014 25 09.57 E"/>-->
+    <!--<point coordinate="49 41 57.91 N 014 38 43.85 E"/>-->
+    <!--<arc coordinate="50.096478 14.262808" direction="counterclockwise"/>-->
+    <!--<point coordinate="49 51 10.30 N 014 52 57.05 E"/>-->
+    <!--<arc coordinate="50.096478 14.262808" direction="counterclockwise"/>-->
+    <!--<point coordinate="49 55 03.85 N 014 56 02.60 E"/>-->
+    <!--</points>-->
     <!--</border>-->
     <!--<border name="LKPR TMA VI" type="tma" enclosed="true" minAltitude="FL75" maxAltitude="FL145">-->
-      <!--<points>-->
-        <!--<point coordinate="50 18 09.62 N 013 36 52.95 E"/>-->
-        <!--<arc coordinate="50.096478 14.262808" direction="counterclockwise"/>-->
-        <!--<point coordinate="49 50 55.63 N 013 39 08.89 E"/>-->
-        <!--<point coordinate="49 54 17.09 N 013 52 27.51 E"/>-->
-        <!--<point coordinate="49 51 39.91 N 013 57 59.41 E"/>-->
-        <!--<point coordinate="49 43 12.46 N 013 39 22.14 E"/>-->
-        <!--<point coordinate="49 58 43.86 N 013 13 16.99 E"/>-->
-        <!--<point coordinate="50 05 22.06 N 013 19 35.48 E"/>-->
-        <!--<point coordinate="50 12 51.65 N 013 15 49.68 E"/>-->
-        <!--<point coordinate="50 18 09.62 N 013 36 52.95 E"/>-->
-      <!--</points>-->
+    <!--<points>-->
+    <!--<point coordinate="50 18 09.62 N 013 36 52.95 E"/>-->
+    <!--<arc coordinate="50.096478 14.262808" direction="counterclockwise"/>-->
+    <!--<point coordinate="49 50 55.63 N 013 39 08.89 E"/>-->
+    <!--<point coordinate="49 54 17.09 N 013 52 27.51 E"/>-->
+    <!--<point coordinate="49 51 39.91 N 013 57 59.41 E"/>-->
+    <!--<point coordinate="49 43 12.46 N 013 39 22.14 E"/>-->
+    <!--<point coordinate="49 58 43.86 N 013 13 16.99 E"/>-->
+    <!--<point coordinate="50 05 22.06 N 013 19 35.48 E"/>-->
+    <!--<point coordinate="50 12 51.65 N 013 15 49.68 E"/>-->
+    <!--<point coordinate="50 18 09.62 N 013 36 52.95 E"/>-->
+    <!--</points>-->
     <!--</border>-->
     <!--<border name="LKPR TMA VII" type="tma" enclosed="true" minAltitude="FL65" maxAltitude="FL145">-->
-      <!--<points>-->
-        <!--<point coordinate="50 18 09.62 N 013 36 52.95 E"/>-->
-        <!--<arc coordinate="50.096478 14.262808" direction="clockwise"/>-->
-        <!--<point coordinate="50 28 29.08 N 014 41 21.25 E"/>-->
-        <!--<point coordinate="50 28 02.22 N 014 39 55.63 E"/>-->
-        <!--<point coordinate="50 26 19.68 N 014 38 25.44 E"/>-->
-        <!--<point coordinate="50 22 42.62 N 013 57 08.79 E"/>-->
-        <!--<point coordinate="50 19 42.98 N 013 50 15.03 E"/>-->
-        <!--<point coordinate="50 18 09.62 N 013 36 52.95 E"/>-->
-      <!--</points>-->
+    <!--<points>-->
+    <!--<point coordinate="50 18 09.62 N 013 36 52.95 E"/>-->
+    <!--<arc coordinate="50.096478 14.262808" direction="clockwise"/>-->
+    <!--<point coordinate="50 28 29.08 N 014 41 21.25 E"/>-->
+    <!--<point coordinate="50 28 02.22 N 014 39 55.63 E"/>-->
+    <!--<point coordinate="50 26 19.68 N 014 38 25.44 E"/>-->
+    <!--<point coordinate="50 22 42.62 N 013 57 08.79 E"/>-->
+    <!--<point coordinate="50 19 42.98 N 013 50 15.03 E"/>-->
+    <!--<point coordinate="50 18 09.62 N 013 36 52.95 E"/>-->
+    <!--</points>-->
     <!--</border>-->
     <!--<border name="LKPR TMA VIII" type="tma" enclosed="true" minAltitude="5000" maxAltitude="FL145">-->
-      <!--<points>-->
-        <!--<point coordinate="50 28 29.08 N 014 41 21.25 E"/>-->
-        <!--<arc coordinate="50.096478 14.262808" direction="clockwise"/>-->
-        <!--<point coordinate="50 11 07.99 N 014 58 38.36 E"/>-->
-        <!--<point coordinate="50 12 13.78 N 014 43 31.74 E"/>-->
-        <!--<point coordinate="50 26 19.68 N 014 38 25.44 E"/>-->
-        <!--<point coordinate="50 28 02.22 N 014 39 55.63 E"/>-->
-        <!--<point coordinate="50 28 29.08 N 014 41 21.25 E"/>-->
-      <!--</points>-->
+    <!--<points>-->
+    <!--<point coordinate="50 28 29.08 N 014 41 21.25 E"/>-->
+    <!--<arc coordinate="50.096478 14.262808" direction="clockwise"/>-->
+    <!--<point coordinate="50 11 07.99 N 014 58 38.36 E"/>-->
+    <!--<point coordinate="50 12 13.78 N 014 43 31.74 E"/>-->
+    <!--<point coordinate="50 26 19.68 N 014 38 25.44 E"/>-->
+    <!--<point coordinate="50 28 02.22 N 014 39 55.63 E"/>-->
+    <!--<point coordinate="50 28 29.08 N 014 41 21.25 E"/>-->
+    <!--</points>-->
     <!--</border>-->
     <!--<border name="LKPR TMA IX" type="tma" enclosed="true" minAltitude="1000" maxAltitude="3000">-->
-      <!--<points>-->
-        <!--<point coordinate="50 20 04.62 N 014 22 45.29 E"/>-->
-        <!--<arc coordinate="50.096478 14.262808" direction="clockwise"/>-->
-        <!--<point coordinate="50 10 33.93 N 014 38 00.35 E"/>-->
-        <!--<point coordinate="50 10 03.83 N 014 36 20.64 E"/>-->
-        <!--<point coordinate="50 14 04.29 N 014 10 38.63 E"/>-->
-        <!--<point coordinate="50 20 04.62 N 014 22 45.29 E"/>-->
-      <!--</points>-->
+    <!--<points>-->
+    <!--<point coordinate="50 20 04.62 N 014 22 45.29 E"/>-->
+    <!--<arc coordinate="50.096478 14.262808" direction="clockwise"/>-->
+    <!--<point coordinate="50 10 33.93 N 014 38 00.35 E"/>-->
+    <!--<point coordinate="50 10 03.83 N 014 36 20.64 E"/>-->
+    <!--<point coordinate="50 14 04.29 N 014 10 38.63 E"/>-->
+    <!--<point coordinate="50 20 04.62 N 014 22 45.29 E"/>-->
+    <!--</points>-->
     <!--</border>-->
 
     <!-- LKMT -->
-    <border name="" type="mrva" enclosed="true" maxAltitude="2700">
+    <border name="" type="mrva" enclosed="true" maxAltitude="3700">
       <points>
-        <point coordinate="49.611102 17.686481" />
-        <point coordinate="49.638059 17.627353" />
-        <point coordinate="49.710263 17.612570" />
-        <point coordinate="49.759362 17.701264" />
-        <point coordinate="49.805573 17.945170" />
-        <point coordinate="49.812312 18.107774" />
-        <point coordinate="49.791132 18.377550" />
-        <point coordinate="49.745884 18.536458" />
+        <point coordinate="50.016072 17.785422"/>
+        <point coordinate="49.924914 17.447273"/>
+        <point coordinate="49.771535 17.470023"/>
+        <point coordinate="49.528445 17.323181"/>
+        <point coordinate="49.369278 17.605489"/>
+        <point coordinate="49.497335 17.818513"/>
+        <point coordinate="49.555937 17.761638"/>
+        <point coordinate="49.591388 17.762672"/>
+        <point coordinate="49.678929 17.766808"/>
       </points>
     </border>
 
-    <border name="" type="mrva" enclosed="true" maxAltitude="3300">
-      <points>
-        <point coordinate="49.745884 18.536458" />
-        <point coordinate="49.712189 18.588196" />
-        <point coordinate="49.658276 18.595587" />
-        <point coordinate="49.602438 18.492112" />
-        <point coordinate="49.560078 18.270379" />
-        <point coordinate="49.556227 17.963648" />
-        <point coordinate="49.581258 17.786261" />
-        <point coordinate="49.611102 17.686481" />
-      </points>
-    </border>
 
     <border name="" type="mrva" enclosed="true" maxAltitude="3100">
       <points>
-        <point coordinate="50.241689 16.648031" />
-        <point coordinate="50.328334 17.690177" />
-        <point coordinate="50.293676 17.922997" />
-        <point coordinate="50.210882 18.122556" />
-        <point coordinate="49.812312 18.107774" />
-        <point coordinate="49.805573 17.945170" />
-        <point coordinate="49.759362 17.701264" />
-        <point coordinate="49.710263 17.612570" />
-        <point coordinate="49.638059 17.627353" />
-        <point coordinate="49.587997 17.050847" />
-        <point coordinate="49.685232 16.995413" />
-        <point coordinate="49.687158 16.585207" />
+        <point coordinate="50.016072 17.785422"/>
+        <point coordinate="49.977004 17.899173"/>
+        <point coordinate="50.013902 17.991207"/>
+        <point coordinate="50.011732 18.026366"/>
+        <point coordinate="50.034160 18.031537"/>
+        <point coordinate="50.034883 17.997412"/>
+        <point coordinate="50.068163 17.999480"/>
+        <point coordinate="50.051523 18.066696"/>
+        <point coordinate="49.997985 18.117367"/>
+        <point coordinate="49.757065 18.113230"/>
+        <point coordinate="49.737531 18.041878"/>
+        <point coordinate="49.704975 18.006718"/>
+        <point coordinate="49.649990 18.004650"/>
+        <point coordinate="49.619604 17.874354"/>
+        <point coordinate="49.677482 17.860911"/>
+        <point coordinate="49.678929 17.766808"/>
       </points>
     </border>
 
     <border name="" type="mrva" enclosed="true" maxAltitude="3400">
       <points>
-        <point coordinate="49.687158 16.585207" />
-        <point coordinate="49.685232 16.995413" />
-        <point coordinate="49.587997 17.050847" />
-        <point coordinate="49.544674 16.563034" />
-      </points>
-    </border>
-
-    <border name="" type="mrva" enclosed="true" maxAltitude="3700">
-      <points>
-        <point coordinate="50.241689 16.648031" />
-        <point coordinate="49.687158 16.585207" />
-        <point coordinate="49.544674 16.563034" />
-        <point coordinate="49.484022 16.559338" />
-        <point coordinate="49.389675 16.810636" />
-        <point coordinate="49.176912 15.871966" />
-        <point coordinate="49.439737 14.622869" />
-        <point coordinate="49.841194 15.258504" />
-        <point coordinate="50.088615 15.166115" />
+        <point coordinate="49.619604 17.874354"/>
+        <point coordinate="49.677482 17.860911"/>
+        <point coordinate="49.678929 17.766808"/>
+        <point coordinate="49.591388 17.762672"/>
       </points>
     </border>
 
     <border name="" type="mrva" enclosed="true" maxAltitude="3000">
       <points>
-        <point coordinate="49.638059 17.627353" />
-        <point coordinate="49.587997 17.050847" />
-        <point coordinate="49.544674 16.563034" />
-        <point coordinate="49.484022 16.559338" />
-        <point coordinate="49.389675 16.810636" />
-        <point coordinate="49.338650 17.028673" />
-        <point coordinate="49.581258 17.786261" />
-        <point coordinate="49.611102 17.686481" />
+        <point coordinate="49.649990 18.004650" />
+        <point coordinate="49.619604 17.874354" />
+        <point coordinate="49.591388 17.762672" />
+        <point coordinate="49.555937 17.761638" />
+        <point coordinate="49.497335 17.818513" />
+        <point coordinate="49.466225 17.869184" />
+        <point coordinate="49.614539 18.040844" />
+        <point coordinate="49.634073 18.017059" />
       </points>
     </border>
+
 
     <border name="" type="mrva" enclosed="true" maxAltitude="4000">
       <points>
-        <point coordinate="49.581258 17.786261" />
-        <point coordinate="49.338650 17.028673" />
-        <point coordinate="49.389675 16.810636" />
-        <point coordinate="49.176912 15.871966" />
-        <point coordinate="49.155732 15.971746" />
-        <point coordinate="49.093155 17.464748" />
-        <point coordinate="49.556227 17.963648" />
+        <point coordinate="49.614539 18.040844" />
+        <point coordinate="49.601516 18.079105" />
+        <point coordinate="49.317911 17.966389" />
+        <point coordinate="49.357703 17.625137" />
+        <point coordinate="49.369278 17.605489" />
+        <point coordinate="49.497335 17.818513" />
+        <point coordinate="49.466225 17.869184" />
       </points>
     </border>
+
+
+    <border name="" type="mrva" enclosed="true" maxAltitude="2700">
+      <points>
+        <point coordinate="49.634073 18.017059" />
+        <point coordinate="49.649990 18.004650" />
+        <point coordinate="49.704975 18.006718" />
+        <point coordinate="49.737531 18.041878" />
+        <point coordinate="49.757065 18.113230" />
+        <point coordinate="49.743319 18.172174" />
+        <point coordinate="49.715103 18.209401" />
+      </points>
+    </border>
+
+
+    <border name="" type="mrva" enclosed="true" maxAltitude="3300">
+      <points>
+        <point coordinate="49.715103 18.209401" />
+        <point coordinate="49.634073 18.017059" />
+        <point coordinate="49.614539 18.040844" />
+        <point coordinate="49.601516 18.079105" />
+        <point coordinate="49.602963 18.145287" />
+        <point coordinate="49.625391 18.194924" />
+        <point coordinate="49.660842 18.223879" />
+        <point coordinate="49.694122 18.220776" />
+      </points>
+    </border>
+
 
     <border name="" type="mrva" enclosed="true" maxAltitude="5200">
       <points>
-        <point coordinate="49.658276 18.595587" />
-        <point coordinate="49.602438 18.492112" />
-        <point coordinate="49.560078 18.270379" />
-        <point coordinate="49.556227 17.963648" />
-        <point coordinate="49.093155 17.464748" />
-        <point coordinate="49.025764 18.957751" />
-        <point coordinate="49.110484 19.441868" />
-        <point coordinate="49.185577 19.427086" />
-        <point coordinate="49.192316 19.648819" />
-        <point coordinate="49.450327 18.832102" />
-        <point coordinate="49.613990 19.423391" />
+        <point coordinate="49.317911 17.966389" />
+        <point coordinate="49.601516 18.079105" />
+        <point coordinate="49.602963 18.145287" />
+        <point coordinate="49.625391 18.194924" />
+        <point coordinate="49.660842 18.223879" />
+        <point coordinate="49.635520 18.413118" />
+        <point coordinate="49.535679 18.277652" />
+        <point coordinate="49.379407 18.460686" />
+        <point coordinate="49.373619 18.411050" />
+        <point coordinate="49.330210 18.417254" />
+        <point coordinate="49.278119 18.308674" />
       </points>
     </border>
+
 
     <border name="" type="mrva" enclosed="true" maxAltitude="5600">
       <points>
-        <point coordinate="49.613990 19.423391" />
-        <point coordinate="49.450327 18.832102" />
-        <point coordinate="49.192316 19.648819" />
-        <point coordinate="49.313619 20.029461" />
-        <point coordinate="49.359830 19.985114" />
-        <point coordinate="49.393526 20.195761" />
-        <point coordinate="49.376197 20.306627" />
-        <point coordinate="49.371383 20.949653" />
-        <point coordinate="49.415669 21.082693" />
-        <point coordinate="49.427221 21.319209" />
-        <point coordinate="49.477283 21.374642" />
-        <point coordinate="49.518680 21.248993" />
+        <point coordinate="49.379407 18.460686" />
+        <point coordinate="49.535679 18.277652" />
+        <point coordinate="49.635520 18.413118" />
+        <point coordinate="49.578365 18.823654" />
+        <point coordinate="49.553043 18.853643" />
+        <point coordinate="49.520486 18.840200" />
+        <point coordinate="49.488653 18.756438" />
+        <point coordinate="49.488653 18.612699" />
+        <point coordinate="49.503846 18.588914" />
+        <point coordinate="49.483589 18.535141" />
+        <point coordinate="49.457543 18.547551" />
       </points>
     </border>
 
-    <border name="" type="mrva" enclosed="true" maxAltitude="5000">
-      <points>
-        <point coordinate="49.613990 19.423391" />
-        <point coordinate="49.518680 21.248993" />
-        <point coordinate="49.555264 21.274862" />
-        <point coordinate="49.693897 21.112258" />
-        <point coordinate="49.741070 20.657705" />
-        <point coordinate="49.810387 20.317714" />
-        <point coordinate="49.797871 20.088590" />
-      </points>
-    </border>
 
     <border name="" type="mrva" enclosed="true" maxAltitude="4300">
       <points>
-        <point coordinate="49.613990 19.423391" />
-        <point coordinate="49.797871 20.088590" />
-        <point coordinate="49.712189 18.588196" />
-        <point coordinate="49.658276 18.595587" />
+        <point coordinate="49.635520 18.413118" />
+        <point coordinate="49.660842 18.223879" />
+        <point coordinate="49.694122 18.220776" />
+        <point coordinate="49.748384 18.562028" />
       </points>
     </border>
-    
+
+
+    <border name="" type="mrva" enclosed="true" maxAltitude="5000">
+      <points>
+        <point coordinate="49.578365 18.823654" />
+        <point coordinate="49.635520 18.413118" />
+        <point coordinate="49.748384 18.562028" />
+        <point coordinate="49.755618 18.611664" />
+        <point coordinate="49.713656 18.634415" />
+        <point coordinate="49.712933 18.692324" />
+        <point coordinate="49.688334 18.703699" />
+        <point coordinate="49.685441 18.790563" />
+        <point coordinate="49.661566 18.791597" />
+      </points>
+    </border>
+
+
     <border name="" type="mrva" enclosed="true" maxAltitude="3200">
       <points>
-        <point coordinate="49.810387 20.317714" />
-        <point coordinate="49.797871 20.088590" />
-        <point coordinate="49.712189 18.588196" />
-        <point coordinate="49.745884 18.536458" />
-        <point coordinate="49.975013 20.114459" />
-        <point coordinate="49.949020 20.066417" />
+        <point coordinate="49.755618 18.611664" />
+        <point coordinate="49.748384 18.562028" />
+        <point coordinate="49.694122 18.220776" />
+        <point coordinate="49.715103 18.209401" />
+        <point coordinate="49.855459 18.567198" />
+        <point coordinate="49.839542 18.558926" />
       </points>
     </border>
 
     <border name="" type="mrva" enclosed="true" maxAltitude="2600">
       <points>
-        <point coordinate="50.210882 18.122556" />
-        <point coordinate="49.812312 18.107774" />
-        <point coordinate="49.791132 18.377550" />
-        <point coordinate="49.745884 18.536458" />
-        <point coordinate="49.975013 20.114459" />
-        <point coordinate="50.001970 20.188370" />
-        <point coordinate="50.101131 20.036852" />
-        <point coordinate="50.134826 19.039053" />
-        <point coordinate="50.221472 18.322116" />
+        <point coordinate="49.855459 18.567198" />
+        <point coordinate="49.715103 18.209401" />
+        <point coordinate="49.743319 18.172174" />
+        <point coordinate="49.757065 18.113230" />
+        <point coordinate="49.997985 18.117367" />
+        <point coordinate="49.989304 18.153560" />
+        <point coordinate="50.006667 18.163901" />
+        <point coordinate="50.000156 18.188719" />
+        <point coordinate="49.968323 18.207333" />
+        <point coordinate="49.967599 18.261106" />
+        <point coordinate="49.934319 18.272481" />
+        <point coordinate="49.917679 18.305572" />
+        <point coordinate="49.953129 18.325220" />
+        <point coordinate="49.945895 18.406914" />
+        <point coordinate="49.912614 18.474130" />
+        <point coordinate="49.916955 18.519630" />
+        <point coordinate="49.934319 18.521698" />
+        <point coordinate="49.932872 18.549619" />
+        <point coordinate="49.889463 18.547551" />
+        <point coordinate="49.872823 18.581676" />
       </points>
     </border>
-
   </borders>
 </area>
