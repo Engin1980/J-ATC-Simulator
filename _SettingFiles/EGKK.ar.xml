@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <area
-        xmlns="https://www.w3schools.com"
+        xmlns="https://github.com/Engin1980/J-ATC-Simulator/area"
         icao="LON_S_CTR">
   <airports>
     <airport icao="EGKK" name="London Gatwick" altitude="203" transitionAltitude="6000" vfrAltitude="2500"

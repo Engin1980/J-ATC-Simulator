@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- https://www.sia.aviation-civile.gouv.fr/dvd/eAIP_01_MAR_2018/FRANCE/AIRAC-2018-03-01/html/index-fr-FR.html -->
 <area
-        xmlns="https://www.w3schools.com"
+        xmlns="https://github.com/Engin1980/J-ATC-Simulator/area"
         icao="LFFF">
   <airports>
     <airport icao="LFMN" name="Nice - Cote d'Azur" altitude="12" transitionAltitude="5000" vfrAltitude="2500"

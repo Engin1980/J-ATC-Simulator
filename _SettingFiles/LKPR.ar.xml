@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <area
-        xmlns="https://www.w3schools.com"
+        xmlns="https://github.com/Engin1980/J-ATC-Simulator/area"
         icao="LKAA">
   <airports>
     <airport icao="LKPR" name="Praha Ruzyně" altitude="1247" transitionAltitude="5000" vfrAltitude="2500"

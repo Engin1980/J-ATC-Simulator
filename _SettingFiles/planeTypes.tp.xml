@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<planeTypes>
+<planeTypes xmlns="https://github.com/Engin1980/J-ATC-Simulator/planeTypes">
 
-  <type name="A300" category="D" maxAltitude="35000"
+  <type name="A300" fullName="Airbus A300" category="D" maxAltitude="35000"
         vMinApp="135" vApp="145" vMaxApp="185"
         vR="155" vDep="165"
         vMinClean="210" vMaxClean="330" vCruise="287"
         lowClimbRate="4001" highClimbRate="701"
         lowDescendRate="1501" highDescendRate="3501"
         speedIncreaseRate="2" speedDecreaseRate="3"
-        headingChangeRate="3">
-  </type>
+        headingChangeRate="3"/>
 
   <type name="A310" category="D" maxAltitude="35000"
         vMinApp="135" vApp="145" vMaxApp="185"
@@ -18,8 +17,7 @@
         lowClimbRate="4001" highClimbRate="701"
         lowDescendRate="1501" highDescendRate="3501"
         speedIncreaseRate="2" speedDecreaseRate="3"
-        headingChangeRate="3">
-  </type>
+        headingChangeRate="3" />
 
   <type name="A318" category="C" maxAltitude="39000"
         vMinApp="110" vApp="120" vMaxApp="160"
@@ -28,8 +26,7 @@
         lowClimbRate="4501" highClimbRate="701"
         lowDescendRate="1501" highDescendRate="3501"
         speedIncreaseRate="3" speedDecreaseRate="3"
-        headingChangeRate="3">
-  </type>
+        headingChangeRate="3" />
 
   <type name="A319" category="C" maxAltitude="39000"
         vMinApp="120" vApp="130" vMaxApp="160"
@@ -38,8 +35,7 @@
         lowClimbRate="4501" highClimbRate="701"
         lowDescendRate="1501" highDescendRate="3501"
         speedIncreaseRate="3" speedDecreaseRate="3"
-        headingChangeRate="3">
-  </type>
+        headingChangeRate="3" />
 
   <type name="A320" category="C" maxAltitude="39000"
         vMinApp="130" vApp="140" vMaxApp="170"
@@ -48,8 +44,7 @@
         lowClimbRate="4501" highClimbRate="701"
         lowDescendRate="1501" highDescendRate="3501"
         speedIncreaseRate="3" speedDecreaseRate="3"
-        headingChangeRate="3">
-  </type>
+        headingChangeRate="3"/>
 
   <type name="A321" category="C" maxAltitude="39000"
         vMinApp="135" vApp="145" vMaxApp="180"
@@ -58,8 +53,7 @@
         lowClimbRate="4501" highClimbRate="701"
         lowDescendRate="1501" highDescendRate="3501"
         speedIncreaseRate="3" speedDecreaseRate="3"
-        headingChangeRate="3">
-  </type>
+        headingChangeRate="3"/>
 
   <type name="A330" category="D" maxAltitude="41000"
         vMinApp="135" vApp="145" vMaxApp="185"
@@ -68,8 +62,7 @@
         lowClimbRate="4001" highClimbRate="701"
         lowDescendRate="1501" highDescendRate="3501"
         speedIncreaseRate="2" speedDecreaseRate="3"
-        headingChangeRate="3">
-  </type>
+        headingChangeRate="3" />
 
   <type name="A350" category="C" maxAltitude="41000"
         vMinApp="135" vApp="140" vMaxApp="190"
@@ -78,8 +71,7 @@
         lowClimbRate="4501" highClimbRate="701"
         lowDescendRate="1501" highDescendRate="3501"
         speedIncreaseRate="2" speedDecreaseRate="3"
-        headingChangeRate="3">
-  </type>
+        headingChangeRate="3" />
 
   <type name="A340" category="D" maxAltitude="41000"
         vMinApp="140" vApp="150" vMaxApp="200"
@@ -88,8 +80,7 @@
         lowClimbRate="3501" highClimbRate="701"
         lowDescendRate="1601" highDescendRate="3501"
         speedIncreaseRate="3" speedDecreaseRate="2"
-        headingChangeRate="3">
-  </type>
+        headingChangeRate="3" />
 
   <type name="A380" category="D" maxAltitude="41000"
         vMinApp="135" vApp="145" vMaxApp="190"
@@ -98,12 +89,11 @@
         lowClimbRate="3501" highClimbRate="701"
         lowDescendRate="1601" highDescendRate="3501"
         speedIncreaseRate="3" speedDecreaseRate="3"
-        headingChangeRate="3">
-  </type>
+        headingChangeRate="3" />
 
   <type name="ATR72" category="B" maxAltitude="25000"
         vMinApp="110" vApp="120" vMaxApp="145"
-        vR="110" v2="120" vDep="180"
+        vR="110" vDep="180"
         vMinClean="190" vMaxClean="270" vCruise="255"
         lowClimbRate="5001" highClimbRate="601"
         lowDescendRate="2001" highDescendRate="2501"
@@ -112,7 +102,7 @@
 
   <type name="ATR42" category="B" maxAltitude="25000"
         vMinApp="90" vApp="100" vMaxApp="120"
-        vR="100" v2="110" vDep="160"
+        vR="100" vDep="160"
         vMinClean="170" vMaxClean="250" vCruise="230"
         lowClimbRate="5001" highClimbRate="601"
         lowDescendRate="2001" highDescendRate="2501"
@@ -126,8 +116,7 @@
         lowClimbRate="4501" highClimbRate="701"
         lowDescendRate="1501" highDescendRate="3501"
         speedIncreaseRate="3" speedDecreaseRate="3"
-        headingChangeRate="3">
-  </type>
+        headingChangeRate="3" />
 
   <type name="B737" category="C" maxAltitude="39000"
         vMinApp="130" vApp="140" vMaxApp="170"
@@ -136,8 +125,7 @@
         lowClimbRate="4501" highClimbRate="701"
         lowDescendRate="1501" highDescendRate="3501"
         speedIncreaseRate="3" speedDecreaseRate="3"
-        headingChangeRate="3">
-  </type>
+        headingChangeRate="3"/>
 
   <type name="B737NG" category="C" maxAltitude="39000"
         vMinApp="130" vApp="140" vMaxApp="170"
@@ -146,8 +134,7 @@
         lowClimbRate="4501" highClimbRate="701"
         lowDescendRate="1501" highDescendRate="3501"
         speedIncreaseRate="3" speedDecreaseRate="3"
-        headingChangeRate="3">
-  </type>
+        headingChangeRate="3"/>
 
   <type name="B747" category="C" maxAltitude="41000"
         vMinApp="135" vApp="140" vMaxApp="190"
@@ -156,8 +143,7 @@
         lowClimbRate="3501" highClimbRate="701"
         lowDescendRate="1601" highDescendRate="3501"
         speedIncreaseRate="2" speedDecreaseRate="3"
-        headingChangeRate="3">
-  </type>
+        headingChangeRate="3"/>
 
   <type name="B757" category="C" maxAltitude="41000"
         vMinApp="130" vApp="140" vMaxApp="190"
@@ -166,8 +152,7 @@
         lowClimbRate="4001" highClimbRate="701"
         lowDescendRate="1501" highDescendRate="3501"
         speedIncreaseRate="2" speedDecreaseRate="3"
-        headingChangeRate="3">
-  </type>
+        headingChangeRate="3"/>
 
   <type name="B767" category="C" maxAltitude="41000"
         vMinApp="130" vApp="140" vMaxApp="190"
@@ -176,8 +161,7 @@
         lowClimbRate="4001" highClimbRate="701"
         lowDescendRate="1501" highDescendRate="3501"
         speedIncreaseRate="2" speedDecreaseRate="3"
-        headingChangeRate="3">
-  </type>
+        headingChangeRate="3"/>
 
   <type name="B787" category="C" maxAltitude="41000"
         vMinApp="130" vApp="140" vMaxApp="190"
@@ -186,8 +170,7 @@
         lowClimbRate="4501" highClimbRate="701"
         lowDescendRate="1501" highDescendRate="3501"
         speedIncreaseRate="2" speedDecreaseRate="3"
-        headingChangeRate="3">
-  </type>
+        headingChangeRate="3"/>
 
   <type name="B777" category="C" maxAltitude="41000"
         vMinApp="145" vApp="155" vMaxApp="210"
@@ -196,12 +179,11 @@
         lowClimbRate="3501" highClimbRate="701"
         lowDescendRate="1601" highDescendRate="3501"
         speedIncreaseRate="3" speedDecreaseRate="3"
-        headingChangeRate="3">
-  </type>
+        headingChangeRate="3"/>
 
   <type name="E120" category="B" maxAltitude="29000"
         vMinApp="90" vApp="100" vMaxApp="120"
-        vR="100" v2="110" vDep="160"
+        vR="100" vDep="160"
         vMinClean="170" vMaxClean="250" vCruise="230"
         lowClimbRate="5001" highClimbRate="601"
         lowDescendRate="2001" highDescendRate="2501"
@@ -215,8 +197,7 @@
         lowClimbRate="4501" highClimbRate="701"
         lowDescendRate="1501" highDescendRate="3501"
         speedIncreaseRate="3" speedDecreaseRate="3"
-        headingChangeRate="3">
-  </type>
+        headingChangeRate="3"/>
 
   <type name="E145" category="C" maxAltitude="37000"
         vMinApp="110" vApp="120" vMaxApp="160"
@@ -225,8 +206,7 @@
         lowClimbRate="4501" highClimbRate="701"
         lowDescendRate="1501" highDescendRate="3501"
         speedIncreaseRate="3" speedDecreaseRate="3"
-        headingChangeRate="3">
-  </type>
+        headingChangeRate="3"/>
 
   <type name="CRJ" category="C" maxAltitude="41000"
         vMinApp="110" vApp="120" vMaxApp="160"
@@ -235,12 +215,11 @@
         lowClimbRate="4501" highClimbRate="701"
         lowDescendRate="1501" highDescendRate="3501"
         speedIncreaseRate="3" speedDecreaseRate="3"
-        headingChangeRate="3">
-  </type>
+        headingChangeRate="3"/>
 
   <type name="F50" category="B" maxAltitude="25000"
         vMinApp="110" vApp="120" vMaxApp="145"
-        vR="110" v2="120" vDep="180"
+        vR="110" vDep="180"
         vMinClean="190" vMaxClean="270" vCruise="255"
         lowClimbRate="5001" highClimbRate="601"
         lowDescendRate="2001" highDescendRate="2501"
@@ -254,12 +233,11 @@
         lowClimbRate="4501" highClimbRate="701"
         lowDescendRate="1501" highDescendRate="3501"
         speedIncreaseRate="3" speedDecreaseRate="3"
-        headingChangeRate="3">
-  </type>
+        headingChangeRate="3"/>
 
   <type name="B190" category="B" maxAltitude="25000"
         vMinApp="110" vApp="120" vMaxApp="145"
-        vR="110" v2="120" vDep="180"
+        vR="110" vDep="180"
         vMinClean="190" vMaxClean="270" vCruise="255"
         lowClimbRate="5001" highClimbRate="601"
         lowDescendRate="2001" highDescendRate="2501"
@@ -273,12 +251,11 @@
         lowClimbRate="4501" highClimbRate="701"
         lowDescendRate="1501" highDescendRate="3501"
         speedIncreaseRate="3" speedDecreaseRate="3"
-        headingChangeRate="3">
-  </type>
+        headingChangeRate="3"/>
 
   <type name="SF34" category="B" maxAltitude="25000"
         vMinApp="110" vApp="120" vMaxApp="145"
-        vR="110" v2="120" vDep="180"
+        vR="110" vDep="180"
         vMinClean="190" vMaxClean="270" vCruise="255"
         lowClimbRate="5001" highClimbRate="601"
         lowDescendRate="2001" highDescendRate="2501"
@@ -292,8 +269,7 @@
         lowClimbRate="4501" highClimbRate="701"
         lowDescendRate="1501" highDescendRate="3501"
         speedIncreaseRate="3" speedDecreaseRate="3"
-        headingChangeRate="3">
-  </type>
+        headingChangeRate="3"/>
 
   <type name="E195" category="C" maxAltitude="41000"
         vMinApp="120" vApp="130" vMaxApp="160"
@@ -302,8 +278,7 @@
         lowClimbRate="4501" highClimbRate="701"
         lowDescendRate="1501" highDescendRate="3501"
         speedIncreaseRate="3" speedDecreaseRate="3"
-        headingChangeRate="3">
-  </type>
+        headingChangeRate="3"/>
 
   <type name="MD90" category="C" maxAltitude="37000"
         vMinApp="110" vApp="120" vMaxApp="160"
@@ -312,8 +287,7 @@
         lowClimbRate="4501" highClimbRate="701"
         lowDescendRate="1501" highDescendRate="3501"
         speedIncreaseRate="3" speedDecreaseRate="3"
-        headingChangeRate="3">
-  </type>
+        headingChangeRate="3"/>
 
   <type name="B461" category="C" maxAltitude="35000"
         vMinApp="110" vApp="120" vMaxApp="160"
@@ -322,12 +296,11 @@
         lowClimbRate="4501" highClimbRate="701"
         lowDescendRate="1501" highDescendRate="3501"
         speedIncreaseRate="3" speedDecreaseRate="3"
-        headingChangeRate="3">
-  </type>
+        headingChangeRate="3"/>
 
   <type name="DH8A" category="B" maxAltitude="25000"
         vMinApp="90" vApp="100" vMaxApp="120"
-        vR="100" v2="110" vDep="160"
+        vR="100" vDep="160"
         vMinClean="170" vMaxClean="250" vCruise="230"
         lowClimbRate="5001" highClimbRate="601"
         lowDescendRate="2001" highDescendRate="2501"
@@ -341,8 +314,7 @@
         lowClimbRate="4501" highClimbRate="701"
         lowDescendRate="1501" highDescendRate="3501"
         speedIncreaseRate="3" speedDecreaseRate="3"
-        headingChangeRate="3">
-  </type>
+        headingChangeRate="3"/>
 
   <type name="MD11" category="C" maxAltitude="43000"
         vMinApp="130" vApp="140" vMaxApp="170"
@@ -351,8 +323,7 @@
         lowClimbRate="4201" highClimbRate="701"
         lowDescendRate="1601" highDescendRate="3501"
         speedIncreaseRate="3" speedDecreaseRate="3"
-        headingChangeRate="3">
-  </type>
+        headingChangeRate="3"/>
 
   <type name="DC10" category="C" maxAltitude="43000"
         vMinApp="130" vApp="140" vMaxApp="170"
@@ -361,8 +332,7 @@
         lowClimbRate="4201" highClimbRate="701"
         lowDescendRate="1601" highDescendRate="3501"
         speedIncreaseRate="3" speedDecreaseRate="3"
-        headingChangeRate="3">
-  </type>
+        headingChangeRate="3"/>
 
   <type name="MD11" category="C" maxAltitude="43000"
         vMinApp="130" vApp="140" vMaxApp="170"
@@ -371,8 +341,7 @@
         lowClimbRate="4201" highClimbRate="701"
         lowDescendRate="1601" highDescendRate="3501"
         speedIncreaseRate="3" speedDecreaseRate="3"
-        headingChangeRate="3">
-  </type>
+        headingChangeRate="3"/>
 
   <type name="AJ21" category="C" maxAltitude="39000"
         vMinApp="120" vApp="130" vMaxApp="160"
@@ -381,8 +350,7 @@
         lowClimbRate="4501" highClimbRate="701"
         lowDescendRate="1501" highDescendRate="3501"
         speedIncreaseRate="3" speedDecreaseRate="3"
-        headingChangeRate="3">
-  </type>
+        headingChangeRate="3"/>
 
   <type name="IL96" category="D" maxAltitude="43000"
         vMinApp="140" vApp="150" vMaxApp="200"
@@ -391,12 +359,11 @@
         lowClimbRate="3501" highClimbRate="701"
         lowDescendRate="1601" highDescendRate="3501"
         speedIncreaseRate="3" speedDecreaseRate="2"
-        headingChangeRate="3">
-  </type>
+        headingChangeRate="3"/>
 
   <type name="SB20" category="B" maxAltitude="31000"
         vMinApp="90" vApp="100" vMaxApp="120"
-        vR="100" v2="110" vDep="160"
+        vR="100" vDep="160"
         vMinClean="170" vMaxClean="250" vCruise="230"
         lowClimbRate="5001" highClimbRate="601"
         lowDescendRate="2001" highDescendRate="2501"
@@ -410,28 +377,23 @@
         lowClimbRate="4201" highClimbRate="701"
         lowDescendRate="1601" highDescendRate="3501"
         speedIncreaseRate="3" speedDecreaseRate="3"
-        headingChangeRate="3">
-  </type>
+        headingChangeRate="3"/>
 
   <type name="C172" category="A" maxAltitude="9000"
         vMinApp="65" vApp="70" vMaxApp="80"
-        vR="65" v2="75" vDep="80"
+        vR="65" vDep="80"
         vMinClean="80" vMaxClean="100" vCruise="120"
         lowClimbRate="600" highClimbRate="200"
         lowDescendRate="500" highDescendRate="1000"
         speedIncreaseRate="1" speedDecreaseRate="2"
         headingChangeRate="3"/>
 
-  <!-- template
-   
-  <type name="" category="" maxAltitude=""
-           vMinApp="" vApp="" vMaxApp=""
-           vR="" v2="" vDep=""
-           vMinClean="" vMaxClean="" vCruise=""
-           lowClimbRate="" highClimbRate=""
-           lowDescendRate="" highDescendRate=""
-           speedIncreaseRate="" speedDecreaseRate=""
-           headingChangeRate="" /> 
-           
-  -->
-</planeTypes>  
+  <type name="C152" category="A" maxAltitude="9000"
+        vMinApp="45" vApp="55" vMaxApp="70"
+        vR="55" vDep="70"
+        vMinClean="80" vMaxClean="100" vCruise="120"
+        lowClimbRate="600" highClimbRate="200"
+        lowDescendRate="500" highDescendRate="1000"
+        speedIncreaseRate="1" speedDecreaseRate="2"
+        headingChangeRate="3"/>
+</planeTypes>
