@@ -11,8 +11,9 @@ import eng.jAtcSim.lib.world.PublishedHold;
 public class HoldParser extends SpeechParser<HoldCommand> {
 
   private static final String [][]patterns = {
+      {"H","\\S{1,5}", "\\d{3}", "R|L"},
       {"H","\\S{1,5}"},
-      {"H","\\S{1,5}", "\\d{3}", "R|L"}};
+  };
 
   @Override
   public String [][]getPatterns() {

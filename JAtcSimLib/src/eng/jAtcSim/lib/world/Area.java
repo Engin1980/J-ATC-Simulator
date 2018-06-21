@@ -15,6 +15,7 @@ import eng.eSystem.exceptions.ERuntimeException;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
 import eng.jAtcSim.lib.speaking.parsing.Parser;
+import eng.jAtcSim.lib.speaking.parsing.shortBlockParser.ShortBlockParser;
 import eng.jAtcSim.lib.speaking.parsing.shortParsing.ShortParser;
 import eng.jAtcSim.lib.world.approaches.Approach;
 import eng.jAtcSim.lib.world.approaches.IlsApproach;
@@ -161,7 +162,7 @@ public class Area {
   }
 
   private void checkRouteCommands() {
-    Parser parser = new ShortParser();
+    Parser parser = new ShortBlockParser();
     IList<IAtcCommand> cmds;
     Navaid n;
     for (Airport a : this.getAirports()) {

@@ -17,6 +17,7 @@ import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ProceedDirectCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ToNavaidCommand;
 import eng.jAtcSim.lib.speaking.parsing.Parser;
+import eng.jAtcSim.lib.speaking.parsing.shortBlockParser.ShortBlockParser;
 import eng.jAtcSim.lib.speaking.parsing.shortParsing.ShortParser;
 
 import java.util.ArrayList;
@@ -155,7 +156,7 @@ public class Route {
 
   public void bind() {
     try {
-      Parser p = new ShortParser();
+      Parser p = new ShortBlockParser();
       SpeechList<IFromAtc> xlst = p.parseMulti(this.route);
       _routeCommands = xlst.convertTo();
     } catch (Exception ex) {

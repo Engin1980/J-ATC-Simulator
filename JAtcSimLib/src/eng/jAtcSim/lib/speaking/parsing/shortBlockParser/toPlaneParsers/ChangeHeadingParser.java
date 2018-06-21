@@ -7,8 +7,9 @@ import eng.jAtcSim.lib.speaking.parsing.shortBlockParser.SpeechParser;
 public class ChangeHeadingParser extends SpeechParser<ChangeHeadingCommand> {
 
   private static final String[][] patterns = {
-      {"TL|TR|FH"},
-      {"TL|TR|FH", "\\d{1,3}?"}};
+      {"TL|TR|FH", "\\d{1,3}?"},
+      {"TL|TR|FH"}
+  };
 
 
   @Override
@@ -37,7 +38,7 @@ public class ChangeHeadingParser extends SpeechParser<ChangeHeadingCommand> {
     if (blocks.size() == 1) {
       ret = new ChangeHeadingCommand();
     } else {
-      int h = super.getInt(blocks, 2);
+      int h = super.getInt(blocks, 1);
       ret = new ChangeHeadingCommand(h, d);
     }
     return ret;

@@ -24,6 +24,7 @@ import eng.jAtcSim.lib.messaging.Message;
 import eng.jAtcSim.lib.messaging.Messenger;
 import eng.jAtcSim.lib.messaging.StringMessageContent;
 import eng.jAtcSim.lib.serialization.LoadSave;
+import eng.jAtcSim.lib.speaking.parsing.shortBlockParser.ShortBlockParser;
 import eng.jAtcSim.lib.speaking.parsing.shortParsing.ShortParser;
 import eng.jAtcSim.lib.stats.Statistics;
 import eng.jAtcSim.lib.traffic.Movement;
@@ -647,7 +648,7 @@ public class Simulation {
   }
 
   private void printCommandsHelps() {
-    String txt = new ShortParser().getHelp();
+    String txt = new ShortBlockParser().getHelp();
 
     Acc.messenger().send(
         new Message(

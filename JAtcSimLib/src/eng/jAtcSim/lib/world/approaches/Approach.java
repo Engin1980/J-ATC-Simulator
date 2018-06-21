@@ -19,6 +19,7 @@ import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeHeadingCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ProceedDirectCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ThenCommand;
 import eng.jAtcSim.lib.speaking.parsing.Parser;
+import eng.jAtcSim.lib.speaking.parsing.shortBlockParser.ShortBlockParser;
 import eng.jAtcSim.lib.speaking.parsing.shortParsing.ShortParser;
 import eng.jAtcSim.lib.world.Navaid;
 import eng.jAtcSim.lib.world.RunwayThreshold;
@@ -75,7 +76,7 @@ public abstract class Approach {
   }
 
   public static SpeechList<IAtcCommand> parseRoute(String route) {
-    Parser p = new ShortParser();
+    Parser p = new ShortBlockParser();
     SpeechList<IAtcCommand> ret = p.parseMultipleCommands(route);
     return ret;
   }

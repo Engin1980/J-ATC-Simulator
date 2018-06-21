@@ -20,6 +20,7 @@ import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtc2Atc;
 import eng.jAtcSim.lib.speaking.fromAtc.atc2atc.PlaneSwitchMessage;
 import eng.jAtcSim.lib.speaking.parsing.Parser;
+import eng.jAtcSim.lib.speaking.parsing.shortBlockParser.ShortBlockParser;
 import eng.jAtcSim.lib.speaking.parsing.shortParsing.ShortParser;
 
 /**
@@ -32,7 +33,7 @@ public class UserAtc extends Atc {
     throwExceptions,
     sendSystemErrors
   }
-  private final Parser parser = new ShortParser();
+  private final Parser parser = new ShortBlockParser();
   private eErrorBehavior errorBehavior = eErrorBehavior.sendSystemErrors;
 
   @Override

@@ -16,6 +16,7 @@ import eng.jAtcSim.lib.speaking.parsing.shortBlockParser.toAtcParsers.*;
 import eng.jAtcSim.lib.speaking.parsing.shortBlockParser.toPlaneParsers.*;
 import sun.font.FontRunIterator;
 
+import javax.swing.text.StyledEditorKit;
 import java.util.regex.Pattern;
 
 public class ShortBlockParser extends Parser {
@@ -61,20 +62,24 @@ public class ShortBlockParser extends Parser {
   }
 
   private static SpeechParser getSpeechParser(IReadOnlyList<String> tokens) {
-    for (SpeechParser tmp : planeParsers) {
-      if (ArrayUtils.contains(tmp.getPrefixes(), tokens.get(0)))
-        return tmp;
-    }
-
-    return null;
+    SpeechParser ret = getParser(tokens, planeParsers);
+    return ret;
   }
 
   private static SpeechParser getAtcSpeechParser(IReadOnlyList<String> tokens) {
-    for (SpeechParser tmp : atcParsers) {
-      if (ArrayUtils.contains(tmp.getPrefixes(), tokens.get(0)))
-        return tmp;
-    }
+    SpeechParser ret = getParser(tokens, atcParsers);
+    return ret;
+  }
 
+  private static SpeechParser getParser(IReadOnlyList<String> tokens, IList<SpeechParser> parsers){
+    for (SpeechParser tmp : planeParsers) {
+      for (String s : tmp.getPrefixes()) {
+        Pattern p = Pattern.compile(s);
+        if (p.matcher(tokens.get(0)).find()){
+          return tmp;
+        }
+      }
+    }
     return null;
   }
 
@@ -83,30 +88,35 @@ public class ShortBlockParser extends Parser {
     IList<String> tokens = tokenize(line);
     SpeechList ret = new SpeechList();
 
-    IList<String> toProcess = new EList<>(tokens);
-    IList<String> processed = new EList<>(tokens);
+    IList<String> toDo = new EList<>(tokens);
+    IList<String> done = new EList<>();
 
-    while (!toProcess.isEmpty()) {
-      SpeechParser p = getSpeechParser(processed);
+    while (!toDo.isEmpty()) {
+      SpeechParser p = getSpeechParser(toDo);
 
       if (p == null) {
         // try shortcuts
-        IList<String> trs = tryExpandByShortcut(processed);
+        IList<String> trs = tryExpandByShortcut(toDo);
         p = getSpeechParser(trs);
 
         if (p == null)
           throw new EInvalidCommandException("Failed to parse command prefix.",
-              toLineString(processed),
-              toLineString(toProcess));
+              toLineString(done),
+              toLineString(toDo));
       }
 
       IList<String> used = null;
       try {
-        used = getInterestingBlocks(toProcess, processed, p);
+        used = getInterestingBlocks(toDo, done, p);
       } catch (Exception ex) {
         throw new EInvalidCommandException("Failed to parse command via parser " + p.getClass().getName() + ". Probably invalid syntax?.",
-            toLineString(processed),
-            toLineString(toProcess));
+            toLineString(done),
+            toLineString(toDo));
+      }
+      if (used == null){
+        throw new EInvalidCommandException("Failed to parse command via parser " + p.getClass().getName() + ". Probably invalid syntax?.",
+            toLineString(done),
+            toLineString(toDo));
       }
 
       ISpeech cmd = p.parse(used);
@@ -191,14 +201,15 @@ public class ShortBlockParser extends Parser {
 
       ret = i;
       for (int j = 0; j < pattern.length; j++) {
-        Pattern p = Pattern.compile(pattern[j]);
-        if (p.matcher(toDo.get(i)).find() == false) { // some part of pattern does not fit
+        Pattern p = Pattern.compile("^(" + pattern[j] + ")$");
+        String pt = toDo.get(j);
+        if (p.matcher(pt).find() == false) { // some part of pattern does not fit
           ret = -1;
           break;
         }
       }
 
-      if (ret == -1) break;
+      if (ret != -1) break;
     }
 
     return ret;
