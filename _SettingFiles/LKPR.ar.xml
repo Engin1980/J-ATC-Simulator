@@ -7345,7 +7345,7 @@
     </border>
 
 
-    <border name="" type="mrva" enclosed="true" maxAltitude="2600">
+    <border name="LKPR_MRVA_I" type="mrva" enclosed="true" maxAltitude="2600">
       <points>
         <point coordinate="50.176644 14.260330"/>
         <point coordinate="50.162343 14.330547"/>
@@ -7360,8 +7360,7 @@
         <point coordinate="50.159483 14.187248"/>
       </points>
     </border>
-
-    <border name="" type="mrva" enclosed="true" maxAltitude="3000">
+    <border name="LKPR_MRVA_II" type="mrva" enclosed="true" maxAltitude="3000">
       <points>
         <point coordinate="50.005986 14.244568"/>
         <point coordinate="50.026007 14.180083"/>
@@ -7394,8 +7393,7 @@
         <point coordinate="49.962129 14.241702"/>
       </points>
     </border>
-
-    <border name="" type="mrva" enclosed="true" maxAltitude="3500">
+    <border name="LKPR_MRVA_III" type="mrva" enclosed="true" maxAltitude="3500">
       <points>
 
         <point coordinate="49.906832 14.920936"/>
@@ -7414,8 +7412,7 @@
         <point coordinate="49.844861 15.069967"/>
       </points>
     </border>
-
-    <border name="" type="mrva" enclosed="true" maxAltitude="3500">
+    <border name="LKPR_MRVA_IV" type="mrva" enclosed="true" maxAltitude="3500">
       <points>
 
         <point coordinate="49.843908 14.866483"/>
@@ -7440,8 +7437,7 @@
         <point coordinate="49.705665 14.674463"/>
       </points>
     </border>
-
-    <border name="" type="mrva" enclosed="true" maxAltitude="3700">
+    <border name="LKPR_MRVA_V" type="mrva" enclosed="true" maxAltitude="3700">
       <points>
 
         <point coordinate="49.844861 15.069967"/>
@@ -7457,8 +7453,7 @@
         <point coordinate="49.776216 15.216131"/>
       </points>
     </border>
-
-    <border name="" type="mrva" enclosed="true" maxAltitude="3900">
+    <border name="LKPR_MRVA_VI" type="mrva" enclosed="true" maxAltitude="3900">
       <points>
         <point coordinate="50.605673 14.385000"/>
         <point coordinate="50.392112 14.036785"/>
@@ -7485,8 +7480,7 @@
         <point coordinate="50.600906 13.818971"/>
       </points>
     </border>
-
-    <border name="" type="mrva" enclosed="true" maxAltitude="4500">
+    <border name="LKPR_MRVA_VII" type="mrva" enclosed="true" maxAltitude="4500">
       <points>
         <point coordinate="50.188085 13.383344"/>
         <point coordinate="50.002172 13.381911"/>
@@ -7501,7 +7495,88 @@
 
 
     <!-- LKMT -->
-    <border name="" type="mrva" enclosed="true" maxAltitude="3700">
+
+    <border name="LKMT CTR" type="ctr" enclosed="true" minAltitude="0" maxAltitude="5000">
+      <points>
+        <point coordinate="49 44 16.06 N 018 16 42.91 E"/>
+        <arc coordinate="49.697492 18.109075" direction="clockwise"/>
+        <point coordinate="49 35 21.86 N 018 02 19.96 E"/>
+        <point coordinate="49 33 05.29 N 017 58 40.69 E"/>
+        <point coordinate="49 36 58.87 N 017 52 56.45 E"/>
+        <point coordinate="49 39 15.61 N 017 56 35.76 E"/>
+        <arc coordinate="49.697492 18.109075" direction="clockwise"/>
+        <point coordinate="49 48 11.58 N 018 10 53.42 E"/>
+        <point coordinate="49 50 30.43 N 018 14 46.00 E"/>
+        <point coordinate="49 46 38.00 N 018 20 30.00 E"/>
+        <point coordinate="49 44 16.06 N 018 16 42.91 E"/>
+      </points>
+    </border>
+
+    <border name="LKMT TMA I" type="tma" enclosed="true" minAltitude="1000" maxAltitude="9500">
+      <points>
+        <point coordinate="49 59 32.1846 N 018 12 40.99 E"/>
+        <!--state boundary with Poland - -->
+        <point coordinate="49 49 04.7075 N 018 34 56.4441 E"/>
+        <point coordinate="49 26 39.42 N 017 58 55.86 E"/>
+        <arc coordinate="49.697492 18.109075" direction="clockwise"/>
+        <point coordinate="49 35 00.12 N 017 44 19.02 E"/>
+        <point coordinate="49 42 24.44 N 017 45 08.26 E"/>
+        <point coordinate="49 59 32.1846 N 018 12 40.99 E"/>
+      </points>
+    </border>
+
+    <border name="LKMT TMA II" type="tma" enclosed="true" minAltitude="4000" maxAltitude="9500">
+      <points>
+        <point coordinate="49 49 04.7075 N 018 34 56.4441 E"/>
+        <!--state boundary with Poland - -->
+        <point coordinate="49 45 59.2026 N 018 36 39.3458 E"/>
+        <point coordinate="49 25 55.46 N 018 04 32.35 E"/>
+        <arc coordinate="49.697492 18.109075" direction="clockwise"/>
+        <point coordinate="49 26 39.42 N 017 58 55.86 E"/>
+        <point coordinate="49 49 04.7075 N 018 34 56.4441 E"/>
+      </points>
+    </border>
+
+    <border name="LKMT TMA III" type="tma" enclosed="true" minAltitude="4000" maxAltitude="9500">
+      <points>
+        <point coordinate="50 01 03.4982 N 017 47 13.8124 E"/>
+        <!--state boundary with Poland - -->
+        <point coordinate="49 59 32.1846 N 018 12 40.9921 E"/>
+        <point coordinate="49 42 24.44 N 017 45 08.26 E"/>
+        <point coordinate="50 01 03.4982 N 017 47 13.8124 E"/>
+      </points>
+    </border>
+
+    <border name="LKMT TMA IV" type="tma" enclosed="true" minAltitude="4500" maxAltitude="9500">
+      <points>
+        <point coordinate="49 35 00.12 N 017 44 19.02 E"/>
+        <arc coordinate="49.697492 18.109075" direction="clockwise"/>
+        <point coordinate="49 26 39.42 N 017 58 55.86 E"/>
+        <point coordinate="49 22 53.78 N 017 47 57.80 E"/>
+        <point coordinate="49 31 23.68 N 017 35 00.18 E"/>
+        <point coordinate="49 34 13.89 N 017 37 40.77 E"/>
+        <point coordinate="49 35 00.12 N 017 44 19.02 E"/>
+      </points>
+    </border>
+
+    <border name="LKMT TMA V" type="tma" enclosed="true" minAltitude="6500" maxAltitude="9500">
+      <points>
+        <point coordinate="49 33 39.47 N 017 26 09.50 E"/>
+        <point coordinate="49 33 25.05 N 017 31 51.04 E"/>
+        <point coordinate="49 33 22.90 N 017 32 39.77 E"/>
+        <point coordinate="49 34 13.89 N 017 37 40.77 E"/>
+        <point coordinate="49 31 23.68 N 017 35 00.18 E"/>
+        <point coordinate="49 22 53.78 N 017 47 57.80 E"/>
+        <point coordinate="49 22 17.81 N 017 47 02.26 E"/>
+        <point coordinate="49 23 49.98 N 017 35 29.94 E"/>
+        <point coordinate="49 27 29.85 N 017 29 00.64 E"/>
+        <point coordinate="49 29 12.61 N 017 25 58.12 E"/>
+        <point coordinate="49 33 39.47 N 017 26 09.50 E"/>
+      </points>
+    </border>
+
+
+    <border name="LKMT_MRVA_I" type="mrva" enclosed="true" maxAltitude="3700">
       <points>
         <point coordinate="50.016072 17.785422"/>
         <point coordinate="49.924914 17.447273"/>
@@ -7514,7 +7589,7 @@
         <point coordinate="49.678929 17.766808"/>
       </points>
     </border>
-    <border name="" type="mrva" enclosed="true" maxAltitude="3100">
+    <border name="LKMT_MRVA_II" type="mrva" enclosed="true" maxAltitude="3100">
       <points>
         <point coordinate="50.016072 17.785422"/>
         <point coordinate="49.977004 17.899173"/>
@@ -7534,7 +7609,7 @@
         <point coordinate="49.678929 17.766808"/>
       </points>
     </border>
-    <border name="" type="mrva" enclosed="true" maxAltitude="3400">
+    <border name="LKMT_MRVA_III" type="mrva" enclosed="true" maxAltitude="3400">
       <points>
         <point coordinate="49.619604 17.874354"/>
         <point coordinate="49.677482 17.860911"/>
@@ -7542,7 +7617,7 @@
         <point coordinate="49.591388 17.762672"/>
       </points>
     </border>
-    <border name="" type="mrva" enclosed="true" maxAltitude="3000">
+    <border name="LKMT_MRVA_IV" type="mrva" enclosed="true" maxAltitude="3000">
       <points>
         <point coordinate="49.649990 18.004650"/>
         <point coordinate="49.619604 17.874354"/>
@@ -7554,7 +7629,7 @@
         <point coordinate="49.634073 18.017059"/>
       </points>
     </border>
-    <border name="" type="mrva" enclosed="true" maxAltitude="4000">
+    <border name="LKMT_MRVA_V" type="mrva" enclosed="true" maxAltitude="4000">
       <points>
         <point coordinate="49.614539 18.040844"/>
         <point coordinate="49.601516 18.079105"/>
@@ -7565,7 +7640,7 @@
         <point coordinate="49.466225 17.869184"/>
       </points>
     </border>
-    <border name="" type="mrva" enclosed="true" maxAltitude="2700">
+    <border name="LKMT_MRVA_VI" type="mrva" enclosed="true" maxAltitude="2700">
       <points>
         <point coordinate="49.634073 18.017059"/>
         <point coordinate="49.649990 18.004650"/>
@@ -7576,7 +7651,7 @@
         <point coordinate="49.715103 18.209401"/>
       </points>
     </border>
-    <border name="" type="mrva" enclosed="true" maxAltitude="3300">
+    <border name="LKMT_MRVA_VII" type="mrva" enclosed="true" maxAltitude="3300">
       <points>
         <point coordinate="49.715103 18.209401"/>
         <point coordinate="49.634073 18.017059"/>
@@ -7588,7 +7663,7 @@
         <point coordinate="49.694122 18.220776"/>
       </points>
     </border>
-    <border name="" type="mrva" enclosed="true" maxAltitude="5200">
+    <border name="LKMT_MRVA_VIII" type="mrva" enclosed="true" maxAltitude="5200">
       <points>
         <point coordinate="49.317911 17.966389"/>
         <point coordinate="49.601516 18.079105"/>
@@ -7603,7 +7678,7 @@
         <point coordinate="49.278119 18.308674"/>
       </points>
     </border>
-    <border name="" type="mrva" enclosed="true" maxAltitude="5600">
+    <border name="LKMT_MRVA_IX" type="mrva" enclosed="true" maxAltitude="5600">
       <points>
         <point coordinate="49.379407 18.460686"/>
         <point coordinate="49.535679 18.277652"/>
@@ -7618,7 +7693,7 @@
         <point coordinate="49.457543 18.547551"/>
       </points>
     </border>
-    <border name="" type="mrva" enclosed="true" maxAltitude="4300">
+    <border name="LKMT_MRVA_X" type="mrva" enclosed="true" maxAltitude="4300">
       <points>
         <point coordinate="49.635520 18.413118"/>
         <point coordinate="49.660842 18.223879"/>
@@ -7626,7 +7701,7 @@
         <point coordinate="49.748384 18.562028"/>
       </points>
     </border>
-    <border name="" type="mrva" enclosed="true" maxAltitude="5000">
+    <border name="LKMT_MRVA_XI" type="mrva" enclosed="true" maxAltitude="5000">
       <points>
         <point coordinate="49.578365 18.823654"/>
         <point coordinate="49.635520 18.413118"/>
@@ -7639,7 +7714,7 @@
         <point coordinate="49.661566 18.791597"/>
       </points>
     </border>
-    <border name="" type="mrva" enclosed="true" maxAltitude="3200">
+    <border name="LKMT_MRVA_XII" type="mrva" enclosed="true" maxAltitude="3200">
       <points>
         <point coordinate="49.755618 18.611664"/>
         <point coordinate="49.748384 18.562028"/>
@@ -7649,7 +7724,7 @@
         <point coordinate="49.839542 18.558926"/>
       </points>
     </border>
-    <border name="" type="mrva" enclosed="true" maxAltitude="2600">
+    <border name="LKMT_MRVA_XIII" type="mrva" enclosed="true" maxAltitude="2600">
       <points>
         <point coordinate="49.855459 18.567198"/>
         <point coordinate="49.715103 18.209401"/>
