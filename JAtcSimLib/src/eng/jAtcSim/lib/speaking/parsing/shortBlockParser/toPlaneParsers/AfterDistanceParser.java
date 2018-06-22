@@ -1,5 +1,6 @@
 package eng.jAtcSim.lib.speaking.parsing.shortBlockParser.toPlaneParsers;
 
+import eng.eSystem.EStringBuilder;
 import eng.eSystem.collections.IList;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.exceptions.EInvalidCommandException;
@@ -8,12 +9,22 @@ import eng.jAtcSim.lib.speaking.parsing.shortBlockParser.SpeechParser;
 import eng.jAtcSim.lib.speaking.parsing.shortParsing.RegexGrouper;
 import eng.jAtcSim.lib.world.Navaid;
 
+import java.util.Arrays;
+
 public class AfterDistanceParser extends SpeechParser<AfterDistanceCommand> {
   private static final String BLOCK_PATTERN= "(\\S+)/(\\d+(\\.\\d+)?)";
   private static final String[][] patterns = {
       {"AD", BLOCK_PATTERN}
   };
 
+  @Override
+  public String getHelp() {
+    String ret = super.buildHelpString(
+        "After distance from fix", "AD {fixName}/{distance",
+        "After distance (in nm) from specified fix. Distance can be fractional.",
+        "AD KENOK/10.8");
+    return ret;
+  }
 
   @Override
   public String[][] getPatterns() {

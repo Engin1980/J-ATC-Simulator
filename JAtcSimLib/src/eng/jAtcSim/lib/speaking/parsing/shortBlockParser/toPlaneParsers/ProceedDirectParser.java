@@ -1,5 +1,6 @@
 package eng.jAtcSim.lib.speaking.parsing.shortBlockParser.toPlaneParsers;
 
+import eng.eSystem.EStringBuilder;
 import eng.eSystem.collections.IList;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.exceptions.EInvalidCommandException;
@@ -7,10 +8,19 @@ import eng.jAtcSim.lib.speaking.fromAtc.commands.ProceedDirectCommand;
 import eng.jAtcSim.lib.speaking.parsing.shortBlockParser.SpeechParser;
 import eng.jAtcSim.lib.world.Navaid;
 
+import java.util.Arrays;
+
 public class ProceedDirectParser extends SpeechParser<ProceedDirectCommand> {
 
   private static final String [][]patterns = {{"PD","\\S+"}};
-
+  public String getHelp() {
+    String ret = super.buildHelpString(
+        "Proceed direct to",
+        "PD {fixName}",
+        "Orders to proceed direct to specified fix.\nFix can be also specified using fix/radial/distance format.",
+        "PD ERASU\nPD SIGMA/030/20.5");
+    return ret;
+  }
   @Override
   public String [][]getPatterns() {
     return patterns;

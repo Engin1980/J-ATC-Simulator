@@ -1,5 +1,6 @@
 package eng.jAtcSim.lib.speaking.parsing.shortBlockParser.toPlaneParsers;
 
+import eng.eSystem.EStringBuilder;
 import eng.eSystem.collections.IList;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.exceptions.EInvalidCommandException;
@@ -8,16 +9,28 @@ import eng.jAtcSim.lib.speaking.parsing.shortBlockParser.SpeechParser;
 import eng.jAtcSim.lib.world.Navaid;
 import eng.jAtcSim.lib.world.PublishedHold;
 
+import java.util.Arrays;
+
 public class HoldParser extends SpeechParser<HoldCommand> {
 
-  private static final String [][]patterns = {
-      {"H","\\S{1,5}", "\\d{3}", "R|L"},
-      {"H","\\S{1,5}"},
+  private static final String[][] patterns = {
+      {"H", "\\S{1,5}", "\\d{3}", "R|L"},
+      {"H", "\\S{1,5}"},
   };
 
   @Override
-  public String [][]getPatterns() {
+  public String[][] getPatterns() {
     return patterns;
+  }
+
+  public String getHelp() {
+    String ret = super.buildHelpString(
+        "Hold",
+        "H {fixName} - for published hold\n" +
+            "H {fixName} {inboundRadial} {L/R} - for custom hold. L=left turns, R=right turns",
+        "Hold over specified fix. When short version used, hold must be published.\nOtherwise hold parameters must be specified.\nFix can be also specified using fix/radial/distance format.",
+        "H ERASU\nH SIGMA 040 R\nH SIGMA/030/20.5 250 R");
+    return ret;
   }
 
   @Override
@@ -30,9 +43,9 @@ public class HoldParser extends SpeechParser<HoldCommand> {
       throw new EInvalidCommandException("Unable to find navaid named \"" + ns + "\".", rg.get(1));
     }
 
-    if (rg.size() == 2){
+    if (rg.size() == 2) {
       // published
-      PublishedHold h = Acc.airport().getHolds().tryGetFirst(q->q.getNavaid().equals(n));
+      PublishedHold h = Acc.airport().getHolds().tryGetFirst(q -> q.getNavaid().equals(n));
 
       if (h == null) {
         throw new EInvalidCommandException(
@@ -41,8 +54,7 @@ public class HoldParser extends SpeechParser<HoldCommand> {
       }
 
       ret = new HoldCommand(h);
-    }
-    else {
+    } else {
       Integer heading = getInt(rg, 2);
       char leftOrRight = rg.get(3).charAt(0);
 

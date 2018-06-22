@@ -1,16 +1,28 @@
 package eng.jAtcSim.lib.speaking.parsing.shortBlockParser.toPlaneParsers;
 
+import eng.eSystem.EStringBuilder;
 import eng.eSystem.collections.IList;
 import eng.jAtcSim.lib.speaking.fromAtc.notifications.RadarContactConfirmationNotification;
 import eng.jAtcSim.lib.speaking.parsing.shortBlockParser.SpeechParser;
 
+import java.util.Arrays;
+
 public class RadarContactConfirmationParser extends SpeechParser<RadarContactConfirmationNotification> {
 
-  private static final String [][]patterns = {{"RC"}};
+  private static final String[][] patterns = {{"RC"}};
 
   @Override
-  public String [][]getPatterns() {
+  public String[][] getPatterns() {
     return patterns;
+  }
+
+  public String getHelp() {
+    String ret = super.buildHelpString(
+        "Radar contact confirmation",
+        "RC",
+        "Informs airplane about radar contact. Without this confirmation the airplane will refuse all other commands.",
+        "RC");
+    return ret;
   }
 
   @Override

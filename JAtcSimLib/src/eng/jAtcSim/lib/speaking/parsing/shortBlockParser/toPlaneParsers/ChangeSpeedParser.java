@@ -1,17 +1,38 @@
 package eng.jAtcSim.lib.speaking.parsing.shortBlockParser.toPlaneParsers;
 
+import eng.eSystem.EStringBuilder;
 import eng.eSystem.collections.IList;
 import eng.jAtcSim.lib.global.Restriction;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeSpeedCommand;
 import eng.jAtcSim.lib.speaking.parsing.shortBlockParser.SpeechParser;
 
+import java.util.Arrays;
+
 public class ChangeSpeedParser extends SpeechParser<ChangeSpeedCommand> {
 
   private static final String[][] patterns = {
       {"SC"},
-      {"S[MLE]", "\\d{3}"}
+      {"SM", "\\d{3}"},
+      {"SL", "\\d{3}"},
+      {"SE", "\\d{3}"}
   };
 
+  @Override
+  public String getHelp() {
+    String ret = super.buildHelpString(
+        "Change speed",
+        "SC - Cancel current speed restriction\n"+
+            "SM {speed} - Speed more or equal to value\n"+
+            "SL {speed} - Speed less or equal to value\n"+
+            "SE {speed} - Speed exactly",
+        "Changes airplane speed",
+        "SC\n"+
+            "SM 200\n"+
+            "SL 200\n"+
+            "SE 200");
+    return ret;
+  }
+  
   @Override
   public String[][] getPatterns() {
     return patterns;

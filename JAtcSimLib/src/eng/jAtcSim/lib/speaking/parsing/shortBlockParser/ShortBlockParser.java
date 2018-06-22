@@ -17,6 +17,7 @@ import eng.jAtcSim.lib.speaking.parsing.shortBlockParser.toPlaneParsers.*;
 import sun.font.FontRunIterator;
 
 import javax.swing.text.StyledEditorKit;
+import java.util.Arrays;
 import java.util.regex.Pattern;
 
 public class ShortBlockParser extends Parser {
@@ -62,20 +63,20 @@ public class ShortBlockParser extends Parser {
   }
 
   private static SpeechParser getSpeechParser(IReadOnlyList<String> tokens) {
-    SpeechParser ret = getParser(tokens, planeParsers);
+    SpeechParser ret = getParserByPrefix(tokens.get(0), planeParsers);
     return ret;
   }
 
   private static SpeechParser getAtcSpeechParser(IReadOnlyList<String> tokens) {
-    SpeechParser ret = getParser(tokens, atcParsers);
+    SpeechParser ret = getParserByPrefix(tokens.get(0), atcParsers);
     return ret;
   }
 
-  private static SpeechParser getParser(IReadOnlyList<String> tokens, IList<SpeechParser> parsers){
-    for (SpeechParser tmp : planeParsers) {
+  private static SpeechParser getParserByPrefix(String prefix, IList<SpeechParser> parsers) {
+    for (SpeechParser tmp : parsers) {
       for (String s : tmp.getPrefixes()) {
-        Pattern p = Pattern.compile(s);
-        if (p.matcher(tokens.get(0)).find()){
+        Pattern p = Pattern.compile("^(" + s + ")$");
+        if (p.matcher(prefix).find()) {
           return tmp;
         }
       }
@@ -105,7 +106,7 @@ public class ShortBlockParser extends Parser {
               toLineString(toDo));
       }
 
-      IList<String> used = null;
+      IList<String> used;
       try {
         used = getInterestingBlocks(toDo, done, p);
       } catch (Exception ex) {
@@ -113,7 +114,7 @@ public class ShortBlockParser extends Parser {
             toLineString(done),
             toLineString(toDo));
       }
-      if (used == null){
+      if (used == null) {
         throw new EInvalidCommandException("Failed to parse command via parser " + p.getClass().getName() + ". Probably invalid syntax?.",
             toLineString(done),
             toLineString(toDo));
@@ -134,12 +135,38 @@ public class ShortBlockParser extends Parser {
 
   @Override
   public String getHelp() {
-    throw new UnsupportedOperationException("TODO");
+    EStringBuilder ret = new EStringBuilder();
+    ret.appendLine("* Plane commands *");
+    ret.appendLine("Plane commands must be prefixed by a plane callsign.");
+    for (SpeechParser parser : planeParsers) {
+      String[] prefixes = parser.getPrefixes();
+      ret.appendItems(Arrays.asList(prefixes), "/");
+      ret.append(" - " + parser.getCommandName());
+      ret.appendLine();
+    }
+
+    ret.appendLine("* ATC commands *");
+    ret.appendLine("ATC commands must be prefixed by an atc mark -/+.");
+    for (SpeechParser parser : atcParsers) {
+      String[] prefixes = parser.getPrefixes();
+      ret.appendItems(Arrays.asList(prefixes), "/");
+      ret.append(" - " + parser.getCommandName());
+      ret.appendLine();
+    }
+    return ret.toString();
   }
 
   @Override
   public String getHelp(String commandPrefix) {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    commandPrefix = commandPrefix.toUpperCase();
+    SpeechParser p = getParserByPrefix(commandPrefix, planeParsers);
+    if (p == null) {
+      p = getParserByPrefix(commandPrefix, atcParsers);
+    }
+    if (p == null)
+      return null;
+    else
+      return p.getHelp();
   }
 
   @Override

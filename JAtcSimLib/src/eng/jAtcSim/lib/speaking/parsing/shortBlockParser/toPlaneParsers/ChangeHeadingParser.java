@@ -1,20 +1,37 @@
 package eng.jAtcSim.lib.speaking.parsing.shortBlockParser.toPlaneParsers;
 
+import eng.eSystem.EStringBuilder;
 import eng.eSystem.collections.IList;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeHeadingCommand;
 import eng.jAtcSim.lib.speaking.parsing.shortBlockParser.SpeechParser;
 
+import java.util.Arrays;
+
 public class ChangeHeadingParser extends SpeechParser<ChangeHeadingCommand> {
 
   private static final String[][] patterns = {
-      {"TL|TR|FH", "\\d{1,3}?"},
-      {"TL|TR|FH"}
+      {"TL", "\\d{1,3}?"},
+      {"TR", "\\d{1,3}?"},
+      {"FH", "\\d{1,3}?"},
+      {"FH"}
   };
-
 
   @Override
   public String[][] getPatterns() {
     return patterns;
+  }
+
+  @Override
+  public String getHelp() {
+    String ret = super.buildHelpString(
+        "Change heading",
+        "TL {heading} - Turn left to heading\n" +
+            "TR {heading} - Turn right to heading\n" +
+            "FH {heading} - Fly heading (nearest tun) to heading\n" +
+            "FH - Continue on current heading (when no heading is specified)",
+        "Changes airplane heading",
+        "TL 120\n" + "TR 120\n" + "FH 120\n" + "FH");
+    return ret;
   }
 
   @Override

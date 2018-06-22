@@ -7,6 +7,8 @@ import eng.jAtcSim.lib.speaking.fromAtc.commands.ClearedToApproachCommand;
 import eng.jAtcSim.lib.speaking.parsing.shortBlockParser.SpeechParser;
 import eng.jAtcSim.lib.world.approaches.Approach;
 
+import java.util.Arrays;
+
 public class ClearedToApproachParser extends SpeechParser<ClearedToApproachCommand> {
 
   private static final String pattern = "C (I|II|III|G|V|R|N) (\\S+)";
@@ -21,23 +23,20 @@ public class ClearedToApproachParser extends SpeechParser<ClearedToApproachComma
 
   @Override
   public String getHelp() {
-    EStringBuilder sb = new EStringBuilder();
-
-    sb.appendLine("Cleared to approach");
-    sb.appendLine("\t " + pattern);
-    sb.appendLine("\tI\t.. ILS cat I");
-    sb.appendLine("\tII\t.. ILS cat II");
-    sb.appendLine("\tIII\t.. ILS cat III");
-    sb.appendLine("\tR\t.. VOR/DME");
-    sb.appendLine("\tN\t.. NDB");
-    sb.appendLine("\tG\t.. GPS/GNSS");
-    sb.appendLine("\tV\t.. visual");
-    sb.appendLine("Example:");
-    sb.appendLine("\t C I 24 \t - cleared ILS category I 24");
-    sb.appendLine("\t C R 24 \t - cleared VOR/DME 24");
-    sb.appendLine("\t C V 24 \t - cleared visual 24");
-
-    return sb.toString();
+    String ret = super.buildHelpString(
+        "Cleared to approach",
+            "C I {rwy} - ILS cat I\n" +
+            "C II {rwy} -  ILS cat II\n" +
+            "C III {rwy} - ILS cat III\n" +
+            "C R {rwy} - VOR/DME\n" +
+            "C N {rwy} - NDB\n" +
+            "C G {rwy} - GPS/GNSS\n" +
+            "C V {rwy} - visual",
+        "Gives approach clearance",
+        "C I 24 \t - cleared ILS category I 24\n" +
+            "C R 24 \t - cleared VOR/DME 24\n" +
+            "C V 24 \t - cleared visual 24");
+    return ret;
   }
 
   @Override

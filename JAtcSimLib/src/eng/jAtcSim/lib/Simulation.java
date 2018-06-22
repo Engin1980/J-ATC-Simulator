@@ -88,6 +88,59 @@ public class Simulation {
   @XmlIgnore
   private final Timer tmr = new Timer(o -> Simulation.this.elapseSecond());
 
+  public Simulation(
+      Area area, AirplaneTypes airplaneTypes, Fleets fleets, Traffic traffic, Airport activeAirport,
+      WeatherProvider weatherProvider, ETime now, int simulationSecondLengthInMs, double emergencyPerDayProbability) {
+
+    if (area == null) {
+      throw new IllegalArgumentException("Value of {area} cannot not be null.");
+    }
+    if (airplaneTypes == null) {
+      throw new IllegalArgumentException("Value of {airplaneTypes} cannot not be null.");
+    }
+    if (fleets == null) {
+      throw new IllegalArgumentException("Value of {fleets} cannot not be null.");
+    }
+    if (traffic == null) {
+      throw new IllegalArgumentException("Value of {traffic} cannot not be null.");
+    }
+    if (weatherProvider == null) {
+      throw new IllegalArgumentException("Value of {weatherProvider} cannot not be null.");
+    }
+    if (now == null) {
+      throw new IllegalArgumentException("Value of {now} cannot not be null.");
+    }
+    if (activeAirport == null) {
+      throw new IllegalArgumentException("Value of {activeAirport} cannot not be null.");
+    }
+
+
+    this.now = now.clone();
+    this.simulationSecondLengthInMs = simulationSecondLengthInMs;
+
+    this.area = area;
+    this.airplaneTypes = airplaneTypes;
+    this.traffic = traffic;
+    this.fleets = fleets;
+    this.weatherProvider = weatherProvider;
+
+    this.activeAirport = activeAirport;
+    this.twrAtc = new TowerAtc(this.activeAirport.getAtcTemplates().getFirst(q -> q.getType() == Atc.eType.twr));
+    this.ctrAtc = new CenterAtc(this.activeAirport.getAtcTemplates().getFirst(q -> q.getType() == Atc.eType.ctr));
+    this.appAtc = new UserAtc(this.activeAirport.getAtcTemplates().getFirst(q -> q.getType() == Atc.eType.app));
+
+    this.prm = new PlaneResponsibilityManager();
+
+    this.emergencyManager = new EmergencyManager(emergencyPerDayProbability);
+    this.emergencyManager.generateEmergencyTime(this.now);
+
+    this.trafficManager = new TrafficManager();
+
+    IList<Border> mrvaAreas =
+        area.getBorders().where(q -> q.getType() == Border.eType.mrva);
+    this.mrvaManager = new MrvaManager(mrvaAreas);
+  }
+
   public void load(XElement root) {
 
     LoadSave.setRelativeArea(this.area, this.activeAirport, new Atc[]{this.twrAtc, this.ctrAtc, this.appAtc});
@@ -128,61 +181,8 @@ public class Simulation {
       LoadSave.setRelativeAirplanes(lst);
     }
 
-    this.prm.getAll().forEach(q->this.mrvaManager.registerPlane(q));
+    this.prm.getAll().forEach(q -> this.mrvaManager.registerPlane(q));
     this.prm.init();
-  }
-
-  public Simulation(
-      Area area, AirplaneTypes airplaneTypes, Fleets fleets, Traffic traffic, Airport activeAirport,
-      WeatherProvider weatherProvider, ETime now, int simulationSecondLengthInMs, double emergencyPerDayProbability) {
-
-    if (area == null) {
-        throw new IllegalArgumentException("Value of {area} cannot not be null.");
-    }
-    if (airplaneTypes == null) {
-        throw new IllegalArgumentException("Value of {airplaneTypes} cannot not be null.");
-    }
-    if (fleets == null) {
-        throw new IllegalArgumentException("Value of {fleets} cannot not be null.");
-    }
-    if (traffic == null) {
-        throw new IllegalArgumentException("Value of {traffic} cannot not be null.");
-    }
-    if (weatherProvider == null) {
-      throw new IllegalArgumentException("Value of {weatherProvider} cannot not be null.");
-    }
-    if (now == null) {
-      throw new IllegalArgumentException("Value of {now} cannot not be null.");
-    }
-    if (activeAirport == null) {
-        throw new IllegalArgumentException("Value of {activeAirport} cannot not be null.");
-    }
-
-
-    this.now = now.clone();
-    this.simulationSecondLengthInMs = simulationSecondLengthInMs;
-
-    this.area = area;
-    this.airplaneTypes = airplaneTypes;
-    this.traffic = traffic;
-    this.fleets = fleets;
-    this.weatherProvider = weatherProvider;
-
-    this.activeAirport = activeAirport;
-    this.twrAtc = new TowerAtc(this.activeAirport.getAtcTemplates().getFirst(q->q.getType() == Atc.eType.twr));
-    this.ctrAtc = new CenterAtc(this.activeAirport.getAtcTemplates().getFirst(q->q.getType() == Atc.eType.ctr));
-    this.appAtc = new UserAtc(this.activeAirport.getAtcTemplates().getFirst(q->q.getType() == Atc.eType.app));
-
-    this.prm = new PlaneResponsibilityManager();
-
-    this.emergencyManager = new EmergencyManager(emergencyPerDayProbability);
-    this.emergencyManager.generateEmergencyTime(this.now);
-
-    this.trafficManager = new TrafficManager();
-
-    IList<Border> mrvaAreas =
-        area.getBorders().where(q -> q.getType() == Border.eType.mrva);
-    this.mrvaManager = new MrvaManager(mrvaAreas);
   }
 
   public PlaneResponsibilityManager getPrm() {
@@ -355,6 +355,14 @@ public class Simulation {
     LoadSave.saveField(root, this, "simulationSecondLengthInMs");
   }
 
+  public IMap<String, String> getCommandShortcuts() {
+    return this.appAtc.getParser().getShortcuts().getAll2();
+  }
+
+  public void setCommandShortcuts(IMap<String, String> shortcuts) {
+    this.appAtc.getParser().getShortcuts().setAll2(shortcuts);
+  }
+
   private void weatherProvider_weatherUpdated(Weather w) {
     Acc.sim().sendTextMessageForUser("Weather updated: " + w.toInfoString());
   }
@@ -515,11 +523,19 @@ public class Simulation {
       processSystemMessageShortcut(m);
     } else {
       String msg = m.<StringMessageContent>getContent().getMessageText();
-      Acc.messenger().send(
-          new Message(
-              messenger.SYSTEM,
-              m.<UserAtc>getSource(),
-              new StringMessageContent("Unknown system command '%s'.", msg)));
+      String resp = new ShortBlockParser().getHelp(msg);
+      if (resp == null)
+        Acc.messenger().send(
+            new Message(
+                messenger.SYSTEM,
+                m.<UserAtc>getSource(),
+                new StringMessageContent("Unknown system command '%s'.", msg)));
+      else
+        Acc.messenger().send(
+            new Message(
+                messenger.SYSTEM,
+                m.getSource(),
+                new StringMessageContent(resp)));
     }
   }
 
@@ -586,14 +602,6 @@ public class Simulation {
             m.<UserAtc>getSource(),
             new StringMessageContent("Tick speed changed to %d milliseconds.", tickI))
     );
-  }
-
-  public IMap<String, String> getCommandShortcuts(){
-    return this.appAtc.getParser().getShortcuts().getAll2();
-  }
-
-  public void setCommandShortcuts(IMap<String, String> shortcuts){
-    this.appAtc.getParser().getShortcuts().setAll2(shortcuts);
   }
 
   private void processSystemMessageShortcut(Message m) {

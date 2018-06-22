@@ -1,5 +1,6 @@
 package eng.jAtcSim.lib.speaking.parsing.shortBlockParser.toAtcParsers;
 
+import eng.eSystem.EStringBuilder;
 import eng.eSystem.collections.IList;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.jAtcSim.lib.Acc;
@@ -8,13 +9,25 @@ import eng.jAtcSim.lib.speaking.parsing.shortBlockParser.SpeechParser;
 import eng.jAtcSim.lib.world.Runway;
 import eng.jAtcSim.lib.world.RunwayThreshold;
 
+import java.util.Arrays;
+
 public class RunwayCheckParser extends SpeechParser<RunwayCheck> {
   private static final String[][] patterns = {
       {"RWYCHECK", "TIME", ".+"},
       {"RWYCHECK", "TIME"},
       {"RWYCHECK", "DO", ".+"},
       {"RWYCHECK", "DO"}};
-
+  public String getHelp() {
+    String ret = super.buildHelpString(
+        "Runway check",
+        "-RWYCHECK TIME {rwy} - estimated check time of the specified runway\n-RWYCHECK TIME - estimated check time of all runways\n" +
+        "-RWYCHECK DO {rwy} - asks Tower ATC to do maintenance of specified runway now\n-RWYCHECK DO - asks Tower ATC to do maintenance of active runway",
+        "Asks Tower ATC about the expected runway check and maintenance time and duration OR\n"+
+        "Asks Tower ATC about the expected end of the maintenance in progress of the runway OR\n"+
+            "Asks Tower ATC to start maintenance of the specified runway now.",
+        "-RWYCHECK TIME 26L\n-RWYCHECK TIME\n-RWYCHECK DO 26L\n-RWYCHECK DO");
+    return ret;
+  }
   @Override
   public String[][] getPatterns() {
     return patterns;

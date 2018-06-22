@@ -1,16 +1,35 @@
 package eng.jAtcSim.lib.speaking.parsing.shortBlockParser.toPlaneParsers;
 
+import eng.eSystem.EStringBuilder;
 import eng.eSystem.collections.IList;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeAltitudeCommand;
 import eng.jAtcSim.lib.speaking.parsing.shortBlockParser.SpeechParser;
 
+import java.util.Arrays;
+
 public class ChangeAltitudeParser extends SpeechParser<ChangeAltitudeCommand> {
 
-  private static final String[][] patterns = {{"MA|CM|DM", "\\d{1,3}"}};
+  private static final String[][] patterns = {
+      {"MA", "\\d{1,3}"},
+      {"CM", "\\d{1,3}"},
+      {"DM", "\\d{1,3}"}
+  };
 
   @Override
   public String[][] getPatterns() {
     return patterns;
+  }
+
+  @Override
+  public String getHelp() {
+    String ret = super.buildHelpString(
+        "Change altitude",
+        "MA {altitude} - Maintain (climb or descend) to altitude\n" +
+            "CM {altitude} - Climb to altitude\n" +
+            "DM {altitude} - Descend to altitude",
+        "When reaching speed",
+        "MA 120\n" + "CM 120\n" + "DM 120");
+    return ret;
   }
 
   @Override
@@ -33,7 +52,7 @@ public class ChangeAltitudeParser extends SpeechParser<ChangeAltitudeCommand> {
         throw new UnsupportedOperationException("Invalid prefix for Maintain-altitude command.");
     }
 
-    a = super.getInt(blocks, 1) *100;
+    a = super.getInt(blocks, 1) * 100;
 
     ret = new ChangeAltitudeCommand(d, a);
     return ret;

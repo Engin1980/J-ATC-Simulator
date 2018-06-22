@@ -1,5 +1,6 @@
 package eng.jAtcSim.lib.speaking.parsing.shortBlockParser.toPlaneParsers;
 
+import eng.eSystem.EStringBuilder;
 import eng.eSystem.collections.IList;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.exceptions.EInvalidCommandException;
@@ -7,9 +8,21 @@ import eng.jAtcSim.lib.speaking.fromAtc.commands.afters.AfterNavaidCommand;
 import eng.jAtcSim.lib.speaking.parsing.shortBlockParser.SpeechParser;
 import eng.jAtcSim.lib.world.Navaid;
 
+import java.util.Arrays;
+
 public class AfterNavaidParser extends SpeechParser<AfterNavaidCommand> {
 
   private static final String[][] patterns = {{"AN", "\\S+"}};
+
+  @Override
+  public String getHelp() {
+    String ret = super.buildHelpString(
+        "After navaid",
+        "AN {fixName}",
+        "When flying over fix",
+        "AN KENOK");
+    return ret;
+  }
 
   @Override
   public String[][] getPatterns() {
