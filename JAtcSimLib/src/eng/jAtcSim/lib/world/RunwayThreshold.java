@@ -109,8 +109,8 @@ public class RunwayThreshold {
     return ret;
   }
 
-  public List<RunwayThreshold> getParallelGroup() {
-    List<RunwayThreshold> ret = new ArrayList<>();
+  public IList<RunwayThreshold> getParallelGroup() {
+    IList<RunwayThreshold> ret = new EList<>();
 
     double crs = this.getCourse();
     for (Runway runway : this.getParent().getParent().getRunways()) {

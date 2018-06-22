@@ -128,6 +128,10 @@ public class AirplaneType {
   public String toString() {
     return String.format("%s {airplaneType}", this.name);
   }
+
+  public int getV2() {
+    return this.vR + 15;
+  }
 }
 
 class RateInfo {

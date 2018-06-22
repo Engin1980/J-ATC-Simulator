@@ -35,13 +35,16 @@ public class TestTrafficOneDeparture extends TestTraffic {
     return ret;
   }
 
+  private static String typeName= "A319";
   private Movement generateMovement(String number) {
     Movement tmp;
 
     Callsign cs;
     cs = new Callsign("CSA", number);
-    AirplaneType pt = Acc.sim().getAirplaneTypes().tryGetByName("A319");
+    AirplaneType pt = Acc.sim().getAirplaneTypes().tryGetByName(typeName);
     assert pt != null;
+
+    typeName = "A319";
 
     tmp = new Movement(cs, pt, Acc.now().clone(), 0, true);
     return tmp;

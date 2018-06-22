@@ -121,7 +121,7 @@ public class Pilot {
 
     public void setTakeOffBehavior(RunwayThreshold thrs) {
       Pilot.this.behavior = new Pilot.TakeOffBehavior(thrs);
-      Pilot.this.parent.setTargetSpeed(Pilot.this.parent.getType().vR + 15);
+      Pilot.this.parent.setTargetSpeed(Pilot.this.parent.getType().getV2());
       Pilot.this.parent.setTargetHeading(thrs.getCourse());
       Pilot.this.parent.setxState(Airplane.State.takeOffRoll);
     }
