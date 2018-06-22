@@ -440,6 +440,7 @@ public class Simulation {
       if (newPlane != null) {
         newPlanesDelayedToAvoidCollision.remove(newPlane);
         Acc.prm().registerPlane(ctrAtc, newPlane);
+        this.mrvaManager.registerPlane(newPlane);
       }
     }
 
