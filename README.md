@@ -9,3 +9,5 @@ This simulator is trying to model the approach traffic over a selected airport, 
 
 * For **more information and the manual** info go to [Wiki](https://github.com/Engin1980/J-ATC-Simulator/wiki) or see examples on [YouTube](https://www.youtube.com/playlist?list=PL0bQQrRRNSOKHkzac671atY_SmYVa6a25).
 
+* To download app in ZIP go to [releases page](https://github.com/Engin1980/J-ATC-Simulator/releases).
+
