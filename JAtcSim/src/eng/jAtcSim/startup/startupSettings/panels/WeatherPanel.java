@@ -37,7 +37,6 @@ public class WeatherPanel extends JStartupPanel {
   private NumericUpDownExtender txtBaseAltitude = new NumericUpDownExtender(new JSpinner(), 0, 20000, 8000, 1000);
   private String icao;
   private JButton btnDownload;
-  private JLabel lblMetar;
 
   private static IList<XComboBoxExtender.Item<Weather>> getPredefinedWeathers() {
     IList<XComboBoxExtender.Item<Weather>> ret = new EList<>();
@@ -98,9 +97,7 @@ public class WeatherPanel extends JStartupPanel {
         btnDownload
     );
 
-    lblMetar = new JLabel("");
-
-    LayoutManager.fillBoxPanel(this, LayoutManager.eHorizontalAlign.left, SPACE, pnlA, pnlB, pnlC, pnlD, lblMetar);
+    LayoutManager.fillBoxPanel(this, LayoutManager.eHorizontalAlign.left, SPACE, pnlA, pnlB, pnlC, pnlD);
 
     cmbClouds.getControl().addActionListener(q -> cmbCloudsChanged());
     cmbPreset.getControl().addActionListener(this::cmbPreset_selectedItemChanged);
@@ -182,9 +179,7 @@ public class WeatherPanel extends JStartupPanel {
   private void metarDownloadFinished(Tuple<String, Weather> result, Exception ex) {
     if (result != null) {
       setWeather(result.getB());
-      lblMetar.setText(result.getA());
     } else {
-      lblMetar.setText("");
       EStringBuilder sb = new EStringBuilder();
       sb.appendFormatLine("Failed to download METAR for airport with code: %s. Reason:", icao);
       sb.appendLine(ExceptionUtil.toFullString(ex, "\n"));
