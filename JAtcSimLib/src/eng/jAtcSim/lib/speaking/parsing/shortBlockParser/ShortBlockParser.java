@@ -98,7 +98,9 @@ public class ShortBlockParser extends Parser {
       if (p == null) {
         // try shortcuts
         IList<String> trs = tryExpandByShortcut(toDo);
-        p = getSpeechParser(trs);
+        if (trs != null)
+          toDo = trs;
+        p = getSpeechParser(toDo);
 
         if (p == null)
           throw new EInvalidCommandException("Failed to parse command prefix.",
@@ -258,7 +260,7 @@ public class ShortBlockParser extends Parser {
     IList<String> ret;
     String firstWord = tokens.get(0);
     String exp = this.getShortcuts().tryGet(firstWord);
-    if (exp != null)
+    if (exp == null)
       ret = null;
     else {
       IList<String> tmp = tokenize(exp);

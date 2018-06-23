@@ -85,7 +85,7 @@ public class CenterAtc extends ComputerAtc {
                 p.getCallsign().toString(),
                 p.getAssigneRoute().getMainFix().getName()));
       } else {
-        if (p.getAltitude() > super.acceptAltitude) {
+        if (p.getAltitude() > super.acceptAltitude || p.getAltitude() > (p.getType().maxAltitude * .666)) {
           ret = new RequestResult(true, null);
         } else {
           double aipDist = Coordinates.getDistanceInNM(p.getCoordinate(), Acc.airport().getLocation());

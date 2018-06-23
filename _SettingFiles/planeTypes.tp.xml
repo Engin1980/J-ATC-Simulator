@@ -383,7 +383,7 @@
         vMinApp="65" vApp="70" vMaxApp="80"
         vR="65" vDep="80"
         vMinClean="80" vMaxClean="100" vCruise="120"
-        lowClimbRate="600" highClimbRate="200"
+        lowClimbRate="800" highClimbRate="400"
         lowDescendRate="500" highDescendRate="1000"
         speedIncreaseRate="1" speedDecreaseRate="2"
         headingChangeRate="3"/>
@@ -392,7 +392,7 @@
         vMinApp="45" vApp="55" vMaxApp="70"
         vR="55" vDep="70"
         vMinClean="80" vMaxClean="100" vCruise="120"
-        lowClimbRate="600" highClimbRate="200"
+        lowClimbRate="700" highClimbRate="300"
         lowDescendRate="500" highDescendRate="1000"
         speedIncreaseRate="1" speedDecreaseRate="2"
         headingChangeRate="3"/>

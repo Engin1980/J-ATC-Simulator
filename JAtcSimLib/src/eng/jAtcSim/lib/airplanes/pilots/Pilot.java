@@ -267,17 +267,33 @@ public class Pilot {
 
   class TakeOffBehavior extends Behavior {
 
-    private final static int TAKEOFF_ACCELERATION_ALTITUDE_AGL = 1500;
-    //TODO add to config the acceleration altitude and use it here
-    private final int accelerationAltitude =
-        Acc.airport().getAltitude() + TAKEOFF_ACCELERATION_ALTITUDE_AGL;
+    //TODO add to airport config the acceleration altitude and use it here
+    private final int accelerationAltitude;
     private RunwayThreshold toThreshold;
 
     private TakeOffBehavior() {
+      accelerationAltitude = 0;
     }
 
     public TakeOffBehavior(RunwayThreshold toThreshold) {
+
       this.toThreshold = toThreshold;
+      int accAlt;
+      switch (parent.getType().category) {
+        case 'A':
+          accAlt = 300;
+          break;
+        case 'B':
+          accAlt = 1000;
+          break;
+        case 'C':
+        case 'D':
+          accAlt = 1500;
+          break;
+        default:
+          throw new EEnumValueUnsupportedException(parent.getType().category);
+      }
+      this.accelerationAltitude = Acc.airport().getAltitude() + accAlt;
     }
 
     @Override

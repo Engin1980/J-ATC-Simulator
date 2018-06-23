@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?><root __class="StartupSettings">
   <files areaXmlFile="_SettingFiles\LKPR.ar.xml" fleetsXmlFile="_SettingFiles\fleets.fl.xml" planesXmlFile="_SettingFiles\planeTypes.tp.xml" trafficXmlFile="(null)"/>
-  <recent icao="LKMT" time="14:59"/>
+  <recent icao="LKMT" time="1:01"/>
   <weather cloudBaseAltitudeFt="10000" cloudBaseProbability="0.0" useOnline="false" visibilityInM="9999" windDirection="260" windSpeed="11"/>
-  <traffic allowDelays="true" densityPercentage="1.0" emergencyPerDayProbability="0.14285714285714285" maxPlanes="60" trafficAirportDefinedTitle="LKMT:Very lite generated traffic" type="custom">
-    <customTraffic arrivals2departuresRatio="5" companies="CSA;EZY;RYR;TVS" countryCodes="OK;OM;G" nonCommercialFlightProbability="0.7" useExtendedCallsigns="true" weightTypeA="5" weightTypeB="5" weightTypeC="5" weightTypeD="1">
+  <traffic allowDelays="true" densityPercentage="1.0" emergencyPerDayProbability="0.14285714285714285" maxPlanes="60" trafficAirportDefinedTitle="----" type="custom">
+    <customTraffic arrivals2departuresRatio="10" companies="CSA;EZY;RYR;TVS" countryCodes="OK;OM;G" nonCommercialFlightProbability="0.7" useExtendedCallsigns="true" weightTypeA="5" weightTypeB="5" weightTypeC="5" weightTypeD="1">
       <movementsPerHour>
         <int __class="Integer">0</int>
-        <int __class="Integer">0</int>
+        <int __class="Integer">60</int>
         <int __class="Integer">0</int>
         <int __class="Integer">1</int>
         <int __class="Integer">3</int>
