@@ -12,9 +12,9 @@ public class ChangeSpeedParser extends SpeechParser<ChangeSpeedCommand> {
 
   private static final String[][] patterns = {
       {"SC"},
-      {"SM", "\\d{3}"},
-      {"SL", "\\d{3}"},
-      {"SE", "\\d{3}"}
+      {"SM", "\\d{1,3}"},
+      {"SL", "\\d{1,3}"},
+      {"SE", "\\d{1,3}"}
   };
 
   @Override

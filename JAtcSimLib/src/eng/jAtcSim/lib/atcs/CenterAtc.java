@@ -39,16 +39,6 @@ public class CenterAtc extends ComputerAtc {
   }
 
   @Override
-  protected void _save(XElement elm) {
-    super._save(elm);
-  }
-
-  @Override
-  protected void _load(XElement elm) {
-    super._load(elm);
-  }
-
-  @Override
   public void unregisterPlaneUnderControl(Airplane plane, boolean finalUnregistration) {
 
   }
@@ -143,18 +133,28 @@ public class CenterAtc extends ComputerAtc {
   protected Atc getTargetAtcIfPlaneIsReadyToSwitch(Airplane plane) {
     Atc ret = null;
     if (plane.isArrival()) {
-      if (plane.getAltitude() <= this.releaseAltitude || plane.isEmergency()) {
+      if (plane.isEmergency())
         ret = Acc.atcApp();
-      } else {
+      else {
         Route r = plane.getAssigneRoute();
         Navaid n = r.getMainFix();
         double dist = Coordinates.getDistanceInNM(plane.getCoordinate(), n.getCoordinate());
-        if (dist < 15) {
+        if (dist <= 10) {
           ret = Acc.atcApp();
         }
       }
     }
     return ret;
+  }
+
+  @Override
+  protected void _save(XElement elm) {
+    super._save(elm);
+  }
+
+  @Override
+  protected void _load(XElement elm) {
+    super._load(elm);
   }
 
   private int getDepartureRandomTargetAltitude(Airplane p) {

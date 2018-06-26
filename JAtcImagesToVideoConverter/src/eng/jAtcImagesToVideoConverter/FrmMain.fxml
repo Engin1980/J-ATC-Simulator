@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="445.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="eng.jAtcImagesToVideoConverter.FrmMain">
+   <children>
+      <BorderPane AnchorPane.bottomAnchor="8.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="8.0">
+         <center>
+            <GridPane BorderPane.alignment="CENTER">
+              <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="294.0" minWidth="10.0" prefWidth="193.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="414.0" minWidth="10.0" prefWidth="407.0" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+               <children>
+                  <Label text="Location of &quot;ffmpeg.exe&quot;:" />
+                  <Label text="Location of input image files:" GridPane.rowIndex="1" />
+                  <Label text="Target framerate:" GridPane.rowIndex="3" />
+                  <Label text="Output folder:" GridPane.rowIndex="4" />
+                  <BorderPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1">
+                     <right>
+                        <Button fx:id="btnFfmpeg" mnemonicParsing="false" onAction="#btnFfmpeg_click" text="(browse)" BorderPane.alignment="CENTER" />
+                     </right>
+                     <center>
+                        <TextField fx:id="txtFfmpeg" BorderPane.alignment="CENTER" />
+                     </center>
+                  </BorderPane>
+                  <BorderPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                     <right>
+                        <Button fx:id="btnIn" mnemonicParsing="false" onAction="#btnIn_click" text="(browse)" BorderPane.alignment="CENTER" />
+                     </right>
+                     <center>
+                        <TextField fx:id="txtIn" BorderPane.alignment="CENTER" />
+                     </center>
+                  </BorderPane>
+                  <BorderPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                     <center>
+                        <Slider fx:id="sldFramerate" blockIncrement="1.0" majorTickUnit="5.0" minorTickCount="1" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="24.0" BorderPane.alignment="CENTER" />
+                     </center>
+                     <right>
+                        <TextField fx:id="txtFramerate" prefWidth="50.0" text="24" BorderPane.alignment="CENTER" />
+                     </right>
+                  </BorderPane>
+                  <BorderPane prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                     <right>
+                        <Button fx:id="btnOut" mnemonicParsing="false" onAction="#btnOut_click" text="(browse)" BorderPane.alignment="CENTER" />
+                     </right>
+                     <center>
+                        <TextField fx:id="txtOut" BorderPane.alignment="CENTER" />
+                     </center>
+                  </BorderPane>
+                  <Label text="Image file type:" GridPane.rowIndex="2" />
+                  <ComboBox fx:id="cmbExtension" editable="true" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+               </children>
+            </GridPane>
+         </center>
+         <bottom>
+            <VBox alignment="TOP_CENTER" BorderPane.alignment="CENTER">
+               <children>
+                  <Button fx:id="btnConvert" mnemonicParsing="false" onAction="#btnConvert_click" text="Convert" />
+                  <TextField fx:id="txtCmd" />
+                  <TextArea fx:id="txtPrint" prefHeight="200.0" prefWidth="200.0" />
+               </children>
+            </VBox>
+         </bottom>
+      </BorderPane>
+   </children>
+</AnchorPane>

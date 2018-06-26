@@ -51,6 +51,7 @@ public class ScheduledFlightListPanel extends JPanel {
     }
 
     this.revalidate();
+    this.repaint();
   }
 
   private JPanel createMovementStrip(Movement mvm) {

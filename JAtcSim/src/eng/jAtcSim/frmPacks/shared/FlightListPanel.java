@@ -97,6 +97,7 @@ public class FlightListPanel extends JPanel {
     }
 
     this.revalidate();
+    this.repaint();
   }
 
   private FlightStripPanel createFlightStrip(Airplane.Airplane4Display ai) {
