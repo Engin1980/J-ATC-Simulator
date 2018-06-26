@@ -120,11 +120,20 @@ public class FrmMain {
     IList<String> cmds = new EList();
 
     cmds.add(txtFfmpeg.getText());
+
     cmds.add("-r");
     cmds.add(txtFramerate.getText());
+
     cmds.add("-i");
     Path pIn = Paths.get(txtIn.getText(), "%05d." + cmbExtension.getValue());
     cmds.add(pIn.toString());
+
+    cmds.add("-q:v");
+    cmds.add("3");
+
+    cmds.add("-c:v");
+    cmds.add("libx264");
+    
     cmds.add(txtOut.getText());
 
     EStringBuilder esb = new EStringBuilder();
@@ -148,7 +157,8 @@ public class FrmMain {
       String line;
       try {
         while ((line = input.readLine()) != null) {
-          txtPrint.appendText(line+"\r\n");
+          txtPrint.appendText(line);
+          txtPrint.appendText("\n");
         }
       } catch (IOException e) {
         e.printStackTrace();
