@@ -3,10 +3,7 @@ package eng.jAtcImagesToVideoConverter;
 import eng.eSystem.EStringBuilder;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import eng.eSystem.utilites.ExceptionUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
@@ -27,6 +24,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.prefs.Preferences;
 import java.util.regex.Pattern;
 
 interface Validator<T> {
@@ -106,6 +104,8 @@ public class FrmMain {
         ));
 
     cmbExtension.getItems().addAll("png", "jpg", "bmp");
+
+    loadPref();
   }
 
   @FXML
@@ -133,7 +133,7 @@ public class FrmMain {
 
     cmds.add("-c:v");
     cmds.add("libx264");
-    
+
     cmds.add(txtOut.getText());
 
     EStringBuilder esb = new EStringBuilder();
@@ -147,8 +147,14 @@ public class FrmMain {
       process = builder.start();
       watch(process);
     } catch (IOException e) {
-      System.out.println("Fucking fail." + e.getClass().getName() + ": " + e.getMessage());
+      txtPrint.setText("Nepodařilo se spustit ffmpeg. " + ExceptionUtils.toFullString(e));
+      return;
     }
+  }
+
+  @FXML
+  void btnSaveSettings_click(ActionEvent event) {
+    savePref();
   }
 
   private void watch(final Process process) {
@@ -211,7 +217,40 @@ public class FrmMain {
     if (tmp != null)
       txtOut.setText(tmp);
   }
+
+  private void loadPref(){
+    Preferences prefs = Preferences.userNodeForPackage(this.getClass());
+
+    String tmp;
+
+    tmp = prefs.get("ffmpeg", "");
+    txtFfmpeg.setText(tmp);
+
+    tmp = prefs.get("in", "");
+    txtIn.setText(tmp);
+
+    tmp = prefs.get("framerate", "24");
+    txtFramerate.setText(tmp);
+
+    tmp = prefs.get("inExt", "png");
+    cmbExtension.setValue(tmp);
+
+    tmp = prefs.get("out", "");
+    txtOut.setText(tmp);
+  }
+
+  private void savePref(){
+    Preferences prefs = Preferences.userNodeForPackage(this.getClass());
+
+    prefs.put("ffmpeg", txtFfmpeg.getText());
+    prefs.put("in", txtIn.getText());
+    prefs.put("framerate",txtFramerate.getText() );
+    prefs.put("inExt", cmbExtension.getValue());
+    prefs.put("out", txtOut.getText());
+  }
 }
+
+
 
 class TextFieldValidator {
   private final TextField txt;

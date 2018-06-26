@@ -9,7 +9,7 @@ import eng.eSystem.collections.EList;
 import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IMap;
-import eng.eSystem.utilites.ExceptionUtil;
+import eng.eSystem.utilites.ExceptionUtils;
 import eng.eSystem.utilites.awt.ComponentUtils;
 import eng.jAtcSim.XmlLoadHelper;
 import eng.jAtcSim.lib.traffic.Traffic;
@@ -223,7 +223,7 @@ public class TrafficPanel extends JStartupPanel {
       XmlLoadHelper.loadTraffic(file);
       MessageBox.show("Traffic file seems ok.", "Traffic file check");
     } catch (Exception ex) {
-      MessageBox.show("Error occurred when loading traffic file. \n\n" + ExceptionUtil.toFullString(ex, "\n"), "Traffic file check");
+      MessageBox.show("Error occurred when loading traffic file. \n\n" + ExceptionUtils.toFullString(ex, "\n"), "Traffic file check");
     }
   }
 

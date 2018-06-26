@@ -1,7 +1,7 @@
 package eng.jAtcSim.lib.global.logging;
 
 import eng.eSystem.exceptions.ERuntimeException;
-import eng.eSystem.utilites.ExceptionUtil;
+import eng.eSystem.utilites.ExceptionUtils;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -50,7 +50,7 @@ public abstract class Log {
       wrt.write(tmp);
     } catch (IOException ex) {
       if (errorKind)
-        System.out.println("Log " + this.name + " write failed: " + ExceptionUtil.toFullString(ex, " ==> "));
+        System.out.println("Log " + this.name + " write failed: " + ExceptionUtils.toFullString(ex, " ==> "));
       else
         throw new ERuntimeException("Log " + this.name + " write failed.", ex);
     }

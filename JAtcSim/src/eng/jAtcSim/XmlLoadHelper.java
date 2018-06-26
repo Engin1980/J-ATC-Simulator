@@ -1,7 +1,7 @@
 package eng.jAtcSim;
 
 import eng.eSystem.exceptions.ERuntimeException;
-import eng.eSystem.utilites.ExceptionUtil;
+import eng.eSystem.utilites.ExceptionUtils;
 import eng.eSystem.xmlSerialization.*;
 import eng.jAtcSim.frmPacks.shared.FlightStripSettings;
 import eng.jAtcSim.lib.airplanes.AirplaneType;
@@ -60,7 +60,7 @@ public class XmlLoadHelper {
     try {
       ret = (StartupSettings) ser.deserialize(fileName, StartupSettings.class);
     } catch (Exception ex) {
-      System.out.println("Failed to load startup settings from " + fileName + ". Defaults used. Reason: " + ExceptionUtil.toFullString(ex, "\n"));
+      System.out.println("Failed to load startup settings from " + fileName + ". Defaults used. Reason: " + ExceptionUtils.toFullString(ex, "\n"));
       ret = new StartupSettings();
     }
 

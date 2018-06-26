@@ -5,7 +5,7 @@ import eng.eSystem.Tuple;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
-import eng.eSystem.utilites.ExceptionUtil;
+import eng.eSystem.utilites.ExceptionUtils;
 import eng.jAtcSim.lib.weathers.Weather;
 import eng.jAtcSim.lib.weathers.downloaders.MetarDecoder;
 import eng.jAtcSim.lib.weathers.downloaders.MetarDownloader;
@@ -182,7 +182,7 @@ public class WeatherPanel extends JStartupPanel {
     } else {
       EStringBuilder sb = new EStringBuilder();
       sb.appendFormatLine("Failed to download METAR for airport with code: %s. Reason:", icao);
-      sb.appendLine(ExceptionUtil.toFullString(ex, "\n"));
+      sb.appendLine(ExceptionUtils.toFullString(ex, "\n"));
       MessageBox.show(sb.toString(), "Error...");
     }
     btnDownload.setText(DOWNLOAD_BUTTON_TEXT);

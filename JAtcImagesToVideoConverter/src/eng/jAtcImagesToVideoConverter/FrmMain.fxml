@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.text.*?>
 <?import java.lang.*?>
 <?import java.util.*?>
 <?import javafx.scene.*?>
@@ -67,7 +68,18 @@
          <bottom>
             <VBox alignment="TOP_CENTER" BorderPane.alignment="CENTER">
                <children>
-                  <Button fx:id="btnConvert" mnemonicParsing="false" onAction="#btnConvert_click" text="Convert" />
+                  <BorderPane>
+                     <center>
+                        <Button fx:id="btnConvert" mnemonicParsing="false" onAction="#btnConvert_click" text="Convert" BorderPane.alignment="CENTER">
+                           <font>
+                              <Font name="System Bold" size="12.0" />
+                           </font>
+                        </Button>
+                     </center>
+                     <right>
+                        <Button mnemonicParsing="false" onAction="#btnSaveSettings_click" text="Save current settings" BorderPane.alignment="CENTER" />
+                     </right>
+                  </BorderPane>
                   <TextField fx:id="txtCmd" />
                   <TextArea fx:id="txtPrint" prefHeight="200.0" prefWidth="200.0" />
                </children>

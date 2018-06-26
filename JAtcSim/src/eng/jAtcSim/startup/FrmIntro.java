@@ -1,6 +1,6 @@
 package eng.jAtcSim.startup;
 
-import eng.eSystem.utilites.ExceptionUtil;
+import eng.eSystem.utilites.ExceptionUtils;
 import eng.eSystem.utilites.awt.ComponentUtils;
 import eng.jAtcSim.JAtcSim;
 import eng.jAtcSim.Stylist;
@@ -84,7 +84,7 @@ public class FrmIntro extends JFrame {
     } catch (Exception ex) {
       ex.printStackTrace();
       MessageBox.show("Failed to start up the simulation. Something is wrong. Check the startup settings. \n\n" +
-          ExceptionUtil.toFullString(ex, "\n"), "Error during simulation start-up.");
+          ExceptionUtils.toFullString(ex, "\n"), "Error during simulation start-up.");
       this.setVisible(true);
     }
   }
@@ -103,7 +103,7 @@ public class FrmIntro extends JFrame {
     } catch (Exception ex) {
       ex.printStackTrace();
       MessageBox.show("Failed to load the simulation. \n\n" +
-          ExceptionUtil.toFullString(ex, "\n"), "Error during simulation load.");
+          ExceptionUtils.toFullString(ex, "\n"), "Error during simulation load.");
       this.setVisible(true);
     }
   }

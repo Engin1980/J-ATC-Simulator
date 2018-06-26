@@ -6,7 +6,7 @@ import eng.eSystem.collections.EList;
 import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IList;
 import eng.eSystem.exceptions.ERuntimeException;
-import eng.eSystem.utilites.ExceptionUtil;
+import eng.eSystem.utilites.ExceptionUtils;
 import eng.eSystem.utilites.NumberUtils;
 import eng.eSystem.xmlSerialization.XmlSerializer;
 
@@ -184,7 +184,7 @@ public class Program {
         downloadAirlineFleet(airline);
       } catch (Exception ex) {
         System.out.println("\terror!");
-        System.out.println(ExceptionUtil.toFullString(ex));
+        System.out.println(ExceptionUtils.toFullString(ex));
         airline.setDecoded(true);
       }
 

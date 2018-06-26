@@ -1,7 +1,7 @@
 package eng.jAtcSim.recording;
 
 import eng.eSystem.exceptions.EApplicationException;
-import eng.eSystem.utilites.ExceptionUtil;
+import eng.eSystem.utilites.ExceptionUtils;
 import eng.jAtcSim.BitmapRadar.BitmapCanvas;
 import eng.jAtcSim.lib.Simulation;
 import eng.jAtcSim.lib.world.Area;
@@ -82,7 +82,7 @@ public class Recording {
           break;
       }
     } catch (Exception e) {
-      System.out.println("Recording error. " + ExceptionUtil.toFullString(e, "\n\t"));
+      System.out.println("Recording error. " + ExceptionUtils.toFullString(e, "\n\t"));
       this.stop();
     }
   }

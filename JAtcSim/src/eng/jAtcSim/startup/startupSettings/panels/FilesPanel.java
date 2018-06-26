@@ -1,6 +1,6 @@
 package eng.jAtcSim.startup.startupSettings.panels;
 
-import eng.eSystem.utilites.ExceptionUtil;
+import eng.eSystem.utilites.ExceptionUtils;
 import eng.jAtcSim.XmlLoadHelper;
 import eng.jAtcSim.lib.world.Area;
 import eng.jAtcSim.shared.BackgroundWorker;
@@ -95,7 +95,7 @@ public class FilesPanel extends JStartupPanel {
       Sources.setArea(area);
     } catch (Exception ex) {
       ex.printStackTrace();
-      MessageBox.show("Unable to load area file " + fileName + ".\n\nReason:\n" + ExceptionUtil.toFullString(ex, "\n"),
+      MessageBox.show("Unable to load area file " + fileName + ".\n\nReason:\n" + ExceptionUtils.toFullString(ex, "\n"),
           "Error...");
       ret = false;
     }
@@ -111,7 +111,7 @@ public class FilesPanel extends JStartupPanel {
           XmlLoadHelper.loadFleets(fileName));
       ret = true;
     } catch (Exception ex) {
-      MessageBox.show("Unable to load company fleets file " + fileName + ".\n\nReason:\n" + ExceptionUtil.toFullString(ex, "\n"),
+      MessageBox.show("Unable to load company fleets file " + fileName + ".\n\nReason:\n" + ExceptionUtils.toFullString(ex, "\n"),
           "Error...");
       ret = false;
     }
@@ -127,7 +127,7 @@ public class FilesPanel extends JStartupPanel {
           XmlLoadHelper.loadPlaneTypes(fileName));
       ret = true;
     } catch (Exception ex) {
-      MessageBox.show("Unable to load plane types file " + fileName + ".\n\nReason:\n" + ExceptionUtil.toFullString(ex, "\n"),
+      MessageBox.show("Unable to load plane types file " + fileName + ".\n\nReason:\n" + ExceptionUtils.toFullString(ex, "\n"),
           "Error...");
       ret = false;
     }
