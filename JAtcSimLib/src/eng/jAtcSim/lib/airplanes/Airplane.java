@@ -645,14 +645,14 @@ public class Airplane implements IMessageParticipant {
     return targetHeading;
   }
 
-  public void setTargetHeading(double targetHeading) {
-    this.setTargetHeading((int) Math.round(targetHeading));
-  }
-
   public void setTargetHeading(int targetHeading) {
     boolean useLeft
         = Headings.getBetterDirectionToTurn(heading.getValue(), targetHeading) == ChangeHeadingCommand.eDirection.left;
     setTargetHeading(targetHeading, useLeft);
+  }
+
+  public void setTargetHeading(double targetHeading) {
+    this.setTargetHeading((int) Math.round(targetHeading));
   }
 
   public int getTargetAltitude() {
@@ -796,6 +796,14 @@ public class Airplane implements IMessageParticipant {
     this.pilot.save(tmp);
     elm.addElement(tmp);
 
+  }
+
+  public void resetAirprox() {
+    this.airprox = AirproxType.none;
+  }
+
+  public void increaseAirprox(AirproxType at) {
+    this.airprox = AirproxType.combine(this.airprox, at);
   }
 
   // </editor-fold>

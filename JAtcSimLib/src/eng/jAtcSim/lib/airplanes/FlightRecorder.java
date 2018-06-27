@@ -78,8 +78,8 @@ public class FlightRecorder extends Recorder {
 
     // heading
     sb.appendFormat(" H:%5s => %03d/%03d  ", plane.getHeadingS(),
-        plane.getTargetHeadingS(),
-        Headings.add(plane.getTargetHeading(), -Acc.airport().getDeclination())
+        plane.getTargetHeading(),
+        (int) Headings.add(plane.getTargetHeading(), -Acc.airport().getDeclination())
         ).append(SEPARATOR);
 
     // alt

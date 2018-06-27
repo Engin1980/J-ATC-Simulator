@@ -643,12 +643,17 @@ public class Pilot {
           new TakeOffBehavior(null), Airplane.State.takeOffGoAround);
 
       parent.setTargetSpeed(parent.getType().vDep);
-      parent.setTargetAltitude(0);
+      parent.setTargetAltitude((int) parent.getAltitude());
       parent.setTargetHeading(approach.getCourse());
 
       Pilot.this.afterCommands.clearAll();
 
       SpeechList<IFromAtc> gas = new SpeechList<>(this.approach.getGaRoute());
+      ChangeAltitudeCommand cac = null; // remember climb command and add it as first at the end
+      if (gas.get(0) instanceof ChangeAltitudeCommand){
+        cac = (ChangeAltitudeCommand) gas.get(0);
+        gas.removeAt(0);
+      }
       gas.insert(0, new ChangeHeadingCommand((int) this.approach.getThreshold().getCourse(), ChangeHeadingCommand.eDirection.any));
 
       // check if is before runway threshold.
@@ -660,6 +665,9 @@ public class Pilot {
         gas.insert(0, new ProceedDirectCommand(runwayThresholdNavaid));
         gas.insert(1, new ThenCommand());
       }
+
+      if (cac != null)
+        gas.insert(0, cac);
 
       expandThenCommands(gas);
       processSpeeches(gas, CommandSource.procedure);

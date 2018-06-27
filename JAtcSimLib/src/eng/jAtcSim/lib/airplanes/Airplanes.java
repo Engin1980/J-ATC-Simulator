@@ -76,7 +76,7 @@ public class Airplanes {
 
   public static void evaluateAirproxes(IReadOnlyList<Airplane> planes) {
     for (Airplane p : planes) {
-      p.setAirprox(AirproxType.none);
+      p.resetAirprox();
     }
 
     for (int i = 0; i < planes.size() - 1; i++) {
@@ -100,8 +100,8 @@ public class Airplanes {
             Acc.prm().getResponsibleAtc(b) == Acc.atcApp()))
           at = AirproxType.partial;
 
-        a.setAirprox(at);
-        b.setAirprox(at);
+        a.increaseAirprox(at);
+        b.increaseAirprox(at);
       }
     }
   }
