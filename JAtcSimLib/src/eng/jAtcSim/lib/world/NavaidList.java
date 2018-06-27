@@ -12,27 +12,44 @@ public class NavaidList extends EList<Navaid> {
 
   public Navaid getOrGenerate(String name) {
     Navaid ret = this.tryGet(name);
-    if (ret == null && name.contains("/")) {
-      try {
-        PBD pdb = PBD.decode(name);
-        Coordinate coord = Coordinates.getCoordinate(pdb.point.getCoordinate(), pdb.bearing, pdb.distance);
-        Navaid n = new Navaid(name, Navaid.eType.auxiliary, coord);
-        super.add(n);
-        ret = n;
-      } catch (Exception ex){
-        throw new EApplicationException("Failed to getContent / decode navaid with name " + name, ex);
+    if (ret == null) {
+      if (name.contains("/")) {
+        try {
+          PBD pdb = PBD.decode(name);
+          Coordinate coord = Coordinates.getCoordinate(pdb.point.getCoordinate(), pdb.bearing, pdb.distance);
+          Navaid n = new Navaid(name, Navaid.eType.auxiliary, coord);
+          super.add(n);
+          ret = n;
+        } catch (Exception ex) {
+          throw new EApplicationException("Failed to getContent / decode navaid with name " + name, ex);
+        }
+      } else if (name.contains(":")){
+        try{
+          String[] pts = name.split(":");
+          Airport aip = Acc.area().getAirports().tryGetFirst(q->q.getIcao().equals(pts[0]));
+          if (aip == null)
+            throw new EApplicationException("Airport with code " + pts[0] + " not found.");
+          RunwayThreshold th = aip.tryGetRunwayThreshold(pts[1]);
+          if (th == null)
+            throw new EApplicationException("Airport with code " + pts[0] + " has no threshold " + pts[1]+".");
+          Navaid n = new Navaid(name, Navaid.eType.auxiliary, th.getCoordinate());
+          super.add(n);
+          ret = n;
+        } catch (Exception ex){
+          throw new EApplicationException("Failed to getContent / decode navaid with name " + name, ex);
+        }
       }
     }
     return ret;
   }
 
-  public Navaid get(String name){
-    Navaid ret = this.getFirst(q->q.getName().equals(name));
+  public Navaid get(String name) {
+    Navaid ret = this.getFirst(q -> q.getName().equals(name));
     return ret;
   }
 
-  public Navaid tryGet(String name){
-    Navaid ret = this.tryGetFirst(q->q.getName().equals(name));
+  public Navaid tryGet(String name) {
+    Navaid ret = this.tryGetFirst(q -> q.getName().equals(name));
     return ret;
   }
 }

@@ -782,7 +782,7 @@ public class Radar {
   private void drawApproach(Approach approach) {
     Coordinate start = Coordinates.getCoordinate(
         approach.getParent().getCoordinate(),
-        Headings.getOpposite(approach.getRadial()),
+        Headings.getOpposite(approach.getGeographicalRadial()),
         15);
     //TODO colors should be configurable
     tl.drawLine(start, approach.getParent().getCoordinate(), Color.MAGENTA, 1);

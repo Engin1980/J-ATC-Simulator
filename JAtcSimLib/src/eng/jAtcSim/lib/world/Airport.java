@@ -34,9 +34,14 @@ public class Airport {
   private int transitionAltitude;
   private int vfrAltitude;
   private String mainAirportNavaidName;
+  private double declination;
   private Navaid _mainAirportNavaid;
   private IList<Traffic> trafficDefinitions = new EList<>();
   private Area parent;
+
+  public double getDeclination() {
+    return declination;
+  }
 
   public String getIcao() {
     return icao;

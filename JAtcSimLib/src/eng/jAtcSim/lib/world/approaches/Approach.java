@@ -4,6 +4,7 @@ import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.utilites.CollectionUtils;
 import eng.eSystem.utilites.NumberUtils;
+import eng.eSystem.xmlSerialization.XmlIgnore;
 import eng.eSystem.xmlSerialization.XmlOptional;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.coordinates.Coordinate;
@@ -36,7 +37,8 @@ public abstract class Approach {
     gnss,
     visual
   }
-
+  @XmlIgnore
+  int geographicalRadial;
   private String gaRoute;
   private SpeechList<IAtcCommand> _gaCommands;
   @XmlOptional
@@ -45,10 +47,6 @@ public abstract class Approach {
   private RunwayThreshold parent;
   private boolean includeSharedIafRoutes;
   private int initialAltitude;
-
-  public int getInitialAltitude() {
-    return initialAltitude;
-  }
 
   public static CurrentApproachInfo tryGetCurrentApproachInfo(List<Approach> apps, char category, ApproachType type, Coordinate currentPlaneLocation) {
     CurrentApproachInfo ret;
@@ -174,8 +172,8 @@ public abstract class Approach {
     return UnitProvider.nmToFt(Math.tan(glidePathPercentage * Math.PI / 180));
   }
 
-  private static IafRoute tryGetIafRoute(IList<IafRoute> routes, Navaid iaf, char category){
-    IafRoute ret = routes.tryGetFirst(q->q.getNavaid().equals(iaf) && q.getCategory().contains(category));
+  private static IafRoute tryGetIafRoute(IList<IafRoute> routes, Navaid iaf, char category) {
+    IafRoute ret = routes.tryGetFirst(q -> q.getNavaid().equals(iaf) && q.getCategory().contains(category));
     return ret;
   }
 
@@ -183,7 +181,7 @@ public abstract class Approach {
     CurrentApproachInfo ret;
     IlsApproach tmp = (IlsApproach) CollectionUtils.tryGetFirst(apps, o -> o instanceof IlsApproach);
     IlsApproach.Type catKey = typeToIlsType(type);
-    IlsApproach.Category cat = tmp.getCategories().getFirst(q->q.getType() == catKey);
+    IlsApproach.Category cat = tmp.getCategories().getFirst(q -> q.getType() == catKey);
 
     Navaid iaf = tryGetIafNavaidCloseToPlaneLocation(tmp, planeLocation);
 
@@ -194,12 +192,12 @@ public abstract class Approach {
       iafCommands = new SpeechList<>(iafRoute.getRouteCommands());
     else
       iafCommands = new SpeechList<>();
-    iafCommands.add(new ChangeAltitudeCommand( ChangeAltitudeCommand.eDirection.descend, tmp.getInitialAltitude()));
+    iafCommands.add(new ChangeAltitudeCommand(ChangeAltitudeCommand.eDirection.descend, tmp.getInitialAltitude()));
     SpeechList<IFromAtc> gaCommands = new SpeechList<>(tmp.getGaCommands());
     Coordinate faf = Coordinates.getCoordinate(
-        tmp.getParent().getCoordinate(), Headings.getOpposite(tmp.getRadial()), 10);
+        tmp.getParent().getCoordinate(), Headings.getOpposite(tmp.getGeographicalRadial()), 10);
     Coordinate mapt = tmp.getParent().getCoordinate();
-    int course = tmp.getRadial();
+    int course = tmp.getGeographicalRadial();
     int mda = cat.getDA(category);
     double slope = getSlope(tmp.getGlidePathPercentage());
 
@@ -224,14 +222,14 @@ public abstract class Approach {
       iafCommands = new SpeechList<>(iafRoute.getRouteCommands());
     else
       iafCommands = new SpeechList<>();
-    iafCommands.add(new ChangeAltitudeCommand( ChangeAltitudeCommand.eDirection.descend, tmp.getInitialAltitude()));
+    iafCommands.add(new ChangeAltitudeCommand(ChangeAltitudeCommand.eDirection.descend, tmp.getInitialAltitude()));
     SpeechList<IFromAtc> gaCommands = new SpeechList<>(tmp.getGaCommands());
     Coordinate faf = tmp.getFaf().getCoordinate();
     Coordinate mapt = tmp.getMAPt();
-    int course = tmp.getRadial();
+    int course = tmp.getGeographicalRadial();
     int mda = tmp.getMDA(category);
 
-    double faf2maptDistance = Coordinates.getDistanceInNM(faf, mapt );
+    double faf2maptDistance = Coordinates.getDistanceInNM(faf, mapt);
     double faf2maptAltitude = tmp.getInitialAltitude() - mda;
     double slope = faf2maptAltitude / faf2maptDistance;
 
@@ -252,12 +250,12 @@ public abstract class Approach {
       iafCommands = new SpeechList<>(iafRoute.getRouteCommands());
     else
       iafCommands = new SpeechList<>();
-    iafCommands.add(new ChangeAltitudeCommand( ChangeAltitudeCommand.eDirection.descend, tmp.getInitialAltitude()));
+    iafCommands.add(new ChangeAltitudeCommand(ChangeAltitudeCommand.eDirection.descend, tmp.getInitialAltitude()));
     SpeechList<IFromAtc> gaCommands = new SpeechList<>(tmp.getGaCommands());
     Coordinate faf = Coordinates.getCoordinate(
-        tmp.getParent().getCoordinate(), Headings.getOpposite(tmp.getRadial()), 10);
+        tmp.getParent().getCoordinate(), Headings.getOpposite(tmp.getGeographicalRadial()), 10);
     Coordinate mapt = tmp.getParent().getCoordinate();
-    int course = tmp.getRadial();
+    int course = tmp.getGeographicalRadial();
     int mda = tmp.getDA(category);
     double slope = getSlope(tmp.getGlidePathPercentage());
 
@@ -290,6 +288,10 @@ public abstract class Approach {
     }
   }
 
+  public int getInitialAltitude() {
+    return initialAltitude;
+  }
+
   public IList<IafRoute> getIafRoutes() {
     return iafRoutes;
   }
@@ -298,7 +300,11 @@ public abstract class Approach {
     return _gaCommands;
   }
 
-  public int getRadial() {
+  public int getGeographicalRadial() {
+    return geographicalRadial;
+  }
+
+  public int getMagneticalRadial() {
     return radial;
   }
 
@@ -314,7 +320,12 @@ public abstract class Approach {
       iafRoute.bind();
     }
 
+
     _bind();
+
+    this.geographicalRadial = (int) Math.round(
+        Headings.add(this.radial,
+            this.getParent().getParent().getParent().getDeclination()));
   }
 
   public String getGaRoute() {

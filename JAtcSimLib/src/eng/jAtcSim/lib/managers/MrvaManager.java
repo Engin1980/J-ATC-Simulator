@@ -62,9 +62,15 @@ public class MrvaManager {
         Airplane.State.landed
     )) {
       airplane.setMrvaError(false);
+      if (maps.get(airplane) != null) maps.set(airplane, null);
     } else {
       XMRVA m = maps.get(airplane);
-      if (m == null || m.isIn(airplane.getCoordinate()) == false) {
+      boolean findNewOne = false;
+      if (m == null && airplane.getVerticalSpeed() <= 0)
+        findNewOne = true;
+      else if (m != null && m.isIn(airplane.getCoordinate()) == false)
+        findNewOne = true;
+      if (findNewOne) {
         m = this.mrvas.tryGetFirst(q -> q.isIn(airplane.getCoordinate()));
         maps.set(airplane, m);
       }

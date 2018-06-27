@@ -8,6 +8,7 @@ package eng.jAtcSim.lib.airplanes;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.pilots.Pilot;
 import eng.eSystem.EStringBuilder;
+import eng.jAtcSim.lib.global.Headings;
 import eng.jAtcSim.lib.global.logging.AbstractSaver;
 import eng.jAtcSim.lib.global.logging.FileSaver;
 import eng.jAtcSim.lib.global.logging.Recorder;
@@ -76,7 +77,10 @@ public class FlightRecorder extends Recorder {
     sb.appendFormat(" %20s  ", plane.getCoordinate().toString()).append(SEPARATOR);
 
     // heading
-    sb.appendFormat(" H:%5s => %5s ", plane.getHeadingS(), plane.getTargetHeadingS()).append(SEPARATOR);
+    sb.appendFormat(" H:%5s => %03d/%03d  ", plane.getHeadingS(),
+        plane.getTargetHeadingS(),
+        Headings.add(plane.getTargetHeading(), -Acc.airport().getDeclination())
+        ).append(SEPARATOR);
 
     // alt
     sb.appendFormat(" A:%7.0f (%5.0f) => %7d ", plane.getAltitude(), plane.getVerticalSpeed(), plane.getTargetAltitude()).append(SEPARATOR);

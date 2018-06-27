@@ -647,11 +647,34 @@ public class Pilot {
       parent.setTargetHeading(approach.getCourse());
 
       Pilot.this.afterCommands.clearAll();
+
       SpeechList<IFromAtc> gas = new SpeechList<>(this.approach.getGaRoute());
+      gas.insert(0, new ChangeHeadingCommand((int) this.approach.getThreshold().getCourse(), ChangeHeadingCommand.eDirection.any));
+
+      // check if is before runway threshold.
+      // if is far before, then first point will still be runway threshold
+      if (isBeforeRunwayThreshold()){
+        String runwayThresholdNavaidName =
+            this.approach.getThreshold().getParent().getParent().getIcao() + ":" + this.approach.getThreshold().getName();
+        Navaid runwayThresholdNavaid = Acc.area().getNavaids().getOrGenerate(runwayThresholdNavaidName);
+        gas.insert(0, new ProceedDirectCommand(runwayThresholdNavaid));
+        gas.insert(1, new ThenCommand());
+      }
+
       expandThenCommands(gas);
       processSpeeches(gas, CommandSource.procedure);
+    }
 
-
+    private boolean isBeforeRunwayThreshold() {
+      double dist = Coordinates.getDistanceInNM(parent.getCoordinate(), this.approach.getThreshold().getCoordinate());
+      double hdg = Coordinates.getBearing(parent.getCoordinate(), this.approach.getThreshold().getCoordinate());
+      boolean ret;
+      if (dist < 3)
+        ret = false;
+      else {
+        ret = Headings.isBetween(this.approach.getCourse()-70, hdg, this.approach.getCourse()+70);
+      }
+      return ret;
     }
 
     private boolean updateAltitudeOnApproach(boolean checkIfIsAfterThreshold) {

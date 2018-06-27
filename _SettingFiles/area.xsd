@@ -143,6 +143,7 @@
     <xs:attribute name="transitionAltitude" type="xs:integer" use="required"/>
     <xs:attribute name="vfrAltitude" type="xs:integer" use="optional"/>
     <xs:attribute name="mainAirportNavaidName" type="xs:string" use="required"/>
+    <xs:attribute name="declination" type="xs:double" use="required" />
   </xs:complexType>
 
   <xs:complexType name="traffic">
