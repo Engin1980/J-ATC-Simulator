@@ -192,7 +192,7 @@ public class TowerAtc extends ComputerAtc {
   }
 
   @Override
-  protected void processMessageFromAtc(Message m) {
+  protected void processNonPlaneSwitchMessageFromAtc(Message m) {
     if (m.getContent() instanceof eng.jAtcSim.lib.speaking.fromAtc.atc2atc.RunwayCheck) {
       eng.jAtcSim.lib.speaking.fromAtc.atc2atc.RunwayCheck rrct = m.getContent();
       processMessageFromAtc(rrct);

@@ -219,6 +219,18 @@ private CommonRecorder tmpRecorder = new CommonRecorder("Plane-responsibility-ma
         || s == eState.twr2appReady;
   }
 
+  public boolean isRequestedToSwitch(Airplane plane, Atc atc){
+    eState s = map.get(plane);
+    boolean ret;
+    ret = (s == eState.app2ctr && atc.getType()==Atc.eType.ctr)
+        || (s == eState.app2twr && atc.getType()==Atc.eType.twr);
+    return ret;
+  }
+
+  public eState getState(Airplane plane){
+    return map.get(plane);
+  }
+
   public Atc getResponsibleAtc(Airplane plane) {
     eState s = map.get(plane);
     switch (s) {
@@ -306,6 +318,16 @@ private CommonRecorder tmpRecorder = new CommonRecorder("Plane-responsibility-ma
     } catch (XmlSerializationException e) {
       throw new EApplicationException("Failed to store PlaneResponsibilityManager.", e);
     }
+  }
+
+  public void abortSwitch(Airplane plane,Atc oldAtc, Atc newAtc) {
+    eState renewState = typeToState(newAtc);
+    map.set(plane, renewState);
+
+    oldAtc.unregisterPlaneUnderControl(plane, false);
+    lst.get(oldAtc).remove(plane);
+    lst.get(newAtc).add(plane);
+    newAtc.registerNewPlaneUnderControl(plane, false);
   }
 
   boolean isToSwitch(Airplane p) {

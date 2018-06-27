@@ -49,7 +49,7 @@ public class CenterAtc extends ComputerAtc {
   }
 
   @Override
-  protected void processMessageFromAtc(Message m) {
+  protected void processNonPlaneSwitchMessageFromAtc(Message m) {
     // do nothing , ctr has no messages acceptable from ATC
     super.sendMessage(new Message(
         this,

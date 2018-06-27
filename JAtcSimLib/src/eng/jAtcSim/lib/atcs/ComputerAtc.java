@@ -94,29 +94,35 @@ public abstract class ComputerAtc extends Atc {
             new SwitchRequest(targetAtc, plane));
       } else {
         // other ATC asks to let us accept the plane
-        RequestResult planeAcceptance = canIAcceptPlane(plane);
-        if (planeAcceptance.isAccepted) {
-          this.confirmSwitch(plane, targetAtc);
-          this.approveSwitch(plane);
+        if (getPrm().getResponsibleAtc(plane).equals(this)) {
+          if (plane.getTunedAtc().equals(Acc.atcApp())) {
+            this.abortSwitch(plane, plane.getTunedAtc());
+          } else {
+            this.refuseSwitch(plane, targetAtc, "Under my control, not intended to be switched.?t");
+          }
         } else {
-          this.refuseSwitch(plane, targetAtc, planeAcceptance.message);
+          RequestResult planeAcceptance = canIAcceptPlane(plane);
+          if (planeAcceptance.isAccepted) {
+            this.confirmSwitch(plane, targetAtc);
+            this.approveSwitch(plane);
+          } else {
+            this.refuseSwitch(plane, targetAtc, planeAcceptance.message);
+          }
         }
       }
     } else {
-      processMessageFromAtc(m);
+      processNonPlaneSwitchMessageFromAtc(m);
     }
   }
 
-  @Override
-  public void init() {
+  private void abortSwitch(Airplane plane, Atc targetAtc) {
+    getPrm().abortSwitch(plane, this, targetAtc);
+    Message m = new Message(this, targetAtc,
+        new PlaneSwitchMessage(plane, false, "canceled"));
+    sendMessage(m);
   }
 
-  @Override
-  public boolean isHuman() {
-    return false;
-  }
-
-  protected abstract void processMessageFromAtc(Message m);
+  protected abstract void processNonPlaneSwitchMessageFromAtc(Message m);
 
   protected abstract boolean shouldBeSwitched(Airplane plane);
 
@@ -211,13 +217,22 @@ public abstract class ComputerAtc extends Atc {
     LoadSave.loadField(elm, this, "waitingRequestsList");
     LoadSave.loadField(elm, this, "confirmedRequestList");
   }
+
+  @Override
+  public void init() {
+  }
+
+  @Override
+  public boolean isHuman() {
+    return false;
+  }
 }
 
 class SwitchRequest {
   public final Atc atc;
   public final Airplane airplane;
 
-  private SwitchRequest(){
+  private SwitchRequest() {
     atc = null;
     airplane = null;
   }

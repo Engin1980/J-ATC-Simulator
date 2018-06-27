@@ -31,18 +31,9 @@ public class UserAtc extends Atc {
     throwExceptions,
     sendSystemErrors
   }
+
   private final Parser parser = new ShortBlockParser();
   private eErrorBehavior errorBehavior = eErrorBehavior.sendSystemErrors;
-
-  @Override
-  protected void _save(XElement elm){
-
-  }
-
-  @Override
-  protected void _load(XElement elm){
-
-  }
 
   public UserAtc(AtcTemplate template) {
     super(template);
@@ -54,25 +45,6 @@ public class UserAtc extends Atc {
 
   public void setErrorBehavior(eErrorBehavior errorBehavior) {
     this.errorBehavior = errorBehavior;
-  }
-
-  @Override
-  public void unregisterPlaneUnderControl(Airplane plane, boolean finalUnergistration) {
-
-  }
-
-  @Override
-  public void registerNewPlaneUnderControl(Airplane plane, boolean finalRegistration) {
-
-  }
-
-  @Override
-  public void init() {
-  }
-
-  @Override
-  public boolean isHuman() {
-    return true;
   }
 
   public void elapseSecond() {
@@ -131,7 +103,7 @@ public class UserAtc extends Atc {
 
   public void sendToAtc(Atc.eType type, Squawk squawk) {
     Airplane plane = Airplanes.tryGetBySqwk(Acc.planes(), squawk);
-    if (plane == null){
+    if (plane == null) {
       sendError("SQWK " + squawk.toString() + " does not exist.");
       return;
     }
@@ -150,8 +122,12 @@ public class UserAtc extends Atc {
         getPrm().confirmSwitch(this, plane);
       }
     } else {
-      // je nova zadost APP -> ???
-      getPrm().requestSwitch(this, atc, plane);
+      if (getPrm().getResponsibleAtc(plane).equals(this))
+        // je nova zadost APP -> ???
+        getPrm().requestSwitch(this, atc, plane);
+      else
+        // je to zruseni zadosti o switch
+        getPrm().requestSwitch(getPrm().getResponsibleAtc(plane), this, plane);
     }
 
     PlaneSwitchMessage msg = new PlaneSwitchMessage(plane);
@@ -174,6 +150,35 @@ public class UserAtc extends Atc {
 
   public Parser getParser() {
     return parser;
+  }
+
+  @Override
+  protected void _save(XElement elm) {
+
+  }
+
+  @Override
+  protected void _load(XElement elm) {
+
+  }
+
+  @Override
+  public void unregisterPlaneUnderControl(Airplane plane, boolean finalUnergistration) {
+
+  }
+
+  @Override
+  public void registerNewPlaneUnderControl(Airplane plane, boolean finalRegistration) {
+
+  }
+
+  @Override
+  public void init() {
+  }
+
+  @Override
+  public boolean isHuman() {
+    return true;
   }
 
   private void raiseError(String text) {
