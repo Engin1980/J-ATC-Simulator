@@ -384,7 +384,7 @@ public class SwingRadarPanel extends JPanel {
         ret = true;
       }
     } catch (Throwable t) {
-      throw new ERuntimeException("Message invocation failed for speech: " + msg, t);
+      throw new ERuntimeException("Message invocation failed for item: " + msg, t);
     }
     return ret;
   }

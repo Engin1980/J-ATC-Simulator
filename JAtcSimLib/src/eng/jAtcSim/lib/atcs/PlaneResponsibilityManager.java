@@ -106,11 +106,12 @@ private CommonRecorder tmpRecorder = new CommonRecorder("Plane-responsibility-ma
   public void requestSwitch(Atc from, Atc to, Airplane plane) {
     eState st = typeToState(from);
     if (map.get(plane) != st) {
-      StringBuilder sb = new StringBuilder();
-      sb.append("Code ").append(plane.getSqwk().toString()).append(" err: ");
-      sb.append(" Cannot request switch. Atc ").append(from.getName()).append(" is not responsible for plane.");
-      Message m = new Message(Messenger.SYSTEM, Acc.atcApp(), new StringMessageContent(sb.toString()));
-      Acc.messenger().send(m);
+//      StringBuilder sb = new StringBuilder();
+//      sb.append("Code ").append(plane.getSqwk().toString()).append(" err: ");
+//      sb.append(" Cannot request switch. Atc ").append(from.getName()).append(" is not responsible for plane.");
+//      Message m = new Message(Messenger.SYSTEM, Acc.atcApp(), new StringMessageContent(sb.toString()));
+//      Acc.messenger().send(m);
+      // message is sent via ATC
       return;
     }
 

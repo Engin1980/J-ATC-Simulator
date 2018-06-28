@@ -39,7 +39,7 @@ public class FrmView extends JFrame {
 
     this.parent = pack;
 
-    BehaviorSettings behSett = new BehaviorSettings(false, new LongFormatter(),10);
+    BehaviorSettings behSett = new BehaviorSettings(false, new LongFormatter());
 
     SwingRadarPanel srp = new SwingRadarPanel();
     srp.init(this.parent.getSim().getActiveAirport().getInitialPosition(),

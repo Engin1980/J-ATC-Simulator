@@ -22,7 +22,7 @@
 //    return null;
 //  }
 //
-//  public static <T extends KeyItem<K>, K> T get(Iterable<T> lst, K key) {
+//  public static <T extends KeyItem<K>, K> T getAndElapse(Iterable<T> lst, K key) {
 //    for (T item : lst) {
 //      if (item.getKey().equals(key)) {
 //        return item;

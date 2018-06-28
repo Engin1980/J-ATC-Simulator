@@ -41,7 +41,7 @@
 //    return null;
 //  }
 //
-//  public TValue get(TKey key) {
+//  public TValue getAndElapse(TKey key) {
 //    for (TValue item : this) {
 //      if (item.getKey().equals(key)) {
 //        return item;

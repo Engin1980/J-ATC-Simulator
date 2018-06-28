@@ -353,7 +353,7 @@ public class Radar {
 
     buildLocalNavaidList();
 
-    this.messageManager = new MessageManager(this.behaviorSettings.getDisplayTextDelay());
+    this.messageManager = new MessageManager(this.displaySettings.displayTextDelay);
 
     this.c.getMouseEvent().add(
         (sender, e) -> Radar.this.canvas_onMouseMove((ICanvas) sender, (EMouseEventArg) e));
@@ -1023,7 +1023,7 @@ public class Radar {
 
   private void drawCaptions() {
     Messenger ms = simulation.getMessenger();
-    List<Message> msgs = ms.getByTarget(simulation.getAppAtc(), true);
+    IList<Message> msgs = ms.getByTarget(simulation.getAppAtc(), true);
 
     for (Message msg : msgs) {
       String formattedText =
@@ -1032,7 +1032,7 @@ public class Radar {
     }
 
     boolean containsSystemMessage =
-        msgs.stream().anyMatch(q -> q.isSourceOfType(Messenger.XSystem.class));
+        msgs.isAny(q -> q.isSourceOfType(Messenger.XSystem.class));
 
     List<Message> atcMsgs = CollectionUtils.where(msgs, q -> q.isSourceOfType(Atc.class));
     boolean containsAtcMessage = atcMsgs.isEmpty() == false;

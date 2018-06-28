@@ -564,17 +564,17 @@ public class TowerAtc extends ComputerAtc {
     Airplane toReadyPlane = linedUpPlanesList.get(0);
 
     // gets available thresholds
-    // first get those whose are not under maintenance
+    // first getAndElapse those whose are not under maintenance
     IList<RunwayThreshold> availableThresholds = inUseInfo.current.where(q -> runwayChecks.get(q.getParent()).isActive() == false);
-    // then get those which has no close landing
+    // then getAndElapse those which has no close landing
     availableThresholds = availableThresholds.where(q -> closestLandingPlaneDistance(q) > 2.5);
-    // then get those which has departed at least 1 minute before
+    // then getAndElapse those which has departed at least 1 minute before
     availableThresholds = availableThresholds.where(
         q->!takeOffInfos.containsKey(q) || takeOffInfos.get(q).takeOffTime.addSeconds(60).isBeforeOrEq(Acc.now()));
     // kick out if no runway left
     if (availableThresholds.isEmpty()) return;
 
-    // get those where separation is ok
+    // getAndElapse those where separation is ok
     {
       IList<RunwayThreshold> tmp = new EList<>();
       for (RunwayThreshold threshold : availableThresholds) {

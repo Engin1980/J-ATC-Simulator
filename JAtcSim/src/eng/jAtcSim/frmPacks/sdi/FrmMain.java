@@ -1,16 +1,14 @@
 package eng.jAtcSim.frmPacks.sdi;
 
-import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IMap;
 import eng.eSystem.utilites.awt.ComponentUtils;
 import eng.jAtcSim.frmPacks.shared.*;
-import eng.jAtcSim.lib.Game;
 import eng.jAtcSim.lib.airplanes.Callsign;
-import eng.jAtcSim.lib.coordinates.Coordinate;
 import eng.jAtcSim.lib.speaking.formatting.LongFormatter;
 import eng.jAtcSim.lib.world.InitialPosition;
 import eng.jAtcSim.radarBase.BehaviorSettings;
 import eng.jAtcSim.radarBase.RadarViewPort;
+import eng.jAtcSim.radarBase.global.SoundManager;
 import eng.jAtcSim.recording.Recording;
 import eng.jAtcSim.recording.Settings;
 import eng.jAtcSim.shared.LayoutManager;
@@ -19,6 +17,7 @@ import eng.jAtcSim.startup.extenders.SwingFactory;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.File;
@@ -26,6 +25,8 @@ import java.io.IOException;
 
 public class FrmMain extends JFrame {
 
+  private static final String SOUND_OFF_LABEL = "Sound off";
+  private static final String SOUND_ON_LABEL = "Sound on";
   private Recording recording = null;
   private Pack parent;
   private JPanel pnlContent;
@@ -37,6 +38,7 @@ public class FrmMain extends JFrame {
   private FlightListPanel flightListPanel;
   private CommandButtonsPanel pnlCommands;
   private String lastFileName = null;
+  private JButton btnSound;
 
   public FrmMain() {
     initComponents();
@@ -164,10 +166,20 @@ public class FrmMain extends JFrame {
     adjustJComponentColors(btnRecording);
     btnRecording.addActionListener(q -> btnRecording_click());
 
+    btnSound = new JButton(SOUND_OFF_LABEL);
+    adjustJComponentColors(btnSound);
+    btnSound.addActionListener(this::btnSound_click);
+
     JPanel ret = LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.middle, 4,
         btnStrips, btnCommands, btnMovs, btnPause, btnSave, btnView, btnRecording);
     ret.setName("pnlTop");
     return ret;
+  }
+
+
+  private void btnSound_click(ActionEvent actionEvent) {
+    SoundManager.switchEnabled();
+    btnSound.setText(SoundManager.isEnabled() ? SOUND_OFF_LABEL : SOUND_ON_LABEL);
   }
 
   private void btnRecording_click() {
@@ -197,7 +209,7 @@ public class FrmMain extends JFrame {
   }
 
   private void recording_recordingStarted(Settings q) {
-    BehaviorSettings bs = new BehaviorSettings(false, new LongFormatter(), 0);
+    BehaviorSettings bs = new BehaviorSettings(false, new LongFormatter());
 
     InitialPosition initPos = srpRadar.getRadar().getPosition();
 
@@ -228,7 +240,7 @@ public class FrmMain extends JFrame {
     this.parent = pack;
 
     // radar
-    BehaviorSettings behSett = new BehaviorSettings(true, new LongFormatter(), 10);
+    BehaviorSettings behSett = new BehaviorSettings(true, new LongFormatter());
     this.srpRadar = new SwingRadarPanel();
     this.srpRadar.init(
         this.parent.getSim().getActiveAirport().getInitialPosition(),

@@ -430,7 +430,6 @@
     <navaid name="NIZ" type="vor" coordinate="N43 46.2 E007 15.3"/>
     <navaid name="CGS" type="vor" coordinate="N43 38.7 E007 08.8"/>
 
-    <navaid name="NIZ" type="vor" coordinate="N43 46.2 E007 15.3"/>
     <navaid name="STP" type="vor" coordinate="N43 13.2 E006 36.1"/>
     <navaid name="AZR" type="vor" coordinate="N43 39.6 E007 13.5"/>
     <navaid name="CNM" type="vor" coordinate="N43 33.6 E006 52.3"/>
@@ -458,7 +457,6 @@
     <navaid name="RUBAS" type="fix" coordinate="N42 22.6 E006 34.1"/>
     <navaid name="LERMA" type="fix" coordinate="N43 10.0 E007 04.4"/>
     <navaid name="VAREK" type="fix" coordinate="N42 18.8 E007 58.8"/>
-    <navaid name="MERLU" type="fix" coordinate="N43 04.8 E007 47.6"/>
     <navaid name="PERUS" type="fix" coordinate="N44 09.2 E006 06.2"/>
     <navaid name="IRMAR" type="fix" coordinate="N44 48.0 E006 47.4"/>
     <navaid name="BODRU" type="fix" coordinate="N44 12.5 E006 22.7"/>

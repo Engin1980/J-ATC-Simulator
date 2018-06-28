@@ -126,7 +126,7 @@ public class RecordingPanel extends JPanel {
 //    if (sett != null){
 //      fleVideoIn.setFileName(sett.getPath());
 //      fleVideoOut.setFileName(
-//          Paths.get(sett.getPath(), "videoOut.mp4").toString());
+//          Paths.getAndElapse(sett.getPath(), "videoOut.mp4").toString());
 //    }
 //
 //    JPanel ret = LayoutManager.createFormPanel(5, 2,

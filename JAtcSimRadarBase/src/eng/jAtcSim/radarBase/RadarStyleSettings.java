@@ -193,6 +193,8 @@ public class RadarStyleSettings {
   }
   ///end region
 
+  public int displayTextDelay;
+
   public ColorWidthFontSettings infoLine;
 
   // runways

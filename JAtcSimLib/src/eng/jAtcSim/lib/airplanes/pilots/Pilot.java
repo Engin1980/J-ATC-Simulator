@@ -22,13 +22,13 @@ import eng.jAtcSim.lib.airplanes.commandApplications.ConfirmationResult;
 import eng.jAtcSim.lib.atcs.Atc;
 import eng.jAtcSim.lib.coordinates.Coordinate;
 import eng.jAtcSim.lib.coordinates.Coordinates;
+import eng.jAtcSim.lib.global.DelayedList;
 import eng.jAtcSim.lib.global.ETime;
 import eng.jAtcSim.lib.global.Headings;
 import eng.jAtcSim.lib.global.Restriction;
 import eng.jAtcSim.lib.serialization.LoadSave;
 import eng.jAtcSim.lib.speaking.IFromAtc;
 import eng.jAtcSim.lib.speaking.ISpeech;
-import eng.jAtcSim.lib.speaking.SpeechDelayer;
 import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.*;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.IllegalThenCommandRejection;
@@ -975,7 +975,7 @@ public class Pilot {
     extension
   }
 
-  private final SpeechDelayer queue = new SpeechDelayer(2, 7); //Min/max speech delay
+  private final DelayedList<ISpeech> queue = new DelayedList<>(2, 7); //Min/max item delay
   private final AfterCommandList afterCommands = new AfterCommandList();
   private final Map<Atc, SpeechList> saidText = new HashMap<>();
   @XmlIgnore
@@ -1233,7 +1233,7 @@ public class Pilot {
   }
 
   private void processNewSpeeches() {
-    SpeechList current = this.queue.get();
+    SpeechList current = new SpeechList(this.queue.getAndElapse());
 
     if (current.isEmpty()) return;
 

@@ -1,0 +1,123 @@
+<?xml version="1.0"?>
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           targetNamespace="https://github.com/Engin1980/J-ATC-Simulator/radarStyle"
+           xmlns="https://github.com/Engin1980/J-ATC-Simulator/radarStyle"
+           elementFormDefault="qualified">
+
+  <xs:element name="settings" type="settings" />
+
+  <xs:complexType name="settings">
+    <xs:choice>
+      <xs:element name="airproxFull" type="colorElement"/>
+      <xs:element name="airproxWarning" type="colorElement"/>
+      <xs:element name="airproxPartial" type="colorElement"/>
+      <xs:element name="mrvaError" type="colorElement"/>
+
+      <xs:element name="activeRunway" type="colorWidthElement" />
+      <xs:element name="closedRunway" type="colorWidthElement" />
+
+      <xs:element name="navVOR" type="colorWidthBorderElement" />
+      <xs:element name="navNDB" type="colorWidthBorderElement" />
+      <xs:element name="navFix" type="colorWidthBorderElement" />
+      <xs:element name="fafFix" type="colorWidthBorderElement" />
+      <xs:element name="navFixMinor" type="colorWidthBorderElement" />
+      <xs:element name="navAirport" type="colorWidthBorderElement" />
+
+      <xs:element name="borderCountry" type="colorWidthElement" />
+      <xs:element name="borderCtr" type="colorWidthElement" />
+      <xs:element name="borderTma" type="colorWidthElement" />
+      <xs:element name="borderMrva" type="colorWidthFontElement" />
+
+      <xs:element name="infoLine" type="colorWidthFontElement" />
+
+      <xs:element name="mapBackcolor" type="colorElement" />
+
+      <xs:element name="star" type="colorWidthElement" />
+      <xs:element name="sid" type="colorWidthElement" />
+
+      <xs:element name="atc" type="colorFontElement" />
+      <xs:element name="plane" type="colorFontElement" />
+      <xs:element name="system" type="colorFontElement" />
+      <xs:element name="time" type="colorFontElement" />
+      <xs:element name="callsign" type="colorFontElement" />
+      <xs:element name="navaid" type="colorFontElement" />
+
+      <xs:element name="stopped" type="displayLabelElement" />
+      <xs:element name="app" type="displayLabelElement" />
+      <xs:element name="ctr" type="displayLabelElement" />
+      <xs:element name="twr" type="displayLabelElement" />
+      <xs:element name="selected" type="displayLabelElement" />
+      <xs:element name="emergency" type="displayLabelElement" />
+
+    </xs:choice>
+
+    <xs:attribute name="displayTextDelay" type="xs:nonNegativeInteger" use="required" />
+  </xs:complexType>
+
+  <xs:complexType name="displayLabelElement">
+    <xs:attribute name="visible" type="xs:boolean" />
+    <xs:attribute name="color" type="colorValue" use="required" />
+    <xs:attribute name="connectorColor" type="colorValue" use="required" />
+    <xs:attribute name="pointWidth" type="xs:nonNegativeInteger" use="required" />
+    <xs:attribute name="headingLineLength" type="xs:nonNegativeInteger" use="required" />
+    <xs:attribute name="historyDotCount" type="xs:nonNegativeInteger" use="required" />
+    <xs:attribute name="historyDotStep" type="xs:positiveInteger" use="required" />
+    <xs:attribute name="separationRingRadius" type="xs:nonNegativeInteger" use="required" />
+    <xs:attribute name="firstLineFormat" type="xs:string" use="required" />
+    <xs:attribute name="secondLineFormat" type="xs:string" use="required" />
+    <xs:attribute name="thirdLineFormat" type="xs:string" use="required" />
+  </xs:complexType>
+
+  <xs:complexType name="colorFontElement">
+    <xs:sequence>
+      <xs:element name="font" type="fontElement" />
+    </xs:sequence>
+    <xs:attribute name="color" type="colorValue" use="required" />
+  </xs:complexType>
+
+  <xs:complexType name="colorWidthElement">
+    <xs:attribute name="color" type="colorValue" use="required" />
+    <xs:attribute name="width" type="xs:nonNegativeInteger" use="required" />
+  </xs:complexType>
+
+  <xs:complexType name="colorWidthFontElement">
+    <xs:complexContent>
+      <xs:extension base="colorWidthElement">
+        <xs:sequence>
+          <xs:element name="font" type="fontElement" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="fontElement">
+    <xs:attribute name="name" type="xs:string" use="required" />
+    <xs:attribute name="size" type="xs:positiveInteger" use="required" />
+    <xs:attribute name="style" type="xs:integer" use="required" />
+  </xs:complexType>
+
+  <xs:complexType name="colorWidthBorderElement">
+    <xs:complexContent>
+      <xs:extension base="colorWidthElement">
+        <xs:attribute name="borderWidth" type="xs:nonNegativeInteger" use="required" />
+        <xs:attribute name="borderDistance" type="xs:nonNegativeInteger" use="required" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="colorElement">
+    <xs:simpleContent >
+      <xs:restriction base="xs:string" >
+        <xs:pattern value="[0-9A-F]{6}" />
+      </xs:restriction>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:simpleType name="colorValue">
+    <xs:restriction base="xs:string" >
+      <xs:pattern value="[0-9A-F]{6}" />
+    </xs:restriction>
+  </xs:simpleType>
+
+</xs:schema>

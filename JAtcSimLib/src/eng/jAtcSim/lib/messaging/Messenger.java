@@ -1,5 +1,7 @@
 package eng.jAtcSim.lib.messaging;
 
+import eng.eSystem.collections.EList;
+import eng.eSystem.collections.IList;
 import eng.eSystem.xmlSerialization.XmlIgnore;
 import eng.eSystem.xmlSerialization.XmlOptional;
 
@@ -26,7 +28,7 @@ public class Messenger {
   }
 
   public static final XSystem SYSTEM = new XSystem();
-  private List<Message> inner = new LinkedList<>();
+  private IList<Message> inner = new EList<>(LinkedList.class);
   @XmlIgnore
   private MessengerRecorder recorder = new MessengerRecorder("Messenger log", "messenger.log");
 
@@ -37,17 +39,19 @@ public class Messenger {
     }
   }
 
-  public List<Message> getByTarget(IMessageParticipant participant, boolean deleteRetrieved) {
-    List<Message> ret;
+  public IList<Message> getByTarget(IMessageParticipant participant, boolean deleteRetrieved) {
+    IList<Message> ret;
+
     synchronized (inner) {
-      ret =
-          inner.stream().filter(q -> q.getTarget() == participant).collect(Collectors.toList());
-      if (deleteRetrieved){
-        inner.removeAll(ret);
-        ret.stream().forEach(q -> {recorder.recordMessage(MessengerRecorder.eAction.GET, q) ;});
+      ret = inner.where(q->q.getTarget() == participant);
+      if (deleteRetrieved) {
+        inner.remove(ret);
+        ret.forEach(q->recorder.recordMessage(MessengerRecorder.eAction.GET,q ));
       }
     }
+
     return ret;
+
   }
 
 }

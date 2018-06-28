@@ -6,6 +6,7 @@
 package eng.jAtcSim.lib.airplanes;
 
 import com.sun.istack.internal.Nullable;
+import eng.eSystem.collections.IList;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.utilites.NumberUtils;
@@ -813,14 +814,14 @@ public class Airplane implements IMessageParticipant {
   }
 
   private void processMessages() {
-    List<Message> msgs = Acc.messenger().getByTarget(this, true);
+    IList<Message> msgs = Acc.messenger().getByTarget(this, true);
     for (Message m : msgs) {
       processMessage(m);
     }
   }
 
   private void processMessage(Message msg) {
-    // if speech from non-tuned ATC, then is ignored
+    // if item from non-tuned ATC, then is ignored
     if (msg.getSource() != this.pilot.getTunedAtc()) {
       return;
     }

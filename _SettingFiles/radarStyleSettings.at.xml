@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<settings refreshRate="3">
+<settings
+        xmlns="https://github.com/Engin1980/J-ATC-Simulator/radarStyle"
+        displayTextDelay="27">
 
   <airproxFull>FF0000</airproxFull>
   <airproxWarning>FFA500</airproxWarning>

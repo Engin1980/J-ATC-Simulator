@@ -501,7 +501,7 @@ public class Simulation {
   }
 
   private void processSystemMessages() {
-    List<Message> systemMessages = Acc.messenger().getByTarget(messenger.SYSTEM, true);
+    IList<Message> systemMessages = Acc.messenger().getByTarget(messenger.SYSTEM, true);
 
     for (Message m : systemMessages) {
       processSystemMessage(m);

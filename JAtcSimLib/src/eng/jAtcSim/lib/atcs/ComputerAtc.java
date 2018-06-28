@@ -9,6 +9,7 @@ import eng.eSystem.eXml.XElement;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.AirplaneList;
+import eng.jAtcSim.lib.global.DelayedList;
 import eng.jAtcSim.lib.messaging.Message;
 import eng.jAtcSim.lib.serialization.LoadSave;
 import eng.jAtcSim.lib.speaking.SpeechList;
@@ -35,6 +36,7 @@ public abstract class ComputerAtc extends Atc {
   private final WaitingList waitingRequestsList = new WaitingList();
   private final IList<SwitchRequest> confirmedRequestList = new EList<>();
 
+  private final DelayedList<Message> speechDelayer = new DelayedList<>(3, 25);
 
   public ComputerAtc(AtcTemplate template) {
     super(template);
@@ -42,10 +44,13 @@ public abstract class ComputerAtc extends Atc {
 
   public void elapseSecond() {
 
-    List<Message> msgs = Acc.messenger().getByTarget(this, true);
+    IList<Message> msgs = Acc.messenger().getByTarget(this, true);
+    speechDelayer.add(msgs);
+
+    msgs = speechDelayer.getAndElapse();
 
     for (Message m : msgs) {
-      recorder.write(m); // incoming speech
+      recorder.write(m); // incoming item
 
       if (m.isSourceOfType(Airplane.class)) {
         // messages from planes
@@ -98,7 +103,7 @@ public abstract class ComputerAtc extends Atc {
           if (plane.getTunedAtc().equals(Acc.atcApp())) {
             this.abortSwitch(plane, plane.getTunedAtc());
           } else {
-            this.refuseSwitch(plane, targetAtc, "Under my control, not intended to be switched.?t");
+            this.refuseSwitch(plane, targetAtc, "Under my control, not intended to be switched.");
           }
         } else {
           RequestResult planeAcceptance = canIAcceptPlane(plane);

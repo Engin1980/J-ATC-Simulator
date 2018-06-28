@@ -5,4 +5,5 @@
   <startupSettingsFile>$app$\_SettingFiles\defaultStartupSettings.ss.xml</startupSettingsFile>
   <stripSettings>$app$\_SettingFiles\stripSettings.at.xml</stripSettings>
   <radarStyleSettings>$app$\_SettingFiles\radarStyleSettings.at.xml</radarStyleSettings>
+  <displayTextDelay>30</displayTextDelay>
 </settings>

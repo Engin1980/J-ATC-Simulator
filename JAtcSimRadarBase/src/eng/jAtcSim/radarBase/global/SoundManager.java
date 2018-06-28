@@ -12,16 +12,16 @@ import java.nio.file.Paths;
 public class SoundManager {
   //TODO this class should be somehow rewritten to be a non-static and configurable
 
-
   private static Clip planeClip = null;
   private static Clip atcClip = null;
   private static Clip planeNegClip = null;
   private static Clip atcNegClip = null;
   private static Clip systemClip = null;
   private static Clip airproxClip = null;
+  private static boolean enabled = true;
 
   public static void init(String wavFolderPath) {
-    AudioInputStream audioStream = null;
+    AudioInputStream audioStream;
 
     Path p = Paths.get(wavFolderPath);
     File planeMessageFile = Paths.get(wavFolderPath, "plane.wav").toFile();
@@ -62,31 +62,44 @@ public class SoundManager {
 
   public static void playAtcNewMessage(boolean isNegative) {
     if (!isNegative) {
-      atcClip.setMicrosecondPosition(0);
-      atcClip.start();
+      playClip(atcClip);
     } else {
-      atcNegClip.setMicrosecondPosition(0);
-      atcNegClip.start();
+      playClip(atcNegClip);
     }
   }
 
   public static void playPlaneNewMessage(boolean isNegative) {
     if (!isNegative) {
-      planeClip.setMicrosecondPosition(0);
-      planeClip.start();
+      playClip(planeClip);
     } else {
-      planeNegClip.setMicrosecondPosition(0);
-      planeNegClip.start();
+      playClip(planeNegClip);
     }
   }
 
+  public static void switchEnabled() {
+    SoundManager.enabled = !SoundManager.enabled;
+  }
+
+  public static boolean isEnabled() {
+    return SoundManager.enabled;
+  }
+
+  public static void setEnabled(boolean enabled) {
+    SoundManager.enabled = enabled;
+  }
+
   public static void playSystemMessage() {
-    systemClip.setMicrosecondPosition(0);
-    systemClip.start();
+    playClip(systemClip);
   }
 
   public static void playAirprox() {
-    airproxClip.setMicrosecondPosition(0);
-    airproxClip.start();
+    playClip(airproxClip);
+  }
+
+  private static void playClip(Clip clip) {
+    if (enabled) {
+      clip.setMicrosecondPosition(0);
+      clip.start();
+    }
   }
 }

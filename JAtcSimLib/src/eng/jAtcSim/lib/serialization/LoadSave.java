@@ -67,7 +67,7 @@ public class LoadSave {
 //    if (s.equals("(null)"))
 //      ret = null;
 //    else
-//      ret = elm.getAttributes().get(name);
+//      ret = elm.getAttributes().getAndElapse(name);
 //    return ret;
 //  }
 
