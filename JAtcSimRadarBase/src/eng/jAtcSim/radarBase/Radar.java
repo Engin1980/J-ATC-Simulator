@@ -710,31 +710,48 @@ public class Radar {
     RadarStyleSettings.ColorWidthSettings ds = getDispSettBy(border);
 
     Coordinate last = null;
-    for (int i = 0; i < border.getPoints().size(); i++) {
-      BorderPoint bp = border.getPoints().get(i);
-      if (bp instanceof BorderExactPoint) {
-        BorderExactPoint bep = (BorderExactPoint) bp;
-        if (last != null) {
-          tl.drawLine(last, bep.getCoordinate(), ds.getColor(), ds.getWidth());
-        }
-        last = bep.getCoordinate();
-      } else if (bp instanceof BorderArcPoint) {
-        BorderExactPoint bPrev = (BorderExactPoint) border.getPoints().get(i - 1);
-        BorderExactPoint bNext = (BorderExactPoint) border.getPoints().get(i + 1);
-        drawArc(bPrev, (BorderArcPoint) bp, bNext, ds.getColor());
-        last = null;
-      } else {
-        throw new UnsupportedOperationException();
+    for (int i = 0; i < border.getExactPoints().size(); i++) {
+      BorderExactPoint bep = border.getExactPoints().get(i);
+      if (last != null) {
+        tl.drawLine(last, bep.getCoordinate(), ds.getColor(), ds.getWidth());
       }
+      last = bep.getCoordinate();
     }
 
-    if (border.isEnclosed() && !border.getPoints().isEmpty()) {
-      BorderExactPoint lastP = (BorderExactPoint) border.getPoints().get(border.getPoints().size() - 1);
-      BorderExactPoint firstP = (BorderExactPoint) border.getPoints().get(0);
-      tl.drawLine(
-          lastP.getCoordinate(), firstP.getCoordinate(),
-          ds.getColor(), ds.getWidth());
-    }
+//    if (border.isEnclosed() && !border.getPoints().isEmpty()) {
+//      BorderExactPoint lastP = (BorderExactPoint) border.getPoints().get(border.getPoints().size() - 1);
+//      BorderExactPoint firstP = (BorderExactPoint) border.getPoints().get(0);
+//      tl.drawLine(
+//          lastP.getCoordinate(), firstP.getCoordinate(),
+//          ds.getColor(), ds.getWidth());
+//    }
+
+//    Coordinate last = null;
+//    for (int i = 0; i < border.getPoints().size(); i++) {
+//      BorderPoint bp = border.getPoints().get(i);
+//      if (bp instanceof BorderExactPoint) {
+//        BorderExactPoint bep = (BorderExactPoint) bp;
+//        if (last != null) {
+//          tl.drawLine(last, bep.getCoordinate(), ds.getColor(), ds.getWidth());
+//        }
+//        last = bep.getCoordinate();
+//      } else if (bp instanceof BorderArcPoint) {
+//        BorderExactPoint bPrev = (BorderExactPoint) border.getPoints().get(i - 1);
+//        BorderExactPoint bNext = (BorderExactPoint) border.getPoints().get(i + 1);
+//        drawArc(bPrev, (BorderArcPoint) bp, bNext, ds.getColor());
+//        last = null;
+//      } else {
+//        throw new UnsupportedOperationException();
+//      }
+//    }
+//
+//    if (border.isEnclosed() && !border.getPoints().isEmpty()) {
+//      BorderExactPoint lastP = (BorderExactPoint) border.getPoints().get(border.getPoints().size() - 1);
+//      BorderExactPoint firstP = (BorderExactPoint) border.getPoints().get(0);
+//      tl.drawLine(
+//          lastP.getCoordinate(), firstP.getCoordinate(),
+//          ds.getColor(), ds.getWidth());
+//    }
   }
 
   private void drawRoutes(boolean drawArrivalRoutes, boolean drawDepartureRoutes) {

@@ -20,6 +20,13 @@ public class BorderExactPoint extends BorderPoint {
     return coordinate;
   }
 
+  public BorderExactPoint() {
+  }
+
+  public BorderExactPoint(Coordinate coordinate) {
+    this.coordinate = coordinate;
+  }
+
   @Override
   public int hashCode() {
     int hash = 7;

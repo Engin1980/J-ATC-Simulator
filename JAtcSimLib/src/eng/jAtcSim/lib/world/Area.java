@@ -112,6 +112,10 @@ public class Area {
   }
 
   private void bind() {
+    for (Border border : borders) {
+      border.bind();
+    }
+
     for (Airport a : this.getAirports()) {
       Acc.setAirport(a);
 
