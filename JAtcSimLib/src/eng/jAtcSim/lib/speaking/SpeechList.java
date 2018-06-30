@@ -13,11 +13,15 @@ public class SpeechList<T extends ISpeech> extends EList<T> implements IMessageC
 
   public SpeechList(T... speeches) {
     super(speeches);
+    if (this.isAny(q -> q == null))
+      throw new EApplicationException("Some speech is null.");
   }
 
 
   public SpeechList(Iterable<? extends T> lst) {
     super(lst);
+    if (this.isAny(q -> q == null))
+      throw new EApplicationException("Some speech is null.");
   }
 
   public IAtcCommand getAsCommand(int index) {
@@ -76,7 +80,7 @@ public class SpeechList<T extends ISpeech> extends EList<T> implements IMessageC
   }
 
   @Override
-  public String toString(){
+  public String toString() {
     EStringBuilder sb = new EStringBuilder();
     sb.appendItems(this, q -> q.toString(), ";");
     return sb.toString();

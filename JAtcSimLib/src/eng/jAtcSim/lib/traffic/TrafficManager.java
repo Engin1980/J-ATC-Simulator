@@ -13,6 +13,9 @@ import eng.jAtcSim.lib.airplanes.Squawk;
 import eng.jAtcSim.lib.coordinates.Coordinate;
 import eng.jAtcSim.lib.coordinates.Coordinates;
 import eng.jAtcSim.lib.global.ETime;
+import eng.jAtcSim.lib.messaging.Message;
+import eng.jAtcSim.lib.messaging.Messenger;
+import eng.jAtcSim.lib.messaging.StringMessageContent;
 import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeAltitudeCommand;
@@ -56,7 +59,11 @@ public class TrafficManager {
     scheduledMovements.remove(readyMovements);
     for (Movement readyMovement : readyMovements) {
       Airplane a = this.convertMovementToAirplane(readyMovement);
-      ret.add(a);
+      if (a == null){
+        Acc.messenger().send(new Message(Messenger.SYSTEM, Acc.atcApp(),
+            new StringMessageContent("Flight " + readyMovement.getCallsign() + " IFR flight plan canceled, no route.")));
+      } else
+        ret.add(a);
     }
 
     return ret;
@@ -91,6 +98,7 @@ public class TrafficManager {
     AirplaneType pt = m.getAirplaneType();
 
     Route route = tryGetRandomIfrRoute(false, pt);
+    if (route == null) return null; // no route means disallowed IFR
     Coordinate coord = Acc.airport().getLocation();
     Squawk sqwk = generateSqwk();
 
@@ -115,20 +123,20 @@ public class TrafficManager {
 
     AirplaneType pt = m.getAirplaneType();
 
-    Route r;
+    Route route;
     Coordinate coord;
     int heading;
     int alt;
     int spd;
     SpeechList<IAtcCommand> initialCommands;
 
-    r = tryGetRandomIfrRoute(true, pt);
-    if (r == null) {
-      r = generatePointRoute(true);
+    route = tryGetRandomIfrRoute(true, pt);
+    if (route == null) {
+      return null; // no route means disallowed IFR
     }
-    coord = generateArrivalCoordinate(r.getMainFix().getCoordinate(), Acc.airport().getLocation());
-    heading = (int) Coordinates.getBearing(coord, r.getMainFix().getCoordinate());
-    alt = generateArrivingPlaneAltitude(r, pt);
+    coord = generateArrivalCoordinate(route.getMainFix().getCoordinate(), Acc.airport().getLocation());
+    heading = (int) Coordinates.getBearing(coord, route.getMainFix().getCoordinate());
+    alt = generateArrivingPlaneAltitude(route, pt);
 
     initialCommands = new SpeechList<>();
     // added command to descend
@@ -143,7 +151,7 @@ public class TrafficManager {
 
     ret = new Airplane(
         cs, coord, sqwk, pt, heading, alt, spd, false,
-        r, initialCommands, m.getDelayInMinutes(), m.getInitTime().addMinutes(25));
+        route, initialCommands, m.getDelayInMinutes(), m.getInitTime().addMinutes(25));
 
     return ret;
   }
@@ -173,6 +181,13 @@ public class TrafficManager {
         ret = type.maxAltitude - Acc.rnd().nextInt(11) * 1000;
     }
     ret = ret / 1000 * 1000;
+
+    // check if initial altitude is not below STAR mrva
+    if (ret < r.getMaxMrvaAltitude()){
+      double tmp = Math.ceil(r.getMaxMrvaAltitude() / 10d) * 10;
+      ret = (int) tmp;
+    }
+
     return ret;
   }
 
@@ -222,35 +237,35 @@ public class TrafficManager {
     return ret;
   }
 
-  private Route generatePointRoute(boolean arrival) {
-    List<Navaid> nvs = new LinkedList();
-
-    for (Runway rw : Acc.airport().getRunways()) {
-      for (RunwayThreshold rt : rw.getThresholds()) {
-        for (Route r : rt.getRoutes()) {
-          if (arrival && r.getType() == Route.eType.sid) {
-            continue;
-          } else if (!arrival && r.getType() != Route.eType.sid) {
-            continue;
-          }
-
-          Navaid n = r.getMainFix();
-
-          if (nvs.contains(n) == false) {
-            nvs.add(n);
-          }
-        }
-      }
-    }
-
-    int index = Acc.rnd().nextInt(nvs.size());
-
-    Navaid n = nvs.get(index);
-
-    Route r = Route.createNewByFix(n, arrival);
-
-    return r;
-  }
+//  private Route generatePointRoute(boolean arrival) {
+//    List<Navaid> nvs = new LinkedList();
+//
+//    for (Runway rw : Acc.airport().getRunways()) {
+//      for (RunwayThreshold rt : rw.getThresholds()) {
+//        for (Route r : rt.getRoutes()) {
+//          if (arrival && r.getType() == Route.eType.sid) {
+//            continue;
+//          } else if (!arrival && r.getType() != Route.eType.sid) {
+//            continue;
+//          }
+//
+//          Navaid n = r.getMainFix();
+//
+//          if (nvs.contains(n) == false) {
+//            nvs.add(n);
+//          }
+//        }
+//      }
+//    }
+//
+//    int index = Acc.rnd().nextInt(nvs.size());
+//
+//    Navaid n = nvs.get(index);
+//
+//    Route r = Route.createNewByFix(n, arrival);
+//
+//    return r;
+//  }
 
   private Route tryGetRandomIfrRoute(boolean isArrival, AirplaneType planeType) {
 
@@ -273,6 +288,8 @@ public class TrafficManager {
       rts = rts.where(q -> q.getType() != Route.eType.sid);
     else
       rts = rts.where(q -> q.getType() == Route.eType.sid);
+
+    rts = rts.where(q->q.getMaxMrvaAltitude() < planeType.maxAltitude);
 
     rts = rts.where(q -> q.isValidForCategory(planeType.category));
 

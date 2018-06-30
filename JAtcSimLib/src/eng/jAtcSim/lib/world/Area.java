@@ -114,9 +114,11 @@ public class Area {
   private void bind() {
     for (Airport a : this.getAirports()) {
       Acc.setAirport(a);
+
       for (PublishedHold h : a.getHolds()) {
         h.bind();
       }
+
       for (Runway r : a.getRunways()) {
         for (RunwayThreshold t : r.getThresholds()) {
           t.bind();

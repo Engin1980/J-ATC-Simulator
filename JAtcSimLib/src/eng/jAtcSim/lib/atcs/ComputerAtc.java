@@ -2,9 +2,7 @@ package eng.jAtcSim.lib.atcs;
 
 import com.sun.istack.internal.NotNull;
 import com.sun.istack.internal.Nullable;
-import eng.eSystem.collections.EList;
-import eng.eSystem.collections.IList;
-import eng.eSystem.collections.IReadOnlyList;
+import eng.eSystem.collections.*;
 import eng.eSystem.eXml.XElement;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
@@ -35,7 +33,6 @@ public abstract class ComputerAtc extends Atc {
 
   private final WaitingList waitingRequestsList = new WaitingList();
   private final IList<SwitchRequest> confirmedRequestList = new EList<>();
-
   private final DelayedList<Message> speechDelayer = new DelayedList<>(3, 25);
 
   public ComputerAtc(AtcTemplate template) {
@@ -175,9 +172,9 @@ public abstract class ComputerAtc extends Atc {
   protected abstract Atc getTargetAtcIfPlaneIsReadyToSwitch(@NotNull Airplane plane);
 
   private void repeatOldSwitchRequests() {
-    // opakovani starych zadosti
     IReadOnlyList<Airplane> awaitings = this.waitingRequestsList.getAwaitings();
     for (Airplane p : awaitings) {
+      if (speechDelayer.isAny(q-> q.equals(p))) continue; // if message about this plane is delayed and waiting to process
       Message m = new Message(this, Acc.atcApp(),
           new PlaneSwitchMessage(p, false, " to you (repeated)"));
       Acc.messenger().send(m);

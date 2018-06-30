@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?><root __class="StartupSettings">
   <files areaXmlFile="_SettingFiles\LFMN.ar.xml" fleetsXmlFile="_SettingFiles\fleets.fl.xml" planesXmlFile="_SettingFiles\planeTypes.tp.xml" trafficXmlFile="(null)"/>
-  <recent icao="LFMN" time="18:58"/>
+  <recent icao="LFMN" time="19:00"/>
   <weather cloudBaseAltitudeFt="1600" cloudBaseProbability="0.75" useOnline="false" visibilityInM="8000" windDirection="50" windSpeed="9"/>
-  <traffic allowDelays="true" densityPercentage="1.0" emergencyPerDayProbability="0.14285714285714285" maxPlanes="60" trafficAirportDefinedTitle="LFMN:Normal traffic" type="custom">
-    <customTraffic arrivals2departuresRatio="5" companies="CSA;EZY;RYR;TVS" countryCodes="OK;OM;G" nonCommercialFlightProbability="0.7" useExtendedCallsigns="true" weightTypeA="5" weightTypeB="5" weightTypeC="5" weightTypeD="1">
+  <traffic allowDelays="true" densityPercentage="1.0" emergencyPerDayProbability="0.14285714285714285" maxPlanes="60" trafficAirportDefinedTitle="----" type="custom">
+    <customTraffic arrivals2departuresRatio="5" companies="CSA;EZY;RYR;TVS" countryCodes="OK;OM;G" nonCommercialFlightProbability="0.7" useExtendedCallsigns="false" weightTypeA="5" weightTypeB="5" weightTypeC="5" weightTypeD="1">
       <movementsPerHour>
         <int __class="Integer">0</int>
         <int __class="Integer">0</int>

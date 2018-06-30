@@ -563,6 +563,14 @@ public class TowerAtc extends ComputerAtc {
     if (linedUpPlanesList.isEmpty()) return;
     Airplane toReadyPlane = linedUpPlanesList.get(0);
 
+    // first check separation from all departures
+    // if no sep, no t-o
+    for (RunwayThreshold threshold : inUseInfo.current) {
+      Airplane a = takeOffInfos.tryGetAirplaneForThreshold(threshold);
+      if (a != null && Separation.isSafeSeparation(a, toReadyPlane, 120))
+        return; // no safe separation from someone, no t-o
+    }
+
     // gets available thresholds
     // first getAndElapse those whose are not under maintenance
     IList<RunwayThreshold> availableThresholds = inUseInfo.current.where(q -> runwayChecks.get(q.getParent()).isActive() == false);
@@ -572,19 +580,6 @@ public class TowerAtc extends ComputerAtc {
     availableThresholds = availableThresholds.where(
         q->!takeOffInfos.containsKey(q) || takeOffInfos.get(q).takeOffTime.addSeconds(60).isBeforeOrEq(Acc.now()));
     // kick out if no runway left
-    if (availableThresholds.isEmpty()) return;
-
-    // getAndElapse those where separation is ok
-    {
-      IList<RunwayThreshold> tmp = new EList<>();
-      for (RunwayThreshold threshold : availableThresholds) {
-        Airplane a = takeOffInfos.tryGetAirplaneForThreshold(threshold);
-        if (a == null || Separation.isSafeSeparation(a, toReadyPlane, 120))
-          tmp.add(threshold);
-      }
-      availableThresholds = tmp;
-    }
-
     if (availableThresholds.isEmpty()) return;
 
     RunwayThreshold availableThreshold;

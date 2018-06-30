@@ -13,6 +13,10 @@ public class PlaneCategoryDefinitions {
     return ALL;
   }
 
+  private PlaneCategoryDefinitions(IReadOnlyList<Character> inner) {
+    this.inner = inner;
+  }
+
   public PlaneCategoryDefinitions(String chars) {
     IList<Character> tmp = new EList();
     for (int i = 0; i < chars.length(); i++) {
@@ -36,6 +40,11 @@ public class PlaneCategoryDefinitions {
     EStringBuilder ret = new EStringBuilder();
     ret.appendItems(inner, q -> q.toString(), "");
     return ret.toString();
+  }
+
+  public PlaneCategoryDefinitions makeClone() {
+    PlaneCategoryDefinitions ret = new PlaneCategoryDefinitions(new EList(this.inner));
+    return ret;
   }
 
   private char ensureValidAndNormalize(char category) {

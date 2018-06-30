@@ -8,6 +8,7 @@ import eng.jAtcSim.lib.Acc;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Predicate;
 
 public class DelayedList<T> {
 
@@ -31,7 +32,6 @@ public class DelayedList<T> {
       minimalDelay = 0;
       maximalDelay = 0;
     }
-
 
     public DelayedList(int minimalDelay, int maximalDelay) {
       this.minimalDelay = minimalDelay;
@@ -101,6 +101,14 @@ public class DelayedList<T> {
 
     public void removeAt(int index) {
       inner.remove(index);
+    }
+
+    public boolean isAny(Predicate<T> predicate){
+      for (DelayedItem<T> item : inner) {
+        if (predicate.test(item.item))
+          return true;
+      }
+      return false;
     }
 
     private void lowerDelay() {

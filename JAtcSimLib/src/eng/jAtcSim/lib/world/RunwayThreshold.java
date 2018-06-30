@@ -155,7 +155,11 @@ public class RunwayThreshold {
         9);
 
     if (this.includeSharedRoutes){
-      this.routes.add(this.getParent().getParent().getSharedRoutes());
+      for (Route route : this.getParent().getParent().getSharedRoutes()) {
+        route = route.makeClone();
+        route.setParent(this);
+        this.routes.add(route);
+      }
     }
 
     for (IafRoute iafRoute : sharedIafRoutes) {

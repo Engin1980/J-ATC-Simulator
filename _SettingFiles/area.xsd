@@ -136,6 +136,7 @@
         </xs:complexType>
       </xs:element>
       <xs:element name="sharedRoutes" type="routes" minOccurs="0" maxOccurs="1" />
+      <xs:element name="separationTime" type="separationTime" minOccurs="0" maxOccurs="1" />
     </xs:choice>
     <xs:attribute name="icao" type="xs:string" use="required"/>
     <xs:attribute name="name" type="xs:string" use="required"/>
@@ -144,6 +145,17 @@
     <xs:attribute name="vfrAltitude" type="xs:integer" use="optional"/>
     <xs:attribute name="mainAirportNavaidName" type="xs:string" use="required"/>
     <xs:attribute name="declination" type="xs:double" use="required" />
+  </xs:complexType>
+
+  <xs:complexType name="separationTime">
+    <xs:choice>
+      <xs:element name="separation">
+        <xs:complexType>
+          <xs:attribute name="category" type="planeCategory" />
+          <xs:attribute name="seconds" type="xs:positiveInteger" />
+        </xs:complexType>
+      </xs:element>
+    </xs:choice>
   </xs:complexType>
 
   <xs:complexType name="traffic">

@@ -37,22 +37,27 @@
 
   <!-- style: 0=plain, 1=bold, 2=italic -->
   <atc color="AAAAAA">
-    <font name="Arial Unicode MT" size="14" style="1"/>
+    <font name="Inconsolata" size="14" style="0"/>
+    <!--<font name="Arial Unicode MT" size="14" style="1"/>-->
   </atc>
   <plane color="00FF00">
-    <font name="Arial Unicode MT" size="14" style="1"/>
+    <font name="Inconsolata" size="14" style="0"/>
+    <!--<font name="Inconsolata" size="14" style="0"/>-->
   </plane>
   <system color="FFFFFF">
-    <font name="Arial Unicode MT" size="14" style="1"/>
+    <!--<font name="Arial Unicode MT" size="14" style="1"/>-->
+    <font name="Inconsolata" size="14" style="0"/>
   </system>
   <time color="AAAAFF">
-    <font name="Courier CE" size="10" style="0"/>
+    <!--<font name="Courier CE" size="10" style="0"/>-->
+    <font name="Inconsolata" size="12" style="0"/>
   </time>
   <callsign color="000000">
-    <font name="Arial Unicode MT" size="12" style="1"/>
+    <font name="Inconsolata" size="14" style="0"/>
   </callsign>
   <navaid color="000000">
-    <font name="Arial Unicode MT" size="10" style="0"/>
+    <!--<font name="Arial Unicode MT" size="10" style="0"/>-->
+    <font name="Inconsolata" size="12" style="0"/>
   </navaid>
 
   <!--

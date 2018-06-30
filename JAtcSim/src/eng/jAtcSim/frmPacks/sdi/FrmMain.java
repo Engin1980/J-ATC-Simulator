@@ -171,7 +171,7 @@ public class FrmMain extends JFrame {
     btnSound.addActionListener(this::btnSound_click);
 
     JPanel ret = LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.middle, 4,
-        btnStrips, btnCommands, btnMovs, btnPause, btnSave, btnView, btnRecording);
+        btnStrips, btnCommands, btnMovs, btnPause, btnSave, btnView, btnRecording, btnSound);
     ret.setName("pnlTop");
     return ret;
   }

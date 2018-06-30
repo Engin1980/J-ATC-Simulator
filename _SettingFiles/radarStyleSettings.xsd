@@ -8,7 +8,7 @@
   <xs:element name="settings" type="settings" />
 
   <xs:complexType name="settings">
-    <xs:choice>
+    <xs:sequence>
       <xs:element name="airproxFull" type="colorElement"/>
       <xs:element name="airproxWarning" type="colorElement"/>
       <xs:element name="airproxPartial" type="colorElement"/>
@@ -50,7 +50,7 @@
       <xs:element name="selected" type="displayLabelElement" />
       <xs:element name="emergency" type="displayLabelElement" />
 
-    </xs:choice>
+    </xs:sequence>
 
     <xs:attribute name="displayTextDelay" type="xs:nonNegativeInteger" use="required" />
   </xs:complexType>

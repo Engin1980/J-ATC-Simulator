@@ -688,16 +688,18 @@ public class Pilot {
     private boolean updateAltitudeOnApproach(boolean checkIfIsAfterThreshold) {
       int currentTargetAlttiude = parent.getTargetAltitude();
       double distToLand;
-      int newAltitude = -1;
+      int newAltitude;
       if (location == ApproachLocation.afterThreshold) {
         newAltitude = Acc.airport().getAltitude() - 100; // I need to lock the airplane on runway
-      }
-
-      if (newAltitude == -1) {
+      } else {
         switch (approach.getType()) {
           case visual:
-            if (location == ApproachLocation.beforeFaf)
-              newAltitude = parent.getTargetAltitude();
+            if (location == ApproachLocation.beforeFaf) {
+              // TODO check and evaluate
+              // experimental, trying to fix descend rate after FAF to lower values
+              // newAltitude = parent.getTargetAltitude();
+              newAltitude = (int) Math.max(parent.getTargetAltitude(), parent.getAltitude() - 1000);
+            }
             else {
               double dist = Coordinates.getDistanceInNM(parent.getCoordinate(), approach.getThreshold().getCoordinate());
               double delta = dist * this.approach.getSlope();
@@ -854,7 +856,7 @@ public class Pilot {
             if (this.approach.isPrecise()) {
               // check if not descending to ILS path and not yet established in ILS LOC
               if (Headings.getDifference(
-                  parent.getTargetHeading(), this.approach.getFaf2MaptCourse(), true) > 10) {
+                  parent.getTargetHeading(), this.approach.getFaf2MaptCourse(), true) > 15) {
                 goAround("Not established in LOC when GP is captured.");
                 return;
               }

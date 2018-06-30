@@ -5,8 +5,14 @@
  */
 package eng.jAtcSim.lib.world;
 
+import eng.eSystem.Tuple;
+import eng.eSystem.collections.EList;
+import eng.eSystem.collections.IList;
+import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.xmlSerialization.XmlIgnore;
 import eng.eSystem.xmlSerialization.XmlOptional;
+import eng.jAtcSim.lib.coordinates.Coordinate;
 import eng.jAtcSim.lib.coordinates.Coordinates;
 import eng.jAtcSim.lib.exceptions.EBindException;
 import eng.jAtcSim.lib.global.PlaneCategoryDefinitions;
@@ -19,8 +25,7 @@ import eng.jAtcSim.lib.speaking.fromAtc.commands.ToNavaidCommand;
 import eng.jAtcSim.lib.speaking.parsing.Parser;
 import eng.jAtcSim.lib.speaking.parsing.shortBlockParser.ShortBlockParser;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.awt.geom.Line2D;
 
 /**
  * @author Marek
@@ -38,6 +43,7 @@ public class Route {
       return this == star || this == transition;
     }
   }
+
   private eType type;
   private String name;
   private String route;
@@ -45,16 +51,14 @@ public class Route {
   @XmlOptional
   private PlaneCategoryDefinitions category = PlaneCategoryDefinitions.getAll();
   private SpeechList<IAtcCommand> _routeCommands = null;
-  private List<Navaid> _routeNavaids = null;
+  private IList<Navaid> _routeNavaids = null;
   private double _routeLength = -1;
   @XmlOptional
   private Navaid mainFix = null;
   @XmlOptional
-  private Integer entryFL;
-
-  public Integer getEntryFL() {
-    return entryFL;
-  }
+  private Integer entryFL = null;
+  @XmlIgnore
+  private Integer maxMrvaFL = null;
 
   public static Route createNewByFix(Navaid n, boolean arrival) {
     Route ret = new Route();
@@ -72,6 +76,15 @@ public class Route {
 
     ret.bind();
 
+    return ret;
+  }
+
+  public Integer getEntryFL() {
+    return entryFL;
+  }
+
+  public int getMaxMrvaAltitude() {
+    int ret = maxMrvaFL == null ? 0 : maxMrvaFL * 100;
     return ret;
   }
 
@@ -118,7 +131,7 @@ public class Route {
     return ret;
   }
 
-  public List<Navaid> getNavaids() {
+  public IReadOnlyList<Navaid> getNavaids() {
     return this._routeNavaids;
   }
 
@@ -131,26 +144,6 @@ public class Route {
     return "Route{" +
         type +
         ",'" + name + "'}";
-  }
-
-  private double calculateRouteLength() {
-    double ret = 0;
-    Navaid prev = null;
-
-    for (ICommand cmd : this._routeCommands) {
-      if ((cmd instanceof ProceedDirectCommand) == false) continue;
-
-      if (prev == null)
-        prev = ((ProceedDirectCommand) cmd).getNavaid();
-      else {
-        Navaid curr = ((ProceedDirectCommand) cmd).getNavaid();
-        double dist = Coordinates.getDistanceInNM(prev.getCoordinate(), curr.getCoordinate());
-        ret += dist;
-        prev = curr;
-      }
-    }
-
-    return ret;
   }
 
   public void bind() {
@@ -174,14 +167,14 @@ public class Route {
           break;
         case vectoring:
           if (mainFix == null)
-            throw new EBindException("\"Vectoing\" route must have set mainFix explicitly.");
+            throw new EBindException("\"Vectoring\" route must have set mainFix explicitly.");
           break;
         default:
           throw new EBindException("Failed to obtain main route fix of route " + this.name + ". SID last/STAR first command must be \"proceed direct\" (fromAtc: " + this.route + ")");
       }
     }
 
-    _routeNavaids = new ArrayList<>();
+    _routeNavaids = new EList<>();
     for (ICommand c : _routeCommands) {
       if (c instanceof ToNavaidCommand) {
         _routeNavaids.add(((ToNavaidCommand) c).getNavaid());
@@ -189,7 +182,92 @@ public class Route {
     }
 
     _routeLength = calculateRouteLength();
+
+    // min alt
+    Area area = this.getParent().getParent().getParent().getParent();
+    IList<Border> mrvas = area.getBorders().where(q -> q.getType() == Border.eType.mrva);
+    IList<Tuple<Coordinate, Coordinate>> pointLines = convertPointsToLines(this._routeNavaids);
+
+    int maxMrvaAlt = 0;
+    for (Border mrva : mrvas) {
+      if (hasMrvaIntersection(pointLines, mrva))
+        maxMrvaAlt = Math.max(maxMrvaAlt, mrva.getMaxAltitude());
+    }
+    //TODO here is unresolved when whole route is inside one MRVA, then there is no intersection, but a restriction occurs
+    this.maxMrvaFL = maxMrvaAlt / 100;
   }
+
+  public Route makeClone() {
+    Route ret = new Route();
+    ret.type = this.type;
+    ret.name = this.name;
+    ret.route = this.route;
+    ret.category = this.category.makeClone();
+    ret._routeCommands = new SpeechList<>(this._routeCommands);
+    ret._routeNavaids = new EList<>(this._routeNavaids);
+    ret._routeLength = this._routeLength;
+    ret.mainFix = this.mainFix;
+    ret.entryFL = this.entryFL;
+    ret.maxMrvaFL = this.maxMrvaFL;
+    return ret;
+  }
+
+  private boolean hasMrvaIntersection(IList<Tuple<Coordinate, Coordinate>> pointLines, Border mrva) {
+    for (Tuple<Coordinate, Coordinate> pointLine : pointLines) {
+
+      for (int i = 1; i < mrva.getPoints().size(); i++) {
+        Tuple<Coordinate, Coordinate> mrvaLine = new Tuple<>(
+            ((BorderExactPoint) mrva.getPoints().get(i - 1)).getCoordinate(),
+            ((BorderExactPoint) mrva.getPoints().get(i)).getCoordinate());
+        if (isLineIntersection(pointLine, mrvaLine))
+          return true;
+      }
+
+    }
+    return false;
+  }
+
+  private boolean isLineIntersection(Tuple<Coordinate,Coordinate> a, Tuple<Coordinate,Coordinate> b) {
+    boolean ret = Line2D.linesIntersect(
+        a.getA().getLatitude().get(), a.getA().getLongitude().get(),
+        a.getB().getLatitude().get(), a.getB().getLongitude().get(),
+        b.getA().getLatitude().get(), b.getA().getLongitude().get(),
+        b.getB().getLatitude().get(), b.getB().getLongitude().get());
+    return ret;
+  }
+
+  private double calculateRouteLength() {
+    double ret = 0;
+    Navaid prev = null;
+
+    for (ICommand cmd : this._routeCommands) {
+      if ((cmd instanceof ProceedDirectCommand) == false) continue;
+
+      if (prev == null)
+        prev = ((ProceedDirectCommand) cmd).getNavaid();
+      else {
+        Navaid curr = ((ProceedDirectCommand) cmd).getNavaid();
+        double dist = Coordinates.getDistanceInNM(prev.getCoordinate(), curr.getCoordinate());
+        ret += dist;
+        prev = curr;
+      }
+    }
+
+    return ret;
+  }
+
+  private IList<Tuple<Coordinate, Coordinate>> convertPointsToLines(IList<Navaid> points) {
+    IList<Tuple<Coordinate, Coordinate>> ret = new EList<>();
+
+    for (int i = 1; i < points.size(); i++) {
+      Navaid bef = points.get(i - 1);
+      Navaid aft = points.get(i);
+      ret.add(new Tuple<>(bef.getCoordinate(), aft.getCoordinate()));
+    }
+
+    return ret;
+  }
+
 
   private Navaid tryGetSidMainFix() {
     int index = _routeCommands.size() - 1;

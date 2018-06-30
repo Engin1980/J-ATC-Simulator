@@ -6,6 +6,7 @@ import eng.eSystem.events.Event;
 import eng.eSystem.events.EventSimple;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.utilites.CollectionUtils;
+import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.Simulation;
 import eng.jAtcSim.lib.airplanes.*;
 import eng.jAtcSim.lib.atcs.Atc;
@@ -748,7 +749,7 @@ public class Radar {
     }
   }
 
-  private void drawStar(List<Navaid> navaidPoints) {
+  private void drawStar(IReadOnlyList<Navaid> navaidPoints) {
     RadarStyleSettings.ColorWidthSettings sett = displaySettings.star;
     for (int i = 0; i < navaidPoints.size() - 1; i++) {
       tl.drawLine(
@@ -759,7 +760,7 @@ public class Radar {
     }
   }
 
-  private void drawSid(List<Navaid> navaidPoints) {
+  private void drawSid(IReadOnlyList<Navaid> navaidPoints) {
     RadarStyleSettings.ColorWidthSettings sett = displaySettings.sid;
     for (int i = 0; i < navaidPoints.size() - 1; i++) {
       tl.drawLine(
@@ -967,7 +968,7 @@ public class Radar {
 
     // separation ring
     if (localSettings.isRingsVisible()) {
-      if (adi.speed > 100 || adi.verticalSpeed != 0) {
+      if (adi.altitude > Acc.airport().getAltitude()) {
         tl.drawCircleAroundInNM(adi.coordinate, dp.getSeparationRingRadius(),
             c, 1);
       }
