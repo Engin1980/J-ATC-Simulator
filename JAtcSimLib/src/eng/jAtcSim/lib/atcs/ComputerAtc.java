@@ -174,7 +174,8 @@ public abstract class ComputerAtc extends Atc {
   private void repeatOldSwitchRequests() {
     IReadOnlyList<Airplane> awaitings = this.waitingRequestsList.getAwaitings();
     for (Airplane p : awaitings) {
-      if (speechDelayer.isAny(q-> q.equals(p))) continue; // if message about this plane is delayed and waiting to process
+      if (speechDelayer.isAny(q-> q.getContent() instanceof PlaneSwitchMessage && ((PlaneSwitchMessage) q.getContent()).plane.equals(p)))
+        continue; // if message about this plane is delayed and waiting to process
       Message m = new Message(this, Acc.atcApp(),
           new PlaneSwitchMessage(p, false, " to you (repeated)"));
       Acc.messenger().send(m);
