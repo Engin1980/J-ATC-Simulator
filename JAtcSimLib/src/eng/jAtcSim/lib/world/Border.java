@@ -184,7 +184,7 @@ public class Border {
             latMin = latMax;
             latMax = tmp;
           }
-          if (NumberUtils.isBetweenOrEqual(latMin, c.getLatitude().get(), latMax)) hit++;
+        if (NumberUtils.isBetweenOrEqual(latMin, c.getLatitude().get(), latMax)) hit++;
         } else {
           // line longitude in range
           if (!NumberUtils.isInRange(line.getA().getLatitude().get(), c.getLatitude().get(), line.getB().getLatitude().get()))
@@ -210,10 +210,14 @@ public class Border {
   }
 
   private Tuple<Coordinate, Coordinate> getLine(int index) {
-    Tuple<Coordinate, Coordinate> ret = new Tuple<>(
-        this.exactPoints.get(index).getCoordinate(),
-        this.exactPoints.get(index + 1).getCoordinate()
-    );
+    Coordinate a = this.exactPoints.get(index).getCoordinate();
+    Coordinate b = this.exactPoints.get(index+1).getCoordinate();
+    Tuple<Coordinate, Coordinate> ret;
+    if (a.getLongitude().get() > b.getLongitude().get()) {
+      ret = new Tuple<>(b, a);
+    } else {
+      ret = new Tuple(a,b);
+    }
     return ret;
   }
 
@@ -222,8 +226,8 @@ public class Border {
     return ret;
   }
 
-  public boolean hasIntersectionWithLine(Tuple<Coordinate, Coordinate> line){
-   boolean ret = false;
+  public boolean hasIntersectionWithLine(Tuple<Coordinate, Coordinate> line) {
+    boolean ret = false;
     for (int i = 0; i < getLinesCount(); i++) {
       Tuple<Coordinate, Coordinate> borderLine = getLine(i);
       ret = isLineIntersection(borderLine, line);
@@ -232,7 +236,7 @@ public class Border {
     return ret;
   }
 
-  private boolean isLineIntersection(Tuple<Coordinate,Coordinate> a, Tuple<Coordinate,Coordinate> b) {
+  private boolean isLineIntersection(Tuple<Coordinate, Coordinate> a, Tuple<Coordinate, Coordinate> b) {
     boolean ret = Line2D.linesIntersect(
         a.getA().getLatitude().get(), a.getA().getLongitude().get(),
         a.getB().getLatitude().get(), a.getB().getLongitude().get(),

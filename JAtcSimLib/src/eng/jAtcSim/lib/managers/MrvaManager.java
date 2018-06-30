@@ -14,11 +14,8 @@ import eng.jAtcSim.lib.world.BorderPoint;
 
 public class MrvaManager {
 
-  private IReadOnlyList<Border> mrvas = new EList<>();
+  private IReadOnlyList<Border> mrvas;
   private IMap<Airplane, Border> maps = new EMap<>();
-  //TODO remove when bug has been found
-  private CommonRecorder tmpRecorder = new CommonRecorder("MRVA manager recorder", "mrvaRecorder.log",
-      "-");
 
   public MrvaManager(IReadOnlyList<Border> mrvas) {
     assert mrvas.isAll(q->q.getType() == Border.eType.mrva);
@@ -27,12 +24,10 @@ public class MrvaManager {
   }
 
   public void registerPlane(Airplane plane) {
-    tmpRecorder.write("%s (%s) registered request", plane.getCallsign().toString(), plane.getSqwk().toString());
     maps.set(plane, null);
   }
 
   public void unregisterPlane(Airplane plane) {
-    tmpRecorder.write("%s (%s) unregister request", plane.getCallsign().toString(), plane.getSqwk().toString());
     maps.remove(plane);
   }
 
