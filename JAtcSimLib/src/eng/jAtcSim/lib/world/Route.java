@@ -193,7 +193,12 @@ public class Route {
       if (hasMrvaIntersection(pointLines, mrva))
         maxMrvaAlt = Math.max(maxMrvaAlt, mrva.getMaxAltitude());
     }
-    //TODO here is unresolved when whole route is inside one MRVA, then there is no intersection, but a restriction occurs
+    if (maxMrvaAlt == 0){
+      Navaid routePoint = this.getMainFix();
+      Border mrva = mrvas.tryGetFirst(q->q.isIn(routePoint.getCoordinate()));
+      if (mrva != null)
+          maxMrvaAlt = mrva.getMaxAltitude();
+    }
     this.maxMrvaFL = maxMrvaAlt / 100;
   }
 
@@ -213,28 +218,10 @@ public class Route {
   }
 
   private boolean hasMrvaIntersection(IList<Tuple<Coordinate, Coordinate>> pointLines, Border mrva) {
-    for (Tuple<Coordinate, Coordinate> pointLine : pointLines) {
-
-      for (int i = 1; i < mrva.getPoints().size(); i++) {
-        Tuple<Coordinate, Coordinate> mrvaLine = new Tuple<>(
-            ((BorderExactPoint) mrva.getPoints().get(i - 1)).getCoordinate(),
-            ((BorderExactPoint) mrva.getPoints().get(i)).getCoordinate());
-        if (isLineIntersection(pointLine, mrvaLine))
-          return true;
-      }
-
-    }
-    return false;
-  }
-
-  private boolean isLineIntersection(Tuple<Coordinate,Coordinate> a, Tuple<Coordinate,Coordinate> b) {
-    boolean ret = Line2D.linesIntersect(
-        a.getA().getLatitude().get(), a.getA().getLongitude().get(),
-        a.getB().getLatitude().get(), a.getB().getLongitude().get(),
-        b.getA().getLatitude().get(), b.getA().getLongitude().get(),
-        b.getB().getLatitude().get(), b.getB().getLongitude().get());
+    boolean ret = pointLines.isAny(q->mrva.hasIntersectionWithLine(q));
     return ret;
   }
+
 
   private double calculateRouteLength() {
     double ret = 0;
