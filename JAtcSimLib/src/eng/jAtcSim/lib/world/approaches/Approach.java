@@ -133,7 +133,6 @@ public abstract class Approach {
       }
     }
 
-
     int crs = (int) Math.round(threshold.getCourse());
 
     SpeechList<IFromAtc> iafCmds = new SpeechList<>();
@@ -157,7 +156,8 @@ public abstract class Approach {
     double slope = UnitProvider.nmToFt(Math.tan(3 * Math.PI / 180));
 
     CurrentApproachInfo ret = new CurrentApproachInfo(
-        threshold, false, iafCmds, gaCmds, ApproachType.visual, faf, mapt, crs, mda, slope);
+        threshold, false, iafCmds, gaCmds, ApproachType.visual, faf, mapt, crs, mda, slope,
+        fafa);
 
     return ret;
   }
@@ -203,7 +203,7 @@ public abstract class Approach {
 
 
     ret = new CurrentApproachInfo(
-        tmp.getParent(), usingIaf, iafCommands, gaCommands, type, faf, mapt, course, mda, slope);
+        tmp.getParent(), usingIaf, iafCommands, gaCommands, type, faf, mapt, course, mda, slope, tmp.getInitialAltitude());
     return ret;
   }
 
@@ -234,7 +234,7 @@ public abstract class Approach {
     double slope = faf2maptAltitude / faf2maptDistance;
 
     ret = new CurrentApproachInfo(
-        tmp.getParent(), usingIaf, iafCommands, gaCommands, type, faf, mapt, course, mda, slope);
+        tmp.getParent(), usingIaf, iafCommands, gaCommands, type, faf, mapt, course, mda, slope, tmp.getInitialAltitude());
     return ret;
   }
 
@@ -260,7 +260,7 @@ public abstract class Approach {
     double slope = getSlope(tmp.getGlidePathPercentage());
 
     ret = new CurrentApproachInfo(
-        tmp.getParent(), usingIaf, iafCommands, gaCommands, ApproachType.visual, faf, mapt, course, mda, slope);
+        tmp.getParent(), usingIaf, iafCommands, gaCommands, ApproachType.visual, faf, mapt, course, mda, slope, tmp.getInitialAltitude());
     return ret;
   }
 

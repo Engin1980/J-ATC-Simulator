@@ -18,11 +18,12 @@ public class CurrentApproachInfo {
   private double slope;
   private double faf2maptCourse;
   private boolean usingIafRoute;
+  private int initialAltitude;
 
   private CurrentApproachInfo() {
   }
 
-  public CurrentApproachInfo(RunwayThreshold threshold, boolean usingIafRoute, SpeechList<IFromAtc> iafRoute, SpeechList<IFromAtc> gaRoute, Approach.ApproachType type, Coordinate faf, Coordinate mapt, int course, int decisionAltitude, double slope) {
+  public CurrentApproachInfo(RunwayThreshold threshold, boolean usingIafRoute, SpeechList<IFromAtc> iafRoute, SpeechList<IFromAtc> gaRoute, Approach.ApproachType type, Coordinate faf, Coordinate mapt, int course, int decisionAltitude, double slope, int initialAltitude) {
     this.threshold = threshold;
     this.usingIafRoute = usingIafRoute;
     this.iafRoute = iafRoute;
@@ -34,6 +35,7 @@ public class CurrentApproachInfo {
     this.decisionAltitude = decisionAltitude;
     this.slope = slope;
     this.faf2maptCourse = Coordinates.getBearing(this.faf, this.mapt);
+    this.initialAltitude = initialAltitude;
   }
 
   public boolean isUsingIafRoute() {
@@ -90,5 +92,9 @@ public class CurrentApproachInfo {
         type == Approach.ApproachType.ils_II ||
         type == Approach.ApproachType.ils_III ||
         type == Approach.ApproachType.gnss;
+  }
+
+  public int getInitialAltitude() {
+    return initialAltitude;
   }
 }

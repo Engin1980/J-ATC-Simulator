@@ -12,6 +12,7 @@ import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.xmlSerialization.XmlIgnore;
 import eng.eSystem.xmlSerialization.XmlOptional;
+import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.coordinates.Coordinate;
 import eng.jAtcSim.lib.coordinates.Coordinates;
 import eng.jAtcSim.lib.exceptions.EBindException;
@@ -73,6 +74,7 @@ public class Route {
     ret.type = eType.vectoring;
     ret._routeCommands.add(new ProceedDirectCommand(n));
     ret.route = "";
+    ret.parent = Acc.airport().getRunways().get(0).getThresholdA(); // only formal for binding
 
     ret.bind();
 

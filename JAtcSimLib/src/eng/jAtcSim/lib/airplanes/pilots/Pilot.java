@@ -92,6 +92,7 @@ public class Pilot {
     public void setApproachBehavior(CurrentApproachInfo app) {
       Pilot.this.behavior = Pilot.this.new ApproachBehavior(app);
       Pilot.this.adjustTargetSpeed();
+
     }
 
     public void setResponsibleAtc(Atc responsibleAtc) {
@@ -631,6 +632,9 @@ public class Pilot {
         Pilot.this.processSpeeches(approach.getIafRoute(), CommandSource.procedure);
         this.setState(Airplane.State.flyingIaf2Faf);
       } else {
+        SpeechList<IFromAtc> tmp = new SpeechList();
+        tmp.add(new ChangeAltitudeCommand(ChangeAltitudeCommand.eDirection.descend, approach.getInitialAltitude()));
+        Pilot.this.processSpeeches(tmp, CommandSource.procedure);
         this.setState(Airplane.State.approachEnter);
       }
     }
@@ -858,6 +862,11 @@ public class Pilot {
               if (Headings.getDifference(
                   parent.getTargetHeading(), this.approach.getFaf2MaptCourse(), true) > 15) {
                 goAround("Not established in LOC when GP is captured.");
+                return;
+              }
+              // check if should descend but is not leveled at initial altitude
+              if (parent.getAltitude() > this.approach.getInitialAltitude() + 100){
+                goAround("Not established in GP, too high.");
                 return;
               }
             }
