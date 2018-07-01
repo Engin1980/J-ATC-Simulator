@@ -14,20 +14,20 @@
 
   <navVOR color="55FF55" width="3" borderWidth="1" borderDistance="9"/>
   <navNDB color="5555FF" width="3" borderWidth="1" borderDistance="10"/>
-  <navFix color="999999" width="3" borderWidth="0" borderDistance="0"/>
+  <navFix color="666666" width="3" borderWidth="0" borderDistance="0"/>
   <fafFix color="5555FF" width="10" borderWidth="0" borderDistance="0"/>
-  <navFixMinor color="666666" width="3" borderWidth="0" borderDistance="0"/>
+  <navFixMinor color="444444" width="3" borderWidth="0" borderDistance="0"/>
   <navAirport color="AAAAFF" width="7" borderWidth="0" borderDistance="0"/>
 
   <borderCountry color="4444FF" width="1"/>
   <borderCtr color="44AAFF" width="1"/>
   <borderTma color="44AAFF" width="1"/>
   <borderMrva color="555555" width="1">
-    <font name="Arial Unicode MT" size="10" style="0"/>
+    <font name="Inconsolata" size="12" style="0"/>
   </borderMrva>
 
   <infoLine color="FFFF00" width="4">
-    <font name="Consolas" size="14" style="0"/>
+    <font name="Inconsolata" size="14" style="0"/>
   </infoLine>
 
   <mapBackcolor>000000</mapBackcolor>
@@ -38,25 +38,20 @@
   <!-- style: 0=plain, 1=bold, 2=italic -->
   <atc color="AAAAAA">
     <font name="Inconsolata" size="14" style="0"/>
-    <!--<font name="Arial Unicode MT" size="14" style="1"/>-->
   </atc>
   <plane color="00FF00">
     <font name="Inconsolata" size="14" style="0"/>
-    <!--<font name="Inconsolata" size="14" style="0"/>-->
   </plane>
   <system color="FFFFFF">
-    <!--<font name="Arial Unicode MT" size="14" style="1"/>-->
     <font name="Inconsolata" size="14" style="0"/>
   </system>
   <time color="AAAAFF">
-    <!--<font name="Courier CE" size="10" style="0"/>-->
     <font name="Inconsolata" size="12" style="0"/>
   </time>
   <callsign color="000000">
     <font name="Inconsolata" size="14" style="0"/>
   </callsign>
   <navaid color="000000">
-    <!--<font name="Arial Unicode MT" size="10" style="0"/>-->
     <font name="Inconsolata" size="12" style="0"/>
   </navaid>
 
