@@ -29,6 +29,7 @@ public class Pack extends eng.jAtcSim.frmPacks.Pack {
   private FrmMain frmMain;
   private FrmFlightList frmList;
   private FrmScheduledTrafficListing frmScheduledTrafficListing;
+  private AppSettings appSettings;
 
   public Pack() {
   }
@@ -36,8 +37,9 @@ public class Pack extends eng.jAtcSim.frmPacks.Pack {
   @Override
   public void initPack(Game game, AppSettings appSettings) {
 
-    String fileName = appSettings.getRadarStyleSettings().toString();
+    String fileName = appSettings.radar.styleSettingsFile.toString();
     this.displaySettings = XmlLoadHelper.loadNewDisplaySettings(fileName);
+    this.appSettings  = appSettings;
 
     // init sim & area
     this.game = game;
@@ -76,6 +78,11 @@ public class Pack extends eng.jAtcSim.frmPacks.Pack {
   @Override
   public IMap<String, Object> getDataToStore() {
     return new EMap<>();
+  }
+
+  @Override
+  public AppSettings getAppSettings() {
+    return this.appSettings;
   }
 
   @Override

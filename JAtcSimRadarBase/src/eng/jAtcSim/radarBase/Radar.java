@@ -325,9 +325,9 @@ public class Radar {
   private final Event<Radar, KeyEventArg> keyPressEvent = new Event(this);
   private final Event<Radar, Callsign> selectedAirplaneChangedEvent = new Event<>(this);
   private final EventSimple<Radar> gotFocusEvent = new EventSimple(this);
-  private final RadarStyleSettings displaySettings;
-  private final BehaviorSettings behaviorSettings;
-  private final LocalSettings localSettings;
+  private final RadarStyleSettings styleSettings;
+  private final RadarBehaviorSettings behaviorSettings;
+  private final RadarDisplaySettings displaySettings;
   private final Simulation simulation;
   private final Area area;
   private final MessageManager messageManager;
@@ -341,20 +341,29 @@ public class Radar {
 
   public Radar(ICanvas canvas, InitialPosition initialPosition,
                Simulation sim, Area area,
-               RadarStyleSettings displaySettings,
-               BehaviorSettings behaviorSettings) {
+               RadarStyleSettings styleSettings,
+               RadarDisplaySettings displaySettings,
+               RadarBehaviorSettings behaviorSettings) {
+    assert canvas != null;
+    assert initialPosition != null;
+    assert sim != null;
+    assert area != null;
+    assert styleSettings != null;
+    assert displaySettings != null;
+    assert behaviorSettings != null;
+
     this.c = canvas;
 
     this.tl = new TransformationLayer(this.c, initialPosition.coordinate, initialPosition.range);
-    this.displaySettings = displaySettings;
+    this.styleSettings = styleSettings;
     this.behaviorSettings = behaviorSettings;
-    this.localSettings = new LocalSettings();
+    this.displaySettings = displaySettings;
     this.simulation = sim;
     this.area = area;
 
     buildLocalNavaidList();
 
-    this.messageManager = new MessageManager(this.displaySettings.displayTextDelay);
+    this.messageManager = new MessageManager(this.styleSettings.displayTextDelay);
 
     this.c.getMouseEvent().add(
         (sender, e) -> Radar.this.canvas_onMouseMove((ICanvas) sender, (EMouseEventArg) e));
@@ -427,8 +436,8 @@ public class Radar {
     }
   }
 
-  public LocalSettings getLocalSettings() {
-    return localSettings;
+  public RadarDisplaySettings getDisplaySettings() {
+    return displaySettings;
   }
 
   public Event<Radar, Callsign> getSelectedAirplaneChangedEvent() {
@@ -593,7 +602,7 @@ public class Radar {
   private void drawInfoLine() {
     if (this.infoLine != null) {
 
-      RadarStyleSettings.ColorWidthFontSettings cwfs = this.displaySettings.infoLine;
+      RadarStyleSettings.ColorWidthFontSettings cwfs = this.styleSettings.infoLine;
 
       tl.drawLine(
           this.infoLine.from,
@@ -666,7 +675,7 @@ public class Radar {
   }
 
   private void drawBackground() {
-    Color color = displaySettings.mapBackcolor;
+    Color color = styleSettings.mapBackcolor;
     tl.clear(color);
   }
 
@@ -674,21 +683,21 @@ public class Radar {
     for (Border b : area.getBorders()) {
       switch (b.getType()) {
         case tma:
-          if (localSettings.isTmaBorderVisible())
+          if (displaySettings.isTmaBorderVisible())
             drawBorder(b);
           break;
         case ctr:
-          if (localSettings.isCtrBorderVisible())
+          if (displaySettings.isCtrBorderVisible())
             drawBorder(b);
           break;
         case country:
-          if (localSettings.isCountryBorderVisible())
+          if (displaySettings.isCountryBorderVisible())
             drawBorder(b);
           break;
         case mrva:
-          if (localSettings.isMrvaBorderVisible()) {
+          if (displaySettings.isMrvaBorderVisible()) {
             drawBorder(b);
-            if (localSettings.isMrvaBorderAltitudeVisible()) {
+            if (displaySettings.isMrvaBorderAltitudeVisible()) {
               drawBorderAltitude(b);
             }
           }
@@ -717,57 +726,22 @@ public class Radar {
       }
       last = bep.getCoordinate();
     }
-
-//    if (border.isEnclosed() && !border.getPoints().isEmpty()) {
-//      BorderExactPoint lastP = (BorderExactPoint) border.getPoints().get(border.getPoints().size() - 1);
-//      BorderExactPoint firstP = (BorderExactPoint) border.getPoints().get(0);
-//      tl.drawLine(
-//          lastP.getCoordinate(), firstP.getCoordinate(),
-//          ds.getColor(), ds.getWidth());
-//    }
-
-//    Coordinate last = null;
-//    for (int i = 0; i < border.getPoints().size(); i++) {
-//      BorderPoint bp = border.getPoints().get(i);
-//      if (bp instanceof BorderExactPoint) {
-//        BorderExactPoint bep = (BorderExactPoint) bp;
-//        if (last != null) {
-//          tl.drawLine(last, bep.getCoordinate(), ds.getColor(), ds.getWidth());
-//        }
-//        last = bep.getCoordinate();
-//      } else if (bp instanceof BorderArcPoint) {
-//        BorderExactPoint bPrev = (BorderExactPoint) border.getPoints().get(i - 1);
-//        BorderExactPoint bNext = (BorderExactPoint) border.getPoints().get(i + 1);
-//        drawArc(bPrev, (BorderArcPoint) bp, bNext, ds.getColor());
-//        last = null;
-//      } else {
-//        throw new UnsupportedOperationException();
-//      }
-//    }
-//
-//    if (border.isEnclosed() && !border.getPoints().isEmpty()) {
-//      BorderExactPoint lastP = (BorderExactPoint) border.getPoints().get(border.getPoints().size() - 1);
-//      BorderExactPoint firstP = (BorderExactPoint) border.getPoints().get(0);
-//      tl.drawLine(
-//          lastP.getCoordinate(), firstP.getCoordinate(),
-//          ds.getColor(), ds.getWidth());
-//    }
   }
 
   private void drawRoutes(boolean drawArrivalRoutes, boolean drawDepartureRoutes) {
     for (RunwayThreshold threshold : simulation.getActiveRunwayThresholds()) {
       for (Route r : threshold.getRoutes()) {
         if (drawArrivalRoutes && (r.getType() == Route.eType.star || r.getType() == Route.eType.transition)) {
-          if (localSettings.isStarVisible()) drawStar(r.getNavaids());
+          if (displaySettings.isStarVisible()) drawStar(r.getNavaids());
         } else if (drawDepartureRoutes && r.getType() == Route.eType.sid) {
-          if (localSettings.isSidVisible()) drawSid(r.getNavaids());
+          if (displaySettings.isSidVisible()) drawSid(r.getNavaids());
         }
       }
     }
   }
 
   private void drawStar(IReadOnlyList<Navaid> navaidPoints) {
-    RadarStyleSettings.ColorWidthSettings sett = displaySettings.star;
+    RadarStyleSettings.ColorWidthSettings sett = styleSettings.star;
     for (int i = 0; i < navaidPoints.size() - 1; i++) {
       tl.drawLine(
           navaidPoints.get(i).getCoordinate(),
@@ -778,7 +752,7 @@ public class Radar {
   }
 
   private void drawSid(IReadOnlyList<Navaid> navaidPoints) {
-    RadarStyleSettings.ColorWidthSettings sett = displaySettings.sid;
+    RadarStyleSettings.ColorWidthSettings sett = styleSettings.sid;
     for (int i = 0; i < navaidPoints.size() - 1; i++) {
       tl.drawLine(
           navaidPoints.get(i).getCoordinate(),
@@ -810,22 +784,22 @@ public class Radar {
     for (NavaidDisplayInfo ndi : this.navaids) {
       switch (ndi.navaid.getType()) {
         case ndb:
-          if (localSettings.isNdbVisible()) drawNavaid(ndi.navaid);
+          if (displaySettings.isNdbVisible()) drawNavaid(ndi.navaid);
           break;
         case airport:
-          if (localSettings.isAirportVisible()) drawNavaid(ndi.navaid);
+          if (displaySettings.isAirportVisible()) drawNavaid(ndi.navaid);
           break;
         case vor:
-          if (localSettings.isVorVisible()) drawNavaid(ndi.navaid);
+          if (displaySettings.isVorVisible()) drawNavaid(ndi.navaid);
           break;
         case fix:
         case fixMinor:
           boolean isVisible = false;
-          if (ndi.navaid.getType() == Navaid.eType.fix && localSettings.isFixVisible())
+          if (ndi.navaid.getType() == Navaid.eType.fix && displaySettings.isFixVisible())
             isVisible = true;
-          if (ndi.navaid.getType() == Navaid.eType.fixMinor && localSettings.isFixMinorVisible())
+          if (ndi.navaid.getType() == Navaid.eType.fixMinor && displaySettings.isFixMinorVisible())
             isVisible = true;
-          if (ndi.isRoute && localSettings.isFixRouteVisible())
+          if (ndi.isRoute && displaySettings.isFixRouteVisible())
             isVisible = true;
           if (isVisible) drawNavaid(ndi.navaid);
           break;
@@ -840,7 +814,7 @@ public class Radar {
 
   private void drawNavaid(Navaid navaid) {
     RadarStyleSettings.ColorWidthBorderSettings ds = getDispSettBy(navaid);
-    RadarStyleSettings.TextSettings dt = displaySettings.navaid;
+    RadarStyleSettings.TextSettings dt = styleSettings.navaid;
 
     switch (navaid.getType()) {
       case vor:
@@ -911,7 +885,7 @@ public class Radar {
   private void drawAirplanes() {
     if (this.planeInfos.isEmpty()) return;
 
-    RadarStyleSettings.TextSettings dt = displaySettings.callsign;
+    RadarStyleSettings.TextSettings dt = styleSettings.callsign;
     Size s = c.getEstimatedTextSize(dt.getFont(), 12, 3);
     tl.adjustPlaneLabelOverlying(s.width, s.height);
 
@@ -945,7 +919,7 @@ public class Radar {
     if (dp.isVisible() == false) {
       return;
     }
-    RadarStyleSettings.TextSettings dt = displaySettings.callsign;
+    RadarStyleSettings.TextSettings dt = styleSettings.callsign;
 
     Color c = resolvePlaneDrawColor(adi, dp);
     Color cc = dp.getConnectorColor();
@@ -981,41 +955,44 @@ public class Radar {
 
     // plane dot and direction line
     tl.drawPlanePoint(adi.coordinate, c, dp.getPointWidth()); // point of plane
-    tl.drawLineByHeadingAndDistance(adi.coordinate, adi.heading, dp.getHeadingLineLength(), c, 1);
+    if (this.displaySettings.isPlaneHeadingLineVisible())
+      tl.drawLineByHeadingAndDistance(adi.coordinate, adi.heading, dp.getHeadingLineLength(), c, 1);
 
     // separation ring
-    if (localSettings.isRingsVisible()) {
+    if (displaySettings.isRingsVisible()) {
       if (adi.altitude > Acc.airport().getAltitude()) {
         tl.drawCircleAroundInNM(adi.coordinate, dp.getSeparationRingRadius(),
             c, 1);
       }
     }
 
-    List<Coordinate> hist = adi.planeDotHistory;
-    int printedDots = 0;
-    int index = hist.size() - 1;
-    while (printedDots < dp.getHistoryDotCount()) {
-      if (index % dp.getHistoryDotStep() == 0) {
-        tl.drawPoint(hist.get(index), c, 3);
-        printedDots++;
+    if (this.displaySettings.isPlaneHistoryVisible()) {
+      List<Coordinate> hist = adi.planeDotHistory;
+      int printedDots = 0;
+      int index = hist.size() - 1;
+      while (printedDots < dp.getHistoryDotCount()) {
+        if (index % dp.getHistoryDotStep() == 0) {
+          tl.drawPoint(hist.get(index), c, 3);
+          printedDots++;
+        }
+        index--;
+        if (index < 0) break;
       }
-      index--;
-      if (index < 0) break;
     }
   }
 
   private Color resolvePlaneDrawColor(AirplaneDisplayInfo adi, RadarStyleSettings.PlaneLabelSettings dp) {
     Color c = dp.getColor();
     if (adi.airprox == AirproxType.full) {
-      c = displaySettings.airproxFull;
+      c = styleSettings.airproxFull;
     } else if (adi.airprox == AirproxType.partial) {
-      c = displaySettings.airproxPartial;
+      c = styleSettings.airproxPartial;
     } else if (adi.mrvaError) {
-      c = displaySettings.mrvaError;
+      c = styleSettings.mrvaError;
     } else if (adi.airprox == AirproxType.warning) {
-      c = displaySettings.airproxWarning;
+      c = styleSettings.airproxWarning;
     } else if (this.selectedCallsign == adi.callsign) {
-      c = displaySettings.selected.getColor();
+      c = styleSettings.selected.getColor();
     }
     return c;
   }
@@ -1024,15 +1001,15 @@ public class Radar {
     RadarStyleSettings.PlaneLabelSettings ret;
 
     if (adi.emergency)
-      ret = displaySettings.emergency;
+      ret = styleSettings.emergency;
     else if (adi.speed == 0)
-      ret = displaySettings.stopped;
+      ret = styleSettings.stopped;
     else if (adi.responsibleAtc.getType() == Atc.eType.app)
-      ret = displaySettings.app;
+      ret = styleSettings.app;
     else if (adi.responsibleAtc.getType() == Atc.eType.twr)
-      ret = displaySettings.twr;
+      ret = styleSettings.twr;
     else if (adi.responsibleAtc.getType() == Atc.eType.ctr)
-      ret = displaySettings.ctr;
+      ret = styleSettings.ctr;
     else
       throw new UnsupportedOperationException();
 
@@ -1088,20 +1065,20 @@ public class Radar {
 
     RadarStyleSettings.TextSettings dt;
 
-    dt = displaySettings.atc;
+    dt = styleSettings.atc;
     tl.drawTextBlock(ms.atc, TextBlockLocation.bottomRight, dt.getFont(), dt.getColor());
 
-    dt = displaySettings.plane;
+    dt = styleSettings.plane;
     tl.drawTextBlock(ms.plane, TextBlockLocation.bottomLeft, dt.getFont(), dt.getColor());
 
-    dt = displaySettings.system;
+    dt = styleSettings.system;
     tl.drawTextBlock(decodeSystemMultilines(ms.system), TextBlockLocation.topRight, dt.getFont(), dt.getColor());
   }
 
   private void drawTime() {
 
     // todo rewritten, check
-    RadarStyleSettings.TextSettings dt = displaySettings.time;
+    RadarStyleSettings.TextSettings dt = styleSettings.time;
     List<String> lst = new ArrayList(1);
     lst.add(simulation.getNow().toString());
     tl.drawTextBlock(lst, TextBlockLocation.topLeft, dt.getFont(), dt.getColor());
@@ -1150,38 +1127,38 @@ public class Radar {
   private RadarStyleSettings.ColorWidthSettings getDispSettBy(Border border) {
     switch (border.getType()) {
       case ctr:
-        return displaySettings.borderCtr;
+        return styleSettings.borderCtr;
       case country:
-        return displaySettings.borderCountry;
+        return styleSettings.borderCountry;
       case tma:
-        return displaySettings.borderTma;
+        return styleSettings.borderTma;
       case mrva:
-        return displaySettings.borderMrva;
+        return styleSettings.borderMrva;
       default:
         throw new EEnumValueUnsupportedException(border.getType());
     }
   }
 
   private RadarStyleSettings.ColorWidthSettings getDispSettBy(Runway runway) {
-    return displaySettings.activeRunway;
+    return styleSettings.activeRunway;
   }
 
   private RadarStyleSettings.ColorWidthSettings getDispSettBy(InactiveRunway runway) {
-    return displaySettings.closedRunway;
+    return styleSettings.closedRunway;
   }
 
   private RadarStyleSettings.ColorWidthBorderSettings getDispSettBy(Navaid navaid) {
     switch (navaid.getType()) {
       case fix:
-        return displaySettings.navFix;
+        return styleSettings.navFix;
       case fixMinor:
-        return displaySettings.navFixMinor;
+        return styleSettings.navFixMinor;
       case ndb:
-        return displaySettings.navNDB;
+        return styleSettings.navNDB;
       case vor:
-        return displaySettings.navVOR;
+        return styleSettings.navVOR;
       case airport:
-        return displaySettings.navAirport;
+        return styleSettings.navAirport;
       default:
         throw new EEnumValueUnsupportedException(navaid.getType());
     }

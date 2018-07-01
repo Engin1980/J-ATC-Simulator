@@ -2,12 +2,12 @@ package eng.jAtcSim;
 
 
 import eng.eSystem.eXml.XDocument;
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EXmlException;
-import eng.eSystem.xmlSerialization.Settings;
 import eng.eSystem.xmlSerialization.XmlIgnore;
 import eng.eSystem.xmlSerialization.XmlSerializer;
-import eng.eSystem.xmlSerialization.common.parsers.PathValueParser;
+import eng.jAtcSim.radarBase.RadarDisplaySettings;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -16,17 +16,66 @@ import java.time.format.DateTimeFormatter;
 
 public class AppSettings {
 
+  public static class Radar {
+    public Path styleSettingsFile;
+    public int displayTextDelay;
+    public DisplaySettings displaySettings;
+
+    public static class DisplaySettings {
+      public boolean tma = true;
+      public boolean country = true;
+      public boolean mrva = true;
+      public boolean mrvaLabel = true;
+      public boolean ctr = true;
+      public boolean vor = true;
+      public boolean ndb = true;
+      public boolean airport = true;
+      public boolean sid = true;
+      public boolean star = true;
+      public boolean fix = true;
+      public boolean routeFix = true;
+      public boolean minorFix = true;
+      public boolean rings = true;
+      public boolean history = true;
+      public int minAltitude = 0;
+      public int maxAltitude = 99000;
+
+      public RadarDisplaySettings toRadarDisplaySettings(){
+        RadarDisplaySettings ret = new RadarDisplaySettings();
+        ret.setAirportVisible(this.airport);
+        ret.setCountryBorderVisible(this.country);
+        ret.setCtrBorderVisible(this.ctr);
+        ret.setFixMinorVisible(this.minorFix);
+        ret.setFixRouteVisible(this.routeFix);
+        ret.setFixVisible(this.fix);
+        ret.setMrvaBorderAltitudeVisible(this.mrvaLabel);
+        ret.setMrvaBorderVisible(this.mrva);
+        ret.setNdbVisible(this.ndb);
+        ret.setRingsVisible(this.rings);
+        ret.setSidVisible(this.sid);
+        ret.setStarVisible(this.star);
+        ret.setTmaBorderVisible(this.tma);
+        ret.setVorVisible(this.vor        );
+        ret.setPlaneHistoryVisible(this.history);
+        ret.setMinAltitude(this.minAltitude);
+        ret.setMaxAltitude(this.maxAltitude);
+        return ret;
+      }
+    }
+  }
+
+  public Radar radar = new Radar();
+
   @XmlIgnore
   private static Path applicationFolder;
   @XmlIgnore
   private static java.time.LocalDateTime startDateTime;
   @XmlIgnore
   private static boolean initialized = false;
-  private Path startupSettingsFile;
-  private Path soundFolder;
-  private Path logFolder;
-  private Path stripSettings;
-  private Path radarStyleSettings;
+  public Path startupSettingsFile;
+  public Path soundFolder;
+  public Path logFolder;
+  public Path stripSettingsFile;
 
   public static Path getApplicationFolder() {
     return applicationFolder;
@@ -74,12 +123,15 @@ public class AppSettings {
       tmp = doc.getRoot().getChild("logFolder").getContent();
       ret.logFolder = decodePath(tmp);
 
-      tmp = doc.getRoot().getChild("stripSettings").getContent();
-      ret.stripSettings = decodePath(tmp);
+      tmp = doc.getRoot().getChild("stripSettingsFile").getContent();
+      ret.stripSettingsFile = decodePath(tmp);
 
-      tmp = doc.getRoot().getChild("radarStyleSettings").getContent();
-      ret.radarStyleSettings = decodePath(tmp);
-
+      XElement radarElement = doc.getRoot().getChild("radar");
+      tmp = radarElement.getChild("styleSettingsFile").getContent();
+      ret.radar.styleSettingsFile = decodePath(tmp);
+      ret.radar.displayTextDelay = Integer.parseInt(radarElement.getChild("displayTextDelay").getContent());
+      ret.radar.displaySettings = (Radar.DisplaySettings) new XmlSerializer().deserialize(
+          radarElement.getChild("displaySettings"), Radar.DisplaySettings.class);
     }
 
     return ret;
@@ -113,27 +165,7 @@ public class AppSettings {
     this.startupSettingsFile = getUnderAppFolder("defaultStartupSettings.ss.xml");
     this.soundFolder = getUnderAppFolder("_Sounds");
     this.logFolder = getUnderAppFolder("_Log");
-    this.stripSettings = getUnderAppFolder("stripSettings.at.xml");
-    this.radarStyleSettings = getUnderAppFolder("radarStyleSettings.at.xml");
-  }
-
-  public Path getStartupSettingsFile() {
-    return startupSettingsFile;
-  }
-
-  public Path getSoundFolder() {
-    return soundFolder;
-  }
-
-  public Path getLogFolder() {
-    return logFolder;
-  }
-
-  public Path getStripSettings() {
-    return stripSettings;
-  }
-
-  public Path getRadarStyleSettings() {
-    return radarStyleSettings;
+    this.stripSettingsFile = getUnderAppFolder("stripSettings.at.xml");
+    this.radar.styleSettingsFile = getUnderAppFolder("radarStyleSettings.at.xml");
   }
 }

@@ -25,5 +25,7 @@ public abstract class Pack {
 
   public abstract IMap<String,Object> getDataToStore();
 
+  public abstract AppSettings getAppSettings();
+
   public abstract void applyStoredData(IMap<String,Object> map);
 }

@@ -2,7 +2,7 @@ package eng.jAtcSim.radarBase;
 
 import eng.jAtcSim.lib.speaking.formatting.Formatter;
 
-public class BehaviorSettings {
+public class RadarBehaviorSettings {
   private final boolean paintMessages;
   private final Formatter formatter;
 
@@ -14,7 +14,7 @@ public class BehaviorSettings {
     return formatter;
   }
 
-  public BehaviorSettings(boolean paintMessages, Formatter formatter) {
+  public RadarBehaviorSettings(boolean paintMessages, Formatter formatter) {
     if (formatter == null) {
         throw new IllegalArgumentException("Value of {formatter} cannot not be null.");
     }
@@ -23,7 +23,7 @@ public class BehaviorSettings {
     this.formatter = formatter;
   }
 
-  public BehaviorSettings(Formatter formatter) {
+  public RadarBehaviorSettings(Formatter formatter) {
     this(true, formatter);
   }
 

@@ -59,10 +59,10 @@ public class JAtcSim {
 
     appSettings = AppSettings.create();
 
-    Recorder.init(appSettings.getLogFolder().toString());
+    Recorder.init(appSettings.logFolder.toString());
 
     // startupSettings wizard
-    StartupSettings startupSettings = XmlLoadHelper.loadStartupSettings(appSettings.getStartupSettingsFile().toString());
+    StartupSettings startupSettings = XmlLoadHelper.loadStartupSettings(appSettings.startupSettingsFile.toString());
 
     FrmIntro frmIntro = new FrmIntro(startupSettings);
     Stylist.apply(frmIntro, true);
@@ -84,7 +84,7 @@ public class JAtcSim {
 
     System.out.println("* Initializing sound environment");
     // sound
-    SoundManager.init(appSettings.getSoundFolder().toString());
+    SoundManager.init(appSettings.soundFolder.toString());
 
     System.out.println("* Starting a GUI");
     // starting pack & simulation
@@ -102,7 +102,7 @@ public class JAtcSim {
 
     try {
       resolveShortXmlFileNamesInStartupSettings(appSettings, startupSettings);
-      XmlLoadHelper.saveStartupSettings(startupSettings, appSettings.getStartupSettingsFile().toString());
+      XmlLoadHelper.saveStartupSettings(startupSettings, appSettings.startupSettingsFile.toString());
     } catch (EApplicationException ex) {
       throw new EApplicationException("Failed to normalize or save default settings.", ex);
     }
@@ -138,7 +138,7 @@ public class JAtcSim {
 
     System.out.println("* Initializing sound environment");
     // sound
-    SoundManager.init(appSettings.getSoundFolder().toString());
+    SoundManager.init(appSettings.soundFolder.toString());
 
     System.out.println("* Starting a GUI");
     // starting pack & simulation

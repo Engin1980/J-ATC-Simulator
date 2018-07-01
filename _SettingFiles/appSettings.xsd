@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           targetNamespace="https://github.com/Engin1980/J-ATC-Simulator/appSettings"
+           xmlns="https://github.com/Engin1980/J-ATC-Simulator/appSettings"
+           elementFormDefault="qualified">
+
+  <xs:element name="settings">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="soundFolder" type="xs:string" />
+        <xs:element name="logFolder" type="xs:string" />
+        <xs:element name="startupSettingsFile" type="xs:string" />
+        <xs:element name="stripSettingsFile" type="xs:string" />
+        <xs:element name="radar">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="styleSettingsFile" type="xs:string" />
+              <xs:element name="displayTextDelay" type="xs:positiveInteger" />
+              <xs:element name="displaySettings">
+                <xs:complexType>
+                  <xs:attribute name="tma" type="xs:boolean" use="required" />
+                  <xs:attribute name="country" type="xs:boolean" use="required" />
+                  <xs:attribute name="mrva" type="xs:boolean" use="required" />
+                  <xs:attribute name="mrvaLabel" type="xs:boolean" use="required" />
+                  <xs:attribute name="ctr" type="xs:boolean" use="required" />
+                  <xs:attribute name="vor" type="xs:boolean" use="required" />
+                  <xs:attribute name="ndb" type="xs:boolean" use="required" />
+                  <xs:attribute name="airport" type="xs:boolean" use="required" />
+                  <xs:attribute name="sid" type="xs:boolean" use="required" />
+                  <xs:attribute name="star" type="xs:boolean" use="required" />
+                  <xs:attribute name="fix" type="xs:boolean" use="required" />
+                  <xs:attribute name="routeFix" type="xs:boolean" use="required" />
+                  <xs:attribute name="minorFix" type="xs:boolean" use="required" />
+                  <xs:attribute name="rings" type="xs:boolean" use="required" />
+                  <xs:attribute name="history" type="xs:boolean" use="required" />
+                  <xs:attribute name="headingLine" type="xs:boolean" use="required" />
+                  <xs:attribute name="minAltitude" type="xs:nonNegativeInteger" use="required" />
+                  <xs:attribute name="maxAltitude" type="xs:positiveInteger" use="required" />
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

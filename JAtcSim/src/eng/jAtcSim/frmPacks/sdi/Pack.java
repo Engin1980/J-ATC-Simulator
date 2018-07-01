@@ -13,7 +13,6 @@ import eng.jAtcSim.radarBase.RadarStyleSettings;
 import eng.jAtcSim.radarBase.RadarViewPort;
 
 import javax.swing.*;
-import java.nio.file.Paths;
 
 public class Pack extends eng.jAtcSim.frmPacks.Pack {
 
@@ -22,7 +21,7 @@ public class Pack extends eng.jAtcSim.frmPacks.Pack {
   private Area area;
   private Airport aip;
   private AppSettings appSettings;
-  private RadarStyleSettings displaySettings;
+  private RadarStyleSettings radarStyleSettings;
   private FrmMain frmMain;
 
   public Game getGame() {
@@ -38,8 +37,8 @@ public class Pack extends eng.jAtcSim.frmPacks.Pack {
     this.aip = sim.getActiveAirport();
     this.appSettings = appSettings;
 
-    String fileName = appSettings.getRadarStyleSettings().toString();
-    this.displaySettings = XmlLoadHelper.loadNewDisplaySettings(fileName);
+    String fileName = appSettings.radar.styleSettingsFile.toString();
+    this.radarStyleSettings = XmlLoadHelper.loadNewDisplaySettings(fileName);
 
     // create windows
     this.frmMain = new FrmMain();
@@ -83,8 +82,8 @@ public class Pack extends eng.jAtcSim.frmPacks.Pack {
     return aip;
   }
 
-  public RadarStyleSettings getDisplaySettings() {
-    return displaySettings;
+  public RadarStyleSettings getRadarStyleSettings() {
+    return radarStyleSettings;
   }
 
   public AppSettings getAppSettings() {

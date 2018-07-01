@@ -1,9 +1,16 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<settings>
+<settings
+        xmlns="https://github.com/Engin1980/J-ATC-Simulator/appSettings"
+  >
   <soundFolder>$app$\_Sounds</soundFolder>
   <logFolder>C:\Temp\_AtcLog\$time$\</logFolder>
   <startupSettingsFile>$app$\_SettingFiles\defaultStartupSettings.ss.xml</startupSettingsFile>
-  <stripSettings>$app$\_SettingFiles\stripSettings.at.xml</stripSettings>
-  <radarStyleSettings>$app$\_SettingFiles\radarStyleSettings.at.xml</radarStyleSettings>
-  <displayTextDelay>30</displayTextDelay>
+  <stripSettingsFile>$app$\_SettingFiles\stripSettings.at.xml</stripSettingsFile>
+  <radar>
+    <styleSettingsFile>$app$\_SettingFiles\radarStyleSettings.at.xml</styleSettingsFile>
+    <displayTextDelay>30</displayTextDelay>
+    <displaySettings tma="true" country="false" mrva="true" mrvaLabel="true" ctr="true" vor="true" ndb="true" airport="true" sid="true" star="true"
+    fix="true" routeFix="true" minorFix="false" rings="true" history="true" headingLine="true"
+                     minAltitude="0" maxAltitude="99000" />
+  </radar>
 </settings>

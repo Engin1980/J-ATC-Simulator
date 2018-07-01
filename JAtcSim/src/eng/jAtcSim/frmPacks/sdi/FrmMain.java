@@ -6,7 +6,8 @@ import eng.jAtcSim.frmPacks.shared.*;
 import eng.jAtcSim.lib.airplanes.Callsign;
 import eng.jAtcSim.lib.speaking.formatting.LongFormatter;
 import eng.jAtcSim.lib.world.InitialPosition;
-import eng.jAtcSim.radarBase.BehaviorSettings;
+import eng.jAtcSim.radarBase.RadarBehaviorSettings;
+import eng.jAtcSim.radarBase.RadarDisplaySettings;
 import eng.jAtcSim.radarBase.RadarViewPort;
 import eng.jAtcSim.radarBase.global.SoundManager;
 import eng.jAtcSim.recording.Recording;
@@ -209,12 +210,13 @@ public class FrmMain extends JFrame {
   }
 
   private void recording_recordingStarted(Settings q) {
-    BehaviorSettings bs = new BehaviorSettings(false, new LongFormatter());
+    RadarBehaviorSettings bs = new RadarBehaviorSettings(false, new LongFormatter());
 
     InitialPosition initPos = srpRadar.getRadar().getPosition();
 
+    RadarDisplaySettings ds = this.parent.getAppSettings().radar.displaySettings.toRadarDisplaySettings();
     recording = new Recording(q,
-        this.parent.getSim(), this.parent.getArea(), initPos, this.parent.getDisplaySettings(), bs);
+        this.parent.getSim(), this.parent.getArea(), initPos, this.parent.getRadarStyleSettings(), ds, bs);
   }
 
   private void saveSimulation() {
@@ -240,12 +242,14 @@ public class FrmMain extends JFrame {
     this.parent = pack;
 
     // radar
-    BehaviorSettings behSett = new BehaviorSettings(true, new LongFormatter());
+    RadarBehaviorSettings behSett = new RadarBehaviorSettings(true, new LongFormatter());
+    RadarDisplaySettings dispSett = pack.getAppSettings().radar.displaySettings.toRadarDisplaySettings();
+
     this.srpRadar = new SwingRadarPanel();
     this.srpRadar.init(
         this.parent.getSim().getActiveAirport().getInitialPosition(),
         this.parent.getSim(), this.parent.getArea(),
-        this.parent.getDisplaySettings(), behSett
+        this.parent.getRadarStyleSettings(), dispSett, behSett
     );
     this.pnlContent.add(srpRadar);
 

@@ -7,7 +7,8 @@ package eng.jAtcSim.frmPacks.mdi;
 
 import eng.jAtcSim.frmPacks.shared.SwingRadarPanel;
 import eng.jAtcSim.lib.speaking.formatting.LongFormatter;
-import eng.jAtcSim.radarBase.BehaviorSettings;
+import eng.jAtcSim.radarBase.RadarBehaviorSettings;
+import eng.jAtcSim.radarBase.RadarDisplaySettings;
 
 import javax.swing.*;
 import java.awt.*;
@@ -67,12 +68,13 @@ public class FrmMain extends javax.swing.JFrame {
     this.parent = pack;
 
     // behavior settings for this radar
-    BehaviorSettings behSett = new BehaviorSettings(true, new LongFormatter());
+    RadarBehaviorSettings behSett = new RadarBehaviorSettings(true, new LongFormatter());
+    RadarDisplaySettings dispSett = pack.getAppSettings().radar.displaySettings.toRadarDisplaySettings();
 
     this.pnlRadar = new SwingRadarPanel();
     this.pnlRadar.init(this.parent.getSim().getActiveAirport().getInitialPosition(),
         this.parent.getSim(), this.parent.getArea(),
-        this.parent.getDisplaySettings(), behSett );
+        this.parent.getDisplaySettings(), dispSett, behSett );
 
     this.pnlContent.add(this.pnlRadar);
 

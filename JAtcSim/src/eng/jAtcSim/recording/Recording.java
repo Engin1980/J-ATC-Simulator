@@ -6,7 +6,8 @@ import eng.jAtcSim.BitmapRadar.BitmapCanvas;
 import eng.jAtcSim.lib.Simulation;
 import eng.jAtcSim.lib.world.Area;
 import eng.jAtcSim.lib.world.InitialPosition;
-import eng.jAtcSim.radarBase.BehaviorSettings;
+import eng.jAtcSim.radarBase.RadarBehaviorSettings;
+import eng.jAtcSim.radarBase.RadarDisplaySettings;
 import eng.jAtcSim.radarBase.RadarStyleSettings;
 import eng.jAtcSim.radarBase.Radar;
 
@@ -32,7 +33,7 @@ public class Recording {
   private boolean isActive;
 
   public Recording(Settings settings, Simulation sim, Area area, InitialPosition initialPosition,
-                   RadarStyleSettings ds, BehaviorSettings bs) {
+                   RadarStyleSettings ss, RadarDisplaySettings ds, RadarBehaviorSettings bs) {
 
     File f = new File(settings.getPath());
     if (f.exists() == false || f.canWrite() == false) {
@@ -45,7 +46,7 @@ public class Recording {
     bmpCanvas = new BitmapCanvas(settings.getWidth(), settings.getHeight());
     bmpCanvas.getImageDrawn().add(this::bmpCanvas_imageDrawn);
 
-    radar = new Radar(bmpCanvas, initialPosition, simulation, area, ds, bs);
+    radar = new Radar(bmpCanvas, initialPosition, simulation, area, ss, ds, bs);
 
     this.radar.start(settings.getInterval(), settings.getInterval());
     this.isActive = true;

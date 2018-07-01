@@ -1,6 +1,6 @@
 package eng.jAtcSim.radarBase;
 
-public class LocalSettings {
+public class RadarDisplaySettings {
 
   private boolean tmaBorderVisible = true;
   private boolean countryBorderVisible = true;
@@ -16,6 +16,22 @@ public class LocalSettings {
   private boolean fixRouteVisible = true;
   private boolean fixMinorVisible = false;
   private boolean ringsVisible = true;
+  private boolean planeHistoryVisible = true;
+  private boolean planeHeadingLineVisible = true;
+  private int minAltitude = 0;
+  private int maxAltitude = 99_000;
+
+  public boolean isPlaneHistoryVisible() {
+    return planeHistoryVisible;
+  }
+
+  public boolean isPlaneHeadingLineVisible() {
+    return planeHeadingLineVisible;
+  }
+
+  public void setPlaneHeadingLineVisible(boolean planeHeadingLineVisible) {
+    this.planeHeadingLineVisible = planeHeadingLineVisible;
+  }
 
   public boolean isMrvaBorderVisible() {
     return mrvaBorderVisible;
@@ -127,5 +143,29 @@ public class LocalSettings {
 
   public void setRingsVisible(boolean ringsVisible) {
     this.ringsVisible = ringsVisible;
+  }
+
+  public void setPlaneHistoryVisible(boolean planeHistoryVisible) {
+    this.planeHistoryVisible = planeHistoryVisible;
+  }
+
+  public boolean getPlaneHistoryVisible() {
+    return planeHistoryVisible;
+  }
+
+  public void setMinAltitude(int minAltitude) {
+    this.minAltitude = minAltitude;
+  }
+
+  public int getMinAltitude() {
+    return minAltitude;
+  }
+
+  public void setMaxAltitude(int maxAltitude) {
+    this.maxAltitude = maxAltitude;
+  }
+
+  public int getMaxAltitude() {
+    return maxAltitude;
   }
 }
