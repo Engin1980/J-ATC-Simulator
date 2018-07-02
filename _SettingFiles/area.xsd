@@ -93,7 +93,7 @@
 
   <xs:complexType name="arc">
     <xs:attribute name="coordinate" type="xs:string" use="required"/>
-    <xs:attribute name="direction">
+    <xs:attribute name="direction" use="required">
       <xs:simpleType>
         <xs:restriction base="xs:string">
           <xs:enumeration value="clockwise"/>
