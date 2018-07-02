@@ -90,6 +90,8 @@ public class AreaXmlSource extends XmlSource<Area> {
     sett.getListItemMappings().add(
         new XmlListItemMapping("/points$", "arc", BorderArcPoint.class));
     sett.getListItemMappings().add(
+        new XmlListItemMapping("/points$", "crd", BorderCrdPoint.class));
+    sett.getListItemMappings().add(
         new XmlListItemMapping("/companies$", DensityBasedTraffic.CodeWeight.class));
     sett.getListItemMappings().add(
         new XmlListItemMapping("/countries$", DensityBasedTraffic.CodeWeight.class));

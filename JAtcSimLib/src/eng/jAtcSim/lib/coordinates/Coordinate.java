@@ -5,6 +5,8 @@
  */
 package eng.jAtcSim.lib.coordinates;
 
+import eng.eSystem.exceptions.EApplicationException;
+
 import java.awt.geom.RoundRectangle2D;
 import java.util.Objects;
 import java.util.regex.Matcher;
@@ -55,6 +57,9 @@ public final class Coordinate {
     }
     if (ret == null) {
       ret = tryParseD(value);
+    }
+    if (ret == null){
+      ret = tryParseE(value);
     }
 
     if (ret == null) {
@@ -118,6 +123,45 @@ public final class Coordinate {
     return ret;
   }
 
+  /**
+   * Parses 40.20324, 10.05343 to coordinate
+   * @param value
+   * @return
+   */
+  private static Coordinate tryParseE(String value){
+    Coordinate ret = null;
+
+    String patternString = "(-?\\d+(\\.\\d+)?), (-?\\d+(\\.\\d+)?)";
+    Pattern p = Pattern.compile(patternString);
+    Matcher m = p.matcher(value);
+    if (m.find()) {
+      String latS = m.group(1);
+      String lngS = m.group(3);
+
+      double lat;
+      double lng;
+
+      try{
+        lat = Double.parseDouble(latS);
+        lng = Double.parseDouble(lngS);
+      } catch (Exception ex){
+        throw new EApplicationException("Failed to convert " + latS + "/" + lngS + " to doubles.");
+      }
+
+      ret = new Coordinate(
+          new CoordinateValue(lat),
+          new CoordinateValue(lng)
+      );
+    }
+
+    return ret;
+  }
+
+  /**
+   * Parses N40 30.203 W20 2.502 to coordinate.
+   * @param value
+   * @return
+   */
   private static Coordinate tryParseD(String value){
     Coordinate ret = null;
 

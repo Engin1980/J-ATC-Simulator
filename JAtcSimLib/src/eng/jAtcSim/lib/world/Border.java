@@ -117,15 +117,26 @@ public class Border {
     if (this.isEnclosed() && !this.points.get(0).equals(this.points.get(this.points.size() - 1)))
       this.points.add(this.points.get(0));
 
+    // replace CRD to Exact
+    IList<BorderPoint> lst = new EList<>(this.points);
+    for (int i = 0; i < lst.size(); i++) {
+      if (lst.get(i) instanceof BorderCrdPoint){
+        BorderCrdPoint bcp = (BorderCrdPoint) lst.get(i);
+        Coordinate c = Coordinates.getCoordinate(bcp.getCoordinate(), bcp.getRadial(), bcp.getDistance());
+        BorderExactPoint bep = new BorderExactPoint(c);
+        lst.set(i, bep);
+      }
+    }
+
     this.exactPoints = new EList<>();
 
-    for (int i = 0; i < this.points.size(); i++) {
-      if (this.points.get(i) instanceof BorderExactPoint)
-        this.exactPoints.add((BorderExactPoint) this.points.get(i));
+    for (int i = 0; i < lst.size(); i++) {
+      if (lst.get(i) instanceof BorderExactPoint)
+        this.exactPoints.add((BorderExactPoint) lst.get(i));
       else {
-        BorderExactPoint prev = (BorderExactPoint) this.points.get(i - 1);
-        BorderArcPoint curr = (BorderArcPoint) this.points.get(i);
-        BorderExactPoint next = (BorderExactPoint) this.points.get(i + 1);
+        BorderExactPoint prev = (BorderExactPoint) lst.get(i - 1);
+        BorderArcPoint curr = (BorderArcPoint) lst.get(i);
+        BorderExactPoint next = (BorderExactPoint) lst.get(i + 1);
         IList<BorderExactPoint> tmp = generateArcPoints(prev, curr, next);
         this.exactPoints.add(tmp);
       }

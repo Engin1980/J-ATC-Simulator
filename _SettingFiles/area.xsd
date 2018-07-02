@@ -59,6 +59,7 @@
           <xs:choice maxOccurs="unbounded">
             <xs:element name="point" type="point"/>
             <xs:element name="arc" type="arc"/>
+            <xs:element name="crd" type="crd" />
           </xs:choice>
         </xs:complexType>
       </xs:element>
@@ -78,6 +79,12 @@
     <xs:attribute name="minAltitude" type="xs:string" use="optional"/>
     <xs:attribute name="maxAltitude" type="xs:string" use="optional"/>
     <xs:attribute name="labelCoordinate" type="xs:string" use="optional" />
+  </xs:complexType>
+
+  <xs:complexType name="crd">
+    <xs:attribute name="coordinate" type="xs:string" use="required"/>
+    <xs:attribute name="radial" type="xs:integer" use="required" />
+    <xs:attribute name="distance" type="xs:double" use="required" />
   </xs:complexType>
 
   <xs:complexType name="point">

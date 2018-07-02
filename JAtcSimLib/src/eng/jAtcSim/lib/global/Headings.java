@@ -90,7 +90,7 @@ public class Headings {
     double ret = value;
     while (ret < 0)
       ret += 360;
-    while (ret > 360)
+    while (ret >= 360)
       ret -= 360; // probably faster than modulo
     return ret;
   }
