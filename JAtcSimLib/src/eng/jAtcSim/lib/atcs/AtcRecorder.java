@@ -57,7 +57,7 @@ public class AtcRecorder extends Recorder {
   }
 
   public void write(Atc atc, String type, String content){
-    String s = String.format("%s %s %s %s %s %s %s\r\n",
+    String s = String.format("%s %s %s %s %s %s %s",
       type,
       SEPARATOR,
       Acc.now().toString(),

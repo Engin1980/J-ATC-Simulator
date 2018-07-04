@@ -20,7 +20,7 @@ public class MessengerRecorder extends Recorder {
 
   public void recordMessage(eAction action, Message msg) {
     String line = String.format(
-        "%S || FROM: %-10s; TO: %-10s; CONTENT: %s\n",
+        "%S || FROM: %-10s; TO: %-10s; CONTENT: %s",
         action.toString(),
         msg.getSource().toString(),
         msg.getTarget().toString(),

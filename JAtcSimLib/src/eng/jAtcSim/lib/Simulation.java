@@ -9,6 +9,7 @@ import eng.eSystem.EStringBuilder;
 import eng.eSystem.collections.*;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.events.EventSimple;
+import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.xmlSerialization.XmlIgnore;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.AirplaneList;
@@ -428,7 +429,11 @@ public class Simulation {
 
   private void updatePlanes() {
     for (Airplane plane : Acc.planes()) {
-      plane.elapseSecond();
+      try {
+        plane.elapseSecond();
+      } catch (Exception ex){
+        throw new EApplicationException("Error processing elapseSecond() on plane " + plane.getCallsign() + ".", ex);
+      }
     }
   }
 

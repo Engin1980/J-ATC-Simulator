@@ -56,7 +56,6 @@ public class FlightRecorder extends Recorder {
     sb.appendFormat("TO: %s ", trg).append(SEPARATOR);
     sb.appendFormat(" %s ", cnt);
 
-    sb.appendLine();
     super.writeLine(sb.toString());
   }
 
@@ -92,7 +91,6 @@ public class FlightRecorder extends Recorder {
     // from pilot
     sb.appendFormat(" BEH: {%s} ", pilot.getBehaviorLogString());
 
-    sb.appendLine();
     super.writeLine(sb.toString());
   }
 
