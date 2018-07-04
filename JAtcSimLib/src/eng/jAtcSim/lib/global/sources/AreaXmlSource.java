@@ -17,26 +17,39 @@ public class AreaXmlSource extends XmlSource<Area> {
 
   private int activeAirportIndex = 0;
 
-  public int getActiveAirportIndex() {
-    return activeAirportIndex;
-  }
-
-  public void setActiveAirport(String icao){
-    this.activeAirportIndex =
-        super.getContent().getAirports().getIndexOf(q->q.getIcao().equals(icao));
-  }
-
-  public Airport getActiveAirport(){
-    Airport ret = super.getContent().getAirports().get(this.activeAirportIndex);
-    return ret;
-  }
-
-
   public AreaXmlSource(String xmlFile) {
     super(xmlFile);
   }
 
-  public AreaXmlSource(){super(null);}
+  public AreaXmlSource() {
+    super(null);
+  }
+
+  public int getActiveAirportIndex() {
+    return activeAirportIndex;
+  }
+
+  public Airport getActiveAirport() {
+    Airport ret = super.getContent().getAirports().get(this.activeAirportIndex);
+    return ret;
+  }
+
+  public void setActiveAirport(String icao) {
+    this.activeAirportIndex =
+        super.getContent().getAirports().getIndexOf(q -> q.getIcao().equals(icao));
+  }
+
+  public void init(String icao) {
+    super.setInitialized();
+    super.getContent().init();
+    this.setActiveAirport(icao);
+  }
+
+  public void init(int index) {
+    super.setInitialized();
+    super.getContent().init();
+    this.setActiveAirport(super.getContent().getAirports().get(index).getIcao());
+  }
 
   @Override
   protected Area _load() {
@@ -66,11 +79,11 @@ public class AreaXmlSource extends XmlSource<Area> {
     sett.getListItemMappings().add(
         new XmlListItemMapping("/approaches$", "gnssApproach", GnssApproach.class));
     sett.getListItemMappings().add(
-        new XmlListItemMapping("/ilsApproach/categories$",  IlsApproach.Category.class));
+        new XmlListItemMapping("/ilsApproach/categories$", IlsApproach.Category.class));
     sett.getListItemMappings().add(
-        new XmlListItemMapping("/iafRoutes$",  IafRoute.class));
+        new XmlListItemMapping("/iafRoutes$", IafRoute.class));
     sett.getListItemMappings().add(
-        new XmlListItemMapping("/sharedIafRoutes$",  IafRoute.class));
+        new XmlListItemMapping("/sharedIafRoutes$", IafRoute.class));
     sett.getListItemMappings().add(
         new XmlListItemMapping("/routes$", Route.class));
     sett.getListItemMappings().add(
@@ -104,11 +117,12 @@ public class AreaXmlSource extends XmlSource<Area> {
     sett.getListItemMappings().add(
         new XmlListItemMapping("/trafficDefinitions$", "densityTraffic", DensityBasedTraffic.class));
     sett.getListItemMappings().add(
-        new XmlListItemMapping( "/trafficDefinitions$", "flightListTraffic", FlightListTraffic.class));
+        new XmlListItemMapping("/trafficDefinitions$", "flightListTraffic", FlightListTraffic.class));
 
     // own parsers
     sett.getValueParsers().add(new CoordinateValueParser());
     sett.getValueParsers().add(new TrafficCategoryDefinitionParser());
+    sett.getValueParsers().add(new IntegerParser());
 
     // instance creators
     sett.getInstanceCreators().add(new AreaCreator());
@@ -119,18 +133,6 @@ public class AreaXmlSource extends XmlSource<Area> {
     Area ret = (Area) ser.deserialize(super.getXmlFileName(), Area.class);
 
     return ret;
-  }
-
-  public void init(String icao){
-    super.setInitialized();
-    super.getContent().init();
-    this.setActiveAirport(icao);
-  }
-
-  public void init(int index){
-    super.setInitialized();
-    super.getContent().init();
-    this.setActiveAirport(super.getContent().getAirports().get(index).getIcao());
   }
 }
 
@@ -167,7 +169,7 @@ class CoordinateValueParser implements IValueParser<Coordinate> {
   }
 }
 
-class TrafficCategoryDefinitionParser implements IValueParser<PlaneCategoryDefinitions>{
+class TrafficCategoryDefinitionParser implements IValueParser<PlaneCategoryDefinitions> {
 
   @Override
   public Class getType() {
@@ -183,5 +185,31 @@ class TrafficCategoryDefinitionParser implements IValueParser<PlaneCategoryDefin
   @Override
   public String format(PlaneCategoryDefinitions trafficCategoryDefinition) throws XmlSerializationException {
     return trafficCategoryDefinition.toString();
+  }
+}
+
+class IntegerParser implements IValueParser<Integer> {
+
+  @Override
+  public Class getType() {
+    return int.class;
+  }
+
+  @Override
+  public Integer parse(String s) throws XmlDeserializationException {
+    Integer ret;
+    if (s.startsWith("FL")) {
+      s = s.substring(2);
+      ret = Integer.parseInt(s);
+      ret = ret * 100;
+    } else {
+      ret = Integer.parseInt(s);
+    }
+    return ret;
+  }
+
+  @Override
+  public String format(Integer value) throws XmlSerializationException {
+    return value.toString();
   }
 }

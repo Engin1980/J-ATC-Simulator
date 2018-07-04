@@ -148,6 +148,9 @@
         <route type="star" name="LONSU6R" route="PD LONSU T PD KESAK T PD NERAS T H NERAS" />
         <route type="star" name="MERLU6C" route="PD MERLU T PD AZR/121/40 T PD NERAS T H NERAS" />
       </sharedRoutes>
+      <sharedRoutes>
+
+      </sharedRoutes>
       <runways>
         <runway>
           <thresholds>
