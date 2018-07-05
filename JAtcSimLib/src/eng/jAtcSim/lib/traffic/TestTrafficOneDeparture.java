@@ -12,17 +12,16 @@ import eng.jAtcSim.lib.airplanes.AirplaneType;
 import eng.jAtcSim.lib.airplanes.Callsign;
 
 /**
- *
  * @author Marek Vajgl
  */
 public class TestTrafficOneDeparture extends TestTraffic {
 
-  private String[] clsgnNumbers = new String[]{"5555", "6666", "7777"};
+  private String[] clsgnNumbers = new String[]{"5555"}; //, "6666", "7777"};
 
   @Override
   public GeneratedMovementsResponse generateMovements(Object syncObject) {
     Boolean done = (Boolean) syncObject;
-    IList<Movement> lst =new EList<>();
+    IList<Movement> lst = new EList<>();
     if (done == null || done == false) {
       Movement mov;
       for (String clsgnNumber : clsgnNumbers) {
@@ -35,7 +34,8 @@ public class TestTrafficOneDeparture extends TestTraffic {
     return ret;
   }
 
-  private static String typeName= "A319";
+  private static String typeName = "A319";
+
   private Movement generateMovement(String number) {
     Movement tmp;
 

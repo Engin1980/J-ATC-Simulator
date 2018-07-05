@@ -654,7 +654,7 @@ public class Pilot {
 
       SpeechList<IFromAtc> gas = new SpeechList<>(this.approach.getGaRoute());
       ChangeAltitudeCommand cac = null; // remember climb command and add it as first at the end
-      if (gas.get(0) instanceof ChangeAltitudeCommand){
+      if (gas.get(0) instanceof ChangeAltitudeCommand) {
         cac = (ChangeAltitudeCommand) gas.get(0);
         gas.removeAt(0);
       }
@@ -662,7 +662,7 @@ public class Pilot {
 
       // check if is before runway threshold.
       // if is far before, then first point will still be runway threshold
-      if (isBeforeRunwayThreshold()){
+      if (isBeforeRunwayThreshold()) {
         String runwayThresholdNavaidName =
             this.approach.getThreshold().getParent().getParent().getIcao() + ":" + this.approach.getThreshold().getName();
         Navaid runwayThresholdNavaid = Acc.area().getNavaids().getOrGenerate(runwayThresholdNavaidName);
@@ -684,7 +684,7 @@ public class Pilot {
       if (dist < 3)
         ret = false;
       else {
-        ret = Headings.isBetween(this.approach.getCourse()-70, hdg, this.approach.getCourse()+70);
+        ret = Headings.isBetween(this.approach.getCourse() - 70, hdg, this.approach.getCourse() + 70);
       }
       return ret;
     }
@@ -703,8 +703,7 @@ public class Pilot {
               // experimental, trying to fix descend rate after FAF to lower values
               // newAltitude = parent.getTargetAltitude();
               newAltitude = (int) Math.max(parent.getTargetAltitude(), parent.getAltitude() - 1000);
-            }
-            else {
+            } else {
               double dist = Coordinates.getDistanceInNM(parent.getCoordinate(), approach.getThreshold().getCoordinate());
               double delta = dist * this.approach.getSlope();
               newAltitude = (int) delta + Acc.airport().getAltitude();
@@ -865,7 +864,7 @@ public class Pilot {
                 return;
               }
               // check if should descend but is not leveled at initial altitude
-              if (parent.getAltitude() > this.approach.getInitialAltitude() + 100){
+              if (parent.getAltitude() > this.approach.getInitialAltitude() + 100) {
                 goAround("Not established in GP, too high.");
                 return;
               }
@@ -1393,19 +1392,24 @@ public class Pilot {
     if (sayConfirmations) say(cres.confirmation);
 
     while (queue.isEmpty() == false) {
-      IAtcCommand cmd = (IAtcCommand) queue.get(0);
-      if (cmd instanceof AfterCommand)
-        break;
+      ISpeech sp = queue.get(0);
       queue.removeAt(0);
+      if (sp instanceof RadarContactConfirmationNotification) {
+        // do nothing, just ignore it. I hope it will be confirmed already somewhere else.
+        // the reason why it may appear here is delayed ATC radar contact confirmation.
+      } else {
+        IAtcCommand cmd = (IAtcCommand) sp;
+        if (cmd instanceof AfterCommand)
+          break;
 
-      cres = ApplicationManager.confirm(plane, cmd, true, false);
-      if (sayConfirmations) say(cres.confirmation);
+        cres = ApplicationManager.confirm(plane, cmd, true, false);
+        if (sayConfirmations) say(cres.confirmation);
 
-      if (cs == CommandSource.procedure) {
-        afterCommands.addRoute(af, cmd);
-      } else
-        afterCommands.addExtension(af, cmd);
-
+        if (cs == CommandSource.procedure) {
+          afterCommands.addRoute(af, cmd);
+        } else
+          afterCommands.addExtension(af, cmd);
+      }
     }
   }
 

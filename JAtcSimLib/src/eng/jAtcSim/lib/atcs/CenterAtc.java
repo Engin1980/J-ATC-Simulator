@@ -40,12 +40,10 @@ public class CenterAtc extends ComputerAtc {
 
   @Override
   public void unregisterPlaneUnderControl(Airplane plane, boolean finalUnregistration) {
-
   }
 
   @Override
   public void registerNewPlaneUnderControl(Airplane plane, boolean finalRegistration) {
-
   }
 
   @Override
@@ -106,8 +104,9 @@ public class CenterAtc extends ComputerAtc {
         if (plane.isDeparture()) {
           SpeechList cmds = new SpeechList();
 
-          cmds.add(
-              new RadarContactConfirmationNotification());
+          // this is done automatically in ComputerAtc class.
+//          cmds.add(
+//              new RadarContactConfirmationNotification());
           cmds.add(
               new ChangeAltitudeCommand(ChangeAltitudeCommand.eDirection.climb, getDepartureRandomTargetAltitude(plane)));
           cmds.add(
