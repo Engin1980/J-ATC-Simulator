@@ -191,14 +191,14 @@ public class Area {
                   String.format("airport %s runway %s route %s has invalid fromAtc: %s (error: %s)",
                       a.getIcao(), t.getName(), o.getName(), o.getRoute(), ex.getMessage()));
             }
-            try {
-              n = o.getMainFix();
-            } catch (ERuntimeException ex) {
-              throw new EApplicationException(
-                  String.format(
-                      "airport %s runway %s route %s has no main fix. SID last/STAR first command must be PD FIX (error: %s)",
-                      a.getIcao(), t.getName(), o.getName(), o.getRoute()));
-            }
+//            try {
+//              n = o.getMainFix();
+//            } catch (ERuntimeException ex) {
+//              throw new EApplicationException(
+//                  String.format(
+//                      "airport %s runway %s route %s has no main fix. SID last/STAR first command must be PD FIX (error: %s)",
+//                      a.getIcao(), t.getName(), o.getName(), o.getRoute()));
+//            }
           }
         } // for (RunwayThreshold
       } // for (Runway

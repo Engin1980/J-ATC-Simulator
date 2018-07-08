@@ -468,8 +468,7 @@ public class Airplane implements IMessageParticipant {
 
   public Airplane(Callsign callsign, Coordinate coordinate, Squawk sqwk, AirplaneType airplaneSpecification,
                   int heading, int altitude, int speed, boolean isDeparture,
-                  Route assignedRoute, SpeechList<IAtcCommand> initialCommands,
-                  int delayInitialMinutes, ETime delayExpectedTime) {
+                  Route assignedRoute, int delayInitialMinutes, ETime delayExpectedTime) {
 
     this.callsign = callsign;
     this.coordinate = coordinate;
@@ -528,7 +527,6 @@ public class Airplane implements IMessageParticipant {
     this.pilot = new Pilot(this.new Airplane4Pilot(), divertTime);
     if (assignedRoute != null)
       this.pilot.setAssignedRoute(assignedRoute);
-    this.pilot.initSpeeches(initialCommands);
     this.plane4Display = this.new Airplane4Display();
 
     // flight recorders on
@@ -681,7 +679,7 @@ public class Airplane implements IMessageParticipant {
     if (isDeparture() == false)
       throw new EApplicationException(sf("This method should not be called on departure aircraft %s.", this.getCallsign().toString()));
 
-    Navaid ret = this.pilot.getAssignedRoute().getMainFix();
+    Navaid ret = this.pilot.getAssignedRoute().getExitFix();
     return ret;
   }
 

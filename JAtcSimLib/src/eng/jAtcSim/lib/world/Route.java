@@ -5,11 +5,13 @@
  */
 package eng.jAtcSim.lib.world;
 
+import com.sun.corba.se.impl.monitoring.MonitoredAttributeInfoImpl;
 import eng.eSystem.Tuple;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.xmlSerialization.XmlIgnore;
 import eng.eSystem.xmlSerialization.XmlOptional;
 import eng.jAtcSim.lib.Acc;
@@ -55,7 +57,13 @@ public class Route {
   private IList<Navaid> _routeNavaids = null;
   private double _routeLength = -1;
   @XmlOptional
-  private Navaid mainFix = null;
+  private String customFixName = null;
+  @XmlIgnore
+  private Navaid nameFix = null;
+  @XmlIgnore
+  private Navaid entryFix = null;
+  @XmlIgnore
+  private Navaid exitFix = null;
   @XmlOptional
   private Integer entryFL = null;
   @XmlIgnore
@@ -70,7 +78,9 @@ public class Route {
     if (arrival) {
       ret._routeCommands.add(new ProceedDirectCommand(n));
     }
-    ret.mainFix = n;
+    ret.entryFix = n;
+    ret.exitFix = n;
+    ret.nameFix = n;
     ret.type = eType.vectoring;
     ret._routeCommands.add(new ProceedDirectCommand(n));
     ret.route = "";
@@ -137,10 +147,6 @@ public class Route {
     return this._routeNavaids;
   }
 
-  public Navaid getMainFix() {
-    return mainFix;
-  }
-
   @Override
   public String toString() {
     return "Route{" +
@@ -149,6 +155,9 @@ public class Route {
   }
 
   public void bind() {
+    if (type == eType.vectoring)
+      throw new UnsupportedOperationException("Vectoring type is not supported in the game yet.");
+
     try {
       Parser p = new ShortBlockParser();
       SpeechList<IFromAtc> xlst = p.parseMulti(this.route);
@@ -157,33 +166,28 @@ public class Route {
       throw new EBindException("Parsing fromAtc failed for route " + this.name + ". Route fromAtc contains error (see cause).", ex);
     }
 
-    // when "main fix" was not explicitly specified
-    if (mainFix == null) {
-      switch (type) {
-        case sid:
-          mainFix = tryGetSidMainFix();
-          break;
-        case star:
-        case transition:
-          mainFix = tryGetStarMainFix();
-          break;
-        case vectoring:
-          if (mainFix == null)
-            throw new EBindException("\"Vectoring\" route must have set mainFix explicitly.");
-          break;
-        default:
-          throw new EBindException("Failed to obtain main route fix of route " + this.name + ". SID last/STAR first command must be \"proceed direct\" (fromAtc: " + this.route + ")");
-      }
-    }
 
-    _routeNavaids = new EList<>();
-    for (ICommand c : _routeCommands) {
-      if (c instanceof ToNavaidCommand) {
-        _routeNavaids.add(((ToNavaidCommand) c).getNavaid());
-      }
-    }
-
+    _routeNavaids = _routeCommands
+        .where(q->q instanceof ToNavaidCommand)
+        .select(q->((ToNavaidCommand)q).getNavaid());
     _routeLength = calculateRouteLength();
+
+
+    Navaid customFix = null;
+    if (this.customFixName != null) customFix = Acc.area().getNavaids().get(customFixName);
+    switch (type) {
+      case sid:
+        this.entryFix = _routeNavaids.getFirst();
+        this.exitFix = customFix == null ? getFixByRouteName() : customFix;
+        break;
+      case star:
+      case transition:
+        this.entryFix = customFix == null ? getFixByRouteName() : customFix;
+        this.exitFix = _routeNavaids.getLast();
+        break;
+      default:
+        throw new EEnumValueUnsupportedException(type);
+    }
 
     // min alt
     Area area = this.getParent().getParent().getParent().getParent();
@@ -195,13 +199,25 @@ public class Route {
       if (hasMrvaIntersection(pointLines, mrva))
         maxMrvaAlt = Math.max(maxMrvaAlt, mrva.getMaxAltitude());
     }
-    if (maxMrvaAlt == 0){
-      Navaid routePoint = this.getMainFix();
-      Border mrva = mrvas.tryGetFirst(q->q.isIn(routePoint.getCoordinate()));
+    if (maxMrvaAlt == 0) {
+      Navaid routePoint = this.getEntryFix();
+      Border mrva = mrvas.tryGetFirst(q -> q.isIn(routePoint.getCoordinate()));
       if (mrva != null)
-          maxMrvaAlt = mrva.getMaxAltitude();
+        maxMrvaAlt = mrva.getMaxAltitude();
     }
     this.maxMrvaFL = maxMrvaAlt / 100;
+  }
+
+  public Navaid getNameFix() {
+    return nameFix;
+  }
+
+  public Navaid getEntryFix() {
+    return entryFix;
+  }
+
+  public Navaid getExitFix() {
+    return exitFix;
   }
 
   public Route makeClone() {
@@ -213,14 +229,16 @@ public class Route {
     ret._routeCommands = new SpeechList<>(this._routeCommands);
     ret._routeNavaids = new EList<>(this._routeNavaids);
     ret._routeLength = this._routeLength;
-    ret.mainFix = this.mainFix;
+    ret.nameFix = this.nameFix;
+    ret.entryFix = this.entryFix;
+    ret.exitFix = this.exitFix;
     ret.entryFL = this.entryFL;
     ret.maxMrvaFL = this.maxMrvaFL;
     return ret;
   }
 
   private boolean hasMrvaIntersection(IList<Tuple<Coordinate, Coordinate>> pointLines, Border mrva) {
-    boolean ret = pointLines.isAny(q->mrva.hasIntersectionWithLine(q));
+    boolean ret = pointLines.isAny(q -> mrva.hasIntersectionWithLine(q));
     return ret;
   }
 
@@ -257,28 +275,10 @@ public class Route {
     return ret;
   }
 
-
-  private Navaid tryGetSidMainFix() {
-    int index = _routeCommands.size() - 1;
-    while (index >= 0 && !(_routeCommands.get(index) instanceof ProceedDirectCommand)) {
-      index--;
-    }
-    if (index < 0)
-      throw new EApplicationException("Failed to find main navaid for route " + this.name + ". Route commands probably not well defined.");
-
-    ProceedDirectCommand c = (ProceedDirectCommand) _routeCommands.get(index);
-    return c.getNavaid();
-  }
-
-  private Navaid tryGetStarMainFix() {
-    int index = 0;
-    while (index < _routeCommands.size() && !(_routeCommands.get(index) instanceof ProceedDirectCommand))
-      index++;
-
-    if (index >= _routeCommands.size())
-      throw new EApplicationException("Failed to find main navaid for route " + this.name + ". Route commands probably not well defined.");
-
-    ProceedDirectCommand c = (ProceedDirectCommand) _routeCommands.get(index);
-    return c.getNavaid();
+  private Navaid getFixByRouteName() {
+    Navaid ret;
+    String name = this.name.substring(0, this.name.length() - 2);
+    ret = Acc.area().getNavaids().get(name);
+    return ret;
   }
 }

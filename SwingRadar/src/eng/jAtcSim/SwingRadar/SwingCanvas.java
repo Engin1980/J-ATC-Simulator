@@ -91,6 +91,7 @@ public class SwingCanvas implements ICanvas<JComponent> {
     }
 
     void scrolled(MouseWheelEvent e) {
+      if (e.getWheelRotation() == 0) return;
       EMouseEventArg eme = EMouseEventArg.createScroll(
           e.getPoint().x, e.getPoint().y, e.getWheelRotation());
       SwingCanvas.this.mouseEvent.raise(eme);

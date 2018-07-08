@@ -5,8 +5,10 @@
  */
 package eng.jAtcSim.lib.speaking.fromAtc.commands.afters;
 
+import eng.eSystem.Tuple;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
+import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.utilites.ConversionUtils;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.coordinates.Coordinate;
@@ -32,6 +34,13 @@ public class AfterCommandList {
 
   private final IList<AFItem> rt = new EList<>();
   private final IList<AFItem> ex = new EList<>();
+
+  public IReadOnlyList<Tuple<AfterCommand, IAtcCommand>> getAsList(Type type) {
+    IList<Tuple<AfterCommand, IAtcCommand>> ret;
+    IList<AFItem> tmp = type == Type.route ? this.rt : this.ex;
+    ret = tmp.select(q -> new Tuple<>(q.antecedent, q.consequent));
+    return ret;
+  }
 
   private static boolean isLateralDirectionAfterNavaidCommand(Coordinate coordinate, AFItem item) {
     boolean ret = false;
@@ -327,7 +336,7 @@ class AFItem {
   public final IAtcCommand consequent;
 
   private AFItem() {
-    antecedentDerivativeSourceHex =0;
+    antecedentDerivativeSourceHex = 0;
     consequentHex = 0;
     antecedent = null;
     consequent = null;
@@ -336,7 +345,7 @@ class AFItem {
   public AFItem(AfterCommand antecedent, IAtcCommand consequent) {
     this.antecedent = antecedent;
     this.consequent = consequent;
-    if (antecedent.getDerivationSource() != null){
+    if (antecedent.getDerivationSource() != null) {
       antecedentDerivativeSourceHex = antecedent.getDerivationSource().hashCode();
     } else {
       this.antecedentDerivativeSourceHex = -1;

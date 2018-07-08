@@ -7,7 +7,9 @@ package eng.jAtcSim.lib.airplanes.pilots;
 
 import com.sun.istack.internal.Nullable;
 import eng.eSystem.EStringBuilder;
+import eng.eSystem.Tuple;
 import eng.eSystem.collections.IList;
+import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
@@ -26,6 +28,9 @@ import eng.jAtcSim.lib.global.DelayedList;
 import eng.jAtcSim.lib.global.ETime;
 import eng.jAtcSim.lib.global.Headings;
 import eng.jAtcSim.lib.global.Restriction;
+import eng.jAtcSim.lib.global.logging.AbstractSaver;
+import eng.jAtcSim.lib.global.logging.FileSaver;
+import eng.jAtcSim.lib.global.logging.Recorder;
 import eng.jAtcSim.lib.serialization.LoadSave;
 import eng.jAtcSim.lib.speaking.IFromAtc;
 import eng.jAtcSim.lib.speaking.ISpeech;
@@ -42,6 +47,7 @@ import eng.jAtcSim.lib.world.Route;
 import eng.jAtcSim.lib.world.RunwayThreshold;
 import eng.jAtcSim.lib.world.approaches.Approach;
 import eng.jAtcSim.lib.world.approaches.CurrentApproachInfo;
+import sun.util.resources.OpenListResourceBundle;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -1000,6 +1006,8 @@ public class Pilot {
   private Route assignedRoute;
   private Restriction speedRestriction = null;
   private Restriction altitudeRestriction = null;
+  @XmlIgnore
+  private PilotRecorder recorder;
 
   public static Pilot load(XElement tmp, Airplane.Airplane4Pilot parent) {
     Pilot ret = new Pilot();
@@ -1025,7 +1033,16 @@ public class Pilot {
       LoadSave.loadFromElement(behEl, ret.behavior);
     }
 
+    ret.openRecorder();
+
     return ret;
+  }
+
+  private void openRecorder(){
+    this.recorder = new PilotRecorder(
+        parent.getCallsign().toString() + " - pilot.log",
+        new FileSaver(Recorder.getRecorderFileName(parent.getCallsign().toString() + "_pilot.log")),
+        " \t ");
   }
 
   private static Behavior getBehaviorInstance(XElement behEl, Pilot parent) {
@@ -1067,17 +1084,12 @@ public class Pilot {
     }
 
     this.secondsWithoutRadarContact = 0;
+
+    this.openRecorder();
   }
 
   private Pilot() {
 
-  }
-
-  public void initSpeeches(SpeechList<IAtcCommand> initialCommands) {
-    SpeechList<IFromAtc> cmds;
-    cmds = new SpeechList<>(initialCommands);
-    expandThenCommands(cmds);
-    processSpeeches(cmds, CommandSource.atc);
   }
 
   public Route getAssignedRoute() {
@@ -1122,6 +1134,8 @@ public class Pilot {
     requestRadarContactIfRequired();
     flushSaidTextToAtc();
 
+    recorder.logPostponedAfterSpeeches(this.afterCommands);
+
 //    this.afterCommands.consolePrint();
 //    System.out.println(" / / / / / ");
   }
@@ -1145,7 +1159,7 @@ public class Pilot {
     rts = rts.where(q -> q.isValidForCategory(this.parent.getType().category));
     Route r = rts.getRandom();
     //TODO here can null-pointer-exception occur when no route is found for threshold and category
-    Navaid ret = r.getMainFix();
+    Navaid ret = r.getExitFix();
     return ret;
   }
 
@@ -1247,6 +1261,8 @@ public class Pilot {
 
     if (current.isEmpty()) return;
 
+    recorder.logProcessedCurrentSpeeches(current);
+
     // if has not confirmed radar contact and the first command in the queue is not radar contact confirmation
     if (secondsWithoutRadarContact > 0 && !(current.get(0) instanceof RadarContactConfirmationNotification)) {
       say(new RequestRadarContactNotification());
@@ -1266,10 +1282,12 @@ public class Pilot {
 
     cmds = afterCommands.getAndRemoveSatisfiedCommands(
         parent.getMe(), targetCoordinate, AfterCommandList.Type.extensions);
+    recorder.logProcessedAfterSpeeches(cmds, "extensions");
     processSpeeches(cmds, CommandSource.extension);
 
     cmds = afterCommands.getAndRemoveSatisfiedCommands(
         parent.getMe(), targetCoordinate, AfterCommandList.Type.route);
+    recorder.logProcessedAfterSpeeches(cmds, "route");
     processSpeeches(cmds, CommandSource.route);
   }
 
@@ -1621,4 +1639,52 @@ public class Pilot {
     behavior.fly();
   }
 
+}
+
+class PilotRecorder extends Recorder {
+
+  public PilotRecorder(String recorderName, AbstractSaver os, String fromTimeSeparator) {
+    super(recorderName, os, fromTimeSeparator);
+  }
+
+  public void logPostponedAfterSpeeches(AfterCommandList afterCommands) {
+    IReadOnlyList<Tuple<AfterCommand, IAtcCommand>> tmp;
+    tmp = afterCommands.getAsList(AfterCommandList.Type.route);
+    _logPosponed(tmp, "route");
+    tmp = afterCommands.getAsList(AfterCommandList.Type.extensions);
+    _logPosponed(tmp, "extensions");
+  }
+
+  private void _logPosponed(IReadOnlyList<Tuple<AfterCommand, IAtcCommand>> tmp, String type) {
+    EStringBuilder sb = new EStringBuilder();
+    sb.appendLine("Postponed " + type + " after commands");
+    for (Tuple<AfterCommand, IAtcCommand> tuple : tmp) {
+      sb.append("\t");
+      sb.append(tuple.getA().toString());
+      sb.append(" -> ");
+      sb.append(tuple.getB().toString());
+      sb.appendLine();
+    }
+    super.writeLine(sb.toString());
+  }
+
+  public void logProcessedAfterSpeeches(SpeechList<IAtcCommand> cmds, String extensions) {
+    EStringBuilder sb = new EStringBuilder();
+    sb.appendLine("Processed after speeches of " + extensions);
+    for (int i = 0; i < cmds.size(); i++) {
+      IAtcCommand cmd = cmds.get(i);
+      sb.appendLine("\t").appendLine(cmd.toString()).appendLine();
+    }
+    super.writeLine(sb.toString());
+  }
+
+  public void logProcessedCurrentSpeeches(SpeechList current) {
+    EStringBuilder sb = new EStringBuilder();
+    sb.appendLine("Current processed speeches");
+    for (int i = 0; i < current.size(); i++) {
+      ISpeech sp = current.get(i);
+      sb.append("\t").append(sp.toString()).appendLine();
+    }
+    super.writeLine(sb.toString());
+  }
 }

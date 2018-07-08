@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<settings
+        xmlns="https://github.com/Engin1980/J-ATC-Simulator/radarStyle"
+        displayTextDelay="27">
+
+  <airproxFull>FF0000</airproxFull>
+  <airproxWarning>FFA500</airproxWarning>
+  <airproxPartial>880000</airproxPartial>
+  <mrvaError>FF0066</mrvaError>
+
+  <activeRunway color="FFFFFF" width="3"/>
+  <closedRunway color="FFAAAA" width="3"/>
+
+  <navVOR color="55FF55" width="3" borderWidth="1" borderDistance="9"/>
+  <navNDB color="5555FF" width="3" borderWidth="1" borderDistance="10"/>
+  <navFix color="666666" width="3" borderWidth="0" borderDistance="0"/>
+  <fafFix color="5555FF" width="10" borderWidth="0" borderDistance="0"/>
+  <navFixMinor color="444444" width="3" borderWidth="0" borderDistance="0"/>
+  <navAirport color="AAAAFF" width="7" borderWidth="0" borderDistance="0"/>
+
+  <borderCountry color="4444FF" width="1"/>
+  <borderCtr color="44AAFF" width="1"/>
+  <borderTma color="44AAFF" width="1"/>
+  <borderMrva color="555555" width="1">
+    <font name="Inconsolata" size="14" style="0"/>
+  </borderMrva>
+
+  <infoLine color="FFFF00" width="4">
+    <font name="Inconsolata" size="16" style="0"/>
+  </infoLine>
+
+  <mapBackcolor>000000</mapBackcolor>
+
+  <star color="990099" width="1"/>
+  <sid color="009900" width="1"/>
+
+  <!-- style: 0=plain, 1=bold, 2=italic -->
+  <atc color="AAAAAA">
+    <font name="Inconsolata" size="16" style="0"/>
+  </atc>
+  <plane color="00FF00">
+    <font name="Inconsolata" size="16" style="0"/>
+  </plane>
+  <system color="FFFFFF">
+    <font name="Inconsolata" size="16" style="0"/>
+  </system>
+  <time color="AAAAFF">
+    <font name="Inconsolata" size="14" style="0"/>
+  </time>
+  <callsign color="000000">
+    <font name="Inconsolata" size="16" style="0"/>
+  </callsign>
+  <navaid color="000000">
+    <font name="Inconsolata" size="14" style="0"/>
+  </navaid>
+
+  <!--
+    case 1:    callsign
+    case 2:    callsignCompany
+    case 3:    callsignNumber
+    case 4:    type
+    case 5:    category by type
+    case 8:    sqwk
+    case 11:   heading
+    case 12:   targetHeading
+    case 21:   speedLong
+    case 22:   speedShort
+    case 31:   targetSpeedLong
+    case 32:   targetSpeedShort
+    case 33:   altitudeLong
+    case 34:   altitudeShort
+    case 35:   altitudeInFtShort
+    case 36:   targetAltitudeLong
+    case 37:   targetAltitudeShort
+    case 38:   targetAltitudeInFtShort
+    case 41:   verticalSpeedLong
+    case 42:   verticalSpeedShort
+    case 43:   climbDescendChar
+  -->
+
+  <stopped visible="false" color="000000"
+           connectorColor="000000"
+           pointWidth="0" headingLineLength="0"
+           historyDotCount="0" historyDotStep="5"
+           separationRingRadius="0"
+           firstLineFormat=""
+           secondLineFormat=""
+           thirdLineFormat=""/>
+
+  <app color="00FF00" connectorColor="008800"
+       pointWidth="7" headingLineLength="5"
+       historyDotCount="10" historyDotStep="3"
+       separationRingRadius="5"
+       firstLineFormat="{1}"
+       secondLineFormat="{34}{43}{37} {22}"
+       thirdLineFormat="{8} {4}"/>
+
+  <ctr color="0000A0" connectorColor="000050"
+       pointWidth="5" headingLineLength="3"
+       historyDotCount="5" historyDotStep="3"
+       separationRingRadius="5"
+       firstLineFormat="{1}"
+       secondLineFormat="{34} {22}"
+       thirdLineFormat="{8} {4}"/>
+
+  <twr color="4F4F00" connectorColor="282800"
+       pointWidth="5" headingLineLength="3"
+       historyDotCount="5" historyDotStep="3"
+       separationRingRadius="5"
+       firstLineFormat="{1}"
+       secondLineFormat="{34} {22}"
+       thirdLineFormat="{8} {4}"/>
+
+  <selected color="FFFF00" connectorColor="888800"
+            pointWidth="7" headingLineLength="5"
+            historyDotCount="10" historyDotStep="3"
+            separationRingRadius="5"
+            firstLineFormat="{1}"
+            secondLineFormat="{34}{43}{37} {22}"
+            thirdLineFormat="{8} {4}"/>
+
+  <emergency color="FF0000" connectorColor="880000"
+             pointWidth="7" headingLineLength="5"
+             historyDotCount="10" historyDotStep="3"
+             separationRingRadius="5"
+             firstLineFormat="{1}"
+             secondLineFormat="{34}{43}{37} {22}"
+             thirdLineFormat="{8} {4}"/>
+</settings>

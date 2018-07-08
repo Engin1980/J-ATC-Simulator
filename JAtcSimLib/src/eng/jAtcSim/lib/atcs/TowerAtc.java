@@ -593,7 +593,7 @@ public class TowerAtc extends ComputerAtc {
       // first try to getContent route for the same navaid, then try to find any route
       Route r = availableThreshold.getRoutes().tryGetFirst(q ->
           q.getType() == Route.eType.sid &&
-              q.getMainFix().equals(toReadyPlane.getAssigneRoute().getMainFix()) &&
+              q.getNameFix().equals(toReadyPlane.getAssigneRoute().getNameFix()) &&
               q.isValidForCategory(toReadyPlane.getType().category));
       if (r == null)
         r = availableThreshold.getRoutes().where(q ->

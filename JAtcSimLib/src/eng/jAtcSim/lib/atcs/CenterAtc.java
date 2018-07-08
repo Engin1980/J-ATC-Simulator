@@ -8,10 +8,8 @@ import eng.jAtcSim.lib.messaging.Message;
 import eng.jAtcSim.lib.messaging.StringMessageContent;
 import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.GoodDayNotification;
-import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeAltitudeCommand;
-import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeHeadingCommand;
-import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeSpeedCommand;
-import eng.jAtcSim.lib.speaking.fromAtc.commands.SetAltitudeRestriction;
+import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
+import eng.jAtcSim.lib.speaking.fromAtc.commands.*;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.afters.AfterNavaidCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.notifications.RadarContactConfirmationNotification;
 import eng.jAtcSim.lib.world.Navaid;
@@ -44,6 +42,17 @@ public class CenterAtc extends ComputerAtc {
 
   @Override
   public void registerNewPlaneUnderControl(Airplane plane, boolean finalRegistration) {
+    if (finalRegistration){
+      SpeechList<IAtcCommand> initialCommands = new SpeechList<>();
+      initialCommands.add(new ChangeAltitudeCommand(
+          ChangeAltitudeCommand.eDirection.descend,
+          Acc.atcCtr().getOrderedAltitude()
+      ));
+      initialCommands.add(new ProceedDirectCommand(plane.getAssigneRoute().getEntryFix()));
+      initialCommands.add(new ClearedToArrival(plane.getAssigneRoute()));
+      Message msg = new Message(this, plane, initialCommands);
+      super.sendMessage(msg);
+    }
   }
 
   @Override
@@ -71,7 +80,7 @@ public class CenterAtc extends ComputerAtc {
         ret = new RequestResult(false,
             String.format("%s is not heading (or on the route to) departure fix %s",
                 p.getCallsign().toString(),
-                p.getAssigneRoute().getMainFix().getName()));
+                p.getAssigneRoute().getExitFix().getName()));
       } else {
         if (p.getAltitude() > super.acceptAltitude || p.getAltitude() > (p.getType().maxAltitude * .666)) {
           ret = new RequestResult(true, null);
@@ -136,7 +145,7 @@ public class CenterAtc extends ComputerAtc {
         ret = Acc.atcApp();
       else {
         Route r = plane.getAssigneRoute();
-        Navaid n = r.getMainFix();
+        Navaid n = r.getExitFix();
         double dist = Coordinates.getDistanceInNM(plane.getCoordinate(), n.getCoordinate());
         if (dist <= 10) {
           ret = Acc.atcApp();

@@ -106,11 +106,9 @@ public class TrafficManager {
     int alt = Acc.airport().getAltitude();
     int spd = 0;
 
-    SpeechList<IAtcCommand> initialCommands = new SpeechList<>();
-
     ret = new Airplane(
         cs, coord, sqwk, pt, heading, alt, spd, true,
-        route, initialCommands, m.getDelayInMinutes(), m.getInitTime().addMinutes(3));
+        route, m.getDelayInMinutes(), m.getInitTime().addMinutes(3));
 
     return ret;
   }
@@ -128,30 +126,21 @@ public class TrafficManager {
     int heading;
     int alt;
     int spd;
-    SpeechList<IAtcCommand> initialCommands;
 
     route = tryGetRandomIfrRoute(true, pt);
     if (route == null) {
       return null; // no route means disallowed IFR
     }
-    coord = generateArrivalCoordinate(route.getMainFix().getCoordinate(), Acc.airport().getLocation());
-    heading = (int) Coordinates.getBearing(coord, route.getMainFix().getCoordinate());
+    coord = generateArrivalCoordinate(route.getEntryFix().getCoordinate(), Acc.airport().getLocation());
+    heading = (int) Coordinates.getBearing(coord, route.getEntryFix().getCoordinate());
     alt = generateArrivingPlaneAltitude(route, pt);
-
-    initialCommands = new SpeechList<>();
-    // added command to descend
-    //TODO following should say ctr ATC, not this here
-    initialCommands.add(new ChangeAltitudeCommand(
-        ChangeAltitudeCommand.eDirection.descend,
-        Acc.atcCtr().getOrderedAltitude()
-    ));
 
     Squawk sqwk = generateSqwk();
     spd = pt.vCruise;
 
     ret = new Airplane(
         cs, coord, sqwk, pt, heading, alt, spd, false,
-        route, initialCommands, m.getDelayInMinutes(), m.getInitTime().addMinutes(25));
+        route, m.getDelayInMinutes(), m.getInitTime().addMinutes(25));
 
     return ret;
   }
@@ -165,7 +154,7 @@ public class TrafficManager {
       double thousandsFeetPerMile = 500;
       double dist = r.getRouteLength();
       if (dist <= 0) {
-        dist = Coordinates.getDistanceInNM(r.getMainFix().getCoordinate(), Acc.airport().getLocation());
+        dist = Coordinates.getDistanceInNM(r.getEntryFix().getCoordinate(), Acc.airport().getLocation());
       }
       ret = (int) (dist * thousandsFeetPerMile);
     }
