@@ -170,25 +170,6 @@ public class TowerAtc extends ComputerAtc {
   }
 
   @Override
-  public void init() {
-    super.init();
-
-    runwayChecks = new EMap<>();
-    for (Runway runway : Acc.airport().getRunways()) {
-      RunwayCheck rc = TowerAtc.RunwayCheck.createNormal(true);
-      runwayChecks.set(runway, rc);
-    }
-
-    inUseInfo = new RunwaysInUseInfo();
-    inUseInfo.scheduled = getSuggestedThresholds();
-    inUseInfo.scheduler = new SchedulerForAdvice(Acc.now().clone());
-    processRunwayChangeBackground();
-
-    WeatherProvider wp = Acc.weatherProvider();
-    wp.getWeatherUpdatedEvent().add(w -> weatherUpdated(w));
-  }
-
-  @Override
   protected void processNonPlaneSwitchMessageFromAtc(Message m) {
     if (m.getContent() instanceof eng.jAtcSim.lib.speaking.fromAtc.atc2atc.RunwayCheck) {
       eng.jAtcSim.lib.speaking.fromAtc.atc2atc.RunwayCheck rrct = m.getContent();
@@ -292,6 +273,25 @@ public class TowerAtc extends ComputerAtc {
     LoadSave.loadField(elm, this, "inUseInfo");
     LoadSave.loadField(elm, this, "runwayChecks");
     LoadSave.loadField(elm, this, "isUpdatedWeather");
+  }
+
+  @Override
+  public void init() {
+    super.init();
+
+    runwayChecks = new EMap<>();
+    for (Runway runway : Acc.airport().getRunways()) {
+      RunwayCheck rc = TowerAtc.RunwayCheck.createNormal(true);
+      runwayChecks.set(runway, rc);
+    }
+
+    inUseInfo = new RunwaysInUseInfo();
+    inUseInfo.scheduled = getSuggestedThresholds();
+    inUseInfo.scheduler = new SchedulerForAdvice(Acc.now().clone());
+    processRunwayChangeBackground();
+
+    WeatherProvider wp = Acc.weatherProvider();
+    wp.getWeatherUpdatedEvent().add(w -> weatherUpdated(w));
   }
 
   public boolean isRunwayThresholdUnderMaintenance(RunwayThreshold threshold) {
@@ -575,28 +575,23 @@ public class TowerAtc extends ComputerAtc {
     availableThresholds = availableThresholds.where(q -> closestLandingPlaneDistance(q) > 2.5);
     // then getAndElapse those which has departed at least 1 minute before
     availableThresholds = availableThresholds.where(
-        q->!takeOffInfos.containsKey(q) || takeOffInfos.get(q).takeOffTime.addSeconds(60).isBeforeOrEq(Acc.now()));
+        q -> !takeOffInfos.containsKey(q) || takeOffInfos.get(q).takeOffTime.addSeconds(60).isBeforeOrEq(Acc.now()));
     // kick out if no runway left
     if (availableThresholds.isEmpty()) return;
 
-    RunwayThreshold availableThreshold;
-    if (availableThresholds.contains(toReadyPlane.getAssigneRoute().getParent()))
-      availableThreshold = toReadyPlane.getAssigneRoute().getParent();
-    else {
-      availableThreshold = availableThresholds.getRandom();
-      // plane has SID for different threshold
-      // may occur in runway change or parallel runways
-      // first try to getContent route for the same navaid, then try to find any route
-      Route r = availableThreshold.getRoutes().tryGetFirst(q ->
+    RunwayThreshold availableThreshold = availableThresholds.getRandom();
+    // plane has SID for different threshold
+    // may occur in runway change or parallel runways
+    // first try to getContent route for the same navaid, then try to find any route
+    Route r = availableThreshold.getRoutes().tryGetFirst(q ->
+        q.getType() == Route.eType.sid &&
+            q.getMainFix().equals(toReadyPlane.getEntryExitFix()) &&
+            q.isValidForCategory(toReadyPlane.getType().category));
+    if (r == null)
+      r = availableThreshold.getRoutes().where(q ->
           q.getType() == Route.eType.sid &&
-              q.getMainFix().equals(toReadyPlane.getAssigneRoute().getMainFix()) &&
-              q.isValidForCategory(toReadyPlane.getType().category));
-      if (r == null)
-        r = availableThreshold.getRoutes().where(q ->
-            q.getType() == Route.eType.sid &&
-                q.isValidForCategory(toReadyPlane.getType().category)).getRandom();
-      toReadyPlane.updateAssignedRoute(r);
-    }
+              q.isValidForCategory(toReadyPlane.getType().category)).getRandom();
+    toReadyPlane.updateAssignedRoute(r);
 
     // if it gets here, the "toReadyPlane" can proceed take-off
     linedUpPlanesList.removeAt(0);
@@ -614,7 +609,7 @@ public class TowerAtc extends ComputerAtc {
     TakeOffInfo toi = new TakeOffInfo(
         Acc.now(), toReadyPlane);
     this.takeOffInfos.set(availableThreshold, toi);
-    this.departureSwitchAltitude.set(toReadyPlane,  getDepartingPlaneSwitchAltitude(toReadyPlane.getType().category));
+    this.departureSwitchAltitude.set(toReadyPlane, getDepartingPlaneSwitchAltitude(toReadyPlane.getType().category));
 
     SpeechList lst = new SpeechList();
     lst.add(new RadarContactConfirmationNotification());
@@ -638,8 +633,8 @@ public class TowerAtc extends ComputerAtc {
     super.sendMessage(m);
   }
 
-  private double getDepartingPlaneSwitchAltitude(char category){
-    switch (category){
+  private double getDepartingPlaneSwitchAltitude(char category) {
+    switch (category) {
       case 'A':
         return (double) Acc.airport().getAltitude() + Acc.rnd().nextInt(100, 250);
       case 'B':
@@ -912,7 +907,7 @@ class Separation {
   }
 
   private static Coordinate getPosition(Airplane plane, int seconds, int heading) {
-    double traveledDistance = seconds/3600d * plane.getType().getV2();
+    double traveledDistance = seconds / 3600d * plane.getType().getV2();
     Coordinate ret = Coordinates.getCoordinate(plane.getCoordinate(), heading, traveledDistance);
     return ret;
   }

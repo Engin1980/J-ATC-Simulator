@@ -14,6 +14,7 @@ import eng.eSystem.xmlSerialization.XmlIgnore;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.pilots.Pilot;
 import eng.jAtcSim.lib.atcs.Atc;
+import eng.jAtcSim.lib.atcs.AtcTemplate;
 import eng.jAtcSim.lib.coordinates.Coordinate;
 import eng.jAtcSim.lib.coordinates.Coordinates;
 import eng.jAtcSim.lib.global.ETime;
@@ -117,6 +118,10 @@ public class Airplane implements IMessageParticipant {
 
     public boolean isEmergency() {
       return Airplane.this.isEmergency();
+    }
+
+    public Navaid entryExitPoint() {
+      return Airplane.this.getEntryExitFix();
     }
   }
 
