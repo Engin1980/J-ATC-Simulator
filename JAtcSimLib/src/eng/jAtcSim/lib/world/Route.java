@@ -59,11 +59,7 @@ public class Route {
   @XmlOptional
   private String customFixName = null;
   @XmlIgnore
-  private Navaid nameFix = null;
-  @XmlIgnore
-  private Navaid entryFix = null;
-  @XmlIgnore
-  private Navaid exitFix = null;
+  private Navaid mainFix = null;
   @XmlOptional
   private Integer entryFL = null;
   @XmlIgnore
@@ -78,9 +74,7 @@ public class Route {
     if (arrival) {
       ret._routeCommands.add(new ProceedDirectCommand(n));
     }
-    ret.entryFix = n;
-    ret.exitFix = n;
-    ret.nameFix = n;
+    ret.mainFix = n;
     ret.type = eType.vectoring;
     ret._routeCommands.add(new ProceedDirectCommand(n));
     ret.route = "";
@@ -166,24 +160,21 @@ public class Route {
       throw new EBindException("Parsing fromAtc failed for route " + this.name + ". Route fromAtc contains error (see cause).", ex);
     }
 
-
     _routeNavaids = _routeCommands
         .where(q->q instanceof ToNavaidCommand)
         .select(q->((ToNavaidCommand)q).getNavaid());
     _routeLength = calculateRouteLength();
 
-
     Navaid customFix = null;
-    if (this.customFixName != null) customFix = Acc.area().getNavaids().get(customFixName);
+    if (this.customFixName != null)
+      customFix = Acc.area().getNavaids().get(customFixName);
     switch (type) {
       case sid:
-        this.entryFix = _routeNavaids.getFirst();
-        this.exitFix = customFix == null ? getFixByRouteName() : customFix;
+        this.mainFix = customFix == null ? getFixByRouteName() : customFix;
         break;
       case star:
       case transition:
-        this.entryFix = customFix == null ? getFixByRouteName() : customFix;
-        this.exitFix = _routeNavaids.getLast();
+        this.mainFix = customFix == null ? getFixByRouteName() : customFix;
         break;
       default:
         throw new EEnumValueUnsupportedException(type);
@@ -200,7 +191,7 @@ public class Route {
         maxMrvaAlt = Math.max(maxMrvaAlt, mrva.getMaxAltitude());
     }
     if (maxMrvaAlt == 0) {
-      Navaid routePoint = this.getEntryFix();
+      Navaid routePoint = this.mainFix;
       Border mrva = mrvas.tryGetFirst(q -> q.isIn(routePoint.getCoordinate()));
       if (mrva != null)
         maxMrvaAlt = mrva.getMaxAltitude();
@@ -208,16 +199,8 @@ public class Route {
     this.maxMrvaFL = maxMrvaAlt / 100;
   }
 
-  public Navaid getNameFix() {
-    return nameFix;
-  }
-
-  public Navaid getEntryFix() {
-    return entryFix;
-  }
-
-  public Navaid getExitFix() {
-    return exitFix;
+  public Navaid getMainFix() {
+    return mainFix;
   }
 
   public Route makeClone() {
@@ -229,9 +212,7 @@ public class Route {
     ret._routeCommands = new SpeechList<>(this._routeCommands);
     ret._routeNavaids = new EList<>(this._routeNavaids);
     ret._routeLength = this._routeLength;
-    ret.nameFix = this.nameFix;
-    ret.entryFix = this.entryFix;
-    ret.exitFix = this.exitFix;
+    ret.mainFix = this.mainFix;
     ret.entryFL = this.entryFL;
     ret.maxMrvaFL = this.maxMrvaFL;
     return ret;

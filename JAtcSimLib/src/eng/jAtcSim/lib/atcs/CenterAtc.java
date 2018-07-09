@@ -1,5 +1,7 @@
 package eng.jAtcSim.lib.atcs;
 
+import eng.eSystem.collections.EList;
+import eng.eSystem.collections.IList;
 import eng.eSystem.eXml.XElement;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
@@ -11,9 +13,9 @@ import eng.jAtcSim.lib.speaking.fromAirplane.notifications.GoodDayNotification;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.*;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.afters.AfterNavaidCommand;
-import eng.jAtcSim.lib.speaking.fromAtc.notifications.RadarContactConfirmationNotification;
 import eng.jAtcSim.lib.world.Navaid;
 import eng.jAtcSim.lib.world.Route;
+import eng.jAtcSim.lib.world.RunwayThreshold;
 
 public class CenterAtc extends ComputerAtc {
 
@@ -42,17 +44,46 @@ public class CenterAtc extends ComputerAtc {
 
   @Override
   public void registerNewPlaneUnderControl(Airplane plane, boolean finalRegistration) {
-    if (finalRegistration){
-      SpeechList<IAtcCommand> initialCommands = new SpeechList<>();
-      initialCommands.add(new ChangeAltitudeCommand(
-          ChangeAltitudeCommand.eDirection.descend,
-          Acc.atcCtr().getOrderedAltitude()
-      ));
-      initialCommands.add(new ProceedDirectCommand(plane.getAssigneRoute().getEntryFix()));
-      initialCommands.add(new ClearedToArrival(plane.getAssigneRoute()));
-      Message msg = new Message(this, plane, initialCommands);
+    if (finalRegistration) {
+      SpeechList<IAtcCommand> cmds = new SpeechList<>();
+      cmds.add(new ChangeAltitudeCommand(ChangeAltitudeCommand.eDirection.descend, Acc.atcCtr().getOrderedAltitude()));
+
+      // assigns route
+      Navaid n = plane.getEntryExitFix();
+      Route r = getRouteForPlaneAndFix(plane, n);
+      cmds.add(new ProceedDirectCommand(n));
+//      cmds.add(new ThenCommand());
+      cmds.add(new ClearedToRouteCommand(r));
+      Message msg = new Message(this, plane, cmds);
       super.sendMessage(msg);
     }
+  }
+
+  private Route getRouteForPlaneAndFix(Airplane plane, Navaid n) {
+
+    IList<Route> rts = new EList<>();
+
+    IList<RunwayThreshold> thresholds;
+    // if is arrival, scheduled thresholds are taken into account
+    thresholds = Acc.atcTwr().getRunwayThresholdsScheduled();
+    if (thresholds.isEmpty())
+      thresholds = Acc.thresholds();
+
+    for (RunwayThreshold threshold : thresholds) {
+      rts.add(threshold.getRoutes());
+    }
+    rts = rts.where(q -> q.getType() != Route.eType.sid);
+
+    rts = rts.where(q -> q.getMaxMrvaAltitude() < plane.getType().maxAltitude);
+
+    rts = rts.where(q -> q.isValidForCategory(plane.getType().category));
+
+    assert !rts.isEmpty() : "Here should be at least one route, otherwise the arrival had to be canceled during creationg for NO-IFR route";
+
+    Route ret;
+      ret = rts.getRandom();
+
+    return ret;
   }
 
   @Override
@@ -80,7 +111,7 @@ public class CenterAtc extends ComputerAtc {
         ret = new RequestResult(false,
             String.format("%s is not heading (or on the route to) departure fix %s",
                 p.getCallsign().toString(),
-                p.getAssigneRoute().getExitFix().getName()));
+                p.getAssigneRoute().getMainFix().getName()));
       } else {
         if (p.getAltitude() > super.acceptAltitude || p.getAltitude() > (p.getType().maxAltitude * .666)) {
           ret = new RequestResult(true, null);
@@ -113,9 +144,6 @@ public class CenterAtc extends ComputerAtc {
         if (plane.isDeparture()) {
           SpeechList cmds = new SpeechList();
 
-          // this is done automatically in ComputerAtc class.
-//          cmds.add(
-//              new RadarContactConfirmationNotification());
           cmds.add(
               new ChangeAltitudeCommand(ChangeAltitudeCommand.eDirection.climb, getDepartureRandomTargetAltitude(plane)));
           cmds.add(
@@ -144,8 +172,7 @@ public class CenterAtc extends ComputerAtc {
       if (plane.isEmergency())
         ret = Acc.atcApp();
       else {
-        Route r = plane.getAssigneRoute();
-        Navaid n = r.getExitFix();
+        Navaid n = plane.getEntryExitFix();
         double dist = Coordinates.getDistanceInNM(plane.getCoordinate(), n.getCoordinate());
         if (dist <= 10) {
           ret = Acc.atcApp();

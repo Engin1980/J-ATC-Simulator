@@ -32,6 +32,7 @@ public class ApplicationManager {
     cmdApps.put(ReportDivertTime.class, new ReportDivertTimeCommandApplication());
     cmdApps.put(DivertCommand.class, new DivertCommandApplication());
     cmdApps.put(SetAltitudeRestriction.class, new SetAltitudeRestrictionApplication());
+    cmdApps.put(ClearedToRouteCommand.class, new ClearedToRouteApplication());
 
     notApps = new HashMap<>();
     notApps.put(RadarContactConfirmationNotification.class, new RadarContactConfirmationNotificationApplication());
@@ -45,7 +46,7 @@ public class ApplicationManager {
       ret.confirmation = new Confirmation((AfterCommand) c);
     } else if (c instanceof IAtcCommand) {
       CommandApplication ca = cmdApps.get(c.getClass());
-      assert ca != null;
+      assert ca != null : "Unknown application. Probably not added into cmdApps list?";
       assert plane != null;
       assert c != null;
       ret = ca.confirm(plane, (IAtcCommand) c, checkStateSanity, checkCommandSanity);

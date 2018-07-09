@@ -23,7 +23,6 @@ import eng.jAtcSim.lib.messaging.StringMessageContent;
 import eng.jAtcSim.lib.serialization.LoadSave;
 import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.GoingAroundNotification;
-import eng.jAtcSim.lib.speaking.fromAirplane.notifications.GoodDayNotification;
 import eng.jAtcSim.lib.speaking.fromAtc.atc2atc.RunwayUse;
 import eng.jAtcSim.lib.speaking.fromAtc.atc2atc.StringResponse;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeAltitudeCommand;
@@ -34,11 +33,8 @@ import eng.jAtcSim.lib.weathers.WeatherProvider;
 import eng.jAtcSim.lib.world.Route;
 import eng.jAtcSim.lib.world.Runway;
 import eng.jAtcSim.lib.world.RunwayThreshold;
-import jdk.management.resource.internal.inst.ThreadRMHooks;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class TowerAtc extends ComputerAtc {
@@ -593,7 +589,7 @@ public class TowerAtc extends ComputerAtc {
       // first try to getContent route for the same navaid, then try to find any route
       Route r = availableThreshold.getRoutes().tryGetFirst(q ->
           q.getType() == Route.eType.sid &&
-              q.getNameFix().equals(toReadyPlane.getAssigneRoute().getNameFix()) &&
+              q.getMainFix().equals(toReadyPlane.getAssigneRoute().getMainFix()) &&
               q.isValidForCategory(toReadyPlane.getType().category));
       if (r == null)
         r = availableThreshold.getRoutes().where(q ->

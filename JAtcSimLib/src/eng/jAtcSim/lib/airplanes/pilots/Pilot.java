@@ -1004,6 +1004,7 @@ public class Pilot {
   private Coordinate targetCoordinate;
   private Behavior behavior;
   private Route assignedRoute;
+  private Navaid entryExitPoint;
   private Restriction speedRestriction = null;
   private Restriction altitudeRestriction = null;
   @XmlIgnore
@@ -1024,6 +1025,7 @@ public class Pilot {
     LoadSave.loadField(tmp, ret, "speedRestriction");
     LoadSave.loadField(tmp, ret, "altitudeRestriction");
     LoadSave.loadField(tmp, ret, "assignedRoute");
+    LoadSave.loadField(tmp, ret, "entryExitPoint");
     LoadSave.loadField(tmp, ret, "afterCommands");
     LoadSave.loadField(tmp, ret, "saidText");
 
@@ -1036,6 +1038,10 @@ public class Pilot {
     ret.openRecorder();
 
     return ret;
+  }
+
+  public Navaid getEntryExitPoint() {
+    return this.entryExitPoint;
   }
 
   private void openRecorder(){
@@ -1069,9 +1075,11 @@ public class Pilot {
     return ret;
   }
 
-  public Pilot(Airplane.Airplane4Pilot parent, @Nullable ETime divertTime) {
+  public Pilot(Airplane.Airplane4Pilot parent, Navaid entryExitPoint, @Nullable ETime divertTime) {
 
     this.parent = parent;
+    this.entryExitPoint = entryExitPoint;
+    this.secondsWithoutRadarContact = 0;
 
     if (parent.isArrival()) {
       this.atc = Acc.atcCtr();
@@ -1082,8 +1090,6 @@ public class Pilot {
       this.behavior = new HoldingPointBehavior();
       this.divertInfo = null;
     }
-
-    this.secondsWithoutRadarContact = 0;
 
     this.openRecorder();
   }
@@ -1159,7 +1165,7 @@ public class Pilot {
     rts = rts.where(q -> q.isValidForCategory(this.parent.getType().category));
     Route r = rts.getRandom();
     //TODO here can null-pointer-exception occur when no route is found for threshold and category
-    Navaid ret = r.getExitFix();
+    Navaid ret = r.getMainFix();
     return ret;
   }
 
@@ -1214,6 +1220,7 @@ public class Pilot {
     LoadSave.saveField(tmp, this, "speedRestriction");
     LoadSave.saveField(tmp, this, "altitudeRestriction");
     LoadSave.saveField(tmp, this, "assignedRoute");
+    LoadSave.saveField(tmp, this, "entryExitPoint");
     LoadSave.saveField(tmp, this, "afterCommands");
     LoadSave.saveField(tmp, this, "saidText");
     LoadSave.saveField(tmp, this, "behavior");
@@ -1411,8 +1418,9 @@ public class Pilot {
 
     while (queue.isEmpty() == false) {
       ISpeech sp = queue.get(0);
-      queue.removeAt(0);
-      if (sp instanceof RadarContactConfirmationNotification) {
+      if (sp instanceof AfterCommand)
+        break;
+      else if (sp instanceof RadarContactConfirmationNotification) {
         // do nothing, just ignore it. I hope it will be confirmed already somewhere else.
         // the reason why it may appear here is delayed ATC radar contact confirmation.
       } else {
@@ -1420,6 +1428,7 @@ public class Pilot {
         if (cmd instanceof AfterCommand)
           break;
 
+        queue.removeAt(0);
         cres = ApplicationManager.confirm(plane, cmd, true, false);
         if (sayConfirmations) say(cres.confirmation);
 

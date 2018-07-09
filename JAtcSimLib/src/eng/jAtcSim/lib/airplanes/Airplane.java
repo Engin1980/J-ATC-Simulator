@@ -29,7 +29,6 @@ import eng.jAtcSim.lib.speaking.ISpeech;
 import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.speaking.fromAirplane.IAirplaneNotification;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.GoingAroundNotification;
-import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeHeadingCommand;
 import eng.jAtcSim.lib.world.Navaid;
 import eng.jAtcSim.lib.world.Route;
@@ -468,7 +467,7 @@ public class Airplane implements IMessageParticipant {
 
   public Airplane(Callsign callsign, Coordinate coordinate, Squawk sqwk, AirplaneType airplaneSpecification,
                   int heading, int altitude, int speed, boolean isDeparture,
-                  Route assignedRoute, int delayInitialMinutes, ETime delayExpectedTime) {
+                  Navaid entryExitPoint, int delayInitialMinutes, ETime delayExpectedTime) {
 
     this.callsign = callsign;
     this.coordinate = coordinate;
@@ -524,9 +523,7 @@ public class Airplane implements IMessageParticipant {
       divertTime = Acc.now().addMinutes(divertTimeMinutes);
     }
 
-    this.pilot = new Pilot(this.new Airplane4Pilot(), divertTime);
-    if (assignedRoute != null)
-      this.pilot.setAssignedRoute(assignedRoute);
+    this.pilot = new Pilot(this.new Airplane4Pilot(), entryExitPoint, divertTime);
     this.plane4Display = this.new Airplane4Display();
 
     // flight recorders on
@@ -677,9 +674,11 @@ public class Airplane implements IMessageParticipant {
 
   public Navaid getDepartureLastNavaid() {
     if (isDeparture() == false)
-      throw new EApplicationException(sf("This method should not be called on departure aircraft %s.", this.getCallsign().toString()));
+      throw new EApplicationException(sf(
+          "This method should not be called on departure aircraft %s.",
+          this.getCallsign().toString()));
 
-    Navaid ret = this.pilot.getAssignedRoute().getExitFix();
+    Navaid ret = this.pilot.getAssignedRoute().getMainFix();
     return ret;
   }
 
@@ -803,6 +802,10 @@ public class Airplane implements IMessageParticipant {
 
   public void increaseAirprox(AirproxType at) {
     this.airprox = AirproxType.combine(this.airprox, at);
+  }
+
+  public Navaid getEntryExitFix() {
+    return pilot.getEntryExitPoint();
   }
 
   // </editor-fold>

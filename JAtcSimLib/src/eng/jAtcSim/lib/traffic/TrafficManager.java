@@ -55,11 +55,11 @@ public class TrafficManager {
 
     IList<Airplane> ret = new EList<>();
 
-    IList<Movement> readyMovements = scheduledMovements.where(q->q.getInitTime().isBeforeOrEq(Acc.now()));
+    IList<Movement> readyMovements = scheduledMovements.where(q -> q.getInitTime().isBeforeOrEq(Acc.now()));
     scheduledMovements.remove(readyMovements);
     for (Movement readyMovement : readyMovements) {
       Airplane a = this.convertMovementToAirplane(readyMovement);
-      if (a == null){
+      if (a == null) {
         Acc.messenger().send(new Message(Messenger.SYSTEM, Acc.atcApp(),
             new StringMessageContent("Flight " + readyMovement.getCallsign() + " IFR flight plan canceled, no route.")));
       } else
@@ -79,7 +79,7 @@ public class TrafficManager {
   }
 
   public void throwOutElapsedMovements(ETime minTime) {
-    scheduledMovements.remove(q->q.getInitTime().isBefore(minTime));
+    scheduledMovements.remove(q -> q.getInitTime().isBefore(minTime));
   }
 
   private Airplane convertMovementToAirplane(Movement m) {
@@ -108,7 +108,7 @@ public class TrafficManager {
 
     ret = new Airplane(
         cs, coord, sqwk, pt, heading, alt, spd, true,
-        route, m.getDelayInMinutes(), m.getInitTime().addMinutes(3));
+        route.getMainFix(), m.getDelayInMinutes(), m.getInitTime().addMinutes(3));
 
     return ret;
   }
@@ -131,8 +131,8 @@ public class TrafficManager {
     if (route == null) {
       return null; // no route means disallowed IFR
     }
-    coord = generateArrivalCoordinate(route.getEntryFix().getCoordinate(), Acc.airport().getLocation());
-    heading = (int) Coordinates.getBearing(coord, route.getEntryFix().getCoordinate());
+    coord = generateArrivalCoordinate(route.getMainFix().getCoordinate(), Acc.airport().getLocation());
+    heading = (int) Coordinates.getBearing(coord, route.getMainFix().getCoordinate());
     alt = generateArrivingPlaneAltitude(route, pt);
 
     Squawk sqwk = generateSqwk();
@@ -140,7 +140,7 @@ public class TrafficManager {
 
     ret = new Airplane(
         cs, coord, sqwk, pt, heading, alt, spd, false,
-        route, m.getDelayInMinutes(), m.getInitTime().addMinutes(25));
+        route.getMainFix(), m.getDelayInMinutes(), m.getInitTime().addMinutes(25));
 
     return ret;
   }
@@ -154,7 +154,7 @@ public class TrafficManager {
       double thousandsFeetPerMile = 500;
       double dist = r.getRouteLength();
       if (dist <= 0) {
-        dist = Coordinates.getDistanceInNM(r.getEntryFix().getCoordinate(), Acc.airport().getLocation());
+        dist = Coordinates.getDistanceInNM(r.getMainFix().getCoordinate(), Acc.airport().getLocation());
       }
       ret = (int) (dist * thousandsFeetPerMile);
     }
@@ -172,7 +172,7 @@ public class TrafficManager {
     ret = ret / 1000 * 1000;
 
     // check if initial altitude is not below STAR mrva
-    if (ret < r.getMaxMrvaAltitude()){
+    if (ret < r.getMaxMrvaAltitude()) {
       double tmp = Math.ceil(r.getMaxMrvaAltitude() / 10d) * 10;
       ret = (int) tmp;
     }
@@ -226,36 +226,6 @@ public class TrafficManager {
     return ret;
   }
 
-//  private Route generatePointRoute(boolean arrival) {
-//    List<Navaid> nvs = new LinkedList();
-//
-//    for (Runway rw : Acc.airport().getRunways()) {
-//      for (RunwayThreshold rt : rw.getThresholds()) {
-//        for (Route r : rt.getRoutes()) {
-//          if (arrival && r.getType() == Route.eType.sid) {
-//            continue;
-//          } else if (!arrival && r.getType() != Route.eType.sid) {
-//            continue;
-//          }
-//
-//          Navaid n = r.getMainFix();
-//
-//          if (nvs.contains(n) == false) {
-//            nvs.add(n);
-//          }
-//        }
-//      }
-//    }
-//
-//    int index = Acc.rnd().nextInt(nvs.size());
-//
-//    Navaid n = nvs.get(index);
-//
-//    Route r = Route.createNewByFix(n, arrival);
-//
-//    return r;
-//  }
-
   private Route tryGetRandomIfrRoute(boolean isArrival, AirplaneType planeType) {
 
     IList<Route> rts = new EList<>();
@@ -278,7 +248,7 @@ public class TrafficManager {
     else
       rts = rts.where(q -> q.getType() == Route.eType.sid);
 
-    rts = rts.where(q->q.getMaxMrvaAltitude() < planeType.maxAltitude);
+    rts = rts.where(q -> q.getMaxMrvaAltitude() < planeType.maxAltitude);
 
     rts = rts.where(q -> q.isValidForCategory(planeType.category));
 

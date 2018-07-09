@@ -11,7 +11,7 @@ public class ClearedToRouteApplication extends CommandApplication<ClearedToRoute
   @Override
   protected IFromAirplane checkCommandSanity(Airplane.Airplane4Command plane, ClearedToRouteCommand c) {
     if (plane.isArrival() && c.getRoute().getType() == Route.eType.sid)
-      return new Rejection("We are arrival, cannot be cleared to non-SID route.", c);
+      return new Rejection("We are arrival, cannot be cleared to SID route.", c);
     else if (!plane.isArrival() && c.getRoute().getType() != Route.eType.sid)
       return new Rejection("We are departure, can be cleared only to SID route",c );
 
@@ -36,6 +36,13 @@ public class ClearedToRouteApplication extends CommandApplication<ClearedToRoute
 
   @Override
   protected ApplicationResult adjustAirplane(Airplane.Airplane4Command plane, ClearedToRouteCommand c) {
+//    toto neni dobre
+        /*
+        CTR rekne letadlu cleared to arrival
+        ale ten command se zpracuje az za entry fixem
+        do te doby neni videt priletovka
+        takze to musim vymyslet jinak, aby ta priletovka se nastavila nejak hned
+         */
     plane.getPilot().setRoute(c.getRoute());
     return ApplicationResult.getEmpty();
   }

@@ -23,6 +23,7 @@ import java.util.List;
 public class FlightListPanel extends JPanel {
 
   private static List<Airplane.Airplane4Display> plns;
+  public eng.eSystem.events.Event<FlightListPanel, Callsign> selectedCallsignChangedEvent = new eng.eSystem.events.Event(this);
   private Simulation sim;
   private JScrollPane pnlScroll;
   private JPanel pnlContent;
@@ -48,8 +49,6 @@ public class FlightListPanel extends JPanel {
     this.sim.getSecondElapsedEvent().add(o -> updateList());
   }
 
-  public eng.eSystem.events.Event<FlightListPanel, Callsign> selectedCallsignChangedEvent = new eng.eSystem.events.Event(this);
-
   public Event<FlightListPanel, Callsign> getSelectedCallsignChangedEvent() {
     return selectedCallsignChangedEvent;
   }
@@ -61,7 +60,7 @@ public class FlightListPanel extends JPanel {
   public void setSelectedCallsign(Callsign selectedCallsign) {
     Callsign bef = this.selectedCallsign;
     this.selectedCallsign = selectedCallsign;
-    if(bef != this.selectedCallsign) {
+    if (bef != this.selectedCallsign) {
       selectedCallsignChangedEvent.raise(this.selectedCallsign);
       updateList();
     }
@@ -113,12 +112,19 @@ class FlightStripPanel extends JPanel {
   private static int index = 0;
   private static Font normalFont;
   private static Font boldFont;
+  private final Event<FlightStripPanel, Callsign> clickEvent = new Event<>(this);
   private Callsign callsign;
   private FlightListPanel parent;
-  private final Event<FlightStripPanel, Callsign> clickEvent = new Event<>(this);
 
-  public Event<FlightStripPanel, Callsign> getClickEvent() {
-    return clickEvent;
+  public static void setStripSettings(FlightStripSettings stripSettings) {
+    FlightStripPanel.stripSettings = stripSettings;
+
+    normalFont = new Font(stripSettings.font.getName(), 0, stripSettings.font.getSize());
+    boldFont = new Font(stripSettings.font.getName(), Font.BOLD, stripSettings.font.getSize());
+  }
+
+  public static void resetIndex() {
+    index = 0;
   }
 
   public FlightStripPanel(FlightListPanel parent, Airplane.Airplane4Display ai) {
@@ -147,15 +153,8 @@ class FlightStripPanel extends JPanel {
     });
   }
 
-  public static void setStripSettings(FlightStripSettings stripSettings) {
-    FlightStripPanel.stripSettings = stripSettings;
-
-    normalFont = new Font(stripSettings.font.getName(), 0, stripSettings.font.getSize());
-    boldFont = new Font(stripSettings.font.getName(), Font.BOLD, stripSettings.font.getSize());
-  }
-
-  public static void resetIndex() {
-    index = 0;
+  public Event<FlightStripPanel, Callsign> getClickEvent() {
+    return clickEvent;
   }
 
   private Color getColor(Airplane.Airplane4Display ai) {
@@ -165,7 +164,7 @@ class FlightStripPanel extends JPanel {
       ret = stripSettings.airprox;
     } else if (ai.callsign() == parent.getSelectedCallsign()) {
       ret = stripSettings.selected;
-    }else{
+    } else {
       boolean isEven = index++ % 2 == 0;
       switch (ai.responsibleAtc().getType()) {
         case app:
@@ -206,17 +205,18 @@ class FlightStripPanel extends JPanel {
     lbl.setForeground(stripSettings.textColor);
     cmps[4] = lbl;
 
-    lbl = new JLabel(AirplaneDataFormatter.getDepartureArrivalChar(ai.isDeparture()) + " " + ai.getAssignedRoute().getName());
+    String routeLabel = ai.getAssignedRoute() == null ? "----" : ai.getAssignedRoute().getName();
+    lbl = new JLabel(AirplaneDataFormatter.getDepartureArrivalChar(ai.isDeparture()) + " " + routeLabel);
     lbl.setName("lblRoute");
     lbl.setFont(normalFont);
     lbl.setForeground(stripSettings.textColor);
     cmps[1] = lbl;
 
     lbl = new JLabel(
-        AirplaneDataFormatter.formatAltitudeShort(ai.altitude(),true)
-        + " " +
+        AirplaneDataFormatter.formatAltitudeShort(ai.altitude(), true)
+            + " " +
             AirplaneDataFormatter.getClimbDescendChar(ai.verticalSpeed())
-        + " " +
+            + " " +
             AirplaneDataFormatter.formatAltitudeShort(ai.targetAltitude(), true));
     lbl.setName("lblAltitude");
     lbl.setFont(normalFont);
@@ -225,7 +225,7 @@ class FlightStripPanel extends JPanel {
 
     lbl = new JLabel(
         AirplaneDataFormatter.formatHeadingLong(ai.heading())
-        + " // " +
+            + " // " +
             AirplaneDataFormatter.formatSpeedLong(ai.speed()));
     lbl.setName("lblHeadingAndSpeed");
     lbl.setFont(normalFont);
