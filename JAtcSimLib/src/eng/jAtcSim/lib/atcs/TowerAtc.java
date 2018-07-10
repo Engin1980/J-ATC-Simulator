@@ -564,7 +564,7 @@ public class TowerAtc extends ComputerAtc {
     // if no sep, no t-o
     for (RunwayThreshold threshold : inUseInfo.current) {
       Airplane a = takeOffInfos.tryGetAirplaneForThreshold(threshold);
-      if (a != null && Separation.isSafeSeparation(a, toReadyPlane, 120))
+      if (a != null && !Separation.isSafeSeparation(a, toReadyPlane, 120))
         return; // no safe separation from someone, no t-o
     }
 

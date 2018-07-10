@@ -227,6 +227,8 @@ public class CenterAtc extends ComputerAtc {
     IList<RunwayThreshold> thresholds;
     // if is arrival, scheduled thresholds are taken into account
     thresholds = Acc.atcTwr().getRunwayThresholdsScheduled();
+    if (thresholds.isEmpty())
+      thresholds = Acc.atcTwr().getRunwayThresholdsInUse();
     for (RunwayThreshold threshold : thresholds) {
       rts.add(threshold.getRoutes());
     }

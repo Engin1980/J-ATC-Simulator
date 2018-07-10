@@ -558,7 +558,7 @@ public class Pilot {
 
         case parallelEntry:
           if (Coordinates.getDistanceInNM(parent.getCoordinate(), this.navaid.getCoordinate()) < NEAR_FIX_DISTANCE) {
-            parent.setTargetHeading(this.getOutboundHeading(), !this.isLeftTurned);
+            parent.setTargetHeading(this.getOutboundHeading(), this.isLeftTurned);
             this.secondTurnTime = Acc.now().addSeconds(60);
             this.phase = eHoldPhase.parallelAgainst;
           } else {
