@@ -8,6 +8,7 @@ import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.coordinates.Coordinates;
 import eng.jAtcSim.lib.messaging.Message;
 import eng.jAtcSim.lib.messaging.StringMessageContent;
+import eng.jAtcSim.lib.serialization.LoadSave;
 import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.GoodDayNotification;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
@@ -191,11 +192,17 @@ public class CenterAtc extends ComputerAtc {
   @Override
   protected void _save(XElement elm) {
     super._save(elm);
+    LoadSave.saveField(elm, this, "farArrivals");
+    LoadSave.saveField(elm, this, "middleArrivals");
+    LoadSave.saveField(elm, this, "closeArrivals");
   }
 
   @Override
   protected void _load(XElement elm) {
     super._load(elm);
+    LoadSave.loadField(elm, this, "farArrivals");
+    LoadSave.loadField(elm, this, "middleArrivals");
+    LoadSave.loadField(elm, this, "closeArrivals");
   }
 
   @Override
