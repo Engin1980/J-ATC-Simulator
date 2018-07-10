@@ -50,13 +50,11 @@ public class Simulation {
 
   public static final ERandom rnd = new ERandom();
   private static final boolean DEBUG_STYLE_TIMER = false;
-  private static final int MINIMAL_DEPARTURE_REMOVE_DISTANCE = 100;
   private static final String SYSMES_COMMANDS = "?";
   private static final Pattern SYSMES_CHANGE_SPEED = Pattern.compile("TICK (\\d+)");
   private static final Pattern SYSMES_METAR = Pattern.compile("METAR");
   private static final Pattern SYSMES_REMOVE = Pattern.compile("REMOVE (\\d{4})");
   private static final Pattern SYSMES_SHORTCUT = Pattern.compile("SHORTCUT ([\\\\?A-Z0-9]+)( (.+))?");
-  private final static double MAX_VICINITY_DISTANCE_IN_NM = 10;
   private final ETime now;
   private final Messenger messenger = new Messenger();
   private final IList<Airplane> newPlanesDelayedToAvoidCollision = new EList<>();
@@ -441,7 +439,8 @@ public class Simulation {
     IReadOnlyList<Airplane> newPlanes = trafficManager.getNewAirplanes();
 
     if (newPlanesDelayedToAvoidCollision.isEmpty() == false) {
-      Airplane newPlane = newPlanesDelayedToAvoidCollision.tryGetFirst(q -> isInVicinityOfSomeOtherPlane(q) == false);
+      Airplane newPlane = newPlanesDelayedToAvoidCollision.tryGetFirst(
+          q -> isInVicinityOfSomeOtherPlane(q) == false);
       if (newPlane != null) {
         newPlanesDelayedToAvoidCollision.remove(newPlane);
         Acc.prm().registerPlane(ctrAtc, newPlane);
@@ -479,7 +478,9 @@ public class Simulation {
 
       // departed
       if (p.isDeparture() && Acc.prm().getResponsibleAtc(p).equals(Acc.atcCtr())
-          && Coordinates.getDistanceInNM(p.getCoordinate(), Acc.airport().getLocation()) > MINIMAL_DEPARTURE_REMOVE_DISTANCE) {
+          && Coordinates.getDistanceInNM(
+              p.getCoordinate(), Acc.airport().getLocation())
+          > Acc.airport().getCoveredDistance()) {
         rem.add(p);
         this.stats.finishedDepartures.add();
       }
@@ -671,13 +672,28 @@ public class Simulation {
   }
 
   private boolean isInVicinityOfSomeOtherPlane(Airplane checkedPlane) {
+    Integer checkedAtEntryPointSeconds = null;
+
     boolean ret = false;
     for (Airplane plane : Acc.planes()) {
-      if (plane.isArrival() == false) {
+      if (plane.isArrival() == false)
         continue;
+      if (prm.getResponsibleAtc(plane) != ctrAtc)
+        continue;
+      if (checkedPlane.getEntryExitFix().equals(plane.getEntryExitFix()) == false)
+        continue;
+
+      double dist = Coordinates.getDistanceInNM(
+          plane.getEntryExitFix().getCoordinate(), plane.getCoordinate());
+      int atEntryPointSeconds = (int) (dist / plane.getSpeed() * 3600);
+
+      if (checkedAtEntryPointSeconds == null){
+        dist = Coordinates.getDistanceInNM(
+            checkedPlane.getEntryExitFix().getCoordinate(), checkedPlane.getCoordinate());
+        checkedAtEntryPointSeconds = (int) (dist / checkedPlane.getSpeed() * 3600);
       }
-      double dist = Coordinates.getDistanceInNM(checkedPlane.getCoordinate(), plane.getCoordinate());
-      if (dist < MAX_VICINITY_DISTANCE_IN_NM) {
+
+      if (Math.abs(atEntryPointSeconds - checkedAtEntryPointSeconds) < 120) {
         ret = true;
         break;
       }

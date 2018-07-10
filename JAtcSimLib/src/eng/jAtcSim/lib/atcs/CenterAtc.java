@@ -22,6 +22,10 @@ public class CenterAtc extends ComputerAtc {
   private int ctrAcceptDistance = 40;
   private int ctrNavaidAcceptDistance = 15;
 
+  private IList<Airplane> farArrivals = new EList<>();
+  private IList<Airplane> middleArrivals = new EList<>();
+  private IList<Airplane> closeArrivals = new EList<>();
+
   public CenterAtc(AtcTemplate template) {
     super(template);
     if (template.getCtrAcceptDistance() != null)
@@ -39,51 +43,53 @@ public class CenterAtc extends ComputerAtc {
   }
 
   @Override
-  public void unregisterPlaneUnderControl(Airplane plane, boolean finalUnregistration) {
-  }
+  public void elapseSecond() {
+    super.elapseSecond();
 
-  @Override
-  public void registerNewPlaneUnderControl(Airplane plane, boolean finalRegistration) {
-    if (finalRegistration) {
-      SpeechList<IAtcCommand> cmds = new SpeechList<>();
-      cmds.add(new ChangeAltitudeCommand(ChangeAltitudeCommand.eDirection.descend, Acc.atcCtr().getOrderedAltitude()));
+    if (Acc.now().getTotalSeconds() % 16 == 0) {
+      double dist;
 
-      // assigns route
-      Navaid n = plane.getEntryExitFix();
-      Route r = getRouteForPlaneAndFix(plane, n);
-      cmds.add(new ProceedDirectCommand(n));
-      cmds.add(new ClearedToRouteCommand(r));
-      Message msg = new Message(this, plane, cmds);
-      super.sendMessage(msg);
+      IList<Airplane> tmp = new EList<>();
+
+      for (Airplane plane : middleArrivals) {
+        dist = Coordinates.getDistanceInNM(plane.getEntryExitFix().getCoordinate(), plane.getCoordinate());
+        if (dist < 27){
+          SpeechList<IAtcCommand> cmds = new SpeechList<>();
+          if (plane.getTargetAltitude() > Acc.atcCtr().getOrderedAltitude())
+            cmds.add(new ChangeAltitudeCommand(ChangeAltitudeCommand.eDirection.descend, Acc.atcCtr().getOrderedAltitude()));
+
+          // assigns route
+          Navaid n = plane.getEntryExitFix();
+          Route r = getRouteForPlaneAndFix(plane, n);
+          cmds.add(new ProceedDirectCommand(n));
+          cmds.add(new ClearedToRouteCommand(r));
+          Message msg = new Message(this, plane, cmds);
+          super.sendMessage(msg);
+
+          tmp.add(plane);
+        }
+      }
+      middleArrivals.remove(tmp);
+      closeArrivals.add(tmp);
+      tmp.clear();
+
+      for (Airplane plane : farArrivals) {
+        dist = Coordinates.getDistanceInNM(plane.getEntryExitFix().getCoordinate(), plane.getCoordinate());
+        if (dist < 50) {
+          if (plane.getAltitude() > 29_000) {
+            int newAlt = Acc.rnd().nextInt(25, 29) * 1_000;
+            SpeechList sl = new SpeechList();
+            sl.add(new ChangeAltitudeCommand(ChangeAltitudeCommand.eDirection.descend, newAlt));
+            Message m = new Message(this, plane, sl);
+            super.sendMessage(m);
+          }
+          tmp.add(plane);
+        }
+      }
+      farArrivals.remove(tmp);
+      middleArrivals.add(tmp);
+      tmp.clear();
     }
-  }
-
-  private Route getRouteForPlaneAndFix(Airplane plane, Navaid n) {
-
-    IList<Route> rts = new EList<>();
-
-    IList<RunwayThreshold> thresholds;
-    // if is arrival, scheduled thresholds are taken into account
-    thresholds = Acc.atcTwr().getRunwayThresholdsScheduled();
-    if (thresholds.isEmpty())
-      Acc.airport().getRunways().forEach(q -> q.getThresholds().forEach(p -> thresholds.add(p)));
-
-    for (RunwayThreshold threshold : thresholds) {
-      rts.add(threshold.getRoutes());
-    }
-
-    rts = rts.where(q -> q.getType() != Route.eType.sid);
-    rts = rts.where(q -> q.getMaxMrvaAltitude() < plane.getType().maxAltitude);
-    rts = rts.where(q -> q.isValidForCategory(plane.getType().category));
-    rts = rts.where(q -> q.getMainFix().equals(n));
-
-    Route ret;
-    if (rts.isEmpty()) {
-      ret = Route.createNewVectoringByFix(n, true);
-    } else
-      ret = rts.getRandom();
-
-    return ret;
   }
 
   @Override
@@ -190,6 +196,46 @@ public class CenterAtc extends ComputerAtc {
   @Override
   protected void _load(XElement elm) {
     super._load(elm);
+  }
+
+  @Override
+  public void unregisterPlaneUnderControl(Airplane plane, boolean finalUnregistration) {
+    if (plane.isArrival()) {
+      farArrivals.tryRemove(plane);
+      middleArrivals.tryRemove(plane);
+      closeArrivals.tryRemove(plane);
+    }
+  }
+
+  @Override
+  public void registerNewPlaneUnderControl(Airplane plane, boolean finalRegistration) {
+    if (plane.isArrival())
+      farArrivals.add(plane);
+  }
+
+  private Route getRouteForPlaneAndFix(Airplane plane, Navaid n) {
+
+    IList<Route> rts = new EList<>();
+
+    IList<RunwayThreshold> thresholds;
+    // if is arrival, scheduled thresholds are taken into account
+    thresholds = Acc.atcTwr().getRunwayThresholdsScheduled();
+    for (RunwayThreshold threshold : thresholds) {
+      rts.add(threshold.getRoutes());
+    }
+
+    rts = rts.where(q -> q.getType() != Route.eType.sid);
+    rts = rts.where(q -> q.getMaxMrvaAltitude() < plane.getType().maxAltitude);
+    rts = rts.where(q -> q.isValidForCategory(plane.getType().category));
+    rts = rts.where(q -> q.getMainFix().equals(n));
+
+    Route ret;
+    if (rts.isEmpty()) {
+      ret = Route.createNewVectoringByFix(n, true);
+    } else
+      ret = rts.getRandom();
+
+    return ret;
   }
 
   private int getDepartureRandomTargetAltitude(Airplane p) {

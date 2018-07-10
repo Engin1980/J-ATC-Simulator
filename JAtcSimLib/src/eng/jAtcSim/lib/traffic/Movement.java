@@ -5,6 +5,7 @@
  */
 package eng.jAtcSim.lib.traffic;
 
+import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.AirplaneType;
 import eng.jAtcSim.lib.airplanes.Callsign;
 import eng.jAtcSim.lib.global.ETime;
@@ -16,34 +17,34 @@ import java.util.Comparator;
  */
 public class Movement {
 
-  public static class SortByETimeComparer implements Comparator<Movement> {
-
-    @Override
-    public int compare(Movement o1, Movement o2) {
-      return o1.getInitTime().compareTo(o2.getInitTime());
-    }
-
-  }
 
   private final Callsign callsign;
   private final AirplaneType airplaneType;
   private final boolean departure;
   private final ETime initTime;
+  private final ETime appExpectedTime;
   private final int delayInMinutes;
 
   public Movement(Callsign callsign, AirplaneType type, ETime initTime, int delayInMinutes, boolean isDeparture) {
     this.callsign = callsign;
     this.departure = isDeparture;
     this.initTime = initTime;
+    if (isDeparture) {
+      this.appExpectedTime = this.initTime.addMinutes(1);
+    } else {
+      double appExpDelay = Acc.airport().getCoveredDistance() / (double) type.vCruise * 3600d;
+      this.appExpectedTime = this.initTime.addSeconds((int) appExpDelay);
+    }
     this.airplaneType = type;
     this.delayInMinutes = delayInMinutes;
   }
 
-  private Movement(){
+  private Movement() {
     callsign = null;
     airplaneType = null;
-    departure= false;
+    departure = false;
     initTime = null;
+    appExpectedTime = null;
     delayInMinutes = 0;
   }
 
@@ -61,6 +62,10 @@ public class Movement {
 
   public ETime getInitTime() {
     return initTime;
+  }
+
+  public ETime getAppExpectedTime() {
+    return appExpectedTime;
   }
 
   public int getDelayInMinutes() {

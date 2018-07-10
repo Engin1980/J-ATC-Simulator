@@ -4,7 +4,7 @@
         icao="LKAA">
   <airports>
     <airport icao="LKPR" name="Praha Ruzyně" altitude="1247" transitionAltitude="5000" vfrAltitude="2500"
-             mainAirportNavaidName="OKL" declination="3.93">
+             mainAirportNavaidName="OKL" declination="3.93" coveredDistance="80">
       <initialPosition coordinate="50.095867 14.265608" range="85"/>
       <trafficDefinitions>
         <densityTraffic title="Normal traffic" useExtendedCallsigns="true" nonCommercialFlightProbability="0.05"
@@ -384,7 +384,7 @@
       <!--</vfrPoints>-->
     </airport>
     <airport icao="LKMT" name="Ostrava Mošnov" altitude="844" transitionAltitude="5000" vfrAltitude="2500"
-             mainAirportNavaidName="OTA" declination="4.833">
+             mainAirportNavaidName="OTA" declination="4.833" coveredDistance="50">
       <initialPosition coordinate="49.697492 18.109075" range="85"/>
       <trafficDefinitions>
         <genericTraffic title="Very lite generated traffic" probabilityOfNonCommercialFlight="0.7"

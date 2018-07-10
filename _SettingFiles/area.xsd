@@ -157,6 +157,7 @@
     <xs:attribute name="vfrAltitude" type="xs:integer" use="optional"/>
     <xs:attribute name="mainAirportNavaidName" type="xs:string" use="required"/>
     <xs:attribute name="declination" type="xs:double" use="required" />
+    <xs:attribute name="coveredDistance" type="xs:positiveInteger" use="required" />
   </xs:complexType>
 
   <xs:complexType name="entryExitPoint">

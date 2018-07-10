@@ -25,9 +25,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class TrafficManager {
-  public static double MAX_ARRIVING_PLANE_DISTANCE = 30;
-  public static double MIN_ARRIVING_PLANE_DISTANCE = 15;
-
   private IList<Movement> scheduledMovements = new EList<>();
   private Traffic traffic;
   private Object lastRelativeInfo;
@@ -141,7 +138,7 @@ public class TrafficManager {
     }
     coord = generateArrivalCoordinate(entryPoint.getNavaid().getCoordinate(), Acc.airport().getLocation());
     heading = (int) Coordinates.getBearing(coord, entryPoint.getNavaid().getCoordinate());
-    alt = generateArrivingPlaneAltitude(entryPoint, pt);
+    alt = generateArrivingPlaneAltitude(entryPoint, coord, pt);
 
     Squawk sqwk = generateSqwk();
     spd = pt.vCruise;
@@ -153,7 +150,7 @@ public class TrafficManager {
     return ret;
   }
 
-  private int generateArrivingPlaneAltitude(EntryExitPoint eep, AirplaneType type) {
+  private int generateArrivingPlaneAltitude(EntryExitPoint eep, Coordinate planeCoordinate, AirplaneType type) {
 
     int ret;
 
@@ -163,7 +160,8 @@ public class TrafficManager {
     // update by distance
     {
       final double thousandsFeetPerMile = 500;
-      final double distance = Coordinates.getDistanceInNM(Acc.airport().getLocation(), eep.getNavaid().getCoordinate());
+      final double distance = Coordinates.getDistanceInNM(Acc.airport().getLocation(), eep.getNavaid().getCoordinate())
+          + Coordinates.getDistanceInNM(eep.getNavaid().getCoordinate(), planeCoordinate );
       int tmp = (int) (distance * thousandsFeetPerMile);
       ret = Math.max(ret, tmp);
     }
@@ -191,8 +189,8 @@ public class TrafficManager {
 
   private Coordinate generateArrivalCoordinate(Coordinate navFix, Coordinate aipFix) {
     double radial = Coordinates.getBearing(aipFix, navFix);
-    radial += Simulation.rnd.nextDouble(-25, 25); // nahodne zatoceni priletoveho radialu
-    double dist = Simulation.rnd.nextDouble(MIN_ARRIVING_PLANE_DISTANCE, MAX_ARRIVING_PLANE_DISTANCE); // vzdalenost od prvniho bodu STARu
+    radial += Simulation.rnd.nextDouble(-15, 15); // nahodne zatoceni priletoveho radialu
+    double dist = Acc.airport().getCoveredDistance();
     Coordinate ret = null;
     while (ret == null) {
 

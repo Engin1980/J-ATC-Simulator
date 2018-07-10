@@ -4,7 +4,7 @@
         icao="LON_S_CTR">
   <airports>
     <airport icao="EGKK" name="London Gatwick" altitude="203" transitionAltitude="6000" vfrAltitude="2500"
-             mainAirportNavaidName="MAY" declination="-0.35">
+             mainAirportNavaidName="MAY" declination="-0.35" coveredDistance="50">
       <trafficDefinitions>
         <densityTraffic title="Normal traffic" useExtendedCallsigns="true" nonCommercialFlightProbability="0.05"
                         delayProbability="0.1" maxDelayInMinutesPerStep="45">

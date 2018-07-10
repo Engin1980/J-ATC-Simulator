@@ -40,9 +40,14 @@ public class Airport {
   private Navaid _mainAirportNavaid;
   private IList<Traffic> trafficDefinitions = new EList<>();
   private Area parent;
+  private int coveredDistance;
 
   public IReadOnlyList<EntryExitPoint> getEntryExitPoints() {
     return entryExitPoints;
+  }
+
+  public int getCoveredDistance() {
+    return coveredDistance;
   }
 
   public double getDeclination() {

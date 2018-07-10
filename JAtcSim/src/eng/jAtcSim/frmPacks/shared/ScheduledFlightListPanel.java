@@ -120,7 +120,7 @@ class ScheduledFlightStripPanel extends JPanel {
     JLabel lblTypeName = new JLabel(movement.getAirplaneType().name);
     setLabelFixedSize(lblTypeName, CALLSIGN_DIMENSION);
 
-    JLabel lblTime = new JLabel(movement.getInitTime().toTimeString());
+    JLabel lblTime = new JLabel(movement.getAppExpectedTime().toTimeString());
     setLabelFixedSize(lblTime, TIME_DIMENSION);
     JLabel lblDelay = new JLabel(Integer.toString(movement.getDelayInMinutes()));
     setLabelFixedSize(lblDelay, DELAY_DIMENSION);
