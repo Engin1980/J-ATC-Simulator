@@ -130,12 +130,19 @@ public class Area {
           for (Route o : t.getRoutes()) {
             o.bind();
           }
+          a.bindEntryExitPointsByRoutes(t.getRoutes());
 
           for (Approach p : t.getApproaches()) {
             p.bind();
           }
         }
+
+        for (EntryExitPoint eep : a.getEntryExitPoints()) {
+          eep.bind();
+        }
       }
+
+
     }
     Acc.setAirport(null);
   }

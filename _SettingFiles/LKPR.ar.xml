@@ -577,6 +577,10 @@
         <hold navaidName="BOGTU" inboundRadial="042" turn="left"/>
         <hold navaidName="EKMIT" inboundRadial="042" turn="right"/>
       </holds>
+      <entryExitPoints>
+        <entryExitPoint name="ODRAN" type="entry" />
+        <entryExitPoint name="BOHUM" type="both" />
+      </entryExitPoints>
     </airport>
   </airports>
   <navaids>

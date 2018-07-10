@@ -47,7 +47,6 @@ import eng.jAtcSim.lib.world.Route;
 import eng.jAtcSim.lib.world.RunwayThreshold;
 import eng.jAtcSim.lib.world.approaches.Approach;
 import eng.jAtcSim.lib.world.approaches.CurrentApproachInfo;
-import sun.util.resources.OpenListResourceBundle;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -1245,7 +1244,7 @@ public class Pilot {
     this.afterCommands.clearAll();
     this.behavior = new DepartureBehavior();
     this.divertInfo = null;
-    this.assignedRoute = Route.createNewByFix(n, false);
+    this.assignedRoute = Route.createNewVectoringByFix(n, false);
     this.parent.setxState(Airplane.State.departingLow); // here must be departureLow, this us later used to evaluate delay
 
     this.say(new DivertingNotification(n));

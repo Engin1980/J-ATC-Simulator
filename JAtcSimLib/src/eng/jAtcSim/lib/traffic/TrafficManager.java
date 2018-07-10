@@ -19,10 +19,7 @@ import eng.jAtcSim.lib.messaging.StringMessageContent;
 import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeAltitudeCommand;
-import eng.jAtcSim.lib.world.Navaid;
-import eng.jAtcSim.lib.world.Route;
-import eng.jAtcSim.lib.world.Runway;
-import eng.jAtcSim.lib.world.RunwayThreshold;
+import eng.jAtcSim.lib.world.*;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -97,8 +94,8 @@ public class TrafficManager {
     cs = m.getCallsign();
     AirplaneType pt = m.getAirplaneType();
 
-    Route route = tryGetRandomIfrRoute(false, pt);
-    if (route == null) return null; // no route means disallowed IFR
+    EntryExitPoint entryPoint = tryGetRandomEntryPoint(false, pt);
+    if (entryPoint == null) return null; // no route means disallowed IFR
     Coordinate coord = Acc.airport().getLocation();
     Squawk sqwk = generateSqwk();
 
@@ -108,8 +105,19 @@ public class TrafficManager {
 
     ret = new Airplane(
         cs, coord, sqwk, pt, heading, alt, spd, true,
-        route.getMainFix(), m.getDelayInMinutes(), m.getInitTime().addMinutes(3));
+        entryPoint.getNavaid(), m.getDelayInMinutes(), m.getInitTime().addMinutes(3));
 
+    return ret;
+  }
+
+  private EntryExitPoint tryGetRandomEntryPoint(boolean isArrival, AirplaneType pt) {
+    IReadOnlyList<EntryExitPoint> tmp = Acc.airport().getEntryExitPoints();
+    if (isArrival)
+      tmp = tmp.where(q->q.getType() == EntryExitPoint.Type.entry || q.getType() == EntryExitPoint.Type.both);
+    else
+      tmp = tmp.where(q->q.getType() == EntryExitPoint.Type.exit || q.getType() == EntryExitPoint.Type.both);
+    tmp = tmp.where(q->q.getMaxMrvaAltitudeOrHigh() < pt.maxAltitude);
+    EntryExitPoint ret = tmp.tryGetRandom();
     return ret;
   }
 
@@ -127,36 +135,37 @@ public class TrafficManager {
     int alt;
     int spd;
 
-    route = tryGetRandomIfrRoute(true, pt);
-    if (route == null) {
+    EntryExitPoint entryPoint = tryGetRandomEntryPoint(true, pt);
+    if (entryPoint == null) {
       return null; // no route means disallowed IFR
     }
-    coord = generateArrivalCoordinate(route.getMainFix().getCoordinate(), Acc.airport().getLocation());
-    heading = (int) Coordinates.getBearing(coord, route.getMainFix().getCoordinate());
-    alt = generateArrivingPlaneAltitude(route, pt);
+    coord = generateArrivalCoordinate(entryPoint.getNavaid().getCoordinate(), Acc.airport().getLocation());
+    heading = (int) Coordinates.getBearing(coord, entryPoint.getNavaid().getCoordinate());
+    alt = generateArrivingPlaneAltitude(entryPoint, pt);
 
     Squawk sqwk = generateSqwk();
     spd = pt.vCruise;
 
     ret = new Airplane(
         cs, coord, sqwk, pt, heading, alt, spd, false,
-        route.getMainFix(), m.getDelayInMinutes(), m.getInitTime().addMinutes(25));
+        entryPoint.getNavaid(), m.getDelayInMinutes(), m.getInitTime().addMinutes(25));
 
     return ret;
   }
 
-  private int generateArrivingPlaneAltitude(Route r, AirplaneType type) {
+  private int generateArrivingPlaneAltitude(EntryExitPoint eep, AirplaneType type) {
 
     int ret;
-    if (r.getEntryFL() != null) {
-      ret = r.getEntryFL() * 100;
-    } else {
-      double thousandsFeetPerMile = 500;
-      double dist = r.getRouteLength();
-      if (dist <= 0) {
-        dist = Coordinates.getDistanceInNM(r.getMainFix().getCoordinate(), Acc.airport().getLocation());
-      }
-      ret = (int) (dist * thousandsFeetPerMile);
+
+    // min alt by mrva
+    ret = eep.getMaxMrvaAltitudeOrHigh();
+
+    // update by distance
+    {
+      final double thousandsFeetPerMile = 500;
+      final double distance = Coordinates.getDistanceInNM(Acc.airport().getLocation(), eep.getNavaid().getCoordinate());
+      int tmp = (int) (distance * thousandsFeetPerMile);
+      ret = Math.max(ret, tmp);
     }
 
     // update by random value
@@ -172,8 +181,8 @@ public class TrafficManager {
     ret = ret / 1000 * 1000;
 
     // check if initial altitude is not below STAR mrva
-    if (ret < r.getMaxMrvaAltitude()) {
-      double tmp = Math.ceil(r.getMaxMrvaAltitude() / 10d) * 10;
+    if (ret <eep.getMaxMrvaAltitudeOrHigh()) {
+      double tmp = Math.ceil(eep.getMaxMrvaAltitudeOrHigh() / 10d) * 10;
       ret = (int) tmp;
     }
 
@@ -226,39 +235,39 @@ public class TrafficManager {
     return ret;
   }
 
-  private Route tryGetRandomIfrRoute(boolean isArrival, AirplaneType planeType) {
-
-    IList<Route> rts = new EList<>();
-
-    IList<RunwayThreshold> thresholds;
-    if (!isArrival) {
-      thresholds = Acc.thresholds();
-    } else {
-      // if is arrival, scheduled thresholds are taken into account
-      thresholds = Acc.atcTwr().getRunwayThresholdsScheduled();
-      if (thresholds.isEmpty())
-        thresholds = Acc.thresholds();
-    }
-
-    for (RunwayThreshold threshold : thresholds) {
-      rts.add(threshold.getRoutes());
-    }
-    if (isArrival)
-      rts = rts.where(q -> q.getType() != Route.eType.sid);
-    else
-      rts = rts.where(q -> q.getType() == Route.eType.sid);
-
-    rts = rts.where(q -> q.getMaxMrvaAltitude() < planeType.maxAltitude);
-
-    rts = rts.where(q -> q.isValidForCategory(planeType.category));
-
-    Route ret;
-
-    if (rts.isEmpty())
-      ret = null;
-    else
-      ret = rts.getRandom();
-
-    return ret;
-  }
+//  private Route tryGetRandomIfrRoute(boolean isArrival, AirplaneType planeType) {
+//
+//    IList<Route> rts = new EList<>();
+//
+//    IList<RunwayThreshold> thresholds;
+//    if (!isArrival) {
+//      thresholds = Acc.thresholds();
+//    } else {
+//      // if is arrival, scheduled thresholds are taken into account
+//      thresholds = Acc.atcTwr().getRunwayThresholdsScheduled();
+//      if (thresholds.isEmpty())
+//        thresholds = Acc.thresholds();
+//    }
+//
+//    for (RunwayThreshold threshold : thresholds) {
+//      rts.add(threshold.getRoutes());
+//    }
+//    if (isArrival)
+//      rts = rts.where(q -> q.getType() != Route.eType.sid);
+//    else
+//      rts = rts.where(q -> q.getType() == Route.eType.sid);
+//
+//    rts = rts.where(q -> q.getMaxMrvaAltitude() < planeType.maxAltitude);
+//
+//    rts = rts.where(q -> q.isValidForCategory(planeType.category));
+//
+//    Route ret;
+//
+//    if (rts.isEmpty())
+//      ret = null;
+//    else
+//      ret = rts.getRandom();
+//
+//    return ret;
+//  }
 }

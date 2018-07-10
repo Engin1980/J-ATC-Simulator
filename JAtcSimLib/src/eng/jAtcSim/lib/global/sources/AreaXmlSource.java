@@ -93,6 +93,8 @@ public class AreaXmlSource extends XmlSource<Area> {
     sett.getListItemMappings().add(
         new XmlListItemMapping("/holds$", PublishedHold.class));
     sett.getListItemMappings().add(
+        new XmlListItemMapping("/entryExitPoints$", EntryExitPoint.class));
+    sett.getListItemMappings().add(
         new XmlListItemMapping("/vfrPoints$", VfrPoint.class));
     sett.getListItemMappings().add(
         new XmlListItemMapping("/navaids$", Navaid.class));

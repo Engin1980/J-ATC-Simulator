@@ -28,6 +28,8 @@ public class Airport {
   private final IList<PublishedHold> holds = new EList<>();
   @XmlOptional
   private final IList<Route> sharedRoutes = new EList<>();
+  @XmlOptional
+  private final IList<EntryExitPoint> entryExitPoints = new EList<>();
   private String icao;
   private String name;
   private int altitude;
@@ -38,6 +40,10 @@ public class Airport {
   private Navaid _mainAirportNavaid;
   private IList<Traffic> trafficDefinitions = new EList<>();
   private Area parent;
+
+  public IReadOnlyList<EntryExitPoint> getEntryExitPoints() {
+    return entryExitPoints;
+  }
 
   public double getDeclination() {
     return declination;
@@ -124,5 +130,25 @@ public class Airport {
 
   public IList<Route> getSharedRoutes() {
     return sharedRoutes;
+  }
+
+  public void bindEntryExitPointsByRoutes(IList<Route> routes) {
+    for (Route route : routes) {
+      EntryExitPoint eep = new EntryExitPoint(
+          route.getMainFix(),
+          route.getType() == Route.eType.sid ? EntryExitPoint.Type.exit : EntryExitPoint.Type.entry,
+          route.getMaxMrvaAltitude());
+
+      mergeEntryExitPoints(eep);
+    }
+  }
+
+  private void mergeEntryExitPoints(EntryExitPoint eep) {
+    EntryExitPoint tmp = this.getEntryExitPoints().tryGetFirst(q->q.getName().equals(eep.getNavaid().getName()));
+    if (tmp == null)
+      this.entryExitPoints.add(eep);
+    else {
+      tmp.adjustBy(eep);
+    }
   }
 }

@@ -141,6 +141,13 @@
           </xs:sequence>
         </xs:complexType>
       </xs:element>
+      <xs:element name="entryExitPoints" minOccurs="0" maxOccurs="1">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="entryExitPoint" type="entryExitPoint" minOccurs="0" maxOccurs="unbounded" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
       <xs:element name="sharedRoutes" type="routes" minOccurs="0" maxOccurs="1" />
     </xs:choice>
     <xs:attribute name="icao" type="xs:string" use="required"/>
@@ -150,6 +157,17 @@
     <xs:attribute name="vfrAltitude" type="xs:integer" use="optional"/>
     <xs:attribute name="mainAirportNavaidName" type="xs:string" use="required"/>
     <xs:attribute name="declination" type="xs:double" use="required" />
+  </xs:complexType>
+
+  <xs:complexType name="entryExitPoint">
+    <xs:attribute name="name" type="xs:string" use="required" />
+    <xs:attribute name="type" use="required">
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:pattern value="entry|exit|both" />
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
   </xs:complexType>
 
   <xs:complexType name="traffic">

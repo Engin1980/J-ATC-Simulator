@@ -52,7 +52,6 @@ public class CenterAtc extends ComputerAtc {
       Navaid n = plane.getEntryExitFix();
       Route r = getRouteForPlaneAndFix(plane, n);
       cmds.add(new ProceedDirectCommand(n));
-//      cmds.add(new ThenCommand());
       cmds.add(new ClearedToRouteCommand(r));
       Message msg = new Message(this, plane, cmds);
       super.sendMessage(msg);
@@ -67,20 +66,21 @@ public class CenterAtc extends ComputerAtc {
     // if is arrival, scheduled thresholds are taken into account
     thresholds = Acc.atcTwr().getRunwayThresholdsScheduled();
     if (thresholds.isEmpty())
-      thresholds = Acc.thresholds();
+      Acc.airport().getRunways().forEach(q -> q.getThresholds().forEach(p -> thresholds.add(p)));
 
     for (RunwayThreshold threshold : thresholds) {
       rts.add(threshold.getRoutes());
     }
+
     rts = rts.where(q -> q.getType() != Route.eType.sid);
-
     rts = rts.where(q -> q.getMaxMrvaAltitude() < plane.getType().maxAltitude);
-
     rts = rts.where(q -> q.isValidForCategory(plane.getType().category));
-
-    assert !rts.isEmpty() : "Here should be at least one route, otherwise the arrival had to be canceled during creationg for NO-IFR route";
+    rts = rts.where(q -> q.getMainFix().equals(n));
 
     Route ret;
+    if (rts.isEmpty()) {
+      ret = Route.createNewVectoringByFix(n, true);
+    } else
       ret = rts.getRandom();
 
     return ret;

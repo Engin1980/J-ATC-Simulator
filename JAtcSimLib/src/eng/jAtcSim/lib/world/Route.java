@@ -65,10 +65,10 @@ public class Route {
   @XmlIgnore
   private Integer maxMrvaFL = null;
 
-  public static Route createNewByFix(Navaid n, boolean arrival) {
+  public static Route createNewVectoringByFix(Navaid n, boolean arrival) {
     Route ret = new Route();
 
-    ret.name = n.getName();
+    ret.name = n.getName() + "/v";
 
     ret._routeCommands = new SpeechList<>();
     if (arrival) {
@@ -150,7 +150,7 @@ public class Route {
 
   public void bind() {
     if (type == eType.vectoring)
-      throw new UnsupportedOperationException("Vectoring type is not supported in the game yet.");
+      System.out.println("\test");
 
     try {
       Parser p = new ShortBlockParser();
@@ -161,8 +161,8 @@ public class Route {
     }
 
     _routeNavaids = _routeCommands
-        .where(q->q instanceof ToNavaidCommand)
-        .select(q->((ToNavaidCommand)q).getNavaid());
+        .where(q -> q instanceof ToNavaidCommand)
+        .select(q -> ((ToNavaidCommand) q).getNavaid());
     _routeLength = calculateRouteLength();
 
     Navaid customFix = null;
@@ -175,6 +175,9 @@ public class Route {
       case star:
       case transition:
         this.mainFix = customFix == null ? getFixByRouteName() : customFix;
+        break;
+      case vectoring:
+        // nothing
         break;
       default:
         throw new EEnumValueUnsupportedException(type);
