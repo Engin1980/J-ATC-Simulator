@@ -353,6 +353,7 @@ public class Pilot {
       if (targetCoordinate != null) {
 
         double dist = Coordinates.getDistanceInNM(parent.getCoordinate(), targetCoordinate);
+        System.out.println(this.airplane.getCallsign() + " - to target: " + dist);
         if (!clearanceLimitWarningSent && dist < 5 && !pilot.afterCommands.hasLateralDirectionAfterCoordinate(targetCoordinate)) {
           say(new PassingClearanceLimitNotification());
           clearanceLimitWarningSent = true;

@@ -17,7 +17,7 @@ import eng.jAtcSim.lib.airplanes.Callsign;
  */
 public class TestTrafficOneApproach extends TestTraffic {
 
-  private String[] clsgnNumbers = new String[]{"5555" }; //, "6666", "7777"};
+  private String[] clsgnNumbers = new String[]{"5555", "6666", "7777"};
 
   @Override
   public GeneratedMovementsResponse generateMovements(Object syncObject) {

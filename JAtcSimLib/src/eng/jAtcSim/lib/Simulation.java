@@ -367,12 +367,14 @@ public class Simulation {
   }
 
   private synchronized void elapseSecond() {
-
+    System.out.println("ElapseSecond - start");
     long elapseStartMs = System.currentTimeMillis();
 
+    System.out.println("ElapseSecond - before timer stop");
     if (DEBUG_STYLE_TIMER)
       tmr.stop();
 
+    System.out.println("ElapseSecond - before isBusy");
     if (isBusy) {
       System.out.println("## -- elapse second is busy!");
       return;
@@ -380,35 +382,52 @@ public class Simulation {
     isBusy = true;
     now.increaseSecond();
 
+    System.out.println("ElapseSecond - this.processSystemMessages();");
     // system stuff
     this.processSystemMessages();
 
+    System.out.println("ElapseSecond -generateNewTrafficIfRequired");
     // traffic stuff
     trafficManager.generateNewTrafficIfRequired();
 
+    System.out.println("ElapseSecond - this.ctrAtc.elapseSecond();;");
     // atc stuff
     this.ctrAtc.elapseSecond();
+    System.out.println("ElapseSecond - this.twrAtc.elapseSecond();");
     this.twrAtc.elapseSecond();
 
+    System.out.println("ElapseSecond -  generateNewPlanes();");
     // planes stuff
     generateNewPlanes();
+    System.out.println("ElapseSecond - removeOldPlanes");
     removeOldPlanes();
+    System.out.println("ElapseSecond - generateEmergencyIfRequired");
     generateEmergencyIfRequired();
+    System.out.println("ElapseSecond -updatePlanes;");
     updatePlanes();
+    System.out.println("ElapseSecond - evalAirproxes");
     evalAirproxes();
+    System.out.println("ElapseSecond - evalMrvas");
     evalMrvas();
 
+    System.out.println("ElapseSecond - stats.secondElapsed();");
     stats.secondElapsed();
+    System.out.println("ElapseSecond -  long elapseEndMs = System.currentTimeMillis();");
     long elapseEndMs = System.currentTimeMillis();
+    System.out.println("ElapseSecond - stats.durationOfSecondElapse.add");
     stats.durationOfSecondElapse.add((elapseEndMs - elapseStartMs) / 1000d);
 
+    System.out.println("ElapseSecond -isBusy = false;;");
     isBusy = false;
 
     // raises event
     this.secondElapsedEvent.raise();
 
+    System.out.println("ElapseSecond - if (DEBUG_STYLE_TIMER)");
     if (DEBUG_STYLE_TIMER)
       tmr.start(tmr.getTickLength());
+
+    System.out.println("ElapseSecond - end");
   }
 
   private void generateEmergencyIfRequired() {
