@@ -3,16 +3,21 @@ package eng.jAtcSim.frmPacks.sdi;
 import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IMap;
 import eng.eSystem.events.EventSimple;
+import eng.eSystem.exceptions.EApplicationException;
 import eng.jAtcSim.AppSettings;
 import eng.jAtcSim.XmlLoadHelper;
 import eng.jAtcSim.lib.Game;
 import eng.jAtcSim.lib.Simulation;
+import eng.jAtcSim.lib.global.ETime;
 import eng.jAtcSim.lib.world.Airport;
 import eng.jAtcSim.lib.world.Area;
 import eng.jAtcSim.radarBase.RadarStyleSettings;
 import eng.jAtcSim.radarBase.RadarViewPort;
 
 import javax.swing.*;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class Pack extends eng.jAtcSim.frmPacks.Pack {
 
@@ -33,6 +38,16 @@ public class Pack extends eng.jAtcSim.frmPacks.Pack {
 
     this.game = game;
     this.sim = game.getSimulation();
+    if (appSettings.autosave.intervalInSeconds > 0) {
+      this.sim.getSecondElapsedEvent().add(this::sim_secondElapsed);
+      if (java.nio.file.Files.exists(appSettings.autosave.path) == false) {
+        try {
+          java.nio.file.Files.createDirectories(appSettings.autosave.path);
+        } catch (IOException e) {
+          throw new EApplicationException("Unable to create directory " + appSettings.autosave.path + " specified in appSettings for autosaves.");
+        }
+      }
+    }
     this.area = game.getSimulation().getArea();
     this.aip = sim.getActiveAirport();
     this.appSettings = appSettings;
@@ -64,6 +79,10 @@ public class Pack extends eng.jAtcSim.frmPacks.Pack {
     return ret;
   }
 
+  public AppSettings getAppSettings() {
+    return appSettings;
+  }
+
   @Override
   public void applyStoredData(IMap<String, Object> map) {
     IMap<Integer, RadarViewPort> storedRadarPositions = (IMap<Integer, RadarViewPort>) map.tryGet("StoredRadarPositions");
@@ -86,7 +105,19 @@ public class Pack extends eng.jAtcSim.frmPacks.Pack {
     return radarStyleSettings;
   }
 
-  public AppSettings getAppSettings() {
-    return appSettings;
+  private void sim_secondElapsed(Simulation simulation) {
+    ETime now = simulation.getNow();
+    int secs = now.getTotalSeconds();
+    if (secs % appSettings.autosave.intervalInSeconds == 0) {
+      // doing autosave
+      String fileName = simulation.getActiveAirport().getIcao() + "_" +
+          String.format("%d_%02d_%02d_%02d", now.getDays(), now.getHours(), now.getMinutes(), now.getSeconds()) +
+          ".autosave.sm.xml";
+
+      Path p = Paths.get(appSettings.autosave.path.toAbsolutePath().toString(), fileName);
+
+      IMap<String, Object> tmp = this.getDataToStore();
+      this.getGame().save(p.toAbsolutePath().toString(), tmp);
+    }
   }
 }

@@ -64,6 +64,13 @@ public class AppSettings {
     }
   }
 
+  public static class AutoSave{
+    public int intervalInSeconds;
+    public Path path;
+  }
+
+  public AutoSave autosave = new AutoSave();
+
   public Radar radar = new Radar();
 
   @XmlIgnore
@@ -132,6 +139,11 @@ public class AppSettings {
       ret.radar.displayTextDelay = Integer.parseInt(radarElement.getChild("displayTextDelay").getContent());
       ret.radar.displaySettings = (Radar.DisplaySettings) new XmlSerializer().deserialize(
           radarElement.getChild("displaySettings"), Radar.DisplaySettings.class);
+
+      XElement autosaveElement = doc.getRoot().getChild("autosave");
+      ret.autosave.intervalInSeconds = Integer.parseInt(autosaveElement.getAttribute("intervalInMinutes")) * 60;
+      tmp = autosaveElement.getAttribute("path");
+      ret.autosave.path = decodePath(tmp);
     }
 
     return ret;

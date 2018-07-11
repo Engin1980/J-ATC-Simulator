@@ -66,7 +66,7 @@ public class Recording {
   }
 
   private void bmpCanvas_imageDrawn(BitmapCanvas o) {
-    assert isActive;
+    if (!isActive) return;
 
     BufferedImage img = bmpCanvas.getGuiControl();
     imgCounter++;

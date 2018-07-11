@@ -50,7 +50,6 @@ public class PlaneResponsibilityManager {
   private final AirplaneList all = new AirplaneList(true);
   @XmlIgnore
   private final List<Airplane.Airplane4Display> infos = new LinkedList<>();
-private CommonRecorder tmpRecorder = new CommonRecorder("Plane-responsibility-manager", "prmTemp.log", " - ");
 
   public PlaneResponsibilityManager() {
   }
@@ -74,7 +73,6 @@ private CommonRecorder tmpRecorder = new CommonRecorder("Plane-responsibility-ma
   }
 
   public void registerPlane(Atc atc, Airplane plane) {
-    tmpRecorder.write("%s (%s) register request to ATC %s", plane.getCallsign().toString(), plane.getSqwk().toString(), atc.getName());
     if (map.containsKey(plane)) {
       throw new EApplicationException(sf("Second registration of already registered plane %s!", plane.getCallsign()));
     }
@@ -87,9 +85,6 @@ private CommonRecorder tmpRecorder = new CommonRecorder("Plane-responsibility-ma
   }
 
   public void unregisterPlane(Airplane plane) {
-    tmpRecorder.write("%s (%s) unregister request",
-        plane.getCallsign().toString(),
-        plane.getSqwk().toString());
     if (!map.containsKey(plane)) {
       throw new EApplicationException(sf("Plane %s is not registered, cannot be unregistered!", plane.getCallsign()));
     }
@@ -106,12 +101,6 @@ private CommonRecorder tmpRecorder = new CommonRecorder("Plane-responsibility-ma
   public void requestSwitch(Atc from, Atc to, Airplane plane) {
     eState st = typeToState(from);
     if (map.get(plane) != st) {
-//      StringBuilder sb = new StringBuilder();
-//      sb.append("Code ").append(plane.getSqwk().toString()).append(" err: ");
-//      sb.append(" Cannot request switch. Atc ").append(from.getName()).append(" is not responsible for plane.");
-//      Message m = new Message(Messenger.SYSTEM, Acc.atcApp(), new StringMessageContent(sb.toString()));
-//      Acc.messenger().send(m);
-      // message is sent via ATC
       return;
     }
 

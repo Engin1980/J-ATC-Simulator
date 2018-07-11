@@ -42,6 +42,12 @@
             </xs:sequence>
           </xs:complexType>
         </xs:element>
+        <xs:element name="autosave">
+          <xs:complexType>
+            <xs:attribute name="intervalInMinutes" type="xs:positiveInteger" use="required" />
+            <xs:attribute name="path" type="xs:string" use="required" />
+          </xs:complexType>
+        </xs:element>
       </xs:sequence>
     </xs:complexType>
   </xs:element>

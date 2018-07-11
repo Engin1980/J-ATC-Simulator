@@ -3,6 +3,7 @@ package eng.jAtcSim.lib.speaking;
 import eng.eSystem.EStringBuilder;
 import eng.eSystem.collections.EList;
 import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.NullArgumentException;
 import eng.jAtcSim.lib.messaging.IMessageContent;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
 
@@ -17,6 +18,43 @@ public class SpeechList<T extends ISpeech> extends EList<T> implements IMessageC
       throw new EApplicationException("Some speech is null.");
   }
 
+  @Override
+  public void add(T item) {
+    if (item == null) throw new NullArgumentException("item");
+    super.add(item);
+  }
+
+  @Override
+  public void add(Iterable<? extends T> items) {
+    for (T item : items) {
+      if (item == null)
+        throw new NullArgumentException("Some item in items is null.");
+    }
+    super.add(items);
+  }
+
+  @Override
+  public void add(T[] items) {
+    for (T item : items) {
+      if (item == null)
+        throw new NullArgumentException("Some item in items is null.");
+    }
+    super.add(items);
+  }
+
+  @Override
+  public void insert(int index, T item) {
+    if (item == null)
+      throw new NullArgumentException("item");
+    super.insert(index, item);
+  }
+
+  @Override
+  public void set(int index, T item) {
+    if (item == null)
+      throw new NullArgumentException("item");
+    super.set(index, item);
+  }
 
   public SpeechList(Iterable<? extends T> lst) {
     super(lst);

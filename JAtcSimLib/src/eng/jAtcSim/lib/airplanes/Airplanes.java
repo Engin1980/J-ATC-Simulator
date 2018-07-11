@@ -21,6 +21,16 @@ public class Airplanes {
   private static final double AIRPROX_STANDARD_DISTANCE = 5;
   private static final double AIRPROX_WARNING_DISTANCE = 7.5;
   private static final double AIRPROX_APPROACH_DISTANCE = 2.5;
+  private static final Airplane.State[] airproxApproachStates = {
+      Airplane.State.flyingIaf2Faf,
+      Airplane.State.approachEnter,
+      Airplane.State.approachDescend,
+      Airplane.State.longFinal,
+      Airplane.State.shortFinal,
+      Airplane.State.landed,
+      Airplane.State.takeOffRoll,
+      Airplane.State.takeOffGoAround
+  };
 
   public static Airplane tryGetByCallsingOrNumber(Iterable<Airplane> planes, String callsignOrNumber) {
     if (StringUtil.isEmpty(callsignOrNumber)) return null;
@@ -47,7 +57,7 @@ public class Airplanes {
   }
 
   public static Airplane tryGetByCallsign(IReadOnlyList<Airplane> planes, Callsign callsign) {
-    return planes.tryGetFirst(q->q.getCallsign().equals(callsign));
+    return planes.tryGetFirst(q -> q.getCallsign().equals(callsign));
   }
 
   public static Airplane getByCallsing(IReadOnlyList<Airplane> planes, String callsign) {
@@ -56,7 +66,7 @@ public class Airplanes {
   }
 
   public static Airplane getByCallsing(IReadOnlyList<Airplane> planes, Callsign callsign) {
-    return planes.getFirst(q->q.getCallsign().equals(callsign));
+    return planes.getFirst(q -> q.getCallsign().equals(callsign));
   }
 
   public static Airplane tryGetBySqwk(IReadOnlyList<Airplane> planes, String sqwk) {
@@ -70,7 +80,7 @@ public class Airplanes {
   }
 
   public static Airplane tryGetBySqwk(IReadOnlyList<Airplane> planes, Squawk sqwk) {
-    Airplane ret = planes.tryGetFirst(q->q.getSqwk().equals(sqwk));
+    Airplane ret = planes.tryGetFirst(q -> q.getSqwk().equals(sqwk));
     return ret;
   }
 
@@ -119,8 +129,8 @@ public class Airplanes {
         a.getCoordinate(), b.getCoordinate());
 
     if (alt < 1000) {
-      boolean isAinApp = a.getState().is(Airplane.State.flyingIaf2Faf, Airplane.State.approachEnter, Airplane.State.approachDescend, Airplane.State.longFinal, Airplane.State.shortFinal, Airplane.State.landed, Airplane.State.takeOffRoll, Airplane.State.takeOffGoAround);
-      boolean isBinApp = b.getState().is(Airplane.State.flyingIaf2Faf, Airplane.State.approachEnter, Airplane.State.approachDescend, Airplane.State.longFinal, Airplane.State.shortFinal, Airplane.State.landed, Airplane.State.takeOffRoll, Airplane.State.takeOffGoAround);
+      boolean isAinApp = a.getState().is(airproxApproachStates);
+      boolean isBinApp = b.getState().is(airproxApproachStates);
       if (isAinApp && isBinApp) {
         if (dist < AIRPROX_APPROACH_DISTANCE) {
           ret = AirproxType.full;
