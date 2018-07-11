@@ -871,7 +871,7 @@ class TakeOffInfos extends EMap<RunwayThreshold, TakeOffInfo> {
 }
 
 class Separation {
-  private static final int SAFE_SEPARATION_ALTITUDE = 1500;
+  private static final int SAFE_SEPARATION_ALTITUDE = 2000;
   private static final double SAFE_SEPARATION_DISTANCE = 5.5;
 
   public static boolean isSafeSeparation(Airplane a, Airplane b, int safeSeparationSeconds) {
@@ -893,7 +893,7 @@ class Separation {
   }
 
   private static int getSecondsInFlight(Airplane plane, int totalSeconds) {
-    double spdRef = plane.getType().getV2() - plane.getSpeed();
+    double spdRef = plane.getType().vCruise - plane.getSpeed();
     double secondsToAccelerate = spdRef / plane.getType().speedIncreaseRate;
     int ret = totalSeconds - (int) secondsToAccelerate;
     if (ret < 0) ret = 0;

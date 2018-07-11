@@ -467,18 +467,29 @@ public class Pilot {
 
     private void setHoldDataByEntry() {
       double y = Coordinates.getBearing(parent.getCoordinate(), this.navaid.getCoordinate());
-      double yy = Headings.add(y, 180);
+      y = Headings.add(y, 180);
 
       int h = this.inboundRadial;
-      double a = Headings.add(h, -75);
-      double b = Headings.add(h, 110);
-
-      if (Headings.isBetween(b, yy, a)) {
-        this.phase = eHoldPhase.directEntry;
-      } else if (Headings.isBetween(h, yy, b)) {
-        this.phase = eHoldPhase.parallelEntry;
+      double a;
+      double b;
+      if (this.isLeftTurned) {
+        a = Headings.add(h, -110);
+        b = Headings.add(h, 75);
+        if (Headings.isBetween(a, y, h))
+          this.phase = eHoldPhase.parallelEntry;
+        else if (Headings.isBetween(h, y, b))
+          this.phase = eHoldPhase.tearEntry;
+        else
+          this.phase = eHoldPhase.directEntry;
       } else {
-        this.phase = eHoldPhase.tearEntry;
+        a = Headings.add(h, -75);
+        b = Headings.add(h, 110);
+        if (Headings.isBetween(a, y, h))
+          this.phase = eHoldPhase.tearEntry;
+        else if (Headings.isBetween(h, y, b))
+          this.phase = eHoldPhase.parallelEntry;
+        else
+          this.phase = eHoldPhase.directEntry;
       }
     }
 
@@ -558,7 +569,7 @@ public class Pilot {
 
         case parallelEntry:
           if (Coordinates.getDistanceInNM(parent.getCoordinate(), this.navaid.getCoordinate()) < NEAR_FIX_DISTANCE) {
-            parent.setTargetHeading(this.getOutboundHeading(), this.isLeftTurned);
+            parent.setTargetHeading(this.getOutboundHeading(), !this.isLeftTurned);
             this.secondTurnTime = Acc.now().addSeconds(60);
             this.phase = eHoldPhase.parallelAgainst;
           } else {
@@ -1039,17 +1050,6 @@ public class Pilot {
     return ret;
   }
 
-  public Navaid getEntryExitPoint() {
-    return this.entryExitPoint;
-  }
-
-  private void openRecorder(){
-    this.recorder = new PilotRecorder(
-        parent.getCallsign().toString() + " - pilot.log",
-        new FileSaver(Recorder.getRecorderFileName(parent.getCallsign().toString() + "_pilot.log")),
-        " \t ");
-  }
-
   private static Behavior getBehaviorInstance(XElement behEl, Pilot parent) {
     String clsName = behEl.getAttribute("__class");
     Class cls;
@@ -1097,6 +1097,10 @@ public class Pilot {
 
   }
 
+  public Navaid getEntryExitPoint() {
+    return this.entryExitPoint;
+  }
+
   public Route getAssignedRoute() {
     return this.assignedRoute;
   }
@@ -1140,9 +1144,6 @@ public class Pilot {
     flushSaidTextToAtc();
 
     recorder.logPostponedAfterSpeeches(this.afterCommands);
-
-//    this.afterCommands.consolePrint();
-//    System.out.println(" / / / / / ");
   }
 
   public Atc getTunedAtc() {
@@ -1223,6 +1224,13 @@ public class Pilot {
     LoadSave.saveField(tmp, this, "afterCommands");
     LoadSave.saveField(tmp, this, "saidText");
     LoadSave.saveField(tmp, this, "behavior");
+  }
+
+  private void openRecorder() {
+    this.recorder = new PilotRecorder(
+        parent.getCallsign().toString() + " - pilot.log",
+        new FileSaver(Recorder.getRecorderFileName(parent.getCallsign().toString() + "_pilot.log")),
+        " \t ");
   }
 
   private void requestRadarContactIfRequired() {
@@ -1663,19 +1671,6 @@ class PilotRecorder extends Recorder {
     _logPosponed(tmp, "extensions");
   }
 
-  private void _logPosponed(IReadOnlyList<Tuple<AfterCommand, IAtcCommand>> tmp, String type) {
-    EStringBuilder sb = new EStringBuilder();
-    sb.appendLine("Postponed " + type + " after commands");
-    for (Tuple<AfterCommand, IAtcCommand> tuple : tmp) {
-      sb.append("\t");
-      sb.append(tuple.getA().toString());
-      sb.append(" -> ");
-      sb.append(tuple.getB().toString());
-      sb.appendLine();
-    }
-    super.writeLine(sb.toString());
-  }
-
   public void logProcessedAfterSpeeches(SpeechList<IAtcCommand> cmds, String extensions) {
     EStringBuilder sb = new EStringBuilder();
     sb.appendLine("Processed after speeches of " + extensions);
@@ -1692,6 +1687,19 @@ class PilotRecorder extends Recorder {
     for (int i = 0; i < current.size(); i++) {
       ISpeech sp = current.get(i);
       sb.append("\t").append(sp.toString()).appendLine();
+    }
+    super.writeLine(sb.toString());
+  }
+
+  private void _logPosponed(IReadOnlyList<Tuple<AfterCommand, IAtcCommand>> tmp, String type) {
+    EStringBuilder sb = new EStringBuilder();
+    sb.appendLine("Postponed " + type + " after commands");
+    for (Tuple<AfterCommand, IAtcCommand> tuple : tmp) {
+      sb.append("\t");
+      sb.append(tuple.getA().toString());
+      sb.append(" -> ");
+      sb.append(tuple.getB().toString());
+      sb.appendLine();
     }
     super.writeLine(sb.toString());
   }

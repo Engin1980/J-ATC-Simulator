@@ -16,7 +16,7 @@ import eng.jAtcSim.lib.airplanes.Callsign;
  */
 public class TestTrafficOneDeparture extends TestTraffic {
 
-  private String[] clsgnNumbers = new String[]{"5555"}; //, "6666", "7777"};
+  private String[] clsgnNumbers = new String[]{"5555", "6666"}; //, "7777"};
 
   @Override
   public GeneratedMovementsResponse generateMovements(Object syncObject) {
@@ -34,7 +34,7 @@ public class TestTrafficOneDeparture extends TestTraffic {
     return ret;
   }
 
-  private static String typeName = "A319";
+  private static String typeName = "C152";
 
   private Movement generateMovement(String number) {
     Movement tmp;
@@ -44,7 +44,7 @@ public class TestTrafficOneDeparture extends TestTraffic {
     AirplaneType pt = Acc.sim().getAirplaneTypes().tryGetByName(typeName);
     assert pt != null;
 
-    typeName = "A319";
+    typeName = "C172";
 
     tmp = new Movement(cs, pt, Acc.now().clone(), 0, true);
     return tmp;
