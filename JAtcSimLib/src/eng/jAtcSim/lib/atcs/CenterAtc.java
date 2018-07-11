@@ -235,6 +235,7 @@ public class CenterAtc extends ComputerAtc {
 
     rts = rts.where(q -> q.getType() != Route.eType.sid);
     rts = rts.where(q -> q.getMaxMrvaAltitude() < plane.getType().maxAltitude);
+    rts = rts.where(q->q.getMaxMrvaAltitude() < plane.getTargetAltitude());
     rts = rts.where(q -> q.isValidForCategory(plane.getType().category));
     rts = rts.where(q -> q.getMainFix().equals(n));
 

@@ -42,6 +42,7 @@ public class MrvaManager {
         Airplane.State.holdingPoint,
         Airplane.State.takeOffRoll,
         Airplane.State.takeOffGoAround,
+        Airplane.State.flyingIaf2Faf,
         Airplane.State.approachEnter,
         Airplane.State.approachDescend,
         Airplane.State.longFinal,

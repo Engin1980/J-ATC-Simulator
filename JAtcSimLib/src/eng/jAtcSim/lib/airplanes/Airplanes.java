@@ -119,8 +119,8 @@ public class Airplanes {
         a.getCoordinate(), b.getCoordinate());
 
     if (alt < 1000) {
-      boolean isAinApp = a.getState().is(Airplane.State.approachDescend, Airplane.State.longFinal, Airplane.State.shortFinal, Airplane.State.landed, Airplane.State.takeOffRoll, Airplane.State.takeOffGoAround);
-      boolean isBinApp = b.getState().is(Airplane.State.approachDescend, Airplane.State.longFinal, Airplane.State.shortFinal, Airplane.State.landed, Airplane.State.takeOffRoll, Airplane.State.takeOffGoAround);
+      boolean isAinApp = a.getState().is(Airplane.State.flyingIaf2Faf, Airplane.State.approachEnter, Airplane.State.approachDescend, Airplane.State.longFinal, Airplane.State.shortFinal, Airplane.State.landed, Airplane.State.takeOffRoll, Airplane.State.takeOffGoAround);
+      boolean isBinApp = b.getState().is(Airplane.State.flyingIaf2Faf, Airplane.State.approachEnter, Airplane.State.approachDescend, Airplane.State.longFinal, Airplane.State.shortFinal, Airplane.State.landed, Airplane.State.takeOffRoll, Airplane.State.takeOffGoAround);
       if (isAinApp && isBinApp) {
         if (dist < AIRPROX_APPROACH_DISTANCE) {
           ret = AirproxType.full;
