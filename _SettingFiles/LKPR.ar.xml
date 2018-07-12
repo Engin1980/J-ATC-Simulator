@@ -119,7 +119,7 @@
       </trafficDefinitions>
       <atcTemplates>
         <atcTemplate type="ctr" name="LKAA CTR" frequency="127.12"
-                     releaseAltitude="19000" acceptAltitude="7000" orderedAltitude="17000"/>
+                     releaseAltitude="19000" acceptAltitude="14000" orderedAltitude="17000"/>
         <atcTemplate type="twr" name="LKPR TWR" frequency="118.10"
                      releaseAltitude="300" acceptAltitude="4000" orderedAltitude="5000"/>
         <atcTemplate type="app" name="LKPR APP" frequency="119.00"
@@ -577,10 +577,6 @@
         <hold navaidName="BOGTU" inboundRadial="042" turn="left"/>
         <hold navaidName="EKMIT" inboundRadial="042" turn="right"/>
       </holds>
-      <entryExitPoints>
-        <entryExitPoint name="ODRAN" type="entry" />
-        <entryExitPoint name="BOHUM" type="both" />
-      </entryExitPoints>
     </airport>
   </airports>
   <navaids>

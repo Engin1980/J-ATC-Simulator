@@ -41,8 +41,8 @@ public class JAtcSim {
 
   private static final boolean FAST_START = false;
   private static final Traffic enginSpecificTraffic =
-        new eng.jAtcSim.lib.traffic.TestTrafficOneApproach();
-       // new eng.jAtcSim.lib.traffic.TestTrafficOneDeparture();
+        // new eng.jAtcSim.lib.traffic.TestTrafficOneApproach();
+       new eng.jAtcSim.lib.traffic.TestTrafficOneDeparture();
        // null;
   private static AppSettings appSettings;
 
@@ -317,31 +317,6 @@ public class JAtcSim {
         trf.customTraffic.weightTypeD,
         trf.customTraffic.useExtendedCallsigns);
     return ret;
-//    Traffic ret;
-//    switch (sett.traffic.type) {
-//      case xml:
-//        ret = XmlLoadHelper.loadTraffic(sett.files.trafficXmlFile);
-//        break;
-//      case airportDefined:
-//        Area area = XmlLoadHelper.loadNewArea(sett.files.areaXmlFile);
-//        Airport airport = CollectionUtils.tryGetFirst(area.getAirports(), o -> o.getIcao().equals(sett.recent.icao));
-//        ret = CollectionUtils.tryGetFirst(airport.getTrafficDefinitions(), o -> o.getTitle().equals(sett.traffic.trafficAirportDefinedTitle));
-//        break;
-//      case custom:
-//        ret = new GenericTraffic(
-//            sett.traffic.customTraffic.movementsPerHour,
-//            1 - sett.traffic.customTraffic.arrivals2departuresRatio / 10d, // 0-10 to 0.0-1.0
-//            sett.traffic.customTraffic.weightTypeA,
-//            sett.traffic.customTraffic.weightTypeB,
-//            sett.traffic.customTraffic.weightTypeC,
-//            sett.traffic.customTraffic.weightTypeD,
-//            sett.traffic.customTraffic.useExtendedCallsigns
-//        );
-//      default:
-//        throw new UnsupportedOperationException();
-//    }
-//
-//    return ret;
   }
 }
 

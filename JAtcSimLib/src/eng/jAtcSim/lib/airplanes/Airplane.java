@@ -606,18 +606,14 @@ public class Airplane implements IMessageParticipant {
 
   public void elapseSecond() {
 
-    System.out.println("Plane " + this.getCallsign() + " elapseSecond() - start/processMessages");
     processMessages();
     System.out.println("Plane " + this.getCallsign() + " elapseSecond() - drivePlane");
     drivePlane();
     System.out.println("Plane " + this.getCallsign() + " elapseSecond() - updateSHA");
     updateSHABySecondNew();
-    System.out.println("Plane " + this.getCallsign() + " elapseSecond() - updateCoordinates");
     updateCoordinates();
 
-    System.out.println("Plane " + this.getCallsign() + " elapseSecond() - logFDR");
     flightRecorder.logFDR(this, this.pilot);
-    System.out.println("Plane " + this.getCallsign() + " elapseSecond() - end");
   }
 
   @Override

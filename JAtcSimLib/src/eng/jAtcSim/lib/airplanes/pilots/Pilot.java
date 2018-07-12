@@ -1139,13 +1139,22 @@ public class Pilot {
      4. ridicimu se reknou potvrzeni a zpravy
 
      */
+
+    System.out.println("Pilot - nespeeches");
     processNewSpeeches();
+    System.out.println("Pilot - afterspeeches");
     processAfterSpeeches(); // udelat vlastni queue toho co se ma udelat a pak to provest pres processQueueCommands
+    System.out.println("Pilot - nedrivePLane");
     endrivePlane();
+    System.out.println("Pilot - reqRadCon");
     requestRadarContactIfRequired();
+    System.out.println("Pilot - flush msgs");
     flushSaidTextToAtc();
 
+    System.out.println("Pilot - recorder");
     recorder.logPostponedAfterSpeeches(this.afterCommands);
+
+    System.out.println("Pilot - done");
   }
 
   public Atc getTunedAtc() {
