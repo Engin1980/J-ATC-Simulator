@@ -37,6 +37,7 @@ import eng.jAtcSim.lib.speaking.ISpeech;
 import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.*;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.IllegalThenCommandRejection;
+import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.Rejection;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.*;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.afters.*;
@@ -1415,8 +1416,27 @@ public class Pilot {
 
   private void processAfterSpeechWithConsequents(IList<? extends ISpeech> queue, CommandSource cs) {
     Airplane.Airplane4Command plane = this.parent.getPlane4Command();
+
+    Airplane.State [] unableProcessAfterCommandsStates = {
+        Airplane.State.flyingIaf2Faf,
+        Airplane.State.approachEnter,
+        Airplane.State.approachDescend,
+        Airplane.State.longFinal,
+        Airplane.State.shortFinal,
+        Airplane.State.landed,
+        Airplane.State.takeOffRoll,
+        Airplane.State.takeOffGoAround
+    };
+
     AfterCommand af = (AfterCommand) queue.get(0);
     queue.removeAt(0);
+
+    if (plane.getState().is(unableProcessAfterCommandsStates)){
+      ISpeech rej = new Rejection("Unable to process after-command in approach/take-off.", af);
+      say(rej);
+      return;
+    }
+
 
     ConfirmationResult cres;
     boolean sayConfirmations = cs == CommandSource.atc;
