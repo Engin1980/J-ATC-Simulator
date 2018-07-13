@@ -49,7 +49,9 @@ public class ApplicationManager {
       assert ca != null : "Unknown application. Probably not added into cmdApps list?";
       assert plane != null;
       assert c != null;
+      System.out.println("Confirming " + c);
       ret = ca.confirm(plane, (IAtcCommand) c, checkStateSanity, checkCommandSanity);
+      System.out.println("Confirmed " + c);
     } else if (c instanceof IAtcNotification) {
       NotificationApplication na = notApps.get(c.getClass());
       assert na != null;

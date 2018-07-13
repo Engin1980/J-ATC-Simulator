@@ -4,6 +4,7 @@ import eng.eSystem.collections.IReadOnlyList;
 import eng.jAtcSim.AppSettings;
 import eng.jAtcSim.XmlLoadHelper;
 import eng.jAtcSim.lib.Simulation;
+import eng.jAtcSim.lib.airplanes.Callsign;
 import eng.jAtcSim.lib.traffic.Movement;
 import eng.jAtcSim.shared.LayoutManager;
 
@@ -16,6 +17,9 @@ public class ScheduledFlightListPanel extends JPanel {
   private JPanel pnlContent;
   private JScrollPane pnlScroll;
   private Simulation sim;
+  private Callsign firstItemCallsign = null;
+  private Callsign lastItemCallsign = null;
+  private Integer itemCount = null;
 
 
   public void init(Simulation sim, AppSettings appSettings) {
@@ -39,19 +43,38 @@ public class ScheduledFlightListPanel extends JPanel {
   }
 
   private void updateList() {
-    IReadOnlyList<Movement> movements =
-        this.sim.getScheduledMovements();
+    if (refreshNeeded()) {
+      IReadOnlyList<Movement> movements =
+          this.sim.getScheduledMovements().orderBy(q -> q.getAppExpectedTime());
 
-    pnlContent.removeAll();
-    ScheduledFlightStripPanel.resetIndex();
-    for (Movement mvm : movements) {
-      JPanel pnlItem = createMovementStrip(mvm);
-      pnlItem.setName("MovementStrip_" + mvm.getCallsign().toString());
-      pnlContent.add(pnlItem);
+      pnlContent.removeAll();
+      ScheduledFlightStripPanel.resetIndex();
+      for (Movement mvm : movements) {
+        JPanel pnlItem = createMovementStrip(mvm);
+        pnlItem.setName("MovementStrip_" + mvm.getCallsign().toString());
+        pnlContent.add(pnlItem);
+      }
+
+      this.firstItemCallsign = this.sim.getScheduledMovements().getFirst().getCallsign();
+      this.lastItemCallsign = this.sim.getScheduledMovements().getLast().getCallsign();
+      this.itemCount = this.sim.getScheduledMovements().size();
+
+      this.revalidate();
+      this.repaint();
     }
+  }
 
-    this.revalidate();
-    this.repaint();
+  private boolean refreshNeeded() {
+    IReadOnlyList<Movement> mvm = this.sim.getScheduledMovements();
+    if (itemCount == null || itemCount != mvm.size())
+      return true;
+    if (itemCount > 0) {
+      if (this.firstItemCallsign == null || this.firstItemCallsign.equals(mvm.getFirst().getCallsign()) == false)
+        return true;
+      if (this.lastItemCallsign == null || this.lastItemCallsign.equals(mvm.getLast().getCallsign()) == false)
+        return true;
+    }
+    return false;
   }
 
   private JPanel createMovementStrip(Movement mvm) {
@@ -70,22 +93,6 @@ class ScheduledFlightStripPanel extends JPanel {
   private static int index = 0;
   private static Font normalFont;
   private static Font boldFont;
-
-  public ScheduledFlightStripPanel(Movement mvm) {
-
-    this.setLayout(new BorderLayout());
-
-    Dimension dim = stripSettings.size;
-    this.setPreferredSize(dim);
-    this.setMinimumSize(dim);
-    this.setMaximumSize(dim);
-
-    Color color = ScheduledFlightStripPanel.getColor(mvm);
-    this.setBackground(color);
-    this.setForeground(stripSettings.textColor);
-
-    fillContent(mvm, stripSettings.textColor, color);
-  }
 
   public static void setStripSettings(FlightStripSettings stripSettings) {
     ScheduledFlightStripPanel.stripSettings = stripSettings;
@@ -108,6 +115,22 @@ class ScheduledFlightStripPanel extends JPanel {
       ret = isEven ? stripSettings.ctr.even : stripSettings.ctr.odd;
     }
     return ret;
+  }
+
+  public ScheduledFlightStripPanel(Movement mvm) {
+
+    this.setLayout(new BorderLayout());
+
+    Dimension dim = stripSettings.size;
+    this.setPreferredSize(dim);
+    this.setMinimumSize(dim);
+    this.setMaximumSize(dim);
+
+    Color color = ScheduledFlightStripPanel.getColor(mvm);
+    this.setBackground(color);
+    this.setForeground(stripSettings.textColor);
+
+    fillContent(mvm, stripSettings.textColor, color);
   }
 
   private void fillContent(Movement movement, Color frColor, Color bgColor) {

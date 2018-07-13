@@ -841,7 +841,7 @@ public class Airplane implements IMessageParticipant {
         cmds = (SpeechList) s;
       else {
         cmds = new SpeechList();
-        cmds.add(s);
+        cmds.add((ISpeech) s);
       }
     } else {
       throw new EApplicationException("Airplane can only deal with messages containing \"IFromAtc\" or \"List<IFromAtc>\".");
