@@ -5,12 +5,10 @@
  */
 package eng.jAtcSim.lib.world;
 
-import com.sun.corba.se.impl.monitoring.MonitoredAttributeInfoImpl;
 import eng.eSystem.Tuple;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
-import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.xmlSerialization.XmlIgnore;
 import eng.eSystem.xmlSerialization.XmlOptional;
@@ -27,8 +25,6 @@ import eng.jAtcSim.lib.speaking.fromAtc.commands.ProceedDirectCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ToNavaidCommand;
 import eng.jAtcSim.lib.speaking.parsing.Parser;
 import eng.jAtcSim.lib.speaking.parsing.shortBlockParser.ShortBlockParser;
-
-import java.awt.geom.Line2D;
 
 /**
  * @author Marek
@@ -57,9 +53,9 @@ public class Route {
   private IList<Navaid> _routeNavaids = null;
   private double _routeLength = -1;
   @XmlOptional
-  private String customFixName = null;
+  private String mainFix = null;
   @XmlIgnore
-  private Navaid mainFix = null;
+  private Navaid mainNavaid = null;
   @XmlOptional
   private Integer entryFL = null;
   @XmlIgnore
@@ -74,7 +70,7 @@ public class Route {
     if (arrival) {
       ret._routeCommands.add(new ProceedDirectCommand(n));
     }
-    ret.mainFix = n;
+    ret.mainNavaid = n;
     ret.type = eType.vectoring;
     ret._routeCommands.add(new ProceedDirectCommand(n));
     ret.route = "";
@@ -166,15 +162,15 @@ public class Route {
     _routeLength = calculateRouteLength();
 
     Navaid customFix = null;
-    if (this.customFixName != null)
-      customFix = Acc.area().getNavaids().get(customFixName);
+    if (this.mainFix != null)
+      customFix = Acc.area().getNavaids().get(mainFix);
     switch (type) {
       case sid:
-        this.mainFix = customFix == null ? getFixByRouteName() : customFix;
+        this.mainNavaid = customFix == null ? getFixByRouteName() : customFix;
         break;
       case star:
       case transition:
-        this.mainFix = customFix == null ? getFixByRouteName() : customFix;
+        this.mainNavaid = customFix == null ? getFixByRouteName() : customFix;
         break;
       case vectoring:
         // nothing
@@ -194,7 +190,7 @@ public class Route {
         maxMrvaAlt = Math.max(maxMrvaAlt, mrva.getMaxAltitude());
     }
     if (maxMrvaAlt == 0) {
-      Navaid routePoint = this.mainFix;
+      Navaid routePoint = this.mainNavaid;
       Border mrva = mrvas.tryGetFirst(q -> q.isIn(routePoint.getCoordinate()));
       if (mrva != null)
         maxMrvaAlt = mrva.getMaxAltitude();
@@ -202,8 +198,8 @@ public class Route {
     this.maxMrvaFL = maxMrvaAlt / 100;
   }
 
-  public Navaid getMainFix() {
-    return mainFix;
+  public Navaid getMainNavaid() {
+    return mainNavaid;
   }
 
   public Route makeClone() {
@@ -215,7 +211,7 @@ public class Route {
     ret._routeCommands = new SpeechList<>(this._routeCommands);
     ret._routeNavaids = new EList<>(this._routeNavaids);
     ret._routeLength = this._routeLength;
-    ret.mainFix = this.mainFix;
+    ret.mainNavaid = this.mainNavaid;
     ret.entryFL = this.entryFL;
     ret.maxMrvaFL = this.maxMrvaFL;
     return ret;
@@ -261,7 +257,11 @@ public class Route {
 
   private Navaid getFixByRouteName() {
     Navaid ret;
-    String name = this.name.substring(0, this.name.length() - 2);
+    String name;
+    if (mainFix != null)
+      name = mainFix;
+    else
+      name = this.name.substring(0, this.name.length() - 2);
     ret = Acc.area().getNavaids().get(name);
     return ret;
   }

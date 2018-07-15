@@ -140,7 +140,7 @@ public class Airport {
   public void bindEntryExitPointsByRoutes(IList<Route> routes) {
     for (Route route : routes) {
       EntryExitPoint eep = new EntryExitPoint(
-          route.getMainFix(),
+          route.getMainNavaid(),
           route.getType() == Route.eType.sid ? EntryExitPoint.Type.exit : EntryExitPoint.Type.entry,
           route.getMaxMrvaAltitude());
 

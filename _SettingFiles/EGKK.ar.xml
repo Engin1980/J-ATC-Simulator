@@ -192,11 +192,11 @@
                        preferred="true"
                        includeSharedRoutes="true">
               <sharedIafRoutes>
-                <route iaf="TIMBA" route="DM 40 PD MAY T DM 30 PD MAY/003/8.5 T FH 290" />
-                <route iaf="WILLO" route="DM 40 PD MID/117/22 T PD MAY T DM 30 PD MAY/003/8.5 T FH 290" />
+                <route iaf="TIMBA" route="DM 40 PD MAY T DM 30 PD MAY/003/3 T DM 20 PD MAY/003/8.5 T FH 290" />
+                <route iaf="WILLO" route="DM 40 PD MID/117/22 T PD MAY T DM 30 PD MAY/003/3 T DM 20 PD MAY/003/8.5 T FH 290" />
               </sharedIafRoutes>
               <approaches>
-                <ilsApproach gaRoute="CM 30 AA 20+ FH 179" radial="258" includeSharedIafRoutes="true" initialAltitude="3000">
+                <ilsApproach gaRoute="CM 30 AA 20+ FH 179" radial="258" includeSharedIafRoutes="true" initialAltitude="2000">
                   <categories>
                     <category type="I" daA="335" daB="344" daC="356" daD="370"/>
                     <category type="II" daA="245" daB="255" daC="268" daD="281" />
@@ -204,7 +204,7 @@
                 </ilsApproach>
                 <gnssApproach gaRoute="CM 30 AA 20+ FH 179" radial="258" includeSharedIafRoutes="true" daA="580"
                               daB="580"
-                              daC="580" daD="580" initialAltitude="3000" />
+                              daC="580" daD="580" initialAltitude="2000" />
               </approaches>
               <routes>
                 <!--<route type="sid" name="DVR9M"-->

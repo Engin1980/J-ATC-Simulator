@@ -199,7 +199,7 @@ public class Area {
                       a.getIcao(), t.getName(), o.getName(), o.getRoute(), ex.getMessage()));
             }
 //            try {
-//              n = o.getMainFix();
+//              n = o.getMainNavaid();
 //            } catch (ERuntimeException ex) {
 //              throw new EApplicationException(
 //                  String.format(

@@ -44,7 +44,12 @@ public class NavaidList extends EList<Navaid> {
   }
 
   public Navaid get(String name) {
-    Navaid ret = this.getFirst(q -> q.getName().equals(name));
+    Navaid ret;
+    try {
+      ret = this.getFirst(q -> q.getName().equals(name));
+    }catch (Exception ex){
+      throw new EApplicationException("Unable to find element " + name + ".");
+    }
     return ret;
   }
 

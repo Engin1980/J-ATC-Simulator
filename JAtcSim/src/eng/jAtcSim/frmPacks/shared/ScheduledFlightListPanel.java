@@ -55,9 +55,14 @@ public class ScheduledFlightListPanel extends JPanel {
         pnlContent.add(pnlItem);
       }
 
-      this.firstItemCallsign = this.sim.getScheduledMovements().getFirst().getCallsign();
-      this.lastItemCallsign = this.sim.getScheduledMovements().getLast().getCallsign();
       this.itemCount = this.sim.getScheduledMovements().size();
+      if (itemCount == 0) {
+        this.firstItemCallsign = null;
+        this.lastItemCallsign = null;
+      } else {
+        this.firstItemCallsign = this.sim.getScheduledMovements().getFirst().getCallsign();
+        this.lastItemCallsign = this.sim.getScheduledMovements().getLast().getCallsign();
+      }
 
       this.revalidate();
       this.repaint();

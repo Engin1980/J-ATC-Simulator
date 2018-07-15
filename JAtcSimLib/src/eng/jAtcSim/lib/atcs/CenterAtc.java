@@ -118,7 +118,7 @@ public class CenterAtc extends ComputerAtc {
         ret = new RequestResult(false,
             String.format("%s is not heading (or on the route to) departure fix %s",
                 p.getCallsign().toString(),
-                p.getAssigneRoute().getMainFix().getName()));
+                p.getAssigneRoute().getMainNavaid().getName()));
       } else {
         if (p.getAltitude() > super.acceptAltitude || p.getAltitude() > (p.getType().maxAltitude * .666)) {
           ret = new RequestResult(true, null);
@@ -237,7 +237,7 @@ public class CenterAtc extends ComputerAtc {
     rts = rts.where(q -> q.getMaxMrvaAltitude() < plane.getType().maxAltitude);
     rts = rts.where(q->q.getMaxMrvaAltitude() < plane.getTargetAltitude());
     rts = rts.where(q -> q.isValidForCategory(plane.getType().category));
-    rts = rts.where(q -> q.getMainFix().equals(n));
+    rts = rts.where(q -> q.getMainNavaid().equals(n));
 
     Route ret;
     if (rts.isEmpty()) {

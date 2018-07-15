@@ -1170,7 +1170,7 @@ public class Pilot {
     rts = rts.where(q -> q.isValidForCategory(this.parent.getType().category));
     Route r = rts.getRandom();
     //TODO here can null-pointer-exception occur when no route is found for threshold and category
-    Navaid ret = r.getMainFix();
+    Navaid ret = r.getMainNavaid();
     return ret;
   }
 
@@ -1434,12 +1434,11 @@ public class Pilot {
     AfterCommand af = (AfterCommand) queue.get(0);
     queue.removeAt(0);
 
-    if (plane.getState().is(unableProcessAfterCommandsStates)){
+    if ( cs == CommandSource.atc && plane.getState().is(unableProcessAfterCommandsStates)){
       ISpeech rej = new Rejection("Unable to process after-command in approach/take-off.", af);
       say(rej);
       return;
     }
-
 
     ConfirmationResult cres;
     boolean sayConfirmations = cs == CommandSource.atc;
