@@ -126,7 +126,6 @@ public class TrafficManager {
 
     AirplaneType pt = m.getAirplaneType();
 
-    Route route;
     Coordinate coord;
     int heading;
     int alt;
@@ -191,19 +190,7 @@ public class TrafficManager {
     double radial = Coordinates.getBearing(aipFix, navFix);
     radial += Simulation.rnd.nextDouble(-15, 15); // nahodne zatoceni priletoveho radialu
     double dist = Acc.airport().getCoveredDistance();
-    Coordinate ret = null;
-    while (ret == null) {
-
-      ret = Coordinates.getCoordinate(navFix, (int) radial, dist);
-      for (Airplane p : Acc.planes()) {
-        double delta = Coordinates.getDistanceInNM(ret, p.getCoordinate());
-        if (delta < 5d) {
-          ret = null;
-          break;
-        }
-      }
-      dist += Simulation.rnd.nextDouble() * 10;
-    }
+    Coordinate ret = Coordinates.getCoordinate(Acc.airport().getLocation(), (int) radial, dist);
     return ret;
   }
 

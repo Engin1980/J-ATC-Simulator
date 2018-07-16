@@ -116,14 +116,7 @@ public class Pilot {
     }
 
     public void setHoldBehavior(Navaid navaid, int inboundRadial, boolean leftTurn) {
-      Pilot.HoldBehavior hold = new Pilot.HoldBehavior();
-      hold.navaid = navaid;
-      hold.inboundRadial = inboundRadial;
-      hold.isLeftTurned = leftTurn;
-      hold.phase = eHoldPhase.beginning;
-
-      parent.setxState(Airplane.State.holding);
-      Pilot.this.behavior = hold;
+      Pilot.this.setHoldBehavior(navaid, inboundRadial, leftTurn);
     }
 
     public void setTakeOffBehavior(RunwayThreshold thrs) {
@@ -359,8 +352,18 @@ public class Pilot {
           say(new PassingClearanceLimitNotification());
           clearanceLimitWarningSent = true;
         } else if (dist < 1) {
-          targetCoordinate = null;
-          clearanceLimitWarningSent = false;
+          if (parent.isArrival() == false) {
+            Navaid n = Pilot.this.assignedRoute.getMainNavaid();
+            dist = Coordinates.getDistanceInNM(parent.getCoordinate(), n.getCoordinate());
+            if (dist < 1.5) {
+              int rad = (int) Coordinates.getBearing(Acc.airport().getLocation(), n.getCoordinate());
+              rad = rad % 90;
+              Pilot.this.setHoldBehavior(n, rad, true);
+            }
+          } else {
+            targetCoordinate = null;
+            clearanceLimitWarningSent = false;
+          }
         } else {
           double heading = Coordinates.getBearing(parent.getCoordinate(), targetCoordinate);
           heading = Headings.to(heading);
@@ -1231,6 +1234,17 @@ public class Pilot {
     LoadSave.saveField(tmp, this, "behavior");
   }
 
+  private void setHoldBehavior(Navaid navaid, int inboundRadial, boolean leftTurn) {
+    Pilot.HoldBehavior hold = new Pilot.HoldBehavior();
+    hold.navaid = navaid;
+    hold.inboundRadial = inboundRadial;
+    hold.isLeftTurned = leftTurn;
+    hold.phase = eHoldPhase.beginning;
+
+    parent.setxState(Airplane.State.holding);
+    Pilot.this.behavior = hold;
+  }
+
   private void openRecorder() {
     this.recorder = new PilotRecorder(
         parent.getCallsign().toString() + " - pilot.log",
@@ -1420,7 +1434,7 @@ public class Pilot {
   private void processAfterSpeechWithConsequents(IList<? extends ISpeech> queue, CommandSource cs) {
     Airplane.Airplane4Command plane = this.parent.getPlane4Command();
 
-    Airplane.State [] unableProcessAfterCommandsStates = {
+    Airplane.State[] unableProcessAfterCommandsStates = {
         Airplane.State.flyingIaf2Faf,
         Airplane.State.approachEnter,
         Airplane.State.approachDescend,
@@ -1434,7 +1448,7 @@ public class Pilot {
     AfterCommand af = (AfterCommand) queue.get(0);
     queue.removeAt(0);
 
-    if ( cs == CommandSource.atc && plane.getState().is(unableProcessAfterCommandsStates)){
+    if (cs == CommandSource.atc && plane.getState().is(unableProcessAfterCommandsStates)) {
       ISpeech rej = new Rejection("Unable to process after-command in approach/take-off.", af);
       say(rej);
       return;

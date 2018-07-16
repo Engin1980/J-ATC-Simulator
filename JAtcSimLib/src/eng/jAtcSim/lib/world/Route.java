@@ -21,6 +21,7 @@ import eng.jAtcSim.lib.speaking.ICommand;
 import eng.jAtcSim.lib.speaking.IFromAtc;
 import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
+import eng.jAtcSim.lib.speaking.fromAtc.commands.HoldCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ProceedDirectCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ToNavaidCommand;
 import eng.jAtcSim.lib.speaking.parsing.Parser;
@@ -196,6 +197,15 @@ public class Route {
         maxMrvaAlt = mrva.getMaxAltitude();
     }
     this.maxMrvaFL = maxMrvaAlt / 100;
+
+    // hold at the end of SID via main point
+    if (this.type ==  eType.sid){
+      ToNavaidCommand tnc = (ToNavaidCommand) this._routeCommands.tryGetLast(q->q instanceof ToNavaidCommand);
+      assert tnc != null : "No ToNavaidCommand in SID???";
+      if (tnc instanceof HoldCommand == false){
+        this._routeCommands.add(new HoldCommand(tnc.getNavaid(), 270, true));
+      }
+    }
   }
 
   public Navaid getMainNavaid() {
