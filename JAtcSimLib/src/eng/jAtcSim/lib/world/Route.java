@@ -55,12 +55,10 @@ public class Route {
   private double _routeLength = -1;
   @XmlOptional
   private String mainFix = null;
-  @XmlIgnore
-  private Navaid mainNavaid = null;
+  private Navaid _mainNavaid = null;
   @XmlOptional
   private Integer entryFL = null;
-  @XmlIgnore
-  private Integer maxMrvaFL = null;
+  private Integer _maxMrvaFL = null;
 
   public static Route createNewVectoringByFix(Navaid n, boolean arrival) {
     Route ret = new Route();
@@ -71,7 +69,7 @@ public class Route {
     if (arrival) {
       ret._routeCommands.add(new ProceedDirectCommand(n));
     }
-    ret.mainNavaid = n;
+    ret._mainNavaid = n;
     ret.type = eType.vectoring;
     ret._routeCommands.add(new ProceedDirectCommand(n));
     ret.route = "";
@@ -87,7 +85,7 @@ public class Route {
   }
 
   public int getMaxMrvaAltitude() {
-    int ret = maxMrvaFL == null ? 0 : maxMrvaFL * 100;
+    int ret = _maxMrvaFL == null ? 0 : _maxMrvaFL * 100;
     return ret;
   }
 
@@ -167,11 +165,11 @@ public class Route {
       customFix = Acc.area().getNavaids().get(mainFix);
     switch (type) {
       case sid:
-        this.mainNavaid = customFix == null ? getFixByRouteName() : customFix;
+        this._mainNavaid = customFix == null ? getFixByRouteName() : customFix;
         break;
       case star:
       case transition:
-        this.mainNavaid = customFix == null ? getFixByRouteName() : customFix;
+        this._mainNavaid = customFix == null ? getFixByRouteName() : customFix;
         break;
       case vectoring:
         // nothing
@@ -191,25 +189,25 @@ public class Route {
         maxMrvaAlt = Math.max(maxMrvaAlt, mrva.getMaxAltitude());
     }
     if (maxMrvaAlt == 0) {
-      Navaid routePoint = this.mainNavaid;
+      Navaid routePoint = this._mainNavaid;
       Border mrva = mrvas.tryGetFirst(q -> q.isIn(routePoint.getCoordinate()));
       if (mrva != null)
         maxMrvaAlt = mrva.getMaxAltitude();
     }
-    this.maxMrvaFL = maxMrvaAlt / 100;
+    this._maxMrvaFL = maxMrvaAlt / 100;
 
     // hold at the end of SID via main point
-    if (this.type ==  eType.sid){
-      ToNavaidCommand tnc = (ToNavaidCommand) this._routeCommands.tryGetLast(q->q instanceof ToNavaidCommand);
+    if (this.type == eType.sid) {
+      ToNavaidCommand tnc = (ToNavaidCommand) this._routeCommands.tryGetLast(q -> q instanceof ToNavaidCommand);
       assert tnc != null : "No ToNavaidCommand in SID???";
-      if (tnc instanceof HoldCommand == false){
+      if (tnc instanceof HoldCommand == false) {
         this._routeCommands.add(new HoldCommand(tnc.getNavaid(), 270, true));
       }
     }
   }
 
   public Navaid getMainNavaid() {
-    return mainNavaid;
+    return _mainNavaid;
   }
 
   public Route makeClone() {
@@ -221,9 +219,10 @@ public class Route {
     ret._routeCommands = new SpeechList<>(this._routeCommands);
     ret._routeNavaids = new EList<>(this._routeNavaids);
     ret._routeLength = this._routeLength;
-    ret.mainNavaid = this.mainNavaid;
+    ret.mainFix = this.mainFix;
+    ret._mainNavaid = this._mainNavaid;
     ret.entryFL = this.entryFL;
-    ret.maxMrvaFL = this.maxMrvaFL;
+    ret._maxMrvaFL = this._maxMrvaFL;
     return ret;
   }
 

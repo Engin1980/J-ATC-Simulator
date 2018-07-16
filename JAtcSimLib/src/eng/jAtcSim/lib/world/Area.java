@@ -174,15 +174,13 @@ public class Area {
 
   private void checkRouteCommands() {
     Parser parser = new ShortBlockParser();
-    IList<IAtcCommand> cmds;
-    Navaid n;
     for (Airport a : this.getAirports()) {
       Acc.setAirport(a);
       for (Runway r : a.getRunways()) {
         for (RunwayThreshold t : r.getThresholds()) {
           for (Approach p : t.getApproaches()) {
             try {
-              cmds = parser.parseMultipleCommands(p.getGaRoute());
+              parser.parseMultipleCommands(p.getGaRoute());
             } catch (Exception ex) {
               throw new EApplicationException(
                   String.format("airport %s runway %s approach %s has invalid go-around route fromAtc: %s (error: %s)",
@@ -192,7 +190,7 @@ public class Area {
 
           for (Route o : t.getRoutes()) {
             try {
-              cmds = parser.parseMultipleCommands(o.getRoute());
+              parser.parseMultipleCommands(o.getRoute());
             } catch (Exception ex) {
               throw new EApplicationException(
                   String.format("airport %s runway %s route %s has invalid fromAtc: %s (error: %s)",
