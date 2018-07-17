@@ -359,6 +359,7 @@
         <xs:restriction>
           <xs:enumeration value="sid"/>
           <xs:enumeration value="star"/>
+          <xs:enumeration value="transition"/>
         </xs:restriction>
       </xs:simpleType>
     </xs:attribute>
