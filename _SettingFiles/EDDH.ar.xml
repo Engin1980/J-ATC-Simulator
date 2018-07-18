@@ -255,19 +255,70 @@
       </disjoints>
     </border>
     
-    <border name="EDDH TMA 494" type="mrva" enclosed="true">
+    <border name="EDDH TMA 494" type="mrva" enclosed="true" maxAltitude="3000">
       <points>
         <point coordinate="N 53 40 12.0000 E 9 31 21.0000" />
-        clockwise 17 NM around
-        <point coordinate="N 53 38 13.0000 E 9 59 43.0000" />
-        to
+        <arc coordinate="N 53 38 13.0000 E 9 59 43.0000" direction="clockwise" />
         <point coordinate="N 53 54 48.0000 E 10 5 48.0000" />
         <point coordinate="N 53 52 4.0000 E 9 56 49.0000" />
         <point coordinate="N 53 49 28.0000 E 9 54 55.0000" />
         <point coordinate="N 53 46 54.0000 E 9 46 23.0000" />
         <point coordinate="N 53 40 12.0000 E 9 31 21.0000" />
-        clockwise 17 NM around
-        <point coordinate="N 53 38 13.0000 E 9 59 43.0000" />
+        <!--<arc coordinate="N 53 38 13.0000 E 9 59 43.0000" direction="clockwise" />-->
+      </points>
+    </border>
+    
+    <border name="EDDH TMA 457" type="mrva" enclosed="true" maxAltitude="3000">
+      <points>
+        <point coordinate="N 53 37 39.0000 E 9 52 14.0000" />
+        <point coordinate="N 53 37 59.0000 E 10 0 36.0000" />
+        <point coordinate="N 53 33 2.0000 E 10 15 27.0000" />
+        <point coordinate="N 53 27 36.0000 E 10 11 37.0000" />
+        <point coordinate="N 53 25 2.0000 E 9 59 35.0000" />
+        <point coordinate="N 53 27 54.0000 E 9 55 56.0000" />
+        <point coordinate="N 53 28 24.0000 E 9 49 56.0000" />
+      </points>
+    </border>
+
+    <border name="EDDH TMA 389" type="mrva" enclosed="true">
+      <points>
+        <point coordinate="N 53 21 15.0000 E 9 58 42.0000" />
+        <arc coordinate="N 53 38 13.0000 E 9 59 43.0000" direction="clockwise" />
+        <point coordinate="N 53 23 6.0000 E 9 46 46.0000" />
+        <point coordinate="N 53 23 33.0000 E 9 44 31.0000" />
+        <point coordinate="N 53 26 13.0000 E 9 45 7.0000" />
+        <point coordinate="N 53 28 24.0000 E 9 49 56.0000" />
+        <point coordinate="N 53 27 54.0000 E 9 55 56.0000" />
+        <point coordinate="N 53 25 2.0000 E 9 59 35.0000" />
+      </points>
+    </border>
+    
+    <border name="EDDH TMA 388" type="mrva" enclosed="true">
+      <points>
+        <point coordinate="N 54 0 0.0000 E 11 0 0.0000"/>
+        <point coordinate="N 53 41 0.0000 E 11 10 0.0000"/>
+        <point coordinate="N 53 33 16.0000 E 10 27 1.0000"/>
+        <arc coordinate="N 53 38 13.0000 E 9 59 43.0000" direction="clockwise" />
+        <point coordinate="N 53 21 15.0000 E 9 58 42.0000"/>
+        <point coordinate="N 53 25 2.0000 E 9 59 35.0000"/>
+        <point coordinate="N 53 27 36.0000 E 10 11 37.0000"/>
+        <point coordinate="N 53 33 2.0000 E 10 15 27.0000"/>
+        <point coordinate="N 53 37 59.0000 E 10 0 36.0000"/>
+        <point coordinate="N 53 37 39.0000 E 9 52 14.0000"/>
+        <point coordinate="N 53 28 24.0000 E 9 49 56.0000"/>
+        <point coordinate="N 53 26 13.0000 E 9 45 7.0000"/>
+        <point coordinate="N 53 23 33.0000 E 9 44 31.0000"/>
+        <point coordinate="N 53 24 8.0000 E 9 41 33.0000"/>
+        <point coordinate="N 53 29 10.0000 E 9 34 58.0000"/>
+        <point coordinate="N 53 32 45.0000 E 9 32 43.0000"/>
+        <arc coordinate="N 53 38 13.0000 E 9 59 43.0000" direction="clockwise" />
+        <point coordinate="N 53 40 12.0000 E 9 31 21.0000"/>
+        <point coordinate="N 53 46 54.0000 E 9 46 23.0000"/>
+        <point coordinate="N 53 49 28.0000 E 9 54 55.0000"/>
+        <point coordinate="N 53 52 4.0000 E 9 56 49.0000"/>
+        <point coordinate="N 53 54 48.0000 E 10 5 48.0000"/>
+        <arc coordinate="N 53 38 13.0000 E 9 59 43.0000" direction="clockwise" />
+        <point coordinate="N 53 51 57.0000 E 10 16 31.0000"/>
       </points>
     </border>
   </borders>
