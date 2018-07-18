@@ -62,6 +62,13 @@
           </xs:choice>
         </xs:complexType>
       </xs:element>
+      <xs:element name="disjoints" minOccurs="0" maxOccurs="1">
+        <xs:complexType>
+          <xs:sequence minOccurs="0" maxOccurs="unbounded" >
+            <xs:element name="disjoint" type="xs:string" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
     </xs:sequence>
     <xs:attribute name="name" type="xs:string" use="required"/>
     <xs:attribute name="type" use="required">

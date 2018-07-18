@@ -191,23 +191,83 @@
     </airport>
   </airports>
   <borders>
-    <border name="EDDH CTR" type="ctr" enclosed="true">
+    <border name="EDDH CTR" type="ctr" enclosed="true" minAltitude="0" maxAltitude="2500">
       <points>
-        <point coordinate="N 53 46.74 E 10 10.17"/>
-        <point coordinate="N 53 42.57 E 10 1.36"/>
-        <point coordinate="N 53 49.50 E  9 54.93"/>
-        <point coordinate="N 53 46.93 E  9 46.39"/>
-        <point coordinate="N 53 40.04 E  9 51.69"/>
-        <point coordinate="N 53 37.35 E  9 51.11"/>
-        <point coordinate="N 53 29.20 E  9 34.89"/>
-        <point coordinate="N 53 24.14 E  9 41.57"/>
-        <point coordinate="N 53 30.21 E  9 54.42"/>
-        <point coordinate="N 53 30.05 E 10 0.00"/>
-        <point coordinate="N 53 27.43 E 10 2.11"/>
-        <point coordinate="N 53 30.03 E 10 11.37"/>
-        <point coordinate="N 53 35.21 E 10 7.14"/>
-        <point coordinate="N 53 38.12 E 10 8.00"/>
-        <point coordinate="N 53 42.51 E 10 15.77"/>
+        <point coordinate="53.777379 10.170100" />
+        <point coordinate="53.707210 10.021496" />
+        <point coordinate="53.823979 9.915223" />
+        <point coordinate="53.781128 9.772923" />
+        <point coordinate="53.667037 9.864787" />
+        <point coordinate="53.623115 9.856682" />
+        <point coordinate="53.485991 9.581991" />
+        <point coordinate="53.401360 9.691867" />
+        <point coordinate="53.502596 9.906216" />
+        <point coordinate="53.499382 9.999881" />
+        <point coordinate="53.456531 10.035906" />
+        <point coordinate="53.499382 10.188112" />
+        <point coordinate="53.585084 10.119665" />
+        <point coordinate="53.634899 10.133174" />
+        <point coordinate="53.707746 10.262864" />
+      </points>
+    </border>
+    <border name="EDDH TMA I" type="tma" enclosed="true" minAltitude="2500" maxAltitude="FL100">
+      <points>
+        <point coordinate="53.401360 9.691867" />
+        <point coordinate="53.383684 9.781029" />
+        <arc coordinate="53.631149 9.986372" direction="counterclockwise" />
+        <point coordinate="53.546518 9.544164" />
+        <point coordinate="53.485991 9.581991" />
+      </points>
+      <disjoints>
+        <disjoint>EDDH CTR</disjoint>
+      </disjoints>
+    </border>
+    <border name="EDDH TMA II" type="tma" enclosed="true" minAltitude="4500" maxAltitude="FL100">
+      <points>
+        <point coordinate="53.921927 9.558555" />
+        <arc coordinate="53.631149 9.986372" direction="counterclockwise" />
+        <point coordinate="53.276818 9.776122" />
+        <point coordinate="53.345966 10.409667" />
+        <arc coordinate="53.631149 9.986372" direction="counterclockwise" />
+        <point coordinate="53.994329 10.224940" />
+      </points>
+      <disjoints>
+        <disjoint>EDDH TMA I</disjoint>
+      </disjoints>
+    </border>
+    <border name="EDDH TMA III" type="tma" enclosed="true" minAltitude="FL60" maxAltitude="FL100">
+      <points>
+        <point coordinate="53.921927 9.558555" />
+        <point coordinate="53.900776 9.380669" />
+        <arc coordinate="53.631149 9.986372" direction="counterclockwise" />
+        <point coordinate="53.256480 9.594132" />
+        <point coordinate="53.276818 9.776122" />
+        <point coordinate="53.345966 10.409667" />
+        <point coordinate="53.362236 10.591657" />
+        <arc coordinate="53.631149 9.986372" direction="counterclockwise" />
+        <point coordinate="54.013040 10.408298" />
+        <point coordinate="53.994329 10.224940" />
+      </points>
+      <disjoints>
+        <disjoint>EDDH TMA II</disjoint>
+        <disjoint>EDDH TMA I</disjoint>
+        <disjoint>EDDH CTR</disjoint>
+      </disjoints>
+    </border>
+    
+    <border name="EDDH TMA 494" type="mrva" enclosed="true">
+      <points>
+        <point coordinate="N 53 40 12.0000 E 9 31 21.0000" />
+        clockwise 17 NM around
+        <point coordinate="N 53 38 13.0000 E 9 59 43.0000" />
+        to
+        <point coordinate="N 53 54 48.0000 E 10 5 48.0000" />
+        <point coordinate="N 53 52 4.0000 E 9 56 49.0000" />
+        <point coordinate="N 53 49 28.0000 E 9 54 55.0000" />
+        <point coordinate="N 53 46 54.0000 E 9 46 23.0000" />
+        <point coordinate="N 53 40 12.0000 E 9 31 21.0000" />
+        clockwise 17 NM around
+        <point coordinate="N 53 38 13.0000 E 9 59 43.0000" />
       </points>
     </border>
   </borders>
@@ -445,5 +505,16 @@
     <navaid name="RARUP" type="fixMinor" coordinate="N 53 38 30.49 E 010 40 37.20"/>
     <navaid name="RIBSO" type="fixMinor" coordinate="N 53 48 45.96 E 009 20 24.80"/>
     <navaid name="SOSAX" type="fixMinor" coordinate="N 53 29 35.01 E 010 06 50.96"/>
+
+
+    <navaid name="EDFH" type="airport" coordinate="53.994329 9.579080" />
+    <navaid name="EDHM" type="airport" coordinate="53.915419 10.034739" />
+    <navaid name="EDHW" type="airport" coordinate="53.970737 10.224940" />
+    <navaid name="EDHG" type="airport" coordinate="53.249972 10.457559" />
+    <navaid name="EDHU" type="airport" coordinate="53.206856 9.573606" />
+    <navaid name="EDXS" type="airport" coordinate="53.337831 9.262992" />
+    <navaid name="EDHI" type="airport" coordinate="53.533072 9.833592" />
+    <navaid name="EDHO" type="airport" coordinate="53.701467 9.740545" />
+    <navaid name="EDHL" type="airport" coordinate="53.803969 10.709335" />
   </navaids>
 </area>
