@@ -103,7 +103,7 @@ public class ShortBlockParser extends Parser {
         p = getSpeechParser(toDo);
 
         if (p == null)
-          throw new EInvalidCommandException("Failed to parse command prefix.",
+          throw new EInvalidCommandException("Failed to parseOld command prefix.",
               toLineString(done),
               toLineString(toDo));
       }
@@ -112,12 +112,12 @@ public class ShortBlockParser extends Parser {
       try {
         used = getInterestingBlocks(toDo, done, p);
       } catch (Exception ex) {
-        throw new EInvalidCommandException("Failed to parse command via parser " + p.getClass().getName() + ". Probably invalid syntax?.",
+        throw new EInvalidCommandException("Failed to parseOld command via parser " + p.getClass().getName() + ". Probably invalid syntax?.",
             toLineString(done),
             toLineString(toDo));
       }
       if (used == null) {
-        throw new EInvalidCommandException("Failed to parse command via parser " + p.getClass().getName() + ". Probably invalid syntax?.",
+        throw new EInvalidCommandException("Failed to parseOld command via parser " + p.getClass().getName() + ". Probably invalid syntax?.",
             toLineString(done),
             toLineString(toDo));
       }
@@ -179,7 +179,7 @@ public class ShortBlockParser extends Parser {
     SpeechParser p = getAtcSpeechParser(toDo);
 
     if (p == null)
-      throw new EInvalidCommandException("Failed to parse atc message prefix.",
+      throw new EInvalidCommandException("Failed to parseOld atc message prefix.",
           toLineString(toDo),
           toLineString(done));
 
@@ -187,7 +187,7 @@ public class ShortBlockParser extends Parser {
     try {
       used = getInterestingBlocks(toDo, done, p);
     } catch (Exception ex) {
-      throw new EInvalidCommandException("Failed to parse command via parser " + p.getClass().getName() + ". Probably invalid syntax?.",
+      throw new EInvalidCommandException("Failed to parseOld command via parser " + p.getClass().getName() + ". Probably invalid syntax?.",
           toLineString(toDo),
           toLineString(done));
     }

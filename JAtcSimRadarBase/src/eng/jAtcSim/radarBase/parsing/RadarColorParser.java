@@ -34,7 +34,7 @@ public class RadarColorParser implements IValueParser<Color> {
       }
     }
     if (ret == null) {
-      throw new XmlDeserializationException("Unable to parse \"" + value + "\" into color.");
+      throw new XmlDeserializationException("Unable to parseOld \"" + value + "\" into color.");
     }
 
     return ret;

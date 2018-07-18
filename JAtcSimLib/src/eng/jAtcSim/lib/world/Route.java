@@ -269,8 +269,17 @@ public class Route {
     String name;
     if (mainFix != null)
       name = mainFix;
-    else
-      name = this.name.substring(0, this.name.length() - 2);
+    else{
+      int endIndex = 0;
+      while (endIndex < this.name.length()){
+        char c = this.name.charAt(endIndex);
+        if (Character.isDigit(c)){
+          break;
+        }
+        endIndex++;
+      }
+      name = this.name.substring(0, endIndex);
+    }
     ret = Acc.area().getNavaids().get(name);
     return ret;
   }

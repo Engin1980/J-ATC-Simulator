@@ -39,7 +39,7 @@ public abstract class SpeechParser<T extends IFromAtc> {
     try {
       ret = Integer.parseInt(s);
     } catch (Exception ex) {
-      throw new EApplicationException("Unable to parse " + s + " to integer.");
+      throw new EApplicationException("Unable to parseOld " + s + " to integer.");
     }
     return ret;
   }

@@ -124,6 +124,7 @@ public class AreaXmlSource extends XmlSource<Area> {
     // own parsers
     sett.getValueParsers().add(new CoordinateValueParser());
     sett.getValueParsers().add(new TrafficCategoryDefinitionParser());
+    sett.getValueParsers().add(new IntParser());
     sett.getValueParsers().add(new IntegerParser());
 
     // instance creators
@@ -162,7 +163,7 @@ class CoordinateValueParser implements IValueParser<Coordinate> {
 
   @Override
   public Coordinate parse(String s) {
-    return Coordinate.parse(s);
+    return Coordinate.parseNew(s);
   }
 
   @Override
@@ -190,11 +191,37 @@ class TrafficCategoryDefinitionParser implements IValueParser<PlaneCategoryDefin
   }
 }
 
-class IntegerParser implements IValueParser<Integer> {
+class IntParser implements IValueParser<Integer> {
 
   @Override
   public Class getType() {
     return int.class;
+  }
+
+  @Override
+  public Integer parse(String s) throws XmlDeserializationException {
+    Integer ret;
+    if (s.startsWith("FL")) {
+      s = s.substring(2);
+      ret = Integer.parseInt(s);
+      ret = ret * 100;
+    } else {
+      ret = Integer.parseInt(s);
+    }
+    return ret;
+  }
+
+  @Override
+  public String format(Integer value) throws XmlSerializationException {
+    return value.toString();
+  }
+}
+
+class IntegerParser implements IValueParser<Integer> {
+
+  @Override
+  public Class getType() {
+    return Integer.class;
   }
 
   @Override

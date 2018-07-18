@@ -20,34 +20,24 @@ public final class Coordinate {
   private final CoordinateValue latitude;
   private final CoordinateValue longitude;
 
-  public Coordinate(int aDegrees, int aMinutes, double aSeconds, boolean isSouth,
-                    int bDegrees, int bMinutes, double bSeconds, boolean isWest) {
-    this(
-        new CoordinateValue(aDegrees, aMinutes, aSeconds, isSouth),
-        new CoordinateValue(bDegrees, bMinutes, bSeconds, isWest));
+  public static Coordinate parseNew(String value) {
+    Coordinate ret;
+    final String regex = "^(N|S)? ?(-?\\d+(?:\\.\\d+)?)(?: +?(\\d+(?:\\.\\d+)?))?(?: +?(\\d+(?:\\.\\d+)?))?,? (E|W)? ?(-?\\d+(?:\\.\\d+)?)(?: +?(\\d+(?:\\.\\d+)?))?(?: +?(\\d+(?:\\.\\d+)?))?";
+    final Pattern pattern = Pattern.compile(regex);
+    final Matcher matcher = pattern.matcher(value);
+
+    if (matcher.find()) {
+      double lat = decodeValue(matcher, 1, 2, 3, 4);
+      double lng = decodeValue(matcher, 5, 6, 7, 8);
+      ret = new Coordinate(lat, lng);
+    } else
+      throw new IllegalArgumentException("Unable to parse " + value + " into Coordinate.");
+
+    return ret;
   }
 
-  public Coordinate(int aDegrees, double aMinutesSeconds, boolean isSouth,
-                    int bDegrees, double bMinutesSeconds, boolean isWest) {
-    this(
-        new CoordinateValue(aDegrees, aMinutesSeconds, isSouth),
-        new CoordinateValue(bDegrees, bMinutesSeconds, isWest));
-  }
-
-  private Coordinate(){
-    this(Double.MIN_VALUE, Double.MIN_VALUE);
-  }
-
-  public Coordinate(double lat, double lon) {
-    this(
-        new CoordinateValue(lat), new CoordinateValue(lon));
-  }
-  public Coordinate(CoordinateValue lat, CoordinateValue lon) {
-    this.latitude = lat;
-    this.longitude = lon;
-  }
-
-  public static Coordinate parse(String value) {
+  @Deprecated
+  public static Coordinate parseOld(String value) {
     Coordinate ret = tryParseA(value);
     if (ret == null) {
       ret = tryParseB(value);
@@ -58,19 +48,53 @@ public final class Coordinate {
     if (ret == null) {
       ret = tryParseD(value);
     }
-    if (ret == null){
+    if (ret == null) {
       ret = tryParseE(value);
     }
 
     if (ret == null) {
-      throw new IllegalArgumentException("Unable to parse " + value + " into Coordinate.");
+      throw new IllegalArgumentException("Unable to parseOld " + value + " into Coordinate.");
     }
+
+    return ret;
+  }
+
+  private static double decodeValue(Matcher matcher,
+                                    int flagIndex, int degreeIndex, int minuteIndex, int secondIndex) {
+    double ret;
+
+    String fs = matcher.group(flagIndex);
+    String ds = matcher.group(degreeIndex);
+    String ms = matcher.group(minuteIndex);
+    String ss = matcher.group(secondIndex);
+
+
+    boolean isNeg = fs != null && (fs.equals("S") || fs.equals("W"));
+    double d;
+    double m;
+    double s;
+
+    d = Double.parseDouble(ds);
+    if (ms != null && ms.length() > 0)
+      m = Double.parseDouble(ms);
+    else
+      m = 0;
+    if (ss != null && ss.length() > 0)
+      s = Double.parseDouble(ss);
+    else
+      s = 0;
+
+    ret = d + m / 60d + s / 3600d;
+
+    if (isNeg)
+      ret = -ret;
 
     return ret;
   }
 
   /**
    * Parses 503113.59N 0012000.23W to coordinate.
+   *
    * @param value
    * @return
    */
@@ -90,7 +114,7 @@ public final class Coordinate {
         double lonS = Double.parseDouble(m.group(8));
         ret = new Coordinate(
             new CoordinateValue(latH, latM, latS, m.group(5).equals("S")),
-            new CoordinateValue(lonH, lonM, lonS,m.group(10).equals("W"))
+            new CoordinateValue(lonH, lonM, lonS, m.group(10).equals("W"))
         );
       } catch (Exception ex) {
         ret = null;
@@ -102,6 +126,7 @@ public final class Coordinate {
 
   /**
    * Parses 50.257243 7.07292 to coordinate
+   *
    * @param value
    * @return
    */
@@ -125,10 +150,11 @@ public final class Coordinate {
 
   /**
    * Parses 40.20324, 10.05343 to coordinate
+   *
    * @param value
    * @return
    */
-  private static Coordinate tryParseE(String value){
+  private static Coordinate tryParseE(String value) {
     Coordinate ret = null;
 
     String patternString = "(-?\\d+(\\.\\d+)?), (-?\\d+(\\.\\d+)?)";
@@ -141,10 +167,10 @@ public final class Coordinate {
       double lat;
       double lng;
 
-      try{
+      try {
         lat = Double.parseDouble(latS);
         lng = Double.parseDouble(lngS);
-      } catch (Exception ex){
+      } catch (Exception ex) {
         throw new EApplicationException("Failed to convert " + latS + "/" + lngS + " to doubles.");
       }
 
@@ -159,10 +185,11 @@ public final class Coordinate {
 
   /**
    * Parses N40 30.203 W20 2.502 to coordinate.
+   *
    * @param value
    * @return
    */
-  private static Coordinate tryParseD(String value){
+  private static Coordinate tryParseD(String value) {
     Coordinate ret = null;
 
     String patternString = "(N|S)(\\d+) (\\d{1,2}(\\.\\d+)) (E|W)(\\d+) (\\d{1,2}(\\.\\d+))";
@@ -184,7 +211,7 @@ public final class Coordinate {
 
       double lng = lngDeg + lngMins / 60d;
       if (lngtA == 'W')
-        lng =-lng;
+        lng = -lng;
 
       ret = new Coordinate(
           new CoordinateValue(lat),
@@ -197,6 +224,7 @@ public final class Coordinate {
 
   /**
    * Parses 50 23 29.24 N 1 12 29.52 E to coordinate.
+   *
    * @param value
    * @return
    */
@@ -223,6 +251,34 @@ public final class Coordinate {
     }
 
     return ret;
+  }
+
+  public Coordinate(int aDegrees, int aMinutes, double aSeconds, boolean isSouth,
+                    int bDegrees, int bMinutes, double bSeconds, boolean isWest) {
+    this(
+        new CoordinateValue(aDegrees, aMinutes, aSeconds, isSouth),
+        new CoordinateValue(bDegrees, bMinutes, bSeconds, isWest));
+  }
+
+  public Coordinate(int aDegrees, double aMinutesSeconds, boolean isSouth,
+                    int bDegrees, double bMinutesSeconds, boolean isWest) {
+    this(
+        new CoordinateValue(aDegrees, aMinutesSeconds, isSouth),
+        new CoordinateValue(bDegrees, bMinutesSeconds, isWest));
+  }
+
+  private Coordinate() {
+    this(Double.MIN_VALUE, Double.MIN_VALUE);
+  }
+
+  public Coordinate(double lat, double lon) {
+    this(
+        new CoordinateValue(lat), new CoordinateValue(lon));
+  }
+
+  public Coordinate(CoordinateValue lat, CoordinateValue lon) {
+    this.latitude = lat;
+    this.longitude = lon;
   }
 
   public Coordinate add(Coordinate other) {

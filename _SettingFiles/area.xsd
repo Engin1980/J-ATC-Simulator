@@ -75,8 +75,8 @@
       </xs:simpleType>
     </xs:attribute>
     <xs:attribute name="enclosed" type="xs:boolean" use="required"/>
-    <xs:attribute name="minAltitude" type="xs:string" use="optional"/>
-    <xs:attribute name="maxAltitude" type="xs:string" use="optional"/>
+    <xs:attribute name="minAltitude" type="flightLevelAltitude" use="optional"/>
+    <xs:attribute name="maxAltitude" type="flightLevelAltitude" use="optional"/>
     <xs:attribute name="labelCoordinate" type="xs:string" use="optional" />
   </xs:complexType>
 
@@ -103,16 +103,8 @@
   </xs:complexType>
 
   <xs:complexType name="airport">
-    <xs:choice maxOccurs="unbounded">
+    <xs:sequence maxOccurs="unbounded">
       <xs:element name="initialPosition" type="initialPosition"/>
-      <xs:element name="trafficDefinitions" maxOccurs="unbounded" minOccurs="0">
-        <xs:complexType>
-          <xs:choice  maxOccurs="unbounded">
-            <xs:element name="genericTraffic" type="genericTraffic"/>
-            <xs:element name="densityTraffic" type="densityTraffic"/>
-          </xs:choice>
-        </xs:complexType>
-      </xs:element>
       <xs:element name="atcTemplates">
         <xs:complexType>
           <xs:sequence>
@@ -134,10 +126,10 @@
           </xs:sequence>
         </xs:complexType>
       </xs:element>
-      <xs:element name="holds">
+      <xs:element name="holds" minOccurs="1" maxOccurs="1">
         <xs:complexType>
           <xs:sequence>
-            <xs:element name="hold" type="hold" maxOccurs="unbounded"/>
+            <xs:element name="hold" type="hold" minOccurs="0" maxOccurs="unbounded"/>
           </xs:sequence>
         </xs:complexType>
       </xs:element>
@@ -149,7 +141,15 @@
         </xs:complexType>
       </xs:element>
       <xs:element name="sharedRoutes" type="routes" minOccurs="0" maxOccurs="1" />
-    </xs:choice>
+      <xs:element name="trafficDefinitions">
+        <xs:complexType>
+          <xs:choice  maxOccurs="unbounded" minOccurs="0">
+            <xs:element name="genericTraffic" type="genericTraffic"/>
+            <xs:element name="densityTraffic" type="densityTraffic"/>
+          </xs:choice>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
     <xs:attribute name="icao" type="xs:string" use="required"/>
     <xs:attribute name="name" type="xs:string" use="required"/>
     <xs:attribute name="altitude" type="xs:int" use="required"/>
@@ -366,9 +366,15 @@
     <xs:attribute name="name" type="nonEmptyString" use="required"/>
     <xs:attribute name="route" type="nonEmptyString" use="required"/>
     <xs:attribute name="category" type="planeCategory" use="optional" />
-    <xs:attribute name="entryFL" type="xs:int" use="optional" />
+    <xs:attribute name="entryFL" type="flightLevelAltitude" use="optional" />
     <xs:attribute name="mainFix" type="nonEmptyString" use="optional" />
   </xs:complexType>
+
+  <xs:simpleType name="flightLevelAltitude">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="(FL\d{1,3})|(\d+)" />
+    </xs:restriction>
+  </xs:simpleType>
 
   <xs:simpleType name="nonEmptyString">
     <xs:restriction base="xs:string">
@@ -467,7 +473,7 @@
   <xs:complexType name="hold">
     <xs:attribute name="navaidName" type="xs:string" use="required"/>
     <xs:attribute name="inboundRadial" type="xs:int" use="required"/>
-    <xs:attribute name="turn">
+    <xs:attribute name="turn" use="required">
       <xs:simpleType>
         <xs:restriction base="xs:string">
           <xs:enumeration value="left"/>

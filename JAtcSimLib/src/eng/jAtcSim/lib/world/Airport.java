@@ -34,7 +34,8 @@ public class Airport {
   private String name;
   private int altitude;
   private int transitionAltitude;
-  private int vfrAltitude;
+  @XmlOptional
+  private int vfrAltitude = -1;
   private String mainAirportNavaidName;
   private double declination;
   private Navaid _mainAirportNavaid;

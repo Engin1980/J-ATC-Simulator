@@ -156,7 +156,7 @@ class LocalTimeParser implements eng.eSystem.xmlSerialization.IValueParser<Local
     try{
       ret = LocalTime.parse(s, DateTimeFormatter.ofPattern(PATTERN));
     }catch (Exception ex){
-      throw new XmlDeserializationException(ex, "Failed to parse local time (LocalTime) from value " + s + ".");
+      throw new XmlDeserializationException(ex, "Failed to parseOld local time (LocalTime) from value " + s + ".");
     }
     return ret;
   }
