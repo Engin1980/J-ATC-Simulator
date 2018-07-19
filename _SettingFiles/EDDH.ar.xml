@@ -268,7 +268,7 @@
       </points>
     </border>
     
-    <border name="EDDH TMA 457" type="mrva" enclosed="true" maxAltitude="3000">
+    <border name="EDDH MRVA 457" type="mrva" enclosed="true" maxAltitude="3000">
       <points>
         <point coordinate="N 53 37 39.0000 E 9 52 14.0000" />
         <point coordinate="N 53 37 59.0000 E 10 0 36.0000" />
@@ -280,7 +280,7 @@
       </points>
     </border>
 
-    <border name="EDDH TMA 389" type="mrva" enclosed="true">
+    <border name="EDDH MRVA 389" type="mrva" enclosed="true" maxAltitude="38900">
       <points>
         <point coordinate="N 53 21 15.0000 E 9 58 42.0000" />
         <arc coordinate="N 53 38 13.0000 E 9 59 43.0000" direction="clockwise" />
@@ -293,7 +293,7 @@
       </points>
     </border>
     
-    <border name="EDDH TMA 388" type="mrva" enclosed="true">
+    <border name="EDDH MRVA 388" type="mrva" enclosed="true" maxAltitude="38800">
       <points>
         <point coordinate="N 54 0 0.0000 E 11 0 0.0000"/>
         <point coordinate="N 53 41 0.0000 E 11 10 0.0000"/>
@@ -319,6 +319,135 @@
         <point coordinate="N 53 54 48.0000 E 10 5 48.0000"/>
         <arc coordinate="N 53 38 13.0000 E 9 59 43.0000" direction="clockwise" />
         <point coordinate="N 53 51 57.0000 E 10 16 31.0000"/>
+      </points>
+    </border>
+    <border name="EDDH MRVA 387" type="mrva" enclosed="true" maxAltitude="38700">
+      <points>
+        <point coordinate="N 54 11 30.0000 E 9 2 0.0000"/>
+        <point coordinate="N 54 8 30.0000 E 9 14 0.0000"/>
+        <point coordinate="N 54 9 49.0000 E 9 24 39.0000"/>
+        <point coordinate="N 54 13 40.0000 E 9 55 40.0000"/>
+        <point coordinate="N 53 54 36.0000 E 9 52 20.0000"/>
+        <arc coordinate="N 53 38 13.0000 E 9 59 43.0000" direction="counterclockwise" />
+        <point coordinate="N 53 32 45.0000 E 9 32 43.0000"/>
+        <point coordinate="N 53 29 10.0000 E 9 34 58.0000"/>
+        <point coordinate="N 53 24 8.0000 E 9 41 33.0000"/>
+        <point coordinate="N 53 23 33.0000 E 9 44 31.0000"/>
+        <point coordinate="N 53 23 6.0000 E 9 46 46.0000"/>
+        <point coordinate="N 53 19 59.0000 E 9 36 12.0000"/>
+        <point coordinate="N 53 16 42.0000 E 9 32 21.0000"/>
+        <point coordinate="N 53 0 0.0000 E 9 30 0.0000"/>
+        <point coordinate="N 52 57 8.0000 E 9 24 28.0000"/>
+        <point coordinate="N 52 46 0.0000 E 9 40 0.0000"/>
+        <point coordinate="N 52 43 57.0000 E 9 41 35.0000"/>
+        <point coordinate="N 52 42 59.0000 E 9 43 34.0000"/>
+        <point coordinate="N 52 41 0.0000 E 9 5 10.0000"/>
+        <point coordinate="N 52 43 42.0000 E 8 52 12.0000"/>
+        <point coordinate="N 52 43 4.0000 E 8 39 27.0000"/>
+        <point coordinate="N 52 40 56.0000 E 7 59 12.0000"/>
+        <point coordinate="N 52 40 58.0000 E 7 54 51.0000"/>
+        <point coordinate="N 52 41 0.0000 E 7 50 0.0000"/>
+        <point coordinate="N 53 0 0.0000 E 7 50 0.0000"/>
+        <point coordinate="N 53 0 0.0000 E 7 12 50.0000"/>
+        <point coordinate="N 53 16 52.0000 E 7 11 50.0000"/>
+        <point coordinate="N 53 18 37.0000 E 7 19 4.0000"/>
+        <point coordinate="N 53 21 18.0000 E 7 51 57.0000"/>
+        <point coordinate="N 53 18 57.0000 E 7 58 10.0000"/>
+        <point coordinate="N 53 22 19.0000 E 8 4 24.0000"/>
+        <point coordinate="N 53 24 15.0000 E 8 28 0.0000"/>
+        <point coordinate="N 53 25 38.0000 E 8 31 42.0000"/>
+        <point coordinate="N 53 20 10.0000 E 8 34 27.0000"/>
+        <arc coordinate="N 53 30 10.0000 E 8 34 30.0000" direction="counterclockwise" />
+        <point coordinate="N 53 24 11.0000 E 8 47 55.0000"/>
+        <point coordinate="N 53 35 56.0000 E 8 41 45.0000"/>
+        <point coordinate="N 53 37 56.0000 E 8 58 41.0000"/>
+        <point coordinate="N 53 39 0.0000 E 9 7 45.0000"/>
+        <point coordinate="N 53 48 23.0000 E 9 4 45.0000"/>
+        <point coordinate="N 53 51 30.0000 E 9 3 45.0000"/>
+        <point coordinate="N 53 55 0.0000 E 8 57 30.0000"/>
+      </points>
+    </border>
+    <border name="EDDH MRVA 152" type="mrva" enclosed="true" maxAltitude="15200">
+      <points>
+        <point coordinate="N 53 41 5.0000 E 14 16 50.0000"/>
+        <point coordinate="N 53 46 0.0000 E 13 58 0.0000"/>
+        <point coordinate="N 53 46 0.0000 E 13 50 0.0000"/>
+        <point coordinate="N 54 2 23.0000 E 12 50 40.0000"/>
+        <point coordinate="N 53 42 37.0000 E 12 45 46.0000"/>
+        <point coordinate="N 53 48 5.0000 E 11 39 22.0000"/>
+        <point coordinate="N 54 7 27.0000 E 11 49 33.0000"/>
+        <point coordinate="N 54 6 37.0000 E 12 0 0.0000"/>
+        <point coordinate="N 54 15 0.0000 E 12 0 0.0000"/>
+        <point coordinate="N 54 15 0.0000 E 11 31 45.0000"/>
+        <point coordinate="N 54 4 0.0000 E 11 30 0.0000"/>
+        <point coordinate="N 54 4 42.0000 E 11 8 0.0000"/>
+        <point coordinate="N 54 15 11.0000 E 10 50 36.0000"/>
+        <point coordinate="N 54 11 11.0000 E 10 50 33.0000"/>
+        <point coordinate="N 54 8 39.0000 E 10 46 11.0000"/>
+        <point coordinate="N 54 8 40.0000 E 10 40 2.0000"/>
+        <point coordinate="N 54 11 13.0000 E 10 35 42.0000"/>
+        <point coordinate="N 54 14 49.0000 E 10 35 42.0000"/>
+        <point coordinate="N 54 17 21.0000 E 10 40 5.0000"/>
+        <point coordinate="N 54 17 20.0000 E 10 47 0.0000"/>
+        <point coordinate="N 54 26 46.0000 E 10 29 16.0000"/>
+        <point coordinate="N 54 18 0.0000 E 10 31 0.0000"/>
+        <point coordinate="N 54 17 0.0000 E 10 25 0.0000"/>
+        <point coordinate="N 54 13 40.0000 E 9 55 40.0000"/>
+        <point coordinate="N 53 54 38.0000 E 9 52 20.0000"/>
+        <arc coordinate="N 53 38 13.0000 E 9 59 43.0000" direction="clockwise"/>
+        <point coordinate="N 53 51 58.0000 E 10 16 34.0000"/>
+        <point coordinate="N 54 0 0.0000 E 11 0 0.0000"/>
+        <point coordinate="N 53 41 0.0000 E 11 10 0.0000"/>
+        <point coordinate="N 53 33 17.0000 E 10 27 4.0000"/>
+        <arc coordinate="N 53 38 13.0000 E 9 59 43.0000" direction="clockwise"/>
+        <point coordinate="N 53 21 15.0000 E 9 58 42.0000"/>
+        <arc coordinate="N 53 38 13.0000 E 9 59 43.0000" direction="clockwise"/>
+        <point coordinate="N 53 23 6.0000 E 9 46 47.0000"/>
+        <point coordinate="N 53 19 59.0000 E 9 36 12.0000"/>
+        <point coordinate="N 53 16 42.0000 E 9 32 21.0000"/>
+        <point coordinate="N 53 0 0.0000 E 9 30 0.0000"/>
+        <point coordinate="N 52 57 8.0000 E 9 24 28.0000"/>
+        <point coordinate="N 52 46 0.0000 E 9 40 0.0000"/>
+        <point coordinate="N 52 51 0.0000 E 9 42 0.0000"/>
+        <point coordinate="N 52 55 0.0000 E 9 48 0.0000"/>
+        <point coordinate="N 52 57 0.0000 E 9 53 0.0000"/>
+        <point coordinate="N 53 0 0.0000 E 9 55 0.0000"/>
+        <point coordinate="N 53 5 30.0000 E 10 6 0.0000"/>
+        <point coordinate="N 53 3 0.0000 E 10 16 0.0000"/>
+        <point coordinate="N 53 2 30.0000 E 10 25 0.0000"/>
+        <point coordinate="N 52 58 0.0000 E 10 25 0.0000"/>
+        <point coordinate="N 52 58 0.0000 E 10 40 0.0000"/>
+        <point coordinate="N 52 45 30.0000 E 10 40 0.0000"/>
+        <point coordinate="N 52 27 32.0000 E 10 39 58.0000"/>
+        <point coordinate="N 52 28 8.0000 E 10 50 41.0000"/>
+        <point coordinate="N 52 22 40.0000 E 10 51 28.0000"/>
+        <point coordinate="N 52 17 24.0000 E 10 52 12.0000"/>
+        <point coordinate="N 52 12 8.0000 E 10 52 56.0000"/>
+        <point coordinate="N 52 10 0.0000 E 11 3 0.0000"/>
+        <point coordinate="N 52 0 0.0000 E 11 7 5.0000"/>
+        <point coordinate="N 51 55 5.0000 E 11 7 42.0000"/>
+        <point coordinate="N 51 57 12.0000 E 11 22 48.0000"/>
+        <point coordinate="N 51 58 13.0000 E 11 30 3.0000"/>
+        <point coordinate="N 51 58 27.0000 E 11 41 55.0000"/>
+        <point coordinate="N 51 48 43.0000 E 11 45 22.0000"/>
+        <point coordinate="N 51 41 53.0000 E 11 30 4.0000"/>
+        <point coordinate="N 51 41 8.0000 E 11 41 5.0000"/>
+        <point coordinate="N 51 34 56.0000 E 11 53 13.0000"/>
+        <point coordinate="N 51 36 8.0000 E 12 18 19.0000"/>
+        <point coordinate="N 52 11 15.0000 E 12 19 30.0000"/>
+        <point coordinate="N 52 17 21.0000 E 13 1 0.0000"/>
+        <point coordinate="N 52 23 29.0000 E 12 53 37.0000"/>
+        <arc coordinate="N 52 33 33.0000 E 13 16 3.0000" direction="clockwise"/>
+        <point coordinate="N 52 40 0.0000 E 12 50 14.0000"/>
+        <point coordinate="N 52 45 0.0000 E 12 58 30.0000"/>
+        <point coordinate="N 52 48 2.0000 E 13 33 58.0000"/>
+        <arc coordinate="N 52 33 49.0000 E 13 18 41.0000" direction="clockwise"/>
+        <point coordinate="N 52 44 51.0000 E 13 39 55.0000"/>
+        <point coordinate="N 52 34 26.0000 E 13 54 35.0000"/>
+        <arc coordinate="N 52 23 25.0000 E 13 33 18.0000" direction="clockwise"/>
+        <point coordinate="N 52 12 59.0000 E 13 55 16.0000"/>
+        <point coordinate="N 52 10 0.0000 E 14 42 0.000"/>
+
       </points>
     </border>
   </borders>
