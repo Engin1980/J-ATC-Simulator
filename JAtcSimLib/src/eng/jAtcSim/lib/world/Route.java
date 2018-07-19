@@ -158,7 +158,6 @@ public class Route {
     _routeNavaids = _routeCommands
         .where(q -> q instanceof ToNavaidCommand)
         .select(q -> ((ToNavaidCommand) q).getNavaid());
-    _routeLength = calculateRouteLength();
 
     Navaid customFix = null;
     if (this.mainFix != null)
@@ -166,10 +165,14 @@ public class Route {
     switch (type) {
       case sid:
         this._mainNavaid = customFix == null ? getFixByRouteName() : customFix;
+        if (!_routeNavaids.isEmpty() && !_routeNavaids.getLast().equals(this._mainNavaid))
+          _routeNavaids.add(this._mainNavaid);
         break;
       case star:
       case transition:
         this._mainNavaid = customFix == null ? getFixByRouteName() : customFix;
+        if (!_routeNavaids.isEmpty() && !_routeNavaids.getFirst().equals(this._mainNavaid))
+          _routeNavaids.insert(0, this._mainNavaid);
         break;
       case vectoring:
         // nothing
@@ -177,6 +180,12 @@ public class Route {
       default:
         throw new EEnumValueUnsupportedException(type);
     }
+
+
+
+
+    _routeLength = calculateRouteLength();
+
 
     // min alt
     Area area = this.getParent().getParent().getParent().getParent();
