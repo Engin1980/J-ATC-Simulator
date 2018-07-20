@@ -1,6 +1,7 @@
 package eng.jAtcSim.lib.managers;
 
 import eng.eSystem.collections.*;
+import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.utilites.NumberUtils;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
@@ -12,14 +13,16 @@ import eng.jAtcSim.lib.world.Border;
 import eng.jAtcSim.lib.world.BorderExactPoint;
 import eng.jAtcSim.lib.world.BorderPoint;
 
+import java.util.Comparator;
+
 public class MrvaManager {
 
   private IReadOnlyList<Border> mrvas;
   private IMap<Airplane, Border> maps = new EMap<>();
 
   public MrvaManager(IReadOnlyList<Border> mrvas) {
-    assert mrvas.isAll(q->q.getType() == Border.eType.mrva);
-    assert mrvas.isAll(q->q.isEnclosed());
+    assert mrvas.isAll(q -> q.getType() == Border.eType.mrva);
+    assert mrvas.isAll(q -> q.isEnclosed());
     this.mrvas = mrvas;
   }
 

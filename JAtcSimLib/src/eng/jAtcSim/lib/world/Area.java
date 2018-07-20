@@ -112,6 +112,7 @@ public class Area {
   }
 
   private void bind() {
+    borders.sort(new Border.ByDisjointsComparator());
     for (Border border : borders) {
       border.bind();
     }

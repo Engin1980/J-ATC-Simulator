@@ -10,6 +10,8 @@ import eng.eSystem.Tuple;
 import eng.eSystem.collections.EDistinctList;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
+import eng.eSystem.collections.IReadOnlyList;
+import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.utilites.NumberUtils;
 import eng.eSystem.xmlSerialization.XmlIgnore;
 import eng.eSystem.xmlSerialization.XmlOptional;
@@ -19,11 +21,29 @@ import eng.jAtcSim.lib.global.Headings;
 import sun.font.FontRunIterator;
 
 import java.awt.geom.Line2D;
+import java.util.Comparator;
 
 /**
  * @author Marek
  */
 public class Border {
+
+  public static class ByDisjointsComparator implements Comparator<Border> {
+
+    @Override
+    public int compare(Border a, Border b) {
+      if (a.getDisjoints().contains(b.getName()))
+        if (b.getDisjoints().contains(a.getName()))
+          throw new EApplicationException("Borders has cyclic dependency in disjoints definition. Borders. " + a.getName() + ", " + b.getName());
+        else
+          return 1;
+      else if (b.getDisjoints().contains(a.getName()))
+        return -1;
+      else
+        return 0;
+    }
+  }
+
   public enum eType {
     country,
     tma,
@@ -55,6 +75,8 @@ public class Border {
   @XmlIgnore
   private IList<BorderExactPoint> exactPoints;
 
+  private IList<String> disjoints;
+
   public IList<BorderExactPoint> getExactPoints() {
     return exactPoints;
   }
@@ -65,6 +87,10 @@ public class Border {
 
   public eType getType() {
     return type;
+  }
+
+  public IReadOnlyList<String> getDisjoints() {
+    return disjoints;
   }
 
   @Deprecated
