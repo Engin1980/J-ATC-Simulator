@@ -255,7 +255,7 @@
       </disjoints>
     </border>
     
-    <border name="EDDH TMA 494" type="mrva" enclosed="true" maxAltitude="3000">
+    <border name="EDDH MRVA 494" type="mrva" enclosed="true" maxAltitude="1600">
       <points>
         <point coordinate="N 53 40 12.0000 E 9 31 21.0000" />
         <arc coordinate="N 53 38 13.0000 E 9 59 43.0000" direction="clockwise" />
@@ -268,7 +268,7 @@
       </points>
     </border>
     
-    <border name="EDDH MRVA 457" type="mrva" enclosed="true" maxAltitude="3000">
+    <border name="EDDH MRVA 152" type="mrva" enclosed="true" maxAltitude="3500">
       <points>
         <point coordinate="N 53 37 39.0000 E 9 52 14.0000" />
         <point coordinate="N 53 37 59.0000 E 10 0 36.0000" />
@@ -280,7 +280,7 @@
       </points>
     </border>
 
-    <border name="EDDH MRVA 389" type="mrva" enclosed="true" maxAltitude="38900">
+    <border name="EDDH MRVA 389" type="mrva" enclosed="true" maxAltitude="2000">
       <points>
         <point coordinate="N 53 21 15.0000 E 9 58 42.0000" />
         <arc coordinate="N 53 38 13.0000 E 9 59 43.0000" direction="clockwise" />
@@ -293,7 +293,7 @@
       </points>
     </border>
     
-    <border name="EDDH MRVA 388" type="mrva" enclosed="true" maxAltitude="38800">
+    <border name="EDDH MRVA 388" type="mrva" enclosed="true" maxAltitude="1800">
       <points>
         <point coordinate="N 54 0 0.0000 E 11 0 0.0000"/>
         <point coordinate="N 53 41 0.0000 E 11 10 0.0000"/>
@@ -321,7 +321,7 @@
         <point coordinate="N 53 51 57.0000 E 10 16 31.0000"/>
       </points>
     </border>
-    <border name="EDDH MRVA 387" type="mrva" enclosed="true" maxAltitude="38700">
+    <border name="EDDH MRVA 387" type="mrva" enclosed="true" maxAltitude="3000">
       <points>
         <point coordinate="N 54 11 30.0000 E 9 2 0.0000"/>
         <point coordinate="N 54 8 30.0000 E 9 14 0.0000"/>
@@ -367,7 +367,7 @@
         <point coordinate="N 53 55 0.0000 E 8 57 30.0000"/>
       </points>
     </border>
-    <border name="EDDH MRVA 152" type="mrva" enclosed="true" maxAltitude="15200">
+    <border name="EDDH MRVA 152" type="mrva" enclosed="true" maxAltitude="3500">
       <points>
         <point coordinate="N 53 41 5.0000 E 14 16 50.0000"/>
         <point coordinate="N 53 46 0.0000 E 13 58 0.0000"/>
