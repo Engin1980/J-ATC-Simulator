@@ -120,6 +120,8 @@ public class AreaXmlSource extends XmlSource<Area> {
         new XmlListItemMapping("/trafficDefinitions$", "densityTraffic", DensityBasedTraffic.class));
     sett.getListItemMappings().add(
         new XmlListItemMapping("/trafficDefinitions$", "flightListTraffic", FlightListTraffic.class));
+    sett.getListItemMappings().add(
+        new XmlListItemMapping("/disjoints$", String.class));
 
     // own parsers
     sett.getValueParsers().add(new CoordinateValueParser());

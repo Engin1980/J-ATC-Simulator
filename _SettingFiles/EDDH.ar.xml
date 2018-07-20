@@ -37,13 +37,13 @@
               </approaches>
               <routes>
                 <route type="transition" name="RIBSO05" entryFL="FL110"
-                       route="DM 40 PD DH210 T SL 220 PD DH211 T PD DH213 T PD DH214 T PD DH215 T PD DH255 T PD DH256 T PD DH257 T DM 30 PD DH025 T PD ANEXI"/>
+                       route="PD RIBSO T DM 40 PD DH210 T SL 220 PD DH211 T PD DH213 T PD DH214 T PD DH215 T PD DH255 T PD DH256 T PD DH257 T DM 30 PD DH025 T PD ANEXI"/>
                 <route type="transition" name="NOLGO05" entryFL="FL110"
-                       route="DM 40 PD DH230 T SL 220 PD DH231 T PD DH232 T PD DH232 T PD DH233 T PD DH234 T PD DH235 T PD DH255 T PD DH256 T PD DH257 T DM 30 PD DH025 T PD ANEXI"/>
+                       route="PD NOLGO T DM 40 PD DH230 T SL 220 PD DH231 T PD DH232 T PD DH232 T PD DH233 T PD DH234 T PD DH235 T PD DH255 T PD DH256 T PD DH257 T DM 30 PD DH025 T PD ANEXI"/>
                 <route type="transition" name="RARUP05" entryFL="FL110"
-                       route="DM 40 PD DH230 T SL 220 PD DH231 T PD DH232 T PD DH232 T PD DH233 T PD DH234 T PD DH235 T PD DH255 T PD DH256 T PD DH257 T DM 30 PD DH025 T PD ANEXI"/>
+                       route="PD RARUP T DM 40 PD DH230 T SL 220 PD DH231 T PD DH232 T PD DH232 T PD DH233 T PD DH234 T PD DH235 T PD DH255 T PD DH256 T PD DH257 T DM 30 PD DH025 T PD ANEXI"/>
                 <route type="transition" name="BOGMU05" entryFL="FL110"
-                       route="DM 40 PD DH225 T SL 220 PD DH226 T PD DH227 T PD DH228 T PD DH229 T PD DH230 T SL 220 PD DH231 T PD DH232 T PD DH232 T PD DH233 T PD DH234 T PD DH235 T PD DH255 T PD DH256 T PD DH257 T DM 30 PD DH025 T PD ANEXI"/>
+                       route="PD BOGMU T DM 40 PD DH225 T SL 220 PD DH226 T PD DH227 T PD DH228 T PD DH229 T PD DH230 T SL 220 PD DH231 T PD DH232 T PD DH232 T PD DH233 T PD DH234 T PD DH235 T PD DH255 T PD DH256 T PD DH257 T DM 30 PD DH025 T PD ANEXI"/>
                 <route type="sid" name="EKERN8C" route="PD ALF/048/7.2 T PD EKERN"/>
                 <route type="sid" name="LUB9C" route="PD ALF/048/7.2 T PD LUB"/>
                 <route type="sid" name="RAMAR3C" route="PD ALF/048/7.2 T PD LYE T PD RAMAR"/>
@@ -88,13 +88,13 @@
                        route="AL 40 PD ALF/230/5.5 T PD WSN"/>
                 <route type="sid" name="LBV1B" route="AL 40 PD ALF/230/5.5 T PD LBV"/>
                 <route type="transition" name="RARUP23" entryFL="FL110"
-                       route="DM 40 PD DH600 T SL 200 PD DH611 T PD DH612 T PD DH613 T PD DH614 T PD DH615 T PD DH655 T PD DH656 T PD DH657 T PD DH658 T DM 30 PD PISAS"/>
+                       route="PD RARUP T DM 40 PD DH600 T SL 200 PD DH611 T PD DH612 T PD DH613 T PD DH614 T PD DH615 T PD DH655 T PD DH656 T PD DH657 T PD DH658 T DM 30 PD PISAS"/>
                 <route type="transition" name="NOLGO23" entryFL="FL110"
-                       route="DM 40 PD DH611 T SL 220 PD DH612 T PD DH613 T PD DH614 T PD DH615 T PD DH655 T PD DH656 T PD DH657 T PD DH658 T DM 30 PD PISAS"/>
+                       route="PD NOLGO T DM 40 PD DH611 T SL 220 PD DH612 T PD DH613 T PD DH614 T PD DH615 T PD DH655 T PD DH656 T PD DH657 T PD DH658 T DM 30 PD PISAS"/>
                 <route type="transition" name="BOGMU23" entryFL="FL110"
-                       route="DM 40 PD DH634 T SL 220 PD DH635 T PD DH655 T PD DH656 T PD DH657 T PD DH658 T DM 30 PD PISAS"/>
+                       route="PD BOGMU T DM 40 PD DH634 T SL 220 PD DH635 T PD DH655 T PD DH656 T PD DH657 T PD DH658 T DM 30 PD PISAS"/>
                 <route type="transition" name="RIBSO23" entryFL="FL110"
-                       route="DM 40 PD DH620 T PD DH633 T SL 220 PD DH634 T PD DH635 T PD DH655 T PD DH656 T PD DH657 T PD DH658 T DM 30 PD PISAS"/>
+                       route="PD RIBSO T DM 40 PD DH620 T PD DH633 T SL 220 PD DH634 T PD DH635 T PD DH655 T PD DH656 T PD DH657 T PD DH658 T DM 30 PD PISAS"/>
               </routes>
             </threshold>
           </thresholds>
@@ -136,13 +136,13 @@
                 <route type="sid" name="IDEKO5D"
                        route="AL 40 PD ALF/151/5 T PD WSN/074/27 T PD IDEKO"/>
                 <route type="transition" name="RIBSO15" entryFL="FL110"
-                       route="DM 40 SL 220 PD DH434 T PD DH435 T PD DH455 T PD DH456 T PD DH457 T DM 30 PD DH458 T PD DEVOD"/>
+                       route="PD RIBSO T DM 40 SL 220 PD DH434 T PD DH435 T PD DH455 T PD DH456 T PD DH457 T DM 30 PD DH458 T PD DEVOD"/>
                 <route type="transition" name="NOLGO15" entryFL="FL110"
-                       route="DM 40 PD DH406 T PD DH408 T PD DH409 T SL 220 PD DH412 T PD DH413 T PD DH414 T PD DH416 T PD DH455 T PD DH456 T PD DH457 T DM 30 PD DH458 T PD DEVOD"/>
+                       route="PD NOLGO T DM 40 PD DH406 T PD DH408 T PD DH409 T SL 220 PD DH412 T PD DH413 T PD DH414 T PD DH416 T PD DH455 T PD DH456 T PD DH457 T DM 30 PD DH458 T PD DEVOD"/>
                 <route type="transition" name="BOGMU15" entryFL="FL110"
-                       route="DM 40 SL 220 PD DH412 T PD DH413 T PD DH414 T PD DH416 T PD DH455 T PD DH456 T PD DH457 T DM 30 PD DH458 T PD DEVOD"/>
+                       route="PD BOGMU T DM 40 SL 220 PD DH412 T PD DH413 T PD DH414 T PD DH416 T PD DH455 T PD DH456 T PD DH457 T DM 30 PD DH458 T PD DEVOD"/>
                 <route type="transition" name="RARUP15" entryFL="FL110"
-                       route="DM 40 PD DH417 T SL 220 PD DH412 T PD DH413 T PD DH414 T PD DH416 T PD DH455 T PD DH456 T PD DH457 T DM 30 PD DH458 T PD DEVOD"/>
+                       route="PD RARUP T DM 40 PD DH417 T SL 220 PD DH412 T PD DH413 T PD DH414 T PD DH416 T PD DH455 T PD DH456 T PD DH457 T DM 30 PD DH458 T PD DEVOD"/>
               </routes>
             </threshold>
             <threshold includeSharedRoutes="false" name="33" coordinate="N 53 37 43.25 E 009 59 50.81"
@@ -166,13 +166,13 @@
                 <route type="sid" name="WSN2G"
                        route="AL 40 PD ALF/331/4 T PD LBV T PD WSN"/>
                 <route type="transition" name="RIBSO33" entryFL="FL110"
-                       route="DM 40 PD DH804 T SL 220 PD DH805 T PD DH806 T PD DH807 T PD DH808 T PD DH809 T PD DH810 T PD DH811 T PD DH812 T PD DH813 T PD DH814 T PD DH815 T PD DH854 T PD DH855 T PD DH856 T PD DH857 T PD DH858 T DM 30 PD SOSAX"/>
+                       route="PD RIBSO T DM 40 PD DH804 T SL 220 PD DH805 T PD DH806 T PD DH807 T PD DH808 T PD DH809 T PD DH810 T PD DH811 T PD DH812 T PD DH813 T PD DH814 T PD DH815 T PD DH854 T PD DH855 T PD DH856 T PD DH857 T PD DH858 T DM 30 PD SOSAX"/>
                 <route type="transition" name="NOLGO33" entryFL="FL110"
-                       route="DM 80 PD DH832 T SL 220 DM 40 T PD DH833 T PD DH834 T PD DH835 T PD DH854 T PD DH855 T PD DH856 T PD DH857 T PD DH858 T DM 30 PD SOSAX"/>
+                       route="PD NOLGO T DM 80 PD DH832 T SL 220 DM 40 T PD DH833 T PD DH834 T PD DH835 T PD DH854 T PD DH855 T PD DH856 T PD DH857 T PD DH858 T DM 30 PD SOSAX"/>
                 <route type="transition" name="RARUP33" entryFL="FL110"
-                       route="DM 40 PD DH829 T SL 220 PD DH830 T PD DH831 T PD DH832 T PD DH833 T PD DH834 T PD DH835 T PD DH854 T PD DH855 T PD DH856 T PD DH857 T PD DH858 T DM 30 PD SOSAX"/>
+                       route="PD RARUP T DM 40 PD DH829 T SL 220 PD DH830 T PD DH831 T PD DH832 T PD DH833 T PD DH834 T PD DH835 T PD DH854 T PD DH855 T PD DH856 T PD DH857 T PD DH858 T DM 30 PD SOSAX"/>
                 <route type="transition" name="BOGMU33" entryFL="FL110"
-                       route="DM 40 PD DH829 T SL 220 PD DH830 T PD DH831 T PD DH832 T PD DH833 T PD DH834 T PD DH835 T PD DH854 T PD DH855 T PD DH856 T PD DH857 T PD DH858 T DM 30 PD SOSAX"/>
+                       route="PD BOGMU T DM 40 PD DH829 T SL 220 PD DH830 T PD DH831 T PD DH832 T PD DH833 T PD DH834 T PD DH835 T PD DH854 T PD DH855 T PD DH856 T PD DH857 T PD DH858 T DM 30 PD SOSAX"/>
               </routes>
             </threshold>
           </thresholds>
