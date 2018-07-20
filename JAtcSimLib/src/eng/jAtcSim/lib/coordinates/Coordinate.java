@@ -5,9 +5,6 @@
  */
 package eng.jAtcSim.lib.coordinates;
 
-import eng.eSystem.exceptions.EApplicationException;
-
-import java.awt.geom.RoundRectangle2D;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

@@ -16,7 +16,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -46,7 +45,7 @@ public class FlightListPanel extends JPanel {
 
     pnlContent.setBackground(new Color(50, 50, 50));
 
-    this.sim.getSecondElapsedEvent().add(o -> updateList());
+    this.sim.getOnSecondElapsed().add(o -> updateList());
   }
 
   public Event<FlightListPanel, Callsign> getSelectedCallsignChangedEvent() {

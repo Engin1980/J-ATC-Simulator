@@ -380,11 +380,11 @@ public class Radar {
     this.planeRedrawCounter = new Counter(planeRepositionInterval);
     this.radarRedrawCounter = new Counter(redrawInterval);
     // listen to simulation seconds for redraw
-    this.simulationSecondListenerHandler = this.simulation.getSecondElapsedEvent().add(o -> redraw(false));
+    this.simulationSecondListenerHandler = this.simulation.getOnSecondElapsed().add(o -> redraw(false));
   }
 
   public void stop() {
-    this.simulation.getSecondElapsedEvent().remove(this.simulationSecondListenerHandler);
+    this.simulation.getOnSecondElapsed().remove(this.simulationSecondListenerHandler);
   }
 
   public void zoomIn() {

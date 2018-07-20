@@ -38,7 +38,6 @@ import eng.jAtcSim.lib.world.Area;
 import eng.jAtcSim.lib.world.Border;
 import eng.jAtcSim.lib.world.RunwayThreshold;
 
-import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -76,7 +75,10 @@ public class Simulation {
    * Public event informing surrounding about elapsed second.
    */
   @XmlIgnore
-  private EventSimple<Simulation> secondElapsedEvent =
+  private final EventSimple<Simulation> onSecondElapsed =
+      new EventSimple<>(this);
+  @XmlIgnore
+  private final EventSimple<Simulation> onRunwayChanged =
       new EventSimple<>(this);
   private int simulationSecondLengthInMs;
   @XmlIgnore
@@ -86,6 +88,10 @@ public class Simulation {
    */
   @XmlIgnore
   private final Timer tmr = new Timer(o -> Simulation.this.elapseSecond());
+
+  public EventSimple<Simulation> getOnRunwayChanged() {
+    return onRunwayChanged;
+  }
 
   public Simulation(
       Area area, AirplaneTypes airplaneTypes, Fleets fleets, Traffic traffic, Airport activeAirport,
@@ -125,6 +131,7 @@ public class Simulation {
 
     this.activeAirport = activeAirport;
     this.twrAtc = new TowerAtc(this.activeAirport.getAtcTemplates().getFirst(q -> q.getType() == Atc.eType.twr));
+    this.twrAtc.getOnRunwayChanged().add(this::twr_runwayChanged);
     this.ctrAtc = new CenterAtc(this.activeAirport.getAtcTemplates().getFirst(q -> q.getType() == Atc.eType.ctr));
     this.appAtc = new UserAtc(this.activeAirport.getAtcTemplates().getFirst(q -> q.getType() == Atc.eType.app));
 
@@ -160,6 +167,7 @@ public class Simulation {
       this.ctrAtc.load(tmp);
       this.appAtc.load(tmp);
       this.twrAtc.load(tmp);
+      this.twrAtc.getOnRunwayChanged().add(this::twr_runwayChanged);
     }
 
     LoadSave.loadField(root, this, "prm");
@@ -184,6 +192,10 @@ public class Simulation {
     this.prm.init();
   }
 
+  private void twr_runwayChanged() {
+    this.onRunwayChanged.raise();
+  }
+
   public PlaneResponsibilityManager getPrm() {
     return prm;
   }
@@ -201,8 +213,8 @@ public class Simulation {
     trafficManager.throwOutElapsedMovements(this.now.addMinutes(-5));
   }
 
-  public EventSimple<Simulation> getSecondElapsedEvent() {
-    return secondElapsedEvent;
+  public EventSimple<Simulation> getOnSecondElapsed() {
+    return onSecondElapsed;
   }
 
   //TODO shouldn't this be private?
@@ -405,7 +417,7 @@ public class Simulation {
     isBusy = false;
 
     // raises event
-    this.secondElapsedEvent.raise();
+    this.onSecondElapsed.raise();
 
     if (DEBUG_STYLE_TIMER)
       tmr.start(tmr.getTickLength());

@@ -9,7 +9,7 @@
 //
 //  void start();
 //
-//  EventSimple<ISimulation> getSecondElapsedEvent();
+//  EventSimple<ISimulation> getOnSecondElapsed();
 //
 //  Movement[] getScheduledMovements();
 //}

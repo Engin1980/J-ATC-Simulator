@@ -6,6 +6,7 @@ import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IMap;
 import eng.eSystem.eXml.XElement;
+import eng.eSystem.events.EventAnonymousSimple;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.utilites.CollectionUtils;
 import eng.eSystem.xmlSerialization.XmlIgnore;
@@ -107,6 +108,8 @@ public class TowerAtc extends ComputerAtc {
   private final TakeOffInfos takeOffInfos = new TakeOffInfos();
   @XmlIgnore
   private final CommonRecorder toRecorder;
+  @XmlIgnore
+  private final EventAnonymousSimple onRunwayChanged = new EventAnonymousSimple();
   private AirplaneList landingPlanesList = new AirplaneList(true);
   private AirplaneList goAroundedPlanesToSwitchList = new AirplaneList(true);
   private AirplaneList holdingPointPlanesList = new AirplaneList(true);
@@ -356,6 +359,10 @@ public class TowerAtc extends ComputerAtc {
     }
   }
 
+  public EventAnonymousSimple getOnRunwayChanged() {
+    return onRunwayChanged;
+  }
+
   private void processMessageFromAtc(RunwayUse ru) {
     EStringBuilder sb = new EStringBuilder();
     sb.append("Runway(s) in use: ");
@@ -547,6 +554,8 @@ public class TowerAtc extends ComputerAtc {
       announceScheduledRunwayCheck(rwy,
           this.runwayChecks.get(rwy));
     }
+
+    onRunwayChanged.raise();
   }
 
   private void tryToLog(String format, Object... params) {

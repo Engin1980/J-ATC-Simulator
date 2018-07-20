@@ -10,7 +10,6 @@ import eng.jAtcSim.shared.LayoutManager;
 
 import javax.swing.*;
 import java.awt.*;
-import java.nio.file.Paths;
 
 public class ScheduledFlightListPanel extends JPanel {
 
@@ -39,7 +38,7 @@ public class ScheduledFlightListPanel extends JPanel {
 
     pnlContent.setBackground(new Color(50, 50, 50));
 
-    this.sim.getSecondElapsedEvent().add(o -> updateList());
+    this.sim.getOnSecondElapsed().add(o -> updateList());
   }
 
   private void updateList() {

@@ -48,7 +48,7 @@ public class StatsPanel extends JPanel {
 
   public void init(Simulation sim) {
     this.stats = sim.getStats();
-    sim.getSecondElapsedEvent().add((a) -> update());
+    sim.getOnSecondElapsed().add((a) -> update());
   }
 
   private void initComponents() {
