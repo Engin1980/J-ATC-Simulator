@@ -307,11 +307,13 @@ public class TowerAtc extends ComputerAtc {
   }
 
   public IList<RunwayThreshold> getRunwayThresholdsInUse() {
+    //TODO rewrite to return read-only only without copy
     IList<RunwayThreshold> ret = new EList<>(inUseInfo.current);
     return ret;
   }
 
   public IList<RunwayThreshold> getRunwayThresholdsScheduled() {
+    //TODO rewrite to return read-only only without copy
     IList<RunwayThreshold> ret = new EList<>();
     if (inUseInfo.scheduled != null)
       ret.add(inUseInfo.scheduled);

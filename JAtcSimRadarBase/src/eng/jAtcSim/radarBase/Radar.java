@@ -365,6 +365,8 @@ public class Radar {
 
     this.messageManager = new MessageManager(this.styleSettings.displayTextDelay);
 
+    sim.getOnRunwayChanged().add(this::sim_runwayChanged);
+
     this.c.getMouseEvent().add(
         (sender, e) -> Radar.this.canvas_onMouseMove((ICanvas) sender, (EMouseEventArg) e));
     this.c.getPaintEvent().add(
@@ -372,6 +374,10 @@ public class Radar {
     this.c.getKeyEvent().add(
         (c, o) -> Radar.this.canvas_onKeyPress((ICanvas) c, (KeyEventArg) o));
     this.c.getResizedEvent().add(o -> tl.resetPosition());
+  }
+
+  private void sim_runwayChanged(Simulation simulation) {
+    buildLocalNavaidList();
   }
 
   public void start(int redrawInterval, int planeRepositionInterval) {
@@ -475,18 +481,11 @@ public class Radar {
       this.navaids.add(ndi);
     }
 
-    for (Runway runway : simulation.getActiveAirport().getRunways()) {
-      for (RunwayThreshold runwayThreshold : runway.getThresholds()) {
-        for (Route route : runwayThreshold.getRoutes()) {
-          //TODO this is incredibly time consuming, do it better way?
-          // YES! There is, route has something like "getNavaids()", try to do this that way
-          for (IAtcCommand command : route.getCommands()) {
-            if (command instanceof ProceedDirectCommand) {
-              ProceedDirectCommand pdc = (ProceedDirectCommand) command;
-              NavaidDisplayInfo ndi = this.navaids.getByNavaid(pdc.getNavaid());
-              ndi.isRoute = true;
-            }
-          }
+    for (RunwayThreshold threshold : Acc.atcTwr().getRunwayThresholdsInUse()) {
+      for (Route route : threshold.getRoutes()) {
+        for (Navaid navaid : route.getNavaids()) {
+          NavaidDisplayInfo ndi = this.navaids.getByNavaid(navaid);
+          ndi.isRoute = true;
         }
       }
     }
