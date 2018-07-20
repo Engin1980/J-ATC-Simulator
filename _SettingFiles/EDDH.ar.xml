@@ -54,7 +54,7 @@
               </routes>
             </threshold>
             <threshold includeSharedRoutes="false" name="23" coordinate="N 53 38 09.64 E 009 59 58.76"
-                       initialDepartureAltitude="5000">
+                       initialDepartureAltitude="5000" preferred="true">
               <approaches>
                 <ilsApproach gaRoute="CM 40 PD ALF/228/5.5 T H HAM" radial="228" includeSharedIafRoutes="false"
                              initialAltitude="3000">
@@ -457,14 +457,14 @@
     <navaid name="GT" type="ndb" coordinate="53.714199 9.924300"/>
     <navaid name="FU" type="ndb" coordinate="53.575500 9.875810"/>
     <navaid name="HAM" type="vor" coordinate="53.685600 10.205000"/>
-    <navaid name="LBE" type="vor" coordinate="N 53 39.252090 E 9 35.703621"/>
+    <!--<navaid name="LBE" type="vor" coordinate="N 53 39.252090 E 9 35.703621"/>-->
     <navaid name="LYE" type="vor" coordinate="N 53 48.048019 E 10 41.753998"/>
     <navaid name="LUD" type="vor" coordinate="N 53 48.384018 E 10 43.116016"/>
-    <navaid name="WSN" type="vor" coordinate="N 53 20.91 E  8 52.28"/>
-    <navaid name="OSN" type="vor" coordinate="N 52 11.99 E  8 17.12"/>
+    <navaid name="WSN" type="vor" coordinate="N 53 20.91 E 8 52.28"/>
+    <navaid name="OSN" type="vor" coordinate="N 52 11.99 E 8 17.12"/>
     <navaid name="LUB" type="vor" coordinate="N 53 56.50 E 10 40.05"/>
-    <navaid name="NIE" type="vor" coordinate="N 52 37.71 E  9 22.31"/>
-    <navaid name="LBV" type="vor" coordinate="N 53 39.23 E  9 34.64"/>
+    <navaid name="NIE" type="vor" coordinate="N 52 37.71 E 9 22.31"/>
+    <navaid name="LBV" type="vor" coordinate="N 53 39.23 E 9 34.64"/>
 
     <!-- FU GT HAM LBE -->
     <navaid name="AGATI" type="fixMinor" coordinate="N 52 54 42.05 E 010 01 44.28"/>
