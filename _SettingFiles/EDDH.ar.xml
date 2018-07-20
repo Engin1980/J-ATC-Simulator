@@ -178,6 +178,12 @@
           </thresholds>
         </runway>
       </runways>
+      <runwayConfigurations>
+        <configuration windSpeedTo="10">
+          <arrivals>23</arrivals>
+          <departures>15</departures>
+        </configuration>
+      </runwayConfigurations>
       <holds>
         <hold navaidName="RIBSO" inboundRadial="028" turn="right"/>
         <hold navaidName="BOGMU" inboundRadial="231" turn="right"/>

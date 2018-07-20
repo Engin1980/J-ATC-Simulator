@@ -1,5 +1,8 @@
 package eng.jAtcSim.lib.global.sources;
 
+import eng.eSystem.collections.EList;
+import eng.eSystem.collections.IList;
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.xmlSerialization.*;
 import eng.jAtcSim.lib.atcs.AtcTemplate;
 import eng.jAtcSim.lib.coordinates.Coordinate;
@@ -122,12 +125,15 @@ public class AreaXmlSource extends XmlSource<Area> {
         new XmlListItemMapping("/trafficDefinitions$", "flightListTraffic", FlightListTraffic.class));
     sett.getListItemMappings().add(
         new XmlListItemMapping("/disjoints$", String.class));
+    sett.getListItemMappings().add(
+        new XmlListItemMapping("/runwayConfigurations$", RunwayConfiguration.class));
 
     // own parsers
     sett.getValueParsers().add(new CoordinateValueParser());
     sett.getValueParsers().add(new TrafficCategoryDefinitionParser());
     sett.getValueParsers().add(new IntParser());
     sett.getValueParsers().add(new IntegerParser());
+    sett.getElementParsers().add(new RunwayConfigurationParser());
 
     // instance creators
     sett.getInstanceCreators().add(new AreaCreator());
@@ -242,5 +248,54 @@ class IntegerParser implements IValueParser<Integer> {
   @Override
   public String format(Integer value) throws XmlSerializationException {
     return value.toString();
+  }
+}
+
+class RunwayConfigurationParser implements IElementParser<RunwayConfiguration> {
+
+  @Override
+  public Class getType() {
+    return RunwayConfiguration.class;
+  }
+
+  @Override
+  public RunwayConfiguration parse(XElement xElement, XmlSerializer.Deserializer deserializer) throws XmlDeserializationException {
+    int windFrom = 0;
+    int windTo = 359;
+    int windSpeedFrom = 0;
+    int windSpeedTo = 999;
+    IList<String>arrivals = new EList<>();
+    IList<String>departures = new EList<>();
+
+    String tmp;
+    tmp = xElement.tryGetAttribute("windFrom" );
+    if (tmp != null) windFrom = Integer.parseInt(tmp);
+    tmp = xElement.tryGetAttribute("windTo");
+    if (tmp != null) windTo = Integer.parseInt(tmp);
+    tmp = xElement.tryGetAttribute("windSpeedFrom");
+    if (tmp != null) windSpeedFrom = Integer.parseInt(tmp);
+    tmp = xElement.tryGetAttribute("windSpeedTo");
+    if (tmp != null) windSpeedTo = Integer.parseInt(tmp);
+
+    for (XElement elm : xElement.getChildren()) {
+      String val = elm.getContent();
+      if (elm.getName().equals("arrivals"))
+        arrivals.add(val);
+      else if (elm.getName().equals("departures"))
+        departures.add(val);
+    }
+
+    RunwayConfiguration ret = new RunwayConfiguration(windFrom, windTo, windSpeedFrom, windSpeedTo, arrivals, departures);
+return ret;
+  }
+
+  @Override
+  public void format(RunwayConfiguration runwayConfiguration, XElement xElement, XmlSerializer.Serializer serializer) throws XmlSerializationException {
+    throw new UnsupportedOperationException("This method is not expected to be called.");
+  }
+
+  @Override
+  public boolean isApplicableOnDescendants() {
+    return false;
   }
 }
