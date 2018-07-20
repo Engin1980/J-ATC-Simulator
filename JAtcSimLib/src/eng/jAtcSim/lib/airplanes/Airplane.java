@@ -103,8 +103,12 @@ public class Airplane implements IMessageParticipant {
       return (int) Airplane.this.targetAltitude;
     }
 
-    public int speed() {
+    public int ias() {
       return (int) Airplane.this.speed.getValue();
+    }
+
+    public double tas() {
+      return Airplane.this.getTAS();
     }
 
     public int targetHeading() {

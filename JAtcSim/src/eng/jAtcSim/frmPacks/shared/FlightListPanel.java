@@ -225,7 +225,7 @@ class FlightStripPanel extends JPanel {
     lbl = new JLabel(
         AirplaneDataFormatter.formatHeadingLong(ai.heading())
             + " // " +
-            AirplaneDataFormatter.formatSpeedLong(ai.speed()));
+            AirplaneDataFormatter.formatSpeedLong(ai.ias()));
     lbl.setName("lblHeadingAndSpeed");
     lbl.setFont(normalFont);
     lbl.setForeground(stripSettings.textColor);

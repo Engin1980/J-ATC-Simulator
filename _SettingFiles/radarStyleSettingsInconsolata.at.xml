@@ -89,7 +89,7 @@
            thirdLineFormat=""/>
 
   <app color="00FF00" connectorColor="008800"
-       pointWidth="7" headingLineLength="5"
+       pointWidth="7" headingLineLength="60"
        historyDotCount="10" historyDotStep="3"
        separationRingRadius="5"
        firstLineFormat="{1}"
@@ -97,7 +97,7 @@
        thirdLineFormat="{8} {4}"/>
 
   <ctr color="0000A0" connectorColor="000050"
-       pointWidth="5" headingLineLength="3"
+       pointWidth="5" headingLineLength="60"
        historyDotCount="5" historyDotStep="3"
        separationRingRadius="5"
        firstLineFormat="{1}"
@@ -105,7 +105,7 @@
        thirdLineFormat="{8} {4}"/>
 
   <twr color="4F4F00" connectorColor="282800"
-       pointWidth="5" headingLineLength="3"
+       pointWidth="5" headingLineLength="60"
        historyDotCount="5" historyDotStep="3"
        separationRingRadius="5"
        firstLineFormat="{1}"
@@ -113,7 +113,7 @@
        thirdLineFormat="{8} {4}"/>
 
   <selected color="FFFF00" connectorColor="888800"
-            pointWidth="7" headingLineLength="5"
+            pointWidth="7" headingLineLength="60"
             historyDotCount="10" historyDotStep="3"
             separationRingRadius="5"
             firstLineFormat="{1}"
@@ -121,7 +121,7 @@
             thirdLineFormat="{8} {4}"/>
 
   <emergency color="FF0000" connectorColor="880000"
-             pointWidth="7" headingLineLength="5"
+             pointWidth="7" headingLineLength="60"
              historyDotCount="10" historyDotStep="3"
              separationRingRadius="5"
              firstLineFormat="{1}"

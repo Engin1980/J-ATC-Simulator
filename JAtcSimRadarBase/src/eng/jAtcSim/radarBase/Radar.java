@@ -105,7 +105,8 @@ public class Radar {
     public boolean mrvaError;
     public Coordinate coordinate;
     public int heading;
-    public int speed;
+    public int ias;
+    public double tas;
     public int verticalSpeed;
     public Atc tunedAtc;
     public Atc responsibleAtc;
@@ -129,7 +130,8 @@ public class Radar {
     public void updateInfo(Airplane.Airplane4Display plane) {
       wasUpdatedFlag = true;
 
-      this.speed = plane.speed();
+      this.ias = plane.ias();
+      this.tas = plane.tas();
       this.targetSpeed = plane.targetSpeed();
       this.altitude = plane.altitude();
       this.targetAltitude = plane.targetAltitude();
@@ -197,11 +199,11 @@ public class Radar {
         case 16:
           return AirplaneDataFormatter.formatHeadingShort(this.targetHeading);
         case 21:
-          return AirplaneDataFormatter.formatSpeedLong(this.speed);
+          return AirplaneDataFormatter.formatSpeedLong(this.tas);
         case 22:
-          return AirplaneDataFormatter.formatSpeedShort(this.speed);
+          return AirplaneDataFormatter.formatSpeedShort(this.tas);
         case 23:
-          return AirplaneDataFormatter.formatSpeedAligned(this.speed);
+          return AirplaneDataFormatter.formatSpeedAligned(this.tas);
         case 31:
           return AirplaneDataFormatter.formatSpeedLong(this.targetSpeed);
         case 32:
@@ -376,10 +378,6 @@ public class Radar {
     this.c.getResizedEvent().add(o -> tl.resetPosition());
   }
 
-  private void sim_runwayChanged(Simulation simulation) {
-    buildLocalNavaidList();
-  }
-
   public void start(int redrawInterval, int planeRepositionInterval) {
     assert redrawInterval > 0;
     assert planeRepositionInterval > 0;
@@ -470,6 +468,10 @@ public class Radar {
 
   public EventSimple<Radar> getGotFocusEvent() {
     return gotFocusEvent;
+  }
+
+  private void sim_runwayChanged(Simulation simulation) {
+    buildLocalNavaidList();
   }
 
   private void buildLocalNavaidList() {
@@ -954,8 +956,10 @@ public class Radar {
 
     // plane dot and direction line
     tl.drawPlanePoint(adi.coordinate, c, dp.getPointWidth()); // point of plane
-    if (this.displaySettings.isPlaneHeadingLineVisible())
-      tl.drawLineByHeadingAndDistance(adi.coordinate, adi.heading, dp.getHeadingLineLength(), c, 1);
+    if (this.displaySettings.isPlaneHeadingLineVisible()) {
+      double len = adi.tas * dp.getHeadingLineLength() / 60d;
+      tl.drawLineByHeadingAndDistance(adi.coordinate, adi.heading, len, c, 1);
+    }
 
     // separation ring
     if (displaySettings.isRingsVisible()) {
@@ -1001,7 +1005,7 @@ public class Radar {
 
     if (adi.emergency)
       ret = styleSettings.emergency;
-    else if (adi.speed == 0)
+    else if (adi.ias == 0)
       ret = styleSettings.stopped;
     else if (adi.responsibleAtc.getType() == Atc.eType.app)
       ret = styleSettings.app;
