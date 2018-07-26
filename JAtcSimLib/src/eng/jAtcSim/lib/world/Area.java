@@ -143,6 +143,9 @@ public class Area {
         }
       }
 
+      for (RunwayConfiguration runwayConfiguration : a.getRunwayConfigurations()) {
+        runwayConfiguration.bind();
+      }
 
     }
     Acc.setAirport(null);

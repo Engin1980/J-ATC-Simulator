@@ -131,6 +131,10 @@ public class Airport {
     return this._mainAirportNavaid;
   }
 
+  public IReadOnlyList<RunwayConfiguration> getRunwayConfigurations() {
+    return runwayConfigurations;
+  }
+
   public InitialPosition getInitialPosition() {
     return this.initialPosition;
   }

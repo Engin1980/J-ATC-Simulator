@@ -1,14 +1,10 @@
 package eng.jAtcSim.lib.atcs;
 
 import eng.eSystem.EStringBuilder;
-import eng.eSystem.collections.EList;
-import eng.eSystem.collections.EMap;
-import eng.eSystem.collections.IList;
-import eng.eSystem.collections.IMap;
+import eng.eSystem.collections.*;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.events.EventAnonymousSimple;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
-import eng.eSystem.utilites.CollectionUtils;
 import eng.eSystem.xmlSerialization.XmlIgnore;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
@@ -33,10 +29,8 @@ import eng.jAtcSim.lib.weathers.Weather;
 import eng.jAtcSim.lib.weathers.WeatherProvider;
 import eng.jAtcSim.lib.world.Route;
 import eng.jAtcSim.lib.world.Runway;
+import eng.jAtcSim.lib.world.RunwayConfiguration;
 import eng.jAtcSim.lib.world.RunwayThreshold;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class TowerAtc extends ComputerAtc {
 
@@ -94,38 +88,56 @@ public class TowerAtc extends ComputerAtc {
 
   public static class RunwaysInUseInfo {
     private SchedulerForAdvice scheduler;
-    private IList<RunwayThreshold> current;
-    private IList<RunwayThreshold> scheduled;
+    private RunwayConfiguration current;
+    private RunwayConfiguration scheduled;
 
-    public boolean isInUse(RunwayThreshold threshold) {
-      return current.contains(threshold);
+    public RunwayConfiguration getCurrent() {
+      return current;
     }
 
+    public RunwayConfiguration getScheduled() {
+      return scheduled;
+    }
   }
+
 
   private static final int MAXIMAL_SPEED_FOR_PREFERRED_RUNWAY = 5;
   private static final double MAXIMAL_ACCEPT_DISTANCE_IN_NM = 15;
-  private final TakeOffInfos takeOffInfos = new TakeOffInfos();
+  private final DepartureManager departureManager = new DepartureManager();
   @XmlIgnore
   private final CommonRecorder toRecorder;
   @XmlIgnore
   private final EventAnonymousSimple onRunwayChanged = new EventAnonymousSimple();
   private AirplaneList landingPlanesList = new AirplaneList(true);
   private AirplaneList goAroundedPlanesToSwitchList = new AirplaneList(true);
-  private AirplaneList holdingPointPlanesList = new AirplaneList(true);
-  private AirplaneList linedUpPlanesList = new AirplaneList(true);
-  private AirplaneList departingPlanesList = new AirplaneList(true);
-  private IMap<Airplane, Double> departureSwitchAltitude = new EMap<>();
-  private Map<Airplane, ETime> holdingPointWaitingTimeMap = new HashMap<>();
   private RunwaysInUseInfo inUseInfo = null;
   private EMap<Runway, RunwayCheck> runwayChecks = null;
   private boolean isUpdatedWeather;
 
-  private static IList<RunwayThreshold> getSuggestedThresholds() {
+  private static RunwayConfiguration getSuggestedThresholds() {
+    RunwayConfiguration ret = null;
     Weather w = Acc.weather();
 
-    RunwayThreshold rt = null;
+    for (RunwayConfiguration rc : Acc.airport().getRunwayConfigurations()) {
+      if (rc.accepts(w.getWindHeading(), w.getWindSpeetInKts())) {
+        ret = rc;
+        break;
+      }
+    }
+    if (ret != null) {
+      RunwayThreshold rt = getSuggestedThresholdsRegardlessRunwayConfigurations();
+      IList<RunwayThreshold> rts = rt.getParallelGroup();
+      ret = RunwayConfiguration.createForThresholds(rts);
+    }
 
+    assert ret != null : "There must be runway configuration created.";
+
+    return ret;
+  }
+
+  private static RunwayThreshold getSuggestedThresholdsRegardlessRunwayConfigurations() {
+    Weather w = Acc.weather();
+    RunwayThreshold rt = null;
     if (w.getWindSpeetInKts() <= MAXIMAL_SPEED_FOR_PREFERRED_RUNWAY) {
       for (Runway r : Acc.airport().getRunways()) {
         for (RunwayThreshold t : r.getThresholds()) {
@@ -153,9 +165,7 @@ public class TowerAtc extends ComputerAtc {
         }
       }
     }
-
-    IList<RunwayThreshold> ret = rt.getParallelGroup();
-    return ret;
+    return rt;
   }
 
   public TowerAtc(AtcTemplate template) {
@@ -190,15 +200,10 @@ public class TowerAtc extends ComputerAtc {
 
     // as this plane is asked for switch, it is confirmed
     // from APP, so can be moved from holding-point to line-up
-    if (holdingPointPlanesList.contains(plane)) {
-      holdingPointPlanesList.remove(plane);
-      linedUpPlanesList.add(plane);
-    }
+    departureManager.confirmByApproach(plane);
 
-    if (departureSwitchAltitude.containsKey(plane) && departureSwitchAltitude.get(plane) < plane.getAltitude()) {
-      departureSwitchAltitude.remove(plane);
+    if (departureManager.canBeSwitched(plane))
       return true;
-    }
 
     return false;
   }
@@ -254,8 +259,8 @@ public class TowerAtc extends ComputerAtc {
     LoadSave.saveField(elm, this, "takeOffInfos");
     LoadSave.saveField(elm, this, "landingPlanesList");
     LoadSave.saveField(elm, this, "goAroundedPlanesToSwitchList");
-    LoadSave.saveField(elm, this, "holdingPointPlanesList");
-    LoadSave.saveField(elm, this, "linedUpPlanesList");
+    LoadSave.saveField(elm, this, "holdingPointNotReadyPlanesList");
+    LoadSave.saveField(elm, this, "holdingPointReadyPlanesList");
     LoadSave.saveField(elm, this, "departingPlanesList");
     LoadSave.saveField(elm, this, "holdingPointWaitingTimeMap");
     LoadSave.saveField(elm, this, "inUseInfo");
@@ -269,8 +274,8 @@ public class TowerAtc extends ComputerAtc {
     LoadSave.loadField(elm, this, "takeOffInfos");
     LoadSave.loadField(elm, this, "landingPlanesList");
     LoadSave.loadField(elm, this, "goAroundedPlanesToSwitchList");
-    LoadSave.loadField(elm, this, "holdingPointPlanesList");
-    LoadSave.loadField(elm, this, "linedUpPlanesList");
+    LoadSave.loadField(elm, this, "holdingPointNotReadyPlanesList");
+    LoadSave.loadField(elm, this, "holdingPointReadyPlanesList");
     LoadSave.loadField(elm, this, "departingPlanesList");
     LoadSave.loadField(elm, this, "holdingPointWaitingTimeMap");
     LoadSave.loadField(elm, this, "inUseInfo");
@@ -303,21 +308,38 @@ public class TowerAtc extends ComputerAtc {
   }
 
   public int getNumberOfPlanesAtHoldingPoint() {
-    return holdingPointPlanesList.size() + linedUpPlanesList.size();
+    return departureManager.getNumberOfPlanesAtHoldingPoint();
   }
 
-  public IList<RunwayThreshold> getRunwayThresholdsInUse() {
-    //TODO rewrite to return read-only only without copy
-    IList<RunwayThreshold> ret = new EList<>(inUseInfo.current);
-    return ret;
+  public enum eDirection {
+    departures,
+    arrivals
   }
 
-  public IList<RunwayThreshold> getRunwayThresholdsScheduled() {
-    //TODO rewrite to return read-only only without copy
-    IList<RunwayThreshold> ret = new EList<>();
-    if (inUseInfo.scheduled != null)
-      ret.add(inUseInfo.scheduled);
-    return ret;
+  public IReadOnlyList<RunwayThreshold> getRunwayThresholdsInUse(eDirection direction) {
+    switch (direction) {
+      case departures:
+        return inUseInfo.current.getDepartingThresholds();
+      case arrivals:
+        return inUseInfo.current.getArrivingThresholds();
+      default:
+        throw new EEnumValueUnsupportedException(direction);
+    }
+  }
+
+  public IReadOnlyList<RunwayThreshold> getRunwayThresholdsScheduled(eDirection direction) {
+    if (inUseInfo.scheduled == null)
+      return new EList<>();
+    else {
+      switch (direction) {
+        case departures:
+          return inUseInfo.scheduled.getDepartingThresholds();
+        case arrivals:
+          return inUseInfo.scheduled.getArrivingThresholds();
+        default:
+          throw new EEnumValueUnsupportedException(direction);
+      }
+    }
   }
 
   @Override
@@ -327,21 +349,10 @@ public class TowerAtc extends ComputerAtc {
       landingPlanesList.remove(plane);
     if (goAroundedPlanesToSwitchList.contains(plane))
       goAroundedPlanesToSwitchList.remove(plane);
-    if (holdingPointPlanesList.contains(plane)) {
-      holdingPointPlanesList.remove(plane);
-    }
-    if (linedUpPlanesList.contains(plane))
-      linedUpPlanesList.remove(plane);
-    if (departingPlanesList.contains(plane))
-      departingPlanesList.remove(plane);
-    if (holdingPointWaitingTimeMap.containsKey(plane))
-      holdingPointWaitingTimeMap.remove(plane);
-
-
-    if (finalUnregistration) {
-      IMap<RunwayThreshold, TakeOffInfo> tmp = takeOffInfos.whereValue(q -> q.airplane == plane);
-      tmp.getKeys().forEach(q -> takeOffInfos.remove(q));
-    }
+    if (finalUnregistration)
+      departureManager.unregisterDeletedPlane(plane);
+    else
+      departureManager.unregisterFinishedDeparture(plane);
 
     if (plane.isEmergency() && plane.getState() == Airplane.State.landed) {
       // if it is landed emergency, close runway for amount of time
@@ -353,12 +364,10 @@ public class TowerAtc extends ComputerAtc {
 
   @Override
   public void registerNewPlaneUnderControl(Airplane plane, boolean initialRegistration) {
-    if (plane.isArrival()) {
+    if (plane.isArrival())
       landingPlanesList.add(plane);
-    } else {
-      holdingPointPlanesList.add(plane);
-      holdingPointWaitingTimeMap.put(plane, Acc.now().clone());
-    }
+    else
+      departureManager.registerNewDeparture(plane);
   }
 
   public EventAnonymousSimple getOnRunwayChanged() {
@@ -367,19 +376,19 @@ public class TowerAtc extends ComputerAtc {
 
   private void processMessageFromAtc(RunwayUse ru) {
     EStringBuilder sb = new EStringBuilder();
+    Message msg;
     sb.append("Runway(s) in use: ");
-    sb.appendItems(inUseInfo.current, q -> q.getName(), ", ");
-    Message msg = new Message(this, Acc.atcApp(),
+    sb.append(inUseInfo.current.toLineInfoString());
+    msg = new Message(this, Acc.atcApp(),
         new StringMessageContent(sb.toString()));
     super.sendMessage(msg);
 
     if (inUseInfo.scheduled != null) {
       sb = new EStringBuilder();
-      sb.append("Scheduled runway change to ");
-      sb.appendItems(inUseInfo.scheduled, q -> q.getName(), ", ");
-      sb.append(" at ");
+      sb.append("Scheduled runways to use: ");
+      sb.append(inUseInfo.scheduled.toLineInfoString());
+      sb.append(" from ");
       sb.append(inUseInfo.scheduler.getScheduledTime().toHourMinuteString());
-
       msg = new Message(this, Acc.atcApp(),
           new StringMessageContent(sb.toString()));
       super.sendMessage(msg);
@@ -401,8 +410,7 @@ public class TowerAtc extends ComputerAtc {
       Runway rwy = rrct.runway;
       RunwayCheck rc = this.runwayChecks.tryGet(rwy);
       if (rwy == null && this.runwayChecks.size() == 1) {
-        rwy = inUseInfo.current.get(0).getParent();
-        rc = this.runwayChecks.get(rwy);
+        rc = this.runwayChecks.get(this.runwayChecks.getKeys().getFirst());
       }
       if (rc == null) {
         Message msg = new Message(this, Acc.atcApp(),
@@ -453,7 +461,7 @@ public class TowerAtc extends ComputerAtc {
     EStringBuilder sb = new EStringBuilder();
 
     sb.append("Expected runway change to: ");
-    sb.appendItems(this.inUseInfo.scheduled, q -> q.getName(), ", ");
+    sb.append(this.inUseInfo.scheduled.toLineInfoString());
     sb.appendFormat(" at %s.", this.inUseInfo.scheduler.getScheduledTime().toTimeString());
 
     Message m = new Message(
@@ -464,7 +472,7 @@ public class TowerAtc extends ComputerAtc {
   }
 
   private boolean isOnApproachOfTheRunwayInUse(Airplane p) {
-    boolean ret = inUseInfo.isInUse(p.tryGetCurrentApproachRunwayThreshold());
+    boolean ret = inUseInfo.current.getArrivingThresholds().contains(p.tryGetCurrentApproachRunwayThreshold());
     return ret;
   }
 
@@ -476,7 +484,7 @@ public class TowerAtc extends ComputerAtc {
           finishRunwayMaintenance(runway, rc);
       } else {
         if (rc.scheduler.isElapsed()) {
-          if (this.departingPlanesList.isEmpty() && this.landingPlanesList.isEmpty())
+          if (this.departureManager.isRunwayEmpty(runway) && this.landingPlanesList.isEmpty())
             beginRunwayMaintenance(runway, rc);
         } else if (rc.scheduler.shouldBeAnnouncedNow()) {
           announceScheduledRunwayCheck(runway, rc);
@@ -526,9 +534,9 @@ public class TowerAtc extends ComputerAtc {
   }
 
   private void checkForRunwayChange() {
-    IList<RunwayThreshold> newSuggested = getSuggestedThresholds();
+    RunwayConfiguration newSuggested = getSuggestedThresholds();
 
-    boolean isSame = CollectionUtils.containsSameItems(newSuggested, inUseInfo.current);
+    boolean isSame = inUseInfo.current.isUsingTheSameRunwayConfiguration(newSuggested);
     if (!isSame) {
       inUseInfo.scheduler = new SchedulerForAdvice(Acc.now().addSeconds(10 * 60));
       inUseInfo.scheduled = newSuggested;
@@ -539,7 +547,7 @@ public class TowerAtc extends ComputerAtc {
 
     EStringBuilder str = new EStringBuilder();
     str.appendLine("Changed runway(s) in use now to: ");
-    str.appendItems(inUseInfo.scheduled, q -> q.getName(), ", ");
+    str.append(inUseInfo.scheduled.toLineInfoString());
     str.append(".");
 
     Message m = new Message(
@@ -551,11 +559,11 @@ public class TowerAtc extends ComputerAtc {
     this.inUseInfo.scheduled = null;
     this.inUseInfo.scheduler = null;
 
-    for (RunwayThreshold threshold : this.inUseInfo.current) {
-      Runway rwy = threshold.getParent();
-      announceScheduledRunwayCheck(rwy,
-          this.runwayChecks.get(rwy));
-    }
+    IList<Runway> tmp =
+        this.inUseInfo.current.getDepartingThresholds()
+            .select(q -> q.getParent())
+            .union(this.inUseInfo.current.getArrivingThresholds().select(q -> q.getParent()));
+    tmp.forEach(q -> announceScheduledRunwayCheck(q, this.runwayChecks.get(q)));
 
     onRunwayChanged.raise();
   }
@@ -565,32 +573,85 @@ public class TowerAtc extends ComputerAtc {
       toRecorder.write(format, params);
   }
 
-  private void tryTakeOffPlaneNew() {
+  private void restrictToRunwaysNotUnderMaintenance(IList<RunwayThreshold> rts) {
+    rts.remove(q -> runwayChecks.get(q.getParent()).isActive());
+  }
 
-    // checks for lined-up plane
-    if (linedUpPlanesList.isEmpty()) return;
-    Airplane toReadyPlane = linedUpPlanesList.get(0);
+  private void restrictToRunwaysNotUsedInApproach(IList<RunwayThreshold> rts) {
+    rts.remove(q -> getClosestLandingPlaneDistanceForThreshold(q) < 2.5);
+  }
 
-    // first check separation from all departures
-    // if no sep, no t-o
-    for (RunwayThreshold threshold : inUseInfo.current) {
+  private void restrictToRunwaysNotUsedByRolling(IList<RunwayThreshold> rts) {
+    IList<RunwayThreshold> tmp = new EList<>();
+    for (RunwayThreshold rt : rts) {
+      ISet<RunwayThreshold> crossedSet = inUseInfo.current.getCrossedSetForThreshold(rt);
+      boolean hasSetAirplaneOnGround = crossedSet.isAny(q -> hasAirplaneRollingOnTheGround(q));
+      if (hasSetAirplaneOnGround)
+        tmp.add(crossedSet);
+    }
+    rts.tryRemove(tmp);
+  }
+
+  private boolean hasAirplaneRollingOnTheGround(RunwayThreshold rt) {
+    boolean ret = false;
+    IList<Airplane> tmp;
+    tmp = this.landingPlanesList.where(q -> rt.equals(q.getAssignedRunwayThreshold()));
+    if (tmp.isAny(q -> q.getState() == Airplane.State.landed))
+      ret = true;
+
+    if (ret == false) {
+      ret = !departureManager.isRunwayEmpty(rt.getParent());
+    }
+
+    return ret;
+  }
+
+  private void restrictToRunwayAvailableForTakeOff(IList<RunwayThreshold> rts, Airplane toPlane) {
+    for (RunwayThreshold threshold : inUseInfo.current.getDepartingThresholds()) {
       Airplane a = takeOffInfos.tryGetAirplaneForThreshold(threshold);
-      if (a != null && !Separation.isSafeSeparation(a, toReadyPlane, 120))
+      if (a != null && !Separation.isSafeSeparation(a, toPlane, 120))
         return; // no safe separation from someone, no t-o
     }
 
-    // gets available thresholds
-    // first getAndElapse those whose are not under maintenance
-    IList<RunwayThreshold> availableThresholds = inUseInfo.current.where(q -> runwayChecks.get(q.getParent()).isActive() == false);
-    // then getAndElapse those which has no close landing
-    availableThresholds = availableThresholds.where(q -> closestLandingPlaneDistance(q) > 2.5);
-    // then getAndElapse those which has departed at least 1 minute before
-    availableThresholds = availableThresholds.where(
-        q -> !takeOffInfos.containsKey(q) || takeOffInfos.get(q).takeOffTime.addSeconds(60).isBeforeOrEq(Acc.now()));
-    // kick out if no runway left
-    if (availableThresholds.isEmpty()) return;
 
-    RunwayThreshold availableThreshold = availableThresholds.getRandom();
+    !takeOffInfos.containsKey(q) || takeOffInfos.get(q).takeOffTime.addSeconds(60).isBeforeOrEq(Acc.now())
+  }
+
+  private void tryTakeOffPlaneNew() {
+
+    // checks for lined-up plane
+    Airplane toReadyPlane = departureManager.tryGetPlaneReadyForTakeOff();
+    if (toReadyPlane == null) return;
+
+    IList<RunwayThreshold> rts = new EList<>(inUseInfo.current.getDepartingThresholds());
+    restrictToRunwaysNotUnderMaintenance(rts);
+    restrictToRunwaysNotUsedInApproach(rts);
+    restrictToRunwaysNotUsedByRolling(rts);
+    restrictToRunwayAvailableForTakeOff(rts, toReadyPlane);
+
+    if (rts.isEmpty())
+      return; // no available rwy
+
+//    // first check separation from all departures
+//    // if no sep, no t-o
+//    for (RunwayThreshold threshold : inUseInfo.current) {
+//      Airplane a = takeOffInfos.tryGetAirplaneForThreshold(threshold);
+//      if (a != null && !Separation.isSafeSeparation(a, toReadyPlane, 120))
+//        return; // no safe separation from someone, no t-o
+//    }
+//
+//    // gets available thresholds
+//    // first getAndElapse those whose are not under maintenance
+//    IList<RunwayThreshold> availableThresholds = inUseInfo.current.where(q -> runwayChecks.get(q.getParent()).isActive() == false);
+//    // then getAndElapse those which has no close landing
+//    availableThresholds = availableThresholds.where(q -> closestLandingPlaneDistance(q) > 2.5);
+//    // then getAndElapse those which has departed at least 1 minute before
+//    availableThresholds = availableThresholds.where(
+//        q -> !takeOffInfos.containsKey(q) || takeOffInfos.get(q).takeOffTime.addSeconds(60).isBeforeOrEq(Acc.now()));
+//    // kick out if no runway left
+//    if (availableThresholds.isEmpty()) return;
+
+    RunwayThreshold availableThreshold = rts.getRandom();
     // plane has SID for different threshold
     // may occur in runway change or parallel runways
     // first try to getContent route for the same navaid, then try to find any route
@@ -605,22 +666,15 @@ public class TowerAtc extends ComputerAtc {
     toReadyPlane.updateAssignedRoute(r);
 
     // if it gets here, the "toReadyPlane" can proceed take-off
-    linedUpPlanesList.removeAt(0);
-    departingPlanesList.add(toReadyPlane);
+    ETime holdingPointEntryTime = departureManager.departAndGetHoldingPointEntryTime(toReadyPlane, availableThreshold, getDepartingPlaneSwitchAltitude(toReadyPlane.getType().category));
     toReadyPlane.setHoldingPointState(availableThreshold.getCoordinate(), availableThreshold.getCourse());
 
     // add to stats
-    double diffSecs = ETime.getDifference(Acc.now(), this.holdingPointWaitingTimeMap.get(toReadyPlane)).getTotalSeconds();
+    double diffSecs = ETime.getDifference(Acc.now(), holdingPointEntryTime).getTotalSeconds();
     diffSecs -= 15; // generally let TWR atc asks APP atc to switch 15 seconds before HP.
     if (diffSecs < 0) diffSecs = 0;
     Acc.stats().holdingPointInfo.maximumHoldingPointTime.set(diffSecs);
     Acc.stats().holdingPointInfo.meanHoldingPointTime.add(diffSecs);
-
-    // process the T-O
-    TakeOffInfo toi = new TakeOffInfo(
-        Acc.now(), toReadyPlane);
-    this.takeOffInfos.set(availableThreshold, toi);
-    this.departureSwitchAltitude.set(toReadyPlane, getDepartingPlaneSwitchAltitude(toReadyPlane.getType().category));
 
     SpeechList lst = new SpeechList();
     lst.add(new RadarContactConfirmationNotification());
@@ -631,14 +685,6 @@ public class TowerAtc extends ComputerAtc {
           ChangeAltitudeCommand.eDirection.climb, availableThreshold.getInitialDepartureAltitude()));
 
     lst.add(new ClearedForTakeoffCommand(availableThreshold));
-
-    // this is done automatically when atc is switched
-    // the altitude depends on the switch altitude of the airplane
-//    // -- po vysce+300 ma kontaktovat APP
-//    lst.add(new AfterAltitudeCommand(
-//        Acc.airport().getAltitude() + Acc.rnd().nextInt(5,10), //(150, 450),
-//        AfterAltitudeCommand.ERestriction.andAbove));
-//    lst.add(new ContactCommand(Atc.eType.app));
 
     Message m = new Message(this, toReadyPlane, lst);
     super.sendMessage(m);
@@ -658,11 +704,14 @@ public class TowerAtc extends ComputerAtc {
     }
   }
 
-  private double closestLandingPlaneDistance(RunwayThreshold threshold) {
+  private double getClosestLandingPlaneDistanceForThreshold(RunwayThreshold threshold) {
+    IList<Airplane> tmp = landingPlanesList.where(q -> threshold.equals(q.getAssignedRunwayThreshold()));
     double ret = Double.MAX_VALUE;
-    for (Airplane plane : Acc.planes()) {
-      if (plane.getState().is(
-          Airplane.State.landed,
+    for (Airplane plane : tmp) {
+      if (plane.getState() == Airplane.State.landed) {
+        ret = 0;
+        break;
+      } else if (plane.getState().is(
           Airplane.State.shortFinal,
           Airplane.State.longFinal,
           Airplane.State.approachDescend
@@ -820,6 +869,91 @@ class Separation {
   private static Coordinate getPosition(Airplane plane, int seconds, int heading) {
     double traveledDistance = seconds / 3600d * plane.getType().getV2();
     Coordinate ret = Coordinates.getCoordinate(plane.getCoordinate(), heading, traveledDistance);
+    return ret;
+  }
+}
+
+class TOI {
+  public final Airplane plane;
+  public final ETime time;
+  public final RunwayThreshold threshold;
+
+  public TOI(Airplane plane, ETime time, RunwayThreshold threshold) {
+    this.plane = plane;
+    this.time = time;
+    this.threshold = threshold;
+  }
+
+  public TOI() {
+    plane = null;
+    time = null;
+    threshold = null;
+  }
+}
+
+class DepartureManager {
+
+  private IList<Airplane> holdingPointNotReady = new AirplaneList(true);
+  private IList<Airplane> holdingPointReady = new AirplaneList(true);
+  private IList<TOI> departing = new EList<>();
+  private IMap<Airplane, Double> departureSwitchAltitude = new EMap<>();
+  private IMap<Airplane, ETime> holdingPointWaitingTimeMap = new EMap<>();
+
+  public void registerNewDeparture(Airplane plane) {
+    this.holdingPointNotReady.add(plane);
+    holdingPointWaitingTimeMap.set(plane, Acc.now().clone());
+  }
+
+  public void confirmByApproach(Airplane plane) {
+    if (this.holdingPointNotReady.contains(plane)) {
+      this.holdingPointNotReady.remove(plane);
+      this.holdingPointReady.add(plane);
+    }
+  }
+
+  public boolean canBeSwitched(Airplane plane) {
+    if (departureSwitchAltitude.containsKey(plane) && departureSwitchAltitude.get(plane) < plane.getAltitude()) {
+      departureSwitchAltitude.remove(plane);
+      return true;
+    } else
+      return false;
+  }
+
+  public ETime departAndGetHoldingPointEntryTime(Airplane plane, RunwayThreshold th, double switchAltitude) {
+    this.holdingPointReady.remove(plane);
+    TOI toi = new TOI(plane, Acc.now().clone(), th);
+    departing.add(toi);
+    departureSwitchAltitude.set(plane, switchAltitude);
+    ETime ret = holdingPointWaitingTimeMap.get(plane);
+    holdingPointWaitingTimeMap.remove(plane);
+    return ret;
+  }
+
+  public void unregisterFinishedDeparture(Airplane plane) {
+    departing.remove(q -> q.plane.equals(plane));
+    holdingPointWaitingTimeMap.remove(plane);
+  }
+
+  public void unregisterDeletedPlane(Airplane plane) {
+    holdingPointNotReady.tryRemove(plane);
+    holdingPointReady.tryRemove(plane);
+    departing.remove(q -> q.plane.equals(plane));
+    holdingPointWaitingTimeMap.remove(plane);
+  }
+
+  public int getNumberOfPlanesAtHoldingPoint() {
+    return this.holdingPointNotReady.size() + this.holdingPointReady.size();
+  }
+
+  public boolean isRunwayEmpty(Runway runway) {
+    IList<TOI> tois =
+        this.departing.where(q->runway.getThresholds().contains(q.threshold));
+    tois.remove(q->q.plane.getState() != Airplane.State.takeOffRoll);
+    return tois.isEmpty();
+  }
+
+  public Airplane tryGetPlaneReadyForTakeOff() {
+    Airplane ret = holdingPointReady.tryGet(0);
     return ret;
   }
 }
