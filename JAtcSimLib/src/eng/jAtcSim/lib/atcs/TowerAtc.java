@@ -32,6 +32,8 @@ import eng.jAtcSim.lib.world.Runway;
 import eng.jAtcSim.lib.world.RunwayConfiguration;
 import eng.jAtcSim.lib.world.RunwayThreshold;
 
+import java.util.Map;
+
 public class TowerAtc extends ComputerAtc {
 
   public static class RunwayCheck {
@@ -607,14 +609,26 @@ public class TowerAtc extends ComputerAtc {
   }
 
   private void restrictToRunwayAvailableForTakeOff(IList<RunwayThreshold> rts, Airplane toPlane) {
-    for (RunwayThreshold threshold : inUseInfo.current.getDepartingThresholds()) {
-      Airplane a = takeOffInfos.tryGetAirplaneForThreshold(threshold);
-      if (a != null && !Separation.isSafeSeparation(a, toPlane, 120))
-        return; // no safe separation from someone, no t-o
+    rts.remove(q -> departureManager.getLastDepartureTime(q).addSeconds(60).isAfterOrEq(Acc.now()));
+
+    if (rts.isEmpty()) return;
+
+    double toPlaneClearAltitude = toPlane.getAltitude() + 1500;
+
+    IList<RunwayThreshold> toRem = new EList<>();
+    for (RunwayThreshold rt : rts) {
+      Airplane lastDep = departureManager.getLastDeparturePlane(rt);
+      if (lastDep.getAltitude() < toPlaneClearAltitude) {
+        double dist = Coordinates.getDistanceInNM(rt.getCoordinate(), lastDep.getCoordinate());
+        if (dist < 5) {
+          toRem.add(rt);
+        }
+      } else if (!Separation.isSafeSeparation(lastDep, toPlane, (int)rt.getCourse(), 120)){
+        toRem.add(rt);
+      }
     }
-
-
-    !takeOffInfos.containsKey(q) || takeOffInfos.get(q).takeOffTime.addSeconds(60).isBeforeOrEq(Acc.now())
+    rts.remove(toRem);
+    toRem.clear();
   }
 
   private void tryTakeOffPlaneNew() {
@@ -631,25 +645,6 @@ public class TowerAtc extends ComputerAtc {
 
     if (rts.isEmpty())
       return; // no available rwy
-
-//    // first check separation from all departures
-//    // if no sep, no t-o
-//    for (RunwayThreshold threshold : inUseInfo.current) {
-//      Airplane a = takeOffInfos.tryGetAirplaneForThreshold(threshold);
-//      if (a != null && !Separation.isSafeSeparation(a, toReadyPlane, 120))
-//        return; // no safe separation from someone, no t-o
-//    }
-//
-//    // gets available thresholds
-//    // first getAndElapse those whose are not under maintenance
-//    IList<RunwayThreshold> availableThresholds = inUseInfo.current.where(q -> runwayChecks.get(q.getParent()).isActive() == false);
-//    // then getAndElapse those which has no close landing
-//    availableThresholds = availableThresholds.where(q -> closestLandingPlaneDistance(q) > 2.5);
-//    // then getAndElapse those which has departed at least 1 minute before
-//    availableThresholds = availableThresholds.where(
-//        q -> !takeOffInfos.containsKey(q) || takeOffInfos.get(q).takeOffTime.addSeconds(60).isBeforeOrEq(Acc.now()));
-//    // kick out if no runway left
-//    if (availableThresholds.isEmpty()) return;
 
     RunwayThreshold availableThreshold = rts.getRandom();
     // plane has SID for different threshold
@@ -741,108 +736,18 @@ class TakeOffInfo {
   }
 }
 
-class TakeOffInfos extends EMap<RunwayThreshold, TakeOffInfo> {
-
-  private final static int[][] sepDistanceNm = new int[][]{
-      new int[]{0, 0, 0, 0}, // A
-      new int[]{4, 3, 0, 0}, // B
-      new int[]{5, 3, 3, 0}, // C
-      new int[]{6, 6, 5, 4}}; // D
-  private final static int[][] sepTimeSeconds = new int[][]{
-      new int[]{120, 0, 0, 0}, // A
-      new int[]{120, 120, 0, 0}, // B
-      new int[]{120, 120, 120, 0}, // C
-      new int[]{180, 180, 180, 120}}; // D
-
-  private static int c2i(char c) {
-    switch (c) {
-      case 'A':
-        return 0;
-      case 'B':
-        return 1;
-      case 'C':
-        return 2;
-      case 'D':
-        return 3;
-      default:
-        throw new UnsupportedOperationException("Unknown plane type category " + c);
-    }
-  }
-
-  public Airplane tryGetAirplaneForThreshold(RunwayThreshold rt) {
-    TakeOffInfo toi = this.tryGet(rt);
-    if (toi == null) return null;
-    Airplane ret = toi.airplane;
-    return ret;
-  }
-
-  public boolean isLatestDepartureBelow(IList<RunwayThreshold> checkedThresholds, double altitudeInFt) {
-    boolean ret = false;
-
-    for (RunwayThreshold threshold : checkedThresholds) {
-      TakeOffInfo toi = this.tryGet(threshold);
-      if (toi == null) continue; // no mapping for threshold yet
-      if (toi.airplane.getAltitude() < altitudeInFt) {
-        ret = true;
-        break;
-      }
-    }
-
-    return ret;
-  }
-
-  public boolean isLatestDepartureSeparated(IList<RunwayThreshold> current, char planeCategory) {
-    boolean ret = true;
-    for (RunwayThreshold threshold : current) {
-      TakeOffInfo toi = this.tryGet(threshold);
-      if (toi == null) continue;
-      int[] separationIndices = getSeparationIndices(toi.airplane.getType().category, planeCategory);
-
-      if (!isTimeSeparated(separationIndices, toi) ||
-          !isDistanceSeparated(separationIndices, toi, threshold)) {
-        ret = false;
-        break;
-      }
-    }
-
-    return ret;
-  }
-
-  private boolean isDistanceSeparated(int[] separationIndices, TakeOffInfo toi, RunwayThreshold threshold) {
-    int minDistance = sepDistanceNm[separationIndices[0]][separationIndices[1]];
-    double curDist = Coordinates.getDistanceInNM(toi.airplane.getCoordinate(), threshold.getCoordinate());
-    boolean ret = curDist > minDistance;
-    return ret;
-  }
-
-  private boolean isTimeSeparated(int[] separationIndices, TakeOffInfo toi) {
-    int minSeconds = sepTimeSeconds[separationIndices[0]][separationIndices[1]];
-    ETime minTime = toi.takeOffTime.addSeconds(minSeconds);
-    boolean ret = minTime.isBeforeOrEq(Acc.now());
-    return ret;
-  }
-
-  private int[] getSeparationIndices(char firstCategory, char secondCategory) {
-    int[] ret = new int[2];
-    ret[0] = c2i(firstCategory);
-    ret[1] = c2i(secondCategory);
-    return ret;
-  }
-}
-
 class Separation {
   private static final int SAFE_SEPARATION_ALTITUDE = 2000;
   private static final double SAFE_SEPARATION_DISTANCE = 5.5;
 
-  public static boolean isSafeSeparation(Airplane a, Airplane b, int safeSeparationSeconds) {
-    if (a == null) return true;
-    int aSeconds = getSecondsInFlight(a, safeSeparationSeconds);
-    int bSeconds = getSecondsInFlight(b, safeSeparationSeconds);
-    Coordinate aTargetPosition = getPosition(a, aSeconds, (int) a.getHeading());
-    Coordinate bTargetPosition = getPosition(b, bSeconds, (int) a.getHeading()); // a.getHeading() is correct as we need both planes to estimate same headings
+  public static boolean isSafeSeparation(Airplane flyingPlane, Airplane readyPlane, int readyPlaneRunwayHeading, int safeSeparationSeconds) {
+    int aSeconds = getSecondsInFlight(flyingPlane, safeSeparationSeconds);
+    int bSeconds = getSecondsInFlight(readyPlane, safeSeparationSeconds);
+    Coordinate aTargetPosition = getPosition(flyingPlane, aSeconds, (int) flyingPlane.getHeading());
+    Coordinate bTargetPosition = getPosition(readyPlane, bSeconds, readyPlaneRunwayHeading); // flyingPLane.getHeading() is correct as we need both planes to estimate same headings
     double dist = Coordinates.getDistanceInNM(aTargetPosition, bTargetPosition);
-    int aTargetAlt = getAltitude(a, aSeconds, true);
-    int bTargetAlt = getAltitude(b, bSeconds, false);
+    int aTargetAlt = getAltitude(flyingPlane, aSeconds, true);
+    int bTargetAlt = getAltitude(readyPlane, bSeconds, false);
     double alt = aTargetAlt - bTargetAlt;
     if (dist > SAFE_SEPARATION_DISTANCE)
       return true;
@@ -947,13 +852,36 @@ class DepartureManager {
 
   public boolean isRunwayEmpty(Runway runway) {
     IList<TOI> tois =
-        this.departing.where(q->runway.getThresholds().contains(q.threshold));
-    tois.remove(q->q.plane.getState() != Airplane.State.takeOffRoll);
+        this.departing.where(q -> runway.getThresholds().contains(q.threshold));
+    tois.remove(q -> q.plane.getState() != Airplane.State.takeOffRoll);
     return tois.isEmpty();
   }
 
   public Airplane tryGetPlaneReadyForTakeOff() {
     Airplane ret = holdingPointReady.tryGet(0);
     return ret;
+  }
+
+
+
+  public ETime getLastDepartureTime(RunwayThreshold rt) {
+    ETime ret = this.departing
+        .where(q -> q.threshold.equals(rt))
+        .max2(q -> q.time, new ETime(0));
+    return ret;
+  }
+
+  public Airplane getLastDeparturePlane(RunwayThreshold rt) {
+    TOI tmp = null;
+    for (TOI toi : this.departing.where(q -> q.threshold.equals(rt))) {
+      if (tmp == null)
+        tmp = toi;
+      else if (toi.time.isBefore(tmp.time))
+        tmp = toi;
+    }
+    if (tmp == null)
+      return null;
+    else
+      return tmp.plane;
   }
 }
