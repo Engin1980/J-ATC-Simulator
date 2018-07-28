@@ -397,7 +397,7 @@ public class Pilot {
             super.setState(Airplane.State.arrivingLow);
           else {
             double distToFaf = Acc.thresholds(TowerAtc.eDirection.arrivals)
-                .min(q -> Coordinates.getDistanceInNM(parent.getCoordinate(), q.getEstimatedFafPoint()));
+                .minDouble(q -> Coordinates.getDistanceInNM(parent.getCoordinate(), q.getEstimatedFafPoint()));
             if (distToFaf < FAF_SPEED_DOWN_DISTANCE_IN_NM) {
               super.setState(Airplane.State.arrivingCloseFaf);
             }
@@ -406,7 +406,7 @@ public class Pilot {
         case arrivingLow:
           // TODO this will not work for runways with FAF above FL100
           double distToFaf = Acc.thresholds(TowerAtc.eDirection.arrivals)
-              .min(q -> Coordinates.getDistanceInNM(parent.getCoordinate(), q.getEstimatedFafPoint()));
+              .minDouble(q -> Coordinates.getDistanceInNM(parent.getCoordinate(), q.getEstimatedFafPoint()));
           if (distToFaf < FAF_SPEED_DOWN_DISTANCE_IN_NM) {
             super.setState(Airplane.State.arrivingCloseFaf);
           }

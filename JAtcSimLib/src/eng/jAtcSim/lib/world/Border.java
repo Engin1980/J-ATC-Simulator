@@ -120,10 +120,10 @@ public class Border {
   public void bind() {
     expandArcsToPoints();
 
-    this.globalMinLat = exactPoints.min(q -> q.getCoordinate().getLatitude().get());
-    this.globalMaxLat = exactPoints.max(q -> q.getCoordinate().getLatitude().get());
-    this.globalMinLng = exactPoints.min(q -> q.getCoordinate().getLongitude().get());
-    this.globalMaxLng = exactPoints.max(q -> q.getCoordinate().getLongitude().get());
+    this.globalMinLat = exactPoints.minDouble(q -> q.getCoordinate().getLatitude().get());
+    this.globalMaxLat = exactPoints.maxDouble(q -> q.getCoordinate().getLatitude().get());
+    this.globalMinLng = exactPoints.minDouble(q -> q.getCoordinate().getLongitude().get());
+    this.globalMaxLng = exactPoints.maxDouble(q -> q.getCoordinate().getLongitude().get());
   }
 
   public boolean isIn(Coordinate c) {
@@ -184,10 +184,10 @@ public class Border {
 
   private void generateLabelCoordinate() {
     IList<BorderExactPoint> tmp = points.where(q -> q instanceof BorderExactPoint).select(q -> (BorderExactPoint) q);
-    double latMin = tmp.min(q -> q.getCoordinate().getLatitude().get());
-    double latMax = tmp.max(q -> q.getCoordinate().getLatitude().get());
-    double lngMin = tmp.min(q -> q.getCoordinate().getLongitude().get());
-    double lngMax = tmp.max(q -> q.getCoordinate().getLongitude().get());
+    double latMin = tmp.minDouble(q -> q.getCoordinate().getLatitude().get());
+    double latMax = tmp.maxDouble(q -> q.getCoordinate().getLatitude().get());
+    double lngMin = tmp.minDouble(q -> q.getCoordinate().getLongitude().get());
+    double lngMax = tmp.maxDouble(q -> q.getCoordinate().getLongitude().get());
 
     double lat = (latMax + latMin) / 2;
     double lng = (lngMax + lngMin) / 2;
