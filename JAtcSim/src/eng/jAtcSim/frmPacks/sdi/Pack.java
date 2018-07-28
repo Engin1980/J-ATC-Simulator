@@ -117,7 +117,8 @@ public class Pack extends eng.jAtcSim.frmPacks.Pack {
       Path p = Paths.get(appSettings.autosave.path.toAbsolutePath().toString(), fileName);
 
       IMap<String, Object> tmp = this.getDataToStore();
-      this.getGame().save(p.toAbsolutePath().toString(), tmp);
+      System.out.println("### saving suspended here");
+      // this.getGame().save(p.toAbsolutePath().toString(), tmp);
     }
   }
 }

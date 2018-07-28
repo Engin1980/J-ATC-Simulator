@@ -10,6 +10,7 @@ import eng.eSystem.collections.*;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.events.EventSimple;
 import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.xmlSerialization.XmlIgnore;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.AirplaneList;
@@ -310,8 +311,15 @@ public class Simulation {
     return stats;
   }
 
-  public IReadOnlyList<RunwayThreshold> getActiveRunwayThresholdsArrivalsAndDeparturesTogether() {
-    return Acc.thresholds(TowerAtc.eDirection.departures).union(Acc.thresholds(TowerAtc.eDirection.arrivals));
+  public IReadOnlyList<RunwayThreshold> getActiveRunwayThresholds(TowerAtc.eDirection direction) {
+    switch (direction){
+      case arrivals:
+        return Acc.thresholds(TowerAtc.eDirection.arrivals);
+      case departures:
+        return Acc.thresholds(TowerAtc.eDirection.departures);
+      default:
+        throw new EEnumValueUnsupportedException(direction);
+    }
   }
 
   public void sendTextMessageForUser(String text) {

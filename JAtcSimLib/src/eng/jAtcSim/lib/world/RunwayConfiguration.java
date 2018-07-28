@@ -118,12 +118,12 @@ public class RunwayConfiguration {
         (float) a.getThresholdA().getCoordinate().getLatitude().get(),
         (float) a.getThresholdA().getCoordinate().getLongitude().get(),
         (float) a.getThresholdB().getCoordinate().getLatitude().get(),
-        (float) a.getThresholdA().getCoordinate().getLongitude().get());
+        (float) a.getThresholdB().getCoordinate().getLongitude().get());
     Line2D lineB = new Line2D.Float(
         (float) b.getThresholdA().getCoordinate().getLatitude().get(),
         (float) b.getThresholdA().getCoordinate().getLongitude().get(),
         (float) b.getThresholdB().getCoordinate().getLatitude().get(),
-        (float) b.getThresholdA().getCoordinate().getLongitude().get());
+        (float) b.getThresholdB().getCoordinate().getLongitude().get());
     boolean ret = lineA.intersectsLine(lineB);
     return ret;
   }
@@ -139,8 +139,9 @@ public class RunwayConfiguration {
   public String toLineInfoString() {
     EStringBuilder sb = new EStringBuilder();
     IList<String> deps = getDepartingThresholds().select(q -> q.getName() + "(DEP)");
-    IList<String> arrs = getDepartingThresholds().select(q -> q.getName() + "(ARR)");
+    IList<String> arrs = getArrivingThresholds().select(q -> q.getName() + "(ARR)");
     sb.appendItems(deps, ", ");
+    sb.append(", ");
     sb.appendItems(arrs, ", ");
     return sb.toString();
   }

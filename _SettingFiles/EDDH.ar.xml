@@ -181,7 +181,7 @@
       <runwayConfigurations>
         <configuration windSpeedTo="10">
           <arrivals>23</arrivals>
-          <departures>15</departures>
+          <departures>33</departures>
         </configuration>
       </runwayConfigurations>
       <holds>

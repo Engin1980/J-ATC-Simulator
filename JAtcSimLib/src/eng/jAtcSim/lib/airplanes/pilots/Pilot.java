@@ -338,6 +338,8 @@ public class Pilot {
 
   }
 
+  public static final double SPEED_TO_OVER_NAVAID_DISTANCE_MULTIPLIER = 0.004;
+
   abstract class BasicBehavior extends DivertableBehavior {
     private boolean clearanceLimitWarningSent = false;
 
@@ -347,12 +349,15 @@ public class Pilot {
     public void fly() {
       if (targetCoordinate != null) {
 
+        double warningDistance = Pilot.this.parent.getSpeed() * .02;
+        double overNavaidDistance = Pilot.this.parent.getSpeed() * SPEED_TO_OVER_NAVAID_DISTANCE_MULTIPLIER;
+
         double dist = Coordinates.getDistanceInNM(parent.getCoordinate(), targetCoordinate);
         System.out.println(this.airplane.getCallsign() + " - to target: " + dist);
-        if (!clearanceLimitWarningSent && dist < 5 && !pilot.afterCommands.hasLateralDirectionAfterCoordinate(targetCoordinate)) {
+        if (!clearanceLimitWarningSent && dist < warningDistance && !pilot.afterCommands.hasLateralDirectionAfterCoordinate(targetCoordinate)) {
           say(new PassingClearanceLimitNotification());
           clearanceLimitWarningSent = true;
-        } else if (dist < 1) {
+        } else if (dist < overNavaidDistance) {
           if (parent.isArrival() == false) {
             Navaid n = Pilot.this.assignedRoute.getMainNavaid();
             dist = Coordinates.getDistanceInNM(parent.getCoordinate(), n.getCoordinate());

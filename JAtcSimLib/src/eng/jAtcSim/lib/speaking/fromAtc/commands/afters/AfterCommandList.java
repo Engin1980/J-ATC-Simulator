@@ -11,6 +11,7 @@ import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.utilites.ConversionUtils;
 import eng.jAtcSim.lib.airplanes.Airplane;
+import eng.jAtcSim.lib.airplanes.pilots.Pilot;
 import eng.jAtcSim.lib.coordinates.Coordinate;
 import eng.jAtcSim.lib.coordinates.Coordinates;
 import eng.jAtcSim.lib.global.Headings;
@@ -77,7 +78,8 @@ public class AfterCommandList {
             = Coordinates.getDistanceInNM(
             ((AfterNavaidCommand) item.antecedent).getNavaid().getCoordinate(),
             plane.getCoordinate());
-        ret = (dist < 1.5);
+        double overDist = plane.getSpeed() * Pilot.SPEED_TO_OVER_NAVAID_DISTANCE_MULTIPLIER;
+        ret = (dist < overDist);
       }
     } else if (item.antecedent instanceof AfterHeadingCommand) {
       AfterHeadingCommand anc = (AfterHeadingCommand) item.antecedent;

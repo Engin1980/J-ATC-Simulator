@@ -732,12 +732,19 @@ public class Radar {
   }
 
   private void drawRoutes(boolean drawArrivalRoutes, boolean drawDepartureRoutes) {
-    for (RunwayThreshold threshold : simulation.getActiveRunwayThresholdsArrivalsAndDeparturesTogether()) {
-      for (Route r : threshold.getRoutes()) {
-        if (drawArrivalRoutes && (r.getType() == Route.eType.star || r.getType() == Route.eType.transition)) {
-          if (displaySettings.isStarVisible()) drawStar(r.getNavaids());
-        } else if (drawDepartureRoutes && r.getType() == Route.eType.sid) {
-          if (displaySettings.isSidVisible()) drawSid(r.getNavaids());
+    if (drawArrivalRoutes && displaySettings.isStarVisible()) {
+      for (RunwayThreshold rt : simulation.getActiveRunwayThresholds(TowerAtc.eDirection.arrivals)) {
+        for (Route r : rt.getRoutes()) {
+          if (r.getType() == Route.eType.star || r.getType() == Route.eType.transition)
+            drawStar(r.getNavaids());
+        }
+      }
+    }
+    if (drawDepartureRoutes && displaySettings.isSidVisible()) {
+      for (RunwayThreshold rt : simulation.getActiveRunwayThresholds(TowerAtc.eDirection.departures)) {
+        for (Route r : rt.getRoutes()) {
+          if (r.getType() == Route.eType.sid)
+            drawSid(r.getParent().getCoordinate(), r.getNavaids());
         }
       }
     }
@@ -754,8 +761,14 @@ public class Radar {
     }
   }
 
-  private void drawSid(IReadOnlyList<Navaid> navaidPoints) {
+  private void drawSid(Coordinate thresholdCoordinate, IReadOnlyList<Navaid> navaidPoints) {
     RadarStyleSettings.ColorWidthSettings sett = styleSettings.sid;
+    if (navaidPoints.isEmpty() == false)
+      tl.drawLine(
+          thresholdCoordinate,
+          navaidPoints.get(0).getCoordinate(),
+          sett.getColor(),
+          sett.getWidth());
     for (int i = 0; i < navaidPoints.size() - 1; i++) {
       tl.drawLine(
           navaidPoints.get(i).getCoordinate(),
@@ -766,7 +779,7 @@ public class Radar {
   }
 
   private void drawApproaches() {
-    for (RunwayThreshold threshold : simulation.getActiveRunwayThresholdsArrivalsAndDeparturesTogether()) {
+    for (RunwayThreshold threshold : simulation.getActiveRunwayThresholds(TowerAtc.eDirection.arrivals)) {
       Approach a = threshold.getHighestApproach();
       if (a != null) {
         drawApproach(a);
