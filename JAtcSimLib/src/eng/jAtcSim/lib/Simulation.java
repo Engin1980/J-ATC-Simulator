@@ -310,8 +310,8 @@ public class Simulation {
     return stats;
   }
 
-  public IList<RunwayThreshold> getActiveRunwayThresholds() {
-    return Acc.thresholds();
+  public IReadOnlyList<RunwayThreshold> getActiveRunwayThresholdsArrivalsAndDeparturesTogether() {
+    return Acc.thresholds(TowerAtc.eDirection.departures).union(Acc.thresholds(TowerAtc.eDirection.arrivals));
   }
 
   public void sendTextMessageForUser(String text) {

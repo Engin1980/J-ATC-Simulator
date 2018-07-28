@@ -82,8 +82,8 @@ public class Acc {
     return sim.getWeather();
   }
 
-  public static IList<RunwayThreshold> thresholds() {
-    return atcTwr().getRunwayThresholdsInUse();
+  public static IReadOnlyList<RunwayThreshold> thresholds(TowerAtc.eDirection direction) {
+    return atcTwr().getRunwayThresholdsInUse(direction);
   }
 
   public static Area area() {

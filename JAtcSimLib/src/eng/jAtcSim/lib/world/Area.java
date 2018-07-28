@@ -62,23 +62,23 @@ public class Area {
   public void checkForDuplicits() {
     ISet<String> set;
 
-    set = this.airports.getDuplicateItems(q -> q.getIcao()).select(q -> q.getIcao()).first(5);
+    set = this.airports.getDuplicateItems(q -> q.getIcao()).select(q -> q.getIcao()).selectCount(5);
     tryFailDuplicits("Airports", set);
 
-    set = this.navaids.getDuplicateItems(q -> q.getName()).select(q -> q.getName()).first(5);
+    set = this.navaids.getDuplicateItems(q -> q.getName()).select(q -> q.getName()).selectCount(5);
     tryFailDuplicits("Navaids", set);
 
     for (Airport airport : this.airports) {
-      set = airport.getRunways().getDuplicateItems(q -> q.getName()).select(q -> q.getName()).first(3);
+      set = airport.getRunways().getDuplicateItems(q -> q.getName()).select(q -> q.getName()).selectCount(3);
       tryFailDuplicits("Active runways of " + airport.getName(), set);
 
-      set = airport.getInactiveRunways().getDuplicateItems(q -> q.getName()).select(q -> q.getName()).first(3);
+      set = airport.getInactiveRunways().getDuplicateItems(q -> q.getName()).select(q -> q.getName()).selectCount(3);
       tryFailDuplicits("Inactive runways of " + airport.getName(), set);
 
-      set = airport.getAtcTemplates().getDuplicateItems(q -> q.getName()).select(q -> q.getName()).first(3);
+      set = airport.getAtcTemplates().getDuplicateItems(q -> q.getName()).select(q -> q.getName()).selectCount(3);
       tryFailDuplicits("ATC templates of " + airport.getName(), set);
 
-      set = airport.getHolds().getDuplicateItems(q -> q.getNavaid().getName()).select(q -> q.getNavaid().getName()).first(3);
+      set = airport.getHolds().getDuplicateItems(q -> q.getNavaid().getName()).select(q -> q.getNavaid().getName()).selectCount(3);
       tryFailDuplicits("Published holds of " + airport.getName(), set);
 
       for (Runway runway : airport.getRunways()) {

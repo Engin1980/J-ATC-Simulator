@@ -2,6 +2,7 @@ package eng.jAtcSim.lib.atcs;
 
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
+import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.eXml.XElement;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
@@ -224,11 +225,11 @@ public class CenterAtc extends ComputerAtc {
 
     IList<Route> rts = new EList<>();
 
-    IList<RunwayThreshold> thresholds;
+    IReadOnlyList<RunwayThreshold> thresholds;
     // if is arrival, scheduled thresholds are taken into account
-    thresholds = Acc.atcTwr().getRunwayThresholdsScheduled();
+    thresholds = Acc.atcTwr().getRunwayThresholdsScheduled(TowerAtc.eDirection.arrivals);
     if (thresholds.isEmpty())
-      thresholds = Acc.atcTwr().getRunwayThresholdsInUse();
+      thresholds = Acc.atcTwr().getRunwayThresholdsInUse(TowerAtc.eDirection.arrivals);
     for (RunwayThreshold threshold : thresholds) {
       rts.add(threshold.getRoutes());
     }

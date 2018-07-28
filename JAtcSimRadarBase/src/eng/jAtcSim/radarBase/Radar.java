@@ -10,6 +10,7 @@ import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.Simulation;
 import eng.jAtcSim.lib.airplanes.*;
 import eng.jAtcSim.lib.atcs.Atc;
+import eng.jAtcSim.lib.atcs.TowerAtc;
 import eng.jAtcSim.lib.coordinates.Coordinate;
 import eng.jAtcSim.lib.coordinates.Coordinates;
 import eng.jAtcSim.lib.global.Headings;
@@ -21,10 +22,8 @@ import eng.jAtcSim.lib.speaking.ISpeech;
 import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.Rejection;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtc2Atc;
-import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.atc2atc.PlaneSwitchMessage;
 import eng.jAtcSim.lib.speaking.fromAtc.atc2atc.StringResponse;
-import eng.jAtcSim.lib.speaking.fromAtc.commands.ProceedDirectCommand;
 import eng.jAtcSim.lib.world.*;
 import eng.jAtcSim.lib.world.approaches.Approach;
 import eng.jAtcSim.radarBase.global.*;
@@ -483,7 +482,10 @@ public class Radar {
       this.navaids.add(ndi);
     }
 
-    for (RunwayThreshold threshold : Acc.atcTwr().getRunwayThresholdsInUse()) {
+    IReadOnlyList<RunwayThreshold> rts =
+        Acc.atcTwr().getRunwayThresholdsInUse(TowerAtc.eDirection.arrivals)
+            .union(Acc.atcTwr().getRunwayThresholdsInUse((TowerAtc.eDirection.departures)));
+    for (RunwayThreshold threshold : rts) {
       for (Route route : threshold.getRoutes()) {
         for (Navaid navaid : route.getNavaids()) {
           NavaidDisplayInfo ndi = this.navaids.getByNavaid(navaid);
@@ -730,7 +732,7 @@ public class Radar {
   }
 
   private void drawRoutes(boolean drawArrivalRoutes, boolean drawDepartureRoutes) {
-    for (RunwayThreshold threshold : simulation.getActiveRunwayThresholds()) {
+    for (RunwayThreshold threshold : simulation.getActiveRunwayThresholdsArrivalsAndDeparturesTogether()) {
       for (Route r : threshold.getRoutes()) {
         if (drawArrivalRoutes && (r.getType() == Route.eType.star || r.getType() == Route.eType.transition)) {
           if (displaySettings.isStarVisible()) drawStar(r.getNavaids());
@@ -764,7 +766,7 @@ public class Radar {
   }
 
   private void drawApproaches() {
-    for (RunwayThreshold threshold : simulation.getActiveRunwayThresholds()) {
+    for (RunwayThreshold threshold : simulation.getActiveRunwayThresholdsArrivalsAndDeparturesTogether()) {
       Approach a = threshold.getHighestApproach();
       if (a != null) {
         drawApproach(a);
