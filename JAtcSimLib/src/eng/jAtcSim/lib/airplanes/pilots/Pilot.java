@@ -1346,10 +1346,13 @@ public class Pilot {
       CommandSource cs, Airplane.Airplane4Command plane) {
 
     ConfirmationResult cres = ApplicationManager.confirm(plane, cmd, cs == CommandSource.atc, true);
+    System.out.println("Confirmred result " + cres);
     if (cres.rejection != null) {
       // command was rejected
+      System.out.println("rejected");
       say(cres.rejection);
     } else {
+      System.out.println("after command affecting");
       affectAfterCommands(cmd, cs);
       // new commands from atc when needs to be confirmed, are confirmed
       if (cs == CommandSource.atc && cres.confirmation != null)
@@ -1359,6 +1362,7 @@ public class Pilot {
       assert ares.rejection == null : "This should not be rejected as was confirmed a few moments before.";
       ares.informations.forEach(q -> say(q));
     }
+    System.out.println("resulting removing");
 
     queue.removeAt(0);
   }
