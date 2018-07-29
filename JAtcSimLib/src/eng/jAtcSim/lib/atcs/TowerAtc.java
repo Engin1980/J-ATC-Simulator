@@ -260,7 +260,7 @@ public class TowerAtc extends ComputerAtc {
   protected void _save(XElement elm) {
     Acc.log().writeLine(ApplicationLog.eType.warning, "Not implemented saving of TWR !!!");
     super._save(elm);
-//    LoadSave.saveField(elm, this, "takeOffInfos");
+    LoadSave.saveField(elm, this, "departureManager");
     LoadSave.saveField(elm, this, "landingPlanesList");
     LoadSave.saveField(elm, this, "goAroundedPlanesToSwitchList");
     LoadSave.saveField(elm, this, "holdingPointNotReadyPlanesList");
@@ -275,7 +275,7 @@ public class TowerAtc extends ComputerAtc {
   @Override
   protected void _load(XElement elm) {
     super._load(elm);
-//    LoadSave.loadField(elm, this, "takeOffInfos");
+    LoadSave.loadField(elm, this, "departureManager");
     LoadSave.loadField(elm, this, "landingPlanesList");
     LoadSave.loadField(elm, this, "goAroundedPlanesToSwitchList");
     LoadSave.loadField(elm, this, "holdingPointNotReadyPlanesList");
