@@ -20,6 +20,10 @@ public class RunwayConfiguration {
   private IList<RunwayThreshold> departingThresholds;
   private IList<ISet<RunwayThreshold>> crossedThresholdSets = null;
 
+  private RunwayConfiguration(){
+
+  }
+
   public RunwayConfiguration(int windFrom, int windTo, int windSpeedFrom, int windSpeedTo, IList<String> arrivals, IList<String> departures) {
     this.windFrom = windFrom;
     this.windTo = windTo;

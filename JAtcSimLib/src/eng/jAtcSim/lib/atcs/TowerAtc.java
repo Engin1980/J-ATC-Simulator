@@ -263,10 +263,6 @@ public class TowerAtc extends ComputerAtc {
     LoadSave.saveField(elm, this, "departureManager");
     LoadSave.saveField(elm, this, "landingPlanesList");
     LoadSave.saveField(elm, this, "goAroundedPlanesToSwitchList");
-    LoadSave.saveField(elm, this, "holdingPointNotReadyPlanesList");
-    LoadSave.saveField(elm, this, "holdingPointReadyPlanesList");
-    LoadSave.saveField(elm, this, "departingPlanesList");
-    LoadSave.saveField(elm, this, "holdingPointWaitingTimeMap");
     LoadSave.saveField(elm, this, "inUseInfo");
     LoadSave.saveField(elm, this, "runwayChecks");
     LoadSave.saveField(elm, this, "isUpdatedWeather");
@@ -278,10 +274,6 @@ public class TowerAtc extends ComputerAtc {
     LoadSave.loadField(elm, this, "departureManager");
     LoadSave.loadField(elm, this, "landingPlanesList");
     LoadSave.loadField(elm, this, "goAroundedPlanesToSwitchList");
-    LoadSave.loadField(elm, this, "holdingPointNotReadyPlanesList");
-    LoadSave.loadField(elm, this, "holdingPointReadyPlanesList");
-    LoadSave.loadField(elm, this, "departingPlanesList");
-    LoadSave.loadField(elm, this, "holdingPointWaitingTimeMap");
     LoadSave.loadField(elm, this, "inUseInfo");
     LoadSave.loadField(elm, this, "runwayChecks");
     LoadSave.loadField(elm, this, "isUpdatedWeather");
