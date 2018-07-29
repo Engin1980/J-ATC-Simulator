@@ -483,10 +483,17 @@ public class Radar {
     }
 
     IReadOnlyList<RunwayThreshold> rts =
-        Acc.atcTwr().getRunwayThresholdsInUse(TowerAtc.eDirection.arrivals)
-            .union(Acc.atcTwr().getRunwayThresholdsInUse((TowerAtc.eDirection.departures)));
-    for (RunwayThreshold threshold : rts) {
-      for (Route route : threshold.getRoutes()) {
+        Acc.atcTwr().getRunwayThresholdsInUse(TowerAtc.eDirection.arrivals);
+    for (RunwayThreshold rt : rts) {
+      for (Route route : rt.getRoutes().where(q->q.getType() != Route.eType.sid)) {
+        for (Navaid navaid : route.getNavaids()) {
+          NavaidDisplayInfo ndi = this.navaids.getByNavaid(navaid);
+          ndi.isRoute = true;
+        }
+      }
+    }
+    for (RunwayThreshold rt : rts) {
+      for (Route route : rt.getRoutes().where(q->q.getType() == Route.eType.sid)) {
         for (Navaid navaid : route.getNavaids()) {
           NavaidDisplayInfo ndi = this.navaids.getByNavaid(navaid);
           ndi.isRoute = true;
