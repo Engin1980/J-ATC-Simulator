@@ -636,7 +636,7 @@ class ButtonBinding {
     }
     boolean val;
     try {
-      val = (boolean) mi.invoke(target, null);
+      val = (boolean) mi.invoke(target, (Object[]) null);
     } catch (IllegalAccessException | InvocationTargetException e) {
       throw new EApplicationException("Unable to read property is" + propertyName + " over " + target + ".", e);
     }
