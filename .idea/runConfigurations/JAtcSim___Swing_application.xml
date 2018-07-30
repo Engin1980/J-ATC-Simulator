@@ -1,0 +1,11 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="JAtcSim - Swing application" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="eng.jAtcSim.JAtcSim" />
+    <module name="JAtcSim" />
+    <option name="VM_PARAMETERS" value="-ea" />
+    <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
+    <method>
+      <option name="RunConfigurationTask" enabled="true" run_configuration_name="Update jar libs" run_configuration_type="BatchConfigurationType" />
+    </method>
+  </configuration>
+</component>

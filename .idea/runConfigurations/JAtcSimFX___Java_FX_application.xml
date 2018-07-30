@@ -1,0 +1,8 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="JAtcSimFX - Java FX application" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="Program" />
+    <module name="JAtcSimFX" />
+    <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
+    <method />
+  </configuration>
+</component>

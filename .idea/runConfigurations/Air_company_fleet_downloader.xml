@@ -1,0 +1,8 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Air-company fleet downloader" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="eng.airCompanyFleetDownloader.Program" />
+    <module name="AirCompany Fleet Downloader" />
+    <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
+    <method />
+  </configuration>
+</component>

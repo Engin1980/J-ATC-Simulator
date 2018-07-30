@@ -1,0 +1,8 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="JAtc Images To Video Converter" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="eng.jAtcImagesToVideoConverter.JAtcImagesToVideoConverter" />
+    <module name="JAtcImagesToVideoConverter" />
+    <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$" />
+    <method />
+  </configuration>
+</component>
