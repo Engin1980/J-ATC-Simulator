@@ -33,6 +33,7 @@ import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeHeadingCommand;
 import eng.jAtcSim.lib.world.Navaid;
 import eng.jAtcSim.lib.world.Route;
 import eng.jAtcSim.lib.world.RunwayThreshold;
+import eng.jAtcSim.lib.world.approaches.Approach;
 import eng.jAtcSim.lib.world.approaches.CurrentApproachInfo;
 
 import java.util.ArrayList;
@@ -770,7 +771,12 @@ public class Airplane implements IMessageParticipant {
   }
 
   public RunwayThreshold getAssignedRunwayThreshold() {
-    RunwayThreshold ret = pilot.tryGetAssignedApproach().getThreshold();
+    CurrentApproachInfo cai = pilot.tryGetAssignedApproach();
+    if (cai == null)
+    {
+      throw new EApplicationException("Unable to find approach for plane " + this.getCallsign().toString());
+    }
+    RunwayThreshold ret = cai.getThreshold();
     return ret;
   }
 
