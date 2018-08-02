@@ -365,6 +365,7 @@ public class Pilot {
               int rad = (int) Coordinates.getBearing(Acc.airport().getLocation(), n.getCoordinate());
               rad = rad % 90;
               Pilot.this.setHoldBehavior(n, rad, true);
+              return;
             }
           } else {
             targetCoordinate = null;

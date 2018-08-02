@@ -106,6 +106,7 @@ public class TowerAtc extends ComputerAtc {
     departures,
     arrivals
   }
+
   private static final int MAXIMAL_SPEED_FOR_PREFERRED_RUNWAY = 5;
   private static final double MAXIMAL_ACCEPT_DISTANCE_IN_NM = 15;
   private final DepartureManager departureManager = new DepartureManager();
@@ -260,8 +261,7 @@ public class TowerAtc extends ComputerAtc {
     Acc.log().writeLine(ApplicationLog.eType.warning, "Not implemented saving of TWR !!!");
     super._save(elm);
     LoadSave.saveField(elm, this, "departureManager");
-    LoadSave.saveField(elm, this, "landingPlanesList");
-    LoadSave.saveField(elm, this, "goAroundedPlanesToSwitchList");
+    LoadSave.saveField(elm, this, "arrivalManager");
     LoadSave.saveField(elm, this, "inUseInfo");
     LoadSave.saveField(elm, this, "runwayChecks");
     LoadSave.saveField(elm, this, "isUpdatedWeather");
@@ -271,8 +271,7 @@ public class TowerAtc extends ComputerAtc {
   protected void _load(XElement elm) {
     super._load(elm);
     LoadSave.loadField(elm, this, "departureManager");
-    LoadSave.loadField(elm, this, "landingPlanesList");
-    LoadSave.loadField(elm, this, "goAroundedPlanesToSwitchList");
+    LoadSave.saveField(elm, this, "arrivalManager");
     LoadSave.loadField(elm, this, "inUseInfo");
     LoadSave.loadField(elm, this, "runwayChecks");
     LoadSave.loadField(elm, this, "isUpdatedWeather");
@@ -333,21 +332,15 @@ public class TowerAtc extends ComputerAtc {
   }
 
   @Override
-  public void unregisterPlaneUnderControl(Airplane plane, boolean finalUnregistration) {
-    //TODO the Tower ATC does some unregistration operations probably somewhere here in the code, should be checked
+  public void unregisterPlaneUnderControl(Airplane plane) {
     if (plane.isArrival()) {
-      if (finalUnregistration)
-        arrivalManager.unregisterDeletedPlane(plane);
-      else if (plane.getState() == Airplane.State.landed)
+      if (plane.getState() == Airplane.State.landed)
         arrivalManager.unregisterFinishedArrival(plane);
       else
         arrivalManager.unregisterGoAroundedArrival(plane);
     }
     if (plane.isDeparture()) {
-      if (finalUnregistration)
-        departureManager.unregisterDeletedPlane(plane);
-      else
-        departureManager.unregisterFinishedDeparture(plane);
+      departureManager.unregisterFinishedDeparture(plane);
     }
 
     if (plane.isEmergency() && plane.getState() == Airplane.State.landed) {
@@ -355,6 +348,16 @@ public class TowerAtc extends ComputerAtc {
       Runway rwy = plane.getAssignedRunwayThreshold().getParent();
       RunwayCheck rwyCheck = RunwayCheck.createImmediateAfterEmergency();
       runwayChecks.set(rwy, rwyCheck);
+    }
+  }
+
+  @Override
+  public void removePlaneDeletedFromGame(Airplane plane) {
+    if (plane.isArrival()) {
+      arrivalManager.deletePlane(plane);
+    }
+    if (plane.isDeparture()) {
+      departureManager.deletePlane(plane);
     }
   }
 
@@ -797,7 +800,7 @@ class ArrivalManager {
     this.landingPlanesList.remove(plane);
   }
 
-  public void unregisterDeletedPlane(Airplane plane) {
+  public void deletePlane(Airplane plane) {
     this.landingPlanesList.tryRemove(plane);
     this.goAroundedPlanesToSwitchList.tryRemove(plane);
   }
@@ -876,7 +879,7 @@ class DepartureManager {
     departing.remove(plane);
   }
 
-  public void unregisterDeletedPlane(Airplane plane) {
+  public void deletePlane(Airplane plane) {
     holdingPointNotReady.tryRemove(plane);
     holdingPointReady.tryRemove(plane);
     departing.tryRemove(plane);

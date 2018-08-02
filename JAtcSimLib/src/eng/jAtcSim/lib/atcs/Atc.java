@@ -63,7 +63,9 @@ public abstract class Atc implements IMessageParticipant {
   @XmlIgnore
   protected final AtcRecorder recorder;
 
-  public abstract void unregisterPlaneUnderControl(Airplane plane, boolean finalUnregistration);
+  public abstract void unregisterPlaneUnderControl(Airplane plane);
+
+  public abstract void removePlaneDeletedFromGame(Airplane plane);
 
   public abstract void registerNewPlaneUnderControl(Airplane plane, boolean initialRegistration);
 

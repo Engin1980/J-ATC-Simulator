@@ -22,6 +22,7 @@ import eng.jAtcSim.lib.messaging.StringMessageContent;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
@@ -95,7 +96,10 @@ public class PlaneResponsibilityManager {
     lst.get(atc).remove(plane);
     all.remove(plane);
     infos.remove(plane.getPlane4Display());
-    atc.unregisterPlaneUnderControl(plane, true);
+
+    Acc.atcApp().removePlaneDeletedFromGame(plane);
+    Acc.atcTwr().removePlaneDeletedFromGame(plane);
+    Acc.atcCtr().removePlaneDeletedFromGame(plane);
   }
 
   public void requestSwitch(Atc from, Atc to, Airplane plane) {
@@ -193,7 +197,7 @@ public class PlaneResponsibilityManager {
     eState newState = typeToState(newAtc);
     map.set(plane, newState);
 
-    oldAtc.unregisterPlaneUnderControl(plane, false);
+    oldAtc.unregisterPlaneUnderControl(plane);
     lst.get(oldAtc).remove(plane);
     lst.get(newAtc).add(plane);
     newAtc.registerNewPlaneUnderControl(plane, false);
@@ -314,7 +318,7 @@ public class PlaneResponsibilityManager {
     eState renewState = typeToState(newAtc);
     map.set(plane, renewState);
 
-    oldAtc.unregisterPlaneUnderControl(plane, false);
+    oldAtc.unregisterPlaneUnderControl(plane);
     lst.get(oldAtc).remove(plane);
     lst.get(newAtc).add(plane);
     newAtc.registerNewPlaneUnderControl(plane, false);

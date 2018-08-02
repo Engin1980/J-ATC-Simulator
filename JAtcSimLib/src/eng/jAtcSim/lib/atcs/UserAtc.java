@@ -163,7 +163,12 @@ public class UserAtc extends Atc {
   }
 
   @Override
-  public void unregisterPlaneUnderControl(Airplane plane, boolean finalUnergistration) {
+  public void unregisterPlaneUnderControl(Airplane plane) {
+
+  }
+
+  @Override
+  public void removePlaneDeletedFromGame(Airplane plane){
 
   }
 

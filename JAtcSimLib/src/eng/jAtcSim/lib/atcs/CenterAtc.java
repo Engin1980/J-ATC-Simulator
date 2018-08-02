@@ -208,12 +208,17 @@ public class CenterAtc extends ComputerAtc {
   }
 
   @Override
-  public void unregisterPlaneUnderControl(Airplane plane, boolean finalUnregistration) {
+  public void unregisterPlaneUnderControl(Airplane plane) {
     if (plane.isArrival()) {
       farArrivals.tryRemove(plane);
       middleArrivals.tryRemove(plane);
       closeArrivals.tryRemove(plane);
     }
+  }
+
+  @Override
+  public void removePlaneDeletedFromGame(Airplane plane){
+
   }
 
   @Override
