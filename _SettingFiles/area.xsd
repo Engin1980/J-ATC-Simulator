@@ -154,6 +154,7 @@
           <xs:choice maxOccurs="unbounded" minOccurs="0">
             <xs:element name="genericTraffic" type="genericTraffic"/>
             <xs:element name="densityTraffic" type="densityTraffic"/>
+            <xs:element name="flightListTraffic"type="flightListTraffic" />
           </xs:choice>
         </xs:complexType>
       </xs:element>
@@ -183,6 +184,28 @@
         </xs:complexType>
       </xs:element>
     </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="flightListTraffic">
+    <xs:sequence>
+      <xs:element name="flight" type="flightListTrafficFlight" minOccurs="0" maxOccurs="unbounded" />
+    </xs:sequence>
+    <xs:attribute name="title" type="xs:string" use="required" />
+  </xs:complexType>
+
+  <xs:complexType name="flightListTrafficFlight">
+    <xs:attribute name="time" type="xs:time" use="required" />
+    <xs:attribute name="callsign" type="xs:string" use="required" />
+    <xs:attribute name="kind" use="required">
+      <xs:simpleType xml:base="xs:string">
+        <xs:restriction>
+          <xs:pattern value="(departure)|(arrival)" />
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="heading" type="heading" use="required" />
+    <xs:attribute name="planeType" type="xs:string" use="optional" />
+    <xs:attribute name="follows" type="xs:string"  use="optional" />
   </xs:complexType>
 
   <xs:simpleType name="heading">

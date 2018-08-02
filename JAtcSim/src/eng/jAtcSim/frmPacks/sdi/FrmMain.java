@@ -67,6 +67,8 @@ public class FrmMain extends JFrame {
 
   private void initComponents() {
 
+    eng.jAtcSim.JAtcSim.setAppIconToFrame(this);
+
     this.setPreferredSize(new Dimension(1000, 600));
     this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     this.setTitle("SDI");
