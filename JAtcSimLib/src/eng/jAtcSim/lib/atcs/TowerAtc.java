@@ -33,9 +33,6 @@ import eng.jAtcSim.lib.world.Runway;
 import eng.jAtcSim.lib.world.RunwayConfiguration;
 import eng.jAtcSim.lib.world.RunwayThreshold;
 
-import javax.imageio.event.IIOReadProgressListener;
-import java.util.Map;
-
 public class TowerAtc extends ComputerAtc {
 
   public static class RunwayCheck {
@@ -105,6 +102,10 @@ public class TowerAtc extends ComputerAtc {
   }
 
 
+  public enum eDirection {
+    departures,
+    arrivals
+  }
   private static final int MAXIMAL_SPEED_FOR_PREFERRED_RUNWAY = 5;
   private static final double MAXIMAL_ACCEPT_DISTANCE_IN_NM = 15;
   private final DepartureManager departureManager = new DepartureManager();
@@ -305,11 +306,6 @@ public class TowerAtc extends ComputerAtc {
     return departureManager.getNumberOfPlanesAtHoldingPoint();
   }
 
-  public enum eDirection {
-    departures,
-    arrivals
-  }
-
   public IReadOnlyList<RunwayThreshold> getRunwayThresholdsInUse(eDirection direction) {
     switch (direction) {
       case departures:
@@ -342,8 +338,10 @@ public class TowerAtc extends ComputerAtc {
     if (plane.isArrival()) {
       if (finalUnregistration)
         arrivalManager.unregisterDeletedPlane(plane);
+      else if (plane.getState() == Airplane.State.landed)
+        arrivalManager.unregisterFinishedArrival(plane);
       else
-        arrivalManager.unregisterFinishedDeparture(plane);
+        arrivalManager.unregisterGoAroundedArrival(plane);
     }
     if (plane.isDeparture()) {
       if (finalUnregistration)
@@ -634,8 +632,7 @@ public class TowerAtc extends ComputerAtc {
             toRem.add(rt);
           }
         }
-        if(!removed)
-        {
+        if (!removed) {
           System.out.println("## ... safe-sep check");
           boolean safeSep = !Separation.isSafeSeparation(lastDep, toPlane, (int) rt.getCourse(), 120);
           System.out.println("## ... safe-sep-check-test-result: " + safeSep);
@@ -759,7 +756,7 @@ class Separation {
   }
 }
 
-class ArrivalManager{
+class ArrivalManager {
   private IList<Airplane> landingPlanesList = new AirplaneList(true);
   private IList<Airplane> goAroundedPlanesToSwitchList = new AirplaneList(true);
 
@@ -789,14 +786,14 @@ class ArrivalManager{
   }
 
   public boolean checkIfPlaneIsReadyToSwitchAndRemoveIt(Airplane plane) {
-    if (goAroundedPlanesToSwitchList.contains(plane)){
+    if (goAroundedPlanesToSwitchList.contains(plane)) {
       goAroundedPlanesToSwitchList.remove(plane);
       return true;
     } else
       return false;
   }
 
-  public void unregisterFinishedDeparture(Airplane plane) {
+  public void unregisterFinishedArrival(Airplane plane) {
     this.landingPlanesList.remove(plane);
   }
 
@@ -807,7 +804,7 @@ class ArrivalManager{
 
   public void registerNewArrival(Airplane plane) {
     if (plane == null) {
-        throw new IllegalArgumentException("Value of {plane} cannot not be null.");
+      throw new IllegalArgumentException("Value of {plane} cannot not be null.");
     }
 
     assert plane.getAssignedRunwayThreshold() != null : "Assigned arrival for " + plane.getCallsign() + " is null.";
@@ -816,16 +813,20 @@ class ArrivalManager{
 
   public boolean isSomeArrivalApproachingOrOnRunway(Runway runway) {
     if (runway == null) {
-        throw new IllegalArgumentException("Value of {runway} cannot not be null.");
+      throw new IllegalArgumentException("Value of {runway} cannot not be null.");
     }
-    return this.landingPlanesList.where(q->q.getAssignedRunwayThreshold().getParent().equals(runway)).isEmpty();
+    return this.landingPlanesList.where(q -> q.getAssignedRunwayThreshold().getParent().equals(runway)).isEmpty();
   }
 
   public boolean isSomeArrivalOnRunway(Runway rwy) {
     boolean ret = this.landingPlanesList
-            .where(q -> rwy.getThresholds().contains(q.getAssignedRunwayThreshold()))
-            .isAny(q -> q.getState() == Airplane.State.landed);
+        .where(q -> rwy.getThresholds().contains(q.getAssignedRunwayThreshold()))
+        .isAny(q -> q.getState() == Airplane.State.landed);
     return ret;
+  }
+
+  public void unregisterGoAroundedArrival(Airplane plane) {
+    this.goAroundedPlanesToSwitchList.remove(plane);
   }
 }
 
@@ -880,7 +881,7 @@ class DepartureManager {
     holdingPointReady.tryRemove(plane);
     departing.tryRemove(plane);
     for (RunwayThreshold rt : this.lastDepartures.getKeys()) {
-      if (this.lastDepartures.containsKey(rt) && this.lastDepartures.get(rt).equals(plane)){
+      if (this.lastDepartures.containsKey(rt) && this.lastDepartures.get(rt).equals(plane)) {
         this.lastDepartures.set(rt, null);
         this.lastDeparturesTime.set(rt, null);
       }
