@@ -1262,7 +1262,7 @@ public class Pilot {
       if (secondsWithoutRadarContact % 20 == 0) {
         this.say(
             new GoodDayNotification(
-                this.parent.getCallsign(), this.parent.getAltitude(), this.parent.isEmergency()));
+                this.parent.getCallsign(), this.parent.getAltitude(), this.parent.isEmergency(), true));
       }
     }
   }
@@ -1457,7 +1457,7 @@ public class Pilot {
     queue.removeAt(0);
 
     if (cs == CommandSource.atc && plane.getState().is(unableProcessAfterCommandsStates)) {
-      ISpeech rej = new Rejection("Unable to process after-command in approach/take-off.", af);
+      ISpeech rej = new Rejection("Unable to process after-command during approach/take-off.", af);
       say(rej);
       return;
     }
@@ -1473,10 +1473,7 @@ public class Pilot {
       System.out.println("?? analysing speech " + sp.getClass().getName());
       if (sp instanceof AfterCommand)
         break;
-      else if (sp instanceof RadarContactConfirmationNotification) {
-        // do nothing, just ignore it. I hope it will be confirmed already somewhere else.
-        // the reason why it may appear here is delayed ATC radar contact confirmation.
-      } else {
+      else {
         assert sp instanceof IAtcCommand : "Instance of " + sp.getClass().getName() + " is not IAtcCommand";
         IAtcCommand cmd = (IAtcCommand) sp;
         if (cmd instanceof AfterCommand)

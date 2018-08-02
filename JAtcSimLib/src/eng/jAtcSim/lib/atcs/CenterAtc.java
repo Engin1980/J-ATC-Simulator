@@ -149,6 +149,7 @@ public class CenterAtc extends ComputerAtc {
   protected void processMessagesFromPlane(Airplane plane, SpeechList spchs) {
     for (Object o : spchs) {
       if (o instanceof GoodDayNotification) {
+        if (((GoodDayNotification) o).isRepeated()) continue; // repeated g-d-n are ignored
         if (plane.isDeparture()) {
           SpeechList cmds = new SpeechList();
 
