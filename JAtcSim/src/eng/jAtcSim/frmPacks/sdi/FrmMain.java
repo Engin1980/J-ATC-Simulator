@@ -228,6 +228,9 @@ public class FrmMain extends JFrame {
 
     String fileName = jf.getSelectedFile().getAbsolutePath();
 
+    if (!fileName.endsWith(SwingFactory.SAVED_SIMULATION_EXTENSION))
+      fileName += SwingFactory.SAVED_SIMULATION_EXTENSION;
+
     IMap<String, Object> tmp = this.parent.getDataToStore();
 
     this.parent.getGame().save(fileName, tmp);

@@ -28,6 +28,13 @@ public class SwingFactory {
     video
   }
 
+  public static final String AREA_FILE_EXTENSION = ".ar.xml";
+  public static final String FLEET_FILE_EXTENSION = ".fl.xml";
+  public static final String STARTUP_SETTING_FILE_EXTENSION = ".ss.xml";
+  public static final String SAVED_SIMULATION_EXTENSION = ".sm.xml";
+  public static final String TRAFFIC_FILE_EXTENSION = ".tr.xml";
+  public static final String AIRPLANE_TYPES_EXTENSION = ".tp.xml";
+
   public static JScrollBar createHorizontalBar(int minimum, int maximum, int value) {
     JScrollBar ret = new JScrollBar(JScrollBar.HORIZONTAL);
     ret.getModel().setRangeProperties(value, 0, minimum, maximum, true);
@@ -40,22 +47,22 @@ public class SwingFactory {
     ret.setAcceptAllFileFilterUsed(false);
     switch (type) {
       case area:
-        ret.addChoosableFileFilter(new FileTypeFilter(".ar.xml", "area files"));
+        ret.addChoosableFileFilter(new FileTypeFilter(AREA_FILE_EXTENSION, "area files"));
         break;
       case fleets:
-        ret.addChoosableFileFilter(new FileTypeFilter(".fl.xml", "Fleet files"));
+        ret.addChoosableFileFilter(new FileTypeFilter(FLEET_FILE_EXTENSION, "Fleet files"));
         break;
       case startupSettings:
-        ret.addChoosableFileFilter(new FileTypeFilter(".ss.xml", "Startup settings"));
+        ret.addChoosableFileFilter(new FileTypeFilter(STARTUP_SETTING_FILE_EXTENSION, "Startup settings"));
         break;
       case game:
-        ret.addChoosableFileFilter(new FileTypeFilter(".sm.xml", "Saved simulation"));
+        ret.addChoosableFileFilter(new FileTypeFilter(SAVED_SIMULATION_EXTENSION, "Saved simulation"));
         break;
       case traffic:
-        ret.addChoosableFileFilter(new FileTypeFilter(".tr.xml", "Traffic files"));
+        ret.addChoosableFileFilter(new FileTypeFilter(TRAFFIC_FILE_EXTENSION, "Traffic files"));
         break;
       case types:
-        ret.addChoosableFileFilter(new FileTypeFilter(".tp.xml", "Airplane types files"));
+        ret.addChoosableFileFilter(new FileTypeFilter(AIRPLANE_TYPES_EXTENSION, "Airplane types files"));
         break;
       case folder:
         ret.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
