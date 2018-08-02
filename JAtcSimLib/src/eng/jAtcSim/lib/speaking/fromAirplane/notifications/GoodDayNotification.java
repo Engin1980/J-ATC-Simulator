@@ -9,14 +9,16 @@ public class GoodDayNotification implements IAirplaneNotification {
   private final Callsign callsign;
   private final double altitude;
   private final boolean emergency;
+  private final boolean repeated;
 
-  public GoodDayNotification(Callsign callsign, double altitude, boolean emergecny) {
+  public GoodDayNotification(Callsign callsign, double altitude, boolean emergecny, boolean repeated) {
     if (callsign == null)
       throw new IllegalArgumentException("Argument \"callsign\" cannot be null.");
 
     this.callsign = callsign;
     this.altitude = altitude;
     this.emergency = emergecny;
+    this.repeated = repeated;
   }
 
   public boolean isEmergency() {
@@ -31,9 +33,17 @@ public class GoodDayNotification implements IAirplaneNotification {
     return altitude;
   }
 
+  public boolean isRepeated() {
+    return repeated;
+  }
+
   @Override
   public String toString(){
     String ret = "Welcome greeting from plane " + this.callsign.toString() + " {notification}";
+    if (emergency)
+      ret += "{emergency}";
+    if (repeated)
+      ret += "{repeated}";
 
     return ret;
   }

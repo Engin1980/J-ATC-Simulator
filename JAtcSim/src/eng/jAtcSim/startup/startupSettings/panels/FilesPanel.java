@@ -43,10 +43,11 @@ public class FilesPanel extends JStartupPanel {
             fleTypes.getButtonControl()
         ));
 
-    final BackgroundWorker<Object> bw = new BackgroundWorker<>(this::xmlFilesLoading, this::xmlFilesLoaded);
+
     btnLoad.addActionListener(q -> {
       btnLoad.setText(LOADING_FILES_LABEL);
       btnLoad.setEnabled(false);
+      BackgroundWorker<Object> bw = new BackgroundWorker<>(this::xmlFilesLoading, this::xmlFilesLoaded);
       bw.start();
     });
     this.add(btnLoad);

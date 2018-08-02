@@ -338,7 +338,7 @@ public class Pilot {
 
   }
 
-  public static final double SPEED_TO_OVER_NAVAID_DISTANCE_MULTIPLIER = 0.004;
+  public static final double SPEED_TO_OVER_NAVAID_DISTANCE_MULTIPLIER = 0.01;
 
   abstract class BasicBehavior extends DivertableBehavior {
     private boolean clearanceLimitWarningSent = false;
@@ -1262,7 +1262,7 @@ public class Pilot {
       if (secondsWithoutRadarContact % 20 == 0) {
         this.say(
             new GoodDayNotification(
-                this.parent.getCallsign(), this.parent.getAltitude(), this.parent.isEmergency()));
+                this.parent.getCallsign(), this.parent.getAltitude(), this.parent.isEmergency(), true));
       }
     }
   }
@@ -1457,7 +1457,7 @@ public class Pilot {
     queue.removeAt(0);
 
     if (cs == CommandSource.atc && plane.getState().is(unableProcessAfterCommandsStates)) {
-      ISpeech rej = new Rejection("Unable to process after-command in approach/take-off.", af);
+      ISpeech rej = new Rejection("Unable to process after-command during approach/take-off.", af);
       say(rej);
       return;
     }
@@ -1470,26 +1470,29 @@ public class Pilot {
 
     while (queue.isEmpty() == false) {
       ISpeech sp = queue.get(0);
+      System.out.println("?? analysing speech " + sp.getClass().getName());
       if (sp instanceof AfterCommand)
         break;
-      else if (sp instanceof RadarContactConfirmationNotification) {
-        // do nothing, just ignore it. I hope it will be confirmed already somewhere else.
-        // the reason why it may appear here is delayed ATC radar contact confirmation.
-      } else {
+      else {
+        assert sp instanceof IAtcCommand : "Instance of " + sp.getClass().getName() + " is not IAtcCommand";
         IAtcCommand cmd = (IAtcCommand) sp;
         if (cmd instanceof AfterCommand)
           break;
 
         queue.removeAt(0);
         cres = ApplicationManager.confirm(plane, cmd, true, false);
+        System.out.println("?? after cres");
         if (sayConfirmations) say(cres.confirmation);
+        System.out.println("?? confirmation said");
 
         if (cs == CommandSource.procedure) {
           afterCommands.addRoute(af, cmd);
         } else
           afterCommands.addExtension(af, cmd);
+        System.out.println("?? iteration processed");
       }
     }
+    System.out.println("?? processAfterSpeechWithConsequents end");
   }
 
   private void say(ISpeech speech) {

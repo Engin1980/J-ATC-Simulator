@@ -19,13 +19,13 @@ public final class Coordinate {
 
   public static Coordinate parseNew(String value) {
     Coordinate ret;
-    final String regex = "^(N|S)? ?(-?\\d+(?:\\.\\d+)?)(?: +?(\\d+(?:\\.\\d+)?))?(?: +?(\\d+(?:\\.\\d+)?))?,? (E|W)? ?(-?\\d+(?:\\.\\d+)?)(?: +?(\\d+(?:\\.\\d+)?))?(?: +?(\\d+(?:\\.\\d+)?))?";
+    final String regex = "^(N|S)? ?(-?\\d+(?:\\.\\d+)?)(?: +?(\\d+(?:\\.\\d+)?))?(?: +?(\\d+(?:\\.\\d+)?))?,? (N|S|E|W)? ?(-?\\d+(?:\\.\\d+)?)(?: +?(\\d+(?:\\.\\d+)?))?(?: +?(\\d+(?:\\.\\d+)?))?(?: (E|W))?";
     final Pattern pattern = Pattern.compile(regex);
     final Matcher matcher = pattern.matcher(value);
 
     if (matcher.find()) {
-      double lat = decodeValue(matcher, 1, 2, 3, 4);
-      double lng = decodeValue(matcher, 5, 6, 7, 8);
+      double lat = decodeValue(matcher, 1, 5, 2, 3, 4);
+      double lng = decodeValue(matcher, 5, 9, 6, 7, 8);
       ret = new Coordinate(lat, lng);
     } else
       throw new IllegalArgumentException("Unable to parse " + value + " into Coordinate.");
@@ -34,16 +34,18 @@ public final class Coordinate {
   }
 
   private static double decodeValue(Matcher matcher,
-                                    int flagIndex, int degreeIndex, int minuteIndex, int secondIndex) {
+                                    int flagIndexA, int flagIndexB, int degreeIndex, int minuteIndex, int secondIndex) {
     double ret;
 
-    String fs = matcher.group(flagIndex);
+    String fsA = matcher.group(flagIndexA);
+    String fsB = matcher.group(flagIndexB);
     String ds = matcher.group(degreeIndex);
     String ms = matcher.group(minuteIndex);
     String ss = matcher.group(secondIndex);
 
 
-    boolean isNeg = fs != null && (fs.equals("S") || fs.equals("W"));
+    boolean isNeg = (fsA != null && (fsA.equals("S") || fsA.equals("W")))
+            || (fsB != null && (fsB.equals("S") || fsB.equals("W")));
     double d;
     double m;
     double s;

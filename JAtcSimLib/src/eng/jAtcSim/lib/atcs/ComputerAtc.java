@@ -54,6 +54,8 @@ public abstract class ComputerAtc extends Atc {
         Airplane p = m.getSource();
         SpeechList spchs = m.getContent();
 
+        if (spchs.containsType(GoodDayNotification.class))
+
         confirmGoodDayNotificationIfRequired(p, spchs);
         processMessagesFromPlane(p, spchs);
       } else if (m.getSource() instanceof Atc) {
@@ -131,7 +133,10 @@ public abstract class ComputerAtc extends Atc {
   protected abstract RequestResult canIAcceptPlane(Airplane p);
 
   private void confirmGoodDayNotificationIfRequired(Airplane p, SpeechList spchs) {
-    if (spchs.containsType(GoodDayNotification.class)) {
+    IList<GoodDayNotification> gdns = spchs.where(q->q instanceof  GoodDayNotification);
+    // todo implement directly into if without gdns variable
+    gdns = gdns.where(q->q.isRepeated() == false);
+    if (gdns.isEmpty() == false) {
       SpeechList lst = new SpeechList();
       lst.add(new RadarContactConfirmationNotification());
       if (Acc.prm().getResponsibleAtc(p) != this) {

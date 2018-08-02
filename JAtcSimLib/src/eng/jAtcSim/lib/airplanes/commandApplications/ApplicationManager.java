@@ -52,6 +52,10 @@ public class ApplicationManager {
       System.out.println("Confirming " + c);
       ret = ca.confirm(plane, (IAtcCommand) c, checkStateSanity, checkCommandSanity);
       System.out.println("Confirmed " + c);
+      System.out.println("printing stack trace");
+      Throwable t = new Throwable();
+      t.printStackTrace();
+      System.out.println("print stack trace end");
     } else if (c instanceof IAtcNotification) {
       NotificationApplication na = notApps.get(c.getClass());
       assert na != null;

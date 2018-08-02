@@ -128,7 +128,7 @@ public class Airplanes {
     double dist = Coordinates.getDistanceInNM(
         a.getCoordinate(), b.getCoordinate());
 
-    if (alt < 1000) {
+    if (alt < 950) {
       boolean isAinApp = a.getState().is(airproxApproachStates);
       boolean isBinApp = b.getState().is(airproxApproachStates);
       if (isAinApp && isBinApp) {
@@ -146,9 +146,15 @@ public class Airplanes {
           ret = AirproxType.none;
       }
     } else {
-      if (dist < AIRPROX_STANDARD_DISTANCE)
-        ret = AirproxType.warning;
-      else
+      if (dist < AIRPROX_STANDARD_DISTANCE) {
+        if (a.getAltitude() == b.getAltitude())
+          ret = AirproxType.warning;
+        else if ((a.getAltitude() > b.getAltitude() && a.getVerticalSpeed() < 0 && b.getVerticalSpeed() > 0)
+          || (a.getAltitude() < b.getAltitude() && a.getVerticalSpeed() > 0 && b.getVerticalSpeed() < 0))
+          ret = AirproxType.warning;
+        else
+          ret = AirproxType.none;
+      } else
         ret = AirproxType.none;
     }
 

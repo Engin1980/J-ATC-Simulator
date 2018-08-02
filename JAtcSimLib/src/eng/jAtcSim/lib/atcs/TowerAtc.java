@@ -33,8 +33,6 @@ import eng.jAtcSim.lib.world.Runway;
 import eng.jAtcSim.lib.world.RunwayConfiguration;
 import eng.jAtcSim.lib.world.RunwayThreshold;
 
-import java.util.Map;
-
 public class TowerAtc extends ComputerAtc {
 
   public static class RunwayCheck {
@@ -104,15 +102,18 @@ public class TowerAtc extends ComputerAtc {
   }
 
 
+  public enum eDirection {
+    departures,
+    arrivals
+  }
   private static final int MAXIMAL_SPEED_FOR_PREFERRED_RUNWAY = 5;
   private static final double MAXIMAL_ACCEPT_DISTANCE_IN_NM = 15;
   private final DepartureManager departureManager = new DepartureManager();
+  private final ArrivalManager arrivalManager = new ArrivalManager();
   @XmlIgnore
   private final CommonRecorder toRecorder;
   @XmlIgnore
   private final EventAnonymousSimple onRunwayChanged = new EventAnonymousSimple();
-  private AirplaneList landingPlanesList = new AirplaneList(true);
-  private AirplaneList goAroundedPlanesToSwitchList = new AirplaneList(true);
   private RunwaysInUseInfo inUseInfo = null;
   private EMap<Runway, RunwayCheck> runwayChecks = null;
   private boolean isUpdatedWeather;
@@ -239,16 +240,14 @@ public class TowerAtc extends ComputerAtc {
   @Override
   protected void processMessagesFromPlane(Airplane plane, SpeechList spchs) {
     if (spchs.containsType(GoingAroundNotification.class)) {
-      landingPlanesList.remove(plane);
-      goAroundedPlanesToSwitchList.add(plane);
+      arrivalManager.goAroundPlane(plane);
     }
   }
 
   @Override
   protected Atc getTargetAtcIfPlaneIsReadyToSwitch(Airplane plane) {
     Atc ret = null;
-    if (this.goAroundedPlanesToSwitchList.contains(plane)) {
-      this.goAroundedPlanesToSwitchList.remove(plane);
+    if (this.arrivalManager.checkIfPlaneIsReadyToSwitchAndRemoveIt(plane)) {
       ret = Acc.atcApp();
     } else if (plane.isDeparture()) {
       ret = Acc.atcApp();
@@ -307,11 +306,6 @@ public class TowerAtc extends ComputerAtc {
     return departureManager.getNumberOfPlanesAtHoldingPoint();
   }
 
-  public enum eDirection {
-    departures,
-    arrivals
-  }
-
   public IReadOnlyList<RunwayThreshold> getRunwayThresholdsInUse(eDirection direction) {
     switch (direction) {
       case departures:
@@ -342,10 +336,12 @@ public class TowerAtc extends ComputerAtc {
   public void unregisterPlaneUnderControl(Airplane plane, boolean finalUnregistration) {
     //TODO the Tower ATC does some unregistration operations probably somewhere here in the code, should be checked
     if (plane.isArrival()) {
-      if (landingPlanesList.contains(plane))
-        landingPlanesList.remove(plane);
-      if (goAroundedPlanesToSwitchList.contains(plane))
-        goAroundedPlanesToSwitchList.remove(plane);
+      if (finalUnregistration)
+        arrivalManager.unregisterDeletedPlane(plane);
+      else if (plane.getState() == Airplane.State.landed)
+        arrivalManager.unregisterFinishedArrival(plane);
+      else
+        arrivalManager.unregisterGoAroundedArrival(plane);
     }
     if (plane.isDeparture()) {
       if (finalUnregistration)
@@ -365,7 +361,7 @@ public class TowerAtc extends ComputerAtc {
   @Override
   public void registerNewPlaneUnderControl(Airplane plane, boolean initialRegistration) {
     if (plane.isArrival())
-      landingPlanesList.add(plane);
+      arrivalManager.registerNewArrival(plane);
     else
       departureManager.registerNewDeparture(plane);
   }
@@ -484,7 +480,7 @@ public class TowerAtc extends ComputerAtc {
           finishRunwayMaintenance(runway, rc);
       } else {
         if (rc.scheduler.isElapsed()) {
-          if (this.departureManager.isSomeDepartureOnRunway(runway) == false && this.landingPlanesList.isEmpty())
+          if (this.departureManager.isSomeDepartureOnRunway(runway) == false && this.arrivalManager.isSomeArrivalApproachingOrOnRunway(runway))
             beginRunwayMaintenance(runway, rc);
         } else if (rc.scheduler.shouldBeAnnouncedNow()) {
           announceScheduledRunwayCheck(runway, rc);
@@ -578,7 +574,7 @@ public class TowerAtc extends ComputerAtc {
   }
 
   private void restrictToRunwaysNotUsedInApproach(IList<RunwayThreshold> rts) {
-    rts.remove(q -> getClosestLandingPlaneDistanceForThreshold(q) < 2.5);
+    rts.remove(q -> arrivalManager.getClosestLandingPlaneDistanceForThreshold(q) < 2.5);
   }
 
   private void restrictToRunwaysNotUsedByRolling(IList<RunwayThreshold> rts) {
@@ -593,12 +589,8 @@ public class TowerAtc extends ComputerAtc {
   }
 
   private boolean hasAirplaneRollingOnTheGround(RunwayThreshold rt) {
-    boolean ret = false;
-    IList<Airplane> tmp;
-    tmp = this.landingPlanesList.where(q -> rt.equals(q.getAssignedRunwayThreshold()));
-    if (tmp.isAny(q -> q.getState() == Airplane.State.landed))
-      ret = true;
-
+    boolean ret;
+    ret = arrivalManager.isSomeArrivalOnRunway(rt.getParent());
     if (ret == false) {
       ret = departureManager.isSomeDepartureOnRunway(rt.getParent());
     }
@@ -640,8 +632,7 @@ public class TowerAtc extends ComputerAtc {
             toRem.add(rt);
           }
         }
-        if(!removed)
-        {
+        if (!removed) {
           System.out.println("## ... safe-sep check");
           boolean safeSep = !Separation.isSafeSeparation(lastDep, toPlane, (int) rt.getCourse(), 120);
           System.out.println("## ... safe-sep-check-test-result: " + safeSep);
@@ -721,26 +712,6 @@ public class TowerAtc extends ComputerAtc {
     }
   }
 
-  private double getClosestLandingPlaneDistanceForThreshold(RunwayThreshold threshold) {
-    IList<Airplane> tmp = landingPlanesList.where(q -> threshold.equals(q.getAssignedRunwayThreshold()));
-    double ret = Double.MAX_VALUE;
-    for (Airplane plane : tmp) {
-      if (plane.getState() == Airplane.State.landed) {
-        ret = 0;
-        break;
-      } else if (plane.getState().is(
-          Airplane.State.shortFinal,
-          Airplane.State.longFinal,
-          Airplane.State.approachDescend
-      )) {
-        double dist = Coordinates.getDistanceInNM(plane.getCoordinate(), threshold.getCoordinate());
-        if (dist < ret)
-          ret = dist;
-      }
-    }
-    return ret;
-  }
-
 }
 
 class Separation {
@@ -782,6 +753,80 @@ class Separation {
     double traveledDistance = seconds / 3600d * plane.getType().getV2();
     Coordinate ret = Coordinates.getCoordinate(plane.getCoordinate(), heading, traveledDistance);
     return ret;
+  }
+}
+
+class ArrivalManager {
+  private IList<Airplane> landingPlanesList = new AirplaneList(true);
+  private IList<Airplane> goAroundedPlanesToSwitchList = new AirplaneList(true);
+
+  public double getClosestLandingPlaneDistanceForThreshold(RunwayThreshold threshold) {
+    IList<Airplane> tmp = landingPlanesList.where(q -> threshold.equals(q.getAssignedRunwayThreshold()));
+    double ret = Double.MAX_VALUE;
+    for (Airplane plane : tmp) {
+      if (plane.getState() == Airplane.State.landed) {
+        ret = 0;
+        break;
+      } else if (plane.getState().is(
+          Airplane.State.shortFinal,
+          Airplane.State.longFinal,
+          Airplane.State.approachDescend
+      )) {
+        double dist = Coordinates.getDistanceInNM(plane.getCoordinate(), threshold.getCoordinate());
+        if (dist < ret)
+          ret = dist;
+      }
+    }
+    return ret;
+  }
+
+  public void goAroundPlane(Airplane plane) {
+    landingPlanesList.remove(plane);
+    goAroundedPlanesToSwitchList.add(plane);
+  }
+
+  public boolean checkIfPlaneIsReadyToSwitchAndRemoveIt(Airplane plane) {
+    if (goAroundedPlanesToSwitchList.contains(plane)) {
+      goAroundedPlanesToSwitchList.remove(plane);
+      return true;
+    } else
+      return false;
+  }
+
+  public void unregisterFinishedArrival(Airplane plane) {
+    this.landingPlanesList.remove(plane);
+  }
+
+  public void unregisterDeletedPlane(Airplane plane) {
+    this.landingPlanesList.tryRemove(plane);
+    this.goAroundedPlanesToSwitchList.tryRemove(plane);
+  }
+
+  public void registerNewArrival(Airplane plane) {
+    if (plane == null) {
+      throw new IllegalArgumentException("Value of {plane} cannot not be null.");
+    }
+
+    assert plane.getAssignedRunwayThreshold() != null : "Assigned arrival for " + plane.getCallsign() + " is null.";
+    this.landingPlanesList.add(plane);
+  }
+
+  public boolean isSomeArrivalApproachingOrOnRunway(Runway runway) {
+    if (runway == null) {
+      throw new IllegalArgumentException("Value of {runway} cannot not be null.");
+    }
+    return this.landingPlanesList.where(q -> q.getAssignedRunwayThreshold().getParent().equals(runway)).isEmpty();
+  }
+
+  public boolean isSomeArrivalOnRunway(Runway rwy) {
+    boolean ret = this.landingPlanesList
+        .where(q -> rwy.getThresholds().contains(q.getAssignedRunwayThreshold()))
+        .isAny(q -> q.getState() == Airplane.State.landed);
+    return ret;
+  }
+
+  public void unregisterGoAroundedArrival(Airplane plane) {
+    this.goAroundedPlanesToSwitchList.remove(plane);
   }
 }
 
@@ -836,7 +881,7 @@ class DepartureManager {
     holdingPointReady.tryRemove(plane);
     departing.tryRemove(plane);
     for (RunwayThreshold rt : this.lastDepartures.getKeys()) {
-      if (this.lastDepartures.containsKey(rt) && this.lastDepartures.get(rt).equals(plane)){
+      if (this.lastDepartures.containsKey(rt) && this.lastDepartures.get(rt).equals(plane)) {
         this.lastDepartures.set(rt, null);
         this.lastDeparturesTime.set(rt, null);
       }
@@ -876,4 +921,5 @@ class DepartureManager {
     ret = this.lastDepartures.tryGet(rt);
     return ret;
   }
+
 }
