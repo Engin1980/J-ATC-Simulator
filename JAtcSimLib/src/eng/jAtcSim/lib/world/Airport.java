@@ -42,7 +42,8 @@ public class Airport {
   private IList<Traffic> trafficDefinitions = new EList<>();
   private Area parent;
   private int coveredDistance;
-  private IList<RunwayConfiguration> runwayConfigurations;
+  @XmlOptional
+  private IList<RunwayConfiguration> runwayConfigurations = new EList<>();
 
   public IReadOnlyList<EntryExitPoint> getEntryExitPoints() {
     return entryExitPoints;
