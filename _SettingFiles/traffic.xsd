@@ -6,7 +6,7 @@
            xmlns="https://github.com/Engin1980/J-ATC-Simulator/traffic"
            elementFormDefault="qualified">
 
-  <xs:element name="trafficDefinitions" type="trafficDefinitions" />
+  <xs:element name="trafficDefinitions" type="trafficDefinitions"/>
 
   <xs:complexType name="trafficDefinitions">
     <xs:choice maxOccurs="unbounded" minOccurs="0">
@@ -143,10 +143,14 @@
   </xs:complexType>
 
   <xs:complexType name="flightListTraffic">
-    <xs:sequence>
-      <xs:element name="flight" type="flightListTrafficFlight" minOccurs="0" maxOccurs="unbounded"/>
-    </xs:sequence>
-    <xs:attribute name="title" type="xs:string" use="required"/>
+    <xs:complexContent>
+      <xs:extension base="traffic">
+        <xs:sequence>
+          <xs:element name="flight" type="flightListTrafficFlight" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="title" type="xs:string" use="required"/>
+      </xs:extension>
+    </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="flightListTrafficFlight">

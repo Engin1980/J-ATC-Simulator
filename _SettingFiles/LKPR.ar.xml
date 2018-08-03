@@ -626,7 +626,7 @@
             <direction heading="320" weight="1" />
           </directions>
         </densityTraffic>
-        <flightListTraffic title="Real traffic 14. 7. 2018 only commercials" delayProbability=".5" maxDelayInMinutesPerStep="20" useExtendedCallsigns="true">
+        <flightListTraffic title="Real traffic 14. 7. 2018 only commercials" delayProbability=".5" maxDelayInMinutesPerStep="20">
           <flight time="5:00" callsign="TVS1392" kind="departure" heading="100" planeType="B737" />
           <flight time="10:40" callsign="TVS1419" kind="arrival" heading="190" planeType="A320" />
           <flight time="11:00" callsign="TVS1381" kind="arrival" heading="100" planeType="B737" />
