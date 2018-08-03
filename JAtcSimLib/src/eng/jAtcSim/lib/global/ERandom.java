@@ -28,11 +28,11 @@ public class ERandom extends Random {
   }
   
   @Override
-  public int nextInt (int maximum){
-    if (maximum == 0)
+  public int nextInt (int maximumExclusive){
+    if (maximumExclusive == 0)
       return 0;
     else 
-      return super.nextInt(maximum);
+      return super.nextInt(maximumExclusive);
   }
 
   public double nextDouble(double fromInclusive, double toExclusive) {

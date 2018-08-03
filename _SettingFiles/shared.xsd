@@ -1,0 +1,32 @@
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           targetNamespace="https://github.com/Engin1980/J-ATC-Simulator/shared"
+           xmlns="https://github.com/Engin1980/J-ATC-Simulator/shared"
+           elementFormDefault="qualified">
+
+
+  <xs:simpleType name="flightLevelAltitude">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="(FL\d{1,3})|(\d+)"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="nonEmptyString">
+    <xs:restriction base="xs:string">
+      <xs:minLength value="1"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="planeCategory">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[aA]?[bB]?[cC]?[dD]?"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="heading">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="([0123]?[0-9])?[0-9]"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+</xs:schema>

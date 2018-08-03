@@ -5,6 +5,7 @@
  */
 package eng.jAtcSim.lib.traffic;
 
+import eng.eSystem.xmlSerialization.XmlConstructor;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.AirplaneType;
 import eng.jAtcSim.lib.airplanes.Callsign;
@@ -24,11 +25,13 @@ public class Movement {
   private final ETime initTime;
   private final ETime appExpectedTime;
   private final int delayInMinutes;
+  private final int entryRadial;
 
-  public Movement(Callsign callsign, AirplaneType type, ETime initTime, int delayInMinutes, boolean isDeparture) {
+  public Movement(Callsign callsign, AirplaneType type, ETime initTime, int delayInMinutes, boolean isDeparture, int entryRadial) {
     this.callsign = callsign;
     this.departure = isDeparture;
     this.initTime = initTime;
+    this.entryRadial = entryRadial;
     if (isDeparture) {
       this.appExpectedTime = this.initTime.addMinutes(1);
     } else {
@@ -39,6 +42,7 @@ public class Movement {
     this.delayInMinutes = delayInMinutes;
   }
 
+  @XmlConstructor
   private Movement() {
     callsign = null;
     airplaneType = null;
@@ -46,6 +50,11 @@ public class Movement {
     initTime = null;
     appExpectedTime = null;
     delayInMinutes = 0;
+    entryRadial = 0;
+  }
+
+  public int getEntryRadial() {
+    return entryRadial;
   }
 
   public AirplaneType getAirplaneType() {

@@ -1,0 +1,168 @@
+<?xml version="1.0"?>
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:sh="https://github.com/Engin1980/J-ATC-Simulator/shared"
+           targetNamespace="https://github.com/Engin1980/J-ATC-Simulator/traffic"
+           xmlns="https://github.com/Engin1980/J-ATC-Simulator/traffic"
+           elementFormDefault="qualified">
+
+  <xs:element name="trafficDefinitions" type="trafficDefinitions" />
+
+  <xs:complexType name="trafficDefinitions">
+    <xs:choice maxOccurs="unbounded" minOccurs="0">
+      <xs:element name="genericTraffic" type="genericTraffic"/>
+      <xs:element name="densityTraffic" type="densityTraffic"/>
+      <xs:element name="flightListTraffic" type="flightListTraffic"/>
+    </xs:choice>
+  </xs:complexType>
+
+  <xs:complexType name="traffic">
+    <xs:sequence>
+      <xs:element name="description" minOccurs="0" maxOccurs="1">
+        <xs:simpleType>
+          <xs:restriction base="xs:string"/>
+        </xs:simpleType>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute name="title" type="sh:nonEmptyString" use="required"/>
+    <xs:attribute name="delayProbability" type="xs:double" use="required"/>
+    <xs:attribute name="maxDelayInMinutesPerStep" type="xs:int" use="required"/>
+  </xs:complexType>
+
+
+  <xs:complexType name="codeWeight">
+    <xs:attribute name="code" type="xs:string" use="required"/>
+    <xs:attribute name="weight" type="xs:double" use="required"/>
+  </xs:complexType>
+
+  <xs:complexType name="densityTraffic">
+    <xs:complexContent>
+      <xs:extension base="traffic">
+        <xs:sequence>
+          <xs:element name="companies">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="company" type="codeWeight" maxOccurs="unbounded" minOccurs="1"/>
+              </xs:sequence>
+              <xs:attribute name="isFullDayTraffic" type="xs:boolean" use="required"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="countries">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="country" type="codeWeight" maxOccurs="unbounded" minOccurs="1"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="density">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="item" maxOccurs="24">
+                  <xs:complexType>
+                    <xs:attribute name="hour" type="xs:int" use="required"/>
+                    <xs:attribute name="departures" type="xs:int" use="required"/>
+                    <xs:attribute name="arrivals" type="xs:int" use="required"/>
+                  </xs:complexType>
+                </xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="directions">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="direction" maxOccurs="unbounded">
+                  <xs:complexType>
+                    <xs:attribute name="heading" type="xs:int" use="required"/>
+                    <xs:attribute name="weight" type="xs:double" use="required"/>
+                  </xs:complexType>
+                </xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+        <xs:attribute name="nonCommercialFlightProbability" type="xs:double" use="required"/>
+        <xs:attribute name="useExtendedCallsigns" type="xs:boolean" use="required"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="genericTraffic">
+    <xs:complexContent>
+      <xs:extension base="traffic">
+        <xs:sequence>
+          <xs:element name="movementsPerHour">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="item" maxOccurs="24" minOccurs="24">
+                  <xs:simpleType>
+                    <xs:restriction base="xs:int"/>
+                  </xs:simpleType>
+                </xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="probabilityOfCategory">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="item" minOccurs="4" maxOccurs="4">
+                  <xs:simpleType>
+                    <xs:restriction base="xs:double"/>
+                  </xs:simpleType>
+                </xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="companies">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="item" minOccurs="1" maxOccurs="unbounded">
+                  <xs:simpleType>
+                    <xs:restriction base="xs:string"/>
+                  </xs:simpleType>
+                </xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="countryCodes">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="item" minOccurs="1" maxOccurs="unbounded">
+                  <xs:simpleType>
+                    <xs:restriction base="xs:string"/>
+                  </xs:simpleType>
+                </xs:element>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+        <xs:attribute name="probabilityOfNonCommercialFlight" type="xs:double" use="required"/>
+        <xs:attribute name="probabilityOfDeparture" type="xs:double" use="required"/>
+        <xs:attribute name="useExtendedCallsigns" type="xs:boolean" use="required"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="flightListTraffic">
+    <xs:sequence>
+      <xs:element name="flight" type="flightListTrafficFlight" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+    <xs:attribute name="title" type="xs:string" use="required"/>
+  </xs:complexType>
+
+  <xs:complexType name="flightListTrafficFlight">
+    <xs:attribute name="time" type="xs:time" use="required"/>
+    <xs:attribute name="callsign" type="xs:string" use="required"/>
+    <xs:attribute name="kind" use="required">
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:pattern value="(departure)|(arrival)"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="heading" type="sh:heading" use="required"/>
+    <xs:attribute name="planeType" type="xs:string" use="optional"/>
+    <xs:attribute name="follows" type="xs:string" use="optional"/>
+  </xs:complexType>
+
+
+</xs:schema>

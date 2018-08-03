@@ -1,35 +1,23 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package eng.jAtcSim.lib.traffic;
 
-import com.sun.org.apache.bcel.internal.generic.RET;
-import eng.eSystem.Triple;
 import eng.eSystem.Tuple;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.utilites.ArrayUtils;
 import eng.eSystem.utilites.NumberUtils;
+import eng.eSystem.xmlSerialization.XmlConstructor;
 import eng.eSystem.xmlSerialization.XmlIgnore;
-import eng.eSystem.xmlSerialization.XmlOptional;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.AirplaneType;
 import eng.jAtcSim.lib.airplanes.Callsign;
 import eng.jAtcSim.lib.global.ETime;
 import eng.jAtcSim.lib.traffic.fleets.CompanyFleet;
-import eng.jAtcSim.lib.traffic.fleets.FleetType;
-import eng.jAtcSim.lib.traffic.fleets.Fleets;
-
-import javax.crypto.AEADBadTagException;
-import java.util.Arrays;
 
 /**
  * @author Marek Vajgl
  */
-public class GenericTraffic extends Traffic {
+public class GenericTraffic extends GeneratedTraffic {
 
   private final String[] companies;
   private final String[] countryCodes;
@@ -55,6 +43,7 @@ public class GenericTraffic extends Traffic {
   @XmlIgnore
   private char[] orderedCategoriesByProbabilityDesc = null;
 
+  @XmlConstructor
   private GenericTraffic() {
     this.probabilityOfDeparture = 0.5;
     this.probabilityOfNonCommercialFlight = 0;
@@ -163,7 +152,8 @@ public class GenericTraffic extends Traffic {
 
     Callsign cls = generateUnusedCallsign(prefix, isNonCommercial);
     int delayInMinutes = generateDelayMinutes();
-    Movement ret = new Movement(cls, type, initTime, delayInMinutes, isDeparture);
+    int entryRadial = Acc.rnd().nextInt(360);
+    Movement ret = new Movement(cls, type, initTime, delayInMinutes, isDeparture, entryRadial);
     return ret;
   }
 
@@ -202,7 +192,7 @@ public class GenericTraffic extends Traffic {
       type = companyFleet.getTypes().where(q -> q.getAirplaneType().category == category).getRandom().getAirplaneType();
     }
 
-//those should be set
+    //those should be set
     assert icao != null;
     assert type != null;
 

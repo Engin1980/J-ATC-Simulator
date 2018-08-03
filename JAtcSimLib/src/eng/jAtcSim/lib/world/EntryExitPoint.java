@@ -5,8 +5,7 @@ import eng.eSystem.collections.IList;
 import eng.eSystem.xmlSerialization.XmlIgnore;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.coordinates.Coordinate;
-
-import java.util.Arrays;
+import eng.jAtcSim.lib.coordinates.Coordinates;
 
 public class EntryExitPoint {
   public enum Type {
@@ -23,6 +22,8 @@ public class EntryExitPoint {
   private Type type;
   @XmlIgnore
   private Integer maxMrvaAltitude = null;
+  @XmlIgnore
+  private int radialFromAirport;
 
   public EntryExitPoint(Navaid mainFix, Type type, int maxMrvaAltitude) {
     this.navaid = mainFix;
@@ -75,6 +76,9 @@ public class EntryExitPoint {
       this.maxMrvaAltitude = maxMrvaAlt;
     else
       this.maxMrvaAltitude = Math.min(this.maxMrvaAltitude, maxMrvaAlt);
+
+    this.radialFromAirport = (int) Math.round(
+        Coordinates.getBearing(this.parent.getLocation(), this.navaid.getCoordinate()));
   }
 
   public void adjustBy(EntryExitPoint eep) {
@@ -94,5 +98,9 @@ public class EntryExitPoint {
 
   public String getName() {
     return this.name;
+  }
+
+  public int getRadialFromAirport() {
+    return radialFromAirport;
   }
 }

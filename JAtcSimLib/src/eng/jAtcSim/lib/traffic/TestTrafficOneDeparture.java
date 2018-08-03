@@ -46,7 +46,7 @@ public class TestTrafficOneDeparture extends TestTraffic {
 
     typeName = "C172";
 
-    tmp = new Movement(cs, pt, Acc.now().clone(), 0, true);
+    tmp = new Movement(cs, pt, Acc.now().clone(), 0, true, 180);
     return tmp;
   }
 }

@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class DensityBasedTraffic extends Traffic {
+public class DensityBasedTraffic extends GeneratedTraffic {
 
   public static class CodeWeight {
     public String code;
@@ -65,15 +65,10 @@ public class DensityBasedTraffic extends Traffic {
     }
   }
 
-  public static class HourBlockMovements implements Comparable<HourBlockMovements> {
+  public static class HourBlockMovements {
     public int hour;
     public int arrivals;
     public int departures;
-
-    @Override
-    public int compareTo(HourBlockMovements o) {
-      return Integer.compare(hour, o.hour);
-    }
 
     @Override
     public String toString() {
@@ -83,8 +78,8 @@ public class DensityBasedTraffic extends Traffic {
 
   private CodeWeightList companies = null; // XML
   private CodeWeightList countries = null; // XML
-  private List<HourBlockMovements> density = null; //XMl
-  private List<DirectionWeight> directions = new ArrayList<>(); // XML
+  private IList<HourBlockMovements> density = null; //XMl
+  private IList<DirectionWeight> directions = new EList<>(); // XML
   private double nonCommercialFlightProbability = 0; // XML
 
   @XmlIgnore
@@ -112,13 +107,6 @@ public class DensityBasedTraffic extends Traffic {
     return ret;
   }
 
-//  @Override
-//  public void generateNewMovementsIfRequired() {
-//    if (lastGeneratedHour == null || lastGeneratedHour == Acc.now().getHours()) {
-//      generateNewMovements();
-//    }
-//  }
-
   private Tuple<Integer,IReadOnlyList<Movement>> generateNewMovements() {
     IList<Movement> ret = new EList<>();
 
@@ -126,7 +114,7 @@ public class DensityBasedTraffic extends Traffic {
       if (density.size() == 0)
         throw new EApplicationException("Unable to use generic traffic without density specified.");
       // init things
-      Collections.sort(density);
+      density.sort(q->q.hour);
       IReadOnlyList<Movement> tmp = generateTrafficForHour(Acc.now().getHours());
       ret.add(tmp);
       lastGeneratedHour = Acc.now().getHours();
@@ -188,8 +176,21 @@ public class DensityBasedTraffic extends Traffic {
       type = cf.getRandom().getAirplaneType();
     }
 
+    int entryRadial = getRandomEntryRadial();
 
-    Movement m = new Movement(cls, type, initTime, delay, isDeparture);
+    Movement m = new Movement(cls, type, initTime, delay, isDeparture, entryRadial);
     return m;
+  }
+
+  private int getRandomEntryRadial() {
+    int ret;
+    if (directions.isEmpty())
+      ret = Acc.rnd().nextInt(360);
+    else {
+      DirectionWeight dw;
+      dw = directions.getRandomByWeights(q->q.weight, Acc.rnd());
+      ret = dw.heading;
+    }
+    return ret;
   }
 }

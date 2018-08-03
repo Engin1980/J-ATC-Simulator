@@ -12,7 +12,6 @@ import eng.jAtcSim.lib.airplanes.AirplaneType;
 import eng.jAtcSim.lib.airplanes.Callsign;
 
 /**
- *
  * @author Marek Vajgl
  */
 public class TestTrafficOneApproach extends TestTraffic {
@@ -22,7 +21,7 @@ public class TestTrafficOneApproach extends TestTraffic {
   @Override
   public GeneratedMovementsResponse generateMovements(Object syncObject) {
     Boolean done = (Boolean) syncObject;
-    IList<Movement> lst =new EList<>();
+    IList<Movement> lst = new EList<>();
     if (done == null || done == false) {
       Movement mov;
       for (String clsgnNumber : clsgnNumbers) {
@@ -42,9 +41,9 @@ public class TestTrafficOneApproach extends TestTraffic {
     assert pt != null;
 
     ret = new Movement(
-      new Callsign("CSA", number),
-      pt,
-        Acc.now().clone(), 0, false);
+        new Callsign("CSA", number),
+        pt,
+        Acc.now().clone(), 0, false, 180);
 
     return ret;
   }

@@ -13,6 +13,7 @@ import eng.jAtcSim.lib.airplanes.Squawk;
 import eng.jAtcSim.lib.coordinates.Coordinate;
 import eng.jAtcSim.lib.coordinates.Coordinates;
 import eng.jAtcSim.lib.global.ETime;
+import eng.jAtcSim.lib.global.Headings;
 import eng.jAtcSim.lib.messaging.Message;
 import eng.jAtcSim.lib.messaging.Messenger;
 import eng.jAtcSim.lib.messaging.StringMessageContent;
@@ -91,7 +92,7 @@ public class TrafficManager {
     cs = m.getCallsign();
     AirplaneType pt = m.getAirplaneType();
 
-    EntryExitPoint entryPoint = tryGetRandomEntryPoint(false, pt);
+    EntryExitPoint entryPoint = tryGetRandomEntryPoint(m.getEntryRadial(), false, pt);
     if (entryPoint == null) return null; // no route means disallowed IFR
     Coordinate coord = Acc.airport().getLocation();
     Squawk sqwk = generateSqwk();
@@ -107,14 +108,18 @@ public class TrafficManager {
     return ret;
   }
 
-  private EntryExitPoint tryGetRandomEntryPoint(boolean isArrival, AirplaneType pt) {
+  private EntryExitPoint tryGetRandomEntryPoint(int entryRadial, boolean isArrival, AirplaneType pt) {
     IReadOnlyList<EntryExitPoint> tmp = Acc.airport().getEntryExitPoints();
     if (isArrival)
       tmp = tmp.where(q->q.getType() == EntryExitPoint.Type.entry || q.getType() == EntryExitPoint.Type.both);
     else
       tmp = tmp.where(q->q.getType() == EntryExitPoint.Type.exit || q.getType() == EntryExitPoint.Type.both);
     tmp = tmp.where(q->q.getMaxMrvaAltitudeOrHigh() < pt.maxAltitude);
-    EntryExitPoint ret = tmp.tryGetRandom();
+
+    assert !tmp.isEmpty() : "There are no avilable entry/exit points for plane type " + pt.name + " with service ceiling at " + pt.maxAltitude;
+
+    EntryExitPoint ret = tmp.getSmallest(q->Headings.getDifference(entryRadial, q.getRadialFromAirport(), true));
+
     return ret;
   }
 
@@ -131,7 +136,7 @@ public class TrafficManager {
     int alt;
     int spd;
 
-    EntryExitPoint entryPoint = tryGetRandomEntryPoint(true, pt);
+    EntryExitPoint entryPoint = tryGetRandomEntryPoint(m.getEntryRadial(), true, pt);
     if (entryPoint == null) {
       return null; // no route means disallowed IFR
     }
@@ -219,40 +224,4 @@ public class TrafficManager {
     }
     return ret;
   }
-
-//  private Route tryGetRandomIfrRoute(boolean isArrival, AirplaneType planeType) {
-//
-//    IList<Route> rts = new EList<>();
-//
-//    IList<RunwayThreshold> thresholds;
-//    if (!isArrival) {
-//      thresholds = Acc.thresholds();
-//    } else {
-//      // if is arrival, scheduled thresholds are taken into account
-//      thresholds = Acc.atcTwr().getRunwayThresholdsScheduled();
-//      if (thresholds.isEmpty())
-//        thresholds = Acc.thresholds();
-//    }
-//
-//    for (RunwayThreshold threshold : thresholds) {
-//      rts.add(threshold.getRoutes());
-//    }
-//    if (isArrival)
-//      rts = rts.where(q -> q.getType() != Route.eType.sid);
-//    else
-//      rts = rts.where(q -> q.getType() == Route.eType.sid);
-//
-//    rts = rts.where(q -> q.getMaxMrvaAltitude() < planeType.maxAltitude);
-//
-//    rts = rts.where(q -> q.isValidForCategory(planeType.category));
-//
-//    Route ret;
-//
-//    if (rts.isEmpty())
-//      ret = null;
-//    else
-//      ret = rts.getRandom();
-//
-//    return ret;
-//  }
 }
