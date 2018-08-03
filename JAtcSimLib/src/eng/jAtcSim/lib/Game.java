@@ -34,6 +34,8 @@ public class Game {
     public Weather initialWeather;
     public WeatherSource.ProviderType weatherProviderType;
 
+    public TrafficXmlSource.TrafficSource trafficSourceType;
+    public String lookForTrafficTitle;
   }
 
   private AreaXmlSource areaXmlSource;
@@ -73,10 +75,16 @@ public class Game {
     g.weatherSource.init(gsi.initialWeather);
 
     System.out.println("* Generating traffic");
-    if (gsi.specificTraffic != null)
-      g.trafficXmlSource.setActiveTraffic(TrafficXmlSource.TrafficSource.specificTraffic, 0);
-    else
-      g.trafficXmlSource.setActiveTraffic(TrafficXmlSource.TrafficSource.activeAirportTraffic, 0);
+    switch (gsi.trafficSourceType){
+      case activeAirportTraffic:
+        g.trafficXmlSource.setActiveTraffic(gsi.trafficSourceType,gsi.lookForTrafficTitle);
+        break;
+      case xmlFileTraffic:
+        g.trafficXmlSource.setActiveTraffic(TrafficXmlSource.TrafficSource.xmlFileTraffic, gsi.lookForTrafficTitle );
+        break;
+      case specificTraffic:
+        g.trafficXmlSource.setActiveTraffic(TrafficXmlSource.TrafficSource.specificTraffic, null);
+    }
 
     System.out.println("* Creating simulation");
     g.simulation = new Simulation(
@@ -117,9 +125,9 @@ public class Game {
     ret.fleetsXmlSource.load();
     ret.fleetsXmlSource.init(ret.airplaneTypesXmlSource.getContent());
 
-    IList<Traffic> loadedSpecificTraffic = ret.trafficXmlSource.getSpecificTraffic();
+    Traffic loadedSpecificTraffic = ret.trafficXmlSource.getSpecificTraffic();
     ret.trafficXmlSource.load();
-    ret.trafficXmlSource.init(ret.areaXmlSource.getActiveAirport(), loadedSpecificTraffic.toArray(Traffic.class));
+    ret.trafficXmlSource.init(ret.areaXmlSource.getActiveAirport(), loadedSpecificTraffic);
 
     ret.weatherSource.init(ret.weatherSource.getWeather());
 

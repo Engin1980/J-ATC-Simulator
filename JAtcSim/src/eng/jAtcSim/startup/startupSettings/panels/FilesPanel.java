@@ -1,7 +1,9 @@
 package eng.jAtcSim.startup.startupSettings.panels;
 
+import eng.eSystem.collections.IList;
 import eng.eSystem.utilites.ExceptionUtils;
 import eng.jAtcSim.XmlLoadHelper;
+import eng.jAtcSim.lib.traffic.Traffic;
 import eng.jAtcSim.lib.world.Area;
 import eng.jAtcSim.shared.BackgroundWorker;
 import eng.jAtcSim.shared.LayoutManager;
@@ -18,6 +20,7 @@ public class FilesPanel extends JStartupPanel {
   private final XmlFileSelectorExtender fleArea;
   private final XmlFileSelectorExtender fleFleet;
   private final XmlFileSelectorExtender fleTypes;
+  private final XmlFileSelectorExtender fleTraffic;
   private final JButton btnLoad;
   private static final String LOAD_FILES_LABEL = "Load XML files";
   private static final String LOADING_FILES_LABEL = "...loading";
@@ -26,12 +29,13 @@ public class FilesPanel extends JStartupPanel {
     fleArea = new XmlFileSelectorExtender(SwingFactory.FileDialogType.area);
     fleFleet = new XmlFileSelectorExtender(SwingFactory.FileDialogType.fleets);
     fleTypes = new XmlFileSelectorExtender(SwingFactory.FileDialogType.types);
+    fleTraffic = new XmlFileSelectorExtender(SwingFactory.FileDialogType.traffic);
     btnLoad = new JButton(LOAD_FILES_LABEL);
 
     this.setBorder(new TitledBorder("Source XML files:"));
     this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
     this.add(
-        LayoutManager.createFormPanel(3, 3,
+        LayoutManager.createFormPanel(4, 3,
             new JLabel("area XML file:"),
             fleArea.getTextControl(),
             fleArea.getButtonControl(),
@@ -40,7 +44,10 @@ public class FilesPanel extends JStartupPanel {
             fleFleet.getButtonControl(),
             new JLabel("Plane types XML file:"),
             fleTypes.getTextControl(),
-            fleTypes.getButtonControl()
+            fleTypes.getButtonControl(),
+            new JLabel("Traffic XML file:"),
+            fleTraffic.getTextControl(),
+            fleTraffic.getButtonControl()
         ));
 
 
@@ -57,6 +64,7 @@ public class FilesPanel extends JStartupPanel {
     if (!loadArea()) return new Object();
     if (!loadFleet()) return new Object();
     if (!loadTypes()) return new Object();
+    if (!loadTraffic()) return new Object();
     return new Object();
   }
 
@@ -70,6 +78,7 @@ public class FilesPanel extends JStartupPanel {
     this.fleArea.setFileName(settings.files.areaXmlFile);
     this.fleTypes.setFileName(settings.files.planesXmlFile);
     this.fleFleet.setFileName(settings.files.fleetsXmlFile);
+    this.fleTraffic.setFileName(settings.files.trafficXmlFile);
   }
 
   @Override
@@ -77,14 +86,29 @@ public class FilesPanel extends JStartupPanel {
     settings.files.areaXmlFile = this.fleArea.getFileName();
     settings.files.planesXmlFile = this.fleTypes.getFileName();
     settings.files.fleetsXmlFile = this.fleFleet.getFileName();
+    settings.files.trafficXmlFile = this.fleTraffic.getFileName();
   }
 
-  private void btnLoadXml_click() {
-    if (!loadArea()) return;
-    if (!loadFleet()) return;
-    if (!loadTypes()) return;
+  private boolean loadTraffic() {
+    boolean ret;
+    String fileName = fleTraffic.getFileName();
+    if (fileName == null)
+      return true;
+    else {
+      IList<Traffic> trfc;
+      try {
+        trfc = XmlLoadHelper.loadTraffic(fileName);
+        ret = true;
+        Sources.setTraffic(trfc);
+      } catch (Exception ex) {
+        ex.printStackTrace();
+        MessageBox.show("Unable to load traffic file " + fileName + ".\n\nReason:\n" + ExceptionUtils.toFullString(ex, "\n"),
+            "Error...");
+        ret = false;
+      }
+    }
+    return ret;
   }
-
 
   private boolean loadArea() {
     boolean ret;

@@ -2,6 +2,7 @@ package eng.jAtcSim.startup.startupSettings;
 
 import eng.eSystem.utilites.awt.ComponentUtils;
 import eng.jAtcSim.XmlLoadHelper;
+import eng.jAtcSim.lib.world.Airport;
 import eng.jAtcSim.shared.LayoutManager;
 import eng.jAtcSim.startup.extenders.SwingFactory;
 import eng.jAtcSim.startup.startupSettings.panels.*;
@@ -13,10 +14,7 @@ import java.io.File;
 public class FrmStartupSettings extends JPanel {
   private JPanel pnlContent;
   private boolean dialogResultOk;
-
-  public boolean isDialogResultOk() {
-    return dialogResultOk;
-  }
+  private String lastStartupSettingsFileName = null;
 
   public FrmStartupSettings() throws HeadlessException {
 
@@ -31,6 +29,10 @@ public class FrmStartupSettings extends JPanel {
 
     //JPanel pnl = LayoutManager.createBorderedPanel(pnlTop, pnlBottom, null, null, pnlContent);
     LayoutManager.fillBorderedPanel(this, pnlTop, pnlBottom, null, null, pnlContent);
+  }
+
+  public boolean isDialogResultOk() {
+    return dialogResultOk;
   }
 
   public void fillBySettings(StartupSettings settings) {
@@ -54,12 +56,18 @@ public class FrmStartupSettings extends JPanel {
     JButton btnSave = new JButton("Save");
     JButton btnLoad = new JButton("Load");
     JButton btnApply = new JButton("Apply");
-    btnApply.addActionListener(q->{this.dialogResultOk = true; this.getRootPane().getParent().setVisible(false);});
+    btnApply.addActionListener(q -> {
+      this.dialogResultOk = true;
+      this.getRootPane().getParent().setVisible(false);
+    });
     JButton btnCancel = new JButton("Discard changes");
-    btnCancel.addActionListener(q->{this.dialogResultOk = false; this.getRootPane().getParent().setVisible(false);});
+    btnCancel.addActionListener(q -> {
+      this.dialogResultOk = false;
+      this.getRootPane().getParent().setVisible(false);
+    });
 
     btnSave.addActionListener(q -> btnSave_click());
-    btnLoad.addActionListener(q->btnLoad_click());
+    btnLoad.addActionListener(q -> btnLoad_click());
 
     JPanel ret = LayoutManager.createBorderedPanel(
         null,
@@ -77,7 +85,6 @@ public class FrmStartupSettings extends JPanel {
     return ret;
   }
 
-  private String lastStartupSettingsFileName = null;
   private void btnLoad_click() {
     JFileChooser jfc = SwingFactory.createFileDialog(SwingFactory.FileDialogType.startupSettings, lastStartupSettingsFileName);
 
@@ -112,16 +119,15 @@ public class FrmStartupSettings extends JPanel {
 
     JTabbedPane tabbedPane = new JTabbedPane();
 
-    JPanel pnl;
+    AirportAndWeatherPanel pnlA = new AirportAndWeatherPanel();
+    tabbedPane.addTab("Airport & Weather", pnlA);
 
-    pnl = new AirportAndWeatherPanel();
-    tabbedPane.addTab("Airport & Weather", pnl);
+    TrafficPanel pnlB = new TrafficPanel();
+    pnlA.getOnAirportChanged().add(q->{pnlB.airportChanged((Airport) q);});
+    tabbedPane.addTab("Traffic", pnlB);
 
-    pnl = new TrafficPanel();
-    tabbedPane.addTab("Traffic", pnl);
-
-    pnl = new SimulationTimeRadarSettings();
-    tabbedPane.addTab("Simulation", pnl);
+    SimulationTimeRadarSettings pnlC = new SimulationTimeRadarSettings();
+    tabbedPane.addTab("Simulation", pnlC);
 
     ret.add(tabbedPane);
 

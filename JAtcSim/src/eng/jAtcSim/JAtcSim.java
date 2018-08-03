@@ -8,6 +8,7 @@ package eng.jAtcSim;
 import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IMap;
 import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.exceptions.ERuntimeException;
 import eng.jAtcSim.frmPacks.Pack;
 import eng.jAtcSim.lib.Acc;
@@ -15,6 +16,7 @@ import eng.jAtcSim.lib.Game;
 import eng.jAtcSim.lib.global.ETime;
 import eng.jAtcSim.lib.global.logging.ApplicationLog;
 import eng.jAtcSim.lib.global.logging.Recorder;
+import eng.jAtcSim.lib.global.sources.TrafficXmlSource;
 import eng.jAtcSim.lib.global.sources.WeatherSource;
 import eng.jAtcSim.lib.traffic.GenericTraffic;
 import eng.jAtcSim.lib.traffic.Traffic;
@@ -41,9 +43,9 @@ public class JAtcSim {
 
   private static final boolean FAST_START = false;
   private static final Traffic enginSpecificTraffic =
-       // new eng.jAtcSim.lib.traffic.TestTrafficOneApproach();
-        new eng.jAtcSim.lib.traffic.TestTrafficOneDeparture();
-       // null;
+      // new eng.jAtcSim.lib.traffic.TestTrafficOneApproach();
+      // new eng.jAtcSim.lib.traffic.TestTrafficOneDeparture();
+      null;
   private static AppSettings appSettings;
 
   /**
@@ -116,10 +118,28 @@ public class JAtcSim {
     gsi.icao = startupSettings.recent.icao;
     gsi.planesXmlFile = startupSettings.files.planesXmlFile;
     gsi.secondLengthInMs = startupSettings.simulation.secondLengthInMs;
-    if (startupSettings.traffic.type == StartupSettings.Traffic.eTrafficType.custom)
-      gsi.specificTraffic = generateCustomTraffic(startupSettings.traffic);
-    if (enginSpecificTraffic != null)
+    if (enginSpecificTraffic != null) {
       gsi.specificTraffic = enginSpecificTraffic;
+      gsi.trafficSourceType = TrafficXmlSource.TrafficSource.specificTraffic;
+    } else {
+      switch (startupSettings.traffic.type) {
+        case custom:
+          gsi.specificTraffic = generateCustomTraffic(startupSettings.traffic);
+          gsi.trafficSourceType = TrafficXmlSource.TrafficSource.specificTraffic;
+          break;
+        case airportDefined:
+          gsi.trafficSourceType = TrafficXmlSource.TrafficSource.activeAirportTraffic;
+          gsi.lookForTrafficTitle = startupSettings.traffic.trafficAirportDefinedTitle;
+          break;
+        case xml:
+          gsi.trafficSourceType = TrafficXmlSource.TrafficSource.xmlFileTraffic;
+          gsi.lookForTrafficTitle = startupSettings.traffic.trafficXmlDefinedTitle;
+          break;
+        default:
+          throw new EEnumValueUnsupportedException(startupSettings.traffic.type);
+      }
+    }
+
     gsi.startTime = new ETime(startupSettings.recent.time);
     gsi.trafficXmlFile = startupSettings.files.trafficXmlFile;
     gsi.initialWeather = Weather.createClear();
@@ -258,7 +278,8 @@ public class JAtcSim {
         });
   }
 
-  private static void resolveShortXmlFileNamesInStartupSettings(AppSettings appSettings, StartupSettings startupSettings) {
+  private static void resolveShortXmlFileNamesInStartupSettings(AppSettings appSettings, StartupSettings
+      startupSettings) {
     Path tmp;
     Path appPath;
     appPath = appSettings.getApplicationFolder();

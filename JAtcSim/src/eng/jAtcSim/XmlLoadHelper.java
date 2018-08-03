@@ -1,5 +1,6 @@
 package eng.jAtcSim;
 
+import eng.eSystem.collections.IList;
 import eng.eSystem.exceptions.ERuntimeException;
 import eng.eSystem.utilites.ExceptionUtils;
 import eng.eSystem.xmlSerialization.*;
@@ -12,6 +13,7 @@ import eng.jAtcSim.lib.global.PlaneCategoryDefinitions;
 import eng.jAtcSim.lib.global.sources.AirplaneTypesXmlSource;
 import eng.jAtcSim.lib.global.sources.AreaXmlSource;
 import eng.jAtcSim.lib.global.sources.FleetsXmlSource;
+import eng.jAtcSim.lib.global.sources.TrafficXmlSource;
 import eng.jAtcSim.lib.traffic.DensityBasedTraffic;
 import eng.jAtcSim.lib.traffic.FlightListTraffic;
 import eng.jAtcSim.lib.traffic.GenericTraffic;
@@ -133,11 +135,11 @@ public class XmlLoadHelper {
     return ret;
   }
 
-  public static Traffic loadTraffic(String trafficXmlFile) {
-    XmlSerializer ser = new XmlSerializer();
-    // todo I dont know how to do this as I do not have support for element->type mapping in XMlSerializing for root element
-    // it can be probably done via ICUstomElementParser with extension for .deserialize(Element... )?
-    throw new  UnsupportedOperationException("Custom traffic XML files are not supported yet.");
+  public static IList<Traffic> loadTraffic(String fileName) {
+    TrafficXmlSource txs = new TrafficXmlSource(fileName);
+    txs.load();
+    IList<Traffic> ret = txs._get();
+    return ret;
   }
 }
 

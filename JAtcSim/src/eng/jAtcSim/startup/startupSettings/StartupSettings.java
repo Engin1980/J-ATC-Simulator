@@ -4,7 +4,6 @@ import eng.eSystem.EStringBuilder;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.xmlSerialization.XmlIgnore;
-import eng.eSystem.xmlSerialization.XmlOptional;
 import eng.jAtcSim.XmlLoadHelper;
 import eng.jAtcSim.lib.airplanes.AirplaneTypes;
 import eng.jAtcSim.lib.traffic.fleets.Fleets;
@@ -45,6 +44,7 @@ public class StartupSettings {
 
     public eTrafficType type;
     public String trafficAirportDefinedTitle;
+    public String trafficXmlDefinedTitle;
     public CustomTraffic customTraffic = new CustomTraffic();
     public int maxPlanes;
     public double densityPercentage;

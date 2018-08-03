@@ -1,6 +1,9 @@
 package eng.jAtcSim.startup.startupSettings.panels;
 
 import eng.eSystem.collections.EList;
+import eng.eSystem.events.EventAnonymous;
+import eng.eSystem.events.EventAnonymousSimple;
+import eng.eSystem.events.EventSimple;
 import eng.eSystem.utilites.awt.ComponentUtils;
 import eng.jAtcSim.lib.world.Airport;
 import eng.jAtcSim.lib.world.Area;
@@ -16,12 +19,17 @@ public class AirportAndWeatherPanel extends JStartupPanel {
   private JRadioButton rdbWeatherFromUser;
   private JRadioButton rdbWeatherFromWeb;
   private WeatherPanel weatherPanel;
+  private EventAnonymous<Airport> onAirportChanged = new EventAnonymous<Airport>();
 
   public AirportAndWeatherPanel() {
     super();
     initComponents();
-    Sources.getAreaChanged().add(this::fillAirportsComboBox);
+    Sources.getOnAreaChanged().add(this::fillAirportsComboBox);
     cmbAirports.getSelectedItemChanged().add(this::cmbAirports_changed);
+  }
+
+  public EventAnonymous getOnAirportChanged() {
+    return onAirportChanged;
   }
 
   @Override
@@ -43,8 +51,14 @@ public class AirportAndWeatherPanel extends JStartupPanel {
   }
 
   private void cmbAirports_changed(Object e) {
-    Object o = cmbAirports.getSelectedItem();
-    weatherPanel.setRelativeIcao((String) o);
+    String s = cmbAirports.getSelectedItem();
+    weatherPanel.setRelativeIcao(s);
+    if (Sources.getArea() == null)
+      onAirportChanged.raise(null);
+    else {
+      Airport aip = Sources.getArea().getAirports().tryGetFirst(q -> q.getIcao().equals(s));
+      onAirportChanged.raise(aip);
+    }
   }
 
   private void initComponents() {

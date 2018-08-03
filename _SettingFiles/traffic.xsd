@@ -90,7 +90,7 @@
     <xs:complexContent>
       <xs:extension base="traffic">
         <xs:sequence>
-          <xs:element name="movementsPerHour">
+          <xs:element name="movementsPerHour" minOccurs="1" maxOccurs="1">
             <xs:complexType>
               <xs:sequence>
                 <xs:element name="item" maxOccurs="24" minOccurs="24">
@@ -101,7 +101,7 @@
               </xs:sequence>
             </xs:complexType>
           </xs:element>
-          <xs:element name="probabilityOfCategory">
+          <xs:element name="probabilityOfCategory" minOccurs="1" maxOccurs="1">
             <xs:complexType>
               <xs:sequence>
                 <xs:element name="item" minOccurs="4" maxOccurs="4">
@@ -112,7 +112,7 @@
               </xs:sequence>
             </xs:complexType>
           </xs:element>
-          <xs:element name="companies">
+          <xs:element name="companies" minOccurs="1" maxOccurs="1">
             <xs:complexType>
               <xs:sequence>
                 <xs:element name="item" minOccurs="1" maxOccurs="unbounded">
@@ -123,7 +123,7 @@
               </xs:sequence>
             </xs:complexType>
           </xs:element>
-          <xs:element name="countryCodes">
+          <xs:element name="countryCodes" minOccurs="1" maxOccurs="1">
             <xs:complexType>
               <xs:sequence>
                 <xs:element name="item" minOccurs="1" maxOccurs="unbounded">

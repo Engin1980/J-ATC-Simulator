@@ -1,29 +1,38 @@
 package eng.jAtcSim.startup.startupSettings.panels;
 
+import eng.eSystem.collections.IList;
+import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.events.EventAnonymousSimple;
 import eng.jAtcSim.lib.airplanes.AirplaneTypes;
+import eng.jAtcSim.lib.traffic.Traffic;
 import eng.jAtcSim.lib.traffic.fleets.Fleets;
 import eng.jAtcSim.lib.world.Area;
 
 class Sources {
 
-  private static final EventAnonymousSimple areaChanged = new EventAnonymousSimple();
-  private static final EventAnonymousSimple typesChanged = new EventAnonymousSimple();
-  private static final EventAnonymousSimple fleetsChanged = new EventAnonymousSimple();
+  private static final EventAnonymousSimple onAreaChanged = new EventAnonymousSimple();
+  private static final EventAnonymousSimple onTypesChanged = new EventAnonymousSimple();
+  private static final EventAnonymousSimple onFleetsChanged = new EventAnonymousSimple();
+  private static final EventAnonymousSimple onTrafficChanged = new EventAnonymousSimple();
   private static Area area;
   private static AirplaneTypes types;
   private static Fleets fleets;
+  private static IList<Traffic> traffics;
 
-  public static EventAnonymousSimple getAreaChanged() {
-    return areaChanged;
+  public static EventAnonymousSimple getOnAreaChanged() {
+    return onAreaChanged;
   }
 
-  public static EventAnonymousSimple getTypesChanged() {
-    return typesChanged;
+  public static EventAnonymousSimple getOnTypesChanged() {
+    return onTypesChanged;
   }
 
-  public static EventAnonymousSimple getFleetsChanged() {
-    return fleetsChanged;
+  public static EventAnonymousSimple getOnFleetsChanged() {
+    return onFleetsChanged;
+  }
+
+  public static EventAnonymousSimple getOnTrafficChanged() {
+    return onTrafficChanged;
   }
 
   public static Area getArea() {
@@ -32,7 +41,12 @@ class Sources {
 
   public static void setArea(Area area) {
     Sources.area = area;
-    areaChanged.raise();
+    onAreaChanged.raise();
+  }
+
+  public static void setTraffic(IList<Traffic> traffics) {
+    Sources.traffics = traffics;
+    onTrafficChanged.raise();
   }
 
   public static AirplaneTypes getTypes() {
@@ -41,15 +55,19 @@ class Sources {
 
   public static void setTypes(AirplaneTypes types) {
     Sources.types = types;
-    typesChanged.raise();
+    onTypesChanged.raise();
   }
 
   public static Fleets getFleets() {
     return fleets;
   }
 
+  public static IReadOnlyList<Traffic> getTraffics() {
+    return traffics;
+  }
+
   public static void setFleets(Fleets fleets) {
     Sources.fleets = fleets;
-    fleetsChanged.raise();
+    onFleetsChanged.raise();
   }
 }
