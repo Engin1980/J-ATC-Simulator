@@ -105,13 +105,15 @@ public class FrmStartupSettings extends JPanel {
     int res = jfc.showSaveDialog(this);
     if (res != JFileChooser.APPROVE_OPTION) return;
 
-    File file = jfc.getSelectedFile();
+    String fileName = jfc.getSelectedFile().toString();
+    if (fileName.endsWith(SwingFactory.STARTUP_SETTING_FILE_EXTENSION) == false)
+      fileName += SwingFactory.STARTUP_SETTING_FILE_EXTENSION;
 
     StartupSettings sett = new StartupSettings();
     this.fillSettingsBy(sett);
 
-    XmlLoadHelper.saveStartupSettings(sett, file.getAbsolutePath());
-    this.lastStartupSettingsFileName = file.getAbsolutePath();
+    XmlLoadHelper.saveStartupSettings(sett, fileName);
+    this.lastStartupSettingsFileName = fileName;
   }
 
   private JPanel createContentPanel() {
