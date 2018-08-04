@@ -96,7 +96,8 @@ public class Simulation {
 
   public Simulation(
       Area area, AirplaneTypes airplaneTypes, Fleets fleets, Traffic traffic, Airport activeAirport,
-      WeatherProvider weatherProvider, ETime now, int simulationSecondLengthInMs, double emergencyPerDayProbability) {
+      WeatherProvider weatherProvider, ETime now, int simulationSecondLengthInMs, double emergencyPerDayProbability,
+      TrafficManager.TrafficManagerSettings trafficManagerSettings) {
 
     if (area == null) {
       throw new IllegalArgumentException("Value of {area} cannot not be null.");
@@ -118,6 +119,9 @@ public class Simulation {
     }
     if (activeAirport == null) {
       throw new IllegalArgumentException("Value of {activeAirport} cannot not be null.");
+    }
+    if (trafficManagerSettings == null) {
+        throw new IllegalArgumentException("Value of {trafficManagerSettings} cannot not be null.");
     }
 
 
@@ -141,7 +145,7 @@ public class Simulation {
     this.emergencyManager = new EmergencyManager(emergencyPerDayProbability);
     this.emergencyManager.generateEmergencyTime(this.now);
 
-    this.trafficManager = new TrafficManager();
+    this.trafficManager = new TrafficManager(trafficManagerSettings);
 
     IList<Border> mrvaAreas =
         area.getBorders().where(q -> q.getType() == Border.eType.mrva);

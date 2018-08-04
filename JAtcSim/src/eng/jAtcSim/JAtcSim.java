@@ -146,6 +146,10 @@ public class JAtcSim {
     gsi.weatherProviderType = startupSettings.weather.useOnline ?
         WeatherSource.ProviderType.dynamicNovGoaaProvider : WeatherSource.ProviderType.staticProvider;
 
+    gsi.allowTrafficDelays = startupSettings.traffic.allowDelays;
+    gsi.maxTrafficPlanes = startupSettings.traffic.maxPlanes;
+    gsi.trafficDensityPercentage = startupSettings.traffic.densityPercentage;
+
     Game g;
     g = Game.create(gsi);
 

@@ -18,13 +18,12 @@ import java.util.Comparator;
  */
 public class Movement {
 
-
   private final Callsign callsign;
   private final AirplaneType airplaneType;
   private final boolean departure;
   private final ETime initTime;
   private final ETime appExpectedTime;
-  private final int delayInMinutes;
+  private int delayInMinutes;
   private final int entryRadial;
 
   public Movement(Callsign callsign, AirplaneType type, ETime initTime, int delayInMinutes, boolean isDeparture, int entryRadial) {
@@ -86,4 +85,7 @@ public class Movement {
     return "Movement{" + "callsign=" + callsign + ", departure=" + departure + ", initTime=" + initTime + '}';
   }
 
+  public void clearDelayMinutes() {
+    this.delayInMinutes = 0;
+  }
 }

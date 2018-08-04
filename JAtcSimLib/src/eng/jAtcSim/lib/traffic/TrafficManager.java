@@ -4,6 +4,7 @@ import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.utilites.ArrayUtils;
+import eng.eSystem.xmlSerialization.XmlConstructor;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.Simulation;
 import eng.jAtcSim.lib.airplanes.Airplane;
@@ -30,10 +31,38 @@ public class TrafficManager {
   private Traffic traffic;
   private Object lastRelativeInfo;
   private ETime nextGenerateTime = new ETime(0);
+  private TrafficManagerSettings settings;
+  private int offeredMovements = 0;
+  private int createdMovements = 0;
+
+  public static class TrafficManagerSettings {
+    public final boolean allowDelays;
+    public final int maxPlanes;
+    public final double densityPercentage;
+
+    public TrafficManagerSettings(boolean allowDelays, int maxPlanes, double densityPercentage) {
+      this.allowDelays = allowDelays;
+      this.maxPlanes = maxPlanes;
+      this.densityPercentage = densityPercentage;
+    }
+  }
+
+  @XmlConstructor
+  private TrafficManager() {
+  }
+
+  public TrafficManager(TrafficManagerSettings settings) {
+    if (settings == null) {
+      throw new IllegalArgumentException("Value of {settings} cannot not be null.");
+    }
+    this.settings = settings;
+  }
 
   public void generateNewTrafficIfRequired() {
     if (Acc.now().isAfterOrEq(nextGenerateTime)) {
       GeneratedMovementsResponse gmr = traffic.generateMovements(lastRelativeInfo);
+      if (!settings.allowDelays)
+        gmr.getNewMovements().forEach(q -> q.clearDelayMinutes());
       this.scheduledMovements.add(gmr.getNewMovements());
       this.scheduledMovements.sort(q -> q.getInitTime()); // Movement has inner class comparer
       this.nextGenerateTime = gmr.getNextTime();
@@ -53,6 +82,9 @@ public class TrafficManager {
     IList<Movement> readyMovements = scheduledMovements.where(q -> q.getInitTime().isBeforeOrEq(Acc.now()));
     scheduledMovements.remove(readyMovements);
     for (Movement readyMovement : readyMovements) {
+      boolean createNewMovement = shouldCreateMovementByDensity();
+      if (!createNewMovement)
+        continue;
       Airplane a = this.convertMovementToAirplane(readyMovement);
       if (a == null) {
         Acc.messenger().send(new Message(Messenger.SYSTEM, Acc.atcApp(),
@@ -61,6 +93,25 @@ public class TrafficManager {
         ret.add(a);
     }
 
+    // restrict to max planes count
+    while (Acc.planes().size() + ret.size() > this.settings.maxPlanes) {
+      Airplane a = ret.getRandom();
+      ret.remove(a);
+    }
+
+    return ret;
+  }
+
+  private boolean shouldCreateMovementByDensity() {
+    double perc;
+    if (offeredMovements == 0)
+      perc = 0;
+    else
+      perc = createdMovements / (double) offeredMovements;
+    boolean ret = perc <= settings.densityPercentage;
+    offeredMovements++;
+    if (ret)
+      createdMovements++;
     return ret;
   }
 
@@ -111,14 +162,14 @@ public class TrafficManager {
   private EntryExitPoint tryGetRandomEntryPoint(int entryRadial, boolean isArrival, AirplaneType pt) {
     IReadOnlyList<EntryExitPoint> tmp = Acc.airport().getEntryExitPoints();
     if (isArrival)
-      tmp = tmp.where(q->q.getType() == EntryExitPoint.Type.entry || q.getType() == EntryExitPoint.Type.both);
+      tmp = tmp.where(q -> q.getType() == EntryExitPoint.Type.entry || q.getType() == EntryExitPoint.Type.both);
     else
-      tmp = tmp.where(q->q.getType() == EntryExitPoint.Type.exit || q.getType() == EntryExitPoint.Type.both);
-    tmp = tmp.where(q->q.getMaxMrvaAltitudeOrHigh() < pt.maxAltitude);
+      tmp = tmp.where(q -> q.getType() == EntryExitPoint.Type.exit || q.getType() == EntryExitPoint.Type.both);
+    tmp = tmp.where(q -> q.getMaxMrvaAltitudeOrHigh() < pt.maxAltitude);
 
     assert !tmp.isEmpty() : "There are no avilable entry/exit points for plane type " + pt.name + " with service ceiling at " + pt.maxAltitude;
 
-    EntryExitPoint ret = tmp.getSmallest(q->Headings.getDifference(entryRadial, q.getRadialFromAirport(), true));
+    EntryExitPoint ret = tmp.getSmallest(q -> Headings.getDifference(entryRadial, q.getRadialFromAirport(), true));
 
     return ret;
   }
@@ -165,7 +216,7 @@ public class TrafficManager {
     {
       final double thousandsFeetPerMile = 500;
       final double distance = Coordinates.getDistanceInNM(Acc.airport().getLocation(), eep.getNavaid().getCoordinate())
-          + Coordinates.getDistanceInNM(eep.getNavaid().getCoordinate(), planeCoordinate );
+          + Coordinates.getDistanceInNM(eep.getNavaid().getCoordinate(), planeCoordinate);
       int tmp = (int) (distance * thousandsFeetPerMile);
       ret = Math.max(ret, tmp);
     }
@@ -183,7 +234,7 @@ public class TrafficManager {
     ret = ret / 1000 * 1000;
 
     // check if initial altitude is not below STAR mrva
-    if (ret <eep.getMaxMrvaAltitudeOrHigh()) {
+    if (ret < eep.getMaxMrvaAltitudeOrHigh()) {
       double tmp = Math.ceil(eep.getMaxMrvaAltitudeOrHigh() / 10d) * 10;
       ret = (int) tmp;
     }

@@ -1,22 +1,18 @@
 package eng.jAtcSim.lib;
 
-import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IMap;
-import eng.eSystem.collections.IReadOnlyList;
-import eng.eSystem.collections.ISet;
 import eng.eSystem.eXml.XDocument;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.ERuntimeException;
 import eng.eSystem.exceptions.EXmlException;
-import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.global.ETime;
 import eng.jAtcSim.lib.global.sources.*;
 import eng.jAtcSim.lib.serialization.LoadSave;
 import eng.jAtcSim.lib.traffic.Traffic;
-import eng.jAtcSim.lib.weathers.*;
+import eng.jAtcSim.lib.traffic.TrafficManager;
+import eng.jAtcSim.lib.weathers.Weather;
 
-import java.util.Calendar;
 import java.util.Map;
 
 public class Game {
@@ -36,6 +32,9 @@ public class Game {
 
     public TrafficXmlSource.TrafficSource trafficSourceType;
     public String lookForTrafficTitle;
+    public boolean allowTrafficDelays;
+    public int maxTrafficPlanes;
+    public double trafficDensityPercentage;
   }
 
   private AreaXmlSource areaXmlSource;
@@ -86,13 +85,17 @@ public class Game {
         g.trafficXmlSource.setActiveTraffic(TrafficXmlSource.TrafficSource.specificTraffic, null);
     }
 
+    TrafficManager.TrafficManagerSettings tms = new TrafficManager.TrafficManagerSettings(
+        gsi.allowTrafficDelays, gsi.maxTrafficPlanes, gsi.trafficDensityPercentage);
+
     System.out.println("* Creating simulation");
     g.simulation = new Simulation(
         g.areaXmlSource.getContent(), g.airplaneTypesXmlSource.getContent(), g.fleetsXmlSource.getContent(), g.trafficXmlSource.getActiveTraffic(),
         g.areaXmlSource.getActiveAirport(),
         g.weatherSource.getContent(), gsi.startTime,
         gsi.secondLengthInMs,
-        gsi.emergencyPerDayProbability);
+        gsi.emergencyPerDayProbability,
+        tms);
     g.simulation.init();
 
     return g;
@@ -135,7 +138,8 @@ public class Game {
         ret.areaXmlSource.getContent(), ret.airplaneTypesXmlSource.getContent(),
         ret.fleetsXmlSource.getContent(), ret.trafficXmlSource.getActiveTraffic(),
         ret.areaXmlSource.getActiveAirport(),
-        ret.weatherSource.getContent(), new ETime(0), 0, 0);
+        ret.weatherSource.getContent(), new ETime(0), 0, 0,
+        new TrafficManager.TrafficManagerSettings(false, 0, 0));
     ret.simulation.init();
 
     XElement tmp = root.getChild("simulation");
