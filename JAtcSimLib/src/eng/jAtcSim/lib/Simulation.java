@@ -66,7 +66,6 @@ public class Simulation {
   private final Area area;
   private final AirplaneTypes airplaneTypes;
   private final Fleets fleets;
-  private final Traffic traffic;
   private final UserAtc appAtc;
   private final TowerAtc twrAtc;
   private final CenterAtc ctrAtc;
@@ -130,7 +129,6 @@ public class Simulation {
 
     this.area = area;
     this.airplaneTypes = airplaneTypes;
-    this.traffic = traffic;
     this.fleets = fleets;
     this.weatherProvider = weatherProvider;
 
@@ -145,7 +143,7 @@ public class Simulation {
     this.emergencyManager = new EmergencyManager(emergencyPerDayProbability);
     this.emergencyManager.generateEmergencyTime(this.now);
 
-    this.trafficManager = new TrafficManager(trafficManagerSettings);
+    this.trafficManager = new TrafficManager(trafficManagerSettings, traffic);
 
     IList<Border> mrvaAreas =
         area.getBorders().where(q -> q.getType() == Border.eType.mrva);
@@ -213,7 +211,6 @@ public class Simulation {
     this.prm.init();
     this.weatherProvider.getWeatherUpdatedEvent().add(w -> weatherProvider_weatherUpdated(w));
 
-    trafficManager.setTraffic(traffic);
     trafficManager.generateNewTrafficIfRequired();
     trafficManager.throwOutElapsedMovements(this.now.addMinutes(-5));
   }
@@ -416,9 +413,7 @@ public class Simulation {
     generateNewPlanes();
     removeOldPlanes();
     generateEmergencyIfRequired();
-    System.out.println("ElapseSecond -updatePlanes;");
     updatePlanes();
-    System.out.println("ElapseSecond - evalAirproxes");
     evalAirproxes();
     evalMrvas();
 

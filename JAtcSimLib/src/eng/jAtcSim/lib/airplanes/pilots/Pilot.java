@@ -1148,9 +1148,7 @@ public class Pilot {
 
      */
 
-    System.out.println("Pilot - new speeches");
     processNewSpeeches();
-    System.out.println("Pilot - afterspeeches");
     processAfterSpeeches(); // udelat vlastni queue toho co se ma udelat a pak to provest pres processQueueCommands
     endrivePlane();
     requestRadarContactIfRequired();

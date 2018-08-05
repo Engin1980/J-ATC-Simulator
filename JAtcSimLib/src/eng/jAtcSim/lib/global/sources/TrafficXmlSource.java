@@ -23,8 +23,8 @@ public class TrafficXmlSource extends XmlSource<IList<Traffic>> {
     specificTraffic
   }
 
-  @XmlIgnore
   private Traffic activeTraffic;
+  @XmlIgnore
   private Traffic specificTraffic;
   @XmlIgnore
   private Airport airport = null;

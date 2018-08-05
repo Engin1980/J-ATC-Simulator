@@ -611,9 +611,7 @@ public class Airplane implements IMessageParticipant {
   public void elapseSecond() {
 
     processMessages();
-    System.out.println("Plane " + this.getCallsign() + " elapseSecond() - drivePlane");
     drivePlane();
-    System.out.println("Plane " + this.getCallsign() + " elapseSecond() - updateSHA");
     updateSHABySecondNew();
     updateCoordinates();
 

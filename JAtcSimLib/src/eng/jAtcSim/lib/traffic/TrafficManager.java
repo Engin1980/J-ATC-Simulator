@@ -51,11 +51,16 @@ public class TrafficManager {
   private TrafficManager() {
   }
 
-  public TrafficManager(TrafficManagerSettings settings) {
+  public TrafficManager(TrafficManagerSettings settings, Traffic traffic) {
     if (settings == null) {
       throw new IllegalArgumentException("Value of {settings} cannot not be null.");
     }
+    if (traffic == null) {
+        throw new IllegalArgumentException("Value of {traffic} cannot not be null.");
+    }
+
     this.settings = settings;
+    this.traffic = traffic;
   }
 
   public void generateNewTrafficIfRequired() {
@@ -118,10 +123,6 @@ public class TrafficManager {
   public final IReadOnlyList<Movement> getScheduledMovements() {
     IReadOnlyList<Movement> ret = scheduledMovements;
     return ret;
-  }
-
-  public void setTraffic(Traffic traffic) {
-    this.traffic = traffic;
   }
 
   public void throwOutElapsedMovements(ETime minTime) {

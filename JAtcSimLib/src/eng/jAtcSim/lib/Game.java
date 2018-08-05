@@ -74,12 +74,12 @@ public class Game {
     g.weatherSource.init(gsi.initialWeather);
 
     System.out.println("* Generating traffic");
-    switch (gsi.trafficSourceType){
+    switch (gsi.trafficSourceType) {
       case activeAirportTraffic:
-        g.trafficXmlSource.setActiveTraffic(gsi.trafficSourceType,gsi.lookForTrafficTitle);
+        g.trafficXmlSource.setActiveTraffic(gsi.trafficSourceType, gsi.lookForTrafficTitle);
         break;
       case xmlFileTraffic:
-        g.trafficXmlSource.setActiveTraffic(TrafficXmlSource.TrafficSource.xmlFileTraffic, gsi.lookForTrafficTitle );
+        g.trafficXmlSource.setActiveTraffic(TrafficXmlSource.TrafficSource.xmlFileTraffic, gsi.lookForTrafficTitle);
         break;
       case specificTraffic:
         g.trafficXmlSource.setActiveTraffic(TrafficXmlSource.TrafficSource.specificTraffic, null);
@@ -128,9 +128,11 @@ public class Game {
     ret.fleetsXmlSource.load();
     ret.fleetsXmlSource.init(ret.airplaneTypesXmlSource.getContent());
 
-    Traffic loadedSpecificTraffic = ret.trafficXmlSource.getSpecificTraffic();
-    ret.trafficXmlSource.load();
-    ret.trafficXmlSource.init(ret.areaXmlSource.getActiveAirport(), loadedSpecificTraffic);
+    // does not need anything, everything is already loaded
+//    Traffic loadedSpecificTraffic = ret.trafficXmlSource.getSpecificTraffic();
+//    ret.trafficXmlSource.load();
+//    ret.trafficXmlSource.init(ret.areaXmlSource.getActiveAirport(), loadedSpecificTraffic);
+//    ret.trafficXmlSource.setActiveTraffic(TrafficXmlSource.TrafficSource.specificTraffic, null);
 
     ret.weatherSource.init(ret.weatherSource.getWeather());
 
