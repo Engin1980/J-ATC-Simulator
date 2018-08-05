@@ -338,7 +338,7 @@ public class Pilot {
 
   }
 
-  public static final double SPEED_TO_OVER_NAVAID_DISTANCE_MULTIPLIER = 0.01;
+  public static final double SPEED_TO_OVER_NAVAID_DISTANCE_MULTIPLIER = 0.007;
 
   abstract class BasicBehavior extends DivertableBehavior {
     private boolean clearanceLimitWarningSent = false;

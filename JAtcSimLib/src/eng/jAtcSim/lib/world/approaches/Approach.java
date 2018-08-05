@@ -164,7 +164,7 @@ public abstract class Approach {
 
   private static Navaid tryGetIafNavaidCloseToPlaneLocation(Approach approach, Coordinate planeLocation) {
     List<Navaid> iafNavs = CollectionUtils.select(approach.getIafRoutes(), q -> q.getNavaid());
-    Navaid ret = CollectionUtils.tryGetFirst(iafNavs, o -> Coordinates.getDistanceInNM(planeLocation, o.getCoordinate()) < 2);
+    Navaid ret = CollectionUtils.tryGetFirst(iafNavs, o -> Coordinates.getDistanceInNM(planeLocation, o.getCoordinate()) < 3);
     return ret;
   }
 
