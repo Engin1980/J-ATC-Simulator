@@ -769,13 +769,21 @@ public class Airplane implements IMessageParticipant {
   }
 
   public RunwayThreshold getAssignedRunwayThreshold() {
-    CurrentApproachInfo cai = pilot.tryGetAssignedApproach();
-    if (cai == null)
-    {
+    RunwayThreshold ret = tryGetAssignedRunwayThreshold();
+    if (ret == null) {
       throw new EApplicationException("Unable to find approach for plane " + this.getCallsign().toString());
     }
-    RunwayThreshold ret = cai.getThreshold();
     return ret;
+  }
+
+  public RunwayThreshold tryGetAssignedRunwayThreshold() {
+    CurrentApproachInfo cai = pilot.tryGetAssignedApproach();
+    if (cai == null) {
+      return null;
+    } else {
+      RunwayThreshold ret = cai.getThreshold();
+      return ret;
+    }
   }
 
   public void save(XElement elm) {
@@ -784,7 +792,6 @@ public class Airplane implements IMessageParticipant {
      */
     LoadSave.saveField(elm, this, "callsign");
     LoadSave.saveField(elm, this, "sqwk");
-    //LoadSave.saveAsAttribute(elm, "type", this.getType().name);
     LoadSave.saveField(elm, this, "airplaneType");
     LoadSave.saveField(elm, this, "delayInitialMinutes");
     LoadSave.saveField(elm, this, "delayExpectedTime");
