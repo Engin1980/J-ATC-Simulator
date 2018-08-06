@@ -258,7 +258,6 @@ public class TowerAtc extends ComputerAtc {
 
   @Override
   protected void _save(XElement elm) {
-    Acc.log().writeLine(ApplicationLog.eType.warning, "Not implemented saving of TWR !!!");
     super._save(elm);
     LoadSave.saveField(elm, this, "departureManager");
     LoadSave.saveField(elm, this, "arrivalManager");
@@ -764,7 +763,7 @@ class ArrivalManager {
   private IList<Airplane> goAroundedPlanesToSwitchList = new AirplaneList(true);
 
   public double getClosestLandingPlaneDistanceForThreshold(RunwayThreshold threshold) {
-    IList<Airplane> tmp = Acc.planes().where(q -> threshold.equals(q.getAssignedRunwayThreshold()));
+    IList<Airplane> tmp = Acc.planes().where(q -> threshold.equals(q.tryGetAssignedRunwayThreshold()));
     double ret = Double.MAX_VALUE;
     for (Airplane plane : tmp) {
       if (plane.getState() == Airplane.State.landed) {

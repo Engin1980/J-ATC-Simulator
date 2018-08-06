@@ -353,7 +353,6 @@ public class Pilot {
         double overNavaidDistance = Pilot.this.parent.getSpeed() * SPEED_TO_OVER_NAVAID_DISTANCE_MULTIPLIER;
 
         double dist = Coordinates.getDistanceInNM(parent.getCoordinate(), targetCoordinate);
-        System.out.println(this.airplane.getCallsign() + " - to target: " + dist);
         if (!clearanceLimitWarningSent && dist < warningDistance && !pilot.afterCommands.hasLateralDirectionAfterCoordinate(targetCoordinate)) {
           say(new PassingClearanceLimitNotification());
           clearanceLimitWarningSent = true;
@@ -1469,7 +1468,6 @@ public class Pilot {
 
     while (queue.isEmpty() == false) {
       ISpeech sp = queue.get(0);
-      System.out.println("?? analysing speech " + sp.getClass().getName());
       if (sp instanceof AfterCommand)
         break;
       else {
@@ -1480,18 +1478,14 @@ public class Pilot {
 
         queue.removeAt(0);
         cres = ApplicationManager.confirm(plane, cmd, true, false);
-        System.out.println("?? after cres");
         if (sayConfirmations) say(cres.confirmation);
-        System.out.println("?? confirmation said");
 
         if (cs == CommandSource.procedure) {
           afterCommands.addRoute(af, cmd);
         } else
           afterCommands.addExtension(af, cmd);
-        System.out.println("?? iteration processed");
       }
     }
-    System.out.println("?? processAfterSpeechWithConsequents end");
   }
 
   private void say(ISpeech speech) {
