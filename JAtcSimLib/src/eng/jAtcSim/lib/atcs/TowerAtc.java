@@ -408,7 +408,8 @@ public class TowerAtc extends ComputerAtc {
       Runway rwy = rrct.runway;
       RunwayCheck rc = this.runwayChecks.tryGet(rwy);
       if (rwy == null && this.runwayChecks.size() == 1) {
-        rc = this.runwayChecks.get(this.runwayChecks.getKeys().getFirst());
+        rwy = this.runwayChecks.getKeys().getFirst();
+        rc = this.runwayChecks.get(rwy);
       }
       if (rc == null) {
         Message msg = new Message(this, Acc.atcApp(),
