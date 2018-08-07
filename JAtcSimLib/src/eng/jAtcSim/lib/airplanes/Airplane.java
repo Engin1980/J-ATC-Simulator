@@ -127,6 +127,10 @@ public class Airplane implements IMessageParticipant {
     public Navaid entryExitPoint() {
       return Airplane.this.getEntryExitFix();
     }
+
+    public boolean hasRadarContact() {
+      return Airplane.this.pilot.hasRadarContact();
+    }
   }
 
   public class Airplane4Pilot {

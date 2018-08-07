@@ -1236,6 +1236,10 @@ public class Pilot {
     LoadSave.saveField(tmp, this, "behavior");
   }
 
+  public boolean hasRadarContact() {
+    return secondsWithoutRadarContact == 0;
+  }
+
   private void setHoldBehavior(Navaid navaid, int inboundRadial, boolean leftTurn) {
     Pilot.HoldBehavior hold = new Pilot.HoldBehavior();
     hold.navaid = navaid;

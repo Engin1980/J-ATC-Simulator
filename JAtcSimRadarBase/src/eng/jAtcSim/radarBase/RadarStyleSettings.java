@@ -229,6 +229,8 @@ public class RadarStyleSettings {
   public TextSettings time;
   public TextSettings callsign;
   public TextSettings navaid;
+  @XmlOptional
+  public Color switchingPlaneAlternatingColor = null;
 
   // plane labels
   public PlaneLabelSettings stopped;

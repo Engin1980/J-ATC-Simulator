@@ -109,6 +109,7 @@ public class Radar {
     public int verticalSpeed;
     public Atc tunedAtc;
     public Atc responsibleAtc;
+    public boolean hasRadarContact;
     public AirplaneType type;
     public Point labelShift;
     public boolean fixedLabelShift = false;
@@ -140,6 +141,7 @@ public class Radar {
 
       this.tunedAtc = plane.tunedAtc();
       this.responsibleAtc = plane.responsibleAtc();
+this.hasRadarContact = plane.hasRadarContact();
 
       this.airprox = plane.getAirprox();
       this.mrvaError = plane.isMrvaError();
@@ -339,6 +341,7 @@ public class Radar {
   private int simulationSecondListenerHandler = -1;
   private Counter planeRedrawCounter;
   private Counter radarRedrawCounter;
+  private boolean switchFlagTrue = false;
 
   public Radar(ICanvas canvas, InitialPosition initialPosition,
                Simulation sim, Area area,
@@ -433,8 +436,10 @@ public class Radar {
   public void redraw(boolean force) {
 
     if (force || radarRedrawCounter.increase()) { // if is forced or second is elapsed
-      if (!force && planeRedrawCounter.increase()) // if is only second elapsed
+      if (!force && planeRedrawCounter.increase()) { // if is only second elapsed
+        if (styleSettings.switchingPlaneAlternatingColor != null) switchFlagTrue = !switchFlagTrue;
         planeInfos.update(simulation.getPlanesToDisplay());
+      }
       this.c.invokeRepaint();
     }
   }
@@ -485,7 +490,7 @@ public class Radar {
     IReadOnlyList<RunwayThreshold> rts =
         Acc.atcTwr().getRunwayThresholdsInUse(TowerAtc.eDirection.arrivals);
     for (RunwayThreshold rt : rts) {
-      for (Route route : rt.getRoutes().where(q->q.getType() != Route.eType.sid)) {
+      for (Route route : rt.getRoutes().where(q -> q.getType() != Route.eType.sid)) {
         for (Navaid navaid : route.getNavaids()) {
           NavaidDisplayInfo ndi = this.navaids.getByNavaid(navaid);
           ndi.isRoute = true;
@@ -493,7 +498,7 @@ public class Radar {
       }
     }
     for (RunwayThreshold rt : rts) {
-      for (Route route : rt.getRoutes().where(q->q.getType() == Route.eType.sid)) {
+      for (Route route : rt.getRoutes().where(q -> q.getType() == Route.eType.sid)) {
         for (Navaid navaid : route.getNavaids()) {
           NavaidDisplayInfo ndi = this.navaids.getByNavaid(navaid);
           ndi.isRoute = true;
@@ -1016,10 +1021,18 @@ public class Radar {
       c = styleSettings.mrvaError;
     } else if (adi.airprox == AirproxType.warning) {
       c = styleSettings.airproxWarning;
+    } else if (switchFlagTrue && isUnderSwitching(adi)) {
+      c = styleSettings.switchingPlaneAlternatingColor;
     } else if (this.selectedCallsign == adi.callsign) {
       c = styleSettings.selected.getColor();
     }
     return c;
+  }
+
+  private boolean isUnderSwitching(AirplaneDisplayInfo adi) {
+    boolean ret;
+    ret = adi.responsibleAtc != adi.tunedAtc; // || !adi.hasRadarContact;
+    return ret;
   }
 
   private RadarStyleSettings.PlaneLabelSettings getPlaneLabelDisplaySettingsBy(AirplaneDisplayInfo adi) {

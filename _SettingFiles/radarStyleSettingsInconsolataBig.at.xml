@@ -54,6 +54,7 @@
   <navaid color="000000">
     <font name="Inconsolata" size="14" style="0"/>
   </navaid>
+  <switchingPlaneAlternatingColor>FFFFFF</switchingPlaneAlternatingColor>
 
   <!--
     case 1:    callsign

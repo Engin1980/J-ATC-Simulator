@@ -42,6 +42,7 @@
       <xs:element name="time" type="colorFontElement" />
       <xs:element name="callsign" type="colorFontElement" />
       <xs:element name="navaid" type="colorFontElement" />
+      <xs:element name="switchingPlaneAlternatingColor" type="colorElement" minOccurs="0" maxOccurs="1" />
 
       <xs:element name="stopped" type="displayLabelElement" />
       <xs:element name="app" type="displayLabelElement" />
