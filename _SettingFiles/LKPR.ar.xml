@@ -7546,7 +7546,6 @@
         <point coordinate="49 44 16.06 N 018 16 42.91 E"/>
       </points>
     </border>
-
     <border name="LKMT TMA I" type="tma" enclosed="true" minAltitude="1000" maxAltitude="FL95">
       <points>
         <point coordinate="49 59 32.1846 N 018 12 40.99 E"/>
@@ -7559,7 +7558,6 @@
         <point coordinate="49 59 32.1846 N 018 12 40.99 E"/>
       </points>
     </border>
-
     <border name="LKMT TMA II" type="tma" enclosed="true" minAltitude="4000" maxAltitude="FL95">
       <points>
         <point coordinate="49 49 04.7075 N 018 34 56.4441 E"/>
@@ -7571,7 +7569,6 @@
         <point coordinate="49 49 04.7075 N 018 34 56.4441 E"/>
       </points>
     </border>
-
     <border name="LKMT TMA III" type="tma" enclosed="true" minAltitude="4000" maxAltitude="FL95">
       <points>
         <point coordinate="50 01 03.4982 N 017 47 13.8124 E"/>
@@ -7581,7 +7578,6 @@
         <point coordinate="50 01 03.4982 N 017 47 13.8124 E"/>
       </points>
     </border>
-
     <border name="LKMT TMA IV" type="tma" enclosed="true" minAltitude="4500" maxAltitude="FL95">
       <points>
         <point coordinate="49 35 00.12 N 017 44 19.02 E"/>
@@ -7593,7 +7589,6 @@
         <point coordinate="49 35 00.12 N 017 44 19.02 E"/>
       </points>
     </border>
-
     <border name="LKMT TMA V" type="tma" enclosed="true" minAltitude="FL65" maxAltitude="FL95">
       <points>
         <point coordinate="49 33 39.47 N 017 26 09.50 E"/>

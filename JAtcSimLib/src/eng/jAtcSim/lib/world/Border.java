@@ -140,7 +140,7 @@ public class Border {
         } else if (line.getA().getLongitude().get() > c.getLongitude().get()) {
           // line longitude on the right side
           double latMin = line.getA().getLatitude().get();
-          double latMax = line.getA().getLatitude().get();
+          double latMax = line.getB().getLatitude().get();
           if (latMin > latMax) {
             double tmp = latMin;
             latMin = latMax;
