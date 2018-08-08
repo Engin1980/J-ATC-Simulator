@@ -307,9 +307,9 @@ public class TowerAtc extends ComputerAtc {
   public IReadOnlyList<RunwayThreshold> getRunwayThresholdsInUse(eDirection direction) {
     switch (direction) {
       case departures:
-        return inUseInfo.current.getDepartingThresholds();
+        return inUseInfo.current.getDepartures().select(q->q.getThreshold());
       case arrivals:
-        return inUseInfo.current.getArrivingThresholds();
+        return inUseInfo.current.getArrivals().select(q->q.getThreshold());
       default:
         throw new EEnumValueUnsupportedException(direction);
     }
@@ -321,9 +321,9 @@ public class TowerAtc extends ComputerAtc {
     else {
       switch (direction) {
         case departures:
-          return inUseInfo.scheduled.getDepartingThresholds();
+          return inUseInfo.scheduled.getDepartures().select(q->q.getThreshold());
         case arrivals:
-          return inUseInfo.scheduled.getArrivingThresholds();
+          return inUseInfo.scheduled.getArrivals().select(q->q.getThreshold());
         default:
           throw new EEnumValueUnsupportedException(direction);
       }
@@ -471,7 +471,8 @@ public class TowerAtc extends ComputerAtc {
   }
 
   private boolean isOnApproachOfTheRunwayInUse(Airplane p) {
-    boolean ret = inUseInfo.current.getArrivingThresholds().contains(p.tryGetCurrentApproachRunwayThreshold());
+    boolean ret = inUseInfo.current.getArrivals()
+        .isAny(q->q.getThreshold().equals(p.tryGetCurrentApproachRunwayThreshold()));
     return ret;
   }
 
@@ -559,9 +560,9 @@ public class TowerAtc extends ComputerAtc {
     this.inUseInfo.scheduler = null;
 
     IList<Runway> tmp =
-        this.inUseInfo.current.getDepartingThresholds()
-            .select(q -> q.getParent())
-            .union(this.inUseInfo.current.getArrivingThresholds().select(q -> q.getParent()));
+        this.inUseInfo.current.getDepartures()
+            .select(q -> q.getThreshold().getParent())
+            .union(this.inUseInfo.current.getArrivals().select(q -> q.getThreshold().getParent()));
     tmp.forEach(q -> announceScheduledRunwayCheck(q, this.runwayChecks.get(q)));
 
     onRunwayChanged.raise();
@@ -653,7 +654,9 @@ public class TowerAtc extends ComputerAtc {
     Airplane toReadyPlane = departureManager.tryGetPlaneReadyForTakeOff();
     if (toReadyPlane == null) return;
 
-    IList<RunwayThreshold> rts = new EList<>(inUseInfo.current.getDepartingThresholds());
+    IList<RunwayThreshold> rts = inUseInfo.current.getDepartures()
+        .where(q->q.isForCategory(toReadyPlane.getType().category))
+        .select(q->q.getThreshold());
     restrictToRunwaysNotUnderMaintenance(rts);
     restrictToRunwaysNotUsedInApproach(rts);
     restrictToRunwaysNotUsedByRolling(rts);

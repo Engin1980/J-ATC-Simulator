@@ -264,11 +264,11 @@ class RunwayConfigurationParser implements IElementParser<RunwayConfiguration> {
     int windTo = 359;
     int windSpeedFrom = 0;
     int windSpeedTo = 999;
-    IList<String>arrivals = new EList<>();
-    IList<String>departures = new EList<>();
+    IList<RunwayConfiguration.RunwayThresholdConfiguration> arrivals = new EList<>();
+    IList<RunwayConfiguration.RunwayThresholdConfiguration> departures = new EList<>();
 
     String tmp;
-    tmp = xElement.tryGetAttribute("windFrom" );
+    tmp = xElement.tryGetAttribute("windFrom");
     if (tmp != null) windFrom = Integer.parseInt(tmp);
     tmp = xElement.tryGetAttribute("windTo");
     if (tmp != null) windTo = Integer.parseInt(tmp);
@@ -277,16 +277,18 @@ class RunwayConfigurationParser implements IElementParser<RunwayConfiguration> {
     tmp = xElement.tryGetAttribute("windSpeedTo");
     if (tmp != null) windSpeedTo = Integer.parseInt(tmp);
 
+    RunwayConfiguration.RunwayThresholdConfiguration rtc;
     for (XElement elm : xElement.getChildren()) {
-      String val = elm.getContent();
+      rtc = (RunwayConfiguration.RunwayThresholdConfiguration)
+          deserializer.deserialize(elm, RunwayConfiguration.RunwayThresholdConfiguration.class);
       if (elm.getName().equals("arrivals"))
-        arrivals.add(val);
+        arrivals.add(rtc);
       else if (elm.getName().equals("departures"))
-        departures.add(val);
+        departures.add(rtc);
     }
 
     RunwayConfiguration ret = new RunwayConfiguration(windFrom, windTo, windSpeedFrom, windSpeedTo, arrivals, departures);
-return ret;
+    return ret;
   }
 
   @Override

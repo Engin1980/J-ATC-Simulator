@@ -169,8 +169,8 @@
       <xs:element name="configuration">
         <xs:complexType>
           <xs:choice minOccurs="2" maxOccurs="unbounded">
-            <xs:element name="arrivals" type="xs:string" minOccurs="1" maxOccurs="unbounded"/>
-            <xs:element name="departures" type="xs:string" minOccurs="1" maxOccurs="unbounded"/>
+            <xs:element name="arrivals" type="runwayThresholdConfiguration" minOccurs="1" maxOccurs="unbounded"/>
+            <xs:element name="departures" type="runwayThresholdConfiguration" minOccurs="1" maxOccurs="unbounded"/>
           </xs:choice>
           <xs:attribute name="windFrom" type="sh:heading" use="optional"/>
           <xs:attribute name="windTo" type="sh:heading" use="optional"/>
@@ -179,6 +179,11 @@
         </xs:complexType>
       </xs:element>
     </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="runwayThresholdConfiguration">
+    <xs:attribute name="category" type="sh:planeCategory" use="optional" />
+    <xs:attribute name="name" type="sh:nonEmptyString" use="required" />
   </xs:complexType>
 
 

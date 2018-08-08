@@ -3,22 +3,62 @@ package eng.jAtcSim.lib.world;
 import eng.eSystem.EStringBuilder;
 import eng.eSystem.collections.*;
 import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.utilites.ArrayUtils;
 import eng.eSystem.utilites.NumberUtils;
 import eng.eSystem.xmlSerialization.XmlConstructor;
+import eng.eSystem.xmlSerialization.XmlIgnore;
+import eng.eSystem.xmlSerialization.XmlOptional;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.global.Headings;
 
 import java.awt.geom.Line2D;
 
 public class RunwayConfiguration {
+
+  public static class RunwayThresholdConfiguration{
+    @XmlOptional
+    private String categories = "ABCD";
+    @XmlIgnore
+    private char[] categoriesArray;
+    private String name;
+    @XmlIgnore
+    private RunwayThreshold threshold;
+
+    public String getCategories() {
+      return categories;
+    }
+
+    public RunwayThreshold getThreshold() {
+      return threshold;
+    }
+
+    @XmlConstructor
+    public RunwayThresholdConfiguration() {
+    }
+
+    public RunwayThresholdConfiguration(RunwayThreshold threshold) {
+      this.name = threshold.getName();
+      this.threshold = threshold;
+    }
+
+    public void bind(){
+      this.threshold = Acc.airport().tryGetRunwayThreshold(this.name);
+      if (this.threshold == null)
+        throw new EApplicationException("Unable to find threshold " + this.name + " for runway configuration.");
+      categoriesArray = categories.toCharArray();
+    }
+
+    public boolean isForCategory(char category) {
+      return ArrayUtils.contains(this.categoriesArray, category);
+    }
+  }
+
   private int windFrom;
   private int windTo;
   private int windSpeedFrom;
   private int windSpeedTo;
-  private IList<String> arrivals;
-  private IList<String> departures;
-  private IList<RunwayThreshold> arrivingThresholds;
-  private IList<RunwayThreshold> departingThresholds;
+  private IList<RunwayThresholdConfiguration> arrivals;
+  private IList<RunwayThresholdConfiguration> departures;
   private IList<ISet<RunwayThreshold>> crossedThresholdSets = null;
 
   @XmlConstructor
@@ -26,7 +66,8 @@ public class RunwayConfiguration {
 
   }
 
-  public RunwayConfiguration(int windFrom, int windTo, int windSpeedFrom, int windSpeedTo, IList<String> arrivals, IList<String> departures) {
+  public RunwayConfiguration(int windFrom, int windTo, int windSpeedFrom, int windSpeedTo,
+                             IList<RunwayThresholdConfiguration> arrivals, IList<RunwayThresholdConfiguration> departures) {
     this.windFrom = windFrom;
     this.windTo = windTo;
     this.windSpeedFrom = windSpeedFrom;
@@ -36,8 +77,8 @@ public class RunwayConfiguration {
   }
 
   public static RunwayConfiguration createForThresholds(IList<RunwayThreshold> rts) {
-    IList<String> lst;
-    lst = rts.select(q -> q.getName());
+    IList<RunwayThresholdConfiguration> lst;
+    lst = rts.select(q -> new RunwayThresholdConfiguration(q));
     RunwayConfiguration ret = new RunwayConfiguration(0, 359, 0, 999, lst, lst);
     ret.bind();
     return ret;
@@ -59,41 +100,21 @@ public class RunwayConfiguration {
     return windSpeedTo;
   }
 
-  public IReadOnlyList<String> getArrivals() {
+  public IReadOnlyList<RunwayThresholdConfiguration> getArrivals() {
     return arrivals;
   }
 
-  public IReadOnlyList<String> getDepartures() {
+  public IReadOnlyList<RunwayThresholdConfiguration> getDepartures() {
     return departures;
   }
 
-  public IReadOnlyList<RunwayThreshold> getArrivingThresholds() {
-    return arrivingThresholds;
-  }
-
-  public IReadOnlyList<RunwayThreshold> getDepartingThresholds() {
-    return departingThresholds;
-  }
-
   public void bind() {
-    this.arrivingThresholds = new EList<>();
-    for (String s : arrivals) {
-      RunwayThreshold thr = Acc.airport().tryGetRunwayThreshold(s);
-      if (thr == null)
-        throw new EApplicationException("Unable to find threshold " + s + " for runway configuration.");
-      arrivingThresholds.add(thr);
-    }
-    this.departingThresholds = new EList<>();
-    for (String s : departures) {
-      RunwayThreshold thr = Acc.airport().tryGetRunwayThreshold(s);
-      if (thr == null)
-        throw new EApplicationException("Unable to find threshold " + s + " for runway configuration.");
-      departingThresholds.add(thr);
-    }
+    arrivals.forEach(q->q.bind());
+    departures.forEach(q->q.bind());
 
     IList<Runway> rwys = new EDistinctList<>(EDistinctList.Behavior.skip);
-    rwys.add(this.arrivingThresholds.select(q->q.getParent()).distinct());
-    rwys.add(this.departingThresholds.select(q->q.getParent()).distinct());
+    rwys.add(this.arrivals.select(q->q.threshold.getParent()).distinct());
+    rwys.add(this.departures.select(q->q.threshold.getParent()).distinct());
 
     IList<ISet<Runway>> crossedRwys = new EList<>();
     while (rwys.isEmpty() == false){
@@ -144,8 +165,8 @@ public class RunwayConfiguration {
 
   public String toLineInfoString() {
     EStringBuilder sb = new EStringBuilder();
-    IList<String> deps = getDepartingThresholds().select(q -> q.getName() + "(DEP)");
-    IList<String> arrs = getArrivingThresholds().select(q -> q.getName() + "(ARR)");
+    IList<String> deps = departures.select(q -> q.name + "(DEP)");
+    IList<String> arrs = arrivals.select(q -> q.name + "(ARR)");
     sb.appendItems(deps, ", ");
     sb.append(", ");
     sb.appendItems(arrs, ", ");
@@ -154,13 +175,13 @@ public class RunwayConfiguration {
 
   public boolean isUsingTheSameRunwayConfiguration(RunwayConfiguration other) {
     boolean ret;
-    if (this.arrivingThresholds.size() != other.arrivingThresholds.size())
+    if (this.arrivals.size() != other.arrivals.size())
       ret = false;
-    else if (this.departingThresholds.size() != other.departingThresholds.size())
+    else if (this.departures.size() != other.departures.size())
       ret = false;
-    else if (this.arrivingThresholds.union(other.arrivingThresholds).size() != this.arrivingThresholds.size())
+    else if (this.arrivals.union(other.arrivals).size() != this.arrivals.size())
       ret = false;
-    else if (this.arrivingThresholds.union(other.arrivingThresholds).size() != this.arrivingThresholds.size())
+    else if (this.arrivals.union(other.arrivals).size() != this.arrivals.size())
       ret = false;
     else
       ret = true;
