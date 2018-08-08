@@ -141,7 +141,7 @@ public class Radar {
 
       this.tunedAtc = plane.tunedAtc();
       this.responsibleAtc = plane.responsibleAtc();
-this.hasRadarContact = plane.hasRadarContact();
+      this.hasRadarContact = plane.hasRadarContact();
 
       this.airprox = plane.getAirprox();
       this.mrvaError = plane.isMrvaError();
@@ -709,6 +709,12 @@ this.hasRadarContact = plane.hasRadarContact();
           if (displaySettings.isCountryBorderVisible())
             drawBorder(b);
           break;
+        case restricted:
+          if (displaySettings.isRestrictedBorderVisible()) {
+            drawBorder(b);
+            drawBorderCaption(b);
+          }
+          break;
         case mrva:
           if (displaySettings.isMrvaBorderVisible()) {
             drawBorder(b);
@@ -725,6 +731,15 @@ this.hasRadarContact = plane.hasRadarContact();
 
   private void drawBorderAltitude(Border border) {
     String s = AirplaneDataFormatter.formatAltitudeShort(border.getMaxAltitude(), true);
+    RadarStyleSettings.ColorWidthFontSettings ds = (RadarStyleSettings.ColorWidthFontSettings) getDispSettBy(border);
+    tl.drawText(s, border.getLabelCoordinate(), 0, 0, ds.getFont(), ds.getColor());
+  }
+
+  private void drawBorderCaption(Border border) {
+    String s =
+        AirplaneDataFormatter.formatAltitudeShort(border.getMinAltitude(), true) +
+            "/" +
+            AirplaneDataFormatter.formatAltitudeShort(border.getMaxAltitude(), true);
     RadarStyleSettings.ColorWidthFontSettings ds = (RadarStyleSettings.ColorWidthFontSettings) getDispSettBy(border);
     tl.drawText(s, border.getLabelCoordinate(), 0, 0, ds.getFont(), ds.getColor());
   }
@@ -1172,6 +1187,8 @@ this.hasRadarContact = plane.hasRadarContact();
         return styleSettings.borderTma;
       case mrva:
         return styleSettings.borderMrva;
+      case restricted:
+        return styleSettings.borderRestricted;
       default:
         throw new EEnumValueUnsupportedException(border.getType());
     }

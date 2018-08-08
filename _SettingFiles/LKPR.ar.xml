@@ -7605,7 +7605,7 @@
       </points>
     </border>
 
-    <border name="" type="mrva" enclosed="true" maxAltitude="2700">
+    <border name="LKMT_MRVA_27" type="mrva" enclosed="true" maxAltitude="2700">
       <points>
         <crd coordinate="49.688428 18.103892" radial="240" distance="4.5"/>
         <arc coordinate="49.688428 18.103892" direction="clockwise"/>
@@ -7613,7 +7613,7 @@
       </points>
     </border>
 
-    <border name="" type="mrva" enclosed="true" maxAltitude="3300">
+    <border name="LKMT_MRVA_33" type="mrva" enclosed="true" maxAltitude="3300">
       <points>
         <crd coordinate="49.688428 18.103892" radial="060" distance="4.5"/>
         <arc coordinate="49.688428 18.103892" direction="clockwise"/>
@@ -7621,7 +7621,7 @@
       </points>
     </border>
 
-    <border name="" type="mrva" enclosed="true" maxAltitude="3100">
+    <border name="LKMT_MRVA_31" type="mrva" enclosed="true" maxAltitude="3100">
       <points>
         <crd coordinate="49.688428 18.103892" radial="250" distance="4.5"/>
         <crd coordinate="49.688428 18.103892" radial="250" distance="10"/>
@@ -7636,7 +7636,7 @@
       </points>
     </border>
 
-    <border name="LKMT_MRVA_" type="mrva" enclosed="true" maxAltitude="3200">
+    <border name="LKMT_MRVA_32" type="mrva" enclosed="true" maxAltitude="3200">
     <points>
       <crd coordinate="49.688428 18.103892" radial="270" distance="10" />
       <point coordinate="49.699825 17.742879" />
@@ -7646,7 +7646,7 @@
     </points>
     </border>
 
-    <border name="LKMT_MRVA_" type="mrva" enclosed="true" maxAltitude="3700">
+    <border name="LKMT_MRVA_37" type="mrva" enclosed="true" maxAltitude="3700">
       <points>
         <point coordinate="49.699825 17.742879" />
         <point coordinate="50.023015 17.787444" />
@@ -7661,7 +7661,7 @@
       </points>
     </border>
 
-    <border name="LKMT_MRVA_" type="mrva" enclosed="true" maxAltitude="3000">
+    <border name="LKMT_MRVA_30" type="mrva" enclosed="true" maxAltitude="3000">
       <points>
         <crd coordinate="49.688428 18.103892" radial="250" distance="4.5" />
         <crd coordinate="49.688428 18.103892" radial="250" distance="10" />
@@ -7674,7 +7674,7 @@
       </points>
     </border>
 
-    <border name="LKMT_MRVA_" type="mrva" enclosed="true" maxAltitude="4000">
+    <border name="LKMT_MRVA_40" type="mrva" enclosed="true" maxAltitude="4000">
       <points>
         <crd coordinate="49.688428 18.103892" radial="218" distance="4.5" />
         <point coordinate="49.490829 17.829782" />
@@ -7687,7 +7687,7 @@
       </points>
     </border>
 
-    <border name="LKMT_MRVA_" type="mrva" enclosed="true" maxAltitude="5200">
+    <border name="LKMT_MRVA_52" type="mrva" enclosed="true" maxAltitude="5200">
       <points>
         <crd coordinate="49.688428 18.103892" radial="195" distance="4.5" />
         <point coordinate="49.342880 17.923370" />
@@ -7700,7 +7700,7 @@
       </points>
     </border>
 
-    <border name="LKMT_MRVA_" type="mrva" enclosed="true" maxAltitude="5600">
+    <border name="LKMT_MRVA_56" type="mrva" enclosed="true" maxAltitude="5600">
       <points>
         <point coordinate="49.634469 18.411366" />
         <point coordinate="49.541821 18.265413" />
@@ -7710,7 +7710,7 @@
       </points>
     </border>
 
-    <border name="LKMT_MRVA_" type="mrva" enclosed="true" maxAltitude="4300">
+    <border name="LKMT_MRVA_43" type="mrva" enclosed="true" maxAltitude="4300">
       <points>
         <crd coordinate="49.688428 18.103892" radial="100" distance="4.5" />
         <point coordinate="49.634469 18.411366" />
@@ -7720,7 +7720,7 @@
       </points>
     </border>
 
-    <border name="LKMT_MRVA_" type="mrva" enclosed="true" maxAltitude="5000">
+    <border name="LKMT_MRVA_50" type="mrva" enclosed="true" maxAltitude="5000">
       <points>
         <point coordinate="49.735735 18.577373" />
         <point coordinate="49.634469 18.411366" />
@@ -7731,7 +7731,7 @@
       </points>
     </border>
 
-    <border name="LKMT_MRVA_" type="mrva" enclosed="true" maxAltitude="3200">
+    <border name="LKMT_MRVA_32" type="mrva" enclosed="true" maxAltitude="3200">
       <points>
         <crd coordinate="49.688428 18.103892" radial="77" distance="4.5" />
         <point coordinate="49.735735 18.577373" />
@@ -7743,7 +7743,7 @@
       </points>
     </border>
 
-    <border name="LKMT_MRVA_" type="mrva" enclosed="true" maxAltitude="2600">
+    <border name="LKMT_MRVA_26" type="mrva" enclosed="true" maxAltitude="2600">
       <points>
         <crd coordinate="49.688428 18.103892" radial="60" distance="4.5" />
         <point coordinate="49.839156 18.592971" />
@@ -7754,6 +7754,15 @@
         <point coordinate="49.993569 18.131715" />
         <crd coordinate="49.688428 18.103892" radial="0" distance="4.5" />
         <arc coordinate="49.688428 18.103892" direction="clockwise" />
+      </points>
+    </border>
+
+    <border name="LKMT_RI" type="restricted" enclosed="true">
+      <points>
+        <point coordinate="49.773245 17.441492" />
+        <point coordinate="49.573245 17.441492" />
+        <point coordinate="49.573245 17.641492" />
+        <point coordinate="49.773245 17.641492" />
       </points>
     </border>
 

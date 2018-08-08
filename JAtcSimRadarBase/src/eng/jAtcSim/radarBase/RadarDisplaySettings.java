@@ -6,6 +6,7 @@ public class RadarDisplaySettings {
   private boolean countryBorderVisible = true;
   private boolean mrvaBorderVisible = true;
   private boolean mrvaBorderAltitudeVisible = true;
+  private boolean restrictedBorderVisible = true;
   private boolean ctrBorderVisible = true;
   private boolean vorVisible = true;
   private boolean ndbVisible = true;
@@ -167,5 +168,9 @@ public class RadarDisplaySettings {
 
   public int getMaxAltitude() {
     return maxAltitude;
+  }
+
+  public boolean isRestrictedBorderVisible() {
+    return this.restrictedBorderVisible;
   }
 }

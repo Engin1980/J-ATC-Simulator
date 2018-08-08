@@ -28,6 +28,7 @@
       <xs:element name="borderCtr" type="colorWidthElement" />
       <xs:element name="borderTma" type="colorWidthElement" />
       <xs:element name="borderMrva" type="colorWidthFontElement" />
+      <xs:element name="borderRestricted" type="colorWidthFontElement" />
 
       <xs:element name="infoLine" type="colorWidthFontElement" />
 

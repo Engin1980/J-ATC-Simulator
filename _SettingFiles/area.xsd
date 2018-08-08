@@ -80,6 +80,7 @@
           <xs:enumeration value="ctr"/>
           <xs:enumeration value="country"/>
           <xs:enumeration value="mrva"/>
+          <xs:enumeration value="restricted" />
         </xs:restriction>
       </xs:simpleType>
     </xs:attribute>

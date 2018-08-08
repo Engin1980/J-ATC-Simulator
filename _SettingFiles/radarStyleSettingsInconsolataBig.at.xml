@@ -25,6 +25,9 @@
   <borderMrva color="555555" width="1">
     <font name="Inconsolata" size="14" style="0"/>
   </borderMrva>
+  <borderRestricted color="FF0000" width="1">
+    <font name="Inconsolata" size="14" style="0" />
+  </borderRestricted>
 
   <infoLine color="FFFF00" width="4">
     <font name="Inconsolata" size="16" style="0"/>

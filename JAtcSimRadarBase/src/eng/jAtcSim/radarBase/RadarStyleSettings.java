@@ -213,6 +213,7 @@ public class RadarStyleSettings {
   public ColorWidthSettings borderCtr;
   public ColorWidthSettings borderTma;
   public ColorWidthFontSettings borderMrva;
+  public ColorWidthFontSettings borderRestricted;
 
   // mapBack
   /** Map background color in hex */

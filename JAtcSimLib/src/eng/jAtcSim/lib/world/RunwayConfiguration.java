@@ -4,6 +4,7 @@ import eng.eSystem.EStringBuilder;
 import eng.eSystem.collections.*;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.utilites.NumberUtils;
+import eng.eSystem.xmlSerialization.XmlConstructor;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.global.Headings;
 
@@ -20,6 +21,7 @@ public class RunwayConfiguration {
   private IList<RunwayThreshold> departingThresholds;
   private IList<ISet<RunwayThreshold>> crossedThresholdSets = null;
 
+  @XmlConstructor
   private RunwayConfiguration(){
 
   }
