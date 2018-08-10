@@ -237,8 +237,8 @@
       </runways>
       <runwayConfigurations>
         <configuration windFrom="0" windTo="359" windSpeedTo="10">
-          <arrivals name="24" category="BCD" />
-          <arrivals name="30" category="A" />
+          <arrivals name="24" category="BCD" primary="true" />
+          <arrivals name="30" category="AB" />
           <departures name="24" category="BCD" />
           <departures name="30" category="AB" />
         </configuration>

@@ -23,6 +23,12 @@ public class RunwayConfiguration {
     private String name;
     @XmlIgnore
     private RunwayThreshold threshold;
+    @XmlOptional
+    private boolean primary = false;
+
+    public boolean isPrimary() {
+      return primary;
+    }
 
     public String getCategories() {
       return categories;
@@ -34,6 +40,12 @@ public class RunwayConfiguration {
 
     @XmlConstructor
     public RunwayThresholdConfiguration() {
+    }
+
+    public RunwayThresholdConfiguration(String name, String categories, boolean primary) {
+      this.categories = categories;
+      this.name = name;
+      this.primary = primary;
     }
 
     public RunwayThresholdConfiguration(RunwayThreshold threshold) {
@@ -116,6 +128,16 @@ public class RunwayConfiguration {
     rwys.add(this.arrivals.select(q->q.threshold.getParent()).distinct());
     rwys.add(this.departures.select(q->q.threshold.getParent()).distinct());
 
+    // check if all categories are applied
+    for (char i = 'A'; i <= 'D' ; i++) {
+      char c = i;
+      if (!arrivals.isAny(q->q.isForCategory(c)))
+        throw new EApplicationException("Unable to find arrival threshold for category " + c);
+      if (!departures.isAny(q->q.isForCategory(c)))
+        throw new EApplicationException("Unable to find departure threshold for category " + c);
+    }
+
+    // detection and saving the crossed runways
     IList<ISet<Runway>> crossedRwys = new EList<>();
     while (rwys.isEmpty() == false){
       ISet<Runway> set = new ESet<>();

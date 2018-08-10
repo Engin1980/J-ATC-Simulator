@@ -8,6 +8,7 @@ import eng.eSystem.events.EventAnonymous;
 import eng.eSystem.events.EventAnonymousSimple;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.ERuntimeException;
+import eng.eSystem.swing.Factory;
 import eng.jAtcSim.SwingRadar.SwingCanvas;
 import eng.jAtcSim.lib.Simulation;
 import eng.jAtcSim.lib.atcs.Atc;
@@ -16,6 +17,7 @@ import eng.jAtcSim.lib.world.Area;
 import eng.jAtcSim.lib.world.InitialPosition;
 import eng.jAtcSim.radarBase.*;
 import eng.jAtcSim.shared.LayoutManager;
+import eng.jAtcSim.startup.extenders.SwingFactory;
 import sun.management.MethodInfo;
 
 import javax.swing.*;
@@ -261,118 +263,6 @@ public class SwingRadarPanel extends JPanel {
     ret.add(btn);
 
     return ret;
-  }
-
-  private void btnTmaBorder_click(ActionEvent e) {
-    boolean cur = radar.getDisplaySettings().isTmaBorderVisible();
-    cur = !cur;
-    radar.getDisplaySettings().setTmaBorderVisible(cur);
-    extBtn.set((JButton) e.getSource(), cur);
-    radar.redraw(true);
-  }
-
-  private void btnMrvaBorder_click(ActionEvent e) {
-    boolean cur = radar.getDisplaySettings().isMrvaBorderVisible();
-    cur = !cur;
-    radar.getDisplaySettings().setMrvaBorderVisible(cur);
-    extBtn.set((JButton) e.getSource(), cur);
-    radar.redraw(true);
-  }
-
-  private void btnMrvaLblBorder_click(ActionEvent e) {
-    boolean cur = radar.getDisplaySettings().isMrvaBorderAltitudeVisible();
-    cur = !cur;
-    radar.getDisplaySettings().setMrvaBorderAltitudeVisible(cur);
-    extBtn.set((JButton) e.getSource(), cur);
-    radar.redraw(true);
-  }
-
-  private void btnCountryBorder_click(ActionEvent e) {
-    boolean cur = radar.getDisplaySettings().isCountryBorderVisible();
-    cur = !cur;
-    radar.getDisplaySettings().setCountryBorderVisible(cur);
-    extBtn.set((JButton) e.getSource(), cur);
-    radar.redraw(true);
-  }
-
-  private void btnCtrBorder_click(ActionEvent e) {
-    boolean cur = radar.getDisplaySettings().isCtrBorderVisible();
-    cur = !cur;
-    radar.getDisplaySettings().setCtrBorderVisible(cur);
-    extBtn.set((JButton) e.getSource(), cur);
-    radar.redraw(true);
-  }
-
-  private void btnVor_click(ActionEvent e) {
-    boolean cur = radar.getDisplaySettings().isVorVisible();
-    cur = !cur;
-    radar.getDisplaySettings().setVorVisible(cur);
-    extBtn.set((JButton) e.getSource(), cur);
-    radar.redraw(true);
-  }
-
-  private void btnNdb_click(ActionEvent e) {
-    boolean cur = radar.getDisplaySettings().isNdbVisible();
-    cur = !cur;
-    radar.getDisplaySettings().setNdbVisible(cur);
-    extBtn.set((JButton) e.getSource(), cur);
-    radar.redraw(true);
-  }
-
-  private void btnAirport_click(ActionEvent e) {
-    boolean cur = radar.getDisplaySettings().isAirportVisible();
-    cur = !cur;
-    radar.getDisplaySettings().setAirportVisible(cur);
-    extBtn.set((JButton) e.getSource(), cur);
-    radar.redraw(true);
-  }
-
-  private void btnSid_click(ActionEvent e) {
-    boolean cur = radar.getDisplaySettings().isSidVisible();
-    cur = !cur;
-    radar.getDisplaySettings().setSidVisible(cur);
-    extBtn.set((JButton) e.getSource(), cur);
-    radar.redraw(true);
-  }
-
-  private void btnStar_click(ActionEvent e) {
-    boolean cur = radar.getDisplaySettings().isStarVisible();
-    cur = !cur;
-    radar.getDisplaySettings().setStarVisible(cur);
-    extBtn.set((JButton) e.getSource(), cur);
-    radar.redraw(true);
-  }
-
-  private void btnFix_click(ActionEvent e) {
-    boolean cur = radar.getDisplaySettings().isFixVisible();
-    cur = !cur;
-    radar.getDisplaySettings().setFixVisible(cur);
-    extBtn.set((JButton) e.getSource(), cur);
-    radar.redraw(true);
-  }
-
-  private void btnFixRoute_click(ActionEvent e) {
-    boolean cur = radar.getDisplaySettings().isFixRouteVisible();
-    cur = !cur;
-    radar.getDisplaySettings().setFixRouteVisible(cur);
-    extBtn.set((JButton) e.getSource(), cur);
-    radar.redraw(true);
-  }
-
-  private void btnFixMinor_click(ActionEvent e) {
-    boolean cur = radar.getDisplaySettings().isFixMinorVisible();
-    cur = !cur;
-    radar.getDisplaySettings().setFixMinorVisible(cur);
-    extBtn.set((JButton) e.getSource(), cur);
-    radar.redraw(true);
-  }
-
-  private void btnRings_click(ActionEvent e) {
-    boolean cur = radar.getDisplaySettings().isRingsVisible();
-    cur = !cur;
-    radar.getDisplaySettings().setRingsVisible(cur);
-    extBtn.set((JButton) e.getSource(), cur);
-    radar.redraw(true);
   }
 
   private boolean sendMessage(String msg) {

@@ -304,30 +304,42 @@ public class TowerAtc extends ComputerAtc {
     return departureManager.getNumberOfPlanesAtHoldingPoint();
   }
 
-  public IReadOnlyList<RunwayThreshold> getRunwayThresholdsInUse(eDirection direction) {
+  public IReadOnlyList<RunwayThreshold> getRunwayThresholdsInUse(eDirection direction, char category) {
+    IReadOnlyList<RunwayThreshold> ret;
+    ret = getSuggestedRunwayThreshold(direction, category,
+        inUseInfo.current.getDepartures(), inUseInfo.current.getArrivals());
+    return ret;
+  }
+
+  public IReadOnlyList<RunwayThreshold> getRunwayThresholdsScheduled(eDirection direction, char category) {
+    IReadOnlyList<RunwayThreshold> ret;
+    if (inUseInfo.scheduled == null)
+      ret = new EList<>();
+    else {
+      ret = getSuggestedRunwayThreshold(direction, category,
+          inUseInfo.scheduled.getDepartures(), inUseInfo.scheduled.getArrivals());
+    }
+    return ret;
+  }
+
+  private static IReadOnlyList<RunwayThreshold> getSuggestedRunwayThreshold(eDirection direction, char category,
+                                                                            IReadOnlyList<RunwayConfiguration.RunwayThresholdConfiguration> arrivals,
+                                                                            IReadOnlyList<RunwayConfiguration.RunwayThresholdConfiguration> departures) {
+    IReadOnlyList<RunwayThreshold> ret;
     switch (direction) {
       case departures:
-        return inUseInfo.current.getDepartures().select(q->q.getThreshold());
+        ret = departures.where(q->q.isForCategory(category)).select(q -> q.getThreshold());
+        break;
       case arrivals:
-        return inUseInfo.current.getArrivals().select(q->q.getThreshold());
+        if (arrivals.isAny(q->q.isPrimary()))
+          ret = arrivals.where(q->q.isPrimary() && q.isForCategory(category)).select(q->q.getThreshold());
+        else
+          ret = arrivals.where(q->q.isForCategory(category)).select(q -> q.getThreshold());
+        break;
       default:
         throw new EEnumValueUnsupportedException(direction);
     }
-  }
-
-  public IReadOnlyList<RunwayThreshold> getRunwayThresholdsScheduled(eDirection direction) {
-    if (inUseInfo.scheduled == null)
-      return new EList<>();
-    else {
-      switch (direction) {
-        case departures:
-          return inUseInfo.scheduled.getDepartures().select(q->q.getThreshold());
-        case arrivals:
-          return inUseInfo.scheduled.getArrivals().select(q->q.getThreshold());
-        default:
-          throw new EEnumValueUnsupportedException(direction);
-      }
-    }
+    return ret;
   }
 
   @Override
@@ -472,7 +484,7 @@ public class TowerAtc extends ComputerAtc {
 
   private boolean isOnApproachOfTheRunwayInUse(Airplane p) {
     boolean ret = inUseInfo.current.getArrivals()
-        .isAny(q->q.getThreshold().equals(p.tryGetCurrentApproachRunwayThreshold()));
+        .isAny(q -> q.getThreshold().equals(p.tryGetCurrentApproachRunwayThreshold()));
     return ret;
   }
 
@@ -655,8 +667,8 @@ public class TowerAtc extends ComputerAtc {
     if (toReadyPlane == null) return;
 
     IList<RunwayThreshold> rts = inUseInfo.current.getDepartures()
-        .where(q->q.isForCategory(toReadyPlane.getType().category))
-        .select(q->q.getThreshold());
+        .where(q -> q.isForCategory(toReadyPlane.getType().category))
+        .select(q -> q.getThreshold());
     restrictToRunwaysNotUnderMaintenance(rts);
     restrictToRunwaysNotUsedInApproach(rts);
     restrictToRunwaysNotUsedByRolling(rts);

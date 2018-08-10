@@ -279,8 +279,10 @@ class RunwayConfigurationParser implements IElementParser<RunwayConfiguration> {
 
     RunwayConfiguration.RunwayThresholdConfiguration rtc;
     for (XElement elm : xElement.getChildren()) {
-      rtc = (RunwayConfiguration.RunwayThresholdConfiguration)
-          deserializer.deserialize(elm, RunwayConfiguration.RunwayThresholdConfiguration.class);
+      String name = elm.getAttribute("name");
+      String categories = elm.getAttribute("category");
+      boolean primary = elm.tryGetAttribute("primary", "false").equals("true");
+      rtc = new RunwayConfiguration.RunwayThresholdConfiguration(name, categories, primary);
       if (elm.getName().equals("arrivals"))
         arrivals.add(rtc);
       else if (elm.getName().equals("departures"))

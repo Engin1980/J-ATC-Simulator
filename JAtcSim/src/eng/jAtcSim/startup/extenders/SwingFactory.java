@@ -92,11 +92,16 @@ public class SwingFactory {
   }
 
   public static void show(JPanel pnl, String title){
-    JFrame frm = new JFrame();
-    frm.getContentPane().add(pnl);
-    frm.pack();
+    JFrame frm = getAsFrame(pnl, title);
     frm.setVisible(true);
-    frm.setTitle(title);
+  }
+
+  public static JFrame getAsFrame(JPanel pnl, String title){
+    JFrame ret = new JFrame();
+    ret.getContentPane().add(pnl);
+    ret.pack();
+    ret.setTitle(title);
+    return ret;
   }
 
   public static void showDialog(JPanel pnl, String title, JFrame owner){
