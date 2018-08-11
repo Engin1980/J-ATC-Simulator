@@ -151,7 +151,7 @@
           </xs:sequence>
         </xs:complexType>
       </xs:element>
-      <xs:element name="sharedRoutes" type="routes" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="routes" type="routes" minOccurs="1" maxOccurs="1"/>
       <xs:element name="trafficDefinitions" type="tr:trafficDefinitions" minOccurs="0" maxOccurs="1" />
     </xs:sequence>
     <xs:attribute name="icao" type="xs:string" use="required"/>
@@ -241,15 +241,20 @@
           </xs:choice>
         </xs:complexType>
       </xs:element>
-      <xs:element name="routes" type="routes" minOccurs="1" maxOccurs="1"/>
     </xs:sequence>
-    <xs:attribute name="includeSharedRoutes" type="xs:boolean" use="required"/>
+    <xs:attribute name="assignedRoutes" type="routeNames" use="required" />
     <xs:attribute name="name" type="sh:nonEmptyString" use="required"/>
     <xs:attribute name="coordinate" type="sh:nonEmptyString" use="required"/>
     <xs:attribute name="initialDepartureAltitude" type="sh:flightLevelAltitude" use="required"/>
     <xs:attribute name="preferred" type="xs:boolean" use="optional"/>
   </xs:complexType>
 
+  <xs:simpleType name="routeNames">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[A-Za-z0-9]+(;[A-Za-z0-9]+)*" />
+    </xs:restriction>
+  </xs:simpleType>
+  
   <xs:complexType name="routes">
     <xs:sequence>
       <xs:element name="route" type="route" minOccurs="0" maxOccurs="unbounded"/>

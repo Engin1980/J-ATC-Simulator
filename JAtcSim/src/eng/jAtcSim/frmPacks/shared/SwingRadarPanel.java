@@ -1,5 +1,6 @@
 package eng.jAtcSim.frmPacks.shared;
 
+import eng.eSystem.EStringBuilder;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IList;
@@ -9,12 +10,15 @@ import eng.eSystem.events.EventAnonymousSimple;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.ERuntimeException;
 import eng.eSystem.swing.Factory;
+import eng.eSystem.swing.extenders.BoxItem;
 import eng.jAtcSim.SwingRadar.SwingCanvas;
+import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.Simulation;
 import eng.jAtcSim.lib.atcs.Atc;
 import eng.jAtcSim.lib.atcs.UserAtc;
 import eng.jAtcSim.lib.world.Area;
 import eng.jAtcSim.lib.world.InitialPosition;
+import eng.jAtcSim.lib.world.Route;
 import eng.jAtcSim.radarBase.*;
 import eng.jAtcSim.shared.LayoutManager;
 import eng.jAtcSim.startup.extenders.SwingFactory;
@@ -239,6 +243,10 @@ public class SwingRadarPanel extends JPanel {
     this.bndgs.add(bb);
     ret.add(btn);
 
+    btn = new JButton("??");
+    btn.addActionListener(this::test_click);
+    ret.add(btn);
+
     btn = new JButton("P(rngs)");
     bb = new ButtonBinding(this.displaySettings, "RingsVisible", btn);
     this.bndgs.add(bb);
@@ -263,6 +271,29 @@ public class SwingRadarPanel extends JPanel {
     ret.add(btn);
 
     return ret;
+  }
+
+  private void test_click(ActionEvent actionEvent) {
+    JFrame frm = new JFrame();
+    Point p = MouseInfo.getPointerInfo().getLocation();
+    AdjustSelectionPanel<Route> pnl = new AdjustSelectionPanel<>();
+
+    IList<BoxItem<Route>> items = new EList<>();
+    for (Route route : Acc.airport().getRoutes()) {
+      EStringBuilder sb = new EStringBuilder();
+      sb.append(route.getName());
+      sb.append(" (");
+      sb.appendItems(route.getRelativeThresholds(), q->q.getName(), ", ");
+      sb.append(")");
+      items.add(new BoxItem<>(route, sb.toString()));
+    }
+    pnl.setItems(items);
+    frm.getContentPane().add(pnl);
+    frm.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+    frm.setUndecorated(true);
+    frm.pack();
+    frm.setLocation(p);
+    frm.setVisible(true);
   }
 
   private boolean sendMessage(String msg) {

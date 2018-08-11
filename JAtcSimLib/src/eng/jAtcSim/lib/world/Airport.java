@@ -27,7 +27,7 @@ public class Airport {
   private final IList<AtcTemplate> atcTemplates = new EList<>();
   private final IList<PublishedHold> holds = new EList<>();
   @XmlOptional
-  private final IList<Route> sharedRoutes = new EList<>();
+  private final IList<Route> routes = new EList<>();
   @XmlOptional
   private final IList<EntryExitPoint> entryExitPoints = new EList<>();
   private String icao;
@@ -140,8 +140,8 @@ public class Airport {
     return this.initialPosition;
   }
 
-  public IList<Route> getSharedRoutes() {
-    return sharedRoutes;
+  public IReadOnlyList<Route> getRoutes() {
+    return routes;
   }
 
   public void bindEntryExitPointsByRoutes(IList<Route> routes) {

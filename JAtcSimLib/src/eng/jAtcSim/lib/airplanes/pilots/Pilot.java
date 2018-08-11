@@ -396,7 +396,7 @@ public class Pilot {
           if (parent.getAltitude() < LOW_SPEED_DOWN_ALTITUDE)
             super.setState(Airplane.State.arrivingLow);
           else {
-            double distToFaf = Acc.thresholds(TowerAtc.eDirection.arrivals)
+            double distToFaf = Acc.thresholds(TowerAtc.eDirection.arrivals, Pilot.this.parent.getType().category)
                 .minDouble(q -> Coordinates.getDistanceInNM(parent.getCoordinate(), q.getEstimatedFafPoint()));
             if (distToFaf < FAF_SPEED_DOWN_DISTANCE_IN_NM) {
               super.setState(Airplane.State.arrivingCloseFaf);
@@ -405,7 +405,7 @@ public class Pilot {
           break;
         case arrivingLow:
           // TODO this will not work for runways with FAF above FL100
-          double distToFaf = Acc.thresholds(TowerAtc.eDirection.arrivals)
+          double distToFaf = Acc.thresholds(TowerAtc.eDirection.arrivals, Pilot.this.parent.getType().category)
               .minDouble(q -> Coordinates.getDistanceInNM(parent.getCoordinate(), q.getEstimatedFafPoint()));
           if (distToFaf < FAF_SPEED_DOWN_DISTANCE_IN_NM) {
             super.setState(Airplane.State.arrivingCloseFaf);
@@ -1170,7 +1170,10 @@ public class Pilot {
   }
 
   public Navaid getDivertNavaid() {
-    IList<Route> rts = Acc.thresholds(TowerAtc.eDirection.departures).get(0).getRoutes(); // getContent random active departure threshold
+    IList<Route> rts = Acc
+        .thresholds(TowerAtc.eDirection.departures, Pilot.this.parent.getType().category)
+        .get(0)
+        .getRoutes(); // getContent random active departure threshold
     rts = rts.where(q -> q.getType() == Route.eType.sid);
     rts = rts.where(q -> q.isValidForCategory(this.parent.getType().category));
     Route r = rts.getRandom();

@@ -159,20 +159,24 @@ public class Area {
         h.setParent(a);
       }
 
+      for (Route o : a.getRoutes()) {
+        o.setParent(a);
+      }
+
       for (Runway r : a.getRunways()) {
         r.setParent(a);
 
         for (RunwayThreshold t : r.getThresholds()) {
           t.setParent(r);
 
-          for (Route o : t.getRoutes()) {
-            o.setParent(t);
-          }
+
           for (Approach p : t.getApproaches()) {
             p.setParent(t);
           }
         }
       }
+
+
     }
   }
 

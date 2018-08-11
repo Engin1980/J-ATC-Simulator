@@ -7,6 +7,7 @@ package eng.jAtcSim.lib.world;
 
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
+import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.utilites.CollectionUtils;
 import eng.eSystem.xmlSerialization.XmlIgnore;
 import eng.eSystem.xmlSerialization.XmlOptional;
@@ -24,9 +25,11 @@ import java.util.List;
 public class RunwayThreshold {
 
   private final List<Approach> approaches = new ArrayList<>();
+  @XmlIgnore
   private final IList<Route> routes = new EList<>();
   private String name;
   private Coordinate coordinate;
+  private String assignedRoutes;
   private Runway parent;
   private double _course;
   private int initialDepartureAltitude;
@@ -37,7 +40,6 @@ public class RunwayThreshold {
   private Coordinate estimatedFafPoint;
   @XmlOptional
   private IList<IafRoute> sharedIafRoutes = new EList<>();
-  private boolean includeSharedRoutes;
 
   public IList<IafRoute> getSharedIafRoutes() {
     return sharedIafRoutes;
@@ -154,12 +156,14 @@ public class RunwayThreshold {
         Headings.getOpposite(this._course),
         9);
 
-    if (this.includeSharedRoutes){
-      for (Route route : this.getParent().getParent().getSharedRoutes()) {
-        route = route.makeClone();
-        route.setParent(this);
-        this.routes.add(route);
-      }
+    String[] routeNames = this.assignedRoutes.split(";");
+    for (String routeName : routeNames) {
+      Route route = this.getParent().getParent().getRoutes().tryGetFirst(q -> q.getName().equals(routeName));
+      if (route == null)
+        throw new EApplicationException("Unable to find route named " + routeName + " in airport "
+            + this.getParent().getParent().getIcao() + " required for runway threshold " + this.getName());
+      this.routes.add(route);
+      route.registerForThreshold(this);
     }
 
     for (IafRoute iafRoute : sharedIafRoutes) {

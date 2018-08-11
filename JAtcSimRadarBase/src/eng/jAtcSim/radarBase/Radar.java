@@ -488,7 +488,7 @@ public class Radar {
     }
 
     IReadOnlyList<RunwayThreshold> rts =
-        Acc.atcTwr().getRunwayThresholdsInUse(TowerAtc.eDirection.arrivals);
+        Acc.atcTwr().getRunwayThresholdsInUse(TowerAtc.eDirection.arrivals, 'C');
     for (RunwayThreshold rt : rts) {
       for (Route route : rt.getRoutes().where(q -> q.getType() != Route.eType.sid)) {
         for (Navaid navaid : route.getNavaids()) {
@@ -760,7 +760,7 @@ public class Radar {
 
   private void drawRoutes(boolean drawArrivalRoutes, boolean drawDepartureRoutes) {
     if (drawArrivalRoutes && displaySettings.isStarVisible()) {
-      for (RunwayThreshold rt : simulation.getActiveRunwayThresholds(TowerAtc.eDirection.arrivals)) {
+      for (RunwayThreshold rt : simulation.getActiveRunwayThresholds(TowerAtc.eDirection.arrivals, 'C')) {
         for (Route r : rt.getRoutes()) {
           if (r.getType() == Route.eType.star || r.getType() == Route.eType.transition)
             drawStar(r.getNavaids());
@@ -768,10 +768,10 @@ public class Radar {
       }
     }
     if (drawDepartureRoutes && displaySettings.isSidVisible()) {
-      for (RunwayThreshold rt : simulation.getActiveRunwayThresholds(TowerAtc.eDirection.departures)) {
+      for (RunwayThreshold rt : simulation.getActiveRunwayThresholds(TowerAtc.eDirection.departures, 'C')) {
         for (Route r : rt.getRoutes()) {
           if (r.getType() == Route.eType.sid)
-            drawSid(r.getParent().getCoordinate(), r.getNavaids());
+            drawSid(rt.getCoordinate(), r.getNavaids());
         }
       }
     }
@@ -806,7 +806,7 @@ public class Radar {
   }
 
   private void drawApproaches() {
-    for (RunwayThreshold threshold : simulation.getActiveRunwayThresholds(TowerAtc.eDirection.arrivals)) {
+    for (RunwayThreshold threshold : simulation.getActiveRunwayThresholds(TowerAtc.eDirection.arrivals,'C')) {
       Approach a = threshold.getHighestApproach();
       if (a != null) {
         drawApproach(a);

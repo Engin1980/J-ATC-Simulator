@@ -18,7 +18,7 @@
         <runway>
           <thresholds>
             <threshold name="06" coordinate="50 06 06.61 N 014 13 34.58 E" initialDepartureAltitude="5000"
-                       includeSharedRoutes="false">
+                       assignedRoutes="LOMKI5T;GOLOP1T;VLM1T;GOSEK2T;VOZ1E;VOZ1D;BALTU2E;BALTU2D;VENOX2D;VENOX1E;ARTUP1E">
               <sharedIafRoutes>
                 <route iaf="OKL" route="DM 40 PD OKL/247/9.9 T PD OKL/260/13 T PD PR742 T FH 061"/>
                 <route iaf="KUVIX" route="DM 40 PD PR741 T PD PR742 T FH 061"/>
@@ -43,36 +43,10 @@
                                    mdaA="1600" mdaB="1600"
                                    mdaC="1600" mdaD="1600" includeSharedIafRoutes="true" initialAltitude="4000"/>
               </approaches>
-              <routes>
-                <route type="star" name="LOMKI5T"
-                       route="PD LOMKI T SL 250 PD PR707 T SL 220 PD BAROX T H BAROX"/>
-                <route type="star" name="GOLOP1T"
-                       route="PD GOLOP T SL 250 PD PR711 T PD PR712 T PD PR513 T SL 220 PD KUVIX T FH 242"/>
-                <route type="star" name="VLM1T"
-                       route="PD VLM T PD PR721 T PD PR722 T SL 250 PD PR723 T PD PR523 T SL 220 PD PR521 T PD AKEVA T FH 242"/>
-                <route type="star" name="GOSEK2T"
-                       route="PD GOSEK T SL 250 PD PR718 T PD PR719 T SL 220 PD PR521 T PD AKEVA T FH 242"/>
-                <route type="sid" name="VOZ1E" category="CD"
-                       route="PD PR619 T PD PR633 T PD PR635 T PD VOZ"/>
-                <route type="sid" name="VOZ1D" category="AB"
-                       route="PD PR619 T PD PR625 T PD PR626 T PD PR627 T PD VOZ"/>
-                <route type="sid" name="BALTU2E" category="CD"
-                       route="PD PR619 T PD PR631 T PD PR632 T PD PR621 T PD ESINU T PD BALTU"/>
-                <route type="sid" name="BALTU2D" category="AB"
-                       route="PD PR619 T PD PR621 T PD ESINU T PD BALTU"/>
-                <route type="sid" name="BALTU2E" category="CD"
-                       route="PD PR619 T PD PR631 T PD PR632 T PD PR621 T PD ESINU T PD DOBEN"/>
-                <route type="sid" name="BALTU2D" category="AB"
-                       route="PD PR619 T PD PR621 T PD ESINU T PD DOBEN"/>
-                <route type="sid" name="VENOX2D" category="AB"
-                       route="PD PR619 T PD PR621 T PD PR622 T PD VENOX"/>
-                <route type="sid" name="VENOX1E" category="CD"
-                       route="PD PR619 T PD PR631 T PD PR632 T PD VENOX"/>
-                <route type="sid" name="ARTUP1E" route="PD PR619 T PD PR633 T PD PR634 T PD ARTUP"/>
-              </routes>
             </threshold>
             <threshold name="24" coordinate="50 06 57.43 N 014 16 24.12 E" initialDepartureAltitude="5000"
-                       preferred="true" includeSharedRoutes="false">
+                       preferred="true"
+                       assignedRoutes="VLM1S;GOSEK2S;LOMKI4S;GOLOP1S;ARTUP1M;ARTUP1A;VENOX1A;VENOX1M;BALTU2A;DOBEN2A;VOZ1M;VOZ1A">
               <sharedIafRoutes>
                 <route iaf="ERASU" route="DM 40 PD PR531 T PD PR532 T FH 241"/>
                 <route iaf="RATEV" route="DM 40 PD PR530 T PD PR532 T FH 241"/>
@@ -92,39 +66,13 @@
                                    mdaC="1460" mdaD="1460" includeSharedIafRoutes="true" initialAltitude="4000">
                 </unpreciseApproach>
               </approaches>
-              <routes>
-                <route type="star" name="VLM1S"
-                       route="PD VLM T SL 250 PD PR522 T SL 220 PD PR523 T PD RATEV T FH 062"/>
-                <route type="star" name="GOSEK2S"
-                       route="PD GOSEK T SL 250 PD PR521 T SL 220 PD PR523 T PD RATEV T FH 062"/>
-                <route type="star" name="LOMKI4S"
-                       route="PD LOMKI T PD PR511 T SL 250 PD PR512 T SL 220 PD PR513 T PD PR518 T PD ERASU T FH 062"/>
-                <route type="star" name="GOLOP1S"
-                       route="PD GOLOP T SL 250 PD PR516 T SL 220 PD PR517 T PD PR518 T PD ERASU T FH 062"/>
-                <route type="sid" name="ARTUP1M" category="AB"
-                       route="AA 017 PD PR407 T PD BAGRU T PD PR409 T PD ARTUP"/>
-                <route type="sid" name="ARTUP1A" category="CD"
-                       route="PD PR402 T PD PR405 T PD PR406 T PD PR407 T PD BAGRU T PD PR409 T PD ARTUP"/>
-                <route type="sid" name="VENOX1A" category="AB"
-                       route="AA 017 PD PR407 T PD VENOX"/>
-                <route type="sid" name="VENOX1A" category="CD"
-                       route="PD PR402 T PD PR405 T PD PR406 T PD VENOX"/>
-                <route type="sid" name="BALTU2A"
-                       route="PD PR402 T PD PR405 T PD BALTU"/>
-                <route type="sid" name="DOBEN2A"
-                       route="PD PR402 T PD DOBEN"/>
-                <route type="sid" name="VOZ1M" category="AB"
-                       route="AA 017 PD PR411 T PD PR412 T PD VOZ"/>
-                <route type="sid" name="VOZ1A" category="CD"
-                       route="PD PR402 T PD PR403 T PD PR404 T PD VOZ"/>
-              </routes>
             </threshold>
           </thresholds>
         </runway>
         <runway>
           <thresholds>
             <threshold name="12" coordinate="50 06 28.84 N 014 14 43.32 E" initialDepartureAltitude="5000"
-                       includeSharedRoutes="false">
+                       assignedRoutes="GOLOP1P;VLM1P;LOMKI4P;GOSEK2P;VENOX1H;BALTU2H;DOBEN2H;DOBEN1G;VOZ1G;VOZ1Q;VOZ1K;VOZ1H;ARTUP1H">
               <sharedIafRoutes>
                 <route iaf="EVEMI" route="PD PR961 T PD PR962 T FH 123"/>
                 <route iaf="SOMIS" route="PD PR960 T PD PR962 T FH 123"/>
@@ -149,37 +97,9 @@
                   </categories>
                 </ilsApproach>
               </approaches>
-              <routes>
-                <route type="star" name="GOLOP1P"
-                       route="PD GOLOP T SL 250 PD PR957 T SL 220 PD PR958 T PD EVEMI T FH 304"/>
-                <route type="star" name="VLM1P"
-                       route="PD VLM T PD PR950 T SL 250 PD PR951 T PD PR952 T SL 220 PD PR958 T PD EVEMI T FH 304"/>
-                <route type="star" name="LOMKI4P"
-                       route="PD LOMKI T SL 250 PD PR707 T PD PR956 T SL 220 PD PR954 T PD SOMIS T FH 304"/>
-                <route type="star" name="GOSEK2P"
-                       route="PD GOSEK T SL 250 PD PR953 T SL 220 PD PR954 T PD SOMIS T FH 304"/>
-                <route type="sid" name="VENOX1H"
-                       route="PD PR626 T PD PR856 T PD UTORO T PD PR858 T PD VENOX"/>
-                <route type="sid" name="BALTU2H"
-                       route="PD PR626 T PD PR856 T PD UTORO T PD PR858 T PD ESINU T PD BALTU"/>
-                <route type="sid" name="DOBEN2H" category="CD"
-                       route="PD PR626 T PD PR856 T PD UTORO T PD PR858 T PD ESINU T PD DOBEN"/>
-                <route type="sid" name="DOBEN1G" category="AB"
-                       route="AA 017 PD PR854 T PD PR855 T PD DOBEN"/>
-                <route type="sid" name="VOZ1G" category="AB"
-                       route="AA 017 PD PR411 T PD PR404 T PD VOZ"/>
-                <route type="sid" name="VOZ1Q" category="AB"
-                       route="AA 017 PD PR411 T PD PR412 T PD VOZ"/>
-                <route type="sid" name="VOZ1K" category="CD"
-                       route="PD PR626 T PD PR627 T PD VOZ"/>
-                <route type="sid" name="VOZ1H" category="CD"
-                       route="PD PR626 T PD PR412 T PD VOZ"/>
-                <route type="sid" name="ARTUP1H"
-                       route="PD PR626 T PD PR861 T PD ARTUP"/>
-              </routes>
             </threshold>
             <threshold name="30" coordinate="50 05 25.68 N 014 16 53.02 E" initialDepartureAltitude="5000"
-                       includeSharedRoutes="false">
+                       assignedRoutes="GOLOP2R;LOMKI6R;VLM1R;GOSEK3R;VOZ1N;VOZ1B;DOBEN2B;BALTU2B;VENOX1B;VENOX1N;ARTUP1N;ARTUP1B">
               <sharedIafRoutes>
                 <route iaf="ARVEG" route="PD PR905 T PD PR906 T PD PR912 T FH 303"/>
                 <route iaf="OKL" route="PD OKL/123/9.2 T FH 168 T PD PR912 T FH 303"/>
@@ -205,42 +125,16 @@
                   </categories>
                 </ilsApproach>
               </approaches>
-              <routes>
-                <route type="star" name="GOLOP2R"
-                       route="PD GOLOP T SL 250 PD BAGRU T PD PR914 T SL 220 PD PR915 T PD ARVEG T FH 124"/>
-                <route type="star" name="LOMKI6R"
-                       route="PD LOMKI T PD PR511 T SL 250 PD PR512 T PD PR914 T SL 220 PD PR915 T PD ARVEG T FH 124"/>
-                <route type="star" name="VLM1R"
-                       route="PD VLM T SL 250 PD PR904 T SL 220 PD KENOK T H KENOK"/>
-                <route type="star" name="GOSEK3R"
-                       route="PD GOSEK T SL 250 PD PR901 T PD PR902 T PD PR903 T SL 220 PD PR904 T PD KENOK T H KENOK"/>
-                <route type="sid" name="VOZ1N" category="AB"
-                       route="AA 017 PD PR807 T PD PR808 T PD VOZ"/>
-                <route type="sid" name="VOZ1B" category="CD"
-                       route="PD PR813 T PD PR814 T PD PR403 T PD PR404 T PD VOZ"/>
-                <route type="sid" name="DOBEN2B"
-                       route="PD PR813 T PD PR814 T PD PR817 T PD DOBEN"/>
-                <route type="sid" name="BALTU2B"
-                       route="PD PR813 T PD PR815 T PD BALTU"/>
-                <route type="sid" name="VENOX1B" category="CD"
-                       route="PD PR813 T PD PR815 T PD PR816 T PD VENOX"/>
-                <route type="sid" name="VENOX1N" category="AB"
-                       route="AA 017 PD PR818 T PD VENOX"/>
-                <route type="sid" name="ARTUP1N" category="AB"
-                       route="AA 017 PD PR818 T PD PR819 T PD ARTUP"/>
-                <route type="sid" name="ARTUP1B" category="CD"
-                       route="PD PR813 T PD PR815 T PD PR816 T PD PR818 T PD PR819 T PD ARTUP"/>
-              </routes>
             </threshold>
           </thresholds>
         </runway>
       </runways>
       <runwayConfigurations>
         <configuration windFrom="0" windTo="359" windSpeedTo="10">
-          <arrivals name="24" category="BCD" primary="true" />
-          <arrivals name="30" category="AB" />
-          <departures name="24" category="BCD" />
-          <departures name="30" category="AB" />
+          <arrivals name="24" category="BCD" primary="true"/>
+          <arrivals name="30" category="AB"/>
+          <departures name="24" category="BCD"/>
+          <departures name="30" category="AB"/>
         </configuration>
       </runwayConfigurations>
       <inactiveRunways>
@@ -269,6 +163,111 @@
         <hold navaidName="ARVEG" inboundRadial="123" turn="left"/>
         <hold navaidName="KENOK" inboundRadial="304" turn="left"/>
       </holds>
+      <routes>
+        <!-- 06 -->
+        <route type="star" name="LOMKI5T"
+               route="PD LOMKI T SL 250 PD PR707 T SL 220 PD BAROX T H BAROX"/>
+        <route type="star" name="GOLOP1T"
+               route="PD GOLOP T SL 250 PD PR711 T PD PR712 T PD PR513 T SL 220 PD KUVIX T FH 242"/>
+        <route type="star" name="VLM1T"
+               route="PD VLM T PD PR721 T PD PR722 T SL 250 PD PR723 T PD PR523 T SL 220 PD PR521 T PD AKEVA T FH 242"/>
+        <route type="star" name="GOSEK2T"
+               route="PD GOSEK T SL 250 PD PR718 T PD PR719 T SL 220 PD PR521 T PD AKEVA T FH 242"/>
+        <route type="sid" name="VOZ1E" category="CD"
+               route="PD PR619 T PD PR633 T PD PR635 T PD VOZ"/>
+        <route type="sid" name="VOZ1D" category="AB"
+               route="PD PR619 T PD PR625 T PD PR626 T PD PR627 T PD VOZ"/>
+        <route type="sid" name="BALTU2E" category="CD"
+               route="PD PR619 T PD PR631 T PD PR632 T PD PR621 T PD ESINU T PD BALTU"/>
+        <route type="sid" name="BALTU2D" category="AB"
+               route="PD PR619 T PD PR621 T PD ESINU T PD BALTU"/>
+        <route type="sid" name="BALTU2E" category="CD"
+               route="PD PR619 T PD PR631 T PD PR632 T PD PR621 T PD ESINU T PD DOBEN"/>
+        <route type="sid" name="BALTU2D" category="AB"
+               route="PD PR619 T PD PR621 T PD ESINU T PD DOBEN"/>
+        <route type="sid" name="VENOX2D" category="AB"
+               route="PD PR619 T PD PR621 T PD PR622 T PD VENOX"/>
+        <route type="sid" name="VENOX1E" category="CD"
+               route="PD PR619 T PD PR631 T PD PR632 T PD VENOX"/>
+        <route type="sid" name="ARTUP1E" route="PD PR619 T PD PR633 T PD PR634 T PD ARTUP"/>
+        <!-- 24 -->
+        <route type="star" name="VLM1S"
+               route="PD VLM T SL 250 PD PR522 T SL 220 PD PR523 T PD RATEV T FH 062"/>
+        <route type="star" name="GOSEK2S"
+               route="PD GOSEK T SL 250 PD PR521 T SL 220 PD PR523 T PD RATEV T FH 062"/>
+        <route type="star" name="LOMKI4S"
+               route="PD LOMKI T PD PR511 T SL 250 PD PR512 T SL 220 PD PR513 T PD PR518 T PD ERASU T FH 062"/>
+        <route type="star" name="GOLOP1S"
+               route="PD GOLOP T SL 250 PD PR516 T SL 220 PD PR517 T PD PR518 T PD ERASU T FH 062"/>
+        <route type="sid" name="ARTUP1M" category="AB"
+               route="AA 017 PD PR407 T PD BAGRU T PD PR409 T PD ARTUP"/>
+        <route type="sid" name="ARTUP1A" category="CD"
+               route="PD PR402 T PD PR405 T PD PR406 T PD PR407 T PD BAGRU T PD PR409 T PD ARTUP"/>
+        <route type="sid" name="VENOX1M" category="AB"
+               route="AA 017 PD PR407 T PD VENOX"/>
+        <route type="sid" name="VENOX1A" category="CD"
+               route="PD PR402 T PD PR405 T PD PR406 T PD VENOX"/>
+        <route type="sid" name="BALTU2A"
+               route="PD PR402 T PD PR405 T PD BALTU"/>
+        <route type="sid" name="DOBEN2A"
+               route="PD PR402 T PD DOBEN"/>
+        <route type="sid" name="VOZ1M" category="AB"
+               route="AA 017 PD PR411 T PD PR412 T PD VOZ"/>
+        <route type="sid" name="VOZ1A" category="CD"
+               route="PD PR402 T PD PR403 T PD PR404 T PD VOZ"/>
+        <!-- 12 -->
+        <route type="star" name="GOLOP1P"
+               route="PD GOLOP T SL 250 PD PR957 T SL 220 PD PR958 T PD EVEMI T FH 304"/>
+        <route type="star" name="VLM1P"
+               route="PD VLM T PD PR950 T SL 250 PD PR951 T PD PR952 T SL 220 PD PR958 T PD EVEMI T FH 304"/>
+        <route type="star" name="LOMKI4P"
+               route="PD LOMKI T SL 250 PD PR707 T PD PR956 T SL 220 PD PR954 T PD SOMIS T FH 304"/>
+        <route type="star" name="GOSEK2P"
+               route="PD GOSEK T SL 250 PD PR953 T SL 220 PD PR954 T PD SOMIS T FH 304"/>
+        <route type="sid" name="VENOX1H"
+               route="PD PR626 T PD PR856 T PD UTORO T PD PR858 T PD VENOX"/>
+        <route type="sid" name="BALTU2H"
+               route="PD PR626 T PD PR856 T PD UTORO T PD PR858 T PD ESINU T PD BALTU"/>
+        <route type="sid" name="DOBEN2H" category="CD"
+               route="PD PR626 T PD PR856 T PD UTORO T PD PR858 T PD ESINU T PD DOBEN"/>
+        <route type="sid" name="DOBEN1G" category="AB"
+               route="AA 017 PD PR854 T PD PR855 T PD DOBEN"/>
+        <route type="sid" name="VOZ1G" category="AB"
+               route="AA 017 PD PR411 T PD PR404 T PD VOZ"/>
+        <route type="sid" name="VOZ1Q" category="AB"
+               route="AA 017 PD PR411 T PD PR412 T PD VOZ"/>
+        <route type="sid" name="VOZ1K" category="CD"
+               route="PD PR626 T PD PR627 T PD VOZ"/>
+        <route type="sid" name="VOZ1H" category="CD"
+               route="PD PR626 T PD PR412 T PD VOZ"/>
+        <route type="sid" name="ARTUP1H"
+               route="PD PR626 T PD PR861 T PD ARTUP"/>
+        <!-- 30 -->
+        <route type="star" name="GOLOP2R"
+               route="PD GOLOP T SL 250 PD BAGRU T PD PR914 T SL 220 PD PR915 T PD ARVEG T FH 124"/>
+        <route type="star" name="LOMKI6R"
+               route="PD LOMKI T PD PR511 T SL 250 PD PR512 T PD PR914 T SL 220 PD PR915 T PD ARVEG T FH 124"/>
+        <route type="star" name="VLM1R"
+               route="PD VLM T SL 250 PD PR904 T SL 220 PD KENOK T H KENOK"/>
+        <route type="star" name="GOSEK3R"
+               route="PD GOSEK T SL 250 PD PR901 T PD PR902 T PD PR903 T SL 220 PD PR904 T PD KENOK T H KENOK"/>
+        <route type="sid" name="VOZ1N" category="AB"
+               route="AA 017 PD PR807 T PD PR808 T PD VOZ"/>
+        <route type="sid" name="VOZ1B" category="CD"
+               route="PD PR813 T PD PR814 T PD PR403 T PD PR404 T PD VOZ"/>
+        <route type="sid" name="DOBEN2B"
+               route="PD PR813 T PD PR814 T PD PR817 T PD DOBEN"/>
+        <route type="sid" name="BALTU2B"
+               route="PD PR813 T PD PR815 T PD BALTU"/>
+        <route type="sid" name="VENOX1B" category="CD"
+               route="PD PR813 T PD PR815 T PD PR816 T PD VENOX"/>
+        <route type="sid" name="VENOX1N" category="AB"
+               route="AA 017 PD PR818 T PD VENOX"/>
+        <route type="sid" name="ARTUP1N" category="AB"
+               route="AA 017 PD PR818 T PD PR819 T PD ARTUP"/>
+        <route type="sid" name="ARTUP1B" category="CD"
+               route="PD PR813 T PD PR815 T PD PR816 T PD PR818 T PD PR819 T PD ARTUP"/>
+      </routes>
       <trafficDefinitions>
         <densityTraffic title="Normal traffic" useExtendedCallsigns="true" nonCommercialFlightProbability="0.05"
                         delayProbability="0.1" maxDelayInMinutesPerStep="45">
@@ -406,7 +405,7 @@
         <runway>
           <thresholds>
             <threshold name="04" coordinate="49 41 07.16 N 018 05 35.69 E" initialDepartureAltitude="4000"
-                       includeSharedRoutes="false">
+                       assignedRoutes="BAXEV1W;REGLI1W;TUSIN1W;BILNA2W;HLV5W;HLV5H;BILNA3H;NETIR1H;BAVOK1H;REGLI1H;BAXEV1H">
               <sharedIafRoutes>
                 <route iaf="OTA" route="PD ODRAN T PD MT603 T PD MT604 T FH 042"/>
                 <route iaf="ODRAN" route="PD MT603 T PD MT604 T FH 042"/>
@@ -432,29 +431,10 @@
                   </iafRoutes>
                 </unpreciseApproach>
               </approaches>
-              <routes>
-                <route type="star" name="BAXEV1W"
-                       route="PD BAXEV T PD OPAVO T PD MT602 T PD ODRAN T H ODRAN"/>
-                <route type="star" name="REGLI1W" route="PD REGLI T PD MT602 T PD ODRAN T H ODRAN"/>
-                <route type="star" name="TUSIN1W" route="PD TUSIN T PD MT715 T PD MORUV T H MORUV"/>
-                <route type="star" name="BILNA2W"
-                       route="PD BILNA T PD MT714 T PD MT715 T PD MORUV T H MORUV"/>
-                <route type="star" name="HLV5W" route="PD HLV T PD POLOM T H POLOM"/>
-                <route type="sid" name="HLV5H"
-                       route="PD MT701 SM 230 T PD MT715 SC T PD MT716 T PD HLV"/>
-                <route type="sid" name="BILNA3H"
-                       route="PD MT701 T PD MT702 T PD MT712 T PD MT713 T PD BILNA"/>
-                <route type="sid" name="NETIR1H"
-                       route="PD MT701 T PD MT702 T PD MT705 T PD MT708 T PD MT709 T PD NETIR"/>
-                <route type="sid" name="BAVOK1H"
-                       route="PD MT701 T PD MT702 T PD MT705 T PD MT706 T PD BAVOK"/>
-                <route type="sid" name="REGLI1H" route="PD MT701 T PD MT702 T PD MT703 T PD REGLI"/>
-                <route type="sid" name="BAXEV1H"
-                       route="PD MT701 T PD MT702 T PD MT703 T PD OPAVO T PD BAXEV"/>
-              </routes>
             </threshold>
             <threshold name="22" coordinate="49 42 25.65 N 018 07 42.41 E" initialDepartureAltitude="4000"
-                       preferred="true" includeSharedRoutes="false">
+                       preferred="true"
+                       assignedRoutes="BAXEV1T;REGLI1T;BAVOK1T;TUSIN1T;HLV2T;BILNA2T;BAXEV1F;REGLI1F;BAVOK1F;HLV5F;BILNA2F;NETIR1F">
               <sharedIafRoutes>
                 <route iaf="OTA" route="AN OTA DM 30 PD OTA/015/10 T TR 200"/>
                 <route iaf="BOGTU" route="AN BOGTU DM 30 PD MT821 T PD MT827 T FH 226"/>
@@ -504,26 +484,6 @@
                   </iafRoutes>
                 </gnssApproach>
               </approaches>
-              <routes>
-                <route type="star" name="BAXEV1T"
-                       route="PD BAXEV T PD OPAVO T PD MT807 T PD BOGTU T H BOGTU"/>
-                <route type="star" name="REGLI1T"
-                       route="PD REGLI T PD MT806 T PD MT807 T PD BOGTU T H BOGTU"/>
-                <route type="star" name="BAVOK1T"
-                       route="PD BAVOK T PD MT806 T PD MT807 T PD BOGTU T H BOGTU"/>
-                <route type="star" name="TUSIN1T"
-                       route="PD TUSIN T PD MT805 T PD MT807 T PD BOGTU T H BOGTU"/>
-                <route type="star" name="HLV2T"
-                       route="PD HLV T PD MT716 T PD MT715 T PD EKMIT T H EKMIT"/>
-                <route type="star" name="BILNA2T"
-                       route="PD BILNA T PD MT714 T PD MT715 T PD EKMIT T H EKMIT"/>
-                <route type="sid" name="BAXEV1F" route="PD MT511 T PD MT512 T PD OPAVO T PD BAXEV"/>
-                <route type="sid" name="REGLI1F" route="PD MT511 T PD MT512 T PD REGLI"/>
-                <route type="sid" name="BAVOK1F" route="PD MT511 T PD MT512 T PD BAVOK"/>
-                <route type="sid" name="HLV5F" route="PD MT521 T PD POLOM T PD HLV"/>
-                <route type="sid" name="BILNA2F" route="PD MT521 T PD MT522 T PD MT523 T PD BILNA"/>
-                <route type="sid" name="NETIR1F" route="PD MT521 T PD MT522 T PD MT523 T PD NETIR"/>
-              </routes>
             </threshold>
           </thresholds>
         </runway>
@@ -538,6 +498,46 @@
         <hold navaidName="BOGTU" inboundRadial="042" turn="left"/>
         <hold navaidName="EKMIT" inboundRadial="042" turn="right"/>
       </holds>
+      <routes>
+        <!-- 04 -->
+        <route type="star" name="BAXEV1W"
+               route="PD BAXEV T PD OPAVO T PD MT602 T PD ODRAN T H ODRAN"/>
+        <route type="star" name="REGLI1W" route="PD REGLI T PD MT602 T PD ODRAN T H ODRAN"/>
+        <route type="star" name="TUSIN1W" route="PD TUSIN T PD MT715 T PD MORUV T H MORUV"/>
+        <route type="star" name="BILNA2W"
+               route="PD BILNA T PD MT714 T PD MT715 T PD MORUV T H MORUV"/>
+        <route type="star" name="HLV5W" route="PD HLV T PD POLOM T H POLOM"/>
+        <route type="sid" name="HLV5H"
+               route="PD MT701 SM 230 T PD MT715 SC T PD MT716 T PD HLV"/>
+        <route type="sid" name="BILNA3H"
+               route="PD MT701 T PD MT702 T PD MT712 T PD MT713 T PD BILNA"/>
+        <route type="sid" name="NETIR1H"
+               route="PD MT701 T PD MT702 T PD MT705 T PD MT708 T PD MT709 T PD NETIR"/>
+        <route type="sid" name="BAVOK1H"
+               route="PD MT701 T PD MT702 T PD MT705 T PD MT706 T PD BAVOK"/>
+        <route type="sid" name="REGLI1H" route="PD MT701 T PD MT702 T PD MT703 T PD REGLI"/>
+        <route type="sid" name="BAXEV1H"
+               route="PD MT701 T PD MT702 T PD MT703 T PD OPAVO T PD BAXEV"/>
+        <!-- 22 -->
+        <route type="star" name="BAXEV1T"
+               route="PD BAXEV T PD OPAVO T PD MT807 T PD BOGTU T H BOGTU"/>
+        <route type="star" name="REGLI1T"
+               route="PD REGLI T PD MT806 T PD MT807 T PD BOGTU T H BOGTU"/>
+        <route type="star" name="BAVOK1T"
+               route="PD BAVOK T PD MT806 T PD MT807 T PD BOGTU T H BOGTU"/>
+        <route type="star" name="TUSIN1T"
+               route="PD TUSIN T PD MT805 T PD MT807 T PD BOGTU T H BOGTU"/>
+        <route type="star" name="HLV2T"
+               route="PD HLV T PD MT716 T PD MT715 T PD EKMIT T H EKMIT"/>
+        <route type="star" name="BILNA2T"
+               route="PD BILNA T PD MT714 T PD MT715 T PD EKMIT T H EKMIT"/>
+        <route type="sid" name="BAXEV1F" route="PD MT511 T PD MT512 T PD OPAVO T PD BAXEV"/>
+        <route type="sid" name="REGLI1F" route="PD MT511 T PD MT512 T PD REGLI"/>
+        <route type="sid" name="BAVOK1F" route="PD MT511 T PD MT512 T PD BAVOK"/>
+        <route type="sid" name="HLV5F" route="PD MT521 T PD POLOM T PD HLV"/>
+        <route type="sid" name="BILNA2F" route="PD MT521 T PD MT522 T PD MT523 T PD BILNA"/>
+        <route type="sid" name="NETIR1F" route="PD MT521 T PD MT522 T PD MT523 T PD NETIR"/>
+      </routes>
       <trafficDefinitions>
         <genericTraffic title="Very lite generated traffic" probabilityOfNonCommercialFlight="0.7"
                         probabilityOfDeparture="0.5"
@@ -584,14 +584,15 @@
             <item>OM</item>
           </countryCodes>
         </genericTraffic>
-        <densityTraffic title="Standard LKMT traffic (busy day)" delayProbability=".5" maxDelayInMinutesPerStep="20" nonCommercialFlightProbability="0.5"
+        <densityTraffic title="Standard LKMT traffic (busy day)" delayProbability=".5" maxDelayInMinutesPerStep="20"
+                        nonCommercialFlightProbability="0.5"
                         useExtendedCallsigns="true">
           <companies isFullDayTraffic="true">
             <company code="TVS" weight="15"/>
-            <company code="TAR" weight="2" />
-            <company code="RYR" weight="2" />
-            <company code="OHY" weight="2" />
-            <company code="CSA" weight="4" />
+            <company code="TAR" weight="2"/>
+            <company code="RYR" weight="2"/>
+            <company code="OHY" weight="2"/>
+            <company code="CSA" weight="4"/>
           </companies>
           <countries>
             <country code="OK" weight="4"/>
@@ -628,20 +629,21 @@
           </density>
           <directions>
             <direction heading="110" weight="7"/>
-            <direction heading="200" weight="7" />
-            <direction heading="10" weight="3" />
-            <direction heading="280" weight="5" />
-            <direction heading="320" weight="1" />
+            <direction heading="200" weight="7"/>
+            <direction heading="10" weight="3"/>
+            <direction heading="280" weight="5"/>
+            <direction heading="320" weight="1"/>
           </directions>
         </densityTraffic>
-        <flightListTraffic title="Real traffic 14. 7. 2018 only commercials" delayProbability=".5" maxDelayInMinutesPerStep="20">
-          <flight time="5:00" callsign="TVS1392" kind="departure" heading="100" planeType="B737" />
-          <flight time="10:40" callsign="TVS1419" kind="arrival" heading="190" planeType="A320" />
-          <flight time="11:00" callsign="TVS1381" kind="arrival" heading="100" planeType="B737" />
-          <flight time="11:15" callsign="TVS1393" kind="arrival" heading="100" planeType="B737" />
-          <flight time="11:30" callsign="TVS1420" kind="departure" heading="190" follows="TVS1419" />
-          <flight time="12:00" callsign="TVS1380" kind="departure" heading="190" follows="TVS1380" />
-          <flight time="12:15" callsign="TVS1386" kind="departure" heading="190" follows="TVS1393" />
+        <flightListTraffic title="Real traffic 14. 7. 2018 only commercials" delayProbability=".5"
+                           maxDelayInMinutesPerStep="20">
+          <flight time="5:00" callsign="TVS1392" kind="departure" heading="100" planeType="B737"/>
+          <flight time="10:40" callsign="TVS1419" kind="arrival" heading="190" planeType="A320"/>
+          <flight time="11:00" callsign="TVS1381" kind="arrival" heading="100" planeType="B737"/>
+          <flight time="11:15" callsign="TVS1393" kind="arrival" heading="100" planeType="B737"/>
+          <flight time="11:30" callsign="TVS1420" kind="departure" heading="190" follows="TVS1419"/>
+          <flight time="12:00" callsign="TVS1380" kind="departure" heading="190" follows="TVS1380"/>
+          <flight time="12:15" callsign="TVS1386" kind="departure" heading="190" follows="TVS1393"/>
         </flightListTraffic>
       </trafficDefinitions>
     </airport>
@@ -7633,144 +7635,144 @@
       <points>
         <crd coordinate="49.688428 18.103892" radial="250" distance="4.5"/>
         <crd coordinate="49.688428 18.103892" radial="250" distance="10"/>
-        <arc coordinate="49.688428 18.103892" direction="clockwise" />
+        <arc coordinate="49.688428 18.103892" direction="clockwise"/>
         <crd coordinate="49.688428 18.103892" radial="270" distance="10"/>
-        <point coordinate="49.699825 17.742879" />
-        <point coordinate="50.023015 17.787444" />
-        <point coordinate="50.067543 18.035899" />
-        <point coordinate="49.993569 18.131715" />
+        <point coordinate="49.699825 17.742879"/>
+        <point coordinate="50.023015 17.787444"/>
+        <point coordinate="50.067543 18.035899"/>
+        <point coordinate="49.993569 18.131715"/>
         <crd coordinate="49.688428 18.103892" radial="0" distance="4.5"/>
-        <arc coordinate="49.688428 18.103892" direction="counterclockwise" />
+        <arc coordinate="49.688428 18.103892" direction="counterclockwise"/>
       </points>
     </border>
 
     <border name="LKMT_MRVA_32" type="mrva" enclosed="true" maxAltitude="3200">
-    <points>
-      <crd coordinate="49.688428 18.103892" radial="270" distance="10" />
-      <point coordinate="49.699825 17.742879" />
-      <point coordinate="49.617950 17.732851" />
-      <crd coordinate="49.688428 18.103892" radial="250" distance="10" />
-      <arc coordinate="49.688428 18.103892" direction="clockwise" />
-    </points>
+      <points>
+        <crd coordinate="49.688428 18.103892" radial="270" distance="10"/>
+        <point coordinate="49.699825 17.742879"/>
+        <point coordinate="49.617950 17.732851"/>
+        <crd coordinate="49.688428 18.103892" radial="250" distance="10"/>
+        <arc coordinate="49.688428 18.103892" direction="clockwise"/>
+      </points>
     </border>
 
     <border name="LKMT_MRVA_37" type="mrva" enclosed="true" maxAltitude="3700">
       <points>
-        <point coordinate="49.699825 17.742879" />
-        <point coordinate="50.023015 17.787444" />
-        <point coordinate="49.946886 17.423119" />
-        <point coordinate="49.800373 17.437603" />
-        <point coordinate="49.568395 17.267139" />
-        <point coordinate="49.406082 17.551246" />
-        <point coordinate="49.521712 17.781874" />
-        <point coordinate="49.577731 17.727281" />
-        <point coordinate="49.617950 17.732851" />
-        <point coordinate="49.699825 17.742879" />
+        <point coordinate="49.699825 17.742879"/>
+        <point coordinate="50.023015 17.787444"/>
+        <point coordinate="49.946886 17.423119"/>
+        <point coordinate="49.800373 17.437603"/>
+        <point coordinate="49.568395 17.267139"/>
+        <point coordinate="49.406082 17.551246"/>
+        <point coordinate="49.521712 17.781874"/>
+        <point coordinate="49.577731 17.727281"/>
+        <point coordinate="49.617950 17.732851"/>
+        <point coordinate="49.699825 17.742879"/>
       </points>
     </border>
 
     <border name="LKMT_MRVA_30" type="mrva" enclosed="true" maxAltitude="3000">
       <points>
-        <crd coordinate="49.688428 18.103892" radial="250" distance="4.5" />
-        <crd coordinate="49.688428 18.103892" radial="250" distance="10" />
-        <point coordinate="49.617950 17.732851" />
-        <point coordinate="49.577731 17.727281" />
-        <point coordinate="49.521712 17.781874" />
-        <point coordinate="49.490829 17.829782" />
-        <crd coordinate="49.688428 18.103892" radial="218" distance="4.5" />
-        <arc coordinate="49.688428 18.103892" direction="clockwise" />
+        <crd coordinate="49.688428 18.103892" radial="250" distance="4.5"/>
+        <crd coordinate="49.688428 18.103892" radial="250" distance="10"/>
+        <point coordinate="49.617950 17.732851"/>
+        <point coordinate="49.577731 17.727281"/>
+        <point coordinate="49.521712 17.781874"/>
+        <point coordinate="49.490829 17.829782"/>
+        <crd coordinate="49.688428 18.103892" radial="218" distance="4.5"/>
+        <arc coordinate="49.688428 18.103892" direction="clockwise"/>
       </points>
     </border>
 
     <border name="LKMT_MRVA_40" type="mrva" enclosed="true" maxAltitude="4000">
       <points>
-        <crd coordinate="49.688428 18.103892" radial="218" distance="4.5" />
-        <point coordinate="49.490829 17.829782" />
-        <point coordinate="49.521712 17.781874" />
-        <point coordinate="49.406082 17.551246" />
-        <point coordinate="49.393872 17.571300" />
-        <point coordinate="49.342880 17.923370" />
-        <crd coordinate="49.688428 18.103892" radial="195" distance="4.5" />
-        <arc coordinate="49.688428 18.103892" direction="clockwise" />
+        <crd coordinate="49.688428 18.103892" radial="218" distance="4.5"/>
+        <point coordinate="49.490829 17.829782"/>
+        <point coordinate="49.521712 17.781874"/>
+        <point coordinate="49.406082 17.551246"/>
+        <point coordinate="49.393872 17.571300"/>
+        <point coordinate="49.342880 17.923370"/>
+        <crd coordinate="49.688428 18.103892" radial="195" distance="4.5"/>
+        <arc coordinate="49.688428 18.103892" direction="clockwise"/>
       </points>
     </border>
 
     <border name="LKMT_MRVA_52" type="mrva" enclosed="true" maxAltitude="5200">
       <points>
-        <crd coordinate="49.688428 18.103892" radial="195" distance="4.5" />
-        <point coordinate="49.342880 17.923370" />
-        <point coordinate="49.294761 18.277668" />
-        <point coordinate="49.383818 18.443676" />
-        <point coordinate="49.541821 18.265413" />
-        <point coordinate="49.634469 18.411366" />
-        <crd coordinate="49.688428 18.103892" radial="100" distance="4.5" />
-        <arc coordinate="49.688428 18.103892" direction="clockwise" />
+        <crd coordinate="49.688428 18.103892" radial="195" distance="4.5"/>
+        <point coordinate="49.342880 17.923370"/>
+        <point coordinate="49.294761 18.277668"/>
+        <point coordinate="49.383818 18.443676"/>
+        <point coordinate="49.541821 18.265413"/>
+        <point coordinate="49.634469 18.411366"/>
+        <crd coordinate="49.688428 18.103892" radial="100" distance="4.5"/>
+        <arc coordinate="49.688428 18.103892" direction="clockwise"/>
       </points>
     </border>
 
     <border name="LKMT_MRVA_56" type="mrva" enclosed="true" maxAltitude="5600">
       <points>
-        <point coordinate="49.634469 18.411366" />
-        <point coordinate="49.541821 18.265413" />
-        <point coordinate="49.383818 18.443676" />
-        <point coordinate="49.508784 18.849225" />
-        <point coordinate="49.562649 18.840312" />
+        <point coordinate="49.634469 18.411366"/>
+        <point coordinate="49.541821 18.265413"/>
+        <point coordinate="49.383818 18.443676"/>
+        <point coordinate="49.508784 18.849225"/>
+        <point coordinate="49.562649 18.840312"/>
       </points>
     </border>
 
     <border name="LKMT_MRVA_43" type="mrva" enclosed="true" maxAltitude="4300">
       <points>
-        <crd coordinate="49.688428 18.103892" radial="100" distance="4.5" />
-        <point coordinate="49.634469 18.411366" />
-        <point coordinate="49.735735 18.577373" />
-        <crd coordinate="49.688428 18.103892" radial="77" distance="4.5" />
-        <arc coordinate="49.688428 18.103892" direction="clockwise" />
+        <crd coordinate="49.688428 18.103892" radial="100" distance="4.5"/>
+        <point coordinate="49.634469 18.411366"/>
+        <point coordinate="49.735735 18.577373"/>
+        <crd coordinate="49.688428 18.103892" radial="77" distance="4.5"/>
+        <arc coordinate="49.688428 18.103892" direction="clockwise"/>
       </points>
     </border>
 
     <border name="LKMT_MRVA_50" type="mrva" enclosed="true" maxAltitude="5000">
       <points>
-        <point coordinate="49.735735 18.577373" />
-        <point coordinate="49.634469 18.411366" />
-        <point coordinate="49.562649 18.840312" />
-        <point coordinate="49.666788 18.816915" />
-        <point coordinate="49.707725 18.645336" />
-        <point coordinate="49.741481 18.633081" />
+        <point coordinate="49.735735 18.577373"/>
+        <point coordinate="49.634469 18.411366"/>
+        <point coordinate="49.562649 18.840312"/>
+        <point coordinate="49.666788 18.816915"/>
+        <point coordinate="49.707725 18.645336"/>
+        <point coordinate="49.741481 18.633081"/>
       </points>
     </border>
 
     <border name="LKMT_MRVA_32" type="mrva" enclosed="true" maxAltitude="3200">
       <points>
-        <crd coordinate="49.688428 18.103892" radial="77" distance="4.5" />
-        <point coordinate="49.735735 18.577373" />
-        <point coordinate="49.741481 18.633081" />
-        <point coordinate="49.824074 18.584058" />
-        <point coordinate="49.839156 18.592971" />
-        <crd coordinate="49.688428 18.103892" radial="60" distance="4.5" />
-        <arc coordinate="49.688428 18.103892" direction="clockwise" />
+        <crd coordinate="49.688428 18.103892" radial="77" distance="4.5"/>
+        <point coordinate="49.735735 18.577373"/>
+        <point coordinate="49.741481 18.633081"/>
+        <point coordinate="49.824074 18.584058"/>
+        <point coordinate="49.839156 18.592971"/>
+        <crd coordinate="49.688428 18.103892" radial="60" distance="4.5"/>
+        <arc coordinate="49.688428 18.103892" direction="clockwise"/>
       </points>
     </border>
 
     <border name="LKMT_MRVA_26" type="mrva" enclosed="true" maxAltitude="2600">
       <points>
-        <crd coordinate="49.688428 18.103892" radial="60" distance="4.5" />
-        <point coordinate="49.839156 18.592971" />
-        <point coordinate="49.856393 18.614140" />
-        <point coordinate="49.913130 18.579602" />
-        <point coordinate="49.942576 18.345631" />
-        <point coordinate="49.998596 18.182966" />
-        <point coordinate="49.993569 18.131715" />
-        <crd coordinate="49.688428 18.103892" radial="0" distance="4.5" />
-        <arc coordinate="49.688428 18.103892" direction="clockwise" />
+        <crd coordinate="49.688428 18.103892" radial="60" distance="4.5"/>
+        <point coordinate="49.839156 18.592971"/>
+        <point coordinate="49.856393 18.614140"/>
+        <point coordinate="49.913130 18.579602"/>
+        <point coordinate="49.942576 18.345631"/>
+        <point coordinate="49.998596 18.182966"/>
+        <point coordinate="49.993569 18.131715"/>
+        <crd coordinate="49.688428 18.103892" radial="0" distance="4.5"/>
+        <arc coordinate="49.688428 18.103892" direction="clockwise"/>
       </points>
     </border>
 
     <border name="LKMT_RI" type="restricted" enclosed="true">
       <points>
-        <point coordinate="49.773245 17.441492" />
-        <point coordinate="49.573245 17.441492" />
-        <point coordinate="49.573245 17.641492" />
-        <point coordinate="49.773245 17.641492" />
+        <point coordinate="49.773245 17.441492"/>
+        <point coordinate="49.573245 17.441492"/>
+        <point coordinate="49.573245 17.641492"/>
+        <point coordinate="49.773245 17.641492"/>
       </points>
     </border>
 

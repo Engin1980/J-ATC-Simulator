@@ -47,7 +47,9 @@ public class Route {
   private eType type;
   private String name;
   private String route;
-  private RunwayThreshold parent;
+  private Airport parent;
+  @XmlIgnore
+  private IList<RunwayThreshold> relativeThresholds = new EList<>();
   @XmlOptional
   private PlaneCategoryDefinitions category = PlaneCategoryDefinitions.getAll();
   private SpeechList<IAtcCommand> _routeCommands = null;
@@ -73,7 +75,7 @@ public class Route {
     ret.type = eType.vectoring;
     ret._routeCommands.add(new ProceedDirectCommand(n));
     ret.route = "";
-    ret.parent = Acc.airport().getRunways().get(0).getThresholdA(); // only formal for binding
+    ret.parent = Acc.airport(); // only formal for binding
 
     ret.bind();
 
@@ -105,12 +107,8 @@ public class Route {
     return route;
   }
 
-  public RunwayThreshold getParent() {
+  public Airport getParent() {
     return parent;
-  }
-
-  public void setParent(RunwayThreshold parent) {
-    this.parent = parent;
   }
 
   public PlaneCategoryDefinitions getCategory() {
@@ -182,13 +180,11 @@ public class Route {
     }
 
 
-
-
     _routeLength = calculateRouteLength();
 
 
     // min alt
-    Area area = this.getParent().getParent().getParent().getParent();
+    Area area = this.getParent().getParent();
     IList<Border> mrvas = area.getBorders().where(q -> q.getType() == Border.eType.mrva);
     IList<Tuple<Coordinate, Coordinate>> pointLines = convertPointsToLines(this._routeNavaids);
 
@@ -213,6 +209,15 @@ public class Route {
         this._routeCommands.add(new HoldCommand(tnc.getNavaid(), 270, true));
       }
     }
+
+  }
+
+  public void registerForThreshold(RunwayThreshold threshold){
+    this.relativeThresholds.add(threshold);
+  }
+
+  public IReadOnlyList<RunwayThreshold> getRelativeThresholds() {
+    return relativeThresholds;
   }
 
   public Navaid getMainNavaid() {
@@ -233,6 +238,10 @@ public class Route {
     ret.entryFL = this.entryFL;
     ret._maxMrvaFL = this._maxMrvaFL;
     return ret;
+  }
+
+  public void setParent(Airport airport) {
+    this.parent = airport;
   }
 
   private boolean hasMrvaIntersection(IList<Tuple<Coordinate, Coordinate>> pointLines, Border mrva) {
