@@ -132,6 +132,16 @@ public class Airport {
     return this._mainAirportNavaid;
   }
 
+  public IReadOnlyList<RunwayThreshold> getAllThresholds(){
+    IList<RunwayThreshold> ret = new EList<>();
+    for (Runway runway : this.getRunways()) {
+      for (RunwayThreshold threshold : runway.getThresholds()) {
+        ret.add(threshold);
+      }
+    }
+    return ret;
+  }
+
   public IReadOnlyList<RunwayConfiguration> getRunwayConfigurations() {
     return runwayConfigurations;
   }

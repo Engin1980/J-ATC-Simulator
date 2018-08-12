@@ -8,8 +8,9 @@ import eng.eSystem.collections.IMap;
 import eng.eSystem.events.EventAnonymous;
 import eng.eSystem.events.EventAnonymousSimple;
 import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.exceptions.ERuntimeException;
-import eng.eSystem.swing.Factory;
+import eng.eSystem.swing.DialogResult;
 import eng.eSystem.swing.extenders.BoxItem;
 import eng.jAtcSim.SwingRadar.SwingCanvas;
 import eng.jAtcSim.lib.Acc;
@@ -19,16 +20,16 @@ import eng.jAtcSim.lib.atcs.UserAtc;
 import eng.jAtcSim.lib.world.Area;
 import eng.jAtcSim.lib.world.InitialPosition;
 import eng.jAtcSim.lib.world.Route;
+import eng.jAtcSim.lib.world.RunwayThreshold;
 import eng.jAtcSim.radarBase.*;
 import eng.jAtcSim.shared.LayoutManager;
-import eng.jAtcSim.startup.extenders.SwingFactory;
-import sun.management.MethodInfo;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Comparator;
 
 public class SwingRadarPanel extends JPanel {
   private Radar radar;
@@ -274,22 +275,75 @@ public class SwingRadarPanel extends JPanel {
   }
 
   private void test_click(ActionEvent actionEvent) {
-    JFrame frm = new JFrame();
     Point p = MouseInfo.getPointerInfo().getLocation();
     AdjustSelectionPanel<Route> pnl = new AdjustSelectionPanel<>();
 
+    IMap<Route, IList<RunwayThreshold>> tmp = new EMap<>();
+    for (RunwayThreshold threshold : Acc.airport().getAllThresholds()) {
+      for (Route route : threshold.getRoutes()) {
+        IList<RunwayThreshold> lst = tmp.tryGet(route);
+        if (lst== null){
+          lst = new EList<>();
+          tmp.set(route, lst);
+        }
+        lst.add(threshold);
+      }
+    }
+    IList<Route> orderedRoutes = tmp.getKeys().toList();
+    orderedRoutes.sort(new RouteComparator(tmp));
+
     IList<BoxItem<Route>> items = new EList<>();
-    for (Route route : Acc.airport().getRoutes()) {
+    for (Route route : orderedRoutes) {
       EStringBuilder sb = new EStringBuilder();
       sb.append(route.getName());
       sb.append(" (");
-      sb.appendItems(route.getRelativeThresholds(), q->q.getName(), ", ");
+      switch (route.getType()) {
+        case sid:
+          sb.append("SID:");
+          break;
+        case star:
+          sb.append("STAR:");
+          break;
+        case transition:
+          sb.append("TRANS:");
+          break;
+        default:
+          throw new EEnumValueUnsupportedException(route.getType());
+      }
+      sb.appendItems(tmp.get(route), q -> q.getName(), ", ");
       sb.append(")");
       items.add(new BoxItem<>(route, sb.toString()));
     }
     pnl.setItems(items);
+
+    // set radar visible
+    pnl.setCheckedItems(this.radar.getDrawnRoutes());
+
+    JFrame frm = new JFrame();
     frm.getContentPane().add(pnl);
     frm.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+    frm.addWindowListener(new WindowAdapter() {
+      @Override
+      public void windowActivated(WindowEvent e) {
+        pnl.resetDialogResult();
+      }
+
+      @Override
+      public void windowDeactivated(WindowEvent e) {
+        if (pnl.getDialogResult() == DialogResult.ok){
+          SwingRadarPanel.this.radar.setDrawnRoutes(pnl.getCheckedItems());
+          SwingRadarPanel.this.radar.redraw(true);
+        }
+      }
+
+
+    });
+    frm.addWindowFocusListener(new WindowAdapter() {
+      @Override
+      public void windowLostFocus(WindowEvent e) {
+        frm.setVisible(false);
+      }
+    });
     frm.setUndecorated(true);
     frm.pack();
     frm.setLocation(p);
@@ -577,5 +631,34 @@ class ButtonBinding {
     } catch (IllegalAccessException | InvocationTargetException e) {
       throw new EApplicationException("Unable to write property set" + propertyName + " over " + target + ".", e);
     }
+  }
+}
+
+class RouteComparator implements Comparator<Route> {
+
+  private IMap<Route, IList<RunwayThreshold>> map;
+
+  public RouteComparator(IMap<Route, IList<RunwayThreshold>> map) {
+    this.map = map;
+  }
+
+  @Override
+  public int compare(Route a, Route b) {
+    int ret;
+
+    String sa;
+    String sb;
+    IList<RunwayThreshold> tmp;
+    tmp = map.get(a);
+    sa = tmp.isEmpty() ? "" : tmp.getFirst().getName();
+    tmp = map.get(b);
+    sb = tmp.isEmpty() ? "" : tmp.getFirst().getName();
+    ret = sa.compareTo(sb);
+    if (ret == 0){
+      ret = a.getType().compareTo(b.getType());
+      if (ret == 0)
+        ret = a.getName().compareTo(b.getName());
+    }
+    return ret;
   }
 }

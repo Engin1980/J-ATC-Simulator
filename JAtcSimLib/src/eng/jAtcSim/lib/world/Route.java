@@ -48,8 +48,6 @@ public class Route {
   private String name;
   private String route;
   private Airport parent;
-  @XmlIgnore
-  private IList<RunwayThreshold> relativeThresholds = new EList<>();
   @XmlOptional
   private PlaneCategoryDefinitions category = PlaneCategoryDefinitions.getAll();
   private SpeechList<IAtcCommand> _routeCommands = null;
@@ -210,14 +208,6 @@ public class Route {
       }
     }
 
-  }
-
-  public void registerForThreshold(RunwayThreshold threshold){
-    this.relativeThresholds.add(threshold);
-  }
-
-  public IReadOnlyList<RunwayThreshold> getRelativeThresholds() {
-    return relativeThresholds;
   }
 
   public Navaid getMainNavaid() {

@@ -31,6 +31,7 @@ import eng.jAtcSim.radarBase.global.events.EMouseEventArg;
 import eng.jAtcSim.radarBase.global.events.KeyEventArg;
 import eng.jAtcSim.radarBase.global.events.WithCoordinateEventArg;
 
+import javax.swing.plaf.synth.ColorType;
 import java.util.*;
 
 public class Radar {
@@ -342,6 +343,7 @@ public class Radar {
   private Counter planeRedrawCounter;
   private Counter radarRedrawCounter;
   private boolean switchFlagTrue = false;
+  private final IList<Route> drawnRoutes = new EDistinctList<>(EDistinctList.Behavior.skip);
 
   public Radar(ICanvas canvas, InitialPosition initialPosition,
                Simulation sim, Area area,
@@ -366,6 +368,7 @@ public class Radar {
     this.area = area;
 
     buildLocalNavaidList();
+    buildDrawnRoutesList();
 
     this.messageManager = new MessageManager(this.styleSettings.displayTextDelay);
 
@@ -474,8 +477,28 @@ public class Radar {
     return gotFocusEvent;
   }
 
+  public IReadOnlyList<Route> getDrawnRoutes() {
+    return this.drawnRoutes;
+  }
+
+  public void setDrawnRoutes(Iterable<Route> drawnRoutes){
+    this.drawnRoutes.clear();
+    this.drawnRoutes.add(drawnRoutes);
+  }
+
   private void sim_runwayChanged(Simulation simulation) {
     buildLocalNavaidList();
+    buildDrawnRoutesList();
+  }
+
+  private void buildDrawnRoutesList() {
+    this.drawnRoutes.clear();
+    for (RunwayThreshold threshold : Acc.atcTwr().getRunwayThresholdsInUse(TowerAtc.eDirection.departures)) {
+      this.drawnRoutes.add(threshold.getRoutes());
+    }
+    for (RunwayThreshold threshold : Acc.atcTwr().getRunwayThresholdsInUse(TowerAtc.eDirection.arrivals)) {
+      this.drawnRoutes.add(threshold.getRoutes());
+    }
   }
 
   private void buildLocalNavaidList() {
@@ -599,8 +622,7 @@ public class Radar {
     c.beforeDraw();
     drawBackground();
     drawBorders();
-    drawRoutes(true, false);
-    drawRoutes(false, true);
+    drawRoutes();
     drawApproaches();
     drawNavaids();
     drawAirports();
@@ -758,27 +780,31 @@ public class Radar {
     }
   }
 
-  private void drawRoutes(boolean drawArrivalRoutes, boolean drawDepartureRoutes) {
-    if (drawArrivalRoutes && displaySettings.isStarVisible()) {
-      for (RunwayThreshold rt : simulation.getActiveRunwayThresholds(TowerAtc.eDirection.arrivals, 'C')) {
-        for (Route r : rt.getRoutes()) {
-          if (r.getType() == Route.eType.star || r.getType() == Route.eType.transition)
-            drawStar(r.getNavaids());
-        }
-      }
-    }
-    if (drawDepartureRoutes && displaySettings.isSidVisible()) {
-      for (RunwayThreshold rt : simulation.getActiveRunwayThresholds(TowerAtc.eDirection.departures, 'C')) {
-        for (Route r : rt.getRoutes()) {
-          if (r.getType() == Route.eType.sid)
-            drawSid(rt.getCoordinate(), r.getNavaids());
-        }
+  private void drawRoutes() {
+    for (Route route : drawnRoutes) {
+      if (route.getNavaids().isEmpty()) continue;
+      switch (route.getType()) {
+        case sid:
+          if (!displaySettings.isSidVisible()) continue;
+          for (RunwayThreshold runwayThreshold : Acc.atcTwr()
+              .getRunwayThresholdsInUse(TowerAtc.eDirection.departures)
+              .where(q -> q.getRoutes().contains(route))) {
+            drawSidIntro(runwayThreshold.getOtherThreshold().getCoordinate(), route.getNavaids().getFirst());
+          }
+          drawRoute(route.getNavaids(), styleSettings.sid);
+          break;
+        case star:
+        case transition:
+          if (!displaySettings.isStarVisible()) continue;
+          drawRoute(route.getNavaids(), styleSettings.star);
+          break;
+        default:
+          throw new EEnumValueUnsupportedException(route.getType());
       }
     }
   }
 
-  private void drawStar(IReadOnlyList<Navaid> navaidPoints) {
-    RadarStyleSettings.ColorWidthSettings sett = styleSettings.star;
+  private void drawRoute(IReadOnlyList<Navaid> navaidPoints, RadarStyleSettings.ColorWidthSettings sett) {
     for (int i = 0; i < navaidPoints.size() - 1; i++) {
       tl.drawLine(
           navaidPoints.get(i).getCoordinate(),
@@ -788,25 +814,17 @@ public class Radar {
     }
   }
 
-  private void drawSid(Coordinate thresholdCoordinate, IReadOnlyList<Navaid> navaidPoints) {
+  private void drawSidIntro(Coordinate thresholdCoordinate, Navaid firstNavaid) {
     RadarStyleSettings.ColorWidthSettings sett = styleSettings.sid;
-    if (navaidPoints.isEmpty() == false)
-      tl.drawLine(
-          thresholdCoordinate,
-          navaidPoints.get(0).getCoordinate(),
-          sett.getColor(),
-          sett.getWidth());
-    for (int i = 0; i < navaidPoints.size() - 1; i++) {
-      tl.drawLine(
-          navaidPoints.get(i).getCoordinate(),
-          navaidPoints.get(i + 1).getCoordinate(),
-          sett.getColor(),
-          sett.getWidth());
-    }
+    tl.drawLine(
+        thresholdCoordinate,
+        firstNavaid.getCoordinate(),
+        sett.getColor(),
+        sett.getWidth());
   }
 
   private void drawApproaches() {
-    for (RunwayThreshold threshold : simulation.getActiveRunwayThresholds(TowerAtc.eDirection.arrivals,'C')) {
+    for (RunwayThreshold threshold : simulation.getActiveRunwayThresholds(TowerAtc.eDirection.arrivals, 'C')) {
       Approach a = threshold.getHighestApproach();
       if (a != null) {
         drawApproach(a);

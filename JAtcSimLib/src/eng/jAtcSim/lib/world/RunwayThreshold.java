@@ -163,7 +163,6 @@ public class RunwayThreshold {
         throw new EApplicationException("Unable to find route named " + routeName + " in airport "
             + this.getParent().getParent().getIcao() + " required for runway threshold " + this.getName());
       this.routes.add(route);
-      route.registerForThreshold(this);
     }
 
     for (IafRoute iafRoute : sharedIafRoutes) {

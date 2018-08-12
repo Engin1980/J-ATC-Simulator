@@ -311,6 +311,11 @@ public class TowerAtc extends ComputerAtc {
     return ret;
   }
 
+  public IReadOnlyList<RunwayThreshold> getRunwayThresholdsInUse(eDirection direction) {
+    IReadOnlyList<RunwayThreshold> ret = inUseInfo.current.getDepartures().select(q->q.getThreshold());
+    return ret;
+  }
+
   public IReadOnlyList<RunwayThreshold> getRunwayThresholdsScheduled(eDirection direction, char category) {
     IReadOnlyList<RunwayThreshold> ret;
     if (inUseInfo.scheduled == null)

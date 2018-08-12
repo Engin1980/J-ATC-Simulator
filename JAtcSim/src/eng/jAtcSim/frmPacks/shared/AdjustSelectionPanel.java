@@ -1,34 +1,36 @@
 package eng.jAtcSim.frmPacks.shared;
 
-import eng.eSystem.Tuple;
-import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
+import eng.eSystem.collections.IReadOnlySet;
 import eng.eSystem.swing.*;
 import eng.eSystem.swing.extenders.BoxItem;
-import eng.eSystem.swing.extenders.ListBoxExtender;
+import eng.eSystem.swing.extenders.CheckedListBoxExtender;
 import eng.eSystem.utilites.Selector;
 import eng.jAtcSim.shared.LayoutManager;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.awt.geom.Point2D;
 
 public class AdjustSelectionPanel<T> extends JPanel {
 
-  private eng.eSystem.swing.extenders.ListBoxExtender<T> lstBox =
-      new ListBoxExtender<>();
+  private eng.eSystem.swing.extenders.CheckedListBoxExtender<T> lstBox =
+      new CheckedListBoxExtender<>();
   private DialogResult dialogResult = DialogResult.none;
 
   public AdjustSelectionPanel() {
     initComponents();
   }
 
+  public void resetDialogResult() {
+    this.dialogResult = DialogResult.none;
+  }
+
   private void initComponents() {
     JScrollPane pnlLst = new JScrollPane(lstBox.getControl());
     JPanel pnlBtns = LayoutManager.createGridPanel(2, 2, 0,
-        Factory.createButton("(all)", this::btnSelectAll_click),
-        Factory.createButton("(none)", this::btnSelectNone_click),
+        Factory.createButton("(all)", this::btnCheckAll_click),
+        Factory.createButton("(none)", this::btnCheckNone_click),
         Factory.createButton("Cancel", this::btnCancel_click),
         Factory.createButton("Ok", this::btnOk_click));
 
@@ -51,12 +53,12 @@ public class AdjustSelectionPanel<T> extends JPanel {
     this.getRootPane().getParent().setVisible(false);
   }
 
-  private void btnSelectNone_click(ActionEvent actionEvent) {
-    lstBox.selectNone();
+  private void btnCheckNone_click(ActionEvent actionEvent) {
+    lstBox.checkNone();
   }
 
-  private void btnSelectAll_click(ActionEvent actionEvent) {
-    lstBox.selectAll();
+  private void btnCheckAll_click(ActionEvent actionEvent) {
+    lstBox.checkAll();
   }
 
   public void setItems(IReadOnlyList<T> items, Selector<T, String> labelSelector) {
@@ -68,12 +70,12 @@ public class AdjustSelectionPanel<T> extends JPanel {
     items.forEach(q->lstBox.addItem(q));
   }
 
-  public void setSelectedItems(IReadOnlyList<T> items) {
-    lstBox.setSelectedItems(items);
+  public void setCheckedItems(IReadOnlyList<T> items) {
+    lstBox.setCheckedItems(items);
   }
 
-  public IReadOnlyList<T> getSelectedItems() {
-    IReadOnlyList<T> ret = lstBox.getSelectedItems();
+  public IReadOnlySet<T> getCheckedItems() {
+    IReadOnlySet<T> ret = lstBox.getCheckedItems();
     return ret;
   }
 
