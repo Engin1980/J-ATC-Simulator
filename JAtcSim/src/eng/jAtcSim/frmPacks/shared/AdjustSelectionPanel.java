@@ -70,11 +70,11 @@ public class AdjustSelectionPanel<T> extends JPanel {
     items.forEach(q->lstBox.addItem(q));
   }
 
-  public void setCheckedItems(IReadOnlyList<T> items) {
+  public void setCheckedItems(Iterable<T> items) {
     lstBox.setCheckedItems(items);
   }
 
-  public IReadOnlySet<T> getCheckedItems() {
+  public Iterable<T> getCheckedItems() {
     IReadOnlySet<T> ret = lstBox.getCheckedItems();
     return ret;
   }

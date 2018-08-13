@@ -17,10 +17,7 @@ import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.Simulation;
 import eng.jAtcSim.lib.atcs.Atc;
 import eng.jAtcSim.lib.atcs.UserAtc;
-import eng.jAtcSim.lib.world.Area;
-import eng.jAtcSim.lib.world.InitialPosition;
-import eng.jAtcSim.lib.world.Route;
-import eng.jAtcSim.lib.world.RunwayThreshold;
+import eng.jAtcSim.lib.world.*;
 import eng.jAtcSim.radarBase.*;
 import eng.jAtcSim.shared.LayoutManager;
 
@@ -48,6 +45,62 @@ public class SwingRadarPanel extends JPanel {
   );
   private IMap<Integer, RadarViewPort> storedRadarPositions = new EMap<>();
   private IList<ButtonBinding> bndgs = new EList();
+  private AdjustSelectionPanelWrapper<Route> wrpRoutes;
+
+  class RoutesAdjustSelectionPanelWrapperListener implements AdjustSelectionPanelWrapper.ActionSelectionPanelWraperListener<Route>{
+
+    @Override
+    public Iterable<BoxItem<Route>> doInit() {
+      IMap<Route, IList<RunwayThreshold>> tmp = new EMap<>();
+      for (RunwayThreshold threshold : Acc.airport().getAllThresholds()) {
+        for (Route route : threshold.getRoutes()) {
+          IList<RunwayThreshold> lst = tmp.tryGet(route);
+          if (lst == null) {
+            lst = new EList<>();
+            tmp.set(route, lst);
+          }
+          lst.add(threshold);
+        }
+      }
+      IList<Route> orderedRoutes = tmp.getKeys().toList();
+      orderedRoutes.sort(new RouteComparator(tmp));
+
+      IList<BoxItem<Route>> items = new EList<>();
+      for (Route route : orderedRoutes) {
+        EStringBuilder sb = new EStringBuilder();
+        sb.append(route.getName());
+        sb.append(" (");
+        switch (route.getType()) {
+          case sid:
+            sb.append("SID:");
+            break;
+          case star:
+            sb.append("STAR:");
+            break;
+          case transition:
+            sb.append("TRANS:");
+            break;
+          default:
+            throw new EEnumValueUnsupportedException(route.getType());
+        }
+        sb.appendItems(tmp.get(route), q -> q.getName(), ", ");
+        sb.append(")");
+        items.add(new BoxItem<>(route, sb.toString()));
+      }
+      return items;
+    }
+
+    @Override
+    public Iterable<Route> doRequest() {
+      return radar.getDrawnRoutes();
+    }
+
+    @Override
+    public void doResponse(Iterable<Route> routes) {
+      radar.setDrawnRoutes(routes);
+      radar.redraw(true);
+    }
+  }
 
   public void init(InitialPosition initialPosition,
                    Simulation sim, Area area,
@@ -235,18 +288,22 @@ public class SwingRadarPanel extends JPanel {
     bb = new ButtonBinding(this.displaySettings, "AirportVisible", btn);
     this.bndgs.add(bb);
     ret.add(btn);
-    btn = new JButton("SID");
-    bb = new ButtonBinding(this.displaySettings, "SidVisible", btn);
-    this.bndgs.add(bb);
-    ret.add(btn);
-    btn = new JButton("STAR");
-    bb = new ButtonBinding(this.displaySettings, "StarVisible", btn);
-    this.bndgs.add(bb);
-    ret.add(btn);
 
-    btn = new JButton("??");
-    btn.addActionListener(this::test_click);
-    ret.add(btn);
+    {
+      JButton btnSid = new JButton("SID");
+      bb = new ButtonBinding(this.displaySettings, "SidVisible", btnSid);
+      this.bndgs.add(bb);
+      ret.add(btnSid);
+
+      JButton btnStar = new JButton("STAR");
+      bb = new ButtonBinding(this.displaySettings, "StarVisible", btnStar);
+      this.bndgs.add(bb);
+      ret.add(btnStar);
+
+      wrpRoutes =
+          new AdjustSelectionPanelWrapper(new RoutesAdjustSelectionPanelWrapperListener(), btnSid, btnStar);
+      ret.add(btn);
+    }
 
     btn = new JButton("P(rngs)");
     bb = new ButtonBinding(this.displaySettings, "RingsVisible", btn);
@@ -274,81 +331,81 @@ public class SwingRadarPanel extends JPanel {
     return ret;
   }
 
-  private void test_click(ActionEvent actionEvent) {
-    Point p = MouseInfo.getPointerInfo().getLocation();
-    AdjustSelectionPanel<Route> pnl = new AdjustSelectionPanel<>();
-
-    IMap<Route, IList<RunwayThreshold>> tmp = new EMap<>();
-    for (RunwayThreshold threshold : Acc.airport().getAllThresholds()) {
-      for (Route route : threshold.getRoutes()) {
-        IList<RunwayThreshold> lst = tmp.tryGet(route);
-        if (lst== null){
-          lst = new EList<>();
-          tmp.set(route, lst);
-        }
-        lst.add(threshold);
-      }
-    }
-    IList<Route> orderedRoutes = tmp.getKeys().toList();
-    orderedRoutes.sort(new RouteComparator(tmp));
-
-    IList<BoxItem<Route>> items = new EList<>();
-    for (Route route : orderedRoutes) {
-      EStringBuilder sb = new EStringBuilder();
-      sb.append(route.getName());
-      sb.append(" (");
-      switch (route.getType()) {
-        case sid:
-          sb.append("SID:");
-          break;
-        case star:
-          sb.append("STAR:");
-          break;
-        case transition:
-          sb.append("TRANS:");
-          break;
-        default:
-          throw new EEnumValueUnsupportedException(route.getType());
-      }
-      sb.appendItems(tmp.get(route), q -> q.getName(), ", ");
-      sb.append(")");
-      items.add(new BoxItem<>(route, sb.toString()));
-    }
-    pnl.setItems(items);
-
-    // set radar visible
-    pnl.setCheckedItems(this.radar.getDrawnRoutes());
-
-    JFrame frm = new JFrame();
-    frm.getContentPane().add(pnl);
-    frm.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-    frm.addWindowListener(new WindowAdapter() {
-      @Override
-      public void windowActivated(WindowEvent e) {
-        pnl.resetDialogResult();
-      }
-
-      @Override
-      public void windowDeactivated(WindowEvent e) {
-        if (pnl.getDialogResult() == DialogResult.ok){
-          SwingRadarPanel.this.radar.setDrawnRoutes(pnl.getCheckedItems());
-          SwingRadarPanel.this.radar.redraw(true);
-        }
-      }
-
-
-    });
-    frm.addWindowFocusListener(new WindowAdapter() {
-      @Override
-      public void windowLostFocus(WindowEvent e) {
-        frm.setVisible(false);
-      }
-    });
-    frm.setUndecorated(true);
-    frm.pack();
-    frm.setLocation(p);
-    frm.setVisible(true);
-  }
+//  private void test_click(ActionEvent actionEvent) {
+//    Point p = MouseInfo.getPointerInfo().getLocation();
+//    AdjustSelectionPanel<Route> pnl = new AdjustSelectionPanel<>();
+//
+//    IMap<Route, IList<RunwayThreshold>> tmp = new EMap<>();
+//    for (RunwayThreshold threshold : Acc.airport().getAllThresholds()) {
+//      for (Route route : threshold.getRoutes()) {
+//        IList<RunwayThreshold> lst = tmp.tryGet(route);
+//        if (lst == null) {
+//          lst = new EList<>();
+//          tmp.set(route, lst);
+//        }
+//        lst.add(threshold);
+//      }
+//    }
+//    IList<Route> orderedRoutes = tmp.getKeys().toList();
+//    orderedRoutes.sort(new RouteComparator(tmp));
+//
+//    IList<BoxItem<Route>> items = new EList<>();
+//    for (Route route : orderedRoutes) {
+//      EStringBuilder sb = new EStringBuilder();
+//      sb.append(route.getName());
+//      sb.append(" (");
+//      switch (route.getType()) {
+//        case sid:
+//          sb.append("SID:");
+//          break;
+//        case star:
+//          sb.append("STAR:");
+//          break;
+//        case transition:
+//          sb.append("TRANS:");
+//          break;
+//        default:
+//          throw new EEnumValueUnsupportedException(route.getType());
+//      }
+//      sb.appendItems(tmp.get(route), q -> q.getName(), ", ");
+//      sb.append(")");
+//      items.add(new BoxItem<>(route, sb.toString()));
+//    }
+//    pnl.setItems(items);
+//
+//    // set radar visible
+//    pnl.setCheckedItems(this.radar.getDrawnRoutes());
+//
+//    JFrame frm = new JFrame();
+//    frm.getContentPane().add(pnl);
+//    frm.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+//    frm.addWindowListener(new WindowAdapter() {
+//      @Override
+//      public void windowActivated(WindowEvent e) {
+//        pnl.resetDialogResult();
+//      }
+//
+//      @Override
+//      public void windowDeactivated(WindowEvent e) {
+//        if (pnl.getDialogResult() == DialogResult.ok) {
+//          SwingRadarPanel.this.radar.setDrawnRoutes(pnl.getCheckedItems());
+//          SwingRadarPanel.this.radar.redraw(true);
+//        }
+//      }
+//
+//
+//    });
+//    frm.addWindowFocusListener(new WindowAdapter() {
+//      @Override
+//      public void windowLostFocus(WindowEvent e) {
+//        frm.setVisible(false);
+//      }
+//    });
+//    frm.setUndecorated(true);
+//    frm.pack();
+//    frm.setLocation(p);
+//    frm.setVisible(true);
+//  }
 
   private boolean sendMessage(String msg) {
     msg = normalizeMsg(msg);
@@ -568,11 +625,11 @@ class JButtonExtender {
 }
 
 class ButtonBinding {
+  private static JButtonExtender ext;
   private final Object target;
   private final String propertyName;
   private final JButton btn;
   private final EventAnonymousSimple onClicked = new EventAnonymousSimple();
-  private static JButtonExtender ext;
 
   public static void init(JButtonExtender ext) {
     ButtonBinding.ext = ext;
@@ -654,7 +711,7 @@ class RouteComparator implements Comparator<Route> {
     tmp = map.get(b);
     sb = tmp.isEmpty() ? "" : tmp.getFirst().getName();
     ret = sa.compareTo(sb);
-    if (ret == 0){
+    if (ret == 0) {
       ret = a.getType().compareTo(b.getType());
       if (ret == 0)
         ret = a.getName().compareTo(b.getName());
