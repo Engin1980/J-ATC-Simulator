@@ -14,7 +14,6 @@ import eng.jAtcSim.lib.coordinates.Coordinates;
 import eng.jAtcSim.lib.global.ETime;
 import eng.jAtcSim.lib.global.Headings;
 import eng.jAtcSim.lib.global.SchedulerForAdvice;
-import eng.jAtcSim.lib.global.logging.ApplicationLog;
 import eng.jAtcSim.lib.global.logging.CommonRecorder;
 import eng.jAtcSim.lib.messaging.Message;
 import eng.jAtcSim.lib.messaging.StringMessageContent;
@@ -595,118 +594,63 @@ public class TowerAtc extends ComputerAtc {
   }
 
   private void restrictToRunwaysNotUsedInApproach(IList<RunwayThreshold> rts) {
-    rts.remove(q -> arrivalManager.getClosestLandingPlaneDistanceForThreshold(q) < 2.5);
+    // removes thresholds, which has in their cross-set some plane on close approach
+    int index = 0;
+    while (index < rts.size()){
+      RunwayThreshold rt = rts.get(index);
+      ISet<RunwayThreshold> crts = inUseInfo.current.getCrossedSetForThreshold(rt);
+      double dist =  crts.min(q->arrivalManager.getClosestLandingPlaneDistanceForThreshold(q),100d );
+      if (dist < 2.5)
+        rts.tryRemove(crts);
+      else
+        index++;
+    }
   }
 
   private void restrictToRunwaysNotUsedByRolling(IList<RunwayThreshold> rts) {
-    IList<RunwayThreshold> tmp = new EList<>();
-    for (RunwayThreshold rt : rts) {
-      ISet<RunwayThreshold> crossedSet = inUseInfo.current.getCrossedSetForThreshold(rt);
-      boolean hasSetAirplaneOnGround = crossedSet.isAny(q -> hasAirplaneRollingOnTheGround(q));
-      if (hasSetAirplaneOnGround)
-        tmp.add(crossedSet);
+    int index = 0;
+    while (index < rts.size()){
+      RunwayThreshold rt = rts.get(index);
+      ISet<RunwayThreshold> crts = inUseInfo.current.getCrossedSetForThreshold(rt);
+      boolean hasPlaneOnTheGround = crts
+          .isAny(q ->
+              arrivalManager.isSomeArrivalOnRunway(rt.getParent())
+                  || departureManager.isSomeDepartureOnRunway(rt.getParent()));
+      if (hasPlaneOnTheGround)
+        rts.tryRemove(crts);
+      else
+        index++;
     }
-    rts.tryRemove(tmp);
-  }
-
-  private boolean hasAirplaneRollingOnTheGround(RunwayThreshold rt) {
-    boolean ret;
-    ret = arrivalManager.isSomeArrivalOnRunway(rt.getParent())
-        ||
-        departureManager.isSomeDepartureOnRunway(rt.getParent());
-
-    return ret;
   }
 
   private void restrictToRunwayAvailableForTakeOff(IList<RunwayThreshold> rts, Airplane toPlane) {
-    IList<RunwayThreshold> toRem;
-
-    rts.remove(q -> departureManager.getLastDepartureTime(q).addSeconds(60).isAfterOrEq(Acc.now()));
-
-//    boolean fail;
-//    int i = 0;
-//    while (i < rts.size()) {
-//      fail = false;
-//      RunwayThreshold rt = rts.get(i);
-//      IReadOnlySet<RunwayThreshold> crts = inUseInfo.current.getCrossedSetForThreshold(rt);
-//      for (RunwayThreshold crt : crts) {
-//        ETime t = departureManager.getLastDepartureTime(crt);
-//        t = t.addSeconds(60);
-//        if (t.isAfterOrEq(Acc.now())) {
-//          fail = true;
-//          break;
-//        }
-//      }
-//      if (fail)
-//        rts.tryRemove(crts);
-//      else
-//        i++;
-//    }
-//
-//    if (rts.isEmpty()) return;
-
     double toPlaneClearAltitude = toPlane.getAltitude() + 1500;
+    int index = 0;
+    while (index < rts.size()){
+      RunwayThreshold rt = rts.get(index);
+      if (departureManager.getLastDepartureTime(rt).addSeconds(60).isAfterOrEq(Acc.now())){
+        rts.remove(rt);
+        continue;
+      }
 
-    boolean removed;
-    int i = 0;
-    while (i < rts.size()) {
-      removed = false;
-      RunwayThreshold rt = rts.get(i);
-      IReadOnlySet<RunwayThreshold> crts = inUseInfo.current.getCrossedSetForThreshold(rt);
+      ISet<RunwayThreshold> crts = inUseInfo.current.getCrossedSetForThreshold(rt);
+
       for (RunwayThreshold crt : crts) {
-        Airplane lastDep = departureManager.getLastDeparturePlane(rt);
-        if (lastDep != null) {
-          if (lastDep.getAltitude() < toPlaneClearAltitude) {
-            double dist = Coordinates.getDistanceInNM(rt.getCoordinate(), lastDep.getCoordinate());
-            System.out.println("## ... dist: " + dist);
-            if (dist < 5) {
-              removed = true;
-            }
-          }
-          if (!removed) {
-            System.out.println("## ... safe-sep check");
-            boolean noSafeSep = !Separation.isSafeSeparation(lastDep, toPlane, (int) rt.getCourse(), 120);
-            System.out.println("## ... safe-sep-check-test-result: " + noSafeSep);
-            if (noSafeSep)
-              removed = true;
-          }
-          if (removed) break;
-        }
-      } // for crt
-      if (removed){
-        rts.remove(crts);
-      } else
-        i++;
-    } // while (i ...
-    bubla tady divne je treba zkontrolovat
+        Airplane lastDep = departureManager.tryGetLastDeparturePlane(crt);
+        if (lastDep == null) continue; // no last departure
+        if (lastDep.getAltitude() > toPlaneClearAltitude) continue; // last departure has safe altitude
+        double dist = Coordinates.getDistanceInNM(rt.getCoordinate(), lastDep.getCoordinate());
+        if (dist > 5) continue; // last departure has safe distance
+        boolean hasSafeSeparation = Separation.isSafeSeparation(lastDep, toPlane, (int) rt.getCourse(), 120);
+        if (hasSafeSeparation) continue; // has safe separation
 
-//    toRem = new EList<>();
-//    boolean removed;
-//    for (RunwayThreshold rt : rts) {
-//      removed = false;
-//      System.out.println("## checking " + rt.getName());
-//      Airplane lastDep = departureManager.getLastDeparturePlane(rt);
-//      if (lastDep != null) {
-//        System.out.println("## last-dep: " + lastDep.getCallsign().toString());
-//        System.out.println("## ... its altitude " + lastDep.getAltitude() + "/ target altitude: " + toPlaneClearAltitude);
-//        if (lastDep.getAltitude() < toPlaneClearAltitude) {
-//          double dist = Coordinates.getDistanceInNM(rt.getCoordinate(), lastDep.getCoordinate());
-//          System.out.println("## ... dist: " + dist);
-//          if (dist < 5) {
-//            removed = true;
-//            toRem.add(rt);
-//          }
-//        }
-//        if (!removed) {
-//          System.out.println("## ... safe-sep check");
-//          boolean safeSep = !Separation.isSafeSeparation(lastDep, toPlane, (int) rt.getCourse(), 120);
-//          System.out.println("## ... safe-sep-check-test-result: " + safeSep);
-//          if (safeSep)
-//            toRem.add(rt);
-//        }
-//      }
-//    }
-//    rts.remove(toRem);
+        rts.tryRemove(crts);
+        index--;
+        break;
+
+      }
+      index++;
+    }
   }
 
   private void tryTakeOffPlaneNew() {
@@ -983,7 +927,7 @@ class DepartureManager {
     return ret;
   }
 
-  public Airplane getLastDeparturePlane(RunwayThreshold rt) {
+  public Airplane tryGetLastDeparturePlane(RunwayThreshold rt) {
     Airplane ret;
     ret = this.lastDepartures.tryGet(rt);
     return ret;

@@ -11,6 +11,9 @@
 
   <activeRunway color="FFFFFF" width="3"/>
   <closedRunway color="FFAAAA" width="3"/>
+  <defaultVisibleRoutesForCategories>C</defaultVisibleRoutesForCategories>
+  
+  <ilsApproach width="1" color="FF00FF" length="15" />
 
   <navVOR color="55FF55" width="3" borderWidth="1" borderDistance="9"/>
   <navNDB color="5555FF" width="3" borderWidth="1" borderDistance="10"/>

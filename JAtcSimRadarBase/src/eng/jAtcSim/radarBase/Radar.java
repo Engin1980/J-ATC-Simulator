@@ -492,12 +492,17 @@ public class Radar {
   }
 
   private void buildDrawnRoutesList() {
+    char[] drawnRoutesCategories = styleSettings.defaultVisibleRoutesForCategories.toCharArray();
+    IReadOnlyList<RunwayThreshold> rts;
     this.drawnRoutes.clear();
-    for (RunwayThreshold threshold : Acc.atcTwr().getRunwayThresholdsInUse(TowerAtc.eDirection.departures)) {
-      this.drawnRoutes.add(threshold.getRoutes());
-    }
-    for (RunwayThreshold threshold : Acc.atcTwr().getRunwayThresholdsInUse(TowerAtc.eDirection.arrivals)) {
-      this.drawnRoutes.add(threshold.getRoutes());
+    for (char category : drawnRoutesCategories) {
+      rts = Acc.atcTwr().getRunwayThresholdsInUse(TowerAtc.eDirection.departures, category);
+      rts.forEach(q-> this.drawnRoutes.add(
+          q.getRoutes().where(p->p.getCategory().containsAny(drawnRoutesCategories))));
+
+      rts = Acc.atcTwr().getRunwayThresholdsInUse(TowerAtc.eDirection.arrivals, category);
+      rts.forEach(q-> this.drawnRoutes.add(
+          q.getRoutes().where(p->p.getCategory().containsAny(drawnRoutesCategories))));
     }
   }
 
@@ -824,7 +829,7 @@ public class Radar {
   }
 
   private void drawApproaches() {
-    for (RunwayThreshold threshold : simulation.getActiveRunwayThresholds(TowerAtc.eDirection.arrivals, 'C')) {
+    for (RunwayThreshold threshold : Acc.atcTwr().getRunwayThresholdsInUse(TowerAtc.eDirection.arrivals)){
       Approach a = threshold.getHighestApproach();
       if (a != null) {
         drawApproach(a);
@@ -833,12 +838,13 @@ public class Radar {
   }
 
   private void drawApproach(Approach approach) {
+    RadarStyleSettings.ColorWidthLengthSettings dispSett =
+        styleSettings.ilsApproach;
     Coordinate start = Coordinates.getCoordinate(
         approach.getParent().getCoordinate(),
         Headings.getOpposite(approach.getGeographicalRadial()),
-        15);
-    //TODO colors should be configurable
-    tl.drawLine(start, approach.getParent().getCoordinate(), Color.MAGENTA, 1);
+        dispSett.getLength());
+    tl.drawLine(start, approach.getParent().getCoordinate(), dispSett.getColor(), dispSett.getWidth());
   }
 
   private void drawNavaids() {

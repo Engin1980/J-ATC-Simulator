@@ -49,6 +49,18 @@ public class RadarStyleSettings {
     }
   }
 
+  public static class ColorWidthLengthSettings extends ColorWidthSettings{
+    private double length;
+
+    public double getLength() {
+      return length;
+    }
+
+    public void setLength(double length) {
+      this.length = length;
+    }
+  }
+
   public static class ColorWidthBorderSettings extends ColorWidthSettings {
     private int borderWidth;
     private int borderDistance;
@@ -200,6 +212,13 @@ public class RadarStyleSettings {
   // runways
   public ColorWidthSettings activeRunway;
   public ColorWidthSettings closedRunway;
+
+  // routes
+  public String defaultVisibleRoutesForCategories;
+
+  // approaches
+  //TODO other approaches
+  public ColorWidthLengthSettings ilsApproach;
 
   // navaids
   public ColorWidthBorderSettings navVOR;

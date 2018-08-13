@@ -27,6 +27,14 @@ public class PlaneCategoryDefinitions {
     this.inner = tmp;
   }
 
+  public boolean containsAny(char[] categories){
+    for (char c : categories) {
+      if (contains(c))
+        return true;
+    }
+    return false;
+  }
+
   public boolean contains(char category) {
     category = ensureValidAndNormalize(category);
 

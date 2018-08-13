@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:sh="https://github.com/Engin1980/J-ATC-Simulator/shared"
            targetNamespace="https://github.com/Engin1980/J-ATC-Simulator/radarStyle"
            xmlns="https://github.com/Engin1980/J-ATC-Simulator/radarStyle"
            elementFormDefault="qualified">
@@ -16,6 +17,9 @@
 
       <xs:element name="activeRunway" type="colorWidthElement" />
       <xs:element name="closedRunway" type="colorWidthElement" />
+      <xs:element name="defaultVisibleRoutesForCategories" type="sh:planeCategory" />
+
+      <xs:element name="ilsApproach" type="colorWidthLengthElement" />
 
       <xs:element name="navVOR" type="colorWidthBorderElement" />
       <xs:element name="navNDB" type="colorWidthBorderElement" />
@@ -81,6 +85,14 @@
   <xs:complexType name="colorWidthElement">
     <xs:attribute name="color" type="colorValue" use="required" />
     <xs:attribute name="width" type="xs:nonNegativeInteger" use="required" />
+  </xs:complexType>
+
+  <xs:complexType name="colorWidthLengthElement">
+    <xs:complexContent>
+      <xs:extension base="colorWidthElement">
+        <xs:attribute name="length" type="xs:double" use="required" />
+      </xs:extension>
+    </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="colorWidthFontElement">
