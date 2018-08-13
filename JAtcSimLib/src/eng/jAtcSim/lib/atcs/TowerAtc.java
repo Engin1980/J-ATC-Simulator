@@ -173,6 +173,26 @@ public class TowerAtc extends ComputerAtc {
     return rt;
   }
 
+  private static IReadOnlyList<RunwayThreshold> getSuggestedRunwayThreshold(eDirection direction, char category,
+                                                                            IReadOnlyList<RunwayConfiguration.RunwayThresholdConfiguration> arrivals,
+                                                                            IReadOnlyList<RunwayConfiguration.RunwayThresholdConfiguration> departures) {
+    IReadOnlyList<RunwayThreshold> ret;
+    switch (direction) {
+      case departures:
+        ret = departures.where(q -> q.isForCategory(category)).select(q -> q.getThreshold());
+        break;
+      case arrivals:
+        if (arrivals.isAny(q -> q.isPrimary()))
+          ret = arrivals.where(q -> q.isPrimary() && q.isForCategory(category)).select(q -> q.getThreshold());
+        else
+          ret = arrivals.where(q -> q.isForCategory(category)).select(q -> q.getThreshold());
+        break;
+      default:
+        throw new EEnumValueUnsupportedException(direction);
+    }
+    return ret;
+  }
+
   public TowerAtc(AtcTemplate template) {
     super(template);
     toRecorder = new CommonRecorder(template.getName() + " - TO", template.getName() + "_to.log", "\t");
@@ -312,7 +332,7 @@ public class TowerAtc extends ComputerAtc {
   }
 
   public IReadOnlyList<RunwayThreshold> getRunwayThresholdsInUse(eDirection direction) {
-    IReadOnlyList<RunwayThreshold> ret = inUseInfo.current.getDepartures().select(q->q.getThreshold());
+    IReadOnlyList<RunwayThreshold> ret = inUseInfo.current.getDepartures().select(q -> q.getThreshold());
     return ret;
   }
 
@@ -323,26 +343,6 @@ public class TowerAtc extends ComputerAtc {
     else {
       ret = getSuggestedRunwayThreshold(direction, category,
           inUseInfo.scheduled.getDepartures(), inUseInfo.scheduled.getArrivals());
-    }
-    return ret;
-  }
-
-  private static IReadOnlyList<RunwayThreshold> getSuggestedRunwayThreshold(eDirection direction, char category,
-                                                                            IReadOnlyList<RunwayConfiguration.RunwayThresholdConfiguration> arrivals,
-                                                                            IReadOnlyList<RunwayConfiguration.RunwayThresholdConfiguration> departures) {
-    IReadOnlyList<RunwayThreshold> ret;
-    switch (direction) {
-      case departures:
-        ret = departures.where(q->q.isForCategory(category)).select(q -> q.getThreshold());
-        break;
-      case arrivals:
-        if (arrivals.isAny(q->q.isPrimary()))
-          ret = arrivals.where(q->q.isPrimary() && q.isForCategory(category)).select(q->q.getThreshold());
-        else
-          ret = arrivals.where(q->q.isForCategory(category)).select(q -> q.getThreshold());
-        break;
-      default:
-        throw new EEnumValueUnsupportedException(direction);
     }
     return ret;
   }
@@ -611,58 +611,102 @@ public class TowerAtc extends ComputerAtc {
 
   private boolean hasAirplaneRollingOnTheGround(RunwayThreshold rt) {
     boolean ret;
-    ret = arrivalManager.isSomeArrivalOnRunway(rt.getParent());
-    if (ret == false) {
-      ret = departureManager.isSomeDepartureOnRunway(rt.getParent());
-    }
+    ret = arrivalManager.isSomeArrivalOnRunway(rt.getParent())
+        ||
+        departureManager.isSomeDepartureOnRunway(rt.getParent());
 
     return ret;
   }
 
   private void restrictToRunwayAvailableForTakeOff(IList<RunwayThreshold> rts, Airplane toPlane) {
-    IList<RunwayThreshold> toRem = new EList<>();
+    IList<RunwayThreshold> toRem;
 
-    for (RunwayThreshold rt : rts) {
-      ETime t = departureManager.getLastDepartureTime(rt);
-      t = t.addSeconds(60);
-      if (t.isAfterOrEq(Acc.now()))
-        toRem.add(rt);
-    }
-    rts.remove(toRem);
-    toRem.clear();
+    rts.remove(q -> departureManager.getLastDepartureTime(q).addSeconds(60).isAfterOrEq(Acc.now()));
 
-//    rts.remove(q -> departureManager.getLastDepartureTime(q).addSeconds(60).isAfterOrEq(Acc.now()));
-    if (rts.isEmpty()) return;
+//    boolean fail;
+//    int i = 0;
+//    while (i < rts.size()) {
+//      fail = false;
+//      RunwayThreshold rt = rts.get(i);
+//      IReadOnlySet<RunwayThreshold> crts = inUseInfo.current.getCrossedSetForThreshold(rt);
+//      for (RunwayThreshold crt : crts) {
+//        ETime t = departureManager.getLastDepartureTime(crt);
+//        t = t.addSeconds(60);
+//        if (t.isAfterOrEq(Acc.now())) {
+//          fail = true;
+//          break;
+//        }
+//      }
+//      if (fail)
+//        rts.tryRemove(crts);
+//      else
+//        i++;
+//    }
+//
+//    if (rts.isEmpty()) return;
 
     double toPlaneClearAltitude = toPlane.getAltitude() + 1500;
 
-    toRem = new EList<>();
     boolean removed;
-    for (RunwayThreshold rt : rts) {
+    int i = 0;
+    while (i < rts.size()) {
       removed = false;
-      System.out.println("## checking " + rt.getName());
-      Airplane lastDep = departureManager.getLastDeparturePlane(rt);
-      if (lastDep != null) {
-        System.out.println("## last-dep: " + lastDep.getCallsign().toString());
-        System.out.println("## ... its altitude " + lastDep.getAltitude() + "/ target altitude: " + toPlaneClearAltitude);
-        if (lastDep.getAltitude() < toPlaneClearAltitude) {
-          double dist = Coordinates.getDistanceInNM(rt.getCoordinate(), lastDep.getCoordinate());
-          System.out.println("## ... dist: " + dist);
-          if (dist < 5) {
-            removed = true;
-            toRem.add(rt);
+      RunwayThreshold rt = rts.get(i);
+      IReadOnlySet<RunwayThreshold> crts = inUseInfo.current.getCrossedSetForThreshold(rt);
+      for (RunwayThreshold crt : crts) {
+        Airplane lastDep = departureManager.getLastDeparturePlane(rt);
+        if (lastDep != null) {
+          if (lastDep.getAltitude() < toPlaneClearAltitude) {
+            double dist = Coordinates.getDistanceInNM(rt.getCoordinate(), lastDep.getCoordinate());
+            System.out.println("## ... dist: " + dist);
+            if (dist < 5) {
+              removed = true;
+            }
           }
+          if (!removed) {
+            System.out.println("## ... safe-sep check");
+            boolean noSafeSep = !Separation.isSafeSeparation(lastDep, toPlane, (int) rt.getCourse(), 120);
+            System.out.println("## ... safe-sep-check-test-result: " + noSafeSep);
+            if (noSafeSep)
+              removed = true;
+          }
+          if (removed) break;
         }
-        if (!removed) {
-          System.out.println("## ... safe-sep check");
-          boolean safeSep = !Separation.isSafeSeparation(lastDep, toPlane, (int) rt.getCourse(), 120);
-          System.out.println("## ... safe-sep-check-test-result: " + safeSep);
-          if (safeSep)
-            toRem.add(rt);
-        }
-      }
-    }
-    rts.remove(toRem);
+      } // for crt
+      if (removed){
+        rts.remove(crts);
+      } else
+        i++;
+    } // while (i ...
+    bubla tady divne je treba zkontrolovat
+
+//    toRem = new EList<>();
+//    boolean removed;
+//    for (RunwayThreshold rt : rts) {
+//      removed = false;
+//      System.out.println("## checking " + rt.getName());
+//      Airplane lastDep = departureManager.getLastDeparturePlane(rt);
+//      if (lastDep != null) {
+//        System.out.println("## last-dep: " + lastDep.getCallsign().toString());
+//        System.out.println("## ... its altitude " + lastDep.getAltitude() + "/ target altitude: " + toPlaneClearAltitude);
+//        if (lastDep.getAltitude() < toPlaneClearAltitude) {
+//          double dist = Coordinates.getDistanceInNM(rt.getCoordinate(), lastDep.getCoordinate());
+//          System.out.println("## ... dist: " + dist);
+//          if (dist < 5) {
+//            removed = true;
+//            toRem.add(rt);
+//          }
+//        }
+//        if (!removed) {
+//          System.out.println("## ... safe-sep check");
+//          boolean safeSep = !Separation.isSafeSeparation(lastDep, toPlane, (int) rt.getCourse(), 120);
+//          System.out.println("## ... safe-sep-check-test-result: " + safeSep);
+//          if (safeSep)
+//            toRem.add(rt);
+//        }
+//      }
+//    }
+//    rts.remove(toRem);
   }
 
   private void tryTakeOffPlaneNew() {

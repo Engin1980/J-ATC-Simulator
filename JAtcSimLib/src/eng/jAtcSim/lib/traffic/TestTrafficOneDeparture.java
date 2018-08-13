@@ -44,7 +44,7 @@ public class TestTrafficOneDeparture extends TestTraffic {
     AirplaneType pt = Acc.sim().getAirplaneTypes().tryGetByName(typeName);
     assert pt != null;
 
-    typeName = "C172";
+    typeName = "A319";
 
     tmp = new Movement(cs, pt, Acc.now().clone(), 0, true, 180);
     return tmp;
