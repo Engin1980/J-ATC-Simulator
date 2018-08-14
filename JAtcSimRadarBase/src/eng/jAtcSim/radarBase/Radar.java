@@ -737,6 +737,7 @@ public class Radar {
             drawBorder(b);
           break;
         case restricted:
+        case danger:
           if (displaySettings.isRestrictedBorderVisible()) {
             drawBorder(b);
             drawBorderCaption(b);
@@ -1212,6 +1213,7 @@ public class Radar {
       case mrva:
         return styleSettings.borderMrva;
       case restricted:
+      case danger:
         return styleSettings.borderRestricted;
       default:
         throw new EEnumValueUnsupportedException(border.getType());

@@ -7767,12 +7767,29 @@
       </points>
     </border>
 
-    <border name="LKMT_RI" type="restricted" enclosed="true">
+    <border name="LKP1" type="restricted" minAltitude="0" maxAltitude="5000" enclosed="true">
       <points>
-        <point coordinate="49.773245 17.441492"/>
-        <point coordinate="49.573245 17.441492"/>
-        <point coordinate="49.573245 17.641492"/>
-        <point coordinate="49.773245 17.641492"/>
+        <circle coordinate="N 50 05 26.72 E 014 24 01.68" distance=".6"/>
+      </points>
+    </border>
+
+    <border name="LKD9" type="danger" minAltitude="0" maxAltitude="9500" enclosed="true">
+      <points>
+        <circle coordinate="N 49 44 58.00 E 013 54 43.00" distance="1.5"/>
+      </points>
+    </border>
+
+    <border name="LKD13" type="danger" minAltitude="0" maxAltitude="9500" enclosed="true">
+      <points>
+        <circle coordinate="49 40 23.34 N 017 36 05.38 E" distance="7"/>
+      </points>
+    </border>
+
+    <border name="LKP4" type="restricted" minAltitude="0" maxAltitude="5000" enclosed="true">
+      <points>
+        <point coordinate="49 42 23.79 N 014 53 56.76 E"/>
+        <point coordinate="49 40 53.30 N 014 57 57.76 E"/>
+        <point coordinate="49 39 40.74 N 014 55 54.76 E"/>
       </points>
     </border>
 

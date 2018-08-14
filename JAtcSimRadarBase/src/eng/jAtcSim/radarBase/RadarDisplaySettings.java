@@ -7,6 +7,7 @@ public class RadarDisplaySettings {
   private boolean mrvaBorderVisible = true;
   private boolean mrvaBorderAltitudeVisible = true;
   private boolean restrictedBorderVisible = true;
+  private boolean restrictedBorderAltitudeVisible = true;
   private boolean ctrBorderVisible = true;
   private boolean vorVisible = true;
   private boolean ndbVisible = true;
@@ -172,5 +173,17 @@ public class RadarDisplaySettings {
 
   public boolean isRestrictedBorderVisible() {
     return this.restrictedBorderVisible;
+  }
+
+  public void setRestrictedBorderVisible(boolean restrictedBorderVisible) {
+    this.restrictedBorderVisible = restrictedBorderVisible;
+  }
+
+  public boolean isRestrictedBorderAltitudeVisible() {
+    return restrictedBorderAltitudeVisible;
+  }
+
+  public void setRestrictedBorderAltitudeVisible(boolean restrictedBorderAltitudeVisible) {
+    this.restrictedBorderAltitudeVisible = restrictedBorderAltitudeVisible;
   }
 }

@@ -23,6 +23,11 @@ public class BorderArcPoint extends BorderPoint {
   private Coordinate coordinate;
   private eDirection direction;
 
+  public BorderArcPoint(Coordinate coordinate, eDirection direction) {
+    this.coordinate = coordinate;
+    this.direction = direction;
+  }
+
   public Coordinate getCoordinate() {
     return coordinate;
   }

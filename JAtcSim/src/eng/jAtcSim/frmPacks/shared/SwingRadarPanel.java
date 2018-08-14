@@ -1,6 +1,7 @@
 package eng.jAtcSim.frmPacks.shared;
 
 import eng.eSystem.EStringBuilder;
+import eng.eSystem.Tuple;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IList;
@@ -229,104 +230,114 @@ public class SwingRadarPanel extends JPanel {
     return ret;
   }
 
+  private Tuple<JPanel, JButton[]> buildButtonBlock(
+      String btnLabel, Object targetObject, String propertyName){
+
+    JButton btn = new JButton(btnLabel);
+    ButtonBinding bb = new ButtonBinding(targetObject, propertyName, btn);
+    this.bndgs.add(bb);
+
+    JPanel ret = LayoutManager.createGridPanel(1, 1, 0, btn);
+    return new Tuple<>(ret, new JButton[]{btn});
+  }
+
+  private Tuple<JPanel, JButton[]> buildButtonBlock(
+      String btnLabel, Object targetObject, String propertyName,
+      String btnLabelB, Object targetObjectB, String propertyNameB){
+
+    JButton btn = new JButton(btnLabel);
+    ButtonBinding bb = new ButtonBinding(targetObject, propertyName, btn);
+    this.bndgs.add(bb);
+
+    JButton btnB = new JButton(btnLabelB);
+    ButtonBinding bbB = new ButtonBinding(targetObjectB, propertyNameB, btnB);
+    this.bndgs.add(bbB);
+
+    JPanel ret = LayoutManager.createGridPanel(2, 1, 0, btn, btnB);
+    return new Tuple<>(ret, new JButton[]{btn, btnB});
+  }
+
   private JPanel buildTopPanel() {
     JPanel ret = new JPanel();
+    ret.setBackground(Color.BLACK);
     LayoutManager.fillFlowPanel(ret, LayoutManager.eVerticalAlign.middle, 4);
-
-    JButton btn;
-    JTextField txt;
-    ButtonBinding bb;
 
     ButtonBinding.init(this.extBtn);
 
-    btn = new JButton("Cntr");
-    bb = new ButtonBinding(this.displaySettings, "CountryBorderVisible", btn);
-    this.bndgs.add(bb);
-    ret.add(btn);
 
-    btn = new JButton("CTR");
-    bb = new ButtonBinding(this.displaySettings, "CtrBorderVisible", btn);
-    this.bndgs.add(bb);
-    ret.add(btn);
+    Tuple<JPanel, JButton[]> pnlx;
+    pnlx = buildButtonBlock(
+        "Cntr",
+        this.displaySettings, "CountryBorderVisible");
+    ret.add(pnlx.getA());
 
-    btn = new JButton("TMA");
-    bb = new ButtonBinding(this.displaySettings, "TmaBorderVisible", btn);
-    this.bndgs.add(bb);
-    ret.add(btn);
+    pnlx = buildButtonBlock(
+        "CTR", this.displaySettings, "CtrBorderVisible",
+        "TMA", this.displaySettings, "TmaBorderVisible"
+        );
+    ret.add(pnlx.getA());
 
-    btn = new JButton("MRVA");
-    bb = new ButtonBinding(this.displaySettings, "MrvaBorderVisible", btn);
-    this.bndgs.add(bb);
-    ret.add(btn);
+    pnlx = buildButtonBlock(
+        "MRVA", this.displaySettings, "MrvaBorderVisible",
+        "MRVA(lbl)", this.displaySettings, "MrvaBorderAltitudeVisible"
+    );
+    ret.add(pnlx.getA());
 
-    btn = new JButton("MRVA(lbl)");
-    bb = new ButtonBinding(this.displaySettings, "MrvaBorderAltitudeVisible", btn);
-    this.bndgs.add(bb);
-    ret.add(btn);
+    pnlx = buildButtonBlock(
+        "PROH", this.displaySettings, "RestrictedBorderVisible",
+        "PROH(lbl)", this.displaySettings, "RestrictedBorderAltitudeVisible"
+    );
+    ret.add(pnlx.getA());
 
-    btn = new JButton("VOR");
-    bb = new ButtonBinding(this.displaySettings, "VorVisible", btn);
-    this.bndgs.add(bb);
-    ret.add(btn);
-    btn = new JButton("NDB");
-    bb = new ButtonBinding(this.displaySettings, "NdbVisible", btn);
-    this.bndgs.add(bb);
-    ret.add(btn);
-    btn = new JButton("FIX");
-    bb = new ButtonBinding(this.displaySettings, "FixVisible", btn);
-    this.bndgs.add(bb);
-    ret.add(btn);
-    btn = new JButton("FIX-R");
-    bb = new ButtonBinding(this.displaySettings, "FixRouteVisible", btn);
-    this.bndgs.add(bb);
-    ret.add(btn);
-    btn = new JButton("FIX-M");
-    bb = new ButtonBinding(this.displaySettings, "FixMinorVisible", btn);
-    this.bndgs.add(bb);
-    ret.add(btn);
-    btn = new JButton("AIP");
-    bb = new ButtonBinding(this.displaySettings, "AirportVisible", btn);
-    this.bndgs.add(bb);
-    ret.add(btn);
+    pnlx = buildButtonBlock(
+        "VOR", this.displaySettings, "VorVisible",
+        "NDB", this.displaySettings, "NdbVisible"
+    );
+    ret.add(pnlx.getA());
+
+    pnlx = buildButtonBlock(
+        "FIX",
+        this.displaySettings, "FixVisible");
+    ret.add(pnlx.getA());
+    pnlx = buildButtonBlock(
+        "FIX-R", this.displaySettings, "FixRouteVisible",
+        "FIX-M", this.displaySettings, "FixMinorVisible"
+    );
+    ret.add(pnlx.getA());
+
+    pnlx = buildButtonBlock(
+        "AIP",
+        this.displaySettings, "AirportVisible");
+    ret.add(pnlx.getA());
+
+    pnlx = buildButtonBlock(
+        "SID", this.displaySettings, "SidVisible",
+        "STAR", this.displaySettings, "StarVisible"
+    );
+    wrpRoutes =
+        new AdjustSelectionPanelWrapper(new RoutesAdjustSelectionPanelWrapperListener(), pnlx.getB());
+    ret.add(pnlx.getA());
+
+    pnlx = buildButtonBlock(
+        "P(rngs)",
+        this.displaySettings, "RingsVisible");
+    ret.add(pnlx.getA());
+    pnlx = buildButtonBlock(
+        "P(hdg)", this.displaySettings, "PlaneHeadingLineVisible",
+        "P(hist)", this.displaySettings, "PlaneHistoryVisible"
+    );
+    ret.add(pnlx.getA());
 
     {
-      JButton btnSid = new JButton("SID");
-      bb = new ButtonBinding(this.displaySettings, "SidVisible", btnSid);
-      this.bndgs.add(bb);
-      ret.add(btnSid);
-
-      JButton btnStar = new JButton("STAR");
-      bb = new ButtonBinding(this.displaySettings, "StarVisible", btnStar);
-      this.bndgs.add(bb);
-      ret.add(btnStar);
-
-      wrpRoutes =
-          new AdjustSelectionPanelWrapper(new RoutesAdjustSelectionPanelWrapperListener(), btnSid, btnStar);
+      JTextField txt;
+      JTextField txtA = new JTextField("0");
+      JTextField txtB = new JTextField("380");
+      JPanel pnl = LayoutManager.createGridPanel(2, 1, 0, txtA, txtB);
+      ret.add(pnl);
+      JButton btn = new JButton("(set)");
+      extBtn.set(btn, false);
       ret.add(btn);
     }
-
-    btn = new JButton("P(rngs)");
-    bb = new ButtonBinding(this.displaySettings, "RingsVisible", btn);
-    this.bndgs.add(bb);
-    ret.add(btn);
-
-    btn = new JButton("P(hdg)");
-    bb = new ButtonBinding(this.displaySettings, "PlaneHeadingLineVisible", btn);
-    this.bndgs.add(bb);
-    ret.add(btn);
-
-    btn = new JButton("P(hist)");
-    bb = new ButtonBinding(this.displaySettings, "PlaneHistoryVisible", btn);
-    this.bndgs.add(bb);
-    ret.add(btn);
-
-    txt = new JTextField("0");
-    ret.add(txt);
-    txt = new JTextField("380");
-    ret.add(txt);
-    btn = new JButton("(set)");
-    extBtn.set(btn, false);
-    ret.add(btn);
 
     return ret;
   }

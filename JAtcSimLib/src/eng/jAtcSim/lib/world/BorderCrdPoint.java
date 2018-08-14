@@ -9,6 +9,12 @@ public class BorderCrdPoint extends BorderPoint {
   private int radial;
   private double distance;
 
+  public BorderCrdPoint(Coordinate coordinate, int radial, double distance) {
+    this.coordinate = coordinate;
+    this.radial = radial;
+    this.distance = distance;
+  }
+
   public Coordinate getCoordinate() {
     return coordinate;
   }

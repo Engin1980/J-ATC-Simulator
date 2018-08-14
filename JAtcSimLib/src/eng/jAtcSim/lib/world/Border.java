@@ -49,6 +49,7 @@ public class Border {
     tma,
     ctr,
     restricted,
+    danger,
     mrva,
     other
   }
@@ -118,6 +119,9 @@ public class Border {
   }
 
   public void bind() {
+    if (this.points.size() > 1 && this.points.isAny(q -> q instanceof BorderCirclePoint)) {
+      throw new EApplicationException("Border " + this.getName() + " is not valid. If <circle> is used, it must be the only element in the <points> list.");
+    }
     expandArcsToPoints();
 
     this.globalMinLat = exactPoints.minDouble(q -> q.getCoordinate().getLatitude().get());
@@ -196,6 +200,17 @@ public class Border {
   }
 
   private void expandArcsToPoints() {
+    // expand circle
+    if (this.points.size() > 0 && points.get(0) instanceof BorderCirclePoint) {
+      BorderCirclePoint bcp = (BorderCirclePoint) points.get(0);
+      points.clear();
+      points.add(new BorderCrdPoint(bcp.getCoordinate(), 0, bcp.getDistance()));
+      points.add(new BorderArcPoint(bcp.getCoordinate(), BorderArcPoint.eDirection.clockwise));
+      points.add(new BorderCrdPoint(bcp.getCoordinate(), 180, bcp.getDistance()));
+      points.add(new BorderArcPoint(bcp.getCoordinate(), BorderArcPoint.eDirection.clockwise));
+      this.enclosed = true;
+    }
+
     if (this.isEnclosed() && !this.points.get(0).equals(this.points.get(this.points.size() - 1)))
       this.points.add(this.points.get(0));
 
