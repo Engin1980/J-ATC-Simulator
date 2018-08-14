@@ -1,5 +1,6 @@
 package eng.jAtcSim.lib.world.approaches;
 
+import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.coordinates.Coordinate;
 import eng.jAtcSim.lib.world.Navaid;
@@ -51,6 +52,18 @@ public class UnpreciseApproach extends Approach {
         return mdaD;
       default:
         throw new UnsupportedOperationException();
+    }
+  }
+
+  @Override
+  public String getTypeString() {
+    switch (this.type){
+      case ndb:
+        return "NDB";
+      case vor:
+        return "VOR";
+      default:
+        throw new EEnumValueUnsupportedException(this.type);
     }
   }
 

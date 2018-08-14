@@ -20,6 +20,9 @@
       <xs:element name="defaultVisibleRoutesForCategories" type="sh:planeCategory" />
 
       <xs:element name="ilsApproach" type="colorWidthLengthElement" />
+      <xs:element name="gnssApproach" type="colorWidthLengthElement" />
+      <xs:element name="ndbApproach" type="colorWidthLengthElement" />
+      <xs:element name="vorApproach" type="colorWidthLengthElement" />
 
       <xs:element name="navVOR" type="colorWidthBorderElement" />
       <xs:element name="navNDB" type="colorWidthBorderElement" />

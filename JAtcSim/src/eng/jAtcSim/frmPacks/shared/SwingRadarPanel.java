@@ -1,10 +1,7 @@
 package eng.jAtcSim.frmPacks.shared;
 
 import eng.eSystem.EStringBuilder;
-import eng.eSystem.collections.EList;
-import eng.eSystem.collections.EMap;
-import eng.eSystem.collections.IList;
-import eng.eSystem.collections.IMap;
+import eng.eSystem.collections.*;
 import eng.eSystem.events.EventAnonymous;
 import eng.eSystem.events.EventAnonymousSimple;
 import eng.eSystem.exceptions.EApplicationException;
@@ -16,8 +13,10 @@ import eng.jAtcSim.SwingRadar.SwingCanvas;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.Simulation;
 import eng.jAtcSim.lib.atcs.Atc;
+import eng.jAtcSim.lib.atcs.TowerAtc;
 import eng.jAtcSim.lib.atcs.UserAtc;
 import eng.jAtcSim.lib.world.*;
+import eng.jAtcSim.lib.world.approaches.Approach;
 import eng.jAtcSim.radarBase.*;
 import eng.jAtcSim.shared.LayoutManager;
 
@@ -46,6 +45,7 @@ public class SwingRadarPanel extends JPanel {
   private IMap<Integer, RadarViewPort> storedRadarPositions = new EMap<>();
   private IList<ButtonBinding> bndgs = new EList();
   private AdjustSelectionPanelWrapper<Route> wrpRoutes;
+  private AdjustSelectionPanelWrapper<Approach> wrpApproaches;
 
   class RoutesAdjustSelectionPanelWrapperListener implements AdjustSelectionPanelWrapper.ActionSelectionPanelWraperListener<Route>{
 
@@ -98,6 +98,35 @@ public class SwingRadarPanel extends JPanel {
     @Override
     public void doResponse(Iterable<Route> routes) {
       radar.setDrawnRoutes(routes);
+      radar.redraw(true);
+    }
+  }
+
+  class ApproachesAdjustSelectionPanelWrapperListener implements AdjustSelectionPanelWrapper.ActionSelectionPanelWraperListener<Approach>{
+    @Override
+    public Iterable<BoxItem<Approach>> doInit() {
+      IList<Approach> tmp = new EList();
+
+      for (RunwayThreshold rt : Acc.atcTwr().getRunwayThresholdsInUse(TowerAtc.eDirection.arrivals)){
+        tmp.add(rt.getApproaches());
+      }
+
+      IList<BoxItem<Approach>> items = new EList<>();
+      for (Approach approach : tmp) {
+        BoxItem<Approach> bi = new BoxItem<>(approach, approach.getParent().getName() + " " + approach.getTypeString());
+        items.add(bi);
+      }
+      return items;
+    }
+
+    @Override
+    public Iterable<Approach> doRequest() {
+      return radar.getDrawnApproaches();
+    }
+
+    @Override
+    public void doResponse(Iterable<Approach> routes) {
+      radar.setDrawnApproaches(routes);
       radar.redraw(true);
     }
   }
@@ -302,8 +331,14 @@ public class SwingRadarPanel extends JPanel {
 
       wrpRoutes =
           new AdjustSelectionPanelWrapper(new RoutesAdjustSelectionPanelWrapperListener(), btnSid, btnStar);
-      ret.add(btn);
     }
+
+    btn = new JButton("APS");
+    bb = new ButtonBinding(this.displaySettings, "ApproachesVisible", btn);
+    this.bndgs.add(bb);
+    ret.add(btn);
+    wrpApproaches =
+            new AdjustSelectionPanelWrapper(new ApproachesAdjustSelectionPanelWrapperListener(), btn);
 
     btn = new JButton("P(rngs)");
     bb = new ButtonBinding(this.displaySettings, "RingsVisible", btn);

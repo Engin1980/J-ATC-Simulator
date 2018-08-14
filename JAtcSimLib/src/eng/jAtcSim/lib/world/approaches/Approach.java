@@ -28,7 +28,9 @@ import java.util.List;
 
 public abstract class Approach {
 
-  public enum ApproachType {
+    public abstract String getTypeString();
+
+    public enum ApproachType {
     ils_I,
     ils_II,
     ils_III,
