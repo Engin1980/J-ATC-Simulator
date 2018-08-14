@@ -80,6 +80,11 @@ public class IlsApproach extends Approach {
   }
 
   @Override
+  public String getTypeString() {
+    return "ILS";
+  }
+
+  @Override
   protected void _bind() {
 
   }

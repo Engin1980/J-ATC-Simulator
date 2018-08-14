@@ -12,6 +12,7 @@ public class RadarDisplaySettings {
   private boolean vorVisible = true;
   private boolean ndbVisible = true;
   private boolean airportVisible = true;
+  private boolean approachesVisible = true;
   private boolean sidVisible = true;
   private boolean starVisible = true;
   private boolean fixVisible = true;
@@ -49,6 +50,14 @@ public class RadarDisplaySettings {
 
   public void setMrvaBorderAltitudeVisible(boolean mrvaBorderAltitudeVisible) {
     this.mrvaBorderAltitudeVisible = mrvaBorderAltitudeVisible;
+  }
+
+  public boolean isApproachesVisible() {
+    return approachesVisible;
+  }
+
+  public void setApproachesVisible(boolean approachesVisible) {
+    this.approachesVisible = approachesVisible;
   }
 
   public boolean isFixVisible() {

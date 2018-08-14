@@ -31,6 +31,11 @@ public class GnssApproach extends Approach {
   }
 
   @Override
+  public String getTypeString() {
+    return "GNSS";
+  }
+
+  @Override
   protected void _bind() {
   }
 }

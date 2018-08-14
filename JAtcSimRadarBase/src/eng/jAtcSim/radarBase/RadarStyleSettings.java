@@ -217,8 +217,10 @@ public class RadarStyleSettings {
   public String defaultVisibleRoutesForCategories;
 
   // approaches
-  //TODO other approaches
   public ColorWidthLengthSettings ilsApproach;
+  public ColorWidthLengthSettings gnssApproach;
+  public ColorWidthLengthSettings vorApproach;
+  public ColorWidthLengthSettings ndbApproach;
 
   // navaids
   public ColorWidthBorderSettings navVOR;

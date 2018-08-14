@@ -4,6 +4,7 @@ import eng.eSystem.EStringBuilder;
 import eng.eSystem.collections.*;
 import eng.eSystem.events.Event;
 import eng.eSystem.events.EventSimple;
+import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.utilites.CollectionUtils;
 import eng.jAtcSim.lib.Acc;
@@ -25,7 +26,7 @@ import eng.jAtcSim.lib.speaking.fromAtc.IAtc2Atc;
 import eng.jAtcSim.lib.speaking.fromAtc.atc2atc.PlaneSwitchMessage;
 import eng.jAtcSim.lib.speaking.fromAtc.atc2atc.StringResponse;
 import eng.jAtcSim.lib.world.*;
-import eng.jAtcSim.lib.world.approaches.Approach;
+import eng.jAtcSim.lib.world.approaches.*;
 import eng.jAtcSim.radarBase.global.*;
 import eng.jAtcSim.radarBase.global.events.EMouseEventArg;
 import eng.jAtcSim.radarBase.global.events.KeyEventArg;
@@ -35,6 +36,10 @@ import javax.swing.plaf.synth.ColorType;
 import java.util.*;
 
 public class Radar {
+
+
+
+
 
   static class MessageSet {
 
@@ -344,6 +349,7 @@ public class Radar {
   private Counter radarRedrawCounter;
   private boolean switchFlagTrue = false;
   private final IList<Route> drawnRoutes = new EDistinctList<>(EDistinctList.Behavior.skip);
+  private final IList<Approach> drawnApproaches = new EDistinctList<>(EDistinctList.Behavior.skip);
 
   public Radar(ICanvas canvas, InitialPosition initialPosition,
                Simulation sim, Area area,
@@ -369,6 +375,7 @@ public class Radar {
 
     buildLocalNavaidList();
     buildDrawnRoutesList();
+    buildDrawnApproachesList();
 
     this.messageManager = new MessageManager(this.styleSettings.displayTextDelay);
 
@@ -489,6 +496,15 @@ public class Radar {
   private void sim_runwayChanged(Simulation simulation) {
     buildLocalNavaidList();
     buildDrawnRoutesList();
+    buildDrawnApproachesList();
+  }
+
+  private void buildDrawnApproachesList() {
+    this.drawnApproaches.clear();
+    Acc.atcTwr()
+            .getRunwayThresholdsInUse(TowerAtc.eDirection.arrivals)
+            .select(q->q.getHighestApproach())
+            .forEach(q->this.drawnApproaches.add(q));
   }
 
   private void buildDrawnRoutesList() {
@@ -504,6 +520,15 @@ public class Radar {
       rts.forEach(q-> this.drawnRoutes.add(
           q.getRoutes().where(p->p.getCategory().containsAny(drawnRoutesCategories))));
     }
+  }
+
+  public Iterable<Approach> getDrawnApproaches() {
+    return drawnApproaches;
+  }
+
+  public void setDrawnApproaches(Iterable<Approach> drawnApproaches) {
+    this.drawnApproaches.clear();
+    this.drawnApproaches.add(drawnApproaches);
   }
 
   private void buildLocalNavaidList() {
@@ -830,17 +855,29 @@ public class Radar {
   }
 
   private void drawApproaches() {
-    for (RunwayThreshold threshold : Acc.atcTwr().getRunwayThresholdsInUse(TowerAtc.eDirection.arrivals)){
-      Approach a = threshold.getHighestApproach();
-      if (a != null) {
-        drawApproach(a);
-      }
+    for (Approach drawnApproach : this.drawnApproaches) {
+      drawApproach(drawnApproach);
     }
   }
 
   private void drawApproach(Approach approach) {
-    RadarStyleSettings.ColorWidthLengthSettings dispSett =
-        styleSettings.ilsApproach;
+    RadarStyleSettings.ColorWidthLengthSettings dispSett;
+    if (approach instanceof IlsApproach)
+      dispSett = styleSettings.ilsApproach;
+    else if (approach instanceof GnssApproach)
+      dispSett = styleSettings.gnssApproach;
+    else if (approach instanceof VisualApproach)
+      return;
+    else if (approach instanceof UnpreciseApproach){
+      UnpreciseApproach ua = (UnpreciseApproach) approach;
+      if (ua.getType() == UnpreciseApproach.Type.ndb)
+        dispSett = styleSettings.ndbApproach;
+      else if (ua.getType() == UnpreciseApproach.Type.vor)
+        dispSett = styleSettings.vorApproach;
+      else
+        throw new EApplicationException("Not supported");
+    } else
+      throw new EApplicationException("Not supported");
     Coordinate start = Coordinates.getCoordinate(
         approach.getParent().getCoordinate(),
         Headings.getOpposite(approach.getGeographicalRadial()),
