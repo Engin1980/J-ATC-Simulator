@@ -855,6 +855,7 @@ public class Radar {
   }
 
   private void drawApproaches() {
+    if (displaySettings.isApproachesVisible() == false) return;
     for (Approach drawnApproach : this.drawnApproaches) {
       drawApproach(drawnApproach);
     }

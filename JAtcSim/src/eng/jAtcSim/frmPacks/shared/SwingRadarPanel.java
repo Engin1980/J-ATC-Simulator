@@ -353,7 +353,7 @@ public class SwingRadarPanel extends JPanel {
         "Apps",
         this.displaySettings, "ApproachesVisible");
     wrpApproaches =
-        new AdjustSelectionPanelWrapper(new RoutesAdjustSelectionPanelWrapperListener(), pnlx.getB());
+        new AdjustSelectionPanelWrapper(new ApproachesAdjustSelectionPanelWrapperListener(), pnlx.getB());
     ret.add(pnlx.getA());
 
     pnlx = buildButtonBlock(
