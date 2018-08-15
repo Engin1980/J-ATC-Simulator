@@ -17,78 +17,133 @@
       <runways>
         <runway>
           <thresholds>
-            <threshold name="06" coordinate="50 06 06.61 N 014 13 34.58 E" initialDepartureAltitude="5000"
-                       assignedRoutes="LOMKI5T;GOLOP1T;VLM1T;GOSEK2T;VOZ1E;VOZ1D;BALTU2E;BALTU2D;VENOX2D;VENOX1E;ARTUP1E">
-              <sharedIafRoutes>
-                <route iaf="OKL" route="DM 40 PD OKL/247/9.9 T PD OKL/260/13 T PD PR742 T FH 061"/>
-                <route iaf="KUVIX" route="DM 40 PD PR741 T PD PR742 T FH 061"/>
-                <route iaf="BAROX" route="DM 40 PD PR742 T FH 061"/>
-                <route iaf="AKEVA" route="DM 40 PD PR740 T PD PR742 T FH 061"/>
-              </sharedIafRoutes>
+            <threshold name="06" coordinate="50 06 06.61 N 014 13 34.58 E" initialDepartureAltitude="5000">
+              <routes>
+                <route type="star" name="LOMKI5T"
+                       route="PD LOMKI T SL 250 PD PR707 T SL 220 PD BAROX T H BAROX"/>
+                <route type="star" name="GOLOP1T"
+                       route="PD GOLOP T SL 250 PD PR711 T PD PR712 T PD PR513 T SL 220 PD KUVIX T FH 242"/>
+                <route type="star" name="VLM1T"
+                       route="PD VLM T PD PR721 T PD PR722 T SL 250 PD PR723 T PD PR523 T SL 220 PD PR521 T PD AKEVA T FH 242"/>
+                <route type="star" name="GOSEK2T"
+                       route="PD GOSEK T SL 250 PD PR718 T PD PR719 T SL 220 PD PR521 T PD AKEVA T FH 242"/>
+                <route type="sid" name="VOZ1E" category="CD"
+                       route="PD PR619 T PD PR633 T PD PR635 T PD VOZ"/>
+                <route type="sid" name="VOZ1D" category="AB"
+                       route="PD PR619 T PD PR625 T PD PR626 T PD PR627 T PD VOZ"/>
+                <route type="sid" name="BALTU2E" category="CD"
+                       route="PD PR619 T PD PR631 T PD PR632 T PD PR621 T PD ESINU T PD BALTU"/>
+                <route type="sid" name="BALTU2D" category="AB"
+                       route="PD PR619 T PD PR621 T PD ESINU T PD BALTU"/>
+                <route type="sid" name="BALTU2E" category="CD"
+                       route="PD PR619 T PD PR631 T PD PR632 T PD PR621 T PD ESINU T PD DOBEN"/>
+                <route type="sid" name="BALTU2D" category="AB"
+                       route="PD PR619 T PD PR621 T PD ESINU T PD DOBEN"/>
+                <route type="sid" name="VENOX2D" category="AB"
+                       route="PD PR619 T PD PR621 T PD PR622 T PD VENOX"/>
+                <route type="sid" name="VENOX1E" category="CD"
+                       route="PD PR619 T PD PR631 T PD PR632 T PD VENOX"/>
+                <route type="sid" name="ARTUP1E" route="PD PR619 T PD PR633 T PD PR634 T PD ARTUP"/>
+              </routes>
               <approaches>
-                <ilsApproach gaRoute="FH 061 CM 40" radial="061" includeSharedIafRoutes="true" initialAltitude="4000">
+                <ilsApproach gaRoute="FH 061 CM 40" radial="061" initialAltitude="4000" includeIafRoutesGroups="06;06OKL">
                   <categories>
                     <category type="I" daA="1247" daB="1357" daC="1367" daD="1380"/>
                   </categories>
                 </ilsApproach>
-                <gnssApproach gaRoute="FH 061 CM 40" radial="061" daA="1515" daB="1515" daC="1515" daD="1515"
-                              includeSharedIafRoutes="false" initialAltitude="4000">
-                  <iafRoutes>
-                    <route iaf="KUVIX" route="DM 40 PD PR741 T PD PR742 T FH 061"/>
-                    <route iaf="BAROX" route="DM 40 PD PR742 T FH 061"/>
-                    <route iaf="AKEVA" route="DM 40 PD PR740 T PD PR742 T  FH 061"/>
-                  </iafRoutes>
-                </gnssApproach>
+                <gnssApproach gaRoute="FH 061 CM 40" radial="061" daA="1515" daB="1515" daC="1515" daD="1515" initialAltitude="4000"
+                 includeIafRoutesGroups="06" />
                 <unpreciseApproach gaRoute="CM 40 FH 061" radial="061" type="ndb" faf="PH/061/8.8" mapt="PH/061/0.5"
                                    mdaA="1600" mdaB="1600"
-                                   mdaC="1600" mdaD="1600" includeSharedIafRoutes="true" initialAltitude="4000"/>
+                                   mdaC="1600" mdaD="1600" includeIafRoutesGroups="06;06OKL" initialAltitude="4000"/>
               </approaches>
             </threshold>
             <threshold name="24" coordinate="50 06 57.43 N 014 16 24.12 E" initialDepartureAltitude="5000"
-                       preferred="true"
-                       assignedRoutes="VLM1S;GOSEK2S;LOMKI4S;GOLOP1S;ARTUP1M;ARTUP1A;VENOX1A;VENOX1M;BALTU2A;DOBEN2A;VOZ1M;VOZ1A">
-              <sharedIafRoutes>
-                <route iaf="ERASU" route="DM 40 PD PR531 T PD PR532 T FH 241"/>
-                <route iaf="RATEV" route="DM 40 PD PR530 T PD PR532 T FH 241"/>
-              </sharedIafRoutes>
+                       preferred="true" >
+              <routes>
+                <route type="star" name="VLM1S"
+                       route="PD VLM T SL 250 PD PR522 T SL 220 PD PR523 T PD RATEV T FH 062"/>
+                <route type="star" name="GOSEK2S"
+                       route="PD GOSEK T SL 250 PD PR521 T SL 220 PD PR523 T PD RATEV T FH 062"/>
+                <route type="star" name="LOMKI4S"
+                       route="PD LOMKI T PD PR511 T SL 250 PD PR512 T SL 220 PD PR513 T PD PR518 T PD ERASU T FH 062"/>
+                <route type="star" name="GOLOP1S"
+                       route="PD GOLOP T SL 250 PD PR516 T SL 220 PD PR517 T PD PR518 T PD ERASU T FH 062"/>
+                <route type="sid" name="ARTUP1M" category="AB"
+                       route="AA 017 PD PR407 T PD BAGRU T PD PR409 T PD ARTUP"/>
+                <route type="sid" name="ARTUP1A" category="CD"
+                       route="PD PR402 T PD PR405 T PD PR406 T PD PR407 T PD BAGRU T PD PR409 T PD ARTUP"/>
+                <route type="sid" name="VENOX1M" category="AB"
+                       route="AA 017 PD PR407 T PD VENOX"/>
+                <route type="sid" name="VENOX1A" category="CD"
+                       route="PD PR402 T PD PR405 T PD PR406 T PD VENOX"/>
+                <route type="sid" name="BALTU2A"
+                       route="PD PR402 T PD PR405 T PD BALTU"/>
+                <route type="sid" name="DOBEN2A"
+                       route="PD PR402 T PD DOBEN"/>
+                <route type="sid" name="VOZ1M" category="AB"
+                       route="AA 017 PD PR411 T PD PR412 T PD VOZ"/>
+                <route type="sid" name="VOZ1A" category="CD"
+                       route="PD PR402 T PD PR403 T PD PR404 T PD VOZ"/>
+              </routes>
               <approaches>
-                <ilsApproach gaRoute="FH 241 CM 40" radial="241" includeSharedIafRoutes="true" initialAltitude="4000">
+                <ilsApproach gaRoute="FH 241 CM 40" radial="241" includeIafRoutesGroups="24" initialAltitude="4000">
                   <categories>
                     <category type="I" daA="1295" daB="1303" daC="1313" daD="1321"/>
                     <category type="II" daA="1207" daB="1218" daC="1231" daD="1244"/>
                   </categories>
                 </ilsApproach>
                 <gnssApproach gaRoute="FH 241 CM 40" radial="241" daA="1479" daB="1479" daC="1479" daD="1479"
-                              includeSharedIafRoutes="true" initialAltitude="4000">
-                </gnssApproach>
+                              includeIafRoutesGroups="24" initialAltitude="4000" />
                 <unpreciseApproach gaRoute="FH 241 CM 40" radial="241" type="ndb" faf="PH/241/10.6" mapt="L" mdaA="1460"
                                    mdaB="1460"
-                                   mdaC="1460" mdaD="1460" includeSharedIafRoutes="true" initialAltitude="4000">
-                </unpreciseApproach>
+                                   mdaC="1460" mdaD="1460" includeIafRoutesGroups="24" initialAltitude="4000" />
               </approaches>
             </threshold>
           </thresholds>
         </runway>
         <runway>
           <thresholds>
-            <threshold name="12" coordinate="50 06 28.84 N 014 14 43.32 E" initialDepartureAltitude="5000"
-                       assignedRoutes="GOLOP1P;VLM1P;LOMKI4P;GOSEK2P;VENOX1H;BALTU2H;DOBEN2H;DOBEN1G;VOZ1G;VOZ1Q;VOZ1K;VOZ1H;ARTUP1H">
-              <sharedIafRoutes>
-                <route iaf="EVEMI" route="PD PR961 T PD PR962 T FH 123"/>
-                <route iaf="SOMIS" route="PD PR960 T PD PR962 T FH 123"/>
-              </sharedIafRoutes>
+            <threshold name="12" coordinate="50 06 28.84 N 014 14 43.32 E" initialDepartureAltitude="5000">
+              <routes>
+                <route type="star" name="GOLOP1P"
+                       route="PD GOLOP T SL 250 PD PR957 T SL 220 PD PR958 T PD EVEMI T FH 304"/>
+                <route type="star" name="VLM1P"
+                       route="PD VLM T PD PR950 T SL 250 PD PR951 T PD PR952 T SL 220 PD PR958 T PD EVEMI T FH 304"/>
+                <route type="star" name="LOMKI4P"
+                       route="PD LOMKI T SL 250 PD PR707 T PD PR956 T SL 220 PD PR954 T PD SOMIS T FH 304"/>
+                <route type="star" name="GOSEK2P"
+                       route="PD GOSEK T SL 250 PD PR953 T SL 220 PD PR954 T PD SOMIS T FH 304"/>
+                <route type="sid" name="VENOX1H"
+                       route="PD PR626 T PD PR856 T PD UTORO T PD PR858 T PD VENOX"/>
+                <route type="sid" name="BALTU2H"
+                       route="PD PR626 T PD PR856 T PD UTORO T PD PR858 T PD ESINU T PD BALTU"/>
+                <route type="sid" name="DOBEN2H" category="CD"
+                       route="PD PR626 T PD PR856 T PD UTORO T PD PR858 T PD ESINU T PD DOBEN"/>
+                <route type="sid" name="DOBEN1G" category="AB"
+                       route="AA 017 PD PR854 T PD PR855 T PD DOBEN"/>
+                <route type="sid" name="VOZ1G" category="AB"
+                       route="AA 017 PD PR411 T PD PR404 T PD VOZ"/>
+                <route type="sid" name="VOZ1Q" category="AB"
+                       route="AA 017 PD PR411 T PD PR412 T PD VOZ"/>
+                <route type="sid" name="VOZ1K" category="CD"
+                       route="PD PR626 T PD PR627 T PD VOZ"/>
+                <route type="sid" name="VOZ1H" category="CD"
+                       route="PD PR626 T PD PR412 T PD VOZ"/>
+                <route type="sid" name="ARTUP1H"
+                       route="PD PR626 T PD PR861 T PD ARTUP"/>
+              </routes>
               <approaches>
                 <unpreciseApproach gaRoute="FH 123 CM 40" radial="127" type="vor" faf="OKL/127/9.8" mapt="OKL/127/1.8"
-                                   mdaA="1530" mdaB="1530" mdaC="1530" mdaD="1530" includeSharedIafRoutes="false"
-                                   initialAltitude="4000">
+                                   mdaA="1530" mdaB="1530" mdaC="1530" mdaD="1530" initialAltitude="4000">
                   <iafRoutes>
                     <route iaf="EVEMI" route="FH 303 AD OKL/14.2 FH 213 AR OKL/313 PD OKL/127/12.9 T FH 127"/>
                     <route iaf="SOMIS" route="FH 303 AD OKL/13.9 FH 033 AR OKL/300 PD OKL/127/12.9 T FH 127"/>
                   </iafRoutes>
                 </unpreciseApproach>
                 <gnssApproach gaRoute="FH 123 CM 40" radial="123" daA="1453" daB="1453" daC="1453" daD="1453"
-                              includeSharedIafRoutes="true" initialAltitude="4000"/>
-                <ilsApproach gaRoute="FH 123 CM 40" radial="123" includeSharedIafRoutes="true" initialAltitude="4000">
+                              includeIafRoutesGroups="12" initialAltitude="4000"/>
+                <ilsApproach gaRoute="FH 123 CM 40" radial="123" includeIafRoutesGroups="12" initialAltitude="4000">
                   <iafRoutes>
                     <route iaf="OKL" route="PD OKL/302/9.8 T FH 348 T PD PR962 T FH 123"/>
                   </iafRoutes>
@@ -98,15 +153,35 @@
                 </ilsApproach>
               </approaches>
             </threshold>
-            <threshold name="30" coordinate="50 05 25.68 N 014 16 53.02 E" initialDepartureAltitude="5000"
-                       assignedRoutes="GOLOP2R;LOMKI6R;VLM1R;GOSEK3R;VOZ1N;VOZ1B;DOBEN2B;BALTU2B;VENOX1B;VENOX1N;ARTUP1N;ARTUP1B">
-              <sharedIafRoutes>
-                <route iaf="ARVEG" route="PD PR905 T PD PR906 T PD PR912 T FH 303"/>
-                <route iaf="OKL" route="PD OKL/123/9.2 T FH 168 T PD PR912 T FH 303"/>
-                <route iaf="KENOK" route="PD PR906 T PD PR912 T FH 303"/>
-              </sharedIafRoutes>
+            <threshold name="30" coordinate="50 05 25.68 N 014 16 53.02 E" initialDepartureAltitude="5000">
+              <routes>
+                <route type="star" name="GOLOP2R"
+                       route="PD GOLOP T SL 250 PD BAGRU T PD PR914 T SL 220 PD PR915 T PD ARVEG T FH 124"/>
+                <route type="star" name="LOMKI6R"
+                       route="PD LOMKI T PD PR511 T SL 250 PD PR512 T PD PR914 T SL 220 PD PR915 T PD ARVEG T FH 124"/>
+                <route type="star" name="VLM1R"
+                       route="PD VLM T SL 250 PD PR904 T SL 220 PD KENOK T H KENOK"/>
+                <route type="star" name="GOSEK3R"
+                       route="PD GOSEK T SL 250 PD PR901 T PD PR902 T PD PR903 T SL 220 PD PR904 T PD KENOK T H KENOK"/>
+                <route type="sid" name="VOZ1N" category="AB"
+                       route="AA 017 PD PR807 T PD PR808 T PD VOZ"/>
+                <route type="sid" name="VOZ1B" category="CD"
+                       route="PD PR813 T PD PR814 T PD PR403 T PD PR404 T PD VOZ"/>
+                <route type="sid" name="DOBEN2B"
+                       route="PD PR813 T PD PR814 T PD PR817 T PD DOBEN"/>
+                <route type="sid" name="BALTU2B"
+                       route="PD PR813 T PD PR815 T PD BALTU"/>
+                <route type="sid" name="VENOX1B" category="CD"
+                       route="PD PR813 T PD PR815 T PD PR816 T PD VENOX"/>
+                <route type="sid" name="VENOX1N" category="AB"
+                       route="AA 017 PD PR818 T PD VENOX"/>
+                <route type="sid" name="ARTUP1N" category="AB"
+                       route="AA 017 PD PR818 T PD PR819 T PD ARTUP"/>
+                <route type="sid" name="ARTUP1B" category="CD"
+                       route="PD PR813 T PD PR815 T PD PR816 T PD PR818 T PD PR819 T PD ARTUP"/>
+              </routes>
               <approaches>
-                <unpreciseApproach gaRoute="FH 303 CM 40" radial="299" includeSharedIafRoutes="false" type="vor"
+                <unpreciseApproach gaRoute="FH 303 CM 40" radial="299" type="vor"
                                    faf="OKL/119/9.3"
                                    mapt="OKL/119/1.5" mdaA="1630"
                                    mdaB="1630" mdaC="1630" mdaD="1630" initialAltitude="4000">
@@ -116,10 +191,9 @@
                     <route iaf="KENOK" route="FH 343 AD VOZ/21.8 PD OKL/119/13.5 T FH 299"/>
                   </iafRoutes>
                 </unpreciseApproach>
-                <gnssApproach gaRoute="FH 303 CM 40" radial="303" includeSharedIafRoutes="true" daA="1516" daB="1516"
-                              daC="1516"
-                              daD="1516" initialAltitude="4000"/>
-                <ilsApproach gaRoute="FH 303 CM 40" radial="303" includeSharedIafRoutes="true" initialAltitude="4000">
+                <gnssApproach gaRoute="FH 303 CM 40" radial="303" includeIafRoutesGroups="30" daA="1516" daB="1516"
+                              daC="1516" daD="1516" initialAltitude="4000"/>
+                <ilsApproach gaRoute="FH 303 CM 40" radial="303" includeIafRoutesGroups="30" initialAltitude="4000">
                   <categories>
                     <category type="I" daA="1369" daB="1377" daC="1387" daD="1395"/>
                   </categories>
@@ -163,111 +237,39 @@
         <hold navaidName="ARVEG" inboundRadial="123" turn="left"/>
         <hold navaidName="KENOK" inboundRadial="304" turn="left"/>
       </holds>
-      <routes>
-        <!-- 06 -->
-        <route type="star" name="LOMKI5T"
-               route="PD LOMKI T SL 250 PD PR707 T SL 220 PD BAROX T H BAROX"/>
-        <route type="star" name="GOLOP1T"
-               route="PD GOLOP T SL 250 PD PR711 T PD PR712 T PD PR513 T SL 220 PD KUVIX T FH 242"/>
-        <route type="star" name="VLM1T"
-               route="PD VLM T PD PR721 T PD PR722 T SL 250 PD PR723 T PD PR523 T SL 220 PD PR521 T PD AKEVA T FH 242"/>
-        <route type="star" name="GOSEK2T"
-               route="PD GOSEK T SL 250 PD PR718 T PD PR719 T SL 220 PD PR521 T PD AKEVA T FH 242"/>
-        <route type="sid" name="VOZ1E" category="CD"
-               route="PD PR619 T PD PR633 T PD PR635 T PD VOZ"/>
-        <route type="sid" name="VOZ1D" category="AB"
-               route="PD PR619 T PD PR625 T PD PR626 T PD PR627 T PD VOZ"/>
-        <route type="sid" name="BALTU2E" category="CD"
-               route="PD PR619 T PD PR631 T PD PR632 T PD PR621 T PD ESINU T PD BALTU"/>
-        <route type="sid" name="BALTU2D" category="AB"
-               route="PD PR619 T PD PR621 T PD ESINU T PD BALTU"/>
-        <route type="sid" name="BALTU2E" category="CD"
-               route="PD PR619 T PD PR631 T PD PR632 T PD PR621 T PD ESINU T PD DOBEN"/>
-        <route type="sid" name="BALTU2D" category="AB"
-               route="PD PR619 T PD PR621 T PD ESINU T PD DOBEN"/>
-        <route type="sid" name="VENOX2D" category="AB"
-               route="PD PR619 T PD PR621 T PD PR622 T PD VENOX"/>
-        <route type="sid" name="VENOX1E" category="CD"
-               route="PD PR619 T PD PR631 T PD PR632 T PD VENOX"/>
-        <route type="sid" name="ARTUP1E" route="PD PR619 T PD PR633 T PD PR634 T PD ARTUP"/>
-        <!-- 24 -->
-        <route type="star" name="VLM1S"
-               route="PD VLM T SL 250 PD PR522 T SL 220 PD PR523 T PD RATEV T FH 062"/>
-        <route type="star" name="GOSEK2S"
-               route="PD GOSEK T SL 250 PD PR521 T SL 220 PD PR523 T PD RATEV T FH 062"/>
-        <route type="star" name="LOMKI4S"
-               route="PD LOMKI T PD PR511 T SL 250 PD PR512 T SL 220 PD PR513 T PD PR518 T PD ERASU T FH 062"/>
-        <route type="star" name="GOLOP1S"
-               route="PD GOLOP T SL 250 PD PR516 T SL 220 PD PR517 T PD PR518 T PD ERASU T FH 062"/>
-        <route type="sid" name="ARTUP1M" category="AB"
-               route="AA 017 PD PR407 T PD BAGRU T PD PR409 T PD ARTUP"/>
-        <route type="sid" name="ARTUP1A" category="CD"
-               route="PD PR402 T PD PR405 T PD PR406 T PD PR407 T PD BAGRU T PD PR409 T PD ARTUP"/>
-        <route type="sid" name="VENOX1M" category="AB"
-               route="AA 017 PD PR407 T PD VENOX"/>
-        <route type="sid" name="VENOX1A" category="CD"
-               route="PD PR402 T PD PR405 T PD PR406 T PD VENOX"/>
-        <route type="sid" name="BALTU2A"
-               route="PD PR402 T PD PR405 T PD BALTU"/>
-        <route type="sid" name="DOBEN2A"
-               route="PD PR402 T PD DOBEN"/>
-        <route type="sid" name="VOZ1M" category="AB"
-               route="AA 017 PD PR411 T PD PR412 T PD VOZ"/>
-        <route type="sid" name="VOZ1A" category="CD"
-               route="PD PR402 T PD PR403 T PD PR404 T PD VOZ"/>
-        <!-- 12 -->
-        <route type="star" name="GOLOP1P"
-               route="PD GOLOP T SL 250 PD PR957 T SL 220 PD PR958 T PD EVEMI T FH 304"/>
-        <route type="star" name="VLM1P"
-               route="PD VLM T PD PR950 T SL 250 PD PR951 T PD PR952 T SL 220 PD PR958 T PD EVEMI T FH 304"/>
-        <route type="star" name="LOMKI4P"
-               route="PD LOMKI T SL 250 PD PR707 T PD PR956 T SL 220 PD PR954 T PD SOMIS T FH 304"/>
-        <route type="star" name="GOSEK2P"
-               route="PD GOSEK T SL 250 PD PR953 T SL 220 PD PR954 T PD SOMIS T FH 304"/>
-        <route type="sid" name="VENOX1H"
-               route="PD PR626 T PD PR856 T PD UTORO T PD PR858 T PD VENOX"/>
-        <route type="sid" name="BALTU2H"
-               route="PD PR626 T PD PR856 T PD UTORO T PD PR858 T PD ESINU T PD BALTU"/>
-        <route type="sid" name="DOBEN2H" category="CD"
-               route="PD PR626 T PD PR856 T PD UTORO T PD PR858 T PD ESINU T PD DOBEN"/>
-        <route type="sid" name="DOBEN1G" category="AB"
-               route="AA 017 PD PR854 T PD PR855 T PD DOBEN"/>
-        <route type="sid" name="VOZ1G" category="AB"
-               route="AA 017 PD PR411 T PD PR404 T PD VOZ"/>
-        <route type="sid" name="VOZ1Q" category="AB"
-               route="AA 017 PD PR411 T PD PR412 T PD VOZ"/>
-        <route type="sid" name="VOZ1K" category="CD"
-               route="PD PR626 T PD PR627 T PD VOZ"/>
-        <route type="sid" name="VOZ1H" category="CD"
-               route="PD PR626 T PD PR412 T PD VOZ"/>
-        <route type="sid" name="ARTUP1H"
-               route="PD PR626 T PD PR861 T PD ARTUP"/>
-        <!-- 30 -->
-        <route type="star" name="GOLOP2R"
-               route="PD GOLOP T SL 250 PD BAGRU T PD PR914 T SL 220 PD PR915 T PD ARVEG T FH 124"/>
-        <route type="star" name="LOMKI6R"
-               route="PD LOMKI T PD PR511 T SL 250 PD PR512 T PD PR914 T SL 220 PD PR915 T PD ARVEG T FH 124"/>
-        <route type="star" name="VLM1R"
-               route="PD VLM T SL 250 PD PR904 T SL 220 PD KENOK T H KENOK"/>
-        <route type="star" name="GOSEK3R"
-               route="PD GOSEK T SL 250 PD PR901 T PD PR902 T PD PR903 T SL 220 PD PR904 T PD KENOK T H KENOK"/>
-        <route type="sid" name="VOZ1N" category="AB"
-               route="AA 017 PD PR807 T PD PR808 T PD VOZ"/>
-        <route type="sid" name="VOZ1B" category="CD"
-               route="PD PR813 T PD PR814 T PD PR403 T PD PR404 T PD VOZ"/>
-        <route type="sid" name="DOBEN2B"
-               route="PD PR813 T PD PR814 T PD PR817 T PD DOBEN"/>
-        <route type="sid" name="BALTU2B"
-               route="PD PR813 T PD PR815 T PD BALTU"/>
-        <route type="sid" name="VENOX1B" category="CD"
-               route="PD PR813 T PD PR815 T PD PR816 T PD VENOX"/>
-        <route type="sid" name="VENOX1N" category="AB"
-               route="AA 017 PD PR818 T PD VENOX"/>
-        <route type="sid" name="ARTUP1N" category="AB"
-               route="AA 017 PD PR818 T PD PR819 T PD ARTUP"/>
-        <route type="sid" name="ARTUP1B" category="CD"
-               route="PD PR813 T PD PR815 T PD PR816 T PD PR818 T PD PR819 T PD ARTUP"/>
-      </routes>
+      <sharedIafRoutesGroups>
+        <sharedIafRoutesGroup groupName="06">
+          <iafRoutes>
+            <route iaf="KUVIX" route="DM 40 PD PR741 T PD PR742 T FH 061"/>
+            <route iaf="BAROX" route="DM 40 PD PR742 T FH 061"/>
+            <route iaf="AKEVA" route="DM 40 PD PR740 T PD PR742 T  FH 061"/>
+          </iafRoutes>
+        </sharedIafRoutesGroup>
+        <sharedIafRoutesGroup groupName="06OKL">
+          <iafRoutes>
+            <route iaf="OKL" route="DM 40 PD OKL/247/9.9 T PD OKL/260/13 T PD PR742 T FH 061"/>
+          </iafRoutes>
+        </sharedIafRoutesGroup>
+        <sharedIafRoutesGroup groupName="24">
+          <iafRoutes>
+            <route iaf="ERASU" route="DM 40 PD PR531 T PD PR532 T FH 241"/>
+            <route iaf="RATEV" route="DM 40 PD PR530 T PD PR532 T FH 241"/>
+          </iafRoutes>
+        </sharedIafRoutesGroup>
+        <sharedIafRoutesGroup groupName="12">
+          <iafRoutes>
+            <route iaf="EVEMI" route="PD PR961 T PD PR962 T FH 123"/>
+            <route iaf="SOMIS" route="PD PR960 T PD PR962 T FH 123"/>
+          </iafRoutes>
+        </sharedIafRoutesGroup>
+        <sharedIafRoutesGroup groupName="30">
+          <iafRoutes>
+            <route iaf="ARVEG" route="PD PR905 T PD PR906 T PD PR912 T FH 303"/>
+            <route iaf="OKL" route="PD OKL/123/9.2 T FH 168 T PD PR912 T FH 303"/>
+            <route iaf="KENOK" route="PD PR906 T PD PR912 T FH 303"/>
+          </iafRoutes>
+        </sharedIafRoutesGroup>
+      </sharedIafRoutesGroups>
       <trafficDefinitions>
         <densityTraffic title="Normal traffic" useExtendedCallsigns="true" nonCommercialFlightProbability="0.05"
                         delayProbability="0.1" maxDelayInMinutesPerStep="45">
@@ -379,16 +381,6 @@
           </directions>
         </densityTraffic>
       </trafficDefinitions>
-      <!--<vfrPoints>-->
-      <!--<vfrPoint name="A" coordinate="50 08 17 N 014 14 38 E" forArrivals="false" forDepartures="false"/>-->
-      <!--<vfrPoint name="B" coordinate="50 11 16 N 014 11 09 E" forArrivals="false" forDepartures="false"/>-->
-      <!--<vfrPoint name="E" coordinate="49 59 10 N 014 21 41 E" forArrivals="true" forDepartures="true"/>-->
-      <!--<vfrPoint name="C" coordinate="50 11 18 N 014 02 28 E" forArrivals="false" forDepartures="false"/>-->
-      <!--<vfrPoint name="N" coordinate="50 16 06 N 014 14 21 E" forArrivals="true" forDepartures="true"/>-->
-      <!--<vfrPoint name="S" coordinate="49 57 42 N 014 04 58 E" forArrivals="true" forDepartures="true"/>-->
-      <!--<vfrPoint name="T" coordinate="50 02 59 N 014 16 22 E" forArrivals="false" forDepartures="false"/>-->
-      <!--<vfrPoint name="W" coordinate="50 09 10 N 013 58 59 E" forArrivals="true" forDepartures="true"/>-->
-      <!--</vfrPoints>-->
     </airport>
     <airport icao="LKMT" name="Ostrava Mošnov" altitude="844" transitionAltitude="5000" vfrAltitude="2500"
              mainAirportNavaidName="OTA" declination="4.833" coveredDistance="50">
@@ -404,24 +396,37 @@
       <runways>
         <runway>
           <thresholds>
-            <threshold name="04" coordinate="49 41 07.16 N 018 05 35.69 E" initialDepartureAltitude="4000"
-                       assignedRoutes="BAXEV1W;REGLI1W;TUSIN1W;BILNA2W;HLV5W;HLV5H;BILNA3H;NETIR1H;BAVOK1H;REGLI1H;BAXEV1H">
-              <sharedIafRoutes>
-                <route iaf="OTA" route="PD ODRAN T PD MT603 T PD MT604 T FH 042"/>
-                <route iaf="ODRAN" route="PD MT603 T PD MT604 T FH 042"/>
-                <route iaf="MORUV" route="PD MT716 T PD MT604 T FH 042"/>
-                <route iaf="POLOM" route="PD MT604"/>
-              </sharedIafRoutes>
+            <threshold name="04" coordinate="49 41 07.16 N 018 05 35.69 E" initialDepartureAltitude="4000">
+              <routes>
+                <route type="star" name="BAXEV1W"
+                       route="PD BAXEV T PD OPAVO T PD MT602 T PD ODRAN T H ODRAN"/>
+                <route type="star" name="REGLI1W" route="PD REGLI T PD MT602 T PD ODRAN T H ODRAN"/>
+                <route type="star" name="TUSIN1W" route="PD TUSIN T PD MT715 T PD MORUV T H MORUV"/>
+                <route type="star" name="BILNA2W"
+                       route="PD BILNA T PD MT714 T PD MT715 T PD MORUV T H MORUV"/>
+                <route type="star" name="HLV5W" route="PD HLV T PD POLOM T H POLOM"/>
+                <route type="sid" name="HLV5H"
+                       route="PD MT701 SM 230 T PD MT715 SC T PD MT716 T PD HLV"/>
+                <route type="sid" name="BILNA3H"
+                       route="PD MT701 T PD MT702 T PD MT712 T PD MT713 T PD BILNA"/>
+                <route type="sid" name="NETIR1H"
+                       route="PD MT701 T PD MT702 T PD MT705 T PD MT708 T PD MT709 T PD NETIR"/>
+                <route type="sid" name="BAVOK1H"
+                       route="PD MT701 T PD MT702 T PD MT705 T PD MT706 T PD BAVOK"/>
+                <route type="sid" name="REGLI1H" route="PD MT701 T PD MT702 T PD MT703 T PD REGLI"/>
+                <route type="sid" name="BAXEV1H"
+                       route="PD MT701 T PD MT702 T PD MT703 T PD OPAVO T PD BAXEV"/>
+              </routes>
               <approaches>
                 <gnssApproach gaRoute="FH 039 CM 025 AA 025+ PD MT598 CM 035 AN MT598 PD ODRAN"
-                              radial="042" daA="1190" daB="1190" daC="1190" daD="1190" includeSharedIafRoutes="true"
+                              radial="042" daA="1190" daB="1190" daC="1190" daD="1190" includeIafRoutesGroups="04"
                               initialAltitude="3200"/>
                 <unpreciseApproach gaRoute="FH 039 CM 025 AA 025+ PD MT598 CM 035 AN MT598 PD ODRAN"
                                    radial="042" type="ndb" mapt="N" faf="OTA/222/8.2" mdaA="1220" mdaB="1220"
-                                   mdaC="1220" mdaD="1220" includeSharedIafRoutes="true" initialAltitude="3200"/>
+                                   mdaC="1220" mdaD="1220" includeIafRoutesGroups="04" initialAltitude="3200"/>
                 <unpreciseApproach gaRoute="FH 039 CM 025 AA 025+ PD MT598 CM 035 AN MT598 PD ODRAN"
                                    radial="039" type="vor" mapt="OTA/219/1.7" faf="OTA/219/8.2" mdaA="1220" mdaB="1220"
-                                   mdaC="1220" mdaD="1220" includeSharedIafRoutes="false" initialAltitude="3200">
+                                   mdaC="1220" mdaD="1220" initialAltitude="3200">
                   <iafRoutes>
                     <route iaf="MORUV" route="PD MT716 T PD MT718 T FH 039"/>
                     <route iaf="POLOM" route="PD MT718 T FH 039"/>
@@ -432,16 +437,29 @@
                 </unpreciseApproach>
               </approaches>
             </threshold>
-            <threshold name="22" coordinate="49 42 25.65 N 018 07 42.41 E" initialDepartureAltitude="4000"
-                       preferred="true"
-                       assignedRoutes="BAXEV1T;REGLI1T;BAVOK1T;TUSIN1T;HLV2T;BILNA2T;BAXEV1F;REGLI1F;BAVOK1F;HLV5F;BILNA2F;NETIR1F">
-              <sharedIafRoutes>
-                <route iaf="OTA" route="AN OTA DM 30 PD OTA/015/10 T TR 200"/>
-                <route iaf="BOGTU" route="AN BOGTU DM 30 PD MT821 T PD MT827 T FH 226"/>
-              </sharedIafRoutes>
+            <threshold name="22" coordinate="49 42 25.65 N 018 07 42.41 E" initialDepartureAltitude="4000" preferred="true">
+              <routes>
+                <route type="star" name="BAXEV1T"
+                       route="PD BAXEV T PD OPAVO T PD MT807 T PD BOGTU T H BOGTU"/>
+                <route type="star" name="REGLI1T"
+                       route="PD REGLI T PD MT806 T PD MT807 T PD BOGTU T H BOGTU"/>
+                <route type="star" name="BAVOK1T"
+                       route="PD BAVOK T PD MT806 T PD MT807 T PD BOGTU T H BOGTU"/>
+                <route type="star" name="TUSIN1T"
+                       route="PD TUSIN T PD MT805 T PD MT807 T PD BOGTU T H BOGTU"/>
+                <route type="star" name="HLV2T"
+                       route="PD HLV T PD MT716 T PD MT715 T PD EKMIT T H EKMIT"/>
+                <route type="star" name="BILNA2T"
+                       route="PD BILNA T PD MT714 T PD MT715 T PD EKMIT T H EKMIT"/>
+                <route type="sid" name="BAXEV1F" route="PD MT511 T PD MT512 T PD OPAVO T PD BAXEV"/>
+                <route type="sid" name="REGLI1F" route="PD MT511 T PD MT512 T PD REGLI"/>
+                <route type="sid" name="BAVOK1F" route="PD MT511 T PD MT512 T PD BAVOK"/>
+                <route type="sid" name="HLV5F" route="PD MT521 T PD POLOM T PD HLV"/>
+                <route type="sid" name="BILNA2F" route="PD MT521 T PD MT522 T PD MT523 T PD BILNA"/>
+                <route type="sid" name="NETIR1F" route="PD MT521 T PD MT522 T PD MT523 T PD NETIR"/>
+              </routes>
               <approaches>
-                <ilsApproach radial="222" gaRoute="CM 30 FH 222 AA 25+ PD MT598 T PD BOGTU"
-                             includeSharedIafRoutes="false" initialAltitude="3000">
+                <ilsApproach radial="222" gaRoute="CM 30 FH 222 AA 25+ PD MT598 T PD BOGTU" initialAltitude="3000">
                   <iafRoutes>
                     <route iaf="OTA" route="DM 30 PD OTA/015/10 T PD MT825 T TR 200"/>
                     <route iaf="BOGTU" route="DM 30 PD MT821 T PD MT825 T FH 222"/>
@@ -453,9 +471,7 @@
                   </categories>
                 </ilsApproach>
                 <unpreciseApproach type="vor" mapt="OTA/046/1.7" faf="OTA/046/7.7" radial="226" mdaA="1170" mdaB="1170"
-                                   mdaC="1170" mdaD="1170"
-                                   gaRoute="FH 226 AA 025+ PD MT598 T PD BOGTU" includeSharedIafRoutes="true"
-                                   initialAltitude="3000">
+                                   mdaC="1170" mdaD="1170" gaRoute="FH 226 AA 025+ PD MT598 T PD BOGTU" initialAltitude="3000">
                   <iafRoutes>
                     <route iaf="BOGTU" route="DM 30 PD MT821 T PD MT827 T FH 226"/>
                     <route iaf="EKMIT" route="DM 30 PD MT823 T PD MT827 T FH 226"/>
@@ -464,9 +480,7 @@
                   </iafRoutes>
                 </unpreciseApproach>
                 <unpreciseApproach type="ndb" mapt="N" faf="OTA/042/7.7" radial="222" mdaA="1170" mdaB="1170"
-                                   mdaC="1170" mdaD="1170"
-                                   gaRoute="FH 226 AA 025+ PD MT598 T PD BOGTU" includeSharedIafRoutes="true"
-                                   initialAltitude="3000">
+                                   mdaC="1170" mdaD="1170" gaRoute="FH 226 AA 025+ PD MT598 T PD BOGTU" initialAltitude="3000">
                   <iafRoutes>
                     <route iaf="BOGTU" route="DM 30 PD MT821 T PD MT825 T FH 222"/>
                     <route iaf="EKMIT" route="DM 30 PD MT823 T PD MT825 T FH 222"/>
@@ -474,8 +488,7 @@
                     <route iaf="OTA" category="AB" route="DM 30 T PD OTA/033/10 T PD MT825 T FH 222"/>
                   </iafRoutes>
                 </unpreciseApproach>
-                <gnssApproach daA="1062" daB="1074" daC="1083" daD="1093" radial="222"
-                              gaRoute="CM 30 PD MT597 T PD MT598 T PD BOGTU" includeSharedIafRoutes="false"
+                <gnssApproach daA="1062" daB="1074" daC="1083" daD="1093" radial="222" gaRoute="CM 30 PD MT597 T PD MT598 T PD BOGTU"
                               initialAltitude="3000">
                   <iafRoutes>
                     <route iaf="OTA" route="DM 30 PD BOGTU T PD MT821 T PD MT825 T PD MT22F T FH 222"/>
@@ -498,51 +511,20 @@
         <hold navaidName="BOGTU" inboundRadial="042" turn="left"/>
         <hold navaidName="EKMIT" inboundRadial="042" turn="right"/>
       </holds>
-      <routes>
-        <!-- 04 -->
-        <route type="star" name="BAXEV1W"
-               route="PD BAXEV T PD OPAVO T PD MT602 T PD ODRAN T H ODRAN"/>
-        <route type="star" name="REGLI1W" route="PD REGLI T PD MT602 T PD ODRAN T H ODRAN"/>
-        <route type="star" name="TUSIN1W" route="PD TUSIN T PD MT715 T PD MORUV T H MORUV"/>
-        <route type="star" name="BILNA2W"
-               route="PD BILNA T PD MT714 T PD MT715 T PD MORUV T H MORUV"/>
-        <route type="star" name="HLV5W" route="PD HLV T PD POLOM T H POLOM"/>
-        <route type="sid" name="HLV5H"
-               route="PD MT701 SM 230 T PD MT715 SC T PD MT716 T PD HLV"/>
-        <route type="sid" name="BILNA3H"
-               route="PD MT701 T PD MT702 T PD MT712 T PD MT713 T PD BILNA"/>
-        <route type="sid" name="NETIR1H"
-               route="PD MT701 T PD MT702 T PD MT705 T PD MT708 T PD MT709 T PD NETIR"/>
-        <route type="sid" name="BAVOK1H"
-               route="PD MT701 T PD MT702 T PD MT705 T PD MT706 T PD BAVOK"/>
-        <route type="sid" name="REGLI1H" route="PD MT701 T PD MT702 T PD MT703 T PD REGLI"/>
-        <route type="sid" name="BAXEV1H"
-               route="PD MT701 T PD MT702 T PD MT703 T PD OPAVO T PD BAXEV"/>
-        <!-- 22 -->
-        <route type="star" name="BAXEV1T"
-               route="PD BAXEV T PD OPAVO T PD MT807 T PD BOGTU T H BOGTU"/>
-        <route type="star" name="REGLI1T"
-               route="PD REGLI T PD MT806 T PD MT807 T PD BOGTU T H BOGTU"/>
-        <route type="star" name="BAVOK1T"
-               route="PD BAVOK T PD MT806 T PD MT807 T PD BOGTU T H BOGTU"/>
-        <route type="star" name="TUSIN1T"
-               route="PD TUSIN T PD MT805 T PD MT807 T PD BOGTU T H BOGTU"/>
-        <route type="star" name="HLV2T"
-               route="PD HLV T PD MT716 T PD MT715 T PD EKMIT T H EKMIT"/>
-        <route type="star" name="BILNA2T"
-               route="PD BILNA T PD MT714 T PD MT715 T PD EKMIT T H EKMIT"/>
-        <route type="sid" name="BAXEV1F" route="PD MT511 T PD MT512 T PD OPAVO T PD BAXEV"/>
-        <route type="sid" name="REGLI1F" route="PD MT511 T PD MT512 T PD REGLI"/>
-        <route type="sid" name="BAVOK1F" route="PD MT511 T PD MT512 T PD BAVOK"/>
-        <route type="sid" name="HLV5F" route="PD MT521 T PD POLOM T PD HLV"/>
-        <route type="sid" name="BILNA2F" route="PD MT521 T PD MT522 T PD MT523 T PD BILNA"/>
-        <route type="sid" name="NETIR1F" route="PD MT521 T PD MT522 T PD MT523 T PD NETIR"/>
-      </routes>
+      <sharedIafRoutesGroups>
+        <sharedIafRoutesGroup groupName="04">
+          <iafRoutes>
+            <route iaf="OTA" route="PD ODRAN T PD MT603 T PD MT604 T FH 042"/>
+            <route iaf="ODRAN" route="PD MT603 T PD MT604 T FH 042"/>
+            <route iaf="MORUV" route="PD MT716 T PD MT604 T FH 042"/>
+            <route iaf="POLOM" route="PD MT604"/>
+          </iafRoutes>
+        </sharedIafRoutesGroup>
+      </sharedIafRoutesGroups>
       <trafficDefinitions>
         <genericTraffic title="Very lite generated traffic" probabilityOfNonCommercialFlight="0.7"
                         probabilityOfDeparture="0.5"
-                        delayProbability="0.03" maxDelayInMinutesPerStep="30" useExtendedCallsigns="true"
-        >
+                        delayProbability="0.03" maxDelayInMinutesPerStep="30" useExtendedCallsigns="true">
           <movementsPerHour>
             <item>0</item>
             <item>0</item>

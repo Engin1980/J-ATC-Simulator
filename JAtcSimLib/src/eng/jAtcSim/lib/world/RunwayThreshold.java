@@ -7,6 +7,7 @@ package eng.jAtcSim.lib.world;
 
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
+import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.utilites.CollectionUtils;
 import eng.eSystem.xmlSerialization.XmlIgnore;
@@ -25,11 +26,12 @@ import java.util.List;
 public class RunwayThreshold {
 
   private final List<Approach> approaches = new ArrayList<>();
-  @XmlIgnore
+  @XmlOptional
   private final IList<Route> routes = new EList<>();
+  @XmlOptional
+  String includeRoutesGroups = null;
   private String name;
   private Coordinate coordinate;
-  private String assignedRoutes;
   private Runway parent;
   private double _course;
   private int initialDepartureAltitude;
@@ -38,12 +40,6 @@ public class RunwayThreshold {
   private boolean preferred = false;
   @XmlIgnore
   private Coordinate estimatedFafPoint;
-  @XmlOptional
-  private IList<IafRoute> sharedIafRoutes = new EList<>();
-
-  public IList<IafRoute> getSharedIafRoutes() {
-    return sharedIafRoutes;
-  }
 
   public int getInitialDepartureAltitude() {
     return initialDepartureAltitude;
@@ -156,17 +152,17 @@ public class RunwayThreshold {
         Headings.getOpposite(this._course),
         9);
 
-    String[] routeNames = this.assignedRoutes.split(";");
-    for (String routeName : routeNames) {
-      Route route = this.getParent().getParent().getRoutes().tryGetFirst(q -> q.getName().equals(routeName));
-      if (route == null)
-        throw new EApplicationException("Unable to find route named " + routeName + " in airport "
-            + this.getParent().getParent().getIcao() + " required for runway threshold " + this.getName());
-      this.routes.add(route);
-    }
+    if (this.includeRoutesGroups != null) {
+      String[] groupNames = this.includeRoutesGroups.split(";");
+      for (String groupName : groupNames) {
+        Airport.SharedRoutesGroup group = this.getParent().getParent().getSharedRoutesGroups().tryGetFirst(q -> q.groupName.equals(groupName));
 
-    for (IafRoute iafRoute : sharedIafRoutes) {
-      iafRoute.bind();
+        if (group == null)
+          throw new EApplicationException("Unable to find route group named " + groupName + " in airport "
+              + this.getParent().getParent().getIcao() + " required for runway threshold " + this.getName());
+
+        this.routes.add(group.routes);
+      }
     }
   }
 }

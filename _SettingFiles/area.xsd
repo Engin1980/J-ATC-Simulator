@@ -162,7 +162,40 @@
           </xs:sequence>
         </xs:complexType>
       </xs:element>
-      <xs:element name="routes" type="routes" minOccurs="1" maxOccurs="1"/>
+      <xs:element name="sharedRoutesGroups" minOccurs="0" maxOccurs="1">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="sharedRoutesGroup" minOccurs="1" maxOccurs="unbounded">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element name="route" type="route" minOccurs="1" maxOccurs="unbounded" />
+                </xs:sequence>
+                <xs:attribute name="groupName" type="groupNames" use="required" />
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="sharedIafRoutesGroups" minOccurs="0" maxOccurs="1">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="sharedIafRoutesGroup" minOccurs="1" maxOccurs="unbounded">
+              <xs:complexType>
+                <xs:sequence >
+                  <xs:element name="iafRoutes" minOccurs="1" maxOccurs="1">
+                    <xs:complexType>
+                      <xs:sequence>
+                        <xs:element name="route" type="iafRoute" minOccurs="1" maxOccurs="unbounded"/>
+                      </xs:sequence>
+                    </xs:complexType>
+                  </xs:element>
+                </xs:sequence>
+                <xs:attribute name="groupName" type="sh:nonEmptyString" use="required" />
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
       <xs:element name="trafficDefinitions" type="tr:trafficDefinitions" minOccurs="0" maxOccurs="1"/>
     </xs:sequence>
     <xs:attribute name="icao" type="xs:string" use="required"/>
@@ -241,8 +274,7 @@
   </xs:complexType>
 
   <xs:complexType name="threshold">
-    <xs:sequence>
-      <xs:element name="sharedIafRoutes" type="iafRoutes" minOccurs="0" maxOccurs="1"/>
+    <xs:choice minOccurs="0" maxOccurs="2">
       <xs:element name="approaches" minOccurs="1" maxOccurs="1">
         <xs:complexType>
           <xs:choice maxOccurs="unbounded">
@@ -252,15 +284,22 @@
           </xs:choice>
         </xs:complexType>
       </xs:element>
-    </xs:sequence>
-    <xs:attribute name="assignedRoutes" type="routeNames" use="required"/>
+      <xs:element name="routes" minOccurs="0" maxOccurs="1" >
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="route" type="route" minOccurs="0" maxOccurs="unbounded" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:choice>
+    <xs:attribute name="includeRoutesGroups" type="groupNames" use="optional" />
     <xs:attribute name="name" type="sh:nonEmptyString" use="required"/>
     <xs:attribute name="coordinate" type="sh:nonEmptyString" use="required"/>
     <xs:attribute name="initialDepartureAltitude" type="sh:flightLevelAltitude" use="required"/>
     <xs:attribute name="preferred" type="xs:boolean" use="optional"/>
   </xs:complexType>
 
-  <xs:simpleType name="routeNames">
+  <xs:simpleType name="groupNames">
     <xs:restriction base="xs:string">
       <xs:pattern value="[A-Za-z0-9]+(;[A-Za-z0-9]+)*"/>
     </xs:restriction>
@@ -291,12 +330,12 @@
 
 
   <xs:complexType name="approach">
-    <xs:sequence>
+    <xs:sequence minOccurs="0" maxOccurs="1">
       <xs:element name="iafRoutes" type="iafRoutes" minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
     <xs:attribute name="gaRoute" type="xs:string" use="required"/>
     <xs:attribute name="radial" type="xs:int" use="required"/>
-    <xs:attribute name="includeSharedIafRoutes" type="xs:boolean" use="required"/>
+    <xs:attribute name="includeIafRoutesGroups" type="sh:nonEmptyString" use="optional"/>
     <xs:attribute name="initialAltitude" type="xs:int" use="required"/>
   </xs:complexType>
 

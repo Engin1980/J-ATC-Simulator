@@ -107,7 +107,7 @@ public class Area {
 
     EStringBuilder sb = new EStringBuilder();
     sb.append(items.size() + " duplicate record(s) were found in " + type + ". E.g.: ");
-    sb.appendItems(items, q->q, "; ");
+    sb.appendItems(items, q -> q, "; ");
     throw new EApplicationException(sb.toString());
   }
 
@@ -119,33 +119,7 @@ public class Area {
 
     for (Airport a : this.getAirports()) {
       Acc.setAirport(a);
-
-      for (PublishedHold h : a.getHolds()) {
-        h.bind();
-      }
-
-      for (Runway r : a.getRunways()) {
-        for (RunwayThreshold t : r.getThresholds()) {
-          t.bind();
-
-          for (Route o : t.getRoutes()) {
-            o.bind();
-          }
-          a.bindEntryExitPointsByRoutes(t.getRoutes());
-
-          for (Approach p : t.getApproaches()) {
-            p.bind();
-          }
-        }
-
-        for (EntryExitPoint eep : a.getEntryExitPoints()) {
-          eep.bind();
-        }
-      }
-
-      for (RunwayConfiguration runwayConfiguration : a.getRunwayConfigurations()) {
-        runwayConfiguration.bind();
-      }
+      a.bind();
 
     }
     Acc.setAirport(null);
@@ -159,16 +133,14 @@ public class Area {
         h.setParent(a);
       }
 
-      for (Route o : a.getRoutes()) {
-        o.setParent(a);
-      }
+      a.getSharedRoutesGroups().forEach(q -> q.routes.forEach(p -> p.setParent(a)));
 
       for (Runway r : a.getRunways()) {
         r.setParent(a);
 
         for (RunwayThreshold t : r.getThresholds()) {
           t.setParent(r);
-
+          t.getRoutes().forEach(q -> q.setParent(a));
 
           for (Approach p : t.getApproaches()) {
             p.setParent(t);

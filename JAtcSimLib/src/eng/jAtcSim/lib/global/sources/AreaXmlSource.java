@@ -86,11 +86,11 @@ public class AreaXmlSource extends XmlSource<Area> {
     sett.getListItemMappings().add(
         new XmlListItemMapping("/iafRoutes$", IafRoute.class));
     sett.getListItemMappings().add(
-        new XmlListItemMapping("/sharedIafRoutes$", IafRoute.class));
-    sett.getListItemMappings().add(
         new XmlListItemMapping("/routes$", Route.class));
     sett.getListItemMappings().add(
-        new XmlListItemMapping("/sharedRoutes$", Route.class));
+        new XmlListItemMapping("/sharedIafRoutesGroups$", Airport.SharedIafRoutesGroup.class));
+    sett.getListItemMappings().add(
+        new XmlListItemMapping("/sharedRoutesGroups$", Airport.SharedRoutesGroup.class));
     sett.getListItemMappings().add(
         new XmlListItemMapping("/atcTemplates$", AtcTemplate.class));
     sett.getListItemMappings().add(

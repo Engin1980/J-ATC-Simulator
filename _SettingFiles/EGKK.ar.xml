@@ -19,17 +19,38 @@
       <runways>
         <runway>
           <thresholds>
-            <threshold name="08R" coordinate="51 08 45.10 N 000 12 24.59 W" initialDepartureAltitude="4000"
-                       assignedRoutes="TElTU1G;AMDUT1G;ARNUN1G;OTMET1G;VASUX1G;TIMBA2G;TIMBA4B;TIMBA3F;TIMBA1J;TIMBA1K;LAM1Z;BIG2Z;CLN2Z;KENET1Z;SAM3Z;SFD4Z;ODVIK2Z">
-              <sharedIafRoutes>
-                <route iaf="TIMBA" route="DM 40 PD MAY T PD MAY/275/23 T TR 050 T DM 30 FH 080"/>
-                <route iaf="WILLO" route="DM 40 PD MID/105/5 T TR 050 T DM 30 FH 080"/>
-              </sharedIafRoutes>
+            <threshold name="08R" coordinate="51 08 45.10 N 000 12 24.59 W" initialDepartureAltitude="4000">
+              <routes>
+                <route type="sid" name="BOGNA1X"
+                       route="SL 220 AL 40 PD KKW06 T PD KKW08 T PD KKS11 T AL 50 SC PD KKS17 T AL 60 PD KKS20 T PD KKS25 T PD BOGNA"/>
+                <route type="sid" name="LAM2X"
+                       route="SL 220 AL 40 PD KKW02 T PD KKE09 T SL 250 PD KKE11 T AL 50 PD SUNAV T PD KKE35 T PD KKN43 T AL 60 PD KKN48 T PD LAM"/>
+                <route type="sid" name="BIG2X"
+                       route="SL 220 AL 40 PD KKW02 T PD KKE09 T SL 230 PD KKE11 T PD KKE15 T AL 50 PD SUNAV T AL 60 PD KKE38 T PD BIG"/>
+                <route type="sid" name="CLN4X"
+                       route="SL 220 AL 40 PD KKW02 T PD KKE09 T SC PD KKE11 T PD KKE15 T AL 50 PD SUNAV T PD KKE42 T PD DET T AL 60 PD KKN52 T PD DAGGA T PD CLN"/>
+                <route type="sid" name="HARDY1X"
+                       route="SL 220 AL 40 PD KKW06 T PD KKW08 T PD KKS11 T SC AL 50 PD KKS17 T AL 60 PD KKS20 T PD KKS25 T PD BOGNA T PD HARDY"/>
+                <route type="sid" name="KENET1X"
+                       route="PD KKW07 T PD KKW09 T PD MID T PD KKW28 T PD KENET"/>
+                <route type="sid" name="SAM1X"
+                       route="PD KKW07 T PD KKW09 T PD MID T PD SAM"/>
+                <route type="sid" name="SFD1X"
+                       route="SL 220 AL 40 PD KKW06 T PD KKW10 T PD KKW11 T SC PD KKS13 T AL 50 PD KKS19 T AL 60 PD KKS21 T PD SFD"/>
+                <route type="sid" name="WIZAD1X"
+                       route="SL 220 AL 40 PD KKW04 T PD KKS06 T SC PD KKS09 T PD KKS14 T AL 50 PD MAY T AL 60 PD KKS33 T PD WIZAD"/>
+                <route type="sid" name="ADMAG2X"
+                       route="SL 220 AL 40 PD KKW02 T PD KKW09 T SC PD KKE11 T PD KKE15 T AL 50 PD SUNAV T AL 60 PD ADMAG"/>
+                <route type="sid" name="TIGER1X" mainFix="LAM"
+                       route="SL 220 AL 40 PD KKW04 T PD KKS06 T SC PD KKS09 T PD KKS14 T AL 50 PD MAY T PD KKS36 T PD LAM"/>
+                <route type="sid" name="DAGGA1X"
+                       route="SL 220 AL 40 PD KKW04 T PD KKS06 T SC PD KKS09 T PD KKS14 T AL 50 PD MAY T PD KKS36 T PD DET T PD DAGGA T PD CLN"/>
+              </routes>
               <approaches>
-                <gnssApproach gaRoute="CM 30 AA 20+ TR 179" radial="078" includeSharedIafRoutes="true" daA="700"
+                <gnssApproach gaRoute="CM 30 AA 20+ TR 179" radial="078" includeIafRoutesGroups="26L" daA="700"
                               daB="700"
                               daC="700" daD="700" initialAltitude="3000"/>
-                <ilsApproach gaRoute="CM 30 AA 20+ TR 179" radial="078" includeSharedIafRoutes="true"
+                <ilsApproach gaRoute="CM 30 AA 20+ TR 179" radial="078" includeIafRoutesGroups="26L"
                              initialAltitude="3000">
                   <categories>
                     <category type="I" daA="336" daB="345" daC="357" daD="370"/>
@@ -39,24 +60,32 @@
               </approaches>
             </threshold>
             <threshold name="26L" coordinate="51 09 02.43 N 000 10 18.93 W" initialDepartureAltitude="4000"
-                       preferred="true"
-                       assignedRoutes="TElTU1G;AMDUT1G;ARNUN1G;OTMET1G;VASUX1G;TIMBA2G;TIMBA4B;TIMBA3F;TIMBA1J;TIMBA1K;BOGNA1X;LAM2X;BIG2X;CLN4X;HARDY1X;KENET1X;SAM1X;SFD1X;WIZAD1X;ADMAG2X;TIGER1X;DAGGA1X">
-              <sharedIafRoutes>
-                <route iaf="TIMBA" route="DM 40 PD MAY T DM 30 PD MAY/003/3 T DM 20 PD MAY/003/8.5 T FH 290"/>
-                <route iaf="WILLO"
-                       route="DM 40 PD MID/117/22 T PD MAY T DM 30 PD MAY/003/3 T DM 20 PD MAY/003/8.5 T FH 290"/>
-              </sharedIafRoutes>
+                       preferred="true">
+              <routes>
+                <route type="sid" name="LAM1Z"
+                       route="AL 40 PD KKE02 T PD KKE12 T AL 50 PD SUNAV T PD KKE35 T PD KKN43 T AL 60 PD KKN48 T PD LAM"/>
+                <route type="sid" name="BIG2Z"
+                       route="AL 40 PD KKE04 T PD KKE10 T AL 50 PD KKE17 T SL 210 AL 60 PD KKE23 T PD BIG"/>
+                <route type="sid" name="CLN2Z"
+                       route="AL 40 PD KKE04 T PD KKE10 T AL 50 PD KKE17 T PD KKE25 T PD DET T AL 60 PD KKN52 T PD DAGGA T PD CLN"/>
+                <route type="sid" name="KENET1Z"
+                       route="SL 220 AL 40 PD KKE05 T PD KKN09 T SC PD KKW19 T PD KKW26 T PD KKW44 T PD KENET"/>
+                <route type="sid" name="SAM3Z"
+                       route="SL 220 AL 40 PD KKE05 T PD KKN09 T SC PD KKW19 T PD KKW26 T PD SAM"/>
+                <route type="sid" name="SFD4Z"
+                       route="SL 220 AL 40 PD KKE03 T SC PD KKS08 T PD KKS12 T AL 50 PD KKS16 T AL 60 PD KKS22 T PD SFD"/>
+                <route type="sid" name="ODVIK2Z"
+                       route="AL 40 PD KKE04 T PD KKE10 T AL 50 PD KKE17 T AL 60 PD ODVIK"/>
+              </routes>
               <approaches>
-                <ilsApproach gaRoute="CM 30 AA 20+ FH 179" radial="258" includeSharedIafRoutes="true"
-                             initialAltitude="2000">
+                <ilsApproach gaRoute="CM 30 AA 20+ FH 179" radial="258" includeIafRoutesGroups="08R" initialAltitude="2000">
                   <categories>
                     <category type="I" daA="335" daB="344" daC="356" daD="370"/>
                     <category type="II" daA="245" daB="255" daC="268" daD="281"/>
                   </categories>
                 </ilsApproach>
-                <gnssApproach gaRoute="CM 30 AA 20+ FH 179" radial="258" includeSharedIafRoutes="true" daA="580"
-                              daB="580"
-                              daC="580" daD="580" initialAltitude="2000"/>
+                <gnssApproach gaRoute="CM 30 AA 20+ FH 179" radial="258" includeIafRoutesGroups="08R" daA="580"
+                              daB="580" daC="580" daD="580" initialAltitude="2000"/>
               </approaches>
             </threshold>
           </thresholds>
@@ -85,68 +114,45 @@
         <!--
         -->
       </holds>
-      <routes>
-        <route type="star" name="TELTU1G" entryFL="220"
-               route="PD TELTU T SL 220 PD SFD T PD TIMBA T H TIMBA"/>
-        <route type="star" name="AMDUT1G" entryFL="220"
-               route="PD AMDUT T SL 220 PD SFD T PD WILLO T H WILLO"/>
-        <route type="star" name="ARNUN1G" entryFL="220"
-               route="PD ARNUN T PD HASTY T SL 220 PD SFD T PD WILLO T H WILLO"/>
-        <route type="star" name="OTMET1G" entryFL="220"
-               route="PD OTMET T PD SOKDU T PD NEDUL T SL 250 PD TELTU T SL 220 PD HOLLY T PD WILLO T H WILLO"/>
-        <route type="star" name="VASUX1G" entryFL="220"
-               route="PD VASUX T PD DISVO T SL 250 PD TELTU T SL 220 PD HOLLY T PD WILLO T H WILLO"/>
-        <route type="star" name="TIMBA2G" entryFL="220" mainFix="NEVIL"
-               route="PD NEVIL T PD OSPOL T PD NETVU T PD ELDAX T PD AMDUT T SL 250 PD KKE64 T PD TIMBA T H TIMBA"/>
-        <route type="star" name="TIMBA4B" mainFix="KUNAV"
-               route="PD KUNAV T PD AMDUT T SL 250 PD KKE64 T PD TIMBA T H TIMBA"/>
-        <route type="star" name="TIMBA3F" mainFix="KONAN"
-               route="PD KONAN T PD ARNUN T SL 250 PD KKE63 T PD LARCK T PD TIMBA T H TIMBA"/>
-        <route type="star" name="TIMBA1J" mainFix="ERING"
-               route="PD ERING T PD ABTUM T PD ARNUN T SL 250 PD KKE63 T PD LARCK T PD TIMBA T H TIMBA"/>
-        <route type="star" name="TIMBA1K" mainFix="TEBRA"
-               route="PD TEBRA T PD ABTUM T PD ARNUN T SL 250 PD KKE63 T PD LARCK T PD TIMBA T H TIMBA"/>
-        <!--26l SIDs-->
-        <route type="sid" name="LAM1Z"
-               route="AL 40 PD KKE02 T PD KKE12 T AL 50 PD SUNAV T PD KKE35 T PD KKN43 T AL 60 PD KKN48 T PD LAM"/>
-        <route type="sid" name="BIG2Z"
-               route="AL 40 PD KKE04 T PD KKE10 T AL 50 PD KKE17 T SL 210 AL 60 PD KKE23 T PD BIG"/>
-        <route type="sid" name="CLN2Z"
-               route="AL 40 PD KKE04 T PD KKE10 T AL 50 PD KKE17 T PD KKE25 T PD DET T AL 60 PD KKN52 T PD DAGGA T PD CLN"/>
-        <route type="sid" name="KENET1Z"
-               route="SL 220 AL 40 PD KKE05 T PD KKN09 T SC PD KKW19 T PD KKW26 T PD KKW44 T PD KENET"/>
-        <route type="sid" name="SAM3Z"
-               route="SL 220 AL 40 PD KKE05 T PD KKN09 T SC PD KKW19 T PD KKW26 T PD SAM"/>
-        <route type="sid" name="SFD4Z"
-               route="SL 220 AL 40 PD KKE03 T SC PD KKS08 T PD KKS12 T AL 50 PD KKS16 T AL 60 PD KKS22 T PD SFD"/>
-        <route type="sid" name="ODVIK2Z"
-               route="AL 40 PD KKE04 T PD KKE10 T AL 50 PD KKE17 T AL 60 PD ODVIK"/>
-        <!-- 08R SIDs -->
-        <route type="sid" name="BOGNA1X"
-               route="SL 220 AL 40 PD KKW06 T PD KKW08 T PD KKS11 T AL 50 SC PD KKS17 T AL 60 PD KKS20 T PD KKS25 T PD BOGNA"/>
-        <route type="sid" name="LAM2X"
-               route="SL 220 AL 40 PD KKW02 T PD KKE09 T SL 250 PD KKE11 T AL 50 PD SUNAV T PD KKE35 T PD KKN43 T AL 60 PD KKN48 T PD LAM"/>
-        <route type="sid" name="BIG2X"
-               route="SL 220 AL 40 PD KKW02 T PD KKE09 T SL 230 PD KKE11 T PD KKE15 T AL 50 PD SUNAV T AL 60 PD KKE38 T PD BIG"/>
-        <route type="sid" name="CLN4X"
-               route="SL 220 AL 40 PD KKW02 T PD KKE09 T SC PD KKE11 T PD KKE15 T AL 50 PD SUNAV T PD KKE42 T PD DET T AL 60 PD KKN52 T PD DAGGA T PD CLN"/>
-        <route type="sid" name="HARDY1X"
-               route="SL 220 AL 40 PD KKW06 T PD KKW08 T PD KKS11 T SC AL 50 PD KKS17 T AL 60 PD KKS20 T PD KKS25 T PD BOGNA T PD HARDY"/>
-        <route type="sid" name="KENET1X"
-               route="PD KKW07 T PD KKW09 T PD MID T PD KKW28 T PD KENET"/>
-        <route type="sid" name="SAM1X"
-               route="PD KKW07 T PD KKW09 T PD MID T PD SAM"/>
-        <route type="sid" name="SFD1X"
-               route="SL 220 AL 40 PD KKW06 T PD KKW10 T PD KKW11 T SC PD KKS13 T AL 50 PD KKS19 T AL 60 PD KKS21 T PD SFD"/>
-        <route type="sid" name="WIZAD1X"
-               route="SL 220 AL 40 PD KKW04 T PD KKS06 T SC PD KKS09 T PD KKS14 T AL 50 PD MAY T AL 60 PD KKS33 T PD WIZAD"/>
-        <route type="sid" name="ADMAG2X"
-               route="SL 220 AL 40 PD KKW02 T PD KKW09 T SC PD KKE11 T PD KKE15 T AL 50 PD SUNAV T AL 60 PD ADMAG"/>
-        <route type="sid" name="TIGER1X" mainFix="LAM"
-               route="SL 220 AL 40 PD KKW04 T PD KKS06 T SC PD KKS09 T PD KKS14 T AL 50 PD MAY T PD KKS36 T PD LAM"/>
-        <route type="sid" name="DAGGA1X"
-               route="SL 220 AL 40 PD KKW04 T PD KKS06 T SC PD KKS09 T PD KKS14 T AL 50 PD MAY T PD KKS36 T PD DET T PD DAGGA T PD CLN"/>
-      </routes>
+      <sharedRoutesGroups>
+        <sharedRoutesGroup groupName="stars">
+          <route type="star" name="TELTU1G" entryFL="220"
+                 route="PD TELTU T SL 220 PD SFD T PD TIMBA T H TIMBA"/>
+          <route type="star" name="AMDUT1G" entryFL="220"
+                 route="PD AMDUT T SL 220 PD SFD T PD WILLO T H WILLO"/>
+          <route type="star" name="ARNUN1G" entryFL="220"
+                 route="PD ARNUN T PD HASTY T SL 220 PD SFD T PD WILLO T H WILLO"/>
+          <route type="star" name="OTMET1G" entryFL="220"
+                 route="PD OTMET T PD SOKDU T PD NEDUL T SL 250 PD TELTU T SL 220 PD HOLLY T PD WILLO T H WILLO"/>
+          <route type="star" name="VASUX1G" entryFL="220"
+                 route="PD VASUX T PD DISVO T SL 250 PD TELTU T SL 220 PD HOLLY T PD WILLO T H WILLO"/>
+          <route type="star" name="TIMBA2G" entryFL="220" mainFix="NEVIL"
+                 route="PD NEVIL T PD OSPOL T PD NETVU T PD ELDAX T PD AMDUT T SL 250 PD KKE64 T PD TIMBA T H TIMBA"/>
+          <route type="star" name="TIMBA4B" mainFix="KUNAV"
+                 route="PD KUNAV T PD AMDUT T SL 250 PD KKE64 T PD TIMBA T H TIMBA"/>
+          <route type="star" name="TIMBA3F" mainFix="KONAN"
+                 route="PD KONAN T PD ARNUN T SL 250 PD KKE63 T PD LARCK T PD TIMBA T H TIMBA"/>
+          <route type="star" name="TIMBA1J" mainFix="ERING"
+                 route="PD ERING T PD ABTUM T PD ARNUN T SL 250 PD KKE63 T PD LARCK T PD TIMBA T H TIMBA"/>
+          <route type="star" name="TIMBA1K" mainFix="TEBRA"
+                 route="PD TEBRA T PD ABTUM T PD ARNUN T SL 250 PD KKE63 T PD LARCK T PD TIMBA T H TIMBA"/>
+        </sharedRoutesGroup>
+      </sharedRoutesGroups>
+      <sharedIafRoutesGroups>
+        <sharedIafRoutesGroup groupName="26L">
+          <iafRoutes>
+            <route iaf="TIMBA" route="DM 40 PD MAY T PD MAY/275/23 T TR 050 T DM 30 FH 080"/>
+            <route iaf="WILLO" route="DM 40 PD MID/105/5 T TR 050 T DM 30 FH 080"/>
+          </iafRoutes>
+        </sharedIafRoutesGroup>
+        <sharedIafRoutesGroup groupName="08R">
+          <iafRoutes>
+            <route iaf="TIMBA" route="DM 40 PD MAY T DM 30 PD MAY/003/3 T DM 20 PD MAY/003/8.5 T FH 290"/>
+            <route iaf="WILLO"
+                   route="DM 40 PD MID/117/22 T PD MAY T DM 30 PD MAY/003/3 T DM 20 PD MAY/003/8.5 T FH 290"/>
+          </iafRoutes>
+        </sharedIafRoutesGroup>
+      </sharedIafRoutesGroups>
       <trafficDefinitions>
         <densityTraffic title="Normal traffic" useExtendedCallsigns="true" nonCommercialFlightProbability="0.05"
                         delayProbability="0.1" maxDelayInMinutesPerStep="45">

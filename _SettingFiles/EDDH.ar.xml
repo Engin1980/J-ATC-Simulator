@@ -18,17 +18,15 @@
       <runways>
         <runway>
           <thresholds>
-            <threshold includeSharedRoutes="false" name="05" coordinate="N 53 37 11.85 E 009 58 01.80"
+            <threshold name="05" coordinate="N 53 37 11.85 E 009 58 01.80"
                        initialDepartureAltitude="5000">
               <approaches>
-                <ilsApproach gaRoute="CM 40 PD HOS T H HAM" radial="048" includeSharedIafRoutes="false"
-                             initialAltitude="3000">
+                <ilsApproach gaRoute="CM 40 PD HOS T H HAM" radial="048" initialAltitude="3000">
                   <categories>
                     <category type="I" daA="188" daB="197" daC="207" daD="217"/>
                   </categories>
                 </ilsApproach>
-                <unpreciseApproach gaRoute="CM 40 PD HOS T H HAM" radial="049" includeSharedIafRoutes="false"
-                                   initialAltitude="3000" type="ndb"
+                <unpreciseApproach gaRoute="CM 40 PD HOS T H HAM" radial="049" initialAltitude="3000" type="ndb"
                                    faf="ALF/229/10.5" mapt="ALF/229/1.8" mdaA="570" mdaB="570" mdaC="570" mdaD="570">
                   <iafRoutes>
                     <route iaf="LBV" route="PD LBV/153/8.4 T TL 079"/>
@@ -53,18 +51,16 @@
                 <route type="sid" name="IDEKO5C" route="PD ALF/048/7.2 T TR 244 PD HAM/296/7 T PD LBV T PD IDEKO"/>
               </routes>
             </threshold>
-            <threshold includeSharedRoutes="false" name="23" coordinate="N 53 38 09.64 E 009 59 58.76"
+            <threshold name="23" coordinate="N 53 38 09.64 E 009 59 58.76"
                        initialDepartureAltitude="5000" preferred="true">
               <approaches>
-                <ilsApproach gaRoute="CM 40 PD ALF/228/5.5 T H HAM" radial="228" includeSharedIafRoutes="false"
-                             initialAltitude="3000">
+                <ilsApproach gaRoute="CM 40 PD ALF/228/5.5 T H HAM" radial="228" initialAltitude="3000">
                   <categories>
                     <category type="I" daA="217" daB="227" daC="237" daD="247"/>
                     <category type="II" daA="55" daB="71" daC="84" daD="98"/>
                   </categories>
                 </ilsApproach>
-                <unpreciseApproach gaRoute="CM 40 PD ALF/228/5.5 T H HAM" radial="228" includeSharedIafRoutes="false"
-                                   initialAltitude="3000" type="ndb"
+                <unpreciseApproach gaRoute="CM 40 PD ALF/228/5.5 T H HAM" radial="228" initialAltitude="3000" type="ndb"
                                    faf="ALF/048/9.3" mapt="ALF/048/0.7" mdaA="490" mdaB="490" mdaC="490" mdaD="490">
                   <iafRoutes>
                     <route iaf="LBV" route="PD LBV/228/21.8 T TR 198"/>
@@ -101,17 +97,14 @@
         </runway>
         <runway>
           <thresholds>
-            <threshold includeSharedRoutes="false" name="15" coordinate="N 53 39 15.88 E 009 58 30.76"
-                       initialDepartureAltitude="5000">
+            <threshold name="15" coordinate="N 53 39 15.88 E 009 58 30.76" initialDepartureAltitude="5000">
               <approaches>
-                <ilsApproach gaRoute="CM 40 PD ALF/150/3 T H HAM" radial="150" includeSharedIafRoutes="false"
-                             initialAltitude="3000">
+                <ilsApproach gaRoute="CM 40 PD ALF/150/3 T H HAM" radial="150" initialAltitude="3000">
                   <categories>
                     <category type="I" daA="179" daB="188" daC="198" daD="208"/>
                   </categories>
                 </ilsApproach>
-                <unpreciseApproach gaRoute="CM 40 PD ALF/151/3 T H HAM" radial="151" includeSharedIafRoutes="false"
-                                   initialAltitude="3000" type="ndb"
+                <unpreciseApproach gaRoute="CM 40 PD ALF/151/3 T H HAM" radial="151" initialAltitude="3000" type="ndb"
                                    faf="ALF/331/10.4" mapt="ALF/331/1.8" mdaA="560" mdaB="560" mdaC="560" mdaD="560">
                   <iafRoutes>
                     <route iaf="LBV" route="PD LBV/034/11.3 T TR 121"/>
@@ -145,8 +138,7 @@
                        route="PD RARUP T DM 40 PD DH417 T SL 220 PD DH412 T PD DH413 T PD DH414 T PD DH416 T PD DH455 T PD DH456 T PD DH457 T DM 30 PD DH458 T PD DEVOD"/>
               </routes>
             </threshold>
-            <threshold includeSharedRoutes="false" name="33" coordinate="N 53 37 43.25 E 009 59 50.81"
-                       initialDepartureAltitude="5000">
+            <threshold name="33" coordinate="N 53 37 43.25 E 009 59 50.81" initialDepartureAltitude="5000">
               <approaches>
                 <!-- NO PUBLISHED APPROACH, ONLY LOC/LLZ -->
               </approaches>

@@ -20,266 +20,48 @@
         <runway>
           <thresholds>
             <threshold name="04L" coordinate="43 39 06.50 N 007 12 14.55 E" initialDepartureAltitude="4000"
-                       preferred="true" includeSharedRoutes="true">
-              <sharedIafRoutes>
-                <route iaf="MUS" route="DM 40 PD AZR/223/22 T PD AZR/223/17 T FH 043"/>
-                <route iaf="NERAS"
-                       route="DM 40 PD AZR/117/26 T PD AZR/130/27 T PD AZR/150/27 T PD AZR/170/27 T PD AZR/190/27 T PD AZR/210/27 T PD AZR/223/17 T FH 043"/>
-              </sharedIafRoutes>
+                       preferred="true" includeRoutesGroups="sid04">
               <approaches>
                 <ilsApproach gaRoute="CM 20 SL 220 FH 043 AD NIZ/1.2 PD AZR/117/10 T SC PD NERAS" radial="043"
-                             includeSharedIafRoutes="true" initialAltitude="4000">
+                             includeIafRoutesGroups="04" initialAltitude="4000">
                   <categories>
                     <category type="I" daA="210" daB="210" daC="220" daD="230"/>
                   </categories>
                 </ilsApproach>
                 <unpreciseApproach gaRoute="CM 20 SL 220 PD AZR/117/10 T SC PD NERAS" radial="354"
-                                   includeSharedIafRoutes="false" initialAltitude="3000" type="vor"
+                                   initialAltitude="3000" type="vor"
                                    faf="CGS/174/8.1" mapt="CGS/174/5" mdaA="2000" mdaB="2000" mdaC="2000" mdaD="2000"/>
               </approaches>
-              <routes>
-                <route type="sid" name="IRMAR6A" category="CD"
-                       route="CM 130 SM 210 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD NC T SC PD BARSO T PD IRMAR" />
-                <route type="sid" name="BADOD6A" category="CD"
-                       route="CM 130 SM 210 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD NC T SC PD AMIRO T PD BADOD" />
-                <route type="sid" name="OKTET6A" category="CD"
-                       route="CM 130 SM 210 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD NC T SC PD AMIRO T PD OKTET" />
-                <route type="sid" name="BODRU6A" category="ABCD"
-                       route="CM 130 SM 210 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD NC T SC PD AMIRO T PD BODRU" />
-                <route type="sid" name="PERUS6A" category="ABCD"
-                       route="CM 130 SM 210 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD NC T SC PD AMIRO T PD PERUS" />
-                <route type="sid" name="IRMAR6C" category="AB"
-                       route="CM 70 AA 4+ FH 138 AD NIZ/8 PD MN052 T PD NIZ T PD BARSO T PD IRMAR" />
-                <route type="sid" name="OKTET6C" category="AB"
-                       route="CM 70 AA 4+ FH 138 AD NIZ/8 PD MN052 T PD NIZ T PD BARSO T PD OKTET" />
-                <route type="sid" name="BADOD6C" category="ABCD"
-                       route="CM 70 AA 4+ FH 138 AD NIZ/8 PD MN052 T PD NIZ T PD BADOD" />
-                <route type="sid" name="BASIP6A" category="AB"
-                       route="CM 70 AA 4+ FH 138 AD NIZ/8 PD MN052 T PD MN054 T PD USANO T PD TIVNO T PD BASIP" />
-                <route type="sid" name="RUBIT6A" category="CD"
-                       route="CM 100 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD MN236 T PD RESBO T PD STP T PD RUBIT" />
-                <route type="sid" name="LANKO6A" category="CD"
-                       route="CM 100 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD MN236 T PD RESBO T PD STP T PD RUBIT T PD LANKO" />
-                <route type="sid" name="TURIL6A" category="CD"
-                       route="CM 100 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD MN236 T PD RESBO T PD STP T PD RUBIT T PD TURIL" />
-                <route type="sid" name="EPOLO6A" category="CD"
-                       route="CM 100 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD MN236 T PD RESBO T PD EPOLO"/>
-                <route type="sid" name="RUBAS6A" category="ABCD"
-                       route="CM 100 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD MN236 T PD RESBO T PD RUBAS"/>
-                <route type="sid" name="RUBIT6B" category="AB"
-                       route="CM 70 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD MN234 T PD MN238 T PD RESBO T PD STP T PD RUBIT"/>
-                <route type="sid" name="LANKO6B" category="AB"
-                       route="CM 70 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD MN234 T PD MN238 T PD RESBO T PD STP T PD RUBIT T PD LANKO" />
-                <route type="sid" name="TURIL6B" category="AB"
-                       route="CM 70 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD MN234 T PD MN238 T PD RESBO T PD STP T PD RUBIT T PD TURIL" />
-                <route type="sid" name="EPOLO6B" category="AB"
-                       route="CM 70 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD MN234 T PD MN238 T PD LERMA T PD EPOLO"/>
-                <route type="sid" name="VAREK6A" category="CD"
-                       route="CM 100 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN046 T PD OMARD T PD VAREK"/>
-                <route type="sid" name="LONSU6A" category="CD"
-                       route="CM 100 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN046 T PD OMARD T PD MERLU T PD LONSU"/>
-                <route type="sid" name="SODRI6A" category="CD"
-                       route="CM 100 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN046 T PD OMARD T PD MERLU T PD SODRI"/>
-                <route type="sid" name="VAREK6B" category="AB"
-                       route="CM 70 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD MN244 T PD OMARD T PD VAREK"/>
-                <route type="sid" name="LONSU6B" category="AB"
-                       route="CM 70 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD MN244 T PD OMARD T PD MERLU T PD LONSU"/>
-                <route type="sid" name="SODRI6B" category="AB"
-                       route="CM 70 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD MN244 T PD OMARD T PD MERLU T PD SODRI"/>
-              </routes>
             </threshold>
-            <threshold name="22R" coordinate="43 40 06.76 N 007 13 37.42 E" initialDepartureAltitude="4000"
-                       includeSharedRoutes="true">
+            <threshold name="22R" coordinate="43 40 06.76 N 007 13 37.42 E" initialDepartureAltitude="4000" includeRoutesGroups="sid22">
               <approaches>
-                <unpreciseApproach gaRoute="CM 30 PD CGS/113/10 T PD NERAS" radial="263" includeSharedIafRoutes="false"
+                <unpreciseApproach gaRoute="CM 30 PD CGS/113/10 T PD NERAS" radial="263" includeIafRoutesGroups="22"
                                    initialAltitude="3000" type="vor"
                                    faf="CGS/083/15" mapt="CGS/083/9" mdaA="1500" mdaB="1500" mdaC="1500" mdaD="1500">
-                  <iafRoutes>
-                    <route iaf="NERAS" route="DM 40 PD CGS/113/25 T PD CGS/093/23 T DM 30 PD CGS/083/18 T FH 263"/>
-                    <route iaf="MUS"
-                           route="DM 50 PD LUC/088/30 T DM 40 PD LUC/088/53 T PD CGS/113/23 T DM 30 PD CGS/093/23 T PD CGS/083/18 T FH 263"/>
-                  </iafRoutes>
                 </unpreciseApproach>
               </approaches>
-              <routes>
-                <route type="sid" name="IRMAR6X" category="CD"
-                       route="CM 130 PD MN222 T PD MN223 T SL 210 PD MN224 T PD MN226 T SC PD MN228 T PD BARSO T PD IRMAR" />
-                <route type="sid" name="BADOD6X" category="CD"
-                       route="CM 130 PD MN222 T PD MN223 T SL 210 PD MN224 T PD MN226 T SC PD AMIRO T PD BADOD" />
-                <route type="sid" name="OKTET6X" category="CD"
-                       route="CM 130 PD MN222 T PD MN223 T SL 210 PD MN224 T PD MN226 T SC PD AMIRO T PD OKTET" />
-                <route type="sid" name="BODRU6X" category="ABCD"
-                       route="CM 130 PD MN222 T PD MN223 T SL 210 PD MN224 T PD MN226 T SC PD AMIRO T PD BODRU" />
-                <route type="sid" name="PERUS6X" category="ABCD"
-                       route="CM 130 PD MN222 T PD MN223 T SL 210 PD MN224 T PD MN226 T SC PD AMIRO T PD PERUS" />
-                <route type="sid" name="IRMAR6Z" category="AB"
-                       route="PD MN222 T PD MN223 T PD MN246 T PD MN248 T PD NIZ T PD BARSO T PD IRMAR" />
-                <route type="sid" name="OKTET6Z" category="AB"
-                       route="PD MN222 T PD MN223 T PD MN246 T PD MN248 T PD NIZ T PD BARSO T PD OKTET" />
-                <route type="sid" name="BADOD6Z" category="AB"
-                       route="PD MN222 T PD MN223 T PD MN246 T PD MN248 T PD NIZ T PD BADOD" />
-                <route type="sid" name="BASIP6X" category="ABCD"
-                       route="CM 70 PD MN222 T PD MN223 T PD MN246 T PD MN248 T PD USANO T PD TIVNO T PD BASIP"/>
-                <route type="sid" name="RUBIT6X" category="CD"
-                       route="CM 100 PD MN222 T PD MN223 T PD MN232 T PD MN234 T PD MN236 T PD RESBO T PD STP T PD RUBIT" />
-                <route type="sid" name="LANKO6X" category="CD"
-                       route="CM 100 PD MN222 T PD MN223 T PD MN232 T PD MN234 T PD MN236 T PD RESBO T PD STP T PD RUBIT T PD LANKO" />
-                <route type="sid" name="TURIL6X" category="CD"
-                       route="CM 100 PD MN222 T PD MN223 T PD MN232 T PD MN234 T PD MN236 T PD RESBO T PD STP T PD RUBIT T PD TURIL" />
-                <route type="sid" name="EPOLO6X" category="CD"
-                       route="CM 100 PD MN222 T PD MN223 T PD MN232 T PD MN234 T PD MN236 T PD RESBO T PD EPOLO"/>
-                <route type="sid" name="RUBAS6X" category="ABCD"
-                       route="CM 100 PD MN222 T PD MN223 T PD MN232 T PD MN234 T PD MN236 T PD RESBO T PD RUBAS"/>
-                <route type="sid" name="RUBIT6Y" category="AB"
-                       route="CM 70 PD MN222 T PD MN223 T PD MN232 T PD MN234 T PD MN238 T PD RESBO T PD STP T PD RUBIT"/>
-                <route type="sid" name="LANKO6Y" category="AB"
-                       route="CM 70 PD MN222 T PD MN223 T PD MN232 T PD MN234 T PD MN238 T PD RESBO T PD STP T PD RUBIT T PD LANKO" />
-                <route type="sid" name="TURIL6Y" category="AB"
-                       route="CM 70 PD MN222 T PD MN223 T PD MN232 T PD MN234 T PD MN238 T PD RESBO T PD STP T PD RUBIT T PD TURIL" />
-                <route type="sid" name="EPOLO6Y" category="AB"
-                       route="CM 70 PD MN222 T PD MN223 T PD MN232 T PD MN234 T PD MN238 T PD LERMA T PD EPOLO"/>
-                <route type="sid" name="VAREK6X" category="CD"
-                       route="CM 100 PD MN222 T PD MN223 T PD MN232 T PD MN242 T PD OMARD T PD VAREK"/>
-                <route type="sid" name="LONSU6X" category="CD"
-                       route="CM 100 PD MN222 T PD MN223 T PD MN232 T PD MN242 T PD OMARD T PD MERLU T PD LONSU"/>
-                <route type="sid" name="SODRI6X" category="CD"
-                       route="CM 100 PD MN222 T PD MN223 T PD MN232 T PD MN242 T PD OMARD T PD MERLU T PD SODRI"/>
-                <route type="sid" name="VAREK6Y" category="AB"
-                       route="CM 70 PD MN222 T PD MN223 T PD MN232 T PD MN244 T PD OMARD T PD VAREK"/>
-                <route type="sid" name="LONSU6Y" category="AB"
-                       route="CM 70 PD MN222 T PD MN223 T PD MN232 T PD MN244 T PD OMARD T PD MERLU T PD LONSU"/>
-                <route type="sid" name="SODRI6Y" category="AB"
-                       route="CM 70 PD MN222 T PD MN223 T PD MN232 T PD MN244 T PD OMARD T PD MERLU T PD SODRI"/>
-              </routes>
             </threshold>
           </thresholds>
         </runway>
         <runway>
           <thresholds>
-            <threshold name="04R" coordinate="43 38 48.26 N 007 12 08.98 E" initialDepartureAltitude="4000"
-                       includeSharedRoutes="true">
-              <sharedIafRoutes>
-                <route iaf="MUS" route="DM 40 PD AZR/223/22 T PD AZR/223/17 T FH 041"/>
-                <route iaf="NERAS"
-                       route="DM 40 PD AZR/117/26 T PD AZR/130/27 T PD AZR/150/27 T PD AZR/170/27 T PD AZR/190/27 T PD AZR/210/27 T PD AZR/223/17 T FH 041"/>
-              </sharedIafRoutes>
+            <threshold name="04R" coordinate="43 38 48.26 N 007 12 08.98 E" initialDepartureAltitude="4000" includeRoutesGroups="sid04">
               <approaches>
-                <ilsApproach gaRoute="SM 220 AA 20+ SC PD NERAS" radial="041" includeSharedIafRoutes="true"
+                <ilsApproach gaRoute="SM 220 AA 20+ SC PD NERAS" radial="041" includeIafRoutesGroups="04"
                              initialAltitude="4000">
                   <categories>
                     <category type="I" daA="260" daB="260" daC="260" daD="280"/>
                   </categories>
                 </ilsApproach>
-                <unpreciseApproach gaRoute="SM 220 AA 20+ SC PD NERAS" radial="041" includeSharedIafRoutes="true"
+                <unpreciseApproach gaRoute="SM 220 AA 20+ SC PD NERAS" radial="041" includeIafRoutesGroups="04"
                                    initialAltitude="4000" type="ndb" faf="NA/221/12.5"
                                    mapt="NA" mdaA="500" mdaB="500" mdaC="500" mdaD="500"/>
               </approaches>
-              <routes>
-                <route type="sid" name="IRMAR6A" category="CD"
-                       route="CM 130 SM 210 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD NC T SC PD BARSO T PD IRMAR"/>
-                <route type="sid" name="BADOD6A" category="CD"
-                       route="CM 130 SM 210 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD NC T SC PD AMIRO T PD BADOD"/>
-                <route type="sid" name="OKTET6A" category="CD"
-                       route="CM 130 SM 210 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD NC T SC PD AMIRO T PD OKTET"/>
-                <route type="sid" name="BODRU6A" category="ABCD"
-                       route="CM 130 SM 210 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD NC T SC PD AMIRO T PD BODRU"/>
-                <route type="sid" name="PERUS6A" category="ABCD"
-                       route="CM 130 SM 210 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD NC T SC PD AMIRO T PD PERUS"/>
-                <route type="sid" name="IRMAR6C" category="AB"
-                       route="CM 70 AA 4+ FH 138 AD NIZ/8 PD MN052 T PD NIZ T PD BARSO T PD IRMAR"/>
-                <route type="sid" name="OKTET6C" category="AB"
-                       route="CM 70 AA 4+ FH 138 AD NIZ/8 PD MN052 T PD NIZ T PD BARSO T PD OKTET"/>
-                <route type="sid" name="BADOD6C" category="ABCD"
-                       route="CM 70 AA 4+ FH 138 AD NIZ/8 PD MN052 T PD NIZ T PD BADOD"/>
-                <route type="sid" name="BASIP6A" category="AB"
-                       route="CM 70 AA 4+ FH 138 AD NIZ/8 PD MN052 T PD MN054 T PD USANO T PD TIVNO T PD BASIP"/>
-                <route type="sid" name="RUBIT6A" category="CD"
-                       route="CM 100 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD MN236 T PD RESBO T PD STP T PD RUBIT"/>
-                <route type="sid" name="LANKO6A" category="CD"
-                       route="CM 100 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD MN236 T PD RESBO T PD STP T PD RUBIT T PD LANKO"/>
-                <route type="sid" name="TURIL6A" category="CD"
-                       route="CM 100 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD MN236 T PD RESBO T PD STP T PD RUBIT T PD TURIL"/>
-                <route type="sid" name="EPOLO6A" category="CD"
-                       route="CM 100 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD MN236 T PD RESBO T PD EPOLO"/>
-                <route type="sid" name="RUBAS6A" category="ABCD"
-                       route="CM 100 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD MN236 T PD RESBO T PD RUBAS"/>
-                <route type="sid" name="RUBIT6B" category="AB"
-                       route="CM 70 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD MN234 T PD MN238 T PD RESBO T PD STP T PD RUBIT"/>
-                <route type="sid" name="LANKO6B" category="AB"
-                       route="CM 70 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD MN234 T PD MN238 T PD RESBO T PD STP T PD RUBIT T PD LANKO"/>
-                <route type="sid" name="TURIL6B" category="AB"
-                       route="CM 70 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD MN234 T PD MN238 T PD RESBO T PD STP T PD RUBIT T PD TURIL"/>
-                <route type="sid" name="EPOLO6B" category="AB"
-                       route="CM 70 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD MN234 T PD MN238 T PD LERMA T PD EPOLO"/>
-                <route type="sid" name="VAREK6A" category="CD"
-                       route="CM 100 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN046 T PD OMARD T PD VAREK"/>
-                <route type="sid" name="LONSU6A" category="CD"
-                       route="CM 100 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN046 T PD OMARD T PD MERLU T PD LONSU"/>
-                <route type="sid" name="SODRI6A" category="CD"
-                       route="CM 100 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN046 T PD OMARD T PD MERLU T PD SODRI"/>
-                <route type="sid" name="VAREK6B" category="AB"
-                       route="CM 70 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD MN244 T PD OMARD T PD VAREK"/>
-                <route type="sid" name="LONSU6B" category="AB"
-                       route="CM 70 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD MN244 T PD OMARD T PD MERLU T PD LONSU"/>
-                <route type="sid" name="SODRI6B" category="AB"
-                       route="CM 70 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD MN244 T PD OMARD T PD MERLU T PD SODRI"/>
-              </routes>
             </threshold>
-            <threshold name="22L" coordinate="43 39 56.19 N 007 13 42.40 E" initialDepartureAltitude="4000"
-                       includeSharedRoutes="false">
+            <threshold name="22L" coordinate="43 39 56.19 N 007 13 42.40 E" initialDepartureAltitude="4000" includeRoutesGroups="sid22">
               <approaches>
                 <!-- any published approach -->
               </approaches>
-              <routes>
-                <route type="sid" name="IRMAR6X" category="CD"
-                       route="CM 130 PD MN222 T PD MN223 T SL 210 PD MN224 T PD MN226 T SC PD MN228 T PD BARSO T PD IRMAR"/>
-                <route type="sid" name="BADOD6X" category="CD"
-                       route="CM 130 PD MN222 T PD MN223 T SL 210 PD MN224 T PD MN226 T SC PD AMIRO T PD BADOD"/>
-                <route type="sid" name="OKTET6X" category="CD"
-                       route="CM 130 PD MN222 T PD MN223 T SL 210 PD MN224 T PD MN226 T SC PD AMIRO T PD OKTET"/>
-                <route type="sid" name="BODRU6X" category="ABCD"
-                       route="CM 130 PD MN222 T PD MN223 T SL 210 PD MN224 T PD MN226 T SC PD AMIRO T PD BODRU"/>
-                <route type="sid" name="PERUS6X" category="ABCD"
-                       route="CM 130 PD MN222 T PD MN223 T SL 210 PD MN224 T PD MN226 T SC PD AMIRO T PD PERUS"/>
-                <route type="sid" name="IRMAR6Z" category="AB"
-                       route="PD MN222 T PD MN223 T PD MN246 T PD MN248 T PD NIZ T PD BARSO T PD IRMAR"/>
-                <route type="sid" name="OKTET6Z" category="AB"
-                       route="PD MN222 T PD MN223 T PD MN246 T PD MN248 T PD NIZ T PD BARSO T PD OKTET"/>
-                <route type="sid" name="BADOD6Z" category="AB"
-                       route="PD MN222 T PD MN223 T PD MN246 T PD MN248 T PD NIZ T PD BADOD"/>
-                <route type="sid" name="BASIP6X" category="ABCD"
-                       route="CM 70 PD MN222 T PD MN223 T PD MN246 T PD MN248 T PD USANO T PD TIVNO T PD BASIP"/>
-                <route type="sid" name="RUBIT6X" category="CD"
-                       route="CM 100 PD MN222 T PD MN223 T PD MN232 T PD MN234 T PD MN236 T PD RESBO T PD STP T PD RUBIT"/>
-                <route type="sid" name="LANKO6X" category="CD"
-                       route="CM 100 PD MN222 T PD MN223 T PD MN232 T PD MN234 T PD MN236 T PD RESBO T PD STP T PD RUBIT T PD LANKO"/>
-                <route type="sid" name="TURIL6X" category="CD"
-                       route="CM 100 PD MN222 T PD MN223 T PD MN232 T PD MN234 T PD MN236 T PD RESBO T PD STP T PD RUBIT T PD TURIL"/>
-                <route type="sid" name="EPOLO6X" category="CD"
-                       route="CM 100 PD MN222 T PD MN223 T PD MN232 T PD MN234 T PD MN236 T PD RESBO T PD EPOLO"/>
-                <route type="sid" name="RUBAS6X" category="ABCD"
-                       route="CM 100 PD MN222 T PD MN223 T PD MN232 T PD MN234 T PD MN236 T PD RESBO T PD RUBAS"/>
-                <route type="sid" name="RUBIT6Y" category="AB"
-                       route="CM 70 PD MN222 T PD MN223 T PD MN232 T PD MN234 T PD MN238 T PD RESBO T PD STP T PD RUBIT"/>
-                <route type="sid" name="LANKO6Y" category="AB"
-                       route="CM 70 PD MN222 T PD MN223 T PD MN232 T PD MN234 T PD MN238 T PD RESBO T PD STP T PD RUBIT T PD LANKO"/>
-                <route type="sid" name="TURIL6Y" category="AB"
-                       route="CM 70 PD MN222 T PD MN223 T PD MN232 T PD MN234 T PD MN238 T PD RESBO T PD STP T PD RUBIT T PD TURIL"/>
-                <route type="sid" name="EPOLO6Y" category="AB"
-                       route="CM 70 PD MN222 T PD MN223 T PD MN232 T PD MN234 T PD MN238 T PD LERMA T PD EPOLO"/>
-                <route type="sid" name="VAREK6X" category="CD"
-                       route="CM 100 PD MN222 T PD MN223 T PD MN232 T PD MN242 T PD OMARD T PD VAREK"/>
-                <route type="sid" name="LONSU6X" category="CD"
-                       route="CM 100 PD MN222 T PD MN223 T PD MN232 T PD MN242 T PD OMARD T PD MERLU T PD LONSU"/>
-                <route type="sid" name="SODRI6X" category="CD"
-                       route="CM 100 PD MN222 T PD MN223 T PD MN232 T PD MN242 T PD OMARD T PD MERLU T PD SODRI"/>
-                <route type="sid" name="VAREK6Y" category="AB"
-                       route="CM 70 PD MN222 T PD MN223 T PD MN232 T PD MN244 T PD OMARD T PD VAREK"/>
-                <route type="sid" name="LONSU6Y" category="AB"
-                       route="CM 70 PD MN222 T PD MN223 T PD MN232 T PD MN244 T PD OMARD T PD MERLU T PD LONSU"/>
-                <route type="sid" name="SODRI6Y" category="AB"
-                       route="CM 70 PD MN222 T PD MN223 T PD MN232 T PD MN244 T PD OMARD T PD MERLU T PD SODRI"/>
-              </routes>
             </threshold>
           </thresholds>
         </runway>
@@ -290,27 +72,145 @@
         <hold navaidName="MUS" inboundRadial="150" turn="left"/>
         <hold navaidName="AMFOU" inboundRadial="136" turn="right"/>
       </holds>
-      <sharedRoutes>
-        <route type="star" name="NISAR6R"
-               route="PD NISAR T PD XIRBI T PD ABDIL T PD GIROL T PD AMFOU T SL 250 PD TIPIK T PD MUS T H MUS"
-               entryFL="340" />
-        <route type="star" name="ABDIL6R"
-               route="PD ABDIL T PD GIROL T PD AMFOU T PD AMFOU T SL 250 PD TIPIK T PD MUS T H MUS"
-               entryFL="190" />
-        <route type="star" name="ABLAK6R" route="PD ABLAK T PD ABILI T PD AMFOU T SL 250 PD TIPIK T PD MUS T H MUS"
-               entryFL="200" />
-        <route type="star" name="PERUS6R" route="PD PERUS T PD AMFOU T SL 210 PD TIPIK T PD MUS T H MUS" entryFL="190" />
-        <route type="star" name="BIRGO6C" route="PD BIRGO T PD LUC T PD MUS T H MUS" entryFL="110" />
-        <route type="star" name="VEVAR6R"
-               route="PD VEVAR T PD GAPDO T PD AMGEL T PD MIKRU T PD PIRAM T PD AZR/112/35 T PD NERAS T H NERAS" />
-        <route type="star" name="BORDI6R"
-               route="PD BORDI T PD AMGEL T PD MIKRU T PD PIRAM T PD AZR/112/35 T PD NERAS T H NERAS" entryFL="170" />
-        <route type="star" name="KERIT6C"
-               route="PD KERIT T PD NIZ/112/51 T PD AZR/114/47 T PD KESAK T PD NERAS T H NERAS" entryFL="170" />
-        <route type="star" name="SODRI6R" route="PD SODRI T PD KESAK T PD NERAS T H NERAS" />
-        <route type="star" name="LONSU6R" route="PD LONSU T PD KESAK T PD NERAS T H NERAS" />
-        <route type="star" name="MERLU6C" route="PD MERLU T PD AZR/121/40 T PD NERAS T H NERAS" />
-      </sharedRoutes>
+      <sharedRoutesGroups>
+        <sharedRoutesGroup groupName="star">
+          <route type="star" name="NISAR6R"
+                 route="PD NISAR T PD XIRBI T PD ABDIL T PD GIROL T PD AMFOU T SL 250 PD TIPIK T PD MUS T H MUS"
+                 entryFL="340" />
+          <route type="star" name="ABDIL6R"
+                 route="PD ABDIL T PD GIROL T PD AMFOU T PD AMFOU T SL 250 PD TIPIK T PD MUS T H MUS"
+                 entryFL="190" />
+          <route type="star" name="ABLAK6R" route="PD ABLAK T PD ABILI T PD AMFOU T SL 250 PD TIPIK T PD MUS T H MUS"
+                 entryFL="200" />
+          <route type="star" name="PERUS6R" route="PD PERUS T PD AMFOU T SL 210 PD TIPIK T PD MUS T H MUS" entryFL="190" />
+          <route type="star" name="BIRGO6C" route="PD BIRGO T PD LUC T PD MUS T H MUS" entryFL="110" />
+          <route type="star" name="VEVAR6R"
+                 route="PD VEVAR T PD GAPDO T PD AMGEL T PD MIKRU T PD PIRAM T PD AZR/112/35 T PD NERAS T H NERAS" />
+          <route type="star" name="BORDI6R"
+                 route="PD BORDI T PD AMGEL T PD MIKRU T PD PIRAM T PD AZR/112/35 T PD NERAS T H NERAS" entryFL="170" />
+          <route type="star" name="KERIT6C"
+                 route="PD KERIT T PD NIZ/112/51 T PD AZR/114/47 T PD KESAK T PD NERAS T H NERAS" entryFL="170" />
+          <route type="star" name="SODRI6R" route="PD SODRI T PD KESAK T PD NERAS T H NERAS" />
+          <route type="star" name="LONSU6R" route="PD LONSU T PD KESAK T PD NERAS T H NERAS" />
+          <route type="star" name="MERLU6C" route="PD MERLU T PD AZR/121/40 T PD NERAS T H NERAS" />
+        </sharedRoutesGroup>
+        <sharedRoutesGroup groupName="sid04">
+          <route type="sid" name="IRMAR6A" category="CD"
+                 route="CM 130 SM 210 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD NC T SC PD BARSO T PD IRMAR" />
+          <route type="sid" name="BADOD6A" category="CD"
+                 route="CM 130 SM 210 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD NC T SC PD AMIRO T PD BADOD" />
+          <route type="sid" name="OKTET6A" category="CD"
+                 route="CM 130 SM 210 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD NC T SC PD AMIRO T PD OKTET" />
+          <route type="sid" name="BODRU6A" category="ABCD"
+                 route="CM 130 SM 210 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD NC T SC PD AMIRO T PD BODRU" />
+          <route type="sid" name="PERUS6A" category="ABCD"
+                 route="CM 130 SM 210 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD NC T SC PD AMIRO T PD PERUS" />
+          <route type="sid" name="IRMAR6C" category="AB"
+                 route="CM 70 AA 4+ FH 138 AD NIZ/8 PD MN052 T PD NIZ T PD BARSO T PD IRMAR" />
+          <route type="sid" name="OKTET6C" category="AB"
+                 route="CM 70 AA 4+ FH 138 AD NIZ/8 PD MN052 T PD NIZ T PD BARSO T PD OKTET" />
+          <route type="sid" name="BADOD6C" category="ABCD"
+                 route="CM 70 AA 4+ FH 138 AD NIZ/8 PD MN052 T PD NIZ T PD BADOD" />
+          <route type="sid" name="BASIP6A" category="AB"
+                 route="CM 70 AA 4+ FH 138 AD NIZ/8 PD MN052 T PD MN054 T PD USANO T PD TIVNO T PD BASIP" />
+          <route type="sid" name="RUBIT6A" category="CD"
+                 route="CM 100 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD MN236 T PD RESBO T PD STP T PD RUBIT" />
+          <route type="sid" name="LANKO6A" category="CD"
+                 route="CM 100 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD MN236 T PD RESBO T PD STP T PD RUBIT T PD LANKO" />
+          <route type="sid" name="TURIL6A" category="CD"
+                 route="CM 100 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD MN236 T PD RESBO T PD STP T PD RUBIT T PD TURIL" />
+          <route type="sid" name="EPOLO6A" category="CD"
+                 route="CM 100 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD MN236 T PD RESBO T PD EPOLO"/>
+          <route type="sid" name="RUBAS6A" category="ABCD"
+                 route="CM 100 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD MN236 T PD RESBO T PD RUBAS"/>
+          <route type="sid" name="RUBIT6B" category="AB"
+                 route="CM 70 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD MN234 T PD MN238 T PD RESBO T PD STP T PD RUBIT"/>
+          <route type="sid" name="LANKO6B" category="AB"
+                 route="CM 70 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD MN234 T PD MN238 T PD RESBO T PD STP T PD RUBIT T PD LANKO" />
+          <route type="sid" name="TURIL6B" category="AB"
+                 route="CM 70 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD MN234 T PD MN238 T PD RESBO T PD STP T PD RUBIT T PD TURIL" />
+          <route type="sid" name="EPOLO6B" category="AB"
+                 route="CM 70 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD MN234 T PD MN238 T PD LERMA T PD EPOLO"/>
+          <route type="sid" name="VAREK6A" category="CD"
+                 route="CM 100 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN046 T PD OMARD T PD VAREK"/>
+          <route type="sid" name="LONSU6A" category="CD"
+                 route="CM 100 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN046 T PD OMARD T PD MERLU T PD LONSU"/>
+          <route type="sid" name="SODRI6A" category="CD"
+                 route="CM 100 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN046 T PD OMARD T PD MERLU T PD SODRI"/>
+          <route type="sid" name="VAREK6B" category="AB"
+                 route="CM 70 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD MN244 T PD OMARD T PD VAREK"/>
+          <route type="sid" name="LONSU6B" category="AB"
+                 route="CM 70 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD MN244 T PD OMARD T PD MERLU T PD LONSU"/>
+          <route type="sid" name="SODRI6B" category="AB"
+                 route="CM 70 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD MN244 T PD OMARD T PD MERLU T PD SODRI"/>
+        </sharedRoutesGroup>
+        <sharedRoutesGroup groupName="sid22">
+          <route type="sid" name="IRMAR6X" category="CD"
+                 route="CM 130 PD MN222 T PD MN223 T SL 210 PD MN224 T PD MN226 T SC PD MN228 T PD BARSO T PD IRMAR" />
+          <route type="sid" name="BADOD6X" category="CD"
+                 route="CM 130 PD MN222 T PD MN223 T SL 210 PD MN224 T PD MN226 T SC PD AMIRO T PD BADOD" />
+          <route type="sid" name="OKTET6X" category="CD"
+                 route="CM 130 PD MN222 T PD MN223 T SL 210 PD MN224 T PD MN226 T SC PD AMIRO T PD OKTET" />
+          <route type="sid" name="BODRU6X" category="ABCD"
+                 route="CM 130 PD MN222 T PD MN223 T SL 210 PD MN224 T PD MN226 T SC PD AMIRO T PD BODRU" />
+          <route type="sid" name="PERUS6X" category="ABCD"
+                 route="CM 130 PD MN222 T PD MN223 T SL 210 PD MN224 T PD MN226 T SC PD AMIRO T PD PERUS" />
+          <route type="sid" name="IRMAR6Z" category="AB"
+                 route="PD MN222 T PD MN223 T PD MN246 T PD MN248 T PD NIZ T PD BARSO T PD IRMAR" />
+          <route type="sid" name="OKTET6Z" category="AB"
+                 route="PD MN222 T PD MN223 T PD MN246 T PD MN248 T PD NIZ T PD BARSO T PD OKTET" />
+          <route type="sid" name="BADOD6Z" category="AB"
+                 route="PD MN222 T PD MN223 T PD MN246 T PD MN248 T PD NIZ T PD BADOD" />
+          <route type="sid" name="BASIP6X" category="ABCD"
+                 route="CM 70 PD MN222 T PD MN223 T PD MN246 T PD MN248 T PD USANO T PD TIVNO T PD BASIP"/>
+          <route type="sid" name="RUBIT6X" category="CD"
+                 route="CM 100 PD MN222 T PD MN223 T PD MN232 T PD MN234 T PD MN236 T PD RESBO T PD STP T PD RUBIT" />
+          <route type="sid" name="LANKO6X" category="CD"
+                 route="CM 100 PD MN222 T PD MN223 T PD MN232 T PD MN234 T PD MN236 T PD RESBO T PD STP T PD RUBIT T PD LANKO" />
+          <route type="sid" name="TURIL6X" category="CD"
+                 route="CM 100 PD MN222 T PD MN223 T PD MN232 T PD MN234 T PD MN236 T PD RESBO T PD STP T PD RUBIT T PD TURIL" />
+          <route type="sid" name="EPOLO6X" category="CD"
+                 route="CM 100 PD MN222 T PD MN223 T PD MN232 T PD MN234 T PD MN236 T PD RESBO T PD EPOLO"/>
+          <route type="sid" name="RUBAS6X" category="ABCD"
+                 route="CM 100 PD MN222 T PD MN223 T PD MN232 T PD MN234 T PD MN236 T PD RESBO T PD RUBAS"/>
+          <route type="sid" name="RUBIT6Y" category="AB"
+                 route="CM 70 PD MN222 T PD MN223 T PD MN232 T PD MN234 T PD MN238 T PD RESBO T PD STP T PD RUBIT"/>
+          <route type="sid" name="LANKO6Y" category="AB"
+                 route="CM 70 PD MN222 T PD MN223 T PD MN232 T PD MN234 T PD MN238 T PD RESBO T PD STP T PD RUBIT T PD LANKO" />
+          <route type="sid" name="TURIL6Y" category="AB"
+                 route="CM 70 PD MN222 T PD MN223 T PD MN232 T PD MN234 T PD MN238 T PD RESBO T PD STP T PD RUBIT T PD TURIL" />
+          <route type="sid" name="EPOLO6Y" category="AB"
+                 route="CM 70 PD MN222 T PD MN223 T PD MN232 T PD MN234 T PD MN238 T PD LERMA T PD EPOLO"/>
+          <route type="sid" name="VAREK6X" category="CD"
+                 route="CM 100 PD MN222 T PD MN223 T PD MN232 T PD MN242 T PD OMARD T PD VAREK"/>
+          <route type="sid" name="LONSU6X" category="CD"
+                 route="CM 100 PD MN222 T PD MN223 T PD MN232 T PD MN242 T PD OMARD T PD MERLU T PD LONSU"/>
+          <route type="sid" name="SODRI6X" category="CD"
+                 route="CM 100 PD MN222 T PD MN223 T PD MN232 T PD MN242 T PD OMARD T PD MERLU T PD SODRI"/>
+          <route type="sid" name="VAREK6Y" category="AB"
+                 route="CM 70 PD MN222 T PD MN223 T PD MN232 T PD MN244 T PD OMARD T PD VAREK"/>
+          <route type="sid" name="LONSU6Y" category="AB"
+                 route="CM 70 PD MN222 T PD MN223 T PD MN232 T PD MN244 T PD OMARD T PD MERLU T PD LONSU"/>
+          <route type="sid" name="SODRI6Y" category="AB"
+                 route="CM 70 PD MN222 T PD MN223 T PD MN232 T PD MN244 T PD OMARD T PD MERLU T PD SODRI"/>
+        </sharedRoutesGroup>
+      </sharedRoutesGroups>
+      <sharedIafRoutesGroups>
+        <sharedIafRoutesGroup groupName="04">
+          <iafRoutes>
+            <route iaf="MUS" route="DM 40 PD AZR/223/22 T PD AZR/223/17 T FH 042"/>
+            <route iaf="NERAS"
+                   route="DM 40 PD AZR/117/26 T PD AZR/130/27 T PD AZR/150/27 T PD AZR/170/27 T PD AZR/190/27 T PD AZR/210/27 T PD AZR/223/17 T FH 042"/>
+          </iafRoutes>
+        </sharedIafRoutesGroup>
+        <sharedIafRoutesGroup groupName="22">
+          <iafRoutes>
+            <route iaf="NERAS" route="DM 40 PD CGS/113/25 T PD CGS/093/23 T DM 30 PD CGS/083/18 T FH 262"/>
+            <route iaf="MUS"
+                   route="DM 50 PD LUC/088/30 T DM 40 PD LUC/088/53 T PD CGS/113/23 T DM 30 PD CGS/093/23 T PD CGS/083/18 T FH 262"/>
+          </iafRoutes>
+        </sharedIafRoutesGroup>
+      </sharedIafRoutesGroups>
       <trafficDefinitions>
         <densityTraffic title="Normal traffic" useExtendedCallsigns="true" nonCommercialFlightProbability="0.05"
                         delayProbability="0.1" maxDelayInMinutesPerStep="45">

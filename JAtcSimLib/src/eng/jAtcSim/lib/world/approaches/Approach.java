@@ -2,6 +2,7 @@ package eng.jAtcSim.lib.world.approaches;
 
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
+import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.utilites.CollectionUtils;
 import eng.eSystem.utilites.NumberUtils;
 import eng.eSystem.xmlSerialization.XmlIgnore;
@@ -20,6 +21,7 @@ import eng.jAtcSim.lib.speaking.fromAtc.commands.ProceedDirectCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ThenCommand;
 import eng.jAtcSim.lib.speaking.parsing.Parser;
 import eng.jAtcSim.lib.speaking.parsing.shortBlockParser.ShortBlockParser;
+import eng.jAtcSim.lib.world.Airport;
 import eng.jAtcSim.lib.world.Navaid;
 import eng.jAtcSim.lib.world.RunwayThreshold;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
@@ -28,9 +30,7 @@ import java.util.List;
 
 public abstract class Approach {
 
-    public abstract String getTypeString();
-
-    public enum ApproachType {
+  public enum ApproachType {
     ils_I,
     ils_II,
     ils_III,
@@ -47,8 +47,9 @@ public abstract class Approach {
   private IList<IafRoute> iafRoutes = new EList<>();
   private int radial;
   private RunwayThreshold parent;
-  private boolean includeSharedIafRoutes;
   private int initialAltitude;
+  @XmlOptional
+  private String includeIafRoutesGroups = null;
 
   public static CurrentApproachInfo tryGetCurrentApproachInfo(List<Approach> apps, char category, ApproachType type, Coordinate currentPlaneLocation) {
     CurrentApproachInfo ret;
@@ -290,6 +291,8 @@ public abstract class Approach {
     }
   }
 
+  public abstract String getTypeString();
+
   public int getInitialAltitude() {
     return initialAltitude;
   }
@@ -313,17 +316,22 @@ public abstract class Approach {
   public void bind() {
     _gaCommands = parseRoute(gaRoute);
 
-    if (includeSharedIafRoutes) {
-      this.iafRoutes = new EList<>();
-      this.iafRoutes.add(this.getParent().getSharedIafRoutes());
+    if (this.includeIafRoutesGroups != null) {
+      String[] groupNames = this.includeIafRoutesGroups.split(";");
+      for (String groupName : groupNames) {
+        Airport.SharedIafRoutesGroup group = this.getParent().getParent().getParent().getSharedIafRoutesGroups().tryGetFirst(q -> q.groupName.equals(groupName));
+        if (group == null) {
+          throw new EApplicationException("Unable to find iaf-route group named " + groupName + " in airport "
+              + this.getParent().getParent().getParent().getIcao() + " required for runway approach " + this.getParent().getName() + " " + this.getTypeString() + ".");
+        }
+
+        this.iafRoutes.add(group.iafRoutes);
+      }
     }
 
-    for (IafRoute iafRoute : iafRoutes) {
-      iafRoute.bind();
-    }
+    this.iafRoutes.forEach(q -> q.bind());
 
-
-    _bind();
+    this._bind(); // bind in descendants
 
     this.geographicalRadial = (int) Math.round(
         Headings.add(this.radial,
