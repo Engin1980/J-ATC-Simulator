@@ -501,10 +501,12 @@ public class Radar {
 
   private void buildDrawnApproachesList() {
     this.drawnApproaches.clear();
-    Acc.atcTwr()
+    IList<Approach> approachesToDraw =
+      Acc.atcTwr()
             .getRunwayThresholdsInUse(TowerAtc.eDirection.arrivals)
-            .select(q->q.getHighestApproach())
-            .forEach(q->this.drawnApproaches.add(q));
+            .select(q->q.getHighestApproach());
+    approachesToDraw.remove(q->q==null);
+    this.drawnApproaches.add(approachesToDraw);
   }
 
   private void buildDrawnRoutesList() {

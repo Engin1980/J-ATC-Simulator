@@ -19,7 +19,38 @@
       <runways>
         <runway>
           <thresholds>
-            <threshold name="08R" coordinate="51 08 45.10 N 000 12 24.59 W" initialDepartureAltitude="4000">
+            <threshold name="08R" coordinate="51 08 45.10 N 000 12 24.59 W" initialDepartureAltitude="4000" includeRoutesGroups="stars">
+              <routes>
+                <route type="sid" name="LAM1Z"
+                       route="AL 40 PD KKE02 T PD KKE12 T AL 50 PD SUNAV T PD KKE35 T PD KKN43 T AL 60 PD KKN48 T PD LAM"/>
+                <route type="sid" name="BIG2Z"
+                       route="AL 40 PD KKE04 T PD KKE10 T AL 50 PD KKE17 T SL 210 AL 60 PD KKE23 T PD BIG"/>
+                <route type="sid" name="CLN2Z"
+                       route="AL 40 PD KKE04 T PD KKE10 T AL 50 PD KKE17 T PD KKE25 T PD DET T AL 60 PD KKN52 T PD DAGGA T PD CLN"/>
+                <route type="sid" name="KENET1Z"
+                       route="SL 220 AL 40 PD KKE05 T PD KKN09 T SC PD KKW19 T PD KKW26 T PD KKW44 T PD KENET"/>
+                <route type="sid" name="SAM3Z"
+                       route="SL 220 AL 40 PD KKE05 T PD KKN09 T SC PD KKW19 T PD KKW26 T PD SAM"/>
+                <route type="sid" name="SFD4Z"
+                       route="SL 220 AL 40 PD KKE03 T SC PD KKS08 T PD KKS12 T AL 50 PD KKS16 T AL 60 PD KKS22 T PD SFD"/>
+                <route type="sid" name="ODVIK2Z"
+                       route="AL 40 PD KKE04 T PD KKE10 T AL 50 PD KKE17 T AL 60 PD ODVIK"/>
+              </routes>
+              <approaches>
+                <gnssApproach gaRoute="CM 30 AA 20+ TR 179" radial="078" includeIafRoutesGroups="26L" daA="700"
+                              daB="700"
+                              daC="700" daD="700" initialAltitude="3000"/>
+                <ilsApproach gaRoute="CM 30 AA 20+ TR 179" radial="078" includeIafRoutesGroups="26L"
+                             initialAltitude="3000">
+                  <categories>
+                    <category type="I" daA="336" daB="345" daC="357" daD="370"/>
+                    <category type="II" daA="244" daB="255" daC="268" daD="280"/>
+                  </categories>
+                </ilsApproach>
+              </approaches>
+            </threshold>
+            <threshold name="26L" coordinate="51 09 02.43 N 000 10 18.93 W" initialDepartureAltitude="4000" includeRoutesGroups="stars"
+                       preferred="true">
               <routes>
                 <route type="sid" name="BOGNA1X"
                        route="SL 220 AL 40 PD KKW06 T PD KKW08 T PD KKS11 T AL 50 SC PD KKS17 T AL 60 PD KKS20 T PD KKS25 T PD BOGNA"/>
@@ -47,38 +78,8 @@
                        route="SL 220 AL 40 PD KKW04 T PD KKS06 T SC PD KKS09 T PD KKS14 T AL 50 PD MAY T PD KKS36 T PD DET T PD DAGGA T PD CLN"/>
               </routes>
               <approaches>
-                <gnssApproach gaRoute="CM 30 AA 20+ TR 179" radial="078" includeIafRoutesGroups="26L" daA="700"
-                              daB="700"
-                              daC="700" daD="700" initialAltitude="3000"/>
-                <ilsApproach gaRoute="CM 30 AA 20+ TR 179" radial="078" includeIafRoutesGroups="26L"
-                             initialAltitude="3000">
-                  <categories>
-                    <category type="I" daA="336" daB="345" daC="357" daD="370"/>
-                    <category type="II" daA="244" daB="255" daC="268" daD="280"/>
-                  </categories>
-                </ilsApproach>
-              </approaches>
-            </threshold>
-            <threshold name="26L" coordinate="51 09 02.43 N 000 10 18.93 W" initialDepartureAltitude="4000"
-                       preferred="true">
-              <routes>
-                <route type="sid" name="LAM1Z"
-                       route="AL 40 PD KKE02 T PD KKE12 T AL 50 PD SUNAV T PD KKE35 T PD KKN43 T AL 60 PD KKN48 T PD LAM"/>
-                <route type="sid" name="BIG2Z"
-                       route="AL 40 PD KKE04 T PD KKE10 T AL 50 PD KKE17 T SL 210 AL 60 PD KKE23 T PD BIG"/>
-                <route type="sid" name="CLN2Z"
-                       route="AL 40 PD KKE04 T PD KKE10 T AL 50 PD KKE17 T PD KKE25 T PD DET T AL 60 PD KKN52 T PD DAGGA T PD CLN"/>
-                <route type="sid" name="KENET1Z"
-                       route="SL 220 AL 40 PD KKE05 T PD KKN09 T SC PD KKW19 T PD KKW26 T PD KKW44 T PD KENET"/>
-                <route type="sid" name="SAM3Z"
-                       route="SL 220 AL 40 PD KKE05 T PD KKN09 T SC PD KKW19 T PD KKW26 T PD SAM"/>
-                <route type="sid" name="SFD4Z"
-                       route="SL 220 AL 40 PD KKE03 T SC PD KKS08 T PD KKS12 T AL 50 PD KKS16 T AL 60 PD KKS22 T PD SFD"/>
-                <route type="sid" name="ODVIK2Z"
-                       route="AL 40 PD KKE04 T PD KKE10 T AL 50 PD KKE17 T AL 60 PD ODVIK"/>
-              </routes>
-              <approaches>
-                <ilsApproach gaRoute="CM 30 AA 20+ FH 179" radial="258" includeIafRoutesGroups="08R" initialAltitude="2000">
+                <ilsApproach gaRoute="CM 30 AA 20+ FH 179" radial="258" includeIafRoutesGroups="08R"
+                             initialAltitude="2000">
                   <categories>
                     <category type="I" daA="335" daB="344" daC="356" daD="370"/>
                     <category type="II" daA="245" daB="255" daC="268" daD="281"/>
@@ -116,26 +117,28 @@
       </holds>
       <sharedRoutesGroups>
         <sharedRoutesGroup groupName="stars">
-          <route type="star" name="TELTU1G" entryFL="220"
-                 route="PD TELTU T SL 220 PD SFD T PD TIMBA T H TIMBA"/>
-          <route type="star" name="AMDUT1G" entryFL="220"
-                 route="PD AMDUT T SL 220 PD SFD T PD WILLO T H WILLO"/>
-          <route type="star" name="ARNUN1G" entryFL="220"
-                 route="PD ARNUN T PD HASTY T SL 220 PD SFD T PD WILLO T H WILLO"/>
-          <route type="star" name="OTMET1G" entryFL="220"
-                 route="PD OTMET T PD SOKDU T PD NEDUL T SL 250 PD TELTU T SL 220 PD HOLLY T PD WILLO T H WILLO"/>
-          <route type="star" name="VASUX1G" entryFL="220"
-                 route="PD VASUX T PD DISVO T SL 250 PD TELTU T SL 220 PD HOLLY T PD WILLO T H WILLO"/>
-          <route type="star" name="TIMBA2G" entryFL="220" mainFix="NEVIL"
-                 route="PD NEVIL T PD OSPOL T PD NETVU T PD ELDAX T PD AMDUT T SL 250 PD KKE64 T PD TIMBA T H TIMBA"/>
-          <route type="star" name="TIMBA4B" mainFix="KUNAV"
-                 route="PD KUNAV T PD AMDUT T SL 250 PD KKE64 T PD TIMBA T H TIMBA"/>
-          <route type="star" name="TIMBA3F" mainFix="KONAN"
-                 route="PD KONAN T PD ARNUN T SL 250 PD KKE63 T PD LARCK T PD TIMBA T H TIMBA"/>
-          <route type="star" name="TIMBA1J" mainFix="ERING"
-                 route="PD ERING T PD ABTUM T PD ARNUN T SL 250 PD KKE63 T PD LARCK T PD TIMBA T H TIMBA"/>
-          <route type="star" name="TIMBA1K" mainFix="TEBRA"
-                 route="PD TEBRA T PD ABTUM T PD ARNUN T SL 250 PD KKE63 T PD LARCK T PD TIMBA T H TIMBA"/>
+          <routes>
+            <route type="star" name="TELTU1G" entryFL="220"
+                   route="PD TELTU T SL 220 PD SFD T PD TIMBA T H TIMBA"/>
+            <route type="star" name="AMDUT1G" entryFL="220"
+                   route="PD AMDUT T SL 220 PD SFD T PD WILLO T H WILLO"/>
+            <route type="star" name="ARNUN1G" entryFL="220"
+                   route="PD ARNUN T PD HASTY T SL 220 PD SFD T PD WILLO T H WILLO"/>
+            <route type="star" name="OTMET1G" entryFL="220"
+                   route="PD OTMET T PD SOKDU T PD NEDUL T SL 250 PD TELTU T SL 220 PD HOLLY T PD WILLO T H WILLO"/>
+            <route type="star" name="VASUX1G" entryFL="220"
+                   route="PD VASUX T PD DISVO T SL 250 PD TELTU T SL 220 PD HOLLY T PD WILLO T H WILLO"/>
+            <route type="star" name="TIMBA2G" entryFL="220" mainFix="NEVIL"
+                   route="PD NEVIL T PD OSPOL T PD NETVU T PD ELDAX T PD AMDUT T SL 250 PD KKE64 T PD TIMBA T H TIMBA"/>
+            <route type="star" name="TIMBA4B" mainFix="KUNAV"
+                   route="PD KUNAV T PD AMDUT T SL 250 PD KKE64 T PD TIMBA T H TIMBA"/>
+            <route type="star" name="TIMBA3F" mainFix="KONAN"
+                   route="PD KONAN T PD ARNUN T SL 250 PD KKE63 T PD LARCK T PD TIMBA T H TIMBA"/>
+            <route type="star" name="TIMBA1J" mainFix="ERING"
+                   route="PD ERING T PD ABTUM T PD ARNUN T SL 250 PD KKE63 T PD LARCK T PD TIMBA T H TIMBA"/>
+            <route type="star" name="TIMBA1K" mainFix="TEBRA"
+                   route="PD TEBRA T PD ABTUM T PD ARNUN T SL 250 PD KKE63 T PD LARCK T PD TIMBA T H TIMBA"/>
+          </routes>
         </sharedRoutesGroup>
       </sharedRoutesGroups>
       <sharedIafRoutesGroups>
@@ -268,95 +271,95 @@
   </airports>
   <navaids>
     <!-- navaids for SIDs & STARs extracted from charts -->
-    <navaid name="TUNBY" type="fix" coordinate="511008.00N 0001929.00E"/>
-    <navaid name="ABTUM" type="fix" coordinate="512603.66N 0012228.98E"/>
-    <navaid name="ADMAG" type="fix" coordinate="511401.91N 0002933.64E"/>
-    <navaid name="AMDUT" type="fix" coordinate="504027.90N 0004746.38E"/>
-    <navaid name="ARNUN" type="fix" coordinate="510325.98N 0005552.98E"/>
-    <navaid name="BOGNA" type="fix" coordinate="504207.00N 0001506.00W"/>
-    <navaid name="DAGGA" type="fix" coordinate="514919.00N 0004739.00E"/>
-    <navaid name="DISVO" type="fix" coordinate="503931.38N 0010257.16W"/>
-    <navaid name="ELDAX" type="fix" coordinate="502918.36N 0003930.42E"/>
-    <navaid name="ELDER" type="fix" coordinate="503948.10N 0012013.93W"/>
-    <navaid name="ERING" type="fix" coordinate="513526.45N 0013643.00E"/>
-    <navaid name="HARDY" type="fix" coordinate="502816.00N 0002928.00E"/>
-    <navaid name="HASTY" type="fix" coordinate="504342.46N 0003200.37E"/>
-    <navaid name="HOLLY" type="fix" coordinate="505312.18N 0000542.23W"/>
-    <navaid name="KENET" type="fix" coordinate="513114.00N 0012718.00W"/>
-    <navaid name="KKE02" type="fixMinor" coordinate="510953.05N 0000410.13W"/>
-    <navaid name="KKE03" type="fixMinor" coordinate="510958.00N 0000334.10W"/>
-    <navaid name="KKE04" type="fixMinor" coordinate="511008.38N 0000218.83W"/>
-    <navaid name="KKE05" type="fixMinor" coordinate="511005.90N 0000235.70W"/>
-    <navaid name="KKE09" type="fixMinor" coordinate="511143.92N 0001223.92W"/>
-    <navaid name="KKE10" type="fixMinor" coordinate="510955.93N 0000909.88E"/>
-    <navaid name="KKE11" type="fixMinor" coordinate="511209.71N 0000917.62W"/>
-    <navaid name="KKE12" type="fixMinor" coordinate="511459.25N 0000624.07E"/>
-    <navaid name="KKE15" type="fixMinor" coordinate="511250.31N 0000423.12W"/>
-    <navaid name="KKE17" type="fixMinor" coordinate="510957.12N 0001937.59E"/>
-    <navaid name="KKE23" type="fixMinor" coordinate="510957.40N 0002909.33E"/>
-    <navaid name="KKE25" type="fixMinor" coordinate="510957.30N 0003244.84E"/>
-    <navaid name="KKE35" type="fixMinor" coordinate="511659.04N 0002316.22E"/>
-    <navaid name="KKE38" type="fixMinor" coordinate="510948.83N 0002550.71E"/>
-    <navaid name="KKE42" type="fixMinor" coordinate="511337.30N 0003406.70E"/>
-    <navaid name="KKE63" type="fixMinor" coordinate="505856.70N 0004051.78E"/>
-    <navaid name="KKE64" type="fixMinor" coordinate="504915.77N 0003030.52E"/>
-    <navaid name="KKN09" type="fixMinor" coordinate="511353.10N 0000355.30W"/>
-    <navaid name="KKN43" type="fixMinor" coordinate="512453.61N 0001809.13E"/>
-    <navaid name="KKN48" type="fixMinor" coordinate="512931.14N 0001508.68E"/>
-    <navaid name="KKN52" type="fixMinor" coordinate="512306.00N 0003739.40E"/>
-    <navaid name="KKS06" type="fixMinor" coordinate="510422.79N 0001744.35W"/>
-    <navaid name="KKS08" type="fixMinor" coordinate="510544.80N 0000209.20W"/>
-    <navaid name="KKS09" type="fixMinor" coordinate="510347.42N 0001043.34W"/>
-    <navaid name="KKS11" type="fixMinor" coordinate="510442.43N 0002505.76W"/>
-    <navaid name="KKS12" type="fixMinor" coordinate="510155.10N 0000020.40W"/>
-    <navaid name="KKS13" type="fixMinor" coordinate="510205.06N 0002223.13W"/>
-    <navaid name="KKS14" type="fixMinor" coordinate="510311.65N 0000652.24W"/>
-    <navaid name="KKS16" type="fixMinor" coordinate="505805.21N 0000128.29E"/>
-    <navaid name="KKS17" type="fixMinor" coordinate="510022.73N 0002432.75W"/>
-    <navaid name="KKS19" type="fixMinor" coordinate="505729.42N 0001402.01W"/>
-    <navaid name="KKS20" type="fixMinor" coordinate="505524.03N 0002354.89W"/>
-    <navaid name="KKS21" type="fixMinor" coordinate="505610.56N 0001139.14W"/>
-    <navaid name="KKS22" type="fixMinor" coordinate="505220.70N 0000410.60E"/>
-    <navaid name="KKS25" type="fixMinor" coordinate="504958.32N 0002313.74W"/>
-    <navaid name="KKS33" type="fixMinor" coordinate="510327.27N 0002657.12E"/>
-    <navaid name="KKS36" type="fixMinor" coordinate="510503.33N 0003055.89E"/>
-    <navaid name="KKW02" type="fixMinor" coordinate="510815.56N 0001558.77W"/>
-    <navaid name="KKW04" type="fixMinor" coordinate="510750.70N 0001857.30W"/>
-    <navaid name="KKW06" type="fixMinor" coordinate="510726.09N 0002153.73W"/>
-    <navaid name="KKW07" type="fixMinor" coordinate="510717.20N 0002300.00W"/>
-    <navaid name="KKW08" type="fixMinor" coordinate="510656.84N 0002522.88W"/>
-    <navaid name="KKW09" type="fixMinor" coordinate="510654.30N 0002544.30W"/>
-    <navaid name="KKW10" type="fixMinor" coordinate="510648.64N 0002621.35W"/>
-    <navaid name="KKW11" type="fixMinor" coordinate="510338.83N 0002514.22W"/>
-    <navaid name="KKW19" type="fixMinor" coordinate="511158.00N 0002034.30W"/>
-    <navaid name="KKW26" type="fixMinor" coordinate="511028.90N 0003156.40W"/>
-    <navaid name="KKW28" type="fixMinor" coordinate="510052.20N 0005501.48W"/>
-    <navaid name="KKW44" type="fixMinor" coordinate="510332.85N 0005750.20W"/>
-    <navaid name="KONAN" type="fix" coordinate="510750.75N 0020000.00E"/>
-    <navaid name="KUNAV" type="fix" coordinate="503054.00N 0010356.00E"/>
-    <navaid name="LARCK" type="fix" coordinate="505441.83N 0002647.93E"/>
-    <navaid name="NEDUL" type="fix" coordinate="503958.00N 0013251.86W"/>
-    <navaid name="NETVU" type="fix" coordinate="502445.00N 0002854.00E"/>
-    <navaid name="NEVIL" type="fix" coordinate="500000.00N 0002205.64W"/>
-    <navaid name="ODVIK" type="fix" coordinate="510957.40N 0002909.33E"/>
-    <navaid name="OSPOL" type="fix" coordinate="500900.00N 0001107.84W"/>
-    <navaid name="OTMET" type="fix" coordinate="504055.06N 0023053.37W"/>
-    <navaid name="SOKDU" type="fix" coordinate="503939.22N 0020133.06W"/>
-    <navaid name="SUNAV" type="fix" coordinate="511536.90N 0001139.80E"/>
-    <navaid name="TEBRA" type="fix" coordinate="512920.30N 0013643.00E"/>
-    <navaid name="TELTU" type="fix" coordinate="504839.92N 0004517.69W"/>
-    <navaid name="TIMBA" type="fix" coordinate="505643.99N 0001542.25E"/>
-    <navaid name="VASUX" type="fix" coordinate="503009.23N 0011516.99W"/>
-    <navaid name="WILLO" type="fix" coordinate="505905.88N 0001130.30W"/>
-    <navaid name="WIZAD" type="fix" coordinate="510700.00N 0005711.00E"/>
+    <navaid name="TUNBY" type="fix" coordinate="51 10 08.00 N 000 19 29.00 E"/>
+    <navaid name="ABTUM" type="fix" coordinate="51 26 03.66 N 001 22 28.98 E"/>
+    <navaid name="ADMAG" type="fix" coordinate="51 14 01.91 N 000 29 33.64 E"/>
+    <navaid name="AMDUT" type="fix" coordinate="50 40 27.90 N 000 47 46.38 E"/>
+    <navaid name="ARNUN" type="fix" coordinate="51 03 25.98 N 000 55 52.98 E"/>
+    <navaid name="BOGNA" type="fix" coordinate="50 42 07.00 N 000 15 06.00 W"/>
+    <navaid name="DAGGA" type="fix" coordinate="51 49 19.00 N 000 47 39.00 E"/>
+    <navaid name="DISVO" type="fix" coordinate="50 39 31.38 N 001 02 57.16 W"/>
+    <navaid name="ELDAX" type="fix" coordinate="50 29 18.36 N 000 39 30.42 E"/>
+    <navaid name="ELDER" type="fix" coordinate="50 39 48.10 N 001 20 13.93 W"/>
+    <navaid name="ERING" type="fix" coordinate="51 35 26.45 N 001 36 43.00 E"/>
+    <navaid name="HARDY" type="fix" coordinate="50 28 16.00 N 000 29 28.00 E"/>
+    <navaid name="HASTY" type="fix" coordinate="50 43 42.46 N 000 32 00.37 E"/>
+    <navaid name="HOLLY" type="fix" coordinate="50 53 12.18 N 000 05 42.23 W"/>
+    <navaid name="KENET" type="fix" coordinate="51 31 14.00 N 001 27 18.00 W"/>
+    <navaid name="KKE02" type="fixMinor" coordinate="51 09 53.05 N 000 04 10.13 W"/>
+    <navaid name="KKE03" type="fixMinor" coordinate="51 09 58.00 N 000 03 34.10 W"/>
+    <navaid name="KKE04" type="fixMinor" coordinate="51 10 08.38 N 000 02 18.83 W"/>
+    <navaid name="KKE05" type="fixMinor" coordinate="51 10 05.90 N 000 02 35.70 W"/>
+    <navaid name="KKE09" type="fixMinor" coordinate="51 11 43.92 N 000 12 23.92 W"/>
+    <navaid name="KKE10" type="fixMinor" coordinate="51 09 55.93 N 000 09 09.88 E"/>
+    <navaid name="KKE11" type="fixMinor" coordinate="51 12 09.71 N 000 09 17.62 W"/>
+    <navaid name="KKE12" type="fixMinor" coordinate="51 14 59.25 N 000 06 24.07 E"/>
+    <navaid name="KKE15" type="fixMinor" coordinate="51 12 50.31 N 000 04 23.12 W"/>
+    <navaid name="KKE17" type="fixMinor" coordinate="51 09 57.12 N 000 19 37.59 E"/>
+    <navaid name="KKE23" type="fixMinor" coordinate="51 09 57.40 N 000 29 09.33 E"/>
+    <navaid name="KKE25" type="fixMinor" coordinate="51 09 57.30 N 000 32 44.84 E"/>
+    <navaid name="KKE35" type="fixMinor" coordinate="51 16 59.04 N 000 23 16.22 E"/>
+    <navaid name="KKE38" type="fixMinor" coordinate="51 09 48.83 N 000 25 50.71 E"/>
+    <navaid name="KKE42" type="fixMinor" coordinate="51 13 37.30 N 000 34 06.70 E"/>
+    <navaid name="KKE63" type="fixMinor" coordinate="50 58 56.70 N 000 40 51.78 E"/>
+    <navaid name="KKE64" type="fixMinor" coordinate="50 49 15.77 N 000 30 30.52 E"/>
+    <navaid name="KKN09" type="fixMinor" coordinate="51 13 53.10 N 000 03 55.30 W"/>
+    <navaid name="KKN43" type="fixMinor" coordinate="51 24 53.61 N 000 18 09.13 E"/>
+    <navaid name="KKN48" type="fixMinor" coordinate="51 29 31.14 N 000 15 08.68 E"/>
+    <navaid name="KKN52" type="fixMinor" coordinate="51 23 06.00 N 000 37 39.40 E"/>
+    <navaid name="KKS06" type="fixMinor" coordinate="51 04 22.79 N 000 17 44.35 W"/>
+    <navaid name="KKS08" type="fixMinor" coordinate="51 05 44.80 N 000 02 09.20 W"/>
+    <navaid name="KKS09" type="fixMinor" coordinate="51 03 47.42 N 000 10 43.34 W"/>
+    <navaid name="KKS11" type="fixMinor" coordinate="51 04 42.43 N 000 25 05.76 W"/>
+    <navaid name="KKS12" type="fixMinor" coordinate="51 01 55.10 N 000 00 20.40 W"/>
+    <navaid name="KKS13" type="fixMinor" coordinate="51 02 05.06 N 000 22 23.13 W"/>
+    <navaid name="KKS14" type="fixMinor" coordinate="51 03 11.65 N 000 06 52.24 W"/>
+    <navaid name="KKS16" type="fixMinor" coordinate="50 58 05.21 N 000 01 28.29 E"/>
+    <navaid name="KKS17" type="fixMinor" coordinate="51 00 22.73 N 000 24 32.75 W"/>
+    <navaid name="KKS19" type="fixMinor" coordinate="50 57 29.42 N 000 14 02.01 W"/>
+    <navaid name="KKS20" type="fixMinor" coordinate="50 55 24.03 N 000 23 54.89 W"/>
+    <navaid name="KKS21" type="fixMinor" coordinate="50 56 10.56 N 000 11 39.14 W"/>
+    <navaid name="KKS22" type="fixMinor" coordinate="50 52 20.70 N 000 04 10.60 E"/>
+    <navaid name="KKS25" type="fixMinor" coordinate="50 49 58.32 N 000 23 13.74 W"/>
+    <navaid name="KKS33" type="fixMinor" coordinate="51 03 27.27 N 000 26 57.12 E"/>
+    <navaid name="KKS36" type="fixMinor" coordinate="51 05 03.33 N 000 30 55.89 E"/>
+    <navaid name="KKW02" type="fixMinor" coordinate="51 08 15.56 N 000 15 58.77 W"/>
+    <navaid name="KKW04" type="fixMinor" coordinate="51 07 50.70 N 000 18 57.30 W"/>
+    <navaid name="KKW06" type="fixMinor" coordinate="51 07 26.09 N 000 21 53.73 W"/>
+    <navaid name="KKW07" type="fixMinor" coordinate="51 07 17.20 N 000 23 00.00 W"/>
+    <navaid name="KKW08" type="fixMinor" coordinate="51 06 56.84 N 000 25 22.88 W"/>
+    <navaid name="KKW09" type="fixMinor" coordinate="51 06 54.30 N 000 25 44.30 W"/>
+    <navaid name="KKW10" type="fixMinor" coordinate="51 06 48.64 N 000 26 21.35 W"/>
+    <navaid name="KKW11" type="fixMinor" coordinate="51 03 38.83 N 000 25 14.22 W"/>
+    <navaid name="KKW19" type="fixMinor" coordinate="51 11 58.00 N 000 20 34.30 W"/>
+    <navaid name="KKW26" type="fixMinor" coordinate="51 10 28.90 N 000 31 56.40 W"/>
+    <navaid name="KKW28" type="fixMinor" coordinate="51 00 52.20 N 000 55 01.48 W"/>
+    <navaid name="KKW44" type="fixMinor" coordinate="51 03 32.85 N 000 57 50.20 W"/>
+    <navaid name="KONAN" type="fix" coordinate="51 07 50.75 N 002 00 00.00 E"/>
+    <navaid name="KUNAV" type="fix" coordinate="50 30 54.00 N 001 03 56.00 E"/>
+    <navaid name="LARCK" type="fix" coordinate="50 54 41.83 N 000 26 47.93 E"/>
+    <navaid name="NEDUL" type="fix" coordinate="50 39 58.00 N 001 32 51.86 W"/>
+    <navaid name="NETVU" type="fix" coordinate="50 24 45.00 N 000 28 54.00 E"/>
+    <navaid name="NEVIL" type="fix" coordinate="50 00 00.00 N 000 22 05.64 W"/>
+    <navaid name="ODVIK" type="fix" coordinate="51 09 57.40 N 000 29 09.33 E"/>
+    <navaid name="OSPOL" type="fix" coordinate="50 09 00.00 N 000 11 07.84 W"/>
+    <navaid name="OTMET" type="fix" coordinate="50 40 55.06 N 002 30 53.37 W"/>
+    <navaid name="SOKDU" type="fix" coordinate="50 39 39.22 N 002 01 33.06 W"/>
+    <navaid name="SUNAV" type="fix" coordinate="51 15 36.90 N 000 11 39.80 E"/>
+    <navaid name="TEBRA" type="fix" coordinate="51 29 20.30 N 001 36 43.00 E"/>
+    <navaid name="TELTU" type="fix" coordinate="50 48 39.92 N 000 45 17.69 W"/>
+    <navaid name="TIMBA" type="fix" coordinate="50 56 43.99 N 000 15 42.25 E"/>
+    <navaid name="VASUX" type="fix" coordinate="50 30 09.23 N 001 15 16.99 W"/>
+    <navaid name="WILLO" type="fix" coordinate="50 59 05.88 N 000 11 30.30 W"/>
+    <navaid name="WIZAD" type="fix" coordinate="51 07 00.00 N 000 57 11.00 E"/>
     <navaid name="DET31" type="fixMinor" coordinate="51.20582975921482 -0.2102778551925172"/>
     <navaid name="DET29" type="fixMinor" coordinate="51.2205543491044 -0.1605556296941767"/>
     <navaid name="DVR33" type="fixMinor" coordinate="51.21809599856 0.60466674227"/>
     <navaid name="NEXOX" type="fix" coordinate="51 15 01 N 000 11 38 E"/>
-    <navaid name="BILNI" type="fix" coordinate="504031.08N 0020732.56W"/>
-    <navaid name="DOMUT" type="fix" coordinate="501542.57N 0014008.65W"/>
-    <navaid name="GOKTU" type="fix" coordinate="501504.87N 0012244.57W"/>
-    <navaid name="KATHY" type="fix" coordinate="503113.59N 0012000.23W"/>
+    <navaid name="BILNI" type="fix" coordinate="50 40 31.08 N 002 07 32.56 W"/>
+    <navaid name="DOMUT" type="fix" coordinate="50 15 42.57 N 001 40 08.65 W"/>
+    <navaid name="GOKTU" type="fix" coordinate="50 15 04.87 N 001 22 44.57 W"/>
+    <navaid name="KATHY" type="fix" coordinate="50 31 13.59 N 001 20 00.23 W"/>
 
     <!-- https://gitlab.asap.dsna.fr/4ME/4me.env/raw/master/4Flight/LFEE/POINTS.SVG -->
     <navaid name="OX" type="ndb" coordinate="51.83333221295327 -1.3233339227905"/>
@@ -2411,26 +2414,26 @@
 
     <border name="London Gatwick CTR" type="tma" enclosed="true" minAltitude="0" maxAltitude="2000">
       <points>
-        <point coordinate="511258N 0001129W"/>
-        <point coordinate="511200N 0000341E"/>
-        <arc coordinate="510853N 0001125W" direction="clockwise"/>
-        <point coordinate="510550N 0000342E"/>
-        <point coordinate="510240N 0001923W"/>
-        <arc coordinate="510853N 0001125W" direction="clockwise"/>
-        <point coordinate="511118N 0002332W"/>
-        <point coordinate="511258N 0001129W"/>
+        <point coordinate="51 12 58 N 000 11 29 W"/>
+        <point coordinate="51 12 00 N 000 03 41 E"/>
+        <arc coordinate="51 08 53 N 000 11 25 W" direction="clockwise"/>
+        <point coordinate="51 05 50 N 000 03 42 E"/>
+        <point coordinate="51 02 40 N 000 19 23 W"/>
+        <arc coordinate="51 08 53 N 000 11 25 W" direction="clockwise"/>
+        <point coordinate="51 11 18 N 000 23 32 W"/>
+        <point coordinate="51 12 58 N 000 11 29 W"/>
       </points>
     </border>
 
     <border name="London Gatwick CTA" type="tma" enclosed="true" minAltitude="1500" maxAltitude="2500">
       <points>
-        <point coordinate="510100N 0000458E"/>
-        <point coordinate="510100N 0002545W"/>
-        <arc coordinate="510853N 0001125W" direction="clockwise"/>
-        <point coordinate="511124N 0003003W"/>
-        <point coordinate="511618N 0000533E"/>
-        <arc coordinate="510853N 0001125W" direction="clockwise"/>
-        <point coordinate="510100N 0000458E"/>
+        <point coordinate="51 01 00 N 000 04 58 E"/>
+        <point coordinate="51 01 00 N 000 25 45 W"/>
+        <arc coordinate="51 08 53 N 000 11 25 W" direction="clockwise"/>
+        <point coordinate="51 11 24 N 000 30 03 W"/>
+        <point coordinate="51 16 18 N 000 05 33 E"/>
+        <arc coordinate="51 08 53 N 000 11 25 W" direction="clockwise"/>
+        <point coordinate="51 01 00 N 000 04 58 E"/>
       </points>
     </border>
 

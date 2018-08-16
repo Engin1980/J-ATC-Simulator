@@ -168,7 +168,13 @@
             <xs:element name="sharedRoutesGroup" minOccurs="1" maxOccurs="unbounded">
               <xs:complexType>
                 <xs:sequence>
-                  <xs:element name="route" type="route" minOccurs="1" maxOccurs="unbounded" />
+                  <xs:element name="routes" minOccurs="1" maxOccurs="1">
+                    <xs:complexType>
+                      <xs:sequence>
+                        <xs:element name="route" type="route" minOccurs="1" maxOccurs="unbounded" />
+                      </xs:sequence>
+                    </xs:complexType>
+                  </xs:element>
                 </xs:sequence>
                 <xs:attribute name="groupName" type="groupNames" use="required" />
               </xs:complexType>
