@@ -7,6 +7,7 @@ import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.ERuntimeException;
 import eng.eSystem.exceptions.EXmlException;
 import eng.jAtcSim.lib.global.ETime;
+import eng.jAtcSim.lib.global.logging.ApplicationLog;
 import eng.jAtcSim.lib.global.sources.*;
 import eng.jAtcSim.lib.serialization.LoadSave;
 import eng.jAtcSim.lib.traffic.Traffic;
@@ -47,33 +48,33 @@ public class Game {
   public static Game create(GameStartupInfo gsi) {
     Game g = new Game();
 
-    System.out.println("* Loading area");
+    Acc.log().writeLine(ApplicationLog.eType.info, "Loading area");
     g.areaXmlSource = new AreaXmlSource(gsi.areaXmlFile);
     g.areaXmlSource.load();
     g.areaXmlSource.init(gsi.icao);
 
-    System.out.println("* Loading plane types");
+    Acc.log().writeLine(ApplicationLog.eType.info, "Loading plane types");
     g.airplaneTypesXmlSource = new AirplaneTypesXmlSource(gsi.planesXmlFile);
     g.airplaneTypesXmlSource.load();
     g.airplaneTypesXmlSource.init();
 
-    System.out.println("* Loading fleets");
+    Acc.log().writeLine(ApplicationLog.eType.info, "Loading fleets");
     g.fleetsXmlSource = new FleetsXmlSource(gsi.fleetsXmlFile);
     g.fleetsXmlSource.load();
     g.fleetsXmlSource.init(g.airplaneTypesXmlSource.getContent());
 
-    System.out.println("* Loading traffic");
+    Acc.log().writeLine(ApplicationLog.eType.info, "Loading traffic");
     g.trafficXmlSource = new TrafficXmlSource(gsi.trafficXmlFile);
     g.trafficXmlSource.load();
     g.trafficXmlSource.init(g.areaXmlSource.getActiveAirport(), gsi.specificTraffic);
 
-    System.out.println("* Initializing weather");
+    Acc.log().writeLine(ApplicationLog.eType.info, "Initializing weather");
     g.weatherSource = new WeatherSource(
         gsi.weatherProviderType,
         g.areaXmlSource.getActiveAirport().getIcao());
     g.weatherSource.init(gsi.initialWeather);
 
-    System.out.println("* Generating traffic");
+    Acc.log().writeLine(ApplicationLog.eType.info, "Generating traffic");
     switch (gsi.trafficSourceType) {
       case activeAirportTraffic:
         g.trafficXmlSource.setActiveTraffic(gsi.trafficSourceType, gsi.lookForTrafficTitle);
@@ -88,7 +89,7 @@ public class Game {
     TrafficManager.TrafficManagerSettings tms = new TrafficManager.TrafficManagerSettings(
         gsi.allowTrafficDelays, gsi.maxTrafficPlanes, gsi.trafficDensityPercentage);
 
-    System.out.println("* Creating simulation");
+    Acc.log().writeLine(ApplicationLog.eType.info, "Creating simulatio");
     g.simulation = new Simulation(
         g.areaXmlSource.getContent(), g.airplaneTypesXmlSource.getContent(), g.fleetsXmlSource.getContent(), g.trafficXmlSource.getActiveTraffic(),
         g.areaXmlSource.getActiveAirport(),
@@ -127,12 +128,6 @@ public class Game {
 
     ret.fleetsXmlSource.load();
     ret.fleetsXmlSource.init(ret.airplaneTypesXmlSource.getContent());
-
-    // does not need anything, everything is already loaded
-//    Traffic loadedSpecificTraffic = ret.trafficXmlSource.getSpecificTraffic();
-//    ret.trafficXmlSource.load();
-//    ret.trafficXmlSource.init(ret.areaXmlSource.getActiveAirport(), loadedSpecificTraffic);
-//    ret.trafficXmlSource.setActiveTraffic(TrafficXmlSource.TrafficSource.specificTraffic, null);
 
     ret.weatherSource.init(ret.weatherSource.getWeather());
 

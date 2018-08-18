@@ -72,7 +72,7 @@ public class JAtcSim {
   }
 
   public static void loadSimulation(StartupSettings startupSettings, String xmlFileName) {
-    System.out.println("* Loading the simulation");
+    Acc.log().writeLine(ApplicationLog.eType.info, "Loading saved simulation game");
 
     IMap<String, Object> map = new EMap<>();
     Game g = Game.load(xmlFileName, map);
@@ -109,7 +109,7 @@ public class JAtcSim {
       throw new EApplicationException("Failed to normalize or save default settings.", ex);
     }
 
-    System.out.println("* Creating the simulation");
+    Acc.log().writeLine(ApplicationLog.eType.info, "Starting new simulation game");
 
     Game.GameStartupInfo gsi = new Game.GameStartupInfo();
     gsi.areaXmlFile = startupSettings.files.areaXmlFile;
@@ -160,11 +160,11 @@ public class JAtcSim {
       throw new EApplicationException("Some element in source XML files is not unique. Some of the input XML files is not valid.", ex);
     }
 
-    System.out.println("* Initializing sound environment");
+    Acc.log().writeLine(ApplicationLog.eType.info, "Initializing sound environment");
     // sound
     SoundManager.init(appSettings.soundFolder.toString());
 
-    System.out.println("* Starting a GUI");
+    Acc.log().writeLine(ApplicationLog.eType.info, "Starting a GUI");
     // starting pack & simulation
     String packType = startupSettings.radar.packClass;
     Pack simPack
