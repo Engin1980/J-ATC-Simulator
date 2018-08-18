@@ -12,24 +12,22 @@ import eng.eSystem.collections.IReadOnlyList;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.global.ETime;
-import eng.jAtcSim.lib.Acc;
-import eng.jAtcSim.lib.airplanes.Airplane;
-import eng.jAtcSim.lib.global.ETime;
-
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * @author Marek
  */
 public class WaitingList {
 
-  private static final int AWAITING_SECONDS = 20;
+  private final int awaitingSeconds;
+
+  public WaitingList(int awaitingSeconds) {
+    this.awaitingSeconds = awaitingSeconds;
+  }
 
   private final IList<Tuple<ETime, Airplane>> inner = new EList<>();
 
   public void add(Airplane plane) {
-    this.inner.add(new Tuple<>(Acc.now().addSeconds(AWAITING_SECONDS), plane));
+    this.inner.add(new Tuple<>(Acc.now().addSeconds(awaitingSeconds), plane));
   }
 
   public void remove(Airplane plane) {
@@ -44,7 +42,7 @@ public class WaitingList {
 
     for (int i = 0; i < inner.size(); i++) {
       if (now.isAfter(inner.get(i).getA())) {
-        inner.get(i).setA(now.addSeconds(AWAITING_SECONDS));
+        inner.get(i).setA(now.addSeconds(awaitingSeconds));
         ret.add(inner.get(i).getB());
       }
     }

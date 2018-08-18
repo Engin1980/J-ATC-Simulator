@@ -25,10 +25,7 @@ import eng.jAtcSim.lib.atcs.Atc;
 import eng.jAtcSim.lib.atcs.TowerAtc;
 import eng.jAtcSim.lib.coordinates.Coordinate;
 import eng.jAtcSim.lib.coordinates.Coordinates;
-import eng.jAtcSim.lib.global.DelayedList;
-import eng.jAtcSim.lib.global.ETime;
-import eng.jAtcSim.lib.global.Headings;
-import eng.jAtcSim.lib.global.Restriction;
+import eng.jAtcSim.lib.global.*;
 import eng.jAtcSim.lib.global.logging.AbstractSaver;
 import eng.jAtcSim.lib.global.logging.FileSaver;
 import eng.jAtcSim.lib.global.logging.Recorder;
@@ -50,6 +47,7 @@ import eng.jAtcSim.lib.world.RunwayThreshold;
 import eng.jAtcSim.lib.world.approaches.Approach;
 import eng.jAtcSim.lib.world.approaches.CurrentApproachInfo;
 
+import javax.xml.bind.annotation.XmlElementDecl;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
@@ -1264,7 +1262,7 @@ public class Pilot {
   private void requestRadarContactIfRequired() {
     if (secondsWithoutRadarContact > 0) {
       secondsWithoutRadarContact++;
-      if (secondsWithoutRadarContact % 20 == 0) {
+      if (secondsWithoutRadarContact % Global.REPEATED_RADAR_CONTACT_REQUEST_SECONDS == 0) {
         this.say(
             new GoodDayNotification(
                 this.parent.getCallsign(), this.parent.getAltitude(), this.parent.isEmergency(), true));

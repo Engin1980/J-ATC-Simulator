@@ -9,17 +9,22 @@ package eng.jAtcSim.lib.global;
 import eng.eSystem.utilites.ConversionUtils;
 
 /**
- *
  * @author Marek
  */
 public class Global {
+  public static final int MINIMUM_ATC_SPEECH_DELAY_SECONDS = 3;
+  public static final int MAXIMUM_ATC_SPEECH_DELAY_SECONDS = 25;
+
   /**
    * If TRUE, Coordinates are displayed as DD°MM'SS", if FALSE, as decimal.
    */
   public static boolean COORDINATE_LONG = false;
-  
 
-  public static <T> T as (Object obj, Class<T> type){
+  public final static int REPEATED_RADAR_CONTACT_REQUEST_SECONDS = 20;
+  public final static int REPEATED_SWITCH_REQUEST_SECONDS = 20;
+
+
+  public static <T> T as(Object obj, Class<T> type) {
     T ret = ConversionUtils.tryConvert(obj, type);
     return ret;
   }

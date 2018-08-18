@@ -21,13 +21,13 @@ public class StatsPanel extends JPanel {
   JLabel lvlBusyDuration = new JLabel("-");
   JLabel lblFinished = new JLabel("Served planes:");
   JLabel lvlFinished = new JLabel("-");
-  JLabel lblMaxInGame = new JLabel("Max in game:");
+  JLabel lblMaxInGame = new JLabel("Max in simulation:");
   JLabel lvlMaxInGame = new JLabel("-");
   JLabel lblMovementsGame = new JLabel("Moves/hour:");
   JLabel lvlMovementsGame = new JLabel("-");
   JLabel lblMaxApp = new JLabel("Max under APP:");
   JLabel lvlMaxApp = new JLabel("-");
-  JLabel lblCurInGame = new JLabel("Now in game:");
+  JLabel lblCurInGame = new JLabel("Now in simulation:");
   JLabel lvlCurInGame = new JLabel("-");
   JLabel lblCurApp = new JLabel("Now under APP:");
   JLabel lvlCurApp = new JLabel("-");

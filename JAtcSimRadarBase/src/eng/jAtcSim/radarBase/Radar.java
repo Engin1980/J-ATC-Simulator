@@ -14,7 +14,9 @@ import eng.jAtcSim.lib.atcs.Atc;
 import eng.jAtcSim.lib.atcs.TowerAtc;
 import eng.jAtcSim.lib.coordinates.Coordinate;
 import eng.jAtcSim.lib.coordinates.Coordinates;
+import eng.jAtcSim.lib.global.Global;
 import eng.jAtcSim.lib.global.Headings;
+import eng.jAtcSim.lib.global.logging.ApplicationLog;
 import eng.jAtcSim.lib.messaging.IMessageParticipant;
 import eng.jAtcSim.lib.messaging.Message;
 import eng.jAtcSim.lib.messaging.Messenger;
@@ -32,7 +34,6 @@ import eng.jAtcSim.radarBase.global.events.EMouseEventArg;
 import eng.jAtcSim.radarBase.global.events.KeyEventArg;
 import eng.jAtcSim.radarBase.global.events.WithCoordinateEventArg;
 
-import javax.swing.plaf.synth.ColorType;
 import java.util.*;
 
 public class Radar {
@@ -375,6 +376,16 @@ public class Radar {
     buildDrawnApproachesList();
 
     this.messageManager = new MessageManager(this.styleSettings.displayTextDelay);
+    if (this.styleSettings.displayTextDelay > Global.REPEATED_SWITCH_REQUEST_SECONDS ||
+    this.styleSettings.displayTextDelay > Global.REPEATED_RADAR_CONTACT_REQUEST_SECONDS){
+      Acc.log().writeLine(ApplicationLog.eType.warning,
+          "Radar message display interval in seconds (%d) is higher than plane repeated " +
+              "radar-contact request interval (%d) or ATC repeated request switch interval (%d). " + "" +
+              "The repetition messages will overlap.",
+          this.styleSettings.displayTextDelay,
+          Global.REPEATED_RADAR_CONTACT_REQUEST_SECONDS,
+          Global.REPEATED_SWITCH_REQUEST_SECONDS);
+    }
 
     sim.getOnRunwayChanged().add(this::sim_runwayChanged);
 

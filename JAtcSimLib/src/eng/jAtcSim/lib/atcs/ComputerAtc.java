@@ -8,6 +8,7 @@ import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.AirplaneList;
 import eng.jAtcSim.lib.global.DelayedList;
+import eng.jAtcSim.lib.global.Global;
 import eng.jAtcSim.lib.messaging.Message;
 import eng.jAtcSim.lib.serialization.LoadSave;
 import eng.jAtcSim.lib.speaking.SpeechList;
@@ -31,9 +32,10 @@ public abstract class ComputerAtc extends Atc {
     }
   }
 
-  private final WaitingList waitingRequestsList = new WaitingList();
+  private final WaitingList waitingRequestsList = new WaitingList(Global.REPEATED_SWITCH_REQUEST_SECONDS);
   private final IList<SwitchRequest> confirmedRequestList = new EList<>();
-  private final DelayedList<Message> speechDelayer = new DelayedList<>(3, 25);
+  private final DelayedList<Message> speechDelayer = new DelayedList<>(
+      Global.MINIMUM_ATC_SPEECH_DELAY_SECONDS, Global.MAXIMUM_ATC_SPEECH_DELAY_SECONDS);
 
   public ComputerAtc(AtcTemplate template) {
     super(template);
