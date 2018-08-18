@@ -23,6 +23,7 @@ import eng.jAtcSim.lib.traffic.Traffic;
 import eng.jAtcSim.lib.weathers.Weather;
 import eng.jAtcSim.radarBase.global.SoundManager;
 import eng.jAtcSim.startup.FrmIntro;
+import eng.jAtcSim.startup.FrmStartupProgress;
 import eng.jAtcSim.startup.startupSettings.StartupSettings;
 
 import javax.swing.*;
@@ -109,6 +110,12 @@ public class JAtcSim {
       throw new EApplicationException("Failed to normalize or save default settings.", ex);
     }
 
+    FrmStartupProgress frm = new FrmStartupProgress(10);
+    frm.setVisible(true);
+    Acc.log().getOnNewMessage().add(q-> {
+      System.out.println("Direct thread " + Thread.currentThread().getId());
+      frm.setTitle(q.text);});
+
     Acc.log().writeLine(ApplicationLog.eType.info, "Starting new simulation game");
 
     Game.GameStartupInfo gsi = new Game.GameStartupInfo();
@@ -172,6 +179,8 @@ public class JAtcSim {
 
     simPack.initPack(g, appSettings);
     simPack.startPack();
+
+    frm.setVisible(false);
   }
 
   public static void quit() {
@@ -190,6 +199,22 @@ public class JAtcSim {
     initDefault();
     initIntro();
     initStartupSettings();
+    initStartupProgress();
+  }
+
+  private static void initStartupProgress(){
+    Stylist.add(
+        new Stylist.TypeFilter(FrmStartupProgress.class, true),
+        q -> q.setBackground(Color.DARK_GRAY)
+    );
+
+    Stylist.add(
+        new Stylist.AndFilter(
+            new Stylist.TypeFilter(javax.swing.JFrame.class, false),
+            new Stylist.ParentTypeFilter(FrmStartupProgress.class, true)
+        )
+        ,
+        q -> q.setBackground(Color.yellow));
   }
 
   private static void initStartupSettings() {
