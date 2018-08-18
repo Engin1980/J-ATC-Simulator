@@ -284,7 +284,9 @@ class RunwayConfigurationParser implements IElementParser<RunwayConfiguration> {
       String name = elm.getAttribute("name");
       String categories = elm.tryGetAttribute("category", "ABCD");
       boolean primary = elm.tryGetAttribute("primary", "false").equals("true");
-      rtc = new RunwayConfiguration.RunwayThresholdConfiguration(name, categories, primary);
+      boolean showRoutes = elm.tryGetAttribute("showRoutes", "true").equals("true");
+      boolean showApproach = elm.tryGetAttribute("showApproach", "true").equals("true");
+      rtc = new RunwayConfiguration.RunwayThresholdConfiguration(name, categories, primary, showRoutes, showApproach);
       if (elm.getName().equals("arrivals"))
         arrivals.add(rtc);
       else if (elm.getName().equals("departures"))

@@ -17,7 +17,6 @@
 
       <xs:element name="activeRunway" type="colorWidthElement" />
       <xs:element name="closedRunway" type="colorWidthElement" />
-      <xs:element name="defaultVisibleRoutesForCategories" type="sh:planeCategory" />
 
       <xs:element name="ilsApproach" type="colorWidthLengthElement" />
       <xs:element name="gnssApproach" type="colorWidthLengthElement" />

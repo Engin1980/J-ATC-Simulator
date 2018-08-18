@@ -11,8 +11,7 @@
 
   <activeRunway color="FFFFFF" width="3"/>
   <closedRunway color="FFAAAA" width="3"/>
-  <defaultVisibleRoutesForCategories>C</defaultVisibleRoutesForCategories>
-  
+
   <ilsApproach width="1" color="FF00FF" length="15" />
   <gnssApproach color="FF0000" width="1" length="15" />
   <ndbApproach color="00FF00" width="1" length="15" />

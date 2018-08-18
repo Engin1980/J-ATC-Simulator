@@ -235,6 +235,8 @@
     <xs:attribute name="category" type="sh:planeCategory" use="optional"/>
     <xs:attribute name="name" type="sh:nonEmptyString" use="required"/>
     <xs:attribute name="primary" type="xs:boolean" use="optional"/>
+    <xs:attribute name="showRoutes" type="xs:boolean" use="optional" />
+    <xs:attribute name="showApproach" type="xs:boolean" use="optional" />
   </xs:complexType>
 
 

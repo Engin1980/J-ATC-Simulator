@@ -25,6 +25,18 @@ public class RunwayConfiguration {
     private RunwayThreshold threshold;
     @XmlOptional
     private boolean primary = false;
+    @XmlOptional
+    private boolean showRoutes = true;
+    @XmlOptional
+    private boolean showApproach = true;
+
+    public boolean isShowRoutes() {
+      return showRoutes;
+    }
+
+    public boolean isShowApproach() {
+      return showApproach;
+    }
 
     public boolean isPrimary() {
       return primary;
@@ -38,14 +50,12 @@ public class RunwayConfiguration {
       return threshold;
     }
 
-    @XmlConstructor
-    public RunwayThresholdConfiguration() {
-    }
-
-    public RunwayThresholdConfiguration(String name, String categories, boolean primary) {
+    public RunwayThresholdConfiguration(String name, String categories, boolean primary, boolean showRoutes, boolean showApproach) {
       this.categories = categories;
       this.name = name;
       this.primary = primary;
+      this.showRoutes = showRoutes;
+      this.showApproach = showApproach;
     }
 
     public RunwayThresholdConfiguration(RunwayThreshold threshold) {

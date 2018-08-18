@@ -38,9 +38,6 @@ import java.util.*;
 public class Radar {
 
 
-
-
-
   static class MessageSet {
 
     public final List<String> atc = new ArrayList<>();
@@ -488,7 +485,7 @@ public class Radar {
     return this.drawnRoutes;
   }
 
-  public void setDrawnRoutes(Iterable<Route> drawnRoutes){
+  public void setDrawnRoutes(Iterable<Route> drawnRoutes) {
     this.drawnRoutes.clear();
     this.drawnRoutes.add(drawnRoutes);
   }
@@ -501,27 +498,35 @@ public class Radar {
 
   private void buildDrawnApproachesList() {
     this.drawnApproaches.clear();
+    RunwayConfiguration rc =
+        Acc.atcTwr().getRunwayConfigurationInUse();
+
     IList<Approach> approachesToDraw =
-      Acc.atcTwr()
-            .getRunwayThresholdsInUse(TowerAtc.eDirection.arrivals)
-            .select(q->q.getHighestApproach());
-    approachesToDraw.remove(q->q==null);
+        rc.getArrivals()
+            .where(q -> q.isShowApproach())
+            .select(q -> q.getThreshold().getHighestApproach());
+
+    approachesToDraw.remove(q -> q == null);
     this.drawnApproaches.add(approachesToDraw);
   }
 
   private void buildDrawnRoutesList() {
-    char[] drawnRoutesCategories = styleSettings.defaultVisibleRoutesForCategories.toCharArray();
     IReadOnlyList<RunwayThreshold> rts;
     this.drawnRoutes.clear();
-    for (char category : drawnRoutesCategories) {
-      rts = Acc.atcTwr().getRunwayThresholdsInUse(TowerAtc.eDirection.departures, category);
-      rts.forEach(q-> this.drawnRoutes.add(
-          q.getRoutes().where(p->p.getCategory().containsAny(drawnRoutesCategories))));
-
-      rts = Acc.atcTwr().getRunwayThresholdsInUse(TowerAtc.eDirection.arrivals, category);
-      rts.forEach(q-> this.drawnRoutes.add(
-          q.getRoutes().where(p->p.getCategory().containsAny(drawnRoutesCategories))));
+    RunwayConfiguration rc = Acc.atcTwr().getRunwayConfigurationInUse();
+    for (RunwayConfiguration.RunwayThresholdConfiguration arrival : rc.getArrivals()) {
+      if (arrival.isShowRoutes())
+        this.drawnRoutes.add(arrival.getThreshold().getRoutes());
     }
+
+    rc.getArrivals()
+        .where(q -> q.isShowRoutes())
+        .forEach(q -> this.drawnRoutes.add(
+            q.getThreshold().getRoutes().where(p -> p.getType() != Route.eType.sid)));
+    rc.getArrivals()
+        .where(q -> q.isShowRoutes())
+        .forEach(q -> this.drawnRoutes.add(
+            q.getThreshold().getRoutes().where(p -> p.getType() == Route.eType.sid)));
   }
 
   public Iterable<Approach> getDrawnApproaches() {
@@ -871,7 +876,7 @@ public class Radar {
       dispSett = styleSettings.gnssApproach;
     else if (approach instanceof VisualApproach)
       return;
-    else if (approach instanceof UnpreciseApproach){
+    else if (approach instanceof UnpreciseApproach) {
       UnpreciseApproach ua = (UnpreciseApproach) approach;
       if (ua.getType() == UnpreciseApproach.Type.ndb)
         dispSett = styleSettings.ndbApproach;

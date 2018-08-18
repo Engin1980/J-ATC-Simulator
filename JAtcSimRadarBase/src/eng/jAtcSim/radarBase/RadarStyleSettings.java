@@ -213,9 +213,6 @@ public class RadarStyleSettings {
   public ColorWidthSettings activeRunway;
   public ColorWidthSettings closedRunway;
 
-  // routes
-  public String defaultVisibleRoutesForCategories;
-
   // approaches
   public ColorWidthLengthSettings ilsApproach;
   public ColorWidthLengthSettings gnssApproach;

@@ -206,6 +206,10 @@ public class TowerAtc extends ComputerAtc {
     processRunwayChangeBackground();
   }
 
+  public RunwayConfiguration getRunwayConfigurationInUse() {
+    return inUseInfo.current;
+  }
+
   @Override
   protected void processNonPlaneSwitchMessageFromAtc(Message m) {
     if (m.getContent() instanceof eng.jAtcSim.lib.speaking.fromAtc.atc2atc.RunwayCheck) {
