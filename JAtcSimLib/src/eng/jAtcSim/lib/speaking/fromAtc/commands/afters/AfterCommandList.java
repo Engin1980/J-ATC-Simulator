@@ -175,13 +175,13 @@ public class AfterCommandList {
     return ret;
   }
 
-  public void consolePrint() {
-    System.out.println("After commands:");
-    System.out.println("\troute");
-    rt.forEach(q -> System.out.println("\t\t" + q.toString()));
-    System.out.println("\textensions");
-    ex.forEach(q -> System.out.println("\t\t" + q.toString()));
-  }
+//  public void consolePrint() {
+//    System.out.println("After commands:");
+//    System.out.println("\troute");
+//    rt.forEach(q -> System.out.println("\t\t" + q.toString()));
+//    System.out.println("\textensions");
+//    ex.forEach(q -> System.out.println("\t\t" + q.toString()));
+//  }
 
   public void clearAll() {
     this.rt.clear();

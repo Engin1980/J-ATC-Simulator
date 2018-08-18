@@ -140,9 +140,6 @@ public class Route {
   }
 
   public void bind() {
-    if (type == eType.vectoring)
-      System.out.println("\test");
-
     try {
       Parser p = new ShortBlockParser();
       SpeechList<IFromAtc> xlst = p.parseMulti(this.route);

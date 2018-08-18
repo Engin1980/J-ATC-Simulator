@@ -84,11 +84,11 @@ public class JAtcSim {
       throw new EApplicationException("Some element in source XML files is not unique. Some of the input XML files is not valid.", ex);
     }
 
-    System.out.println("* Initializing sound environment");
+    Acc.log().writeLine(ApplicationLog.eType.info, "Initializing sound environment");
     // sound
     SoundManager.init(appSettings.soundFolder.toString());
 
-    System.out.println("* Starting a GUI");
+    Acc.log().writeLine(ApplicationLog.eType.info, "Starting a GUI");
     // starting pack & simulation
     String packType = startupSettings.radar.packClass;
     Pack simPack

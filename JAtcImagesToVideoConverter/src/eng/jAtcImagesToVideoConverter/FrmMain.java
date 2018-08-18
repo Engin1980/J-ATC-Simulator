@@ -110,12 +110,6 @@ public class FrmMain {
 
   @FXML
   void btnConvert_click(ActionEvent event) {
-//    Runtime r = Runtime.getRuntime();
-//    try {
-//      r.exec("cmd /c echo nazdar");
-//    } catch (IOException e) {
-//      System.out.println("Fucking fail." + e.getClass().getName() + ": " + e.getMessage());
-//    }
 
     IList<String> cmds = new EList();
 

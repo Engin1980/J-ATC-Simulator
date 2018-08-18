@@ -5,11 +5,13 @@ import eng.eSystem.exceptions.ERuntimeException;
 import eng.eSystem.utilites.ExceptionUtils;
 import eng.eSystem.xmlSerialization.*;
 import eng.jAtcSim.frmPacks.shared.FlightStripSettings;
+import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.AirplaneType;
 import eng.jAtcSim.lib.airplanes.AirplaneTypes;
 import eng.jAtcSim.lib.atcs.AtcTemplate;
 import eng.jAtcSim.lib.coordinates.Coordinate;
 import eng.jAtcSim.lib.global.PlaneCategoryDefinitions;
+import eng.jAtcSim.lib.global.logging.ApplicationLog;
 import eng.jAtcSim.lib.global.sources.AirplaneTypesXmlSource;
 import eng.jAtcSim.lib.global.sources.AreaXmlSource;
 import eng.jAtcSim.lib.global.sources.FleetsXmlSource;
@@ -65,7 +67,10 @@ public class XmlLoadHelper {
     try {
       ret = (StartupSettings) ser.deserialize(fileName, StartupSettings.class);
     } catch (Exception ex) {
-      System.out.println("Failed to load startup settings from " + fileName + ". Defaults used. Reason: " + ExceptionUtils.toFullString(ex, "\n"));
+      Acc.log().writeLine(
+          ApplicationLog.eType.critical,
+          "Failed to load startup settings from " + fileName +
+              ". Defaults used. Reason: " + ExceptionUtils.toFullString(ex, "\n"));
       ret = new StartupSettings();
     }
 
@@ -80,7 +85,9 @@ public class XmlLoadHelper {
     try {
       ser.serialize(fileName, sett);
     } catch (Exception ex) {
-      System.out.println("Failed to save startup settings into " + fileName + ". Reason: " + ex.getMessage());
+      Acc.log().writeLine(
+          ApplicationLog.eType.critical,
+          "Failed to save startup settings into " + fileName + ". Reason: " + ex.getMessage());
     }
   }
 
