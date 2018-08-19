@@ -245,7 +245,7 @@ public class Airplane implements IMessageParticipant {
     }
 
     public AirproxType getAirprox() {
-      return this.getAirprox();
+      return Airplane.this.airprox;
     }
   }
 

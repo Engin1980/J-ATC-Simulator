@@ -1,7 +1,6 @@
 package eng.jAtcSim.startup;
 
 import eng.eSystem.swing.extenders.ListBoxExtender;
-import eng.eSystem.utilites.awt.ComponentUtils;
 import eng.jAtcSim.Stylist;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.global.logging.ApplicationLog;
@@ -14,8 +13,8 @@ import java.awt.event.WindowEvent;
 
 public class FrmStartupProgress extends JFrame {
   private final int listenerId;
-  private final ListBoxExtender<String> lst;
   private final JProgressBar prg;
+  private final JLabel lbl;
 
   public FrmStartupProgress(int expectedProgressCount) {
     listenerId = Acc.log().getOnNewMessage().add(q -> appendInfo(q));
@@ -31,11 +30,12 @@ public class FrmStartupProgress extends JFrame {
     prg.setValue(0);
     JPanel pnlProgress = LayoutManager.createBorderedPanel(8, prg);
 
-    lst = new ListBoxExtender<>();
-    JPanel pnlList = LayoutManager.createBorderedPanel(8, lst.getControl());
-    pnlList.setPreferredSize(new Dimension(400, 300));
+    lbl = new JLabel("Initialization");
+    JPanel pnlLabel = LayoutManager.createBorderedPanel(8, lbl);
 
-    JPanel pnl = LayoutManager.createBorderedPanel(pnlProgress, null, null, null, pnlList);
+    JPanel pnl = LayoutManager.createGridPanel(2, 1, 0, pnlProgress, pnlLabel);
+    pnl.setPreferredSize(new Dimension(400, 75));
+
     this.getContentPane().add(pnl);
     this.pack();
     this.setLocationRelativeTo(null);
@@ -47,8 +47,7 @@ public class FrmStartupProgress extends JFrame {
       int val = prg.getValue() + 1;
       if (val < prg.getMaximum())
         prg.setValue(val);
-      lst.addItem(q.text);
-      lst.ensureLastVisible();
+      lbl.setText(q.text);
 
       JPanel pnl = (JPanel) this.getContentPane();
       pnl.paintImmediately(pnl.getVisibleRect());
