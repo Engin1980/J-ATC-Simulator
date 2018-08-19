@@ -45,8 +45,8 @@ public class JAtcSim {
   private static final boolean FAST_START = false;
   private static final Traffic enginSpecificTraffic =
       // new eng.jAtcSim.lib.traffic.TestTrafficOneApproach();
-       new eng.jAtcSim.lib.traffic.TestTrafficOneDeparture();
-      // null;
+      new eng.jAtcSim.lib.traffic.TestTrafficOneDeparture();
+  // null;
   private static AppSettings appSettings;
 
   /**
@@ -112,10 +112,6 @@ public class JAtcSim {
 
     FrmStartupProgress frm = new FrmStartupProgress(10);
     frm.setVisible(true);
-    Acc.log().getOnNewMessage().add(q-> {
-      System.out.println("Direct thread " + Thread.currentThread().getId());
-      frm.setTitle(q.text);});
-
     Acc.log().writeLine(ApplicationLog.eType.info, "Starting new simulation game");
 
     Game.GameStartupInfo gsi = new Game.GameStartupInfo();
@@ -202,29 +198,33 @@ public class JAtcSim {
     initStartupProgress();
   }
 
-  private static void initStartupProgress(){
+  private static void initStartupProgress() {
     Stylist.add(
+        "Startup progress form background dark",
         new Stylist.TypeFilter(FrmStartupProgress.class, true),
         q -> q.setBackground(Color.DARK_GRAY)
     );
 
     Stylist.add(
+        "Startup progress - panels dark",
         new Stylist.AndFilter(
-            new Stylist.TypeFilter(javax.swing.JFrame.class, false),
+            new Stylist.TypeFilter(javax.swing.JPanel.class, false),
             new Stylist.ParentTypeFilter(FrmStartupProgress.class, true)
         )
         ,
-        q -> q.setBackground(Color.yellow));
+        q -> q.setBackground(Color.DARK_GRAY));
   }
 
   private static void initStartupSettings() {
 
     Stylist.add(
+        "Startup settings - JPanel dark",
         new Stylist.TypeFilter(JPanel.class, true),
         q -> q.setBackground(Color.DARK_GRAY)
     );
 
     Stylist.add(
+        "Startup settings - JPanel border style",
         new Stylist.TypeFilter(javax.swing.JPanel.class, true),
         q -> {
           javax.swing.JPanel p = (javax.swing.JPanel) q;
@@ -233,6 +233,7 @@ public class JAtcSim {
         });
 
     Stylist.add(
+        "Startup settings - JLabel style",
         new Stylist.TypeFilter(JLabel.class, false),
         q -> {
           q.setForeground(Color.LIGHT_GRAY);
@@ -240,6 +241,7 @@ public class JAtcSim {
     );
 
     Stylist.add(
+        "Startup settings - JRadioButton style",
         new Stylist.TypeFilter(JRadioButton.class, false),
         q -> {
           q.setForeground(Color.LIGHT_GRAY);
@@ -247,6 +249,7 @@ public class JAtcSim {
         }
     );
     Stylist.add(
+        "Startup settings - JCheckBox style",
         new Stylist.TypeFilter(JCheckBox.class, false),
         q -> {
           q.setForeground(Color.LIGHT_GRAY);
@@ -254,6 +257,7 @@ public class JAtcSim {
         }
     );
     Stylist.add(
+        "Startup settings - JTextField style",
         new Stylist.TypeFilter(JTextField.class, false),
         q -> {
           JTextField txt = (JTextField) q;
@@ -268,6 +272,7 @@ public class JAtcSim {
   private static void initIntro() {
     // intro page
     Stylist.add(
+        "Frm Intro - frm size",
         new Stylist.TypeFilter(FrmIntro.class, false),
         q -> {
           Dimension d = new Dimension(500, 420);
@@ -276,6 +281,7 @@ public class JAtcSim {
         });
 
     Stylist.add(
+        "Frm Intro - JButton style",
         new Stylist.AndFilter(
             new Stylist.TypeFilter(javax.swing.JButton.class, false),
             new Stylist.ParentTypeFilter(FrmIntro.class, true)
@@ -289,6 +295,7 @@ public class JAtcSim {
         });
 
     Stylist.add(
+        "Frm Intro - JPanel dark background style",
         new Stylist.AndFilter(
             new Stylist.TypeFilter(JPanel.class, true),
             new Stylist.ParentTypeFilter(FrmIntro.class, true)
@@ -300,6 +307,7 @@ public class JAtcSim {
   private static void initDefault() {
     // default theme
     Stylist.add(
+        "Global - components font",
         new Stylist.TypeFilter(java.awt.Component.class, true),
         q -> {
           Font fnt = new Font("Verdana", 0, 12);

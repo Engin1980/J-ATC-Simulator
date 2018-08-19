@@ -1,6 +1,7 @@
 package eng.jAtcSim.startup;
 
 import eng.eSystem.swing.extenders.ListBoxExtender;
+import eng.eSystem.utilites.awt.ComponentUtils;
 import eng.jAtcSim.Stylist;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.global.logging.ApplicationLog;
@@ -28,7 +29,7 @@ public class FrmStartupProgress extends JFrame {
 
     prg = new JProgressBar(JProgressBar.HORIZONTAL, 0, expectedProgressCount);
     prg.setValue(0);
-    JPanel pnlProgress = LayoutManager.createBorderedPanel(32, prg);
+    JPanel pnlProgress = LayoutManager.createBorderedPanel(8, prg);
 
     lst = new ListBoxExtender<>();
     JPanel pnlList = LayoutManager.createBorderedPanel(8, lst.getControl());
@@ -44,17 +45,16 @@ public class FrmStartupProgress extends JFrame {
   private void appendInfo(ApplicationLog.Message q) {
     if (q.type == ApplicationLog.eType.info) {
       int val = prg.getValue() + 1;
-      System.out.println("val: " + val);
-      System.out.println("max:" + prg.getMaximum());
       if (val < prg.getMaximum())
         prg.setValue(val);
       lst.addItem(q.text);
       lst.ensureLastVisible();
-      prg.paintImmediately(prg.getVisibleRect());
-      lst.getControl().paintImmediately(lst.getControl().getVisibleRect());
+
+      JPanel pnl = (JPanel) this.getContentPane();
+      pnl.paintImmediately(pnl.getVisibleRect());
 
       try {
-        Thread.sleep(10);
+        Thread.sleep(5);
       } catch (InterruptedException e) {
         e.printStackTrace();
       }

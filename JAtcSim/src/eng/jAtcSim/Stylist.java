@@ -1,11 +1,13 @@
 package eng.jAtcSim;
 
+import eng.eSystem.Triple;
 import eng.eSystem.Tuple;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 
 import java.awt.*;
 import java.util.function.Consumer;
+import java.util.zip.CheckedOutputStream;
 
 public class Stylist {
 
@@ -112,25 +114,45 @@ public class Stylist {
     }
   }
 
-  private static IList<Tuple<Filter, Consumer<Component>>> inner  = new EList<>();
+  private static IList<Triple<String, Filter, Consumer<Component>>> inner  = new EList<>();
+
+  public static boolean verbose = false;
+
+  private static int nextId = 1;
 
   public static void add(Filter filter, Consumer<Component> style) {
-    inner.add(new Tuple(filter, style));
+    inner.add(new Triple("Unnamed style " + nextId++, filter, style));
   }
 
-  public static void apply(Component component, boolean applyOnContent) {
+  public static void add(String name, Filter filter, Consumer<Component> style) {
+    inner.add(new Triple(name, filter, style));
+  }
 
-    for (Tuple<Filter, Consumer<Component>> item : inner) {
-      Filter filter = item.getA();
+  public static void apply(Component component, boolean applyOnContent){
+    _apply(component, applyOnContent, 0);
+  }
+
+  private static void _apply(Component component, boolean applyOnContent, int level) {
+
+    for (Triple<String, Filter, Consumer<Component>> item : inner) {
+      Filter filter = item.getB();
       if (filter.accepts(component)) {
-        item.getB().accept(component);
+        if (verbose){
+          for (int i = 0; i < level; i++) {
+            System.out.print(" ");
+          }
+          System.out.print(component.getClass().getSimpleName() + ":" + component.getName());
+          System.out.print(" => ");
+          System.out.println(item.getA());
+        }
+        item.getC().accept(component);
       }
     }
 
     if (applyOnContent && component instanceof java.awt.Container) {
       Container container = (Container) component;
       for (Component item : container.getComponents()) {
-        apply(item, applyOnContent);
+        _apply(item, true, level+1);
       }
     }
   }
