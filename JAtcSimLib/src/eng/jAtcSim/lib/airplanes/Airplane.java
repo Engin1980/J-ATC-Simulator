@@ -243,6 +243,10 @@ public class Airplane implements IMessageParticipant {
     public boolean isEmergency() {
       return Airplane.this.isEmergency();
     }
+
+    public AirproxType getAirprox() {
+      return this.getAirprox();
+    }
   }
 
   public class Airplane4Command {

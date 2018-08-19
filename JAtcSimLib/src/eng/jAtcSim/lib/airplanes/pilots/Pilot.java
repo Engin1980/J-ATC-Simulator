@@ -18,6 +18,7 @@ import eng.eSystem.utilites.ConversionUtils;
 import eng.eSystem.xmlSerialization.XmlIgnore;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
+import eng.jAtcSim.lib.airplanes.AirproxType;
 import eng.jAtcSim.lib.airplanes.commandApplications.ApplicationManager;
 import eng.jAtcSim.lib.airplanes.commandApplications.ApplicationResult;
 import eng.jAtcSim.lib.airplanes.commandApplications.ConfirmationResult;
@@ -846,6 +847,16 @@ public class Pilot {
     }
 
     private void flyApproachingPhase() {
+
+      switch (parent.getState()){
+        case approachDescend:
+        case longFinal:
+        case shortFinal:
+          if (parent.getAirprox() == AirproxType.full){
+            goAround("No separation from other traffic.");
+            return;
+          }
+      }
 
       ApproachLocation last = this.location;
       updateApproachLocation(this.approach.isPrecise());

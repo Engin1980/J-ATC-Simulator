@@ -9,6 +9,7 @@ import eng.eSystem.xmlSerialization.XmlIgnore;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.AirplaneList;
+import eng.jAtcSim.lib.airplanes.AirproxType;
 import eng.jAtcSim.lib.coordinates.Coordinate;
 import eng.jAtcSim.lib.coordinates.Coordinates;
 import eng.jAtcSim.lib.global.ETime;
@@ -31,6 +32,8 @@ import eng.jAtcSim.lib.world.Route;
 import eng.jAtcSim.lib.world.Runway;
 import eng.jAtcSim.lib.world.RunwayConfiguration;
 import eng.jAtcSim.lib.world.RunwayThreshold;
+
+import java.util.Map;
 
 public class TowerAtc extends ComputerAtc {
 
@@ -191,7 +194,6 @@ public class TowerAtc extends ComputerAtc {
     }
     return ret;
   }
-
   public TowerAtc(AtcTemplate template) {
     super(template);
     toRecorder = new CommonRecorder(template.getName() + " - TO", template.getName() + "_to.log", "\t");
