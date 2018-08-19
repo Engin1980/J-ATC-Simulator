@@ -55,7 +55,7 @@ public class CenterAtc extends ComputerAtc {
 
       for (Airplane plane : middleArrivals) {
         dist = Coordinates.getDistanceInNM(plane.getEntryExitFix().getCoordinate(), plane.getCoordinate());
-        if (dist < 27){
+        if (dist < 27) {
           SpeechList<IAtcCommand> cmds = new SpeechList<>();
           if (plane.getTargetAltitude() > Acc.atcCtr().getOrderedAltitude())
             cmds.add(new ChangeAltitudeCommand(ChangeAltitudeCommand.eDirection.descend, Acc.atcCtr().getOrderedAltitude()));
@@ -217,7 +217,7 @@ public class CenterAtc extends ComputerAtc {
   }
 
   @Override
-  public void removePlaneDeletedFromGame(Airplane plane){
+  public void removePlaneDeletedFromGame(Airplane plane) {
 
   }
 
@@ -233,16 +233,21 @@ public class CenterAtc extends ComputerAtc {
 
     IReadOnlyList<RunwayThreshold> thresholds;
     // if is arrival, scheduled thresholds are taken into account
-    thresholds = Acc.atcTwr().getRunwayThresholdsScheduled(TowerAtc.eDirection.arrivals, plane.getType().category);
-    if (thresholds.isEmpty())
-      thresholds = Acc.atcTwr().getRunwayThresholdsInUse(TowerAtc.eDirection.arrivals, plane.getType().category);
+    if (Acc.atcTwr().tryGetRunwayConfigurationScheduled() != null)
+      thresholds = Acc.atcTwr().tryGetRunwayConfigurationScheduled().getArrivals()
+          .where(q -> q.isForCategory(plane.getType().category))
+          .select(q -> q.getThreshold());
+    else
+      thresholds = Acc.atcTwr().getRunwayConfigurationInUse().getArrivals()
+          .where(q -> q.isForCategory(plane.getType().category))
+          .select(q -> q.getThreshold());
     for (RunwayThreshold threshold : thresholds) {
       rts.add(threshold.getRoutes());
     }
 
     rts = rts.where(q -> q.getType() != Route.eType.sid);
     rts = rts.where(q -> q.getMaxMrvaAltitude() < plane.getType().maxAltitude);
-    rts = rts.where(q->q.getMaxMrvaAltitude() < plane.getTargetAltitude());
+    rts = rts.where(q -> q.getMaxMrvaAltitude() < plane.getTargetAltitude());
     rts = rts.where(q -> q.isValidForCategory(plane.getType().category));
     rts = rts.where(q -> q.getMainNavaid().equals(n));
 

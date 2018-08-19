@@ -312,17 +312,6 @@ public class Simulation {
     return stats;
   }
 
-  public IReadOnlyList<RunwayThreshold> getActiveRunwayThresholds(TowerAtc.eDirection direction, char category) {
-    switch (direction){
-      case arrivals:
-        return Acc.thresholds(TowerAtc.eDirection.arrivals, category);
-      case departures:
-        return Acc.thresholds(TowerAtc.eDirection.departures, category);
-      default:
-        throw new EEnumValueUnsupportedException(direction);
-    }
-  }
-
   public void sendTextMessageForUser(String text) {
     Message m = new Message(Messenger.SYSTEM, appAtc,
         new StringMessageContent(text));

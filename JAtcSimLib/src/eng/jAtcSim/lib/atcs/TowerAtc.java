@@ -327,27 +327,8 @@ public class TowerAtc extends ComputerAtc {
     return departureManager.getNumberOfPlanesAtHoldingPoint();
   }
 
-  public IReadOnlyList<RunwayThreshold> getRunwayThresholdsInUse(eDirection direction, char category) {
-    IReadOnlyList<RunwayThreshold> ret;
-    ret = getSuggestedRunwayThreshold(direction, category,
-        inUseInfo.current.getDepartures(), inUseInfo.current.getArrivals());
-    return ret;
-  }
-
-  public IReadOnlyList<RunwayThreshold> getRunwayThresholdsInUse(eDirection direction) {
-    IReadOnlyList<RunwayThreshold> ret = inUseInfo.current.getDepartures().select(q -> q.getThreshold());
-    return ret;
-  }
-
-  public IReadOnlyList<RunwayThreshold> getRunwayThresholdsScheduled(eDirection direction, char category) {
-    IReadOnlyList<RunwayThreshold> ret;
-    if (inUseInfo.scheduled == null)
-      ret = new EList<>();
-    else {
-      ret = getSuggestedRunwayThreshold(direction, category,
-          inUseInfo.scheduled.getDepartures(), inUseInfo.scheduled.getArrivals());
-    }
-    return ret;
+  public RunwayConfiguration tryGetRunwayConfigurationScheduled(){
+    return inUseInfo.scheduled;
   }
 
   @Override

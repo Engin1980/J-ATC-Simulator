@@ -7,7 +7,7 @@ package eng.jAtcSim.lib.airplanes;
 
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.utilites.CollectionUtils;
-import eng.eSystem.utilites.StringUtil;
+import eng.eSystem.utilites.StringUtils;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.coordinates.Coordinates;
 
@@ -33,7 +33,7 @@ public class Airplanes {
   };
 
   public static Airplane tryGetByCallsingOrNumber(Iterable<Airplane> planes, String callsignOrNumber) {
-    if (StringUtil.isEmpty(callsignOrNumber)) return null;
+    if (StringUtils.isNullOrEmpty(callsignOrNumber)) return null;
 
     Airplane ret = CollectionUtils.tryGetFirst(planes, p -> p.getCallsign().toString(false).equals(callsignOrNumber));
     if (ret == null) {

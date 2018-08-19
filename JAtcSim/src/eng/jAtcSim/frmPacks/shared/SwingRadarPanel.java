@@ -110,8 +110,8 @@ public class SwingRadarPanel extends JPanel {
     public Iterable<BoxItem<Approach>> doInit() {
       IList<Approach> tmp = new EList();
 
-      for (RunwayThreshold rt : Acc.atcTwr().getRunwayThresholdsInUse(TowerAtc.eDirection.arrivals)){
-        tmp.add(rt.getApproaches());
+      for (RunwayThreshold runwayThreshold : Acc.atcTwr().getRunwayConfigurationInUse().getArrivals().select(q -> q.getThreshold())) {
+        tmp.add(runwayThreshold.getApproaches());
       }
 
       IList<BoxItem<Approach>> items = new EList<>();

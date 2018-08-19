@@ -377,7 +377,7 @@ public class Radar {
 
     this.messageManager = new MessageManager(this.styleSettings.displayTextDelay);
     if (this.styleSettings.displayTextDelay > Global.REPEATED_SWITCH_REQUEST_SECONDS ||
-    this.styleSettings.displayTextDelay > Global.REPEATED_RADAR_CONTACT_REQUEST_SECONDS){
+        this.styleSettings.displayTextDelay > Global.REPEATED_RADAR_CONTACT_REQUEST_SECONDS) {
       Acc.log().writeLine(ApplicationLog.eType.warning,
           "Radar message display interval in seconds (%d) is higher than plane repeated " +
               "radar-contact request interval (%d) or ATC repeated request switch interval (%d). " + "" +
@@ -559,7 +559,9 @@ public class Radar {
     }
 
     IReadOnlyList<RunwayThreshold> rts =
-        Acc.atcTwr().getRunwayThresholdsInUse(TowerAtc.eDirection.arrivals, 'C');
+        Acc.atcTwr().getRunwayConfigurationInUse().getArrivals()
+        .where(q->q.isShowRoutes())
+        .select(q->q.getThreshold());
     for (RunwayThreshold rt : rts) {
       for (Route route : rt.getRoutes().where(q -> q.getType() != Route.eType.sid)) {
         for (Navaid navaid : route.getNavaids()) {
@@ -835,8 +837,12 @@ public class Radar {
       switch (route.getType()) {
         case sid:
           if (!displaySettings.isSidVisible()) continue;
-          for (RunwayThreshold runwayThreshold : Acc.atcTwr()
-              .getRunwayThresholdsInUse(TowerAtc.eDirection.departures)
+//          for (RunwayThreshold runwayThreshold : Acc.atcTwr()
+//              .getRunwayThresholdsInUse(TowerAtc.eDirection.departures)
+//              .where(q -> q.getRoutes().contains(route))) {
+          for (RunwayThreshold runwayThreshold : Acc.atcTwr().getRunwayConfigurationInUse()
+              .getArrivals()
+              .select(q->q.getThreshold())
               .where(q -> q.getRoutes().contains(route))) {
             drawSidIntro(runwayThreshold.getOtherThreshold().getCoordinate(), route.getNavaids().getFirst());
           }

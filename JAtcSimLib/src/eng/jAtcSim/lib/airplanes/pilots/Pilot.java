@@ -394,8 +394,9 @@ public class Pilot {
           if (parent.getAltitude() < LOW_SPEED_DOWN_ALTITUDE)
             super.setState(Airplane.State.arrivingLow);
           else {
-            double distToFaf = Acc.thresholds(TowerAtc.eDirection.arrivals, Pilot.this.parent.getType().category)
-                .minDouble(q -> Coordinates.getDistanceInNM(parent.getCoordinate(), q.getEstimatedFafPoint()));
+            double distToFaf  = Acc.atcTwr().getRunwayConfigurationInUse()
+                .getArrivals().where(q->q.isForCategory(Pilot.this.parent.getType().category))
+                .minDouble(q -> Coordinates.getDistanceInNM(parent.getCoordinate(), q.getThreshold().getEstimatedFafPoint()));
             if (distToFaf < FAF_SPEED_DOWN_DISTANCE_IN_NM) {
               super.setState(Airplane.State.arrivingCloseFaf);
             }
@@ -403,8 +404,9 @@ public class Pilot {
           break;
         case arrivingLow:
           // TODO this will not work for runways with FAF above FL100
-          double distToFaf = Acc.thresholds(TowerAtc.eDirection.arrivals, Pilot.this.parent.getType().category)
-              .minDouble(q -> Coordinates.getDistanceInNM(parent.getCoordinate(), q.getEstimatedFafPoint()));
+          double distToFaf  = Acc.atcTwr().getRunwayConfigurationInUse()
+              .getArrivals().where(q->q.isForCategory(Pilot.this.parent.getType().category))
+              .minDouble(q -> Coordinates.getDistanceInNM(parent.getCoordinate(), q.getThreshold().getEstimatedFafPoint()));
           if (distToFaf < FAF_SPEED_DOWN_DISTANCE_IN_NM) {
             super.setState(Airplane.State.arrivingCloseFaf);
           }
@@ -1169,11 +1171,13 @@ public class Pilot {
 
   public Navaid getDivertNavaid() {
     IList<Route> rts = Acc
-        .thresholds(TowerAtc.eDirection.departures, Pilot.this.parent.getType().category)
-        .get(0)
-        .getRoutes(); // getContent random active departure threshold
-    rts = rts.where(q -> q.getType() == Route.eType.sid);
-    rts = rts.where(q -> q.isValidForCategory(this.parent.getType().category));
+        .atcTwr().getRunwayConfigurationInUse()
+        .getDepartures()
+        .where(q->q.isForCategory(Pilot.this.parent.getType().category))
+        .getRandom()
+        .getThreshold()
+        .getRoutes()
+        .where(q->q.getType() == Route.eType.sid);
     Route r = rts.getRandom();
     //TODO here can null-pointer-exception occur when no route is found for threshold and category
     Navaid ret = r.getMainNavaid();
