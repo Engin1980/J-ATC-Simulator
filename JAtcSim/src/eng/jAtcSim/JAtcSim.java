@@ -11,6 +11,7 @@ import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.exceptions.ERuntimeException;
 import eng.jAtcSim.frmPacks.Pack;
+import eng.jAtcSim.frmPacks.shared.FrmLog;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.Game;
 import eng.jAtcSim.lib.global.ETime;
@@ -49,6 +50,8 @@ public class JAtcSim {
   // null;
   private static AppSettings appSettings;
 
+  private static FrmLog frmLog;
+
   /**
    * @param args the command line arguments
    */
@@ -56,9 +59,11 @@ public class JAtcSim {
 
     AppSettings.init();
 
+
     initStylist();
 
     Acc.setLog(new ApplicationLog());
+    frmLog = new FrmLog();
 
     appSettings = AppSettings.create();
 
