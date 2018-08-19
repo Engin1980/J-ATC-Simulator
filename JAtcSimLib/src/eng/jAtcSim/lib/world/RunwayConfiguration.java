@@ -1,6 +1,7 @@
 package eng.jAtcSim.lib.world;
 
 import eng.eSystem.EStringBuilder;
+import eng.eSystem.Tuple;
 import eng.eSystem.collections.*;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.utilites.ArrayUtils;
@@ -15,7 +16,7 @@ import java.awt.geom.Line2D;
 
 public class RunwayConfiguration {
 
-  public static class RunwayThresholdConfiguration{
+  public static class RunwayThresholdConfiguration {
     @XmlOptional
     private String categories = "ABCD";
     @XmlIgnore
@@ -63,7 +64,7 @@ public class RunwayConfiguration {
       this.threshold = threshold;
     }
 
-    public void bind(){
+    public void bind() {
       this.threshold = Acc.airport().tryGetRunwayThreshold(this.name);
       if (this.threshold == null)
         throw new EApplicationException("Unable to find threshold " + this.name + " for runway configuration.");
@@ -84,7 +85,7 @@ public class RunwayConfiguration {
   private IList<ISet<RunwayThreshold>> crossedThresholdSets = null;
 
   @XmlConstructor
-  private RunwayConfiguration(){
+  private RunwayConfiguration() {
 
   }
 
@@ -131,31 +132,31 @@ public class RunwayConfiguration {
   }
 
   public void bind() {
-    arrivals.forEach(q->q.bind());
-    departures.forEach(q->q.bind());
+    arrivals.forEach(q -> q.bind());
+    departures.forEach(q -> q.bind());
 
     IList<Runway> rwys = new EDistinctList<>(EDistinctList.Behavior.skip);
-    rwys.add(this.arrivals.select(q->q.threshold.getParent()).distinct());
-    rwys.add(this.departures.select(q->q.threshold.getParent()).distinct());
+    rwys.add(this.arrivals.select(q -> q.threshold.getParent()).distinct());
+    rwys.add(this.departures.select(q -> q.threshold.getParent()).distinct());
 
     // check if all categories are applied
-    for (char i = 'A'; i <= 'D' ; i++) {
+    for (char i = 'A'; i <= 'D'; i++) {
       char c = i;
-      if (!arrivals.isAny(q->q.isForCategory(c)))
+      if (!arrivals.isAny(q -> q.isForCategory(c)))
         throw new EApplicationException("Unable to find arrival threshold for category " + c);
-      if (!departures.isAny(q->q.isForCategory(c)))
+      if (!departures.isAny(q -> q.isForCategory(c)))
         throw new EApplicationException("Unable to find departure threshold for category " + c);
     }
 
     // detection and saving the crossed runways
     IList<ISet<Runway>> crossedRwys = new EList<>();
-    while (rwys.isEmpty() == false){
+    while (rwys.isEmpty() == false) {
       ISet<Runway> set = new ESet<>();
       Runway r = rwys.get(0);
       rwys.removeAt(0);
       set.add(r);
       set.add(
-        rwys.where(q->isIntersectionBetweenRunways(r, q))
+          rwys.where(q -> isIntersectionBetweenRunways(r, q))
       );
       rwys.tryRemove(set);
       crossedRwys.add(set);
@@ -195,14 +196,27 @@ public class RunwayConfiguration {
     return ret;
   }
 
-  public String toLineInfoString() {
-    EStringBuilder sb = new EStringBuilder();
-    IList<String> deps = departures.select(q -> q.name + "(DEP)");
-    IList<String> arrs = arrivals.select(q -> q.name + "(ARR)");
-    sb.appendItems(deps, ", ");
-    sb.append(", ");
-    sb.appendItems(arrs, ", ");
-    return sb.toString();
+  public IList<String> toInfoString() {
+    EList<String> lines = new EList<>();
+    EStringBuilder sb;
+
+    sb = new EStringBuilder();
+    sb.append("Arrivals: ");
+    sb.appendItems(
+        arrivals.select(q -> new Tuple<>(q.name, q.categories)),
+        q -> q.getA() + "/" + q.getB(),
+        ", ");
+    lines.add(sb.toString());
+
+    sb = new EStringBuilder();
+    sb.append("Departures: ");
+    sb.appendItems(
+        departures.select(q -> new Tuple<>(q.name, q.categories)),
+        q -> q.getA() + "/" + q.getB(),
+        ", ");
+    lines.add(sb.toString());
+
+    return lines;
   }
 
   public boolean isUsingTheSameRunwayConfiguration(RunwayConfiguration other) {
@@ -222,7 +236,7 @@ public class RunwayConfiguration {
   }
 
   public ISet<RunwayThreshold> getCrossedSetForThreshold(RunwayThreshold rt) {
-    ISet<RunwayThreshold> ret = this.crossedThresholdSets.getFirst(q->q.contains(rt));
+    ISet<RunwayThreshold> ret = this.crossedThresholdSets.getFirst(q -> q.contains(rt));
     return ret;
   }
 }

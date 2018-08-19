@@ -522,19 +522,13 @@ public class Radar {
   }
 
   private void buildDrawnRoutesList() {
-    IReadOnlyList<RunwayThreshold> rts;
     this.drawnRoutes.clear();
     RunwayConfiguration rc = Acc.atcTwr().getRunwayConfigurationInUse();
-    for (RunwayConfiguration.RunwayThresholdConfiguration arrival : rc.getArrivals()) {
-      if (arrival.isShowRoutes())
-        this.drawnRoutes.add(arrival.getThreshold().getRoutes());
-    }
-
     rc.getArrivals()
         .where(q -> q.isShowRoutes())
         .forEach(q -> this.drawnRoutes.add(
             q.getThreshold().getRoutes().where(p -> p.getType() != Route.eType.sid)));
-    rc.getArrivals()
+    rc.getDepartures()
         .where(q -> q.isShowRoutes())
         .forEach(q -> this.drawnRoutes.add(
             q.getThreshold().getRoutes().where(p -> p.getType() == Route.eType.sid)));
@@ -837,9 +831,6 @@ public class Radar {
       switch (route.getType()) {
         case sid:
           if (!displaySettings.isSidVisible()) continue;
-//          for (RunwayThreshold runwayThreshold : Acc.atcTwr()
-//              .getRunwayThresholdsInUse(TowerAtc.eDirection.departures)
-//              .where(q -> q.getRoutes().contains(route))) {
           for (RunwayThreshold runwayThreshold : Acc.atcTwr().getRunwayConfigurationInUse()
               .getArrivals()
               .select(q->q.getThreshold())

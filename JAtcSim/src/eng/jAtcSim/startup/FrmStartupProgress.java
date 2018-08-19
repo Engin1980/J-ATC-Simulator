@@ -36,6 +36,7 @@ public class FrmStartupProgress extends JFrame {
     JPanel pnl = LayoutManager.createGridPanel(2, 1, 0, pnlProgress, pnlLabel);
     pnl.setPreferredSize(new Dimension(400, 75));
 
+    this.setUndecorated(true);
     this.getContentPane().add(pnl);
     this.pack();
     this.setLocationRelativeTo(null);

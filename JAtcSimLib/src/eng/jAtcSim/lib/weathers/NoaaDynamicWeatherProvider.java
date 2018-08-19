@@ -1,6 +1,5 @@
 package eng.jAtcSim.lib.weathers;
 
-import eng.eSystem.xmlSerialization.XmlIgnore;
 import eng.jAtcSim.lib.Timer;
 import eng.jAtcSim.lib.weathers.downloaders.MetarDecoder;
 import eng.jAtcSim.lib.weathers.downloaders.MetarDownloader;

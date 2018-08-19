@@ -14,6 +14,7 @@ import eng.eSystem.utilites.ConversionUtils;
 public class Global {
   public static final int MINIMUM_ATC_SPEECH_DELAY_SECONDS = 3;
   public static final int MAXIMUM_ATC_SPEECH_DELAY_SECONDS = 25;
+  public static final boolean WEATHER_INFO_STRING_AS_METAR = true;
 
   /**
    * If TRUE, Coordinates are displayed as DD°MM'SS", if FALSE, as decimal.

@@ -10,7 +10,6 @@ import eng.eSystem.collections.*;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.events.EventSimple;
 import eng.eSystem.exceptions.EApplicationException;
-import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.xmlSerialization.XmlIgnore;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.AirplaneList;
@@ -37,7 +36,6 @@ import eng.jAtcSim.lib.weathers.WeatherProvider;
 import eng.jAtcSim.lib.world.Airport;
 import eng.jAtcSim.lib.world.Area;
 import eng.jAtcSim.lib.world.Border;
-import eng.jAtcSim.lib.world.RunwayThreshold;
 
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -123,7 +121,6 @@ public class Simulation {
         throw new IllegalArgumentException("Value of {trafficManagerSettings} cannot not be null.");
     }
 
-
     this.now = now.clone();
     this.simulationSecondLengthInMs = simulationSecondLengthInMs;
 
@@ -205,11 +202,13 @@ public class Simulation {
 
   public void init() {
     Acc.setSimulation(this);
+    Acc.setAirport(this.activeAirport);
     Acc.atcTwr().init();
     Acc.atcApp().init();
     Acc.atcCtr().init();
     this.prm.init();
-    this.weatherProvider.getWeatherUpdatedEvent().add(w -> weatherProvider_weatherUpdated(w));
+    this.weatherProvider.getOnWeatherUpdated().add(w -> weatherProvider_weatherUpdated(w));
+    weatherProvider_weatherUpdated(this.weatherProvider.getWeather());
 
     trafficManager.generateNewTrafficIfRequired();
     trafficManager.throwOutElapsedMovements(this.now.addMinutes(-5));

@@ -9,7 +9,6 @@ import eng.eSystem.xmlSerialization.XmlIgnore;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.AirplaneList;
-import eng.jAtcSim.lib.airplanes.AirproxType;
 import eng.jAtcSim.lib.coordinates.Coordinate;
 import eng.jAtcSim.lib.coordinates.Coordinates;
 import eng.jAtcSim.lib.global.ETime;
@@ -32,8 +31,6 @@ import eng.jAtcSim.lib.world.Route;
 import eng.jAtcSim.lib.world.Runway;
 import eng.jAtcSim.lib.world.RunwayConfiguration;
 import eng.jAtcSim.lib.world.RunwayThreshold;
-
-import java.util.Map;
 
 public class TowerAtc extends ComputerAtc {
 
@@ -317,7 +314,7 @@ public class TowerAtc extends ComputerAtc {
     processRunwayChangeBackground();
 
     WeatherProvider wp = Acc.weatherProvider();
-    wp.getWeatherUpdatedEvent().add(w -> weatherUpdated(w));
+    wp.getOnWeatherUpdated().add(w -> weatherUpdated(w));
   }
 
   public boolean isRunwayThresholdUnderMaintenance(RunwayThreshold threshold) {
@@ -375,24 +372,28 @@ public class TowerAtc extends ComputerAtc {
     return onRunwayChanged;
   }
 
+  private void sendMultiLineMessageToUser(Iterable<String> lines){
+    IList<String> lst = new EList<>();
+    lst.add(lines);
+    for (String s : lst) {
+      Message msg = new Message(this, Acc.atcApp(),
+          new StringMessageContent(s));
+      super.sendMessage(msg);
+    }
+  }
+
   private void processMessageFromAtc(RunwayUse ru) {
     EStringBuilder sb = new EStringBuilder();
     Message msg;
-    sb.append("Runway(s) in use: ");
-    sb.append(inUseInfo.current.toLineInfoString());
-    msg = new Message(this, Acc.atcApp(),
-        new StringMessageContent(sb.toString()));
-    super.sendMessage(msg);
+    IList<String> lns = inUseInfo.current.toInfoString();
+    lns.insert(0, "Runway(s) in use:");
+    sendMultiLineMessageToUser(lns);
 
     if (inUseInfo.scheduled != null) {
-      sb = new EStringBuilder();
-      sb.append("Scheduled runways to use: ");
-      sb.append(inUseInfo.scheduled.toLineInfoString());
-      sb.append(" from ");
-      sb.append(inUseInfo.scheduler.getScheduledTime().toHourMinuteString());
-      msg = new Message(this, Acc.atcApp(),
-          new StringMessageContent(sb.toString()));
-      super.sendMessage(msg);
+      lns = inUseInfo.scheduled.toInfoString();
+      lns.insert(0, "Scheduled runways to use:");
+      lns.add("Scheduled runways active from " + inUseInfo.scheduler.getScheduledTime().toHourMinuteString());
+      sendMultiLineMessageToUser(lns);
     }
   }
 
@@ -460,17 +461,10 @@ public class TowerAtc extends ComputerAtc {
   }
 
   private void announceChangeRunwayInUse() {
-    EStringBuilder sb = new EStringBuilder();
-
-    sb.append("Expected runway change to: ");
-    sb.append(this.inUseInfo.scheduled.toLineInfoString());
-    sb.appendFormat(" at %s.", this.inUseInfo.scheduler.getScheduledTime().toTimeString());
-
-    Message m = new Message(
-        this,
-        Acc.atcApp(),
-        new StringMessageContent(sb.toString()));
-    super.sendMessage(m);
+    IList<String> lns = this.inUseInfo.scheduled.toInfoString();
+    lns.insert(0,"Expected runway change to:");
+    lns.add("Expected runway change at " + this.inUseInfo.scheduler.getScheduledTime().toTimeString());
+    sendMultiLineMessageToUser(lns);
   }
 
   private boolean isOnApproachOfTheRunwayInUse(Airplane p) {
@@ -549,15 +543,10 @@ public class TowerAtc extends ComputerAtc {
   private void changeRunwayInUse() {
 
     EStringBuilder str = new EStringBuilder();
-    str.appendLine("Changed runway(s) in use now to: ");
-    str.append(inUseInfo.scheduled.toLineInfoString());
-    str.append(".");
+    IList<String> lns = inUseInfo.scheduled.toInfoString();
+    lns.insert(0,"Changed runway(s) in use now to: ");
+    sendMultiLineMessageToUser(lns);
 
-    Message m = new Message(
-        this,
-        Acc.atcApp(),
-        StringResponse.create(str.toString()));
-    super.sendMessage(m);
     this.inUseInfo.current = this.inUseInfo.scheduled;
     this.inUseInfo.scheduled = null;
     this.inUseInfo.scheduler = null;

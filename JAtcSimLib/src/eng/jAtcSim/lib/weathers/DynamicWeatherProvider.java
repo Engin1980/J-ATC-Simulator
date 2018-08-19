@@ -6,17 +6,21 @@
 package eng.jAtcSim.lib.weathers;
 
 import eng.eSystem.events.EventSimple;
+import eng.eSystem.utilites.ExceptionUtils;
 import eng.jAtcSim.lib.Acc;
+import eng.jAtcSim.lib.global.logging.ApplicationLog;
 
 /**
  * @author Marek Vajgl
  */
 public abstract class DynamicWeatherProvider extends WeatherProvider {
 
+  private boolean hasFailedAlready = false;
+
   public final void updateWeather(boolean async) {
     UpdateThread t = new UpdateThread(this);
     if (async) {
-      t.getUpdateFinishedEvent().add(q -> updateWeatherFinished((UpdateThread) q));
+      t.getUpdateFinishedEvent().add(q -> updateWeatherFinished(q));
       t.start();
     } else {
       t.run();
@@ -25,9 +29,17 @@ public abstract class DynamicWeatherProvider extends WeatherProvider {
   }
 
   private void updateWeatherFinished(UpdateThread q) {
-    if (q.getException() != null) {
-      Acc.sim().sendTextMessageForUser("Failed to update weather. " + q.getException().getMessage());
+    if (q.getException() != null && !hasFailedAlready) {
+      Acc.log().writeLine(ApplicationLog.eType.warning,
+          "Failed to download weather using %s. Reason: %s.",
+          this.getClass().getName(),
+          ExceptionUtils.toFullString(q.getException()));
+      hasFailedAlready = true;
     } else {
+      Acc.log().writeLine(ApplicationLog.eType.info,
+          "Weather downloaded successfully: %s",
+          q.getResult().toInfoString());
+      if (hasFailedAlready) hasFailedAlready = false;
       Weather w = q.getResult();
       super.setWeather(w);
     }

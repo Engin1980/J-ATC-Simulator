@@ -7,6 +7,8 @@
 package eng.jAtcSim.lib.weathers;
 
 import eng.eSystem.EStringBuilder;
+import eng.jAtcSim.lib.Acc;
+import eng.jAtcSim.lib.global.Global;
 import eng.jAtcSim.lib.global.UnitProvider;
 
 /**
@@ -50,7 +52,7 @@ public class Weather {
     return UnitProvider.mToNM(visibilityInM);
   }
 
-  public double getVisibilityInMilesReal(){
+  public double getVisibilityInMilesReal() {
     if (visibilityInM == 9999)
       return Double.MAX_VALUE;
     else
@@ -95,13 +97,37 @@ public class Weather {
 
   public String toInfoString() {
     EStringBuilder sb = new EStringBuilder();
-    sb.appendFormatLine("Wind %d° at %d kts, visibility %1.0f miles, cloud base at %d ft at %1.0f %%.",
-        this.getWindHeading(),
-        this.getWindSpeetInKts(),
-        this.getVisibilityInMiles(),
-        this.getCloudBaseInFt(),
-        this.getCloudBaseHitProbability() * 100
-    );
+    if (Global.WEATHER_INFO_STRING_AS_METAR) {
+      sb.append("METAR ");
+      if (Acc.airport() == null)
+        sb.append("???? ");
+      else
+        sb.append(Acc.airport().getIcao()).append(" ");
+      sb.append("------Z ");
+      sb.appendFormat("%03d%02dKT ", this.getWindHeading(), this.getWindSpeetInKts());
+      sb.appendFormat("%04d ", this.getVisibilityInMeters());
+      if (getCloudBaseHitProbability() == 0) {
+        sb.append("NOSIG");
+      } else {
+        if (getCloudBaseHitProbability() < 2d / 8)
+          sb.append("FEW");
+        else if (getCloudBaseHitProbability() < 5d / 8)
+          sb.append("BKN");
+        else if (getCloudBaseHitProbability() < 7d / 8)
+          sb.append("SCT");
+        else
+          sb.append("OVC");
+        sb.appendFormat("%03d", this.getCloudBaseInFt() / 100);
+      }
+      sb.append(" ...");
+    } else
+      sb.appendFormatLine("Wind %d° at %d kts, visibility %1.0f miles, cloud base at %d ft at %1.0f %%.",
+          this.getWindHeading(),
+          this.getWindSpeetInKts(),
+          this.getVisibilityInMiles(),
+          this.getCloudBaseInFt(),
+          this.getCloudBaseHitProbability() * 100
+      );
     return sb.toString();
   }
 }
