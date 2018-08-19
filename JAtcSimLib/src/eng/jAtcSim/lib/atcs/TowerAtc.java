@@ -475,7 +475,7 @@ public class TowerAtc extends ComputerAtc {
 
   private boolean isOnApproachOfTheRunwayInUse(Airplane p) {
     boolean ret = inUseInfo.current.getArrivals()
-        .isAny(q -> q.getThreshold().equals(p.tryGetCurrentApproachRunwayThreshold()));
+        .isAny(q -> q.getThreshold().equals(p.tryGetCurrentApproachRunwayThreshold()) && q.isForCategory(p.getType().category));
     return ret;
   }
 
