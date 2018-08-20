@@ -47,7 +47,7 @@ public class JAtcSim {
   private static final Traffic enginSpecificTraffic =
       // new eng.jAtcSim.lib.traffic.TestTrafficOneApproach();
       // new eng.jAtcSim.lib.traffic.TestTrafficOneDeparture();
-   null;
+      null;
   private static AppSettings appSettings;
 
   private static FrmLog frmLog;
@@ -201,6 +201,39 @@ public class JAtcSim {
     initIntro();
     initStartupSettings();
     initStartupProgress();
+    initMainMenus();
+  }
+
+  private static void initMainMenus() {
+    Stylist.add(
+        "JMenuBar style",
+        new Stylist.TypeFilter(JMenuBar.class, true),
+        q -> {
+          q.setBackground(Color.DARK_GRAY);
+          q.setForeground(Color.LIGHT_GRAY);
+        });
+    Stylist.add(
+        "JMenu style",
+        new Stylist.TypeFilter(JMenu.class, false),
+        q -> {
+          q.setBackground(Color.DARK_GRAY);
+          q.setForeground(Color.LIGHT_GRAY);
+          ((JMenu)q).setOpaque(true);
+        });
+    Stylist.add(
+        "JMenuItem style",
+        new Stylist.TypeFilter(JMenuItem.class, false),
+        q -> {
+          q.setBackground(Color.DARK_GRAY);
+          q.setForeground(Color.LIGHT_GRAY);
+        });
+    Stylist.add(
+        "JMenuChecked style",
+        new Stylist.TypeFilter(JCheckBoxMenuItem.class, false),
+        q -> {
+          q.setBackground(Color.DARK_GRAY);
+          q.setForeground(Color.LIGHT_GRAY);
+        });
   }
 
   private static void initStartupProgress() {

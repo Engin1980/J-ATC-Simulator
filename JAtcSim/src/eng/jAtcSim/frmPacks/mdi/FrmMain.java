@@ -32,9 +32,6 @@ public class FrmMain extends javax.swing.JFrame {
     // top panel
     pnlTop = new JPanel();
     pnlTop.setLayout(new BoxLayout(pnlTop, BoxLayout.Y_AXIS));
-    //JButton btn = new JButton("test");
-    //btn.addActionListener(this::btn_click);
-    //pnlTop.add(btn);
 
     // content (radar) panel
     pnlContent = new JPanel();

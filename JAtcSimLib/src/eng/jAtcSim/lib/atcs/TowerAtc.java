@@ -191,6 +191,7 @@ public class TowerAtc extends ComputerAtc {
     }
     return ret;
   }
+
   public TowerAtc(AtcTemplate template) {
     super(template);
     toRecorder = new CommonRecorder(template.getName() + " - TO", template.getName() + "_to.log", "\t");
@@ -203,10 +204,6 @@ public class TowerAtc extends ComputerAtc {
     tryTakeOffPlaneNew();
     processRunwayCheckBackground();
     processRunwayChangeBackground();
-  }
-
-  public RunwayConfiguration getRunwayConfigurationInUse() {
-    return inUseInfo.current;
   }
 
   @Override
@@ -243,9 +240,8 @@ public class TowerAtc extends ComputerAtc {
     if (Acc.prm().getResponsibleAtc(p) != Acc.atcApp()) {
       return new ComputerAtc.RequestResult(false, String.format("%s is not from APP.", p.getCallsign()));
     }
-    if (isOnApproachOfTheRunwayInUse(p) == false) {
-      return new ComputerAtc.RequestResult(false, String.format("%s is cleared to approach on the inactive runway.", p.getCallsign()));
-    }
+    if (isOnApproachOfTheRunwayInUse(p) == false)
+        return new ComputerAtc.RequestResult(false, String.format("%s is cleared to approach on the inactive runway.", p.getCallsign()));
     if (isRunwayThresholdUnderMaintenance(p.tryGetCurrentApproachRunwayThreshold()) == false) {
       return new RequestResult(false, String.format("Runway %s is closed now.", p.tryGetCurrentApproachRunwayThreshold().getParent().getName()));
     }
@@ -317,6 +313,10 @@ public class TowerAtc extends ComputerAtc {
     wp.getOnWeatherUpdated().add(w -> weatherUpdated(w));
   }
 
+  public RunwayConfiguration getRunwayConfigurationInUse() {
+    return inUseInfo.current;
+  }
+
   public boolean isRunwayThresholdUnderMaintenance(RunwayThreshold threshold) {
     boolean ret = runwayChecks.get(threshold.getParent()).isActive() == false;
     return ret;
@@ -326,7 +326,7 @@ public class TowerAtc extends ComputerAtc {
     return departureManager.getNumberOfPlanesAtHoldingPoint();
   }
 
-  public RunwayConfiguration tryGetRunwayConfigurationScheduled(){
+  public RunwayConfiguration tryGetRunwayConfigurationScheduled() {
     return inUseInfo.scheduled;
   }
 
@@ -372,7 +372,7 @@ public class TowerAtc extends ComputerAtc {
     return onRunwayChanged;
   }
 
-  private void sendMultiLineMessageToUser(Iterable<String> lines){
+  private void sendMultiLineMessageToUser(Iterable<String> lines) {
     IList<String> lst = new EList<>();
     lst.add(lines);
     for (String s : lst) {
@@ -462,13 +462,13 @@ public class TowerAtc extends ComputerAtc {
 
   private void announceChangeRunwayInUse() {
     IList<String> lns = this.inUseInfo.scheduled.toInfoString();
-    lns.insert(0,"Expected runway change to:");
+    lns.insert(0, "Expected runway change to:");
     lns.add("Expected runway change at " + this.inUseInfo.scheduler.getScheduledTime().toTimeString());
     sendMultiLineMessageToUser(lns);
   }
 
   private boolean isOnApproachOfTheRunwayInUse(Airplane p) {
-    boolean ret = inUseInfo.current.getArrivals()
+    boolean ret = p.isEmergency() || inUseInfo.current.getArrivals()
         .isAny(q -> q.getThreshold().equals(p.tryGetCurrentApproachRunwayThreshold()) && q.isForCategory(p.getType().category));
     return ret;
   }
@@ -544,7 +544,7 @@ public class TowerAtc extends ComputerAtc {
 
     EStringBuilder str = new EStringBuilder();
     IList<String> lns = inUseInfo.scheduled.toInfoString();
-    lns.insert(0,"Changed runway(s) in use now to: ");
+    lns.insert(0, "Changed runway(s) in use now to: ");
     sendMultiLineMessageToUser(lns);
 
     this.inUseInfo.current = this.inUseInfo.scheduled;
@@ -572,10 +572,10 @@ public class TowerAtc extends ComputerAtc {
   private void restrictToRunwaysNotUsedInApproach(IList<RunwayThreshold> rts) {
     // removes thresholds, which has in their cross-set some plane on close approach
     int index = 0;
-    while (index < rts.size()){
+    while (index < rts.size()) {
       RunwayThreshold rt = rts.get(index);
       ISet<RunwayThreshold> crts = inUseInfo.current.getCrossedSetForThreshold(rt);
-      double dist =  crts.min(q->arrivalManager.getClosestLandingPlaneDistanceForThreshold(q),100d );
+      double dist = crts.min(q -> arrivalManager.getClosestLandingPlaneDistanceForThreshold(q), 100d);
       if (dist < 2.5)
         rts.tryRemove(crts);
       else
@@ -585,7 +585,7 @@ public class TowerAtc extends ComputerAtc {
 
   private void restrictToRunwaysNotUsedByRolling(IList<RunwayThreshold> rts) {
     int index = 0;
-    while (index < rts.size()){
+    while (index < rts.size()) {
       RunwayThreshold rt = rts.get(index);
       ISet<RunwayThreshold> crts = inUseInfo.current.getCrossedSetForThreshold(rt);
       boolean hasPlaneOnTheGround = crts
@@ -602,9 +602,9 @@ public class TowerAtc extends ComputerAtc {
   private void restrictToRunwayAvailableForTakeOff(IList<RunwayThreshold> rts, Airplane toPlane) {
     double toPlaneClearAltitude = toPlane.getAltitude() + 1500;
     int index = 0;
-    while (index < rts.size()){
+    while (index < rts.size()) {
       RunwayThreshold rt = rts.get(index);
-      if (departureManager.getLastDepartureTime(rt).addSeconds(60).isAfterOrEq(Acc.now())){
+      if (departureManager.getLastDepartureTime(rt).addSeconds(60).isAfterOrEq(Acc.now())) {
         rts.remove(rt);
         continue;
       }

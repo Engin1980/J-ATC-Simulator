@@ -2,6 +2,7 @@ package eng.jAtcSim.frmPacks.sdi;
 
 import eng.eSystem.collections.IMap;
 import eng.eSystem.utilites.awt.ComponentUtils;
+import eng.jAtcSim.Stylist;
 import eng.jAtcSim.frmPacks.shared.*;
 import eng.jAtcSim.lib.airplanes.Callsign;
 import eng.jAtcSim.lib.speaking.formatting.LongFormatter;
@@ -75,8 +76,11 @@ public class FrmMain extends JFrame {
 
     Color bgColor = new Color(50, 50, 50);
 
+    // menu
+    buildMenu();
+
     // top
-    pnlTop = buildTopPanel();
+    pnlTop = new JPanel(); // buildTopPanel();
     pnlTop.setBackground(bgColor);
 
     // bottom
@@ -115,69 +119,144 @@ public class FrmMain extends JFrame {
 
   }
 
-  private JPanel buildTopPanel() {
-
-    JButton btnStrips = new JButton("Strips");
-    adjustJComponentColors(btnStrips);
-    btnStrips.addActionListener(o -> {
-      boolean isVis = pnlLeft.isVisible();
-      isVis = !isVis;
-      pnlLeft.setVisible(isVis);
-    });
-
-    JButton btnCommands = new JButton("Cmds");
-    adjustJComponentColors(btnCommands);
-    btnCommands.addActionListener(o -> {
-      boolean isVis = pnlCommands.isVisible();
-      isVis = !isVis;
-      pnlCommands.setVisible(isVis);
-    });
-
-    JButton btnMovs = new JButton("Movs & Stats");
-    adjustJComponentColors(btnMovs);
-    btnMovs.addActionListener(o -> {
-      boolean isVis = pnlRight.isVisible();
-      isVis = !isVis;
-      pnlRight.setVisible(isVis);
-    });
-
-    JButton btnPause = new JButton("Pause");
-    adjustJComponentColors(btnPause);
-    btnPause.addActionListener(o -> {
-      if (parent.getSim().isRunning()) {
-        parent.getSim().stop();
-        btnPause.setText("Resume");
-      } else {
-        parent.getSim().start();
-        btnPause.setText("Pause");
-      }
-    });
-
-    JButton btnSave = new JButton("Save");
-    adjustJComponentColors(btnSave);
-    btnSave.addActionListener(o -> saveSimulation());
-
-    JButton btnView = new JButton("Add view");
-    adjustJComponentColors(btnView);
-    btnView.addActionListener(o -> {
-      FrmView f = new FrmView();
-      f.init(this.parent);
-      f.setVisible(true);
-    });
-
-    JButton btnRecording = new JButton("Recording");
-    adjustJComponentColors(btnRecording);
-    btnRecording.addActionListener(q -> btnRecording_click());
-
-    btnSound = new JButton(SOUND_OFF_LABEL);
-    adjustJComponentColors(btnSound);
-    btnSound.addActionListener(this::btnSound_click);
-
-    JPanel ret = LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.middle, 4,
-        btnStrips, btnCommands, btnMovs, btnPause, btnSave, btnView, btnRecording, btnSound);
-    ret.setName("pnlTop");
-    return ret;
+  private void buildMenuItem(JMenu mnu, String label, Character charMnemonic, eng.eSystem.Action action, Boolean checkBoxState) {
+    if (checkBoxState != null) {
+      JCheckBoxMenuItem item = new JCheckBoxMenuItem(label, checkBoxState);
+      item.setName("mnu" + label);
+      if (charMnemonic != null) item.setMnemonic(charMnemonic);
+      mnu.add(item);
+    } else {
+      JMenuItem item = new JMenuItem(label);
+      item.setName("mnu" + label);
+      if (charMnemonic != null) item.setMnemonic(charMnemonic);
+      mnu.add(item);
+    }
   }
+
+  private void noAction() {
+  }
+
+  private void buildMenu() {
+    JMenuBar mnuBar = new JMenuBar();
+
+    JMenu mnuFile = new JMenu("File");
+    mnuFile.setMnemonic(KeyEvent.VK_F);
+    mnuBar.add(mnuFile);
+
+    JMenu mnuSimulation = new JMenu("Simulation");
+    mnuSimulation.setMnemonic(KeyEvent.VK_S);
+    mnuBar.add(mnuSimulation);
+
+    JMenu mnuView = new JMenu("View");
+    mnuView.setMnemonic(KeyEvent.VK_V);
+    mnuBar.add(mnuView);
+
+    {
+      buildMenuItem(mnuFile, "Save", 's', this::noAction, null);
+      mnuFile.addSeparator();
+      buildMenuItem(mnuFile, "Quit", 'q', this::noAction, null);
+    }
+
+    {
+      buildMenuItem(mnuSimulation, "Paused", 'p', this::noAction, false);
+      JMenu mnuSpeed = new JMenu("Set speed");
+      mnuSpeed.setMnemonic(KeyEvent.VK_S);
+      mnuSimulation.add(mnuSpeed);
+      {
+        buildMenuItem(mnuSpeed, "Frozen (5000ms)", null, null, null);
+        buildMenuItem(mnuSpeed, "Slow (2000ms)", null, null, null);
+        buildMenuItem(mnuSpeed, "Real (1000ms)", null, null, null);
+        buildMenuItem(mnuSpeed, "Accelerated (500ms)", null, null, null);
+        buildMenuItem(mnuSpeed, "Fast (250ms)", null, null, null);
+        buildMenuItem(mnuSpeed, "Skip (50ms)", null, null, null);
+      }
+      mnuSimulation.addSeparator();
+      buildMenuItem(mnuSimulation, "Sounds", 's', this::noAction, true);
+      buildMenuItem(mnuSimulation, "Recording", 'r', this::noAction, null);
+    }
+    {
+      buildMenuItem(mnuView, "Flight strips", 'f', this::noAction, true);
+      buildMenuItem(mnuView, "Command buttons", 'c', this::noAction, true);
+      buildMenuItem(mnuView, "Scheduled & Stats", 's', this::noAction, true);
+      buildMenuItem(mnuView, "Add new radar view", 'r', this::noAction, null);
+    }
+
+    Stylist.verbose=true;
+    Stylist.apply(mnuBar, true);
+    Stylist.verbose=false;
+
+    this.setJMenuBar(mnuBar);
+  }
+
+//  private JPanel buildTopPanel() {
+
+//    ImageIcon imi = new ImageIcon("R:\\strips.png");
+//    JButton btnStrips = new JButton(imi);
+//    btnStrips.setMargin(new Insets(0, 0, 0, 0));
+//    adjustJComponentColors(btnStrips);
+//    btnStrips.addActionListener(o -> {
+//      boolean isVis = pnlLeft.isVisible();
+//      isVis = !isVis;
+//      pnlLeft.setVisible(isVis);
+//    });
+//
+//    imi = new ImageIcon("R:\\cmds.png");
+//    JButton btnCommands = new JButton(imi);
+//    btnCommands.setMargin(new Insets(0, 0, 0, 0));
+//    adjustJComponentColors(btnCommands);
+//    btnCommands.addActionListener(o -> {
+//      boolean isVis = pnlCommands.isVisible();
+//      isVis = !isVis;
+//      pnlCommands.setVisible(isVis);
+//    });
+//
+//    imi = new ImageIcon("R:\\scheduled.png");
+//    JButton btnMovs = new JButton(imi); //"Movs & Stats");
+//    btnMovs.setMargin(new Insets(0, 0, 0, 0));
+//    adjustJComponentColors(btnMovs);
+//    btnMovs.addActionListener(o -> {
+//      boolean isVis = pnlRight.isVisible();
+//      isVis = !isVis;
+//      pnlRight.setVisible(isVis);
+//    });
+//
+//    JButton btnPause = new JButton("Pause");
+//    adjustJComponentColors(btnPause);
+//    btnPause.addActionListener(o -> {
+//      if (parent.getSim().isRunning()) {
+//        parent.getSim().stop();
+//        btnPause.setText("Resume");
+//      } else {
+//        parent.getSim().start();
+//        btnPause.setText("Pause");
+//      }
+//    });
+//
+//    JButton btnSave = new JButton("Save");
+//    adjustJComponentColors(btnSave);
+//    btnSave.addActionListener(o -> saveSimulation());
+//
+//    JButton btnView = new JButton("Add view");
+//    adjustJComponentColors(btnView);
+//    btnView.addActionListener(o -> {
+//      FrmView f = new FrmView();
+//      f.init(this.parent);
+//      f.setVisible(true);
+//    });
+//
+//    JButton btnRecording = new JButton("Recording");
+//    adjustJComponentColors(btnRecording);
+//    btnRecording.addActionListener(q -> btnRecording_click());
+//
+//    btnSound = new JButton(SOUND_OFF_LABEL);
+//    adjustJComponentColors(btnSound);
+//    btnSound.addActionListener(this::btnSound_click);
+//
+//    JPanel ret = LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.middle, 4,
+//        btnStrips, btnCommands, btnMovs, btnPause, btnSave, btnView, btnRecording, btnSound);
+//    ret.setName("pnlTop");
+//    return ret;
+//  }
 
 
   private void btnSound_click(ActionEvent actionEvent) {

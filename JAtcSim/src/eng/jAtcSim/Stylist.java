@@ -15,10 +15,10 @@ public class Stylist {
     public abstract boolean accepts(Component component);
   }
 
-  public static class AndFilter extends Filter{
+  public static class AndFilter extends Filter {
     private IList<Filter> inner = new EList<>();
 
-    public AndFilter(Filter ... filters) {
+    public AndFilter(Filter... filters) {
       this.inner.add(filters);
     }
 
@@ -52,7 +52,7 @@ public class Stylist {
     }
   }
 
-  public static class ParentNameFilter extends Filter{
+  public static class ParentNameFilter extends Filter {
     private final String name;
     private final boolean lookRecursively;
 
@@ -64,7 +64,7 @@ public class Stylist {
     @Override
     public boolean accepts(Component component) {
       Component parent = component.getParent();
-      while (parent != null){
+      while (parent != null) {
         if (parent.getName().equals(this.name))
           return true;
         if (this.lookRecursively)
@@ -76,7 +76,7 @@ public class Stylist {
     }
   }
 
-  public static class ParentTypeFilter extends Filter{
+  public static class ParentTypeFilter extends Filter {
     private final Class type;
     private final boolean lookRecursively;
 
@@ -88,7 +88,7 @@ public class Stylist {
     @Override
     public boolean accepts(Component component) {
       Component parent = component.getParent();
-      while (parent != null){
+      while (parent != null) {
         if (parent.getClass().equals(this.type))
           return true;
         if (this.lookRecursively)
@@ -100,7 +100,7 @@ public class Stylist {
     }
   }
 
-  public static class NameFilter extends Filter{
+  public static class NameFilter extends Filter {
     private final String name;
 
     public NameFilter(String name) {
@@ -113,11 +113,8 @@ public class Stylist {
       return ret;
     }
   }
-
-  private static IList<Triple<String, Filter, Consumer<Component>>> inner  = new EList<>();
-
   public static boolean verbose = false;
-
+  private static IList<Triple<String, Filter, Consumer<Component>>> inner = new EList<>();
   private static int nextId = 1;
 
   public static void add(Filter filter, Consumer<Component> style) {
@@ -128,7 +125,7 @@ public class Stylist {
     inner.add(new Triple(name, filter, style));
   }
 
-  public static void apply(Component component, boolean applyOnContent){
+  public static void apply(Component component, boolean applyOnContent) {
     _apply(component, applyOnContent, 0);
   }
 
@@ -137,7 +134,7 @@ public class Stylist {
     for (Triple<String, Filter, Consumer<Component>> item : inner) {
       Filter filter = item.getB();
       if (filter.accepts(component)) {
-        if (verbose){
+        if (verbose) {
           for (int i = 0; i < level; i++) {
             System.out.print(" ");
           }
@@ -149,10 +146,20 @@ public class Stylist {
       }
     }
 
-    if (applyOnContent && component instanceof java.awt.Container) {
-      Container container = (Container) component;
-      for (Component item : container.getComponents()) {
-        _apply(item, true, level+1);
+    if (applyOnContent) {
+      if (component instanceof java.awt.Container) {
+        Container container = (Container) component;
+        for (Component item : container.getComponents()) {
+          _apply(item, true, level + 1);
+        }
+      }
+      if (component instanceof javax.swing.JMenu) {
+        javax.swing.JMenu container = (javax.swing.JMenu) component;
+        for (int i = 0; i < container.getItemCount(); i++) {
+          Object item = container.getItem(i);
+          if (item instanceof Component)
+            _apply((Component) item, true, level + 1);
+        }
       }
     }
   }
