@@ -139,9 +139,6 @@ public class FrmMain extends JFrame {
       item.addActionListener(e -> action.accept(item));
   }
 
-  private void noAction() {
-  }
-
   private void buildMenu() {
     JMenuBar mnuBar = new JMenuBar();
 
@@ -163,6 +160,7 @@ public class FrmMain extends JFrame {
       buildMenuItem(mnuFile, "Quit", 'q', s -> {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setVisible(false);
+        System.exit(0);
       });
     }
 
@@ -327,6 +325,5 @@ public class FrmMain extends JFrame {
 
     appendListenerForKeyToRadar();
   }
-
 
 }
