@@ -4,6 +4,7 @@ import eng.eSystem.collections.IMap;
 import eng.eSystem.utilites.awt.ComponentUtils;
 import eng.jAtcSim.Stylist;
 import eng.jAtcSim.frmPacks.shared.*;
+import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Callsign;
 import eng.jAtcSim.lib.speaking.formatting.LongFormatter;
 import eng.jAtcSim.lib.world.InitialPosition;
@@ -24,6 +25,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
+import java.util.function.Consumer;
 
 public class FrmMain extends JFrame {
 
@@ -119,18 +121,22 @@ public class FrmMain extends JFrame {
 
   }
 
-  private void buildMenuItem(JMenu mnu, String label, Character charMnemonic, eng.eSystem.Action action, Boolean checkBoxState) {
-    if (checkBoxState != null) {
-      JCheckBoxMenuItem item = new JCheckBoxMenuItem(label, checkBoxState);
-      item.setName("mnu" + label);
-      if (charMnemonic != null) item.setMnemonic(charMnemonic);
-      mnu.add(item);
-    } else {
-      JMenuItem item = new JMenuItem(label);
-      item.setName("mnu" + label);
-      if (charMnemonic != null) item.setMnemonic(charMnemonic);
-      mnu.add(item);
-    }
+  private void buildCheckMenuItem(JMenu mnu, String label, boolean checkBoxState, Character charMnemonic, Consumer<JCheckBoxMenuItem> action) {
+    JCheckBoxMenuItem item = new JCheckBoxMenuItem(label, checkBoxState);
+    item.setName("mnu" + label);
+    if (charMnemonic != null) item.setMnemonic(charMnemonic);
+    mnu.add(item);
+    if (action != null)
+      item.addActionListener(e -> action.accept(item));
+  }
+
+  private void buildMenuItem(JMenu mnu, String label, Character charMnemonic, Consumer<JMenuItem> action) {
+    JMenuItem item = new JMenuItem(label);
+    item.setName("mnu" + label);
+    if (charMnemonic != null) item.setMnemonic(charMnemonic);
+    mnu.add(item);
+    if (action != null)
+      item.addActionListener(e -> action.accept(item));
   }
 
   private void noAction() {
@@ -152,119 +158,77 @@ public class FrmMain extends JFrame {
     mnuBar.add(mnuView);
 
     {
-      buildMenuItem(mnuFile, "Save", 's', this::noAction, null);
+      buildMenuItem(mnuFile, "Save", 's', s -> this.saveSimulation());
       mnuFile.addSeparator();
-      buildMenuItem(mnuFile, "Quit", 'q', this::noAction, null);
+      buildMenuItem(mnuFile, "Quit", 'q', s -> {
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.setVisible(false);
+      });
     }
 
     {
-      buildMenuItem(mnuSimulation, "Paused", 'p', this::noAction, false);
+      buildMenuItem(mnuSimulation, "Pause", 'p', s -> {
+        if (parent.getSim().isRunning()) {
+          parent.getSim().stop();
+          s.setText("Resume");
+        } else {
+          parent.getSim().start();
+          s.setText("Pause");
+        }
+      });
       JMenu mnuSpeed = new JMenu("Set speed");
       mnuSpeed.setMnemonic(KeyEvent.VK_S);
       mnuSimulation.add(mnuSpeed);
       {
-        buildMenuItem(mnuSpeed, "Frozen (5000ms)", null, null, null);
-        buildMenuItem(mnuSpeed, "Slow (2000ms)", null, null, null);
-        buildMenuItem(mnuSpeed, "Real (1000ms)", null, null, null);
-        buildMenuItem(mnuSpeed, "Accelerated (500ms)", null, null, null);
-        buildMenuItem(mnuSpeed, "Fast (250ms)", null, null, null);
-        buildMenuItem(mnuSpeed, "Skip (50ms)", null, null, null);
+        buildMenuItem(mnuSpeed, "Frozen (5000ms)", null, s -> setSimulationSpeed(5000));
+        buildMenuItem(mnuSpeed, "Slow (2000ms)", null, s -> setSimulationSpeed(2000));
+        buildMenuItem(mnuSpeed, "Real (1000ms)", null, s -> setSimulationSpeed(1000));
+        buildMenuItem(mnuSpeed, "Accelerated (500ms)", null, s -> setSimulationSpeed(500));
+        buildMenuItem(mnuSpeed, "Fast (250ms)", null, s -> setSimulationSpeed(250));
+        buildMenuItem(mnuSpeed, "Skip (50ms)", null, s -> setSimulationSpeed(50));
       }
       mnuSimulation.addSeparator();
-      buildMenuItem(mnuSimulation, "Sounds", 's', this::noAction, true);
-      buildMenuItem(mnuSimulation, "Recording", 'r', this::noAction, null);
+      buildCheckMenuItem(mnuSimulation, "Sounds", true, 's', s -> {
+        SoundManager.switchEnabled();
+        s.setState(SoundManager.isEnabled());
+      });
+      buildMenuItem(mnuSimulation, "Recording", 'r', s -> viewRecordingPanel());
     }
     {
-      buildMenuItem(mnuView, "Flight strips", 'f', this::noAction, true);
-      buildMenuItem(mnuView, "Command buttons", 'c', this::noAction, true);
-      buildMenuItem(mnuView, "Scheduled & Stats", 's', this::noAction, true);
-      buildMenuItem(mnuView, "Add new radar view", 'r', this::noAction, null);
+      buildCheckMenuItem(mnuView, "Flight strips", true, 'f', s -> {
+        boolean isVis = pnlLeft.isVisible();
+        isVis = !isVis;
+        pnlLeft.setVisible(isVis);
+        s.setState(isVis);
+      });
+      buildCheckMenuItem(mnuView, "Command buttons", true, 'c', s -> {
+        boolean isVis = pnlCommands.isVisible();
+        isVis = !isVis;
+        pnlCommands.setVisible(isVis);
+        s.setState(isVis);
+      });
+      buildCheckMenuItem(mnuView, "Scheduled & Stats", true, 's', s -> {
+        boolean isVis = pnlRight.isVisible();
+        isVis = !isVis;
+        pnlRight.setVisible(isVis);
+        s.setState(isVis);
+      });
+      buildCheckMenuItem(mnuView, "Add new radar view", true, 'r', s -> {
+        FrmView f = new FrmView();
+      f.init(this.parent);
+        f.setVisible(true);
+      });
     }
 
-    Stylist.verbose=true;
     Stylist.apply(mnuBar, true);
-    Stylist.verbose=false;
-
     this.setJMenuBar(mnuBar);
   }
 
-//  private JPanel buildTopPanel() {
-
-//    ImageIcon imi = new ImageIcon("R:\\strips.png");
-//    JButton btnStrips = new JButton(imi);
-//    btnStrips.setMargin(new Insets(0, 0, 0, 0));
-//    adjustJComponentColors(btnStrips);
-//    btnStrips.addActionListener(o -> {
-//      boolean isVis = pnlLeft.isVisible();
-//      isVis = !isVis;
-//      pnlLeft.setVisible(isVis);
-//    });
-//
-//    imi = new ImageIcon("R:\\cmds.png");
-//    JButton btnCommands = new JButton(imi);
-//    btnCommands.setMargin(new Insets(0, 0, 0, 0));
-//    adjustJComponentColors(btnCommands);
-//    btnCommands.addActionListener(o -> {
-//      boolean isVis = pnlCommands.isVisible();
-//      isVis = !isVis;
-//      pnlCommands.setVisible(isVis);
-//    });
-//
-//    imi = new ImageIcon("R:\\scheduled.png");
-//    JButton btnMovs = new JButton(imi); //"Movs & Stats");
-//    btnMovs.setMargin(new Insets(0, 0, 0, 0));
-//    adjustJComponentColors(btnMovs);
-//    btnMovs.addActionListener(o -> {
-//      boolean isVis = pnlRight.isVisible();
-//      isVis = !isVis;
-//      pnlRight.setVisible(isVis);
-//    });
-//
-//    JButton btnPause = new JButton("Pause");
-//    adjustJComponentColors(btnPause);
-//    btnPause.addActionListener(o -> {
-//      if (parent.getSim().isRunning()) {
-//        parent.getSim().stop();
-//        btnPause.setText("Resume");
-//      } else {
-//        parent.getSim().start();
-//        btnPause.setText("Pause");
-//      }
-//    });
-//
-//    JButton btnSave = new JButton("Save");
-//    adjustJComponentColors(btnSave);
-//    btnSave.addActionListener(o -> saveSimulation());
-//
-//    JButton btnView = new JButton("Add view");
-//    adjustJComponentColors(btnView);
-//    btnView.addActionListener(o -> {
-//      FrmView f = new FrmView();
-//      f.init(this.parent);
-//      f.setVisible(true);
-//    });
-//
-//    JButton btnRecording = new JButton("Recording");
-//    adjustJComponentColors(btnRecording);
-//    btnRecording.addActionListener(q -> btnRecording_click());
-//
-//    btnSound = new JButton(SOUND_OFF_LABEL);
-//    adjustJComponentColors(btnSound);
-//    btnSound.addActionListener(this::btnSound_click);
-//
-//    JPanel ret = LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.middle, 4,
-//        btnStrips, btnCommands, btnMovs, btnPause, btnSave, btnView, btnRecording, btnSound);
-//    ret.setName("pnlTop");
-//    return ret;
-//  }
-
-
-  private void btnSound_click(ActionEvent actionEvent) {
-    SoundManager.switchEnabled();
-    btnSound.setText(SoundManager.isEnabled() ? SOUND_OFF_LABEL : SOUND_ON_LABEL);
+  private void setSimulationSpeed(int intervalMs) {
+    parent.getSim().setSimulationSecondInterval(intervalMs);
   }
 
-  private void btnRecording_click() {
+  private void viewRecordingPanel() {
     RecordingPanel pnl;
     if (recording != null)
       pnl = new RecordingPanel(recording.getSettings());
@@ -314,11 +278,6 @@ public class FrmMain extends JFrame {
 
     this.parent.getGame().save(fileName, tmp);
     lastFileName = fileName;
-  }
-
-  private void adjustJComponentColors(JComponent component) {
-    component.setBackground(new Color(50, 50, 50));
-    component.setForeground(new Color(200, 200, 200));
   }
 
   void init(Pack pack) {

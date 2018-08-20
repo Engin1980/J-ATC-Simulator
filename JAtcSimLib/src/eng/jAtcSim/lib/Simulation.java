@@ -37,6 +37,7 @@ import eng.jAtcSim.lib.world.Airport;
 import eng.jAtcSim.lib.world.Area;
 import eng.jAtcSim.lib.world.Border;
 
+import javax.crypto.AEADBadTagException;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -190,6 +191,14 @@ public class Simulation {
 
     this.prm.getAll().forEach(q -> this.mrvaManager.registerPlane(q));
     this.prm.init();
+  }
+
+  public void setSimulationSecondInterval(int intervalMs) {
+    if (intervalMs < 0)
+      throw new EApplicationException("Interval " + intervalMs + " to be set as second length interval must be greater than 0.");
+    this.simulationSecondLengthInMs = intervalMs;
+    this.stop();
+    this.start();
   }
 
   private void twr_runwayChanged() {
