@@ -1,11 +1,13 @@
 package eng.jAtcSim.frmPacks.sdi;
 
 import eng.eSystem.collections.IMap;
+import eng.eSystem.utilites.ExceptionUtils;
 import eng.eSystem.utilites.awt.ComponentUtils;
 import eng.jAtcSim.Stylist;
 import eng.jAtcSim.frmPacks.shared.*;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Callsign;
+import eng.jAtcSim.lib.global.logging.ApplicationLog;
 import eng.jAtcSim.lib.speaking.formatting.LongFormatter;
 import eng.jAtcSim.lib.world.InitialPosition;
 import eng.jAtcSim.radarBase.RadarBehaviorSettings;
@@ -154,6 +156,10 @@ public class FrmMain extends JFrame {
     mnuView.setMnemonic(KeyEvent.VK_V);
     mnuBar.add(mnuView);
 
+    JMenu mnuHelp = new JMenu("Help");
+    mnuHelp.setMnemonic(KeyEvent.VK_H);
+    mnuBar.add(mnuHelp);
+
     {
       buildMenuItem(mnuFile, "Save", 's', s -> this.saveSimulation());
       mnuFile.addSeparator();
@@ -213,8 +219,25 @@ public class FrmMain extends JFrame {
       });
       buildCheckMenuItem(mnuView, "Add new radar view", true, 'r', s -> {
         FrmView f = new FrmView();
-      f.init(this.parent);
+        f.init(this.parent);
         f.setVisible(true);
+      });
+    }
+
+    {
+      buildMenuItem(mnuHelp, "Project web pages", null, s -> {
+        ProcessBuilder pb;
+        String url = "https://github.com/Engin1980/J-ATC-Simulator/wiki";
+        String osName = System.getProperty("os.name");
+        if (osName.contains("Windows"))
+          pb = new ProcessBuilder("cmd", "/c", "start", url);
+        else
+          pb = new ProcessBuilder("xsd-open", url);
+        try {
+          pb.start();
+        } catch (IOException e) {
+          Acc.log().writeLine(ApplicationLog.eType.warning, "Failed to start project web pages." + ExceptionUtils.toFullString(e));
+        }
       });
     }
 
