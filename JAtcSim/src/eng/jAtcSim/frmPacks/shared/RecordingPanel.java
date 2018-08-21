@@ -8,7 +8,7 @@ import eng.eSystem.utilites.awt.ComponentUtils;
 import eng.jAtcSim.recording.Settings;
 import eng.jAtcSim.shared.LayoutManager;
 import eng.jAtcSim.shared.MessageBox;
-import eng.jAtcSim.startup.extenders.*;
+import eng.jAtcSim.app.extenders.*;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;

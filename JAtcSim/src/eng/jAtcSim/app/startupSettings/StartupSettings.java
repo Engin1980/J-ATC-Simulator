@@ -1,4 +1,4 @@
-package eng.jAtcSim.startup.startupSettings;
+package eng.jAtcSim.app.startupSettings;
 
 import eng.eSystem.EStringBuilder;
 import eng.eSystem.collections.EList;

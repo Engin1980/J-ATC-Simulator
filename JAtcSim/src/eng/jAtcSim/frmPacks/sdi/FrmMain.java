@@ -4,6 +4,7 @@ import eng.eSystem.collections.IMap;
 import eng.eSystem.utilites.ExceptionUtils;
 import eng.eSystem.utilites.awt.ComponentUtils;
 import eng.jAtcSim.Stylist;
+import eng.jAtcSim.app.FrmAbout;
 import eng.jAtcSim.frmPacks.shared.*;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Callsign;
@@ -18,11 +19,10 @@ import eng.jAtcSim.recording.Recording;
 import eng.jAtcSim.recording.Settings;
 import eng.jAtcSim.shared.LayoutManager;
 import eng.jAtcSim.shared.MessageBox;
-import eng.jAtcSim.startup.extenders.SwingFactory;
+import eng.jAtcSim.app.extenders.SwingFactory;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.File;
@@ -239,6 +239,8 @@ public class FrmMain extends JFrame {
           Acc.log().writeLine(ApplicationLog.eType.warning, "Failed to start project web pages." + ExceptionUtils.toFullString(e));
         }
       });
+      mnuHelp.addSeparator();
+      buildMenuItem(mnuHelp, "About", 'o', s -> new FrmAbout().setVisible(true));
     }
 
     Stylist.apply(mnuBar, true);

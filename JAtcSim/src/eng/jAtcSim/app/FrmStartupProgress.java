@@ -1,6 +1,6 @@
-package eng.jAtcSim.startup;
+package eng.jAtcSim.app;
 
-import eng.eSystem.swing.extenders.ListBoxExtender;
+import eng.jAtcSim.JAtcSim;
 import eng.jAtcSim.Stylist;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.global.logging.ApplicationLog;
@@ -10,6 +10,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.net.URL;
 
 public class FrmStartupProgress extends JFrame {
   private final int listenerId;
@@ -17,6 +18,9 @@ public class FrmStartupProgress extends JFrame {
   private final JLabel lbl;
 
   public FrmStartupProgress(int expectedProgressCount) {
+
+    JAtcSim.setIconToFrame(this, "logIcon.png");
+
     listenerId = Acc.log().getOnNewMessage().add(q -> appendInfo(q));
     this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     this.addWindowListener(new WindowAdapter() {
@@ -26,6 +30,8 @@ public class FrmStartupProgress extends JFrame {
       }
     });
 
+    JLabel lblImage = JAtcSim.getAppImage(this);
+
     prg = new JProgressBar(JProgressBar.HORIZONTAL, 0, expectedProgressCount);
     prg.setValue(0);
     JPanel pnlProgress = LayoutManager.createBorderedPanel(8, prg);
@@ -33,8 +39,13 @@ public class FrmStartupProgress extends JFrame {
     lbl = new JLabel("Initialization");
     JPanel pnlLabel = LayoutManager.createBorderedPanel(8, lbl);
 
-    JPanel pnl = LayoutManager.createGridPanel(2, 1, 0, pnlProgress, pnlLabel);
-    pnl.setPreferredSize(new Dimension(400, 75));
+    JPanel pnl =
+        LayoutManager.createBorderedPanel(
+            LayoutManager.createBorderedPanel(8, lblImage),
+            null, null, null,
+            LayoutManager.createGridPanel(2, 1, 0, pnlProgress, pnlLabel)
+        );
+    pnl.setPreferredSize(new Dimension(400, 225));
 
     this.setUndecorated(true);
     this.getContentPane().add(pnl);

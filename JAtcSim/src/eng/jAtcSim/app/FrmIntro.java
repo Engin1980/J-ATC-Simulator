@@ -1,14 +1,13 @@
-package eng.jAtcSim.startup;
+package eng.jAtcSim.app;
 
 import eng.eSystem.utilites.ExceptionUtils;
-import eng.eSystem.utilites.awt.ComponentUtils;
 import eng.jAtcSim.JAtcSim;
 import eng.jAtcSim.Stylist;
 import eng.jAtcSim.shared.LayoutManager;
 import eng.jAtcSim.shared.MessageBox;
-import eng.jAtcSim.startup.extenders.SwingFactory;
-import eng.jAtcSim.startup.startupSettings.FrmStartupSettings;
-import eng.jAtcSim.startup.startupSettings.StartupSettings;
+import eng.jAtcSim.app.extenders.SwingFactory;
+import eng.jAtcSim.app.startupSettings.FrmStartupSettings;
+import eng.jAtcSim.app.startupSettings.StartupSettings;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -25,9 +24,6 @@ public class FrmIntro extends JFrame {
     initializeComponents();
     this.setTitle("JAtcSim - Main menu");
     this.startupSettings = startupSettings;
-
-
-
   }
 
   public StartupSettings getStartupSettings() {
@@ -38,12 +34,9 @@ public class FrmIntro extends JFrame {
 
     JAtcSim.setAppIconToFrame(this);
 
-    URL url = this.getClass().getResource("/intro.png");
-    Toolkit tk = this.getToolkit();
-    Image img = tk.getImage(url);
-    JLabel lblImage = new JLabel(new ImageIcon(img));
+    JLabel lblImage = JAtcSim.getAppImage(this);
 
-    JButton btnStartupSettings = new JButton("Adjust startup settings");
+    JButton btnStartupSettings = new JButton("Adjust app settings");
     btnStartupSettings.addActionListener(o -> btnStartupSettings_click());
     JButton btnRun = new JButton("Start simulation");
     btnRun.addActionListener(o -> btnRun_click());
@@ -83,7 +76,7 @@ public class FrmIntro extends JFrame {
       JAtcSim.startSimulation(this.startupSettings);
     } catch (Exception ex) {
       ex.printStackTrace();
-      MessageBox.show("Failed to start up the simulation. Something is wrong. Check the startup settings. \n\n" +
+      MessageBox.show("Failed to start up the simulation. Something is wrong. Check the app settings. \n\n" +
           ExceptionUtils.toFullString(ex, "\n"), "Error during simulation start-up.");
       this.setVisible(true);
     }

@@ -35,7 +35,7 @@
   <radar packClass="eng.jAtcSim.frmPacks.sdi.Pack"/>
   <simulation secondLengthInMs="750"/>
   <__typeMap>
+    <item class="eng.jAtcSim.app.startupSettings.StartupSettings" key="StartupSettings"/>
     <item class="java.lang.Integer" key="Integer"/>
-    <item class="eng.jAtcSim.startup.startupSettings.StartupSettings" key="StartupSettings"/>
   </__typeMap>
 </root>

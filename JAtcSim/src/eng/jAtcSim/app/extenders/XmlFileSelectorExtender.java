@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package eng.jAtcSim.startup.extenders;
+package eng.jAtcSim.app.extenders;
 
 import eng.jAtcSim.shared.LayoutManager;
 

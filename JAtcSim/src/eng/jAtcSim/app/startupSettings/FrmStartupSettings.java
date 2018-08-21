@@ -1,11 +1,11 @@
-package eng.jAtcSim.startup.startupSettings;
+package eng.jAtcSim.app.startupSettings;
 
 import eng.eSystem.utilites.awt.ComponentUtils;
 import eng.jAtcSim.XmlLoadHelper;
 import eng.jAtcSim.lib.world.Airport;
 import eng.jAtcSim.shared.LayoutManager;
-import eng.jAtcSim.startup.extenders.SwingFactory;
-import eng.jAtcSim.startup.startupSettings.panels.*;
+import eng.jAtcSim.app.extenders.SwingFactory;
+import eng.jAtcSim.app.startupSettings.panels.*;
 
 import javax.swing.*;
 import java.awt.*;

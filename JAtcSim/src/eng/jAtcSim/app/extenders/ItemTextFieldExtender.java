@@ -1,11 +1,9 @@
-package eng.jAtcSim.startup.extenders;
+package eng.jAtcSim.app.extenders;
 
-import com.sun.javafx.iio.common.ImageLoaderImpl;
 import eng.eSystem.EStringBuilder;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.utilites.ArrayUtils;
-import eng.eSystem.utilites.StringUtils;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;

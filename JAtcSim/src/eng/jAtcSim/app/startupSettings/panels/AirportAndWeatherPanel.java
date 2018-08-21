@@ -1,15 +1,13 @@
-package eng.jAtcSim.startup.startupSettings.panels;
+package eng.jAtcSim.app.startupSettings.panels;
 
 import eng.eSystem.collections.EList;
 import eng.eSystem.events.EventAnonymous;
-import eng.eSystem.events.EventAnonymousSimple;
-import eng.eSystem.events.EventSimple;
 import eng.eSystem.utilites.awt.ComponentUtils;
 import eng.jAtcSim.lib.world.Airport;
 import eng.jAtcSim.lib.world.Area;
 import eng.jAtcSim.shared.LayoutManager;
-import eng.jAtcSim.startup.startupSettings.StartupSettings;
-import eng.jAtcSim.startup.extenders.XComboBoxExtender;
+import eng.jAtcSim.app.startupSettings.StartupSettings;
+import eng.jAtcSim.app.extenders.XComboBoxExtender;
 
 import javax.swing.*;
 

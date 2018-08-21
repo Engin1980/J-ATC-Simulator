@@ -23,9 +23,9 @@ import eng.jAtcSim.lib.traffic.GenericTraffic;
 import eng.jAtcSim.lib.traffic.Traffic;
 import eng.jAtcSim.lib.weathers.Weather;
 import eng.jAtcSim.radarBase.global.SoundManager;
-import eng.jAtcSim.startup.FrmIntro;
-import eng.jAtcSim.startup.FrmStartupProgress;
-import eng.jAtcSim.startup.startupSettings.StartupSettings;
+import eng.jAtcSim.app.FrmIntro;
+import eng.jAtcSim.app.FrmStartupProgress;
+import eng.jAtcSim.app.startupSettings.StartupSettings;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -190,10 +190,22 @@ public class JAtcSim {
 
 
   public static void setAppIconToFrame(JFrame frm) {
-    URL url = frm.getClass().getResource("/icon.png");
+    setIconToFrame(frm, "icon.png");
+  }
+
+  public static void setIconToFrame(JFrame frm, String iconFileName) {
+    URL url = frm.getClass().getResource("/" + iconFileName);
     Toolkit tk = frm.getToolkit();
     Image img = tk.getImage(url);
     frm.setIconImage(img);
+  }
+
+  public static JLabel getAppImage(JFrame frm) {
+    URL url = frm.getClass().getResource("/intro.png");
+    Toolkit tk = frm.getToolkit();
+    Image img = tk.getImage(url);
+    JLabel ret = new JLabel(new ImageIcon(img));
+    return ret;
   }
 
   private static void initStylist() {

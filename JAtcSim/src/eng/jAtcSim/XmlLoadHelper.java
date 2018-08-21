@@ -6,32 +6,19 @@ import eng.eSystem.utilites.ExceptionUtils;
 import eng.eSystem.xmlSerialization.*;
 import eng.jAtcSim.frmPacks.shared.FlightStripSettings;
 import eng.jAtcSim.lib.Acc;
-import eng.jAtcSim.lib.airplanes.AirplaneType;
 import eng.jAtcSim.lib.airplanes.AirplaneTypes;
-import eng.jAtcSim.lib.atcs.AtcTemplate;
-import eng.jAtcSim.lib.coordinates.Coordinate;
-import eng.jAtcSim.lib.global.PlaneCategoryDefinitions;
 import eng.jAtcSim.lib.global.logging.ApplicationLog;
 import eng.jAtcSim.lib.global.sources.AirplaneTypesXmlSource;
 import eng.jAtcSim.lib.global.sources.AreaXmlSource;
 import eng.jAtcSim.lib.global.sources.FleetsXmlSource;
 import eng.jAtcSim.lib.global.sources.TrafficXmlSource;
-import eng.jAtcSim.lib.traffic.DensityBasedTraffic;
-import eng.jAtcSim.lib.traffic.FlightListTraffic;
-import eng.jAtcSim.lib.traffic.GenericTraffic;
 import eng.jAtcSim.lib.traffic.Traffic;
-import eng.jAtcSim.lib.traffic.fleets.CompanyFleet;
-import eng.jAtcSim.lib.traffic.fleets.FleetType;
 import eng.jAtcSim.lib.traffic.fleets.Fleets;
 import eng.jAtcSim.lib.world.*;
-import eng.jAtcSim.lib.world.approaches.GnssApproach;
-import eng.jAtcSim.lib.world.approaches.IafRoute;
-import eng.jAtcSim.lib.world.approaches.IlsApproach;
-import eng.jAtcSim.lib.world.approaches.UnpreciseApproach;
 import eng.jAtcSim.radarBase.RadarStyleSettings;
 import eng.jAtcSim.radarBase.parsing.RadarColorParser;
 import eng.jAtcSim.radarBase.parsing.RadarFontParser;
-import eng.jAtcSim.startup.startupSettings.StartupSettings;
+import eng.jAtcSim.app.startupSettings.StartupSettings;
 
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -69,7 +56,7 @@ public class XmlLoadHelper {
     } catch (Exception ex) {
       Acc.log().writeLine(
           ApplicationLog.eType.critical,
-          "Failed to load startup settings from " + fileName +
+          "Failed to load app settings from " + fileName +
               ". Defaults used. Reason: " + ExceptionUtils.toFullString(ex, "\n"));
       ret = new StartupSettings();
     }
@@ -87,7 +74,7 @@ public class XmlLoadHelper {
     } catch (Exception ex) {
       Acc.log().writeLine(
           ApplicationLog.eType.critical,
-          "Failed to save startup settings into " + fileName + ". Reason: " + ex.getMessage());
+          "Failed to save app settings into " + fileName + ". Reason: " + ex.getMessage());
     }
   }
 

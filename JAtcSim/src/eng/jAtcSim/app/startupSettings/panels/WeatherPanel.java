@@ -1,4 +1,4 @@
-package eng.jAtcSim.startup.startupSettings.panels;
+package eng.jAtcSim.app.startupSettings.panels;
 
 import eng.eSystem.EStringBuilder;
 import eng.eSystem.Tuple;
@@ -13,9 +13,9 @@ import eng.jAtcSim.lib.weathers.downloaders.MetarDownloaderNoaaGov;
 import eng.jAtcSim.shared.BackgroundWorker;
 import eng.jAtcSim.shared.LayoutManager;
 import eng.jAtcSim.shared.MessageBox;
-import eng.jAtcSim.startup.startupSettings.StartupSettings;
-import eng.jAtcSim.startup.extenders.NumericUpDownExtender;
-import eng.jAtcSim.startup.extenders.XComboBoxExtender;
+import eng.jAtcSim.app.startupSettings.StartupSettings;
+import eng.jAtcSim.app.extenders.NumericUpDownExtender;
+import eng.jAtcSim.app.extenders.XComboBoxExtender;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;

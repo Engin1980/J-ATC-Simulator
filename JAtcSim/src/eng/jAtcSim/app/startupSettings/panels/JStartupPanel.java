@@ -1,4 +1,4 @@
-package eng.jAtcSim.startup.startupSettings.panels;
+package eng.jAtcSim.app.startupSettings.panels;
 
 import javax.swing.*;
 import java.awt.*;

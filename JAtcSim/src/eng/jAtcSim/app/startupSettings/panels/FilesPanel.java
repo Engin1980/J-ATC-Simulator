@@ -1,4 +1,4 @@
-package eng.jAtcSim.startup.startupSettings.panels;
+package eng.jAtcSim.app.startupSettings.panels;
 
 import eng.eSystem.collections.IList;
 import eng.eSystem.utilites.ExceptionUtils;
@@ -8,9 +8,9 @@ import eng.jAtcSim.lib.world.Area;
 import eng.jAtcSim.shared.BackgroundWorker;
 import eng.jAtcSim.shared.LayoutManager;
 import eng.jAtcSim.shared.MessageBox;
-import eng.jAtcSim.startup.startupSettings.StartupSettings;
-import eng.jAtcSim.startup.extenders.SwingFactory;
-import eng.jAtcSim.startup.extenders.XmlFileSelectorExtender;
+import eng.jAtcSim.app.startupSettings.StartupSettings;
+import eng.jAtcSim.app.extenders.SwingFactory;
+import eng.jAtcSim.app.extenders.XmlFileSelectorExtender;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;

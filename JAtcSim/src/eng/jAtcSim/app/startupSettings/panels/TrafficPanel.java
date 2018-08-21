@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package eng.jAtcSim.startup.startupSettings.panels;
+package eng.jAtcSim.app.startupSettings.panels;
 
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
@@ -11,13 +11,12 @@ import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.utilites.awt.ComponentUtils;
 import eng.jAtcSim.lib.traffic.Traffic;
 import eng.jAtcSim.lib.world.Airport;
-import eng.jAtcSim.lib.world.Area;
 import eng.jAtcSim.shared.LayoutManager;
-import eng.jAtcSim.startup.extenders.ItemTextFieldExtender;
-import eng.jAtcSim.startup.extenders.NumericUpDownExtender;
-import eng.jAtcSim.startup.extenders.SwingFactory;
-import eng.jAtcSim.startup.extenders.XComboBoxExtender;
-import eng.jAtcSim.startup.startupSettings.StartupSettings;
+import eng.jAtcSim.app.extenders.ItemTextFieldExtender;
+import eng.jAtcSim.app.extenders.NumericUpDownExtender;
+import eng.jAtcSim.app.extenders.SwingFactory;
+import eng.jAtcSim.app.extenders.XComboBoxExtender;
+import eng.jAtcSim.app.startupSettings.StartupSettings;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;

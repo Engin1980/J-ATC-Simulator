@@ -36,6 +36,6 @@
   <simulation secondLengthInMs="500"/>
   <__typeMap>
     <item class="java.lang.Integer" key="Integer"/>
-    <item class="eng.jAtcSim.startup.startupSettings.StartupSettings" key="StartupSettings"/>
+    <item class="eng.jAtcSim.app.startupSettings.StartupSettings" key="StartupSettings"/>
   </__typeMap>
 </root>

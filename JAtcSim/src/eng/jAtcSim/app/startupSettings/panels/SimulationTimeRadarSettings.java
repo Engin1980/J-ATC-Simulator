@@ -1,12 +1,12 @@
-package eng.jAtcSim.startup.startupSettings.panels;
+package eng.jAtcSim.app.startupSettings.panels;
 
 import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IMap;
 import eng.jAtcSim.shared.LayoutManager;
-import eng.jAtcSim.startup.extenders.XComboBoxExtender;
-import eng.jAtcSim.startup.startupSettings.StartupSettings;
-import eng.jAtcSim.startup.extenders.NumericUpDownExtender;
-import eng.jAtcSim.startup.extenders.TimeExtender;
+import eng.jAtcSim.app.extenders.XComboBoxExtender;
+import eng.jAtcSim.app.startupSettings.StartupSettings;
+import eng.jAtcSim.app.extenders.NumericUpDownExtender;
+import eng.jAtcSim.app.extenders.TimeExtender;
 
 import javax.swing.*;
 import java.time.LocalTime;

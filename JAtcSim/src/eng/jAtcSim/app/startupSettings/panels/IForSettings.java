@@ -1,6 +1,6 @@
-package eng.jAtcSim.startup.startupSettings.panels;
+package eng.jAtcSim.app.startupSettings.panels;
 
-import eng.jAtcSim.startup.startupSettings.StartupSettings;
+import eng.jAtcSim.app.startupSettings.StartupSettings;
 
 public interface IForSettings {
 

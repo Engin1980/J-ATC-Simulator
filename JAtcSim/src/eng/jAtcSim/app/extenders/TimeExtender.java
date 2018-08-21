@@ -3,19 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package eng.jAtcSim.startup.extenders;
+package eng.jAtcSim.app.extenders;
 
 import java.awt.Color;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import javax.swing.JTextField;
-
-import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 /**
  *

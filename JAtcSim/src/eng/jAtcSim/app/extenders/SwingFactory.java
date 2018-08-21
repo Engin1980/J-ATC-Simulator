@@ -1,4 +1,4 @@
-package eng.jAtcSim.startup.extenders;
+package eng.jAtcSim.app.extenders;
 
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 
@@ -6,13 +6,9 @@ import javax.swing.*;
 import javax.swing.filechooser.FileFilter;
 import java.awt.*;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
-import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class SwingFactory {
 

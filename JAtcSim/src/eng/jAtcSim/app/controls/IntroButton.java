@@ -1,4 +1,4 @@
-package eng.jAtcSim.startup.controls;
+package eng.jAtcSim.app.controls;
 
 import eng.eSystem.events.EventSimple;
 
@@ -6,7 +6,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionAdapter;
 import java.awt.geom.Rectangle2D;
 
 public class IntroButton extends JPanel {
