@@ -56,7 +56,7 @@ public class XmlLoadHelper {
     } catch (Exception ex) {
       Acc.log().writeLine(
           ApplicationLog.eType.warning,
-          "Failed to load app settings from " + fileName +
+          "Failed to load startup settings from " + fileName +
               ". Defaults used. Reason: " + ExceptionUtils.toFullString(ex, "\n"));
       ret = new StartupSettings();
     }
