@@ -49,11 +49,33 @@ public class JavaFXCanvas implements ICanvas<Canvas> {
         type = EMouseEventArg.eType.click;
 
       }
+      EMouseEventArg.eButton btn = convertToMouseButton(e.getButton());
       eme = EMouseEventArg.createClick(
-          (int) e.getX(), (int) e.getY(), type,
-          EMouseEventArg.eButton.convertFromFXButton(e.getButton()),
+          (int) e.getX(), (int) e.getY(), type, btn,
           new EKeyboardModifier(dragStartModifiers));
       raiseEvent(eme);
+    }
+
+    private EMouseEventArg.eButton convertToMouseButton(MouseButton button) {
+      EMouseEventArg.eButton ret;
+      switch (button) {
+        case NONE:
+          ret = EMouseEventArg.eButton.none;
+          break;
+        case PRIMARY:
+          ret = EMouseEventArg.eButton.left;
+          break;
+        case SECONDARY:
+          ret = EMouseEventArg.eButton.right;
+          break;
+        case MIDDLE:
+          ret = EMouseEventArg.eButton.middle;
+          break;
+        default:
+          ret = EMouseEventArg.eButton.other;
+          break;
+      }
+      return ret;
     }
 
     void pressed(MouseEvent e) {
@@ -72,10 +94,9 @@ public class JavaFXCanvas implements ICanvas<Canvas> {
           Math.abs(dragEndPoint.y - dragStartPoint.y));
       if (diffPoint.x < MINIMUM_DRAG_SHIFT && diffPoint.y < MINIMUM_DRAG_SHIFT) {
       } else {
-
+        EMouseEventArg.eButton btn = convertToMouseButton(e.getButton());
         EMouseEventArg eme = EMouseEventArg.createDragged(
-            dragStartPoint.x, dragStartPoint.y, dragEndPoint.x, dragEndPoint.y,
-            EMouseEventArg.eButton.convertFromFXButton(e.getButton()),
+            dragStartPoint.x, dragStartPoint.y, dragEndPoint.x, dragEndPoint.y, btn,
             new EKeyboardModifier(dragStartModifiers));
         dragStartModifiers = 0;
         dragStartPoint = null;
@@ -91,11 +112,10 @@ public class JavaFXCanvas implements ICanvas<Canvas> {
       if (diffPoint.x < MINIMUM_DRAG_SHIFT && diffPoint.y < MINIMUM_DRAG_SHIFT) {
         return;
       }
-
+      EMouseEventArg.eButton btn = convertToMouseButton(e.getButton());
       EMouseEventArg eme = EMouseEventArg.createDragging(
           dragStartPoint.x, dragStartPoint.y, dragEndPoint.x, dragEndPoint.y,
-          EMouseEventArg.eButton.convertFromFXButton(dragStartButton),
-          new EKeyboardModifier(dragStartModifiers));
+          btn, new EKeyboardModifier(dragStartModifiers));
 
       raiseEvent(eme);
     }

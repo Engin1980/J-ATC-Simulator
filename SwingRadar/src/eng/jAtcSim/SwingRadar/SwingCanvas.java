@@ -34,11 +34,33 @@ public class SwingCanvas implements ICanvas<JComponent> {
         type = EMouseEventArg.eType.click;
 
       }
+      EMouseEventArg.eButton btn = convertFromSwingButton(e.getButton());
       eme = EMouseEventArg.createClick(
           e.getPoint().x, e.getPoint().y, type,
-          EMouseEventArg.eButton.convertFromSpringButton(e.getButton()),
-          new EKeyboardModifier(dragStartModifiers));
+          btn, new EKeyboardModifier(dragStartModifiers));
       raiseEvent(eme);
+    }
+
+    private EMouseEventArg.eButton convertFromSwingButton(int button) {
+      EMouseEventArg.eButton ret;
+      switch (button) {
+        case 0:
+          ret = EMouseEventArg.eButton.none;
+          break;
+        case java.awt.event.MouseEvent.BUTTON1:
+          ret = EMouseEventArg.eButton.left;
+          break;
+        case java.awt.event.MouseEvent.BUTTON2:
+          ret = EMouseEventArg.eButton.middle;
+          break;
+        case java.awt.event.MouseEvent.BUTTON3:
+          ret = EMouseEventArg.eButton.right;
+          break;
+        default:
+          ret = EMouseEventArg.eButton.other;
+          break;
+      }
+      return ret;
     }
 
     void pressed(MouseEvent e) {
@@ -57,11 +79,10 @@ public class SwingCanvas implements ICanvas<JComponent> {
           Math.abs(dragEndPoint.y - dragStartPoint.y));
       if (diffPoint.x < MINIMUM_DRAG_SHIFT && diffPoint.y < MINIMUM_DRAG_SHIFT) {
       } else {
-
+        EMouseEventArg.eButton btn = convertFromSwingButton(e.getButton());
         EMouseEventArg eme = EMouseEventArg.createDragged(
             dragStartPoint.x, dragStartPoint.y, dragEndPoint.x, dragEndPoint.y,
-            EMouseEventArg.eButton.convertFromSpringButton(e.getButton()),
-            new EKeyboardModifier(dragStartModifiers));
+            btn, new EKeyboardModifier(dragStartModifiers));
         dragStartModifiers = 0;
         dragStartPoint = null;
         raiseEvent(eme);
@@ -76,11 +97,10 @@ public class SwingCanvas implements ICanvas<JComponent> {
       if (diffPoint.x < MINIMUM_DRAG_SHIFT && diffPoint.y < MINIMUM_DRAG_SHIFT) {
         return;
       }
-
+      EMouseEventArg.eButton btn = convertFromSwingButton(e.getButton());
       EMouseEventArg eme = EMouseEventArg.createDragging(
           dragStartPoint.x, dragStartPoint.y, dragEndPoint.x, dragEndPoint.y,
-          EMouseEventArg.eButton.convertFromSpringButton(dragStartButton),
-          new EKeyboardModifier(dragStartModifiers));
+          btn, new EKeyboardModifier(dragStartModifiers));
 
       raiseEvent(eme);
     }

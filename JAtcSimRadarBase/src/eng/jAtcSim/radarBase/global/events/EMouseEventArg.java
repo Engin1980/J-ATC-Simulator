@@ -25,50 +25,6 @@ public class EMouseEventArg {
     middle,
     right,
     other;
-
-    public static eButton convertFromSpringButton(int value) {
-      eButton ret;
-      switch (value) {
-        case 0:
-          ret = eButton.none;
-          break;
-        case java.awt.event.MouseEvent.BUTTON1:
-          ret = eButton.left;
-          break;
-        case java.awt.event.MouseEvent.BUTTON2:
-          ret = eButton.middle;
-          break;
-        case java.awt.event.MouseEvent.BUTTON3:
-          ret = eButton.right;
-          break;
-        default:
-          ret = eButton.other;
-          break;
-      }
-      return ret;
-    }
-
-    public static eButton convertFromFXButton(MouseButton button) {
-      eButton ret;
-      switch (button) {
-        case NONE:
-          ret = none;
-          break;
-        case PRIMARY:
-          ret = left;
-          break;
-        case SECONDARY:
-          ret = right;
-          break;
-        case MIDDLE:
-          ret = middle;
-          break;
-        default:
-          ret = other;
-          break;
-      }
-      return ret;
-    }
   }
 
   public final int x;
