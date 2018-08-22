@@ -99,7 +99,7 @@ public class AppSettings {
 
     ret = getUnderAppFolder("appSettings.at.xml");
     if (ret.toFile().exists() == false) {
-      ret = getUnderAppFolder("_SettingFiles\\appSettings.at.xml");
+      ret = getUnderAppFolder(Paths.get("_SettingFiles", "appSettings.at.xml").toString());
       if (ret.toFile().exists() == false)
         ret = null;
     }

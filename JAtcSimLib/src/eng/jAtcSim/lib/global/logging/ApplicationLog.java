@@ -22,7 +22,7 @@ public class ApplicationLog extends Log {
   }
 
   public ApplicationLog() {
-    super("Applicatoin write", false, new WriterSaver(System.out, false));
+    super("Application write", false, new WriterSaver(System.out, false));
   }
 
   public enum eType{
