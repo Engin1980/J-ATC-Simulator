@@ -335,8 +335,7 @@ public class TowerAtc extends ComputerAtc {
     if (plane.isArrival()) {
       if (plane.getState() == Airplane.State.landed)
         arrivalManager.unregisterFinishedArrival(plane);
-      else
-        arrivalManager.unregisterGoAroundedArrival(plane);
+      //GO-AROUNDed planes are not unregistered, they have been unregistered previously
     }
     if (plane.isDeparture()) {
       departureManager.unregisterFinishedDeparture(plane);
@@ -781,21 +780,28 @@ class ArrivalManager {
   }
 
   public void unregisterFinishedArrival(Airplane plane) {
+    System.out.println("## unregistering finished arrival " + plane.getCallsign());
     this.landingPlanesList.remove(plane);
   }
 
   public void deletePlane(Airplane plane) {
+    System.out.println("## deleting plane " + plane.getCallsign());
     this.landingPlanesList.tryRemove(plane);
     this.goAroundedPlanesToSwitchList.tryRemove(plane);
   }
 
   public void registerNewArrival(Airplane plane) {
+    System.out.println("## registering arrival " + plane.getCallsign());
     if (plane == null) {
       throw new IllegalArgumentException("Value of {plane} cannot not be null.");
     }
 
+    assert plane.isArrival();
     assert plane.getAssignedRunwayThreshold() != null : "Assigned arrival for " + plane.getCallsign() + " is null.";
-    this.landingPlanesList.add(plane);
+    if (plane.getState().is(Airplane.State.approachEnter, Airplane.State.approachDescend, Airplane.State.longFinal, Airplane.State.shortFinal))
+      this.landingPlanesList.add(plane);
+    else
+      this.goAroundedPlanesToSwitchList.add(plane);
   }
 
   public boolean isSomeArrivalApproachingOrOnRunway(Runway runway) {
@@ -813,6 +819,7 @@ class ArrivalManager {
   }
 
   public void unregisterGoAroundedArrival(Airplane plane) {
+    System.out.println("## unregistering go-arounded arrival " + plane.getCallsign());
     this.goAroundedPlanesToSwitchList.remove(plane);
   }
 }
