@@ -4,7 +4,6 @@ import eng.eSystem.exceptions.EApplicationException;
 
 import javax.sound.sampled.*;
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -31,33 +30,30 @@ public class SoundManager {
     File systemMessageFile = Paths.get(wavFolderPath, "system.wav").toFile();
     File airproxFile = Paths.get(wavFolderPath, "airprox.wav").toFile();
     try {
-      audioStream = AudioSystem.getAudioInputStream(planeMessageFile);
-      planeClip = AudioSystem.getClip();
-      planeClip.open(audioStream);
+      planeClip = loadAndOpenClip(planeMessageFile);
+      planeNegClip = loadAndOpenClip(planeNegMessageFile);
+      atcClip = loadAndOpenClip(atcMessageFile);
+      atcNegClip = loadAndOpenClip(atcNegMessageFile);
+      systemClip = loadAndOpenClip(systemMessageFile);
+      airproxClip = loadAndOpenClip(airproxFile);
 
-      audioStream = AudioSystem.getAudioInputStream(planeNegMessageFile);
-      planeNegClip = AudioSystem.getClip();
-      planeNegClip.open(audioStream);
-
-      audioStream = AudioSystem.getAudioInputStream(atcMessageFile);
-      atcClip = AudioSystem.getClip();
-      atcClip.open(audioStream);
-
-      audioStream = AudioSystem.getAudioInputStream(atcNegMessageFile);
-      atcNegClip = AudioSystem.getClip();
-      atcNegClip.open(audioStream);
-
-      audioStream = AudioSystem.getAudioInputStream(systemMessageFile);
-      systemClip = AudioSystem.getClip();
-      systemClip.open(audioStream);
-
-      audioStream = AudioSystem.getAudioInputStream(airproxFile);
-      airproxClip = AudioSystem.getClip();
-      airproxClip.open(audioStream);
-
-    } catch (UnsupportedAudioFileException | IOException | LineUnavailableException ex) {
+    } catch (EApplicationException ex) {
       throw new EApplicationException("Sound area init fail!", ex);
     }
+  }
+
+  private static Clip loadAndOpenClip(File file){
+    Clip ret;
+    try {
+      AudioInputStream audioStream = AudioSystem.getAudioInputStream(file);
+      AudioFormat format = audioStream.getFormat();
+      DataLine.Info info = new DataLine.Info(Clip.class, format);
+      ret = (Clip) AudioSystem.getLine(info);
+      ret.open(audioStream);
+    } catch (Exception ex){
+      throw new EApplicationException("Unable to initialize sound clip from " + file + ".", ex);
+    }
+    return ret;
   }
 
   public static void playAtcNewMessage(boolean isNegative) {
