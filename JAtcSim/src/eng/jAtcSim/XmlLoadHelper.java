@@ -55,7 +55,7 @@ public class XmlLoadHelper {
       ret = (StartupSettings) ser.deserialize(fileName, StartupSettings.class);
     } catch (Exception ex) {
       Acc.log().writeLine(
-          ApplicationLog.eType.critical,
+          ApplicationLog.eType.warning,
           "Failed to load app settings from " + fileName +
               ". Defaults used. Reason: " + ExceptionUtils.toFullString(ex, "\n"));
       ret = new StartupSettings();
@@ -73,7 +73,7 @@ public class XmlLoadHelper {
       ser.serialize(fileName, sett);
     } catch (Exception ex) {
       Acc.log().writeLine(
-          ApplicationLog.eType.critical,
+          ApplicationLog.eType.warning,
           "Failed to save app settings into " + fileName + ". Reason: " + ex.getMessage());
     }
   }

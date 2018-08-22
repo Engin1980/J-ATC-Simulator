@@ -1,7 +1,6 @@
 package eng.jAtcSim.radarBase.global.events;
 
 import eng.jAtcSim.radarBase.global.Point;
-import javafx.scene.input.MouseButton;
 
 /**
  * @author Marek
