@@ -1,12 +1,8 @@
 package eng.jAtcSim.lib.traffic.fleets;
 
-import com.sun.javafx.iio.common.ImageLoaderImpl;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
-import eng.jAtcSim.lib.airplanes.AirplaneType;
 import eng.jAtcSim.lib.airplanes.AirplaneTypes;
-
-import java.util.ArrayList;
 
 public class Fleets extends EList<CompanyFleet> {
 
