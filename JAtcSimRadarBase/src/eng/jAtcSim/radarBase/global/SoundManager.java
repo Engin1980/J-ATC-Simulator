@@ -20,9 +20,6 @@ public class SoundManager {
   private static boolean enabled = true;
 
   public static void init(String wavFolderPath) {
-    AudioInputStream audioStream;
-
-    Path p = Paths.get(wavFolderPath);
     File planeMessageFile = Paths.get(wavFolderPath, "plane.wav").toFile();
     File atcMessageFile = Paths.get(wavFolderPath, "atc.wav").toFile();
     File planeNegMessageFile = Paths.get(wavFolderPath, "planeNeg.wav").toFile();
