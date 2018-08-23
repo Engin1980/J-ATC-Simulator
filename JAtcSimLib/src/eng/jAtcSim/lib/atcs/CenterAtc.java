@@ -150,7 +150,7 @@ public class CenterAtc extends ComputerAtc {
     for (Object o : spchs) {
       if (o instanceof GoodDayNotification) {
         if (((GoodDayNotification) o).isRepeated()) continue; // repeated g-d-n are ignored
-        if (plane.isDeparture()) {
+        if (plane.isDeparture() && Acc.prm().getResponsibleAtc(plane) == this) {
           SpeechList cmds = new SpeechList();
 
           cmds.add(
