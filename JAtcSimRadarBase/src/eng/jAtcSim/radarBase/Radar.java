@@ -340,14 +340,14 @@ public class Radar {
   private final MessageManager messageManager;
   private final AirplaneDisplayInfoList planeInfos = new AirplaneDisplayInfoList();
   private final NavaidDisplayInfoList navaids = new NavaidDisplayInfoList();
+  private final IList<Route> drawnRoutes = new EDistinctList<>(EDistinctList.Behavior.skip);
+  private final IList<Approach> drawnApproaches = new EDistinctList<>(EDistinctList.Behavior.skip);
   private InfoLine infoLine;
   private Callsign selectedCallsign;
   private int simulationSecondListenerHandler = -1;
   private Counter planeRedrawCounter;
   private Counter radarRedrawCounter;
   private boolean switchFlagTrue = false;
-  private final IList<Route> drawnRoutes = new EDistinctList<>(EDistinctList.Behavior.skip);
-  private final IList<Approach> drawnApproaches = new EDistinctList<>(EDistinctList.Behavior.skip);
 
   public Radar(ICanvas canvas, InitialPosition initialPosition,
                Simulation sim, Area area,
@@ -501,6 +501,15 @@ public class Radar {
     this.drawnRoutes.add(drawnRoutes);
   }
 
+  public Iterable<Approach> getDrawnApproaches() {
+    return drawnApproaches;
+  }
+
+  public void setDrawnApproaches(Iterable<Approach> drawnApproaches) {
+    this.drawnApproaches.clear();
+    this.drawnApproaches.add(drawnApproaches);
+  }
+
   private void sim_runwayChanged(Simulation simulation) {
     buildLocalNavaidList();
     buildDrawnRoutesList();
@@ -534,15 +543,6 @@ public class Radar {
             q.getThreshold().getRoutes().where(p -> p.getType() == Route.eType.sid)));
   }
 
-  public Iterable<Approach> getDrawnApproaches() {
-    return drawnApproaches;
-  }
-
-  public void setDrawnApproaches(Iterable<Approach> drawnApproaches) {
-    this.drawnApproaches.clear();
-    this.drawnApproaches.add(drawnApproaches);
-  }
-
   private void buildLocalNavaidList() {
 
     for (Navaid navaid : area.getNavaids()) {
@@ -554,8 +554,8 @@ public class Radar {
 
     IReadOnlyList<RunwayThreshold> rts =
         Acc.atcTwr().getRunwayConfigurationInUse().getArrivals()
-        .where(q->q.isShowRoutes())
-        .select(q->q.getThreshold());
+            .where(q -> q.isShowRoutes())
+            .select(q -> q.getThreshold());
     for (RunwayThreshold rt : rts) {
       for (Route route : rt.getRoutes().where(q -> q.getType() != Route.eType.sid)) {
         for (Navaid navaid : route.getNavaids()) {
@@ -832,7 +832,7 @@ public class Radar {
         case sid:
           if (!displaySettings.isSidVisible()) continue;
           for (RunwayThreshold runwayThreshold : Acc.atcTwr().getRunwayConfigurationInUse()
-              .getArrivals()
+              .getDepartures()
               .select(q->q.getThreshold())
               .where(q -> q.getRoutes().contains(route))) {
             drawSidIntro(runwayThreshold.getOtherThreshold().getCoordinate(), route.getNavaids().getFirst());

@@ -2,16 +2,11 @@
 <settings
         xmlns="https://github.com/Engin1980/J-ATC-Simulator/appSettings"
 >
-  <!--<soundFolder>$app$\_Sounds</soundFolder>-->
-  <!--<logFolder>C:\Temp\_AtcLog\$time$\</logFolder>-->
-  <!--<startupSettingsFile>$app$\_SettingFiles\defaultStartupSettingsUbuntu.ss.xml</startupSettingsFile>-->
-  <!--<stripSettingsFile>$app$\_SettingFiles\stripSettings.at.xml</stripSettingsFile>-->
   <soundFolder>$app$/_Sounds</soundFolder>
   <logFolder>./$time$/</logFolder>
   <startupSettingsFile>$app$/_SettingFiles/defaultStartupSettingsUbuntu.ss.xml</startupSettingsFile>
   <stripSettingsFile>$app$/_SettingFiles/stripSettings.at.xml</stripSettingsFile>
   <radar>
-    <!--<styleSettingsFile>$app$\_SettingFiles\radarStyleSettingsInconsolataBig.at.xml</styleSettingsFile>-->
     <styleSettingsFile>$app$/_SettingFiles/radarStyleSettingsInconsolataBig.at.xml</styleSettingsFile>
     <displayTextDelay>30</displayTextDelay>
     <displaySettings tma="true" country="false" mrva="true" mrvaLabel="true" ctr="true" vor="true" ndb="true"
@@ -19,5 +14,5 @@
                      fix="true" routeFix="true" minorFix="false" rings="true" history="true" headingLine="true"
                      minAltitude="0" maxAltitude="99000"/>
   </radar>
-  <autosave intervalInMinutes="15" path="c:\temp\jatcAutoSave" />
+  <autosave intervalInMinutes="15" path="./jatcAutoSave" />
 </settings>
