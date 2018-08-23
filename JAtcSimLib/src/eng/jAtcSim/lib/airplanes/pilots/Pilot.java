@@ -977,7 +977,7 @@ public class Pilot {
 
             // neni na twr, tak GA
             if (pilot.atc != Acc.atcTwr()) {
-              goAround("Not cleared to land. We expected to be switched to tower controller here.");
+              goAround("Not cleared to land; expected to be switched to tower controller here");
               return;
             }
             isAfterStateChange = false;
