@@ -5,7 +5,7 @@
  */
 package eng.jAtcSim.lib.coordinates;
 
-import eng.jAtcSim.lib.global.EMath;
+import eng.eSystem.EMath;
 import eng.jAtcSim.lib.global.Global;
 
 import java.text.DecimalFormat;
@@ -87,7 +87,7 @@ public final class CoordinateValue {
   }
 
   public int getDegrees() {
-    return EMath.down(value);
+    return EMath.roundToZero(value);
   }
 
   /**
@@ -103,7 +103,7 @@ public final class CoordinateValue {
   public int getMinutes() {
     double pom = value - getDegrees();
     pom = pom * 60;
-    int ret = EMath.down(pom);
+    int ret = EMath.roundToZero(pom);
     return ret;
   }
 

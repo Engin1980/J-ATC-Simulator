@@ -6,6 +6,7 @@
 package eng.jAtcSim.lib.airplanes.pilots;
 
 import com.sun.istack.internal.Nullable;
+import eng.eSystem.EMath;
 import eng.eSystem.EStringBuilder;
 import eng.eSystem.Tuple;
 import eng.eSystem.collections.IList;
@@ -715,6 +716,23 @@ public class Pilot {
       return ret;
     }
 
+    private double getMinimalAllowedAltitudeAfterThisStep(){
+      double maxVS;
+      switch (Pilot.this.parent.getState()){
+        case longFinal:
+          maxVS = -1500;
+          break;
+        case shortFinal:
+          maxVS = -1100;
+          break;
+          default:
+            maxVS = -2500;
+
+      }
+      double ret = Pilot.this.parent.getAltitude() + maxVS / 60d;
+      return ret;
+    }
+
     private boolean updateAltitudeOnApproach(boolean checkIfIsAfterThreshold) {
       int currentTargetAlttiude = parent.getTargetAltitude();
       double distToLand;
@@ -722,6 +740,7 @@ public class Pilot {
       if (location == ApproachLocation.afterThreshold) {
         newAltitude = Acc.airport().getAltitude() - 100; // I need to lock the airplane on runway
       } else {
+        int minAltByState = (int) getMinimalAllowedAltitudeAfterThisStep();
         switch (approach.getType()) {
           case visual:
             if (location == ApproachLocation.beforeFaf) {
@@ -744,6 +763,7 @@ public class Pilot {
               newAltitude = (int) delta + Acc.airport().getAltitude();
             }
         }
+        newAltitude = Math.max(newAltitude, minAltByState);
         newAltitude = Math.min(newAltitude, parent.getTargetAltitude());
         if (location == ApproachLocation.beforeMapt)
           newAltitude = Math.max(newAltitude, approach.getDecisionAltitude());
