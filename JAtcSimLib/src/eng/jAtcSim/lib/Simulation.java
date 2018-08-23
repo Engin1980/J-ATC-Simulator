@@ -5,6 +5,7 @@
  */
 package eng.jAtcSim.lib;
 
+import eng.eSystem.ERandom;
 import eng.eSystem.EStringBuilder;
 import eng.eSystem.collections.*;
 import eng.eSystem.eXml.XElement;
@@ -17,7 +18,6 @@ import eng.jAtcSim.lib.airplanes.AirplaneTypes;
 import eng.jAtcSim.lib.airplanes.Airplanes;
 import eng.jAtcSim.lib.atcs.*;
 import eng.jAtcSim.lib.coordinates.Coordinates;
-import eng.jAtcSim.lib.global.ERandom;
 import eng.jAtcSim.lib.global.ETime;
 import eng.jAtcSim.lib.managers.EmergencyManager;
 import eng.jAtcSim.lib.managers.MrvaManager;
@@ -37,7 +37,6 @@ import eng.jAtcSim.lib.world.Airport;
 import eng.jAtcSim.lib.world.Area;
 import eng.jAtcSim.lib.world.Border;
 
-import javax.crypto.AEADBadTagException;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
