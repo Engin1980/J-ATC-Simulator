@@ -3,6 +3,17 @@
 <area
         xmlns="https://github.com/Engin1980/J-ATC-Simulator/area"
         icao="LFFF">
+  <meta>
+    <title>Nice - Cote d'Azur Airport</title>
+    <author>Marek Vajgl</author>
+    <date>2018-08-25</date>
+    <description>
+      Real-life Cote d'Azur Airport - LFMN.
+
+      Departures have high altitude clearance (typically FL70 or FL100).
+      Arrivals check MRVA areas to not descend under them.
+    </description>
+  </meta>
   <airports>
     <airport icao="LFMN" name="Nice - Cote d'Azur" altitude="12" transitionAltitude="5000" vfrAltitude="2500"
              mainAirportNavaidName="NIZ" declination="2.083" coveredDistance="80">

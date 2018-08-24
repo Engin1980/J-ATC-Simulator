@@ -9,11 +9,14 @@
   <xs:element name="trafficDefinitions" type="trafficDefinitions"/>
 
   <xs:complexType name="trafficDefinitions">
-    <xs:choice maxOccurs="unbounded" minOccurs="0">
-      <xs:element name="genericTraffic" type="genericTraffic"/>
-      <xs:element name="densityTraffic" type="densityTraffic"/>
-      <xs:element name="flightListTraffic" type="flightListTraffic"/>
-    </xs:choice>
+    <xs:sequence>
+      <xs:element name="meta" type="sh:meta" minOccurs="0" maxOccurs="1" />
+      <xs:choice maxOccurs="unbounded" minOccurs="0">
+        <xs:element name="genericTraffic" type="genericTraffic"/>
+        <xs:element name="densityTraffic" type="densityTraffic"/>
+        <xs:element name="flightListTraffic" type="flightListTraffic"/>
+      </xs:choice>
+    </xs:sequence>
   </xs:complexType>
 
   <xs:complexType name="traffic">

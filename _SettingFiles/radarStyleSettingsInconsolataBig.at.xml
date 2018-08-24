@@ -4,6 +4,11 @@
         xmlns="https://github.com/Engin1980/J-ATC-Simulator/radarStyle"
         displayTextDelay="17">
 
+  <meta>
+    <title>Default radar - Inconsolata font</title>
+    <author>Marek Vajgl</author>
+  </meta>
+
   <airproxFull>FF0000</airproxFull>
   <airproxWarning>FFA500</airproxWarning>
   <airproxPartial>880000</airproxPartial>

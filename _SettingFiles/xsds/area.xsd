@@ -10,7 +10,8 @@
   <xs:element name="area" type="area"/>
 
   <xs:complexType name="area">
-    <xs:choice maxOccurs="unbounded">
+    <xs:sequence maxOccurs="unbounded">
+      <xs:element name="meta" type="sh:meta" minOccurs="0" maxOccurs="1" />
       <xs:element name="airports">
         <xs:complexType>
           <xs:sequence>
@@ -32,7 +33,7 @@
           </xs:sequence>
         </xs:complexType>
       </xs:element>
-    </xs:choice>
+    </xs:sequence>
     <xs:attribute name="icao" type="xs:string"/>
   </xs:complexType>
 

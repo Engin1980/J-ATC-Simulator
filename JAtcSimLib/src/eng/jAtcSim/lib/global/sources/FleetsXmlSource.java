@@ -21,7 +21,7 @@ public class FleetsXmlSource extends XmlSource<Fleets> {
 
     // mappings
     sett.getListItemMappings().add(
-        new XmlListItemMapping("fleets$", CompanyFleet.class));
+        new XmlListItemMapping("fleets$", "company", CompanyFleet.class));
     sett.getListItemMappings().add(
         new XmlListItemMapping("/company/types$", FleetType.class));
 

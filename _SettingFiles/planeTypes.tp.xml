@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <planeTypes xmlns="https://github.com/Engin1980/J-ATC-Simulator/planeTypes">
-
   <type name="A300" fullName="Airbus A300" category="D" maxAltitude="35000"
         vMinApp="135" vApp="145" vMaxApp="185"
         vR="155" vDep="165"

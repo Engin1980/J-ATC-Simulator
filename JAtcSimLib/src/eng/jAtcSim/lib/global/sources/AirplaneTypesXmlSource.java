@@ -24,7 +24,7 @@ public class AirplaneTypesXmlSource extends XmlSource<AirplaneTypes> {
 
     // mappings
     sett.getListItemMappings().add(
-        new XmlListItemMapping("planeTypes$", AirplaneType.class));
+        new XmlListItemMapping("planeTypes$", "type", AirplaneType.class));
 
     // own parsers
     sett.getValueParsers().add(new CoordinateValueParser());

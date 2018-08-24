@@ -2,6 +2,16 @@
 <area
         xmlns="https://github.com/Engin1980/J-ATC-Simulator/area"
         icao="LKAA">
+  <meta>
+    <title>LKPR + LKMT airports</title>
+    <author>Marek Vajgl</author>
+    <date>2018-08-24</date>
+    <description>
+      Real-life implementation of LKPR (Praha - Ruzyně) and LKMT(Ostrava - Mošnov) airports.
+
+      At LKPR note that planes do not hold at the end of STAR, but continue on their headings.
+    </description>
+  </meta>
   <airports>
     <airport icao="LKPR" name="Praha Ruzyně" altitude="1247" transitionAltitude="5000" vfrAltitude="2500"
              mainAirportNavaidName="OKL" declination="3.93" coveredDistance="80">

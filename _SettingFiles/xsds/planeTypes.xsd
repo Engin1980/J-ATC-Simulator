@@ -2,10 +2,11 @@
 
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
            targetNamespace="https://github.com/Engin1980/J-ATC-Simulator/planeTypes"
+           xmlns:sh="https://github.com/Engin1980/J-ATC-Simulator/shared"
            xmlns="https://github.com/Engin1980/J-ATC-Simulator/planeTypes"
            elementFormDefault="qualified">
 
-  <xs:element name="planeTypes" type="planeTypes" />
+  <xs:element name="planeTypes" type="planeTypes"/>
 
   <xs:complexType name="planeTypes">
     <xs:sequence>
@@ -14,33 +15,32 @@
   </xs:complexType>
 
   <xs:complexType name="planeType">
-    <xs:attribute name="name" type="xs:string" use="required" />
-    <xs:attribute name="fullName" type="xs:string" use="optional" />
-    <xs:attribute name="category" type="planeCategory" use="required" />
-    <xs:attribute name="maxAltitude" type="xs:int" use="required" />
-    <xs:attribute name="vMinApp" type="xs:int" use="required" />
-    <xs:attribute name="vApp" type="xs:int" use="required" />
-    <xs:attribute name="vMaxApp" type="xs:int" use="required" />
-    <xs:attribute name="vR" type="xs:int" use="required" />
-    <xs:attribute name="vDep" type="xs:int" use="required" />
-    <xs:attribute name="vMinClean" type="xs:int" use="required" />
-    <xs:attribute name="vMaxClean" type="xs:int" use="required" />
-    <xs:attribute name="vCruise" type="xs:int" use="required" />
-    <xs:attribute name="lowClimbRate" type="xs:int" use="required" />
-    <xs:attribute name="highClimbRate" type="xs:int" use="required" />
-    <xs:attribute name="lowDescendRate" type="xs:int" use="required" />
-    <xs:attribute name="highDescendRate" type="xs:int" use="required" />
-    <xs:attribute name="speedIncreaseRate" type="xs:int" use="required" />
-    <xs:attribute name="speedDecreaseRate" type="xs:int" use="required" />
-    <xs:attribute name="headingChangeRate" type="xs:double" use="required" />
+    <xs:attribute name="name" type="xs:string" use="required"/>
+    <xs:attribute name="fullName" type="xs:string" use="optional"/>
+    <xs:attribute name="category" type="planeCategory" use="required"/>
+    <xs:attribute name="maxAltitude" type="xs:int" use="required"/>
+    <xs:attribute name="vMinApp" type="xs:int" use="required"/>
+    <xs:attribute name="vApp" type="xs:int" use="required"/>
+    <xs:attribute name="vMaxApp" type="xs:int" use="required"/>
+    <xs:attribute name="vR" type="xs:int" use="required"/>
+    <xs:attribute name="vDep" type="xs:int" use="required"/>
+    <xs:attribute name="vMinClean" type="xs:int" use="required"/>
+    <xs:attribute name="vMaxClean" type="xs:int" use="required"/>
+    <xs:attribute name="vCruise" type="xs:int" use="required"/>
+    <xs:attribute name="lowClimbRate" type="xs:int" use="required"/>
+    <xs:attribute name="highClimbRate" type="xs:int" use="required"/>
+    <xs:attribute name="lowDescendRate" type="xs:int" use="required"/>
+    <xs:attribute name="highDescendRate" type="xs:int" use="required"/>
+    <xs:attribute name="speedIncreaseRate" type="xs:int" use="required"/>
+    <xs:attribute name="speedDecreaseRate" type="xs:int" use="required"/>
+    <xs:attribute name="headingChangeRate" type="xs:double" use="required"/>
   </xs:complexType>
 
   <xs:simpleType name="planeCategory">
     <xs:restriction base="xs:string">
-      <xs:pattern value="A|B|C|D" />
+      <xs:pattern value="A|B|C|D"/>
     </xs:restriction>
   </xs:simpleType>
-
 
 
 </xs:schema>
