@@ -1,7 +1,7 @@
 package eng.jAtcSim.lib.global.sources;
 
 import eng.eSystem.xmlSerialization.XmlSerializer;
-import eng.jAtcSim.lib.airplanes.AirplaneType;
+import eng.eSystem.xmlSerialization.XmlSettings;
 import eng.jAtcSim.lib.airplanes.AirplaneTypes;
 
 public class AirplaneTypesXmlSource extends XmlSource<AirplaneTypes> {
@@ -14,24 +14,13 @@ public class AirplaneTypesXmlSource extends XmlSource<AirplaneTypes> {
 
   @Override
   protected AirplaneTypes _load() {
-    throw new UnsupportedOperationException("Implement");
-//    eng.eSystem.xmlSerialization.Settings sett = new eng.eSystem.xmlSerialization.Settings();
-//
-//    // ignores
-//    sett.getIgnoredFieldsRegex().add("^_.+");
-//    sett.getIgnoredFieldsRegex().add("^parent$");
-//    sett.getIgnoredFieldsRegex().add("^binded$");
-//
-//    // mappings
-//    sett.getListItemMappings().add(
-//        new XmlListItemMapping("planeTypes$", "type", AirplaneType.class));
-//
-//    // own parsers
-//    sett.getValueParsers().add(new CoordinateValueParser());
-//
-//    XmlSerializer ser = new XmlSerializer(sett);
-//    AirplaneTypes ret = (AirplaneTypes) ser.deserialize(super.getXmlFileName(), AirplaneTypes.class);
-//    return ret;
+    XmlSettings sett = new XmlSettings();
+
+    XmlSerializer ser = new XmlSerializer(sett);
+
+    AirplaneTypes ret = ser.deserialize(super.getXmlFileName(), AirplaneTypes.class);
+
+    return ret;
   }
 
   public void init(){

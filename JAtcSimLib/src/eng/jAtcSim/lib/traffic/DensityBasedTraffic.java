@@ -8,6 +8,7 @@ import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.utilites.CollectionUtils;
 
 import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
+import eng.eSystem.xmlSerialization.annotations.XmlItemElement;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.AirplaneType;
 import eng.jAtcSim.lib.airplanes.Callsign;
@@ -30,7 +31,7 @@ public class DensityBasedTraffic extends GeneratedTraffic {
     }
   }
 
-  public static class CodeWeightList extends ArrayList<CodeWeight> {
+  public static class CodeWeightList extends EList<CodeWeight> {
     @XmlIgnore
     private double weightSum = -1;
 
@@ -77,9 +78,13 @@ public class DensityBasedTraffic extends GeneratedTraffic {
     }
   }
 
+  @XmlItemElement(elementName = "company", type = CodeWeight.class)
   private CodeWeightList companies = null; // XML
+  @XmlItemElement(elementName = "country", type = CodeWeight.class)
   private CodeWeightList countries = null; // XML
+  @XmlItemElement(elementName = "item", type = HourBlockMovements.class)
   private IList<HourBlockMovements> density = null; //XMl
+  @XmlItemElement(elementName = "direction", type = DirectionWeight.class)
   private IList<DirectionWeight> directions = new EList<>(); // XML
   private double nonCommercialFlightProbability = 0; // XML
 
@@ -99,7 +104,7 @@ public class DensityBasedTraffic extends GeneratedTraffic {
           Acc.now().getRoundedToNextHour(),
           tmp.getA(),
           tmp.getB());
-    }  else
+    } else
       ret = new GeneratedMovementsResponse(
           Acc.now().getRoundedToNextHour(),
           syncObject,
@@ -108,14 +113,14 @@ public class DensityBasedTraffic extends GeneratedTraffic {
     return ret;
   }
 
-  private Tuple<Integer,IReadOnlyList<Movement>> generateNewMovements() {
+  private Tuple<Integer, IReadOnlyList<Movement>> generateNewMovements() {
     IList<Movement> ret = new EList<>();
 
     if (lastGeneratedHour == null) {
       if (density.size() == 0)
         throw new EApplicationException("Unable to use generic traffic without density specified.");
       // init things
-      density.sort(q->q.hour);
+      density.sort(q -> q.hour);
       IReadOnlyList<Movement> tmp = generateTrafficForHour(Acc.now().getHours());
       ret.add(tmp);
       lastGeneratedHour = Acc.now().getHours();
@@ -189,7 +194,7 @@ public class DensityBasedTraffic extends GeneratedTraffic {
       ret = Acc.rnd().nextInt(360);
     else {
       DirectionWeight dw;
-      dw = directions.getRandomByWeights(q->q.weight, Acc.rnd());
+      dw = directions.getRandomByWeights(q -> q.weight, Acc.rnd());
       ret = dw.heading;
     }
     return ret;

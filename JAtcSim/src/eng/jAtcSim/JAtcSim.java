@@ -56,12 +56,9 @@ public class JAtcSim {
    * @param args the command line arguments
    */
   public static void main(String[] args) {
-
-   LoadDemo.loadDemo();
-
+//   LoadDemo.loadDemo();
 
     AppSettings.init();
-
 
     initStylist();
 

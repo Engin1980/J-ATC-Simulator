@@ -1,12 +1,11 @@
 package eng.jAtcSim;
 
-import eng.eSystem.xmlSerialization.Log;
 import eng.eSystem.xmlSerialization.XmlSerializer;
 import eng.eSystem.xmlSerialization.XmlSettings;
-import eng.jAtcSim.lib.airplanes.AirplaneType;
 import eng.jAtcSim.lib.airplanes.AirplaneTypes;
 import eng.jAtcSim.lib.traffic.fleets.Fleets;
 import eng.jAtcSim.lib.world.Area;
+import eng.jAtcSim.lib.world.xml.AltitudeValueParser;
 
 public class LoadDemo {
 
@@ -15,7 +14,10 @@ public class LoadDemo {
 
     Area ret;
 
-    XmlSerializer ser = new XmlSerializer();
+    XmlSettings sett = new XmlSettings();
+    sett.getMeta().registerCustomParser(int.class, false, new AltitudeValueParser());
+    sett.getMeta().registerCustomParser(Integer.class, false, new AltitudeValueParser());
+    XmlSerializer ser = new XmlSerializer(sett);
 
     ret = ser.deserialize(fileName, Area.class);
 

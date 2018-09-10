@@ -7,7 +7,7 @@ import eng.jAtcSim.radarBase.global.Color;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class RadarColorParser implements IValueParser<Color> {
+public class RadarColorValueParser implements IValueParser<Color> {
   @Override
   public Color parse(String value) {
     Color ret = null;

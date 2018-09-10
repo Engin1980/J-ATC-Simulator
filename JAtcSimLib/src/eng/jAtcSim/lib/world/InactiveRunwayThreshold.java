@@ -1,13 +1,17 @@
 package eng.jAtcSim.lib.world;
 
+import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 import eng.jAtcSim.lib.coordinates.Coordinate;
 import eng.jAtcSim.lib.coordinates.Coordinates;
 
 public class InactiveRunwayThreshold {
   private String name;
   private Coordinate coordinate;
+  @XmlIgnore
   private InactiveRunway parent;
+  @XmlIgnore
   private double _course;
+  @XmlIgnore
   private InactiveRunwayThreshold _other;
 
   public String getName() {

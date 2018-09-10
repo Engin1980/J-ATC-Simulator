@@ -11,6 +11,7 @@ import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.ERuntimeException;
+import eng.eSystem.xmlSerialization.annotations.XmlElementParser;
 import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 import eng.eSystem.xmlSerialization.annotations.XmlItemElement;
 import eng.eSystem.xmlSerialization.annotations.XmlOptional;
@@ -30,13 +31,15 @@ public class Airport {
 
   public static class SharedRoutesGroup {
     public String groupName;
+    @XmlOptional
     @XmlItemElement(elementName = "route", type = Route.class)
     public IList<Route> routes = new EList<>();
   }
 
   public static class SharedIafRoutesGroup {
     public String groupName;
-    @XmlItemElement(elementName = "iafRoute", type = IafRoute.class)
+    @XmlOptional
+    @XmlItemElement(elementName = "route", type = IafRoute.class)
     public IList<IafRoute> iafRoutes = new EList<>();
   }
 
@@ -44,7 +47,7 @@ public class Airport {
   @XmlItemElement(elementName = "runway", type = Runway.class)
   private final IList<Runway> runways = new EList<>();
   @XmlOptional
-  @XmlItemElement(elementName = "inactiveRunway", type = InactiveRunway.class)
+  @XmlItemElement(elementName = "runway", type = InactiveRunway.class)
   private final IList<InactiveRunway> inactiveRunways = new EList<>();
   @XmlItemElement(elementName = "atcTemplate", type = AtcTemplate.class)
   private final IList<AtcTemplate> atcTemplates = new EList<>();
@@ -71,10 +74,13 @@ public class Airport {
   private Area parent;
   private int coveredDistance;
   @XmlOptional
+  @XmlItemElement(elementName = "configuration", type = RunwayConfiguration.class)
   private IList<RunwayConfiguration> runwayConfigurations = new EList<>();
   @XmlOptional
+  @XmlItemElement(elementName = "sharedRoutesGroup", type=SharedRoutesGroup.class)
   private IList<SharedRoutesGroup> sharedRoutesGroups = new EList<>();
   @XmlOptional
+  @XmlItemElement(elementName = "sharedIafRoutesGroup", type=SharedIafRoutesGroup.class)
   private IList<SharedIafRoutesGroup> sharedIafRoutesGroups = new EList<>();
   @XmlIgnore
   private IList<Route> routes;

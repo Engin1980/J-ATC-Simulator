@@ -1,5 +1,6 @@
 package eng.jAtcSim.lib.world.approaches;
 
+import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 import eng.eSystem.xmlSerialization.annotations.XmlOptional;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.global.PlaneCategoryDefinitions;
@@ -9,8 +10,10 @@ import eng.jAtcSim.lib.world.Navaid;
 
 public class IafRoute {
   private String iaf;
+  @XmlIgnore
   private Navaid _navaid;
   private String route;
+  @XmlIgnore
   private SpeechList<IAtcCommand> _routeCommands;
   @XmlOptional
   private PlaneCategoryDefinitions category = PlaneCategoryDefinitions.getAll();

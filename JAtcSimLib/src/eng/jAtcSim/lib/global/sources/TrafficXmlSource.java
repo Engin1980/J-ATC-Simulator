@@ -5,13 +5,16 @@ import eng.eSystem.collections.IList;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 
+import eng.eSystem.utilites.ExceptionUtils;
 import eng.eSystem.xmlSerialization.XmlSerializer;
+import eng.eSystem.xmlSerialization.XmlSettings;
 import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 import eng.jAtcSim.lib.traffic.DensityBasedTraffic;
 import eng.jAtcSim.lib.traffic.FlightListTraffic;
 import eng.jAtcSim.lib.traffic.GenericTraffic;
 import eng.jAtcSim.lib.traffic.Traffic;
 import eng.jAtcSim.lib.world.Airport;
+import eng.jAtcSim.lib.world.xml.AltitudeValueParser;
 
 public class TrafficXmlSource extends XmlSource<IList<Traffic>> {
 
@@ -72,36 +75,25 @@ public class TrafficXmlSource extends XmlSource<IList<Traffic>> {
   @Override
   protected IList<Traffic> _load() {
 
-    throw new UnsupportedOperationException("Implements");
+    XmlSettings sett = new XmlSettings();
 
-//    eng.eSystem.xmlSerialization.Settings sett = new eng.eSystem.xmlSerialization.Settings();
-//
-//    // ignores
-//    sett.getIgnoredFieldsRegex().add("^_.+");
-//    sett.getIgnoredFieldsRegex().add("^parent$");
-//    sett.getIgnoredFieldsRegex().add("^binded$");
-//    sett.getIgnoredFieldsRegex().add("^scheduledMovements$");
-//
-//    // list mappings
-//    sett.getListItemMappings().add(
-//        new XmlListItemMapping("/trafficDefinitions$", "genericTraffic", GenericTraffic.class));
-//    sett.getListItemMappings().add(
-//        new XmlListItemMapping("/trafficDefinitions$", "densityTraffic", DensityBasedTraffic.class));
-//    sett.getListItemMappings().add(
-//        new XmlListItemMapping("/trafficDefinitions$", "flightListTraffic", FlightListTraffic.class));
-//
-//    // own parsers
-//    sett.getValueParsers().add(new CoordinateValueParser());
-////    sett.getValueParsers().add(new TrafficCategoryDefinitionParser());
-//    sett.getValueParsers().add(new IntParser());
-//    sett.getValueParsers().add(new IntegerParser());
-//
-//    // instance creators
-//
-//    // own loading
-//    XmlSerializer ser = new XmlSerializer(sett);
-//    IList<Traffic> ret = (IList) ser.deserialize(super.getXmlFileName(), EList.class);
-//
-//    return ret;
+    // list mappings
+    sett.getMeta().registerXmlItemElement(
+        EList.class, "genericTraffic", GenericTraffic.class, false, null );
+    sett.getMeta().registerXmlItemElement(
+        EList.class, "densityTraffic", DensityBasedTraffic.class, false, null );
+    sett.getMeta().registerXmlItemElement(
+        EList.class, "flightListTraffic", FlightListTraffic.class, false, null);
+
+    sett.getMeta().registerCustomParser(int.class, false, new AltitudeValueParser());
+    sett.getMeta().registerCustomParser(Integer.class, false, new AltitudeValueParser());
+
+    // own loading
+    XmlSerializer ser = new XmlSerializer(sett);
+    IList tmp = ser.deserialize(super.getXmlFileName(), EList.class);
+
+    IList<Traffic> ret = tmp.where(q-> q instanceof Traffic);
+
+    return ret;
   }
 }

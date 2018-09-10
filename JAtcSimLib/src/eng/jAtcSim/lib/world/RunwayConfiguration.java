@@ -6,15 +6,14 @@ import eng.eSystem.collections.*;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.utilites.ArrayUtils;
 import eng.eSystem.utilites.NumberUtils;
-import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
-import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
-import eng.eSystem.xmlSerialization.annotations.XmlItemElement;
-import eng.eSystem.xmlSerialization.annotations.XmlOptional;
+import eng.eSystem.xmlSerialization.annotations.*;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.global.Headings;
+import eng.jAtcSim.lib.world.xml.RunwayConfigurationParser;
 
 import java.awt.geom.Line2D;
 
+@XmlElementParser(RunwayConfigurationParser.class)
 public class RunwayConfiguration {
 
   public static class RunwayThresholdConfiguration {
@@ -81,11 +80,8 @@ public class RunwayConfiguration {
   private int windTo;
   private int windSpeedFrom;
   private int windSpeedTo;
-  @XmlItemElement(elementName = "arrival", type=RunwayThresholdConfiguration.class)
   private IList<RunwayThresholdConfiguration> arrivals;
-  @XmlItemElement(elementName = "departure", type=RunwayThresholdConfiguration.class)
   private IList<RunwayThresholdConfiguration> departures;
-  @XmlIgnore
   private IList<ISet<RunwayThreshold>> crossedThresholdSets = null;
 
   @XmlConstructor

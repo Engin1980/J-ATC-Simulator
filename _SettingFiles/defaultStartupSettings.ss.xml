@@ -5,30 +5,30 @@
   <traffic allowDelays="true" densityPercentage="1.0" emergencyPerDayProbability="0.14285714285714285" maxPlanes="60" trafficAirportDefinedTitle="Normal traffic" trafficXmlDefinedTitle="Generic low traffic" type="custom">
     <customTraffic arrivals2departuresRatio="5" companies="CSA;EZY;TVS;RYR;WZZ;DLA" countryCodes="G;AU;DE;OK;OM" nonCommercialFlightProbability="0.05" useExtendedCallsigns="false" weightTypeA="0" weightTypeB="2" weightTypeC="8" weightTypeD="5">
       <movementsPerHour>
-        <int __class="Integer">0</int>
-        <int __class="Integer">0</int>
-        <int __class="Integer">0</int>
-        <int __class="Integer">0</int>
-        <int __class="Integer">0</int>
-        <int __class="Integer">13</int>
-        <int __class="Integer">30</int>
-        <int __class="Integer">17</int>
-        <int __class="Integer">40</int>
-        <int __class="Integer">20</int>
-        <int __class="Integer">0</int>
-        <int __class="Integer">0</int>
-        <int __class="Integer">7</int>
-        <int __class="Integer">4</int>
-        <int __class="Integer">6</int>
-        <int __class="Integer">13</int>
-        <int __class="Integer">16</int>
-        <int __class="Integer">7</int>
-        <int __class="Integer">4</int>
-        <int __class="Integer">18</int>
-        <int __class="Integer">30</int>
-        <int __class="Integer">7</int>
-        <int __class="Integer">0</int>
-        <int __class="Integer">0</int>
+        <item>0</item>
+        <item>0</item>
+        <item>0</item>
+        <item>0</item>
+        <item>0</item>
+        <item>13</item>
+        <item>30</item>
+        <item>17</item>
+        <item>40</item>
+        <item>20</item>
+        <item>0</item>
+        <item>0</item>
+        <item>7</item>
+        <item>4</item>
+        <item>6</item>
+        <item>13</item>
+        <item>16</item>
+        <item>7</item>
+        <item>4</item>
+        <item>18</item>
+        <item>30</item>
+        <item>7</item>
+        <item>0</item>
+        <item>0</item>
       </movementsPerHour>
     </customTraffic>
   </traffic>
@@ -36,6 +36,5 @@
   <simulation secondLengthInMs="750"/>
   <__typeMap>
     <item class="eng.jAtcSim.app.startupSettings.StartupSettings" key="StartupSettings"/>
-    <item class="java.lang.Integer" key="Integer"/>
   </__typeMap>
 </root>

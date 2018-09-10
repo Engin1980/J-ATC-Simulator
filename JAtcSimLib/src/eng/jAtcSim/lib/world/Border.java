@@ -12,11 +12,11 @@ import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.utilites.NumberUtils;
-import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
-import eng.eSystem.xmlSerialization.annotations.XmlOptional;
+import eng.eSystem.xmlSerialization.annotations.*;
 import eng.jAtcSim.lib.coordinates.Coordinate;
 import eng.jAtcSim.lib.coordinates.Coordinates;
 import eng.jAtcSim.lib.global.Headings;
+import eng.jAtcSim.lib.world.xml.AltitudeValueParser;
 
 import java.awt.geom.Line2D;
 import java.util.Comparator;
@@ -55,11 +55,17 @@ public class Border {
   private static final int DRAW_STEP = 10;
   private String name;
   private eType type;
+  @XmlItemElement(elementName = "point", type=BorderExactPoint.class)
+  @XmlItemElement(elementName = "arc", type=BorderArcPoint.class)
+  @XmlItemElement(elementName = "crd", type=BorderCrdPoint.class)
+  @XmlItemElement(elementName = "circle", type=BorderCirclePoint.class)
   private IList<BorderPoint> points;
   private boolean enclosed;
   @XmlOptional
+//  @XmlAttribute(parser = AltitudeValueParser.class)
   private int minAltitude = 0;
   @XmlOptional
+//  @XmlAttribute(parser = AltitudeValueParser.class)
   private int maxAltitude = 99000;
   @XmlOptional
   private Coordinate labelCoordinate;

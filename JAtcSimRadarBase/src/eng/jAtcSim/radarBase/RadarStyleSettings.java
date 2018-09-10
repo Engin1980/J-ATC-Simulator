@@ -5,7 +5,7 @@
  */
 package eng.jAtcSim.radarBase;
 
-import eng.eSystem.xmlSerialization.XmlOptional;
+import eng.eSystem.xmlSerialization.annotations.XmlOptional;
 import eng.jAtcSim.radarBase.global.Color;
 import eng.jAtcSim.radarBase.global.Font;
 

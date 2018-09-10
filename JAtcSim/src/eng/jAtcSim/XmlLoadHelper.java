@@ -19,11 +19,11 @@ import eng.jAtcSim.lib.global.sources.TrafficXmlSource;
 import eng.jAtcSim.lib.traffic.Traffic;
 import eng.jAtcSim.lib.traffic.fleets.Fleets;
 import eng.jAtcSim.lib.world.*;
+import eng.jAtcSim.lib.world.xml.ElementFromValueParser;
 import eng.jAtcSim.radarBase.RadarStyleSettings;
-import eng.jAtcSim.radarBase.parsing.RadarColorParser;
+import eng.jAtcSim.radarBase.parsing.RadarColorValueParser;
 import eng.jAtcSim.radarBase.parsing.RadarFontParser;
 import eng.jAtcSim.app.startupSettings.StartupSettings;
-import eng.jAtcSim.recording.Settings;
 
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -52,7 +52,7 @@ public class XmlLoadHelper {
   }
 
   public static StartupSettings loadStartupSettings(String fileName) {
-    XmlSettings xmlSett = new XmlSettings ();
+    XmlSettings xmlSett = new XmlSettings();
     xmlSett.getMeta().registerCustomParser(java.time.LocalTime.class, false, new LocalTimeParser());
     XmlSerializer ser = new XmlSerializer(xmlSett);
 
@@ -72,7 +72,7 @@ public class XmlLoadHelper {
   }
 
   public static void saveStartupSettings(StartupSettings sett, String fileName) {
-    XmlSettings xmlSett = new XmlSettings ();
+    XmlSettings xmlSett = new XmlSettings();
     xmlSett.getMeta().registerCustomParser(java.time.LocalTime.class, false, new LocalTimeParser());
     XmlSerializer ser = new XmlSerializer(xmlSett);
 
@@ -86,11 +86,14 @@ public class XmlLoadHelper {
   }
 
   public static RadarStyleSettings loadNewDisplaySettings(String fileName) {
-    XmlSettings xmlSett = new XmlSettings ();
+    XmlSettings xmlSett = new XmlSettings();
 
     // own parsers
     xmlSett.getMeta().registerCustomParser(
-        eng.jAtcSim.radarBase.global.Color.class, false, new RadarColorParser());
+        eng.jAtcSim.radarBase.global.Color.class, false, new RadarColorValueParser());
+    xmlSett.getMeta().registerCustomParser(
+        eng.jAtcSim.radarBase.global.Color.class, false, new ElementFromValueParser<>(new RadarColorValueParser()));
+
     xmlSett.getMeta().registerCustomParser(
         eng.jAtcSim.radarBase.global.Font.class, false,
         new RadarFontParser());
@@ -124,7 +127,9 @@ public class XmlLoadHelper {
     XmlSettings sett = new XmlSettings();
 
     sett.getMeta().registerCustomParser(
-        java.awt.Color.class  , false, new HexToAwtColorValueParser());
+        java.awt.Color.class, false, new HexToAwtColorValueParser());
+    sett.getMeta().registerCustomParser(
+        java.awt.Color.class, false, new ElementFromValueParser(new HexToAwtColorValueParser()));
     sett.getMeta().registerCustomParser(
         java.awt.Font.class, false, new AwtFontElementParser());
 
@@ -151,11 +156,11 @@ class LocalTimeParser implements IValueParser<LocalTime> {
   private static final String PATTERN = "H:mm";
 
   @Override
-  public LocalTime parse(String s){
+  public LocalTime parse(String s) {
     LocalTime ret;
-    try{
+    try {
       ret = LocalTime.parse(s, DateTimeFormatter.ofPattern(PATTERN));
-    }catch (Exception ex){
+    } catch (Exception ex) {
       throw new XmlSerializationException(sf("Failed to parseOld local time (LocalTime) from value " + s + "."), ex);
     }
     return ret;
@@ -164,10 +169,10 @@ class LocalTimeParser implements IValueParser<LocalTime> {
   @Override
   public String format(LocalTime localTime) {
     String ret;
-    try{
-      ret = localTime.format( DateTimeFormatter.ofPattern(PATTERN));
-    } catch (Exception ex){
-      throw new XmlSerializationException(sf( "Failed to format local time (LocalTime) of value " + localTime), ex);
+    try {
+      ret = localTime.format(DateTimeFormatter.ofPattern(PATTERN));
+    } catch (Exception ex) {
+      throw new XmlSerializationException(sf("Failed to format local time (LocalTime) of value " + localTime), ex);
     }
     return ret;
   }

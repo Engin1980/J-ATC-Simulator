@@ -46,7 +46,7 @@ public abstract class Approach {
   @XmlIgnore
   private SpeechList<IAtcCommand> _gaCommands;
   @XmlOptional
-  @XmlItemElement(elementName = "iafRoute", type=IafRoute.class)
+  @XmlItemElement(elementName = "route", type=IafRoute.class)
   private IList<IafRoute> iafRoutes = new EList<>();
   private int radial;
   @XmlIgnore
