@@ -11,10 +11,14 @@ import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.ERuntimeException;
-import eng.eSystem.xmlSerialization.XmlIgnore;
-import eng.eSystem.xmlSerialization.XmlOptional;
+import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
+import eng.eSystem.xmlSerialization.annotations.XmlItemElement;
+import eng.eSystem.xmlSerialization.annotations.XmlOptional;
 import eng.jAtcSim.lib.atcs.AtcTemplate;
 import eng.jAtcSim.lib.coordinates.Coordinate;
+import eng.jAtcSim.lib.traffic.DensityBasedTraffic;
+import eng.jAtcSim.lib.traffic.FlightListTraffic;
+import eng.jAtcSim.lib.traffic.GenericTraffic;
 import eng.jAtcSim.lib.traffic.Traffic;
 import eng.jAtcSim.lib.world.approaches.Approach;
 import eng.jAtcSim.lib.world.approaches.IafRoute;
@@ -26,21 +30,28 @@ public class Airport {
 
   public static class SharedRoutesGroup {
     public String groupName;
+    @XmlItemElement(elementName = "route", type = Route.class)
     public IList<Route> routes = new EList<>();
   }
 
   public static class SharedIafRoutesGroup {
     public String groupName;
+    @XmlItemElement(elementName = "iafRoute", type = IafRoute.class)
     public IList<IafRoute> iafRoutes = new EList<>();
   }
 
   private final InitialPosition initialPosition = new InitialPosition();
+  @XmlItemElement(elementName = "runway", type = Runway.class)
   private final IList<Runway> runways = new EList<>();
   @XmlOptional
+  @XmlItemElement(elementName = "inactiveRunway", type = InactiveRunway.class)
   private final IList<InactiveRunway> inactiveRunways = new EList<>();
+  @XmlItemElement(elementName = "atcTemplate", type = AtcTemplate.class)
   private final IList<AtcTemplate> atcTemplates = new EList<>();
+  @XmlItemElement(elementName = "hold", type = PublishedHold.class)
   private final IList<PublishedHold> holds = new EList<>();
   @XmlOptional
+  @XmlItemElement(elementName = "entryExitPoint", type = EntryExitPoint.class)
   private final IList<EntryExitPoint> entryExitPoints = new EList<>();
   private String icao;
   private String name;
@@ -50,13 +61,17 @@ public class Airport {
   private int vfrAltitude = -1;
   private String mainAirportNavaidName;
   private double declination;
+  @XmlIgnore
   private Navaid _mainAirportNavaid;
+  @XmlItemElement(elementName = "densityTraffic", type = DensityBasedTraffic.class)
+  @XmlItemElement(elementName = "genericTraffic", type = GenericTraffic.class)
+  @XmlItemElement(elementName = "flightListTraffic", type = FlightListTraffic.class)
   private IList<Traffic> trafficDefinitions = new EList<>();
+  @XmlIgnore
   private Area parent;
   private int coveredDistance;
   @XmlOptional
   private IList<RunwayConfiguration> runwayConfigurations = new EList<>();
-
   @XmlOptional
   private IList<SharedRoutesGroup> sharedRoutesGroups = new EList<>();
   @XmlOptional
@@ -190,8 +205,8 @@ public class Airport {
 
     // fill routes list
     this.routes = new EDistinctList<>(EDistinctList.Behavior.exception);
-    this.sharedRoutesGroups.forEach(q->this.routes.add(q.routes)); // adds shared routes
-    this.getAllThresholds().forEach(q-> this.routes.add(q.getRoutes())); // adds threshold specific routes
+    this.sharedRoutesGroups.forEach(q -> this.routes.add(q.routes)); // adds shared routes
+    this.getAllThresholds().forEach(q -> this.routes.add(q.getRoutes())); // adds threshold specific routes
 
     for (Route o : a.getRoutes()) {
       o.bind();

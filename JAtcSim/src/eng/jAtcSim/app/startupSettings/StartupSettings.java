@@ -3,7 +3,8 @@ package eng.jAtcSim.app.startupSettings;
 import eng.eSystem.EStringBuilder;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
-import eng.eSystem.xmlSerialization.XmlIgnore;
+
+import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 import eng.jAtcSim.XmlLoadHelper;
 import eng.jAtcSim.lib.airplanes.AirplaneTypes;
 import eng.jAtcSim.lib.traffic.fleets.Fleets;

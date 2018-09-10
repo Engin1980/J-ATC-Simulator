@@ -11,6 +11,7 @@ import eng.eSystem.collections.IList;
 import eng.eSystem.collections.ISet;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.ERuntimeException;
+import eng.eSystem.xmlSerialization.annotations.XmlItemElement;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
 import eng.jAtcSim.lib.speaking.parsing.Parser;
@@ -23,8 +24,10 @@ import eng.jAtcSim.lib.world.approaches.IlsApproach;
  */
 public class Area {
 
+  @XmlItemElement(elementName = "airport", type=Airport.class)
   private final IList<Airport> airports = new EList<>();
   private final NavaidList navaids = new NavaidList();
+  @XmlItemElement(elementName = "border", type=Border.class)
   private final IList<Border> borders = new EList();
   private String icao;
 

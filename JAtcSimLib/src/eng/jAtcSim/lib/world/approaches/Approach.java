@@ -5,8 +5,9 @@ import eng.eSystem.collections.IList;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.utilites.CollectionUtils;
 import eng.eSystem.utilites.NumberUtils;
-import eng.eSystem.xmlSerialization.XmlIgnore;
-import eng.eSystem.xmlSerialization.XmlOptional;
+import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
+import eng.eSystem.xmlSerialization.annotations.XmlItemElement;
+import eng.eSystem.xmlSerialization.annotations.XmlOptional;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.coordinates.Coordinate;
 import eng.jAtcSim.lib.coordinates.Coordinates;
@@ -42,10 +43,13 @@ public abstract class Approach {
   @XmlIgnore
   int geographicalRadial;
   private String gaRoute;
+  @XmlIgnore
   private SpeechList<IAtcCommand> _gaCommands;
   @XmlOptional
+  @XmlItemElement(elementName = "iafRoute", type=IafRoute.class)
   private IList<IafRoute> iafRoutes = new EList<>();
   private int radial;
+  @XmlIgnore
   private RunwayThreshold parent;
   private int initialAltitude;
   @XmlOptional

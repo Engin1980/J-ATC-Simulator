@@ -1,7 +1,8 @@
 package eng.jAtcSim.lib.global.sources;
 
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
-import eng.eSystem.xmlSerialization.XmlIgnore;
+
+import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 import eng.jAtcSim.lib.weathers.*;
 
 public class WeatherSource extends Source<WeatherProvider> {

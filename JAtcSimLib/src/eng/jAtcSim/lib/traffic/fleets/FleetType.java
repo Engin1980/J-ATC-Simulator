@@ -1,6 +1,7 @@
 package eng.jAtcSim.lib.traffic.fleets;
 
-import eng.eSystem.xmlSerialization.XmlIgnore;
+
+import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.global.logging.Log;
 import eng.jAtcSim.lib.airplanes.AirplaneType;

@@ -8,8 +8,8 @@ package eng.jAtcSim.lib.world;
 import eng.eSystem.Tuple;
 import eng.eSystem.collections.*;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
-import eng.eSystem.xmlSerialization.XmlIgnore;
-import eng.eSystem.xmlSerialization.XmlOptional;
+import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
+import eng.eSystem.xmlSerialization.annotations.XmlOptional;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.coordinates.Coordinate;
 import eng.jAtcSim.lib.coordinates.Coordinates;
@@ -45,17 +45,23 @@ public class Route {
   private eType type;
   private String name;
   private String route;
+  @XmlIgnore
   private Airport parent;
   @XmlOptional
   private PlaneCategoryDefinitions category = PlaneCategoryDefinitions.getAll();
+  @XmlIgnore
   private SpeechList<IAtcCommand> _routeCommands = null;
+  @XmlIgnore
   private IList<Navaid> _routeNavaids = null;
+  @XmlIgnore
   private double _routeLength = -1;
   @XmlOptional
   private String mainFix = null;
+  @XmlIgnore
   private Navaid _mainNavaid = null;
   @XmlOptional
   private Integer entryFL = null;
+  @XmlIgnore
   private Integer _maxMrvaFL = null;
 
   public static Route createNewVectoringByFix(Navaid n, boolean arrival) {

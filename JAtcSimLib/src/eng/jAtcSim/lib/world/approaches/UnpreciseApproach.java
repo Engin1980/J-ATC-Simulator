@@ -1,6 +1,7 @@
 package eng.jAtcSim.lib.world.approaches;
 
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
+import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.coordinates.Coordinate;
 import eng.jAtcSim.lib.world.Navaid;
@@ -16,11 +17,13 @@ public class UnpreciseApproach extends Approach {
    * Name of FAF navaid, where descend begins.
    */
   private String faf;
+  @XmlIgnore
   private Navaid _faf;
   /**
    * Name of mapt where course is relative to.
    */
   private String mapt;
+  @XmlIgnore
   private Navaid _mapt;
   private int mdaA;
   private int mdaB;

@@ -8,7 +8,7 @@ package eng.jAtcSim.lib.atcs;
 
 import eng.eSystem.eXml.XDocument;
 import eng.eSystem.eXml.XElement;
-import eng.eSystem.xmlSerialization.XmlIgnore;
+import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.messaging.IMessageParticipant;

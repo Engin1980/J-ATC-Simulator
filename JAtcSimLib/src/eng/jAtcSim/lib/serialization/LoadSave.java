@@ -4,13 +4,11 @@ import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
-import eng.eSystem.xmlSerialization.IInstanceCreator;
-import eng.eSystem.xmlSerialization.Settings;
-import eng.eSystem.xmlSerialization.XmlSerializationException;
 import eng.eSystem.xmlSerialization.XmlSerializer;
+import eng.eSystem.xmlSerialization.exceptions.XmlSerializationException;
+import eng.eSystem.xmlSerialization.supports.IFactory;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.AirplaneTypes;
-import eng.jAtcSim.lib.airplanes.pilots.Pilot;
 import eng.jAtcSim.lib.atcs.Atc;
 import eng.jAtcSim.lib.speaking.fromAtc.atc2atc.PlaneSwitchMessage;
 import eng.jAtcSim.lib.speaking.fromAtc.atc2atc.RunwayCheck;
@@ -25,25 +23,25 @@ public class LoadSave {
   private static XmlSerializer ser;
 
   static {
-    Settings sett = new Settings();
-    sett.getElementParsers().add(new NavaidParser());
-    sett.getElementParsers().add(new AirplaneTypeParser());
-    sett.getElementParsers().add(new RunwayThresholdParser());
-    sett.getElementParsers().add(new RunwayParser());
-    sett.getElementParsers().add(new RouteParser());
-    sett.getElementParsers().add(new AirplaneParser());
-    sett.getElementParsers().add(new AtcParser());
-    sett.getElementParsers().add(new AirportParser());
-
-    sett.getInstanceCreators().add(new PlaneSwitchMessageIC());
-    sett.getInstanceCreators().add(new RunwayCheckIC());
-    sett.getInstanceCreators().add(new StringResponseIC());
-    // TODO here should be all classes with private constructors defined for xml loading
-
-    sett.getIgnoredFieldsRegex().add("this\\$0"); // parent of inner class
-
-    //sett.setVerbose(true);
-    ser = new XmlSerializer(sett);
+//    Settings sett = new Settings();
+//    sett.getElementParsers().add(new NavaidParser());
+//    sett.getElementParsers().add(new AirplaneTypeParser());
+//    sett.getElementParsers().add(new RunwayThresholdParser());
+//    sett.getElementParsers().add(new RunwayParser());
+//    sett.getElementParsers().add(new RouteParser());
+//    sett.getElementParsers().add(new AirplaneParser());
+//    sett.getElementParsers().add(new AtcParser());
+//    sett.getElementParsers().add(new AirportParser());
+//
+//    sett.getInstanceCreators().add(new PlaneSwitchMessageIC());
+//    sett.getInstanceCreators().add(new RunwayCheckIC());
+//    sett.getInstanceCreators().add(new StringResponseIC());
+//    // TODO here should be all classes with private constructors defined for xml loading
+//
+//    sett.getIgnoredFieldsRegex().add("this\\$0"); // parent of inner class
+//
+//    //sett.setVerbose(true);
+//    ser = new XmlSerializer(sett);
   }
 
   public static void saveField(XElement elm, Object src, String fieldName) {
@@ -117,38 +115,41 @@ public class LoadSave {
   }
 
   public static void setRelativeArea(Area area, Airport aip, Atc[] atcs) {
-
-    NavaidParser np = (NavaidParser) ser.getSettings().getElementParsers().getFirst(q -> q instanceof NavaidParser);
-    np.setRelative(area.getNavaids());
-
-    AirportParser ap = (AirportParser) ser.getSettings().getElementParsers().getFirst(q -> q instanceof AirportParser);
-    ap.setRelative(area.getAirports());
-
-    AtcParser atp = (AtcParser) ser.getSettings().getElementParsers().getFirst(q -> q instanceof AtcParser);
-    atp.setRelative(new EList<Atc>(atcs));
-
-    RouteParser rp = (RouteParser) ser.getSettings().getElementParsers().getFirst(q -> q instanceof RouteParser);
-    rp.setRelative(aip);
-
-    RunwayParser rwp = (RunwayParser) ser.getSettings().getElementParsers().getFirst(q -> q instanceof RunwayParser);
-    rwp.setRelative(aip);
-
-    RunwayThresholdParser rtp = (RunwayThresholdParser) ser.getSettings().getElementParsers().getFirst(q -> q instanceof RunwayThresholdParser);
-    rtp.setRelative(aip);
+throw new UnsupportedOperationException("implement");
+//    NavaidParser np = (NavaidParser) ser.getSettings().getElementParsers().getFirst(q -> q instanceof NavaidParser);
+//    np.setRelative(area.getNavaids());
+//
+//    AirportParser ap = (AirportParser) ser.getSettings().getElementParsers().getFirst(q -> q instanceof AirportParser);
+//    ap.setRelative(area.getAirports());
+//
+//    AtcParser atp = (AtcParser) ser.getSettings().getElementParsers().getFirst(q -> q instanceof AtcParser);
+//    atp.setRelative(new EList<Atc>(atcs));
+//
+//    RouteParser rp = (RouteParser) ser.getSettings().getElementParsers().getFirst(q -> q instanceof RouteParser);
+//    rp.setRelative(aip);
+//
+//    RunwayParser rwp = (RunwayParser) ser.getSettings().getElementParsers().getFirst(q -> q instanceof RunwayParser);
+//    rwp.setRelative(aip);
+//
+//    RunwayThresholdParser rtp = (RunwayThresholdParser) ser.getSettings().getElementParsers().getFirst(q -> q instanceof RunwayThresholdParser);
+//    rtp.setRelative(aip);
   }
 
   public static void setRelativeAirplaneTypes(AirplaneTypes types) {
-    AirplaneTypeParser atp = (AirplaneTypeParser) ser.getSettings().getElementParsers().getFirst(q -> q instanceof AirplaneTypeParser);
-    atp.setRelative(types);
+    throw new UnsupportedOperationException("implement");
+//    AirplaneTypeParser atp = (AirplaneTypeParser) ser.getSettings().getElementParsers().getFirst(q -> q instanceof AirplaneTypeParser);
+//    atp.setRelative(types);
   }
 
   public static void loadFromElement(XElement elm, Object object) {
-    ser.deserializeContent(elm, object);
+    throw new UnsupportedOperationException("implement");
+//    ser.deserializeContent(elm, object);
   }
 
   public static void setRelativeAirplanes(IList<Airplane> lst) {
-    AirplaneParser ap = (AirplaneParser) ser.getSettings().getElementParsers().getFirst(q -> q instanceof AirplaneParser);
-    ap.setRelative(lst);
+    throw new UnsupportedOperationException("implement");
+//    AirplaneParser ap = (AirplaneParser) ser.getSettings().getElementParsers().getFirst(q -> q instanceof AirplaneParser);
+//    ap.setRelative(lst);
   }
 
   private static Object getFieldValue(Object src, String fieldName) {
@@ -182,7 +183,7 @@ public class LoadSave {
 }
 
 
-class PlaneSwitchMessageIC implements IInstanceCreator<PlaneSwitchMessage> {
+class PlaneSwitchMessageIC implements IFactory<PlaneSwitchMessage> {
 
   @Override
   public Class getType() {
@@ -195,7 +196,7 @@ class PlaneSwitchMessageIC implements IInstanceCreator<PlaneSwitchMessage> {
   }
 }
 
-class RunwayCheckIC implements IInstanceCreator<RunwayCheck> {
+class RunwayCheckIC implements IFactory<RunwayCheck> {
 
   @Override
   public Class getType() {
@@ -208,7 +209,7 @@ class RunwayCheckIC implements IInstanceCreator<RunwayCheck> {
   }
 }
 
-class StringResponseIC implements IInstanceCreator<StringResponse> {
+class StringResponseIC implements IFactory<StringResponse> {
 
   @Override
   public Class getType() {

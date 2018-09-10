@@ -1,6 +1,5 @@
 package eng.jAtcSim.lib.global.sources;
 
-import eng.eSystem.xmlSerialization.XmlListItemMapping;
 import eng.eSystem.xmlSerialization.XmlSerializer;
 import eng.jAtcSim.lib.airplanes.AirplaneTypes;
 import eng.jAtcSim.lib.traffic.fleets.CompanyFleet;
@@ -17,17 +16,18 @@ public class FleetsXmlSource extends XmlSource<Fleets> {
 
   @Override
   protected Fleets _load() {
-    eng.eSystem.xmlSerialization.Settings sett = new eng.eSystem.xmlSerialization.Settings();
-
-    // mappings
-    sett.getListItemMappings().add(
-        new XmlListItemMapping("fleets$", "company", CompanyFleet.class));
-    sett.getListItemMappings().add(
-        new XmlListItemMapping("/company/types$", FleetType.class));
-
-    XmlSerializer ser = new XmlSerializer(sett);
-    Fleets ret = (Fleets) ser.deserialize(super.getXmlFileName(), Fleets.class);
-    return ret;
+    throw new UnsupportedOperationException("Implement");
+//    eng.eSystem.xmlSerialization.Settings sett = new eng.eSystem.xmlSerialization.Settings();
+//
+//    // mappings
+//    sett.getListItemMappings().add(
+//        new XmlListItemMapping("fleets$", "company", CompanyFleet.class));
+//    sett.getListItemMappings().add(
+//        new XmlListItemMapping("/company/types$", FleetType.class));
+//
+//    XmlSerializer ser = new XmlSerializer(sett);
+//    Fleets ret = (Fleets) ser.deserialize(super.getXmlFileName(), Fleets.class);
+//    return ret;
   }
 
   public void init(AirplaneTypes types){

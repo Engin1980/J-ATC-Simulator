@@ -7,18 +7,16 @@
 package eng.jAtcSim.lib.world;
 
 import eng.eSystem.Tuple;
-import eng.eSystem.collections.EDistinctList;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.utilites.NumberUtils;
-import eng.eSystem.xmlSerialization.XmlIgnore;
-import eng.eSystem.xmlSerialization.XmlOptional;
+import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
+import eng.eSystem.xmlSerialization.annotations.XmlOptional;
 import eng.jAtcSim.lib.coordinates.Coordinate;
 import eng.jAtcSim.lib.coordinates.Coordinates;
 import eng.jAtcSim.lib.global.Headings;
-import sun.font.FontRunIterator;
 
 import java.awt.geom.Line2D;
 import java.util.Comparator;

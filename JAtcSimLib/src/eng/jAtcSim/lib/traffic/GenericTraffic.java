@@ -6,8 +6,9 @@ import eng.eSystem.collections.IList;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.utilites.ArrayUtils;
 import eng.eSystem.utilites.NumberUtils;
-import eng.eSystem.xmlSerialization.XmlConstructor;
-import eng.eSystem.xmlSerialization.XmlIgnore;
+
+import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
+import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.AirplaneType;
 import eng.jAtcSim.lib.airplanes.Callsign;

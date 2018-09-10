@@ -2,8 +2,10 @@ package eng.jAtcSim.lib.traffic.fleets;
 
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
+import eng.eSystem.xmlSerialization.annotations.XmlItemElement;
 import eng.jAtcSim.lib.airplanes.AirplaneTypes;
 
+@XmlItemElement(elementName = "company", type=CompanyFleet.class)
 public class Fleets extends EList<CompanyFleet> {
 
   public void init(AirplaneTypes types){

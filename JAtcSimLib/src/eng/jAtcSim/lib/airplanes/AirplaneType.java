@@ -5,6 +5,8 @@
  */
 package eng.jAtcSim.lib.airplanes;
 
+import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
+
 /**
  *
  * @author Marek
@@ -101,7 +103,9 @@ public class AirplaneType {
    */
   public int headingChangeRate;
 
+  @XmlIgnore
   private RateInfo _climb = null;
+  @XmlIgnore
   private RateInfo _descend = null;
 
   public double getClimbRateForAltitude(double altitude) {

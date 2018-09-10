@@ -1,6 +1,7 @@
 package eng.jAtcSim.lib.world.approaches;
 
-import eng.eSystem.xmlSerialization.XmlOptional;
+
+import eng.eSystem.xmlSerialization.annotations.XmlOptional;
 
 public class GnssApproach extends Approach {
 

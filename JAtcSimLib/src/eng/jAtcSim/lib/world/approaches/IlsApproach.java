@@ -3,7 +3,8 @@ package eng.jAtcSim.lib.world.approaches;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
-import eng.eSystem.xmlSerialization.XmlOptional;
+import eng.eSystem.xmlSerialization.annotations.XmlItemElement;
+import eng.eSystem.xmlSerialization.annotations.XmlOptional;
 
 public class IlsApproach extends Approach {
 
@@ -67,6 +68,7 @@ public class IlsApproach extends Approach {
     III
   }
 
+  @XmlItemElement(elementName = "category", type = Category.class)
   private IList<Category> categories = new EList<>();
   @XmlOptional
   private double glidePathPercentage = 3;

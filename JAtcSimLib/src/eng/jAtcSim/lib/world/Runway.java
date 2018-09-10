@@ -9,14 +9,18 @@ package eng.jAtcSim.lib.world;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
+import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
+import eng.eSystem.xmlSerialization.annotations.XmlItemElement;
 
 /**
  *
  * @author Marek
  */
 public class Runway {
+  @XmlItemElement(elementName = "threshold", type = RunwayThreshold.class)
   private final IList<RunwayThreshold> thresholds = new EList<>();
 
+  @XmlIgnore
   private Airport parent;
 
   public RunwayThreshold get(int index){

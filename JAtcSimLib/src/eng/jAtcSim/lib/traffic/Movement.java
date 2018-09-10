@@ -5,13 +5,11 @@
  */
 package eng.jAtcSim.lib.traffic;
 
-import eng.eSystem.xmlSerialization.XmlConstructor;
+import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.AirplaneType;
 import eng.jAtcSim.lib.airplanes.Callsign;
 import eng.jAtcSim.lib.global.ETime;
-
-import java.util.Comparator;
 
 /**
  * @author Marek Vajgl

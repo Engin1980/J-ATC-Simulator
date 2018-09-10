@@ -5,8 +5,9 @@ import eng.eSystem.eXml.XDocument;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EXmlException;
-import eng.eSystem.xmlSerialization.XmlIgnore;
+
 import eng.eSystem.xmlSerialization.XmlSerializer;
+import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 import eng.jAtcSim.radarBase.RadarDisplaySettings;
 
 import java.nio.file.Path;

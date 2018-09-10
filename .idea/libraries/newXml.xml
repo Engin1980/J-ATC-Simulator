@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="newXml">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/../NewXML/out/artifacts/newXml" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+    <jarDirectory url="file://$PROJECT_DIR$/../NewXML/out/artifacts/newXml" recursive="false" />
+  </library>
+</component>

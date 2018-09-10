@@ -1,21 +1,15 @@
 package eng.jAtcSim.radarBase.parsing;
 
-import eng.eSystem.xmlSerialization.XmlDeserializationException;
+import eng.eSystem.xmlSerialization.exceptions.XmlSerializationException;
+import eng.eSystem.xmlSerialization.supports.IValueParser;
 import eng.jAtcSim.radarBase.global.Color;
-import eng.eSystem.xmlSerialization.IValueParser;
-import eng.eSystem.xmlSerialization.XmlSerializationException;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class RadarColorParser implements IValueParser<Color> {
   @Override
-  public Class getType() {
-    return Color.class;
-  }
-
-  @Override
-  public Color parse(String value)  throws XmlDeserializationException{
+  public Color parse(String value) {
     Color ret = null;
     String ps = "(..)(..)(..)";
     Pattern p = Pattern.compile(ps);
@@ -34,7 +28,7 @@ public class RadarColorParser implements IValueParser<Color> {
       }
     }
     if (ret == null) {
-      throw new XmlDeserializationException("Unable to parseOld \"" + value + "\" into color.");
+      throw new XmlSerializationException("Unable to parseOld \"" + value + "\" into color.");
     }
 
     return ret;

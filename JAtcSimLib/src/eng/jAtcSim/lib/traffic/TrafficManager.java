@@ -4,7 +4,7 @@ import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.utilites.ArrayUtils;
-import eng.eSystem.xmlSerialization.XmlConstructor;
+import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.Simulation;
 import eng.jAtcSim.lib.airplanes.Airplane;
@@ -18,13 +18,7 @@ import eng.jAtcSim.lib.global.Headings;
 import eng.jAtcSim.lib.messaging.Message;
 import eng.jAtcSim.lib.messaging.Messenger;
 import eng.jAtcSim.lib.messaging.StringMessageContent;
-import eng.jAtcSim.lib.speaking.SpeechList;
-import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
-import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeAltitudeCommand;
 import eng.jAtcSim.lib.world.*;
-
-import java.util.LinkedList;
-import java.util.List;
 
 public class TrafficManager {
   private IList<Movement> scheduledMovements = new EList<>();

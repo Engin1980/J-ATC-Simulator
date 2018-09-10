@@ -6,7 +6,8 @@
 package eng.jAtcSim.lib.stats;
 
 import eng.eSystem.utilites.CollectionUtils;
-import eng.eSystem.xmlSerialization.XmlIgnore;
+
+import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.AirproxType;

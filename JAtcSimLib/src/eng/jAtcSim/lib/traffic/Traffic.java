@@ -5,7 +5,7 @@
  */
 package eng.jAtcSim.lib.traffic;
 
-import eng.eSystem.xmlSerialization.XmlOptional;
+import eng.eSystem.xmlSerialization.annotations.XmlOptional;
 
 /**
  * @author Marek Vajgl

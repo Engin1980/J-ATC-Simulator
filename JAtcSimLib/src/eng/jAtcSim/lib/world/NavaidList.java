@@ -2,12 +2,14 @@ package eng.jAtcSim.lib.world;
 
 import eng.eSystem.collections.EList;
 import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.xmlSerialization.annotations.XmlItemElement;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.coordinates.Coordinate;
 import eng.jAtcSim.lib.coordinates.Coordinates;
 import eng.jAtcSim.lib.global.Headings;
 import eng.jAtcSim.lib.speaking.parsing.shortParsing.RegexGrouper;
 
+@XmlItemElement(elementName="navaid", type=Navaid.class)
 public class NavaidList extends EList<Navaid> {
 
   public Navaid getOrGenerate(String name) {

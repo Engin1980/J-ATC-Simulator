@@ -57,6 +57,9 @@ public class JAtcSim {
    */
   public static void main(String[] args) {
 
+   LoadDemo.loadDemo();
+
+
     AppSettings.init();
 
 

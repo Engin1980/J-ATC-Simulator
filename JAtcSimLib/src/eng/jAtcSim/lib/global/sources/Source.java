@@ -1,7 +1,8 @@
 package eng.jAtcSim.lib.global.sources;
 
 import eng.eSystem.exceptions.EApplicationException;
-import eng.eSystem.xmlSerialization.XmlIgnore;
+import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
+
 
 public abstract class Source<T> {
   @XmlIgnore

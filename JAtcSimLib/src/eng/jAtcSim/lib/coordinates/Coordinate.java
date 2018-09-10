@@ -5,6 +5,9 @@
  */
 package eng.jAtcSim.lib.coordinates;
 
+import eng.eSystem.xmlSerialization.annotations.XmlValueParser;
+import eng.eSystem.xmlSerialization.supports.IValueParser;
+
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -12,6 +15,7 @@ import java.util.regex.Pattern;
 /**
  * @author Marek
  */
+@XmlValueParser(CoordinateValueParser.class)
 public final class Coordinate {
 
   private final CoordinateValue latitude;
@@ -176,5 +180,18 @@ public final class Coordinate {
 
   public Coordinate negate() {
     return new Coordinate(-this.latitude.get(), -this.longitude.get());
+  }
+}
+
+class CoordinateValueParser implements IValueParser<Coordinate> {
+
+  @Override
+  public Coordinate parse(String s) {
+    return Coordinate.parseNew(s);
+  }
+
+  @Override
+  public String format(Coordinate coordinate) {
+    throw new UnsupportedOperationException();
   }
 }

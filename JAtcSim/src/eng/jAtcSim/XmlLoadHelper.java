@@ -4,6 +4,10 @@ import eng.eSystem.collections.IList;
 import eng.eSystem.exceptions.ERuntimeException;
 import eng.eSystem.utilites.ExceptionUtils;
 import eng.eSystem.xmlSerialization.*;
+import eng.eSystem.xmlSerialization.common.parsers.AwtFontElementParser;
+import eng.eSystem.xmlSerialization.common.parsers.HexToAwtColorValueParser;
+import eng.eSystem.xmlSerialization.exceptions.XmlSerializationException;
+import eng.eSystem.xmlSerialization.supports.IValueParser;
 import eng.jAtcSim.frmPacks.shared.FlightStripSettings;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.AirplaneTypes;
@@ -19,18 +23,21 @@ import eng.jAtcSim.radarBase.RadarStyleSettings;
 import eng.jAtcSim.radarBase.parsing.RadarColorParser;
 import eng.jAtcSim.radarBase.parsing.RadarFontParser;
 import eng.jAtcSim.app.startupSettings.StartupSettings;
+import eng.jAtcSim.recording.Settings;
 
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
+import static eng.eSystem.utilites.FunctionShortcuts.sf;
+
 public class XmlLoadHelper {
 
   public static Object deserialize(String fileName, Class type) {
-    Object ret = deserialize(fileName, type, new Settings());
+    Object ret = deserialize(fileName, type, new XmlSettings());
     return ret;
   }
 
-  public static Object deserialize(String fileName, Class type, Settings xmlSerializationSettings) {
+  public static Object deserialize(String fileName, Class type, XmlSettings xmlSerializationSettings) {
     XmlSerializer ser = new XmlSerializer(xmlSerializationSettings);
 
     Object ret;
@@ -45,14 +52,14 @@ public class XmlLoadHelper {
   }
 
   public static StartupSettings loadStartupSettings(String fileName) {
-    Settings xmlSett = new Settings();
-    xmlSett.getValueParsers().add(new LocalTimeParser());
+    XmlSettings xmlSett = new XmlSettings ();
+    xmlSett.getMeta().registerCustomParser(java.time.LocalTime.class, false, new LocalTimeParser());
     XmlSerializer ser = new XmlSerializer(xmlSett);
 
     StartupSettings ret;
 
     try {
-      ret = (StartupSettings) ser.deserialize(fileName, StartupSettings.class);
+      ret = ser.deserialize(fileName, StartupSettings.class);
     } catch (Exception ex) {
       Acc.log().writeLine(
           ApplicationLog.eType.warning,
@@ -65,8 +72,8 @@ public class XmlLoadHelper {
   }
 
   public static void saveStartupSettings(StartupSettings sett, String fileName) {
-    Settings xmlSett = new Settings();
-    xmlSett.getValueParsers().add(new LocalTimeParser());
+    XmlSettings xmlSett = new XmlSettings ();
+    xmlSett.getMeta().registerCustomParser(java.time.LocalTime.class, false, new LocalTimeParser());
     XmlSerializer ser = new XmlSerializer(xmlSett);
 
     try {
@@ -79,14 +86,16 @@ public class XmlLoadHelper {
   }
 
   public static RadarStyleSettings loadNewDisplaySettings(String fileName) {
-    eng.eSystem.xmlSerialization.Settings sett = new eng.eSystem.xmlSerialization.Settings();
+    XmlSettings xmlSett = new XmlSettings ();
 
     // own parsers
-    sett.getValueParsers().add(new RadarColorParser());
-    sett.getElementParsers().add(new RadarFontParser());
+    xmlSett.getMeta().registerCustomParser(
+        eng.jAtcSim.radarBase.global.Color.class, false, new RadarColorParser());
+    xmlSett.getMeta().registerCustomParser(
+        eng.jAtcSim.radarBase.global.Font.class, false,
+        new RadarFontParser());
 
-    eng.eSystem.xmlSerialization.XmlSerializer ser = new eng.eSystem.xmlSerialization.XmlSerializer(sett);
-    RadarStyleSettings ret = (RadarStyleSettings) deserialize(fileName, RadarStyleSettings.class, sett);
+    RadarStyleSettings ret = (RadarStyleSettings) deserialize(fileName, RadarStyleSettings.class, xmlSett);
     return ret;
   }
 
@@ -112,12 +121,12 @@ public class XmlLoadHelper {
   }
 
   public static FlightStripSettings loadStripSettings(String fileName) {
-    eng.eSystem.xmlSerialization.Settings sett = new eng.eSystem.xmlSerialization.Settings();
+    XmlSettings sett = new XmlSettings();
 
-    sett.getValueParsers().add(
-        new eng.eSystem.xmlSerialization.common.parsers.HexToAwtColorValueParser());
-    sett.getElementParsers().add(
-        new eng.eSystem.xmlSerialization.common.parsers.AwtFontElementParser());
+    sett.getMeta().registerCustomParser(
+        java.awt.Color.class  , false, new HexToAwtColorValueParser());
+    sett.getMeta().registerCustomParser(
+        java.awt.Font.class, false, new AwtFontElementParser());
 
     FlightStripSettings ret = (FlightStripSettings) deserialize(fileName, FlightStripSettings.class, sett);
     return ret;
@@ -125,7 +134,7 @@ public class XmlLoadHelper {
 
   public static AppSettings loadApplicationSettings(String fileName) {
     XmlSerializer ser = new XmlSerializer();
-    AppSettings ret = (AppSettings) ser.deserialize(fileName, AppSettings.class);
+    AppSettings ret = ser.deserialize(fileName, AppSettings.class);
     return ret;
   }
 
@@ -137,33 +146,28 @@ public class XmlLoadHelper {
   }
 }
 
-class LocalTimeParser implements eng.eSystem.xmlSerialization.IValueParser<LocalTime>{
+class LocalTimeParser implements IValueParser<LocalTime> {
 
   private static final String PATTERN = "H:mm";
 
   @Override
-  public Class getType() {
-    return LocalTime.class;
-  }
-
-  @Override
-  public LocalTime parse(String s) throws XmlDeserializationException {
+  public LocalTime parse(String s){
     LocalTime ret;
     try{
       ret = LocalTime.parse(s, DateTimeFormatter.ofPattern(PATTERN));
     }catch (Exception ex){
-      throw new XmlDeserializationException(ex, "Failed to parseOld local time (LocalTime) from value " + s + ".");
+      throw new XmlSerializationException(sf("Failed to parseOld local time (LocalTime) from value " + s + "."), ex);
     }
     return ret;
   }
 
   @Override
-  public String format(LocalTime localTime) throws XmlSerializationException {
+  public String format(LocalTime localTime) {
     String ret;
     try{
       ret = localTime.format( DateTimeFormatter.ofPattern(PATTERN));
     } catch (Exception ex){
-      throw new XmlSerializationException(ex, "Failed to format local time (LocalTime) of value " + localTime);
+      throw new XmlSerializationException(sf( "Failed to format local time (LocalTime) of value " + localTime), ex);
     }
     return ret;
   }

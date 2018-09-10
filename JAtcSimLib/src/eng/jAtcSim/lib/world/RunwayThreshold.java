@@ -7,11 +7,11 @@ package eng.jAtcSim.lib.world;
 
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
-import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.utilites.CollectionUtils;
-import eng.eSystem.xmlSerialization.XmlIgnore;
-import eng.eSystem.xmlSerialization.XmlOptional;
+import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
+import eng.eSystem.xmlSerialization.annotations.XmlItemElement;
+import eng.eSystem.xmlSerialization.annotations.XmlOptional;
 import eng.jAtcSim.lib.coordinates.Coordinate;
 import eng.jAtcSim.lib.coordinates.Coordinates;
 import eng.jAtcSim.lib.global.Headings;
@@ -25,16 +25,23 @@ import java.util.List;
  */
 public class RunwayThreshold {
 
+  @XmlItemElement(elementName = "ilsApproach", type = IlsApproach.class)
+  @XmlItemElement(elementName = "gnssApproach", type = GnssApproach.class)
+  @XmlItemElement(elementName = "unpreciseApproach", type = UnpreciseApproach.class)
   private final List<Approach> approaches = new ArrayList<>();
   @XmlOptional
+  @XmlItemElement(elementName = "route", type = Route.class)
   private final IList<Route> routes = new EList<>();
   @XmlOptional
   String includeRoutesGroups = null;
   private String name;
   private Coordinate coordinate;
+  @XmlIgnore
   private Runway parent;
+  @XmlIgnore
   private double _course;
   private int initialDepartureAltitude;
+  @XmlIgnore
   private RunwayThreshold _other;
   @XmlOptional // as inactive runway do not have this
   private boolean preferred = false;

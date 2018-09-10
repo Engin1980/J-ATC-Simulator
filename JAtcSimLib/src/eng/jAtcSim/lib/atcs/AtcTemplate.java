@@ -6,10 +6,9 @@
 
 package eng.jAtcSim.lib.atcs;
 
-import eng.eSystem.xmlSerialization.XmlOptional;
+import eng.eSystem.xmlSerialization.annotations.XmlOptional;
 
 /**
- *
  * @author Marek
  */
 public class AtcTemplate {

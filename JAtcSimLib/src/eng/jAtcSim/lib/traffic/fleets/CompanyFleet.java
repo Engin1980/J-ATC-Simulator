@@ -1,32 +1,27 @@
 package eng.jAtcSim.lib.traffic.fleets;
 
-import eng.eSystem.collections.EList;
-import eng.eSystem.collections.IList;
-import eng.eSystem.collections.IReadOnlyList;
-import eng.eSystem.xmlSerialization.XmlIgnore;
-import eng.jAtcSim.lib.Acc;
+import eng.eSystem.collections.*;
 import eng.eSystem.utilites.CollectionUtils;
-import eng.jAtcSim.lib.airplanes.AirplaneType;
+import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
+import eng.eSystem.xmlSerialization.annotations.XmlItemElement;
+import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.AirplaneTypes;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class CompanyFleet {
   private static final String DEFAULT_AIRPLANE_TYPE_NAME = "A319";
   public String icao;
+  @XmlItemElement(elementName = "type", type = FleetType.class)
   private IList<FleetType> types = new EList<>();
+  @XmlIgnore
+  private double fleetWeightSum = -1;
+  @XmlIgnore
+  private IMap<Character, Double> categoryFleetWeightSum = null;
 
   public IReadOnlyList<FleetType> getTypes() {
     return types;
   }
 
-  @XmlIgnore
-  private double fleetWeightSum = -1;
-  @XmlIgnore
-  private Map<Character, Double> categoryFleetWeightSum = null;
+
 
   public static CompanyFleet getDefault() {
     CompanyFleet ret = new CompanyFleet();
@@ -93,17 +88,17 @@ public class CompanyFleet {
   }
 
   private void updateCategoryWeightSum() {
-    this.categoryFleetWeightSum = new HashMap<>();
-    this.categoryFleetWeightSum.put('A', 0d);
-    this.categoryFleetWeightSum.put('B', 0d);
-    this.categoryFleetWeightSum.put('C', 0d);
-    this.categoryFleetWeightSum.put('D', 0d);
+    this.categoryFleetWeightSum = new EMap<>();
+    this.categoryFleetWeightSum.set('A', 0d);
+    this.categoryFleetWeightSum.set('B', 0d);
+    this.categoryFleetWeightSum.set('C', 0d);
+    this.categoryFleetWeightSum.set('D', 0d);
 
     for (FleetType fleetType : this.types) {
       double tmp =
           this.categoryFleetWeightSum.get(fleetType.getAirplaneType().category) +
               fleetType.weight;
-      this.categoryFleetWeightSum.put(fleetType.getAirplaneType().category, tmp);
+      this.categoryFleetWeightSum.set(fleetType.getAirplaneType().category, tmp);
     }
   }
 

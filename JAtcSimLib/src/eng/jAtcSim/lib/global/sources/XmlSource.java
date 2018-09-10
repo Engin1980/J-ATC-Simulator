@@ -2,7 +2,7 @@ package eng.jAtcSim.lib.global.sources;
 
 import eng.eSystem.exceptions.ERuntimeException;
 import eng.eSystem.utilites.StringUtils;
-import eng.eSystem.xmlSerialization.XmlIgnore;
+import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 
 import java.io.IOException;
 import java.nio.file.Paths;

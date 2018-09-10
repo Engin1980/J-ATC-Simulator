@@ -2,12 +2,8 @@ package eng.jAtcSim.lib.messaging;
 
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
-import eng.eSystem.xmlSerialization.XmlIgnore;
-import eng.eSystem.xmlSerialization.XmlOptional;
-
+import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class Messenger {
 

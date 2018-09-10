@@ -5,6 +5,7 @@
  */
 package eng.jAtcSim.lib.airplanes;
 
+import eng.eSystem.xmlSerialization.annotations.XmlItemElement;
 import eng.jAtcSim.lib.Acc;
 import eng.eSystem.utilites.CollectionUtils;
 
@@ -16,6 +17,7 @@ import java.util.Map;
 /**
  * @author Marek
  */
+@XmlItemElement(elementName = "type", type = AirplaneType.class)
 public class AirplaneTypes extends ArrayList<AirplaneType> {
 
   private int lastRefreshCount = -1;

@@ -6,8 +6,7 @@
 
 package eng.jAtcSim.lib.speaking.fromAtc.commands.afters;
 
-import eng.eSystem.xmlSerialization.XmlIgnore;
-import eng.jAtcSim.lib.speaking.ICommand;
+import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
 
 /**

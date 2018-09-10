@@ -4,6 +4,10 @@ import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.xmlSerialization.*;
+import eng.eSystem.xmlSerialization.exceptions.XmlSerializationException;
+import eng.eSystem.xmlSerialization.supports.IElementParser;
+import eng.eSystem.xmlSerialization.supports.IFactory;
+import eng.eSystem.xmlSerialization.supports.IValueParser;
 import eng.jAtcSim.lib.atcs.AtcTemplate;
 import eng.jAtcSim.lib.coordinates.Coordinate;
 import eng.jAtcSim.lib.global.PlaneCategoryDefinitions;
@@ -56,101 +60,80 @@ public class AreaXmlSource extends XmlSource<Area> {
 
   @Override
   protected Area _load() {
-    eng.eSystem.xmlSerialization.Settings sett = new eng.eSystem.xmlSerialization.Settings();
-
-    // ignores
-    sett.getIgnoredFieldsRegex().add("^_.+");
-    sett.getIgnoredFieldsRegex().add("^parent$");
-    sett.getIgnoredFieldsRegex().add("^binded$");
-    sett.getIgnoredFieldsRegex().add("^scheduledMovements$");
-
-    // list mappings
-    sett.getListItemMappings().add(
-        new XmlListItemMapping("/airports$", Airport.class));
-    sett.getListItemMappings().add(
-        new XmlListItemMapping("/runways$", Runway.class));
-    sett.getListItemMappings().add(
-        new XmlListItemMapping("/runways/runway/thresholds$", RunwayThreshold.class));
-    sett.getListItemMappings().add(
-        new XmlListItemMapping("/inactiveRunways$", InactiveRunway.class));
-    sett.getListItemMappings().add(
-        new XmlListItemMapping("/inactiveRunways/runway/thresholds$", InactiveRunwayThreshold.class));
-    sett.getListItemMappings().add(
-        new XmlListItemMapping("/approaches$", "ilsApproach", IlsApproach.class));
-    sett.getListItemMappings().add(
-        new XmlListItemMapping("/approaches$", "unpreciseApproach", UnpreciseApproach.class));
-    sett.getListItemMappings().add(
-        new XmlListItemMapping("/approaches$", "gnssApproach", GnssApproach.class));
-    sett.getListItemMappings().add(
-        new XmlListItemMapping("/ilsApproach/categories$", IlsApproach.Category.class));
-    sett.getListItemMappings().add(
-        new XmlListItemMapping("/iafRoutes$", IafRoute.class));
-    sett.getListItemMappings().add(
-        new XmlListItemMapping("/routes$", Route.class));
-    sett.getListItemMappings().add(
-        new XmlListItemMapping("/sharedIafRoutesGroups$", Airport.SharedIafRoutesGroup.class));
-    sett.getListItemMappings().add(
-        new XmlListItemMapping("/sharedRoutesGroups$", Airport.SharedRoutesGroup.class));
-    sett.getListItemMappings().add(
-        new XmlListItemMapping("/atcTemplates$", AtcTemplate.class));
-    sett.getListItemMappings().add(
-        new XmlListItemMapping("/holds$", PublishedHold.class));
-    sett.getListItemMappings().add(
-        new XmlListItemMapping("/entryExitPoints$", EntryExitPoint.class));
-    sett.getListItemMappings().add(
-        new XmlListItemMapping("/vfrPoints$", VfrPoint.class));
-    sett.getListItemMappings().add(
-        new XmlListItemMapping("/navaids$", Navaid.class));
-    sett.getListItemMappings().add(
-        new XmlListItemMapping("/borders$", Border.class));
-    sett.getListItemMappings().add(
-        new XmlListItemMapping("/points$", "point", BorderExactPoint.class));
-    sett.getListItemMappings().add(
-        new XmlListItemMapping("/points$", "arc", BorderArcPoint.class));
-    sett.getListItemMappings().add(
-        new XmlListItemMapping("/points$", "crd", BorderCrdPoint.class));
-    sett.getListItemMappings().add(
-        new XmlListItemMapping("/points$", "circle", BorderCirclePoint.class));
-    sett.getListItemMappings().add(
-        new XmlListItemMapping("/companies$", DensityBasedTraffic.CodeWeight.class));
-    sett.getListItemMappings().add(
-        new XmlListItemMapping("/countries$", DensityBasedTraffic.CodeWeight.class));
-    sett.getListItemMappings().add(
-        new XmlListItemMapping("/density$", DensityBasedTraffic.HourBlockMovements.class));
-    sett.getListItemMappings().add(
-        new XmlListItemMapping("/directions$", DensityBasedTraffic.DirectionWeight.class));
-    sett.getListItemMappings().add(
-        new XmlListItemMapping("/trafficDefinitions$", "genericTraffic", GenericTraffic.class));
-    sett.getListItemMappings().add(
-        new XmlListItemMapping("/trafficDefinitions$", "densityTraffic", DensityBasedTraffic.class));
-    sett.getListItemMappings().add(
-        new XmlListItemMapping("/trafficDefinitions$", "flightListTraffic", FlightListTraffic.class));
-    sett.getListItemMappings().add(
-        new XmlListItemMapping("/disjoints$", String.class));
-    sett.getListItemMappings().add(
-        new XmlListItemMapping("/runwayConfigurations$", RunwayConfiguration.class));
-
-    // own parsers
-    sett.getValueParsers().add(new CoordinateValueParser());
-    sett.getValueParsers().add(new TrafficCategoryDefinitionParser());
-    sett.getValueParsers().add(new IntParser());
-    sett.getValueParsers().add(new IntegerParser());
-    sett.getElementParsers().add(new RunwayConfigurationParser());
-
-    // instance creators
-    sett.getInstanceCreators().add(new AreaCreator());
-
-
-    // own loading
-    XmlSerializer ser = new XmlSerializer(sett);
-    Area ret = (Area) ser.deserialize(super.getXmlFileName(), Area.class);
-
-    return ret;
+    throw new UnsupportedOperationException("Implement");
+//    eng.eSystem.xmlSerialization.Settings sett = new eng.eSystem.xmlSerialization.Settings();
+//
+//    // ignores
+//    sett.getIgnoredFieldsRegex().add("^_.+");
+//    sett.getIgnoredFieldsRegex().add("^parent$");
+//    sett.getIgnoredFieldsRegex().add("^binded$");
+//    sett.getIgnoredFieldsRegex().add("^scheduledMovements$");
+//
+//    // list mappings
+//    sett.getListItemMappings().add(
+//        new XmlListItemMapping("/ilsApproach/categories$", IlsApproach.Category.class));
+//    sett.getListItemMappings().add(
+//        new XmlListItemMapping("/iafRoutes$", IafRoute.class));
+//    sett.getListItemMappings().add(
+//        new XmlListItemMapping("/routes$", Route.class));
+//    sett.getListItemMappings().add(
+//        new XmlListItemMapping("/sharedIafRoutesGroups$", Airport.SharedIafRoutesGroup.class));
+//    sett.getListItemMappings().add(
+//        new XmlListItemMapping("/sharedRoutesGroups$", Airport.SharedRoutesGroup.class));
+//    sett.getListItemMappings().add(
+//        new XmlListItemMapping("/atcTemplates$", AtcTemplate.class));
+//    sett.getListItemMappings().add(
+//        new XmlListItemMapping("/entryExitPoints$", EntryExitPoint.class));
+//    sett.getListItemMappings().add(
+//        new XmlListItemMapping("/vfrPoints$", VfrPoint.class));
+//    sett.getListItemMappings().add(
+//        new XmlListItemMapping("/points$", "point", BorderExactPoint.class));
+//    sett.getListItemMappings().add(
+//        new XmlListItemMapping("/points$", "arc", BorderArcPoint.class));
+//    sett.getListItemMappings().add(
+//        new XmlListItemMapping("/points$", "crd", BorderCrdPoint.class));
+//    sett.getListItemMappings().add(
+//        new XmlListItemMapping("/points$", "circle", BorderCirclePoint.class));
+//    sett.getListItemMappings().add(
+//        new XmlListItemMapping("/companies$", DensityBasedTraffic.CodeWeight.class));
+//    sett.getListItemMappings().add(
+//        new XmlListItemMapping("/countries$", DensityBasedTraffic.CodeWeight.class));
+//    sett.getListItemMappings().add(
+//        new XmlListItemMapping("/density$", DensityBasedTraffic.HourBlockMovements.class));
+//    sett.getListItemMappings().add(
+//        new XmlListItemMapping("/directions$", DensityBasedTraffic.DirectionWeight.class));
+//    sett.getListItemMappings().add(
+//        new XmlListItemMapping("/trafficDefinitions$", "genericTraffic", GenericTraffic.class));
+//    sett.getListItemMappings().add(
+//        new XmlListItemMapping("/trafficDefinitions$", "densityTraffic", DensityBasedTraffic.class));
+//    sett.getListItemMappings().add(
+//        new XmlListItemMapping("/trafficDefinitions$", "flightListTraffic", FlightListTraffic.class));
+//    sett.getListItemMappings().add(
+//        new XmlListItemMapping("/disjoints$", String.class));
+//    sett.getListItemMappings().add(
+//        new XmlListItemMapping("/runwayConfigurations$", RunwayConfiguration.class));
+//
+//    // own parsers
+//    sett.getValueParsers().add(new CoordinateValueParser());
+//    sett.getValueParsers().add(new TrafficCategoryDefinitionParser());
+//    sett.getValueParsers().add(new IntParser());
+//    sett.getValueParsers().add(new IntegerParser());
+//    sett.getElementParsers().add(new RunwayConfigurationParser());
+//
+//    // instance creators
+//    sett.getInstanceCreators().add(new AreaCreator());
+//
+//
+//    // own loading
+//    XmlSerializer ser = new XmlSerializer(sett);
+//    Area ret = (Area) ser.deserialize(super.getXmlFileName(), Area.class);
+//
+//    return ret;
   }
 }
 
 
-class AreaCreator implements eng.eSystem.xmlSerialization.IInstanceCreator<Area> {
+class AreaCreator implements IFactory<Area> {
 
   @Override
   public Class getType() {
@@ -164,39 +147,18 @@ class AreaCreator implements eng.eSystem.xmlSerialization.IInstanceCreator<Area>
   }
 }
 
-class CoordinateValueParser implements IValueParser<Coordinate> {
 
-  @Override
-  public Class getType() {
-    return Coordinate.class;
-  }
-
-  @Override
-  public Coordinate parse(String s) {
-    return Coordinate.parseNew(s);
-  }
-
-  @Override
-  public String format(Coordinate coordinate) {
-    throw new UnsupportedOperationException();
-  }
-}
 
 class TrafficCategoryDefinitionParser implements IValueParser<PlaneCategoryDefinitions> {
 
   @Override
-  public Class getType() {
-    return PlaneCategoryDefinitions.class;
-  }
-
-  @Override
-  public PlaneCategoryDefinitions parse(String s) throws XmlDeserializationException {
+  public PlaneCategoryDefinitions parse(String s) throws XmlSerializationException {
     PlaneCategoryDefinitions ret = new PlaneCategoryDefinitions(s);
     return ret;
   }
 
   @Override
-  public String format(PlaneCategoryDefinitions trafficCategoryDefinition) throws XmlSerializationException {
+  public String format(PlaneCategoryDefinitions trafficCategoryDefinition) {
     return trafficCategoryDefinition.toString();
   }
 }
@@ -204,12 +166,7 @@ class TrafficCategoryDefinitionParser implements IValueParser<PlaneCategoryDefin
 class IntParser implements IValueParser<Integer> {
 
   @Override
-  public Class getType() {
-    return int.class;
-  }
-
-  @Override
-  public Integer parse(String s) throws XmlDeserializationException {
+  public Integer parse(String s) throws XmlSerializationException {
     Integer ret;
     if (s.startsWith("FL")) {
       s = s.substring(2);
@@ -230,12 +187,7 @@ class IntParser implements IValueParser<Integer> {
 class IntegerParser implements IValueParser<Integer> {
 
   @Override
-  public Class getType() {
-    return Integer.class;
-  }
-
-  @Override
-  public Integer parse(String s) throws XmlDeserializationException {
+  public Integer parse(String s) throws XmlSerializationException {
     Integer ret;
     if (s.startsWith("FL")) {
       s = s.substring(2);
@@ -256,12 +208,7 @@ class IntegerParser implements IValueParser<Integer> {
 class RunwayConfigurationParser implements IElementParser<RunwayConfiguration> {
 
   @Override
-  public Class getType() {
-    return RunwayConfiguration.class;
-  }
-
-  @Override
-  public RunwayConfiguration parse(XElement xElement, XmlSerializer.Deserializer deserializer) throws XmlDeserializationException {
+  public RunwayConfiguration parse(XElement xElement, XmlSerializer.Deserializer deserializer) {
     int windFrom = 0;
     int windTo = 359;
     int windSpeedFrom = 0;
@@ -302,8 +249,4 @@ class RunwayConfigurationParser implements IElementParser<RunwayConfiguration> {
     throw new UnsupportedOperationException("This method is not expected to be called.");
   }
 
-  @Override
-  public boolean isApplicableOnDescendants() {
-    return false;
-  }
 }
