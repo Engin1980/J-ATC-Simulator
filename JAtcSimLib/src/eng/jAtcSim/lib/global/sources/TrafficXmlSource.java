@@ -86,8 +86,8 @@ public class TrafficXmlSource extends XmlSource<IList<Traffic>> {
         EList.class, "flightListTraffic", FlightListTraffic.class, false, null);
     sett.getMeta().registerXmlItemIgnoredElement(EList.class, "meta");
 
-    sett.getMeta().registerCustomParser(int.class, false, new AltitudeValueParser());
-    sett.getMeta().registerCustomParser(Integer.class, false, new AltitudeValueParser());
+    sett.getMeta().registerCustomParser(int.class,  new AltitudeValueParser());
+    sett.getMeta().registerCustomParser(Integer.class,  new AltitudeValueParser());
 
     // own loading
     XmlSerializer ser = new XmlSerializer(sett);

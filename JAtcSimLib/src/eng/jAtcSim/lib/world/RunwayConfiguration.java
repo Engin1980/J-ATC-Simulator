@@ -13,7 +13,6 @@ import eng.jAtcSim.lib.world.xml.RunwayConfigurationParser;
 
 import java.awt.geom.Line2D;
 
-@XmlElementParser(RunwayConfigurationParser.class)
 public class RunwayConfiguration {
 
   public static class RunwayThresholdConfiguration {
@@ -50,6 +49,9 @@ public class RunwayConfiguration {
     public RunwayThreshold getThreshold() {
       return threshold;
     }
+
+    @XmlConstructor
+    private RunwayThresholdConfiguration(){}
 
     public RunwayThresholdConfiguration(String name, String categories, boolean primary, boolean showRoutes, boolean showApproach) {
       this.categories = categories;

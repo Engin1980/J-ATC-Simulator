@@ -4,17 +4,19 @@ import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.xmlSerialization.Log;
 import eng.eSystem.xmlSerialization.XmlSerializer;
+import eng.eSystem.xmlSerialization.XmlSettings;
 import eng.eSystem.xmlSerialization.exceptions.XmlSerializationException;
 import eng.eSystem.xmlSerialization.supports.IFactory;
 import eng.jAtcSim.lib.airplanes.Airplane;
+import eng.jAtcSim.lib.airplanes.AirplaneType;
 import eng.jAtcSim.lib.airplanes.AirplaneTypes;
 import eng.jAtcSim.lib.atcs.Atc;
 import eng.jAtcSim.lib.speaking.fromAtc.atc2atc.PlaneSwitchMessage;
 import eng.jAtcSim.lib.speaking.fromAtc.atc2atc.RunwayCheck;
 import eng.jAtcSim.lib.speaking.fromAtc.atc2atc.StringResponse;
-import eng.jAtcSim.lib.world.Airport;
-import eng.jAtcSim.lib.world.Area;
+import eng.jAtcSim.lib.world.*;
 
 import java.lang.reflect.Field;
 
@@ -22,52 +24,44 @@ public class LoadSave {
 
   private static XmlSerializer ser;
 
+  private static NavaidParser navaidParser = new NavaidParser();
+  private static AirportParser airportParser = new AirportParser();
+  private static AtcParser atcParser = new AtcParser();
+  private static RouteParser routeParser = new RouteParser();
+  private static RunwayParser runwayParser = new RunwayParser();
+  private static RunwayThresholdParser runwayThresholdParser = new RunwayThresholdParser();
+  private static AirplaneTypeParser airplaneTypeParser = new AirplaneTypeParser();
+  private static AirplaneParser airplaneParser = new AirplaneParser();
+
   static {
-//    Settings sett = new Settings();
-//    sett.getElementParsers().add(new NavaidParser());
-//    sett.getElementParsers().add(new AirplaneTypeParser());
-//    sett.getElementParsers().add(new RunwayThresholdParser());
-//    sett.getElementParsers().add(new RunwayParser());
-//    sett.getElementParsers().add(new RouteParser());
-//    sett.getElementParsers().add(new AirplaneParser());
-//    sett.getElementParsers().add(new AtcParser());
-//    sett.getElementParsers().add(new AirportParser());
-//
-//    sett.getInstanceCreators().add(new PlaneSwitchMessageIC());
-//    sett.getInstanceCreators().add(new RunwayCheckIC());
-//    sett.getInstanceCreators().add(new StringResponseIC());
 //    // TODO here should be all classes with private constructors defined for xml loading
-//
 //    sett.getIgnoredFieldsRegex().add("this\\$0"); // parent of inner class
-//
-//    //sett.setVerbose(true);
-//    ser = new XmlSerializer(sett);
+
+    XmlSettings sett = new XmlSettings();
+
+    // parser
+    sett.getMeta().registerCustomParser(Navaid.class,  navaidParser);
+    sett.getMeta().registerCustomParser(AirplaneType.class,  airplaneTypeParser);
+    sett.getMeta().registerCustomParser(RunwayThreshold.class,  runwayThresholdParser);
+    sett.getMeta().registerCustomParser(Runway.class,  runwayParser);
+    sett.getMeta().registerCustomParser(Route.class,  routeParser);
+    sett.getMeta().registerCustomParser(Airplane.class,  airplaneParser);
+    sett.getMeta().registerCustomParser(Atc.class,  atcParser);
+    sett.getMeta().registerCustomParser(Airport.class,  airportParser);
+
+    // factories
+    sett.getMeta().registerFactory(new PlaneSwitchMessageIC());
+    sett.getMeta().registerFactory(new RunwayCheckIC());
+    sett.getMeta().registerFactory(new StringResponseIC());
+
+    sett.setLogLevel(Log.LogLevel.verbose);
+    ser = new XmlSerializer(sett);
   }
 
   public static void saveField(XElement elm, Object src, String fieldName) {
     Object v = getFieldValue(src, fieldName);
-//    if (v == null || v.getClass().isPrimitive() || v.getClass().isEnum())
-//      LoadSave.saveAsAttribute(elm, fieldName, v);
-//    else
     LoadSave.saveAsElement(elm, fieldName, v);
   }
-
-//  public static void saveAsAttribute(XElement elm, String name, Object value) {
-//    if (value == null)
-//      elm.setAttribute(name, "(null)");
-//    else
-//      elm.setAttribute(name, value.toString());
-//  }
-//
-//  public static Object loadFromAttribute(XElement elm, String name) {
-//    Object ret;
-//    String s = elm.getContent();
-//    if (s.equals("(null)"))
-//      ret = null;
-//    else
-//      ret = elm.getAttributes().getAndElapse(name);
-//    return ret;
-//  }
 
   public static void saveAsElement(XElement elm, String name, Object obj) {
     XElement tmp = new XElement(name);
@@ -99,11 +93,6 @@ public class LoadSave {
     }
 
     Object v;
-//    if ((f.getType().isPrimitive() || f.getType().isEnum())
-//        &&
-//        elm.getAttributes().containsKey(fieldName))
-//      v = LoadSave.loadFromAttribute(elm, fieldName);
-//    else
     v = LoadSave.loadFromElement(elm, fieldName, f.getType());
 
     try {
@@ -115,30 +104,21 @@ public class LoadSave {
   }
 
   public static void setRelativeArea(Area area, Airport aip, Atc[] atcs) {
-throw new UnsupportedOperationException("implement");
-//    NavaidParser np = (NavaidParser) ser.getSettings().getElementParsers().getFirst(q -> q instanceof NavaidParser);
-//    np.setRelative(area.getNavaids());
-//
-//    AirportParser ap = (AirportParser) ser.getSettings().getElementParsers().getFirst(q -> q instanceof AirportParser);
-//    ap.setRelative(area.getAirports());
-//
-//    AtcParser atp = (AtcParser) ser.getSettings().getElementParsers().getFirst(q -> q instanceof AtcParser);
-//    atp.setRelative(new EList<Atc>(atcs));
-//
-//    RouteParser rp = (RouteParser) ser.getSettings().getElementParsers().getFirst(q -> q instanceof RouteParser);
-//    rp.setRelative(aip);
-//
-//    RunwayParser rwp = (RunwayParser) ser.getSettings().getElementParsers().getFirst(q -> q instanceof RunwayParser);
-//    rwp.setRelative(aip);
-//
-//    RunwayThresholdParser rtp = (RunwayThresholdParser) ser.getSettings().getElementParsers().getFirst(q -> q instanceof RunwayThresholdParser);
-//    rtp.setRelative(aip);
+    navaidParser.setRelative(area.getNavaids());
+
+    airportParser.setRelative(area.getAirports());
+
+    atcParser.setRelative(new EList<>(atcs));
+
+    routeParser.setRelative(aip);
+
+    runwayParser.setRelative(aip);
+
+    runwayThresholdParser.setRelative(aip);
   }
 
   public static void setRelativeAirplaneTypes(AirplaneTypes types) {
-    throw new UnsupportedOperationException("implement");
-//    AirplaneTypeParser atp = (AirplaneTypeParser) ser.getSettings().getElementParsers().getFirst(q -> q instanceof AirplaneTypeParser);
-//    atp.setRelative(types);
+    airplaneTypeParser.setRelative(types);
   }
 
   public static void loadFromElement(XElement elm, Object object) {
@@ -147,9 +127,7 @@ throw new UnsupportedOperationException("implement");
   }
 
   public static void setRelativeAirplanes(IList<Airplane> lst) {
-    throw new UnsupportedOperationException("implement");
-//    AirplaneParser ap = (AirplaneParser) ser.getSettings().getElementParsers().getFirst(q -> q instanceof AirplaneParser);
-//    ap.setRelative(lst);
+    airplaneParser.setRelative(lst);
   }
 
   private static Object getFieldValue(Object src, String fieldName) {

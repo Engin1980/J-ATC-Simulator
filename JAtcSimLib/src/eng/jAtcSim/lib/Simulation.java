@@ -168,6 +168,7 @@ public class Simulation {
       this.ctrAtc.load(tmp);
       this.appAtc.load(tmp);
       this.twrAtc.load(tmp);
+      this.twrAtc.getRunwayConfigurationInUse().bind();
       this.twrAtc.getOnRunwayChanged().add(this::twr_runwayChanged);
     }
 

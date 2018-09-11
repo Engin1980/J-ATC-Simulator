@@ -100,7 +100,6 @@ public class TowerAtc extends ComputerAtc {
     }
   }
 
-
   public enum eDirection {
     departures,
     arrivals

@@ -23,6 +23,7 @@ import eng.jAtcSim.lib.traffic.GenericTraffic;
 import eng.jAtcSim.lib.traffic.Traffic;
 import eng.jAtcSim.lib.world.approaches.Approach;
 import eng.jAtcSim.lib.world.approaches.IafRoute;
+import eng.jAtcSim.lib.world.xml.RunwayConfigurationParser;
 
 /**
  * @author Marek
@@ -74,7 +75,7 @@ public class Airport {
   private Area parent;
   private int coveredDistance;
   @XmlOptional
-  @XmlItemElement(elementName = "configuration", type = RunwayConfiguration.class)
+  @XmlItemElement(elementName = "configuration", type = RunwayConfiguration.class, parser = RunwayConfigurationParser.class)
   private IList<RunwayConfiguration> runwayConfigurations = new EList<>();
   @XmlOptional
   @XmlItemElement(elementName = "sharedRoutesGroup", type=SharedRoutesGroup.class)

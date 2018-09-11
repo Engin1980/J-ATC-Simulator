@@ -49,8 +49,8 @@ public class AreaXmlSource extends XmlSource<Area> {
 
     sett.getMeta().registerFactory(new AreaFactory());
 
-    sett.getMeta().registerCustomParser(int.class, false, new AltitudeValueParser());
-    sett.getMeta().registerCustomParser(Integer.class, false, new AltitudeValueParser());
+    sett.getMeta().registerCustomParser(int.class,  new AltitudeValueParser());
+    sett.getMeta().registerCustomParser(Integer.class,  new AltitudeValueParser());
 
     XmlSerializer ser = new XmlSerializer(sett);
 
