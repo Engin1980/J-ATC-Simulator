@@ -187,7 +187,8 @@ public class FrmMain extends JFrame {
         buildMenuItem(mnuSpeed, "Frozen (5000ms)", null, s -> setSimulationSpeed(5000));
         buildMenuItem(mnuSpeed, "Slow (2000ms)", null, s -> setSimulationSpeed(2000));
         buildMenuItem(mnuSpeed, "Real (1000ms)", null, s -> setSimulationSpeed(1000));
-        buildMenuItem(mnuSpeed, "Accelerated (500ms)", null, s -> setSimulationSpeed(500));
+        buildMenuItem(mnuSpeed, "Accelerated (750ms)", null, s -> setSimulationSpeed(750));
+        buildMenuItem(mnuSpeed, "Arcade (500ms)", null, s -> setSimulationSpeed(500));
         buildMenuItem(mnuSpeed, "Fast (250ms)", null, s -> setSimulationSpeed(250));
         buildMenuItem(mnuSpeed, "Skip (50ms)", null, s -> setSimulationSpeed(50));
       }
