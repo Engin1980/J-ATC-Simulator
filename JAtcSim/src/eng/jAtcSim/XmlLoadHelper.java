@@ -53,7 +53,7 @@ public class XmlLoadHelper {
 
   public static StartupSettings loadStartupSettings(String fileName) {
     XmlSettings xmlSett = new XmlSettings();
-    xmlSett.getMeta().registerCustomParser(java.time.LocalTime.class, new LocalTimeParser());
+    xmlSett.forType(java.time.LocalTime.class).setCustomParser(new LocalTimeParser());
     XmlSerializer ser = new XmlSerializer(xmlSett);
 
     StartupSettings ret;
@@ -73,7 +73,7 @@ public class XmlLoadHelper {
 
   public static void saveStartupSettings(StartupSettings sett, String fileName) {
     XmlSettings xmlSett = new XmlSettings();
-    xmlSett.getMeta().registerCustomParser(java.time.LocalTime.class, new LocalTimeParser());
+    xmlSett.forType(java.time.LocalTime.class).setCustomParser(new LocalTimeParser());
     XmlSerializer ser = new XmlSerializer(xmlSett);
 
     try {
@@ -89,13 +89,11 @@ public class XmlLoadHelper {
     XmlSettings xmlSett = new XmlSettings();
 
     // own parsers
-    xmlSett.getMeta().registerCustomParser(
-        eng.jAtcSim.radarBase.global.Color.class, new RadarColorValueParser());
-    xmlSett.getMeta().registerCustomParser(
-        eng.jAtcSim.radarBase.global.Color.class, new ElementFromValueParser<>(new RadarColorValueParser()));
+    xmlSett.forType(eng.jAtcSim.radarBase.global.Color.class).setCustomParser(new RadarColorValueParser());
+    xmlSett.forType(eng.jAtcSim.radarBase.global.Color.class).setCustomParser(
+        new ElementFromValueParser<>(new RadarColorValueParser()));
 
-    xmlSett.getMeta().registerCustomParser(
-        eng.jAtcSim.radarBase.global.Font.class,         new RadarFontParser());
+    xmlSett.forType(eng.jAtcSim.radarBase.global.Font.class).setCustomParser(new RadarFontParser());
 
     RadarStyleSettings ret = (RadarStyleSettings) deserialize(fileName, RadarStyleSettings.class, xmlSett);
     return ret;
@@ -125,12 +123,9 @@ public class XmlLoadHelper {
   public static FlightStripSettings loadStripSettings(String fileName) {
     XmlSettings sett = new XmlSettings();
 
-    sett.getMeta().registerCustomParser(
-        java.awt.Color.class,  new HexToAwtColorValueParser());
-    sett.getMeta().registerCustomParser(
-        java.awt.Color.class,  new ElementFromValueParser(new HexToAwtColorValueParser()));
-    sett.getMeta().registerCustomParser(
-        java.awt.Font.class,  new AwtFontElementParser());
+    sett.forType(java.awt.Color.class).setCustomParser(new HexToAwtColorValueParser());
+    sett.forType(java.awt.Color.class).setCustomParser(new ElementFromValueParser(new HexToAwtColorValueParser()));
+    sett.forType(java.awt.Font.class).setCustomParser(new AwtFontElementParser());
 
     FlightStripSettings ret = (FlightStripSettings) deserialize(fileName, FlightStripSettings.class, sett);
     return ret;

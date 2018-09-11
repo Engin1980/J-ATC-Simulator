@@ -15,8 +15,8 @@ public class LoadDemo {
     Area ret;
 
     XmlSettings sett = new XmlSettings();
-    sett.getMeta().registerCustomParser(int.class,  new AltitudeValueParser());
-    sett.getMeta().registerCustomParser(Integer.class,  new AltitudeValueParser());
+    sett.forType(int.class).setCustomParser(new AltitudeValueParser());
+    sett.forType(Integer.class).setCustomParser(new AltitudeValueParser());
     XmlSerializer ser = new XmlSerializer(sett);
 
     ret = ser.deserialize(fileName, Area.class);

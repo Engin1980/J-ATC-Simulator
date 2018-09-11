@@ -47,10 +47,11 @@ public class AreaXmlSource extends XmlSource<Area> {
   protected Area _load() {
     XmlSettings sett = new XmlSettings();
 
-    sett.getMeta().registerFactory(new AreaFactory());
-
-    sett.getMeta().registerCustomParser(int.class,  new AltitudeValueParser());
-    sett.getMeta().registerCustomParser(Integer.class,  new AltitudeValueParser());
+    sett.forType(Area.class).setFactory(new AreaFactory());
+    sett.forType(int.class)
+        .setCustomParser(new AltitudeValueParser());
+    sett.forType(Integer.class)
+        .setCustomParser(new AltitudeValueParser());
 
     XmlSerializer ser = new XmlSerializer(sett);
 
@@ -61,11 +62,6 @@ public class AreaXmlSource extends XmlSource<Area> {
 
 
 class AreaFactory implements IFactory<Area> {
-
-  @Override
-  public Class getType() {
-    return Area.class;
-  }
 
   @Override
   public Area createInstance() {

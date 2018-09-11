@@ -40,19 +40,19 @@ public class LoadSave {
     XmlSettings sett = new XmlSettings();
 
     // parser
-    sett.getMeta().registerCustomParser(Navaid.class,  navaidParser);
-    sett.getMeta().registerCustomParser(AirplaneType.class,  airplaneTypeParser);
-    sett.getMeta().registerCustomParser(RunwayThreshold.class,  runwayThresholdParser);
-    sett.getMeta().registerCustomParser(Runway.class,  runwayParser);
-    sett.getMeta().registerCustomParser(Route.class,  routeParser);
-    sett.getMeta().registerCustomParser(Airplane.class,  airplaneParser);
-    sett.getMeta().registerCustomParser(Atc.class,  atcParser);
-    sett.getMeta().registerCustomParser(Airport.class,  airportParser);
+    sett.forType(Navaid.class).setCustomParser(navaidParser);
+    sett.forType(AirplaneType.class).setCustomParser(airplaneTypeParser);
+    sett.forType(RunwayThreshold.class).setCustomParser(runwayThresholdParser);
+    sett.forType(Runway.class).setCustomParser(runwayParser);
+    sett.forType(Route.class).setCustomParser(routeParser);
+    sett.forType(Airplane.class).setCustomParser(airplaneParser);
+    sett.forType(Atc.class).setCustomParser(atcParser);
+    sett.forType(Airport.class).setCustomParser(airportParser);
 
     // factories
-    sett.getMeta().registerFactory(new PlaneSwitchMessageIC());
-    sett.getMeta().registerFactory(new RunwayCheckIC());
-    sett.getMeta().registerFactory(new StringResponseIC());
+    sett.forType(PlaneSwitchMessage.class).setFactory(new PlaneSwitchMessageIC());
+    sett.forType(RunwayCheck.class).setFactory(new RunwayCheckIC());
+    sett.forType(StringResponse.class).setFactory(new StringResponseIC());
 
     sett.setLogLevel(Log.LogLevel.verbose);
     ser = new XmlSerializer(sett);
@@ -162,12 +162,6 @@ public class LoadSave {
 
 
 class PlaneSwitchMessageIC implements IFactory<PlaneSwitchMessage> {
-
-  @Override
-  public Class getType() {
-    return PlaneSwitchMessage.class;
-  }
-
   @Override
   public PlaneSwitchMessage createInstance() {
     return new PlaneSwitchMessage(null);
@@ -175,12 +169,6 @@ class PlaneSwitchMessageIC implements IFactory<PlaneSwitchMessage> {
 }
 
 class RunwayCheckIC implements IFactory<RunwayCheck> {
-
-  @Override
-  public Class getType() {
-    return RunwayCheck.class;
-  }
-
   @Override
   public RunwayCheck createInstance() {
     return new RunwayCheck(null, RunwayCheck.eType.askForTime);
@@ -188,12 +176,6 @@ class RunwayCheckIC implements IFactory<RunwayCheck> {
 }
 
 class StringResponseIC implements IFactory<StringResponse> {
-
-  @Override
-  public Class getType() {
-    return StringResponse.class;
-  }
-
   @Override
   public StringResponse createInstance() {
     return new StringResponse(false, "");
