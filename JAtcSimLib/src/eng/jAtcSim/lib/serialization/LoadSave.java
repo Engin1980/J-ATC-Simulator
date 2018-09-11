@@ -122,8 +122,8 @@ public class LoadSave {
   }
 
   public static void loadFromElement(XElement elm, Object object) {
-    throw new UnsupportedOperationException("implement");
-//    ser.deserializeContent(elm, object);
+    ser.des .deserializeContent(elm, object);
+    this is not implemented yet in serialization
   }
 
   public static void setRelativeAirplanes(IList<Airplane> lst) {

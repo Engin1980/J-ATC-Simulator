@@ -5,9 +5,11 @@
  */
 package eng.jAtcSim.lib.coordinates;
 
+import eng.eSystem.EStringBuilder;
 import eng.eSystem.xmlSerialization.annotations.XmlValueParser;
 import eng.eSystem.xmlSerialization.supports.IValueParser;
 
+import java.awt.geom.RoundRectangle2D;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -192,6 +194,12 @@ class CoordinateValueParser implements IValueParser<Coordinate> {
 
   @Override
   public String format(Coordinate coordinate) {
-    throw new UnsupportedOperationException();
+    EStringBuilder ret = new EStringBuilder();
+    ret.append(
+        Double.toString(coordinate.getLatitude().get()));
+    ret.append(" ");
+    ret.append(
+        Double.toString(coordinate.getLongitude().get()));
+    return ret.toString();
   }
 }

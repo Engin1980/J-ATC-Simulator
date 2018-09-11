@@ -5,6 +5,7 @@ import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.utilites.ArrayUtils;
 import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
+import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.Simulation;
 import eng.jAtcSim.lib.airplanes.Airplane;
@@ -22,6 +23,7 @@ import eng.jAtcSim.lib.world.*;
 
 public class TrafficManager {
   private IList<Movement> scheduledMovements = new EList<>();
+  @XmlIgnore
   private Traffic traffic;
   private Object lastRelativeInfo;
   private ETime nextGenerateTime = new ETime(0);

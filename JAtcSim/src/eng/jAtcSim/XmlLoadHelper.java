@@ -90,9 +90,6 @@ public class XmlLoadHelper {
 
     // own parsers
     xmlSett.forType(eng.jAtcSim.radarBase.global.Color.class).setCustomParser(new RadarColorValueParser());
-    xmlSett.forType(eng.jAtcSim.radarBase.global.Color.class).setCustomParser(
-        new ElementFromValueParser<>(new RadarColorValueParser()));
-
     xmlSett.forType(eng.jAtcSim.radarBase.global.Font.class).setCustomParser(new RadarFontParser());
 
     RadarStyleSettings ret = (RadarStyleSettings) deserialize(fileName, RadarStyleSettings.class, xmlSett);
@@ -124,7 +121,6 @@ public class XmlLoadHelper {
     XmlSettings sett = new XmlSettings();
 
     sett.forType(java.awt.Color.class).setCustomParser(new HexToAwtColorValueParser());
-    sett.forType(java.awt.Color.class).setCustomParser(new ElementFromValueParser(new HexToAwtColorValueParser()));
     sett.forType(java.awt.Font.class).setCustomParser(new AwtFontElementParser());
 
     FlightStripSettings ret = (FlightStripSettings) deserialize(fileName, FlightStripSettings.class, sett);
