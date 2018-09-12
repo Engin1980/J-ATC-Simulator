@@ -122,8 +122,7 @@ public class LoadSave {
   }
 
   public static void loadFromElement(XElement elm, Object object) {
-    ser.des .deserializeContent(elm, object);
-    this is not implemented yet in serialization
+    ser.deserializeContent(elm, object);
   }
 
   public static void setRelativeAirplanes(IList<Airplane> lst) {
