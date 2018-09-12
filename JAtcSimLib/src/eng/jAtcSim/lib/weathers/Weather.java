@@ -103,7 +103,8 @@ public class Weather {
         sb.append("???? ");
       else
         sb.append(Acc.airport().getIcao()).append(" ");
-      sb.append("------Z ");
+      sb.appendFormat("%02d", java.time.LocalDate.now().getDayOfMonth());
+      sb.appendFormat("%02d%02dZ ", Acc.now().getHours(), Acc.now().getMinutes());
       sb.appendFormat("%03d%02dKT ", this.getWindHeading(), this.getWindSpeetInKts());
       sb.appendFormat("%04d ", this.getVisibilityInMeters());
       if (getCloudBaseHitProbability() == 0) {
