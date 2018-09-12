@@ -779,18 +779,15 @@ class ArrivalManager {
   }
 
   public void unregisterFinishedArrival(Airplane plane) {
-    System.out.println("## unregistering finished arrival " + plane.getCallsign());
     this.landingPlanesList.remove(plane);
   }
 
   public void deletePlane(Airplane plane) {
-    System.out.println("## deleting plane " + plane.getCallsign());
     this.landingPlanesList.tryRemove(plane);
     this.goAroundedPlanesToSwitchList.tryRemove(plane);
   }
 
   public void registerNewArrival(Airplane plane) {
-    System.out.println("## registering arrival " + plane.getCallsign());
     if (plane == null) {
       throw new IllegalArgumentException("Value of {plane} cannot not be null.");
     }

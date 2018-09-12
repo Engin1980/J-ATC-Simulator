@@ -737,7 +737,7 @@ public class Pilot {
       if (location == ApproachLocation.afterThreshold) {
         newAltitude = Acc.airport().getAltitude() - 100; // I need to lock the airplane on runway
       } else {
-        int minAltByState = (int) getMinimalAllowedAltitudeAfterThisStep();
+        int minAltByState = 0; // (int) getMinimalAllowedAltitudeAfterThisStep();
         switch (approach.getType()) {
           case visual:
             if (location == ApproachLocation.beforeFaf) {
