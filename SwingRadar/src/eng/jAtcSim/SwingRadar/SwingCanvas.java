@@ -97,7 +97,7 @@ public class SwingCanvas implements ICanvas<JComponent> {
       if (diffPoint.x < MINIMUM_DRAG_SHIFT && diffPoint.y < MINIMUM_DRAG_SHIFT) {
         return;
       }
-      EMouseEventArg.eButton btn = convertFromSwingButton(e.getButton());
+      EMouseEventArg.eButton btn = convertFromSwingButton(dragStartButton);
       EMouseEventArg eme = EMouseEventArg.createDragging(
           dragStartPoint.x, dragStartPoint.y, dragEndPoint.x, dragEndPoint.y,
           btn, new EKeyboardModifier(dragStartModifiers));
