@@ -958,13 +958,41 @@ public class Airplane implements IMessageParticipant {
       ret.energy = 0;
       ret.value = 0;
     } else {
+      double climbRateForAltitude = airplaneType.getClimbRateForAltitude(this.altitude.getValue());
+      double descentRateForAltitude = airplaneType.getDescendRateForAltitude(this.altitude.getValue());
+      descentRateForAltitude = adjustDescentRateByApproachStateIfRequired(descentRateForAltitude);
       ret = getRequest(
           this.altitude.getValue(),
           this.targetAltitude,
-          airplaneType.getClimbRateForAltitude(this.altitude.getValue()),
-          airplaneType.getDescendRateForAltitude(this.altitude.getValue()));
+          climbRateForAltitude,
+          descentRateForAltitude);
     }
 
+    return ret;
+  }
+
+  private double adjustDescentRateByApproachStateIfRequired(double descentRateForAltitude) {
+    double ret;
+    if (state.is(State.approachDescend, State.longFinal, State.shortFinal)) {
+      double restrictedDescentRate;
+      switch (state) {
+        case approachDescend:
+          restrictedDescentRate = 2000;
+          break;
+        case longFinal:
+          restrictedDescentRate = this.pilot.tryGetAssignedApproach().getType() == Approach.ApproachType.visual ?
+              2000 : 1300;
+          break;
+        case shortFinal:
+          restrictedDescentRate = 1300;
+          break;
+        default:
+          throw new UnsupportedOperationException("This situation is not supported.");
+      }
+      restrictedDescentRate /= 60d;
+      ret = Math.min(descentRateForAltitude, restrictedDescentRate);
+    } else
+      ret = descentRateForAltitude;
     return ret;
   }
 
