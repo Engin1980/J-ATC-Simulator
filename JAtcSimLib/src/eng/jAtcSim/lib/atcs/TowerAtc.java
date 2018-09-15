@@ -871,7 +871,7 @@ class DepartureManager {
     holdingPointReady.tryRemove(plane);
     departing.tryRemove(plane);
     for (RunwayThreshold rt : this.lastDepartures.getKeys()) {
-      if (this.lastDepartures.containsKey(rt) && this.lastDepartures.get(rt).equals(plane)) {
+      if (this.lastDepartures.containsKey(rt) && plane.equals(this.lastDepartures.get(rt))) {
         this.lastDepartures.set(rt, null);
         this.lastDeparturesTime.set(rt, null);
       }
