@@ -632,12 +632,31 @@ public class Radar {
         if (e.modifiers.is(false, false, false) && e.button == EMouseEventArg.eButton.left) {
           Coordinate fromCoordinate = tl.toCoordinate(e.getPoint());
           Coordinate toCoordinate = tl.toCoordinate(e.getDropPoint());
-          infoLine = new InfoLine(fromCoordinate, toCoordinate);
+          Double relativeSpeed = tryGetRelativeSpeed(fromCoordinate);
+          infoLine = new InfoLine(fromCoordinate, toCoordinate, relativeSpeed);
           this.redraw(true);
         }
         break;
     }
 
+  }
+
+  private Double tryGetRelativeSpeed(Coordinate fromCoordinate) {
+    AirplaneDisplayInfo adi = null;
+    double dist = Double.MAX_VALUE;
+    for (AirplaneDisplayInfo radi : this.planeInfos.getList()) {
+      double rdist = Coordinates.getDistanceInNM(radi.coordinate, fromCoordinate);
+      if (rdist < dist){
+        dist = rdist;
+        adi = radi;
+      }
+    }
+    if (dist > 3)
+      adi = null;
+    if (adi != null)
+      return adi.tas;
+    else
+      return null;
   }
 
   private AirplaneDisplayInfo tryGetAirplaneDisplayInfoByPoint(Point p) {
@@ -693,13 +712,19 @@ public class Radar {
       );
 
       String distS = String.format("%03d %.1fnm", this.infoLine.heading, this.infoLine.distanceInNm);
-      String timeS = String.format("%s:%s/%s:%s/%s:%s",
+      String timeS;
+      if (this.infoLine.isRelativeSpeedUsed == false)
+        timeS = String.format("%s:%s/%s:%s/%s:%s",
           InfoLine.toIntegerMinutes(this.infoLine.seconds280),
           infoLine.toIntegerSeconds(this.infoLine.seconds280),
           InfoLine.toIntegerMinutes(this.infoLine.seconds250),
           infoLine.toIntegerSeconds(this.infoLine.seconds250),
           InfoLine.toIntegerMinutes(this.infoLine.seconds200),
           infoLine.toIntegerSeconds(this.infoLine.seconds200));
+      else
+        timeS = String.format("%s:%s",
+            InfoLine.toIntegerMinutes(this.infoLine.secondsSpeed),
+            InfoLine.toIntegerSeconds(this.infoLine.secondsSpeed));
 
 
       tl.drawText(distS, this.infoLine.to,
@@ -1373,6 +1398,8 @@ class InfoLine {
   public final double seconds200;
   public final double seconds250;
   public final double seconds280;
+  public final double secondsSpeed;
+  public final boolean isRelativeSpeedUsed;
 
   public static String toIntegerMinutes(double value) {
     int tmp = (int) (value / 60);
@@ -1384,14 +1411,24 @@ class InfoLine {
     return String.format("%02.0f", tmp);
   }
 
-  public InfoLine(Coordinate from, Coordinate to) {
+  public InfoLine(Coordinate from, Coordinate to, Double refSpeed) {
     this.from = from;
     this.to = to;
     this.distanceInNm = Coordinates.getDistanceInNM(from, to);
     this.heading = (int) Coordinates.getBearing(from, to);
-    this.seconds200 = this.distanceInNm / 200d * 3600d;
-    this.seconds250 = this.distanceInNm / 250d * 3600d;
-    this.seconds280 = this.distanceInNm / 280d * 3600d;
+    if (refSpeed == null) {
+      this.seconds200 = this.distanceInNm / 200d * 3600d;
+      this.seconds250 = this.distanceInNm / 250d * 3600d;
+      this.seconds280 = this.distanceInNm / 280d * 3600d;
+      this.secondsSpeed = 0;
+      this.isRelativeSpeedUsed = false;
+    } else {
+      this.secondsSpeed = this.distanceInNm / refSpeed * 3600d;
+      this.seconds200 = 0;
+      this.seconds250 = 0;
+      this.seconds280 = 0;
+      this.isRelativeSpeedUsed = true;
+    }
   }
 }
 
