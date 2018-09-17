@@ -1,20 +1,21 @@
 package eng.jAtcSim.radarBase;
 
 import eng.jAtcSim.lib.speaking.formatting.Formatter;
+import eng.jAtcSim.lib.speaking.formatting.IFormatter;
 
 public class RadarBehaviorSettings {
   private final boolean paintMessages;
-  private final Formatter formatter;
+  private final IFormatter formatter;
 
   public boolean isPaintMessages() {
     return paintMessages;
   }
 
-  public Formatter getFormatter() {
+  public IFormatter getFormatter() {
     return formatter;
   }
 
-  public RadarBehaviorSettings(boolean paintMessages, Formatter formatter) {
+  public RadarBehaviorSettings(boolean paintMessages, IFormatter formatter) {
     if (formatter == null) {
         throw new IllegalArgumentException("Value of {formatter} cannot not be null.");
     }

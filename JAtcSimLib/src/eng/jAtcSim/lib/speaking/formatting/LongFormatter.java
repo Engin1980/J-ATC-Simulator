@@ -2,7 +2,6 @@ package eng.jAtcSim.lib.speaking.formatting;
 
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.AirplaneDataFormatter;
-import eng.jAtcSim.lib.airplanes.commandApplications.ClearedToRouteApplication;
 import eng.jAtcSim.lib.atcs.Atc;
 import eng.jAtcSim.lib.global.DataFormat;
 import eng.jAtcSim.lib.global.Headings;

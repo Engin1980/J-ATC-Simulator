@@ -10,6 +10,7 @@ import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Callsign;
 import eng.jAtcSim.lib.global.logging.ApplicationLog;
 import eng.jAtcSim.lib.speaking.formatting.LongFormatter;
+import eng.jAtcSim.lib.speaking.formatting.XmlFormatter;
 import eng.jAtcSim.lib.world.InitialPosition;
 import eng.jAtcSim.radarBase.RadarBehaviorSettings;
 import eng.jAtcSim.radarBase.RadarDisplaySettings;
@@ -308,8 +309,13 @@ public class FrmMain extends JFrame {
 
     this.parent = pack;
 
+    // TODO get path from some settings
+    System.out.println("## this is place where new xml formatter is used");
+    XmlFormatter xmlFormatter = XmlFormatter.create("C:\\Users\\Marek Vajgl\\Documents\\IdeaProjects\\J-ATC-Simulator\\_SettingFiles\\speechResponses.fm.xml");
+    // behavior settings for this radar
+
     // radar
-    RadarBehaviorSettings behSett = new RadarBehaviorSettings(true, new LongFormatter());
+    RadarBehaviorSettings behSett = new RadarBehaviorSettings(true, xmlFormatter);
     RadarDisplaySettings dispSett = pack.getAppSettings().radar.displaySettings.toRadarDisplaySettings();
 
     this.srpRadar = new SwingRadarPanel();

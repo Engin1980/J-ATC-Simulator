@@ -1,6 +1,7 @@
 package eng.jAtcSim.lib.speaking.formatting;
 
 import eng.eSystem.exceptions.EApplicationException;
+import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.atcs.Atc;
 import eng.jAtcSim.lib.speaking.fromAtc.atc2atc.PlaneSwitchMessage;
 import eng.jAtcSim.lib.speaking.ISpeech;
@@ -10,8 +11,9 @@ import java.lang.reflect.Method;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
-public abstract class Formatter {
+public abstract class Formatter implements IFormatter {
 
+  @Override
   public String format(ISpeech speech) {
     String ret =
         formatByReflection(speech);
@@ -53,6 +55,7 @@ public abstract class Formatter {
     return ret;
   }
 
+  @Override
   public abstract String format(Atc sender, PlaneSwitchMessage msg);
 
 }

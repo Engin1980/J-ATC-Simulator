@@ -19,6 +19,7 @@ import eng.jAtcSim.lib.global.logging.ApplicationLog;
 import eng.jAtcSim.lib.global.logging.Recorder;
 import eng.jAtcSim.lib.global.sources.TrafficXmlSource;
 import eng.jAtcSim.lib.global.sources.WeatherSource;
+import eng.jAtcSim.lib.speaking.fromAtc.notifications.RadarContactConfirmationNotification;
 import eng.jAtcSim.lib.traffic.GenericTraffic;
 import eng.jAtcSim.lib.traffic.Traffic;
 import eng.jAtcSim.lib.weathers.Weather;
@@ -55,7 +56,7 @@ public class JAtcSim {
   /**
    * @param args the command line arguments
    */
-  public static void main(String[] args) {
+  public static void main(String[] args) throws ClassNotFoundException {
 //   LoadDemo.loadDemo();
 
     AppSettings.init();

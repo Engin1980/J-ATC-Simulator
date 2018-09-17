@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<speaches
+        xmlns="https://github.com/Engin1980/J-ATC-Simulator/speechResponsesFormat">
+  <response type="AfterAltitudeCommand">
+    <sentence>when passing {cmd:alt}</sentence>
+  </response>
+  <response type="AfterNavaidCommand">
+    <sentence>after {cmd:navaid}</sentence>
+  </response>
+  <response type="AfterHeadingCommand">
+    <sentence>after hdg {cmd:heading}</sentence>
+  </response>
+  <response type="AfterRadialCommand">
+    <sentence>after radial {cmd:radial} from {cmd:navaid}</sentence>
+  </response>
+  <response type="AfterDistanceCommand">
+    <sentence>after at {cmd:distance} nm from {cmd:navaid}</sentence>
+  </response>
+  <response type="AfterSpeedCommand">
+    <sentence>after speed {cmd:speed} kts</sentence>
+  </response>
+  <response type="ChangeAltitudeCommand">
+    <sentence kind="climb">climb and maintain {cmd:altitude}</sentence>
+    <sentence kind="climb">climb to {cmd:altitude}</sentence>
+    <sentence kind="descend">descend and maintain {cmd:altitude}</sentence>
+    <sentence kind="descend">descend to {cmd:altitude}</sentence>
+    <sentence>{cmd:altitude}</sentence>
+  </response>
+  <response type="ChangeHeadingCommand">
+    <sentence kind="left">turn left to {cmd:heading}</sentence>
+    <sentence kind="left">left to {cmd:heading}</sentence>
+    <sentence kind="left">left {cmd:heading}</sentence>
+    <sentence kind="right">turn right to {cmd:heading}</sentence>
+    <sentence kind="right">right to {cmd:heading}</sentence>
+    <sentence kind="right">right {cmd:heading}</sentence>
+    <sentence kind="any"> hdg {cmd:heading}</sentence>
+    <sentence kind="any">fly heading {cmd:heading}</sentence>
+  </response>
+  <response type="GoAroundCommand">
+    <sentence>going around</sentence>
+    <sentence>go around</sentence>
+  </response>
+  <response type="ChangeSpeedCommand">
+    <sentence kind="atLeast">speed {cmd:speed} or more</sentence>
+    <sentence kind="atLeast">speed at least {cmd:speed}</sentence>
+    <sentence kind="atMost">speed {cmd:speed} or less</sentence>
+    <sentence kind="atMost">speed at most {cmd:speed}</sentence>
+    <sentence kind="exactly">speed {cmd:speed}</sentence>
+    <sentence kind="resumeOwn">my speed</sentence>
+    <sentence kind="resumeOwn">resume own speed</sentence>
+    <sentence kind="resumeOwn">speed at your discretion</sentence>
+  </response>
+  <response type="SetAltitudeRestriction">
+    <sentence kind="atLeast">{cmd:altitude} at least</sentence>
+    <sentence kind="atMost">{cmd:altitude} at most</sentence>
+    <sentence kind="exactly">{cmd:altitude} exactly</sentence>
+  </response>
+  <response type="ClearedForTakeoffCommand">
+    <sentence>cleared for take off {cmd:rwy}</sentence>
+    <sentence>{cmd:rwy} cleared for take off</sentence>
+  </response>
+  <response type="ClearedToApproachCommand">
+    <sentence kind="ILS">cleared for ILS {cmd:ilsCategory} approach runway {cmd:rwy}</sentence>
+    <sentence kind="NDB">cleared for NDB approach runway {cmd:rwy}</sentence>
+    <sentence kind="GNSS">cleared for GNSS approach runway {cmd:rwy}</sentence>
+    <sentence kind="VOR">cleared for VOR-DME approach runway {cmd:rwy}</sentence>
+    <sentence kind="visual">cleared for visual approach runway {cmd:rwy}</sentence>
+  </response>
+  <response type="ContactCommand">
+    <sentence>contact {cmd:atcName} at {cmd:atcFrequency}, good bye</sentence>
+    <sentence>going to {cmd:atcName} at {cmd:atcFrequency}, bye</sentence>
+  </response>
+  <response type="HoldCommand">
+    <sentence kind="published">hold over {cmd:navaid} as published</sentence>
+    <sentence kind="custom">hold over {cmd:navaid}, inbound {cmd:inboundRadial}, {cmd:turnsDirection} turns</sentence>
+  </response>
+  <response type="ProceedDirectCommand">
+    <sentence>direct to {cmd:navaid}</sentence>
+    <sentence>to {cmd:navaid}</sentence>
+    <sentence>proceed direct to {cmd:navaid}</sentence>
+  </response>
+  <response type="ShortcutCommand">
+    <sentence>shortcut to {cmd:navaid}</sentence>
+  </response>
+  <response type="ThenCommand">
+    <sentence>then</sentence>
+  </response>
+  <response type="PassingClearanceLimitNotification">
+    <sentence>approaching clearance limit</sentence>
+  </response>
+
+  <response type="Confirmation">
+    <sentence>{cmd:origin}</sentence>
+    <sentence>Roger, {cmd:origin}</sentence>
+  </response>
+  <response type="Rejection">
+    <sentence>Unable {cmd:origin}, {cmd:reason}</sentence>
+  </response>
+
+  <response type="RequestRadarContactNotification">
+    <sentence>We do not have radar contact confirmation. Please confirm radar contact first.</sentence>
+    <sentence>Unable to follow orders from you. Please confirm radar contact first.</sentence>
+  </response>
+  <response type="EmergencyNotification">
+    <sentence>Pan-Pan-Pan, we have an emergency situation. Request landing immediatelly.</sentence>
+  </response>
+
+  <response type="ClearedToRouteCommand">
+    <sentence kind="sid">Cleared to {cmd:route} departure</sentence>
+    <sentence kind="star">Cleared to {cmd:route} arrival</sentence>
+    <sentence kind="transition">Cleared to {cmd:route} transition</sentence>
+    <sentence kind="vectoring">Cleared to {cmd:route} via vectoring</sentence>
+  </response>
+  <response type="UnableToEnterApproachFromDifficultPosition">
+    <sentence>Unable to enter approach: {cmd:reason}</sentence>
+  </response>
+  <response type="HighOrderedSpeedForApproach">
+    <sentence>we have ordered speed {cmd:orderedSpeed}, but we need {cmd:requiredSpeed} at most</sentence>
+  </response>
+  <response type="RadarContactConfirmationNotification">
+    <sentence>radar contact</sentence>
+  </response>
+  <response type="GoodDayNotification">
+    <sentence>Hello, [{cmd:emergency} ]{cmd:callsign} with you at {cmd:altitude}</sentence>
+    <sentence>Hello, [{cmd:emergency} ]{cmd:callsign} with you at {cmd:altitude}[ descending to {cmd:targetAltitudeIfDifferent}]</sentence>
+    <sentence>Hello, [{cmd:emergency} ]{cmd:callsign} passing {cmd:altitude}[ climbing to {cmd:targetAltitudeIfDifferent}]</sentence>
+  </response>
+  <response type="EstablishedOnApproachNotification">
+    <sentence>short final {cmd:rwy}</sentence>
+  </response>
+  <response type="DivertTimeNotification">
+    <sentence>we will need to divert in {cmd:divertMinutes} minutes</sentence>
+  </response>
+  <response type="GoingAroundNotification">
+    <sentence>Missed approach[, {cmd:reason}]</sentence>
+  </response>
+  <response type="ReportDivertTime">
+    <sentence>N/A</sentence>
+  </response>
+  <response type="DivertCommand">
+    <sentence>diverting now</sentence>
+  </response>
+  <response type="DivertingNotification">
+    <sentence>we are now proceeding divert via {cmd:navaid}</sentence>
+    <sentence>diverting through {cmd:navaid}</sentence>
+  </response>
+</speaches>

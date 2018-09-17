@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:sh="https://github.com/Engin1980/J-ATC-Simulator/shared"
+           targetNamespace="https://github.com/Engin1980/J-ATC-Simulator/speechResponsesFormat"
+           xmlns="https://github.com/Engin1980/J-ATC-Simulator/speechResponsesFormat"
+           elementFormDefault="qualified">
+  <xs:element name="speaches">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="response" type="response" minOccurs="0" maxOccurs="unbounded" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:complexType name="response">
+    <xs:sequence>
+       <xs:element name="sentence" type="sentence" minOccurs="1" maxOccurs="unbounded" />
+    </xs:sequence>
+    <xs:attribute name="type" type="sh:nonEmptyString" use="required" />
+  </xs:complexType>
+
+  <xs:complexType name="sentence">
+    <xs:simpleContent>
+      <xs:extension base="sh:nonEmptyString" >
+        <xs:attribute name="kind" type="sh:nonEmptyString" use="optional" />
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+</xs:schema>

@@ -5,18 +5,19 @@ import eng.jAtcSim.lib.airplanes.Callsign;
 import eng.jAtcSim.lib.speaking.fromAirplane.IAirplaneNotification;
 
 public class GoodDayNotification implements IAirplaneNotification {
-  // TODO here callsign should not be, as it is known from the sender.
   private final Callsign callsign;
   private final double altitude;
+  private final double targetAltitude;
   private final boolean emergency;
   private final boolean repeated;
 
-  public GoodDayNotification(Callsign callsign, double altitude, boolean emergecny, boolean repeated) {
+  public GoodDayNotification(Callsign callsign, double altitude, double targetAltitude, boolean emergecny, boolean repeated) {
     if (callsign == null)
       throw new IllegalArgumentException("Argument \"callsign\" cannot be null.");
 
     this.callsign = callsign;
     this.altitude = altitude;
+    this.targetAltitude = targetAltitude;
     this.emergency = emergecny;
     this.repeated = repeated;
   }
@@ -31,6 +32,10 @@ public class GoodDayNotification implements IAirplaneNotification {
 
   public double getAltitude() {
     return altitude;
+  }
+
+  public double getTargetAltitude() {
+    return targetAltitude;
   }
 
   public boolean isRepeated() {

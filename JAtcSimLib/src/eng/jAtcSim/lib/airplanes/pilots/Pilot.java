@@ -1247,12 +1247,6 @@ public class Pilot {
   }
 
   public void save(XElement tmp) {
-  /*
-  private final Map<Atc, SpeechList> saidText = new HashMap<>();
-  private Behavior behavior;
-
-   */
-
     LoadSave.saveField(tmp, this, "queue");
     LoadSave.saveField(tmp, this, "gaReason");
     LoadSave.saveField(tmp, this, "divertInfo");
@@ -1297,7 +1291,7 @@ public class Pilot {
       if (secondsWithoutRadarContact % Global.REPEATED_RADAR_CONTACT_REQUEST_SECONDS == 0) {
         this.say(
             new GoodDayNotification(
-                this.parent.getCallsign(), this.parent.getAltitude(), this.parent.isEmergency(), true));
+                this.parent.getCallsign(), this.parent.getAltitude(), this.parent.getTargetAltitude(), this.parent.isEmergency(), true));
       }
     }
   }

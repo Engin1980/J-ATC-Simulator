@@ -20,4 +20,28 @@ public class DataFormat {
       return (int) (altitude / 100);
     }
   }
+
+  public static class Heading{
+    public static String to(int heading){
+      return String.format("%03", heading);
+    }
+  }
+
+  public static class Distance{
+    public static String to(double distance){
+      return String.format("%.2f nm", distance);
+    }
+  }
+
+  public static class Speed{
+    public static String to(int speed){
+      return String.format("%d kt", speed);
+    }
+  }
+
+  public static class Frequency{
+    public static String to(double frequency){
+      return String.format("%5.2f", frequency);
+    }
+  }
 }
