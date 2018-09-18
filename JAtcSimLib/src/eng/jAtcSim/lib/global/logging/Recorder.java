@@ -7,7 +7,6 @@ package eng.jAtcSim.lib.global.logging;
 
 import eng.eSystem.EStringBuilder;
 import eng.eSystem.exceptions.EApplicationException;
-import eng.eSystem.exceptions.ERuntimeException;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.atcs.Atc;
 import eng.jAtcSim.lib.speaking.fromAtc.atc2atc.PlaneSwitchMessage;
@@ -19,20 +18,16 @@ import eng.jAtcSim.lib.speaking.ICommand;
 import eng.jAtcSim.lib.speaking.ISpeech;
 import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.speaking.formatting.Formatter;
-import eng.jAtcSim.lib.speaking.formatting.LongFormatter;
+import eng.jAtcSim.lib.speaking.formatting.DebugFormatter;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.GoingAroundNotification;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.Confirmation;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtc2Atc;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.notifications.RadarContactConfirmationNotification;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 /**
  * @author Marek Vajgl
@@ -40,7 +35,7 @@ import java.util.Date;
 public abstract class Recorder extends SimulationLog {
 
   private static String logPathBase = null;
-  private static Formatter fmt = new LongFormatter();
+  private static Formatter fmt = new DebugFormatter();
 
   public static void init(String folder) {
     if (folder == null) {

@@ -84,6 +84,7 @@ public class AppSettings {
   public Path soundFolder;
   public Path logFolder;
   public Path stripSettingsFile;
+  public Path speechFormatterFile;
 
   public static Path getApplicationFolder() {
     return applicationFolder;

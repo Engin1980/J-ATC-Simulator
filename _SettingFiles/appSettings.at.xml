@@ -6,6 +6,7 @@
   <logFolder>./temp/$time$/</logFolder>
   <startupSettingsFile>$app$/_SettingFiles/defaultStartupSettings.ss.xml</startupSettingsFile>
   <stripSettingsFile>$app$/_SettingFiles/stripSettings.at.xml</stripSettingsFile>
+  <speechFormatterFile>$app$/_SettingFiles/speechResponses.fm.xml</speechFormatterFile>
   <radar>
     <styleSettingsFile>$app$/_SettingFiles/radarStyleSettingsInconsolataBig.at.xml</styleSettingsFile>
     <displayTextDelay>30</displayTextDelay>

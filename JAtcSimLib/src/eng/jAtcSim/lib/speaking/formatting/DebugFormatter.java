@@ -14,16 +14,9 @@ import eng.jAtcSim.lib.speaking.fromAtc.commands.*;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.afters.*;
 import eng.jAtcSim.lib.speaking.fromAtc.notifications.RadarContactConfirmationNotification;
 
-public class LongFormatter extends Formatter {
+public class DebugFormatter extends Formatter {
 
-  private static Formatter instance = null;
   private final String[] greetings = new String[]{"Good day", "Hello", "Hi"};
-
-  public static Formatter getInstance() {
-    if (instance == null)
-      instance = new LongFormatter();
-    return instance;
-  }
 
   public String format(AfterAltitudeCommand cmd) {
     return "when passing " + Acc.toAltS(cmd.getAltitudeInFt(), true) + " ";

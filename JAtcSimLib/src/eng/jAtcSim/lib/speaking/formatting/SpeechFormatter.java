@@ -9,7 +9,6 @@ import eng.eSystem.exceptions.EXmlException;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.atcs.Atc;
 import eng.jAtcSim.lib.global.DataFormat;
-import eng.jAtcSim.lib.messaging.Message;
 import eng.jAtcSim.lib.speaking.ISpeech;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.*;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.Confirmation;
@@ -20,12 +19,12 @@ import eng.jAtcSim.lib.speaking.fromAtc.commands.*;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.afters.*;
 import eng.jAtcSim.lib.world.approaches.Approach;
 
-import java.lang.reflect.Method;
+import java.nio.file.Path;
 import java.util.function.Function;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
-public class XmlFormatter implements IFormatter {
+public class SpeechFormatter implements IFormatter {
 
   public static class Sentence {
 
@@ -120,19 +119,19 @@ public class XmlFormatter implements IFormatter {
     }
   }
 
-  public static XmlFormatter create(String xmlFileName) {
+  public static SpeechFormatter create(Path xmlFilePath) {
     XDocument doc;
     try {
-      doc = XDocument.load(xmlFileName);
+      doc = XDocument.load(xmlFilePath.toAbsolutePath());
     } catch (EXmlException e) {
-      throw new EApplicationException("Unable to load XmlFormatter from file " + xmlFileName + ".", e);
+      throw new EApplicationException("Unable to load XmlFormatter from file " + xmlFilePath + ".", e);
     }
 
-    XmlFormatter ret = new XmlFormatterLoader().parse(doc.getRoot());
+    SpeechFormatter ret = new XmlFormatterLoader().parse(doc.getRoot());
     return ret;
   }
 
-  XmlFormatter(IMap<Class, IList<Sentence>> sentences) {
+  SpeechFormatter(IMap<Class, IList<Sentence>> sentences) {
     this.sentences = sentences;
   }
 
@@ -253,7 +252,7 @@ public class XmlFormatter implements IFormatter {
 
   private String _evaluate(ISpeech speech, Sentence.Block block) {
     if (block instanceof Sentence.StaticBlock)
-      return _evaluate(speech, (Sentence.StaticBlock) block);
+      return _evaluate((Sentence.StaticBlock) block);
     else if (block instanceof Sentence.VariableBlock)
       return _evaluate(speech, (Sentence.VariableBlock) block);
     else if (block instanceof Sentence.ConditionalBlock)
@@ -262,7 +261,7 @@ public class XmlFormatter implements IFormatter {
       throw new UnsupportedOperationException();
   }
 
-  private String _evaluate(ISpeech speech, Sentence.StaticBlock block) {
+  private String _evaluate(Sentence.StaticBlock block) {
     return block.text;
   }
 
@@ -273,7 +272,7 @@ public class XmlFormatter implements IFormatter {
       case "plane":
         throw new UnsupportedOperationException("Plane commands are not supported");
       case "cmd":
-        ret = _evaluateCommandVariable(speech, pts[2]);
+        ret = _evaluateCommandVariable(speech, pts[1]);
         break;
       default:
         throw new EEnumValueUnsupportedException(pts[0]);
@@ -348,23 +347,23 @@ class XmlFormatterLoader {
     return cls;
   }
 
-  public XmlFormatter parse(XElement xElement) {
-    IMap<Class, IList<XmlFormatter.Sentence>> tmp = new EMap<>();
+  public SpeechFormatter parse(XElement xElement) {
+    IMap<Class, IList<SpeechFormatter.Sentence>> tmp = new EMap<>();
 
     for (XElement responseElement : xElement.getChildren("response")) {
       String type = responseElement.getAttribute("type");
       Class cls = getTypeClass(type);
-      IList<XmlFormatter.Sentence> lst = new EList<>();
+      IList<SpeechFormatter.Sentence> lst = new EList<>();
       tmp.set(cls, lst);
       for (XElement sentenceElement : responseElement.getChildren("sentence")) {
         String text = sentenceElement.getContent();
         String kind = sentenceElement.tryGetAttribute("kind");
-        XmlFormatter.Sentence sent = new XmlFormatter.Sentence(kind, text);
+        SpeechFormatter.Sentence sent = new SpeechFormatter.Sentence(kind, text);
         lst.add(sent);
       }
     }
 
-    XmlFormatter ret = new XmlFormatter(tmp);
+    SpeechFormatter ret = new SpeechFormatter(tmp);
     return ret;
   }
 }
@@ -384,10 +383,10 @@ class XmlFormatterLoader {
 //
 
 class CommandVariableEvaluator {
-  private XmlFormatter parent;
-  private IMap<Class, IMap<String, Function<? extends ISpeech, String>>> evals;
+  private SpeechFormatter parent;
+  private IMap<Class, IMap<String, Function<? extends ISpeech, String>>> evals = new EMap<>();
 
-  public CommandVariableEvaluator(XmlFormatter parentFormatter) {
+  public CommandVariableEvaluator(SpeechFormatter parentFormatter) {
     this.parent = parentFormatter;
 
     register(AfterAltitudeCommand.class, "alt",
@@ -491,19 +490,23 @@ class CommandVariableEvaluator {
 
   public <T extends ISpeech> String eval(T value, String key) {
     String ret;
+    Class cls = value.getClass();
+    Function<T, String> fun;
     try {
-      Function<T, String> fun = (Function<T, String>) evals.get(value.getClass()).get(key);
-      ret = fun.apply(value);
+      IMap<String, Function<? extends ISpeech, String>> typeEvals = evals.get(cls);
+      fun = (Function<T, String>) typeEvals.get(key);
     } catch (Exception ex) {
-      throw ex;
+      throw new EApplicationException(
+          sf("Unable to find lambda function for '%s'.'%s'.", cls.getSimpleName(), key), ex);
+    }
+    try{
+      ret = fun.apply(value);
+    }catch (Exception ex){
+      throw new EApplicationException(
+          sf("Unable to evaluate '%s'.'%s' via its lambda function.", cls.getSimpleName(), key), ex);
     }
     return ret;
   }
-
-//  private static String invokeLambdaByReflection(Function<? extends ISpeech, String> function, ISpeech value) {
-//    function.
-//    for (Method m : thi)
-//  }
 }
 
 

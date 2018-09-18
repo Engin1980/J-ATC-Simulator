@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package eng.jAtcSim.lib.airplanes;
 
 import com.sun.istack.internal.Nullable;
@@ -41,9 +36,6 @@ import java.util.List;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
-/**
- * @author Marek
- */
 public class Airplane implements IMessageParticipant {
 
   public class Airplane4Display {
@@ -837,7 +829,6 @@ public class Airplane implements IMessageParticipant {
     return pilot.getEntryExitPoint();
   }
 
-  // </editor-fold>
   // <editor-fold defaultstate="collapsed" desc=" private methods ">
   private void drivePlane() {
     pilot.elapseSecond();

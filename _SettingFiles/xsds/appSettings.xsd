@@ -12,6 +12,7 @@
         <xs:element name="logFolder" type="xs:string" />
         <xs:element name="startupSettingsFile" type="xs:string" />
         <xs:element name="stripSettingsFile" type="xs:string" />
+        <xs:element name="speechFormatterFile" type="xs:string" />
         <xs:element name="radar">
           <xs:complexType>
             <xs:sequence>

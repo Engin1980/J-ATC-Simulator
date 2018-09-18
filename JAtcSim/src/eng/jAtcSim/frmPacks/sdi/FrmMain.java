@@ -9,8 +9,8 @@ import eng.jAtcSim.frmPacks.shared.*;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Callsign;
 import eng.jAtcSim.lib.global.logging.ApplicationLog;
-import eng.jAtcSim.lib.speaking.formatting.LongFormatter;
-import eng.jAtcSim.lib.speaking.formatting.XmlFormatter;
+import eng.jAtcSim.lib.speaking.formatting.DebugFormatter;
+import eng.jAtcSim.lib.speaking.formatting.SpeechFormatter;
 import eng.jAtcSim.lib.world.InitialPosition;
 import eng.jAtcSim.radarBase.RadarBehaviorSettings;
 import eng.jAtcSim.radarBase.RadarDisplaySettings;
@@ -32,8 +32,6 @@ import java.util.function.Consumer;
 
 public class FrmMain extends JFrame {
 
-  private static final String SOUND_OFF_LABEL = "Sound off";
-  private static final String SOUND_ON_LABEL = "Sound on";
   private Recording recording = null;
   private Pack parent;
   private JPanel pnlContent;
@@ -45,7 +43,6 @@ public class FrmMain extends JFrame {
   private FlightListPanel flightListPanel;
   private CommandButtonsPanel pnlCommands;
   private String lastFileName = null;
-  private JButton btnSound;
 
   public FrmMain() {
     initComponents();
@@ -280,7 +277,7 @@ public class FrmMain extends JFrame {
   }
 
   private void recording_recordingStarted(Settings q) {
-    RadarBehaviorSettings bs = new RadarBehaviorSettings(false, new LongFormatter());
+    RadarBehaviorSettings bs = new RadarBehaviorSettings(false, new DebugFormatter());
 
     InitialPosition initPos = srpRadar.getRadar().getPosition();
 
@@ -309,13 +306,8 @@ public class FrmMain extends JFrame {
 
     this.parent = pack;
 
-    // TODO get path from some settings
-    System.out.println("## this is place where new xml formatter is used");
-    XmlFormatter xmlFormatter = XmlFormatter.create("C:\\Users\\Marek Vajgl\\Documents\\IdeaProjects\\J-ATC-Simulator\\_SettingFiles\\speechResponses.fm.xml");
-    // behavior settings for this radar
-
-    // radar
-    RadarBehaviorSettings behSett = new RadarBehaviorSettings(true, xmlFormatter);
+    SpeechFormatter formatter = SpeechFormatter.create(pack.getAppSettings().speechFormatterFile);
+    RadarBehaviorSettings behSett = new RadarBehaviorSettings(true, formatter);
     RadarDisplaySettings dispSett = pack.getAppSettings().radar.displaySettings.toRadarDisplaySettings();
 
     this.srpRadar = new SwingRadarPanel();
