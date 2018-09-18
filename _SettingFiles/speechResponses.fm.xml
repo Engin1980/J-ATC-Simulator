@@ -122,9 +122,15 @@
     <sentence>radar contact</sentence>
   </response>
   <response type="GoodDayNotification">
-    <sentence>Hello, [{cmd:emergency} ]{cmd:callsign} with you at {cmd:altitude}</sentence>
-    <sentence>Hello, [{cmd:emergency} ]{cmd:callsign} with you at {cmd:altitude}[ descending to {cmd:targetAltitudeIfDifferent}]</sentence>
-    <sentence>Hello, [{cmd:emergency} ]{cmd:callsign} passing {cmd:altitude}[ climbing to {cmd:targetAltitudeIfDifferent}]</sentence>
+    <sentence>Hi, [{cmd:emergency} ]{cmd:callsign} with you at {cmd:altitude}</sentence>
+    <sentence>Hello, [{cmd:emergency} ]{cmd:callsign}, {cmd:altitude}</sentence>
+    <sentence>Good day, [{cmd:emergency} ]{cmd:callsign} at {cmd:altitude}</sentence>
+    <sentence kind="descend">Hi, [{cmd:emergency} ]{cmd:callsign} with you at {cmd:altitude}[ descending to {cmd:targetAltitudeIfDifferent}]</sentence>
+    <sentence kind="descend">Hello, [{cmd:emergency} ]{cmd:callsign} with you at {cmd:altitude}[ descending to {cmd:targetAltitudeIfDifferent}]</sentence>
+    <sentence kind="descend">Good day, [{cmd:emergency} ]{cmd:callsign} with you at {cmd:altitude}[ descending to {cmd:targetAltitudeIfDifferent}]</sentence>
+    <sentence kind="climb">Hi, [{cmd:emergency} ]{cmd:callsign} passing {cmd:altitude}[ climbing to {cmd:targetAltitudeIfDifferent}]</sentence>
+    <sentence kind="climb">Hello, [{cmd:emergency} ]{cmd:callsign} passing {cmd:altitude}[ climbing to {cmd:targetAltitudeIfDifferent}]</sentence>
+    <sentence kind="climb">Good day, [{cmd:emergency} ]{cmd:callsign} passing {cmd:altitude}[ climbing to {cmd:targetAltitudeIfDifferent}]</sentence>
   </response>
   <response type="EstablishedOnApproachNotification">
     <sentence>short final {cmd:rwy}</sentence>

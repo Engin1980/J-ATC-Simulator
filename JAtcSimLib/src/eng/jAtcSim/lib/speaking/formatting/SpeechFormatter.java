@@ -189,6 +189,7 @@ public class SpeechFormatter implements IFormatter {
       }
     } else if (speech instanceof SetAltitudeRestriction) {
       SetAltitudeRestriction tmp = (SetAltitudeRestriction) speech;
+      tady to zuchne kdyz je to null
       switch (tmp.getRestriction().direction) {
         case atLeast:
           return "atLeast";
