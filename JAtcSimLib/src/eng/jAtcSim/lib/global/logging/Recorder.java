@@ -9,6 +9,8 @@ import eng.eSystem.EStringBuilder;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.atcs.Atc;
+import eng.jAtcSim.lib.speaking.formatting.IFormatter;
+import eng.jAtcSim.lib.speaking.formatting.SpeechFormatter;
 import eng.jAtcSim.lib.speaking.fromAtc.atc2atc.PlaneSwitchMessage;
 import eng.jAtcSim.lib.messaging.IMessageContent;
 import eng.jAtcSim.lib.messaging.IMessageParticipant;
@@ -35,13 +37,17 @@ import java.nio.file.Paths;
 public abstract class Recorder extends SimulationLog {
 
   private static String logPathBase = null;
-  private static Formatter fmt = new DebugFormatter();
+  private static IFormatter fmt = null;
 
-  public static void init(String folder) {
+  public static void init(String folder, Path speechFormaterXmlSourceFilePath) {
     if (folder == null) {
       throw new IllegalArgumentException("Value of {folder} cannot not be null.");
     }
+    if (speechFormaterXmlSourceFilePath == null) {
+      throw new IllegalArgumentException("Xml source file for Speech formatter initialization is not set.");
+    }
     Recorder.logPathBase = folder;
+    fmt = SpeechFormatter.create(speechFormaterXmlSourceFilePath.toAbsolutePath());
   }
 
   public static String getRecorderFileName(String name) {

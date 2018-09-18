@@ -135,6 +135,9 @@ public class AppSettings {
       tmp = doc.getRoot().getChild("stripSettingsFile").getContent();
       ret.stripSettingsFile = decodePath(tmp);
 
+      tmp = doc.getRoot().getChild("speechFormatterFile").getContent();
+      ret.speechFormatterFile = decodePath(tmp);
+
       XElement radarElement = doc.getRoot().getChild("radar");
       tmp = radarElement.getChild("styleSettingsFile").getContent();
       ret.radar.styleSettingsFile = decodePath(tmp);

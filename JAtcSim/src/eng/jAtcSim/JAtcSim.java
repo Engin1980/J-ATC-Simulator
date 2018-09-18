@@ -68,7 +68,7 @@ public class JAtcSim {
 
     appSettings = AppSettings.create();
 
-    Recorder.init(appSettings.logFolder.toString());
+    Recorder.init(appSettings.logFolder.toString(), appSettings.speechFormatterFile);
 
     // startupSettings wizard
     StartupSettings startupSettings = XmlLoadHelper.loadStartupSettings(appSettings.startupSettingsFile.toString());
