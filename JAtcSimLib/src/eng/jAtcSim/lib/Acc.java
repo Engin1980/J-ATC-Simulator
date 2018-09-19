@@ -129,10 +129,6 @@ public class Acc {
     return sim.getFleets();
   }
 
-  public static WeatherProvider weatherProvider() {
-    return sim.getWeatherProvider();
-  }
-
   public static IReadOnlyList<Movement> scheduledMovements(){
     return sim.getTrafficManager().getScheduledMovements();
   }

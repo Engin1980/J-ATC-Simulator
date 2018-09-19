@@ -34,7 +34,7 @@ public class SwingFactory {
     startupSettings,
     folder,
     ffmpeg,
-    video
+    weather, video
   }
 
   public static final String AREA_FILE_EXTENSION = ".ar.xml";

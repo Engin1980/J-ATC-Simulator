@@ -6,8 +6,9 @@
 package eng.jAtcSim.lib.weathers.downloaders;
 
 import eng.eSystem.exceptions.ERuntimeException;
-import eng.jAtcSim.lib.weathers.Weather;
+import eng.jAtcSim.lib.weathers.presets.PresetWeather;
 
+import java.time.LocalTime;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -22,8 +23,8 @@ public class MetarDecoder {
    * @param metarLine Metar string. Should include "METAR" prefix.
    * @return Decoded weather, or exception description.
    */
-  public static Weather decode(String metarLine) {
-    Weather ret;
+  public static PresetWeather decode(String metarLine) {
+    PresetWeather ret;
 
     metarLine = cutOutPostfix(metarLine); // cut out TEMPO/BECMG
     try {
@@ -35,12 +36,13 @@ public class MetarDecoder {
     return ret;
   }
 
-  private static Weather decodeWeather(String metarLine) {
+  private static PresetWeather decodeWeather(String metarLine) {
+    LocalTime time = decodeTime(metarLine);
     int[] wind = decodeWindDirSpeedGusts(metarLine);
     int visibilityInM = decodeVisibility(metarLine);
     CloudBaseResult cloudBaseInFt = decodeCloudBase(metarLine);
 
-    Weather w = new Weather(wind[0], wind[1], visibilityInM, cloudBaseInFt.altitudeInFt, cloudBaseInFt.probability);
+    PresetWeather w = new PresetWeather(time, wind[0], wind[1], visibilityInM, cloudBaseInFt.altitudeInFt, cloudBaseInFt.probability);
 
     return w;
   }
@@ -97,6 +99,25 @@ public class MetarDecoder {
     if (m.find()) {
       ret = getIntFromGroup(m, 1);
     }
+
+    return ret;
+  }
+
+  private static LocalTime decodeTime(String metarLine) {
+    LocalTime ret;
+    int hour;
+    int minute;
+    String pattern = " (\\d{2})(\\d{2})(\\d{2})Z ";
+    Pattern p = Pattern.compile(pattern);
+    Matcher m = p.matcher(metarLine);
+
+    if (m.find()) {
+      hour = getIntFromGroup(m, 1 );
+      minute = getIntFromGroup(m, 1 );
+      ret = LocalTime.of(hour, minute);
+    }
+    else
+      throw new IllegalArgumentException("Unable to decode time from " + metarLine);
 
     return ret;
   }

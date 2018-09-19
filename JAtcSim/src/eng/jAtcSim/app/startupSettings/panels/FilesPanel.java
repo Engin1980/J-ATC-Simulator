@@ -21,6 +21,7 @@ public class FilesPanel extends JStartupPanel {
   private final XmlFileSelectorExtender fleFleet;
   private final XmlFileSelectorExtender fleTypes;
   private final XmlFileSelectorExtender fleTraffic;
+  private final XmlFileSelectorExtender fleWeather;
   private final JButton btnLoad;
   private static final String LOAD_FILES_LABEL = "Load XML files";
   private static final String LOADING_FILES_LABEL = "...loading";
@@ -30,13 +31,14 @@ public class FilesPanel extends JStartupPanel {
     fleFleet = new XmlFileSelectorExtender(SwingFactory.FileDialogType.fleets);
     fleTypes = new XmlFileSelectorExtender(SwingFactory.FileDialogType.types);
     fleTraffic = new XmlFileSelectorExtender(SwingFactory.FileDialogType.traffic);
+    fleWeather = new XmlFileSelectorExtender(SwingFactory.FileDialogType.weather);
     btnLoad = new JButton(LOAD_FILES_LABEL);
 
     this.setBorder(new TitledBorder("Source XML files:"));
     this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
     this.add(
-        LayoutManager.createFormPanel(4, 3,
-            new JLabel("area XML file:"),
+        LayoutManager.createFormPanel(5, 3,
+            new JLabel("Area XML file:"),
             fleArea.getTextControl(),
             fleArea.getButtonControl(),
             new JLabel("Company fleets XML file:"),
@@ -47,7 +49,10 @@ public class FilesPanel extends JStartupPanel {
             fleTypes.getButtonControl(),
             new JLabel("Traffic XML file:"),
             fleTraffic.getTextControl(),
-            fleTraffic.getButtonControl()
+            fleTraffic.getButtonControl(),
+            new JLabel("Weather XML file:"),
+            fleWeather.getTextControl(),
+            fleWeather.getButtonControl()
         ));
 
 

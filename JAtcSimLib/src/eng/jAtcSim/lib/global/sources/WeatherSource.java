@@ -4,19 +4,20 @@ import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 
 import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 import eng.jAtcSim.lib.weathers.*;
+import eng.jAtcSim.lib.weathers.downloaders.MetarDownloaderNoaaGov;
 
 public class WeatherSource extends Source<WeatherProvider> {
 
   public enum ProviderType{
     staticProvider,
-    dynamicNovGoaaProvider
+    dynamicProvider,
+    presetProvider
   }
 
   @XmlIgnore
   private WeatherProvider provider;
   private ProviderType type;
   private String icao;
-  private Weather weather;
 
   public WeatherSource (ProviderType type, String icao){
     this.type = type;
@@ -24,10 +25,6 @@ public class WeatherSource extends Source<WeatherProvider> {
   }
 
   public WeatherSource(){}
-
-  public Weather getWeather() {
-    return weather;
-  }
 
   @Override
   public WeatherProvider _get() {
@@ -37,24 +34,19 @@ public class WeatherSource extends Source<WeatherProvider> {
   public void init(Weather initialWeather) {
 
     switch (type){
-      case dynamicNovGoaaProvider:
-        provider = new NoaaDynamicWeatherProvider(icao);
+      case dynamicProvider:
+        provider = new DynamicWeatherProvider(new MetarDownloaderNoaaGov());
+        ((DynamicWeatherProvider) provider).getNewWeather();
         break;
       case staticProvider:
-        provider = new StaticWeatherProvider();
+        provider = new StaticWeatherProvider(initialWeather);
+        break;
+      case presetProvider:
+        provider = new PresetWeatherProvider();
         break;
       default:
         throw new EEnumValueUnsupportedException(type);
     }
-    provider.getOnWeatherUpdated().add(w -> this.weather = w);
-
-    provider.setWeather(initialWeather);
-    if (provider instanceof DynamicWeatherProvider)
-    {
-      DynamicWeatherProvider tmp = (DynamicWeatherProvider) provider;
-      tmp.updateWeather(false);
-    }
-
     super.setInitialized();
   }
 }

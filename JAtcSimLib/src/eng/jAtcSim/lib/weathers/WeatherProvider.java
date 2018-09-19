@@ -1,34 +1,18 @@
 package eng.jAtcSim.lib.weathers;
 
-import eng.eSystem.events.EventAnonymous;
-import eng.jAtcSim.lib.Acc;
+import eng.eSystem.exceptions.EApplicationException;
 import eng.jAtcSim.lib.weathers.downloaders.MetarDecoder;
 
 public abstract class WeatherProvider {
-  private Weather weather;
-  private EventAnonymous<Weather> onWeatherUpdated = new EventAnonymous<>();
+  public abstract Weather tryGetNewWeather();
 
-  public EventAnonymous<Weather> getOnWeatherUpdated() {
-    return onWeatherUpdated;
-  }
-
-  public void setWeather(Weather weather) {
-    assert weather != null;
-    this.weather = weather;
-    onWeatherUpdated.raise(weather);
-  }
-
-  public Weather getWeather() {
-    return weather;
-  }
-
-  public void setWeatherByMetarString(String metarString) {
+  protected Weather decodeFromMetar(String metarString){
     Weather tmp;
     try {
       tmp = MetarDecoder.decode(metarString);
-      this.setWeather(tmp);
     } catch (Exception ex){
-      Acc.sim().sendTextMessageForUser("Failed to decode metar. " + ex.getMessage());
+      throw new EApplicationException("Failed to decode metar string from " + metarString, ex);
     }
+    return tmp;
   }
 }

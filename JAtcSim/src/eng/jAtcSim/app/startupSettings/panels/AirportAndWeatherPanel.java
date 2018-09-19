@@ -2,7 +2,9 @@ package eng.jAtcSim.app.startupSettings.panels;
 
 import eng.eSystem.collections.EList;
 import eng.eSystem.events.EventAnonymous;
+import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.utilites.awt.ComponentUtils;
+import eng.jAtcSim.lib.weathers.presets.PresetWeatherSet;
 import eng.jAtcSim.lib.world.Airport;
 import eng.jAtcSim.lib.world.Area;
 import eng.jAtcSim.shared.LayoutManager;
@@ -16,6 +18,8 @@ public class AirportAndWeatherPanel extends JStartupPanel {
   private XComboBoxExtender<String> cmbAirports;
   private JRadioButton rdbWeatherFromUser;
   private JRadioButton rdbWeatherFromWeb;
+  private JRadioButton rdbWeatherFromFile;
+  private XComboBoxExtender<PresetWeatherSet> cmbWeatherSets;
   private WeatherPanel weatherPanel;
   private EventAnonymous<Airport> onAirportChanged = new EventAnonymous<Airport>();
 
@@ -36,16 +40,30 @@ public class AirportAndWeatherPanel extends JStartupPanel {
 
     cmbAirports.setSelectedItem(settings.recent.icao);
 
-    if (settings.weather.useOnline)
-      rdbWeatherFromWeb.setSelected(true);
-    else
-      rdbWeatherFromUser.setSelected(true);
+    switch (settings.weather.type){
+      case constant:
+        rdbWeatherFromUser.setSelected(true);
+        break;
+      case online:
+        rdbWeatherFromWeb.setSelected(true);
+        break;
+      case preset:
+        rdbWeatherFromFile.setSelected(true);
+        break;
+      default:
+        throw new EEnumValueUnsupportedException(settings.weather.type);
+    }
   }
 
   @Override
   public void fillSettingsBy(StartupSettings settings) {
     settings.recent.icao = cmbAirports.getSelectedItem();
-    settings.weather.useOnline = rdbWeatherFromWeb.isSelected();
+    if (rdbWeatherFromFile.isSelected())
+      settings.weather.type = StartupSettings.Weather.WeatherSourceType.preset;
+    else if (rdbWeatherFromWeb.isSelected())
+      settings.weather.type = StartupSettings.Weather.WeatherSourceType.online;
+    else
+      settings.weather.type = StartupSettings.Weather.WeatherSourceType.constant;
   }
 
   private void cmbAirports_changed(Object e) {
@@ -73,6 +91,9 @@ public class AirportAndWeatherPanel extends JStartupPanel {
     JPanel wp = LayoutManager.indentPanel(this.weatherPanel, 30);
     wp = LayoutManager.createBoxPanel(LayoutManager.eHorizontalAlign.left, DISTANCE,
         rdbWeatherFromWeb,
+        LayoutManager.createFlowPanel(
+            LayoutManager.eVerticalAlign.baseline, 4,
+            rdbWeatherFromFile, cmbWeatherSets.getControl()),
         rdbWeatherFromUser,
         wp
     );
@@ -80,7 +101,7 @@ public class AirportAndWeatherPanel extends JStartupPanel {
     wp = LayoutManager.createFormPanel(2, 2,
         new JLabel("Select airport:"),
         cmbAirports.getControl(),
-        new JLabel("Weather"),
+        new JLabel("Weather to use:"),
         wp
     );
 
@@ -93,18 +114,26 @@ public class AirportAndWeatherPanel extends JStartupPanel {
     rdbWeatherFromWeb.addActionListener((e) -> {
       ComponentUtils.adjustComponentTree(this.weatherPanel, q -> q.setEnabled(false));
     });
-    rdbWeatherFromWeb.setText("use real weather continuously downloaded from web");
+    rdbWeatherFromWeb.setText("online weather from web");
+
+    cmbWeatherSets = new XComboBoxExtender<>();
+    rdbWeatherFromFile = new JRadioButton();
+    rdbWeatherFromWeb.addActionListener((e) -> {
+      ComponentUtils.adjustComponentTree(this.weatherPanel, q -> q.setEnabled(false));
+    });
+    rdbWeatherFromFile.setText("preset weather from file");
 
     rdbWeatherFromUser = new JRadioButton();
     rdbWeatherFromUser.addActionListener((e) -> {
       ComponentUtils.adjustComponentTree(this.weatherPanel, q -> q.setEnabled(true));
     });
     rdbWeatherFromUser.setSelected(true);
-    rdbWeatherFromUser.setText("user set - insert METAR string:");
+    rdbWeatherFromUser.setText("custom weather:");
 
     ButtonGroup group = new ButtonGroup();
     group.add(rdbWeatherFromUser);
     group.add(rdbWeatherFromWeb);
+    group.add(rdbWeatherFromFile);
 
     cmbAirports = new XComboBoxExtender<>();
   }

@@ -33,6 +33,7 @@ import eng.jAtcSim.lib.traffic.TrafficManager;
 import eng.jAtcSim.lib.traffic.Traffic;
 import eng.jAtcSim.lib.traffic.fleets.Fleets;
 import eng.jAtcSim.lib.weathers.Weather;
+import eng.jAtcSim.lib.weathers.WeatherManager;
 import eng.jAtcSim.lib.weathers.WeatherProvider;
 import eng.jAtcSim.lib.world.Airport;
 import eng.jAtcSim.lib.world.Area;
@@ -57,7 +58,7 @@ public class Simulation {
   private final ETime now;
   private final Messenger messenger = new Messenger();
   private final IList<Airplane> newPlanesDelayedToAvoidCollision = new EList<>();
-  private final WeatherProvider weatherProvider;
+  private final WeatherManager weatherManager;
   private final Statistics stats = new Statistics();
   private final EmergencyManager emergencyManager;
   private final TrafficManager trafficManager;
@@ -128,7 +129,7 @@ public class Simulation {
     this.area = area;
     this.airplaneTypes = airplaneTypes;
     this.fleets = fleets;
-    this.weatherProvider = weatherProvider;
+    this.weatherManager = new WeatherManager(weatherProvider.tryGetNewWeather(), weatherProvider);
 
     this.activeAirport = activeAirport;
     this.twrAtc = new TowerAtc(this.activeAirport.getAtcTemplates().getFirst(q -> q.getType() == Atc.eType.twr));
@@ -217,8 +218,6 @@ public class Simulation {
     Acc.atcApp().init();
     Acc.atcCtr().init();
     this.prm.init();
-    this.weatherProvider.getOnWeatherUpdated().add(w -> weatherProvider_weatherUpdated(w));
-    weatherProvider_weatherUpdated(this.weatherProvider.getWeather());
 
     trafficManager.generateNewTrafficIfRequired();
     trafficManager.throwOutElapsedMovements(this.now.addMinutes(-5));
@@ -298,11 +297,7 @@ public class Simulation {
   }
 
   public Weather getWeather() {
-    return this.weatherProvider.getWeather();
-  }
-
-  public WeatherProvider getWeatherProvider() {
-    return weatherProvider;
+    return this.weatherManager.getWeather();
   }
 
   public UserAtc getAppAtc() {
@@ -381,10 +376,6 @@ public class Simulation {
     this.appAtc.getParser().getShortcuts().setAll2(shortcuts);
   }
 
-  private void weatherProvider_weatherUpdated(Weather w) {
-    Acc.sim().sendTextMessageForUser("Weather updated: " + w.toInfoString());
-  }
-
   private synchronized void elapseSecond() {
     long elapseStartMs = System.currentTimeMillis();
 
@@ -418,6 +409,13 @@ public class Simulation {
     stats.secondElapsed();
     long elapseEndMs = System.currentTimeMillis();
     stats.durationOfSecondElapse.add((elapseEndMs - elapseStartMs) / 1000d);
+
+    // weather
+    this.weatherManager.elapseSecond();
+    if (this.weatherManager.isNewWeatherFlagAndResetIt()){
+      twrAtc.setUpdatedWeatherFlag();
+      sendTextMessageForUser("Weather updated: " + this.weatherManager.getWeather().toInfoString());
+    }
 
     isBusy = false;
 

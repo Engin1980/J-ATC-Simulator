@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:sh="https://github.com/Engin1980/J-ATC-Simulator/shared"
+           targetNamespace="https://github.com/Engin1980/J-ATC-Simulator/weather"
+           xmlns="https://github.com/Engin1980/J-ATC-Simulator/weather"
+           elementFormDefault="qualified">
+
+  <xs:element name="presetWeatherSet" type="presetWeatherSet"/>
+
+  <xs:complexType name="presetWeatherSet">
+    <xs:sequence>
+      <xs:element name="meta" type="sh:meta" minOccurs="0" maxOccurs="1"/>
+      <xs:choice maxOccurs="unbounded" minOccurs="0">
+        <xs:element name="weather" type="weather"/>
+        <xs:element name="metar" type="metar"/>
+      </xs:choice>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="metar">
+    <xs:simpleContent>
+      <xs:restriction base="xs:string">
+        <xs:pattern value="METAR .{4} \d{6}Z .+" />
+      </xs:restriction>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:complexType name="weather">
+    <xs:attribute name="time" type="sh:time" use="required" />
+    <xs:attribute name="cloudBaseAltitudeFt" type="xs:int" use="required"/>
+    <xs:attribute name="cloudBaseProbability" type="xs:double" use="required"/>
+    <xs:attribute name="visibility" type="xs:int" use="required"/>
+    <xs:attribute name="windDirection" type="sh:heading" use="required"/>
+    <xs:attribute name="windSpeed" type="xs:nonNegativeInteger" use="required"/>
+  </xs:complexType>
+
+
+</xs:schema>

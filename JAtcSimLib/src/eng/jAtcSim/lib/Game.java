@@ -93,7 +93,8 @@ public class Game {
     g.simulation = new Simulation(
         g.areaXmlSource.getContent(), g.airplaneTypesXmlSource.getContent(), g.fleetsXmlSource.getContent(), g.trafficXmlSource.getActiveTraffic(),
         g.areaXmlSource.getActiveAirport(),
-        g.weatherSource.getContent(), gsi.startTime,
+        g.weatherSource.getContent(),
+        gsi.startTime,
         gsi.secondLengthInMs,
         gsi.emergencyPerDayProbability,
         tms);
@@ -118,7 +119,8 @@ public class Game {
     LoadSave.loadField(root, ret, "airplaneTypesXmlSource");
     LoadSave.loadField(root, ret, "fleetsXmlSource");
     LoadSave.loadField(root, ret, "trafficXmlSource");
-    LoadSave.loadField(root, ret, "weatherSource");
+    //LoadSave.loadField(root, ret, "weatherSource");
+
 
     ret.areaXmlSource.load();
     ret.areaXmlSource.init(ret.areaXmlSource.getActiveAirportIndex());
@@ -129,7 +131,8 @@ public class Game {
     ret.fleetsXmlSource.load();
     ret.fleetsXmlSource.init(ret.airplaneTypesXmlSource.getContent());
 
-    ret.weatherSource.init(ret.weatherSource.getWeather());
+    ret.weatherSource = new WeatherSource(
+        WeatherSource.ProviderType.staticProvider,ret.areaXmlSource.getActiveAirport().getIcao());
 
     ret.simulation = new Simulation(
         ret.areaXmlSource.getContent(), ret.airplaneTypesXmlSource.getContent(),
@@ -166,7 +169,7 @@ public class Game {
     LoadSave.saveField(root, this, "airplaneTypesXmlSource");
     LoadSave.saveField(root, this, "fleetsXmlSource");
     LoadSave.saveField(root, this, "trafficXmlSource");
-    LoadSave.saveField(root, this, "weatherSource");
+    //LoadSave.saveField(root, this, "weatherSource");
 
     {
       XElement tmp = new XElement("simulation");

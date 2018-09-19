@@ -54,4 +54,12 @@
     </xs:simpleContent>
   </xs:complexType>
 
+  <xs:complexType name="time">
+    <xs:simpleContent>
+      <xs:restriction base="xs:string">
+        <xs:pattern value="\d{2}:?\d{2}" />
+      </xs:restriction>
+    </xs:simpleContent>
+  </xs:complexType>
+
 </xs:schema>

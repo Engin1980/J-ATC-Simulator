@@ -307,9 +307,6 @@ public class TowerAtc extends ComputerAtc {
     inUseInfo.scheduled = getSuggestedThresholds();
     inUseInfo.scheduler = new SchedulerForAdvice(Acc.now().clone());
     processRunwayChangeBackground();
-
-    WeatherProvider wp = Acc.weatherProvider();
-    wp.getOnWeatherUpdated().add(w -> weatherUpdated(w));
   }
 
   public RunwayConfiguration getRunwayConfigurationInUse() {
@@ -439,7 +436,7 @@ public class TowerAtc extends ComputerAtc {
     }
   }
 
-  private void weatherUpdated(Weather w) {
+  public void setUpdatedWeatherFlag() {
     this.isUpdatedWeather = true;
   }
 

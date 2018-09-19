@@ -28,7 +28,12 @@ public class StartupSettings {
   }
 
   public static class Weather {
-    public boolean useOnline;
+    public enum WeatherSourceType{
+      constant,
+      online,
+      preset
+    }
+    public WeatherSourceType type = WeatherSourceType.constant;
     public int windDirection;
     public int windSpeed;
     public int cloudBaseAltitudeFt;

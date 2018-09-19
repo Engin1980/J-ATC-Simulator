@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<presetWeatherSet
+        xmlns="https://github.com/Engin1980/J-ATC-Simulator/weather"
+>
+  <meta>
+    <title>Simple demo weather</title>
+    <author>Marek Vajgl</author>
+  </meta>
+  <weather time="06:00" cloudBaseAltitudeFt="10000" cloudBaseProbability="0" visibility="9999" windDirection="240"
+           windSpeed="5" />
+  <weather time="06:15" cloudBaseAltitudeFt="300" cloudBaseProbability="1" visibility="150" windDirection="060" windSpeed="12" />
+  <metar>METAR LKPR 122004Z 00000KT CLR 9999 NOSIG</metar>
+</presetWeatherSet>

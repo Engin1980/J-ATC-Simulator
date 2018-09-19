@@ -5,6 +5,7 @@
  */
 package eng.jAtcSim;
 
+import com.sun.deploy.association.utility.WinRegistryWrapper;
 import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IMap;
 import eng.eSystem.exceptions.EApplicationException;
@@ -19,7 +20,6 @@ import eng.jAtcSim.lib.global.logging.ApplicationLog;
 import eng.jAtcSim.lib.global.logging.Recorder;
 import eng.jAtcSim.lib.global.sources.TrafficXmlSource;
 import eng.jAtcSim.lib.global.sources.WeatherSource;
-import eng.jAtcSim.lib.speaking.fromAtc.notifications.RadarContactConfirmationNotification;
 import eng.jAtcSim.lib.traffic.GenericTraffic;
 import eng.jAtcSim.lib.traffic.Traffic;
 import eng.jAtcSim.lib.weathers.Weather;
@@ -152,8 +152,19 @@ public class JAtcSim {
     gsi.startTime = new ETime(startupSettings.recent.time);
     gsi.trafficXmlFile = startupSettings.files.trafficXmlFile;
     gsi.initialWeather = Weather.createClear();
-    gsi.weatherProviderType = startupSettings.weather.useOnline ?
-        WeatherSource.ProviderType.dynamicNovGoaaProvider : WeatherSource.ProviderType.staticProvider;
+    switch (startupSettings.weather.type){
+      case constant:
+        gsi.weatherProviderType = WeatherSource.ProviderType.staticProvider;
+        break;
+      case  online:
+        gsi.weatherProviderType = WeatherSource.ProviderType.dynamicProvider;
+        break;
+      case preset:
+        gsi.weatherProviderType = WeatherSource.ProviderType.presetProvider;
+        break;
+        default:
+          throw new EEnumValueUnsupportedException(startupSettings.weather.type);
+    }
 
     gsi.allowTrafficDelays = startupSettings.traffic.allowDelays;
     gsi.maxTrafficPlanes = startupSettings.traffic.maxPlanes;
