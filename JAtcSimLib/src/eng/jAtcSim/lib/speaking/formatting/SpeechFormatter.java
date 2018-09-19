@@ -141,12 +141,24 @@ public class SpeechFormatter implements IFormatter {
   @Override
   public String format(ISpeech speech) {
     Class cls = speech.getClass();
-    IList<Sentence> sentences = this.sentences.get(cls);
-    String kind = _getKind(speech);
+    IList<Sentence> sentences;
+    String kind;
+    try {
+      sentences = this.sentences.get(cls);
+    } catch (Exception ex){
+      throw new EApplicationException("Failed to get sentences for " + cls.getSimpleName());
+    }
+    try {
+      kind = _getKind(speech);
+    } catch (Exception ex){
+      throw new EApplicationException("Failed to get 'kind' for " + cls.getSimpleName());
+    }
     if (kind == null)
       sentences = sentences.where(q -> q.kind == null);
     else
       sentences = sentences.where(q -> q.kind == null || q.kind.equals(kind));
+    assert !sentences.isEmpty() : "Sentences list is empty for speech " + cls.getSimpleName() + " and kind " + kind;
+
     Sentence sentence = sentences.getRandom();
     String ret = _format(speech, sentence);
     return ret;
@@ -174,32 +186,37 @@ public class SpeechFormatter implements IFormatter {
     } else if (speech instanceof ChangeSpeedCommand) {
       ChangeSpeedCommand tmp = (ChangeSpeedCommand) speech;
       if (tmp.isResumeOwnSpeed())
-        return "resumeOwn";
+        return "clear";
       else {
-        switch (tmp.getSpeedRestriction().direction) {
-          case atMost:
-            return "atMost";
+        if (tmp.getSpeedRestriction() == null)
+          return null;
+        else
+          switch (tmp.getSpeedRestriction().direction) {
+            case atMost:
+              return "atMost";
+            case atLeast:
+              return "atLeast";
+            case exactly:
+              return "exactly";
+            default:
+              return null;
+          }
+      }
+    } else if (speech instanceof SetAltitudeRestriction) {
+      SetAltitudeRestriction tmp = (SetAltitudeRestriction) speech;
+      if (tmp.getRestriction() == null)
+        return "clear";
+      else
+        switch (tmp.getRestriction().direction) {
           case atLeast:
             return "atLeast";
+          case atMost:
+            return "atMost";
           case exactly:
             return "exactly";
           default:
             return null;
         }
-      }
-    } else if (speech instanceof SetAltitudeRestriction) {
-      SetAltitudeRestriction tmp = (SetAltitudeRestriction) speech;
-      tady to zuchne kdyz je to null
-      switch (tmp.getRestriction().direction) {
-        case atLeast:
-          return "atLeast";
-        case atMost:
-          return "atMost";
-        case exactly:
-          return "exactly";
-        default:
-          return null;
-      }
     } else if (speech instanceof ClearedToApproachCommand) {
       ClearedToApproachCommand tmp = (ClearedToApproachCommand) speech;
       switch (tmp.getType()) {
@@ -286,7 +303,7 @@ public class SpeechFormatter implements IFormatter {
     try {
       ret = commandVariableEvaluator.eval(speech, key);
     } catch (Exception ex) {
-      throw new EApplicationException(sf("Unable to find for type '%s' key '%s'.", speech.getClass().getName(), key));
+      throw new EApplicationException(sf("Variable evaluation error. Unable to find for type '%s' key '%s'.", speech.getClass().getSimpleName(), key));
     }
     return ret;
   }
@@ -500,9 +517,9 @@ class CommandVariableEvaluator {
       throw new EApplicationException(
           sf("Unable to find lambda function for '%s'.'%s'.", cls.getSimpleName(), key), ex);
     }
-    try{
+    try {
       ret = fun.apply(value);
-    }catch (Exception ex){
+    } catch (Exception ex) {
       throw new EApplicationException(
           sf("Unable to evaluate '%s'.'%s' via its lambda function.", cls.getSimpleName(), key), ex);
     }

@@ -23,7 +23,7 @@ public class DataFormat {
 
   public static class Heading{
     public static String to(int heading){
-      return String.format("%03", heading);
+      return String.format("%03d", heading);
     }
   }
 

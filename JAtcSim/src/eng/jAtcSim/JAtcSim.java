@@ -48,7 +48,7 @@ public class JAtcSim {
   private static final Traffic enginSpecificTraffic =
        // new eng.jAtcSim.lib.traffic.TestTrafficOneApproach();
        // new eng.jAtcSim.lib.traffic.TestTrafficOneDeparture();
-       null;
+        null;
   private static AppSettings appSettings;
 
   private static FrmLog frmLog;

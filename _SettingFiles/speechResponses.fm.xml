@@ -9,7 +9,7 @@
     <sentence>after {cmd:navaid}</sentence>
   </response>
   <response type="AfterHeadingCommand">
-    <sentence>after hdg {cmd:heading}</sentence>
+    <sentence>after heading {cmd:heading}</sentence>
   </response>
   <response type="AfterRadialCommand">
     <sentence>after radial {cmd:radial} from {cmd:navaid}</sentence>
@@ -34,7 +34,7 @@
     <sentence kind="right">turn right to {cmd:heading}</sentence>
     <sentence kind="right">right to {cmd:heading}</sentence>
     <sentence kind="right">right {cmd:heading}</sentence>
-    <sentence kind="any"> hdg {cmd:heading}</sentence>
+    <sentence kind="any"> heading {cmd:heading}</sentence>
     <sentence kind="any">fly heading {cmd:heading}</sentence>
   </response>
   <response type="GoAroundCommand">
@@ -47,14 +47,15 @@
     <sentence kind="atMost">speed {cmd:speed} or less</sentence>
     <sentence kind="atMost">speed at most {cmd:speed}</sentence>
     <sentence kind="exactly">speed {cmd:speed}</sentence>
-    <sentence kind="resumeOwn">my speed</sentence>
-    <sentence kind="resumeOwn">resume own speed</sentence>
-    <sentence kind="resumeOwn">speed at your discretion</sentence>
+    <sentence kind="clear">my speed</sentence>
+    <sentence kind="clear">resume own speed</sentence>
+    <sentence kind="clear">speed at your discretion</sentence>
   </response>
   <response type="SetAltitudeRestriction">
     <sentence kind="atLeast">{cmd:altitude} at least</sentence>
     <sentence kind="atMost">{cmd:altitude} at most</sentence>
     <sentence kind="exactly">{cmd:altitude} exactly</sentence>
+    <sentence kind="clear">altitude restriction released</sentence>
   </response>
   <response type="ClearedForTakeoffCommand">
     <sentence>cleared for take off {cmd:rwy}</sentence>
@@ -92,7 +93,6 @@
 
   <response type="Confirmation">
     <sentence>{cmd:origin}</sentence>
-    <sentence>Roger, {cmd:origin}</sentence>
   </response>
   <response type="Rejection">
     <sentence>Unable {cmd:origin}, {cmd:reason}</sentence>
