@@ -25,7 +25,6 @@
     <sentence kind="climb">climb to {cmd:altitude}</sentence>
     <sentence kind="descend">descend and maintain {cmd:altitude}</sentence>
     <sentence kind="descend">descend to {cmd:altitude}</sentence>
-    <sentence>{cmd:altitude}</sentence>
   </response>
   <response type="ChangeHeadingCommand">
     <sentence kind="left">turn left to {cmd:heading}</sentence>
