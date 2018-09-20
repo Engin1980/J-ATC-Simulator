@@ -4,11 +4,12 @@ import eng.eSystem.collections.IMap;
 import eng.eSystem.eXml.XDocument;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.exceptions.ERuntimeException;
 import eng.eSystem.exceptions.EXmlException;
 import eng.jAtcSim.lib.global.ETime;
 import eng.jAtcSim.lib.global.logging.ApplicationLog;
-import eng.jAtcSim.lib.global.sources.*;
+import eng.jAtcSim.lib.global.newSources.*;
 import eng.jAtcSim.lib.serialization.LoadSave;
 import eng.jAtcSim.lib.traffic.Traffic;
 import eng.jAtcSim.lib.traffic.TrafficManager;
@@ -19,80 +20,106 @@ import java.util.Map;
 public class Game {
 
   public static class GameStartupInfo {
+
+    public enum SourceType {
+      xml,
+      user
+    }
+    public enum WeatherSourceType{
+      xml,
+      user,
+      online
+    }
+
     public String areaXmlFile;
     public String planesXmlFile;
     public String fleetsXmlFile;
     public String trafficXmlFile;
+    public String weatherXmlFile;
     public String icao;
     public Traffic specificTraffic;
     public ETime startTime;
     public int secondLengthInMs;
     public double emergencyPerDayProbability;
     public Weather initialWeather;
-    public WeatherSource.ProviderType weatherProviderType;
-
-    public TrafficXmlSource.TrafficSource trafficSourceType;
+    public WeatherSourceType weatherProviderType;
+    public SourceType trafficSourceType;
     public String lookForTrafficTitle;
     public boolean allowTrafficDelays;
     public int maxTrafficPlanes;
     public double trafficDensityPercentage;
   }
 
-  private AreaXmlSource areaXmlSource;
-  private AirplaneTypesXmlSource airplaneTypesXmlSource;
-  private FleetsXmlSource fleetsXmlSource;
-  private TrafficXmlSource trafficXmlSource;
-  private WeatherSource weatherSource;
+  private AreaSource areaSource;
+  private AirplaneTypesSource airplaneTypesSource;
+  private FleetsSource fleetsSource;
+  private TrafficSource trafficSource;
+  private eng.jAtcSim.lib.global.newSources.WeatherSource weatherSource;
   private Simulation simulation;
 
   public static Game create(GameStartupInfo gsi) {
     Game g = new Game();
 
     Acc.log().writeLine(ApplicationLog.eType.info, "Loading area");
-    g.areaXmlSource = new AreaXmlSource(gsi.areaXmlFile);
-    g.areaXmlSource.load();
-    g.areaXmlSource.init(gsi.icao);
+    g.areaSource = new AreaSource(gsi.areaXmlFile, gsi.icao);
+    g.areaSource.init();
 
     Acc.log().writeLine(ApplicationLog.eType.info, "Loading plane types");
-    g.airplaneTypesXmlSource = new AirplaneTypesXmlSource(gsi.planesXmlFile);
-    g.airplaneTypesXmlSource.load();
-    g.airplaneTypesXmlSource.init();
+    g.airplaneTypesSource = new AirplaneTypesSource(gsi.planesXmlFile);
+    g.airplaneTypesSource.init();
 
     Acc.log().writeLine(ApplicationLog.eType.info, "Loading fleets");
-    g.fleetsXmlSource = new FleetsXmlSource(gsi.fleetsXmlFile);
-    g.fleetsXmlSource.load();
-    g.fleetsXmlSource.init(g.airplaneTypesXmlSource.getContent());
+    g.fleetsSource = new FleetsSource(gsi.fleetsXmlFile);
+    g.fleetsSource.init(g.airplaneTypesSource.getContent());
 
     Acc.log().writeLine(ApplicationLog.eType.info, "Loading traffic");
-    g.trafficXmlSource = new TrafficXmlSource(gsi.trafficXmlFile);
-    g.trafficXmlSource.load();
-    g.trafficXmlSource.init(g.areaXmlSource.getActiveAirport(), gsi.specificTraffic);
+    switch (gsi.trafficSourceType){
+      case user:
+        g.trafficSource = new UserTrafficSource(gsi.specificTraffic);
+        break;
+      case xml:
+        g.trafficSource = new XmlTrafficSource(gsi.trafficXmlFile);
+        break;
+        default:
+          throw new EEnumValueUnsupportedException(gsi.specificTraffic);
+    }
+    g.trafficSource.init();
 
     Acc.log().writeLine(ApplicationLog.eType.info, "Initializing weather");
-    g.weatherSource = new WeatherSource(
-        gsi.weatherProviderType,
-        g.areaXmlSource.getActiveAirport().getIcao());
-    g.weatherSource.init(gsi.initialWeather);
-
-    Acc.log().writeLine(ApplicationLog.eType.info, "Generating traffic");
-    switch (gsi.trafficSourceType) {
-      case activeAirportTraffic:
-        g.trafficXmlSource.setActiveTraffic(gsi.trafficSourceType, gsi.lookForTrafficTitle);
+    switch (gsi.weatherProviderType){
+      case online:
+        g.weatherSource = new OnlineWeatherSource(true);
         break;
-      case xmlFileTraffic:
-        g.trafficXmlSource.setActiveTraffic(TrafficXmlSource.TrafficSource.xmlFileTraffic, gsi.lookForTrafficTitle);
+      case xml:
+        g.weatherSource = new XmlWeatherSource(gsi.weatherXmlFile);
         break;
-      case specificTraffic:
-        g.trafficXmlSource.setActiveTraffic(TrafficXmlSource.TrafficSource.specificTraffic, null);
+      case user:
+        g.weatherSource = new UserWeatherSource(gsi.initialWeather);
+            break;
+      default:
+        throw new EEnumValueUnsupportedException(gsi.weatherProviderType);
     }
+    g.weatherSource.init();
+
+//    Acc.log().writeLine(ApplicationLog.eType.info, "Generating traffic");
+//    switch (gsi.trafficSourceType) {
+//      case activeAirportTraffic:
+//        g.trafficXmlSource.setActiveTraffic(gsi.trafficSourceType, gsi.lookForTrafficTitle);
+//        break;
+//      case xmlFileTraffic:
+//        g.trafficXmlSource.setActiveTraffic(TrafficXmlSource.TrafficSource.xmlFileTraffic, gsi.lookForTrafficTitle);
+//        break;
+//      case specificTraffic:
+//        g.trafficXmlSource.setActiveTraffic(TrafficXmlSource.TrafficSource.specificTraffic, null);
+//    }
 
     TrafficManager.TrafficManagerSettings tms = new TrafficManager.TrafficManagerSettings(
         gsi.allowTrafficDelays, gsi.maxTrafficPlanes, gsi.trafficDensityPercentage);
 
-    Acc.log().writeLine(ApplicationLog.eType.info, "Creating simulatio");
+    Acc.log().writeLine(ApplicationLog.eType.info, "Creating the simulation");
     g.simulation = new Simulation(
-        g.areaXmlSource.getContent(), g.airplaneTypesXmlSource.getContent(), g.fleetsXmlSource.getContent(), g.trafficXmlSource.getActiveTraffic(),
-        g.areaXmlSource.getActiveAirport(),
+        g.areaSource.getContent(), g.airplaneTypesSource.getContent(), g.fleetsSource.getContent(), g.trafficSource.getContent(),
+        g.areaSource.getActiveAirport(),
         g.weatherSource.getContent(),
         gsi.startTime,
         gsi.secondLengthInMs,
@@ -119,25 +146,17 @@ public class Game {
     LoadSave.loadField(root, ret, "airplaneTypesXmlSource");
     LoadSave.loadField(root, ret, "fleetsXmlSource");
     LoadSave.loadField(root, ret, "trafficXmlSource");
-    //LoadSave.loadField(root, ret, "weatherSource");
+    LoadSave.loadField(root, ret, "weatherXmlSource");
 
 
-    ret.areaXmlSource.load();
-    ret.areaXmlSource.init(ret.areaXmlSource.getActiveAirportIndex());
-
-    ret.airplaneTypesXmlSource.load();
-    ret.airplaneTypesXmlSource.init();
-
-    ret.fleetsXmlSource.load();
-    ret.fleetsXmlSource.init(ret.airplaneTypesXmlSource.getContent());
-
-    ret.weatherSource = new WeatherSource(
-        WeatherSource.ProviderType.staticProvider,ret.areaXmlSource.getActiveAirport().getIcao());
+    ret.areaSource.init();
+    ret.airplaneTypesSource.init();
+    ret.fleetsSource.init(ret.airplaneTypesSource.getContent());
 
     ret.simulation = new Simulation(
-        ret.areaXmlSource.getContent(), ret.airplaneTypesXmlSource.getContent(),
-        ret.fleetsXmlSource.getContent(), ret.trafficXmlSource.getActiveTraffic(),
-        ret.areaXmlSource.getActiveAirport(),
+        ret.areaSource.getContent(), ret.airplaneTypesSource.getContent(),
+        ret.fleetsSource.getContent(), ret.trafficSource.getContent(),
+        ret.areaSource.getActiveAirport(),
         ret.weatherSource.getContent(), new ETime(0), 0, 0,
         new TrafficManager.TrafficManagerSettings(false, 0, 0));
     ret.simulation.init();
@@ -169,7 +188,7 @@ public class Game {
     LoadSave.saveField(root, this, "airplaneTypesXmlSource");
     LoadSave.saveField(root, this, "fleetsXmlSource");
     LoadSave.saveField(root, this, "trafficXmlSource");
-    //LoadSave.saveField(root, this, "weatherSource");
+    LoadSave.saveField(root, this, "weatherXmlSource");
 
     {
       XElement tmp = new XElement("simulation");

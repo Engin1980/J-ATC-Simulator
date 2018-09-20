@@ -43,6 +43,7 @@ public class SwingFactory {
   public static final String SAVED_SIMULATION_EXTENSION = ".sm.xml";
   public static final String TRAFFIC_FILE_EXTENSION = ".tr.xml";
   public static final String AIRPLANE_TYPES_EXTENSION = ".tp.xml";
+  public static final String WEATHER_EXTENSION = ".we.xml";
 
   public static JScrollBar createHorizontalBar(int minimum, int maximum, int value) {
     JScrollBar ret = new JScrollBar(JScrollBar.HORIZONTAL);
@@ -82,6 +83,11 @@ public class SwingFactory {
         break;
       case types:
         ret.addChoosableFileFilter(new FileTypeFilter(AIRPLANE_TYPES_EXTENSION, "Airplane types files"));
+        ret.addChoosableFileFilter(new FileTypeFilter(".xml", "XML files"));
+        ret.setAccessory(new XmlMetaInfoPreview(ret));
+        break;
+      case weather:
+        ret.addChoosableFileFilter(new FileTypeFilter(WEATHER_EXTENSION, "Weather preset files"));
         ret.addChoosableFileFilter(new FileTypeFilter(".xml", "XML files"));
         ret.setAccessory(new XmlMetaInfoPreview(ret));
         break;

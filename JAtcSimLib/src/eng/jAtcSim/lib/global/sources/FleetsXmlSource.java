@@ -5,6 +5,7 @@ import eng.eSystem.xmlSerialization.XmlSettings;
 import eng.jAtcSim.lib.airplanes.AirplaneTypes;
 import eng.jAtcSim.lib.traffic.fleets.Fleets;
 
+@Deprecated
 public class FleetsXmlSource extends XmlSource<Fleets> {
 
   public FleetsXmlSource(String xmlFile) {

@@ -5,7 +5,6 @@
  */
 package eng.jAtcSim;
 
-import com.sun.deploy.association.utility.WinRegistryWrapper;
 import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IMap;
 import eng.eSystem.exceptions.EApplicationException;

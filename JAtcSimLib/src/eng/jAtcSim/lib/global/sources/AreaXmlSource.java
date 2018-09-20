@@ -5,6 +5,7 @@ import eng.eSystem.xmlSerialization.supports.IFactory;
 import eng.jAtcSim.lib.world.*;
 import eng.jAtcSim.lib.world.xml.AltitudeValueParser;
 
+@Deprecated
 public class AreaXmlSource extends XmlSource<Area> {
 
   private int activeAirportIndex = 0;
@@ -60,7 +61,7 @@ public class AreaXmlSource extends XmlSource<Area> {
   }
 }
 
-
+@Deprecated
 class AreaFactory implements IFactory<Area> {
 
   @Override

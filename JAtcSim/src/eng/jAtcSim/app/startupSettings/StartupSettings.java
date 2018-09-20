@@ -20,6 +20,7 @@ public class StartupSettings {
     public String planesXmlFile;
     public String areaXmlFile;
     public String fleetsXmlFile;
+    public String weatherXmlFile;
   }
 
   public static class Recent {

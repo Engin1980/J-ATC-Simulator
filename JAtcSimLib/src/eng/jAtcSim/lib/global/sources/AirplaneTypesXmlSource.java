@@ -4,6 +4,7 @@ import eng.eSystem.xmlSerialization.XmlSerializer;
 import eng.eSystem.xmlSerialization.XmlSettings;
 import eng.jAtcSim.lib.airplanes.AirplaneTypes;
 
+@Deprecated
 public class AirplaneTypesXmlSource extends XmlSource<AirplaneTypes> {
 
   public AirplaneTypesXmlSource(String xmlFile) {

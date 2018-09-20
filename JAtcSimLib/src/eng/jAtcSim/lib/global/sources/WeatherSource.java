@@ -6,6 +6,7 @@ import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 import eng.jAtcSim.lib.weathers.*;
 import eng.jAtcSim.lib.weathers.downloaders.MetarDownloaderNoaaGov;
 
+@Deprecated
 public class WeatherSource extends Source<WeatherProvider> {
 
   public enum ProviderType{
@@ -18,10 +19,12 @@ public class WeatherSource extends Source<WeatherProvider> {
   private WeatherProvider provider;
   private ProviderType type;
   private String icao;
+  private String xmlFile;
 
-  public WeatherSource (ProviderType type, String icao){
+  public WeatherSource(ProviderType type, String icao, String xmlFile){
     this.type = type;
     this.icao = icao;
+    this.xmlFile = xmlFile;
   }
 
   public WeatherSource(){}
@@ -42,7 +45,7 @@ public class WeatherSource extends Source<WeatherProvider> {
         provider = new StaticWeatherProvider(initialWeather);
         break;
       case presetProvider:
-        provider = new PresetWeatherProvider();
+        provider = new PresetWeatherProvider(this.xmlFile);
         break;
       default:
         throw new EEnumValueUnsupportedException(type);

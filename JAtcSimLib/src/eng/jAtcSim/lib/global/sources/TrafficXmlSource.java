@@ -16,6 +16,7 @@ import eng.jAtcSim.lib.traffic.Traffic;
 import eng.jAtcSim.lib.world.Airport;
 import eng.jAtcSim.lib.world.xml.AltitudeValueParser;
 
+@Deprecated
 public class TrafficXmlSource extends XmlSource<IList<Traffic>> {
 
   //TODO duplicate with Traffic.eTrafficType

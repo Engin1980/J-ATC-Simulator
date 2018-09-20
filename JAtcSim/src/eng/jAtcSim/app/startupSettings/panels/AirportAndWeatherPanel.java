@@ -4,7 +4,7 @@ import eng.eSystem.collections.EList;
 import eng.eSystem.events.EventAnonymous;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.utilites.awt.ComponentUtils;
-import eng.jAtcSim.lib.weathers.presets.PresetWeatherSet;
+import eng.jAtcSim.lib.weathers.presets.PresetWeatherList;
 import eng.jAtcSim.lib.world.Airport;
 import eng.jAtcSim.lib.world.Area;
 import eng.jAtcSim.shared.LayoutManager;
@@ -19,7 +19,7 @@ public class AirportAndWeatherPanel extends JStartupPanel {
   private JRadioButton rdbWeatherFromUser;
   private JRadioButton rdbWeatherFromWeb;
   private JRadioButton rdbWeatherFromFile;
-  private XComboBoxExtender<PresetWeatherSet> cmbWeatherSets;
+  private XComboBoxExtender<PresetWeatherList> cmbWeatherSets;
   private WeatherPanel weatherPanel;
   private EventAnonymous<Airport> onAirportChanged = new EventAnonymous<Airport>();
 

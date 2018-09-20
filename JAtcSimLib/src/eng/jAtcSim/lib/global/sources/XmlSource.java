@@ -7,6 +7,7 @@ import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 import java.io.IOException;
 import java.nio.file.Paths;
 
+@Deprecated
 public abstract class XmlSource<T> extends Source<T> {
   private String xmlFileName;
   private int xmlFileHash;

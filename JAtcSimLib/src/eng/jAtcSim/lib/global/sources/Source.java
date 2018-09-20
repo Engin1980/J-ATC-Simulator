@@ -3,7 +3,7 @@ package eng.jAtcSim.lib.global.sources;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 
-
+@Deprecated
 public abstract class Source<T> {
   @XmlIgnore
   private boolean initialized = false;

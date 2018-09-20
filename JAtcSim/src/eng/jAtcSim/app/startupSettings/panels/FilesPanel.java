@@ -4,6 +4,7 @@ import eng.eSystem.collections.IList;
 import eng.eSystem.utilites.ExceptionUtils;
 import eng.jAtcSim.XmlLoadHelper;
 import eng.jAtcSim.lib.traffic.Traffic;
+import eng.jAtcSim.lib.weathers.presets.PresetWeatherList;
 import eng.jAtcSim.lib.world.Area;
 import eng.jAtcSim.shared.BackgroundWorker;
 import eng.jAtcSim.shared.LayoutManager;
@@ -70,6 +71,7 @@ public class FilesPanel extends JStartupPanel {
     if (!loadFleet()) return new Object();
     if (!loadTypes()) return new Object();
     if (!loadTraffic()) return new Object();
+    if (!loadWeather()) return new Object();
     return new Object();
   }
 
@@ -84,6 +86,7 @@ public class FilesPanel extends JStartupPanel {
     this.fleTypes.setFileName(settings.files.planesXmlFile);
     this.fleFleet.setFileName(settings.files.fleetsXmlFile);
     this.fleTraffic.setFileName(settings.files.trafficXmlFile);
+    this.fleWeather.setFileName(settings.files.weatherXmlFile);
   }
 
   @Override
@@ -92,6 +95,7 @@ public class FilesPanel extends JStartupPanel {
     settings.files.planesXmlFile = this.fleTypes.getFileName();
     settings.files.fleetsXmlFile = this.fleFleet.getFileName();
     settings.files.trafficXmlFile = this.fleTraffic.getFileName();
+    settings.files.weatherXmlFile = this.fleWeather.getFileName();
   }
 
   private boolean loadTraffic() {
@@ -105,6 +109,27 @@ public class FilesPanel extends JStartupPanel {
         trfc = XmlLoadHelper.loadTraffic(fileName);
         ret = true;
         Sources.setTraffic(trfc);
+      } catch (Exception ex) {
+        ex.printStackTrace();
+        MessageBox.show("Unable to load traffic file " + fileName + ".\n\nReason:\n" + ExceptionUtils.toFullString(ex, "\n"),
+            "Error...");
+        ret = false;
+      }
+    }
+    return ret;
+  }
+
+  private boolean loadWeather() {
+    boolean ret;
+    String fileName = fleWeather.getFileName();
+    if (fileName == null)
+      return true;
+    else {
+      IList<PresetWeatherList> wths;
+      try {
+        wths = XmlLoadHelper.loadWeather(fileName);
+        ret = true;
+        Sources.setTraffic(wths);
       } catch (Exception ex) {
         ex.printStackTrace();
         MessageBox.show("Unable to load traffic file " + fileName + ".\n\nReason:\n" + ExceptionUtils.toFullString(ex, "\n"),
