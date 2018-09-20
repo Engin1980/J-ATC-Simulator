@@ -30,11 +30,11 @@ public class StartupSettings {
 
   public static class Weather {
     public enum WeatherSourceType{
-      constant,
+      user,
       online,
-      preset
+      xml
     }
-    public WeatherSourceType type = WeatherSourceType.constant;
+    public WeatherSourceType type = WeatherSourceType.user;
     public int windDirection;
     public int windSpeed;
     public int cloudBaseAltitudeFt;
@@ -44,9 +44,8 @@ public class StartupSettings {
 
   public static class Traffic {
     public enum eTrafficType {
-      custom,
-      xml,
-      airportDefined
+      user,
+      xml
     }
 
     public eTrafficType type;

@@ -121,15 +121,18 @@ public class FrmStartupSettings extends JPanel {
 
     JTabbedPane tabbedPane = new JTabbedPane();
 
-    AirportAndWeatherPanel pnlA = new AirportAndWeatherPanel();
-    tabbedPane.addTab("Airport & Weather", pnlA);
+    AirportAndAirplanesPanel pnlA = new AirportAndAirplanesPanel();
+    tabbedPane.addTab("Airport, planes & fleets", pnlA);
 
-    TrafficPanel pnlB = new TrafficPanel();
-    pnlA.getOnAirportChanged().add(q->{pnlB.airportChanged((Airport) q);});
-    tabbedPane.addTab("Traffic", pnlB);
+    WeatherPanel pnlB = new WeatherPanel();
+    tabbedPane.addTab("Weather",pnlB );
 
-    SimulationTimeRadarSettings pnlC = new SimulationTimeRadarSettings();
-    tabbedPane.addTab("Simulation", pnlC);
+    TrafficPanel pnlC = new TrafficPanel();
+    pnlA.getOnAirportChanged().add(q->{pnlC.airportChanged((Airport) q);});
+    tabbedPane.addTab("Traffic", pnlC);
+
+    SimulationTimeRadarSettings pnlD = new SimulationTimeRadarSettings();
+    tabbedPane.addTab("Simulation", pnlD);
 
     ret.add(tabbedPane);
 

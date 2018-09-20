@@ -67,11 +67,11 @@ public class FilesPanel extends JStartupPanel {
   }
 
   private Object xmlFilesLoading() {
-    if (!loadArea()) return new Object();
-    if (!loadFleet()) return new Object();
-    if (!loadTypes()) return new Object();
-    if (!loadTraffic()) return new Object();
-    if (!loadWeather()) return new Object();
+//    if (!loadArea()) return new Object();
+//    if (!loadFleet()) return new Object();
+//    if (!loadTypes()) return new Object();
+//    if (!loadTraffic()) return new Object();
+//    if (!loadWeather()) return new Object();
     return new Object();
   }
 
@@ -120,24 +120,25 @@ public class FilesPanel extends JStartupPanel {
   }
 
   private boolean loadWeather() {
-    boolean ret;
-    String fileName = fleWeather.getFileName();
-    if (fileName == null)
-      return true;
-    else {
-      IList<PresetWeatherList> wths;
-      try {
-        wths = XmlLoadHelper.loadWeather(fileName);
-        ret = true;
-        Sources.setTraffic(wths);
-      } catch (Exception ex) {
-        ex.printStackTrace();
-        MessageBox.show("Unable to load traffic file " + fileName + ".\n\nReason:\n" + ExceptionUtils.toFullString(ex, "\n"),
-            "Error...");
-        ret = false;
-      }
-    }
-    return ret;
+    throw new UnsupportedOperationException();
+//    boolean ret;
+//    String fileName = fleWeather.getFileName();
+//    if (fileName == null)
+//      return true;
+//    else {
+//      IList<PresetWeatherList> wths;
+//      try {
+//        wths = XmlLoadHelper.loadWeather(fileName);
+//        ret = true;
+//        Sources.setTraffic(wths);
+//      } catch (Exception ex) {
+//        ex.printStackTrace();
+//        MessageBox.show("Unable to load traffic file " + fileName + ".\n\nReason:\n" + ExceptionUtils.toFullString(ex, "\n"),
+//            "Error...");
+//        ret = false;
+//      }
+//    }
+//    return ret;
   }
 
   private boolean loadArea() {

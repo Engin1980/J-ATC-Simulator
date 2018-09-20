@@ -45,9 +45,9 @@ public class JAtcSim {
 
   private static final boolean FAST_START = false;
   private static final Traffic enginSpecificTraffic =
-       // new eng.jAtcSim.lib.traffic.TestTrafficOneApproach();
-       // new eng.jAtcSim.lib.traffic.TestTrafficOneDeparture();
-        null;
+      // new eng.jAtcSim.lib.traffic.TestTrafficOneApproach();
+      // new eng.jAtcSim.lib.traffic.TestTrafficOneDeparture();
+      null;
   private static AppSettings appSettings;
 
   private static FrmLog frmLog;
@@ -55,7 +55,7 @@ public class JAtcSim {
   /**
    * @param args the command line arguments
    */
-  public static void main(String[] args){
+  public static void main(String[] args) {
 //   LoadDemo.demoSerializer();
 
     AppSettings.init();
@@ -128,41 +128,32 @@ public class JAtcSim {
     gsi.secondLengthInMs = startupSettings.simulation.secondLengthInMs;
     if (enginSpecificTraffic != null) {
       gsi.specificTraffic = enginSpecificTraffic;
-      gsi.trafficSourceType = TrafficXmlSource.TrafficSource.specificTraffic;
+      gsi.trafficSourceType = Game.GameStartupInfo.SourceType.user;
     } else {
-      switch (startupSettings.traffic.type) {
-        case custom:
-          gsi.specificTraffic = generateCustomTraffic(startupSettings.traffic);
-          gsi.trafficSourceType = TrafficXmlSource.TrafficSource.specificTraffic;
-          break;
-        case airportDefined:
-          gsi.trafficSourceType = TrafficXmlSource.TrafficSource.activeAirportTraffic;
-          gsi.lookForTrafficTitle = startupSettings.traffic.trafficAirportDefinedTitle;
-          break;
-        case xml:
-          gsi.trafficSourceType = TrafficXmlSource.TrafficSource.xmlFileTraffic;
-          gsi.lookForTrafficTitle = startupSettings.traffic.trafficXmlDefinedTitle;
-          break;
-        default:
-          throw new EEnumValueUnsupportedException(startupSettings.traffic.type);
+      if (startupSettings.traffic.type == StartupSettings.Traffic.eTrafficType.xml) {
+        gsi.trafficSourceType = Game.GameStartupInfo.SourceType.xml;
+        gsi.specificTraffic = null;
+      } else {
+        gsi.trafficSourceType = Game.GameStartupInfo.SourceType.user;
+        gsi.specificTraffic = generateCustomTraffic(startupSettings.traffic);
       }
     }
 
     gsi.startTime = new ETime(startupSettings.recent.time);
     gsi.trafficXmlFile = startupSettings.files.trafficXmlFile;
     gsi.initialWeather = Weather.createClear();
-    switch (startupSettings.weather.type){
-      case constant:
-        gsi.weatherProviderType = WeatherSource.ProviderType.staticProvider;
+    switch (startupSettings.weather.type) {
+      case user:
+        gsi.weatherProviderType = Game.GameStartupInfo.WeatherSourceType.user;
         break;
-      case  online:
-        gsi.weatherProviderType = WeatherSource.ProviderType.dynamicProvider;
+      case online:
+        gsi.weatherProviderType = Game.GameStartupInfo.WeatherSourceType.online;
         break;
-      case preset:
-        gsi.weatherProviderType = WeatherSource.ProviderType.presetProvider;
+      case xml:
+        gsi.weatherProviderType = Game.GameStartupInfo.WeatherSourceType.xml;
         break;
-        default:
-          throw new EEnumValueUnsupportedException(startupSettings.weather.type);
+      default:
+        throw new EEnumValueUnsupportedException(startupSettings.weather.type);
     }
 
     gsi.allowTrafficDelays = startupSettings.traffic.allowDelays;
@@ -241,7 +232,7 @@ public class JAtcSim {
         q -> {
           q.setBackground(Color.DARK_GRAY);
           q.setForeground(Color.LIGHT_GRAY);
-          ((JMenu)q).setOpaque(true);
+          ((JMenu) q).setOpaque(true);
         });
     Stylist.add(
         "JMenuItem style",

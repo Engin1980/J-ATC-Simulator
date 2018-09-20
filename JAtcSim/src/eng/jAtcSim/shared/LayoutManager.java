@@ -22,6 +22,10 @@ public class LayoutManager {
     baseline
   }
 
+  public static void setPanelBorderText(JPanel pnl, String text){
+    pnl.setBorder(BorderFactory.createTitledBorder(text));
+  }
+
   public static void adjustComponents(Component mostParentComponent, Action action){
     action.apply(mostParentComponent);
 
@@ -37,6 +41,10 @@ public class LayoutManager {
     JPanel ret = new JPanel();
     fillFlowPanel(ret, align, distance, components);
     return ret;
+  }
+
+  public static JPanel createFlowPanel(JComponent... components) {
+    return createFlowPanel(eVerticalAlign.baseline,4, components );
   }
 
   public static void fillFlowPanel(Container panel, eVerticalAlign align, int distance, JComponent... components) {
@@ -67,6 +75,10 @@ public class LayoutManager {
     JPanel ret = new JPanel();
     fillBoxPanel(ret, align, distance, components);
     return ret;
+  }
+
+  public static JPanel createBoxPanel(JComponent... components) {
+    return createBoxPanel(eHorizontalAlign.left, 4, components);
   }
 
   public static void fillBoxPanel(Container panel, eHorizontalAlign align, int distance, JComponent... components) {
@@ -108,11 +120,21 @@ public class LayoutManager {
   }
 
   public static void fillBorderedPanel(Container panel, int distance, JComponent content) {
+    fillBorderedPanel(panel, distance, distance, distance, distance, content);
+  }
+
+  public static JPanel createBorderedPanel(int marginLeft, int marginTop, int marginRight, int marginBottom, Container content){
+    JPanel ret = new JPanel();
+    fillBorderedPanel(ret, marginLeft, marginTop, marginRight, marginBottom, content );
+    return ret;
+  }
+
+  public static void fillBorderedPanel(Container panel, int marginLeft, int marginTop, int marginRight, int marginBottom, Container content){
     panel.setLayout(new BorderLayout());
-    panel.add(Box.createVerticalStrut(distance), BorderLayout.PAGE_START);
-    panel.add(Box.createVerticalStrut(distance), BorderLayout.PAGE_END);
-    panel.add(Box.createHorizontalStrut(distance), BorderLayout.LINE_START);
-    panel.add(Box.createHorizontalStrut(distance), BorderLayout.LINE_END);
+    panel.add(Box.createVerticalStrut(marginTop), BorderLayout.PAGE_START);
+    panel.add(Box.createVerticalStrut(marginBottom), BorderLayout.PAGE_END);
+    panel.add(Box.createHorizontalStrut(marginLeft), BorderLayout.LINE_START);
+    panel.add(Box.createHorizontalStrut(marginRight), BorderLayout.LINE_END);
     if (content != null)
       panel.add(content, BorderLayout.CENTER);
   }

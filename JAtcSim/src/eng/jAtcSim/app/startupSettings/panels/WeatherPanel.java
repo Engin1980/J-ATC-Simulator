@@ -1,214 +1,104 @@
 package eng.jAtcSim.app.startupSettings.panels;
 
-import eng.eSystem.EStringBuilder;
-import eng.eSystem.Tuple;
-import eng.eSystem.collections.EList;
-import eng.eSystem.collections.IList;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
-import eng.eSystem.utilites.ExceptionUtils;
-import eng.jAtcSim.lib.weathers.Weather;
-import eng.jAtcSim.lib.weathers.downloaders.MetarDecoder;
-import eng.jAtcSim.lib.weathers.downloaders.MetarDownloader;
-import eng.jAtcSim.lib.weathers.downloaders.MetarDownloaderNoaaGov;
-import eng.jAtcSim.shared.BackgroundWorker;
-import eng.jAtcSim.shared.LayoutManager;
-import eng.jAtcSim.shared.MessageBox;
+import eng.eSystem.utilites.awt.ComponentUtils;
+import eng.jAtcSim.app.extenders.SwingFactory;
+import eng.jAtcSim.app.extenders.XmlFileSelectorExtender;
 import eng.jAtcSim.app.startupSettings.StartupSettings;
-import eng.jAtcSim.app.extenders.NumericUpDownExtender;
-import eng.jAtcSim.app.extenders.XComboBoxExtender;
+import eng.jAtcSim.shared.LayoutManager;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
 
 public class WeatherPanel extends JStartupPanel {
+  private CustomWeatherPanel weatherPanel;
+  private JRadioButton rdbWeatherFromUser;
+  private JRadioButton rdbWeatherFromWeb;
+  private JRadioButton rdbWeatherFromFile;
+  private XmlFileSelectorExtender fleWeather;
 
-  private static final int SPACE = 4;
-  private static final String DOWNLOAD_BUTTON_TEXT = "Download and use current";
-  private static final String DOWNLOADING_BUTTON_TEXT = "...downloading, please wait";
+  public WeatherPanel() {
+    initComponents();
+    createLayout();
+  }
 
-  private NumericUpDownExtender txtWindHeading = new NumericUpDownExtender(new JSpinner(), 0, 360, 40, 1);
-  private NumericUpDownExtender txtWindSpeed = new NumericUpDownExtender(new JSpinner(), 0, 100, 4, 1);
-  private NumericUpDownExtender txtVisibility = new NumericUpDownExtender(new JSpinner(), 0, 9999, 9999, 100);
-  private NumericUpDownExtender txtHitProbability = new NumericUpDownExtender(new JSpinner(), 0, 100, 0, 1);
-  private XComboBoxExtender<String> cmbClouds = new XComboBoxExtender(
-      new String[]{"CLR", "FEW", "SCT", "BKN", "OVC"}
-  );
-  private XComboBoxExtender<Weather> cmbPreset = new XComboBoxExtender<>(getPredefinedWeathers());
-  private NumericUpDownExtender txtBaseAltitude = new NumericUpDownExtender(new JSpinner(), 0, 20000, 8000, 1000);
-  private String icao;
-  private JButton btnDownload;
+  private void createLayout() {
+    JPanel pnlWeather = createWeatherPanel();
+    JPanel pnlUserWeather = createUserWeatherPanel();
+    LayoutManager.setPanelBorderText(pnlWeather, "Weather source:");
+    LayoutManager.setPanelBorderText(pnlUserWeather, "Custom weather settings:");
+    JPanel tmp = LayoutManager.createBoxPanel(LayoutManager.eHorizontalAlign.center, 4,
+        pnlWeather, pnlUserWeather);
 
-  private static IList<XComboBoxExtender.Item<Weather>> getPredefinedWeathers() {
-    IList<XComboBoxExtender.Item<Weather>> ret = new EList<>();
+    this.add(tmp);
+  }
 
-    String k;
-    Weather w;
-    XComboBoxExtender.Item<Weather> item;
+  private void initComponents() {
+    fleWeather = new XmlFileSelectorExtender(SwingFactory.FileDialogType.weather);
+    this.weatherPanel = new CustomWeatherPanel();
 
-    k = "Clear";
-    w = new Weather(34, 4, 9999, 12_000, .1);
-    item = new XComboBoxExtender.Item(k, w);
-    ret.add(item);
+    rdbWeatherFromWeb = new JRadioButton();
+    rdbWeatherFromWeb.addActionListener(
+        e -> ComponentUtils.adjustComponentTree(this.weatherPanel, q -> q.setEnabled(false)));
+    rdbWeatherFromWeb.setText("online weather from web");
 
-    k = "Foggy";
-    w = new Weather(61, 2, 100, 100, 1);
-    item = new XComboBoxExtender.Item(k, w);
-    ret.add(item);
+    rdbWeatherFromFile = new JRadioButton();
+    rdbWeatherFromWeb.addActionListener(
+        e -> ComponentUtils.adjustComponentTree(this.weatherPanel, q -> q.setEnabled(false)));
+    rdbWeatherFromFile.setText("from file");
 
-    k = "Windy";
-    w = new Weather(281, 31, 7000, 8_000, .7);
-    item = new XComboBoxExtender.Item(k, w);
-    ret.add(item);
+    rdbWeatherFromUser = new JRadioButton();
+    rdbWeatherFromUser.addActionListener(
+        e -> ComponentUtils.adjustComponentTree(this.weatherPanel, q -> q.setEnabled(true)));
+    rdbWeatherFromUser.setSelected(true);
+    rdbWeatherFromUser.setText("custom weather:");
 
-    k = "Rainy";
-    w = new Weather(174, 17, 1_500, 1000, .8);
-    item = new XComboBoxExtender.Item(k, w);
-    ret.add(item);
+    ButtonGroup group = new ButtonGroup();
+    group.add(rdbWeatherFromUser);
+    group.add(rdbWeatherFromWeb);
+    group.add(rdbWeatherFromFile);
+  }
 
+  private JPanel createWeatherPanel() {
+    JPanel ret = LayoutManager.createBoxPanel(LayoutManager.eHorizontalAlign.left, DISTANCE,
+        rdbWeatherFromWeb,
+        LayoutManager.createFlowPanel(
+            LayoutManager.eVerticalAlign.baseline, 4,
+            rdbWeatherFromFile,
+            LayoutManager.createFlowPanel(fleWeather.getTextControl(), fleWeather.getButtonControl())),
+        rdbWeatherFromUser
+    );
     return ret;
   }
 
-  public WeatherPanel() {
-
-    JPanel pnlA = LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.baseline, SPACE,
-        new JLabel("Wind direction (°):"),
-        txtWindHeading.getControl(),
-        new JLabel("Wind speed (kts):"),
-        txtWindSpeed.getControl());
-
-    JPanel pnlB = LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.baseline, SPACE,
-        new JLabel("Visibility (meters):"),
-        txtVisibility.getControl());
-
-    JPanel pnlC = LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.baseline, SPACE,
-        new JLabel("Cloud intensity (%):"),
-        cmbClouds.getControl(),
-        txtHitProbability.getControl(),
-        new JLabel("Base cloud altitude (ft):"),
-        txtBaseAltitude.getControl()
-    );
-
-    this.btnDownload = new JButton(DOWNLOAD_BUTTON_TEXT);
-    btnDownload.addActionListener(q -> btnDownload_click(q));
-
-    JPanel pnlD = LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.baseline, SPACE,
-        new JLabel("Choose preset:"),
-        cmbPreset.getControl(),
-        btnDownload
-    );
-
-    LayoutManager.fillBoxPanel(this, LayoutManager.eHorizontalAlign.left, SPACE, pnlA, pnlB, pnlC, pnlD);
-
-    cmbClouds.getControl().addActionListener(q -> cmbCloudsChanged());
-    cmbPreset.getControl().addActionListener(this::cmbPreset_selectedItemChanged);
-  }
-
-  private void cmbPreset_selectedItemChanged(ActionEvent actionEvent) {
-    Weather w = cmbPreset.getSelectedItem();
-    this.setWeather(w);
+  private JPanel createUserWeatherPanel() {
+    this.weatherPanel = new CustomWeatherPanel();
+    return this.weatherPanel;
   }
 
   @Override
   public void fillBySettings(StartupSettings settings) {
-    StartupSettings.Weather w = settings.weather;
-
-    txtBaseAltitude.setValue(w.cloudBaseAltitudeFt);
-    txtVisibility.setValue(w.visibilityInM);
-    txtHitProbability.setValue((int) (w.cloudBaseProbability * 100));
-    txtWindHeading.setValue(w.windDirection);
-    txtWindSpeed.setValue(w.windSpeed);
-    selectHitProbabilityComboBoxByValue(w.cloudBaseProbability);
+    switch (settings.weather.type) {
+      case user:
+        rdbWeatherFromUser.setSelected(true);
+        break;
+      case online:
+        rdbWeatherFromWeb.setSelected(true);
+        break;
+      case xml:
+        rdbWeatherFromFile.setSelected(true);
+        break;
+      default:
+        throw new EEnumValueUnsupportedException(settings.weather.type);
+    }
   }
 
   @Override
   public void fillSettingsBy(StartupSettings settings) {
-    StartupSettings.Weather w = settings.weather;
-
-    w.cloudBaseAltitudeFt = txtBaseAltitude.getValue();
-    w.visibilityInM = txtVisibility.getValue();
-    w.cloudBaseProbability = txtHitProbability.getValue() / 100d;
-    w.windDirection = txtWindHeading.getValue();
-    w.windSpeed = txtWindSpeed.getValue();
-  }
-
-  private void cmbCloudsChanged() {
-    String item = cmbClouds.getSelectedItem();
-    switch (item) {
-      case "CLR":
-        txtHitProbability.setValue(0);
-        break;
-      case "FEW":
-        txtHitProbability.setValue(1000 / 80);
-        break;
-      case "SCT":
-        txtHitProbability.setValue(4000 / 80);
-        break;
-      case "BKN":
-        txtHitProbability.setValue(6000 / 80);
-        break;
-      case "OVC":
-        txtHitProbability.setValue(100);
-        break;
-      default:
-        throw new EEnumValueUnsupportedException(item);
-    }
-  }
-
-  public void setRelativeIcao(String icao) {
-    this.icao = icao;
-  }
-
-  private void btnDownload_click(java.awt.event.ActionEvent evt) {
-    btnDownload.setText(DOWNLOADING_BUTTON_TEXT);
-    btnDownload.setEnabled(false);
-
-    BackgroundWorker<Tuple<String, Weather>> bw = new BackgroundWorker<>(
-        this::metarDownloadStart,
-        this::metarDownloadFinished);
-    bw.start();
-  }
-
-  private Tuple<String, Weather> metarDownloadStart() {
-    MetarDownloader down = new MetarDownloaderNoaaGov();
-    String s = down.downloadMetar(icao);
-    Weather w = MetarDecoder.decode(s);
-    Tuple<String, Weather> ret = new Tuple<>(s, w);
-    return ret;
-  }
-
-  private void metarDownloadFinished(Tuple<String, Weather> result, Exception ex) {
-    if (result != null) {
-      setWeather(result.getB());
-    } else {
-      EStringBuilder sb = new EStringBuilder();
-      sb.appendFormatLine("Failed to download METAR for airport with code: %s. Reason:", icao);
-      sb.appendLine(ExceptionUtils.toFullString(ex, "\n"));
-      MessageBox.show(sb.toString(), "Error...");
-    }
-    btnDownload.setText(DOWNLOAD_BUTTON_TEXT);
-    btnDownload.setEnabled(true);
-  }
-
-  private void setWeather(Weather w) {
-    txtBaseAltitude.setValue(w.getCloudBaseInFt());
-    txtVisibility.setValue(w.getVisibilityInMeters());
-    txtWindHeading.setValue(w.getWindHeading());
-    txtWindSpeed.setValue(w.getWindSpeetInKts());
-    txtHitProbability.setValue((int) (w.getCloudBaseHitProbability() * 100));
-    selectHitProbabilityComboBoxByValue(w.getCloudBaseHitProbability());
-  }
-
-  private void selectHitProbabilityComboBoxByValue(double value) {
-    value = value * .8;
-    if (value == 0)
-      cmbClouds.setSelectedItem("CLR");
-    else if (value < .2)
-      cmbClouds.setSelectedItem("FEW");
-    else if (value < .4)
-      cmbClouds.setSelectedItem("SCT");
-    else if (value < .8)
-      cmbClouds.setSelectedItem("BKN");
+    if (rdbWeatherFromFile.isSelected())
+      settings.weather.type = StartupSettings.Weather.WeatherSourceType.xml;
+    else if (rdbWeatherFromWeb.isSelected())
+      settings.weather.type = StartupSettings.Weather.WeatherSourceType.online;
     else
-      cmbClouds.setSelectedItem("OVC");
+      settings.weather.type = StartupSettings.Weather.WeatherSourceType.user;
   }
 }

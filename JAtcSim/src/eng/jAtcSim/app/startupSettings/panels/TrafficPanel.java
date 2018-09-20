@@ -9,13 +9,10 @@ import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.utilites.awt.ComponentUtils;
+import eng.jAtcSim.app.extenders.*;
 import eng.jAtcSim.lib.traffic.Traffic;
 import eng.jAtcSim.lib.world.Airport;
 import eng.jAtcSim.shared.LayoutManager;
-import eng.jAtcSim.app.extenders.ItemTextFieldExtender;
-import eng.jAtcSim.app.extenders.NumericUpDownExtender;
-import eng.jAtcSim.app.extenders.SwingFactory;
-import eng.jAtcSim.app.extenders.XComboBoxExtender;
 import eng.jAtcSim.app.startupSettings.StartupSettings;
 
 import javax.swing.*;
@@ -31,8 +28,7 @@ public class TrafficPanel extends JStartupPanel {
   private NumericUpDownExtender nudMaxPlanes;
   private NumericUpDownExtender nudMovements;
   private NumericUpDownExtender nudNonCommercials;
-  private javax.swing.JRadioButton rdbAirportDefined;
-  private javax.swing.JRadioButton rdbCustom;
+  private javax.swing.JRadioButton rdbUser;
   private javax.swing.JRadioButton rdbXml;
   private NumericUpDownExtender nudA;
   private JScrollBar sldArrivalsDepartures;
@@ -184,15 +180,13 @@ public class TrafficPanel extends JStartupPanel {
             super.DISTANCE,
             new JLabel("Emergencies probabilty:"),
             cmbEmergencyProbability.getControl()));
+    pnlGlobalTrafficSettings = LayoutManager.createBorderedPanel(8, pnlGlobalTrafficSettings);
+    LayoutManager.setPanelBorderText(pnlGlobalTrafficSettings, "Global traffic settings:");
 
-    pnlGlobalTrafficSettings.setBorder(BorderFactory.createTitledBorder("Global traffic settings:"));
-
-    JPanel pnlTrafficSource = LayoutManager.createFormPanel(3, 2,
+    JPanel pnlTrafficSource = LayoutManager.createFormPanel(2, 2,
         rdbXml,
-        cmbXmlDefinedTraffic.getControl(),
-        rdbAirportDefined,
-        cmbAirportDefinedTraffic.getControl(),
-        rdbCustom, null);
+        LayoutManager.createFlowPanel(fleTraffic.getTextControl(), fleTraffic.getButtonControl()),
+        rdbUser, null);
     pnlTrafficSource.setBorder(BorderFactory.createTitledBorder("Used traffic:"));
 
     this.pnlCustomTraffic = LayoutManager.createFormPanel(7, 2,
@@ -230,16 +224,17 @@ public class TrafficPanel extends JStartupPanel {
       specificMovementValues = tmp;
     }
   }
-
+  private XmlFileSelectorExtender fleTraffic;
   private void createComponents() {
+
+    fleTraffic = new XmlFileSelectorExtender(SwingFactory.FileDialogType.traffic);
+
     grpRdb = new javax.swing.ButtonGroup();
 
-    rdbXml = new javax.swing.JRadioButton("Use XML defined traffic");
+    rdbXml = new javax.swing.JRadioButton("Load from file");
 
-    rdbAirportDefined = new javax.swing.JRadioButton("Defined by active airport:");
-
-    rdbCustom = new javax.swing.JRadioButton("Use custom traffic");
-    rdbCustom.addChangeListener(q -> updateCustomPanelState());
+    rdbUser = new javax.swing.JRadioButton("Use custom traffic");
+    rdbUser.addChangeListener(q -> updateCustomPanelState());
 
     chkAllowDelays = new javax.swing.JCheckBox("Allow traffic delays");
 
@@ -263,9 +258,8 @@ public class TrafficPanel extends JStartupPanel {
     setCmbEmergencyProbabilityModel();
 
     grpRdb.add(rdbXml);
-    grpRdb.add(rdbCustom);
-    grpRdb.add(rdbAirportDefined);
-    rdbCustom.setSelected(true);
+    grpRdb.add(rdbUser);
+    rdbUser.setSelected(true);
   }
 
   private void setCmbEmergencyProbabilityModel() {
@@ -286,23 +280,20 @@ public class TrafficPanel extends JStartupPanel {
   }
 
   private void updateCustomPanelState() {
-    if (pnlCustomTraffic != null && rdbCustom != null)
-      ComponentUtils.adjustComponentTree(pnlCustomTraffic, q -> q.setEnabled(rdbCustom.isSelected()));
+    if (pnlCustomTraffic != null && rdbUser != null)
+      ComponentUtils.adjustComponentTree(pnlCustomTraffic, q -> q.setEnabled(rdbUser.isSelected()));
   }
 
   private void adjustSelectedRdb(StartupSettings settings) {
-    rdbAirportDefined.setSelected(settings.traffic.type == StartupSettings.Traffic.eTrafficType.airportDefined);
     rdbXml.setSelected(settings.traffic.type == StartupSettings.Traffic.eTrafficType.xml);
-    rdbCustom.setSelected(settings.traffic.type == StartupSettings.Traffic.eTrafficType.custom);
+    rdbUser.setSelected(settings.traffic.type == StartupSettings.Traffic.eTrafficType.user);
   }
 
   private void adjustRdbSelected(StartupSettings settings) {
     if (rdbXml.isSelected())
       settings.traffic.type = StartupSettings.Traffic.eTrafficType.xml;
-    else if (rdbAirportDefined.isSelected())
-      settings.traffic.type = StartupSettings.Traffic.eTrafficType.airportDefined;
-    else if (rdbCustom.isSelected())
-      settings.traffic.type = StartupSettings.Traffic.eTrafficType.custom;
+    else if (rdbUser.isSelected())
+      settings.traffic.type = StartupSettings.Traffic.eTrafficType.user;
     else
       throw new UnsupportedOperationException();
   }
