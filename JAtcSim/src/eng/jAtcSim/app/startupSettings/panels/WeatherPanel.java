@@ -10,7 +10,7 @@ import eng.jAtcSim.shared.LayoutManager;
 import javax.swing.*;
 
 public class WeatherPanel extends JStartupPanel {
-  private CustomWeatherPanel weatherPanel;
+  private CustomWeatherPanel userWeatherPanel;
   private JRadioButton rdbWeatherFromUser;
   private JRadioButton rdbWeatherFromWeb;
   private JRadioButton rdbWeatherFromFile;
@@ -19,60 +19,6 @@ public class WeatherPanel extends JStartupPanel {
   public WeatherPanel() {
     initComponents();
     createLayout();
-  }
-
-  private void createLayout() {
-    JPanel pnlWeather = createWeatherPanel();
-    JPanel pnlUserWeather = createUserWeatherPanel();
-    LayoutManager.setPanelBorderText(pnlWeather, "Weather source:");
-    LayoutManager.setPanelBorderText(pnlUserWeather, "Custom weather settings:");
-    JPanel tmp = LayoutManager.createBoxPanel(LayoutManager.eHorizontalAlign.center, 4,
-        pnlWeather, pnlUserWeather);
-
-    this.add(tmp);
-  }
-
-  private void initComponents() {
-    fleWeather = new XmlFileSelectorExtender(SwingFactory.FileDialogType.weather);
-    this.weatherPanel = new CustomWeatherPanel();
-
-    rdbWeatherFromWeb = new JRadioButton();
-    rdbWeatherFromWeb.addActionListener(
-        e -> ComponentUtils.adjustComponentTree(this.weatherPanel, q -> q.setEnabled(false)));
-    rdbWeatherFromWeb.setText("online weather from web");
-
-    rdbWeatherFromFile = new JRadioButton();
-    rdbWeatherFromWeb.addActionListener(
-        e -> ComponentUtils.adjustComponentTree(this.weatherPanel, q -> q.setEnabled(false)));
-    rdbWeatherFromFile.setText("from file");
-
-    rdbWeatherFromUser = new JRadioButton();
-    rdbWeatherFromUser.addActionListener(
-        e -> ComponentUtils.adjustComponentTree(this.weatherPanel, q -> q.setEnabled(true)));
-    rdbWeatherFromUser.setSelected(true);
-    rdbWeatherFromUser.setText("custom weather:");
-
-    ButtonGroup group = new ButtonGroup();
-    group.add(rdbWeatherFromUser);
-    group.add(rdbWeatherFromWeb);
-    group.add(rdbWeatherFromFile);
-  }
-
-  private JPanel createWeatherPanel() {
-    JPanel ret = LayoutManager.createBoxPanel(LayoutManager.eHorizontalAlign.left, DISTANCE,
-        rdbWeatherFromWeb,
-        LayoutManager.createFlowPanel(
-            LayoutManager.eVerticalAlign.baseline, 4,
-            rdbWeatherFromFile,
-            LayoutManager.createFlowPanel(fleWeather.getTextControl(), fleWeather.getButtonControl())),
-        rdbWeatherFromUser
-    );
-    return ret;
-  }
-
-  private JPanel createUserWeatherPanel() {
-    this.weatherPanel = new CustomWeatherPanel();
-    return this.weatherPanel;
   }
 
   @Override
@@ -100,5 +46,71 @@ public class WeatherPanel extends JStartupPanel {
       settings.weather.type = StartupSettings.Weather.WeatherSourceType.online;
     else
       settings.weather.type = StartupSettings.Weather.WeatherSourceType.user;
+  }
+
+  public void setRelativeIcao(String icao) {
+    this.userWeatherPanel.setRelativeIcao(icao);
+  }
+
+  private void createLayout() {
+    JPanel pnlWeather = createWeatherPanel();
+    JPanel pnlUserWeather = createUserWeatherPanel();
+    LayoutManager.setPanelBorderText(pnlWeather, "Weather source:");
+    LayoutManager.setPanelBorderText(pnlUserWeather, "Custom weather settings:");
+
+    pnlWeather = LayoutManager.createBorderedPanel(8, pnlWeather);
+    pnlUserWeather = LayoutManager.createBorderedPanel(8, pnlUserWeather);
+
+    pnlWeather.setMinimumSize(LARGE_FRAME_FIELD_DIMENSION);
+    pnlUserWeather.setMinimumSize(LARGE_FRAME_FIELD_DIMENSION);
+
+
+    JPanel pnlMain = LayoutManager.createFormPanel(2, 1,
+        pnlWeather, pnlUserWeather);
+
+    this.add(pnlMain);
+  }
+
+  private void initComponents() {
+    fleWeather = new XmlFileSelectorExtender(SwingFactory.FileDialogType.weather);
+    this.userWeatherPanel = new CustomWeatherPanel();
+
+    rdbWeatherFromWeb = new JRadioButton();
+    rdbWeatherFromWeb.addActionListener(
+        e -> ComponentUtils.adjustComponentTree(this.userWeatherPanel, q -> q.setEnabled(false)));
+    rdbWeatherFromWeb.setText("online weather from web");
+
+    rdbWeatherFromFile = new JRadioButton();
+    rdbWeatherFromWeb.addActionListener(
+        e -> ComponentUtils.adjustComponentTree(this.userWeatherPanel, q -> q.setEnabled(false)));
+    rdbWeatherFromFile.setText("from file");
+
+    rdbWeatherFromUser = new JRadioButton();
+    rdbWeatherFromUser.addActionListener(
+        e -> ComponentUtils.adjustComponentTree(this.userWeatherPanel, q -> q.setEnabled(true)));
+    rdbWeatherFromUser.setSelected(true);
+    rdbWeatherFromUser.setText("custom weather:");
+
+    ButtonGroup group = new ButtonGroup();
+    group.add(rdbWeatherFromUser);
+    group.add(rdbWeatherFromWeb);
+    group.add(rdbWeatherFromFile);
+  }
+
+  private JPanel createWeatherPanel() {
+    JPanel ret = LayoutManager.createBoxPanel(LayoutManager.eHorizontalAlign.left, DISTANCE,
+        rdbWeatherFromWeb,
+        LayoutManager.createFlowPanel(
+            LayoutManager.eVerticalAlign.baseline, 4,
+            rdbWeatherFromFile,
+            LayoutManager.createFlowPanel(fleWeather.getTextControl(), fleWeather.getButtonControl())),
+        rdbWeatherFromUser
+    );
+    return ret;
+  }
+
+  private JPanel createUserWeatherPanel() {
+    this.userWeatherPanel = new CustomWeatherPanel();
+    return this.userWeatherPanel;
   }
 }

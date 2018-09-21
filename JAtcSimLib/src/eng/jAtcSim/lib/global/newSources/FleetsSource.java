@@ -25,7 +25,7 @@ public class FleetsSource extends Source<Fleets> {
     XmlSettings sett = new XmlSettings();
     XmlSerializer ser = new XmlSerializer(sett);
     this.fleets = ser.deserialize(this.xmlFileName, Fleets.class);
-    this.getContent().init(types);
+    this.fleets.init(types);
     super.setInitialized();
   }
 }

@@ -18,9 +18,6 @@ public class FrmStartupSettings extends JPanel {
 
   public FrmStartupSettings() throws HeadlessException {
 
-    // top
-    JPanel pnlTop = createTopPanel();
-
     // content
     pnlContent = createContentPanel();
 
@@ -28,7 +25,7 @@ public class FrmStartupSettings extends JPanel {
     JPanel pnlBottom = createBottomPanel();
 
     //JPanel pnl = LayoutManager.createBorderedPanel(pnlTop, pnlBottom, null, null, pnlContent);
-    LayoutManager.fillBorderedPanel(this, pnlTop, pnlBottom, null, null, pnlContent);
+    LayoutManager.fillBorderedPanel(this, null, pnlBottom, null, null, pnlContent);
   }
 
   public boolean isDialogResultOk() {
@@ -125,10 +122,12 @@ public class FrmStartupSettings extends JPanel {
     tabbedPane.addTab("Airport, planes & fleets", pnlA);
 
     WeatherPanel pnlB = new WeatherPanel();
-    tabbedPane.addTab("Weather",pnlB );
+    tabbedPane.addTab("Weather", pnlB);
+    pnlA.getOnIcaoChanged().add(this::icaoChanged);
+    pnlA.getOnIcaoChanged().add(pnlB::setRelativeIcao);
+
 
     TrafficPanel pnlC = new TrafficPanel();
-    pnlA.getOnAirportChanged().add(q->{pnlC.airportChanged((Airport) q);});
     tabbedPane.addTab("Traffic", pnlC);
 
     SimulationTimeRadarSettings pnlD = new SimulationTimeRadarSettings();
@@ -137,6 +136,10 @@ public class FrmStartupSettings extends JPanel {
     ret.add(tabbedPane);
 
     return ret;
+  }
+
+  private void icaoChanged(String s) {
+    System.out.println("Changed icao to " + s);
   }
 
   private JPanel createTopPanel() {

@@ -6,6 +6,7 @@ import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.utilites.ExceptionUtils;
+import eng.eSystem.utilites.StringUtils;
 import eng.jAtcSim.app.extenders.SwingFactory;
 import eng.jAtcSim.app.extenders.XmlFileSelectorExtender;
 import eng.jAtcSim.lib.weathers.Weather;
@@ -40,6 +41,15 @@ public class CustomWeatherPanel extends JStartupPanel {
   private String icao;
   private JButton btnDownload;
 
+  public void setRelativeIcao(String icao) {
+    this.icao = icao;
+    btnDownload.setEnabled(StringUtils.isNullOrWhitespace(icao) == false);
+    if (btnDownload.isEnabled())
+      btnDownload.setText("Download for '" + icao+ "'");
+    else
+      btnDownload.setText("(select airport first)");
+  }
+
   private static IList<XComboBoxExtender.Item<Weather>> getPredefinedWeathers() {
     IList<XComboBoxExtender.Item<Weather>> ret = new EList<>();
 
@@ -72,42 +82,31 @@ public class CustomWeatherPanel extends JStartupPanel {
 
   public CustomWeatherPanel() {
 
-    JPanel pnlA = LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.baseline, SPACE,
+    this.btnDownload = new JButton(DOWNLOAD_BUTTON_TEXT);
+    btnDownload.addActionListener(q -> btnDownload_click(q));
+    cmbClouds.getControl().addActionListener(q -> cmbCloudsChanged());
+    cmbPreset.getControl().addActionListener(this::cmbPreset_selectedItemChanged);
+
+
+    JPanel pnlA = LayoutManager.createFormPanel(6, 2,
         new JLabel("Wind direction (°):"),
         txtWindHeading.getControl(),
         new JLabel("Wind speed (kts):"),
-        txtWindSpeed.getControl());
-
-    JPanel pnlB = LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.baseline, SPACE,
+        txtWindSpeed.getControl(),
         new JLabel("Visibility (meters):"),
-        txtVisibility.getControl());
-
-    JPanel pnlC = LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.baseline, SPACE,
+        txtVisibility.getControl(),
         new JLabel("Cloud intensity (%):"),
-        cmbClouds.getControl(),
-        txtHitProbability.getControl(),
+        LayoutManager.createFlowPanel(
+            cmbClouds.getControl(),
+            txtHitProbability.getControl()),
         new JLabel("Base cloud altitude (ft):"),
-        txtBaseAltitude.getControl()
-    );
-
-    this.btnDownload = new JButton(DOWNLOAD_BUTTON_TEXT);
-    btnDownload.addActionListener(q -> btnDownload_click(q));
-
-    JPanel pnlD = LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.baseline, SPACE,
+        txtBaseAltitude.getControl(),
         new JLabel("Choose preset:"),
-        cmbPreset.getControl(),
-        btnDownload
-    );
+        LayoutManager.createFlowPanel(
+            cmbPreset.getControl(),
+            btnDownload));
 
-    LayoutManager.fillBoxPanel(this, LayoutManager.eHorizontalAlign.left, SPACE, pnlA, pnlB, pnlC, pnlD);
-
-    cmbClouds.getControl().addActionListener(q -> cmbCloudsChanged());
-    cmbPreset.getControl().addActionListener(this::cmbPreset_selectedItemChanged);
-  }
-
-  private void cmbPreset_selectedItemChanged(ActionEvent actionEvent) {
-    Weather w = cmbPreset.getSelectedItem();
-    this.setWeather(w);
+    LayoutManager.fillBoxPanel(this, LayoutManager.eHorizontalAlign.left, 4, pnlA);
   }
 
   @Override
@@ -133,6 +132,11 @@ public class CustomWeatherPanel extends JStartupPanel {
     w.windSpeed = txtWindSpeed.getValue();
   }
 
+  private void cmbPreset_selectedItemChanged(ActionEvent actionEvent) {
+    Weather w = cmbPreset.getSelectedItem();
+    this.setWeather(w);
+  }
+
   private void cmbCloudsChanged() {
     String item = cmbClouds.getSelectedItem();
     switch (item) {
@@ -140,7 +144,7 @@ public class CustomWeatherPanel extends JStartupPanel {
         txtHitProbability.setValue(0);
         break;
       case "FEW":
-        txtHitProbability.setValue(1000 / 80);
+        txtHitProbability.setValue(1500 / 80);
         break;
       case "SCT":
         txtHitProbability.setValue(4000 / 80);
@@ -154,10 +158,6 @@ public class CustomWeatherPanel extends JStartupPanel {
       default:
         throw new EEnumValueUnsupportedException(item);
     }
-  }
-
-  public void setRelativeIcao(String icao) {
-    this.icao = icao;
   }
 
   private void btnDownload_click(java.awt.event.ActionEvent evt) {

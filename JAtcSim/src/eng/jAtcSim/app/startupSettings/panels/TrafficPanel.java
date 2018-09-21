@@ -42,6 +42,7 @@ public class TrafficPanel extends JStartupPanel {
   private ItemTextFieldExtender txtCompanies;
   private ItemTextFieldExtender txtCountryCodes;
   private int[] specificMovementValues = null;
+  private XmlFileSelectorExtender fleTraffic;
 
   public TrafficPanel() {
     initComponents();
@@ -49,12 +50,15 @@ public class TrafficPanel extends JStartupPanel {
     Sources.getOnTrafficChanged().add(this::trafficChanged);
   }
 
-  public void setActiveAirport(Airport aip){
+  public void setActiveAirport(Airport aip) {
     airportChanged(aip);
   }
 
   @Override
   public void fillBySettings(StartupSettings settings) {
+
+    fleTraffic.setFileName(settings.files.trafficXmlFile);
+
     nudMaxPlanes.setValue(settings.traffic.maxPlanes);
     nudTrafficDensity.setValue((int) (settings.traffic.densityPercentage * 100));
     adjustSelectedRdb(settings);
@@ -88,12 +92,14 @@ public class TrafficPanel extends JStartupPanel {
 
   @Override
   public void fillSettingsBy(StartupSettings settings) {
+    settings.files.trafficXmlFile = fleTraffic.getFileName();
+
     settings.traffic.maxPlanes = nudMaxPlanes.getValue();
     settings.traffic.trafficAirportDefinedTitle = cmbAirportDefinedTraffic.getSelectedItem();
     settings.traffic.trafficXmlDefinedTitle = cmbXmlDefinedTraffic.getSelectedItem();
     settings.traffic.densityPercentage = nudTrafficDensity.getValue() / 100d;
-    if (specificMovementValues == null){
-      int tmp []  = new int[24];
+    if (specificMovementValues == null) {
+      int tmp[] = new int[24];
       Arrays.fill(tmp, nudMovements.getValue());
       settings.traffic.customTraffic.movementsPerHour = tmp;
     } else
@@ -117,12 +123,12 @@ public class TrafficPanel extends JStartupPanel {
   public void airportChanged(Airport aip) {
     IList<XComboBoxExtender.Item<String>> mp = new EList<>();
     if (aip != null)
-        for (Traffic traffic : aip.getTrafficDefinitions()) {
-          mp.add(
-              new XComboBoxExtender.Item<>(
-                  traffic.getTitle(),
-                  traffic.getTitle()));
-        }
+      for (Traffic traffic : aip.getTrafficDefinitions()) {
+        mp.add(
+            new XComboBoxExtender.Item<>(
+                traffic.getTitle(),
+                traffic.getTitle()));
+      }
     else
       mp.add(new XComboBoxExtender.Item<>("Airport not selected", ""));
     cmbAirportDefinedTraffic.setModel(mp);
@@ -132,12 +138,12 @@ public class TrafficPanel extends JStartupPanel {
     IList<XComboBoxExtender.Item<String>> mp = new EList<>();
     IReadOnlyList<Traffic> trafficList = Sources.getTraffics();
     if (trafficList != null)
-        for (Traffic traffic : trafficList) {
-          mp.add(
-              new XComboBoxExtender.Item<>(
-                  traffic.getTitle(),
-                  traffic.getTitle()));
-        }
+      for (Traffic traffic : trafficList) {
+        mp.add(
+            new XComboBoxExtender.Item<>(
+                traffic.getTitle(),
+                traffic.getTitle()));
+      }
     else
       mp.add(new XComboBoxExtender.Item<>("Traffic set not loaded", ""));
     cmbXmlDefinedTraffic.setModel(mp);
@@ -168,28 +174,53 @@ public class TrafficPanel extends JStartupPanel {
 
   private void createLayout() {
 
-    JPanel pnlGlobalTrafficSettings = LayoutManager.createBoxPanel(LayoutManager.eHorizontalAlign.left, 4,
+    JPanel pnlGlobalTrafficSettings = createGlobalPanel();
+    JPanel pnlTrafficSource = createTrafficSourcePanel();
+    this.pnlCustomTraffic = createCustomTrafficPanel();
+
+    pnlGlobalTrafficSettings = LayoutManager.createBorderedPanel(8, pnlGlobalTrafficSettings);
+
+    LayoutManager.setPanelBorderText(pnlGlobalTrafficSettings, "Global traffic settings:");
+    LayoutManager.setPanelBorderText(pnlTrafficSource, "Used traffic:");
+    LayoutManager.setPanelBorderText(this.pnlCustomTraffic, "Custom generic traffic settings:");
+
+    pnlGlobalTrafficSettings.setMinimumSize(LARGE_FRAME_FIELD_DIMENSION);
+    pnlTrafficSource.setMinimumSize(LARGE_FRAME_FIELD_DIMENSION);
+    pnlCustomTraffic.setMinimumSize(LARGE_FRAME_FIELD_DIMENSION);
+
+    JPanel pnlMain = LayoutManager.createFormPanel(3, 1,
+        pnlGlobalTrafficSettings, pnlTrafficSource, this.pnlCustomTraffic);
+
+    pnlMain = LayoutManager.createBorderedPanel(DISTANCE, pnlMain);
+
+    this.add(pnlMain);
+  }
+
+  private JPanel createGlobalPanel() {
+    return LayoutManager.createFormPanel(2, 2,
+        new JLabel("Max planes count:"),
         LayoutManager.createFlowPanel(
             LayoutManager.eVerticalAlign.baseline,
             super.DISTANCE,
-            new JLabel("Max planes count:"), nudMaxPlanes.getControl(),
+            nudMaxPlanes.getControl(),
             new JLabel("Traffic density (%):"), nudTrafficDensity.getControl(),
             chkAllowDelays),
+        new JLabel("Emergencies probabilty:"),
         LayoutManager.createFlowPanel(
             LayoutManager.eVerticalAlign.baseline,
             super.DISTANCE,
-            new JLabel("Emergencies probabilty:"),
             cmbEmergencyProbability.getControl()));
-    pnlGlobalTrafficSettings = LayoutManager.createBorderedPanel(8, pnlGlobalTrafficSettings);
-    LayoutManager.setPanelBorderText(pnlGlobalTrafficSettings, "Global traffic settings:");
+  }
 
-    JPanel pnlTrafficSource = LayoutManager.createFormPanel(2, 2,
+  private JPanel createTrafficSourcePanel() {
+    return LayoutManager.createFormPanel(2, 2,
         rdbXml,
         LayoutManager.createFlowPanel(fleTraffic.getTextControl(), fleTraffic.getButtonControl()),
         rdbUser, null);
-    pnlTrafficSource.setBorder(BorderFactory.createTitledBorder("Used traffic:"));
+  }
 
-    this.pnlCustomTraffic = LayoutManager.createFormPanel(7, 2,
+  private JPanel createCustomTrafficPanel() {
+    JPanel ret = LayoutManager.createFormPanel(7, 2,
         null, chkCustomExtendedCallsigns,
         new JLabel("Movements / hour:"),
         LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.baseline, DISTANCE,
@@ -202,14 +233,7 @@ public class TrafficPanel extends JStartupPanel {
         new JLabel("Plane weights A/B/C/D"), LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.baseline, DISTANCE,
             nudA.getControl(), nudB.getControl(), nudC.getControl(), nudD.getControl())
     );
-    this.pnlCustomTraffic.setBorder(BorderFactory.createTitledBorder("Custom generic traffic settings:"));
-
-    JPanel pnlMain = LayoutManager.createBoxPanel(LayoutManager.eHorizontalAlign.left, DISTANCE,
-        pnlGlobalTrafficSettings, pnlTrafficSource, this.pnlCustomTraffic);
-
-    pnlMain = LayoutManager.createBorderedPanel(DISTANCE, pnlMain);
-
-    this.add(pnlMain);
+    return ret;
   }
 
   private void btnSpecifyTraffic_click(ActionEvent actionEvent) {
@@ -224,7 +248,7 @@ public class TrafficPanel extends JStartupPanel {
       specificMovementValues = tmp;
     }
   }
-  private XmlFileSelectorExtender fleTraffic;
+
   private void createComponents() {
 
     fleTraffic = new XmlFileSelectorExtender(SwingFactory.FileDialogType.traffic);

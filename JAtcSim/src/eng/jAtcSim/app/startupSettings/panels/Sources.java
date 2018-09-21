@@ -8,6 +8,7 @@ import eng.jAtcSim.lib.traffic.Traffic;
 import eng.jAtcSim.lib.traffic.fleets.Fleets;
 import eng.jAtcSim.lib.world.Area;
 
+@Deprecated
 class Sources {
 
   private static final EventAnonymousSimple onAreaChanged = new EventAnonymousSimple();
