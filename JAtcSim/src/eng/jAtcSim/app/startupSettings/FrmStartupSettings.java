@@ -9,6 +9,7 @@ import eng.jAtcSim.app.startupSettings.panels.*;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.io.File;
 
 public class FrmStartupSettings extends JPanel {
@@ -53,10 +54,7 @@ public class FrmStartupSettings extends JPanel {
     JButton btnSave = new JButton("Save");
     JButton btnLoad = new JButton("Load");
     JButton btnApply = new JButton("Apply");
-    btnApply.addActionListener(q -> {
-      this.dialogResultOk = true;
-      this.getRootPane().getParent().setVisible(false);
-    });
+    btnApply.addActionListener(this::btnApply_click);
     JButton btnCancel = new JButton("Discard changes");
     btnCancel.addActionListener(q -> {
       this.dialogResultOk = false;
@@ -80,6 +78,11 @@ public class FrmStartupSettings extends JPanel {
     ret = LayoutManager.createBorderedPanel(4, ret);
 
     return ret;
+  }
+
+  private void btnApply_click(ActionEvent actionEvent) {
+    this.dialogResultOk = true;
+    this.getRootPane().getParent().setVisible(false);
   }
 
   private void btnLoad_click() {
@@ -123,7 +126,6 @@ public class FrmStartupSettings extends JPanel {
 
     WeatherPanel pnlB = new WeatherPanel();
     tabbedPane.addTab("Weather", pnlB);
-    pnlA.getOnIcaoChanged().add(this::icaoChanged);
     pnlA.getOnIcaoChanged().add(pnlB::setRelativeIcao);
 
 
@@ -136,9 +138,5 @@ public class FrmStartupSettings extends JPanel {
     ret.add(tabbedPane);
 
     return ret;
-  }
-
-  private void icaoChanged(String s) {
-    System.out.println("Changed icao to " + s);
   }
 }

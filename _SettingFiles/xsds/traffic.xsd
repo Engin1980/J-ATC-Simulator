@@ -20,14 +20,6 @@
   </xs:complexType>
 
   <xs:complexType name="traffic">
-    <xs:sequence>
-      <xs:element name="description" minOccurs="0" maxOccurs="1">
-        <xs:simpleType>
-          <xs:restriction base="xs:string"/>
-        </xs:simpleType>
-      </xs:element>
-    </xs:sequence>
-    <xs:attribute name="title" type="sh:nonEmptyString" use="required"/>
     <xs:attribute name="delayProbability" type="xs:double" use="required"/>
     <xs:attribute name="maxDelayInMinutesPerStep" type="xs:int" use="required"/>
   </xs:complexType>
@@ -151,13 +143,12 @@
         <xs:sequence>
           <xs:element name="flight" type="flightListTrafficFlight" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
-        <xs:attribute name="title" type="xs:string" use="required"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="flightListTrafficFlight">
-    <xs:attribute name="time" type="xs:time" use="required"/>
+    <xs:attribute name="time" type="sh:time" use="required"/>
     <xs:attribute name="callsign" type="xs:string" use="required"/>
     <xs:attribute name="kind" use="required">
       <xs:simpleType>

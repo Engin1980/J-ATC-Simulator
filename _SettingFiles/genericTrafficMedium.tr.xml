@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<trafficDefinition
+        xmlns="https://github.com/Engin1980/J-ATC-Simulator/traffic">
+  <meta>
+    <title>Generic traffic medium</title>
+    <author>Marek Vajgl</author>
+    <description>
+      Generic medium traffic in waves defines high traffic every second hour. Peaks in the morning
+      (up to 23 movements/hour) and at the late afternoon/evening (up to 31 movements/hour).
+    </description>
+  </meta>
+  <genericTraffic delayProbability=".3" maxDelayInMinutesPerStep="15" probabilityOfDeparture=".5"
+                  probabilityOfNonCommercialFlight=".1" useExtendedCallsigns="true">
+    <movementsPerHour>
+      <item>0</item>
+      <item>0</item>
+      <item>1</item>
+      <item>0</item>
+      <item>0</item>
+      <item>3</item>
+      <item>11</item>
+      <item>4</item>
+      <item>23</item>
+      <item>3</item>
+      <item>12</item>
+      <item>7</item>
+      <item>11</item>
+      <item>4</item>
+      <item>2</item>
+      <item>5</item>
+      <item>21</item>
+      <item>14</item>
+      <item>15</item>
+      <item>21</item>
+      <item>31</item>
+      <item>17</item>
+      <item>7</item>
+      <item>3</item>
+    </movementsPerHour>
+    <probabilityOfCategory>
+      <item>.1</item>
+      <item>.3</item>
+      <item>.4</item>
+      <item>.2</item>
+    </probabilityOfCategory>
+    <companies>
+      <item>CSA</item>
+      <item>RYR</item>
+      <item>EZY</item>
+      <item>DHL</item>
+      <item>BAW</item>
+      <item>AUA</item>
+    </companies>
+    <countryCodes>
+      <item>DE</item>
+      <item>AT</item>
+      <item>OK</item>
+      <item>OM</item>
+      <item>G</item>
+      <item>AU</item>
+    </countryCodes>
+  </genericTraffic>
+</trafficDefinition>

@@ -5,8 +5,6 @@
  */
 package eng.jAtcSim.lib.traffic;
 
-import eng.eSystem.xmlSerialization.annotations.XmlOptional;
-
 /**
  * @author Marek Vajgl
  */
@@ -19,9 +17,6 @@ public abstract class Traffic {
    * Max delay in minutes per step.
    */
   private final int maxDelayInMinutesPerStep = 15;
-  private String title;
-  @XmlOptional
-  private String description;
 
   public double getDelayProbability() {
     return delayProbability;
@@ -31,16 +26,7 @@ public abstract class Traffic {
     return maxDelayInMinutesPerStep;
   }
 
-  public String getTitle() {
-    return title;
-  }
-
-  public String getDescription() {
-    return description;
-  }
-
   public abstract GeneratedMovementsResponse generateMovements(Object syncObject);
-
 }
 
 

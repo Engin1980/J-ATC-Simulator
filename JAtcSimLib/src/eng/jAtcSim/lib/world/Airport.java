@@ -67,10 +67,6 @@ public class Airport {
   private double declination;
   @XmlIgnore
   private Navaid _mainAirportNavaid;
-  @XmlItemElement(elementName = "densityTraffic", type = DensityBasedTraffic.class)
-  @XmlItemElement(elementName = "genericTraffic", type = GenericTraffic.class)
-  @XmlItemElement(elementName = "flightListTraffic", type = FlightListTraffic.class)
-  private IList<Traffic> trafficDefinitions = new EList<>();
   @XmlIgnore
   private Area parent;
   private int coveredDistance;
@@ -144,10 +140,6 @@ public class Airport {
 
   public IReadOnlyList<PublishedHold> getHolds() {
     return holds;
-  }
-
-  public IReadOnlyList<Traffic> getTrafficDefinitions() {
-    return trafficDefinitions;
   }
 
   public RunwayThreshold tryGetRunwayThreshold(String runwayThresholdName) {

@@ -194,8 +194,6 @@
         <hold navaidName="LBV" inboundRadial="110" turn="right"/>
         <hold navaidName="HAM" inboundRadial="007" turn="right"/>
       </holds>
-      <trafficDefinitions>
-      </trafficDefinitions>
     </airport>
   </airports>
   <navaids>

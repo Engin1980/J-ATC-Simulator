@@ -203,7 +203,6 @@
           </xs:sequence>
         </xs:complexType>
       </xs:element>
-      <xs:element name="trafficDefinitions" type="tr:trafficDefinitions" minOccurs="0" maxOccurs="1"/>
     </xs:sequence>
     <xs:attribute name="icao" type="xs:string" use="required"/>
     <xs:attribute name="name" type="xs:string" use="required"/>
