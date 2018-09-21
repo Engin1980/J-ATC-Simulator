@@ -59,6 +59,9 @@ public class AreaSource extends Source<Area> {
     XmlSerializer ser = new XmlSerializer(sett);
 
     this.area = ser.deserialize(this.fileName, Area.class);
+
+    this.area.init();
+
     super.setInitialized();
   }
 }

@@ -12,6 +12,7 @@ import eng.jAtcSim.lib.global.Headings;
 import eng.jAtcSim.lib.world.xml.RunwayConfigurationParser;
 
 import java.awt.geom.Line2D;
+import java.util.Objects;
 
 public class RunwayConfiguration {
 
@@ -75,6 +76,21 @@ public class RunwayConfiguration {
 
     public boolean isForCategory(char category) {
       return ArrayUtils.contains(this.categoriesArray, category);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+      RunwayThresholdConfiguration that = (RunwayThresholdConfiguration) o;
+      return primary == that.primary &&
+          Objects.equals(categories, that.categories) &&
+          Objects.equals(name, that.name);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(categories, name, primary);
     }
   }
 
@@ -227,9 +243,9 @@ public class RunwayConfiguration {
       ret = false;
     else if (this.departures.size() != other.departures.size())
       ret = false;
-    else if (this.arrivals.union(other.arrivals).size() != this.arrivals.size())
+    else if (this.arrivals.union(other.arrivals).distinct().size() != this.arrivals.size())
       ret = false;
-    else if (this.arrivals.union(other.arrivals).size() != this.arrivals.size())
+    else if (this.arrivals.union(other.arrivals).distinct().size() != this.arrivals.size())
       ret = false;
     else
       ret = true;

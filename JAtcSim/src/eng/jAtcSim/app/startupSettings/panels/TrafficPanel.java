@@ -7,13 +7,11 @@ package eng.jAtcSim.app.startupSettings.panels;
 
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
-import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.utilites.awt.ComponentUtils;
 import eng.jAtcSim.app.extenders.*;
-import eng.jAtcSim.lib.traffic.Traffic;
-import eng.jAtcSim.lib.world.Airport;
-import eng.jAtcSim.shared.LayoutManager;
 import eng.jAtcSim.app.startupSettings.StartupSettings;
+import eng.jAtcSim.lib.traffic.fleets.Fleets;
+import eng.jAtcSim.shared.LayoutManager;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -35,8 +33,6 @@ public class TrafficPanel extends JStartupPanel {
   private NumericUpDownExtender nudB;
   private NumericUpDownExtender nudC;
   private NumericUpDownExtender nudD;
-  private XComboBoxExtender<String> cmbAirportDefinedTraffic;
-  private XComboBoxExtender<String> cmbXmlDefinedTraffic;
   private NumericUpDownExtender nudTrafficDensity;
   private JPanel pnlCustomTraffic;
   private ItemTextFieldExtender txtCompanies;
@@ -46,12 +42,6 @@ public class TrafficPanel extends JStartupPanel {
 
   public TrafficPanel() {
     initComponents();
-    Sources.getOnFleetsChanged().add(this::fleetsChanged);
-    Sources.getOnTrafficChanged().add(this::trafficChanged);
-  }
-
-  public void setActiveAirport(Airport aip) {
-    airportChanged(aip);
   }
 
   @Override
@@ -81,13 +71,6 @@ public class TrafficPanel extends JStartupPanel {
     txtCountryCodes.setItems(settings.traffic.customTraffic.getCountryCodes());
 
     setCmbEmergencyProbabilityByClosestValue(settings.traffic.emergencyPerDayProbability);
-
-    //TODO
-//    areaChanged();
-    trafficChanged();
-
-    cmbAirportDefinedTraffic.setSelectedItem(settings.traffic.trafficAirportDefinedTitle);
-    cmbXmlDefinedTraffic.setSelectedItem(settings.traffic.trafficXmlDefinedTitle);
   }
 
   @Override
@@ -95,8 +78,6 @@ public class TrafficPanel extends JStartupPanel {
     settings.files.trafficXmlFile = fleTraffic.getFileName();
 
     settings.traffic.maxPlanes = nudMaxPlanes.getValue();
-    settings.traffic.trafficAirportDefinedTitle = cmbAirportDefinedTraffic.getSelectedItem();
-    settings.traffic.trafficXmlDefinedTitle = cmbXmlDefinedTraffic.getSelectedItem();
     settings.traffic.densityPercentage = nudTrafficDensity.getValue() / 100d;
     if (specificMovementValues == null) {
       int tmp[] = new int[24];
@@ -120,35 +101,6 @@ public class TrafficPanel extends JStartupPanel {
     settings.traffic.emergencyPerDayProbability = cmbEmergencyProbability.getSelectedItem();
   }
 
-  public void airportChanged(Airport aip) {
-    IList<XComboBoxExtender.Item<String>> mp = new EList<>();
-    if (aip != null)
-      for (Traffic traffic : aip.getTrafficDefinitions()) {
-        mp.add(
-            new XComboBoxExtender.Item<>(
-                traffic.getTitle(),
-                traffic.getTitle()));
-      }
-    else
-      mp.add(new XComboBoxExtender.Item<>("Airport not selected", ""));
-    cmbAirportDefinedTraffic.setModel(mp);
-  }
-
-  public void trafficChanged() {
-    IList<XComboBoxExtender.Item<String>> mp = new EList<>();
-    IReadOnlyList<Traffic> trafficList = Sources.getTraffics();
-    if (trafficList != null)
-      for (Traffic traffic : trafficList) {
-        mp.add(
-            new XComboBoxExtender.Item<>(
-                traffic.getTitle(),
-                traffic.getTitle()));
-      }
-    else
-      mp.add(new XComboBoxExtender.Item<>("Traffic set not loaded", ""));
-    cmbXmlDefinedTraffic.setModel(mp);
-  }
-
   private void setCmbEmergencyProbabilityByClosestValue(double emergencyPerDayProbability) {
     double minDiff = Double.MAX_VALUE;
     int bestIndex = 0;
@@ -162,8 +114,9 @@ public class TrafficPanel extends JStartupPanel {
     cmbEmergencyProbability.setSelectedIndex(bestIndex);
   }
 
-  private void fleetsChanged() {
-    txtCompanies.setModel(Sources.getFleets().getIcaos());
+  private void fleetsChanged(Fleets fleets) {
+
+    txtCompanies.setModel(fleets.getIcaos());
   }
 
   private void initComponents() {
@@ -271,8 +224,6 @@ public class TrafficPanel extends JStartupPanel {
     nudD = new NumericUpDownExtender(new JSpinner(), 0, 100, 5, 1);
     chkCustomExtendedCallsigns = new javax.swing.JCheckBox("Use extended callsigns");
     nudMaxPlanes = new NumericUpDownExtender(new JSpinner(), 1, 100, 15, 1);
-    cmbAirportDefinedTraffic = new XComboBoxExtender<>();
-    cmbXmlDefinedTraffic = new XComboBoxExtender<>();
     nudTrafficDensity = new NumericUpDownExtender(new JSpinner(), 0, 100, 100, 1);
     nudNonCommercials = new NumericUpDownExtender(new JSpinner(), 0, 100, 0, 10);
     txtCompanies = new ItemTextFieldExtender();

@@ -1,6 +1,6 @@
 package eng.jAtcSim.lib.global.newSources;
 
-import eng.eSystem.utilites.Validator;
+import eng.eSystem.validation.Validator;
 import eng.jAtcSim.lib.weathers.StaticWeatherProvider;
 import eng.jAtcSim.lib.weathers.Weather;
 import eng.jAtcSim.lib.weathers.WeatherProvider;

@@ -141,9 +141,4 @@ public class FrmStartupSettings extends JPanel {
   private void icaoChanged(String s) {
     System.out.println("Changed icao to " + s);
   }
-
-  private JPanel createTopPanel() {
-    JPanel ret = new FilesPanel();
-    return ret;
-  }
 }

@@ -111,51 +111,6 @@ public class StartupSettings {
     public int secondLengthInMs = 1000;
   }
 
-  public class Loaded {
-    private Area area = null;
-    private AirplaneTypes types = null;
-    private Fleets fleets = null;
-
-    public Area tryGetArea() {
-      if (area == null)
-        try {
-          area = XmlLoadHelper.loadNewArea(files.areaXmlFile);
-        } catch (Exception ex) {
-          area = null;
-        }
-      return area;
-    }
-
-    public AirplaneTypes tryGetTypes() {
-      if (types == null)
-        try {
-          types = XmlLoadHelper.loadPlaneTypes(files.planesXmlFile);
-        } catch (Exception ex) {
-          types = null;
-        }
-      return types;
-    }
-
-    public Fleets tryGetFleets() {
-      if (fleets == null)
-        try {
-          fleets = XmlLoadHelper.loadFleets(files.fleetsXmlFile);
-        } catch (Exception ex) {
-          fleets = null;
-        }
-
-      return fleets;
-    }
-
-    public void reset() {
-      area = null;
-      types = null;
-      fleets = null;
-    }
-  }
-
-  @XmlIgnore
-  public final Loaded Loaded = this.new Loaded();
   public Files files;
   public Recent recent;
   public Weather weather;

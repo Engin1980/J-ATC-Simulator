@@ -12,10 +12,6 @@ import eng.jAtcSim.frmPacks.shared.FlightStripSettings;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.AirplaneTypes;
 import eng.jAtcSim.lib.global.logging.ApplicationLog;
-import eng.jAtcSim.lib.global.sources.AirplaneTypesXmlSource;
-import eng.jAtcSim.lib.global.sources.AreaXmlSource;
-import eng.jAtcSim.lib.global.sources.FleetsXmlSource;
-import eng.jAtcSim.lib.global.sources.TrafficXmlSource;
 import eng.jAtcSim.lib.traffic.Traffic;
 import eng.jAtcSim.lib.traffic.fleets.Fleets;
 import eng.jAtcSim.lib.world.*;
@@ -96,27 +92,6 @@ public class XmlLoadHelper {
     return ret;
   }
 
-  public static Area loadNewArea(String fileName) {
-    AreaXmlSource axs = new AreaXmlSource(fileName);
-    axs.load();
-    Area ret = axs._get();
-    return ret;
-  }
-
-  public static AirplaneTypes loadPlaneTypes(String fileName) {
-    AirplaneTypesXmlSource atxs = new AirplaneTypesXmlSource(fileName);
-    atxs.load();
-    AirplaneTypes ret = atxs._get();
-    return ret;
-  }
-
-  public static Fleets loadFleets(String fileName) {
-    FleetsXmlSource fxs = new FleetsXmlSource(fileName);
-    fxs.load();
-    Fleets ret = fxs._get();
-    return ret;
-  }
-
   public static FlightStripSettings loadStripSettings(String fileName) {
     XmlSettings sett = new XmlSettings();
 
@@ -133,12 +108,6 @@ public class XmlLoadHelper {
     return ret;
   }
 
-  public static IList<Traffic> loadTraffic(String fileName) {
-    TrafficXmlSource txs = new TrafficXmlSource(fileName);
-    txs.load();
-    IList<Traffic> ret = txs._get();
-    return ret;
-  }
 }
 
 class LocalTimeParser implements IValueParser<LocalTime> {

@@ -17,8 +17,6 @@ import eng.jAtcSim.lib.Game;
 import eng.jAtcSim.lib.global.ETime;
 import eng.jAtcSim.lib.global.logging.ApplicationLog;
 import eng.jAtcSim.lib.global.logging.Recorder;
-import eng.jAtcSim.lib.global.sources.TrafficXmlSource;
-import eng.jAtcSim.lib.global.sources.WeatherSource;
 import eng.jAtcSim.lib.traffic.GenericTraffic;
 import eng.jAtcSim.lib.traffic.Traffic;
 import eng.jAtcSim.lib.weathers.Weather;

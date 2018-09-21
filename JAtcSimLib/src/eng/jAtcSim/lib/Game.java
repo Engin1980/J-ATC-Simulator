@@ -88,10 +88,10 @@ public class Game {
     Acc.log().writeLine(ApplicationLog.eType.info, "Initializing weather");
     switch (gsi.weatherProviderType){
       case online:
-        g.weatherSource = new OnlineWeatherSource(true);
+        g.weatherSource = new OnlineWeatherSource(true, gsi.icao, gsi.initialWeather);
         break;
       case xml:
-        g.weatherSource = new XmlWeatherSource(gsi.weatherXmlFile);
+        g.weatherSource = new XmlWeatherSource(gsi.weatherXmlFile, gsi.initialWeather);
         break;
       case user:
         g.weatherSource = new UserWeatherSource(gsi.initialWeather);
@@ -100,18 +100,6 @@ public class Game {
         throw new EEnumValueUnsupportedException(gsi.weatherProviderType);
     }
     g.weatherSource.init();
-
-//    Acc.log().writeLine(ApplicationLog.eType.info, "Generating traffic");
-//    switch (gsi.trafficSourceType) {
-//      case activeAirportTraffic:
-//        g.trafficXmlSource.setActiveTraffic(gsi.trafficSourceType, gsi.lookForTrafficTitle);
-//        break;
-//      case xmlFileTraffic:
-//        g.trafficXmlSource.setActiveTraffic(TrafficXmlSource.TrafficSource.xmlFileTraffic, gsi.lookForTrafficTitle);
-//        break;
-//      case specificTraffic:
-//        g.trafficXmlSource.setActiveTraffic(TrafficXmlSource.TrafficSource.specificTraffic, null);
-//    }
 
     TrafficManager.TrafficManagerSettings tms = new TrafficManager.TrafficManagerSettings(
         gsi.allowTrafficDelays, gsi.maxTrafficPlanes, gsi.trafficDensityPercentage);

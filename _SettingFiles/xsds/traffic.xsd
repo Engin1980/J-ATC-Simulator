@@ -6,9 +6,9 @@
            xmlns="https://github.com/Engin1980/J-ATC-Simulator/traffic"
            elementFormDefault="qualified">
 
-  <xs:element name="trafficDefinitions" type="trafficDefinitions"/>
+  <xs:element name="trafficDefinition" type="trafficDefinition"/>
 
-  <xs:complexType name="trafficDefinitions">
+  <xs:complexType name="trafficDefinition">
     <xs:sequence>
       <xs:element name="meta" type="sh:meta" minOccurs="0" maxOccurs="1" />
       <xs:choice maxOccurs="unbounded" minOccurs="0">

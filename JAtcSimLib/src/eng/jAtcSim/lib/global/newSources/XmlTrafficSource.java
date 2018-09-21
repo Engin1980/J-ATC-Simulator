@@ -2,8 +2,13 @@ package eng.jAtcSim.lib.global.newSources;
 
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
+import eng.eSystem.eXml.XDocument;
+import eng.eSystem.eXml.XElement;
+import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.EXmlException;
 import eng.eSystem.xmlSerialization.XmlSerializer;
 import eng.eSystem.xmlSerialization.XmlSettings;
+import eng.eSystem.xmlSerialization.annotations.XmlElement;
 import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 import eng.jAtcSim.lib.traffic.DensityBasedTraffic;
 import eng.jAtcSim.lib.traffic.FlightListTraffic;
@@ -15,6 +20,13 @@ import eng.jAtcSim.lib.world.xml.AltitudeValueParser;
 import javax.swing.*;
 
 public class XmlTrafficSource extends TrafficSource {
+
+  static class TrafficDefinition{
+    @XmlElement(elementName = "genericTraffic", type= GenericTraffic.class)
+    @XmlElement(elementName = "densityTraffic", type=DensityBasedTraffic.class)
+    @XmlElement(elementName = "flightListTraffic", type=FlightListTraffic.class)
+    public Traffic traffic;
+  }
 
   @XmlIgnore
   private Traffic traffic;
@@ -31,25 +43,20 @@ public class XmlTrafficSource extends TrafficSource {
 
   @Override
   public void init() {
+    TrafficDefinition def;
+
     XmlSettings sett = new XmlSettings();
-
-    System.out.println("## traffic loading will be probably needed to be rewritten");
-
-    // list mappings
-//    sett.forType(Traffic.class)
-//        .addXmlElement("genericTraffic", GenericTraffic.class, false, null)
-//        .addXmlItemElement("densityTraffic", DensityBasedTraffic.class, false, null)
-//        .addXmlItemElement("flightListTraffic", FlightListTraffic.class, false, null)
-//        .addXmlItemIgnoredElement("meta");
-
     sett.forType(int.class)
         .setCustomParser(new AltitudeValueParser());
     sett.forType(Integer.class)
         .setCustomParser(new AltitudeValueParser());
 
-    // own loading
     XmlSerializer ser = new XmlSerializer(sett);
-    traffic = ser.deserialize(this.fileName, Traffic.class);
+    try {
+      def = ser.deserialize(this.fileName, TrafficDefinition.class);
+    } catch (Exception e) {
+      throw new EApplicationException("Unable to load traffic from file '" + this.fileName + "'.");
+    }
 
     super.setInitialized();
   }
