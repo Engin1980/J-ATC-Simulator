@@ -117,12 +117,16 @@ public class GenericTraffic extends GeneratedTraffic {
   }
 
   @Override
-  public IReadOnlyList<ETime> getExpectedTimesForDay() {
-    IList<ETime> ret = new EList<>();
+  public IReadOnlyList<ExpectedMovement> getExpectedTimesForDay() {
+    IList<ExpectedMovement> ret = new EList<>();
     for (int i = 0; i < 24; i++) {
       for (int j = 0; j < movementsPerHour[i]; j++) {
         ETime time = new ETime(i, Acc.rnd().nextInt(0, 60), Acc.rnd().nextInt(0, 60));
-        ret.add(time);
+        boolean isArrival = this.probabilityOfDeparture < Acc.rnd().nextDouble();
+        boolean isCommercial = this.probabilityOfNonCommercialFlight > Acc.rnd().nextDouble();
+        char category = getRandomCategory();
+        ExpectedMovement em = new ExpectedMovement(time, isArrival, isCommercial, category);
+        ret.add(em);
       }
     }
     return ret;

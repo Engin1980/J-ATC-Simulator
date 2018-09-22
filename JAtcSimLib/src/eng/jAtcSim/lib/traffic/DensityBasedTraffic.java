@@ -114,17 +114,25 @@ public class DensityBasedTraffic extends GeneratedTraffic {
   }
 
   @Override
-  public IReadOnlyList<ETime> getExpectedTimesForDay() {
-    IList<ETime> ret = new EList<>();
+  public IReadOnlyList<ExpectedMovement> getExpectedTimesForDay() {
+    IList<ExpectedMovement> ret = new EList<>();
 
     for (int i = 0; i < 24; i++) {
       int l = i;
       IList<HourBlockMovements> hbms = density.where(q->q.hour == l);
       for (int j = 0; j < hbms.size(); j++) {
         HourBlockMovements hbm = hbms.get(j);
-        for (int k = 0; k < hbm.arrivals + hbm.departures; k++) {
+        boolean isCommercial = Acc.rnd().nextDouble() > nonCommercialFlightProbability;
+        char category = '-';
+        for (int k = 0; k < hbm.arrivals; k++) {
           ETime time = new ETime(i, Acc.rnd().nextInt(0, 60), 30);
-          ret.add(time);
+          ExpectedMovement em = new ExpectedMovement(time, true, isCommercial, category);
+          ret.add(em);
+        }
+        for (int k = 0; k < hbm.departures; k++) {
+          ETime time = new ETime(i, Acc.rnd().nextInt(0, 60), 30);
+          ExpectedMovement em = new ExpectedMovement(time, false, isCommercial, category);
+          ret.add(em);
         }
       }
     }

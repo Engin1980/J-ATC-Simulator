@@ -12,6 +12,21 @@ import eng.jAtcSim.lib.global.ETime;
  * @author Marek Vajgl
  */
 public abstract class Traffic {
+
+  public static class ExpectedMovement{
+    public ETime time;
+    public boolean isArrival;
+    public boolean isCommercial;
+    public char category;
+
+    public ExpectedMovement(ETime time, boolean isArrival, boolean isCommercial, char category) {
+      this.time = time;
+      this.isArrival = isArrival;
+      this.isCommercial = isCommercial;
+      this.category = category;
+    }
+  }
+
   /**
    * Specifies delay probability, range 0.0-1.0.
    */
@@ -31,7 +46,7 @@ public abstract class Traffic {
 
   public abstract GeneratedMovementsResponse generateMovements(Object syncObject);
 
-  public abstract IReadOnlyList<ETime> getExpectedTimesForDay();
+  public abstract IReadOnlyList<ExpectedMovement> getExpectedTimesForDay();
 }
 
 

@@ -11,7 +11,7 @@ public class FlightListTraffic extends Traffic {
   }
 
   @Override
-  public IReadOnlyList<ETime> getExpectedTimesForDay() {
+  public IReadOnlyList<ExpectedMovement> getExpectedTimesForDay() {
     throw new UnsupportedOperationException();
   }
 }

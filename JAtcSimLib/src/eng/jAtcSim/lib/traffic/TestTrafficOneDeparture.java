@@ -40,7 +40,7 @@ public class TestTrafficOneDeparture extends TestTraffic {
   }
 
   @Override
-  public IReadOnlyList<ETime> getExpectedTimesForDay() {
+  public IReadOnlyList<ExpectedMovement> getExpectedTimesForDay() {
     return new EList<>();
   }
 
