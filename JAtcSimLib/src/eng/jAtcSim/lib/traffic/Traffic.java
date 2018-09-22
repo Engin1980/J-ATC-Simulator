@@ -5,6 +5,9 @@
  */
 package eng.jAtcSim.lib.traffic;
 
+import eng.eSystem.collections.IReadOnlyList;
+import eng.jAtcSim.lib.global.ETime;
+
 /**
  * @author Marek Vajgl
  */
@@ -27,6 +30,8 @@ public abstract class Traffic {
   }
 
   public abstract GeneratedMovementsResponse generateMovements(Object syncObject);
+
+  public abstract IReadOnlyList<ETime> getExpectedTimesForDay();
 }
 
 

@@ -113,6 +113,25 @@ public class DensityBasedTraffic extends GeneratedTraffic {
     return ret;
   }
 
+  @Override
+  public IReadOnlyList<ETime> getExpectedTimesForDay() {
+    IList<ETime> ret = new EList<>();
+
+    for (int i = 0; i < 24; i++) {
+      int l = i;
+      IList<HourBlockMovements> hbms = density.where(q->q.hour == l);
+      for (int j = 0; j < hbms.size(); j++) {
+        HourBlockMovements hbm = hbms.get(j);
+        for (int k = 0; k < hbm.arrivals + hbm.departures; k++) {
+          ETime time = new ETime(i, Acc.rnd().nextInt(0, 60), 30);
+          ret.add(time);
+        }
+      }
+    }
+
+    return ret;
+  }
+
   private Tuple<Integer, IReadOnlyList<Movement>> generateNewMovements() {
     IList<Movement> ret = new EList<>();
 

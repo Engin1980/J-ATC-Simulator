@@ -10,11 +10,21 @@ import eng.eSystem.collections.IList;
 import eng.eSystem.utilites.awt.ComponentUtils;
 import eng.jAtcSim.app.extenders.*;
 import eng.jAtcSim.app.startupSettings.StartupSettings;
+import eng.jAtcSim.frmPacks.shared.FrmTrafficHistogram;
+import eng.jAtcSim.lib.global.ETime;
+import eng.jAtcSim.lib.global.newSources.TrafficSource;
+import eng.jAtcSim.lib.global.newSources.UserTrafficSource;
+import eng.jAtcSim.lib.global.newSources.XmlTrafficSource;
+import eng.jAtcSim.lib.traffic.GenericTraffic;
+import eng.jAtcSim.lib.traffic.Traffic;
 import eng.jAtcSim.lib.traffic.fleets.Fleets;
 import eng.jAtcSim.shared.LayoutManager;
+import jdk.internal.org.objectweb.asm.util.TraceFieldVisitor;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
+import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 
 public class TrafficPanel extends JStartupPanel {
@@ -166,10 +176,11 @@ public class TrafficPanel extends JStartupPanel {
   }
 
   private JPanel createTrafficSourcePanel() {
-    return LayoutManager.createFormPanel(2, 2,
+    return LayoutManager.createFormPanel(3, 2,
         rdbXml,
         LayoutManager.createFlowPanel(fleTraffic.getTextControl(), fleTraffic.getButtonControl()),
-        rdbUser, null);
+        rdbUser, null,
+        null, btnAnalyseTraffic);
   }
 
   private JPanel createCustomTrafficPanel() {
@@ -202,7 +213,10 @@ public class TrafficPanel extends JStartupPanel {
     }
   }
 
+  private JButton btnAnalyseTraffic;
   private void createComponents() {
+
+    btnAnalyseTraffic = SwingFactory.createButton("Analyse traffic movements", this::btnAnalyseTraffic_click);
 
     fleTraffic = new XmlFileSelectorExtender(SwingFactory.FileDialogType.traffic);
 
@@ -222,7 +236,7 @@ public class TrafficPanel extends JStartupPanel {
     nudB = new NumericUpDownExtender(new JSpinner(), 0, 100, 5, 1);
     nudC = new NumericUpDownExtender(new JSpinner(), 0, 100, 5, 1);
     nudD = new NumericUpDownExtender(new JSpinner(), 0, 100, 5, 1);
-    chkCustomExtendedCallsigns = new javax.swing.JCheckBox("Use extended callsigns");
+    chkCustomExtendedCallsigns = new javax.swing.JCheckBox("Use extended callsings");
     nudMaxPlanes = new NumericUpDownExtender(new JSpinner(), 1, 100, 15, 1);
     nudTrafficDensity = new NumericUpDownExtender(new JSpinner(), 0, 100, 100, 1);
     nudNonCommercials = new NumericUpDownExtender(new JSpinner(), 0, 100, 0, 10);
@@ -235,6 +249,44 @@ public class TrafficPanel extends JStartupPanel {
     grpRdb.add(rdbXml);
     grpRdb.add(rdbUser);
     rdbUser.setSelected(true);
+  }
+
+  private void btnAnalyseTraffic_click(ActionEvent actionEvent) {
+    Traffic tfc = getCurrentTraffic();
+
+    FrmTrafficHistogram frm = new FrmTrafficHistogram();
+    frm.init(tfc, "Movements histogram");
+    frm.setVisible(true);
+  }
+
+  private Traffic getCurrentTraffic() {
+    Traffic ret;
+    if (rdbXml.isSelected()){
+      TrafficSource trafficSource = new XmlTrafficSource(fleTraffic.getFileName());
+      trafficSource.init();
+      ret = trafficSource.getContent();
+    } else {
+      StartupSettings ss = new StartupSettings();
+      fillSettingsBy(ss);
+      ret = generateCustomTraffic(ss.traffic);
+    }
+
+    return ret;
+  }
+
+  private static GenericTraffic generateCustomTraffic(StartupSettings.Traffic trf) {
+    // Taken from JAtcSim class ! ! !
+    GenericTraffic ret = new GenericTraffic(
+        trf.customTraffic.companies, trf.customTraffic.countryCodes,
+        trf.customTraffic.movementsPerHour,
+        trf.customTraffic.arrivals2departuresRatio / 10d,
+        trf.customTraffic.nonCommercialFlightProbability,
+        trf.customTraffic.weightTypeA,
+        trf.customTraffic.weightTypeB,
+        trf.customTraffic.weightTypeC,
+        trf.customTraffic.weightTypeD,
+        trf.customTraffic.useExtendedCallsigns);
+    return ret;
   }
 
   private void setCmbEmergencyProbabilityModel() {

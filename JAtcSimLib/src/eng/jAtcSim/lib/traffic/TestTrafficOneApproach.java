@@ -7,9 +7,11 @@ package eng.jAtcSim.lib.traffic;
 
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
+import eng.eSystem.collections.IReadOnlyList;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.AirplaneType;
 import eng.jAtcSim.lib.airplanes.Callsign;
+import eng.jAtcSim.lib.global.ETime;
 
 /**
  * @author Marek Vajgl
@@ -32,6 +34,11 @@ public class TestTrafficOneApproach extends TestTraffic {
 
     GeneratedMovementsResponse ret = new GeneratedMovementsResponse(Acc.now().addHours(10), true, lst);
     return ret;
+  }
+
+  @Override
+  public IReadOnlyList<ETime> getExpectedTimesForDay() {
+    return new EList<>();
   }
 
   private Movement generateMovement(String number) {
