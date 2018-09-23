@@ -1,7 +1,7 @@
 //package eng.jAtcSim.lib.weathers;
 //
 //import eng.jAtcSim.lib.Timer;
-//import eng.jAtcSim.lib.weathers.downloaders.MetarDecoder;
+//import eng.jAtcSim.lib.weathers.decoders.MetarDecoder;
 //import eng.jAtcSim.lib.weathers.downloaders.MetarDownloader;
 //import eng.jAtcSim.lib.weathers.downloaders.MetarDownloaderNoaaGov;
 //

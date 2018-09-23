@@ -7,10 +7,8 @@ import eng.eSystem.collections.IList;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.utilites.ExceptionUtils;
 import eng.eSystem.utilites.StringUtils;
-import eng.jAtcSim.app.extenders.SwingFactory;
-import eng.jAtcSim.app.extenders.XmlFileSelectorExtender;
 import eng.jAtcSim.lib.weathers.Weather;
-import eng.jAtcSim.lib.weathers.downloaders.MetarDecoder;
+import eng.jAtcSim.lib.weathers.decoders.MetarDecoder;
 import eng.jAtcSim.lib.weathers.downloaders.MetarDownloader;
 import eng.jAtcSim.lib.weathers.downloaders.MetarDownloaderNoaaGov;
 import eng.jAtcSim.shared.BackgroundWorker;
@@ -58,22 +56,22 @@ public class CustomWeatherPanel extends JStartupPanel {
     XComboBoxExtender.Item<Weather> item;
 
     k = "Clear";
-    w = new Weather(34, 4, 9999, 12_000, .1);
+    w = new Weather(34, 4, 4, 9999, 12_000, .1);
     item = new XComboBoxExtender.Item(k, w);
     ret.add(item);
 
     k = "Foggy";
-    w = new Weather(61, 2, 100, 100, 1);
+    w = new Weather(61, 2, 2, 100, 100, 1);
     item = new XComboBoxExtender.Item(k, w);
     ret.add(item);
 
     k = "Windy";
-    w = new Weather(281, 31, 7000, 8_000, .7);
+    w = new Weather(281, 31, 46, 7000, 8_000, .7);
     item = new XComboBoxExtender.Item(k, w);
     ret.add(item);
 
     k = "Rainy";
-    w = new Weather(174, 17, 1_500, 1000, .8);
+    w = new Weather(174, 17, 21, 1_500, 1000, .8);
     item = new XComboBoxExtender.Item(k, w);
     ret.add(item);
 

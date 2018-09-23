@@ -139,6 +139,8 @@ public class JAtcSim {
 
     gsi.startTime = new ETime(startupSettings.recent.time);
     gsi.trafficXmlFile = startupSettings.files.trafficXmlFile;
+
+    gsi.weatherXmlFile = startupSettings.files.weatherXmlFile;
     gsi.initialWeather = Weather.createClear();
     switch (startupSettings.weather.type) {
       case user:

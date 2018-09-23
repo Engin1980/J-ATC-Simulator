@@ -129,7 +129,7 @@ public class Simulation {
     this.area = area;
     this.airplaneTypes = airplaneTypes;
     this.fleets = fleets;
-    this.weatherManager = new WeatherManager(weatherProvider.tryGetNewWeather(), weatherProvider);
+    this.weatherManager = new WeatherManager(weatherProvider);
 
     this.activeAirport = activeAirport;
     this.twrAtc = new TowerAtc(this.activeAirport.getAtcTemplates().getFirst(q -> q.getType() == Atc.eType.twr));
@@ -214,6 +214,7 @@ public class Simulation {
   public void init() {
     Acc.setSimulation(this);
     Acc.setAirport(this.activeAirport);
+    this.weatherManager.init();
     Acc.atcTwr().init();
     Acc.atcApp().init();
     Acc.atcCtr().init();

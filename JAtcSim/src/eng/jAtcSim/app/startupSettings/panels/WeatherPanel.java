@@ -36,6 +36,7 @@ public class WeatherPanel extends JStartupPanel {
       default:
         throw new EEnumValueUnsupportedException(settings.weather.type);
     }
+    fleWeather.setFileName(settings.files.weatherXmlFile);
   }
 
   @Override
@@ -46,6 +47,7 @@ public class WeatherPanel extends JStartupPanel {
       settings.weather.type = StartupSettings.Weather.WeatherSourceType.online;
     else
       settings.weather.type = StartupSettings.Weather.WeatherSourceType.user;
+    settings.files.weatherXmlFile = fleWeather.getFileName();
   }
 
   public void setRelativeIcao(String icao) {

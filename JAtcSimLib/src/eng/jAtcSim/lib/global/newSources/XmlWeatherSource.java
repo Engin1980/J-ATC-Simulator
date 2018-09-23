@@ -1,11 +1,10 @@
 package eng.jAtcSim.lib.global.newSources;
 
-import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.validation.Validator;
 import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
-import eng.jAtcSim.lib.weathers.*;
-import eng.jAtcSim.lib.weathers.downloaders.MetarDownloaderNoaaGov;
-import eng.jAtcSim.lib.weathers.presets.PresetWeather;
+import eng.jAtcSim.lib.weathers.PresetWeatherProvider;
+import eng.jAtcSim.lib.weathers.Weather;
+import eng.jAtcSim.lib.weathers.WeatherProvider;
 
 import java.nio.file.Paths;
 
@@ -15,7 +14,7 @@ public class XmlWeatherSource extends WeatherSource {
   private WeatherProvider content;
   private String xmlFileName;
 
-  public XmlWeatherSource(String xmlFileName, Weather initialWeather) {
+  public XmlWeatherSource(String xmlFileName) {
     Validator.isNotNull(xmlFileName);
     Validator.check(java.nio.file.Files.exists(Paths.get(xmlFileName)));
     this.xmlFileName = xmlFileName;

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package eng.jAtcSim.lib.weathers.downloaders;
+package eng.jAtcSim.lib.weathers.decoders;
 
 import eng.eSystem.exceptions.ERuntimeException;
 import eng.jAtcSim.lib.weathers.presets.PresetWeather;
@@ -42,7 +42,7 @@ public class MetarDecoder {
     int visibilityInM = decodeVisibility(metarLine);
     CloudBaseResult cloudBaseInFt = decodeCloudBase(metarLine);
 
-    PresetWeather w = new PresetWeather(time, wind[0], wind[1], visibilityInM, cloudBaseInFt.altitudeInFt, cloudBaseInFt.probability);
+    PresetWeather w = new PresetWeather(time, wind[0], wind[1], wind[2], visibilityInM, cloudBaseInFt.altitudeInFt, cloudBaseInFt.probability);
 
     return w;
   }
@@ -112,8 +112,8 @@ public class MetarDecoder {
     Matcher m = p.matcher(metarLine);
 
     if (m.find()) {
-      hour = getIntFromGroup(m, 1 );
-      minute = getIntFromGroup(m, 1 );
+      hour = getIntFromGroup(m, 2 );
+      minute = getIntFromGroup(m, 3 );
       ret = LocalTime.of(hour, minute);
     }
     else

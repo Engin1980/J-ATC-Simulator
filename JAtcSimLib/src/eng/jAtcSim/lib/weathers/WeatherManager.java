@@ -2,18 +2,16 @@ package eng.jAtcSim.lib.weathers;
 
 import eng.eSystem.validation.Validator;
 import eng.jAtcSim.lib.Acc;
-import eng.jAtcSim.lib.weathers.downloaders.MetarDecoder;
+import eng.jAtcSim.lib.weathers.decoders.MetarDecoder;
 
 public class WeatherManager {
   private Weather currentWeather;
   private boolean newWeatherFlag;
   private WeatherProvider provider;
 
-  public WeatherManager(Weather initialWeather, WeatherProvider provider) {
-    Validator.isNotNull(initialWeather);
+  public WeatherManager(WeatherProvider provider) {
     Validator.isNotNull(provider);
 
-    this.currentWeather = initialWeather;
     this.provider = provider;
     this.newWeatherFlag = true;
   }
@@ -55,5 +53,10 @@ public class WeatherManager {
     } catch (Exception ex) {
       Acc.sim().sendTextMessageForUser("Failed to decode metar. " + ex.getMessage());
     }
+  }
+
+  public void init() {
+    this.currentWeather = provider.tryGetNewWeather();
+    assert this.currentWeather != null;
   }
 }

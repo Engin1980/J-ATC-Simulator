@@ -1031,7 +1031,7 @@ public class Airplane implements IMessageParticipant {
       newC = Coordinates.getCoordinate(
           newC,
           Acc.weather().getWindHeading(),
-          UnitProvider.ftToNm(Acc.weather().getWindSpeetInKts()));
+          UnitProvider.ftToNm(Acc.weather().getWindSpeedOrWindGustSpeed()));
 
     this.coordinate = newC;
   }

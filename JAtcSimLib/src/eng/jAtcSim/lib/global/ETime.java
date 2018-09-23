@@ -38,6 +38,10 @@ public class ETime implements Comparable<ETime> {
     set(h, m, s);
   }
 
+  public java.time.LocalTime toLocalTime(){
+    return java.time.LocalTime.of(this.getHours(), this.getMinutes());
+  }
+
   // TODO remove sets or make them private, ensure that constructor rounds value around midnight.
   public final void set(int hours, int minutes, int seconds) {
     this.value = hours * 60 * 60 + minutes * 60 + seconds;

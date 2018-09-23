@@ -44,7 +44,6 @@ public class Game {
     public Weather initialWeather;
     public WeatherSourceType weatherProviderType;
     public SourceType trafficSourceType;
-    public String lookForTrafficTitle;
     public boolean allowTrafficDelays;
     public int maxTrafficPlanes;
     public double trafficDensityPercentage;
@@ -91,7 +90,7 @@ public class Game {
         g.weatherSource = new OnlineWeatherSource(true, gsi.icao, gsi.initialWeather);
         break;
       case xml:
-        g.weatherSource = new XmlWeatherSource(gsi.weatherXmlFile, gsi.initialWeather);
+        g.weatherSource = new XmlWeatherSource(gsi.weatherXmlFile);
         break;
       case user:
         g.weatherSource = new UserWeatherSource(gsi.initialWeather);

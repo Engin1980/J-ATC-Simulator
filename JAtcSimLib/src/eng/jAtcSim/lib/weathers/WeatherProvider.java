@@ -1,7 +1,7 @@
 package eng.jAtcSim.lib.weathers;
 
 import eng.eSystem.exceptions.EApplicationException;
-import eng.jAtcSim.lib.weathers.downloaders.MetarDecoder;
+import eng.jAtcSim.lib.weathers.decoders.MetarDecoder;
 
 public abstract class WeatherProvider {
   public abstract Weather tryGetNewWeather();

@@ -3,7 +3,7 @@ package eng.jAtcSim.lib.weathers.presets;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.xmlSerialization.XmlSerializer;
 import eng.eSystem.xmlSerialization.supports.IElementParser;
-import eng.jAtcSim.lib.weathers.downloaders.MetarDecoder;
+import eng.jAtcSim.lib.weathers.decoders.MetarDecoder;
 
 public class MetarParser implements IElementParser<PresetWeather> {
   @Override
