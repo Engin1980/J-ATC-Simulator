@@ -10,6 +10,7 @@ import eng.eSystem.collections.IList;
 import eng.eSystem.utilites.awt.ComponentUtils;
 import eng.jAtcSim.app.extenders.*;
 import eng.jAtcSim.app.startupSettings.StartupSettings;
+import eng.jAtcSim.frmPacks.shared.FrmTrafficBarGraph;
 import eng.jAtcSim.frmPacks.shared.FrmTrafficHistogram;
 import eng.jAtcSim.lib.global.ETime;
 import eng.jAtcSim.lib.global.newSources.TrafficSource;
@@ -254,7 +255,8 @@ public class TrafficPanel extends JStartupPanel {
   private void btnAnalyseTraffic_click(ActionEvent actionEvent) {
     Traffic tfc = getCurrentTraffic();
 
-    FrmTrafficHistogram frm = new FrmTrafficHistogram();
+//    FrmTrafficHistogram frm = new FrmTrafficHistogram();
+    FrmTrafficBarGraph frm = new FrmTrafficBarGraph();
     frm.init(tfc, "Movements histogram");
     frm.setVisible(true);
   }

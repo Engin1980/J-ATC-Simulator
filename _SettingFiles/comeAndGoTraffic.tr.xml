@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<trafficDefinition
+        xmlns="https://github.com/Engin1980/J-ATC-Simulator/traffic">
+  <meta>
+    <title>Arriving and departure waves (busy day)</title>
+    <author>Marek Vajgl</author>
+    <description>Traffic in waves.
+    Huge arrivals and then departures firstly in the morning, then
+    in the midday, then in the afternoon and finally at the evening is
+    the most aggregated traffic.</description>
+  </meta>
+  <densityTraffic delayProbability=".5" maxDelayInMinutesPerStep="20"
+                  nonCommercialFlightProbability="0.2"
+                  useExtendedCallsigns="true">
+    <companies isFullDayTraffic="true">
+      <company code="TVS" weight="15"/>
+      <company code="TAR" weight="2"/>
+      <company code="RYR" weight="2"/>
+      <company code="OHY" weight="2"/>
+      <company code="CSA" weight="4"/>
+    </companies>
+    <countries>
+      <country code="OK" weight="4"/>
+      <country code="OM" weight="3"/>
+      <country code="PL" weight="1"/>
+      <country code="DE" weight="1"/>
+      <country code="AT" weight="1"/>
+    </countries>
+    <density>
+      <item hour="0" departures="0" arrivals="0"/>
+      <item hour="1" departures="2" arrivals="0"/>
+      <item hour="2" departures="0" arrivals="3"/>
+      <item hour="3" departures="1" arrivals="0"/>
+      <item hour="4" departures="0" arrivals="0"/>
+      <item hour="5" departures="3" arrivals="2"/>
+      <item hour="6" departures="11" arrivals="5"/>
+      <item hour="7" departures="8" arrivals="13"/>
+      <item hour="8" departures="4" arrivals="7"/>
+      <item hour="9" departures="16" arrivals="5"/>
+      <item hour="10" departures="3" arrivals="3"/>
+      <item hour="11" departures="5" arrivals="8"/>
+      <item hour="12" departures="2" arrivals="20"/>
+      <item hour="13" departures="15" arrivals="10"/>
+      <item hour="14" departures="20" arrivals="7"/>
+      <item hour="15" departures="7" arrivals="2"/>
+      <item hour="16" departures="0" arrivals="8"/>
+      <item hour="17" departures="5" arrivals="14"/>
+      <item hour="18" departures="15" arrivals="13"/>
+      <item hour="19" departures="13" arrivals="4"/>
+      <item hour="20" departures="6" arrivals="17"/>
+      <item hour="21" departures="17" arrivals="15"/>
+      <item hour="22" departures="10" arrivals="3"/>
+      <item hour="23" departures="2" arrivals="1"/>
+    </density>
+    <directions>
+      <direction heading="110" weight="7"/>
+      <direction heading="200" weight="7"/>
+      <direction heading="10" weight="3"/>
+      <direction heading="280" weight="5"/>
+      <direction heading="320" weight="1"/>
+    </directions>
+  </densityTraffic>
+</trafficDefinition>
