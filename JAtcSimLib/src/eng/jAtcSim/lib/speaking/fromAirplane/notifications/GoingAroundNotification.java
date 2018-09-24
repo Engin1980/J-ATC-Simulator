@@ -4,13 +4,23 @@ import eng.jAtcSim.lib.speaking.fromAirplane.IAirplaneNotification;
 
 public class GoingAroundNotification implements IAirplaneNotification {
 
-  private String reason;
+  public enum GoAroundReason{
+    runwayNotInSight,
+    notStabilizedApproachEnter,
+    notStabilizedOnFinal,
+    noLandingClearance,
+    windGustBeforeTouchdown,
+    lostTrafficSeparationInApproach
 
-  public GoingAroundNotification(String reason) {
+  }
+
+  public GoAroundReason reason;
+
+  public GoingAroundNotification(GoAroundReason reason) {
     this.reason = reason;
   }
 
-  public String getReason() {
+  public GoAroundReason getReason() {
     return reason;
   }
 

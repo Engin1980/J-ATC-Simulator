@@ -138,7 +138,12 @@
     <sentence>we will need to divert in {cmd:divertMinutes} minutes</sentence>
   </response>
   <response type="GoingAroundNotification">
-    <sentence>Missed approach[, {cmd:reason}]</sentence>
+    <sentence kind="runwayNotInSight">Missed approach, not runway in sight</sentence>
+    <sentence kind="notStabilizedApproachEnter">Missed approach, not stabilized on the approach enter</sentence>
+    <sentence kind="notStabilizedOnFinal">Missed approach, not stabilized on the final</sentence>
+    <sentence kind="noLandingClearance">Missed approach, got no landing clearance</sentence>
+    <sentence kind="lostTrafficSeparationInApproach">Missed approach, not runway in sight</sentence>
+    <sentence kind="windGustBeforeTouchdown">Missed approach due to weather</sentence>
   </response>
   <response type="ReportDivertTime">
     <sentence>N/A</sentence>

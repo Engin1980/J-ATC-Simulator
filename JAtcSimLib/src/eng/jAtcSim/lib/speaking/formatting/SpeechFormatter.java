@@ -255,6 +255,9 @@ public class SpeechFormatter implements IFormatter {
         default:
           return null;
       }
+    } else if (speech instanceof GoingAroundNotification){
+      GoingAroundNotification tmp = (GoingAroundNotification) speech;
+      return tmp.getReason().toString();
     } else
       return null;
   }
@@ -480,8 +483,6 @@ class CommandVariableEvaluator {
         q -> q.getThreshold().getName());
     register(DivertTimeNotification.class, "divertMinutes",
         q -> Integer.toString(q.getMinutesToDivert()));
-    register(GoingAroundNotification.class, "reason",
-        q -> q.getReason());
     register(DivertingNotification.class, "navaid",
         q -> q.getExitNavaid().getName());
 

@@ -110,8 +110,6 @@ public class TowerAtc extends ComputerAtc {
   private final DepartureManager departureManager = new DepartureManager();
   private final ArrivalManager arrivalManager = new ArrivalManager();
   @XmlIgnore
-  private final CommonRecorder toRecorder;
-  @XmlIgnore
   private final EventAnonymousSimple onRunwayChanged = new EventAnonymousSimple();
   private RunwaysInUseInfo inUseInfo = null;
   private EMap<Runway, RunwayCheck> runwayChecks = null;
@@ -171,35 +169,15 @@ public class TowerAtc extends ComputerAtc {
     return rt;
   }
 
-  private static IReadOnlyList<RunwayThreshold> getSuggestedRunwayThreshold(eDirection direction, char category,
-                                                                            IReadOnlyList<RunwayConfiguration.RunwayThresholdConfiguration> arrivals,
-                                                                            IReadOnlyList<RunwayConfiguration.RunwayThresholdConfiguration> departures) {
-    IReadOnlyList<RunwayThreshold> ret;
-    switch (direction) {
-      case departures:
-        ret = departures.where(q -> q.isForCategory(category)).select(q -> q.getThreshold());
-        break;
-      case arrivals:
-        if (arrivals.isAny(q -> q.isPrimary()))
-          ret = arrivals.where(q -> q.isPrimary() && q.isForCategory(category)).select(q -> q.getThreshold());
-        else
-          ret = arrivals.where(q -> q.isForCategory(category)).select(q -> q.getThreshold());
-        break;
-      default:
-        throw new EEnumValueUnsupportedException(direction);
-    }
-    return ret;
-  }
-
   public TowerAtc(AtcTemplate template) {
     super(template);
-    toRecorder = new CommonRecorder(template.getName() + " - TO", template.getName() + "_to.log", "\t");
   }
 
   @Override
   public void elapseSecond() {
     super.elapseSecond();
 
+    //TODO here should be some check that landing plane is not landing on the occupied runway
     tryTakeOffPlaneNew();
     processRunwayCheckBackground();
     processRunwayChangeBackground();
@@ -537,7 +515,6 @@ public class TowerAtc extends ComputerAtc {
 
   private void changeRunwayInUse() {
 
-    EStringBuilder str = new EStringBuilder();
     IList<String> lns = inUseInfo.scheduled.toInfoString();
     lns.insert(0, "Changed runway(s) in use now to: ");
     sendMultiLineMessageToUser(lns);
@@ -553,11 +530,6 @@ public class TowerAtc extends ComputerAtc {
     tmp.forEach(q -> announceScheduledRunwayCheck(q, this.runwayChecks.get(q)));
 
     onRunwayChanged.raise();
-  }
-
-  private void tryToLog(String format, Object... params) {
-    if (toRecorder != null)
-      toRecorder.write(format, params);
   }
 
   private void restrictToRunwaysNotUnderMaintenance(IList<RunwayThreshold> rts) {
@@ -812,7 +784,6 @@ class ArrivalManager {
   }
 
   public void unregisterGoAroundedArrival(Airplane plane) {
-    System.out.println("## unregistering go-arounded arrival " + plane.getCallsign());
     this.goAroundedPlanesToSwitchList.remove(plane);
   }
 }

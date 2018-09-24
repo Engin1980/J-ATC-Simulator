@@ -189,7 +189,7 @@ public class Airplane implements IMessageParticipant {
       Airplane.this.setTargetSpeed(speed);
     }
 
-    public void adviceGoAroundToAtc(Atc targetAtc, String reason) {
+    public void adviceGoAroundToAtc(Atc targetAtc, GoingAroundNotification.GoAroundReason reason) {
       IAirplaneNotification notification = new GoingAroundNotification(reason);
       adviceToAtc(targetAtc, notification);
     }

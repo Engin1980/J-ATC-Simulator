@@ -393,8 +393,8 @@ public class Pilot {
           if (parent.getAltitude() < LOW_SPEED_DOWN_ALTITUDE)
             super.setState(Airplane.State.arrivingLow);
           else {
-            double distToFaf  = Acc.atcTwr().getRunwayConfigurationInUse()
-                .getArrivals().where(q->q.isForCategory(Pilot.this.parent.getType().category))
+            double distToFaf = Acc.atcTwr().getRunwayConfigurationInUse()
+                .getArrivals().where(q -> q.isForCategory(Pilot.this.parent.getType().category))
                 .minDouble(q -> Coordinates.getDistanceInNM(parent.getCoordinate(), q.getThreshold().getEstimatedFafPoint()));
             if (distToFaf < FAF_SPEED_DOWN_DISTANCE_IN_NM) {
               super.setState(Airplane.State.arrivingCloseFaf);
@@ -403,8 +403,8 @@ public class Pilot {
           break;
         case arrivingLow:
           // TODO this will not work for runways with FAF above FL100
-          double distToFaf  = Acc.atcTwr().getRunwayConfigurationInUse()
-              .getArrivals().where(q->q.isForCategory(Pilot.this.parent.getType().category))
+          double distToFaf = Acc.atcTwr().getRunwayConfigurationInUse()
+              .getArrivals().where(q -> q.isForCategory(Pilot.this.parent.getType().category))
               .minDouble(q -> Coordinates.getDistanceInNM(parent.getCoordinate(), q.getThreshold().getEstimatedFafPoint()));
           if (distToFaf < FAF_SPEED_DOWN_DISTANCE_IN_NM) {
             super.setState(Airplane.State.arrivingCloseFaf);
@@ -630,6 +630,7 @@ public class Pilot {
 
     private final static int LONG_FINAL_ALTITUDE_AGL = 1000;
     private final static int SHORT_FINAL_ALTITUDE_AGL = 200;
+    public static final double DEGREES_TO_RADS = .0174532925;
     private final int finalAltitude;
     private final int shortFinalAltitude;
 
@@ -663,7 +664,7 @@ public class Pilot {
       }
     }
 
-    public void goAround(String reason) {
+    public void goAround(GoingAroundNotification.GoAroundReason reason) {
       Pilot.this.gaReason = reason;
       parent.adviceGoAroundToAtc(atc, reason);
 
@@ -713,17 +714,17 @@ public class Pilot {
       return ret;
     }
 
-    private double getMinimalAllowedAltitudeAfterThisStep(){
+    private double getMinimalAllowedAltitudeAfterThisStep() {
       double maxVS;
-      switch (Pilot.this.parent.getState()){
+      switch (Pilot.this.parent.getState()) {
         case longFinal:
           maxVS = -1500;
           break;
         case shortFinal:
           maxVS = -1100;
           break;
-          default:
-            maxVS = -2500;
+        default:
+          maxVS = -2500;
 
       }
       double ret = Pilot.this.parent.getAltitude() + maxVS / 60d;
@@ -865,12 +866,12 @@ public class Pilot {
 
     private void flyApproachingPhase() {
 
-      switch (parent.getState()){
+      switch (parent.getState()) {
         case approachDescend:
         case longFinal:
         case shortFinal:
-          if (parent.getAirprox() == AirproxType.full){
-            goAround("No separation from other traffic.");
+          if (parent.getAirprox() == AirproxType.full) {
+            goAround(GoingAroundNotification.GoAroundReason.lostTrafficSeparationInApproach);
             return;
           }
       }
@@ -880,7 +881,7 @@ public class Pilot {
 
       if (last == ApproachLocation.beforeMapt && this.location == ApproachLocation.beforeThreshold) {
         if (canSeeRunwayFromCurrentPosition() == false) {
-          goAround("Not runway in sight.");
+          goAround(GoingAroundNotification.GoAroundReason.runwayNotInSight);
           return;
         }
       }
@@ -893,7 +894,7 @@ public class Pilot {
         case approachEnter:
           if (isAfterStateChange && this.approach.getType() == Approach.ApproachType.visual) {
             if (canSeeRunwayFromCurrentPosition() == false) {
-              goAround("Not airport in sight.");
+              goAround(GoingAroundNotification.GoAroundReason.runwayNotInSight);
               return;
             }
           }
@@ -913,12 +914,12 @@ public class Pilot {
               // check if not descending to ILS path and not yet established in ILS LOC
               if (Headings.getDifference(
                   parent.getTargetHeading(), this.approach.getFaf2MaptCourse(), true) > 15) {
-                goAround("Not established in LOC when GP is captured.");
+                goAround(GoingAroundNotification.GoAroundReason.notStabilizedApproachEnter);
                 return;
               }
               // check if should descend but is not leveled at initial altitude
               if (parent.getAltitude() > this.approach.getInitialAltitude() + 100) {
-                goAround("Not established in GP, too high.");
+                goAround(GoingAroundNotification.GoAroundReason.notStabilizedApproachEnter);
                 return;
               }
             }
@@ -945,7 +946,7 @@ public class Pilot {
             // moc nizko, uz pod stabilized altitude
             int MAX_LONG_FINAL_HEADING_DIFF = 30;
             if (Math.abs(parent.getTargetHeading() - this.approach.getCourse()) > MAX_LONG_FINAL_HEADING_DIFF) {
-              goAround("Not stabilized in approach.");
+              goAround(GoingAroundNotification.GoAroundReason.notStabilizedOnFinal);
               return;
             }
 
@@ -968,21 +969,27 @@ public class Pilot {
             int MAX_SHORT_FINAL_HEADING_DIFF = 10;
             double diff = Math.abs(parent.getTargetHeading() - this.approach.getCourse());
             if (diff > MAX_SHORT_FINAL_HEADING_DIFF) {
-              goAround("Not stabilized in approach.");
+              goAround(GoingAroundNotification.GoAroundReason.notStabilizedOnFinal);
               return;
             }
 
             // neni na twr, tak GA
             if (pilot.atc != Acc.atcTwr()) {
-              goAround("Not cleared to land; expected to be switched to tower controller here");
+              goAround(GoingAroundNotification.GoAroundReason.noLandingClearance);
               return;
             }
             isAfterStateChange = false;
           }
 
           if (parent.getAltitude() == Acc.airport().getAltitude()) {
-            isAfterStateChange = true;
-            super.setState(Airplane.State.landed);
+            double gaProbability = getGoAroundProbabilityDueToWind();
+            if (Acc.rnd().nextDouble() < gaProbability) {
+              goAround(GoingAroundNotification.GoAroundReason.windGustBeforeTouchdown);
+              return;
+            } else {
+              isAfterStateChange = true;
+              super.setState(Airplane.State.landed);
+            }
           }
           break;
         case landed:
@@ -992,6 +999,24 @@ public class Pilot {
         default:
           super.throwIllegalStateException();
       }
+    }
+
+    private double getGoAroundProbabilityDueToWind() {
+      double windGustBase =
+          Acc.weather().getWindGustSpeedInKts() - Acc.weather().getWindSpeetInKts();
+      double windRelativeHeading =
+          Headings.getDifference(Pilot.this.parent.getHeading(), Acc.weather().getWindHeading(), true);
+      double gaProbability = 0;
+      if (windGustBase > 0) {
+        double windCauseGoAroundProbability =
+            Math.sin(windRelativeHeading * DEGREES_TO_RADS);
+        if (windRelativeHeading > 90)
+          windCauseGoAroundProbability += 2 * Math.sin((windRelativeHeading - 90) * DEGREES_TO_RADS);
+        windCauseGoAroundProbability /= 2;
+        windCauseGoAroundProbability *= windGustBase;
+        gaProbability = windCauseGoAroundProbability;
+      }
+      return gaProbability;
     }
 
     @Override
@@ -1043,7 +1068,7 @@ public class Pilot {
   private final Map<Atc, SpeechList> saidText = new HashMap<>();
   @XmlIgnore
   private Airplane.Airplane4Pilot parent;
-  private String gaReason = null;
+  private GoingAroundNotification.GoAroundReason gaReason = null;
   private DivertInfo divertInfo;
   private int altitudeOrderedByAtc;
   private Atc atc;
@@ -1201,11 +1226,11 @@ public class Pilot {
     IList<Route> rts = Acc
         .atcTwr().getRunwayConfigurationInUse()
         .getDepartures()
-        .where(q->q.isForCategory(Pilot.this.parent.getType().category))
+        .where(q -> q.isForCategory(Pilot.this.parent.getType().category))
         .getRandom()
         .getThreshold()
         .getRoutes()
-        .where(q->q.getType() == Route.eType.sid);
+        .where(q -> q.getType() == Route.eType.sid);
     Route r = rts.getRandom();
     //TODO here can null-pointer-exception occur when no route is found for threshold and category
     Navaid ret = r.getMainNavaid();
