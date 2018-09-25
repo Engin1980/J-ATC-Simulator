@@ -2,11 +2,18 @@ package eng.jAtcSim.lib.airplanes.moods;
 
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
+import eng.jAtcSim.lib.airplanes.Callsign;
+import eng.jAtcSim.lib.global.ETime;
+import sun.security.krb5.internal.ETypeInfo;
 
 public class MoodResult {
+  private ETime time;
+  private Callsign callsing;
   private IList<MoodExperienceResult> experiences;
 
-  public MoodResult(IList<MoodExperienceResult> experiences) {
+  public MoodResult(ETime time, Callsign callsign, IList<MoodExperienceResult> experiences) {
+    this.time = time;
+    this.callsing = callsign;
     this.experiences = experiences;
   }
 
