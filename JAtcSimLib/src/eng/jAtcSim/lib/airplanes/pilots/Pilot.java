@@ -164,10 +164,12 @@ public class Pilot {
     public void setTargetAltitude(int targetAltitude) {
       boolean isNowLevelled = Math.abs(
           Pilot.this.parent.getTargetAltitude() - Pilot.this.parent.getAltitude()) < 100;
-      if (isNowLevelled) {
-        if (Pilot.this.parent.isArrival())
+      if (isNowLevelled && Pilot.this.getTunedAtc().getType() == Atc.eType.app) {
+        if (Pilot.this.parent.isArrival() &&
+            Pilot.this.parent.getAltitude() < 15000 &&
+            !(Pilot.this.behavior instanceof ApproachBehavior))
           Pilot.this.parent.getMood().experience(Mood.ArrivalExperience.leveledFlight);
-        else
+        else if (Pilot.this.parent.isArrival() == false)
           Pilot.this.parent.getMood().experience(Mood.DepartureExperience.leveledFlight);
       }
 

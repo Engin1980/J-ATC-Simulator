@@ -9,6 +9,7 @@ import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
 import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.moods.Mood;
+import eng.jAtcSim.lib.airplanes.moods.MoodResult;
 import eng.jAtcSim.lib.airplanes.pilots.Pilot;
 import eng.jAtcSim.lib.atcs.Atc;
 import eng.jAtcSim.lib.coordinates.Coordinate;
@@ -244,12 +245,13 @@ public class Airplane implements IMessageParticipant {
 
     public void evaluateMoodForShortcut(Navaid navaid) {
       Route r = getAssigneRoute();
+      if (r == null) return;
       if (r.getNavaids().getLast().equals(navaid)) {
         if (Airplane.this.isArrival()) {
-          if (Airplane.this.altitude.value > 1e5)
+          if (Airplane.this.altitude.value > 1e4)
             mood.experience(Mood.ArrivalExperience.shortcutToIafAbove100);
         } else {
-          if (Airplane.this.altitude.value > 1e5)
+          if (Airplane.this.altitude.value > 1e4)
             mood.experience(Mood.DepartureExperience.shortcutToExitPointBelow100);
           else
             mood.experience(Mood.DepartureExperience.shortctuToExitPointAbove100);
@@ -561,7 +563,7 @@ public class Airplane implements IMessageParticipant {
     // flight recorders on
     this.flightRecorder = FlightRecorder.create(this.callsign);
 
-    this.mood = new Mood(!this.departure);
+    this.mood = new Mood();
   }
 
   @XmlConstructor
@@ -859,6 +861,11 @@ public class Airplane implements IMessageParticipant {
 
   public Mood getMood() {
     return this.mood;
+  }
+
+  public MoodResult getEvaluatedMood() {
+    MoodResult ret = this.mood.evaluate(this.callsign, this.delayResult);
+    return ret;
   }
 
   // <editor-fold defaultstate="collapsed" desc=" private methods ">

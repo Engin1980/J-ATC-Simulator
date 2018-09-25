@@ -25,4 +25,12 @@ public class MoodResult {
     int ret = experiences.sumInt(q -> q.getPoints());
     return ret;
   }
+
+  public ETime getTime() {
+    return time;
+  }
+
+  public Callsign getCallsing() {
+    return callsing;
+  }
 }

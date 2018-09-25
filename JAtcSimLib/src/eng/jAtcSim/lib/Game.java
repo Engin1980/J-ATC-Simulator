@@ -129,11 +129,11 @@ public class Game {
 
     XElement root = doc.getRoot();
 
-    LoadSave.loadField(root, ret, "areaXmlSource");
-    LoadSave.loadField(root, ret, "airplaneTypesXmlSource");
-    LoadSave.loadField(root, ret, "fleetsXmlSource");
-    LoadSave.loadField(root, ret, "trafficXmlSource");
-    LoadSave.loadField(root, ret, "weatherXmlSource");
+    LoadSave.loadField(root, ret, "areaSource");
+    LoadSave.loadField(root, ret, "airplaneTypesSource");
+    LoadSave.loadField(root, ret, "fleetsSource");
+    LoadSave.loadField(root, ret, "trafficSource");
+    LoadSave.loadField(root, ret, "weatherSource");
 
 
     ret.areaSource.init();
@@ -171,11 +171,11 @@ public class Game {
   public void save(String fileName, IMap<String, Object> customData) {
     XElement root = new XElement("game");
 
-    LoadSave.saveField(root, this, "areaXmlSource");
-    LoadSave.saveField(root, this, "airplaneTypesXmlSource");
-    LoadSave.saveField(root, this, "fleetsXmlSource");
-    LoadSave.saveField(root, this, "trafficXmlSource");
-    LoadSave.saveField(root, this, "weatherXmlSource");
+    LoadSave.saveField(root, this, "areaSource");
+    LoadSave.saveField(root, this, "airplaneTypesSource");
+    LoadSave.saveField(root, this, "fleetsSource");
+    LoadSave.saveField(root, this, "trafficSource");
+    LoadSave.saveField(root, this, "weatherSource");
 
     {
       XElement tmp = new XElement("simulation");

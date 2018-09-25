@@ -3,6 +3,7 @@ package eng.jAtcSim.frmPacks.sdi;
 import eng.eSystem.collections.IMap;
 import eng.eSystem.utilites.ExceptionUtils;
 import eng.eSystem.utilites.awt.ComponentUtils;
+import eng.eSystem.utilites.awt.JFrameUtils;
 import eng.jAtcSim.Stylist;
 import eng.jAtcSim.app.FrmAbout;
 import eng.jAtcSim.frmPacks.shared.*;
@@ -216,7 +217,13 @@ public class FrmMain extends JFrame {
         pnlRight.setVisible(isVis);
         s.setState(isVis);
       });
-      buildCheckMenuItem(mnuView, "Add new radar view", true, 'r', s -> {
+      mnuView.addSeparator();
+      buildMenuItem(mnuView, "Show mood results", null, s -> {
+        MoodHistoryPanel2 pnl = new MoodHistoryPanel2();
+        pnl.init(Acc.sim().getMoodHistory());
+        SwingFactory.show(pnl, "Rating board");
+      });
+      buildMenuItem(mnuView, "Add new radar view",  'r', s -> {
         FrmView f = new FrmView();
         f.init(this.parent);
         f.setVisible(true);

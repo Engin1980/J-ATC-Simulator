@@ -15,6 +15,7 @@ import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 import eng.jAtcSim.lib.airplanes.*;
 import eng.jAtcSim.lib.airplanes.moods.Mood;
+import eng.jAtcSim.lib.airplanes.moods.MoodResult;
 import eng.jAtcSim.lib.atcs.*;
 import eng.jAtcSim.lib.coordinates.Coordinates;
 import eng.jAtcSim.lib.global.ETime;
@@ -69,6 +70,8 @@ public class Simulation {
   private final CenterAtc ctrAtc;
   private final MrvaManager mrvaManager;
   private final Airport activeAirport;
+  private IList<MoodResult> moodsHistory;
+
   /**
    * Public event informing surrounding about elapsed second.
    */
@@ -145,6 +148,8 @@ public class Simulation {
     IList<Border> mrvaAreas =
         area.getBorders().where(q -> q.getType() == Border.eType.mrva);
     this.mrvaManager = new MrvaManager(mrvaAreas);
+
+    this.moodsHistory = new EList<>();
   }
 
   public void load(XElement root) {
@@ -178,6 +183,7 @@ public class Simulation {
     LoadSave.loadField(root, this, "emergencyManager");
     LoadSave.loadField(root, this, "trafficManager");
     LoadSave.loadField(root, this, "simulationSecondLengthInMs");
+    LoadSave.loadField(root, this, "moodsHistory");
 
     {
       IList<Airplane> lst = new EList<>();
@@ -199,6 +205,11 @@ public class Simulation {
     this.simulationSecondLengthInMs = intervalMs;
     this.stop();
     this.start();
+  }
+
+
+  public IReadOnlyList<MoodResult> getMoodHistory() {
+    return moodsHistory;
   }
 
   private void twr_runwayChanged() {
@@ -365,6 +376,7 @@ public class Simulation {
     LoadSave.saveField(root, this, "emergencyManager");
     LoadSave.saveField(root, this, "trafficManager");
     LoadSave.saveField(root, this, "simulationSecondLengthInMs");
+    LoadSave.saveField(root, this, "moodsHistory");
   }
 
   public IMap<String, String> getCommandShortcuts() {
@@ -505,6 +517,7 @@ public class Simulation {
     }
 
     for (Airplane p : rem) {
+      this.moodsHistory.add(p.getEvaluatedMood());
       Acc.prm().unregisterPlane(p);
       this.mrvaManager.unregisterPlane(p);
       if (!p.isEmergency())

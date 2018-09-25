@@ -3,6 +3,7 @@ package eng.jAtcSim.lib.airplanes.moods;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.jAtcSim.lib.Acc;
+import eng.jAtcSim.lib.airplanes.Callsign;
 import eng.jAtcSim.lib.global.ETime;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
@@ -39,7 +40,7 @@ public class Mood {
     divertedAsEmergency
   }
 
-  public enum SharedExperience{
+  public enum SharedExperience {
     airprox,
     mrvaViolation,
     prohibitedAreaViolation
@@ -63,10 +64,12 @@ public class Mood {
 
   private IList<Experience<ArrivalExperience>> arrivalExperiences;
   private IList<Experience<DepartureExperience>> departureExperiences;
-private IList<Experience<SharedExperience>> sharedExperiences;
+  private IList<Experience<SharedExperience>> sharedExperiences;
 
-  public Mood(boolean isArrival) {
-
+  public Mood() {
+    this.arrivalExperiences = new EList<>();
+    this.departureExperiences = new EList<>();
+    this.sharedExperiences = new EList<>();
   }
 
   public void experience(ArrivalExperience kindOfExperience) {
@@ -77,11 +80,11 @@ private IList<Experience<SharedExperience>> sharedExperiences;
     this.departureExperiences.add(new Experience<>(Acc.now(), kindOfExperience));
   }
 
-  public void experience(SharedExperience kindOfExperience){
+  public void experience(SharedExperience kindOfExperience) {
     this.sharedExperiences.add(new Experience<>(Acc.now(), kindOfExperience));
   }
 
-  public MoodResult evaluate(int delayMinutesPlusMinus) {
+  public MoodResult evaluate(Callsign callsign, int delayMinutesPlusMinus) {
     IList<MoodExperienceResult> arrEvals = evaluateArrivals();
     IList<MoodExperienceResult> depEvals = evaluateDepartures();
     IList<MoodExperienceResult> sharedEvals = evaluateShared();
@@ -96,9 +99,9 @@ private IList<Experience<SharedExperience>> sharedExperiences;
           (int) (delayMinutesPlusMinus * DELAY_PER_MINUTE_POINTS)));
     }
 
-    tmp.sort(q-> q.getTime() == null ? new ETime(0) : q.getTime());
+    tmp.sort(q -> q.getTime() == null ? new ETime(0) : q.getTime());
 
-    MoodResult ret = new MoodResult(tmp);
+    MoodResult ret = new MoodResult(Acc.now().clone(), callsign, tmp);
     return ret;
   }
 
@@ -123,7 +126,7 @@ private IList<Experience<SharedExperience>> sharedExperiences;
       ret.add(new MoodExperienceResult(null, NO_DESCEND_DURING_APPROACH, 20));
 
     tmp = arrivalExperiences.tryGetFirst(q -> q.type == ArrivalExperience.landedAsEmergency);
-    if (tmp == null)
+    if (tmp != null)
       ret.add(new MoodExperienceResult(null, LANDED_AS_EMERGENCY, 50));
 
     // negative
@@ -172,12 +175,12 @@ private IList<Experience<SharedExperience>> sharedExperiences;
       ret.add(new MoodExperienceResult(tmp.time, DEPARTURE_ALTITUDE_RESTRICTION_CANCELED, 5));
 
     tmp = departureExperiences.tryGetFirst(q -> q.type == DepartureExperience.divertedAsEmergency);
-    if (tmp == null)
+    if (tmp != null)
       ret.add(new MoodExperienceResult(null, DIVERTED_AS_EMERGENCY, 15));
 
     // negative
     tmp = departureExperiences.tryGetFirst(q -> q.type == DepartureExperience.leveledFlight);
-    if (tmp == null)
+    if (tmp != null)
       ret.add(new MoodExperienceResult(null, NO_DESCEND_DURING_APPROACH, -5));
 
     tmps = departureExperiences.where(q -> q.type == DepartureExperience.holdCycleFinished);
