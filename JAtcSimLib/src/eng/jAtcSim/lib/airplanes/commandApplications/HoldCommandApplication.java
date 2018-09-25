@@ -1,6 +1,7 @@
 package eng.jAtcSim.lib.airplanes.commandApplications;
 
 import eng.jAtcSim.lib.airplanes.Airplane;
+import eng.jAtcSim.lib.coordinates.Coordinate;
 import eng.jAtcSim.lib.speaking.IFromAirplane;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.HoldCommand;
 
@@ -28,7 +29,7 @@ public class HoldCommandApplication extends CommandApplication<HoldCommand> {
 
   @Override
   protected ApplicationResult adjustAirplane(Airplane.Airplane4Command plane, HoldCommand c) {
-    plane.getPilot().setTargetCoordinate(null);
+    plane.getPilot().setTargetCoordinate((Coordinate) null);
 
     plane.getPilot().setHoldBehavior(c.getNavaid(), c.getInboundRadial(), c.isLeftTurn());
 

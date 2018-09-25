@@ -15,6 +15,7 @@ import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.exceptions.ERuntimeException;
 import eng.eSystem.utilites.ConversionUtils;
+import eng.eSystem.utilites.EnumUtils;
 import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
@@ -22,6 +23,7 @@ import eng.jAtcSim.lib.airplanes.AirproxType;
 import eng.jAtcSim.lib.airplanes.commandApplications.ApplicationManager;
 import eng.jAtcSim.lib.airplanes.commandApplications.ApplicationResult;
 import eng.jAtcSim.lib.airplanes.commandApplications.ConfirmationResult;
+import eng.jAtcSim.lib.airplanes.moods.Mood;
 import eng.jAtcSim.lib.atcs.Atc;
 import eng.jAtcSim.lib.coordinates.Coordinate;
 import eng.jAtcSim.lib.coordinates.Coordinates;
@@ -84,6 +86,12 @@ public class Pilot {
       Pilot.this.targetCoordinate = coordinate;
     }
 
+    public void setTargetCoordinate(Navaid navaid) {
+      assert navaid != null;
+      Pilot.this.targetCoordinate = navaid.getCoordinate();
+      Pilot.this.parent.evaluateMoodForShortcut(navaid);
+    }
+
     public Restriction getSpeedRestriction() {
       return speedRestriction;
     }
@@ -111,6 +119,7 @@ public class Pilot {
     public void applyShortcut(Navaid n) {
       SpeechList<IFromAtc> skippedCommands = Pilot.this.afterCommands.doShortcutTo(n);
       Pilot.this.processSpeeches(skippedCommands, CommandSource.procedure);
+      Pilot.this.parent.evaluateMoodForShortcut(n);
     }
 
     public void setHoldBehavior(Navaid navaid, int inboundRadial, boolean leftTurn) {
@@ -145,10 +154,23 @@ public class Pilot {
     }
 
     public void processOrderedDivert() {
+      if (Pilot.this.parent.isEmergency())
+        Pilot.this.parent.getMood().experience(Mood.DepartureExperience.divertedAsEmergency);
+      else if (!Acc.isSomeActiveEmergency() == false)
+        Pilot.this.parent.getMood().experience(Mood.ArrivalExperience.divertOrderedByAtcWhenNoEmergency);
       Pilot.this.processDivert();
     }
 
     public void setTargetAltitude(int targetAltitude) {
+      boolean isNowLevelled = Math.abs(
+          Pilot.this.parent.getTargetAltitude() - Pilot.this.parent.getAltitude()) < 100;
+      if (isNowLevelled) {
+        if (Pilot.this.parent.isArrival())
+          Pilot.this.parent.getMood().experience(Mood.ArrivalExperience.leveledFlight);
+        else
+          Pilot.this.parent.getMood().experience(Mood.DepartureExperience.leveledFlight);
+      }
+
       Pilot.this.altitudeOrderedByAtc = targetAltitude;
       adjustTargetAltitude();
     }
@@ -157,7 +179,9 @@ public class Pilot {
       Pilot.this.altitudeRestriction = altitudeRestriction;
 
       if (altitudeRestriction == null) {
-        Pilot.this.afterCommands.clearAllAltitudeRestrictions();
+        boolean wasAny = Pilot.this.afterCommands.clearAllAltitudeRestrictions();
+        if (Pilot.this.parent.isArrival() == false && wasAny)
+          Pilot.this.parent.getMood().experience(Mood.DepartureExperience.departureAltitudeRestrictionCanceled);
       }
       adjustTargetAltitude();
     }
@@ -334,8 +358,6 @@ public class Pilot {
     }
 
   }
-
-  public static final double SPEED_TO_OVER_NAVAID_DISTANCE_MULTIPLIER = 0.007;
 
   abstract class BasicBehavior extends DivertableBehavior {
     private boolean clearanceLimitWarningSent = false;
@@ -524,6 +546,10 @@ public class Pilot {
           if (Coordinates.getDistanceInNM(parent.getCoordinate(), this.navaid.getCoordinate()) < NEAR_FIX_DISTANCE) {
             parent.setTargetHeading(this.getOutboundHeading(), this.isLeftTurned);
             this.phase = eHoldPhase.firstTurn;
+            if (Pilot.this.parent.isArrival())
+              Pilot.this.parent.getMood().experience(Mood.ArrivalExperience.holdCycleFinished);
+            else
+              Pilot.this.parent.getMood().experience(Mood.DepartureExperience.holdCycleFinished);
           } else {
             double newHeading = Coordinates.getHeadingToRadial(
                 parent.getCoordinate(), this.navaid.getCoordinate(), this.inboundRadial,
@@ -628,9 +654,9 @@ public class Pilot {
 
   class ApproachBehavior extends Behavior {
 
+    public static final double DEGREES_TO_RADS = .0174532925;
     private final static int LONG_FINAL_ALTITUDE_AGL = 1000;
     private final static int SHORT_FINAL_ALTITUDE_AGL = 200;
-    public static final double DEGREES_TO_RADS = .0174532925;
     private final int finalAltitude;
     private final int shortFinalAltitude;
 
@@ -665,6 +691,16 @@ public class Pilot {
     }
 
     public void goAround(GoingAroundNotification.GoAroundReason reason) {
+      boolean isAtcFail = EnumUtils.is((GoingAroundNotification.GoAroundReason) reason,
+          new GoingAroundNotification.GoAroundReason[]{
+              GoingAroundNotification.GoAroundReason.lostTrafficSeparationInApproach,
+              GoingAroundNotification.GoAroundReason.noLandingClearance,
+              GoingAroundNotification.GoAroundReason.notStabilizedApproachEnter,
+              GoingAroundNotification.GoAroundReason.notStabilizedOnFinal
+          });
+      if (isAtcFail)
+        Pilot.this.parent.getMood().experience(Mood.ArrivalExperience.goAroundNotCausedByPilot);
+
       Pilot.this.gaReason = reason;
       parent.adviceGoAroundToAtc(atc, reason);
 
@@ -993,6 +1029,8 @@ public class Pilot {
           }
           break;
         case landed:
+          if (Pilot.this.parent.isEmergency())
+            Pilot.this.parent.getMood().experience(Mood.ArrivalExperience.landedAsEmergency);
           isAfterStateChange = false;
           updateHeadingOnApproach(Coordinates.eHeadingToRadialBehavior.gentle);
           break;
@@ -1063,6 +1101,7 @@ public class Pilot {
     extension
   }
 
+  public static final double SPEED_TO_OVER_NAVAID_DISTANCE_MULTIPLIER = 0.007;
   private final DelayedList<ISpeech> queue = new DelayedList<>(2, 7); //Min/max item delay
   private final AfterCommandList afterCommands = new AfterCommandList();
   private final Map<Atc, SpeechList> saidText = new HashMap<>();
@@ -1321,7 +1360,12 @@ public class Pilot {
     }
   }
 
+  /**
+   * Divert ordered by the captain of the airplane (when time runs out)
+   */
   private void processDivert() {
+
+    Pilot.this.parent.getMood().experience(Mood.ArrivalExperience.divertOrderedByCaptain);
 
     Navaid n = getDivertNavaid();
 

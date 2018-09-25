@@ -38,7 +38,7 @@ public class ProceedDirectApplication extends CommandApplication<ProceedDirectCo
       plane.getPilot().abortHolding();
     }
 
-    plane.getPilot().setTargetCoordinate(c.getNavaid().getCoordinate());
+    plane.getPilot().setTargetCoordinate(c.getNavaid());
     return ApplicationResult.getEmpty();
   }
 }

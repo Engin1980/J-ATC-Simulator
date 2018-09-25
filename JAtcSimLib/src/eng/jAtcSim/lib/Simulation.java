@@ -13,10 +13,8 @@ import eng.eSystem.events.EventSimple;
 import eng.eSystem.exceptions.EApplicationException;
 
 import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
-import eng.jAtcSim.lib.airplanes.Airplane;
-import eng.jAtcSim.lib.airplanes.AirplaneList;
-import eng.jAtcSim.lib.airplanes.AirplaneTypes;
-import eng.jAtcSim.lib.airplanes.Airplanes;
+import eng.jAtcSim.lib.airplanes.*;
+import eng.jAtcSim.lib.airplanes.moods.Mood;
 import eng.jAtcSim.lib.atcs.*;
 import eng.jAtcSim.lib.coordinates.Coordinates;
 import eng.jAtcSim.lib.global.ETime;
@@ -516,10 +514,16 @@ public class Simulation {
 
   private void evalAirproxes() {
     Airplanes.evaluateAirproxes(Acc.planes());
+    Acc.planes()
+        .where(q->q.getAirprox() == AirproxType.full && Acc.prm().getResponsibleAtc(q) == Acc.atcApp())
+        .forEach(q->q.getMood().experience(Mood.SharedExperience.airprox));
   }
 
   private void evalMrvas() {
     this.mrvaManager.evaluateMrvaFails();
+    Acc.planes()
+        .where(q->q.isMrvaError() && Acc.prm().getResponsibleAtc(q) == Acc.atcApp())
+        .forEach(q->q.getMood().experience(Mood.SharedExperience.mrvaViolation));
   }
 
   private void processSystemMessages() {

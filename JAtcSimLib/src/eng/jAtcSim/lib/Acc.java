@@ -132,4 +132,9 @@ public class Acc {
   public static IReadOnlyList<Movement> scheduledMovements(){
     return sim.getTrafficManager().getScheduledMovements();
   }
+
+  public static boolean isSomeActiveEmergency() {
+    boolean ret = Acc.planes().isAny(q->q.isEmergency() && q.isArrival());
+    return ret;
+  }
 }

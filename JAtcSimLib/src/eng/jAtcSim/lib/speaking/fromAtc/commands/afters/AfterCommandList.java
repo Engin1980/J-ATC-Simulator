@@ -300,8 +300,10 @@ public class AfterCommandList {
     this.rt.add(it);
   }
 
-  public void clearAllAltitudeRestrictions() {
+  public boolean clearAllAltitudeRestrictions() {
+    boolean ret = this.rt.isAny(q -> q.consequent instanceof SetAltitudeRestriction);
     this.rt.remove(q -> q.consequent instanceof SetAltitudeRestriction);
+    return ret;
   }
 
   public SpeechList<IFromAtc> doShortcutTo(Navaid n) {

@@ -5,8 +5,10 @@ import eng.eSystem.collections.IList;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.utilites.NumberUtils;
+import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
 import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 import eng.jAtcSim.lib.Acc;
+import eng.jAtcSim.lib.airplanes.moods.Mood;
 import eng.jAtcSim.lib.airplanes.pilots.Pilot;
 import eng.jAtcSim.lib.atcs.Atc;
 import eng.jAtcSim.lib.coordinates.Coordinate;
@@ -239,6 +241,25 @@ public class Airplane implements IMessageParticipant {
     public AirproxType getAirprox() {
       return Airplane.this.airprox;
     }
+
+    public void evaluateMoodForShortcut(Navaid navaid) {
+      Route r = getAssigneRoute();
+      if (r.getNavaids().getLast().equals(navaid)) {
+        if (Airplane.this.isArrival()) {
+          if (Airplane.this.altitude.value > 1e5)
+            mood.experience(Mood.ArrivalExperience.shortcutToIafAbove100);
+        } else {
+          if (Airplane.this.altitude.value > 1e5)
+            mood.experience(Mood.DepartureExperience.shortcutToExitPointBelow100);
+          else
+            mood.experience(Mood.DepartureExperience.shortctuToExitPointAbove100);
+        }
+      }
+    }
+
+    public Mood getMood() {
+      return Airplane.this.mood;
+    }
   }
 
   public class Airplane4Command {
@@ -398,6 +419,7 @@ public class Airplane implements IMessageParticipant {
   private InertialValue altitude;
   private Integer delayResult = null;
   private ETime emergencyWanishTime = null;
+  private Mood mood;
 
   public static Airplane load(XElement elm) {
 
@@ -423,6 +445,7 @@ public class Airplane implements IMessageParticipant {
     LoadSave.loadField(elm, ret, "heading");
     LoadSave.loadField(elm, ret, "speed");
     LoadSave.loadField(elm, ret, "altitude");
+    LoadSave.loadField(elm, ret, "mood");
 
     ret.flightRecorder = FlightRecorder.create(ret.callsign);
 
@@ -537,8 +560,11 @@ public class Airplane implements IMessageParticipant {
 
     // flight recorders on
     this.flightRecorder = FlightRecorder.create(this.callsign);
+
+    this.mood = new Mood(!this.departure);
   }
 
+  @XmlConstructor
   private Airplane() {
     this.callsign = null;
     this.sqwk = null;
@@ -546,6 +572,7 @@ public class Airplane implements IMessageParticipant {
     this.plane4Display = new Airplane4Display();
     this.delayInitialMinutes = 0;
     this.delayExpectedTime = null;
+    this.mood = null;
   }
 
   public boolean isEmergency() {
@@ -650,14 +677,14 @@ public class Airplane implements IMessageParticipant {
     return targetHeading;
   }
 
+  public void setTargetHeading(double targetHeading) {
+    this.setTargetHeading((int) Math.round(targetHeading));
+  }
+
   public void setTargetHeading(int targetHeading) {
     boolean useLeft
         = Headings.getBetterDirectionToTurn(heading.getValue(), targetHeading) == ChangeHeadingCommand.eDirection.left;
     setTargetHeading(targetHeading, useLeft);
-  }
-
-  public void setTargetHeading(double targetHeading) {
-    this.setTargetHeading((int) Math.round(targetHeading));
   }
 
   public int getTargetAltitude() {
@@ -810,6 +837,7 @@ public class Airplane implements IMessageParticipant {
     LoadSave.saveField(elm, this, "heading");
     LoadSave.saveField(elm, this, "speed");
     LoadSave.saveField(elm, this, "altitude");
+    LoadSave.saveField(elm, this, "mood");
 
     XElement tmp = new XElement("pilot");
     this.pilot.save(tmp);
@@ -827,6 +855,10 @@ public class Airplane implements IMessageParticipant {
 
   public Navaid getEntryExitFix() {
     return pilot.getEntryExitPoint();
+  }
+
+  public Mood getMood() {
+    return this.mood;
   }
 
   // <editor-fold defaultstate="collapsed" desc=" private methods ">

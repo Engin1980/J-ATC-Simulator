@@ -2,6 +2,7 @@ package eng.jAtcSim.lib.airplanes.commandApplications;
 
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
+import eng.jAtcSim.lib.coordinates.Coordinate;
 import eng.jAtcSim.lib.global.Headings;
 import eng.jAtcSim.lib.speaking.IFromAirplane;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeHeadingCommand;
@@ -32,7 +33,7 @@ public class ChangeHeadingApplication extends CommandApplication<ChangeHeadingCo
     if (plane.getState() == Airplane.State.holding)
       plane.getPilot().abortHolding();
 
-    plane.getPilot().setTargetCoordinate(null);
+    plane.getPilot().setTargetCoordinate((Coordinate)null);
 
     double targetHeading;
     if (c.isCurrentHeading()) {

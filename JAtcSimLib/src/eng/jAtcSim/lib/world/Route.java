@@ -217,22 +217,6 @@ public class Route {
     return _mainNavaid;
   }
 
-//  public Route makeClone() {
-//    Route ret = new Route();
-//    ret.type = this.type;
-//    ret.name = this.name;
-//    ret.route = this.route;
-//    ret.category = this.category.makeClone();
-//    ret._routeCommands = new SpeechList<>(this._routeCommands);
-//    ret._routeNavaids = new EList<>(this._routeNavaids);
-//    ret._routeLength = this._routeLength;
-//    ret.mainFix = this.mainFix;
-//    ret._mainNavaid = this._mainNavaid;
-//    ret.entryFL = this.entryFL;
-//    ret._maxMrvaFL = this._maxMrvaFL;
-//    return ret;
-//  }
-
   public void setParent(Airport airport) {
     this.parent = airport;
   }
