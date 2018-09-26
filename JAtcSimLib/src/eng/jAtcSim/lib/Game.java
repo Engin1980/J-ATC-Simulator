@@ -59,61 +59,89 @@ public class Game {
   public static Game create(GameStartupInfo gsi) {
     Game g = new Game();
 
-    Acc.log().writeLine(ApplicationLog.eType.info, "Loading area");
-    g.areaSource = new AreaSource(gsi.areaXmlFile, gsi.icao);
-    g.areaSource.init();
+    try {
+      Acc.log().writeLine(ApplicationLog.eType.info, "Loading area");
+      g.areaSource = new AreaSource(gsi.areaXmlFile, gsi.icao);
+      g.areaSource.init();
+    } catch (Exception ex){
+      throw new EApplicationException("Unable to load or initialize area.");
+    }
+    try {
+      Acc.log().writeLine(ApplicationLog.eType.info, "Loading plane types");
+      g.airplaneTypesSource = new AirplaneTypesSource(gsi.planesXmlFile);
+      g.airplaneTypesSource.init();
+    } catch (Exception ex){
+      throw new EApplicationException("Unable to load or initialize plane types.");
+    }
 
-    Acc.log().writeLine(ApplicationLog.eType.info, "Loading plane types");
-    g.airplaneTypesSource = new AirplaneTypesSource(gsi.planesXmlFile);
-    g.airplaneTypesSource.init();
+    try {
+      Acc.log().writeLine(ApplicationLog.eType.info, "Loading fleets");
+      g.fleetsSource = new FleetsSource(gsi.fleetsXmlFile);
+      g.fleetsSource.init(g.airplaneTypesSource.getContent());
+    } catch (Exception ex){
+      throw new EApplicationException("Unable to load or initialize fleets.");
+    }
 
-    Acc.log().writeLine(ApplicationLog.eType.info, "Loading fleets");
-    g.fleetsSource = new FleetsSource(gsi.fleetsXmlFile);
-    g.fleetsSource.init(g.airplaneTypesSource.getContent());
-
-    Acc.log().writeLine(ApplicationLog.eType.info, "Loading traffic");
-    switch (gsi.trafficSourceType){
-      case user:
-        g.trafficSource = new UserTrafficSource(gsi.specificTraffic);
-        break;
-      case xml:
-        g.trafficSource = new XmlTrafficSource(gsi.trafficXmlFile);
-        break;
+    try {
+      Acc.log().writeLine(ApplicationLog.eType.info, "Loading traffic");
+      switch (gsi.trafficSourceType) {
+        case user:
+          g.trafficSource = new UserTrafficSource(gsi.specificTraffic);
+          break;
+        case xml:
+          g.trafficSource = new XmlTrafficSource(gsi.trafficXmlFile);
+          break;
         default:
           throw new EEnumValueUnsupportedException(gsi.specificTraffic);
+      }
+      g.trafficSource.init();
+    } catch (Exception ex){
+      throw new EApplicationException("Unable to load or initialize traffic.");
     }
-    g.trafficSource.init();
 
-    Acc.log().writeLine(ApplicationLog.eType.info, "Initializing weather");
-    switch (gsi.weatherProviderType){
-      case online:
-        g.weatherSource = new OnlineWeatherSource(true, gsi.icao, gsi.initialWeather);
-        break;
-      case xml:
-        g.weatherSource = new XmlWeatherSource(gsi.weatherXmlFile);
-        break;
-      case user:
-        g.weatherSource = new UserWeatherSource(gsi.initialWeather);
-            break;
-      default:
-        throw new EEnumValueUnsupportedException(gsi.weatherProviderType);
+    try {
+      Acc.log().writeLine(ApplicationLog.eType.info, "Initializing weather");
+      switch (gsi.weatherProviderType) {
+        case online:
+          g.weatherSource = new OnlineWeatherSource(true, gsi.icao, gsi.initialWeather);
+          break;
+        case xml:
+          g.weatherSource = new XmlWeatherSource(gsi.weatherXmlFile);
+          break;
+        case user:
+          g.weatherSource = new UserWeatherSource(gsi.initialWeather);
+          break;
+        default:
+          throw new EEnumValueUnsupportedException(gsi.weatherProviderType);
+      }
+      g.weatherSource.init();
+    } catch ( Exception ex){
+      throw new EApplicationException("Unable to load, download or initialize weather.");
     }
-    g.weatherSource.init();
 
-    TrafficManager.TrafficManagerSettings tms = new TrafficManager.TrafficManagerSettings(
-        gsi.allowTrafficDelays, gsi.maxTrafficPlanes, gsi.trafficDensityPercentage);
+    TrafficManager.TrafficManagerSettings tms;
+    try {
+      tms = new TrafficManager.TrafficManagerSettings(
+          gsi.allowTrafficDelays, gsi.maxTrafficPlanes, gsi.trafficDensityPercentage);
+    } catch (Exception ex){
+      throw new EApplicationException("Unable to initialize the traffic manager.");
+    }
 
-    Acc.log().writeLine(ApplicationLog.eType.info, "Creating the simulation");
-    g.simulation = new Simulation(
-        g.areaSource.getContent(), g.airplaneTypesSource.getContent(), g.fleetsSource.getContent(), g.trafficSource.getContent(),
-        g.areaSource.getActiveAirport(),
-        g.weatherSource.getContent(),
-        gsi.startTime,
-        gsi.secondLengthInMs,
-        gsi.emergencyPerDayProbability,
-        tms);
-    g.simulation.init();
-
+    try {
+      Acc.log().writeLine(ApplicationLog.eType.info, "Creating the simulation");
+      g.simulation = new Simulation(
+          g.areaSource.getContent(), g.airplaneTypesSource.getContent(), g.fleetsSource.getContent(), g.trafficSource.getContent(),
+          g.areaSource.getActiveAirport(),
+          g.weatherSource.getContent(),
+          gsi.startTime,
+          gsi.secondLengthInMs,
+          gsi.emergencyPerDayProbability,
+          tms);
+      Acc.log().writeLine(ApplicationLog.eType.info, "Initializing the simulation");
+      g.simulation.init();
+    } catch (Exception ex){
+      throw new EApplicationException("Unable to create or initialize the simulation.");
+    }
     return g;
   }
 

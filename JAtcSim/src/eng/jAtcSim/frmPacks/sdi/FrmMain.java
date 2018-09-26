@@ -219,7 +219,7 @@ public class FrmMain extends JFrame {
       });
       mnuView.addSeparator();
       buildMenuItem(mnuView, "Show mood results", null, s -> {
-        MoodHistoryPanel2 pnl = new MoodHistoryPanel2();
+        MoodHistoryPanel pnl = new MoodHistoryPanel();
         pnl.init(Acc.sim().getMoodHistory());
         SwingFactory.show(pnl, "Rating board");
       });

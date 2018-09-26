@@ -95,7 +95,9 @@ public class Mood {
 
     if (delayMinutesPlusMinus != 0) {
       tmp.add(new MoodExperienceResult(null,
-          sf("%s (%s minutes)", DELAY, (delayMinutesPlusMinus > 0 ? "+" : "-")),
+          sf("%s (%+d minutes)",
+              DELAY,
+              delayMinutesPlusMinus),
           (int) (delayMinutesPlusMinus * DELAY_PER_MINUTE_POINTS)));
     }
 

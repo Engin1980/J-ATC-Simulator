@@ -1,11 +1,13 @@
 package eng.jAtcSim.shared;
 
+import eng.eSystem.utilites.awt.ComponentUtils;
+
 import javax.swing.*;
 import java.awt.*;
 
 public class LayoutManager {
 
-  public interface Action{
+  public interface Action {
     void apply(Component component);
   }
 
@@ -22,14 +24,62 @@ public class LayoutManager {
     baseline
   }
 
-  public static void setPanelBorderText(JPanel pnl, String text){
+  public static void setFixedSize(Component component) {
+    LayoutManager.setFixedSize(component, component.getPreferredSize());
+  }
+
+  public static void setFixedSize(Component component, Dimension dimension) {
+    component.setMaximumSize(dimension);
+    component.setPreferredSize(dimension);
+    component.setMinimumSize(dimension);
+  }
+
+  public static void setFixedWidth(Component component) {
+    setFixedWidth(component, (int) component.getPreferredSize().getWidth());
+  }
+
+  public static void setFixedWidth(Component component, int width) {
+    component.setMaximumSize(
+        new Dimension(
+            width,
+            (int) component.getMaximumSize().getHeight()));
+    component.setPreferredSize(
+        new Dimension(
+        width,
+        (int) component.getPreferredSize().getHeight()));
+    component.setMinimumSize(
+        new Dimension(
+            width,
+            (int) component.getMinimumSize().getHeight()));
+  }
+
+  public static void setFixedHeight(Component component) {
+    setFixedHeight(component, (int) component.getPreferredSize().getHeight());
+  }
+
+  public static void setFixedHeight(Component component, int height) {
+    component.setMaximumSize(
+        new Dimension(
+            (int) component.getMaximumSize().getWidth(),
+            height));
+    component.setPreferredSize(
+        new Dimension(
+            (int) component.getPreferredSize().getWidth(),
+            height));
+    component.setMinimumSize(
+        new Dimension(
+            (int) component.getMaximumSize().getWidth(),
+            height));
+  }
+
+  public static void setPanelBorderText(JPanel pnl, String text) {
     pnl.setBorder(BorderFactory.createTitledBorder(text));
   }
 
-  public static void adjustComponents(Component mostParentComponent, Action action){
+  public static void adjustComponents(Component mostParentComponent, Action action) {
     action.apply(mostParentComponent);
 
-    if (mostParentComponent instanceof Container){
+    if (mostParentComponent instanceof Container) {
       Container container = (Container) mostParentComponent;
       for (Component component : container.getComponents()) {
         adjustComponents(component, action);
@@ -44,7 +94,7 @@ public class LayoutManager {
   }
 
   public static JPanel createFlowPanel(JComponent... components) {
-    return createFlowPanel(eVerticalAlign.baseline,4, components );
+    return createFlowPanel(eVerticalAlign.baseline, 4, components);
   }
 
   public static void fillFlowPanel(Container panel, eVerticalAlign align, int distance, JComponent... components) {
@@ -56,7 +106,7 @@ public class LayoutManager {
         panel.add(Box.createHorizontalStrut(distance));
       }
       JComponent component = components[i];
-      switch (align){
+      switch (align) {
         case top:
           component.setAlignmentY(Component.TOP_ALIGNMENT);
           break;
@@ -113,6 +163,7 @@ public class LayoutManager {
     fillBorderedPanel(panel, distance, content);
     return panel;
   }
+
   public static JPanel createBorderedPanel(int distance) {
     JPanel panel = new JPanel();
     fillBorderedPanel(panel, distance, null);
@@ -123,13 +174,13 @@ public class LayoutManager {
     fillBorderedPanel(panel, distance, distance, distance, distance, content);
   }
 
-  public static JPanel createBorderedPanel(int marginLeft, int marginTop, int marginRight, int marginBottom, Container content){
+  public static JPanel createBorderedPanel(int marginLeft, int marginTop, int marginRight, int marginBottom, Container content) {
     JPanel ret = new JPanel();
-    fillBorderedPanel(ret, marginLeft, marginTop, marginRight, marginBottom, content );
+    fillBorderedPanel(ret, marginLeft, marginTop, marginRight, marginBottom, content);
     return ret;
   }
 
-  public static void fillBorderedPanel(Container panel, int marginLeft, int marginTop, int marginRight, int marginBottom, Container content){
+  public static void fillBorderedPanel(Container panel, int marginLeft, int marginTop, int marginRight, int marginBottom, Container content) {
     panel.setLayout(new BorderLayout());
     panel.add(Box.createVerticalStrut(marginTop), BorderLayout.PAGE_START);
     panel.add(Box.createVerticalStrut(marginBottom), BorderLayout.PAGE_END);
@@ -139,7 +190,7 @@ public class LayoutManager {
       panel.add(content, BorderLayout.CENTER);
   }
 
-  public static JPanel createBorderedPanel(Container top, Container bottom, Container left, Container right, Container content){
+  public static JPanel createBorderedPanel(Container top, Container bottom, Container left, Container right, Container content) {
     JPanel ret = new JPanel();
     fillBorderedPanel(ret, top, bottom, left, right, content);
     return ret;
@@ -244,7 +295,7 @@ public class LayoutManager {
       throw new IllegalArgumentException(
           String.format(
               "Component array length %d is not valid for row-count %d x %d. Unable to create form-panel layout.",
-              components.length,  rowCount,  columnCount));
+              components.length, rowCount, columnCount));
 
     rows = new Component[rowCount][];
     for (int i = 0; i < rowCount; i++) {
@@ -269,7 +320,7 @@ public class LayoutManager {
     fillFormPanel(panel, rows, columns);
   }
 
-  public static JPanel indentPanel(JComponent panel, int distance){
+  public static JPanel indentPanel(JComponent panel, int distance) {
     JPanel ret =
         LayoutManager.createFlowPanel(eVerticalAlign.baseline, 0,
             createHorizontalPlaceholder(distance),
@@ -277,17 +328,17 @@ public class LayoutManager {
     return ret;
   }
 
-  public static JPanel createHorizontalPlaceholder(int width){
+  public static JPanel createHorizontalPlaceholder(int width) {
     JPanel ret = createPlaceholder(width, 1);
     return ret;
   }
 
-  private static JPanel createVerticalPlaceholder(int height){
+  private static JPanel createVerticalPlaceholder(int height) {
     JPanel ret = createPlaceholder(1, height);
     return ret;
   }
 
-  private static JPanel createPlaceholder(int width, int height){
+  private static JPanel createPlaceholder(int width, int height) {
     JPanel ret = new JPanel();
     Dimension d = new Dimension(width, height);
     ret.setPreferredSize(d);

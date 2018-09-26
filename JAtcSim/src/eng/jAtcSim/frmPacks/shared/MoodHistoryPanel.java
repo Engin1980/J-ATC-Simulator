@@ -11,64 +11,60 @@ import eng.jAtcSim.shared.LayoutManager;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class MoodHistoryPanel extends JPanel {
-  private static Dimension lblDimension = new Dimension(150, 1);
-
-  private IList<MoodResult> dataSet;
-
   private class PlaneRow extends JPanel {
     public PlaneRow(ETime time, Callsign callsign, int points) {
 
       JLabel lblTime = new JLabel(time.toString());
-      lblTime.setMinimumSize(lblDimension);
+      LayoutManager.setFixedWidth(lblTime, labelWidth);
+
       JLabel lblCallsign = new JLabel(callsign.toString());
-      lblCallsign.setMinimumSize(lblDimension);
+      LayoutManager.setFixedWidth(lblCallsign, labelWidth);
+
       JLabel lblPoints = new JLabel((points < 0) ? Integer.toString(points) : ("+" + points));
 
-      LayoutManager.fillFlowPanel(this, LayoutManager.eVerticalAlign.bottom, 4,
-          lblTime, lblCallsign, lblPoints );
+      JPanel pnlContent = LayoutManager.createFlowPanel(lblTime, lblCallsign, lblPoints);
+      pnlContent = LayoutManager.createBorderedPanel(4, pnlContent);
+      LayoutManager.fillBorderedPanel(this, null, null, pnlContent, null, null);
+      LayoutManager.setFixedHeight(this);
     }
   }
 
   public class ResultRow extends JPanel {
     public ResultRow(MoodExperienceResult experienceResult) {
       JLabel lblTime = new JLabel(
-          experienceResult.getTime() == null ? "---" : experienceResult.getTime().toString());
+          experienceResult.getTime() == null ? "" : experienceResult.getTime().toString());
+      LayoutManager.setFixedWidth(lblTime, labelWidth);
+
       JLabel lblPoints = new JLabel(
           experienceResult.getPoints() < 0 ? Integer.toString(experienceResult.getPoints()) : "+" + experienceResult.getPoints());
+      LayoutManager.setFixedWidth(lblPoints, labelWidth);
+
       JLabel lblDescription = new JLabel(experienceResult.getDescription());
 
-      LayoutManager.fillFlowPanel(this, LayoutManager.eVerticalAlign.bottom, 4,
-          lblTime, lblPoints, lblDescription);
+      JPanel pnlContent = LayoutManager.createFlowPanel(lblTime, lblPoints, lblDescription);
+      pnlContent = LayoutManager.createBorderedPanel(4, pnlContent);
+      LayoutManager.fillBorderedPanel(this, null, null, pnlContent, null, null);
+      LayoutManager.setFixedHeight(this);
     }
   }
 
-  JPanel pnlTop;
-  JPanel pnlBottom;
+  private static final Color selectedBackgroundColor = Color.white;
+  private static int labelWidth = 150;
+  private static Dimension panelDimension = new Dimension(500, 300);
+  private static Dimension formDimension = new Dimension(500, 500);
+  private JPanel pnlTop;
+  private JPanel pnlBottom;
+  private IList<MoodResult> dataSet;
+  private Integer selectedIndex = null;
+  private Color defaultBackgroundColor = null;
 
   public MoodHistoryPanel() {
     initializeComponents();
     layoutComponents();
-  }
-
-  private void layoutComponents() {
-    JScrollPane scrTop = new JScrollPane(pnlTop);
-    JScrollPane scrBottom = new JScrollPane(pnlBottom);
-    JSplitPane pnlSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, scrTop, scrBottom);
-    pnlSplit.setOneTouchExpandable(true);
-    pnlSplit.setDividerLocation(250);
-
-    Dimension minSize = new Dimension(300, 100);
-    scrTop.setMinimumSize(minSize);
-    scrBottom.setMinimumSize(minSize);
-
-    this.add(pnlSplit);
-  }
-
-  private void initializeComponents() {
-    pnlTop = new JPanel();
-    pnlBottom = new JPanel();
   }
 
   public void init(IReadOnlyList<MoodResult> results) {
@@ -80,9 +76,52 @@ public class MoodHistoryPanel extends JPanel {
       final int index = globalIndex;
       PlaneRow pnlPlane = new PlaneRow(result.getTime(), result.getCallsing(), result.getPoints());
       pnlTop.add(pnlPlane);
-      ComponentUtils.adjustComponentTree(pnlPlane, q -> this.row_clicked(index));
+      pnlPlane.addMouseListener(new MouseAdapter() {
+        @Override
+        public void mouseClicked(MouseEvent e) {
+          rowSelectionChanged(index);
+        }
+      });
       globalIndex++;
     }
+  }
+
+  private void layoutComponents() {
+    JScrollPane scrTop = new JScrollPane(pnlTop);
+    JScrollPane scrBottom = new JScrollPane(pnlBottom);
+    JSplitPane pnlSplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT, scrTop, scrBottom);
+    pnlSplit.setOneTouchExpandable(true);
+    pnlSplit.setDividerLocation(250);
+
+    scrTop.setMinimumSize(panelDimension);
+    scrBottom.setMinimumSize(panelDimension);
+
+    this.setLayout(new BorderLayout());
+    this.add(pnlSplit, BorderLayout.CENTER);
+
+    this.setPreferredSize(formDimension);
+  }
+
+  private void initializeComponents() {
+    pnlTop = LayoutManager.createBoxPanel();
+    pnlBottom = LayoutManager.createBoxPanel();
+  }
+
+  private void rowSelectionChanged(int index) {
+    higlightRow(index);
+    MoodResult mr = dataSet.get(index);
+    init2(mr.getExperiences());
+  }
+
+  private void higlightRow(int index) {
+    if (selectedIndex != null) {
+      Component prev = pnlTop.getComponent(selectedIndex);
+      ComponentUtils.adjustComponentTree(prev, q -> q.setBackground(defaultBackgroundColor));
+    }
+    selectedIndex = index;
+    Component prev = pnlTop.getComponent(selectedIndex);
+    defaultBackgroundColor = prev.getBackground();
+    ComponentUtils.adjustComponentTree(prev, q -> q.setBackground(selectedBackgroundColor));
   }
 
   private void init2(IReadOnlyList<MoodExperienceResult> exps) {
@@ -92,12 +131,8 @@ public class MoodHistoryPanel extends JPanel {
       ResultRow pnlResult = new ResultRow(result);
       pnlBottom.add(pnlResult);
     }
-  }
-
-  private void row_clicked(int index) {
-    MoodResult mr = dataSet.get(index);
-
-    init2(mr.getExperiences());
+    pnlBottom.revalidate();
+    pnlBottom.repaint();
   }
 
 }

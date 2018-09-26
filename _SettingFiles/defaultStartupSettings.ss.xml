@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?><root __class="StartupSettings">
-  <files areaXmlFile="_SettingFiles\LKPR.ar.xml" fleetsXmlFile="_SettingFiles\fleets.fl.xml" planesXmlFile="_SettingFiles\planeTypes.tp.xml" trafficXmlFile="_SettingFiles\comeAndGoTraffic.tr.xml" weatherXmlFile="C:\Users\Marek Vajgl\Documents\IdeaProjects\J-ATC-Simulator\_SettingFiles\LKPR_afternoonThunderstorm.we.xml"/>
+  <files areaXmlFile="_SettingFiles\LKPR.ar.xml" fleetsXmlFile="_SettingFiles\fleets.fl.xml" planesXmlFile="_SettingFiles\planeTypes.tp.xml" trafficXmlFile="_SettingFiles\comeAndGoTraffic.tr.xml" weatherXmlFile="C:\Users\Marek Vajgl\Documents\IdeaProjects\JAtcSimSolution\_SettingFiles\LKPR_afternoonThunderstorm.we.xml"/>
   <recent icao="LKPR" time="6:00"/>
   <weather cloudBaseAltitudeFt="10000" cloudBaseProbability="0.0" type="xml" visibilityInM="9999" windDirection="80" windSpeed="4"/>
   <traffic allowDelays="true" densityPercentage="1.0" emergencyPerDayProbability="0.14285714285714285" maxPlanes="60" trafficAirportDefinedTitle="Normal traffic" trafficXmlDefinedTitle="Generic heavy traffic in waves" type="xml">
