@@ -49,8 +49,6 @@ public class StartupSettings {
     }
 
     public eTrafficType type;
-    public String trafficAirportDefinedTitle;
-    public String trafficXmlDefinedTitle;
     public CustomTraffic customTraffic = new CustomTraffic();
     public int maxPlanes;
     public double densityPercentage;

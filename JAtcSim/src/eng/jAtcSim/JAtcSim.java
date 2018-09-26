@@ -402,6 +402,14 @@ public class JAtcSim {
         startupSettings.files.trafficXmlFile = tmp.toString();
       }
     }
+
+    if (startupSettings.files.weatherXmlFile != null) {
+      tmp = Paths.get(startupSettings.files.weatherXmlFile);
+      if (tmp.isAbsolute()) {
+        tmp = appPath.relativize(tmp);
+        startupSettings.files.weatherXmlFile = tmp.toString();
+      }
+    }
   }
 
   private static Pack createPackInstance(String packTypeName) {

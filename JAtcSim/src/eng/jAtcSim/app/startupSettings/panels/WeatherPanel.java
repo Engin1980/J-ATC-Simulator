@@ -74,6 +74,8 @@ public class WeatherPanel extends JStartupPanel {
   }
 
   private void initComponents() {
+    this.setMinimumSize(LARGE_FRAME_FIELD_DIMENSION);
+
     fleWeather = new XmlFileSelectorExtender(SwingFactory.FileDialogType.weather);
     this.userWeatherPanel = new CustomWeatherPanel();
 
