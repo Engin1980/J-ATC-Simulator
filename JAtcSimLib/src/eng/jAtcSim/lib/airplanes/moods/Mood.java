@@ -53,7 +53,7 @@ public class Mood {
   private static final String SPEED_RESTRICTION_UNDER_FL100_CANCELED = "Speed restriction below FL100 canceled";
   private static final String NO_DESCEND_DURING_APPROACH = "No descend during approach";
   private static final String LANDED_AS_EMERGENCY = "Successful emergency landing";
-  private static final String HOLDING = "Holding";
+  private static final String HOLDING = "Flown holding pattern";
   private static final String GO_AROUND = "Go around (ATC fault)";
   private static final String DIVERT = "Diverted";
   private static final String AIRPROX = "Separation disrupted";
@@ -134,12 +134,12 @@ public class Mood {
     // negative
     tmps = arrivalExperiences.where(q -> q.type == ArrivalExperience.holdCycleFinished);
     for (Experience<ArrivalExperience> tm : tmps) {
-      ret.add(new MoodExperienceResult(tmp.time, HOLDING, -3));
+      ret.add(new MoodExperienceResult(tm.time, HOLDING, -3));
     }
 
     tmps = arrivalExperiences.where(q -> q.type == ArrivalExperience.goAroundNotCausedByPilot);
     for (Experience<ArrivalExperience> tm : tmps) {
-      ret.add(new MoodExperienceResult(tmp.time, GO_AROUND, -10));
+      ret.add(new MoodExperienceResult(tm.time, GO_AROUND, -10));
     }
 
     tmp = arrivalExperiences.tryGetFirst(q -> q.type == ArrivalExperience.divertOrderedByAtcWhenNoEmergency);
@@ -187,7 +187,7 @@ public class Mood {
 
     tmps = departureExperiences.where(q -> q.type == DepartureExperience.holdCycleFinished);
     for (Experience<DepartureExperience> tm : tmps) {
-      ret.add(new MoodExperienceResult(tmp.time, HOLDING, -10));
+      ret.add(new MoodExperienceResult(tm.time, HOLDING, -10));
     }
 
     return ret;

@@ -167,6 +167,8 @@ public class Game {
     ret.areaSource.init();
     ret.airplaneTypesSource.init();
     ret.fleetsSource.init(ret.airplaneTypesSource.getContent());
+    ret.trafficSource.init();
+    ret.weatherSource.init();
 
     ret.simulation = new Simulation(
         ret.areaSource.getContent(), ret.airplaneTypesSource.getContent(),

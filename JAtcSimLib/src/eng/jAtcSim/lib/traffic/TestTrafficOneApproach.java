@@ -8,6 +8,7 @@ package eng.jAtcSim.lib.traffic;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
+import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.AirplaneType;
 import eng.jAtcSim.lib.airplanes.Callsign;
@@ -18,6 +19,7 @@ import eng.jAtcSim.lib.global.ETime;
  */
 public class TestTrafficOneApproach extends TestTraffic {
 
+  @XmlIgnore
   private String[] clsgnNumbers = new String[]{"5555"}; //, "6666", "7777"};
 
   @Override

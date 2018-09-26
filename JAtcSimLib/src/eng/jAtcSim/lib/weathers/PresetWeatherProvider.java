@@ -10,7 +10,8 @@ import eng.jAtcSim.lib.weathers.presets.PresetWeatherList;
 public class PresetWeatherProvider extends WeatherProvider {
 
   private PresetWeatherList presetWeathers;
-  private int nextAvailableWeatherIndex = -1;
+  private int dayIndex = -1;
+  private int weatherIndex = -1;
 
   public PresetWeatherProvider(String sourceFileName) {
 
@@ -32,18 +33,36 @@ public class PresetWeatherProvider extends WeatherProvider {
   @Override
   public Weather tryGetNewWeather() {
     Weather ret = null;
-    if (nextAvailableWeatherIndex == -1) {
+    if (dayIndex != Acc.now().getDays()) {
       int index = getFirstWeatherIndex();
       ret = presetWeathers.get(index);
-      nextAvailableWeatherIndex = index+1;
+      weatherIndex = index;
+      dayIndex = Acc.now().getDays();
     } else {
-      if (nextAvailableWeatherIndex == presetWeathers.size())
-        nextAvailableWeatherIndex = 0;
-      PresetWeather pw = presetWeathers.get(nextAvailableWeatherIndex);
-      java.time.LocalTime now = Acc.now().toLocalTime();
-      if (pw.getTime().isBefore(now)) {
-        ret = presetWeathers.get(nextAvailableWeatherIndex);
-        nextAvailableWeatherIndex++;
+      if (weatherIndex == presetWeathers.size())
+        ret = null; // no more weahter available
+      else {
+        java.time.LocalTime now = Acc.now().toLocalTime();
+        int newIndex = weatherIndex;
+        while (true) {
+          if (newIndex == presetWeathers.size()) {
+            newIndex = -1;
+            break;
+          } else if (presetWeathers.get(newIndex).getTime().isBefore(now)) {
+            newIndex++;
+          } else {
+            break;
+          }
+        }
+        if (newIndex == -1) {
+          weatherIndex = presetWeathers.size();
+          ret = null;
+        } else if (newIndex == weatherIndex) {
+          ret = null;
+        } else {
+          ret = presetWeathers.get(newIndex);
+          weatherIndex = newIndex;
+        }
       }
     }
     return ret;
@@ -56,13 +75,13 @@ public class PresetWeatherProvider extends WeatherProvider {
     int index = -1;
     java.time.LocalTime now = Acc.now().toLocalTime();
     for (int i = 0; i < presetWeathers.size(); i++) {
-      if (presetWeathers.get(i).getTime().isAfter(now)){
-        index = i-1;
+      if (presetWeathers.get(i).getTime().isAfter(now)) {
+        index = i - 1;
         break;
       }
     }
     if (index == -1)
-      index = presetWeathers.size()-1;
+      index = presetWeathers.size() - 1;
 
     return index;
   }
