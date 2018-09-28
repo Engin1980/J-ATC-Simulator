@@ -172,6 +172,13 @@ public class Pilot {
         else if (Pilot.this.parent.isArrival() == false)
           Pilot.this.parent.getMood().experience(Mood.DepartureExperience.leveledFlight);
       }
+      if (Pilot.this.parent.isArrival()){
+        if (targetAltitude > Pilot.this.parent.getAltitude() && !Pilot.this.isAfterGoAround)
+          Pilot.this.parent.getMood().experience(Mood.SharedExperience.incorrectAltitudeChange);
+      }else {
+        if (targetAltitude < Pilot.this.parent.getAltitude())
+          Pilot.this.parent.getMood().experience(Mood.SharedExperience.incorrectAltitudeChange);
+      }
 
       Pilot.this.altitudeOrderedByAtc = targetAltitude;
       adjustTargetAltitude();
@@ -693,7 +700,8 @@ public class Pilot {
     }
 
     public void goAround(GoingAroundNotification.GoAroundReason reason) {
-      boolean isAtcFail = EnumUtils.is((GoingAroundNotification.GoAroundReason) reason,
+      Pilot.this.isAfterGoAround=true;
+      boolean isAtcFail = EnumUtils.is(reason,
           new GoingAroundNotification.GoAroundReason[]{
               GoingAroundNotification.GoAroundReason.lostTrafficSeparationInApproach,
               GoingAroundNotification.GoAroundReason.noLandingClearance,
@@ -1120,6 +1128,7 @@ public class Pilot {
   private Navaid entryExitPoint;
   private Restriction speedRestriction = null;
   private Restriction altitudeRestriction = null;
+  private boolean isAfterGoAround = false;
   @XmlIgnore
   private PilotRecorder recorder;
 

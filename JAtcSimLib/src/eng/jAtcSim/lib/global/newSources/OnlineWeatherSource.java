@@ -1,6 +1,7 @@
 package eng.jAtcSim.lib.global.newSources;
 
 import eng.eSystem.validation.Validator;
+import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
 import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 import eng.jAtcSim.lib.weathers.DynamicWeatherProvider;
 import eng.jAtcSim.lib.weathers.Weather;
@@ -13,6 +14,10 @@ public class OnlineWeatherSource extends WeatherSource {
   private Weather defaultWeather;
   @XmlIgnore
   private WeatherProvider content;
+
+  @XmlConstructor
+  private OnlineWeatherSource(){
+  }
 
   public OnlineWeatherSource(boolean refreshOnInit, String icao, Weather defaultWeather) {
     Validator.matchPattern(icao, "^[A-Z]{4}$");

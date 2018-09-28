@@ -140,7 +140,7 @@ public class Game {
       Acc.log().writeLine(ApplicationLog.eType.info, "Initializing the simulation");
       g.simulation.init();
     } catch (Exception ex){
-      throw new EApplicationException("Unable to create or initialize the simulation.");
+      throw new EApplicationException("Unable to create or initialize the simulation.", ex);
     }
     return g;
   }

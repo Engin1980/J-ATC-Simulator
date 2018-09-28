@@ -13,6 +13,9 @@ import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.AirplaneType;
 import eng.jAtcSim.lib.airplanes.AirplaneTypes;
 import eng.jAtcSim.lib.atcs.Atc;
+import eng.jAtcSim.lib.atcs.CenterAtc;
+import eng.jAtcSim.lib.atcs.TowerAtc;
+import eng.jAtcSim.lib.atcs.UserAtc;
 import eng.jAtcSim.lib.speaking.fromAtc.atc2atc.PlaneSwitchMessage;
 import eng.jAtcSim.lib.speaking.fromAtc.atc2atc.RunwayCheck;
 import eng.jAtcSim.lib.speaking.fromAtc.atc2atc.StringResponse;
@@ -34,9 +37,6 @@ public class LoadSave {
   private static AirplaneParser airplaneParser = new AirplaneParser();
 
   static {
-//    // TODO here should be all classes with private constructors defined for xml loading
-//    sett.getIgnoredFieldsRegex().add("this\\$0"); // parent of inner class
-
     XmlSettings sett = new XmlSettings();
 
     // parser
@@ -47,6 +47,9 @@ public class LoadSave {
     sett.forType(Route.class).setCustomParser(routeParser);
     sett.forType(Airplane.class).setCustomParser(airplaneParser);
     sett.forType(Atc.class).setCustomParser(atcParser);
+    sett.forType(UserAtc.class).setCustomParser(atcParser);
+    sett.forType(CenterAtc.class).setCustomParser(atcParser);
+    sett.forType(TowerAtc.class).setCustomParser(atcParser);
     sett.forType(Airport.class).setCustomParser(airportParser);
 
     // factories

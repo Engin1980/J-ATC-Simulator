@@ -25,7 +25,6 @@ public class FrmStartupSettings extends JPanel {
     // bottom
     JPanel pnlBottom = createBottomPanel();
 
-    //JPanel pnl = LayoutManager.createBorderedPanel(pnlTop, pnlBottom, null, null, pnlContent);
     LayoutManager.fillBorderedPanel(this, null, pnlBottom, null, null, pnlContent);
   }
 
