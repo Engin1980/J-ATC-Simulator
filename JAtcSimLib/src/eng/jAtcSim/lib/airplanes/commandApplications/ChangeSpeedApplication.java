@@ -1,8 +1,8 @@
 package eng.jAtcSim.lib.airplanes.commandApplications;
 
+import eng.eSystem.geo.Coordinates;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
-import eng.jAtcSim.lib.coordinates.Coordinates;
 import eng.jAtcSim.lib.global.Restriction;
 import eng.jAtcSim.lib.speaking.IFromAirplane;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.Rejection;

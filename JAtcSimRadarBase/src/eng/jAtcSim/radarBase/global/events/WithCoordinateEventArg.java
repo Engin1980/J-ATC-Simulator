@@ -6,7 +6,7 @@
 
 package eng.jAtcSim.radarBase.global.events;
 
-import eng.jAtcSim.lib.coordinates.Coordinate;
+import eng.eSystem.geo.Coordinate;
 
 /**
  *

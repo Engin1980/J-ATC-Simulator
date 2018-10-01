@@ -5,7 +5,7 @@
  */
 package eng.jAtcSim.lib.world;
 
-import eng.jAtcSim.lib.coordinates.Coordinate;
+import eng.eSystem.geo.Coordinate;
 
 /**
  *

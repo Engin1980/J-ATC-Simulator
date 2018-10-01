@@ -6,14 +6,13 @@ import eng.eSystem.events.Event;
 import eng.eSystem.events.EventSimple;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
+import eng.eSystem.geo.Coordinates;
 import eng.eSystem.utilites.CollectionUtils;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.Simulation;
 import eng.jAtcSim.lib.airplanes.*;
 import eng.jAtcSim.lib.atcs.Atc;
-import eng.jAtcSim.lib.atcs.TowerAtc;
-import eng.jAtcSim.lib.coordinates.Coordinate;
-import eng.jAtcSim.lib.coordinates.Coordinates;
+import eng.eSystem.geo.Coordinate;
 import eng.jAtcSim.lib.global.Global;
 import eng.jAtcSim.lib.global.Headings;
 import eng.jAtcSim.lib.global.logging.ApplicationLog;
@@ -577,6 +576,7 @@ public class Radar {
   private void canvas_onMouseMove(ICanvas sender, EMouseEventArg e) {
     Point pt = e.getPoint();
     Coordinate coord = tl.toCoordinate(pt);
+    System.out.println("## " + e.type);
     switch (e.type) {
       case wheelScroll:
         if (e.wheel > 0) {

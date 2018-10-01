@@ -1,8 +1,8 @@
 package eng.jAtcSim.lib.world;
 
+import eng.eSystem.geo.Coordinates;
 import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
-import eng.jAtcSim.lib.coordinates.Coordinate;
-import eng.jAtcSim.lib.coordinates.Coordinates;
+import eng.eSystem.geo.Coordinate;
 
 public class InactiveRunwayThreshold {
   private String name;

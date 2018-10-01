@@ -1,6 +1,6 @@
 package eng.jAtcSim.lib.world;
 
-import eng.jAtcSim.lib.coordinates.Coordinate;
+import eng.eSystem.geo.Coordinate;
 
 public class InitialPosition {
   public Coordinate coordinate;

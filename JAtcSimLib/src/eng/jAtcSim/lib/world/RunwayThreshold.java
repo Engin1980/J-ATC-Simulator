@@ -8,12 +8,12 @@ package eng.jAtcSim.lib.world;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.geo.Coordinates;
 import eng.eSystem.utilites.CollectionUtils;
 import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 import eng.eSystem.xmlSerialization.annotations.XmlItemElement;
 import eng.eSystem.xmlSerialization.annotations.XmlOptional;
-import eng.jAtcSim.lib.coordinates.Coordinate;
-import eng.jAtcSim.lib.coordinates.Coordinates;
+import eng.eSystem.geo.Coordinate;
 import eng.jAtcSim.lib.global.Headings;
 import eng.jAtcSim.lib.world.approaches.*;
 

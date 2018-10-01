@@ -1,7 +1,7 @@
 package eng.jAtcSim.lib.world.approaches;
 
-import eng.jAtcSim.lib.coordinates.Coordinate;
-import eng.jAtcSim.lib.coordinates.Coordinates;
+import eng.eSystem.geo.Coordinate;
+import eng.eSystem.geo.Coordinates;
 import eng.jAtcSim.lib.speaking.IFromAtc;
 import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.world.RunwayThreshold;

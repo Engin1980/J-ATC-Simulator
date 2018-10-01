@@ -49,7 +49,7 @@ public class Mood {
   public enum SharedExperience {
     airprox,
     mrvaViolation,
-    prohibitedAreaViolation
+    incorrectAltitudeChange, prohibitedAreaViolation
   }
 
   private static final String SHORTCUT_TO_EXIT = "Shortcut to SID final point";
@@ -66,6 +66,7 @@ public class Mood {
   private static final String MRVA = "MRVA disrupted";
   private static final String PROHIBITED_AREA = "Prohibited area entered";
   private static final String DELAY = "Delay";
+  private static final String INCORRECT_ALTITUDE_CHANGE = "Incorrect altitude change";
   private static final double DELAY_PER_MINUTE_POINTS = -1;
 
   private IList<Experience<ArrivalExperience>> arrivalExperiences;
@@ -203,12 +204,17 @@ public class Mood {
     IList<MoodExperienceResult> ret = new EList<>();
 
     Experience<DepartureExperience> tmp;
-    IList<Experience<DepartureExperience>> tmps;
+    IList<Experience<SharedExperience>> tmps;
     int cnt;
 
     // positive
 
     // negative
+    tmps = sharedExperiences.where(q->q.type == SharedExperience.incorrectAltitudeChange);
+    for (Experience<SharedExperience> tm : tmps) {
+      ret.add(new MoodExperienceResult(tm.time, INCORRECT_ALTITUDE_CHANGE, -10));
+    }
+
     cnt = sharedExperiences.count(q -> q.type == SharedExperience.airprox);
     if (cnt > 0) {
       ret.add(new MoodExperienceResult(null, AIRPROX + sf(" (%s seconds)", cnt), -1));

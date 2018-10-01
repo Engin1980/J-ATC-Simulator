@@ -2,8 +2,8 @@ package eng.jAtcSim.radarBase;
 
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
-import eng.jAtcSim.lib.coordinates.Coordinate;
-import eng.jAtcSim.lib.coordinates.Coordinates;
+import eng.eSystem.geo.Coordinate;
+import eng.eSystem.geo.Coordinates;
 import eng.jAtcSim.radarBase.global.*;
 import eng.jAtcSim.radarBase.global.Color;
 import eng.jAtcSim.radarBase.global.Font;

@@ -1,19 +1,11 @@
 package eng.jAtcSim.lib.managers;
 
 import eng.eSystem.collections.*;
-import eng.eSystem.exceptions.EApplicationException;
-import eng.eSystem.utilites.NumberUtils;
+import eng.eSystem.geo.Coordinates;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
-import eng.jAtcSim.lib.coordinates.Coordinate;
-import eng.jAtcSim.lib.coordinates.Coordinates;
-import eng.jAtcSim.lib.global.logging.CommonRecorder;
-import eng.jAtcSim.lib.global.logging.Recorder;
+import eng.eSystem.geo.Coordinate;
 import eng.jAtcSim.lib.world.Border;
-import eng.jAtcSim.lib.world.BorderExactPoint;
-import eng.jAtcSim.lib.world.BorderPoint;
-
-import java.util.Comparator;
 
 public class MrvaManager {
 

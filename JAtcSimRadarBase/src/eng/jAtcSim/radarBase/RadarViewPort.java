@@ -1,6 +1,6 @@
 package eng.jAtcSim.radarBase;
 
-import eng.jAtcSim.lib.coordinates.Coordinate;
+import eng.eSystem.geo.Coordinate;
 
 public class RadarViewPort {
   private Coordinate topLeft;

@@ -2,10 +2,10 @@ package eng.jAtcSim.lib.world;
 
 import eng.eSystem.Tuple;
 import eng.eSystem.collections.IList;
+import eng.eSystem.geo.Coordinates;
 import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 import eng.jAtcSim.lib.Acc;
-import eng.jAtcSim.lib.coordinates.Coordinate;
-import eng.jAtcSim.lib.coordinates.Coordinates;
+import eng.eSystem.geo.Coordinate;
 
 public class EntryExitPoint {
   public enum Type {

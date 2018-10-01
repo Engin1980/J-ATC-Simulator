@@ -3,7 +3,7 @@ package eng.jAtcSim.lib.world.approaches;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 import eng.jAtcSim.lib.Acc;
-import eng.jAtcSim.lib.coordinates.Coordinate;
+import eng.eSystem.geo.Coordinate;
 import eng.jAtcSim.lib.world.Navaid;
 
 public class UnpreciseApproach extends Approach {

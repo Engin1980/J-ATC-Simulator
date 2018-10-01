@@ -1,7 +1,7 @@
 
 package eng.jAtcSim.lib.airplanes.pilots;
 
-import eng.jAtcSim.lib.coordinates.Coordinate;
+import eng.eSystem.geo.Coordinate;
 import eng.jAtcSim.lib.global.ETime;
 import eng.jAtcSim.lib.global.Headings;
 

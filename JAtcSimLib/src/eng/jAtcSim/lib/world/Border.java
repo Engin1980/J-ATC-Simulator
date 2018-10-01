@@ -11,12 +11,11 @@ import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.geo.Coordinates;
 import eng.eSystem.utilites.NumberUtils;
 import eng.eSystem.xmlSerialization.annotations.*;
-import eng.jAtcSim.lib.coordinates.Coordinate;
-import eng.jAtcSim.lib.coordinates.Coordinates;
+import eng.eSystem.geo.Coordinate;
 import eng.jAtcSim.lib.global.Headings;
-import eng.jAtcSim.lib.world.xml.AltitudeValueParser;
 
 import java.awt.geom.Line2D;
 import java.util.Comparator;

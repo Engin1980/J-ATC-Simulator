@@ -4,6 +4,7 @@ import com.sun.istack.internal.Nullable;
 import eng.eSystem.collections.IList;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.geo.Coordinates;
 import eng.eSystem.utilites.NumberUtils;
 import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
 import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
@@ -12,10 +13,10 @@ import eng.jAtcSim.lib.airplanes.moods.Mood;
 import eng.jAtcSim.lib.airplanes.moods.MoodResult;
 import eng.jAtcSim.lib.airplanes.pilots.Pilot;
 import eng.jAtcSim.lib.atcs.Atc;
-import eng.jAtcSim.lib.coordinates.Coordinate;
-import eng.jAtcSim.lib.coordinates.Coordinates;
+import eng.eSystem.geo.Coordinate;
 import eng.jAtcSim.lib.global.ETime;
 import eng.jAtcSim.lib.global.Headings;
+import eng.jAtcSim.lib.global.HeadingsNew;
 import eng.jAtcSim.lib.global.UnitProvider;
 import eng.jAtcSim.lib.messaging.IMessageContent;
 import eng.jAtcSim.lib.messaging.IMessageParticipant;
@@ -685,9 +686,10 @@ public class Airplane implements IMessageParticipant {
 
   public void setTargetHeading(int targetHeading) {
     boolean useLeft
-        = Headings.getBetterDirectionToTurn(heading.getValue(), targetHeading) == ChangeHeadingCommand.eDirection.left;
+        = HeadingsNew.getBetterDirectionToTurn(heading.getValue(), targetHeading) == ChangeHeadingCommand.eDirection.left;
     setTargetHeading(targetHeading, useLeft);
   }
+
 
   public int getTargetAltitude() {
     return targetAltitude;
@@ -1048,7 +1050,7 @@ public class Airplane implements IMessageParticipant {
 
     boolean isLeft = targetHeadingLeftTurn;
     if (diff < 3)
-      isLeft = Headings.getBetterDirectionToTurn(heading.getValue(), targetHeading) == ChangeHeadingCommand.eDirection.left;
+      isLeft = HeadingsNew.getBetterDirectionToTurn(heading.getValue(), targetHeading) == ChangeHeadingCommand.eDirection.left;
 
     if (isLeft)
       this.heading.add(-diff);

@@ -5,7 +5,7 @@
 // */
 //package jatcsim.JAtcSimRada.radarBase.global.events;
 //
-//import eng.jAtcSim.lib.coordinates.Coordinate;
+//import eng.eSystem.geo.Coordinate;
 //
 ///**
 // *

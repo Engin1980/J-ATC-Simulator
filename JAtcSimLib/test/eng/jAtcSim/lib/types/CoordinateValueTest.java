@@ -6,8 +6,7 @@
 
 package eng.jAtcSim.lib.types;
 
-import eng.jAtcSim.lib.global.Global;
-import eng.jAtcSim.lib.coordinates.CoordinateValue;
+import eng.eSystem.geo.CoordinateValue;
 import eng.jAtcSim.lib.global.Global;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -17,7 +16,7 @@ import static org.junit.Assert.*;
  * @author Marek
  */
 public class CoordinateValueTest {
-  
+  //TODO move to eSystem!
   public CoordinateValueTest() {
   }
 

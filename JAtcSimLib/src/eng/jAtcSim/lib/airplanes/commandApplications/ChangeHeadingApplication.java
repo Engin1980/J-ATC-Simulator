@@ -2,8 +2,9 @@ package eng.jAtcSim.lib.airplanes.commandApplications;
 
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
-import eng.jAtcSim.lib.coordinates.Coordinate;
+import eng.eSystem.geo.Coordinate;
 import eng.jAtcSim.lib.global.Headings;
+import eng.jAtcSim.lib.global.HeadingsNew;
 import eng.jAtcSim.lib.speaking.IFromAirplane;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeHeadingCommand;
 
@@ -48,7 +49,7 @@ public class ChangeHeadingApplication extends CommandApplication<ChangeHeadingCo
 
     if (c.getDirection() == ChangeHeadingCommand.eDirection.any) {
       leftTurn
-          = (Headings.getBetterDirectionToTurn(plane.getHeading(), c.getHeading()) == ChangeHeadingCommand.eDirection.left);
+          = (HeadingsNew.getBetterDirectionToTurn(plane.getHeading(), c.getHeading()) == ChangeHeadingCommand.eDirection.left);
     } else {
       leftTurn
           = c.getDirection() == ChangeHeadingCommand.eDirection.left;

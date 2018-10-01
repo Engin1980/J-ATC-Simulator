@@ -6,10 +6,10 @@
 package eng.jAtcSim.lib.airplanes;
 
 import eng.eSystem.collections.IReadOnlyList;
+import eng.eSystem.geo.Coordinates;
 import eng.eSystem.utilites.CollectionUtils;
 import eng.eSystem.utilites.StringUtils;
 import eng.jAtcSim.lib.Acc;
-import eng.jAtcSim.lib.coordinates.Coordinates;
 
 import java.util.List;
 

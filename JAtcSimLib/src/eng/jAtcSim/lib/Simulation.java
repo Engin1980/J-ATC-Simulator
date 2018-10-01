@@ -12,12 +12,12 @@ import eng.eSystem.eXml.XElement;
 import eng.eSystem.events.EventSimple;
 import eng.eSystem.exceptions.EApplicationException;
 
+import eng.eSystem.geo.Coordinates;
 import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 import eng.jAtcSim.lib.airplanes.*;
 import eng.jAtcSim.lib.airplanes.moods.Mood;
 import eng.jAtcSim.lib.airplanes.moods.MoodResult;
 import eng.jAtcSim.lib.atcs.*;
-import eng.jAtcSim.lib.coordinates.Coordinates;
 import eng.jAtcSim.lib.global.ETime;
 import eng.jAtcSim.lib.managers.EmergencyManager;
 import eng.jAtcSim.lib.managers.MrvaManager;
