@@ -1,0 +1,809 @@
+0:25;BY4127;Gran Canaria (LPA);TUI ;B738 (G-FDZS) ;Blabla;Arrival
+0:25;U28692;Gran Canaria (LPA);easyJet ;A320 (OE-IVM) ;Blabla;Arrival
+0:30;BA2563;Dalaman (DLM);British Airways ;A320 (G-MIDX) ;Blabla;Arrival
+0:30;BA2789;Bordeaux (BOD);British Airways ;A320 (G-GATJ) ;Blabla;Arrival
+0:30;U28846;Dalaman (DLM);easyJet ;A320 (G-EZOI) ;Blabla;Arrival
+0:50;BA2667;Marrakesh (RAK);British Airways ;A320 (G-GATP) ;Blabla;Arrival
+1:05;BA2587;Venice (VCE);British Airways ;A320 (G-MIDY) ;Blabla;Arrival
+1:10;BY771;Hurghada (HRG);TUI ;B738 (G-TAWV) ;Blabla;Arrival
+1:15;MT1069;Gran Canaria (LPA);Thomas Cook Airlines ;A321 (G-TCDY) ;Blabla;Arrival
+1:15;U28840;Antalya (AYT);easyJet ;A320 (G-EZWY) ;Blabla;Arrival
+1:25;BY4173;Tenerife (TFS);TUI Airways ;73H ;Blabla;Arrival
+1:25;U28764;Heraklion (HER);easyJet ;A20N (G-UZHM) ;Blabla;Arrival
+1:30;U28936;Pafos (PFO);easyJet ;A320 (G-EZWF) ;Blabla;Arrival
+1:50;U28710;Tenerife (TFS);easyJet (A321 NEO Livery) ;A21N (G-UZMA) ;Blabla;Arrival
+1:55;U28968;Larnaca (LCA);easyJet (NEO Livery) ;A20N (G-UZHD) ;Blabla;Arrival
+2:15;U28654;Ibiza (IBZ);easyJet ;A320 (OE-IVH) ;Blabla;Arrival
+3:00;MT865;Dalaman (DLM);Thomas Cook Airlines ;A321 (G-TCVB) ;Blabla;Arrival
+3:05;BY357;Agadir (AGA);TUI ;B738 (G-TAWM) ;Blabla;Arrival
+3:55;BY607;Marrakesh (RAK);TUI ;B752 (G-OOBG) ;Blabla;Arrival
+4:20;MT431;Antalya (AYT);Thomas Cook Airlines ;B753 (G-JMAB) ;Blabla;Arrival
+5:50;DI7046;Fort Lauderdale (FLL);Norwegian ;B789 (G-CKWE) ;Blabla;Arrival
+5:55;BY95;Montego Bay (MBJ);TUI ;B789 (G-TUIJ) ;Blabla;Arrival
+6:20;BA2154;Bridgetown (BGI);British Airways ;B772 (G-VIIW) ;Blabla;Arrival
+6:30;BA2168;Fort Lauderdale (FLL);British Airways ;B772 (G-VIIU) ;Blabla;Arrival
+6:35;MT511;Dalaman (DLM);Thomas Cook Airlines ;B753 (G-JMAA) ;Blabla;Arrival
+6:35;MT603;Bodrum (BJV);Thomas Cook Airlines ;A321 (G-TCDW) ;Blabla;Arrival
+6:40;VS30;Bridgetown (BGI);Virgin Atlantic ;A333 (G-VSXY) ;Blabla;Arrival
+6:40;CX343;Hong Kong (HKG);Cathay Pacific ;A359 (B-LRO) ;Blabla;Arrival
+6:45;BA2036;Orlando (MCO);British Airways ;B772 (G-VIIX) ;Blabla;Arrival
+6:55;BA2232;Bermuda (BDA);British Airways ;B772 (G-VIIY) ;Blabla;Arrival
+6:55;TS776;Vancouver (YVR);Air Transat ;A332 (C-GUBL) ;Blabla;Arrival
+7:00;DI7132;Seattle (SEA);Norwegian ;B789 (G-CKWB) ;Blabla;Arrival
+7:05;BA2166;Tampa (TPA);British Airways ;B772 (G-VIIV) ;Blabla;Arrival
+7:10;DI7058;Orlando (MCO);Norwegian ;B789 (G-CKNZ) ;Blabla;Arrival
+7:10;BY77;Liberia (LIR);TUI ;B788 (G-TUIB) ;Blabla;Arrival
+7:10;QR329;Doha (DOH);Qatar Airways ;B788 (A7-BCV) ;Blabla;Arrival
+7:10;VY8770;Paris (CDG);Vueling ;A320 (EC-LQK) ;Blabla;Arrival
+7:20;EK11;Dubai (DXB);Emirates (Paris Saint-Germain F.C. Livery) ;A388 (A6-EUB) ;Blabla;Arrival
+7:25;U28322;Paris (CDG);easyJet ;A320 (OE-IJH) ;Blabla;Arrival
+7:25;U28868;Amsterdam (AMS);easyJet ;A320 (G-EZWB) ;Blabla;Arrival
+7:30;BY53;Cancun (CUN);TUI ;B789 (G-TUIL) ;Blabla;Arrival
+7:30;U28430;Basel (BSL);easyJet ;A320 (G-EZWG) ;Blabla;Arrival
+7:30;U28463;Geneva (GVA);easyJet ;A319 (HB-JYG) ;Blabla;Arrival
+7:35;U2802;Edinburgh (EDI);easyJet (Europcar Livery) ;A320 (OE-IVV) ;Blabla;Arrival
+7:40;U2830;Belfast (BFS);easyJet ;A320 (G-EZTM) ;Blabla;Arrival
+7:40;U28020;Bordeaux (BOD);easyJet ;A320 (G-EZWR) ;Blabla;Arrival
+7:40;U28416;Lyon (LYS);easyJet ;A319 (OE-LQM) ;Blabla;Arrival
+7:45;MT2647;Cancun (CUN);Thomas Cook Airlines ;A332 (G-TCXB) ;Blabla;Arrival
+7:50;U28182;Milan (LIN);easyJet ;A319 (OE-LQW) ;Blabla;Arrival
+7:55;DI7148;Boston (BOS);Norwegian ;B789 (G-CKOF) ;Blabla;Arrival
+7:55;GR600;Guernsey (GCI);Aurigny Air Services ;E195 (G-NSEY) ;Blabla;Arrival
+7:55;U28332;Toulouse (TLS);easyJet ;A319 (G-EZBV) ;Blabla;Arrival
+8:05;D82899;Copenhagen (CPH);Norwegian ;B738 (EI-FVO) ;Blabla;Arrival
+8:05;U28062;Venice (VCE);easyJet ;A320 (G-EZTT) ;Blabla;Arrival
+8:05;BA2202;Cancun (CUN);British Airways ;B772 (G-VIIR) ;Blabla;Arrival
+8:10;BA2767;Jersey (JER);British Airways ;A319 (G-DBCA) ;Blabla;Arrival
+8:10;FR120;Dublin (DUB);Ryanair ;B738 (EI-FIZ) ;Blabla;Arrival
+8:10;U28208;Berlin (SXF);easyJet ;A319 (G-EZBD) ;Blabla;Arrival
+8:20;BA2953;Glasgow (GLA);British Airways ;A320 (G-MEDK) ;Blabla;Arrival
+8:20;U2882;Glasgow (GLA);EasyJet ;A319 (G-EZGR) ;Blabla;Arrival
+8:20;U28190;Milan (MXP);easyJet ;A319 (G-EZEN) ;Blabla;Arrival
+8:25;WS24;Halifax (YHZ);WestJet ;B38M (C-FNAX) ;Blabla;Arrival
+8:25;BA2931;Edinburgh (EDI);British Airways ;A319 (G-DBCH) ;Blabla;Arrival
+8:25;VY7834;Barcelona (BCN);Vueling ;A320 (EC-MFN) ;Blabla;Arrival
+8:30;U28274;Madrid (MAD);easyJet ;A320 (OE-IZV) ;Blabla;Arrival
+8:35;BE801;Newquay (NQY);Flybe ;E75S (G-FBJH) ;Blabla;Arrival
+8:35;U28570;Barcelona (BCN);easyJet ;A320 (OE-IVO) ;Blabla;Arrival
+8:35;U28622;Palma de Mallorca (PMI);easyJet ;A320 (OE-IVC) ;Blabla;Arrival
+8:40;BT651;Riga (RIX);Air Baltic ;BCS3 (YL-CSJ) ;Blabla;Arrival
+8:40;DY1302;Oslo (OSL);Norwegian (Jorn Utzon Livery) ;B738 (LN-DYU) ;Blabla;Arrival
+8:40;D82849;Stockholm (ARN);Norwegian ;B738 (EI-FVH) ;Blabla;Arrival
+8:45;U2862;Inverness (INV);easyJet ;A320 (OE-ICB) ;Blabla;Arrival
+8:50;BA2262;Kingston (KIN);British Airways ;B772 (G-VIIP) ;Blabla;Arrival
+8:50;VS90;Vieux Fort (UVF);Virgin Atlantic ;A332 (G-VWND) ;Blabla;Arrival
+8:55;BA2158;Vieux Fort (UVF);British Airways ;B772 (G-VIIL) ;Blabla;Arrival
+8:55;EI230;Dublin (DUB);Aer Lingus ;A320 (EI-CVC) ;Blabla;Arrival
+8:55;VY7822;Barcelona (BCN);Vueling ;A321 (EC-MHA) ;Blabla;Arrival
+9:00;UX1013;Madrid (MAD);Air Europa ;E195 (EC-LEK) ;Blabla;Arrival
+9:00;U28582;Porto (OPO);easyJet ;A320 (G-EZUZ) ;Blabla;Arrival
+9:05;VS16;Orlando (MCO);Virgin Atlantic ;B744 (G-VROS) ;Blabla;Arrival
+9:10;D8366;Helsinki (HEL);Norwegian ;B738 (EI-FJK) ;Blabla;Arrival
+9:10;D85000;Malaga (AGP);Norwegian ;B738 (EI-FVL) ;Blabla;Arrival
+9:10;FR112;Dublin (DUB);Ryanair ;B738 (EI-FIY) ;Blabla;Arrival
+9:10;U28870;Amsterdam (AMS);easyJet ;A319 (G-EZBX) ;Blabla;Arrival
+9:15;WS3;Toronto (YYZ);WestJet ;B763 (C-GOGN) ;Blabla;Arrival
+9:20;U28716;Lisbon (LIS);easyJet ;A319 (OE-LQX) ;Blabla;Arrival
+9:25;BA2038;Orlando (MCO);British Airways ;B772 (G-YMMS) ;Blabla;Arrival
+9:25;VS44;Las Vegas (LAS);Virgin Atlantic ;B744 (G-VAST) ;Blabla;Arrival
+9:30;VS64;Havana (HAV);Virgin Atlantic ;B744 (G-VBIG) ;Blabla;Arrival
+9:30;GR602;Guernsey (GCI);Aurigny Air Services ;AT75 (G-LERE) ;Blabla;Arrival
+9:35;TK1981;Istanbul (IST);Turkish Airlines ;A321 (TC-JSU) ;Blabla;Arrival
+9:40;U2832;Belfast (BFS);easyJet ;A320 (OE-IZW) ;Blabla;Arrival
+9:45;TP336;Lisbon (LIS);TAP Air Portugal ;A319 (CS-TTR) ;Blabla;Arrival
+9:50;BA2278;Oakland (OAK);British Airways ;B772 (G-YMMD) ;Blabla;Arrival
+9:50;FR2714;Alicante (ALC);Ryanair ;B738 (EI-DAG) ;Blabla;Arrival
+10:00;BA2272;New York (JFK);British Airways ;B772 (G-VIIO) ;Blabla;Arrival
+10:05;TS122;Toronto (YYZ);Air Transat ;A333 (C-GTSO) ;Blabla;Arrival
+10:10;CO540;Larnaca (LCA);Cobalt Air ;A320 (5B-DCZ) ;Blabla;Arrival
+10:10;I23714;Madrid (MAD);Iberia Express ;A320 (EC-LYM) ;Blabla;Arrival
+10:10;U2892;Jersey (JER);easyJet ;A319 (G-EZBV) ;Blabla;Arrival
+10:15;DY1316;Bergen (BGO);Norwegian ;B738 (LN-NGQ) ;Blabla;Arrival
+10:15;EI232;Dublin (DUB);Aer Lingus ;A320 (EI-DEJ) ;Blabla;Arrival
+10:20;U2872;Aberdeen (ABZ);easyJet ;A319 (G-EZAA) ;Blabla;Arrival
+10:25;WW810;Reykjavik (KEF);WOW air ;A321 (TF-GPA) ;Blabla;Arrival
+10:34;WS22;Vancouver (YVR);WestJet ;B763 (C-FWAD) ;Blabla;Arrival
+10:35;BA2787;Bordeaux (BOD);British Airways ;A319 (G-DBCK) ;Blabla;Arrival
+10:40;D82921;Aalborg (AAL);Norwegian (Carl Nielsen livery) ;B738 (G-NRWY) ;Blabla;Arrival
+10:40;U28350;Nice (NCE);easyJet ;A319 (G-EZIX) ;Blabla;Arrival
+10:40;U28982;Munich (MUC);easyJet ;A320 (OE-IZB) ;Blabla;Arrival
+10:45;D82901;Copenhagen (CPH);Norwegian ;B738 (EI-FVN) ;Blabla;Arrival
+10:50;DI7152;Chicago (ORD);Norwegian ;B789 (G-CKWF) ;Blabla;Arrival
+10:50;TK1963;Istanbul (SAW);Turkish Airlines ;B738 (TC-JHT) ;Blabla;Arrival
+10:55;BA2771;Jersey (JER);British Airways ;A319 (G-DBCC) ;Blabla;Arrival
+10:55;KM116;Luqa (MLA);Air Malta ;A320 (9H-AEP) ;Blabla;Arrival
+11:00;DI7016;New York (JFK);Norwegian ;B789 (G-CKWD) ;Blabla;Arrival
+11:00;BA2937;Edinburgh (EDI);British Airways ;A319 (G-DBCF) ;Blabla;Arrival
+11:10;BA2759;Amsterdam (AMS);British Airways ;A319 (G-DBCD) ;Blabla;Arrival
+11:10;BY4223;Reus (REU);TUI ;B738 (G-FDZS) ;Blabla;Arrival
+11:10;TP334;Porto (OPO);TAP Air Portugal ;A319 (CS-TTD) ;Blabla;Arrival
+11:10;U2852;Isle of Man (IOM);easyJet ;A319 (G-EZDJ) ;Blabla;Arrival
+11:15;BA2957;Glasgow (GLA);British Airways ;A319 (G-EUPJ) ;Blabla;Arrival
+11:20;GR604;Guernsey (GCI);Aurigny Air Services ;E195 (G-NSEY) ;Blabla;Arrival
+11:20;U28122;Berlin (TXL);easyJet ;A319 (G-EZAK) ;Blabla;Arrival
+11:20;U28724;Marseille (MRS);easyJet ;A319 (G-EZAO) ;Blabla;Arrival
+11:25;PS111;Kiev (KBP);Ukraine International Airlines ;B738 (UR-UIB) ;Blabla;Arrival
+11:25;U28192;Milan (MXP);easyJet ;A319 (G-EZAF) ;Blabla;Arrival
+11:30;U28184;Milan (LIN);easyJet ;A319 (OE-LKI) ;Blabla;Arrival
+11:35;U28660;Alicante (ALC);easyJet ;A320 (OE-IVX) ;Blabla;Arrival
+11:40;U28424;Budapest (BUD);easyJet ;A319 (G-EZDD) ;Blabla;Arrival
+11:45;FI470;Reykjavik (KEF);Icelandair ;B752 (TF-FIO) ;Blabla;Arrival
+11:45;BY4289;Palma de Mallorca (PMI);TUI ;B738 (G-TAWM) ;Blabla;Arrival
+11:45;U28224;Valencia (VLC);easyJet ;A319 (G-EZBZ) ;Blabla;Arrival
+11:50;FR9852;Cork (ORK);Ryanair ;B738 (EI-EBY) ;Blabla;Arrival
+11:50;U28164;Almeria (LEI);easyJet ;A319 (G-EZFL) ;Blabla;Arrival
+11:50;U28266;Copenhagen (CPH);easyJet ;A320 (G-EZWF) ;Blabla;Arrival
+11:55;BA2707;Barcelona (BCN);British Airways ;A320 (G-GATM) ;Blabla;Arrival
+11:55;U28302;Mahon (MAH);easyJet ;A320 (G-EZTE) ;Blabla;Arrival
+12:00;U28532;Naples (NAP);easyJet ;A319 (OE-LQA) ;Blabla;Arrival
+12:00;U28990;Bologna (BLQ);easyJet ;A319 (G-EZDA) ;Blabla;Arrival
+12:05;U28958;Vienna (VIE);easyJet ;A319 (G-EZAL) ;Blabla;Arrival
+12:10;D82851;Stockholm (ARN);Norwegian ;B738 (EI-FJZ) ;Blabla;Arrival
+12:10;U28916;Faro (FAO);SmartLynx ;A320 (ES-SAS) ;Blabla;Arrival
+12:10;VK4050;Vienna (VIE);LEVEL ;A321 (OE-LCF) ;Blabla;Arrival
+12:15;U28602;Malaga (AGP);easyJet ;A319 (G-EZBR) ;Blabla;Arrival
+12:25;BA2623;Nice (NCE);British Airways ;A320 (G-MIDO) ;Blabla;Arrival
+12:25;BE803;Newquay (NQY);Flybe ;E75S (G-FBJH) ;Blabla;Arrival
+12:35;BA2631;Alicante (ALC);British Airways ;A320 (G-GATU) ;Blabla;Arrival
+12:35;EK15;Dubai (DXB);Emirates ;A388 (A6-EDR) ;Blabla;Arrival
+12:35;MT1217;Palma de Mallorca (PMI);Thomas Cook Airlines ;B753 (G-JMAB) ;Blabla;Arrival
+12:35;U28252;Rome (FCO);easyJet ;A319 (G-EZIR) ;Blabla;Arrival
+12:40;DI7074;Oakland (OAK);Norwegian ;B789 (G-CKWA) ;Blabla;Arrival
+12:40;FR114;Dublin (DUB);Ryanair ;B738 (EI-GSH) ;Blabla;Arrival
+12:40;U28244;Palermo (PMO);easyJet ;A319 (OE-LQO) ;Blabla;Arrival
+12:45;BA2583;Venice (VCE);British Airways ;A319 (G-DBCE) ;Blabla;Arrival
+12:45;U28572;Barcelona (BCN);easyJet ;A319 (OE-LQQ) ;Blabla;Arrival
+12:55;BA2597;Verona (VRN);British Airways ;A320 (G-MIDS) ;Blabla;Arrival
+12:55;U28752;Corfu (CFU);easyJet ;A320 (G-EZOM) ;Blabla;Arrival
+12:55;3O101;Tangier (TNG);Air Arabia ;A320 (CN-NMM) ;Blabla;Arrival
+13:05;D82903;Copenhagen (CPH);Norwegian ;B738 (EI-FVO) ;Blabla;Arrival
+13:05;U28276;Madrid (MAD);easyJet ;A319 (G-EZAT) ;Blabla;Arrival
+13:05;U28352;Nice (NCE);easyJet ;A319 (OE-LQW) ;Blabla;Arrival
+13:10;BA2607;Naples (NAP);British Airways ;A320 (G-GATH) ;Blabla;Arrival
+13:10;U28518;Dubrovnik (DBV);easyJet ;A320 (G-EZPB) ;Blabla;Arrival
+13:20;U28092;Thessaloniki (SKG);easyJet ;A319 (G-EZEY) ;Blabla;Arrival
+13:20;U28566;Catania (CTA);easyJet ;A320 (OE-IVD) ;Blabla;Arrival
+13:20;U28620;Palma de Mallorca (PMI);easyJet ;A320 (G-EZOB) ;Blabla;Arrival
+13:20;U28974;Sofia (SOF);easyJet ;A319 (G-EZGF) ;Blabla;Arrival
+13:30;BA2713;Malaga (AGP);British Airways ;A320 (G-GATS) ;Blabla;Arrival
+13:30;QR327;Doha (DOH);Qatar Airways ;B788 (A7-BCA) ;Blabla;Arrival
+13:30;U28342;Hamburg (HAM);easyJet ;A319 (G-EZBX) ;Blabla;Arrival
+13:30;U28902;Gibraltar (GIB);easyJet ;A319 (G-EZNM) ;Blabla;Arrival
+13:35;U2842;Belfast (BFS);easyJet ;A320 (G-EZUZ) ;Blabla;Arrival
+13:35;U28994;Prague (PRG);easyJet ;A319 (G-EZEN) ;Blabla;Arrival
+13:40;BA2679;Dubrovnik (DBV);British Airways ;A320 (G-MIDX) ;Blabla;Arrival
+13:40;U28662;Alicante (ALC);easyJet ;A320 (OE-IZL) ;Blabla;Arrival
+13:40;U28824;Luqa (MLA);easyJet ;A320 (G-EZOI) ;Blabla;Arrival
+13:45;MT1461;Kefalonia (EFL);Thomas Cook Airlines (I ? Cook's Club Livery) ;A321 (G-TCDV) ;Blabla;Arrival
+13:45;U28382;Kalamata (KLX);easyJet (NEO Livery) ;A20N (G-UZHD) ;Blabla;Arrival
+13:50;BA2545;Alicante (ALC);British Airways ;A320 (G-EUUJ) ;Blabla;Arrival
+13:50;U28576;Barcelona (BCN);easyJet (250th Airbus Livery) ;A320 (OE-IJB) ;Blabla;Arrival
+13:50;VY7826;Barcelona (BCN);Vueling ;A321 (EC-MMU) ;Blabla;Arrival
+13:55;BA2725;Ibiza (IBZ);British Airways ;A320 (G-MIDY) ;Blabla;Arrival
+13:55;U28082;Athens (ATH);easyJet ;A21N (G-UZMB) ;Blabla;Arrival
+14:00;DI7096;Los Angeles (LAX);Norwegian ;B789 (G-CKWC) ;Blabla;Arrival
+14:00;DY7096;Los Angeles (LAX);Norwegian ;789;Blabla;Arrival
+14:10;U28398;Split (SPU);easyJet ;A320 (OE-IVW) ;Blabla;Arrival
+14:15;BA2761;Amsterdam (AMS);British Airways ;A319 (G-DBCG) ;Blabla;Arrival
+14:20;U28894;Marrakesh (RAK);easyJet ;A320 (OE-IJG) ;Blabla;Arrival
+14:20;VY6224;Rome (FCO);Vueling ;A320 (EC-KDX) ;Blabla;Arrival
+14:25;BA2961;Glasgow (GLA);British Airways ;A319 (G-DBCH) ;Blabla;Arrival
+14:25;D82805;Oslo (OSL);Norwegian (Roald Dahl Livery) ;B738 (EI-FJW) ;Blabla;Arrival
+14:25;EI236;Dublin (DUB);Aer Lingus ;A320 (EI-DEG) ;Blabla;Arrival
+14:25;FR122;Dublin (DUB);Ryanair ;B738 (EI-EFJ) ;Blabla;Arrival
+14:30;U28172;Granada (GRX);easyJet ;A319 (OE-LQE) ;Blabla;Arrival
+14:40;BA2645;Luqa (MLA);British Airways ;A320 (G-EUYM) ;Blabla;Arrival
+14:40;U28196;Milan (MXP);easyJet (UNICEF Livery) ;A319 (G-EZIO) ;Blabla;Arrival
+14:40;U28222;Valencia (VLC);easyJet ;A320 (OE-IZV) ;Blabla;Arrival
+14:40;U28604;Malaga (AGP);easyJet ;A320 (G-EZWR) ;Blabla;Arrival
+14:45;BA2543;Rome (FCO);British Airways ;A320 (G-GATP) ;Blabla;Arrival
+14:45;BY4211;Santorini (JTR);TUI ;B738 (G-TAWV) ;Blabla;Arrival
+14:45;U28150;Agadir (AGA);easyJet ;A20N (G-UZHM) ;Blabla;Arrival
+14:45;U28536;Fuerteventura (FUE);easyJet ;A320 (G-EZWJ) ;Blabla;Arrival
+14:55;BA2773;Jersey (JER);British Airways ;A319 (G-DBCC) ;Blabla;Arrival
+14:55;BY4207;Zakynthos (ZTH);TUI ;B738 (G-TAWC) ;Blabla;Arrival
+14:55;U28682;Lanzarote (ACE);easyJet ;A20N (G-UZHJ) ;Blabla;Arrival
+15:05;VY6206;Florence (FLR);Vueling ;A319 (EC-MIQ) ;Blabla;Arrival
+15:10;BA2547;Algiers (ALG);British Airways ;A320 (G-GATK) ;Blabla;Arrival
+15:10;MT881;Enfidha (NBE);Thomas Cook Airlines ;A321 (G-TCVB) ;Blabla;Arrival
+15:10;U28512;Krakow (KRK);easyJet ;A20N (G-UZHE) ;Blabla;Arrival
+15:20;BY4279;Pula (PUY);TUI ;B789 (G-TUIL) ;Blabla;Arrival
+15:20;U2806;Edinburgh (EDI);easyJet ;A319 (G-EZFT) ;Blabla;Arrival
+15:20;U28254;Rome (FCO);easyJet ;A320 (G-EZTT) ;Blabla;Arrival
+15:20;U28874;Amsterdam (AMS);easyJet ;A320 (G-EZTH) ;Blabla;Arrival
+15:25;AT802;Casablanca (CMN);Royal Air Maroc ;B738 (CN-RGM) ;Blabla;Arrival
+15:25;U28910;Pula (PUY);easyJet ;A320 (OE-IZW) ;Blabla;Arrival
+15:30;BA2695;Faro (FAO);British Airways ;A320 (G-GATJ) ;Blabla;Arrival
+15:30;U28386;Kefalonia (EFL);easyJet ;A321 (G-POWU) ;Blabla;Arrival
+15:30;U28850;Izmir (ADB);easyJet ;A320 (OE-IZG) ;Blabla;Arrival
+15:35;TP342;Lisbon (LIS);TAP Air Portugal ;A319 (CS-TTI) ;Blabla;Arrival
+15:35;U28712;La Palma (SPC);easyJet ;A320 (OE-IVS) ;Blabla;Arrival
+15:40;GR606;Guernsey (GCI);Aurigny Air Services ;E195 (G-NSEY) ;Blabla;Arrival
+15:40;BY4215;Chania (CHQ);TUI ;B788 (G-TUIC) ;Blabla;Arrival
+15:45;D82853;Stockholm (ARN);Norwegian ;B738 (EI-FVH) ;Blabla;Arrival
+15:45;VY7314;Asturias (OVD);Vueling ;A320 (EC-MFK) ;Blabla;Arrival
+15:50;D82557;Larnaca (LCA);Norwegian ;B738 (EI-FVK) ;Blabla;Arrival
+15:50;U28136;Funchal (FNC);easyJet ;A320 (OE-INH) ;Blabla;Arrival
+15:55;CI69;Taipei (TPE);China Airlines ;A359 (B-18916) ;Blabla;Arrival
+16:00;BA2617;Cagliari (CAG);British Airways ;A320 (G-MEDK) ;Blabla;Arrival
+16:00;SU6619;St. Petersburg (LED);Rossiya ;A319 (VP-BNB) ;Blabla;Arrival
+16:00;TK1997;Istanbul (IST);Turkish Airlines ;A321 (TC-JSN) ;Blabla;Arrival
+16:00;U28762;Heraklion (HER);easyJet ;A320 (OE-IVR) ;Blabla;Arrival
+16:05;BA2715;Malaga (AGP);British Airways ;A319 (G-DBCA) ;Blabla;Arrival
+16:05;BA2941;Edinburgh (EDI);British Airways ;A319 (G-EUPJ) ;Blabla;Arrival
+16:10;DI7408;Singapore (SIN);Norwegian ;B789 (G-CJGI) ;Blabla;Arrival
+16:10;D82869;Gothenburg (GOT);Norwegian (Carl Nielsen livery) ;B738 (G-NRWY) ;Blabla;Arrival
+16:10;U28832;Bodrum (BJV);easyJet ;A320 (OE-IVH) ;Blabla;Arrival
+16:10;U28876;Amsterdam (AMS);easyJet ;A319 (G-EZBR) ;Blabla;Arrival
+16:20;UX1015;Madrid (MAD);Air Europa ;E195 (EC-LKX) ;Blabla;Arrival
+16:30;MT1329;Pafos (PFO);Thomas Cook Airlines ;A321 (G-TCDY) ;Blabla;Arrival
+16:30;U28475;Geneva (GVA);easyJet ;A319 (HB-JYH) ;Blabla;Arrival
+16:35;U2864;Inverness (INV);easyJet ;A320 (G-EZTE) ;Blabla;Arrival
+16:40;BT653;Riga (RIX);Air Baltic ;BCS3 (YL-CSA) ;Blabla;Arrival
+16:40;EI238;Dublin (DUB);Aer Lingus ;A320 (EI-DEJ) ;Blabla;Arrival
+16:45;U28324;Paris (CDG);easyJet ;A319 (G-EZBC) ;Blabla;Arrival
+16:50;BA2601;Pisa (PSA);British Airways ;A319 (G-DBCK) ;Blabla;Arrival
+16:50;MT1095;Santorini (JTR);Thomas Cook Airlines ;A321 (G-TCVA) ;Blabla;Arrival
+16:50;U28574;Barcelona (BCN);easyJet ;A319 (G-EZIX) ;Blabla;Arrival
+16:50;U28704;Tenerife (TFS);easyJet (A321 NEO Livery) ;A21N (G-UZMA) ;Blabla;Arrival
+16:55;U28782;Chania (CHQ);easyJet ;A320 (G-EZWY) ;Blabla;Arrival
+17:00;BT649;Tallinn (TLL);Air Baltic ;B733 (YL-BBX) ;Blabla;Arrival
+17:00;D82803;Oslo (OSL);Norwegian ;B738 (EI-FVJ) ;Blabla;Arrival
+17:05;U28294;Innsbruck (INN);easyJet ;A319 (G-EZDA) ;Blabla;Arrival
+17:05;U28954;Vienna (VIE);easyJet ;A320 (OE-IZB) ;Blabla;Arrival
+17:10;BA2581;Venice (VCE);British Airways ;A319 (G-DBCF) ;Blabla;Arrival
+17:10;FR116;Dublin (DUB);Ryanair ;B738 (EI-GSJ) ;Blabla;Arrival
+17:15;BA2553;Heraklion (HER);British Airways ;A320 (G-GATR) ;Blabla;Arrival
+17:15;U2808;Edinburgh (EDI);easyJet ;A319 (G-EZIR) ;Blabla;Arrival
+17:20;U28680;Olbia (OLB);easyJet ;A320 (G-EZPB) ;Blabla;Arrival
+17:25;MT105;Dalaman (DLM);Thomas Cook Airlines ;B753 (G-JMAA) ;Blabla;Arrival
+17:25;U28124;Berlin (TXL);easyJet ;A319 (G-EZBZ) ;Blabla;Arrival
+17:25;U28477;Geneva (GVA);easyJet ;A319 (OE-LQA) ;Blabla;Arrival
+17:30;GR608;Guernsey (GCI);Aurigny Air Services ;AT75 (G-VZON) ;Blabla;Arrival
+17:30;U28068;Venice (VCE);easyJet ;A319 (G-EZFL) ;Blabla;Arrival
+17:30;WB700;Brussels (BRU);RwandAir ;A333 (9XR-WP) ;Blabla;Arrival
+17:35;VK4052;Vienna (VIE);LEVEL ;A321 (OE-LCP) ;Blabla;Arrival
+17:40;U28934;Pafos (PFO);easyJet (NEO Livery) ;A20N (G-UZHC) ;Blabla;Arrival
+17:45;U28626;Palma de Mallorca (PMI);easyJet ;A319 (G-EZAO) ;Blabla;Arrival
+17:50;U2836;Belfast (BFS);easyJet ;A319 (G-EZDH) ;Blabla;Arrival
+17:50;U28984;Munich (MUC);SmartLynx ;A320 (ES-SAS) ;Blabla;Arrival
+17:55;BA2579;Turin (TRN);British Airways ;A320 (G-MIDO) ;Blabla;Arrival
+17:55;U28186;Milan (LIN);easyJet ;A319 (OE-LQQ) ;Blabla;Arrival
+17:55;U28450;Verona (VRN);easyJet ;A319 (OE-LQO) ;Blabla;Arrival
+18:00;U28278;Madrid (MAD);easyJet ;A319 (OE-LKI) ;Blabla;Arrival
+18:00;U28436;Basel (BSL);easyJet ;A319 (G-EZEN) ;Blabla;Arrival
+18:05;MT1487;Rhodes (RHO);Thomas Cook Airlines ;A321 (G-TCDW) ;Blabla;Arrival
+18:05;U28338;Toulouse (TLS);easyJet ;A319 (OE-LQW) ;Blabla;Arrival
+18:05;U28664;Alicante (ALC);easyJet ;A320 (OE-IVX) ;Blabla;Arrival
+18:10;D8370;Helsinki (HEL);Norwegian ;B38M (EI-FYF) ;Blabla;Arrival
+18:10;U28176;Seville (SVQ);easyJet ;A319 (G-EZAF) ;Blabla;Arrival
+18:10;U28922;Faro (FAO);easyJet ;A319 (G-EZDJ) ;Blabla;Arrival
+18:20;D82671;Faro (FAO);Norwegian ;B738 (EI-FVN) ;Blabla;Arrival
+18:20;FR142;Dublin (DUB);Ryanair ;B738 (EI-EXD) ;Blabla;Arrival
+18:20;U28964;Nantes (NTE);easyJet ;A319 (G-EZBV) ;Blabla;Arrival
+18:25;BA2795;Valencia (VLC);British Airways ;A319 (G-DBCD) ;Blabla;Arrival
+18:30;U28268;Copenhagen (CPH);easyJet ;A319 (G-EZAT) ;Blabla;Arrival
+18:30;U28534;Naples (NAP);easyJet ;A319 (OE-LKD) ;Blabla;Arrival
+18:35;BA2775;Jersey (JER);British Airways ;A319 (G-DBCC) ;Blabla;Arrival
+18:35;D85302;Alicante (ALC);Norwegian (Andre Bjerke Livery) ;B738 (EI-FHZ) ;Blabla;Arrival
+18:35;U28366;Bari (BRI);easyJet ;A319 (G-EZDD) ;Blabla;Arrival
+18:40;D85502;Barcelona (BCN);Norwegian ;B738 (EI-FJN) ;Blabla;Arrival
+18:40;U28056;Montpellier (MPL);easyJet ;A320 (G-EZUZ) ;Blabla;Arrival
+18:40;U28552;Murcia (MJV);easyJet ;A319 (G-EZAL) ;Blabla;Arrival
+18:45;U28356;Nice (NCE);easyJet ;A319 (G-EZBX) ;Blabla;Arrival
+18:45;U28608;Malaga (AGP);easyJet ;A319 (G-EZAK) ;Blabla;Arrival
+18:45;VY7824;Barcelona (BCN);Vueling ;A321 (EC-MRF) ;Blabla;Arrival
+18:55;BA2625;Nice (NCE);British Airways ;A320 (G-MIDT) ;Blabla;Arrival
+19:05;DY4441;Gothenburg (GOT);Norwegian ;B738 (LN-NHE) ;Blabla;Arrival
+19:10;EI244;Dublin (DUB);Aer Lingus ;A320 (EI-DEG) ;Blabla;Arrival
+19:10;GR610;Guernsey (GCI);Aurigny Air Services ;E195 (G-NSEY) ;Blabla;Arrival
+19:10;VY7292;Bilbao (BIO);Vueling ;A320 (EC-JSY) ;Blabla;Arrival
+19:15;BA2585;Venice (VCE);British Airways ;A319 (G-DBCE) ;Blabla;Arrival
+19:15;D82857;Stockholm (ARN);Norwegian ;B738 (EI-FJZ) ;Blabla;Arrival
+19:25;U28214;Berlin (SXF);easyJet ;A319 (G-EZAP) ;Blabla;Arrival
+19:25;U28234;Pisa (PSA);easyJet ;A319 (G-EZNM) ;Blabla;Arrival
+19:25;U28580;Barcelona (BCN);easyJet (250th Airbus Livery) ;A320 (OE-IJB) ;Blabla;Arrival
+19:25;U28880;Amsterdam (AMS);easyJet (Austria Livery) ;A320 (OE-IVA) ;Blabla;Arrival
+19:30;FR1182;Shannon (SNN);Ryanair ;B738 (EI-EKS) ;Blabla;Arrival
+19:30;U2886;Glasgow (GLA);easyJet (UNICEF Livery) ;A319 (G-EZIO) ;Blabla;Arrival
+19:30;U28198;Milan (MXP);easyJet ;A320 (OE-IJN) ;Blabla;Arrival
+19:35;BA2763;Amsterdam (AMS);British Airways ;A320 (G-GATP) ;Blabla;Arrival
+19:40;BE805;Newquay (NQY);Flybe ;E75S (G-FBJH) ;Blabla;Arrival
+19:40;D86054;Madrid (MAD);Norwegian (Sonja Henie livery) ;B738 (EI-FHE) ;Blabla;Arrival
+19:40;U28481;Geneva (GVA);easyJet ;A319 (HB-JYN) ;Blabla;Arrival
+19:45;BA2653;Salzburg (SZG);British Airways ;A320 (G-MIDY) ;Blabla;Arrival
+19:45;EK9;Dubai (DXB);Emirates ;A388 (A6-EUU) ;Blabla;Arrival
+19:50;BA2697;Faro (FAO);British Airways ;A320 (G-GATU) ;Blabla;Arrival
+19:50;U2896;Jersey (JER);easyJet ;A319 (G-EZBC) ;Blabla;Arrival
+19:55;D82909;Copenhagen (CPH);Norwegian (Roald Dahl Livery) ;B738 (EI-FJW) ;Blabla;Arrival
+19:55;U2838;Belfast (BFS);easyJet ;A320 (G-EZTZ) ;Blabla;Arrival
+20:00;CA423;Chengdu (CTU);Air China ;A333 (B-8385) ;Blabla;Arrival
+20:00;U28072;Venice (VCE);easyJet ;A320 (G-EZTG) ;Blabla;Arrival
+20:05;D82807;Oslo (OSL);Norwegian ;B738 (EI-FVL) ;Blabla;Arrival
+20:05;TP338;Porto (OPO);TAP Express ;E190 (CS-TPT) ;Blabla;Arrival
+20:10;DY1318;Bergen (BGO);Norwegian (Kirsten Flagstad Livery) ;B738 (LN-DYT) ;Blabla;Arrival
+20:10;I23718;Madrid (MAD);Iberia Express ;A320 (EC-LUS) ;Blabla;Arrival
+20:10;VY6228;Rome (FCO);Vueling ;A320 (EC-MAX) ;Blabla;Arrival
+20:10;WW814;Reykjavik (KEF);WOW air ;A20N (TF-NEO) ;Blabla;Arrival
+20:15;BA2709;Barcelona (BCN);British Airways ;A320 (G-GATS) ;Blabla;Arrival
+20:15;VY7820;Barcelona (BCN);Vueling ;A320 (EC-KCU) ;Blabla;Arrival
+20:15;VY8772;Paris (CDG);Vueling ;A320 (EC-LQK) ;Blabla;Arrival
+20:25;BY259;Boa Vista (BVC);TUI ;B752 (G-OOBG) ;Blabla;Arrival
+20:25;W63031;Bucharest (OTP);Wizz Air ;A321 (HA-LTE) ;Blabla;Arrival
+20:30;U28882;Amsterdam (AMS);easyJet ;A319 (G-EZIX) ;Blabla;Arrival
+20:30;3O105;Marrakesh (RAK);Air Arabia ;A320 (CN-NMH) ;Blabla;Arrival
+20:35;DY1336;Stavanger (SVG);Norwegian (Jens Glad Balchen Livery) ;B738 (LN-NGC) ;Blabla;Arrival
+20:40;BA2777;Jersey (JER);British Airways ;A319 (G-DBCK) ;Blabla;Arrival
+20:40;BA2945;Edinburgh (EDI);British Airways ;A319 (G-EUPJ) ;Blabla;Arrival
+20:40;MT1013;Tenerife (TFS);Thomas Cook Airlines ;A321 (G-DHJH) ;Blabla;Arrival
+20:50;D86402;Tenerife (TFS);Norwegian ;B738 (EI-FVY) ;Blabla;Arrival
+20:50;VY7828;Barcelona (BCN);Vueling ;A320 (EC-MBK) ;Blabla;Arrival
+20:55;BA2965;Glasgow (GLA);British Airways ;A319 (G-DBCA) ;Blabla;Arrival
+20:55;EI912;Knock (NOC);Aer Lingus ;A320 (EI-DEJ) ;Blabla;Arrival
+20:55;FR118;Dublin (DUB);Ryanair ;B738 (EI-GSJ) ;Blabla;Arrival
+21:00;BA2689;Genoa (GOA);British Airways ;A320 (G-GATN) ;Blabla;Arrival
+21:00;U28326;Paris (CDG);easyJet ;A319 (G-EZFL) ;Blabla;Arrival
+21:10;CO240;Athens (ATH);Cobalt Air ;A320 (5B-DDC) ;Blabla;Arrival
+21:20;U28636;Palma de Mallorca (PMI);easyJet ;A320 (G-EZUF) ;Blabla;Arrival
+21:25;U2840;Belfast (BFS);easyJet ;A319 (G-EZGF) ;Blabla;Arrival
+21:30;BA2799;Seville (SVQ);British Airways ;A319 (G-DBCH) ;Blabla;Arrival
+21:35;PS113;Kiev (KBP);Ukraine International Airlines ;B738 (UR-PSM) ;Blabla;Arrival
+21:35;U28256;Rome (FCO);easyJet ;A320 (G-EZWJ) ;Blabla;Arrival
+21:40;BA2611;Naples (NAP);British Airways ;A319 (G-DBCG) ;Blabla;Arrival
+21:40;BY4263;Kos (KGS);TUI ;B738 (G-FDZS) ;Blabla;Arrival
+21:45;U28884;Amsterdam (AMS);easyJet ;A320 (OE-IVX) ;Blabla;Arrival
+21:50;U2898;Jersey (JER);easyJet ;A319 (G-EZBV) ;Blabla;Arrival
+21:55;BA2595;Catania (CTA);British Airways ;A320 (G-MIDX) ;Blabla;Arrival
+21:55;U28526;Stuttgart (STR);easyJet ;A319 (OE-LQA) ;Blabla;Arrival
+21:55;U28578;Barcelona (BCN);easyJet ;A319 (G-EZBR) ;Blabla;Arrival
+22:05;U28270;Copenhagen (CPH);easyJet ;A319 (G-EZDA) ;Blabla;Arrival
+22:10;U2874;Aberdeen (ABZ);easyJet ;A319 (G-EZAO) ;Blabla;Arrival
+22:10;U28118;Zurich (ZRH);easyJet ;A320 (OE-IZB) ;Blabla;Arrival
+22:15;U2856;Isle of Man (IOM);easyJet ;A320 (G-EZUZ) ;Blabla;Arrival
+22:15;U28226;Valencia (VLC);easyJet ;A320 (G-EZTT) ;Blabla;Arrival
+22:20;BA2667;Marrakesh (RAK);British Airways ;A320 (G-GATH) ;Blabla;Arrival
+22:20;U28438;Basel (BSL);easyJet ;A319 (G-EZDJ) ;Blabla;Arrival
+22:20;U28485;Geneva (GVA);easyJet ;A319 (G-EZEN) ;Blabla;Arrival
+22:30;U28126;Berlin (TXL);easyJet ;A319 (G-EZBZ) ;Blabla;Arrival
+22:30;U28346;Hamburg (HAM);easyJet ;A319 (OE-LQW) ;Blabla;Arrival
+22:30;U28768;Santorini (JTR);easyJet ;A320 (G-EZOM) ;Blabla;Arrival
+22:20;BA2667;Marrakesh (RAK);British Airways ;A320 (G-GATH) ;Blabla;Arrival
+22:20;U28438;Basel (BSL);easyJet ;A319 (G-EZDJ) ;Blabla;Arrival
+22:20;U28485;Geneva (GVA);easyJet ;A319 (G-EZEN) ;Blabla;Arrival
+22:30;U28126;Berlin (TXL);easyJet ;A319 (G-EZBZ) ;Blabla;Arrival
+22:30;U28346;Hamburg (HAM);easyJet ;A319 (OE-LQW) ;Blabla;Arrival
+22:30;U28768;Santorini (JTR);easyJet ;A320 (G-EZOM) ;Blabla;Arrival
+22:35;D82859;Stockholm (ARN);Norwegian ;B738 (EI-FVH) ;Blabla;Arrival
+22:35;U2888;Glasgow (GLA);easyJet ;A319 (G-EZAT) ;Blabla;Arrival
+22:40;D82907;Copenhagen (CPH);Norwegian (Carl Nielsen livery) ;B738 (G-NRWY) ;Blabla;Arrival
+22:40;U28446;Tallinn (TLL);easyJet ;A20N (G-UZHJ) ;Blabla;Arrival
+22:40;U28926;Faro (FAO);easyJet ;A320 (OE-IVS) ;Blabla;Arrival
+22:45;BA2589;Venice (VCE);British Airways ;A320 (G-GATK) ;Blabla;Arrival
+22:45;BA2783;Porto (OPO);British Airways ;A320 (G-MEDK) ;Blabla;Arrival
+22:45;U28960;Vienna (VIE);easyJet ;A320 (OE-IZW) ;Blabla;Arrival
+22:50;BA2731;Tenerife (TFS);British Airways ;A320 (G-GATM) ;Blabla;Arrival
+22:50;BY287;Antalya (AYT);TUI ;B788 (G-TUIB) ;Blabla;Arrival
+22:50;U2814;Edinburgh (EDI);easyJet ;A319 (G-EZBX) ;Blabla;Arrival
+22:55;U28158;Mykonos (JMK);easyJet ;A320 (G-EZOI) ;Blabla;Arrival
+22:55;U28200;Milan (MXP);easyJet ;A319 (OE-LQO) ;Blabla;Arrival
+22:55;U28862;Hurghada (HRG);easyJet ;A320 (OE-ICB) ;Blabla;Arrival
+22:55;U28986;Munich (MUC);easyJet ;A319 (OE-LKI) ;Blabla;Arrival
+23:00;BA2717;Malaga (AGP);British Airways ;A320 (G-GATJ) ;Blabla;Arrival
+23:00;U28070;Venice (VCE);easyJet ;A319 (G-EZIR) ;Blabla;Arrival
+23:00;U28360;Nice (NCE);EasyJet ;320;Blabla;Arrival
+23:00;U28998;Prague (PRG);easyJet ;A320 (OE-INH) ;Blabla;Arrival
+23:05;U28792;Rhodes (RHO);easyJet ;A320 (OE-IVD) ;Blabla;Arrival
+23:10;BA2649;Tirana (TIA);British Airways ;A320 (G-MIDS) ;Blabla;Arrival
+23:10;U28258;Rome (FCO);easyJet ;A320 (OE-IZG) ;Blabla;Arrival
+23:10;U28282;Madrid (MAD);easyJet ;A320 (G-EZWY) ;Blabla;Arrival
+23:10;U28720;Lisbon (LIS);easyJet ;A320 (G-EZTE) ;Blabla;Arrival
+23:20;U28826;Luqa (MLA);easyJet ;A20N (G-UZHM) ;Blabla;Arrival
+23:25;DI7014;New York (JFK);Wamos Air ;A332 (EC-MNY) ;Blabla;Arrival
+23:25;D82811;Oslo (OSL);Norwegian (Ludvig Holberg Livery) ;B738 (LN-DYE) ;Blabla;Arrival
+23:25;U28612;Malaga (AGP);easyJet ;A321 (G-POWU) ;Blabla;Arrival
+23:25;U28634;Palma de Mallorca (PMI);easyJet ;A320 (OE-IVR) ;Blabla;Arrival
+23:45;BA2723;Malaga (AGP);British Airways ;A320 (G-EUUJ) ;Blabla;Arrival
+23:45;U28668;Alicante (ALC);easyJet (A321 NEO Livery) ;A21N (G-UZMA) ;Blabla;Arrival
+23:55;MT1269;Heraklion (HER);Thomas Cook Airlines ;A321 (G-NIKO) ;Blabla;Arrival
+23:55;U28758;Corfu (CFU);easyJet ;A320 (OE-IVH) ;Blabla;Arrival
+5:35;D82556;Larnaca (LCA);Norwegian ;B738 (EI-FVK) ;Blabla;Departure
+5:35;U28081;Athens (ATH);easyJet ;A21N (G-UZMB) ;Blabla;Departure
+5:35;U28381;Kalamata (KLX);easyJet (NEO Livery) ;A20N (G-UZHD) ;Blabla;Departure
+5:45;U28163;Almeria (LEI);easyJet ;A319 (G-EZFL) ;Blabla;Departure
+5:45;U28601;Malaga (AGP);easyJet ;A319 (G-EZBR) ;Blabla;Departure
+5:50;U28535;Fuerteventura (FUE);easyJet ;A320 (G-EZWJ) ;Blabla;Departure
+5:50;U28659;Alicante (ALC);easyJet ;A320 (OE-IVX) ;Blabla;Departure
+5:55;DI7013;New York (JFK);Wamos Air ;A332 (EC-MNY) ;Blabla;Departure
+5:55;U28091;Thessaloniki (SKG);easyJet ;A319 (G-EZEY) ;Blabla;Departure
+5:55;U28751;Corfu (CFU);easyJet ;A320 (G-EZOM) ;Blabla;Departure
+5:55;U28869;Amsterdam (AMS);easyJet ;A319 (G-EZBX) ;Blabla;Departure
+5:55;U28915;Faro (FAO);SmartLynx ;A320 (ES-SAS) ;Blabla;Departure
+6:00;MT1460;Kefalonia (EFL);Thomas Cook Airlines (I ? Cook's Club Livery) ;A321 (G-TCDV) ;Blabla;Departure
+6:00;BY4210;Santorini (JTR);TUI ;B738 (G-TAWV) ;Blabla;Departure
+6:00;BY4222;Reus (REU);TUI ;B738 (G-FDZS) ;Blabla;Departure
+6:00;U28423;Budapest (BUD);easyJet ;A319 (G-EZDD) ;Blabla;Departure
+6:00;U28531;Naples (NAP);easyJet ;A319 (OE-LQA) ;Blabla;Departure
+6:05;BY4288;Palma de Mallorca (PMI);TUI ;B738 (G-TAWM) ;Blabla;Departure
+6:05;U28711;La Palma (SPC);easyJet ;A320 (OE-IVS) ;Blabla;Departure
+6:10;BY4214;Chania (CHQ);TUI ;B788 (G-TUIC) ;Blabla;Departure
+6:10;U28243;Palermo (PMO);easyJet ;A319 (OE-LQO) ;Blabla;Departure
+6:10;U28349;Nice (NCE);easyJet ;A319 (G-EZIX) ;Blabla;Departure
+6:10;U28681;Lanzarote (ACE);easyJet ;A20N (G-UZHJ) ;Blabla;Departure
+6:10;U28973;Sofia (SOF);easyJet ;A319 (G-EZGF) ;Blabla;Departure
+6:15;MT1328;Pafos (PFO);Thomas Cook Airlines ;A321 (G-TCDY) ;Blabla;Departure
+6:15;U2829;Belfast (BFS);easyJet ;A320 (OE-IZW) ;Blabla;Departure
+6:20;D82900;Copenhagen (CPH);Norwegian ;B738 (EI-FVN) ;Blabla;Departure
+6:20;U28981;Munich (MUC);easyJet ;A320 (OE-IZB) ;Blabla;Departure
+6:25;U28223;Valencia (VLC);easyJet ;A319 (G-EZBZ) ;Blabla;Departure
+6:25;U28565;Catania (CTA);easyJet ;A320 (OE-IVD) ;Blabla;Departure
+6:25;U28823;Luqa (MLA);easyJet ;A320 (G-EZOI) ;Blabla;Departure
+6:25;U28893;Marrakesh (RAK);easyJet ;A320 (OE-IJG) ;Blabla;Departure
+6:30;BA2630;Alicante (ALC);British Airways ;A320 (G-GATU) ;Blabla;Departure
+6:30;D82850;Stockholm (ARN);Norwegian ;B738 (EI-FJZ) ;Blabla;Departure
+6:30;U28149;Agadir (AGA);easyJet ;A20N (G-UZHM) ;Blabla;Departure
+6:35;MT1216;Palma de Mallorca (PMI);Thomas Cook Airlines ;B753 (G-JMAB) ;Blabla;Departure
+6:35;U28301;Mahon (MAH);easyJet ;A320 (G-EZTE) ;Blabla;Departure
+6:40;BA2706;Barcelona (BCN);British Airways ;A320 (G-GATM) ;Blabla;Departure
+6:40;BA2786;Bordeaux (BOD);British Airways ;A319 (G-DBCK) ;Blabla;Departure
+6:40;D82920;Aalborg (AAL);Norwegian (Carl Nielsen livery) ;B738 (G-NRWY) ;Blabla;Departure
+6:40;MT880;Enfidha (NBE);Thomas Cook Airlines ;A321 (G-TCVB) ;Blabla;Departure
+6:40;U28121;Berlin (TXL);easyJet ;A319 (G-EZAK) ;Blabla;Departure
+6:45;BA2606;Naples (NAP);British Airways ;A320 (G-GATH) ;Blabla;Departure
+6:45;U2871;Aberdeen (ABZ);easyJet ;A319 (G-EZAA) ;Blabla;Departure
+6:45;U28251;Rome (FCO);easyJet ;A319 (G-EZIR) ;Blabla;Departure
+6:45;U28849;Izmir (ADB);easyJet ;A320 (OE-IZG) ;Blabla;Departure
+6:50;BA2712;Malaga (AGP);British Airways ;A320 (G-GATS) ;Blabla;Departure
+6:55;U28723;Marseille (MRS);easyJet ;A319 (G-EZAO) ;Blabla;Departure
+6:55;U28957;Vienna (VIE);easyJet ;A319 (G-EZAL) ;Blabla;Departure
+7:00;BY4206;Zakynthos (ZTH);TUI ;B738 (G-TAWC) ;Blabla;Departure
+7:00;U28183;Milan (LIN);easyJet ;A319 (OE-LKI) ;Blabla;Departure
+7:00;U28189;Milan (MXP);easyJet ;A319 (G-EZAF) ;Blabla;Departure
+7:00;U28901;Gibraltar (GIB);easyJet ;A319 (G-EZNM) ;Blabla;Departure
+7:05;BA2936;Edinburgh (EDI);British Airways ;A319 (G-DBCF) ;Blabla;Departure
+7:05;U28517;Dubrovnik (DBV);easyJet ;A320 (G-EZPB) ;Blabla;Departure
+7:10;BA2678;Dubrovnik (DBV);British Airways ;A320 (G-MIDX) ;Blabla;Departure
+7:10;U2891;Jersey (JER);easyJet ;A319 (G-EZBV) ;Blabla;Departure
+7:10;U28703;Tenerife (TFS);easyJet (A321 NEO Livery) ;A21N (G-UZMA) ;Blabla;Departure
+7:10;U28831;Bodrum (BJV);easyJet ;A320 (OE-IVH) ;Blabla;Departure
+7:10;U28989;Bologna (BLQ);easyJet ;A319 (G-EZDA) ;Blabla;Departure
+7:15;BA2644;Luqa (MLA);British Airways ;A320 (G-EUYM) ;Blabla;Departure
+7:15;U28761;Heraklion (HER);easyJet ;A320 (OE-IVR) ;Blabla;Departure
+7:20;BA2956;Glasgow (GLA);British Airways ;A319 (G-EUPJ) ;Blabla;Departure
+7:20;BY258;Boa Vista (BVC);TUI ;B752 (G-OOBG) ;Blabla;Departure
+7:25;BA2622;Nice (NCE);British Airways ;A320 (G-MIDO) ;Blabla;Departure
+7:25;U28265;Copenhagen (CPH);easyJet ;A320 (G-EZWF) ;Blabla;Departure
+7:25;U28571;Barcelona (BCN);easyJet ;A319 (OE-LQQ) ;Blabla;Departure
+7:30;BA2582;Venice (VCE);British Airways ;A319 (G-DBCE) ;Blabla;Departure
+7:30;U28275;Madrid (MAD);easyJet ;A319 (G-EZAT) ;Blabla;Departure
+7:35;BA2552;Heraklion (HER);British Airways ;A320 (G-GATR) ;Blabla;Departure
+7:40;BA2544;Alicante (ALC);British Airways ;A320 (G-EUUJ) ;Blabla;Departure
+7:40;BA2758;Amsterdam (AMS);British Airways ;A319 (G-DBCD) ;Blabla;Departure
+7:40;U28135;Funchal (FNC);easyJet ;A320 (OE-INH) ;Blabla;Departure
+7:40;U28933;Pafos (PFO);easyJet (NEO Livery) ;A20N (G-UZHC) ;Blabla;Departure
+7:45;U28385;Kefalonia (EFL);easyJet ;A321 (G-POWU) ;Blabla;Departure
+7:50;BA2724;Ibiza (IBZ);British Airways ;A320 (G-MIDY) ;Blabla;Departure
+7:50;MT104;Dalaman (DLM);Thomas Cook Airlines ;B753 (G-JMAA) ;Blabla;Departure
+7:50;VY8771;Paris (CDG);Vueling ;A320 (EC-LQK) ;Blabla;Departure
+7:55;BA2596;Verona (VRN);British Airways ;A320 (G-MIDS) ;Blabla;Departure
+8:00;BA2770;Jersey (JER);British Airways ;A319 (G-DBCC) ;Blabla;Departure
+8:00;U28323;Paris (CDG);easyJet ;A320 (OE-IJH) ;Blabla;Departure
+8:00;U28661;Alicante (ALC);easyJet ;A320 (OE-IZL) ;Blabla;Departure
+8:00;U28871;Amsterdam (AMS);easyJet ;A320 (G-EZWB) ;Blabla;Departure
+8:05;U2803;Edinburgh (EDI);easyJet (Europcar Livery) ;A320 (OE-IVV) ;Blabla;Departure
+8:05;U2851;Isle of Man (IOM);easyJet ;A319 (G-EZDJ) ;Blabla;Departure
+8:05;U28603;Malaga (AGP);easyJet ;A320 (G-EZWR) ;Blabla;Departure
+8:10;MT1094;Santorini (JTR);Thomas Cook Airlines ;A321 (G-TCVA) ;Blabla;Departure
+8:10;U28431;Basel (BSL);easyJet ;A320 (G-EZWG) ;Blabla;Departure
+8:10;U28415;Lyon (LYS);easyJet ;A319 (OE-LQM) ;Blabla;Departure
+8:10;U28464;Geneva (GVA);easyJet ;A319 (HB-JYG) ;Blabla;Departure
+8:10;U28781;Chania (CHQ);easyJet ;A320 (G-EZWY) ;Blabla;Departure
+8:15;BA2542;Rome (FCO);British Airways ;A320 (G-GATP) ;Blabla;Departure
+8:15;U28019;Bordeaux (BOD);easyJet ;A320 (OE-IVM) ;Blabla;Departure
+8:20;U2831;Belfast (BFS);easyJet ;A320 (G-EZTM) ;Blabla;Departure
+8:25;BA2546;Algiers (ALG);British Airways ;A320 (G-GATK) ;Blabla;Departure
+8:25;U28171;Granada (GRX);easyJet ;A319 (OE-LQE) ;Blabla;Departure
+8:25;U28333;Toulouse (TLS);easyJet ;A319 (G-EZBV) ;Blabla;Departure
+8:25;U28397;Split (SPU);easyJet ;A320 (OE-IVW) ;Blabla;Departure
+8:30;U28351;Nice (NCE);easyJet ;A319 (OE-LQW) ;Blabla;Departure
+8:35;GR601;Guernsey (GCI);Aurigny Air Services ;E195 (G-NSEY) ;Blabla;Departure
+8:35;U28063;Venice (VCE);easyJet ;A320 (OE-IJO) ;Blabla;Departure
+8:40;BA2694;Faro (FAO);British Airways ;A320 (G-GATJ) ;Blabla;Departure
+8:40;U28209;Berlin (SXF);easyJet ;A319 (G-EZBD) ;Blabla;Departure
+8:45;D82902;Copenhagen (CPH);Norwegian ;B738 (EI-FVO) ;Blabla;Departure
+8:50;FR121;Dublin (DUB);Ryanair ;B738 (EI-FIZ) ;Blabla;Departure
+8:50;U28993;Prague (PRG);easyJet ;A319 (G-EZEN) ;Blabla;Departure
+8:55;U2883;Glasgow (GLA);EasyJet ;A319 (G-EZGR) ;Blabla;Departure
+9:00;MT1486;Rhodes (RHO);Thomas Cook Airlines ;A321 (G-TCDW) ;Blabla;Departure
+9:00;QR330;Doha (DOH);Qatar Airways ;B788 (A7-BCV) ;Blabla;Departure
+9:00;U28191;Milan (MXP);easyJet ;A319 (G-EZPG) ;Blabla;Departure
+9:00;VS33;Antigua (ANU);Virgin Atlantic ;A332 (G-VWND) ;Blabla;Departure
+9:05;U28621;Palma de Mallorca (PMI);easyJet ;A320 (OE-IVC) ;Blabla;Departure
+9:10;U28569;Barcelona (BCN);easyJet ;A320 (OE-IVO) ;Blabla;Departure
+9:10;VY7835;Barcelona (BCN);Vueling ;A320 (EC-MFN) ;Blabla;Departure
+9:15;U28221;Valencia (VLC);easyJet ;A320 (OE-IZV) ;Blabla;Departure
+9:15;U28253;Rome (FCO);easyJet ;A320 (G-EZTT) ;Blabla;Departure
+9:20;BA2714;Malaga (AGP);British Airways ;A319 (G-DBCA) ;Blabla;Departure
+9:20;DY1303;Oslo (OSL);Norwegian (Jorn Utzon Livery) ;B738 (LN-DYU) ;Blabla;Departure
+9:20;D82852;Stockholm (ARN);Norwegian ;B738 (EI-FVH) ;Blabla;Departure
+9:25;BA2167;Tampa (TPA);British Airways ;B772 (G-VIIX) ;Blabla;Departure
+9:25;BA2616;Cagliari (CAG);British Airways ;A320 (G-MEDK) ;Blabla;Departure
+9:25;BY4278;Pula (PUY);TUI ;B789 (G-TUIL) ;Blabla;Departure
+9:25;U28511;Krakow (KRK);easyJet ;A20N (G-UZHE) ;Blabla;Departure
+9:30;BE802;Newquay (NQY);Flybe ;E75S (G-FBJH) ;Blabla;Departure
+9:35;EI231;Dublin (DUB);Aer Lingus ;A320 (EI-CVC) ;Blabla;Departure
+9:35;U28583;Porto (OPO);easyJet ;A320 (G-EZWD) ;Blabla;Departure
+9:40;FR113;Dublin (DUB);Ryanair ;B738 (EI-FIY) ;Blabla;Departure
+9:40;U28343;Hamburg (HAM);easyJet ;A319 (G-EZBX) ;Blabla;Departure
+9:45;VY7823;Barcelona (BCN);Vueling ;A321 (EC-MHA) ;Blabla;Departure
+9:50;DI7171;Denver (DEN);Norwegian ;B789 (G-CKNZ) ;Blabla;Departure
+9:50;D8367;Helsinki (HEL);Norwegian ;B738 (EI-FJK) ;Blabla;Departure
+9:50;MT2816;Holguin (HOG);Thomas Cook Airlines ;A332 (G-TCXB) ;Blabla;Departure
+9:50;U28717;Lisbon (LIS);easyJet ;A319 (OE-LQX) ;Blabla;Departure
+9:50;WS25;Halifax (YHZ);WestJet ;B38M (C-FNAX) ;Blabla;Departure
+9:55;DI7057;Orlando (MCO);Norwegian ;B789 (G-CKWB) ;Blabla;Departure
+9:55;BY38;Cancun (CUN);TUI ;B789 (G-TUIJ) ;Blabla;Departure
+10:00;BA2159;Vieux Fort (UVF);British Airways ;B772 (G-VIIY) ;Blabla;Departure
+10:00;DI7181;Austin (AUS);Norwegian ;B789 (G-CKWE) ;Blabla;Departure
+10:00;D85001;Malaga (AGP);Norwegian (Knud Rasmussen livery) ;B738 (EI-FJA) ;Blabla;Departure
+10:00;EK12;Dubai (DXB);Emirates (Paris Saint-Germain F.C. Livery) ;A388 (A6-EUB) ;Blabla;Departure
+10:00;GR603;Guernsey (GCI);Aurigny Air Services ;AT75 (G-LERE) ;Blabla;Departure
+10:10;BT652;Riga (RIX);Air Baltic ;BCS3 (YL-CSJ) ;Blabla;Departure
+10:10;UX1014;Madrid (MAD);Air Europa ;E195 (EC-LEK) ;Blabla;Departure
+10:10;U2841;Belfast (BFS);easyJet ;A320 (G-EZUZ) ;Blabla;Departure
+10:15;U28909;Pula (PUY);easyJet ;A320 (OE-IZW) ;Blabla;Departure
+10:25;FR2715;Alicante (ALC);Ryanair ;B738 (EI-DAG) ;Blabla;Departure
+10:30;BA2157;Antigua (ANU);British Airways ;B772 (G-VIIV) ;Blabla;Departure
+10:35;BA2960;Glasgow (GLA);British Airways ;A319 (G-DBCH) ;Blabla;Departure
+10:35;TK1982;Istanbul (IST);Turkish Airlines ;A321 (TC-JSU) ;Blabla;Departure
+10:35;TP339;Lisbon (LIS);TAP Air Portugal ;A319 (CS-TTR) ;Blabla;Departure
+10:35;VS43;Las Vegas (LAS);Virgin Atlantic ;B744 (G-VXLG) ;Blabla;Departure
+10:40;BA2760;Amsterdam (AMS);British Airways ;A319 (G-DBCG) ;Blabla;Departure
+10:50;DY1317;Bergen (BGO);Norwegian ;B738 (LN-NGQ) ;Blabla;Departure
+10:50;I23715;Madrid (MAD);Iberia Express ;A320 (EC-LYM) ;Blabla;Departure
+10:50;MT1012;Tenerife (TFS);Thomas Cook Airlines ;A321 (G-DHJH) ;Blabla;Departure
+10:50;U28861;Hurghada (HRG);easyJet ;A320 (OE-ICB) ;Blabla;Departure
+10:55;EI233;Dublin (DUB);Aer Lingus ;A320 (EI-DEJ) ;Blabla;Departure
+10:55;BY24;Vieux Fort (UVF);TUI ;B788 (G-TUII) ;Blabla;Departure
+10:55;WS2;Calgary (YYC);WestJet ;B763 (C-GOGN) ;Blabla;Departure
+11:00;CO541;Larnaca (LCA);Cobalt Air ;A320 (5B-DCZ) ;Blabla;Departure
+11:05;VS29;Bridgetown (BGI);Virgin Atlantic ;A333 (G-VSXY) ;Blabla;Departure
+11:10;TS777;Vancouver (YVR);Air Transat ;A332 (C-GUBL) ;Blabla;Departure
+11:15;BA2037;Orlando (MCO);British Airways ;B772 (G-VIIR) ;Blabla;Departure
+11:20;D82802;Oslo (OSL);Norwegian ;B738 (EI-FVJ) ;Blabla;Departure
+11:25;BA2155;Bridgetown (BGI);British Airways ;B772 (G-VIIL) ;Blabla;Departure
+11:25;BA2600;Pisa (PSA);British Airways ;A319 (G-DBCK) ;Blabla;Departure
+11:25;D82868;Gothenburg (GOT);Norwegian (Carl Nielsen livery) ;B738 (G-NRWY) ;Blabla;Departure
+11:35;BA2205;Punta Cana (PUJ);British Airways ;B772 (G-VIIP) ;Blabla;Departure
+11:35;BA2271;Toronto (YYZ);British Airways ;B772 (G-VIIU) ;Blabla;Departure
+11:35;U28573;Barcelona (BCN);easyJet ;A319 (G-EZIX) ;Blabla;Departure
+11:40;WW811;Reykjavik (KEF);WOW air ;A321 (TF-GPA) ;Blabla;Departure
+11:45;VS27;Orlando (MCO);Virgin Atlantic ;B744 (G-VBIG) ;Blabla;Departure
+11:50;BA2586;Venice (VCE);British Airways ;A319 (G-DBCF) ;Blabla;Departure
+11:50;BA2794;Valencia (VLC);British Airways ;A319 (G-DBCD) ;Blabla;Departure
+11:50;GR605;Guernsey (GCI);Aurigny Air Services ;E195 (G-NSEY) ;Blabla;Departure
+11:50;TK1964;Istanbul (SAW);Turkish Airlines ;B738 (TC-JHT) ;Blabla;Departure
+11:50;U28955;Vienna (VIE);easyJet ;A320 (OE-IZB) ;Blabla;Departure
+11:55;BA2277;Las Vegas (LAS);British Airways ;B772 (G-YMMS) ;Blabla;Departure
+11:55;KM117;Luqa (MLA);Air Malta ;A320 (9H-AEP) ;Blabla;Departure
+11:55;U28679;Olbia (OLB);easyJet ;A320 (G-EZPB) ;Blabla;Departure
+11:55;U28921;Faro (FAO);easyJet ;A319 (G-EZDJ) ;Blabla;Departure
+12:00;TP331;Porto (OPO);TAP Air Portugal ;A319 (CS-TTD) ;Blabla;Departure
+12:00;TS123;Toronto (YYZ);Air Transat ;A333 (C-GTSO) ;Blabla;Departure
+12:05;D82670;Faro (FAO);Norwegian ;B738 (EI-FVN) ;Blabla;Departure
+12:05;U28175;Seville (SVQ);easyJet ;A319 (G-EZAF) ;Blabla;Departure
+12:05;U28277;Madrid (MAD);easyJet ;A319 (OE-LKI) ;Blabla;Departure
+12:10;BA2772;Jersey (JER);British Airways ;A319 (G-DBCC) ;Blabla;Departure
+12:10;U28625;Palma de Mallorca (PMI);easyJet ;A319 (G-EZAO) ;Blabla;Departure
+12:15;BA2940;Edinburgh (EDI);British Airways ;A319 (G-EUPJ) ;Blabla;Departure
+12:15;U28607;Malaga (AGP);easyJet ;A319 (G-EZAK) ;Blabla;Departure
+12:20;PS112;Kiev (KBP);Ukraine International Airlines ;B738 (UR-UIB) ;Blabla;Departure
+12:20;U28663;Alicante (ALC);easyJet ;A320 (OE-IVX) ;Blabla;Departure
+12:20;VS93;Cancun (CUN);Virgin Atlantic ;B744 (G-VROS) ;Blabla;Departure
+12:25;FR9853;Cork (ORK);Ryanair ;B738 (EI-EBY) ;Blabla;Departure
+12:25;U28365;Bari (BRI);easyJet ;A319 (G-EZDD) ;Blabla;Departure
+12:30;U2863;Inverness (INV);easyJet ;A320 (G-EZTE) ;Blabla;Departure
+12:30;U28067;Venice (VCE);easyJet ;A319 (G-EZFL) ;Blabla;Departure
+12:35;CX354;Hong Kong (HKG);Cathay Pacific ;A359 (B-LRO) ;Blabla;Departure
+12:35;WS4;Toronto (YYZ);WestJet ;B763 (C-FWAD) ;Blabla;Departure
+12:40;BY4262;Kos (KGS);TUI ;B738 (G-FDZS) ;Blabla;Departure
+12:40;U28293;Innsbruck (INN);easyJet ;A319 (G-EZDA) ;Blabla;Departure
+12:50;U28123;Berlin (TXL);easyJet ;A319 (G-EZBZ) ;Blabla;Departure
+12:50;U28551;Murcia (MJV);easyJet ;A319 (G-EZAL) ;Blabla;Departure
+12:50;U28817;Tel Aviv (TLV);easyJet ;A320 (G-EZWF) ;Blabla;Departure
+12:55;U28875;Amsterdam (AMS);easyJet ;A319 (G-EZBR) ;Blabla;Departure
+12:55;VK4051;Vienna (VIE);LEVEL ;A321 (OE-LCF) ;Blabla;Departure
+13:00;BY286;Antalya (AYT);TUI ;B788 (G-TUIB) ;Blabla;Departure
+13:00;VS15;Orlando (MCO);Virgin Atlantic ;B744 (G-VGAL) ;Blabla;Departure
+13:05;BE804;Newquay (NQY);Flybe ;E75S (G-FBJH) ;Blabla;Departure
+13:10;BA2730;Tenerife (TFS);British Airways ;A320 (G-GATM) ;Blabla;Departure
+13:10;D82854;Stockholm (ARN);Norwegian ;B738 (EI-FJZ) ;Blabla;Departure
+13:10;FI471;Reykjavik (KEF);Icelandair ;B752 (TF-FIO) ;Blabla;Departure
+13:10;FR115;Dublin (DUB);Ryanair ;B738 (EI-GSH) ;Blabla;Departure
+13:15;BA2578;Turin (TRN);British Airways ;A320 (G-MIDO) ;Blabla;Departure
+13:15;U28449;Verona (VRN);easyJet ;A319 (OE-LQO) ;Blabla;Departure
+13:20;U28185;Milan (LIN);easyJet ;A319 (OE-LQQ) ;Blabla;Departure
+13:25;BA2039;Orlando (MCO);British Airways ;B772 (G-YMMD) ;Blabla;Departure
+13:25;BA2696;Faro (FAO);British Airways ;A320 (G-GATU) ;Blabla;Departure
+13:25;U28983;Munich (MUC);SmartLynx ;A320 (ES-SAS) ;Blabla;Departure
+13:30;DI7073;Oakland (OAK);Norwegian ;B789 (G-CKOF) ;Blabla;Departure
+13:35;U2807;Edinburgh (EDI);easyJet ;A319 (G-EZIR) ;Blabla;Departure
+13:35;U28474;Geneva (GVA);easyJet ;A319 (OE-LQA) ;Blabla;Departure
+13:50;BA2624;Nice (NCE);British Airways ;A320 (G-MIDT) ;Blabla;Departure
+13:50;MT518;Hurghada (HRG);Thomas Cook Airlines ;B753 (G-JMAB) ;Blabla;Departure
+13:50;U28325;Paris (CDG);easyJet ;A319 (G-EZBC) ;Blabla;Departure
+13:55;U28337;Toulouse (TLS);easyJet ;A319 (OE-LQW) ;Blabla;Departure
+13:55;U28767;Santorini (JTR);easyJet ;A320 (G-EZOM) ;Blabla;Departure
+13:55;3O102;Tangier (TNG);Air Arabia ;A320 (CN-NMM) ;Blabla;Departure
+14:00;BA2584;Venice (VCE);British Airways ;A319 (G-DBCE) ;Blabla;Departure
+14:00;U28267;Copenhagen (CPH);easyJet ;A319 (G-EZAT) ;Blabla;Departure
+14:00;U28619;Palma de Mallorca (PMI);easyJet ;A320 (G-EZOB) ;Blabla;Departure
+14:05;U28355;Nice (NCE);easyJet ;A319 (G-EZBX) ;Blabla;Departure
+14:10;DI7095;Los Angeles (LAX);Norwegian ;B789 (G-CKWF) ;Blabla;Departure
+14:10;U28791;Rhodes (RHO);easyJet ;A320 (OE-IVD) ;Blabla;Departure
+14:10;DY7095;Los Angeles (LAX);Norwegian ;789;Blabla;Departure
+14:15;U28435;Basel (BSL);easyJet ;A319 (G-EZEN) ;Blabla;Departure
+14:20;BA2666;Marrakesh (RAK);British Airways ;A320 (G-GATH) ;Blabla;Departure
+14:20;U2835;Belfast (BFS);easyJet ;A319 (G-EZEY) ;Blabla;Departure
+14:20;U28575;Barcelona (BCN);easyJet (250th Airbus Livery) ;A320 (OE-IJB) ;Blabla;Departure
+14:25;BY482;Hurghada (HRG);TUI ;B738 (G-FDZW) ;Blabla;Departure
+14:25;U28055;Montpellier (MPL);easyJet ;A320 (G-EZUZ) ;Blabla;Departure
+14:25;U28233;Pisa (PSA);easyJet ;A319 (G-EZNM) ;Blabla;Departure
+14:30;EK16;Dubai (DXB);Emirates ;A388 (A6-EDR) ;Blabla;Departure
+14:30;U28157;Mykonos (JMK);easyJet ;A320 (G-EZOI) ;Blabla;Departure
+14:40;VY7827;Barcelona (BCN);Vueling ;A321 (EC-MMU) ;Blabla;Departure
+14:45;BA2594;Catania (CTA);British Airways ;A320 (G-MIDX) ;Blabla;Departure
+14:50;FR123;Dublin (DUB);Ryanair ;B738 (EI-EFJ) ;Blabla;Departure
+14:50;MT1268;Heraklion (HER);Thomas Cook Airlines (I ? Cook's Club Livery) ;A321 (G-TCDV) ;Blabla;Departure
+14:50;U28691;Gran Canaria (LPA);easyJet (NEO Livery) ;A20N (G-UZHD) ;Blabla;Departure
+14:55;BA2233;Bermuda (BDA);British Airways ;B772 (G-VIIW) ;Blabla;Departure
+14:55;BA2652;Salzburg (SZG);British Airways ;A320 (G-MIDY) ;Blabla;Departure
+15:00;BA2708;Barcelona (BCN);British Airways ;A320 (G-GATS) ;Blabla;Departure
+15:00;D82806;Oslo (OSL);Norwegian ;B738 (EI-FVL) ;Blabla;Departure
+15:00;U28963;Nantes (NTE);easyJet ;A319 (G-EZBV) ;Blabla;Departure
+15:05;EI237;Dublin (DUB);Aer Lingus ;A320 (EI-DEG) ;Blabla;Departure
+15:05;VY6225;Rome (FCO);Vueling ;A320 (EC-KDX) ;Blabla;Departure
+15:10;U28795;Kos (KGS);easyJet ;A320 (OE-IZL) ;Blabla;Departure
+15:15;U28195;Milan (MXP);easyJet ;A319 (OE-LQE) ;Blabla;Departure
+15:20;BA2610;Naples (NAP);British Airways ;A319 (G-DBCG) ;Blabla;Departure
+15:20;U28845;Dalaman (DLM);easyJet ;A320 (G-EZWR) ;Blabla;Departure
+15:20;U28935;Pafos (PFO);easyJet ;A320 (OE-IJG) ;Blabla;Departure
+15:20;U28967;Larnaca (LCA);easyJet ;A320 (OE-IVW) ;Blabla;Departure
+15:25;BA2798;Seville (SVQ);British Airways ;A319 (G-DBCH) ;Blabla;Departure
+15:25;D82908;Copenhagen (CPH);Norwegian (Roald Dahl Livery) ;B738 (EI-FJW) ;Blabla;Departure
+15:25;QR328;Doha (DOH);Qatar Airways ;B788 (A7-BCA) ;Blabla;Departure
+15:45;BA2688;Genoa (GOA);British Airways ;A320 (G-GATN) ;Blabla;Departure
+15:50;BA2774;Jersey (JER);British Airways ;A319 (G-DBCC) ;Blabla;Departure
+15:50;U2809;Edinburgh (EDI);easyJet ;A319 (G-EZFT) ;Blabla;Departure
+15:50;U28255;Rome (FCO);easyJet ;A320 (G-EZWJ) ;Blabla;Departure
+15:50;U28885;Amsterdam (AMS);easyJet ;A320 (G-EZTH) ;Blabla;Departure
+15:50;VY6205;Florence (FLR);Vueling ;A319 (EC-MIQ) ;Blabla;Departure
+16:00;DI7151;Chicago (ORD);Norwegian ;B789 (G-CKWD) ;Blabla;Departure
+16:00;U2887;Glasgow (GLA);easyJet (UNICEF Livery) ;A319 (G-EZIO) ;Blabla;Departure
+16:05;BY4294;Chania (CHQ);TUI Airways ;73H ;Blabla;Departure
+16:10;BA2762;Amsterdam (AMS);British Airways ;A320 (G-GATP) ;Blabla;Departure
+16:10;U28445;Tallinn (TLL);easyJet ;A20N (G-UZHJ) ;Blabla;Departure
+16:10;U28825;Luqa (MLA);easyJet ;A20N (G-UZHM) ;Blabla;Departure
+16:15;AT803;Casablanca (CMN);Royal Air Maroc ;B738 (CN-RGM) ;Blabla;Departure
+16:15;BA2648;Tirana (TIA);British Airways ;A320 (G-MIDS) ;Blabla;Departure
+16:25;BA2716;Malaga (AGP);British Airways ;A320 (G-GATJ) ;Blabla;Departure
+16:25;BY4238;Lanzarote (ACE);TUI ;B789 (G-TUIL) ;Blabla;Departure
+16:25;BY4248;Rhodes (RHO);TUI ;B738 (G-TAWV) ;Blabla;Departure
+16:25;TP341;Lisbon (LIS);TAP Air Portugal ;A319 (CS-TTI) ;Blabla;Departure
+16:25;VY7315;Asturias (OVD);Vueling ;A320 (EC-MFK) ;Blabla;Departure
+16:30;GR607;Guernsey (GCI);Aurigny Air Services ;E195 (G-NSEY) ;Blabla;Departure
+16:30;MT866;Dalaman (DLM);Thomas Cook Airlines ;A321 (G-TCVB) ;Blabla;Departure
+16:30;U28925;Faro (FAO);easyJet ;A320 (OE-IVS) ;Blabla;Departure
+16:35;BA2720;Malaga (AGP);British Airways ;A320 (G-EUUJ) ;Blabla;Departure
+16:40;BA2273;New York (JFK);British Airways ;B772 (G-VIIO) ;Blabla;Departure
+16:40;U28577;Barcelona (BCN);easyJet ;A319 (G-EZBR) ;Blabla;Departure
+16:40;U28709;Tenerife (TFS);easyJet ;A21N (G-UZMB) ;Blabla;Departure
+16:40;U28763;Heraklion (HER);easyJet ;A320 (OE-IZV) ;Blabla;Departure
+16:50;U28225;Valencia (VLC);easyJet ;A320 (G-EZTT) ;Blabla;Departure
+16:55;BA2944;Edinburgh (EDI);British Airways ;A319 (G-EUPJ) ;Blabla;Departure
+16:55;DI7147;Boston (BOS);Norwegian ;B789 (G-CKWA) ;Blabla;Departure
+16:55;U28757;Corfu (CFU);easyJet ;A320 (OE-IVH) ;Blabla;Departure
+17:00;D82856;Stockholm (ARN);Norwegian ;B738 (EI-FVH) ;Blabla;Departure
+17:00;TK1998;Istanbul (IST);Turkish Airlines ;A321 (TC-JSN) ;Blabla;Departure
+17:00;U28478;Geneva (GVA);easyJet ;A319 (HB-JYH) ;Blabla;Departure
+17:05;DI7015;New York (JFK);Norwegian ;B789 (G-CKWC) ;Blabla;Departure
+17:05;U28611;Malaga (AGP);easyJet ;A321 (G-POWU) ;Blabla;Departure
+17:10;BA2964;Glasgow (GLA);British Airways ;A319 (G-DBCA) ;Blabla;Departure
+17:15;U2895;Jersey (JER);easyJet ;A319 (G-EZBC) ;Blabla;Departure
+17:15;U28719;Lisbon (LIS);easyJet ;A320 (G-EZTE) ;Blabla;Departure
+17:20;BA2782;Porto (OPO);British Airways ;A320 (G-MEDK) ;Blabla;Departure
+17:20;EI911;Knock (NOC);Aer Lingus ;A320 (EI-DEJ) ;Blabla;Departure
+17:20;UX1016;Madrid (MAD);Air Europa ;E195 (EC-LKX) ;Blabla;Departure
+17:20;U28879;Amsterdam (AMS);easyJet ;A319 (G-EZIX) ;Blabla;Departure
+17:25;BT654;Riga (RIX);Air Baltic ;BCS3 (YL-CSA) ;Blabla;Departure
+17:25;U28257;Rome (FCO);easyJet ;A320 (OE-IZG) ;Blabla;Departure
+17:35;FR117;Dublin (DUB);Ryanair ;B738 (EI-GSJ) ;Blabla;Departure
+17:35;U28269;Copenhagen (CPH);easyJet ;A319 (G-EZDA) ;Blabla;Departure
+17:35;U28959;Vienna (VIE);easyJet ;A320 (OE-IZW) ;Blabla;Departure
+17:40;BA2588;Venice (VCE);British Airways ;A320 (G-GATK) ;Blabla;Departure
+17:40;U28281;Madrid (MAD);easyJet ;A320 (G-EZWY) ;Blabla;Departure
+17:40;U28667;Alicante (ALC);easyJet (A321 NEO Livery) ;A21N (G-UZMA) ;Blabla;Departure
+17:45;BT650;Tallinn (TLL);Air Baltic ;B733 (YL-BBX) ;Blabla;Departure
+17:45;D82810;Oslo (OSL);Norwegian ;B738 (EI-FVJ) ;Blabla;Departure
+17:50;BA2776;Jersey (JER);British Airways ;A319 (G-DBCK) ;Blabla;Departure
+17:50;U2837;Belfast (BFS);easyJet ;A319 (G-EZGF) ;Blabla;Departure
+17:55;U28525;Stuttgart (STR);easyJet ;A319 (OE-LQA) ;Blabla;Departure
+18:00;GR609;Guernsey (GCI);Aurigny Air Services ;AT75 (G-VZON) ;Blabla;Departure
+18:00;U28125;Berlin (TXL);easyJet ;A319 (G-EZBZ) ;Blabla;Departure
+18:00;U28327;Paris (CDG);easyJet ;A319 (G-EZFL) ;Blabla;Departure
+18:00;U28633;Palma de Mallorca (PMI);easyJet ;A320 (OE-IVR) ;Blabla;Departure
+18:10;D82906;Copenhagen (CPH);Norwegian (Carl Nielsen livery) ;B738 (G-NRWY) ;Blabla;Departure
+18:10;U28069;Venice (VCE);easyJet ;A319 (G-EZIR) ;Blabla;Departure
+18:10;U28117;Zurich (ZRH);easyJet ;A320 (OE-IZB) ;Blabla;Departure
+18:20;U28997;Prague (PRG);easyJet ;A320 (OE-INH) ;Blabla;Departure
+18:20;VK4053;Vienna (VIE);LEVEL ;A321 (OE-LCP) ;Blabla;Departure
+18:25;BY284;Dalaman (DLM);TUI ;B738 (G-TAWM) ;Blabla;Departure
+18:25;U28359;Nice (NCE);SmartLynx ;A320 (ES-SAS) ;Blabla;Departure
+18:30;U2873;Aberdeen (ABZ);easyJet ;A319 (G-EZAO) ;Blabla;Departure
+18:30;U28197;Milan (MXP);easyJet ;A319 (OE-LQO) ;Blabla;Departure
+18:30;U28480;Geneva (GVA);easyJet ;A319 (G-EZEN) ;Blabla;Departure
+18:30;U28985;Munich (MUC);easyJet ;A319 (OE-LKI) ;Blabla;Departure
+18:35;U28881;Amsterdam (AMS);easyJet ;A320 (OE-IVX) ;Blabla;Departure
+18:40;BA2718;Malaga (AGP);British Airways ;A319 (G-DBCF) ;Blabla;Departure
+18:40;U28347;Hamburg (HAM);easyJet ;A319 (OE-LQW) ;Blabla;Departure
+18:40;U28437;Basel (BSL);easyJet ;A319 (G-EZDJ) ;Blabla;Departure
+18:45;BA2632;Alicante (ALC);British Airways ;A320 (G-MIDO) ;Blabla;Departure
+18:45;D8371;Helsinki (HEL);Norwegian ;B38M (EI-FYF) ;Blabla;Departure
+18:50;MT124;Antalya (AYT);Thomas Cook Airlines ;B753 (G-JMAA) ;Blabla;Departure
+18:55;U28927;Faro (FAO);easyJet ;A319 (OE-LQQ) ;Blabla;Departure
+19:00;FR143;Dublin (DUB);Ryanair ;B738 (EI-EXD) ;Blabla;Departure
+19:00;U2889;Glasgow (GLA);easyJet ;A319 (G-EZAT) ;Blabla;Departure
+19:05;D82426;Palma de Mallorca (PMI);Norwegian ;B738 (EI-FVK) ;Blabla;Departure
+19:05;U2897;Jersey (JER);easyJet ;A319 (G-EZBV) ;Blabla;Departure
+19:05;U28533;Naples (NAP);easyJet ;A319 (OE-LKD) ;Blabla;Departure
+19:10;D82808;Oslo (OSL);Norwegian ;B738 (EI-FVN) ;Blabla;Departure
+19:10;WB701;Brussels (BRU);RwandAir ;A333 (9XR-WP) ;Blabla;Departure
+19:15;U2855;Isle of Man (IOM);easyJet ;A320 (G-EZUZ) ;Blabla;Departure
+19:15;U28283;Madrid (MAD);easyJet ;A319 (G-EZAL) ;Blabla;Departure
+19:20;D85503;Barcelona (BCN);Norwegian ;B738 (EI-FJN) ;Blabla;Departure
+19:25;D85303;Alicante (ALC);Norwegian (Andre Bjerke Livery) ;B738 (EI-FHZ) ;Blabla;Departure
+19:25;U2811;Edinburgh (EDI);easyJet ;A319 (G-EZBX) ;Blabla;Departure
+19:30;U28651;Ibiza (IBZ);easyJet ;A319 (G-EZDD) ;Blabla;Departure
+19:35;DY4442;Gothenburg (GOT);Norwegian ;B738 (LN-NHE) ;Blabla;Departure
+19:35;VY7825;Barcelona (BCN);Vueling ;A321 (EC-MRF) ;Blabla;Departure
+19:40;BA2778;Jersey (JER);British Airways ;A319 (G-DBCD) ;Blabla;Departure
+19:40;GR611;Guernsey (GCI);Aurigny Air Services ;E195 (G-NSEY) ;Blabla;Departure
+19:50;EI245;Dublin (DUB);Aer Lingus ;A320 (EI-DEG) ;Blabla;Departure
+19:55;D82858;Stockholm (ARN);Norwegian ;B738 (EI-FJZ) ;Blabla;Departure
+19:55;FR1183;Shannon (SNN);Ryanair ;B738 (EI-EKS) ;Blabla;Departure
+19:55;U28187;Milan (LIN);easyJet ;A319 (G-EZNM) ;Blabla;Departure
+19:55;U28217;Berlin (SXF);easyJet ;A319 (G-EZAP) ;Blabla;Departure
+19:55;U28581;Barcelona (BCN);easyJet (250th Airbus Livery) ;A320 (OE-IJB) ;Blabla;Departure
+20:00;U28883;Amsterdam (AMS);easyJet (Austria Livery) ;A320 (OE-IVA) ;Blabla;Departure
+20:00;VY7293;Bilbao (BIO);Vueling ;A320 (EC-JSY) ;Blabla;Departure
+20:05;U28199;Milan (MXP);easyJet ;A320 (OE-IJN) ;Blabla;Departure
+20:15;U28482;Geneva (GVA);easyJet ;A319 (HB-JYN) ;Blabla;Departure
+20:20;D86055;Madrid (MAD);Norwegian Air International ;73H ;Blabla;Departure
+20:25;BE806;Newquay (NQY);Flybe ;E75S (G-FBJH) ;Blabla;Departure
+20:25;U2867;Inverness (INV);easyJet (UNICEF Livery) ;A319 (G-EZIO) ;Blabla;Departure
+20:30;U2839;Belfast (BFS);easyJet ;A320 (G-EZTZ) ;Blabla;Departure
+20:30;U28071;Venice (VCE);easyJet ;A320 (G-EZTG) ;Blabla;Departure
+20:45;DY1319;Bergen (BGO);Norwegian (Kirsten Flagstad Livery) ;B738 (LN-DYT) ;Blabla;Departure
+20:45;D82914;Copenhagen (CPH);Norwegian ;B738 (EI-FVL) ;Blabla;Departure
+20:45;MT782;Antalya (AYT);Thomas Cook Airlines ;A321 (G-TCVA) ;Blabla;Departure
+20:50;I23717;Madrid (MAD);Iberia Express ;A320 (EC-LUS) ;Blabla;Departure
+20:50;VY6227;Rome (FCO);Vueling ;A320 (EC-MAX) ;Blabla;Departure
+20:50;WW815;Reykjavik (KEF);WOW air ;A20N (TF-NEO) ;Blabla;Departure
+20:55;BA2946;Edinburgh (EDI);British Airways ;A320 (G-MIDT) ;Blabla;Departure
+21:00;VY7821;Barcelona (BCN);Vueling ;A320 (EC-KCU) ;Blabla;Departure
+21:05;DY1337;Stavanger (SVG);Norwegian (Jens Glad Balchen Livery) ;B738 (LN-NGC) ;Blabla;Departure
+21:10;CI70;Taipei (TPE);China Airlines ;A359 (B-18916) ;Blabla;Departure
+21:10;TP337;Porto (OPO);TAP Express ;E190 (CS-TPT) ;Blabla;Departure
+21:10;VY8773;Paris (CDG);Vueling ;A320 (EC-LQK) ;Blabla;Departure
+21:30;BA2968;Glasgow (GLA);British Airways ;A320 (G-MIDY) ;Blabla;Departure
+21:30;D86403;Tenerife (TFS);Norwegian ;B738 (EI-FVY) ;Blabla;Departure
+21:30;3O106;Marrakesh (RAK);Air Arabia ;A320 (CN-NMH) ;Blabla;Departure
+21:35;EI249;Dublin (DUB);Aer Lingus ;320;Blabla;Departure
+21:35;FR119;Dublin (DUB);Ryanair ;B738 (EI-GSJ) ;Blabla;Departure
+21:35;MT560;Dalaman (DLM);Thomas Cook Airlines ;A321 (G-TCDW) ;Blabla;Departure
+21:40;VY7833;Barcelona (BCN);Vueling ;A320 (EC-MBK) ;Blabla;Departure
+21:45;EK10;Dubai (DXB);Emirates ;A388 (A6-EUU) ;Blabla;Departure
+21:55;U28635;Palma de Mallorca (PMI);easyJet ;A320 (G-EZUF) ;Blabla;Departure
+21:55;W63032;Bucharest (OTP);Wizz Air ;A321 (HA-LTE) ;Blabla;Departure
+22:00;CA424;Chengdu (CTU);Air China ;A333 (B-8385) ;Blabla;Departure
+22:00;CO241;Athens (ATH);Cobalt Air ;A320 (5B-DDC) ;Blabla;Departure
+23:00;PS114;Kiev (KBP);Ukraine Int. Airlines ;737;Blabla;Departure

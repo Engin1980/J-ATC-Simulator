@@ -29,6 +29,12 @@
     </xs:restriction>
   </xs:simpleType>
 
+  <xs:simpleType name="coordinateAsDouble">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="-?\d{1,2}(\.\d+)? -?\d{1,3}(\.\d+)?" />
+    </xs:restriction>
+  </xs:simpleType>
+
   <xs:complexType name="meta">
     <xs:sequence>
       <xs:element name="title" type="textContent" minOccurs="1" maxOccurs="1" />

@@ -15,7 +15,9 @@ import eng.eSystem.geo.geocoding.IGeocoding;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.NumberFormat;
 import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -32,7 +34,6 @@ public class Program {
   private static IMap<String, String> companies = null;
   private static IMap<String, String> types = null;
   private static IGeocoding geocoding = null;
-  private static String mainAirport = null;
   private static Scanner sc = new Scanner(System.in);
 
   public static void main(String[] args) throws IOException, EXmlException {
@@ -55,9 +56,6 @@ public class Program {
     Path apiPath = Paths.get(path, HERE_API_FILE);
     Path typesPath = Paths.get(path, TYPES_FILE);
     Path outPath = Paths.get(path, OUT_FILE);
-
-    System.out.println("Enter main airport city name:");
-    mainAirport = sc.nextLine();
 
     System.out.println("Loading airport cities coordinates database...");
     cities = CsvLoader.loadAirports(airportsPath);
@@ -140,9 +138,9 @@ public class Program {
     trafficDefinition.setAttribute("xmlns", "https://github.com/Engin1980/J-ATC-Simulator/traffic");
 
     XElement meta = new XElement("meta");
-    meta.addElement(new XElement("title", "Automatically generated traffic for " + mainAirport + " airport."));
+    meta.addElement(new XElement("title", "Automatically generated traffic."));
     meta.addElement(new XElement("author", "Flight radar real traffic converter"));
-    meta.addElement(new XElement("description", "Automatically generated flight-list-traffic for " + mainAirport + " generated on " +
+    meta.addElement(new XElement("description", "Automatically generated flight-list-traffic generated on " +
         java.time.LocalDateTime.now().format(DateTimeFormatter.ofPattern("d. MMMM yyyy, HH:mm:ss"))
         + "."));
     meta.addElement(new XElement("date",
@@ -167,11 +165,9 @@ public class Program {
   }
 
   private static void geussRadials(IList<Item> items) {
-    Coordinate main = getCoordinateOf(mainAirport);
     for (Item item : items) {
       Coordinate c = getCoordinateOf(item.otherAirport);
-      double radial = Coordinates.getBearing(main, c);
-      item.radial = (int) radial;
+      item.otherAirportCoordinate = c;
     }
   }
 
@@ -212,6 +208,7 @@ public class Program {
     }
   }
 
+  private static final NumberFormat nf = NumberFormat.getInstance(Locale.ENGLISH);
   private static XElement createElement(Item item) {
     XElement ret = new XElement("flight");
 
@@ -221,7 +218,9 @@ public class Program {
         item.callsignCompany + item.callsignNumber);
     ret.setAttribute("kind",
         item.arrival ? "arrival" : "departure");
-    ret.setAttribute("heading", Integer.toString(item.radial));
+    String coordString = nf.format(item.otherAirportCoordinate.getLatitude().get()) + " " +
+        nf.format(item.otherAirportCoordinate.getLongitude().get());
+    ret.setAttribute("otherAirport", coordString);
     ret.setAttribute("planeType", item.type);
     if (item.previousItem != null)
       ret.setAttribute("follows",
@@ -247,7 +246,7 @@ public class Program {
 
   private static Item convertLine(String line) {
     line = line.replace(" ;", ";");
-    final String regex = "((\\d{1,2}):(\\d{2}));([0-9A-Z]{4,6});(.+?) \\(.+\\);(.+?);(.+?)(?: (\\((.+)\\)))?;.+?;(Departure|Arrival)";
+    final String regex = "((\\d{1,2}):(\\d{2}));([0-9A-Z]{3,6});(.+?) \\(.+\\);(.+?);(.+?)(?: (\\((.+)\\)))?;.+?;(Departure|Arrival)";
     Pattern pattern = Pattern.compile(regex);
     Matcher m = pattern.matcher(line);
     if (m.find() == false)
@@ -274,7 +273,7 @@ class Item {
   public String callsignCompany;
   public String callsignNumber;
   public String otherAirport;
-  public int radial;
+  public Coordinate otherAirportCoordinate;
   public String type;
   public boolean arrival;
   public String registration;

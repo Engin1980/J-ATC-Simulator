@@ -6,10 +6,12 @@ import eng.eSystem.eXml.XDocument;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EXmlException;
+import eng.eSystem.geo.Coordinate;
 import eng.eSystem.xmlSerialization.XmlSerializer;
 import eng.eSystem.xmlSerialization.XmlSettings;
 import eng.eSystem.xmlSerialization.annotations.XmlElement;
 import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
+import eng.jAtcSim.lib.coordinates.CoordinateValueParser;
 import eng.jAtcSim.lib.traffic.DensityBasedTraffic;
 import eng.jAtcSim.lib.traffic.FlightListTraffic;
 import eng.jAtcSim.lib.traffic.GenericTraffic;
@@ -32,7 +34,8 @@ public class XmlTrafficSource extends TrafficSource {
   private Traffic traffic;
   private String fileName;
 
-  public XmlTrafficSource(String fileName) {
+  public XmlTrafficSource(String fileName)
+  {
     this.fileName = fileName;
   }
 
@@ -50,6 +53,8 @@ public class XmlTrafficSource extends TrafficSource {
         .setCustomParser(new AltitudeValueParser());
     sett.forType(Integer.class)
         .setCustomParser(new AltitudeValueParser());
+    sett.forType(Coordinate.class)
+        .setCustomParser(new CoordinateValueParser());
 
     XmlSerializer ser = new XmlSerializer(sett);
     try {

@@ -6,6 +6,8 @@ import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.geo.Coordinate;
+import eng.eSystem.geo.Coordinates;
 import eng.eSystem.xmlSerialization.XmlSerializer;
 import eng.eSystem.xmlSerialization.annotations.XmlAttribute;
 import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
@@ -16,9 +18,12 @@ import eng.eSystem.xmlSerialization.supports.IElementParser;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.AirplaneType;
 import eng.jAtcSim.lib.airplanes.Callsign;
+import eng.jAtcSim.lib.global.DataFormat;
 import eng.jAtcSim.lib.global.ETime;
 
 public class FlightListTraffic extends Traffic {
+
+  private static final int EMPTY_HEADING = -1;
 
   public static class Flight {
     protected String callsign;
@@ -26,7 +31,10 @@ public class FlightListTraffic extends Traffic {
     protected Callsign bindedCallsign;
     @XmlIgnore
     protected Flight bindedFollows;
-    private int heading;
+    @XmlOptional
+    private int heading = EMPTY_HEADING;
+    @XmlOptional
+    private Coordinate otherAirport = null;
     private eKind kind;
     private String planeType;
     @XmlAttribute(parser = JavaTimeLocalTimeValueParser.class)
@@ -46,6 +54,11 @@ public class FlightListTraffic extends Traffic {
       AirplaneType type = Acc.types().tryGetByName(this.planeType);
       if (type == null)
         throw new EApplicationException("Unable to create flight. Required airplane type '" + this.planeType + "' not found.");
+
+      if (this.heading == EMPTY_HEADING){
+        double radial = Coordinates.getBearing(Acc.airport().getLocation(), this.otherAirport);
+        this.heading = (int) radial;
+      }
 
       ETime initTime;
       if (this.isArrival())
@@ -78,6 +91,10 @@ public class FlightListTraffic extends Traffic {
       } catch (Exception ex) {
         throw new EApplicationException("Unable to create a callsign from " + flight.callsign + ".", ex);
       }
+
+      if (flight.heading == EMPTY_HEADING && flight.otherAirport == null)
+        throw new EApplicationException("Flight " + flight.callsign + " has neither heading nor other-airport coordinate.");
+
       if (flight.follows != null)
         try {
           flight.bindedFollows = flights.getFirst(q -> q.callsign.equals(flight.follows));
