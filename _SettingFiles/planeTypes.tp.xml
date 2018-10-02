@@ -395,4 +395,40 @@
         lowDescendRate="500" highDescendRate="1000"
         speedIncreaseRate="1" speedDecreaseRate="2"
         headingChangeRate="3"/>
+
+  <type name="BCS" category="C" maxAltitude="39000"
+        vMinApp="120" vApp="130" vMaxApp="160"
+        vR="140" vDep="150"
+        vMinClean="190" vMaxClean="330" vCruise="287"
+        lowClimbRate="4501" highClimbRate="701"
+        lowDescendRate="1501" highDescendRate="3501"
+        speedIncreaseRate="3" speedDecreaseRate="3"
+        headingChangeRate="3" />
+
+  <type name="E175" category="C" maxAltitude="39000"
+        vMinApp="120" vApp="130" vMaxApp="160"
+        vR="140" vDep="150"
+        vMinClean="190" vMaxClean="330" vCruise="287"
+        lowClimbRate="4501" highClimbRate="701"
+        lowDescendRate="1501" highDescendRate="3501"
+        speedIncreaseRate="3" speedDecreaseRate="3"
+        headingChangeRate="3" />
+
+  <type name="B717" category="C" maxAltitude="41000"
+        vMinApp="110" vApp="120" vMaxApp="160"
+        vR="130" vDep="140"
+        vMinClean="180" vMaxClean="330" vCruise="287"
+        lowClimbRate="4501" highClimbRate="701"
+        lowDescendRate="1501" highDescendRate="3501"
+        speedIncreaseRate="3" speedDecreaseRate="3"
+        headingChangeRate="3"/>
+
+  <type name="SH8" category="C" maxAltitude="37000"
+        vMinApp="110" vApp="120" vMaxApp="160"
+        vR="130" vDep="140"
+        vMinClean="180" vMaxClean="330" vCruise="287"
+        lowClimbRate="4501" highClimbRate="701"
+        lowDescendRate="1501" highDescendRate="3501"
+        speedIncreaseRate="3" speedDecreaseRate="3"
+        headingChangeRate="3"/>
 </planeTypes>

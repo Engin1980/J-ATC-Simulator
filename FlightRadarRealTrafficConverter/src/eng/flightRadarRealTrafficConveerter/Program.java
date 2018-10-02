@@ -21,14 +21,16 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Program {
-  public static final String IN_FILE = "in.csv";
-  public static final String COMPANIES__FILE = "..\\db\\companies.csv";
-  public static final String AIRPORTS_FILE = "..\\db\\airports.csv";
+  private static final String IN_FILE = "in.csv";
+  private static final String COMPANIES__FILE = "..\\db\\companies.csv";
+  private static final String AIRPORTS_FILE = "..\\db\\airports.csv";
   private static final String OUT_FILE = "out.xml";
+  private static final String TYPES_FILE = "..\\db\\typeMaps.csv";
   private static final String HERE_API_FILE = "..\\db\\hereApiKeys.txt";
 
   private static IMap<String, Coordinate> cities = null;
   private static IMap<String, String> companies = null;
+  private static IMap<String, String> types = null;
   private static IGeocoding geocoding = null;
   private static String mainAirport = null;
   private static Scanner sc = new Scanner(System.in);
@@ -51,6 +53,7 @@ public class Program {
     Path companiesPath = Paths.get(path, COMPANIES__FILE);
     Path airportsPath = Paths.get(path, AIRPORTS_FILE);
     Path apiPath = Paths.get(path, HERE_API_FILE);
+    Path typesPath = Paths.get(path, TYPES_FILE);
     Path outPath = Paths.get(path, OUT_FILE);
 
     System.out.println("Enter main airport city name:");
@@ -61,8 +64,12 @@ public class Program {
     System.out.println("... loaded " + cities.size() + " records.");
 
     System.out.println("Loading company IATA->ICAO database...");
-    companies = CsvLoader.loadCompanies(companiesPath);
+    companies = CsvLoader.loadTouples(companiesPath);
     System.out.println("... loaded " + companies.size() + " records.");
+
+    System.out.println("Loading company airplane-type-map database...");
+    types = CsvLoader.loadTouples(typesPath);
+    System.out.println("... loaded " + types.size() + " records.");
 
     System.out.println("Loading here-maps api keys...");
     String[] keys = CsvLoader.loadHereApiKeys(apiPath);
@@ -81,11 +88,10 @@ public class Program {
 
     IList<Item> items = new EList();
     System.out.println("Begin conversion...");
-    for (String line : lines) {
-      System.out.println("... converting " + line);
-      Item item = convertLine(line);
-      items.add(item);
-    }
+    convertFromStringToItems(lines, items);
+
+    System.out.println("Replacing airplane types...");
+    convertTypes(items);
 
     System.out.println("Convert IATA->ICAO...");
     int cnt = companies.size();
@@ -111,6 +117,21 @@ public class Program {
     XDocument doc = new XDocument(root);
     doc.save(outPath);
     System.out.println("Done, saved as '" + outPath + "'.");
+  }
+
+  private static void convertTypes(IList<Item> items) {
+    for (Item item : items) {
+      if (types.containsKey(item.type))
+        item.type = types.get(item.type);
+    }
+  }
+
+  private static void convertFromStringToItems(IList<String> lines, IList<Item> items) {
+    for (String line : lines) {
+      System.out.println("... converting " + line);
+      Item item = convertLine(line);
+      items.add(item);
+    }
   }
 
   private static XElement generateXml(IList<Item> items) {

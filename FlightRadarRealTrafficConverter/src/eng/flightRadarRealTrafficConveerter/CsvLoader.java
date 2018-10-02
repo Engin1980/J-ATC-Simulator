@@ -16,7 +16,7 @@ import java.util.Locale;
 import java.util.Map;
 
 public class CsvLoader {
-  public static IMap<String, String> loadCompanies(Path filePath) {
+  public static IMap<String, String> loadTouples(Path filePath) {
     List<String> lines = readFileLines(filePath);
 
     IMap<String, String> ret = new EMap<>();
