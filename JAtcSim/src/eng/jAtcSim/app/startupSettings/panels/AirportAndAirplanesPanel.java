@@ -32,7 +32,6 @@ public class AirportAndAirplanesPanel extends JStartupPanel {
   private XmlFileSelectorExtender fleTypes;
   private XmlFileSelectorExtender fleArea;
   private JButton btnLoadArea;
-  private JButton btnLoadPlanes;
   private final EventAnonymous<String> onIcaoChanged = new EventAnonymous<>();
 
   public AirportAndAirplanesPanel() {
@@ -87,12 +86,11 @@ public class AirportAndAirplanesPanel extends JStartupPanel {
   }
 
   private JPanel createPlanesPanel() {
-    JPanel ret = LayoutManager.createFormPanel(3, 3,
+    JPanel ret = LayoutManager.createFormPanel(2, 3,
         new JLabel("Airplane types:"),
         fleTypes.getTextControl(), fleTypes.getButtonControl(),
         new JLabel("Fleets:"),
-        fleFleet.getTextControl(), fleFleet.getButtonControl(),
-        null, null, btnLoadPlanes);
+        fleFleet.getTextControl(), fleFleet.getButtonControl());
     return ret;
   }
 
@@ -117,38 +115,9 @@ public class AirportAndAirplanesPanel extends JStartupPanel {
     fleTypes = new XmlFileSelectorExtender(SwingFactory.FileDialogType.types);
     fleArea = new XmlFileSelectorExtender(SwingFactory.FileDialogType.area);
     btnLoadArea = SwingFactory.createButton("Load", this::btnLoadArea_click);
-    btnLoadPlanes = SwingFactory.createButton("Validate", this::btnLoadPlanes_click);
-
     cmbAirports = new XComboBoxExtender<>();
     cmbAirports.getSelectedItemChanged().add(o ->
         this.getOnIcaoChanged().raise(cmbAirports.getSelectedItem()));
-  }
-
-  private void btnLoadPlanes_click(ActionEvent actionEvent) {
-    btnLoadPlanes.setEnabled(false);
-    AirplaneTypesSource types = new AirplaneTypesSource(fleTypes.getFileName());
-    FleetsSource fleets = new FleetsSource(fleFleet.getFileName());
-    try {
-      types.init();
-    } catch (Exception ex) {
-      Acc.log().writeLine(ApplicationLog.eType.warning, "Failed to load types from '%s'. '%s'", fleTypes.getFileName(),
-          ExceptionUtils.toFullString(ex));
-      MessageBox.show("Failed to load types from file " + fleTypes.getFileName() + ". " + ex.getMessage(), "Error...");
-      btnLoadPlanes.setEnabled(true);
-      return;
-    }
-    try {
-      fleets.init(types.getContent());
-    } catch (Exception ex) {
-      Acc.log().writeLine(ApplicationLog.eType.warning, "Failed to load fleets from '%s'. '%s'", fleFleet.getFileName(),
-          ExceptionUtils.toFullString(ex));
-      MessageBox.show("Failed to load fleets from file " + fleFleet.getFileName() + ". " + ex.getMessage(), "Error...");
-      btnLoadPlanes.setEnabled(true);
-      return;
-    }
-
-    MessageBox.show("Everything seems to be ok.", "Validation successful.");
-    btnLoadPlanes.setEnabled(true);
   }
 
   private void btnLoadArea_click(ActionEvent actionEvent) {

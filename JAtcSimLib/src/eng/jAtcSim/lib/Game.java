@@ -64,14 +64,14 @@ public class Game {
       g.areaSource = new AreaSource(gsi.areaXmlFile, gsi.icao);
       g.areaSource.init();
     } catch (Exception ex){
-      throw new EApplicationException("Unable to load or initialize area.");
+      throw new EApplicationException("Unable to load or initialize area.", ex);
     }
     try {
       Acc.log().writeLine(ApplicationLog.eType.info, "Loading plane types");
       g.airplaneTypesSource = new AirplaneTypesSource(gsi.planesXmlFile);
       g.airplaneTypesSource.init();
     } catch (Exception ex){
-      throw new EApplicationException("Unable to load or initialize plane types.");
+      throw new EApplicationException("Unable to load or initialize plane types.", ex);
     }
 
     try {
@@ -79,7 +79,7 @@ public class Game {
       g.fleetsSource = new FleetsSource(gsi.fleetsXmlFile);
       g.fleetsSource.init(g.airplaneTypesSource.getContent());
     } catch (Exception ex){
-      throw new EApplicationException("Unable to load or initialize fleets.");
+      throw new EApplicationException("Unable to load or initialize fleets.", ex);
     }
 
     try {
@@ -96,7 +96,7 @@ public class Game {
       }
       g.trafficSource.init();
     } catch (Exception ex){
-      throw new EApplicationException("Unable to load or initialize traffic.");
+      throw new EApplicationException("Unable to load or initialize traffic.", ex);
     }
 
     try {
@@ -116,7 +116,7 @@ public class Game {
       }
       g.weatherSource.init();
     } catch ( Exception ex){
-      throw new EApplicationException("Unable to load, download or initialize weather.");
+      throw new EApplicationException("Unable to load, download or initialize weather.",ex);
     }
 
     TrafficManager.TrafficManagerSettings tms;
@@ -124,7 +124,7 @@ public class Game {
       tms = new TrafficManager.TrafficManagerSettings(
           gsi.allowTrafficDelays, gsi.maxTrafficPlanes, gsi.trafficDensityPercentage);
     } catch (Exception ex){
-      throw new EApplicationException("Unable to initialize the traffic manager.");
+      throw new EApplicationException("Unable to initialize the traffic manager.", ex);
     }
 
     try {

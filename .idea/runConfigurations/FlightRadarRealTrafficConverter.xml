@@ -1,0 +1,16 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="FlightRadarRealTrafficConverter" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="eng.flightRadarRealTrafficConveerter.Program" />
+    <module name="FlightRadarRealTrafficConverter" />
+    <option name="PROGRAM_PARAMETERS" value="&quot;C:\Users\Marek Vajgl\Documents\IdeaProjects\JAtcSimSolution\FlightRadarRealTrafficConverter\sources\lkpr&quot;" />
+    <extension name="coverage">
+      <pattern>
+        <option name="PATTERN" value="eng.flightRadarRealTrafficConveerter.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+    </extension>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

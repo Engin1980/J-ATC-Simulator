@@ -30,6 +30,8 @@ public class Program {
   private static IMap<String, Coordinate> cities = null;
   private static IMap<String, String> companies = null;
   private static IGeocoding geocoding = null;
+  private static String mainAirport = null;
+  private static Scanner sc = new Scanner(System.in);
 
   public static void main(String[] args) throws IOException, EXmlException {
     System.out.println("Download data from FlightRadar24 history - departures and arrivals.");
@@ -50,6 +52,9 @@ public class Program {
     Path airportsPath = Paths.get(path, AIRPORTS_FILE);
     Path apiPath = Paths.get(path, HERE_API_FILE);
     Path outPath = Paths.get(path, OUT_FILE);
+
+    System.out.println("Enter main airport city name:");
+    mainAirport = sc.nextLine();
 
     System.out.println("Loading airport cities coordinates database...");
     cities = CsvLoader.loadAirports(airportsPath);
@@ -83,37 +88,65 @@ public class Program {
     }
 
     System.out.println("Convert IATA->ICAO...");
+    int cnt = companies.size();
     convertIataToIcaos(items);
-//    System.out.println("... saving updated database");
-//    CsvLoader.saveCompanies(companies, companiesPath);
+    if (cnt == companies.size()) {
+      System.out.println("... saving updated database");
+      CsvLoader.saveCompanies(companies, companiesPath);
+    }
 
     System.out.println("Guess arrival/departure radials...");
+    cnt = cities.size();
     geussRadials(items);
-    System.out.println("... saving updated database");
-    CsvLoader.saveAirports(cities, airportsPath);
+    if (cnt != cities.size()) {
+      System.out.println("... saving updated database");
+      CsvLoader.saveAirports(cities, airportsPath);
+    }
 
     System.out.println("Binding...");
     bindItems(items);
 
-    System.out.println("Generating result xml-file...");
-    XElement root = new XElement("root");
-    XElement tmp;
-    for (Item item : items) {
-      tmp = createElement(item);
-      root.addElement(tmp);
-    }
+    XElement root = generateXml(items);
 
     XDocument doc = new XDocument(root);
     doc.save(outPath);
     System.out.println("Done, saved as '" + outPath + "'.");
   }
 
-  private static Scanner sc = new Scanner(System.in);
+  private static XElement generateXml(IList<Item> items) {
+    System.out.println("Generating result xml-file...");
+    XElement trafficDefinition = new XElement("trafficDefinition");
+    trafficDefinition.setAttribute("xmlns", "https://github.com/Engin1980/J-ATC-Simulator/traffic");
+
+    XElement meta = new XElement("meta");
+    meta.addElement(new XElement("title", "Automatically generated traffic for " + mainAirport + " airport."));
+    meta.addElement(new XElement("author", "Flight radar real traffic converter"));
+    meta.addElement(new XElement("description", "Automatically generated flight-list-traffic for " + mainAirport + " generated on " +
+        java.time.LocalDateTime.now().format(DateTimeFormatter.ofPattern("d. MMMM yyyy, HH:mm:ss"))
+        + "."));
+    meta.addElement(new XElement("date",
+        java.time.LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+        ));
+    trafficDefinition.addElement(meta);
+
+    XElement flightListTraffic = new XElement("flightListTraffic");
+    flightListTraffic.setAttribute("delayProbability", "0");
+    flightListTraffic.setAttribute("maxDelayInMinutesPerStep", "0");
+    trafficDefinition.addElement(flightListTraffic);
+
+    XElement flights = new XElement("flights");
+    flightListTraffic.addElement(flights);
+
+    XElement tmp;
+    for (Item item : items) {
+      tmp = createElement(item);
+      flights.addElement(tmp);
+    }
+    return trafficDefinition;
+  }
 
   private static void geussRadials(IList<Item> items) {
-    System.out.println("Enter main airport city name:");
-    String name = sc.nextLine();
-    Coordinate main = getCoordinateOf(name);
+    Coordinate main = getCoordinateOf(mainAirport);
     for (Item item : items) {
       Coordinate c = getCoordinateOf(item.otherAirport);
       double radial = Coordinates.getBearing(main, c);
@@ -123,18 +156,17 @@ public class Program {
 
   private static Coordinate getCoordinateOf(String name) {
     Coordinate ret = null;
-    if (cities.containsKey(name) == false){
-      if (geocoding != null){
+    if (cities.containsKey(name) == false) {
+      if (geocoding != null) {
         try {
           System.out.println("... downloading coordinate of " + name);
           ret = geocoding.geocode(name);
-        }
-        catch (Exception ex){
+        } catch (Exception ex) {
           System.out.println("... geocoding ERROR for " + name + ": " + ex.getMessage());
           ret = null;
         }
       }
-      if (ret == null){
+      if (ret == null) {
         System.out.println("Enter coordinates for " + name + ":");
         String line = sc.nextLine();
         ret = Coordinate.parse(line);
@@ -168,7 +200,7 @@ public class Program {
         item.callsignCompany + item.callsignNumber);
     ret.setAttribute("kind",
         item.arrival ? "arrival" : "departure");
-    ret.setAttribute("heading", "0");
+    ret.setAttribute("heading", Integer.toString(item.radial));
     ret.setAttribute("planeType", item.type);
     if (item.previousItem != null)
       ret.setAttribute("follows",

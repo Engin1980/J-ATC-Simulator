@@ -4,7 +4,7 @@ import eng.eSystem.EStringBuilder;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.xmlSerialization.supports.IValueParser;
 
-class CoordinateValueParser implements IValueParser<Coordinate> {
+public class CoordinateValueParser implements IValueParser<Coordinate> {
 
   @Override
   public eng.eSystem.geo.Coordinate parse(String s) {

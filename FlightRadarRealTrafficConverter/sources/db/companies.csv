@@ -1,915 +1,915 @@
-0A;GNT;Amber Air
-0B;BMS;Blue Air
-0C;IBL;IBL Aviation
-0D;DWT;Darwin Airline
-0J;JCS;Jetclub
-0V;VFC;Vietnam Air Services Company (VASCO)
-1A;AGT;Amadeus IT Group
-1I;AMB;Deutsche Rettungsflugwacht
-1L;OSY;Open Skies Consultative Commission
-1Z;APD;Sabre Pacific
-2B;ARD;Aerocondor
-2D;AOG;Aero VIP
-2F;FTA;Frontier Flying Service
-2G;CRG;Cargoitalia
-2G*;MRR;San Juan Airlines
-2J;VBW;Air Burkina
-2K;GLG;Aerogal
-2L;OAW;Helvetic Airways
-2M;MDV;Moldavian Airlines
-2N;NTJ;NextJet
-2O;RNE;Air Salone
-2P;GAP;Air Philippines
-2Q;SNC;Air Cargo Carriers
-2S;SDY;Island Express
-2T;HAM;Haiti Ambassador Airlines
-2U;GIP;Air Guinee Express
-2W;WLC;Welcome Air
-2Z;CGN;Chang An Airlines
-3C;CMV;Calima Aviación
-3G;AYZ;Atlant-Soyuz Airlines
-3J;AAQ;Air Alliance
-3K;JSA;Jetstar Asia Airways
-3L;ISK;Intersky
-3N;URG;Air Urga
-3O;MAC;Air Arabia Maroc
-3P;TNM;Tiara Air
-3Q;CYH;China Yunnan Airlines
-3R;GAI;Moskovia Airlines
-3S;BOX;Aerologic
-3S*;AEN;Aeroland Airways
-3T;URN;Turan Air
-3U;CSC;Sichuan Airlines
-3V;TAY;TNT Airways
-3W;EMX;Euromanx Airways
-3W*;VNR;Wan Air
-3X;JAC;Japan Air Commuter
-4A;AKL;Air Kiribati
-4C;ARE;Aires, Aerovías de Integración Regional, S.A.
-4D;ASD;Air Sinai
-4F;ECE;Air City
-4G;GZP;Gazpromavia
-4H;UBD;United Airways
-4K*;AAS;Askari Aviation
-4M;DSM;LATAM Argentina
-4N;ANT;Air North Charter - Canada
-4O;AIJ;Interjet
-4R;SEK;Star East Airline
-4S;FNC;Finalair Congo
-4T;BHP;Belair Airlines
-4U;GWI;Germanwings
-4Y;AIB;Airbus Industrie
-5A;AIP;Alpine Air Express
-5C;ICL;CAL Cargo Air Lines
-5D;SLI;Aeroméxico Connect
-5F;CIR;Arctic Circle Air Service
-5G;SSV;Skyservice Airlines
-5J;CEB;Cebu Pacific
-5K;HFY;Hi Fly
-5L;RSU;AeroSur
-5M;MNT;Montserrat Airways
-5N;AUL;Nordavia
-5O;FPO;Europe Airpost
-5P;LLX;Small Planet Airlines
-5T;MPE;Canadian North
-5V;UKW;Lviv Airlines
-5W;AEU;Astraeus
-5X;UPS;United Parcel Service
-5Y;GTI;Atlas Air
-5Z;AFX;Airfreight Express
-6A;CHP;Aviacsa
-6B;BLX;TUIfly Nordic
-6E;IGO;IndiGo Airlines
-6G;AWW;Air Wales
-6H;ISR;Israir
-6I;IBZ;International Business Air
-6J;JUB;Jubba Airways
-6K;RIT;Asian Spirit
-6N;NIN;Niger Airlines
-6P;ISG;Club Air
-6Q;SLL;Slovak Airlines
-6R;DRU;Alrosa Air Company
-6U;ACX;Air Cargo Germany
-6V;VGA;Air Vegas
-6W;SOV;Saratov Airlines Joint Stock Company
-6Y;ART;Smartlynx Airlines
-6Z;UKS;Ukrainian Cargo Airways
-7A;XRC;Express Air Cargo
-7B;KJC;Krasnojarsky Airlines
-7C;COY;Coyne Aviation
-7E;AWU;Sylt Air GmbH
-7F;FAB;First Air
-7G;SFJ;Star Flyer
-7K;KGL;Kogalymavia Air Company
-7L;AZG;Silk Way West Airlines
-7M;MYI;Mayair
-7N;PWD;Pawa Dominicana
-7O;GAL;Galaxy Air
-7O[33];TVL;Travel Service
-7R;BRB;BRA-Transportes Aéreos
-7S;RCT;Ryan Air Service
-7T;AGV;Air Glaciers
-7W;QGA;Windrose Air
-8A;BMM;Atlas Blue
-8B;GFI;Caribbean Star Airlines
-8C;ATN;Air Transport International
-8D;EXV;FitsAir
-8D*;SUW;Astair
-8E;BRG;Bering Air
-8F;FFR;Fischer Air
-8H;BGH;BH Air
-8J;KMV;Komiinteravia
-8L;CGP;Cargo Plus Aviation
-8M;MXL;Maxair
-8N;NKF;Barents AirLink
-8O;YWZ;West Coast Air
-8P;PCO;Pacific Coastal Airlines
-8Q;OHY;Onur Air
-8Q*;BAJ;Baker Aviation
-8T;TID;Air Tindi
-8U;AAW;Afriqiyah Airways
-8V;ACP;Astral Aviation
-8W;EDR;Fly All Ways
-8Y;PBU;Air Burundi
-8Z;WVL;Wizz Air Bulgaria
-9A;EZX;Eagle Express Air Charter
-9C;CQH;Spring Airlines
-9E;FLG;Pinnacle Airlines
-9I;LLR;Alliance Air
-9K;KAP;Cape Air
-9L;CJC;Colgan Air
-9M;GLR;Central Mountain Air
-9Q;PBA;PB Air
-9R;VAP;Phuket Air
-9T;ABS;Transwest Air
-9U;MLD;Air Moldova
-9V;VPA;Vipair Airlines
-9W;JAI;Jet Airways
-9Y;FGE;Fly Georgia
-A0;MCJ;Avianca Argentina
-A2;AZI;Astra Airlines
-A3;AEE;Aegean Airlines
-A4;SWD;Southern Winds Airlines
-A5;RLA;Airlinair
-A6;LPV;Air Alps Aviation
-A7;MPD;Air Plus Comet
-A8;XAU;Aerolink Uganda
-A9;TGZ;Georgian Airways
-AA;AAL;American Airlines
-AB;BER;Air Berlin
-AC;ACA;Air Canada
-AD;PRZ;Air Paradise International
-AE;AE;Air Ceylon
-AF;AFR;Air France
-AG;ARU;Aruba Airlines
-AH;DAH;Air Algérie
-AI;AIC;Air India Limited
-AJ;NIG;Aero Contractors
-AK;AXM;AirAsia
-AL;SYX;Skywalk Airlines
-AM;AMX;Aeroméxico
-AN;AAA;Ansett Australia
-AO;AUZ;Australian Airlines
-AP;ADH;Air One
-AQ;AAH;Aloha Airlines
-AR;ARG;Aerolíneas Argentinas
-AS;ASA;Alaska Airlines, Inc.
-AT;RAM;Royal Air Maroc
-AU;AUT;Austral Líneas Aéreas
-AV;AVA;Avianca
-AW;AFW;Africa World Airlines
-AX;—;AmericanConnection[5]
-AY;FIN;Finnair
-AZ;AZA;Alitalia
-B2;BRU;Belavia Belarusian Airlines
-B3;BLV;Bellview Airlines
-B4;BCF;BACH Flugbetriebsges
-B5;FLT;Flightline
-B6;JBU;JetBlue Airways
-B8;ERT;Eritrean Airlines
-B9;BGD;Air Bangladesh
-BA;BAW;British Airways
-BB;SBS;Seaborne Airlines
-BC;SKY;Skymark Airlines
-BD;BMA;BMI
-BE;BEE;Flybe
-BF;RSR;Aero-Service
-BG;BBC;Biman Bangladesh Airlines
-BI;RBA;Royal Brunei Airlines
-BJ;LBT;Nouvel Air Tunisie
-BK;PDC;Potomac Air
-BL;PIC;Pacific Airlines
-BN;BNF;Braniff International Airways
-BO;BBD;Bluebird Nordic
-BP;BOT;Air Botswana
-BQ;ROM;Aeromar Lineas Aereas Dominicanas
-BR;EVA;EVA Air
-BS;BIH;British International Helicopters
-BT;BTI;Air Baltic
-BU;BUN;Buryat Airlines Aircompany
-BV;BPA;Blue Panorama Airlines
-BW;BWA;Caribbean Airlines
-BX;ABL;Air Busan
-BY;TOM;Thomson Airways
-BZ;BDA;Blue Dart Aviation
-C3;IPR;Independent Carrier (ICAR)
-C4;IMX;Zimex Aviation
-C5;UCA;CommutAir
-C6;CJA;CanJet
-C7;CIN;Cinnamon Air
-C8;ICV;Cargolux Italia
-C9;RUS;Cirrus Airlines
-CA;CCA;Air China
-CB*;KFS;Kalitta Charters II
-CC;ABD;Air Atlanta Icelandic
-CD;CND;Corendon Dutch Airlines
-CE;NTW;Nationwide Airlines
-CF;SDR;City Airline
-CG;TOK;Airlines PNG
-CI;CAL;China Airlines
-CJ;CFE;BA CityFlyer
-CK;CKK;China Cargo Airlines
-CL;CLH;Lufthansa CityLine
-CM;CMP;Copa Airlines
-CO;COA;Continental Airlines
-CP;CDN;Canadian Airlines
-CQ;CCW;Central Charter
-CS;CMI;Continental Micronesia
-CT;CAT;Civil Air Transport
-CU;CUB;Cubana de Aviación
-CV;CVA;Air Chathams
-CW;CWM;Air Marshall Islands
-CX;CPA;Cathay Pacific
-CY;CYP;Cyprus Airways
-CZ;CSN;China Southern Airlines
-D0;DHK;DHL Air Limited
-D2;SSF;Severstal Air Company
-D3;DAO;Daallo Airlines
-D4;LID;Alidaunia
-D5;DAU;Dauair
-D6;ILN;Interair South Africa
-D7;XAX;AirAsia X
-D8;IBK;Norwegian Air International (Norway)
-D9;DNV;Donavia
-DA;GRG;Air Georgia
-DB;BZH;Brit Air
-DC;GAO;Golden Air
-DD;DDL;Danish Air Lines
-DE;CFG;Condor Flugdienst
-DG;SRQ;Cebgo
-DH;DVA;Discovery Airways
-DI;BAG;Dba
-DJ;WAJ;AirAsia Japan
-DK;ELA;Eastland Air
-DL;DAL;Delta Air Lines
-DO;DOA;Dominicana de Aviación
-DP;FCA;First Choice Airways
-DS;EZS;easyJet Switzerland
-DT;DTA;TAAG Angola Airlines
-DU;NLH;Norwegian Long Haul
-DV;LTF;Lufttaxi Fluggesellschaft
-DW;UCR;Aero-Charter Ukraine
-DX;DTR;DAT Danish Air Transport
-DY;NAX;Norwegian Air Shuttle
-E0;ESS;Eos Airlines
-E2;KMP;Kampuchea Airlines
-E3;DMO;Domodedovo Airlines
-E4;RSO;Aero Asia International
-E5;BRZ;Samara Airlines
-E7;ESF;Estafeta Carga Aérea
-E8;ELG;Alpi Eagles
-E9;CXS;Boston-Maine Airways
-EA;EAL;Eastern Air Lines
-EC;TWN;Avialeasing Aviation Company
-ED*;ABQ;Airblue
-EE;EAY;Aero Airlines
-EF;EFA;Far Eastern Air Transport
-EG;JAA;Japan Asia Airways
-EH;AKX;Air Nippon Network Co. Ltd.
-EI;EIN;Aer Lingus
-EJ;NEA;New England Airlines
-EK;UAE;Emirates Airlines
-EL;ANK;Air Nippon
-EM;CFS;Empire Airlines
-EM*;AEB;Aero Benin
-EN;DLA;Air Dolomiti
-EO;LHN;Express One International
-EP;IRC;Iran Aseman Airlines
-EQ;TAE;TAME
-ER;DHL;Astar Air Cargo
-ES;DHX;DHL International
-ET;ETH;Ethiopian Airlines
-EU;EEA;Empresa Ecuatoriana De Aviación
-EV;ASQ;Atlantic Southeast Airlines
-EW;EWG;Eurowings
-EX;BJK;Atlantic Airlines
-EY;EFL;Eagle Air
-EZ;EIA;Evergreen International Airlines
-F2;FLM;Fly Air
-F3;FSW;Faso Airways
-F4;NBK;Albarka Air
-F5;COZ;Cosmic Air
-F6;RCK;FaroeJet
-F7;BBO;Flybaboo
-F9;FFT;Frontier Airlines
-FA;SFR;Safair
-FB;LZB;Bulgaria Air
-FC;WBA;Finncomm Airlines
-FE;WCP;Primaris Airlines
-FG;AFG;Ariana Afghan Airlines
-FH;FHY;Freebird Airlines
-FI;ICE;Icelandair
-FJ;FJI;Fiji Airways
-FK;WTA;Africa West
-FL;TRS;AirTran Airways
-FM;CSH;Shanghai Airlines
-FN;RGL;Regional Air Lines
-FO;ATM;Airlines of Tasmania
-FP;FRE;FlyPelican
-FR;RYR;Ryanair
-FS;ACL;Itali Airlines
-FT;SRH;Siem Reap Airways
-FV;PLK;Pulkovo Aviation Enterprise
-FW;IBX;Ibex Airlines
-FX;FDX;Federal Express
-FY;FFM;Firefly
-FZ;FDB;Flydubai
-G0;GHB;Ghana International Airlines
-G2;VXG;Avirex
-G3;CIX;City Connexion Airlines
-G4;AAY;Allegiant Air
-G5;HXA;China Express Airlines
-G6;BSR;Guine Bissaur Airlines
-G7;GNF;Gandalf Airlines
-G8;AGB;Air Service Gabon
-G9;ABY;Air Arabia
-GA;GIA;Garuda Indonesia
-GB;ABX;Airborne Express
-GC;GNR;Gambia International Airlines
-GD;AHA;Air Alpha Greenland
-GE;TNA;TransAsia Airways
-GF;GFA;Gulf Air
-GG;GUY;Air Guyane
-GH;GLP;Globus Airlines
-GI;IKA;Itek Air
-GJ;MXC;Compania Mexicargo
-GL;GRL;Air Greenland
-GM;SVK;Air Slovakia
-GN;AGN;Air Gabon
-GO;KZU;Kuzu Airlines Cargo
-GP;RIV;APG Airlines
-GQ;BSY;Big Sky Airlines
-GR;AUR;Aurigny Air Services
-GS;UPA;Air Foyle
-GT;GBL;GB Airways
-GV;ARF;Aero Flight
-GW;KIL;Kuban Airlines
-GX;GBC;Guangxi Beibu Gulf Airlines
-GZ;RAR;Air Rarotonga
-H2;SKU;Sky Airline
-H5;HOA;Hola Airlines
-H6;HAG;Hageland Aviation Services
-H7;EGU;Eagle Air
-H8;KHB;Dalavia
-H9;HAD;Air d'Ayiti
-HA;HAL;Hawaiian Airlines
-HB;HAR;Harbor Airlines
-HC;ATI;Aero-Tropics Air Services
-HD;HLN;Air Holland
-HE;LGW;Luftfahrtgesellschaft Walter
-HF;HLF;Hapagfly
-HG;NLY;Niki
-HJ;AXF;Asian Express Airlines
-HK;FSC;Four Star Aviation / Four Star Cargo
-HM;SEY;Air Seychelles
-HN;HVY;Heavylift Cargo Airlines
-HO;DJA;Antinea Airlines
-HP;AWE;America West Airlines
-HQ;HMY;Harmony Airways
-HR;HHN;Hahn Air
-HT;AHW;Aeromist-Kharkiv
-HU;CHH;Hainan Airlines
-HV;TRA;Transavia Holland
-HW;FHE;Hello
-HX;CRK;Hong Kong Airlines
-HY;UZB;Uzbekistan Airways
-HZ;SHU;Sakhalinskie Aviatrassy (SAT)
-CH;BMJ;Bemidji Airlines
-I2;IBS;Iberia Express
-I4;FWA;Interstate Airlines
-I5;IAD;AirAsia India
-I6;SEQ;Sky Eyes
-I7;PMW;Paramount Airways
-I9;IBU;Indigo Airlines
-I9*;AEY;Air Italy
-IA;IAW;Iraqi Airways
-IB;IBE;Iberia Airlines
-IC;IAC;Indian Airlines
-ID;BTK;Batik Air
-IE;SOL;Solomon Airlines
-IF;ISW;Islas Airways
-IG;ISS;Meridiana
-II;CSQ;IBC Airways
-IJ;GWL;Great Wall Airlines
-IK;KAR;Ikar
-IM;MNJ;Menajet
-IN;MAK;MAT Macedonian Airlines
-IO;IAA;Indonesian Airlines
-IP;JOL;Atyrau Air Ways
-IQ;AUB;Augsburg Airways
-IR;IRA;Iran Air
-IT;KFR;Kingfisher Airlines
-IV;JET;Wind Jet
-IW;AOM;AOM French Airlines
-IX;AXB;Air India Express
-IY;IYE;Yemenia
-IZ;AIZ;Arkia Israel Airlines
-J2;AHY;Azerbaijan Airlines
-J3;PLR;Northwestern Air
-J4;BFL;Buffalo Airways
-J6;AOC;AVCOM
-J7;CVC;Centre-Avia
-J8;BVT;Berjaya Air
-J9;GIF;Guinee Airlines
-JA;BON;B&H Airlines
-JB;JBA;Helijet
-JC;JEX;JAL Express
-JD;CBJ;Beijing Capital Airlines
-JE;MNO;Mango
-JF;JAA;Jet Asia Airways
-JH;NES;Nordeste Linhas Aéreas Regionais
-JI;JAE;Jade Cargo International
-JJ;AGX;Aviogenex
-JK;JKK;Spanair
-JL;JAL;Japan Airlines
-JM;AJM;Air Jamaica
-JN;XLA;Excel Airways
-JO;JAZ;JALways
-JP;ADR;Adria Airways
-JQ;JST;Jetstar Airways
-JR;SER;Aero California
-JS;KOR;Air Koryo
-JT;LNI;Lion Mentari Airlines
-JU;ASL;Air Serbia
-JV;BLS;Bearskin Lake Air Service
-JW;APW;Arrow Air
-JX;JEC;Jett8 Airlines Cargo
-JY;IWY;InterCaribbean Airways
-JZ;SKX;Avia Express
-K2;ELO;Eurolot
-K3;TQN;Taquan Air Services
-K4;CKS;Kalitta Air
-K5;SQH;SeaPort Airlines
-K6;KHV;Angkor Air
-K8;ZAK;Airlink Zambia
-K9;KFS;Kalitta Charters
-KA;HDA;Cathay Dragon
-KB;DRK;Druk Air
-KC;KZR;Air Astana
-KD;AEN;Air Enterprise
-KE;KAL;Korean Air
-KF;BLF;Blue1
-KG;BNX;LAI - Línea Aérea IAACA
-KH;AAH;Aloha Air Cargo
-KI;AAG;Air Atlantique
-KJ;AAZ;Asian Air
-KK;KKK;Atlasjet
-KL;KLM;KLM
-KM;AMC;Air Malta
-KN;CUA;China United Airlines
-KO;AER;Alaska Central Express
-KP;KIA;Kiwi International Air Lines
-KQ;KQA;Kenya Airways
-KR;CWK;Comores Airlines
-KS;PEN;Peninsula Airways
-KU;KAC;Kuwait Airways
-KV;MVD;Kavminvodyavia
-KW;KHK;Kharkiv Airlines
-KX;CAY;Cayman Airways
-KY;EQL;Air São Tomé and Príncipe
-KZ;NCA;Nippon Cargo Airlines
-L2;LYC;Lynden Air Cargo
-L3;JOS;DHL de Guatemala
-L4;SSX;Lynx Aviation
-L6;VNZ;Tbilaviamsheni
-L7;LPN;Laoag International Airlines
-L8;LXG;Air Luxor GB
-L9;MLI;Air Mali
-LA;LAN;LATAM Chile
-LB;LLB;Lloyd Aéreo Boliviano
-LC;LOG;Loganair
-LD;AHK;Air Hong Kong
-LF;NDC;FlyNordic
-LG;LGL;Luxair
-LH;DLH;Lufthansa
-LI;LIA;Leeward Islands Air Transport
-LJ;JNA;Jin Air
-LK;LXR;Air Luxor
-LL;GRO;Allegro
-LM;LVG;Livingston Energy Flight
-LN;LAA;Libyan Arab Airlines
-LO;LOT;LOT Polish Airlines
-LP;LPE;LATAM Peru
-LQ;LAQ;Lebanese Air Transport
-LR;LRC;LACSA
-LS;EXS;Jet2.com
-LT;LTU;LTU International
-LU;LXP;LATAM Express
-LV;LBC;Albanian Airlines
-LW;NMI;Pacific Wings
-LX;SWR;Swiss International Air Lines
-LY;ELY;El Al Israel Airlines
-LZ[30];SWU;Swiss Global Air Lines
-M2;MZS;Mahfooz Aviation
-M3;TUS;ABSA Cargo
-M4;MSA;Mistral Air
-M5;KEN;Kenmore Air
-M6;AJT;Amerijet International
-M7;MAA;MasAir
-M8;MKN;Mekong Airlines
-M9;MSI;Motor Sich
-MA;MAH;Malév Hungarian Airlines
-MB;EXA;Execair Aviation
-MC;RCH;Air Mobility Command
-MD;MDG;Air Madagascar
-ME;MEA;Middle East Airlines
-MF;CXA;Xiamen Airlines
-MG;CCP;Champion Air
-MH;MWG;MASwings
-MI;SLK;SilkAir
-MJ;LPR;Líneas Aéreas Privadas Argentinas
-MK;MAU;Air Mauritius
-ML;BIE;Air Mediterranee
-MM;MMZ;EuroAtlantic Airways
-MN;CAW;Comair
-MO;AUH;Abu Dhabi Amiri Flight
-MP;MPH;Martinair
-MQ;EGF;American Eagle Airlines
-MR;MRT;Air Mauritanie
-MS;MSR;Egyptair
-MT;JMC;JMC Airlines
-MU;CES;China Eastern Airlines
-MV;RML;Armenian International Airways
-MW;MYD;Maya Island Air
-MX;MXA;Mexicana de Aviación
-MY;MXJ;Maxjet Airways
-MZ;MNA;Merpati Nusantara Airlines
-N2;DAG;Dagestan Airlines
-N4;MTC;Mountain Air Company
-N5;KGZ;Kyrgyz Airlines
-N6;JEV;Lagun Air
-N7;ROK;National Airlines
-N8;HGK;Fika Salaama Airlines
-NA;NAL;National Airlines
-NB;SNB;Sterling Airlines
-NC;NJS;National Jet Systems
-NE;ESK;SkyEurope
-NF;AVN;Air Vanuatu
-NG;LDA;Lauda Air
-NH;ANA;All Nippon Airways
-NK;NKS;Spirit Airlines
-NL;SAI;Shaheen Air International
-NM;DRD;Air Madrid
-NN;MOV;VIM Airlines
-NO;AUS;Aus-Air
-NQ;AJX;Air Japan
-NR;PIR;Pamir Airways
-NT;IBB;Binter Canarias
-NU;JTA;Japan Transocean Air
-NV;CRF;Air Central
-NW;NWA;Northwest Airlines
-NX;AMU;Air Macau
-NY;FXI;Air Iceland
-NZ;ANZ;Air New Zealand
-O2;JEA;OLT Express
-O3;CSS;SF Airlines
-O4;ABV;Antrak Air
-O6;ONE;Avianca Brazil
-O7;OZJ;Ozjet Airlines
-O8;OHK;Oasis Hong Kong Airlines
-O9;NOV;Nova Airline
-OA;OAL;Olympic Air
-OB;ASZ;Astrakhan Airlines
-OD;MXD;Malindo Airways
-OE;AOT;Asia Overnight Express
-OE[20];LDM;LaudaMotion
-OF;FIF;Air Finland
-OH;COM;Comair
-OJ;FJM;Fly Jamaica Airways
-OK;CSA;Czech Airlines
-OL;OLT;OLT Express Germany
-OM;MGL;MIAT Mongolian Airlines
-ON;RON;Our Airline
-OO;SKW;SkyWest Airlines
-OP;CHK;Chalk's International Airlines
-OR;TFL;Arkefly
-OS;AUA;Austrian Airlines
-OT;PEL;Aeropelican Air Services
-OU;CTN;Croatia Airlines
-OV;ELL;Estonian Air
-OW;EXK;Executive Airlines
-OX;OEA;Orient Thai Airlines
-OY;ANS;Andes Líneas Aéreas
-OZ;AAR;Asiana Airlines
-P0;PFZ;Proflight Zambia
-P3;PTB;Passaredo Transportes Aéreos
-P5;RPB;AeroRepública
-P6;PVG;Privilege Style Líneas Aéreas
-P7;REP;Regional Paraguaya
-P8;MKG;Air Mekong
-PA;FCL;Florida Coastal Airlines
-PC;FAJ;Air Fiji
-PD;POE;Porter Airlines
-PE;AEL;Air Europe Italy
-PF;PNW;Palestinian Airlines
-PG;BKP;Bangkok Airways
-PH;PAO;Polynesian Airlines
-PI;PDT;Piedmont Airlines (1948-1989)
-PJ;SPM;Air Saint Pierre
-PK;PIA;Pakistan International Airlines
-PL;PLI;Aeroperú
-PM;TOS;Tropic Air
-PO;PAC;Polar Air Cargo
-PP;PJS;Jet Aviation
-PR;PAL;Philippine Airlines
-PS;AUI;Ukraine International Airlines
-PT;CCI;Capital Cargo International Airlines
-PU;PUA;PLUNA
-PV;PNR;PAN Air
-PW;PRF;Precision Air
-PX;ANG;Air Niugini
-PY;SLM;Surinam Airways
-PZ;LAP;LATAM Paraguay
-Q2;DQA;Maldivian (airline)
-Q3;MBN;Zambian Airways
-Q5;MLA;40-Mile Air
-Q6;CDP;Aero Condor Peru
-Q7;SBM;SkyBahamas
-Q8;PEC;Pacific East Asia Cargo Airlines
-Q9;AFU;Afrinat International Airlines
-QB;AAJ;Air Alma
-QC;CRD;Air Corridor
-QD;QCL;Air Class Líneas Aéreas
-QE;ECC;Crossair Europe
-QF;EAQ;Eastern Australia Airlines
-QH;LYN;Air Kyrgyzstan
-QI;CIM;Cimber Sterling
-QK;JZA;Air Canada Jazz
-QL;RLN;Aero Lanka
-QM;AML;Air Malawi
-QN;ARR;Air Armenia
-QO;MPX;Aeromexpress
-QQ;UTY;Alliance Airlines
-QR;QTR;Qatar Airways
-QS;QSC;African Safari Airways
-QT;TPA;TAMPA
-QU;UTN;UTair-Ukraine
-QV;LAO;Lao Airlines
-QW;BWG;Blue Wings
-QX;QXE;Horizon Air
-QY;BCS;European Air Transport
-QZ;AWQ;Indonesia AirAsia
-R0;RPK;Royal Airlines
-R2;ORB;Orenburg Airlines
-R3;RME;Armenian Airlines
-R5;JAV;Jordan Aviation
-R7;OCA;Aserca Airlines
-R8;KGA;Kyrgyzstan Airlines
-R9;CAM;Camai Air
-RA;RNA;Nepal Airlines
-RB;SBK;Air Srpska
-RC;FLI;Atlantic Airways
-RD;RYN;Ryan International Airlines
-RE;REA;Aer Arann
-RF;FWL;Florida West International Airways
-RG;VRN;VRG Linhas Aéreas
-RH;HKC;Hong Kong Air Cargo
-RI;MDL;Mandala Airlines
-RJ;RJA;Royal Jordanian
-RK;RCT;Skyview Airways
-RL;RIO;Rio Linhas Aéreas
-RO;ROT;Tarom
-RP*;CHQ;Chautauqua Airlines
-RQ;KMF;Kam Air
-RR;RFR;Royal Air Force
-RS;ICT;Intercontinental de Aviación
-RT;BUG;UVT Aero
-RU;ABW;AirBridge Cargo
-RV;ROU;Air Canada Rouge
-RV*;AFI;Africaone
-RW;RPA;Republic Airlines
-RX;AEH;Aviaexpress
-S0;OKS;Slok Air Gambia
-S2;RSH;Air Sahara
-S3;BBR;Santa Barbara Airlines
-S4;RZO;SATA International
-S5;TCF;Shuttle America
-S6;SRR;Star Air
-S7;SBI;S7 Airlines
-S8;CSU;Chari Aviation Services
-S9;HSA;East African Safari Air
-SA;SAA;South African Airways
-SB;ACI;Air Caledonie International
-SC;CDG;Shandong Airlines
-SD;SUD;Sudan Airways
-SE;SEU;XL Airways France
-SF;DTH;Tassili Airlines
-SG;JGO;JetsGo
-SH;FLY;Fly Me Sweden
-SI;SIH;Skynet Airlines
-SJ;FOM;Freedom Air
-SK;SAS;Scandinavian Airlines
-SL;RSL;Rio Sul Serviços Aéreos Regionais
-SM;AAW;Aberdeen Airways
-SN;BXI;Brussels International Airlines
-SO;HKA;Superior Aviation
-SP;SAT;SATA Air Acores
-SQ;SIA;Singapore Airlines
-SR;SWR;Swissair
-SS;CRL;Corsairfly
-ST;GMI;Germania
-SU;AFL;Aeroflot Russian Airlines
-SV;SVA;Saudia
-SW;NMB;Air Namibia
-SX;SRK;Sky Work Airlines
-SY;SCX;Sun Country Airlines
-SZ;WOW;Air Southwest
-T2;TCG;Thai Air Cargo
-T3;EZE;Eastern Airways
-T4;TIB;TRIP Linhas Aéreas
-T5;TUA;Turkmenhovayollary
-T6;TVR;Tavrey Airlines
-T7;TJT;Twin Jet
-T9;TRZ;TransMeridian Airlines
-TC;ATC;Air Tanzania
-TD;LUR;Atlantis European Airways
-TF;SCW;Malmö Aviation
-TG;THA;Thai Airways International
-TI;TOL;Tol-Air Services
-TJ;GPD;Tradewind Aviation
-TK;THY;Turkish Airlines
-TL;ANO;Airnorth
-TM;LAM;Linhas Aéreas de Moçambique
-TN;THT;Air Tahiti Nui
-TO;PSD;President Airlines
-TP;TAP;TAP Portugal
-TQ;TDM;Tandem Aero
-TR;TGW;Scoot
-TS;TSC;Air Transat
-TT;KLA;Air Lithuania
-TU;TAR;Tunisair
-TV;VEX;Virgin Express
-TW;TWB;T'way Air
-TX;FWI;Air Caraïbes
-TY;TPC;Air Calédonie
-TZ;TWG;air-taxi Europe
-U2;EZY;easyJet
-U3;AIA;Avies
-U4;PMT;PMTair
-U5;GWY;USA3000 Airlines
-U6;SVR;Ural Airlines
-U7;UGA;Air Uganda
-U8;RNV;Armavia
-UA;UAL;United Airlines
-UB;UBA;Myanma Airways
-UC;LCO;LATAM Cargo Chile
-UD;HER;Hex'Air
-UE;NAS;Nasair
-UF;UKM;UM Airlines
-UG;SEN;SevenAir
-UH;USH;US Helicopter
-UI;ECA;Eurocypria Airlines
-UL;ALK;SriLankan Airlines
-UM;AZW;Air Zimbabwe
-UN;TSO;Transaero Airlines
-UO;HKE;Hong Kong Express Airways
-UP;BHS;Bahamasair
-UQ;OCM;O'Connor Airlines
-US;AWE;US Airways
-UT;UTA;UTair Aviation
-UU;REU;Air Austral
-UX;AEA;Air Europa
-UY;UYC;Cameroon Airlines
-UZ;BRQ;El-Buraq Air Transport
-V0;VCV;Conviasa
-V2;AKT;Karat
-V3;KRP;Carpatair
-V4;REK;Reem Air
-V5;VLI;Avolar Aerolíneas
-V7;SNG;Air Senegal International
-V8;VAS;ATRAN Cargo Airlines
-V9;BTC;BAL Bashkirian Airlines
-VA;OZW;Virgin Australia Regional Airlines
-VB;VIV;Aeroenlaces Nacionales
-VC;VCX;Ocean Airlines
-VD;LIB;Air Liberté
-VE;AVE;Avensa
-VF;VLU;Valuair
-VG;VLM;VLM Airlines
-VH;ALV;Aeropostal Alas de Venezuela
-VI;VDA;Volga-Dnepr Airlines
-VJ;AFF;Africa Airways
-VK;FVK;FlyViking
-VL;VIM;Air VIA
-VM;VOA;Viaggio Air
-VN;HVN;Vietnam Airlines
-VO;TYR;Tyrolean Airways
-VP;VSP;VASP
-VQ;NVQ;Novo Air
-VR;TCV;TACV
-VS;VIR;Virgin Atlantic Airways
-VT;VTA;Air Tahiti
-VU;VUN;Air Ivoire
-VV;AEW;Aerosvit Airlines
-VW;TAO;Aeromar
-VX;AES;ACES Colombia
-VY;FOS;Formosa Airlines
-VZ;MYT;MyTravel Airways
-W2;CWA;Canadian Western Airlines
-W3;FYH;Flyhy Cargo Airlines
-W4;BES;Aero Services Executive
-W5;IRM;Mahan Air
-W6;WZZ;Wizz Air
-W7;SAH;Sayakhat Airlines
-W8;CJT;Cargojet Airways
-W9;AAB;Abelag Aviation
-WA;KLC;KLM Cityhopper
-WB;RWD;Rwandair Express
-WC;ISV;Islena De Inversiones
-WD;DSR;DAS Air Cargo
-WD*;AAN;Amsterdam Airlines
-WE;CWC;Centurion Air Cargo
-WF;WIF;Widerøe
-WG;SWG;Sunwing Airlines
-WH;CNW;China Northwest Airlines
-WK;AFB;American Falcon
-WN;SWA;Southwest Airlines
-WO;WSW;Swoop
-WR;HRH;Royal Tongan Airlines
-WS;WJA;WestJet
-WT;WSG;Wasaya Airways
-WV;SWV;Swe Fly
-WW;BMI;Bmibaby
-WX;BCY;CityJet
-WY;OMA;Oman Air
-WZ;WSF;West African Airlines
-X3;HLX;Hapag-Lloyd Express (TUIfly)
-X7;CHF;Chitaavia
-X9;NVD;Avion Express
-XC;CAI;Corendon Airlines
-XF;VLK;Vladivostok Air
-XG;CLI;Clickair
-XJ;MES;Mesaba Airlines
-XK;CCM;Corse Méditerranée
-XL;LNE;Aerolane
-XN;XAR;XpressAir
-XO;CXH;China Xinhua Airlines
-XP;CXP;Western
-XQ;SXS;SunExpress
-XS;SIT;SITA
-XT;AXL;Air Exel
-XW;NCT;NokScoot
-Y0;EMJ;Yellow Air Taxi/Friendship Airways
-Y2;AFJ;Alliance Air
-Y4;VOI;Volaris
-Y5;GMR;Golden Myanmar Airlines
-Y6;BTV;Batavia Air
-Y8;YZR;Yangtze River Express
-Y9;IRK;Kish Air
-YB;BRJ;Borajet
-YD;CAT;Cologne Air Transport GmbH
-YE;ACQ;Aryan Cargo Express
-YH;WCW;West Caribbean Airways
-YK;KYV;Cyprus Turkish Airlines
-YL;LLM;Yamal Airlines
-YM;MGX;Montenegro Airlines
-YQ;LCT;TAR Aerolineas
-YS;RAE;Régional Compagnie Aérienne Européenne
-YT;TGA;Air Togo
-YU;ADM;Dominair
-YV;ASH;Mesa Airlines
-YW;ANE;Air Nostrum
-YX;MEP;Midwest Airlines
-Z2;Philippines AirAsia;EZD
-Z3;SMJ;Avient Aviation
-Z4;OOM;Zoom Airlines
-Z5;GMG;GMG Airlines
-Z6;UDN;Dniproavia
-Z7*;ADK;ADC Airlines
-Z8;AZN;Línea Aérea Amaszonas
-ZA;CYD;AccessAir
-ZB;BUB;Air Bourbon
-ZE;AZE;Arcus-Air Logistic
-ZG;VVM;Viva Macau
-ZH;CSZ;Shenzhen Airlines
-ZI;AAF;Aigle Azur
-ZK;GLA;Great Lakes Airlines
-ZL;RXA;Regional Express
-ZP;AZP;Amaszonas Paraguay
-ZS;AZI;Azzurra Air
-ZT;AWC;Titan Airways
-ZU;HCY;Helios Airways
-ZV;AMW;Air Midwest
-ZW;AWI;Air Wisconsin
-ZX;ABL;Air BC
-ZY;SHY;Sky Airlines
+AE;AE
+JV;BLS
+MD;MDG
+7F;FAB
+HN;HVY
+EN;DLA
+IN;MAK
+HK;FSC
+B4;BCF
+H2;SKU
+RT;BUG
+2T;HAM
+EM*;AEB
+BE;BEE
+0J;JCS
+5N;AUL
+AX;—
+D0;DHK
+KB;DRK
+OM;MGL
+ME;MEA
+SR;SWR
+6G;AWW
+7E;AWU
+FP;FRE
+RS;ICT
+4K*;AAS
+QS;QSC
+R8;KGA
+CF;SDR
+BG;BBC
+BO;BBD
+AB;BER
+JZ;SKX
+O8;OHK
+SV;SVA
+5P;LLX
+2B;ARD
+BZ;BDA
+KF;BLF
+E3;DMO
+PJ;SPM
+IE;SOL
+SD;SUD
+XQ;SXS
+B5;FLT
+NY;FXI
+XN;XAR
+5L;RSU
+Q5;MLA
+WN;SWA
+MI;SLK
+L4;SSX
+V9;BTC
+JA;BON
+I4;FWA
+8F;FFR
+R2;ORB
+IK;KAR
+6Y;ART
+MA;MAH
+UZ;BRQ
+M7;MAA
+B9;BGD
+8D*;SUW
+WV;SWV
+QR;QTR
+BS;BIH
+WG;SWG
+QW;BWG
+Y6;BTV
+UY;UYC
+4C;ARE
+YD;CAT
+F7;BBO
+FJ;FJI
+WY;OMA
+4D;ASD
+OX;OEA
+KU;KAC
+NM;DRD
+FB;LZB
+ZK;GLA
+U6;SVR
+KG;BNX
+PG;BKP
+QX;QXE
+MK;MAU
+K5;SQH
+ER;DHL
+FA;SFR
+9Y;FGE
+SN;BXI
+F2;FLM
+KE;KAL
+YS;RAE
+3Q;CYH
+NB;SNB
+H5;HOA
+ES;DHX
+TU;TAR
+FT;SRH
+JR;SER
+QO;MPX
+TV;VEX
+8D;EXV
+BD;BMA
+2N;NTJ
+RQ;KMF
+OO;SKW
+XK;CCM
+DT;DTA
+RP*;CHQ
+QF;EAQ
+L2;LYC
+I6;SEQ
+BN;BNF
+LK;LXR
+CH;BMJ
+8N;NKF
+ML;BIE
+BC;SKY
+XC;CAI
+VW;TAO
+HM;SEY
+VS;VIR
+VL;VIM
+LZ[30];SWU
+DG;SRQ
+V3;KRP
+L8;LXG
+3G;AYZ
+DX;DTR
+VA;OZW
+ZB;BUB
+OA;OAL
+DH;DVA
+9A;EZX
+OE[20];LDM
+JQ;JST
+QE;ECC
+8C;ATN
+Z4;OOM
+D9;DNV
+A0;MCJ
+VR;TCV
+B3;BLV
+HO;DJA
+TT;KLA
+F3;FSW
+D2;SSF
+R9;CAM
+DO;DOA
+TQ;TDM
+J4;BFL
+V8;VAS
+5K;HFY
+EX;BJK
+HZ;SHU
+LH;DLH
+FK;WTA
+4H;UBD
+WA;KLC
+LU;LXP
+V0;VCV
+OJ;FJM
+7L;AZG
+VI;VDA
+9I;LLR
+BV;BPA
+T2;TCG
+VC;VCX
+BP;BOT
+GS;UPA
+7N;PWD
+PT;CCI
+NU;JTA
+CB*;KFS
+S5;TCF
+UI;ECA
+G5;HXA
+TP;TAP
+2Z;CGN
+SH;FLY
+WZ;WSF
+BU;BUN
+7T;AGV
+SE;SEU
+5Z;AFX
+MN;CAW
+SZ;WOW
+3L;ISK
+QY;BCS
+5F;CIR
+WO;WSW
+JS;KOR
+D8;IBK
+C8;ICV
+Z3;SMJ
+6K;RIT
+OD;MXD
+B2;BRU
+3W;EMX
+WT;WSG
+GX;GBC
+5Y;GTI
+GT;GBL
+MQ;EGF
+6A;CHP
+XS;SIT
+3J;AAQ
+MH;MWG
+MY;MXJ
+S3;BBR
+UP;BHS
+2K;GLG
+MX;MXA
+0A;GNT
+GW;KIL
+7A;XRC
+BT;BTI
+UQ;OCM
+QD;QCL
+VY;FOS
+MG;CCP
+KL;KLM
+SY;SCX
+A4;SWD
+RC;FLI
+5W;AEU
+H8;KHB
+TF;SCW
+O7;OZJ
+QH;LYN
+6P;ISG
+JN;XLA
+J9;GIF
+DB;BZH
+FW;IBX
+5J;CEB
+Z2;Philippines AirAsia
+AL;SYX
+A8;XAU
+E5;BRZ
+RV*;AFI
+WR;HRH
+YX;MEP
+MP;MPH
+FI;ICE
+6U;ACX
+GM;SVK
+UG;SEN
+9C;CQH
+6H;ISR
+7S;RCT
+GQ;BSY
+R7;OCA
+DC;GAO
+MS;MSR
+W4;BES
+9W;JAI
+KV;MVD
+S9;HSA
+WD*;AAN
+KX;CAY
+BW;BWA
+WX;BCY
+N4;MTC
+M4;MSA
+1A;AGT
+SI;SIH
+UF;UKM
+QK;JZA
+7M;MYI
+MR;MRT
+YM;MGX
+7O[33];TVL
+M9;MSI
+G6;BSR
+JD;CBJ
+SJ;FOM
+YB;BRJ
+SQ;SIA
+KQ;KQA
+D7;XAX
+IO;IAA
+EU;EEA
+8M;MXL
+A7;MPD
+K9;KFS
+GJ;MXC
+MM;MMZ
+PY;SLM
+UT;UTA
+H7;EGU
+TX;FWI
+I5;IAD
+ID;BTK
+IA;IAW
+6N;NIN
+8U;AAW
+HY;UZB
+4G;GZP
+IC;IAC
+NN;MOV
+9M;GLR
+GA;GIA
+K8;ZAK
+XJ;MES
+G0;GHB
+I9;IBU
+3U;CSC
+I2;IBS
+IB;IBE
+Q2;DQA
+Q3;MBN
+3C;CMV
+4N;ANT
+EF;EFA
+W3;FYH
+3X;JAC
+W6;WZZ
+9T;ABS
+MZ;MNA
+WD;DSR
+3P;TNM
+8V;ACP
+8T;TID
+8L;CGP
+IT;KFR
+EY;EFL
+O6;ONE
+P8;MKG
+7C;COY
+8Y;PBU
+5A;AIP
+KK;KKK
+2D;AOG
+NT;IBB
+9L;CJC
+S6;SRR
+CQ;CCW
+ZY;SHY
+EE;EAY
+GF;GFA
+E2;KMP
+RI;MDL
+8P;PCO
+SX;SRK
+QU;UTN
+EA;EAL
+RF;FWL
+1I;AMB
+J8;BVT
+Y8;YZR
+9Q;PBA
+VN;HVN
+4O;AIJ
+QQ;UTY
+GI;IKA
+1Z;APD
+M5;KEN
+CA;CCA
+WW;BMI
+4Y;AIB
+CT;CAT
+KP;KIA
+CI;CAL
+OL;OLT
+S0;OKS
+AT;RAM
+VK;FVK
+K6;KHV
+EQ;TAE
+2O;RNE
+N5;KGZ
+8Q*;BAJ
+KW;KHK
+LX;SWR
+C4;IMX
+L9;MLI
+SF;DTH
+IM;MNJ
+V7;SNG
+2G;CRG
+4A;AKL
+JE;MNO
+D6;ILN
+UH;USH
+4U;GWI
+M8;MKN
+9V;VPA
+NZ;ANZ
+ZP;AZP
+FG;AFG
+IZ;AIZ
+YH;WCW
+LV;LBC
+N7;ROK
+SW;NMB
+JM;AJM
+ZE;AZE
+XT;AXL
+ZS;AZI
+AA;AAL
+AN;AAA
+OK;CSA
+G8;AGB
+LA;LAN
+NH;ANA
+GN;AGN
+OW;EXK
+E8;ELG
+PV;PNR
+GP;RIV
+AQ;AAH
+S2;RSH
+OU;CTN
+HT;AHW
+BX;ABL
+TC;ATC
+VE;AVE
+P5;RPB
+CC;ABD
+CJ;CFE
+Z7*;ADK
+IY;IYE
+GL;GRL
+O3;CSS
+GD;AHA
+8J;KMV
+Z8;AZN
+OY;ANS
+7B;KJC
+GO;KZU
+OE;AOT
+PL;PLI
+0D;DWT
+LF;NDC
+K3;TQN
+U2;EZY
+J2;AHY
+9R;VAP
+6E;IGO
+0C;IBL
+8B;GFI
+KZ;NCA
+JH;NES
+7O;GAL
+KY;EQL
+US;AWE
+WB;RWD
+BI;RBA
+C3;IPR
+QN;ARR
+A9;TGZ
+CP;CDN
+NX;AMU
+5M;MNT
+T3;EZE
+ON;RON
+NG;LDA
+SL;RSL
+T6;TVR
+M3;TUS
+MB;EXA
+UD;HER
+IJ;GWL
+LD;AHK
+AC;ACA
+FN;RGL
+NV;CRF
+G3;CIX
+WE;CWC
+PW;PRF
+XP;CXP
+Z6;UDN
+XO;CXH
+7K;KGL
+BK;PDC
+CK;CKK
+G9;ABY
+F6;RCK
+GB;ABX
+HV;TRA
+NQ;AJX
+8W;EDR
+EI;EIN
+EP;IRC
+PK;PIA
+GC;GNR
+PS;AUI
+CL;CLH
+TW;TWB
+TZ;TWG
+FS;ACL
+EZ;EIA
+AP;ADH
+HX;CRK
+A3;AEE
+6I;IBZ
+JL;JAL
+OH;COM
+NR;PIR
+DA;GRG
+II;CSQ
+M6;AJT
+DE;CFG
+PM;TOS
+P0;PFZ
+VD;LIB
+1L;OSY
+JI;JAE
+3R;GAI
+RD;RYN
+VO;TYR
+JF;JAA
+PU;PUA
+MV;RML
+TO;PSD
+5C;ICL
+AW;AFW
+SG;JGO
+AF;AFR
+C6;CJA
+2P;GAP
+GH;GLP
+NE;ESK
+G7;GNF
+LN;LAA
+GZ;RAR
+IW;AOM
+QZ;AWQ
+G4;AAY
+I7;PMW
+KM;AMC
+W2;CWA
+LQ;LAQ
+EM;CFS
+J6;AOC
+DK;ELA
+C7;CIN
+J3;PLR
+CX;CPA
+3S*;AEN
+X3;HLX
+3V;TAY
+G2;VXG
+IR;IRA
+OT;PEL
+WS;WJA
+PI;PDT
+EL;ANK
+FM;CSH
+FV;PLK
+LY;ELY
+BL;PIC
+AI;AIC
+VQ;NVQ
+CO;COA
+UO;HKE
+LL;GRO
+S4;RZO
+EG;JAA
+NA;NAL
+YV;ASH
+CM;CMP
+6V;VGA
+A5;RLA
+FL;TRS
+CG;TOK
+CD;CND
+PE;AEL
+OV;ELL
+BY;TOM
+KJ;AAZ
+EW;EWG
+OP;CHK
+U7;UGA
+CS;CMI
+B8;ERT
+IF;ISW
+2J;VBW
+KH;AAH
+IG;ISS
+KI;AAG
+WF;WIF
+W7;SAH
+AM;AMX
+ZU;HCY
+PH;PAO
+ZL;RXA
+PO;PAC
+HU;CHH
+KS;PEN
+O4;ABV
+DY;NAX
+RH;HKC
+MU;CES
+TD;LUR
+KC;KZR
+SP;SAT
+P7;REP
+SK;SAS
+X9;NVD
+S7;SBI
+MC;RCH
+K4;CKS
+JY;IWY
+UM;AZW
+CZ;CSN
+ZA;CYD
+I9*;AEY
+JJ;AGX
+MW;MYD
+0V;VFC
+F4;NBK
+9U;MLD
+5T;MPE
+F5;COZ
+M2;MZS
+SO;HKA
+AJ;NIG
+JP;ADR
+L6;VNZ
+GG;GUY
+KO;AER
+E7;ESF
+2U;GIP
+EH;AKX
+UA;UAL
+EJ;NEA
+K2;ELO
+BJ;LBT
+ET;ETH
+GE;TNA
+UB;UBA
+OZ;AAR
+Q7;SBM
+YL;LLM
+BR;EVA
+RB;SBK
+ZW;AWI
+E0;ESS
+KD;AEN
+4F;ECE
+XL;LNE
+ZT;AWC
+OR;TFL
+SA;SAA
+BQ;ROM
+LJ;JNA
+NL;SAI
+AR;ARG
+Q6;CDP
+T4;TIB
+TJ;GPD
+W8;CJT
+TK;THY
+RU;ABW
+D4;LID
+TN;THT
+VM;VOA
+L7;LPN
+UU;REU
+FR;RYR
+C9;RUS
+B6;JBU
+SB;ACI
+CW;CWM
+OF;FIF
+QB;AAJ
+TR;TGW
+Y2;AFJ
+UX;AEA
+TG;THA
+5V;UKW
+ST;GMI
+LT;LTU
+HR;HHN
+DJ;WAJ
+2S;SDY
+Y4;VOI
+JT;LNI
+NW;NWA
+LC;LOG
+Y0;EMJ
+SC;CDG
+CV;CVA
+RE;REA
+X7;CHF
+3K;JSA
+AG;ARU
+CU;CUB
+WK;AFB
+FC;WBA
+JK;JKK
+2W;WLC
+8A;BMM
+4T;BHP
+SM;AAW
+VX;AES
+8Z;WVL
+VV;AEW
+BF;RSR
+GR;AUR
+VJ;AFF
+PR;PAL
+RK;RCT
+AS;ASA
+LM;LVG
+5O;FPO
+H6;HAG
+IP;JOL
+HB;HAR
+6J;JUB
+N8;HGK
+AO;AUZ
+9K;KAP
+HA;HAL
+HC;ATI
+AU;AUT
+ZV;AMW
+6Z;UKS
+AV;AVA
+H9;HAD
+2L;OAW
+E4;RSO
+WC;ISV
+ZG;VVM
+YQ;LCT
+HG;NLY
+SU;AFL
+YW;ANE
+4R;SEK
+7G;SFJ
+VB;VIV
+DS;EZS
+FO;ATM
+LO;LOT
+EC;TWN
+8Q;OHY
+AD;PRZ
+XF;VLK
+3W*;VNR
+QI;CIM
+HE;LGW
+RL;RIO
+LP;LPE
+ZH;CSZ
+MT;JMC
+L3;JOS
+HW;FHE
+V5;VLI
+N2;DAG
+Y5;GMR
+MJ;LPR
+Q9;AFU
+DU;NLH
+GV;ARF
+AK;AXM
+PA;FCL
+RR;RFR
+W9;AAB
+RX;AEH
+4S;FNC
+P6;PVG
+V4;REK
+VG;VLM
+Q8;PEC
+E9;CXS
+CY;CYP
+VZ;MYT
+EV;ASQ
+VF;VLU
+EO;LHN
+LR;LRC
+W5;IRM
+8E;BRG
+HQ;HMY
+T7;TJT
+TM;LAM
+NF;AVN
+4M;DSM
+D5;DAU
+7R;BRB
+ZI;AAF
+AZ;AZA
+JU;ASL
+FH;FHY
+DW;UCR
+2Q;SNC
+UL;ALK
+LI;LIA
+U8;RNV
+D3;DAO
+J7;CVC
+PC;FAJ
+C5;UCA
+A2;AZI
+F9;FFT
+RG;VRN
+JX;JEC
+UN;TSO
+3S;BOX
+DV;LTF
+JB;JBA
+RJ;RJA
+3N;URG
+KR;CWK
+CE;NTW
+YT;TGA
+MO;AUH
+HD;HLN
+UC;LCO
+VH;ALV
+2G*;MRR
+ED*;ABQ
+Z5;GMG
+HF;HLF
+Y9;IRK
+JC;JEX
+JW;APW
+TI;TOL
+5G;SSV
+A6;LPV
+JO;JAZ
+R3;RME
+LG;LGL
+AH;DAH
+DD;DDL
+QL;RLN
+3O;MAC
+IV;JET
+6R;DRU
+P3;PTB
+NO;AUS
+QV;LAO
+FY;FFM
+YE;ACQ
+2F;FTA
+QT;TPA
+U3;AIA
+OS;AUA
+9E;FLG
+DI;BAG
+KN;CUA
+PZ;LAP
+ZX;ABL
+0B;BMS
+O9;NOV
+T5;TUA
+6B;BLX
+LS;EXS
+RW;RPA
+VP;VSP
+FX;FDX
+U4;PMT
+NK;NKS
+RO;ROT
+FZ;FDB
+UE;NAS
+KA;HDA
+YU;ADM
+PP;PJS
+6W;SOV
+WH;CNW
+EK;UAE
+S8;CSU
+NC;NJS
+O2;JEA
+BB;SBS
+IQ;AUB
+QC;CRD
+DP;FCA
+RA;RNA
+PX;ANG
+8H;BGH
+LB;LLB
+FE;WCP
+TL;ANO
+OB;ASZ
+YK;KYV
+QM;AML
+5D;SLI
+XW;NCT
+TY;TPC
+IX;AXB
+2M;MDV
+BA;BAW
+HP;AWE
+6Q;SLL
+VU;VUN
+3T;URN
+AY;FIN
+N6;JEV
+R0;RPK
+PD;POE
+TS;TSC
+5X;UPS
+SS;CRL
+R5;JAV
+LW;NMI
+DL;DAL
+U5;GWY
+7W;QGA
+8O;YWZ
+HJ;AXF
+PF;PNW
+XG;CLI
+MF;CXA
+V2;AKT
+T9;TRZ
+VT;VTA
+RV;ROU

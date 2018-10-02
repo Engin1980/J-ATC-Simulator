@@ -1,11 +1,22 @@
 package eng.jAtcSim.app.startupSettings;
 
+import eng.eSystem.collections.IList;
+import eng.eSystem.utilites.ExceptionUtils;
 import eng.eSystem.utilites.awt.ComponentUtils;
 import eng.jAtcSim.XmlLoadHelper;
+import eng.jAtcSim.lib.Acc;
+import eng.jAtcSim.lib.global.logging.ApplicationLog;
+import eng.jAtcSim.lib.global.newSources.AirplaneTypesSource;
+import eng.jAtcSim.lib.global.newSources.FleetsSource;
+import eng.jAtcSim.lib.global.newSources.TrafficSource;
+import eng.jAtcSim.lib.global.newSources.XmlTrafficSource;
+import eng.jAtcSim.lib.traffic.FlightListTraffic;
+import eng.jAtcSim.lib.traffic.Traffic;
 import eng.jAtcSim.lib.world.Airport;
 import eng.jAtcSim.shared.LayoutManager;
 import eng.jAtcSim.app.extenders.SwingFactory;
 import eng.jAtcSim.app.startupSettings.panels.*;
+import eng.jAtcSim.shared.MessageBox;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,6 +27,7 @@ public class FrmStartupSettings extends JPanel {
   private JPanel pnlContent;
   private boolean dialogResultOk;
   private String lastStartupSettingsFileName = null;
+  private JButton btnValidate;
 
   public FrmStartupSettings() throws HeadlessException {
 
@@ -49,19 +61,14 @@ public class FrmStartupSettings extends JPanel {
   }
 
   private JPanel createBottomPanel() {
-
-    JButton btnSave = new JButton("Save");
-    JButton btnLoad = new JButton("Load");
-    JButton btnApply = new JButton("Apply");
-    btnApply.addActionListener(this::btnApply_click);
-    JButton btnCancel = new JButton("Discard changes");
-    btnCancel.addActionListener(q -> {
+    btnValidate = SwingFactory.createButton("Validate", q -> validateSources());
+    JButton btnSave = SwingFactory.createButton("Save", q -> btnSave_click());
+    JButton btnLoad = SwingFactory.createButton("Load", q -> btnLoad_click());
+    JButton btnApply = SwingFactory.createButton("Apply", this::btnApply_click);
+    JButton btnCancel = SwingFactory.createButton("Discard changes", q -> {
       this.dialogResultOk = false;
       this.getRootPane().getParent().setVisible(false);
     });
-
-    btnSave.addActionListener(q -> btnSave_click());
-    btnLoad.addActionListener(q -> btnLoad_click());
 
     JPanel ret = LayoutManager.createBorderedPanel(
         null,
@@ -71,12 +78,74 @@ public class FrmStartupSettings extends JPanel {
             btnSave),
         LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.bottom, 4,
             btnCancel,
+            btnValidate,
             btnApply),
         null);
 
     ret = LayoutManager.createBorderedPanel(4, ret);
 
     return ret;
+  }
+
+  private void validateSources() {
+    StartupSettings ss = new StartupSettings();
+    this.fillSettingsBy(ss);
+
+    btnValidate.setEnabled(false);
+    AirplaneTypesSource types = new AirplaneTypesSource(ss.files.planesXmlFile);
+    FleetsSource fleets = new FleetsSource(ss.files.fleetsXmlFile);
+    try {
+      types.init();
+    } catch (Exception ex) {
+      Acc.log().writeLine(ApplicationLog.eType.warning, "Failed to load types from '%s'. '%s'", ss.files.planesXmlFile,
+          ExceptionUtils.toFullString(ex));
+      MessageBox.show("Failed to load types from file " + ss.files.planesXmlFile + ". " + ex.getMessage(), "Error...");
+      btnValidate.setEnabled(true);
+      return;
+    }
+    try {
+      fleets.init(types.getContent());
+    } catch (Exception ex) {
+      Acc.log().writeLine(ApplicationLog.eType.warning, "Failed to load fleets from '%s'. '%s'", ss.files.fleetsXmlFile,
+          ExceptionUtils.toFullString(ex));
+      MessageBox.show("Failed to load fleets from file " + ss.files.fleetsXmlFile + ". " + ex.getMessage(), "Error...");
+      btnValidate.setEnabled(true);
+      return;
+    }
+
+    if (ss.traffic.type == StartupSettings.Traffic.eTrafficType.xml) {
+      TrafficSource traffics = new XmlTrafficSource(ss.files.trafficXmlFile);
+      try {
+        traffics.init();
+      } catch (Exception ex) {
+        Acc.log().writeLine(ApplicationLog.eType.warning, "Failed to load traffic from '%s'. '%s'", ss.files.trafficXmlFile,
+            ExceptionUtils.toFullString(ex));
+        MessageBox.show("Failed to load traffic from file " + ss.files.trafficXmlFile + ". " + ex.getMessage(), "Error...");
+        btnValidate.setEnabled(true);
+        return;
+      }
+
+      Traffic trf = traffics.getContent();
+      if (trf instanceof FlightListTraffic) {
+        boolean someFail = false;
+        IList<String> requiredPlaneTypes = ((FlightListTraffic) trf).getRequiredPlaneTypes();
+
+        for (String requiredPlaneType : requiredPlaneTypes) {
+          if (types.getContent().tryGetByName(requiredPlaneType) == null) {
+            Acc.log().writeLine(ApplicationLog.eType.warning, "Required plane type '%s' not found in known plane types.", requiredPlaneType);
+            someFail = true;
+          }
+        }
+        if (someFail) {
+          MessageBox.show("Some airplane types required by the traffic file are missing.", "Error...");
+          btnValidate.setEnabled(true);
+          return;
+        }
+      }
+    }
+
+    MessageBox.show("Everything seems to be ok.", "Validation successful.");
+    btnValidate.setEnabled(true);
   }
 
   private void btnApply_click(ActionEvent actionEvent) {

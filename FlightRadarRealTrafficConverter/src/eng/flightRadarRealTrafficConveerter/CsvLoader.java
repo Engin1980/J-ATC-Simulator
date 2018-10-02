@@ -138,7 +138,7 @@ public class CsvLoader {
   private static Path getTempFileName() {
     File tmp = null;
     try {
-      tmp = File.createTempFile(null, null);
+      tmp = File.createTempFile("tmp", ".tmp");
     } catch (IOException e) {
       throw new RuntimeException("Failed to create temporary file.", e);
     }

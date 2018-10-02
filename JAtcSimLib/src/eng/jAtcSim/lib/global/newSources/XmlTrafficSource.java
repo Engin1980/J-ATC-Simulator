@@ -54,6 +54,9 @@ public class XmlTrafficSource extends TrafficSource {
     XmlSerializer ser = new XmlSerializer(sett);
     try {
       def = ser.deserialize(this.fileName, TrafficDefinition.class);
+      if (def.traffic instanceof FlightListTraffic){
+        ((FlightListTraffic)def.traffic).bind();
+      }
       this.traffic = def.traffic;
     } catch (Exception e) {
       throw new EApplicationException("Unable to load traffic from file '" + this.fileName + "'.", e);

@@ -10,7 +10,7 @@
 
   <xs:complexType name="trafficDefinition">
     <xs:sequence>
-      <xs:element name="meta" type="sh:meta" minOccurs="0" maxOccurs="1" />
+      <xs:element name="meta" type="sh:meta" minOccurs="0" maxOccurs="1"/>
       <xs:choice maxOccurs="unbounded" minOccurs="0">
         <xs:element name="genericTraffic" type="genericTraffic"/>
         <xs:element name="densityTraffic" type="densityTraffic"/>
@@ -23,7 +23,6 @@
     <xs:attribute name="delayProbability" type="xs:double" use="required"/>
     <xs:attribute name="maxDelayInMinutesPerStep" type="xs:int" use="required"/>
   </xs:complexType>
-
 
   <xs:complexType name="codeWeight">
     <xs:attribute name="code" type="xs:string" use="required"/>
@@ -141,7 +140,13 @@
     <xs:complexContent>
       <xs:extension base="traffic">
         <xs:sequence>
-          <xs:element name="flight" type="flightListTrafficFlight" minOccurs="0" maxOccurs="unbounded"/>
+          <xs:element name="flights" minOccurs="1" maxOccurs="1">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="flight" type="flightListTrafficFlight" minOccurs="0" maxOccurs="unbounded"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
