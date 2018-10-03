@@ -70,8 +70,6 @@ public class Simulation {
   private final CenterAtc ctrAtc;
   private final MrvaManager mrvaManager;
   private final Airport activeAirport;
-  private IList<MoodResult> moodsHistory;
-
   /**
    * Public event informing surrounding about elapsed second.
    */
@@ -89,10 +87,6 @@ public class Simulation {
    */
   @XmlIgnore
   private final Timer tmr = new Timer(o -> Simulation.this.elapseSecond());
-
-  public EventSimple<Simulation> getOnRunwayChanged() {
-    return onRunwayChanged;
-  }
 
   public Simulation(
       Area area, AirplaneTypes airplaneTypes, Fleets fleets, Traffic traffic, Airport activeAirport,
@@ -121,7 +115,7 @@ public class Simulation {
       throw new IllegalArgumentException("Value of {activeAirport} cannot not be null.");
     }
     if (trafficManagerSettings == null) {
-        throw new IllegalArgumentException("Value of {trafficManagerSettings} cannot not be null.");
+      throw new IllegalArgumentException("Value of {trafficManagerSettings} cannot not be null.");
     }
 
     this.now = now.clone();
@@ -148,8 +142,10 @@ public class Simulation {
     IList<Border> mrvaAreas =
         area.getBorders().where(q -> q.getType() == Border.eType.mrva);
     this.mrvaManager = new MrvaManager(mrvaAreas);
+  }
 
-    this.moodsHistory = new EList<>();
+  public EventSimple<Simulation> getOnRunwayChanged() {
+    return onRunwayChanged;
   }
 
   public void load(XElement root) {
@@ -207,15 +203,6 @@ public class Simulation {
     this.start();
   }
 
-
-  public IReadOnlyList<MoodResult> getMoodHistory() {
-    return moodsHistory;
-  }
-
-  private void twr_runwayChanged() {
-    this.onRunwayChanged.raise();
-  }
-
   public PlaneResponsibilityManager getPrm() {
     return prm;
   }
@@ -228,6 +215,7 @@ public class Simulation {
     Acc.atcApp().init();
     Acc.atcCtr().init();
     this.prm.init();
+    this.stats.init();
 
     trafficManager.generateNewTrafficIfRequired();
     trafficManager.throwOutElapsedMovements(this.now.addMinutes(-5));
@@ -387,6 +375,10 @@ public class Simulation {
     this.appAtc.getParser().getShortcuts().setAll2(shortcuts);
   }
 
+  private void twr_runwayChanged() {
+    this.onRunwayChanged.raise();
+  }
+
   private synchronized void elapseSecond() {
     long elapseStartMs = System.currentTimeMillis();
 
@@ -417,13 +409,14 @@ public class Simulation {
     evalAirproxes();
     evalMrvas();
 
+    System.out.println("## here stats call ignored");
     stats.secondElapsed();
     long elapseEndMs = System.currentTimeMillis();
-    stats.durationOfSecondElapse.add((elapseEndMs - elapseStartMs) / 1000d);
+    stats.getSecondStats().getDuration().add((elapseEndMs - elapseStartMs) / 1000d);
 
     // weather
     this.weatherManager.elapseSecond();
-    if (this.weatherManager.isNewWeatherFlagAndResetIt()){
+    if (this.weatherManager.isNewWeatherFlagAndResetIt()) {
       twrAtc.setUpdatedWeatherFlag();
       sendTextMessageForUser("Weather updated: " + this.weatherManager.getWeather().toInfoString());
     }
@@ -455,7 +448,7 @@ public class Simulation {
     for (Airplane plane : Acc.planes()) {
       try {
         plane.elapseSecond();
-      } catch (Exception ex){
+      } catch (Exception ex) {
         throw new EApplicationException("Error processing elapseSecond() on plane " + plane.getCallsign() + ".", ex);
       }
     }
@@ -499,16 +492,16 @@ public class Simulation {
       // landed
       if (p.isArrival() && p.getSpeed() < 11) {
         rem.add(p);
-        this.stats.finishedArrivals.add();
+        this.stats.getPlanes().getFinishedPlanes().getArrivals().add(1);
       }
 
       // departed
       if (p.isDeparture() && Acc.prm().getResponsibleAtc(p).equals(Acc.atcCtr())
           && Coordinates.getDistanceInNM(
-              p.getCoordinate(), Acc.airport().getLocation())
+          p.getCoordinate(), Acc.airport().getLocation())
           > Acc.airport().getCoveredDistance()) {
         rem.add(p);
-        this.stats.finishedDepartures.add();
+        this.stats.getPlanes().getFinishedPlanes().getDepartures().add(1);
       }
 
       if (p.isEmergency() && p.hasElapsedEmergencyTime()) {
@@ -517,26 +510,26 @@ public class Simulation {
     }
 
     for (Airplane p : rem) {
-      this.moodsHistory.add(p.getEvaluatedMood());
+      stats.getPlanesMood().add(p.getEvaluatedMood());
       Acc.prm().unregisterPlane(p);
       this.mrvaManager.unregisterPlane(p);
       if (!p.isEmergency())
-        this.stats.delays.add(p.getDelayDifference());
+        this.stats.getPlanes().getDelay().getByType(p.isArrival()).add(p.getDelayDifference());
     }
   }
 
   private void evalAirproxes() {
     Airplanes.evaluateAirproxes(Acc.planes());
     Acc.planes()
-        .where(q->q.getAirprox() == AirproxType.full && Acc.prm().getResponsibleAtc(q) == Acc.atcApp())
-        .forEach(q->q.getMood().experience(Mood.SharedExperience.airprox));
+        .where(q -> q.getAirprox() == AirproxType.full && Acc.prm().getResponsibleAtc(q) == Acc.atcApp())
+        .forEach(q -> q.getMood().experience(Mood.SharedExperience.airprox));
   }
 
   private void evalMrvas() {
     this.mrvaManager.evaluateMrvaFails();
     Acc.planes()
-        .where(q->q.isMrvaError() && Acc.prm().getResponsibleAtc(q) == Acc.atcApp())
-        .forEach(q->q.getMood().experience(Mood.SharedExperience.mrvaViolation));
+        .where(q -> q.isMrvaError() && Acc.prm().getResponsibleAtc(q) == Acc.atcApp())
+        .forEach(q -> q.getMood().experience(Mood.SharedExperience.mrvaViolation));
   }
 
   private void processSystemMessages() {
@@ -720,7 +713,7 @@ public class Simulation {
           plane.getEntryExitFix().getCoordinate(), plane.getCoordinate());
       int atEntryPointSeconds = (int) (dist / plane.getSpeed() * 3600);
 
-      if (checkedAtEntryPointSeconds == null){
+      if (checkedAtEntryPointSeconds == null) {
         dist = Coordinates.getDistanceInNM(
             checkedPlane.getEntryExitFix().getCoordinate(), checkedPlane.getCoordinate());
         checkedAtEntryPointSeconds = (int) (dist / checkedPlane.getSpeed() * 3600);

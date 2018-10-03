@@ -576,7 +576,6 @@ public class Radar {
   private void canvas_onMouseMove(ICanvas sender, EMouseEventArg e) {
     Point pt = e.getPoint();
     Coordinate coord = tl.toCoordinate(pt);
-    System.out.println("## " + e.type);
     switch (e.type) {
       case wheelScroll:
         if (e.wheel > 0) {

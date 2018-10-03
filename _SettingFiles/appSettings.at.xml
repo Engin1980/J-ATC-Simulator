@@ -7,6 +7,7 @@
   <startupSettingsFile>$app$/_SettingFiles/defaultStartupSettings.ss.xml</startupSettingsFile>
   <stripSettingsFile>$app$/_SettingFiles/stripSettings.at.xml</stripSettingsFile>
   <speechFormatterFile>$app$/_SettingFiles/speechResponses.fm.xml</speechFormatterFile>
+  <stats perMinuteInterval="240" perQuaterInterval="1440" />
   <radar>
     <styleSettingsFile>$app$/_SettingFiles/radarStyleSettingsInconsolataBig.at.xml</styleSettingsFile>
     <displayTextDelay>30</displayTextDelay>

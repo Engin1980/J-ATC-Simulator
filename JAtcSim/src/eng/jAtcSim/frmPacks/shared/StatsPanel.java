@@ -1,7 +1,9 @@
 package eng.jAtcSim.frmPacks.shared;
 
+import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.Simulation;
 import eng.jAtcSim.lib.global.ETime;
+import eng.jAtcSim.lib.stats.read.StatisticsView;
 import eng.jAtcSim.lib.stats.Statistics;
 import eng.jAtcSim.shared.LayoutManager;
 
@@ -111,14 +113,19 @@ public class StatsPanel extends JPanel {
         setDarkTheme(i);
       }
     }
-
-
   }
+
+  private StatisticsView view;
 
   private void update() {
 
-    lvlElapsed.setText(toTime(stats.secondsElapsed.get()));
-    lvlBusyDuration.setText(String.format("%.3f", stats.durationOfSecondElapse.get()));
+    view = stats.createView(Acc.now().addHours(-1));
+
+    lvlElapsed.setText(toTime(view.getSecondStats().getSecondsElapsed()));
+    lvlBusyDuration.setText(String.format("%.3f (%.3f)",
+        view.getSecondStats().getDuration().getMean(),
+        view.getSecondStats().getDuration().getMaximum()
+    ));
 
     updateFinished();
     updateMaxAll();
@@ -133,83 +140,83 @@ public class StatsPanel extends JPanel {
   }
 
   private void updateAirproxAndMrvas() {
-    double air = stats.airproxes.get() * 1000;
-    double mrv = stats.mrvaErrors.get() * 1000;
+    double air = view.getErrors().getAirproxes().getMean();
+    double mrv = view.getErrors().getMrvas().getMean();
     String s = String.format("%.1f‰ / %.1f‰", air, mrv);
     lvlErrors.setText(s);
   }
 
   private void updateDelays() {
-    ETime tmean = new ETime((int) stats.delays.mean.get());
-    ETime tmax = new ETime((int) stats.delays.max.get());
+    ETime tmean = new ETime((int) view.getPlanes().getDelay().getTogether().getMean());
+    ETime tmax = new ETime((int) view.getPlanes().getDelay().getTogether().getMaximum());
 
     String s = String.format("%s / %s", tmean.toMinuteSecondString(), tmax.toMinuteSecondString());
     lvlDelay.setText(s);
   }
 
   private void updateHoldingPointInfo() {
-    String tmp = String.format("%d / %d",
-        stats.holdingPointInfo.currentHoldingPointCount,
-        stats.holdingPointInfo.maximumHoldingPointCount.getInt());
+    String tmp = String.format("%.0f / %.0f",
+        view.getHoldingPoint().getCount().getCurrent(),
+        view.getHoldingPoint().getCount().getMaximum());
     lvlHpCount.setText(tmp);
 
     tmp = String.format("%s / %s",
-        toTime(stats.holdingPointInfo.meanHoldingPointTime.get()),
-        toTime(stats.holdingPointInfo.maximumHoldingPointTime.get())
+        toTime(view.getHoldingPoint().getDelay().getMean()),
+        toTime(view.getHoldingPoint().getDelay().getMaximum())
     );
     lvlHpTime.setText(tmp);
   }
 
   private void updateMovementsPerHour() {
     String s = String.format("%.1f / %.1f / %.1f",
-        stats.movementsPerHour.getDepartures(),
-        stats.movementsPerHour.getArrivals(),
-        stats.movementsPerHour.getTotal()
+        view.getPlanes().getFinishedPlanes().getDepartures().getMean(),
+        view.getPlanes().getFinishedPlanes().getArrivals().getMean(),
+        view.getPlanes().getFinishedPlanes().getTogether().getMean()
     );
     lvlMovementsGame.setText(s);
   }
 
   private void updateCurApp() {
-    String s = String.format("%d / %d / %d",
-        stats.currentPlanes.appDepartures,
-        stats.currentPlanes.appArrivals,
-        stats.currentPlanes.appTotal
+    String s = String.format("%.0f / %.0f / %.0f",
+        view.getPlanes().getPlanesUnderApp().getDepartures().getCurrent(),
+        view.getPlanes().getPlanesUnderApp().getArrivals().getCurrent(),
+        view.getPlanes().getPlanesUnderApp().getTogether().getCurrent()
     );
     lvlCurApp.setText(s);
   }
 
   private void updateCurAll() {
-    String s = String.format("%d / %d / %d",
-        stats.currentPlanes.departures,
-        stats.currentPlanes.arrivals,
-        stats.currentPlanes.total
+    String s = String.format("%.0f / %.0f / %.0f",
+        view.getPlanes().getPlanesInSim().getDepartures().getCurrent(),
+        view.getPlanes().getPlanesInSim().getArrivals().getCurrent(),
+        view.getPlanes().getPlanesInSim().getTogether().getCurrent()
     );
     lvlCurInGame.setText(s);
   }
 
   private void updateMaxApp() {
-    String s = String.format("%d / %d / %d",
-        stats.maximumResponsiblePlanes.departures.getInt(),
-        stats.maximumResponsiblePlanes.arrivals.getInt(),
-        stats.maximumResponsiblePlanes.total.getInt()
+    String s = String.format("%.0f / %.0f / %.0f",
+        view.getPlanes().getPlanesUnderApp().getDepartures().getMaximum(),
+        view.getPlanes().getPlanesUnderApp().getArrivals().getMaximum(),
+        view.getPlanes().getPlanesUnderApp().getTogether().getMaximum()
     );
     lvlMaxApp.setText(s);
   }
 
   private void updateMaxAll() {
-    String s = String.format("%d / %d / %d",
-        stats.maxumumTotalPlanes.departures.getInt(),
-        stats.maxumumTotalPlanes.arrivals.getInt(),
-        stats.maxumumTotalPlanes.total.getInt()
+    String s = String.format("%.0f / %.0f / %.0f",
+        view.getPlanes().getPlanesInSim().getDepartures().getMaximum(),
+        view.getPlanes().getPlanesInSim().getArrivals().getMaximum(),
+        view.getPlanes().getPlanesInSim().getTogether().getMaximum()
     );
     lvlMaxInGame.setText(s);
   }
 
   private void updateFinished() {
     String s = String.format("%d / %d / %d",
-        stats.finishedDepartures.get(),
-        stats.finishedArrivals.get(),
-        stats.finishedDepartures.get() + stats.finishedArrivals.get()
+        view.getPlanes().getFinishedPlanes().getDepartures().getCount(),
+        view.getPlanes().getFinishedPlanes().getArrivals().getCount(),
+        view.getPlanes().getFinishedPlanes().getTogether().getCount()
     );
     lvlFinished.setText(s);
   }

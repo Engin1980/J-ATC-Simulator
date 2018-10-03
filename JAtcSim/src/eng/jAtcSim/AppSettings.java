@@ -17,11 +17,12 @@ import java.time.format.DateTimeFormatter;
 
 public class AppSettings {
 
-  public static class Radar {
-    public Path styleSettingsFile;
-    public int displayTextDelay;
-    public DisplaySettings displaySettings;
+  public static class Stats {
+    public int perMinuteInterval = 60;
+    public int perQuaterInterval = 240;
+  }
 
+  public static class Radar {
     public static class DisplaySettings {
       public boolean tma = true;
       public boolean country = true;
@@ -41,7 +42,7 @@ public class AppSettings {
       public int minAltitude = 0;
       public int maxAltitude = 99000;
 
-      public RadarDisplaySettings toRadarDisplaySettings(){
+      public RadarDisplaySettings toRadarDisplaySettings() {
         RadarDisplaySettings ret = new RadarDisplaySettings();
         ret.setAirportVisible(this.airport);
         ret.setCountryBorderVisible(this.country);
@@ -56,35 +57,36 @@ public class AppSettings {
         ret.setSidVisible(this.sid);
         ret.setStarVisible(this.star);
         ret.setTmaBorderVisible(this.tma);
-        ret.setVorVisible(this.vor        );
+        ret.setVorVisible(this.vor);
         ret.setPlaneHistoryVisible(this.history);
         ret.setMinAltitude(this.minAltitude);
         ret.setMaxAltitude(this.maxAltitude);
         return ret;
       }
     }
+    public Path styleSettingsFile;
+    public int displayTextDelay;
+    public DisplaySettings displaySettings;
   }
 
-  public static class AutoSave{
+  public static class AutoSave {
     public int intervalInSeconds;
     public Path path;
   }
-
-  public AutoSave autosave = new AutoSave();
-
-  public Radar radar = new Radar();
-
   @XmlIgnore
   private static Path applicationFolder;
   @XmlIgnore
   private static java.time.LocalDateTime startDateTime;
   @XmlIgnore
   private static boolean initialized = false;
+  public AutoSave autosave = new AutoSave();
+  public Radar radar = new Radar();
   public Path startupSettingsFile;
   public Path soundFolder;
   public Path logFolder;
   public Path stripSettingsFile;
   public Path speechFormatterFile;
+  public Stats stats;
 
   public static Path getApplicationFolder() {
     return applicationFolder;

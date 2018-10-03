@@ -30,6 +30,8 @@ import eng.jAtcSim.lib.world.Runway;
 import eng.jAtcSim.lib.world.RunwayConfiguration;
 import eng.jAtcSim.lib.world.RunwayThreshold;
 
+import javax.security.auth.login.AccountNotFoundException;
+
 public class TowerAtc extends ComputerAtc {
 
   public static class RunwayCheck {
@@ -633,8 +635,7 @@ public class TowerAtc extends ComputerAtc {
     double diffSecs = ETime.getDifference(Acc.now(), holdingPointEntryTime).getTotalSeconds();
     diffSecs -= 15; // generally let TWR atc asks APP atc to switch 15 seconds before HP.
     if (diffSecs < 0) diffSecs = 0;
-    Acc.stats().holdingPointInfo.maximumHoldingPointTime.set(diffSecs);
-    Acc.stats().holdingPointInfo.meanHoldingPointTime.add(diffSecs);
+    Acc.stats().getHoldingPoint().getDelay().add(diffSecs);
 
     SpeechList lst = new SpeechList();
     lst.add(new RadarContactConfirmationNotification());

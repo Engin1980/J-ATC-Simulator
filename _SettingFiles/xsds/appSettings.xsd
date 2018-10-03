@@ -13,6 +13,12 @@
         <xs:element name="startupSettingsFile" type="xs:string" />
         <xs:element name="stripSettingsFile" type="xs:string" />
         <xs:element name="speechFormatterFile" type="xs:string" />
+        <xs:element name="stats">
+          <xs:complexType>
+            <xs:attribute name="perMinuteInterval" type="xs:positiveInteger" use="required" />
+            <xs:attribute name="perQuaterInterval" type="xs:positiveInteger" use="required" />
+          </xs:complexType>
+        </xs:element>
         <xs:element name="radar">
           <xs:complexType>
             <xs:sequence>
