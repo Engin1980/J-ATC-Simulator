@@ -4,3 +4,4 @@ temp/
 *.rar
 workspace.xml
 _Log/*
+FlightRadarRealTrafficConverter/sources/db/hereApiKeys.txt
