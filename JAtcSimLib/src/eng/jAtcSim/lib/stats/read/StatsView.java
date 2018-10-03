@@ -1,7 +1,6 @@
 package eng.jAtcSim.lib.stats.read;
 
 import eng.jAtcSim.lib.global.ETime;
-import eng.jAtcSim.lib.stats.read.shared.MinMaxMeanCountCurrentView;
 import eng.jAtcSim.lib.stats.read.shared.MinMaxMeanCountView;
 import eng.jAtcSim.lib.stats.read.specific.*;
 
@@ -9,12 +8,12 @@ public class StatisticsView {
   private ETime fromTime;
   private ETime toTime;
   private SecondStats secondStats;
-  private PlanesCountStats planes;
+  private PlaneStats planes;
   private MinMaxMeanCountView planesMood;
   private HoldingPointStats holdingPoint;
   private ErrorsStats errors;
 
-  public StatisticsView(ETime fromTime, ETime toTime, SecondStats secondStats, PlanesCountStats planes, MinMaxMeanCountView planesMood, HoldingPointStats holdingPoint, ErrorsStats errors) {
+  public StatisticsView(ETime fromTime, ETime toTime, SecondStats secondStats, PlaneStats planes, MinMaxMeanCountView planesMood, HoldingPointStats holdingPoint, ErrorsStats errors) {
     this.fromTime = fromTime;
     this.toTime = toTime;
     this.secondStats = secondStats;
@@ -36,7 +35,7 @@ public class StatisticsView {
     return secondStats;
   }
 
-  public PlanesCountStats getPlanes() {
+  public PlaneStats getPlanes() {
     return planes;
   }
 

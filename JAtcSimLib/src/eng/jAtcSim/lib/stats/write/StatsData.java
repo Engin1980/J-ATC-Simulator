@@ -5,6 +5,7 @@ import eng.jAtcSim.lib.stats.write.specific.*;
 
 public class WriteSet {
   public ETime fromTime;
+  public ETime toTime;
   public SecondStats secondStats = new SecondStats();
   public PlanesStats planes = new PlanesStats();
   public MoodStatsItem planesMood = new MoodStatsItem();
@@ -13,5 +14,10 @@ public class WriteSet {
 
   public WriteSet(ETime fromTime) {
     this.fromTime = fromTime;
+    this.toTime = null;
+  }
+
+  public boolean isLive(){
+    return toTime == null;
   }
 }

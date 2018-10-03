@@ -1,11 +1,11 @@
 package eng.jAtcSim.lib.stats.read.specific;
 
-public class PlanesViewBlock<T> {
+public class PlaneSubStats<T> {
   private T arrivals;
   private T departures;
   private T together;
 
-  public PlanesViewBlock(T arrivals, T departures, T together) {
+  public PlaneSubStats(T arrivals, T departures, T together) {
     this.arrivals = arrivals;
     this.departures = departures;
     this.together = together;

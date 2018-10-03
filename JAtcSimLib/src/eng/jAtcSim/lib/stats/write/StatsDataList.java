@@ -12,7 +12,12 @@ public class WriteSetList {
   private EList<WriteSet> inner = new EList();
 
   public void createNewSet(){
-    WriteSet ws = new WriteSet(Acc.now().clone());
+    WriteSet ws;
+    ws = inner.tryGetLast( );
+    if (ws != null){
+      ws.toTime = Acc.now().clone();
+    }
+    ws = new WriteSet(Acc.now().clone());
     inner.add(ws);
   }
 

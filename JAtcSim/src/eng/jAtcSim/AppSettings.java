@@ -85,7 +85,7 @@ public class AppSettings {
   public Path logFolder;
   public Path stripSettingsFile;
   public Path speechFormatterFile;
-  public Stats stats;
+  public Stats stats = new Stats();
 
   public static Path getApplicationFolder() {
     return applicationFolder;
@@ -143,13 +143,16 @@ public class AppSettings {
       tmp = radarElement.getChild("styleSettingsFile").getContent();
       ret.radar.styleSettingsFile = decodePath(tmp);
       ret.radar.displayTextDelay = Integer.parseInt(radarElement.getChild("displayTextDelay").getContent());
-      ret.radar.displaySettings = (Radar.DisplaySettings) new XmlSerializer().deserialize(
+      ret.radar.displaySettings = new XmlSerializer().deserialize(
           radarElement.getChild("displaySettings"), Radar.DisplaySettings.class);
 
       XElement autosaveElement = doc.getRoot().getChild("autosave");
       ret.autosave.intervalInSeconds = Integer.parseInt(autosaveElement.getAttribute("intervalInMinutes")) * 60;
       tmp = autosaveElement.getAttribute("path");
       ret.autosave.path = decodePath(tmp);
+
+      XElement statsElement = doc.getRoot().getChild("stats");
+      ret.stats.blockIntervalSize = Integer.parseInt(statsElement.getAttribute("blockIntervalSize"));
     }
 
     return ret;

@@ -98,9 +98,10 @@ public class Statistics {
   }
 
   public StatisticsView createView(ETime fromTime){
-    StatisticsView ret = null;
+    StatisticsView ret;
     IReadOnlyList<WriteSet> writeSets = this.writeSetList.getByTime(fromTime);
-    ret = ReadToWriteConverter.convert(writeSets);
+    IReadOnlyList<StatisticsView> statSets = ReadToWriteConverter.convert(writeSets);
+    ret = ViewMerger.merge(statSets);
     return ret;
   }
 

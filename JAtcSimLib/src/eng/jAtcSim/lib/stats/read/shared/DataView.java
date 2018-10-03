@@ -28,7 +28,10 @@ public class DataView {
     this.maximum = Math.max(this.maximum, other.maximum);
     double sum = this.mean * this.count + other.mean + other.count;
     this.count = this.count + other.count;
-    this.mean = sum /this.count;
+    if (this.count > 0)
+      this.mean = sum /this.count;
+    else
+      this.mean = 0;
     this.current = this.current + other.current;
   }
 }
