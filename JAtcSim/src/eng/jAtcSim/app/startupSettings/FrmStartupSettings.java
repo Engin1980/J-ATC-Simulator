@@ -6,10 +6,7 @@ import eng.eSystem.utilites.awt.ComponentUtils;
 import eng.jAtcSim.XmlLoadHelper;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.global.logging.ApplicationLog;
-import eng.jAtcSim.lib.global.newSources.AirplaneTypesSource;
-import eng.jAtcSim.lib.global.newSources.FleetsSource;
-import eng.jAtcSim.lib.global.newSources.TrafficSource;
-import eng.jAtcSim.lib.global.newSources.XmlTrafficSource;
+import eng.jAtcSim.lib.global.newSources.*;
 import eng.jAtcSim.lib.traffic.FlightListTraffic;
 import eng.jAtcSim.lib.traffic.Traffic;
 import eng.jAtcSim.lib.world.Airport;
@@ -111,6 +108,19 @@ public class FrmStartupSettings extends JPanel {
       MessageBox.show("Failed to load fleets from file " + ss.files.fleetsXmlFile + ". " + ex.getMessage(), "Error...");
       btnValidate.setEnabled(true);
       return;
+    }
+
+    if (ss.weather.type == StartupSettings.Weather.WeatherSourceType.xml){
+      WeatherSource ws = new XmlWeatherSource(ss.files.weatherXmlFile);
+      try{
+        ws.init();
+      } catch (Exception ex){
+        Acc.log().writeLine(ApplicationLog.eType.warning, "Failed to load weather from '%s'. '%s'", ss.files.weatherXmlFile,
+            ExceptionUtils.toFullString(ex));
+        MessageBox.show("Failed to load weather from file " + ss.files.weatherXmlFile + ". " + ex.getMessage(), "Error...");
+        btnValidate.setEnabled(true);
+        return;
+      }
     }
 
     if (ss.traffic.type == StartupSettings.Traffic.eTrafficType.xml) {

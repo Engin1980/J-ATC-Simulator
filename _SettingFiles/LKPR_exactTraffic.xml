@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<trafficDefinition
-        xmlns="https://github.com/Engin1980/J-ATC-Simulator/traffic">
-  <flightListTraffic delayProbability=".3" maxDelayInMinutesPerStep="10">
-    <flight time="" callsign="" kind="" heading=""
-  </flightListTraffic>
-</trafficDefinition>
