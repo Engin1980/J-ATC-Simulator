@@ -2,6 +2,7 @@ package eng.jAtcSim.lib.stats.write.specific;
 
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
+import eng.eSystem.collections.IReadOnlyList;
 import eng.jAtcSim.lib.airplanes.moods.MoodExperienceResult;
 import eng.jAtcSim.lib.airplanes.moods.MoodResult;
 import eng.jAtcSim.lib.stats.read.shared.DataView;
@@ -28,5 +29,9 @@ public class MoodStatsItem  {
     DataView ret = new DataView(min, max, mean, moods.size(), 0);
 
     return ret;
+  }
+
+  public IReadOnlyList<MoodResult> getList() {
+    return moods;
   }
 }

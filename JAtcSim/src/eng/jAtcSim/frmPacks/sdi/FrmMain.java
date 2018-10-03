@@ -220,7 +220,7 @@ public class FrmMain extends JFrame {
       mnuView.addSeparator();
       buildMenuItem(mnuView, "Show mood results", null, s -> {
         MoodHistoryPanel pnl = new MoodHistoryPanel();
-        pnl.init(Acc.sim().getMoodHistory());
+        pnl.init(Acc.sim().getStats().getFullMoodHistory());
         SwingFactory.show(pnl, "Rating board");
       });
       buildMenuItem(mnuView, "Add new radar view",  'r', s -> {

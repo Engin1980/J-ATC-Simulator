@@ -18,8 +18,7 @@ import java.time.format.DateTimeFormatter;
 public class AppSettings {
 
   public static class Stats {
-    public int perMinuteInterval = 60;
-    public int perQuaterInterval = 240;
+    public int blockIntervalSize = 5;
   }
 
   public static class Radar {

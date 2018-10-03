@@ -58,7 +58,7 @@ public class Simulation {
   private final Messenger messenger = new Messenger();
   private final IList<Airplane> newPlanesDelayedToAvoidCollision = new EList<>();
   private final WeatherManager weatherManager;
-  private final Statistics stats = new Statistics();
+  private final Statistics stats;
   private final EmergencyManager emergencyManager;
   private final TrafficManager trafficManager;
   private final PlaneResponsibilityManager prm;
@@ -91,7 +91,7 @@ public class Simulation {
   public Simulation(
       Area area, AirplaneTypes airplaneTypes, Fleets fleets, Traffic traffic, Airport activeAirport,
       WeatherProvider weatherProvider, ETime now, int simulationSecondLengthInMs, double emergencyPerDayProbability,
-      TrafficManager.TrafficManagerSettings trafficManagerSettings) {
+      TrafficManager.TrafficManagerSettings trafficManagerSettings, int statsSetWindowIntervalInMinutes) {
 
     if (area == null) {
       throw new IllegalArgumentException("Value of {area} cannot not be null.");
@@ -142,6 +142,8 @@ public class Simulation {
     IList<Border> mrvaAreas =
         area.getBorders().where(q -> q.getType() == Border.eType.mrva);
     this.mrvaManager = new MrvaManager(mrvaAreas);
+
+    this.stats = new Statistics(statsSetWindowIntervalInMinutes);
   }
 
   public EventSimple<Simulation> getOnRunwayChanged() {

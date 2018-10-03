@@ -47,6 +47,7 @@ public class Game {
     public boolean allowTrafficDelays;
     public int maxTrafficPlanes;
     public double trafficDensityPercentage;
+    public int statsIntervalBlockSize;
   }
 
   private AreaSource areaSource;
@@ -136,7 +137,7 @@ public class Game {
           gsi.startTime,
           gsi.secondLengthInMs,
           gsi.emergencyPerDayProbability,
-          tms);
+          tms, gsi.statsIntervalBlockSize);
       Acc.log().writeLine(ApplicationLog.eType.info, "Initializing the simulation");
       g.simulation.init();
     } catch (Exception ex){
@@ -175,7 +176,7 @@ public class Game {
         ret.fleetsSource.getContent(), ret.trafficSource.getContent(),
         ret.areaSource.getActiveAirport(),
         ret.weatherSource.getContent(), new ETime(0), 0, 0,
-        new TrafficManager.TrafficManagerSettings(false, 0, 0));
+        new TrafficManager.TrafficManagerSettings(false, 0, 0), 5);
     ret.simulation.init();
 
     XElement tmp = root.getChild("simulation");

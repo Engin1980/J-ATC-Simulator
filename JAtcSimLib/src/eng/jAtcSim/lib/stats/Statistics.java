@@ -5,11 +5,16 @@
  */
 package eng.jAtcSim.lib.stats;
 
+import eng.eSystem.collections.EList;
+import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
+import eng.eSystem.validation.Validator;
+import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
 import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.AirproxType;
+import eng.jAtcSim.lib.airplanes.moods.MoodResult;
 import eng.jAtcSim.lib.atcs.Atc;
 import eng.jAtcSim.lib.global.ETime;
 import eng.jAtcSim.lib.stats.read.StatisticsView;
@@ -52,6 +57,7 @@ public class Statistics {
 
   private WriteSetList writeSetList;
   private ETime nextWriteSetTime;
+  private int setLengthIntervalInMinutes = 5;
   @XmlIgnore
   private CurrentPlanes currentPlanes = new CurrentPlanes();
 
@@ -98,7 +104,13 @@ public class Statistics {
     return ret;
   }
 
-  public Statistics() {
+  public Statistics(int setLengthIntervalInMinutes) {
+    Validator.check(setLengthIntervalInMinutes > 0);
+    this.setLengthIntervalInMinutes = setLengthIntervalInMinutes;
+  }
+
+  @XmlConstructor
+  private Statistics() {
   }
 
   public void init(){
@@ -112,7 +124,7 @@ public class Statistics {
     if (Acc.now().isAfter(this.nextWriteSetTime))
     {
       this.writeSetList.createNewSet();
-      this.nextWriteSetTime = Acc.now().addMinutes(5);
+      this.nextWriteSetTime = Acc.now().addMinutes(this.setLengthIntervalInMinutes);
     }
 
     this.currentPlanes.update();
@@ -138,6 +150,11 @@ public class Statistics {
 
   public int getCountOfPlanes() {
     return Acc.planes().size();
+  }
+
+  public IReadOnlyList<MoodResult> getFullMoodHistory() {
+    IList<MoodResult> ret = this.writeSetList.getFullMoodHistory();
+    return ret;
   }
 }
 

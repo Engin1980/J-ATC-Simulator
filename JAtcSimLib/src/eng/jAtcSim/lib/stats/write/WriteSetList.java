@@ -4,6 +4,7 @@ import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.jAtcSim.lib.Acc;
+import eng.jAtcSim.lib.airplanes.moods.MoodResult;
 import eng.jAtcSim.lib.global.ETime;
 import eng.jAtcSim.lib.stats.Statistics;
 
@@ -21,6 +22,12 @@ public class WriteSetList {
 
   public IReadOnlyList<WriteSet> getByTime(ETime time){
     IList<WriteSet> ret = inner.where(q->q.fromTime.isAfter(time)).orderBy(q->q.fromTime);
+    return ret;
+  }
+
+  public IList<MoodResult> getFullMoodHistory() {
+    EList<MoodResult> ret = new EList<>();
+    inner.forEach(q->ret.add(q.planesMood.getList()));
     return ret;
   }
 }
