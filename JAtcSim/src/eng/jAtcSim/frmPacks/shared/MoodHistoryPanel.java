@@ -72,7 +72,7 @@ public class MoodHistoryPanel extends JPanel {
     this.dataSet = results.orderBy(q -> q.getTime());
     this.dataSet.reverse();
     int globalIndex = 0;
-    for (MoodResult result : results) {
+    for (MoodResult result : this.dataSet) {
       final int index = globalIndex;
       PlaneRow pnlPlane = new PlaneRow(result.getTime(), result.getCallsing(), result.getPoints());
       pnlTop.add(pnlPlane);
