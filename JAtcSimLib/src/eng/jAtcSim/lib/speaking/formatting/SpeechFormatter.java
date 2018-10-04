@@ -223,9 +223,11 @@ public class SpeechFormatter implements IFormatter {
       ClearedToApproachCommand tmp = (ClearedToApproachCommand) speech;
       switch (tmp.getType()) {
         case ils_I:
+          return "ILS_I";
         case ils_II:
+          return "ILS_II";
         case ils_III:
-          return "ILS";
+          return "ILS_III";
         case gnss:
           return "GNSS";
         case ndb:

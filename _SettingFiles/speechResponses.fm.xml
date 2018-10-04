@@ -63,7 +63,9 @@
     <sentence>{cmd:rwy} cleared for take off</sentence>
   </response>
   <response type="ClearedToApproachCommand">
-    <sentence kind="ILS">cleared for ILS {cmd:ilsCategory} approach runway {cmd:rwy}</sentence>
+    <sentence kind="ILS_I">cleared for ILS approach runway {cmd:rwy}</sentence>
+    <sentence kind="ILS_II">cleared for ILS category II approach runway {cmd:rwy}</sentence>
+    <sentence kind="ILS_III">cleared for ILS category III approach runway {cmd:rwy}</sentence>
     <sentence kind="NDB">cleared for NDB approach runway {cmd:rwy}</sentence>
     <sentence kind="GNSS">cleared for GNSS approach runway {cmd:rwy}</sentence>
     <sentence kind="VOR">cleared for VOR-DME approach runway {cmd:rwy}</sentence>
