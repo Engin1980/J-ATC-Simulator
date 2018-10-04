@@ -493,6 +493,7 @@ public class Simulation {
       if (p.isArrival() && p.getSpeed() < 11) {
         rem.add(p);
         this.stats.getPlanes().getFinishedPlanes().getArrivals().add(1);
+        this.stats.getPlanes().getFinishedPlanes().getTogether().add(1);
       }
 
       // departed
@@ -502,6 +503,7 @@ public class Simulation {
           > Acc.airport().getCoveredDistance()) {
         rem.add(p);
         this.stats.getPlanes().getFinishedPlanes().getDepartures().add(1);
+        this.stats.getPlanes().getFinishedPlanes().getTogether().add(1);
       }
 
       if (p.isEmergency() && p.hasElapsedEmergencyTime()) {

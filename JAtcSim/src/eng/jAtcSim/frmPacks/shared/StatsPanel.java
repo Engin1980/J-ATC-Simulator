@@ -168,10 +168,21 @@ public class StatsPanel extends JPanel {
   }
 
   private void updateMovementsPerHour() {
+    double deps = view.getPlanes().getFinishedPlanes().getDepartures().getCount() *
+        view.getPlanes().getFinishedPlanes().getDepartures().getMean();
+    double arrs = view.getPlanes().getFinishedPlanes().getArrivals().getCount() *
+        view.getPlanes().getFinishedPlanes().getArrivals().getMean();
+    double tots = view.getPlanes().getFinishedPlanes().getTogether().getCount() *
+        view.getPlanes().getFinishedPlanes().getTogether().getMean();
+    double secs = view.getSecondStats().getSecondsElapsed();
+    secs /= 3600d;
+    deps /= secs;
+    arrs /= secs;
+    tots /= secs;
     String s = String.format("%.1f / %.1f / %.1f",
-        view.getPlanes().getFinishedPlanes().getDepartures().getMean(),
-        view.getPlanes().getFinishedPlanes().getArrivals().getMean(),
-        view.getPlanes().getFinishedPlanes().getTogether().getMean()
+        deps,
+        arrs,
+        tots
     );
     lvlMovementsGame.setText(s);
   }
