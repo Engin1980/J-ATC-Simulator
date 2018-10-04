@@ -35,6 +35,8 @@
     <sentence kind="right">right {cmd:heading}</sentence>
     <sentence kind="any"> heading {cmd:heading}</sentence>
     <sentence kind="any">fly heading {cmd:heading}</sentence>
+    <sentence kind="current">fly current heading</sentence>
+    <sentence kind="current">current heading</sentence>
   </response>
   <response type="GoAroundCommand">
     <sentence>going around</sentence>

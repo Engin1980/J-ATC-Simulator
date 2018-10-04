@@ -175,7 +175,9 @@ public class SpeechFormatter implements IFormatter {
         return null;
     } else if (speech instanceof ChangeHeadingCommand) {
       ChangeHeadingCommand tmp = (ChangeHeadingCommand) speech;
-      if (tmp.getDirection() == ChangeHeadingCommand.eDirection.left)
+      if (tmp.isCurrentHeading())
+        return "current";
+      else if (tmp.getDirection() == ChangeHeadingCommand.eDirection.left)
         return "left";
       else if (tmp.getDirection() == ChangeHeadingCommand.eDirection.right)
         return "right";
