@@ -3,6 +3,7 @@ package eng.jAtcSim.lib.traffic;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.utilites.ArrayUtils;
 import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
@@ -19,6 +20,7 @@ import eng.jAtcSim.lib.global.Headings;
 import eng.jAtcSim.lib.messaging.Message;
 import eng.jAtcSim.lib.messaging.Messenger;
 import eng.jAtcSim.lib.messaging.StringMessageContent;
+import eng.jAtcSim.lib.serialization.LoadSave;
 import eng.jAtcSim.lib.world.*;
 
 public class TrafficManager {
@@ -101,6 +103,30 @@ public class TrafficManager {
     }
 
     return ret;
+  }
+
+  public void save(XElement root) {
+    XElement trafficElement = new XElement("trafficManager");
+
+    LoadSave.saveField(trafficElement, this, "scheduledMovements");
+    LoadSave.saveField(trafficElement, this, "lastRelativeInfo");
+    LoadSave.saveField(trafficElement, this, "nextGenerateTime");
+    LoadSave.saveField(trafficElement, this, "settings");
+    LoadSave.saveField(trafficElement, this, "offeredMovements");
+    LoadSave.saveField(trafficElement, this, "createdMovements");
+
+    root.addElement(trafficElement);
+  }
+
+  public void load(XElement root) {
+      XElement trafficElement = root.getChild("trafficManager");
+
+      LoadSave.loadField(trafficElement, this, "scheduledMovements");
+      LoadSave.loadField(trafficElement, this, "lastRelativeInfo");
+      LoadSave.loadField(trafficElement, this, "nextGenerateTime");
+      LoadSave.loadField(trafficElement, this, "settings");
+      LoadSave.loadField(trafficElement, this, "offeredMovements");
+      LoadSave.loadField(trafficElement, this, "createdMovements");
   }
 
   private boolean shouldCreateMovementByDensity() {

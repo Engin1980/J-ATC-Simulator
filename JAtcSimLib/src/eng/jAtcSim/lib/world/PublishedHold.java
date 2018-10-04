@@ -7,6 +7,7 @@
 package eng.jAtcSim.lib.world;
 
 import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
+import eng.eSystem.xmlSerialization.annotations.XmlOptional;
 import eng.jAtcSim.lib.exceptions.EBindException;
 
 /**
@@ -15,11 +16,11 @@ import eng.jAtcSim.lib.exceptions.EBindException;
  */
 public class PublishedHold{
   private String navaidName;
-  @XmlIgnore
+  @XmlOptional
   private Navaid _navaid;
   private int inboundRadial;
   private String turn;
-  @XmlIgnore
+  @XmlOptional
   private boolean _leftTurn;
   @XmlIgnore
   private Airport _parent;

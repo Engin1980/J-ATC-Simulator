@@ -75,7 +75,7 @@ public class HoldCommand extends ToNavaidCommand {
   @Override
   public String toString() {
     if (isPublished()) {
-      return "Hold over " + getNavaid().getName() + " as published {command}";
+      return "Hold over " + super.getNavaid().getName() + " as published {command}";
     } else {
       return "Hold over " + getNavaid().getName()
           + " inbound " + leftTurn
