@@ -1,16 +1,16 @@
 package eng.jAtcSim.lib.stats.write.specific;
 
-import eng.jAtcSim.lib.stats.write.shared.Record;
+import eng.jAtcSim.lib.stats.write.shared.DataRecord;
 
 public class ErrorsStats {
-  private Record airproxes = new Record();
-  private Record mrvas = new Record();
+  private DataRecord airproxes = new DataRecord();
+  private DataRecord mrvas = new DataRecord();
 
-  public Record getAirproxes() {
+  public DataRecord getAirproxes() {
     return airproxes;
   }
 
-  public Record getMrvas() {
+  public DataRecord getMrvas() {
     return mrvas;
   }
 }

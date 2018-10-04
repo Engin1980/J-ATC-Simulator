@@ -3,22 +3,22 @@ package eng.jAtcSim.lib.stats;
 import eng.eSystem.collections.*;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.global.ETime;
-import eng.jAtcSim.lib.stats.read.StatisticsView;
+import eng.jAtcSim.lib.stats.read.StatsView;
 import eng.jAtcSim.lib.stats.read.shared.*;
 import eng.jAtcSim.lib.stats.read.specific.*;
-import eng.jAtcSim.lib.stats.write.WriteSet;
+import eng.jAtcSim.lib.stats.write.StatsData;
 import eng.jAtcSim.lib.stats.write.specific.PlanesSubStats;
 
 class ReadToWriteConverter {
 
-  private static IMap<WriteSet, StatisticsView> calculatedMappings = new EMap<>();
+  private static IMap<StatsData, StatsView> calculatedMappings = new EMap<>();
 
-  public static IList<StatisticsView> convert(IReadOnlyList<WriteSet> writeSets) {
+  public static IList<StatsView> convert(IReadOnlyList<StatsData> writeSets) {
 
     IList ret = new EList();
 
-    for (WriteSet writeSet : writeSets) {
-      StatisticsView sv;
+    for (StatsData writeSet : writeSets) {
+      StatsView sv;
 
       sv = calculatedMappings.tryGet(writeSet);
       if (sv == null) {
@@ -31,8 +31,8 @@ class ReadToWriteConverter {
     return ret;
   }
 
-  private static StatisticsView buildView(WriteSet writeSet) {
-    StatisticsView sv;
+  private static StatsView buildView(StatsData writeSet) {
+    StatsView sv;
     ETime fromTime = writeSet.fromTime;
     ETime toTime = writeSet.isLive() ? Acc.now().clone() : writeSet.toTime;
 
@@ -42,17 +42,17 @@ class ReadToWriteConverter {
     HoldingPointStats hps = buildHoldingPointStats(writeSet);
     ErrorsStats ers = buildErrorStats(writeSet);
 
-    sv = new StatisticsView(fromTime, toTime,
+    sv = new StatsView(fromTime, toTime,
         ses, pcs, mds, hps, ers);
     return sv;
   }
 
-  private static MinMaxMeanCountView buildMoodStats(WriteSet writeSet) {
+  private static MinMaxMeanCountView buildMoodStats(StatsData writeSet) {
     DataView ret = writeSet.planesMood.toView();
     return new MinMaxMeanCountCurrentView(ret);
   }
 
-  private static ErrorsStats buildErrorStats(WriteSet writeSet) {
+  private static ErrorsStats buildErrorStats(StatsData writeSet) {
     ErrorsStats ret;
     ret = new ErrorsStats(
         new MeanView(writeSet.errors.getAirproxes().toView()),
@@ -61,7 +61,7 @@ class ReadToWriteConverter {
     return ret;
   }
 
-  private static HoldingPointStats buildHoldingPointStats(WriteSet writeSet) {
+  private static HoldingPointStats buildHoldingPointStats(StatsData writeSet) {
     HoldingPointStats ret;
     ret = new HoldingPointStats(
         new MinMaxMeanCountCurrentView(
@@ -72,7 +72,7 @@ class ReadToWriteConverter {
     return ret;
   }
 
-  private static PlaneStats buildPlanesCountStats(WriteSet writeSet) {
+  private static PlaneStats buildPlanesCountStats(StatsData writeSet) {
     DataView[] tmp;
 
     tmp = buildPlanesDataView(writeSet.planes.getPlanesInSim());
@@ -92,7 +92,7 @@ class ReadToWriteConverter {
     return ret;
   }
 
-  private static SecondStats buildSecondStats(WriteSet writeSet) {
+  private static SecondStats buildSecondStats(StatsData writeSet) {
     ETime toTime = writeSet.isLive() ? Acc.now().clone() : writeSet.toTime;
     int totalSeconds = ETime.getDifference(toTime, writeSet.fromTime).getTotalSeconds();
     SecondStats ret = new SecondStats(totalSeconds, writeSet.secondStats.getDuration().toView());

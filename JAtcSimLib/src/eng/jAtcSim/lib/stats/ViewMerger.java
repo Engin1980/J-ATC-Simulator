@@ -2,7 +2,7 @@ package eng.jAtcSim.lib.stats;
 
 import eng.eSystem.collections.IReadOnlyList;
 import eng.jAtcSim.lib.global.ETime;
-import eng.jAtcSim.lib.stats.read.StatisticsView;
+import eng.jAtcSim.lib.stats.read.StatsView;
 import eng.jAtcSim.lib.stats.read.shared.*;
 import eng.jAtcSim.lib.stats.read.specific.*;
 import eng.jAtcSim.lib.stats.read.specific.PlaneSubStats;
@@ -10,8 +10,8 @@ import eng.jAtcSim.lib.stats.read.specific.PlaneSubStats;
 import java.util.function.Function;
 
 public class ViewMerger {
-  public static StatisticsView merge(IReadOnlyList<StatisticsView> views) {
-    StatisticsView ret;
+  public static StatsView merge(IReadOnlyList<StatsView> views) {
+    StatsView ret;
 
     ETime fromTime = views.getFirst().getFromTime();
     ETime toTime = views.getLast().getToTime();
@@ -22,12 +22,12 @@ public class ViewMerger {
     HoldingPointStats hps = mergeHoldingPointStats(views);
     ErrorsStats ers = mergeErrorStats(views);
 
-    ret = new StatisticsView(fromTime, toTime,
+    ret = new StatsView(fromTime, toTime,
         ses, pcs, mds, hps, ers);
     return ret;
   }
 
-  private static ErrorsStats mergeErrorStats(IReadOnlyList<StatisticsView> views) {
+  private static ErrorsStats mergeErrorStats(IReadOnlyList<StatsView> views) {
     ErrorsStats ret;
     ret = new ErrorsStats(
         new MeanView(
@@ -38,7 +38,7 @@ public class ViewMerger {
     return ret;
   }
 
-  private static HoldingPointStats mergeHoldingPointStats(IReadOnlyList<StatisticsView> views) {
+  private static HoldingPointStats mergeHoldingPointStats(IReadOnlyList<StatsView> views) {
     HoldingPointStats ret;
     ret = new HoldingPointStats(
         new MinMaxMeanCountCurrentView(
@@ -49,9 +49,9 @@ public class ViewMerger {
     return ret;
   }
 
-  private static MinMaxMeanCountView mergeMoodStats(IReadOnlyList<StatisticsView> views) {
+  private static MinMaxMeanCountView mergeMoodStats(IReadOnlyList<StatsView> views) {
     DataView dv = null;
-    for (StatisticsView view : views) {
+    for (StatsView view : views) {
       if (dv == null)
         dv = new DataView(view.getPlanesMood());
       else
@@ -60,7 +60,7 @@ public class ViewMerger {
     return new MinMaxMeanCountView(dv);
   }
 
-  private static SecondStats mergeSecondStats(IReadOnlyList<StatisticsView> views, ETime fromTime, ETime toTime) {
+  private static SecondStats mergeSecondStats(IReadOnlyList<StatsView> views, ETime fromTime, ETime toTime) {
     SecondStats ret;
     DataView duration = mergeView(views, q -> q.getSecondStats().getDuration());
     ret = new SecondStats(
@@ -69,7 +69,7 @@ public class ViewMerger {
     return ret;
   }
 
-  private static PlaneStats mergePlaneStats(IReadOnlyList<StatisticsView> views) {
+  private static PlaneStats mergePlaneStats(IReadOnlyList<StatsView> views) {
     DataView[] tmp;
 
     tmp = mergePlanesDataView(views,
@@ -93,8 +93,8 @@ public class ViewMerger {
     return ret;
   }
 
-  private static <T extends DataView> DataView[] mergePlanesDataView(IReadOnlyList<StatisticsView> writeSets,
-                                                                     Function<StatisticsView, PlaneSubStats<T>> selector) {
+  private static <T extends DataView> DataView[] mergePlanesDataView(IReadOnlyList<StatsView> writeSets,
+                                                                     Function<StatsView, PlaneSubStats<T>> selector) {
     DataView[] ret = new DataView[3];
     ret[0] = mergeDataView(writeSets, q -> selector.apply(q).getArrivals());
     ret[1] = mergeDataView(writeSets, q -> selector.apply(q).getDepartures());
@@ -103,9 +103,9 @@ public class ViewMerger {
     return ret;
   }
 
-  private static DataView mergeView(IReadOnlyList<StatisticsView> views, Function<StatisticsView, DataView> selector) {
+  private static DataView mergeView(IReadOnlyList<StatsView> views, Function<StatsView, DataView> selector) {
     DataView ret = null;
-    for (StatisticsView view : views) {
+    for (StatsView view : views) {
       DataView dv = selector.apply(view);
       if (ret == null)
         ret = new DataView(dv);
@@ -115,9 +115,9 @@ public class ViewMerger {
     return ret;
   }
 
-  private static DataView mergeDataView(IReadOnlyList<StatisticsView> views, Function<StatisticsView, DataView> selector) {
+  private static DataView mergeDataView(IReadOnlyList<StatsView> views, Function<StatsView, DataView> selector) {
     DataView ret = null;
-    for (StatisticsView view : views) {
+    for (StatsView view : views) {
       DataView dv = selector.apply(view);
       if (ret == null)
         ret = new DataView(dv);

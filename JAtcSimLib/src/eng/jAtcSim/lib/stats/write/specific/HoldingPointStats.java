@@ -1,16 +1,16 @@
 package eng.jAtcSim.lib.stats.write.specific;
 
-import eng.jAtcSim.lib.stats.write.shared.Record;
+import eng.jAtcSim.lib.stats.write.shared.DataRecord;
 
 public class HoldingPointStats {
-  private Record delay = new Record();
-  private Record count = new Record();
+  private DataRecord delay = new DataRecord();
+  private DataRecord count = new DataRecord();
 
-  public Record getDelay() {
+  public DataRecord getDelay() {
     return delay;
   }
 
-  public Record getCount() {
+  public DataRecord getCount() {
     return count;
   }
 }

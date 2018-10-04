@@ -181,7 +181,6 @@ public class Simulation {
     LoadSave.loadField(root, this, "emergencyManager");
     LoadSave.loadField(root, this, "trafficManager");
     LoadSave.loadField(root, this, "simulationSecondLengthInMs");
-    LoadSave.loadField(root, this, "moodsHistory");
 
     {
       IList<Airplane> lst = new EList<>();
@@ -366,7 +365,6 @@ public class Simulation {
     LoadSave.saveField(root, this, "emergencyManager");
     LoadSave.saveField(root, this, "trafficManager");
     LoadSave.saveField(root, this, "simulationSecondLengthInMs");
-    LoadSave.saveField(root, this, "moodsHistory");
   }
 
   public IMap<String, String> getCommandShortcuts() {
@@ -411,7 +409,6 @@ public class Simulation {
     evalAirproxes();
     evalMrvas();
 
-    System.out.println("## here stats call ignored");
     stats.secondElapsed();
     long elapseEndMs = System.currentTimeMillis();
     stats.getSecondStats().getDuration().add((elapseEndMs - elapseStartMs) / 1000d);

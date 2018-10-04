@@ -5,7 +5,6 @@
  */
 package eng.jAtcSim.lib.stats;
 
-import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.validation.Validator;
@@ -17,9 +16,9 @@ import eng.jAtcSim.lib.airplanes.AirproxType;
 import eng.jAtcSim.lib.airplanes.moods.MoodResult;
 import eng.jAtcSim.lib.atcs.Atc;
 import eng.jAtcSim.lib.global.ETime;
-import eng.jAtcSim.lib.stats.read.StatisticsView;
-import eng.jAtcSim.lib.stats.write.WriteSet;
-import eng.jAtcSim.lib.stats.write.WriteSetList;
+import eng.jAtcSim.lib.stats.read.StatsView;
+import eng.jAtcSim.lib.stats.write.StatsData;
+import eng.jAtcSim.lib.stats.write.StatsDataList;
 import eng.jAtcSim.lib.stats.write.specific.*;
 
 /**
@@ -55,7 +54,7 @@ public class Statistics {
     }
   }
 
-  private WriteSetList writeSetList;
+  private StatsDataList writeSetList;
   private ETime nextWriteSetTime;
   private int setLengthIntervalInMinutes = 5;
   @XmlIgnore
@@ -97,10 +96,10 @@ public class Statistics {
     return ret;
   }
 
-  public StatisticsView createView(ETime fromTime){
-    StatisticsView ret;
-    IReadOnlyList<WriteSet> writeSets = this.writeSetList.getByTime(fromTime);
-    IReadOnlyList<StatisticsView> statSets = ReadToWriteConverter.convert(writeSets);
+  public StatsView createView(ETime fromTime){
+    StatsView ret;
+    IReadOnlyList<StatsData> writeSets = this.writeSetList.getByTime(fromTime);
+    IReadOnlyList<StatsView> statSets = ReadToWriteConverter.convert(writeSets);
     ret = ViewMerger.merge(statSets);
     return ret;
   }
@@ -115,7 +114,7 @@ public class Statistics {
   }
 
   public void init(){
-    this.writeSetList = new WriteSetList();
+    this.writeSetList = new StatsDataList();
     this.writeSetList.createNewSet();
     this.nextWriteSetTime = Acc.now().addMinutes(5); //TODO this should be taken from app-settings
   }
@@ -130,7 +129,7 @@ public class Statistics {
 
     this.currentPlanes.update();
 
-    WriteSet ws = this.writeSetList.getCurrent();
+    StatsData ws = this.writeSetList.getCurrent();
     ws.planes.getPlanesUnderApp().getArrivals().add(this.currentPlanes.appArrivals);
     ws.planes.getPlanesUnderApp().getDepartures().add(this.currentPlanes.appDepartures);
 

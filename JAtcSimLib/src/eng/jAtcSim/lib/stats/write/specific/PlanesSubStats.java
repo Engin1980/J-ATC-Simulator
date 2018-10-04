@@ -1,20 +1,20 @@
 package eng.jAtcSim.lib.stats.write.specific;
 
-import eng.jAtcSim.lib.stats.write.shared.Record;
+import eng.jAtcSim.lib.stats.write.shared.DataRecord;
 
 public class PlanesSubStats {
-    private Record departures = new Record();
-    private Record arrivals = new Record();
+    private DataRecord departures = new DataRecord();
+    private DataRecord arrivals = new DataRecord();
 
-  public Record getDepartures() {
+  public DataRecord getDepartures() {
     return departures;
   }
 
-  public Record getArrivals() {
+  public DataRecord getArrivals() {
     return arrivals;
   }
 
-  public Record getByType(boolean isArrival) {
+  public DataRecord getByType(boolean isArrival) {
       return isArrival ? this.arrivals : this.departures;
     }
 }

@@ -3,7 +3,7 @@ package eng.jAtcSim.lib.stats.write;
 import eng.jAtcSim.lib.global.ETime;
 import eng.jAtcSim.lib.stats.write.specific.*;
 
-public class WriteSet {
+public class StatsData {
   public ETime fromTime;
   public ETime toTime;
   public SecondStats secondStats = new SecondStats();
@@ -12,7 +12,7 @@ public class WriteSet {
   public HoldingPointStats holdingPoint = new HoldingPointStats();
   public ErrorsStats errors = new ErrorsStats();
 
-  public WriteSet(ETime fromTime) {
+  public StatsData(ETime fromTime) {
     this.fromTime = fromTime;
     this.toTime = null;
   }

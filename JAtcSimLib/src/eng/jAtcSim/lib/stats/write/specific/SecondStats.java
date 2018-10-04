@@ -1,11 +1,11 @@
 package eng.jAtcSim.lib.stats.write.specific;
 
-import eng.jAtcSim.lib.stats.write.shared.Record;
+import eng.jAtcSim.lib.stats.write.shared.DataRecord;
 
 public class SecondStats {
-  private Record duration = new Record();
+  private DataRecord duration = new DataRecord();
 
-  public Record getDuration() {
+  public DataRecord getDuration() {
     return duration;
   }
 

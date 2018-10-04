@@ -3,7 +3,7 @@ package eng.jAtcSim.frmPacks.shared;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.Simulation;
 import eng.jAtcSim.lib.global.ETime;
-import eng.jAtcSim.lib.stats.read.StatisticsView;
+import eng.jAtcSim.lib.stats.read.StatsView;
 import eng.jAtcSim.lib.stats.Statistics;
 import eng.jAtcSim.shared.LayoutManager;
 
@@ -115,7 +115,7 @@ public class StatsPanel extends JPanel {
     }
   }
 
-  private StatisticsView view;
+  private StatsView view;
 
   private void update() {
 

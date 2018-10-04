@@ -2,7 +2,7 @@ package eng.jAtcSim.lib.stats.write.shared;
 
 import eng.jAtcSim.lib.stats.read.shared.DataView;
 
-public class Record {
+public class DataRecord {
   private double minimum;
   private double maximum;
   private double sum;
