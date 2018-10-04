@@ -44,9 +44,9 @@ public class JAtcSim {
 
   private static final boolean FAST_START = false;
   private static final Traffic enginSpecificTraffic =
-      new eng.jAtcSim.lib.traffic.TestTrafficOneApproach();
-  // new eng.jAtcSim.lib.traffic.TestTrafficOneDeparture();
-//   null;
+      // new eng.jAtcSim.lib.traffic.TestTrafficOneApproach();
+      // new eng.jAtcSim.lib.traffic.TestTrafficOneDeparture();
+      null;
   private static AppSettings appSettings;
 
   private static FrmLog frmLog;

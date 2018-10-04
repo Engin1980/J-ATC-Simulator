@@ -8,6 +8,7 @@ package eng.jAtcSim.lib;
 import eng.eSystem.events.EventSimple;
 import eng.eSystem.events.IEventListenerSimple;
 import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.validation.Validator;
 
 import java.util.TimerTask;
 
@@ -34,6 +35,7 @@ public class Timer {
     if (tmr != null) {
       throw new EApplicationException("Cannot start the timer, its not stopped.");
     }
+    Validator.check(ms > 0);
 
     this.tickLength = ms;
 

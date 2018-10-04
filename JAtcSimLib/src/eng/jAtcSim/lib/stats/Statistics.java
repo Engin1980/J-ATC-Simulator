@@ -5,6 +5,7 @@
  */
 package eng.jAtcSim.lib.stats;
 
+import com.sun.deploy.uitoolkit.DelegatingPluginUIToolkit;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.validation.Validator;
@@ -30,24 +31,30 @@ public class Statistics {
 
     public int arrivals;
     public int departures;
+    public int together;
     public int appArrivals;
     public int appDepartures;
+    public int appTogether;
 
     public void update() {
       arrivals = 0;
       departures = 0;
+      together = Acc.planes().size();
       appArrivals = 0;
       appDepartures = 0;
+      appTogether = 0;
       for (Airplane airplane : Acc.planes()) {
         if (airplane.isArrival()) {
           arrivals++;
           if (airplane.getTunedAtc().getType() == Atc.eType.app) {
             appArrivals++;
+            appTogether++;
           }
         } else {
           departures++;
           if (airplane.getTunedAtc().getType() == Atc.eType.app) {
             appDepartures++;
+            appTogether++;
           }
         }
       }
@@ -132,9 +139,11 @@ public class Statistics {
     StatsData ws = this.writeSetList.getCurrent();
     ws.planes.getPlanesUnderApp().getArrivals().add(this.currentPlanes.appArrivals);
     ws.planes.getPlanesUnderApp().getDepartures().add(this.currentPlanes.appDepartures);
+    ws.planes.getPlanesUnderApp().getTogether().add(this.currentPlanes.appTogether);
 
     ws.planes.getPlanesInSim().getArrivals().add(this.currentPlanes.arrivals);
     ws.planes.getPlanesInSim().getDepartures().add(this.currentPlanes.departures);
+    ws.planes.getPlanesInSim().getTogether().add(this.currentPlanes.together);
 
     ws.holdingPoint.getCount().add(Acc.atcTwr().getNumberOfPlanesAtHoldingPoint());
 

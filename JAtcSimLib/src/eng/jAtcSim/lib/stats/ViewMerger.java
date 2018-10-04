@@ -98,8 +98,7 @@ public class ViewMerger {
     DataView[] ret = new DataView[3];
     ret[0] = mergeDataView(writeSets, q -> selector.apply(q).getArrivals());
     ret[1] = mergeDataView(writeSets, q -> selector.apply(q).getDepartures());
-    ret[2] = new DataView(ret[0]);
-    ret[2].mergeWith(ret[1]);
+    ret[2] = mergeDataView(writeSets, q -> selector.apply(q).getTogether());
     return ret;
   }
 

@@ -76,7 +76,10 @@ class ReadToWriteConverter {
     DataView[] tmp;
 
     tmp = buildPlanesDataView(writeSet.planes.getPlanesInSim());
-    PlaneSubStats<MinMaxMeanCountCurrentView> inSim = new PlaneSubStats<>(new MinMaxMeanCountCurrentView(tmp[0]), new MinMaxMeanCountCurrentView(tmp[1]), new MinMaxMeanCountCurrentView(tmp[2]));
+    PlaneSubStats<MinMaxMeanCountCurrentView> inSim = new PlaneSubStats<>(
+        new MinMaxMeanCountCurrentView(tmp[0]),
+        new MinMaxMeanCountCurrentView(tmp[1]),
+        new MinMaxMeanCountCurrentView(tmp[2]));
 
     tmp = buildPlanesDataView(writeSet.planes.getPlanesUnderApp());
     PlaneSubStats<MinMaxMeanCountCurrentView> underApp = new PlaneSubStats<>(new MinMaxMeanCountCurrentView(tmp[0]), new MinMaxMeanCountCurrentView(tmp[1]), new MinMaxMeanCountCurrentView(tmp[2]));
@@ -103,8 +106,7 @@ class ReadToWriteConverter {
     DataView[] ret = new DataView[3];
     ret[0] = subStats.getArrivals().toView();
     ret[1] = subStats.getDepartures().toView();
-    ret[2] = new DataView(ret[0]);
-    ret[2].mergeWith(ret[1]);
+    ret[2] = subStats.getTogether().toView();
     return ret;
   }
 }
