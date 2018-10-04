@@ -176,7 +176,7 @@ public class CenterAtc extends ComputerAtc {
 
   @Override
   protected Atc getTargetAtcIfPlaneIsReadyToSwitch(Airplane plane) {
-    Atc ret = null;
+    Atc ret;
     if (plane.isArrival()) {
       if (plane.isEmergency())
         ret = Acc.atcApp();
@@ -185,9 +185,11 @@ public class CenterAtc extends ComputerAtc {
         double dist = Coordinates.getDistanceInNM(plane.getCoordinate(), n.getCoordinate());
         if (dist <= 10) {
           ret = Acc.atcApp();
-        }
+        } else
+          ret = null;
       }
-    }
+    } else
+      ret = null;
     return ret;
   }
 

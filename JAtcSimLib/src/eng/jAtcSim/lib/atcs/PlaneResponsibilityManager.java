@@ -50,7 +50,7 @@ public class PlaneResponsibilityManager {
   public PlaneResponsibilityManager() {
   }
 
-  public void init(){
+  public void init() {
     if (lst.isEmpty()) { // non-empty after load
       lst.set(Acc.atcApp(), new AirplaneList(true));
       lst.set(Acc.atcCtr(), new AirplaneList(true));
@@ -208,15 +208,15 @@ public class PlaneResponsibilityManager {
         || s == eState.twr2appReady;
   }
 
-  public boolean isRequestedToSwitch(Airplane plane, Atc atc){
+  public boolean isRequestedToSwitch(Airplane plane, Atc atc) {
     eState s = map.get(plane);
     boolean ret;
-    ret = (s == eState.app2ctr && atc.getType()==Atc.eType.ctr)
-        || (s == eState.app2twr && atc.getType()==Atc.eType.twr);
+    ret = (s == eState.app2ctr && atc.getType() == Atc.eType.ctr)
+        || (s == eState.app2twr && atc.getType() == Atc.eType.twr);
     return ret;
   }
 
-  public eState getState(Airplane plane){
+  public eState getState(Airplane plane) {
     return map.get(plane);
   }
 
@@ -243,24 +243,20 @@ public class PlaneResponsibilityManager {
   }
 
   public void refuseSwitch(Atc atc, Airplane plane) {
-    if (isToSwitchToAtc(atc, plane)) {
-      eState s = map.get(plane);
-      switch (s) {
-        case app2ctr:
-        case app2twr:
-          map.set(plane, eState.app);
-          break;
-        case ctr2app:
-          map.set(plane, eState.ctr);
-          break;
-        case twr2app:
-          map.set(plane, eState.twr);
-          break;
-        default:
-          throw new EEnumValueUnsupportedException(s);
-      }
-    } else {
-
+    eState s = map.get(plane);
+    switch (s) {
+      case app2ctr:
+      case app2twr:
+        map.set(plane, eState.app);
+        break;
+      case ctr2app:
+        map.set(plane, eState.ctr);
+        break;
+      case twr2app:
+        map.set(plane, eState.twr);
+        break;
+      default:
+        throw new EEnumValueUnsupportedException(s);
     }
   }
 
@@ -309,7 +305,7 @@ public class PlaneResponsibilityManager {
     }
   }
 
-  public void abortSwitch(Airplane plane,Atc oldAtc, Atc newAtc) {
+  public void abortSwitch(Airplane plane, Atc oldAtc, Atc newAtc) {
     eState renewState = typeToState(newAtc);
     map.set(plane, renewState);
 

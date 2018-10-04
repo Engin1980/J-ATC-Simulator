@@ -1256,7 +1256,22 @@ public class Pilot {
     requestRadarContactIfRequired();
     flushSaidTextToAtc();
 
+    //printAfterCommands();
+
     recorder.logPostponedAfterSpeeches(this.afterCommands);
+  }
+
+  private void printAfterCommands() {
+    System.out.println("## -- route ");
+    for (Tuple<AfterCommand, IAtcCommand> afterCommandIAtcCommandTuple : afterCommands.getAsList(AfterCommandList.Type.route)) {
+      System.out.println("  IF " + afterCommandIAtcCommandTuple.getA().toString());
+      System.out.println("  THEN " + afterCommandIAtcCommandTuple.getB().toString());
+    }
+    System.out.println("## -- ex ");
+    for (Tuple<AfterCommand, IAtcCommand> afterCommandIAtcCommandTuple : afterCommands.getAsList(AfterCommandList.Type.extensions)) {
+      System.out.println("  IF " + afterCommandIAtcCommandTuple.getA().toString());
+      System.out.println("  THEN " + afterCommandIAtcCommandTuple.getB().toString());
+    }
   }
 
   public Atc getTunedAtc() {
