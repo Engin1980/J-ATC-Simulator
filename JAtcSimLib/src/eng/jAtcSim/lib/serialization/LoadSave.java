@@ -57,7 +57,7 @@ public class LoadSave {
     sett.forType(RunwayCheck.class).setFactory(new RunwayCheckIC());
     sett.forType(StringResponse.class).setFactory(new StringResponseIC());
 
-    sett.setLogLevel(Log.LogLevel.verbose);
+    sett.setLogLevel(Log.LogLevel.info);
     ser = new XmlSerializer(sett);
   }
 

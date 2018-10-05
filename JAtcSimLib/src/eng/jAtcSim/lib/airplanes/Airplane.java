@@ -1049,7 +1049,7 @@ public class Airplane implements IMessageParticipant {
     double diff = Headings.getDifference(heading.getValue(), targetHeading, true);
 
     boolean isLeft = targetHeadingLeftTurn;
-    if (diff < 3)
+    if (diff < 5)
       isLeft = HeadingsNew.getBetterDirectionToTurn(heading.getValue(), targetHeading) == ChangeHeadingCommand.eDirection.left;
 
     if (isLeft)
