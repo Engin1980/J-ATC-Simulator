@@ -5,6 +5,7 @@ import eng.eSystem.events.EventAnonymousSimple;
 import eng.eSystem.utilites.ExceptionUtils;
 import eng.eSystem.utilites.NumberUtils;
 import eng.eSystem.utilites.awt.ComponentUtils;
+import eng.jAtcSim.Stylist;
 import eng.jAtcSim.recording.Settings;
 import eng.jAtcSim.shared.LayoutManager;
 import eng.jAtcSim.shared.MessageBox;
@@ -41,6 +42,7 @@ public class RecordingPanel extends JPanel {
 //    JPanel pnlVideo = buildVideoPanel(settings);
     LayoutManager.fillBoxPanel(this, LayoutManager.eHorizontalAlign.center, 4, pnlBefore, pnlDuring); //, pnlVideo);
     adjustAvailibility(settings != null);
+    Stylist.apply(this, true);
   }
 
   public EventAnonymous<Settings> getRecordingStarted() {
