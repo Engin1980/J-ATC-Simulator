@@ -66,14 +66,19 @@ public class LoadSave {
     LoadSave.saveAsElement(elm, fieldName, v);
   }
 
-  public static void saveAsElement(XElement elm, String name, Object obj) {
-    XElement tmp = new XElement(name);
+  public static void saveAsElement(XElement elm, String elementName, Object obj) {
+    XElement tmp = saveIntoElement(elementName, obj);
     elm.addElement(tmp);
+  }
+
+  public static XElement saveIntoElement(String elementName, Object obj) {
+    XElement ret = new XElement(elementName);
     try {
-      ser.serialize(tmp, obj);
+      ser.serialize(ret, obj);
     } catch (XmlSerializationException e) {
       throw new EApplicationException("Failed to save object " + obj + ".", e);
     }
+    return ret;
   }
 
   public static Object loadFromElement(XElement elm, String name, Class type) {

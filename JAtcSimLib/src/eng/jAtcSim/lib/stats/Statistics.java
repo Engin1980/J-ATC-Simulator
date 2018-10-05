@@ -8,6 +8,7 @@ package eng.jAtcSim.lib.stats;
 import com.sun.deploy.uitoolkit.DelegatingPluginUIToolkit;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.validation.Validator;
 import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
 import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
@@ -17,6 +18,7 @@ import eng.jAtcSim.lib.airplanes.AirproxType;
 import eng.jAtcSim.lib.airplanes.moods.MoodResult;
 import eng.jAtcSim.lib.atcs.Atc;
 import eng.jAtcSim.lib.global.ETime;
+import eng.jAtcSim.lib.serialization.LoadSave;
 import eng.jAtcSim.lib.stats.read.StatsView;
 import eng.jAtcSim.lib.stats.write.StatsData;
 import eng.jAtcSim.lib.stats.write.StatsDataList;
@@ -67,6 +69,31 @@ public class Statistics {
   @XmlIgnore
   private CurrentPlanes currentPlanes = new CurrentPlanes();
 
+  public static String toTime(double seconds) {
+    String ret;
+    int tmp = (int) Math.floor(seconds);
+    int hrs = tmp / 3600;
+    tmp = tmp % 3600;
+    int min = tmp / 60;
+    tmp = tmp % 60;
+    int sec = tmp;
+    if (hrs == 0) {
+      ret = String.format("%d:%02d", min, sec);
+    } else {
+      ret = String.format("%d:%02d:%02d", hrs, min, sec);
+    }
+    return ret;
+  }
+
+  public Statistics(int setLengthIntervalInMinutes) {
+    Validator.check(setLengthIntervalInMinutes > 0);
+    this.setLengthIntervalInMinutes = setLengthIntervalInMinutes;
+  }
+
+  @XmlConstructor
+  private Statistics() {
+  }
+
   public SecondStats getSecondStats() {
     return writeSetList.getCurrent().secondStats;
   }
@@ -87,23 +114,7 @@ public class Statistics {
     return writeSetList.getCurrent().errors;
   }
 
-  public static String toTime(double seconds) {
-    String ret;
-    int tmp = (int) Math.floor(seconds);
-    int hrs = tmp / 3600;
-    tmp = tmp % 3600;
-    int min = tmp / 60;
-    tmp = tmp % 60;
-    int sec = tmp;
-    if (hrs == 0) {
-      ret = String.format("%d:%02d", min, sec);
-    } else {
-      ret = String.format("%d:%02d:%02d", hrs, min, sec);
-    }
-    return ret;
-  }
-
-  public StatsView createView(ETime fromTime){
+  public StatsView createView(ETime fromTime) {
     StatsView ret;
     IReadOnlyList<StatsData> writeSets = this.writeSetList.getByTime(fromTime);
     IReadOnlyList<StatsView> statSets = ReadToWriteConverter.convert(writeSets);
@@ -111,16 +122,7 @@ public class Statistics {
     return ret;
   }
 
-  public Statistics(int setLengthIntervalInMinutes) {
-    Validator.check(setLengthIntervalInMinutes > 0);
-    this.setLengthIntervalInMinutes = setLengthIntervalInMinutes;
-  }
-
-  @XmlConstructor
-  private Statistics() {
-  }
-
-  public void init(){
+  public void init() {
     this.writeSetList = new StatsDataList();
     this.writeSetList.createNewSet();
     this.nextWriteSetTime = Acc.now().addMinutes(5); //TODO this should be taken from app-settings
@@ -128,8 +130,7 @@ public class Statistics {
 
   public void secondElapsed() {
 
-    if (Acc.now().isAfter(this.nextWriteSetTime))
-    {
+    if (Acc.now().isAfter(this.nextWriteSetTime)) {
       this.writeSetList.createNewSet();
       this.nextWriteSetTime = Acc.now().addMinutes(this.setLengthIntervalInMinutes);
     }
@@ -149,10 +150,10 @@ public class Statistics {
 
     int tmp;
 
-    tmp = Acc.planes().count(q->q.getAirprox() == AirproxType.full);
+    tmp = Acc.planes().count(q -> q.getAirprox() == AirproxType.full);
     ws.errors.getAirproxes().add(tmp);
 
-    tmp = Acc.planes().count(q->q.isMrvaError());
+    tmp = Acc.planes().count(q -> q.isMrvaError());
     ws.errors.getMrvas().add(tmp);
   }
 
@@ -163,6 +164,24 @@ public class Statistics {
 
   public IReadOnlyList<MoodResult> getFullMoodHistory() {
     IList<MoodResult> ret = this.writeSetList.getFullMoodHistory();
+    return ret;
+  }
+
+  public void save(XElement root) {
+    XElement elm = new XElement("stats");
+    elm.setAttribute("setLengthIntervalInMinutes", Integer.toString(this.setLengthIntervalInMinutes));
+    LoadSave.saveField(elm, this,"nextWriteSetTime" );
+    writeSetList.save(elm);
+    root.addElement(elm);
+  }
+
+  public Statistics load(XElement root){
+    Statistics ret = new Statistics();
+    XElement elm = root.getChild("stats");
+    ret.setLengthIntervalInMinutes = Integer.parseInt(elm.getAttribute("setLengthIntervalInMinutes"));
+    LoadSave.loadField(elm, this, "nextWriteSetTime");
+    this.writeSetList = StatsDataList.load(elm);
+
     return ret;
   }
 }

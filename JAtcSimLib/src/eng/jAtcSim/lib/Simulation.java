@@ -177,7 +177,7 @@ public class Simulation {
     LoadSave.loadField(root, this, "prm");
 
     LoadSave.loadField(root, this, "now");
-    LoadSave.loadField(root, this, "stats");
+    this.stats.load(root);
     LoadSave.loadField(root, this, "emergencyManager");
     this.trafficManager.load(root);
 
@@ -362,7 +362,7 @@ public class Simulation {
     }
 
     //mrvaManager
-    LoadSave.saveField(root, this, "stats");
+    this.stats.save(root);
     LoadSave.saveField(root, this, "emergencyManager");
     this.trafficManager.save(root);
     LoadSave.saveField(root, this, "simulationSecondLengthInMs");

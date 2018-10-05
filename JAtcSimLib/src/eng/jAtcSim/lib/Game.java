@@ -200,6 +200,7 @@ public class Game {
   }
 
   public void save(String fileName, IMap<String, Object> customData) {
+    long saveStart = System.currentTimeMillis();
     XElement root = new XElement("game");
 
     LoadSave.saveField(root, this, "areaSource");
@@ -231,6 +232,8 @@ public class Game {
       root.addElement(tmp);
     }
 
+    long saveIn= System.currentTimeMillis();
+
     XDocument doc = new XDocument(root);
     try {
       doc.save(fileName);
@@ -238,6 +241,11 @@ public class Game {
       throw new EApplicationException("Failed to save simulation.", e);
     }
 
+    long saveEnd = System.currentTimeMillis();
+
+    System.out.println("## save output:");
+    System.out.println("## storing: " + (saveIn - saveStart));
+    System.out.println("## writing: " + (saveEnd - saveIn));
   }
 
   public Simulation getSimulation() {
