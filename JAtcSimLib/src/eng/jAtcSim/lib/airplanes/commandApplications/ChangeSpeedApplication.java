@@ -43,10 +43,10 @@ public class ChangeSpeedApplication extends CommandApplication<ChangeSpeedComman
       }
 
       if (sr.direction != Restriction.eDirection.atMost && sr.value > cMax) {
-        ret = new Rejection("Unable to reach speed " + c.getSpeedInKts() + " kts, maximum is " + cMax + ".", c);
+        ret = new Rejection("Unable to reach speed " + c.getSpeedInKts() + " kts, maximum is " + cMax, c);
         return ret;
       } else if (sr.direction != Restriction.eDirection.atLeast && sr.value < cMin) {
-        ret = new Rejection("Unable to reach speed " + c.getSpeedInKts() + " kts, minimum is " + cMin + ".", c);
+        ret = new Rejection("Unable to reach speed " + c.getSpeedInKts() + " kts, minimum is " + cMin , c);
         return ret;
       }
     }

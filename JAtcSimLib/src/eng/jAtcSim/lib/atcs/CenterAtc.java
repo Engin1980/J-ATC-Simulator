@@ -4,6 +4,7 @@ import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.eXml.XElement;
+import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.geo.Coordinates;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
@@ -54,21 +55,10 @@ public class CenterAtc extends ComputerAtc {
       IList<Airplane> tmp = new EList<>();
 
       for (Airplane plane : middleArrivals) {
-        dist = Coordinates.getDistanceInNM(plane.getEntryExitFix().getCoordinate(), plane.getCoordinate());
-        if (dist < 27) {
-          SpeechList<IAtcCommand> cmds = new SpeechList<>();
-          if (plane.getTargetAltitude() > Acc.atcCtr().getOrderedAltitude())
-            cmds.add(new ChangeAltitudeCommand(ChangeAltitudeCommand.eDirection.descend, Acc.atcCtr().getOrderedAltitude()));
-
-          // assigns route
-          Navaid n = plane.getEntryExitFix();
-          Route r = getRouteForPlaneAndFix(plane, n);
-          cmds.add(new ProceedDirectCommand(n));
-          cmds.add(new ClearedToRouteCommand(r));
-          Message msg = new Message(this, plane, cmds);
-          super.sendMessage(msg);
-
-          tmp.add(plane);
+        try {
+          evaluateMiddleArrivalsForCloseArrivals(tmp, plane);
+        } catch (Exception ex){
+          throw new EApplicationException("Failed to evaluate " + plane.getCallsign() + ".", ex);
         }
       }
       middleArrivals.remove(tmp);
@@ -91,6 +81,26 @@ public class CenterAtc extends ComputerAtc {
       farArrivals.remove(tmp);
       middleArrivals.add(tmp);
       tmp.clear();
+    }
+  }
+
+  private void evaluateMiddleArrivalsForCloseArrivals(IList<Airplane> tmp, Airplane plane) {
+    double dist;
+    dist = Coordinates.getDistanceInNM(plane.getEntryExitFix().getCoordinate(), plane.getCoordinate());
+    if (dist < 27) {
+      SpeechList<IAtcCommand> cmds = new SpeechList<>();
+      if (plane.getTargetAltitude() > Acc.atcCtr().getOrderedAltitude())
+        cmds.add(new ChangeAltitudeCommand(ChangeAltitudeCommand.eDirection.descend, Acc.atcCtr().getOrderedAltitude()));
+
+      // assigns route
+      Navaid n = plane.getEntryExitFix();
+      Route r = getRouteForPlaneAndFix(plane, n);
+      cmds.add(new ProceedDirectCommand(n));
+      cmds.add(new ClearedToRouteCommand(r));
+      Message msg = new Message(this, plane, cmds);
+      super.sendMessage(msg);
+
+      tmp.add(plane);
     }
   }
 
