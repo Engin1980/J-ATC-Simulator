@@ -39,7 +39,7 @@ public class ETime implements Comparable<ETime> {
   }
 
   public java.time.LocalTime toLocalTime(){
-    return java.time.LocalTime.of(this.getHours(), this.getMinutes());
+    return java.time.LocalTime.of(this.getHours(), this.getMinutes(), this.getSeconds());
   }
 
   // TODO remove sets or make them private, ensure that constructor rounds value around midnight.

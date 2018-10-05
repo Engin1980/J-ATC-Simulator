@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><root __class="StartupSettings">
-  <files areaXmlFile="_SettingFiles\LKPR.ar.xml" fleetsXmlFile="_SettingFiles\fleets.fl.xml" planesXmlFile="_SettingFiles\planeTypes.tp.xml" trafficXmlFile="_SettingFiles\RuzyneRealLifeFlightListTraffic.tr.xml" weatherXmlFile="_SettingFiles\afternoonThunderstorm.we.xml"/>
-  <recent icao="LKPR" time="5:30"/>
+  <files areaXmlFile="_SettingFiles\LKPR.ar.xml" fleetsXmlFile="_SettingFiles\fleets.fl.xml" planesXmlFile="_SettingFiles\planeTypes.tp.xml" trafficXmlFile="_SettingFiles\RuzyneRealLifeFlightListTraffic.tr.xml" weatherXmlFile="_SettingFiles\developers\testWindChange.we.xml"/>
+  <recent icao="LKPR" time="6:01"/>
   <weather cloudBaseAltitudeFt="10000" cloudBaseProbability="0.0" type="xml" visibilityInM="9999" windDirection="80" windSpeed="4"/>
   <traffic allowDelays="true" densityPercentage="1.0" emergencyPerDayProbability="0.14285714285714285" maxPlanes="60" type="xml">
     <customTraffic arrivals2departuresRatio="5" companies="CSA;EZY;TVS;RYR;WZZ;DLA;PUT;CUL;MRD;KEC;BER;JEB" countryCodes="G;AU;DE;OK;OM" nonCommercialFlightProbability="0.05" useExtendedCallsigns="false" weightTypeA="0" weightTypeB="2" weightTypeC="8" weightTypeD="5">

@@ -7,6 +7,8 @@ import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.weathers.presets.PresetWeather;
 import eng.jAtcSim.lib.weathers.presets.PresetWeatherList;
 
+import java.util.prefs.NodeChangeEvent;
+
 public class PresetWeatherProvider extends WeatherProvider {
 
   private PresetWeatherList presetWeathers;
@@ -33,37 +35,46 @@ public class PresetWeatherProvider extends WeatherProvider {
   @Override
   public Weather tryGetNewWeather() {
     Weather ret = null;
-    if (dayIndex != Acc.now().getDays()) {
+    if (dayIndex == -1) {
       int index = getFirstWeatherIndex();
       ret = presetWeathers.get(index);
       weatherIndex = index;
       dayIndex = Acc.now().getDays();
     } else {
-      if (weatherIndex == presetWeathers.size())
-        ret = null; // no more weahter available
-      else {
-        java.time.LocalTime now = Acc.now().toLocalTime();
-        int newIndex = weatherIndex;
-        while (true) {
-          if (newIndex == presetWeathers.size()) {
-            newIndex = -1;
-            break;
-          } else if (presetWeathers.get(newIndex).getTime().isBefore(now)) {
-            newIndex++;
-          } else {
-            break;
-          }
-        }
-        if (newIndex == -1) {
-          weatherIndex = presetWeathers.size();
-          ret = null;
-        } else if (newIndex == weatherIndex) {
-          ret = null;
-        } else {
+      if (dayIndex == Acc.now().getDays()) {
+        // evaluating current day
+        int newIndex = getSuggestedWeatherIndex();
+        if (newIndex == NEXT_DAY) {
+          dayIndex++;
+          weatherIndex = -1;
+        } else if (newIndex != NO_CHANGE) {
           ret = presetWeathers.get(newIndex);
           weatherIndex = newIndex;
+        } else {
+          ret = null;
         }
+      } else
+        // waiting for the next day
+        ret = null;
+    }
+    return ret;
+  }
+
+  private static final int NO_CHANGE = -2;
+  private static final int NEXT_DAY = -1;
+  private int getSuggestedWeatherIndex() {
+    int ret;
+    java.time.LocalTime now = Acc.now().toLocalTime();
+
+    if (weatherIndex + 1 == presetWeathers.size())
+      ret = NEXT_DAY;
+    else {
+      int suggestedIndex = NO_CHANGE;
+      for (int i = weatherIndex + 1; i < presetWeathers.size(); i++) {
+        if (presetWeathers.get(i).getTime().isBefore(now))
+          suggestedIndex = i;
       }
+      ret = suggestedIndex;
     }
     return ret;
   }

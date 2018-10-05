@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<presetWeatherSet
+        xmlns="https://github.com/Engin1980/J-ATC-Simulator/weather"
+>
+  <meta>
+    <title>Simple demo weather</title>
+    <author>Marek Vajgl</author>
+  </meta>
+  <metar>METAR LKPR 230400Z 23009KT 9999 -RA FEW043 12/05 Q1019 NOSIG=</metar>
+  <metar>METAR LKPR 230610Z 04026KT 9999 -RA FEW043 12/05 Q1019 NOSIG=</metar>
+</presetWeatherSet>
