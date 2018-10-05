@@ -2,18 +2,12 @@ package eng.jAtcSim.app.startupSettings.panels;
 
 import eng.eSystem.collections.EList;
 import eng.eSystem.events.EventAnonymous;
-import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.utilites.ExceptionUtils;
-import eng.eSystem.utilites.awt.ComponentUtils;
 import eng.jAtcSim.app.extenders.SwingFactory;
 import eng.jAtcSim.app.extenders.XmlFileSelectorExtender;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.global.logging.ApplicationLog;
-import eng.jAtcSim.lib.global.newSources.AirplaneTypesSource;
 import eng.jAtcSim.lib.global.newSources.AreaSource;
-import eng.jAtcSim.lib.global.newSources.FleetsSource;
-import eng.jAtcSim.lib.traffic.fleets.FleetType;
-import eng.jAtcSim.lib.weathers.presets.PresetWeatherList;
 import eng.jAtcSim.lib.world.Airport;
 import eng.jAtcSim.lib.world.Area;
 import eng.jAtcSim.shared.LayoutManager;
@@ -22,7 +16,6 @@ import eng.jAtcSim.app.extenders.XComboBoxExtender;
 import eng.jAtcSim.shared.MessageBox;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 
 public class AirportAndAirplanesPanel extends JStartupPanel {
@@ -116,7 +109,7 @@ public class AirportAndAirplanesPanel extends JStartupPanel {
     fleArea = new XmlFileSelectorExtender(SwingFactory.FileDialogType.area);
     btnLoadArea = SwingFactory.createButton("Load", this::btnLoadArea_click);
     cmbAirports = new XComboBoxExtender<>();
-    cmbAirports.getSelectedItemChanged().add(o ->
+    cmbAirports.getOnSelectedItemChanged().add(o ->
         this.getOnIcaoChanged().raise(cmbAirports.getSelectedItem()));
   }
 

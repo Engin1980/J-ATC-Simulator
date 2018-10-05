@@ -7,7 +7,6 @@ import eng.jAtcSim.lib.stats.read.StatsView;
 import eng.jAtcSim.lib.stats.read.shared.*;
 import eng.jAtcSim.lib.stats.read.specific.*;
 import eng.jAtcSim.lib.stats.write.StatsData;
-import eng.jAtcSim.lib.stats.write.specific.PlanesSubStats;
 
 class ReadToWriteConverter {
 
@@ -76,19 +75,19 @@ class ReadToWriteConverter {
     DataView[] tmp;
 
     tmp = buildPlanesDataView(writeSet.planes.getPlanesInSim());
-    PlaneSubStats<MinMaxMeanCountCurrentView> inSim = new PlaneSubStats<>(
+    PlanesSubStats<MinMaxMeanCountCurrentView> inSim = new PlanesSubStats<>(
         new MinMaxMeanCountCurrentView(tmp[0]),
         new MinMaxMeanCountCurrentView(tmp[1]),
         new MinMaxMeanCountCurrentView(tmp[2]));
 
     tmp = buildPlanesDataView(writeSet.planes.getPlanesUnderApp());
-    PlaneSubStats<MinMaxMeanCountCurrentView> underApp = new PlaneSubStats<>(new MinMaxMeanCountCurrentView(tmp[0]), new MinMaxMeanCountCurrentView(tmp[1]), new MinMaxMeanCountCurrentView(tmp[2]));
+    PlanesSubStats<MinMaxMeanCountCurrentView> underApp = new PlanesSubStats<>(new MinMaxMeanCountCurrentView(tmp[0]), new MinMaxMeanCountCurrentView(tmp[1]), new MinMaxMeanCountCurrentView(tmp[2]));
 
     tmp = buildPlanesDataView(writeSet.planes.getFinishedPlanes());
-    PlaneSubStats<CountMeanView> finished = new PlaneSubStats<>(new CountMeanView(tmp[0]), new CountMeanView(tmp[1]), new CountMeanView(tmp[2]));
+    PlanesSubStats<CountMeanView> finished = new PlanesSubStats<>(new CountMeanView(tmp[0]), new CountMeanView(tmp[1]), new CountMeanView(tmp[2]));
 
     tmp = buildPlanesDataView(writeSet.planes.getDelay());
-    PlaneSubStats<MinMaxMeanCountCurrentView> delay = new PlaneSubStats<>(new MinMaxMeanCountCurrentView(tmp[0]), new MinMaxMeanCountCurrentView(tmp[1]), new MinMaxMeanCountCurrentView(tmp[2]));
+    PlanesSubStats<MinMaxMeanCountCurrentView> delay = new PlanesSubStats<>(new MinMaxMeanCountCurrentView(tmp[0]), new MinMaxMeanCountCurrentView(tmp[1]), new MinMaxMeanCountCurrentView(tmp[2]));
 
     PlaneStats ret;
     ret = new PlaneStats(inSim, underApp, finished, delay);
@@ -102,7 +101,7 @@ class ReadToWriteConverter {
     return ret;
   }
 
-  private static DataView[] buildPlanesDataView(PlanesSubStats subStats) {
+  private static DataView[] buildPlanesDataView(eng.jAtcSim.lib.stats.write.specific.PlanesSubStats subStats) {
     DataView[] ret = new DataView[3];
     ret[0] = subStats.getArrivals().toView();
     ret[1] = subStats.getDepartures().toView();

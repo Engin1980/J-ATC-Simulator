@@ -54,6 +54,10 @@ public class StatsDataList {
     }
   }
 
+  public IReadOnlyList<StatsData> getAll() {
+    return inner;
+  }
+
   private XElement saveItem(StatsData statsData) {
     XElement ret;
 
@@ -75,6 +79,7 @@ public class StatsDataList {
     for (XElement itemElement : elm.getChildren("item")) {
       StatsData statsData = loadItem(itemElement);
       ret.inner.add(statsData);
+      ret.presavedElements.set(statsData, itemElement);
     }
 
     return ret;

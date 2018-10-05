@@ -223,7 +223,12 @@ public class FrmMain extends JFrame {
         pnl.init(Acc.sim().getStats().getFullMoodHistory());
         SwingFactory.show(pnl, "Rating board");
       });
-      buildMenuItem(mnuView, "Add new radar view",  'r', s -> {
+      buildMenuItem(mnuView, "Show stats graphs", null, s -> {
+        StatsGraphPanel pnl = new StatsGraphPanel();
+        pnl.init(Acc.sim().getStats());
+        SwingFactory.show(pnl, "Statistical graphs");
+      });
+      buildMenuItem(mnuView, "Add new radar view", 'r', s -> {
         FrmView f = new FrmView();
         f.init(this.parent);
         f.setVisible(true);
@@ -294,19 +299,25 @@ public class FrmMain extends JFrame {
   }
 
   private void saveSimulation() {
+    parent.getSim().stop();
+
     JFileChooser jf = SwingFactory.createFileDialog(SwingFactory.FileDialogType.game, lastFileName);
     int res = jf.showSaveDialog(this);
-    if (res != JFileChooser.APPROVE_OPTION) return;
+    if (res == JFileChooser.APPROVE_OPTION) {
 
-    String fileName = jf.getSelectedFile().getAbsolutePath();
+      String fileName = jf.getSelectedFile().getAbsolutePath();
 
-    if (!fileName.endsWith(SwingFactory.SAVED_SIMULATION_EXTENSION))
-      fileName += SwingFactory.SAVED_SIMULATION_EXTENSION;
+      if (!fileName.endsWith(SwingFactory.SAVED_SIMULATION_EXTENSION))
+        fileName += SwingFactory.SAVED_SIMULATION_EXTENSION;
 
-    IMap<String, Object> tmp = this.parent.getDataToStore();
+      IMap<String, Object> tmp = this.parent.getDataToStore();
 
-    this.parent.getGame().save(fileName, tmp);
-    lastFileName = fileName;
+      this.parent.getGame().save(fileName, tmp);
+      lastFileName = fileName;
+      this.parent.getSim().sendTextMessageForUser("Game saved.");
+    }
+
+    parent.getSim().start();
   }
 
   void init(Pack pack) {

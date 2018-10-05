@@ -3,6 +3,7 @@ package eng.jAtcSim.frmPacks.shared;
 import eng.eSystem.collections.*;
 import eng.eSystem.utilites.ArrayUtils;
 import eng.eSystem.validation.Validator;
+import eng.jAtcSim.app.controls.ImagePanel;
 import eng.jAtcSim.app.extenders.XComboBoxExtender;
 import eng.jAtcSim.lib.traffic.Traffic;
 import eng.jAtcSim.shared.LayoutManager;
@@ -136,7 +137,7 @@ public class FrmTrafficHistogram extends JFrame {
     cmbSerie.setModel(keyArr);
     cmbSerie.setSelectedIndex(0);
 
-    cmbSerie.getSelectedItemChanged().add(q -> this.updateHistogram());
+    cmbSerie.getOnSelectedItemChanged().add(q -> this.updateHistogram());
 
     updateHistogram();
   }
@@ -176,28 +177,4 @@ public class FrmTrafficHistogram extends JFrame {
   }
 }
 
-class ImagePanel extends JPanel {
 
-  private BufferedImage image;
-  private final int width;
-  private final int height;
-
-  public ImagePanel(int width, int height) {
-    this.width = width;
-    this.height = height;
-    Dimension d = new Dimension(width, height);
-    this.setPreferredSize(d);
-    this.setMinimumSize(d);
-    this.setMaximumSize(d);
-  }
-
-  public synchronized void setImage(BufferedImage image) {
-    this.image = image;
-  }
-
-  public synchronized void paint(Graphics g) {
-    super.paint(g);
-    if (this.image != null)
-      g.drawImage(image, 0, 0, width, height, null);
-  }
-}

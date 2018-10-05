@@ -5,7 +5,7 @@ import eng.jAtcSim.lib.global.ETime;
 import eng.jAtcSim.lib.stats.read.StatsView;
 import eng.jAtcSim.lib.stats.read.shared.*;
 import eng.jAtcSim.lib.stats.read.specific.*;
-import eng.jAtcSim.lib.stats.read.specific.PlaneSubStats;
+import eng.jAtcSim.lib.stats.read.specific.PlanesSubStats;
 
 import java.util.function.Function;
 
@@ -74,19 +74,19 @@ public class ViewMerger {
 
     tmp = mergePlanesDataView(views,
         q -> q.getPlanes().getPlanesInSim());
-    PlaneSubStats<MinMaxMeanCountCurrentView> inSim = new PlaneSubStats<>(new MinMaxMeanCountCurrentView(tmp[0]), new MinMaxMeanCountCurrentView(tmp[1]), new MinMaxMeanCountCurrentView(tmp[2]));
+    PlanesSubStats<MinMaxMeanCountCurrentView> inSim = new PlanesSubStats<>(new MinMaxMeanCountCurrentView(tmp[0]), new MinMaxMeanCountCurrentView(tmp[1]), new MinMaxMeanCountCurrentView(tmp[2]));
 
     tmp = mergePlanesDataView(views,
         q -> q.getPlanes().getPlanesUnderApp());
-    PlaneSubStats<MinMaxMeanCountCurrentView> underApp = new PlaneSubStats<>(new MinMaxMeanCountCurrentView(tmp[0]), new MinMaxMeanCountCurrentView(tmp[1]), new MinMaxMeanCountCurrentView(tmp[2]));
+    PlanesSubStats<MinMaxMeanCountCurrentView> underApp = new PlanesSubStats<>(new MinMaxMeanCountCurrentView(tmp[0]), new MinMaxMeanCountCurrentView(tmp[1]), new MinMaxMeanCountCurrentView(tmp[2]));
 
     tmp = mergePlanesDataView(views,
         q -> q.getPlanes().getFinishedPlanes());
-    PlaneSubStats<CountMeanView> finished = new PlaneSubStats<>(new CountMeanView(tmp[0]), new CountMeanView(tmp[1]), new CountMeanView(tmp[2]));
+    PlanesSubStats<CountMeanView> finished = new PlanesSubStats<>(new CountMeanView(tmp[0]), new CountMeanView(tmp[1]), new CountMeanView(tmp[2]));
 
     tmp = mergePlanesDataView(views,
         q -> q.getPlanes().getDelay());
-    PlaneSubStats<MinMaxMeanCountCurrentView> delay = new PlaneSubStats<>(new MinMaxMeanCountCurrentView(tmp[0]), new MinMaxMeanCountCurrentView(tmp[1]), new MinMaxMeanCountCurrentView(tmp[2]));
+    PlanesSubStats<MinMaxMeanCountCurrentView> delay = new PlanesSubStats<>(new MinMaxMeanCountCurrentView(tmp[0]), new MinMaxMeanCountCurrentView(tmp[1]), new MinMaxMeanCountCurrentView(tmp[2]));
 
     PlaneStats ret;
     ret = new PlaneStats(inSim, underApp, finished, delay);
@@ -94,7 +94,7 @@ public class ViewMerger {
   }
 
   private static <T extends DataView> DataView[] mergePlanesDataView(IReadOnlyList<StatsView> writeSets,
-                                                                     Function<StatsView, PlaneSubStats<T>> selector) {
+                                                                     Function<StatsView, PlanesSubStats<T>> selector) {
     DataView[] ret = new DataView[3];
     ret[0] = mergeDataView(writeSets, q -> selector.apply(q).getArrivals());
     ret[1] = mergeDataView(writeSets, q -> selector.apply(q).getDepartures());

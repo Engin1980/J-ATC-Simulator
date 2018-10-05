@@ -123,7 +123,7 @@ public class RecordingPanel extends JPanel {
 //    fleVideoOut = new XmlFileSelectorExtender(SwingFactory.FileDialogType.video);
 //    nudFPS = new NumericUpDownExtender(new JSpinner(), 1, 100, 24, 1);
 //    cmbVideoImageType = new XComboBoxExtender<>(new String[]{"jpg", "png", "bmp"});
-//    cmbImageType.getSelectedItemChanged().add(this::cmbImageType_selectedItemChanged);
+//    cmbImageType.getOnSelectedItemChanged().add(this::cmbImageType_selectedItemChanged);
 //
 //    if (sett != null){
 //      fleVideoIn.setFileName(sett.getPath());

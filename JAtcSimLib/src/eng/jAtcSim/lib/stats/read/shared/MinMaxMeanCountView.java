@@ -1,6 +1,6 @@
 package eng.jAtcSim.lib.stats.read.shared;
 
-public class MinMaxMeanCountView extends DataView {
+public class MinMaxMeanCountView extends CountMeanView {
 
   public MinMaxMeanCountView(DataView other) {
     super(other);
@@ -12,13 +12,5 @@ public class MinMaxMeanCountView extends DataView {
 
   public double getMaximum() {
     return super.maximum;
-  }
-
-  public double getMean() {
-    return super.mean;
-  }
-
-  public double getCount() {
-    return super.count;
   }
 }

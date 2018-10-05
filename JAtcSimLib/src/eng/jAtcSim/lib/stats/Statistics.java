@@ -5,7 +5,6 @@
  */
 package eng.jAtcSim.lib.stats;
 
-import com.sun.deploy.uitoolkit.DelegatingPluginUIToolkit;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.eXml.XElement;
@@ -183,6 +182,12 @@ public class Statistics {
     this.writeSetList = StatsDataList.load(elm);
 
     return ret;
+  }
+
+  public IReadOnlyList<StatsView> createViews() {
+    IReadOnlyList<StatsData> writeSets = this.writeSetList.getAll();
+    IReadOnlyList<StatsView> statSets = ReadToWriteConverter.convert(writeSets);
+    return statSets;
   }
 }
 

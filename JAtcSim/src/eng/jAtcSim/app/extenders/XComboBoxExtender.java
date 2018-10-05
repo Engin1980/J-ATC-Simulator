@@ -24,7 +24,7 @@ public class XComboBoxExtender<T> {
   }
 
   private final JComboBox<T> cmb;
-  private final EventSimple<XComboBoxExtender> selectedItemChanged = new EventSimple(this);
+  private final EventSimple<XComboBoxExtender> onSelectedItemChanged = new EventSimple(this);
 
   private static <T> ComboBoxModel<T> convertToModel(IMap<String, T> map) {
     DefaultComboBoxModel model = new DefaultComboBoxModel();
@@ -84,7 +84,7 @@ public class XComboBoxExtender<T> {
 
   private XComboBoxExtender(JComboBox<T> cmb, ComboBoxModel<T> model) {
     this.cmb = cmb;
-    this.cmb.addActionListener(q -> selectedItemChanged.raise());
+    this.cmb.addActionListener(q -> onSelectedItemChanged.raise());
     this.setModel(model);
   }
 
@@ -92,8 +92,8 @@ public class XComboBoxExtender<T> {
     return cmb;
   }
 
-  public EventSimple<XComboBoxExtender> getSelectedItemChanged() {
-    return selectedItemChanged;
+  public EventSimple<XComboBoxExtender> getOnSelectedItemChanged() {
+    return onSelectedItemChanged;
   }
 
   public T getSelectedItem() {

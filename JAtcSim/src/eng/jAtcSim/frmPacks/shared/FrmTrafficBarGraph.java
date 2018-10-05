@@ -2,6 +2,7 @@ package eng.jAtcSim.frmPacks.shared;
 
 import eng.eSystem.collections.*;
 import eng.eSystem.validation.Validator;
+import eng.jAtcSim.app.controls.ImagePanel;
 import eng.jAtcSim.app.extenders.XComboBoxExtender;
 import eng.jAtcSim.lib.traffic.Traffic;
 import eng.jAtcSim.shared.LayoutManager;
@@ -128,7 +129,7 @@ public class FrmTrafficBarGraph extends JFrame {
     cmbSerie.setModel(keyArr);
     cmbSerie.setSelectedIndex(0);
 
-    cmbSerie.getSelectedItemChanged().add(q -> this.updateGraph());
+    cmbSerie.getOnSelectedItemChanged().add(q -> this.updateGraph());
 
     updateGraph();
   }
