@@ -12,7 +12,7 @@ import java.util.function.Predicate;
 
 public class DelayedList<T> {
 
-    class DelayedItem<T> {
+    static class DelayedItem<T> {
       public final T item;
       public int delayLeft;
 
