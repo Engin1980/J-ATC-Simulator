@@ -1,20 +1,25 @@
 package eng.jAtcSim.lib.global;
 
+import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
 import eng.jAtcSim.lib.Acc;
 
 public class SchedulerForAdvice {
 
   private ETime scheduledTime;
   private int lastAnnouncedSecond;
-  private int[] checkIntervals = new int[]{30 * 60, 15 * 60, 10 * 60, 5 * 60};
+  private int[] checkIntervals;
   private boolean approved;
 
-  private SchedulerForAdvice() {
-  }
+  @XmlConstructor
+  private SchedulerForAdvice(){}
 
-  public SchedulerForAdvice(ETime scheduledTime) {
+  public SchedulerForAdvice(ETime scheduledTime, int[] checkIntervalsInMinutes) {
     resetScheduledTime(scheduledTime);
     this.scheduledTime = scheduledTime;
+    this.checkIntervals = new int[checkIntervalsInMinutes.length];
+    for (int i = 0; i < checkIntervalsInMinutes.length; i++) {
+      this.checkIntervals[i] = checkIntervalsInMinutes[i] *60;
+    }
   }
 
   public void nowAnnounced() {

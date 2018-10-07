@@ -1,6 +1,5 @@
 package eng.jAtcSim.lib.atcs;
 
-import eng.eSystem.EStringBuilder;
 import eng.eSystem.collections.*;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.events.EventAnonymousSimple;
@@ -30,11 +29,11 @@ import eng.jAtcSim.lib.world.Runway;
 import eng.jAtcSim.lib.world.RunwayConfiguration;
 import eng.jAtcSim.lib.world.RunwayThreshold;
 
-import javax.security.auth.login.AccountNotFoundException;
-
 public class TowerAtc extends ComputerAtc {
-
+  private static final int[] RWY_CHANGE_ANNOUNCE_INTERVALS = new int[]{30, 15, 10, 5, 4, 3, 2, 1};
   public static class RunwayCheck {
+    private static final int[] RWY_CHECK_ANNOUNCE_INTERVALS = new int[]{30, 15, 10, 5};
+
     private int expectedDurationInMinutes;
     private ETime realDurationEnd;
     private SchedulerForAdvice scheduler;
@@ -68,7 +67,7 @@ public class TowerAtc extends ComputerAtc {
 
     private RunwayCheck(int minutesToNextCheck, int expectedDurationInMinutes) {
       ETime et = Acc.now().addMinutes(minutesToNextCheck);
-      this.scheduler = new SchedulerForAdvice(et);
+      this.scheduler = new SchedulerForAdvice(et, RWY_CHECK_ANNOUNCE_INTERVALS);
       this.expectedDurationInMinutes = expectedDurationInMinutes;
     }
 
@@ -218,7 +217,7 @@ public class TowerAtc extends ComputerAtc {
       return new ComputerAtc.RequestResult(false, String.format("%s is not from APP.", p.getCallsign()));
     }
     if (isOnApproachOfTheRunwayInUse(p) == false)
-        return new ComputerAtc.RequestResult(false, String.format("%s is cleared to approach on the inactive runway.", p.getCallsign()));
+      return new ComputerAtc.RequestResult(false, String.format("%s is cleared to approach on the inactive runway.", p.getCallsign()));
     if (isRunwayThresholdUnderMaintenance(p.tryGetCurrentApproachRunwayThreshold()) == false) {
       return new RequestResult(false, String.format("Runway %s is closed now.", p.tryGetCurrentApproachRunwayThreshold().getParent().getName()));
     }
@@ -283,7 +282,7 @@ public class TowerAtc extends ComputerAtc {
 
     inUseInfo = new RunwaysInUseInfo();
     inUseInfo.scheduled = getSuggestedThresholds();
-    inUseInfo.scheduler = new SchedulerForAdvice(Acc.now().clone());
+    inUseInfo.scheduler = new SchedulerForAdvice(Acc.now().clone(), RWY_CHANGE_ANNOUNCE_INTERVALS);
     processRunwayChangeBackground();
   }
 
@@ -356,17 +355,29 @@ public class TowerAtc extends ComputerAtc {
   }
 
   private void processMessageFromAtc(RunwayUse ru) {
-    EStringBuilder sb = new EStringBuilder();
-    Message msg;
-    IList<String> lns = inUseInfo.current.toInfoString();
-    lns.insert(0, "Runway(s) in use:");
-    sendMultiLineMessageToUser(lns);
 
-    if (inUseInfo.scheduled != null) {
-      lns = inUseInfo.scheduled.toInfoString();
-      lns.insert(0, "Scheduled runways to use:");
-      lns.add("Scheduled runways active from " + inUseInfo.scheduler.getScheduledTime().toHourMinuteString());
+    if (ru.isAsksForChange()) {
+      if (inUseInfo.scheduled == null) {
+        Message msg = new Message(
+            this,
+            Acc.atcApp(),
+            new StringMessageContent("There is no scheduled runway change."));
+        super.sendMessage(msg);
+      } else {
+        // force runway change
+        changeRunwayInUse();
+      }
+    } else {
+      IList<String> lns = inUseInfo.current.toInfoString();
+      lns.insert(0, "Runway(s) in use:");
       sendMultiLineMessageToUser(lns);
+
+      if (inUseInfo.scheduled != null) {
+        lns = inUseInfo.scheduled.toInfoString();
+        lns.insert(0, "Scheduled runways to use:");
+        lns.add("Scheduled runways active from " + inUseInfo.scheduler.getScheduledTime().toHourMinuteString());
+        sendMultiLineMessageToUser(lns);
+      }
     }
   }
 
@@ -508,7 +519,7 @@ public class TowerAtc extends ComputerAtc {
 
     boolean isSame = inUseInfo.current.isUsingTheSameRunwayConfiguration(newSuggested);
     if (!isSame) {
-      inUseInfo.scheduler = new SchedulerForAdvice(Acc.now().addSeconds(10 * 60));
+      inUseInfo.scheduler = new SchedulerForAdvice(Acc.now().addSeconds(10 * 60), RWY_CHANGE_ANNOUNCE_INTERVALS);
       inUseInfo.scheduled = newSuggested;
     }
   }
