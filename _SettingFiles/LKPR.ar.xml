@@ -305,7 +305,7 @@
                        route="PD BILNA T PD MT714 T PD MT715 T PD MORUV T H MORUV"/>
                 <route type="star" name="HLV5W" route="PD HLV T PD POLOM T H POLOM"/>
                 <route type="sid" name="HLV5H"
-                       route="PD MT701 SM 230 T PD MT715 SC T PD MT716 T PD HLV"/>
+                       route="PD MT701 SM 230 T SC PD MT715 T PD MT716 T PD HLV"/>
                 <route type="sid" name="BILNA3H"
                        route="PD MT701 T PD MT702 T PD MT712 T PD MT713 T PD BILNA"/>
                 <route type="sid" name="NETIR1H"

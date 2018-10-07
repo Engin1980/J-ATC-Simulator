@@ -7,6 +7,7 @@ import eng.jAtcSim.lib.stats.Statistics;
 import eng.jAtcSim.lib.stats.read.StatsView;
 import eng.jAtcSim.lib.stats.read.shared.DataView;
 import eng.jAtcSim.lib.stats.read.shared.MeanView;
+import eng.jAtcSim.lib.stats.read.shared.MinMaxMeanCountCurrentView;
 import eng.jAtcSim.lib.stats.read.specific.PlanesSubStats;
 import eng.jAtcSim.shared.LayoutManager;
 import org.jfree.chart.JFreeChart;
@@ -16,7 +17,9 @@ import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.labels.StandardCategoryItemLabelGenerator;
 import org.jfree.chart.plot.CategoryPlot;
+import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.chart.renderer.category.CategoryItemRenderer;
+import org.jfree.chart.renderer.category.LineAndShapeRenderer;
 import org.jfree.chart.renderer.category.StackedBarRenderer;
 import org.jfree.data.category.DefaultCategoryDataset;
 
@@ -27,37 +30,119 @@ import java.util.function.Function;
 
 public class StatsGraphPanel extends JPanel {
 
-  private static final int IMG_WIDTH = 4000;
-  private static final int IMG_HEIGHT = 1000;
-  private static IMap<String, IMap<String, Function<StatsView, DataView>>> graphMeasures = new EMap();
+  private static class GraphMeasureView {
+    public Function<StatsView, DataView> dataViewSelector;
+    public Function<DataView, Double> valueSelector;
 
-  static {
-    IMap<String, Function<StatsView, DataView>> g;
-
-    g = buildSimpleDisplaySet(q -> q.getSecondStats().getDuration());
-    graphMeasures.set("Calculation time (s)", g);
-
-    g = buildPlanesDisplaySet(q -> q.getPlanes().getPlanesInSim());
-    graphMeasures.set("Planes in sim", g);
-    g = buildPlanesDisplaySet(q -> q.getPlanes().getPlanesUnderApp());
-    graphMeasures.set("Planes under APP", g);
-    g = buildPlanesDisplaySet(q -> q.getPlanes().getFinishedPlanes());
-    graphMeasures.set("Finished planes", g);
-    g = buildPlanesDisplaySet(q -> q.getPlanes().getDelay());
-    graphMeasures.set("Delay", g);
+    public GraphMeasureView(Function<StatsView, DataView> dataViewSelector, Function<DataView, Double> valueSelector) {
+      this.dataViewSelector = dataViewSelector;
+      this.valueSelector = valueSelector;
+    }
   }
 
-  private static EMap<String, Function<StatsView, DataView>> buildSimpleDisplaySet(Function<StatsView, DataView> selector) {
-    EMap<String, Function<StatsView, DataView>> g = new EMap<>();
-    g.set("", q -> selector.apply(q));
+  private static final int IMG_WIDTH = 8000;
+  private static final int IMG_HEIGHT = 800;
+  private static IMap<String, IMap<String, GraphMeasureView>> graphMeasures = new EMap();
+  private static IMap<String, CategoryItemRenderer> renderers = new EMap<>();
+
+  static {
+    IMap<String, GraphMeasureView> g;
+String key;
+
+    // calc time
+    key = "Calculation time (s)";
+    g = buildSimpleDisplaySet(q -> q.getSecondStats().getDuration());
+    graphMeasures.set(key, g);
+    renderers.set(key, new LineAndShapeRenderer());
+
+//    key = "Movements / hour (together)";
+//    g = new EMap<>();
+//    g.set("Movements / hour",
+//        new GraphMeasureView(
+//            q->q.getPlanes().getFinishedPlanes().getTogether(),
+//            q->((MinMaxMeanCountCurrentView)q).getMean()));
+//    graphMeasures.set(key, g);
+//    renderers.set(key, new BarRenderer());
+
+    // max planes in sim (together)
+    key = "Planes in sim (together)";
+    g = new EMap<>();
+    g.set("Number of planes",
+        new GraphMeasureView(
+            q->q.getPlanes().getPlanesInSim().getTogether(),
+            q->((MinMaxMeanCountCurrentView)q).getMaximum()));
+    graphMeasures.set(key, g);
+    renderers.set(key, new BarRenderer());
+
+    // max planes in sim (arrs / deps)
+    key = "Planes in sim (arrivals / departures)";
+    g = new EMap<>();
+    g.set("Number of arrivals",
+        new GraphMeasureView(
+            q->q.getPlanes().getPlanesInSim().getArrivals(),
+            q->((MinMaxMeanCountCurrentView)q).getMaximum()));
+    g.set("Number of departures",
+        new GraphMeasureView(
+            q->q.getPlanes().getPlanesInSim().getDepartures(),
+            q->((MinMaxMeanCountCurrentView)q).getMaximum()));
+    graphMeasures.set(key, g);
+    renderers.set(key, new StackedBarRenderer());
+
+    key = "Planes under APP (together)";
+    g = new EMap<>();
+    g.set("Number of planes",
+        new GraphMeasureView(
+            q->q.getPlanes().getPlanesUnderApp().getTogether(),
+            q->((MinMaxMeanCountCurrentView)q).getMaximum()));
+    graphMeasures.set(key, g);
+    renderers.set(key, new BarRenderer());
+
+    key = "Planes under APP (arrivals / departures)";
+    g = new EMap<>();
+    g.set("Number of arrivals",
+        new GraphMeasureView(
+            q->q.getPlanes().getPlanesUnderApp().getArrivals(),
+            q->((MinMaxMeanCountCurrentView)q).getMaximum()));
+    g.set("Number of departures",
+        new GraphMeasureView(
+            q->q.getPlanes().getPlanesUnderApp().getDepartures(),
+            q->((MinMaxMeanCountCurrentView)q).getMaximum()));
+    graphMeasures.set(key, g);
+    renderers.set(key, new StackedBarRenderer());
+
+//    g = buildPlanesMaxiumumDisplaySet(q -> q.getPlanes().getPlanesUnderApp());
+//    graphMeasures.set("Planes under APP", g);
+//    renderers.set("Planes under APP", new BarRenderer());
+//    g = buildPlanesDisplaySet(q -> q.getPlanes().getFinishedPlanes());
+//    graphMeasures.set("Finished planes", g);
+//    g = buildPlanesDisplaySet(q -> q.getPlanes().getDelay());
+//    graphMeasures.set("Delay", g);
+  }
+
+
+  private static EMap<String, GraphMeasureView> buildSimpleDisplaySet(Function<StatsView, DataView> selector) {
+    EMap<String, GraphMeasureView> g = new EMap<>();
+    g.set("",
+        new GraphMeasureView(
+            q -> selector.apply(q),
+            q -> ((MeanView) q).getMean()));
     return g;
   }
 
-  private static <T extends DataView> EMap<String, Function<StatsView, DataView>> buildPlanesDisplaySet(Function<StatsView, PlanesSubStats<T>> selector) {
-    EMap<String, Function<StatsView, DataView>> g = new EMap<>();
-    g.set("Arrivals", q -> selector.apply(q).getArrivals());
-    g.set("Departures", q -> selector.apply(q).getDepartures());
-    g.set("Together", q -> selector.apply(q).getTogether());
+  private static <T extends DataView> EMap<String, GraphMeasureView> buildPlanesMaxiumumDisplaySet(Function<StatsView, PlanesSubStats<T>> selector) {
+    EMap<String, GraphMeasureView> g = new EMap<>();
+    g.set("Arrivals (max)",
+        new GraphMeasureView(
+            q -> selector.apply(q).getArrivals(),
+            q->((MinMaxMeanCountCurrentView)q).getMaximum()));
+    g.set("Departures (max)",
+        new GraphMeasureView(
+            q -> selector.apply(q).getDepartures(),
+            q->((MinMaxMeanCountCurrentView)q).getMaximum()));
+    g.set("Together (max)",
+        new GraphMeasureView(
+            q -> selector.apply(q).getTogether(),
+            q->((MinMaxMeanCountCurrentView)q).getMaximum()));
     return g;
   }
 
@@ -89,10 +174,11 @@ public class StatsGraphPanel extends JPanel {
   private void cmbMeasure_selectionChanged(XComboBoxExtender<String> source) {
     String key = source.getSelectedItem();
     GraphDataSet gds = buildGraphDataSet(key);
-    showGraphDataSet(gds);
+    CategoryItemRenderer renderer = renderers.get(key);
+    showGraphDataSet(gds, renderer);
   }
 
-  private void showGraphDataSet(GraphDataSet gds) {
+  private void showGraphDataSet(GraphDataSet gds, CategoryItemRenderer renderer) {
     DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 
     for (GraphDataItem item : gds.items) {
@@ -106,7 +192,6 @@ public class StatsGraphPanel extends JPanel {
         CategoryLabelPositions.createUpRotationLabelPositions(
             90d * Math.PI / 180d));
     ValueAxis rangeAxis = new NumberAxis("Mean");
-    CategoryItemRenderer renderer = new StackedBarRenderer();
 
     renderer.setBaseItemLabelGenerator(
         new StandardCategoryItemLabelGenerator());
@@ -118,7 +203,7 @@ public class StatsGraphPanel extends JPanel {
         dataset, domainAxis, rangeAxis, renderer);
     JFreeChart chart = new JFreeChart(gds.title, plot);
 
-    Dimension d = new Dimension(IMG_WIDTH , IMG_HEIGHT);
+    Dimension d = new Dimension(IMG_WIDTH, IMG_HEIGHT);
     BufferedImage bufferedImage = chart.createBufferedImage(d.width, d.height);
 
     pnlImage.setPreferredSize(d);
@@ -135,7 +220,7 @@ public class StatsGraphPanel extends JPanel {
 
   private GraphDataSet buildGraphDataSet(String key) {
     GraphDataSet gds = new GraphDataSet();
-    IMap<String, Function<StatsView, DataView>> g = graphMeasures.get(key);
+    IMap<String, GraphMeasureView> g = graphMeasures.get(key);
 
     IList<String> keys = g.getKeys().toList();
 
@@ -152,9 +237,8 @@ public class StatsGraphPanel extends JPanel {
       gdi.x = statsView.getFromTime().toString();
       gdi.ys = new double[keys.size()];
       for (int i = 0; i < keys.size(); i++) {
-        DataView dv = g.get(keys.get(i)).apply(statsView);
-        MeanView mv = (MeanView) dv;
-        double val = mv.getMean();
+        DataView dv = g.get(keys.get(i)).dataViewSelector.apply(statsView);
+        double val = g.get(keys.get(i)).valueSelector.apply(dv);
         gdi.ys[i] = val;
       }
       gds.items.add(gdi);
