@@ -46,7 +46,7 @@ public class JAtcSim {
   private static final Traffic enginSpecificTraffic =
       // new eng.jAtcSim.lib.traffic.TestTrafficOneApproach();
       // new eng.jAtcSim.lib.traffic.TestTrafficOneDeparture();
-       null;
+      null;
   private static AppSettings appSettings;
 
   private static FrmLog frmLog;
@@ -80,29 +80,43 @@ public class JAtcSim {
     Acc.log().writeLine(ApplicationLog.eType.info, "Loading saved simulation game");
 
     IMap<String, Object> map = new EMap<>();
-    Game g = Game.load(xmlFileName, map);
 
-    // enable duplicates
+    FrmStartupProgress frm = new FrmStartupProgress(16);
+    frm.setVisible(true);
+
+    Game g;
+
     try {
-      g.getSimulation().getArea().checkForDuplicits();
+
+      g = Game.load(xmlFileName, map);
+
+      // enable duplicates
+      try {
+        g.getSimulation().getArea().checkForDuplicits();
+      } catch (Exception ex) {
+        throw new EApplicationException("Some element in source XML files is not unique. Some of the input XML files is not valid.", ex);
+      }
+
+      Acc.log().writeLine(ApplicationLog.eType.info, "Initializing sound environment");
+      // sound
+      SoundManager.init(appSettings.soundFolder.toString());
+
+      Acc.log().writeLine(ApplicationLog.eType.info, "Starting a GUI");
+
     } catch (Exception ex) {
-      throw new EApplicationException("Some element in source XML files is not unique. Some of the input XML files is not valid.", ex);
+      throw ex;
+    } finally {
+      frm.setVisible(false);
     }
 
-    Acc.log().writeLine(ApplicationLog.eType.info, "Initializing sound environment");
-    // sound
-    SoundManager.init(appSettings.soundFolder.toString());
-
-    Acc.log().writeLine(ApplicationLog.eType.info, "Starting a GUI");
     // starting pack & simulation
     String packType = startupSettings.radar.packClass;
-    Pack simPack
-        = createPackInstance(packType);
-
+    Pack simPack = createPackInstance(packType);
     simPack.initPack(g, appSettings);
     simPack.startPack();
 
     simPack.applyStoredData(map);
+
   }
 
   public static void startSimulation(StartupSettings startupSettings) {

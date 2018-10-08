@@ -149,6 +149,7 @@ public class Game {
   public static Game load(String fileName, IMap<String, Object> customData) {
     Game ret = new Game();
 
+    Acc.log().writeLine(ApplicationLog.eType.info, "Loading xml document...");
     XDocument doc;
     try {
       doc = XDocument.load(fileName);
@@ -158,35 +159,50 @@ public class Game {
 
     XElement root = doc.getRoot();
 
+    Acc.log().writeLine(ApplicationLog.eType.info, "Loading area...");
     LoadSave.loadField(root, ret, "areaSource");
+    Acc.log().writeLine(ApplicationLog.eType.info, "Loading airplane types...");
     LoadSave.loadField(root, ret, "airplaneTypesSource");
+    Acc.log().writeLine(ApplicationLog.eType.info, "Loading fleets...");
     LoadSave.loadField(root, ret, "fleetsSource");
+    Acc.log().writeLine(ApplicationLog.eType.info, "Loading traffic...");
     LoadSave.loadField(root, ret, "trafficSource");
+    Acc.log().writeLine(ApplicationLog.eType.info, "Loading weather...");
     LoadSave.loadField(root, ret, "weatherSource");
 
-
+    Acc.log().writeLine(ApplicationLog.eType.info, "Initializing area...");
     ret.areaSource.init();
+    Acc.log().writeLine(ApplicationLog.eType.info, "Initializing airplane types...");
     ret.airplaneTypesSource.init();
+    Acc.log().writeLine(ApplicationLog.eType.info, "Initializing fleets...");
     ret.fleetsSource.init(ret.airplaneTypesSource.getContent());
+    Acc.log().writeLine(ApplicationLog.eType.info, "Initializing traffic...");
     ret.trafficSource.init();
+    Acc.log().writeLine(ApplicationLog.eType.info, "Initializing weather...");
     ret.weatherSource.init();
 
+    Acc.log().writeLine(ApplicationLog.eType.info, "Creating the simulation...");
     ret.simulation = new Simulation(
         ret.areaSource.getContent(), ret.airplaneTypesSource.getContent(),
         ret.fleetsSource.getContent(), ret.trafficSource.getContent(),
         ret.areaSource.getActiveAirport(),
         ret.weatherSource.getContent(), new ETime(0), 0, 0,
         new TrafficManager.TrafficManagerSettings(false, 0, 0), 5);
+
+    Acc.log().writeLine(ApplicationLog.eType.info, "Initializing the simulation...");
     ret.simulation.init();
 
     XElement tmp = root.getChild("simulation");
+    Acc.log().writeLine(ApplicationLog.eType.info, "Loading the simulation (may take a while)...");
     ret.simulation.load(tmp);
 
+    Acc.log().writeLine(ApplicationLog.eType.info, "Loading radar shortcuts...");
     {
       IMap<String, String> shortcuts = (IMap<String, String>) LoadSave.loadFromElement(root, "shortcuts", IMap.class);
       ret.simulation.setCommandShortcuts(shortcuts);
     }
 
+    Acc.log().writeLine(ApplicationLog.eType.info, "Loading custom data...");
     {
       XElement elm = root.getChild("custom");
       for (XElement child : elm.getChildren()) {
@@ -252,3 +268,4 @@ public class Game {
     return simulation;
   }
 }
+
