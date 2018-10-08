@@ -255,6 +255,10 @@ public class PlaneResponsibilityManager {
       case twr2app:
         map.set(plane, eState.twr);
         break;
+      case ctr2appReady:
+      case twr2appReady:
+        // intentionally blank
+        break;
       default:
         throw new EEnumValueUnsupportedException(s);
     }

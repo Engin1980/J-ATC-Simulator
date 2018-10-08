@@ -1,5 +1,6 @@
 package eng.jAtcSim.lib.managers;
 
+import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.global.ETime;
 
@@ -8,6 +9,7 @@ public class EmergencyManager {
   private ETime nextEmergencyTime;
   private double emergencyPerDayProbability;
 
+  @XmlConstructor
   private EmergencyManager() {
   }
 

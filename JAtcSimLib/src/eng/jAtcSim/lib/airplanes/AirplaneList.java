@@ -6,6 +6,7 @@
 package eng.jAtcSim.lib.airplanes;
 
 import eng.eSystem.collections.EDistinctList;
+import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
 
 /**
  *
@@ -17,6 +18,7 @@ public class AirplaneList extends EDistinctList<Airplane> {
     super(duplicitCheckEnabled ? Behavior.exception : Behavior.ignore);
   }
 
+  @XmlConstructor
   private AirplaneList() {
   }
 }

@@ -2,6 +2,7 @@ package eng.jAtcSim.lib.world.approaches;
 
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
+import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
 import eng.jAtcSim.lib.speaking.IFromAtc;
 import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.world.RunwayThreshold;
@@ -20,6 +21,7 @@ public class CurrentApproachInfo {
   private boolean usingIafRoute;
   private int initialAltitude;
 
+  @XmlConstructor
   private CurrentApproachInfo() {
   }
 

@@ -6,6 +6,8 @@
 
 package eng.jAtcSim.lib.global;
 
+import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
+
 /**
  *
  * @author Marek
@@ -21,6 +23,7 @@ public class Restriction {
   public final eDirection direction;
   public final int value;
 
+  @XmlConstructor
   private Restriction() {
     direction = eDirection.exactly;
     value = 0;

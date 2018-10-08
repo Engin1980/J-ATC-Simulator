@@ -6,6 +6,7 @@
 
 package eng.jAtcSim.lib.speaking.fromAtc.commands;
 
+import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
 import eng.jAtcSim.lib.world.Navaid;
 
 /**
@@ -14,6 +15,7 @@ import eng.jAtcSim.lib.world.Navaid;
  */
 public class ProceedDirectCommand extends ToNavaidCommand {
 
+  @XmlConstructor
   private ProceedDirectCommand() {
     super();
   }

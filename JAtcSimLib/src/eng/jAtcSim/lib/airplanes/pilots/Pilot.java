@@ -17,6 +17,7 @@ import eng.eSystem.exceptions.ERuntimeException;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.utilites.ConversionUtils;
 import eng.eSystem.utilites.EnumUtils;
+import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
 import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
@@ -64,6 +65,7 @@ public class Pilot {
     public ETime divertTime;
     public int lastAnnouncedMinute = Integer.MAX_VALUE;
 
+    @XmlConstructor
     private DivertInfo() {
     }
 

@@ -6,6 +6,7 @@ import eng.eSystem.events.EventAnonymousSimple;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
+import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
 import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
@@ -62,6 +63,7 @@ public class TowerAtc extends ComputerAtc {
       return ret;
     }
 
+    @XmlConstructor
     private RunwayCheck() {
     }
 
@@ -281,9 +283,8 @@ public class TowerAtc extends ComputerAtc {
     }
 
     inUseInfo = new RunwaysInUseInfo();
-    inUseInfo.scheduled = getSuggestedThresholds();
-    inUseInfo.scheduler = new SchedulerForAdvice(Acc.now().clone(), RWY_CHANGE_ANNOUNCE_INTERVALS);
-    processRunwayChangeBackground();
+    inUseInfo.current = getSuggestedThresholds();
+    inUseInfo.scheduler = null;
   }
 
   public RunwayConfiguration getRunwayConfigurationInUse() {

@@ -1,6 +1,7 @@
 package eng.jAtcSim.radarBase;
 
 import eng.eSystem.geo.Coordinate;
+import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
 
 public class RadarViewPort {
   private Coordinate topLeft;
@@ -11,6 +12,7 @@ public class RadarViewPort {
     this.widthInNm = widthInNm;
   }
 
+  @XmlConstructor
   private RadarViewPort() {
   }
 

@@ -6,6 +6,7 @@
 
 package eng.jAtcSim.lib.speaking.fromAtc.commands.afters;
 
+import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
 import eng.jAtcSim.lib.world.Navaid;
 
 /**
@@ -15,6 +16,7 @@ import eng.jAtcSim.lib.world.Navaid;
 public class AfterNavaidCommand extends AfterCommand {
   private final Navaid navaid;
 
+  @XmlConstructor
   private AfterNavaidCommand() {
     navaid = null;
   }

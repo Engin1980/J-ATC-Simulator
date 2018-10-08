@@ -3,6 +3,7 @@ package eng.jAtcSim.lib.global;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
+import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
 import eng.jAtcSim.lib.Acc;
 
 import java.util.Collection;
@@ -28,6 +29,7 @@ public class DelayedList<T> {
     private int currentDelay = 0;
     private List<DelayedItem<T>> inner = new LinkedList<>();
 
+    @XmlConstructor
     private DelayedList() {
       minimalDelay = 0;
       maximalDelay = 0;

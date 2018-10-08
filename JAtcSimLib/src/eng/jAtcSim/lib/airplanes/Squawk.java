@@ -5,6 +5,8 @@
  */
 package eng.jAtcSim.lib.airplanes;
 
+import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
+
 import java.util.Arrays;
 
 /**
@@ -15,6 +17,7 @@ public class Squawk {
 
   private final char[] code;
 
+  @XmlConstructor
   private Squawk() {
     this(new char[]{'7', '7','7','7'});
   }

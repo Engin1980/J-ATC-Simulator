@@ -4,6 +4,8 @@ import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.geo.Coordinate;
+import eng.eSystem.geo.CoordinateValue;
 import eng.eSystem.xmlSerialization.Log;
 import eng.eSystem.xmlSerialization.XmlSerializer;
 import eng.eSystem.xmlSerialization.XmlSettings;
@@ -56,8 +58,10 @@ public class LoadSave {
     sett.forType(PlaneSwitchMessage.class).setFactory(new PlaneSwitchMessageIC());
     sett.forType(RunwayCheck.class).setFactory(new RunwayCheckIC());
     sett.forType(StringResponse.class).setFactory(new StringResponseIC());
+    sett.forType(Coordinate.class).setFactory(new CoordinateFactory());
+    sett.forType(CoordinateValue.class).setFactory(new CoordinateValueFactory());
 
-    sett.setLogLevel(Log.LogLevel.info);
+    sett.setLogLevel(Log.LogLevel.warning);
     ser = new XmlSerializer(sett);
   }
 
@@ -186,5 +190,21 @@ class StringResponseIC implements IFactory<StringResponse> {
   @Override
   public StringResponse createInstance() {
     return new StringResponse(false, "");
+  }
+}
+
+class CoordinateFactory implements IFactory<Coordinate>{
+
+  @Override
+  public Coordinate createInstance() {
+    return new Coordinate(Double.NaN, Double.NaN);
+  }
+}
+
+class CoordinateValueFactory implements IFactory<CoordinateValue>{
+
+  @Override
+  public CoordinateValue createInstance() {
+    return new CoordinateValue(Double.NaN);
   }
 }

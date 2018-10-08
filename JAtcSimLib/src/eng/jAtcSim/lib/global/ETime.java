@@ -5,6 +5,8 @@
  */
 package eng.jAtcSim.lib.global;
 
+import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
+
 import java.time.LocalTime;
 import java.util.Calendar;
 
@@ -18,6 +20,7 @@ public class ETime implements Comparable<ETime> {
   private static final int DAY_SECONDS = HOUR_SECONDS * 24;
   private int value = 0;
 
+  @XmlConstructor
   private ETime(){
     this(0);
   }

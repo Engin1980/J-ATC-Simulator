@@ -5,6 +5,7 @@
  */
 package eng.jAtcSim.lib.speaking.fromAtc.commands;
 
+import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
 import eng.jAtcSim.lib.world.Navaid;
 import eng.jAtcSim.lib.world.PublishedHold;
 
@@ -18,6 +19,7 @@ public class HoldCommand extends ToNavaidCommand {
   private final boolean leftTurn;
   private final PublishedHold publishedHold;
 
+  @XmlConstructor
   private HoldCommand() {
     super();
     this.inboundHeading = 0;

@@ -11,6 +11,7 @@ import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.utilites.ConversionUtils;
+import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.pilots.Pilot;
 import eng.eSystem.geo.Coordinate;
@@ -339,6 +340,7 @@ class AFItem {
   public final AfterCommand antecedent;
   public final IAtcCommand consequent;
 
+  @XmlConstructor
   private AFItem() {
     antecedentDerivativeSourceHex = 0;
     consequentHex = 0;

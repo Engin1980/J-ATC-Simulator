@@ -1105,6 +1105,7 @@ class InertialValue {
   private double inertia;
   private Double minimum;
 
+  @XmlConstructor
   private InertialValue() {
     maxPositiveInertiaChange = Double.MIN_VALUE;
     maxNegativeInertiaChange = Double.MIN_VALUE;
@@ -1178,6 +1179,7 @@ class HeadingInertialValue {
     buildHashMap();
   }
 
+  @XmlConstructor
   private HeadingInertialValue() {
     maxInertia = Double.MIN_VALUE;
     maxInertiaChange = Double.MIN_VALUE;
