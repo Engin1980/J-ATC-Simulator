@@ -24,9 +24,7 @@ public class MoodStatsItem  {
       max =Math.max(max, mood.getPoints());
       sum += mood.getPoints();
     }
-    double mean = moods.isEmpty() ? 0 : sum / moods.size();
-
-    DataView ret = new DataView(min, max, mean, moods.size(), 0);
+    DataView ret = new DataView(min, max, sum, moods.size(), 0);
 
     return ret;
   }

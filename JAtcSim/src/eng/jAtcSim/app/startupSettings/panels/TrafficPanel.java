@@ -11,21 +11,15 @@ import eng.eSystem.utilites.awt.ComponentUtils;
 import eng.jAtcSim.app.extenders.*;
 import eng.jAtcSim.app.startupSettings.StartupSettings;
 import eng.jAtcSim.frmPacks.shared.FrmTrafficBarGraph;
-import eng.jAtcSim.frmPacks.shared.FrmTrafficHistogram;
-import eng.jAtcSim.lib.global.ETime;
 import eng.jAtcSim.lib.global.newSources.TrafficSource;
-import eng.jAtcSim.lib.global.newSources.UserTrafficSource;
 import eng.jAtcSim.lib.global.newSources.XmlTrafficSource;
 import eng.jAtcSim.lib.traffic.GenericTraffic;
 import eng.jAtcSim.lib.traffic.Traffic;
 import eng.jAtcSim.lib.traffic.fleets.Fleets;
 import eng.jAtcSim.shared.LayoutManager;
-import jdk.internal.org.objectweb.asm.util.TraceFieldVisitor;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
-import java.io.File;
-import java.io.IOException;
 import java.util.Arrays;
 
 public class TrafficPanel extends JStartupPanel {

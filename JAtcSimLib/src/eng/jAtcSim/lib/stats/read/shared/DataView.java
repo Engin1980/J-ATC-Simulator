@@ -5,6 +5,7 @@ public class DataView {
   protected double maximum;
   protected double mean;
   protected double count;
+  protected double sum;
   protected double current;
 
   public DataView(DataView other) {
@@ -12,13 +13,14 @@ public class DataView {
     this.maximum = other.maximum;
     this.mean = other.mean;
     this.count = other.count;
+    this.sum = other.sum;
     this.current = other.current;
   }
 
-  public DataView(double minimum, double maximum, double mean, double count, double current) {
+  public DataView(double minimum, double maximum, double sum, double count, double current) {
     this.minimum = minimum;
     this.maximum = maximum;
-    this.mean = mean;
+    this.mean = count == 0 ?  0 : sum / count;
     this.count = count;
     this.current = current;
   }

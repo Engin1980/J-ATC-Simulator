@@ -9,4 +9,6 @@ public class CountMeanView extends MeanView {
   public int getCount() {
     return (int) super.count;
   }
+
+  public double getSum() { return super.sum;}
 }
