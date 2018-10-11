@@ -28,6 +28,6 @@ public class DataRecord {
 
   public DataView toView() {
     double mean = count == 0 ? 0 : sum / count;
-    return new DataView(minimum, maximum, mean, count, last);
+    return new DataView(minimum, maximum, sum, count, last);
   }
 }

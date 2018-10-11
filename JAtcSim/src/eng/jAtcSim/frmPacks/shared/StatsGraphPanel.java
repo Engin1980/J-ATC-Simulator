@@ -17,10 +17,9 @@ import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.labels.StandardCategoryItemLabelGenerator;
 import org.jfree.chart.plot.CategoryPlot;
-import org.jfree.chart.renderer.category.BarRenderer;
-import org.jfree.chart.renderer.category.CategoryItemRenderer;
-import org.jfree.chart.renderer.category.LineAndShapeRenderer;
-import org.jfree.chart.renderer.category.StackedBarRenderer;
+import org.jfree.chart.renderer.category.*;
+import org.jfree.chart.renderer.xy.HighLowRenderer;
+import org.jfree.chart.renderer.xy.XYAreaRenderer;
 import org.jfree.data.category.DefaultCategoryDataset;
 
 import javax.swing.*;
@@ -44,10 +43,13 @@ public class StatsGraphPanel extends JPanel {
   private static final int IMG_HEIGHT = 800;
   private static IMap<String, IMap<String, GraphMeasureView>> graphMeasures = new EMap();
   private static IMap<String, CategoryItemRenderer> renderers = new EMap<>();
+  private XComboBoxExtender<String> cmbMeasure;
+  private ImagePanel pnlImage;
+  private IReadOnlyList<StatsView> statsViews;
 
   static {
     IMap<String, GraphMeasureView> g;
-String key;
+    String key;
 
     // calc time
     key = "Calculation time (s)";
@@ -60,7 +62,7 @@ String key;
 //    g.set("Movements / hour",
 //        new GraphMeasureView(
 //            q->q.getPlanes().getFinishedPlanes().getTogether(),
-//            q->((MinMaxMeanCountCurrentView)q).getMean()));
+//            q->((MinMaxMeanCountCurrentView)q).getSum() / ));
 //    graphMeasures.set(key, g);
 //    renderers.set(key, new BarRenderer());
 
@@ -69,8 +71,8 @@ String key;
     g = new EMap<>();
     g.set("Number of planes",
         new GraphMeasureView(
-            q->q.getPlanes().getPlanesInSim().getTogether(),
-            q->((MinMaxMeanCountCurrentView)q).getMaximum()));
+            q -> q.getPlanes().getPlanesInSim().getTogether(),
+            q -> ((MinMaxMeanCountCurrentView) q).getMaximum()));
     graphMeasures.set(key, g);
     renderers.set(key, new BarRenderer());
 
@@ -79,21 +81,21 @@ String key;
     g = new EMap<>();
     g.set("Number of arrivals",
         new GraphMeasureView(
-            q->q.getPlanes().getPlanesInSim().getArrivals(),
-            q->((MinMaxMeanCountCurrentView)q).getMaximum()));
+            q -> q.getPlanes().getPlanesInSim().getArrivals(),
+            q -> ((MinMaxMeanCountCurrentView) q).getMaximum()));
     g.set("Number of departures",
         new GraphMeasureView(
-            q->q.getPlanes().getPlanesInSim().getDepartures(),
-            q->((MinMaxMeanCountCurrentView)q).getMaximum()));
+            q -> q.getPlanes().getPlanesInSim().getDepartures(),
+            q -> ((MinMaxMeanCountCurrentView) q).getMaximum()));
     graphMeasures.set(key, g);
-    renderers.set(key, new StackedBarRenderer());
+    renderers.set(key, new LineRenderer3D());
 
     key = "Planes under APP (together)";
     g = new EMap<>();
     g.set("Number of planes",
         new GraphMeasureView(
-            q->q.getPlanes().getPlanesUnderApp().getTogether(),
-            q->((MinMaxMeanCountCurrentView)q).getMaximum()));
+            q -> q.getPlanes().getPlanesUnderApp().getTogether(),
+            q -> ((MinMaxMeanCountCurrentView) q).getMaximum()));
     graphMeasures.set(key, g);
     renderers.set(key, new BarRenderer());
 
@@ -101,12 +103,12 @@ String key;
     g = new EMap<>();
     g.set("Number of arrivals",
         new GraphMeasureView(
-            q->q.getPlanes().getPlanesUnderApp().getArrivals(),
-            q->((MinMaxMeanCountCurrentView)q).getMaximum()));
+            q -> q.getPlanes().getPlanesUnderApp().getArrivals(),
+            q -> ((MinMaxMeanCountCurrentView) q).getMaximum()));
     g.set("Number of departures",
         new GraphMeasureView(
-            q->q.getPlanes().getPlanesUnderApp().getDepartures(),
-            q->((MinMaxMeanCountCurrentView)q).getMaximum()));
+            q -> q.getPlanes().getPlanesUnderApp().getDepartures(),
+            q -> ((MinMaxMeanCountCurrentView) q).getMaximum()));
     graphMeasures.set(key, g);
     renderers.set(key, new StackedBarRenderer());
 
@@ -118,7 +120,6 @@ String key;
 //    g = buildPlanesDisplaySet(q -> q.getPlanes().getDelay());
 //    graphMeasures.set("Delay", g);
   }
-
 
   private static EMap<String, GraphMeasureView> buildSimpleDisplaySet(Function<StatsView, DataView> selector) {
     EMap<String, GraphMeasureView> g = new EMap<>();
@@ -134,25 +135,25 @@ String key;
     g.set("Arrivals (max)",
         new GraphMeasureView(
             q -> selector.apply(q).getArrivals(),
-            q->((MinMaxMeanCountCurrentView)q).getMaximum()));
+            q -> ((MinMaxMeanCountCurrentView) q).getMaximum()));
     g.set("Departures (max)",
         new GraphMeasureView(
             q -> selector.apply(q).getDepartures(),
-            q->((MinMaxMeanCountCurrentView)q).getMaximum()));
+            q -> ((MinMaxMeanCountCurrentView) q).getMaximum()));
     g.set("Together (max)",
         new GraphMeasureView(
             q -> selector.apply(q).getTogether(),
-            q->((MinMaxMeanCountCurrentView)q).getMaximum()));
+            q -> ((MinMaxMeanCountCurrentView) q).getMaximum()));
     return g;
   }
-
-  private XComboBoxExtender<String> cmbMeasure;
-  private ImagePanel pnlImage;
-  private IReadOnlyList<StatsView> statsViews;
 
   public StatsGraphPanel() {
     initComponents();
     layoutComponents();
+  }
+
+  public void init(Statistics stats) {
+    this.statsViews = stats.createViews();
   }
 
   private void layoutComponents() {
@@ -212,10 +213,6 @@ String key;
     pnlImage.setImage(bufferedImage);
     pnlImage.invalidate();
     pnlImage.repaint();
-  }
-
-  public void init(Statistics stats) {
-    this.statsViews = stats.createViews();
   }
 
   private GraphDataSet buildGraphDataSet(String key) {
