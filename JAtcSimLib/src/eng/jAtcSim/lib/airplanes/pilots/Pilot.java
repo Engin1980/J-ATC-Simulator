@@ -6,6 +6,7 @@
 package eng.jAtcSim.lib.airplanes.pilots;
 
 import com.sun.istack.internal.Nullable;
+import com.sun.javafx.property.JavaBeanAccessHelper;
 import eng.eSystem.EStringBuilder;
 import eng.eSystem.Tuple;
 import eng.eSystem.collections.IList;
@@ -174,10 +175,10 @@ public class Pilot {
         else if (Pilot.this.parent.isArrival() == false)
           Pilot.this.parent.getMood().experience(Mood.DepartureExperience.leveledFlight);
       }
-      if (Pilot.this.parent.isArrival()){
+      if (Pilot.this.parent.isArrival()) {
         if (targetAltitude > Pilot.this.parent.getAltitude() && !Pilot.this.isAfterGoAround)
           Pilot.this.parent.getMood().experience(Mood.SharedExperience.incorrectAltitudeChange);
-      }else {
+      } else {
         if (targetAltitude < Pilot.this.parent.getAltitude())
           Pilot.this.parent.getMood().experience(Mood.SharedExperience.incorrectAltitudeChange);
       }
@@ -702,7 +703,7 @@ public class Pilot {
     }
 
     public void goAround(GoingAroundNotification.GoAroundReason reason) {
-      Pilot.this.isAfterGoAround=true;
+      Pilot.this.isAfterGoAround = true;
       boolean isAtcFail = EnumUtils.is(reason,
           new GoingAroundNotification.GoAroundReason[]{
               GoingAroundNotification.GoAroundReason.lostTrafficSeparationInApproach,
@@ -1263,17 +1264,19 @@ public class Pilot {
     recorder.logPostponedAfterSpeeches(this.afterCommands);
   }
 
-  private void printAfterCommands() {
-    System.out.println("## -- route ");
-    for (Tuple<AfterCommand, IAtcCommand> afterCommandIAtcCommandTuple : afterCommands.getAsList(AfterCommandList.Type.route)) {
-      System.out.println("  IF " + afterCommandIAtcCommandTuple.getA().toString());
-      System.out.println("  THEN " + afterCommandIAtcCommandTuple.getB().toString());
-    }
-    System.out.println("## -- ex ");
-    for (Tuple<AfterCommand, IAtcCommand> afterCommandIAtcCommandTuple : afterCommands.getAsList(AfterCommandList.Type.extensions)) {
-      System.out.println("  IF " + afterCommandIAtcCommandTuple.getA().toString());
-      System.out.println("  THEN " + afterCommandIAtcCommandTuple.getB().toString());
-    }
+  public String getStatusAsString() {
+    if (behavior instanceof BasicBehavior)
+      return behavior instanceof ArrivalBehavior ? "Arriving" : "Departing";
+    else if (behavior instanceof HoldBehavior)
+      return "Holding";
+    else if (behavior instanceof ApproachBehavior)
+      return "In approach " + this.tryGetAssignedApproach().getThreshold().getName();
+    else if (behavior instanceof HoldingPointBehavior)
+      return "Holding point";
+    else if (behavior instanceof TakeOffBehavior)
+      return "Take-off";
+    else
+      return "???";
   }
 
   public Atc getTunedAtc() {
@@ -1357,6 +1360,19 @@ public class Pilot {
 
   public boolean hasRadarContact() {
     return secondsWithoutRadarContact == 0;
+  }
+
+  private void printAfterCommands() {
+    System.out.println("## -- route ");
+    for (Tuple<AfterCommand, IAtcCommand> afterCommandIAtcCommandTuple : afterCommands.getAsList(AfterCommandList.Type.route)) {
+      System.out.println("  IF " + afterCommandIAtcCommandTuple.getA().toString());
+      System.out.println("  THEN " + afterCommandIAtcCommandTuple.getB().toString());
+    }
+    System.out.println("## -- ex ");
+    for (Tuple<AfterCommand, IAtcCommand> afterCommandIAtcCommandTuple : afterCommands.getAsList(AfterCommandList.Type.extensions)) {
+      System.out.println("  IF " + afterCommandIAtcCommandTuple.getA().toString());
+      System.out.println("  THEN " + afterCommandIAtcCommandTuple.getB().toString());
+    }
   }
 
   private void setHoldBehavior(Navaid navaid, int inboundRadial, boolean leftTurn) {

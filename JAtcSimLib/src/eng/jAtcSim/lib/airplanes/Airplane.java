@@ -127,6 +127,10 @@ public class Airplane implements IMessageParticipant {
     public boolean hasRadarContact() {
       return Airplane.this.pilot.hasRadarContact();
     }
+
+    public String status() {
+      return pilot.getStatusAsString();
+    }
   }
 
   public class Airplane4Pilot {

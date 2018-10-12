@@ -231,7 +231,27 @@ class FlightStripPanel extends JPanel {
     lbl.setForeground(stripSettings.textColor);
     cmps[5] = lbl;
 
-    LayoutManager.fillGridPanel(this, 3, 2, 0, cmps);
+    lbl= new JLabel(getStatus(ai));
+    lbl.setName("lblTextStatus");
+    lbl.setFont(normalFont);
+    lbl.setForeground(stripSettings.textColor);
+
+    JPanel pnlFlightDataPanel = LayoutManager.createGridPanel(3, 2, 0,cmps);
+    JPanel pnlTextStatus = LayoutManager.createBorderedPanel(16, 0, 0, 0, lbl);
+
+    Color color = this.getColor(ai);
+    pnlFlightDataPanel.setBackground(color);
+    pnlFlightDataPanel.setForeground(stripSettings.textColor);
+
+    pnlTextStatus.setBackground(color);
+    pnlTextStatus.setForeground(stripSettings.textColor);
+
+    LayoutManager.fillBoxPanel(this, LayoutManager.eHorizontalAlign.left, 0,
+        pnlFlightDataPanel, pnlTextStatus);
+  }
+
+  private String getStatus(Airplane.Airplane4Display ai) {
+    return ai.status();
   }
 
 
