@@ -1,15 +1,12 @@
 package eng.jAtcSim.lib.speaking.parsing.shortBlockParser.toPlaneParsers;
 
-import eng.eSystem.EStringBuilder;
 import eng.eSystem.collections.IList;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.afters.AfterHeadingCommand;
 import eng.jAtcSim.lib.speaking.parsing.shortBlockParser.SpeechParser;
 
-import java.util.Arrays;
-
 public class AfterHeadingParser extends SpeechParser<AfterHeadingCommand> {
 
-  private static final String[][] patterns = {{"AH", "\\d{1,3)"}};
+  private static final String[][] patterns = {{"AH", "\\d{1,3}"}};
 
   @Override
   public String[][] getPatterns() {
@@ -21,7 +18,7 @@ public class AfterHeadingParser extends SpeechParser<AfterHeadingCommand> {
     String ret = super.buildHelpString(
         "After heading",
         "AH {heading}",
-        "When (moreless) on specified heading",
+        "When (more-less) on specified heading",
         "AH 030");
     return ret;
   }
