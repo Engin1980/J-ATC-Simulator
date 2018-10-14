@@ -44,8 +44,6 @@ public interface ICanvas<T> {
 
   void drawTextBlock(List<String> lines, TextBlockLocation location, Font font, Color color);
 
-
-
   void clear(Color backColor);
 
   void beforeDraw();

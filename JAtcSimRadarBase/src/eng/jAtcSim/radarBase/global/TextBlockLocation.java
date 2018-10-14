@@ -2,11 +2,15 @@ package eng.jAtcSim.radarBase.global;
 
 public enum TextBlockLocation {
   topLeft,
-  topMiddle,
   topRight,
-  middleLeft,
-  middleRight,
   bottomLeft,
-  bottomMiddle,
-  bottomRight
+  bottomRight;
+
+  public boolean isBottom(){
+    return this == bottomLeft || this == bottomRight;
+  }
+
+  public boolean isRight(){
+    return this == bottomRight || this == topRight;
+  }
 }

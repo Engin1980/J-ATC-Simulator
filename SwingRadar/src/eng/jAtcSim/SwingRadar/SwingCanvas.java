@@ -1,7 +1,11 @@
 package eng.jAtcSim.SwingRadar;
 
+import eng.eSystem.Tuple;
+import eng.eSystem.collections.EList;
+import eng.eSystem.collections.IList;
 import eng.eSystem.events.Event;
 import eng.eSystem.events.EventSimple;
+import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.jAtcSim.radarBase.ICanvas;
 import eng.jAtcSim.radarBase.global.Color;
 import eng.jAtcSim.radarBase.global.Font;
@@ -17,6 +21,16 @@ import java.awt.geom.Rectangle2D;
 import java.util.List;
 
 public class SwingCanvas implements ICanvas<JComponent> {
+
+  static class EditablePoint {
+    public int x;
+    public int y;
+
+    public EditablePoint(int x, int y) {
+      this.x = x;
+      this.y = y;
+    }
+  }
 
   class MouseProcessor {
     private java.awt.Point dragStartPoint = null;
@@ -309,27 +323,142 @@ public class SwingCanvas implements ICanvas<JComponent> {
     }
   }
 
+//  @Override
+//  public void drawTextBlock(List<String> lines, TextBlockLocation location, Font font, Color color) {
+//    if (location == TextBlockLocation.bottomMiddle
+//        || location == TextBlockLocation.middleLeft
+//        || location == TextBlockLocation.middleRight
+//        || location == TextBlockLocation.topMiddle) {
+//      //TODO remove this, move this exception to somewhere shared and remove
+//      // dependency on JAtcSimLib
+//      throw new UnsupportedOperationException();
+//    }
+//    if (lines.isEmpty()) {
+//      return;
+//    }
+//
+//    g.setFont(Fonting.get(font));
+//    g.setColor(Coloring.get(color));
+//
+//    Point[] pts = getPositionsForText(lines, location);
+//    for (int i = 0; i < lines.size(); i++) {
+//      g.drawString(lines.get(i), pts[i].x, pts[i].y);
+//    }
+//  }
+
   @Override
   public void drawTextBlock(List<String> lines, TextBlockLocation location, Font font, Color color) {
-    if (location == TextBlockLocation.bottomMiddle
-        || location == TextBlockLocation.middleLeft
-        || location == TextBlockLocation.middleRight
-        || location == TextBlockLocation.topMiddle) {
-      //TODO remove this, move this exception to somewhere shared and remove
-      // dependency on JAtcSimLib
-      throw new UnsupportedOperationException();
-    }
     if (lines.isEmpty()) {
       return;
     }
+    if (
+        location == TextBlockLocation.topLeft
+            ||
+            location == TextBlockLocation.bottomRight
+        ||
+            location == TextBlockLocation.topRight
+    ) return;
 
     g.setFont(Fonting.get(font));
     g.setColor(Coloring.get(color));
 
-    Point[] pts = getPositionsForText(lines, location);
-    for (int i = 0; i < lines.size(); i++) {
-      g.drawString(lines.get(i), pts[i].x, pts[i].y);
+    int width = (int) g.getClipBounds().getWidth() - 16;
+    double maxLength = width * .45;
+    int height = (int) g.getClipBounds().getHeight() - 16;
+
+    IList<Tuple<EditablePoint, String>> positionedLines = getPositionedLines(lines, location, width, height, maxLength);
+    for (Tuple<EditablePoint, String> line : positionedLines) {
+      g.drawString(line.getB(), line.getA().x, line.getA().y);
     }
+  }
+
+  private IList<Tuple<EditablePoint, String>> getPositionedLines(List<String> lines, TextBlockLocation location,
+                                                                 int width, int height, double maxLength) {
+    IList<Tuple<EditablePoint, String>> ret = new EList<>();
+
+    FontMetrics fm = g.getFontMetrics();
+    Rectangle charBounds = fm.getStringBounds("X", g).getBounds();
+    int lineStep = charBounds.height;
+    int globalY = getGlobalY(location, lineStep, height);
+    for (String line : lines) {
+      IList<Tuple<EditablePoint, String>> tmp = convertToSublines(line, fm, maxLength);
+      adjustLineRelativePosition(tmp, location, width, lineStep);
+      globalY = adjustLineAbsolutePosition(tmp, location, globalY, lineStep);
+      ret.add(tmp);
+    }
+
+    return ret;
+  }
+
+  private int adjustLineAbsolutePosition(IList<Tuple<EditablePoint, String>> tmp, TextBlockLocation location, int globalY, int lineStep) {
+    int dir = location.isBottom() ? -1 : +1;
+    for (Tuple<EditablePoint, String> tmpItem : tmp) {
+      tmpItem.getA().y = globalY;
+      globalY += lineStep * dir;
+    }
+    return globalY;
+  }
+
+  private int getGlobalY(TextBlockLocation location, int lineStep, int maxHeight) {
+    if (location.isBottom())
+      return maxHeight;
+    else
+      return lineStep;
+  }
+
+  private void adjustLineRelativePosition(IList<Tuple<EditablePoint, String>> tmp, TextBlockLocation location, int maxWidth, int lineStep) {
+    int curY = 8 + lineStep;
+    for (Tuple<EditablePoint, String> tmpItem : tmp) {
+      tmpItem.getA().y = curY;
+      curY += lineStep;
+    }
+    if (location.isRight() == false)
+      for (Tuple<EditablePoint, String> tmpItem : tmp) {
+        tmpItem.getA().x = 8;
+      }
+    else
+      for (Tuple<EditablePoint, String> tmpItem : tmp) {
+        tmpItem.getA().x = maxWidth - tmpItem.getA().x;
+      }
+  }
+
+  private IList<Tuple<EditablePoint, String>> convertToSublines(String line, FontMetrics fm, double maxWidth) {
+    IList<Tuple<EditablePoint, String>> ret = new EList<>();
+    Rectangle r = fm.getStringBounds(line, g).getBounds();
+    if (r.width < maxWidth)
+      ret.add(new Tuple<>(new EditablePoint(r.width, 0), line));
+    else {
+      while (line.isEmpty() == false) {
+        Tuple<String, Integer> subLineInfo = getSubLineInWidth(line, fm, maxWidth);
+        ret.add(new Tuple<>(new EditablePoint(subLineInfo.getB(),0 ), subLineInfo.getA()));
+        line = line.substring(subLineInfo.getA().length());
+      }
+    }
+    return ret;
+  }
+
+  private Tuple<String, Integer> getSubLineInWidth(String line, FontMetrics fm, double maxWidth) {
+    Tuple<String, Integer> ret = new Tuple<>("", 0);
+    int spaceIndex = 0;
+    spaceIndex = line.indexOf(' ', spaceIndex);
+    while (true) {
+      if (spaceIndex < 0) {
+        // rest of the line is shorter than width
+        ret.setA(line);
+        ret.setB(fm.getStringBounds(line, g).getBounds().width);
+        break;
+      } else {
+        String tmpLine = line.substring(0, spaceIndex);
+        int tmpWidth = fm.getStringBounds(tmpLine, g).getBounds().width;
+        if (tmpWidth < maxWidth) {
+          ret.setA(tmpLine);
+          ret.setB(tmpWidth);
+        } else {
+          break;
+        }
+      }
+    }
+    return ret;
   }
 
   @Override

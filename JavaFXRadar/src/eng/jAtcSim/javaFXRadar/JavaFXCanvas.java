@@ -328,14 +328,6 @@ public class JavaFXCanvas implements ICanvas<Canvas> {
 
   @Override
   public void drawTextBlock(java.util.List<String> lines, TextBlockLocation location, eng.jAtcSim.radarBase.global.Font font, eng.jAtcSim.radarBase.global.Color color) {
-    if (location == TextBlockLocation.bottomMiddle
-        || location == TextBlockLocation.middleLeft
-        || location == TextBlockLocation.middleRight
-        || location == TextBlockLocation.topMiddle) {
-      //TODO remove this, move this exception to somewhere shared and remove
-      // dependency on JAtcSimLib
-      throw new UnsupportedOperationException();
-    }
     if (lines.isEmpty()) {
       return;
     }
