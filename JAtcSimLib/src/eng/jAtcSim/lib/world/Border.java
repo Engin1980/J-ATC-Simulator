@@ -52,20 +52,20 @@ public class Border {
   }
 
   private static final int DRAW_STEP = 10;
+  public static final int ALTITUDE_MINIMUM_VALUE = 0;
+  public static final int ALTITUDE_MAXIMUM_VALUE = 99000;
   private String name;
   private eType type;
-  @XmlItemElement(elementName = "point", type=BorderExactPoint.class)
-  @XmlItemElement(elementName = "arc", type=BorderArcPoint.class)
-  @XmlItemElement(elementName = "crd", type=BorderCrdPoint.class)
-  @XmlItemElement(elementName = "circle", type=BorderCirclePoint.class)
+  @XmlItemElement(elementName = "point", type = BorderExactPoint.class)
+  @XmlItemElement(elementName = "arc", type = BorderArcPoint.class)
+  @XmlItemElement(elementName = "crd", type = BorderCrdPoint.class)
+  @XmlItemElement(elementName = "circle", type = BorderCirclePoint.class)
   private IList<BorderPoint> points;
   private boolean enclosed;
   @XmlOptional
-//  @XmlAttribute(parser = AltitudeValueParser.class)
-  private int minAltitude = 0;
+  private int minAltitude = ALTITUDE_MINIMUM_VALUE;
   @XmlOptional
-//  @XmlAttribute(parser = AltitudeValueParser.class)
-  private int maxAltitude = 99000;
+  private int maxAltitude = ALTITUDE_MAXIMUM_VALUE;
   @XmlOptional
   private Coordinate labelCoordinate;
   @XmlIgnore
@@ -206,6 +206,7 @@ public class Border {
     // expand circle
     if (this.points.size() > 0 && points.get(0) instanceof BorderCirclePoint) {
       BorderCirclePoint bcp = (BorderCirclePoint) points.get(0);
+      this.labelCoordinate = bcp.getCoordinate();
       points.clear();
       points.add(new BorderCrdPoint(bcp.getCoordinate(), 0, bcp.getDistance()));
       points.add(new BorderArcPoint(bcp.getCoordinate(), BorderArcPoint.eDirection.clockwise));

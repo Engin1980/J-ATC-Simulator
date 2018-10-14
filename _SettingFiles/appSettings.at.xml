@@ -10,6 +10,7 @@
   <stats blockIntervalSize="10" />
   <radar>
     <styleSettingsFile>$app$/_SettingFiles/radarStyleSettingsInconsolataBig.at.xml</styleSettingsFile>
+    <!--<styleSettingsFile>$app$/_SettingFiles/radarStyleSettingsArialUnicodeMt.at.xml</styleSettingsFile>-->
     <displayTextDelay>30</displayTextDelay>
     <displaySettings tma="true" country="false" mrva="true" mrvaLabel="true" ctr="true" vor="true" ndb="true"
                      airport="true" sid="true" star="true"

@@ -12,6 +12,11 @@
   <activeRunway color="FFFFFF" width="3"/>
   <closedRunway color="FFAAAA" width="3"/>
 
+  <ilsApproach width="1" color="FF00FF" length="15" />
+  <gnssApproach color="FF0000" width="1" length="15" />
+  <ndbApproach color="00FF00" width="1" length="15" />
+  <vorApproach color="00FFFF" width="1" length="15" />
+
   <navVOR color="55FF55" width="3" borderWidth="1" borderDistance="9"/>
   <navNDB color="5555FF" width="3" borderWidth="1" borderDistance="10"/>
   <navFix color="999999" width="3" borderWidth="0" borderDistance="0"/>
@@ -23,8 +28,11 @@
   <borderCtr color="44AAFF" width="1"/>
   <borderTma color="44AAFF" width="1"/>
   <borderMrva color="555555" width="1">
-    <font name="Consolas" size="10" style="0"/>
+    <font name="Courier New" size="14" style="0"/>
   </borderMrva>
+  <borderRestricted color="FF0000" width="1">
+    <font name="Consolas" size="14" style="0" />
+  </borderRestricted>
 
   <infoLine color="FFFF00" width="4">
     <font name="Consolas" size="14" style="0"/>

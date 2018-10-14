@@ -40,6 +40,10 @@ public class AirplaneDataFormatter {
     return Acc.toAltS(value, true);
   }
 
+  public static String formatAltitudeLong(int value, boolean appendFt) {
+    return Acc.toAltS(value, appendFt);
+  }
+
   public static String formatAltitudeInFt(int value, boolean addFt) {
     String ret = Integer.toString(value);
     if (addFt)

@@ -218,6 +218,7 @@ class TransformationLayer {
     return ret;
   }
 
+
   Coordinate getTopLeft() {
     return topLeft;
   }
@@ -271,6 +272,15 @@ class TransformationLayer {
     Point p = toPoint(coordinate);
     c.drawText(text, p, xShiftInPixels, yShiftInPixels, font, color);
   }
+
+  public void drawAltitudeRangeText(Coordinate coordinate,
+                                    String minAltitudeLabel, String maxAltitudeLabel,
+                                    int xShiftInPixels, int yShiftInPixels,
+                                    Font font, Color color) {
+    Point p = toPoint(coordinate);
+    c.drawAltitudeRangeBoundedBetween(p, minAltitudeLabel, maxAltitudeLabel, xShiftInPixels, yShiftInPixels, font, color);
+  }
+
 
   void drawPlaneLabel(String text, boolean isFixed, Coordinate coordinate, Point pixelShift, Font font, Color color, Color connectorColor) {
     Point op = toPoint(coordinate);

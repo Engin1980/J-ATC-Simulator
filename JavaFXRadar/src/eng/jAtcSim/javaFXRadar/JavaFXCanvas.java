@@ -307,7 +307,7 @@ public class JavaFXCanvas implements ICanvas<Canvas> {
   }
 
   @Override
-  public void drawText(String text, Point p, int xShiftInPixels, int yShiftInPixels, eng.jAtcSim.radarBase.global.Font font, eng.jAtcSim.radarBase.global.Color c) {
+  public void drawText(String text, Point p, int xShiftInPixels, int yShiftInPixels, eng.jAtcSim.radarBase.global.Font font, eng.jAtcSim.radarBase.global.Color color) {
     String[] lines = text.split(System.getProperty("line.separator"));
 
     int x = p.x + xShiftInPixels;
@@ -315,7 +315,7 @@ public class JavaFXCanvas implements ICanvas<Canvas> {
 
     Font fxFont = Fonting.get(font);
     g.setFont(fxFont);
-    g.setFill(Coloring.get(c));
+    g.setFill(Coloring.get(color));
 
     for (String line : lines) {
 
@@ -323,6 +323,44 @@ public class JavaFXCanvas implements ICanvas<Canvas> {
       y = y + (int) b.getHeight() - 5;
 
       g.fillText(line, x, y);
+    }
+  }
+
+  private static final int ALTITUDE_LINE_SEPARATION_WIDTH = 3;
+
+  @Override
+  public void drawAltitudeRangeBoundedAboveAndBelow(Point p,
+                                                    String minAltitudeLabel, String maxAltitudeLabel,
+                                                    int xShiftInPixels, int yShiftInPixels,
+                                                    eng.jAtcSim.radarBase.global.Font font,
+                                                    eng.jAtcSim.radarBase.global.Color color) {
+    int x = p.x + xShiftInPixels;
+    int y = p.y + yShiftInPixels;
+    Font fxFont = Fonting.get(font);
+    g.setFont(fxFont);
+    g.setFill(Coloring.get(color));
+    g.setStroke(Coloring.get(color));
+    String demoString = minAltitudeLabel == null ? maxAltitudeLabel : minAltitudeLabel;
+    Bounds b = getTextBounds(demoString, fxFont);
+
+    int tx;
+    int ty;
+
+    if (maxAltitudeLabel != null) {
+      tx = x;
+      ty = y - (int) b.getHeight() - ALTITUDE_LINE_SEPARATION_WIDTH;
+      g.fillText(maxAltitudeLabel, tx, ty);
+
+      ty = ty - ALTITUDE_LINE_SEPARATION_WIDTH;
+      g.strokeLine(tx, ty, tx + (int) b.getWidth(), ty);
+    }
+    if (minAltitudeLabel != null) {
+      tx = x;
+      ty = y + ALTITUDE_LINE_SEPARATION_WIDTH;
+      g.fillText(minAltitudeLabel, tx, ty);
+
+      ty = ty + ALTITUDE_LINE_SEPARATION_WIDTH;
+      g.strokeLine(tx, ty, tx + (int) b.getWidth(), ty);
     }
   }
 

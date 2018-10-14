@@ -131,14 +131,15 @@ public class BitmapCanvas implements ICanvas<BufferedImage> {
   }
 
   @Override
-  public void drawText(String text, eng.jAtcSim.radarBase.global.Point p, int xShiftInPixels, int yShiftInPixels, eng.jAtcSim.radarBase.global.Font font, eng.jAtcSim.radarBase.global.Color c) {
+  public void drawText(String text, eng.jAtcSim.radarBase.global.Point p, int xShiftInPixels, int yShiftInPixels,
+                       eng.jAtcSim.radarBase.global.Font font, eng.jAtcSim.radarBase.global.Color color) {
     String[] lines = text.split(System.getProperty("line.separator"));
 
     int x = p.x + xShiftInPixels;
     int y = p.y + yShiftInPixels;
 
     g.setFont(Fonting.get(font));
-    g.setColor(Coloring.get(c));
+    g.setColor(Coloring.get(color));
 
     for (String line : lines) {
       FontMetrics fm = g.getFontMetrics();
@@ -147,6 +148,41 @@ public class BitmapCanvas implements ICanvas<BufferedImage> {
       y = y + b.height - 5;
 
       g.drawString(line, x, y);
+    }
+  }
+
+  private static final int ALTITUDE_LINE_SEPARATION_WIDTH = 3;
+  @Override
+  public void drawAltitudeRangeBoundedAboveAndBelow(eng.jAtcSim.radarBase.global.Point p,
+                                                    String minAltitudeLabel, String maxAltitudeLabel,
+                                                    int xShiftInPixels, int yShiftInPixels,
+                                                    eng.jAtcSim.radarBase.global.Font font, eng.jAtcSim.radarBase.global.Color color) {
+    int x = p.x + xShiftInPixels;
+    int y = p.y + yShiftInPixels;
+    g.setFont(Fonting.get(font));
+    g.setColor(Coloring.get(color));
+    FontMetrics fm = g.getFontMetrics();
+    String demoString = minAltitudeLabel == null ? maxAltitudeLabel : minAltitudeLabel;
+    Rectangle b = fm.getStringBounds(demoString, g).getBounds();
+
+    int tx;
+    int ty;
+
+    if (maxAltitudeLabel != null) {
+      tx = x;
+      ty = y - b.height - ALTITUDE_LINE_SEPARATION_WIDTH;
+      g.drawString(maxAltitudeLabel, tx, ty);
+
+      ty = ty - ALTITUDE_LINE_SEPARATION_WIDTH;
+      g.drawLine(tx, ty, tx+b.width, ty);
+    }
+    if (minAltitudeLabel != null){
+      tx = x;
+      ty = y + ALTITUDE_LINE_SEPARATION_WIDTH;
+      g.drawString(minAltitudeLabel, tx,ty );
+
+      ty = ty + ALTITUDE_LINE_SEPARATION_WIDTH;
+      g.drawLine(tx, ty, tx+b.width, ty);
     }
   }
 

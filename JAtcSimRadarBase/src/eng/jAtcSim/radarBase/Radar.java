@@ -645,7 +645,7 @@ public class Radar {
     double dist = Double.MAX_VALUE;
     for (AirplaneDisplayInfo radi : this.planeInfos.getList()) {
       double rdist = Coordinates.getDistanceInNM(radi.coordinate, fromCoordinate);
-      if (rdist < dist){
+      if (rdist < dist) {
         dist = rdist;
         adi = radi;
       }
@@ -714,12 +714,12 @@ public class Radar {
       String timeS;
       if (this.infoLine.isRelativeSpeedUsed == false)
         timeS = String.format("%s:%s/%s:%s/%s:%s",
-          InfoLine.toIntegerMinutes(this.infoLine.seconds280),
-          infoLine.toIntegerSeconds(this.infoLine.seconds280),
-          InfoLine.toIntegerMinutes(this.infoLine.seconds250),
-          infoLine.toIntegerSeconds(this.infoLine.seconds250),
-          InfoLine.toIntegerMinutes(this.infoLine.seconds200),
-          infoLine.toIntegerSeconds(this.infoLine.seconds200));
+            InfoLine.toIntegerMinutes(this.infoLine.seconds280),
+            infoLine.toIntegerSeconds(this.infoLine.seconds280),
+            InfoLine.toIntegerMinutes(this.infoLine.seconds250),
+            infoLine.toIntegerSeconds(this.infoLine.seconds250),
+            InfoLine.toIntegerMinutes(this.infoLine.seconds200),
+            infoLine.toIntegerSeconds(this.infoLine.seconds200));
       else
         timeS = String.format("%s:%s",
             InfoLine.toIntegerMinutes(this.infoLine.secondsSpeed),
@@ -803,7 +803,10 @@ public class Radar {
         case danger:
           if (displaySettings.isRestrictedBorderVisible()) {
             drawBorder(b);
-            drawBorderCaption(b);
+            //drawBorderCaption(b);
+            if (displaySettings.isMrvaBorderAltitudeVisible()) {
+              drawBorderAltitude(b);
+            }
           }
           break;
         case mrva:
@@ -821,9 +824,22 @@ public class Radar {
   }
 
   private void drawBorderAltitude(Border border) {
-    String s = AirplaneDataFormatter.formatAltitudeShort(border.getMaxAltitude(), true);
+    String maxS =
+        border.getMaxAltitude() == Border.ALTITUDE_MAXIMUM_VALUE ?
+            null
+            :
+        AirplaneDataFormatter.formatAltitudeLong(border.getMaxAltitude(), false);
+    String minS =
+        border.getMinAltitude() == Border.ALTITUDE_MINIMUM_VALUE?
+            null
+            :
+            AirplaneDataFormatter.formatAltitudeLong(border.getMinAltitude(), false);
+    if (minS == null && maxS == null) return;
     RadarStyleSettings.ColorWidthFontSettings ds = (RadarStyleSettings.ColorWidthFontSettings) getDispSettBy(border);
-    tl.drawText(s, border.getLabelCoordinate(), 0, 0, ds.getFont(), ds.getColor());
+    tl.drawAltitudeRangeText(
+        border.getLabelCoordinate(),
+        minS, maxS,
+        0, 0, ds.getFont(), ds.getColor());
   }
 
   private void drawBorderCaption(Border border) {
@@ -857,7 +873,7 @@ public class Radar {
           if (!displaySettings.isSidVisible()) continue;
           for (RunwayThreshold runwayThreshold : Acc.atcTwr().getRunwayConfigurationInUse()
               .getDepartures()
-              .select(q->q.getThreshold())
+              .select(q -> q.getThreshold())
               .where(q -> q.getRoutes().contains(route))) {
             drawSidIntro(runwayThreshold.getOtherThreshold().getCoordinate(), route.getNavaids().getFirst());
           }

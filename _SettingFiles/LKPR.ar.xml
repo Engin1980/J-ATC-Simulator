@@ -7541,7 +7541,7 @@
       </points>
     </border>
 
-    <border name="LKP1" type="restricted" minAltitude="0" maxAltitude="5000" enclosed="true">
+    <border name="LKP1" type="restricted" minAltitude="0" maxAltitude="5000" enclosed="true" >
       <points>
         <circle coordinate="N 50 05 26.72 E 014 24 01.68" distance=".6"/>
       </points>

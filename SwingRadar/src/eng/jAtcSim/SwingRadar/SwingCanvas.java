@@ -291,14 +291,14 @@ public class SwingCanvas implements ICanvas<JComponent> {
   }
 
   @Override
-  public void drawText(String text, Point p, int xShiftInPixels, int yShiftInPixels, Font font, Color c) {
+  public void drawText(String text, Point p, int xShiftInPixels, int yShiftInPixels, Font font, Color color) {
     String[] lines = text.split(System.getProperty("line.separator"));
 
     int x = p.x + xShiftInPixels;
     int y = p.y + yShiftInPixels;
 
     g.setFont(Fonting.get(font));
-    g.setColor(Coloring.get(c));
+    g.setColor(Coloring.get(color));
 
     for (String line : lines) {
       FontMetrics fm = g.getFontMetrics();
@@ -308,6 +308,78 @@ public class SwingCanvas implements ICanvas<JComponent> {
 
       g.drawString(line, x, y);
     }
+  }
+
+  private static final int ALTITUDE_LINE_SEPARATION_WIDTH = 3;
+
+  @Override
+  public void drawAltitudeRangeBoundedAboveAndBelow(Point p,
+                                                    String minAltitudeLabel, String maxAltitudeLabel,
+                                                    int xShiftInPixels, int yShiftInPixels, Font font, Color color) {
+    int x = p.x + xShiftInPixels;
+    int y = p.y + yShiftInPixels;
+    g.setFont(Fonting.get(font));
+    g.setColor(Coloring.get(color));
+    String demoString = minAltitudeLabel == null ? maxAltitudeLabel : minAltitudeLabel;
+    Rectangle b = getStringBounds(g, demoString);
+
+    int tx;
+    int ty;
+
+    if (maxAltitudeLabel != null) {
+      tx = x + b.x - b.width / 2;
+      ty = y + b.y;
+      g.drawString(maxAltitudeLabel, tx, ty);
+
+      ty = ty - b.height + ALTITUDE_LINE_SEPARATION_WIDTH;
+      g.drawLine(tx, ty, tx + b.width, ty);
+    }
+    if (minAltitudeLabel != null) {
+      tx = x + b.x - b.width / 2;
+      ty = y + b.y + b.height;
+      g.drawString(minAltitudeLabel, tx, ty);
+
+      ty = ty + ALTITUDE_LINE_SEPARATION_WIDTH;
+      g.drawLine(tx, ty, tx+b.width, ty);
+    }
+  }
+
+  @Override
+  public void drawAltitudeRangeBoundedBetween(Point p,
+                                                    String minAltitudeLabel, String maxAltitudeLabel,
+                                                    int xShiftInPixels, int yShiftInPixels, Font font, Color color) {
+    int x = p.x + xShiftInPixels;
+    int y = p.y + yShiftInPixels;
+    g.setFont(Fonting.get(font));
+    g.setColor(Coloring.get(color));
+    String demoString = "FL120";
+    Rectangle b = getStringBounds(g, demoString);
+
+    int tx;
+    int ty;
+
+    y += b.height;
+
+    tx = x + b.x - b.width / 2;
+    ty = y + b.y + ALTITUDE_LINE_SEPARATION_WIDTH;
+    g.drawLine(tx, ty, tx+b.width, ty);
+
+    if (maxAltitudeLabel != null) {
+      tx = x + b.x - b.width / 2;
+      ty = y + b.y;
+      g.drawString(maxAltitudeLabel, tx, ty);
+    }
+    if (minAltitudeLabel != null) {
+      tx = x + b.x - b.width / 2;
+      ty = y + b.y + b.height;
+      g.drawString(minAltitudeLabel, tx, ty);
+    }
+  }
+
+  private Rectangle getStringBounds(Graphics g, String text) {
+    FontMetrics fm = g.getFontMetrics();
+    Rectangle r = fm.getStringBounds(text, g).getBounds();
+    return r;
   }
 
   @Override

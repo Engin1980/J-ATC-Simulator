@@ -44,6 +44,8 @@ public interface ICanvas<T> {
 
   void drawTextBlock(List<String> lines, TextBlockLocation location, Font font, Color color);
 
+  void drawAltitudeRangeBoundedAboveAndBelow(Point p, String minAltitudeLabel, String maxAltitudeLabel, int xShiftInPixels, int yShiftInPixels, Font font, Color color);
+
   void clear(Color backColor);
 
   void beforeDraw();
@@ -63,4 +65,8 @@ public interface ICanvas<T> {
   EventSimple<ICanvas> getResizedEvent();
 
   Size getEstimatedTextSize(Font font, int rowsCount, int columnsCount);
+
+  default void drawAltitudeRangeBoundedBetween(Point p, String minAltitudeLabel, String maxAltitudeLabel, int xShiftInPixels, int yShiftInPixels, Font font, Color color){
+    System.out.println("xxxx default not implemented");
+  }
 }
