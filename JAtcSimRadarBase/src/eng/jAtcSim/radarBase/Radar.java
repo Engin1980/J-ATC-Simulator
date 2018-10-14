@@ -842,15 +842,6 @@ public class Radar {
         0, 0, ds.getFont(), ds.getColor());
   }
 
-  private void drawBorderCaption(Border border) {
-    String s =
-        AirplaneDataFormatter.formatAltitudeShort(border.getMinAltitude(), true) +
-            "/" +
-            AirplaneDataFormatter.formatAltitudeShort(border.getMaxAltitude(), true);
-    RadarStyleSettings.ColorWidthFontSettings ds = (RadarStyleSettings.ColorWidthFontSettings) getDispSettBy(border);
-    tl.drawText(s, border.getLabelCoordinate(), 0, 0, ds.getFont(), ds.getColor());
-  }
-
   private void drawBorder(Border border) {
 
     RadarStyleSettings.ColorWidthSettings ds = getDispSettBy(border);

@@ -44,7 +44,7 @@ public interface ICanvas<T> {
 
   void drawTextBlock(List<String> lines, TextBlockLocation location, Font font, Color color);
 
-  void drawAltitudeRangeBoundedAboveAndBelow(Point p, String minAltitudeLabel, String maxAltitudeLabel, int xShiftInPixels, int yShiftInPixels, Font font, Color color);
+
 
   void clear(Color backColor);
 
@@ -66,7 +66,77 @@ public interface ICanvas<T> {
 
   Size getEstimatedTextSize(Font font, int rowsCount, int columnsCount);
 
-  default void drawAltitudeRangeBoundedBetween(Point p, String minAltitudeLabel, String maxAltitudeLabel, int xShiftInPixels, int yShiftInPixels, Font font, Color color){
-    System.out.println("xxxx default not implemented");
+  java.awt.Rectangle getStringBounds(String text, Font font);
+
+  default void drawAltitudeRangeBoundedBetween(Point p, String minAltitudeLabel, String maxAltitudeLabel,
+                                               int xShiftInPixels, int yShiftInPixels,
+                                               Font font, Color color) {
+    final int ALTITUDE_LINE_SEPARATION_WIDTH = 3;
+    final int SEPARATION_LINE_WIDTH = 1;
+    int x = p.x + xShiftInPixels;
+    int y = p.y + yShiftInPixels;
+    String demoString = "X";
+    int textWidth = Math.max(minAltitudeLabel == null ? 0 : minAltitudeLabel.length(),
+        maxAltitudeLabel == null ? 0 : maxAltitudeLabel.length());
+    java.awt.Rectangle charBounds = getStringBounds(demoString, font);
+
+    int tx;
+    int ty;
+    Point up;
+
+    x -= (int) (textWidth / 2d);
+    y += charBounds.height;
+
+    tx = x;
+    ty = y + charBounds.y + ALTITUDE_LINE_SEPARATION_WIDTH / 2;
+    this.drawLine(tx, ty, tx + textWidth * charBounds.width, ty, color, SEPARATION_LINE_WIDTH);
+
+    if (maxAltitudeLabel != null) {
+      tx = x + charBounds.x + charBounds.width * (textWidth - maxAltitudeLabel.length());
+      ty = y + charBounds.y - charBounds.height;
+      up = new Point(tx, ty);
+      this.drawText(maxAltitudeLabel, up, 0, 0, font, color);
+    }
+    if (minAltitudeLabel != null) {
+      tx = x + charBounds.x + charBounds.width * (textWidth - minAltitudeLabel.length());
+      ty = y + charBounds.y + ALTITUDE_LINE_SEPARATION_WIDTH;
+      up = new Point(tx, ty);
+      this.drawText(minAltitudeLabel, up, 0, 0, font, color);
+    }
   }
+
+  default void drawAltitudeRangeBoundedAboveAndBelow(Point p,
+                                                    String minAltitudeLabel, String maxAltitudeLabel,
+                                                    int xShiftInPixels, int yShiftInPixels, Font font, Color color) {
+    final int ALTITUDE_LINE_SEPARATION_WIDTH = 3;
+    final int SEPARATION_LINE_WIDTH = 1;
+    int x = p.x + xShiftInPixels;
+    int y = p.y + yShiftInPixels;
+    String demoString = minAltitudeLabel == null ? maxAltitudeLabel : minAltitudeLabel;
+    java.awt.Rectangle bounds = getStringBounds(demoString, font);
+
+    int tx;
+    int ty;
+    Point up;
+
+    if (maxAltitudeLabel != null) {
+      tx = x + bounds.x - bounds.width / 2;
+      ty = y + bounds.y;
+      up = new Point(tx,ty);
+      this.drawText(maxAltitudeLabel, up, 0,0,font,color);
+
+      ty = ty - bounds.height + ALTITUDE_LINE_SEPARATION_WIDTH;
+      this.drawLine(tx, ty, tx + bounds.width, ty, color, SEPARATION_LINE_WIDTH);
+    }
+    if (minAltitudeLabel != null) {
+      tx = x + bounds.x - bounds.width / 2;
+      ty = y + bounds.y + bounds.height;
+      up = new Point(tx,ty);
+      this.drawText(minAltitudeLabel, up, 0,0,font,color);
+
+      ty = ty + ALTITUDE_LINE_SEPARATION_WIDTH;
+      this.drawLine(tx, ty, tx + bounds.width, ty, color, SEPARATION_LINE_WIDTH);
+    }
+  }
+
 }

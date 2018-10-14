@@ -1,7 +1,6 @@
 package eng.jAtcSim.SwingRadar;
 
 import eng.eSystem.events.Event;
-import eng.eSystem.events.EventAnonymousSimple;
 import eng.eSystem.events.EventSimple;
 import eng.jAtcSim.radarBase.ICanvas;
 import eng.jAtcSim.radarBase.global.Color;
@@ -310,78 +309,6 @@ public class SwingCanvas implements ICanvas<JComponent> {
     }
   }
 
-  private static final int ALTITUDE_LINE_SEPARATION_WIDTH = 3;
-
-  @Override
-  public void drawAltitudeRangeBoundedAboveAndBelow(Point p,
-                                                    String minAltitudeLabel, String maxAltitudeLabel,
-                                                    int xShiftInPixels, int yShiftInPixels, Font font, Color color) {
-    int x = p.x + xShiftInPixels;
-    int y = p.y + yShiftInPixels;
-    g.setFont(Fonting.get(font));
-    g.setColor(Coloring.get(color));
-    String demoString = minAltitudeLabel == null ? maxAltitudeLabel : minAltitudeLabel;
-    Rectangle b = getStringBounds(g, demoString);
-
-    int tx;
-    int ty;
-
-    if (maxAltitudeLabel != null) {
-      tx = x + b.x - b.width / 2;
-      ty = y + b.y;
-      g.drawString(maxAltitudeLabel, tx, ty);
-
-      ty = ty - b.height + ALTITUDE_LINE_SEPARATION_WIDTH;
-      g.drawLine(tx, ty, tx + b.width, ty);
-    }
-    if (minAltitudeLabel != null) {
-      tx = x + b.x - b.width / 2;
-      ty = y + b.y + b.height;
-      g.drawString(minAltitudeLabel, tx, ty);
-
-      ty = ty + ALTITUDE_LINE_SEPARATION_WIDTH;
-      g.drawLine(tx, ty, tx+b.width, ty);
-    }
-  }
-
-  @Override
-  public void drawAltitudeRangeBoundedBetween(Point p,
-                                                    String minAltitudeLabel, String maxAltitudeLabel,
-                                                    int xShiftInPixels, int yShiftInPixels, Font font, Color color) {
-    int x = p.x + xShiftInPixels;
-    int y = p.y + yShiftInPixels;
-    g.setFont(Fonting.get(font));
-    g.setColor(Coloring.get(color));
-    String demoString = "FL120";
-    Rectangle b = getStringBounds(g, demoString);
-
-    int tx;
-    int ty;
-
-    y += b.height;
-
-    tx = x + b.x - b.width / 2;
-    ty = y + b.y + ALTITUDE_LINE_SEPARATION_WIDTH;
-    g.drawLine(tx, ty, tx+b.width, ty);
-
-    if (maxAltitudeLabel != null) {
-      tx = x + b.x - b.width / 2;
-      ty = y + b.y;
-      g.drawString(maxAltitudeLabel, tx, ty);
-    }
-    if (minAltitudeLabel != null) {
-      tx = x + b.x - b.width / 2;
-      ty = y + b.y + b.height;
-      g.drawString(minAltitudeLabel, tx, ty);
-    }
-  }
-
-  private Rectangle getStringBounds(Graphics g, String text) {
-    FontMetrics fm = g.getFontMetrics();
-    Rectangle r = fm.getStringBounds(text, g).getBounds();
-    return r;
-  }
-
   @Override
   public void drawTextBlock(List<String> lines, TextBlockLocation location, Font font, Color color) {
     if (location == TextBlockLocation.bottomMiddle
@@ -455,13 +382,6 @@ public class SwingCanvas implements ICanvas<JComponent> {
   public eng.jAtcSim.radarBase.global.Size getEstimatedTextSize(Font font, int rowsCount, int columnsCount) {
     FontMetrics fm = g.getFontMetrics();
 
-//    StringBuilder sb = new StringBuilder();
-//    for (int i = 0; i < columnsCount; i++) {
-//      for (int j = 0; j < rowsCount; j++) {
-//        sb.append("0");
-//      }
-//      sb.append("\n");
-//    }
     String str = "0";
     Rectangle2D r = fm.getStringBounds(str, g);
 
@@ -470,6 +390,14 @@ public class SwingCanvas implements ICanvas<JComponent> {
         (int) r.getWidth() * rowsCount,
         (int) r.getHeight() * columnsCount);
 
+    return ret;
+  }
+
+  @Override
+  public Rectangle getStringBounds(String text, Font font) {
+    java.awt.Font awtFont = Fonting.get(font);
+    FontMetrics fm = g.getFontMetrics(awtFont);
+    Rectangle ret = fm.getStringBounds(text, g).getBounds();
     return ret;
   }
 

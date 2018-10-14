@@ -271,6 +271,14 @@ public class BitmapCanvas implements ICanvas<BufferedImage> {
     return ret;
   }
 
+  @Override
+  public Rectangle getStringBounds(String text, eng.jAtcSim.radarBase.global.Font font) {
+    java.awt.Font awtFont = Fonting.get(font);
+    FontMetrics fm = g.getFontMetrics(awtFont);
+    Rectangle ret = fm.getStringBounds(text, g).getBounds();
+    return ret;
+  }
+
   private int toEJComponentAngle(int angle) {
     return 360 - angle + 90;
   }

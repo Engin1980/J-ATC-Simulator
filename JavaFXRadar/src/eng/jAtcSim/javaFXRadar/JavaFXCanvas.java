@@ -326,44 +326,6 @@ public class JavaFXCanvas implements ICanvas<Canvas> {
     }
   }
 
-  private static final int ALTITUDE_LINE_SEPARATION_WIDTH = 3;
-
-  @Override
-  public void drawAltitudeRangeBoundedAboveAndBelow(Point p,
-                                                    String minAltitudeLabel, String maxAltitudeLabel,
-                                                    int xShiftInPixels, int yShiftInPixels,
-                                                    eng.jAtcSim.radarBase.global.Font font,
-                                                    eng.jAtcSim.radarBase.global.Color color) {
-    int x = p.x + xShiftInPixels;
-    int y = p.y + yShiftInPixels;
-    Font fxFont = Fonting.get(font);
-    g.setFont(fxFont);
-    g.setFill(Coloring.get(color));
-    g.setStroke(Coloring.get(color));
-    String demoString = minAltitudeLabel == null ? maxAltitudeLabel : minAltitudeLabel;
-    Bounds b = getTextBounds(demoString, fxFont);
-
-    int tx;
-    int ty;
-
-    if (maxAltitudeLabel != null) {
-      tx = x;
-      ty = y - (int) b.getHeight() - ALTITUDE_LINE_SEPARATION_WIDTH;
-      g.fillText(maxAltitudeLabel, tx, ty);
-
-      ty = ty - ALTITUDE_LINE_SEPARATION_WIDTH;
-      g.strokeLine(tx, ty, tx + (int) b.getWidth(), ty);
-    }
-    if (minAltitudeLabel != null) {
-      tx = x;
-      ty = y + ALTITUDE_LINE_SEPARATION_WIDTH;
-      g.fillText(minAltitudeLabel, tx, ty);
-
-      ty = ty + ALTITUDE_LINE_SEPARATION_WIDTH;
-      g.strokeLine(tx, ty, tx + (int) b.getWidth(), ty);
-    }
-  }
-
   @Override
   public void drawTextBlock(java.util.List<String> lines, TextBlockLocation location, eng.jAtcSim.radarBase.global.Font font, eng.jAtcSim.radarBase.global.Color color) {
     if (location == TextBlockLocation.bottomMiddle
@@ -436,6 +398,15 @@ public class JavaFXCanvas implements ICanvas<Canvas> {
   @Override
   public Size getEstimatedTextSize(eng.jAtcSim.radarBase.global.Font font, int rowsCount, int columnsCount) {
     throw new UnsupportedOperationException("This method is not implemented, but should be.");
+  }
+
+  @Override
+  public java.awt.Rectangle getStringBounds(String text, eng.jAtcSim.radarBase.global.Font font) {
+    Font fxFont = Fonting.get(font);
+    Bounds bounds = getTextBounds(text, fxFont);
+    java.awt.Rectangle ret = new java.awt.Rectangle(
+        (int) bounds.getMinX(), (int) bounds.getMinY(), (int) bounds.getWidth(), (int) bounds.getHeight());
+    return ret;
   }
 
   public Bounds getTextBounds(String s, Font font) {
