@@ -1,5 +1,6 @@
 package eng.jAtcSim.lib.atcs;
 
+import eng.eSystem.EStringBuilder;
 import eng.eSystem.collections.*;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.events.EventAnonymousSimple;
@@ -32,6 +33,7 @@ import eng.jAtcSim.lib.world.RunwayThreshold;
 
 public class TowerAtc extends ComputerAtc {
   private static final int[] RWY_CHANGE_ANNOUNCE_INTERVALS = new int[]{30, 15, 10, 5, 4, 3, 2, 1};
+
   public static class RunwayCheck {
     private static final int[] RWY_CHECK_ANNOUNCE_INTERVALS = new int[]{30, 15, 10, 5};
 
@@ -346,13 +348,19 @@ public class TowerAtc extends ComputerAtc {
   }
 
   private void sendMultiLineMessageToUser(Iterable<String> lines) {
-    IList<String> lst = new EList<>();
-    lst.add(lines);
-    for (String s : lst) {
-      Message msg = new Message(this, Acc.atcApp(),
-          new StringMessageContent(s));
-      super.sendMessage(msg);
-    }
+    EStringBuilder esb = new EStringBuilder();
+    esb.appendItems(lines, " ");
+    Message msg = new Message(this, Acc.atcApp(),
+        new StringMessageContent(esb.toString()));
+    super.sendMessage(msg);
+
+//    IList<String> lst = new EList<>();
+//    lst.add(lines);
+//    for (String s : lst) {
+//      Message msg = new Message(this, Acc.atcApp(),
+//          new StringMessageContent(s));
+//      super.sendMessage(msg);
+//    }
   }
 
   private void processMessageFromAtc(RunwayUse ru) {
@@ -370,7 +378,7 @@ public class TowerAtc extends ComputerAtc {
       }
     } else {
       IList<String> lns = inUseInfo.current.toInfoString();
-      lns.insert(0, "Runway(s) in use:");
+      lns.insert(0, "Runway(s) in use: ### this line describes runways currently used. The beginning is the runway designator, then is lomitko and after the shlash there are categories for the ruwnay specified, i mean creategoreis of the plaen ");
       sendMultiLineMessageToUser(lns);
 
       if (inUseInfo.scheduled != null) {

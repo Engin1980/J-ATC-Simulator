@@ -1,5 +1,6 @@
 package eng.jAtcSim.SwingRadar;
 
+import com.sun.org.apache.xml.internal.serialize.LineSeparator;
 import eng.eSystem.Tuple;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
@@ -352,9 +353,7 @@ public class SwingCanvas implements ICanvas<JComponent> {
       return;
     }
     if (
-        location == TextBlockLocation.topLeft
-            ||
-            location == TextBlockLocation.bottomRight
+            location == TextBlockLocation.bottomLeft
         ||
             location == TextBlockLocation.topRight
     ) return;
@@ -390,11 +389,14 @@ public class SwingCanvas implements ICanvas<JComponent> {
     return ret;
   }
 
-  private int adjustLineAbsolutePosition(IList<Tuple<EditablePoint, String>> tmp, TextBlockLocation location, int globalY, int lineStep) {
-    int dir = location.isBottom() ? -1 : +1;
+  private int adjustLineAbsolutePosition(IList<Tuple<EditablePoint, String>> tmp, TextBlockLocation location,
+                                         int globalY, int lineStep) {
+    int tmpY = location.isBottom() ?
+        globalY - tmp.size() * lineStep : globalY;
+    globalY = tmpY;
     for (Tuple<EditablePoint, String> tmpItem : tmp) {
-      tmpItem.getA().y = globalY;
-      globalY += lineStep * dir;
+      tmpItem.getA().y = tmpY;
+      tmpY += lineStep;
     }
     return globalY;
   }
@@ -431,7 +433,7 @@ public class SwingCanvas implements ICanvas<JComponent> {
       while (line.isEmpty() == false) {
         Tuple<String, Integer> subLineInfo = getSubLineInWidth(line, fm, maxWidth);
         ret.add(new Tuple<>(new EditablePoint(subLineInfo.getB(),0 ), subLineInfo.getA()));
-        line = line.substring(subLineInfo.getA().length());
+        line = line.substring(subLineInfo.getA().length()).trim();
       }
     }
     return ret;
@@ -456,6 +458,7 @@ public class SwingCanvas implements ICanvas<JComponent> {
         } else {
           break;
         }
+        spaceIndex = line.indexOf(' ', spaceIndex+1);
       }
     }
     return ret;
