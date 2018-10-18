@@ -324,29 +324,6 @@ public class SwingCanvas implements ICanvas<JComponent> {
     }
   }
 
-//  @Override
-//  public void drawTextBlock(List<String> lines, TextBlockLocation location, Font font, Color color) {
-//    if (location == TextBlockLocation.bottomMiddle
-//        || location == TextBlockLocation.middleLeft
-//        || location == TextBlockLocation.middleRight
-//        || location == TextBlockLocation.topMiddle) {
-//      //TODO remove this, move this exception to somewhere shared and remove
-//      // dependency on JAtcSimLib
-//      throw new UnsupportedOperationException();
-//    }
-//    if (lines.isEmpty()) {
-//      return;
-//    }
-//
-//    g.setFont(Fonting.get(font));
-//    g.setColor(Coloring.get(color));
-//
-//    Point[] pts = getPositionsForText(lines, location);
-//    for (int i = 0; i < lines.size(); i++) {
-//      g.drawString(lines.get(i), pts[i].x, pts[i].y);
-//    }
-//  }
-
   @Override
   public void drawTextBlock(List<String> lines, TextBlockLocation location, Font font, Color color) {
     if (lines.isEmpty()) {
@@ -441,11 +418,14 @@ public class SwingCanvas implements ICanvas<JComponent> {
 
   private Tuple<String, Integer> getSubLineInWidth(String line, FontMetrics fm, double maxWidth) {
     Tuple<String, Integer> ret = new Tuple<>("", 0);
+    int lineBreakIndex = line.indexOf('\n');
+    if (lineBreakIndex > 0)
+      line = line.substring(0, lineBreakIndex);
     int spaceIndex = 0;
     spaceIndex = line.indexOf(' ', spaceIndex);
     while (true) {
       if (spaceIndex < 0) {
-        // rest of the line is shorter than width
+        // rest of the line is shorter than width or after line break
         ret.setA(line);
         ret.setB(fm.getStringBounds(line, g).getBounds().width);
         break;

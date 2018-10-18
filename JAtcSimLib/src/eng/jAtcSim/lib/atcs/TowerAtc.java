@@ -347,20 +347,10 @@ public class TowerAtc extends ComputerAtc {
     return onRunwayChanged;
   }
 
-  private void sendMultiLineMessageToUser(Iterable<String> lines) {
-    EStringBuilder esb = new EStringBuilder();
-    esb.appendItems(lines, " ");
+  private void sendMessageToUser(String text) {
     Message msg = new Message(this, Acc.atcApp(),
-        new StringMessageContent(esb.toString()));
+        new StringMessageContent(text));
     super.sendMessage(msg);
-
-//    IList<String> lst = new EList<>();
-//    lst.add(lines);
-//    for (String s : lst) {
-//      Message msg = new Message(this, Acc.atcApp(),
-//          new StringMessageContent(s));
-//      super.sendMessage(msg);
-//    }
   }
 
   private void processMessageFromAtc(RunwayUse ru) {
@@ -377,15 +367,14 @@ public class TowerAtc extends ComputerAtc {
         changeRunwayInUse();
       }
     } else {
-      IList<String> lns = inUseInfo.current.toInfoString();
-      lns.insert(0, "Runway(s) in use: ### this line describes runways currently used. The beginning is the runway designator, then is lomitko and after the shlash there are categories for the ruwnay specified, i mean creategoreis of the plaen ");
-      sendMultiLineMessageToUser(lns);
+      String msgTxt = inUseInfo.current.toInfoString("\n");
+      sendMessageToUser("Runway(s) in use: \n" + msgTxt);
 
       if (inUseInfo.scheduled != null) {
-        lns = inUseInfo.scheduled.toInfoString();
-        lns.insert(0, "Scheduled runways to use:");
-        lns.add("Scheduled runways active from " + inUseInfo.scheduler.getScheduledTime().toHourMinuteString());
-        sendMultiLineMessageToUser(lns);
+        msgTxt = inUseInfo.scheduled.toInfoString("\n");
+        msgTxt = "Scheduled runways to use: \n" + msgTxt +
+            ". \nScheduled runways active from " + inUseInfo.scheduler.getScheduledTime().toHourMinuteString();
+        sendMessageToUser(msgTxt);
       }
     }
   }
@@ -454,10 +443,10 @@ public class TowerAtc extends ComputerAtc {
   }
 
   private void announceChangeRunwayInUse() {
-    IList<String> lns = this.inUseInfo.scheduled.toInfoString();
-    lns.insert(0, "Expected runway change to:");
-    lns.add("Expected runway change at " + this.inUseInfo.scheduler.getScheduledTime().toTimeString());
-    sendMultiLineMessageToUser(lns);
+    String msgTxt = this.inUseInfo.scheduled.toInfoString("; ");
+    msgTxt = "Expected runway change to: " + msgTxt +
+        ".\nExpected runway change at " + this.inUseInfo.scheduler.getScheduledTime().toTimeString();
+    sendMessageToUser(msgTxt);
   }
 
   private boolean isOnApproachOfTheRunwayInUse(Airplane p) {
@@ -535,9 +524,8 @@ public class TowerAtc extends ComputerAtc {
 
   private void changeRunwayInUse() {
 
-    IList<String> lns = inUseInfo.scheduled.toInfoString();
-    lns.insert(0, "Changed runway(s) in use now to: ");
-    sendMultiLineMessageToUser(lns);
+    String msgTxt = "Changed runway(s) in use now to: " + inUseInfo.scheduled.toInfoString("; ");
+    sendMessageToUser(msgTxt);
 
     this.inUseInfo.current = this.inUseInfo.scheduled;
     this.inUseInfo.scheduled = null;

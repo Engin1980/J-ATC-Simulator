@@ -1253,7 +1253,7 @@ public class Radar {
       if (m.getSource() == Messenger.SYSTEM) {
         ret.system.add(">> " + m.getText());
       } else if (m.getSource() instanceof Atc) {
-        ret.atc.add(m.getText() + " [" + m.getSource().getName() + "]");
+        ret.atc.add("[" + m.getSource().getName() + "] " + m.getText());
       } else if (m.getSource() instanceof Airplane) {
         ret.plane.add(m.getSource().getName() + ": " + m.getText());
       } else {

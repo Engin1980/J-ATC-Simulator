@@ -214,27 +214,22 @@ public class RunwayConfiguration {
     return ret;
   }
 
-  public IList<String> toInfoString() {
-    EList<String> lines = new EList<>();
-    EStringBuilder sb;
+  public String toInfoString(String departureArrivalSeparator) {
+    EStringBuilder sb = new EStringBuilder();
 
-    sb = new EStringBuilder();
-    sb.append("Arrivals: ");
-    sb.appendItems(
-        arrivals.select(q -> new Tuple<>(q.name, q.categories)),
-        q -> q.getA() + "/" + q.getB(),
-        ", ");
-    lines.add(sb.toString());
-
-    sb = new EStringBuilder();
-    sb.append("Departures: ");
+    sb.append("Departures - ");
     sb.appendItems(
         departures.select(q -> new Tuple<>(q.name, q.categories)),
-        q -> q.getA() + "/" + q.getB(),
+        q -> q.getA() + " for " + q.getB(),
         ", ");
-    lines.add(sb.toString());
+    sb.append(departureArrivalSeparator);
+    sb.append("Arrivals - ");
+    sb.appendItems(
+        arrivals.select(q -> new Tuple<>(q.name, q.categories)),
+        q -> q.getA() + " for " + q.getB(),
+        ", ");
 
-    return lines;
+    return sb.toString();
   }
 
   public boolean isUsingTheSameRunwayConfiguration(RunwayConfiguration other) {
