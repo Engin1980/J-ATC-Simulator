@@ -2,7 +2,7 @@ package eng.jAtcSim.app.startupSettings.panels;
 
 import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IMap;
-import eng.jAtcSim.shared.LayoutManager;
+import eng.eSystem.swing.LayoutManager;
 import eng.jAtcSim.app.extenders.XComboBoxExtender;
 import eng.jAtcSim.app.startupSettings.StartupSettings;
 import eng.jAtcSim.app.extenders.NumericUpDownExtender;

@@ -21,7 +21,7 @@ import eng.jAtcSim.lib.atcs.UserAtc;
 import eng.jAtcSim.lib.world.*;
 import eng.jAtcSim.lib.world.approaches.Approach;
 import eng.jAtcSim.radarBase.*;
-import eng.jAtcSim.shared.LayoutManager;
+import eng.eSystem.swing.LayoutManager;
 
 import javax.swing.*;
 import java.awt.*;

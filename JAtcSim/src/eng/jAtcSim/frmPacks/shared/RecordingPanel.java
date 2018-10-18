@@ -7,7 +7,7 @@ import eng.eSystem.utilites.NumberUtils;
 import eng.eSystem.utilites.awt.ComponentUtils;
 import eng.jAtcSim.Stylist;
 import eng.jAtcSim.recording.Settings;
-import eng.jAtcSim.shared.LayoutManager;
+import eng.eSystem.swing.LayoutManager;
 import eng.jAtcSim.shared.MessageBox;
 import eng.jAtcSim.app.extenders.*;
 

@@ -12,7 +12,7 @@ import eng.jAtcSim.lib.weathers.decoders.MetarDecoder;
 import eng.jAtcSim.lib.weathers.downloaders.MetarDownloader;
 import eng.jAtcSim.lib.weathers.downloaders.MetarDownloaderNoaaGov;
 import eng.jAtcSim.shared.BackgroundWorker;
-import eng.jAtcSim.shared.LayoutManager;
+import eng.eSystem.swing.LayoutManager;
 import eng.jAtcSim.shared.MessageBox;
 import eng.jAtcSim.app.startupSettings.StartupSettings;
 import eng.jAtcSim.app.extenders.NumericUpDownExtender;

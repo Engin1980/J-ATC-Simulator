@@ -5,7 +5,7 @@
  */
 package eng.jAtcSim.app.extenders;
 
-import eng.jAtcSim.shared.LayoutManager;
+import eng.eSystem.swing.LayoutManager;
 
 import java.awt.*;
 import java.io.File;

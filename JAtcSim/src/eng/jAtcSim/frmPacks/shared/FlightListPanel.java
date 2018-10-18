@@ -10,7 +10,7 @@ import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.AirplaneDataFormatter;
 import eng.jAtcSim.lib.airplanes.AirproxType;
 import eng.jAtcSim.lib.airplanes.Callsign;
-import eng.jAtcSim.shared.LayoutManager;
+import eng.eSystem.swing.LayoutManager;
 
 import javax.swing.*;
 import java.awt.*;

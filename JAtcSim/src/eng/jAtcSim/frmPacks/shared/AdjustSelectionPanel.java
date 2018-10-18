@@ -6,7 +6,7 @@ import eng.eSystem.swing.extenders.BoxItem;
 import eng.eSystem.swing.extenders.CheckedListBoxExtender;
 import eng.eSystem.utilites.Selector;
 import eng.eSystem.utilites.StringUtils;
-import eng.jAtcSim.shared.LayoutManager;
+import eng.eSystem.swing.LayoutManager;
 
 import javax.swing.*;
 import java.awt.*;

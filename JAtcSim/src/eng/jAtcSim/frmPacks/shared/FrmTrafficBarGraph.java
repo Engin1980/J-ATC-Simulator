@@ -5,7 +5,7 @@ import eng.eSystem.validation.Validator;
 import eng.jAtcSim.app.controls.ImagePanel;
 import eng.jAtcSim.app.extenders.XComboBoxExtender;
 import eng.jAtcSim.lib.traffic.Traffic;
-import eng.jAtcSim.shared.LayoutManager;
+import eng.eSystem.swing.LayoutManager;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.CategoryAxis;
 import org.jfree.chart.axis.CategoryLabelPositions;

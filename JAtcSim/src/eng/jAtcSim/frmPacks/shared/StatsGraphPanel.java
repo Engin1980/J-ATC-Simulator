@@ -9,7 +9,7 @@ import eng.jAtcSim.lib.stats.read.shared.DataView;
 import eng.jAtcSim.lib.stats.read.shared.MeanView;
 import eng.jAtcSim.lib.stats.read.shared.MinMaxMeanCountCurrentView;
 import eng.jAtcSim.lib.stats.read.specific.PlanesSubStats;
-import eng.jAtcSim.shared.LayoutManager;
+import eng.eSystem.swing.LayoutManager;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.CategoryAxis;
 import org.jfree.chart.axis.CategoryLabelPositions;

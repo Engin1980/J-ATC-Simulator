@@ -3,7 +3,7 @@ package eng.jAtcSim.app.startupSettings.panels;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.jAtcSim.Stylist;
-import eng.jAtcSim.shared.LayoutManager;
+import eng.eSystem.swing.LayoutManager;
 import eng.jAtcSim.app.extenders.NumericUpDownExtender;
 import eng.jAtcSim.app.extenders.SwingFactory;
 

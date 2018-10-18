@@ -8,7 +8,7 @@ import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.Callsign;
 import eng.jAtcSim.lib.world.Navaid;
 import eng.jAtcSim.radarBase.global.Color;
-import eng.jAtcSim.shared.LayoutManager;
+import eng.eSystem.swing.LayoutManager;
 
 import javax.swing.*;
 import java.awt.*;

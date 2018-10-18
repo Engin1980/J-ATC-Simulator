@@ -19,7 +19,7 @@ import eng.jAtcSim.radarBase.RadarViewPort;
 import eng.jAtcSim.radarBase.global.SoundManager;
 import eng.jAtcSim.recording.Recording;
 import eng.jAtcSim.recording.Settings;
-import eng.jAtcSim.shared.LayoutManager;
+import eng.eSystem.swing.LayoutManager;
 import eng.jAtcSim.shared.MessageBox;
 import eng.jAtcSim.app.extenders.SwingFactory;
 

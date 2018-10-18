@@ -7,7 +7,7 @@ import eng.jAtcSim.lib.airplanes.Callsign;
 import eng.jAtcSim.lib.airplanes.moods.MoodExperienceResult;
 import eng.jAtcSim.lib.airplanes.moods.MoodResult;
 import eng.jAtcSim.lib.global.ETime;
-import eng.jAtcSim.shared.LayoutManager;
+import eng.eSystem.swing.LayoutManager;
 
 import javax.swing.*;
 import java.awt.*;

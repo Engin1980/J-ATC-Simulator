@@ -10,7 +10,7 @@ import eng.jAtcSim.lib.global.newSources.*;
 import eng.jAtcSim.lib.traffic.FlightListTraffic;
 import eng.jAtcSim.lib.traffic.Traffic;
 import eng.jAtcSim.lib.world.Airport;
-import eng.jAtcSim.shared.LayoutManager;
+import eng.eSystem.swing.LayoutManager;
 import eng.jAtcSim.app.extenders.SwingFactory;
 import eng.jAtcSim.app.startupSettings.panels.*;
 import eng.jAtcSim.shared.MessageBox;

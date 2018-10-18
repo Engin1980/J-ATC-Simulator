@@ -2,7 +2,7 @@ package eng.jAtcSim.app.extenders;
 
 import eng.eSystem.Tuple;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
-import eng.jAtcSim.shared.LayoutManager;
+import eng.eSystem.swing.LayoutManager;
 
 import javax.swing.*;
 

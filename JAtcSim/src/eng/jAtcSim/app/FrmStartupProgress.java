@@ -4,7 +4,7 @@ import eng.jAtcSim.JAtcSim;
 import eng.jAtcSim.Stylist;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.global.logging.ApplicationLog;
-import eng.jAtcSim.shared.LayoutManager;
+import eng.eSystem.swing.LayoutManager;
 
 import javax.swing.*;
 import java.awt.*;

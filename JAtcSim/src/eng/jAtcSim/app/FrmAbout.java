@@ -2,7 +2,7 @@ package eng.jAtcSim.app;
 
 import eng.jAtcSim.JAtcSim;
 import eng.jAtcSim.Stylist;
-import eng.jAtcSim.shared.LayoutManager;
+import eng.eSystem.swing.LayoutManager;
 
 import javax.swing.*;
 import java.awt.*;

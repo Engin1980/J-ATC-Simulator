@@ -5,7 +5,7 @@ import eng.jAtcSim.lib.Simulation;
 import eng.jAtcSim.lib.global.ETime;
 import eng.jAtcSim.lib.stats.read.StatsView;
 import eng.jAtcSim.lib.stats.Statistics;
-import eng.jAtcSim.shared.LayoutManager;
+import eng.eSystem.swing.LayoutManager;
 
 import javax.swing.*;
 import java.awt.*;

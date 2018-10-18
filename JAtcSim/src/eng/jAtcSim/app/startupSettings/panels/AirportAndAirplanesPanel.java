@@ -10,7 +10,7 @@ import eng.jAtcSim.lib.global.logging.ApplicationLog;
 import eng.jAtcSim.lib.global.newSources.AreaSource;
 import eng.jAtcSim.lib.world.Airport;
 import eng.jAtcSim.lib.world.Area;
-import eng.jAtcSim.shared.LayoutManager;
+import eng.eSystem.swing.LayoutManager;
 import eng.jAtcSim.app.startupSettings.StartupSettings;
 import eng.jAtcSim.app.extenders.XComboBoxExtender;
 import eng.jAtcSim.shared.MessageBox;

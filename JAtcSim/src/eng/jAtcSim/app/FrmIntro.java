@@ -3,7 +3,7 @@ package eng.jAtcSim.app;
 import eng.eSystem.utilites.ExceptionUtils;
 import eng.jAtcSim.JAtcSim;
 import eng.jAtcSim.Stylist;
-import eng.jAtcSim.shared.LayoutManager;
+import eng.eSystem.swing.LayoutManager;
 import eng.jAtcSim.shared.MessageBox;
 import eng.jAtcSim.app.extenders.SwingFactory;
 import eng.jAtcSim.app.startupSettings.FrmStartupSettings;
@@ -46,8 +46,8 @@ public class FrmIntro extends JFrame {
     btnExit.addActionListener(o -> btnExit_click());
 
 
-    JPanel pnl = eng.jAtcSim.shared.LayoutManager.createBorderedPanel(16,
-        eng.jAtcSim.shared.LayoutManager.createBoxPanel(LayoutManager.eHorizontalAlign.center, 16,
+    JPanel pnl = LayoutManager.createBorderedPanel(16,
+        LayoutManager.createBoxPanel(LayoutManager.eHorizontalAlign.center, 16,
             lblImage, btnStartupSettings, btnRun, btnLoadSim, btnExit));
 
     this.getContentPane().setLayout(new BorderLayout());

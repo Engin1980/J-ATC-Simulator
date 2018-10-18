@@ -5,7 +5,7 @@ import eng.eSystem.utilites.awt.ComponentUtils;
 import eng.jAtcSim.app.extenders.SwingFactory;
 import eng.jAtcSim.app.extenders.XmlFileSelectorExtender;
 import eng.jAtcSim.app.startupSettings.StartupSettings;
-import eng.jAtcSim.shared.LayoutManager;
+import eng.eSystem.swing.LayoutManager;
 
 import javax.swing.*;
 

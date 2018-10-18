@@ -6,7 +6,7 @@ import eng.jAtcSim.XmlLoadHelper;
 import eng.jAtcSim.lib.Simulation;
 import eng.jAtcSim.lib.airplanes.Callsign;
 import eng.jAtcSim.lib.traffic.Movement;
-import eng.jAtcSim.shared.LayoutManager;
+import eng.eSystem.swing.LayoutManager;
 
 import javax.swing.*;
 import java.awt.*;

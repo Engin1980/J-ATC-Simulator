@@ -16,7 +16,7 @@ import eng.jAtcSim.lib.global.newSources.XmlTrafficSource;
 import eng.jAtcSim.lib.traffic.GenericTraffic;
 import eng.jAtcSim.lib.traffic.Traffic;
 import eng.jAtcSim.lib.traffic.fleets.Fleets;
-import eng.jAtcSim.shared.LayoutManager;
+import eng.eSystem.swing.LayoutManager;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
