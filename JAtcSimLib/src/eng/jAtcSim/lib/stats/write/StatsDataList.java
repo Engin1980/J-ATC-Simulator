@@ -66,7 +66,7 @@ public class StatsDataList {
       ret = LoadSave.saveIntoElement("item", statsData);
       presavedElements.set(statsData, ret);
     }
-    ret.releaseFromParent();
+    ret.detachFromParent();
     return ret;
   }
 
