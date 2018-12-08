@@ -45,9 +45,9 @@
                        route="PD PR619 T PD PR631 T PD PR632 T PD PR621 T PD ESINU T PD BALTU"/>
                 <route type="sid" name="BALTU2D" category="AB"
                        route="PD PR619 T PD PR621 T PD ESINU T PD BALTU"/>
-                <route type="sid" name="BALTU2E" category="CD"
+                <route type="sid" name="DOBEN2E" category="CD"
                        route="PD PR619 T PD PR631 T PD PR632 T PD PR621 T PD ESINU T PD DOBEN"/>
-                <route type="sid" name="BALTU2D" category="AB"
+                <route type="sid" name="DOBEN2D" category="AB"
                        route="PD PR619 T PD PR621 T PD ESINU T PD DOBEN"/>
                 <route type="sid" name="VENOX2D" category="AB"
                        route="PD PR619 T PD PR621 T PD PR622 T PD VENOX"/>

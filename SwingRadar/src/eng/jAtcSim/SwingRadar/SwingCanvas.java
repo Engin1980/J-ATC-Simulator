@@ -326,7 +326,7 @@ public class SwingCanvas implements ICanvas<JComponent> {
 
   private static final double MAX_TEXT_WIDTH_RATIO = .45;
   private static final int TEXT_WIDTH_MARGIN = 16;
-  private static final int TEXT_HEIGHT_MARGIN = 8;
+  private static final int TEXT_HEIGHT_MARGIN = 0;
 
   @Override
   public void drawTextBlock(List<String> lines, TextBlockLocation location, Font font, Color color) {
