@@ -452,8 +452,8 @@ public class Radar {
    */
   public void redraw(boolean force) {
 
-    if (force || radarRedrawCounter.increase()) { // if is forced or second is elapsed
-      if (!force && planeRedrawCounter.increase()) { // if is only second elapsed
+    if (force || radarRedrawCounter.increase()) { // only if forced or second has elapsed
+      if (!force && planeRedrawCounter.increase()) { // only if a second has elapsed
         if (styleSettings.switchingPlaneAlternatingColor != null) switchFlagTrue = !switchFlagTrue;
         planeInfos.update(simulation.getPlanesToDisplay());
       }

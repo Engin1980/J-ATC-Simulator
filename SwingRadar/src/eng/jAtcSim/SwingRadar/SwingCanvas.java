@@ -324,23 +324,22 @@ public class SwingCanvas implements ICanvas<JComponent> {
     }
   }
 
+  private static final double MAX_TEXT_WIDTH_RATIO = .45;
+  private static final int TEXT_WIDTH_MARGIN = 16;
+  private static final int TEXT_HEIGHT_MARGIN = 8;
+
   @Override
   public void drawTextBlock(List<String> lines, TextBlockLocation location, Font font, Color color) {
     if (lines.isEmpty()) {
       return;
     }
-    if (
-            location == TextBlockLocation.bottomLeft
-        ||
-            location == TextBlockLocation.topRight
-    ) return;
 
     g.setFont(Fonting.get(font));
     g.setColor(Coloring.get(color));
 
-    int width = (int) g.getClipBounds().getWidth() - 16;
-    double maxLength = width * .45;
-    int height = (int) g.getClipBounds().getHeight() - 16;
+    int width = (int) g.getClipBounds().getWidth() - TEXT_WIDTH_MARGIN;
+    double maxLength = width * MAX_TEXT_WIDTH_RATIO;
+    int height = (int) g.getClipBounds().getHeight() - TEXT_HEIGHT_MARGIN;
 
     IList<Tuple<EditablePoint, String>> positionedLines = getPositionedLines(lines, location, width, height, maxLength);
     for (Tuple<EditablePoint, String> line : positionedLines) {
