@@ -4,6 +4,7 @@ import com.sun.istack.internal.NotNull;
 import com.sun.istack.internal.Nullable;
 import eng.eSystem.collections.*;
 import eng.eSystem.eXml.XElement;
+import eng.eSystem.exceptions.EApplicationException;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.AirplaneList;
@@ -19,6 +20,8 @@ import eng.jAtcSim.lib.speaking.fromAtc.notifications.RadarContactConfirmationNo
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public abstract class ComputerAtc extends Atc {
 
@@ -47,28 +50,20 @@ public abstract class ComputerAtc extends Atc {
     speechDelayer.add(msgs);
 
     msgs = speechDelayer.getAndElapse();
+    elapseSecondProcessMessagesForAtc(msgs);
 
-    for (Message m : msgs) {
-      recorder.write(m); // incoming item
-
-      if (m.isSourceOfType(Airplane.class)) {
-        // messages from planes
-        Airplane p = m.getSource();
-        SpeechList spchs = m.getContent();
-
-        if (spchs.containsType(GoodDayNotification.class))
-
-        confirmGoodDayNotificationIfRequired(p, spchs);
-        processMessagesFromPlane(p, spchs);
-      } else if (m.getSource() instanceof Atc) {
-        elapseSecondProcessMessageFromAtc(m);
-      }
-    }
     List<SwitchRequest> srs = new ArrayList<>();
     for (SwitchRequest sr : this.confirmedRequestList) {
       if (shouldBeSwitched(sr.airplane))
         srs.add(sr);
     }
+    elapseSecondProcessSwitchRequests(srs);
+
+    checkAndProcessPlanesReadyToSwitch();
+    repeatOldSwitchRequests();
+  }
+
+  private void elapseSecondProcessSwitchRequests(List<SwitchRequest> srs) {
     for (SwitchRequest sr : srs) {
       this.confirmedRequestList.remove(sr);
       if (Acc.prm().isApprovedToSwitch(sr.airplane)) {
@@ -83,9 +78,33 @@ public abstract class ComputerAtc extends Atc {
         this.sendMessage(nm);
       }
     }
+  }
 
-    checkAndProcessPlanesReadyToSwitch();
-    repeatOldSwitchRequests();
+  private void elapseSecondProcessMessagesForAtc(IList<Message> msgs) {
+    for (Message m : msgs) {
+      try {
+        recorder.write(m); // incoming item
+
+        if (m.isSourceOfType(Airplane.class)) {
+          // messages from planes
+          Airplane p = m.getSource();
+          SpeechList spchs = m.getContent();
+
+          if (spchs.containsType(GoodDayNotification.class))
+
+            confirmGoodDayNotificationIfRequired(p, spchs);
+          processMessagesFromPlane(p, spchs);
+        } else if (m.getSource() instanceof Atc) {
+          elapseSecondProcessMessageFromAtc(m);
+        }
+      } catch (Exception ex){
+        throw new EApplicationException(sf(
+            "Failed to process a message for Atc. Atc: %s. Message from %s. Message itself: %s.",
+            this.getName(),
+            m.getSource().getName(),
+            m.toString()), ex);
+      }
+    }
   }
 
   private void elapseSecondProcessMessageFromAtc(Message m) {

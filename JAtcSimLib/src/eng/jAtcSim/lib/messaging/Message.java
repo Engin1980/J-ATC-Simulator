@@ -26,7 +26,7 @@ public class Message {
     return type.isAssignableFrom(source.getClass());
   }
 
-  public <T> T getSource(){
+  public <T extends IMessageParticipant> T getSource(){
     T ret;
     try{
       ret = (T) source;
@@ -36,7 +36,7 @@ public class Message {
     return ret;
   }
 
-  public <T> T getTarget(){
+  public <T extends  IMessageParticipant> T getTarget(){
     T ret;
     try{
       ret = (T) target;
