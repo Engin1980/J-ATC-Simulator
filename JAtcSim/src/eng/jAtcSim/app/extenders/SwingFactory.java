@@ -1,8 +1,13 @@
 package eng.jAtcSim.app.extenders;
 
 import eng.eSystem.Tuple;
+import eng.eSystem.collections.EList;
+import eng.eSystem.collections.EMap;
+import eng.eSystem.collections.IList;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.swing.LayoutManager;
+import eng.eSystem.swing.other.HistoryForJFileChooser;
+import eng.eSystem.swing.other.JFileChooserAsidePanel;
 
 import javax.swing.*;
 
@@ -45,10 +50,31 @@ public class SwingFactory {
   public static final String AIRPLANE_TYPES_EXTENSION = ".tp.xml";
   public static final String WEATHER_EXTENSION = ".we.xml";
 
+  public static class HistoryFileChooserManager{
+    private static Dimension defaultDimension = new Dimension(500,100);
+    private static EMap<String, EList<HistoryForJFileChooser.HistoryItem>> histories = new eng.eSystem.collections.EMap<>();
+    private static EMap<String, HistoryForJFileChooser> panels = new eng.eSystem.collections.EMap<>();
+
+    public static HistoryForJFileChooser getAsidePanel(String key){
+      HistoryForJFileChooser ret = panels.tryGet(key);
+      if (ret == null){
+        ret = new HistoryForJFileChooser(defaultDimension);
+        panels.set(key, ret);
+      }
+      return ret;
+    }
+  }
+
   public static JScrollBar createHorizontalBar(int minimum, int maximum, int value) {
     JScrollBar ret = new JScrollBar(JScrollBar.HORIZONTAL);
     ret.getModel().setRangeProperties(value, 0, minimum, maximum, true);
     return ret;
+  }
+
+  private static void bindAsidePanel(JFileChooser jFileChooser, JFileChooserAsidePanel ... asidePanels){
+    JFileChooserAsidePanel.LayoutDefinition layoutDefinition =
+        new JFileChooserAsidePanel.LayoutDefinition(JFileChooserAsidePanel.eOrientation.vertical, 500,500);
+    JFileChooserAsidePanel.bind(jFileChooser, layoutDefinition, asidePanels);
   }
 
   public static JFileChooser createFileDialog(FileDialogType type, String defaultFile) {
@@ -74,6 +100,8 @@ public class SwingFactory {
       case game:
         ret.addChoosableFileFilter(new FileTypeFilter(SAVED_SIMULATION_EXTENSION, "Saved simulation"));
         ret.addChoosableFileFilter(new FileTypeFilter(".xml", "XML files"));
+        HistoryForJFileChooser historyPanel = HistoryFileChooserManager.getAsidePanel(SAVED_SIMULATION_EXTENSION);
+        bindAsidePanel(ret, historyPanel);
         //TODO make the support of meta here: ret.setAccessory(new XmlMetaInfoPreview(ret));
         break;
       case traffic:
