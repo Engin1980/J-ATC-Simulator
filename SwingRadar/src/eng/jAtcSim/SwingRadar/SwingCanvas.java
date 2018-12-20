@@ -31,6 +31,14 @@ public class SwingCanvas implements ICanvas<JComponent> {
       this.x = x;
       this.y = y;
     }
+
+    @Override
+    public String toString() {
+      return "EditablePoint{" +
+          "x=" + x +
+          ", y=" + y +
+          '}';
+    }
   }
 
   class MouseProcessor {
@@ -145,6 +153,7 @@ public class SwingCanvas implements ICanvas<JComponent> {
    */
   private static final int yMargin = -2;
   private static final double MAX_TEXT_WIDTH_RATIO = .45;
+  private static final double MAX_TEXT_TOP_RIGHT_WIDTH_RATIO = .80;
   private static final int TEXT_WIDTH_MARGIN = 16;
   private static final int TEXT_HEIGHT_MARGIN = 0;
   private final JComponent c;
@@ -344,7 +353,8 @@ public class SwingCanvas implements ICanvas<JComponent> {
     g.setColor(Coloring.get(color));
 
     int width = (int) g.getClipBounds().getWidth() - TEXT_WIDTH_MARGIN;
-    double maxLength = width * MAX_TEXT_WIDTH_RATIO;
+    double maxLength = location == TextBlockLocation.topRight ?
+        width * MAX_TEXT_TOP_RIGHT_WIDTH_RATIO : width * MAX_TEXT_WIDTH_RATIO;
     int height = (int) g.getClipBounds().getHeight() - TEXT_HEIGHT_MARGIN;
 
     IList<Tuple<EditablePoint, String>> positionedLines = getPositionedLines(lines, location, width, height, maxLength);
@@ -443,7 +453,7 @@ public class SwingCanvas implements ICanvas<JComponent> {
   private int adjustLineAbsolutePosition(IList<Tuple<EditablePoint, String>> tmp, TextBlockLocation location,
                                          int globalY, int lineStep) {
     int tmpY = location.isBottom() ?
-        globalY - tmp.size() * lineStep : globalY;
+        globalY - tmp.size() * lineStep : globalY + lineStep;
     globalY = tmpY;
     for (Tuple<EditablePoint, String> tmpItem : tmp) {
       tmpItem.getA().y = tmpY;
@@ -456,7 +466,7 @@ public class SwingCanvas implements ICanvas<JComponent> {
     if (location.isBottom())
       return maxHeight;
     else
-      return lineStep;
+      return 0;
   }
 
   private void adjustLineRelativePosition(IList<Tuple<EditablePoint, String>> tmp, TextBlockLocation location, int maxWidth, int lineStep) {
@@ -512,6 +522,7 @@ public class SwingCanvas implements ICanvas<JComponent> {
         else
           tmpLine = tmpLine.substring(0, spaceIndex);
       }
+      currentWidth = fm.getStringBounds(tmpLine, g).getBounds().width;
     }
     return ret;
   }
