@@ -2,7 +2,7 @@ package eng.jAtcSim.app.startupSettings.panels;
 
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.utilites.awt.ComponentUtils;
-import eng.jAtcSim.app.extenders.SwingFactory;
+import eng.jAtcSim.app.extenders.swingFactory.SwingFactory;
 import eng.jAtcSim.app.extenders.XmlFileSelectorExtender;
 import eng.jAtcSim.app.startupSettings.StartupSettings;
 import eng.eSystem.swing.LayoutManager;

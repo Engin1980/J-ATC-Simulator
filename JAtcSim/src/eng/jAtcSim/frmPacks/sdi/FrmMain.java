@@ -3,7 +3,6 @@ package eng.jAtcSim.frmPacks.sdi;
 import eng.eSystem.collections.IMap;
 import eng.eSystem.utilites.ExceptionUtils;
 import eng.eSystem.utilites.awt.ComponentUtils;
-import eng.eSystem.utilites.awt.JFrameUtils;
 import eng.jAtcSim.Stylist;
 import eng.jAtcSim.app.FrmAbout;
 import eng.jAtcSim.frmPacks.shared.*;
@@ -21,7 +20,7 @@ import eng.jAtcSim.recording.Recording;
 import eng.jAtcSim.recording.Settings;
 import eng.eSystem.swing.LayoutManager;
 import eng.jAtcSim.shared.MessageBox;
-import eng.jAtcSim.app.extenders.SwingFactory;
+import eng.jAtcSim.app.extenders.swingFactory.SwingFactory;
 
 import javax.swing.*;
 import java.awt.*;

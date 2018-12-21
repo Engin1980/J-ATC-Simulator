@@ -1,11 +1,13 @@
 package eng.jAtcSim.app;
 
+import eng.eSystem.swing.other.HistoryForJFileChooser;
 import eng.eSystem.utilites.ExceptionUtils;
 import eng.jAtcSim.JAtcSim;
 import eng.jAtcSim.Stylist;
 import eng.eSystem.swing.LayoutManager;
+import eng.jAtcSim.app.extenders.swingFactory.FileHistoryManager;
 import eng.jAtcSim.shared.MessageBox;
-import eng.jAtcSim.app.extenders.SwingFactory;
+import eng.jAtcSim.app.extenders.swingFactory.SwingFactory;
 import eng.jAtcSim.app.startupSettings.FrmStartupSettings;
 import eng.jAtcSim.app.startupSettings.StartupSettings;
 
@@ -14,7 +16,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 
 public class FrmIntro extends JFrame {
 
@@ -89,10 +90,12 @@ public class FrmIntro extends JFrame {
     int res = jf.showOpenDialog(this);
     if (res != JFileChooser.APPROVE_OPTION) return;
 
-
     this.setVisible(false);
     try {
       JAtcSim.loadSimulation(this.startupSettings, jf.getSelectedFile().getAbsolutePath());
+
+      // on successful load update files history
+      FileHistoryManager.updateHistory(SwingFactory.FileDialogType.game.toString(), jf.getSelectedFile().toPath().toString());
     } catch (Exception ex) {
       ex.printStackTrace();
       MessageBox.show("Failed to load the simulation. \n\n" +

@@ -10,7 +10,8 @@ import eng.eSystem.collections.IMap;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.exceptions.ERuntimeException;
-import eng.jAtcSim.app.extenders.SwingFactory;
+import eng.jAtcSim.app.extenders.swingFactory.FileHistoryManager;
+import eng.jAtcSim.app.extenders.swingFactory.SwingFactory;
 import eng.jAtcSim.frmPacks.Pack;
 import eng.jAtcSim.frmPacks.shared.FrmLog;
 import eng.jAtcSim.lib.Acc;
@@ -25,7 +26,6 @@ import eng.jAtcSim.radarBase.global.SoundManager;
 import eng.jAtcSim.app.FrmIntro;
 import eng.jAtcSim.app.FrmStartupProgress;
 import eng.jAtcSim.app.startupSettings.StartupSettings;
-import eng.jAtcSim.shared.MessageBox;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -68,7 +68,7 @@ public class JAtcSim {
     appSettings = AppSettings.create();
 
     // various inits
-    SwingFactory.HistoryFileChooserManager.init();
+    FileHistoryManager.init();
     Recorder.init(appSettings.logFolder.toString(), appSettings.speechFormatterFile);
 
 

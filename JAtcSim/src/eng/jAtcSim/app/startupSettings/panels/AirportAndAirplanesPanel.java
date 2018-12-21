@@ -3,7 +3,7 @@ package eng.jAtcSim.app.startupSettings.panels;
 import eng.eSystem.collections.EList;
 import eng.eSystem.events.EventAnonymous;
 import eng.eSystem.utilites.ExceptionUtils;
-import eng.jAtcSim.app.extenders.SwingFactory;
+import eng.jAtcSim.app.extenders.swingFactory.SwingFactory;
 import eng.jAtcSim.app.extenders.XmlFileSelectorExtender;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.global.logging.ApplicationLog;

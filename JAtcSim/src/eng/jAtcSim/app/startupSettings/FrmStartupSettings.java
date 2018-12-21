@@ -4,14 +4,14 @@ import eng.eSystem.collections.IList;
 import eng.eSystem.utilites.ExceptionUtils;
 import eng.eSystem.utilites.awt.ComponentUtils;
 import eng.jAtcSim.XmlLoadHelper;
+import eng.jAtcSim.app.extenders.swingFactory.FileHistoryManager;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.global.logging.ApplicationLog;
 import eng.jAtcSim.lib.global.newSources.*;
 import eng.jAtcSim.lib.traffic.FlightListTraffic;
 import eng.jAtcSim.lib.traffic.Traffic;
-import eng.jAtcSim.lib.world.Airport;
 import eng.eSystem.swing.LayoutManager;
-import eng.jAtcSim.app.extenders.SwingFactory;
+import eng.jAtcSim.app.extenders.swingFactory.SwingFactory;
 import eng.jAtcSim.app.startupSettings.panels.*;
 import eng.jAtcSim.shared.MessageBox;
 
@@ -174,6 +174,7 @@ public class FrmStartupSettings extends JPanel {
     StartupSettings sett;
     sett = XmlLoadHelper.loadStartupSettings(file.getAbsolutePath());
     this.fillBySettings(sett);
+    FileHistoryManager.updateHistory(SwingFactory.FileDialogType.startupSettings.toString(), file.toPath().toString());
     this.lastStartupSettingsFileName = file.getAbsolutePath();
   }
 
@@ -191,6 +192,7 @@ public class FrmStartupSettings extends JPanel {
     this.fillSettingsBy(sett);
 
     XmlLoadHelper.saveStartupSettings(sett, fileName);
+    FileHistoryManager.updateHistory(SwingFactory.FileDialogType.startupSettings.toString(), fileName);
     this.lastStartupSettingsFileName = fileName;
   }
 

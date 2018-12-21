@@ -5,7 +5,7 @@ import eng.eSystem.collections.IList;
 import eng.jAtcSim.Stylist;
 import eng.eSystem.swing.LayoutManager;
 import eng.jAtcSim.app.extenders.NumericUpDownExtender;
-import eng.jAtcSim.app.extenders.SwingFactory;
+import eng.jAtcSim.app.extenders.swingFactory.SwingFactory;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;

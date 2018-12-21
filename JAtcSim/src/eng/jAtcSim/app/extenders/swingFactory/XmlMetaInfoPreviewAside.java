@@ -1,8 +1,9 @@
-package eng.jAtcSim.app.extenders;
+package eng.jAtcSim.app.extenders.swingFactory;
 
 import eng.eSystem.Tuple;
 import eng.eSystem.swing.LayoutManager;
 import eng.eSystem.swing.other.JFileChooserAsidePanel;
+import eng.jAtcSim.app.extenders.swingFactory.XmlInfo;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
