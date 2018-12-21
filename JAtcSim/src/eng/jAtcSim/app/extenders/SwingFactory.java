@@ -3,14 +3,15 @@ package eng.jAtcSim.app.extenders;
 import eng.eSystem.Tuple;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.EMap;
-import eng.eSystem.collections.IList;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
+import eng.eSystem.exceptions.ERuntimeException;
 import eng.eSystem.swing.LayoutManager;
 import eng.eSystem.swing.other.HistoryForJFileChooser;
 import eng.eSystem.swing.other.JFileChooserAsidePanel;
+import eng.eSystem.xmlSerialization.XmlSerializer;
+import eng.eSystem.xmlSerialization.XmlSettings;
 
 import javax.swing.*;
-
 import javax.swing.border.TitledBorder;
 import javax.swing.filechooser.FileFilter;
 import java.awt.*;
@@ -23,6 +24,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -50,20 +52,76 @@ public class SwingFactory {
   public static final String AIRPLANE_TYPES_EXTENSION = ".tp.xml";
   public static final String WEATHER_EXTENSION = ".we.xml";
 
-  public static class HistoryFileChooserManager{
-    private static Dimension defaultDimension = new Dimension(500,100);
-    private static EMap<String, EList<HistoryForJFileChooser.HistoryItem>> histories = new eng.eSystem.collections.EMap<>();
+  public static class HistoryFileChooserManager {
+    private static Dimension defaultDimension = new Dimension(500, 100);
+    private static EMap<String, EList<String>> histories = new eng.eSystem.collections.EMap<>();
     private static EMap<String, HistoryForJFileChooser> panels = new eng.eSystem.collections.EMap<>();
+    private static boolean initialized = false;
 
-    public static HistoryForJFileChooser getAsidePanel(String key){
+    public static HistoryForJFileChooser getAsidePanel(String key) {
+      if (initialized == false)
+        init();
       HistoryForJFileChooser ret = panels.tryGet(key);
-      if (ret == null){
+      if (ret == null) {
         ret = new HistoryForJFileChooser(defaultDimension);
         panels.set(key, ret);
       }
       return ret;
     }
+
+    public static void init() {
+      loadHistories();
+      initialized = true;
+    }
+
+    private static void loadHistories() {
+      Path userHomeHistoryFile = getHistoryFilePath();
+
+      if (java.nio.file.Files.exists(userHomeHistoryFile) == false)
+        return;
+
+      XmlSettings sett = getXmlHistorySettings();
+      XmlSerializer ser = new XmlSerializer(sett);
+      EMap<String, EList<String>> tmp = ser.deserialize(userHomeHistoryFile.toAbsolutePath().toString(), EMap.class);
+      SwingFactory.HistoryFileChooserManager.histories = tmp;
+    }
+
+    private static void saveHistories(){
+      Path userHomeHistoryFile = getHistoryFilePath();
+
+      XmlSettings sett = getXmlHistorySettings();
+      XmlSerializer ser = new XmlSerializer(sett);
+      Path tmpFile;
+      try {
+        tmpFile = java.nio.file.Files.createTempFile("", "");
+      } catch (IOException e) {
+        throw new ERuntimeException("Failed to create a temp file.", e);
+      }
+      ser.serialize(tmpFile.toAbsolutePath().toString(), ser);
+      try {
+        java.nio.file.Files.copy(tmpFile, userHomeHistoryFile, StandardCopyOption.REPLACE_EXISTING);
+      } catch (IOException e) {
+        throw new ERuntimeException("Failed to replace existing history file.", e);
+      }
+    }
+
+    private static Path getHistoryFilePath(){
+      String userHome = System.getProperty("user.home");
+      Path ret = Paths.get(userHome, "jAtcSimFileHistory.xml");
+      return ret;
+    }
+    private static XmlSettings getXmlHistorySettings(){
+      XmlSettings ret = new XmlSettings();
+
+      ret.forType(EList.class).addXmlItemElement("file", String.class, false,null);
+      ret.forType(EMap.class)
+          .addXmlMapKeyAttribute("key", String.class,false,null)
+          .addXmlMapValueElement("files", EList.class, true, null);
+
+      return ret;
+    }
   }
+
 
   public static JScrollBar createHorizontalBar(int minimum, int maximum, int value) {
     JScrollBar ret = new JScrollBar(JScrollBar.HORIZONTAL);
@@ -71,9 +129,9 @@ public class SwingFactory {
     return ret;
   }
 
-  private static void bindAsidePanel(JFileChooser jFileChooser, JFileChooserAsidePanel ... asidePanels){
+  private static void bindAsidePanel(JFileChooser jFileChooser, JFileChooserAsidePanel... asidePanels) {
     JFileChooserAsidePanel.LayoutDefinition layoutDefinition =
-        new JFileChooserAsidePanel.LayoutDefinition(JFileChooserAsidePanel.eOrientation.vertical, 500,500);
+        new JFileChooserAsidePanel.LayoutDefinition(JFileChooserAsidePanel.eOrientation.vertical, 500, 500);
     JFileChooserAsidePanel.bind(jFileChooser, layoutDefinition, asidePanels);
   }
 
@@ -145,12 +203,12 @@ public class SwingFactory {
     return ret;
   }
 
-  public static void show(JPanel pnl, String title){
+  public static void show(JPanel pnl, String title) {
     JFrame frm = getAsFrame(pnl, title);
     frm.setVisible(true);
   }
 
-  public static JFrame getAsFrame(JPanel pnl, String title){
+  public static JFrame getAsFrame(JPanel pnl, String title) {
     JFrame ret = new JFrame();
     ret.getContentPane().add(pnl);
     ret.pack();
@@ -158,15 +216,7 @@ public class SwingFactory {
     return ret;
   }
 
-  public static void showDialog(JPanel pnl, String title, JFrame owner){
-    JDialog dlg = new JDialog(owner, Dialog.ModalityType.DOCUMENT_MODAL);
-    dlg.getContentPane().add(pnl);
-    dlg.pack();
-    dlg.setLocationRelativeTo(null);
-    dlg.setTitle(title);
-    dlg.setVisible(true);
-  }
-  public static void showDialog(JPanel pnl, String title, JDialog owner){
+  public static void showDialog(JPanel pnl, String title, JFrame owner) {
     JDialog dlg = new JDialog(owner, Dialog.ModalityType.DOCUMENT_MODAL);
     dlg.getContentPane().add(pnl);
     dlg.pack();
@@ -175,7 +225,16 @@ public class SwingFactory {
     dlg.setVisible(true);
   }
 
-  public static JButton createButton(String title, ActionListener action){
+  public static void showDialog(JPanel pnl, String title, JDialog owner) {
+    JDialog dlg = new JDialog(owner, Dialog.ModalityType.DOCUMENT_MODAL);
+    dlg.getContentPane().add(pnl);
+    dlg.pack();
+    dlg.setLocationRelativeTo(null);
+    dlg.setTitle(title);
+    dlg.setVisible(true);
+  }
+
+  public static JButton createButton(String title, ActionListener action) {
     JButton ret = new JButton(title);
     ret.addActionListener(action);
     return ret;
@@ -226,7 +285,7 @@ class XmlMetaInfoPreview extends JComponent implements PropertyChangeListener {
     JPanel pnlTitle = LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.baseline, 0, txtTitle);
     JPanel pnlVersionDate = LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.baseline, 0, txtVersionDate);
     JPanel pnlAuthor = LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.baseline, 0, txtAuthor);
-    JScrollPane pnlDescriptionScroll =new JScrollPane(txtDescription);
+    JScrollPane pnlDescriptionScroll = new JScrollPane(txtDescription);
     pnlDescriptionScroll.setBorder(null);
     JPanel pnlDescription = LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.baseline, 0,
         pnlDescriptionScroll);

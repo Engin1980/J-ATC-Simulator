@@ -10,6 +10,7 @@ import eng.eSystem.collections.IMap;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.exceptions.ERuntimeException;
+import eng.jAtcSim.app.extenders.SwingFactory;
 import eng.jAtcSim.frmPacks.Pack;
 import eng.jAtcSim.frmPacks.shared.FrmLog;
 import eng.jAtcSim.lib.Acc;
@@ -66,7 +67,10 @@ public class JAtcSim {
 
     appSettings = AppSettings.create();
 
+    // various inits
+    SwingFactory.HistoryFileChooserManager.init();
     Recorder.init(appSettings.logFolder.toString(), appSettings.speechFormatterFile);
+
 
     // startupSettings wizard
     StartupSettings startupSettings = XmlLoadHelper.loadStartupSettings(appSettings.startupSettingsFile.toString());

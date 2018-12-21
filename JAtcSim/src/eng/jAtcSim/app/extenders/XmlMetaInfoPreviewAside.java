@@ -37,7 +37,7 @@ public class XmlMetaInfoPreviewAside extends JFileChooserAsidePanel {
     JPanel pnlTitle = LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.baseline, 0, txtTitle);
     JPanel pnlVersionDate = LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.baseline, 0, txtVersionDate);
     JPanel pnlAuthor = LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.baseline, 0, txtAuthor);
-    JScrollPane pnlDescriptionScroll =new JScrollPane(txtDescription);
+    JScrollPane pnlDescriptionScroll = new JScrollPane(txtDescription);
     pnlDescriptionScroll.setBorder(null);
     JPanel pnlDescription = LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.baseline, 0,
         pnlDescriptionScroll);
