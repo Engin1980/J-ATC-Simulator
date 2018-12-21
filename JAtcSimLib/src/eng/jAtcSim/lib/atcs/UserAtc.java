@@ -115,7 +115,7 @@ public class UserAtc extends Atc {
 
       if (getPrm().getResponsibleAtc(plane).getType() != type) {
         // nesedi smer potvrzeni A predava na APP, ale APP potvrzuje na B
-        sendError("SQWK " + plane.getSqwk() + " not in your control. You cannot request switch.");
+        sendError("SQWK " + plane.getSqwk() + " not under your control. You cannot request switch.");
         return;
       } else {
         // potvrdime

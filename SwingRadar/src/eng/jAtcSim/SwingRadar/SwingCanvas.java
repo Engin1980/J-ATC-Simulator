@@ -439,21 +439,19 @@ public class SwingCanvas implements ICanvas<JComponent> {
     FontMetrics fm = g.getFontMetrics();
     Rectangle charBounds = fm.getStringBounds("X", g).getBounds();
     int lineStep = charBounds.height;
-    int globalY = getGlobalY(location, lineStep, height);
+    int globalY = getGlobalY(location, lineStep, height, lines.size());
     for (String line : lines) {
       IList<Tuple<EditablePoint, String>> tmp = convertToSublines(line, fm, maxLength);
       adjustLineRelativePosition(tmp, location, width, lineStep);
-      globalY = adjustLineAbsolutePosition(tmp, location, globalY, lineStep);
+      globalY = adjustLineAbsolutePosition(tmp, globalY, lineStep);
       ret.add(tmp);
     }
 
     return ret;
   }
 
-  private int adjustLineAbsolutePosition(IList<Tuple<EditablePoint, String>> tmp, TextBlockLocation location,
-                                         int globalY, int lineStep) {
-    int tmpY = location.isBottom() ?
-        globalY - tmp.size() * lineStep : globalY + lineStep;
+  private int adjustLineAbsolutePosition(IList<Tuple<EditablePoint, String>> tmp, int globalY, int lineStep) {
+    int tmpY = globalY + lineStep;
     globalY = tmpY;
     for (Tuple<EditablePoint, String> tmpItem : tmp) {
       tmpItem.getA().y = tmpY;
@@ -462,9 +460,9 @@ public class SwingCanvas implements ICanvas<JComponent> {
     return globalY;
   }
 
-  private int getGlobalY(TextBlockLocation location, int lineStep, int maxHeight) {
+  private int getGlobalY(TextBlockLocation location, int lineStep, int maxHeight, int numberOfLines) {
     if (location.isBottom())
-      return maxHeight;
+      return maxHeight - lineStep * (numberOfLines + 1);
     else
       return 0;
   }
