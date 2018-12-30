@@ -777,8 +777,8 @@ public class Airplane implements IMessageParticipant {
     return delayResult;
   }
 
-  public void updateAssignedRoute(Route r) {
-    pilot.setAssignedRoute(r);
+  public void updateAssignedRouting(Route route, RunwayThreshold expectedRunwayThreshold) {
+    pilot.updateAssignedRouting(route, expectedRunwayThreshold);
   }
 
   public void raiseEmergency() {
@@ -803,15 +803,15 @@ public class Airplane implements IMessageParticipant {
     return ret;
   }
 
-  public RunwayThreshold getAssignedRunwayThreshold() {
-    RunwayThreshold ret = tryGetAssignedRunwayThreshold();
+  public RunwayThreshold getAssignedRunwayThresholdForLanding() {
+    RunwayThreshold ret = tryGetAssignedRunwayThresholdForLanding();
     if (ret == null) {
-      throw new EApplicationException("Unable to find approach for plane " + this.getCallsign().toString());
+      throw new EApplicationException(this.getCallsign().toString() + " has no assigned departure/arrival threshold.");
     }
     return ret;
   }
 
-  public RunwayThreshold tryGetAssignedRunwayThreshold() {
+  public RunwayThreshold tryGetAssignedRunwayThresholdForLanding() {
     CurrentApproachInfo cai = pilot.tryGetAssignedApproach();
     if (cai == null) {
       return null;
@@ -872,6 +872,10 @@ public class Airplane implements IMessageParticipant {
   public MoodResult getEvaluatedMood() {
     MoodResult ret = this.mood.evaluate(this.callsign, this.delayResult);
     return ret;
+  }
+
+  public RunwayThreshold getExpectedRunwayThreshold() {
+    return pilot.getExpectedRunwayThreshold();
   }
 
   // <editor-fold defaultstate="collapsed" desc=" private methods ">

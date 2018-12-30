@@ -31,10 +31,13 @@ public class PlaneSwitchMessage implements IAtc2Atc {
   public String getAsString() {
 
     String ret =
-        String.format("%1$s (%2$s) [%3$s]",
+        String.format("%1$s (%2$s) [%3$s] via %4$s/%5$s",
             plane.getSqwk().toString(),
             plane.getCallsign().toString(),
-            message);
+            message,
+            plane.getAssigneRoute().getName(),
+            plane.getExpectedRunwayThreshold().getName()
+            );
 
     return ret;
   }

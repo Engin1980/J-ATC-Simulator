@@ -6,7 +6,6 @@
 package eng.jAtcSim.lib.airplanes.pilots;
 
 import com.sun.istack.internal.Nullable;
-import com.sun.javafx.property.JavaBeanAccessHelper;
 import eng.eSystem.EStringBuilder;
 import eng.eSystem.Tuple;
 import eng.eSystem.collections.IList;
@@ -212,8 +211,8 @@ public class Pilot {
       return ret;
     }
 
-    public void setRoute(Route route) {
-      Pilot.this.setAssignedRoute(route);
+    public void setRoute(Route route, RunwayThreshold expectedRunwayThreshold) {
+      Pilot.this.updateAssignedRouting(route, expectedRunwayThreshold);
     }
 
     protected void setState(Airplane.State state) {
@@ -1128,6 +1127,7 @@ public class Pilot {
   private Coordinate targetCoordinate;
   private Behavior behavior;
   private Route assignedRoute;
+  private RunwayThreshold expectedRunwayThreshold;
   private Navaid entryExitPoint;
   private Restriction speedRestriction = null;
   private Restriction altitudeRestriction = null;
@@ -1220,7 +1220,8 @@ public class Pilot {
     return this.assignedRoute;
   }
 
-  public void setAssignedRoute(Route newRoute) {
+  public void updateAssignedRouting(Route newRoute, RunwayThreshold expectedRunwayThreshold) {
+    this.expectedRunwayThreshold = expectedRunwayThreshold;
     this.assignedRoute = newRoute;
     this.afterCommands.clearRoute();
 
@@ -1402,6 +1403,10 @@ public class Pilot {
                 this.parent.getCallsign(), this.parent.getAltitude(), this.parent.getTargetAltitude(), this.parent.isEmergency(), true));
       }
     }
+  }
+
+  public RunwayThreshold getExpectedRunwayThreshold() {
+    return expectedRunwayThreshold;
   }
 
   /**

@@ -1,5 +1,6 @@
 package eng.jAtcSim.lib.atcs;
 
+import eng.eSystem.Tuple;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
@@ -94,9 +95,11 @@ public class CenterAtc extends ComputerAtc {
 
       // assigns route
       Navaid n = plane.getEntryExitFix();
-      Route r = getRouteForPlaneAndFix(plane, n);
+      Tuple<Route, RunwayThreshold> rrt = getRoutingForPlaneAndFix(plane, n);
+      Route r = rrt.getA();
+      RunwayThreshold rt = rrt.getB();
       cmds.add(new ProceedDirectCommand(n));
-      cmds.add(new ClearedToRouteCommand(r));
+      cmds.add(new ClearedToRouteCommand(r, rt));
       Message msg = new Message(this, plane, cmds);
       super.sendMessage(msg);
 
@@ -239,8 +242,10 @@ public class CenterAtc extends ComputerAtc {
       farArrivals.add(plane);
   }
 
-  private Route getRouteForPlaneAndFix(Airplane plane, Navaid n) {
-
+  private Tuple<Route, RunwayThreshold> getRoutingForPlaneAndFix(Airplane plane, Navaid n) {
+    Tuple<Route, RunwayThreshold> ret;
+    Route r;
+    RunwayThreshold rt;
     IList<Route> rts = new EList<>();
 
     IReadOnlyList<RunwayThreshold> thresholds;
@@ -263,12 +268,15 @@ public class CenterAtc extends ComputerAtc {
     rts = rts.where(q -> q.isValidForCategory(plane.getType().category));
     rts = rts.where(q -> q.getMainNavaid().equals(n));
 
-    Route ret;
     if (rts.isEmpty()) {
-      ret = Route.createNewVectoringByFix(n, true);
-    } else
-      ret = rts.getRandom();
+      r = Route.createNewVectoringByFix(n, true);
+      rt = thresholds.getRandom();
+    } else {
+      r = rts.getRandom();
+      rt = thresholds.where(q->q.getRoutes().contains(r)).getRandom();
+    }
 
+    ret = new Tuple<>(r, rt);
     return ret;
   }
 

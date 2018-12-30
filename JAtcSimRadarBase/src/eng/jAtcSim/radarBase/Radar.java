@@ -1352,7 +1352,7 @@ public class Radar {
       }
     } else if (msg.isSourceOfType(Atc.class)) {
       if (msg.isContentOfType(PlaneSwitchMessage.class)) {
-        PlaneSwitchMessage psm = msg.<PlaneSwitchMessage>getContent();
+        PlaneSwitchMessage psm = msg.getContent();
         ret = behaviorSettings.getFormatter().format(msg.getSource(), psm);
       } else if (msg.isContentOfType(StringResponse.class)) {
         ret = msg.<StringResponse>getContent().text;

@@ -36,7 +36,7 @@ public class ClearedToRouteApplication extends CommandApplication<ClearedToRoute
 
   @Override
   protected ApplicationResult adjustAirplane(Airplane.Airplane4Command plane, ClearedToRouteCommand c) {
-    plane.getPilot().setRoute(c.getRoute());
+    plane.getPilot().setRoute(c.getRoute(), c.getExpectedRunwayThreshold());
     return ApplicationResult.getEmpty();
   }
 }
