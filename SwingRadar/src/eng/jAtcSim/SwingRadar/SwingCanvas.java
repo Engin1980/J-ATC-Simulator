@@ -438,11 +438,12 @@ public class SwingCanvas implements ICanvas<JComponent> {
 
     FontMetrics fm = g.getFontMetrics();
     Rectangle charBounds = fm.getStringBounds("X", g).getBounds();
-    int lineStep = charBounds.height;
-    int globalY = getGlobalY(location, lineStep, height, lines.size());
+    int lineStep = location.isBottom() ? -charBounds.height : charBounds.height;
+    int globalY = getGlobalY(location, lineStep, height);
     for (String line : lines) {
       IList<Tuple<EditablePoint, String>> tmp = convertToSublines(line, fm, maxLength);
-      adjustLineRelativePosition(tmp, location, width, lineStep);
+      if (location.isBottom()) tmp.reverse(); // for correct printing order
+      adjustLineRelativePosition(tmp, location, width);
       globalY = adjustLineAbsolutePosition(tmp, globalY, lineStep);
       ret.add(tmp);
     }
@@ -451,28 +452,26 @@ public class SwingCanvas implements ICanvas<JComponent> {
   }
 
   private int adjustLineAbsolutePosition(IList<Tuple<EditablePoint, String>> tmp, int globalY, int lineStep) {
-    int tmpY = globalY + lineStep;
-    globalY = tmpY;
     for (Tuple<EditablePoint, String> tmpItem : tmp) {
-      tmpItem.getA().y = tmpY;
-      tmpY += lineStep;
+      tmpItem.getA().y = globalY;
+      globalY += lineStep;
     }
     return globalY;
   }
 
-  private int getGlobalY(TextBlockLocation location, int lineStep, int maxHeight, int numberOfLines) {
+  private int getGlobalY(TextBlockLocation location, int lineStep, int maxHeight) {
     if (location.isBottom())
-      return maxHeight - lineStep * (numberOfLines + 1);
+      return maxHeight + lineStep;
     else
-      return 0;
+      return lineStep;
   }
 
-  private void adjustLineRelativePosition(IList<Tuple<EditablePoint, String>> tmp, TextBlockLocation location, int maxWidth, int lineStep) {
-    int curY = 8 + lineStep;
-    for (Tuple<EditablePoint, String> tmpItem : tmp) {
-      tmpItem.getA().y = curY;
-      curY += lineStep;
-    }
+  private void adjustLineRelativePosition(IList<Tuple<EditablePoint, String>> tmp, TextBlockLocation location, int maxWidth) {
+//    int curY = 8 + lineStep;
+//    for (Tuple<EditablePoint, String> tmpItem : tmp) {
+//      tmpItem.getA().y = curY;
+//      curY += lineStep;
+//    }
     if (location.isRight() == false)
       for (Tuple<EditablePoint, String> tmpItem : tmp) {
         tmpItem.getA().x = 8;

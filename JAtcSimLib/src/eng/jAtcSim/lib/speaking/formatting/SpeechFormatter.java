@@ -335,7 +335,7 @@ public class SpeechFormatter implements IFormatter {
   @Override
   public String format(Atc sender, PlaneSwitchMessage msg) {
     String ret = String.format(
-        "%s {%s} via %s/%s: %s",
+        "%s {%s} via %s/%s %s",
         msg.plane.getSqwk(),
         msg.plane.getCallsign().toString(),
         msg.plane.getExpectedRunwayThreshold().getName(),
