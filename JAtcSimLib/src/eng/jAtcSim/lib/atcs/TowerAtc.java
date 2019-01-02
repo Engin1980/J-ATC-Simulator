@@ -632,7 +632,7 @@ public class TowerAtc extends ComputerAtc {
 
     if (toReadyPlane == null) return; // no-one has runway for deprature
 
-    RunwayThreshold availableThreshold = toReadyPlane.getAssignedRunwayThresholdForLanding();
+    RunwayThreshold availableThreshold = toReadyPlane.getExpectedRunwayThreshold();
 
     // if it gets here, the "toReadyPlane" can proceed take-off
     ETime holdingPointEntryTime = departureManager.departAndGetHoldingPointEntryTime(toReadyPlane, availableThreshold, getDepartingPlaneSwitchAltitude(toReadyPlane.getType().category));
@@ -882,8 +882,8 @@ class DepartureManager {
   public IMap<RunwayThreshold, Airplane> getTheLinedUpPlanes() {
     IMap<RunwayThreshold, Airplane> ret = new EMap<>();
     for (Airplane airplane : holdingPointReady) {
-      if (ret.containsKey(airplane.getAssignedRunwayThresholdForLanding()) == false) {
-        ret.set(airplane.getAssignedRunwayThresholdForLanding(), airplane);
+      if (ret.containsKey(airplane.getExpectedRunwayThreshold()) == false) {
+        ret.set(airplane.getExpectedRunwayThreshold(), airplane);
       }
     }
     return ret;

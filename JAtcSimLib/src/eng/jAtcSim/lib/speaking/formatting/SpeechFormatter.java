@@ -146,12 +146,12 @@ public class SpeechFormatter implements IFormatter {
     try {
       sentences = this.sentences.get(cls);
     } catch (Exception ex){
-      throw new EApplicationException("Failed to get sentences for " + cls.getSimpleName());
+      throw new EApplicationException("Failed to get sentences for " + cls.getSimpleName(), ex);
     }
     try {
       kind = _getKind(speech);
     } catch (Exception ex){
-      throw new EApplicationException("Failed to get 'kind' for " + cls.getSimpleName());
+      throw new EApplicationException("Failed to get 'kind' for " + cls.getSimpleName(),  ex);
     }
     if (kind == null)
       sentences = sentences.where(q -> q.kind == null);
