@@ -212,7 +212,7 @@ public abstract class ComputerAtc extends Atc {
   protected void requestSwitch(Airplane plane, Atc targetAtc) {
     getPrm().requestSwitch(this, targetAtc, plane);
     Message m = new Message(this, targetAtc,
-        new PlaneSwitchMessage(plane, false, "to you with the big test at the end of the street and there is much more other things to show"));
+        new PlaneSwitchMessage(plane, false, "to you"));
     sendMessage(m);
   }
 

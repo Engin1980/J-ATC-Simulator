@@ -11,13 +11,13 @@
       <element id="library" level="project" name="eng.eSystem.xmlSerialization" />
       <element id="library" level="project" name="eng.eSystem" />
       <element id="directory" name="_Sounds">
-        <element id="dir-copy" path="$PROJECT_DIR$/_Sounds" />
+        <element id="dir-copy" path="$PROJECT_DIR$/Simulator/_Sounds" />
       </element>
       <element id="directory" name="_SettingFiles">
-        <element id="dir-copy" path="$PROJECT_DIR$/_SettingFiles" />
+        <element id="dir-copy" path="$PROJECT_DIR$/Simulator/_SettingFiles" />
       </element>
       <element id="directory" name="_Log" />
-      <element id="file-copy" path="$PROJECT_DIR$/_Libs/start.bat" />
+      <element id="file-copy" path="$PROJECT_DIR$/Simulator/_Libs/start.bat" />
     </root>
   </artifact>
 </component>

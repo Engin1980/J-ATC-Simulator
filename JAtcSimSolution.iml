@@ -7,7 +7,7 @@
       <sourceFolder url="file://$MODULE_DIR$/Radar/JAtcSimRadarBase/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/JAtcSimDraw" />
       <excludeFolder url="file://$MODULE_DIR$/JAtcSimXml" />
-      <excludeFolder url="file://$MODULE_DIR$/temp" />
+      <excludeFolder url="file://$MODULE_DIR$/Simulator/temp" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

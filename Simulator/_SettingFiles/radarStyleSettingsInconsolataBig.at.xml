@@ -49,7 +49,7 @@
   <sid color="009900" width="1"/>
 
   <!-- style: 0=plain, 1=bold, 2=italic -->
-  <atc color="AAAAAA">
+  <atc color="DDDDDD">
     <font name="Inconsolata" size="16" style="0"/>
   </atc>
   <plane color="00FF00">

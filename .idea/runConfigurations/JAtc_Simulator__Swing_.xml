@@ -5,6 +5,7 @@
     <option name="MAIN_CLASS_NAME" value="eng.jAtcSim.JAtcSim" />
     <module name="JAtcSim" />
     <option name="VM_PARAMETERS" value="-ea" />
+    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Simulator" />
     <method v="2">
       <option name="Make" enabled="true" />
     </method>

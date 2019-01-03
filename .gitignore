@@ -1,7 +1,8 @@
-_Other/
-out/
-temp/
+Other/_Other/
+Simulator/out/
+Simulator/temp/
 *.rar
 workspace.xml
-_Log/*
-FlightRadarRealTrafficConverter/sources/db/hereApiKeys.txt
+Simulator/_Log/*
+Tools/FlightRadarRealTrafficConverter/sources/db/hereApiKeys.txt
+Tools/LogViewer/*

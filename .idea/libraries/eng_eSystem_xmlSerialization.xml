@@ -1,7 +1,7 @@
 <component name="libraryTable">
   <library name="eng.eSystem.xmlSerialization">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/_Libs/EXmlSerialization.jar!/" />
+      <root url="jar://$PROJECT_DIR$/Simulator/_Libs/EXmlSerialization.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

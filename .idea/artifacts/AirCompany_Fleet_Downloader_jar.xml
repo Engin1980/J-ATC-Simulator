@@ -1,0 +1,10 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="AirCompany Fleet Downloader:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/AirCompany_Fleet_Downloader_jar</output-path>
+    <root id="archive" name="AirCompany Fleet Downloader.jar">
+      <element id="module-output" name="AirCompany Fleet Downloader" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/Simulator/_Libs/eng.eSystem.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/Simulator/_Libs/EXmlSerialization.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>
