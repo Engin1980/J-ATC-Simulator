@@ -17,6 +17,7 @@ import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 import eng.jAtcSim.lib.airplanes.*;
 import eng.jAtcSim.lib.airplanes.moods.Mood;
 import eng.jAtcSim.lib.atcs.*;
+import eng.jAtcSim.lib.atcs.planeResponsibility.PlaneResponsibilityManager;
 import eng.jAtcSim.lib.global.ETime;
 import eng.jAtcSim.lib.managers.EmergencyManager;
 import eng.jAtcSim.lib.managers.MrvaManager;
@@ -463,14 +464,14 @@ public class Simulation {
           q -> isInVicinityOfSomeOtherPlane(q) == false);
       if (newPlane != null) {
         newPlanesDelayedToAvoidCollision.remove(newPlane);
-        Acc.prm().registerPlane(ctrAtc, newPlane);
+        Acc.prm().registerNewPlane(ctrAtc, newPlane);
         this.mrvaManager.registerPlane(newPlane);
       }
     }
 
     for (Airplane newPlane : newPlanes) {
       if (newPlane.isDeparture()) {
-        Acc.prm().registerPlane(twrAtc, newPlane);
+        Acc.prm().registerNewPlane(twrAtc, newPlane);
         this.mrvaManager.registerPlane(newPlane);
       } else {
         // here are two possibilities
@@ -480,7 +481,7 @@ public class Simulation {
         if (isInVicinityOfSomeOtherPlane(newPlane)) {
           newPlanesDelayedToAvoidCollision.add(newPlane);
         } else {
-          Acc.prm().registerPlane(ctrAtc, newPlane);
+          Acc.prm().registerNewPlane(ctrAtc, newPlane);
           this.mrvaManager.registerPlane(newPlane);
         }
       }

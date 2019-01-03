@@ -216,7 +216,7 @@ public class TowerAtc extends ComputerAtc {
     if (p.isDeparture()) {
       return new ComputerAtc.RequestResult(false, String.format("%s is a departure.", p.getCallsign()));
     }
-    if (Acc.prm().getResponsibleAtc(p) != Acc.atcApp()) {
+    if (getPrm().getResponsibleAtc(p) != Acc.atcApp()) {
       return new ComputerAtc.RequestResult(false, String.format("%s is not from APP.", p.getCallsign()));
     }
     if (isOnApproachOfTheRunwayInUse(p) == false)

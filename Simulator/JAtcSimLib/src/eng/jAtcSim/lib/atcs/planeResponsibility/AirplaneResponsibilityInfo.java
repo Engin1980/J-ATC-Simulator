@@ -1,0 +1,41 @@
+package eng.jAtcSim.lib.atcs.planeResponsibility;
+
+import eng.eSystem.validation.Validator;
+import eng.jAtcSim.lib.airplanes.Airplane;
+import eng.jAtcSim.lib.atcs.Atc;
+
+public class AirplaneResponsibilityInfo {
+  private Airplane plane;
+  private Atc atc;
+  private SwitchRequest switchRequest;
+
+  public AirplaneResponsibilityInfo(Airplane plane, Atc atc) {
+    Validator.isNotNull(plane);
+    Validator.isNotNull(atc);
+
+    this.plane = plane;
+    this.atc = atc;
+    this.switchRequest = null;
+  }
+
+  public Airplane getPlane() {
+    return plane;
+  }
+
+  public Atc getAtc() {
+    return atc;
+  }
+
+  void setAtc(Atc atc) {
+    Validator.isNotNull(atc);
+    this.atc = atc;
+  }
+
+  public SwitchRequest getSwitchRequest() {
+    return switchRequest;
+  }
+
+  void setSwitchRequest(SwitchRequest switchRequest) {
+    this.switchRequest = switchRequest;
+  }
+}

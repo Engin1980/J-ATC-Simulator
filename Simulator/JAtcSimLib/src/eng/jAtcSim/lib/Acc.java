@@ -11,6 +11,7 @@ import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.AirplaneTypes;
 import eng.jAtcSim.lib.atcs.*;
+import eng.jAtcSim.lib.atcs.planeResponsibility.PlaneResponsibilityManager;
 import eng.jAtcSim.lib.global.ETime;
 import eng.jAtcSim.lib.global.logging.ApplicationLog;
 import eng.jAtcSim.lib.stats.Statistics;

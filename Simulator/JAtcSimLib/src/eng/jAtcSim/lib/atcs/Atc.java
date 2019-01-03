@@ -4,6 +4,7 @@ import eng.eSystem.eXml.XElement;
 import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
+import eng.jAtcSim.lib.atcs.planeResponsibility.PlaneResponsibilityManager;
 import eng.jAtcSim.lib.messaging.IMessageParticipant;
 import eng.jAtcSim.lib.messaging.Message;
 import eng.jAtcSim.lib.serialization.LoadSave;
@@ -62,8 +63,8 @@ public abstract class Atc implements IMessageParticipant {
 
   public abstract void registerNewPlaneUnderControl(Airplane plane, boolean initialRegistration);
 
-  protected PlaneResponsibilityManager getPrm(){
-    return Acc.prm();
+  protected PlaneResponsibilityManager.PlaneResponsibilityManagerForAtc getPrm(){
+    return Acc.prm().forAtc();
   }
 
   public Atc(AtcTemplate template) {
@@ -87,10 +88,6 @@ public abstract class Atc implements IMessageParticipant {
 
   public String getName() {
     return name;
-  }
-  
-  public final boolean isControllingAirplane(Airplane plane){
-    return getPrm().getResponsibleAtc(plane) == this;
   }
   
   public int getReleaseAltitude() {
