@@ -148,7 +148,7 @@ public class Pilot {
 
     public void processOrderedGoAround() {
       ApproachBehavior app = (ApproachBehavior) Pilot.this.behavior;
-      app.goAround(null);
+      app.goAround(GoingAroundNotification.GoAroundReason.atcDecision);
     }
 
     public int getDivertMinutesLeft() {
@@ -702,6 +702,8 @@ public class Pilot {
     }
 
     public void goAround(GoingAroundNotification.GoAroundReason reason) {
+      assert reason != null;
+
       Pilot.this.isAfterGoAround = true;
       boolean isAtcFail = EnumUtils.is(reason,
           new GoingAroundNotification.GoAroundReason[]{

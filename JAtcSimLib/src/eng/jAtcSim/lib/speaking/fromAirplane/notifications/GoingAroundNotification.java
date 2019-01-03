@@ -10,8 +10,8 @@ public class GoingAroundNotification implements IAirplaneNotification {
     notStabilizedOnFinal,
     noLandingClearance,
     windGustBeforeTouchdown,
-    lostTrafficSeparationInApproach
-
+    lostTrafficSeparationInApproach,
+    atcDecision
   }
 
   public GoAroundReason reason;

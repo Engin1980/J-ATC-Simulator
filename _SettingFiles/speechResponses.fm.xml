@@ -145,9 +145,10 @@
     <sentence kind="runwayNotInSight">Missed approach, not runway in sight</sentence>
     <sentence kind="notStabilizedApproachEnter">Missed approach, not stabilized on the approach enter</sentence>
     <sentence kind="notStabilizedOnFinal">Missed approach, not stabilized on the final</sentence>
-    <sentence kind="noLandingClearance">Missed approach, got no landing clearance</sentence>
-    <sentence kind="lostTrafficSeparationInApproach">Missed approach, not runway in sight</sentence>
+    <sentence kind="noLandingClearance">Missed approach, no landing clearance</sentence>
+    <sentence kind="lostTrafficSeparationInApproach">Missed approach, close to other traffic</sentence>
     <sentence kind="windGustBeforeTouchdown">Missed approach due to weather</sentence>
+    <sentence kind="atcDecision">Missed approach ordered by ATC</sentence>
   </response>
   <response type="ReportDivertTime">
     <sentence>N/A</sentence>
