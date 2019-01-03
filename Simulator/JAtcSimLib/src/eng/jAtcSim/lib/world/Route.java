@@ -22,8 +22,8 @@ import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.HoldCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ProceedDirectCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ToNavaidCommand;
-import eng.jAtcSim.lib.speaking.parsing.Parser;
-import eng.jAtcSim.lib.speaking.parsing.shortBlockParser.ShortBlockParser;
+import eng.jAtcSim.lib.textProcessing.parsing.Parser;
+import eng.jAtcSim.lib.textProcessing.parsing.shortBlockParser.ShortBlockParser;
 
 /**
  * @author Marek

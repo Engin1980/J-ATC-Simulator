@@ -7,7 +7,7 @@ import eng.eSystem.xmlSerialization.annotations.XmlItemElement;
 import eng.jAtcSim.lib.Acc;
 import eng.eSystem.geo.Coordinate;
 import eng.jAtcSim.lib.global.Headings;
-import eng.jAtcSim.lib.speaking.parsing.shortParsing.RegexGrouper;
+import eng.jAtcSim.lib.textProcessing.parsing.RegexGrouper;
 
 @XmlItemElement(elementName="navaid", type=Navaid.class)
 public class NavaidList extends EList<Navaid> {

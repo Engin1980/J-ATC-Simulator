@@ -408,8 +408,7 @@ public class SwingRadarPanel extends JPanel {
         ret = true;
       } else {
         // plane fromAtc
-        String[] spl = splitToCallsignAndMessages(msg);
-        app.sendToPlane(spl[0], spl[1]);
+        app.sendToPlane(msg);
         ret = true;
       }
     } catch (Throwable t) {
@@ -431,19 +430,6 @@ public class SwingRadarPanel extends JPanel {
 
   private void processApplicationMessage(String msg) {
 
-  }
-
-  private String[] splitToCallsignAndMessages(String msg) {
-    String[] ret = new String[2];
-    int i = msg.indexOf(" ");
-    if (i == msg.length() || i < 0) {
-      ret[0] = msg;
-      ret[1] = "";
-    } else {
-      ret[0] = msg.substring(0, i);
-      ret[1] = msg.substring(i + 1);
-    }
-    return ret;
   }
 }
 

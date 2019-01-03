@@ -7,6 +7,7 @@ package eng.jAtcSim.lib.atcs;
 
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.ERuntimeException;
+import eng.eSystem.utilites.RegexUtils;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.Airplanes;
@@ -18,8 +19,11 @@ import eng.jAtcSim.lib.messaging.StringMessageContent;
 import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtc2Atc;
 import eng.jAtcSim.lib.speaking.fromAtc.atc2atc.PlaneSwitchMessage;
-import eng.jAtcSim.lib.speaking.parsing.Parser;
-import eng.jAtcSim.lib.speaking.parsing.shortBlockParser.ShortBlockParser;
+import eng.jAtcSim.lib.textProcessing.parsing.Parser;
+import eng.jAtcSim.lib.textProcessing.parsing.shortBlockParser.ShortBlockParser;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author Marek
@@ -51,7 +55,11 @@ public class UserAtc extends Atc {
 
   }
 
-  public void sendToPlane(String airplaneCallsignOrPart, String commands) {
+  public void sendToPlane(String line) {
+    String[] tmp = splitToCallsignAndMessages((line));
+    String airplaneCallsignOrPart = tmp[0];
+    String commands = tmp[1];
+
     Airplane p = Airplanes.tryGetByCallsingOrNumber(Acc.planes(), airplaneCallsignOrPart);
     if (p == null) {
       raiseError(
@@ -80,11 +88,18 @@ public class UserAtc extends Atc {
 
   public void sendToAtc(Atc.eType type, String message) {
     if (message.matches("\\d{4}")) {
-      Squawk s = Squawk.tryCreate(message);
+      String[] tmp = RegexUtils.extractGroups(message, "^(\\d{4})(.*)$");
+      Squawk s = Squawk.tryCreate(tmp[0]);
       if (s == null) {
-        raiseError("\"" + message + "\" is not valid transponder code.");
-      } else
-        sendToAtc(type, s);
+        raiseError("\"" + tmp[0] + "\" is not valid transponder code.");
+        return;
+      }
+      Airplane plane = Airplanes.tryGetBySqwk(Acc.planes(), s);
+      if (plane == null) {
+        raiseError("SQWK " + s.toString() + " does not exist.");
+        return;
+      }
+      sendToAtc(type, plane, tmp[1]);
     } else {
       try {
         IAtc2Atc content = parser.parseAtc(message);
@@ -101,16 +116,10 @@ public class UserAtc extends Atc {
     super.sendMessage(m);
   }
 
-  public void sendToAtc(Atc.eType type, Squawk squawk) {
-    Airplane plane = Airplanes.tryGetBySqwk(Acc.planes(), squawk);
-    if (plane == null) {
-      sendError("SQWK " + squawk.toString() + " does not exist.");
-      return;
-    }
-
+  public void sendToAtc(Atc.eType type, Airplane plane, String additionalMessage) {
     Atc atc = Acc.atc(type);
 
-    if (getPrm().isToSwitch(plane)) {
+    if (getPrm().xisUnderSwitchRequest(plane, null,this)) {
       // je to ... -> APP
 
       if (getPrm().getResponsibleAtc(plane).getType() != type) {
@@ -118,7 +127,16 @@ public class UserAtc extends Atc {
         sendError("SQWK " + plane.getSqwk() + " not under your control. You cannot request switch.");
         return;
       } else {
-        // potvrdime
+//        // overime routovani
+//        String[] tmp = decodeAdditionalRouting(additionalMessage);
+//        // poprosime ATC o potvrzeni routovani
+//        if (tmp != null && atc.acceptsChangedRouting(plane, tmp[0], tmp[1])){
+//          // potvrdime
+//          getPrm().confirmSwitch(this, plane);
+//        } else {
+//          // zamitneme zmenene routovani
+//          getPrm().abortSwitch(plane, atc, Acc.atcApp());
+//        }
         getPrm().confirmSwitch(this, plane);
       }
     } else {
@@ -152,6 +170,27 @@ public class UserAtc extends Atc {
     return parser;
   }
 
+  private String[] decodeAdditionalRouting(String text) {
+    Matcher m =
+        Pattern.compile("(\\d{1,2}[lrcLRC]?)?(\\/.+)?")
+            .matcher(text);
+    String[] ret = {m.group(1), m.group(2)};
+    return ret;
+  }
+
+  private String[] splitToCallsignAndMessages(String msg) {
+    String[] ret = new String[2];
+    int i = msg.indexOf(" ");
+    if (i == msg.length() || i < 0) {
+      ret[0] = msg;
+      ret[1] = "";
+    } else {
+      ret[0] = msg.substring(0, i);
+      ret[1] = msg.substring(i + 1);
+    }
+    return ret;
+  }
+
   @Override
   protected void _save(XElement elm) {
 
@@ -168,7 +207,7 @@ public class UserAtc extends Atc {
   }
 
   @Override
-  public void removePlaneDeletedFromGame(Airplane plane){
+  public void removePlaneDeletedFromGame(Airplane plane) {
 
   }
 

@@ -4,7 +4,7 @@ import eng.eSystem.xmlSerialization.XmlSerializer;
 import eng.eSystem.xmlSerialization.XmlSettings;
 import eng.jAtcSim.lib.airplanes.AirplaneTypes;
 import eng.jAtcSim.lib.airplanes.Callsign;
-import eng.jAtcSim.lib.speaking.formatting.SpeechFormatter;
+import eng.jAtcSim.lib.textProcessing.formatting.SpeechFormatter;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.GoodDayNotification;
 import eng.jAtcSim.lib.traffic.fleets.Fleets;
 import eng.jAtcSim.lib.world.Area;

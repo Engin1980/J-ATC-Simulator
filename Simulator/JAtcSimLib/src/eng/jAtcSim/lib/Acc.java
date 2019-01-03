@@ -17,7 +17,6 @@ import eng.jAtcSim.lib.stats.Statistics;
 import eng.jAtcSim.lib.traffic.Movement;
 import eng.jAtcSim.lib.traffic.fleets.Fleets;
 import eng.jAtcSim.lib.weathers.Weather;
-import eng.jAtcSim.lib.weathers.WeatherProvider;
 import eng.jAtcSim.lib.world.Airport;
 import eng.jAtcSim.lib.world.Area;
 
@@ -57,7 +56,7 @@ public class Acc {
   }
 
   public static IReadOnlyList<Airplane> planes() {
-    return prm().getAll();
+    return prm().getPlanes();
   }
 
   public static PlaneResponsibilityManager prm() {

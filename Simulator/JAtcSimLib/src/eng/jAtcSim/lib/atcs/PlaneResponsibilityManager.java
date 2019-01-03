@@ -5,377 +5,305 @@
  */
 package eng.jAtcSim.lib.atcs;
 
+import com.sun.istack.internal.Nullable;
 import eng.eSystem.collections.*;
-import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
-import eng.eSystem.exceptions.EEnumValueUnsupportedException;
-import eng.eSystem.xmlSerialization.XmlSerializer;
+import eng.eSystem.validation.Validator;
 import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
-import eng.eSystem.xmlSerialization.exceptions.XmlSerializationException;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.AirplaneList;
+import eng.jAtcSim.lib.global.ETime;
 
 import java.util.LinkedList;
 import java.util.List;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
-/**
- * @author Marek
- */
 public class PlaneResponsibilityManager {
 
-  public enum eState {
+  private static class AirplaneInfo {
+    private Airplane plane;
+    private Atc atc;
+    private SwitchRequest switchRequest;
 
-    ctr,
-    ctr2app,
-    ctr2appReady,
-    app2ctr,
-    app2ctrReady,
-    app,
-    app2twr,
-    app2twrReady,
-    twr2app,
-    twr2appReady,
-    twr
+    public AirplaneInfo(Airplane plane, Atc atc) {
+      Validator.isNotNull(plane);
+      Validator.isNotNull(atc);
+
+      this.plane = plane;
+      this.atc = atc;
+      this.switchRequest = null;
+    }
+
+    public Airplane getPlane() {
+      return plane;
+    }
+
+    public Atc getAtc() {
+      return atc;
+    }
+
+    void setAtc(Atc atc) {
+      Validator.isNotNull(atc);
+      this.atc = atc;
+    }
+
+    public SwitchRequest getSwitchRequest() {
+      return switchRequest;
+    }
+
+    void setSwitchRequest(SwitchRequest switchRequest) {
+      this.switchRequest = switchRequest;
+    }
   }
 
-  private final IMap<Airplane, eState> map = new EMap<>();
-  private final IMap<Atc, AirplaneList> lst = new EMap<>();
-  private final AirplaneList all = new AirplaneList(true);
+  public static class SwitchRequest {
+    private ETime creationTime;
+    private Atc atc;
+    private ETime repeatRequestTime;
+    private ETime confirmedTime = null;
+
+    public void setConfirmed(){
+      this.confirmedTime = Acc.now().clone();
+    }
+
+    public SwitchRequest(Atc atc) {
+      this.atc = atc;
+      this.creationTime = Acc.now().clone();
+      this.updateLastRequestTime();
+    }
+
+    public ETime getRepeatRequestTime() {
+      return repeatRequestTime;
+    }
+
+    public ETime getCreationTime() {
+      return creationTime;
+    }
+
+    public Atc getAtc() {
+      return atc;
+    }
+
+    void confirm(Atc oldAtc) {
+      this.atc = oldAtc;
+    }
+
+    public ETime getConfirmedTime() {
+      return confirmedTime;
+    }
+
+    public boolean isConfirmed(){
+      return this.confirmedTime != null;
+    }
+
+    public void updateLastRequestTime(){
+      this.repeatRequestTime = Acc.now().addSeconds(30);
+    }
+  }
+
+  private final IList<AirplaneInfo> all = new EList<>();
   @XmlIgnore
-  private final List<Airplane.Airplane4Display> infos = new LinkedList<>();
+  private final List<Airplane.Airplane4Display> displays = new LinkedList<>();
+  private boolean VERBOSE = true;
 
   public PlaneResponsibilityManager() {
   }
 
   public void init() {
-    if (lst.isEmpty()) { // non-empty after load
-      lst.set(Acc.atcApp(), new AirplaneList(true));
-      lst.set(Acc.atcCtr(), new AirplaneList(true));
-      lst.set(Acc.atcTwr(), new AirplaneList(true));
-    }
-
-    for (Airplane plane : all) {
-      infos.add(plane.getPlane4Display());
+    for (AirplaneInfo ai : all) {
+      displays.add(ai.getPlane().getPlane4Display());
     }
   }
 
   public ReadOnlyList<Airplane.Airplane4Display> getPlanesToDisplay() {
     ReadOnlyList<Airplane.Airplane4Display> ret
-        = new ReadOnlyList<>(this.infos);
+        = new ReadOnlyList<>(this.displays);
     return ret;
   }
 
   public void registerPlane(Atc atc, Airplane plane) {
-    if (map.containsKey(plane)) {
+    if (all.isAny(q -> q.getPlane() == plane)) {
       throw new EApplicationException(sf("Second registration of already registered plane %s!", plane.getCallsign()));
     }
 
-    map.set(plane, typeToState(atc));
-    lst.get(atc).add(plane);
-    all.add(plane);
-    infos.add(plane.getPlane4Display());
+    all.add(new AirplaneInfo(plane, atc));
+    displays.add(plane.getPlane4Display());
     atc.registerNewPlaneUnderControl(plane, true);
   }
 
   public void unregisterPlane(Airplane plane) {
-    if (!map.containsKey(plane)) {
+    AirplaneInfo ai = all.tryGetFirst(q -> q.plane == plane);
+    if (ai == null) {
       throw new EApplicationException(sf("Plane %s is not registered, cannot be unregistered!", plane.getCallsign()));
     }
-
-    Atc atc = getResponsibleAtc(plane);
-
-    map.remove(plane);
-    lst.get(atc).remove(plane);
-    all.remove(plane);
-    infos.remove(plane.getPlane4Display());
-
-    Acc.atcApp().removePlaneDeletedFromGame(plane);
-    Acc.atcTwr().removePlaneDeletedFromGame(plane);
-    Acc.atcCtr().removePlaneDeletedFromGame(plane);
+    all.remove(ai);
+    displays.remove(ai.getPlane().getPlane4Display());
+    ai.getAtc().removePlaneDeletedFromGame(plane);
+//    Acc.atcApp().removePlaneDeletedFromGame(plane);
+//    Acc.atcTwr().removePlaneDeletedFromGame(plane);
+//    Acc.atcCtr().removePlaneDeletedFromGame(plane);
   }
 
   public void requestSwitch(Atc from, Atc to, Airplane plane) {
-    eState st = typeToState(from);
-    if (map.get(plane) != st) {
+    Validator.isNotNull(from);
+    Validator.isNotNull(to);
+    Validator.isNotNull(plane);
+
+    AirplaneInfo ai = all.getFirst(q -> q.getPlane() == plane);
+
+    // auto-cancel
+    if (ai.getAtc() == to && ai.getPlane().getTunedAtc() == from) {
+      ai.setAtc(from);
+      ai.setSwitchRequest(null);
       return;
     }
 
-    switch (from.getType()) {
-      case ctr:
-        if (to.getType() != Atc.eType.app) {
-          throw new EApplicationException("Invalid request direction.");
-        }
-        if (map.get(plane) != eState.ctr) {
-          throw new EApplicationException("Not in ctr state, cannot switch.");
-        }
+    if (ai.getSwitchRequest() != null)
+      throw new EApplicationException("Airplane " + plane.getCallsign() + " is already under request switch from "
+          + ai.getAtc().getType().toString() + " to " + ai.getSwitchRequest().getAtc().getType().toString() + ".");
+    if (ai.getAtc() != from)
+      throw new EApplicationException("Airplane " + plane.getCallsign()
+          + " is requested to be switched from incorrect atc. Current is "
+          + ai.getAtc().getType().toString() + ", requested from is " + from.getType().toString() + ".");
 
-        map.set(plane, eState.ctr2app);
-        break;
-      case app:
+    if ((from.getType() == Atc.eType.ctr || from.getType() == Atc.eType.twr) && to.getType() != Atc.eType.app)
+      throw new EApplicationException("Invalid request direction.");
 
-        if (map.get(plane) != eState.app) {
-          throw new EApplicationException("Not int APP state, cannot switch.");
-        }
-
-        if (to.getType() == Atc.eType.ctr) {
-          map.set(plane, eState.app2ctr);
-        } else if (to.getType() == Atc.eType.twr) {
-          map.set(plane, eState.app2twr);
-        } else {
-          throw new UnsupportedOperationException();
-        }
-
-        break;
-      case twr:
-        if (to.getType() != Atc.eType.app) {
-          throw new EApplicationException("Invalid request direction.");
-        }
-        if (map.get(plane) != eState.twr) {
-          throw new EApplicationException("Not in TWR state, cannot switch.");
-        }
-
-        map.set(plane, eState.twr2app);
-        break;
-      default:
-        throw new EEnumValueUnsupportedException(from.getType());
-    }
-  }
-
-  public boolean isToSwitchToAtc(Atc targetAtc, Airplane plane) {
-    eState s = map.get(plane);
-    switch (targetAtc.getType()) {
-      case app:
-        return isIn(s, eState.ctr2app, eState.twr2app);
-      case twr:
-        return isIn(s, eState.app2twr);
-      case ctr:
-        return isIn(s, eState.app2ctr);
-      default:
-        throw new EEnumValueUnsupportedException(targetAtc.getType());
-    }
+    SwitchRequest sr = new SwitchRequest(to);
+    ai.setSwitchRequest(sr);
+    verb(plane.getCallsign() + " request from " + from.getType() + " to " + to.getType());
   }
 
   public void confirmSwitch(Atc atc, Airplane plane) {
-    if (isToSwitchToAtc(atc, plane)) {
-      switch (map.get(plane)) {
-        case app2ctr:
-          map.set(plane, eState.app2ctrReady);
-          break;
-        case app2twr:
-          map.set(plane, eState.app2twrReady);
-          break;
-        case ctr2app:
-          map.set(plane, eState.ctr2appReady);
-          break;
-        case twr2app:
-          map.set(plane, eState.twr2appReady);
-          break;
-        default:
-          throw new EEnumValueUnsupportedException(map.get(plane));
-      }
-    } else {
-      throw new EApplicationException(sf("Cannot switch plane %s, not ready to switch.", plane.getCallsign()));
+    AirplaneInfo ai = all.getFirst(q -> q.getPlane() == plane);
+    if (ai.getSwitchRequest() == null || ai.getSwitchRequest().getAtc() != atc) { // probably canceled
+      verb(plane.getCallsign() + " confirmation failed, no request or not from " + atc.getType() + ".");
+      return;
     }
+    SwitchRequest sr = ai.getSwitchRequest();
+    sr.setConfirmed();
   }
 
-  public void approveSwitch(Airplane plane) {
-    if (isApprovedToSwitch(plane) == false) {
-      throw new IllegalArgumentException(sf("Plane %s not approved to switch!", plane.getCallsign()));
+  public void applySwitch(Airplane plane, Atc oldAtc){
+    AirplaneInfo ai = all.getFirst(q -> q.getPlane() == plane);
+    if (ai.getSwitchRequest() == null || ai.getAtc() != oldAtc) { // probably canceled
+      verb(plane.getCallsign() + " switch application failed, no request or not from " + oldAtc.getType() + ".");
+      return;
     }
+    SwitchRequest sr = ai.getSwitchRequest();
 
-    Atc oldAtc = getResponsibleAtc(plane);
-
-    Atc newAtc = getApprovedAtc(plane);
-    eState newState = typeToState(newAtc);
-    map.set(plane, newState);
-
-    oldAtc.unregisterPlaneUnderControl(plane);
-    lst.get(oldAtc).remove(plane);
-    lst.get(newAtc).add(plane);
-    newAtc.registerNewPlaneUnderControl(plane, false);
-
-    // this is the place, THE place!
+    ai.getAtc().unregisterPlaneUnderControl(plane);
+    ai.setAtc(sr.getAtc());
+    ai.getAtc().registerNewPlaneUnderControl(plane, false);
+    ai.setSwitchRequest(null);
   }
 
-  public boolean isApprovedToSwitch(Airplane plane) {
-    eState s = map.get(plane);
-    return s == eState.app2ctrReady
-        || s == eState.app2twrReady
-        || s == eState.ctr2appReady
-        || s == eState.twr2appReady;
+  public void abortSwitch(Airplane plane) {
+    AirplaneInfo ai = all.getFirst(q -> q.getPlane() == plane);
+    if (ai.getSwitchRequest() == null)
+      throw new EApplicationException("Unable to abort switch of " + plane.getCallsign().toString() + " as it is not under switch request.");
+
+
+    ai.setSwitchRequest(null);
   }
 
+  public boolean isToSwitchToAtc(Atc targetAtc, Airplane plane) {
+    AirplaneInfo ai = all.getFirst(q -> q.getPlane() == plane);
+    SwitchRequest sr = ai.getSwitchRequest();
+    return sr != null && sr.getAtc() == targetAtc;
+  }
+
+//  public boolean isUnderConfirmedSwitchRequest(Airplane plane) {
+//    AirplaneInfo ai = all.getFirst(q -> q.getPlane() == plane);
+//    boolean ret = ai.getSwitchRequest() != null && ai.getSwitchRequest().isConfirmed();
+//    return ret;
+//  }
+
+  @Deprecated()
   public boolean isRequestedToSwitch(Airplane plane, Atc atc) {
-    eState s = map.get(plane);
-    boolean ret;
-    ret = (s == eState.app2ctr && atc.getType() == Atc.eType.ctr)
-        || (s == eState.app2twr && atc.getType() == Atc.eType.twr);
+    boolean ret = isToSwitchToAtc(atc, plane);
     return ret;
-  }
-
-  public eState getState(Airplane plane) {
-    return map.get(plane);
   }
 
   public Atc getResponsibleAtc(Airplane plane) {
-    eState s = map.get(plane);
-    switch (s) {
-      case app:
-      case app2ctr:
-      case app2twr:
-      case app2ctrReady:
-      case app2twrReady:
-        return Acc.atcApp();
-      case ctr:
-      case ctr2app:
-      case ctr2appReady:
-        return Acc.atcCtr();
-      case twr:
-      case twr2app:
-      case twr2appReady:
-        return Acc.atcTwr();
-      default:
-        throw new EEnumValueUnsupportedException(s);
-    }
+    AirplaneInfo ai = all.getFirst(q -> q.getPlane() == plane);
+    return ai.getAtc();
   }
 
-  public void refuseSwitch(Atc atc, Airplane plane) {
-    eState s = map.get(plane);
-    switch (s) {
-      case app2ctr:
-      case app2twr:
-        map.set(plane, eState.app);
-        break;
-      case ctr2app:
-        map.set(plane, eState.ctr);
-        break;
-      case twr2app:
-        map.set(plane, eState.twr);
-        break;
-      case ctr2appReady:
-      case twr2appReady:
-        // intentionally blank
-        break;
-      default:
-        throw new EEnumValueUnsupportedException(s);
-    }
-  }
-
-  public boolean isRegistered(Airplane plane) {
-    return map.containsKey(plane);
-  }
-
-  public IReadOnlyList<Airplane> getAll() {
-    return new EList<>(all);
-  }
-
-  public void save(XElement elm) {
-/*
-  private final IMap<Airplane, eState> map = new EMap<>();
-  private final IMap<Atc, AirplaneList> lst = new EMap<>();
-  private final AirplaneList all = new AirplaneList();
- */
-
-    XmlSerializer ser = new XmlSerializer();
-
-    XElement tmp;
-
-    try {
-
-      tmp = new XElement("planes");
-      for (Airplane airplane : all) {
-        XElement tmpAp = new XElement("plane");
-        airplane.save(tmpAp);
-        tmp.addElement(tmpAp);
-      }
-
-      tmp = new XElement("states");
-      IMap<String, String> remap = map.select(q -> q.getCallsign().toString(), q -> q.toString());
-      ser.serialize(tmp, remap);
-      elm.addElement(tmp);
-
-      tmp = new XElement("atc");
-      IMap<String, IList<String>> relst = lst.select(q -> q.getName(), q -> q.select(o -> o.getCallsign().toString()));
-      ser.serialize(tmp, relst);
-      elm.addElement(tmp);
-
-      // infos not serialized, should be created during deserialization
-
-    } catch (XmlSerializationException e) {
-      throw new EApplicationException("Failed to store PlaneResponsibilityManager.", e);
-    }
-  }
-
-  public void abortSwitch(Airplane plane, Atc oldAtc, Atc newAtc) {
-    eState renewState = typeToState(newAtc);
-    map.set(plane, renewState);
-
-    oldAtc.unregisterPlaneUnderControl(plane);
-    lst.get(oldAtc).remove(plane);
-    lst.get(newAtc).add(plane);
-    newAtc.registerNewPlaneUnderControl(plane, false);
-  }
-
-  boolean isToSwitch(Airplane p) {
-    eState s = map.get(p);
-    return s == eState.app2ctr
-        || s == eState.app2twr
-        || s == eState.ctr2app
-        || s == eState.twr2app;
-  }
-
-  boolean isAskedToSwitch(Airplane p) {
-    eState s = map.get(p);
-    boolean ret = s == eState.app
-        || s == eState.ctr
-        || s == eState.twr;
-    ret = !ret;
+  public IReadOnlyList<Airplane> getSwitchRequestsToRepeatByAtc(Atc atc) {
+    IReadOnlyList<AirplaneInfo> tmp =
+        this.all.where(q->q.getSwitchRequest() != null
+            && q.getAtc() == atc
+            && q.getSwitchRequest().isConfirmed() == false
+            && q.getSwitchRequest().getRepeatRequestTime().isBefore(Acc.now()));
+    tmp.forEach(q->q.getSwitchRequest().updateLastRequestTime());
+    IReadOnlyList<Airplane> ret = tmp.select(q->q.getPlane());
     return ret;
   }
 
-  private Atc getApprovedAtc(Airplane p) {
-    switch (map.get(p)) {
-      case app2ctrReady:
-        return Acc.atcCtr();
-      case app2twrReady:
-        return Acc.atcTwr();
-      case ctr2appReady:
-      case twr2appReady:
-        return Acc.atcApp();
-      default:
-        throw new EEnumValueUnsupportedException(map.get(p));
-    }
+
+//  public void save(XElement elm) {
+///*
+//  private final IMap<Airplane, eState> map = new EMap<>();
+//  private final IMap<Atc, AirplaneList> lst = new EMap<>();
+//  private final AirplaneList all = new AirplaneList();
+// */
+//
+//    XmlSerializer ser = new XmlSerializer();
+//
+//    XElement tmp;
+//
+//    try {
+//
+//      throw new UnsupportedOperationException();
+//
+////      tmp = new XElement("planes");
+////      for (Airplane airplane : all) {
+////        XElement tmpAp = new XElement("plane");
+////        airplane.save(tmpAp);
+////        tmp.addElement(tmpAp);
+////      }
+////
+////      tmp = new XElement("states");
+////      IMap<String, String> remap = map.select(q -> q.getCallsign().toString(), q -> q.toString());
+////      ser.serialize(tmp, remap);
+////      elm.addElement(tmp);
+////
+////      tmp = new XElement("atc");
+////      IMap<String, IList<String>> relst = lst.select(q -> q.getName(), q -> q.select(o -> o.getCallsign().toString()));
+////      ser.serialize(tmp, relst);
+////      elm.addElement(tmp);
+//
+//      // displays not serialized, should be created during deserialization
+//
+//    } catch (XmlSerializationException e) {
+//      throw new EApplicationException("Failed to store PlaneResponsibilityManager.", e);
+//    }
+//  }
+
+  private void verb(String line) {
+    if (VERBOSE)
+      System.out.println("## PRM ##: " + line);
   }
 
-  protected AirplaneList getPlanes(Atc atc) {
-    //TODO není to moc pomalé?
-    AirplaneList nw = new AirplaneList(false);
-    nw.add(lst.get(atc));
-    return nw;
+  protected IReadOnlyList<Airplane> getPlanes(Atc atc) {
+    return all.where(q->q.getAtc() == atc).select(q -> q.getPlane());
   }
 
-  private eState typeToState(Atc atc) {
-    switch (atc.getType()) {
-      case ctr:
-        return eState.ctr;
-      case app:
-        return eState.app;
-      case twr:
-        return eState.twr;
-      default:
-        throw new EEnumValueUnsupportedException(atc.getType());
-    }
+  public IReadOnlyList<Airplane> getPlanes() {
+    return all.select(q -> q.getPlane());
   }
 
-  private boolean isIn(eState value, eState... set) {
-    for (eState e : set) {
-      if (e == value) {
-        return true;
-      }
-    }
-    return false;
+  public boolean xisUnderSwitchRequest(Airplane plane, @Nullable Atc sourceAtc, @Nullable Atc targetAtc){
+    boolean ret;
+    AirplaneInfo ai = all.getFirst(q -> q.getPlane() == plane);
+    ret = ai.getSwitchRequest() != null;
+    if (ret && sourceAtc != null)
+      ret = ai.getAtc() == sourceAtc;
+    if (ret && targetAtc != null)
+      ret = ai.getSwitchRequest().getAtc() == targetAtc;
+    return ret;
   }
 }

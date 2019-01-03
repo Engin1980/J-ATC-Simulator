@@ -5,7 +5,6 @@
  */
 package eng.jAtcSim.lib.speaking.fromAtc.commands;
 
-import eng.jAtcSim.lib.speaking.ICommand;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
 
 /**
