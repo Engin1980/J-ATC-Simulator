@@ -437,15 +437,17 @@ public class SwingCanvas implements ICanvas<JComponent> {
     IList<Tuple<EditablePoint, String>> ret = new EList<>();
 
     FontMetrics fm = g.getFontMetrics();
-    Rectangle charBounds = fm.getStringBounds("X", g).getBounds();
-    int lineStep = location.isBottom() ? -charBounds.height : charBounds.height;
+    int lineStep = fm.getAscent(); // see https://docs.oracle.com/javase/tutorial/2d/text/measuringtext.html
+    if (location.isBottom()) lineStep = -lineStep;
+    int lineMid = lineStep / 2;
     int globalY = getGlobalY(location, lineStep, height);
     for (String line : lines) {
       IList<Tuple<EditablePoint, String>> tmp = convertToSublines(line, fm, maxLength);
-      if (location.isBottom()) tmp.reverse(); // for correct printing order
+      if (location.isBottom()) tmp.reverse(); // to correct printing order
       adjustLineRelativePosition(tmp, location, width);
       globalY = adjustLineAbsolutePosition(tmp, globalY, lineStep);
       ret.add(tmp);
+      globalY += lineMid;
     }
 
     return ret;

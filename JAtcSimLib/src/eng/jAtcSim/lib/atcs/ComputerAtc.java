@@ -203,7 +203,7 @@ public abstract class ComputerAtc extends Atc {
       if (speechDelayer.isAny(q-> q.getContent() instanceof PlaneSwitchMessage && ((PlaneSwitchMessage) q.getContent()).plane.equals(p)))
         continue; // if message about this plane is delayed and waiting to process
       Message m = new Message(this, Acc.atcApp(),
-          new PlaneSwitchMessage(p, false, " to you (repeated)"));
+          new PlaneSwitchMessage(p, false, "to you (repeated)"));
       Acc.messenger().send(m);
       recorder.write(m);
     }
@@ -212,7 +212,7 @@ public abstract class ComputerAtc extends Atc {
   protected void requestSwitch(Airplane plane, Atc targetAtc) {
     getPrm().requestSwitch(this, targetAtc, plane);
     Message m = new Message(this, targetAtc,
-        new PlaneSwitchMessage(plane, false, " to you"));
+        new PlaneSwitchMessage(plane, false, "to you with the big test at the end of the street and there is much more other things to show"));
     sendMessage(m);
   }
 
