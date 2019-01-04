@@ -5,14 +5,18 @@
  */
 package eng.jAtcSim.lib.atcs;
 
+import eng.eSystem.Tuple;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.ERuntimeException;
 import eng.eSystem.utilites.RegexUtils;
+import eng.eSystem.validation.Validator;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.Airplanes;
 import eng.jAtcSim.lib.airplanes.Callsign;
 import eng.jAtcSim.lib.airplanes.Squawk;
+import eng.jAtcSim.lib.atcs.planeResponsibility.SwitchRoutingRequest;
+import eng.jAtcSim.lib.global.TryResult;
 import eng.jAtcSim.lib.messaging.Message;
 import eng.jAtcSim.lib.messaging.Messenger;
 import eng.jAtcSim.lib.messaging.StringMessageContent;
@@ -22,6 +26,8 @@ import eng.jAtcSim.lib.speaking.fromAtc.atc2atc.PlaneSwitchMessage;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ContactCommand;
 import eng.jAtcSim.lib.textProcessing.parsing.Parser;
 import eng.jAtcSim.lib.textProcessing.parsing.shortBlockParser.ShortBlockParser;
+import eng.jAtcSim.lib.world.Route;
+import eng.jAtcSim.lib.world.RunwayThreshold;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -121,9 +127,9 @@ public class UserAtc extends Atc {
   public void sendPlaneSwitchMessageToAtc(Atc.eType type, Airplane plane, String additionalMessage) {
     Atc otherAtc = Acc.atc(type);
 
-    if (getPrm().getResponsibleAtc(plane) == this){
+    if (getPrm().getResponsibleAtc(plane) == this) {
       // it is my plane
-      if (getPrm().isUnderSwitchRequest(plane, this, null)){
+      if (getPrm().isUnderSwitchRequest(plane, this, null)) {
         // is already under switch request?
         getPrm().cancelSwitchRequest(this, plane);
       } else {
@@ -132,12 +138,18 @@ public class UserAtc extends Atc {
       }
     } else {
       // it is not my plane
-      if (getPrm().isUnderSwitchRequest(plane, otherAtc, this)){
+      if (getPrm().isUnderSwitchRequest(plane, otherAtc, this)) {
         // is under switch request to me, I am making a confirmation
-        getPrm().confirmSwitch(plane, this);
+        Tuple<SwitchRoutingRequest, String> routing = decodeAdditionalRouting(additionalMessage, plane.getExpectedRunwayThreshold(), plane.getAssigneRoute());
+        if (routing.getB() != null){
+          sendError(routing.getB());
+          return;
+        } else
+          getPrm().confirmSwitchRequest(plane, this, routing.getA());
       } else {
         // making a confirmation to non-requested switch? or probably an error
         sendError("SQWK " + plane.getSqwk() + " not under your control and not under a switch request.");
+        return;
       }
     }
 
@@ -163,11 +175,39 @@ public class UserAtc extends Atc {
     return parser;
   }
 
-  private String[] decodeAdditionalRouting(String text) {
+  private Tuple<SwitchRoutingRequest, String> decodeAdditionalRouting(String text, RunwayThreshold originalThreshold, Route originalRoute) {
+    Validator.isNotNull(originalThreshold);
+
     Matcher m =
-        Pattern.compile("(\\d{1,2}[lrcLRC]?)?(\\/.+)?")
+        Pattern.compile("(\\d{1,2}[lrcLRC]?)?(\\/(.+))?")
             .matcher(text);
-    String[] ret = {m.group(1), m.group(2)};
+
+    RunwayThreshold threshold;
+    if (m.group(1).isEmpty())
+      threshold = originalThreshold;
+    else {
+      threshold = Acc.airport().tryGetRunwayThreshold(m.group(1));
+      if (threshold == null) {
+        return new Tuple<>(null, "Unable to find runway threshold {" + m.group(1) + "}.");
+      }
+    }
+
+    Route route;
+    if (m.group(3).isEmpty())
+      route = originalRoute;
+    else if (m.group(3).isEmpty()) {
+      route = Route.createNewVectoringByFix(originalRoute.getMainNavaid(), originalRoute.getType() != Route.eType.sid);
+    }else{
+      route = threshold.getRoutes().tryGetFirst(q->q.getName().equals(m.group(3)));
+      if (route == null)
+        return new Tuple<>(null, "Unable to find route {" + m.group((3) + "} for runway threshold {" + threshold.getName()+ "}."));
+    }
+
+    Tuple<SwitchRoutingRequest, String> ret;
+    if (threshold == originalThreshold && route == originalRoute)
+      ret = new Tuple<>(null, null);
+    else
+      ret = new Tuple(new SwitchRoutingRequest(threshold, route), null);
     return ret;
   }
 
@@ -238,8 +278,8 @@ public class UserAtc extends Atc {
   }
 
   private void confirmAtcChangeInPlaneResponsibilityManagerIfRequired(Airplane plane, SpeechList speeches) {
-    ContactCommand cc = (ContactCommand) speeches.tryGetFirst(q->q instanceof ContactCommand);
-    if (cc != null){
+    ContactCommand cc = (ContactCommand) speeches.tryGetFirst(q -> q instanceof ContactCommand);
+    if (cc != null) {
       getPrm().applyConfirmedSwitch(this, plane);
     }
   }

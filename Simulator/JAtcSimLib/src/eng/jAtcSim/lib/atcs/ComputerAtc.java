@@ -7,9 +7,11 @@ import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
+import eng.jAtcSim.lib.atcs.planeResponsibility.SwitchRoutingRequest;
 import eng.jAtcSim.lib.global.DelayedList;
 import eng.jAtcSim.lib.global.Global;
 import eng.jAtcSim.lib.messaging.Message;
+import eng.jAtcSim.lib.messaging.StringMessageContent;
 import eng.jAtcSim.lib.serialization.LoadSave;
 import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.GoodDayNotification;
@@ -94,12 +96,19 @@ public abstract class ComputerAtc extends Atc {
     }
   }
 
+  protected abstract boolean acceptsNewRouting(Airplane plane, SwitchRoutingRequest srr);
+
   private void processPlaneSwitchMessage(Message m) {
     Airplane plane = m.<PlaneSwitchMessage>getContent().plane;
     Atc targetAtc = m.getSource();
     if (getPrm().isUnderSwitchRequest(plane, this, targetAtc)) {
       // other ATC confirms our request, plane is going to hang off
-      // nothing is done here, later the plane is checked to hang off
+      SwitchRoutingRequest srr = getPrm().getRoutingForSwitchRequest(this,plane);
+      if (srr != null){
+        // the other ATC tries to change plane routing, we can check in and reject it if required
+        if (acceptsNewRouting(plane, srr) == false)
+        rejectChangedRouting(plane, targetAtc);
+      }
     } else if (getPrm().isUnderSwitchRequest(plane, null, this)) {
       // other ATC offers us a plane
       RequestResult planeAcceptance = canIAcceptPlane(plane);
@@ -108,34 +117,24 @@ public abstract class ComputerAtc extends Atc {
       } else {
         rejectSwitch(plane, targetAtc, planeAcceptance);
       }
-      // this is a request to accept the plane
-//      if (getPrm().getResponsibleAtc(plane) == this){
-//        if (plane.getTunedAtc().equals(Acc.atcApp())) {
-//          this.abortSwitch(plane, plane.getTunedAtc());
-//        } else {
-//          this.refuseSwitch(plane, targetAtc, "Under my control, not intended to be switched.");
-//        }
-//      } else {
-//        RequestResult planeAcceptance = canIAcceptPlane(plane);
-//        if (planeAcceptance.isAccepted) {
-//          this.confirmSwitch(plane, targetAtc);
-//          this.approveSwitch(plane);
-//        } else {
-//          this.refuseSwitch(plane, targetAtc, planeAcceptance.message);
-//        }
-//      }
     }
   }
 
+  private void rejectChangedRouting(Airplane plane, Atc targetAtc){
+    getPrm().resetSwitchRequest(this, plane);
+    Message m = new Message(this, targetAtc, new StringMessageContent( plane.getSqwk() + "{" + plane.getCallsign() + "} routing change rejected."));
+    sendMessage(m);
+  }
+
   private void rejectSwitch(Airplane plane, Atc targetAtc, RequestResult planeAcceptance) {
-    getPrm().rejectSwitch(plane, this);
+    getPrm().rejectSwitchRequest(plane, this);
     Message nm = new Message(this, targetAtc,
         new PlaneSwitchMessage(plane, true, " refused. " + planeAcceptance.message));
     sendMessage(nm);
   }
 
   private void acceptSwitch(Airplane plane, Atc targetAtc) {
-    getPrm().confirmSwitch(plane, this);
+    getPrm().confirmSwitchRequest(plane, this, null);
     Message nm = new Message(this, targetAtc,
         new PlaneSwitchMessage(plane, false, "accepted"));
     sendMessage(nm);

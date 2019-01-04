@@ -11,6 +11,7 @@ import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.AirplaneList;
+import eng.jAtcSim.lib.atcs.planeResponsibility.SwitchRoutingRequest;
 import eng.jAtcSim.lib.global.ETime;
 import eng.jAtcSim.lib.global.Headings;
 import eng.jAtcSim.lib.global.SchedulerForAdvice;
@@ -31,8 +32,6 @@ import eng.jAtcSim.lib.world.RunwayConfiguration;
 import eng.jAtcSim.lib.world.RunwayThreshold;
 
 public class TowerAtc extends ComputerAtc {
-  private static final int[] RWY_CHANGE_ANNOUNCE_INTERVALS = new int[]{30, 15, 10, 5, 4, 3, 2, 1};
-
   public static class RunwayCheck {
     private static final int[] RWY_CHECK_ANNOUNCE_INTERVALS = new int[]{30, 15, 10, 5};
 
@@ -107,6 +106,7 @@ public class TowerAtc extends ComputerAtc {
     arrivals
   }
 
+  private static final int[] RWY_CHANGE_ANNOUNCE_INTERVALS = new int[]{30, 15, 10, 5, 4, 3, 2, 1};
   private static final int MAXIMAL_SPEED_FOR_PREFERRED_RUNWAY = 5;
   private static final double MAXIMAL_ACCEPT_DISTANCE_IN_NM = 15;
   private final DepartureManager departureManager = new DepartureManager();
@@ -183,6 +183,28 @@ public class TowerAtc extends ComputerAtc {
     tryTakeOffPlaneNew();
     processRunwayCheckBackground();
     processRunwayChangeBackground();
+  }
+
+  @Override
+  protected boolean acceptsNewRouting(Airplane plane, SwitchRoutingRequest srr) {
+    assert plane.isDeparture() : "It is nonsense to have this call here for arrival.";
+
+    boolean ret;
+    RunwayConfiguration rc;
+    if (inUseInfo.scheduler.getSecondsLeft() < 300) {
+      rc = inUseInfo.getScheduled();
+    } else {
+      rc = inUseInfo.getCurrent();
+    }
+
+    ret = rc.getDepartures()
+        .isAny(q -> q.getThreshold() == srr.threshold && q.getCategories().indexOf(plane.getType().category) >= 0);
+
+    if (ret){
+      ret = srr.threshold.getRoutes()
+          .isAny(q->(q == srr.route || srr.route.getType()== Route.eType.vectoring) && srr.route.isValidForCategory(plane.getType().category));
+    }
+    return ret;
   }
 
   @Override
@@ -344,6 +366,14 @@ public class TowerAtc extends ComputerAtc {
     }
   }
 
+  public EventAnonymousSimple getOnRunwayChanged() {
+    return onRunwayChanged;
+  }
+
+  public void setUpdatedWeatherFlag() {
+    this.isUpdatedWeather = true;
+  }
+
   private RunwayThreshold getRunwayThresholdForDeparture(Airplane plane) {
     RunwayThreshold ret;
     IList<RunwayThreshold> rts = inUseInfo.current.getDepartures()
@@ -355,10 +385,6 @@ public class TowerAtc extends ComputerAtc {
     if (rts.size() > 0)
       ret = rts.getRandom();
     return ret;
-  }
-
-  public EventAnonymousSimple getOnRunwayChanged() {
-    return onRunwayChanged;
   }
 
   private void sendMessageToUser(String text) {
@@ -435,10 +461,6 @@ public class TowerAtc extends ComputerAtc {
         }
       }
     }
-  }
-
-  public void setUpdatedWeatherFlag() {
-    this.isUpdatedWeather = true;
   }
 
   private void processRunwayChangeBackground() {

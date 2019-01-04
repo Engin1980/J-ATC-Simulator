@@ -9,6 +9,7 @@ import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.geo.Coordinates;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
+import eng.jAtcSim.lib.atcs.planeResponsibility.SwitchRoutingRequest;
 import eng.jAtcSim.lib.messaging.Message;
 import eng.jAtcSim.lib.messaging.StringMessageContent;
 import eng.jAtcSim.lib.serialization.LoadSave;
@@ -83,6 +84,16 @@ public class CenterAtc extends ComputerAtc {
       middleArrivals.add(tmp);
       tmp.clear();
     }
+  }
+
+  @Override
+  protected boolean acceptsNewRouting(Airplane plane, SwitchRoutingRequest srr) {
+    boolean ret;
+    ret = srr.route.isValidForCategory(plane.getType().category)
+        && (srr.route.getType() == Route.eType.vectoring
+            || srr.route.getType() == Route.eType.star
+            || srr.route.getType() == Route.eType.transition);
+    return ret;
   }
 
   private void evaluateMiddleArrivalsForCloseArrivals(IList<Airplane> tmp, Airplane plane) {

@@ -90,16 +90,16 @@ public class PlaneResponsibilityManager {
       return ret;
     }
 
-    public void confirmSwitch(Airplane plane, Atc targetAtc) {
+    public void confirmSwitchRequest(Airplane plane, Atc targetAtc, @Nullable SwitchRoutingRequest updatedRoutingIfRequired) {
       AirplaneResponsibilityInfo ai = dao.get(plane);
       if (ai.getSwitchRequest() == null || ai.getSwitchRequest().getAtc() != targetAtc) { // probably canceled
         return;
       }
       SwitchRequest sr = ai.getSwitchRequest();
-      sr.setConfirmed();
+      sr.setConfirmed(updatedRoutingIfRequired);
     }
 
-    public void rejectSwitch(Airplane plane, Atc targetAtc) {
+    public void rejectSwitchRequest(Airplane plane, Atc targetAtc) {
       AirplaneResponsibilityInfo ai = dao.get(plane);
       if (ai.getSwitchRequest() == null || ai.getSwitchRequest().getAtc() != targetAtc) { // probably canceled
         return;
@@ -123,6 +123,19 @@ public class PlaneResponsibilityManager {
       ai.setAtc(sr.getAtc());
       ai.getAtc().registerNewPlaneUnderControl(plane, false);
       ai.setSwitchRequest(null);
+    }
+
+    public SwitchRoutingRequest getRoutingForSwitchRequest(Atc sender, Airplane plane) {
+      AirplaneResponsibilityInfo ari = dao.get(plane);
+      SwitchRequest sr = ari.getSwitchRequest();
+      SwitchRoutingRequest srr = sr.getRouting();
+      return srr;
+    }
+
+    public void resetSwitchRequest(ComputerAtc sender, Airplane plane) {
+      AirplaneResponsibilityInfo ari = dao.get(plane);
+      SwitchRequest sr = ari.getSwitchRequest();
+      sr.reset();
     }
   }
 

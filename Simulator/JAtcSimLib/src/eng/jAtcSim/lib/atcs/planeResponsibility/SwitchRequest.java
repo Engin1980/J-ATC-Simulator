@@ -9,15 +9,21 @@ public class SwitchRequest {
   private Atc atc;
   private ETime repeatRequestTime;
   private ETime confirmedTime = null;
+  private SwitchRoutingRequest routing;
 
-  public void setConfirmed(){
+  public void setConfirmed(SwitchRoutingRequest newRoutingIfRequired){
     this.confirmedTime = Acc.now().clone();
+    this.routing = newRoutingIfRequired;
   }
 
   public SwitchRequest(Atc atc) {
     this.atc = atc;
     this.creationTime = Acc.now().clone();
     this.updateLastRequestTime();
+  }
+
+  public SwitchRoutingRequest getRouting() {
+    return routing;
   }
 
   public ETime getRepeatRequestTime() {
@@ -30,6 +36,11 @@ public class SwitchRequest {
 
   public Atc getAtc() {
     return atc;
+  }
+
+  public void reset() {
+    this.confirmedTime = null;
+    this.routing = null;
   }
 
   void confirm(Atc oldAtc) {
