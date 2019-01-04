@@ -100,7 +100,7 @@ public abstract class ComputerAtc extends Atc {
     if (getPrm().isUnderSwitchRequest(plane, this, targetAtc)) {
       // other ATC confirms our request, plane is going to hang off
       // nothing is done here, later the plane is checked to hang off
-    } else {
+    } else if (getPrm().isUnderSwitchRequest(plane, null, this)) {
       // other ATC offers us a plane
       RequestResult planeAcceptance = canIAcceptPlane(plane);
       if (planeAcceptance.isAccepted) {

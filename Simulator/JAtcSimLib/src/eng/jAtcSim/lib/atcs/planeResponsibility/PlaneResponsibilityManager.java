@@ -11,6 +11,7 @@ import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.validation.Validator;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
+import eng.jAtcSim.lib.airplanes.Callsign;
 import eng.jAtcSim.lib.atcs.Atc;
 import eng.jAtcSim.lib.atcs.ComputerAtc;
 
@@ -98,7 +99,7 @@ public class PlaneResponsibilityManager {
       sr.setConfirmed();
     }
 
-    public void rejectSwitch(Airplane plane, Atc targetAtc){
+    public void rejectSwitch(Airplane plane, Atc targetAtc) {
       AirplaneResponsibilityInfo ai = dao.get(plane);
       if (ai.getSwitchRequest() == null || ai.getSwitchRequest().getAtc() != targetAtc) { // probably canceled
         return;
@@ -106,7 +107,7 @@ public class PlaneResponsibilityManager {
       ai.setSwitchRequest(null);
     }
 
-    public void cancelSwitchRequest(Atc sender, Airplane plane){
+    public void cancelSwitchRequest(Atc sender, Airplane plane) {
       AirplaneResponsibilityInfo ai = dao.get(plane);
       ai.setSwitchRequest(null);
     }
@@ -126,14 +127,13 @@ public class PlaneResponsibilityManager {
   }
 
   private PlaneResponsibilityManagerForAtc forAtc = new PlaneResponsibilityManagerForAtc();
-
-  public PlaneResponsibilityManagerForAtc forAtc() {
-    return this.forAtc;
-  }
-
   private PlaneResponsibilityDAO dao = new PlaneResponsibilityDAO();
 
   public PlaneResponsibilityManager() {
+  }
+
+  public PlaneResponsibilityManagerForAtc forAtc() {
+    return this.forAtc;
   }
 
   public void init() {
@@ -141,8 +141,10 @@ public class PlaneResponsibilityManager {
   }
 
   public Atc getResponsibleAtc(Airplane plane) {
+    Atc ret;
     AirplaneResponsibilityInfo ai = dao.get(plane);
-    return ai.getAtc();
+    ret = ai.getAtc();
+    return ret;
   }
 
   public void registerNewPlane(Atc atc, Airplane plane) {
@@ -171,8 +173,14 @@ public class PlaneResponsibilityManager {
     return ret;
   }
 
-  public IReadOnlyList<Airplane> getPlanes(){
-    return dao.getAll().select(q->q.getPlane());
+  public IReadOnlyList<Airplane> getPlanes() {
+    return dao.getAll().select(q -> q.getPlane());
+  }
+
+  public boolean isUnderConfirmedSwitch(Callsign callsign) {
+    AirplaneResponsibilityInfo ari = dao.get(callsign);
+    boolean ret = ari.getSwitchRequest() != null && ari.getSwitchRequest().isConfirmed();
+    return ret;
   }
 
 //  public void applySwitch(Airplane plane, Atc oldAtc) {

@@ -19,6 +19,7 @@ import eng.jAtcSim.lib.messaging.StringMessageContent;
 import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtc2Atc;
 import eng.jAtcSim.lib.speaking.fromAtc.atc2atc.PlaneSwitchMessage;
+import eng.jAtcSim.lib.speaking.fromAtc.commands.ContactCommand;
 import eng.jAtcSim.lib.textProcessing.parsing.Parser;
 import eng.jAtcSim.lib.textProcessing.parsing.shortBlockParser.ShortBlockParser;
 
@@ -231,7 +232,16 @@ public class UserAtc extends Atc {
   }
 
   private void sendToPlane(Airplane plane, SpeechList speeches) {
+    confirmAtcChangeInPlaneResponsibilityManagerIfRequired(plane, speeches);
     Message m = new Message(this, plane, speeches);
     super.sendMessage(m);
   }
+
+  private void confirmAtcChangeInPlaneResponsibilityManagerIfRequired(Airplane plane, SpeechList speeches) {
+    ContactCommand cc = (ContactCommand) speeches.tryGetFirst(q->q instanceof ContactCommand);
+    if (cc != null){
+      getPrm().applyConfirmedSwitch(this, plane);
+    }
+  }
+
 }

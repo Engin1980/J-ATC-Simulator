@@ -116,12 +116,14 @@ public class Radar {
     public AirplaneType type;
     public Point labelShift;
     public boolean fixedLabelShift = false;
+    public boolean isConfirmedSwitch;
     private Squawk squawk;
     private int targetHeading;
     private double targetSpeed;
     private int altitude;
     private int targetAltitude;
     private boolean emergency;
+
 
     public AirplaneDisplayInfo(Airplane.Airplane4Display planeInfo) {
       this.callsign = planeInfo.callsign();
@@ -151,6 +153,8 @@ public class Radar {
       this.emergency = plane.isEmergency();
 
       this.coordinate = plane.coordinate();
+
+      this.isConfirmedSwitch = Acc.prm().isUnderConfirmedSwitch(plane.callsign());
 
       planeDotHistory.add(plane.coordinate());
     }
@@ -369,6 +373,7 @@ public class Radar {
     this.displaySettings = displaySettings;
     this.simulation = sim;
     this.area = area;
+    Acc.messenger().registerListener(this, Acc.atcApp());
 
     buildLocalNavaidList();
     buildDrawnRoutesList();
@@ -1079,7 +1084,7 @@ public class Radar {
     // plane label
     StringBuilder sb = new StringBuilder();
     sb.append(buildPlaneString(dp.getFirstLineFormat(), adi));
-    if (adi.tunedAtc != adi.responsibleAtc) {
+    if (isAirplaneUnderConfirmedSwitch(adi)) {
       sb.append("*");
     }
     sb.append("\r\n");
@@ -1093,6 +1098,10 @@ public class Radar {
       tl.drawPlaneLabel(sb.toString(), adi.fixedLabelShift, adi.coordinate, adi.labelShift, dt.getFont(), c, cc);
     else
       tl.drawText(sb.toString(), adi.coordinate, adi.labelShift.x, adi.labelShift.y, dt.getFont(), c);
+  }
+
+  private boolean isAirplaneUnderConfirmedSwitch(AirplaneDisplayInfo adi) {
+    return adi.isConfirmedSwitch && adi.altitude > Acc.airport().getAltitude();
   }
 
   private void drawPlanePoint(AirplaneDisplayInfo adi) {
@@ -1145,18 +1154,12 @@ public class Radar {
       c = styleSettings.mrvaError;
     } else if (adi.airprox == AirproxType.warning) {
       c = styleSettings.airproxWarning;
-    } else if (switchFlagTrue && isUnderSwitching(adi)) {
+    } else if (switchFlagTrue && isAirplaneUnderConfirmedSwitch(adi)) {
       c = styleSettings.switchingPlaneAlternatingColor;
     } else if (this.selectedCallsign == adi.callsign) {
       c = styleSettings.selected.getColor();
     }
     return c;
-  }
-
-  private boolean isUnderSwitching(AirplaneDisplayInfo adi) {
-    boolean ret;
-    ret = adi.responsibleAtc != adi.tunedAtc; // || !adi.hasRadarContact;
-    return ret;
   }
 
   private RadarStyleSettings.PlaneLabelSettings getPlaneLabelDisplaySettingsBy(AirplaneDisplayInfo adi) {

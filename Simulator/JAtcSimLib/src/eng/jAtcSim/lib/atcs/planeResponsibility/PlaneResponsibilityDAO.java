@@ -5,6 +5,7 @@ import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 import eng.jAtcSim.lib.airplanes.Airplane;
+import eng.jAtcSim.lib.airplanes.Callsign;
 import eng.jAtcSim.lib.atcs.Atc;
 
 import java.util.LinkedList;
@@ -47,5 +48,10 @@ class PlaneResponsibilityDAO {
   public IReadOnlyList<AirplaneResponsibilityInfo> getByAtc(Atc atc) {
     IReadOnlyList<AirplaneResponsibilityInfo> ret = all.where(q -> q.getAtc() == atc);
     return ret;
+  }
+
+  public AirplaneResponsibilityInfo get(Callsign callsign) {
+    AirplaneResponsibilityInfo ari = this.all.getFirst(q->q.getPlane().getCallsign().equals(callsign));
+    return ari;
   }
 }

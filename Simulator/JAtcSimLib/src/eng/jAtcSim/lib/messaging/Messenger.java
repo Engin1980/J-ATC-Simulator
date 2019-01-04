@@ -50,7 +50,7 @@ public class Messenger {
     if (listeners.isAny(q -> q.listener == listener))
       throw new EApplicationException("Listener " + listener.toString() + " already registered.");
 
-    ListenerInfo li = new ListenerInfo(listeners, messageTarget);
+    ListenerInfo li = new ListenerInfo(listener, messageTarget);
     this.listeners.add(li);
   }
 

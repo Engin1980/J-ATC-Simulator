@@ -221,6 +221,10 @@ public class Simulation {
     this.prm.init();
     this.stats.init();
 
+    Acc.messenger().registerListener(Acc.atcTwr(), Acc.atcTwr());
+    Acc.messenger().registerListener(Acc.atcCtr(), Acc.atcCtr());
+    Acc.messenger().registerListener(Acc.messenger().SYSTEM, Acc.messenger().SYSTEM);
+
     trafficManager.generateNewTrafficIfRequired();
     trafficManager.throwOutElapsedMovements(this.now.addMinutes(-5));
   }
@@ -465,6 +469,7 @@ public class Simulation {
       if (newPlane != null) {
         newPlanesDelayedToAvoidCollision.remove(newPlane);
         Acc.prm().registerNewPlane(ctrAtc, newPlane);
+        Acc.messenger().registerListener(newPlane, newPlane);
         this.mrvaManager.registerPlane(newPlane);
       }
     }
@@ -472,6 +477,7 @@ public class Simulation {
     for (Airplane newPlane : newPlanes) {
       if (newPlane.isDeparture()) {
         Acc.prm().registerNewPlane(twrAtc, newPlane);
+        Acc.messenger().registerListener(newPlane, newPlane);
         this.mrvaManager.registerPlane(newPlane);
       } else {
         // here are two possibilities
@@ -513,12 +519,13 @@ public class Simulation {
       }
     }
 
-    for (Airplane p : rem) {
-      stats.getPlanesMood().add(p.getEvaluatedMood());
-      Acc.prm().unregisterPlane(p);
-      this.mrvaManager.unregisterPlane(p);
-      if (!p.isEmergency())
-        this.stats.getPlanes().getDelay().getByType(p.isArrival()).add(p.getDelayDifference());
+    for (Airplane plane : rem) {
+      stats.getPlanesMood().add(plane.getEvaluatedMood());
+      Acc.prm().unregisterPlane(plane);
+      Acc.messenger().unregisterListener(plane);
+      this.mrvaManager.unregisterPlane(plane);
+      if (!plane.isEmergency())
+        this.stats.getPlanes().getDelay().getByType(plane.isArrival()).add(plane.getDelayDifference());
     }
   }
 
