@@ -884,7 +884,7 @@ public class Airplane implements IMessageParticipant {
   }
 
   private void processMessages() {
-    IList<Message> msgs = Acc.messenger().getByTarget(this, true);
+    IList<Message> msgs = Acc.messenger().getMessagesByListener(this, true);
     for (Message m : msgs) {
       processMessage(m);
     }

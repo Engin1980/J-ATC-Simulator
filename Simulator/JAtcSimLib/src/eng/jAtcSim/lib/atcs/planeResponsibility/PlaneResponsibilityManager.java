@@ -52,7 +52,7 @@ public class PlaneResponsibilityManager {
       return ret;
     }
 
-    public void registerSwitchRequest(Atc sender, Atc targetAtc, Airplane plane) {
+    public void createSwitchRequest(Atc sender, Atc targetAtc, Airplane plane) {
       Validator.isNotNull(sender);
       Validator.isNotNull(targetAtc);
       Validator.isNotNull(plane);
@@ -89,13 +89,26 @@ public class PlaneResponsibilityManager {
       return ret;
     }
 
-    public void confirmSwitch(Atc sender, Airplane plane) {
+    public void confirmSwitch(Airplane plane, Atc targetAtc) {
       AirplaneResponsibilityInfo ai = dao.get(plane);
-      if (ai.getSwitchRequest() == null || ai.getSwitchRequest().getAtc() != sender) { // probably canceled
+      if (ai.getSwitchRequest() == null || ai.getSwitchRequest().getAtc() != targetAtc) { // probably canceled
         return;
       }
       SwitchRequest sr = ai.getSwitchRequest();
       sr.setConfirmed();
+    }
+
+    public void rejectSwitch(Airplane plane, Atc targetAtc){
+      AirplaneResponsibilityInfo ai = dao.get(plane);
+      if (ai.getSwitchRequest() == null || ai.getSwitchRequest().getAtc() != targetAtc) { // probably canceled
+        return;
+      }
+      ai.setSwitchRequest(null);
+    }
+
+    public void cancelSwitchRequest(Atc sender, Airplane plane){
+      AirplaneResponsibilityInfo ai = dao.get(plane);
+      ai.setSwitchRequest(null);
     }
 
     public void applyConfirmedSwitch(Atc sender, Airplane plane) {
@@ -110,57 +123,9 @@ public class PlaneResponsibilityManager {
       ai.getAtc().registerNewPlaneUnderControl(plane, false);
       ai.setSwitchRequest(null);
     }
-
-    public void confirmSwitchFromApp(Airplane plane, ComputerAtc targetAtc) {
-      AirplaneResponsibilityInfo ai = dao.get(plane);
-      if (ai.getSwitchRequest() != null && ai.getSwitchRequest().getAtc() == targetAtc)
-        ai.getSwitchRequest().confirm(ai.getAtc());
-    }
-
-    public void abortSwitchFromApp(Airplane plane, ComputerAtc targetAtc) {
-      AirplaneResponsibilityInfo ai = dao.get(plane);
-      if (ai.getSwitchRequest() != null && ai.getSwitchRequest().getAtc() == targetAtc)
-        ai.setSwitchRequest(null);
-    }
-  }
-
-  public class PlaneResponsibilityManagerForGlobal {
-    public void registerNewPlane(Atc atc, Airplane plane) {
-      if (all.isAny(q -> q.getPlane() == plane)) {
-        throw new EApplicationException(sf("Second registration of already registered plane %s!", plane.getCallsign()));
-      }
-
-      all.add(new AirplaneResponsibilityInfo(plane, atc));
-      displays.add(plane.getPlane4Display());
-      atc.registerNewPlaneUnderControl(plane, true);
-    }
-
-    public void unregisterPlane(Airplane plane) {
-      AirplaneResponsibilityInfo ai = all.tryGetFirst(q -> q.getPlane() == plane);
-      if (ai == null) {
-        throw new EApplicationException(sf("Plane %s is not registered, cannot be unregistered!", plane.getCallsign()));
-      }
-      all.remove(ai);
-      displays.remove(ai.getPlane().getPlane4Display());
-      ai.getAtc().removePlaneDeletedFromGame(plane);
-//    Acc.atcApp().removePlaneDeletedFromGame(plane);
-//    Acc.atcTwr().removePlaneDeletedFromGame(plane);
-//    Acc.atcCtr().removePlaneDeletedFromGame(plane);
-    }
-
-    public ReadOnlyList<Airplane.Airplane4Display> getPlanesToDisplay() {
-      ReadOnlyList<Airplane.Airplane4Display> ret
-          = new ReadOnlyList<>(PlaneResponsibilityManager.this.displays);
-      return ret;
-    }
-
-    public Atc getResponsibleAtc(Airplane plane) {
-      return PlaneResponsibilityManager.this.getResponsibleAtc(plane);
-    }
   }
 
   private PlaneResponsibilityManagerForAtc forAtc = new PlaneResponsibilityManagerForAtc();
-  private PlaneResponsibilityManagerForGlobal forGlobal = new PlaneResponsibilityManagerForGlobal();
 
   public PlaneResponsibilityManagerForAtc forAtc() {
     return this.forAtc;
@@ -175,9 +140,39 @@ public class PlaneResponsibilityManager {
     dao.init();
   }
 
-  private Atc getResponsibleAtc(Airplane plane) {
+  public Atc getResponsibleAtc(Airplane plane) {
     AirplaneResponsibilityInfo ai = dao.get(plane);
     return ai.getAtc();
+  }
+
+  public void registerNewPlane(Atc atc, Airplane plane) {
+    if (dao.getAll().isAny(q -> q.getPlane() == plane)) {
+      throw new EApplicationException(sf("Second registration of already registered plane %s!", plane.getCallsign()));
+    }
+
+    dao.add(new AirplaneResponsibilityInfo(plane, atc));
+    atc.registerNewPlaneUnderControl(plane, true);
+  }
+
+  public void unregisterPlane(Airplane plane) {
+    AirplaneResponsibilityInfo ai = dao.getAll().tryGetFirst(q -> q.getPlane() == plane);
+    if (ai == null) {
+      throw new EApplicationException(sf("Plane %s is not registered, cannot be unregistered!", plane.getCallsign()));
+    }
+    dao.remove(ai);
+    ai.getAtc().removePlaneDeletedFromGame(plane);
+//    Acc.atcApp().removePlaneDeletedFromGame(plane);
+//    Acc.atcTwr().removePlaneDeletedFromGame(plane);
+//    Acc.atcCtr().removePlaneDeletedFromGame(plane);
+  }
+
+  public IReadOnlyList<Airplane.Airplane4Display> getPlanesToDisplay() {
+    IReadOnlyList<Airplane.Airplane4Display> ret = dao.getDisplays();
+    return ret;
+  }
+
+  public IReadOnlyList<Airplane> getPlanes(){
+    return dao.getAll().select(q->q.getPlane());
   }
 
 //  public void applySwitch(Airplane plane, Atc oldAtc) {

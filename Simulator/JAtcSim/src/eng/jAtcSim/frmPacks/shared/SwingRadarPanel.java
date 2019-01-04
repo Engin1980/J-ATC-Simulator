@@ -16,7 +16,6 @@ import eng.jAtcSim.SwingRadar.SwingCanvas;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.Simulation;
 import eng.jAtcSim.lib.atcs.Atc;
-import eng.jAtcSim.lib.atcs.TowerAtc;
 import eng.jAtcSim.lib.atcs.UserAtc;
 import eng.jAtcSim.lib.world.*;
 import eng.jAtcSim.lib.world.approaches.Approach;
@@ -388,13 +387,13 @@ public class SwingRadarPanel extends JPanel {
       if (msg.startsWith("+")) {
         // msg for ctr
         msg = msg.substring(1);
-        app.sendToAtc(Atc.eType.ctr, msg);
+        app.sendPlaneSwitchMessageToAtc(Atc.eType.ctr, msg);
         ret = true;
 
       } else if (msg.startsWith("-")) {
         // msg for TWR
         msg = msg.substring(1);
-        app.sendToAtc(Atc.eType.twr, msg);
+        app.sendPlaneSwitchMessageToAtc(Atc.eType.twr, msg);
         ret = true;
 
       } else if (msg.startsWith("?")) {

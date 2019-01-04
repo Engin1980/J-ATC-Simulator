@@ -52,7 +52,6 @@ public class UserAtc extends Atc {
   }
 
   public void elapseSecond() {
-
   }
 
   public void sendToPlane(String line) {
@@ -86,8 +85,9 @@ public class UserAtc extends Atc {
     sendToPlane(pln, speeches);
   }
 
-  public void sendToAtc(Atc.eType type, String message) {
+  public void sendPlaneSwitchMessageToAtc(Atc.eType type, String message) {
     if (message.matches("\\d{4}")) {
+      // it is plane switch message
       String[] tmp = RegexUtils.extractGroups(message, "^(\\d{4})(.*)$");
       Squawk s = Squawk.tryCreate(tmp[0]);
       if (s == null) {
@@ -99,57 +99,49 @@ public class UserAtc extends Atc {
         raiseError("SQWK " + s.toString() + " does not exist.");
         return;
       }
-      sendToAtc(type, plane, tmp[1]);
+      sendPlaneSwitchMessageToAtc(type, plane, tmp[1]);
     } else {
+      // it is different message to atc
       try {
         IAtc2Atc content = parser.parseAtc(message);
-        sendToAtc(type, content);
+        sendOtherMessageToAtc(type, content);
       } catch (Exception ex) {
         raiseError("\"" + message + "\" has invalid syntax as message for ATC");
       }
     }
   }
 
-  public void sendToAtc(Atc.eType type, IAtc2Atc msg) {
+  public void sendOtherMessageToAtc(Atc.eType type, IAtc2Atc msg) {
     Atc atc = Acc.atc(type);
     Message m = new Message(this, atc, msg);
     super.sendMessage(m);
   }
 
-  public void sendToAtc(Atc.eType type, Airplane plane, String additionalMessage) {
-    Atc atc = Acc.atc(type);
+  public void sendPlaneSwitchMessageToAtc(Atc.eType type, Airplane plane, String additionalMessage) {
+    Atc otherAtc = Acc.atc(type);
 
-    if (getPrm().xisUnderSwitchRequest(plane, null,this)) {
-      // je to ... -> APP
-
-      if (getPrm().getResponsibleAtc(plane).getType() != type) {
-        // nesedi smer potvrzeni A predava na APP, ale APP potvrzuje na B
-        sendError("SQWK " + plane.getSqwk() + " not under your control. You cannot request switch.");
-        return;
+    if (getPrm().getResponsibleAtc(plane) == this){
+      // it is my plane
+      if (getPrm().isUnderSwitchRequest(plane, this, null)){
+        // is already under switch request?
+        getPrm().cancelSwitchRequest(this, plane);
       } else {
-//        // overime routovani
-//        String[] tmp = decodeAdditionalRouting(additionalMessage);
-//        // poprosime ATC o potvrzeni routovani
-//        if (tmp != null && atc.acceptsChangedRouting(plane, tmp[0], tmp[1])){
-//          // potvrdime
-//          getPrm().confirmSwitch(this, plane);
-//        } else {
-//          // zamitneme zmenene routovani
-//          getPrm().abortSwitch(plane, atc, Acc.atcApp());
-//        }
-        getPrm().confirmSwitch(this, plane);
+        // create new switch request
+        getPrm().createSwitchRequest(this, otherAtc, plane);
       }
     } else {
-      if (getPrm().getResponsibleAtc(plane).equals(this))
-        // je nova zadost APP -> ???
-        getPrm().requestSwitch(this, atc, plane);
-      else
-        // je to zruseni zadosti o switch
-        getPrm().requestSwitch(getPrm().getResponsibleAtc(plane), this, plane);
+      // it is not my plane
+      if (getPrm().isUnderSwitchRequest(plane, otherAtc, this)){
+        // is under switch request to me, I am making a confirmation
+        getPrm().confirmSwitch(plane, this);
+      } else {
+        // making a confirmation to non-requested switch? or probably an error
+        sendError("SQWK " + plane.getSqwk() + " not under your control and not under a switch request.");
+      }
     }
 
     PlaneSwitchMessage msg = new PlaneSwitchMessage(plane);
-    Message m = new Message(this, atc, msg);
+    Message m = new Message(this, otherAtc, msg);
     super.sendMessage(m);
   }
 

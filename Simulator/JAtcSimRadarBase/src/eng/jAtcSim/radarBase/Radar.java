@@ -256,7 +256,7 @@ public class Radar {
       return inner.isEmpty();
     }
 
-    public void update(ReadOnlyList<Airplane.Airplane4Display> planes) {
+    public void update(IReadOnlyList<Airplane.Airplane4Display> planes) {
       resetWasUpdatedFlag();
 
       for (Airplane.Airplane4Display plane : planes) {
@@ -828,9 +828,9 @@ public class Radar {
         border.getMaxAltitude() == Border.ALTITUDE_MAXIMUM_VALUE ?
             null
             :
-        AirplaneDataFormatter.formatAltitudeLong(border.getMaxAltitude(), false);
+            AirplaneDataFormatter.formatAltitudeLong(border.getMaxAltitude(), false);
     String minS =
-        border.getMinAltitude() == Border.ALTITUDE_MINIMUM_VALUE?
+        border.getMinAltitude() == Border.ALTITUDE_MINIMUM_VALUE ?
             null
             :
             AirplaneDataFormatter.formatAltitudeLong(border.getMinAltitude(), false);
@@ -1180,7 +1180,7 @@ public class Radar {
 
   private void drawCaptions() {
     Messenger ms = simulation.getMessenger();
-    IList<Message> msgs = ms.getByTarget(simulation.getAppAtc(), true);
+    IList<Message> msgs = ms.getMessagesByListener(this, true);
 
     for (Message msg : msgs) {
       String formattedText =
@@ -1191,22 +1191,24 @@ public class Radar {
     boolean containsSystemMessage =
         msgs.isAny(q -> q.isSourceOfType(Messenger.XSystem.class));
 
-    List<Message> atcMsgs = CollectionUtils.where(msgs, q -> q.isSourceOfType(Atc.class));
+    IList<Message> atcMsgs = msgs.where(q -> q.isSourceOfType(Atc.class));
     boolean containsAtcMessage = atcMsgs.isEmpty() == false;
     boolean isAtcMessageNegative = false;
     if (containsAtcMessage) {
-      atcMsgs = CollectionUtils.where(atcMsgs, q -> q.isContentOfType(IAtc2Atc.class));
-      isAtcMessageNegative = atcMsgs.stream().anyMatch(q -> q.<IAtc2Atc>getContent().isRejection());
+      atcMsgs = atcMsgs.where(q -> q.isContentOfType(IAtc2Atc.class));
+      isAtcMessageNegative = atcMsgs.isAny(q -> q.<IAtc2Atc>getContent().isRejection());
     }
 
-    List<Message> planeMsgs = CollectionUtils.where(msgs, q -> q.isSourceOfType(Airplane.class));
+    IList<Message> planeMsgs = msgs.where(q -> q.isSourceOfType(Airplane.class));
     boolean containsPlaneMessage = planeMsgs.isEmpty() == false;
     boolean isPlaneMessageNegative = false;
     if (containsPlaneMessage) {
-      for (Message planeMsg : planeMsgs) {
-        isPlaneMessageNegative = ((SpeechList) planeMsg.getContent()).isAny(q -> q instanceof Rejection);
-        if (isPlaneMessageNegative) break;
-      }
+//      for (Message planeMsg : planeMsgs) {
+//        isPlaneMessageNegative = ((SpeechList) planeMsg.getContent()).isAny(q -> q instanceof Rejection);
+//        if (isPlaneMessageNegative) break;
+//
+//      }
+      isPlaneMessageNegative = planeMsgs.isAny(q->((SpeechList)q.getContent()).isAny(p -> p instanceof Rejection));
     }
 
     if (containsAtcMessage) {

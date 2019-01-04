@@ -40,7 +40,7 @@ public abstract class ComputerAtc extends Atc {
 
   public void elapseSecond() {
 
-    IList<Message> msgs = Acc.messenger().getByTarget(this, true);
+    IList<Message> msgs = Acc.messenger().getMessagesByListener(this, true);
     speechDelayer.add(msgs);
 
     msgs = speechDelayer.getAndElapse();
@@ -56,7 +56,7 @@ public abstract class ComputerAtc extends Atc {
     IReadOnlyList<Airplane> planes = getPrm().getConfirmedSwitchesByAtc(this);
     for (Airplane plane : planes) {
       if (this.shouldBeSwitched(plane))
-        this.doSwitchApplication(plane);
+        this.applySwitchHangOff(plane);
     }
   }
 
@@ -71,7 +71,6 @@ public abstract class ComputerAtc extends Atc {
           SpeechList spchs = m.getContent();
 
           if (spchs.containsType(GoodDayNotification.class))
-
             confirmGoodDayNotificationIfRequired(p, spchs);
           processMessagesFromPlane(p, spchs);
         } else if (m.getSource() instanceof Atc) {
@@ -98,15 +97,16 @@ public abstract class ComputerAtc extends Atc {
   private void processPlaneSwitchMessage(Message m) {
     Airplane plane = m.<PlaneSwitchMessage>getContent().plane;
     Atc targetAtc = m.getSource();
-    if (getPrm().isUnderSwitchRequest(plane, this, null)) {
+    if (getPrm().isUnderSwitchRequest(plane, this, targetAtc)) {
       // other ATC confirms our request, plane is going to hang off
-      this.doSwitchConfirmation(plane);
+      // nothing is done here, later the plane is checked to hang off
     } else {
+      // other ATC offers us a plane
       RequestResult planeAcceptance = canIAcceptPlane(plane);
       if (planeAcceptance.isAccepted) {
-        doSwitchAcceptance(plane, targetAtc);
+        acceptSwitch(plane, targetAtc);
       } else {
-        doSwitchRejection(plane, targetAtc, planeAcceptance);
+        rejectSwitch(plane, targetAtc, planeAcceptance);
       }
       // this is a request to accept the plane
 //      if (getPrm().getResponsibleAtc(plane) == this){
@@ -127,15 +127,15 @@ public abstract class ComputerAtc extends Atc {
     }
   }
 
-  private void doSwitchRejection(Airplane plane, Atc targetAtc, RequestResult planeAcceptance) {
-    getPrm().abortSwitchFromApp(plane,this);
+  private void rejectSwitch(Airplane plane, Atc targetAtc, RequestResult planeAcceptance) {
+    getPrm().rejectSwitch(plane, this);
     Message nm = new Message(this, targetAtc,
         new PlaneSwitchMessage(plane, true, " refused. " + planeAcceptance.message));
     sendMessage(nm);
   }
 
-  private void doSwitchAcceptance(Airplane plane, Atc targetAtc) {
-    getPrm().confirmSwitchFromApp(plane,this);
+  private void acceptSwitch(Airplane plane, Atc targetAtc) {
+    getPrm().confirmSwitch(plane, this);
     Message nm = new Message(this, targetAtc,
         new PlaneSwitchMessage(plane, false, "accepted"));
     sendMessage(nm);
@@ -176,7 +176,7 @@ public abstract class ComputerAtc extends Atc {
 
       Atc targetAtc = getTargetAtcIfPlaneIsReadyToSwitch(myPlane);
       if (targetAtc != null) {
-        this.doSwitchRequest(myPlane, targetAtc);
+        this.requestNewSwitch(myPlane, targetAtc);
       }
     }
   }
@@ -202,18 +202,14 @@ public abstract class ComputerAtc extends Atc {
     }
   }
 
-  protected void doSwitchRequest(Airplane plane, Atc targetAtc) {
-    getPrm().registerSwitchRequest(this, targetAtc, plane);
+  protected void requestNewSwitch(Airplane plane, Atc targetAtc) {
+    getPrm().createSwitchRequest(this, targetAtc, plane);
     Message m = new Message(this, targetAtc,
         new PlaneSwitchMessage(plane, false, "to you"));
     sendMessage(m);
   }
 
-  protected void doSwitchConfirmation(Airplane plane) {
-
-  }
-
-  private void doSwitchApplication(Airplane plane) {
+  private void applySwitchHangOff(Airplane plane) {
     getPrm().applyConfirmedSwitch(this, plane);
     Atc newTargetAtc = getPrm().getResponsibleAtc(plane);
     Message msg = new Message(this, plane,

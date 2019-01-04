@@ -1,5 +1,6 @@
 package eng.jAtcSim.frmPacks.shared;
 
+import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.collections.ReadOnlyList;
 import eng.eSystem.events.Event;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
@@ -72,7 +73,7 @@ public class FlightListPanel extends JPanel {
     }
 
     // znovunaplneni, kdyz nesedi pocet
-    ReadOnlyList<Airplane.Airplane4Display> pi = sim.getPlanesToDisplay();
+    IReadOnlyList<Airplane.Airplane4Display> pi = sim.getPlanesToDisplay();
     if (plns.size() != pi.size()) {
       plns.clear();
       for (Airplane.Airplane4Display ai : pi) {

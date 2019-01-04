@@ -290,7 +290,7 @@ public class Simulation {
     return this.tmr.isRunning();
   }
 
-  public ReadOnlyList<Airplane.Airplane4Display> getPlanesToDisplay() {
+  public IReadOnlyList<Airplane.Airplane4Display> getPlanesToDisplay() {
     return Acc.prm().getPlanesToDisplay();
   }
 
@@ -537,7 +537,7 @@ public class Simulation {
   }
 
   private void processSystemMessages() {
-    IList<Message> systemMessages = Acc.messenger().getByTarget(messenger.SYSTEM, true);
+    IList<Message> systemMessages = Acc.messenger().getMessagesByListener(messenger.SYSTEM, true);
 
     for (Message m : systemMessages) {
       processSystemMessage(m);
