@@ -6,6 +6,7 @@
 
 package eng.jAtcSim.lib.speaking.fromAtc.commands;
 
+import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
 import eng.jAtcSim.lib.world.approaches.Approach;
 
@@ -17,6 +18,7 @@ public class ClearedToApproachCommand implements IAtcCommand {
   private String thresholdName;
   private Approach.ApproachType type;
 
+  @XmlConstructor
   private ClearedToApproachCommand() {
   }
 
