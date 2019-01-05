@@ -92,6 +92,8 @@ public class Airplane implements IMessageParticipant {
       return Airplane.this.pilot.getAssignedRoute();
     }
 
+    public RunwayThreshold getExpectedRunwayThreshold() {return Airplane.this.pilot.getExpectedRunwayThreshold(); }
+
     public int altitude() {
       return (int) Airplane.this.altitude.getValue();
     }
@@ -251,6 +253,7 @@ public class Airplane implements IMessageParticipant {
     public void evaluateMoodForShortcut(Navaid navaid) {
       Route r = getAssigneRoute();
       if (r == null) return;
+      if (r.getNavaids().isEmpty()) return;
       if (r.getNavaids().getLast().equals(navaid)) {
         if (Airplane.this.isArrival()) {
           if (Airplane.this.altitude.value > 1e4)

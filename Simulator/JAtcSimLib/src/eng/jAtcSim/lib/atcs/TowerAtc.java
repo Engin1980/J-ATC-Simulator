@@ -191,19 +191,22 @@ public class TowerAtc extends ComputerAtc {
 
     boolean ret;
     RunwayConfiguration rc;
-    if (inUseInfo.scheduler.getSecondsLeft() < 300) {
+    if (inUseInfo.getScheduled() != null && inUseInfo.scheduler.getSecondsLeft() < 300) {
       rc = inUseInfo.getScheduled();
     } else {
       rc = inUseInfo.getCurrent();
     }
 
-    ret = rc.getDepartures()
-        .isAny(q -> q.getThreshold() == srr.threshold && q.getCategories().indexOf(plane.getType().category) >= 0);
-
-    if (ret){
-      ret = srr.threshold.getRoutes()
-          .isAny(q->(q == srr.route || srr.route.getType()== Route.eType.vectoring) && srr.route.isValidForCategory(plane.getType().category));
-    }
+//    ret = rc.getArrivals()
+//        .isNone(q -> q.getThreshold() == srr.threshold);
+//
+//    if (ret) {
+    ret = srr.threshold.getRoutes()
+        .isAny(q -> (q == srr.route || srr.route.getType() == Route.eType.vectoring)
+            && srr.route.isValidForCategory(plane.getType().category)
+            && srr.route.getMaxMrvaAltitude() <= plane.getType().maxAltitude
+            && q.getMainNavaid().equals(plane.getEntryExitFix()));
+//    }
     return ret;
   }
 
@@ -833,14 +836,7 @@ class DepartureManager {
   public void registerNewDeparture(Airplane plane, RunwayThreshold runwayThreshold) {
     this.holdingPointNotReady.add(plane);
     holdingPointWaitingTimeMap.set(plane, Acc.now().clone());
-    Route r = runwayThreshold.getRoutes().tryGetFirst(q ->
-        q.getType() == Route.eType.sid &&
-            q.getMainNavaid().equals(plane.getEntryExitFix()) &&
-            q.isValidForCategory(plane.getType().category));
-    if (r == null)
-      r = runwayThreshold.getRoutes().where(q ->
-          q.getType() == Route.eType.sid &&
-              q.isValidForCategory(plane.getType().category)).getRandom();
+    Route r = runwayThreshold.getDepartureRouteForPlane(plane.getType(), plane.getEntryExitFix(), true);
     plane.updateAssignedRouting(r, runwayThreshold);
   }
 

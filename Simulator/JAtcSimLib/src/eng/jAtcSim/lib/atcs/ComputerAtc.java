@@ -55,7 +55,7 @@ public abstract class ComputerAtc extends Atc {
   }
 
   private void switchConfirmedPlanesIfReady() {
-    IReadOnlyList<Airplane> planes = getPrm().getConfirmedSwitchesByAtc(this);
+    IReadOnlyList<Airplane> planes = getPrm().getConfirmedSwitchesByAtc(this, true);
     for (Airplane plane : planes) {
       if (this.shouldBeSwitched(plane))
         this.applySwitchHangOff(plane);
@@ -107,7 +107,9 @@ public abstract class ComputerAtc extends Atc {
       if (srr != null){
         // the other ATC tries to change plane routing, we can check in and reject it if required
         if (acceptsNewRouting(plane, srr) == false)
-        rejectChangedRouting(plane, targetAtc);
+          rejectChangedRouting(plane, targetAtc);
+        else
+          getPrm().confirmRerouting(this, plane);
       }
     } else if (getPrm().isUnderSwitchRequest(plane, null, this)) {
       // other ATC offers us a plane

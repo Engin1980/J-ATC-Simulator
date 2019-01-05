@@ -82,12 +82,15 @@ public class PlaneResponsibilityManager {
       ai.setSwitchRequest(sr);
     }
 
-    public IReadOnlyList<Airplane> getConfirmedSwitchesByAtc(Atc sender) {
+    public IReadOnlyList<Airplane> getConfirmedSwitchesByAtc(Atc sender, boolean excludeWithRerouting) {
       IReadOnlyList<AirplaneResponsibilityInfo> tmp = dao.getByAtc(sender);
-      IList<Airplane> ret = tmp
-          .where(q -> q.getSwitchRequest() != null && q.getSwitchRequest().isConfirmed())
-          .select(q -> q.getPlane());
+       tmp = tmp
+          .where(q -> q.getSwitchRequest() != null && q.getSwitchRequest().isConfirmed());
+       if (excludeWithRerouting)
+         tmp = tmp.where(q->q.getSwitchRequest().getRouting() == null);
+      IList<Airplane> ret = tmp.select(q->q.getPlane());
       return ret;
+
     }
 
     public void confirmSwitchRequest(Airplane plane, Atc targetAtc, @Nullable SwitchRoutingRequest updatedRoutingIfRequired) {
@@ -135,7 +138,21 @@ public class PlaneResponsibilityManager {
     public void resetSwitchRequest(ComputerAtc sender, Airplane plane) {
       AirplaneResponsibilityInfo ari = dao.get(plane);
       SwitchRequest sr = ari.getSwitchRequest();
+
+      assert ari.getAtc() == sender;
+
       sr.reset();
+    }
+
+    public void confirmRerouting(ComputerAtc sender, Airplane plane) {
+      AirplaneResponsibilityInfo ari = dao.get(plane);
+      SwitchRequest sr = ari.getSwitchRequest();
+
+      assert ari.getAtc() == sender;
+
+      SwitchRoutingRequest srr = sr.getRouting();
+      plane.updateAssignedRouting(srr.route, srr.threshold);
+      sr.deleteConfirmedRouting();
     }
   }
 

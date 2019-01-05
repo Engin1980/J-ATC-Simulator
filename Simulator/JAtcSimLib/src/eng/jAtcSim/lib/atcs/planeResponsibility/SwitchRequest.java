@@ -43,6 +43,10 @@ public class SwitchRequest {
     this.routing = null;
   }
 
+  public void deleteConfirmedRouting(){
+    this.routing = null;
+  }
+
   void confirm(Atc oldAtc) {
     this.atc = oldAtc;
   }

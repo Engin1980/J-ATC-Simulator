@@ -19,6 +19,7 @@ import eng.jAtcSim.lib.speaking.ICommand;
 import eng.jAtcSim.lib.speaking.IFromAtc;
 import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
+import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeHeadingCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.HoldCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ProceedDirectCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ToNavaidCommand;
@@ -70,15 +71,13 @@ public class Route {
     ret.name = n.getName() + "/v";
 
     ret._routeCommands = new SpeechList<>();
-    if (arrival) {
-      ret._routeCommands.add(new ProceedDirectCommand(n));
-    }
+    if (arrival)
+      ret.route = "PD " + n.getName();
+    else
+      ret.route = "FH";
     ret._mainNavaid = n;
     ret.type = eType.vectoring;
-    ret._routeCommands.add(new ProceedDirectCommand(n));
-    ret.route = "";
     ret.parent = Acc.airport(); // only formal for binding
-
     ret.bind();
 
     return ret;
@@ -224,7 +223,6 @@ public class Route {
     return ret;
   }
 
-
   private double calculateRouteLength() {
     double ret = 0;
     Navaid prev = null;
@@ -262,11 +260,11 @@ public class Route {
     String name;
     if (mainFix != null)
       name = mainFix;
-    else{
+    else {
       int endIndex = 0;
-      while (endIndex < this.name.length()){
+      while (endIndex < this.name.length()) {
         char c = this.name.charAt(endIndex);
-        if (Character.isDigit(c)){
+        if (Character.isDigit(c)) {
           break;
         }
         endIndex++;

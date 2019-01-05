@@ -14,6 +14,7 @@ import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 import eng.eSystem.xmlSerialization.annotations.XmlItemElement;
 import eng.eSystem.xmlSerialization.annotations.XmlOptional;
 import eng.eSystem.geo.Coordinate;
+import eng.jAtcSim.lib.airplanes.AirplaneType;
 import eng.jAtcSim.lib.global.Headings;
 import eng.jAtcSim.lib.world.approaches.*;
 
@@ -84,6 +85,36 @@ public class RunwayThreshold {
     return this._course;
   }
 
+  public Route getDepartureRouteForPlane(AirplaneType type, Navaid mainNavaid, boolean canBeVectoring) {
+    Route ret = this.getRoutes().where(
+        q -> q.getType() == Route.eType.sid
+            && q.isValidForCategory(type.category)
+            && q.getMaxMrvaAltitude() < type.maxAltitude
+            && q.getMainNavaid().equals(mainNavaid))
+        .tryGetRandom();
+    if (ret == null && canBeVectoring)
+      ret = Route.createNewVectoringByFix(mainNavaid, false);
+    return ret;
+  }
+
+  public Route getArrivalRouteForPlane(AirplaneType type, int currentAltitude, Navaid mainNavaid, boolean canBeVectoring) {
+    Route ret = this.getRoutes().where(
+        q -> q.getType() == Route.eType.transition
+            && q.isValidForCategory(type.category)
+            && q.getMaxMrvaAltitude() < currentAltitude
+            && q.getMainNavaid().equals(mainNavaid))
+        .tryGetRandom();
+    if (ret == null)
+      ret = this.getRoutes().where(
+          q -> q.getType() == Route.eType.star
+              && q.isValidForCategory(type.category)
+              && q.getMaxMrvaAltitude() < currentAltitude
+              && q.getMainNavaid().equals(mainNavaid))
+          .tryGetRandom();
+    if (ret == null && canBeVectoring)
+      ret = Route.createNewVectoringByFix(mainNavaid, true);
+    return ret;
+  }
 
   public CurrentApproachInfo tryGetCurrentApproachInfo(Approach.ApproachType type, char category, Coordinate planePosition) {
 

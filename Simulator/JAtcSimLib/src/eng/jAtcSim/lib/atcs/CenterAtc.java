@@ -59,7 +59,7 @@ public class CenterAtc extends ComputerAtc {
       for (Airplane plane : middleArrivals) {
         try {
           evaluateMiddleArrivalsForCloseArrivals(tmp, plane);
-        } catch (Exception ex){
+        } catch (Exception ex) {
           throw new EApplicationException("Failed to evaluate " + plane.getCallsign() + ".", ex);
         }
       }
@@ -91,8 +91,8 @@ public class CenterAtc extends ComputerAtc {
     boolean ret;
     ret = srr.route.isValidForCategory(plane.getType().category)
         && (srr.route.getType() == Route.eType.vectoring
-            || srr.route.getType() == Route.eType.star
-            || srr.route.getType() == Route.eType.transition);
+        || srr.route.getType() == Route.eType.star
+        || srr.route.getType() == Route.eType.transition);
     return ret;
   }
 
@@ -255,9 +255,9 @@ public class CenterAtc extends ComputerAtc {
 
   private Tuple<Route, RunwayThreshold> getRoutingForPlaneAndFix(Airplane plane, Navaid n) {
     Tuple<Route, RunwayThreshold> ret;
-    Route r;
-    RunwayThreshold rt;
-    IList<Route> rts = new EList<>();
+    Route r = null;
+    RunwayThreshold rt = null;
+    IList<RunwayThreshold> thresholdsCopy = new EList<>();
 
     IReadOnlyList<RunwayThreshold> thresholds;
     // if is arrival, scheduled thresholds are taken into account
@@ -269,23 +269,19 @@ public class CenterAtc extends ComputerAtc {
       thresholds = Acc.atcTwr().getRunwayConfigurationInUse().getArrivals()
           .where(q -> q.isForCategory(plane.getType().category))
           .select(q -> q.getThreshold());
-    for (RunwayThreshold threshold : thresholds) {
-      rts.add(threshold.getRoutes());
+
+    thresholdsCopy = new EList<>(thresholds);
+    while (r == null && !thresholdsCopy.isEmpty()) {
+      rt = thresholdsCopy.getRandom();
+      thresholdsCopy.remove(rt);
+      r = rt.getArrivalRouteForPlane(plane.getType(), plane.getTargetAltitude(), plane.getEntryExitFix(), false);
     }
-
-    rts = rts.where(q -> q.getType() != Route.eType.sid);
-    rts = rts.where(q -> q.getMaxMrvaAltitude() < plane.getType().maxAltitude);
-    rts = rts.where(q -> q.getMaxMrvaAltitude() < plane.getTargetAltitude());
-    rts = rts.where(q -> q.isValidForCategory(plane.getType().category));
-    rts = rts.where(q -> q.getMainNavaid().equals(n));
-
-    if (rts.isEmpty()) {
-      r = Route.createNewVectoringByFix(n, true);
+    if (thresholdsCopy.isEmpty() && r == null){
       rt = thresholds.getRandom();
-    } else {
-      r = rts.getRandom();
-      rt = thresholds.where(q->q.getRoutes().contains(r)).getRandom();
+      r = rt.getArrivalRouteForPlane(plane.getType(), plane.getTargetAltitude(), plane.getEntryExitFix(), true);
     }
+    assert rt != null;
+    assert r != null;
 
     ret = new Tuple<>(r, rt);
     return ret;
