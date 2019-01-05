@@ -221,14 +221,10 @@ public abstract class ComputerAtc extends Atc {
 
   @Override
   protected void _save(XElement elm) {
-    LoadSave.saveField(elm, this, "waitingRequestsList");
-    LoadSave.saveField(elm, this, "confirmedRequestList");
   }
 
   @Override
   protected void _load(XElement elm) {
-    LoadSave.loadField(elm, this, "waitingRequestsList");
-    LoadSave.loadField(elm, this, "confirmedRequestList");
   }
 
   @Override
