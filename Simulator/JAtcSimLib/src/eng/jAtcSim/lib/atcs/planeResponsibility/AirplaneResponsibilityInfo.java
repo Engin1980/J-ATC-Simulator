@@ -1,6 +1,7 @@
 package eng.jAtcSim.lib.atcs.planeResponsibility;
 
 import eng.eSystem.validation.Validator;
+import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.atcs.Atc;
 
@@ -8,6 +9,9 @@ public class AirplaneResponsibilityInfo {
   private Airplane plane;
   private Atc atc;
   private SwitchRequest switchRequest;
+
+  @XmlConstructor
+  private AirplaneResponsibilityInfo(){}
 
   public AirplaneResponsibilityInfo(Airplane plane, Atc atc) {
     Validator.isNotNull(plane);

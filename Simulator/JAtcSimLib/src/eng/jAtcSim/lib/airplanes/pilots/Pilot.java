@@ -55,10 +55,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @author Marek
- */
-@SuppressWarnings("unused")
 public class Pilot {
 
   static class DivertInfo {
@@ -1101,13 +1097,6 @@ public class Pilot {
     afterThreshold
   }
 
-  private enum SpeechProcessingType {
-    normal,
-    afterCommands,
-    goAround,
-    routeInsert
-  }
-
   private enum CommandSource {
     procedure,
     atc,
@@ -1152,6 +1141,7 @@ public class Pilot {
     LoadSave.loadField(tmp, ret, "speedRestriction");
     LoadSave.loadField(tmp, ret, "altitudeRestriction");
     LoadSave.loadField(tmp, ret, "assignedRoute");
+    LoadSave.loadField(tmp, ret, "expectedRunwayThreshold");
     LoadSave.loadField(tmp, ret, "entryExitPoint");
     LoadSave.loadField(tmp, ret, "afterCommands");
     LoadSave.loadField(tmp, ret, "saidText");
@@ -1355,6 +1345,7 @@ public class Pilot {
     LoadSave.saveField(tmp, this, "speedRestriction");
     LoadSave.saveField(tmp, this, "altitudeRestriction");
     LoadSave.saveField(tmp, this, "assignedRoute");
+    LoadSave.saveField(tmp, this, "expectedRunwayThreshold");
     LoadSave.saveField(tmp, this, "entryExitPoint");
     LoadSave.saveField(tmp, this, "afterCommands");
     LoadSave.saveField(tmp, this, "saidText");

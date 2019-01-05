@@ -197,6 +197,9 @@ public class Simulation {
 
     this.prm.getPlanes().forEach(q -> this.mrvaManager.registerPlane(q));
     this.prm.init();
+
+    this.prm.getPlanes().forEach(
+        q->this.messenger.registerListener(q, q));
   }
 
   public void setSimulationSecondInterval(int intervalMs) {

@@ -9,6 +9,7 @@ import com.sun.istack.internal.Nullable;
 import eng.eSystem.collections.*;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.validation.Validator;
+import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.Callsign;
@@ -156,6 +157,7 @@ public class PlaneResponsibilityManager {
     }
   }
 
+  @XmlIgnore
   private PlaneResponsibilityManagerForAtc forAtc = new PlaneResponsibilityManagerForAtc();
   private PlaneResponsibilityDAO dao = new PlaneResponsibilityDAO();
 
