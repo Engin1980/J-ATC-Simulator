@@ -468,17 +468,13 @@ public class Simulation {
           q -> isInVicinityOfSomeOtherPlane(q) == false);
       if (newPlane != null) {
         newPlanesDelayedToAvoidCollision.remove(newPlane);
-        Acc.prm().registerNewPlane(ctrAtc, newPlane);
-        Acc.messenger().registerListener(newPlane, newPlane);
-        this.mrvaManager.registerPlane(newPlane);
+        registerNewPlaneIntoTheSimulation(newPlane, ctrAtc);
       }
     }
 
     for (Airplane newPlane : newPlanes) {
       if (newPlane.isDeparture()) {
-        Acc.prm().registerNewPlane(twrAtc, newPlane);
-        Acc.messenger().registerListener(newPlane, newPlane);
-        this.mrvaManager.registerPlane(newPlane);
+        registerNewPlaneIntoTheSimulation(newPlane, twrAtc);
       } else {
         // here are two possibilities
         // 1. new airplanes are delayed to avoid current airplanes. That is, as far as new plane is in vicinity of an other plane, it is added to "delayed" collection.
@@ -487,11 +483,16 @@ public class Simulation {
         if (isInVicinityOfSomeOtherPlane(newPlane)) {
           newPlanesDelayedToAvoidCollision.add(newPlane);
         } else {
-          Acc.prm().registerNewPlane(ctrAtc, newPlane);
-          this.mrvaManager.registerPlane(newPlane);
+          registerNewPlaneIntoTheSimulation(newPlane, ctrAtc);
         }
       }
     }
+  }
+
+  private void registerNewPlaneIntoTheSimulation(Airplane newPlane, Atc responsibleAtc) {
+    Acc.prm().registerNewPlane(responsibleAtc, newPlane);
+    Acc.messenger().registerListener(newPlane, newPlane);
+    this.mrvaManager.registerPlane(newPlane);
   }
 
   private void removeOldPlanes() {
