@@ -19,6 +19,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Rectangle2D;
+import java.util.Collections;
 import java.util.List;
 
 public class SwingCanvas implements ICanvas<JComponent> {
@@ -347,7 +348,8 @@ public class SwingCanvas implements ICanvas<JComponent> {
   public void drawTextBlock(List<String> lines, TextBlockLocation location, Font font, Color color) {
     if (lines.isEmpty()) {
       return;
-    }
+    } else if (location.isBottom())
+      Collections.reverse(lines);
 
     g.setFont(Fonting.get(font));
     g.setColor(Coloring.get(color));
