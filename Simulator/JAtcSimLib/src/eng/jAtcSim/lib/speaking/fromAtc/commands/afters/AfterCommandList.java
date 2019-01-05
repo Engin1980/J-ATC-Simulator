@@ -12,6 +12,7 @@ import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.utilites.ConversionUtils;
 import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
+import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.pilots.Pilot;
 import eng.eSystem.geo.Coordinate;
@@ -84,7 +85,8 @@ public class AfterCommandList {
       }
     } else if (item.antecedent instanceof AfterHeadingCommand) {
       AfterHeadingCommand anc = (AfterHeadingCommand) item.antecedent;
-      double diff = Headings.getDifference(plane.getHeading(), anc.getHeading(), true);
+      double trgHdg = Headings.add(anc.getHeading(), Acc.airport().getDeclination());
+      double diff = Headings.getDifference(plane.getHeading(), trgHdg, true);
       ret = (diff < 3);
     } else if (item.antecedent instanceof AfterDistanceCommand) {
       AfterDistanceCommand anc = (AfterDistanceCommand) item.antecedent;

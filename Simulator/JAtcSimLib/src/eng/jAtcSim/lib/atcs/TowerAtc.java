@@ -482,9 +482,9 @@ public class TowerAtc extends ComputerAtc {
   }
 
   private void announceChangeRunwayInUse() {
-    String msgTxt = this.inUseInfo.scheduled.toInfoString("; ");
-    msgTxt = "Expected runway change to: " + msgTxt +
-        ".\nExpected runway change at " + this.inUseInfo.scheduler.getScheduledTime().toTimeString();
+    String msgTxt = this.inUseInfo.scheduled.toInfoString("\n");
+    msgTxt = "Expected runway change to:\n" + msgTxt +
+        "\nExpected runway change at " + this.inUseInfo.scheduler.getScheduledTime().toTimeString();
     sendMessageToUser(msgTxt);
   }
 
