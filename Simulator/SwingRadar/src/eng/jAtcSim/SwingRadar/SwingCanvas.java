@@ -1,12 +1,10 @@
 package eng.jAtcSim.SwingRadar;
 
-import com.sun.org.apache.xml.internal.serialize.LineSeparator;
 import eng.eSystem.Tuple;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.events.Event;
 import eng.eSystem.events.EventSimple;
-import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.jAtcSim.radarBase.ICanvas;
 import eng.jAtcSim.radarBase.global.Color;
 import eng.jAtcSim.radarBase.global.Font;
@@ -258,23 +256,26 @@ public class SwingCanvas implements ICanvas<JComponent> {
 
   @Override
   public boolean isReady() {
-    return g != null;
+    return g != null && g.getClipBounds().width == c.getWidth();
   }
 
   @Override
   public void drawLine(int x1, int y1, int x2, int y2, Color color, int width) {
+    if (!isReady()) return;
     g.setColor(Coloring.get(color));
     g.drawLine(x1, y1, x2, y2);
   }
 
   @Override
   public void fillRectangle(int x, int y, int width, int height, Color color) {
+    if (!isReady()) return;
     g.setColor(Coloring.get(color));
     g.fillRect(x, y, width, height);
   }
 
   @Override
   public void drawPoint(int x, int y, Color color, int width) {
+    if (!isReady()) return;
     g.setColor(Coloring.get(color));
     int step = width / 2;
     g.fillOval(x - step, y - step, width, width);
@@ -282,6 +283,7 @@ public class SwingCanvas implements ICanvas<JComponent> {
 
   @Override
   public void drawCircleAround(Point p, int distanceInPixels, Color color, int width) {
+    if (!isReady()) return;
     g.setColor(Coloring.get(color));
     int step = distanceInPixels / 2;
     g.drawOval(p.x - step, p.y - step, distanceInPixels, distanceInPixels);
@@ -289,6 +291,7 @@ public class SwingCanvas implements ICanvas<JComponent> {
 
   @Override
   public void drawTriangleAround(Point p, int distanceInPixels, Color color, int width) {
+    if (!isReady()) return;
     Point[] pts = new Point[3];
     double tStep = distanceInPixels / 3d;
     pts[0] = new Point(p.x, p.y - (int) (2 * tStep));
@@ -304,6 +307,7 @@ public class SwingCanvas implements ICanvas<JComponent> {
 
   @Override
   public void drawCross(Point p, Color color, int length, int width) {
+    if (!isReady()) return;
     int hl = length / 2;
 
     Point topLeft = new Point(p.x - hl, p.y - hl);
@@ -317,6 +321,7 @@ public class SwingCanvas implements ICanvas<JComponent> {
 
   @Override
   public void drawArc(Point p, int xRadius, int yRadius, int fromAngle, int toAngle, Color color) {
+    if (!isReady()) return;
     g.setColor(Coloring.get(color));
     Point orig = new Point(p.x - xRadius, p.y - yRadius);
     int angleLength = (toAngle < fromAngle) ? (toAngle + 360) : toAngle - fromAngle;
@@ -326,6 +331,8 @@ public class SwingCanvas implements ICanvas<JComponent> {
 
   @Override
   public void drawText(String text, Point p, int xShiftInPixels, int yShiftInPixels, Font font, Color color) {
+    if (!isReady()) return;
+
     String[] lines = text.split(System.getProperty("line.separator"));
 
     int x = p.x + xShiftInPixels;
@@ -346,6 +353,7 @@ public class SwingCanvas implements ICanvas<JComponent> {
 
   @Override
   public void drawTextBlock(List<String> lines, TextBlockLocation location, Font font, Color color) {
+    if (!isReady()) return;
     if (lines.isEmpty()) {
       return;
     } else if (location.isBottom())
@@ -530,57 +538,6 @@ public class SwingCanvas implements ICanvas<JComponent> {
 
   private int toEJComponentAngle(int angle) {
     return 360 - angle + 90;
-  }
-
-  private Point[] getPositionsForText(List<String> lines, TextBlockLocation location) {
-
-    int lastX;
-    int lastY;
-    int maxX;
-    Point[] ret = new Point[lines.size()];
-    FontMetrics fm = g.getFontMetrics();
-
-    switch (location) {
-      case topLeft:
-        lastX = xMargin;
-        lastY = yMargin + 16;
-        for (int i = 0; i < lines.size(); i++) {
-          ret[i] = new Point(lastX, lastY);
-          Rectangle r = fm.getStringBounds(lines.get(i), g).getBounds();
-          lastY += r.height;
-        }
-        break;
-      case bottomLeft:
-        lastX = xMargin;
-        lastY = this.getHeight() - yMargin; // g.getClipBounds().height - yMargin;
-        for (int i = lines.size() - 1; i >= 0; i--) {
-          Rectangle r = fm.getStringBounds(lines.get(i), g).getBounds();
-          lastY -= r.height;
-          ret[i] = new Point(lastX, lastY);
-        }
-        break;
-      case topRight:
-        lastY = yMargin + 16;
-        maxX = this.getWidth() - xMargin; //g.getClipBounds().width - xMargin;
-        for (int i = 0; i < lines.size(); i++) {
-          Rectangle r = fm.getStringBounds(lines.get(i), g).getBounds();
-          ret[i] = new Point(maxX - r.width, lastY);
-          lastY += r.height;
-        }
-        break;
-      case bottomRight:
-        maxX = this.getWidth() - xMargin; //g.getClipBounds().width-xMargin;
-        lastY = this.getHeight() - yMargin; // g.getClipBounds().height - yMargin;
-        for (int i = lines.size() - 1; i >= 0; i--) {
-          Rectangle r = fm.getStringBounds(lines.get(i), g).getBounds();
-          lastY -= r.height;
-          ret[i] = new Point(maxX - r.width, lastY);
-        }
-        break;
-      default:
-        throw new UnsupportedOperationException();
-    } // switch
-    return ret;
   }
 
 }
