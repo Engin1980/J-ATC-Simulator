@@ -6,6 +6,7 @@
 
 package eng.jAtcSim.lib.speaking.fromAtc.commands;
 
+import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
 import eng.jAtcSim.lib.atcs.Atc;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
 
@@ -16,6 +17,7 @@ import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
 public class ContactCommand implements IAtcCommand {
   private final Atc.eType atcType;
 
+  @XmlConstructor
   private ContactCommand() {
     atcType = Atc.eType.gnd;
   }

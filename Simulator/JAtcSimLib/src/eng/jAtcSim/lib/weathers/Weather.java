@@ -15,12 +15,20 @@ import eng.jAtcSim.lib.global.UnitProvider;
  * @author Marek
  */
 public class Weather {
+
+  public enum eSnowState{
+    none,
+    normal,
+    intensive
+  }
+
   public static final double WIND_GUST_PROBABILITY = 0.1;
   private int windHeading;
   private int windSpeetInKts;
   private int windGustSpeedInKts;
   private int visibilityInM;
   private int cloudBaseInFt;
+  private eSnowState snowState;
   private double cloudBaseHitProbability;
 
   public static Weather createClear() {
@@ -44,6 +52,7 @@ public class Weather {
     this.visibilityInM = visibilityInM;
     this.cloudBaseInFt = cloudBaseInFt;
     this.cloudBaseHitProbability = cloudBaseHitProbability;
+    this.snowState = eSnowState.none;
   }
 
   /**
@@ -148,5 +157,9 @@ public class Weather {
           this.getCloudBaseHitProbability() * 100
       );
     return sb.toString();
+  }
+
+  public eSnowState getSnowState() {
+    return this.snowState;
   }
 }

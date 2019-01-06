@@ -191,6 +191,7 @@ public class FrmMain extends JFrame {
       });
       buildMenuItem(mnuSimulation, "Recording", 'r', s -> viewRecordingPanel());
     }
+
     {
       buildCheckMenuItem(mnuView, "Flight strips", true, 'f', s -> {
         boolean isVis = pnlLeft.isVisible();

@@ -22,6 +22,7 @@ public class DelayedList<T> {
         this.delayLeft = delay;
       }
 
+      @XmlConstructor
       private DelayedItem(){ item = null;}
     }
     private final int minimalDelay;

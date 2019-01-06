@@ -1,5 +1,7 @@
 package eng.jAtcSim.frmPacks.shared;
 
+import eng.eSystem.collections.EList;
+import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.collections.ReadOnlyList;
 import eng.eSystem.events.Event;
@@ -22,7 +24,7 @@ import java.util.List;
 
 public class FlightListPanel extends JPanel {
 
-  private static List<Airplane.Airplane4Display> plns;
+  private static IList<Airplane.Airplane4Display> plns;
   public eng.eSystem.events.Event<FlightListPanel, Callsign> selectedCallsignChangedEvent = new eng.eSystem.events.Event(this);
   private Simulation sim;
   private JScrollPane pnlScroll;
@@ -69,12 +71,12 @@ public class FlightListPanel extends JPanel {
   private void updateList() {
     // init pri prvnim volani
     if (plns == null) {
-      plns = new LinkedList();
+      plns = new EList<>();
     }
 
-    // znovunaplneni, kdyz nesedi pocet
+    // znovunaplneni, kdyz nesedi pocet nebo poslední prvek (odebrani a pridani najednou)
     IReadOnlyList<Airplane.Airplane4Display> pi = sim.getPlanesToDisplay();
-    if (plns.size() != pi.size()) {
+    if (plns.size() != pi.size() || pi.isEmpty() == false && !pi.getLast().callsign().equals(plns.getLast().callsign())) {
       plns.clear();
       for (Airplane.Airplane4Display ai : pi) {
         plns.add(ai);

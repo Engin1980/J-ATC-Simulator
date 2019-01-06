@@ -3,6 +3,7 @@ package eng.jAtcSim.lib.atcs.planeResponsibility;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
+import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.Callsign;
@@ -16,7 +17,7 @@ class PlaneResponsibilityDAO {
   @XmlIgnore
   private final IList<Airplane.Airplane4Display> displays = new EList<>();
 
-  public void init(){
+  public void init() {
     for (AirplaneResponsibilityInfo ai : all) {
       displays.add(ai.getPlane().getPlane4Display());
     }
@@ -27,21 +28,21 @@ class PlaneResponsibilityDAO {
     return ret;
   }
 
-  public IList<AirplaneResponsibilityInfo> getAll(){
+  public IList<AirplaneResponsibilityInfo> getAll() {
     return all;
   }
 
-  public void add(AirplaneResponsibilityInfo ari){
+  public void add(AirplaneResponsibilityInfo ari) {
     this.all.add(ari);
     this.displays.add(ari.getPlane().getPlane4Display());
   }
 
-  public void remove(AirplaneResponsibilityInfo ari){
+  public void remove(AirplaneResponsibilityInfo ari) {
     this.all.remove(ari);
     this.displays.remove(ari.getPlane().getPlane4Display());
   }
 
-  public IReadOnlyList<Airplane.Airplane4Display> getDisplays(){
+  public IReadOnlyList<Airplane.Airplane4Display> getDisplays() {
     return this.displays;
   }
 
@@ -51,7 +52,7 @@ class PlaneResponsibilityDAO {
   }
 
   public AirplaneResponsibilityInfo get(Callsign callsign) {
-    AirplaneResponsibilityInfo ari = this.all.getFirst(q->q.getPlane().getCallsign().equals(callsign));
+    AirplaneResponsibilityInfo ari = this.all.getFirst(q -> q.getPlane().getCallsign().equals(callsign));
     return ari;
   }
 }

@@ -31,34 +31,51 @@ import eng.jAtcSim.lib.world.Runway;
 import eng.jAtcSim.lib.world.RunwayConfiguration;
 import eng.jAtcSim.lib.world.RunwayThreshold;
 
+import java.util.Map;
+
 public class TowerAtc extends ComputerAtc {
   public static class RunwayCheck {
     private static final int[] RWY_CHECK_ANNOUNCE_INTERVALS = new int[]{30, 15, 10, 5};
+
+    private static final int MIN_NORMAL_MAINTENANCE_INTERVAL = 200;
+    private static final int MAX_NORMAL_MAINTENANCE_INTERVAL = 240;
+    private static final int NORMAL_MAINTENACE_DURATION = 5;
+    private static final int MIN_SNOW_MAINTENANCE_INTERVAL = 45;
+    private static final int MAX_SNOW_MAINTENANCE_INTERVAL = 180;
+    private static final int SNOW_MAINENANCE_DURATION = 20;
+    private static final int MIN_SNOW_INTENSIVE_MAINTENANCE_INTERVAL = 20;
+    private static final int MAX_SNOW_INTENSIVE_MAINTENANCE_INTERVAL = 60;
+    private static final int MIN_EMERGENCY_MAINTENANCE_DURATION = 5;
+    private static final int MAX_EMERGENCY_MAINTENANCE_DURATION = 45;
 
     private int expectedDurationInMinutes;
     private ETime realDurationEnd;
     private SchedulerForAdvice scheduler;
 
     public static RunwayCheck createNormal(boolean isInitial) {
-      int maxTime = 4 * 60;
+      int maxTime;
       if (isInitial)
-        maxTime = Acc.rnd().nextInt(maxTime);
+        maxTime = Acc.rnd().nextInt(MAX_NORMAL_MAINTENANCE_INTERVAL);
+      else
+        maxTime = Acc.rnd().nextInt(MIN_NORMAL_MAINTENANCE_INTERVAL, MAX_NORMAL_MAINTENANCE_INTERVAL);
 
-      RunwayCheck ret = new RunwayCheck(maxTime, 5);
+      RunwayCheck ret = new RunwayCheck(maxTime, NORMAL_MAINTENACE_DURATION);
       return ret;
     }
 
-    public static RunwayCheck createSnowCleaning(boolean isInitial) {
-      int maxTime = Acc.rnd().nextInt(30, 180);
+    public static RunwayCheck createSnowCleaning(boolean isInitial, boolean isIntensive) {
+      int maxTime = isIntensive
+          ? Acc.rnd().nextInt(MIN_SNOW_INTENSIVE_MAINTENANCE_INTERVAL, MAX_SNOW_INTENSIVE_MAINTENANCE_INTERVAL)
+          : Acc.rnd().nextInt(MIN_SNOW_MAINTENANCE_INTERVAL, MAX_SNOW_MAINTENANCE_INTERVAL);
       if (isInitial)
         maxTime = Acc.rnd().nextInt(maxTime);
 
-      RunwayCheck ret = new RunwayCheck(maxTime, 20);
+      RunwayCheck ret = new RunwayCheck(maxTime, SNOW_MAINENANCE_DURATION);
       return ret;
     }
 
     public static RunwayCheck createImmediateAfterEmergency() {
-      int closeDuration = Acc.rnd().nextInt(5, 33);
+      int closeDuration = Acc.rnd().nextInt(MIN_EMERGENCY_MAINTENANCE_DURATION, MAX_EMERGENCY_MAINTENANCE_DURATION);
       RunwayCheck ret = new RunwayCheck(0, closeDuration);
       return ret;
     }
@@ -136,6 +153,20 @@ public class TowerAtc extends ComputerAtc {
     assert ret != null : "There must be runway configuration created.";
 
     return ret;
+  }
+
+  private void updateRunwayMaintenanceDueToSnow() {
+    for (Runway key : this.runwayChecks.getKeys()) {
+      RunwayCheck rc = this.runwayChecks.get(key);
+      int maxInterval = Acc.weather().getSnowState() == Weather.eSnowState.intensive
+          ? RunwayCheck.MAX_SNOW_INTENSIVE_MAINTENANCE_INTERVAL
+          : RunwayCheck.MAX_SNOW_MAINTENANCE_INTERVAL;
+      if (rc.scheduler.getMinutesLeft() > maxInterval)
+      {
+        rc = TowerAtc.RunwayCheck.createSnowCleaning(false, Acc.weather().getSnowState() == Weather.eSnowState.intensive);
+        runwayChecks.set(key, rc);
+      }
+    }
   }
 
   private static RunwayThreshold getSuggestedThresholdsRegardlessRunwayConfigurations() {
@@ -469,6 +500,8 @@ public class TowerAtc extends ComputerAtc {
   private void processRunwayChangeBackground() {
     if (inUseInfo.scheduler == null) {
       if (isUpdatedWeather) {
+        if (Acc.weather().getSnowState() != Weather.eSnowState.none)
+          updateRunwayMaintenanceDueToSnow();
         checkForRunwayChange();
         isUpdatedWeather = false;
       }
@@ -869,6 +902,7 @@ class DepartureManager {
 
   public void unregisterFinishedDeparture(Airplane plane) {
     departing.remove(plane);
+    lastDepartingPlane.remove(q->q.getValue() == plane);
   }
 
   public void deletePlane(Airplane plane) {
