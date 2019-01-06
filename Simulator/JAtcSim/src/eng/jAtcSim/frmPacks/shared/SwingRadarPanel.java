@@ -214,6 +214,7 @@ public class SwingRadarPanel extends JPanel {
     wrp.getSendEvent().add(() -> this.wrp_send());
     wrp.getRecallRadarPosition().add(pos -> this.recallRadarPosition(pos));
     wrp.getStoreRadarPosition().add(pos -> this.storeRadarPosition(pos));
+    wrp.getPauseUnpauseSimulation().add(() -> this.sim.pauseUnpauseSim());
     wrp.focus();
 
     return ret;
@@ -439,6 +440,11 @@ class CommandJTextWraper {
   private EventAnonymousSimple sendEvent = new EventAnonymousSimple();
   private EventAnonymous<Integer> storeRadarPosition = new EventAnonymous<>();
   private EventAnonymous<Integer> recallRadarPosition = new EventAnonymous<>();
+  private EventAnonymousSimple pauseUnpauseSimulation = new EventAnonymousSimple();
+
+  public EventAnonymousSimple getPauseUnpauseSimulation() {
+    return pauseUnpauseSimulation;
+  }
 
   public CommandJTextWraper(JTextField parentJTextField) {
     parent = parentJTextField;
@@ -474,6 +480,8 @@ class CommandJTextWraper {
           case java.awt.event.KeyEvent.VK_ENTER:
             send();
             break;
+          case KeyEvent.VK_F1:
+            pauseUnpauseSimulation.raise();
           case KeyEvent.VK_F2:
             if (isCtr)
               storeRadarPosition.raise(2);

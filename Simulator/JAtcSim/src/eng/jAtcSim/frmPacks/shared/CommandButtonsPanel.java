@@ -55,7 +55,6 @@ public class CommandButtonsPanel extends JPanel {
     if (callsign == null)
       setPlane((Airplane.Airplane4Display) null);
     else {
-      Airplane.Airplane4Display plane;
       for (Airplane.Airplane4Display item : Acc.sim().getPlanesToDisplay()) {
         if (item.callsign() == callsign) {
           setPlane(item);

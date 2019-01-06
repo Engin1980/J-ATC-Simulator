@@ -385,6 +385,14 @@ public class Simulation {
     this.appAtc.getParser().getShortcuts().setAll2(shortcuts);
   }
 
+  public void pauseUnpauseSim() {
+    if (this.isRunning()) {
+      this.stop();
+    } else {
+      this.start();
+    }
+  }
+
   private void twr_runwayChanged() {
     this.onRunwayChanged.raise();
   }

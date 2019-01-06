@@ -169,14 +169,8 @@ public class FrmMain extends JFrame {
     }
 
     {
-      buildMenuItem(mnuSimulation, "Pause", 'p', s -> {
-        if (parent.getSim().isRunning()) {
-          parent.getSim().stop();
-          s.setText("Resume");
-        } else {
-          parent.getSim().start();
-          s.setText("Pause");
-        }
+      buildMenuItem(mnuSimulation, "Pause/Resume", 'p', s -> {
+        parent.getSim().pauseUnpauseSim();
       });
       JMenu mnuSpeed = new JMenu("Set speed");
       mnuSpeed.setMnemonic(KeyEvent.VK_S);
@@ -365,6 +359,7 @@ public class FrmMain extends JFrame {
     pnlCommands.getEraseEvent().add(() -> srpRadar.eraseCommand());
 
     appendListenerForKeyToRadar();
-  }
 
+    srpRadar.requestFocus();
+  }
 }
