@@ -214,6 +214,7 @@ public class CustomWeatherPanel extends JStartupPanel {
     txtWindSpeed.setValue(w.getWindSpeetInKts());
     txtHitProbability.setValue((int) (w.getCloudBaseHitProbability() * 100));
     selectHitProbabilityComboBoxByValue(w.getCloudBaseHitProbability());
+    cmbSnowState.setSelectedItem(w.getSnowState().toString());
   }
 
   private void selectHitProbabilityComboBoxByValue(double value) {

@@ -68,6 +68,7 @@ public class SimulationTimeRadarSettings extends JStartupPanel {
     nudSecondLength = new NumericUpDownExtender(new JSpinner(), 100, 3000, 1000, 200);
     java.time.LocalTime tm = java.time.LocalTime.now();
     tmeTime = new TimeExtender(tm);
+    LayoutManager.setFixedWidth(tmeTime.getControl(), 100);
 
     IMap<String, String> rdrTypes = new EMap<>();
     rdrTypes.set("SDI", "eng.jAtcSim.frmPacks.sdi.Pack");
