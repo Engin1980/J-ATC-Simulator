@@ -42,9 +42,9 @@ public class TowerAtc extends ComputerAtc {
     private static final int NORMAL_MAINTENACE_DURATION = 5;
     private static final int MIN_SNOW_MAINTENANCE_INTERVAL = 45;
     private static final int MAX_SNOW_MAINTENANCE_INTERVAL = 180;
-    private static final int SNOW_MAINENANCE_DURATION = 20;
     private static final int MIN_SNOW_INTENSIVE_MAINTENANCE_INTERVAL = 20;
-    private static final int MAX_SNOW_INTENSIVE_MAINTENANCE_INTERVAL = 60;
+    private static final int MAX_SNOW_INTENSIVE_MAINTENANCE_INTERVAL = 45;
+    private static final int SNOW_MAINENANCE_DURATION = 20;
     private static final int MIN_EMERGENCY_MAINTENANCE_DURATION = 5;
     private static final int MAX_EMERGENCY_MAINTENANCE_DURATION = 45;
 
@@ -165,6 +165,7 @@ public class TowerAtc extends ComputerAtc {
       {
         rc = TowerAtc.RunwayCheck.createSnowCleaning(false, Acc.weather().getSnowState() == Weather.eSnowState.intensive);
         runwayChecks.set(key, rc);
+        announceScheduledRunwayCheck(key, rc);
       }
     }
   }
@@ -734,48 +735,6 @@ public class TowerAtc extends ComputerAtc {
     }
   }
 
-}
-
-class Separation {
-  private static final int SAFE_SEPARATION_ALTITUDE = 2000;
-  private static final double SAFE_SEPARATION_DISTANCE = 5.5;
-
-  public static boolean isSafeSeparation(Airplane flyingPlane, Airplane readyPlane, int readyPlaneRunwayHeading, int safeSeparationSeconds) {
-    int aSeconds = getSecondsInFlight(flyingPlane, safeSeparationSeconds);
-    int bSeconds = getSecondsInFlight(readyPlane, safeSeparationSeconds);
-    Coordinate aTargetPosition = getPosition(flyingPlane, aSeconds, (int) flyingPlane.getHeading());
-    Coordinate bTargetPosition = getPosition(readyPlane, bSeconds, readyPlaneRunwayHeading); // flyingPLane.getHeading() is correct as we need both planes to estimate same headings
-    double dist = Coordinates.getDistanceInNM(aTargetPosition, bTargetPosition);
-    int aTargetAlt = getAltitude(flyingPlane, aSeconds, true);
-    int bTargetAlt = getAltitude(readyPlane, bSeconds, false);
-    double alt = aTargetAlt - bTargetAlt;
-    if (dist > SAFE_SEPARATION_DISTANCE)
-      return true;
-    else if (alt > SAFE_SEPARATION_ALTITUDE)
-      return true;
-    else
-      return false;
-  }
-
-  private static int getSecondsInFlight(Airplane plane, int totalSeconds) {
-    double spdRef = plane.getType().vCruise - plane.getSpeed();
-    double secondsToAccelerate = spdRef / plane.getType().speedIncreaseRate;
-    int ret = totalSeconds - (int) secondsToAccelerate;
-    if (ret < 0) ret = 0;
-    return ret;
-  }
-
-  private static int getAltitude(Airplane plane, int seconds, boolean isHigher) {
-    double refAlt = isHigher ? plane.getAltitude() + SAFE_SEPARATION_ALTITUDE : plane.getAltitude();
-    double ret = plane.getAltitude() + plane.getType().getClimbRateForAltitude(refAlt) * seconds;
-    return (int) ret;
-  }
-
-  private static Coordinate getPosition(Airplane plane, int seconds, int heading) {
-    double traveledDistance = seconds / 3600d * plane.getType().getV2();
-    Coordinate ret = Coordinates.getCoordinate(plane.getCoordinate(), heading, traveledDistance);
-    return ret;
-  }
 }
 
 class ArrivalManager {
