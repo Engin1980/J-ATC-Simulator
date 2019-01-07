@@ -4,12 +4,6 @@ import eng.eSystem.EStringBuilder;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 
-import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
-import eng.jAtcSim.XmlLoadHelper;
-import eng.jAtcSim.lib.airplanes.AirplaneTypes;
-import eng.jAtcSim.lib.traffic.fleets.Fleets;
-import eng.jAtcSim.lib.world.Area;
-
 import java.time.LocalTime;
 
 public class StartupSettings {
@@ -34,12 +28,18 @@ public class StartupSettings {
       online,
       xml
     }
+    public enum eSnowState {
+      none,
+      normal,
+      intensive
+    }
     public WeatherSourceType type = WeatherSourceType.user;
     public int windDirection;
     public int windSpeed;
     public int cloudBaseAltitudeFt;
     public double cloudBaseProbability;
     public int visibilityInM;
+    public eSnowState snowState;
   }
 
   public static class Traffic {

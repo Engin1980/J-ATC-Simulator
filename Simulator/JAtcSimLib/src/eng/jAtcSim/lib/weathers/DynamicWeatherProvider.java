@@ -18,7 +18,7 @@ import eng.jAtcSim.lib.weathers.downloaders.MetarDownloader;
  */
 public class DynamicWeatherProvider extends WeatherProvider {
 
-  class UpdateResult {
+  static class UpdateResult {
     public final String metar;
     public final Exception exception;
 
@@ -33,7 +33,7 @@ public class DynamicWeatherProvider extends WeatherProvider {
     }
   }
 
-  class UpdateThread extends Thread {
+  static class UpdateThread extends Thread {
     private final MetarDownloader downloader;
     private final String icao;
     private Action<UpdateResult> onFinished;

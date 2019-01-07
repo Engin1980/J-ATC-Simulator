@@ -11,7 +11,6 @@ import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.exceptions.ERuntimeException;
 import eng.jAtcSim.app.extenders.swingFactory.FileHistoryManager;
-import eng.jAtcSim.app.extenders.swingFactory.SwingFactory;
 import eng.jAtcSim.frmPacks.Pack;
 import eng.jAtcSim.frmPacks.shared.FrmLog;
 import eng.jAtcSim.lib.Acc;
@@ -160,7 +159,7 @@ public class JAtcSim {
       gsi.trafficXmlFile = startupSettings.files.trafficXmlFile;
 
       gsi.weatherXmlFile = startupSettings.files.weatherXmlFile;
-      gsi.initialWeather = Weather.createClear();
+      gsi.initialWeather = convertStartupWeatherToInitialWeather(startupSettings.weather);
       switch (startupSettings.weather.type) {
         case user:
           gsi.weatherProviderType = Game.GameStartupInfo.WeatherSourceType.user;
@@ -207,6 +206,32 @@ public class JAtcSim {
     } finally {
       frm.setVisible(false);
     }
+  }
+
+  private static Weather convertStartupWeatherToInitialWeather(StartupSettings.Weather weather) {
+    Weather.eSnowState snowState;
+    switch (weather.snowState){
+      case none:
+        snowState = Weather.eSnowState.none;
+        break;
+      case normal:
+        snowState = Weather.eSnowState.normal;
+        break;
+      case intensive:
+        snowState = Weather.eSnowState.intensive;
+        break;
+      default:
+        throw new EEnumValueUnsupportedException(weather.snowState);
+    }
+    Weather ret =
+        new Weather(weather.windDirection,
+            weather.windSpeed,
+            weather.windSpeed,
+            weather.visibilityInM,
+            weather.cloudBaseAltitudeFt,
+            weather.cloudBaseProbability,
+            snowState);
+    return ret;
   }
 
   public static void quit() {

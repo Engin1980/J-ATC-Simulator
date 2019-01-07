@@ -33,7 +33,7 @@ public class Weather {
 
   public static Weather createClear() {
     Weather ret = new Weather(
-        210, 4, 4, 9999, 13000, .2
+        210, 4, 4, 9999, 13000, .2, eSnowState.none
     );
     return ret;
   }
@@ -45,14 +45,14 @@ public class Weather {
     return visibilityInM;
   }
 
-  public Weather(int windHeading, int windSpeetInKts, int windGustSpeedInKts, int visibilityInM, int cloudBaseInFt, double cloudBaseHitProbability) {
+  public Weather(int windHeading, int windSpeetInKts, int windGustSpeedInKts, int visibilityInM, int cloudBaseInFt, double cloudBaseHitProbability, eSnowState snowState) {
     this.windHeading = windHeading;
     this.windSpeetInKts = windSpeetInKts;
     this.windGustSpeedInKts = windGustSpeedInKts;
     this.visibilityInM = visibilityInM;
     this.cloudBaseInFt = cloudBaseInFt;
     this.cloudBaseHitProbability = cloudBaseHitProbability;
-    this.snowState = eSnowState.none;
+    this.snowState = snowState;
   }
 
   /**
@@ -133,8 +133,12 @@ public class Weather {
       else
         sb.appendFormat("%03d%02G%02KT ", this.getWindHeading(), this.getWindSpeetInKts(), this.getWindGustSpeedInKts());
       sb.appendFormat("%04d ", this.getVisibilityInMeters());
+      if (snowState == eSnowState.normal)
+        sb.append("SN " );
+      else if (snowState == eSnowState.intensive)
+        sb.append("+SN ");
       if (getCloudBaseHitProbability() == 0) {
-        sb.append("NOSIG");
+        sb.append("SKC");
       } else {
         if (getCloudBaseHitProbability() < 2d / 8)
           sb.append("FEW");
@@ -147,7 +151,7 @@ public class Weather {
         sb.appendFormat("%03d", this.getCloudBaseInFt() / 100);
       }
       sb.append(" ...");
-    } else
+    } else {
       sb.appendFormatLine("Wind %d° at %d (%d) kts, visibility %1.0f miles, cloud base at %d ft at %1.0f %%.",
           this.getWindHeading(),
           this.getWindSpeetInKts(),
@@ -156,6 +160,11 @@ public class Weather {
           this.getCloudBaseInFt(),
           this.getCloudBaseHitProbability() * 100
       );
+      if (snowState == eSnowState.normal)
+        sb.append(" Snowing.");
+      else if (snowState == eSnowState.intensive)
+        sb.append(" Intensive snowing.");
+    }
     return sb.toString();
   }
 

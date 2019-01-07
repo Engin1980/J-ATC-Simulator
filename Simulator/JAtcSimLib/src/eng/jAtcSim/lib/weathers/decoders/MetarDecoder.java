@@ -5,7 +5,10 @@
  */
 package eng.jAtcSim.lib.weathers.decoders;
 
+import com.sun.javafx.image.BytePixelSetter;
 import eng.eSystem.exceptions.ERuntimeException;
+import eng.eSystem.utilites.RegexUtils;
+import eng.jAtcSim.lib.weathers.Weather;
 import eng.jAtcSim.lib.weathers.presets.PresetWeather;
 
 import java.time.LocalTime;
@@ -41,10 +44,20 @@ public class MetarDecoder {
     int[] wind = decodeWindDirSpeedGusts(metarLine);
     int visibilityInM = decodeVisibility(metarLine);
     CloudBaseResult cloudBaseInFt = decodeCloudBase(metarLine);
+    Weather.eSnowState snowState = decodeSnowState(metarLine);
 
-    PresetWeather w = new PresetWeather(time, wind[0], wind[1], wind[2], visibilityInM, cloudBaseInFt.altitudeInFt, cloudBaseInFt.probability);
+    PresetWeather w = new PresetWeather(time, wind[0], wind[1], wind[2], visibilityInM, cloudBaseInFt.altitudeInFt, cloudBaseInFt.probability, snowState);
 
     return w;
+  }
+
+  private static Weather.eSnowState decodeSnowState(String metarLine) {
+    if (RegexUtils.isMatch(metarLine, "\\+[A-Z]*SN "))
+      return Weather.eSnowState.intensive;
+    else if (RegexUtils.isMatch(metarLine, "SN "))
+      return Weather.eSnowState.normal;
+    else
+      return Weather.eSnowState.none;
   }
 
   private static int[] decodeWindDirSpeedGusts(String metarLine) {
@@ -112,11 +125,10 @@ public class MetarDecoder {
     Matcher m = p.matcher(metarLine);
 
     if (m.find()) {
-      hour = getIntFromGroup(m, 2 );
-      minute = getIntFromGroup(m, 3 );
+      hour = getIntFromGroup(m, 2);
+      minute = getIntFromGroup(m, 3);
       ret = LocalTime.of(hour, minute);
-    }
-    else
+    } else
       throw new IllegalArgumentException("Unable to decode time from " + metarLine);
 
     return ret;

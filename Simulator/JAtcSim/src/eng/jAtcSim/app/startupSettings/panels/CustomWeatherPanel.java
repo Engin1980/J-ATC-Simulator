@@ -23,7 +23,6 @@ import java.awt.event.ActionEvent;
 
 public class CustomWeatherPanel extends JStartupPanel {
 
-  private static final int SPACE = 4;
   private static final String DOWNLOAD_BUTTON_TEXT = "Download and use current";
   private static final String DOWNLOADING_BUTTON_TEXT = "...downloading, please wait";
 
@@ -34,6 +33,7 @@ public class CustomWeatherPanel extends JStartupPanel {
   private XComboBoxExtender<String> cmbClouds = new XComboBoxExtender(
       new String[]{"CLR", "FEW", "SCT", "BKN", "OVC"}
   );
+  private XComboBoxExtender<String> cmbSnowState = new XComboBoxExtender<>(new String[]{"none", "normal", "intensive"});
   private XComboBoxExtender<Weather> cmbPreset = new XComboBoxExtender<>(getPredefinedWeathers());
   private NumericUpDownExtender txtBaseAltitude = new NumericUpDownExtender(new JSpinner(), 0, 20000, 8000, 1000);
   private String icao;
@@ -56,22 +56,32 @@ public class CustomWeatherPanel extends JStartupPanel {
     XComboBoxExtender.Item<Weather> item;
 
     k = "Clear";
-    w = new Weather(34, 4, 4, 9999, 12_000, .1);
+    w = new Weather(34, 4, 4, 9999, 12_000, .1, Weather.eSnowState.none);
     item = new XComboBoxExtender.Item(k, w);
     ret.add(item);
 
     k = "Foggy";
-    w = new Weather(61, 2, 2, 100, 100, 1);
+    w = new Weather(61, 2, 2, 100, 100, 1, Weather.eSnowState.none);
     item = new XComboBoxExtender.Item(k, w);
     ret.add(item);
 
     k = "Windy";
-    w = new Weather(281, 31, 46, 7000, 8_000, .7);
+    w = new Weather(281, 31, 46, 7000, 8_000, .7, Weather.eSnowState.none);
     item = new XComboBoxExtender.Item(k, w);
     ret.add(item);
 
     k = "Rainy";
-    w = new Weather(174, 17, 21, 1_500, 1000, .8);
+    w = new Weather(174, 17, 21, 1_500, 1000, .8, Weather.eSnowState.none);
+    item = new XComboBoxExtender.Item(k, w);
+    ret.add(item);
+
+    k = "Snow showers";
+    w = new Weather(174, 11, 11, 3_500, 1000, .8, Weather.eSnowState.normal);
+    item = new XComboBoxExtender.Item(k, w);
+    ret.add(item);
+
+    k = "Heavy snow";
+    w = new Weather(174, 22, 31, 700, 1000, 1, Weather.eSnowState.intensive);
     item = new XComboBoxExtender.Item(k, w);
     ret.add(item);
 
@@ -86,7 +96,7 @@ public class CustomWeatherPanel extends JStartupPanel {
     cmbPreset.getControl().addActionListener(this::cmbPreset_selectedItemChanged);
 
 
-    JPanel pnlA = LayoutManager.createFormPanel(6, 2,
+    JPanel pnlA = LayoutManager.createFormPanel(7, 2,
         new JLabel("Wind direction (°):"),
         txtWindHeading.getControl(),
         new JLabel("Wind speed (kts):"),
@@ -99,6 +109,8 @@ public class CustomWeatherPanel extends JStartupPanel {
             txtHitProbability.getControl()),
         new JLabel("Base cloud altitude (ft):"),
         txtBaseAltitude.getControl(),
+        new JLabel("Snow state:"),
+        cmbSnowState.getControl(),
         new JLabel("Choose preset:"),
         LayoutManager.createFlowPanel(
             cmbPreset.getControl(),
@@ -116,6 +128,7 @@ public class CustomWeatherPanel extends JStartupPanel {
     txtHitProbability.setValue((int) (w.cloudBaseProbability * 100));
     txtWindHeading.setValue(w.windDirection);
     txtWindSpeed.setValue(w.windSpeed);
+    cmbSnowState.setSelectedItem(w.snowState.toString());
     selectHitProbabilityComboBoxByValue(w.cloudBaseProbability);
   }
 
@@ -128,6 +141,11 @@ public class CustomWeatherPanel extends JStartupPanel {
     w.cloudBaseProbability = txtHitProbability.getValue() / 100d;
     w.windDirection = txtWindHeading.getValue();
     w.windSpeed = txtWindSpeed.getValue();
+    w.snowState = cmbSnowState.getSelectedIndex() == 0
+        ? StartupSettings.Weather.eSnowState.none
+        : cmbSnowState.getSelectedIndex() == 1
+        ? StartupSettings.Weather.eSnowState.normal
+        : StartupSettings.Weather.eSnowState.intensive;
   }
 
   private void cmbPreset_selectedItemChanged(ActionEvent actionEvent) {
