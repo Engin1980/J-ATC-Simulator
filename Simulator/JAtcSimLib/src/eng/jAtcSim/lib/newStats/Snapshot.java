@@ -3,6 +3,7 @@ package eng.jAtcSim.lib.newStats;
 import eng.eSystem.collections.IList;
 import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
 import eng.jAtcSim.lib.airplanes.moods.Mood;
+import eng.jAtcSim.lib.airplanes.moods.MoodResult;
 import eng.jAtcSim.lib.global.ETime;
 import eng.jAtcSim.lib.newStats.model.ArrivalDepartureModel;
 import eng.jAtcSim.lib.newStats.model.ArrivalDepartureTotalModel;
@@ -33,19 +34,75 @@ public class Snapshot {
         collector.getPlanesUnderApp().getDepartures().toMMM(),
         collector.getPlanesUnderApp().getTotal().toMMM());
 
-    ret.runwayMovementsPerHour = new ArrivalDepartureTotalModel<>(
-        convertMovementsToMovementsPerHour(collector.getRunwayMovements().getArrivals().getCount(), totalSeconds),
-        convertMovementsToMovementsPerHour(collector.getRunwayMovements().getDepartures().getCount(), totalSeconds),
-        convertMovementsToMovementsPerHour(collector.getRunwayMovements().getArrivals().getCount() + collector.getRunwayMovements().getDepartures().getCount(), totalSeconds));
-
+    ret.runwayMovementsPerHour = convertRunwayMovements(collector, totalSeconds);
     ret.finishedPlanesDelays = convertFinishedPlanesDelays(collector.getFinishedPlanesDelays());
     ret.finishedPlanesMoods = convertFinishedPlanesMoods(collector.getFinishedPlanesMoods());
+    ret.holdingPointDelayStats = collector.getHoldingPointDelayStats().toMMM();
 
     return ret;
   }
 
-  private static ArrivalDepartureTotalModel<MMM> convertFinishedPlanesMoods(ArrivalDepartureModel<IList<Mood>> finishedPlanesMoods) {
-    return null;
+  public ETime getTime() {
+    return time;
+  }
+
+  public ArrivalDepartureTotalModel<MMM> getPlanesInSim() {
+    return planesInSim;
+  }
+
+  public ArrivalDepartureTotalModel<MMM> getPlanesUnderApp() {
+    return planesUnderApp;
+  }
+
+  public ArrivalDepartureTotalModel<Double> getRunwayMovementsPerHour() {
+    return runwayMovementsPerHour;
+  }
+
+  public ArrivalDepartureTotalModel<MMM> getFinishedPlanesDelays() {
+    return finishedPlanesDelays;
+  }
+
+  public ArrivalDepartureTotalModel<MMM> getFinishedPlanesMoods() {
+    return finishedPlanesMoods;
+  }
+
+  public MMM getHoldingPointDelayStats() {
+    return holdingPointDelayStats;
+  }
+
+  private static ArrivalDepartureTotalModel<Double> convertRunwayMovements(Collector collector, int totalSeconds) {
+    ArrivalDepartureTotalModel<Double> ret = new ArrivalDepartureTotalModel<>(
+        convertMovementsToMovementsPerHour(collector.getRunwayMovements().getArrivals().getCount(), totalSeconds),
+        convertMovementsToMovementsPerHour(collector.getRunwayMovements().getDepartures().getCount(), totalSeconds),
+        convertMovementsToMovementsPerHour(collector.getRunwayMovements().getArrivals().getCount() + collector.getRunwayMovements().getDepartures().getCount(), totalSeconds));
+    return ret;
+  }
+
+  private static ArrivalDepartureTotalModel<MMM> convertFinishedPlanesMoods(ArrivalDepartureModel<IList<MoodResult>> finishedPlanesMoods) {
+    IList<MoodResult> tmp;
+
+    // arrivals
+    tmp = finishedPlanesMoods.getArrivals();
+    MMM arrivals = new MMM(
+        tmp.minInt(q -> q.getPoints()),
+        tmp.maxInt(q -> q.getPoints()),
+        tmp.mean(q -> (double) q.getPoints()));
+
+    tmp = finishedPlanesMoods.getDepartures();
+    MMM departures = new MMM(
+        tmp.minInt(q -> q.getPoints()),
+        tmp.maxInt(q -> q.getPoints()),
+        tmp.mean(q -> (double) q.getPoints()));
+
+    tmp = finishedPlanesMoods.getArrivals().union(finishedPlanesMoods.getDepartures());
+    MMM total = new MMM(
+        tmp.minInt(q -> q.getPoints()),
+        tmp.maxInt(q -> q.getPoints()),
+        tmp.mean(q -> (double) q.getPoints()));
+
+    ArrivalDepartureTotalModel<MMM> ret = new ArrivalDepartureTotalModel<>(
+        arrivals, departures, total);
+    return ret;
   }
 
   private static ArrivalDepartureTotalModel<MMM> convertFinishedPlanesDelays(ArrivalDepartureModel<StatisticProperty> finishedPlanesDelays) {
@@ -63,7 +120,6 @@ public class Snapshot {
     double ret = 60d / numberOfSeconds * movements;
     return ret;
   }
-
 
 
   @XmlConstructor

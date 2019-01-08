@@ -3,6 +3,7 @@ package eng.jAtcSim.lib.newStats;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.jAtcSim.lib.airplanes.moods.Mood;
+import eng.jAtcSim.lib.airplanes.moods.MoodResult;
 import eng.jAtcSim.lib.global.ETime;
 import eng.jAtcSim.lib.newStats.model.ArrivalDepartureModel;
 import eng.jAtcSim.lib.newStats.model.ArrivalDepartureTotalModel;
@@ -16,7 +17,7 @@ public class Collector {
   private final ArrivalDepartureTotalModel<StatisticProperty> planesUnderApp;
   private final ArrivalDepartureModel<CounterProperty> runwayMovements;
   private final ArrivalDepartureModel<StatisticProperty> finishedPlanesDelays;
-  private final ArrivalDepartureModel<IList<Mood>> finishedPlanesMoods;
+  private final ArrivalDepartureModel<IList<MoodResult>> finishedPlanesMoods;
   private final StatisticProperty holdingPointDelayStats;
 
   public Collector(ETime fromTime, ETime toTime) {
@@ -55,7 +56,7 @@ public class Collector {
     return finishedPlanesDelays;
   }
 
-  public ArrivalDepartureModel<IList<Mood>> getFinishedPlanesMoods() {
+  public ArrivalDepartureModel<IList<MoodResult>> getFinishedPlanesMoods() {
     return finishedPlanesMoods;
   }
 
