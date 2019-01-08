@@ -6,7 +6,6 @@
       <module fileurl="file://$PROJECT_DIR$/Simulator/BitmapRadar/BitmapRadar.iml" filepath="$PROJECT_DIR$/Simulator/BitmapRadar/BitmapRadar.iml" />
       <module fileurl="file://$PROJECT_DIR$/Tools/CoordinatesViewer/CoordinatesViewer.iml" filepath="$PROJECT_DIR$/Tools/CoordinatesViewer/CoordinatesViewer.iml" />
       <module fileurl="file://$PROJECT_DIR$/Tools/FlightRadarRealTrafficConverter/FlightRadarRealTrafficConverter.iml" filepath="$PROJECT_DIR$/Tools/FlightRadarRealTrafficConverter/FlightRadarRealTrafficConverter.iml" />
-      <module fileurl="file://$PROJECT_DIR$/Simulator/JAtcImagesToVideoConverter/JAtcImagesToVideoConverter.iml" filepath="$PROJECT_DIR$/Simulator/JAtcImagesToVideoConverter/JAtcImagesToVideoConverter.iml" />
       <module fileurl="file://$PROJECT_DIR$/Simulator/JAtcSim/JAtcSim.iml" filepath="$PROJECT_DIR$/Simulator/JAtcSim/JAtcSim.iml" />
       <module fileurl="file://$PROJECT_DIR$/Simulator/JAtcSimFX/JAtcSimFX.iml" filepath="$PROJECT_DIR$/Simulator/JAtcSimFX/JAtcSimFX.iml" />
       <module fileurl="file://$PROJECT_DIR$/Simulator/JAtcSimLib/JAtcSimLib.iml" filepath="$PROJECT_DIR$/Simulator/JAtcSimLib/JAtcSimLib.iml" />
