@@ -365,12 +365,21 @@ public class TowerAtc extends ComputerAtc {
   @Override
   public void unregisterPlaneUnderControl(Airplane plane) {
     if (plane.isArrival()) {
-      if (plane.getState() == Airplane.State.landed)
+      if (plane.getState() == Airplane.State.landed) {
         arrivalManager.unregisterFinishedArrival(plane);
+        Acc.stats().registerArrival();
+      }
       //GO-AROUNDed planes are not unregistered, they have been unregistered previously
     }
     if (plane.isDeparture()) {
       departureManager.unregisterFinishedDeparture(plane);
+
+      // add to stats
+      ETime holdingPointEntryTime = departureManager.getAndEraseHoldingPointEntryTime(plane);
+      int diffSecs = ETime.getDifference(Acc.now(), holdingPointEntryTime).getTotalSeconds();
+      diffSecs -= 15; // generally let TWR atc asks APP atc to switch 15 seconds before HP.
+      if (diffSecs < 0) diffSecs = 0;
+      Acc.stats().registerDeparture(diffSecs);
     }
 
     if (plane.isEmergency() && plane.getState() == Airplane.State.landed) {
@@ -694,14 +703,9 @@ public class TowerAtc extends ComputerAtc {
     RunwayThreshold availableThreshold = toReadyPlane.getExpectedRunwayThreshold();
 
     // if it gets here, the "toReadyPlane" can proceed take-off
-    ETime holdingPointEntryTime = departureManager.departAndGetHoldingPointEntryTime(toReadyPlane, availableThreshold, getDepartingPlaneSwitchAltitude(toReadyPlane.getType().category));
-    toReadyPlane.setHoldingPointState(availableThreshold.getCoordinate(), availableThreshold.getCourse());
-
     // add to stats
-    double diffSecs = ETime.getDifference(Acc.now(), holdingPointEntryTime).getTotalSeconds();
-    diffSecs -= 15; // generally let TWR atc asks APP atc to switch 15 seconds before HP.
-    if (diffSecs < 0) diffSecs = 0;
-    Acc.stats().getHoldingPoint().getDelay().add(diffSecs);
+    departureManager.departAndGetHoldingPointEntryTime(toReadyPlane, availableThreshold, getDepartingPlaneSwitchAltitude(toReadyPlane.getType().category));
+    toReadyPlane.setHoldingPointState(availableThreshold.getCoordinate(), availableThreshold.getCourse());
 
     SpeechList lst = new SpeechList();
     lst.add(new RadarContactConfirmationNotification());
@@ -847,13 +851,15 @@ class DepartureManager {
       return false;
   }
 
-  public ETime departAndGetHoldingPointEntryTime(Airplane plane, RunwayThreshold th, double switchAltitude) {
+  public void departAndGetHoldingPointEntryTime(Airplane plane, RunwayThreshold th, double switchAltitude) {
     this.holdingPointReady.remove(plane);
     this.departing.add(plane);
     this.lastDepartingPlane.set(th, plane);
     this.lastDeparturesTime.set(th, Acc.now().clone());
     this.departureSwitchAltitude.set(plane, switchAltitude);
+  }
 
+  public ETime getAndEraseHoldingPointEntryTime(Airplane plane){
     ETime ret = holdingPointWaitingTimeMap.get(plane);
     holdingPointWaitingTimeMap.remove(plane);
     return ret;

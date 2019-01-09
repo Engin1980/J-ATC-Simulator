@@ -177,7 +177,7 @@ public class JAtcSim {
       gsi.allowTrafficDelays = startupSettings.traffic.allowDelays;
       gsi.maxTrafficPlanes = startupSettings.traffic.maxPlanes;
       gsi.trafficDensityPercentage = startupSettings.traffic.densityPercentage;
-      gsi.statsIntervalBlockSize = appSettings.stats.blockIntervalSize;
+      gsi.statsSnapshotDistanceInMinutes = appSettings.stats.snapshotIntervalDistance;
 
       Game g;
       g = Game.create(gsi);

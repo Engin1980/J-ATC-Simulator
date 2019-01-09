@@ -24,9 +24,9 @@ import eng.jAtcSim.lib.managers.MrvaManager;
 import eng.jAtcSim.lib.messaging.Message;
 import eng.jAtcSim.lib.messaging.Messenger;
 import eng.jAtcSim.lib.messaging.StringMessageContent;
+import eng.jAtcSim.lib.newStats.StatsManager;
 import eng.jAtcSim.lib.serialization.LoadSave;
 import eng.jAtcSim.lib.textProcessing.parsing.shortBlockParser.ShortBlockParser;
-import eng.jAtcSim.lib.stats.Statistics;
 import eng.jAtcSim.lib.traffic.Movement;
 import eng.jAtcSim.lib.traffic.TrafficManager;
 import eng.jAtcSim.lib.traffic.Traffic;
@@ -58,7 +58,7 @@ public class Simulation {
   private final Messenger messenger = new Messenger();
   private final IList<Airplane> newPlanesDelayedToAvoidCollision = new EList<>();
   private final WeatherManager weatherManager;
-  private final Statistics stats;
+  private final StatsManager stats;
   private final EmergencyManager emergencyManager;
   private final TrafficManager trafficManager;
   private final PlaneResponsibilityManager prm;
@@ -91,7 +91,7 @@ public class Simulation {
   public Simulation(
       Area area, AirplaneTypes airplaneTypes, Fleets fleets, Traffic traffic, Airport activeAirport,
       WeatherProvider weatherProvider, ETime now, int simulationSecondLengthInMs, double emergencyPerDayProbability,
-      TrafficManager.TrafficManagerSettings trafficManagerSettings, int statsSetWindowIntervalInMinutes) {
+      TrafficManager.TrafficManagerSettings trafficManagerSettings, int statsSnapshotDistanceInMinutes) {
 
     if (area == null) {
       throw new IllegalArgumentException("Value of {area} cannot not be null.");
@@ -143,7 +143,7 @@ public class Simulation {
         area.getBorders().where(q -> q.getType() == Border.eType.mrva);
     this.mrvaManager = new MrvaManager(mrvaAreas);
 
-    this.stats = new Statistics(statsSetWindowIntervalInMinutes);
+    this.stats = new StatsManager(statsSnapshotDistanceInMinutes);
   }
 
   public EventSimple<Simulation> getOnRunwayChanged() {
@@ -321,7 +321,7 @@ public class Simulation {
     return ctrAtc;
   }
 
-  public Statistics getStats() {
+  public StatsManager getStats() {
     return stats;
   }
 
@@ -427,9 +427,9 @@ public class Simulation {
     evalAirproxes();
     evalMrvas();
 
-    stats.secondElapsed();
+    stats.elapseSecond();
     long elapseEndMs = System.currentTimeMillis();
-    stats.getSecondStats().getDuration().add((elapseEndMs - elapseStartMs) / 1000d);
+stats.registerElapseSecondCalculationDuration(elapseEndMs - elapseStartMs);
 
     // weather
     this.weatherManager.elapseSecond();
@@ -512,8 +512,7 @@ public class Simulation {
       // landed
       if (p.isArrival() && p.getSpeed() < 11) {
         rem.add(p);
-        this.stats.getPlanes().getFinishedPlanes().getArrivals().add(1);
-        this.stats.getPlanes().getFinishedPlanes().getTogether().add(1);
+        this.stats.registerFinishedPlane(p);
       }
 
       // departed
@@ -522,8 +521,7 @@ public class Simulation {
           p.getCoordinate(), Acc.airport().getLocation())
           > Acc.airport().getCoveredDistance()) {
         rem.add(p);
-        this.stats.getPlanes().getFinishedPlanes().getDepartures().add(1);
-        this.stats.getPlanes().getFinishedPlanes().getTogether().add(1);
+        this.stats.registerFinishedPlane(p);
       }
 
       if (p.isEmergency() && p.hasElapsedEmergencyTime()) {
@@ -532,12 +530,9 @@ public class Simulation {
     }
 
     for (Airplane plane : rem) {
-      stats.getPlanesMood().add(plane.getEvaluatedMood());
       Acc.prm().unregisterPlane(plane);
       Acc.messenger().unregisterListener(plane);
       this.mrvaManager.unregisterPlane(plane);
-      if (!plane.isEmergency())
-        this.stats.getPlanes().getDelay().getByType(plane.isArrival()).add(plane.getDelayDifference());
     }
   }
 

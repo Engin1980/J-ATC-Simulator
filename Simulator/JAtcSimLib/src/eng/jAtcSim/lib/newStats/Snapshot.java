@@ -2,7 +2,6 @@ package eng.jAtcSim.lib.newStats;
 
 import eng.eSystem.collections.IList;
 import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
-import eng.jAtcSim.lib.airplanes.moods.Mood;
 import eng.jAtcSim.lib.airplanes.moods.MoodResult;
 import eng.jAtcSim.lib.global.ETime;
 import eng.jAtcSim.lib.newStats.model.ArrivalDepartureModel;
@@ -18,6 +17,9 @@ public class Snapshot {
   private ArrivalDepartureTotalModel<MMM> finishedPlanesDelays;
   private ArrivalDepartureTotalModel<MMM> finishedPlanesMoods;
   private MMM holdingPointDelayStats;
+  private int mrvaErrorsCount;
+  private int airproxErrorsCount;
+  private int holdingPointMaximumCount;
 
   public static Snapshot of(Collector collector) {
     int totalSeconds = collector.getToTime().getTotalSeconds() - collector.getFromTime().getTotalSeconds();
@@ -38,6 +40,11 @@ public class Snapshot {
     ret.finishedPlanesDelays = convertFinishedPlanesDelays(collector.getFinishedPlanesDelays());
     ret.finishedPlanesMoods = convertFinishedPlanesMoods(collector.getFinishedPlanesMoods());
     ret.holdingPointDelayStats = collector.getHoldingPointDelayStats().toMMM();
+
+    ret.mrvaErrorsCount = collector.getErrors().getMrvaErros().getCount();
+    ret.airproxErrorsCount = collector.getErrors().getAirproxErros().getCount();
+
+    ret.holdingPointMaximumCount = collector.getHoldingPointMaximumCount();
 
     return ret;
   }
@@ -122,7 +129,19 @@ public class Snapshot {
   }
 
 
+  public int getMrvaErrorsCount() {
+    return mrvaErrorsCount;
+  }
+
+  public int getAirproxErrorsCount() {
+    return airproxErrorsCount;
+  }
+
   @XmlConstructor
   private Snapshot() {
+  }
+
+  public int getHoldingPointMaximumCount() {
+    return this.holdingPointMaximumCount;
   }
 }

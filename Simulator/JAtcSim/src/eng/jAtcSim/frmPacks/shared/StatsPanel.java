@@ -1,22 +1,19 @@
 package eng.jAtcSim.frmPacks.shared;
 
-import eng.jAtcSim.lib.Acc;
+import eng.eSystem.swing.LayoutManager;
 import eng.jAtcSim.lib.Simulation;
 import eng.jAtcSim.lib.global.ETime;
-import eng.jAtcSim.lib.stats.read.StatsView;
-import eng.jAtcSim.lib.stats.Statistics;
-import eng.eSystem.swing.LayoutManager;
+import eng.jAtcSim.lib.newStats.RecentStats;
+import eng.jAtcSim.lib.newStats.StatsManager;
 
 import javax.swing.*;
 import java.awt.*;
-
-import static eng.jAtcSim.lib.stats.Statistics.toTime;
 
 public class StatsPanel extends JPanel {
 
   private static Color bgColor = new Color(50, 50, 50);
   private static Color frColor = new Color(200, 200, 200);
-  Statistics stats;
+  StatsManager stats;
   JLabel lblElapsed = new JLabel("Seconds elapsed:");
   JLabel lvlElapsed = new JLabel("-");
   JLabel lblBusyDuration = new JLabel("Recalc duration:");
@@ -43,6 +40,22 @@ public class StatsPanel extends JPanel {
 
   JLabel lblDelay = new JLabel("Delay:");
   JLabel lvlDelay = new JLabel("-");
+
+  private static String toTime(double seconds) {
+    String ret;
+    int tmp = (int) Math.floor(seconds);
+    int hrs = tmp / 3600;
+    tmp = tmp % 3600;
+    int min = tmp / 60;
+    tmp = tmp % 60;
+    int sec = tmp;
+    if (hrs == 0) {
+      ret = String.format("%d:%02d", min, sec);
+    } else {
+      ret = String.format("%d:%02d:%02d", hrs, min, sec);
+    }
+    return ret;
+  }
 
   public StatsPanel() {
     initComponents();
@@ -115,71 +128,59 @@ public class StatsPanel extends JPanel {
     }
   }
 
-  private StatsView view;
-
   private void update() {
 
-    view = stats.createView(Acc.now().addHours(-1));
+    RecentStats view = stats.getRecentStats();
 
-    lvlElapsed.setText(toTime(view.getSecondStats().getSecondsElapsed()));
+    lvlElapsed.setText(toTime(stats.getElapsedSeconds()));
     lvlBusyDuration.setText(String.format("%.3f (%.3f)",
-        view.getSecondStats().getDuration().getMean(),
-        view.getSecondStats().getDuration().getMaximum()
-    ));
+        view.getElapsedSecondDuration().getMean(),
+        view.getElapsedSecondDuration().getMaximum()));
 
-    updateFinished();
-    updateMaxAll();
-    updateMaxApp();
-    updateCurAll();
-    updateCurApp();
-    updateMovementsPerHour();
-    updateHoldingPointInfo();
-    updateDelays();
-    updateAirproxAndMrvas();
-
+    updateFinished(view);
+    updateMaxAll(view);
+    updateMaxApp(view);
+    updateCurAll(view);
+    updateCurApp(view);
+    updateMovementsPerHour(view);
+    updateHoldingPointInfo(view);
+    updateDelays(view);
+    updateAirproxAndMrvas(view);
   }
 
-  private void updateAirproxAndMrvas() {
-    double air = view.getErrors().getAirproxes().getMean();
-    double mrv = view.getErrors().getMrvas().getMean();
+  private void updateAirproxAndMrvas(RecentStats view) {
+    double air = view.getErrors().getAirproxErrorsPromile();
+    double mrv = view.getErrors().getMrvaErrorsPromile();
     String s = String.format("%.1f‰ / %.1f‰", air, mrv);
     lvlErrors.setText(s);
   }
 
-  private void updateDelays() {
-    ETime tmean = new ETime((int) view.getPlanes().getDelay().getTogether().getMean());
-    ETime tmax = new ETime((int) view.getPlanes().getDelay().getTogether().getMaximum());
+  private void updateDelays(RecentStats view) {
+    ETime tmean = new ETime((int) view.getDelays().getMean());
+    ETime tmax = new ETime((int) view.getDelays().getMaximum());
 
     String s = String.format("%s / %s", tmean.toMinuteSecondString(), tmax.toMinuteSecondString());
     lvlDelay.setText(s);
   }
 
-  private void updateHoldingPointInfo() {
+  private void updateHoldingPointInfo(RecentStats view) {
     String tmp = String.format("%.0f / %.0f",
-        view.getHoldingPoint().getCount().getCurrent(),
-        view.getHoldingPoint().getCount().getMaximum());
+        view.getHoldingPoint().getCount(),
+        view.getHoldingPoint().getMaximum());
     lvlHpCount.setText(tmp);
 
     tmp = String.format("%s / %s",
-        toTime(view.getHoldingPoint().getDelay().getMean()),
-        toTime(view.getHoldingPoint().getDelay().getMaximum())
+        toTime(view.getHoldingPoint().getAverageDelay()),
+        toTime(view.getHoldingPoint().getMaximumDelay())
     );
     lvlHpTime.setText(tmp);
   }
 
-  private void updateMovementsPerHour() {
-    double deps = view.getPlanes().getFinishedPlanes().getDepartures().getCount() *
-        view.getPlanes().getFinishedPlanes().getDepartures().getMean();
-    double arrs = view.getPlanes().getFinishedPlanes().getArrivals().getCount() *
-        view.getPlanes().getFinishedPlanes().getArrivals().getMean();
-    double tots = view.getPlanes().getFinishedPlanes().getTogether().getCount() *
-        view.getPlanes().getFinishedPlanes().getTogether().getMean();
-    double secs = view.getSecondStats().getSecondsElapsed();
-    secs /= 3600d;
-    deps /= secs;
-    arrs /= secs;
-    tots /= secs;
-    String s = String.format("%.1f / %.1f / %.1f",
+  private void updateMovementsPerHour(RecentStats view) {
+    double deps = view.getMovementsPerHour().getDepartures();
+    double arrs = view.getMovementsPerHour().getArrivals();
+    double tots = deps + arrs;
+    String s = String.format("%.0f / %.0f / %.0f",
         deps,
         arrs,
         tots
@@ -187,48 +188,45 @@ public class StatsPanel extends JPanel {
     lvlMovementsGame.setText(s);
   }
 
-  private void updateCurApp() {
+  private void updateCurApp(RecentStats view) {
+    int a = view.getCurrentPlanesCount().getArrivalsUnderApp();
+    int d = view.getCurrentPlanesCount().getDeparturesUnderApp();
     String s = String.format("%.0f / %.0f / %.0f",
-        view.getPlanes().getPlanesUnderApp().getDepartures().getCurrent(),
-        view.getPlanes().getPlanesUnderApp().getArrivals().getCurrent(),
-        view.getPlanes().getPlanesUnderApp().getTogether().getCurrent()
-    );
+        d, a, a + d);
     lvlCurApp.setText(s);
   }
 
-  private void updateCurAll() {
+  private void updateCurAll(RecentStats view) {
+    int a = view.getCurrentPlanesCount().getArrivals();
+    int d = view.getCurrentPlanesCount().getDepartures();
     String s = String.format("%.0f / %.0f / %.0f",
-        view.getPlanes().getPlanesInSim().getDepartures().getCurrent(),
-        view.getPlanes().getPlanesInSim().getArrivals().getCurrent(),
-        view.getPlanes().getPlanesInSim().getTogether().getCurrent()
-    );
+        d, a, a + d);
     lvlCurInGame.setText(s);
   }
 
-  private void updateMaxApp() {
+  private void updateMaxApp(RecentStats view) {
+    int a = view.getCurrentPlanesCount().getMaximalArrivalsUnderApp();
+    int d = view.getCurrentPlanesCount().getMaximalArrivalsUnderApp();
+    int t = view.getCurrentPlanesCount().getMaximalUnderApp();
     String s = String.format("%.0f / %.0f / %.0f",
-        view.getPlanes().getPlanesUnderApp().getDepartures().getMaximum(),
-        view.getPlanes().getPlanesUnderApp().getArrivals().getMaximum(),
-        view.getPlanes().getPlanesUnderApp().getTogether().getMaximum()
-    );
+        d, a, t);
     lvlMaxApp.setText(s);
   }
 
-  private void updateMaxAll() {
+  private void updateMaxAll(RecentStats view) {
+    int a = view.getCurrentPlanesCount().getMaximalArrivals();
+    int d = view.getCurrentPlanesCount().getMaximalArrivals();
+    int t = view.getCurrentPlanesCount().getMaximal();
     String s = String.format("%.0f / %.0f / %.0f",
-        view.getPlanes().getPlanesInSim().getDepartures().getMaximum(),
-        view.getPlanes().getPlanesInSim().getArrivals().getMaximum(),
-        view.getPlanes().getPlanesInSim().getTogether().getMaximum()
-    );
+        d, a, t);
     lvlMaxInGame.setText(s);
   }
 
-  private void updateFinished() {
+  private void updateFinished(RecentStats view) {
+    int a = view.getFinishedPlanes().getArrivals();
+    int d = view.getFinishedPlanes().getDepartures();
     String s = String.format("%d / %d / %d",
-        view.getPlanes().getFinishedPlanes().getDepartures().getCount(),
-        view.getPlanes().getFinishedPlanes().getArrivals().getCount(),
-        view.getPlanes().getFinishedPlanes().getTogether().getCount()
-    );
+        d, a, d + a);
     lvlFinished.setText(s);
   }
 }

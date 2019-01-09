@@ -10,7 +10,7 @@ public class CounterProperty {
   }
 
   public void add(int count) {
-    Validator.check(count > 0);
+    Validator.check(count >= 0);
     this.count += count;
   }
 

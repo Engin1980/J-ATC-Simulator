@@ -14,7 +14,7 @@ import eng.jAtcSim.lib.atcs.*;
 import eng.jAtcSim.lib.atcs.planeResponsibility.PlaneResponsibilityManager;
 import eng.jAtcSim.lib.global.ETime;
 import eng.jAtcSim.lib.global.logging.ApplicationLog;
-import eng.jAtcSim.lib.stats.Statistics;
+import eng.jAtcSim.lib.newStats.StatsManager;
 import eng.jAtcSim.lib.traffic.Movement;
 import eng.jAtcSim.lib.traffic.fleets.Fleets;
 import eng.jAtcSim.lib.weathers.Weather;
@@ -117,7 +117,7 @@ public class Acc {
     return Simulation.rnd;
   }
 
-  public static Statistics stats() {
+  public static StatsManager stats() {
     return sim().getStats();
   }
 

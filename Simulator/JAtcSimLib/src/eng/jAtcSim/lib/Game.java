@@ -47,7 +47,7 @@ public class Game {
     public boolean allowTrafficDelays;
     public int maxTrafficPlanes;
     public double trafficDensityPercentage;
-    public int statsIntervalBlockSize;
+    public int statsSnapshotDistanceInMinutes;
   }
 
   private AreaSource areaSource;
@@ -137,7 +137,7 @@ public class Game {
           gsi.startTime,
           gsi.secondLengthInMs,
           gsi.emergencyPerDayProbability,
-          tms, gsi.statsIntervalBlockSize);
+          tms, gsi.statsSnapshotDistanceInMinutes);
       Acc.log().writeLine(ApplicationLog.eType.info, "Initializing the simulation");
       g.simulation.init();
     } catch (Exception ex){

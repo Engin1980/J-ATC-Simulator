@@ -18,7 +18,7 @@ import java.time.format.DateTimeFormatter;
 public class AppSettings {
 
   public static class Stats {
-    public int blockIntervalSize = 5;
+    public int snapshotIntervalDistance = 5;
   }
 
   public static class Radar {
@@ -152,7 +152,7 @@ public class AppSettings {
       ret.autosave.path = decodePath(tmp);
 
       XElement statsElement = doc.getRoot().getChild("stats");
-      ret.stats.blockIntervalSize = Integer.parseInt(statsElement.getAttribute("blockIntervalSize"));
+      ret.stats.snapshotIntervalDistance = Integer.parseInt(statsElement.getAttribute("snapshotIntervalDistance"));
     }
 
     return ret;

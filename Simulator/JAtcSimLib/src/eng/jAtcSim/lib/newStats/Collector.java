@@ -2,27 +2,31 @@ package eng.jAtcSim.lib.newStats;
 
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
-import eng.jAtcSim.lib.airplanes.moods.Mood;
 import eng.jAtcSim.lib.airplanes.moods.MoodResult;
 import eng.jAtcSim.lib.global.ETime;
 import eng.jAtcSim.lib.newStats.model.ArrivalDepartureModel;
 import eng.jAtcSim.lib.newStats.model.ArrivalDepartureTotalModel;
+import eng.jAtcSim.lib.newStats.model.ErrorsModel;
 import eng.jAtcSim.lib.newStats.properties.CounterProperty;
 import eng.jAtcSim.lib.newStats.properties.StatisticProperty;
 
 public class Collector {
   private final ETime fromTime;
   private final ETime toTime;
+  private final StatisticProperty busyCounter;
   private final ArrivalDepartureTotalModel<StatisticProperty> planesInSim;
   private final ArrivalDepartureTotalModel<StatisticProperty> planesUnderApp;
   private final ArrivalDepartureModel<CounterProperty> runwayMovements;
   private final ArrivalDepartureModel<StatisticProperty> finishedPlanesDelays;
   private final ArrivalDepartureModel<IList<MoodResult>> finishedPlanesMoods;
+  private final ErrorsModel errors;
   private final StatisticProperty holdingPointDelayStats;
+  private int holdingPointMaximumCount = 0;
 
   public Collector(ETime fromTime, ETime toTime) {
     this.fromTime = fromTime;
     this.toTime = toTime;
+    this.busyCounter = new StatisticProperty();
     this.planesInSim = new ArrivalDepartureTotalModel<>(
         new StatisticProperty(), new StatisticProperty(), new StatisticProperty());
     this.planesUnderApp = new ArrivalDepartureTotalModel<>(new StatisticProperty(), new StatisticProperty(), new StatisticProperty());
@@ -30,6 +34,7 @@ public class Collector {
     this.finishedPlanesDelays = new ArrivalDepartureModel<>(new StatisticProperty(), new StatisticProperty());
     this.finishedPlanesMoods = new ArrivalDepartureModel<>(new EList<>(), new EList<>());
     this.holdingPointDelayStats = new StatisticProperty();
+    this.errors = new ErrorsModel();
   }
 
   public ETime getFromTime() {
@@ -62,5 +67,22 @@ public class Collector {
 
   public StatisticProperty getHoldingPointDelayStats() {
     return holdingPointDelayStats;
+  }
+
+  public ErrorsModel getErrors() {
+    return errors;
+  }
+
+  public StatisticProperty getBusyCounter() {
+    return busyCounter;
+  }
+
+  public int getHoldingPointMaximumCount() {
+    return this.holdingPointMaximumCount;
+  }
+
+  public void adjustHoldingPointMaximumCount(int currentHoldingPointCount){
+    if (currentHoldingPointCount > this.holdingPointMaximumCount)
+      this.holdingPointMaximumCount = currentHoldingPointCount;
   }
 }
