@@ -63,7 +63,6 @@ public class StatsGraphPanel extends JPanel {
     lines = new EList<>();
     lines.add(new MeasureLine("Departures", q -> q.getRunwayMovementsPerHour().getArrivals()));
     lines.add(new MeasureLine("Arrivals", q -> q.getRunwayMovementsPerHour().getDepartures()));
-//    lines.add(new MeasureLine("Total", q -> q.getRunwayMovementsPerHour().getTotal()));
     measure = new Measure(
         "Runway movements per hour", lines, new StackedBarRenderer());
     measures.add(measure);
@@ -89,6 +88,14 @@ public class StatsGraphPanel extends JPanel {
     lines.add(new MeasureLine("Total under APP", q->q.getPlanesUnderApp().getTotal().getMean()));
     measure = new Measure(
         "Average number of planes", lines, new LineRenderer3D());
+    measures.add(measure);
+
+    lines = new EList<>();
+    lines.add(new MeasureLine("Average of mood rating", q->q.getFinishedPlanesMoods().getTotal().getMean()));
+    lines.add(new MeasureLine("Best mood rating", q->q.getFinishedPlanesMoods().getTotal().getMaximum()));
+    lines.add(new MeasureLine("Worst mood rating", q->q.getFinishedPlanesMoods().getTotal().getMinimum()));
+    measure = new Measure(
+        "Mood rating (total)", lines, new LineRenderer3D());
     measures.add(measure);
 
     StatsGraphPanel.measures = measures;
