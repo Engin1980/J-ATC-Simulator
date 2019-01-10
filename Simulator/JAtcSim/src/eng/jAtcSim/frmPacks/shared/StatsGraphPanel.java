@@ -48,22 +48,9 @@ public class StatsGraphPanel extends JPanel {
     }
   }
 
-//  private static class GraphMeasureView {
-//    public Function<StatsView, DataView> dataViewSelector;
-//    public Function<DataView, Double> valueSelector;
-//
-//    public GraphMeasureView(Function<StatsView, DataView> dataViewSelector, Function<DataView, Double> valueSelector) {
-//      this.dataViewSelector = dataViewSelector;
-//      this.valueSelector = valueSelector;
-//    }
-//  }
-
-  private static final int IMG_WIDTH = 2000;
-  private static final int IMG_HEIGHT = 800;
-  //  private IReadOnlyList<StatsView> statsViews;
+  private static final int IMG_WIDTH = 1500;
+  private static final int IMG_HEIGHT = 900;
   private static IReadOnlyList<Measure> measures;
-  //  private static IMap<String, IMap<String, GraphMeasureView>> graphMeasures = new EMap();
-//  private static IMap<String, CategoryItemRenderer> renderers = new EMap<>();
   private XComboBoxExtender<String> cmbMeasures;
   private ImagePanel pnlImage;
   private StatsManager statsManager;
@@ -76,122 +63,36 @@ public class StatsGraphPanel extends JPanel {
     lines = new EList<>();
     lines.add(new MeasureLine("Departures", q -> q.getRunwayMovementsPerHour().getArrivals()));
     lines.add(new MeasureLine("Arrivals", q -> q.getRunwayMovementsPerHour().getDepartures()));
-    lines.add(new MeasureLine("Total", q -> q.getRunwayMovementsPerHour().getTotal()));
+//    lines.add(new MeasureLine("Total", q -> q.getRunwayMovementsPerHour().getTotal()));
     measure = new Measure(
-        "Runway movements per hour", lines, new BarRenderer());
+        "Runway movements per hour", lines, new StackedBarRenderer());
     measures.add(measure);
 
     lines = new EList<>();
-    lines.add(new MeasureLine("Departures (max)", q->q.getPlanesInSim().getDepartures().getMaximum()));
-    lines.add(new MeasureLine("Arrivals (max)", q->q.getPlanesInSim().getArrivals().getMaximum()));
-    lines.add(new MeasureLine("Total (max)", q->q.getPlanesInSim().getTotal().getMaximum()));
-    lines.add(new MeasureLine("Departures (mean)", q->q.getPlanesInSim().getDepartures().getMean()));
-    lines.add(new MeasureLine("Arrivals (mean)", q->q.getPlanesInSim().getArrivals().getMean()));
-    lines.add(new MeasureLine("Total (mean)", q->q.getPlanesInSim().getTotal().getMean()));
+    lines.add(new MeasureLine("Departures in sim", q->q.getPlanesInSim().getDepartures().getMaximum()));
+    lines.add(new MeasureLine("Arrivals in sim", q->q.getPlanesInSim().getArrivals().getMaximum()));
+    lines.add(new MeasureLine("Total in sim", q->q.getPlanesInSim().getTotal().getMaximum()));
+    lines.add(new MeasureLine("Departures under APP", q->q.getPlanesUnderApp().getDepartures().getMaximum()));
+    lines.add(new MeasureLine("Arrivals under APP", q->q.getPlanesUnderApp().getArrivals().getMaximum()));
+    lines.add(new MeasureLine("Total under APP", q->q.getPlanesUnderApp().getTotal().getMaximum()));
+
     measure = new Measure(
-        "Planes in sim", lines, new LineRenderer3D());
+        "Maximum number of planes", lines, new LineRenderer3D());
+    measures.add(measure);
+
+    lines = new EList<>();
+    lines.add(new MeasureLine("Departures in sim", q->q.getPlanesInSim().getDepartures().getMean()));
+    lines.add(new MeasureLine("Arrivals in sim", q->q.getPlanesInSim().getArrivals().getMean()));
+    lines.add(new MeasureLine("Total in sim", q->q.getPlanesInSim().getTotal().getMean()));
+    lines.add(new MeasureLine("Departures under APP", q->q.getPlanesUnderApp().getDepartures().getMean()));
+    lines.add(new MeasureLine("Arrivals under APP", q->q.getPlanesUnderApp().getArrivals().getMean()));
+    lines.add(new MeasureLine("Total under APP", q->q.getPlanesUnderApp().getTotal().getMean()));
+    measure = new Measure(
+        "Average number of planes", lines, new LineRenderer3D());
     measures.add(measure);
 
     StatsGraphPanel.measures = measures;
   }
-//    IMap<String, GraphMeasureView> g;
-//    String key;
-//
-//    // calc time
-//    key = "Calculation time (s)";
-//    g = buildSimpleDisplaySet(q -> q.getSecondStats().getDuration());
-//    graphMeasures.set(key, g);
-//    renderers.set(key, new LineAndShapeRenderer());
-//
-////    key = "Movements / hour (together)";
-////    g = new EMap<>();
-////    g.set("Movements / hour",
-////        new GraphMeasureView(
-////            q->q.getPlanes().getFinishedPlanes().getTogether(),
-////            q->((MinMaxMeanCountCurrentView)q).getSum() / ));
-////    graphMeasures.set(key, g);
-////    renderers.set(key, new BarRenderer());
-//
-//    // max planes in sim (together)
-//    key = "Planes in sim (together)";
-//    g = new EMap<>();
-//    g.set("Number of planes",
-//        new GraphMeasureView(
-//            q -> q.getPlanes().getPlanesInSim().getTogether(),
-//            q -> ((MinMaxMeanCountCurrentView) q).getMaximum()));
-//    graphMeasures.set(key, g);
-//    renderers.set(key, new BarRenderer());
-//
-//    // max planes in sim (arrs / deps)
-//    key = "Planes in sim (arrivals / departures)";
-//    g = new EMap<>();
-//    g.set("Number of arrivals",
-//        new GraphMeasureView(
-//            q -> q.getPlanes().getPlanesInSim().getArrivals(),
-//            q -> ((MinMaxMeanCountCurrentView) q).getMaximum()));
-//    g.set("Number of departures",
-//        new GraphMeasureView(
-//            q -> q.getPlanes().getPlanesInSim().getDepartures(),
-//            q -> ((MinMaxMeanCountCurrentView) q).getMaximum()));
-//    graphMeasures.set(key, g);
-//    renderers.set(key, new LineRenderer3D());
-//
-//    key = "Planes under APP (together)";
-//    g = new EMap<>();
-//    g.set("Number of planes",
-//        new GraphMeasureView(
-//            q -> q.getPlanes().getPlanesUnderApp().getTogether(),
-//            q -> ((MinMaxMeanCountCurrentView) q).getMaximum()));
-//    graphMeasures.set(key, g);
-//    renderers.set(key, new BarRenderer());
-//
-//    key = "Planes under APP (arrivals / departures)";
-//    g = new EMap<>();
-//    g.set("Number of arrivals",
-//        new GraphMeasureView(
-//            q -> q.getPlanes().getPlanesUnderApp().getArrivals(),
-//            q -> ((MinMaxMeanCountCurrentView) q).getMaximum()));
-//    g.set("Number of departures",
-//        new GraphMeasureView(
-//            q -> q.getPlanes().getPlanesUnderApp().getDepartures(),
-//            q -> ((MinMaxMeanCountCurrentView) q).getMaximum()));
-//    graphMeasures.set(key, g);
-//    renderers.set(key, new StackedBarRenderer());
-//
-////    g = buildPlanesMaxiumumDisplaySet(q -> q.getPlanes().getPlanesUnderApp());
-////    graphMeasures.set("Planes under APP", g);
-////    renderers.set("Planes under APP", new BarRenderer());
-////    g = buildPlanesDisplaySet(q -> q.getPlanes().getFinishedPlanes());
-////    graphMeasures.set("Finished planes", g);
-////    g = buildPlanesDisplaySet(q -> q.getPlanes().getDelay());
-////    graphMeasures.set("Delay", g);
-//  }
-
-//  private static EMap<String, GraphMeasureView> buildSimpleDisplaySet(Function<StatsView, DataView> selector) {
-//    EMap<String, GraphMeasureView> g = new EMap<>();
-//    g.set("",
-//        new GraphMeasureView(
-//            q -> selector.apply(q),
-//            q -> ((MeanView) q).getMean()));
-//    return g;
-//  }
-//
-//  private static <T extends DataView> EMap<String, GraphMeasureView> buildPlanesMaxiumumDisplaySet(Function<StatsView, PlanesSubStats<T>> selector) {
-//    EMap<String, GraphMeasureView> g = new EMap<>();
-//    g.set("Arrivals (max)",
-//        new GraphMeasureView(
-//            q -> selector.apply(q).getArrivals(),
-//            q -> ((MinMaxMeanCountCurrentView) q).getMaximum()));
-//    g.set("Departures (max)",
-//        new GraphMeasureView(
-//            q -> selector.apply(q).getDepartures(),
-//            q -> ((MinMaxMeanCountCurrentView) q).getMaximum()));
-//    g.set("Together (max)",
-//        new GraphMeasureView(
-//            q -> selector.apply(q).getTogether(),
-//            q -> ((MinMaxMeanCountCurrentView) q).getMaximum()));
-//    return g;
-//  }
 
   public StatsGraphPanel() {
     initComponents();
@@ -200,7 +101,6 @@ public class StatsGraphPanel extends JPanel {
 
   public void init(StatsManager stats) {
     this.statsManager = stats;
-//    this.statsViews = stats.createViews();
   }
 
   private void layoutComponents() {
@@ -231,7 +131,7 @@ public class StatsGraphPanel extends JPanel {
 
     for (GraphDataLine item : gds.lines) {
       for (int i = 0; i < item.values.length; i++) {
-        dataset.addValue(item.values[i], gds.xAxisTitles[i], item.lineTitle);
+        dataset.addValue(item.values[i], item.lineTitle, gds.xAxisTitles[i]);
       }
     }
 

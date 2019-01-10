@@ -135,7 +135,7 @@ public class Snapshot {
   }
 
   private static double convertMovementsToMovementsPerHour(int movements, int numberOfSeconds) {
-    double ret = 60d / numberOfSeconds * movements;
+    double ret = 3600d / numberOfSeconds * movements;
     return ret;
   }
 

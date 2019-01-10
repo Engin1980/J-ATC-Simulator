@@ -3,6 +3,7 @@ package eng.jAtcSim.lib.newStats;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
+import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.AirproxType;
@@ -128,11 +129,17 @@ public class RecentStats {
   private static final int RECENT_INTERVAL_IN_SECONDS = 60;
   private int recentSecondsElapsed;
   private ElapsedSecondDurationModel elapsedSecondDuration = new ElapsedSecondDurationModel();
+  @XmlIgnore
   private Errors clsErrors = new Errors();
+  @XmlIgnore
   private Delays clsDelays = new Delays();
+  @XmlIgnore
   private HoldingPoint clsHP = new HoldingPoint();
+  @XmlIgnore
   private MovementsPerHour clsMovements = new MovementsPerHour();
+  @XmlIgnore
   private CurrentPlanesCount clsCurrent = new CurrentPlanesCount();
+  @XmlIgnore
   private FinishedPlanes clsFinished = new FinishedPlanes();
   private IList<TimedValue<Integer>> airproxErrors = new EList<>();
   private IList<TimedValue<Integer>> mrvaErrors = new EList();

@@ -5,6 +5,7 @@ import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.validation.Validator;
+import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.AirproxType;
@@ -23,6 +24,10 @@ public class StatsManager {
   private CounterProperty elapsedSecondsCounter = new CounterProperty();
   private int statsSnapshotDistanceInMinutes;
   private ETime nextCollectorStartTime = null;
+
+
+  @XmlConstructor
+  private StatsManager(){}
 
   public StatsManager(int statsSnapshotDistanceInMinutes) {
     Validator.check(statsSnapshotDistanceInMinutes > 1);
@@ -131,18 +136,21 @@ public class StatsManager {
 
   public IReadOnlyList<Snapshot> getSnapshots(int mergeDistance) {
     Validator.check(mergeDistance >= 1);
-spadne nekde tu
+
     IList<Snapshot> ret = new EList<>();
     int index = 0;
     while (index < snapshots.size()) {
-      if (mergeDistance == 1)
+      if (mergeDistance == 1) {
         ret.add(this.snapshots.get(index));
-      else {
+        index++;
+      } else {
         int toIndex = index + mergeDistance;
         IReadOnlyList<Snapshot> tmp = this.snapshots.get(index, toIndex);
         Snapshot s = Snapshot.createMerge(tmp);
         ret.add(s);
+        index = toIndex;
       }
+
     }
 
     return ret;
