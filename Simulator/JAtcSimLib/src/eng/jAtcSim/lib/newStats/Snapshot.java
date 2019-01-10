@@ -50,7 +50,7 @@ public class Snapshot {
     return ret;
   }
 
-  public static Snapshot createMerge(IList<Snapshot> snapshots) {
+  public static Snapshot createMerge(IReadOnlyList<Snapshot> snapshots) {
     Snapshot ret = new Snapshot();
     ret.time = mergeTime(snapshots.select(q -> q.time));
     ret.planesInSim = mergeArrivalDepartureTotalModelOfMMM(snapshots.select(q -> q.planesInSim));

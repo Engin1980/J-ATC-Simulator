@@ -2,8 +2,11 @@ package eng.jAtcSim.frmPacks.shared;
 
 import eng.eSystem.collections.*;
 import eng.eSystem.swing.LayoutManager;
+import eng.eSystem.utilites.ArrayUtils;
+import eng.eSystem.utilites.StringUtils;
 import eng.jAtcSim.app.controls.ImagePanel;
 import eng.jAtcSim.app.extenders.XComboBoxExtender;
+import eng.jAtcSim.lib.newStats.Snapshot;
 import eng.jAtcSim.lib.newStats.StatsManager;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.CategoryAxis;
@@ -16,10 +19,34 @@ import org.jfree.chart.renderer.category.*;
 import org.jfree.data.category.DefaultCategoryDataset;
 
 import javax.swing.*;
+import javax.swing.text.StyledEditorKit;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.function.Function;
 
 public class StatsGraphPanel extends JPanel {
+
+  private static class Measure {
+    public final IReadOnlyList<MeasureLine> lines;
+    public final String title;
+    public final CategoryItemRenderer renderer;
+
+    public Measure(String title, IList<MeasureLine> lines, CategoryItemRenderer renderer) {
+      this.title = title;
+      this.lines = lines;
+      this.renderer = renderer;
+    }
+  }
+
+  private static class MeasureLine {
+    public final String title;
+    public final Function<Snapshot, Double> valueSelector;
+
+    public MeasureLine(String title, Function<Snapshot, Double> valueSelector) {
+      this.title = title;
+      this.valueSelector = valueSelector;
+    }
+  }
 
 //  private static class GraphMeasureView {
 //    public Function<StatsView, DataView> dataViewSelector;
@@ -31,15 +58,42 @@ public class StatsGraphPanel extends JPanel {
 //    }
 //  }
 
-  private static final int IMG_WIDTH = 8000;
+  private static final int IMG_WIDTH = 2000;
   private static final int IMG_HEIGHT = 800;
-//  private static IMap<String, IMap<String, GraphMeasureView>> graphMeasures = new EMap();
+  //  private IReadOnlyList<StatsView> statsViews;
+  private static IReadOnlyList<Measure> measures;
+  //  private static IMap<String, IMap<String, GraphMeasureView>> graphMeasures = new EMap();
 //  private static IMap<String, CategoryItemRenderer> renderers = new EMap<>();
-  private XComboBoxExtender<String> cmbMeasure;
+  private XComboBoxExtender<String> cmbMeasures;
   private ImagePanel pnlImage;
-//  private IReadOnlyList<StatsView> statsViews;
+  private StatsManager statsManager;
 
-//  static {
+  static {
+    EList<Measure> measures = new EList<>();
+    Measure measure;
+    IList<MeasureLine> lines;
+
+    lines = new EList<>();
+    lines.add(new MeasureLine("Departures", q -> q.getRunwayMovementsPerHour().getArrivals()));
+    lines.add(new MeasureLine("Arrivals", q -> q.getRunwayMovementsPerHour().getDepartures()));
+    lines.add(new MeasureLine("Total", q -> q.getRunwayMovementsPerHour().getTotal()));
+    measure = new Measure(
+        "Runway movements per hour", lines, new BarRenderer());
+    measures.add(measure);
+
+    lines = new EList<>();
+    lines.add(new MeasureLine("Departures (max)", q->q.getPlanesInSim().getDepartures().getMaximum()));
+    lines.add(new MeasureLine("Arrivals (max)", q->q.getPlanesInSim().getArrivals().getMaximum()));
+    lines.add(new MeasureLine("Total (max)", q->q.getPlanesInSim().getTotal().getMaximum()));
+    lines.add(new MeasureLine("Departures (mean)", q->q.getPlanesInSim().getDepartures().getMean()));
+    lines.add(new MeasureLine("Arrivals (mean)", q->q.getPlanesInSim().getArrivals().getMean()));
+    lines.add(new MeasureLine("Total (mean)", q->q.getPlanesInSim().getTotal().getMean()));
+    measure = new Measure(
+        "Planes in sim", lines, new LineRenderer3D());
+    measures.add(measure);
+
+    StatsGraphPanel.measures = measures;
+  }
 //    IMap<String, GraphMeasureView> g;
 //    String key;
 //
@@ -145,11 +199,12 @@ public class StatsGraphPanel extends JPanel {
   }
 
   public void init(StatsManager stats) {
+    this.statsManager = stats;
 //    this.statsViews = stats.createViews();
   }
 
   private void layoutComponents() {
-    JPanel pnlTop = LayoutManager.createBorderedPanel(4, cmbMeasure.getControl());
+    JPanel pnlTop = LayoutManager.createBorderedPanel(4, cmbMeasures.getControl());
 
     pnlImage = new ImagePanel(IMG_WIDTH, IMG_HEIGHT);
     JScrollPane pnlScr = new JScrollPane(pnlImage);
@@ -159,24 +214,24 @@ public class StatsGraphPanel extends JPanel {
   }
 
   private void initComponents() {
-    cmbMeasure = new XComboBoxExtender<>();
-//    cmbMeasure.setModel(graphMeasures.getKeys().toArray(String.class));
-    cmbMeasure.getOnSelectedItemChanged().add(this::cmbMeasure_selectionChanged);
+    cmbMeasures = new XComboBoxExtender<>();
+    cmbMeasures.setModel(StatsGraphPanel.measures.select(q -> q.title).toArray(String.class));
+    cmbMeasures.getOnSelectedItemChanged().add(this::cmbMeasure_selectionChanged);
   }
 
   private void cmbMeasure_selectionChanged(XComboBoxExtender<String> source) {
     String key = source.getSelectedItem();
-    GraphDataSet gds = buildGraphDataSet(key);
-//    CategoryItemRenderer renderer = renderers.get(key);
-//    showGraphDataSet(gds, renderer);
+    Measure m = measures.getFirst(q->q.title.equals(key));
+    GraphDataSet gds = buildGraphDataSet(m);
+    showGraphDataSet(gds, m.renderer);
   }
 
   private void showGraphDataSet(GraphDataSet gds, CategoryItemRenderer renderer) {
     DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 
-    for (GraphDataItem item : gds.items) {
-      for (int i = 0; i < item.ys.length; i++) {
-        dataset.addValue(item.ys[i], gds.xs[i], item.x);
+    for (GraphDataLine item : gds.lines) {
+      for (int i = 0; i < item.values.length; i++) {
+        dataset.addValue(item.values[i], gds.xAxisTitles[i], item.lineTitle);
       }
     }
 
@@ -188,7 +243,7 @@ public class StatsGraphPanel extends JPanel {
 
     renderer.setBaseItemLabelGenerator(
         new StandardCategoryItemLabelGenerator());
-    for (int i = 0; i < gds.xs.length; i++) {
+    for (int i = 0; i < gds.xAxisTitles.length; i++) {
       renderer.setSeriesItemLabelsVisible(i, Boolean.TRUE);
     }
 
@@ -207,42 +262,35 @@ public class StatsGraphPanel extends JPanel {
     pnlImage.repaint();
   }
 
-  private GraphDataSet buildGraphDataSet(String key) {
+  private GraphDataSet buildGraphDataSet(Measure measure) {
+    int step = 1;
     GraphDataSet gds = new GraphDataSet();
-//    IMap<String, GraphMeasureView> g = graphMeasures.get(key);
-//
-//    IList<String> keys = g.getKeys().toList();
-//
-//    gds.title = key;
-//    gds.xs = new String[keys.size()];
-//    for (int i = 0; i < keys.size(); i++) {
-//      gds.xs[i] = keys.get(i);
-//      if (gds.xs[i].equals(""))
-//        gds.xs[i] = gds.title;
-//    }
-//
-//    for (StatsView statsView : statsViews) {
-//      GraphDataItem gdi = new GraphDataItem();
-//      gdi.x = statsView.getFromTime().toString();
-//      gdi.ys = new double[keys.size()];
-//      for (int i = 0; i < keys.size(); i++) {
-//        DataView dv = g.get(keys.get(i)).dataViewSelector.apply(statsView);
-//        double val = g.get(keys.get(i)).valueSelector.apply(dv);
-//        gdi.ys[i] = val;
-//      }
-//      gds.items.add(gdi);
-//    }
+    IReadOnlyList<Snapshot> snapshots = statsManager.getSnapshots(step);
+
+    IList<String> lineNames = measure.lines.select(q -> q.title);
+
+    gds.title = measure.title;
+    gds.xAxisTitles = snapshots.select(q -> q.getTime().toString()).toArray(String.class);
+
+    for (MeasureLine measureLine : measure.lines) {
+      GraphDataLine gdl = new GraphDataLine();
+      gdl.lineTitle = measureLine.title;
+      gdl.values = ArrayUtils.toPrimitive(
+          snapshots.select(q -> measureLine.valueSelector.apply(q)).toArray(Double.class));
+      gds.lines.add(gdl);
+    }
+
     return gds;
   }
 }
 
 class GraphDataSet {
   public String title;
-  public String[] xs;
-  public EList<GraphDataItem> items = new EList();
+  public String[] xAxisTitles;
+  public EList<GraphDataLine> lines = new EList();
 }
 
-class GraphDataItem {
-  public String x;
-  public double[] ys;
+class GraphDataLine {
+  public String lineTitle;
+  public double[] values;
 }

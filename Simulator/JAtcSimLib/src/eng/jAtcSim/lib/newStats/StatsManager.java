@@ -22,6 +22,7 @@ public class StatsManager {
   private IList<Snapshot> snapshots = new EList<>();
   private CounterProperty elapsedSecondsCounter = new CounterProperty();
   private int statsSnapshotDistanceInMinutes;
+  private ETime nextCollectorStartTime = null;
 
   public StatsManager(int statsSnapshotDistanceInMinutes) {
     Validator.check(statsSnapshotDistanceInMinutes > 1);
@@ -51,12 +52,14 @@ public class StatsManager {
   }
 
   public void save(XElement root) {
-    LoadSave.saveField(root,this,"statsManager");
+    LoadSave.saveField(root, this, "statsManager");
   }
 
   public void elapseSecond() {
     elapsedSecondsCounter.add();
     recentStats.elapseSecond();
+
+    manageCollectors();
 
     AnalysedPlanes tmp = analyseNumberOfPlanes();
     int hpPlanesCount = Acc.atcTwr().getNumberOfPlanesAtHoldingPoint();
@@ -122,8 +125,46 @@ public class StatsManager {
     return this.elapsedSecondsCounter.getCount();
   }
 
-  public IReadOnlyList<MoodResult> getFullMoodHistory(){
+  public IReadOnlyList<MoodResult> getFullMoodHistory() {
     return this.moodResults;
+  }
+
+  public IReadOnlyList<Snapshot> getSnapshots(int mergeDistance) {
+    Validator.check(mergeDistance >= 1);
+spadne nekde tu
+    IList<Snapshot> ret = new EList<>();
+    int index = 0;
+    while (index < snapshots.size()) {
+      if (mergeDistance == 1)
+        ret.add(this.snapshots.get(index));
+      else {
+        int toIndex = index + mergeDistance;
+        IReadOnlyList<Snapshot> tmp = this.snapshots.get(index, toIndex);
+        Snapshot s = Snapshot.createMerge(tmp);
+        ret.add(s);
+      }
+    }
+
+    return ret;
+  }
+
+  private void manageCollectors() {
+    if (nextCollectorStartTime == null) {
+      // initialization
+      Collector c = new Collector(Acc.now().clone(), Acc.now().addMinutes(statsSnapshotDistanceInMinutes * 2));
+      collectors.add(c);
+      nextCollectorStartTime = Acc.now().addMinutes(statsSnapshotDistanceInMinutes);
+    } else if (Acc.now().isAfterOrEq(this.nextCollectorStartTime)) {
+      Collector c = collectors.tryGetFirst(q -> q.getToTime().isBeforeOrEq(Acc.now()));
+      if (c != null) {
+        Snapshot s = Snapshot.of(c);
+        collectors.remove(c);
+        snapshots.add(s);
+      }
+      c = new Collector(Acc.now().clone(), Acc.now().addMinutes(statsSnapshotDistanceInMinutes * 2));
+      collectors.add(c);
+      nextCollectorStartTime = Acc.now().addMinutes(statsSnapshotDistanceInMinutes);
+    }
   }
 
   /**

@@ -9,6 +9,7 @@ import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
 
 import java.time.LocalTime;
 import java.util.Calendar;
+import java.util.Objects;
 
 /**
  *
@@ -103,6 +104,24 @@ public class ETime implements Comparable<ETime> {
     }
     
     return this.value < otherTime.value;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    ETime eTime = (ETime) o;
+    return value == eTime.value;
+  }
+
+  public boolean equals(ETime time){
+    if (time == null) return false;
+    return this.value == time.value;
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(value);
   }
 
   public boolean isAfter(ETime otherTime) {

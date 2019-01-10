@@ -294,7 +294,7 @@ public class LayoutManager {
     if (components.length != rowCount * columnCount)
       throw new IllegalArgumentException(
           String.format(
-              "Component array length %d is not valid for row-count %d x %d. Unable to create form-panel layout.",
+              "Component array length %d is not valid for row-count %d lineTitle %d. Unable to create form-panel layout.",
               components.length, rowCount, columnCount));
 
     rows = new Component[rowCount][];
