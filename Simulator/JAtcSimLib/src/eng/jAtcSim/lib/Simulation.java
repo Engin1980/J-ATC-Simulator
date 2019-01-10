@@ -429,7 +429,7 @@ public class Simulation {
 
     stats.elapseSecond();
     long elapseEndMs = System.currentTimeMillis();
-stats.registerElapseSecondCalculationDuration(elapseEndMs - elapseStartMs);
+stats.registerElapseSecondCalculationDuration((int) (elapseEndMs - elapseStartMs));
 
     // weather
     this.weatherManager.elapseSecond();

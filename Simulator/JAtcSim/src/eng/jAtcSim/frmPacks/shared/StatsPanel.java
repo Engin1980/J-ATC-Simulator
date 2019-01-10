@@ -164,7 +164,7 @@ public class StatsPanel extends JPanel {
   }
 
   private void updateHoldingPointInfo(RecentStats view) {
-    String tmp = String.format("%.0f / %.0f",
+    String tmp = String.format("%d / %d",
         view.getHoldingPoint().getCount(),
         view.getHoldingPoint().getMaximum());
     lvlHpCount.setText(tmp);
@@ -191,7 +191,7 @@ public class StatsPanel extends JPanel {
   private void updateCurApp(RecentStats view) {
     int a = view.getCurrentPlanesCount().getArrivalsUnderApp();
     int d = view.getCurrentPlanesCount().getDeparturesUnderApp();
-    String s = String.format("%.0f / %.0f / %.0f",
+    String s = String.format("%d / %d / %d",
         d, a, a + d);
     lvlCurApp.setText(s);
   }
@@ -199,25 +199,25 @@ public class StatsPanel extends JPanel {
   private void updateCurAll(RecentStats view) {
     int a = view.getCurrentPlanesCount().getArrivals();
     int d = view.getCurrentPlanesCount().getDepartures();
-    String s = String.format("%.0f / %.0f / %.0f",
+    String s = String.format("%d / %d / %d",
         d, a, a + d);
     lvlCurInGame.setText(s);
   }
 
   private void updateMaxApp(RecentStats view) {
     int a = view.getCurrentPlanesCount().getMaximalArrivalsUnderApp();
-    int d = view.getCurrentPlanesCount().getMaximalArrivalsUnderApp();
+    int d = view.getCurrentPlanesCount().getMaximalDeparturesUnderApp();
     int t = view.getCurrentPlanesCount().getMaximalUnderApp();
-    String s = String.format("%.0f / %.0f / %.0f",
+    String s = String.format("%d / %d / %d",
         d, a, t);
     lvlMaxApp.setText(s);
   }
 
   private void updateMaxAll(RecentStats view) {
     int a = view.getCurrentPlanesCount().getMaximalArrivals();
-    int d = view.getCurrentPlanesCount().getMaximalArrivals();
+    int d = view.getCurrentPlanesCount().getMaximalDepartures();
     int t = view.getCurrentPlanesCount().getMaximal();
-    String s = String.format("%.0f / %.0f / %.0f",
+    String s = String.format("%d / %d / %d",
         d, a, t);
     lvlMaxInGame.setText(s);
   }

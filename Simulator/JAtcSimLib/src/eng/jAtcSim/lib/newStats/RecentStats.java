@@ -33,7 +33,7 @@ public class RecentStats {
     }
 
     public double getMaximum() {
-      return RecentStats.this.planeDelays.maxInt(q -> q.getValue());
+      return RecentStats.this.planeDelays.maxInt(q -> q.getValue(), 0);
     }
   }
 
@@ -43,11 +43,11 @@ public class RecentStats {
     }
 
     public int getMaximum() {
-      return RecentStats.this.holdingPointMaximalCount.maxInt(q -> q.getValue());
+      return RecentStats.this.holdingPointMaximalCount.maxInt(q -> q.getValue(), 0);
     }
 
     public int getMaximumDelay() {
-      return RecentStats.this.holdingPointDelays.maxInt(q -> q.getValue());
+      return RecentStats.this.holdingPointDelays.maxInt(q -> q.getValue(), 0);
     }
 
     public int getAverageDelay() {
@@ -91,27 +91,27 @@ public class RecentStats {
     }
 
     public int getMaximalArrivalsUnderApp() {
-      return maximumArrivalsUnderApp.maxInt(q -> q.getValue());
+      return maximumArrivalsUnderApp.maxInt(q -> q.getValue(), 0);
     }
 
     public int getMaximalDeparturesUnderApp() {
-      return maximumDeparturesUnderApp.maxInt(q -> q.getValue());
+      return maximumDeparturesUnderApp.maxInt(q -> q.getValue(), 0);
     }
 
     public int getMaximalUnderApp() {
-      return maximumPlanesUnderApp.maxInt(q -> q.getValue());
+      return maximumPlanesUnderApp.maxInt(q -> q.getValue(), 0);
     }
 
     public int getMaximalArrivals() {
-      return maximumArrivals.maxInt(q -> q.getValue());
+      return maximumArrivals.maxInt(q -> q.getValue(), 0);
     }
 
     public int getMaximalDepartures() {
-      return maximumDepartures.maxInt(q -> q.getValue());
+      return maximumDepartures.maxInt(q -> q.getValue(), 0);
     }
 
     public int getMaximal() {
-      return maximumPlanes.maxInt(q -> q.getValue());
+      return maximumPlanes.maxInt(q -> q.getValue(), 0);
     }
   }
 
@@ -155,11 +155,10 @@ public class RecentStats {
   private int finishedArrivals;
   private int finishedDepartures;
 
-  public void elapseSecond(int secondElapseDuration) {
+  public void elapseSecond() {
     if (recentSecondsElapsed < RECENT_INTERVAL_IN_SECONDS)
       recentSecondsElapsed++;
 
-    elapsedSecondDuration.add(secondElapseDuration);
     ETime nowTime = Acc.now().clone();
     IReadOnlyList<Airplane> planes = Acc.prm().getPlanes();
     int airproxErs = 0;
@@ -174,7 +173,7 @@ public class RecentStats {
       if (plane.isMrvaError())
         mrvaErs++;
 
-      boolean isApp = Acc.prm().getResponsibleAtc(plane) == Acc.atcTwr();
+      boolean isApp = Acc.prm().getResponsibleAtc(plane) == Acc.atcApp();
       if (plane.isArrival()) {
         arrs++;
         if (isApp) aarrs++;
@@ -201,11 +200,11 @@ public class RecentStats {
       this.maximumDepartures.add(new TimedValue<>(nowTime, deps));
       upd = true;
     }
+    this.currentDepartures = deps;
     if (upd) {
       this.maximumPlanes.add(new TimedValue<>(nowTime, arrs + deps));
       upd = false;
     }
-    this.currentDepartures = deps;
     if (aarrs != this.currentArrivalsUnderApp) {
       this.maximumArrivalsUnderApp.add(new TimedValue<>(nowTime, aarrs));
       upd = true;
@@ -233,6 +232,10 @@ public class RecentStats {
     cleanTimedList(this.maximumPlanesUnderApp, lastTime);
     this.numberOfDepartures.remove(q->q.isBefore(lastTime));
     this.numberOfLandings.remove(q->q.isBefore(lastTime));
+  }
+
+  public void registerElapsedSecondDuration(int ms) {
+    elapsedSecondDuration.add(ms);
   }
 
   private <T> void cleanTimedList(IList<TimedValue<T>> lst, ETime lastTime) {

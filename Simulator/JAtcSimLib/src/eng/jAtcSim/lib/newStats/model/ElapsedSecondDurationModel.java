@@ -24,10 +24,10 @@ public class ElapsedSecondDurationModel {
   }
 
   public double getMean() {
-    return mean;
+    return mean / 1000d;
   }
 
   public double getMaximum() {
-    return max;
+    return max / 1000d;
   }
 }

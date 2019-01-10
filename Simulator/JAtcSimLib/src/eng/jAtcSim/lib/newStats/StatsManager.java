@@ -55,6 +55,7 @@ public class StatsManager {
 
   public void elapseSecond() {
     elapsedSecondsCounter.add();
+    recentStats.elapseSecond();
 
     AnalysedPlanes tmp = analyseNumberOfPlanes();
     int hpPlanesCount = Acc.atcTwr().getNumberOfPlanesAtHoldingPoint();
@@ -109,14 +110,19 @@ public class StatsManager {
     return this.recentStats;
   }
 
-  public void registerElapseSecondCalculationDuration(long ms) {
+  public void registerElapseSecondCalculationDuration(int ms) {
     for (Collector collector : collectors) {
       collector.getBusyCounter().add(ms);
     }
+    recentStats.registerElapsedSecondDuration(ms);
   }
 
   public int getElapsedSeconds() {
     return this.elapsedSecondsCounter.getCount();
+  }
+
+  public IReadOnlyList<MoodResult> getFullMoodHistory(){
+    return this.moodResults;
   }
 
   /**

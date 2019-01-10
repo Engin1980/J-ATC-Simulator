@@ -7,7 +7,7 @@
   <startupSettingsFile>$app$/_SettingFiles/defaultStartupSettings.ss.xml</startupSettingsFile>
   <stripSettingsFile>$app$/_SettingFiles/stripSettings.at.xml</stripSettingsFile>
   <speechFormatterFile>$app$/_SettingFiles/speechResponses.fm.xml</speechFormatterFile>
-  <stats blockIntervalSize="10" />
+  <stats snapshotIntervalDistance="10" />
   <radar>
     <styleSettingsFile>$app$/_SettingFiles/radarStyleSettingsInconsolataBig.at.xml</styleSettingsFile>
     <!--<styleSettingsFile>$app$/_SettingFiles/radarStyleSettingsArialUnicodeMt.at.xml</styleSettingsFile>-->
