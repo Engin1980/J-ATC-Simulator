@@ -158,6 +158,7 @@ public class TowerAtc extends ComputerAtc {
   private void updateRunwayMaintenanceDueToSnow() {
     for (Runway key : this.runwayChecks.getKeys()) {
       RunwayCheck rc = this.runwayChecks.get(key);
+      if (rc.isActive()) continue;
       int maxInterval = Acc.weather().getSnowState() == Weather.eSnowState.intensive
           ? RunwayCheck.MAX_SNOW_INTENSIVE_MAINTENANCE_INTERVAL
           : RunwayCheck.MAX_SNOW_MAINTENANCE_INTERVAL;
