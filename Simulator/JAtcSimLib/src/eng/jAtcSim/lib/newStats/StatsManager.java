@@ -86,6 +86,7 @@ public class StatsManager {
           collector.getFinishedPlanesDelays().getDepartures().add(plane.getDelayDifference());
       }
     }
+    recentStats.registerFinishedPlane(plane);
   }
 
   public void registerDeparture(int holdingPointSeconds) {
@@ -93,12 +94,15 @@ public class StatsManager {
       collector.getHoldingPointDelayStats().add(holdingPointSeconds);
       collector.getRunwayMovements().getDepartures().add();
     }
+    recentStats.registerHoldingPointDelay(holdingPointSeconds);
+    recentStats.registerNewArrivalOrDeparture(false);
   }
 
   public void registerArrival() {
     for (Collector collector : collectors) {
       collector.getRunwayMovements().getArrivals().add();
     }
+    recentStats.registerNewArrivalOrDeparture(true);
   }
 
   public RecentStats getRecentStats() {
