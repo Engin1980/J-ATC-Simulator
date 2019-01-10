@@ -13,6 +13,7 @@ import eng.jAtcSim.lib.global.ETime;
 import eng.jAtcSim.lib.newStats.properties.CounterProperty;
 import eng.jAtcSim.lib.newStats.properties.MMM;
 import eng.jAtcSim.lib.newStats.properties.StatisticProperty;
+import eng.jAtcSim.lib.serialization.LoadSave;
 
 public class StatsManager {
   private RecentStats recentStats = new RecentStats();
@@ -42,7 +43,7 @@ public class StatsManager {
   }
 
   public void load(XElement root) {
-    throw new UnsupportedOperationException("NOt implemented yet.");
+    LoadSave.loadField(root, this, "statsManager");
   }
 
   public void init() {
@@ -50,7 +51,7 @@ public class StatsManager {
   }
 
   public void save(XElement root) {
-    throw new UnsupportedOperationException("Not implemented yet.");
+    LoadSave.saveField(root,this,"statsManager");
   }
 
   public void elapseSecond() {
