@@ -177,7 +177,7 @@ public class SwingCanvas implements ICanvas<JComponent> {
   public SwingCanvas() {
     this.c = new JPanel() {
       @Override
-      public void paint(Graphics g) {
+      public void paintComponent(Graphics g) {
         SwingCanvas.this.g = g;
         SwingCanvas.this.paintEvent.raise();
       }
