@@ -1,35 +1,56 @@
 package eng.jAtcSim.frmPacks.shared;
 
-import eng.eSystem.collections.*;
-import eng.eSystem.swing.*;
-import eng.eSystem.swing.extenders.BoxItem;
+import eng.eSystem.collections.ESet;
+import eng.eSystem.collections.IReadOnlySet;
+import eng.eSystem.collections.ISet;
+import eng.eSystem.swing.DialogResult;
+import eng.eSystem.swing.Factory;
+import eng.eSystem.swing.LayoutManager;
 import eng.eSystem.swing.extenders.CheckedListBoxExtender;
 import eng.eSystem.utilites.Selector;
 import eng.eSystem.utilites.StringUtils;
-import eng.eSystem.swing.LayoutManager;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.util.function.Predicate;
-import java.util.regex.Pattern;
 
 public class AdjustSelectionPanel<T> extends JPanel {
 
-  private eng.eSystem.swing.extenders.CheckedListBoxExtender<T> lstBox =
-      new CheckedListBoxExtender<>();
+  private eng.eSystem.swing.extenders.CheckedListBoxExtender<T> lstBox;
   private DialogResult dialogResult = DialogResult.none;
   private ISet<T> checkedItems = new ESet<>();
   private ISet<T> modelItems = new ESet<>();
 
-  public AdjustSelectionPanel() {
+  public AdjustSelectionPanel(Selector<T,String> selector) {
+    this.lstBox = new CheckedListBoxExtender<>(new JList(), selector);
     initComponents();
   }
 
   public void resetDialogResult() {
     this.dialogResult = DialogResult.none;
+  }
+
+  public DialogResult getDialogResult() {
+    return dialogResult;
+  }
+
+  public void setItems(Iterable<T> items) {
+    lstBox.clearItems();
+    lstBox.addItems(items);
+    items.forEach(q -> this.modelItems.add(q));
+  }
+
+  public Iterable<T> getCheckedItems() {
+    IReadOnlySet<T> ret = this.checkedItems;
+    return ret;
+  }
+
+  public void setCheckedItems(Iterable<T> items) {
+    this.checkedItems.clear();
+    this.checkedItems.add(items);
+    lstBox.setCheckedItems(items);
   }
 
   private void initComponents() {
@@ -51,7 +72,7 @@ public class AdjustSelectionPanel<T> extends JPanel {
     LayoutManager.fillBorderedPanel(this, null, pnlFilter, null, null, pnlLst);
   }
 
-  private void txtFilter_keyPressed(JTextField txt, KeyEvent e){
+  private void txtFilter_keyPressed(JTextField txt, KeyEvent e) {
     if (e.getKeyCode() == KeyEvent.VK_ESCAPE)
       txt.setText("");
 
@@ -72,16 +93,14 @@ public class AdjustSelectionPanel<T> extends JPanel {
     IReadOnlySet<T> checkedItems = lstBox.getCheckedItems();
 
     for (T visibleItem : visibleItems) {
-      if (checkedItems.contains(visibleItem)){
-        if (!this.checkedItems.contains(visibleItem)) this.checkedItems.add(visibleItems);
+      if (checkedItems.contains(visibleItem)) {
+        if (!this.checkedItems.contains(visibleItem))
+          this.checkedItems.add(visibleItem);
       } else {
-        if (this.checkedItems.contains(visibleItem)) this.checkedItems.remove(visibleItems);
+        if (this.checkedItems.contains(visibleItem))
+          this.checkedItems.remove(visibleItem);
       }
     }
-  }
-
-  public DialogResult getDialogResult() {
-    return dialogResult;
   }
 
   private void btnOk_click(ActionEvent actionEvent) {
@@ -91,6 +110,12 @@ public class AdjustSelectionPanel<T> extends JPanel {
       this.getRootPane().getParent().setVisible(false);
     });
   }
+
+//  public void setItems(IReadOnlyList<T> items, Selector<T, String> labelSelector) {
+//    this.modelItems.add(items);
+//    lstBox.setDefaultLabelSelector(labelSelector);
+//    lstBox.addItems(items);
+//  }
 
   private void btnCancel_click(ActionEvent actionEvent) {
     dialogResult = DialogResult.cancel;
@@ -103,28 +128,6 @@ public class AdjustSelectionPanel<T> extends JPanel {
 
   private void btnCheckAll_click(ActionEvent actionEvent) {
     lstBox.checkAll();
-  }
-
-  public void setItems(IReadOnlyList<T> items, Selector<T, String> labelSelector) {
-    this.modelItems.add(items);
-    lstBox.setDefaultLabelSelector(labelSelector);
-    lstBox.addItems(items);
-  }
-
-  public void setItems(Iterable<BoxItem<T>> items) {
-    items.forEach(q->this.modelItems.add(q.value));
-    items.forEach(q -> lstBox.addItem(q));
-  }
-
-  public void setCheckedItems(Iterable<T> items) {
-    this.checkedItems.clear();
-    this.checkedItems.add(items);
-    lstBox.setCheckedItems(items);
-  }
-
-  public Iterable<T> getCheckedItems() {
-    IReadOnlySet<T> ret = this.checkedItems;
-    return ret;
   }
 
 }

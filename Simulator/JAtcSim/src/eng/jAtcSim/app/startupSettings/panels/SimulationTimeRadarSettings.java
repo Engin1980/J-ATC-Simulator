@@ -1,17 +1,13 @@
 package eng.jAtcSim.app.startupSettings.panels;
 
-import eng.eSystem.Tuple;
 import eng.eSystem.collections.EList;
-import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IList;
-import eng.eSystem.collections.IMap;
 import eng.eSystem.swing.LayoutManager;
 import eng.eSystem.swing.extenders.ComboBoxExtender;
 import eng.eSystem.swing.extenders.DisplayItem;
-import eng.jAtcSim.app.extenders.XComboBoxExtender;
-import eng.jAtcSim.app.startupSettings.StartupSettings;
 import eng.jAtcSim.app.extenders.NumericUpDownExtender;
 import eng.jAtcSim.app.extenders.TimeExtender;
+import eng.jAtcSim.app.startupSettings.StartupSettings;
 
 import javax.swing.*;
 import java.time.LocalTime;

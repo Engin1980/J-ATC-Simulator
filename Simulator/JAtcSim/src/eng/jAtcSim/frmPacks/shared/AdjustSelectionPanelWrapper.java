@@ -1,8 +1,9 @@
 package eng.jAtcSim.frmPacks.shared;
 
+import eng.eSystem.Tuple;
 import eng.eSystem.swing.DialogResult;
-import eng.eSystem.swing.extenders.BoxItem;
-import eng.jAtcSim.lib.world.Route;
+import eng.eSystem.swing.extenders.DisplayItem;
+import eng.eSystem.utilites.Selector;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,7 +15,7 @@ import java.awt.event.WindowEvent;
 public class AdjustSelectionPanelWrapper<T> {
 
   public interface ActionSelectionPanelWraperListener<T> {
-    Iterable<BoxItem<T>> doInit();
+    Tuple<Iterable<T>, Selector<T, String>> doInit();
 
     Iterable<T> doRequest();
 
@@ -28,8 +29,9 @@ public class AdjustSelectionPanelWrapper<T> {
   public AdjustSelectionPanelWrapper(ActionSelectionPanelWraperListener<T> listener, JButton... buttons) {
     this.lis = listener;
 
-    this.pnl = new AdjustSelectionPanel<>();
-    this.pnl.setItems(lis.doInit());
+    Tuple<Iterable<T>, Selector<T,String>> tmp = lis.doInit();
+    this.pnl = new AdjustSelectionPanel<>(tmp.getB());
+    this.pnl.setItems(tmp.getA());
 
     this.frm = new JFrame();
     frm.getContentPane().add(pnl);

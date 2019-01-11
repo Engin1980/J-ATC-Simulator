@@ -11,7 +11,8 @@ import eng.eSystem.events.EventAnonymousSimple;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.exceptions.ERuntimeException;
-import eng.eSystem.swing.extenders.BoxItem;
+import eng.eSystem.swing.extenders.DisplayItem;
+import eng.eSystem.utilites.Selector;
 import eng.jAtcSim.SwingRadar.SwingCanvas;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.Simulation;
@@ -52,7 +53,9 @@ public class SwingRadarPanel extends JPanel {
   class RoutesAdjustSelectionPanelWrapperListener implements AdjustSelectionPanelWrapper.ActionSelectionPanelWraperListener<Route>{
 
     @Override
-    public Iterable<BoxItem<Route>> doInit() {
+    public Tuple<Iterable<Route>, Selector<Route, String>> doInit() {
+      Tuple<Iterable<Route>, Selector<Route, String>> ret = new Tuple<>();
+
       IMap<Route, IList<RunwayThreshold>> tmp = new EMap<>();
       for (RunwayThreshold threshold : Acc.airport().getAllThresholds()) {
         for (Route route : threshold.getRoutes()) {
@@ -67,12 +70,12 @@ public class SwingRadarPanel extends JPanel {
       IList<Route> orderedRoutes = tmp.getKeys().toList();
       orderedRoutes.sort(new RouteComparator(tmp));
 
-      IList<BoxItem<Route>> items = new EList<>();
-      for (Route route : orderedRoutes) {
+      ret.setA(orderedRoutes);
+      ret.setB(q->{
         EStringBuilder sb = new EStringBuilder();
-        sb.append(route.getName());
+        sb.append(q.getName());
         sb.append(" (");
-        switch (route.getType()) {
+        switch (q.getType()) {
           case sid:
             sb.append("SID:");
             break;
@@ -83,13 +86,14 @@ public class SwingRadarPanel extends JPanel {
             sb.append("TRANS:");
             break;
           default:
-            throw new EEnumValueUnsupportedException(route.getType());
+            throw new EEnumValueUnsupportedException(q.getType());
         }
-        sb.appendItems(tmp.get(route), q -> q.getName(), ", ");
+        sb.appendItems(tmp.get(q), r -> r.getName(), ", ");
         sb.append(")");
-        items.add(new BoxItem<>(route, sb.toString()));
-      }
-      return items;
+        return sb.toString();
+      });
+
+      return ret;
     }
 
     @Override
@@ -106,19 +110,18 @@ public class SwingRadarPanel extends JPanel {
 
   class ApproachesAdjustSelectionPanelWrapperListener implements AdjustSelectionPanelWrapper.ActionSelectionPanelWraperListener<Approach>{
     @Override
-    public Iterable<BoxItem<Approach>> doInit() {
+    public Tuple<Iterable<Approach>, Selector<Approach, String>> doInit() {
+      Tuple<Iterable<Approach>, Selector<Approach, String>> ret = new Tuple<>();
       IList<Approach> tmp = new EList();
 
       for (RunwayThreshold runwayThreshold : Acc.atcTwr().getRunwayConfigurationInUse().getArrivals().select(q -> q.getThreshold())) {
         tmp.add(runwayThreshold.getApproaches());
       }
 
-      IList<BoxItem<Approach>> items = new EList<>();
-      for (Approach approach : tmp) {
-        BoxItem<Approach> bi = new BoxItem<>(approach, approach.getParent().getName() + " " + approach.getTypeString());
-        items.add(bi);
-      }
-      return items;
+      ret.setA(tmp);
+      ret.setB(q->q.getParent().getName()+ " " + q.getTypeString());
+
+      return ret;
     }
 
     @Override
