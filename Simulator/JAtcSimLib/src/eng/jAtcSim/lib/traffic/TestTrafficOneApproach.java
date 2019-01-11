@@ -52,7 +52,7 @@ public class TestTrafficOneApproach extends TestTraffic {
     ret = new Movement(
         new Callsign("CSA", number),
         pt,
-        Acc.now().clone(), 0, false, 270);
+        Acc.now().clone(), 0, false, 290);
 
     return ret;
   }

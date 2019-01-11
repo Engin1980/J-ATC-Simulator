@@ -6,6 +6,7 @@
 
 package eng.jAtcSim.lib.speaking.fromAtc.atc2atc;
 
+import eng.eSystem.exceptions.EApplicationException;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtc2Atc;
 
@@ -29,6 +30,10 @@ public class PlaneSwitchMessage implements IAtc2Atc {
   }
 
   public String getAsString() {
+    if (plane.getAssigneRoute() == null)
+      throw new EApplicationException("Plane " + plane.getCallsign() + " does not have assigned route.");
+    if (plane.getExpectedRunwayThreshold() == null)
+      throw new EApplicationException("Plane " + plane.getCallsign() + " does not have assigned threshold.");
 
     String ret =
         String.format("%1$s (%2$s) [%3$s] via %4$s/%5$s",
@@ -37,7 +42,7 @@ public class PlaneSwitchMessage implements IAtc2Atc {
             message,
             plane.getAssigneRoute().getName(),
             plane.getExpectedRunwayThreshold().getName()
-            );
+        );
 
     return ret;
   }

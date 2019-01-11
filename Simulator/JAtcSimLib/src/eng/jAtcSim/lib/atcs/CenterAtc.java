@@ -205,6 +205,9 @@ public class CenterAtc extends ComputerAtc {
       if (plane.isEmergency())
         ret = Acc.atcApp();
       else {
+        if (closeArrivals.contains(plane) == false){
+          return null;
+        }
         Navaid n = plane.getEntryExitFix();
         double dist = Coordinates.getDistanceInNM(plane.getCoordinate(), n.getCoordinate());
         if (dist <= 10) {

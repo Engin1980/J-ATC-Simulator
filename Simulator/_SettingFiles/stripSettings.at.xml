@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <settings>
-    <size width="250" height="60" />
+    <size width="200" height="60" />
     <textColor>E6E6E6</textColor>
     <twr even="6E6E00" odd="4F4F00" />
     <ctr even="000080" odd="000040" />

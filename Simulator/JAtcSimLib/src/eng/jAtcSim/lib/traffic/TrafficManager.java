@@ -268,8 +268,13 @@ public class TrafficManager {
   private Coordinate generateArrivalCoordinate(Coordinate navFix, Coordinate aipFix) {
     double radial = Coordinates.getBearing(aipFix, navFix);
     radial += Simulation.rnd.nextDouble(-15, 15); // nahodne zatoceni priletoveho radialu
-    double dist = Acc.airport().getCoveredDistance();
-    Coordinate ret = Coordinates.getCoordinate(Acc.airport().getLocation(), (int) radial, dist);
+    double dist =  Coordinates.getDistanceInNM(navFix, Acc.airport().getLocation());
+    if (dist > Acc.airport().getCoveredDistance()){
+      dist = Simulation.rnd.nextDouble(20, 40);
+    } else {
+      dist = Acc.airport().getCoveredDistance() - dist;
+    }
+    Coordinate ret = Coordinates.getCoordinate(navFix, (int) radial, dist);
     return ret;
   }
 
