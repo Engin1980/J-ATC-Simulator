@@ -1,6 +1,7 @@
 package eng.jAtcSim.frmPacks.shared;
 
 import eng.eSystem.collections.*;
+import eng.eSystem.swing.extenders.ComboBoxExtender;
 import eng.eSystem.validation.Validator;
 import eng.jAtcSim.app.controls.ImagePanel;
 import eng.jAtcSim.app.extenders.XComboBoxExtender;
@@ -38,7 +39,7 @@ public class FrmTrafficBarGraph extends JFrame {
   private static final int IMG_WIDTH = 1400;
   private static final int IMG_HEIGHT = 500;
   private static final int MARGIN = 20;
-  private XComboBoxExtender<String> cmbSerie = new XComboBoxExtender<>();
+  private ComboBoxExtender<String> cmbSerie = new ComboBoxExtender<>();
   private String title;
 
   private ImagePanel pnlImage = new ImagePanel(IMG_WIDTH, IMG_HEIGHT);
@@ -126,10 +127,10 @@ public class FrmTrafficBarGraph extends JFrame {
     keyLst.add("Type categories");
 
     String[] keyArr = keyLst.toArray(String.class);
-    cmbSerie.setModel(keyArr);
+    cmbSerie.addItems(keyArr);
     cmbSerie.setSelectedIndex(0);
 
-    cmbSerie.getOnSelectedItemChanged().add(q -> this.updateGraph());
+    cmbSerie.getOnSelectionChanged().add(q -> this.updateGraph());
 
     updateGraph();
   }

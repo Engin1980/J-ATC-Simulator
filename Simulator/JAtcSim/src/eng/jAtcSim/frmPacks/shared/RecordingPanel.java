@@ -2,6 +2,7 @@ package eng.jAtcSim.frmPacks.shared;
 
 import eng.eSystem.events.EventAnonymous;
 import eng.eSystem.events.EventAnonymousSimple;
+import eng.eSystem.swing.extenders.ComboBoxExtender;
 import eng.eSystem.utilites.ExceptionUtils;
 import eng.eSystem.utilites.NumberUtils;
 import eng.eSystem.utilites.awt.ComponentUtils;
@@ -30,12 +31,12 @@ public class RecordingPanel extends JPanel {
   private EventAnonymous<Settings> recordingStarted = new EventAnonymous<>();
   private EventAnonymousSimple recordingStopped = new EventAnonymousSimple();
   private EventAnonymousSimple viewRecordingFolderRequest = new EventAnonymousSimple();
-  private XComboBoxExtender<String> cmbImageType;
+  private ComboBoxExtender<String> cmbImageType;
   private XmlFileSelectorExtender fleFfmpeg;
   private XmlFileSelectorExtender fleVideoIn;
   private NumericUpDownExtender nudFPS;
   private XmlFileSelectorExtender fleVideoOut;
-  private XComboBoxExtender<String> cmbVideoImageType;
+  private ComboBoxExtender<String> cmbVideoImageType;
 
   public RecordingPanel(Settings settings) {
     pnlBefore = buildBeforePanel(settings);
@@ -85,7 +86,7 @@ public class RecordingPanel extends JPanel {
     nudWidth = new NumericUpDownExtender(new JSpinner(), 100, 4000, 1600, 100);
     nudHeight = new NumericUpDownExtender(new JSpinner(), 100, 4000, 900, 100);
     nudJpgQuality = new NumericUpDownExtender(new JSpinner(), 0, 100, 95, 5);
-    cmbImageType = new XComboBoxExtender<>(new String[]{"jpg", "png", "bmp"});
+    cmbImageType = new ComboBoxExtender<>(new String[]{"jpg", "png", "bmp"});
     if (sett != null) {
       nudInterval.setValue(sett.getInterval());
       fleFolder.setFileName(sett.getPath());

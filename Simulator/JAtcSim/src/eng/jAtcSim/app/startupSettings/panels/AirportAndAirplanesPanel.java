@@ -1,7 +1,9 @@
 package eng.jAtcSim.app.startupSettings.panels;
 
 import eng.eSystem.collections.EList;
+import eng.eSystem.collections.IList;
 import eng.eSystem.events.EventAnonymous;
+import eng.eSystem.swing.extenders.ComboBoxExtender;
 import eng.eSystem.utilites.ExceptionUtils;
 import eng.jAtcSim.app.extenders.swingFactory.SwingFactory;
 import eng.jAtcSim.app.extenders.XmlFileSelectorExtender;
@@ -20,7 +22,24 @@ import java.awt.event.ActionEvent;
 
 public class AirportAndAirplanesPanel extends JStartupPanel {
 
-  private XComboBoxExtender<String> cmbAirports;
+  static class AirportInfo{
+    public String icao;
+    public String title;
+
+    public AirportInfo(String icao, String title) {
+      this.icao = icao;
+      this.title = title;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+      if (obj instanceof AirportInfo == false) return false;
+      AirportInfo other = (AirportInfo) obj;
+      return this.icao.equals(other.icao);
+    }
+  }
+
+  private ComboBoxExtender<AirportInfo> cmbAirports;
   private XmlFileSelectorExtender fleFleet;
   private XmlFileSelectorExtender fleTypes;
   private XmlFileSelectorExtender fleArea;
@@ -39,7 +58,10 @@ public class AirportAndAirplanesPanel extends JStartupPanel {
 
   @Override
   public void fillBySettings(StartupSettings settings) {
-    cmbAirports.setSelectedItem(settings.recent.icao);
+    cmbAirports.clearItems();
+    AirportInfo ai = new AirportInfo(settings.recent.icao, settings.recent.icao + " (area not loaded)");
+    cmbAirports.addItem(ai);
+    cmbAirports.setSelectedItem(ai);
 
     fleFleet.setFileName(settings.files.fleetsXmlFile);
     fleTypes.setFileName(settings.files.planesXmlFile);
@@ -48,7 +70,7 @@ public class AirportAndAirplanesPanel extends JStartupPanel {
 
   @Override
   public void fillSettingsBy(StartupSettings settings) {
-    settings.recent.icao = cmbAirports.getSelectedItem();
+    settings.recent.icao = cmbAirports.getSelectedItem().icao;
     settings.files.fleetsXmlFile = fleFleet.getFileName();
     settings.files.planesXmlFile = fleTypes.getFileName();
     settings.files.areaXmlFile = fleArea.getFileName();
@@ -108,9 +130,12 @@ public class AirportAndAirplanesPanel extends JStartupPanel {
     fleTypes = new XmlFileSelectorExtender(SwingFactory.FileDialogType.types);
     fleArea = new XmlFileSelectorExtender(SwingFactory.FileDialogType.area);
     btnLoadArea = SwingFactory.createButton("Load", this::btnLoadArea_click);
-    cmbAirports = new XComboBoxExtender<>();
-    cmbAirports.getOnSelectedItemChanged().add(o ->
-        this.getOnIcaoChanged().raise(cmbAirports.getSelectedItem()));
+    cmbAirports = new ComboBoxExtender<>(q->q.title);
+    cmbAirports.getOnSelectionChanged().add(o ->
+    {
+      if (cmbAirports.getSelectedItem() != null)
+        this.getOnIcaoChanged().raise(cmbAirports.getSelectedItem().icao);
+    });
   }
 
   private void btnLoadArea_click(ActionEvent actionEvent) {
@@ -132,23 +157,19 @@ public class AirportAndAirplanesPanel extends JStartupPanel {
 
 
   private void fillAirportsComboBox(Area area) {
-    String selectedItem = cmbAirports.getSelectedItem();
-    EList<XComboBoxExtender.Item<String>> aips = new EList<>();
+    AirportInfo selectedItem = cmbAirports.getSelectedItem();
+    IList<AirportInfo> tmp;
+
     if (area != null) {
-      for (Airport airport : area.getAirports()) {
-        aips.add(
-            new XComboBoxExtender.Item<>(
-                airport.getName() + " [" + airport.getIcao() + "]",
-                airport.getIcao()));
-      }
+      tmp = area.getAirports().select(q->
+          new AirportInfo(q.getIcao(), q.getName() + " [" + q.getIcao() + "]"));
     } else {
-      aips.add(
-          new XComboBoxExtender.Item<>(
-              "Area not loaded", "----"));
+      tmp = new EList<>( new AirportInfo[]{new AirportInfo("----", "(Area not loaded)")});
     }
 
-    cmbAirports.setModel(aips);
-    if (selectedItem == null)
+    cmbAirports.clearItems();
+    cmbAirports.addItems(tmp);
+    if (selectedItem == null || cmbAirports.getItems().isNone(q->q.icao.equals(selectedItem.icao)))
       cmbAirports.setSelectedIndex(0);
     else
       cmbAirports.setSelectedItem(selectedItem);

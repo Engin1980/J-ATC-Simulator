@@ -7,6 +7,8 @@ package eng.jAtcSim.app.startupSettings.panels;
 
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
+import eng.eSystem.swing.extenders.ComboBoxExtender;
+import eng.eSystem.swing.extenders.DisplayItem;
 import eng.eSystem.utilites.awt.ComponentUtils;
 import eng.jAtcSim.app.extenders.*;
 import eng.jAtcSim.app.extenders.swingFactory.SwingFactory;
@@ -26,7 +28,7 @@ import java.util.Arrays;
 public class TrafficPanel extends JStartupPanel {
 
   private javax.swing.JCheckBox chkAllowDelays;
-  private XComboBoxExtender<Double> cmbEmergencyProbability;
+  private ComboBoxExtender<DisplayItem<Double>> cmbEmergencyProbability;
   private javax.swing.JCheckBox chkCustomExtendedCallsigns;
   private javax.swing.ButtonGroup grpRdb;
   private NumericUpDownExtender nudMaxPlanes;
@@ -104,14 +106,14 @@ public class TrafficPanel extends JStartupPanel {
     settings.traffic.customTraffic.setCompanies(txtCompanies.getItems());
     settings.traffic.customTraffic.setCountryCodes(txtCountryCodes.getItems());
 
-    settings.traffic.emergencyPerDayProbability = cmbEmergencyProbability.getSelectedItem();
+    settings.traffic.emergencyPerDayProbability = cmbEmergencyProbability.getSelectedItem().value;
   }
 
   private void setCmbEmergencyProbabilityByClosestValue(double emergencyPerDayProbability) {
     double minDiff = Double.MAX_VALUE;
     int bestIndex = 0;
-    for (int i = 0; i < cmbEmergencyProbability.getCount(); i++) {
-      double item = cmbEmergencyProbability.getItem(i);
+    for (int i = 0; i < cmbEmergencyProbability.getItems().size(); i++) {
+      double item = cmbEmergencyProbability.getItem(i).value;
       if (Math.abs(item - emergencyPerDayProbability) < minDiff) {
         minDiff = Math.abs(item - emergencyPerDayProbability);
         bestIndex = i;
@@ -239,7 +241,7 @@ public class TrafficPanel extends JStartupPanel {
     txtCompanies = new ItemTextFieldExtender();
     txtCountryCodes = new ItemTextFieldExtender();
 
-    cmbEmergencyProbability = new XComboBoxExtender<>();
+    cmbEmergencyProbability = new ComboBoxExtender<>(q->q.label);
     setCmbEmergencyProbabilityModel();
 
     grpRdb.add(rdbXml);
@@ -273,6 +275,7 @@ public class TrafficPanel extends JStartupPanel {
 
   private static GenericTraffic generateCustomTraffic(StartupSettings.Traffic trf) {
     // Taken from JAtcSim class ! ! !
+    //TODO remove duplicit
     GenericTraffic ret = new GenericTraffic(
         trf.customTraffic.companies, trf.customTraffic.countryCodes,
         trf.customTraffic.movementsPerHour,
@@ -287,20 +290,20 @@ public class TrafficPanel extends JStartupPanel {
   }
 
   private void setCmbEmergencyProbabilityModel() {
-    IList<XComboBoxExtender.Item<Double>> lst = new EList<>();
+    IList<DisplayItem<Double>> lst = new EList<>();
 
-    lst.add(new XComboBoxExtender.Item<>("Off", -1d));
-    lst.add(new XComboBoxExtender.Item<>("Once per hour", 24d));
-    lst.add(new XComboBoxExtender.Item<>("Once per three hours", 8d));
-    lst.add(new XComboBoxExtender.Item<>("Once per six hours", 4d));
-    lst.add(new XComboBoxExtender.Item<>("Once per twelve hours", 2d));
-    lst.add(new XComboBoxExtender.Item<>("Once per day", 1d));
-    lst.add(new XComboBoxExtender.Item<>("Once per three days", 1 / 3d));
-    lst.add(new XComboBoxExtender.Item<>("Once per week", 1 / 7d));
-    lst.add(new XComboBoxExtender.Item<>("Once per two weeks", 1 / 14d));
-    lst.add(new XComboBoxExtender.Item<>("Once per month", 1 / 30d));
+    lst.add(new DisplayItem<>("Off", -1d));
+    lst.add(new DisplayItem<>("Once per hour", 24d));
+    lst.add(new DisplayItem<>("Once per three hours", 8d));
+    lst.add(new DisplayItem<>("Once per six hours", 4d));
+    lst.add(new DisplayItem<>("Once per twelve hours", 2d));
+    lst.add(new DisplayItem<>("Once per day", 1d));
+    lst.add(new DisplayItem<>("Once per three days", 1 / 3d));
+    lst.add(new DisplayItem<>("Once per week", 1 / 7d));
+    lst.add(new DisplayItem<>("Once per two weeks", 1 / 14d));
+    lst.add(new DisplayItem<>("Once per month", 1 / 30d));
 
-    cmbEmergencyProbability.setModel(lst);
+    cmbEmergencyProbability.addItems(lst);
   }
 
   private void updateCustomPanelState() {

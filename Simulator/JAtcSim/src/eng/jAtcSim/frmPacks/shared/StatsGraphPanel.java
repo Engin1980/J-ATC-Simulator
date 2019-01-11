@@ -1,11 +1,12 @@
 package eng.jAtcSim.frmPacks.shared;
 
-import eng.eSystem.collections.*;
+import eng.eSystem.collections.EList;
+import eng.eSystem.collections.IList;
+import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.swing.LayoutManager;
+import eng.eSystem.swing.extenders.ComboBoxExtender;
 import eng.eSystem.utilites.ArrayUtils;
-import eng.eSystem.utilites.StringUtils;
 import eng.jAtcSim.app.controls.ImagePanel;
-import eng.jAtcSim.app.extenders.XComboBoxExtender;
 import eng.jAtcSim.lib.newStats.Snapshot;
 import eng.jAtcSim.lib.newStats.StatsManager;
 import org.jfree.chart.JFreeChart;
@@ -15,11 +16,12 @@ import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.labels.StandardCategoryItemLabelGenerator;
 import org.jfree.chart.plot.CategoryPlot;
-import org.jfree.chart.renderer.category.*;
+import org.jfree.chart.renderer.category.CategoryItemRenderer;
+import org.jfree.chart.renderer.category.LineRenderer3D;
+import org.jfree.chart.renderer.category.StackedBarRenderer;
 import org.jfree.data.category.DefaultCategoryDataset;
 
 import javax.swing.*;
-import javax.swing.text.StyledEditorKit;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.function.Function;
@@ -51,7 +53,7 @@ public class StatsGraphPanel extends JPanel {
   private static final int IMG_WIDTH = 1500;
   private static final int IMG_HEIGHT = 900;
   private static IReadOnlyList<Measure> measures;
-  private XComboBoxExtender<String> cmbMeasures;
+  private ComboBoxExtender<String> cmbMeasures;
   private ImagePanel pnlImage;
   private StatsManager statsManager;
 
@@ -121,12 +123,12 @@ public class StatsGraphPanel extends JPanel {
   }
 
   private void initComponents() {
-    cmbMeasures = new XComboBoxExtender<>();
-    cmbMeasures.setModel(StatsGraphPanel.measures.select(q -> q.title).toArray(String.class));
-    cmbMeasures.getOnSelectedItemChanged().add(this::cmbMeasure_selectionChanged);
+    cmbMeasures = new ComboBoxExtender<>();
+    cmbMeasures.addItems(StatsGraphPanel.measures.select(q -> q.title).toArray(String.class));
+    cmbMeasures.getOnSelectionChanged().add(this::cmbMeasure_selectionChanged);
   }
 
-  private void cmbMeasure_selectionChanged(XComboBoxExtender<String> source) {
+  private void cmbMeasure_selectionChanged(ComboBoxExtender<String> source) {
     String key = source.getSelectedItem();
     Measure m = measures.getFirst(q->q.title.equals(key));
     GraphDataSet gds = buildGraphDataSet(m);

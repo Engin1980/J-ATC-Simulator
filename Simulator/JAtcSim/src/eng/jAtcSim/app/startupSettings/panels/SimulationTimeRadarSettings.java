@@ -1,8 +1,13 @@
 package eng.jAtcSim.app.startupSettings.panels;
 
+import eng.eSystem.Tuple;
+import eng.eSystem.collections.EList;
 import eng.eSystem.collections.EMap;
+import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IMap;
 import eng.eSystem.swing.LayoutManager;
+import eng.eSystem.swing.extenders.ComboBoxExtender;
+import eng.eSystem.swing.extenders.DisplayItem;
 import eng.jAtcSim.app.extenders.XComboBoxExtender;
 import eng.jAtcSim.app.startupSettings.StartupSettings;
 import eng.jAtcSim.app.extenders.NumericUpDownExtender;
@@ -18,7 +23,7 @@ public class SimulationTimeRadarSettings extends JStartupPanel {
 
   private NumericUpDownExtender nudSecondLength;
   private TimeExtender tmeTime;
-  private XComboBoxExtender<String> cmbRadarClass;
+  private ComboBoxExtender<DisplayItem<String>> cmbRadarClass;
 
   public SimulationTimeRadarSettings() {
     initComponents();
@@ -28,14 +33,14 @@ public class SimulationTimeRadarSettings extends JStartupPanel {
   public void fillBySettings(StartupSettings settings) {
     this.nudSecondLength.setValue(settings.simulation.secondLengthInMs);
     this.tmeTime.setTime(settings.recent.time);
-    this.cmbRadarClass.setSelectedItem(settings.radar.packClass);
+    this.cmbRadarClass.setSelectedItem(new DisplayItem<>("-", settings.radar.packClass));
   }
 
   @Override
   public void fillSettingsBy(StartupSettings settings) {
     settings.simulation.secondLengthInMs = this.nudSecondLength.getValue();
     settings.recent.time = this.tmeTime.getTime();
-    settings.radar.packClass = this.cmbRadarClass.getSelectedItem();
+    settings.radar.packClass = this.cmbRadarClass.getSelectedItem().value;
   }
 
   private void initComponents() {
@@ -48,7 +53,7 @@ public class SimulationTimeRadarSettings extends JStartupPanel {
   private void createLayout() {
 
     JButton btnNow = new JButton("Set current");
-    btnNow.addActionListener(q->{
+    btnNow.addActionListener(q -> {
       tmeTime.setTime(LocalTime.now());
     });
 
@@ -64,16 +69,17 @@ public class SimulationTimeRadarSettings extends JStartupPanel {
     this.add(pnl);
   }
 
+
   private void createComponents() {
     nudSecondLength = new NumericUpDownExtender(new JSpinner(), 100, 3000, 1000, 200);
     java.time.LocalTime tm = java.time.LocalTime.now();
     tmeTime = new TimeExtender(tm);
     LayoutManager.setFixedWidth(tmeTime.getControl(), 100);
 
-    IMap<String, String> rdrTypes = new EMap<>();
-    rdrTypes.set("SDI", "eng.jAtcSim.frmPacks.sdi.Pack");
-    rdrTypes.set("MDI", "eng.jAtcSim.frmPacks.mdi.Pack");
-    cmbRadarClass = new XComboBoxExtender<>(rdrTypes);
+    IList<DisplayItem<String>> rdrTypes = new EList<>();
+    rdrTypes.add(new DisplayItem<>("SDI", "eng.jAtcSim.frmPacks.sdi.Pack"));
+    rdrTypes.add(new DisplayItem<>("MDI", "eng.jAtcSim.frmPacks.mdi.Pack"));
+    cmbRadarClass = new ComboBoxExtender<>(q -> q.label, rdrTypes);
   }
 }
 

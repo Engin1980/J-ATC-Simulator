@@ -1,5 +1,6 @@
 package eng.jAtcSim.lib.global.newSources;
 
+import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.xmlSerialization.XmlSerializer;
 import eng.eSystem.xmlSerialization.XmlSettings;
@@ -40,7 +41,9 @@ public class AreaSource extends Source<Area> {
   }
 
   public Airport getActiveAirport() {
-    Airport ret = area.getAirports().getFirst(q -> q.getIcao().equals(icao));
+    Airport ret = area.getAirports().tryGetFirst(q -> q.getIcao().equals(icao));
+    if (ret == null)
+      throw new EApplicationException("Unable to load airport {" + icao + "} from selected area file.");
     return ret;
   }
 
