@@ -160,6 +160,7 @@ class TransformationLayer {
     }
   }
 
+  private boolean isMeReady = false;
   private ICanvas c;
   private Coordinate topLeft;
   private Coordinate bottomRight;
@@ -329,6 +330,10 @@ class TransformationLayer {
     c.drawTextBlock(lines, location, font, color);
   }
 
+  public boolean isReady(){
+    return isMeReady && c.isReady();
+  }
+
   void drawCross(Coordinate coordinate, Color color, int length, int width) {
     Point p = toPoint(coordinate);
     c.drawCross(p, color, length, width);
@@ -372,6 +377,7 @@ class TransformationLayer {
   private void resetBottomRight() {
     //if (c.isReady() == false) return;
     if (c.isReady() && initialData != null) {
+      this.isMeReady = true;
       this.scale = initialData.widthInNm / c.getWidth();
 
       Coordinate localTopLeft = Coordinates.getCoordinate(

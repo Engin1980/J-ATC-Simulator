@@ -456,7 +456,6 @@ public class Radar {
    * @param force True if radar should be redrawn not due to simulation second elapsed state.
    */
   public void redraw(boolean force) {
-
     if (force || radarRedrawCounter.increase()) { // only if forced or second has elapsed
       if (!force && planeRedrawCounter.increase()) { // only if a second has elapsed
         if (styleSettings.switchingPlaneAlternatingColor != null) switchFlagTrue = !switchFlagTrue;
@@ -686,6 +685,10 @@ public class Radar {
   }
 
   private void canvas_onPaint(ICanvas sender) {
+    if (tl.isReady() == false) {
+      drawBackground();
+      return;
+    }
     c.beforeDraw();
     drawBackground();
     drawBorders();

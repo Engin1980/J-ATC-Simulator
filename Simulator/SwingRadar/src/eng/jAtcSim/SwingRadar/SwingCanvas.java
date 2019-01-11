@@ -143,14 +143,6 @@ public class SwingCanvas implements ICanvas<JComponent> {
     }
   }
 
-  /**
-   * Margin on x axis for text prints.
-   */
-  private static final int xMargin = 4;
-  /**
-   * Margin on y axis for text prints.
-   */
-  private static final int yMargin = -2;
   private static final double MAX_TEXT_WIDTH_RATIO = .45;
   private static final double MAX_TEXT_TOP_RIGHT_WIDTH_RATIO = .80;
   private static final int TEXT_WIDTH_MARGIN = 16;
@@ -261,21 +253,18 @@ public class SwingCanvas implements ICanvas<JComponent> {
 
   @Override
   public void drawLine(int x1, int y1, int x2, int y2, Color color, int width) {
-    if (!isReady()) return;
     g.setColor(Coloring.get(color));
     g.drawLine(x1, y1, x2, y2);
   }
 
   @Override
   public void fillRectangle(int x, int y, int width, int height, Color color) {
-    if (!isReady()) return;
     g.setColor(Coloring.get(color));
     g.fillRect(x, y, width, height);
   }
 
   @Override
   public void drawPoint(int x, int y, Color color, int width) {
-    if (!isReady()) return;
     g.setColor(Coloring.get(color));
     int step = width / 2;
     g.fillOval(x - step, y - step, width, width);
@@ -283,7 +272,6 @@ public class SwingCanvas implements ICanvas<JComponent> {
 
   @Override
   public void drawCircleAround(Point p, int distanceInPixels, Color color, int width) {
-    if (!isReady()) return;
     g.setColor(Coloring.get(color));
     int step = distanceInPixels / 2;
     g.drawOval(p.x - step, p.y - step, distanceInPixels, distanceInPixels);
@@ -291,7 +279,6 @@ public class SwingCanvas implements ICanvas<JComponent> {
 
   @Override
   public void drawTriangleAround(Point p, int distanceInPixels, Color color, int width) {
-    if (!isReady()) return;
     Point[] pts = new Point[3];
     double tStep = distanceInPixels / 3d;
     pts[0] = new Point(p.x, p.y - (int) (2 * tStep));
@@ -307,7 +294,6 @@ public class SwingCanvas implements ICanvas<JComponent> {
 
   @Override
   public void drawCross(Point p, Color color, int length, int width) {
-    if (!isReady()) return;
     int hl = length / 2;
 
     Point topLeft = new Point(p.x - hl, p.y - hl);
@@ -321,7 +307,6 @@ public class SwingCanvas implements ICanvas<JComponent> {
 
   @Override
   public void drawArc(Point p, int xRadius, int yRadius, int fromAngle, int toAngle, Color color) {
-    if (!isReady()) return;
     g.setColor(Coloring.get(color));
     Point orig = new Point(p.x - xRadius, p.y - yRadius);
     int angleLength = (toAngle < fromAngle) ? (toAngle + 360) : toAngle - fromAngle;
@@ -331,8 +316,6 @@ public class SwingCanvas implements ICanvas<JComponent> {
 
   @Override
   public void drawText(String text, Point p, int xShiftInPixels, int yShiftInPixels, Font font, Color color) {
-    if (!isReady()) return;
-
     String[] lines = text.split(System.getProperty("line.separator"));
 
     int x = p.x + xShiftInPixels;
@@ -353,7 +336,6 @@ public class SwingCanvas implements ICanvas<JComponent> {
 
   @Override
   public void drawTextBlock(List<String> lines, TextBlockLocation location, Font font, Color color) {
-    if (!isReady()) return;
     if (lines.isEmpty()) {
       return;
     } else if (location.isBottom())
