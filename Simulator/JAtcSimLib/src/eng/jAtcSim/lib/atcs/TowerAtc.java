@@ -368,7 +368,6 @@ public class TowerAtc extends ComputerAtc {
     if (plane.isArrival()) {
       if (plane.getState() == Airplane.State.landed) {
         arrivalManager.unregisterFinishedArrival(plane);
-        Acc.stats().registerArrival();
       }
       //GO-AROUNDed planes are not unregistered, they have been unregistered previously
     }
@@ -395,6 +394,8 @@ public class TowerAtc extends ComputerAtc {
   public void removePlaneDeletedFromGame(Airplane plane) {
     if (plane.isArrival()) {
       arrivalManager.deletePlane(plane);
+      //TODO this will add to stats even planes deleted from the game by a user(?)
+      Acc.stats().registerArrival();
     }
     if (plane.isDeparture()) {
       departureManager.deletePlane(plane);
