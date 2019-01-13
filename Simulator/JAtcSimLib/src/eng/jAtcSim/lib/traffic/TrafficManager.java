@@ -269,10 +269,11 @@ public class TrafficManager {
     double radial = Coordinates.getBearing(aipFix, navFix);
     radial += Simulation.rnd.nextDouble(-15, 15); // nahodne zatoceni priletoveho radialu
     double dist =  Coordinates.getDistanceInNM(navFix, Acc.airport().getLocation());
-    if (dist > Acc.airport().getCoveredDistance()){
-      dist = Simulation.rnd.nextDouble(20, 40);
+    if (dist > (Acc.airport().getCoveredDistance())){
+      dist = Simulation.rnd.nextDouble(25, 40);
     } else {
       dist = Acc.airport().getCoveredDistance() - dist;
+      if (dist < 25) dist = Simulation.rnd.nextDouble(25,40);
     }
     Coordinate ret = Coordinates.getCoordinate(navFix, (int) radial, dist);
     return ret;
