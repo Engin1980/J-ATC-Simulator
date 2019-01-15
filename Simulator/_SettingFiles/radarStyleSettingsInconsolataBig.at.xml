@@ -17,10 +17,10 @@
   <activeRunway color="FFFFFF" width="3"/>
   <closedRunway color="FFAAAA" width="3"/>
 
-  <ilsApproach width="1" color="FF00FF" length="15" />
-  <gnssApproach color="FF0000" width="1" length="15" />
-  <ndbApproach color="00FF00" width="1" length="15" />
-  <vorApproach color="00FFFF" width="1" length="15" />
+  <ilsApproach width="1" color="FF00FF" length="15"/>
+  <gnssApproach color="FF0000" width="1" length="15"/>
+  <ndbApproach color="00FF00" width="1" length="15"/>
+  <vorApproach color="00FFFF" width="1" length="15"/>
 
   <navVOR color="55FF55" width="3" borderWidth="1" borderDistance="9"/>
   <navNDB color="5555FF" width="3" borderWidth="1" borderDistance="10"/>
@@ -33,14 +33,14 @@
   <borderCtr color="0000A0" width="1"/>
   <borderTma color="0000A0" width="1"/>
   <borderMrva color="555555" width="1">
-    <font name="Inconsolata" size="14" style="0"/>
+    <font family="Inconsolata" size="14" style="0"/>
   </borderMrva>
   <borderRestricted color="FF0000" width="1">
-    <font name="Inconsolata" size="14" style="0" />
+    <font family="Inconsolata" size="14" style="0"/>
   </borderRestricted>
 
   <infoLine color="FFFF00" width="4">
-    <font name="Inconsolata" size="16" style="0"/>
+    <font family="Inconsolata" size="16" style="0"/>
   </infoLine>
 
   <mapBackcolor>000000</mapBackcolor>
@@ -50,22 +50,22 @@
 
   <!-- style: 0=plain, 1=bold, 2=italic -->
   <atc color="DDDDDD">
-    <font name="Inconsolata" size="16" style="0"/>
+    <font family="Inconsolata" size="16" style="0"/>
   </atc>
   <plane color="00FF00">
-    <font name="Inconsolata" size="16" style="0"/>
+    <font family="Inconsolata" size="16" style="0"/>
   </plane>
   <system color="FFFFFF">
-    <font name="Inconsolata" size="16" style="0"/>
+    <font family="Inconsolata" size="16" style="0"/>
   </system>
   <time color="AAAAFF">
-    <font name="Inconsolata" size="14" style="0"/>
+    <font family="Inconsolata" size="14" style="0"/>
   </time>
   <callsign color="000000">
-    <font name="Inconsolata" size="16" style="0"/>
+    <font family="Inconsolata" size="16" style="0"/>
   </callsign>
   <navaid color="000000">
-    <font name="Inconsolata" size="14" style="0"/>
+    <font family="Inconsolata" size="14" style="0"/>
   </navaid>
   <switchingPlaneAlternatingColor>FFFFFF</switchingPlaneAlternatingColor>
 

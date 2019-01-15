@@ -8,7 +8,7 @@ import eng.jAtcSim.radarBase.global.Font;
 
 public class RadarFontParser implements IElementParser<Font> {
 
-  public final static String ATTR_FAMILY = "name";
+  public final static String ATTR_FAMILY = "family";
   public final static String ATTR_STYLE = "style";
   public final static String ATTR_SIZE = "size";
 

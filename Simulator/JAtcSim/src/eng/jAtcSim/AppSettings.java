@@ -8,6 +8,7 @@ import eng.eSystem.exceptions.EXmlException;
 
 import eng.eSystem.xmlSerialization.XmlSerializer;
 import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
+import eng.jAtcSim.frmPacks.shared.FlightStripSettings;
 import eng.jAtcSim.radarBase.RadarDisplaySettings;
 
 import java.nio.file.Path;
@@ -86,6 +87,8 @@ public class AppSettings {
   public Path stripSettingsFile;
   public Path speechFormatterFile;
   public Stats stats = new Stats();
+  @XmlIgnore
+  private FlightStripSettings flightStripSettings = null;
 
   public static Path getApplicationFolder() {
     return applicationFolder;
@@ -177,6 +180,18 @@ public class AppSettings {
   private static Path getUnderAppFolder(String path) {
     Path ret = Paths.get(applicationFolder.toString(), path);
     return ret;
+  }
+
+  public FlightStripSettings getLoadedFlightStripSettings(){
+    if (flightStripSettings == null){
+      try {
+        this.flightStripSettings =
+            XmlLoadHelper.loadStripSettings(this.stripSettingsFile.toString());
+      }catch (Exception ex){
+        throw new EApplicationException("Failed to load flight-strip-settings from " + this.startupSettingsFile.toString(), ex);
+      }
+    }
+    return this.flightStripSettings;
   }
 
   private AppSettings() {

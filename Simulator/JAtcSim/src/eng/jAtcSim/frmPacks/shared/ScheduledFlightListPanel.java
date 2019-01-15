@@ -2,7 +2,6 @@ package eng.jAtcSim.frmPacks.shared;
 
 import eng.eSystem.collections.IReadOnlyList;
 import eng.jAtcSim.AppSettings;
-import eng.jAtcSim.XmlLoadHelper;
 import eng.jAtcSim.lib.Simulation;
 import eng.jAtcSim.lib.airplanes.Callsign;
 import eng.jAtcSim.lib.traffic.Movement;
@@ -23,8 +22,7 @@ public class ScheduledFlightListPanel extends JPanel {
 
   public void init(Simulation sim, AppSettings appSettings) {
     this.sim = sim;
-    ScheduledFlightStripPanel.setStripSettings(
-        XmlLoadHelper.loadStripSettings(appSettings.stripSettingsFile.toString()));
+    ScheduledFlightStripPanel.setStripSettings(appSettings.getLoadedFlightStripSettings());
 
     pnlContent = LayoutManager.createBoxPanel(LayoutManager.eHorizontalAlign.left, 4);
     pnlContent.setName("ScheduledFlightListPanel_ContentPanel");
@@ -75,8 +73,7 @@ public class ScheduledFlightListPanel extends JPanel {
     if (itemCount > 0) {
       if (this.firstItemCallsign == null || this.firstItemCallsign.equals(mvm.getFirst().getCallsign()) == false)
         return true;
-      if (this.lastItemCallsign == null || this.lastItemCallsign.equals(mvm.getLast().getCallsign()) == false)
-        return true;
+      return this.lastItemCallsign == null || this.lastItemCallsign.equals(mvm.getLast().getCallsign()) == false;
     }
     return false;
   }
@@ -125,10 +122,7 @@ class ScheduledFlightStripPanel extends JPanel {
 
     this.setLayout(new BorderLayout());
 
-    Dimension dim = stripSettings.size;
-    this.setPreferredSize(dim);
-    this.setMinimumSize(dim);
-    this.setMaximumSize(dim);
+    LayoutManager.setFixedSize(this, stripSettings.scheduledFlightStripSize);
 
     Color color = ScheduledFlightStripPanel.getColor(mvm);
     this.setBackground(color);
@@ -149,28 +143,38 @@ class ScheduledFlightStripPanel extends JPanel {
 
     JLabel lblTime = new JLabel(movement.getAppExpectedTime().toTimeString());
     setLabelFixedSize(lblTime, TIME_DIMENSION);
-    JLabel lblDelay = new JLabel("+" + Integer.toString(movement.getDelayInMinutes()));
+    JLabel lblDelay = new JLabel("+" + movement.getDelayInMinutes());
     setLabelFixedSize(lblDelay, DELAY_DIMENSION);
 
+    JComponent [] cmps = new JComponent[]{lblCallsign, lblDepartureArrival, lblTypeName, lblTime, lblDelay, null};
 
-    JPanel firstLine = LayoutManager.createFlowPanel(
-        LayoutManager.eVerticalAlign.middle, 0, lblCallsign, lblTypeName, lblDepartureArrival);
-    JPanel secondLine = LayoutManager.createFlowPanel(
-        LayoutManager.eVerticalAlign.middle, 0, lblTime, lblDelay);
-    JPanel pnl = LayoutManager.createBoxPanel(LayoutManager.eHorizontalAlign.left, 0, firstLine, secondLine);
-
-    adjustComponentStyle(bgColor, frColor, normalFont,
-        firstLine, secondLine);
-
-    adjustComponentStyle(bgColor, frColor, normalFont,
-        lblCallsign, lblTypeName, lblDepartureArrival, lblTime, lblDelay);
+    JPanel pnl = LayoutManager.createGridPanel(2, 3, 0, cmps);
+    adjustComponentStyle(bgColor, frColor, normalFont, cmps);
+    adjustComponentStyle(bgColor, frColor, normalFont, pnl);
+    pnl = LayoutManager.createBorderedPanel(stripSettings.stripBorder, pnl);
+    adjustComponentStyle(bgColor, frColor, normalFont, pnl);
 
     lblCallsign.setFont(boldFont);
-
-    pnl.setBackground(bgColor);
-    pnl = LayoutManager.createBorderedPanel(4, pnl);
-    pnl.setBackground(bgColor);
     this.add(pnl);
+
+//    JPanel firstLine = LayoutManager.createFlowPanel(
+//        LayoutManager.eVerticalAlign.middle, 0, lblCallsign, lblTypeName, lblDepartureArrival);
+//    JPanel secondLine = LayoutManager.createFlowPanel(
+//        LayoutManager.eVerticalAlign.middle, 0, lblTime, lblDelay);
+//    JPanel pnl = LayoutManager.createBoxPanel(LayoutManager.eHorizontalAlign.left, 0, firstLine, secondLine);
+//
+//    adjustComponentStyle(bgColor, frColor, normalFont,
+//        firstLine, secondLine);
+//
+//    adjustComponentStyle(bgColor, frColor, normalFont,
+//        lblCallsign, lblTypeName, lblDepartureArrival, lblTime, lblDelay);
+//
+//    lblCallsign.setFont(boldFont);
+//
+//    pnl.setBackground(bgColor);
+//    pnl = LayoutManager.createBorderedPanel(4, pnl);
+//    pnl.setBackground(bgColor);
+//    this.add(pnl);
   }
 
   private void setLabelFixedSize(JLabel lbl, Dimension dimension) {
@@ -181,6 +185,7 @@ class ScheduledFlightStripPanel extends JPanel {
 
   private void adjustComponentStyle(Color bgColor, Color frColor, Font font, JComponent... components) {
     for (JComponent component : components) {
+      if (component == null) continue;
       component.setForeground(frColor);
       component.setBackground(bgColor);
       component.setFont(font);

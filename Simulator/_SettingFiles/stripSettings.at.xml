@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<settings>
-    <size width="200" height="60" />
+<settings
+        xmlns="https://github.com/Engin1980/J-ATC-Simulator/stripSettings">
+    <flightStripSize width="225" height="70" />
+    <scheduledFlightStripSize width="225" height="40" />
+    <stripBorder>4</stripBorder>
     <textColor>E6E6E6</textColor>
     <twr even="6E6E00" odd="4F4F00" />
     <ctr even="000080" odd="000040" />

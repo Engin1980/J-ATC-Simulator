@@ -372,7 +372,7 @@ public class JAtcSim {
   private static void initIntro() {
     // intro page
     Stylist.add(
-        "Frm Intro - frm size",
+        "Frm Intro - frm flightStripSize",
         new Stylist.TypeFilter(FrmIntro.class, false),
         q -> {
           Dimension d = new Dimension(500, 420);

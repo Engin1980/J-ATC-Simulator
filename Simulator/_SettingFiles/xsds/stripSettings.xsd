@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           targetNamespace="https://github.com/Engin1980/J-ATC-Simulator/stripSettings"
+           xmlns="https://github.com/Engin1980/J-ATC-Simulator/stripSettings"
+           xmlns:sh="https://github.com/Engin1980/J-ATC-Simulator/shared"
+           elementFormDefault="qualified">
+
+  <xs:element name="settings">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="flightStripSize" type="dimension"/>
+        <xs:element name="scheduledFlightStripSize" type="dimension"/>
+        <xs:element name="stripBorder" type="xs:nonNegativeInteger"/>
+        <xs:element name="textColor" type="sh:colorElement"/>
+        <xs:element name="twr" type="appColor"/>
+        <xs:element name="ctr" type="appColor"/>
+        <xs:element name="app" type="appColor"/>
+        <xs:element name="airprox" type="sh:colorElement"/>
+        <xs:element name="selected" type="sh:colorElement"/>
+        <xs:element name="font" type="sh:fontElement" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:complexType name="dimension">
+    <xs:attribute name="width" type="xs:positiveInteger" use="required"/>
+    <xs:attribute name="height" type="xs:positiveInteger" use="required"/>
+  </xs:complexType>
+
+  <xs:complexType name="appColor">
+    <xs:attribute name="even" type="sh:colorValue" use="required" />
+    <xs:attribute name="odd" type="sh:colorValue" use="required" />
+  </xs:complexType>
+</xs:schema>

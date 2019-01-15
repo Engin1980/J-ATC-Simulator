@@ -102,14 +102,12 @@ public class FrmMain extends JFrame {
     pnlLeft.setName("pnlLeft");
     pnlLeft.setBackground(bgColor);
     pnlLeft.setLayout(new BorderLayout());
-    pnlLeft.setPreferredSize(new Dimension(200, 200));
 
     // right panel
     pnlRight = new JPanel();
     pnlRight.setName("pnlRight");
     pnlRight.setBackground(bgColor);
     pnlRight.setLayout(new BorderLayout());
-    pnlRight.setPreferredSize(new Dimension(200, 200));
 
     // content pane
 
@@ -315,6 +313,9 @@ public class FrmMain extends JFrame {
   }
 
   void init(Pack pack) {
+
+    LayoutManager.setFixedWidth(pnlLeft, pack.getAppSettings().getLoadedFlightStripSettings().flightStripSize.width);
+    LayoutManager.setFixedWidth(pnlRight, pack.getAppSettings().getLoadedFlightStripSettings().flightStripSize.width);
 
     this.parent = pack;
 

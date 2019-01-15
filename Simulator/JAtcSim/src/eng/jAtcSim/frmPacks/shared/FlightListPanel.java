@@ -3,24 +3,20 @@ package eng.jAtcSim.frmPacks.shared;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
-import eng.eSystem.collections.ReadOnlyList;
 import eng.eSystem.events.Event;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
+import eng.eSystem.swing.LayoutManager;
 import eng.jAtcSim.AppSettings;
-import eng.jAtcSim.XmlLoadHelper;
 import eng.jAtcSim.lib.Simulation;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.AirplaneDataFormatter;
 import eng.jAtcSim.lib.airplanes.AirproxType;
 import eng.jAtcSim.lib.airplanes.Callsign;
-import eng.eSystem.swing.LayoutManager;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.LinkedList;
-import java.util.List;
 
 public class FlightListPanel extends JPanel {
 
@@ -33,8 +29,7 @@ public class FlightListPanel extends JPanel {
 
   public void init(Simulation sim, AppSettings appSettings) {
     this.sim = sim;
-    FlightStripPanel.setStripSettings(
-        XmlLoadHelper.loadStripSettings(appSettings.stripSettingsFile.toString()));
+    FlightStripPanel.setStripSettings(appSettings.getLoadedFlightStripSettings());
 
     pnlContent = LayoutManager.createBoxPanel(LayoutManager.eHorizontalAlign.left, 4);
     pnlContent.setName("FlightListPanel_ContentPanel");
@@ -136,10 +131,7 @@ class FlightStripPanel extends JPanel {
 
     this.setLayout(new BorderLayout());
 
-    Dimension dim = stripSettings.size;
-    this.setPreferredSize(dim);
-    this.setMinimumSize(dim);
-    this.setMaximumSize(dim);
+    LayoutManager.setFixedSize(this, stripSettings.flightStripSize);
 
     Color color = this.getColor(ai);
     this.setBackground(color);
@@ -236,12 +228,12 @@ class FlightStripPanel extends JPanel {
     lbl.setForeground(stripSettings.textColor);
     cmps[5] = lbl;
 
-    lbl= new JLabel(getStatus(ai));
+    lbl = new JLabel(getStatus(ai));
     lbl.setName("lblTextStatus");
     lbl.setFont(normalFont);
     lbl.setForeground(stripSettings.textColor);
 
-    JPanel pnlFlightDataPanel = LayoutManager.createGridPanel(3, 2, 0,cmps);
+    JPanel pnlFlightDataPanel = LayoutManager.createGridPanel(3, 2, 0, cmps);
     JPanel pnlTextStatus = LayoutManager.createBorderedPanel(16, 0, 0, 0, lbl);
 
     Color color = this.getColor(ai);
@@ -251,8 +243,13 @@ class FlightStripPanel extends JPanel {
     pnlTextStatus.setBackground(color);
     pnlTextStatus.setForeground(stripSettings.textColor);
 
-    LayoutManager.fillBoxPanel(this, LayoutManager.eHorizontalAlign.left, 0,
+    JPanel pnl = LayoutManager.createBoxPanel(LayoutManager.eHorizontalAlign.left, 0,
         pnlFlightDataPanel, pnlTextStatus);
+    pnl.setBackground(color);
+
+    pnl = LayoutManager.createBorderedPanel(stripSettings.stripBorder, pnl);
+    pnl.setBackground(color);
+    this.add(pnl);
   }
 
   private String getStatus(Airplane.Airplane4Display ai) {

@@ -68,4 +68,25 @@
     </xs:simpleContent>
   </xs:complexType>
 
+  <xs:complexType name="colorElement">
+    <xs:simpleContent >
+      <xs:restriction base="xs:string" >
+        <xs:pattern value="[0-9A-F]{6}" />
+      </xs:restriction>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:simpleType name="colorValue">
+    <xs:restriction base="xs:string" >
+      <xs:pattern value="[0-9A-F]{6}" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="fontElement">
+    <xs:attribute name="family" type="xs:string" use="required" />
+    <xs:attribute name="size" type="xs:positiveInteger" use="required" />
+    <xs:attribute name="style" type="xs:integer" use="required" />
+  </xs:complexType>
+
+
 </xs:schema>

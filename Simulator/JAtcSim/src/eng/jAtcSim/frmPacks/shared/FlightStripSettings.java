@@ -8,7 +8,9 @@ public class FlightStripSettings {
     public Color odd;
   }
 
-  public Dimension size;
+  public Dimension flightStripSize;
+  public Dimension scheduledFlightStripSize;
+  public int stripBorder;
   public Color textColor;
   public Clrs twr;
   public Clrs ctr;
