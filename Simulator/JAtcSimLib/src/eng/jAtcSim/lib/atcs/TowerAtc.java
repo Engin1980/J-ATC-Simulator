@@ -572,7 +572,7 @@ public class TowerAtc extends ComputerAtc {
     Message m = new Message(this, Acc.atcApp(), cnt);
     super.sendMessage(m);
 
-    rc = TowerAtc.RunwayCheck.createNormal(true);
+    rc = TowerAtc.RunwayCheck.createNormal(false);
     runwayChecks.set(runway, rc);
   }
 
