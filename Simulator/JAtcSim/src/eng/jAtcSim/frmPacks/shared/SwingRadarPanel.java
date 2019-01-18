@@ -485,6 +485,7 @@ class CommandJTextWraper {
             break;
           case KeyEvent.VK_F1:
             pauseUnpauseSimulation.raise();
+            break;
           case KeyEvent.VK_F2:
             if (isCtr)
               storeRadarPosition.raise(2);
