@@ -320,7 +320,7 @@ public class DebugFormatter extends Formatter {
         "%s {%s} %s",
         msg.plane.getSqwk(),
         msg.plane.getCallsign().toString(),
-        msg.message,
+        msg.getMessageText(),
         sender.getName());
     return ret;
   }

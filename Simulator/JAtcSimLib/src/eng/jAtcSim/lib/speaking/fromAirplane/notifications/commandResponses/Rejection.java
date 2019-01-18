@@ -13,7 +13,7 @@ public class Rejection extends CommandResponse {
   }
 
   /**
-   * Reason of the rejection.
+   * Reason of the messageType.
    * @return
    */
   public String getReason() {

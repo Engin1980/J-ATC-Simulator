@@ -6,7 +6,6 @@
 package eng.jAtcSim.lib.atcs;
 
 import eng.eSystem.Tuple;
-import eng.eSystem.collections.IList;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.ERuntimeException;
 import eng.eSystem.utilites.RegexUtils;
@@ -14,7 +13,6 @@ import eng.eSystem.validation.Validator;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.*;
 import eng.jAtcSim.lib.atcs.planeResponsibility.SwitchRoutingRequest;
-import eng.jAtcSim.lib.global.TryResult;
 import eng.jAtcSim.lib.messaging.Message;
 import eng.jAtcSim.lib.messaging.Messenger;
 import eng.jAtcSim.lib.messaging.StringMessageContent;
@@ -124,22 +122,27 @@ public class UserAtc extends Atc {
 
   public void sendPlaneSwitchMessageToAtc(Atc.eType type, Airplane plane, String additionalMessage) {
     Atc otherAtc = Acc.atc(type);
+    PlaneSwitchMessage.eMessageType msgType;
 
     if (getPrm().getResponsibleAtc(plane) == this) {
       // it is my plane
       if (getPrm().isUnderSwitchRequest(plane, this, null)) {
         // is already under switch request?
         getPrm().cancelSwitchRequest(this, plane);
+        msgType = PlaneSwitchMessage.eMessageType.cancelation;
       } else {
         // create new switch request
         getPrm().createSwitchRequest(this, otherAtc, plane);
+        msgType = PlaneSwitchMessage.eMessageType.request;
       }
     } else {
       // it is not my plane
       if (getPrm().isUnderSwitchRequest(plane, otherAtc, this)) {
         // is under switch request to me, I am making a confirmation
-        if (additionalMessage == null)
+        if (additionalMessage == null) {
           getPrm().confirmSwitchRequest(plane, this, null);
+          msgType = PlaneSwitchMessage.eMessageType.confirmation;
+        }
         else {
           Tuple<SwitchRoutingRequest, String> routing = decodeAdditionalRouting(
               additionalMessage, plane);
@@ -148,6 +151,7 @@ public class UserAtc extends Atc {
             return;
           } else
             getPrm().confirmSwitchRequest(plane, this, routing.getA());
+          msgType = PlaneSwitchMessage.eMessageType.confirmation;
         }
       } else {
         // making a confirmation to non-requested switch? or probably an error
@@ -156,7 +160,7 @@ public class UserAtc extends Atc {
       }
     }
 
-    PlaneSwitchMessage msg = new PlaneSwitchMessage(plane);
+    PlaneSwitchMessage msg = new PlaneSwitchMessage(plane, msgType);
     Message m = new Message(this, otherAtc, msg);
     super.sendMessage(m);
   }

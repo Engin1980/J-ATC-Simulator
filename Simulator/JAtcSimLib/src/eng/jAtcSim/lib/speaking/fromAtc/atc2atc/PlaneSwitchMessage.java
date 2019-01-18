@@ -7,6 +7,7 @@
 package eng.jAtcSim.lib.speaking.fromAtc.atc2atc;
 
 import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtc2Atc;
 
@@ -15,18 +16,25 @@ import eng.jAtcSim.lib.speaking.fromAtc.IAtc2Atc;
  */
 public class PlaneSwitchMessage implements IAtc2Atc {
 
-  public final Airplane plane;
-  public final String message;
-  public final boolean rejection;
-
-  public PlaneSwitchMessage(Airplane plane) {
-    this(plane, false, "");
+  public enum eMessageType {
+    request,
+    confirmation,
+    cancelation,
+    rejection
   }
 
-  public PlaneSwitchMessage(Airplane plane, boolean rejection, String message) {
+  public final Airplane plane;
+  public final eMessageType messageType;
+  public final String additionalMessageText;
+
+  public PlaneSwitchMessage(Airplane plane, eMessageType messageType) {
+    this(plane, messageType, null);
+  }
+
+  public PlaneSwitchMessage(Airplane plane, eMessageType messageType, String additionalMessageText) {
     this.plane = plane;
-    this.message = message;
-    this.rejection = rejection;
+    this.messageType = messageType;
+    this.additionalMessageText = additionalMessageText;
   }
 
   public String getAsString() {
@@ -39,7 +47,7 @@ public class PlaneSwitchMessage implements IAtc2Atc {
         String.format("%1$s (%2$s) [%3$s] via %4$s/%5$s",
             plane.getSqwk().toString(),
             plane.getCallsign().toString(),
-            message,
+            this.getMessageText(),
             plane.getAssigneRoute().getName(),
             plane.getExpectedRunwayThreshold().getName()
         );
@@ -47,14 +55,41 @@ public class PlaneSwitchMessage implements IAtc2Atc {
     return ret;
   }
 
+  public eMessageType getMessageType() {
+    return messageType;
+  }
+
   @Override
   public String toString() {
-    return "Msg{" + plane + " -/ " + message + '}';
+    return "Msg{" + plane + " -/ " + this.getMessageText() + '}';
   }
 
 
   @Override
   public boolean isRejection() {
-    return rejection;
+    return messageType == eMessageType.rejection;
+  }
+
+  public String getMessageText() {
+    StringBuilder sb = new StringBuilder();
+    switch (this.messageType) {
+      case confirmation:
+        sb.append("accepted");
+        break;
+      case rejection:
+        sb.append("rejected");
+        break;
+      case cancelation:
+        sb.append("canceled");
+        break;
+      case request:
+        sb.append("to you");
+        break;
+      default:
+        throw new EEnumValueUnsupportedException(this.messageType);
+    }
+    if (additionalMessageText != null)
+      sb.append(" ").append(additionalMessageText);
+    return sb.toString();
   }
 }

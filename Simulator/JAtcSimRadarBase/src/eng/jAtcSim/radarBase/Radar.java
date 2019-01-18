@@ -7,7 +7,6 @@ import eng.eSystem.events.EventSimple;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.geo.Coordinates;
-import eng.eSystem.utilites.CollectionUtils;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.Simulation;
 import eng.jAtcSim.lib.airplanes.*;

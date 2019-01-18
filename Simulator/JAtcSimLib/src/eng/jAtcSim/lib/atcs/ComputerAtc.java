@@ -131,14 +131,14 @@ public abstract class ComputerAtc extends Atc {
   private void rejectSwitch(Airplane plane, Atc targetAtc, RequestResult planeAcceptance) {
     getPrm().rejectSwitchRequest(plane, this);
     Message nm = new Message(this, targetAtc,
-        new PlaneSwitchMessage(plane, true, " refused. " + planeAcceptance.message));
+        new PlaneSwitchMessage(plane, PlaneSwitchMessage.eMessageType.rejection, planeAcceptance.message));
     sendMessage(nm);
   }
 
   private void acceptSwitch(Airplane plane, Atc targetAtc) {
     getPrm().confirmSwitchRequest(plane, this, null);
     Message nm = new Message(this, targetAtc,
-        new PlaneSwitchMessage(plane, false, "accepted"));
+        new PlaneSwitchMessage(plane, PlaneSwitchMessage.eMessageType.confirmation));
     sendMessage(nm);
   }
 
@@ -197,7 +197,7 @@ public abstract class ComputerAtc extends Atc {
       if (speechDelayer.isAny(q -> q.getContent() instanceof PlaneSwitchMessage && ((PlaneSwitchMessage) q.getContent()).plane.equals(p)))
         continue; // if message about this plane is delayed and waiting to process
       Message m = new Message(this, Acc.atcApp(),
-          new PlaneSwitchMessage(p, false, "to you (repeated)"));
+          new PlaneSwitchMessage(p, PlaneSwitchMessage.eMessageType.request, "(repeated)"));
       Acc.messenger().send(m);
       recorder.write(m);
     }
@@ -206,7 +206,7 @@ public abstract class ComputerAtc extends Atc {
   protected void requestNewSwitch(Airplane plane, Atc targetAtc) {
     getPrm().createSwitchRequest(this, targetAtc, plane);
     Message m = new Message(this, targetAtc,
-        new PlaneSwitchMessage(plane, false, "to you"));
+        new PlaneSwitchMessage(plane, PlaneSwitchMessage.eMessageType.request));
     sendMessage(m);
   }
 

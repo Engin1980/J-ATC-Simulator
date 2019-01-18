@@ -175,7 +175,7 @@ public class LoadSave {
 class PlaneSwitchMessageIC implements IFactory<PlaneSwitchMessage> {
   @Override
   public PlaneSwitchMessage createInstance() {
-    return new PlaneSwitchMessage(null);
+    return new PlaneSwitchMessage(null, PlaneSwitchMessage.eMessageType.rejection);
   }
 }
 

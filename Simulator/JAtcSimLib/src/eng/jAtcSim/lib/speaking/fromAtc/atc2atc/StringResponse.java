@@ -30,7 +30,7 @@ public class StringResponse implements IAtc2Atc {
   public String toString() {
     String ret = text;
     if (rejection)
-      ret += " (rejection)";
+      ret += " (messageType)";
     ret += " {StringResponse-Atc}";
     return ret;
   }

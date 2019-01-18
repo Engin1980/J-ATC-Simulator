@@ -16,7 +16,7 @@ public class IllegalThenCommandRejection implements IAirplaneNotification {
 
   @Override
   public String toString(){
-    String ret = "{then} rejection due to " + this.reason;
+    String ret = "{then} messageType due to " + this.reason;
     return ret;
   }
 }
