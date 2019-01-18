@@ -185,11 +185,11 @@ public class Mood {
     // positive
     tmp = departureExperiences.tryGetFirst(q -> q.type == DepartureExperience.shortctuToExitPointAbove100);
     if (tmp != null)
-      ret.add(new MoodExperienceResult(tmp.time, SHORTCUT_TO_EXIT, 10));
+      ret.add(new MoodExperienceResult(tmp.time, SHORTCUT_TO_EXIT, 5));
     else {
       tmp = departureExperiences.tryGetFirst(q -> q.type == DepartureExperience.shortcutToExitPointBelow100);
       if (tmp != null)
-        ret.add(new MoodExperienceResult(tmp.time, SHORTCUT_TO_EXIT, 5));
+        ret.add(new MoodExperienceResult(tmp.time, SHORTCUT_TO_EXIT, 10));
     }
 
     tmp = departureExperiences.tryGetFirst(q -> q.type == DepartureExperience.departureAltitudeRestrictionCanceled);

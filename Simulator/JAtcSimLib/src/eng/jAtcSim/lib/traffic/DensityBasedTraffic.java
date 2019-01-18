@@ -89,7 +89,7 @@ public class DensityBasedTraffic extends GeneratedTraffic {
   private double nonCommercialFlightProbability = 0; // XML
 
   @XmlIgnore
-  private Integer lastGeneratedHour = null;
+  private boolean initialized = false;
 
   @Override
   public GeneratedMovementsResponse generateMovements(Object syncObject) {
@@ -97,8 +97,8 @@ public class DensityBasedTraffic extends GeneratedTraffic {
     GeneratedMovementsResponse ret;
 
     Integer lastGeneratedHour = (Integer) syncObject;
-    if (lastGeneratedHour == null || lastGeneratedHour == Acc.now().getHours()) {
-      tmp = generateNewMovements();
+    if (!initialized || lastGeneratedHour == Acc.now().getHours()) {
+      tmp = generateNewMovements(lastGeneratedHour);
 
       ret = new GeneratedMovementsResponse(
           Acc.now().getRoundedToNextHour(),
@@ -119,7 +119,7 @@ public class DensityBasedTraffic extends GeneratedTraffic {
 
     for (int i = 0; i < 24; i++) {
       int l = i;
-      IList<HourBlockMovements> hbms = density.where(q->q.hour == l);
+      IList<HourBlockMovements> hbms = density.where(q -> q.hour == l);
       for (int j = 0; j < hbms.size(); j++) {
         HourBlockMovements hbm = hbms.get(j);
         boolean isCommercial = Acc.rnd().nextDouble() > nonCommercialFlightProbability;
@@ -140,16 +140,17 @@ public class DensityBasedTraffic extends GeneratedTraffic {
     return ret;
   }
 
-  private Tuple<Integer, IReadOnlyList<Movement>> generateNewMovements() {
+  private Tuple<Integer, IReadOnlyList<Movement>> generateNewMovements(Integer lastGeneratedHour) {
     IList<Movement> ret = new EList<>();
 
-    if (lastGeneratedHour == null) {
+    if (!initialized) {
       if (density.size() == 0)
         throw new EApplicationException("Unable to use generic traffic without density specified.");
       // init things
       density.sort(q -> q.hour);
       IReadOnlyList<Movement> tmp = generateTrafficForHour(Acc.now().getHours());
       ret.add(tmp);
+      initialized = true;
       lastGeneratedHour = Acc.now().getHours();
     }
     lastGeneratedHour++;
