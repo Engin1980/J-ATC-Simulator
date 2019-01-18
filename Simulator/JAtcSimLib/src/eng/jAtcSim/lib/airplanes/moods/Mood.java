@@ -15,7 +15,8 @@ public class Mood {
     public final ETime time;
     public final T type;
 
-    @XmlConstructor private Experience(){
+    @XmlConstructor
+    private Experience() {
       time = null;
       type = null;
     }
@@ -49,7 +50,8 @@ public class Mood {
   public enum SharedExperience {
     airprox,
     mrvaViolation,
-    incorrectAltitudeChange, prohibitedAreaViolation
+    incorrectAltitudeChange,
+    prohibitedAreaViolation
   }
 
   private static final String SHORTCUT_TO_EXIT = "Shortcut to SID final point";
@@ -58,6 +60,7 @@ public class Mood {
   private static final String SHORTCUT_TO_IAF_ABOVE_FL100 = "Got shortcut to IAF";
   private static final String SPEED_RESTRICTION_UNDER_FL100_CANCELED = "Speed restriction below FL100 canceled";
   private static final String NO_DESCEND_DURING_APPROACH = "No descend during approach";
+  private static final String NO_CLIMB_DURING_DEPARTURE = "No climb during departure";
   private static final String LANDED_AS_EMERGENCY = "Successful emergency landing";
   private static final String HOLDING = "Flown holding pattern";
   private static final String GO_AROUND = "Go around (ATC fault)";
@@ -92,9 +95,19 @@ public class Mood {
   }
 
   public MoodResult evaluate(Callsign callsign, int delayMinutesPlusMinus) {
-    IList<MoodExperienceResult> arrEvals = evaluateArrivals();
-    IList<MoodExperienceResult> depEvals = evaluateDepartures();
-    IList<MoodExperienceResult> sharedEvals = evaluateShared();
+    IList<MoodExperienceResult> arrEvals;
+    IList<MoodExperienceResult> depEvals;
+    IList<MoodExperienceResult> sharedEvals;
+
+    if (arrivalExperiences.isEmpty() == false)
+      arrEvals = evaluateArrivals(delayMinutesPlusMinus);
+    else
+      arrEvals = new EList<>();
+    if (departureExperiences.isEmpty() == false)
+      depEvals = evaluateDepartures(delayMinutesPlusMinus);
+    else
+      depEvals = new EList<>();
+    sharedEvals = evaluateShared();
     IList<MoodExperienceResult> tmp = new EList<>();
     tmp.add(arrEvals);
     tmp.add(depEvals);
@@ -114,12 +127,11 @@ public class Mood {
     return ret;
   }
 
-  private IList<MoodExperienceResult> evaluateArrivals() {
+  private IList<MoodExperienceResult> evaluateArrivals(int delayInMinutes) {
     IList<MoodExperienceResult> ret = new EList<>();
 
     Experience<ArrivalExperience> tmp;
     IList<Experience<ArrivalExperience>> tmps;
-    int cnt;
 
     // positive
     tmp = arrivalExperiences.tryGetFirst(q -> q.type == ArrivalExperience.shortcutToIafAbove100);
@@ -130,8 +142,9 @@ public class Mood {
     if (tmp != null)
       ret.add(new MoodExperienceResult(tmp.time, SPEED_RESTRICTION_UNDER_FL100_CANCELED, 5));
 
-    tmp = arrivalExperiences.tryGetFirst(q -> q.type == ArrivalExperience.leveledFlight);
-    if (tmp == null)
+    if (arrivalExperiences.isAny(q -> q.type == ArrivalExperience.leveledFlight) &&
+        arrivalExperiences.isNone(q -> q.type == ArrivalExperience.holdCycleFinished) &&
+        (delayInMinutes <= 0))
       ret.add(new MoodExperienceResult(null, NO_DESCEND_DURING_APPROACH, 20));
 
     tmp = arrivalExperiences.tryGetFirst(q -> q.type == ArrivalExperience.landedAsEmergency);
@@ -162,7 +175,7 @@ public class Mood {
     return ret;
   }
 
-  private IList<MoodExperienceResult> evaluateDepartures() {
+  private IList<MoodExperienceResult> evaluateDepartures(int delayInMinutes) {
     IList<MoodExperienceResult> ret = new EList<>();
 
     Experience<DepartureExperience> tmp;
@@ -190,7 +203,7 @@ public class Mood {
     // negative
     tmp = departureExperiences.tryGetFirst(q -> q.type == DepartureExperience.leveledFlight);
     if (tmp != null)
-      ret.add(new MoodExperienceResult(null, NO_DESCEND_DURING_APPROACH, -5));
+      ret.add(new MoodExperienceResult(null, NO_CLIMB_DURING_DEPARTURE, -5));
 
     tmps = departureExperiences.where(q -> q.type == DepartureExperience.holdCycleFinished);
     for (Experience<DepartureExperience> tm : tmps) {
@@ -210,7 +223,7 @@ public class Mood {
     // positive
 
     // negative
-    tmps = sharedExperiences.where(q->q.type == SharedExperience.incorrectAltitudeChange);
+    tmps = sharedExperiences.where(q -> q.type == SharedExperience.incorrectAltitudeChange);
     for (Experience<SharedExperience> tm : tmps) {
       ret.add(new MoodExperienceResult(tm.time, INCORRECT_ALTITUDE_CHANGE, -10));
     }
@@ -220,12 +233,12 @@ public class Mood {
       ret.add(new MoodExperienceResult(null, AIRPROX + sf(" (%s seconds)", cnt), -1));
     }
 
-    cnt = sharedExperiences.count(q -> q.type == SharedExperience.airprox);
+    cnt = sharedExperiences.count(q -> q.type == SharedExperience.mrvaViolation);
     if (cnt > 0) {
       ret.add(new MoodExperienceResult(null, MRVA + sf(" (%s seconds)", cnt), -1));
     }
 
-    cnt = sharedExperiences.count(q -> q.type == SharedExperience.airprox);
+    cnt = sharedExperiences.count(q -> q.type == SharedExperience.prohibitedAreaViolation);
     if (cnt > 0) {
       ret.add(new MoodExperienceResult(null, PROHIBITED_AREA + sf(" (%s seconds)", cnt), -1));
     }
