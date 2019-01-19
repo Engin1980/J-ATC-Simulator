@@ -3,6 +3,7 @@ package eng.jAtcSim.app.startupSettings;
 import eng.eSystem.EStringBuilder;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
+import eng.jAtcSim.app.startupSettings.panels.TrafficPanel;
 
 import java.time.LocalTime;
 
@@ -15,6 +16,22 @@ public class StartupSettings {
     public String areaXmlFile;
     public String fleetsXmlFile;
     public String weatherXmlFile;
+
+    public void normalizeSlashes(){
+      this.trafficXmlFile = normalizePath(this.trafficXmlFile);
+      this.planesXmlFile = normalizePath(this.planesXmlFile);
+      this.areaXmlFile = normalizePath(this.areaXmlFile);
+      this.fleetsXmlFile = normalizePath(this.fleetsXmlFile);
+      this.weatherXmlFile =  normalizePath(this.weatherXmlFile);
+    }
+    private static String normalizePath(String path){
+      String ret;
+      if (path == null)
+        ret = null;
+      else
+        ret = path.replace('\\','/');
+      return ret;
+    }
   }
 
   public static class Recent {
