@@ -8,9 +8,9 @@ import eng.jAtcSim.lib.world.approaches.Approach;
 
 public class ClearedToApproachParser extends SpeechParser<ClearedToApproachCommand> {
 
-  private static final String pattern = "C (I|II|III|G|V|R|N) (\\S+)";
+  private static final String pattern = "C (I|II|III|G|V|R|N|GNSS|VOR|NDB|VISUAL) (\\S+)";
   private static final String[][] patterns = {
-      {"C", "I|II|III|G|V|R|N", "\\S+"}
+      {"C", "I|II|III|G|V|R|N|GNSS|VOR|NDB|VISUAL", "\\S+"}
   };
 
   @Override
@@ -44,6 +44,7 @@ public class ClearedToApproachParser extends SpeechParser<ClearedToApproachComma
     Approach.ApproachType type;
     switch (typeS) {
       case "G":
+      case "GNSS":
         type = Approach.ApproachType.gnss;
         break;
       case "I":
@@ -56,12 +57,15 @@ public class ClearedToApproachParser extends SpeechParser<ClearedToApproachComma
         type = Approach.ApproachType.ils_III;
         break;
       case "N":
+      case "NDB":
         type = Approach.ApproachType.ndb;
         break;
       case "R":
+      case "VOR":
         type = Approach.ApproachType.vor;
         break;
       case "V":
+      case "VISUAL":
         type = Approach.ApproachType.visual;
         break;
       default:
