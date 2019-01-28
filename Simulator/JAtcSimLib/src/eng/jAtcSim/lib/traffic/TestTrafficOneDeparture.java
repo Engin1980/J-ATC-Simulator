@@ -20,7 +20,7 @@ import eng.jAtcSim.lib.global.ETime;
 public class TestTrafficOneDeparture extends TestTraffic {
 
   @XmlIgnore
-  private String[] clsgnNumbers = new String[]{"5555", "6666", "7777"};
+  private String[] clsgnNumbers = new String[]{"5555" }; //, "6666", "7777"};
   @XmlIgnore
   private String[] types = new String[]{"A319", "A319", "A319"};
 

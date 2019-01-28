@@ -59,7 +59,7 @@ public class Mood {
   private static final String DIVERTED_AS_EMERGENCY = "Diverted as emergency";
   private static final String SHORTCUT_TO_IAF_ABOVE_FL100 = "Got shortcut to IAF";
   private static final String SPEED_RESTRICTION_UNDER_FL100_CANCELED = "Speed restriction below FL100 canceled";
-  private static final String NO_DESCEND_DURING_APPROACH = "No descend during approach";
+  private static final String NO_LEVELED_FLIGHT_ON_APPROACH = "No leveled flight during approach below FL 100";
   private static final String NO_CLIMB_DURING_DEPARTURE = "No climb during departure";
   private static final String LANDED_AS_EMERGENCY = "Successful emergency landing";
   private static final String HOLDING = "Flown holding pattern";
@@ -142,10 +142,10 @@ public class Mood {
     if (tmp != null)
       ret.add(new MoodExperienceResult(tmp.time, SPEED_RESTRICTION_UNDER_FL100_CANCELED, 5));
 
-    if (arrivalExperiences.isAny(q -> q.type == ArrivalExperience.leveledFlight) &&
+    if (arrivalExperiences.isNone(q -> q.type == ArrivalExperience.leveledFlight) &&
         arrivalExperiences.isNone(q -> q.type == ArrivalExperience.holdCycleFinished) &&
         (delayInMinutes <= 0))
-      ret.add(new MoodExperienceResult(null, NO_DESCEND_DURING_APPROACH, 20));
+      ret.add(new MoodExperienceResult(null, NO_LEVELED_FLIGHT_ON_APPROACH, 20));
 
     tmp = arrivalExperiences.tryGetFirst(q -> q.type == ArrivalExperience.landedAsEmergency);
     if (tmp != null)
@@ -185,11 +185,11 @@ public class Mood {
     // positive
     tmp = departureExperiences.tryGetFirst(q -> q.type == DepartureExperience.shortctuToExitPointAbove100);
     if (tmp != null)
-      ret.add(new MoodExperienceResult(tmp.time, SHORTCUT_TO_EXIT, 10));
+      ret.add(new MoodExperienceResult(tmp.time, SHORTCUT_TO_EXIT, 5));
     else {
       tmp = departureExperiences.tryGetFirst(q -> q.type == DepartureExperience.shortcutToExitPointBelow100);
       if (tmp != null)
-        ret.add(new MoodExperienceResult(tmp.time, SHORTCUT_TO_EXIT, 5));
+        ret.add(new MoodExperienceResult(tmp.time, SHORTCUT_TO_EXIT, 10));
     }
 
     tmp = departureExperiences.tryGetFirst(q -> q.type == DepartureExperience.departureAltitudeRestrictionCanceled);
@@ -230,17 +230,17 @@ public class Mood {
 
     cnt = sharedExperiences.count(q -> q.type == SharedExperience.airprox);
     if (cnt > 0) {
-      ret.add(new MoodExperienceResult(null, AIRPROX + sf(" (%s seconds)", cnt), -1));
+      ret.add(new MoodExperienceResult(null, AIRPROX + sf(" (%s seconds)", cnt), -2 * cnt));
     }
 
     cnt = sharedExperiences.count(q -> q.type == SharedExperience.mrvaViolation);
     if (cnt > 0) {
-      ret.add(new MoodExperienceResult(null, MRVA + sf(" (%s seconds)", cnt), -1));
+      ret.add(new MoodExperienceResult(null, MRVA + sf(" (%s seconds)", cnt), -2 * cnt));
     }
 
     cnt = sharedExperiences.count(q -> q.type == SharedExperience.prohibitedAreaViolation);
     if (cnt > 0) {
-      ret.add(new MoodExperienceResult(null, PROHIBITED_AREA + sf(" (%s seconds)", cnt), -1));
+      ret.add(new MoodExperienceResult(null, PROHIBITED_AREA + sf(" (%s seconds)", cnt), -2 * cnt));
     }
 
     return ret;

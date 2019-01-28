@@ -87,7 +87,6 @@ public class Pilot {
     public void setTargetCoordinate(Navaid navaid) {
       assert navaid != null;
       Pilot.this.targetCoordinate = navaid.getCoordinate();
-      Pilot.this.parent.evaluateMoodForShortcut(navaid);
     }
 
     public Restriction getSpeedRestriction() {
@@ -164,7 +163,7 @@ public class Pilot {
           Pilot.this.parent.getTargetAltitude() - Pilot.this.parent.getAltitude()) < 100;
       if (isNowLevelled && Pilot.this.getTunedAtc().getType() == Atc.eType.app) {
         if (Pilot.this.parent.isArrival() &&
-            Pilot.this.parent.getAltitude() < 15000 &&
+            Pilot.this.parent.getAltitude() < 10000 &&
             !(Pilot.this.behavior instanceof ApproachBehavior))
           Pilot.this.parent.getMood().experience(Mood.ArrivalExperience.leveledFlight);
         else if (Pilot.this.parent.isArrival() == false)
@@ -483,11 +482,13 @@ public class Pilot {
 
     private static final double NEAR_FIX_DISTANCE = 0.5;
 
+    public Boolean isBelowFL100 = null;
     public Navaid navaid;
     public int inboundRadial;
     public eHoldPhase phase;
     public ETime secondTurnTime;
     public boolean isLeftTurned;
+    private static final int FL100 = 10000;
 
     public int getAfterSecondTurnHeading() {
       int ret;
@@ -642,6 +643,17 @@ public class Pilot {
       if (!parent.isEmergency())
         if (this.divertIfRequested() == false)
           this.adviceDivertTimeIfRequested();
+
+      if (isBelowFL100 == null) {
+        isBelowFL100 = parent.getAltitude() <= FL100;
+      } else if (isBelowFL100 && parent.getAltitude() > FL100)
+      {
+        Pilot.this.adjustTargetSpeed();
+        isBelowFL100 = parent.getAltitude() <= FL100;
+      } else if (!isBelowFL100 && parent.getAltitude() <= FL100){
+        Pilot.this.adjustTargetSpeed();
+        isBelowFL100 = parent.getAltitude() <= FL100;
+      }
     }
 
     @Override

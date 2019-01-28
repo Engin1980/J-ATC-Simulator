@@ -126,6 +126,7 @@ public class JAtcSim {
 
     try {
       resolveShortXmlFileNamesInStartupSettings(appSettings, startupSettings);
+      startupSettings.files.normalizeSlashes();
       XmlLoadHelper.saveStartupSettings(startupSettings, appSettings.startupSettingsFile.toString());
     } catch (EApplicationException ex) {
       throw new EApplicationException("Failed to normalize or save default settings.", ex);
