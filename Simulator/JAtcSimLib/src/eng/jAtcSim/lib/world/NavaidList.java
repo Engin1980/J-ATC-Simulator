@@ -16,8 +16,10 @@ public class NavaidList extends EList<Navaid> {
     Navaid ret = this.tryGet(name);
     if (ret == null) {
       if (name.contains("/")) {
+        // POINT/BEARING/DISTANCE
         try {
           PBD pdb = PBD.decode(name);
+          pdb.bearing += Acc.airport().getDeclination();
           Coordinate coord = Coordinates.getCoordinate(pdb.point.getCoordinate(), pdb.bearing, pdb.distance);
           Navaid n = new Navaid(name, Navaid.eType.auxiliary, coord);
           super.add(n);
@@ -26,6 +28,7 @@ public class NavaidList extends EList<Navaid> {
           throw new EApplicationException("Failed to getContent / decode navaid with name " + name, ex);
         }
       } else if (name.contains(":")){
+        // ICAO:RWY
         try{
           String[] pts = name.split(":");
           Airport aip = Acc.area().getAirports().tryGetFirst(q->q.getIcao().equals(pts[0]));
