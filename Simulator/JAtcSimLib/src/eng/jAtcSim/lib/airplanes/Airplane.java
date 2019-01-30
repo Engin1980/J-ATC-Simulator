@@ -283,7 +283,7 @@ public class Airplane implements IMessageParticipant {
     }
 
     public Pilot.Pilot4Command getPilot() {
-      return pilot.new Pilot4Command();
+      return pilot.pilot4Command;
     }
 
     public Coordinate getCoordinate() {

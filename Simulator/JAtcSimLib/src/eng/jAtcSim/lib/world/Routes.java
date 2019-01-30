@@ -19,9 +19,9 @@
 //
 //    for (Route r : list){
 //      if (isArrival){
-//        if (r.getType() == Route.eType.sid) continue;
+//        if (r.getAirplaneType() == Route.eType.sid) continue;
 //      } else {
-//        if (r.getType() != Route.eType.sid) continue;
+//        if (r.getAirplaneType() != Route.eType.sid) continue;
 //      }
 //
 //      if (r.isValidForCategory(category) == false) continue;

@@ -17,15 +17,20 @@ import eng.eSystem.exceptions.ERuntimeException;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.utilites.ConversionUtils;
 import eng.eSystem.utilites.EnumUtils;
+import eng.eSystem.validation.Validator;
 import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
 import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
+import eng.jAtcSim.lib.airplanes.AirplaneType;
 import eng.jAtcSim.lib.airplanes.AirproxType;
 import eng.jAtcSim.lib.airplanes.commandApplications.ApplicationManager;
 import eng.jAtcSim.lib.airplanes.commandApplications.ApplicationResult;
 import eng.jAtcSim.lib.airplanes.commandApplications.ConfirmationResult;
 import eng.jAtcSim.lib.airplanes.moods.Mood;
+import eng.jAtcSim.lib.airplanes.pilots.approachStages.ApproachInfo;
+import eng.jAtcSim.lib.airplanes.pilots.approachStages.IApproachStage;
+import eng.jAtcSim.lib.airplanes.pilots.behaviors.*;
 import eng.jAtcSim.lib.atcs.Atc;
 import eng.eSystem.geo.Coordinate;
 import eng.jAtcSim.lib.global.*;
@@ -34,6 +39,7 @@ import eng.jAtcSim.lib.global.logging.FileSaver;
 import eng.jAtcSim.lib.global.logging.Recorder;
 import eng.jAtcSim.lib.serialization.LoadSave;
 import eng.jAtcSim.lib.speaking.IFromAtc;
+import eng.jAtcSim.lib.speaking.INotification;
 import eng.jAtcSim.lib.speaking.ISpeech;
 import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.*;
@@ -57,7 +63,7 @@ import java.util.Map;
 
 public class Pilot {
 
-  static class DivertInfo {
+  public static class DivertInfo {
     public ETime divertTime;
     public int lastAnnouncedMinute = Integer.MAX_VALUE;
 
@@ -99,7 +105,7 @@ public class Pilot {
     }
 
     public void setApproachBehavior(CurrentApproachInfo app) {
-      Pilot.this.behavior = Pilot.this.new ApproachBehavior(app);
+      Pilot.this.behavior = new ApproachBehavior(app);
       Pilot.this.adjustTargetSpeed();
 
     }
@@ -120,14 +126,15 @@ public class Pilot {
     }
 
     public void setHoldBehavior(Navaid navaid, int inboundRadial, boolean leftTurn) {
-      Pilot.this.setHoldBehavior(navaid, inboundRadial, leftTurn);
+      Pilot.this.pilot4Behavior.setHoldBehavior(navaid, inboundRadial, leftTurn);
     }
 
     public void setTakeOffBehavior(RunwayThreshold thrs) {
-      Pilot.this.behavior = new Pilot.TakeOffBehavior(thrs);
+      Pilot.this.pilot4Behavior.setBehaviorAndState(
+          new TakeOffBehavior(Pilot.this.pilot4Behavior, thrs),
+          Airplane.State.takeOffRoll);
       Pilot.this.parent.setTargetSpeed(Pilot.this.parent.getType().getV2());
       Pilot.this.parent.setTargetHeading(thrs.getCourse());
-      Pilot.this.parent.setxState(Airplane.State.takeOffRoll);
     }
 
     public void setHasRadarContact() {
@@ -216,888 +223,127 @@ public class Pilot {
     }
   }
 
-  abstract class Behavior {
-
-    @XmlIgnore
-    public final Pilot pilot;
-    @XmlIgnore
-    public final Airplane.Airplane4Pilot airplane;
-
-    public Behavior() {
-      this.pilot = Pilot.this;
-      this.airplane = Pilot.this.parent;
-    }
-
-    public abstract void fly();
-
-    public abstract String toLogString();
-
-    protected void setBehaviorAndState(
-        Behavior behavior, Airplane.State state) {
+  public class Pilot4Behavior implements IPilot4Behavior {
+    @Override
+    public void setBehaviorAndState(Behavior behavior, Airplane.State state) {
+      Pilot.this.parent.setxState(state);
       Pilot.this.behavior = behavior;
-      this.setState(state);
-    }
-
-    protected void setState(Airplane.State state) {
-      parent.setxState(state);
       Pilot.this.adjustTargetSpeed();
     }
 
-    protected void throwIllegalStateException() {
-      throw new ERuntimeException(
-          "Illegal state " + airplane.getState() + " for behavior " + this.getClass().getSimpleName() + "."
-      );
-    }
-
-  }
-
-  abstract class DivertableBehavior extends Behavior {
-
-    private int[] divertAnnounceTimes = new int[]{30, 15, 10, 5};
-
-    protected void adviceDivertTimeIfRequested() {
-      DivertInfo di = Pilot.this.divertInfo;
-      if (di == null) return;
-
-      for (int dit : divertAnnounceTimes) {
-        int minLeft = di.getMinutesLeft();
-        if (di.lastAnnouncedMinute > dit && minLeft < dit) {
-          Pilot.this.say(
-              new DivertTimeNotification(di.getMinutesLeft()));
-          di.lastAnnouncedMinute = minLeft;
-          break;
-        }
-      }
-    }
-
-    protected boolean divertIfRequested() {
-      if (divertInfo != null && divertInfo.getMinutesLeft() <= 0) {
-        Pilot.this.processDivert();
-        return true;
-      } else {
-        return false;
-      }
-    }
-  }
-
-  class HoldingPointBehavior extends Behavior {
-
     @Override
-    public void fly() {
-
+    public Airplane.State getState() {
+      return Pilot.this.parent.getState();
     }
 
     @Override
-    public String toLogString() {
-      return "{HP}";
-    }
-  }
-
-  class TakeOffBehavior extends Behavior {
-
-    //TODO add to airport config the acceleration altitude and use it here
-    private final int accelerationAltitude;
-    private RunwayThreshold toThreshold;
-
-    private TakeOffBehavior() {
-      accelerationAltitude = 0;
-    }
-
-    public TakeOffBehavior(RunwayThreshold toThreshold) {
-
-      this.toThreshold = toThreshold;
-      int accAlt;
-      switch (parent.getType().category) {
-        case 'A':
-          accAlt = 300;
-          break;
-        case 'B':
-          accAlt = 1000;
-          break;
-        case 'C':
-        case 'D':
-          accAlt = 1500;
-          break;
-        default:
-          throw new EEnumValueUnsupportedException(parent.getType().category);
-      }
-      this.accelerationAltitude = Acc.airport().getAltitude() + accAlt;
+    public DivertInfo getDivertInfo() {
+      return Pilot.this.divertInfo;
     }
 
     @Override
-    public void fly() {
-      switch (parent.getState()) {
-        case holdingPoint:
-          break;
-        case takeOffRoll:
-          double targetHeading = Coordinates.getBearing(
-              parent.getCoordinate(), toThreshold.getOtherThreshold().getCoordinate());
-          parent.setTargetHeading(targetHeading);
-
-          if (parent.getSpeed() > parent.getType().vR) {
-            super.setState(Airplane.State.takeOffGoAround);
-          }
-          break;
-        case takeOffGoAround:
-          // keeps last heading
-          // altitude already set
-          // speed set
-          if (parent.getAltitude() > this.accelerationAltitude)
-            if (parent.isArrival()) {
-              // antecedent G/A
-              super.setBehaviorAndState(new ArrivalBehavior(), Airplane.State.arrivingHigh);
-            } else {
-              super.setBehaviorAndState(
-                  new DepartureBehavior(),
-                  Airplane.State.departingLow
-              );
-            }
-          break;
-        default:
-          super.throwIllegalStateException();
-      }
+    public void say(ISpeech speech) {
+      Pilot.this.say(speech);
     }
 
     @Override
-    public String toLogString() {
-      return "TKO";
-    }
-
-  }
-
-  abstract class BasicBehavior extends DivertableBehavior {
-    private boolean clearanceLimitWarningSent = false;
-
-    abstract void _fly();
-
-    @Override
-    public void fly() {
-      if (targetCoordinate != null) {
-
-        double warningDistance = Pilot.this.parent.getSpeed() * .02;
-        double overNavaidDistance = Pilot.this.parent.getSpeed() * SPEED_TO_OVER_NAVAID_DISTANCE_MULTIPLIER;
-
-        double dist = Coordinates.getDistanceInNM(parent.getCoordinate(), targetCoordinate);
-        if (!clearanceLimitWarningSent && dist < warningDistance && !pilot.afterCommands.hasLateralDirectionAfterCoordinate(targetCoordinate)) {
-          say(new PassingClearanceLimitNotification());
-          clearanceLimitWarningSent = true;
-        } else if (dist < overNavaidDistance) {
-          if (parent.isArrival() == false) {
-            Navaid n = Pilot.this.assignedRoute.getMainNavaid();
-            dist = Coordinates.getDistanceInNM(parent.getCoordinate(), n.getCoordinate());
-            if (dist < 1.5) {
-              int rad = (int) Coordinates.getBearing(Acc.airport().getLocation(), n.getCoordinate());
-              rad = rad % 90;
-              Pilot.this.setHoldBehavior(n, rad, true);
-              return;
-            }
-          } else {
-            targetCoordinate = null;
-            clearanceLimitWarningSent = false;
-          }
-        } else {
-          double heading = Coordinates.getBearing(parent.getCoordinate(), targetCoordinate);
-          heading = Headings.to(heading);
-          if (heading != parent.getTargetHeading()) {
-            parent.setTargetHeading(heading);
-          }
-        }
-      }
-      _fly();
-    }
-
-
-  }
-
-  class ArrivalBehavior extends BasicBehavior {
-
-    private final static double LOW_SPEED_DOWN_ALTITUDE = 11000;
-    private final static double FAF_SPEED_DOWN_DISTANCE_IN_NM = 15;
-
-    @Override
-    void _fly() {
-      switch (parent.getState()) {
-        case arrivingHigh:
-          if (parent.getAltitude() < LOW_SPEED_DOWN_ALTITUDE)
-            super.setState(Airplane.State.arrivingLow);
-          else {
-            double distToFaf = Acc.atcTwr().getRunwayConfigurationInUse()
-                .getArrivals().where(q -> q.isForCategory(Pilot.this.parent.getType().category))
-                .minDouble(q -> Coordinates.getDistanceInNM(parent.getCoordinate(), q.getThreshold().getEstimatedFafPoint()));
-            if (distToFaf < FAF_SPEED_DOWN_DISTANCE_IN_NM) {
-              super.setState(Airplane.State.arrivingCloseFaf);
-            }
-          }
-          break;
-        case arrivingLow:
-          // TODO this will not work for runways with FAF above FL100
-          double distToFaf = Acc.atcTwr().getRunwayConfigurationInUse()
-              .getArrivals().where(q -> q.isForCategory(Pilot.this.parent.getType().category))
-              .minDouble(q -> Coordinates.getDistanceInNM(parent.getCoordinate(), q.getThreshold().getEstimatedFafPoint()));
-          if (distToFaf < FAF_SPEED_DOWN_DISTANCE_IN_NM) {
-            super.setState(Airplane.State.arrivingCloseFaf);
-          }
-          break;
-        case arrivingCloseFaf:
-          break;
-        default:
-          super.throwIllegalStateException();
-      }
-
-      if (!parent.isEmergency())
-        if (this.divertIfRequested() == false)
-          this.adviceDivertTimeIfRequested();
-    }
-
-
-    @Override
-    public String toLogString() {
-      return "ARR";
-    }
-
-  }
-
-  class DepartureBehavior extends BasicBehavior {
-
-    @Override
-    public void _fly() {
-      switch (parent.getState()) {
-        case departingLow:
-          if (parent.getAltitude() > 10000) super.setState(Airplane.State.departingHigh);
-          break;
-        case departingHigh:
-          break;
-        default:
-          super.throwIllegalStateException();
-      }
+    public void processDivert() {
+      Pilot.this.processDivert();
     }
 
     @Override
-    public String toLogString() {
-      return "DEP";
-    }
-  }
-
-  class HoldBehavior extends DivertableBehavior {
-
-    private static final double NEAR_FIX_DISTANCE = 0.5;
-
-    public Boolean isBelowFL100 = null;
-    public Navaid navaid;
-    public int inboundRadial;
-    public eHoldPhase phase;
-    public ETime secondTurnTime;
-    public boolean isLeftTurned;
-    private static final int FL100 = 10000;
-
-    public int getAfterSecondTurnHeading() {
-      int ret;
-      if (isLeftTurned)
-        ret = (int) Headings.to(inboundRadial + 30);
-      else
-        ret = (int) Headings.to(inboundRadial - 30);
-      return ret;
-    }
-
-    private double getOutboundHeading() {
-      return Headings.add(inboundRadial, 180);
-    }
-
-    private void setHoldDataByEntry() {
-      double y = Coordinates.getBearing(parent.getCoordinate(), this.navaid.getCoordinate());
-      y = Headings.add(y, 180);
-
-      int h = this.inboundRadial;
-      double a;
-      double b;
-      if (this.isLeftTurned) {
-        a = Headings.add(h, -110);
-        b = Headings.add(h, 75);
-        if (Headings.isBetween(a, y, h))
-          this.phase = eHoldPhase.parallelEntry;
-        else if (Headings.isBetween(h, y, b))
-          this.phase = eHoldPhase.tearEntry;
-        else
-          this.phase = eHoldPhase.directEntry;
-      } else {
-        a = Headings.add(h, -75);
-        b = Headings.add(h, 110);
-        if (Headings.isBetween(a, y, h))
-          this.phase = eHoldPhase.tearEntry;
-        else if (Headings.isBetween(h, y, b))
-          this.phase = eHoldPhase.parallelEntry;
-        else
-          this.phase = eHoldPhase.directEntry;
-      }
+    public AirplaneType getAirplaneType() {
+      return Pilot.this.parent.getType();
     }
 
     @Override
-    public void fly() {
-      if (parent.getState() != Airplane.State.holding)
-        super.throwIllegalStateException();
-
-      if (this.phase == eHoldPhase.beginning) {
-        setHoldDataByEntry();
-      }
-
-      switch (this.phase) {
-        case directEntry:
-          if (Coordinates.getDistanceInNM(parent.getCoordinate(), this.navaid.getCoordinate()) < NEAR_FIX_DISTANCE) {
-            parent.setTargetHeading(this.getOutboundHeading(), this.isLeftTurned);
-            this.phase = eHoldPhase.firstTurn;
-          } else {
-            int newHeading = (int) Coordinates.getBearing(parent.getCoordinate(), this.navaid.getCoordinate());
-            parent.setTargetHeading(newHeading);
-          }
-          break;
-        case inbound:
-          if (Coordinates.getDistanceInNM(parent.getCoordinate(), this.navaid.getCoordinate()) < NEAR_FIX_DISTANCE) {
-            parent.setTargetHeading(this.getOutboundHeading(), this.isLeftTurned);
-            this.phase = eHoldPhase.firstTurn;
-            if (Pilot.this.parent.isArrival())
-              Pilot.this.parent.getMood().experience(Mood.ArrivalExperience.holdCycleFinished);
-            else
-              Pilot.this.parent.getMood().experience(Mood.DepartureExperience.holdCycleFinished);
-          } else {
-            double newHeading = Coordinates.getHeadingToRadial(
-                parent.getCoordinate(), this.navaid.getCoordinate(), this.inboundRadial,
-                Coordinates.eHeadingToRadialBehavior.standard);
-            parent.setTargetHeading(newHeading);
-
-          }
-          break;
-        case firstTurn:
-          if (parent.getTargetHeading() == parent.getHeading()) {
-            this.secondTurnTime = Acc.now().addSeconds(60);
-            this.phase = eHoldPhase.outbound;
-          }
-          break;
-        case outbound:
-          if (Acc.now().isAfter(this.secondTurnTime)) {
-            parent.setTargetHeading(this.getAfterSecondTurnHeading(), this.isLeftTurned);
-            this.phase = eHoldPhase.secondTurn;
-          }
-          break;
-        case secondTurn:
-          if (parent.getTargetHeading() == parent.getHeading()) {
-            this.phase = eHoldPhase.inbound;
-          }
-          break;
-
-        case tearEntry:
-          if (Coordinates.getDistanceInNM(parent.getCoordinate(), this.navaid.getCoordinate()) < NEAR_FIX_DISTANCE) {
-
-            double newHeading;
-            newHeading = this.isLeftTurned
-                ? Headings.add(this.inboundRadial, -150)
-                : Headings.add(this.inboundRadial, 150);
-            parent.setTargetHeading(newHeading);
-            this.secondTurnTime = Acc.now().addSeconds(120);
-
-            this.phase = eHoldPhase.tearAgainst;
-          } else {
-            double newHeading = Coordinates.getBearing(parent.getCoordinate(), this.navaid.getCoordinate());
-            parent.setTargetHeading(newHeading);
-          }
-          break;
-
-        case tearAgainst:
-          if (Acc.now().isAfter(this.secondTurnTime)) {
-            this.secondTurnTime = null;
-            parent.setTargetHeading(this.inboundRadial, this.isLeftTurned);
-            this.phase = eHoldPhase.secondTurn;
-          }
-          break;
-
-        case parallelEntry:
-          if (Coordinates.getDistanceInNM(parent.getCoordinate(), this.navaid.getCoordinate()) < NEAR_FIX_DISTANCE) {
-            parent.setTargetHeading(this.getOutboundHeading(), !this.isLeftTurned);
-            this.secondTurnTime = Acc.now().addSeconds(60);
-            this.phase = eHoldPhase.parallelAgainst;
-          } else {
-            int newHeading = (int) Coordinates.getBearing(parent.getCoordinate(), this.navaid.getCoordinate());
-            parent.setTargetHeading(newHeading);
-          }
-          break;
-
-        case parallelAgainst:
-          if (Acc.now().isAfter(this.secondTurnTime)) {
-            double newHeading = (this.isLeftTurned)
-                ? Headings.add(this.getOutboundHeading(), -210)
-                : Headings.add(this.getOutboundHeading(), +210);
-            parent.setTargetHeading(newHeading, !this.isLeftTurned);
-            this.phase = eHoldPhase.parallelTurn;
-          }
-          break;
-
-        case parallelTurn:
-          if (parent.getHeading() == parent.getTargetHeading()) {
-            this.phase = eHoldPhase.directEntry;
-          }
-          break;
-
-        default:
-          throw new EEnumValueUnsupportedException(this.phase);
-      }
-
-      if (!parent.isEmergency())
-        if (this.divertIfRequested() == false)
-          this.adviceDivertTimeIfRequested();
-
-      if (isBelowFL100 == null) {
-        isBelowFL100 = parent.getAltitude() <= FL100;
-      } else if (isBelowFL100 && parent.getAltitude() > FL100)
-      {
-        Pilot.this.adjustTargetSpeed();
-        isBelowFL100 = parent.getAltitude() <= FL100;
-      } else if (!isBelowFL100 && parent.getAltitude() <= FL100){
-        Pilot.this.adjustTargetSpeed();
-        isBelowFL100 = parent.getAltitude() <= FL100;
-      }
+    public Coordinate getCoordinate() {
+      return Pilot.this.parent.getCoordinate();
     }
 
     @Override
-    public String toLogString() {
-
-      EStringBuilder sb = new EStringBuilder();
-
-      sb.appendFormat("HLD %s incrs: %03d/%s in: %s",
-          this.navaid.getName(),
-          this.inboundRadial,
-          this.isLeftTurned ? "L" : "R",
-          this.phase.toString());
-
-      return sb.toString();
-    }
-  }
-
-  class ApproachBehavior extends Behavior {
-
-    public static final double DEGREES_TO_RADS = .0174532925;
-    private final static int LONG_FINAL_ALTITUDE_AGL = 1000;
-    private final static int SHORT_FINAL_ALTITUDE_AGL = 200;
-    private final int finalAltitude;
-    private final int shortFinalAltitude;
-
-    public CurrentApproachInfo approach;
-    private boolean isAfterStateChange;
-    private boolean isAtFinalDescend = false;
-    private ApproachLocation location = ApproachLocation.unset;
-    private double slope = -1;
-
-    private ApproachBehavior() {
-      finalAltitude = 0;
-      shortFinalAltitude = 0;
-    }
-
-    public ApproachBehavior(CurrentApproachInfo approach) {
-      this.approach = approach;
-      this.finalAltitude = Acc.airport().getAltitude() + LONG_FINAL_ALTITUDE_AGL;
-      this.shortFinalAltitude = Acc.airport().getAltitude() + SHORT_FINAL_ALTITUDE_AGL;
-      this.isAfterStateChange = true;
-      Pilot.this.gaReason = null;
-
-      if (approach.getIafRoute().isEmpty() == false) {
-        expandThenCommands(approach.getIafRoute());
-        Pilot.this.processSpeeches(approach.getIafRoute(), CommandSource.procedure);
-        this.setState(Airplane.State.flyingIaf2Faf);
-      } else {
-        SpeechList<IFromAtc> tmp = new SpeechList();
-        tmp.add(new ChangeAltitudeCommand(ChangeAltitudeCommand.eDirection.descend, approach.getInitialAltitude()));
-        Pilot.this.processSpeeches(tmp, CommandSource.procedure);
-        this.setState(Airplane.State.approachEnter);
-      }
-    }
-
-    public void goAround(GoingAroundNotification.GoAroundReason reason) {
-      assert reason != null;
-
-      Pilot.this.isAfterGoAround = true;
-      boolean isAtcFail = EnumUtils.is(reason,
-          new GoingAroundNotification.GoAroundReason[]{
-              GoingAroundNotification.GoAroundReason.lostTrafficSeparationInApproach,
-              GoingAroundNotification.GoAroundReason.noLandingClearance,
-              GoingAroundNotification.GoAroundReason.notStabilizedApproachEnter,
-              GoingAroundNotification.GoAroundReason.notStabilizedOnFinal
-          });
-      if (isAtcFail)
-        Pilot.this.parent.getMood().experience(Mood.ArrivalExperience.goAroundNotCausedByPilot);
-
-      Pilot.this.gaReason = reason;
-      parent.adviceGoAroundToAtc(atc, reason);
-
-      super.setBehaviorAndState(
-          new TakeOffBehavior(null), Airplane.State.takeOffGoAround);
-
-      parent.setTargetSpeed(parent.getType().vDep);
-      parent.setTargetAltitude((int) parent.getAltitude());
-      parent.setTargetHeading(approach.getCourse());
-
-      Pilot.this.afterCommands.clearAll();
-
-      SpeechList<IFromAtc> gas = new SpeechList<>(this.approach.getGaRoute());
-      ChangeAltitudeCommand cac = null; // remember climb command and add it as first at the end
-      if (gas.get(0) instanceof ChangeAltitudeCommand) {
-        cac = (ChangeAltitudeCommand) gas.get(0);
-        gas.removeAt(0);
-      }
-      gas.insert(0, new ChangeHeadingCommand((int) this.approach.getThreshold().getCourse(), ChangeHeadingCommand.eDirection.any));
-
-      // check if is before runway threshold.
-      // if is far before, then first point will still be runway threshold
-      if (isBeforeRunwayThreshold()) {
-        String runwayThresholdNavaidName =
-            this.approach.getThreshold().getParent().getParent().getIcao() + ":" + this.approach.getThreshold().getName();
-        Navaid runwayThresholdNavaid = Acc.area().getNavaids().getOrGenerate(runwayThresholdNavaidName);
-        gas.insert(0, new ProceedDirectCommand(runwayThresholdNavaid));
-        gas.insert(1, new ThenCommand());
-      }
-
-      if (cac != null)
-        gas.insert(0, cac);
-
-      expandThenCommands(gas);
-      processSpeeches(gas, CommandSource.procedure);
-    }
-
-    private boolean isBeforeRunwayThreshold() {
-      double dist = Coordinates.getDistanceInNM(parent.getCoordinate(), this.approach.getThreshold().getCoordinate());
-      double hdg = Coordinates.getBearing(parent.getCoordinate(), this.approach.getThreshold().getCoordinate());
-      boolean ret;
-      if (dist < 3)
-        ret = false;
-      else {
-        ret = Headings.isBetween(this.approach.getCourse() - 70, hdg, this.approach.getCourse() + 70);
-      }
-      return ret;
-    }
-
-    private double getMinimalAllowedAltitudeAfterThisStep() {
-      double maxVS;
-      switch (Pilot.this.parent.getState()) {
-        case longFinal:
-          maxVS = -1500;
-          break;
-        case shortFinal:
-          maxVS = -1100;
-          break;
-        default:
-          maxVS = -2500;
-
-      }
-      double ret = Pilot.this.parent.getAltitude() + maxVS / 60d;
-      return ret;
-    }
-
-    private boolean updateAltitudeOnApproach(boolean checkIfIsAfterThreshold) {
-      int currentTargetAlttiude = parent.getTargetAltitude();
-      double distToLand;
-      int newAltitude;
-      if (location == ApproachLocation.afterThreshold) {
-        newAltitude = Acc.airport().getAltitude() - 100; // I need to lock the airplane on runway
-      } else {
-        int minAltByState = 0; // (int) getMinimalAllowedAltitudeAfterThisStep();
-        switch (approach.getType()) {
-          case visual:
-            if (location == ApproachLocation.beforeFaf) {
-              // TODO check and evaluate
-              // experimental, trying to fix descend rate after FAF to lower values
-              // newAltitude = parent.getTargetAltitude();
-              newAltitude = (int) Math.max(parent.getTargetAltitude(), parent.getAltitude() - 1000);
-            } else {
-              double dist = Coordinates.getDistanceInNM(parent.getCoordinate(), approach.getThreshold().getCoordinate());
-              double delta = dist * this.approach.getSlope();
-              newAltitude = (int) delta + Acc.airport().getAltitude();
-            }
-            break;
-          default:
-            if (location == ApproachLocation.beforeFaf)
-              newAltitude = parent.getTargetAltitude();
-            else {
-              double dist = Coordinates.getDistanceInNM(parent.getCoordinate(), approach.getMapt());
-              double delta = dist * this.approach.getSlope();
-              newAltitude = (int) delta + Acc.airport().getAltitude();
-            }
-        }
-        newAltitude = Math.max(newAltitude, minAltByState);
-        newAltitude = Math.min(newAltitude, parent.getTargetAltitude());
-        if (location == ApproachLocation.beforeMapt)
-          newAltitude = Math.max(newAltitude, approach.getDecisionAltitude());
-        newAltitude = Math.max(newAltitude, Acc.airport().getAltitude());
-      }
-      parent.setTargetAltitude(newAltitude);
-      boolean ret = (location != ApproachLocation.beforeFaf) && (currentTargetAlttiude > parent.getTargetAltitude());
-
-      return ret;
-    }
-
-    private boolean isBehindFaf() {
-      double courseToFaf = Coordinates.getBearing(parent.getCoordinate(), approach.getFaf());
-      double diff = Headings.getDifference(courseToFaf, approach.getThreshold().getCourse(), true);
-      boolean ret = diff > 90;
-      return ret;
-    }
-
-    private boolean isPassingFaf() {
-      double dist = Coordinates.getDistanceInNM(parent.getCoordinate(), approach.getFaf());
-      boolean ret = dist < 1.0;
-      return ret;
-    }
-
-    private boolean isBehindThreshold() {
-      double course = Coordinates.getBearing(parent.getCoordinate(), approach.getThreshold().getCoordinate());
-      boolean ret = Headings.getDifference(course, approach.getThreshold().getCourse(), true) > 90;
-      return ret;
-    }
-
-    private boolean isBehindMAPt() {
-      double courseToFaf = Coordinates.getBearing(parent.getCoordinate(), approach.getMapt());
-      boolean ret = Headings.getDifference(courseToFaf, approach.getThreshold().getCourse(), true) > 90;
-      return ret;
-    }
-
-    private void updateHeadingOnApproach(Coordinates.eHeadingToRadialBehavior radialBehavior) {
-      double newHeading;
-      Coordinate planePos = parent.getCoordinate();
-      if (location == ApproachLocation.beforeFaf) {
-        newHeading = Coordinates.getBearing(planePos, approach.getFaf());
-      } else if (location == ApproachLocation.beforeMapt) {
-        Coordinate point = approach.getMapt();
-        double course = approach.getFaf2MaptCourse();
-        newHeading = Coordinates.getHeadingToRadial(
-            planePos, point, course, radialBehavior);
-      } else if (location == ApproachLocation.beforeThreshold) {
-        double dist = Coordinates.getDistanceInNM(planePos, this.approach.getThreshold().getCoordinate());
-        if (dist < 2)
-          newHeading = Coordinates.getBearing(planePos, this.approach.getThreshold().getCoordinate());
-        else
-          newHeading = Coordinates.getHeadingToRadial(planePos, this.approach.getThreshold().getCoordinate(), this.approach.getThreshold().getCourse(), radialBehavior);
-      } else {
-        // afther threshold
-        newHeading = (int) Coordinates.getBearing(planePos, this.approach.getThreshold().getOtherThreshold().getCoordinate());
-      }
-      parent.setTargetHeading(newHeading);
-    }
-
-    private boolean canSeeRunwayFromCurrentPosition() {
-      Weather w = Acc.weather();
-      if ((w.getCloudBaseInFt() + Acc.airport().getAltitude()) < parent.getAltitude()) {
-        return false;
-      }
-      double d = Coordinates.getDistanceInNM(parent.getCoordinate(), approach.getThreshold().getCoordinate());
-      if (w.getVisibilityInMilesReal() < d) {
-        return false;
-      }
-      return true;
-    }
-
-    private void updateApproachLocation(boolean isPrecise) {
-      if (location == ApproachLocation.unset) {
-        if (isPassingFaf() || isPrecise)
-          location = ApproachLocation.beforeMapt;
-        else
-          location = ApproachLocation.beforeFaf;
-      } else if (location == ApproachLocation.beforeFaf && isPassingFaf())
-        location = ApproachLocation.beforeMapt;
-      else if (location == ApproachLocation.beforeMapt && isBehindMAPt())
-        location = ApproachLocation.beforeThreshold;
-      else if (location == ApproachLocation.beforeThreshold && isBehindThreshold())
-        location = ApproachLocation.afterThreshold;
-    }
-
-    private void flyIAFtoFAFPhase() {
-      if (targetCoordinate != null) {
-
-        double heading = Coordinates.getBearing(parent.getCoordinate(), targetCoordinate);
-        heading = Headings.to(heading);
-        if (heading != parent.getTargetHeading()) {
-          parent.setTargetHeading(heading);
-        }
-      }
-
-      if (Pilot.this.afterCommands.isRouteEmpty()) {
-        this.setState(Airplane.State.approachEnter);
-        this.isAfterStateChange = true;
-        // TODO here he probably should again check the position against the runway
-      }
-    }
-
-    private void flyApproachingPhase() {
-
-      switch (parent.getState()) {
-        case approachDescend:
-        case longFinal:
-        case shortFinal:
-          if (parent.getAirprox() == AirproxType.full) {
-            goAround(GoingAroundNotification.GoAroundReason.lostTrafficSeparationInApproach);
-            return;
-          }
-      }
-
-      ApproachLocation last = this.location;
-      updateApproachLocation(this.approach.isPrecise());
-
-      if (last == ApproachLocation.beforeMapt && this.location == ApproachLocation.beforeThreshold) {
-        if (canSeeRunwayFromCurrentPosition() == false) {
-          goAround(GoingAroundNotification.GoAroundReason.runwayNotInSight);
-          return;
-        }
-      }
-
-      switch (parent.getState()) {
-
-        case flyingIaf2Faf:
-          throw new UnsupportedOperationException("Not supposed to be here. See flyIAFtoFAFPhase()");
-
-        case approachEnter:
-          if (isAfterStateChange && this.approach.getType() == Approach.ApproachType.visual) {
-            if (canSeeRunwayFromCurrentPosition() == false) {
-              goAround(GoingAroundNotification.GoAroundReason.runwayNotInSight);
-              return;
-            }
-          }
-          isAfterStateChange = false;
-          // this is when app is cleared for approach
-          // this only updates speed and changes to "entering"
-          updateHeadingOnApproach(Coordinates.eHeadingToRadialBehavior.standard);
-          boolean isDescending = updateAltitudeOnApproach(false);
-          if (isDescending) {
-            isAfterStateChange = true;
-            super.setState(Airplane.State.approachDescend);
-          }
-          break;
-        case approachDescend:
-          if (isAfterStateChange) {
-            if (this.approach.isPrecise()) {
-              // check if not descending to ILS path and not yet established in ILS LOC
-              if (Headings.getDifference(
-                  parent.getTargetHeading(), this.approach.getFaf2MaptCourse(), true) > 15) {
-                goAround(GoingAroundNotification.GoAroundReason.notStabilizedApproachEnter);
-                return;
-              }
-              // check if should descend but is not leveled at initial altitude
-              if (parent.getAltitude() > this.approach.getInitialAltitude() + 100) {
-                goAround(GoingAroundNotification.GoAroundReason.notStabilizedApproachEnter);
-                return;
-              }
-            }
-            this.isAfterStateChange = false;
-          }
-          // plane on descend slope
-          // updates speed, then changes to "descending"
-          isAfterStateChange = false;
-          updateHeadingOnApproach(Coordinates.eHeadingToRadialBehavior.standard);
-          updateAltitudeOnApproach(false);
-          if (parent.getAltitude() < this.finalAltitude) {
-            isAfterStateChange = true;
-            super.setState(Airplane.State.longFinal);
-          }
-          break;
-        case longFinal:
-          // plane under final altitude
-          // yells if it have not own speed or if not switched to atc
-          // TODO see above
-          updateHeadingOnApproach(Coordinates.eHeadingToRadialBehavior.aggresive);
-          updateAltitudeOnApproach(false);
-
-          if (isAfterStateChange) {
-            // moc nizko, uz pod stabilized altitude
-            int MAX_LONG_FINAL_HEADING_DIFF = 30;
-            if (Math.abs(parent.getTargetHeading() - this.approach.getCourse()) > MAX_LONG_FINAL_HEADING_DIFF) {
-              goAround(GoingAroundNotification.GoAroundReason.notStabilizedOnFinal);
-              return;
-            }
-
-            // neni na twr, tak GA
-            if (pilot.atc != Acc.atcTwr()) {
-              parent.adviceToAtc(atc, new EstablishedOnApproachNotification(this.approach.getThreshold()));
-            }
-            isAfterStateChange = false;
-          }
-
-          if (parent.getAltitude() < this.shortFinalAltitude) {
-            isAfterStateChange = true;
-            super.setState(Airplane.State.shortFinal);
-          }
-          break;
-        case shortFinal:
-          updateAltitudeOnApproach(true);
-          updateHeadingOnApproach(Coordinates.eHeadingToRadialBehavior.aggresive);
-          if (isAfterStateChange) {
-            int MAX_SHORT_FINAL_HEADING_DIFF = 10;
-            double diff = Math.abs(parent.getTargetHeading() - this.approach.getCourse());
-            if (diff > MAX_SHORT_FINAL_HEADING_DIFF) {
-              goAround(GoingAroundNotification.GoAroundReason.notStabilizedOnFinal);
-              return;
-            }
-
-            // neni na twr, tak GA
-            if (pilot.atc != Acc.atcTwr()) {
-              goAround(GoingAroundNotification.GoAroundReason.noLandingClearance);
-              return;
-            }
-            isAfterStateChange = false;
-          }
-
-          if (parent.getAltitude() == Acc.airport().getAltitude()) {
-            double gaProbability = getGoAroundProbabilityDueToWind();
-            if (Acc.rnd().nextDouble() < gaProbability) {
-              goAround(GoingAroundNotification.GoAroundReason.windGustBeforeTouchdown);
-              return;
-            } else {
-              isAfterStateChange = true;
-              super.setState(Airplane.State.landed);
-            }
-          }
-          break;
-        case landed:
-          if (Pilot.this.parent.isEmergency())
-            Pilot.this.parent.getMood().experience(Mood.ArrivalExperience.landedAsEmergency);
-          isAfterStateChange = false;
-          updateHeadingOnApproach(Coordinates.eHeadingToRadialBehavior.gentle);
-          break;
-        default:
-          super.throwIllegalStateException();
-      }
-    }
-
-    private double getGoAroundProbabilityDueToWind() {
-      double windGustBase =
-          Acc.weather().getWindGustSpeedInKts() - Acc.weather().getWindSpeetInKts();
-      double windRelativeHeading =
-          Headings.getDifference(Pilot.this.parent.getHeading(), Acc.weather().getWindHeading(), true);
-      double gaProbability = 0;
-      if (windGustBase > 0) {
-        double windCauseGoAroundProbability =
-            Math.sin(windRelativeHeading * DEGREES_TO_RADS);
-        if (windRelativeHeading > 90)
-          windCauseGoAroundProbability += 2 * Math.sin((windRelativeHeading - 90) * DEGREES_TO_RADS);
-        windCauseGoAroundProbability /= 2;
-        windCauseGoAroundProbability *= windGustBase;
-        gaProbability = windCauseGoAroundProbability;
-      }
-      return gaProbability;
+    public void setTargetHeading(double targetHeading) {
+      Pilot.this.parent.setTargetHeading(targetHeading);
     }
 
     @Override
-    public void fly() {
-      if (parent.getState() == Airplane.State.flyingIaf2Faf) {
-        flyIAFtoFAFPhase();
-      } else
-        flyApproachingPhase();
+    public double getSpeed() {
+      return Pilot.this.parent.getSpeed();
     }
 
+    @Override
+    public double getAltitude() {
+      return Pilot.this.parent.getAltitude();
+    }
 
     @Override
-    public String toLogString() {
+    public boolean isArrival() {
+      return Pilot.this.parent.isArrival();
+    }
 
-      EStringBuilder sb = new EStringBuilder();
+    @Override
+    public Coordinate getTargetCoordinate() {
+      return Pilot.this.targetCoordinate;
+    }
 
-      sb.appendFormat("APP %s%s",
-          this.approach.getType().toString(),
-          this.approach.getThreshold().getName());
+    @Override
+    public boolean hasLateralDirectionAfterCoordinate() {
+      return Pilot.this.afterCommands.hasLateralDirectionAfterCoordinate(Pilot.this.targetCoordinate);
+    }
 
-      return sb.toString();
+    @Override
+    public Route getAssignedRoute() {
+      return Pilot.this.assignedRoute;
+    }
+
+    @Override
+    public void setHoldBehavior(Navaid navaid, int inboundRadial, boolean leftTurn) {
+      HoldBehavior hold = new HoldBehavior(this,
+          navaid,
+          inboundRadial,
+          leftTurn);
+
+      Behavior.setBehaviorAndState(this, hold, Airplane.State.holding);
+    }
+
+    @Override
+    public void setTargetCoordinate(Coordinate coordinate) {
+      Pilot.this.targetCoordinate = coordinate;
+    }
+
+    @Override
+    public double getTargetHeading() {
+      return Pilot.this.parent.getTargetHeading();
+    }
+
+    @Override
+    public boolean isEmergency() {
+      return Pilot.this.parent.isEmergency();
+    }
+
+    @Override
+    public void setTargetHeading(double heading, boolean isLeftTurned) {
+      Pilot.this.parent.setTargetHeading(heading, isLeftTurned);
+    }
+
+    @Override
+    public void experience(Mood.ArrivalExperience experience) {
+      Pilot.this.parent.getMood().experience(experience);
+    }
+
+    @Override
+    public void experience(Mood.DepartureExperience experience) {
+      Pilot.this.parent.getMood().experience(experience);
+    }
+
+    @Override
+    public double getHeading() {
+      return Pilot.this.parent.getHeading();
+    }
+
+    @Override
+    public void adjustTargetSpeed() {
+      Pilot.this.adjustTargetSpeed();
     }
   }
 
@@ -1117,6 +363,10 @@ public class Pilot {
   }
 
   public static final double SPEED_TO_OVER_NAVAID_DISTANCE_MULTIPLIER = 0.007;
+  @XmlIgnore
+  public final Pilot4Command pilot4Command = new Pilot4Command();
+  @XmlIgnore
+  public final IPilot4Behavior pilot4Behavior = new Pilot4Behavior();
   private final DelayedList<ISpeech> queue = new DelayedList<>(2, 7); //Min/max item delay
   private final AfterCommandList afterCommands = new AfterCommandList();
   private final Map<Atc, SpeechList> saidText = new HashMap<>();
@@ -1368,6 +618,10 @@ public class Pilot {
     return secondsWithoutRadarContact == 0;
   }
 
+  public RunwayThreshold getExpectedRunwayThreshold() {
+    return expectedRunwayThreshold;
+  }
+
   private void printAfterCommands() {
     System.out.println("## -- route ");
     for (Tuple<AfterCommand, IAtcCommand> afterCommandIAtcCommandTuple : afterCommands.getAsList(AfterCommandList.Type.route)) {
@@ -1379,17 +633,6 @@ public class Pilot {
       System.out.println("  IF " + afterCommandIAtcCommandTuple.getA().toString());
       System.out.println("  THEN " + afterCommandIAtcCommandTuple.getB().toString());
     }
-  }
-
-  private void setHoldBehavior(Navaid navaid, int inboundRadial, boolean leftTurn) {
-    Pilot.HoldBehavior hold = new Pilot.HoldBehavior();
-    hold.navaid = navaid;
-    hold.inboundRadial = inboundRadial;
-    hold.isLeftTurned = leftTurn;
-    hold.phase = eHoldPhase.beginning;
-
-    parent.setxState(Airplane.State.holding);
-    Pilot.this.behavior = hold;
   }
 
   private void openRecorder() {
@@ -1408,10 +651,6 @@ public class Pilot {
                 this.parent.getCallsign(), this.parent.getAltitude(), this.parent.getTargetAltitude(), this.parent.isEmergency(), true));
       }
     }
-  }
-
-  public RunwayThreshold getExpectedRunwayThreshold() {
-    return expectedRunwayThreshold;
   }
 
   /**
