@@ -1,6 +1,7 @@
 package eng.jAtcSim.lib.airplanes.pilots.approachStages;
 
 import eng.eSystem.collections.IList;
+import eng.eSystem.collections.IReadOnlyList;
 import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.world.RunwayThreshold;
 
@@ -48,5 +49,9 @@ public class ApproachInfo {
 
   public SpeechList getGaRoute() {
     return gaRoute;
+  }
+
+  public IReadOnlyList<IApproachStage> getStages() {
+    return stages;
   }
 }

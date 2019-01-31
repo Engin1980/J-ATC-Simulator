@@ -13,23 +13,16 @@ import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
-import eng.eSystem.exceptions.ERuntimeException;
-import eng.eSystem.geo.Coordinates;
 import eng.eSystem.utilites.ConversionUtils;
-import eng.eSystem.utilites.EnumUtils;
-import eng.eSystem.validation.Validator;
 import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
 import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.AirplaneType;
-import eng.jAtcSim.lib.airplanes.AirproxType;
 import eng.jAtcSim.lib.airplanes.commandApplications.ApplicationManager;
 import eng.jAtcSim.lib.airplanes.commandApplications.ApplicationResult;
 import eng.jAtcSim.lib.airplanes.commandApplications.ConfirmationResult;
 import eng.jAtcSim.lib.airplanes.moods.Mood;
-import eng.jAtcSim.lib.airplanes.pilots.approachStages.ApproachInfo;
-import eng.jAtcSim.lib.airplanes.pilots.approachStages.IApproachStage;
 import eng.jAtcSim.lib.airplanes.pilots.behaviors.*;
 import eng.jAtcSim.lib.atcs.Atc;
 import eng.eSystem.geo.Coordinate;
@@ -39,7 +32,6 @@ import eng.jAtcSim.lib.global.logging.FileSaver;
 import eng.jAtcSim.lib.global.logging.Recorder;
 import eng.jAtcSim.lib.serialization.LoadSave;
 import eng.jAtcSim.lib.speaking.IFromAtc;
-import eng.jAtcSim.lib.speaking.INotification;
 import eng.jAtcSim.lib.speaking.ISpeech;
 import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.*;
@@ -49,11 +41,9 @@ import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.Ille
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.Rejection;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.notifications.RadarContactConfirmationNotification;
-import eng.jAtcSim.lib.weathers.Weather;
 import eng.jAtcSim.lib.world.Navaid;
 import eng.jAtcSim.lib.world.Route;
 import eng.jAtcSim.lib.world.RunwayThreshold;
-import eng.jAtcSim.lib.world.approaches.Approach;
 import eng.jAtcSim.lib.world.approaches.CurrentApproachInfo;
 
 import java.lang.reflect.Constructor;
@@ -344,6 +334,17 @@ public class Pilot {
     @Override
     public void adjustTargetSpeed() {
       Pilot.this.adjustTargetSpeed();
+    }
+
+    @Override
+    public void setRoute(SpeechList route) {
+      expandThenCommands(route);
+      Pilot.this.processSpeeches(route, CommandSource.procedure);
+    }
+
+    @Override
+    public boolean hasEmptyRoute() {
+      return Pilot.this.afterCommands.isRouteEmpty();
     }
   }
 

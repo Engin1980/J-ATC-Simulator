@@ -5,10 +5,8 @@ import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.AirplaneType;
 import eng.jAtcSim.lib.airplanes.moods.Mood;
 import eng.jAtcSim.lib.airplanes.pilots.Pilot;
-import eng.jAtcSim.lib.speaking.INotification;
 import eng.jAtcSim.lib.speaking.ISpeech;
-import eng.jAtcSim.lib.speaking.fromAirplane.notifications.DivertTimeNotification;
-import eng.jAtcSim.lib.speaking.fromAirplane.notifications.PassingClearanceLimitNotification;
+import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.world.Navaid;
 import eng.jAtcSim.lib.world.Route;
 
@@ -42,7 +40,7 @@ public interface IPilot4Behavior {
 
   Route getAssignedRoute();
 
-
+//TODO delete this?
   void setHoldBehavior(Navaid navaid, int inboundRadial, boolean leftTurn);
 
   void setTargetCoordinate(Coordinate coordinate);
@@ -55,14 +53,15 @@ public interface IPilot4Behavior {
 
   void experience(Mood.ArrivalExperience experience);
 
-  /**
-   *
-   * @param experience
-   * Pilot.this.parent.getMood()
-   */
   void experience(Mood.DepartureExperience experience);
 
   double getHeading();
 
   void adjustTargetSpeed();
+
+  void setState(Airplane.State flyingIaf2Faf);
+
+  void setRoute(SpeechList route);
+
+  boolean hasEmptyRoute();
 }
