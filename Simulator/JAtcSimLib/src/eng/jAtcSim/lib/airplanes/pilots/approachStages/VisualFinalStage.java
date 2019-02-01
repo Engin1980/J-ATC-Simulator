@@ -19,10 +19,11 @@ import eng.jAtcSim.lib.world.RunwayThreshold;
  * a) if the aip
  */
 public class VisualFinalStage implements IApproachStage {
-  private static final double MINIMAL_AIM_POINT_DISTANCE = 1;
+  private static final double MINIMAL_AIM_POINT_DISTANCE = .4;
   private static final double MINIMAL_NORMAL_AIM_POINT_DISTANCE = 2;
   private static final double MAXIMAL_NORMAL_AIM_POINT_DISTANCE = 5;
   private static final double AIP_POINT_DELETE_DISTANCE = 1;
+  private static final double DEFAULT_SLOPE = 1;
   private RunwayThreshold threshold;
   private Coordinate aimPoint;
 
@@ -35,8 +36,7 @@ public class VisualFinalStage implements IApproachStage {
     double distanceFromThreshold = Coordinates.getDistanceInNM(threshold.getCoordinate(), pilot.getCoordinate());
     double aimPointDistance;
     if (distanceFromThreshold > MINIMAL_NORMAL_AIM_POINT_DISTANCE) {
-      aimPointDistance = MINIMAL_NORMAL_AIM_POINT_DISTANCE +
-          Acc.rnd().nextDouble(MINIMAL_NORMAL_AIM_POINT_DISTANCE, MAXIMAL_NORMAL_AIM_POINT_DISTANCE);
+      aimPointDistance = Acc.rnd().nextDouble(MINIMAL_NORMAL_AIM_POINT_DISTANCE, MAXIMAL_NORMAL_AIM_POINT_DISTANCE);
     } else {
       aimPointDistance = MINIMAL_NORMAL_AIM_POINT_DISTANCE / 2;
       if (aimPointDistance < MINIMAL_AIM_POINT_DISTANCE)
@@ -57,7 +57,13 @@ public class VisualFinalStage implements IApproachStage {
     else
       doFlyHeading(this.threshold.getCoordinate(), pilot);
 
-    doFlyAltitude();
+    doFlyAltitude(pilot);
+  }
+
+  private void doFlyAltitude(IPilot4Behavior pilot) {
+    double alt = ApproachStages.getTargetAltitudeBySlope(pilot.getCoordinate(), pilot.getAltitude(),
+        DEFAULT_SLOPE, this.threshold.getCoordinate(), this.threshold.getParent().getParent().getAltitude());
+    pilot.setTargetAltitude(alt);
   }
 
   private void deleteAimPointIfClose(IPilot4Behavior pilot) {
@@ -66,8 +72,8 @@ public class VisualFinalStage implements IApproachStage {
       this.aimPoint = null;
   }
 
-  private void doFlyHeading(Coordinate coordinate, IPilot4Behavior pilot) {
-    double hdg = Coordinates.getBearing(pilot.getCoordinate(), coordinate);
+  private void doFlyHeading(Coordinate point, IPilot4Behavior pilot) {
+    double hdg = Coordinates.getBearing(pilot.getCoordinate(), point);
     pilot.setTargetHeading(hdg);
   }
 

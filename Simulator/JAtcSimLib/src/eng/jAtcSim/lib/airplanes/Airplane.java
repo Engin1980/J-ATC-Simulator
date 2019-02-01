@@ -12,6 +12,7 @@ import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.moods.Mood;
 import eng.jAtcSim.lib.airplanes.moods.MoodResult;
 import eng.jAtcSim.lib.airplanes.pilots.Pilot;
+import eng.jAtcSim.lib.airplanes.pilots.approachStages.ApproachInfo;
 import eng.jAtcSim.lib.atcs.Atc;
 import eng.eSystem.geo.Coordinate;
 import eng.jAtcSim.lib.global.ETime;
@@ -752,7 +753,7 @@ public class Airplane implements IMessageParticipant {
   }
 
   public RunwayThreshold tryGetCurrentApproachRunwayThreshold() {
-    CurrentApproachInfo app = this.pilot.tryGetAssignedApproach();
+    ApproachInfo app = this.pilot.tryGetAssignedApproach();
     RunwayThreshold ret;
     if (app == null)
       ret = null;
@@ -815,13 +816,14 @@ public class Airplane implements IMessageParticipant {
   }
 
   public RunwayThreshold tryGetAssignedRunwayThresholdForLanding() {
-    CurrentApproachInfo cai = pilot.tryGetAssignedApproach();
+    RunwayThreshold ret;
+    ApproachInfo cai = pilot.tryGetAssignedApproach();
     if (cai == null) {
-      return null;
+      ret = null;
     } else {
-      RunwayThreshold ret = cai.getThreshold();
-      return ret;
+      ret = cai.getThreshold();
     }
+    return ret;
   }
 
   public void save(XElement elm) {

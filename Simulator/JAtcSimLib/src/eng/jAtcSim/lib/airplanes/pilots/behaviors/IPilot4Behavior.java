@@ -7,6 +7,7 @@ import eng.jAtcSim.lib.airplanes.moods.Mood;
 import eng.jAtcSim.lib.airplanes.pilots.Pilot;
 import eng.jAtcSim.lib.speaking.ISpeech;
 import eng.jAtcSim.lib.speaking.SpeechList;
+import eng.jAtcSim.lib.speaking.fromAirplane.notifications.GoingAroundNotification;
 import eng.jAtcSim.lib.world.Navaid;
 import eng.jAtcSim.lib.world.Route;
 
@@ -64,4 +65,8 @@ public interface IPilot4Behavior {
   void setRoute(SpeechList route);
 
   boolean hasEmptyRoute();
+
+  void setTargetAltitude(double altitude);
+
+  void goAround(GoingAroundNotification.GoAroundReason reason, double course, SpeechList gaRoute);
 }

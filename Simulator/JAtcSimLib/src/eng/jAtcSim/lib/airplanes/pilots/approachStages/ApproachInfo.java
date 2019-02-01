@@ -4,6 +4,7 @@ import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.world.RunwayThreshold;
+import eng.jAtcSim.lib.world.approaches.Approach;
 
 public class ApproachInfo {
   public static class AltitudeEvent implements Comparable<AltitudeEvent> {
@@ -42,6 +43,7 @@ public class ApproachInfo {
   private IList<AltitudeEvent> altitudeEvents;
   private RunwayThreshold threshold;
   private SpeechList gaRoute;
+  private Approach.ApproachType type;
 
   public RunwayThreshold getThreshold() {
     return threshold;
@@ -53,5 +55,9 @@ public class ApproachInfo {
 
   public IReadOnlyList<IApproachStage> getStages() {
     return stages;
+  }
+
+  public Approach.ApproachType getType() {
+    return type;
   }
 }

@@ -1,14 +1,19 @@
 package eng.jAtcSim.lib.airplanes.pilots.behaviors;
 
 import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.utilites.EnumUtils;
 import eng.eSystem.validation.Validator;
+import eng.jAtcSim.lib.airplanes.Airplane;
+import eng.jAtcSim.lib.airplanes.moods.Mood;
+import eng.jAtcSim.lib.airplanes.pilots.Pilot;
 import eng.jAtcSim.lib.airplanes.pilots.approachStages.ApproachInfo;
 import eng.jAtcSim.lib.airplanes.pilots.approachStages.IApproachStage;
+import eng.jAtcSim.lib.speaking.fromAirplane.notifications.GoingAroundNotification;
 
 public class NewApproachBehavior extends Behavior {
 
-  ApproachInfo approachInfo;
-  int currentStageIndex = -1;
+  private ApproachInfo approachInfo;
+  private int currentStageIndex = -1;
 
   public NewApproachBehavior(ApproachInfo approachInfo) {
     Validator.isNotNull(approachInfo);
@@ -19,13 +24,13 @@ public class NewApproachBehavior extends Behavior {
 
   @Override
   public void fly(IPilot4Behavior pilot) {
-    if (currentStageIndex == -1) {
-      currentStageIndex++;
+    if (this.currentStageIndex == -1) {
+      this.currentStageIndex++;
       startCurrentStage(pilot);
     } else {
       if (this.getCurrentStage().isFinishedStage(pilot)) {
         disposeCurrentStage(pilot);
-        currentStageIndex++;
+        this.currentStageIndex++;
         startCurrentStage(pilot);
       }
     }
@@ -34,13 +39,17 @@ public class NewApproachBehavior extends Behavior {
 
   }
 
-  private void flyCurrentStage(IPilot4Behavior pilot) {
-    this.getCurrentStage().flyStage(pilot);
-  }
-
   @Override
   public String toLogString() {
     return null;
+  }
+
+  public ApproachInfo getApproachInfo() {
+    return this.approachInfo;
+  }
+
+  private void flyCurrentStage(IPilot4Behavior pilot) {
+    this.getCurrentStage().flyStage(pilot);
   }
 
   private void disposeCurrentStage(IPilot4Behavior pilot) {
@@ -48,11 +57,35 @@ public class NewApproachBehavior extends Behavior {
   }
 
   private IApproachStage getCurrentStage() {
-    return this.approachInfo.getStages().get(currentStageIndex);
+    return this.approachInfo.getStages().get(this.currentStageIndex);
   }
 
   private void startCurrentStage(IPilot4Behavior pilot) {
-    IApproachStage stage = approachInfo.getStages().get(currentStageIndex);
+    IApproachStage stage = this.approachInfo.getStages().get(this.currentStageIndex);
     stage.initStage(pilot);
+  }
+
+    public void goAround(IPilot4Behavior pilot, GoingAroundNotification.GoAroundReason reason) {
+    assert reason != null;
+
+    pilot.goAround(
+        reason,
+        this.approachInfo.getThreshold().getCourse(),
+        this.approachInfo.getGaRoute());
+
+
+    boolean isAtcFail = EnumUtils.is(reason,
+        new GoingAroundNotification.GoAroundReason[]{
+            GoingAroundNotification.GoAroundReason.lostTrafficSeparationInApproach,
+            GoingAroundNotification.GoAroundReason.noLandingClearance,
+            GoingAroundNotification.GoAroundReason.notStabilizedApproachEnter,
+            GoingAroundNotification.GoAroundReason.notStabilizedOnFinal
+        });
+    if (isAtcFail)
+      pilot.experience(Mood.ArrivalExperience.goAroundNotCausedByPilot);
+
+
+
+
   }
 }
