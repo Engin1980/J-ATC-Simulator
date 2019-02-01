@@ -1,5 +1,6 @@
 package eng.jAtcSim.lib.airplanes.pilots.approachStages;
 
+import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.geo.Coordinate;
@@ -40,11 +41,45 @@ public class ApproachInfo {
   private final static int DEFAULT_LONG_FINAL_ALTITUDE_AGL = 1000;
   private final static int DEFAULT_SHORT_FINAL_ALTITUDE_AGL = 200;
 
+  public static IList<AltitudeEvent> generateAltitudeEvents(Approach.ApproachType type, RunwayThreshold threshold) {
+    int sfa = 200;
+    int lfa = (type == Approach.ApproachType.visual) ? 500 : 1000;
+    sfa += threshold.getParent().getParent().getAltitude();
+    lfa += threshold.getParent().getParent().getAltitude();
+    IList<AltitudeEvent> ret = new EList<>();
+    ret.add(new AltitudeEvent(lfa, eAltitudeBasedEvent.longFinal));
+    ret.add(new AltitudeEvent(sfa, eAltitudeBasedEvent.shortFinal));
+    return ret;
+  }
   private IList<IApproachStage> stages;
   private IList<AltitudeEvent> altitudeEvents;
   private RunwayThreshold threshold;
   private SpeechList gaRoute;
   private Approach.ApproachType type;
+
+  public ApproachInfo(Approach.ApproachType type,
+                      RunwayThreshold threshold,
+                      IList<IApproachStage> stages,
+                      IList<AltitudeEvent> altitudeEvents,
+                      SpeechList gaRoute) {
+    this.stages = stages;
+    this.altitudeEvents = altitudeEvents;
+    this.altitudeEvents.sort(q->q.altitude);
+    this.threshold = threshold;
+    this.gaRoute = gaRoute;
+    this.type = type;
+  }
+
+  public ApproachInfo(Approach.ApproachType type,
+                      RunwayThreshold threshold,
+                      IList<IApproachStage> stages,
+                      SpeechList gaRoute) {
+    this(type,
+        threshold,
+        stages,
+        generateAltitudeEvents(type, threshold),
+        gaRoute);
+  }
 
   public RunwayThreshold getThreshold() {
     return threshold;
@@ -68,7 +103,7 @@ public class ApproachInfo {
   }
 
   public Coordinate getMapt() {
-    FollowRadialStage stage = (FollowRadialStage) stages.tryGetLast(q->q instanceof FollowRadialStage);
+    FollowRadialStage stage = (FollowRadialStage) stages.tryGetLast(q -> q instanceof FollowRadialStage);
     if (stage == null)
       return null;
     else
@@ -76,7 +111,7 @@ public class ApproachInfo {
   }
 
   public Coordinate getFaf() {
-    FollowRadialStage stage = (FollowRadialStage) stages.tryGetLast(q->q instanceof FollowRadialStage);
+    FollowRadialStage stage = (FollowRadialStage) stages.tryGetFirst(q -> q instanceof FollowRadialStage);
     if (stage == null)
       return null;
     else
@@ -84,6 +119,10 @@ public class ApproachInfo {
   }
 
   public double getCourse() {
-    return
+    FollowRadialStage stage = (FollowRadialStage) stages.tryGetFirst(q -> q instanceof FollowRadialStage);
+    if (stage == null)
+      return this.threshold.getCourse();
+    else
+      return stage.getCourse();
   }
 }

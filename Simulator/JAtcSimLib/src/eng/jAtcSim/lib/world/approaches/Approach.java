@@ -3,6 +3,7 @@ package eng.jAtcSim.lib.world.approaches;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.utilites.CollectionUtils;
 import eng.eSystem.utilites.NumberUtils;
@@ -10,8 +11,10 @@ import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 import eng.eSystem.xmlSerialization.annotations.XmlItemElement;
 import eng.eSystem.xmlSerialization.annotations.XmlOptional;
 import eng.jAtcSim.lib.Acc;
-import eng.eSystem.geo.Coordinate;
 import eng.jAtcSim.lib.airplanes.pilots.approachStages.ApproachInfo;
+import eng.jAtcSim.lib.airplanes.pilots.approachStages.IApproachStage;
+import eng.jAtcSim.lib.airplanes.pilots.approachStages.RouteStage;
+import eng.jAtcSim.lib.airplanes.pilots.approachStages.VisualFinalStage;
 import eng.jAtcSim.lib.global.Headings;
 import eng.jAtcSim.lib.global.UnitProvider;
 import eng.jAtcSim.lib.speaking.IFromAtc;
@@ -41,20 +44,6 @@ public abstract class Approach {
     gnss,
     visual
   }
-  @XmlIgnore
-  int geographicalRadial;
-  private String gaRoute;
-  @XmlIgnore
-  private SpeechList<IAtcCommand> _gaCommands;
-  @XmlOptional
-  @XmlItemElement(elementName = "route", type=IafRoute.class)
-  private IList<IafRoute> iafRoutes = new EList<>();
-  private int radial;
-  @XmlIgnore
-  private RunwayThreshold parent;
-  private int initialAltitude;
-  @XmlOptional
-  private String includeIafRoutesGroups = null;
 
   public static CurrentApproachInfo tryGetCurrentApproachInfo(List<Approach> apps, char category, ApproachType type, Coordinate currentPlaneLocation) {
     CurrentApproachInfo ret;
@@ -160,12 +149,25 @@ public abstract class Approach {
     gaCmds.add(new ChangeHeadingCommand(crs, ChangeHeadingCommand.eDirection.any));
     gaCmds.add(new ChangeAltitudeCommand(ChangeAltitudeCommand.eDirection.climb, gaa));
 
-    // 3 is glide-path-default-percentage, rest of the formula is unknown source :-)
+    // 3 is glide-path-default-percentage, rest of the formula is from an unknown source :-)
     double slope = UnitProvider.nmToFt(Math.tan(3 * Math.PI / 180));
 
-    CurrentApproachInfo ret = new CurrentApproachInfo(
-        threshold, false, iafCmds, gaCmds, ApproachType.visual, faf, mapt, crs, mda, slope,
-        fafa);
+    // stages
+    IList<IApproachStage> stages = new EList<>();
+    IApproachStage stage;
+    if (iafCmds.isEmpty() == false) {
+      stage = new RouteStage(iafCmds);
+      stages.add(stage);
+    }
+    stage = new VisualFinalStage(threshold);
+    stages.add(stage);
+
+
+    ApproachInfo ret = new ApproachInfo(
+        ApproachType.visual,
+        threshold,
+        stages,
+        gaCmds);
 
     return ret;
   }
@@ -295,6 +297,20 @@ public abstract class Approach {
         throw new NotImplementedException();
     }
   }
+  @XmlIgnore
+  int geographicalRadial;
+  private String gaRoute;
+  @XmlIgnore
+  private SpeechList<IAtcCommand> _gaCommands;
+  @XmlOptional
+  @XmlItemElement(elementName = "route", type = IafRoute.class)
+  private IList<IafRoute> iafRoutes = new EList<>();
+  private int radial;
+  @XmlIgnore
+  private RunwayThreshold parent;
+  private int initialAltitude;
+  @XmlOptional
+  private String includeIafRoutesGroups = null;
 
   public abstract String getTypeString();
 

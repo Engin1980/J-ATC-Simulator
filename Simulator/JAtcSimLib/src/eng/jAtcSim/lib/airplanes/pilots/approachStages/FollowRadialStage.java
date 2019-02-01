@@ -73,6 +73,10 @@ public class FollowRadialStage implements IApproachStage {
     // intentionally blank
   }
 
+  public double getCourse(){
+    return Coordinates.getBearing(this.upperFix, this.lowerFix);
+  }
+
   @Override
   public boolean isFinishedStage(IPilot4Behavior pilot) {
     return this.isCloseToLowerFix;
