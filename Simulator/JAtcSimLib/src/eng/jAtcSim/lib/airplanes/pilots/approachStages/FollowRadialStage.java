@@ -11,24 +11,20 @@ public class FollowRadialStage implements IApproachStage {
   private Coordinates.eHeadingToRadialBehavior radialBehavior;
   private int lowerAltitude;
   private Coordinate lowerFix;
+  private int upperAltitude;
+  private Coordinate upperFix;
   private boolean isCloseToLowerFix;
 
   public FollowRadialStage(int upperAltitude, Coordinate upperFix,
                            int lowerAltitude, Coordinate lowerFix,
                            Coordinates.eHeadingToRadialBehavior radialBehavior) {
-    this(lowerFix, lowerAltitude,
-        Coordinates.getBearing(upperFix, lowerFix),
-        calculateSlope(upperFix, upperAltitude, lowerFix, lowerAltitude),
-        radialBehavior);
-  }
-
-  public FollowRadialStage(Coordinate targetFix, int targetAltitude,
-                           double radial, double slope, Coordinates.eHeadingToRadialBehavior radialBehavior) {
-    this.slope = slope;
-    this.radial = radial;
+    this.slope = calculateSlope(upperFix, upperAltitude, lowerFix, lowerAltitude);
+    this.radial = Coordinates.getBearing(upperFix, lowerFix);
     this.radialBehavior = radialBehavior;
-    this.lowerAltitude = targetAltitude;
-    this.lowerFix = targetFix;
+    this.lowerAltitude = lowerAltitude;
+    this.lowerFix = lowerFix;
+    this.upperAltitude = upperAltitude;
+    this.upperFix = upperFix;
     this.isCloseToLowerFix = false;
   }
 
@@ -48,6 +44,14 @@ public class FollowRadialStage implements IApproachStage {
   public void flyStage(IPilot4Behavior pilot) {
     flyHeading(pilot);
     flyAltitude(pilot);
+  }
+
+  public Coordinate getLowerCoordinate() {
+    return this.lowerFix;
+  }
+
+  public Coordinate getUpperCoordinate(){
+    return this.upperFix;
   }
 
   private void flyAltitude(IPilot4Behavior pilot) {

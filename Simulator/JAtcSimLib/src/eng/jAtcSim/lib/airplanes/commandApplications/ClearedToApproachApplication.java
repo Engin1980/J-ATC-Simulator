@@ -3,6 +3,7 @@ package eng.jAtcSim.lib.airplanes.commandApplications;
 import eng.eSystem.geo.Coordinates;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
+import eng.jAtcSim.lib.airplanes.pilots.approachStages.ApproachInfo;
 import eng.jAtcSim.lib.global.Headings;
 import eng.jAtcSim.lib.global.Restriction;
 import eng.jAtcSim.lib.speaking.IFromAirplane;
@@ -22,13 +23,13 @@ public class ClearedToApproachApplication extends CommandApplication<ClearedToAp
     IFromAirplane ret = null;
 
     RunwayThreshold rt = Acc.airport().tryGetRunwayThreshold(c.getThresholdName());
-    CurrentApproachInfo cai = null;
+    ApproachInfo ai = null;
     if (rt == null) {
       ret = new Rejection(
           "Cannot be cleared to approach. There is no runway designated as " + c.getThresholdName(), c);
     } else {
-      cai = rt.tryGetCurrentApproachInfo(c.getType(), plane.getType().category, plane.getCoordinate());
-      if (cai == null) {
+      ai = rt.tryGetCurrentApproachInfo(c.getType(), plane.getType().category, plane.getCoordinate());
+      if (ai == null) {
         ret = new Rejection(
             "Cannot be cleared to approach. There is no approach type "
                 + c.getType() + " for runway " + rt.getName(), c);
@@ -36,25 +37,25 @@ public class ClearedToApproachApplication extends CommandApplication<ClearedToAp
     }
     if (ret != null) return ret;
 
-    boolean isVisual = cai.getType() == Approach.ApproachType.visual;
-    if (isVisual || !cai.isUsingIafRoute()) {
+    boolean isVisual = ai.getType() == Approach.ApproachType.visual;
+    if (isVisual || !ai.isUsingIafRoute()) {
 
       final int MAXIMAL_DISTANCE_TO_ENTER_APPROACH_IN_NM = isVisual ? 12 : 7;
       final int MAXIMAL_ONE_SIDE_ARC_FROM_APPROACH_RADIAL_TO_ENTER_APPROACH_IN_DEGREES = 30;
 
       // zatim resim jen pozici letadla
       int currentHeading
-          = (int) Coordinates.getBearing(plane.getCoordinate(), cai.getMapt());
+          = (int) Coordinates.getBearing(plane.getCoordinate(), ai.getMapt());
       double dist;
       if (isVisual)
-        dist = Coordinates.getDistanceInNM(cai.getMapt(), plane.getCoordinate());
+        dist = Coordinates.getDistanceInNM(ai.getMapt(), plane.getCoordinate());
       else
-        dist = Coordinates.getDistanceInNM(cai.getFaf(), plane.getCoordinate());
+        dist = Coordinates.getDistanceInNM(ai.getFaf(), plane.getCoordinate());
       double minHeading = Headings.add(
-          cai.getCourse(),
+          ai.getCourse(),
           -MAXIMAL_ONE_SIDE_ARC_FROM_APPROACH_RADIAL_TO_ENTER_APPROACH_IN_DEGREES);
       double maxHeading = Headings.add(
-          cai.getCourse(),
+          ai.getCourse(),
           MAXIMAL_ONE_SIDE_ARC_FROM_APPROACH_RADIAL_TO_ENTER_APPROACH_IN_DEGREES);
 
       if (dist > MAXIMAL_DISTANCE_TO_ENTER_APPROACH_IN_NM)
@@ -111,13 +112,13 @@ public class ClearedToApproachApplication extends CommandApplication<ClearedToAp
     }
 
     RunwayThreshold rt = Acc.airport().tryGetRunwayThreshold(c.getThresholdName());
-    CurrentApproachInfo cai = rt.tryGetCurrentApproachInfo(
+    ApproachInfo ai = rt.tryGetCurrentApproachInfo(
         c.getType(),
         plane.getType().category,
         plane.getCoordinate());
-    assert cai != null;
+    assert ai != null;
 
-    plane.getPilot().setApproachBehavior(cai);
+    plane.getPilot().setApproachBehavior(ai);
 
     return ret;
   }

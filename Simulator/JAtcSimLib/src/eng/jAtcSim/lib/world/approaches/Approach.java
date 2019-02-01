@@ -11,6 +11,7 @@ import eng.eSystem.xmlSerialization.annotations.XmlItemElement;
 import eng.eSystem.xmlSerialization.annotations.XmlOptional;
 import eng.jAtcSim.lib.Acc;
 import eng.eSystem.geo.Coordinate;
+import eng.jAtcSim.lib.airplanes.pilots.approachStages.ApproachInfo;
 import eng.jAtcSim.lib.global.Headings;
 import eng.jAtcSim.lib.global.UnitProvider;
 import eng.jAtcSim.lib.speaking.IFromAtc;
@@ -84,7 +85,7 @@ public abstract class Approach {
     return ret;
   }
 
-  public static CurrentApproachInfo createVisualApproachInfo(RunwayThreshold threshold, ApproachType type, Coordinate planeLocation) {
+  public static ApproachInfo createVisualApproachInfo(RunwayThreshold threshold, Coordinate planeLocation) {
 
     double hdg = Headings.getOpposite(threshold.getCourse());
 

@@ -15,6 +15,7 @@ import eng.eSystem.xmlSerialization.annotations.XmlItemElement;
 import eng.eSystem.xmlSerialization.annotations.XmlOptional;
 import eng.eSystem.geo.Coordinate;
 import eng.jAtcSim.lib.airplanes.AirplaneType;
+import eng.jAtcSim.lib.airplanes.pilots.approachStages.ApproachInfo;
 import eng.jAtcSim.lib.global.Headings;
 import eng.jAtcSim.lib.world.approaches.*;
 
@@ -116,11 +117,11 @@ public class RunwayThreshold {
     return ret;
   }
 
-  public CurrentApproachInfo tryGetCurrentApproachInfo(Approach.ApproachType type, char category, Coordinate planePosition) {
+  public ApproachInfo tryGetCurrentApproachInfo(Approach.ApproachType type, char category, Coordinate planePosition) {
 
-    CurrentApproachInfo ret;
+    ApproachInfo ret;
     if (type == Approach.ApproachType.visual)
-      ret = Approach.createVisualApproachInfo(this, type, planePosition);
+      ret = Approach.createVisualApproachInfo(this, planePosition);
     else
       ret =
           Approach.tryGetCurrentApproachInfo(this.approaches, category, type, planePosition);

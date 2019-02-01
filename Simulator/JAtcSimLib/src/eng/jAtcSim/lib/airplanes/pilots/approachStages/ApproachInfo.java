@@ -2,6 +2,7 @@ package eng.jAtcSim.lib.airplanes.pilots.approachStages;
 
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
+import eng.eSystem.geo.Coordinate;
 import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.world.RunwayThreshold;
 import eng.jAtcSim.lib.world.approaches.Approach;
@@ -59,5 +60,30 @@ public class ApproachInfo {
 
   public Approach.ApproachType getType() {
     return type;
+  }
+
+  public boolean isUsingIafRoute() {
+    boolean ret = stages.getFirst() instanceof RouteStage;
+    return ret;
+  }
+
+  public Coordinate getMapt() {
+    FollowRadialStage stage = (FollowRadialStage) stages.tryGetLast(q->q instanceof FollowRadialStage);
+    if (stage == null)
+      return null;
+    else
+      return stage.getLowerCoordinate();
+  }
+
+  public Coordinate getFaf() {
+    FollowRadialStage stage = (FollowRadialStage) stages.tryGetLast(q->q instanceof FollowRadialStage);
+    if (stage == null)
+      return null;
+    else
+      return stage.getUpperCoordinate();
+  }
+
+  public double getCourse() {
+    return
   }
 }
