@@ -1,53 +1,49 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package eng.jAtcSim.lib.world;
+package eng.jAtcSim.lib.world.xmlModel;
 
 import eng.eSystem.EStringBuilder;
-import eng.eSystem.collections.EList;
-import eng.eSystem.collections.IList;
-import eng.eSystem.collections.ISet;
+import eng.eSystem.collections.*;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.xmlSerialization.annotations.XmlItemElement;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.textProcessing.parsing.Parser;
 import eng.jAtcSim.lib.textProcessing.parsing.shortBlockParser.ShortBlockParser;
+import eng.jAtcSim.lib.world.*;
 import eng.jAtcSim.lib.world.approaches.Approach;
 import eng.jAtcSim.lib.world.approaches.IlsApproach;
 
-/**
- * @author Marek
- */
-public class Area {
+public class XmlArea {
+  @XmlItemElement(elementName = "airport", type= XmlAirport.class)
+  private final IList<XmlAirport> airports = new EList<>();
+  @XmlItemElement(elementName = "border", type= XmlNavaid.class)
+  private final IList<XmlNavaid> navaids = new EList<>();
+  @XmlItemElement(elementName = "border", type= XmlBorder.class)
+  private final IList<XmlBorder> borders = new EList();
+  private String icao;
 
-  private final IList<Airport> airports;
-  private final NavaidList navaids;
-  private final IList<Border> borders;
-  private final String icao;
-
-  public Area(String icao, IList<Airport> airports, NavaidList navaids, IList<Border> borders) {
-    this.icao = icao;
-    this.airports = airports;
-    this.navaids = navaids;
-    this.borders = borders;
+  public static Area create() {
+    Area ret = new Area();
+    Acc.setArea(ret);
+    return ret;
   }
 
-  public IList<Airport> getAirports() {
+  private Area() {
+  }
+
+
+  public IList<XmlAirport> getAirports() {
     return airports;
+  }
+
+  public IList<XmlNavaid> getNavaids() {
+    return navaids;
+  }
+
+  public IList<XmlBorder> getBorders() {
+    return borders;
   }
 
   public String getIcao() {
     return icao;
-  }
-
-  public NavaidList getNavaids() {
-    return navaids;
-  }
-
-  public IList<Border> getBorders() {
-    return borders;
   }
 
   public void init() {
@@ -187,5 +183,4 @@ public class Area {
     } // for (airport
     Acc.setAirport(null);
   }
-
 }

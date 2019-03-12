@@ -9,7 +9,6 @@ import eng.eSystem.geo.Coordinate;
 import eng.jAtcSim.lib.global.Headings;
 import eng.jAtcSim.lib.textProcessing.parsing.RegexGrouper;
 
-@XmlItemElement(elementName="navaid", type=Navaid.class)
 public class NavaidList extends EList<Navaid> {
 
   public Navaid getOrGenerate(String name) {

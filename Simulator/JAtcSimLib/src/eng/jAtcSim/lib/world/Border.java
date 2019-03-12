@@ -79,6 +79,21 @@ public class Border {
   @XmlOptional
   private IList<String> disjoints = new EList<>();
 
+  public Border(String name, eType type, IList<BorderPoint> points, boolean enclosed, int minAltitude, int maxAltitude, Coordinate labelCoordinate) {
+    this.name = name;
+    this.type = type;
+    this.points = points;
+    this.enclosed = enclosed;
+    this.minAltitude = minAltitude;
+    this.maxAltitude = maxAltitude;
+    this.labelCoordinate = labelCoordinate;
+
+    this.globalMinLat = points.minDouble(q -> q.getCoordinate().getLatitude().get());
+    this.globalMaxLat = points.maxDouble(q -> q.getCoordinate().getLatitude().get());
+    this.globalMinLng = points.minDouble(q -> q.getCoordinate().getLongitude().get());
+    this.globalMaxLng = points.maxDouble(q -> q.getCoordinate().getLongitude().get());
+  }
+
   public String getName() {
     return name;
   }

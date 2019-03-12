@@ -189,31 +189,31 @@ public abstract class Approach {
 
   private static CurrentApproachInfo tryGetFromILS(List<Approach> apps, char category, ApproachType type, Coordinate planeLocation) {
     CurrentApproachInfo ret;
-    IlsApproach tmp = (IlsApproach) CollectionUtils.tryGetFirst(apps, o -> o instanceof IlsApproach);
+    IlsApproach ilsApproach = (IlsApproach) CollectionUtils.tryGetFirst(apps, o -> o instanceof IlsApproach);
     IlsApproach.Type catKey = typeToIlsType(type);
-    IlsApproach.Category cat = tmp.getCategories().getFirst(q -> q.getType() == catKey);
+    IlsApproach.Category cat = ilsApproach.getCategories().getFirst(q -> q.getType() == catKey);
 
-    Navaid iaf = tryGetIafNavaidCloseToPlaneLocation(tmp, planeLocation);
+    Navaid iaf = tryGetIafNavaidCloseToPlaneLocation(ilsApproach, planeLocation);
 
-    IafRoute iafRoute = tryGetIafRoute(tmp.getIafRoutes(), iaf, category);
+    IafRoute iafRoute = tryGetIafRoute(ilsApproach.getIafRoutes(), iaf, category);
     SpeechList<IFromAtc> iafCommands;
     boolean usingIaf = iafRoute != null;
     if (iafRoute != null)
       iafCommands = new SpeechList<>(iafRoute.getRouteCommands());
     else
       iafCommands = new SpeechList<>();
-    iafCommands.add(new ChangeAltitudeCommand(ChangeAltitudeCommand.eDirection.descend, tmp.getInitialAltitude()));
-    SpeechList<IFromAtc> gaCommands = new SpeechList<>(tmp.getGaCommands());
+    iafCommands.add(new ChangeAltitudeCommand(ChangeAltitudeCommand.eDirection.descend, ilsApproach.getInitialAltitude()));
+    SpeechList<IFromAtc> gaCommands = new SpeechList<>(ilsApproach.getGaCommands());
     Coordinate faf = Coordinates.getCoordinate(
-        tmp.getParent().getCoordinate(), Headings.getOpposite(tmp.getGeographicalRadial()), 10);
-    Coordinate mapt = tmp.getParent().getCoordinate();
-    int course = tmp.getGeographicalRadial();
+        ilsApproach.getParent().getCoordinate(), Headings.getOpposite(ilsApproach.getGeographicalRadial()), 10);
+    Coordinate mapt = ilsApproach.getParent().getCoordinate();
+    int course = ilsApproach.getGeographicalRadial();
     int mda = cat.getDA(category);
-    double slope = getSlope(tmp.getGlidePathPercentage());
+    double slope = getSlope(ilsApproach.getGlidePathPercentage());
 
 
     ret = new CurrentApproachInfo(
-        tmp.getParent(), usingIaf, iafCommands, gaCommands, type, faf, mapt, course, mda, slope, tmp.getInitialAltitude());
+        ilsApproach.getParent(), usingIaf, iafCommands, gaCommands, type, faf, mapt, course, mda, slope, ilsApproach.getInitialAltitude());
     return ret;
   }
 

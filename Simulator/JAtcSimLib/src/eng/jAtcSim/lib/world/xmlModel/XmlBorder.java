@@ -33,14 +33,8 @@ public class XmlBorder {
   @XmlOptional
   public Coordinate labelCoordinate;
 
-  @XmlIgnore
-  public IList<BorderExactPoint> exactPoints;
   @XmlOptional
   public IList<String> disjoints = new EList<>();
-
-  public IList<BorderExactPoint> getExactPoints() {
-    return exactPoints;
-  }
 
   public String getName() {
     return name;

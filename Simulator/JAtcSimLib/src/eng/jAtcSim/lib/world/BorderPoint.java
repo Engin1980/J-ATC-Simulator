@@ -14,14 +14,11 @@ import java.util.Objects;
  *
  * @author Marek
  */
-public abstract class BorderPoint {
+public class BorderPoint {
   private Coordinate coordinate;
 
   public Coordinate getCoordinate() {
     return coordinate;
-  }
-
-  public BorderPoint() {
   }
 
   public BorderPoint(Coordinate coordinate) {
