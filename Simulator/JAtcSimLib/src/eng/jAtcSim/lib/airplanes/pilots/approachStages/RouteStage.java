@@ -1,6 +1,5 @@
 package eng.jAtcSim.lib.airplanes.pilots.approachStages;
 
-import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.pilots.behaviors.IPilot4Behavior;
 import eng.jAtcSim.lib.speaking.SpeechList;
 
@@ -11,7 +10,7 @@ public class RouteStage implements IApproachStage {
   @Override
   public void initStage(IPilot4Behavior pilot) {
     pilot.setRoute(route);
-    pilot.setState(Airplane.State.flyingIaf2Faf);
+    throw new UnsupportedOperationException("I need to get a route from somewhere!");
   }
 
   @Override

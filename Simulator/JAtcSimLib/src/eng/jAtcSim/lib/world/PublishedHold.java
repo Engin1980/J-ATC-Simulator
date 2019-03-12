@@ -6,27 +6,18 @@
 
 package eng.jAtcSim.lib.world;
 
-import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
-import eng.eSystem.xmlSerialization.annotations.XmlOptional;
-import eng.jAtcSim.lib.exceptions.EBindException;
-
 /**
  *
  * @author Marek
  */
 public class PublishedHold{
-  private String navaidName;
-  @XmlOptional
-  private Navaid _navaid;
+  private Navaid navaid;
   private int inboundRadial;
-  private String turn;
-  @XmlOptional
   private boolean _leftTurn;
-  @XmlIgnore
   private Airport _parent;
 
   public Navaid getNavaid() {
-    return _navaid;
+    return navaid;
   }
 
   public int getInboundRadial() {
@@ -39,16 +30,12 @@ public class PublishedHold{
   public boolean isRightTurn() {
     return !_leftTurn;
   }
-  
-  public void bind(){
-    Navaid n = getParent().getParent().getNavaids().get(navaidName);
-    if (n == null){
-      throw new EBindException("Published hold cannot be created. Unknown navaid " + navaidName);
-    }
-    
-    this._navaid = n;
-    
-    this._leftTurn = this.turn.equals("left");
+
+  public PublishedHold(Navaid navaid, int inboundRadial, boolean _leftTurn, Airport _parent) {
+    this.navaid = navaid;
+    this.inboundRadial = inboundRadial;
+    this._leftTurn = _leftTurn;
+    this._parent = _parent;
   }
 
   void setParent(Airport airport) {
@@ -61,6 +48,6 @@ public class PublishedHold{
 
   @Override
   public String toString() {
-    return "Published hold {" + navaidName + "}";
+    return "Published hold {" + this.getNavaid().getName() + "}";
   }
 }

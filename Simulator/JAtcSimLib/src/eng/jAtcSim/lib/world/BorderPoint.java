@@ -6,9 +6,47 @@
 
 package eng.jAtcSim.lib.world;
 
+import eng.eSystem.geo.Coordinate;
+
+import java.util.Objects;
+
 /**
  *
  * @author Marek
  */
 public abstract class BorderPoint {
+  private Coordinate coordinate;
+
+  public Coordinate getCoordinate() {
+    return coordinate;
+  }
+
+  public BorderPoint() {
+  }
+
+  public BorderPoint(Coordinate coordinate) {
+    this.coordinate = coordinate;
+  }
+
+  @Override
+  public int hashCode() {
+    int hash = 7;
+    hash = 97 * hash + Objects.hashCode(this.coordinate);
+    return hash;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (obj == null) {
+      return false;
+    }
+    if (getClass() != obj.getClass()) {
+      return false;
+    }
+    final BorderPoint other = (BorderPoint) obj;
+    if (!Objects.equals(this.coordinate, other.coordinate)) {
+      return false;
+    }
+    return true;
+  }
 }

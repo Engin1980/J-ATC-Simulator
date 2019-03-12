@@ -28,10 +28,6 @@ public class Navaid {
   private String name;
   private eType type;
 
-  // Must be because of XML parsing
-  public Navaid() {
-  }
-
   public Navaid(String name, eType type, Coordinate coordinate) {
     this.coordinate = coordinate;
     this.name = name;

@@ -76,14 +76,8 @@ public class Border {
   private double globalMinLat;
   @XmlIgnore
   private double globalMaxLat;
-  @XmlIgnore
-  private IList<BorderExactPoint> exactPoints;
   @XmlOptional
   private IList<String> disjoints = new EList<>();
-
-  public IList<BorderExactPoint> getExactPoints() {
-    return exactPoints;
-  }
 
   public String getName() {
     return name;
@@ -97,7 +91,6 @@ public class Border {
     return disjoints;
   }
 
-  @Deprecated
   public IList<BorderPoint> getPoints() {
     return points;
   }
