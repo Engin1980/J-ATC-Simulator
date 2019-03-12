@@ -7,6 +7,10 @@ public class RouteStage implements IApproachStage {
 
   private SpeechList route;
 
+  public RouteStage(SpeechList route) {
+    this.route = route;
+  }
+
   @Override
   public void initStage(IPilot4Behavior pilot) {
     pilot.setRoute(route);
