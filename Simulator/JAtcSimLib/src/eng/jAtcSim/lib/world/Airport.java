@@ -119,6 +119,13 @@ public class Airport {
     return null;
   }
 
+  public ActiveRunwayThreshold getRunwayThreshold(String runwayThresholdName){
+    ActiveRunwayThreshold ret = tryGetRunwayThreshold(runwayThresholdName);
+    if (ret == null)
+      throw new RuntimeException(String.format("Unable to find threshold '%s' for airport '%s'.", runwayThresholdName, this.icao));
+    return ret;
+  }
+
   public IReadOnlyList<AtcTemplate> getAtcTemplates() {
     return atcTemplates;
   }

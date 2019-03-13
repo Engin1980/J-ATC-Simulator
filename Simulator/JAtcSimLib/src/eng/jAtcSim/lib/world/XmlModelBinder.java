@@ -1,9 +1,7 @@
 package eng.jAtcSim.lib.world;
 
 import eng.eSystem.Tuple;
-import eng.eSystem.collections.EList;
-import eng.eSystem.collections.IList;
-import eng.eSystem.collections.IMap;
+import eng.eSystem.collections.*;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.geo.Coordinate;
@@ -13,16 +11,16 @@ import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.atcs.AtcTemplate;
 import eng.jAtcSim.lib.exceptions.EBindException;
 import eng.jAtcSim.lib.global.Headings;
-import eng.jAtcSim.lib.speaking.ICommand;
 import eng.jAtcSim.lib.speaking.IFromAtc;
 import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.HoldCommand;
-import eng.jAtcSim.lib.speaking.fromAtc.commands.ProceedDirectCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ToNavaidCommand;
 import eng.jAtcSim.lib.textProcessing.parsing.Parser;
 import eng.jAtcSim.lib.textProcessing.parsing.shortBlockParser.ShortBlockParser;
 import eng.jAtcSim.lib.world.approaches.Approach;
 import eng.jAtcSim.lib.world.xmlModel.*;
+
+import java.awt.geom.Line2D;
 
 public class XmlModelBinder {
 
@@ -53,12 +51,16 @@ public class XmlModelBinder {
     if (x.points.size() > 1 && x.points.isAny(q -> q instanceof XmlBorderCirclePoint)) {
       throw new EApplicationException("Border " + x.getName() + " is not valid. If <circle> is used, it must be the only element in the <points> list.");
     }
-    IList<BorderPoint> exactPoints = expandArcsToPoints(x);
+    IList<BorderPoint> points = expandArcsToPoints(x);
+
+    Coordinate labelCoordinate = x.labelCoordinate != null
+        ? x.labelCoordinate
+        : generateBorderLabelCoordinate(points);
 
     Border ret = new Border(x.name, x.type,
-        exactPoints, x.enclosed,
+        points, x.enclosed,
         x.minAltitude, x.maxAltitude,
-        x.labelCoordinate);
+        labelCoordinate);
     return ret;
 
 
@@ -83,11 +85,23 @@ public class XmlModelBinder {
     }
 
     for (XmlAirport xmlAirport : area.getAirports()) {
-      Airport airport = XmlModelBinder.convert(xmlAirport);
+      Airport airport = XmlModelBinder.convert(xmlAirport, context);
       airports.add(airport);
     }
 
     return ret;
+  }
+
+  private static Coordinate generateBorderLabelCoordinate(IList<BorderPoint> points) {
+    double latMin = points.minDouble(q -> q.getCoordinate().getLatitude().get());
+    double latMax = points.maxDouble(q -> q.getCoordinate().getLatitude().get());
+    double lngMin = points.minDouble(q -> q.getCoordinate().getLongitude().get());
+    double lngMax = points.maxDouble(q -> q.getCoordinate().getLongitude().get());
+
+    double lat = (latMax + latMin) / 2;
+    double lng = (lngMax + lngMin) / 2;
+
+    return new Coordinate(lat, lng);
   }
 
   private static Airport convert(XmlAirport x, Context context) {
@@ -101,12 +115,14 @@ public class XmlModelBinder {
     IList<RunwayConfiguration> runwayConfigurations = new EList<>();
     IList<EntryExitPoint> entryExitPoints = new EList<>();
     IList<Route> routes = new EList<>();
+    IMap<String, IList<Route>> sharedRoutesGroup = convertSharedRoutes(x, context);
 
     Airport ret = new Airport(
         x.getIcao(), x.getName(), mainAirportNavaid, x.altitude,
         x.vfrAltitude, x.transitionAltitude, x.coveredDistance, x.declination,
         initialPosition, atcTemplates, runways, inactiveRunways,
         holds, entryExitPoints, runwayConfigurations, routes, context.area);
+    context = new Context(context.area, ret);
 
     for (XmlAtcTemplate xmlAtcTemplate : x.atcTemplates) {
       AtcTemplate atcTemplate = convert(xmlAtcTemplate);
@@ -119,10 +135,165 @@ public class XmlModelBinder {
     }
 
     for (XmlActiveRunway xmlRunway : x.runways) {
-      ActiveRunway runway = convert(xmlRunway, context, sharedRoutesGroup);
+      ActiveRunway runway = convert(xmlRunway, sharedRoutesGroup, context);
       runways.add(runway);
     }
 
+    for (XmlPublishedHold xmlPublishedHold : x.holds) {
+      PublishedHold publishedHold = convert(xmlPublishedHold, context);
+      holds.add(publishedHold);
+    }
+
+    for (XmlRunwayConfiguration xmlRunwayConfiguration : x.runwayConfigurations) {
+      RunwayConfiguration runwayConfiguration = convert(xmlRunwayConfiguration, context);
+      runwayConfigurations.add(runwayConfiguration);
+    }
+
+    for (XmlEntryExitPoint xmlEntryExitPoint : x.entryExitPoints) {
+      EntryExitPoint entryExitPoint = convert(xmlEntryExitPoint, context);
+      entryExitPoints.add(entryExitPoint);
+    }
+
+    for (XmlRoute xmlRoute : x.routes) {
+      Route route = convert(xmlRoute, context);
+      routes.add(route);
+    }
+
+    return ret;
+  }
+
+  private static EntryExitPoint convert(XmlEntryExitPoint x, Context context) {
+    Navaid navaid = context.area.getNavaids().get(x.name);
+    int radial = (int) Math.round(
+        Coordinates.getBearing(context.airport.getLocation(), navaid.getCoordinate()));
+    Integer maxMrvaAltitude = evaluateMaxMrvaAltitudeForEntryExitPoint(x.maxMrvaAltitude, navaid, context);
+    EntryExitPoint ret = new EntryExitPoint(context.airport, x.name, navaid, x.type, maxMrvaAltitude, radial);
+    return ret;
+  }
+
+  private static Integer evaluateMaxMrvaAltitudeForEntryExitPoint(Integer customMaxMrvaAltitude, Navaid navaid, Context context) {
+    Integer maxMrvaAltitude;
+    IList<Border> mrvas = context.area.getBorders().where(q -> q.getType() == Border.eType.mrva);
+    Tuple<Coordinate, Coordinate> line =
+        new Tuple<>(
+            navaid.getCoordinate(),
+            context.airport.getMainAirportNavaid().getCoordinate()
+        );
+
+    int maxMrvaAlt = 0;
+    for (Border mrva : mrvas) {
+      if (mrva.hasIntersectionWithLine(line))
+        maxMrvaAlt = Math.max(maxMrvaAlt, mrva.getMaxAltitude());
+    }
+
+    if (customMaxMrvaAltitude == null)
+      maxMrvaAltitude = maxMrvaAlt;
+    else
+      maxMrvaAltitude = Math.min(customMaxMrvaAltitude, maxMrvaAlt);
+    return maxMrvaAltitude;
+  }
+
+  private static RunwayConfiguration convert(XmlRunwayConfiguration x, Context context) {
+    IList<RunwayConfiguration.RunwayThresholdConfiguration> arrivals = new EList<>();
+    IList<RunwayConfiguration.RunwayThresholdConfiguration> departures = new EList<>();
+    IList<ISet<ActiveRunwayThreshold>> crossedThresholdSets = new EList<>();
+    RunwayConfiguration ret = new RunwayConfiguration(x.windFrom, x.windTo, x.windSpeedFrom, x.windSpeedTo,
+        arrivals, departures, crossedThresholdSets);
+
+    for (XmlRunwayConfiguration.XmlRunwayThresholdConfiguration xmlArrival : x.arrivals) {
+      RunwayConfiguration.RunwayThresholdConfiguration arrival = convert(xmlArrival, context);
+      arrivals.add(arrival);
+    }
+    for (XmlRunwayConfiguration.XmlRunwayThresholdConfiguration xmlDeparture : x.departures) {
+      RunwayConfiguration.RunwayThresholdConfiguration departure = convert(xmlDeparture, context);
+      departures.add(departure);
+    }
+
+    checkAllCategoriesAreApplied(departures, arrivals);
+    buildCrossedThresholdsSet(crossedThresholdSets, departures, arrivals);
+
+    return ret;
+  }
+
+  private static void buildCrossedThresholdsSet(IList<ISet<ActiveRunwayThreshold>> crossedThresholdSets,
+                                                IList<RunwayConfiguration.RunwayThresholdConfiguration> departures,
+                                                IList<RunwayConfiguration.RunwayThresholdConfiguration> arrivals) {
+    // detection and saving the crossed runways
+    IList<ActiveRunway> rwys = new EDistinctList<>(EDistinctList.Behavior.skip);
+    rwys.add(arrivals.select(q -> q.getThreshold().getParent()).distinct());
+    rwys.add(departures.select(q -> q.getThreshold().getParent()).distinct());
+    IList<ISet<ActiveRunway>> crossedRwys = new EList<>();
+    while (rwys.isEmpty() == false) {
+      ISet<ActiveRunway> set = new ESet<>();
+      ActiveRunway r = rwys.get(0);
+      rwys.removeAt(0);
+      set.add(r);
+      set.add(
+          rwys.where(q -> isIntersectionBetweenRunways(r, q))
+      );
+      rwys.tryRemove(set);
+      crossedRwys.add(set);
+    }
+
+    ISet<ActiveRunwayThreshold> set;
+    for (ISet<ActiveRunway> crossedRwy : crossedRwys) {
+      set = new ESet<>();
+      for (ActiveRunway runway : crossedRwy) {
+        set.add(runway.getThresholds());
+      }
+      crossedThresholdSets.add(set);
+    }
+  }
+
+  private static boolean isIntersectionBetweenRunways(ActiveRunway a, ActiveRunway b) {
+    Line2D lineA = new Line2D.Float(
+        (float) a.getThresholdA().getCoordinate().getLatitude().get(),
+        (float) a.getThresholdA().getCoordinate().getLongitude().get(),
+        (float) a.getThresholdB().getCoordinate().getLatitude().get(),
+        (float) a.getThresholdB().getCoordinate().getLongitude().get());
+    Line2D lineB = new Line2D.Float(
+        (float) b.getThresholdA().getCoordinate().getLatitude().get(),
+        (float) b.getThresholdA().getCoordinate().getLongitude().get(),
+        (float) b.getThresholdB().getCoordinate().getLatitude().get(),
+        (float) b.getThresholdB().getCoordinate().getLongitude().get());
+    boolean ret = lineA.intersectsLine(lineB);
+    return ret;
+  }
+
+  private static void checkAllCategoriesAreApplied(
+      IList<RunwayConfiguration.RunwayThresholdConfiguration> departures,
+      IList<RunwayConfiguration.RunwayThresholdConfiguration> arrivals) {
+    IList<ActiveRunway> rwys = new EDistinctList<>(EDistinctList.Behavior.skip);
+    rwys.add(arrivals.select(q -> q.getThreshold().getParent()).distinct());
+    rwys.add(departures.select(q -> q.getThreshold().getParent()).distinct());
+
+    // check if all categories are applied
+    for (char i = 'A'; i <= 'D'; i++) {
+      char c = i;
+      if (!arrivals.isAny(q -> q.isForCategory(c)))
+        throw new EApplicationException("Unable to find arrival threshold for category " + c);
+      if (!departures.isAny(q -> q.isForCategory(c)))
+        throw new EApplicationException("Unable to find departure threshold for category " + c);
+    }
+  }
+
+  private static RunwayConfiguration.RunwayThresholdConfiguration convert(
+      XmlRunwayConfiguration.XmlRunwayThresholdConfiguration x, Context context) {
+    ActiveRunwayThreshold t = context.airport.getRunwayThreshold(x.name);
+    RunwayConfiguration.RunwayThresholdConfiguration ret = new RunwayConfiguration.RunwayThresholdConfiguration(t);
+    return ret;
+  }
+
+  private static IMap<String, IList<Route>> convertSharedRoutes(XmlAirport x, Context context) {
+    IMap<String, IList<Route>> ret = new EMap<>();
+    for (XmlAirport.XmlSharedRoutesGroup xmlSharedRoutesGroup : x.sharedRoutesGroups) {
+      IList<Route> lst = new EList<>();
+      ret.set(xmlSharedRoutesGroup.groupName, lst);
+      for (XmlRoute xmlRoute : xmlSharedRoutesGroup.routes) {
+        Route route = convert(xmlRoute, context);
+        lst.add(route);
+      }
+    }
     return ret;
   }
 
@@ -327,10 +498,6 @@ public class XmlModelBinder {
     return ret;
   }
 
-  private static InactiveRunwayThreshold convert(XmlInactiveRunwayThreshold xmlThreshold) {
-    return new InactiveRunwayThreshold();
-  }
-
   private static AtcTemplate convert(XmlAtcTemplate x) {
     return new AtcTemplate(
         x.type, x.name, x.frequency, x.acceptAltitude, x.releaseAltitude, x.orderedAltitude,
@@ -341,7 +508,7 @@ public class XmlModelBinder {
     return new InitialPosition(initialPosition.coordinate, initialPosition.range);
   }
 
-  private static BorderPoint create(XmlBorderExactPoint xmlBorderExactPoint) {
+  private static BorderPoint convert(XmlBorderExactPoint xmlBorderExactPoint) {
     BorderPoint ret = new BorderPoint(xmlBorderExactPoint.getCoordinate());
     return ret;
   }
@@ -390,13 +557,13 @@ public class XmlModelBinder {
     }
 
     for (XmlBorderExactPoint xmlBorderExactPoint : exp) {
-      BorderPoint bp = XmlModelBinder.create(xmlBorderExactPoint);
+      BorderPoint bp = XmlModelBinder.convert(xmlBorderExactPoint);
       ret.add(bp);
     }
     return ret;
   }
 
-  private IList<XmlBorderExactPoint> generateArcPoints(XmlBorderExactPoint prev, XmlBorderArcPoint curr, XmlBorderExactPoint next) {
+  private static IList<XmlBorderExactPoint> generateArcPoints(XmlBorderExactPoint prev, XmlBorderArcPoint curr, XmlBorderExactPoint next) {
     IList<XmlBorderExactPoint> ret = new EList<>();
 
     double prevHdg = Coordinates.getBearing(curr.getCoordinate(), prev.getCoordinate());

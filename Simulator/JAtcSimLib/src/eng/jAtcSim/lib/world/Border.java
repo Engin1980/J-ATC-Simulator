@@ -25,22 +25,6 @@ import java.util.Comparator;
  */
 public class Border {
 
-  public static class ByDisjointsComparator implements Comparator<Border> {
-
-    @Override
-    public int compare(Border a, Border b) {
-      if (a.getDisjoints().contains(b.getName()))
-        if (b.getDisjoints().contains(a.getName()))
-          throw new EApplicationException("Borders has cyclic dependency in disjoints definition. Borders. " + a.getName() + ", " + b.getName());
-        else
-          return 1;
-      else if (b.getDisjoints().contains(a.getName()))
-        return -1;
-      else
-        return 0;
-    }
-  }
-
   public enum eType {
     country,
     tma,
@@ -51,33 +35,20 @@ public class Border {
     other
   }
 
-  private static final int DRAW_STEP = 10;
-  public static final int ALTITUDE_MINIMUM_VALUE = 0;
-  public static final int ALTITUDE_MAXIMUM_VALUE = 99000;
-  private String name;
-  private eType type;
-  @XmlItemElement(elementName = "point", type = BorderExactPoint.class)
-  @XmlItemElement(elementName = "arc", type = BorderArcPoint.class)
-  @XmlItemElement(elementName = "crd", type = BorderCrdPoint.class)
-  @XmlItemElement(elementName = "circle", type = BorderCirclePoint.class)
-  private IList<BorderPoint> points;
+//  private static final int DRAW_STEP = 10;
+//  public static final int ALTITUDE_MINIMUM_VALUE = 0;
+//  public static final int ALTITUDE_MAXIMUM_VALUE = 99000;
+  private final String name;
+  private final eType type;
+  private final IList<BorderPoint> points;
   private boolean enclosed;
-  @XmlOptional
-  private int minAltitude = ALTITUDE_MINIMUM_VALUE;
-  @XmlOptional
-  private int maxAltitude = ALTITUDE_MAXIMUM_VALUE;
-  @XmlOptional
-  private Coordinate labelCoordinate;
-  @XmlIgnore
-  private double globalMinLng;
-  @XmlIgnore
-  private double globalMaxLng;
-  @XmlIgnore
-  private double globalMinLat;
-  @XmlIgnore
-  private double globalMaxLat;
-  @XmlOptional
-  private IList<String> disjoints = new EList<>();
+  private final int minAltitude;
+  private final int maxAltitude;
+  private final Coordinate labelCoordinate;
+  private final double globalMinLng;
+  private final double globalMaxLng;
+  private final double globalMinLat;
+  private final double globalMaxLat;
 
   public Border(String name, eType type, IList<BorderPoint> points, boolean enclosed, int minAltitude, int maxAltitude, Coordinate labelCoordinate) {
     this.name = name;
@@ -102,10 +73,6 @@ public class Border {
     return type;
   }
 
-  public IReadOnlyList<String> getDisjoints() {
-    return disjoints;
-  }
-
   public IList<BorderPoint> getPoints() {
     return points;
   }
@@ -123,22 +90,7 @@ public class Border {
   }
 
   public Coordinate getLabelCoordinate() {
-    if (labelCoordinate == null) {
-      generateLabelCoordinate();
-    }
     return labelCoordinate;
-  }
-
-  public void bind() {
-    if (this.points.size() > 1 && this.points.isAny(q -> q instanceof BorderCirclePoint)) {
-      throw new EApplicationException("Border " + this.getName() + " is not valid. If <circle> is used, it must be the only element in the <points> list.");
-    }
-    expandArcsToPoints();
-
-    this.globalMinLat = exactPoints.minDouble(q -> q.getCoordinate().getLatitude().get());
-    this.globalMaxLat = exactPoints.maxDouble(q -> q.getCoordinate().getLatitude().get());
-    this.globalMinLng = exactPoints.minDouble(q -> q.getCoordinate().getLongitude().get());
-    this.globalMaxLng = exactPoints.maxDouble(q -> q.getCoordinate().getLongitude().get());
   }
 
   public boolean isIn(Coordinate c) {
@@ -197,100 +149,13 @@ public class Border {
     return ret;
   }
 
-  private void generateLabelCoordinate() {
-    IList<BorderExactPoint> tmp = points.where(q -> q instanceof BorderExactPoint).select(q -> (BorderExactPoint) q);
-    double latMin = tmp.minDouble(q -> q.getCoordinate().getLatitude().get());
-    double latMax = tmp.maxDouble(q -> q.getCoordinate().getLatitude().get());
-    double lngMin = tmp.minDouble(q -> q.getCoordinate().getLongitude().get());
-    double lngMax = tmp.maxDouble(q -> q.getCoordinate().getLongitude().get());
-
-    double lat = (latMax + latMin) / 2;
-    double lng = (lngMax + lngMin) / 2;
-
-    this.labelCoordinate = new Coordinate(lat, lng);
-  }
-
-  private void expandArcsToPoints() {
-    // expand circle
-    if (this.points.size() > 0 && points.get(0) instanceof BorderCirclePoint) {
-      BorderCirclePoint bcp = (BorderCirclePoint) points.get(0);
-      this.labelCoordinate = bcp.getCoordinate();
-      points.clear();
-      points.add(new BorderCrdPoint(bcp.getCoordinate(), 0, bcp.getDistance()));
-      points.add(new BorderArcPoint(bcp.getCoordinate(), BorderArcPoint.eDirection.clockwise));
-      points.add(new BorderCrdPoint(bcp.getCoordinate(), 180, bcp.getDistance()));
-      points.add(new BorderArcPoint(bcp.getCoordinate(), BorderArcPoint.eDirection.clockwise));
-      this.enclosed = true;
-    }
-
-    if (this.isEnclosed() && !this.points.get(0).equals(this.points.get(this.points.size() - 1)))
-      this.points.add(this.points.get(0));
-
-    // replace CRD to Exact
-    IList<BorderPoint> lst = new EList<>(this.points);
-    for (int i = 0; i < lst.size(); i++) {
-      if (lst.get(i) instanceof BorderCrdPoint) {
-        BorderCrdPoint bcp = (BorderCrdPoint) lst.get(i);
-        Coordinate c = Coordinates.getCoordinate(bcp.getCoordinate(), bcp.getRadial(), bcp.getDistance());
-        BorderExactPoint bep = new BorderExactPoint(c);
-        lst.set(i, bep);
-      }
-    }
-
-    this.exactPoints = new EList<>();
-
-    for (int i = 0; i < lst.size(); i++) {
-      if (lst.get(i) instanceof BorderExactPoint)
-        this.exactPoints.add((BorderExactPoint) lst.get(i));
-      else {
-        BorderExactPoint prev = (BorderExactPoint) lst.get(i - 1);
-        BorderArcPoint curr = (BorderArcPoint) lst.get(i);
-        BorderExactPoint next = (BorderExactPoint) lst.get(i + 1);
-        IList<BorderExactPoint> tmp = generateArcPoints(prev, curr, next);
-        this.exactPoints.add(tmp);
-      }
-    }
-  }
-
-  private IList<BorderExactPoint> generateArcPoints(BorderExactPoint prev, BorderArcPoint curr, BorderExactPoint next) {
-    IList<BorderExactPoint> ret = new EList<>();
-
-    double prevHdg = Coordinates.getBearing(curr.getCoordinate(), prev.getCoordinate());
-    double nextHdg = Coordinates.getBearing(curr.getCoordinate(), next.getCoordinate());
-    double dist = Coordinates.getDistanceInNM(curr.getCoordinate(), prev.getCoordinate());
-    dist = (dist + Coordinates.getDistanceInNM(curr.getCoordinate(), next.getCoordinate())) / 2;
-    double step;
-    if (curr.getDirection() == BorderArcPoint.eDirection.clockwise) {
-      prevHdg = Math.ceil(prevHdg);
-      nextHdg = Math.floor(nextHdg);
-      step = 1;
-    } else if (curr.getDirection() == BorderArcPoint.eDirection.counterclockwise) {
-      prevHdg = Math.floor(prevHdg);
-      nextHdg = Math.ceil(nextHdg);
-      step = -+1;
-    } else {
-      throw new UnsupportedOperationException("This combination is not supported.");
-    }
-    double pt = prevHdg;
-    while (pt != nextHdg) {
-      pt = Headings.add(pt, step);
-      if (((int) pt) % DRAW_STEP == 0) {
-        Coordinate c = Coordinates.getCoordinate(curr.getCoordinate(), pt, dist);
-        BorderExactPoint p = new BorderExactPoint(c);
-        ret.add(p);
-      }
-    }
-
-    return ret;
-  }
-
   private int getLinesCount() {
-    return this.exactPoints.size() - 1;
+    return this.points.size() - 1;
   }
 
   private Tuple<Coordinate, Coordinate> getLine(int index) {
-    Coordinate a = this.exactPoints.get(index).getCoordinate();
-    Coordinate b = this.exactPoints.get(index + 1).getCoordinate();
+    Coordinate a = this.points.get(index).getCoordinate();
+    Coordinate b = this.points.get(index + 1).getCoordinate();
     Tuple<Coordinate, Coordinate> ret;
     if (a.getLongitude().get() > b.getLongitude().get()) {
       ret = new Tuple<>(b, a);

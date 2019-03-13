@@ -14,25 +14,20 @@ public class EntryExitPoint {
     both
   }
 
-  @XmlIgnore
-  private Airport parent;
-  private String name;
-  @XmlIgnore
-  private Navaid navaid;
-  private Type type;
-  @XmlIgnore
-  private Integer maxMrvaAltitude = null;
-  @XmlIgnore
-  private int radialFromAirport;
+  private final Airport parent;
+  private final String name;
+  private final Navaid navaid;
+  private final Type type;
+  private final Integer maxMrvaAltitude;
+  private final int radialFromAirport;
 
-  public EntryExitPoint(Navaid mainFix, Type type, int maxMrvaAltitude) {
-    this.navaid = mainFix;
-    this.name = this.navaid.getName();
+  public EntryExitPoint(Airport parent, String name, Navaid navaid, Type type, Integer maxMrvaAltitude, int radialFromAirport) {
+    this.parent = parent;
+    this.name = name;
+    this.navaid = navaid;
     this.type = type;
     this.maxMrvaAltitude = maxMrvaAltitude;
-  }
-
-  private EntryExitPoint() {
+    this.radialFromAirport = radialFromAirport;
   }
 
   public Airport getParent() {
@@ -54,41 +49,15 @@ public class EntryExitPoint {
       return maxMrvaAltitude;
   }
 
-  public void bind() {
-    this.parent = Acc.airport();
-    this.navaid = Acc.area().getNavaids().get(this.name);
-
-    Area area = this.getParent().getParent();
-    IList<Border> mrvas = area.getBorders().where(q -> q.getType() == Border.eType.mrva);
-    Tuple<Coordinate, Coordinate> line =
-        new Tuple<>(
-            this.navaid.getCoordinate(),
-            this.getParent().getMainAirportNavaid().getCoordinate()
-        );
-
-    int maxMrvaAlt = 0;
-    for (Border mrva : mrvas) {
-      if (mrva.hasIntersectionWithLine(line))
-        maxMrvaAlt = Math.max(maxMrvaAlt, mrva.getMaxAltitude());
-    }
-
-    if (this.maxMrvaAltitude == null)
-      this.maxMrvaAltitude = maxMrvaAlt;
-    else
-      this.maxMrvaAltitude = Math.min(this.maxMrvaAltitude, maxMrvaAlt);
-
-    this.radialFromAirport = (int) Math.round(
-        Coordinates.getBearing(this.parent.getLocation(), this.navaid.getCoordinate()));
-  }
-
   public void adjustBy(EntryExitPoint eep) {
-    assert this.navaid.equals(eep.navaid);
-
-    this.maxMrvaAltitude = Math.min(this.maxMrvaAltitude, eep.maxMrvaAltitude);
-    if ((eep.type == Type.both && this.type != Type.both) ||
-        (this.type == Type.entry && eep.type == Type.exit) ||
-        (this.type == Type.exit && eep.type == Type.entry))
-      this.type = Type.both;
+    throw new UnsupportedOperationException("I dont know what is this used to do. Check and apply appropriatelly.");
+//    assert this.navaid.equals(eep.navaid);
+//
+//    this.maxMrvaAltitude = Math.min(this.maxMrvaAltitude, eep.maxMrvaAltitude);
+//    if ((eep.type == Type.both && this.type != Type.both) ||
+//        (this.type == Type.entry && eep.type == Type.exit) ||
+//        (this.type == Type.exit && eep.type == Type.entry))
+//      this.type = Type.both;
   }
 
   @Override

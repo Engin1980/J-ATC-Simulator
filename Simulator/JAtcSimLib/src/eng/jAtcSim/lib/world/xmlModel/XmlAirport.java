@@ -17,18 +17,18 @@ import eng.jAtcSim.lib.world.approaches.IafRoute;
 import eng.jAtcSim.lib.world.xml.RunwayConfigurationParser;
 
 public class XmlAirport {
-  public static class SharedRoutesGroup {
+  public static class XmlSharedRoutesGroup {
     public String groupName;
     @XmlOptional
-    @XmlItemElement(elementName = "route", type = Route.class)
-    public IList<Route> routes = new EList<>();
+    @XmlItemElement(elementName = "route", type = XmlRoute.class)
+    public IList<XmlRoute> routes = new EList<>();
   }
 
-  public static class SharedIafRoutesGroup {
+  public static class XmlSharedIafRoutesGroup {
     public String groupName;
     @XmlOptional
-    @XmlItemElement(elementName = "route", type = IafRoute.class)
-    public IList<IafRoute> iafRoutes = new EList<>();
+    @XmlItemElement(elementName = "route", type = XmlIafRoute.class)
+    public IList<XmlIafRoute> iafRoutes = new EList<>();
   }
 
   public final XmlInitialPosition initialPosition = new InitialPosition();
@@ -59,19 +59,19 @@ public class XmlAirport {
   @XmlItemElement(elementName = "configuration", type = RunwayConfiguration.class, parser = RunwayConfigurationParser.class)
   public IList<XmlRunwayConfiguration> runwayConfigurations = new EList<>();
   @XmlOptional
-  @XmlItemElement(elementName = "sharedRoutesGroup", type= eng.jAtcSim.lib.world.Airport.SharedRoutesGroup.class)
-  public IList<eng.jAtcSim.lib.world.Airport.SharedRoutesGroup> sharedRoutesGroups = new EList<>();
+  @XmlItemElement(elementName = "sharedRoutesGroup", type= XmlSharedRoutesGroup.class)
+  public IList<XmlSharedRoutesGroup> sharedRoutesGroups = new EList<>();
   @XmlOptional
-  @XmlItemElement(elementName = "sharedIafRoutesGroup", type= eng.jAtcSim.lib.world.Airport.SharedIafRoutesGroup.class)
-  public IList<eng.jAtcSim.lib.world.Airport.SharedIafRoutesGroup> sharedIafRoutesGroups = new EList<>();
+  @XmlItemElement(elementName = "sharedIafRoutesGroup", type= XmlSharedIafRoutesGroup.class)
+  public IList<XmlSharedIafRoutesGroup> sharedIafRoutesGroups = new EList<>();
   @XmlIgnore
   public IList<XmlRoute> routes;
 
-  public IReadOnlyList<eng.jAtcSim.lib.world.Airport.SharedRoutesGroup> getSharedRoutesGroups() {
+  public IReadOnlyList<XmlSharedRoutesGroup> getSharedRoutesGroups() {
     return sharedRoutesGroups;
   }
 
-  public IReadOnlyList<eng.jAtcSim.lib.world.Airport.SharedIafRoutesGroup> getSharedIafRoutesGroups() {
+  public IReadOnlyList<XmlSharedIafRoutesGroup> getSharedIafRoutesGroups() {
     return sharedIafRoutesGroups;
   }
 
@@ -100,7 +100,7 @@ public class XmlAirport {
   }
 
   public Coordinate getLocation() {
-    return runways.get(0).getThresholdA().getCoordinate();
+    return getMainAirportNavaid().coordinate;
   }
 
   public IReadOnlyList<ActiveRunway> getRunways() {
