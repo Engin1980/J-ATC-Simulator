@@ -4,7 +4,7 @@ import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.pilots.behaviors.IPilot4Behavior;
-import eng.jAtcSim.lib.world.RunwayThreshold;
+import eng.jAtcSim.lib.world.ActiveRunwayThreshold;
 
 /**
  * Represents visual approach aimed to the runway threshold.
@@ -24,10 +24,10 @@ public class VisualFinalStage implements IApproachStage {
   private static final double MAXIMAL_NORMAL_AIM_POINT_DISTANCE = 5;
   private static final double AIP_POINT_DELETE_DISTANCE = 1;
   private static final double DEFAULT_SLOPE = 1;
-  private RunwayThreshold threshold;
+  private ActiveRunwayThreshold threshold;
   private Coordinate aimPoint;
 
-  public VisualFinalStage(RunwayThreshold threshold) {
+  public VisualFinalStage(ActiveRunwayThreshold threshold) {
     this.threshold = threshold;
   }
 

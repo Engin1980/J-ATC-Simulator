@@ -1,18 +1,33 @@
 package eng.jAtcSim.lib.world;
 
 import eng.eSystem.geo.Coordinates;
-import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 import eng.eSystem.geo.Coordinate;
 
 public class InactiveRunwayThreshold {
-  private String name;
-  private Coordinate coordinate;
-  @XmlIgnore
-  private InactiveRunway parent;
-  @XmlIgnore
-  private double _course;
-  @XmlIgnore
-  private InactiveRunwayThreshold _other;
+  public static InactiveRunwayThreshold[] create(String aName, Coordinate aCoordinate, String bName, Coordinate bCoordinate,
+                                                 InactiveRunway parent) {
+    InactiveRunwayThreshold a = new InactiveRunwayThreshold(aName, aCoordinate, parent);
+    InactiveRunwayThreshold b = new InactiveRunwayThreshold(bName, bCoordinate, parent);
+    a.other = b;
+    b.other = a;
+    a.course = Coordinates.getBearing(a.coordinate, b.coordinate);
+    b.course = Coordinates.getBearing(b.coordinate, a.coordinate);
+
+    return new InactiveRunwayThreshold[]{a, b};
+  }
+
+  private final String name;
+  private final Coordinate coordinate;
+  private final InactiveRunway parent;
+  private double course;
+  private InactiveRunwayThreshold other;
+
+  public InactiveRunwayThreshold(String name, Coordinate coordinate, InactiveRunway parent) {
+    this.name = name;
+    this.coordinate = coordinate;
+    this.parent = parent;
+  }
+
 
   public String getName() {
     return name;
@@ -31,11 +46,11 @@ public class InactiveRunwayThreshold {
   }
 
   public double getCourse() {
-    return this._course;
+    return this.course;
   }
 
   public InactiveRunwayThreshold getOtherThreshold() {
-    return _other;
+    return other;
   }
 
   @Override
@@ -44,11 +59,11 @@ public class InactiveRunwayThreshold {
   }
 
   public void bind() {
-    this._other
+    this.other
         = this.getParent().getThresholdA().equals(this)
         ? this.getParent().getThresholdB()
         : this.getParent().getThresholdA();
-    this._course
-        = Coordinates.getBearing(this.coordinate, _other.coordinate);
+    this.course
+        = Coordinates.getBearing(this.coordinate, other.coordinate);
   }
 }

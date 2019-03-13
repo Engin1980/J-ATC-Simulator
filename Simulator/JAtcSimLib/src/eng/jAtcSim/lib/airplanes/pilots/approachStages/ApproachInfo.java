@@ -5,7 +5,7 @@ import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.geo.Coordinate;
 import eng.jAtcSim.lib.speaking.SpeechList;
-import eng.jAtcSim.lib.world.RunwayThreshold;
+import eng.jAtcSim.lib.world.ActiveRunwayThreshold;
 import eng.jAtcSim.lib.world.approaches.Approach;
 
 public class ApproachInfo {
@@ -41,7 +41,7 @@ public class ApproachInfo {
   private final static int DEFAULT_LONG_FINAL_ALTITUDE_AGL = 1000;
   private final static int DEFAULT_SHORT_FINAL_ALTITUDE_AGL = 200;
 
-  public static IList<AltitudeEvent> generateAltitudeEvents(Approach.ApproachType type, RunwayThreshold threshold) {
+  public static IList<AltitudeEvent> generateAltitudeEvents(Approach.ApproachType type, ActiveRunwayThreshold threshold) {
     int sfa = 200;
     int lfa = (type == Approach.ApproachType.visual) ? 500 : 1000;
     sfa += threshold.getParent().getParent().getAltitude();
@@ -53,12 +53,12 @@ public class ApproachInfo {
   }
   private IList<IApproachStage> stages;
   private IList<AltitudeEvent> altitudeEvents;
-  private RunwayThreshold threshold;
+  private ActiveRunwayThreshold threshold;
   private SpeechList gaRoute;
   private Approach.ApproachType type;
 
   public ApproachInfo(Approach.ApproachType type,
-                      RunwayThreshold threshold,
+                      ActiveRunwayThreshold threshold,
                       IList<IApproachStage> stages,
                       IList<AltitudeEvent> altitudeEvents,
                       SpeechList gaRoute) {
@@ -71,7 +71,7 @@ public class ApproachInfo {
   }
 
   public ApproachInfo(Approach.ApproachType type,
-                      RunwayThreshold threshold,
+                      ActiveRunwayThreshold threshold,
                       IList<IApproachStage> stages,
                       SpeechList gaRoute) {
     this(type,
@@ -81,7 +81,7 @@ public class ApproachInfo {
         gaRoute);
   }
 
-  public RunwayThreshold getThreshold() {
+  public ActiveRunwayThreshold getThreshold() {
     return threshold;
   }
 

@@ -7,24 +7,24 @@
 package eng.jAtcSim.lib.speaking.fromAtc.commands;
 
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
-import eng.jAtcSim.lib.world.RunwayThreshold;
+import eng.jAtcSim.lib.world.ActiveRunwayThreshold;
 
 /**
  *
  * @author Marek
  */
 public class ClearedForTakeoffCommand implements IAtcCommand {
-  private final RunwayThreshold runwayThreshold;
+  private final ActiveRunwayThreshold runwayThreshold;
 
   private ClearedForTakeoffCommand() {
     runwayThreshold = null;
   }
 
-  public ClearedForTakeoffCommand(RunwayThreshold runwayThreshold) {
+  public ClearedForTakeoffCommand(ActiveRunwayThreshold runwayThreshold) {
     this.runwayThreshold = runwayThreshold;
   }
 
-  public RunwayThreshold getRunwayThreshold() {
+  public ActiveRunwayThreshold getRunwayThreshold() {
     return runwayThreshold;
   }
 

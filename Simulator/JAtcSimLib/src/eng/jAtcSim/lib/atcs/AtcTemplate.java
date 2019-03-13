@@ -6,8 +6,6 @@
 
 package eng.jAtcSim.lib.atcs;
 
-import eng.eSystem.xmlSerialization.annotations.XmlOptional;
-
 /**
  * @author Marek
  */
@@ -18,10 +16,19 @@ public class AtcTemplate {
   private int acceptAltitude;
   private int releaseAltitude;
   private int orderedAltitude;
-  @XmlOptional
   private Integer ctrAcceptDistance = null;
-  @XmlOptional
   private Integer ctrNavaidAcceptDistance = null;
+
+  public AtcTemplate(Atc.eType type, String name, double frequency, int acceptAltitude, int releaseAltitude, int orderedAltitude, Integer ctrAcceptDistance, Integer ctrNavaidAcceptDistance) {
+    this.type = type;
+    this.name = name;
+    this.frequency = frequency;
+    this.acceptAltitude = acceptAltitude;
+    this.releaseAltitude = releaseAltitude;
+    this.orderedAltitude = orderedAltitude;
+    this.ctrAcceptDistance = ctrAcceptDistance;
+    this.ctrNavaidAcceptDistance = ctrNavaidAcceptDistance;
+  }
 
   public Atc.eType getType() {
     return type;

@@ -3,7 +3,6 @@ package eng.jAtcSim.lib.world;
 import eng.eSystem.collections.EList;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.geo.Coordinates;
-import eng.eSystem.xmlSerialization.annotations.XmlItemElement;
 import eng.jAtcSim.lib.Acc;
 import eng.eSystem.geo.Coordinate;
 import eng.jAtcSim.lib.global.Headings;
@@ -33,7 +32,7 @@ public class NavaidList extends EList<Navaid> {
           Airport aip = Acc.area().getAirports().tryGetFirst(q->q.getIcao().equals(pts[0]));
           if (aip == null)
             throw new EApplicationException("Airport with code " + pts[0] + " not found.");
-          RunwayThreshold th = aip.tryGetRunwayThreshold(pts[1]);
+          ActiveRunwayThreshold th = aip.tryGetRunwayThreshold(pts[1]);
           if (th == null)
             throw new EApplicationException("Airport with code " + pts[0] + " has no threshold " + pts[1]+".");
           Navaid n = new Navaid(name, Navaid.eType.auxiliary, th.getCoordinate());

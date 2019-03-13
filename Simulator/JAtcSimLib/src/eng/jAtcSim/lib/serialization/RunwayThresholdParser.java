@@ -5,19 +5,19 @@ import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.xmlSerialization.XmlSerializer;
 import eng.eSystem.xmlSerialization.supports.IElementParser;
 import eng.jAtcSim.lib.world.Airport;
-import eng.jAtcSim.lib.world.Runway;
-import eng.jAtcSim.lib.world.RunwayThreshold;
+import eng.jAtcSim.lib.world.ActiveRunway;
+import eng.jAtcSim.lib.world.ActiveRunwayThreshold;
 
-public class RunwayThresholdParser implements IElementParser<RunwayThreshold> {
+public class RunwayThresholdParser implements IElementParser<ActiveRunwayThreshold> {
 
   private Airport known;
 
   @Override
-  public RunwayThreshold parse(XElement xElement, XmlSerializer.Deserializer xmlSerializer)   {
+  public ActiveRunwayThreshold parse(XElement xElement, XmlSerializer.Deserializer xmlSerializer)   {
     String c = xElement.getContent();
-    RunwayThreshold ret = null;
-    for (Runway runway : known.getRunways()) {
-      for (RunwayThreshold threshold : runway.getThresholds()) {
+    ActiveRunwayThreshold ret = null;
+    for (ActiveRunway runway : known.getRunways()) {
+      for (ActiveRunwayThreshold threshold : runway.getThresholds()) {
         if (threshold.getName().equals(c)){
           ret = threshold;
           break;
@@ -30,7 +30,7 @@ public class RunwayThresholdParser implements IElementParser<RunwayThreshold> {
   }
 
   @Override
-  public void format(RunwayThreshold runwayThreshold, XElement xElement, XmlSerializer.Serializer xmlSerializer)   {
+  public void format(ActiveRunwayThreshold runwayThreshold, XElement xElement, XmlSerializer.Serializer xmlSerializer)   {
     xElement.setContent(runwayThreshold.getName());
   }
 

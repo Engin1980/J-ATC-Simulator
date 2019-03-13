@@ -5,21 +5,20 @@ import eng.eSystem.geo.Coordinates;
 import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
-import eng.jAtcSim.lib.airplanes.pilots.Pilot;
-import eng.jAtcSim.lib.world.RunwayThreshold;
+import eng.jAtcSim.lib.world.ActiveRunwayThreshold;
 
 public class TakeOffBehavior extends Behavior {
 
   //TODO add to airport config the acceleration altitude and use it here
   private final int accelerationAltitude;
-  private RunwayThreshold toThreshold;
+  private ActiveRunwayThreshold toThreshold;
 
   @XmlConstructor
   private TakeOffBehavior() {
     accelerationAltitude = 0;
   }
 
-  public TakeOffBehavior(IPilot4Behavior pilot, RunwayThreshold toThreshold) {
+  public TakeOffBehavior(IPilot4Behavior pilot, ActiveRunwayThreshold toThreshold) {
 
     this.toThreshold = toThreshold;
     int accAlt;

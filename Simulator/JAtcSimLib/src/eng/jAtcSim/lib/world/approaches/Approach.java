@@ -28,7 +28,7 @@ import eng.jAtcSim.lib.textProcessing.parsing.Parser;
 import eng.jAtcSim.lib.textProcessing.parsing.shortBlockParser.ShortBlockParser;
 import eng.jAtcSim.lib.world.Airport;
 import eng.jAtcSim.lib.world.Navaid;
-import eng.jAtcSim.lib.world.RunwayThreshold;
+import eng.jAtcSim.lib.world.ActiveRunwayThreshold;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.List;
@@ -74,7 +74,7 @@ public abstract class Approach {
     return ret;
   }
 
-  public static ApproachInfo createVisualApproachInfo(RunwayThreshold threshold, Coordinate planeLocation) {
+  public static ApproachInfo createVisualApproachInfo(ActiveRunwayThreshold threshold, Coordinate planeLocation) {
 
     double hdg = Headings.getOpposite(threshold.getCourse());
 
@@ -307,7 +307,7 @@ public abstract class Approach {
   private IList<IafRoute> iafRoutes = new EList<>();
   private int radial;
   @XmlIgnore
-  private RunwayThreshold parent;
+  private ActiveRunwayThreshold parent;
   private int initialAltitude;
   @XmlOptional
   private String includeIafRoutesGroups = null;
@@ -363,11 +363,11 @@ public abstract class Approach {
     return gaRoute;
   }
 
-  public RunwayThreshold getParent() {
+  public ActiveRunwayThreshold getParent() {
     return parent;
   }
 
-  public void setParent(RunwayThreshold parent) {
+  public void setParent(ActiveRunwayThreshold parent) {
     this.parent = parent;
   }
 

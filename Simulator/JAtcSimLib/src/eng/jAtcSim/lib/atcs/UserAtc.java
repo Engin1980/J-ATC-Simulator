@@ -23,7 +23,7 @@ import eng.jAtcSim.lib.speaking.fromAtc.commands.ContactCommand;
 import eng.jAtcSim.lib.textProcessing.parsing.Parser;
 import eng.jAtcSim.lib.textProcessing.parsing.shortBlockParser.ShortBlockParser;
 import eng.jAtcSim.lib.world.Route;
-import eng.jAtcSim.lib.world.RunwayThreshold;
+import eng.jAtcSim.lib.world.ActiveRunwayThreshold;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -189,7 +189,7 @@ public class UserAtc extends Atc {
         Pattern.compile("(\\d{1,2}[lrcLRC]?)?(\\/(.+))?")
             .matcher(text);
     m.find();
-    RunwayThreshold threshold;
+    ActiveRunwayThreshold threshold;
     if (m.group(1) == null)
       threshold = plane.getExpectedRunwayThreshold();
     else {

@@ -11,9 +11,8 @@ import eng.jAtcSim.lib.speaking.fromAirplane.notifications.HighOrderedSpeedForAp
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.Rejection;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.rejections.UnableToEnterApproachFromDifficultPosition;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ClearedToApproachCommand;
-import eng.jAtcSim.lib.world.RunwayThreshold;
+import eng.jAtcSim.lib.world.ActiveRunwayThreshold;
 import eng.jAtcSim.lib.world.approaches.Approach;
-import eng.jAtcSim.lib.world.approaches.CurrentApproachInfo;
 
 public class ClearedToApproachApplication extends CommandApplication<ClearedToApproachCommand> {
 
@@ -22,7 +21,7 @@ public class ClearedToApproachApplication extends CommandApplication<ClearedToAp
 
     IFromAirplane ret = null;
 
-    RunwayThreshold rt = Acc.airport().tryGetRunwayThreshold(c.getThresholdName());
+    ActiveRunwayThreshold rt = Acc.airport().tryGetRunwayThreshold(c.getThresholdName());
     ApproachInfo ai = null;
     if (rt == null) {
       ret = new Rejection(
@@ -111,7 +110,7 @@ public class ClearedToApproachApplication extends CommandApplication<ClearedToAp
       ret.informations.add(tmp);
     }
 
-    RunwayThreshold rt = Acc.airport().tryGetRunwayThreshold(c.getThresholdName());
+    ActiveRunwayThreshold rt = Acc.airport().tryGetRunwayThreshold(c.getThresholdName());
     ApproachInfo ai = rt.tryGetCurrentApproachInfo(
         c.getType(),
         plane.getType().category,

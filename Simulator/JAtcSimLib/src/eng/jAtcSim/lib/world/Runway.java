@@ -1,54 +1,37 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package eng.jAtcSim.lib.world;
 
-import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
-import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
-import eng.eSystem.xmlSerialization.annotations.XmlItemElement;
 
-/**
- *
- * @author Marek
- */
-public class Runway {
-  @XmlItemElement(elementName = "threshold", type = RunwayThreshold.class)
-  private final IList<RunwayThreshold> thresholds = new EList<>();
-
-  @XmlIgnore
+public abstract class Runway<ThresholdType> {
+  private final IList<ThresholdType> thresholds;
   private Airport parent;
 
-  public RunwayThreshold get(int index){
+  public Runway(IList<ThresholdType> thresholds, Airport parent) {
+    this.thresholds = thresholds;
+    this.parent = parent;
+  }
+
+  public ThresholdType get(int index){
     return thresholds.get(index);
   }
-  
-  public IReadOnlyList<RunwayThreshold> getThresholds(){
+
+  public IReadOnlyList<ThresholdType> getThresholds(){
     return this.thresholds;
   }
-  
-  public RunwayThreshold getThresholdA(){
+
+  public ThresholdType getThresholdA(){
     return thresholds.get(0);
   }
-  
-  public RunwayThreshold getThresholdB(){
+
+  public ThresholdType getThresholdB(){
     return thresholds.get(1);
   }
 
-  public String getName(){
-    return getThresholdA().getName() + "-" + getThresholdB().getName();
-  }
-  
+  public abstract String getName();
+
   public Airport getParent() {
     return parent;
-  }
-
-  public void setParent(Airport parent) {
-    this.parent = parent;
   }
 
   @Override

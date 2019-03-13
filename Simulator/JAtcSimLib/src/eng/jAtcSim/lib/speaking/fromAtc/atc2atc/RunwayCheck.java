@@ -1,7 +1,7 @@
 package eng.jAtcSim.lib.speaking.fromAtc.atc2atc;
 
 import eng.jAtcSim.lib.speaking.fromAtc.IAtc2Atc;
-import eng.jAtcSim.lib.world.Runway;
+import eng.jAtcSim.lib.world.ActiveRunway;
 
 public class RunwayCheck implements IAtc2Atc {
 
@@ -10,10 +10,10 @@ public class RunwayCheck implements IAtc2Atc {
     doCheck
   }
 
-  public Runway runway;
+  public ActiveRunway runway;
   public eType type;
 
-  public RunwayCheck(Runway runway, eType type) {
+  public RunwayCheck(ActiveRunway runway, eType type) {
     this.runway = runway;
     this.type = type;
   }

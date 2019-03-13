@@ -20,7 +20,7 @@ import eng.jAtcSim.lib.speaking.fromAtc.commands.*;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.afters.AfterNavaidCommand;
 import eng.jAtcSim.lib.world.Navaid;
 import eng.jAtcSim.lib.world.Route;
-import eng.jAtcSim.lib.world.RunwayThreshold;
+import eng.jAtcSim.lib.world.ActiveRunwayThreshold;
 
 public class CenterAtc extends ComputerAtc {
 
@@ -106,9 +106,9 @@ public class CenterAtc extends ComputerAtc {
 
       // assigns route
       Navaid n = plane.getEntryExitFix();
-      Tuple<Route, RunwayThreshold> rrt = getRoutingForPlaneAndFix(plane, n);
+      Tuple<Route, ActiveRunwayThreshold> rrt = getRoutingForPlaneAndFix(plane, n);
       Route r = rrt.getA();
-      RunwayThreshold rt = rrt.getB();
+      ActiveRunwayThreshold rt = rrt.getB();
       cmds.add(new ProceedDirectCommand(n));
       cmds.add(new ClearedToRouteCommand(r, rt));
       Message msg = new Message(this, plane, cmds);
@@ -256,13 +256,13 @@ public class CenterAtc extends ComputerAtc {
       farArrivals.add(plane);
   }
 
-  private Tuple<Route, RunwayThreshold> getRoutingForPlaneAndFix(Airplane plane, Navaid n) {
-    Tuple<Route, RunwayThreshold> ret;
+  private Tuple<Route, ActiveRunwayThreshold> getRoutingForPlaneAndFix(Airplane plane, Navaid n) {
+    Tuple<Route, ActiveRunwayThreshold> ret;
     Route r = null;
-    RunwayThreshold rt = null;
-    IList<RunwayThreshold> thresholdsCopy = new EList<>();
+    ActiveRunwayThreshold rt = null;
+    IList<ActiveRunwayThreshold> thresholdsCopy = new EList<>();
 
-    IReadOnlyList<RunwayThreshold> thresholds;
+    IReadOnlyList<ActiveRunwayThreshold> thresholds;
     // if is arrival, scheduled thresholds are taken into account
     if (Acc.atcTwr().tryGetRunwayConfigurationScheduled() != null)
       thresholds = Acc.atcTwr().tryGetRunwayConfigurationScheduled().getArrivals()

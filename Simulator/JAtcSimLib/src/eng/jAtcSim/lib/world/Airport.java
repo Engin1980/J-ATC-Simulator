@@ -5,84 +5,55 @@
  */
 package eng.jAtcSim.lib.world;
 
-import eng.eSystem.collections.EDistinctList;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.ERuntimeException;
 import eng.eSystem.geo.Coordinate;
-import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
-import eng.eSystem.xmlSerialization.annotations.XmlItemElement;
-import eng.eSystem.xmlSerialization.annotations.XmlOptional;
 import eng.jAtcSim.lib.atcs.AtcTemplate;
-import eng.jAtcSim.lib.world.approaches.Approach;
-import eng.jAtcSim.lib.world.approaches.IafRoute;
-import eng.jAtcSim.lib.world.xml.RunwayConfigurationParser;
 
 /**
  * @author Marek
  */
 public class Airport {
 
-  public static class SharedRoutesGroup {
-    public String groupName;
-    @XmlOptional
-    @XmlItemElement(elementName = "route", type = Route.class)
-    public IList<Route> routes = new EList<>();
-  }
-
-  public static class SharedIafRoutesGroup {
-    public String groupName;
-    @XmlOptional
-    @XmlItemElement(elementName = "route", type = IafRoute.class)
-    public IList<IafRoute> iafRoutes = new EList<>();
-  }
-
-  private final InitialPosition initialPosition = new InitialPosition();
-  @XmlItemElement(elementName = "runway", type = Runway.class)
-  private final IList<Runway> runways = new EList<>();
-  @XmlOptional
-  @XmlItemElement(elementName = "runway", type = InactiveRunway.class)
-  private final IList<InactiveRunway> inactiveRunways = new EList<>();
-  @XmlItemElement(elementName = "atcTemplate", type = AtcTemplate.class)
-  private final IList<AtcTemplate> atcTemplates = new EList<>();
-  @XmlItemElement(elementName = "hold", type = PublishedHold.class)
-  private final IList<PublishedHold> holds = new EList<>();
-  @XmlOptional
-  @XmlItemElement(elementName = "entryExitPoint", type = EntryExitPoint.class)
-  private final IList<EntryExitPoint> entryExitPoints = new EList<>();
+  private final InitialPosition initialPosition;
+  private final IList<ActiveRunway> runways;
+  private final IList<InactiveRunway> inactiveRunways;
+  private final IList<AtcTemplate> atcTemplates;
+  private final IList<PublishedHold> holds;
+  private final IList<EntryExitPoint> entryExitPoints;
   private String icao;
   private String name;
   private int altitude;
   private int transitionAltitude;
-  @XmlOptional
   private int vfrAltitude = -1;
-  private String mainAirportNavaidName;
   private double declination;
-  @XmlIgnore
-  private Navaid _mainAirportNavaid;
-  @XmlIgnore
+  private Navaid mainAirportNavaid;
   private Area parent;
   private int coveredDistance;
-  @XmlOptional
-  @XmlItemElement(elementName = "configuration", type = RunwayConfiguration.class, parser = RunwayConfigurationParser.class)
-  private IList<RunwayConfiguration> runwayConfigurations = new EList<>();
-  @XmlOptional
-  @XmlItemElement(elementName = "sharedRoutesGroup", type=SharedRoutesGroup.class)
-  private IList<SharedRoutesGroup> sharedRoutesGroups = new EList<>();
-  @XmlOptional
-  @XmlItemElement(elementName = "sharedIafRoutesGroup", type=SharedIafRoutesGroup.class)
-  private IList<SharedIafRoutesGroup> sharedIafRoutesGroups = new EList<>();
-  @XmlIgnore
+  private IList<RunwayConfiguration> runwayConfigurations;
   private IList<Route> routes;
 
-  public IReadOnlyList<SharedRoutesGroup> getSharedRoutesGroups() {
-    return sharedRoutesGroups;
-  }
-
-  public IReadOnlyList<SharedIafRoutesGroup> getSharedIafRoutesGroups() {
-    return sharedIafRoutesGroups;
+  public Airport(String icao, String name, Navaid mainAirportNavaid, int altitude, int vfrAltitude, int transitionAltitude, int coveredDistance, double declination, InitialPosition initialPosition, IList<AtcTemplate> atcTemplates, IList<ActiveRunway> runways, IList<InactiveRunway> inactiveRunways, IList<PublishedHold> holds, IList<EntryExitPoint> entryExitPoints, IList<RunwayConfiguration> runwayConfigurations, IList<Route> routes, Area parent) {
+    this.initialPosition = initialPosition;
+    this.runways = runways;
+    this.inactiveRunways = inactiveRunways;
+    this.atcTemplates = atcTemplates;
+    this.holds = holds;
+    this.entryExitPoints = entryExitPoints;
+    this.icao = icao;
+    this.name = name;
+    this.altitude = altitude;
+    this.transitionAltitude = transitionAltitude;
+    this.vfrAltitude = vfrAltitude;
+    this.declination = declination;
+    this.mainAirportNavaid = mainAirportNavaid;
+    this.parent = parent;
+    this.coveredDistance = coveredDistance;
+    this.runwayConfigurations = runwayConfigurations;
+    this.routes = routes;
   }
 
   public IReadOnlyList<EntryExitPoint> getEntryExitPoints() {
@@ -113,7 +84,7 @@ public class Airport {
     return runways.get(0).getThresholdA().getCoordinate();
   }
 
-  public IReadOnlyList<Runway> getRunways() {
+  public IReadOnlyList<ActiveRunway> getRunways() {
     return runways;
   }
 
@@ -137,9 +108,9 @@ public class Airport {
     return holds;
   }
 
-  public RunwayThreshold tryGetRunwayThreshold(String runwayThresholdName) {
-    for (Runway r : runways) {
-      for (RunwayThreshold t : r.getThresholds()) {
+  public ActiveRunwayThreshold tryGetRunwayThreshold(String runwayThresholdName) {
+    for (ActiveRunway r : runways) {
+      for (ActiveRunwayThreshold t : r.getThresholds()) {
         if (t.getName().equals(runwayThresholdName)) {
           return t;
         }
@@ -157,21 +128,21 @@ public class Airport {
   }
 
   public Navaid getMainAirportNavaid() {
-    if (this._mainAirportNavaid == null) {
+    if (this.mainAirportNavaid == null) {
       try {
-        this._mainAirportNavaid = this.getParent().getNavaids().get(this.mainAirportNavaidName);
+        this.mainAirportNavaid = this.getParent().getNavaids().get(this.mainAirportNavaidName);
       } catch (ERuntimeException ex) {
         throw new EApplicationException("Failed to find main navaid named " + this.mainAirportNavaidName + " for aiport " + this.name + ". Invalid area file?", ex);
       }
     }
 
-    return this._mainAirportNavaid;
+    return this.mainAirportNavaid;
   }
 
-  public IReadOnlyList<RunwayThreshold> getAllThresholds() {
-    IList<RunwayThreshold> ret = new EList<>();
-    for (Runway runway : this.getRunways()) {
-      for (RunwayThreshold threshold : runway.getThresholds()) {
+  public IReadOnlyList<ActiveRunwayThreshold> getAllThresholds() {
+    IList<ActiveRunwayThreshold> ret = new EList<>();
+    for (ActiveRunway runway : this.getRunways()) {
+      for (ActiveRunwayThreshold threshold : runway.getThresholds()) {
         ret.add(threshold);
       }
     }
@@ -190,60 +161,4 @@ public class Airport {
     return routes;
   }
 
-  public void bind() {
-    Airport a = this;
-
-    for (PublishedHold h : a.getHolds()) {
-      h.bind();
-    }
-
-    // fill routes list
-    this.routes = new EDistinctList<>(EDistinctList.Behavior.exception);
-    this.sharedRoutesGroups.forEach(q -> this.routes.add(q.routes)); // adds shared routes
-    this.getAllThresholds().forEach(q -> this.routes.add(q.getRoutes())); // adds threshold specific routes
-
-    for (Route o : a.getRoutes()) {
-      o.bind();
-    }
-    a.bindEntryExitPointsByRoutes();
-
-    for (Runway r : a.getRunways()) {
-      for (RunwayThreshold t : r.getThresholds()) {
-        t.bind();
-
-        for (Approach p : t.getApproaches()) {
-          p.bind();
-        }
-      }
-
-      for (EntryExitPoint eep : a.getEntryExitPoints()) {
-        eep.bind();
-      }
-    }
-
-    for (RunwayConfiguration runwayConfiguration : a.getRunwayConfigurations()) {
-      runwayConfiguration.bind();
-    }
-
-  }
-
-  private void bindEntryExitPointsByRoutes() {
-    for (Route route : this.routes) {
-      EntryExitPoint eep = new EntryExitPoint(
-          route.getMainNavaid(),
-          route.getType() == Route.eType.sid ? EntryExitPoint.Type.exit : EntryExitPoint.Type.entry,
-          route.getMaxMrvaAltitude());
-
-      mergeEntryExitPoints(eep);
-    }
-  }
-
-  private void mergeEntryExitPoints(EntryExitPoint eep) {
-    EntryExitPoint tmp = this.getEntryExitPoints().tryGetFirst(q -> q.getName().equals(eep.getNavaid().getName()));
-    if (tmp == null)
-      this.entryExitPoints.add(eep);
-    else {
-      tmp.adjustBy(eep);
-    }
-  }
 }

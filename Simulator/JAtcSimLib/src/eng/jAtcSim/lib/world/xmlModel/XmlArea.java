@@ -74,11 +74,11 @@ public class XmlArea {
       set = airport.getHolds().getDuplicateItems(q -> q.getNavaid().getName()).select(q -> q.getNavaid().getName()).selectCount(3);
       tryFailDuplicits("Published holds of " + airport.getName(), set);
 
-      for (Runway runway : airport.getRunways()) {
+      for (ActiveRunway runway : airport.getRunways()) {
         set = runway.getThresholds().getDuplicateItems(q -> q.getName()).select(q -> q.getName());
         tryFailDuplicits("Active runway thresholds of " + runway.getName() + " of " + airport.getName(), set);
 
-        for (RunwayThreshold runwayThreshold : runway.getThresholds()) {
+        for (ActiveRunwayThreshold runwayThreshold : runway.getThresholds()) {
           for (Approach approach : runwayThreshold.getApproaches()) {
             if (!(approach instanceof IlsApproach)) continue;
             IlsApproach ils = (IlsApproach) approach;
@@ -128,10 +128,10 @@ public class XmlArea {
 
       a.getSharedRoutesGroups().forEach(q -> q.routes.forEach(p -> p.setParent(a)));
 
-      for (Runway r : a.getRunways()) {
+      for (ActiveRunway r : a.getRunways()) {
         r.setParent(a);
 
-        for (RunwayThreshold t : r.getThresholds()) {
+        for (ActiveRunwayThreshold t : r.getThresholds()) {
           t.setParent(r);
           t.getRoutes().forEach(q -> q.setParent(a));
 
@@ -149,8 +149,8 @@ public class XmlArea {
     Parser parser = new ShortBlockParser();
     for (Airport a : this.getAirports()) {
       Acc.setAirport(a);
-      for (Runway r : a.getRunways()) {
-        for (RunwayThreshold t : r.getThresholds()) {
+      for (ActiveRunway r : a.getRunways()) {
+        for (ActiveRunwayThreshold t : r.getThresholds()) {
           for (Approach p : t.getApproaches()) {
             try {
               parser.parseMultipleCommands(p.getGaRoute());

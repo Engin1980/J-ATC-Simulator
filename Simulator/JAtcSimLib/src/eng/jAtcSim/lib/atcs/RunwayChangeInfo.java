@@ -1,14 +1,14 @@
 package eng.jAtcSim.lib.atcs;
 
 import eng.jAtcSim.lib.global.ETime;
-import eng.jAtcSim.lib.world.RunwayThreshold;
+import eng.jAtcSim.lib.world.ActiveRunwayThreshold;
 
 class RunwayChangeInfo {
 
-  public final RunwayThreshold newRunwayThreshold;
+  public final ActiveRunwayThreshold newRunwayThreshold;
   public final ETime changeTime;
 
-  public RunwayChangeInfo(RunwayThreshold newRunwayThreshold, ETime changeTime) {
+  public RunwayChangeInfo(ActiveRunwayThreshold newRunwayThreshold, ETime changeTime) {
     this.newRunwayThreshold = newRunwayThreshold;
     this.changeTime = changeTime;
   }

@@ -44,8 +44,8 @@ public class LoadSave {
     // parser
     sett.forType(Navaid.class).setCustomParser(navaidParser);
     sett.forType(AirplaneType.class).setCustomParser(airplaneTypeParser);
-    sett.forType(RunwayThreshold.class).setCustomParser(runwayThresholdParser);
-    sett.forType(Runway.class).setCustomParser(runwayParser);
+    sett.forType(ActiveRunwayThreshold.class).setCustomParser(runwayThresholdParser);
+    sett.forType(ActiveRunway.class).setCustomParser(runwayParser);
     sett.forType(Route.class).setCustomParser(routeParser);
     sett.forType(Airplane.class).setCustomParser(airplaneParser);
     sett.forType(Atc.class).setCustomParser(atcParser);

@@ -554,11 +554,11 @@ public class Radar {
       this.navaids.add(ndi);
     }
 
-    IReadOnlyList<RunwayThreshold> rts =
+    IReadOnlyList<ActiveRunwayThreshold> rts =
         Acc.atcTwr().getRunwayConfigurationInUse().getArrivals()
             .where(q -> q.isShowRoutes())
             .select(q -> q.getThreshold());
-    for (RunwayThreshold rt : rts) {
+    for (ActiveRunwayThreshold rt : rts) {
       for (Route route : rt.getRoutes().where(q -> q.getType() != Route.eType.sid)) {
         for (Navaid navaid : route.getNavaids()) {
           NavaidDisplayInfo ndi = this.navaids.getByNavaid(navaid);
@@ -566,7 +566,7 @@ public class Radar {
         }
       }
     }
-    for (RunwayThreshold rt : rts) {
+    for (ActiveRunwayThreshold rt : rts) {
       for (Route route : rt.getRoutes().where(q -> q.getType() == Route.eType.sid)) {
         for (Navaid navaid : route.getNavaids()) {
           NavaidDisplayInfo ndi = this.navaids.getByNavaid(navaid);
@@ -869,7 +869,7 @@ public class Radar {
       switch (route.getType()) {
         case sid:
           if (!displaySettings.isSidVisible()) continue;
-          for (RunwayThreshold runwayThreshold : Acc.atcTwr().getRunwayConfigurationInUse()
+          for (ActiveRunwayThreshold runwayThreshold : Acc.atcTwr().getRunwayConfigurationInUse()
               .getDepartures()
               .select(q -> q.getThreshold())
               .where(q -> q.getRoutes().contains(route))) {
@@ -1013,12 +1013,12 @@ public class Radar {
       drawInactiveRunway(r);
     }
 
-    for (Runway r : a.getRunways()) {
+    for (ActiveRunway r : a.getRunways()) {
       drawRunway(r);
     }
   }
 
-  private void drawRunway(Runway runway) {
+  private void drawRunway(ActiveRunway runway) {
     RadarStyleSettings.ColorWidthSettings ds = getDispSettBy(runway);
 
     tl.drawLine(
@@ -1311,7 +1311,7 @@ public class Radar {
     }
   }
 
-  private RadarStyleSettings.ColorWidthSettings getDispSettBy(Runway runway) {
+  private RadarStyleSettings.ColorWidthSettings getDispSettBy(ActiveRunway runway) {
     return styleSettings.activeRunway;
   }
 

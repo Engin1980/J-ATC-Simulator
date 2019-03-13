@@ -5,10 +5,10 @@ import eng.eSystem.geo.Coordinates;
 import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
 import eng.jAtcSim.lib.speaking.IFromAtc;
 import eng.jAtcSim.lib.speaking.SpeechList;
-import eng.jAtcSim.lib.world.RunwayThreshold;
+import eng.jAtcSim.lib.world.ActiveRunwayThreshold;
 
 public class CurrentApproachInfo {
-  private RunwayThreshold threshold;
+  private ActiveRunwayThreshold threshold;
   private SpeechList<IFromAtc> iafRoute;
   private SpeechList<IFromAtc> gaRoute;
   private Approach.ApproachType type;
@@ -25,7 +25,7 @@ public class CurrentApproachInfo {
   private CurrentApproachInfo() {
   }
 
-  public CurrentApproachInfo(RunwayThreshold threshold, boolean usingIafRoute, SpeechList<IFromAtc> iafRoute, SpeechList<IFromAtc> gaRoute, Approach.ApproachType type, Coordinate faf, Coordinate mapt, int course, int decisionAltitude, double slope, int initialAltitude) {
+  public CurrentApproachInfo(ActiveRunwayThreshold threshold, boolean usingIafRoute, SpeechList<IFromAtc> iafRoute, SpeechList<IFromAtc> gaRoute, Approach.ApproachType type, Coordinate faf, Coordinate mapt, int course, int decisionAltitude, double slope, int initialAltitude) {
     this.threshold = threshold;
     this.usingIafRoute = usingIafRoute;
     this.iafRoute = iafRoute;
@@ -44,7 +44,7 @@ public class CurrentApproachInfo {
     return usingIafRoute;
   }
 
-  public RunwayThreshold getThreshold() {
+  public ActiveRunwayThreshold getThreshold() {
     return threshold;
   }
 

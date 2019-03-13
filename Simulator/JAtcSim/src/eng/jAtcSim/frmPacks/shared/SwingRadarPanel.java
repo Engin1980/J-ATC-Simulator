@@ -11,7 +11,6 @@ import eng.eSystem.events.EventAnonymousSimple;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.exceptions.ERuntimeException;
-import eng.eSystem.swing.extenders.DisplayItem;
 import eng.eSystem.utilites.Selector;
 import eng.jAtcSim.SwingRadar.SwingCanvas;
 import eng.jAtcSim.lib.Acc;
@@ -56,10 +55,10 @@ public class SwingRadarPanel extends JPanel {
     public Tuple<Iterable<Route>, Selector<Route, String>> doInit() {
       Tuple<Iterable<Route>, Selector<Route, String>> ret = new Tuple<>();
 
-      IMap<Route, IList<RunwayThreshold>> tmp = new EMap<>();
-      for (RunwayThreshold threshold : Acc.airport().getAllThresholds()) {
+      IMap<Route, IList<ActiveRunwayThreshold>> tmp = new EMap<>();
+      for (ActiveRunwayThreshold threshold : Acc.airport().getAllThresholds()) {
         for (Route route : threshold.getRoutes()) {
-          IList<RunwayThreshold> lst = tmp.tryGet(route);
+          IList<ActiveRunwayThreshold> lst = tmp.tryGet(route);
           if (lst == null) {
             lst = new EList<>();
             tmp.set(route, lst);
@@ -114,7 +113,7 @@ public class SwingRadarPanel extends JPanel {
       Tuple<Iterable<Approach>, Selector<Approach, String>> ret = new Tuple<>();
       IList<Approach> tmp = new EList();
 
-      for (RunwayThreshold runwayThreshold : Acc.atcTwr().getRunwayConfigurationInUse().getArrivals().select(q -> q.getThreshold())) {
+      for (ActiveRunwayThreshold runwayThreshold : Acc.atcTwr().getRunwayConfigurationInUse().getArrivals().select(q -> q.getThreshold())) {
         tmp.add(runwayThreshold.getApproaches());
       }
 
@@ -663,9 +662,9 @@ class ButtonBinding {
 
 class RouteComparator implements Comparator<Route> {
 
-  private IMap<Route, IList<RunwayThreshold>> map;
+  private IMap<Route, IList<ActiveRunwayThreshold>> map;
 
-  public RouteComparator(IMap<Route, IList<RunwayThreshold>> map) {
+  public RouteComparator(IMap<Route, IList<ActiveRunwayThreshold>> map) {
     this.map = map;
   }
 
@@ -675,7 +674,7 @@ class RouteComparator implements Comparator<Route> {
 
     String sa;
     String sb;
-    IList<RunwayThreshold> tmp;
+    IList<ActiveRunwayThreshold> tmp;
     tmp = map.get(a);
     sa = tmp.isEmpty() ? "" : tmp.getFirst().getName();
     tmp = map.get(b);

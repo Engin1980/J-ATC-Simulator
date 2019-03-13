@@ -1,11 +1,27 @@
 package eng.jAtcSim.lib.world;
 
+import eng.eSystem.Tuple;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
+import eng.eSystem.collections.IMap;
 import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
+import eng.eSystem.utilites.RegexUtils;
+import eng.jAtcSim.lib.Acc;
+import eng.jAtcSim.lib.atcs.AtcTemplate;
+import eng.jAtcSim.lib.exceptions.EBindException;
 import eng.jAtcSim.lib.global.Headings;
+import eng.jAtcSim.lib.speaking.ICommand;
+import eng.jAtcSim.lib.speaking.IFromAtc;
+import eng.jAtcSim.lib.speaking.SpeechList;
+import eng.jAtcSim.lib.speaking.fromAtc.commands.HoldCommand;
+import eng.jAtcSim.lib.speaking.fromAtc.commands.ProceedDirectCommand;
+import eng.jAtcSim.lib.speaking.fromAtc.commands.ToNavaidCommand;
+import eng.jAtcSim.lib.textProcessing.parsing.Parser;
+import eng.jAtcSim.lib.textProcessing.parsing.shortBlockParser.ShortBlockParser;
+import eng.jAtcSim.lib.world.approaches.Approach;
 import eng.jAtcSim.lib.world.xmlModel.*;
 
 public class XmlModelBinder {
@@ -19,6 +35,8 @@ public class XmlModelBinder {
       this.airport = airport;
     }
   }
+
+  private static final int BORDER_ARC_POINT_DRAW_STEP = 10;
 
   public static Navaid convert(XmlNavaid x) {
     Navaid ret = new Navaid(x.name, x.type, x.coordinate);
@@ -64,12 +82,263 @@ public class XmlModelBinder {
       borders.add(border);
     }
 
-//    for (XmlAirport xmlAirport : area.getAirports()) {
-//      Airport airport = XmlModelBinder.convert(xmlAirport);
-//      airports.add(airport);
-//    }
+    for (XmlAirport xmlAirport : area.getAirports()) {
+      Airport airport = XmlModelBinder.convert(xmlAirport);
+      airports.add(airport);
+    }
 
     return ret;
+  }
+
+  private static Airport convert(XmlAirport x, Context context) {
+    Navaid mainAirportNavaid = context.area.getNavaids().get(x.mainAirportNavaidName);
+    InitialPosition initialPosition = convert(x.initialPosition);
+
+    IList<AtcTemplate> atcTemplates = new EList<>();
+    IList<ActiveRunway> runways = new EList<>();
+    IList<InactiveRunway> inactiveRunways = new EList<>();
+    IList<PublishedHold> holds = new EList<>();
+    IList<RunwayConfiguration> runwayConfigurations = new EList<>();
+    IList<EntryExitPoint> entryExitPoints = new EList<>();
+    IList<Route> routes = new EList<>();
+
+    Airport ret = new Airport(
+        x.getIcao(), x.getName(), mainAirportNavaid, x.altitude,
+        x.vfrAltitude, x.transitionAltitude, x.coveredDistance, x.declination,
+        initialPosition, atcTemplates, runways, inactiveRunways,
+        holds, entryExitPoints, runwayConfigurations, routes, context.area);
+
+    for (XmlAtcTemplate xmlAtcTemplate : x.atcTemplates) {
+      AtcTemplate atcTemplate = convert(xmlAtcTemplate);
+      atcTemplates.add(atcTemplate);
+    }
+
+    for (XmlInactiveRunway xmlInactiveRunway : x.inactiveRunways) {
+      InactiveRunway inactiveRunway = convert(xmlInactiveRunway, ret);
+      inactiveRunways.add(inactiveRunway);
+    }
+
+    for (XmlActiveRunway xmlRunway : x.runways) {
+      ActiveRunway runway = convert(xmlRunway, context, sharedRoutesGroup);
+      runways.add(runway);
+    }
+
+    return ret;
+  }
+
+  private static ActiveRunway convert(XmlActiveRunway x, IMap<String, IList<Route>> sharedRoutesGroups,
+                                      Context context) {
+    assert x.thresholds.size() == 2;
+    IList<ActiveRunwayThreshold> thresholds = new EList<>();
+    ActiveRunway ret = new ActiveRunway(thresholds, context.airport);
+
+    XmlActiveRunwayThreshold xa = x.thresholds.get(0);
+    XmlActiveRunwayThreshold xb = x.thresholds.get(1);
+
+    IList<Approach> aApproaches = new EList<>();
+    IList<Route> aRoutes = new EList<>();
+    IList<Approach> bApproaches = new EList<>();
+    IList<Route> bRoutes = new EList<>();
+
+
+    ActiveRunwayThreshold[] t = ActiveRunwayThreshold.create(
+        xa.name, xa.coordinate, xa.initialDepartureAltitude, aApproaches, aRoutes,
+        xb.name, xb.coordinate, xb.initialDepartureAltitude, bApproaches, bRoutes,
+        ret);
+    thresholds.add(t);
+
+    for (XmlApproach xmlApproach : xa.approaches) {
+      Approach approach = convert(xmlApproach);
+      aApproaches.add(approach);
+    }
+    for (XmlApproach xmlApproach : xb.approaches) {
+      Approach approach = convert(xmlApproach);
+      bApproaches.add(approach);
+    }
+    buildRoutesForActiveRunwayThreshold(xa, aRoutes, sharedRoutesGroups, context);
+    buildRoutesForActiveRunwayThreshold(xb, bRoutes, sharedRoutesGroups, context);
+
+    return ret;
+  }
+
+  private static Approach convert(XmlApproach xmlApproach) {
+    throw new UnsupportedOperationException("TODO tohle jsem si nechal nakonec.");
+  }
+
+  private static void buildRoutesForActiveRunwayThreshold(XmlActiveRunwayThreshold xa, IList<Route> aRoutes, IMap<String, IList<Route>> sharedRoutesGroups,
+                                                          Context context) {
+    for (XmlRoute xmlRoute : xa.routes) {
+      Route route = convert(xmlRoute, context);
+      aRoutes.add(route);
+    }
+    if (xa.includeRoutesGroups != null) {
+      String[] groupNames = xa.includeRoutesGroups.split(";");
+      for (String groupName : groupNames) {
+        try {
+          IList<Route> routes = sharedRoutesGroups.get(groupName);
+          aRoutes.add(routes);
+        } catch (Exception ex) {
+          throw new EApplicationException("Unable to find route group named " + groupName + " required for runway threshold " + xa.name);
+        }
+      }
+    }
+  }
+
+  private static Route convert(XmlRoute x, Context context) {
+    SpeechList routeCommands = decodeRouteCommands(x);
+    IList<Navaid> routeNavaids = routeCommands
+        .where(q -> q instanceof ToNavaidCommand)
+        .select(q -> ((ToNavaidCommand) q).getNavaid());
+    Navaid mainNavaid = evaluateMainRouteNavaid(
+        x.name, x.type, x.mainFix, routeNavaids, context);
+
+    double routeLength = calculateRouteLength(routeNavaids);
+    int maxMrvaFL = calculateMaxMrvaFL(mainNavaid, routeNavaids, context);
+    Route ret = new Route(x.type, x.name, x.category, mainNavaid, routeLength, x.entryFL, routeCommands,
+        routeNavaids, maxMrvaFL, context.airport);
+    return ret;
+  }
+
+  private static Navaid evaluateMainRouteNavaid(String routeName, Route.eType type, String customMainFixName, IList<Navaid> routeNavaids, Context context) {
+    Navaid customMainFix = customMainFixName != null && !customMainFixName.isEmpty()
+        ? context.area.getNavaids().get(customMainFixName)
+        : null;
+    Navaid ret;
+
+    switch (type) {
+      case sid:
+        ret = customMainFix == null ? getFixByRouteName(routeName, context) : customMainFix;
+        if (!routeNavaids.isEmpty() && !routeNavaids.getLast().equals(ret))
+          routeNavaids.add(ret);
+        break;
+      case star:
+      case transition:
+        ret = customMainFix == null ? getFixByRouteName(routeName, context) : customMainFix;
+        if (!routeNavaids.isEmpty() && !routeNavaids.getFirst().equals(ret))
+          routeNavaids.insert(0, ret);
+        break;
+      case vectoring:
+        // nothing
+        ret = null;
+        break;
+      default:
+        throw new EEnumValueUnsupportedException(type);
+    }
+    return ret;
+  }
+
+  private static Navaid getFixByRouteName(String routeName, Context context) {
+    Navaid ret;
+    String name = RegexUtils.extractGroupContent(routeName, "^([A-Z]+)\\d.+", 1);
+    ret = Acc.area().getNavaids().get(name);
+    return ret;
+  }
+
+  private static int calculateMaxMrvaFL(Navaid mainNavaid, IList<Navaid> routeNavaids, Context context) {
+    // min alt
+    IList<Border> mrvas = context.area.getBorders().where(q -> q.getType() == Border.eType.mrva);
+    IList<Tuple<Coordinate, Coordinate>> pointLines = convertPointsToLines(routeNavaids);
+
+    int maxMrvaAlt = 0;
+    for (Border mrva : mrvas) {
+      if (hasMrvaIntersection(pointLines, mrva))
+        maxMrvaAlt = Math.max(maxMrvaAlt, mrva.getMaxAltitude());
+    }
+    if (maxMrvaAlt == 0) {
+      Navaid routePoint = mainNavaid;
+      Border mrva = mrvas.tryGetFirst(q -> q.isIn(routePoint.getCoordinate()));
+      if (mrva != null)
+        maxMrvaAlt = mrva.getMaxAltitude();
+    }
+    int ret = maxMrvaAlt / 100;
+    return ret;
+  }
+
+  private static boolean hasMrvaIntersection(IList<Tuple<Coordinate, Coordinate>> pointLines, Border mrva) {
+    boolean ret = pointLines.isAny(q -> mrva.hasIntersectionWithLine(q));
+    return ret;
+  }
+
+  private static IList<Tuple<Coordinate, Coordinate>> convertPointsToLines(IList<Navaid> points) {
+    IList<Tuple<Coordinate, Coordinate>> ret = new EList<>();
+
+    for (int i = 1; i < points.size(); i++) {
+      Navaid bef = points.get(i - 1);
+      Navaid aft = points.get(i);
+      ret.add(new Tuple<>(bef.getCoordinate(), aft.getCoordinate()));
+    }
+
+    return ret;
+  }
+
+  private static double calculateRouteLength(IList<Navaid> routeNavaids) {
+    double ret = 0;
+    Navaid prev = null;
+
+    for (Navaid routeNavaid : routeNavaids) {
+      if (prev == null) {
+        prev = routeNavaid;
+      } else {
+        Navaid curr = routeNavaid;
+        double dist = Coordinates.getDistanceInNM(prev.getCoordinate(), curr.getCoordinate());
+        ret += dist;
+        prev = curr;
+      }
+    }
+
+    return ret;
+  }
+
+  private static SpeechList decodeRouteCommands(XmlRoute route) {
+    SpeechList ret;
+    try {
+      Parser p = new ShortBlockParser();
+      SpeechList<IFromAtc> xlst = p.parseMulti(route.route);
+      ret = xlst.convertTo();
+    } catch (Exception ex) {
+      throw new EBindException("Parsing fromAtc failed for route " + route.name + ". Route fromAtc contains error (see cause).", ex);
+    }
+
+    // hold at the end of SID via main point
+    if (route.type == Route.eType.sid) {
+      ToNavaidCommand tnc = (ToNavaidCommand) ret.tryGetLast(q -> q instanceof ToNavaidCommand);
+      assert tnc != null : "No ToNavaidCommand in SID???";
+      if (tnc instanceof HoldCommand == false) {
+        ret.add(new HoldCommand(tnc.getNavaid(), 270, true));
+      }
+    }
+
+    return ret;
+  }
+
+  private static InactiveRunway convert(XmlInactiveRunway x, Airport parent) {
+    assert x.thresholds.size() == 2;
+    IList<InactiveRunwayThreshold> thresholds = new EList<>();
+    InactiveRunway ret = new InactiveRunway(thresholds, parent);
+
+    XmlInactiveRunwayThreshold xa = x.thresholds.get(0);
+    XmlInactiveRunwayThreshold xb = x.thresholds.get(1);
+    InactiveRunwayThreshold[] t = InactiveRunwayThreshold.create(
+        xa.name, xa.coordinate,
+        xb.name, xb.coordinate,
+        ret);
+    thresholds.add(t);
+
+    return ret;
+  }
+
+  private static InactiveRunwayThreshold convert(XmlInactiveRunwayThreshold xmlThreshold) {
+    return new InactiveRunwayThreshold();
+  }
+
+  private static AtcTemplate convert(XmlAtcTemplate x) {
+    return new AtcTemplate(
+        x.type, x.name, x.frequency, x.acceptAltitude, x.releaseAltitude, x.orderedAltitude,
+        x.ctrAcceptDistance, x.ctrNavaidAcceptDistance);
+  }
+
+  private static InitialPosition convert(XmlInitialPosition initialPosition) {
+    return new InitialPosition(initialPosition.coordinate, initialPosition.range);
   }
 
   private static BorderPoint create(XmlBorderExactPoint xmlBorderExactPoint) {
@@ -126,7 +395,7 @@ public class XmlModelBinder {
     }
     return ret;
   }
-private static final int BORDER_ARC_POINT_DRAW_STEP = 10;
+
   private IList<XmlBorderExactPoint> generateArcPoints(XmlBorderExactPoint prev, XmlBorderArcPoint curr, XmlBorderExactPoint next) {
     IList<XmlBorderExactPoint> ret = new EList<>();
 

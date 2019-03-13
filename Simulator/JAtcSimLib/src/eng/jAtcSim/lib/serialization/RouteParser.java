@@ -6,8 +6,8 @@ import eng.eSystem.xmlSerialization.XmlSerializer;
 import eng.eSystem.xmlSerialization.supports.IElementParser;
 import eng.jAtcSim.lib.world.Airport;
 import eng.jAtcSim.lib.world.Route;
-import eng.jAtcSim.lib.world.Runway;
-import eng.jAtcSim.lib.world.RunwayThreshold;
+import eng.jAtcSim.lib.world.ActiveRunway;
+import eng.jAtcSim.lib.world.ActiveRunwayThreshold;
 
 public class RouteParser implements IElementParser<Route> {
 
@@ -18,8 +18,8 @@ public class RouteParser implements IElementParser<Route> {
     String c = xElement.getContent();
 Route ret = null;
 
-    for (Runway runway : known.getRunways()) {
-      for (RunwayThreshold threshold : runway.getThresholds()) {
+    for (ActiveRunway runway : known.getRunways()) {
+      for (ActiveRunwayThreshold threshold : runway.getThresholds()) {
         for (Route route : threshold.getRoutes()) {
           if (route.getName().equals(c)){
             ret = route;

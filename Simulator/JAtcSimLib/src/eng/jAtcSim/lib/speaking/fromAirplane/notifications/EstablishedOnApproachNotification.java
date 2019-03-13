@@ -1,17 +1,17 @@
 package eng.jAtcSim.lib.speaking.fromAirplane.notifications;
 
 import eng.jAtcSim.lib.speaking.fromAirplane.IAirplaneNotification;
-import eng.jAtcSim.lib.world.RunwayThreshold;
+import eng.jAtcSim.lib.world.ActiveRunwayThreshold;
 
 public class EstablishedOnApproachNotification implements IAirplaneNotification {
 
-  private RunwayThreshold threshold;
+  private ActiveRunwayThreshold threshold;
 
-  public EstablishedOnApproachNotification(RunwayThreshold threshold) {
+  public EstablishedOnApproachNotification(ActiveRunwayThreshold threshold) {
     this.threshold = threshold;
   }
 
-  public RunwayThreshold getThreshold() {
+  public ActiveRunwayThreshold getThreshold() {
     return threshold;
   }
 

@@ -45,7 +45,7 @@ import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.notifications.RadarContactConfirmationNotification;
 import eng.jAtcSim.lib.world.Navaid;
 import eng.jAtcSim.lib.world.Route;
-import eng.jAtcSim.lib.world.RunwayThreshold;
+import eng.jAtcSim.lib.world.ActiveRunwayThreshold;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -120,7 +120,7 @@ public class Pilot {
       Pilot.this.pilot4Behavior.setHoldBehavior(navaid, inboundRadial, leftTurn);
     }
 
-    public void setTakeOffBehavior(RunwayThreshold thrs) {
+    public void setTakeOffBehavior(ActiveRunwayThreshold thrs) {
       Pilot.this.pilot4Behavior.setBehaviorAndState(
           new TakeOffBehavior(Pilot.this.pilot4Behavior, thrs),
           Airplane.State.takeOffRoll);
@@ -204,7 +204,7 @@ public class Pilot {
       return ret;
     }
 
-    public void setRoute(Route route, RunwayThreshold expectedRunwayThreshold) {
+    public void setRoute(Route route, ActiveRunwayThreshold expectedRunwayThreshold) {
       Pilot.this.updateAssignedRouting(route, expectedRunwayThreshold);
     }
 
@@ -275,7 +275,7 @@ public class Pilot {
 
     @Override
     public void goAround(GoingAroundNotification.GoAroundReason reason, double initialCourse, SpeechList gaRoute) {
-      RunwayThreshold threshold = Pilot.this.tryGetAssignedApproach().getThreshold();
+      ActiveRunwayThreshold threshold = Pilot.this.tryGetAssignedApproach().getThreshold();
 
       Pilot.this.isAfterGoAround = true;
       Pilot.this.gaReason = reason;
@@ -452,7 +452,7 @@ public class Pilot {
   private Coordinate targetCoordinate;
   private Behavior behavior;
   private Route assignedRoute;
-  private RunwayThreshold expectedRunwayThreshold;
+  private ActiveRunwayThreshold expectedRunwayThreshold;
   private Navaid entryExitPoint;
   private Restriction speedRestriction = null;
   private Restriction altitudeRestriction = null;
@@ -546,7 +546,7 @@ public class Pilot {
     return this.assignedRoute;
   }
 
-  public void updateAssignedRouting(Route newRoute, RunwayThreshold expectedRunwayThreshold) {
+  public void updateAssignedRouting(Route newRoute, ActiveRunwayThreshold expectedRunwayThreshold) {
     this.expectedRunwayThreshold = expectedRunwayThreshold;
     this.assignedRoute = newRoute;
     this.afterCommands.clearRoute();
@@ -691,7 +691,7 @@ public class Pilot {
     return secondsWithoutRadarContact == 0;
   }
 
-  public RunwayThreshold getExpectedRunwayThreshold() {
+  public ActiveRunwayThreshold getExpectedRunwayThreshold() {
     return expectedRunwayThreshold;
   }
 

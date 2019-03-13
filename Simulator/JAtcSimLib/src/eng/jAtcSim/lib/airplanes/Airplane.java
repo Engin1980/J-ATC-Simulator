@@ -32,9 +32,8 @@ import eng.jAtcSim.lib.speaking.fromAirplane.notifications.GoingAroundNotificati
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeHeadingCommand;
 import eng.jAtcSim.lib.world.Navaid;
 import eng.jAtcSim.lib.world.Route;
-import eng.jAtcSim.lib.world.RunwayThreshold;
+import eng.jAtcSim.lib.world.ActiveRunwayThreshold;
 import eng.jAtcSim.lib.world.approaches.Approach;
-import eng.jAtcSim.lib.world.approaches.CurrentApproachInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -93,7 +92,7 @@ public class Airplane implements IMessageParticipant {
       return Airplane.this.pilot.getAssignedRoute();
     }
 
-    public RunwayThreshold getExpectedRunwayThreshold() {return Airplane.this.pilot.getExpectedRunwayThreshold(); }
+    public ActiveRunwayThreshold getExpectedRunwayThreshold() {return Airplane.this.pilot.getExpectedRunwayThreshold(); }
 
     public int altitude() {
       return (int) Airplane.this.altitude.getValue();
@@ -752,9 +751,9 @@ public class Airplane implements IMessageParticipant {
     return ret;
   }
 
-  public RunwayThreshold tryGetCurrentApproachRunwayThreshold() {
+  public ActiveRunwayThreshold tryGetCurrentApproachRunwayThreshold() {
     ApproachInfo app = this.pilot.tryGetAssignedApproach();
-    RunwayThreshold ret;
+    ActiveRunwayThreshold ret;
     if (app == null)
       ret = null;
     else
@@ -781,7 +780,7 @@ public class Airplane implements IMessageParticipant {
     return delayResult;
   }
 
-  public void updateAssignedRouting(Route route, RunwayThreshold expectedRunwayThreshold) {
+  public void updateAssignedRouting(Route route, ActiveRunwayThreshold expectedRunwayThreshold) {
     pilot.updateAssignedRouting(route, expectedRunwayThreshold);
   }
 
@@ -807,16 +806,16 @@ public class Airplane implements IMessageParticipant {
     return ret;
   }
 
-  public RunwayThreshold getAssignedRunwayThresholdForLanding() {
-    RunwayThreshold ret = tryGetAssignedRunwayThresholdForLanding();
+  public ActiveRunwayThreshold getAssignedRunwayThresholdForLanding() {
+    ActiveRunwayThreshold ret = tryGetAssignedRunwayThresholdForLanding();
     if (ret == null) {
       throw new EApplicationException(this.getCallsign().toString() + " has no assigned departure/arrival threshold.");
     }
     return ret;
   }
 
-  public RunwayThreshold tryGetAssignedRunwayThresholdForLanding() {
-    RunwayThreshold ret;
+  public ActiveRunwayThreshold tryGetAssignedRunwayThresholdForLanding() {
+    ActiveRunwayThreshold ret;
     ApproachInfo cai = pilot.tryGetAssignedApproach();
     if (cai == null) {
       ret = null;
@@ -879,7 +878,7 @@ public class Airplane implements IMessageParticipant {
     return ret;
   }
 
-  public RunwayThreshold getExpectedRunwayThreshold() {
+  public ActiveRunwayThreshold getExpectedRunwayThreshold() {
     return pilot.getExpectedRunwayThreshold();
   }
 

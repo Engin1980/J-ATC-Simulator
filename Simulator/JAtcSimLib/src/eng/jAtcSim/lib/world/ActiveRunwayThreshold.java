@@ -10,45 +10,63 @@ import eng.eSystem.collections.IList;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.utilites.CollectionUtils;
-import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
-import eng.eSystem.xmlSerialization.annotations.XmlItemElement;
-import eng.eSystem.xmlSerialization.annotations.XmlOptional;
 import eng.eSystem.geo.Coordinate;
 import eng.jAtcSim.lib.airplanes.AirplaneType;
 import eng.jAtcSim.lib.airplanes.pilots.approachStages.ApproachInfo;
 import eng.jAtcSim.lib.global.Headings;
 import eng.jAtcSim.lib.world.approaches.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * @author Marek
  */
-public class RunwayThreshold {
+public class ActiveRunwayThreshold {
 
-  @XmlItemElement(elementName = "ilsApproach", type = IlsApproach.class)
-  @XmlItemElement(elementName = "gnssApproach", type = GnssApproach.class)
-  @XmlItemElement(elementName = "unpreciseApproach", type = UnpreciseApproach.class)
-  private final List<Approach> approaches = new ArrayList<>();
-  @XmlOptional
-  @XmlItemElement(elementName = "route", type = Route.class)
-  private final IList<Route> routes = new EList<>();
-  @XmlOptional
-  String includeRoutesGroups = null;
-  private String name;
-  private Coordinate coordinate;
-  @XmlIgnore
-  private Runway parent;
-  @XmlIgnore
-  private double _course;
-  private int initialDepartureAltitude;
-  @XmlIgnore
-  private RunwayThreshold _other;
-  @XmlOptional // as inactive runway do not have this
-  private boolean preferred = false;
-  @XmlIgnore
+  public static ActiveRunwayThreshold[] create(
+      String aName, Coordinate aCoordinate, int aInitialDepartureAltitude, IList<Approach> aApproaches, IList<Route> aRoutes,
+      String bName, Coordinate bCoordinate, int bInitialDepartureAltitude, IList<Approach> bApproaches, IList<Route> bRoutes,
+      ActiveRunway parent
+  ) {
+    ActiveRunwayThreshold a = new ActiveRunwayThreshold(aName, aCoordinate, aInitialDepartureAltitude, aApproaches, aRoutes, parent);
+    ActiveRunwayThreshold b = new ActiveRunwayThreshold(bName, bCoordinate, bInitialDepartureAltitude, bApproaches, bRoutes, parent);
+
+    a.other = b;
+    b.other = a;
+    a.course = Coordinates.getBearing(a.coordinate, b.coordinate);
+    b.course = Coordinates.getBearing(b.coordinate, a.coordinate);
+    a.estimatedFafPoint = Coordinates.getCoordinate(
+        a.coordinate,
+        Headings.getOpposite(a.course),
+        9);
+    b.estimatedFafPoint = Coordinates.getCoordinate(
+        b.coordinate,
+        Headings.getOpposite(b.course),
+        9);
+
+    return new ActiveRunwayThreshold[]{a, b};
+  }
+
+  private final IList<Approach> approaches;
+  private final IList<Route> routes;
+  private final String name;
+  private final Coordinate coordinate;
+  private final ActiveRunway parent;
+  private double course;
+  private final int initialDepartureAltitude;
+  private ActiveRunwayThreshold other;
+  private final boolean preferred = false;
+  @Deprecated
   private Coordinate estimatedFafPoint;
+
+  private ActiveRunwayThreshold(String name, Coordinate coordinate, int initialDepartureAltitude, IList<Approach> approaches, IList<Route> routes, ActiveRunway parent) {
+    this.approaches = approaches;
+    this.routes = routes;
+    this.name = name;
+    this.coordinate = coordinate;
+    this.parent = parent;
+    this.initialDepartureAltitude = initialDepartureAltitude;
+  }
 
   public int getInitialDepartureAltitude() {
     return initialDepartureAltitude;
@@ -74,16 +92,16 @@ public class RunwayThreshold {
     return routes;
   }
 
-  public Runway getParent() {
+  public ActiveRunway getParent() {
     return parent;
   }
 
-  public void setParent(Runway parent) {
+  public void setParent(ActiveRunway parent) {
     this.parent = parent;
   }
 
   public double getCourse() {
-    return this._course;
+    return this.course;
   }
 
   public Route getDepartureRouteForPlane(AirplaneType type, Navaid mainNavaid, boolean canBeVectoring) {
@@ -146,12 +164,12 @@ public class RunwayThreshold {
     return ret;
   }
 
-  public IList<RunwayThreshold> getParallelGroup() {
-    IList<RunwayThreshold> ret = new EList<>();
+  public IList<ActiveRunwayThreshold> getParallelGroup() {
+    IList<ActiveRunwayThreshold> ret = new EList<>();
 
     double crs = this.getCourse();
-    for (Runway runway : this.getParent().getParent().getRunways()) {
-      for (RunwayThreshold threshold : runway.getThresholds()) {
+    for (ActiveRunway runway : this.getParent().getParent().getRunways()) {
+      for (ActiveRunwayThreshold threshold : runway.getThresholds()) {
         //TODO this may fail for
         if (Headings.isBetween(crs - 1, threshold.getCourse(), crs + 1)) {
           ret.add(threshold);
@@ -165,10 +183,11 @@ public class RunwayThreshold {
     return ret;
   }
 
-  public RunwayThreshold getOtherThreshold() {
-    return _other;
+  public ActiveRunwayThreshold getOtherThreshold() {
+    return other;
   }
 
+  @Deprecated
   public Coordinate getEstimatedFafPoint() {
     return estimatedFafPoint;
   }
@@ -176,32 +195,5 @@ public class RunwayThreshold {
   @Override
   public String toString() {
     return this.getName() + "{rwyThr}";
-  }
-
-  public void bind() {
-    this._other
-        = this.getParent().getThresholdA().equals(this)
-        ? this.getParent().getThresholdB()
-        : this.getParent().getThresholdA();
-    this._course
-        = Coordinates.getBearing(this.coordinate, _other.coordinate);
-
-    this.estimatedFafPoint = Coordinates.getCoordinate(
-        this.coordinate,
-        Headings.getOpposite(this._course),
-        9);
-
-    if (this.includeRoutesGroups != null) {
-      String[] groupNames = this.includeRoutesGroups.split(";");
-      for (String groupName : groupNames) {
-        Airport.SharedRoutesGroup group = this.getParent().getParent().getSharedRoutesGroups().tryGetFirst(q -> q.groupName.equals(groupName));
-
-        if (group == null)
-          throw new EApplicationException("Unable to find route group named " + groupName + " in airport "
-              + this.getParent().getParent().getIcao() + " required for runway threshold " + this.getName());
-
-        this.routes.add(group.routes);
-      }
-    }
   }
 }

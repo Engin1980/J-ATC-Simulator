@@ -2,9 +2,9 @@ package eng.jAtcSim.lib.world;
 
 public class RouteReference {
   public final Route route;
-  public final RunwayThreshold threshold;
+  public final ActiveRunwayThreshold threshold;
 
-  public RouteReference(Route route, RunwayThreshold threshold) {
+  public RouteReference(Route route, ActiveRunwayThreshold threshold) {
     this.route = route;
     this.threshold = threshold;
   }
@@ -13,7 +13,7 @@ public class RouteReference {
     return route;
   }
 
-  public RunwayThreshold getThreshold() {
+  public ActiveRunwayThreshold getThreshold() {
     return threshold;
   }
 }

@@ -5,16 +5,16 @@ import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.xmlSerialization.XmlSerializer;
 import eng.eSystem.xmlSerialization.supports.IElementParser;
 import eng.jAtcSim.lib.world.Airport;
-import eng.jAtcSim.lib.world.Runway;
+import eng.jAtcSim.lib.world.ActiveRunway;
 
-public class RunwayParser implements IElementParser<Runway> {
+public class RunwayParser implements IElementParser<ActiveRunway> {
   private Airport known;
 
   @Override
-  public Runway parse(XElement xElement, XmlSerializer.Deserializer xmlSerializer)  {
+  public ActiveRunway parse(XElement xElement, XmlSerializer.Deserializer xmlSerializer)  {
     String c = xElement.getContent();
-    Runway ret = null;
-    for (Runway runway : known.getRunways()) {
+    ActiveRunway ret = null;
+    for (ActiveRunway runway : known.getRunways()) {
       if (runway.getName().equals(c)) {
         ret = runway;
         break;
@@ -26,7 +26,7 @@ public class RunwayParser implements IElementParser<Runway> {
   }
 
   @Override
-  public void format(Runway runway, XElement xElement, XmlSerializer.Serializer xmlSerializer)   {
+  public void format(ActiveRunway runway, XElement xElement, XmlSerializer.Serializer xmlSerializer)   {
     xElement.setContent(runway.getName());
   }
 

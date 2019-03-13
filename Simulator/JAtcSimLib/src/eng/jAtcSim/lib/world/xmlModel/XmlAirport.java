@@ -31,43 +31,41 @@ public class XmlAirport {
     public IList<IafRoute> iafRoutes = new EList<>();
   }
 
-  private final InitialPosition initialPosition = new InitialPosition();
-  @XmlItemElement(elementName = "runway", type = Runway.class)
-  private final IList<Runway> runways = new EList<>();
+  public final XmlInitialPosition initialPosition = new InitialPosition();
+  @XmlItemElement(elementName = "runway", type = ActiveRunway.class)
+  public final IList<XmlActiveRunway> runways = new EList<>();
   @XmlOptional
   @XmlItemElement(elementName = "runway", type = InactiveRunway.class)
-  private final IList<InactiveRunway> inactiveRunways = new EList<>();
+  public final IList<XmlInactiveRunway> inactiveRunways = new EList<>();
   @XmlItemElement(elementName = "atcTemplate", type = AtcTemplate.class)
-  private final IList<AtcTemplate> atcTemplates = new EList<>();
+  public final IList<XmlAtcTemplate> atcTemplates = new EList<>();
   @XmlItemElement(elementName = "hold", type = PublishedHold.class)
-  private final IList<PublishedHold> holds = new EList<>();
+  public final IList<XmlPublishedHold> holds = new EList<>();
   @XmlOptional
   @XmlItemElement(elementName = "entryExitPoint", type = EntryExitPoint.class)
-  private final IList<EntryExitPoint> entryExitPoints = new EList<>();
-  private String icao;
-  private String name;
-  private int altitude;
-  private int transitionAltitude;
+  public final IList<XmlEntryExitPoint> entryExitPoints = new EList<>();
+  public String icao;
+  public String name;
+  public int altitude;
+  public int transitionAltitude;
   @XmlOptional
-  private int vfrAltitude = -1;
-  private String mainAirportNavaidName;
-  private double declination;
+  public int vfrAltitude = -1;
+  public String mainAirportNavaidName;
+  public double declination;
   @XmlIgnore
-  private XmlNavaid _mainAirportNavaid;
-  @XmlIgnore
-  private Area parent;
-  private int coveredDistance;
+  public Area parent;
+  public int coveredDistance;
   @XmlOptional
   @XmlItemElement(elementName = "configuration", type = RunwayConfiguration.class, parser = RunwayConfigurationParser.class)
-  private IList<RunwayConfiguration> runwayConfigurations = new EList<>();
+  public IList<XmlRunwayConfiguration> runwayConfigurations = new EList<>();
   @XmlOptional
   @XmlItemElement(elementName = "sharedRoutesGroup", type= eng.jAtcSim.lib.world.Airport.SharedRoutesGroup.class)
-  private IList<eng.jAtcSim.lib.world.Airport.SharedRoutesGroup> sharedRoutesGroups = new EList<>();
+  public IList<eng.jAtcSim.lib.world.Airport.SharedRoutesGroup> sharedRoutesGroups = new EList<>();
   @XmlOptional
   @XmlItemElement(elementName = "sharedIafRoutesGroup", type= eng.jAtcSim.lib.world.Airport.SharedIafRoutesGroup.class)
-  private IList<eng.jAtcSim.lib.world.Airport.SharedIafRoutesGroup> sharedIafRoutesGroups = new EList<>();
+  public IList<eng.jAtcSim.lib.world.Airport.SharedIafRoutesGroup> sharedIafRoutesGroups = new EList<>();
   @XmlIgnore
-  private IList<Route> routes;
+  public IList<XmlRoute> routes;
 
   public IReadOnlyList<eng.jAtcSim.lib.world.Airport.SharedRoutesGroup> getSharedRoutesGroups() {
     return sharedRoutesGroups;
@@ -105,7 +103,7 @@ public class XmlAirport {
     return runways.get(0).getThresholdA().getCoordinate();
   }
 
-  public IReadOnlyList<Runway> getRunways() {
+  public IReadOnlyList<ActiveRunway> getRunways() {
     return runways;
   }
 
@@ -129,9 +127,9 @@ public class XmlAirport {
     return holds;
   }
 
-  public RunwayThreshold tryGetRunwayThreshold(String runwayThresholdName) {
-    for (Runway r : runways) {
-      for (RunwayThreshold t : r.getThresholds()) {
+  public ActiveRunwayThreshold tryGetRunwayThreshold(String runwayThresholdName) {
+    for (ActiveRunway r : runways) {
+      for (ActiveRunwayThreshold t : r.getThresholds()) {
         if (t.getName().equals(runwayThresholdName)) {
           return t;
         }
@@ -160,10 +158,10 @@ public class XmlAirport {
     return this._mainAirportNavaid;
   }
 
-  public IReadOnlyList<RunwayThreshold> getAllThresholds() {
-    IList<RunwayThreshold> ret = new EList<>();
-    for (Runway runway : this.getRunways()) {
-      for (RunwayThreshold threshold : runway.getThresholds()) {
+  public IReadOnlyList<ActiveRunwayThreshold> getAllThresholds() {
+    IList<ActiveRunwayThreshold> ret = new EList<>();
+    for (ActiveRunway runway : this.getRunways()) {
+      for (ActiveRunwayThreshold threshold : runway.getThresholds()) {
         ret.add(threshold);
       }
     }
@@ -199,8 +197,8 @@ public class XmlAirport {
     }
     a.bindEntryExitPointsByRoutes();
 
-    for (Runway r : a.getRunways()) {
-      for (RunwayThreshold t : r.getThresholds()) {
+    for (ActiveRunway r : a.getRunways()) {
+      for (ActiveRunwayThreshold t : r.getThresholds()) {
         t.bind();
 
         for (Approach p : t.getApproaches()) {
@@ -219,7 +217,7 @@ public class XmlAirport {
 
   }
 
-  private void bindEntryExitPointsByRoutes() {
+  public void bindEntryExitPointsByRoutes() {
     for (Route route : this.routes) {
       EntryExitPoint eep = new EntryExitPoint(
           route.getMainNavaid(),
@@ -230,7 +228,7 @@ public class XmlAirport {
     }
   }
 
-  private void mergeEntryExitPoints(EntryExitPoint eep) {
+  public void mergeEntryExitPoints(EntryExitPoint eep) {
     EntryExitPoint tmp = this.getEntryExitPoints().tryGetFirst(q -> q.getName().equals(eep.getNavaid().getName()));
     if (tmp == null)
       this.entryExitPoints.add(eep);
