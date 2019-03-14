@@ -3,7 +3,6 @@ package eng.jAtcSim.lib.world.xmlModel;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.xmlSerialization.annotations.XmlItemElement;
-import eng.jAtcSim.lib.world.XmlActiveRunwayThreshold;
 
 public class XmlActiveRunway {
   @XmlItemElement(elementName = "threshold", type = XmlActiveRunwayThreshold.class)

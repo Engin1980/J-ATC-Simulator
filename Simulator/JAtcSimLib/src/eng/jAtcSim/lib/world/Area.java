@@ -48,10 +48,9 @@ public class Area {
     return borders;
   }
 
-  public void init() {
-    rebuildParentReferences();
-    bind();
-    checkRouteCommands();
+  public void checkSanity() {
+    checkForDuplicits();
+//    checkRouteCommands();
   }
 
   public void checkForDuplicits() {
@@ -106,84 +105,36 @@ public class Area {
     throw new EApplicationException(sb.toString());
   }
 
-  private void bind() {
-    borders.sort(new Border.ByDisjointsComparator());
-    for (Border border : borders) {
-      border.bind();
-    }
-
-    for (Airport a : this.getAirports()) {
-      Acc.setAirport(a);
-      a.bind();
-
-    }
-    Acc.setAirport(null);
-  }
-
-  private void rebuildParentReferences() {
-    for (Airport a : this.getAirports()) {
-      a.setParent(this);
-
-      for (PublishedHold h : a.getHolds()) {
-        h.setParent(a);
-      }
-
-      a.getSharedRoutesGroups().forEach(q -> q.routes.forEach(p -> p.setParent(a)));
-
-      for (ActiveRunway r : a.getRunways()) {
-        r.setParent(a);
-
-        for (ActiveRunwayThreshold t : r.getThresholds()) {
-          t.setParent(r);
-          t.getRoutes().forEach(q -> q.setParent(a));
-
-          for (Approach p : t.getApproaches()) {
-            p.setParent(t);
-          }
-        }
-      }
-
-
-    }
-  }
-
-  private void checkRouteCommands() {
-    Parser parser = new ShortBlockParser();
-    for (Airport a : this.getAirports()) {
-      Acc.setAirport(a);
-      for (ActiveRunway r : a.getRunways()) {
-        for (ActiveRunwayThreshold t : r.getThresholds()) {
-          for (Approach p : t.getApproaches()) {
-            try {
-              parser.parseMultipleCommands(p.getGaRoute());
-            } catch (Exception ex) {
-              throw new EApplicationException(
-                  String.format("airport %s runway %s approach %s has invalid go-around route fromAtc: %s (error: %s)",
-                      a.getIcao(), t.getName(), p.toString(), p.getGaRoute(), ex.getMessage()));
-            }
-          } // for (Approach
-
-          for (Route o : t.getRoutes()) {
-            try {
-              parser.parseMultipleCommands(o.getRoute());
-            } catch (Exception ex) {
-              throw new EApplicationException(
-                  String.format("airport %s runway %s route %s has invalid fromAtc: %s (error: %s)",
-                      a.getIcao(), t.getName(), o.getName(), o.getRoute(), ex.getMessage()));
-            }
+  // pobably useless as everything is now parsed when converted from xml -> model
+//  private void checkRouteCommands() {
+//    Parser parser = new ShortBlockParser();
+//    for (Airport a : this.getAirports()) {
+//      Acc.setAirport(a);
+//      for (ActiveRunway r : a.getRunways()) {
+//        for (ActiveRunwayThreshold t : r.getThresholds()) {
+//          for (Approach p : t.getApproaches()) {
 //            try {
-//              n = o.getMainNavaid();
-//            } catch (ERuntimeException ex) {
+//              parser.parseMultipleCommands(p.getGaRoute());
+//            } catch (Exception ex) {
 //              throw new EApplicationException(
-//                  String.format(
-//                      "airport %s runway %s route %s has no main fix. SID last/STAR first command must be PD FIX (error: %s)",
-//                      a.getIcao(), t.getName(), o.getName(), o.getRoute()));
+//                  String.format("airport %s runway %s approach %s has invalid go-around route fromAtc: %s (error: %s)",
+//                      a.getIcao(), t.getName(), p.toString(), p.getGaRoute(), ex.getMessage()));
 //            }
-          }
-        } // for (RunwayThreshold
-      } // for (Runway
-    } // for (airport
-    Acc.setAirport(null);
-  }
+//          } // for (Approach
+//
+//          for (Route o : t.getRoutes()) {
+//            try {
+//              parser.parseMultipleCommands(o.get o .getRoute());
+//            } catch (Exception ex) {
+//              throw new EApplicationException(
+//                  String.format("airport %s runway %s route %s has invalid fromAtc: %s (error: %s)",
+//                      a.getIcao(), t.getName(), o.getName(), o.getRoute(), ex.getMessage()));
+//            }
+//          }
+//        } // for (RunwayThreshold
+//      } // for (Runway
+//    } // for (airport
+//    Acc.setAirport(null);
+//  }
 
 }

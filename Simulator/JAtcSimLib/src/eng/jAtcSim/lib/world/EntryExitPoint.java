@@ -15,19 +15,17 @@ public class EntryExitPoint {
   }
 
   private final Airport parent;
-  private final String name;
   private final Navaid navaid;
   private final Type type;
   private final Integer maxMrvaAltitude;
   private final int radialFromAirport;
 
-  public EntryExitPoint(Airport parent, String name, Navaid navaid, Type type, Integer maxMrvaAltitude, int radialFromAirport) {
+  public EntryExitPoint(Airport parent, Navaid navaid, Type type, Integer maxMrvaAltitude) {
     this.parent = parent;
-    this.name = name;
     this.navaid = navaid;
     this.type = type;
     this.maxMrvaAltitude = maxMrvaAltitude;
-    this.radialFromAirport = radialFromAirport;
+    this.radialFromAirport = (int) Math.round(Coordinates.getBearing(parent.getLocation(), navaid.getCoordinate()));
   }
 
   public Airport getParent() {
@@ -62,11 +60,11 @@ public class EntryExitPoint {
 
   @Override
   public String toString() {
-    return  this.name + " (" + this.type + ") {entryExitPoint}";
+    return  this.getName() + " (" + this.type + ") {entryExitPoint}";
   }
 
   public String getName() {
-    return this.name;
+    return this.navaid.getName();
   }
 
   public int getRadialFromAirport() {

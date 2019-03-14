@@ -41,10 +41,6 @@ public class InactiveRunwayThreshold {
     return parent;
   }
 
-  public void setParent(InactiveRunway parent) {
-    this.parent = parent;
-  }
-
   public double getCourse() {
     return this.course;
   }

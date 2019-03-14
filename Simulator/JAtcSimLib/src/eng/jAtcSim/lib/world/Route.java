@@ -5,16 +5,13 @@
  */
 package eng.jAtcSim.lib.world;
 
-import eng.eSystem.Tuple;
-import eng.eSystem.collections.*;
-import eng.eSystem.geo.Coordinates;
+import eng.eSystem.collections.EList;
+import eng.eSystem.collections.IList;
+import eng.eSystem.collections.IReadOnlyList;
 import eng.jAtcSim.lib.Acc;
-import eng.eSystem.geo.Coordinate;
 import eng.jAtcSim.lib.global.PlaneCategoryDefinitions;
-import eng.jAtcSim.lib.speaking.ICommand;
 import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
-import eng.jAtcSim.lib.speaking.fromAtc.commands.ProceedDirectCommand;
 
 /**
  * @author Marek
@@ -33,18 +30,28 @@ public class Route {
     }
   }
 
-  private eType type;
-  private String name;
-  private Airport parent;
-  private PlaneCategoryDefinitions category = PlaneCategoryDefinitions.getAll();
-  private SpeechList<IAtcCommand> routeCommands = null;
-  private IList<Navaid> routeNavaids = null;
-  private double routeLength = -1;
-  private Navaid mainNavaid = null;
-  private Integer entryFL = null;
-  private Integer maxMrvaFL = null;
+  public static Route createNewVectoringByFix(Navaid n) {
+    Route ret = new Route(eType.vectoring, n.getName() + "/v",
+        PlaneCategoryDefinitions.getAll(),
+        n, -1, null, new SpeechList<>(),
+        new EList<>(), null, Acc.airport());
 
-  public Route(eType type, String name, PlaneCategoryDefinitions category, Navaid mainNavaid, double routeLength, Integer entryFL, SpeechList<IAtcCommand> routeCommands, IList<Navaid> routeNavaids, Integer maxMrvaFL, Airport parent) {
+    return ret;
+  }
+  private final eType type;
+  private final String name;
+  private final Airport parent;
+  private final PlaneCategoryDefinitions category;
+  private final SpeechList<IAtcCommand> routeCommands;
+  private final IList<Navaid> routeNavaids;
+  private final double routeLength;
+  private final Navaid mainNavaid;
+  private final Integer entryFL;
+  private final Integer maxMrvaFL;
+
+  public Route(eType type, String name, PlaneCategoryDefinitions category, Navaid mainNavaid, double routeLength,
+               Integer entryFL, SpeechList<IAtcCommand> routeCommands, IList<Navaid> routeNavaids, Integer maxMrvaFL,
+               Airport parent) {
     this.type = type;
     this.name = name;
     this.parent = parent;
@@ -55,20 +62,6 @@ public class Route {
     this.mainNavaid = mainNavaid;
     this.entryFL = entryFL;
     this.maxMrvaFL = maxMrvaFL;
-  }
-
-  public static Route createNewVectoringByFix(Navaid n, boolean arrival) {
-    Route ret = new Route();
-
-    ret.name = n.getName() + "/v";
-
-    ret.routeCommands = new SpeechList<>();
-    ret.mainNavaid = n;
-    ret.type = eType.vectoring;
-    ret.parent = Acc.airport(); // only formal for binding
-    ret.bind();
-
-    return ret;
   }
 
   public Integer getEntryFL() {
@@ -129,11 +122,6 @@ public class Route {
   public Navaid getMainNavaid() {
     return mainNavaid;
   }
-
-  public void setParent(Airport airport) {
-    this.parent = airport;
-  }
-
 }
 
 

@@ -45,7 +45,7 @@ public abstract class Approach {
     visual
   }
 
-  public static CurrentApproachInfo tryGetCurrentApproachInfo(List<Approach> apps, char category, ApproachType type, Coordinate currentPlaneLocation) {
+  public static CurrentApproachInfo tryGetCurrentApproachInfo(IList<Approach> apps, char category, ApproachType type, Coordinate currentPlaneLocation) {
     CurrentApproachInfo ret;
 
     switch (type) {
@@ -187,7 +187,7 @@ public abstract class Approach {
     return ret;
   }
 
-  private static CurrentApproachInfo tryGetFromILS(List<Approach> apps, char category, ApproachType type, Coordinate planeLocation) {
+  private static CurrentApproachInfo tryGetFromILS(IList<Approach> apps, char category, ApproachType type, Coordinate planeLocation) {
     CurrentApproachInfo ret;
     IlsApproach ilsApproach = (IlsApproach) CollectionUtils.tryGetFirst(apps, o -> o instanceof IlsApproach);
     IlsApproach.Type catKey = typeToIlsType(type);
@@ -217,7 +217,7 @@ public abstract class Approach {
     return ret;
   }
 
-  private static CurrentApproachInfo tryGetFromUnprecise(List<Approach> apps, char category, Approach.ApproachType type, Coordinate planeLocation) {
+  private static CurrentApproachInfo tryGetFromUnprecise(IList<Approach> apps, char category, Approach.ApproachType type, Coordinate planeLocation) {
     CurrentApproachInfo ret;
     List<Approach> lst = CollectionUtils.where(apps, o -> o instanceof UnpreciseApproach);
     UnpreciseApproach.Type utype = typeToUnpreciseType(type);
@@ -248,7 +248,7 @@ public abstract class Approach {
     return ret;
   }
 
-  private static CurrentApproachInfo tryGetFromGnss(List<Approach> apps, char category, Coordinate planeLocation) {
+  private static CurrentApproachInfo tryGetFromGnss(IList<Approach> apps, char category, Coordinate planeLocation) {
     CurrentApproachInfo ret;
     GnssApproach tmp = (GnssApproach) CollectionUtils.tryGetFirst(apps, o -> o instanceof GnssApproach);
 

@@ -70,21 +70,22 @@ public class XmlModelBinder {
     IList<Airport> airports = new EList<>();
     IList<Border> borders = new EList<>();
     NavaidList navaids = new NavaidList();
-    Area ret = new Area(area.getIcao(), airports, navaids, borders);
+    Area ret = new Area(area.icao, airports, navaids, borders);
 
     Context context = new Context(ret, null);
 
-    for (XmlNavaid xmlNavaid : area.getNavaids()) {
+    for (XmlNavaid xmlNavaid : area.navaids) {
       Navaid navaid = XmlModelBinder.convert(xmlNavaid);
       navaids.add(navaid);
     }
 
-    for (XmlBorder xmlBorder : area.getBorders()) {
+    area.borders.sort(new XmlBorder.ByDisjointsComparator());
+    for (XmlBorder xmlBorder : area.borders) {
       Border border = XmlModelBinder.convert(xmlBorder);
       borders.add(border);
     }
 
-    for (XmlAirport xmlAirport : area.getAirports()) {
+    for (XmlAirport xmlAirport : area.airports) {
       Airport airport = XmlModelBinder.convert(xmlAirport, context);
       airports.add(airport);
     }
@@ -114,14 +115,13 @@ public class XmlModelBinder {
     IList<PublishedHold> holds = new EList<>();
     IList<RunwayConfiguration> runwayConfigurations = new EList<>();
     IList<EntryExitPoint> entryExitPoints = new EList<>();
-    IList<Route> routes = new EList<>();
     IMap<String, IList<Route>> sharedRoutesGroup = convertSharedRoutes(x, context);
 
     Airport ret = new Airport(
-        x.getIcao(), x.getName(), mainAirportNavaid, x.altitude,
+        x.icao, x.name, mainAirportNavaid, x.altitude,
         x.vfrAltitude, x.transitionAltitude, x.coveredDistance, x.declination,
         initialPosition, atcTemplates, runways, inactiveRunways,
-        holds, entryExitPoints, runwayConfigurations, routes, context.area);
+        holds, entryExitPoints, runwayConfigurations, sharedRoutesGroup, context.area);
     context = new Context(context.area, ret);
 
     for (XmlAtcTemplate xmlAtcTemplate : x.atcTemplates) {
@@ -154,20 +154,13 @@ public class XmlModelBinder {
       entryExitPoints.add(entryExitPoint);
     }
 
-    for (XmlRoute xmlRoute : x.routes) {
-      Route route = convert(xmlRoute, context);
-      routes.add(route);
-    }
-
     return ret;
   }
 
   private static EntryExitPoint convert(XmlEntryExitPoint x, Context context) {
     Navaid navaid = context.area.getNavaids().get(x.name);
-    int radial = (int) Math.round(
-        Coordinates.getBearing(context.airport.getLocation(), navaid.getCoordinate()));
     Integer maxMrvaAltitude = evaluateMaxMrvaAltitudeForEntryExitPoint(x.maxMrvaAltitude, navaid, context);
-    EntryExitPoint ret = new EntryExitPoint(context.airport, x.name, navaid, x.type, maxMrvaAltitude, radial);
+    EntryExitPoint ret = new EntryExitPoint(context.airport, navaid, x.type, maxMrvaAltitude);
     return ret;
   }
 

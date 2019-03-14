@@ -739,7 +739,7 @@ public class Pilot {
     this.afterCommands.clearAll();
     this.behavior = new DepartureBehavior();
     this.divertInfo = null;
-    this.assignedRoute = Route.createNewVectoringByFix(n, false);
+    this.assignedRoute = Route.createNewVectoringByFix(n);
     this.parent.setxState(Airplane.State.departingLow); // here must be departureLow, this us later used to evaluate delay
 
     this.say(new DivertingNotification(n));

@@ -5,11 +5,7 @@
  */
 package eng.jAtcSim.lib.world;
 
-import eng.eSystem.collections.EList;
-import eng.eSystem.collections.IList;
-import eng.eSystem.collections.IReadOnlyList;
-import eng.eSystem.exceptions.EApplicationException;
-import eng.eSystem.exceptions.ERuntimeException;
+import eng.eSystem.collections.*;
 import eng.eSystem.geo.Coordinate;
 import eng.jAtcSim.lib.atcs.AtcTemplate;
 
@@ -23,26 +19,26 @@ public class Airport {
   private final IList<InactiveRunway> inactiveRunways;
   private final IList<AtcTemplate> atcTemplates;
   private final IList<PublishedHold> holds;
-  private final IList<EntryExitPoint> entryExitPoints;
-  private String icao;
-  private String name;
-  private int altitude;
-  private int transitionAltitude;
-  private int vfrAltitude = -1;
-  private double declination;
-  private Navaid mainAirportNavaid;
-  private Area parent;
-  private int coveredDistance;
-  private IList<RunwayConfiguration> runwayConfigurations;
-  private IList<Route> routes;
+  private final EntryExitPointList entryExitPoints;
+  private final String icao;
+  private final String name;
+  private final int altitude;
+  private final int transitionAltitude;
+  private final int vfrAltitude;
+  private final double declination;
+  private final Navaid mainAirportNavaid;
+  private final Area parent;
+  private final int coveredDistance;
+  private final IList<RunwayConfiguration> runwayConfigurations;
+  private final IList<Route> routes;
 
-  public Airport(String icao, String name, Navaid mainAirportNavaid, int altitude, int vfrAltitude, int transitionAltitude, int coveredDistance, double declination, InitialPosition initialPosition, IList<AtcTemplate> atcTemplates, IList<ActiveRunway> runways, IList<InactiveRunway> inactiveRunways, IList<PublishedHold> holds, IList<EntryExitPoint> entryExitPoints, IList<RunwayConfiguration> runwayConfigurations, IList<Route> routes, Area parent) {
+  public Airport(String icao, String name, Navaid mainAirportNavaid, int altitude, int vfrAltitude, int transitionAltitude, int coveredDistance, double declination, InitialPosition initialPosition, IList<AtcTemplate> atcTemplates, IList<ActiveRunway> runways, IList<InactiveRunway> inactiveRunways, IList<PublishedHold> holds, IList<EntryExitPoint> entryExitPoints, IList<RunwayConfiguration> runwayConfigurations, IMap<String, IList<Route>> sharedRoutesGroups, Area parent) {
     this.initialPosition = initialPosition;
     this.runways = runways;
     this.inactiveRunways = inactiveRunways;
     this.atcTemplates = atcTemplates;
     this.holds = holds;
-    this.entryExitPoints = entryExitPoints;
+    this.entryExitPoints = new EntryExitPointList(entryExitPoints);
     this.icao = icao;
     this.name = name;
     this.altitude = altitude;
@@ -53,11 +49,28 @@ public class Airport {
     this.parent = parent;
     this.coveredDistance = coveredDistance;
     this.runwayConfigurations = runwayConfigurations;
-    this.routes = routes;
+
+    this.routes = new EDistinctList<>(EDistinctList.Behavior.exception);
+    sharedRoutesGroups.forEach(e -> this.routes.add(e.getValue())); // adds shared routes
+    this.getAllThresholds().forEach(q -> this.routes.add(q.getRoutes())); // adds threshold specific routes
+
+    bindEntryExitPointsByRoutes();
+  }
+
+  public void bindEntryExitPointsByRoutes() {
+    for (Route route : this.routes) {
+      EntryExitPoint eep = new EntryExitPoint(
+          this,
+          route.getMainNavaid(),
+          route.getType() == Route.eType.sid ? EntryExitPoint.Type.exit : EntryExitPoint.Type.entry,
+          route.getMaxMrvaAltitude());
+
+      this.entryExitPoints.add(eep);
+    }
   }
 
   public IReadOnlyList<EntryExitPoint> getEntryExitPoints() {
-    return entryExitPoints;
+    return entryExitPoints.toReadOnlyList();
   }
 
   public int getCoveredDistance() {
@@ -100,10 +113,6 @@ public class Airport {
     return parent;
   }
 
-  public void setParent(Area parent) {
-    this.parent = parent;
-  }
-
   public IReadOnlyList<PublishedHold> getHolds() {
     return holds;
   }
@@ -119,7 +128,7 @@ public class Airport {
     return null;
   }
 
-  public ActiveRunwayThreshold getRunwayThreshold(String runwayThresholdName){
+  public ActiveRunwayThreshold getRunwayThreshold(String runwayThresholdName) {
     ActiveRunwayThreshold ret = tryGetRunwayThreshold(runwayThresholdName);
     if (ret == null)
       throw new RuntimeException(String.format("Unable to find threshold '%s' for airport '%s'.", runwayThresholdName, this.icao));
@@ -135,14 +144,6 @@ public class Airport {
   }
 
   public Navaid getMainAirportNavaid() {
-    if (this.mainAirportNavaid == null) {
-      try {
-        this.mainAirportNavaid = this.getParent().getNavaids().get(this.mainAirportNavaidName);
-      } catch (ERuntimeException ex) {
-        throw new EApplicationException("Failed to find main navaid named " + this.mainAirportNavaidName + " for aiport " + this.name + ". Invalid area file?", ex);
-      }
-    }
-
     return this.mainAirportNavaid;
   }
 
@@ -167,5 +168,4 @@ public class Airport {
   public IReadOnlyList<Route> getRoutes() {
     return routes;
   }
-
 }

@@ -84,7 +84,7 @@ public class ActiveRunwayThreshold {
     return coordinate;
   }
 
-  public List<Approach> getApproaches() {
+  public IList<Approach> getApproaches() {
     return approaches;
   }
 
@@ -94,10 +94,6 @@ public class ActiveRunwayThreshold {
 
   public ActiveRunway getParent() {
     return parent;
-  }
-
-  public void setParent(ActiveRunway parent) {
-    this.parent = parent;
   }
 
   public double getCourse() {
@@ -112,7 +108,7 @@ public class ActiveRunwayThreshold {
             && q.getMainNavaid().equals(mainNavaid))
         .tryGetRandom();
     if (ret == null && canBeVectoring)
-      ret = Route.createNewVectoringByFix(mainNavaid, false);
+      ret = Route.createNewVectoringByFix(mainNavaid);
     return ret;
   }
 
@@ -131,7 +127,7 @@ public class ActiveRunwayThreshold {
               && q.getMainNavaid().equals(mainNavaid))
           .tryGetRandom();
     if (ret == null && canBeVectoring)
-      ret = Route.createNewVectoringByFix(mainNavaid, true);
+      ret = Route.createNewVectoringByFix(mainNavaid);
     return ret;
   }
 
