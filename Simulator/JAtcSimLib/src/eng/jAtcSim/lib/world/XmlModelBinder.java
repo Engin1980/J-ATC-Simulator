@@ -326,13 +326,13 @@ public class XmlModelBinder {
 
     context = new Context(context.area, context.airport, t[0]);
     for (XmlApproach xmlApproach : xa.approaches) {
-      Approach approach = convert(xmlApproach, context);
-      aApproaches.add(approach);
+      IList<Approach> approaches = convert(xmlApproach, context);
+      aApproaches.add(approaches);
     }
     context = new Context(context.area, context.airport, t[1]);
     for (XmlApproach xmlApproach : xb.approaches) {
-      Approach approach = convert(xmlApproach, context);
-      bApproaches.add(approach);
+      IList<Approach> approaches = convert(xmlApproach, context);
+      bApproaches.add(approaches);
     }
     buildRoutesForActiveRunwayThreshold(xa, aRoutes, sharedRoutesGroups, context);
     buildRoutesForActiveRunwayThreshold(xb, bRoutes, sharedRoutesGroups, context);
@@ -340,18 +340,43 @@ public class XmlModelBinder {
     return ret;
   }
 
-  private static Approach convert(XmlApproach xmlApproach, Context context) {
-    XmlCustomApproach xmlCustomApproach;
-    if (xmlApproach instanceof XmlIlsApproach)
-      xmlCustomApproach = convertFromIls((XmlIlsApproach) xmlApproach, context);
-    else if (xmlApproach instanceof XmlUnpreciseApproach)
-      xmlCustomApproach = convertFromUnprecise((XmlUnpreciseApproach) xmlApproach, context);
-    else if (xmlApproach instanceof XmlGnssApproach)
-      xmlCustomApproach = convertFromGnss((XmlGnssApproach) xmlApproach, context);
-    else
-      xmlCustomApproach = (XmlCustomApproach) xmlApproach;
+  private static IList<Approach> convert(XmlApproach xmlApproach, Context context) {
+    IList<Approach> ret = new EList<>();
 
-    Approach ret = convert(xmlCustomApproach, context);
+    IList<XmlCustomApproach> xmlCustomApproaches;
+    if (xmlApproach instanceof XmlIlsApproach)
+      xmlCustomApproaches = convertFromIls((XmlIlsApproach) xmlApproach, context);
+    else if (xmlApproach instanceof XmlUnpreciseApproach)
+      xmlCustomApproaches = convertFromUnprecise((XmlUnpreciseApproach) xmlApproach, context);
+    else if (xmlApproach instanceof XmlGnssApproach)
+      xmlCustomApproaches = convertFromGnss((XmlGnssApproach) xmlApproach, context);
+    else
+      xmlCustomApproaches = convertFromCustom((XmlCustomApproach) xmlApproach, context);
+
+    for (XmlCustomApproach xmlCustomApproach : xmlCustomApproaches) {
+      Approach app = convertCustom(xmlCustomApproach, context);
+      ret.add(app);
+    }
+    return ret;
+  }
+
+  private static Approach convertCustom(XmlCustomApproach x, Context context) {
+    Approach ret = new App
+  }
+
+  private static IList<XmlCustomApproach> convertFromCustom(XmlCustomApproach x, Context context) {
+    IList<XmlCustomApproach> ret = new EList<>();
+    for (char planeCategory : x.categories.toUpperCase().toCharArray()) {
+
+      XmlCustomApproach app = new XmlCustomApproach();
+      app.type = x.type;
+      app.categories = Character.toString(planeCategory);
+      for (XmlStage stage : x.stages) {
+        app.stages.add(stage);
+      }
+
+      ret.add(app);
+    }
     return ret;
   }
 
@@ -362,9 +387,14 @@ public class XmlModelBinder {
       for (IlsApproach.Category ilsCategory : x.ilsCategories) {
 
         XmlCustomApproach app = new XmlCustomApproach();
-        String tmp = context.airport.getMainAirportNavaid().getName();
+        app.categories = Character.toString(planeCategory);
+        app.type = ilsCategory.getType() == IlsApproach.IlsCategory.I
+            ? Approach.ApproachType.ils_I
+            : ilsCategory.getType() == IlsApproach.IlsCategory.II
+            ? Approach.ApproachType.ils_II
+            : Approach.ApproachType.ils_III;
         app.stages.add(
-            new XmlCheckPlaneLocationStage(tmp,
+            new XmlCheckPlaneLocationStage(context.threshold.getCoordinate(),
                 Headings.add(x.radial, -20),
                 Headings.add(x.radial, 20),
                 5, 15));
@@ -375,7 +405,7 @@ public class XmlModelBinder {
 
         int da = ilsCategory.getDA(planeCategory);
         app.stages.add(
-            new XmlDescendStage(tmp, x.initialAltitude, x.glidePathPercentage,
+            new XmlDescendStage(context.airport.getMainAirportNavaid().getName(), context.airport.getAltitude(), x.slope,
                 null, da));
         app.stages.add(new XmlCheckAirportVisibleStage());
         app.stages.add(new XmlVisualFinalStage());
@@ -385,6 +415,65 @@ public class XmlModelBinder {
     }
     return ret;
   }
+
+  private static IList<XmlCustomApproach> convertFromGnss(XmlGnssApproach x, Context context) {
+    IList<XmlCustomApproach> ret = new EList<>();
+    for (char planeCategory : x.categories.toUpperCase().toCharArray()) {
+
+      XmlCustomApproach app = new XmlCustomApproach();
+      app.categories = Character.toString(planeCategory);
+      app.type = Approach.ApproachType.gnss;
+      String tmp = context.airport.getMainAirportNavaid().getName();
+      app.stages.add(
+          new XmlCheckPlaneLocationStage(tmp,
+              Headings.add(x.radial, -20),
+              Headings.add(x.radial, 20),
+              5, 15));
+
+      app.stages.add(
+          XmlCheckPlaneStateStage.createAltitude(x.initialAltitude, x.initialAltitude + 1000));
+
+      int da = x.getDA(planeCategory);
+      app.stages.add(
+          new XmlDescendStage(tmp, x.initialAltitude, x.slope,
+              null, da));
+      app.stages.add(new XmlCheckAirportVisibleStage());
+      app.stages.add(new XmlVisualFinalStage());
+
+      ret.add(app);
+    }
+    return ret;
+  }
+
+  private static IList<XmlCustomApproach> convertFromUnprecise(XmlUnpreciseApproach x, Context context) {
+    IList<XmlCustomApproach> ret = new EList<>();
+    for (char planeCategory : x.categories.toUpperCase().toCharArray()) {
+
+      XmlCustomApproach app = new XmlCustomApproach();
+      app.categories = Character.toString(planeCategory);
+      app.type = x.type;
+      String tmp = context.airport.getMainAirportNavaid().getName();
+      app.stages.add(
+          new XmlCheckPlaneLocationStage(x.faf,
+              Headings.add(x.radial, -45),
+              Headings.add(x.radial, 45),
+              1, 10));
+
+      app.stages.add(
+          XmlCheckPlaneStateStage.createAltitude(x.initialAltitude, x.initialAltitude + 1000));
+
+      int da = x.getMDA(planeCategory);
+      app.stages.add(
+          new XmlDescendStage(tmp, x.initialAltitude, x.slope,
+              null, da));
+      app.stages.add(new XmlCheckAirportVisibleStage());
+      app.stages.add(new XmlVisualFinalStage());
+
+      ret.add(app);
+    }
+    return ret;
+  }
+
 
   private static void buildRoutesForActiveRunwayThreshold(XmlActiveRunwayThreshold xa, IList<Route> aRoutes, IMap<String, IList<Route>> sharedRoutesGroups,
                                                           Context context) {
