@@ -190,7 +190,7 @@ public abstract class Approach {
   private static CurrentApproachInfo tryGetFromILS(IList<Approach> apps, char category, ApproachType type, Coordinate planeLocation) {
     CurrentApproachInfo ret;
     IlsApproach ilsApproach = (IlsApproach) CollectionUtils.tryGetFirst(apps, o -> o instanceof IlsApproach);
-    IlsApproach.Type catKey = typeToIlsType(type);
+    IlsApproach.IlsCategory catKey = typeToIlsType(type);
     IlsApproach.Category cat = ilsApproach.getCategories().getFirst(q -> q.getType() == catKey);
 
     Navaid iaf = tryGetIafNavaidCloseToPlaneLocation(ilsApproach, planeLocation);
@@ -220,7 +220,7 @@ public abstract class Approach {
   private static CurrentApproachInfo tryGetFromUnprecise(IList<Approach> apps, char category, Approach.ApproachType type, Coordinate planeLocation) {
     CurrentApproachInfo ret;
     List<Approach> lst = CollectionUtils.where(apps, o -> o instanceof UnpreciseApproach);
-    UnpreciseApproach.Type utype = typeToUnpreciseType(type);
+    UnpreciseApproach.Kind utype = typeToUnpreciseType(type);
     UnpreciseApproach tmp = (UnpreciseApproach) CollectionUtils.tryGetFirst(lst, o -> ((UnpreciseApproach) o).getType() == utype);
 
     Navaid iaf = tryGetIafNavaidCloseToPlaneLocation(tmp, planeLocation);
@@ -274,25 +274,25 @@ public abstract class Approach {
     return ret;
   }
 
-  private static UnpreciseApproach.Type typeToUnpreciseType(ApproachType type) {
+  private static UnpreciseApproach.Kind typeToUnpreciseType(ApproachType type) {
     switch (type) {
       case vor:
-        return UnpreciseApproach.Type.vor;
+        return UnpreciseApproach.Kind.vor;
       case ndb:
-        return UnpreciseApproach.Type.ndb;
+        return UnpreciseApproach.Kind.ndb;
       default:
         throw new NotImplementedException();
     }
   }
 
-  private static IlsApproach.Type typeToIlsType(ApproachType type) {
+  private static IlsApproach.IlsCategory typeToIlsType(ApproachType type) {
     switch (type) {
       case ils_I:
-        return IlsApproach.Type.I;
+        return IlsApproach.IlsCategory.I;
       case ils_II:
-        return IlsApproach.Type.II;
+        return IlsApproach.IlsCategory.II;
       case ils_III:
-        return IlsApproach.Type.II;
+        return IlsApproach.IlsCategory.II;
       default:
         throw new NotImplementedException();
     }

@@ -100,6 +100,12 @@ public class Headings {
     return ret;
   }
 
+  public static int add(int current, int amount) {
+    double ret = current + amount;
+    ret = to(ret);
+    return (int) ret;
+  }
+
   public static double getOpposite(double course) {
     double ret = course - 180;
     ret = Headings.to(ret);

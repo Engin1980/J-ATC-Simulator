@@ -10,7 +10,7 @@ public class IlsApproach extends Approach {
 
   public static class Category {
 
-    private Type type;
+    private IlsCategory type;
     private int daA;
     private int daB;
     private int daC;
@@ -19,7 +19,7 @@ public class IlsApproach extends Approach {
     public Category() {
     }
 
-    public Type getType() {
+    public IlsCategory getType() {
       return type;
     }
 
@@ -62,7 +62,7 @@ public class IlsApproach extends Approach {
     }
   }
 
-  public enum Type {
+  public enum IlsCategory {
     I,
     II,
     III

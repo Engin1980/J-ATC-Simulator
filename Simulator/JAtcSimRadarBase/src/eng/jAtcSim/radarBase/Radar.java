@@ -924,9 +924,9 @@ public class Radar {
       return;
     else if (approach instanceof UnpreciseApproach) {
       UnpreciseApproach ua = (UnpreciseApproach) approach;
-      if (ua.getType() == UnpreciseApproach.Type.ndb)
+      if (ua.getType() == UnpreciseApproach.Kind.ndb)
         dispSett = styleSettings.ndbApproach;
-      else if (ua.getType() == UnpreciseApproach.Type.vor)
+      else if (ua.getType() == UnpreciseApproach.Kind.vor)
         dispSett = styleSettings.vorApproach;
       else
         throw new EApplicationException("Not supported");

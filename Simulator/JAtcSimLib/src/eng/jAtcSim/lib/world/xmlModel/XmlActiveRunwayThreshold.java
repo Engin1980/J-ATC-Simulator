@@ -6,11 +6,13 @@ import eng.eSystem.geo.Coordinate;
 import eng.eSystem.xmlSerialization.annotations.XmlItemElement;
 import eng.eSystem.xmlSerialization.annotations.XmlOptional;
 import eng.jAtcSim.lib.world.Route;
+import eng.jAtcSim.lib.world.xmlModel.approaches.*;
 
 public class XmlActiveRunwayThreshold {
   @XmlItemElement(elementName = "ilsApproach", type = XmlIlsApproach.class)
   @XmlItemElement(elementName = "gnssApproach", type = XmlGnssApproach.class)
   @XmlItemElement(elementName = "unpreciseApproach", type = XmlUnpreciseApproach.class)
+  @XmlItemElement(elementName = "customApproach", type = XmlCustomApproach.class)
   public final IList<XmlApproach> approaches = new EList<>();
   @XmlOptional
   @XmlItemElement(elementName = "route", type = Route.class)

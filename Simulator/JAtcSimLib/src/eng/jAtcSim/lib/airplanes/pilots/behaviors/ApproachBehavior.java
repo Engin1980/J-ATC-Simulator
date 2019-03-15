@@ -72,7 +72,7 @@
 //    super.setBehaviorAndState(
 //        new TakeOffBehavior(null), Airplane.State.takeOffGoAround);
 //
-//    parent.setTargetSpeed(parent.getType().vDep);
+//    parent.setTargetSpeed(parent.getKind().vDep);
 //    parent.setTargetAltitude((int) parent.getAltitude());
 //    parent.setTargetHeading(approach.getThreshold().getCourse());
 //
@@ -140,7 +140,7 @@
 //      newAltitude = Acc.airport().getAltitude() - 100; // I need to lock the airplane on runway
 //    } else {
 //      int minAltByState = 0; // (int) getMinimalAllowedAltitudeAfterThisStep();
-//      switch (approach.getType()) {
+//      switch (approach.getKind()) {
 //        case visual:
 //          if (location == Pilot.ApproachLocation.beforeFaf) {
 //            // TODO check and evaluate
@@ -293,7 +293,7 @@
 //        throw new UnsupportedOperationException("Not supposed to be here. See flyIAFtoFAFPhase()");
 //
 //      case approachEnter:
-//        if (isAfterStateChange && this.approach.getType() == Approach.ApproachType.visual) {
+//        if (isAfterStateChange && this.approach.getKind() == Approach.ApproachType.visual) {
 //          if (canSeeRunwayFromCurrentPosition() == false) {
 //            goAround(GoingAroundNotification.GoAroundReason.runwayNotInSight);
 //            return;
@@ -437,7 +437,7 @@
 //    EStringBuilder sb = new EStringBuilder();
 //
 //    sb.appendFormat("APP %s%s",
-//        this.approach.getType().toString(),
+//        this.approach.getKind().toString(),
 //        this.approach.getThreshold().getName());
 //
 //    return sb.toString();

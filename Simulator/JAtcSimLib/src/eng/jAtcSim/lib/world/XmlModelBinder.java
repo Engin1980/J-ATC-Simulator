@@ -18,7 +18,10 @@ import eng.jAtcSim.lib.speaking.fromAtc.commands.ToNavaidCommand;
 import eng.jAtcSim.lib.textProcessing.parsing.Parser;
 import eng.jAtcSim.lib.textProcessing.parsing.shortBlockParser.ShortBlockParser;
 import eng.jAtcSim.lib.world.approaches.Approach;
+import eng.jAtcSim.lib.world.approaches.IlsApproach;
 import eng.jAtcSim.lib.world.xmlModel.*;
+import eng.jAtcSim.lib.world.xmlModel.approaches.*;
+import eng.jAtcSim.lib.world.xmlModel.approaches.approachStages.*;
 
 import java.awt.geom.Line2D;
 
@@ -27,10 +30,20 @@ public class XmlModelBinder {
   public static class Context {
     public final Area area;
     public final Airport airport;
+    public final ActiveRunwayThreshold threshold;
 
     public Context(Area area, Airport airport) {
+      this(area, airport, null);
+    }
+
+    public Context(Area area) {
+      this(area, null, null);
+    }
+
+    public Context(Area area, Airport airport, ActiveRunwayThreshold threshold) {
       this.area = area;
       this.airport = airport;
+      this.threshold = threshold;
     }
   }
 
@@ -311,12 +324,14 @@ public class XmlModelBinder {
         ret);
     thresholds.add(t);
 
+    context = new Context(context.area, context.airport, t[0]);
     for (XmlApproach xmlApproach : xa.approaches) {
-      Approach approach = convert(xmlApproach);
+      Approach approach = convert(xmlApproach, context);
       aApproaches.add(approach);
     }
+    context = new Context(context.area, context.airport, t[1]);
     for (XmlApproach xmlApproach : xb.approaches) {
-      Approach approach = convert(xmlApproach);
+      Approach approach = convert(xmlApproach, context);
       bApproaches.add(approach);
     }
     buildRoutesForActiveRunwayThreshold(xa, aRoutes, sharedRoutesGroups, context);
@@ -325,8 +340,50 @@ public class XmlModelBinder {
     return ret;
   }
 
-  private static Approach convert(XmlApproach xmlApproach) {
-    throw new UnsupportedOperationException("TODO tohle jsem si nechal nakonec.");
+  private static Approach convert(XmlApproach xmlApproach, Context context) {
+    XmlCustomApproach xmlCustomApproach;
+    if (xmlApproach instanceof XmlIlsApproach)
+      xmlCustomApproach = convertFromIls((XmlIlsApproach) xmlApproach, context);
+    else if (xmlApproach instanceof XmlUnpreciseApproach)
+      xmlCustomApproach = convertFromUnprecise((XmlUnpreciseApproach) xmlApproach, context);
+    else if (xmlApproach instanceof XmlGnssApproach)
+      xmlCustomApproach = convertFromGnss((XmlGnssApproach) xmlApproach, context);
+    else
+      xmlCustomApproach = (XmlCustomApproach) xmlApproach;
+
+    Approach ret = convert(xmlCustomApproach, context);
+    return ret;
+  }
+
+  private static IList<XmlCustomApproach> convertFromIls(XmlIlsApproach x, Context context) {
+    IList<XmlCustomApproach> ret = new EList<>();
+    for (char planeCategory : x.categories.toUpperCase().toCharArray()) {
+
+      for (IlsApproach.Category ilsCategory : x.ilsCategories) {
+
+        XmlCustomApproach app = new XmlCustomApproach();
+        String tmp = context.airport.getMainAirportNavaid().getName();
+        app.stages.add(
+            new XmlCheckPlaneLocationStage(tmp,
+                Headings.add(x.radial, -20),
+                Headings.add(x.radial, 20),
+                5, 15));
+
+        int minAlt = x.minimalInitialAltitude == null ? x.initialAltitude : x.minimalInitialAltitude;
+        app.stages.add(
+            XmlCheckPlaneStateStage.createAltitude(minAlt, x.initialAltitude + 1000));
+
+        int da = ilsCategory.getDA(planeCategory);
+        app.stages.add(
+            new XmlDescendStage(tmp, x.initialAltitude, x.glidePathPercentage,
+                null, da));
+        app.stages.add(new XmlCheckAirportVisibleStage());
+        app.stages.add(new XmlVisualFinalStage());
+
+        ret.add(app);
+      }
+    }
+    return ret;
   }
 
   private static void buildRoutesForActiveRunwayThreshold(XmlActiveRunwayThreshold xa, IList<Route> aRoutes, IMap<String, IList<Route>> sharedRoutesGroups,

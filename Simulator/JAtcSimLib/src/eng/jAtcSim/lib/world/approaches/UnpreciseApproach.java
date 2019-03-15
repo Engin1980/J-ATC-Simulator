@@ -8,7 +8,7 @@ import eng.jAtcSim.lib.world.Navaid;
 
 public class UnpreciseApproach extends Approach {
 
-  public enum Type {
+  public enum Kind {
     vor,
     ndb
   }
@@ -29,9 +29,9 @@ public class UnpreciseApproach extends Approach {
   private int mdaB;
   private int mdaC;
   private int mdaD;
-  private Type type;
+  private Kind type;
 
-  public Type getType() {
+  public Kind getType() {
     return type;
   }
 

@@ -488,7 +488,7 @@ stats.registerElapseSecondCalculationDuration((int) (elapseEndMs - elapseStartMs
       } else {
         // here are two possibilities
         // 1. new airplanes are delayed to avoid current airplanes. That is, as far as new plane is in vicinity of an other plane, it is added to "delayed" collection.
-        //    when it is no more in vicinity, it is added into approaching planes
+        //    when it is no more in vicinity, it is added into approaches planes
         // 2. new airplanes are raised to fly over current ones. This seems to be more innatural and more difficult to implement, so this option is not included now.
         if (isInVicinityOfSomeOtherPlane(newPlane)) {
           newPlanesDelayedToAvoidCollision.add(newPlane);
