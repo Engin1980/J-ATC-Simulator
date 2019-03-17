@@ -17,7 +17,7 @@ import java.util.Map;
 /**
  * @author Marek
  */
-@XmlItemElement(elementName = "type", type = AirplaneType.class)
+@XmlItemElement(elementName = "kind", type = AirplaneType.class)
 public class AirplaneTypes extends ArrayList<AirplaneType> {
 
   private int lastRefreshCount = -1;

@@ -53,7 +53,7 @@ public class FlightListTraffic extends Traffic {
     public Movement toMovement() {
       AirplaneType type = Acc.types().tryGetByName(this.planeType);
       if (type == null)
-        throw new EApplicationException("Unable to create flight. Required airplane type '" + this.planeType + "' not found.");
+        throw new EApplicationException("Unable to create flight. Required airplane kind '" + this.planeType + "' not found.");
 
       if (this.heading == EMPTY_HEADING){
         double radial = Coordinates.getBearing(Acc.airport().getLocation(), this.otherAirport);

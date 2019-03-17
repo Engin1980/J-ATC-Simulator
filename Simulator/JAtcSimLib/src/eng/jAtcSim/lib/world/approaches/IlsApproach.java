@@ -10,7 +10,7 @@
 //
 //  public static class Category {
 //
-//    private IlsCategory type;
+//    private IlsCategory kind;
 //    private int daA;
 //    private int daB;
 //    private int daC;
@@ -20,7 +20,7 @@
 //    }
 //
 //    public IlsCategory getType() {
-//      return type;
+//      return kind;
 //    }
 //
 //    public int getDaA() {
@@ -68,7 +68,7 @@
 //    III
 //  }
 //
-//  @XmlItemElement(elementName = "category", type = Category.class)
+//  @XmlItemElement(elementName = "category", kind = Category.class)
 //  private IList<Category> categories = new EList<>();
 //  @XmlOptional
 //  private double glidePathPercentage = 3;

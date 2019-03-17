@@ -9,11 +9,8 @@ import eng.eSystem.EStringBuilder;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.ISet;
 import eng.eSystem.exceptions.EApplicationException;
-import eng.jAtcSim.lib.Acc;
-import eng.jAtcSim.lib.textProcessing.parsing.Parser;
-import eng.jAtcSim.lib.textProcessing.parsing.shortBlockParser.ShortBlockParser;
 import eng.jAtcSim.lib.world.approaches.Approach;
-import eng.jAtcSim.lib.world.approaches.IlsApproach;
+import eng.jAtcSim.lib.world.xmlModel.approaches.XmlIlsApproach;
 
 /**
  * @author Marek
@@ -78,15 +75,6 @@ public class Area {
       for (ActiveRunway runway : airport.getRunways()) {
         set = runway.getThresholds().getDuplicateItems(q -> q.getName()).select(q -> q.getName());
         tryFailDuplicits("Active runway thresholds of " + runway.getName() + " of " + airport.getName(), set);
-
-        for (ActiveRunwayThreshold runwayThreshold : runway.getThresholds()) {
-          for (Approach approach : runwayThreshold.getApproaches()) {
-            if (!(approach instanceof IlsApproach)) continue;
-            IlsApproach ils = (IlsApproach) approach;
-            set = ils.getCategories().getDuplicateItems(q -> q.getType()).select(q -> q.getType().toString());
-            tryFailDuplicits("ILS category types of ILS approach of " + runway.getName() + " of " + airport.getName(), set);
-          }
-        }
       }
 
       for (InactiveRunway runway : airport.getInactiveRunways()) {

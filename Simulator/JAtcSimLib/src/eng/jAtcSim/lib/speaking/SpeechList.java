@@ -86,7 +86,7 @@ public class SpeechList<T extends ISpeech> extends EList<T> implements IMessageC
   public <U extends T> U getAs(int index) {
     U ret = this.tryGetAs(index);
     if (ret == null)
-      throw new EApplicationException("Element at index {" + index + "} cannot be cast to requested type.");
+      throw new EApplicationException("Element at index {" + index + "} cannot be cast to requested kind.");
     return ret;
   }
 

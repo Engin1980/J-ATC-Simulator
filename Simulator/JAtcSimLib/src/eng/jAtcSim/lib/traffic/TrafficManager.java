@@ -190,7 +190,7 @@ public class TrafficManager {
       tmp = tmp.where(q -> q.getType() == EntryExitPoint.Type.exit || q.getType() == EntryExitPoint.Type.both);
     tmp = tmp.where(q -> q.getMaxMrvaAltitudeOrHigh() < pt.maxAltitude);
 
-    assert !tmp.isEmpty() : "There are no avilable entry/exit points for plane type " + pt.name + " with service ceiling at " + pt.maxAltitude;
+    assert !tmp.isEmpty() : "There are no avilable entry/exit points for plane kind " + pt.name + " with service ceiling at " + pt.maxAltitude;
 
     EntryExitPoint ret = tmp.getSmallest(q -> Headings.getDifference(entryRadial, q.getRadialFromAirport(), true));
 

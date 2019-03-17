@@ -10,7 +10,7 @@ import eng.jAtcSim.lib.airplanes.AirplaneTypes;
 public class CompanyFleet {
   private static final String DEFAULT_AIRPLANE_TYPE_NAME = "A319";
   public String icao;
-  @XmlItemElement(elementName = "type", type = FleetType.class)
+  @XmlItemElement(elementName = "kind", type = FleetType.class)
   private IList<FleetType> types = new EList<>();
   @XmlIgnore
   private double fleetWeightSum = -1;

@@ -4,13 +4,12 @@ import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.xmlSerialization.annotations.XmlItemElement;
 import eng.eSystem.xmlSerialization.annotations.XmlOptional;
-import eng.jAtcSim.lib.world.approaches.IlsApproach;
 
-public class XmlIlsApproach extends XmGuidedDescentApproach{
+public class XmlIlsApproach extends XmGuidedDescentApproach {
 
   public static class Category {
 
-    public IlsApproach.IlsCategory type;
+    public Kind kind;
     public int daA;
     public int daB;
     public int daC;
@@ -38,14 +37,14 @@ public class XmlIlsApproach extends XmGuidedDescentApproach{
     }
   }
 
-  public enum Type {
+  public enum Kind {
     I,
     II,
     III
   }
 
-  @XmlItemElement(elementName = "category", type = IlsApproach.Category.class)
-  public IList<IlsApproach.Category> ilsCategories = new EList<>();
+  @XmlItemElement(elementName = "category", type = Category.class)
+  public IList<Category> ilsCategories = new EList<>();
   @XmlOptional
   public Integer minimalInitialAltitude;
 }

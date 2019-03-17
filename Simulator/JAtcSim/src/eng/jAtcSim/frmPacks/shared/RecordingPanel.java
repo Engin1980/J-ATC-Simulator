@@ -104,7 +104,7 @@ public class RecordingPanel extends JPanel {
         nudWidth.getControl(),
         new JLabel("Window height (px):"),
         nudHeight.getControl(),
-        new JLabel("Image type:"),
+        new JLabel("Image kind:"),
         cmbImageType.getControl(),
         new JLabel("JPG quality %:"),
         nudJpgQuality.getControl()
@@ -138,7 +138,7 @@ public class RecordingPanel extends JPanel {
 //        fleFfmpeg.getControl(),
 //        new JLabel("Location of images:"),
 //        fleVideoIn.getControl(),
-//        new JLabel("Images type:"),
+//        new JLabel("Images kind:"),
 //        cmbVideoImageType.getControl(),
 //        new JLabel("Output video file:"),
 //        fleVideoOut.getControl(),
@@ -205,7 +205,7 @@ public class RecordingPanel extends JPanel {
       return false;
     }
     if (cmbImageType.getSelectedIndex() < 0) {
-      MessageBox.show("Image type not selected.", "Error...");
+      MessageBox.show("Image kind not selected.", "Error...");
       return false;
     }
     return true;

@@ -20,7 +20,7 @@ public class AirplaneTypeParser implements IElementParser<AirplaneType> {
     String name = xElement.getContent();
     ret = known.tryGetByName(name);
     if (ret == null)
-      throw new XmlSerializationException(sf("Failed to find airplane type name %s.", name));
+      throw new XmlSerializationException(sf("Failed to find airplane kind name %s.", name));
     return ret;
   }
 

@@ -31,7 +31,7 @@ public class Message {
     try{
       ret = (T) source;
     } catch (Exception ex){
-      throw new ClassCastException("Cannot convert {source} to requested type.");
+      throw new ClassCastException("Cannot convert {source} to requested kind.");
     }
     return ret;
   }
@@ -41,7 +41,7 @@ public class Message {
     try{
       ret = (T) target;
     } catch (Exception ex){
-      throw new ClassCastException("Cannot convert {source} to requested type.");
+      throw new ClassCastException("Cannot convert {source} to requested kind.");
     }
     return ret;
   }
@@ -51,7 +51,7 @@ public class Message {
     try{
       ret = (T) content;
     } catch (Exception ex){
-      throw new ClassCastException("Cannot convert {source} to requested type.");
+      throw new ClassCastException("Cannot convert {source} to requested kind.");
     }
     return ret;
   }

@@ -7391,41 +7391,41 @@
 
     <border name="LKMT_MRVA_27" type="mrva" enclosed="true" maxAltitude="2700">
       <points>
-        <crd coordinate="49.688428 18.103892" radial="240" distance="4.5"/>
+        <crd coordinate="49.688428 18.103892" radial="240" maximalDistance="4.5"/>
         <arc coordinate="49.688428 18.103892" direction="clockwise"/>
-        <crd coordinate="49.688428 18.103892" radial="060" distance="4.5"/>
+        <crd coordinate="49.688428 18.103892" radial="060" maximalDistance="4.5"/>
       </points>
     </border>
 
     <border name="LKMT_MRVA_33" type="mrva" enclosed="true" maxAltitude="3300">
       <points>
-        <crd coordinate="49.688428 18.103892" radial="060" distance="4.5"/>
+        <crd coordinate="49.688428 18.103892" radial="060" maximalDistance="4.5"/>
         <arc coordinate="49.688428 18.103892" direction="clockwise"/>
-        <crd coordinate="49.688428 18.103892" radial="240" distance="4.5"/>
+        <crd coordinate="49.688428 18.103892" radial="240" maximalDistance="4.5"/>
       </points>
     </border>
 
     <border name="LKMT_MRVA_31" type="mrva" enclosed="true" maxAltitude="3100">
       <points>
-        <crd coordinate="49.688428 18.103892" radial="250" distance="4.5"/>
-        <crd coordinate="49.688428 18.103892" radial="250" distance="10"/>
+        <crd coordinate="49.688428 18.103892" radial="250" maximalDistance="4.5"/>
+        <crd coordinate="49.688428 18.103892" radial="250" maximalDistance="10"/>
         <arc coordinate="49.688428 18.103892" direction="clockwise"/>
-        <crd coordinate="49.688428 18.103892" radial="270" distance="10"/>
+        <crd coordinate="49.688428 18.103892" radial="270" maximalDistance="10"/>
         <point coordinate="49.699825 17.742879"/>
         <point coordinate="50.023015 17.787444"/>
         <point coordinate="50.067543 18.035899"/>
         <point coordinate="49.993569 18.131715"/>
-        <crd coordinate="49.688428 18.103892" radial="0" distance="4.5"/>
+        <crd coordinate="49.688428 18.103892" radial="0" maximalDistance="4.5"/>
         <arc coordinate="49.688428 18.103892" direction="counterclockwise"/>
       </points>
     </border>
 
     <border name="LKMT_MRVA_32" type="mrva" enclosed="true" maxAltitude="3200">
       <points>
-        <crd coordinate="49.688428 18.103892" radial="270" distance="10"/>
+        <crd coordinate="49.688428 18.103892" radial="270" maximalDistance="10"/>
         <point coordinate="49.699825 17.742879"/>
         <point coordinate="49.617950 17.732851"/>
-        <crd coordinate="49.688428 18.103892" radial="250" distance="10"/>
+        <crd coordinate="49.688428 18.103892" radial="250" maximalDistance="10"/>
         <arc coordinate="49.688428 18.103892" direction="clockwise"/>
       </points>
     </border>
@@ -7447,39 +7447,39 @@
 
     <border name="LKMT_MRVA_30" type="mrva" enclosed="true" maxAltitude="3000">
       <points>
-        <crd coordinate="49.688428 18.103892" radial="250" distance="4.5"/>
-        <crd coordinate="49.688428 18.103892" radial="250" distance="10"/>
+        <crd coordinate="49.688428 18.103892" radial="250" maximalDistance="4.5"/>
+        <crd coordinate="49.688428 18.103892" radial="250" maximalDistance="10"/>
         <point coordinate="49.617950 17.732851"/>
         <point coordinate="49.577731 17.727281"/>
         <point coordinate="49.521712 17.781874"/>
         <point coordinate="49.490829 17.829782"/>
-        <crd coordinate="49.688428 18.103892" radial="218" distance="4.5"/>
+        <crd coordinate="49.688428 18.103892" radial="218" maximalDistance="4.5"/>
         <arc coordinate="49.688428 18.103892" direction="clockwise"/>
       </points>
     </border>
 
     <border name="LKMT_MRVA_40" type="mrva" enclosed="true" maxAltitude="4000">
       <points>
-        <crd coordinate="49.688428 18.103892" radial="218" distance="4.5"/>
+        <crd coordinate="49.688428 18.103892" radial="218" maximalDistance="4.5"/>
         <point coordinate="49.490829 17.829782"/>
         <point coordinate="49.521712 17.781874"/>
         <point coordinate="49.406082 17.551246"/>
         <point coordinate="49.393872 17.571300"/>
         <point coordinate="49.342880 17.923370"/>
-        <crd coordinate="49.688428 18.103892" radial="195" distance="4.5"/>
+        <crd coordinate="49.688428 18.103892" radial="195" maximalDistance="4.5"/>
         <arc coordinate="49.688428 18.103892" direction="clockwise"/>
       </points>
     </border>
 
     <border name="LKMT_MRVA_52" type="mrva" enclosed="true" maxAltitude="5200">
       <points>
-        <crd coordinate="49.688428 18.103892" radial="195" distance="4.5"/>
+        <crd coordinate="49.688428 18.103892" radial="195" maximalDistance="4.5"/>
         <point coordinate="49.342880 17.923370"/>
         <point coordinate="49.294761 18.277668"/>
         <point coordinate="49.383818 18.443676"/>
         <point coordinate="49.541821 18.265413"/>
         <point coordinate="49.634469 18.411366"/>
-        <crd coordinate="49.688428 18.103892" radial="100" distance="4.5"/>
+        <crd coordinate="49.688428 18.103892" radial="100" maximalDistance="4.5"/>
         <arc coordinate="49.688428 18.103892" direction="clockwise"/>
       </points>
     </border>
@@ -7496,10 +7496,10 @@
 
     <border name="LKMT_MRVA_43" type="mrva" enclosed="true" maxAltitude="4300">
       <points>
-        <crd coordinate="49.688428 18.103892" radial="100" distance="4.5"/>
+        <crd coordinate="49.688428 18.103892" radial="100" maximalDistance="4.5"/>
         <point coordinate="49.634469 18.411366"/>
         <point coordinate="49.735735 18.577373"/>
-        <crd coordinate="49.688428 18.103892" radial="77" distance="4.5"/>
+        <crd coordinate="49.688428 18.103892" radial="77" maximalDistance="4.5"/>
         <arc coordinate="49.688428 18.103892" direction="clockwise"/>
       </points>
     </border>
@@ -7517,45 +7517,45 @@
 
     <border name="LKMT_MRVA_32" type="mrva" enclosed="true" maxAltitude="3200">
       <points>
-        <crd coordinate="49.688428 18.103892" radial="77" distance="4.5"/>
+        <crd coordinate="49.688428 18.103892" radial="77" maximalDistance="4.5"/>
         <point coordinate="49.735735 18.577373"/>
         <point coordinate="49.741481 18.633081"/>
         <point coordinate="49.824074 18.584058"/>
         <point coordinate="49.839156 18.592971"/>
-        <crd coordinate="49.688428 18.103892" radial="60" distance="4.5"/>
+        <crd coordinate="49.688428 18.103892" radial="60" maximalDistance="4.5"/>
         <arc coordinate="49.688428 18.103892" direction="clockwise"/>
       </points>
     </border>
 
     <border name="LKMT_MRVA_26" type="mrva" enclosed="true" maxAltitude="2600">
       <points>
-        <crd coordinate="49.688428 18.103892" radial="60" distance="4.5"/>
+        <crd coordinate="49.688428 18.103892" radial="60" maximalDistance="4.5"/>
         <point coordinate="49.839156 18.592971"/>
         <point coordinate="49.856393 18.614140"/>
         <point coordinate="49.913130 18.579602"/>
         <point coordinate="49.942576 18.345631"/>
         <point coordinate="49.998596 18.182966"/>
         <point coordinate="49.993569 18.131715"/>
-        <crd coordinate="49.688428 18.103892" radial="0" distance="4.5"/>
+        <crd coordinate="49.688428 18.103892" radial="0" maximalDistance="4.5"/>
         <arc coordinate="49.688428 18.103892" direction="clockwise"/>
       </points>
     </border>
 
     <border name="LKP1" type="restricted" minAltitude="0" maxAltitude="5000" enclosed="true" >
       <points>
-        <circle coordinate="N 50 05 26.72 E 014 24 01.68" distance=".6"/>
+        <circle coordinate="N 50 05 26.72 E 014 24 01.68" maximalDistance=".6"/>
       </points>
     </border>
 
     <border name="LKD9" type="danger" minAltitude="0" maxAltitude="9500" enclosed="true">
       <points>
-        <circle coordinate="N 49 44 58.00 E 013 54 43.00" distance="1.5"/>
+        <circle coordinate="N 49 44 58.00 E 013 54 43.00" maximalDistance="1.5"/>
       </points>
     </border>
 
     <border name="LKD13" type="danger" minAltitude="0" maxAltitude="9500" enclosed="true">
       <points>
-        <circle coordinate="49 40 23.34 N 017 36 05.38 E" distance="7"/>
+        <circle coordinate="49 40 23.34 N 017 36 05.38 E" maximalDistance="7"/>
       </points>
     </border>
 

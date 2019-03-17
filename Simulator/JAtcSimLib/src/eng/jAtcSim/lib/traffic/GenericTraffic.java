@@ -205,7 +205,7 @@ public class GenericTraffic extends GeneratedTraffic {
         type = companyFleet.getTypes().getRandom().getAirplaneType();
       }
       if (companyFleet == null)
-        throw new EApplicationException("There is no plane type matching requested category and company.");
+        throw new EApplicationException("There is no plane kind matching requested category and company.");
     } else {
       companyFleet = tmp.getRandom();
       icao = companyFleet.icao;

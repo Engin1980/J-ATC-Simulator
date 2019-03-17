@@ -15,7 +15,7 @@
     <sentence>after radial {cmd:radial} from {cmd:navaid}</sentence>
   </response>
   <response type="AfterDistanceCommand">
-    <sentence>after at {cmd:distance} nm from {cmd:navaid}</sentence>
+    <sentence>after at {cmd:maximalDistance} nm from {cmd:navaid}</sentence>
   </response>
   <response type="AfterSpeedCommand">
     <sentence>after speed {cmd:speed} kts</sentence>

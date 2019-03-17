@@ -7,11 +7,12 @@ import eng.eSystem.xmlSerialization.XmlSerializer;
 import eng.eSystem.xmlSerialization.exceptions.XmlSerializationException;
 import eng.eSystem.xmlSerialization.supports.IElementParser;
 import eng.jAtcSim.lib.world.RunwayConfiguration;
+import eng.jAtcSim.lib.world.xmlModel.XmlRunwayConfiguration;
 
-public class RunwayConfigurationParser implements IElementParser<RunwayConfiguration> {
+public class RunwayConfigurationParser implements IElementParser<XmlRunwayConfiguration> {
 
   @Override
-  public RunwayConfiguration parse(XElement xElement, XmlSerializer.Deserializer deserializer) {
+  public XmlRunwayConfiguration parse(XElement xElement, XmlSerializer.Deserializer deserializer) {
     int windFrom = 0;
     int windTo = 359;
     int windSpeedFrom = 0;
@@ -43,12 +44,12 @@ public class RunwayConfigurationParser implements IElementParser<RunwayConfigura
         departures.add(rtc);
     }
 
-    RunwayConfiguration ret = new RunwayConfiguration(windFrom, windTo, windSpeedFrom, windSpeedTo, arrivals, departures);
+    XmlRunwayConfiguration ret = new XmlRunwayConfiguration(windFrom, windTo, windSpeedFrom, windSpeedTo, arrivals, departures);
     return ret;
   }
 
   @Override
-  public void format(RunwayConfiguration runwayConfiguration, XElement xElement, XmlSerializer.Serializer serializer) throws XmlSerializationException {
+  public void format(XmlRunwayConfiguration runwayConfiguration, XElement xElement, XmlSerializer.Serializer serializer) throws XmlSerializationException {
     throw new UnsupportedOperationException("This method is not expected to be called.");
   }
 

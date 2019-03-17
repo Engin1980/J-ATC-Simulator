@@ -7,16 +7,12 @@ package eng.jAtcSim.lib.world;
 
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
-import eng.eSystem.exceptions.EApplicationException;
-import eng.eSystem.geo.Coordinates;
-import eng.eSystem.utilites.CollectionUtils;
+import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.geo.Coordinate;
+import eng.eSystem.geo.Coordinates;
 import eng.jAtcSim.lib.airplanes.AirplaneType;
-import eng.jAtcSim.lib.airplanes.pilots.approachStages.ApproachInfo;
 import eng.jAtcSim.lib.global.Headings;
-import eng.jAtcSim.lib.world.approaches.*;
-
-import java.util.List;
+import eng.jAtcSim.lib.world.approaches.Approach;
 
 /**
  * @author Marek
@@ -131,31 +127,25 @@ public class ActiveRunwayThreshold {
     return ret;
   }
 
-  public ApproachInfo tryGetCurrentApproachInfo(Approach.ApproachType type, char category, Coordinate planePosition) {
-
-    ApproachInfo ret;
-    if (type == Approach.ApproachType.visual)
-      ret = Approach.createVisualApproachInfo(this, planePosition);
-    else
-      ret =
-          Approach.tryGetCurrentApproachInfo(this.approaches, category, type, planePosition);
+  public IReadOnlyList<Approach> getApproaches(Approach.ApproachType type, char category) {
+    IList<Approach> ret = this.approaches.where(q -> q.getType() == type && q.getPlaneCategories().contains(category));
     return ret;
   }
 
-  public Approach getHighestApproach() {
+  public Approach tryGetHighestApproachExceptVisuals() {
     Approach ret;
 
-    ret = CollectionUtils.tryGetFirst(this.approaches, o -> o instanceof IlsApproach);
+    ret = this.approaches.tryGetFirst(q -> q.getType() == Approach.ApproachType.ils_III);
     if (ret == null)
-      ret = CollectionUtils.tryGetFirst(this.approaches, o -> o instanceof GnssApproach);
+      ret = this.approaches.tryGetFirst(q -> q.getType() == Approach.ApproachType.ils_II);
     if (ret == null)
-      ret = CollectionUtils.tryGetFirst(this.approaches, o -> o instanceof UnpreciseApproach);
-    //TODO original idea was that visual approaches will be generated and put into list of approaches
-    //now it is not done such way, so this method returns null
-//    if (ret == null)
-//      ret = CollectionUtils.tryGetFirst(this.approaches, o -> o instanceof VisualApproach);
-
-//    assert ret != null;
+      ret = this.approaches.tryGetFirst(q -> q.getType() == Approach.ApproachType.ils_I);
+    if (ret == null)
+      ret = this.approaches.tryGetFirst(q -> q.getType() == Approach.ApproachType.gnss);
+    if (ret == null)
+      ret = this.approaches.tryGetFirst(q -> q.getType() == Approach.ApproachType.vor);
+    if (ret == null)
+      ret = this.approaches.tryGetFirst(q -> q.getType() == Approach.ApproachType.ndb);
 
     return ret;
   }
@@ -191,5 +181,9 @@ public class ActiveRunwayThreshold {
   @Override
   public String toString() {
     return this.getName() + "{rwyThr}";
+  }
+
+  public String getFullName() {
+    return parent.getParent().getIcao() + this.getName();
   }
 }

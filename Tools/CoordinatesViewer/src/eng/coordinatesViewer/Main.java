@@ -169,7 +169,7 @@ public class Main {
       project.getNavaidPoints().add(absolutePoint);
     }
     Point coordinate = project.convertPointToCoordinate(absolutePoint);
-    String line = String.format("<navaid name=\"%s\" type=\"fix\" coordinate=\"%.6f %.6f\" />", name, coordinate.x, coordinate.y);
+    String line = String.format("<navaid name=\"%s\" kind=\"fix\" coordinate=\"%.6f %.6f\" />", name, coordinate.x, coordinate.y);
     line = line.replace(',', '.' );
     printLine(line);
   }

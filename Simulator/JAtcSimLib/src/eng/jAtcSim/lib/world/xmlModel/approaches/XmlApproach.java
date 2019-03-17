@@ -9,7 +9,6 @@ import eng.jAtcSim.lib.world.approaches.IafRoute;
 import eng.jAtcSim.lib.world.xmlModel.XmlIafRoute;
 
 public class XmlApproach {
-  public Approach.ApproachType type;
 
   @XmlOptional
   public String categories = "ABCD";
@@ -17,7 +16,7 @@ public class XmlApproach {
   public String gaRoute;
   @XmlOptional
   @XmlItemElement(elementName = "route", type = XmlIafRoute.class)
-  public IList<IafRoute> iafRoutes = new EList<>();
+  public IList<XmlIafRoute> iafRoutes = new EList<>();
   @XmlOptional
   public String includeIafRoutesGroups = null;
 }

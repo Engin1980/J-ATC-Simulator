@@ -30,6 +30,6 @@ public class FleetType {
   public void bindFleetType(AirplaneTypes types) {
     this.referencedAirplaneType = types.tryGetByName(name);
     if (referencedAirplaneType == null)
-      Acc.log().writeLine(warning, "Airplane type not found for %s", name);
+      Acc.log().writeLine(warning, "Airplane kind not found for %s", name);
   }
 }

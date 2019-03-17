@@ -422,7 +422,7 @@ public class TowerAtc extends ComputerAtc {
     IList<ActiveRunwayThreshold> rts = inUseInfo.current.getDepartures()
         .where(q -> q.isForCategory(plane.getType().category))
         .select(q -> q.getThreshold());
-    assert rts.size() > 0 : "No runway for airplane type " + plane.getType().name;
+    assert rts.size() > 0 : "No runway for airplane kind " + plane.getType().name;
     ret = rts.getRandom();
     restrictToRunwaysNotUnderLongMaintenance(rts, true);
     if (rts.size() > 0)

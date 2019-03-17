@@ -1,15 +1,19 @@
 package eng.jAtcSim.lib.world.xmlModel.approaches;
 
-import eng.jAtcSim.lib.world.approaches.UnpreciseApproach;
-
 public class XmlUnpreciseApproach extends XmGuidedDescentApproach{
+
+  public enum Kind {
+    vor,
+    ndb
+  }
+
   public String faf;
   public String mapt;
   public int mdaA;
   public int mdaB;
   public int mdaC;
   public int mdaD;
-  public UnpreciseApproach.Kind kind;
+  public Kind kind;
 
   public int getMDA(char category) {
     switch (category) {

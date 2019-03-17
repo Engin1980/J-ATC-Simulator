@@ -208,7 +208,7 @@ public class UserAtc extends Atc {
             ? threshold.getArrivalRouteForPlane(plane.getType(), plane.getTargetAltitude(), plane.getEntryExitFix(), true)
             : threshold.getDepartureRouteForPlane(plane.getType(), plane.getEntryExitFix(), true);
     } else if (m.group(3).toUpperCase().equals("V")) {
-      route = Route.createNewVectoringByFix(plane.getEntryExitFix(), plane.isArrival());
+      route = Route.createNewVectoringByFix(plane.getEntryExitFix());
     } else {
       route = threshold.getRoutes().tryGetFirst(q -> q.getName().equals(m.group(3)));
       if (route == null)

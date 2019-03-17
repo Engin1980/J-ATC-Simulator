@@ -52,10 +52,10 @@ public class EntryExitPoint {
 //    assert this.navaid.equals(eep.navaid);
 //
 //    this.maxMrvaAltitude = Math.min(this.maxMrvaAltitude, eep.maxMrvaAltitude);
-//    if ((eep.type == Type.both && this.type != Type.both) ||
-//        (this.type == Type.entry && eep.type == Type.exit) ||
-//        (this.type == Type.exit && eep.type == Type.entry))
-//      this.type = Type.both;
+//    if ((eep.kind == Type.both && this.kind != Type.both) ||
+//        (this.kind == Type.entry && eep.kind == Type.exit) ||
+//        (this.kind == Type.exit && eep.kind == Type.entry))
+//      this.kind = Type.both;
   }
 
   @Override

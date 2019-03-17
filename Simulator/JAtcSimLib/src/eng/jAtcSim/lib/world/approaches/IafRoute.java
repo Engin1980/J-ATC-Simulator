@@ -1,26 +1,19 @@
 package eng.jAtcSim.lib.world.approaches;
 
-import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
-import eng.eSystem.xmlSerialization.annotations.XmlOptional;
-import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.global.PlaneCategoryDefinitions;
 import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
 import eng.jAtcSim.lib.world.Navaid;
 
 public class IafRoute {
-  private String iaf;
-  @XmlIgnore
-  private Navaid _navaid;
-  private String route;
-  @XmlIgnore
-  private SpeechList<IAtcCommand> _routeCommands;
-  @XmlOptional
+  private Navaid navaid;
+  private SpeechList<IAtcCommand> routeCommands;
   private PlaneCategoryDefinitions category = PlaneCategoryDefinitions.getAll();
 
-  public void bind() {
-    _navaid = Acc.area().getNavaids().get(iaf);
-    _routeCommands = Approach.parseRoute(route);
+  public IafRoute(Navaid navaid, SpeechList<IAtcCommand> routeCommands, PlaneCategoryDefinitions category) {
+    this.navaid = navaid;
+    this.routeCommands = routeCommands;
+    this.category = category;
   }
 
   public PlaneCategoryDefinitions getCategory() {
@@ -28,10 +21,10 @@ public class IafRoute {
   }
 
   public Navaid getNavaid() {
-    return _navaid;
+    return navaid;
   }
 
   public SpeechList<IAtcCommand> getRouteCommands() {
-    return _routeCommands;
+    return routeCommands;
   }
 }

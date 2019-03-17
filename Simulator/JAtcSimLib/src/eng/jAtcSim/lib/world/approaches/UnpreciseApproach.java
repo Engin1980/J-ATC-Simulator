@@ -29,10 +29,10 @@
 //  private int mdaB;
 //  private int mdaC;
 //  private int mdaD;
-//  private Kind type;
+//  private Kind kind;
 //
 //  public Kind getType() {
-//    return type;
+//    return kind;
 //  }
 //
 //  public Navaid getFaf() {
@@ -60,13 +60,13 @@
 //
 //  @Override
 //  public String getTypeString() {
-//    switch (this.type){
+//    switch (this.kind){
 //      case ndb:
 //        return "NDB";
 //      case vor:
 //        return "VOR";
 //      default:
-//        throw new EEnumValueUnsupportedException(this.type);
+//        throw new EEnumValueUnsupportedException(this.kind);
 //    }
 //  }
 //

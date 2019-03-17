@@ -57,7 +57,7 @@ public class SimulationTimeRadarSettings extends JStartupPanel {
         LayoutManager.createFormPanel(3, 2,
             new JLabel("Simulation speed:"), this.nudSecondLength.getControl(),
             new JLabel("Startup time:"), LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.baseline, DISTANCE, tmeTime.getControl(), btnNow),
-            new JLabel("Radar screen type:"), cmbRadarClass.getControl()
+            new JLabel("Radar screen kind:"), cmbRadarClass.getControl()
         );
 
     pnl = LayoutManager.createBorderedPanel(10, pnl);

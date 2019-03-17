@@ -14,7 +14,7 @@ import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 public class AirplaneType {
 
   /**
-   * Name of type
+   * Name of kind
    */
   public String name;
   

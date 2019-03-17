@@ -152,54 +152,56 @@ public class Simulation {
 
   public void load(XElement root) {
 
-    LoadSave.setRelativeArea(this.area, this.activeAirport, new Atc[]{this.twrAtc, this.ctrAtc, this.appAtc});
-    LoadSave.setRelativeAirplaneTypes(this.airplaneTypes);
+    throw new UnsupportedOperationException("Implement");
 
-    {
-      IList<Airplane> lst = new EList<>();
-      XElement tmp = root.getChildren().getFirst(q -> q.getName().equals("planes"));
-      for (XElement elm : tmp.getChildren()) {
-        Airplane plane = Airplane.load(elm);
-        lst.add(plane);
-      }
-      LoadSave.setRelativeAirplanes(lst);
-    }
-
-    {
-      XElement tmp = root.getChild("atcs");
-      this.ctrAtc.load(tmp);
-      this.appAtc.load(tmp);
-      this.twrAtc.load(tmp);
-      this.twrAtc.getRunwayConfigurationInUse().bind();
-      if (this.twrAtc.tryGetRunwayConfigurationScheduled() != null)
-        this.twrAtc.tryGetRunwayConfigurationScheduled().bind();
-      this.twrAtc.getOnRunwayChanged().add(this::twr_runwayChanged);
-    }
-
-    LoadSave.loadField(root, this, "prm");
-
-    LoadSave.loadField(root, this, "now");
-    LoadSave.loadField(root, this, "stats");
-    LoadSave.loadField(root, this, "emergencyManager");
-    this.trafficManager.load(root);
-
-    LoadSave.loadField(root, this, "simulationSecondLengthInMs");
-
-    {
-      IList<Airplane> lst = new EList<>();
-      XElement tmp = root.getChildren().getFirst(q -> q.getName().equals("delayedPlanes"));
-      for (XElement elm : tmp.getChildren()) {
-        Airplane plane = Airplane.load(elm);
-        this.newPlanesDelayedToAvoidCollision.add(plane);
-      }
-      LoadSave.setRelativeAirplanes(lst);
-    }
-
-    this.prm.getPlanes().forEach(q -> this.mrvaManager.registerPlane(q));
-    this.prm.init();
-
-    this.prm.getPlanes().forEach(
-        q->this.messenger.registerListener(q, q));
+//    LoadSave.setRelativeArea(this.area, this.activeAirport, new Atc[]{this.twrAtc, this.ctrAtc, this.appAtc});
+//    LoadSave.setRelativeAirplaneTypes(this.airplaneTypes);
+//
+//    {
+//      IList<Airplane> lst = new EList<>();
+//      XElement tmp = root.getChildren().getFirst(q -> q.getName().equals("planes"));
+//      for (XElement elm : tmp.getChildren()) {
+//        Airplane plane = Airplane.load(elm);
+//        lst.add(plane);
+//      }
+//      LoadSave.setRelativeAirplanes(lst);
+//    }
+//
+//    {
+//      XElement tmp = root.getChild("atcs");
+//      this.ctrAtc.load(tmp);
+//      this.appAtc.load(tmp);
+//      this.twrAtc.load(tmp);
+//      this.twrAtc.getRunwayConfigurationInUse().bind();
+//      if (this.twrAtc.tryGetRunwayConfigurationScheduled() != null)
+//        this.twrAtc.tryGetRunwayConfigurationScheduled().bind();
+//      this.twrAtc.getOnRunwayChanged().add(this::twr_runwayChanged);
+//    }
+//
+//    LoadSave.loadField(root, this, "prm");
+//
+//    LoadSave.loadField(root, this, "now");
+//    LoadSave.loadField(root, this, "stats");
+//    LoadSave.loadField(root, this, "emergencyManager");
+//    this.trafficManager.load(root);
+//
+//    LoadSave.loadField(root, this, "simulationSecondLengthInMs");
+//
+//    {
+//      IList<Airplane> lst = new EList<>();
+//      XElement tmp = root.getChildren().getFirst(q -> q.getName().equals("delayedPlanes"));
+//      for (XElement elm : tmp.getChildren()) {
+//        Airplane plane = Airplane.load(elm);
+//        this.newPlanesDelayedToAvoidCollision.add(plane);
+//      }
+//      LoadSave.setRelativeAirplanes(lst);
+//    }
+//
+//    this.prm.getPlanes().forEach(q -> this.mrvaManager.registerPlane(q));
+//    this.prm.init();
+//
+//    this.prm.getPlanes().forEach(
+//        q->this.messenger.registerListener(q, q));
   }
 
   public void setSimulationSecondInterval(int intervalMs) {

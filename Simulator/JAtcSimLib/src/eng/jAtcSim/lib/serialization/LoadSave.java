@@ -91,7 +91,7 @@ public class LoadSave {
     try {
       ret = ser.deserialize(tmp, type);
     } catch (Exception e) {
-      throw new EApplicationException("Failed to load object " + name + " of type " + type.getClass().getName() + ".", e);
+      throw new EApplicationException("Failed to load object " + name + " of kind " + type.getClass().getName() + ".", e);
     }
     return ret;
   }
@@ -101,7 +101,7 @@ public class LoadSave {
     try {
       f = getField(src.getClass(), fieldName);
     } catch (NoSuchFieldException e) {
-      throw new EApplicationException("Unable to find field " + fieldName + " in type " + src.getClass().getName());
+      throw new EApplicationException("Unable to find field " + fieldName + " in kind " + src.getClass().getName());
     }
 
     Object v;

@@ -26,7 +26,7 @@ public abstract class Formatter implements IFormatter {
 
     if (m == null) {
       throw new EApplicationException(sf(
-          "No {format(...)} method found for type {%s} in the formatter of type {%s}.",
+          "No {format(...)} method found for kind {%s} in the formatter of kind {%s}.",
           speech.getClass().getName(),
           this.getClass().getName()));
     }

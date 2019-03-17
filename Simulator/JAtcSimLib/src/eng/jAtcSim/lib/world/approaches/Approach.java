@@ -1,17 +1,13 @@
 package eng.jAtcSim.lib.world.approaches;
 
-import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
-import eng.eSystem.exceptions.EApplicationException;
-import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
-import eng.eSystem.xmlSerialization.annotations.XmlItemElement;
-import eng.eSystem.xmlSerialization.annotations.XmlOptional;
-import eng.jAtcSim.lib.global.Headings;
+import eng.jAtcSim.lib.airplanes.AirplaneType;
+import eng.jAtcSim.lib.airplanes.pilots.approachStages.IApproachStage;
+import eng.jAtcSim.lib.global.PlaneCategoryDefinitions;
 import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
 import eng.jAtcSim.lib.world.ActiveRunwayThreshold;
-import eng.jAtcSim.lib.world.Airport;
 
 public class Approach {
 
@@ -25,21 +21,25 @@ public class Approach {
     visual
   }
 
-//  public static CurrentApproachInfo tryGetCurrentApproachInfo(IList<Approach> apps, char category, ApproachType type, Coordinate currentPlaneLocation) {
+  public ApproachType getType() {
+    return type;
+  }
+
+  //  public static CurrentApproachInfo tryGetCurrentApproachInfo(IList<Approach> apps, char category, ApproachType kind, Coordinate currentPlaneLocation) {
 //    CurrentApproachInfo ret;
 //
-//    switch (type) {
+//    switch (kind) {
 //      case ils_I:
 //      case ils_II:
 //      case ils_III:
-//        ret = tryGetFromILS(apps, category, type, currentPlaneLocation);
+//        ret = tryGetFromILS(apps, category, kind, currentPlaneLocation);
 //        break;
 //      case gnss:
 //        ret = tryGetFromGnss(apps, category, currentPlaneLocation);
 //        break;
 //      case ndb:
 //      case vor:
-//        ret = tryGetFromUnprecise(apps, category, type, currentPlaneLocation);
+//        ret = tryGetFromUnprecise(apps, category, kind, currentPlaneLocation);
 //        break;
 //      case visual: // visual is created individually
 //      default:
@@ -167,10 +167,10 @@ public class Approach {
 //    return ret;
 //  }
 //
-//  private static CurrentApproachInfo tryGetFromILS(IList<Approach> apps, char category, ApproachType type, Coordinate planeLocation) {
+//  private static CurrentApproachInfo tryGetFromILS(IList<Approach> apps, char category, ApproachType kind, Coordinate planeLocation) {
 //    CurrentApproachInfo ret;
 //    IlsApproach ilsApproach = (IlsApproach) CollectionUtils.tryGetFirst(apps, o -> o instanceof IlsApproach);
-//    IlsApproach.IlsCategory catKey = typeToIlsType(type);
+//    IlsApproach.IlsCategory catKey = typeToIlsType(kind);
 //    IlsApproach.Category cat = ilsApproach.getCategories().getFirst(q -> q.getType() == catKey);
 //
 //    Navaid iaf = tryGetIafNavaidCloseToPlaneLocation(ilsApproach, planeLocation);
@@ -193,14 +193,14 @@ public class Approach {
 //
 //
 //    ret = new CurrentApproachInfo(
-//        ilsApproach.getParent(), usingIaf, iafCommands, gaCommands, type, faf, mapt, course, mda, slope, ilsApproach.getInitialAltitude());
+//        ilsApproach.getParent(), usingIaf, iafCommands, gaCommands, kind, faf, mapt, course, mda, slope, ilsApproach.getInitialAltitude());
 //    return ret;
 //  }
 //
-//  private static CurrentApproachInfo tryGetFromUnprecise(IList<Approach> apps, char category, Approach.ApproachType type, Coordinate planeLocation) {
+//  private static CurrentApproachInfo tryGetFromUnprecise(IList<Approach> apps, char category, Approach.ApproachType kind, Coordinate planeLocation) {
 //    CurrentApproachInfo ret;
 //    List<Approach> lst = CollectionUtils.where(apps, o -> o instanceof UnpreciseApproach);
-//    UnpreciseApproach.Kind utype = typeToUnpreciseType(type);
+//    UnpreciseApproach.Kind utype = typeToUnpreciseType(kind);
 //    UnpreciseApproach tmp = (UnpreciseApproach) CollectionUtils.tryGetFirst(lst, o -> ((UnpreciseApproach) o).getType() == utype);
 //
 //    Navaid iaf = tryGetIafNavaidCloseToPlaneLocation(tmp, planeLocation);
@@ -224,7 +224,7 @@ public class Approach {
 //    double slope = faf2maptAltitude / faf2maptDistance;
 //
 //    ret = new CurrentApproachInfo(
-//        tmp.getParent(), usingIaf, iafCommands, gaCommands, type, faf, mapt, course, mda, slope, tmp.getInitialAltitude());
+//        tmp.getParent(), usingIaf, iafCommands, gaCommands, kind, faf, mapt, course, mda, slope, tmp.getInitialAltitude());
 //    return ret;
 //  }
 //
@@ -254,8 +254,8 @@ public class Approach {
 //    return ret;
 //  }
 //
-//  private static UnpreciseApproach.Kind typeToUnpreciseType(ApproachType type) {
-//    switch (type) {
+//  private static UnpreciseApproach.Kind typeToUnpreciseType(ApproachType kind) {
+//    switch (kind) {
 //      case vor:
 //        return UnpreciseApproach.Kind.vor;
 //      case ndb:
@@ -265,8 +265,8 @@ public class Approach {
 //    }
 //  }
 //
-//  private static IlsApproach.IlsCategory typeToIlsType(ApproachType type) {
-//    switch (type) {
+//  private static IlsApproach.IlsCategory typeToIlsType(ApproachType kind) {
+//    switch (kind) {
 //      case ils_I:
 //        return IlsApproach.IlsCategory.I;
 //      case ils_II:
@@ -278,10 +278,13 @@ public class Approach {
 //    }
 //  }
 
-  private SpeechList<IAtcCommand> gaCommands;
-  private IList<IafRoute> iafRoutes = new EList<>();
-  private ActiveRunwayThreshold parent;
-  private ApproachType type;
+  private final SpeechList<IAtcCommand> gaCommands;
+  private final PlaneCategoryDefinitions planeCategories;
+  private final IList<IafRoute> iafRoutes;
+  private final ActiveRunwayThreshold parent;
+  private final ApproachType type;
+  private final ApproachEntryLocation entryLocation;
+  private final IList<IApproachStage> stages;
 
   public IReadOnlyList<IafRoute> getIafRoutes() {
     return iafRoutes;
@@ -291,38 +294,54 @@ public class Approach {
     return gaCommands;
   }
 
-  public int getGeographicalRadial() {
-    return geographicalRadial;
+  public Approach(ApproachType type, PlaneCategoryDefinitions planeCategories, SpeechList<IAtcCommand> gaCommands,
+                  ApproachEntryLocation entryLocation, IList<IApproachStage> stages,
+                  IList<IafRoute> iafRoutes, ActiveRunwayThreshold parent) {
+    this.planeCategories = planeCategories;
+    this.gaCommands = gaCommands;
+    this.iafRoutes = iafRoutes;
+    this.parent = parent;
+    this.type = type;
+    this.entryLocation = entryLocation;
+    this.stages = stages;
   }
 
-  public int getMagneticalRadial() {
-    return radial;
+  public PlaneCategoryDefinitions getPlaneCategories() {
+    return planeCategories;
   }
 
-  public void bind() {
-    gaCommands = parseRoute(gaRoute);
-
-    if (this.includeIafRoutesGroups != null) {
-      String[] groupNames = this.includeIafRoutesGroups.split(";");
-      for (String groupName : groupNames) {
-        Airport.SharedIafRoutesGroup group = this.getParent().getParent().getParent().getSharedIafRoutesGroups().tryGetFirst(q -> q.groupName.equals(groupName));
-        if (group == null) {
-          throw new EApplicationException("Unable to find iaf-route group named " + groupName + " in airport "
-              + this.getParent().getParent().getParent().getIcao() + " required for runway approach " + this.getParent().getName() + " " + this.getTypeString() + ".");
-        }
-
-        this.iafRoutes.add(group.iafRoutes);
-      }
-    }
-
-    this.iafRoutes.forEach(q -> q.bind());
-
-    this._bind(); // bind in descendants
-
-    this.geographicalRadial = (int) Math.round(
-        Headings.add(this.radial,
-            this.getParent().getParent().getParent().getDeclination()));
+  public ApproachEntryLocation getEntryLocation() {
+    return entryLocation;
   }
+
+  public IList<IApproachStage> getStages() {
+    return stages;
+  }
+
+  //  public void bind() {
+//    gaCommands = parseRoute(gaRoute);
+//
+//    if (this.includeIafRoutesGroups != null) {
+//      String[] groupNames = this.includeIafRoutesGroups.split(";");
+//      for (String groupName : groupNames) {
+//        Airport.SharedIafRoutesGroup group = this.getParent().getParent().getParent().getSharedIafRoutesGroups().tryGetFirst(q -> q.groupName.equals(groupName));
+//        if (group == null) {
+//          throw new EApplicationException("Unable to find iaf-route group named " + groupName + " in airport "
+//              + this.getParent().getParent().getParent().getIcao() + " required for runway approach " + this.getParent().getName() + " " + this.getTypeString() + ".");
+//        }
+//
+//        this.iafRoutes.add(group.iafRoutes);
+//      }
+//    }
+//
+//    this.iafRoutes.forEach(q -> q.bind());
+//
+//    this._bind(); // bind in descendants
+//
+//    this.geographicalRadial = (int) Math.round(
+//        Headings.add(this.radial,
+//            this.getParent().getParent().getParent().getDeclination()));
+//  }
 
   public ActiveRunwayThreshold getParent() {
     return parent;

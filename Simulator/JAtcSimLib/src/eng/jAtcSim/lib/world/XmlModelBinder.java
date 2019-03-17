@@ -8,17 +8,18 @@ import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.utilites.RegexUtils;
 import eng.jAtcSim.lib.Acc;
+import eng.jAtcSim.lib.airplanes.pilots.approachStages.*;
 import eng.jAtcSim.lib.atcs.AtcTemplate;
 import eng.jAtcSim.lib.exceptions.EBindException;
 import eng.jAtcSim.lib.global.Headings;
+import eng.jAtcSim.lib.global.PlaneCategoryDefinitions;
 import eng.jAtcSim.lib.speaking.IFromAtc;
 import eng.jAtcSim.lib.speaking.SpeechList;
-import eng.jAtcSim.lib.speaking.fromAtc.commands.HoldCommand;
-import eng.jAtcSim.lib.speaking.fromAtc.commands.ToNavaidCommand;
+import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
+import eng.jAtcSim.lib.speaking.fromAtc.commands.*;
 import eng.jAtcSim.lib.textProcessing.parsing.Parser;
 import eng.jAtcSim.lib.textProcessing.parsing.shortBlockParser.ShortBlockParser;
-import eng.jAtcSim.lib.world.approaches.Approach;
-import eng.jAtcSim.lib.world.approaches.IlsApproach;
+import eng.jAtcSim.lib.world.approaches.*;
 import eng.jAtcSim.lib.world.xmlModel.*;
 import eng.jAtcSim.lib.world.xmlModel.approaches.*;
 import eng.jAtcSim.lib.world.xmlModel.approaches.approachStages.*;
@@ -31,6 +32,7 @@ public class XmlModelBinder {
     public final Area area;
     public final Airport airport;
     public final ActiveRunwayThreshold threshold;
+    public final EStack stack = new EStack();
 
     public Context(Area area, Airport airport) {
       this(area, airport, null);
@@ -128,13 +130,14 @@ public class XmlModelBinder {
     IList<PublishedHold> holds = new EList<>();
     IList<RunwayConfiguration> runwayConfigurations = new EList<>();
     IList<EntryExitPoint> entryExitPoints = new EList<>();
-    IMap<String, IList<Route>> sharedRoutesGroup = convertSharedRoutes(x, context);
+    IMap<String, IList<Route>> sharedRoutesGroups = convertSharedRoutes(x, context);
+    IMap<String, IList<IafRoute>> sharedIafRoutesGroups = convertSharedIafRoutes(x, context);
 
     Airport ret = new Airport(
         x.icao, x.name, mainAirportNavaid, x.altitude,
         x.vfrAltitude, x.transitionAltitude, x.coveredDistance, x.declination,
         initialPosition, atcTemplates, runways, inactiveRunways,
-        holds, entryExitPoints, runwayConfigurations, sharedRoutesGroup, context.area);
+        holds, entryExitPoints, runwayConfigurations, sharedRoutesGroups, context.area);
     context = new Context(context.area, ret);
 
     for (XmlAtcTemplate xmlAtcTemplate : x.atcTemplates) {
@@ -148,7 +151,7 @@ public class XmlModelBinder {
     }
 
     for (XmlActiveRunway xmlRunway : x.runways) {
-      ActiveRunway runway = convert(xmlRunway, sharedRoutesGroup, context);
+      ActiveRunway runway = convert(xmlRunway, sharedRoutesGroups, sharedIafRoutesGroups, context);
       runways.add(runway);
     }
 
@@ -303,7 +306,22 @@ public class XmlModelBinder {
     return ret;
   }
 
-  private static ActiveRunway convert(XmlActiveRunway x, IMap<String, IList<Route>> sharedRoutesGroups,
+  private static IMap<String, IList<IafRoute>> convertSharedIafRoutes(XmlAirport x, Context context) {
+    IMap<String, IList<IafRoute>> ret = new EMap<>();
+    for (XmlAirport.XmlSharedIafRoutesGroup xmlSharedIafRoutesGroup : x.sharedIafRoutesGroups) {
+      IList<IafRoute> lst = new EList<>();
+      ret.set(xmlSharedIafRoutesGroup.groupName, lst);
+      for (XmlIafRoute xmlIafRoute : xmlSharedIafRoutesGroup.iafRoutes) {
+        IafRoute iafRoute = convert(xmlIafRoute, context);
+        lst.add(iafRoute);
+      }
+    }
+    return ret;
+  }
+
+  private static ActiveRunway convert(XmlActiveRunway x,
+                                      IMap<String, IList<Route>> sharedRoutesGroups,
+                                      IMap<String, IList<IafRoute>> sharedIafRoutesGroups,
                                       Context context) {
     assert x.thresholds.size() == 2;
     IList<ActiveRunwayThreshold> thresholds = new EList<>();
@@ -326,21 +344,114 @@ public class XmlModelBinder {
 
     context = new Context(context.area, context.airport, t[0]);
     for (XmlApproach xmlApproach : xa.approaches) {
-      IList<Approach> approaches = convert(xmlApproach, context);
+      IList<Approach> approaches = convert(xmlApproach, sharedIafRoutesGroups, context);
       aApproaches.add(approaches);
     }
+    generateVisualApproachesIfRequired(aApproaches, context);
     context = new Context(context.area, context.airport, t[1]);
     for (XmlApproach xmlApproach : xb.approaches) {
-      IList<Approach> approaches = convert(xmlApproach, context);
+      IList<Approach> approaches = convert(xmlApproach, sharedIafRoutesGroups, context);
       bApproaches.add(approaches);
     }
+    generateVisualApproachesIfRequired(bApproaches, context);
     buildRoutesForActiveRunwayThreshold(xa, aRoutes, sharedRoutesGroups, context);
     buildRoutesForActiveRunwayThreshold(xb, bRoutes, sharedRoutesGroups, context);
 
     return ret;
   }
 
-  private static IList<Approach> convert(XmlApproach xmlApproach, Context context) {
+  private static void generateVisualApproachesIfRequired(IList<Approach> approaches, Context context) {
+    // if any visual is predefined, anything is created
+    if (approaches.isAny(q -> q.getType() == Approach.ApproachType.visual)) return;
+
+    Coordinate thresholdCoordinate = context.threshold.getCoordinate();
+    double thresholdCourse = context.threshold.getCourse();
+
+    final double VISUAL_DISTANCE = 8;
+    final double VFAF_DISTANCE = 2.5;
+    final int FINAL_ALTITUDE =
+        (context.airport.getAltitude() / 1000 + 2) * 1000;
+    final int BASE_ALTITUDE =
+        (context.airport.getAltitude() / 1000 + 3) * 1000;
+
+    ApproachEntryLocation entryLocation;
+    SpeechList gaCommands = new SpeechList();
+    gaCommands.add(new ChangeHeadingCommand());
+    gaCommands.add(new ChangeAltitudeCommand(
+        ChangeAltitudeCommand.eDirection.climb, BASE_ALTITUDE));
+    IList<IApproachStage> stages;
+    Approach app;
+
+    Navaid vfaf = context.area.getNavaids().getOrGenerate(
+        context.threshold.getFullName() + "_VFAF",
+        Coordinates.getCoordinate(
+            thresholdCoordinate,
+            Headings.getOpposite(thresholdCourse),
+            VFAF_DISTANCE));
+    Navaid vlft = context.area.getNavaids().getOrGenerate(
+        context.threshold.getFullName() + "_VRGT",
+        Coordinates.getCoordinate(vfaf.getCoordinate(),
+            Headings.add(thresholdCourse, 90),
+            VFAF_DISTANCE));
+    Navaid vrgt = context.area.getNavaids().getOrGenerate(
+        context.threshold.getFullName() + "_VLFT",
+        Coordinates.getCoordinate(vfaf.getCoordinate(),
+            Headings.add(thresholdCourse, -90),
+            VFAF_DISTANCE));
+
+    Coordinate a = Coordinates.getCoordinate(
+        vfaf.getCoordinate(), thresholdCourse, VFAF_DISTANCE + VISUAL_DISTANCE);
+    Coordinate rb = Coordinates.getCoordinate(
+        a, Headings.add(thresholdCourse, 90), VISUAL_DISTANCE);
+    Coordinate rc = Coordinates.getCoordinate(vfaf.getCoordinate(), Headings.add(thresholdCourse, 90), VISUAL_DISTANCE);
+    Coordinate lb = Coordinates.getCoordinate(
+        a, Headings.add(thresholdCourse, -90), VISUAL_DISTANCE);
+    Coordinate lc = Coordinates.getCoordinate(
+        vfaf.getCoordinate(), Headings.add(thresholdCourse, -90), VISUAL_DISTANCE);
+    Coordinate [] ecds;
+
+    // direct approach
+    entryLocation = new FixRelatedApproachEntryLocation(vfaf, VISUAL_DISTANCE,
+        Headings.add(thresholdCourse, 90), Headings.add(thresholdCourse, -90));
+    stages = new EList<>();
+    stages.add(new RouteStage(new SpeechList<>(
+        new ChangeAltitudeCommand(ChangeAltitudeCommand.eDirection.descend, FINAL_ALTITUDE),
+        new ProceedDirectCommand(vfaf))));
+    app = new Approach(Approach.ApproachType.visual, PlaneCategoryDefinitions.getAll(), gaCommands, entryLocation,
+        stages, new EList<>(), context.threshold);
+    approaches.add(app);
+
+    // right pattern approach
+    ecds = new Coordinate[]{};
+    entryLocation = new RegionalApproachEntryLocation(
+        a, rb, rc, vfaf.getCoordinate());
+    stages = new EList<>();
+    stages.add(new RouteStage(new SpeechList<>(
+        new ChangeAltitudeCommand(ChangeAltitudeCommand.eDirection.descend, BASE_ALTITUDE),
+        new ProceedDirectCommand(vrgt),
+        new ThenCommand(),
+        new ChangeAltitudeCommand(ChangeAltitudeCommand.eDirection.descend, FINAL_ALTITUDE),
+        new ProceedDirectCommand(vfaf))));
+    app = new Approach(Approach.ApproachType.visual, PlaneCategoryDefinitions.getAll(), gaCommands, entryLocation,
+        stages, new EList<>(), context.threshold);
+    approaches.add(app);
+
+    // left pattern approach
+    entryLocation = new RegionalApproachEntryLocation(
+        a, lb, lc, vfaf.getCoordinate());
+    stages = new EList<>();
+    stages.add(new RouteStage(new SpeechList<>(
+        new ChangeAltitudeCommand(ChangeAltitudeCommand.eDirection.descend, BASE_ALTITUDE),
+        new ProceedDirectCommand(vlft),
+        new ThenCommand(),
+        new ChangeAltitudeCommand(ChangeAltitudeCommand.eDirection.descend, FINAL_ALTITUDE),
+        new ProceedDirectCommand(vfaf))));
+    app = new Approach(Approach.ApproachType.visual, PlaneCategoryDefinitions.getAll(), gaCommands, entryLocation,
+        stages, new EList<>(), context.threshold);
+    approaches.add(app);
+  }
+
+  private static IList<Approach> convert(XmlApproach xmlApproach, IMap<String, IList<IafRoute>> sharedIafRoutesGroups, Context context) {
     IList<Approach> ret = new EList<>();
 
     IList<XmlCustomApproach> xmlCustomApproaches;
@@ -354,14 +465,156 @@ public class XmlModelBinder {
       xmlCustomApproaches = convertFromCustom((XmlCustomApproach) xmlApproach, context);
 
     for (XmlCustomApproach xmlCustomApproach : xmlCustomApproaches) {
-      Approach app = convertCustom(xmlCustomApproach, context);
+      Approach app = convertCustom(xmlCustomApproach, context, sharedIafRoutesGroups);
       ret.add(app);
     }
     return ret;
   }
 
-  private static Approach convertCustom(XmlCustomApproach x, Context context) {
-    Approach ret = new App
+  private static Approach convertCustom(XmlCustomApproach x, Context context, IMap<String, IList<IafRoute>> sharedIafRoutesGroups) {
+    SpeechList<IAtcCommand> gaCommands = decodeGaCommands(x);
+    ApproachEntryLocation entryLocation = convert(x.entryLocation, context);
+    IList<IafRoute> iafRoutes = new EList<>();
+    IList<IApproachStage> stages = new EList<>();
+    Approach ret = new Approach(x.type, x.planeCategories, gaCommands, entryLocation, stages, iafRoutes, context.threshold);
+
+    for (XmlStage xmlStage : x.stages) {
+      IApproachStage stage = convert(xmlStage, context);
+      stages.add(stage);
+    }
+
+    buildRoutesForApproach(x, iafRoutes, sharedIafRoutesGroups, context);
+    /*
+     gaCommands = parseRoute(gaRoute);
+//
+//    if (this.includeIafRoutesGroups != null) {
+//      String[] groupNames = this.includeIafRoutesGroups.split(";");
+//      for (String groupName : groupNames) {
+//        Airport.SharedIafRoutesGroup group = this.getParent().getParent().getParent().getSharedIafRoutesGroups().tryGetFirst(q -> q.groupName.equals(groupName));
+//        if (group == null) {
+//          throw new EApplicationException("Unable to find iaf-route group named " + groupName + " in airport "
+//              + this.getParent().getParent().getParent().getIcao() + " required for runway approach " + this.getParent().getName() + " " + this.getTypeString() + ".");
+//        }
+//
+//        this.iafRoutes.add(group.iafRoutes);
+//      }
+//    }
+//
+//    this.iafRoutes.forEach(q -> q.bind());
+//
+//    this._bind(); // bind in descendants
+//
+//    this.geographicalRadial = (int) Math.round(
+//        Headings.add(this.radial,
+//            this.getParent().getParent().getParent().getDeclination()));
+     */
+    return ret;
+  }
+
+  private static IApproachStage convert(XmlStage x, Context context) {
+    IApproachStage ret;
+
+    if (x instanceof XmlCheckAirportVisibilityStage)
+      ret = new CheckAirportVisibilityStage();
+    else if (x instanceof XmlVisualFinalStage)
+      ret = new VisualFinalStage(context.threshold);
+    else if (x instanceof XmlCheckPlaneLocationStage)
+      ret = convertCheckPlaneLocationStage((XmlCheckPlaneLocationStage) x, context);
+    else if (x instanceof XmlCheckPlaneStateStage)
+      ret = convertCheckPlaneStateStage((XmlCheckPlaneStateStage) x, context);
+    else if (x instanceof XmlRouteStage)
+      ret = convertRouteStage((XmlRouteStage) x, context);
+    else if (x instanceof XmlDescendStage)
+      ret = convertDescendStage((XmlDescendStage) x, context);
+    else
+      throw new UnsupportedOperationException();
+
+    return ret;
+  }
+
+  private static DescendStage convertDescendStage(XmlDescendStage x, Context context) {
+    Navaid fix = context.area.getNavaids().get(x.fix);
+    Navaid exitFix;
+    if (x.exitFix != null)
+      exitFix = context.area.getNavaids().get(x.exitFix);
+    else
+      exitFix = null;
+    DescendStage ret = new DescendStage(fix, x.altitude, x.slope, exitFix, x.exitAltitude);
+    return ret;
+  }
+
+  private static RouteStage convertRouteStage(XmlRouteStage x, Context context) {
+    SpeechList route = decodeRouteFromString(x.route);
+    RouteStage ret = new RouteStage(route);
+    return ret;
+  }
+
+  private static CheckPlaneStateStage convertCheckPlaneStateStage(XmlCheckPlaneStateStage x, Context context) {
+    CheckPlaneStateStage ret = new CheckPlaneStateStage(
+        x.minAltitude, x.maxAltitude, x.minHeading, x.maxHeading, x.minSpeed, x.maxSpeed
+    );
+    return ret;
+  }
+
+  private static CheckPlaneLocationStage convertCheckPlaneLocationStage(XmlCheckPlaneLocationStage x, Context context) {
+    Coordinate c;
+    if (x.coordinate != null)
+      c = x.coordinate;
+    else
+      c = context.area.getNavaids().get(x.fix).getCoordinate();
+    CheckPlaneLocationStage ret = new CheckPlaneLocationStage(
+        c, x.minDistance, x.maxDistance, x.minHeading, x.maxHeading
+    );
+    return ret;
+  }
+
+  private static ApproachEntryLocation convert(XmlApproachEntryLocation x, Context context) {
+    ApproachEntryLocation ret;
+    if (x instanceof XmlFixRelatedApproachEntryLocation) {
+      XmlFixRelatedApproachEntryLocation fx = (XmlFixRelatedApproachEntryLocation) x;
+      Navaid n = context.area.getNavaids().get(fx.navaid);
+      ret = new FixRelatedApproachEntryLocation(n, fx.maximalDistance, fx.fromRadial, fx.toRadial);
+    } else {
+      XmlRegionalApproachEntryLocation rx = (XmlRegionalApproachEntryLocation) x;
+      ret = new RegionalApproachEntryLocation(rx.points);
+    }
+    return ret;
+  }
+
+  private static void buildRoutesForApproach(XmlCustomApproach x, IList<IafRoute> approachRoutes, IMap<String, IList<IafRoute>> sharedIafRoutesGroups, Context context) {
+
+    for (XmlIafRoute xmlRoute : x.iafRoutes) {
+      IafRoute route = convert(xmlRoute, context);
+      approachRoutes.add(route);
+    }
+    if (x.includeIafRoutesGroups != null) {
+      String[] groupNames = x.includeIafRoutesGroups.split(";");
+      for (String groupName : groupNames) {
+        try {
+          IList<IafRoute> routes = sharedIafRoutesGroups.get(groupName);
+          approachRoutes.add(routes);
+        } catch (Exception ex) {
+          throw new EApplicationException("Unable to find route group named " + groupName + ".");
+        }
+      }
+    }
+  }
+
+  private static IafRoute convert(XmlIafRoute x, Context context) {
+    Navaid navaid = context.area.getNavaids().get(x.iaf);
+    SpeechList routeCommands = decodeRouteFromString(x.route);
+    IafRoute ret = new IafRoute(navaid, routeCommands, x.category);
+    return ret;
+  }
+
+  private static SpeechList<IAtcCommand> decodeGaCommands(XmlCustomApproach x) {
+    SpeechList ret;
+    try {
+      ret = decodeRouteFromString(x.gaRoute);
+    } catch (Exception ex) {
+      throw new EApplicationException("Unable to decode go-around routing for approach.");
+    }
+    return ret;
   }
 
   private static IList<XmlCustomApproach> convertFromCustom(XmlCustomApproach x, Context context) {
@@ -384,13 +637,13 @@ public class XmlModelBinder {
     IList<XmlCustomApproach> ret = new EList<>();
     for (char planeCategory : x.categories.toUpperCase().toCharArray()) {
 
-      for (IlsApproach.Category ilsCategory : x.ilsCategories) {
+      for (XmlIlsApproach.Category ilsCategory : x.ilsCategories) {
 
         XmlCustomApproach app = new XmlCustomApproach();
         app.categories = Character.toString(planeCategory);
-        app.type = ilsCategory.getType() == IlsApproach.IlsCategory.I
+        app.type = ilsCategory.kind == XmlIlsApproach.Kind.I
             ? Approach.ApproachType.ils_I
-            : ilsCategory.getType() == IlsApproach.IlsCategory.II
+            : ilsCategory.kind == XmlIlsApproach.Kind.II
             ? Approach.ApproachType.ils_II
             : Approach.ApproachType.ils_III;
         app.stages.add(
@@ -407,7 +660,7 @@ public class XmlModelBinder {
         app.stages.add(
             new XmlDescendStage(context.airport.getMainAirportNavaid().getName(), context.airport.getAltitude(), x.slope,
                 null, da));
-        app.stages.add(new XmlCheckAirportVisibleStage());
+        app.stages.add(new XmlCheckAirportVisibilityStage());
         app.stages.add(new XmlVisualFinalStage());
 
         ret.add(app);
@@ -437,7 +690,7 @@ public class XmlModelBinder {
       app.stages.add(
           new XmlDescendStage(tmp, x.initialAltitude, x.slope,
               null, da));
-      app.stages.add(new XmlCheckAirportVisibleStage());
+      app.stages.add(new XmlCheckAirportVisibilityStage());
       app.stages.add(new XmlVisualFinalStage());
 
       ret.add(app);
@@ -451,7 +704,9 @@ public class XmlModelBinder {
 
       XmlCustomApproach app = new XmlCustomApproach();
       app.categories = Character.toString(planeCategory);
-      app.type = x.type;
+      app.type = x.kind == XmlUnpreciseApproach.Kind.vor
+          ? Approach.ApproachType.vor
+          : Approach.ApproachType.ndb;
       String tmp = context.airport.getMainAirportNavaid().getName();
       app.stages.add(
           new XmlCheckPlaneLocationStage(x.faf,
@@ -466,7 +721,7 @@ public class XmlModelBinder {
       app.stages.add(
           new XmlDescendStage(tmp, x.initialAltitude, x.slope,
               null, da));
-      app.stages.add(new XmlCheckAirportVisibleStage());
+      app.stages.add(new XmlCheckAirportVisibilityStage());
       app.stages.add(new XmlVisualFinalStage());
 
       ret.add(app);
@@ -599,12 +854,16 @@ public class XmlModelBinder {
     return ret;
   }
 
+  private static SpeechList decodeRouteFromString(String route) {
+    Parser p = new ShortBlockParser();
+    SpeechList<IFromAtc> xlst = p.parseMulti(route);
+    return xlst;
+  }
+
   private static SpeechList decodeRouteCommands(XmlRoute route) {
     SpeechList ret;
     try {
-      Parser p = new ShortBlockParser();
-      SpeechList<IFromAtc> xlst = p.parseMulti(route.route);
-      ret = xlst.convertTo();
+      ret = decodeRouteFromString(route.route);
     } catch (Exception ex) {
       throw new EBindException("Parsing fromAtc failed for route " + route.name + ". Route fromAtc contains error (see cause).", ex);
     }

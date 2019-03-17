@@ -526,7 +526,7 @@ public class Radar {
     IList<Approach> approachesToDraw =
         rc.getArrivals()
             .where(q -> q.isShowApproach())
-            .select(q -> q.getThreshold().getHighestApproach());
+            .select(q -> q.getThreshold().tryGetHighestApproachExceptVisuals());
 
     approachesToDraw.remove(q -> q == null);
     this.drawnApproaches.add(approachesToDraw);

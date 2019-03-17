@@ -5,7 +5,7 @@ import eng.eSystem.xmlSerialization.annotations.XmlOptional;
 public class XmlDescendStage extends XmlStage {
   public String fix;
   public int altitude;
-  double slope;
+  public double slope;
   @XmlOptional
   public String exitFix;
   @XmlOptional

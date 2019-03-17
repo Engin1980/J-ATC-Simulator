@@ -142,7 +142,7 @@ public class FrmStartupSettings extends JPanel {
 
         for (String requiredPlaneType : requiredPlaneTypes) {
           if (types.getContent().tryGetByName(requiredPlaneType) == null) {
-            Acc.log().writeLine(ApplicationLog.eType.warning, "Required plane type '%s' not found in known plane types.", requiredPlaneType);
+            Acc.log().writeLine(ApplicationLog.eType.warning, "Required plane kind '%s' not found in known plane types.", requiredPlaneType);
             someFail = true;
           }
         }

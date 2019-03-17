@@ -19,8 +19,8 @@
 //  public final double dropLat;
 //  public final double dropLng;
 //
-//  public ECoordinatedMouseEvent(double lat, double lng, double dropLat, double dropLng, int x, int y, int dropX, int dropY, int wheel, eButton button, EKeyboardModifier modifiers, eType type) {
-//    super(x, y, dropX, dropY, wheel, button, modifiers, type);
+//  public ECoordinatedMouseEvent(double lat, double lng, double dropLat, double dropLng, int x, int y, int dropX, int dropY, int wheel, eButton button, EKeyboardModifier modifiers, eType kind) {
+//    super(x, y, dropX, dropY, wheel, button, modifiers, kind);
 //    this.lat = lat;
 //    this.lng = lng;
 //    this.dropLat = dropLat;
@@ -31,7 +31,7 @@
 //    ECoordinatedMouseEvent ret = new ECoordinatedMouseEvent(
 //      coord.getLatitude().getContent(), coord.getLongitude().getContent(),
 //      dropCoord.getLatitude().getContent(), dropCoord.getLongitude().getContent(),
-//      e.x, e.y, e.dropX, e.dropY, e.wheel, e.button, e.modifiers, e.type);
+//      e.x, e.y, e.dropX, e.dropY, e.wheel, e.button, e.modifiers, e.kind);
 //    return ret;
 //  }
 //
@@ -39,7 +39,7 @@
 //    ECoordinatedMouseEvent ret = new ECoordinatedMouseEvent(
 //      coord.getLatitude().getContent(), coord.getLongitude().getContent(),
 //      0,0,
-//      e.x, e.y, e.dropX, e.dropY, e.wheel, e.button, e.modifiers, e.type);
+//      e.x, e.y, e.dropX, e.dropY, e.wheel, e.button, e.modifiers, e.kind);
 //    return ret;
 //  }
 //

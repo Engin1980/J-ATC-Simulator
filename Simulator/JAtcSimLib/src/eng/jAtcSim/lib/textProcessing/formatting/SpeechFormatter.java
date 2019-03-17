@@ -310,7 +310,7 @@ public class SpeechFormatter implements IFormatter {
     try {
       ret = commandVariableEvaluator.eval(speech, key);
     } catch (Exception ex) {
-      throw new EApplicationException(sf("Variable evaluation error. Unable to find for type '%s' key '%s'.", speech.getClass().getSimpleName(), key));
+      throw new EApplicationException(sf("Variable evaluation error. Unable to find for kind '%s' key '%s'.", speech.getClass().getSimpleName(), key));
     }
     return ret;
   }
@@ -388,7 +388,7 @@ class XmlFormatterLoader {
     IMap<Class, IList<SpeechFormatter.Sentence>> tmp = new EMap<>();
 
     for (XElement responseElement : xElement.getChildren("response")) {
-      String type = responseElement.getAttribute("type");
+      String type = responseElement.getAttribute("kind");
       Class cls = getTypeClass(type);
       IList<SpeechFormatter.Sentence> lst = new EList<>();
       tmp.set(cls, lst);

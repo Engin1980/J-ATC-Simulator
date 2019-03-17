@@ -13,7 +13,7 @@ public abstract class SpeechParser<T extends IFromAtc> {
 
 
   public final String[] getPrefixes() {
-    //TODO optimalize according to type, as this method always returns the same for the same class type
+    //TODO optimalize according to kind, as this method always returns the same for the same class kind
     String[] ret = new String[getPatterns().length];
     for (int i = 0; i < getPatterns().length; i++) {
       ret[i] = getPatterns()[i][0];

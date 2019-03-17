@@ -1,10 +1,11 @@
 package eng.jAtcSim.lib.airplanes.commandApplications;
 
+import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.geo.Coordinates;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
-import eng.jAtcSim.lib.airplanes.pilots.approachStages.ApproachInfo;
-import eng.jAtcSim.lib.global.Headings;
+import eng.jAtcSim.lib.airplanes.pilots.approachStages.CheckApproachStage;
+import eng.jAtcSim.lib.airplanes.pilots.approachStages.IApproachStage;
 import eng.jAtcSim.lib.global.Restriction;
 import eng.jAtcSim.lib.speaking.IFromAirplane;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.HighOrderedSpeedForApproach;
@@ -13,6 +14,8 @@ import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.reje
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ClearedToApproachCommand;
 import eng.jAtcSim.lib.world.ActiveRunwayThreshold;
 import eng.jAtcSim.lib.world.approaches.Approach;
+import eng.jAtcSim.lib.world.approaches.IafRoute;
+import eng.jAtcSim.lib.world.approaches.NewApproachInfo;
 
 public class ClearedToApproachApplication extends CommandApplication<ClearedToApproachCommand> {
 
@@ -21,57 +24,44 @@ public class ClearedToApproachApplication extends CommandApplication<ClearedToAp
 
     IFromAirplane ret = null;
 
+    NewApproachInfo nai = null;
     ActiveRunwayThreshold rt = Acc.airport().tryGetRunwayThreshold(c.getThresholdName());
-    ApproachInfo ai = null;
     if (rt == null) {
       ret = new Rejection(
           "Cannot be cleared to approach. There is no runway designated as " + c.getThresholdName(), c);
     } else {
-      ai = rt.tryGetCurrentApproachInfo(c.getType(), plane.getType().category, plane.getCoordinate());
-      if (ai == null) {
+      IReadOnlyList<Approach> apps = rt.getApproaches(c.getType(), plane.getType().category);
+      if (apps.isEmpty())
         ret = new Rejection(
-            "Cannot be cleared to approach. There is no approach type "
-                + c.getType() + " for runway " + rt.getName(), c);
+            "Cannot be cleared to approach. There is no approach kind "
+                + c.getType() + " for runway " + rt.getName() + " for our plane.", c);
+      else {
+        nai = tryCreateApproachInfo(apps, plane);
+        if (nai == null)
+          ret = new UnableToEnterApproachFromDifficultPosition(c, "We are not in the correct position to enter the approach.");
       }
     }
     if (ret != null) return ret;
 
-    boolean isVisual = ai.getType() == Approach.ApproachType.visual;
-    if (isVisual || !ai.isUsingIafRoute()) {
-
-      final int MAXIMAL_DISTANCE_TO_ENTER_APPROACH_IN_NM = isVisual ? 12 : 7;
-      final int MAXIMAL_ONE_SIDE_ARC_FROM_APPROACH_RADIAL_TO_ENTER_APPROACH_IN_DEGREES = 30;
-
-      // zatim resim jen pozici letadla
-      int currentHeading
-          = (int) Coordinates.getBearing(plane.getCoordinate(), ai.getMapt());
-      double dist;
-      if (isVisual)
-        dist = Coordinates.getDistanceInNM(ai.getMapt(), plane.getCoordinate());
-      else
-        dist = Coordinates.getDistanceInNM(ai.getFaf(), plane.getCoordinate());
-      double minHeading = Headings.add(
-          ai.getCourse(),
-          -MAXIMAL_ONE_SIDE_ARC_FROM_APPROACH_RADIAL_TO_ENTER_APPROACH_IN_DEGREES);
-      double maxHeading = Headings.add(
-          ai.getCourse(),
-          MAXIMAL_ONE_SIDE_ARC_FROM_APPROACH_RADIAL_TO_ENTER_APPROACH_IN_DEGREES);
-
-      if (dist > MAXIMAL_DISTANCE_TO_ENTER_APPROACH_IN_NM)
-        ret = new UnableToEnterApproachFromDifficultPosition(c, "We are too far.");
-      else if (!isVisual && !Headings.isBetween(minHeading, currentHeading, maxHeading))
-        ret = new UnableToEnterApproachFromDifficultPosition(c, "We need to be heading moreless for the runway.");
-      else if (isVisual) {
-        // check if ground is visible now
-        double alt = plane.getAltitude();
-        if (alt > Acc.weather().getCloudBaseInFt())
-          if (Acc.weather().getCloudBaseHitProbability() > Acc.rnd().nextDouble())
-            ret = new UnableToEnterApproachFromDifficultPosition(c, "We don't have ground in sight.");
-      }
+    for (IApproachStage stage : nai.getStages()) {
+      if (stage instanceof CheckApproachStage) {
+        CheckApproachStage.eResult result = ((CheckApproachStage) stage).check(plane);
+        if (result != CheckApproachStage.eResult.ok) {
+          ret = new UnableToEnterApproachFromDifficultPosition(c, checkResultToString(result));
+          break;
+        }
+      } else break;
     }
-    if (ret != null) return ret;
 
-    return ret;
+    throw new UnsupportedOperationException("Return here Null or \"Confirmation\"?");
+//    if (ret == null)
+//      ret = new Confirmation(c);
+//
+//    return ret;
+  }
+
+  private String checkResultToString(CheckApproachStage.eResult result) {
+    throw new UnsupportedOperationException("Todo");
   }
 
   @Override
@@ -111,14 +101,30 @@ public class ClearedToApproachApplication extends CommandApplication<ClearedToAp
     }
 
     ActiveRunwayThreshold rt = Acc.airport().tryGetRunwayThreshold(c.getThresholdName());
-    ApproachInfo ai = rt.tryGetCurrentApproachInfo(
-        c.getType(),
-        plane.getType().category,
-        plane.getCoordinate());
-    assert ai != null;
+    IReadOnlyList<Approach> apps = rt.getApproaches(c.getType(), plane.getType().category);
+    NewApproachInfo nai = tryCreateApproachInfo(apps, plane);
+    assert nai != null;
 
-    plane.getPilot().setApproachBehavior(ai);
+    plane.getPilot().setApproachBehavior(nai);
 
     return ret;
+  }
+
+  private NewApproachInfo tryCreateApproachInfo(IReadOnlyList<Approach> apps, Airplane.Airplane4Command plane) {
+    Approach app;
+
+    app = apps.tryGetFirst(q -> q.getEntryLocation().isInside(plane.getCoordinate()));
+    if (app != null)
+      return new NewApproachInfo(app);
+
+    for (Approach approach : apps) {
+      for (IafRoute iafRoute : approach.getIafRoutes()) {
+        if (Coordinates.getDistanceInNM(plane.getCoordinate(), iafRoute.getNavaid().getCoordinate()) < 2.5) {
+          return new NewApproachInfo(approach, iafRoute);
+        }
+      }
+    }
+
+    return null;
   }
 }

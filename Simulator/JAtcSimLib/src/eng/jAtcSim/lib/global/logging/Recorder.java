@@ -108,7 +108,7 @@ public abstract class Recorder extends SimulationLog {
     } else if (content instanceof IAtc2Atc) {
       return "{ATC->ATC}" + content.toString();
     } else {
-      throw new UnsupportedOperationException("Message content cannot be getContent for type " + content.getClass().getName());
+      throw new UnsupportedOperationException("Message content cannot be getContent for kind " + content.getClass().getName());
     }
   }
 

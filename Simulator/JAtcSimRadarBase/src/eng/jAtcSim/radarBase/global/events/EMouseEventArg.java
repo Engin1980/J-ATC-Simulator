@@ -63,14 +63,14 @@ public class EMouseEventArg {
   private EMouseEventArg(int x, int y, int dropX, int dropY, int wheel, eButton button, EKeyboardModifier modifiers, eType type) {
 
     if (wheel != 0 && type != eType.wheelScroll) {
-      throw new IllegalArgumentException("Wheel parameter can be set only for wheelScroll type. Otherwise it should be 0.");
+      throw new IllegalArgumentException("Wheel parameter can be set only for wheelScroll kind. Otherwise it should be 0.");
     }
     if (type == eType.move && button != eButton.none) {
-      throw new IllegalArgumentException("Cannot set button type other than \"none\" for mouse event type \"move\".");
+      throw new IllegalArgumentException("Cannot set button kind other than \"none\" for mouse event kind \"move\".");
     }
     if ((dropX != 0 || dropY != 0) && type != type.dragged && type != type.dragging) {
-      throw new IllegalArgumentException("Parameters \"dropX/Y\" can be set only for type \"dragged\", otherwise they should be 0." +
-          " (type " + type + ")");
+      throw new IllegalArgumentException("Parameters \"dropX/Y\" can be set only for kind \"dragged\", otherwise they should be 0." +
+          " (kind " + type + ")");
     }
 
     this.x = x;
