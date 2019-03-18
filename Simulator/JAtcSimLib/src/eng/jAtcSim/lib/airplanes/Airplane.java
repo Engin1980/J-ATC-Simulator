@@ -12,7 +12,6 @@ import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.moods.Mood;
 import eng.jAtcSim.lib.airplanes.moods.MoodResult;
 import eng.jAtcSim.lib.airplanes.pilots.Pilot;
-import eng.jAtcSim.lib.airplanes.pilots.approachStages.ApproachInfo;
 import eng.jAtcSim.lib.atcs.Atc;
 import eng.eSystem.geo.Coordinate;
 import eng.jAtcSim.lib.global.ETime;
@@ -33,7 +32,8 @@ import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeHeadingCommand;
 import eng.jAtcSim.lib.world.Navaid;
 import eng.jAtcSim.lib.world.Route;
 import eng.jAtcSim.lib.world.ActiveRunwayThreshold;
-import eng.jAtcSim.lib.world.approaches.Approach;
+import eng.jAtcSim.lib.world.newApproaches.Approach;
+import eng.jAtcSim.lib.world.newApproaches.NewApproachInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -752,7 +752,7 @@ public class Airplane implements IMessageParticipant {
   }
 
   public ActiveRunwayThreshold tryGetCurrentApproachRunwayThreshold() {
-    ApproachInfo app = this.pilot.tryGetAssignedApproach();
+    NewApproachInfo app = this.pilot.tryGetAssignedApproach();
     ActiveRunwayThreshold ret;
     if (app == null)
       ret = null;
@@ -816,7 +816,7 @@ public class Airplane implements IMessageParticipant {
 
   public ActiveRunwayThreshold tryGetAssignedRunwayThresholdForLanding() {
     ActiveRunwayThreshold ret;
-    ApproachInfo cai = pilot.tryGetAssignedApproach();
+    NewApproachInfo cai = pilot.tryGetAssignedApproach();
     if (cai == null) {
       ret = null;
     } else {
@@ -1024,7 +1024,7 @@ public class Airplane implements IMessageParticipant {
           restrictedDescentRate = 2000;
           break;
         case longFinal:
-          restrictedDescentRate = this.pilot.tryGetAssignedApproach().getType() == Approach.ApproachType.visual ?
+          restrictedDescentRate = this.pilot.tryGetAssignedApproach().getApproach().getType() == Approach.ApproachType.visual ?
               2000 : 1300;
           break;
         case shortFinal:

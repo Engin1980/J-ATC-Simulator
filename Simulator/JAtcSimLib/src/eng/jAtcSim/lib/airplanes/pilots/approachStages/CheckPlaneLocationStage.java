@@ -1,10 +1,12 @@
 package eng.jAtcSim.lib.airplanes.pilots.approachStages;
 
-import eng.eSystem.collections.*;
 import eng.eSystem.geo.Coordinate;
-import eng.eSystem.xmlSerialization.annotations.XmlOptional;
+import eng.eSystem.geo.Coordinates;
+import eng.eSystem.geo.Headings;
+import eng.eSystem.utilites.NumberUtils;
+import eng.jAtcSim.lib.airplanes.pilots.behaviors.IPilot4Behavior;
 
-public class CheckPlaneLocationStage implements IApproachStage{
+public class CheckPlaneLocationStage extends CheckApproachStage {
   private final Coordinate coordinate;
   private final int minHeading;
   private final int maxHeading;
@@ -17,5 +19,19 @@ public class CheckPlaneLocationStage implements IApproachStage{
     this.maxHeading = maxHeading;
     this.minDistance = minDistance;
     this.maxDistance = maxDistance;
+  }
+
+  @Override
+  protected eCheckResult check(IPilot4Behavior pilot) {
+    double realRadial = Coordinates.getBearing(coordinate, pilot.getCoordinate());
+    if (Headings.isBetween(minHeading, realRadial, maxHeading) == false)
+      return eCheckResult.illegalHeading;
+    else {
+      double distance = Coordinates.getDistanceInNM(coordinate, pilot.getCoordinate());
+      if (NumberUtils.isBetweenOrEqual(minDistance, distance, maxDistance) == false)
+        return eCheckResult.illegalDistance;
+    }
+
+    return eCheckResult.ok;
   }
 }

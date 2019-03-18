@@ -24,7 +24,6 @@ import eng.jAtcSim.lib.airplanes.commandApplications.ApplicationManager;
 import eng.jAtcSim.lib.airplanes.commandApplications.ApplicationResult;
 import eng.jAtcSim.lib.airplanes.commandApplications.ConfirmationResult;
 import eng.jAtcSim.lib.airplanes.moods.Mood;
-import eng.jAtcSim.lib.airplanes.pilots.approachStages.ApproachInfo;
 import eng.jAtcSim.lib.airplanes.pilots.behaviors.*;
 import eng.jAtcSim.lib.atcs.Atc;
 import eng.eSystem.geo.Coordinate;
@@ -46,6 +45,8 @@ import eng.jAtcSim.lib.speaking.fromAtc.notifications.RadarContactConfirmationNo
 import eng.jAtcSim.lib.world.Navaid;
 import eng.jAtcSim.lib.world.Route;
 import eng.jAtcSim.lib.world.ActiveRunwayThreshold;
+import eng.jAtcSim.lib.world.newApproaches.NewApproachInfo;
+import eng.jAtcSim.lib.world.newApproaches.Approach;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -95,7 +96,7 @@ public class Pilot {
       Pilot.this.adjustTargetSpeed();
     }
 
-    public void setApproachBehavior(ApproachInfo approachInfo) {
+    public void setApproachBehavior(NewApproachInfo approachInfo) {
       NewApproachBehavior newApproachBehavior = new NewApproachBehavior(approachInfo);
       Pilot.this.behavior = newApproachBehavior;
       Pilot.this.adjustTargetSpeed();
@@ -316,7 +317,7 @@ public class Pilot {
     }
 
     private boolean isBeforeRunwayThreshold() {
-      ApproachInfo ai = Pilot.this.tryGetAssignedApproach();
+      NewApproachInfo ai = Pilot.this.tryGetAssignedApproach();
       double dist = Coordinates.getDistanceInNM(parent.getCoordinate(), ai.getThreshold().getCoordinate());
       double hdg = Coordinates.getBearing(parent.getCoordinate(), ai.getThreshold().getCoordinate());
       boolean ret;
@@ -365,6 +366,9 @@ public class Pilot {
     public Route getAssignedRoute() {
       return Pilot.this.assignedRoute;
     }
+
+    @Override
+    public Approach getAssignedApproach() { return Pilot.this.tryGetAssignedApproach().getApproach();}
 
     @Override
     public void setHoldBehavior(Navaid navaid, int inboundRadial, boolean leftTurn) {
@@ -650,8 +654,8 @@ public class Pilot {
     return ret;
   }
 
-  public ApproachInfo tryGetAssignedApproach() {
-    ApproachInfo ret;
+  public NewApproachInfo tryGetAssignedApproach() {
+    NewApproachInfo ret;
     if (this.behavior instanceof NewApproachBehavior == false)
       ret = null;
     else {

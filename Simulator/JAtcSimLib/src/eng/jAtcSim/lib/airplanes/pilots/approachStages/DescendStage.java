@@ -1,9 +1,6 @@
 package eng.jAtcSim.lib.airplanes.pilots.approachStages;
 
-import com.sun.prism.shader.AlphaTexture_ImagePattern_AlphaTest_Loader;
-import eng.eSystem.collections.*;
 import eng.eSystem.validation.Validator;
-import eng.eSystem.xmlSerialization.annotations.XmlOptional;
 import eng.jAtcSim.lib.world.Navaid;
 
 public class DescendStage implements IApproachStage {

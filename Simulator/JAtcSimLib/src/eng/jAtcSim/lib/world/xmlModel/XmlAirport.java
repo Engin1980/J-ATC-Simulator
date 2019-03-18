@@ -1,20 +1,10 @@
 package eng.jAtcSim.lib.world.xmlModel;
 
-import eng.eSystem.collections.EDistinctList;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
-import eng.eSystem.collections.IReadOnlyList;
-import eng.eSystem.exceptions.EApplicationException;
-import eng.eSystem.exceptions.ERuntimeException;
-import eng.eSystem.geo.Coordinate;
-import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 import eng.eSystem.xmlSerialization.annotations.XmlItemElement;
 import eng.eSystem.xmlSerialization.annotations.XmlOptional;
-import eng.jAtcSim.lib.atcs.AtcTemplate;
-import eng.jAtcSim.lib.world.*;
-import eng.jAtcSim.lib.world.approaches.Approach;
-import eng.jAtcSim.lib.world.approaches.IafRoute;
-import eng.jAtcSim.lib.world.xml.RunwayConfigurationParser;
+//import eng.jAtcSim.lib.world.xml.RunwayConfigurationParser;
 
 public class XmlAirport {
   public static class XmlSharedRoutesGroup {
@@ -54,7 +44,8 @@ public class XmlAirport {
   public double declination;
   public int coveredDistance;
   @XmlOptional
-  @XmlItemElement(elementName = "configuration", type = XmlRunwayConfiguration.class, parser = RunwayConfigurationParser.class)
+//  @XmlItemElement(elementName = "configuration", type = XmlRunwayConfiguration.class, parser = RunwayConfigurationParser.class)
+  @XmlItemElement(elementName = "configuration", type = XmlRunwayConfiguration.class)
   public IList<XmlRunwayConfiguration> runwayConfigurations = new EList<>();
   @XmlOptional
   @XmlItemElement(elementName = "sharedRoutesGroup", type= XmlSharedRoutesGroup.class)

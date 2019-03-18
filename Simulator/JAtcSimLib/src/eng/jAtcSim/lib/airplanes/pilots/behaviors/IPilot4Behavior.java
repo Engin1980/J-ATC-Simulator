@@ -10,6 +10,7 @@ import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.GoingAroundNotification;
 import eng.jAtcSim.lib.world.Navaid;
 import eng.jAtcSim.lib.world.Route;
+import eng.jAtcSim.lib.world.newApproaches.Approach;
 
 public interface IPilot4Behavior {
 
@@ -40,6 +41,8 @@ public interface IPilot4Behavior {
   boolean hasLateralDirectionAfterCoordinate();
 
   Route getAssignedRoute();
+
+  Approach getAssignedApproach();
 
 //TODO delete this?
   void setHoldBehavior(Navaid navaid, int inboundRadial, boolean leftTurn);

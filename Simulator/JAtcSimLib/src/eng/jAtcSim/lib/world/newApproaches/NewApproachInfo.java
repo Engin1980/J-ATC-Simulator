@@ -1,7 +1,8 @@
-package eng.jAtcSim.lib.world.approaches;
+package eng.jAtcSim.lib.world.newApproaches;
 
 import eng.eSystem.collections.*;
 import eng.jAtcSim.lib.airplanes.pilots.approachStages.IApproachStage;
+import eng.jAtcSim.lib.world.ActiveRunwayThreshold;
 
 public class NewApproachInfo {
   private final Approach approach;
@@ -28,5 +29,9 @@ public class NewApproachInfo {
 
   public IafRoute getIafRoute() {
     return iafRoute;
+  }
+
+  public ActiveRunwayThreshold getThreshold() {
+    return this.approach.getParent();
   }
 }

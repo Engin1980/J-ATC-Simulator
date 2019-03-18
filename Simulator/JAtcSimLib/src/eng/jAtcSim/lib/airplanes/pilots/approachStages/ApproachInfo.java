@@ -6,7 +6,7 @@ import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.geo.Coordinate;
 import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.world.ActiveRunwayThreshold;
-import eng.jAtcSim.lib.world.approaches.Approach;
+import eng.jAtcSim.lib.world.newApproaches.Approach;
 
 public class ApproachInfo {
   public static class AltitudeEvent implements Comparable<AltitudeEvent> {

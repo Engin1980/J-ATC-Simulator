@@ -9,18 +9,11 @@ import eng.eSystem.xmlSerialization.supports.IFactory;
 import eng.jAtcSim.lib.coordinates.CoordinateValueParser;
 import eng.jAtcSim.lib.world.Airport;
 import eng.jAtcSim.lib.world.Area;
+import eng.jAtcSim.lib.world.XmlModelBinder;
 import eng.jAtcSim.lib.world.xml.AltitudeValueParser;
+import eng.jAtcSim.lib.world.xmlModel.XmlArea;
 
 public class AreaSource extends Source<Area> {
-
-  private static class AreaFactory implements IFactory<Area> {
-
-    @Override
-    public Area createInstance() {
-      Area ret = Area.create();
-      return ret;
-    }
-  }
 
   @XmlIgnore
   private Area area;
@@ -50,7 +43,6 @@ public class AreaSource extends Source<Area> {
   public void init() {
     XmlSettings sett = new XmlSettings();
 
-    sett.forType(Area.class).setFactory(new AreaFactory());
     sett.forType(int.class)
         .setCustomParser(new AltitudeValueParser());
     sett.forType(Integer.class)
@@ -60,9 +52,8 @@ public class AreaSource extends Source<Area> {
 
     XmlSerializer ser = new XmlSerializer(sett);
 
-    this.area = ser.deserialize(this.fileName, Area.class);
-
-    this.area.init();
+    XmlArea xmlArea = ser.deserialize(this.fileName, XmlArea.class);
+    this.area = XmlModelBinder.convert(xmlArea);
 
     super.setInitialized();
   }

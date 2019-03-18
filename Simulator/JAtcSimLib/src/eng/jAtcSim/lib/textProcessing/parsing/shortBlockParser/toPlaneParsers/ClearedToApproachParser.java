@@ -4,7 +4,7 @@ import eng.eSystem.collections.IList;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ClearedToApproachCommand;
 import eng.jAtcSim.lib.textProcessing.parsing.shortBlockParser.SpeechParser;
-import eng.jAtcSim.lib.world.approaches.Approach;
+import eng.jAtcSim.lib.world.newApproaches.Approach;
 
 public class ClearedToApproachParser extends SpeechParser<ClearedToApproachCommand> {
 

@@ -12,7 +12,7 @@ import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
 import eng.jAtcSim.lib.airplanes.AirplaneType;
 import eng.jAtcSim.lib.global.Headings;
-import eng.jAtcSim.lib.world.approaches.Approach;
+import eng.jAtcSim.lib.world.newApproaches.Approach;
 
 /**
  * @author Marek

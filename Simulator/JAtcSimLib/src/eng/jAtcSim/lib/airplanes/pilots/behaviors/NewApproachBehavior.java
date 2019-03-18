@@ -3,19 +3,17 @@ package eng.jAtcSim.lib.airplanes.pilots.behaviors;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.utilites.EnumUtils;
 import eng.eSystem.validation.Validator;
-import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.moods.Mood;
-import eng.jAtcSim.lib.airplanes.pilots.Pilot;
-import eng.jAtcSim.lib.airplanes.pilots.approachStages.ApproachInfo;
 import eng.jAtcSim.lib.airplanes.pilots.approachStages.IApproachStage;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.GoingAroundNotification;
+import eng.jAtcSim.lib.world.newApproaches.NewApproachInfo;
 
 public class NewApproachBehavior extends Behavior {
 
-  private ApproachInfo approachInfo;
+  private NewApproachInfo approachInfo;
   private int currentStageIndex = -1;
 
-  public NewApproachBehavior(ApproachInfo approachInfo) {
+  public NewApproachBehavior(NewApproachInfo approachInfo) {
     Validator.isNotNull(approachInfo);
     this.approachInfo = approachInfo;
     Validator.check(this.approachInfo.getStages().isEmpty() == false,
@@ -44,7 +42,7 @@ public class NewApproachBehavior extends Behavior {
     return null;
   }
 
-  public ApproachInfo getApproachInfo() {
+  public NewApproachInfo getApproachInfo() {
     return this.approachInfo;
   }
 
@@ -71,7 +69,7 @@ public class NewApproachBehavior extends Behavior {
     pilot.goAround(
         reason,
         this.approachInfo.getThreshold().getCourse(),
-        this.approachInfo.getGaRoute());
+        this.approachInfo.getApproach().getGaCommands());
 
 
     boolean isAtcFail = EnumUtils.is(reason,

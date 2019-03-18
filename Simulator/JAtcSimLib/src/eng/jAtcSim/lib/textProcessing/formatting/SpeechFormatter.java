@@ -17,7 +17,7 @@ import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.Conf
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.Rejection;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.rejections.UnableToEnterApproachFromDifficultPosition;
 import eng.jAtcSim.lib.speaking.fromAtc.atc2atc.PlaneSwitchMessage;
-import eng.jAtcSim.lib.world.approaches.Approach;
+import eng.jAtcSim.lib.world.newApproaches.Approach;
 
 import java.nio.file.Path;
 import java.util.function.Function;

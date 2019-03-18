@@ -1,4 +1,4 @@
-package eng.jAtcSim.lib.world.approaches;
+package eng.jAtcSim.lib.world.newApproaches;
 
 import eng.jAtcSim.lib.global.PlaneCategoryDefinitions;
 import eng.jAtcSim.lib.speaking.SpeechList;

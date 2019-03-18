@@ -2,7 +2,7 @@ package eng.jAtcSim.lib.world.xmlModel.approaches;
 
 import eng.eSystem.collections.IList;
 import eng.jAtcSim.lib.global.PlaneCategoryDefinitions;
-import eng.jAtcSim.lib.world.approaches.Approach;
+import eng.jAtcSim.lib.world.newApproaches.Approach;
 import eng.jAtcSim.lib.world.xmlModel.XmlApproachEntryLocation;
 import eng.jAtcSim.lib.world.xmlModel.approaches.approachStages.XmlStage;
 

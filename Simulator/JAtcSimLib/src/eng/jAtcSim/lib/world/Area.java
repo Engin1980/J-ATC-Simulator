@@ -9,8 +9,6 @@ import eng.eSystem.EStringBuilder;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.ISet;
 import eng.eSystem.exceptions.EApplicationException;
-import eng.jAtcSim.lib.world.approaches.Approach;
-import eng.jAtcSim.lib.world.xmlModel.approaches.XmlIlsApproach;
 
 /**
  * @author Marek

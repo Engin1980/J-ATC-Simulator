@@ -19,7 +19,7 @@ import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.*;
 import eng.jAtcSim.lib.textProcessing.parsing.Parser;
 import eng.jAtcSim.lib.textProcessing.parsing.shortBlockParser.ShortBlockParser;
-import eng.jAtcSim.lib.world.approaches.*;
+import eng.jAtcSim.lib.world.newApproaches.*;
 import eng.jAtcSim.lib.world.xmlModel.*;
 import eng.jAtcSim.lib.world.xmlModel.approaches.*;
 import eng.jAtcSim.lib.world.xmlModel.approaches.approachStages.*;

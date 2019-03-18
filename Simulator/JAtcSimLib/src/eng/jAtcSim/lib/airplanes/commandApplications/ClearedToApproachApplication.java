@@ -5,7 +5,6 @@ import eng.eSystem.geo.Coordinates;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.pilots.approachStages.CheckApproachStage;
-import eng.jAtcSim.lib.airplanes.pilots.approachStages.IApproachStage;
 import eng.jAtcSim.lib.global.Restriction;
 import eng.jAtcSim.lib.speaking.IFromAirplane;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.HighOrderedSpeedForApproach;
@@ -13,9 +12,9 @@ import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.Reje
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.rejections.UnableToEnterApproachFromDifficultPosition;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ClearedToApproachCommand;
 import eng.jAtcSim.lib.world.ActiveRunwayThreshold;
-import eng.jAtcSim.lib.world.approaches.Approach;
-import eng.jAtcSim.lib.world.approaches.IafRoute;
-import eng.jAtcSim.lib.world.approaches.NewApproachInfo;
+import eng.jAtcSim.lib.world.newApproaches.Approach;
+import eng.jAtcSim.lib.world.newApproaches.IafRoute;
+import eng.jAtcSim.lib.world.newApproaches.NewApproachInfo;
 
 public class ClearedToApproachApplication extends CommandApplication<ClearedToApproachCommand> {
 
@@ -43,15 +42,17 @@ public class ClearedToApproachApplication extends CommandApplication<ClearedToAp
     }
     if (ret != null) return ret;
 
-    for (IApproachStage stage : nai.getStages()) {
-      if (stage instanceof CheckApproachStage) {
-        CheckApproachStage.eResult result = ((CheckApproachStage) stage).check(plane);
-        if (result != CheckApproachStage.eResult.ok) {
-          ret = new UnableToEnterApproachFromDifficultPosition(c, checkResultToString(result));
-          break;
-        }
-      } else break;
-    }
+    //TODO here I should check if the approach can be started, but don't know
+    //TODO how to pass an instance to for checking
+//    for (IApproachStage stage : nai.getStages()) {
+//      if (stage instanceof CheckApproachStage) {
+//        CheckApproachStage.eCheckResult result = ((CheckApproachStage) stage).check(plane.);
+//        if (result != CheckApproachStage.eCheckResult.ok) {
+//          ret = new UnableToEnterApproachFromDifficultPosition(c, checkResultToString(result));
+//          break;
+//        }
+//      } else break;
+//    }
 
     throw new UnsupportedOperationException("Return here Null or \"Confirmation\"?");
 //    if (ret == null)
@@ -60,7 +61,7 @@ public class ClearedToApproachApplication extends CommandApplication<ClearedToAp
 //    return ret;
   }
 
-  private String checkResultToString(CheckApproachStage.eResult result) {
+  private String checkResultToString(CheckApproachStage.eCheckResult result) {
     throw new UnsupportedOperationException("Todo");
   }
 
