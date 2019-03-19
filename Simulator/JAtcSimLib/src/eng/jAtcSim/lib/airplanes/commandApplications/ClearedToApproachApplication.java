@@ -4,7 +4,7 @@ import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.geo.Coordinates;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
-import eng.jAtcSim.lib.airplanes.pilots.approachStages.CheckApproachStage;
+import eng.jAtcSim.lib.airplanes.pilots.approachStages.IApproachStage;
 import eng.jAtcSim.lib.global.Restriction;
 import eng.jAtcSim.lib.speaking.IFromAirplane;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.HighOrderedSpeedForApproach;
@@ -61,7 +61,7 @@ public class ClearedToApproachApplication extends CommandApplication<ClearedToAp
 //    return ret;
   }
 
-  private String checkResultToString(CheckApproachStage.eCheckResult result) {
+  private String checkResultToString(IApproachStage.eResult result) {
     throw new UnsupportedOperationException("Todo");
   }
 

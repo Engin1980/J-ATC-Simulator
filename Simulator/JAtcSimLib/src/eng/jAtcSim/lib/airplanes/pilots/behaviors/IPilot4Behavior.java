@@ -72,4 +72,6 @@ public interface IPilot4Behavior {
   void setTargetAltitude(double altitude);
 
   void goAround(GoingAroundNotification.GoAroundReason reason, double course, SpeechList gaRoute);
+
+  int getTargetAltitude();
 }

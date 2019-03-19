@@ -316,6 +316,11 @@ public class Pilot {
       processSpeeches(gas, Pilot.CommandSource.procedure);
     }
 
+    @Override
+    public int getTargetAltitude() {
+      return parent.getTargetAltitude();
+    }
+
     private boolean isBeforeRunwayThreshold() {
       NewApproachInfo ai = Pilot.this.tryGetAssignedApproach();
       double dist = Coordinates.getDistanceInNM(parent.getCoordinate(), ai.getThreshold().getCoordinate());

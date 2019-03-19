@@ -11,8 +11,9 @@ public class IafRouteStage extends RouteStage {
   }
 
   @Override
-  public void initStage(IPilot4Behavior pilot) {
-    super.initStage(pilot);
+  public eResult initStage(IPilot4Behavior pilot) {
+    eResult ret = super.initStage(pilot);
     pilot.setState(Airplane.State.flyingIaf2Faf);
+    return ret;
   }
 }

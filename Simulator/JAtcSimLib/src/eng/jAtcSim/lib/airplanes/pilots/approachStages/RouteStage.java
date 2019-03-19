@@ -12,19 +12,19 @@ public class RouteStage implements IApproachStage {
   }
 
   @Override
-  public void initStage(IPilot4Behavior pilot) {
+  public eResult initStage(IPilot4Behavior pilot) {
     pilot.setRoute(route);
     throw new UnsupportedOperationException("I need to get a route from somewhere!");
   }
 
   @Override
-  public void flyStage(IPilot4Behavior pilot) {
-// intentionally blank
+  public eResult flyStage(IPilot4Behavior pilot) {
+    return eResult.ok;
   }
 
   @Override
-  public void disposeStage(IPilot4Behavior pilot) {
-// intentionally blank
+  public eResult disposeStage(IPilot4Behavior pilot) {
+    return eResult.ok;
   }
 
   @Override

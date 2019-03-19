@@ -32,7 +32,7 @@ public class VisualFinalStage implements IApproachStage {
   }
 
   @Override
-  public void initStage(IPilot4Behavior pilot) {
+  public eResult initStage(IPilot4Behavior pilot) {
     double distanceFromThreshold = Coordinates.getDistanceInNM(threshold.getCoordinate(), pilot.getCoordinate());
     double aimPointDistance;
     if (distanceFromThreshold > MINIMAL_NORMAL_AIM_POINT_DISTANCE) {
@@ -53,11 +53,20 @@ public class VisualFinalStage implements IApproachStage {
     if (aimPoint != null) {
       doFlyHeading(aimPoint, pilot);
       deleteAimPointIfClose(pilot);
-    }
-    else
+    } else
       doFlyHeading(this.threshold.getCoordinate(), pilot);
 
     doFlyAltitude(pilot);
+  }
+
+  @Override
+  public eResult disposeStage(IPilot4Behavior pilot) {
+    return eResult.ok;
+  }
+
+  @Override
+  public boolean isFinishedStage(IPilot4Behavior pilot) {
+    return false;
   }
 
   private void doFlyAltitude(IPilot4Behavior pilot) {
@@ -75,15 +84,5 @@ public class VisualFinalStage implements IApproachStage {
   private void doFlyHeading(Coordinate point, IPilot4Behavior pilot) {
     double hdg = Coordinates.getBearing(pilot.getCoordinate(), point);
     pilot.setTargetHeading(hdg);
-  }
-
-  @Override
-  public void disposeStage(IPilot4Behavior pilot) {
-// intentionally blank
-  }
-
-  @Override
-  public boolean isFinishedStage(IPilot4Behavior pilot) {
-    return false;
   }
 }

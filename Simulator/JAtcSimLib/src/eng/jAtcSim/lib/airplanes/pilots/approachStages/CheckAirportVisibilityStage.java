@@ -7,15 +7,15 @@ import eng.jAtcSim.lib.weathers.Weather;
 
 public class CheckAirportVisibilityStage extends CheckApproachStage {
   @Override
-  protected eCheckResult check(IPilot4Behavior pilot) {
+  protected eResult check(IPilot4Behavior pilot) {
     Weather w = Acc.weather();
     if ((w.getCloudBaseInFt() + Acc.airport().getAltitude()) < pilot.getAltitude()) {
-      return eCheckResult.runwayNotInSight;
+      return eResult.runwayNotInSight;
     }
     double d = Coordinates.getDistanceInNM(pilot.getCoordinate(), pilot.getAssignedApproach().getParent().getCoordinate());
     if (w.getVisibilityInMilesReal() < d) {
-      return eCheckResult.runwayNotInSight;
+      return eResult.runwayNotInSight;
     }
-    return eCheckResult.ok;
+    return eResult.ok;
   }
 }

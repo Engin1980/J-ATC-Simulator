@@ -22,16 +22,16 @@ public class CheckPlaneLocationStage extends CheckApproachStage {
   }
 
   @Override
-  protected eCheckResult check(IPilot4Behavior pilot) {
+  protected eResult check(IPilot4Behavior pilot) {
     double realRadial = Coordinates.getBearing(coordinate, pilot.getCoordinate());
     if (Headings.isBetween(minHeading, realRadial, maxHeading) == false)
-      return eCheckResult.illegalHeading;
+      return eResult.illegalHeading;
     else {
       double distance = Coordinates.getDistanceInNM(coordinate, pilot.getCoordinate());
       if (NumberUtils.isBetweenOrEqual(minDistance, distance, maxDistance) == false)
-        return eCheckResult.illegalDistance;
+        return eResult.illegalDistance;
     }
 
-    return eCheckResult.ok;
+    return eResult.ok;
   }
 }

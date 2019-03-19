@@ -26,18 +26,18 @@ public class CheckPlaneStateStage extends CheckApproachStage {
   }
 
   @Override
-  protected eCheckResult check(IPilot4Behavior pilot) {
+  protected eResult check(IPilot4Behavior pilot) {
     if (minAltitude != null && pilot.getAltitude() < this.minAltitude)
-      return eCheckResult.altitudeTooLow;
+      return eResult.altitudeTooLow;
     if (maxAltitude != null && pilot.getAltitude() > this.maxAltitude)
-      return eCheckResult.altitudeTooHigh;
+      return eResult.altitudeTooHigh;
     if (minHeading != null && Headings.isBetween(this.minHeading, pilot.getHeading(), this.maxHeading) == false)
-      return eCheckResult.illegalHeading;
+      return eResult.illegalHeading;
     if (minSpeed != null && pilot.getSpeed() < this.minSpeed)
-      return eCheckResult.speedTooLow;
+      return eResult.speedTooLow;
     if (maxSpeed != null && pilot.getSpeed() > this.maxSpeed)
-      return eCheckResult.speedTooHigh;
+      return eResult.speedTooHigh;
 
-    return eCheckResult.ok;
+    return eResult.ok;
   }
 }
