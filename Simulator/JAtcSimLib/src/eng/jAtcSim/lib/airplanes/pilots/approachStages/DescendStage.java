@@ -11,16 +11,16 @@ public class DescendStage implements IApproachStage {
   private static final double TOO_HIGH_ALTITUDE_THRESHOLD = 600;
   private final Navaid navaid;
   private final int altitude;
-  private final int radial;
+  private final int course;
   private final double slopeAngle;
   private final Navaid exitFix;
   private final Integer exitAltitude;
 
-  public DescendStage(Navaid navaid, int altitude, int radial, double slopeAngle, Navaid exitFix, Integer exitAltitude) {
+  public DescendStage(Navaid navaid, int altitude, int course, double slopeAngle, Navaid exitFix, Integer exitAltitude) {
     Validator.check(exitFix != null || exitAltitude != null);
     this.navaid = navaid;
     this.altitude = altitude;
-    this.radial = radial;
+    this.course = course;
     this.slopeAngle = slopeAngle;
     this.exitFix = exitFix;
     this.exitAltitude = exitAltitude;
@@ -56,7 +56,7 @@ public class DescendStage implements IApproachStage {
   }
 
   private eResult updateHeading(IPilot4Behavior pilot) {
-    double newHeading = Coordinates.getHeadingToRadial(pilot.getCoordinate(), navaid.getCoordinate(), this.radial, Coordinates.eHeadingToRadialBehavior.standard);
+    double newHeading = Coordinates.getHeadingToRadial(pilot.getCoordinate(), navaid.getCoordinate(), this.course, Coordinates.eHeadingToRadialBehavior.standard);
     pilot.setTargetHeading(newHeading);
     return eResult.ok;
   }
