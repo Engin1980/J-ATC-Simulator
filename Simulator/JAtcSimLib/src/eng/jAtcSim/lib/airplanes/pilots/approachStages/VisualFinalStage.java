@@ -1,5 +1,7 @@
 package eng.jAtcSim.lib.airplanes.pilots.approachStages;
 
+import eng.eSystem.collections.EMap;
+import eng.eSystem.collections.IMap;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
 import eng.jAtcSim.lib.Acc;
@@ -24,8 +26,18 @@ public class VisualFinalStage implements IApproachStage {
   private static final double MAXIMAL_NORMAL_AIM_POINT_DISTANCE = 5;
   private static final double AIP_POINT_DELETE_DISTANCE = 1;
   private static final double DEFAULT_SLOPE = 1;
+  private static IMap<String, AimInfo> aimPoints = new EMap<>();
   private ActiveRunwayThreshold threshold;
-  private Coordinate aimPoint;
+
+  public static class AimInfo{
+    public final Coordinate aimPoint;
+    public final double minimalRadius;
+
+    public AimInfo(Coordinate aimPoint, double minimalRadius) {
+      this.aimPoint = aimPoint;
+      this.minimalRadius = minimalRadius;
+    }
+  }
 
   public VisualFinalStage(ActiveRunwayThreshold threshold) {
     this.threshold = threshold;
@@ -33,19 +45,25 @@ public class VisualFinalStage implements IApproachStage {
 
   @Override
   public eResult initStage(IPilot4Behavior pilot) {
-    double distanceFromThreshold = Coordinates.getDistanceInNM(threshold.getCoordinate(), pilot.getCoordinate());
-    double aimPointDistance;
-    if (distanceFromThreshold > MINIMAL_NORMAL_AIM_POINT_DISTANCE) {
-      aimPointDistance = Acc.rnd().nextDouble(MINIMAL_NORMAL_AIM_POINT_DISTANCE, MAXIMAL_NORMAL_AIM_POINT_DISTANCE);
-    } else {
-      aimPointDistance = MINIMAL_NORMAL_AIM_POINT_DISTANCE / 2;
-      if (aimPointDistance < MINIMAL_AIM_POINT_DISTANCE)
-        aimPointDistance = MINIMAL_AIM_POINT_DISTANCE;
-    }
 
-    this.aimPoint = Coordinates.getCoordinate(this.threshold.getCoordinate(),
-        threshold.getOtherThreshold().getCourse(),
-        aimPointDistance);
+    double distanceFromThreshold = Coordinates.getDistanceInNM(threshold.getCoordinate(), pilot.getCoordinate());
+    Coordinate aimPoint;
+    if (distanceFromThreshold < 2)
+      aimPoint = getAimPoint(pilot, true);
+    else
+      aimPoint = getAimPoint(pilot, false);
+
+    // distanceToAim is a distance of two minutes circle (standart turn 3°/deg)
+    // converted from circle to radius
+    double distanceToAim = (pilot.getAirplaneType().vApp * 2 / 60) / 2 / Math.PI;
+
+    if (distanceToAim) tady to nějak dopsat že může GA když je blbě moc
+
+    aimPoints.set(pilot.getCallsign().toString(), new AimInfo(aimPoint, distanceToAim));
+
+
+
+
   }
 
   @Override
@@ -85,4 +103,19 @@ public class VisualFinalStage implements IApproachStage {
     double hdg = Coordinates.getBearing(pilot.getCoordinate(), point);
     pilot.setTargetHeading(hdg);
   }
+
+  private Coordinate getAimPoint(IPilot4Behavior pilot, boolean aimAtThreshod) {
+    Coordinate ret;
+    if (aimAtThreshod)
+      ret = threshold.getCoordinate();
+    else {
+      int speed = pilot.getAirplaneType().vApp;
+      int verticalSpeed = speed * 5;
+      double flightTimeSeconds = 500 / (double) verticalSpeed;
+      double flightDistance = speed * flightTimeSeconds / 3600;
+      ret = Coordinates.getCoordinate(threshold.getCoordinate(), threshold.getOtherThreshold().getCourse(), flightDistance);
+    }
+    return ret;
+  }
+
 }
