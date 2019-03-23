@@ -59,6 +59,8 @@ public class VisualFinalStage implements IApproachStage {
 
     if (distanceToAim) tady to nějak dopsat že může GA když je blbě moc
 
+        // vzdálenost bodu od přímky: https://matematika.cz/vzdalenost-bod-primka
+
     aimPoints.set(pilot.getCallsign().toString(), new AimInfo(aimPoint, distanceToAim));
 
 
