@@ -2,6 +2,7 @@ package eng.jAtcSim.lib.global;
 
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeHeadingCommand;
 
+//TODO move to Headings class
 public class HeadingsNew {
 
   public static ChangeHeadingCommand.eDirection getBetterDirectionToTurn(double current, double target) {
