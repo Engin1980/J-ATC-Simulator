@@ -174,7 +174,7 @@ class RadialCalculator {
       radialLocation = eRadialLocation.behind;
     else {
       radialLine = getRadialLine(fix, radial);
-      double distanceToRadialLine = evaluateDistanceToRadialLine(currentPosition, fix, radial);
+      double distanceToRadialLine = evaluateDistanceToRadialLine(currentPosition, radialLine);
       if (distanceToRadialLine < ALIGNED_TO_RADIAL_LINE_DISTANCE)
         radialLocation = eRadialLocation.aligned;
       else if (distanceToRadialLine < CLOSE_TO_RADIAL_LINE_DISTANCE)
