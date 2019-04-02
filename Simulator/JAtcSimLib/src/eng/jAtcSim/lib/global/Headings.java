@@ -166,18 +166,21 @@ class RadialCalculator {
 
     double ret;
     eRadialLocation radialLocation;
+    Tuple<Coordinate, Double> tcc = null; // coordinate and turn radius
+    Line radialLine = null;
 
     eToPointLocation positionToFix = evaluateLocationToPoint(currentPosition, fix, radial);
     if (positionToFix.isBehind())
       radialLocation = eRadialLocation.behind;
     else {
+      radialLine = getRadialLine(fix, radial);
       double distanceToRadialLine = evaluateDistanceToRadialLine(currentPosition, fix, radial);
       if (distanceToRadialLine < ALIGNED_TO_RADIAL_LINE_DISTANCE)
         radialLocation = eRadialLocation.aligned;
       else if (distanceToRadialLine < CLOSE_TO_RADIAL_LINE_DISTANCE)
         radialLocation = eRadialLocation.close;
       else {
-        Tuple<Coordinate, Double> tcc = evaluateTurnCircleCenter(fix, radial, positionToFix.isLeft(), speedInKt);
+        tcc = evaluateTurnCircleCenter(fix, radial, positionToFix.isLeft(), speedInKt);
         eToPointLocation positionToTcc = evaluateLocationToPoint(currentPosition, tcc.getA(), radial);
         if (positionToTcc.isBehind())
           radialLocation = eRadialLocation.unturnable;
@@ -199,14 +202,45 @@ class RadialCalculator {
       case behind:
         ret = Double.NaN;
         break;
-
-      tady dopsat kejsy jak se to letí
-
+      case close:
+        assert radialLine != null;
+        ret = getHeadingInAlignment(currentPosition, radial, radialLine, 10);
+        break;
+      case aligned:
+        assert radialLine != null;
+        ret = getHeadingInAlignment(currentPosition, radial, radialLine, 30);
+        break;
+      case freeArea:
+        assert radialLine != null;
+        ret = getHeadingInAlignment(currentPosition, radial, radialLine, 45);
+        break;
+      case atTurnBelt:
+        assert tcc != null;
+        ret = getHeadingAtTurnBelt(currentPosition, tcc.getA());
+        break;
+      default: // including "unset"
 //      case unset:
-//        throw new EApplicationException("Unable to evaluate plane location according to the radial data.");
-//        break;
+        throw new EApplicationException("Unable to evaluate plane location according to the radial data.");
     }
 
+    return ret;
+  }
+
+  private static double getHeadingAtTurnBelt(Coordinate current, Coordinate turnCenter) {
+    double ret = Coordinates.getBearing(turnCenter, current);
+    return ret;
+  }
+
+  private static double getHeadingInAlignment(Coordinate current, double radial, Line radialLine, int maxDifference) {
+    double ret;
+    double distance = evaluateDistanceToRadialLine(current, radialLine);
+    Line.eSide side = radialLine.getRelativeLocation(current.getLatitude().get(), current.getLongitude().get());
+    double headingDifference = distance / ALIGNED_TO_RADIAL_LINE_DISTANCE * 15;
+    headingDifference = Math.max(headingDifference, maxDifference);
+    if (side == Line.eSide.left)
+      ret = radial - headingDifference;
+    else
+      ret = radial + headingDifference;
     return ret;
   }
 
@@ -225,9 +259,8 @@ class RadialCalculator {
     return ret;
   }
 
-  private static double evaluateDistanceToRadialLine(Coordinate currentPosition, Coordinate fix, double radial) {
-    Line line = getRadialLine(fix, radial);
-    double ret = line.getDistance(
+  private static double evaluateDistanceToRadialLine(Coordinate currentPosition, Line radialLine) {
+    double ret = radialLine.getDistance(
         currentPosition.getLatitude().get(), currentPosition.getLongitude().get());
     return ret;
   }
