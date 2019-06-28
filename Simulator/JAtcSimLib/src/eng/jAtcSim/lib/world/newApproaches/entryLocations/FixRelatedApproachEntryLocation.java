@@ -1,4 +1,4 @@
-package eng.jAtcSim.lib.world.newApproaches;
+package eng.jAtcSim.lib.world.newApproaches.entryLocations;
 
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;

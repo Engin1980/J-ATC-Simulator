@@ -1,7 +1,7 @@
 package eng.jAtcSim.lib.world.newApproaches;
 
 import eng.eSystem.collections.*;
-import eng.jAtcSim.lib.airplanes.pilots.approachStages.IApproachStage;
+import eng.jAtcSim.lib.world.newApproaches.stages.IApproachStage;
 import eng.jAtcSim.lib.world.ActiveRunwayThreshold;
 
 public class NewApproachInfo {

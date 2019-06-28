@@ -1,10 +1,9 @@
-package eng.jAtcSim.lib.airplanes.pilots.approachStages;
+package eng.jAtcSim.lib.world.newApproaches.stages;
 
 import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IMap;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
-import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.pilots.behaviors.IPilot4Behavior;
 import eng.jAtcSim.lib.world.ActiveRunwayThreshold;
 

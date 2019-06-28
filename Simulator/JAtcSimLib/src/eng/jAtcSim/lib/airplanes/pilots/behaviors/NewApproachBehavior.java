@@ -4,7 +4,7 @@ import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.utilites.EnumUtils;
 import eng.eSystem.validation.Validator;
 import eng.jAtcSim.lib.airplanes.moods.Mood;
-import eng.jAtcSim.lib.airplanes.pilots.approachStages.IApproachStage;
+import eng.jAtcSim.lib.world.newApproaches.stages.IApproachStage;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.GoingAroundNotification;
 import eng.jAtcSim.lib.world.newApproaches.NewApproachInfo;
 

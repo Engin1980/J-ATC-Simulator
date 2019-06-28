@@ -4,7 +4,7 @@ import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.geo.Coordinates;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
-import eng.jAtcSim.lib.airplanes.pilots.approachStages.IApproachStage;
+import eng.jAtcSim.lib.world.newApproaches.stages.IApproachStage;
 import eng.jAtcSim.lib.global.Restriction;
 import eng.jAtcSim.lib.speaking.IFromAirplane;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.HighOrderedSpeedForApproach;

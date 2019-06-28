@@ -7,7 +7,7 @@
 //import eng.jAtcSim.lib.speaking.SpeechList;
 //import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
 //import eng.jAtcSim.lib.world.ActiveRunwayThreshold;
-//import eng.jAtcSim.lib.world.newApproaches.ApproachEntryLocation;
+//import eng.jAtcSim.lib.world.newApproaches.entryLocations.ApproachEntryLocation;
 //import eng.jAtcSim.lib.world.newApproaches.IafRoute;
 //
 //public class Approach {

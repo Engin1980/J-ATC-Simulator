@@ -1,4 +1,4 @@
-package eng.jAtcSim.lib.airplanes.pilots.approachStages;
+package eng.jAtcSim.lib.world.newApproaches.stages;
 
 import eng.eSystem.validation.Validator;
 import eng.jAtcSim.lib.airplanes.pilots.behaviors.IPilot4Behavior;

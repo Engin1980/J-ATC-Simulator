@@ -2,11 +2,14 @@ package eng.jAtcSim.lib.world.newApproaches;
 
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
-import eng.jAtcSim.lib.airplanes.pilots.approachStages.IApproachStage;
+import eng.eSystem.exceptions.EApplicationException;
+import eng.jAtcSim.lib.world.newApproaches.stages.IApproachStage;
 import eng.jAtcSim.lib.global.PlaneCategoryDefinitions;
 import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
 import eng.jAtcSim.lib.world.ActiveRunwayThreshold;
+import eng.jAtcSim.lib.world.newApproaches.checkPoints.ApproachCheckPoint;
+import eng.jAtcSim.lib.world.newApproaches.entryLocations.ApproachEntryLocation;
 
 public class Approach {
 
@@ -20,29 +23,27 @@ public class Approach {
     visual
   }
 
-  private ApproachEntryLocation approachEntries;
+  private IList<ApproachEntry> approachEntries;
+  private final IList<IApproachStage> stages;
+  private final IList<ApproachCheckPoint> checkPoints;
   private final SpeechList<IAtcCommand> gaCommands;
   private final PlaneCategoryDefinitions planeCategories;
-  private final IList<IafRoute> iafRoutes;
   private final ActiveRunwayThreshold parent;
   private final ApproachType type;
   private final ApproachEntryLocation entryLocation;
-  private final IList<IApproachStage> stages;
+
 
   public Approach(ApproachType type, PlaneCategoryDefinitions planeCategories, SpeechList<IAtcCommand> gaCommands,
                   ApproachEntryLocation entryLocation, IList<IApproachStage> stages,
                   IList<IafRoute> iafRoutes, ActiveRunwayThreshold parent) {
-    this.planeCategories = planeCategories;
-    this.gaCommands = gaCommands;
-    this.iafRoutes = iafRoutes;
-    this.parent = parent;
-    this.type = type;
-    this.entryLocation = entryLocation;
-    this.stages = stages;
-  }
-
-  public ApproachEntryLocation getApproachEntries() {
-    return approachEntries;
+    throw new EApplicationException("Must be implemented.");
+//    this.planeCategories = planeCategories;
+//    this.gaCommands = gaCommands;
+//    this.iafRoutes = iafRoutes;
+//    this.parent = parent;
+//    this.type = type;
+//    this.entryLocation = entryLocation;
+//    this.stages = stages;
   }
 
   public SpeechList<IAtcCommand> getGaCommands() {
@@ -51,10 +52,6 @@ public class Approach {
 
   public PlaneCategoryDefinitions getPlaneCategories() {
     return planeCategories;
-  }
-
-  public IReadOnlyList<IafRoute> getIafRoutes() {
-    return iafRoutes;
   }
 
   public ActiveRunwayThreshold getParent() {
