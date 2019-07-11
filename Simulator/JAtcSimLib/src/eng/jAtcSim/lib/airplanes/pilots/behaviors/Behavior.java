@@ -2,7 +2,7 @@ package eng.jAtcSim.lib.airplanes.pilots.behaviors;
 
 import eng.eSystem.exceptions.ERuntimeException;
 import eng.jAtcSim.lib.airplanes.Airplane;
-import eng.jAtcSim.lib.airplanes.pilots.approachStages.ApproachInfo;
+import eng.jAtcSim.lib.airplanes.pilots.approachStagePilots.ApproachInfo;
 
 public abstract class Behavior {
 

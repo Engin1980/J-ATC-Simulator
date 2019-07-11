@@ -11,7 +11,7 @@
 //import eng.jAtcSim.lib.airplanes.AirproxType;
 //import eng.jAtcSim.lib.airplanes.moods.Mood;
 //import eng.jAtcSim.lib.airplanes.pilots.Pilot;
-//import eng.jAtcSim.lib.airplanes.pilots.approachStages.ApproachInfo;
+//import eng.jAtcSim.lib.airplanes.pilots.approachStagePilots.ApproachInfo;
 //import eng.jAtcSim.lib.global.Headings;
 //import eng.jAtcSim.lib.speaking.IFromAtc;
 //import eng.jAtcSim.lib.speaking.SpeechList;

@@ -1,6 +1,5 @@
 package eng.jAtcSim.lib.world.newApproaches.stages;
 
-import eng.jAtcSim.lib.airplanes.pilots.behaviors.IPilot4Behavior;
 import eng.jAtcSim.lib.speaking.SpeechList;
 
 public class RouteStage implements IApproachStage {
@@ -11,24 +10,8 @@ public class RouteStage implements IApproachStage {
     this.route = route;
   }
 
-  @Override
-  public eResult initStage(IPilot4Behavior pilot) {
-    pilot.setRoute(route);
-    throw new UnsupportedOperationException("I need to get a route from somewhere!");
+  public SpeechList getRoute(){
+    return this.route;
   }
 
-  @Override
-  public eResult flyStage(IPilot4Behavior pilot) {
-    return eResult.ok;
-  }
-
-  @Override
-  public eResult disposeStage(IPilot4Behavior pilot) {
-    return eResult.ok;
-  }
-
-  @Override
-  public boolean isFinishedStage(IPilot4Behavior pilot) {
-    return pilot.hasEmptyRoute();
-  }
 }

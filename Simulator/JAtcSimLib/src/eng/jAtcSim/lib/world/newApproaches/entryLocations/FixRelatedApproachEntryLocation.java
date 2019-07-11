@@ -5,7 +5,7 @@ import eng.eSystem.geo.Coordinates;
 import eng.eSystem.geo.Headings;
 import eng.jAtcSim.lib.world.Navaid;
 
-public class FixRelatedApproachEntryLocation extends ApproachEntryLocation {
+public class FixRelatedApproachEntryLocation implements IApproachEntryLocation {
   private final Navaid navaid;
   private final double maximalDistance;
   private final double fromRadial;

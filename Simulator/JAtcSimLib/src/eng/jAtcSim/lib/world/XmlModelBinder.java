@@ -19,10 +19,13 @@ import eng.jAtcSim.lib.speaking.fromAtc.commands.*;
 import eng.jAtcSim.lib.textProcessing.parsing.Parser;
 import eng.jAtcSim.lib.textProcessing.parsing.shortBlockParser.ShortBlockParser;
 import eng.jAtcSim.lib.world.newApproaches.*;
-import eng.jAtcSim.lib.world.newApproaches.entryLocations.ApproachEntryLocation;
+import eng.jAtcSim.lib.world.newApproaches.entryLocations.IApproachEntryLocation;
 import eng.jAtcSim.lib.world.newApproaches.entryLocations.FixRelatedApproachEntryLocation;
 import eng.jAtcSim.lib.world.newApproaches.entryLocations.RegionalApproachEntryLocation;
 import eng.jAtcSim.lib.world.newApproaches.stages.*;
+import eng.jAtcSim.lib.world.newApproaches.stages.checks.CheckAirportVisibilityStage;
+import eng.jAtcSim.lib.world.newApproaches.stages.checks.CheckPlaneLocationStage;
+import eng.jAtcSim.lib.world.newApproaches.stages.checks.CheckPlaneStateStage;
 import eng.jAtcSim.lib.world.xmlModel.*;
 import eng.jAtcSim.lib.world.xmlModel.approaches.*;
 import eng.jAtcSim.lib.world.xmlModel.approaches.approachStages.*;
@@ -377,7 +380,7 @@ public class XmlModelBinder {
     final int BASE_ALTITUDE =
         (context.airport.getAltitude() / 1000 + 3) * 1000;
 
-    ApproachEntryLocation entryLocation;
+    IApproachEntryLocation entryLocation;
     SpeechList gaCommands = new SpeechList();
     gaCommands.add(new ChangeHeadingCommand());
     gaCommands.add(new ChangeAltitudeCommand(
@@ -476,7 +479,7 @@ public class XmlModelBinder {
 
   private static Approach convertCustom(XmlCustomApproach x, Context context, IMap<String, IList<IafRoute>> sharedIafRoutesGroups) {
     SpeechList<IAtcCommand> gaCommands = decodeGaCommands(x);
-    ApproachEntryLocation entryLocation = convert(x.entryLocation, context);
+    IApproachEntryLocation entryLocation = convert(x.entryLocation, context);
     IList<IafRoute> iafRoutes = new EList<>();
     IList<IApproachStage> stages = new EList<>();
     Approach ret = new Approach(x.type, x.planeCategories, gaCommands, entryLocation, stages, iafRoutes, context.threshold);
@@ -571,8 +574,8 @@ public class XmlModelBinder {
     return ret;
   }
 
-  private static ApproachEntryLocation convert(XmlApproachEntryLocation x, Context context) {
-    ApproachEntryLocation ret;
+  private static IApproachEntryLocation convert(XmlApproachEntryLocation x, Context context) {
+    IApproachEntryLocation ret;
     if (x instanceof XmlFixRelatedApproachEntryLocation) {
       XmlFixRelatedApproachEntryLocation fx = (XmlFixRelatedApproachEntryLocation) x;
       Navaid n = context.area.getNavaids().get(fx.navaid);

@@ -4,7 +4,7 @@ import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.geo.Coordinate;
 
-public class RegionalApproachEntryLocation extends ApproachEntryLocation {
+public class RegionalApproachEntryLocation implements IApproachEntryLocation {
   private final IList<Coordinate> points;
 
   public RegionalApproachEntryLocation(IList<Coordinate> points) {
@@ -17,6 +17,6 @@ public class RegionalApproachEntryLocation extends ApproachEntryLocation {
 
   @Override
   public boolean isInside(Coordinate coordinate) {
-    throw new UnsupportedOperationException("Impement");
+    throw new UnsupportedOperationException("Implement");
   }
 }

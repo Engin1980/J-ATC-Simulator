@@ -1,0 +1,45 @@
+package eng.jAtcSim.lib.airplanes.pilots.approachStagePilots;
+
+import eng.eSystem.collections.EMap;
+import eng.eSystem.collections.IMap;
+import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.validation.Validator;
+import eng.jAtcSim.lib.world.newApproaches.stages.*;
+
+public class ApproachStagePilotProvider {
+
+  private IMap<Class, IApproachStagePilot> inner = new EMap<>();
+
+  public IApproachStagePilot getPilot(IApproachStage stage) {
+    Validator.isNotNull(stage);
+
+    IApproachStagePilot ret;
+    if (stage instanceof CheckStage)
+      ret = getInstance(CheckStagePilot.class);
+    else if (stage instanceof FlyToPointStage)
+      ret = getInstance(FlyToPointStagePilot.class);
+    else if (stage instanceof LandingStage)
+      ret = getInstance(LandingStagePilot.class);
+    else if (stage instanceof RadialStage)
+      ret = getInstance(RadialStagePilot.class);
+    else if (stage instanceof RouteStage)
+      ret = getInstance(RouteStagePilot.class);
+    else
+      throw new UnsupportedOperationException("Unknown stage type of '" + stage.getClass().getSimpleName() + "'.");
+
+    return ret;
+  }
+
+  private IApproachStagePilot getInstance(Class<? extends IApproachStagePilot> stageType) {
+    IApproachStagePilot ret = inner.tryGet(stageType);
+    if (ret == null) {
+      try {
+        ret = stageType.newInstance();
+      } catch (Exception ex) {
+        throw new EApplicationException("Failed to create a new instance of a pilot-stage '" + stageType.getSimpleName() + "'.", ex);
+      }
+      inner.set(stageType, ret);
+    }
+    return ret;
+  }
+}

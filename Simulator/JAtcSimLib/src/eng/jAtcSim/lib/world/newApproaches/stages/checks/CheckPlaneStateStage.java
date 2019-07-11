@@ -1,10 +1,11 @@
-package eng.jAtcSim.lib.world.newApproaches.stages;
+package eng.jAtcSim.lib.world.newApproaches.stages.checks;
 
 import eng.eSystem.validation.Validator;
 import eng.jAtcSim.lib.airplanes.pilots.behaviors.IPilot4Behavior;
 import eng.jAtcSim.lib.global.Headings;
+import eng.jAtcSim.lib.world.newApproaches.stages.CheckStage;
 
-public class CheckPlaneStateStage extends CheckApproachStage {
+public class CheckPlaneStateStage extends CheckStage {
   private final Integer minAltitude;
   private final Integer maxAltitude;
   private final Integer minHeading;

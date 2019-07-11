@@ -1,23 +1,23 @@
 package eng.jAtcSim.lib.world.newApproaches;
 
-import eng.eSystem.collections.IList;
-import eng.eSystem.collections.IReadOnlyList;
-import eng.jAtcSim.lib.world.newApproaches.entryLocations.ApproachEntryLocation;
+import eng.jAtcSim.lib.speaking.SpeechList;
+import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
+import eng.jAtcSim.lib.world.newApproaches.entryLocations.IApproachEntryLocation;
 
 public class ApproachEntry {
-  private final ApproachEntryLocation location;
-  private final IList<IafRoute> route;
+  private final IApproachEntryLocation location;
+  private final SpeechList<IAtcCommand> routeCommands;
 
-  public ApproachEntry(ApproachEntryLocation location, IList<IafRoute> route) {
+  public ApproachEntry(IApproachEntryLocation location, SpeechList<IAtcCommand> routeCommands) {
     this.location = location;
-    this.route = route;
+    this.routeCommands = routeCommands;
   }
 
-  public ApproachEntryLocation getLocation() {
+  public IApproachEntryLocation getLocation() {
     return location;
   }
 
-  public IReadOnlyList<IafRoute> getRoute() {
-    return route;
+  public SpeechList<IAtcCommand> getRouteCommands() {
+    return routeCommands;
   }
 }
