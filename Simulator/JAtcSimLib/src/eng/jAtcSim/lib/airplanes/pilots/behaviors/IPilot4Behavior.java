@@ -5,6 +5,8 @@ import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.AirplaneType;
 import eng.jAtcSim.lib.airplanes.moods.Mood;
 import eng.jAtcSim.lib.airplanes.pilots.Pilot;
+import eng.jAtcSim.lib.airplanes.pilots.navigators.INavigator;
+import eng.jAtcSim.lib.airplanes.pilots.navigators.ToCoordinateNavigator;
 import eng.jAtcSim.lib.speaking.ISpeech;
 import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.GoingAroundNotification;
@@ -74,4 +76,6 @@ public interface IPilot4Behavior {
   void goAround(GoingAroundNotification.GoAroundReason reason, double course, SpeechList gaRoute);
 
   int getTargetAltitude();
+
+  void setNavigator(INavigator navigator);
 }

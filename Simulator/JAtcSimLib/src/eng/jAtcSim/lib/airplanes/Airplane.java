@@ -12,6 +12,7 @@ import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.moods.Mood;
 import eng.jAtcSim.lib.airplanes.moods.MoodResult;
 import eng.jAtcSim.lib.airplanes.pilots.Pilot;
+import eng.jAtcSim.lib.airplanes.pilots.navigators.INavigator;
 import eng.jAtcSim.lib.atcs.Atc;
 import eng.eSystem.geo.Coordinate;
 import eng.jAtcSim.lib.global.ETime;
@@ -270,6 +271,10 @@ public class Airplane implements IMessageParticipant {
     public Mood getMood() {
       return Airplane.this.mood;
     }
+
+    public void setNavigator(INavigator navigator) {
+      Airplane.this.navigator = navigator;
+    }
   }
 
   public class Airplane4Command {
@@ -318,6 +323,19 @@ public class Airplane implements IMessageParticipant {
       return Airplane.this.isArrival();
     }
 
+  }
+
+  public class Airplane4Navigator{
+    public void setTargetHeading(int heading){
+      Airplane.this.setTargetHeading(heading);
+    }
+    public int getTargetHeading(){
+      return Airplane.this.getTargetHeading();
+    }
+
+    public Coordinate getCoordinates(){
+      return Airplane.this.coordinate;
+    }
   }
 
   public enum State {
@@ -409,6 +427,8 @@ public class Airplane implements IMessageParticipant {
   private final AirplaneType airplaneType;
   @XmlIgnore
   private final Airplane4Display plane4Display;
+  @XmlIgnore
+  private final Airplane4Navigator plane4Navigator;
   private final int delayInitialMinutes;
   private final ETime delayExpectedTime;
   private Pilot pilot;
@@ -430,6 +450,7 @@ public class Airplane implements IMessageParticipant {
   private Integer delayResult = null;
   private ETime emergencyWanishTime = null;
   private Mood mood;
+  private INavigator navigator;
 
   public static Airplane load(XElement elm) {
 
@@ -567,6 +588,7 @@ public class Airplane implements IMessageParticipant {
 
     this.pilot = new Pilot(this.new Airplane4Pilot(), entryExitPoint, divertTime);
     this.plane4Display = this.new Airplane4Display();
+    this.plane4Navigator = this.new Airplane4Navigator();
 
     // flight recorders on
     this.flightRecorder = FlightRecorder.create(this.callsign);
@@ -580,6 +602,7 @@ public class Airplane implements IMessageParticipant {
     this.sqwk = null;
     this.airplaneType = null;
     this.plane4Display = new Airplane4Display();
+    this.plane4Navigator = new Airplane4Navigator();
     this.delayInitialMinutes = 0;
     this.delayExpectedTime = null;
     this.mood = null;
@@ -963,6 +986,7 @@ public class Airplane implements IMessageParticipant {
     } else if (this.lastVerticalSpeed != 0)
       this.lastVerticalSpeed = 0;
 
+    this.navigator.navigate(this.plane4Navigator);
     if (targetHeading != heading.getValue()) {
       adjustHeading();
     } else {

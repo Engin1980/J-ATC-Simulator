@@ -25,6 +25,8 @@ import eng.jAtcSim.lib.airplanes.commandApplications.ApplicationResult;
 import eng.jAtcSim.lib.airplanes.commandApplications.ConfirmationResult;
 import eng.jAtcSim.lib.airplanes.moods.Mood;
 import eng.jAtcSim.lib.airplanes.pilots.behaviors.*;
+import eng.jAtcSim.lib.airplanes.pilots.navigators.INavigator;
+import eng.jAtcSim.lib.airplanes.pilots.navigators.ToCoordinateNavigator;
 import eng.jAtcSim.lib.atcs.Atc;
 import eng.eSystem.geo.Coordinate;
 import eng.jAtcSim.lib.global.*;
@@ -319,6 +321,11 @@ public class Pilot {
     @Override
     public int getTargetAltitude() {
       return parent.getTargetAltitude();
+    }
+
+    @Override
+    public void setNavigator(INavigator navigator) {
+      Pilot.this.parent.setNavigator(navigator);
     }
 
     private boolean isBeforeRunwayThreshold() {

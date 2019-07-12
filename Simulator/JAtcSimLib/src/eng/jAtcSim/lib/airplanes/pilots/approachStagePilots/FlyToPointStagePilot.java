@@ -2,6 +2,8 @@ package eng.jAtcSim.lib.airplanes.pilots.approachStagePilots;
 
 import eng.eSystem.geo.Coordinates;
 import eng.jAtcSim.lib.airplanes.pilots.behaviors.IPilot4Behavior;
+import eng.jAtcSim.lib.airplanes.pilots.navigators.HeadingNavigator;
+import eng.jAtcSim.lib.airplanes.pilots.navigators.ToCoordinateNavigator;
 import eng.jAtcSim.lib.world.newApproaches.stages.FlyToPointStage;
 
 public class FlyToPointStagePilot implements IApproachStagePilot<FlyToPointStage> {
@@ -9,18 +11,23 @@ public class FlyToPointStagePilot implements IApproachStagePilot<FlyToPointStage
 
   @Override
   public eResult initStage(IPilot4Behavior pilot, FlyToPointStage stage) {
+    pilot.setNavigator(
+        new ToCoordinateNavigator(stage.getCoordinate())
+    );
+
     return eResult.ok;
   }
 
   @Override
   public eResult flyStage(IPilot4Behavior pilot, FlyToPointStage stage) {
-    double heading = Coordinates.getBearing(pilot.getCoordinate(), stage.getCoordinate());
-    pilot.setTargetHeading(heading);
     return eResult.ok;
   }
 
   @Override
   public eResult disposeStage(IPilot4Behavior pilot, FlyToPointStage stage) {
+    pilot.setNavigator(
+        new HeadingNavigator((int) pilot.getTargetHeading())
+    );
     return eResult.ok;
   }
 
