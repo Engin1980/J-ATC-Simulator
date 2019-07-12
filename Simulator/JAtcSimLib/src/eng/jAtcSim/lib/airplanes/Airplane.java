@@ -93,7 +93,9 @@ public class Airplane implements IMessageParticipant {
       return Airplane.this.pilot.getAssignedRoute();
     }
 
-    public ActiveRunwayThreshold getExpectedRunwayThreshold() {return Airplane.this.pilot.getExpectedRunwayThreshold(); }
+    public ActiveRunwayThreshold getExpectedRunwayThreshold() {
+      return Airplane.this.pilot.getExpectedRunwayThreshold();
+    }
 
     public int altitude() {
       return (int) Airplane.this.altitude.getValue();
@@ -325,15 +327,16 @@ public class Airplane implements IMessageParticipant {
 
   }
 
-  public class Airplane4Navigator{
-    public void setTargetHeading(int heading){
-      Airplane.this.setTargetHeading(heading);
-    }
-    public int getTargetHeading(){
+  public class Airplane4Navigator {
+    public int getTargetHeading() {
       return Airplane.this.getTargetHeading();
     }
 
-    public Coordinate getCoordinates(){
+    public void setTargetHeading(int heading) {
+      Airplane.this.setTargetHeading(heading);
+    }
+
+    public Coordinate getCoordinates() {
       return Airplane.this.coordinate;
     }
   }
@@ -422,35 +425,6 @@ public class Airplane implements IMessageParticipant {
   private static final int MAXIMAL_DIVERT_TIME_MINUTES = 120;
   private final static double GROUND_SPEED_CHANGE_MULTIPLIER = 1.5; //1.5; //3.0;
   private static final double secondFraction = 1 / 60d / 60d;
-  private final Callsign callsign;
-  private final Squawk sqwk;
-  private final AirplaneType airplaneType;
-  @XmlIgnore
-  private final Airplane4Display plane4Display;
-  @XmlIgnore
-  private final Airplane4Navigator plane4Navigator;
-  private final int delayInitialMinutes;
-  private final ETime delayExpectedTime;
-  private Pilot pilot;
-  private boolean departure;
-  private int targetHeading;
-  private boolean targetHeadingLeftTurn;
-  private HeadingInertialValue heading;
-  private int targetAltitude;
-  private int targetSpeed;
-  private InertialValue speed;
-  private Coordinate coordinate;
-  private State state;
-  private double lastVerticalSpeed;
-  @XmlIgnore
-  private FlightRecorder flightRecorder = null;
-  private AirproxType airprox;
-  private boolean mrvaError;
-  private InertialValue altitude;
-  private Integer delayResult = null;
-  private ETime emergencyWanishTime = null;
-  private Mood mood;
-  private INavigator navigator;
 
   public static Airplane load(XElement elm) {
 
@@ -527,84 +501,53 @@ public class Airplane implements IMessageParticipant {
 
     return ret;
   }
+  private final AirplaneType airplaneType;
+  @XmlIgnore
+  private final Airplane4Display plane4Display;
+  @XmlIgnore
+  private final Airplane4Navigator plane4Navigator;
+  private final Squawk sqwk;
+  private final SHA sha;
+  private final AirplaneFlight flight;
+  private final Pilot pilot;
+  private Coordinate coordinate;
+  private State state;
+  @XmlIgnore
+  private FlightRecorder flightRecorder = null;
+  private AirproxType airprox;
+  private boolean mrvaError;
+  private Integer delayResult = null;
+  private ETime emergencyWanishTime = null;
+  private Mood mood;
 
   public Airplane(Callsign callsign, Coordinate coordinate, Squawk sqwk, AirplaneType airplaneSpecification,
                   int heading, int altitude, int speed, boolean isDeparture,
                   Navaid entryExitPoint, int delayInitialMinutes, ETime delayExpectedTime) {
 
-    this.callsign = callsign;
     this.coordinate = coordinate;
     this.sqwk = sqwk;
     this.airplaneType = airplaneSpecification;
-
-    this.delayExpectedTime = delayExpectedTime;
-    this.delayInitialMinutes = delayInitialMinutes;
-
-    this.departure = isDeparture;
     this.state = isDeparture ? State.holdingPoint : State.arrivingHigh;
 
-    double headingChangeDenominator;
-    switch (this.getType().category) {
-      case 'A':
-      case 'B':
-        headingChangeDenominator = 4;
-        break;
-      case 'C':
-        headingChangeDenominator = 5;
-        break;
-      case 'D':
-      case 'E':
-        headingChangeDenominator = 7;
-        break;
-      default:
-        throw new UnsupportedOperationException("Heading-change-denominator for category " + this.getType().category + " cannot be determined.");
-    }
-    this.heading = new HeadingInertialValue(
-        heading,
-        this.getType().headingChangeRate,
-        this.getType().headingChangeRate / headingChangeDenominator);
+    this.flight = new AirplaneFlight(callsign, delayInitialMinutes, delayExpectedTime, isDeparture);
+    this.sha = new SHA(heading, altitude, speed, airplaneSpecification, Acc.airport().getAltitude());
+    this.pilot = new Pilot(this.new Airplane4Pilot(), entryExitPoint, generateDivertTime(isDeparture));
+    this.flightRecorder = FlightRecorder.create(callsign);
+    this.mood = new Mood();
 
-    this.altitude = new InertialValue(
-        altitude,
-        this.getType().lowClimbRate / 7d / 60,
-        this.getType().highDescendRate / 7d / 60,
-        (double) Acc.airport().getAltitude());
-
-    this.speed = new InertialValue(
-        speed,
-        this.getType().speedIncreaseRate / 4d,
-        this.getType().speedDecreaseRate / 6d,
-        0d);
-
-    this.targetAltitude = altitude;
-    this.targetHeading = heading;
-    this.targetSpeed = speed;
-
-    int divertTimeMinutes = Acc.rnd().nextInt(MINIMAL_DIVERT_TIME_MINUTES, MAXIMAL_DIVERT_TIME_MINUTES);
-    ETime divertTime = null;
-    if (this.isArrival()) {
-      divertTime = Acc.now().addMinutes(divertTimeMinutes);
-    }
-
-    this.pilot = new Pilot(this.new Airplane4Pilot(), entryExitPoint, divertTime);
     this.plane4Display = this.new Airplane4Display();
     this.plane4Navigator = this.new Airplane4Navigator();
-
-    // flight recorders on
-    this.flightRecorder = FlightRecorder.create(this.callsign);
-
-    this.mood = new Mood();
   }
 
   @XmlConstructor
   private Airplane() {
-    this.callsign = null;
     this.sqwk = null;
     this.airplaneType = null;
+    this.flight = new AirplaneFlight(null, 0, null, false);
+    this.pilot = new Pilot(this.new Airplane4Pilot(), null, null);
+    this.sha = new SHA(0, 0, 0, null, 0);
     this.plane4Display = new Airplane4Display();
     this.plane4Navigator = new Airplane4Navigator();
-    this.delayInitialMinutes = 0;
-    this.delayExpectedTime = null;
     this.mood = null;
   }
 
@@ -680,7 +623,7 @@ public class Airplane implements IMessageParticipant {
 
   @Override
   public String toString() {
-    return this.callsign.toString();
+    return this.flight.getCallsign().toString();
   }
 
   public Atc getTunedAtc() {
@@ -688,8 +631,8 @@ public class Airplane implements IMessageParticipant {
   }
 
   public double getTAS() {
-    double m = 1 + this.altitude.getValue() / 100000d;
-    double ret = this.speed.getValue() * m;
+    double m = 1 + this.sha.getAltitude() / 100000d;
+    double ret = this.sha.getSpeed() * m;
     return ret;
   }
 
@@ -697,44 +640,8 @@ public class Airplane implements IMessageParticipant {
     return getTAS();
   }
 
-  public void setTargetHeading(int targetHeading, boolean useLeftTurn) {
-    this.targetHeading = targetHeading;
-    this.targetHeadingLeftTurn = useLeftTurn;
-  }
-
-  public void setTargetHeading(double targetHeading, boolean useLeftTurn) {
-    this.setTargetHeading((int) (Math.round(targetHeading)), useLeftTurn);
-  }
-
-  public int getTargetHeading() {
-    return targetHeading;
-  }
-
   public void setTargetHeading(double targetHeading) {
     this.setTargetHeading((int) Math.round(targetHeading));
-  }
-
-  public void setTargetHeading(int targetHeading) {
-    boolean useLeft
-        = HeadingsNew.getBetterDirectionToTurn(heading.getValue(), targetHeading) == ChangeHeadingCommand.eDirection.left;
-    setTargetHeading(targetHeading, useLeft);
-  }
-
-
-  public int getTargetAltitude() {
-    return targetAltitude;
-  }
-
-  public void setTargetAltitude(int targetAltitude) {
-    this.targetAltitude = targetAltitude;
-  }
-
-  public int getTargetSpeed() {
-    return targetSpeed;
-  }
-
-  public void setTargetSpeed(int targetSpeed) {
-    this.targetSpeed = targetSpeed;
   }
 
   @Override
@@ -787,8 +694,7 @@ public class Airplane implements IMessageParticipant {
   public void setHoldingPointState(Coordinate coordinate, double course) {
     assert this.state == State.holdingPoint;
     this.coordinate = coordinate;
-    this.heading.reset(course);
-    this.targetHeading = (int) Math.round(course);
+    this.sha.setTargetHeading((int) Math.round(course));
   }
 
   public boolean isMrvaError() {
@@ -815,7 +721,7 @@ public class Airplane implements IMessageParticipant {
 
     int alt = Math.max((int) this.getAltitude(), Acc.airport().getAltitude() + 4000);
     alt = (int) NumberUtils.ceil(alt, 3);
-    this.setTargetAltitude(alt);
+    this.sha.setTargetAltitude(alt);
 
     this.emergencyWanishTime = wt;
     this.departure = false;
@@ -897,12 +803,21 @@ public class Airplane implements IMessageParticipant {
   }
 
   public MoodResult getEvaluatedMood() {
-    MoodResult ret = this.mood.evaluate(this.callsign, this.delayResult);
+    MoodResult ret = this.mood.evaluate(this.flight.getCallsign(), this.delayResult);
     return ret;
   }
 
   public ActiveRunwayThreshold getExpectedRunwayThreshold() {
     return pilot.getExpectedRunwayThreshold();
+  }
+
+  private ETime generateDivertTime(boolean isDeparture) {
+    ETime divertTime = null;
+    if (!isDeparture) {
+      int divertTimeMinutes = Acc.rnd().nextInt(MINIMAL_DIVERT_TIME_MINUTES, MAXIMAL_DIVERT_TIME_MINUTES);
+      divertTime = Acc.now().addMinutes(divertTimeMinutes);
+    }
+    return divertTime;
   }
 
   // <editor-fold defaultstate="collapsed" desc=" private methods ">

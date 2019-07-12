@@ -470,8 +470,7 @@ public class Pilot {
   private Route assignedRoute;
   private ActiveRunwayThreshold expectedRunwayThreshold;
   private Navaid entryExitPoint;
-  private Restriction speedRestriction = null;
-  private Restriction altitudeRestriction = null;
+
   private boolean isAfterGoAround = false;
   @XmlIgnore
   private PilotRecorder recorder;
