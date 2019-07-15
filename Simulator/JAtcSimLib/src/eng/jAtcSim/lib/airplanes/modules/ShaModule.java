@@ -4,11 +4,13 @@ import com.sun.istack.internal.Nullable;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
+import eng.eSystem.geo.Coordinate;
 import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.*;
 import eng.jAtcSim.lib.airplanes.pilots.navigators.HeadingNavigator;
 import eng.jAtcSim.lib.airplanes.pilots.navigators.INavigator;
+import eng.jAtcSim.lib.airplanes.pilots.navigators.INavigator2Coordinate;
 import eng.jAtcSim.lib.global.Headings;
 import eng.jAtcSim.lib.global.HeadingsNew;
 import eng.jAtcSim.lib.global.Restriction;
@@ -68,6 +70,7 @@ public class ShaModule {
       }
     }
   }
+
   private final static double GROUND_SPEED_CHANGE_MULTIPLIER = 1.5; //1.5; //3.0;
 
   private static double getHeadingChangeDenominator(AirplaneType planeType) {
@@ -131,6 +134,7 @@ public class ShaModule {
 
     return ret;
   }
+
   private final Airplane parent;
   //region Heading fields
   private int targetHeading;
@@ -196,8 +200,8 @@ public class ShaModule {
     this.altitudeOrders.setTargetValue(altitude);
   }
 
-  public double getAltitude() {
-    return altitude.value;
+  public int getAltitude() {
+    return (int) altitude.value;
   }
 
   //endregion
@@ -205,10 +209,6 @@ public class ShaModule {
 
   public double getVerticalSpeed() {
     return this.lastVerticalSpeed;
-  }
-
-  public void setTargetSpeedRestriction(Restriction speedRestriction) {
-    this.speedOrders.setRestriction(speedRestriction);
   }
 
   public void clearTargetSpeedRestriction() {
@@ -223,38 +223,17 @@ public class ShaModule {
     this.speedOrders.setTargetValue(speed);
   }
 
-  //endregion
-  //region Heading-methods
-
   public double getSpeed() {
     return speed.value;
-  }
-
-  public void setTargetHeading(int heading, boolean useLeftTurn) {
-    this.targetHeading = heading;
-    this.targetHeadingLeftTurn = useLeftTurn;
-  }
-
-  public void setTargetHeading(double heading, boolean useLeftTurn) {
-    int hdg = (int) Math.round(heading);
-    this.setTargetHeading(hdg, useLeftTurn);
   }
 
   public int getTargetHeading() {
     return targetHeading;
   }
 
-  public void setTargetHeading(int heading) {
-    boolean useLeft
-        = HeadingsNew.getBetterDirectionToTurn(this.heading.value, targetHeading) == ChangeHeadingCommand.eDirection.left;
-    this.setTargetHeading(heading, useLeft);
-  }
-
-  public void setTargetHeading(double heading) {
-    int hdg = (int) Math.round(heading);
-    this.setTargetHeading(hdg);
-  }
   //endregion
+
+  //region Heading-methods
 
   public double getHeading() {
     return heading.value;
@@ -289,6 +268,7 @@ public class ShaModule {
     } else if (this.lastVerticalSpeed != 0)
       this.lastVerticalSpeed = 0;
 
+    navigator.navigate(this, parent.getCoordinate());
     if (targetHeading != heading.getValue()) {
       adjustHeading();
     } else {
@@ -296,9 +276,31 @@ public class ShaModule {
     }
   }
 
+  //endregion
+
   public void setNavigator(INavigator navigator) {
     assert navigator != null;
     this.navigator = navigator;
+  }
+
+  public Restriction getSpeedRestriction() {
+    return this.speedOrders.restrictedValue;
+  }
+
+  public void setSpeedRestriction(Restriction speedRestriction) {
+    this.speedOrders.setRestriction(speedRestriction);
+  }
+
+  public Coordinate tryGetTargetCoordinate() {
+    if (navigator instanceof INavigator2Coordinate) {
+      INavigator2Coordinate nc = (INavigator2Coordinate) navigator;
+      return nc.getTargetCoordinate();
+    } else
+      return null;
+  }
+
+  public void _setTargetHeading(int heading) {
+    this.targetHeading = heading;
   }
 
   private ValueRequest getSpeedRequest() {

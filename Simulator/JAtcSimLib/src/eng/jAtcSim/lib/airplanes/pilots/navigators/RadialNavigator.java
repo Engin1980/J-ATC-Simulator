@@ -4,9 +4,9 @@ import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.geo.Headings;
-import eng.jAtcSim.lib.airplanes.Airplane;
+import eng.jAtcSim.lib.airplanes.modules.ShaModule;
 
-public class RadialNavigator implements INavigator {
+public class RadialNavigator implements INavigator2Coordinate {
   public enum AggresivityMode {
     gentle,
     standard,
@@ -56,8 +56,14 @@ public class RadialNavigator implements INavigator {
   }
 
   @Override
-  public void navigate(Airplane.Airplane4Navigator plane) {
-    double targetHeading = getHeadingToRadial(plane.getCoordinates(), this.coordinate, this.inboundRadial, this.mode);
-    plane.setTargetHeading((int) targetHeading);
+  public void navigate(ShaModule sha, Coordinate planeCoordinate) {
+    double targetHeading = getHeadingToRadial(planeCoordinate, this.coordinate, this.inboundRadial, this.mode);
+    sha.setNavigator(
+        new HeadingNavigator(targetHeading));
+  }
+
+  @Override
+  public Coordinate getTargetCoordinate() {
+    return this.coordinate;
   }
 }

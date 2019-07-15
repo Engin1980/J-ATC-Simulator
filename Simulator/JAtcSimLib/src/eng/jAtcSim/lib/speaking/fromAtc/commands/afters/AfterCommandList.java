@@ -61,7 +61,7 @@ public class AfterCommandList {
     return ret;
   }
 
-  private static boolean isAFItemPassed(AFItem item, Airplane plane, Coordinate currentTargetCoordinateOrNull) {
+  private static boolean isAFItemPassed(AFItem item, Airplane planex, Coordinate currentTargetCoordinateOrNull) {
     boolean ret;
 
     if (item.antecedent instanceof AfterAltitudeCommand) {

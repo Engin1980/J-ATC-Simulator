@@ -233,6 +233,14 @@ public class Airplane implements IMessageParticipant {
     public void setNavigator(INavigator navigator) {
       Airplane.this.sha.setNavigator(navigator);
     }
+
+    public EmergencyModule getEmergencyModule() {
+      return Airplane.this.emergencyModule;
+    }
+
+    public AirplaneFlight getFlight() {
+      return Airplane.this.flight;
+    }
   }
 
 //  public class Airplane4Command {

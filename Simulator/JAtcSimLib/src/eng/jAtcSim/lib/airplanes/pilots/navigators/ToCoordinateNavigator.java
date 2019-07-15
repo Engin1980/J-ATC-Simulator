@@ -2,9 +2,9 @@ package eng.jAtcSim.lib.airplanes.pilots.navigators;
 
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
-import eng.jAtcSim.lib.airplanes.Airplane;
+import eng.jAtcSim.lib.airplanes.modules.ShaModule;
 
-public class ToCoordinateNavigator implements INavigator {
+public class ToCoordinateNavigator implements INavigator2Coordinate {
 
   private final Coordinate coordinate;
 
@@ -14,9 +14,14 @@ public class ToCoordinateNavigator implements INavigator {
   }
 
   @Override
-  public void navigate(Airplane.Airplane4Navigator plane) {
+  public void navigate(ShaModule sha, Coordinate planeCoordinates) {
     int heading = (int) Math.round(
-        Coordinates.getBearing(plane.getCoordinates(), this.coordinate));
-    plane.setTargetHeading(heading);
+        Coordinates.getBearing(planeCoordinates, this.coordinate));
+    sha._setTargetHeading(heading);
+  }
+
+  @Override
+  public Coordinate getTargetCoordinate() {
+    return coordinate;
   }
 }

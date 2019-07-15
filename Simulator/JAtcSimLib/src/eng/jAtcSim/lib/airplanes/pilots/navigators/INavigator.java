@@ -1,7 +1,8 @@
 package eng.jAtcSim.lib.airplanes.pilots.navigators;
 
-import eng.jAtcSim.lib.airplanes.Airplane;
+import eng.eSystem.geo.Coordinate;
+import eng.jAtcSim.lib.airplanes.modules.ShaModule;
 
 public interface INavigator {
-  void navigate(Airplane.Airplane4Navigator plane);
+  void navigate(ShaModule sha, Coordinate planeCoordinates);
 }

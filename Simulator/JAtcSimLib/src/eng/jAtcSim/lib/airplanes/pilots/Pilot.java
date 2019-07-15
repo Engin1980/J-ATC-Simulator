@@ -24,8 +24,13 @@ import eng.jAtcSim.lib.airplanes.Callsign;
 import eng.jAtcSim.lib.airplanes.commandApplications.ApplicationManager;
 import eng.jAtcSim.lib.airplanes.commandApplications.ApplicationResult;
 import eng.jAtcSim.lib.airplanes.commandApplications.ConfirmationResult;
+import eng.jAtcSim.lib.airplanes.modules.ShaModule;
 import eng.jAtcSim.lib.airplanes.moods.Mood;
 import eng.jAtcSim.lib.airplanes.pilots.behaviors.*;
+import eng.jAtcSim.lib.airplanes.pilots.modules.AtcModule;
+import eng.jAtcSim.lib.airplanes.pilots.modules.BehaviorModule;
+import eng.jAtcSim.lib.airplanes.pilots.modules.PilotRecorderModule;
+import eng.jAtcSim.lib.airplanes.pilots.navigators.HeadingNavigator;
 import eng.jAtcSim.lib.airplanes.pilots.navigators.INavigator;
 import eng.jAtcSim.lib.airplanes.pilots.navigators.ToCoordinateNavigator;
 import eng.jAtcSim.lib.atcs.Atc;
@@ -76,58 +81,79 @@ public class Pilot {
     }
   }
 
-  public class Pilot5Command{
+  public class Pilot5Command {
 
-    public class Pilot5AirplaneCommand{
+    public class Pilot5AirplaneCommand {
 
       public Airplane.State getState() {
-
+        return parent.getState();
       }
 
       public int getAltitude() {
+        return parent.getSha().getAltitude();
       }
 
       public AirplaneType getType() {
+        return parent.getType();
       }
 
       public int getTargetAltitude() {
+        return parent.getSha().getTargetAltitude();
       }
 
       public double getHeading() {
-
+        return parent.getSha().getHeading();
       }
 
       public Coordinate getCoordinate() {
+        return parent.getCoordinate();
       }
 
       public boolean isEmergency() {
+        return parent.getEmergencyModule().isEmergency();
       }
 
       public Restriction getSpeedRestriction() {
+        return parent.getSha().getSpeedRestriction();
       }
     }
 
-    public class Pilot5FlightCommand{
+    public class Pilot5FlightCommand {
 
       public boolean isArrival() {
+        return parent.getFlight().isArrival();
       }
 
       public Callsign getCallsign() {
+        return parent.getFlight().getCallsign();
       }
     }
 
+    private final Pilot5AirplaneCommand pilot5AirplaneCommand = new Pilot5AirplaneCommand();
+    private final Pilot5FlightCommand pilot5FlightCommand = new Pilot5FlightCommand();
+
     public Pilot5AirplaneCommand getPlane() {
-      return null;
+      return pilot5AirplaneCommand;
+    }
+
+    public Pilot5FlightCommand getFlight() {
+      return pilot5FlightCommand;
     }
 
     public void setTargetAltitude(int altitudeInFt) {
+      parent.getSha().setTargetAltitude(altitudeInFt);
     }
 
     public void abortHolding() {
-      
+      if (parent.getFlight().isArrival())
+        Pilot.this.setBehaviorAndState(new ArrivalBehavior(), Airplane.State.arrivingHigh);
+      else
+        Pilot.this.setBehaviorAndState(new DepartureBehavior(), Airplane.State.departingLow);
+      adjustTargetSpeed();
     }
 
     public void setTargetCoordinate(Coordinate coordinate) {
+      parent.getSha().setNavigator(new ToCoordinateNavigator(coordinate));
     }
 
     public void setTargetCoordinate(Navaid navaid) {
@@ -136,9 +162,15 @@ public class Pilot {
     }
 
     public void setTargetHeading(double targetHeading, boolean leftTurn) {
+      parent.getSha().setNavigator(
+          new HeadingNavigator(
+              targetHeading,
+              leftTurn ? HeadingNavigator.Turn.left : HeadingNavigator.Turn.right)
+      );
     }
 
     public void setSpeedRestriction(Restriction speedRestriction) {
+      parent.getSha().setSpeedRestriction(speedRestriction);
     }
 
     public void processOrderedGoAround() {
@@ -159,9 +191,6 @@ public class Pilot {
     }
 
     public void setHasRadarContact() {
-    }
-
-    public Pilot5FlightCommand getFlight() {
     }
 
     public int getDivertMinutesLeft() {
@@ -187,6 +216,36 @@ public class Pilot {
 
     public void setApproachBehavior(NewApproachInfo nai) {
     }
+  }
+
+  public class Pilot5Module{
+
+    public PilotRecorderModule getRecorder() {
+      return Pilot.this.recorder;
+    }
+
+    public AtcModule getAtcModule() {
+    }
+
+    public ShaModule getSha() {
+      return parent.getSha();
+    }
+
+    public BehaviorModule getBehaviorModule() {
+      return null;
+    }
+
+    public Pilot5Command getPilot5Command() {
+
+    }
+  }
+
+  private Pilot5Module pilot5Module = new Pilot5Module();
+  private BehaviorModule behaviorModule = new BehaviorModule(this.pilot5Module);
+
+  private void setBehaviorAndState(Behavior behavior, Airplane.State state) {
+    this.behavior = behavior;
+    this.parent.setxState(state);
   }
 
   public class Pilot4Command {
@@ -345,6 +404,11 @@ public class Pilot {
     }
 
     @Override
+    public void setState(Airplane.State state) {
+      this.setBehaviorAndState(Pilot.this.behavior, state);
+    }
+
+    @Override
     public DivertInfo getDivertInfo() {
       return Pilot.this.divertInfo;
     }
@@ -370,11 +434,6 @@ public class Pilot {
     }
 
     @Override
-    public void setState(Airplane.State state) {
-      this.setBehaviorAndState(Pilot.this.behavior, state);
-    }
-
-    @Override
     public void setRoute(SpeechList route) {
       expandThenCommands(route);
       Pilot.this.processSpeeches(route, CommandSource.procedure);
@@ -383,11 +442,6 @@ public class Pilot {
     @Override
     public boolean hasEmptyRoute() {
       return Pilot.this.afterCommands.isRouteEmpty();
-    }
-
-    @Override
-    public void setTargetAltitude(double altitudeInFt) {
-      Pilot.this.parent.setTargetAltitude((int) altitudeInFt);
     }
 
     @Override
@@ -438,40 +492,24 @@ public class Pilot {
     }
 
     @Override
-    public void setNavigator(INavigator navigator) {
-      Pilot.this.parent.setNavigator(navigator);
-    }
-
-    private boolean isBeforeRunwayThreshold() {
-      NewApproachInfo ai = Pilot.this.tryGetAssignedApproach();
-      double dist = Coordinates.getDistanceInNM(parent.getCoordinate(), ai.getThreshold().getCoordinate());
-      double hdg = Coordinates.getBearing(parent.getCoordinate(), ai.getThreshold().getCoordinate());
-      boolean ret;
-      if (dist < 3)
-        ret = false;
-      else {
-        ret = Headings.isBetween(ai.getThreshold().getCourse() - 70, hdg, ai.getThreshold().getCourse() + 70);
-      }
-      return ret;
+    public void setTargetAltitude(double altitudeInFt) {
+      Pilot.this.parent.setTargetAltitude((int) altitudeInFt);
     }
 
     @Override
-    public void setTargetHeading(double targetHeading) {
-      Pilot.this.parent.setTargetHeading(targetHeading);
+    public void setNavigator(INavigator navigator) {
+      Pilot.this.parent.setNavigator(navigator);
     }
-
 
     @Override
     public double getSpeed() {
       return Pilot.this.parent.getSpeed();
     }
 
-
     @Override
     public double getAltitude() {
       return Pilot.this.parent.getAltitude();
     }
-
 
     @Override
     public boolean isArrival() {
@@ -481,6 +519,11 @@ public class Pilot {
     @Override
     public Coordinate getTargetCoordinate() {
       return Pilot.this.targetCoordinate;
+    }
+
+    @Override
+    public void setTargetCoordinate(Coordinate coordinate) {
+      Pilot.this.targetCoordinate = coordinate;
     }
 
     @Override
@@ -494,7 +537,9 @@ public class Pilot {
     }
 
     @Override
-    public Approach getAssignedApproach() { return Pilot.this.tryGetAssignedApproach().getApproach();}
+    public Approach getAssignedApproach() {
+      return Pilot.this.tryGetAssignedApproach().getApproach();
+    }
 
     @Override
     public void setHoldBehavior(Navaid navaid, int inboundRadial, boolean leftTurn) {
@@ -507,13 +552,13 @@ public class Pilot {
     }
 
     @Override
-    public void setTargetCoordinate(Coordinate coordinate) {
-      Pilot.this.targetCoordinate = coordinate;
+    public double getTargetHeading() {
+      return Pilot.this.parent.getTargetHeading();
     }
 
     @Override
-    public double getTargetHeading() {
-      return Pilot.this.parent.getTargetHeading();
+    public void setTargetHeading(double targetHeading) {
+      Pilot.this.parent.setTargetHeading(targetHeading);
     }
 
     @Override
@@ -546,6 +591,19 @@ public class Pilot {
       Pilot.this.adjustTargetSpeed();
     }
 
+    private boolean isBeforeRunwayThreshold() {
+      NewApproachInfo ai = Pilot.this.tryGetAssignedApproach();
+      double dist = Coordinates.getDistanceInNM(parent.getCoordinate(), ai.getThreshold().getCoordinate());
+      double hdg = Coordinates.getBearing(parent.getCoordinate(), ai.getThreshold().getCoordinate());
+      boolean ret;
+      if (dist < 3)
+        ret = false;
+      else {
+        ret = Headings.isBetween(ai.getThreshold().getCourse() - 70, hdg, ai.getThreshold().getCourse() + 70);
+      }
+      return ret;
+    }
+
 
   }
 
@@ -557,37 +615,9 @@ public class Pilot {
     afterThreshold
   }
 
-  private enum CommandSource {
-    procedure,
-    atc,
-    route,
-    extension
-  }
+
 
   public static final double SPEED_TO_OVER_NAVAID_DISTANCE_MULTIPLIER = 0.007;
-  @XmlIgnore
-  public final Pilot4Command pilot4Command = new Pilot4Command();
-  @XmlIgnore
-  public final IPilot4Behavior pilot4Behavior = new Pilot4Behavior();
-  private final DelayedList<ISpeech> queue = new DelayedList<>(2, 7); //Min/max item delay
-  private final AfterCommandList afterCommands = new AfterCommandList();
-  private final Map<Atc, SpeechList> saidText = new HashMap<>();
-  @XmlIgnore
-  private Airplane.Airplane4Pilot parent;
-  private GoingAroundNotification.GoAroundReason gaReason = null;
-  private DivertInfo divertInfo;
-  private int altitudeOrderedByAtc;
-  private Atc atc;
-  private int secondsWithoutRadarContact;
-  private Coordinate targetCoordinate;
-  private Behavior behavior;
-  private Route assignedRoute;
-  private ActiveRunwayThreshold expectedRunwayThreshold;
-  private Navaid entryExitPoint;
-
-  private boolean isAfterGoAround = false;
-  @XmlIgnore
-  private PilotRecorder recorder;
 
   public static Pilot load(XElement tmp, Airplane.Airplane4Pilot parent) {
     Pilot ret = new Pilot();
@@ -644,6 +674,21 @@ public class Pilot {
     return ret;
   }
 
+  @XmlIgnore
+  public final Pilot4Command pilot4Command = new Pilot4Command();
+  @XmlIgnore
+  public final IPilot4Behavior pilot4Behavior = new Pilot4Behavior();
+
+  @XmlIgnore
+  private Airplane.Airplane4Pilot parent;
+  private GoingAroundNotification.GoAroundReason gaReason = null;
+  private DivertInfo divertInfo;
+  private Behavior behavior;
+
+  private boolean isAfterGoAround = false;
+  @XmlIgnore
+  private PilotRecorderModule recorder;
+
   public Pilot(Airplane.Airplane4Pilot parent, Navaid entryExitPoint, @Nullable ETime divertTime) {
 
     this.parent = parent;
@@ -665,38 +710,6 @@ public class Pilot {
 
   private Pilot() {
 
-  }
-
-  public Navaid getEntryExitPoint() {
-    return this.entryExitPoint;
-  }
-
-  public Route getAssignedRoute() {
-    return this.assignedRoute;
-  }
-
-  public void updateAssignedRouting(Route newRoute, ActiveRunwayThreshold expectedRunwayThreshold) {
-    this.expectedRunwayThreshold = expectedRunwayThreshold;
-    this.assignedRoute = newRoute;
-    this.afterCommands.clearRoute();
-
-    SpeechList<IFromAtc> cmds;
-    cmds = new SpeechList<>();
-    cmds.add(assignedRoute.getCommands());
-    expandThenCommands(cmds);
-    processSpeeches(cmds, CommandSource.procedure);
-  }
-
-  public Coordinate getTargetCoordinate() {
-    return targetCoordinate;
-  }
-
-  public void addNewSpeeches(SpeechList<IFromAtc> speeches) {
-    this.queue.newRandomDelay();
-    expandThenCommands(speeches);
-    for (ISpeech speech : speeches) {
-      this.queue.add(speech);
-    }
   }
 
   public void elapseSecond() {
@@ -735,9 +748,7 @@ public class Pilot {
       return "???";
   }
 
-  public Atc getTunedAtc() {
-    return this.atc;
-  }
+
 
   //TODO this should be in flight recorder class
   public String getBehaviorLogString() {
@@ -816,13 +827,7 @@ public class Pilot {
     LoadSave.saveField(tmp, this, "behavior");
   }
 
-  public boolean hasRadarContact() {
-    return secondsWithoutRadarContact == 0;
-  }
 
-  public ActiveRunwayThreshold getExpectedRunwayThreshold() {
-    return expectedRunwayThreshold;
-  }
 
   private void printAfterCommands() {
     System.out.println("## -- route ");
@@ -842,17 +847,6 @@ public class Pilot {
         this.parent.getCallsign().toString() + " - pilot.log",
         new FileSaver(Recorder.getRecorderFileName(parent.getCallsign().toString() + "_pilot.log")),
         " \t ");
-  }
-
-  private void requestRadarContactIfRequired() {
-    if (this.secondsWithoutRadarContact > 0) {
-      this.secondsWithoutRadarContact++;
-      if (this.secondsWithoutRadarContact % Global.REPEATED_RADAR_CONTACT_REQUEST_SECONDS == 0) {
-        this.say(
-            new GoodDayNotification(
-                this.parent.getCallsign(), this.parent.getSha().getAltitude(), this.parent.getSha().getTargetAltitude(), this.parent.isEmergency(), true));
-      }
-    }
   }
 
   /**
@@ -875,231 +869,6 @@ public class Pilot {
 
   }
 
-  private void abortHolding() {
-    if (this.parent.isArrival()) {
-      this.behavior = new ArrivalBehavior();
-      this.parent.setxState(Airplane.State.arrivingHigh);
-    } else {
-      this.behavior = new DepartureBehavior();
-      this.parent.setxState(Airplane.State.departingLow);
-    }
-    adjustTargetSpeed();
-  }
-
-  private void processNewSpeeches() {
-    SpeechList current = new SpeechList(this.queue.getAndElapse());
-
-    if (current.isEmpty()) return;
-
-    this.recorder.logProcessedCurrentSpeeches(current);
-
-    // if has not confirmed radar contact and the first command in the queue is not radar contact confirmation
-    if (this.secondsWithoutRadarContact > 0 && !(current.get(0) instanceof RadarContactConfirmationNotification)) {
-      say(new RequestRadarContactNotification());
-      this.queue.clear();
-    } else {
-      processSpeeches(current, CommandSource.atc);
-    }
-  }
-
-  private void processAfterSpeeches() {
-
-    SpeechList<IAtcCommand> cmds;
-
-    Coordinate targetCoordinate = this.targetCoordinate;
-    if (targetCoordinate == null && this.behavior instanceof HoldBehavior)
-      targetCoordinate = ((HoldBehavior) this.behavior).navaid.getCoordinate();
-
-    cmds = afterCommands.getAndRemoveSatisfiedCommands(
-        parent.getMe(), targetCoordinate, AfterCommandList.Type.extensions);
-    recorder.logProcessedAfterSpeeches(cmds, "extensions");
-    processSpeeches(cmds, CommandSource.extension);
-
-    cmds = afterCommands.getAndRemoveSatisfiedCommands(
-        parent.getMe(), targetCoordinate, AfterCommandList.Type.route);
-    recorder.logProcessedAfterSpeeches(cmds, "route");
-    processSpeeches(cmds, CommandSource.route);
-  }
-
-  private void processSpeeches(SpeechList<? extends IFromAtc> queue, CommandSource cs) {
-
-    Airplane.Airplane4Command plane = this.parent.getPlane4Command();
-    while (!queue.isEmpty()) {
-      IFromAtc cmd = queue.get(0);
-      if (cmd instanceof AfterCommand) {
-        processAfterSpeechWithConsequents(queue, cs);
-      } else {
-        processNormalSpeech(queue, cmd, cs, plane);
-      }
-    }
-  }
-
-  private void processNormalSpeech(
-      SpeechList<? extends IFromAtc> queue, IFromAtc cmd,
-      CommandSource cs, Airplane.Airplane4Command plane) {
-
-    ConfirmationResult cres = ApplicationManager.confirm(plane, cmd, cs == CommandSource.atc, true);
-    if (cres.rejection != null) {
-      // command was rejected
-      say(cres.rejection);
-    } else {
-      affectAfterCommands(cmd, cs);
-      // new commands from atc when needs to be confirmed, are confirmed
-      if (cs == CommandSource.atc && cres.confirmation != null)
-        say(cres.confirmation);
-      // command is applied
-      ApplicationResult ares = ApplicationManager.apply(plane, cmd);
-      assert ares.rejection == null : "This should not be rejected as was confirmed a few moments before.";
-      ares.informations.forEach(q -> say(q));
-    }
-
-    queue.removeAt(0);
-  }
-
-
-  private void affectAfterCommands(IFromAtc cmd, CommandSource cs) {
-    final Class[] lateralCommands = new Class[]{ProceedDirectCommand.class, ChangeHeadingCommand.class, HoldCommand.class};
-    switch (cs) {
-      case procedure:
-        // nothing
-        break;
-      case route:
-        // nothing
-        break;
-      case atc:
-
-        if (ConversionUtils.isInstanceOf(cmd, lateralCommands)) {
-          // rule 2
-          this.afterCommands.clearRoute();
-          this.afterCommands.clearExtensionsByConsequent(lateralCommands);
-        } else if (cmd instanceof ShortcutCommand) {
-          // rule 3
-          // does nothing as everything is done in ShortcutCommandApplication
-        } else if (cmd instanceof ChangeAltitudeCommand) {
-          // rule 4
-          ChangeAltitudeCommand tmp = (ChangeAltitudeCommand) cmd;
-          this.afterCommands.clearChangeAltitudeClass(tmp.getAltitudeInFt(), this.parent.isArrival());
-        } else if (cmd instanceof ChangeSpeedCommand) {
-          ChangeSpeedCommand tmp = (ChangeSpeedCommand) cmd;
-          if (tmp.isResumeOwnSpeed() == false) {
-            // rule 5
-            this.afterCommands.clearChangeSpeedClass(tmp.getSpeedInKts(), this.parent.isArrival(), AfterCommandList.Type.route);
-            this.afterCommands.clearChangeSpeedClass(tmp.getSpeedInKts(), this.parent.isArrival(), AfterCommandList.Type.extensions);
-          } else {
-            // rule 6
-            this.afterCommands.clearChangeSpeedClassOfRouteWithTransferConsequent(
-                null, this.parent.isArrival());
-            this.afterCommands.clearExtensionsByConsequent(ChangeSpeedCommand.class);
-          }
-        } else if (cmd instanceof ClearedToApproachCommand) {
-          // rule 12
-          this.afterCommands.clearAll();
-        }
-        break;
-      case extension:
-        if (ConversionUtils.isInstanceOf(cmd, lateralCommands)) {
-          // rule 7
-          this.afterCommands.clearRoute();
-        } else if (cmd instanceof ShortcutCommand) {
-          // rule 8
-          // does nothing as everything is done in ShortcutCommandApplication
-        } else if (cmd instanceof AfterAltitudeCommand) {
-          // rule 9
-          ChangeAltitudeCommand tmp = (ChangeAltitudeCommand) cmd;
-          this.afterCommands.clearChangeAltitudeClass(tmp.getAltitudeInFt(), this.parent.isArrival());
-        } else if (cmd instanceof ChangeSpeedCommand) {
-          ChangeSpeedCommand tmp = (ChangeSpeedCommand) cmd;
-          if (tmp.isResumeOwnSpeed() == false) {
-            // rule 10
-            this.afterCommands.clearChangeSpeedClass(tmp.getSpeedInKts(), this.parent.isArrival(), AfterCommandList.Type.extensions);
-          } else {
-            // rule 11
-            this.afterCommands.clearChangeSpeedClassOfRouteWithTransferConsequent(
-                null, this.parent.isArrival());
-            this.afterCommands.clearExtensionsByConsequent(ChangeSpeedCommand.class);
-          }
-        } else if (cmd instanceof ClearedToApproachCommand) {
-          // rule 13
-          this.afterCommands.clearAll();
-        }
-        break;
-      default:
-        throw new UnsupportedOperationException();
-    }
-  }
-
-  private void processAfterSpeechWithConsequents(IList<? extends ISpeech> queue, CommandSource cs) {
-
-    Airplane.State[] unableProcessAfterCommandsStates = {
-        Airplane.State.flyingIaf2Faf,
-        Airplane.State.approachEnter,
-        Airplane.State.approachDescend,
-        Airplane.State.longFinal,
-        Airplane.State.shortFinal,
-        Airplane.State.landed,
-        Airplane.State.takeOffRoll,
-        Airplane.State.takeOffGoAround
-    };
-
-    AfterCommand af = (AfterCommand) queue.get(0);
-    queue.removeAt(0);
-
-    if (cs == CommandSource.atc && parent.getState().is(unableProcessAfterCommandsStates)) {
-      ISpeech rej = new Rejection("Unable to process after-command during approach/take-off.", af);
-      say(rej);
-      return;
-    }
-
-    ConfirmationResult cres;
-    boolean sayConfirmations = cs == CommandSource.atc;
-
-    cres = ApplicationManager.confirm(plane, af, true, false);
-    if (sayConfirmations) say(cres.confirmation);
-
-    while (queue.isEmpty() == false) {
-      ISpeech sp = queue.get(0);
-      if (sp instanceof AfterCommand)
-        break;
-      else {
-        assert sp instanceof IAtcCommand : "Instance of " + sp.getClass().getName() + " is not IAtcCommand";
-        IAtcCommand cmd = (IAtcCommand) sp;
-        if (cmd instanceof AfterCommand)
-          break;
-
-        queue.removeAt(0);
-        cres = ApplicationManager.confirm(plane, cmd, true, false);
-        if (sayConfirmations) say(cres.confirmation);
-
-        if (cs == CommandSource.procedure) {
-          afterCommands.addRoute(af, cmd);
-        } else
-          afterCommands.addExtension(af, cmd);
-      }
-    }
-  }
-
-  private void say(ISpeech speech) {
-    // if no tuned atc, nothing is said
-    if (atc == null) return;
-
-    if (saidText.containsKey(atc) == false) {
-      saidText.put(atc, new SpeechList());
-    }
-
-    saidText.get(atc).add(speech);
-  }
-
-  private void flushSaidTextToAtc() {
-    for (Atc a : saidText.keySet()) {
-      SpeechList saidTextToAtc = saidText.get(a);
-      if (!saidTextToAtc.isEmpty()) {
-        parent.passMessageToAtc(a, saidText.get(a));
-        saidText.put(a, new SpeechList());
-        // here new list must be created
-        // the old one is send to messenger for further processing
-      }
-    }
-  }
 
   private int getIndexOfNavaidInCommands(Navaid navaid) {
     for (int i = 0; i < this.queue.size(); i++) {
@@ -1112,59 +881,6 @@ public class Pilot {
     }
     return -1;
 
-  }
-
-  private void expandThenCommands(SpeechList<IFromAtc> speeches) {
-    if (speeches.isEmpty()) {
-      return;
-    }
-
-    for (int i = 0; i < speeches.size(); i++) {
-      if (speeches.get(i) instanceof ThenCommand) {
-        if (i == 0 || i == speeches.size() - 1) {
-          parent.passMessageToAtc(
-              atc,
-              new IllegalThenCommandRejection("{Then} command cannot be first or last in queue. The whole command block is ignored.")
-          );
-          speeches.clear();
-          return;
-        }
-        IAtcCommand prev = (IAtcCommand) speeches.get(i - 1);
-
-        AfterCommand n; // new
-        if (prev instanceof ProceedDirectCommand) {
-          n = new AfterNavaidCommand(((ProceedDirectCommand) prev).getNavaid());
-        } else if (prev instanceof ChangeAltitudeCommand) {
-          ChangeAltitudeCommand ca = (ChangeAltitudeCommand) prev;
-          AfterAltitudeCommand.ERestriction restriction;
-          switch (ca.getDirection()) {
-            case any:
-              restriction = AfterAltitudeCommand.ERestriction.exact;
-              break;
-            case climb:
-              restriction = AfterAltitudeCommand.ERestriction.andAbove;
-              break;
-            case descend:
-              restriction = AfterAltitudeCommand.ERestriction.andBelow;
-              break;
-            default:
-              throw new UnsupportedOperationException();
-          }
-          n = new AfterAltitudeCommand(ca.getAltitudeInFt(), restriction);
-        } else if (prev instanceof ChangeSpeedCommand) {
-          n = new AfterSpeedCommand(((ChangeSpeedCommand) prev).getSpeedInKts());
-        } else if (prev instanceof ChangeHeadingCommand) {
-          n = new AfterHeadingCommand(((ChangeHeadingCommand) prev).getHeading());
-        } else {
-          parent.passMessageToAtc(atc,
-              new IllegalThenCommandRejection("{Then} command is antecedent a strange command, it does not make sense. The whole command block is ignored."));
-          speeches.clear();
-          return;
-        }
-        n.setDerivationSource(prev);
-        speeches.set(i, n);
-      }
-    }
   }
 
   private void adjustTargetAltitude() {
@@ -1282,52 +998,4 @@ public class Pilot {
     this.behavior.fly(this.pilot4Behavior);
   }
 
-}
-
-class PilotRecorder extends Recorder {
-
-  public PilotRecorder(String recorderName, AbstractSaver os, String fromTimeSeparator) {
-    super(recorderName, os, fromTimeSeparator);
-  }
-
-  public void logPostponedAfterSpeeches(AfterCommandList afterCommands) {
-    IReadOnlyList<Tuple<AfterCommand, IAtcCommand>> tmp;
-    tmp = afterCommands.getAsList(AfterCommandList.Type.route);
-    _logPosponed(tmp, "route");
-    tmp = afterCommands.getAsList(AfterCommandList.Type.extensions);
-    _logPosponed(tmp, "extensions");
-  }
-
-  public void logProcessedAfterSpeeches(SpeechList<IAtcCommand> cmds, String extensions) {
-    EStringBuilder sb = new EStringBuilder();
-    sb.appendLine("Processed after speeches of " + extensions);
-    for (int i = 0; i < cmds.size(); i++) {
-      IAtcCommand cmd = cmds.get(i);
-      sb.appendLine("\t").appendLine(cmd.toString()).appendLine();
-    }
-    super.writeLine(sb.toString());
-  }
-
-  public void logProcessedCurrentSpeeches(SpeechList current) {
-    EStringBuilder sb = new EStringBuilder();
-    sb.appendLine("Current processed speeches");
-    for (int i = 0; i < current.size(); i++) {
-      ISpeech sp = current.get(i);
-      sb.append("\t").append(sp.toString()).appendLine();
-    }
-    super.writeLine(sb.toString());
-  }
-
-  private void _logPosponed(IReadOnlyList<Tuple<AfterCommand, IAtcCommand>> tmp, String type) {
-    EStringBuilder sb = new EStringBuilder();
-    sb.appendLine("Postponed " + type + " after commands");
-    for (Tuple<AfterCommand, IAtcCommand> tuple : tmp) {
-      sb.append("\t");
-      sb.append(tuple.getA().toString());
-      sb.append(" -> ");
-      sb.append(tuple.getB().toString());
-      sb.appendLine();
-    }
-    super.writeLine(sb.toString());
-  }
 }
