@@ -64,19 +64,19 @@
 //  private eResult updateAltitude(IPilot4Behavior pilot) {
 //    eResult ret;
 //    double distance = Coordinates.getDistanceInNM(pilot.getCoordinate(), navaid.getCoordinate());
-//    if (pilot.getTargetAltitude() < altitude) // already passed 'navaid'
+//    if (pilot.getAltitudeOrders() < altitude) // already passed 'navaid'
 //      distance = -distance;
 //
 //    double newAltitude = slopeAngle * distance / 60;
 //    newAltitude = UnitProvider.nmToFt(newAltitude) + altitude;
-//    newAltitude = Math.min(newAltitude, pilot.getTargetAltitude());
+//    newAltitude = Math.min(newAltitude, pilot.getAltitudeOrders());
 //
 //    if (pilot.getAltitude() - newAltitude > TOO_HIGH_ALTITUDE_THRESHOLD)
 //      ret = eResult.altitudeTooHigh;
 //    else
 //      ret = eResult.ok;
 //
-//    pilot.setTargetAltitude(newAltitude);
+//    pilot.setAltitudeOrders(newAltitude);
 //    return ret;
 //  }
 //}

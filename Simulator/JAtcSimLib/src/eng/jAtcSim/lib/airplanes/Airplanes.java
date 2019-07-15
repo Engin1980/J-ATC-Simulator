@@ -35,10 +35,10 @@ public class Airplanes {
   public static Airplane tryGetByCallsingOrNumber(Iterable<Airplane> planes, String callsignOrNumber) {
     if (StringUtils.isNullOrEmpty(callsignOrNumber)) return null;
 
-    Airplane ret = CollectionUtils.tryGetFirst(planes, p -> p.getCallsign().toString(false).equals(callsignOrNumber));
+    Airplane ret = CollectionUtils.tryGetFirst(planes, p -> p.getFlight().getCallsign().toString(false).equals(callsignOrNumber));
     if (ret == null) {
       List<Airplane> byPart = CollectionUtils.where(planes,
-          p -> p.getCallsign().getNumber().equals(callsignOrNumber));
+          p -> p.getFlight().getCallsign().getNumber().equals(callsignOrNumber));
       if (byPart.size() == 1)
         ret = byPart.get(0);
     }
@@ -57,7 +57,7 @@ public class Airplanes {
   }
 
   public static Airplane tryGetByCallsign(IReadOnlyList<Airplane> planes, Callsign callsign) {
-    return planes.tryGetFirst(q -> q.getCallsign().equals(callsign));
+    return planes.tryGetFirst(q -> q.getFlight().getCallsign().equals(callsign));
   }
 
   public static Airplane getByCallsing(IReadOnlyList<Airplane> planes, String callsign) {
@@ -66,7 +66,7 @@ public class Airplanes {
   }
 
   public static Airplane getByCallsing(IReadOnlyList<Airplane> planes, Callsign callsign) {
-    return planes.getFirst(q -> q.getCallsign().equals(callsign));
+    return planes.getFirst(q -> q.getFlight().getCallsign().equals(callsign));
   }
 
   public static Airplane tryGetBySqwk(IReadOnlyList<Airplane> planes, String sqwk) {
@@ -86,7 +86,7 @@ public class Airplanes {
 
   public static void evaluateAirproxes(IReadOnlyList<Airplane> planes) {
     for (Airplane p : planes) {
-      p.resetAirprox();
+      p.getMrvaAirproxModule().resetAirprox();
     }
 
     for (int i = 0; i < planes.size() - 1; i++) {
@@ -110,8 +110,8 @@ public class Airplanes {
             Acc.prm().getResponsibleAtc(b) == Acc.atcApp()))
           at = AirproxType.partial;
 
-        a.increaseAirprox(at);
-        b.increaseAirprox(at);
+        a.getMrvaAirproxModule().increaseAirprox(at);
+        b.getMrvaAirproxModule().increaseAirprox(at);
       }
     }
   }

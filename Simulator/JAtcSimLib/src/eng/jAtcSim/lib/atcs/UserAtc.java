@@ -204,8 +204,8 @@ public class UserAtc extends Atc {
       if (threshold == plane.getExpectedRunwayThreshold())
         route = plane.getAssigneRoute();
       else
-        route = plane.isArrival()
-            ? threshold.getArrivalRouteForPlane(plane.getType(), plane.getTargetAltitude(), plane.getEntryExitFix(), true)
+        route = plane.getFlight().isArrival()
+            ? threshold.getArrivalRouteForPlane(plane.getType(), plane.getAdvanced().getTargetAltitude(), plane.getEntryExitFix(), true)
             : threshold.getDepartureRouteForPlane(plane.getType(), plane.getEntryExitFix(), true);
     } else if (m.group(3).toUpperCase().equals("V")) {
       route = Route.createNewVectoringByFix(plane.getEntryExitFix());

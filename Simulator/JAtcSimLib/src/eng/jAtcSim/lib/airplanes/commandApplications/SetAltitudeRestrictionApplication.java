@@ -1,6 +1,7 @@
 package eng.jAtcSim.lib.airplanes.commandApplications;
 
 import eng.jAtcSim.lib.airplanes.Airplane;
+import eng.jAtcSim.lib.airplanes.pilots.Pilot;
 import eng.jAtcSim.lib.global.Restriction;
 import eng.jAtcSim.lib.speaking.IFromAirplane;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.Rejection;
@@ -22,13 +23,13 @@ public class SetAltitudeRestrictionApplication extends CommandApplication<SetAlt
   }
 
   @Override
-  protected IFromAirplane checkCommandSanity(Airplane.Airplane4Command plane, SetAltitudeRestriction c) {
+  protected IFromAirplane checkCommandSanity(Pilot.Pilot5Command pilot, SetAltitudeRestriction c) {
     IFromAirplane ret;
 
     if (c.getRestriction() != null &&
         (c.getRestriction().direction == Restriction.eDirection.atLeast ||
             c.getRestriction().direction == Restriction.eDirection.exactly) &&
-     c.getRestriction().value > plane.getType().maxAltitude){
+     c.getRestriction().value > pilot.getPlane().getType().maxAltitude){
       ret = new Rejection("Ordered minimal altitude limit is higher than our maximal altitude.", c);
       return ret;
     }
@@ -37,8 +38,8 @@ public class SetAltitudeRestrictionApplication extends CommandApplication<SetAlt
   }
 
   @Override
-  protected ApplicationResult adjustAirplane(Airplane.Airplane4Command plane, SetAltitudeRestriction c) {
-    plane.getPilot().setAltitudeRestriction(c.getRestriction());
+  protected ApplicationResult adjustAirplane(Pilot.Pilot5Command pilot, SetAltitudeRestriction c) {
+    pilot.setAltitudeRestriction(c.getRestriction());
     return ApplicationResult.getEmpty();
   }
 }

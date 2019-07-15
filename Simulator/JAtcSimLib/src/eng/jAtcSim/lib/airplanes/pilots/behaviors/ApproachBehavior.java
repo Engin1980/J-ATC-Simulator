@@ -72,8 +72,8 @@
 //    super.setBehaviorAndState(
 //        new TakeOffBehavior(null), Airplane.State.takeOffGoAround);
 //
-//    parent.setTargetSpeed(parent.getKind().vDep);
-//    parent.setTargetAltitude((int) parent.getAltitude());
+//    parent.setSpeedOrders(parent.getKind().vDep);
+//    parent.setAltitudeOrders((int) parent.getAltitude());
 //    parent.setTargetHeading(approach.getThreshold().getCourse());
 //
 //    Pilot.this.afterCommands.clearAll();
@@ -133,7 +133,7 @@
 //  }
 //
 //  private boolean updateAltitudeOnApproach(boolean checkIfIsAfterThreshold) {
-//    int currentTargetAlttiude = parent.getTargetAltitude();
+//    int currentTargetAlttiude = parent.getAltitudeOrders();
 //    double distToLand;
 //    int newAltitude;
 //    if (location == Pilot.ApproachLocation.afterThreshold) {
@@ -145,8 +145,8 @@
 //          if (location == Pilot.ApproachLocation.beforeFaf) {
 //            // TODO check and evaluate
 //            // experimental, trying to fix descend rate after FAF to lower values
-//            // newAltitude = parent.getTargetAltitude();
-//            newAltitude = (int) Math.max(parent.getTargetAltitude(), parent.getAltitude() - 1000);
+//            // newAltitude = parent.getAltitudeOrders();
+//            newAltitude = (int) Math.max(parent.getAltitudeOrders(), parent.getAltitude() - 1000);
 //          } else {
 //            double dist = Coordinates.getDistanceInNM(parent.getCoordinate(), approach.getThreshold().getCoordinate());
 //            double delta = dist * this.approach.getSlope();
@@ -155,7 +155,7 @@
 //          break;
 //        default:
 //          if (location == Pilot.ApproachLocation.beforeFaf)
-//            newAltitude = parent.getTargetAltitude();
+//            newAltitude = parent.getAltitudeOrders();
 //          else {
 //            double dist = Coordinates.getDistanceInNM(parent.getCoordinate(), approach.getMapt());
 //            double delta = dist * this.approach.getSlope();
@@ -163,13 +163,13 @@
 //          }
 //      }
 //      newAltitude = Math.max(newAltitude, minAltByState);
-//      newAltitude = Math.min(newAltitude, parent.getTargetAltitude());
+//      newAltitude = Math.min(newAltitude, parent.getAltitudeOrders());
 //      if (location == Pilot.ApproachLocation.beforeMapt)
 //        newAltitude = Math.max(newAltitude, approach.getDecisionAltitude());
 //      newAltitude = Math.max(newAltitude, Acc.airport().getAltitude());
 //    }
-//    parent.setTargetAltitude(newAltitude);
-//    boolean ret = (location != Pilot.ApproachLocation.beforeFaf) && (currentTargetAlttiude > parent.getTargetAltitude());
+//    parent.setAltitudeOrders(newAltitude);
+//    boolean ret = (location != Pilot.ApproachLocation.beforeFaf) && (currentTargetAlttiude > parent.getAltitudeOrders());
 //
 //    return ret;
 //  }

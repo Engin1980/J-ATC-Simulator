@@ -20,6 +20,7 @@ import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.AirplaneType;
+import eng.jAtcSim.lib.airplanes.Callsign;
 import eng.jAtcSim.lib.airplanes.commandApplications.ApplicationManager;
 import eng.jAtcSim.lib.airplanes.commandApplications.ApplicationResult;
 import eng.jAtcSim.lib.airplanes.commandApplications.ConfirmationResult;
@@ -72,6 +73,119 @@ public class Pilot {
     public int getMinutesLeft() {
       int diff = divertTime.getTotalMinutes() - Acc.now().getTotalMinutes();
       return diff;
+    }
+  }
+
+  public class Pilot5Command{
+
+    public class Pilot5AirplaneCommand{
+
+      public Airplane.State getState() {
+
+      }
+
+      public int getAltitude() {
+      }
+
+      public AirplaneType getType() {
+      }
+
+      public int getTargetAltitude() {
+      }
+
+      public double getHeading() {
+
+      }
+
+      public Coordinate getCoordinate() {
+      }
+
+      public boolean isEmergency() {
+      }
+
+      public Restriction getSpeedRestriction() {
+      }
+    }
+
+    public class Pilot5FlightCommand{
+
+      public boolean isArrival() {
+      }
+
+      public Callsign getCallsign() {
+      }
+    }
+
+    public Pilot5AirplaneCommand getPlane() {
+      return null;
+    }
+
+    public void setTargetAltitude(int altitudeInFt) {
+    }
+
+    public void abortHolding() {
+      
+    }
+
+    public void setTargetCoordinate(Coordinate coordinate) {
+    }
+
+    public void setTargetCoordinate(Navaid navaid) {
+      assert navaid != null;
+      this.setTargetCoordinate(navaid.getCoordinate());
+    }
+
+    public void setTargetHeading(double targetHeading, boolean leftTurn) {
+    }
+
+    public void setSpeedRestriction(Restriction speedRestriction) {
+    }
+
+    public void processOrderedGoAround() {
+    }
+
+    public boolean isFlyingOverNavaidInFuture(Navaid navaid) {
+    }
+
+    public void applyShortcut(Navaid navaid) {
+    }
+
+    public void startTakeOff(ActiveRunwayThreshold runwayThreshold) {
+      plane.setTakeOffPosition(runwayThreshold.getCoordinate());
+      plane.getPilot().setTakeOffBehavior(runwayThreshold);
+    }
+
+    public void setHoldBehavior(Navaid navaid, int inboundRadial, boolean leftTurn) {
+    }
+
+    public void setHasRadarContact() {
+    }
+
+    public Pilot5FlightCommand getFlight() {
+    }
+
+    public int getDivertMinutesLeft() {
+    }
+
+    public void setAltitudeRestriction(Restriction restriction) {
+    }
+
+    public void processOrderedDivert() {
+    }
+
+    public void setResponsibleAtc(Atc a) {
+    }
+
+    public void say(ISpeech s) {
+    }
+
+    public void adviceGoAroundReasonToAtcIfAny() {
+    }
+
+    public void setRoute(Route route, ActiveRunwayThreshold expectedRunwayThreshold) {
+    }
+
+    public void setApproachBehavior(NewApproachInfo nai) {
     }
   }
 
@@ -736,7 +850,7 @@ public class Pilot {
       if (this.secondsWithoutRadarContact % Global.REPEATED_RADAR_CONTACT_REQUEST_SECONDS == 0) {
         this.say(
             new GoodDayNotification(
-                this.parent.getCallsign(), this.parent.getAltitude(), this.parent.getTargetAltitude(), this.parent.isEmergency(), true));
+                this.parent.getCallsign(), this.parent.getSha().getAltitude(), this.parent.getSha().getTargetAltitude(), this.parent.isEmergency(), true));
       }
     }
   }
@@ -915,7 +1029,6 @@ public class Pilot {
   }
 
   private void processAfterSpeechWithConsequents(IList<? extends ISpeech> queue, CommandSource cs) {
-    Airplane.Airplane4Command plane = this.parent.getPlane4Command();
 
     Airplane.State[] unableProcessAfterCommandsStates = {
         Airplane.State.flyingIaf2Faf,
@@ -931,7 +1044,7 @@ public class Pilot {
     AfterCommand af = (AfterCommand) queue.get(0);
     queue.removeAt(0);
 
-    if (cs == CommandSource.atc && plane.getState().is(unableProcessAfterCommandsStates)) {
+    if (cs == CommandSource.atc && parent.getState().is(unableProcessAfterCommandsStates)) {
       ISpeech rej = new Rejection("Unable to process after-command during approach/take-off.", af);
       say(rej);
       return;

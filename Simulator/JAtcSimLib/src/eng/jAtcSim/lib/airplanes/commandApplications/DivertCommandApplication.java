@@ -1,6 +1,7 @@
 package eng.jAtcSim.lib.airplanes.commandApplications;
 
 import eng.jAtcSim.lib.airplanes.Airplane;
+import eng.jAtcSim.lib.airplanes.pilots.Pilot;
 import eng.jAtcSim.lib.speaking.IFromAirplane;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.Rejection;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.DivertCommand;
@@ -8,10 +9,10 @@ import eng.jAtcSim.lib.speaking.fromAtc.commands.DivertCommand;
 public class DivertCommandApplication extends CommandApplication<DivertCommand> {
 
   @Override
-  protected IFromAirplane checkCommandSanity(Airplane.Airplane4Command plane, DivertCommand c) {
+  protected IFromAirplane checkCommandSanity(Pilot.Pilot5Command pilot, DivertCommand c) {
     IFromAirplane ret = null;
 
-    if (plane.isArrival() == false)
+    if (pilot.getFlight().isArrival() == false)
       ret = new Rejection("We are departure, we will not divert.", c);
 
     return ret;
@@ -31,10 +32,10 @@ public class DivertCommandApplication extends CommandApplication<DivertCommand> 
   }
 
   @Override
-  protected ApplicationResult adjustAirplane(Airplane.Airplane4Command plane, DivertCommand c) {
+  protected ApplicationResult adjustAirplane(Pilot.Pilot5Command pilot, DivertCommand c) {
     ApplicationResult ret = new ApplicationResult();
 
-    plane.getPilot().processOrderedDivert();
+    pilot.processOrderedDivert();
 
     return ret;
   }

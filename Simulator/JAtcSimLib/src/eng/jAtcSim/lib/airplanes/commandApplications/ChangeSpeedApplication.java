@@ -3,6 +3,7 @@ package eng.jAtcSim.lib.airplanes.commandApplications;
 import eng.eSystem.geo.Coordinates;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
+import eng.jAtcSim.lib.airplanes.pilots.Pilot;
 import eng.jAtcSim.lib.global.Restriction;
 import eng.jAtcSim.lib.speaking.IFromAirplane;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.Rejection;
@@ -22,24 +23,24 @@ public class ChangeSpeedApplication extends CommandApplication<ChangeSpeedComman
   }
 
   @Override
-  protected IFromAirplane checkCommandSanity(Airplane.Airplane4Command plane, ChangeSpeedCommand c) {
+  protected IFromAirplane checkCommandSanity(Pilot.Pilot5Command pilot, ChangeSpeedCommand c) {
     IFromAirplane ret;
 
     if (c.isResumeOwnSpeed() == false) {
       // not resume speed
 
       Restriction sr = c.getSpeedRestriction();
-      boolean isInApproach = plane.getState().is(
+      boolean isInApproach = pilot.getPlane().getState().is(
           Airplane.State.approachEnter,
           Airplane.State.approachDescend
       );
 
-      int cMax = !isInApproach ? plane.getType().vMaxClean : plane.getType().vMaxApp;
-      int cMin = !isInApproach ? plane.getType().vMinClean : plane.getType().vMinApp;
+      int cMax = !isInApproach ? pilot.getPlane().getType().vMaxClean : pilot.getPlane().getType().vMaxApp;
+      int cMin = !isInApproach ? pilot.getPlane().getType().vMinClean : pilot.getPlane().getType().vMinApp;
       // next "if" allows speed under vMinClean (like flaps-1) near the FAF
-      if (!isInApproach && Coordinates.getDistanceInNM(plane.getCoordinate(), Acc.airport().getLocation()) < 20) {
+      if (!isInApproach && Coordinates.getDistanceInNM(pilot.getPlane().getCoordinate(), Acc.airport().getLocation()) < 20) {
         //cMin = (int) (cMin * 0.85);
-        cMin = plane.getType().vMaxApp;
+        cMin = pilot.getPlane().getType().vMaxApp;
       }
 
       if (sr.direction != Restriction.eDirection.atMost && sr.value > cMax) {
@@ -56,11 +57,11 @@ public class ChangeSpeedApplication extends CommandApplication<ChangeSpeedComman
   }
 
   @Override
-  protected ApplicationResult adjustAirplane(Airplane.Airplane4Command plane, ChangeSpeedCommand c) {
+  protected ApplicationResult adjustAirplane(Pilot.Pilot5Command pilot, ChangeSpeedCommand c) {
     if (c.isResumeOwnSpeed()) {
-      plane.getPilot().setSpeedRestriction(null);
+      pilot.setSpeedRestriction(null);
     } else {
-      plane.getPilot().setSpeedRestriction(c.getSpeedRestriction());
+      pilot.setSpeedRestriction(c.getSpeedRestriction());
     }
     return ApplicationResult.getEmpty();
   }

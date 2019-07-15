@@ -1,6 +1,7 @@
 package eng.jAtcSim.lib.airplanes.commandApplications;
 
 import eng.jAtcSim.lib.airplanes.Airplane;
+import eng.jAtcSim.lib.airplanes.pilots.Pilot;
 import eng.jAtcSim.lib.speaking.IFromAirplane;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ClearedForTakeoffCommand;
 
@@ -27,14 +28,13 @@ public class ClearedForTakeOffCommandApplication extends CommandApplication<Clea
   }
 
   @Override
-  protected IFromAirplane checkCommandSanity(Airplane.Airplane4Command plane, ClearedForTakeoffCommand c) {
+  protected IFromAirplane checkCommandSanity(Pilot.Pilot5Command pilot, ClearedForTakeoffCommand c) {
     return null;
   }
 
   @Override
-  protected ApplicationResult adjustAirplane(Airplane.Airplane4Command plane, ClearedForTakeoffCommand c) {
-    plane.setTakeOffPosition(c.getRunwayThreshold().getCoordinate());
-    plane.getPilot().setTakeOffBehavior(c.getRunwayThreshold());
+  protected ApplicationResult adjustAirplane(Pilot.Pilot5Command pilot, ClearedForTakeoffCommand c) {
+    pilot.startTakeOff(c.getRunwayThreshold());
     return ApplicationResult.getEmpty();
   }
 }

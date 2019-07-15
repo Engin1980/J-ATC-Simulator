@@ -3,6 +3,7 @@ package eng.jAtcSim.lib.airplanes.commandApplications;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.eSystem.geo.Coordinate;
+import eng.jAtcSim.lib.airplanes.pilots.Pilot;
 import eng.jAtcSim.lib.global.Headings;
 import eng.jAtcSim.lib.global.HeadingsNew;
 import eng.jAtcSim.lib.speaking.IFromAirplane;
@@ -11,7 +12,7 @@ import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeHeadingCommand;
 public class ChangeHeadingApplication extends CommandApplication<ChangeHeadingCommand> {
 
   @Override
-  protected IFromAirplane checkCommandSanity(Airplane.Airplane4Command plane, ChangeHeadingCommand c) {
+  protected IFromAirplane checkCommandSanity(Pilot.Pilot5Command pilot, ChangeHeadingCommand c) {
     return null;
   }
 
@@ -30,15 +31,15 @@ public class ChangeHeadingApplication extends CommandApplication<ChangeHeadingCo
   }
 
   @Override
-  protected ApplicationResult adjustAirplane(Airplane.Airplane4Command plane, ChangeHeadingCommand c) {
-    if (plane.getState() == Airplane.State.holding)
-      plane.getPilot().abortHolding();
+  protected ApplicationResult adjustAirplane(Pilot.Pilot5Command pilot, ChangeHeadingCommand c) {
+    if (pilot.getPlane().getState() == Airplane.State.holding)
+      pilot.abortHolding();
 
-    plane.getPilot().setTargetCoordinate((Coordinate)null);
+    pilot.setTargetCoordinate((Coordinate)null);
 
     double targetHeading;
     if (c.isCurrentHeading()) {
-      targetHeading = plane.getHeading();
+      targetHeading = pilot.getPlane().getHeading();
     } else {
       targetHeading =
           Headings.add(
@@ -49,14 +50,14 @@ public class ChangeHeadingApplication extends CommandApplication<ChangeHeadingCo
 
     if (c.getDirection() == ChangeHeadingCommand.eDirection.any) {
       leftTurn
-          = (HeadingsNew.getBetterDirectionToTurn(plane.getHeading(), c.getHeading()) == ChangeHeadingCommand.eDirection.left);
+          = (HeadingsNew.getBetterDirectionToTurn(pilot.getPlane().getHeading(), c.getHeading()) == ChangeHeadingCommand.eDirection.left);
     } else {
       leftTurn
           = c.getDirection() == ChangeHeadingCommand.eDirection.left;
     }
 
 
-    plane.getPilot().setTargetHeading(targetHeading, leftTurn);
+    pilot.setTargetHeading(targetHeading, leftTurn);
 
     return ApplicationResult.getEmpty();
   }

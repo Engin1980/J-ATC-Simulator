@@ -1,6 +1,7 @@
 package eng.jAtcSim.lib.airplanes.commandApplications;
 
 import eng.jAtcSim.lib.airplanes.Airplane;
+import eng.jAtcSim.lib.airplanes.pilots.Pilot;
 import eng.jAtcSim.lib.speaking.IFromAirplane;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.Rejection;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ProceedDirectCommand;
@@ -22,7 +23,7 @@ public class ProceedDirectApplication extends CommandApplication<ProceedDirectCo
   }
 
   @Override
-  protected IFromAirplane checkCommandSanity(Airplane.Airplane4Command plane, ProceedDirectCommand c) {
+  protected IFromAirplane checkCommandSanity(Pilot.Pilot5Command pilot, ProceedDirectCommand c) {
     IFromAirplane ret = null;
 
     if (c.getNavaid() == null)
@@ -33,12 +34,12 @@ public class ProceedDirectApplication extends CommandApplication<ProceedDirectCo
   }
 
   @Override
-  protected ApplicationResult adjustAirplane(Airplane.Airplane4Command plane, ProceedDirectCommand c) {
-    if (plane.getState() == Airplane.State.holding) {
-      plane.getPilot().abortHolding();
+  protected ApplicationResult adjustAirplane(Pilot.Pilot5Command pilot, ProceedDirectCommand c) {
+    if (pilot.getPlane().getState() == Airplane.State.holding) {
+      pilot.abortHolding();
     }
 
-    plane.getPilot().setTargetCoordinate(c.getNavaid());
+    pilot.setTargetCoordinate(c.getNavaid());
     return ApplicationResult.getEmpty();
   }
 }

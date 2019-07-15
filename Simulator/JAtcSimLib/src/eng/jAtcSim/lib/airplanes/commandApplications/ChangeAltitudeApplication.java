@@ -1,6 +1,7 @@
 package eng.jAtcSim.lib.airplanes.commandApplications;
 
 import eng.jAtcSim.lib.airplanes.Airplane;
+import eng.jAtcSim.lib.airplanes.pilots.Pilot;
 import eng.jAtcSim.lib.speaking.IFromAirplane;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.Rejection;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeAltitudeCommand;
@@ -21,22 +22,22 @@ public class ChangeAltitudeApplication extends CommandApplication<ChangeAltitude
   }
 
   @Override
-  protected IFromAirplane checkCommandSanity(Airplane.Airplane4Command plane, ChangeAltitudeCommand c) {
+  protected IFromAirplane checkCommandSanity(Pilot.Pilot5Command pilot, ChangeAltitudeCommand c) {
     IFromAirplane ret;
 
-    if ((c.getDirection() == ChangeAltitudeCommand.eDirection.climb) && (plane.getAltitude() > c.getAltitudeInFt())) {
+    if ((c.getDirection() == ChangeAltitudeCommand.eDirection.climb) && (pilot.getPlane().getAltitude() > c.getAltitudeInFt())) {
       ret = new Rejection("we are higher", c);
-      if (plane.getTargetAltitude() < c.getAltitudeInFt())
-        plane.getPilot().setTargetAltitude(c.getAltitudeInFt());
+      if (pilot.getPlane().getTargetAltitude() < c.getAltitudeInFt())
+        pilot.setTargetAltitude(c.getAltitudeInFt());
       return ret;
-    } else if ((c.getDirection() == ChangeAltitudeCommand.eDirection.descend) && (plane.getAltitude() < c.getAltitudeInFt())) {
-      if (plane.getTargetAltitude() > c.getAltitudeInFt())
-        plane.getPilot().setTargetAltitude(c.getAltitudeInFt());
+    } else if ((c.getDirection() == ChangeAltitudeCommand.eDirection.descend) && (pilot.getPlane().getAltitude() < c.getAltitudeInFt())) {
+      if (pilot.getPlane().getTargetAltitude() > c.getAltitudeInFt())
+        pilot.setTargetAltitude(c.getAltitudeInFt());
       ret = new Rejection("we are lower", c);
       return ret;
     }
 
-    if (c.getAltitudeInFt() > plane.getType().maxAltitude) {
+    if (c.getAltitudeInFt() > pilot.getPlane().getType().maxAltitude) {
       ret = new Rejection("too high", c);
       return ret;
     }
@@ -45,8 +46,8 @@ public class ChangeAltitudeApplication extends CommandApplication<ChangeAltitude
   }
 
   @Override
-  protected ApplicationResult adjustAirplane(Airplane.Airplane4Command plane, ChangeAltitudeCommand c) {
-    plane.getPilot().setTargetAltitude(c.getAltitudeInFt());
+  protected ApplicationResult adjustAirplane(Pilot.Pilot5Command pilot, ChangeAltitudeCommand c) {
+    pilot.setTargetAltitude(c.getAltitudeInFt());
     return ApplicationResult.getEmpty();
   }
 }

@@ -1,5 +1,6 @@
 package eng.jAtcSim.lib.airplanes;
 
+import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.global.ETime;
 
 public class AirplaneFlight {
@@ -7,6 +8,7 @@ public class AirplaneFlight {
   private final int delayInitialMinutes;
   private final ETime delayExpectedTime;
   private boolean departure;
+  private Integer finalDelayMinutes = null;
 
   public AirplaneFlight(Callsign callsign, int delayInitialMinutes, ETime delayExpectedTime, boolean departure) {
     this.callsign = callsign;
@@ -29,5 +31,29 @@ public class AirplaneFlight {
 
   public boolean isDeparture() {
     return departure;
+  }
+
+  public boolean isArrival() {
+    return !isDeparture();
+  }
+
+  public void raiseEmergency() {
+    this.departure = false;
+  }
+
+  public Integer getFinalDelayMinutes() {
+    return finalDelayMinutes;
+  }
+
+  public void evaluateFinalDelayMinutes() {
+    this.finalDelayMinutes = Acc.now().getTotalMinutes() - this.delayExpectedTime.getTotalMinutes();
+  }
+
+  public void divert() {
+    this.departure = true;
+  }
+
+  public int getDelayDifference() {
+    return finalDelayMinutes;
   }
 }

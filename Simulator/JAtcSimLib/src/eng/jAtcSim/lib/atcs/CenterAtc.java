@@ -60,7 +60,7 @@ public class CenterAtc extends ComputerAtc {
         try {
           evaluateMiddleArrivalsForCloseArrivals(tmp, plane);
         } catch (Exception ex) {
-          throw new EApplicationException("Failed to evaluate " + plane.getCallsign() + ".", ex);
+          throw new EApplicationException("Failed to evaluate " + plane.getFlight().getCallsign() + ".", ex);
         }
       }
       middleArrivals.remove(tmp);
@@ -87,6 +87,26 @@ public class CenterAtc extends ComputerAtc {
   }
 
   @Override
+  public void unregisterPlaneUnderControl(Airplane plane) {
+    if (plane.getFlight().isArrival()) {
+      farArrivals.tryRemove(plane);
+      middleArrivals.tryRemove(plane);
+      closeArrivals.tryRemove(plane);
+    }
+  }
+
+  @Override
+  public void removePlaneDeletedFromGame(Airplane plane) {
+
+  }
+
+  @Override
+  public void registerNewPlaneUnderControl(Airplane plane, boolean finalRegistration) {
+    if (plane.getFlight().isArrival())
+      farArrivals.add(plane);
+  }
+
+  @Override
   protected boolean acceptsNewRouting(Airplane plane, SwitchRoutingRequest srr) {
     boolean ret;
     ret = srr.route.isValidForCategory(plane.getType().category)
@@ -101,7 +121,7 @@ public class CenterAtc extends ComputerAtc {
     dist = Coordinates.getDistanceInNM(plane.getEntryExitFix().getCoordinate(), plane.getCoordinate());
     if (dist < 27) {
       SpeechList<IAtcCommand> cmds = new SpeechList<>();
-      if (plane.getTargetAltitude() > Acc.atcCtr().getOrderedAltitude())
+      if (plane.getAdvanced().getTargetAltitude() > Acc.atcCtr().getOrderedAltitude())
         cmds.add(new ChangeAltitudeCommand(ChangeAltitudeCommand.eDirection.descend, Acc.atcCtr().getOrderedAltitude()));
 
       // assigns route
@@ -136,13 +156,13 @@ public class CenterAtc extends ComputerAtc {
   @Override
   protected RequestResult canIAcceptPlane(Airplane p) {
     RequestResult ret;
-    if (p.isArrival()) {
-      ret = new RequestResult(false, String.format("%s is an arrival.", p.getCallsign().toString()));
+    if (p.getFlight().isArrival()) {
+      ret = new RequestResult(false, String.format("%s is an arrival.", p.getFlight().getCallsign().toString()));
     } else {
       if (p.isOnWayToPassDeparturePoint() == false) {
         ret = new RequestResult(false,
             String.format("%s is not heading (or on the route to) departure fix %s",
-                p.getCallsign().toString(),
+                p.getFlight().getCallsign().toString(),
                 p.getAssigneRoute().getMainNavaid().getName()));
       } else {
         if (p.getAltitude() > super.acceptAltitude || p.getAltitude() > (p.getType().maxAltitude * .666)) {
@@ -152,13 +172,13 @@ public class CenterAtc extends ComputerAtc {
           if (aipDist > this.ctrAcceptDistance) {
             ret = new RequestResult(true, null);
           } else {
-            double navDist = Coordinates.getDistanceInNM(p.getCoordinate(), p.getDepartureLastNavaid().getCoordinate());
+            double navDist = Coordinates.getDistanceInNM(p.getCoordinate(), p.getAdvanced().getDepartureLastNavaid().getCoordinate());
             if (navDist < this.ctrNavaidAcceptDistance) {
               ret = new RequestResult(true, null);
             } else {
               ret = new RequestResult(false, String.format(
                   "%s is too far from departure fix %s, or not enough far from airport, or not enough high.",
-                  p.getCallsign().toString(),
+                  p.getFlight().getCallsign().toString(),
                   p.getAssigneRoute().getName()
               ));
             }
@@ -174,7 +194,7 @@ public class CenterAtc extends ComputerAtc {
     for (Object o : spchs) {
       if (o instanceof GoodDayNotification) {
         if (((GoodDayNotification) o).isRepeated()) continue; // repeated g-d-n are ignored
-        if (plane.isDeparture() && Acc.prm().getResponsibleAtc(plane) == this) {
+        if (plane.getFlight().isDeparture() && Acc.prm().getResponsibleAtc(plane) == this) {
           SpeechList cmds = new SpeechList();
 
           cmds.add(
@@ -185,7 +205,7 @@ public class CenterAtc extends ComputerAtc {
               new ChangeSpeedCommand()); // to abort speeed restriction
 
           // order to continue after last fix
-          Navaid n = plane.getDepartureLastNavaid();
+          Navaid n = plane.getAdvanced().getDepartureLastNavaid();
           cmds.add(new AfterNavaidCommand(n));
           cmds.add(new ChangeHeadingCommand());
 
@@ -201,11 +221,11 @@ public class CenterAtc extends ComputerAtc {
   @Override
   protected Atc getTargetAtcIfPlaneIsReadyToSwitch(Airplane plane) {
     Atc ret;
-    if (plane.isArrival()) {
+    if (plane.getFlight().isArrival()) {
       if (plane.isEmergency())
         ret = Acc.atcApp();
       else {
-        if (closeArrivals.contains(plane) == false){
+        if (closeArrivals.contains(plane) == false) {
           return null;
         }
         Navaid n = plane.getEntryExitFix();
@@ -236,26 +256,6 @@ public class CenterAtc extends ComputerAtc {
     LoadSave.loadField(elm, this, "closeArrivals");
   }
 
-  @Override
-  public void unregisterPlaneUnderControl(Airplane plane) {
-    if (plane.isArrival()) {
-      farArrivals.tryRemove(plane);
-      middleArrivals.tryRemove(plane);
-      closeArrivals.tryRemove(plane);
-    }
-  }
-
-  @Override
-  public void removePlaneDeletedFromGame(Airplane plane) {
-
-  }
-
-  @Override
-  public void registerNewPlaneUnderControl(Airplane plane, boolean finalRegistration) {
-    if (plane.isArrival())
-      farArrivals.add(plane);
-  }
-
   private Tuple<Route, ActiveRunwayThreshold> getRoutingForPlaneAndFix(Airplane plane, Navaid n) {
     Tuple<Route, ActiveRunwayThreshold> ret;
     Route r = null;
@@ -277,11 +277,11 @@ public class CenterAtc extends ComputerAtc {
     while (r == null && !thresholdsCopy.isEmpty()) {
       rt = thresholdsCopy.getRandom();
       thresholdsCopy.remove(rt);
-      r = rt.getArrivalRouteForPlane(plane.getType(), plane.getTargetAltitude(), plane.getEntryExitFix(), false);
+      r = rt.getArrivalRouteForPlane(plane.getType(), plane.getAdvanced().getTargetAltitude(), plane.getEntryExitFix(), false);
     }
-    if (thresholdsCopy.isEmpty() && r == null){
+    if (thresholdsCopy.isEmpty() && r == null) {
       rt = thresholds.getRandom();
-      r = rt.getArrivalRouteForPlane(plane.getType(), plane.getTargetAltitude(), plane.getEntryExitFix(), true);
+      r = rt.getArrivalRouteForPlane(plane.getType(), plane.getAdvanced().getTargetAltitude(), plane.getEntryExitFix(), true);
     }
     assert rt != null;
     assert r != null;

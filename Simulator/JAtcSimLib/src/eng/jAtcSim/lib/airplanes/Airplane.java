@@ -1,24 +1,23 @@
 package eng.jAtcSim.lib.airplanes;
 
-import com.sun.istack.internal.Nullable;
 import eng.eSystem.collections.IList;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
-import eng.eSystem.utilites.NumberUtils;
 import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
 import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 import eng.jAtcSim.lib.Acc;
+import eng.jAtcSim.lib.airplanes.modules.EmergencyModule;
+import eng.jAtcSim.lib.airplanes.modules.MrvaAirproxModule;
+import eng.jAtcSim.lib.airplanes.modules.ShaModule;
 import eng.jAtcSim.lib.airplanes.moods.Mood;
 import eng.jAtcSim.lib.airplanes.moods.MoodResult;
 import eng.jAtcSim.lib.airplanes.pilots.Pilot;
 import eng.jAtcSim.lib.airplanes.pilots.navigators.INavigator;
 import eng.jAtcSim.lib.atcs.Atc;
-import eng.jAtcSim.lib.global.ETime;
-import eng.jAtcSim.lib.global.Headings;
-import eng.jAtcSim.lib.global.HeadingsNew;
-import eng.jAtcSim.lib.global.UnitProvider;
+import eng.jAtcSim.lib.exceptions.ToDoException;
+import eng.jAtcSim.lib.global.*;
 import eng.jAtcSim.lib.messaging.IMessageContent;
 import eng.jAtcSim.lib.messaging.IMessageParticipant;
 import eng.jAtcSim.lib.messaging.Message;
@@ -29,21 +28,17 @@ import eng.jAtcSim.lib.speaking.ISpeech;
 import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.speaking.fromAirplane.IAirplaneNotification;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.GoingAroundNotification;
-import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeHeadingCommand;
 import eng.jAtcSim.lib.world.ActiveRunwayThreshold;
 import eng.jAtcSim.lib.world.Navaid;
 import eng.jAtcSim.lib.world.Route;
-import eng.jAtcSim.lib.world.newApproaches.Approach;
 import eng.jAtcSim.lib.world.newApproaches.NewApproachInfo;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class Airplane implements IMessageParticipant {
 
   //region Inner classes
+
   public class Airplane4Display {
 
     public Coordinate coordinate() {
@@ -51,7 +46,7 @@ public class Airplane implements IMessageParticipant {
     }
 
     public Callsign callsign() {
-      return Airplane.this.callsign;
+      return Airplane.this.flight.getCallsign();
     }
 
     public Squawk squawk() {
@@ -67,11 +62,11 @@ public class Airplane implements IMessageParticipant {
     }
 
     public int heading() {
-      return (int) Airplane.this.heading.getValue();
+      return (int) Airplane.this.sha.getHeading();
     }
 
     public int targetSpeed() {
-      return Airplane.this.targetSpeed;
+      return Airplane.this.sha.getTargetSpeed();
     }
 
     public AirplaneType planeType() {
@@ -79,15 +74,15 @@ public class Airplane implements IMessageParticipant {
     }
 
     public int verticalSpeed() {
-      return (int) Airplane.this.lastVerticalSpeed;
+      return (int) Airplane.this.sha.getVerticalSpeed();
     }
 
     public AirproxType getAirprox() {
-      return airprox;
+      return Airplane.this.mrvaAirproxModule.getAirprox();
     }
 
     public boolean isDeparture() {
-      return Airplane.this.departure;
+      return Airplane.this.flight.isDeparture();
     }
 
     public Route getAssignedRoute() {
@@ -99,15 +94,15 @@ public class Airplane implements IMessageParticipant {
     }
 
     public int altitude() {
-      return (int) Airplane.this.altitude.getValue();
+      return (int) Airplane.this.sha.getAltitude();
     }
 
     public int targetAltitude() {
-      return (int) Airplane.this.targetAltitude;
+      return Airplane.this.sha.getTargetAltitude();
     }
 
     public int ias() {
-      return (int) Airplane.this.speed.getValue();
+      return (int) Airplane.this.sha.getSpeed();
     }
 
     public double tas() {
@@ -115,15 +110,15 @@ public class Airplane implements IMessageParticipant {
     }
 
     public int targetHeading() {
-      return (int) Airplane.this.targetHeading;
+      return Airplane.this.sha.getTargetHeading();
     }
 
     public boolean isMrvaError() {
-      return Airplane.this.mrvaError;
+      return Airplane.this.mrvaAirproxModule.isMrvaError();
     }
 
     public boolean isEmergency() {
-      return Airplane.this.isEmergency();
+      return Airplane.this.emergencyModule.isEmergency();
     }
 
     public Navaid entryExitPoint() {
@@ -147,10 +142,10 @@ public class Airplane implements IMessageParticipant {
 
     public void setxState(State state) {
       Airplane.this.state = state;
-      if (delayResult == null) {
-        if ((Airplane.this.isArrival() && state == State.landed)
-            || (Airplane.this.isDeparture() && state == State.departingLow)) {
-          Airplane.this.delayResult = Acc.now().getTotalMinutes() - Airplane.this.delayExpectedTime.getTotalMinutes();
+      if (flight.getFinalDelayMinutes() == null) {
+        if ((Airplane.this.flight.isArrival() && state == State.landed)
+            || (Airplane.this.flight.isDeparture() && state == State.departingLow)) {
+          flight.evaluateFinalDelayMinutes();
         }
       }
     }
@@ -159,48 +154,12 @@ public class Airplane implements IMessageParticipant {
       return airplaneType;
     }
 
-    public double getSpeed() {
-      return speed.getValue();
+    public ShaModule getSha(){
+      return Airplane.this.sha;
     }
 
     public Coordinate getCoordinate() {
       return coordinate;
-    }
-
-    public double getAltitude() {
-      return altitude.getValue();
-    }
-
-    public double getTargetHeading() {
-      return targetHeading;
-    }
-
-    public void setTargetHeading(double value) {
-      Airplane.this.setTargetHeading(value);
-    }
-
-    public void setTargetHeading(double value, boolean useLeftTurn) {
-      Airplane.this.setTargetHeading(value, useLeftTurn);
-    }
-
-    public double getHeading() {
-      return heading.getValue();
-    }
-
-    public int getTargetAltitude() {
-      return targetAltitude;
-    }
-
-    public void setTargetAltitude(int altitudeInFt) {
-      Airplane.this.setTargetAltitude(altitudeInFt);
-    }
-
-    public int getTargetSpeed() {
-      return targetSpeed;
-    }
-
-    public void setTargetSpeed(int speed) {
-      Airplane.this.setTargetSpeed(speed);
     }
 
     public void adviceGoAroundToAtc(Atc targetAtc, GoingAroundNotification.GoAroundReason reason) {
@@ -216,15 +175,15 @@ public class Airplane implements IMessageParticipant {
     }
 
     public boolean isArrival() {
-      return !departure;
+      return flight.isArrival();
     }
 
-    public Airplane getMe() {
-      return Airplane.this;
-    }
+//    public Airplane getMe() {
+//      return Airplane.this;
+//    }
 
     public Callsign getCallsign() {
-      return callsign;
+      return flight.getCallsign();
     }
 
     public void passMessageToAtc(Atc atc, SpeechList saidText) {
@@ -238,20 +197,16 @@ public class Airplane implements IMessageParticipant {
       passMessageToAtc(atc, saidText);
     }
 
-    public Airplane4Command getPlane4Command() {
-      return Airplane.this.new Airplane4Command();
-    }
-
     public void divert() {
-      Airplane.this.departure = true;
+      Airplane.this.flight.divert();
     }
 
     public boolean isEmergency() {
-      return Airplane.this.isEmergency();
+      return Airplane.this.emergencyModule.isEmergency();
     }
 
     public AirproxType getAirprox() {
-      return Airplane.this.airprox;
+      return Airplane.this.mrvaAirproxModule.getAirprox();
     }
 
     public void evaluateMoodForShortcut(Navaid navaid) {
@@ -259,11 +214,11 @@ public class Airplane implements IMessageParticipant {
       if (r == null) return;
       if (r.getNavaids().isEmpty()) return;
       if (r.getNavaids().getLast().equals(navaid)) {
-        if (Airplane.this.isArrival()) {
-          if (Airplane.this.altitude.value > 1e4)
+        if (Airplane.this.flight.isArrival()) {
+          if (Airplane.this.sha.getAltitude() > 1e4)
             mood.experience(Mood.ArrivalExperience.shortcutToIafAbove100);
         } else {
-          if (Airplane.this.altitude.value > 1e4)
+          if (Airplane.this.sha.getAltitude() > 1e4)
             mood.experience(Mood.DepartureExperience.shortcutToExitPointBelow100);
           else
             mood.experience(Mood.DepartureExperience.shortctuToExitPointAbove100);
@@ -276,7 +231,7 @@ public class Airplane implements IMessageParticipant {
     }
 
     public void setNavigator(INavigator navigator) {
-      Airplane.this.navigator = navigator;
+      Airplane.this.sha.setNavigator(navigator);
     }
   }
 
@@ -306,7 +261,7 @@ public class Airplane implements IMessageParticipant {
 //      return altitude.getValue();
 //    }
 //
-//    public int getTargetAltitude() {
+//    public int getAltitudeOrders() {
 //      return targetAltitude;
 //    }
 //
@@ -342,16 +297,50 @@ public class Airplane implements IMessageParticipant {
 //    }
 //  }
 
-  public class WriteAccessor {
-    public SHA getSha() {
-      return Airplane.this.sha;
+  //endregion
+
+  public class AdvancedReader {
+
+    public int getTargetAltitude() {
+      return Airplane.this.sha.getTargetAltitude();
     }
 
-    public void setState(Airplane.State state) {
-      Airplane.this.state = state;
+    public String getHeadingS() {
+      return String.format("%1$03d", (int) Airplane.this.getHeading());
+    }
+
+    public Coordinate getCoordinate() {
+      return coordinate;
+    }
+
+    public int getTargetHeading() {
+      return Airplane.this.sha.getTargetHeading();
+    }
+
+    public String getTargetHeadingS() {
+      return String.format("%1$03d", getTargetHeading());
+    }
+
+    public Navaid getDepartureLastNavaid() {
+      if (Airplane.this.flight.isDeparture() == false)
+        throw new EApplicationException(sf(
+            "This method should not be called on departure aircraft %s.",
+            Airplane.this.flight.getCallsign().toString()));
+
+      Navaid ret = Airplane.this.pilot.getAssignedRoute().getMainNavaid();
+      return ret;
+    }
+
+    public boolean isOnWayToPassDeparturePoint() {
+      Navaid n = this.getDepartureLastNavaid();
+      boolean ret = Airplane.this.pilot.isOnWayToPassPoint(n);
+      return ret;
+    }
+
+    public double getTargetSpeed() {
+      return Airplane.this.sha.getTargetSpeed();
     }
   }
-  //endregion
 
   public enum State {
 
@@ -423,8 +412,8 @@ public class Airplane implements IMessageParticipant {
 
     public boolean is(State... values) {
       boolean ret = false;
-      for (int i = 0; i < values.length; i++) {
-        if (this == values[i]) {
+      for (State value : values) {
+        if (this == value) {
           ret = true;
           break;
         }
@@ -435,103 +424,66 @@ public class Airplane implements IMessageParticipant {
 
   private static final int MINIMAL_DIVERT_TIME_MINUTES = 45;
   private static final int MAXIMAL_DIVERT_TIME_MINUTES = 120;
-  private final static double GROUND_SPEED_CHANGE_MULTIPLIER = 1.5; //1.5; //3.0;
   private static final double secondFraction = 1 / 60d / 60d;
 
   public static Airplane load(XElement elm) {
 
-    Airplane ret = new Airplane();
+    throw new ToDoException();
 
-    LoadSave.loadField(elm, ret, "callsign");
-    LoadSave.loadField(elm, ret, "sqwk");
-    LoadSave.loadField(elm, ret, "airplaneType");
-    LoadSave.loadField(elm, ret, "delayInitialMinutes");
-    LoadSave.loadField(elm, ret, "delayExpectedTime");
-    LoadSave.loadField(elm, ret, "departure");
-    LoadSave.loadField(elm, ret, "targetHeading");
-    LoadSave.loadField(elm, ret, "targetHeadingLeftTurn");
-    LoadSave.loadField(elm, ret, "targetAltitude");
-    LoadSave.loadField(elm, ret, "targetSpeed");
-    LoadSave.loadField(elm, ret, "state");
-    LoadSave.loadField(elm, ret, "lastVerticalSpeed");
-    LoadSave.loadField(elm, ret, "airprox");
-    LoadSave.loadField(elm, ret, "mrvaError");
-    LoadSave.loadField(elm, ret, "delayResult");
-    LoadSave.loadField(elm, ret, "emergencyWanishTime");
-    LoadSave.loadField(elm, ret, "coordinate");
-    LoadSave.loadField(elm, ret, "heading");
-    LoadSave.loadField(elm, ret, "speed");
-    LoadSave.loadField(elm, ret, "altitude");
-    LoadSave.loadField(elm, ret, "mood");
-
-    ret.flightRecorder = FlightRecorder.create(ret.callsign);
-
-    XElement tmp = elm.getChildren().getFirst(q -> q.getName().equals("pilot"));
-
-    ret.pilot = Pilot.load(tmp, ret.new Airplane4Pilot());
-
-    return ret;
+//    Airplane ret = new Airplane();
+//
+//    LoadSave.loadField(elm, ret, "callsign");
+//    LoadSave.loadField(elm, ret, "sqwk");
+//    LoadSave.loadField(elm, ret, "airplaneType");
+//    LoadSave.loadField(elm, ret, "delayInitialMinutes");
+//    LoadSave.loadField(elm, ret, "delayExpectedTime");
+//    LoadSave.loadField(elm, ret, "departure");
+//    LoadSave.loadField(elm, ret, "targetHeading");
+//    LoadSave.loadField(elm, ret, "targetHeadingLeftTurn");
+//    LoadSave.loadField(elm, ret, "targetAltitude");
+//    LoadSave.loadField(elm, ret, "targetSpeed");
+//    LoadSave.loadField(elm, ret, "state");
+//    LoadSave.loadField(elm, ret, "lastVerticalSpeed");
+//    LoadSave.loadField(elm, ret, "airprox");
+//    LoadSave.loadField(elm, ret, "mrvaError");
+//    LoadSave.loadField(elm, ret, "delayResult");
+//    LoadSave.loadField(elm, ret, "emergencyWanishTime");
+//    LoadSave.loadField(elm, ret, "coordinate");
+//    LoadSave.loadField(elm, ret, "heading");
+//    LoadSave.loadField(elm, ret, "speed");
+//    LoadSave.loadField(elm, ret, "altitude");
+//    LoadSave.loadField(elm, ret, "mood");
+//
+//    ret.flightRecorder = FlightRecorder.create(ret.flight.getCallsign());
+//
+//    XElement tmp = elm.getChildren().getFirst(q -> q.getName().equals("pilot"));
+//
+//    ret.pilot = Pilot.load(tmp, ret.new Airplane4Pilot());
+//
+//    return ret;
   }
 
-  private static ValueRequest getRequest(double current, double target, double maxIncreaseStep, double maxDecreaseStep) {
-    // if on ground, nothing required
-    final double RUN_OUT_COEFF = 0.2;
-    final double RUN_OUT_DISTANCE = 3;
-
-    double delta = target - current;
-    if (delta == 0) {
-      return new ValueRequest();
-      // no change required
-    }
-
-    double absDelta = delta;
-    double availableStep;
-    if (delta > 0) {
-      // needs to accelerate
-      availableStep = maxIncreaseStep;
-    } else {
-      availableStep = maxDecreaseStep;
-      absDelta = -delta;
-    }
-
-    ValueRequest ret = new ValueRequest();
-    double deltaPress = absDelta / availableStep;
-    if (deltaPress > RUN_OUT_DISTANCE) {
-      ret.value = availableStep;
-      ret.energy = 1;
-    } else if (deltaPress > 1) {
-      ret.value = availableStep * RUN_OUT_COEFF;
-      ret.energy = RUN_OUT_COEFF;
-    } else {
-      absDelta = Math.min(absDelta, availableStep * RUN_OUT_COEFF);
-      ret.value = absDelta;
-      ret.energy = absDelta / availableStep;
-    }
-
-    if (delta < 0)
-      ret.multiply(-1);
-
-    return ret;
-  }
 
   private final AirplaneType airplaneType;
-  @XmlIgnore
-  private final Airplane4Display plane4Display;
-  @XmlIgnore
-  private final Airplane4Navigator plane4Navigator;
+
   private final Squawk sqwk;
-  private final SHA sha;
+
   private final AirplaneFlight flight;
   private final Pilot pilot;
   private Coordinate coordinate;
   private State state;
+
+  private final ShaModule sha = new ShaModule(this);
+  private final EmergencyModule emergencyModule = new EmergencyModule(this);
+  private final MrvaAirproxModule mrvaAirproxModule = new MrvaAirproxModule(this);
+  private Mood mood;
+  private final AdvancedReader advancedReader = new AdvancedReader();
+
   @XmlIgnore
   private FlightRecorder flightRecorder = null;
+  @XmlIgnore
+  private final Airplane4Display plane4Display = new Airplane4Display();
 
-  private Integer delayResult = null;
-  private ETime emergencyWanishTime = null;
-  private Mood mood;
-  private final WriteAccessor writeAccessor = new WriteAccessor();
 
   public Airplane(Callsign callsign, Coordinate coordinate, Squawk sqwk, AirplaneType airplaneSpecification,
                   int heading, int altitude, int speed, boolean isDeparture,
@@ -543,13 +495,10 @@ public class Airplane implements IMessageParticipant {
     this.state = isDeparture ? State.holdingPoint : State.arrivingHigh;
 
     this.flight = new AirplaneFlight(callsign, delayInitialMinutes, delayExpectedTime, isDeparture);
-    this.sha = new SHA(heading, altitude, speed, airplaneSpecification, Acc.airport().getAltitude());
+    this.sha.init(heading, altitude, speed, airplaneSpecification, Acc.airport().getAltitude());
     this.pilot = new Pilot(this.new Airplane4Pilot(), entryExitPoint, generateDivertTime(isDeparture));
     this.flightRecorder = FlightRecorder.create(callsign);
     this.mood = new Mood();
-
-    this.plane4Display = this.new Airplane4Display();
-    this.plane4Navigator = this.new Airplane4Navigator();
   }
 
   @XmlConstructor
@@ -558,122 +507,83 @@ public class Airplane implements IMessageParticipant {
     this.airplaneType = null;
     this.flight = new AirplaneFlight(null, 0, null, false);
     this.pilot = new Pilot(this.new Airplane4Pilot(), null, null);
-    this.sha = new SHA(0, 0, 0, null, 0);
-    this.plane4Display = new Airplane4Display();
-    this.plane4Navigator = new Airplane4Navigator();
     this.mood = null;
   }
 
-  public class ReadAccessor{
-    public boolean isEmergency() {
-      return this.emergencyWanishTime != null;
-    }
-
-    public boolean isDeparture() {
-      return departure;
-    }
-
-    public boolean isArrival() {
-      return !departure;
-    }
-
-    public double getVerticalSpeed() {
-      return lastVerticalSpeed;
-    }
-
-    public Callsign getCallsign() {
-      return callsign;
-    }
-
-    public State getState() {
-      return state;
-    }
-
-    public double getHeading() {
-      return heading.getValue();
-    }
-
-    public String getHeadingS() {
-      return String.format("%1$03d", (int) this.heading.getValue());
-    }
-
-    public double getAltitude() {
-      return altitude.getValue();
-    }
-
-    public Coordinate getCoordinate() {
-      return coordinate;
-    }
-
-    public Squawk getSqwk() {
-      return sqwk;
-    }
-
-    public AirplaneType getType() {
-      return airplaneType;
-    }
-
-    public double getSpeed() {
-      return speed.getValue();
-    }
-
-    public FlightRecorder getFlightRecorder() {
-      return flightRecorder;
-    }
-
-    public String getTargetHeadingS() {
-      return String.format("%1$03d", this.targetHeading);
-    }
-
-    public Atc getTunedAtc() {
-      return pilot.getTunedAtc();
-    }
-
-    public double getTAS() {
-      double m = 1 + this.sha.getAltitude() / 100000d;
-      double ret = this.sha.getSpeed() * m;
-      return ret;
-    }
-
-    public double getGS() {
-      return getTAS();
-    }
-
-
-
-    public Navaid getDepartureLastNavaid() {
-      if (isDeparture() == false)
-        throw new EApplicationException(sf(
-            "This method should not be called on departure aircraft %s.",
-            this.getCallsign().toString()));
-
-      Navaid ret = this.pilot.getAssignedRoute().getMainNavaid();
-      return ret;
-    }
-
-    public AirproxType getAirprox() {
-      return this.airprox;
-    }
+  public AirplaneFlight getFlight() {
+    return this.flight;
   }
 
+  public Coordinate getCoordinate() {
+    return this.coordinate;
+  }
 
+  public double getAltitude() {
+    return this.sha.getAltitude();
+  }
+
+  public AirplaneType getType() {
+    return this.airplaneType;
+  }
+
+  public Pilot getPilot() {
+    return this.pilot;
+  }
+
+  public AdvancedReader getAdvanced() {
+    return this.advancedReader;
+  }
+
+  public double getSpeed() {
+    return this.sha.getSpeed();
+  }
+
+  public Atc getTunedAtc() {
+    return pilot.getTunedAtc();
+  }
+
+  public double getTAS() {
+    double m = 1 + this.sha.getAltitude() / 100000d;
+    double ret = this.sha.getSpeed() * m;
+    return ret;
+  }
+
+  public double getGS() {
+    return getTAS();
+  }
+
+  public double getVerticalSpeed() {
+    return this.sha.getVerticalSpeed();
+  }
+
+  public State getState() {
+    return state;
+  }
+
+  public double getHeading() {
+    return this.sha.getHeading();
+  }
+
+  public Squawk getSqwk() {
+    return sqwk;
+  }
+
+  public FlightRecorder getFlightRecorder() {
+    return flightRecorder;
+  }
 
   public void elapseSecond() {
 
     processMessages();
     drivePlane();
-    updateSHABySecondNew();
+    this.sha.elapseSecond();
     updateCoordinates();
 
     flightRecorder.logFDR(this, this.pilot);
   }
 
-  public WriteAccessor getWriteAccessor(){
-    return this.writeAccessor;
-  }
-
-  public ReadAccessor getReadAccessor(){
-    return this.readAccessor;
+  public MrvaAirproxModule getMrvaAirproxModule() {
+    return mrvaAirproxModule;
   }
 
   @Override
@@ -683,7 +593,7 @@ public class Airplane implements IMessageParticipant {
 
   @Override
   public String getName() {
-    return this.getCallsign().toString();
+    return this.flight.getCallsign().toString();
   }
 
   public Route getAssigneRoute() {
@@ -692,12 +602,6 @@ public class Airplane implements IMessageParticipant {
 
   public Airplane4Display getPlane4Display() {
     return this.plane4Display;
-  }
-
-  public boolean isOnWayToPassDeparturePoint() {
-    Navaid n = this.getDepartureLastNavaid();
-    boolean ret = this.pilot.isOnWayToPassPoint(n);
-    return ret;
   }
 
   public ActiveRunwayThreshold tryGetCurrentApproachRunwayThreshold() {
@@ -710,46 +614,25 @@ public class Airplane implements IMessageParticipant {
     return ret;
   }
 
+  public ShaModule getSha() {
+    return this.sha;
+  }
+
   public void setHoldingPointState(Coordinate coordinate, double course) {
     assert this.state == State.holdingPoint;
     this.coordinate = coordinate;
     this.sha.setTargetHeading((int) Math.round(course));
   }
 
-  public int getDelayDifference() {
-    return delayResult;
-  }
-
   public void updateAssignedRouting(Route route, ActiveRunwayThreshold expectedRunwayThreshold) {
     pilot.updateAssignedRouting(route, expectedRunwayThreshold);
   }
 
-  public void raiseEmergency() {
-    int minsE = Acc.rnd().nextInt(5, 60);
-    double distToAip = Coordinates.getDistanceInNM(this.coordinate, Acc.airport().getLocation());
-    int minA = (int) (distToAip / 250d * 60);
-    ETime wt = Acc.now().addMinutes(minsE + minA);
-
-    int alt = Math.max((int) this.getAltitude(), Acc.airport().getAltitude() + 4000);
-    alt = (int) NumberUtils.ceil(alt, 3);
-    this.sha.setTargetAltitude(alt);
-
-    this.emergencyWanishTime = wt;
-    this.departure = false;
-    this.pilot.raiseEmergency();
-  }
-
-  public boolean hasElapsedEmergencyTime() {
-
-    assert this.emergencyWanishTime != null;
-    boolean ret = this.emergencyWanishTime.isBefore(Acc.now());
-    return ret;
-  }
 
   public ActiveRunwayThreshold getAssignedRunwayThresholdForLanding() {
     ActiveRunwayThreshold ret = tryGetAssignedRunwayThresholdForLanding();
     if (ret == null) {
-      throw new EApplicationException(this.getCallsign().toString() + " has no assigned departure/arrival threshold.");
+      throw new EApplicationException(this.getFlight().getCallsign().toString() + " has no assigned departure/arrival threshold.");
     }
     return ret;
   }
@@ -766,9 +649,6 @@ public class Airplane implements IMessageParticipant {
   }
 
   public void save(XElement elm) {
-    /*
-  private FlightRecorder flightRecorder = null;
-     */
     LoadSave.saveField(elm, this, "callsign");
     LoadSave.saveField(elm, this, "sqwk");
     LoadSave.saveField(elm, this, "airplaneType");
@@ -798,7 +678,6 @@ public class Airplane implements IMessageParticipant {
   }
 
 
-
   public Navaid getEntryExitFix() {
     return pilot.getEntryExitPoint();
   }
@@ -808,7 +687,7 @@ public class Airplane implements IMessageParticipant {
   }
 
   public MoodResult getEvaluatedMood() {
-    MoodResult ret = this.mood.evaluate(this.flight.getCallsign(), this.delayResult);
+    MoodResult ret = this.mood.evaluate(this.flight.getCallsign(), this.flight.getFinalDelayMinutes());
     return ret;
   }
 
@@ -816,7 +695,7 @@ public class Airplane implements IMessageParticipant {
     return pilot.getExpectedRunwayThreshold();
   }
 
-  private ETime generateDivertTime(boolean isDeparture) {
+  private static ETime generateDivertTime(boolean isDeparture) {
     ETime divertTime = null;
     if (!isDeparture) {
       int divertTimeMinutes = Acc.rnd().nextInt(MINIMAL_DIVERT_TIME_MINUTES, MAXIMAL_DIVERT_TIME_MINUTES);
@@ -877,147 +756,10 @@ public class Airplane implements IMessageParticipant {
     this.pilot.addNewSpeeches(speeches);
   }
 
-  private void updateSHABySecondNew() {
-    // TODO here is && or || ???
-    boolean isSpeedPreffered =
-        this.state == State.takeOffGoAround || this.state == State.takeOffGoAround;
-
-    if (targetAltitude != altitude.getValue() || targetSpeed != speed.getValue()) {
-
-      ValueRequest speedRequest = getSpeedRequest();
-      ValueRequest altitudeRequest = getAltitudeRequest();
-
-      double totalEnergy = Math.abs(speedRequest.energy + altitudeRequest.energy);
-      if (totalEnergy > 1) {
-        if (!isSpeedPreffered) {
-          double energyMultiplier = 1 / totalEnergy;
-          speedRequest.multiply(energyMultiplier);
-          altitudeRequest.multiply(energyMultiplier);
-        } else {
-          // when speed is preferred
-          double energyLeft = 1 - speedRequest.energy;
-          altitudeRequest.multiply(energyLeft);
-        }
-      }
-
-      adjustSpeed(speedRequest);
-      adjustAltitude(altitudeRequest);
-
-    } else if (this.lastVerticalSpeed != 0)
-      this.lastVerticalSpeed = 0;
-
-    this.navigator.navigate(this.plane4Navigator);
-    if (targetHeading != heading.getValue()) {
-      adjustHeading();
-    } else {
-      this.heading.resetInertia();
-    }
-  }
-
-  private ValueRequest getSpeedRequest() {
-    ValueRequest ret;
-    double delta = targetSpeed - speed.getValue();
-    if (delta == 0) {
-      // no change required
-      ret = new ValueRequest();
-      ret.energy = 0;
-      ret.value = 0;
-    } else {
-      double incStep = airplaneType.speedIncreaseRate;
-      double decStep = airplaneType.speedDecreaseRate;
-      if (this.state.isOnGround()) {
-        incStep *= GROUND_SPEED_CHANGE_MULTIPLIER;
-        decStep *= GROUND_SPEED_CHANGE_MULTIPLIER;
-      }
-      ret = getRequest(
-          this.speed.getValue(),
-          this.targetSpeed,
-          incStep, decStep);
-    }
-
-    return ret;
-  }
-
-  private ValueRequest getAltitudeRequest() {
-    ValueRequest ret;
-    // if on ground, nothing required
-    if (this.state.isOnGround() && altitude.getValue() == Acc.airport().getAltitude()) {
-      ret = new ValueRequest();
-      ret.energy = 0;
-      ret.value = 0;
-    } else {
-      double climbRateForAltitude = airplaneType.getClimbRateForAltitude(this.altitude.getValue());
-      double descentRateForAltitude = airplaneType.getDescendRateForAltitude(this.altitude.getValue());
-      descentRateForAltitude = adjustDescentRateByApproachStateIfRequired(descentRateForAltitude);
-      ret = getRequest(
-          this.altitude.getValue(),
-          this.targetAltitude,
-          climbRateForAltitude,
-          descentRateForAltitude);
-    }
-
-    return ret;
-  }
-
-  private double adjustDescentRateByApproachStateIfRequired(double descentRateForAltitude) {
-    double ret;
-    if (state.is(State.approachDescend, State.longFinal, State.shortFinal)) {
-      double restrictedDescentRate;
-      switch (state) {
-        case approachDescend:
-          restrictedDescentRate = 2000;
-          break;
-        case longFinal:
-          restrictedDescentRate = this.pilot.tryGetAssignedApproach().getApproach().getType() == Approach.ApproachType.visual ?
-              2000 : 1300;
-          break;
-        case shortFinal:
-          restrictedDescentRate = 1300;
-          break;
-        default:
-          throw new UnsupportedOperationException("This situation is not supported.");
-      }
-      restrictedDescentRate /= 60d;
-      ret = Math.min(descentRateForAltitude, restrictedDescentRate);
-    } else
-      ret = descentRateForAltitude;
-    return ret;
-  }
-
-  private void adjustSpeed(ValueRequest speedRequest) {
-    this.speed.add(speedRequest.value);
-  }
-
-  private void adjustAltitude(ValueRequest altitudeRequest) {
-    if (this.getState().is(State.takeOffRoll, State.landed, State.holdingPoint)) {
-      // not adjusting altitude at this states
-      this.altitude.reset(Acc.airport().getAltitude());
-    } else {
-      this.altitude.add(altitudeRequest.value);
-      this.lastVerticalSpeed = this.altitude.getInertia() * 60;
-      if (this.altitude.getValue() < Acc.airport().getAltitude()) {
-        this.altitude.reset(Acc.airport().getAltitude());
-      }
-    }
-  }
-
-  private void adjustHeading() {
-    double diff = Headings.getDifference(heading.getValue(), targetHeading, true);
-
-    boolean isLeft = targetHeadingLeftTurn;
-    if (diff < 5)
-      isLeft = HeadingsNew.getBetterDirectionToTurn(heading.getValue(), targetHeading) == ChangeHeadingCommand.eDirection.left;
-
-    if (isLeft)
-      this.heading.add(-diff);
-    else
-      this.heading.add(diff);
-  }
-
   private void updateCoordinates() {
     double dist = this.getGS() * secondFraction;
     Coordinate newC
-        = Coordinates.getCoordinate(coordinate, heading.getValue(), dist);
+        = Coordinates.getCoordinate(coordinate, this.sha.getHeading(), dist);
 
     // add wind if flying
     if (this.getState().is(
@@ -1034,193 +776,4 @@ public class Airplane implements IMessageParticipant {
   }
 
   //endregion
-}
-
-class ValueRequest {
-  public double value;
-  public double energy;
-
-  public void multiply(double multiplier) {
-    this.value *= multiplier;
-    this.energy *= multiplier;
-  }
-
-  @Override
-  public String toString() {
-    return "ValueRequest{" +
-        "value=" + value +
-        ", energy=" + energy +
-        '}';
-  }
-}
-
-class InertialValue {
-  private final double maxPositiveInertiaChange;
-  private final double maxNegativeInertiaChange;
-  protected double value;
-  private double inertia;
-  private Double minimum;
-
-  @XmlConstructor
-  private InertialValue() {
-    maxPositiveInertiaChange = Double.MIN_VALUE;
-    maxNegativeInertiaChange = Double.MIN_VALUE;
-  }
-
-  public InertialValue(double value,
-                       double maxPositiveInertiaChange, double maxNegativeInertiaChange,
-                       @Nullable Double minimum) {
-    this.value = value;
-    this.inertia = 0;
-    this.minimum = minimum;
-    this.maxPositiveInertiaChange = maxPositiveInertiaChange;
-    this.maxNegativeInertiaChange = maxNegativeInertiaChange;
-  }
-
-  public void reset(double value) {
-    this.value = value;
-    this.inertia = 0;
-  }
-
-  public void add(double val) {
-    double adjustedValue;
-    if (val > inertia)
-      adjustedValue = Math.min(val, inertia + maxPositiveInertiaChange);
-    else
-      adjustedValue = Math.max(val, inertia - maxNegativeInertiaChange);
-
-    this.inertia = adjustedValue;
-    this.value += this.inertia;
-
-    if ((this.minimum != null) && (this.value < this.minimum)) {
-      this.value = this.minimum;
-      this.inertia = 0;
-    }
-  }
-
-  public void set(double value) {
-    double diff = value - this.value;
-    this.add(diff);
-  }
-
-  public double getValue() {
-    return value;
-  }
-
-  public double getInertia() {
-    return inertia;
-  }
-
-  public double getMaxPositiveInertiaChange() {
-    return maxPositiveInertiaChange;
-  }
-
-  public double getMaxNegativeInertiaChange() {
-    return maxNegativeInertiaChange;
-  }
-}
-
-class HeadingInertialValue {
-  private final double maxInertia;
-  private final double maxInertiaChange;
-  protected double value;
-  private List<Double> thresholds = new ArrayList();
-  private int inertiaStep = 0;
-
-  public HeadingInertialValue(double value,
-                              double maxInertia, double maxInertiaChange) {
-    this.value = value;
-    this.maxInertia = maxInertia;
-    this.maxInertiaChange = maxInertiaChange;
-    buildHashMap();
-  }
-
-  @XmlConstructor
-  private HeadingInertialValue() {
-    maxInertia = Double.MIN_VALUE;
-    maxInertiaChange = Double.MIN_VALUE;
-  }
-
-  public void reset(double value) {
-    this.value = value;
-    this.inertiaStep = 0;
-  }
-
-  public void add(double val) {
-    if (Math.abs(val) < maxInertiaChange) {
-      this.value += val;
-      this.inertiaStep = 0;
-    } else {
-      int stepBlock = getFromHashMap(val);
-      if (stepBlock < inertiaStep)
-        inertiaStep--;
-      else if (stepBlock > inertiaStep)
-        inertiaStep++;
-
-      double step = inertiaStep * maxInertiaChange;
-      step = Math.min(step, this.maxInertia);
-      if (val > 0)
-        step = Math.min(step, val);
-      else
-        step = Math.max(step, val);
-
-      this.value += step;
-    }
-
-    this.value = Headings.to(this.value);
-  }
-
-  public double getValue() {
-    return value;
-  }
-
-  public double getInertia() {
-    return inertiaStep * maxInertiaChange;
-  }
-
-  public double getMaxInertia() {
-    return maxInertia;
-  }
-
-  public void resetInertia() {
-    if (this.inertiaStep != 0)
-      this.inertiaStep = 0;
-  }
-
-  private void buildHashMap() {
-    List<Double> tmp = new ArrayList<>();
-    int index = 1;
-    int cumIndex = 1;
-    double maxThr = maxInertia / maxInertiaChange + 1;
-    double thr = 0;
-    while (thr <= maxThr) {
-      thr = cumIndex * this.maxInertiaChange;
-      tmp.add(thr);
-      index++;
-      cumIndex += index;
-    }
-
-    tmp.remove(0);
-
-    this.thresholds = tmp;
-  }
-
-  private int getFromHashMap(double val) {
-    boolean isNeg = false;
-    if (val < 0) {
-      isNeg = true;
-      val = -val;
-    }
-    int ret = 0;
-    while (ret < this.thresholds.size()) {
-      if (val >= this.thresholds.get(ret))
-        ret++;
-      else
-        break;
-    }
-    ret = ret + 1;
-    if (isNeg)
-      ret = -ret;
-    return ret;
-  }
 }

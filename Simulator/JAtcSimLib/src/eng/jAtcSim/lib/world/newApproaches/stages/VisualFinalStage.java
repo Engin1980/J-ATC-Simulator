@@ -91,7 +91,7 @@
 //  private void doFlyAltitude(IPilot4Behavior pilot) {
 //    double alt = ApproachStages.getTargetAltitudeBySlope(pilot.getCoordinate(), pilot.getAltitude(),
 //        DEFAULT_SLOPE, this.threshold.getCoordinate(), this.threshold.getParent().getParent().getAltitude());
-//    pilot.setTargetAltitude(alt);
+//    pilot.setAltitudeOrders(alt);
 //  }
 //
 //  private void deleteAimPointIfClose(IPilot4Behavior pilot) {

@@ -4,6 +4,7 @@ import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.geo.Coordinates;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
+import eng.jAtcSim.lib.airplanes.pilots.Pilot;
 import eng.jAtcSim.lib.world.newApproaches.stages.IApproachStage;
 import eng.jAtcSim.lib.global.Restriction;
 import eng.jAtcSim.lib.speaking.IFromAirplane;
@@ -19,7 +20,7 @@ import eng.jAtcSim.lib.world.newApproaches.NewApproachInfo;
 public class ClearedToApproachApplication extends CommandApplication<ClearedToApproachCommand> {
 
   @Override
-  protected IFromAirplane checkCommandSanity(Airplane.Airplane4Command plane, ClearedToApproachCommand c) {
+  protected IFromAirplane checkCommandSanity(Pilot.Pilot5Command pilot, ClearedToApproachCommand c) {
 
     IFromAirplane ret = null;
 
@@ -83,44 +84,44 @@ public class ClearedToApproachApplication extends CommandApplication<ClearedToAp
   }
 
   @Override
-  protected ApplicationResult adjustAirplane(Airplane.Airplane4Command plane, ClearedToApproachCommand c) {
+  protected ApplicationResult adjustAirplane(Pilot.Pilot5Command pilot, ClearedToApproachCommand c) {
     ApplicationResult ret = new ApplicationResult();
 
     // hold abort only if fix was found
-    if (plane.getState() == Airplane.State.holding) {
-      plane.getPilot().abortHolding();
+    if (pilot.getPlane().getState() == Airplane.State.holding) {
+      pilot.abortHolding();
     }
 
-    Restriction sr = plane.getPilot().getSpeedRestriction();
+    Restriction sr = pilot.getPlane().getSpeedRestriction();
 
     if (sr != null &&
         (sr.direction == Restriction.eDirection.atLeast ||
             sr.direction == Restriction.eDirection.exactly) &&
-        sr.value > plane.getType().vApp) {
-      IFromAirplane tmp = new HighOrderedSpeedForApproach(sr.value, plane.getType().vApp);
+        sr.value > pilot.getPlane().getType().vApp) {
+      IFromAirplane tmp = new HighOrderedSpeedForApproach(sr.value, pilot.getPlane().getType().vApp);
       ret.informations.add(tmp);
     }
 
     ActiveRunwayThreshold rt = Acc.airport().tryGetRunwayThreshold(c.getThresholdName());
-    IReadOnlyList<Approach> apps = rt.getApproaches(c.getType(), plane.getType().category);
+    IReadOnlyList<Approach> apps = rt.getApproaches(c.getType(), pilot.getPlane().getType().category);
     NewApproachInfo nai = tryCreateApproachInfo(apps, plane);
     assert nai != null;
 
-    plane.getPilot().setApproachBehavior(nai);
+    pilot.setApproachBehavior(nai);
 
     return ret;
   }
 
-  private NewApproachInfo tryCreateApproachInfo(IReadOnlyList<Approach> apps, Airplane.Airplane4Command plane) {
+  private NewApproachInfo tryCreateApproachInfo(IReadOnlyList<Approach> apps, Pilot.Pilot5Command pilot) {
     Approach app;
 
-    app = apps.tryGetFirst(q -> q.getEntryLocation().isInside(plane.getCoordinate()));
+    app = apps.tryGetFirst(q -> q.getEntryLocation().isInside(pilot.getPlane().getCoordinate()));
     if (app != null)
       return new NewApproachInfo(app);
 
     for (Approach approach : apps) {
       for (IafRoute iafRoute : approach.getIafRoutes()) {
-        if (Coordinates.getDistanceInNM(plane.getCoordinate(), iafRoute.getNavaid().getCoordinate()) < 2.5) {
+        if (Coordinates.getDistanceInNM(pilot.getPlane().getCoordinate(), iafRoute.getNavaid().getCoordinate()) < 2.5) {
           return new NewApproachInfo(approach, iafRoute);
         }
       }

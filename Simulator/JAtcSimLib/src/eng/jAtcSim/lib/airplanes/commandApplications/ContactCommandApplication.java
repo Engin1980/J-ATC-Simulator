@@ -3,6 +3,7 @@ package eng.jAtcSim.lib.airplanes.commandApplications;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
+import eng.jAtcSim.lib.airplanes.pilots.Pilot;
 import eng.jAtcSim.lib.atcs.Atc;
 import eng.jAtcSim.lib.speaking.IFromAirplane;
 import eng.jAtcSim.lib.speaking.ISpeech;
@@ -17,13 +18,13 @@ public class ContactCommandApplication extends CommandApplication<ContactCommand
   }
 
   @Override
-  protected IFromAirplane checkCommandSanity(Airplane.Airplane4Command plane, ContactCommand c) {
+  protected IFromAirplane checkCommandSanity(Pilot.Pilot5Command pilot, ContactCommand c) {
 
     return null;
   }
 
   @Override
-  protected ApplicationResult adjustAirplane(Airplane.Airplane4Command plane, ContactCommand c) {
+  protected ApplicationResult adjustAirplane(Pilot.Pilot5Command pilot, ContactCommand c) {
     Atc a;
     switch (c.getAtcType()) {
       case app:
@@ -42,12 +43,13 @@ public class ContactCommandApplication extends CommandApplication<ContactCommand
 
 
     // contacting next atc
-    plane.getPilot().setResponsibleAtc(a);
+    pilot.setResponsibleAtc(a);
     // rewritten
     // TODO now switch is realised in no-time, there is no delay between "frequency change confirmation" and "new atc call"
-    ISpeech s = new GoodDayNotification(plane.getCallsign(), plane.getAltitude(), plane.getTargetAltitude(), plane.isEmergency(), false);
-    plane.getPilot().say(s);
-    if (plane.isArrival()) plane.getPilot().adviceGoAroundReasonToAtcIfAny();
+    ISpeech s = new GoodDayNotification(pilot.getFlight().getCallsign(), pilot.getPlane().getAltitude(),
+        pilot.getPlane().getTargetAltitude(), pilot.getPlane().isEmergency(), false);
+    pilot.say(s);
+    if (pilot.getFlight().isArrival()) pilot.adviceGoAroundReasonToAtcIfAny();
     return ApplicationResult.getEmpty();
   }
 }

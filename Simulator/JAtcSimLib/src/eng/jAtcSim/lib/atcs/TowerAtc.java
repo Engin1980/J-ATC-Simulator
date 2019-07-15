@@ -217,7 +217,7 @@ public class TowerAtc extends ComputerAtc {
 
   @Override
   protected boolean acceptsNewRouting(Airplane plane, SwitchRoutingRequest srr) {
-    assert plane.isDeparture() : "It is nonsense to have this call here for arrival.";
+    assert plane.getFlight().isDeparture() : "It is nonsense to have this call here for arrival.";
 
     boolean ret;
     RunwayConfiguration rc;
@@ -253,7 +253,7 @@ public class TowerAtc extends ComputerAtc {
 
   @Override
   protected boolean shouldBeSwitched(Airplane plane) {
-    if (plane.isArrival())
+    if (plane.getFlight().isArrival())
       return true; // this should be go-arounded arrivals
 
     // as this plane is asked for switch, it is confirmed
@@ -268,23 +268,23 @@ public class TowerAtc extends ComputerAtc {
 
   @Override
   protected ComputerAtc.RequestResult canIAcceptPlane(Airplane p) {
-    if (p.isDeparture()) {
-      return new ComputerAtc.RequestResult(false, String.format("%s is a departure.", p.getCallsign()));
+    if (p.getFlight().isDeparture()) {
+      return new ComputerAtc.RequestResult(false, String.format("%s is a departure.", p.getFlight().getCallsign()));
     }
     if (getPrm().getResponsibleAtc(p) != Acc.atcApp()) {
-      return new ComputerAtc.RequestResult(false, String.format("%s is not from APP.", p.getCallsign()));
+      return new ComputerAtc.RequestResult(false, String.format("%s is not from APP.", p.getFlight().getCallsign()));
     }
     if (isOnApproachOfTheRunwayInUse(p) == false)
-      return new ComputerAtc.RequestResult(false, String.format("%s is cleared to approach on the inactive runway.", p.getCallsign()));
+      return new ComputerAtc.RequestResult(false, String.format("%s is cleared to approach on the inactive runway.", p.getFlight().getCallsign()));
     if (isRunwayThresholdUnderMaintenance(p.tryGetCurrentApproachRunwayThreshold()) == false) {
       return new RequestResult(false, String.format("Runway %s is closed now.", p.tryGetCurrentApproachRunwayThreshold().getParent().getName()));
     }
     if (p.getAltitude() > this.acceptAltitude) {
-      return new ComputerAtc.RequestResult(false, String.format("%s is too high.", p.getCallsign()));
+      return new ComputerAtc.RequestResult(false, String.format("%s is too high.", p.getFlight().getCallsign()));
     }
     double dist = Coordinates.getDistanceInNM(p.getCoordinate(), Acc.airport().getLocation());
     if (dist > MAXIMAL_ACCEPT_DISTANCE_IN_NM) {
-      return new ComputerAtc.RequestResult(false, String.format("%s is too far.", p.getCallsign()));
+      return new ComputerAtc.RequestResult(false, String.format("%s is too far.", p.getFlight().getCallsign()));
     }
 
     return new RequestResult(true, null);
@@ -302,7 +302,7 @@ public class TowerAtc extends ComputerAtc {
     Atc ret = null;
     if (this.arrivalManager.checkIfPlaneIsReadyToSwitchAndRemoveIt(plane)) {
       ret = Acc.atcApp();
-    } else if (plane.isDeparture()) {
+    } else if (plane.getFlight().isDeparture()) {
       ret = Acc.atcApp();
     }
     return ret;
@@ -362,13 +362,13 @@ public class TowerAtc extends ComputerAtc {
 
   @Override
   public void unregisterPlaneUnderControl(Airplane plane) {
-    if (plane.isArrival()) {
+    if (plane.getFlight().isArrival()) {
       if (plane.getState() == Airplane.State.landed) {
         arrivalManager.unregisterFinishedArrival(plane);
       }
       //GO-AROUNDed planes are not unregistered, they have been unregistered previously
     }
-    if (plane.isDeparture()) {
+    if (plane.getFlight().isDeparture()) {
       departureManager.unregisterFinishedDeparture(plane);
 
       // add to stats
@@ -389,19 +389,19 @@ public class TowerAtc extends ComputerAtc {
 
   @Override
   public void removePlaneDeletedFromGame(Airplane plane) {
-    if (plane.isArrival()) {
+    if (plane.getFlight().isArrival()) {
       arrivalManager.deletePlane(plane);
       //TODO this will add to stats even planes deleted from the game by a user(?)
       Acc.stats().registerArrival();
     }
-    if (plane.isDeparture()) {
+    if (plane.getFlight().isDeparture()) {
       departureManager.deletePlane(plane);
     }
   }
 
   @Override
   public void registerNewPlaneUnderControl(Airplane plane, boolean initialRegistration) {
-    if (plane.isArrival())
+    if (plane.getFlight().isArrival())
       arrivalManager.registerNewArrival(plane);
     else {
       ActiveRunwayThreshold runwayThreshold = getRunwayThresholdForDeparture(plane);
@@ -710,7 +710,7 @@ public class TowerAtc extends ComputerAtc {
     lst.add(new RadarContactConfirmationNotification());
 
     // TO altitude only when no altitude from SID already processed
-    if (toReadyPlane.getTargetAltitude() <= availableThreshold.getParent().getParent().getAltitude())
+    if (toReadyPlane.getAdvanced().getTargetAltitude() <= availableThreshold.getParent().getParent().getAltitude())
       lst.add(new ChangeAltitudeCommand(
           ChangeAltitudeCommand.eDirection.climb, availableThreshold.getInitialDepartureAltitude()));
 
@@ -791,8 +791,8 @@ class ArrivalManager {
       throw new IllegalArgumentException("Value of {plane} cannot not be null.");
     }
 
-    assert plane.isArrival();
-    assert plane.getAssignedRunwayThresholdForLanding() != null : "Assigned arrival for " + plane.getCallsign() + " is null.";
+    assert plane.getFlight().isArrival();
+    assert plane.getAssignedRunwayThresholdForLanding() != null : "Assigned arrival for " + plane.getFlight().getCallsign() + " is null.";
     if (plane.getState().is(Airplane.State.approachEnter, Airplane.State.approachDescend, Airplane.State.longFinal, Airplane.State.shortFinal))
       this.landingPlanesList.add(plane);
     else
