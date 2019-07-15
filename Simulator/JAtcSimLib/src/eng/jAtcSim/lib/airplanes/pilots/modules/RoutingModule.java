@@ -1,5 +1,6 @@
 package eng.jAtcSim.lib.airplanes.pilots.modules;
 
+import eng.eSystem.Tuple;
 import eng.eSystem.collections.IList;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.utilites.ConversionUtils;
@@ -83,6 +84,20 @@ public class RoutingModule {
     }
   }
 
+  public boolean isOnWayToPassPoint(Navaid navaid) {
+    return afterCommands.hasProceedDirectToNavaidAsConseqent(navaid);
+  }
+
+  public void init(Navaid entryExitPoint) {
+    assert entryExitPoint != null;
+    this.entryExitPoint = entryExitPoint;
+  }
+
+  public void applyShortcut(Navaid navaid) {
+    SpeechList<IFromAtc> skippedCommands = this.afterCommands.doShortcutTo(navaid);
+    this.processSpeeches(skippedCommands, CommandSource.procedure);
+  }
+
   private void processNewSpeeches() {
     SpeechList current = new SpeechList(this.queue.getAndElapse());
 
@@ -105,40 +120,40 @@ public class RoutingModule {
     SpeechList<IAtcCommand> cmds;
 
     Coordinate targetCoordinate = parent.getSha().tryGetTargetCoordinate();
-    if (targetCoordinate == null && parent.getBehaviorModule().is(HoldBehavior.class)){
+    if (targetCoordinate == null && parent.getBehaviorModule().is(HoldBehavior.class)) {
       HoldBehavior hb = parent.getBehaviorModule().getAs(HoldBehavior.class);
       targetCoordinate = hb.navaid.getCoordinate();
     }
 
     cmds = afterCommands.getAndRemoveSatisfiedCommands(
-        parent.getMe(), targetCoordinate, AfterCommandList.Type.extensions);
+        parent.getPlane(), targetCoordinate, AfterCommandList.Type.extensions);
     parent.getRecorder().logProcessedAfterSpeeches(cmds, "extensions");
     processSpeeches(cmds, CommandSource.extension);
 
     cmds = afterCommands.getAndRemoveSatisfiedCommands(
-        parent.getMe(), targetCoordinate, AfterCommandList.Type.route);
+        parent.getPlane(), targetCoordinate, AfterCommandList.Type.route);
     parent.getRecorder().logProcessedAfterSpeeches(cmds, "route");
     processSpeeches(cmds, CommandSource.route);
   }
 
   private void processSpeeches(SpeechList<? extends IFromAtc> queue, CommandSource cs) {
 
-    Airplane.Airplane4Command plane = this.parent.getPlane4Command();
+    Pilot.Pilot5Command pilot5Command = this.parent.getPilot5Command();
     while (!queue.isEmpty()) {
       IFromAtc cmd = queue.get(0);
       if (cmd instanceof AfterCommand) {
         processAfterSpeechWithConsequents(queue, cs);
       } else {
-        processNormalSpeech(queue, cmd, cs, plane);
+        processNormalSpeech(queue, cmd, cs, pilot5Command);
       }
     }
   }
 
   private void processNormalSpeech(
       SpeechList<? extends IFromAtc> queue, IFromAtc cmd,
-      CommandSource cs, Airplane.Airplane4Command plane) {
+      CommandSource cs, Pilot.Pilot5Command pilot) {
 
-    ConfirmationResult cres = ApplicationManager.confirm(plane, cmd, cs == CommandSource.atc, true);
+    ConfirmationResult cres = ApplicationManager.confirm(pilot, cmd, cs == CommandSource.atc, true);
     if (cres.rejection != null) {
       // command was rejected
       say(cres.rejection);
@@ -156,7 +171,7 @@ public class RoutingModule {
     queue.removeAt(0);
   }
 
-  private void affectAfterCommands(IFromAtc cmd, Pilot.CommandSource cs) {
+  private void affectAfterCommands(IFromAtc cmd, CommandSource cs) {
     final Class[] lateralCommands = new Class[]{ProceedDirectCommand.class, ChangeHeadingCommand.class, HoldCommand.class};
     switch (cs) {
       case procedure:
@@ -177,17 +192,19 @@ public class RoutingModule {
         } else if (cmd instanceof ChangeAltitudeCommand) {
           // rule 4
           ChangeAltitudeCommand tmp = (ChangeAltitudeCommand) cmd;
-          this.afterCommands.clearChangeAltitudeClass(tmp.getAltitudeInFt(), this.parent.isArrival());
+          this.afterCommands.clearChangeAltitudeClass(tmp.getAltitudeInFt(), this.parent.getPlane().getFlight().isArrival());
         } else if (cmd instanceof ChangeSpeedCommand) {
           ChangeSpeedCommand tmp = (ChangeSpeedCommand) cmd;
           if (tmp.isResumeOwnSpeed() == false) {
             // rule 5
-            this.afterCommands.clearChangeSpeedClass(tmp.getSpeedInKts(), this.parent.isArrival(), AfterCommandList.Type.route);
-            this.afterCommands.clearChangeSpeedClass(tmp.getSpeedInKts(), this.parent.isArrival(), AfterCommandList.Type.extensions);
+            this.afterCommands.clearChangeSpeedClass(
+                tmp.getSpeedInKts(), this.parent.getPlane().getFlight().isArrival(), AfterCommandList.Type.route);
+            this.afterCommands.clearChangeSpeedClass(
+                tmp.getSpeedInKts(), this.parent.getPlane().getFlight().isArrival(), AfterCommandList.Type.extensions);
           } else {
             // rule 6
             this.afterCommands.clearChangeSpeedClassOfRouteWithTransferConsequent(
-                null, this.parent.isArrival());
+                null, this.parent.getPlane().getFlight().isArrival());
             this.afterCommands.clearExtensionsByConsequent(ChangeSpeedCommand.class);
           }
         } else if (cmd instanceof ClearedToApproachCommand) {
@@ -205,16 +222,16 @@ public class RoutingModule {
         } else if (cmd instanceof AfterAltitudeCommand) {
           // rule 9
           ChangeAltitudeCommand tmp = (ChangeAltitudeCommand) cmd;
-          this.afterCommands.clearChangeAltitudeClass(tmp.getAltitudeInFt(), this.parent.isArrival());
+          this.afterCommands.clearChangeAltitudeClass(tmp.getAltitudeInFt(), this.parent.getPlane().getFlight().isArrival());
         } else if (cmd instanceof ChangeSpeedCommand) {
           ChangeSpeedCommand tmp = (ChangeSpeedCommand) cmd;
           if (tmp.isResumeOwnSpeed() == false) {
             // rule 10
-            this.afterCommands.clearChangeSpeedClass(tmp.getSpeedInKts(), this.parent.isArrival(), AfterCommandList.Type.extensions);
+            this.afterCommands.clearChangeSpeedClass(tmp.getSpeedInKts(), this.parent.getPlane().getFlight().isArrival(), AfterCommandList.Type.extensions);
           } else {
             // rule 11
             this.afterCommands.clearChangeSpeedClassOfRouteWithTransferConsequent(
-                null, this.parent.isArrival());
+                null, this.parent.getPlane().getFlight().isArrival());
             this.afterCommands.clearExtensionsByConsequent(ChangeSpeedCommand.class);
           }
         } else if (cmd instanceof ClearedToApproachCommand) {
@@ -243,16 +260,16 @@ public class RoutingModule {
     AfterCommand af = (AfterCommand) queue.get(0);
     queue.removeAt(0);
 
-    if (cs == Pilot.CommandSource.atc && parent.getState().is(unableProcessAfterCommandsStates)) {
+    if (cs == CommandSource.atc && parent.getPlane().getState().is(unableProcessAfterCommandsStates)) {
       ISpeech rej = new Rejection("Unable to process after-command during approach/take-off.", af);
       say(rej);
       return;
     }
 
     ConfirmationResult cres;
-    boolean sayConfirmations = cs == Pilot.CommandSource.atc;
+    boolean sayConfirmations = cs == CommandSource.atc;
 
-    cres = ApplicationManager.confirm(plane, af, true, false);
+    cres = ApplicationManager.confirm(parent.getPilot5Command(), af, true, false);
     if (sayConfirmations) say(cres.confirmation);
 
     while (queue.isEmpty() == false) {
@@ -266,10 +283,10 @@ public class RoutingModule {
           break;
 
         queue.removeAt(0);
-        cres = ApplicationManager.confirm(plane, cmd, true, false);
+        cres = ApplicationManager.confirm(parent.getPilot5Command(), cmd, true, false);
         if (sayConfirmations) say(cres.confirmation);
 
-        if (cs == Pilot.CommandSource.procedure) {
+        if (cs == CommandSource.procedure) {
           afterCommands.addRoute(af, cmd);
         } else
           afterCommands.addExtension(af, cmd);
@@ -279,6 +296,8 @@ public class RoutingModule {
 
   private void say(ISpeech speech) {
     // if no tuned atc, nothing is said
+    Atc atc = parent.getAtcModule().getTunedAtc();
+
     if (atc == null) return;
 
     if (saidText.containsKey(atc) == false) {
@@ -301,6 +320,7 @@ public class RoutingModule {
   }
 
   private void expandThenCommands(SpeechList<IFromAtc> speeches) {
+    Atc atc = parent.getAtcModule().getTunedAtc();
     if (speeches.isEmpty()) {
       return;
     }
@@ -350,6 +370,32 @@ public class RoutingModule {
         n.setDerivationSource(prev);
         speeches.set(i, n);
       }
+    }
+  }
+
+  private int getIndexOfNavaidInCommands(Navaid navaid) {
+    for (int i = 0; i < this.queue.size(); i++) {
+      if (this.queue.get(i) instanceof ProceedDirectCommand) {
+        ProceedDirectCommand pdc = (ProceedDirectCommand) this.queue.get(i);
+        if (pdc.getNavaid() == navaid) {
+          return i;
+        }
+      }
+    }
+    return -1;
+
+  }
+
+  private void printAfterCommands() {
+    System.out.println("## -- route ");
+    for (Tuple<AfterCommand, IAtcCommand> afterCommandIAtcCommandTuple : afterCommands.getAsList(AfterCommandList.Type.route)) {
+      System.out.println("  IF " + afterCommandIAtcCommandTuple.getA().toString());
+      System.out.println("  THEN " + afterCommandIAtcCommandTuple.getB().toString());
+    }
+    System.out.println("## -- ex ");
+    for (Tuple<AfterCommand, IAtcCommand> afterCommandIAtcCommandTuple : afterCommands.getAsList(AfterCommandList.Type.extensions)) {
+      System.out.println("  IF " + afterCommandIAtcCommandTuple.getA().toString());
+      System.out.println("  THEN " + afterCommandIAtcCommandTuple.getB().toString());
     }
   }
 }

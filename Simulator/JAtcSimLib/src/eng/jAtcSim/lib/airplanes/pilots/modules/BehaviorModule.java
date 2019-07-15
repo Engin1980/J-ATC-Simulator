@@ -27,4 +27,9 @@ public class BehaviorModule {
   public <T extends Behavior> T getAs(Class<T> type) {
     return (T) this.behavior;
   }
+
+  public void setBehavior(Behavior behavior) {
+    assert behavior != null;
+    this.behavior = behavior;
+  }
 }

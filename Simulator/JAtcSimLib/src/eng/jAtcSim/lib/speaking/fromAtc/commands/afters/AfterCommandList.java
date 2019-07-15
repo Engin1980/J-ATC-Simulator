@@ -16,6 +16,7 @@ import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.pilots.Pilot;
 import eng.eSystem.geo.Coordinate;
+import eng.jAtcSim.lib.airplanes.pilots.interfaces.IAirplaneRO;
 import eng.jAtcSim.lib.global.Headings;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.*;
 import eng.jAtcSim.lib.speaking.IFromAtc;
@@ -61,7 +62,7 @@ public class AfterCommandList {
     return ret;
   }
 
-  private static boolean isAFItemPassed(AFItem item, Airplane planex, Coordinate currentTargetCoordinateOrNull) {
+  private static boolean isAFItemPassed(AFItem item, IAirplaneRO plane, Coordinate currentTargetCoordinateOrNull) {
     boolean ret;
 
     if (item.antecedent instanceof AfterAltitudeCommand) {
@@ -106,7 +107,7 @@ public class AfterCommandList {
 
   private static SpeechList<IAtcCommand> getAndRemoveSatisfiedCommands(
       IList<AFItem> lst,
-      Airplane referencePlane, Coordinate currentTargetCoordinateOrNull,
+      IAirplaneRO referencePlane, Coordinate currentTargetCoordinateOrNull,
       boolean untilFirstNotSatisfied) {
 
     SpeechList<IAtcCommand> ret = new SpeechList<>();
@@ -219,7 +220,7 @@ public class AfterCommandList {
     return ret;
   }
 
-  public SpeechList<IAtcCommand> getAndRemoveSatisfiedCommands(Airplane referencePlane, Coordinate currentTargetCoordinateOrNull, Type type) {
+  public SpeechList<IAtcCommand> getAndRemoveSatisfiedCommands(IAirplaneRO referencePlane, Coordinate currentTargetCoordinateOrNull, Type type) {
     SpeechList<IAtcCommand> ret;
     IList<AFItem> tmp;
     boolean untilFirstNotSatisfied;

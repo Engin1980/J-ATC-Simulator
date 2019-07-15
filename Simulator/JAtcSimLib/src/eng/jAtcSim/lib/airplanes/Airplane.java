@@ -14,15 +14,20 @@ import eng.jAtcSim.lib.airplanes.modules.ShaModule;
 import eng.jAtcSim.lib.airplanes.moods.Mood;
 import eng.jAtcSim.lib.airplanes.moods.MoodResult;
 import eng.jAtcSim.lib.airplanes.pilots.Pilot;
+import eng.jAtcSim.lib.airplanes.pilots.interfaces.IAirplaneFlightRO;
+import eng.jAtcSim.lib.airplanes.pilots.interfaces.IAirplaneRO;
+import eng.jAtcSim.lib.airplanes.pilots.interfaces.IEmergencyModuleRO;
+import eng.jAtcSim.lib.airplanes.pilots.interfaces.IShaRO;
+import eng.jAtcSim.lib.airplanes.pilots.navigators.HeadingNavigator;
 import eng.jAtcSim.lib.airplanes.pilots.navigators.INavigator;
 import eng.jAtcSim.lib.atcs.Atc;
 import eng.jAtcSim.lib.exceptions.ToDoException;
-import eng.jAtcSim.lib.global.*;
+import eng.jAtcSim.lib.global.ETime;
+import eng.jAtcSim.lib.global.UnitProvider;
 import eng.jAtcSim.lib.messaging.IMessageContent;
 import eng.jAtcSim.lib.messaging.IMessageParticipant;
 import eng.jAtcSim.lib.messaging.Message;
 import eng.jAtcSim.lib.serialization.LoadSave;
-import eng.jAtcSim.lib.speaking.IFromAirplane;
 import eng.jAtcSim.lib.speaking.IFromAtc;
 import eng.jAtcSim.lib.speaking.ISpeech;
 import eng.jAtcSim.lib.speaking.SpeechList;
@@ -54,7 +59,7 @@ public class Airplane implements IMessageParticipant {
     }
 
     public Atc tunedAtc() {
-      return pilot.getTunedAtc();
+      return pilot.getAtcModule().getTunedAtc();
     }
 
     public Atc responsibleAtc() {
@@ -86,11 +91,11 @@ public class Airplane implements IMessageParticipant {
     }
 
     public Route getAssignedRoute() {
-      return Airplane.this.pilot.getAssignedRoute();
+      return Airplane.this.pilot.getRoutingModule().getAssignedRoute();
     }
 
     public ActiveRunwayThreshold getExpectedRunwayThreshold() {
-      return Airplane.this.pilot.getExpectedRunwayThreshold();
+      return Airplane.this.pilot.getRoutingModule().getExpectedRunwayThreshold();
     }
 
     public int altitude() {
@@ -126,7 +131,7 @@ public class Airplane implements IMessageParticipant {
     }
 
     public boolean hasRadarContact() {
-      return Airplane.this.pilot.hasRadarContact();
+      return Airplane.this.pilot.getAtcModule().hasRadarContact();
     }
 
     public String status() {
@@ -134,10 +139,39 @@ public class Airplane implements IMessageParticipant {
     }
   }
 
-  public class Airplane4Pilot {
-
+  public class AirplaneRO implements IAirplaneRO {
     public State getState() {
       return state;
+    }
+
+    public AirplaneType getType() {
+      return airplaneType;
+    }
+
+    public Coordinate getCoordinate() {
+      return coordinate;
+    }
+
+    @Override
+    public IAirplaneFlightRO getFlight() {
+      return null;
+    }
+
+    @Override
+    public IShaRO getSha() {
+      return null;
+    }
+
+    @Override
+    public IEmergencyModuleRO getEmergencyModule() {
+      return null;
+    }
+  }
+
+  public class Airplane4Pilot {
+
+    public IAirplaneRO getPlane() {
+      return Airplane.this.airplaneRO;
     }
 
     public void setxState(State state) {
@@ -150,16 +184,8 @@ public class Airplane implements IMessageParticipant {
       }
     }
 
-    public AirplaneType getType() {
-      return airplaneType;
-    }
-
-    public ShaModule getSha(){
+    public ShaModule getSha() {
       return Airplane.this.sha;
-    }
-
-    public Coordinate getCoordinate() {
-      return coordinate;
     }
 
     public void adviceGoAroundToAtc(Atc targetAtc, GoingAroundNotification.GoAroundReason reason) {
@@ -174,39 +200,8 @@ public class Airplane implements IMessageParticipant {
       Acc.messenger().send(m);
     }
 
-    public boolean isArrival() {
-      return flight.isArrival();
-    }
-
-//    public Airplane getMe() {
-//      return Airplane.this;
-//    }
-
-    public Callsign getCallsign() {
-      return flight.getCallsign();
-    }
-
-    public void passMessageToAtc(Atc atc, SpeechList saidText) {
-      Message m = new Message(Airplane.this, atc, saidText);
-      Acc.messenger().send(m);
-    }
-
-    public void passMessageToAtc(Atc atc, IFromAirplane content) {
-      SpeechList saidText = new SpeechList();
-      saidText.add(content);
-      passMessageToAtc(atc, saidText);
-    }
-
     public void divert() {
       Airplane.this.flight.divert();
-    }
-
-    public boolean isEmergency() {
-      return Airplane.this.emergencyModule.isEmergency();
-    }
-
-    public AirproxType getAirprox() {
-      return Airplane.this.mrvaAirproxModule.getAirprox();
     }
 
     public void evaluateMoodForShortcut(Navaid navaid) {
@@ -234,12 +229,57 @@ public class Airplane implements IMessageParticipant {
       Airplane.this.sha.setNavigator(navigator);
     }
 
-    public EmergencyModule getEmergencyModule() {
-      return Airplane.this.emergencyModule;
+    public void passMessage(Atc atc, SpeechList saidText) {
+      Message m = new Message(Airplane.this, atc, saidText);
+      Acc.messenger().send(m);
     }
 
-    public AirplaneFlight getFlight() {
-      return Airplane.this.flight;
+    public void setTakeOffPosition(Coordinate coordinate) {
+      assert coordinate != null;
+      Airplane.this.coordinate = coordinate;
+    }
+  }
+
+  public class AdvancedReader {
+
+    public int getTargetAltitude() {
+      return Airplane.this.sha.getTargetAltitude();
+    }
+
+    public String getHeadingS() {
+      return String.format("%1$03d", (int) Airplane.this.getHeading());
+    }
+
+    public Coordinate getCoordinate() {
+      return coordinate;
+    }
+
+    public int getTargetHeading() {
+      return Airplane.this.sha.getTargetHeading();
+    }
+
+    public String getTargetHeadingS() {
+      return String.format("%1$03d", getTargetHeading());
+    }
+
+    public Navaid getDepartureLastNavaid() {
+      if (Airplane.this.flight.isDeparture() == false)
+        throw new EApplicationException(sf(
+            "This method should not be called on departure aircraft %s.",
+            Airplane.this.flight.getCallsign().toString()));
+
+      Navaid ret = Airplane.this.pilot.getRoutingModule().getAssignedRoute().getMainNavaid();
+      return ret;
+    }
+
+    public boolean isOnWayToPassDeparturePoint() {
+      Navaid n = this.getDepartureLastNavaid();
+      boolean ret = Airplane.this.pilot.isOnWayToPassPoint(n);
+      return ret;
+    }
+
+    public double getTargetSpeed() {
+      return Airplane.this.sha.getTargetSpeed();
     }
   }
 
@@ -306,49 +346,6 @@ public class Airplane implements IMessageParticipant {
 //  }
 
   //endregion
-
-  public class AdvancedReader {
-
-    public int getTargetAltitude() {
-      return Airplane.this.sha.getTargetAltitude();
-    }
-
-    public String getHeadingS() {
-      return String.format("%1$03d", (int) Airplane.this.getHeading());
-    }
-
-    public Coordinate getCoordinate() {
-      return coordinate;
-    }
-
-    public int getTargetHeading() {
-      return Airplane.this.sha.getTargetHeading();
-    }
-
-    public String getTargetHeadingS() {
-      return String.format("%1$03d", getTargetHeading());
-    }
-
-    public Navaid getDepartureLastNavaid() {
-      if (Airplane.this.flight.isDeparture() == false)
-        throw new EApplicationException(sf(
-            "This method should not be called on departure aircraft %s.",
-            Airplane.this.flight.getCallsign().toString()));
-
-      Navaid ret = Airplane.this.pilot.getAssignedRoute().getMainNavaid();
-      return ret;
-    }
-
-    public boolean isOnWayToPassDeparturePoint() {
-      Navaid n = this.getDepartureLastNavaid();
-      boolean ret = Airplane.this.pilot.isOnWayToPassPoint(n);
-      return ret;
-    }
-
-    public double getTargetSpeed() {
-      return Airplane.this.sha.getTargetSpeed();
-    }
-  }
 
   public enum State {
 
@@ -429,7 +426,6 @@ public class Airplane implements IMessageParticipant {
       return ret;
     }
   }
-
   private static final int MINIMAL_DIVERT_TIME_MINUTES = 45;
   private static final int MAXIMAL_DIVERT_TIME_MINUTES = 120;
   private static final double secondFraction = 1 / 60d / 60d;
@@ -471,27 +467,30 @@ public class Airplane implements IMessageParticipant {
 //    return ret;
   }
 
-
+  private static ETime generateDivertTime(boolean isDeparture) {
+    ETime divertTime = null;
+    if (!isDeparture) {
+      int divertTimeMinutes = Acc.rnd().nextInt(MINIMAL_DIVERT_TIME_MINUTES, MAXIMAL_DIVERT_TIME_MINUTES);
+      divertTime = Acc.now().addMinutes(divertTimeMinutes);
+    }
+    return divertTime;
+  }
+  private IAirplaneRO airplaneRO = new AirplaneRO();
   private final AirplaneType airplaneType;
-
   private final Squawk sqwk;
-
   private final AirplaneFlight flight;
   private final Pilot pilot;
   private Coordinate coordinate;
   private State state;
-
   private final ShaModule sha = new ShaModule(this);
   private final EmergencyModule emergencyModule = new EmergencyModule(this);
   private final MrvaAirproxModule mrvaAirproxModule = new MrvaAirproxModule(this);
   private Mood mood;
   private final AdvancedReader advancedReader = new AdvancedReader();
-
   @XmlIgnore
   private FlightRecorder flightRecorder = null;
   @XmlIgnore
   private final Airplane4Display plane4Display = new Airplane4Display();
-
 
   public Airplane(Callsign callsign, Coordinate coordinate, Squawk sqwk, AirplaneType airplaneSpecification,
                   int heading, int altitude, int speed, boolean isDeparture,
@@ -547,7 +546,7 @@ public class Airplane implements IMessageParticipant {
   }
 
   public Atc getTunedAtc() {
-    return pilot.getTunedAtc();
+    return pilot.getAtcModule().getTunedAtc();
   }
 
   public double getTAS() {
@@ -605,7 +604,7 @@ public class Airplane implements IMessageParticipant {
   }
 
   public Route getAssigneRoute() {
-    return this.pilot.getAssignedRoute();
+    return this.pilot.getRoutingModule().getAssignedRoute();
   }
 
   public Airplane4Display getPlane4Display() {
@@ -629,13 +628,13 @@ public class Airplane implements IMessageParticipant {
   public void setHoldingPointState(Coordinate coordinate, double course) {
     assert this.state == State.holdingPoint;
     this.coordinate = coordinate;
-    this.sha.setTargetHeading((int) Math.round(course));
+    this.sha.setNavigator(
+        new HeadingNavigator(course));
   }
 
   public void updateAssignedRouting(Route route, ActiveRunwayThreshold expectedRunwayThreshold) {
-    pilot.updateAssignedRouting(route, expectedRunwayThreshold);
+    pilot.getRoutingModule().updateAssignedRouting(route, expectedRunwayThreshold);
   }
-
 
   public ActiveRunwayThreshold getAssignedRunwayThresholdForLanding() {
     ActiveRunwayThreshold ret = tryGetAssignedRunwayThresholdForLanding();
@@ -685,9 +684,8 @@ public class Airplane implements IMessageParticipant {
 
   }
 
-
   public Navaid getEntryExitFix() {
-    return pilot.getEntryExitPoint();
+    return pilot.getRoutingModule().getEntryExitPoint();
   }
 
   public Mood getMood() {
@@ -700,16 +698,7 @@ public class Airplane implements IMessageParticipant {
   }
 
   public ActiveRunwayThreshold getExpectedRunwayThreshold() {
-    return pilot.getExpectedRunwayThreshold();
-  }
-
-  private static ETime generateDivertTime(boolean isDeparture) {
-    ETime divertTime = null;
-    if (!isDeparture) {
-      int divertTimeMinutes = Acc.rnd().nextInt(MINIMAL_DIVERT_TIME_MINUTES, MAXIMAL_DIVERT_TIME_MINUTES);
-      divertTime = Acc.now().addMinutes(divertTimeMinutes);
-    }
-    return divertTime;
+    return pilot.getRoutingModule().getExpectedRunwayThreshold();
   }
 
   //region Private methods
@@ -726,7 +715,7 @@ public class Airplane implements IMessageParticipant {
 
   private void processMessage(Message msg) {
     // if item from non-tuned ATC, then is ignored
-    if (msg.getSource() != this.pilot.getTunedAtc()) {
+    if (msg.getSource() != this.pilot.getAtcModule().getTunedAtc()) {
       return;
     }
 
@@ -761,7 +750,7 @@ public class Airplane implements IMessageParticipant {
   }
 
   private void processCommands(SpeechList speeches) {
-    this.pilot.addNewSpeeches(speeches);
+    this.pilot.getRoutingModule().addNewSpeeches(speeches);
   }
 
   private void updateCoordinates() {

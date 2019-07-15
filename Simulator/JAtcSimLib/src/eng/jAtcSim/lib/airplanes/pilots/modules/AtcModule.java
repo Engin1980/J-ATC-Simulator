@@ -2,16 +2,17 @@ package eng.jAtcSim.lib.airplanes.pilots.modules;
 
 import eng.jAtcSim.lib.airplanes.pilots.Pilot;
 import eng.jAtcSim.lib.atcs.Atc;
+import eng.jAtcSim.lib.atcs.TowerAtc;
 import eng.jAtcSim.lib.global.Global;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.GoodDayNotification;
 
 public class AtcModule {
-  private final Pilot parent;
+  private final Pilot.Pilot5Module parent;
   private int altitudeOrderedByAtc;
   private Atc atc;
-  private int secondsWithoutRadarContact;
+  private int secondsWithoutRadarContact = 0;
 
-  public AtcModule(Pilot parent) {
+  public AtcModule(Pilot.Pilot5Module parent) {
     assert parent != null;
     this.parent = parent;
   }
@@ -28,13 +29,33 @@ public class AtcModule {
     if (this.secondsWithoutRadarContact > 0) {
       this.secondsWithoutRadarContact++;
       if (this.secondsWithoutRadarContact % Global.REPEATED_RADAR_CONTACT_REQUEST_SECONDS == 0) {
-        this.say(
+        parent.say(
             new GoodDayNotification(
-                this.parent.parent.getfli.getCallsign(), this.parent.getSha().getAltitude(), this.parent.getSha().getTargetAltitude(), this.parent.isEmergency(), true));
+                parent.getPlane().getFlight().getCallsign(),
+                parent.getPlane().getSha().getAltitude(),
+                parent.getPlane().getSha().getTargetAltitude(),
+                parent.getPlane().getEmergencyModule().isEmergency(),
+                true));
       }
     }
   }
 
   public int getSecondsWithoutRadarContact() {
+    return this.secondsWithoutRadarContact;
+  }
+
+  public void init(Atc atc) {
+    assert atc != null;
+    this.atc = atc;
+  }
+
+  public void setHasRadarContact() {
+    this.secondsWithoutRadarContact = 0;
+  }
+
+  public void changeAtc(Atc atc) {
+    assert atc != null;
+    this.atc = atc;
+    this.secondsWithoutRadarContact = 1;
   }
 }

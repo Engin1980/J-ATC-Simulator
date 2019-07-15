@@ -184,7 +184,7 @@ public class ShaModule {
   }
 
   //region Altitude-methods
-  public void setTargetAltitudeRestriction(Restriction altitudeRestriction) {
+  public void setAltitudeRestriction(Restriction altitudeRestriction) {
     this.altitudeOrders.setRestriction(altitudeRestriction);
   }
 
