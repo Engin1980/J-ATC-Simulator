@@ -78,9 +78,9 @@ public class HoldBehavior extends DivertableBehavior {
           pilot.setTargetHeading(this.getOutboundHeading(), this.isLeftTurned);
           this.phase = eHoldPhase.firstTurn;
           if (pilot.getPlane().getFlight().isArrival())
-            pilot.experience(Mood.ArrivalExperience.holdCycleFinished);
+            pilot.addExperience(Mood.ArrivalExperience.holdCycleFinished);
           else
-            pilot.experience(Mood.DepartureExperience.holdCycleFinished);
+            pilot.addExperience(Mood.DepartureExperience.holdCycleFinished);
         } else {
           double newHeading = Coordinates.getHeadingToRadial(
               pilot.getPlane().getCoordinate(), this.navaid.getCoordinate(), this.inboundRadial,

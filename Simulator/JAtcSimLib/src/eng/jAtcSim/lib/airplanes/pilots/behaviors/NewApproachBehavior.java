@@ -81,7 +81,7 @@ public class NewApproachBehavior extends Behavior {
             GoingAroundNotification.GoAroundReason.notStabilizedOnFinal
         });
     if (isAtcFail)
-      pilot.experience(Mood.ArrivalExperience.goAroundNotCausedByPilot);
+      pilot.addExperience(Mood.ArrivalExperience.goAroundNotCausedByPilot);
 
 
 

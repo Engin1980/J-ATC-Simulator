@@ -298,7 +298,7 @@ public class ShaModule {
       return null;
   }
 
-  public void _setTargetHeading(int heading, boolean leftTurn) {
+  void _setTargetHeading(int heading, boolean leftTurn) {
     this.finalHeading = heading;
     this.finalHeadingLeftTurn = leftTurn;
   }

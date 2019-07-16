@@ -3,17 +3,22 @@ package eng.jAtcSim.lib.airplanes.pilots.modules;
 import eng.eSystem.Tuple;
 import eng.eSystem.collections.IList;
 import eng.eSystem.geo.Coordinate;
+import eng.eSystem.geo.Coordinates;
 import eng.eSystem.utilites.ConversionUtils;
+import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.commandApplications.ApplicationManager;
 import eng.jAtcSim.lib.airplanes.commandApplications.ApplicationResult;
 import eng.jAtcSim.lib.airplanes.commandApplications.ConfirmationResult;
 import eng.jAtcSim.lib.airplanes.pilots.Pilot;
 import eng.jAtcSim.lib.airplanes.pilots.behaviors.HoldBehavior;
+import eng.jAtcSim.lib.airplanes.pilots.behaviors.NewApproachBehavior;
 import eng.jAtcSim.lib.airplanes.pilots.interfaces.forPilot.IPilot5Command;
 import eng.jAtcSim.lib.airplanes.pilots.interfaces.forPilot.IPilot5Module;
+import eng.jAtcSim.lib.airplanes.pilots.interfaces.forPilot.IRoutingModuleRO;
 import eng.jAtcSim.lib.atcs.Atc;
 import eng.jAtcSim.lib.global.DelayedList;
+import eng.jAtcSim.lib.global.Headings;
 import eng.jAtcSim.lib.speaking.IFromAtc;
 import eng.jAtcSim.lib.speaking.ISpeech;
 import eng.jAtcSim.lib.speaking.SpeechList;
@@ -27,11 +32,12 @@ import eng.jAtcSim.lib.speaking.fromAtc.notifications.RadarContactConfirmationNo
 import eng.jAtcSim.lib.world.ActiveRunwayThreshold;
 import eng.jAtcSim.lib.world.Navaid;
 import eng.jAtcSim.lib.world.Route;
+import eng.jAtcSim.lib.world.newApproaches.NewApproachInfo;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class RoutingModule extends Module {
+public class RoutingModule extends Module implements IRoutingModuleRO {
 
   public enum CommandSource {
     procedure,
@@ -56,8 +62,58 @@ public class RoutingModule extends Module {
     return this.entryExitPoint;
   }
 
+  public void goAround(SpeechList gaRoute) {
+    this.afterCommands.clearAll();
+
+    SpeechList<IFromAtc> gas = new SpeechList<>(gaRoute);
+    ChangeAltitudeCommand cac = null; // remember climb command and add it as the first at the end
+    if (gas.get(0) instanceof ChangeAltitudeCommand) {
+      cac = (ChangeAltitudeCommand) gas.get(0);
+      gas.removeAt(0);
+    }
+    gas.insert(0, new ChangeHeadingCommand((int) expectedRunwayThreshold.getCourse(), ChangeHeadingCommand.eDirection.any));
+
+    // check if is before runway threshold.
+    // if is far before, then first point will still be runway threshold
+    if (isBeforeRunwayThreshold()) {
+      String runwayThresholdNavaidName =
+          expectedRunwayThreshold.getParent().getParent().getIcao() + ":" + expectedRunwayThreshold.getName();
+      Navaid runwayThresholdNavaid = Acc.area().getNavaids().getOrGenerate(runwayThresholdNavaidName);
+      gas.insert(0, new ProceedDirectCommand(runwayThresholdNavaid));
+      gas.insert(1, new ThenCommand());
+    }
+
+    if (cac != null)
+      gas.insert(0, cac);
+
+    expandThenCommands(gas);
+    processSpeeches(gas, CommandSource.procedure);
+  }
+
+  @Override
+  public boolean hasLateralDirectionAfterCoordinate() {
+    Coordinate coordinate = parent.getPlane().getSha().tryGetTargetCoordinate();
+    assert coordinate != null;
+    return afterCommands.hasLateralDirectionAfterCoordinate(coordinate);
+  }
+
   public Route getAssignedRoute() {
     return this.assignedRoute;
+  }
+
+  @Override
+  public boolean hasEmptyRoute() {
+    return afterCommands.isRouteEmpty();
+  }
+
+  public void setRoute(Route route) {
+    afterCommands.clearAll();
+    this.assignedRoute = route;
+  }
+
+  public void setRoute(SpeechList route) {
+    expandThenCommands(route);
+    processSpeeches(route, CommandSource.procedure);
   }
 
   public void updateAssignedRouting(Route newRoute, ActiveRunwayThreshold expectedRunwayThreshold) {
@@ -91,6 +147,10 @@ public class RoutingModule extends Module {
   public void init(Navaid entryExitPoint) {
     assert entryExitPoint != null;
     this.entryExitPoint = entryExitPoint;
+  }
+
+  public void clearAfterCommands(){
+    this.afterCommands.clearAll();
   }
 
   public void applyShortcut(Navaid navaid) {
@@ -397,5 +457,18 @@ public class RoutingModule extends Module {
       System.out.println("  IF " + afterCommandIAtcCommandTuple.getA().toString());
       System.out.println("  THEN " + afterCommandIAtcCommandTuple.getB().toString());
     }
+  }
+
+  private boolean isBeforeRunwayThreshold() {
+    NewApproachInfo ai = parent.getBehaviorModule().getAs(NewApproachBehavior.class).getApproachInfo();
+    double dist = Coordinates.getDistanceInNM(parent.getPlane().getCoordinate(), ai.getThreshold().getCoordinate());
+    double hdg = Coordinates.getBearing(parent.getPlane().getCoordinate(), ai.getThreshold().getCoordinate());
+    boolean ret;
+    if (dist < 3)
+      ret = false;
+    else {
+      ret = Headings.isBetween(ai.getThreshold().getCourse() - 70, hdg, ai.getThreshold().getCourse() + 70);
+    }
+    return ret;
   }
 }

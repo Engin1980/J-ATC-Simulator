@@ -188,18 +188,6 @@ public class Airplane implements IMessageParticipant {
       return Airplane.this.sha;
     }
 
-    public void adviceGoAroundToAtc(Atc targetAtc, GoingAroundNotification.GoAroundReason reason) {
-      IAirplaneNotification notification = new GoingAroundNotification(reason);
-      adviceToAtc(targetAtc, notification);
-    }
-
-    public void adviceToAtc(Atc targetAtc, IAirplaneNotification notification) {
-      SpeechList lst = new SpeechList(notification);
-      Message m = new Message(Airplane.this, targetAtc,
-          lst);
-      Acc.messenger().send(m);
-    }
-
     public void divert() {
       Airplane.this.flight.divert();
     }

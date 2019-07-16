@@ -1,14 +1,14 @@
 package eng.jAtcSim.lib.airplanes.pilots.modules;
 
-import eng.jAtcSim.lib.airplanes.pilots.Pilot;
+import eng.jAtcSim.lib.airplanes.pilots.interfaces.forPilot.IAtcModuleRO;
 import eng.jAtcSim.lib.airplanes.pilots.interfaces.forPilot.IPilot5Module;
 import eng.jAtcSim.lib.atcs.Atc;
-import eng.jAtcSim.lib.atcs.TowerAtc;
 import eng.jAtcSim.lib.global.Global;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.GoodDayNotification;
 
-public class AtcModule extends Module {
-  private int altitudeOrderedByAtc;
+public class AtcModule extends Module implements IAtcModuleRO {
+  //TODO delete if not used
+  //  private int altitudeOrderedByAtc;
   private Atc atc;
   private int secondsWithoutRadarContact = 0;
 

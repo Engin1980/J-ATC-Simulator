@@ -5,6 +5,10 @@ import eng.jAtcSim.lib.airplanes.pilots.interfaces.forPilot.IPilot5Behavior;
 
 public abstract class Behavior {
 
+  public boolean isDivertable(){
+    return false;
+  }
+
   public abstract void fly(IPilot5Behavior pilot);
 
   public abstract String toLogString();

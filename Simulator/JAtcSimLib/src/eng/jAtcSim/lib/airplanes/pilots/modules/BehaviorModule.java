@@ -10,6 +10,10 @@ public class BehaviorModule extends Module{
     super(parent);
   }
 
+  public Behavior get() {
+    return this.behavior;
+  }
+
   public boolean is(Class<? extends Behavior> type) {
     boolean ret = type.isAssignableFrom(behavior.getClass());
     return ret;

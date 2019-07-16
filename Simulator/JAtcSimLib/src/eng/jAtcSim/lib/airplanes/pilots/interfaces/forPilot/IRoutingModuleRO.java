@@ -6,4 +6,6 @@ public interface IRoutingModuleRO {
   boolean hasLateralDirectionAfterCoordinate();
 
   Route getAssignedRoute();
+
+  boolean hasEmptyRoute();
 }

@@ -64,7 +64,7 @@
 //            GoingAroundNotification.GoAroundReason.notStabilizedOnFinal
 //        });
 //    if (isAtcFail)
-//      Pilot.this.parent.getMood().experience(Mood.ArrivalExperience.goAroundNotCausedByPilot);
+//      Pilot.this.parent.getMood().addExperience(Mood.ArrivalExperience.goAroundNotCausedByPilot);
 //
 //    Pilot.this.gaReason = reason;
 //    parent.adviceGoAroundToAtc(atc, reason);
@@ -395,7 +395,7 @@
 //        break;
 //      case landed:
 //        if (Pilot.this.parent.isEmergency())
-//          Pilot.this.parent.getMood().experience(Mood.ArrivalExperience.landedAsEmergency);
+//          Pilot.this.parent.getMood().addExperience(Mood.ArrivalExperience.landedAsEmergency);
 //        isAfterStateChange = false;
 //        updateHeadingOnApproach(Coordinates.eHeadingToRadialBehavior.gentle);
 //        break;
