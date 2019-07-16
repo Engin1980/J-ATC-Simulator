@@ -2,15 +2,15 @@ package eng.jAtcSim.lib.airplanes.pilots.modules;
 
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.pilots.Pilot;
+import eng.jAtcSim.lib.airplanes.pilots.interfaces.forPilot.IPilot5Module;
 import eng.jAtcSim.lib.global.ETime;
 
-public class DivertModule {
-  private final Pilot.Pilot5Module parent;
+public class DivertModule extends Module {
   public ETime divertTime;
   public int lastAnnouncedMinute = Integer.MAX_VALUE;
 
-  public DivertModule(Pilot.Pilot5Module parent) {
-    this.parent = parent;
+  public DivertModule(IPilot5Module parent) {
+    super(parent);
   }
 
   public void init(ETime divertTime){

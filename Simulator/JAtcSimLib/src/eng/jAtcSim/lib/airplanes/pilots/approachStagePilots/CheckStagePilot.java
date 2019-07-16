@@ -1,7 +1,7 @@
 package eng.jAtcSim.lib.airplanes.pilots.approachStagePilots;
 
 import eng.eSystem.exceptions.EApplicationException;
-import eng.jAtcSim.lib.airplanes.pilots.behaviors.IPilot4Behavior;
+import eng.jAtcSim.lib.airplanes.pilots.interfaces.forPilot.IPilot5Behavior;
 import eng.jAtcSim.lib.world.newApproaches.stages.CheckStage;
 import eng.jAtcSim.lib.world.newApproaches.stages.checks.CheckAirportVisibilityStage;
 import eng.jAtcSim.lib.world.newApproaches.stages.checks.CheckPlaneLocationStage;
@@ -10,7 +10,7 @@ import eng.jAtcSim.lib.world.newApproaches.stages.checks.CheckPlaneStateStage;
 public class CheckStagePilot implements IApproachStagePilot<CheckStage> {
 
   @Override
-  public eResult initStage(IPilot4Behavior pilot, CheckStage stage) {
+  public eResult initStage(IPilot5Behavior pilot, CheckStage stage) {
     eResult ret;
     if (stage instanceof CheckAirportVisibilityStage)
       ret = evaluateCheckAirportVisibility(pilot, (CheckAirportVisibilityStage) stage);
@@ -24,30 +24,30 @@ public class CheckStagePilot implements IApproachStagePilot<CheckStage> {
     return ret;
   }
 
-  private eResult evaluateCheckPlaneStateStage(IPilot4Behavior pilot, CheckPlaneStateStage stage) {
+  private eResult evaluateCheckPlaneStateStage(IPilot5Behavior pilot, CheckPlaneStateStage stage) {
     throw new UnsupportedOperationException("TODO");
   }
 
-  private eResult evaluateCheckPlaneLocationStage(IPilot4Behavior pilot, CheckPlaneLocationStage stage) {
+  private eResult evaluateCheckPlaneLocationStage(IPilot5Behavior pilot, CheckPlaneLocationStage stage) {
     throw new UnsupportedOperationException("TODO");
   }
 
-  private eResult evaluateCheckAirportVisibility(IPilot4Behavior pilot, CheckAirportVisibilityStage stage) {
+  private eResult evaluateCheckAirportVisibility(IPilot5Behavior pilot, CheckAirportVisibilityStage stage) {
     throw new UnsupportedOperationException("TODO");
   }
 
   @Override
-  public eResult flyStage(IPilot4Behavior pilot, CheckStage stage) {
+  public eResult flyStage(IPilot5Behavior pilot, CheckStage stage) {
     return eResult.ok;
   }
 
   @Override
-  public eResult disposeStage(IPilot4Behavior pilot, CheckStage stage) {
+  public eResult disposeStage(IPilot5Behavior pilot, CheckStage stage) {
     return eResult.ok;
   }
 
   @Override
-  public boolean isFinishedStage(IPilot4Behavior pilot, CheckStage stage) {
+  public boolean isFinishedStage(IPilot5Behavior pilot, CheckStage stage) {
     return true;
   }
 }

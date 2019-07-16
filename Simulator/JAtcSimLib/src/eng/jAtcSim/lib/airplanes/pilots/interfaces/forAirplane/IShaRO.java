@@ -1,6 +1,7 @@
-package eng.jAtcSim.lib.airplanes.pilots.interfaces;
+package eng.jAtcSim.lib.airplanes.pilots.interfaces.forAirplane;
 
 import eng.eSystem.geo.Coordinate;
+import eng.jAtcSim.lib.global.Restriction;
 
 public interface IShaRO {
   int getAltitude();
@@ -8,4 +9,6 @@ public interface IShaRO {
   int getTargetAltitude();
 
   Coordinate tryGetTargetCoordinate();
+
+  Restriction getSpeedRestriction();
 }

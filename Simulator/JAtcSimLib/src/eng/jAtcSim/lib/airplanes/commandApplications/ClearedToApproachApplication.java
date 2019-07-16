@@ -5,6 +5,7 @@ import eng.eSystem.geo.Coordinates;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.pilots.Pilot;
+import eng.jAtcSim.lib.airplanes.pilots.interfaces.forPilot.IPilot5Command;
 import eng.jAtcSim.lib.world.newApproaches.stages.IApproachStage;
 import eng.jAtcSim.lib.global.Restriction;
 import eng.jAtcSim.lib.speaking.IFromAirplane;
@@ -84,7 +85,7 @@ public class ClearedToApproachApplication extends CommandApplication<ClearedToAp
   }
 
   @Override
-  protected ApplicationResult adjustAirplane(Pilot.Pilot5Command pilot, ClearedToApproachCommand c) {
+  protected ApplicationResult adjustAirplane(IPilot5Command pilot, ClearedToApproachCommand c) {
     ApplicationResult ret = new ApplicationResult();
 
     // hold abort only if fix was found
@@ -92,7 +93,7 @@ public class ClearedToApproachApplication extends CommandApplication<ClearedToAp
       pilot.abortHolding();
     }
 
-    Restriction sr = pilot.getPlane().getSpeedRestriction();
+    Restriction sr = pilot.getPlane().getSha().getSpeedRestriction();
 
     if (sr != null &&
         (sr.direction == Restriction.eDirection.atLeast ||

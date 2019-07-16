@@ -2,12 +2,12 @@ package eng.jAtcSim.lib.world.newApproaches.stages.checks;
 
 import eng.eSystem.geo.Coordinates;
 import eng.jAtcSim.lib.Acc;
-import eng.jAtcSim.lib.airplanes.pilots.behaviors.IPilot4Behavior;
+import eng.jAtcSim.lib.airplanes.pilots.interfaces.forPilot.IPilot5Behavior;
 import eng.jAtcSim.lib.weathers.Weather;
 
 public class CheckAirportVisibilityStage extends CheckApproachStage {
   @Override
-  protected eResult check(IPilot4Behavior pilot) {
+  protected eResult check(IPilot5Behavior pilot) {
     Weather w = Acc.weather();
     if ((w.getCloudBaseInFt() + Acc.airport().getAltitude()) < pilot.getAltitude()) {
       return eResult.runwayNotInSight;

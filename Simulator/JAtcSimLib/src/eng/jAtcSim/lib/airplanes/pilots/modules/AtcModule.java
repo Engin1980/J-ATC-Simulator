@@ -1,20 +1,19 @@
 package eng.jAtcSim.lib.airplanes.pilots.modules;
 
 import eng.jAtcSim.lib.airplanes.pilots.Pilot;
+import eng.jAtcSim.lib.airplanes.pilots.interfaces.forPilot.IPilot5Module;
 import eng.jAtcSim.lib.atcs.Atc;
 import eng.jAtcSim.lib.atcs.TowerAtc;
 import eng.jAtcSim.lib.global.Global;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.GoodDayNotification;
 
-public class AtcModule {
-  private final Pilot.Pilot5Module parent;
+public class AtcModule extends Module {
   private int altitudeOrderedByAtc;
   private Atc atc;
   private int secondsWithoutRadarContact = 0;
 
-  public AtcModule(Pilot.Pilot5Module parent) {
-    assert parent != null;
-    this.parent = parent;
+  public AtcModule(IPilot5Module parent) {
+    super(parent);
   }
 
   public Atc getTunedAtc() {
@@ -29,7 +28,7 @@ public class AtcModule {
     if (this.secondsWithoutRadarContact > 0) {
       this.secondsWithoutRadarContact++;
       if (this.secondsWithoutRadarContact % Global.REPEATED_RADAR_CONTACT_REQUEST_SECONDS == 0) {
-        parent.say(
+        parent.passMessageToAtc(
             new GoodDayNotification(
                 parent.getPlane().getFlight().getCallsign(),
                 parent.getPlane().getSha().getAltitude(),

@@ -1,7 +1,7 @@
 package eng.jAtcSim.lib.world.newApproaches.stages.checks;
 
 import eng.eSystem.validation.Validator;
-import eng.jAtcSim.lib.airplanes.pilots.behaviors.IPilot4Behavior;
+import eng.jAtcSim.lib.airplanes.pilots.interfaces.forPilot.IPilot5Behavior;
 import eng.jAtcSim.lib.global.Headings;
 import eng.jAtcSim.lib.world.newApproaches.stages.CheckStage;
 
@@ -27,7 +27,7 @@ public class CheckPlaneStateStage extends CheckStage {
   }
 
   @Override
-  protected eResult check(IPilot4Behavior pilot) {
+  protected eResult check(IPilot5Behavior pilot) {
     if (minAltitude != null && pilot.getAltitude() < this.minAltitude)
       return eResult.altitudeTooLow;
     if (maxAltitude != null && pilot.getAltitude() > this.maxAltitude)

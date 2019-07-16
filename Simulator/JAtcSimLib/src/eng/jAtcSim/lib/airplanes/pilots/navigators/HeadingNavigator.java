@@ -58,7 +58,7 @@ public class HeadingNavigator implements INavigator {
         default:
           throw new EEnumValueUnsupportedException(turn);
       }
-      sha.setTargetHeading(heading, useLeftTurn);
+      sha._setTargetHeading(heading, useLeftTurn);
       this.isApplied = true;
     }
   }

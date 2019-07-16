@@ -4,6 +4,7 @@ import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.utilites.EnumUtils;
 import eng.eSystem.validation.Validator;
 import eng.jAtcSim.lib.airplanes.moods.Mood;
+import eng.jAtcSim.lib.airplanes.pilots.interfaces.forPilot.IPilot5Behavior;
 import eng.jAtcSim.lib.world.newApproaches.stages.IApproachStage;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.GoingAroundNotification;
 import eng.jAtcSim.lib.world.newApproaches.NewApproachInfo;
@@ -21,7 +22,7 @@ public class NewApproachBehavior extends Behavior {
   }
 
   @Override
-  public void fly(IPilot4Behavior pilot) {
+  public void fly(IPilot5Behavior pilot) {
     if (this.currentStageIndex == -1) {
       this.currentStageIndex++;
       startCurrentStage(pilot);
@@ -46,11 +47,11 @@ public class NewApproachBehavior extends Behavior {
     return this.approachInfo;
   }
 
-  private void flyCurrentStage(IPilot4Behavior pilot) {
+  private void flyCurrentStage(IPilot5Behavior pilot) {
     this.getCurrentStage().flyStage(pilot);
   }
 
-  private void disposeCurrentStage(IPilot4Behavior pilot) {
+  private void disposeCurrentStage(IPilot5Behavior pilot) {
     this.getCurrentStage().disposeStage(pilot);
   }
 
@@ -58,12 +59,12 @@ public class NewApproachBehavior extends Behavior {
     return this.approachInfo.getStages().get(this.currentStageIndex);
   }
 
-  private void startCurrentStage(IPilot4Behavior pilot) {
+  private void startCurrentStage(IPilot5Behavior pilot) {
     IApproachStage stage = this.approachInfo.getStages().get(this.currentStageIndex);
     stage.initStage(pilot);
   }
 
-    public void goAround(IPilot4Behavior pilot, GoingAroundNotification.GoAroundReason reason) {
+    public void goAround(IPilot5Behavior pilot, GoingAroundNotification.GoAroundReason reason) {
     assert reason != null;
 
     pilot.goAround(

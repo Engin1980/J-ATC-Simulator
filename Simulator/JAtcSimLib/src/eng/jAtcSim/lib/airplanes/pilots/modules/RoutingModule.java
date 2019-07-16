@@ -10,6 +10,8 @@ import eng.jAtcSim.lib.airplanes.commandApplications.ApplicationResult;
 import eng.jAtcSim.lib.airplanes.commandApplications.ConfirmationResult;
 import eng.jAtcSim.lib.airplanes.pilots.Pilot;
 import eng.jAtcSim.lib.airplanes.pilots.behaviors.HoldBehavior;
+import eng.jAtcSim.lib.airplanes.pilots.interfaces.forPilot.IPilot5Command;
+import eng.jAtcSim.lib.airplanes.pilots.interfaces.forPilot.IPilot5Module;
 import eng.jAtcSim.lib.atcs.Atc;
 import eng.jAtcSim.lib.global.DelayedList;
 import eng.jAtcSim.lib.speaking.IFromAtc;
@@ -29,15 +31,14 @@ import eng.jAtcSim.lib.world.Route;
 import java.util.HashMap;
 import java.util.Map;
 
-public class RoutingModule {
+public class RoutingModule extends Module {
+
   public enum CommandSource {
     procedure,
     atc,
     route,
     extension
   }
-
-  private final Pilot.Pilot5Module parent;
 
   private Route assignedRoute;
   private ActiveRunwayThreshold expectedRunwayThreshold;
@@ -47,9 +48,8 @@ public class RoutingModule {
   private final AfterCommandList afterCommands = new AfterCommandList();
   private final Map<Atc, SpeechList> saidText = new HashMap<>();
 
-  public RoutingModule(Pilot.Pilot5Module parent) {
-    assert parent != null;
-    this.parent = parent;
+  public RoutingModule(IPilot5Module parent) {
+    super(parent);
   }
 
   public Navaid getEntryExitPoint() {
@@ -103,7 +103,7 @@ public class RoutingModule {
 
     if (current.isEmpty()) return;
 
-    parent.getRecorder().logProcessedCurrentSpeeches(current);
+    parent.getRecorderModule().logProcessedCurrentSpeeches(current);
 
     // if has not confirmed radar contact and the first command in the queue is not radar contact confirmation
     if (parent.getAtcModule().getSecondsWithoutRadarContact() > 0
@@ -127,18 +127,18 @@ public class RoutingModule {
 
     cmds = afterCommands.getAndRemoveSatisfiedCommands(
         parent.getPlane(), targetCoordinate, AfterCommandList.Type.extensions);
-    parent.getRecorder().logProcessedAfterSpeeches(cmds, "extensions");
+    parent.getRecorderModule().logProcessedAfterSpeeches(cmds, "extensions");
     processSpeeches(cmds, CommandSource.extension);
 
     cmds = afterCommands.getAndRemoveSatisfiedCommands(
         parent.getPlane(), targetCoordinate, AfterCommandList.Type.route);
-    parent.getRecorder().logProcessedAfterSpeeches(cmds, "route");
+    parent.getRecorderModule().logProcessedAfterSpeeches(cmds, "route");
     processSpeeches(cmds, CommandSource.route);
   }
 
   private void processSpeeches(SpeechList<? extends IFromAtc> queue, CommandSource cs) {
 
-    Pilot.Pilot5Command pilot5Command = this.parent.getPilot5Command();
+    IPilot5Command pilot5Command = this.parent.getPilot5Command();
     while (!queue.isEmpty()) {
       IFromAtc cmd = queue.get(0);
       if (cmd instanceof AfterCommand) {
@@ -151,7 +151,7 @@ public class RoutingModule {
 
   private void processNormalSpeech(
       SpeechList<? extends IFromAtc> queue, IFromAtc cmd,
-      CommandSource cs, Pilot.Pilot5Command pilot) {
+      CommandSource cs, IPilot5Command pilot) {
 
     ConfirmationResult cres = ApplicationManager.confirm(pilot, cmd, cs == CommandSource.atc, true);
     if (cres.rejection != null) {

@@ -19,7 +19,8 @@ import eng.jAtcSim.lib.airplanes.AirplaneType;
 import eng.jAtcSim.lib.airplanes.modules.ShaModule;
 import eng.jAtcSim.lib.airplanes.moods.Mood;
 import eng.jAtcSim.lib.airplanes.pilots.behaviors.*;
-import eng.jAtcSim.lib.airplanes.pilots.interfaces.IAirplaneRO;
+import eng.jAtcSim.lib.airplanes.pilots.interfaces.forAirplane.IAirplaneRO;
+import eng.jAtcSim.lib.airplanes.pilots.interfaces.forPilot.IPilot5Behavior;
 import eng.jAtcSim.lib.airplanes.pilots.modules.*;
 import eng.jAtcSim.lib.airplanes.pilots.navigators.HeadingNavigator;
 import eng.jAtcSim.lib.airplanes.pilots.navigators.INavigator;
@@ -179,7 +180,7 @@ public class Pilot {
 
   public class Pilot5Module extends Pilot5 {
 
-    public PilotRecorderModule getRecorder() {
+    public PilotRecorderModule getRecorderModule() {
       return Pilot.this.recorder;
     }
 
@@ -321,7 +322,7 @@ public class Pilot {
     }
   }
 
-  public class Pilot4Behavior implements IPilot4Behavior {
+  public class Pilot4Behavior implements IPilot5Behavior {
     @Override
     public void setBehaviorAndState(Behavior behavior, Airplane.State state) {
       Pilot.this.parent.setxState(state);
@@ -601,7 +602,7 @@ public class Pilot {
   @XmlIgnore
   public final Pilot4Command pilot4Command = new Pilot4Command();
   @XmlIgnore
-  public final IPilot4Behavior pilot4Behavior = new Pilot4Behavior();
+  public final IPilot5Behavior pilot4Behavior = new Pilot4Behavior();
   @XmlIgnore
   private GoingAroundNotification.GoAroundReason gaReason = null;
   private boolean isAfterGoAround = false;

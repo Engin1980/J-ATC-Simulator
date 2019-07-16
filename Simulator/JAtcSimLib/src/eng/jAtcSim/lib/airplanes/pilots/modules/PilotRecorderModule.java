@@ -11,6 +11,7 @@ import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.afters.AfterCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.afters.AfterCommandList;
 
+//TODO let this extends Module, probably?
 public class PilotRecorderModule extends Recorder {
 
   public PilotRecorderModule(String recorderName, AbstractSaver os, String fromTimeSeparator) {

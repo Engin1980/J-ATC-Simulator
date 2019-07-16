@@ -2,14 +2,13 @@ package eng.jAtcSim.lib.airplanes.pilots.modules;
 
 import eng.jAtcSim.lib.airplanes.pilots.Pilot;
 import eng.jAtcSim.lib.airplanes.pilots.behaviors.Behavior;
+import eng.jAtcSim.lib.airplanes.pilots.interfaces.forPilot.IPilot5Module;
 
-public class BehaviorModule {
-  private final Pilot.Pilot5Module parent;
+public class BehaviorModule extends Module{
   private Behavior behavior;
 
-  public BehaviorModule(Pilot.Pilot5Module pilot) {
-    assert pilot != null;
-    this.parent = pilot;
+  public BehaviorModule(IPilot5Module parent) {
+    super(parent);
   }
 
   public boolean is(Class<? extends Behavior> type) {

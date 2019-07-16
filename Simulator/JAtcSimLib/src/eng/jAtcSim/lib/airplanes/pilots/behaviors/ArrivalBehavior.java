@@ -3,6 +3,7 @@ package eng.jAtcSim.lib.airplanes.pilots.behaviors;
 import eng.eSystem.geo.Coordinates;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
+import eng.jAtcSim.lib.airplanes.pilots.interfaces.forPilot.IPilot5Behavior;
 
 public class ArrivalBehavior extends BasicBehavior {
 
@@ -10,7 +11,7 @@ public class ArrivalBehavior extends BasicBehavior {
   private final static double FAF_SPEED_DOWN_DISTANCE_IN_NM = 15;
 
   @Override
-  void _fly(IPilot4Behavior pilot) {
+  void _fly(IPilot5Behavior pilot) {
     switch (pilot.getState()) {
       case arrivingHigh:
         if (pilot.getAltitude() < LOW_SPEED_DOWN_ALTITUDE)

@@ -4,7 +4,7 @@ import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.geo.Headings;
 import eng.eSystem.utilites.NumberUtils;
-import eng.jAtcSim.lib.airplanes.pilots.behaviors.IPilot4Behavior;
+import eng.jAtcSim.lib.airplanes.pilots.interfaces.forPilot.IPilot5Behavior;
 
 public class CheckPlaneLocationStage extends CheckApproachStage {
   private final Coordinate coordinate;
@@ -22,7 +22,7 @@ public class CheckPlaneLocationStage extends CheckApproachStage {
   }
 
   @Override
-  protected eResult check(IPilot4Behavior pilot) {
+  protected eResult check(IPilot5Behavior pilot) {
     double realRadial = Coordinates.getBearing(coordinate, pilot.getCoordinate());
     if (Headings.isBetween(minHeading, realRadial, maxHeading) == false)
       return eResult.illegalHeading;

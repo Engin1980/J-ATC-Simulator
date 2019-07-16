@@ -5,6 +5,7 @@ import eng.eSystem.geo.Coordinates;
 import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
+import eng.jAtcSim.lib.airplanes.pilots.interfaces.forPilot.IPilot5Behavior;
 import eng.jAtcSim.lib.world.ActiveRunwayThreshold;
 
 public class TakeOffBehavior extends Behavior {
@@ -18,7 +19,7 @@ public class TakeOffBehavior extends Behavior {
     accelerationAltitude = 0;
   }
 
-  public TakeOffBehavior(IPilot4Behavior pilot, ActiveRunwayThreshold toThreshold) {
+  public TakeOffBehavior(IPilot5Behavior pilot, ActiveRunwayThreshold toThreshold) {
 
     this.toThreshold = toThreshold;
     int accAlt;
@@ -40,7 +41,7 @@ public class TakeOffBehavior extends Behavior {
   }
 
   @Override
-  public void fly(IPilot4Behavior pilot) {
+  public void fly(IPilot5Behavior pilot) {
     switch (pilot.getState()) {
       case holdingPoint:
         break;

@@ -1,4 +1,4 @@
-package eng.jAtcSim.lib.airplanes.pilots.interfaces;
+package eng.jAtcSim.lib.airplanes.pilots.interfaces.forAirplane;
 
 import eng.jAtcSim.lib.airplanes.Callsign;
 

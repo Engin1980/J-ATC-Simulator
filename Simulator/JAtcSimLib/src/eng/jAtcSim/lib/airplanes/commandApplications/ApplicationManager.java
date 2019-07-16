@@ -1,6 +1,7 @@
 package eng.jAtcSim.lib.airplanes.commandApplications;
 
 import eng.jAtcSim.lib.airplanes.pilots.Pilot;
+import eng.jAtcSim.lib.airplanes.pilots.interfaces.forPilot.IPilot5Command;
 import eng.jAtcSim.lib.speaking.IFromAtc;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.Confirmation;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
@@ -16,29 +17,7 @@ public class ApplicationManager {
   private static Map<Class, CommandApplication> cmdApps;
   private static Map<Class, NotificationApplication> notApps;
 
-  static {
-    cmdApps = new HashMap<>();
-
-    cmdApps.put(ChangeAltitudeCommand.class, new ChangeAltitudeApplication());
-    cmdApps.put(ChangeHeadingCommand.class, new ChangeHeadingApplication());
-    cmdApps.put(ChangeSpeedCommand.class, new ChangeSpeedApplication());
-    cmdApps.put(ClearedForTakeoffCommand.class, new ClearedForTakeOffCommandApplication());
-    cmdApps.put(ClearedToApproachCommand.class, new ClearedToApproachApplication());
-    cmdApps.put(HoldCommand.class, new HoldCommandApplication());
-    cmdApps.put(ProceedDirectCommand.class, new ProceedDirectApplication());
-    cmdApps.put(ShortcutCommand.class, new ShortcutCommandApplication());
-    cmdApps.put(ContactCommand.class, new ContactCommandApplication());
-    cmdApps.put(GoAroundCommand.class, new GoAroundCommandApplication());
-    cmdApps.put(ReportDivertTime.class, new ReportDivertTimeCommandApplication());
-    cmdApps.put(DivertCommand.class, new DivertCommandApplication());
-    cmdApps.put(SetAltitudeRestriction.class, new SetAltitudeRestrictionApplication());
-    cmdApps.put(ClearedToRouteCommand.class, new ClearedToRouteApplication());
-
-    notApps = new HashMap<>();
-    notApps.put(RadarContactConfirmationNotification.class, new RadarContactConfirmationNotificationApplication());
-  }
-
-  public static ConfirmationResult confirm(Pilot.Pilot5Command pilot, IFromAtc c, boolean checkStateSanity, boolean checkCommandSanity) {
+  public static ConfirmationResult confirm(IPilot5Command pilot, IFromAtc c, boolean checkStateSanity, boolean checkCommandSanity) {
     ConfirmationResult ret;
 
     if (c instanceof AfterCommand) {
@@ -62,7 +41,7 @@ public class ApplicationManager {
 
   }
 
-  public static ApplicationResult apply(Pilot.Pilot5Command pilot, IFromAtc c) {
+  public static ApplicationResult apply(IPilot5Command pilot, IFromAtc c) {
     ApplicationResult ret;
 
     if (c instanceof IAtcCommand) {
@@ -74,5 +53,27 @@ public class ApplicationManager {
     }
 
     return ret;
+  }
+
+  static {
+    cmdApps = new HashMap<>();
+
+    cmdApps.put(ChangeAltitudeCommand.class, new ChangeAltitudeApplication());
+    cmdApps.put(ChangeHeadingCommand.class, new ChangeHeadingApplication());
+    cmdApps.put(ChangeSpeedCommand.class, new ChangeSpeedApplication());
+    cmdApps.put(ClearedForTakeoffCommand.class, new ClearedForTakeOffCommandApplication());
+    cmdApps.put(ClearedToApproachCommand.class, new ClearedToApproachApplication());
+    cmdApps.put(HoldCommand.class, new HoldCommandApplication());
+    cmdApps.put(ProceedDirectCommand.class, new ProceedDirectApplication());
+    cmdApps.put(ShortcutCommand.class, new ShortcutCommandApplication());
+    cmdApps.put(ContactCommand.class, new ContactCommandApplication());
+    cmdApps.put(GoAroundCommand.class, new GoAroundCommandApplication());
+    cmdApps.put(ReportDivertTime.class, new ReportDivertTimeCommandApplication());
+    cmdApps.put(DivertCommand.class, new DivertCommandApplication());
+    cmdApps.put(SetAltitudeRestriction.class, new SetAltitudeRestrictionApplication());
+    cmdApps.put(ClearedToRouteCommand.class, new ClearedToRouteApplication());
+
+    notApps = new HashMap<>();
+    notApps.put(RadarContactConfirmationNotification.class, new RadarContactConfirmationNotificationApplication());
   }
 }

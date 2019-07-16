@@ -7,6 +7,7 @@ import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.moods.Mood;
+import eng.jAtcSim.lib.airplanes.pilots.interfaces.forPilot.IPilot5Behavior;
 import eng.jAtcSim.lib.global.ETime;
 import eng.jAtcSim.lib.global.Headings;
 import eng.jAtcSim.lib.world.Navaid;
@@ -41,7 +42,7 @@ public class HoldBehavior extends DivertableBehavior {
   }
 
   @XmlConstructor
-  public HoldBehavior(IPilot4Behavior pilot, Navaid navaid, int inboundRadial, boolean isLeftTurned) {
+  public HoldBehavior(IPilot5Behavior pilot, Navaid navaid, int inboundRadial, boolean isLeftTurned) {
     this.navaid = navaid;
     this.inboundRadial = inboundRadial;
     this.isLeftTurned = isLeftTurned;
@@ -58,7 +59,7 @@ public class HoldBehavior extends DivertableBehavior {
   }
 
   @Override
-  public void fly(IPilot4Behavior pilot) {
+  public void fly(IPilot5Behavior pilot) {
     if (pilot.getState() != Airplane.State.holding)
       super.throwIllegalStateException(pilot);
 
@@ -194,7 +195,7 @@ public class HoldBehavior extends DivertableBehavior {
     return Headings.add(inboundRadial, 180);
   }
 
-  private void setHoldDataByEntry(IPilot4Behavior pilot) {
+  private void setHoldDataByEntry(IPilot5Behavior pilot) {
     double y = Coordinates.getBearing(pilot.getCoordinate(), this.navaid.getCoordinate());
     y = Headings.add(y, 180);
 

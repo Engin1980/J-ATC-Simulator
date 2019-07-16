@@ -17,9 +17,6 @@ import eng.jAtcSim.lib.global.Restriction;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeHeadingCommand;
 import eng.jAtcSim.lib.world.newApproaches.Approach;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class ShaModule {
 
   private static class RestrictableItem {
@@ -137,9 +134,9 @@ public class ShaModule {
 
   private final Airplane parent;
   //region Heading fields
-  private int targetHeading;
+  private int finalHeading;
   private HeadingInertialValue heading;
-  private boolean targetHeadingLeftTurn;
+  private boolean finalHeadingLeftTurn;
   //endregion
   //region Altitude fields
   private InertialValue altitude;
@@ -159,7 +156,7 @@ public class ShaModule {
 
   public void init(int heading, int altitude, int speed, AirplaneType planeType, int airportAltitude) {
     this.altitudeOrders = new RestrictableItem(altitude);
-    this.targetHeading = heading;
+    this.finalHeading = heading;
     this.speedOrders = new RestrictableItem(speed);
 
     double headingChangeDenominator = getHeadingChangeDenominator(planeType);
@@ -227,17 +224,19 @@ public class ShaModule {
     return speed.value;
   }
 
-  public int getTargetHeading() {
-    return targetHeading;
-  }
-
   //endregion
 
   //region Heading-methods
 
+  public int getTargetHeading() {
+    return finalHeading;
+  }
+
   public double getHeading() {
     return heading.value;
   }
+
+  //endregion
 
   //region Elapse-Second
   public void elapseSecond() {
@@ -269,7 +268,7 @@ public class ShaModule {
       this.lastVerticalSpeed = 0;
 
     navigator.navigate(this, parent.getCoordinate());
-    if (targetHeading != heading.getValue()) {
+    if (finalHeading != heading.getValue()) {
       adjustHeading();
     } else {
       this.heading.resetInertia();
@@ -299,8 +298,9 @@ public class ShaModule {
       return null;
   }
 
-  public void _setTargetHeading(int heading) {
-    this.targetHeading = heading;
+  public void _setTargetHeading(int heading, boolean leftTurn) {
+    this.finalHeading = heading;
+    this.finalHeadingLeftTurn = leftTurn;
   }
 
   private ValueRequest getSpeedRequest() {
@@ -391,11 +391,11 @@ public class ShaModule {
   }
 
   private void adjustHeading() {
-    double diff = Headings.getDifference(heading.getValue(), targetHeading, true);
+    double diff = Headings.getDifference(heading.getValue(), finalHeading, true);
 
-    boolean isLeft = targetHeadingLeftTurn;
+    boolean isLeft = finalHeadingLeftTurn;
     if (diff < 5)
-      isLeft = HeadingsNew.getBetterDirectionToTurn(heading.getValue(), targetHeading) == ChangeHeadingCommand.eDirection.left;
+      isLeft = HeadingsNew.getBetterDirectionToTurn(heading.getValue(), finalHeading) == ChangeHeadingCommand.eDirection.left;
 
     if (isLeft)
       this.heading.add(-diff);

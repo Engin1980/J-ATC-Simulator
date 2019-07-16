@@ -36,7 +36,7 @@ public abstract class GeneratedTraffic extends Traffic {
 
       ret = generateRandomCallsign(companyOrCountryPrefix, isPrefixCountryCode);
       for (Airplane p : Acc.planes()) { // check not existing in current planes
-        if (ret.equals(p.getCallsign())) {
+        if (ret.equals(p.getFlight().getCallsign())) {
           ret = null;
           break;
         }

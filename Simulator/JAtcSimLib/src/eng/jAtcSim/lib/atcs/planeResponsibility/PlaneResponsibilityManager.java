@@ -69,10 +69,10 @@ public class PlaneResponsibilityManager {
       }
 
       if (ai.getSwitchRequest() != null)
-        throw new EApplicationException("Airplane " + plane.getCallsign() + " is already under request switch from "
+        throw new EApplicationException("Airplane " + plane.getFlight().getCallsign() + " is already under request switch from "
             + ai.getAtc().getType().toString() + " to " + ai.getSwitchRequest().getAtc().getType().toString() + ".");
       if (ai.getAtc() != sender)
-        throw new EApplicationException("Airplane " + plane.getCallsign()
+        throw new EApplicationException("Airplane " + plane.getFlight().getCallsign()
             + " is requested to be switched from incorrect atc. Current is "
             + ai.getAtc().getType().toString() + ", requested from is " + sender.getType().toString() + ".");
 
@@ -181,7 +181,7 @@ public class PlaneResponsibilityManager {
 
   public void registerNewPlane(Atc atc, Airplane plane) {
     if (dao.getAll().isAny(q -> q.getPlane() == plane)) {
-      throw new EApplicationException(sf("Second registration of already registered plane %s!", plane.getCallsign()));
+      throw new EApplicationException(sf("Second registration of already registered plane %s!", plane.getFlight().getCallsign()));
     }
 
     dao.add(new AirplaneResponsibilityInfo(plane, atc));
@@ -191,7 +191,7 @@ public class PlaneResponsibilityManager {
   public void unregisterPlane(Airplane plane) {
     AirplaneResponsibilityInfo ai = dao.getAll().tryGetFirst(q -> q.getPlane() == plane);
     if (ai == null) {
-      throw new EApplicationException(sf("Plane %s is not registered, cannot be unregistered!", plane.getCallsign()));
+      throw new EApplicationException(sf("Plane %s is not registered, cannot be unregistered!", plane.getFlight().getCallsign()));
     }
     dao.remove(ai);
     ai.getAtc().removePlaneDeletedFromGame(plane);

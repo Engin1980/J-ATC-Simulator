@@ -2,6 +2,7 @@ package eng.jAtcSim.lib.airplanes.commandApplications;
 
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.pilots.Pilot;
+import eng.jAtcSim.lib.airplanes.pilots.interfaces.forPilot.IPilot5Command;
 import eng.jAtcSim.lib.speaking.IFromAirplane;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.Confirmation;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.Rejection;
@@ -10,7 +11,7 @@ import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
 public abstract class CommandApplication<T extends IAtcCommand> {
 
   //region Public methods
-  public ConfirmationResult confirm(Pilot.Pilot5Command pilot, T c, boolean checkStateSanity, boolean checkCommandSanity) {
+  public ConfirmationResult confirm(IPilot5Command pilot, T c, boolean checkStateSanity, boolean checkCommandSanity) {
     ConfirmationResult ret = new ConfirmationResult();
     if (checkStateSanity)
       ret.rejection = checkStateSanity(pilot.getPlane().getState(), c);
@@ -22,7 +23,7 @@ public abstract class CommandApplication<T extends IAtcCommand> {
     return ret;
   }
 
-  public ApplicationResult apply(Pilot.Pilot5Command pilot, T c, boolean checkStateSanity) {
+  public ApplicationResult apply(IPilot5Command pilot, T c, boolean checkStateSanity) {
     ApplicationResult ret;
     IFromAirplane rejection = null;
     if (checkStateSanity)
@@ -41,11 +42,11 @@ public abstract class CommandApplication<T extends IAtcCommand> {
 
   //region Protected methods
 
-  protected abstract IFromAirplane checkCommandSanity(Pilot.Pilot5Command pilot, T c);
+  protected abstract IFromAirplane checkCommandSanity(IPilot5Command pilot, T c);
 
   protected abstract Airplane.State [] getInvalidStates();
 
-  protected abstract ApplicationResult adjustAirplane(Pilot.Pilot5Command pilot, T c);
+  protected abstract ApplicationResult adjustAirplane(IPilot5Command pilot, T c);
 
   protected IFromAirplane getRejection(IAtcCommand c, String reason) {
     IFromAirplane ret = new Rejection("Unable to comply the command in the current state.", c);
@@ -57,7 +58,7 @@ public abstract class CommandApplication<T extends IAtcCommand> {
     return ret;
   }
 
-  protected boolean isUnableDueToState(Pilot.Pilot5Command pilot, IAtcCommand c, Airplane.State... states) {
+  protected boolean isUnableDueToState(IPilot5Command pilot, IAtcCommand c, Airplane.State... states) {
     boolean ret = pilot.getPlane().getState().is(states);
     return ret;
   }
