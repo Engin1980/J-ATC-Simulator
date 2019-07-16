@@ -11,28 +11,23 @@ public class ArrivalBehavior extends BasicBehavior {
   private final static double FAF_SPEED_DOWN_DISTANCE_IN_NM = 15;
 
   @Override
+  public String toLogString() {
+    return "ARR";
+  }
+
+  @Override
   void _fly(IPilot5Behavior pilot) {
-    switch (pilot.getState()) {
+    switch (pilot.getPlane().getState()) {
       case arrivingHigh:
-        if (pilot.getAltitude() < LOW_SPEED_DOWN_ALTITUDE)
-          super.setBehaviorAndState(pilot, this, Airplane.State.arrivingLow);
+        if (pilot.getPlane().getSha().getAltitude() < LOW_SPEED_DOWN_ALTITUDE)
+          pilot.setBehaviorAndState(this, Airplane.State.arrivingLow);
         else {
-          double distToFaf = Acc.atcTwr().getRunwayConfigurationInUse()
-              .getArrivals().where(q -> q.isForCategory(pilot.getAirplaneType().category))
-              .minDouble(q -> Coordinates.getDistanceInNM(pilot.getCoordinate(), q.getThreshold().getEstimatedFafPoint()));
-          if (distToFaf < FAF_SPEED_DOWN_DISTANCE_IN_NM) {
-            super.setBehaviorAndState(pilot, this, Airplane.State.arrivingCloseFaf);
-          }
+          setArrivingCloseFafStateIfReady(pilot);
         }
         break;
       case arrivingLow:
         // TODO this will not work for runways with FAF above FL100
-        double distToFaf = Acc.atcTwr().getRunwayConfigurationInUse()
-            .getArrivals().where(q -> q.isForCategory(pilot.getAirplaneType().category))
-            .minDouble(q -> Coordinates.getDistanceInNM(pilot.getCoordinate(), q.getThreshold().getEstimatedFafPoint()));
-        if (distToFaf < FAF_SPEED_DOWN_DISTANCE_IN_NM) {
-          super.setBehaviorAndState(pilot, this, Airplane.State.arrivingCloseFaf);
-        }
+        setArrivingCloseFafStateIfReady(pilot);
         break;
       case arrivingCloseFaf:
         break;
@@ -40,14 +35,17 @@ public class ArrivalBehavior extends BasicBehavior {
         super.throwIllegalStateException(pilot);
     }
 
-    if (!pilot.isEmergency())
+    if (!pilot.getPlane().getEmergencyModule().isEmergency())
       super.processDivertManagement(pilot);
   }
 
-
-  @Override
-  public String toLogString() {
-    return "ARR";
+  private void setArrivingCloseFafStateIfReady(IPilot5Behavior pilot) {
+    double distToFaf = Acc.atcTwr().getRunwayConfigurationInUse()
+        .getArrivals().where(q -> q.isForCategory(pilot.getPlane().getType().category))
+        .minDouble(q -> Coordinates.getDistanceInNM(pilot.getPlane().getCoordinate(), q.getThreshold().getEstimatedFafPoint()));
+    if (distToFaf < FAF_SPEED_DOWN_DISTANCE_IN_NM) {
+      pilot.setBehaviorAndState( this, Airplane.State.arrivingCloseFaf);
+    }
   }
 
 }

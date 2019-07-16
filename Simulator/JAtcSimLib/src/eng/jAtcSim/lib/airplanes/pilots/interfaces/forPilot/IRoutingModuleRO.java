@@ -1,5 +1,9 @@
 package eng.jAtcSim.lib.airplanes.pilots.interfaces.forPilot;
 
-public interface IRouteModuleRO {
+import eng.jAtcSim.lib.world.Route;
+
+public interface IRoutingModuleRO {
   boolean hasLateralDirectionAfterCoordinate();
+
+  Route getAssignedRoute();
 }

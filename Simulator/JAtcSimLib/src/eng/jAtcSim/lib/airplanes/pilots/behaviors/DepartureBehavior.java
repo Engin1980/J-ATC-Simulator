@@ -7,9 +7,10 @@ public class DepartureBehavior extends BasicBehavior {
 
   @Override
   public void _fly(IPilot5Behavior pilot) {
-    switch (pilot.getState()) {
+    switch (pilot.getPlane().getState()) {
       case departingLow:
-        if (pilot.getAltitude() > 10000) super.setBehaviorAndState(pilot, this, Airplane.State.departingHigh);
+        if (pilot.getPlane().getSha().getAltitude() > 10000)
+          pilot.setBehaviorAndState(this, Airplane.State.departingHigh);
         break;
       case departingHigh:
         break;

@@ -3,6 +3,7 @@ package eng.jAtcSim.lib.airplanes.pilots.interfaces.forPilot;
 import eng.eSystem.geo.Coordinate;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.moods.Mood;
+import eng.jAtcSim.lib.airplanes.pilots.Pilot;
 import eng.jAtcSim.lib.airplanes.pilots.behaviors.Behavior;
 import eng.jAtcSim.lib.airplanes.pilots.interfaces.forAirplane.IAirplaneRO;
 import eng.jAtcSim.lib.airplanes.pilots.navigators.INavigator;
@@ -49,4 +50,8 @@ public interface IPilot5Behavior {
   void goAround(GoingAroundNotification.GoAroundReason reason, double course, SpeechList gaRoute);
 
   void setNavigator(INavigator navigator);
+
+  IRoutingModuleRO getRoutingModule();
+
+  void setLastAnnouncedMinuteForDivert(int minLeft);
 }

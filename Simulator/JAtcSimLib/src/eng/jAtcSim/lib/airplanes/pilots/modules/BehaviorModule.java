@@ -1,6 +1,5 @@
 package eng.jAtcSim.lib.airplanes.pilots.modules;
 
-import eng.jAtcSim.lib.airplanes.pilots.Pilot;
 import eng.jAtcSim.lib.airplanes.pilots.behaviors.Behavior;
 import eng.jAtcSim.lib.airplanes.pilots.interfaces.forPilot.IPilot5Module;
 

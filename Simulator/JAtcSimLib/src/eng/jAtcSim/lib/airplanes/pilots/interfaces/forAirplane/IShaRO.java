@@ -11,4 +11,10 @@ public interface IShaRO {
   Coordinate tryGetTargetCoordinate();
 
   Restriction getSpeedRestriction();
+
+  int getSpeed();
+
+  int getTargetHeading();
+
+  int getHeading();
 }

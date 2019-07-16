@@ -1,5 +1,6 @@
 package eng.jAtcSim.lib.airplanes.pilots.behaviors;
 
+import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.pilots.interfaces.forPilot.IPilot5Behavior;
@@ -16,19 +17,20 @@ public abstract class BasicBehavior extends DivertableBehavior {
 
   @Override
   public final void fly(IPilot5Behavior pilot) {
-    if (pilot.getTargetCoordinate() != null) {
+    Coordinate targetCoordinate = pilot.getPlane().getSha().tryGetTargetCoordinate();
+    if (targetCoordinate != null) {
 
-      double warningDistance = pilot.getSpeed() * .02;
-      double overNavaidDistance = pilot.getSpeed() * SPEED_TO_OVER_NAVAID_DISTANCE_MULTIPLIER;
+      double warningDistance = pilot.getPlane().getSha().getSpeed() * .02;
+      double overNavaidDistance = pilot.getPlane().getSha().getSpeed() * SPEED_TO_OVER_NAVAID_DISTANCE_MULTIPLIER;
 
-      double dist = Coordinates.getDistanceInNM(pilot.getCoordinate(), pilot.getTargetCoordinate());
-      if (!clearanceLimitWarningSent && dist < warningDistance && !pilot.hasLateralDirectionAfterCoordinate()) {
+      double dist = Coordinates.getDistanceInNM(pilot.getPlane().getCoordinate(), targetCoordinate);
+      if (!clearanceLimitWarningSent && dist < warningDistance && !pilot.getRoutingModule().hasLateralDirectionAfterCoordinate()) {
         pilot.say(new PassingClearanceLimitNotification());
         clearanceLimitWarningSent = true;
       } else if (dist < overNavaidDistance) {
-        if (pilot.isArrival() == false) {
-          Navaid n = pilot.getAssignedRoute().getMainNavaid();
-          dist = Coordinates.getDistanceInNM(pilot.getCoordinate(), n.getCoordinate());
+        if (pilot.getPlane().getFlight().isArrival() == false) {
+          Navaid n = pilot.getRoutingModule().getAssignedRoute().getMainNavaid();
+          dist = Coordinates.getDistanceInNM(pilot.getPlane().getCoordinate(), n.getCoordinate());
           if (dist < 1.5) {
             int rad = (int) Coordinates.getBearing(Acc.airport().getLocation(), n.getCoordinate());
             rad = rad % 90;
@@ -40,9 +42,9 @@ public abstract class BasicBehavior extends DivertableBehavior {
           clearanceLimitWarningSent = false;
         }
       } else {
-        double heading = Coordinates.getBearing(pilot.getCoordinate(), pilot.getTargetCoordinate());
+        double heading = Coordinates.getBearing(pilot.getPlane().getCoordinate(), targetCoordinate);
         heading = Headings.to(heading);
-        if (heading != pilot.getTargetHeading()) {
+        if (heading != pilot.getPlane().getSha().getTargetHeading()) {
           pilot.setTargetHeading(heading);
         }
       }

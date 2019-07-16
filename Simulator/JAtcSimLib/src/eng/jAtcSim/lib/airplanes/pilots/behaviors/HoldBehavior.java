@@ -60,37 +60,37 @@ public class HoldBehavior extends DivertableBehavior {
 
   @Override
   public void fly(IPilot5Behavior pilot) {
-    if (pilot.getState() != Airplane.State.holding)
+    if (pilot.getPlane().getState() != Airplane.State.holding)
       super.throwIllegalStateException(pilot);
 
     switch (this.phase) {
       case directEntry:
-        if (Coordinates.getDistanceInNM(pilot.getCoordinate(), this.navaid.getCoordinate()) < NEAR_FIX_DISTANCE) {
+        if (Coordinates.getDistanceInNM(pilot.getPlane().getCoordinate(), this.navaid.getCoordinate()) < NEAR_FIX_DISTANCE) {
           pilot.setTargetHeading(this.getOutboundHeading(), this.isLeftTurned);
           this.phase = eHoldPhase.firstTurn;
         } else {
-          int newHeading = (int) Coordinates.getBearing(pilot.getCoordinate(), this.navaid.getCoordinate());
+          int newHeading = (int) Coordinates.getBearing(pilot.getPlane().getCoordinate(), this.navaid.getCoordinate());
           pilot.setTargetHeading(newHeading);
         }
         break;
       case inbound:
-        if (Coordinates.getDistanceInNM(pilot.getCoordinate(), this.navaid.getCoordinate()) < NEAR_FIX_DISTANCE) {
+        if (Coordinates.getDistanceInNM(pilot.getPlane().getCoordinate(), this.navaid.getCoordinate()) < NEAR_FIX_DISTANCE) {
           pilot.setTargetHeading(this.getOutboundHeading(), this.isLeftTurned);
           this.phase = eHoldPhase.firstTurn;
-          if (pilot.isArrival())
+          if (pilot.getPlane().getFlight().isArrival())
             pilot.experience(Mood.ArrivalExperience.holdCycleFinished);
           else
             pilot.experience(Mood.DepartureExperience.holdCycleFinished);
         } else {
           double newHeading = Coordinates.getHeadingToRadial(
-              pilot.getCoordinate(), this.navaid.getCoordinate(), this.inboundRadial,
+              pilot.getPlane().getCoordinate(), this.navaid.getCoordinate(), this.inboundRadial,
               Coordinates.eHeadingToRadialBehavior.standard);
           pilot.setTargetHeading(newHeading);
 
         }
         break;
       case firstTurn:
-        if (pilot.getTargetHeading() == pilot.getHeading()) {
+        if (pilot.getPlane().getSha().getTargetHeading() == pilot.getPlane().getSha().getHeading()) {
           this.secondTurnTime = Acc.now().addSeconds(60);
           this.phase = eHoldPhase.outbound;
         }
@@ -102,13 +102,13 @@ public class HoldBehavior extends DivertableBehavior {
         }
         break;
       case secondTurn:
-        if (pilot.getTargetHeading() == pilot.getHeading()) {
+        if (pilot.getPlane().getSha().getTargetHeading() == pilot.getPlane().getSha().getHeading()) {
           this.phase = eHoldPhase.inbound;
         }
         break;
 
       case tearEntry:
-        if (Coordinates.getDistanceInNM(pilot.getCoordinate(), this.navaid.getCoordinate()) < NEAR_FIX_DISTANCE) {
+        if (Coordinates.getDistanceInNM(pilot.getPlane().getCoordinate(), this.navaid.getCoordinate()) < NEAR_FIX_DISTANCE) {
 
           double newHeading;
           newHeading = this.isLeftTurned
@@ -119,7 +119,7 @@ public class HoldBehavior extends DivertableBehavior {
 
           this.phase = eHoldPhase.tearAgainst;
         } else {
-          double newHeading = Coordinates.getBearing(pilot.getCoordinate(), this.navaid.getCoordinate());
+          double newHeading = Coordinates.getBearing(pilot.getPlane().getCoordinate(), this.navaid.getCoordinate());
           pilot.setTargetHeading(newHeading);
         }
         break;
@@ -133,12 +133,12 @@ public class HoldBehavior extends DivertableBehavior {
         break;
 
       case parallelEntry:
-        if (Coordinates.getDistanceInNM(pilot.getCoordinate(), this.navaid.getCoordinate()) < NEAR_FIX_DISTANCE) {
+        if (Coordinates.getDistanceInNM(pilot.getPlane().getCoordinate(), this.navaid.getCoordinate()) < NEAR_FIX_DISTANCE) {
           pilot.setTargetHeading(this.getOutboundHeading(), !this.isLeftTurned);
           this.secondTurnTime = Acc.now().addSeconds(60);
           this.phase = eHoldPhase.parallelAgainst;
         } else {
-          int newHeading = (int) Coordinates.getBearing(pilot.getCoordinate(), this.navaid.getCoordinate());
+          int newHeading = (int) Coordinates.getBearing(pilot.getPlane().getCoordinate(), this.navaid.getCoordinate());
           pilot.setTargetHeading(newHeading);
         }
         break;
@@ -154,7 +154,7 @@ public class HoldBehavior extends DivertableBehavior {
         break;
 
       case parallelTurn:
-        if (pilot.getHeading() == pilot.getTargetHeading()) {
+        if (pilot.getPlane().getSha().getHeading() == pilot.getPlane().getSha().getTargetHeading()) {
           this.phase = eHoldPhase.directEntry;
         }
         break;
@@ -163,17 +163,17 @@ public class HoldBehavior extends DivertableBehavior {
         throw new EEnumValueUnsupportedException(this.phase);
     }
 
-    if (!pilot.isEmergency())
+    if (!pilot.getPlane().getEmergencyModule().isEmergency())
       super.processDivertManagement(pilot);
 
     if (isBelowFL100 == null) {
-      isBelowFL100 = pilot.getAltitude() <= FL100;
-    } else if (isBelowFL100 && pilot.getAltitude() > FL100) {
+      isBelowFL100 = pilot.getPlane().getSha().getAltitude() <= FL100;
+    } else if (isBelowFL100 && pilot.getPlane().getSha().getAltitude() > FL100) {
       pilot.adjustTargetSpeed();
-      isBelowFL100 = pilot.getAltitude() <= FL100;
-    } else if (!isBelowFL100 && pilot.getAltitude() <= FL100) {
+      isBelowFL100 = pilot.getPlane().getSha().getAltitude() <= FL100;
+    } else if (!isBelowFL100 && pilot.getPlane().getSha().getAltitude() <= FL100) {
       pilot.adjustTargetSpeed();
-      isBelowFL100 = pilot.getAltitude() <= FL100;
+      isBelowFL100 = pilot.getPlane().getSha().getAltitude() <= FL100;
     }
   }
 
@@ -196,7 +196,7 @@ public class HoldBehavior extends DivertableBehavior {
   }
 
   private void setHoldDataByEntry(IPilot5Behavior pilot) {
-    double y = Coordinates.getBearing(pilot.getCoordinate(), this.navaid.getCoordinate());
+    double y = Coordinates.getBearing(pilot.getPlane().getCoordinate(), this.navaid.getCoordinate());
     y = Headings.add(y, 180);
 
     int h = this.inboundRadial;
