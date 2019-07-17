@@ -1,11 +1,11 @@
 package eng.jAtcSim.lib.airplanes.pilots.modules;
 
-import eng.jAtcSim.lib.airplanes.pilots.interfaces.forPilot.IPilot5Module;
+import eng.jAtcSim.lib.airplanes.pilots.interfaces.forPilot.IPilotWriteSimple;
 
 public abstract class Module {
-  protected final IPilot5Module parent;
+  protected final IPilotWriteSimple parent;
 
-  protected Module(IPilot5Module parent) {
+  protected Module(IPilotWriteSimple parent) {
     assert parent != null;
     this.parent = parent;
   }

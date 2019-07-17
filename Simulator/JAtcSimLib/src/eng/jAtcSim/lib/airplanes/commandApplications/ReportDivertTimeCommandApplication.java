@@ -2,6 +2,7 @@ package eng.jAtcSim.lib.airplanes.commandApplications;
 
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.pilots.Pilot;
+import eng.jAtcSim.lib.airplanes.pilots.interfaces.forPilot.IPilotWriteSimple;
 import eng.jAtcSim.lib.speaking.IFromAirplane;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.DivertTimeNotification;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.Rejection;
@@ -15,10 +16,10 @@ public class ReportDivertTimeCommandApplication extends CommandApplication<Repor
   }
 
   @Override
-  protected IFromAirplane checkCommandSanity(Pilot.Pilot5Command pilot, ReportDivertTime c) {
+  protected IFromAirplane checkCommandSanity(IPilotWriteSimple pilot, ReportDivertTime c) {
     IFromAirplane ret;
 
-    if (pilot.getFlight().isArrival() == false)
+    if (pilot.getPlane().getFlight().isArrival() == false)
       ret = new Rejection("We do not have divert time as we are a departure.", c);
     else if (pilot.getPlane().getState().is(Airplane.State.longFinal, Airplane.State.shortFinal)){
       ret = new Rejection("We cannot report divert time at this moment.", c);
@@ -30,10 +31,10 @@ public class ReportDivertTimeCommandApplication extends CommandApplication<Repor
   }
 
   @Override
-  protected ApplicationResult adjustAirplane(Pilot.Pilot5Command pilot, ReportDivertTime c) {
+  protected ApplicationResult adjustAirplane(IPilotWriteSimple pilot, ReportDivertTime c) {
     ApplicationResult ret = new ApplicationResult();
     ret.rejection = null;
-    ret.informations.add(new DivertTimeNotification(pilot.getDivertMinutesLeft()));
+    ret.informations.add(new DivertTimeNotification(pilot.getDivertModule().getMinutesToDivertLeft()));
     return ret;
   }
 }

@@ -5,7 +5,7 @@ import eng.eSystem.geo.Coordinates;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.pilots.Pilot;
-import eng.jAtcSim.lib.airplanes.pilots.interfaces.forPilot.IPilot5Command;
+import eng.jAtcSim.lib.airplanes.pilots.interfaces.forPilot.IPilotWriteSimple;
 import eng.jAtcSim.lib.world.newApproaches.stages.IApproachStage;
 import eng.jAtcSim.lib.global.Restriction;
 import eng.jAtcSim.lib.speaking.IFromAirplane;
@@ -21,7 +21,7 @@ import eng.jAtcSim.lib.world.newApproaches.NewApproachInfo;
 public class ClearedToApproachApplication extends CommandApplication<ClearedToApproachCommand> {
 
   @Override
-  protected IFromAirplane checkCommandSanity(Pilot.Pilot5Command pilot, ClearedToApproachCommand c) {
+  protected IFromAirplane checkCommandSanity(IPilotWriteSimple pilot, ClearedToApproachCommand c) {
 
     IFromAirplane ret = null;
 
@@ -85,12 +85,12 @@ public class ClearedToApproachApplication extends CommandApplication<ClearedToAp
   }
 
   @Override
-  protected ApplicationResult adjustAirplane(IPilot5Command pilot, ClearedToApproachCommand c) {
+  protected ApplicationResult adjustAirplane(IPilotWriteSimple pilot, ClearedToApproachCommand c) {
     ApplicationResult ret = new ApplicationResult();
 
     // hold abort only if fix was found
     if (pilot.getPlane().getState() == Airplane.State.holding) {
-      pilot.abortHolding();
+      pilot.getAdvanced().abortHolding();
     }
 
     Restriction sr = pilot.getPlane().getSha().getSpeedRestriction();
@@ -108,7 +108,7 @@ public class ClearedToApproachApplication extends CommandApplication<ClearedToAp
     NewApproachInfo nai = tryCreateApproachInfo(apps, plane);
     assert nai != null;
 
-    pilot.setApproachBehavior(nai);
+    pilot.getAdvanced().clearedToApproach(nai);
 
     return ret;
   }

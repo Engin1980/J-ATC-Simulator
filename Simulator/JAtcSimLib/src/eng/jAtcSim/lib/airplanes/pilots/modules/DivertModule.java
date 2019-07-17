@@ -4,6 +4,7 @@ import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.pilots.interfaces.forPilot.IDivertModuleRO;
 import eng.jAtcSim.lib.airplanes.pilots.interfaces.forPilot.IPilot5Module;
+import eng.jAtcSim.lib.airplanes.pilots.interfaces.forPilot.IPilotWriteSimple;
 import eng.jAtcSim.lib.global.ETime;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.DivertTimeNotification;
 
@@ -14,7 +15,7 @@ public class DivertModule extends Module implements IDivertModuleRO {
   private int lastAnnouncedMinute = Integer.MAX_VALUE;
   private boolean isPossible = true;
 
-  public DivertModule(IPilot5Module parent) {
+  public DivertModule(IPilotWriteSimple parent) {
     super(parent);
   }
 
@@ -57,7 +58,7 @@ public class DivertModule extends Module implements IDivertModuleRO {
   private boolean divertIfRequested() {
     assert this.isPossible;
     if (this.getMinutesLeft() <= 0) {
-      parent.divert();
+      parent.getAdvanced().divert();
       this.isPossible = false;
       return true;
     } else {

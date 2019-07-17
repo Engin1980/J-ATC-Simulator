@@ -2,6 +2,7 @@ package eng.jAtcSim.lib.airplanes.commandApplications;
 
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.pilots.Pilot;
+import eng.jAtcSim.lib.airplanes.pilots.interfaces.forPilot.IPilotWriteSimple;
 import eng.jAtcSim.lib.global.Restriction;
 import eng.jAtcSim.lib.speaking.IFromAirplane;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.Rejection;
@@ -23,7 +24,7 @@ public class SetAltitudeRestrictionApplication extends CommandApplication<SetAlt
   }
 
   @Override
-  protected IFromAirplane checkCommandSanity(Pilot.Pilot5Command pilot, SetAltitudeRestriction c) {
+  protected IFromAirplane checkCommandSanity(IPilotWriteSimple pilot, SetAltitudeRestriction c) {
     IFromAirplane ret;
 
     if (c.getRestriction() != null &&
@@ -38,7 +39,7 @@ public class SetAltitudeRestrictionApplication extends CommandApplication<SetAlt
   }
 
   @Override
-  protected ApplicationResult adjustAirplane(Pilot.Pilot5Command pilot, SetAltitudeRestriction c) {
+  protected ApplicationResult adjustAirplane(IPilotWriteSimple pilot, SetAltitudeRestriction c) {
     pilot.setAltitudeRestriction(c.getRestriction());
     return ApplicationResult.getEmpty();
   }

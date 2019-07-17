@@ -7,6 +7,7 @@ import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.Callsign;
+import eng.jAtcSim.lib.airplanes.pilots.interfaces.forAirplane.IAirplaneRO;
 import eng.jAtcSim.lib.atcs.Atc;
 
 import java.util.LinkedList;
@@ -23,7 +24,7 @@ class PlaneResponsibilityDAO {
     }
   }
 
-  public AirplaneResponsibilityInfo get(Airplane plane) {
+  public AirplaneResponsibilityInfo get(IAirplaneRO plane) {
     AirplaneResponsibilityInfo ret = all.getFirst(q -> q.getPlane() == plane);
     return ret;
   }
@@ -52,7 +53,7 @@ class PlaneResponsibilityDAO {
   }
 
   public AirplaneResponsibilityInfo get(Callsign callsign) {
-    AirplaneResponsibilityInfo ari = this.all.getFirst(q -> q.getPlane().getCallsign().equals(callsign));
+    AirplaneResponsibilityInfo ari = this.all.getFirst(q -> q.getPlane().getFlight().getCallsign().equals(callsign));
     return ari;
   }
 }

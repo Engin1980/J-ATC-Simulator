@@ -51,6 +51,34 @@ import java.lang.reflect.InvocationTargetException;
 
 public class Pilot {
 
+  public class PilotRO implements IPilotRO{
+
+    @Override
+    public IAtcModuleRO getAtcModule() {
+      return Pilot.this.atcModule;
+    }
+
+    @Override
+    public IDivertModuleRO getDivertModule() {
+      return Pilot.this.divertModule;
+    }
+
+    @Override
+    public IAirplaneRO getPlane() {
+      return Pilot.this.parent.getPlane();
+    }
+
+    @Override
+    public IRoutingModuleRO getRoutingModule() {
+      return Pilot.this.routingModule;
+    }
+
+    @Override
+    public IBehaviorModuleRO getBehaviorModule() {
+      return Pilot.this.behaviorModule;
+    }
+  }
+
   public class Pilot5 {
     Pilot5() {
     }

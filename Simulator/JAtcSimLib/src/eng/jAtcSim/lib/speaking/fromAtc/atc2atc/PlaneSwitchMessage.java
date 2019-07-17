@@ -9,6 +9,8 @@ package eng.jAtcSim.lib.speaking.fromAtc.atc2atc;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.jAtcSim.lib.airplanes.Airplane;
+import eng.jAtcSim.lib.airplanes.pilots.interfaces.forAirplane.IAirplaneRO;
+import eng.jAtcSim.lib.airplanes.pilots.interfaces.forAirplane.IAirplaneWriteSimple;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtc2Atc;
 
 /**
@@ -23,33 +25,33 @@ public class PlaneSwitchMessage implements IAtc2Atc {
     rejection
   }
 
-  public final Airplane plane;
+  public final IAirplaneRO plane;
   public final eMessageType messageType;
   public final String additionalMessageText;
 
-  public PlaneSwitchMessage(Airplane plane, eMessageType messageType) {
+  public PlaneSwitchMessage(IAirplaneRO plane, eMessageType messageType) {
     this(plane, messageType, null);
   }
 
-  public PlaneSwitchMessage(Airplane plane, eMessageType messageType, String additionalMessageText) {
+  public PlaneSwitchMessage(IAirplaneRO plane, eMessageType messageType, String additionalMessageText) {
     this.plane = plane;
     this.messageType = messageType;
     this.additionalMessageText = additionalMessageText;
   }
 
   public String getAsString() {
-    if (plane.getAssigneRoute() == null)
-      throw new EApplicationException("Plane " + plane.getCallsign() + " does not have assigned route.");
-    if (plane.getExpectedRunwayThreshold() == null)
-      throw new EApplicationException("Plane " + plane.getCallsign() + " does not have assigned threshold.");
+    if (plane.getPilot().getRoutingModule().getAssignedRoute() == null)
+      throw new EApplicationException("Plane " + plane.getFlight().getCallsign() + " does not have assigned route.");
+    if (plane.getPilot().getRoutingModule().getAssignedRunwayThreshold() == null)
+      throw new EApplicationException("Plane " + plane.getFlight().getCallsign() + " does not have assigned threshold.");
 
     String ret =
         String.format("%1$s (%2$s) [%3$s] via %4$s/%5$s",
             plane.getSqwk().toString(),
-            plane.getCallsign().toString(),
+            plane.getFlight().getCallsign().toString(),
             this.getMessageText(),
-            plane.getAssigneRoute().getName(),
-            plane.getExpectedRunwayThreshold().getName()
+            plane.getPilot().getRoutingModule().getAssignedRoute().getName(),
+            plane.getPilot().getRoutingModule().getAssignedRunwayThreshold().getName()
         );
 
     return ret;

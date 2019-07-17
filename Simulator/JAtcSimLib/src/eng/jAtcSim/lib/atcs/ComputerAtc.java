@@ -7,6 +7,8 @@ import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
+import eng.jAtcSim.lib.airplanes.pilots.interfaces.forAirplane.IAirplaneRO;
+import eng.jAtcSim.lib.airplanes.pilots.interfaces.forAirplane.IAirplaneWriteSimple;
 import eng.jAtcSim.lib.atcs.planeResponsibility.SwitchRoutingRequest;
 import eng.jAtcSim.lib.global.DelayedList;
 import eng.jAtcSim.lib.global.Global;
@@ -55,8 +57,8 @@ public abstract class ComputerAtc extends Atc {
   }
 
   private void switchConfirmedPlanesIfReady() {
-    IReadOnlyList<Airplane> planes = getPrm().getConfirmedSwitchesByAtc(this, true);
-    for (Airplane plane : planes) {
+    IReadOnlyList<IAirplaneRO> planes = getPrm().getConfirmedSwitchesByAtc(this, true);
+    for (IAirplaneWriteSimple plane : planes) {
       if (this.shouldBeSwitched(plane))
         this.applySwitchHangOff(plane);
     }
@@ -67,9 +69,9 @@ public abstract class ComputerAtc extends Atc {
       try {
         recorder.write(m); // incoming item
 
-        if (m.isSourceOfType(Airplane.class)) {
+        if (m.isSourceOfType(IAirplaneWriteSimple.class)) {
           // messages from planes
-          Airplane p = m.getSource();
+          IAirplaneWriteSimple p = m.getSource();
           SpeechList spchs = m.getContent();
 
           if (spchs.containsType(GoodDayNotification.class))
@@ -96,10 +98,10 @@ public abstract class ComputerAtc extends Atc {
     }
   }
 
-  protected abstract boolean acceptsNewRouting(Airplane plane, SwitchRoutingRequest srr);
+  protected abstract boolean acceptsNewRouting(IAirplaneWriteSimple plane, SwitchRoutingRequest srr);
 
   private void processPlaneSwitchMessage(Message m) {
-    Airplane plane = m.<PlaneSwitchMessage>getContent().plane;
+    IAirplaneWriteSimple plane = m.<PlaneSwitchMessage>getContent().plane;
     Atc targetAtc = m.getSource();
     if (getPrm().isUnderSwitchRequest(plane, this, targetAtc)) {
       // other ATC confirms our request, plane is going to hang off

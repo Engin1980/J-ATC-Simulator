@@ -2,6 +2,7 @@ package eng.jAtcSim.lib.airplanes.commandApplications;
 
 import eng.jAtcSim.lib.airplanes.pilots.Pilot;
 import eng.jAtcSim.lib.airplanes.pilots.interfaces.forPilot.IPilot5Command;
+import eng.jAtcSim.lib.airplanes.pilots.interfaces.forPilot.IPilotWriteSimple;
 import eng.jAtcSim.lib.speaking.IFromAtc;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.Confirmation;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
@@ -17,7 +18,7 @@ public class ApplicationManager {
   private static Map<Class, CommandApplication> cmdApps;
   private static Map<Class, NotificationApplication> notApps;
 
-  public static ConfirmationResult confirm(IPilot5Command pilot, IFromAtc c, boolean checkStateSanity, boolean checkCommandSanity) {
+  public static ConfirmationResult confirm(IPilotWriteSimple pilot, IFromAtc c, boolean checkStateSanity, boolean checkCommandSanity) {
     ConfirmationResult ret;
 
     if (c instanceof AfterCommand) {
@@ -41,7 +42,7 @@ public class ApplicationManager {
 
   }
 
-  public static ApplicationResult apply(IPilot5Command pilot, IFromAtc c) {
+  public static ApplicationResult apply(IPilotWriteSimple pilot, IFromAtc c) {
     ApplicationResult ret;
 
     if (c instanceof IAtcCommand) {

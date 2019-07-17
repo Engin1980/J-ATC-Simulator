@@ -1,33 +1,30 @@
 package eng.jAtcSim.lib.airplanes.pilots.modules;
 
 import eng.jAtcSim.lib.airplanes.pilots.behaviors.Behavior;
-import eng.jAtcSim.lib.airplanes.pilots.interfaces.forPilot.IPilot5Module;
+import eng.jAtcSim.lib.airplanes.pilots.interfaces.forPilot.IBehaviorModuleRO;
+import eng.jAtcSim.lib.airplanes.pilots.interfaces.forPilot.IPilotWriteSimple;
 
-public class BehaviorModule extends Module{
+public class BehaviorModule extends Module implements IBehaviorModuleRO {
   private Behavior behavior;
 
-  public BehaviorModule(IPilot5Module parent) {
+  public BehaviorModule(IPilotWriteSimple parent) {
     super(parent);
   }
 
+  @Override
   public Behavior get() {
     return this.behavior;
   }
 
-  public boolean is(Class<? extends Behavior> type) {
-    boolean ret = type.isAssignableFrom(behavior.getClass());
-    return ret;
-  }
-
-  public <T extends Behavior> T tryGetAs(Class<T> type) {
-    if (this.is(type))
-      return getAs(type);
-    else
-      return null;
-  }
-
+  @Override
   public <T extends Behavior> T getAs(Class<T> type) {
     return (T) this.behavior;
+  }
+
+  @Override
+  public <T extends Behavior> boolean is(Class<T> type) {
+    boolean ret = type.isAssignableFrom(behavior.getClass());
+    return ret;
   }
 
   public void setBehavior(Behavior behavior) {

@@ -260,10 +260,7 @@ public class TowerAtc extends ComputerAtc {
     // from APP, so can be moved from holding-point to line-up
     departureManager.confirmedByApproach(plane);
 
-    if (departureManager.canBeSwitched(plane))
-      return true;
-
-    return false;
+    return departureManager.canBeSwitched(plane);
   }
 
   @Override

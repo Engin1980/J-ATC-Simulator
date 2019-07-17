@@ -2,6 +2,7 @@ package eng.jAtcSim.lib.airplanes.pilots.modules;
 
 import eng.jAtcSim.lib.airplanes.pilots.interfaces.forPilot.IAtcModuleRO;
 import eng.jAtcSim.lib.airplanes.pilots.interfaces.forPilot.IPilot5Module;
+import eng.jAtcSim.lib.airplanes.pilots.interfaces.forPilot.IPilotWriteSimple;
 import eng.jAtcSim.lib.atcs.Atc;
 import eng.jAtcSim.lib.global.Global;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.GoodDayNotification;
@@ -12,7 +13,7 @@ public class AtcModule extends Module implements IAtcModuleRO {
   private Atc atc;
   private int secondsWithoutRadarContact = 0;
 
-  public AtcModule(IPilot5Module parent) {
+  public AtcModule(IPilotWriteSimple parent) {
     super(parent);
   }
 

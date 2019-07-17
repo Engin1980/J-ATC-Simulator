@@ -9,6 +9,7 @@ import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.geo.Coordinates;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
+import eng.jAtcSim.lib.airplanes.pilots.interfaces.forAirplane.IAirplaneWriteSimple;
 import eng.jAtcSim.lib.atcs.planeResponsibility.SwitchRoutingRequest;
 import eng.jAtcSim.lib.messaging.Message;
 import eng.jAtcSim.lib.messaging.StringMessageContent;
@@ -27,9 +28,9 @@ public class CenterAtc extends ComputerAtc {
   private int ctrAcceptDistance = 40;
   private int ctrNavaidAcceptDistance = 15;
 
-  private IList<Airplane> farArrivals = new EList<>();
-  private IList<Airplane> middleArrivals = new EList<>();
-  private IList<Airplane> closeArrivals = new EList<>();
+  private IList<IAirplaneWriteSimple> farArrivals = new EList<>();
+  private IList<IAirplaneWriteSimple> middleArrivals = new EList<>();
+  private IList<IAirplaneWriteSimple> closeArrivals = new EList<>();
 
   public CenterAtc(AtcTemplate template) {
     super(template);
@@ -54,9 +55,9 @@ public class CenterAtc extends ComputerAtc {
     if (Acc.now().getTotalSeconds() % 16 == 0) {
       double dist;
 
-      IList<Airplane> tmp = new EList<>();
+      IList<IAirplaneWriteSimple> tmp = new EList<>();
 
-      for (Airplane plane : middleArrivals) {
+      for (IAirplaneWriteSimple plane : middleArrivals) {
         try {
           evaluateMiddleArrivalsForCloseArrivals(tmp, plane);
         } catch (Exception ex) {
@@ -67,7 +68,7 @@ public class CenterAtc extends ComputerAtc {
       closeArrivals.add(tmp);
       tmp.clear();
 
-      for (Airplane plane : farArrivals) {
+      for (IAirplaneWriteSimple plane : farArrivals) {
         dist = Coordinates.getDistanceInNM(plane.getEntryExitFix().getCoordinate(), plane.getCoordinate());
         if (dist < 50) {
           if (plane.getAltitude() > 29_000) {
@@ -87,7 +88,7 @@ public class CenterAtc extends ComputerAtc {
   }
 
   @Override
-  public void unregisterPlaneUnderControl(Airplane plane) {
+  public void unregisterPlaneUnderControl(IAirplaneWriteSimple plane) {
     if (plane.getFlight().isArrival()) {
       farArrivals.tryRemove(plane);
       middleArrivals.tryRemove(plane);
@@ -96,18 +97,18 @@ public class CenterAtc extends ComputerAtc {
   }
 
   @Override
-  public void removePlaneDeletedFromGame(Airplane plane) {
+  public void removePlaneDeletedFromGame(IAirplaneWriteSimple plane) {
 
   }
 
   @Override
-  public void registerNewPlaneUnderControl(Airplane plane, boolean finalRegistration) {
+  public void registerNewPlaneUnderControl(IAirplaneWriteSimple plane, boolean finalRegistration) {
     if (plane.getFlight().isArrival())
       farArrivals.add(plane);
   }
 
   @Override
-  protected boolean acceptsNewRouting(Airplane plane, SwitchRoutingRequest srr) {
+  protected boolean acceptsNewRouting(IAirplaneWriteSimple plane, SwitchRoutingRequest srr) {
     boolean ret;
     ret = srr.route.isValidForCategory(plane.getType().category)
         && (srr.route.getType() == Route.eType.vectoring
@@ -116,7 +117,7 @@ public class CenterAtc extends ComputerAtc {
     return ret;
   }
 
-  private void evaluateMiddleArrivalsForCloseArrivals(IList<Airplane> tmp, Airplane plane) {
+  private void evaluateMiddleArrivalsForCloseArrivals(IList<IAirplaneWriteSimple> tmp, IAirplaneWriteSimple plane) {
     double dist;
     dist = Coordinates.getDistanceInNM(plane.getEntryExitFix().getCoordinate(), plane.getCoordinate());
     if (dist < 27) {

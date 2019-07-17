@@ -15,6 +15,7 @@ import eng.jAtcSim.lib.airplanes.pilots.behaviors.HoldBehavior;
 import eng.jAtcSim.lib.airplanes.pilots.behaviors.NewApproachBehavior;
 import eng.jAtcSim.lib.airplanes.pilots.interfaces.forPilot.IPilot5Command;
 import eng.jAtcSim.lib.airplanes.pilots.interfaces.forPilot.IPilot5Module;
+import eng.jAtcSim.lib.airplanes.pilots.interfaces.forPilot.IPilotWriteSimple;
 import eng.jAtcSim.lib.airplanes.pilots.interfaces.forPilot.IRoutingModuleRO;
 import eng.jAtcSim.lib.atcs.Atc;
 import eng.jAtcSim.lib.global.DelayedList;
@@ -54,12 +55,17 @@ public class RoutingModule extends Module implements IRoutingModuleRO {
   private final AfterCommandList afterCommands = new AfterCommandList();
   private final Map<Atc, SpeechList> saidText = new HashMap<>();
 
-  public RoutingModule(IPilot5Module parent) {
+  public RoutingModule(IPilotWriteSimple parent) {
     super(parent);
   }
 
   public Navaid getEntryExitPoint() {
     return this.entryExitPoint;
+  }
+
+  @Override
+  public ActiveRunwayThreshold getAssignedRunwayThreshold() {
+    return expectedRunwayThreshold;
   }
 
   @Override
@@ -152,7 +158,7 @@ public class RoutingModule extends Module implements IRoutingModuleRO {
 
     SpeechList<IAtcCommand> cmds;
 
-    Coordinate targetCoordinate = parent.getSha().tryGetTargetCoordinate();
+    Coordinate targetCoordinate = parent.getPlane().getSha().tryGetTargetCoordinate();
     if (targetCoordinate == null && parent.getBehaviorModule().is(HoldBehavior.class)) {
       HoldBehavior hb = parent.getBehaviorModule().getAs(HoldBehavior.class);
       targetCoordinate = hb.navaid.getCoordinate();
@@ -170,21 +176,19 @@ public class RoutingModule extends Module implements IRoutingModuleRO {
   }
 
   private void processSpeeches(SpeechList<? extends IFromAtc> queue, CommandSource cs) {
-
-    IPilot5Command pilot5Command = this.parent.getPilot5Command();
     while (!queue.isEmpty()) {
       IFromAtc cmd = queue.get(0);
       if (cmd instanceof AfterCommand) {
         processAfterSpeechWithConsequents(queue, cs);
       } else {
-        processNormalSpeech(queue, cmd, cs, pilot5Command);
+        processNormalSpeech(queue, cmd, cs, parent);
       }
     }
   }
 
   private void processNormalSpeech(
       SpeechList<? extends IFromAtc> queue, IFromAtc cmd,
-      CommandSource cs, IPilot5Command pilot) {
+      CommandSource cs, IPilotWriteSimple pilot) {
 
     ConfirmationResult cres = ApplicationManager.confirm(pilot, cmd, cs == CommandSource.atc, true);
     if (cres.rejection != null) {
@@ -196,7 +200,7 @@ public class RoutingModule extends Module implements IRoutingModuleRO {
       if (cs == CommandSource.atc && cres.confirmation != null)
         say(cres.confirmation);
       // command is applied
-      ApplicationResult ares = ApplicationManager.apply(parent.getPilot5Command(), cmd);
+      ApplicationResult ares = ApplicationManager.apply(parent, cmd);
       assert ares.rejection == null : "This should not be rejected as was confirmed a few moments before.";
       ares.informations.forEach(q -> say(q));
     }
@@ -302,7 +306,7 @@ public class RoutingModule extends Module implements IRoutingModuleRO {
     ConfirmationResult cres;
     boolean sayConfirmations = cs == CommandSource.atc;
 
-    cres = ApplicationManager.confirm(parent.getPilot5Command(), af, true, false);
+    cres = ApplicationManager.confirm(parent, af, true, false);
     if (sayConfirmations) say(cres.confirmation);
 
     while (queue.isEmpty() == false) {
@@ -316,7 +320,7 @@ public class RoutingModule extends Module implements IRoutingModuleRO {
           break;
 
         queue.removeAt(0);
-        cres = ApplicationManager.confirm(parent.getPilot5Command(), cmd, true, false);
+        cres = ApplicationManager.confirm(parent, cmd, true, false);
         if (sayConfirmations) say(cres.confirmation);
 
         if (cs == CommandSource.procedure) {

@@ -3,17 +3,18 @@ package eng.jAtcSim.lib.atcs.planeResponsibility;
 import eng.eSystem.validation.Validator;
 import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
 import eng.jAtcSim.lib.airplanes.Airplane;
+import eng.jAtcSim.lib.airplanes.pilots.interfaces.forAirplane.IAirplaneRO;
 import eng.jAtcSim.lib.atcs.Atc;
 
 public class AirplaneResponsibilityInfo {
-  private Airplane plane;
+  private IAirplaneRO plane;
   private Atc atc;
   private SwitchRequest switchRequest;
 
   @XmlConstructor
   private AirplaneResponsibilityInfo(){}
 
-  public AirplaneResponsibilityInfo(Airplane plane, Atc atc) {
+  public AirplaneResponsibilityInfo(IAirplaneRO plane, Atc atc) {
     Validator.isNotNull(plane);
     Validator.isNotNull(atc);
 
@@ -22,7 +23,7 @@ public class AirplaneResponsibilityInfo {
     this.switchRequest = null;
   }
 
-  public Airplane getPlane() {
+  public IAirplaneRO getPlane() {
     return plane;
   }
 

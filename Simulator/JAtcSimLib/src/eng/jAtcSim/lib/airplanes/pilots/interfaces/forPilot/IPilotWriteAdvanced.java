@@ -5,6 +5,8 @@ import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.GoingAroundNotification;
 import eng.jAtcSim.lib.world.ActiveRunwayThreshold;
 import eng.jAtcSim.lib.world.Navaid;
+import eng.jAtcSim.lib.world.Route;
+import eng.jAtcSim.lib.world.newApproaches.NewApproachInfo;
 
 public interface IPilotWriteAdvanced {
   void abortHolding();
@@ -13,16 +15,18 @@ public interface IPilotWriteAdvanced {
 
   void addExperience(Mood.DepartureExperience experience);
 
+  void clearedToApproach(NewApproachInfo newApproachInfo);
+
+  void divert();
+
   void goAround(GoingAroundNotification.GoAroundReason reason);
 
   void hold(Navaid navaid, int inboundRadial, boolean leftTurn);
 
   @Deprecated
   void setRoute(SpeechList route);
-  @Deprecated
-  void setRoute(SpeechList route, ActiveRunwayThreshold activeRunwayThreshold);
 
-  void divert();
+  void setRouting(Route route, ActiveRunwayThreshold activeRunwayThreshold);
 
   void takeOff(ActiveRunwayThreshold runwayThreshold);
 }
