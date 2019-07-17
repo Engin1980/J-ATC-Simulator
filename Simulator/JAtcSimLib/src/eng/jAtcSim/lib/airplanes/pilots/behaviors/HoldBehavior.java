@@ -7,7 +7,7 @@ import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.moods.Mood;
-import eng.jAtcSim.lib.airplanes.pilots.interfaces.forPilot.IPilot5Behavior;
+import eng.jAtcSim.lib.airplanes.pilots.interfaces.forPilot.IPilotWriteSimple;
 import eng.jAtcSim.lib.global.ETime;
 import eng.jAtcSim.lib.global.Headings;
 import eng.jAtcSim.lib.world.Navaid;
@@ -42,7 +42,7 @@ public class HoldBehavior extends DivertableBehavior {
   }
 
   @XmlConstructor
-  public HoldBehavior(IPilot5Behavior pilot, Navaid navaid, int inboundRadial, boolean isLeftTurned) {
+  public HoldBehavior(IPilotWriteSimple pilot, Navaid navaid, int inboundRadial, boolean isLeftTurned) {
     this.navaid = navaid;
     this.inboundRadial = inboundRadial;
     this.isLeftTurned = isLeftTurned;
@@ -59,7 +59,7 @@ public class HoldBehavior extends DivertableBehavior {
   }
 
   @Override
-  public void fly(IPilot5Behavior pilot) {
+  public void fly(IPilotWriteSimple pilot) {
     if (pilot.getPlane().getState() != Airplane.State.holding)
       super.throwIllegalStateException(pilot);
 
@@ -78,9 +78,9 @@ public class HoldBehavior extends DivertableBehavior {
           pilot.setTargetHeading(this.getOutboundHeading(), this.isLeftTurned);
           this.phase = eHoldPhase.firstTurn;
           if (pilot.getPlane().getFlight().isArrival())
-            pilot.addExperience(Mood.ArrivalExperience.holdCycleFinished);
+            pilot.getAdvanced().addExperience(Mood.ArrivalExperience.holdCycleFinished);
           else
-            pilot.addExperience(Mood.DepartureExperience.holdCycleFinished);
+            pilot.getAdvanced().addExperience(Mood.DepartureExperience.holdCycleFinished);
         } else {
           double newHeading = Coordinates.getHeadingToRadial(
               pilot.getPlane().getCoordinate(), this.navaid.getCoordinate(), this.inboundRadial,
@@ -163,9 +163,6 @@ public class HoldBehavior extends DivertableBehavior {
         throw new EEnumValueUnsupportedException(this.phase);
     }
 
-    if (!pilot.getPlane().getEmergencyModule().isEmergency())
-      super.processDivertManagement(pilot);
-
     if (isBelowFL100 == null) {
       isBelowFL100 = pilot.getPlane().getSha().getAltitude() <= FL100;
     } else if (isBelowFL100 && pilot.getPlane().getSha().getAltitude() > FL100) {
@@ -195,7 +192,7 @@ public class HoldBehavior extends DivertableBehavior {
     return Headings.add(inboundRadial, 180);
   }
 
-  private void setHoldDataByEntry(IPilot5Behavior pilot) {
+  private void setHoldDataByEntry(IPilotWriteSimple pilot) {
     double y = Coordinates.getBearing(pilot.getPlane().getCoordinate(), this.navaid.getCoordinate());
     y = Headings.add(y, 180);
 

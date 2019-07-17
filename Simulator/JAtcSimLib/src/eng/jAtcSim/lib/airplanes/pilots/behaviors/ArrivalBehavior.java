@@ -3,7 +3,7 @@ package eng.jAtcSim.lib.airplanes.pilots.behaviors;
 import eng.eSystem.geo.Coordinates;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
-import eng.jAtcSim.lib.airplanes.pilots.interfaces.forPilot.IPilot5Behavior;
+import eng.jAtcSim.lib.airplanes.pilots.interfaces.forPilot.IPilotWriteSimple;
 
 public class ArrivalBehavior extends BasicBehavior {
 
@@ -16,7 +16,7 @@ public class ArrivalBehavior extends BasicBehavior {
   }
 
   @Override
-  void _fly(IPilot5Behavior pilot) {
+  void _fly(IPilotWriteSimple pilot) {
     switch (pilot.getPlane().getState()) {
       case arrivingHigh:
         if (pilot.getPlane().getSha().getAltitude() < LOW_SPEED_DOWN_ALTITUDE)
@@ -34,12 +34,9 @@ public class ArrivalBehavior extends BasicBehavior {
       default:
         super.throwIllegalStateException(pilot);
     }
-
-    if (!pilot.getPlane().getEmergencyModule().isEmergency())
-      super.processDivertManagement(pilot);
   }
 
-  private void setArrivingCloseFafStateIfReady(IPilot5Behavior pilot) {
+  private void setArrivingCloseFafStateIfReady(IPilotWriteSimple pilot) {
     double distToFaf = Acc.atcTwr().getRunwayConfigurationInUse()
         .getArrivals().where(q -> q.isForCategory(pilot.getPlane().getType().category))
         .minDouble(q -> Coordinates.getDistanceInNM(pilot.getPlane().getCoordinate(), q.getThreshold().getEstimatedFafPoint()));

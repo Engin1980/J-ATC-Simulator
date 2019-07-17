@@ -4,6 +4,7 @@ import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.eSystem.geo.Coordinate;
 import eng.jAtcSim.lib.airplanes.pilots.Pilot;
+import eng.jAtcSim.lib.airplanes.pilots.interfaces.forPilot.IPilotWriteSimple;
 import eng.jAtcSim.lib.global.Headings;
 import eng.jAtcSim.lib.global.HeadingsNew;
 import eng.jAtcSim.lib.speaking.IFromAirplane;
@@ -12,7 +13,7 @@ import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeHeadingCommand;
 public class ChangeHeadingApplication extends CommandApplication<ChangeHeadingCommand> {
 
   @Override
-  protected IFromAirplane checkCommandSanity(Pilot.Pilot5Command pilot, ChangeHeadingCommand c) {
+  protected IFromAirplane checkCommandSanity(IPilotWriteSimple pilot, ChangeHeadingCommand c) {
     return null;
   }
 
@@ -31,15 +32,13 @@ public class ChangeHeadingApplication extends CommandApplication<ChangeHeadingCo
   }
 
   @Override
-  protected ApplicationResult adjustAirplane(Pilot.Pilot5Command pilot, ChangeHeadingCommand c) {
+  protected ApplicationResult adjustAirplane(IPilotWriteSimple pilot, ChangeHeadingCommand c) {
     if (pilot.getPlane().getState() == Airplane.State.holding)
-      pilot.abortHolding();
-
-    pilot.setTargetCoordinate((Coordinate)null);
+      pilot.getAdvanced().abortHolding();
 
     double targetHeading;
     if (c.isCurrentHeading()) {
-      targetHeading = pilot.getPlane().getHeading();
+      targetHeading = pilot.getPlane().getSha().getHeading();
     } else {
       targetHeading =
           Headings.add(
@@ -49,11 +48,11 @@ public class ChangeHeadingApplication extends CommandApplication<ChangeHeadingCo
     boolean leftTurn;
 
     if (c.getDirection() == ChangeHeadingCommand.eDirection.any) {
-      leftTurn
-          = (HeadingsNew.getBetterDirectionToTurn(pilot.getPlane().getHeading(), c.getHeading()) == ChangeHeadingCommand.eDirection.left);
+      leftTurn =
+          HeadingsNew.getBetterDirectionToTurn(pilot.getPlane().getSha().getHeading(), c.getHeading()) == ChangeHeadingCommand.eDirection.left;
     } else {
-      leftTurn
-          = c.getDirection() == ChangeHeadingCommand.eDirection.left;
+      leftTurn =
+          c.getDirection() == ChangeHeadingCommand.eDirection.left;
     }
 
 

@@ -2,7 +2,6 @@ package eng.jAtcSim.lib.world.newApproaches.stages.checks;
 
 import eng.eSystem.geo.Coordinates;
 import eng.jAtcSim.lib.Acc;
-import eng.jAtcSim.lib.airplanes.pilots.interfaces.forPilot.IPilot5Behavior;
 import eng.jAtcSim.lib.weathers.Weather;
 
 public class CheckAirportVisibilityStage extends CheckApproachStage {

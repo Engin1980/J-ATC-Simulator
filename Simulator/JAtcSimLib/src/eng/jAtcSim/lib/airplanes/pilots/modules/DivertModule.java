@@ -2,9 +2,7 @@ package eng.jAtcSim.lib.airplanes.pilots.modules;
 
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
-import eng.jAtcSim.lib.airplanes.pilots.behaviors.Behavior;
 import eng.jAtcSim.lib.airplanes.pilots.interfaces.forPilot.IDivertModuleRO;
-import eng.jAtcSim.lib.airplanes.pilots.interfaces.forPilot.IPilot5Behavior;
 import eng.jAtcSim.lib.airplanes.pilots.interfaces.forPilot.IPilot5Module;
 import eng.jAtcSim.lib.global.ETime;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.DivertTimeNotification;

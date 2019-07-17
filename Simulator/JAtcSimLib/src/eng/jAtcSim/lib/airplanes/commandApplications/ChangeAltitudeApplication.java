@@ -2,6 +2,7 @@ package eng.jAtcSim.lib.airplanes.commandApplications;
 
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.pilots.Pilot;
+import eng.jAtcSim.lib.airplanes.pilots.interfaces.forPilot.IPilotWriteSimple;
 import eng.jAtcSim.lib.speaking.IFromAirplane;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.Rejection;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeAltitudeCommand;
@@ -22,16 +23,16 @@ public class ChangeAltitudeApplication extends CommandApplication<ChangeAltitude
   }
 
   @Override
-  protected IFromAirplane checkCommandSanity(Pilot.Pilot5Command pilot, ChangeAltitudeCommand c) {
+  protected IFromAirplane checkCommandSanity(IPilotWriteSimple pilot, ChangeAltitudeCommand c) {
     IFromAirplane ret;
 
-    if ((c.getDirection() == ChangeAltitudeCommand.eDirection.climb) && (pilot.getPlane().getAltitude() > c.getAltitudeInFt())) {
+    if ((c.getDirection() == ChangeAltitudeCommand.eDirection.climb) && (pilot.getPlane().getSha().getAltitude() > c.getAltitudeInFt())) {
       ret = new Rejection("we are higher", c);
-      if (pilot.getPlane().getTargetAltitude() < c.getAltitudeInFt())
+      if (pilot.getPlane().getSha().getTargetAltitude() < c.getAltitudeInFt())
         pilot.setTargetAltitude(c.getAltitudeInFt());
       return ret;
-    } else if ((c.getDirection() == ChangeAltitudeCommand.eDirection.descend) && (pilot.getPlane().getAltitude() < c.getAltitudeInFt())) {
-      if (pilot.getPlane().getTargetAltitude() > c.getAltitudeInFt())
+    } else if ((c.getDirection() == ChangeAltitudeCommand.eDirection.descend) && (pilot.getPlane().getSha().getAltitude() < c.getAltitudeInFt())) {
+      if (pilot.getPlane().getSha().getTargetAltitude() > c.getAltitudeInFt())
         pilot.setTargetAltitude(c.getAltitudeInFt());
       ret = new Rejection("we are lower", c);
       return ret;
@@ -46,7 +47,7 @@ public class ChangeAltitudeApplication extends CommandApplication<ChangeAltitude
   }
 
   @Override
-  protected ApplicationResult adjustAirplane(Pilot.Pilot5Command pilot, ChangeAltitudeCommand c) {
+  protected ApplicationResult adjustAirplane(IPilotWriteSimple  pilot, ChangeAltitudeCommand c) {
     pilot.setTargetAltitude(c.getAltitudeInFt());
     return ApplicationResult.getEmpty();
   }

@@ -1,6 +1,5 @@
 package eng.jAtcSim.lib.airplanes.pilots.approachStagePilots;
 
-import eng.jAtcSim.lib.airplanes.pilots.interfaces.forPilot.IPilot5Behavior;
 import eng.jAtcSim.lib.world.newApproaches.stages.IApproachStage;
 
 public interface IApproachStagePilot<T extends IApproachStage>  {

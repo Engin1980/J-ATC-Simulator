@@ -1,7 +1,6 @@
 package eng.jAtcSim.lib.world.newApproaches.stages.checks;
 
 import eng.eSystem.validation.Validator;
-import eng.jAtcSim.lib.airplanes.pilots.interfaces.forPilot.IPilot5Behavior;
 import eng.jAtcSim.lib.global.Headings;
 import eng.jAtcSim.lib.world.newApproaches.stages.CheckStage;
 

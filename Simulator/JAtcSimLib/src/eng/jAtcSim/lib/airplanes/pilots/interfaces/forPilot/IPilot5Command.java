@@ -7,10 +7,8 @@ import eng.jAtcSim.lib.world.Navaid;
 import eng.jAtcSim.lib.world.Route;
 import eng.jAtcSim.lib.world.newApproaches.NewApproachInfo;
 
-public interface IPilot5Command extends IPilot5 {
+public interface IPilot5Command {
   void abortHolding();
-
-  void adviceGoAroundToAtcIfAny();
 
   void applyShortcut(Navaid navaid);
 

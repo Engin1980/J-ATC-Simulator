@@ -3,7 +3,7 @@ package eng.jAtcSim.lib.airplanes.pilots.behaviors;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
 import eng.jAtcSim.lib.Acc;
-import eng.jAtcSim.lib.airplanes.pilots.interfaces.forPilot.IPilot5Behavior;
+import eng.jAtcSim.lib.airplanes.pilots.interfaces.forPilot.IPilotWriteSimple;
 import eng.jAtcSim.lib.global.Headings;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.PassingClearanceLimitNotification;
 import eng.jAtcSim.lib.world.Navaid;
@@ -13,10 +13,10 @@ import static eng.jAtcSim.lib.airplanes.pilots.Pilot.SPEED_TO_OVER_NAVAID_DISTAN
 public abstract class BasicBehavior extends DivertableBehavior {
   private boolean clearanceLimitWarningSent = false;
 
-  abstract void _fly(IPilot5Behavior pilot);
+  abstract void _fly(IPilotWriteSimple pilot);
 
   @Override
-  public final void fly(IPilot5Behavior pilot) {
+  public final void fly(IPilotWriteSimple pilot) {
     Coordinate targetCoordinate = pilot.getPlane().getSha().tryGetTargetCoordinate();
     if (targetCoordinate != null) {
 
@@ -25,7 +25,7 @@ public abstract class BasicBehavior extends DivertableBehavior {
 
       double dist = Coordinates.getDistanceInNM(pilot.getPlane().getCoordinate(), targetCoordinate);
       if (!clearanceLimitWarningSent && dist < warningDistance && !pilot.getRoutingModule().hasLateralDirectionAfterCoordinate()) {
-        pilot.say(new PassingClearanceLimitNotification());
+        pilot.passMessageToAtc(new PassingClearanceLimitNotification());
         clearanceLimitWarningSent = true;
       } else if (dist < overNavaidDistance) {
         if (pilot.getPlane().getFlight().isArrival() == false) {
@@ -34,7 +34,7 @@ public abstract class BasicBehavior extends DivertableBehavior {
           if (dist < 1.5) {
             int rad = (int) Coordinates.getBearing(Acc.airport().getLocation(), n.getCoordinate());
             rad = rad % 90;
-            pilot.setHoldBehavior(n, rad, true);
+            pilot.getAdvanced().hold(n, rad, true);
             return;
           }
         } else {

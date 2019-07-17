@@ -11,6 +11,7 @@ import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.geo.Coordinate;
+import eng.eSystem.geo.Coordinates;
 import eng.eSystem.utilites.EnumUtils;
 import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 import eng.jAtcSim.lib.Acc;
@@ -26,18 +27,23 @@ import eng.jAtcSim.lib.airplanes.pilots.navigators.INavigator;
 import eng.jAtcSim.lib.airplanes.pilots.navigators.ToCoordinateNavigator;
 import eng.jAtcSim.lib.atcs.Atc;
 import eng.jAtcSim.lib.global.ETime;
+import eng.jAtcSim.lib.global.Headings;
 import eng.jAtcSim.lib.global.Restriction;
 import eng.jAtcSim.lib.global.logging.FileSaver;
 import eng.jAtcSim.lib.global.logging.Recorder;
 import eng.jAtcSim.lib.serialization.LoadSave;
+import eng.jAtcSim.lib.speaking.IFromAtc;
 import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.DivertingNotification;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.EmergencyNotification;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.GoingAroundNotification;
+import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeAltitudeCommand;
+import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeHeadingCommand;
+import eng.jAtcSim.lib.speaking.fromAtc.commands.ProceedDirectCommand;
+import eng.jAtcSim.lib.speaking.fromAtc.commands.ThenCommand;
 import eng.jAtcSim.lib.world.ActiveRunwayThreshold;
 import eng.jAtcSim.lib.world.Navaid;
 import eng.jAtcSim.lib.world.Route;
-import eng.jAtcSim.lib.world.newApproaches.Approach;
 import eng.jAtcSim.lib.world.newApproaches.NewApproachInfo;
 
 import java.lang.reflect.Constructor;
@@ -45,8 +51,18 @@ import java.lang.reflect.InvocationTargetException;
 
 public class Pilot {
 
-  public class Pilot5 implements IPilot5 {
+  public class Pilot5 {
     Pilot5() {
+    }
+
+    @Override
+    public IDivertModuleRO getDivertModule() {
+      return Pilot.this.divertModule;
+    }
+
+    @Override
+    public IRoutingModuleRO getRoutingModule() {
+      return Pilot.this.routingModule;
     }
 
     @Override
@@ -180,14 +196,6 @@ public class Pilot {
       adjustTargetSpeed();
     }
 
-    @Override
-    public void adviceGoAroundToAtcIfAny() {
-      if (gaReason != null) {
-        GoingAroundNotification gan = new GoingAroundNotification(gaReason);
-        passMessageToAtc(gan);
-      }
-    }
-
     public void applyShortcut(Navaid navaid) {
       Pilot.this.routingModule.applyShortcut(navaid);
       Pilot.this.parent.evaluateMoodForShortcut(navaid);
@@ -208,7 +216,7 @@ public class Pilot {
 
     public void processOrderedGoAround() {
       NewApproachBehavior app = Pilot.this.behaviorModule.getAs(NewApproachBehavior.class);
-      app.goAround(pilot4Behavior, GoingAroundNotification.GoAroundReason.atcDecision);
+      app.goAround(pilot4Behavior, );
     }
 
     public void setAltitudeRestriction(Restriction restriction) {
@@ -295,7 +303,7 @@ public class Pilot {
     }
   }
 
-  public class Pilot5Behavior extends Pilot5 implements IPilot5Behavior {
+  public class Pilot5Behavior extends Pilot5 {
 
     @Override
     public void addExperience(Mood.ArrivalExperience experience) {
@@ -307,44 +315,31 @@ public class Pilot {
       Pilot.this.parent.getMood().experience(experience);
     }
 
-    @Override
-    public void checkForDivert() {
-      Pilot.this.divertModule.checkForDivert();
-    }
 
-    @Override
-    public IDivertModuleRO getDivertModule() {
-      return Pilot.this.divertModule;
-    }
 
-    @Override
-    public IRoutingModuleRO getRoutingModule() {
-      return Pilot.this.routingModule;
-    }
+//    @Override
+//    public void goAround(GoingAroundNotification.GoAroundReason reason, double course, SpeechList gaRoute) {
+//      ActiveRunwayThreshold threshold = Pilot.this.tryGetAssignedApproach().getThreshold();
+//
+//      Pilot.this.isAfterGoAround = true;
+//      Pilot.this.gaReason = reason;
+//      this.passMessageToAtc(new GoingAroundNotification(reason));
+//
+//      parent.getSha().setTargetSpeed(parent.getPlane().getType().vDep);
+//      parent.getSha().setTargetAltitude(parent.getSha().getAltitude());
+//      parent.getSha().setNavigator(
+//          new HeadingNavigator(course));
+//
+//      TakeOffBehavior takeOffBehavior = new TakeOffBehavior(Pilot.this.pilot4Behavior, threshold);
+//      Pilot.this.setBehaviorAndState(takeOffBehavior, Airplane.State.takeOffGoAround);
+//      Pilot.this.routingModule.goAround(gaRoute);
+//    }
 
-    @Override
-    public void goAround(GoingAroundNotification.GoAroundReason reason, double course, SpeechList gaRoute) {
-      ActiveRunwayThreshold threshold = Pilot.this.tryGetAssignedApproach().getThreshold();
-
-      Pilot.this.isAfterGoAround = true;
-      Pilot.this.gaReason = reason;
-      this.passMessageToAtc(new GoingAroundNotification(reason));
-
-      parent.getSha().setTargetSpeed(parent.getPlane().getType().vDep);
-      parent.getSha().setTargetAltitude(parent.getSha().getAltitude());
-      parent.getSha().setNavigator(
-          new HeadingNavigator(course));
-
-      TakeOffBehavior takeOffBehavior = new TakeOffBehavior(Pilot.this.pilot4Behavior, threshold);
-      Pilot.this.setBehaviorAndState(takeOffBehavior, Airplane.State.takeOffGoAround);
-      Pilot.this.routingModule.goAround(gaRoute);
-    }
-
-    public void goAround(GoingAroundNotification.GoAroundReason reason) {
-      assert reason != null;
+    public void goAround(GoingAroundNotification.GoAroundReason gaReason) {
+      assert gaReason != null;
 
       Pilot.this.isAfterGoAround = true;
-      boolean isAtcFail = EnumUtils.is(reason,
+      boolean isAtcFail = EnumUtils.is(gaReason,
           new GoingAroundNotification.GoAroundReason[]{
               GoingAroundNotification.GoAroundReason.lostTrafficSeparationInApproach,
               GoingAroundNotification.GoAroundReason.noLandingClearance,
@@ -355,25 +350,31 @@ public class Pilot {
         Pilot.this.parent.getMood().experience(
             Mood.ArrivalExperience.goAroundNotCausedByPilot);
 
-      Pilot.this.gaReason = reason;
-      parent.adviceGoAroundToAtc(atc, reason);
+      GoingAroundNotification gan = new GoingAroundNotification(gaReason);
+      passMessageToAtc(gan);
 
-      super.setBehaviorAndState(
-          new TakeOffBehavior(null), Airplane.State.takeOffGoAround);
+      Pilot.this.setBehaviorAndState(
+          new TakeOffBehavior(
+              this.getPlane().getType().category,
+              this.getRoutingModule().getAssignedRunwayThreshold()),
+          Airplane.State.takeOffGoAround);
 
-      parent.setTargetSpeed(parent.getType().vDep);
-      parent.setTargetAltitude((int) parent.getAltitude());
-      parent.setTargetHeading(approach.getCourse());
-
-      Pilot.this.afterCommands.clearAll();
+      parent.getSha().setTargetSpeed(parent.getPlane().getType().vDep);
+      parent.getSha().setTargetAltitude(parent.getPlane().getSha().getAltitude());
+      parent.getSha().setNavigator(
+          new HeadingNavigator(approach.getCourse()));
 
       SpeechList<IFromAtc> gas = new SpeechList<>(this.approach.getGaRoute());
+      Pilot.this.routingModule.setRoute(gas);
+    }
+
+    private void prepareGoAroundRouting(SpeechList<IFromAtc> gaRoute){
       ChangeAltitudeCommand cac = null; // remember climb command and add it as first at the end
-      if (gas.get(0) instanceof ChangeAltitudeCommand) {
-        cac = (ChangeAltitudeCommand) gas.get(0);
-        gas.removeAt(0);
+      if (gaRoute.get(0) instanceof ChangeAltitudeCommand) {
+        cac = (ChangeAltitudeCommand) gaRoute.get(0);
+        gaRoute.removeAt(0);
       }
-      gas.insert(0, new ChangeHeadingCommand((int) this.approach.getThreshold().getCourse(), ChangeHeadingCommand.eDirection.any));
+      gaRoute.insert(0, new ChangeHeadingCommand((int) this.approach.getThreshold().getCourse(), ChangeHeadingCommand.eDirection.any));
 
       // check if is before runway threshold.
       // if is far before, then first point will still be runway threshold
@@ -381,15 +382,25 @@ public class Pilot {
         String runwayThresholdNavaidName =
             this.approach.getThreshold().getParent().getParent().getIcao() + ":" + this.approach.getThreshold().getName();
         Navaid runwayThresholdNavaid = Acc.area().getNavaids().getOrGenerate(runwayThresholdNavaidName);
-        gas.insert(0, new ProceedDirectCommand(runwayThresholdNavaid));
-        gas.insert(1, new ThenCommand());
+        gaRoute.insert(0, new ProceedDirectCommand(runwayThresholdNavaid));
+        gaRoute.insert(1, new ThenCommand());
       }
 
       if (cac != null)
-        gas.insert(0, cac);
+        gaRoute.insert(0, cac);
+    }
 
-      expandThenCommands(gas);
-      processSpeeches(gas, CommandSource.procedure);
+    private boolean isBeforeRunwayThreshold() {
+      NewApproachInfo ai = Pilot.this.behaviorModule.getAs(NewApproachBehavior.class).getApproachInfo();
+      double dist = Coordinates.getDistanceInNM(parent.getPlane().getCoordinate(), ai.getThreshold().getCoordinate());
+      double hdg = Coordinates.getBearing(parent.getPlane().getCoordinate(), ai.getThreshold().getCoordinate());
+      boolean ret;
+      if (dist < 3)
+        ret = false;
+      else {
+        ret = Headings.isBetween(ai.getThreshold().getCourse() - 70, hdg, ai.getThreshold().getCourse() + 70);
+      }
+      return ret;
     }
 
     @Override
@@ -495,8 +506,6 @@ Pilot.this.divertModule.setLastAnnouncedMinute(minLeft);
   private final AtcModule atcModule = new AtcModule(this.pilot5Module);
   private final RoutingModule routingModule = new RoutingModule(this.pilot5Module);
   private final DivertModule divertModule = new DivertModule(this.pilot5Module);
-  @XmlIgnore
-  private GoingAroundNotification.GoAroundReason gaReason = null;
   private boolean isAfterGoAround = false;
   @XmlIgnore
   private PilotRecorderModule recorder;

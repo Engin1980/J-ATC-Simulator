@@ -1,7 +1,6 @@
 package eng.jAtcSim.lib.airplanes.pilots.approachStagePilots;
 
 import eng.eSystem.exceptions.EApplicationException;
-import eng.jAtcSim.lib.airplanes.pilots.interfaces.forPilot.IPilot5Behavior;
 import eng.jAtcSim.lib.world.newApproaches.stages.CheckStage;
 import eng.jAtcSim.lib.world.newApproaches.stages.checks.CheckAirportVisibilityStage;
 import eng.jAtcSim.lib.world.newApproaches.stages.checks.CheckPlaneLocationStage;

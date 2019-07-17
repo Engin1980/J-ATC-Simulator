@@ -1,7 +1,6 @@
 package eng.jAtcSim.lib.airplanes.pilots.approachStagePilots;
 
 import eng.eSystem.geo.Coordinates;
-import eng.jAtcSim.lib.airplanes.pilots.interfaces.forPilot.IPilot5Behavior;
 import eng.jAtcSim.lib.airplanes.pilots.navigators.HeadingNavigator;
 import eng.jAtcSim.lib.airplanes.pilots.navigators.ToCoordinateNavigator;
 import eng.jAtcSim.lib.world.newApproaches.stages.FlyToPointStage;

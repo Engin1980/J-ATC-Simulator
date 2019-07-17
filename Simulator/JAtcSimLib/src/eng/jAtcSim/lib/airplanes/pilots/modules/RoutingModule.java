@@ -62,34 +62,6 @@ public class RoutingModule extends Module implements IRoutingModuleRO {
     return this.entryExitPoint;
   }
 
-  public void goAround(SpeechList gaRoute) {
-    this.afterCommands.clearAll();
-
-    SpeechList<IFromAtc> gas = new SpeechList<>(gaRoute);
-    ChangeAltitudeCommand cac = null; // remember climb command and add it as the first at the end
-    if (gas.get(0) instanceof ChangeAltitudeCommand) {
-      cac = (ChangeAltitudeCommand) gas.get(0);
-      gas.removeAt(0);
-    }
-    gas.insert(0, new ChangeHeadingCommand((int) expectedRunwayThreshold.getCourse(), ChangeHeadingCommand.eDirection.any));
-
-    // check if is before runway threshold.
-    // if is far before, then first point will still be runway threshold
-    if (isBeforeRunwayThreshold()) {
-      String runwayThresholdNavaidName =
-          expectedRunwayThreshold.getParent().getParent().getIcao() + ":" + expectedRunwayThreshold.getName();
-      Navaid runwayThresholdNavaid = Acc.area().getNavaids().getOrGenerate(runwayThresholdNavaidName);
-      gas.insert(0, new ProceedDirectCommand(runwayThresholdNavaid));
-      gas.insert(1, new ThenCommand());
-    }
-
-    if (cac != null)
-      gas.insert(0, cac);
-
-    expandThenCommands(gas);
-    processSpeeches(gas, CommandSource.procedure);
-  }
-
   @Override
   public boolean hasLateralDirectionAfterCoordinate() {
     Coordinate coordinate = parent.getPlane().getSha().tryGetTargetCoordinate();
@@ -111,7 +83,8 @@ public class RoutingModule extends Module implements IRoutingModuleRO {
     this.assignedRoute = route;
   }
 
-  public void setRoute(SpeechList route) {
+  public void setRoute(SpeechList<IFromAtc> route) {
+    this.afterCommands.clearAll();
     expandThenCommands(route);
     processSpeeches(route, CommandSource.procedure);
   }
@@ -457,18 +430,5 @@ public class RoutingModule extends Module implements IRoutingModuleRO {
       System.out.println("  IF " + afterCommandIAtcCommandTuple.getA().toString());
       System.out.println("  THEN " + afterCommandIAtcCommandTuple.getB().toString());
     }
-  }
-
-  private boolean isBeforeRunwayThreshold() {
-    NewApproachInfo ai = parent.getBehaviorModule().getAs(NewApproachBehavior.class).getApproachInfo();
-    double dist = Coordinates.getDistanceInNM(parent.getPlane().getCoordinate(), ai.getThreshold().getCoordinate());
-    double hdg = Coordinates.getBearing(parent.getPlane().getCoordinate(), ai.getThreshold().getCoordinate());
-    boolean ret;
-    if (dist < 3)
-      ret = false;
-    else {
-      ret = Headings.isBetween(ai.getThreshold().getCourse() - 70, hdg, ai.getThreshold().getCourse() + 70);
-    }
-    return ret;
   }
 }

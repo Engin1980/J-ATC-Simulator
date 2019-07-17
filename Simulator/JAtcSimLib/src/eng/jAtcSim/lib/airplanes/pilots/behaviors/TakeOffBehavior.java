@@ -5,7 +5,7 @@ import eng.eSystem.geo.Coordinates;
 import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
-import eng.jAtcSim.lib.airplanes.pilots.interfaces.forPilot.IPilot5Behavior;
+import eng.jAtcSim.lib.airplanes.pilots.interfaces.forPilot.IPilotWriteSimple;
 import eng.jAtcSim.lib.world.ActiveRunwayThreshold;
 
 public class TakeOffBehavior extends Behavior {
@@ -19,11 +19,11 @@ public class TakeOffBehavior extends Behavior {
     accelerationAltitude = 0;
   }
 
-  public TakeOffBehavior(IPilot5Behavior pilot, ActiveRunwayThreshold toThreshold) {
+  public TakeOffBehavior(char planeCategory, ActiveRunwayThreshold toThreshold) {
 
     this.toThreshold = toThreshold;
     int accAlt;
-    switch (pilot.getPlane().getType().category) {
+    switch (planeCategory) {
       case 'A':
         accAlt = 300;
         break;
@@ -35,16 +35,14 @@ public class TakeOffBehavior extends Behavior {
         accAlt = 1500;
         break;
       default:
-        throw new EEnumValueUnsupportedException(pilot.getPlane().getType().category);
+        throw new EEnumValueUnsupportedException(planeCategory);
     }
     this.accelerationAltitude = Acc.airport().getAltitude() + accAlt;
   }
 
   @Override
-  public void fly(IPilot5Behavior pilot) {
+  public void fly(IPilotWriteSimple pilot) {
     switch (pilot.getPlane().getState()) {
-      case holdingPoint:
-        break;
       case takeOffRoll:
         double targetHeading = Coordinates.getBearing(
             pilot.getPlane().getCoordinate(), toThreshold.getOtherThreshold().getCoordinate());

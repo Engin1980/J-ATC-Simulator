@@ -4,6 +4,7 @@ import eng.eSystem.geo.Coordinates;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.pilots.Pilot;
+import eng.jAtcSim.lib.airplanes.pilots.interfaces.forPilot.IPilotWriteSimple;
 import eng.jAtcSim.lib.global.Restriction;
 import eng.jAtcSim.lib.speaking.IFromAirplane;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.Rejection;
@@ -23,7 +24,7 @@ public class ChangeSpeedApplication extends CommandApplication<ChangeSpeedComman
   }
 
   @Override
-  protected IFromAirplane checkCommandSanity(Pilot.Pilot5Command pilot, ChangeSpeedCommand c) {
+  protected IFromAirplane checkCommandSanity(IPilotWriteSimple pilot, ChangeSpeedCommand c) {
     IFromAirplane ret;
 
     if (c.isResumeOwnSpeed() == false) {
@@ -57,7 +58,7 @@ public class ChangeSpeedApplication extends CommandApplication<ChangeSpeedComman
   }
 
   @Override
-  protected ApplicationResult adjustAirplane(Pilot.Pilot5Command pilot, ChangeSpeedCommand c) {
+  protected ApplicationResult adjustAirplane(IPilotWriteSimple pilot, ChangeSpeedCommand c) {
     if (c.isResumeOwnSpeed()) {
       pilot.setSpeedRestriction(null);
     } else {
