@@ -5,7 +5,9 @@ import eng.eSystem.geo.Coordinates;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.pilots.Pilot;
+import eng.jAtcSim.lib.airplanes.pilots.interfaces.forPilot.IPilotRO;
 import eng.jAtcSim.lib.airplanes.pilots.interfaces.forPilot.IPilotWriteSimple;
+import eng.jAtcSim.lib.world.newApproaches.ApproachEntry;
 import eng.jAtcSim.lib.world.newApproaches.stages.IApproachStage;
 import eng.jAtcSim.lib.global.Restriction;
 import eng.jAtcSim.lib.speaking.IFromAirplane;
@@ -18,26 +20,27 @@ import eng.jAtcSim.lib.world.newApproaches.Approach;
 import eng.jAtcSim.lib.world.newApproaches.IafRoute;
 import eng.jAtcSim.lib.world.newApproaches.NewApproachInfo;
 
+import javax.swing.text.StyledEditorKit;
+
 public class ClearedToApproachApplication extends CommandApplication<ClearedToApproachCommand> {
 
   @Override
   protected IFromAirplane checkCommandSanity(IPilotWriteSimple pilot, ClearedToApproachCommand c) {
-
     IFromAirplane ret = null;
+    NewApproachInfo nai;
 
-    NewApproachInfo nai = null;
     ActiveRunwayThreshold rt = Acc.airport().tryGetRunwayThreshold(c.getThresholdName());
     if (rt == null) {
       ret = new Rejection(
           "Cannot be cleared to approach. There is no runway designated as " + c.getThresholdName(), c);
     } else {
-      IReadOnlyList<Approach> apps = rt.getApproaches(c.getType(), plane.getType().category);
+      IReadOnlyList<Approach> apps = rt.getApproaches(c.getType(), pilot.getPlane().getType().category);
       if (apps.isEmpty())
         ret = new Rejection(
             "Cannot be cleared to approach. There is no approach kind "
                 + c.getType() + " for runway " + rt.getName() + " for our plane.", c);
       else {
-        nai = tryCreateApproachInfo(apps, plane);
+        nai = tryCreateApproachInfo(apps, pilot);
         if (nai == null)
           ret = new UnableToEnterApproachFromDifficultPosition(c, "We are not in the correct position to enter the approach.");
       }
@@ -63,9 +66,9 @@ public class ClearedToApproachApplication extends CommandApplication<ClearedToAp
 //    return ret;
   }
 
-  private String checkResultToString(IApproachStage.eResult result) {
-    throw new UnsupportedOperationException("Todo");
-  }
+//  private String checkResultToString(IApproachStage.eResult result) {
+//    throw new UnsupportedOperationException("Todo");
+//  }
 
   @Override
   protected Airplane.State[] getInvalidStates() {
@@ -88,7 +91,7 @@ public class ClearedToApproachApplication extends CommandApplication<ClearedToAp
   protected ApplicationResult adjustAirplane(IPilotWriteSimple pilot, ClearedToApproachCommand c) {
     ApplicationResult ret = new ApplicationResult();
 
-    // hold abort only if fix was found
+    // abort holding, only if fix was found
     if (pilot.getPlane().getState() == Airplane.State.holding) {
       pilot.getAdvanced().abortHolding();
     }
@@ -105,7 +108,7 @@ public class ClearedToApproachApplication extends CommandApplication<ClearedToAp
 
     ActiveRunwayThreshold rt = Acc.airport().tryGetRunwayThreshold(c.getThresholdName());
     IReadOnlyList<Approach> apps = rt.getApproaches(c.getType(), pilot.getPlane().getType().category);
-    NewApproachInfo nai = tryCreateApproachInfo(apps, plane);
+    NewApproachInfo nai = tryCreateApproachInfo(apps, pilot);
     assert nai != null;
 
     pilot.getAdvanced().clearedToApproach(nai);
@@ -113,17 +116,15 @@ public class ClearedToApproachApplication extends CommandApplication<ClearedToAp
     return ret;
   }
 
-  private NewApproachInfo tryCreateApproachInfo(IReadOnlyList<Approach> apps, Pilot.Pilot5Command pilot) {
-    Approach app;
-
-    app = apps.tryGetFirst(q -> q.getEntryLocation().isInside(pilot.getPlane().getCoordinate()));
-    if (app != null)
-      return new NewApproachInfo(app);
+  private NewApproachInfo tryCreateApproachInfo(IReadOnlyList<Approach> apps, IPilotRO pilot) {
+    NewApproachInfo ret = null;
 
     for (Approach approach : apps) {
-      for (IafRoute iafRoute : approach.getIafRoutes()) {
-        if (Coordinates.getDistanceInNM(pilot.getPlane().getCoordinate(), iafRoute.getNavaid().getCoordinate()) < 2.5) {
-          return new NewApproachInfo(approach, iafRoute);
+      if (ret != null) break;
+      for (ApproachEntry entry : approach.getEntries()) {
+        if (ret != null) break;
+        if (entry.getLocation().isInside(pilot.getPlane().getCoordinate())){
+          ret = new NewApproachInfo(entry, approach);
         }
       }
     }

@@ -66,10 +66,10 @@ public class AfterCommandList {
 
     if (item.antecedent instanceof AfterAltitudeCommand) {
       AfterAltitudeCommand cmd = (AfterAltitudeCommand) item.antecedent;
-      ret = isAfterAltitudePassed(cmd, plane.getAltitude());
+      ret = isAfterAltitudePassed(cmd, plane.getSha().getAltitude());
     } else if (item.antecedent instanceof AfterSpeedCommand) {
       int trgSpd = ((AfterSpeedCommand) item.antecedent).getSpeedInKts();
-      ret = (Math.abs(trgSpd - plane.getSpeed()) < 10);
+      ret = (Math.abs(trgSpd - plane.getSha().getSpeed()) < 10);
     } else if (item.antecedent instanceof AfterNavaidCommand) {
       AfterNavaidCommand anc = (AfterNavaidCommand) item.antecedent;
       if ((anc.getNavaid().getCoordinate().equals(currentTargetCoordinateOrNull) == false)) {
@@ -80,13 +80,13 @@ public class AfterCommandList {
             = Coordinates.getDistanceInNM(
             ((AfterNavaidCommand) item.antecedent).getNavaid().getCoordinate(),
             plane.getCoordinate());
-        double overDist = plane.getSpeed() * Pilot.SPEED_TO_OVER_NAVAID_DISTANCE_MULTIPLIER;
+        double overDist = plane.getSha().getSpeed() * Pilot.SPEED_TO_OVER_NAVAID_DISTANCE_MULTIPLIER;
         ret = (dist < overDist);
       }
     } else if (item.antecedent instanceof AfterHeadingCommand) {
       AfterHeadingCommand anc = (AfterHeadingCommand) item.antecedent;
       double trgHdg = Headings.add(anc.getHeading(), Acc.airport().getDeclination());
-      double diff = Headings.getDifference(plane.getHeading(), trgHdg, true);
+      double diff = Headings.getDifference(plane.getSha().getHeading(), trgHdg, true);
       ret = (diff < 3);
     } else if (item.antecedent instanceof AfterDistanceCommand) {
       AfterDistanceCommand anc = (AfterDistanceCommand) item.antecedent;

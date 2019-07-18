@@ -3,12 +3,12 @@ package eng.jAtcSim.lib.world.newApproaches;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.exceptions.EApplicationException;
-import eng.jAtcSim.lib.world.newApproaches.stages.IApproachStage;
 import eng.jAtcSim.lib.global.PlaneCategoryDefinitions;
 import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
 import eng.jAtcSim.lib.world.ActiveRunwayThreshold;
 import eng.jAtcSim.lib.world.newApproaches.entryLocations.IApproachEntryLocation;
+import eng.jAtcSim.lib.world.newApproaches.stages.IApproachStage;
 
 public class Approach {
 
@@ -43,6 +43,14 @@ public class Approach {
 //    this.stages = stages;
   }
 
+  public IReadOnlyList<ApproachEntry> getEntries() {
+    return entries;
+  }
+
+  public IReadOnlyList<IApproachStage> getStages() {
+    return stages;
+  }
+
   public SpeechList<IAtcCommand> getGaCommands() {
     return gaCommands;
   }
@@ -57,9 +65,5 @@ public class Approach {
 
   public ApproachType getType() {
     return type;
-  }
-
-  public IReadOnlyList<IApproachStage> getStages() {
-    return stages;
   }
 }
