@@ -8,9 +8,9 @@ import eng.jAtcSim.lib.world.newApproaches.stages.*;
 
 public class ApproachStagePilotProvider {
 
-  private IMap<Class, IApproachStagePilot> inner = new EMap<>();
+  private static IMap<Class, IApproachStagePilot> inner = new EMap<>();
 
-  public IApproachStagePilot getPilot(IApproachStage stage) {
+  public static IApproachStagePilot getPilot(IApproachStage stage) {
     Validator.isNotNull(stage);
 
     IApproachStagePilot ret;
@@ -30,7 +30,7 @@ public class ApproachStagePilotProvider {
     return ret;
   }
 
-  private IApproachStagePilot getInstance(Class<? extends IApproachStagePilot> stageType) {
+  private static IApproachStagePilot getInstance(Class<? extends IApproachStagePilot> stageType) {
     IApproachStagePilot ret = inner.tryGet(stageType);
     if (ret == null) {
       try {

@@ -6,9 +6,9 @@ import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
 import eng.jAtcSim.lib.world.newApproaches.stages.IApproachStage;
 import eng.jAtcSim.lib.world.ActiveRunwayThreshold;
+import eng.jAtcSim.lib.world.newApproaches.stages.RouteStage;
 
 public class NewApproachInfo {
-  private final ApproachEntry entry;
   private final IList<IApproachStage> stages;
   private final SpeechList<IAtcCommand> gaCommands;
   private final ActiveRunwayThreshold runwayThreshold;
@@ -20,18 +20,14 @@ public class NewApproachInfo {
     assert approach != null;
     assert approach.getEntries().contains(entry) : "Entry must be related to the approach";
 
-    this.entry = entry;
     this.stages = new EList<>(approach.getStages());
+    this.stages.insert(0, new RouteStage(entry.getRouteCommands()));
     this.gaCommands = approach.getGaCommands().clone();
     this.runwayThreshold = approach.getParent();
     this.type = approach.getType();
   }
 
-  public ApproachEntry getEntry() {
-    return entry;
-  }
-
-  public IReadOnlyList<IApproachStage> getStages() {
+  public IList<IApproachStage> getStages() {
     return stages;
   }
 

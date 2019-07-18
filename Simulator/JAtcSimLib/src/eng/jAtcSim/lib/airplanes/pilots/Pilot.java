@@ -372,7 +372,7 @@ public class Pilot {
               GoingAroundNotification.GoAroundReason.lostTrafficSeparationInApproach,
               GoingAroundNotification.GoAroundReason.noLandingClearance,
               GoingAroundNotification.GoAroundReason.notStabilizedApproachEnter,
-              GoingAroundNotification.GoAroundReason.notStabilizedOnFinal
+              GoingAroundNotification.GoAroundReason.notStabilizedAirplane
           });
       if (isAtcFail)
         Pilot.this.parent.getMood().experience(

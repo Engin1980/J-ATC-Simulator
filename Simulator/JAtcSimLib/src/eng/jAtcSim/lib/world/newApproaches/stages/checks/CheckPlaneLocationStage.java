@@ -52,7 +52,7 @@ public class CheckPlaneLocationStage implements CheckStage {
 //    else {
 //      double distance = Coordinates.getDistanceInNM(coordinate, pilot.getCoordinate());
 //      if (NumberUtils.isBetweenOrEqual(minDistance, distance, maxDistance) == false)
-//        return eResult.illegalDistance;
+//        return eResult.illegalLocation;
 //    }
 //
 //    return eResult.ok;

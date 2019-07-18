@@ -6,8 +6,8 @@ public class GoingAroundNotification implements IAirplaneNotification {
 
   public enum GoAroundReason{
     runwayNotInSight,
-    notStabilizedApproachEnter,
-    notStabilizedOnFinal,
+    incorrectApproachEnter,
+    notStabilizedAirplane,
     noLandingClearance,
     windGustBeforeTouchdown,
     lostTrafficSeparationInApproach,

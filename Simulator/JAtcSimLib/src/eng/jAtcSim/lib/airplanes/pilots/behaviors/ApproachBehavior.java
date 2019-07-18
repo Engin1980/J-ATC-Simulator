@@ -61,7 +61,7 @@
 //            GoingAroundNotification.GoAroundReason.lostTrafficSeparationInApproach,
 //            GoingAroundNotification.GoAroundReason.noLandingClearance,
 //            GoingAroundNotification.GoAroundReason.notStabilizedApproachEnter,
-//            GoingAroundNotification.GoAroundReason.notStabilizedOnFinal
+//            GoingAroundNotification.GoAroundReason.notStabilizedAirplane
 //        });
 //    if (isAtcFail)
 //      Pilot.this.parent.getMood().addExperience(Mood.ArrivalExperience.goAroundNotCausedByPilot);
@@ -347,7 +347,7 @@
 //          // moc nizko, uz pod stabilized altitude
 //          int MAX_LONG_FINAL_HEADING_DIFF = 30;
 //          if (Math.abs(parent.getTargetHeading() - this.approach.getCourse()) > MAX_LONG_FINAL_HEADING_DIFF) {
-//            goAround(GoingAroundNotification.GoAroundReason.notStabilizedOnFinal);
+//            goAround(GoingAroundNotification.GoAroundReason.notStabilizedAirplane);
 //            return;
 //          }
 //
@@ -370,7 +370,7 @@
 //          int MAX_SHORT_FINAL_HEADING_DIFF = 10;
 //          double diff = Math.abs(parent.getTargetHeading() - this.approach.getCourse());
 //          if (diff > MAX_SHORT_FINAL_HEADING_DIFF) {
-//            goAround(GoingAroundNotification.GoAroundReason.notStabilizedOnFinal);
+//            goAround(GoingAroundNotification.GoAroundReason.notStabilizedAirplane);
 //            return;
 //          }
 //

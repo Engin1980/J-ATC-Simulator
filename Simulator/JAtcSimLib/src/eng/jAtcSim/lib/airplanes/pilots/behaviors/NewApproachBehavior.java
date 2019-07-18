@@ -1,93 +1,108 @@
 package eng.jAtcSim.lib.airplanes.pilots.behaviors;
 
 import eng.eSystem.exceptions.EApplicationException;
-import eng.eSystem.utilites.EnumUtils;
+import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.validation.Validator;
-import eng.jAtcSim.lib.airplanes.moods.Mood;
+import eng.jAtcSim.lib.airplanes.pilots.approachStagePilots.ApproachStagePilotProvider;
+import eng.jAtcSim.lib.airplanes.pilots.approachStagePilots.IApproachStagePilot;
 import eng.jAtcSim.lib.airplanes.pilots.interfaces.forPilot.IPilotWriteSimple;
-import eng.jAtcSim.lib.world.newApproaches.stages.IApproachStage;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.GoingAroundNotification;
 import eng.jAtcSim.lib.world.newApproaches.NewApproachInfo;
+import eng.jAtcSim.lib.world.newApproaches.stages.IApproachStage;
 
 public class NewApproachBehavior extends Behavior {
 
   private NewApproachInfo approachInfo;
-  private int currentStageIndex = -1;
+  private IApproachStagePilot currentStagePilot = null;
+  private IApproachStage currentStage = null;
 
   public NewApproachBehavior(NewApproachInfo approachInfo) {
     Validator.isNotNull(approachInfo);
-    this.approachInfo = approachInfo;
     Validator.check(this.approachInfo.getStages().isEmpty() == false,
         new EApplicationException("Created approach info has empty stages list."));
+    this.approachInfo = approachInfo;
   }
 
   @Override
   public void fly(IPilotWriteSimple pilot) {
-    if (this.currentStageIndex == -1) {
-      this.currentStageIndex++;
-      startCurrentStage(pilot);
+    if (this.currentStage == null) {
+      startNextStage(pilot);
     } else {
-      if (this.getCurrentStage().isFinishedStage(pilot)) {
-        disposeCurrentStage(pilot);
-        this.currentStageIndex++;
-        startCurrentStage(pilot);
-      }
+      switchToNextStageIfRequired(pilot);
     }
 
     this.flyCurrentStage(pilot);
-
   }
+
+  private void switchToNextStageIfRequired(IPilotWriteSimple pilot) {
+    while (this.currentStagePilot.isFinishedStage(pilot,this.currentStage)) {
+      IApproachStagePilot.eResult result = this.currentStagePilot.disposeStage(pilot, this.currentStage);
+      if (result == IApproachStagePilot.eResult.ok) {
+        approachInfo.getStages().removeAt(0);
+        startNextStage(pilot);
+      } else {
+        pilot.getAdvanced().goAround(convertEResultToGaReason(result));
+      }
+    }
+  }
+
+  //TODO add following lines to go-around implementation if neccessary
+//  public void goAround(IPilotWriteSimple pilot, GoingAroundNotification.GoAroundReason reason) {
+//    assert reason != null;
+//
+//    pilot.goAround(
+//        reason,
+//        this.approachInfo.getThreshold().getCourse(),
+//        this.approachInfo.getApproach().getGaCommands());
+//
+//
+//    boolean isAtcFail = EnumUtils.is(reason,
+//        new GoingAroundNotification.GoAroundReason[]{
+//            GoingAroundNotification.GoAroundReason.lostTrafficSeparationInApproach,
+//            GoingAroundNotification.GoAroundReason.noLandingClearance,
+//            GoingAroundNotification.GoAroundReason.notStabilizedApproachEnter,
+//            GoingAroundNotification.GoAroundReason.notStabilizedAirplane
+//        });
+//    if (isAtcFail)
+//      pilot.getAdvanced().addExperience(Mood.ArrivalExperience.goAroundNotCausedByPilot);
+//
+//
+//  }
 
   @Override
   public String toLogString() {
     return null;
   }
 
-  public NewApproachInfo getApproachInfo() {
-    return this.approachInfo;
-  }
-
   private void flyCurrentStage(IPilotWriteSimple pilot) {
-
-    this.getCurrentStage().flyStage(pilot);
+    IApproachStagePilot.eResult result = this.currentStagePilot.flyStage(pilot, this.currentStage);
+    if (result != IApproachStagePilot.eResult.ok)
+      pilot.getAdvanced().goAround(convertEResultToGaReason(result));
   }
 
-  private void disposeCurrentStage(IPilotWriteSimple pilot) {
-
-    this.getCurrentStage().disposeStage(pilot);
+  private GoingAroundNotification.GoAroundReason convertEResultToGaReason(IApproachStagePilot.eResult result) {
+    switch(result){
+      case runwayNotInSight:
+        return GoingAroundNotification.GoAroundReason.runwayNotInSight;
+      case altitudeTooHigh:
+      case altitudeTooLow:
+      case illegalLocation:
+      case illegalHeading:
+      case speedTooHigh:
+      case speedTooLow:
+        return GoingAroundNotification.GoAroundReason.notStabilizedAirplane;
+      default:
+        throw new EEnumValueUnsupportedException(result);
+    }
   }
 
-  private IApproachStage getCurrentStage() {
+  private void startNextStage(IPilotWriteSimple pilot) {
+    this.currentStage = this.approachInfo.getStages().get(0);
+    this.currentStagePilot = ApproachStagePilotProvider.getPilot(this.currentStage);
 
-    return this.approachInfo.getStages().get(this.currentStageIndex);
+    IApproachStagePilot.eResult result = this.currentStagePilot.initStage(pilot, this.currentStage);
+    if (result != IApproachStagePilot.eResult.ok)
+      pilot.getAdvanced().goAround(convertEResultToGaReason(result));
   }
 
-  private void startCurrentStage(IPilotWriteSimple pilot) {
-    IApproachStage stage = this.approachInfo.getStages().get(this.currentStageIndex);
-    stage.initStage(pilot);
-  }
-
-    public void goAround(IPilotWriteSimple pilot, GoingAroundNotification.GoAroundReason reason) {
-    assert reason != null;
-
-    pilot.goAround(
-        reason,
-        this.approachInfo.getThreshold().getCourse(),
-        this.approachInfo.getApproach().getGaCommands());
-
-
-    boolean isAtcFail = EnumUtils.is(reason,
-        new GoingAroundNotification.GoAroundReason[]{
-            GoingAroundNotification.GoAroundReason.lostTrafficSeparationInApproach,
-            GoingAroundNotification.GoAroundReason.noLandingClearance,
-            GoingAroundNotification.GoAroundReason.notStabilizedApproachEnter,
-            GoingAroundNotification.GoAroundReason.notStabilizedOnFinal
-        });
-    if (isAtcFail)
-      pilot.getAdvanced().addExperience(Mood.ArrivalExperience.goAroundNotCausedByPilot);
-
-
-
-
-  }
 }
