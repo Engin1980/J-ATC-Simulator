@@ -95,7 +95,7 @@ public class RoutingModule extends Module implements IRoutingModuleRO {
     processSpeeches(route, CommandSource.procedure);
   }
 
-  public void updateAssignedRouting(Route newRoute, ActiveRunwayThreshold expectedRunwayThreshold) {
+  public void setRouting(Route newRoute, ActiveRunwayThreshold expectedRunwayThreshold) {
     this.expectedRunwayThreshold = expectedRunwayThreshold;
     this.assignedRoute = newRoute;
     this.afterCommands.clearRoute();
@@ -119,7 +119,7 @@ public class RoutingModule extends Module implements IRoutingModuleRO {
     }
   }
 
-  public boolean isOnWayToPassPoint(Navaid navaid) {
+  public boolean isGoingToFlightOverNavaid(Navaid navaid) {
     return afterCommands.hasProceedDirectToNavaidAsConseqent(navaid);
   }
 

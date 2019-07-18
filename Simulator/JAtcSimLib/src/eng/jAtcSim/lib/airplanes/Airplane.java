@@ -14,10 +14,7 @@ import eng.jAtcSim.lib.airplanes.modules.ShaModule;
 import eng.jAtcSim.lib.airplanes.moods.Mood;
 import eng.jAtcSim.lib.airplanes.moods.MoodResult;
 import eng.jAtcSim.lib.airplanes.pilots.Pilot;
-import eng.jAtcSim.lib.airplanes.pilots.interfaces.forAirplane.IAirplaneFlightRO;
-import eng.jAtcSim.lib.airplanes.pilots.interfaces.forAirplane.IAirplaneRO;
-import eng.jAtcSim.lib.airplanes.pilots.interfaces.forAirplane.IEmergencyModuleRO;
-import eng.jAtcSim.lib.airplanes.pilots.interfaces.forAirplane.IShaRO;
+import eng.jAtcSim.lib.airplanes.pilots.interfaces.forAirplane.*;
 import eng.jAtcSim.lib.airplanes.pilots.navigators.HeadingNavigator;
 import eng.jAtcSim.lib.airplanes.pilots.navigators.INavigator;
 import eng.jAtcSim.lib.atcs.Atc;
@@ -25,7 +22,6 @@ import eng.jAtcSim.lib.exceptions.ToDoException;
 import eng.jAtcSim.lib.global.ETime;
 import eng.jAtcSim.lib.global.UnitProvider;
 import eng.jAtcSim.lib.messaging.IMessageContent;
-import eng.jAtcSim.lib.messaging.IMessageParticipant;
 import eng.jAtcSim.lib.messaging.Message;
 import eng.jAtcSim.lib.serialization.LoadSave;
 import eng.jAtcSim.lib.speaking.IFromAtc;
@@ -38,7 +34,7 @@ import eng.jAtcSim.lib.world.newApproaches.NewApproachInfo;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
-public class Airplane implements IAirplaneRO {
+public class Airplane implements IAirplaneWriteSimple {
 
   //region Inner classes
 
@@ -686,7 +682,7 @@ public class Airplane implements IAirplaneRO {
   }
 
   public void updateAssignedRouting(Route route, ActiveRunwayThreshold expectedRunwayThreshold) {
-    pilot.getRoutingModule().updateAssignedRouting(route, expectedRunwayThreshold);
+    pilot.getRoutingModule().setRouting(route, expectedRunwayThreshold);
   }
 
   //region Private methods

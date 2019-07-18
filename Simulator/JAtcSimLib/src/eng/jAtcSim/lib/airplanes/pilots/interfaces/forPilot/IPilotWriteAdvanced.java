@@ -17,7 +17,7 @@ public interface IPilotWriteAdvanced {
 
   void clearedToApproach(NewApproachInfo newApproachInfo);
 
-  void divert();
+  void divert(boolean isInvokedByAtc);
 
   void goAround(GoingAroundNotification.GoAroundReason reason);
 

@@ -46,6 +46,10 @@ public class NewApproachBehavior extends Behavior {
     }
   }
 
+  public NewApproachInfo getApproachInfo() {
+    return approachInfo;
+  }
+
   //TODO add following lines to go-around implementation if neccessary
 //  public void goAround(IPilotWriteSimple pilot, GoingAroundNotification.GoAroundReason reason) {
 //    assert reason != null;

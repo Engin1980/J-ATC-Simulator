@@ -41,7 +41,7 @@ public interface IPilotWriteSimple extends IPilotRO {
 
   void setNavigator(INavigator navigator);
 
-  void setSpeedRestriction(Object o);
+  void setSpeedRestriction(Restriction speedRestriction);
 
   void setState(Airplane.State state);
 

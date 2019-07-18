@@ -33,7 +33,8 @@ public class DivertModule extends Module implements IDivertModuleRO {
     }
   }
 
-  private int getMinutesLeft() {
+  @Override
+  public int getMinutesLeft() {
     int diff = divertTime.getTotalMinutes() - Acc.now().getTotalMinutes();
     return diff;
   }
@@ -55,11 +56,14 @@ public class DivertModule extends Module implements IDivertModuleRO {
     }
   }
 
+  public void disable(){
+    this.isPossible = false;
+  }
+
   private boolean divertIfRequested() {
     assert this.isPossible;
     if (this.getMinutesLeft() <= 0) {
-      parent.getAdvanced().divert();
-      this.isPossible = false;
+      parent.getAdvanced().divert(false);
       return true;
     } else {
       return false;

@@ -91,11 +91,6 @@ public class ClearedToApproachApplication extends CommandApplication<ClearedToAp
   protected ApplicationResult adjustAirplane(IPilotWriteSimple pilot, ClearedToApproachCommand c) {
     ApplicationResult ret = new ApplicationResult();
 
-    // abort holding, only if fix was found
-    if (pilot.getPlane().getState() == Airplane.State.holding) {
-      pilot.getAdvanced().abortHolding();
-    }
-
     Restriction sr = pilot.getPlane().getSha().getSpeedRestriction();
 
     if (sr != null &&
