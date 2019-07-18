@@ -11,6 +11,10 @@ public class BehaviorModule extends Module implements IBehaviorModuleRO {
     super(parent);
   }
 
+  public void elapseSecond() {
+    behavior.fly(parent);
+  }
+
   @Override
   public Behavior get() {
     return this.behavior;

@@ -26,6 +26,7 @@ import eng.jAtcSim.lib.airplanes.pilots.navigators.HeadingNavigator;
 import eng.jAtcSim.lib.airplanes.pilots.navigators.INavigator;
 import eng.jAtcSim.lib.airplanes.pilots.navigators.ToCoordinateNavigator;
 import eng.jAtcSim.lib.atcs.Atc;
+import eng.jAtcSim.lib.exceptions.ToDoException;
 import eng.jAtcSim.lib.global.ETime;
 import eng.jAtcSim.lib.global.Headings;
 import eng.jAtcSim.lib.global.Restriction;
@@ -237,9 +238,9 @@ public class Pilot {
     @Override
     public void abortHolding() {
       if (parent.getFlight().isArrival())
-        Pilot.this.setBehaviorAndState(new ArrivalBehavior(), Airplane.State.arrivingHigh);
+        Pilot.this.pilotWriteSimple.setBehaviorAndState(new ArrivalBehavior(), Airplane.State.arrivingHigh);
       else
-        Pilot.this.setBehaviorAndState(new DepartureBehavior(), Airplane.State.departingLow);
+        Pilot.this.pilotWriteSimple.setBehaviorAndState(new DepartureBehavior(), Airplane.State.departingLow);
       Pilot.this.pilotWriteSimple.adjustTargetSpeed();
     }
 
@@ -251,6 +252,17 @@ public class Pilot {
     @Override
     public void addExperience(Mood.DepartureExperience experience) {
       Pilot.this.parent.addExperience(experience);
+    }
+
+    @Override
+    public void clearedToApproach(NewApproachInfo newApproachInfo) {
+      // abort holding, only if fix was found
+      if (parent.getState() == Airplane.State.holding) {
+        Pilot.this.pilotWriteAdvanced.abortHolding();
+      }
+
+      NewApproachBehavior behavior = new NewApproachBehavior(newApproachInfo);
+      Pilot.this.pilotWriteSimple.setBehaviorAndState(behavior, Airplane.State.flyingIaf2Faf);
     }
 
     @Override
@@ -270,7 +282,7 @@ public class Pilot {
 
       Pilot.this.parent.divert();
       Pilot.this.routingModule.setRoute(route);
-      Pilot.this.setBehaviorAndState(new DepartureBehavior(), Airplane.State.departingLow);
+      Pilot.this.pilotWriteSimple.setBehaviorAndState(new DepartureBehavior(), Airplane.State.departingLow);
 
       if (!isInvokedByAtc)
         Pilot.this.pilotWriteSimple.passMessageToAtc(
@@ -307,11 +319,42 @@ public class Pilot {
       this.prepareGoAroundRouting(gas, nai);
       Pilot.this.routingModule.setRoute(gas);
 
-      Pilot.this.setBehaviorAndState(
+      Pilot.this.pilotWriteSimple.setBehaviorAndState(
           new TakeOffBehavior(
               Pilot.this.parent.getType().category,
               Pilot.this.getRoutingModule().getAssignedRunwayThreshold()),
           Airplane.State.takeOffGoAround);
+    }
+
+    @Override
+    public void hold(Navaid navaid, int inboundRadial, boolean leftTurn) {
+      HoldBehavior hold = new HoldBehavior(Pilot.this.pilotWriteSimple,
+          navaid,
+          inboundRadial,
+          leftTurn);
+      Pilot.this.pilotWriteSimple.setBehaviorAndState(hold, Airplane.State.holding);
+    }
+
+    @Override
+    public void setRoute(SpeechList route) {
+      Pilot.this.routingModule.setRoute(route);
+    }
+
+    @Override
+    public void setRouting(Route route, ActiveRunwayThreshold activeRunwayThreshold) {
+      Pilot.this.routingModule.setRouting(route, activeRunwayThreshold);
+    }
+
+    @Override
+    public void takeOff(ActiveRunwayThreshold runwayThreshold) {
+      Pilot.this.parent.setTakeOffPosition(runwayThreshold.getCoordinate());
+      Pilot.this.pilotWriteSimple.setBehaviorAndState(
+          new TakeOffBehavior(Pilot.this.parent.getType().category, runwayThreshold),
+          Airplane.State.takeOffRoll);
+      Pilot.this.parent.setTargetSpeed(
+          Pilot.this.parent.getType().getV2());
+      Pilot.this.parent.setNavigator(
+          new HeadingNavigator(runwayThreshold.getCourse()));
     }
 
     private boolean isBeforeRunwayThreshold(NewApproachInfo nai) {
@@ -347,43 +390,6 @@ public class Pilot {
       if (cac != null)
         gaRoute.insert(0, cac);
     }
-
-    @Override
-    public void hold(Navaid navaid, int inboundRadial, boolean leftTurn) {
-      HoldBehavior hold = new HoldBehavior(Pilot.this.pilotWriteSimple,
-          navaid,
-          inboundRadial,
-          leftTurn);
-      Pilot.this.setBehaviorAndState(hold, Airplane.State.holding);
-    }
-
-    @Override
-    public void setRouting(Route route, ActiveRunwayThreshold activeRunwayThreshold) {
-      Pilot.this.routingModule.setRouting(route, activeRunwayThreshold);
-    }
-
-    @Override
-    public void takeOff(ActiveRunwayThreshold runwayThreshold) {
-      Pilot.this.parent.setTakeOffPosition(runwayThreshold.getCoordinate());
-      Pilot.this.setBehaviorAndState(
-          new TakeOffBehavior(Pilot.this.parent.getType().category, runwayThreshold),
-          Airplane.State.takeOffRoll);
-      Pilot.this.parent.setTargetSpeed(
-          Pilot.this.parent.getType().getV2());
-      Pilot.this.parent.setNavigator(
-          new HeadingNavigator(runwayThreshold.getCourse()));
-    }
-
-    @Override
-    public void clearedToApproach(NewApproachInfo newApproachInfo) {
-      // abort holding, only if fix was found
-      if (parent.getState() == Airplane.State.holding) {
-        Pilot.this.pilotWriteAdvanced.abortHolding();
-      }
-
-      NewApproachBehavior behavior = new NewApproachBehavior(newApproachInfo);
-      Pilot.this.setBehaviorAndState(behavior, Airplane.State.flyingIaf2Faf);
-    }
   }
 
   private enum ApproachLocation {
@@ -393,37 +399,39 @@ public class Pilot {
     beforeThreshold,
     afterThreshold
   }
+
   public static final double SPEED_TO_OVER_NAVAID_DISTANCE_MULTIPLIER = 0.007;
 
   public static Pilot load(XElement tmp, Airplane.Airplane4Pilot parent) {
-    Pilot ret = new Pilot();
-
-    ret.parent = parent;
-
-    LoadSave.loadField(tmp, ret, "queue");
-    LoadSave.loadField(tmp, ret, "gaReason");
-    LoadSave.loadField(tmp, ret, "divertInfo");
-    LoadSave.loadField(tmp, ret, "altitudeOrderedByAtc");
-    LoadSave.loadField(tmp, ret, "atc");
-    LoadSave.loadField(tmp, ret, "secondsWithoutRadarContact");
-    LoadSave.loadField(tmp, ret, "targetCoordinate");
-    LoadSave.loadField(tmp, ret, "speedRestriction");
-    LoadSave.loadField(tmp, ret, "altitudeRestriction");
-    LoadSave.loadField(tmp, ret, "assignedRoute");
-    LoadSave.loadField(tmp, ret, "expectedRunwayThreshold");
-    LoadSave.loadField(tmp, ret, "entryExitPoint");
-    LoadSave.loadField(tmp, ret, "afterCommands");
-    LoadSave.loadField(tmp, ret, "saidText");
-
-    {
-      XElement behEl = tmp.getChild("behavior");
-      ret.behavior = getBehaviorInstance(behEl, ret);
-      LoadSave.loadFromElement(behEl, ret.behavior);
-    }
-
-    ret.openRecorder();
-
-    return ret;
+    throw new ToDoException();
+//    Pilot ret = new Pilot();
+//
+//    ret.parent = parent;
+//
+//    LoadSave.loadField(tmp, ret, "queue");
+//    LoadSave.loadField(tmp, ret, "gaReason");
+//    LoadSave.loadField(tmp, ret, "divertInfo");
+//    LoadSave.loadField(tmp, ret, "altitudeOrderedByAtc");
+//    LoadSave.loadField(tmp, ret, "atc");
+//    LoadSave.loadField(tmp, ret, "secondsWithoutRadarContact");
+//    LoadSave.loadField(tmp, ret, "targetCoordinate");
+//    LoadSave.loadField(tmp, ret, "speedRestriction");
+//    LoadSave.loadField(tmp, ret, "altitudeRestriction");
+//    LoadSave.loadField(tmp, ret, "assignedRoute");
+//    LoadSave.loadField(tmp, ret, "expectedRunwayThreshold");
+//    LoadSave.loadField(tmp, ret, "entryExitPoint");
+//    LoadSave.loadField(tmp, ret, "afterCommands");
+//    LoadSave.loadField(tmp, ret, "saidText");
+//
+//    {
+//      XElement behEl = tmp.getChild("behavior");
+//      ret.behavior = getBehaviorInstance(behEl, ret);
+//      LoadSave.loadFromElement(behEl, ret.behavior);
+//    }
+//
+//    ret.openRecorder();
+//
+//    return ret;
   }
 
   private static Behavior getBehaviorInstance(XElement behEl, Pilot parent) {
@@ -449,6 +457,7 @@ public class Pilot {
     }
     return ret;
   }
+
   private final IPilotWriteAdvanced pilotWriteAdvanced = new PilotWriteAdvanced();
   private final IPilotWriteSimple pilotWriteSimple = new PilotWriteSimple();
   private final IAirplaneWriteSimple parent;
@@ -459,48 +468,32 @@ public class Pilot {
   @XmlIgnore
   private PilotRecorderModule recorder;
 
-  public Pilot(Airplane.Airplane4Pilot parent, Navaid entryExitPoint, @Nullable ETime divertTime) {
+  public Pilot(IAirplaneWriteSimple parent, Navaid entryExitPoint, @Nullable ETime divertTime) {
 
     this.parent = parent;
     this.routingModule.init(entryExitPoint);
 
-    if (parent.getPlane().getFlight().isArrival()) {
+    if (parent.getFlight().isArrival()) {
       this.atcModule.init(Acc.atcCtr());
-      this.setBehaviorAndState(new ArrivalBehavior(), Airplane.State.arrivingHigh);
+      this.pilotWriteSimple.setBehaviorAndState(new ArrivalBehavior(), Airplane.State.arrivingHigh);
       this.divertModule.init(divertTime.clone());
     } else {
       this.atcModule.init(Acc.atcTwr());
-      this.setBehaviorAndState(new HoldingPointBehavior(), Airplane.State.holdingPoint);
+      this.pilotWriteSimple.setBehaviorAndState(new HoldingPointBehavior(), Airplane.State.holdingPoint);
       this.divertModule.init(null);
     }
 
     this.openRecorder();
   }
 
-  private Pilot() {
-
-  }
-
   public void elapseSecond() {
-    /*
-
-     1. zpracuji se prikazy ve fronte
-     2. zkontroluje se, jestli neni neco "antecedent"
-     3. ridi se letadlo
-     4. ridicimu se reknou potvrzeni a zpravy
-
-     */
-
-    processNewSpeeches();
-    processAfterSpeeches(); // udelat vlastni queue toho co se ma udelat a pak to provest pres processQueueCommands
-    endrivePlane();
-    requestRadarContactIfRequired();
-    divertModule.checkForDivert();
-    flushSaidTextToAtc();
+    this.routingModule.elapseSecond();
+    this.behaviorModule.elapseSecond();
+    this.atcModule.elapseSecond();
+    this.divertModule.elapseSecond();
 
     //printAfterCommands();
-
-    this.recorder.logPostponedAfterSpeeches(this.afterCommands);
+    //this.recorder.logPostponedAfterSpeeches(this.afterCommands);
   }
 
   public AtcModule getAtcModule() {
@@ -509,11 +502,12 @@ public class Pilot {
 
   //TODO this should be in flight recorder class
   public String getBehaviorLogString() {
-    if (behavior == null) {
-      return "null";
-    } else {
-      return behavior.toLogString();
-    }
+    throw new ToDoException();
+//    if (behavior == null) {
+//      return "null";
+//    } else {
+//      return behavior.toLogString();
+//    }
   }
 
   public Navaid getDivertNavaid() {
@@ -536,18 +530,19 @@ public class Pilot {
   }
 
   public String getStatusAsString() {
-    if (this.behavior instanceof BasicBehavior)
-      return this.behavior instanceof ArrivalBehavior ? "Arriving" : "Departing";
-    else if (this.behavior instanceof HoldBehavior)
-      return "Holding";
-    else if (this.behavior instanceof NewApproachBehavior)
-      return "In approach " + this.tryGetAssignedApproach().getThreshold().getName();
-    else if (this.behavior instanceof HoldingPointBehavior)
-      return "Holding point";
-    else if (this.behavior instanceof TakeOffBehavior)
-      return "Take-off";
-    else
-      return "???";
+    throw new ToDoException();
+//    if (this.behavior instanceof BasicBehavior)
+//      return this.behavior instanceof ArrivalBehavior ? "Arriving" : "Departing";
+//    else if (this.behavior instanceof HoldBehavior)
+//      return "Holding";
+//    else if (this.behavior instanceof NewApproachBehavior)
+//      return "In approach " + this.tryGetAssignedApproach().getThreshold().getName();
+//    else if (this.behavior instanceof HoldingPointBehavior)
+//      return "Holding point";
+//    else if (this.behavior instanceof TakeOffBehavior)
+//      return "Take-off";
+//    else
+//      return "???";
   }
 
   public boolean isOnWayToPassPoint(Navaid navaid) {
@@ -559,12 +554,6 @@ public class Pilot {
       ret = true;
     else
       ret = this.routingModule.isGoingToFlightOverNavaid(navaid);
-    return ret;
-  }
-
-  @Deprecated//("Use routing module directly instead")
-  public boolean isOnWayToPassPointInFuture(Navaid navaid) {
-    boolean ret = this.routingModule.isGoingToFlightOverNavaid(navaid);
     return ret;
   }
 
@@ -634,11 +623,6 @@ public class Pilot {
     }
   }
 
-
-  private void endrivePlane() {
-    this.behavior.fly(this.pilot4Behavior);
-  }
-
   private int getBoundedValueIn(int min, int value, int max) {
     if (value < min)
       value = min;
@@ -653,10 +637,4 @@ public class Pilot {
         new FileSaver(Recorder.getRecorderFileName(parent.getCallsign().toString() + "_pilot.log")),
         " \t ");
   }
-
-  private void setBehaviorAndState(Behavior behavior, Airplane.State state) {
-    this.behaviorModule.setBehavior(behavior);
-    this.parent.setxState(state);
-  }
-
 }

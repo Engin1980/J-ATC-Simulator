@@ -17,6 +17,10 @@ public class AtcModule extends Module implements IAtcModuleRO {
     super(parent);
   }
 
+  public void elapseSecond() {
+    requestRadarContactIfRequired();
+  }
+
   public Atc getTunedAtc() {
     return this.atc;
   }

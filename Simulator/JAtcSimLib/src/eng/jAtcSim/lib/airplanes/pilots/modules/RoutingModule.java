@@ -59,6 +59,12 @@ public class RoutingModule extends Module implements IRoutingModuleRO {
     super(parent);
   }
 
+  public void elapseSecond() {
+    processNewSpeeches();
+    processAfterSpeeches();
+    flushSaidTextToAtc();
+  }
+
   public Navaid getEntryExitPoint() {
     return this.entryExitPoint;
   }
@@ -137,7 +143,7 @@ public class RoutingModule extends Module implements IRoutingModuleRO {
     this.processSpeeches(skippedCommands, CommandSource.procedure);
   }
 
-  private void processNewSpeeches() {
+  public void processNewSpeeches() {
     SpeechList current = new SpeechList(this.queue.getAndElapse());
 
     if (current.isEmpty()) return;

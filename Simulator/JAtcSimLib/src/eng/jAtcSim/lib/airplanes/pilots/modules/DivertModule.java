@@ -3,7 +3,6 @@ package eng.jAtcSim.lib.airplanes.pilots.modules;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.pilots.interfaces.forPilot.IDivertModuleRO;
-import eng.jAtcSim.lib.airplanes.pilots.interfaces.forPilot.IPilot5Module;
 import eng.jAtcSim.lib.airplanes.pilots.interfaces.forPilot.IPilotWriteSimple;
 import eng.jAtcSim.lib.global.ETime;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.DivertTimeNotification;
@@ -19,18 +18,12 @@ public class DivertModule extends Module implements IDivertModuleRO {
     super(parent);
   }
 
-  public void checkForDivert() {
-    if (this.isPossible
-        && parent.getBehaviorModule().get().isDivertable()
-        && parent.getPlane().getState().is(
-          Airplane.State.arrivingHigh, Airplane.State.arrivingLow,
-          Airplane.State.holding)
-        && parent.getPlane().getEmergencyModule().isEmergency() == false) {
-      boolean isDiverting = this.divertIfRequested();
-      if (!isDiverting){
-        adviceDivertTimeIfRequested();
-      }
-    }
+  public void disable() {
+    this.isPossible = false;
+  }
+
+  public void elapseSecond() {
+    checkForDivert();
   }
 
   @Override
@@ -56,8 +49,18 @@ public class DivertModule extends Module implements IDivertModuleRO {
     }
   }
 
-  public void disable(){
-    this.isPossible = false;
+  private void checkForDivert() {
+    if (this.isPossible
+        && parent.getBehaviorModule().get().isDivertable()
+        && parent.getPlane().getState().is(
+        Airplane.State.arrivingHigh, Airplane.State.arrivingLow,
+        Airplane.State.holding)
+        && parent.getPlane().getEmergencyModule().isEmergency() == false) {
+      boolean isDiverting = this.divertIfRequested();
+      if (!isDiverting) {
+        adviceDivertTimeIfRequested();
+      }
+    }
   }
 
   private boolean divertIfRequested() {
