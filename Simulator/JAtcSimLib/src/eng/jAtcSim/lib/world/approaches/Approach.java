@@ -2,7 +2,7 @@
 //
 //import eng.eSystem.collections.IList;
 //import eng.eSystem.collections.IReadOnlyList;
-//import eng.jAtcSim.lib.airplanes.pilots.approachStagePilots.IApproachStage;
+//import eng.jAtcSim.lib.airplanes.approachStagePilots.IApproachStage;
 //import eng.jAtcSim.lib.global.PlaneCategoryDefinitions;
 //import eng.jAtcSim.lib.speaking.SpeechList;
 //import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;

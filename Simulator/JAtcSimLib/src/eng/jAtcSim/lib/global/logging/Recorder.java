@@ -120,7 +120,7 @@ public abstract class Recorder extends SimulationLog {
       return atc.getName();
     } else if (object instanceof Airplane) {
       Airplane plane = (Airplane) object;
-      return plane.getFlight().getCallsign().toString();
+      return plane.getFlightModule().getCallsign().toString();
     } else {
       throw new UnsupportedOperationException("Unknown object {" + object + "}.");
     }

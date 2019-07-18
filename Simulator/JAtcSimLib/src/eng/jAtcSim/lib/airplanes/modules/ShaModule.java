@@ -8,16 +8,17 @@ import eng.eSystem.geo.Coordinate;
 import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.*;
-import eng.jAtcSim.lib.airplanes.pilots.navigators.HeadingNavigator;
-import eng.jAtcSim.lib.airplanes.pilots.navigators.INavigator;
-import eng.jAtcSim.lib.airplanes.pilots.navigators.INavigator2Coordinate;
+import eng.jAtcSim.lib.airplanes.interfaces.modules.IShaRO;
+import eng.jAtcSim.lib.airplanes.navigators.HeadingNavigator;
+import eng.jAtcSim.lib.airplanes.navigators.INavigator;
+import eng.jAtcSim.lib.airplanes.navigators.INavigator2Coordinate;
 import eng.jAtcSim.lib.global.Headings;
 import eng.jAtcSim.lib.global.HeadingsNew;
 import eng.jAtcSim.lib.global.Restriction;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeHeadingCommand;
 import eng.jAtcSim.lib.world.newApproaches.Approach;
 
-public class ShaModule {
+public class ShaModule implements IShaRO {
 
   private static class RestrictableItem {
     private int orderedValue;
@@ -220,8 +221,8 @@ public class ShaModule {
     this.speedOrders.setTargetValue(speed);
   }
 
-  public double getSpeed() {
-    return speed.value;
+  public int getSpeed() {
+    return (int) Math.round(speed.value);
   }
 
   //endregion
@@ -232,8 +233,8 @@ public class ShaModule {
     return finalHeading;
   }
 
-  public double getHeading() {
-    return heading.value;
+  public int getHeading() {
+    return (int) Math.round(heading.value);
   }
 
   //endregion
@@ -244,7 +245,8 @@ public class ShaModule {
     boolean isSpeedPreffered = parent.getState().is(Airplane.State.takeOffGoAround, Airplane.State.takeOffRoll);
 
 
-    if (parent.getAdvanced().getTargetAltitude() != parent.getAltitude() || parent.getAdvanced().getTargetSpeed() != parent.getSpeed()) {
+    if (parent.getSha().getTargetAltitude() != parent.getSha().getAltitude()
+        || parent.getSha().getTargetSpeed() != parent.getSha().getSpeed()) {
       ValueRequest speedRequest = getSpeedRequest();
       ValueRequest altitudeRequest = getAltitudeRequest();
 
@@ -357,7 +359,7 @@ public class ShaModule {
           restrictedDescentRate = 2000;
           break;
         case longFinal:
-          restrictedDescentRate = parent.getPilot().tryGetAssignedApproach().getApproach().getType() == Approach.ApproachType.visual ?
+          restrictedDescentRate = parent.tryGetAssignedApproach().getApproach().getType() == Approach.ApproachType.visual ?
               2000 : 1300;
           break;
         case shortFinal:

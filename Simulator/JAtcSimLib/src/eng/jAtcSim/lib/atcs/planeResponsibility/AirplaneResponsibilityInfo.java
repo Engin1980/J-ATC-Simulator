@@ -2,8 +2,7 @@ package eng.jAtcSim.lib.atcs.planeResponsibility;
 
 import eng.eSystem.validation.Validator;
 import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
-import eng.jAtcSim.lib.airplanes.Airplane;
-import eng.jAtcSim.lib.airplanes.pilots.interfaces.forAirplane.IAirplaneRO;
+import eng.jAtcSim.lib.airplanes.interfaces.IAirplaneRO;
 import eng.jAtcSim.lib.atcs.Atc;
 
 public class AirplaneResponsibilityInfo {

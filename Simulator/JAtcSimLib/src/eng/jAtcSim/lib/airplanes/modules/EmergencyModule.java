@@ -4,9 +4,10 @@ import eng.eSystem.geo.Coordinates;
 import eng.eSystem.utilites.NumberUtils;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
+import eng.jAtcSim.lib.airplanes.interfaces.modules.IEmergencyModuleRO;
 import eng.jAtcSim.lib.global.ETime;
 
-public class EmergencyModule {
+public class EmergencyModule implements IEmergencyModuleRO {
   private final Airplane parent;
   private ETime emergencyWanishTime = null;
 
@@ -29,7 +30,7 @@ public class EmergencyModule {
     parent.getSha().setTargetAltitude(alt);
 
     this.emergencyWanishTime = wt;
-    parent.getFlight().raiseEmergency();
+    parent.getFlightModule().raiseEmergency();
     parent.getPilot().raiseEmergency();
   }
 

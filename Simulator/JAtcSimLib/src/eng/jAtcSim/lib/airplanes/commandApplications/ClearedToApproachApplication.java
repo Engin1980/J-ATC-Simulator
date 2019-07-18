@@ -1,14 +1,10 @@
 package eng.jAtcSim.lib.airplanes.commandApplications;
 
 import eng.eSystem.collections.IReadOnlyList;
-import eng.eSystem.geo.Coordinates;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
-import eng.jAtcSim.lib.airplanes.pilots.Pilot;
-import eng.jAtcSim.lib.airplanes.pilots.interfaces.forPilot.IPilotRO;
-import eng.jAtcSim.lib.airplanes.pilots.interfaces.forPilot.IPilotWriteSimple;
+import eng.jAtcSim.lib.airplanes.interfaces.forPilot.IPilotWriteSimple;
 import eng.jAtcSim.lib.world.newApproaches.ApproachEntry;
-import eng.jAtcSim.lib.world.newApproaches.stages.IApproachStage;
 import eng.jAtcSim.lib.global.Restriction;
 import eng.jAtcSim.lib.speaking.IFromAirplane;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.HighOrderedSpeedForApproach;
@@ -17,10 +13,7 @@ import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.reje
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ClearedToApproachCommand;
 import eng.jAtcSim.lib.world.ActiveRunwayThreshold;
 import eng.jAtcSim.lib.world.newApproaches.Approach;
-import eng.jAtcSim.lib.world.newApproaches.IafRoute;
 import eng.jAtcSim.lib.world.newApproaches.NewApproachInfo;
-
-import javax.swing.text.StyledEditorKit;
 
 public class ClearedToApproachApplication extends CommandApplication<ClearedToApproachCommand> {
 

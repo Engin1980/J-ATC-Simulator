@@ -13,7 +13,7 @@ import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.Callsign;
-import eng.jAtcSim.lib.airplanes.pilots.interfaces.forAirplane.IAirplaneRO;
+import eng.jAtcSim.lib.airplanes.interfaces.IAirplaneRO;
 import eng.jAtcSim.lib.atcs.Atc;
 import eng.jAtcSim.lib.atcs.ComputerAtc;
 
@@ -55,7 +55,7 @@ public class PlaneResponsibilityManager {
       return ret;
     }
 
-    public void createSwitchRequest(Atc sender, Atc targetAtc, Airplane plane) {
+    public void createSwitchRequest(Atc sender, Atc targetAtc, IAirplaneRO plane) {
       Validator.isNotNull(sender);
       Validator.isNotNull(targetAtc);
       Validator.isNotNull(plane);
@@ -63,17 +63,17 @@ public class PlaneResponsibilityManager {
       AirplaneResponsibilityInfo ai = dao.get(plane);
 
       // auto-cancel
-      if (ai.getAtc() == targetAtc && ai.getPlane().getPilot().getAtcModule().getTunedAtc() == sender) {
+      if (ai.getAtc() == targetAtc && ai.getPlane().getAtcModule().getTunedAtc() == sender) {
         ai.setAtc(sender);
         ai.setSwitchRequest(null);
         return;
       }
 
       if (ai.getSwitchRequest() != null)
-        throw new EApplicationException("Airplane " + plane.getFlight().getCallsign() + " is already under request switch from "
+        throw new EApplicationException("Airplane " + plane.getFlightModule().getCallsign() + " is already under request switch from "
             + ai.getAtc().getType().toString() + " to " + ai.getSwitchRequest().getAtc().getType().toString() + ".");
       if (ai.getAtc() != sender)
-        throw new EApplicationException("Airplane " + plane.getFlight().getCallsign()
+        throw new EApplicationException("Airplane " + plane.getFlightModule().getCallsign()
             + " is requested to be switched from incorrect atc. Current is "
             + ai.getAtc().getType().toString() + ", requested from is " + sender.getType().toString() + ".");
 
@@ -95,7 +95,7 @@ public class PlaneResponsibilityManager {
 
     }
 
-    public void confirmSwitchRequest(Airplane plane, Atc targetAtc, @Nullable SwitchRoutingRequest updatedRoutingIfRequired) {
+    public void confirmSwitchRequest(IAirplaneRO plane, Atc targetAtc, @Nullable SwitchRoutingRequest updatedRoutingIfRequired) {
       AirplaneResponsibilityInfo ai = dao.get(plane);
       if (ai.getSwitchRequest() == null || ai.getSwitchRequest().getAtc() != targetAtc) { // probably canceled
         return;
@@ -182,7 +182,7 @@ public class PlaneResponsibilityManager {
 
   public void registerNewPlane(Atc atc, IAirplaneRO plane) {
     if (dao.getAll().isAny(q -> q.getPlane() == plane)) {
-      throw new EApplicationException(sf("Second registration of already registered plane %s!", plane.getFlight().getCallsign()));
+      throw new EApplicationException(sf("Second registration of already registered plane %s!", plane.getFlightModule().getCallsign()));
     }
 
     dao.add(new AirplaneResponsibilityInfo(plane, atc));
@@ -192,7 +192,7 @@ public class PlaneResponsibilityManager {
   public void unregisterPlane(Airplane plane) {
     AirplaneResponsibilityInfo ai = dao.getAll().tryGetFirst(q -> q.getPlane() == plane);
     if (ai == null) {
-      throw new EApplicationException(sf("Plane %s is not registered, cannot be unregistered!", plane.getFlight().getCallsign()));
+      throw new EApplicationException(sf("Plane %s is not registered, cannot be unregistered!", plane.getFlightModule().getCallsign()));
     }
     dao.remove(ai);
     ai.getAtc().removePlaneDeletedFromGame(plane);

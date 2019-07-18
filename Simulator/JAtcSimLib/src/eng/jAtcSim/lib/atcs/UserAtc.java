@@ -12,7 +12,7 @@ import eng.eSystem.utilites.RegexUtils;
 import eng.eSystem.validation.Validator;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.*;
-import eng.jAtcSim.lib.airplanes.pilots.interfaces.forAirplane.IAirplaneRO;
+import eng.jAtcSim.lib.airplanes.interfaces.IAirplaneRO;
 import eng.jAtcSim.lib.atcs.planeResponsibility.SwitchRoutingRequest;
 import eng.jAtcSim.lib.messaging.Message;
 import eng.jAtcSim.lib.messaging.Messenger;
@@ -203,10 +203,10 @@ public class UserAtc extends Atc {
     Route route;
     if (m.group(3) == null) {
       if (threshold == plane.getExpectedRunwayThreshold())
-        route = plane.getAssigneRoute();
+        route = plane.getRoutingModule().getAssignedRoute();
       else
-        route = plane.getFlight().isArrival()
-            ? threshold.getArrivalRouteForPlane(plane.getType(), plane.getAdvanced().getTargetAltitude(), plane.getEntryExitFix(), true)
+        route = plane.getFlightModule().isArrival()
+            ? threshold.getArrivalRouteForPlane(plane.getType(), plane.getSha().getTargetAltitude(), plane.getEntryExitFix(), true)
             : threshold.getDepartureRouteForPlane(plane.getType(), plane.getEntryExitFix(), true);
     } else if (m.group(3).toUpperCase().equals("V")) {
       route = Route.createNewVectoringByFix(plane.getEntryExitFix());

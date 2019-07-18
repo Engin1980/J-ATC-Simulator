@@ -3,15 +3,11 @@ package eng.jAtcSim.lib.atcs.planeResponsibility;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
-import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.Callsign;
-import eng.jAtcSim.lib.airplanes.pilots.interfaces.forAirplane.IAirplaneRO;
+import eng.jAtcSim.lib.airplanes.interfaces.IAirplaneRO;
 import eng.jAtcSim.lib.atcs.Atc;
-
-import java.util.LinkedList;
-import java.util.List;
 
 class PlaneResponsibilityDAO {
   private final IList<AirplaneResponsibilityInfo> all = new EList<>();
@@ -53,7 +49,7 @@ class PlaneResponsibilityDAO {
   }
 
   public AirplaneResponsibilityInfo get(Callsign callsign) {
-    AirplaneResponsibilityInfo ari = this.all.getFirst(q -> q.getPlane().getFlight().getCallsign().equals(callsign));
+    AirplaneResponsibilityInfo ari = this.all.getFirst(q -> q.getPlane().getFlightModule().getCallsign().equals(callsign));
     return ari;
   }
 }

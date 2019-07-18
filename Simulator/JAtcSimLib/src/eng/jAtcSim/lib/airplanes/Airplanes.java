@@ -35,10 +35,10 @@ public class Airplanes {
   public static Airplane tryGetByCallsingOrNumber(Iterable<Airplane> planes, String callsignOrNumber) {
     if (StringUtils.isNullOrEmpty(callsignOrNumber)) return null;
 
-    Airplane ret = CollectionUtils.tryGetFirst(planes, p -> p.getFlight().getCallsign().toString(false).equals(callsignOrNumber));
+    Airplane ret = CollectionUtils.tryGetFirst(planes, p -> p.getFlightModule().getCallsign().toString(false).equals(callsignOrNumber));
     if (ret == null) {
       List<Airplane> byPart = CollectionUtils.where(planes,
-          p -> p.getFlight().getCallsign().getNumber().equals(callsignOrNumber));
+          p -> p.getFlightModule().getCallsign().getNumber().equals(callsignOrNumber));
       if (byPart.size() == 1)
         ret = byPart.get(0);
     }
@@ -57,7 +57,7 @@ public class Airplanes {
   }
 
   public static Airplane tryGetByCallsign(IReadOnlyList<Airplane> planes, Callsign callsign) {
-    return planes.tryGetFirst(q -> q.getFlight().getCallsign().equals(callsign));
+    return planes.tryGetFirst(q -> q.getFlightModule().getCallsign().equals(callsign));
   }
 
   public static Airplane getByCallsing(IReadOnlyList<Airplane> planes, String callsign) {
@@ -66,7 +66,7 @@ public class Airplanes {
   }
 
   public static Airplane getByCallsing(IReadOnlyList<Airplane> planes, Callsign callsign) {
-    return planes.getFirst(q -> q.getFlight().getCallsign().equals(callsign));
+    return planes.getFirst(q -> q.getFlightModule().getCallsign().equals(callsign));
   }
 
   public static Airplane tryGetBySqwk(IReadOnlyList<Airplane> planes, String sqwk) {

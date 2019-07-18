@@ -1,4 +1,4 @@
-//package eng.jAtcSim.lib.airplanes.pilots.approachStagePilots;
+//package eng.jAtcSim.lib.airplanes.approachStagePilots;
 //
 //import eng.eSystem.collections.EList;
 //import eng.eSystem.collections.IList;

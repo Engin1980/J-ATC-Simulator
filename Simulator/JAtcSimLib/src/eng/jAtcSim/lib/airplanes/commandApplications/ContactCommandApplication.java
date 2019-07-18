@@ -3,7 +3,7 @@ package eng.jAtcSim.lib.airplanes.commandApplications;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
-import eng.jAtcSim.lib.airplanes.pilots.interfaces.forPilot.IPilotWriteSimple;
+import eng.jAtcSim.lib.airplanes.interfaces.forPilot.IPilotWriteSimple;
 import eng.jAtcSim.lib.atcs.Atc;
 import eng.jAtcSim.lib.exceptions.ToDoException;
 import eng.jAtcSim.lib.speaking.IFromAirplane;
@@ -44,7 +44,7 @@ public class ContactCommandApplication extends CommandApplication<ContactCommand
     pilot.passMessageToAtc(s);
     //TODO when everything is done, I should update this to report ga-reason to the newly switched atc
     throw new ToDoException();
-//    if (pilot.getPlane().getFlight().isArrival())
+//    if (pilot.getPlane().getFlightModule().isArrival())
 //      pilot.adviceGoAroundReasonToAtcIfAny();
     // return ApplicationResult.getEmpty();
   }

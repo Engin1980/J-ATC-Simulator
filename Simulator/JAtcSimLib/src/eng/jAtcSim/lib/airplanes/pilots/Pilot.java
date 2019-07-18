@@ -16,15 +16,19 @@ import eng.eSystem.utilites.EnumUtils;
 import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
+import eng.jAtcSim.lib.airplanes.interfaces.modules.IAtcModuleRO;
+import eng.jAtcSim.lib.airplanes.interfaces.modules.IBehaviorModuleRO;
+import eng.jAtcSim.lib.airplanes.interfaces.modules.IDivertModuleRO;
+import eng.jAtcSim.lib.airplanes.interfaces.modules.IRoutingModuleRO;
+import eng.jAtcSim.lib.airplanes.modules.*;
 import eng.jAtcSim.lib.airplanes.moods.Mood;
-import eng.jAtcSim.lib.airplanes.pilots.behaviors.*;
-import eng.jAtcSim.lib.airplanes.pilots.interfaces.forAirplane.IAirplaneRO;
-import eng.jAtcSim.lib.airplanes.pilots.interfaces.forAirplane.IAirplaneWriteSimple;
-import eng.jAtcSim.lib.airplanes.pilots.interfaces.forPilot.*;
-import eng.jAtcSim.lib.airplanes.pilots.modules.*;
-import eng.jAtcSim.lib.airplanes.pilots.navigators.HeadingNavigator;
-import eng.jAtcSim.lib.airplanes.pilots.navigators.INavigator;
-import eng.jAtcSim.lib.airplanes.pilots.navigators.ToCoordinateNavigator;
+import eng.jAtcSim.lib.airplanes.behaviors.*;
+import eng.jAtcSim.lib.airplanes.interfaces.IAirplaneRO;
+import eng.jAtcSim.lib.airplanes.interfaces.IAirplaneWriteSimple;
+import eng.jAtcSim.lib.airplanes.interfaces.forPilot.*;
+import eng.jAtcSim.lib.airplanes.navigators.HeadingNavigator;
+import eng.jAtcSim.lib.airplanes.navigators.INavigator;
+import eng.jAtcSim.lib.airplanes.navigators.ToCoordinateNavigator;
 import eng.jAtcSim.lib.atcs.Atc;
 import eng.jAtcSim.lib.exceptions.ToDoException;
 import eng.jAtcSim.lib.global.ETime;
@@ -237,7 +241,7 @@ public class Pilot {
   public class PilotWriteAdvanced implements IPilotWriteAdvanced {
     @Override
     public void abortHolding() {
-      if (parent.getFlight().isArrival())
+      if (parent.getFlightModule().isArrival())
         Pilot.this.pilotWriteSimple.setBehaviorAndState(new ArrivalBehavior(), Airplane.State.arrivingHigh);
       else
         Pilot.this.pilotWriteSimple.setBehaviorAndState(new DepartureBehavior(), Airplane.State.departingLow);
@@ -461,10 +465,7 @@ public class Pilot {
   private final IPilotWriteAdvanced pilotWriteAdvanced = new PilotWriteAdvanced();
   private final IPilotWriteSimple pilotWriteSimple = new PilotWriteSimple();
   private final IAirplaneWriteSimple parent;
-  private final BehaviorModule behaviorModule = new BehaviorModule(this.pilotWriteSimple);
-  private final AtcModule atcModule = new AtcModule(this.pilotWriteSimple);
-  private final RoutingModule routingModule = new RoutingModule(this.pilotWriteSimple);
-  private final DivertModule divertModule = new DivertModule(this.pilotWriteSimple);
+
   @XmlIgnore
   private PilotRecorderModule recorder;
 
@@ -473,7 +474,7 @@ public class Pilot {
     this.parent = parent;
     this.routingModule.init(entryExitPoint);
 
-    if (parent.getFlight().isArrival()) {
+    if (parent.getFlightModule().isArrival()) {
       this.atcModule.init(Acc.atcCtr());
       this.pilotWriteSimple.setBehaviorAndState(new ArrivalBehavior(), Airplane.State.arrivingHigh);
       this.divertModule.init(divertTime.clone());
