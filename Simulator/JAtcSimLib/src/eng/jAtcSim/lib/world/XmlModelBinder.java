@@ -25,7 +25,7 @@ import eng.jAtcSim.lib.world.newApproaches.entryLocations.RegionalApproachEntryL
 import eng.jAtcSim.lib.world.newApproaches.stages.*;
 import eng.jAtcSim.lib.world.newApproaches.stages.checks.CheckAirportVisibilityStage;
 import eng.jAtcSim.lib.world.newApproaches.stages.checks.CheckPlaneLocationStage;
-import eng.jAtcSim.lib.world.newApproaches.stages.checks.CheckPlaneStateStage;
+import eng.jAtcSim.lib.world.newApproaches.stages.checks.CheckPlaneShaStage;
 import eng.jAtcSim.lib.world.xmlModel.*;
 import eng.jAtcSim.lib.world.xmlModel.approaches.*;
 import eng.jAtcSim.lib.world.xmlModel.approaches.approachStages.*;
@@ -555,8 +555,8 @@ public class XmlModelBinder {
     return ret;
   }
 
-  private static CheckPlaneStateStage convertCheckPlaneStateStage(XmlCheckPlaneStateStage x, Context context) {
-    CheckPlaneStateStage ret = new CheckPlaneStateStage(
+  private static CheckPlaneShaStage convertCheckPlaneStateStage(XmlCheckPlaneStateStage x, Context context) {
+    CheckPlaneShaStage ret = new CheckPlaneShaStage(
         x.minAltitude, x.maxAltitude, x.minHeading, x.maxHeading, x.minSpeed, x.maxSpeed
     );
     return ret;

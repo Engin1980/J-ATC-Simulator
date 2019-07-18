@@ -4,7 +4,7 @@ import eng.eSystem.exceptions.EApplicationException;
 import eng.jAtcSim.lib.world.newApproaches.stages.CheckStage;
 import eng.jAtcSim.lib.world.newApproaches.stages.checks.CheckAirportVisibilityStage;
 import eng.jAtcSim.lib.world.newApproaches.stages.checks.CheckPlaneLocationStage;
-import eng.jAtcSim.lib.world.newApproaches.stages.checks.CheckPlaneStateStage;
+import eng.jAtcSim.lib.world.newApproaches.stages.checks.CheckPlaneShaStage;
 
 public class CheckStagePilot implements IApproachStagePilot<CheckStage> {
 
@@ -15,15 +15,15 @@ public class CheckStagePilot implements IApproachStagePilot<CheckStage> {
       ret = evaluateCheckAirportVisibility(pilot, (CheckAirportVisibilityStage) stage);
     else if (stage instanceof CheckPlaneLocationStage)
       ret = evaluateCheckPlaneLocationStage(pilot, (CheckPlaneLocationStage) stage);
-    else if (stage instanceof CheckPlaneStateStage)
-      ret = evaluateCheckPlaneStateStage(pilot, (CheckPlaneStateStage) stage);
+    else if (stage instanceof CheckPlaneShaStage)
+      ret = evaluateCheckPlaneStateStage(pilot, (CheckPlaneShaStage) stage);
     else
       throw new EApplicationException("CheckStagePilot does not support stage of type '" + stage.getClass().getSimpleName() + "'.");
 
     return ret;
   }
 
-  private eResult evaluateCheckPlaneStateStage(IPilot5Behavior pilot, CheckPlaneStateStage stage) {
+  private eResult evaluateCheckPlaneStateStage(IPilot5Behavior pilot, CheckPlaneShaStage stage) {
     throw new UnsupportedOperationException("TODO");
   }
 
