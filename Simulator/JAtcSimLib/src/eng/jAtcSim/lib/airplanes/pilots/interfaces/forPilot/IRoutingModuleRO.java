@@ -9,7 +9,7 @@ public interface IRoutingModuleRO {
 
   ActiveRunwayThreshold getAssignedRunwayThreshold();
 
-  boolean hasEmptyRoute();
+  boolean isRouteEmpty();
 
   boolean hasLateralDirectionAfterCoordinate();
 

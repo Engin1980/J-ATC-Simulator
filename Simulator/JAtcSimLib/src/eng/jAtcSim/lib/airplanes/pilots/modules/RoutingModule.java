@@ -80,7 +80,7 @@ public class RoutingModule extends Module implements IRoutingModuleRO {
   }
 
   @Override
-  public boolean hasEmptyRoute() {
+  public boolean isRouteEmpty() {
     return afterCommands.isRouteEmpty();
   }
 

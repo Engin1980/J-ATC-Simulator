@@ -1,27 +1,28 @@
 package eng.jAtcSim.lib.airplanes.pilots.approachStagePilots;
 
+import eng.jAtcSim.lib.airplanes.pilots.interfaces.forPilot.IPilotWriteSimple;
 import eng.jAtcSim.lib.world.newApproaches.stages.RouteStage;
 
 public class RouteStagePilot implements IApproachStagePilot<RouteStage> {
 
   @Override
-  public eResult initStage(IPilot5Behavior pilot, RouteStage stage) {
-    pilot.setRoute(stage.getRoute());
-    throw new UnsupportedOperationException("I need to get a route from somewhere!");
-  }
-
-  @Override
-  public eResult flyStage(IPilot5Behavior pilot, RouteStage stage) {
+  public eResult initStage(IPilotWriteSimple pilot, RouteStage stage) {
+    pilot.getAdvanced().setRoute(stage.getRoute());
     return eResult.ok;
   }
 
   @Override
-  public eResult disposeStage(IPilot5Behavior pilot, RouteStage stage) {
+  public eResult flyStage(IPilotWriteSimple pilot, RouteStage stage) {
     return eResult.ok;
   }
 
   @Override
-  public boolean isFinishedStage(IPilot5Behavior pilot, RouteStage stage) {
-    return pilot.hasEmptyRoute();
+  public eResult disposeStage(IPilotWriteSimple pilot, RouteStage stage) {
+    return eResult.ok;
+  }
+
+  @Override
+  public boolean isFinishedStage(IPilotWriteSimple pilot, RouteStage stage) {
+    return pilot.getRoutingModule().isRouteEmpty();
   }
 }

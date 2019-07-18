@@ -1,25 +1,27 @@
 package eng.jAtcSim.lib.airplanes.pilots.approachStagePilots;
 
+import eng.jAtcSim.lib.airplanes.pilots.interfaces.forPilot.IPilotWriteSimple;
+import eng.jAtcSim.lib.exceptions.ToDoException;
 import eng.jAtcSim.lib.world.newApproaches.stages.LandingStage;
 
 public class LandingStagePilot implements IApproachStagePilot<LandingStage> {
   @Override
-  public eResult initStage(IPilot5Behavior pilot, LandingStage stage) {
-    return null;
+  public eResult disposeStage(IPilotWriteSimple pilot, LandingStage stage) {
+    throw new ToDoException();
   }
 
   @Override
-  public eResult flyStage(IPilot5Behavior pilot, LandingStage stage) {
-    return null;
+  public eResult flyStage(IPilotWriteSimple pilot, LandingStage stage) {
+    throw new ToDoException();
   }
 
   @Override
-  public eResult disposeStage(IPilot5Behavior pilot, LandingStage stage) {
-    return null;
+  public eResult initStage(IPilotWriteSimple pilot, LandingStage stage) {
+    throw new ToDoException();
   }
 
   @Override
-  public boolean isFinishedStage(IPilot5Behavior pilot, LandingStage stage) {
-    return false;
+  public boolean isFinishedStage(IPilotWriteSimple pilot, LandingStage stage) {
+    throw new ToDoException();
   }
 }
