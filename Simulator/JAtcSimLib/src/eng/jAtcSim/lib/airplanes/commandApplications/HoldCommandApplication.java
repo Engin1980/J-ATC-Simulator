@@ -1,7 +1,7 @@
 package eng.jAtcSim.lib.airplanes.commandApplications;
 
 import eng.jAtcSim.lib.airplanes.Airplane;
-import eng.jAtcSim.lib.airplanes.interfaces.forPilot.IPilotWriteSimple;
+import eng.jAtcSim.lib.airplanes.interfaces.IAirplaneWriteSimple;
 import eng.jAtcSim.lib.speaking.IFromAirplane;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.HoldCommand;
 
@@ -23,15 +23,15 @@ public class HoldCommandApplication extends CommandApplication<HoldCommand> {
   }
 
   @Override
-  protected IFromAirplane checkCommandSanity(IPilotWriteSimple pilot, HoldCommand c) {
+  protected IFromAirplane checkCommandSanity(IAirplaneWriteSimple plane, HoldCommand c) {
     return null;
   }
 
   @Override
-  protected ApplicationResult adjustAirplane(IPilotWriteSimple pilot, HoldCommand c) {
+  protected ApplicationResult adjustAirplane(IAirplaneWriteSimple plane, HoldCommand c) {
     //TODO the first line is probably useless
-    pilot.setTargetCoordinate(null);
-    pilot.getAdvanced().hold(c.getNavaid(), c.getInboundRadial(), c.isLeftTurn());
+    plane.setTargetCoordinate(null);
+    plane.getAdvanced().hold(c.getNavaid(), c.getInboundRadial(), c.isLeftTurn());
     return ApplicationResult.getEmpty();
   }
 }

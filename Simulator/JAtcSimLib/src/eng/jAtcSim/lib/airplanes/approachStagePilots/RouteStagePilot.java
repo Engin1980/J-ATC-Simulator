@@ -1,28 +1,28 @@
 package eng.jAtcSim.lib.airplanes.approachStagePilots;
 
-import eng.jAtcSim.lib.airplanes.interfaces.forPilot.IPilotWriteSimple;
+import eng.jAtcSim.lib.airplanes.interfaces.IAirplaneWriteSimple;
 import eng.jAtcSim.lib.world.newApproaches.stages.RouteStage;
 
 public class RouteStagePilot implements IApproachStagePilot<RouteStage> {
 
   @Override
-  public eResult initStage(IPilotWriteSimple pilot, RouteStage stage) {
-    pilot.getAdvanced().setRoute(stage.getRoute());
+  public eResult initStage(IAirplaneWriteSimple plane, RouteStage stage) {
+    plane.getAdvanced().setRoute(stage.getRoute());
     return eResult.ok;
   }
 
   @Override
-  public eResult flyStage(IPilotWriteSimple pilot, RouteStage stage) {
+  public eResult flyStage(IAirplaneWriteSimple plane, RouteStage stage) {
     return eResult.ok;
   }
 
   @Override
-  public eResult disposeStage(IPilotWriteSimple pilot, RouteStage stage) {
+  public eResult disposeStage(IAirplaneWriteSimple plane, RouteStage stage) {
     return eResult.ok;
   }
 
   @Override
-  public boolean isFinishedStage(IPilotWriteSimple pilot, RouteStage stage) {
-    return pilot.getRoutingModule().isRouteEmpty();
+  public boolean isFinishedStage(IAirplaneWriteSimple plane, RouteStage stage) {
+    return plane.getRoutingModule().isRouteEmpty();
   }
 }

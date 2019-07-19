@@ -2,7 +2,7 @@ package eng.jAtcSim.lib.airplanes.commandApplications;
 
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
-import eng.jAtcSim.lib.airplanes.interfaces.forPilot.IPilotWriteSimple;
+import eng.jAtcSim.lib.airplanes.interfaces.IAirplaneWriteSimple;
 import eng.jAtcSim.lib.global.Headings;
 import eng.jAtcSim.lib.global.HeadingsNew;
 import eng.jAtcSim.lib.speaking.IFromAirplane;
@@ -11,7 +11,7 @@ import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeHeadingCommand;
 public class ChangeHeadingApplication extends CommandApplication<ChangeHeadingCommand> {
 
   @Override
-  protected IFromAirplane checkCommandSanity(IPilotWriteSimple pilot, ChangeHeadingCommand c) {
+  protected IFromAirplane checkCommandSanity(IAirplaneWriteSimple pilot, ChangeHeadingCommand c) {
     return null;
   }
 
@@ -30,13 +30,13 @@ public class ChangeHeadingApplication extends CommandApplication<ChangeHeadingCo
   }
 
   @Override
-  protected ApplicationResult adjustAirplane(IPilotWriteSimple pilot, ChangeHeadingCommand c) {
-    if (pilot.getPlane().getState() == Airplane.State.holding)
+  protected ApplicationResult adjustAirplane(IAirplaneWriteSimple pilot, ChangeHeadingCommand c) {
+    if (pilot.getState() == Airplane.State.holding)
       pilot.getAdvanced().abortHolding();
 
     double targetHeading;
     if (c.isCurrentHeading()) {
-      targetHeading = pilot.getPlane().getSha().getHeading();
+      targetHeading = pilot.getSha().getHeading();
     } else {
       targetHeading =
           Headings.add(
@@ -47,7 +47,7 @@ public class ChangeHeadingApplication extends CommandApplication<ChangeHeadingCo
 
     if (c.getDirection() == ChangeHeadingCommand.eDirection.any) {
       leftTurn =
-          HeadingsNew.getBetterDirectionToTurn(pilot.getPlane().getSha().getHeading(), c.getHeading()) == ChangeHeadingCommand.eDirection.left;
+          HeadingsNew.getBetterDirectionToTurn(pilot.getSha().getHeading(), c.getHeading()) == ChangeHeadingCommand.eDirection.left;
     } else {
       leftTurn =
           c.getDirection() == ChangeHeadingCommand.eDirection.left;

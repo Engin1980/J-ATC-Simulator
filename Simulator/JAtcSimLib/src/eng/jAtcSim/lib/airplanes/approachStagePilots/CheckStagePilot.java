@@ -5,8 +5,8 @@ import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.geo.Headings;
 import eng.jAtcSim.lib.Acc;
+import eng.jAtcSim.lib.airplanes.interfaces.IAirplaneWriteSimple;
 import eng.jAtcSim.lib.airplanes.interfaces.modules.IShaRO;
-import eng.jAtcSim.lib.airplanes.interfaces.forPilot.IPilotWriteSimple;
 import eng.jAtcSim.lib.world.newApproaches.stages.CheckStage;
 import eng.jAtcSim.lib.world.newApproaches.stages.checks.CheckAirportVisibilityStage;
 import eng.jAtcSim.lib.world.newApproaches.stages.checks.CheckPlaneLocationStage;
@@ -15,24 +15,24 @@ import eng.jAtcSim.lib.world.newApproaches.stages.checks.CheckPlaneShaStage;
 public class CheckStagePilot implements IApproachStagePilot<CheckStage> {
 
   @Override
-  public eResult disposeStage(IPilotWriteSimple pilot, CheckStage stage) {
+  public eResult disposeStage(IAirplaneWriteSimple plane, CheckStage stage) {
     return eResult.ok;
   }
 
   @Override
-  public eResult flyStage(IPilotWriteSimple pilot, CheckStage stage) {
+  public eResult flyStage(IAirplaneWriteSimple plane, CheckStage stage) {
     return eResult.ok;
   }
 
   @Override
-  public eResult initStage(IPilotWriteSimple pilot, CheckStage stage) {
+  public eResult initStage(IAirplaneWriteSimple plane, CheckStage stage) {
     eResult ret;
     if (stage instanceof CheckAirportVisibilityStage)
-      ret = evaluateCheckAirportVisibility(pilot);
+      ret = evaluateCheckAirportVisibility(plane);
     else if (stage instanceof CheckPlaneLocationStage)
-      ret = evaluateCheckPlaneLocationStage(pilot, (CheckPlaneLocationStage) stage);
+      ret = evaluateCheckPlaneLocationStage(plane, (CheckPlaneLocationStage) stage);
     else if (stage instanceof CheckPlaneShaStage)
-      ret = evaluateCheckPlaneShaStage(pilot, (CheckPlaneShaStage) stage);
+      ret = evaluateCheckPlaneShaStage(plane, (CheckPlaneShaStage) stage);
     else
       throw new EApplicationException("CheckStagePilot does not support stage of type '" + stage.getClass().getSimpleName() + "'.");
 
@@ -40,12 +40,12 @@ public class CheckStagePilot implements IApproachStagePilot<CheckStage> {
   }
 
   @Override
-  public boolean isFinishedStage(IPilotWriteSimple pilot, CheckStage stage) {
+  public boolean isFinishedStage(IAirplaneWriteSimple plane, CheckStage stage) {
     return true;
   }
 
-  private eResult evaluateCheckAirportVisibility(IPilotWriteSimple pilot) {
-    int planeAltitude = pilot.getPlane().getSha().getAltitude();
+  private eResult evaluateCheckAirportVisibility(IAirplaneWriteSimple plane) {
+    int planeAltitude = plane.getSha().getAltitude();
 
     int cloudsAltitude = Acc.weather().getCloudBaseInFt();
     double cloudProbability = Acc.weather().getCloudBaseHitProbability();
@@ -55,9 +55,9 @@ public class CheckStagePilot implements IApproachStagePilot<CheckStage> {
     return eResult.ok;
   }
 
-  private eResult evaluateCheckPlaneLocationStage(IPilotWriteSimple pilot, CheckPlaneLocationStage stage) {
+  private eResult evaluateCheckPlaneLocationStage(IAirplaneWriteSimple plane, CheckPlaneLocationStage stage) {
 
-    Coordinate planeCoordinate = pilot.getPlane().getCoordinate();
+    Coordinate planeCoordinate = plane.getCoordinate();
 
     double distance = Coordinates.getDistanceInNM(stage.getCoordinate(), planeCoordinate);
     if (distance > stage.getMaxDistance() || distance < stage.getMinDistance())
@@ -69,8 +69,8 @@ public class CheckStagePilot implements IApproachStagePilot<CheckStage> {
     return eResult.ok;
   }
 
-  private eResult evaluateCheckPlaneShaStage(IPilotWriteSimple pilot, CheckPlaneShaStage stage) {
-    IShaRO sha = pilot.getPlane().getSha();
+  private eResult evaluateCheckPlaneShaStage(IAirplaneWriteSimple plane, CheckPlaneShaStage stage) {
+    IShaRO sha = plane.getSha();
     if (stage.getMinHeading() != null) {
       int minHeading = stage.getMinHeading();
       int maxHeading = stage.getMaxHeading();

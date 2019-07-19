@@ -1,7 +1,7 @@
 package eng.jAtcSim.lib.airplanes.commandApplications;
 
 import eng.jAtcSim.lib.airplanes.Airplane;
-import eng.jAtcSim.lib.airplanes.interfaces.forPilot.IPilotWriteSimple;
+import eng.jAtcSim.lib.airplanes.interfaces.IAirplaneWriteSimple;
 import eng.jAtcSim.lib.airplanes.navigators.ToCoordinateNavigator;
 import eng.jAtcSim.lib.speaking.IFromAirplane;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.Rejection;
@@ -24,7 +24,7 @@ public class ProceedDirectApplication extends CommandApplication<ProceedDirectCo
   }
 
   @Override
-  protected IFromAirplane checkCommandSanity(IPilotWriteSimple pilot, ProceedDirectCommand c) {
+  protected IFromAirplane checkCommandSanity(IAirplaneWriteSimple plane, ProceedDirectCommand c) {
     IFromAirplane ret = null;
 
     if (c.getNavaid() == null)
@@ -35,12 +35,12 @@ public class ProceedDirectApplication extends CommandApplication<ProceedDirectCo
   }
 
   @Override
-  protected ApplicationResult adjustAirplane(IPilotWriteSimple pilot, ProceedDirectCommand c) {
-    if (pilot.getPlane().getState() == Airplane.State.holding) {
-      pilot.getAdvanced().abortHolding();
+  protected ApplicationResult adjustAirplane(IAirplaneWriteSimple plane, ProceedDirectCommand c) {
+    if (plane.getState() == Airplane.State.holding) {
+      plane.getAdvanced().abortHolding();
     }
 
-    pilot.setNavigator(
+    plane.setNavigator(
         new ToCoordinateNavigator(c.getNavaid().getCoordinate()));
     return ApplicationResult.getEmpty();
   }

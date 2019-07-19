@@ -25,13 +25,13 @@ public class EmergencyModule implements IEmergencyModuleRO {
     int minA = (int) (distToAip / 250d * 60);
     ETime wt = Acc.now().addMinutes(minsE + minA);
 
-    int alt = Math.max((int) parent.getAltitude(), Acc.airport().getAltitude() + 4000);
+    int alt = Math.max((int) parent.getSha().getAltitude(), Acc.airport().getAltitude() + 4000);
     alt = (int) NumberUtils.ceil(alt, 3);
-    parent.getSha().setTargetAltitude(alt);
+    parent.setTargetAltitude(alt);
 
     this.emergencyWanishTime = wt;
     parent.getFlightModule().raiseEmergency();
-    parent.getPilot().raiseEmergency();
+    parent.raiseEmergency();
   }
 
   public boolean hasElapsedEmergencyTime() {

@@ -5,7 +5,7 @@ import eng.eSystem.geo.Coordinates;
 import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
-import eng.jAtcSim.lib.airplanes.interfaces.forPilot.IPilotWriteSimple;
+import eng.jAtcSim.lib.airplanes.interfaces.IAirplaneWriteSimple;
 import eng.jAtcSim.lib.world.ActiveRunwayThreshold;
 
 public class TakeOffBehavior extends Behavior {
@@ -41,34 +41,34 @@ public class TakeOffBehavior extends Behavior {
   }
 
   @Override
-  public void fly(IPilotWriteSimple pilot) {
-    switch (pilot.getPlane().getState()) {
+  public void fly(IAirplaneWriteSimple plane) {
+    switch (plane.getState()) {
       case takeOffRoll:
         double targetHeading = Coordinates.getBearing(
-            pilot.getPlane().getCoordinate(), toThreshold.getOtherThreshold().getCoordinate());
-        pilot.setTargetHeading(targetHeading);
+            plane.getCoordinate(), toThreshold.getOtherThreshold().getCoordinate());
+        plane.setTargetHeading(targetHeading);
 
-        if (pilot.getPlane().getSha().getSpeed() > pilot.getPlane().getType().vR) {
-          pilot.setBehaviorAndState(this, Airplane.State.takeOffGoAround);
+        if (plane.getSha().getSpeed() > plane.getType().vR) {
+          plane.setBehaviorAndState(this, Airplane.State.takeOffGoAround);
         }
         break;
       case takeOffGoAround:
         // keeps last heading
         // altitude already set
         // speed set
-        if (pilot.getPlane().getSha().getAltitude() > this.accelerationAltitude)
-          if (pilot.getPlane().getFlight().isArrival()) {
+        if (plane.getSha().getAltitude() > this.accelerationAltitude)
+          if (plane.getFlightModule().isArrival()) {
             // antecedent G/A
-            pilot.setBehaviorAndState(new ArrivalBehavior(), Airplane.State.arrivingHigh);
+            plane.setBehaviorAndState(new ArrivalBehavior(), Airplane.State.arrivingHigh);
           } else {
-            pilot.setBehaviorAndState(
+            plane.setBehaviorAndState(
                 new DepartureBehavior(),
                 Airplane.State.departingLow
             );
           }
         break;
       default:
-        super.throwIllegalStateException(pilot);
+        super.throwIllegalStateException(plane);
     }
   }
 
