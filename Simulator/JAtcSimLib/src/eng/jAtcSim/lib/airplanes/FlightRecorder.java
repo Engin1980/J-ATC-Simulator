@@ -13,6 +13,9 @@ import eng.jAtcSim.lib.global.logging.FileSaver;
 import eng.jAtcSim.lib.global.logging.Recorder;
 import eng.jAtcSim.lib.messaging.Message;
 import eng.jAtcSim.lib.global.ETime;
+import eng.jAtcSim.lib.speaking.ISpeech;
+import eng.jAtcSim.lib.speaking.SpeechList;
+import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
 
 /**
  * @author Marek Vajgl
@@ -95,6 +98,26 @@ public class FlightRecorder extends Recorder {
     // from pilot
     sb.appendFormat(" BEH: {%s} ", plane.getBehaviorModule().get().toLogString());
 
+    super.writeLine(sb.toString());
+  }
+
+  public void logProcessedCurrentSpeeches(SpeechList current) {
+    EStringBuilder sb = new EStringBuilder();
+    sb.appendLine("Current processed speeches");
+    for (int i = 0; i < current.size(); i++) {
+      ISpeech sp = current.get(i);
+      sb.append("\t").append(sp.toString()).appendLine();
+    }
+    super.writeLine(sb.toString());
+  }
+
+  public void logProcessedAfterSpeeches(SpeechList<IAtcCommand> cmds, String extensions) {
+    EStringBuilder sb = new EStringBuilder();
+    sb.appendLine("Processed after speeches of " + extensions);
+    for (int i = 0; i < cmds.size(); i++) {
+      IAtcCommand cmd = cmds.get(i);
+      sb.appendLine("\t").appendLine(cmd.toString()).appendLine();
+    }
     super.writeLine(sb.toString());
   }
 
