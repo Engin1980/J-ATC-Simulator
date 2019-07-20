@@ -13,7 +13,7 @@ private IList<Airplane> known;
   @Override
   public void format(Airplane airplane, XElement xElement, XmlSerializer.Serializer source) {
 
-      xElement.setContent(airplane.getCallsign().toString());
+      xElement.setContent(airplane.getFlightModule().getCallsign().toString());
   }
 
   @Override
@@ -21,7 +21,7 @@ private IList<Airplane> known;
 
     Airplane ret;
     String c = elm.getContent();
-    ret = known.getFirst(q->q.getCallsign().toString().equals(c));
+    ret = known.getFirst(q->q.getFlightModule().getCallsign().toString().equals(c));
     return ret;
   }
 

@@ -181,7 +181,7 @@ public class RecentStats {
         mrvaErs++;
 
       boolean isApp = Acc.prm().getResponsibleAtc(plane) == Acc.atcApp();
-      if (plane.isArrival()) {
+      if (plane.getFlightModule().isArrival()) {
         arrs++;
         if (isApp) aarrs++;
       } else {
@@ -257,7 +257,7 @@ public class RecentStats {
   }
 
   public void registerFinishedPlane(Airplane plane) {
-    if (plane.isArrival())
+    if (plane.getFlightModule().isArrival())
       this.finishedArrivals++;
     else
       this.finishedDepartures++;

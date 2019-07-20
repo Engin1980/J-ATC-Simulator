@@ -339,16 +339,16 @@ public class SpeechFormatter implements IFormatter {
       ret = String.format(
           "%s {%s} via %s/%s %s",
           msg.plane.getSqwk(),
-          msg.plane.getCallsign().toString(),
-          msg.plane.getExpectedRunwayThreshold().getName(),
-          msg.plane.getAssigneRoute().getName(),
+          msg.plane.getFlightModule().getCallsign().toString(),
+          msg.plane.getRoutingModule().getAssignedRunwayThreshold().getName(),
+          msg.plane.getRoutingModule().getAssignedRoute().getName(),
           msg.getMessageText(),
           sender.getName());
     } else {
       ret = String.format(
           "%s {%s} %s",
           msg.plane.getSqwk(),
-          msg.plane.getCallsign().toString(),
+          msg.plane.getFlightModule().getCallsign().toString(),
           msg.getMessageText(),
           sender.getName());
     }
