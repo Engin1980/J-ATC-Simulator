@@ -27,4 +27,8 @@ public class MrvaAirproxModule {
   public boolean isMrvaError() {
     return this.mrvaError;
   }
+
+  public void setMrvaError(boolean value) {
+    this.mrvaError = value;
+  }
 }

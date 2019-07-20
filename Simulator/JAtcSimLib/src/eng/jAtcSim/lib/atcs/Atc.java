@@ -3,7 +3,7 @@ package eng.jAtcSim.lib.atcs;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 import eng.jAtcSim.lib.Acc;
-import eng.jAtcSim.lib.airplanes.interfaces.IAirplaneRO;
+import eng.jAtcSim.lib.airplanes.interfaces.IAirplane4Atc;
 import eng.jAtcSim.lib.atcs.planeResponsibility.PlaneResponsibilityManager;
 import eng.jAtcSim.lib.messaging.IMessageParticipant;
 import eng.jAtcSim.lib.messaging.Message;
@@ -57,11 +57,11 @@ public abstract class Atc implements IMessageParticipant {
   @XmlIgnore
   protected final AtcRecorder recorder;
 
-  public abstract void unregisterPlaneUnderControl(IAirplaneRO plane);
+  public abstract void unregisterPlaneUnderControl(IAirplane4Atc plane);
 
-  public abstract void removePlaneDeletedFromGame(IAirplaneRO plane);
+  public abstract void removePlaneDeletedFromGame(IAirplane4Atc plane);
 
-  public abstract void registerNewPlaneUnderControl(IAirplaneRO plane, boolean initialRegistration);
+  public abstract void registerNewPlaneUnderControl(IAirplane4Atc plane, boolean initialRegistration);
 
   protected PlaneResponsibilityManager.PlaneResponsibilityManagerForAtc getPrm(){
     return Acc.prm().forAtc();

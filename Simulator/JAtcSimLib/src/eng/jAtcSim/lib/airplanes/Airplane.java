@@ -9,6 +9,8 @@ import eng.eSystem.utilites.EnumUtils;
 import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.behaviors.*;
+import eng.jAtcSim.lib.airplanes.interfaces.IAirplane4Atc;
+import eng.jAtcSim.lib.airplanes.interfaces.IAirplane4Mrva;
 import eng.jAtcSim.lib.airplanes.interfaces.IAirplaneWriteAdvanced;
 import eng.jAtcSim.lib.airplanes.interfaces.IAirplaneWriteSimple;
 import eng.jAtcSim.lib.airplanes.interfaces.modules.*;
@@ -36,7 +38,7 @@ import eng.jAtcSim.lib.world.Navaid;
 import eng.jAtcSim.lib.world.Route;
 import eng.jAtcSim.lib.world.newApproaches.NewApproachInfo;
 
-public class Airplane implements IAirplaneWriteSimple {
+public class Airplane implements IAirplaneWriteSimple, IAirplane4Mrva, IAirplane4Atc {
 
   public class Airplane4Display {
 
@@ -858,10 +860,27 @@ public class Airplane implements IAirplaneWriteSimple {
     throw new ToDoException(); // TODO move to advanced
   }
 
+  @Override // IAirplane4Atc
+  public void setHoldingPointState(ActiveRunwayThreshold threshold) {
+    this.airplaneWriteAdvanced.setHoldingPointState(
+        threshold.getCoordinate(),
+        (int) Math.round(threshold.getCourse()));
+  }
+
+  @Override // IAirplane4Mrva
+  public void setMrvaError(boolean value) {
+    this.mrvaAirproxModule.setMrvaError(value);
+  }
+
   @Override // IAirplaneWriteSimple
   public void setNavigator(INavigator navigator) {
     assert navigator != null;
     this.sha.setNavigator(navigator);
+  }
+
+  @Override // IAirplane4Atc
+  public void setRouting(Route r, ActiveRunwayThreshold runwayThreshold) {
+    this.airplaneWriteAdvanced.setRouting(r, runwayThreshold);
   }
 
   @Override // IAirplaneWriteSimple

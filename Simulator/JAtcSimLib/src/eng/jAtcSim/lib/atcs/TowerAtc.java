@@ -9,7 +9,8 @@ import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
 import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
-import eng.jAtcSim.lib.airplanes.interfaces.IAirplaneRO;
+import eng.jAtcSim.lib.airplanes.interfaces.IAirplane4Atc;
+import eng.jAtcSim.lib.airplanes.interfaces.IAirplane4Atc;
 import eng.jAtcSim.lib.airplanes.interfaces.IAirplaneWriteSimple;
 import eng.jAtcSim.lib.atcs.planeResponsibility.SwitchRoutingRequest;
 import eng.jAtcSim.lib.global.ETime;
@@ -232,7 +233,7 @@ public class TowerAtc extends ComputerAtc {
   }
 
   @Override
-  public void registerNewPlaneUnderControl(IAirplaneRO plane, boolean initialRegistration) {
+  public void registerNewPlaneUnderControl(IAirplane4Atc plane, boolean initialRegistration) {
     if (plane.getFlightModule().isArrival())
       arrivalManager.registerNewArrival(plane);
     else {
@@ -242,7 +243,7 @@ public class TowerAtc extends ComputerAtc {
   }
 
   @Override
-  public void removePlaneDeletedFromGame(IAirplaneRO plane) {
+  public void removePlaneDeletedFromGame(IAirplane4Atc plane) {
     if (plane.getFlightModule().isArrival()) {
       arrivalManager.deletePlane(plane);
       //TODO this will add to stats even planes deleted from the game by a user(?)
@@ -262,7 +263,7 @@ public class TowerAtc extends ComputerAtc {
   }
 
   @Override
-  public void unregisterPlaneUnderControl(IAirplaneRO plane) {
+  public void unregisterPlaneUnderControl(IAirplane4Atc plane) {
     if (plane.getFlightModule().isArrival()) {
       if (plane.getState() == Airplane.State.landed) {
         arrivalManager.unregisterFinishedArrival(plane);
@@ -309,7 +310,7 @@ public class TowerAtc extends ComputerAtc {
   }
 
   @Override
-  protected boolean acceptsNewRouting(IAirplaneRO plane, SwitchRoutingRequest srr) {
+  protected boolean acceptsNewRouting(IAirplane4Atc plane, SwitchRoutingRequest srr) {
     assert plane.getFlightModule().isDeparture() : "It is nonsense to have this call here for arrival.";
 
     boolean ret;
@@ -370,7 +371,7 @@ public class TowerAtc extends ComputerAtc {
   }
 
   @Override
-  protected ComputerAtc.RequestResult canIAcceptPlane(IAirplaneRO p) {
+  protected ComputerAtc.RequestResult canIAcceptPlane(IAirplane4Atc p) {
     if (p.getFlightModule().isDeparture()) {
       return new ComputerAtc.RequestResult(false, String.format("%s is a departure.", p.getFlightModule().getCallsign()));
     }
@@ -446,7 +447,7 @@ public class TowerAtc extends ComputerAtc {
     }
   }
 
-  private ActiveRunwayThreshold getRunwayThresholdForDeparture(IAirplaneRO plane) {
+  private ActiveRunwayThreshold getRunwayThresholdForDeparture(IAirplane4Atc plane) {
     ActiveRunwayThreshold ret;
     IList<ActiveRunwayThreshold> rts = inUseInfo.current.getDepartures()
         .where(q -> q.isForCategory(plane.getType().category))
@@ -460,7 +461,7 @@ public class TowerAtc extends ComputerAtc {
   }
 
   @Override
-  protected Atc getTargetAtcIfPlaneIsReadyToSwitch(IAirplaneRO plane) {
+  protected Atc getTargetAtcIfPlaneIsReadyToSwitch(IAirplane4Atc plane) {
     Atc ret = null;
     if (this.arrivalManager.checkIfPlaneIsReadyToSwitchAndRemoveIt(plane)) {
       ret = Acc.atcApp();
@@ -470,7 +471,7 @@ public class TowerAtc extends ComputerAtc {
     return ret;
   }
 
-  private boolean isOnApproachOfTheRunwayInUse(IAirplaneRO p) {
+  private boolean isOnApproachOfTheRunwayInUse(IAirplane4Atc p) {
     boolean ret = p.getEmergencyModule().isEmergency() || inUseInfo.current.getArrivals()
         .isAny(q -> q.getThreshold().equals(p.getRoutingModule().getAssignedRunwayThreshold()) && q.isForCategory(p.getType().category));
     return ret;
@@ -507,7 +508,7 @@ public class TowerAtc extends ComputerAtc {
     ISet<ActiveRunwayThreshold> crts = inUseInfo.current.getCrossedSetForThreshold(rt);
 
     for (ActiveRunwayThreshold crt : crts) {
-      IAirplaneRO lastDep = departureManager.tryGetTheLastDepartedPlane(crt);
+      IAirplane4Atc lastDep = departureManager.tryGetTheLastDepartedPlane(crt);
       if (lastDep == null) continue; // no last departure
       if (lastDep.getSha().getAltitude() > clearAltitude) continue; // last departure has safe altitude
       double dist = Coordinates.getDistanceInNM(rt.getOtherThreshold().getCoordinate(), lastDep.getCoordinate());
@@ -601,7 +602,7 @@ public class TowerAtc extends ComputerAtc {
   }
 
   @Override
-  protected void processMessagesFromPlane(IAirplaneRO plane, SpeechList spchs) {
+  protected void processMessagesFromPlane(IAirplane4Atc plane, SpeechList spchs) {
     if (spchs.containsType(GoingAroundNotification.class)) {
       arrivalManager.goAroundPlane(plane);
     }
@@ -667,13 +668,13 @@ public class TowerAtc extends ComputerAtc {
     super.sendMessage(msg);
   }
 
-  private void setHoldingPointStateHack(IAirplaneRO toReadyPlane, ActiveRunwayThreshold availableThreshold) {
+  private void setHoldingPointStateHack(IAirplane4Atc toReadyPlane, ActiveRunwayThreshold availableThreshold) {
     IAirplaneWriteSimple plane = (IAirplaneWriteSimple) toReadyPlane;
     plane.getAdvanced().setHoldingPointState(availableThreshold.getCoordinate(), (int) Math.round(availableThreshold.getCourse()));
   }
 
   @Override
-  protected boolean shouldBeSwitched(IAirplaneRO plane) {
+  protected boolean shouldBeSwitched(IAirplane4Atc plane) {
     if (plane.getFlightModule().isArrival())
       return true; // this should be go-arounded arrivals
 
@@ -687,9 +688,9 @@ public class TowerAtc extends ComputerAtc {
   private void tryTakeOffPlaneNew() {
 
     // checks for lined-up plane
-    IMap<ActiveRunwayThreshold, IAirplaneRO> tmp = departureManager.getTheLinedUpPlanes();
+    IMap<ActiveRunwayThreshold, IAirplane4Atc> tmp = departureManager.getTheLinedUpPlanes();
     if (tmp.isEmpty()) return; // no-one is ready to departure
-    IAirplaneRO toReadyPlane = null;
+    IAirplane4Atc toReadyPlane = null;
     for (ActiveRunwayThreshold runwayThreshold : tmp.getKeys()) {
       ActiveRunway runway = runwayThreshold.getParent();
       if (isRunwayUnderMaintenance(runway)) continue;
@@ -708,7 +709,7 @@ public class TowerAtc extends ComputerAtc {
     // if it gets here, the "toReadyPlane" can proceed take-off
     // add to stats
     departureManager.departAndGetHoldingPointEntryTime(toReadyPlane, availableThreshold, getDepartingPlaneSwitchAltitude(toReadyPlane.getType().category));
-    setHoldingPointStateHack(toReadyPlane, availableThreshold);
+    toReadyPlane.setHoldingPointState(availableThreshold);
 
     SpeechList lst = new SpeechList();
     lst.add(new RadarContactConfirmationNotification());
@@ -742,10 +743,10 @@ public class TowerAtc extends ComputerAtc {
 }
 
 class ArrivalManager {
-  private IList<IAirplaneRO> landingPlanesList = new EDistinctList<>(EDistinctList.Behavior.exception);
-  private IList<IAirplaneRO> goAroundedPlanesToSwitchList = new EDistinctList<>(EDistinctList.Behavior.exception);
+  private IList<IAirplane4Atc> landingPlanesList = new EDistinctList<>(EDistinctList.Behavior.exception);
+  private IList<IAirplane4Atc> goAroundedPlanesToSwitchList = new EDistinctList<>(EDistinctList.Behavior.exception);
 
-  public boolean checkIfPlaneIsReadyToSwitchAndRemoveIt(IAirplaneRO plane) {
+  public boolean checkIfPlaneIsReadyToSwitchAndRemoveIt(IAirplane4Atc plane) {
     if (goAroundedPlanesToSwitchList.contains(plane)) {
       goAroundedPlanesToSwitchList.remove(plane);
       return true;
@@ -753,7 +754,7 @@ class ArrivalManager {
       return false;
   }
 
-  public void deletePlane(IAirplaneRO plane) {
+  public void deletePlane(IAirplane4Atc plane) {
     this.landingPlanesList.tryRemove(plane);
     this.goAroundedPlanesToSwitchList.tryRemove(plane);
   }
@@ -778,7 +779,7 @@ class ArrivalManager {
     return ret;
   }
 
-  public void goAroundPlane(IAirplaneRO plane) {
+  public void goAroundPlane(IAirplane4Atc plane) {
     landingPlanesList.remove(plane);
     goAroundedPlanesToSwitchList.add(plane);
   }
@@ -797,7 +798,7 @@ class ArrivalManager {
     return ret;
   }
 
-  public void registerNewArrival(IAirplaneRO plane) {
+  public void registerNewArrival(IAirplane4Atc plane) {
     if (plane == null) {
       throw new IllegalArgumentException("Value of {plane} cannot not be null.");
     }
@@ -810,26 +811,26 @@ class ArrivalManager {
       this.goAroundedPlanesToSwitchList.add(plane);
   }
 
-  public void unregisterFinishedArrival(IAirplaneRO plane) {
+  public void unregisterFinishedArrival(IAirplane4Atc plane) {
     this.landingPlanesList.remove(plane);
   }
 
-  public void unregisterGoAroundedArrival(IAirplaneRO plane) {
+  public void unregisterGoAroundedArrival(IAirplane4Atc plane) {
     this.goAroundedPlanesToSwitchList.remove(plane);
   }
 }
 
 class DepartureManager {
 
-  private final IList<IAirplaneRO> holdingPointNotReady = new EDistinctList<>(EDistinctList.Behavior.exception);
-  private final IList<IAirplaneRO> holdingPointReady = new EDistinctList<>(EDistinctList.Behavior.exception);
-  private final IList<IAirplaneRO> departing = new EList<>();
-  private final IMap<IAirplaneRO, Double> departureSwitchAltitude = new EMap<>();
-  private final IMap<IAirplaneRO, ETime> holdingPointWaitingTimeMap = new EMap<>();
-  private final IMap<ActiveRunwayThreshold, IAirplaneRO> lastDepartingPlane = new EMap<>();
+  private final IList<IAirplane4Atc> holdingPointNotReady = new EDistinctList<>(EDistinctList.Behavior.exception);
+  private final IList<IAirplane4Atc> holdingPointReady = new EDistinctList<>(EDistinctList.Behavior.exception);
+  private final IList<IAirplane4Atc> departing = new EList<>();
+  private final IMap<IAirplane4Atc, Double> departureSwitchAltitude = new EMap<>();
+  private final IMap<IAirplane4Atc, ETime> holdingPointWaitingTimeMap = new EMap<>();
+  private final IMap<ActiveRunwayThreshold, IAirplane4Atc> lastDepartingPlane = new EMap<>();
   private final IMap<ActiveRunwayThreshold, ETime> lastDeparturesTime = new EMap<>();
 
-  public boolean canBeSwitched(IAirplaneRO plane) {
+  public boolean canBeSwitched(IAirplane4Atc plane) {
     if (departureSwitchAltitude.containsKey(plane) && departureSwitchAltitude.get(plane) < plane.getSha().getAltitude()) {
       departureSwitchAltitude.remove(plane);
       return true;
@@ -837,14 +838,14 @@ class DepartureManager {
       return false;
   }
 
-  public void confirmedByApproach(IAirplaneRO plane) {
+  public void confirmedByApproach(IAirplane4Atc plane) {
     if (this.holdingPointNotReady.contains(plane)) {
       this.holdingPointNotReady.remove(plane);
       this.holdingPointReady.add(plane);
     }
   }
 
-  public void deletePlane(IAirplaneRO plane) {
+  public void deletePlane(IAirplane4Atc plane) {
     holdingPointNotReady.tryRemove(plane);
     holdingPointReady.tryRemove(plane);
     departing.tryRemove(plane);
@@ -857,7 +858,7 @@ class DepartureManager {
     holdingPointWaitingTimeMap.tryRemove(plane);
   }
 
-  public void departAndGetHoldingPointEntryTime(IAirplaneRO plane, ActiveRunwayThreshold th, double switchAltitude) {
+  public void departAndGetHoldingPointEntryTime(IAirplane4Atc plane, ActiveRunwayThreshold th, double switchAltitude) {
     this.holdingPointReady.remove(plane);
     this.departing.add(plane);
     this.lastDepartingPlane.set(th, plane);
@@ -865,7 +866,7 @@ class DepartureManager {
     this.departureSwitchAltitude.set(plane, switchAltitude);
   }
 
-  public ETime getAndEraseHoldingPointEntryTime(IAirplaneRO plane) {
+  public ETime getAndEraseHoldingPointEntryTime(IAirplane4Atc plane) {
     ETime ret = holdingPointWaitingTimeMap.get(plane);
     holdingPointWaitingTimeMap.remove(plane);
     return ret;
@@ -883,9 +884,9 @@ class DepartureManager {
     return this.holdingPointNotReady.size() + this.holdingPointReady.size();
   }
 
-  public IMap<ActiveRunwayThreshold, IAirplaneRO> getTheLinedUpPlanes() {
-    IMap<ActiveRunwayThreshold, IAirplaneRO> ret = new EMap<>();
-    for (IAirplaneRO airplane : holdingPointReady) {
+  public IMap<ActiveRunwayThreshold, IAirplane4Atc> getTheLinedUpPlanes() {
+    IMap<ActiveRunwayThreshold, IAirplane4Atc> ret = new EMap<>();
+    for (IAirplane4Atc airplane : holdingPointReady) {
       if (ret.containsKey(airplane.getRoutingModule().getAssignedRunwayThreshold()) == false) {
         ret.set(airplane.getRoutingModule().getAssignedRunwayThreshold(), airplane);
       }
@@ -895,34 +896,30 @@ class DepartureManager {
 
   public boolean isSomeDepartureOnRunway(ActiveRunway runway) {
     for (ActiveRunwayThreshold rt : runway.getThresholds()) {
-      IAirplaneRO aip = this.lastDepartingPlane.tryGet(rt);
+      IAirplane4Atc aip = this.lastDepartingPlane.tryGet(rt);
       if (aip != null && aip.getState() == Airplane.State.takeOffRoll)
         return true;
     }
     return false;
   }
 
-  public void registerNewDeparture(IAirplaneRO plane, ActiveRunwayThreshold runwayThreshold) {
+  public void registerNewDeparture(IAirplane4Atc plane, ActiveRunwayThreshold runwayThreshold) {
     this.holdingPointNotReady.add(plane);
     holdingPointWaitingTimeMap.set(plane, Acc.now().clone());
     Route r = runwayThreshold.getDepartureRouteForPlane(plane.getType(), plane.getRoutingModule().getEntryExitPoint(), true);
-    setPlaneRoutingViaHack(plane, r, runwayThreshold);
+    plane.setRouting(r, runwayThreshold);
   }
 
-  public IAirplaneRO tryGetTheLastDepartedPlane(ActiveRunwayThreshold rt) {
-    IAirplaneRO ret;
+  public IAirplane4Atc tryGetTheLastDepartedPlane(ActiveRunwayThreshold rt) {
+    IAirplane4Atc ret;
     ret = this.lastDepartingPlane.tryGet(rt);
     return ret;
   }
 
-  public void unregisterFinishedDeparture(IAirplaneRO plane) {
+  public void unregisterFinishedDeparture(IAirplane4Atc plane) {
     departing.remove(plane);
     lastDepartingPlane.remove(q -> q.getValue() == plane);
   }
 
-  private void setPlaneRoutingViaHack(IAirplaneRO planeRo, Route r, ActiveRunwayThreshold runwayThreshold) {
-    IAirplaneWriteSimple plane = (IAirplaneWriteSimple) planeRo;
-    plane.getAdvanced().setRouting(r, runwayThreshold);
-  }
 
 }

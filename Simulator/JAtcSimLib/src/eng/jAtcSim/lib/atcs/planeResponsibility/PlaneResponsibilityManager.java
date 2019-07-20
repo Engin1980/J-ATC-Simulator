@@ -13,7 +13,7 @@ import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.Callsign;
-import eng.jAtcSim.lib.airplanes.interfaces.IAirplaneRO;
+import eng.jAtcSim.lib.airplanes.interfaces.IAirplane4Atc;
 import eng.jAtcSim.lib.atcs.Atc;
 import eng.jAtcSim.lib.atcs.ComputerAtc;
 
@@ -23,13 +23,13 @@ public class PlaneResponsibilityManager {
 
   public class PlaneResponsibilityManagerForAtc {
 
-    public IReadOnlyList<IAirplaneRO> getPlanes(Atc atc) {
+    public IReadOnlyList<IAirplane4Atc> getPlanes(Atc atc) {
       IReadOnlyList<AirplaneResponsibilityInfo> tmp = dao.getByAtc(atc);
-      IReadOnlyList<IAirplaneRO> ret = tmp.select(q -> q.getPlane());
+      IReadOnlyList<IAirplane4Atc> ret = tmp.select(q -> q.getPlane());
       return ret;
     }
 
-    public boolean isUnderSwitchRequest(IAirplaneRO plane, @Nullable Atc sourceAtc, @Nullable Atc targetAtc) {
+    public boolean isUnderSwitchRequest(IAirplane4Atc plane, @Nullable Atc sourceAtc, @Nullable Atc targetAtc) {
       boolean ret;
       AirplaneResponsibilityInfo ai = dao.get(plane);
       ret = ai.getSwitchRequest() != null;
@@ -40,22 +40,22 @@ public class PlaneResponsibilityManager {
       return ret;
     }
 
-    public Atc getResponsibleAtc(IAirplaneRO plane) {
+    public Atc getResponsibleAtc(IAirplane4Atc plane) {
       return PlaneResponsibilityManager.this.getResponsibleAtc(plane);
     }
 
-    public IReadOnlyList<IAirplaneRO> getSwitchRequestsToRepeatByAtc(Atc sender) {
+    public IReadOnlyList<IAirplane4Atc> getSwitchRequestsToRepeatByAtc(Atc sender) {
       IReadOnlyList<AirplaneResponsibilityInfo> tmp = dao.getByAtc(sender);
       tmp = tmp.where(q -> q.getSwitchRequest() != null
           && q.getAtc() == sender
           && q.getSwitchRequest().isConfirmed() == false
           && q.getSwitchRequest().getRepeatRequestTime().isBefore(Acc.now()));
       tmp.forEach(q -> q.getSwitchRequest().updateLastRequestTime());
-      IReadOnlyList<IAirplaneRO> ret = tmp.select(q -> q.getPlane());
+      IReadOnlyList<IAirplane4Atc> ret = tmp.select(q -> q.getPlane());
       return ret;
     }
 
-    public void createSwitchRequest(Atc sender, Atc targetAtc, IAirplaneRO plane) {
+    public void createSwitchRequest(Atc sender, Atc targetAtc, IAirplane4Atc plane) {
       Validator.isNotNull(sender);
       Validator.isNotNull(targetAtc);
       Validator.isNotNull(plane);
@@ -84,18 +84,18 @@ public class PlaneResponsibilityManager {
       ai.setSwitchRequest(sr);
     }
 
-    public IReadOnlyList<IAirplaneRO> getConfirmedSwitchesByAtc(Atc sender, boolean excludeWithRerouting) {
+    public IReadOnlyList<IAirplane4Atc> getConfirmedSwitchesByAtc(Atc sender, boolean excludeWithRerouting) {
       IReadOnlyList<AirplaneResponsibilityInfo> tmp = dao.getByAtc(sender);
        tmp = tmp
           .where(q -> q.getSwitchRequest() != null && q.getSwitchRequest().isConfirmed());
        if (excludeWithRerouting)
          tmp = tmp.where(q->q.getSwitchRequest().getRouting() == null);
-      IList<IAirplaneRO> ret = tmp.select(q->q.getPlane());
+      IList<IAirplane4Atc> ret = tmp.select(q->q.getPlane());
       return ret;
 
     }
 
-    public void confirmSwitchRequest(IAirplaneRO plane, Atc targetAtc, @Nullable SwitchRoutingRequest updatedRoutingIfRequired) {
+    public void confirmSwitchRequest(IAirplane4Atc plane, Atc targetAtc, @Nullable SwitchRoutingRequest updatedRoutingIfRequired) {
       AirplaneResponsibilityInfo ai = dao.get(plane);
       if (ai.getSwitchRequest() == null || ai.getSwitchRequest().getAtc() != targetAtc) { // probably canceled
         return;
@@ -104,7 +104,7 @@ public class PlaneResponsibilityManager {
       sr.setConfirmed(updatedRoutingIfRequired);
     }
 
-    public void rejectSwitchRequest(IAirplaneRO plane, Atc targetAtc) {
+    public void rejectSwitchRequest(IAirplane4Atc plane, Atc targetAtc) {
       AirplaneResponsibilityInfo ai = dao.get(plane);
       if (ai.getSwitchRequest() == null || ai.getSwitchRequest().getAtc() != targetAtc) { // probably canceled
         return;
@@ -112,12 +112,12 @@ public class PlaneResponsibilityManager {
       ai.setSwitchRequest(null);
     }
 
-    public void cancelSwitchRequest(Atc sender, IAirplaneRO plane) {
+    public void cancelSwitchRequest(Atc sender, IAirplane4Atc plane) {
       AirplaneResponsibilityInfo ai = dao.get(plane);
       ai.setSwitchRequest(null);
     }
 
-    public void applyConfirmedSwitch(Atc sender, IAirplaneRO plane) {
+    public void applyConfirmedSwitch(Atc sender, IAirplane4Atc plane) {
       AirplaneResponsibilityInfo ai = dao.get(plane);
       if (ai.getSwitchRequest() == null || ai.getAtc() != sender) { // probably canceled
         return;
@@ -130,14 +130,14 @@ public class PlaneResponsibilityManager {
       ai.setSwitchRequest(null);
     }
 
-    public SwitchRoutingRequest getRoutingForSwitchRequest(Atc sender, IAirplaneRO plane) {
+    public SwitchRoutingRequest getRoutingForSwitchRequest(Atc sender, IAirplane4Atc plane) {
       AirplaneResponsibilityInfo ari = dao.get(plane);
       SwitchRequest sr = ari.getSwitchRequest();
       SwitchRoutingRequest srr = sr.getRouting();
       return srr;
     }
 
-    public void resetSwitchRequest(ComputerAtc sender, IAirplaneRO plane) {
+    public void resetSwitchRequest(ComputerAtc sender, IAirplane4Atc plane) {
       AirplaneResponsibilityInfo ari = dao.get(plane);
       SwitchRequest sr = ari.getSwitchRequest();
 
@@ -146,7 +146,7 @@ public class PlaneResponsibilityManager {
       sr.reset();
     }
 
-    public void confirmRerouting(ComputerAtc sender, IAirplaneRO plane) {
+    public void confirmRerouting(ComputerAtc sender, IAirplane4Atc plane) {
       AirplaneResponsibilityInfo ari = dao.get(plane);
       SwitchRequest sr = ari.getSwitchRequest();
 
@@ -174,7 +174,7 @@ public class PlaneResponsibilityManager {
     dao.init();
   }
 
-  public Atc getResponsibleAtc(IAirplaneRO plane) {
+  public Atc getResponsibleAtc(IAirplane4Atc plane) {
     Atc ret;
     AirplaneResponsibilityInfo ai = dao.get(plane);
     ret = ai.getAtc();

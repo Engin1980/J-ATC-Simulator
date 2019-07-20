@@ -5,12 +5,13 @@ import eng.eSystem.geo.Coordinates;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.eSystem.geo.Coordinate;
+import eng.jAtcSim.lib.airplanes.interfaces.IAirplane4Mrva;
 import eng.jAtcSim.lib.world.Border;
 
 public class MrvaManager {
 
   private IReadOnlyList<Border> mrvas;
-  private IMap<Airplane, Border> maps = new EMap<>();
+  private IMap<IAirplane4Mrva, Border> maps = new EMap<>();
 
   public MrvaManager(IReadOnlyList<Border> mrvas) {
     assert mrvas.isAll(q -> q.getType() == Border.eType.mrva);
@@ -18,21 +19,21 @@ public class MrvaManager {
     this.mrvas = mrvas;
   }
 
-  public void registerPlane(Airplane plane) {
+  public void registerPlane(IAirplane4Mrva plane) {
     maps.set(plane, null);
   }
 
-  public void unregisterPlane(Airplane plane) {
+  public void unregisterPlane(IAirplane4Mrva plane) {
     maps.remove(plane);
   }
 
   public void evaluateMrvaFails() {
-    for (Airplane airplane : maps.getKeys()) {
+    for (IAirplane4Mrva airplane : maps.getKeys()) {
       evaluateMrvaFail(airplane);
     }
   }
 
-  private void evaluateMrvaFail(Airplane airplane) {
+  private void evaluateMrvaFail(IAirplane4Mrva airplane) {
     if (airplane.getState().is(
         Airplane.State.holdingPoint,
         Airplane.State.takeOffRoll,
@@ -49,7 +50,7 @@ public class MrvaManager {
     } else {
       Border m = maps.get(airplane);
       boolean findNewOne = false;
-      if (m == null && airplane.getVerticalSpeed() <= 0)
+      if (m == null && airplane.getSha().getVerticalSpeed() <= 0)
         findNewOne = true;
       else if (m != null && m.isIn(airplane.getCoordinate()) == false)
         findNewOne = true;
@@ -59,7 +60,7 @@ public class MrvaManager {
       }
 
       boolean isOutOfAltitude = false;
-      if (m != null) isOutOfAltitude = m.isIn(airplane.getAltitude());
+      if (m != null) isOutOfAltitude = m.isIn(airplane.getSha().getAltitude());
       if (isOutOfAltitude && airplane.getState().is(Airplane.State.arrivingLow, Airplane.State.departingLow)) {
         // this is for departures/goarounds when close to runway, very low, so are omitted
         double d = Coordinates.getDistanceInNM(airplane.getCoordinate(), Acc.airport().getLocation());

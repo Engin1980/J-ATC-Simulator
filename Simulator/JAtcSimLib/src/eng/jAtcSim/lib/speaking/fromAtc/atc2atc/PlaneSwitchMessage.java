@@ -38,9 +38,9 @@ public class PlaneSwitchMessage implements IAtc2Atc {
   }
 
   public String getAsString() {
-    if (plane.getPilot().getRoutingModule().getAssignedRoute() == null)
+    if (plane.getRoutingModule().getAssignedRoute() == null)
       throw new EApplicationException("Plane " + plane.getFlightModule().getCallsign() + " does not have assigned route.");
-    if (plane.getPilot().getRoutingModule().getAssignedRunwayThreshold() == null)
+    if (plane.getRoutingModule().getAssignedRunwayThreshold() == null)
       throw new EApplicationException("Plane " + plane.getFlightModule().getCallsign() + " does not have assigned threshold.");
 
     String ret =
@@ -48,8 +48,8 @@ public class PlaneSwitchMessage implements IAtc2Atc {
             plane.getSqwk().toString(),
             plane.getFlightModule().getCallsign().toString(),
             this.getMessageText(),
-            plane.getPilot().getRoutingModule().getAssignedRoute().getName(),
-            plane.getPilot().getRoutingModule().getAssignedRunwayThreshold().getName()
+            plane.getRoutingModule().getAssignedRoute().getName(),
+            plane.getRoutingModule().getAssignedRunwayThreshold().getName()
         );
 
     return ret;
