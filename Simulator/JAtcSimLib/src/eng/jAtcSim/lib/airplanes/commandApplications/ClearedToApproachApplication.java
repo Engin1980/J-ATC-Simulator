@@ -3,7 +3,7 @@ package eng.jAtcSim.lib.airplanes.commandApplications;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
-import eng.jAtcSim.lib.airplanes.interfaces.IAirplaneRO;
+import eng.jAtcSim.lib.airplanes.interfaces.IAirplaneRead;
 import eng.jAtcSim.lib.airplanes.interfaces.IAirplaneWriteSimple;
 import eng.jAtcSim.lib.world.newApproaches.ApproachEntry;
 import eng.jAtcSim.lib.global.Restriction;
@@ -105,7 +105,7 @@ public class ClearedToApproachApplication extends CommandApplication<ClearedToAp
     return ret;
   }
 
-  private NewApproachInfo tryCreateApproachInfo(IReadOnlyList<Approach> apps, IAirplaneRO pilot) {
+  private NewApproachInfo tryCreateApproachInfo(IReadOnlyList<Approach> apps, IAirplaneRead pilot) {
     NewApproachInfo ret = null;
 
     for (Approach approach : apps) {

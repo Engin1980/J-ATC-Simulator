@@ -7,7 +7,7 @@ import eng.jAtcSim.lib.airplanes.Squawk;
 import eng.jAtcSim.lib.airplanes.interfaces.modules.*;
 import eng.jAtcSim.lib.messaging.IMessageParticipant;
 
-public interface IAirplaneRO extends IMessageParticipant {
+public interface IAirplaneRead extends IMessageParticipant {
 
   IAtcModuleRO getAtcModule();
 

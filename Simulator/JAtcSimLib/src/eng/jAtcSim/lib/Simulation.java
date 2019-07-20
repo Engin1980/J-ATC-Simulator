@@ -11,13 +11,16 @@ import eng.eSystem.collections.*;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.events.EventSimple;
 import eng.eSystem.exceptions.EApplicationException;
-
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 import eng.jAtcSim.lib.airplanes.*;
 import eng.jAtcSim.lib.airplanes.moods.Mood;
-import eng.jAtcSim.lib.atcs.*;
+import eng.jAtcSim.lib.atcs.Atc;
+import eng.jAtcSim.lib.atcs.CenterAtc;
+import eng.jAtcSim.lib.atcs.TowerAtc;
+import eng.jAtcSim.lib.atcs.UserAtc;
 import eng.jAtcSim.lib.atcs.planeResponsibility.PlaneResponsibilityManager;
+import eng.jAtcSim.lib.exceptions.ToDoException;
 import eng.jAtcSim.lib.global.ETime;
 import eng.jAtcSim.lib.managers.EmergencyManager;
 import eng.jAtcSim.lib.managers.MrvaManager;
@@ -25,11 +28,10 @@ import eng.jAtcSim.lib.messaging.Message;
 import eng.jAtcSim.lib.messaging.Messenger;
 import eng.jAtcSim.lib.messaging.StringMessageContent;
 import eng.jAtcSim.lib.newStats.StatsManager;
-import eng.jAtcSim.lib.serialization.LoadSave;
 import eng.jAtcSim.lib.textProcessing.parsing.shortBlockParser.ShortBlockParser;
 import eng.jAtcSim.lib.traffic.Movement;
-import eng.jAtcSim.lib.traffic.TrafficManager;
 import eng.jAtcSim.lib.traffic.Traffic;
+import eng.jAtcSim.lib.traffic.TrafficManager;
 import eng.jAtcSim.lib.traffic.fleets.Fleets;
 import eng.jAtcSim.lib.weathers.Weather;
 import eng.jAtcSim.lib.weathers.WeatherManager;
@@ -146,8 +148,109 @@ public class Simulation {
     this.stats = new StatsManager(statsSnapshotDistanceInMinutes);
   }
 
+  public Airport getActiveAirport() {
+    return activeAirport;
+  }
+
+  //TODO shouldn't this be private?
+  public AirplaneTypes getAirplaneTypes() {
+    return airplaneTypes;
+  }
+
+  public UserAtc getAppAtc() {
+    return appAtc;
+  }
+
+  public Area getArea() {
+    return area;
+  }
+
+  public IMap<String, String> getCommandShortcuts() {
+    return this.appAtc.getParser().getShortcuts().getAll2();
+  }
+
+  public void setCommandShortcuts(IMap<String, String> shortcuts) {
+    this.appAtc.getParser().getShortcuts().setAll2(shortcuts);
+  }
+
+  public CenterAtc getCtrAtc() {
+    return ctrAtc;
+  }
+
+  public Fleets getFleets() {
+    return fleets;
+  }
+
+  public Messenger getMessenger() {
+    return messenger;
+  }
+
+  public ETime getNow() {
+    return now;
+  }
+
   public EventSimple<Simulation> getOnRunwayChanged() {
     return onRunwayChanged;
+  }
+
+  public EventSimple<Simulation> getOnSecondElapsed() {
+    return onSecondElapsed;
+  }
+
+  public IReadOnlyList<Airplane.Airplane4Display> getPlanesToDisplay() {
+    return Acc.prm().getPlanesToDisplay();
+  }
+
+  public PlaneResponsibilityManager getPrm() {
+    return prm;
+  }
+
+  public Atc getResponsibleAtc(Airplane plane) {
+    return Acc.prm().getResponsibleAtc(plane);
+  }
+
+  public IReadOnlyList<Movement> getScheduledMovements() {
+    IReadOnlyList<Movement> ret;
+    ret = trafficManager.getScheduledMovements();
+    return ret;
+  }
+
+  public StatsManager getStats() {
+    return stats;
+  }
+
+  public TrafficManager getTrafficManager() {
+    return trafficManager;
+  }
+
+  public TowerAtc getTwrAtc() {
+    return twrAtc;
+  }
+
+  public Weather getWeather() {
+    return this.weatherManager.getWeather();
+  }
+
+  public void init() {
+    Acc.setSimulation(this);
+    Acc.setAirport(this.activeAirport);
+    this.weatherManager.init();
+    Acc.atcTwr().init();
+    Acc.atcApp().init();
+    Acc.atcCtr().init();
+    this.prm.init();
+    this.stats.init();
+
+    Acc.messenger().registerListener(Acc.atcTwr(), Acc.atcTwr());
+    Acc.messenger().registerListener(Acc.atcCtr(), Acc.atcCtr());
+    Acc.messenger().registerListener(Acc.messenger().SYSTEM, Acc.messenger().SYSTEM);
+
+    trafficManager.generateNewTrafficIfRequired();
+    trafficManager.throwOutElapsedMovements(this.now.addMinutes(-5));
+  }
+
+  public boolean isRunning() {
+    return this.tmr.isRunning();
   }
 
   public void load(XElement root) {
@@ -204,85 +307,67 @@ public class Simulation {
 //        q->this.messenger.registerListener(q, q));
   }
 
+  public void pauseUnpauseSim() {
+    if (this.isRunning()) {
+      this.stop();
+    } else {
+      this.start();
+    }
+  }
+
+  public void save(XElement root) {
+    throw new ToDoException();
+//    {
+//      IReadOnlyList<Airplane> planes = this.prm.getPlanes();
+//      XElement tmp = new XElement("planes");
+//      root.addElement(tmp);
+//      for (Airplane plane : planes) {
+//        XElement pln = new XElement("plane");
+//        plane.save(pln);
+//        tmp.addElement(pln);
+//      }
+//    }
+//
+//    {
+//      XElement tmp = new XElement("atcs");
+//      root.addElement(tmp);
+//      this.ctrAtc.save(tmp);
+//      this.twrAtc.save(tmp);
+//      this.appAtc.save(tmp);
+//    }
+//
+//    LoadSave.saveField(root, this, "prm");
+//    LoadSave.saveField(root, this, "now");
+//
+//    {
+//      XElement tmp = new XElement("delayedPlanes");
+//      root.addElement(tmp);
+//      for (Airplane plane : this.newPlanesDelayedToAvoidCollision) {
+//        XElement pln = new XElement("plane");
+//        plane.save(pln);
+//        tmp.addElement(pln);
+//      }
+//    }
+//
+//    //mrvaManager
+//    LoadSave.saveField(root, this, "stats");
+//    LoadSave.saveField(root, this, "emergencyManager");
+//    this.trafficManager.save(root);
+//    LoadSave.saveField(root, this, "simulationSecondLengthInMs");
+  }
+
+  public void sendTextMessageForUser(String text) {
+    Message m = new Message(Messenger.SYSTEM, appAtc,
+        new StringMessageContent(text));
+    this.messenger.send(m);
+  }
+
   public void setSimulationSecondInterval(int intervalMs) {
     if (intervalMs < 0)
       throw new EApplicationException("Interval " + intervalMs + " to be set as second length interval must be greater than 0.");
     this.simulationSecondLengthInMs = intervalMs;
     this.stop();
     this.start();
-  }
-
-  public PlaneResponsibilityManager getPrm() {
-    return prm;
-  }
-
-  public void init() {
-    Acc.setSimulation(this);
-    Acc.setAirport(this.activeAirport);
-    this.weatherManager.init();
-    Acc.atcTwr().init();
-    Acc.atcApp().init();
-    Acc.atcCtr().init();
-    this.prm.init();
-    this.stats.init();
-
-    Acc.messenger().registerListener(Acc.atcTwr(), Acc.atcTwr());
-    Acc.messenger().registerListener(Acc.atcCtr(), Acc.atcCtr());
-    Acc.messenger().registerListener(Acc.messenger().SYSTEM, Acc.messenger().SYSTEM);
-
-    trafficManager.generateNewTrafficIfRequired();
-    trafficManager.throwOutElapsedMovements(this.now.addMinutes(-5));
-  }
-
-  public EventSimple<Simulation> getOnSecondElapsed() {
-    return onSecondElapsed;
-  }
-
-  //TODO shouldn't this be private?
-  public AirplaneTypes getAirplaneTypes() {
-    return airplaneTypes;
-  }
-
-  public IReadOnlyList<Movement> getScheduledMovements() {
-    IReadOnlyList<Movement> ret;
-    ret = trafficManager.getScheduledMovements();
-    return ret;
-  }
-
-  public TrafficManager getTrafficManager() {
-    return trafficManager;
-  }
-
-  public Airport getActiveAirport() {
-    return activeAirport;
-  }
-
-  public String toAltitudeString(double altInFt, boolean appendFt) {
-    if (altInFt > getActiveAirport().getTransitionAltitude()) {
-      return String.format("FL%03d", ((int) altInFt) / 100);
-    } else {
-      if (appendFt) {
-        return String.format("%d ft", (int) altInFt);
-      } else {
-        return String.format("%d", (int) altInFt);
-      }
-    }
-  }
-
-  public ETime getNow() {
-    return now;
-  }
-
-  public Fleets getFleets() {
-    return fleets;
-  }
-
-  public IReadOnlyList<Airplane> getAirplanes() {
-    return Acc.prm().getPlanes();
-  }
-
-  public Messenger getMessenger() {
-    return messenger;
   }
 
   public void start() {
@@ -295,107 +380,16 @@ public class Simulation {
     this.tmr.stop();
   }
 
-  public boolean isRunning() {
-    return this.tmr.isRunning();
-  }
-
-  public IReadOnlyList<Airplane.Airplane4Display> getPlanesToDisplay() {
-    return Acc.prm().getPlanesToDisplay();
-  }
-
-  public Atc getResponsibleAtc(Airplane plane) {
-    return Acc.prm().getResponsibleAtc(plane);
-  }
-
-  public Weather getWeather() {
-    return this.weatherManager.getWeather();
-  }
-
-  public UserAtc getAppAtc() {
-    return appAtc;
-  }
-
-  public TowerAtc getTwrAtc() {
-    return twrAtc;
-  }
-
-  public CenterAtc getCtrAtc() {
-    return ctrAtc;
-  }
-
-  public StatsManager getStats() {
-    return stats;
-  }
-
-  public void sendTextMessageForUser(String text) {
-    Message m = new Message(Messenger.SYSTEM, appAtc,
-        new StringMessageContent(text));
-    this.messenger.send(m);
-  }
-
-  public Area getArea() {
-    return area;
-  }
-
-  public void save(XElement root) {
-
-    {
-      IReadOnlyList<Airplane> planes = this.prm.getPlanes();
-      XElement tmp = new XElement("planes");
-      root.addElement(tmp);
-      for (Airplane plane : planes) {
-        XElement pln = new XElement("plane");
-        plane.save(pln);
-        tmp.addElement(pln);
-      }
-    }
-
-    {
-      XElement tmp = new XElement("atcs");
-      root.addElement(tmp);
-      this.ctrAtc.save(tmp);
-      this.twrAtc.save(tmp);
-      this.appAtc.save(tmp);
-    }
-
-    LoadSave.saveField(root, this, "prm");
-    LoadSave.saveField(root, this, "now");
-
-    {
-      XElement tmp = new XElement("delayedPlanes");
-      root.addElement(tmp);
-      for (Airplane plane : this.newPlanesDelayedToAvoidCollision) {
-        XElement pln = new XElement("plane");
-        plane.save(pln);
-        tmp.addElement(pln);
-      }
-    }
-
-    //mrvaManager
-    LoadSave.saveField(root, this, "stats");
-    LoadSave.saveField(root, this, "emergencyManager");
-    this.trafficManager.save(root);
-    LoadSave.saveField(root, this, "simulationSecondLengthInMs");
-  }
-
-  public IMap<String, String> getCommandShortcuts() {
-    return this.appAtc.getParser().getShortcuts().getAll2();
-  }
-
-  public void setCommandShortcuts(IMap<String, String> shortcuts) {
-    this.appAtc.getParser().getShortcuts().setAll2(shortcuts);
-  }
-
-  public void pauseUnpauseSim() {
-    if (this.isRunning()) {
-      this.stop();
+  public String toAltitudeString(double altInFt, boolean appendFt) {
+    if (altInFt > getActiveAirport().getTransitionAltitude()) {
+      return String.format("FL%03d", ((int) altInFt) / 100);
     } else {
-      this.start();
+      if (appendFt) {
+        return String.format("%d ft", (int) altInFt);
+      } else {
+        return String.format("%d", (int) altInFt);
+      }
     }
-  }
-
-  private void twr_runwayChanged() {
-    this.onRunwayChanged.raise();
   }
 
   private synchronized void elapseSecond() {
@@ -430,7 +424,7 @@ public class Simulation {
 
     stats.elapseSecond();
     long elapseEndMs = System.currentTimeMillis();
-stats.registerElapseSecondCalculationDuration((int) (elapseEndMs - elapseStartMs));
+    stats.registerElapseSecondCalculationDuration((int) (elapseEndMs - elapseStartMs));
 
     // weather
     this.weatherManager.elapseSecond();
@@ -448,6 +442,20 @@ stats.registerElapseSecondCalculationDuration((int) (elapseEndMs - elapseStartMs
       tmr.start(tmr.getTickLength());
   }
 
+  private void evalAirproxes() {
+    Airplanes.evaluateAirproxes(Acc.planes());
+    Acc.planes()
+        .where(q -> q.getAirprox() == AirproxType.full && Acc.prm().getResponsibleAtc(q) == Acc.atcApp())
+        .forEach(q -> q.getMood().experience(Mood.SharedExperience.airprox));
+  }
+
+  private void evalMrvas() {
+    this.mrvaManager.evaluateMrvaFails();
+    Acc.planes()
+        .where(q -> q.isMrvaError() && Acc.prm().getResponsibleAtc(q) == Acc.atcApp())
+        .forEach(q -> q.getMood().experience(Mood.SharedExperience.mrvaViolation));
+  }
+
   private void generateEmergencyIfRequired() {
     if (this.emergencyManager.isEmergencyTimeElapsed()) {
       if (!Acc.planes().isAny(q -> q.isEmergency())) {
@@ -459,16 +467,6 @@ stats.registerElapseSecondCalculationDuration((int) (elapseEndMs - elapseStartMs
           p.raiseEmergency();
       }
       this.emergencyManager.generateEmergencyTime(this.now);
-    }
-  }
-
-  private void updatePlanes() {
-    for (Airplane plane : Acc.planes()) {
-      try {
-        plane.elapseSecond();
-      } catch (Exception ex) {
-        throw new EApplicationException("Error processing elapseSecond() on plane " + plane.getCallsign() + ".", ex);
-      }
     }
   }
 
@@ -501,62 +499,45 @@ stats.registerElapseSecondCalculationDuration((int) (elapseEndMs - elapseStartMs
     }
   }
 
-  private void registerNewPlaneIntoTheSimulation(Airplane newPlane, Atc responsibleAtc) {
-    Acc.prm().registerNewPlane(responsibleAtc, newPlane);
-    Acc.messenger().registerListener(newPlane, newPlane);
-    this.mrvaManager.registerPlane(newPlane);
-  }
+  private boolean isInVicinityOfSomeOtherPlane(Airplane checkedPlane) {
+    Integer checkedAtEntryPointSeconds = null;
 
-  private void removeOldPlanes() {
-    AirplaneList rem = new AirplaneList(true);
-    for (Airplane p : Acc.planes()) {
-      // landed
-      if (p.isArrival() && p.getSpeed() < 11) {
-        rem.add(p);
-        this.stats.registerFinishedPlane(p);
+    boolean ret = false;
+    for (Airplane plane : Acc.planes()) {
+      if (plane.isArrival() == false)
+        continue;
+      if (prm.getResponsibleAtc(plane) != ctrAtc)
+        continue;
+      if (checkedPlane.getEntryExitFix().equals(plane.getEntryExitFix()) == false)
+        continue;
+
+      double dist = Coordinates.getDistanceInNM(
+          plane.getEntryExitFix().getCoordinate(), plane.getCoordinate());
+      int atEntryPointSeconds = (int) (dist / plane.getSpeed() * 3600);
+
+      if (checkedAtEntryPointSeconds == null) {
+        dist = Coordinates.getDistanceInNM(
+            checkedPlane.getEntryExitFix().getCoordinate(), checkedPlane.getCoordinate());
+        checkedAtEntryPointSeconds = (int) (dist / checkedPlane.getSpeed() * 3600);
       }
 
-      // departed
-      if (p.isDeparture() && Acc.prm().getResponsibleAtc(p).equals(Acc.atcCtr())
-          && Coordinates.getDistanceInNM(
-          p.getCoordinate(), Acc.airport().getLocation())
-          > Acc.airport().getCoveredDistance()) {
-        rem.add(p);
-        this.stats.registerFinishedPlane(p);
-      }
-
-      if (p.isEmergency() && p.hasElapsedEmergencyTime()) {
-        rem.add(p);
+      if (Math.abs(atEntryPointSeconds - checkedAtEntryPointSeconds) < 120) {
+        ret = true;
+        break;
       }
     }
-
-    for (Airplane plane : rem) {
-      Acc.prm().unregisterPlane(plane);
-      Acc.messenger().unregisterListener(plane);
-      this.mrvaManager.unregisterPlane(plane);
-    }
+    return ret;
   }
 
-  private void evalAirproxes() {
-    Airplanes.evaluateAirproxes(Acc.planes());
-    Acc.planes()
-        .where(q -> q.getAirprox() == AirproxType.full && Acc.prm().getResponsibleAtc(q) == Acc.atcApp())
-        .forEach(q -> q.getMood().experience(Mood.SharedExperience.airprox));
-  }
+  private void printCommandsHelps() {
+    String txt = new ShortBlockParser().getHelp();
 
-  private void evalMrvas() {
-    this.mrvaManager.evaluateMrvaFails();
-    Acc.planes()
-        .where(q -> q.isMrvaError() && Acc.prm().getResponsibleAtc(q) == Acc.atcApp())
-        .forEach(q -> q.getMood().experience(Mood.SharedExperience.mrvaViolation));
-  }
-
-  private void processSystemMessages() {
-    IList<Message> systemMessages = Acc.messenger().getMessagesByListener(messenger.SYSTEM, true);
-
-    for (Message m : systemMessages) {
-      processSystemMessage(m);
-    }
+    Acc.messenger().send(
+        new Message(
+            messenger.SYSTEM,
+            Acc.atcApp(),
+            new StringMessageContent(txt))
+    );
   }
 
   private void processSystemMessage(Message m) {
@@ -629,33 +610,6 @@ stats.registerElapseSecondCalculationDuration((int) (elapseEndMs - elapseStartMs
     }
   }
 
-  private void processSystemMessageTick(Message m) {
-    String msgText = m.<StringMessageContent>getContent().getMessageText();
-    Matcher matcher = SYSMES_CHANGE_SPEED.matcher(msgText);
-    matcher.find();
-    String tickS = matcher.group(1);
-    int tickI;
-    try {
-      tickI = Integer.parseInt(tickS);
-    } catch (NumberFormatException ex) {
-      Acc.messenger().send(
-          new Message(
-              messenger.SYSTEM,
-              m.<UserAtc>getSource(),
-              new StringMessageContent("Current tick speed is " + tmr.getTickLength() + ". To change use ?tick <value>.", tickS)));
-      return;
-    }
-    this.tmr.stop();
-    this.tmr.start(tickI);
-
-    Acc.messenger().send(
-        new Message(
-            messenger.SYSTEM,
-            m.<UserAtc>getSource(),
-            new StringMessageContent("Tick speed changed to %d milliseconds.", tickI))
-    );
-  }
-
   private void processSystemMessageShortcut(Message m) {
     String msgText = m.<StringMessageContent>getContent().getMessageText();
     Matcher matcher = SYSMES_SHORTCUT.matcher(msgText);
@@ -705,44 +659,88 @@ stats.registerElapseSecondCalculationDuration((int) (elapseEndMs - elapseStartMs
     }
   }
 
-  private void printCommandsHelps() {
-    String txt = new ShortBlockParser().getHelp();
+  private void processSystemMessageTick(Message m) {
+    String msgText = m.<StringMessageContent>getContent().getMessageText();
+    Matcher matcher = SYSMES_CHANGE_SPEED.matcher(msgText);
+    matcher.find();
+    String tickS = matcher.group(1);
+    int tickI;
+    try {
+      tickI = Integer.parseInt(tickS);
+    } catch (NumberFormatException ex) {
+      Acc.messenger().send(
+          new Message(
+              messenger.SYSTEM,
+              m.<UserAtc>getSource(),
+              new StringMessageContent("Current tick speed is " + tmr.getTickLength() + ". To change use ?tick <value>.", tickS)));
+      return;
+    }
+    this.tmr.stop();
+    this.tmr.start(tickI);
 
     Acc.messenger().send(
         new Message(
             messenger.SYSTEM,
-            Acc.atcApp(),
-            new StringMessageContent(txt))
+            m.<UserAtc>getSource(),
+            new StringMessageContent("Tick speed changed to %d milliseconds.", tickI))
     );
   }
 
-  private boolean isInVicinityOfSomeOtherPlane(Airplane checkedPlane) {
-    Integer checkedAtEntryPointSeconds = null;
+  private void processSystemMessages() {
+    IList<Message> systemMessages = Acc.messenger().getMessagesByListener(messenger.SYSTEM, true);
 
-    boolean ret = false;
-    for (Airplane plane : Acc.planes()) {
-      if (plane.isArrival() == false)
-        continue;
-      if (prm.getResponsibleAtc(plane) != ctrAtc)
-        continue;
-      if (checkedPlane.getEntryExitFix().equals(plane.getEntryExitFix()) == false)
-        continue;
+    for (Message m : systemMessages) {
+      processSystemMessage(m);
+    }
+  }
 
-      double dist = Coordinates.getDistanceInNM(
-          plane.getEntryExitFix().getCoordinate(), plane.getCoordinate());
-      int atEntryPointSeconds = (int) (dist / plane.getSpeed() * 3600);
+  private void registerNewPlaneIntoTheSimulation(Airplane newPlane, Atc responsibleAtc) {
+    Acc.prm().registerNewPlane(responsibleAtc, newPlane);
+    Acc.messenger().registerListener(newPlane, newPlane);
+    this.mrvaManager.registerPlane(newPlane);
+  }
 
-      if (checkedAtEntryPointSeconds == null) {
-        dist = Coordinates.getDistanceInNM(
-            checkedPlane.getEntryExitFix().getCoordinate(), checkedPlane.getCoordinate());
-        checkedAtEntryPointSeconds = (int) (dist / checkedPlane.getSpeed() * 3600);
+  private void removeOldPlanes() {
+    AirplaneList rem = new AirplaneList(true);
+    for (Airplane p : Acc.planes()) {
+      // landed
+      if (p.isArrival() && p.getSpeed() < 11) {
+        rem.add(p);
+        this.stats.registerFinishedPlane(p);
       }
 
-      if (Math.abs(atEntryPointSeconds - checkedAtEntryPointSeconds) < 120) {
-        ret = true;
-        break;
+      // departed
+      if (p.isDeparture() && Acc.prm().getResponsibleAtc(p).equals(Acc.atcCtr())
+          && Coordinates.getDistanceInNM(
+          p.getCoordinate(), Acc.airport().getLocation())
+          > Acc.airport().getCoveredDistance()) {
+        rem.add(p);
+        this.stats.registerFinishedPlane(p);
+      }
+
+      if (p.isEmergency() && p.hasElapsedEmergencyTime()) {
+        rem.add(p);
       }
     }
-    return ret;
+
+    for (Airplane plane : rem) {
+      Acc.prm().unregisterPlane(plane);
+      Acc.messenger().unregisterListener(plane);
+      this.mrvaManager.unregisterPlane(plane);
+    }
+  }
+
+  private void twr_runwayChanged() {
+    this.onRunwayChanged.raise();
+  }
+
+  private void updatePlanes() {
+    for (Airplane plane : Acc.planes()) {
+      try {
+        plane.elapseSecond();
+      } catch (Exception ex) {
+        throw new EApplicationException("Error processing elapseSecond() on plane " + plane.getCallsign() + ".", ex);
+      }
+    }
   }
 }

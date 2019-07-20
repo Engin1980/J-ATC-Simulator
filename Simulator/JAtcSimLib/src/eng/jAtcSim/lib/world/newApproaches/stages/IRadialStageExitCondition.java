@@ -1,7 +1,7 @@
 package eng.jAtcSim.lib.world.newApproaches.stages;
 
-import eng.jAtcSim.lib.airplanes.interfaces.IAirplaneRO;
+import eng.jAtcSim.lib.airplanes.interfaces.IAirplaneRead;
 
 public interface IRadialStageExitCondition {
-  boolean isTrue(IAirplaneRO plane);
+  boolean isTrue(IAirplaneRead plane);
 }

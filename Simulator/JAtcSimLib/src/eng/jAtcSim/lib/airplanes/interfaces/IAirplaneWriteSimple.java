@@ -3,7 +3,6 @@ package eng.jAtcSim.lib.airplanes.interfaces;
 import eng.eSystem.geo.Coordinate;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.FlightRecorder;
-import eng.jAtcSim.lib.airplanes.modules.PilotRecorderModule;
 import eng.jAtcSim.lib.airplanes.behaviors.Behavior;
 import eng.jAtcSim.lib.airplanes.navigators.HeadingNavigator;
 import eng.jAtcSim.lib.airplanes.navigators.INavigator;
@@ -13,7 +12,7 @@ import eng.jAtcSim.lib.speaking.IFromAirplane;
 import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.world.Navaid;
 
-public interface IAirplaneWriteSimple extends IAirplaneRO {
+public interface IAirplaneWriteSimple extends IAirplaneRead {
 
   void adjustTargetSpeed();
 

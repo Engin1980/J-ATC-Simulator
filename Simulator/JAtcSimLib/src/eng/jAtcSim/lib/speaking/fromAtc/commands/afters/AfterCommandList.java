@@ -13,9 +13,8 @@ import eng.eSystem.geo.Coordinates;
 import eng.eSystem.utilites.ConversionUtils;
 import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
 import eng.jAtcSim.lib.Acc;
-import eng.jAtcSim.lib.airplanes.pilots.Pilot;
 import eng.eSystem.geo.Coordinate;
-import eng.jAtcSim.lib.airplanes.interfaces.IAirplaneRO;
+import eng.jAtcSim.lib.airplanes.interfaces.IAirplaneRead;
 import eng.jAtcSim.lib.global.Headings;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.*;
 import eng.jAtcSim.lib.speaking.IFromAtc;
@@ -29,6 +28,8 @@ import java.util.function.Predicate;
  * @author Marek
  */
 public class AfterCommandList {
+
+  private static final double SPEED_TO_OVER_NAVAID_DISTANCE_MULTIPLIER = 0.007;
 
   public enum Type {
     route,
@@ -61,7 +62,7 @@ public class AfterCommandList {
     return ret;
   }
 
-  private static boolean isAFItemPassed(AFItem item, IAirplaneRO plane, Coordinate currentTargetCoordinateOrNull) {
+  private static boolean isAFItemPassed(AFItem item, IAirplaneRead plane, Coordinate currentTargetCoordinateOrNull) {
     boolean ret;
 
     if (item.antecedent instanceof AfterAltitudeCommand) {
@@ -80,7 +81,7 @@ public class AfterCommandList {
             = Coordinates.getDistanceInNM(
             ((AfterNavaidCommand) item.antecedent).getNavaid().getCoordinate(),
             plane.getCoordinate());
-        double overDist = plane.getSha().getSpeed() * Pilot.SPEED_TO_OVER_NAVAID_DISTANCE_MULTIPLIER;
+        double overDist = plane.getSha().getSpeed() * SPEED_TO_OVER_NAVAID_DISTANCE_MULTIPLIER;
         ret = (dist < overDist);
       }
     } else if (item.antecedent instanceof AfterHeadingCommand) {
@@ -106,7 +107,7 @@ public class AfterCommandList {
 
   private static SpeechList<IAtcCommand> getAndRemoveSatisfiedCommands(
       IList<AFItem> lst,
-      IAirplaneRO referencePlane, Coordinate currentTargetCoordinateOrNull,
+      IAirplaneRead referencePlane, Coordinate currentTargetCoordinateOrNull,
       boolean untilFirstNotSatisfied) {
 
     SpeechList<IAtcCommand> ret = new SpeechList<>();
@@ -219,7 +220,7 @@ public class AfterCommandList {
     return ret;
   }
 
-  public SpeechList<IAtcCommand> getAndRemoveSatisfiedCommands(IAirplaneRO referencePlane, Coordinate currentTargetCoordinateOrNull, Type type) {
+  public SpeechList<IAtcCommand> getAndRemoveSatisfiedCommands(IAirplaneRead referencePlane, Coordinate currentTargetCoordinateOrNull, Type type) {
     SpeechList<IAtcCommand> ret;
     IList<AFItem> tmp;
     boolean untilFirstNotSatisfied;

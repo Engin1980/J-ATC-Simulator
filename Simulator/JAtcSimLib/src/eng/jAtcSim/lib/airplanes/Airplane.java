@@ -17,7 +17,6 @@ import eng.jAtcSim.lib.airplanes.moods.Mood;
 import eng.jAtcSim.lib.airplanes.navigators.HeadingNavigator;
 import eng.jAtcSim.lib.airplanes.navigators.INavigator;
 import eng.jAtcSim.lib.airplanes.navigators.ToCoordinateNavigator;
-import eng.jAtcSim.lib.airplanes.pilots.Pilot;
 import eng.jAtcSim.lib.atcs.Atc;
 import eng.jAtcSim.lib.exceptions.ToDoException;
 import eng.jAtcSim.lib.global.ETime;
@@ -38,6 +37,113 @@ import eng.jAtcSim.lib.world.Route;
 import eng.jAtcSim.lib.world.newApproaches.NewApproachInfo;
 
 public class Airplane implements IAirplaneWriteSimple {
+
+    public class Airplane4Display {
+
+    public int altitude() {
+      return Airplane.this.sha.getAltitude();
+    }
+
+    public Callsign callsign() {
+      return Airplane.this.flightModule.getCallsign();
+    }
+
+    public Coordinate coordinate() {
+      return Airplane.this.coordinate;
+    }
+
+    public Navaid entryExitPoint() {
+      return Airplane.this.routingModule.getEntryExitFix();
+    }
+
+    public AirproxType getAirprox() {
+      return Airplane.this.mrvaAirproxModule.getAirprox();
+    }
+
+    public Route getAssignedRoute() {
+      return Airplane.this.routingModule.getAssignedRoute();
+    }
+
+    public ActiveRunwayThreshold getExpectedRunwayThreshold() {
+      return Airplane.this.routingModule.getAssignedRunwayThreshold();
+    }
+
+    public boolean hasRadarContact() {
+      return Airplane.this.atcModule.hasRadarContact();
+    }
+
+    public int heading() {
+      return Airplane.this.sha.getHeading();
+    }
+
+    public int ias() {
+      return Airplane.this.sha.getSpeed();
+    }
+
+    public boolean isDeparture() {
+      return Airplane.this.flightModule.isDeparture();
+    }
+
+    public boolean isEmergency() {
+      return Airplane.this.emergencyModule.isEmergency();
+    }
+
+    public boolean isMrvaError() {
+      return Airplane.this.mrvaAirproxModule.isMrvaError();
+    }
+
+    public AirplaneType planeType() {
+      return Airplane.this.airplaneType;
+    }
+
+    public Atc responsibleAtc() {
+      return Acc.prm().getResponsibleAtc(Airplane.this);
+    }
+
+    public Squawk squawk() {
+      return Airplane.this.sqwk;
+    }
+
+    public String status() {
+      Behavior behavior = Airplane.this.behaviorModule.get();
+    if (behavior instanceof BasicBehavior)
+      return behavior instanceof ArrivalBehavior ? "Arriving" : "Departing";
+    else if (behavior instanceof HoldBehavior)
+      return "Holding";
+    else if (behavior instanceof NewApproachBehavior)
+      return "In approach " + Airplane.this.routingModule.getAssignedRunwayThreshold().getName();
+    else if (behavior instanceof HoldingPointBehavior)
+      return "Holding point";
+    else if (behavior instanceof TakeOffBehavior)
+      return "Take-off";
+    else
+      return "???";
+    }
+
+    public int targetAltitude() {
+      return Airplane.this.sha.getTargetAltitude();
+    }
+
+    public int targetHeading() {
+      return Airplane.this.sha.getTargetHeading();
+    }
+
+    public int targetSpeed() {
+      return Airplane.this.sha.getTargetSpeed();
+    }
+
+    public int tas() {
+      return Airplane.this.sha.getTAS();
+    }
+
+    public Atc tunedAtc() {
+      return Airplane.this.atcModule.getTunedAtc();
+    }
+
+    public int verticalSpeed() {
+      return (int) Airplane.this.sha.getVerticalSpeed();
+    }
+  }
 
   public class AirplaneWriteAdvanced implements IAirplaneWriteAdvanced{
 
@@ -509,100 +615,7 @@ public class Airplane implements IAirplaneWriteSimple {
 
   //region Inner classes
 
-//  public class Airplane4Display {
-//
-//    public int altitude() {
-//      return (int) Airplane.this.sha.getAltitude();
-//    }
-//
-//    public Callsign callsign() {
-//      return Airplane.this.flightModule.getCallsign();
-//    }
-//
-//    public Coordinate coordinate() {
-//      return Airplane.this.coordinate;
-//    }
-//
-//    public Navaid entryExitPoint() {
-//      return Airplane.this.getEntryExitFix();
-//    }
-//
-//    public AirproxType getAirprox() {
-//      return Airplane.this.mrvaAirproxModule.getAirprox();
-//    }
-//
-//    public Route getAssignedRoute() {
-//      return Airplane.this.pilot.getRoutingModule().getAssignedRoute();
-//    }
-//
-//    public ActiveRunwayThreshold getExpectedRunwayThreshold() {
-//      return Airplane.this.pilot.getRoutingModule().getExpectedRunwayThreshold();
-//    }
-//
-//    public boolean hasRadarContact() {
-//      return Airplane.this.pilot.getAtcModule().hasRadarContact();
-//    }
-//
-//    public int heading() {
-//      return (int) Airplane.this.sha.getHeading();
-//    }
-//
-//    public int ias() {
-//      return (int) Airplane.this.sha.getSpeed();
-//    }
-//
-//    public boolean isDeparture() {
-//      return Airplane.this.flightModule.isDeparture();
-//    }
-//
-//    public boolean isEmergency() {
-//      return Airplane.this.emergencyModule.isEmergency();
-//    }
-//
-//    public boolean isMrvaError() {
-//      return Airplane.this.mrvaAirproxModule.isMrvaError();
-//    }
-//
-//    public AirplaneType planeType() {
-//      return Airplane.this.airplaneType;
-//    }
-//
-//    public Atc responsibleAtc() {
-//      return Acc.prm().getResponsibleAtc(Airplane.this);
-//    }
-//
-//    public Squawk squawk() {
-//      return Airplane.this.sqwk;
-//    }
-//
-//    public String status() {
-//      return pilot.getStatusAsString();
-//    }
-//
-//    public int targetAltitude() {
-//      return Airplane.this.sha.getTargetAltitude();
-//    }
-//
-//    public int targetHeading() {
-//      return Airplane.this.sha.getTargetHeading();
-//    }
-//
-//    public int targetSpeed() {
-//      return Airplane.this.sha.getTargetSpeed();
-//    }
-//
-//    public double tas() {
-//      return Airplane.this.getTAS();
-//    }
-//
-//    public Atc tunedAtc() {
-//      return pilot.getAtcModule().getTunedAtc();
-//    }
-//
-//    public int verticalSpeed() {
-//      return (int) Airplane.this.sha.getVerticalSpeed();
-//    }
-//  }
+
 
 
 //  public class Airplane4Pilot {

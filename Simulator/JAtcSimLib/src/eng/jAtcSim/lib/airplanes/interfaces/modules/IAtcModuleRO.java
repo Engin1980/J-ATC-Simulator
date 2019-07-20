@@ -6,4 +6,6 @@ public interface IAtcModuleRO {
   int getSecondsWithoutRadarContact();
 
   Atc getTunedAtc();
+
+  boolean hasRadarContact();
 }

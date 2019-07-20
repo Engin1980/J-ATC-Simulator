@@ -9,6 +9,14 @@ public interface IRoutingModuleRO {
 
   ActiveRunwayThreshold getAssignedRunwayThreshold();
 
+  Navaid getDepartureLastNavaid();
+
+  Navaid getEntryExitFix();
+
+  default boolean isOnWayToPassDeparturePoint(){
+    return this.isGoingToFlightOverNavaid(this.getEntryExitFix());
+  }
+
   boolean isRouteEmpty();
 
   boolean hasLateralDirectionAfterCoordinate();

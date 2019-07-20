@@ -9,8 +9,7 @@ import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.geo.Coordinates;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
-import eng.jAtcSim.lib.airplanes.interfaces.IAirplaneRO;
-import eng.jAtcSim.lib.airplanes.interfaces.IAirplaneWriteSimple;
+import eng.jAtcSim.lib.airplanes.interfaces.IAirplaneRead;
 import eng.jAtcSim.lib.atcs.planeResponsibility.SwitchRoutingRequest;
 import eng.jAtcSim.lib.messaging.Message;
 import eng.jAtcSim.lib.messaging.StringMessageContent;
@@ -29,9 +28,9 @@ public class CenterAtc extends ComputerAtc {
   private int ctrAcceptDistance = 40;
   private int ctrNavaidAcceptDistance = 15;
 
-  private IList<IAirplaneRO> farArrivals = new EList<>();
-  private IList<IAirplaneRO> middleArrivals = new EList<>();
-  private IList<IAirplaneRO> closeArrivals = new EList<>();
+  private IList<IAirplaneRead> farArrivals = new EList<>();
+  private IList<IAirplaneRead> middleArrivals = new EList<>();
+  private IList<IAirplaneRead> closeArrivals = new EList<>();
 
   public CenterAtc(AtcTemplate template) {
     super(template);
@@ -56,9 +55,9 @@ public class CenterAtc extends ComputerAtc {
     if (Acc.now().getTotalSeconds() % 16 == 0) {
       double dist;
 
-      IList<IAirplaneRO> tmp = new EList<>();
+      IList<IAirplaneRead> tmp = new EList<>();
 
-      for (IAirplaneRO plane : middleArrivals) {
+      for (IAirplaneRead plane : middleArrivals) {
         try {
           evaluateMiddleArrivalsForCloseArrivals(tmp, plane);
         } catch (Exception ex) {
@@ -69,8 +68,8 @@ public class CenterAtc extends ComputerAtc {
       closeArrivals.add(tmp);
       tmp.clear();
 
-      for (IAirplaneRO plane : farArrivals) {
-        dist = Coordinates.getDistanceInNM(plane.getEntryExitFix().getCoordinate(), plane.getCoordinate());
+      for (IAirplaneRead plane : farArrivals) {
+        dist = Coordinates.getDistanceInNM(plane.getRoutingModule().getEntryExitFix().getCoordinate(), plane.getCoordinate());
         if (dist < 50) {
           if (plane.getSha().getAltitude() > 29_000) {
             int newAlt = Acc.rnd().nextInt(25, 29) * 1_000;
@@ -89,7 +88,7 @@ public class CenterAtc extends ComputerAtc {
   }
 
   @Override
-  public void unregisterPlaneUnderControl(IAirplaneRO plane) {
+  public void unregisterPlaneUnderControl(IAirplaneRead plane) {
     if (plane.getFlightModule().isArrival()) {
       farArrivals.tryRemove(plane);
       middleArrivals.tryRemove(plane);
@@ -98,18 +97,18 @@ public class CenterAtc extends ComputerAtc {
   }
 
   @Override
-  public void removePlaneDeletedFromGame(IAirplaneRO plane) {
+  public void removePlaneDeletedFromGame(IAirplaneRead plane) {
 
   }
 
   @Override
-  public void registerNewPlaneUnderControl(IAirplaneRO plane, boolean finalRegistration) {
+  public void registerNewPlaneUnderControl(IAirplaneRead plane, boolean finalRegistration) {
     if (plane.getFlightModule().isArrival())
       farArrivals.add(plane);
   }
 
   @Override
-  protected boolean acceptsNewRouting(IAirplaneRO plane, SwitchRoutingRequest srr) {
+  protected boolean acceptsNewRouting(IAirplaneRead plane, SwitchRoutingRequest srr) {
     boolean ret;
     ret = srr.route.isValidForCategory(plane.getType().category)
         && (srr.route.getType() == Route.eType.vectoring
@@ -118,16 +117,16 @@ public class CenterAtc extends ComputerAtc {
     return ret;
   }
 
-  private void evaluateMiddleArrivalsForCloseArrivals(IList<IAirplaneRO> tmp, IAirplaneRO plane) {
+  private void evaluateMiddleArrivalsForCloseArrivals(IList<IAirplaneRead> tmp, IAirplaneRead plane) {
     double dist;
-    dist = Coordinates.getDistanceInNM(plane.getEntryExitFix().getCoordinate(), plane.getCoordinate());
+    dist = Coordinates.getDistanceInNM(plane.getRoutingModule().getEntryExitFix().getCoordinate(), plane.getCoordinate());
     if (dist < 27) {
       SpeechList<IAtcCommand> cmds = new SpeechList<>();
       if (plane.getSha().getTargetAltitude() > Acc.atcCtr().getOrderedAltitude())
         cmds.add(new ChangeAltitudeCommand(ChangeAltitudeCommand.eDirection.descend, Acc.atcCtr().getOrderedAltitude()));
 
       // assigns route
-      Navaid n = plane.getEntryExitFix();
+      Navaid n = plane.getRoutingModule().getEntryExitFix();
       Tuple<Route, ActiveRunwayThreshold> rrt = getRoutingForPlaneAndFix(plane, n);
       Route r = rrt.getA();
       ActiveRunwayThreshold rt = rrt.getB();
@@ -151,21 +150,21 @@ public class CenterAtc extends ComputerAtc {
   }
 
   @Override
-  protected boolean shouldBeSwitched(IAirplaneRO plane) {
+  protected boolean shouldBeSwitched(IAirplaneRead plane) {
     return true;
   }
 
   @Override
-  protected RequestResult canIAcceptPlane(IAirplaneRO p) {
+  protected RequestResult canIAcceptPlane(IAirplaneRead p) {
     RequestResult ret;
     if (p.getFlightModule().isArrival()) {
       ret = new RequestResult(false, String.format("%s is an arrival.", p.getFlightModule().getCallsign().toString()));
     } else {
-      if (p.isOnWayToPassDeparturePoint() == false) {
+      if (p.getRoutingModule().isOnWayToPassDeparturePoint() == false) {
         ret = new RequestResult(false,
             String.format("%s is not heading (or on the route to) departure fix %s",
                 p.getFlightModule().getCallsign().toString(),
-                p.getAssigneRoute().getMainNavaid().getName()));
+                p.getRoutingModule().getAssignedRoute().getMainNavaid().getName()));
       } else {
         if (p.getSha().getAltitude() > super.acceptAltitude || p.getSha().getAltitude() > (p.getType().maxAltitude * .666)) {
           ret = new RequestResult(true, null);
@@ -174,7 +173,7 @@ public class CenterAtc extends ComputerAtc {
           if (aipDist > this.ctrAcceptDistance) {
             ret = new RequestResult(true, null);
           } else {
-            double navDist = Coordinates.getDistanceInNM(p.getCoordinate(), p.getAdvanced().getDepartureLastNavaid().getCoordinate());
+            double navDist = Coordinates.getDistanceInNM(p.getCoordinate(), p.getRoutingModule().getDepartureLastNavaid().getCoordinate());
             if (navDist < this.ctrNavaidAcceptDistance) {
               ret = new RequestResult(true, null);
             } else {
@@ -192,7 +191,7 @@ public class CenterAtc extends ComputerAtc {
   }
 
   @Override
-  protected void processMessagesFromPlane(IAirplaneRO plane, SpeechList spchs) {
+  protected void processMessagesFromPlane(IAirplaneRead plane, SpeechList spchs) {
     for (Object o : spchs) {
       if (o instanceof GoodDayNotification) {
         if (((GoodDayNotification) o).isRepeated()) continue; // repeated g-d-n are ignored
@@ -207,7 +206,7 @@ public class CenterAtc extends ComputerAtc {
               new ChangeSpeedCommand()); // to abort speeed restriction
 
           // order to continue after last fix
-          Navaid n = plane.getAdvanced().getDepartureLastNavaid();
+          Navaid n = plane.getRoutingModule().getDepartureLastNavaid();
           cmds.add(new AfterNavaidCommand(n));
           cmds.add(new ChangeHeadingCommand());
 
@@ -221,7 +220,7 @@ public class CenterAtc extends ComputerAtc {
   }
 
   @Override
-  protected Atc getTargetAtcIfPlaneIsReadyToSwitch(IAirplaneRO plane) {
+  protected Atc getTargetAtcIfPlaneIsReadyToSwitch(IAirplaneRead plane) {
     Atc ret;
     if (plane.getFlightModule().isArrival()) {
       if (plane.getEmergencyModule().isEmergency())
@@ -230,7 +229,7 @@ public class CenterAtc extends ComputerAtc {
         if (closeArrivals.contains(plane) == false) {
           return null;
         }
-        Navaid n = plane.getEntryExitFix();
+        Navaid n = plane.getRoutingModule().getEntryExitFix();
         double dist = Coordinates.getDistanceInNM(plane.getCoordinate(), n.getCoordinate());
         if (dist <= 10) {
           ret = Acc.atcApp();
@@ -258,7 +257,7 @@ public class CenterAtc extends ComputerAtc {
     LoadSave.loadField(elm, this, "closeArrivals");
   }
 
-  private Tuple<Route, ActiveRunwayThreshold> getRoutingForPlaneAndFix(IAirplaneRO plane, Navaid n) {
+  private Tuple<Route, ActiveRunwayThreshold> getRoutingForPlaneAndFix(IAirplaneRead plane, Navaid n) {
     Tuple<Route, ActiveRunwayThreshold> ret;
     Route r = null;
     ActiveRunwayThreshold rt = null;
@@ -279,11 +278,11 @@ public class CenterAtc extends ComputerAtc {
     while (r == null && !thresholdsCopy.isEmpty()) {
       rt = thresholdsCopy.getRandom();
       thresholdsCopy.remove(rt);
-      r = rt.getArrivalRouteForPlane(plane.getType(), plane.getSha().getTargetAltitude(), plane.getEntryExitFix(), false);
+      r = rt.getArrivalRouteForPlane(plane.getType(), plane.getSha().getTargetAltitude(), plane.getRoutingModule().getEntryExitFix(), false);
     }
     if (thresholdsCopy.isEmpty() && r == null) {
       rt = thresholds.getRandom();
-      r = rt.getArrivalRouteForPlane(plane.getType(), plane.getSha().getTargetAltitude(), plane.getEntryExitFix(), true);
+      r = rt.getArrivalRouteForPlane(plane.getType(), plane.getSha().getTargetAltitude(), plane.getRoutingModule().getEntryExitFix(), true);
     }
     assert rt != null;
     assert r != null;
@@ -292,7 +291,7 @@ public class CenterAtc extends ComputerAtc {
     return ret;
   }
 
-  private int getDepartureRandomTargetAltitude(Airplane p) {
+  private int getDepartureRandomTargetAltitude(IAirplaneRead p) {
     int min;
     switch (p.getType().category) {
       case 'A':
@@ -308,7 +307,7 @@ public class CenterAtc extends ComputerAtc {
       default:
         throw new UnsupportedOperationException();
     }
-    min = (int) Math.max(p.getSha().getAltitude() / 1000, min);
+    min = Math.max(p.getSha().getAltitude() / 1000, min);
     int ret = Acc.rnd().nextInt(min, p.getType().maxAltitude / 1000);
     ret = ret * 1000;
     return ret;

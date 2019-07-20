@@ -6,7 +6,6 @@
 package eng.jAtcSim.lib.airplanes;
 
 import eng.jAtcSim.lib.Acc;
-import eng.jAtcSim.lib.airplanes.pilots.Pilot;
 import eng.eSystem.EStringBuilder;
 import eng.jAtcSim.lib.global.Headings;
 import eng.jAtcSim.lib.global.logging.AbstractSaver;
@@ -14,9 +13,6 @@ import eng.jAtcSim.lib.global.logging.FileSaver;
 import eng.jAtcSim.lib.global.logging.Recorder;
 import eng.jAtcSim.lib.messaging.Message;
 import eng.jAtcSim.lib.global.ETime;
-
-import java.io.OutputStream;
-import java.nio.file.Path;
 
 /**
  * @author Marek Vajgl
@@ -64,32 +60,40 @@ public class FlightRecorder extends Recorder {
    *
    * @param plane Plane to write about.
    */
-  void logFDR(Airplane plane, Pilot pilot) {
+  void logFDR(Airplane plane) {
     ETime now = Acc.now();
     sb.clear();
 
     sb.append("FDR ").append(SEPARATOR);
     sb.appendFormat(" %s ", now.toString()).append(SEPARATOR);
-    sb.appendFormat(" %s ", plane.getCallsign().toString()).append(SEPARATOR);
+    sb.appendFormat(" %s ", plane.getFlightModule().getCallsign().toString()).append(SEPARATOR);
 
     // coord
     sb.appendFormat(" %20s  ", plane.getCoordinate().toString()).append(SEPARATOR);
 
     // heading
-    sb.appendFormat(" H:%5s => %03d/%03d  ", plane.getHeadingS(),
-        plane.getTargetHeading(),
-        (int) Headings.add(plane.getTargetHeading(), -Acc.airport().getDeclination())
+    sb.appendFormat(" H:  %3d => %03d/%03d  ", plane.getSha().getHeading(),
+        plane.getSha().getTargetHeading(),
+        (int) Headings.add(plane.getSha().getTargetHeading(), -Acc.airport().getDeclination())
         ).append(SEPARATOR);
 
     // alt
-    sb.appendFormat(" A:%7.0f (%5.0f) => %7d ", plane.getAltitude(), plane.getVerticalSpeed(), plane.getTargetAltitude()).append(SEPARATOR);
+    sb.appendFormat(" A:%7.0f (%5.0f) => %7d ",
+        plane.getSha().getAltitude(),
+        plane.getSha().getVerticalSpeed(),
+        plane.getSha().getTargetAltitude())
+        .append(SEPARATOR);
 
     // spd
-    sb.appendFormat(" S:%5.0f (%5.0f) => %5d ", plane.getSpeed(), plane.getGS(), plane.getTargetSpeed()).append(SEPARATOR);
+    sb.appendFormat(" S:%5.0f (%5.0f) => %5d ",
+        plane.getSha().getSpeed(),
+        plane.getSha().getGS(),
+        plane.getSha().getTargetSpeed())
+        .append(SEPARATOR);
     sb.appendFormat("%-20s", plane.getState().toString()).append(SEPARATOR);
 
     // from pilot
-    sb.appendFormat(" BEH: {%s} ", pilot.getBehaviorLogString());
+    sb.appendFormat(" BEH: {%s} ", plane.getBehaviorModule().get().toLogString());
 
     super.writeLine(sb.toString());
   }

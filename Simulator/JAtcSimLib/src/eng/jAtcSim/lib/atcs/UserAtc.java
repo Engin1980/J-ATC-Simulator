@@ -12,7 +12,7 @@ import eng.eSystem.utilites.RegexUtils;
 import eng.eSystem.validation.Validator;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.*;
-import eng.jAtcSim.lib.airplanes.interfaces.IAirplaneRO;
+import eng.jAtcSim.lib.airplanes.interfaces.IAirplaneRead;
 import eng.jAtcSim.lib.atcs.planeResponsibility.SwitchRoutingRequest;
 import eng.jAtcSim.lib.messaging.Message;
 import eng.jAtcSim.lib.messaging.Messenger;
@@ -81,7 +81,7 @@ public class UserAtc extends Atc {
   }
 
   public void sendToPlane(Callsign c, SpeechList speeches) {
-    IAirplaneRO pln = Airplanes.tryGetByCallsign(Acc.planes(), c);
+    IAirplaneRead pln = Airplanes.tryGetByCallsign(Acc.planes(), c);
     if (pln == null) {
       raiseError("No such plane for callsign \"" + c.toString() + "\".");
       return;
@@ -121,7 +121,7 @@ public class UserAtc extends Atc {
     super.sendMessage(m);
   }
 
-  public void sendPlaneSwitchMessageToAtc(Atc.eType type, IAirplaneRO plane, String additionalMessage) {
+  public void sendPlaneSwitchMessageToAtc(Atc.eType type, IAirplaneRead plane, String additionalMessage) {
     Atc otherAtc = Acc.atc(type);
     PlaneSwitchMessage.eMessageType msgType;
 
@@ -183,7 +183,7 @@ public class UserAtc extends Atc {
     return parser;
   }
 
-  private Tuple<SwitchRoutingRequest, String> decodeAdditionalRouting(String text, IAirplaneRO plane) {
+  private Tuple<SwitchRoutingRequest, String> decodeAdditionalRouting(String text, IAirplaneRead plane) {
     Validator.isNotNull(plane);
 
     Matcher m =
@@ -248,17 +248,17 @@ public class UserAtc extends Atc {
   }
 
   @Override
-  public void unregisterPlaneUnderControl(IAirplaneRO plane) {
+  public void unregisterPlaneUnderControl(IAirplaneRead plane) {
 
   }
 
   @Override
-  public void removePlaneDeletedFromGame(IAirplaneRO plane) {
+  public void removePlaneDeletedFromGame(IAirplaneRead plane) {
 
   }
 
   @Override
-  public void registerNewPlaneUnderControl(IAirplaneRO plane, boolean finalRegistration) {
+  public void registerNewPlaneUnderControl(IAirplaneRead plane, boolean finalRegistration) {
 
   }
 
@@ -284,13 +284,13 @@ public class UserAtc extends Atc {
     }
   }
 
-  private void sendToPlane(IAirplaneRO plane, SpeechList speeches) {
+  private void sendToPlane(IAirplaneRead plane, SpeechList speeches) {
     confirmAtcChangeInPlaneResponsibilityManagerIfRequired(plane, speeches);
     Message m = new Message(this, plane, speeches);
     super.sendMessage(m);
   }
 
-  private void confirmAtcChangeInPlaneResponsibilityManagerIfRequired(IAirplaneRO plane, SpeechList speeches) {
+  private void confirmAtcChangeInPlaneResponsibilityManagerIfRequired(IAirplaneRead plane, SpeechList speeches) {
     ContactCommand cc = (ContactCommand) speeches.tryGetFirst(q -> q instanceof ContactCommand);
     if (cc != null) {
       getPrm().applyConfirmedSwitch(this, plane);
