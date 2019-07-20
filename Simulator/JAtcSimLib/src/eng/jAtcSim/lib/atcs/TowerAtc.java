@@ -668,11 +668,6 @@ public class TowerAtc extends ComputerAtc {
     super.sendMessage(msg);
   }
 
-  private void setHoldingPointStateHack(IAirplane4Atc toReadyPlane, ActiveRunwayThreshold availableThreshold) {
-    IAirplaneWriteSimple plane = (IAirplaneWriteSimple) toReadyPlane;
-    plane.getAdvanced().setHoldingPointState(availableThreshold.getCoordinate(), (int) Math.round(availableThreshold.getCourse()));
-  }
-
   @Override
   protected boolean shouldBeSwitched(IAirplane4Atc plane) {
     if (plane.getFlightModule().isArrival())
