@@ -2,6 +2,7 @@ package eng.jAtcSim.lib.airplanes.modules;
 
 import eng.eSystem.Tuple;
 import eng.eSystem.collections.IList;
+import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.utilites.ConversionUtils;
 import eng.jAtcSim.lib.airplanes.Airplane;
@@ -29,6 +30,8 @@ import eng.jAtcSim.lib.world.Route;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class RoutingModule extends Module implements IRoutingModuleRO {
 
@@ -64,6 +67,17 @@ public class RoutingModule extends Module implements IRoutingModuleRO {
   @Override
   public ActiveRunwayThreshold getAssignedRunwayThreshold() {
     return expectedRunwayThreshold;
+  }
+
+  @Override
+  public Navaid getDepartureLastNavaid() {
+    if (this.parent.getFlightModule().isDeparture() == false)
+        throw new EApplicationException(sf(
+            "This method should not be called on departure aircraft %s.",
+            this.parent.getFlightModule().getCallsign().toString()));
+
+      Navaid ret = this.assignedRoute.getMainNavaid();
+      return ret;
   }
 
   @Override

@@ -38,7 +38,7 @@ import eng.jAtcSim.lib.world.newApproaches.NewApproachInfo;
 
 public class Airplane implements IAirplaneWriteSimple {
 
-    public class Airplane4Display {
+  public class Airplane4Display {
 
     public int altitude() {
       return Airplane.this.sha.getAltitude();
@@ -53,7 +53,7 @@ public class Airplane implements IAirplaneWriteSimple {
     }
 
     public Navaid entryExitPoint() {
-      return Airplane.this.routingModule.getEntryExitFix();
+      return Airplane.this.routingModule.getEntryExitPoint();
     }
 
     public AirproxType getAirprox() {
@@ -106,18 +106,18 @@ public class Airplane implements IAirplaneWriteSimple {
 
     public String status() {
       Behavior behavior = Airplane.this.behaviorModule.get();
-    if (behavior instanceof BasicBehavior)
-      return behavior instanceof ArrivalBehavior ? "Arriving" : "Departing";
-    else if (behavior instanceof HoldBehavior)
-      return "Holding";
-    else if (behavior instanceof NewApproachBehavior)
-      return "In approach " + Airplane.this.routingModule.getAssignedRunwayThreshold().getName();
-    else if (behavior instanceof HoldingPointBehavior)
-      return "Holding point";
-    else if (behavior instanceof TakeOffBehavior)
-      return "Take-off";
-    else
-      return "???";
+      if (behavior instanceof BasicBehavior)
+        return behavior instanceof ArrivalBehavior ? "Arriving" : "Departing";
+      else if (behavior instanceof HoldBehavior)
+        return "Holding";
+      else if (behavior instanceof NewApproachBehavior)
+        return "In approach " + Airplane.this.routingModule.getAssignedRunwayThreshold().getName();
+      else if (behavior instanceof HoldingPointBehavior)
+        return "Holding point";
+      else if (behavior instanceof TakeOffBehavior)
+        return "Take-off";
+      else
+        return "???";
     }
 
     public int targetAltitude() {
@@ -145,7 +145,7 @@ public class Airplane implements IAirplaneWriteSimple {
     }
   }
 
-  public class AirplaneWriteAdvanced implements IAirplaneWriteAdvanced{
+  public class AirplaneWriteAdvanced implements IAirplaneWriteAdvanced {
 
     @Override
     public void abortHolding() {
@@ -201,21 +201,6 @@ public class Airplane implements IAirplaneWriteSimple {
             new DivertingNotification(divertNavaid));
     }
 
-    private Navaid getDivertNavaid() {
-      IList<Route> rts = Acc
-          .atcTwr().getRunwayConfigurationInUse()
-          .getDepartures()
-          .where(q -> q.isForCategory(Airplane.this.airplaneType.category))
-          .getRandom()
-          .getThreshold()
-          .getRoutes()
-          .where(q -> q.getType() == Route.eType.sid);
-      Route r = rts.getRandom();
-      //TODO here can null-pointer-exception occur when no route is found for threshold and category
-      Navaid ret = r.getMainNavaid();
-      return ret;
-    }
-
     @Override
     public void goAround(GoingAroundNotification.GoAroundReason gaReason) {
       assert gaReason != null;
@@ -253,6 +238,64 @@ public class Airplane implements IAirplaneWriteSimple {
           Airplane.State.takeOffGoAround);
     }
 
+    @Override
+    public void hold(Navaid navaid, int inboundRadial, boolean leftTurn) {
+      HoldBehavior hold = new HoldBehavior(Airplane.this,
+          navaid,
+          inboundRadial,
+          leftTurn);
+      Airplane.this.setBehaviorAndState(hold, Airplane.State.holding);
+    }
+
+    @Override
+    public void setHoldingPointState(Coordinate coordinate, int course) {
+      Airplane.this.coordinate = coordinate;
+      Airplane.this.sha.init(course,
+          Airplane.this.sha.getAltitude(),
+          Airplane.this.sha.getSpeed(),
+          Airplane.this.airplaneType,
+          Acc.airport().getAltitude());
+      Airplane.this.state = State.holdingPoint;
+      Airplane.this.behaviorModule.setBehavior(new HoldingPointBehavior());
+    }
+
+    @Override
+    public void setRoute(SpeechList route) {
+      Airplane.this.routingModule.setRoute(route);
+    }
+
+    @Override
+    public void setRouting(Route route, ActiveRunwayThreshold activeRunwayThreshold) {
+      Airplane.this.routingModule.setRouting(route, activeRunwayThreshold);
+    }
+
+    @Override
+    public void takeOff(ActiveRunwayThreshold runwayThreshold) {
+      Airplane.this.coordinate = runwayThreshold.getCoordinate();
+      Airplane.this.setBehaviorAndState(
+          new TakeOffBehavior(Airplane.this.airplaneType.category, runwayThreshold),
+          Airplane.State.takeOffRoll);
+      Airplane.this.sha.setTargetSpeed(
+          Airplane.this.airplaneType.getV2());
+      Airplane.this.sha.setNavigator(
+          new HeadingNavigator(runwayThreshold.getCourse()));
+    }
+
+    private Navaid getDivertNavaid() {
+      IList<Route> rts = Acc
+          .atcTwr().getRunwayConfigurationInUse()
+          .getDepartures()
+          .where(q -> q.isForCategory(Airplane.this.airplaneType.category))
+          .getRandom()
+          .getThreshold()
+          .getRoutes()
+          .where(q -> q.getType() == Route.eType.sid);
+      Route r = rts.getRandom();
+      //TODO here can null-pointer-exception occur when no route is found for threshold and category
+      Navaid ret = r.getMainNavaid();
+      return ret;
+    }
+
     private boolean isBeforeRunwayThreshold(NewApproachInfo nai) {
       double dist = Coordinates.getDistanceInNM(Airplane.this.coordinate, nai.getRunwayThreshold().getCoordinate());
       double hdg = Coordinates.getBearing(Airplane.this.coordinate, nai.getRunwayThreshold().getCoordinate());
@@ -285,37 +328,6 @@ public class Airplane implements IAirplaneWriteSimple {
 
       if (cac != null)
         gaRoute.insert(0, cac);
-    }
-
-    @Override
-    public void hold(Navaid navaid, int inboundRadial, boolean leftTurn) {
-      HoldBehavior hold = new HoldBehavior(Airplane.this,
-          navaid,
-          inboundRadial,
-          leftTurn);
-      Airplane.this.setBehaviorAndState(hold, Airplane.State.holding);
-    }
-
-    @Override
-    public void setRoute(SpeechList route) {
-      Airplane.this.routingModule.setRoute(route);
-    }
-
-    @Override
-    public void setRouting(Route route, ActiveRunwayThreshold activeRunwayThreshold) {
-      Airplane.this.routingModule.setRouting(route, activeRunwayThreshold);
-    }
-
-    @Override
-    public void takeOff(ActiveRunwayThreshold runwayThreshold) {
-      Airplane.this.coordinate = runwayThreshold.getCoordinate();
-      Airplane.this.setBehaviorAndState(
-          new TakeOffBehavior(Airplane.this.airplaneType.category, runwayThreshold),
-          Airplane.State.takeOffRoll);
-      Airplane.this.sha.setTargetSpeed(
-          Airplane.this.airplaneType.getV2());
-      Airplane.this.sha.setNavigator(
-          new HeadingNavigator(runwayThreshold.getCourse()));
     }
   }
 
@@ -398,6 +410,7 @@ public class Airplane implements IAirplaneWriteSimple {
       return this == takeOffRoll || this == landed || this == holdingPoint;
     }
   }
+
   private static final int MINIMAL_DIVERT_TIME_MINUTES = 45;
   private static final int MAXIMAL_DIVERT_TIME_MINUTES = 120;
   private static final double secondFraction = 1 / 60d / 60d;
@@ -447,7 +460,9 @@ public class Airplane implements IAirplaneWriteSimple {
     }
     return divertTime;
   }
+
   private final AirplaneWriteAdvanced airplaneWriteAdvanced = new AirplaneWriteAdvanced();
+  private final Airplane4Display plane4Display = new Airplane4Display();
   private final AirplaneType airplaneType;
   private final Squawk sqwk;
   private final AirplaneFlightModule flightModule;
@@ -459,9 +474,6 @@ public class Airplane implements IAirplaneWriteSimple {
   private final RoutingModule routingModule = new RoutingModule(this);
   private final DivertModule divertModule = new DivertModule(this);
   private final Mood mood;
-  //  private final AdvancedReader advancedReader = new AdvancedReader();
-//  @XmlIgnore
-//  private final Airplane4Display plane4Display = new Airplane4Display();
   private Coordinate coordinate;
   private State state;
   @XmlIgnore
@@ -614,8 +626,6 @@ public class Airplane implements IAirplaneWriteSimple {
   }
 
   //region Inner classes
-
-
 
 
 //  public class Airplane4Pilot {
@@ -787,6 +797,11 @@ public class Airplane implements IAirplaneWriteSimple {
 
   //endregion
 
+  @Override
+  public Airplane4Display getPlane4Display() {
+    return this.plane4Display;
+  }
+
   @Override // IAirplaneWriteSimple
   public FlightRecorder getRecorderModule() {
     return this.flightRecorder;
@@ -944,7 +959,7 @@ public class Airplane implements IAirplaneWriteSimple {
 //    return this.coordinate;
 //  }
 //
-//  public Navaid getEntryExitFix() {
+//  public Navaid getEntryExitPoint() {
 //    return pilot.getRoutingModule().getEntryExitPoint();
 //  }
 //

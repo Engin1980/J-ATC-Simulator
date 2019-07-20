@@ -403,8 +403,6 @@
 //    afterThreshold
 //  }
 //
-//  public static final double SPEED_TO_OVER_NAVAID_DISTANCE_MULTIPLIER = 0.007;
-//
 //  public static Pilot load(XElement tmp, Airplane.Airplane4Pilot parent) {
 //    throw new ToDoException();
 ////    Pilot ret = new Pilot();

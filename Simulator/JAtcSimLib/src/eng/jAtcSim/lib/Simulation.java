@@ -483,7 +483,7 @@ public class Simulation {
     }
 
     for (Airplane newPlane : newPlanes) {
-      if (newPlane.isDeparture()) {
+      if (newPlane.getFlightModule().isDeparture()) {
         registerNewPlaneIntoTheSimulation(newPlane, twrAtc);
       } else {
         // here are two possibilities
@@ -504,21 +504,21 @@ public class Simulation {
 
     boolean ret = false;
     for (Airplane plane : Acc.planes()) {
-      if (plane.isArrival() == false)
+      if (plane.getFlightModule().isArrival() == false)
         continue;
       if (prm.getResponsibleAtc(plane) != ctrAtc)
         continue;
-      if (checkedPlane.getEntryExitFix().equals(plane.getEntryExitFix()) == false)
+      if (checkedPlane.getRoutingModule().getEntryExitPoint().equals(plane.getRoutingModule().getEntryExitPoint()) == false)
         continue;
 
       double dist = Coordinates.getDistanceInNM(
-          plane.getEntryExitFix().getCoordinate(), plane.getCoordinate());
-      int atEntryPointSeconds = (int) (dist / plane.getSpeed() * 3600);
+          plane.getRoutingModule().getEntryExitPoint().getCoordinate(), plane.getCoordinate());
+      int atEntryPointSeconds = (int) (dist / plane.getSha().getSpeed() * 3600);
 
       if (checkedAtEntryPointSeconds == null) {
         dist = Coordinates.getDistanceInNM(
-            checkedPlane.getEntryExitFix().getCoordinate(), checkedPlane.getCoordinate());
-        checkedAtEntryPointSeconds = (int) (dist / checkedPlane.getSpeed() * 3600);
+            checkedPlane.getRoutingModule().getEntryExitPoint().getCoordinate(), checkedPlane.getCoordinate());
+        checkedAtEntryPointSeconds = (int) (dist / checkedPlane.getSha().getSpeed() * 3600);
       }
 
       if (Math.abs(atEntryPointSeconds - checkedAtEntryPointSeconds) < 120) {
@@ -605,7 +605,7 @@ public class Simulation {
               messenger.SYSTEM,
               m.<UserAtc>getSource(),
               new StringMessageContent("Airplane %s {%s} removed from game.",
-                  plane.getCallsign().toString(),
+                  plane.getFlightModule().getCallsign().toString(),
                   plane.getSqwk().toString())));
     }
   }
@@ -704,13 +704,13 @@ public class Simulation {
     AirplaneList rem = new AirplaneList(true);
     for (Airplane p : Acc.planes()) {
       // landed
-      if (p.isArrival() && p.getSpeed() < 11) {
+      if (p.getFlightModule().isArrival() && p.getSha().getSpeed() < 11) {
         rem.add(p);
         this.stats.registerFinishedPlane(p);
       }
 
       // departed
-      if (p.isDeparture() && Acc.prm().getResponsibleAtc(p).equals(Acc.atcCtr())
+      if (p.getFlightModule().isDeparture() && Acc.prm().getResponsibleAtc(p).equals(Acc.atcCtr())
           && Coordinates.getDistanceInNM(
           p.getCoordinate(), Acc.airport().getLocation())
           > Acc.airport().getCoveredDistance()) {
@@ -718,7 +718,7 @@ public class Simulation {
         this.stats.registerFinishedPlane(p);
       }
 
-      if (p.isEmergency() && p.hasElapsedEmergencyTime()) {
+      if (p.getEmergencyModule().isEmergency() && p.getEmergencyModule().hasElapsedEmergencyTime()) {
         rem.add(p);
       }
     }
@@ -739,7 +739,7 @@ public class Simulation {
       try {
         plane.elapseSecond();
       } catch (Exception ex) {
-        throw new EApplicationException("Error processing elapseSecond() on plane " + plane.getCallsign() + ".", ex);
+        throw new EApplicationException("Error processing elapseSecond() on plane " + plane.getFlightModule().getCallsign() + ".", ex);
       }
     }
   }

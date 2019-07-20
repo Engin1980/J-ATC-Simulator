@@ -1,5 +1,6 @@
 package eng.jAtcSim.lib.airplanes.interfaces;
 
+import eng.eSystem.geo.Coordinate;
 import eng.jAtcSim.lib.airplanes.moods.Mood;
 import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.GoingAroundNotification;
@@ -22,6 +23,8 @@ public interface IAirplaneWriteAdvanced {
   void goAround(GoingAroundNotification.GoAroundReason reason);
 
   void hold(Navaid navaid, int inboundRadial, boolean leftTurn);
+
+  void setHoldingPointState(Coordinate coordinate, int course);
 
   @Deprecated
   void setRoute(SpeechList route);

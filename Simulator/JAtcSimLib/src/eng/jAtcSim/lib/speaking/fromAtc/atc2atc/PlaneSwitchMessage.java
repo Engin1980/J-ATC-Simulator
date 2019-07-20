@@ -8,7 +8,7 @@ package eng.jAtcSim.lib.speaking.fromAtc.atc2atc;
 
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
-import eng.jAtcSim.lib.airplanes.interfaces.IAirplaneRead;
+import eng.jAtcSim.lib.airplanes.interfaces.IAirplaneRO;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtc2Atc;
 
 /**
@@ -23,15 +23,15 @@ public class PlaneSwitchMessage implements IAtc2Atc {
     rejection
   }
 
-  public final IAirplaneRead plane;
+  public final IAirplaneRO plane;
   public final eMessageType messageType;
   public final String additionalMessageText;
 
-  public PlaneSwitchMessage(IAirplaneRead plane, eMessageType messageType) {
+  public PlaneSwitchMessage(IAirplaneRO plane, eMessageType messageType) {
     this(plane, messageType, null);
   }
 
-  public PlaneSwitchMessage(IAirplaneRead plane, eMessageType messageType, String additionalMessageText) {
+  public PlaneSwitchMessage(IAirplaneRO plane, eMessageType messageType, String additionalMessageText) {
     this.plane = plane;
     this.messageType = messageType;
     this.additionalMessageText = additionalMessageText;

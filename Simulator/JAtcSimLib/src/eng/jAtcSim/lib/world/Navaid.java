@@ -10,12 +10,11 @@ package eng.jAtcSim.lib.world;
 import eng.eSystem.geo.Coordinate;
 
 /**
- *
  * @author Marek
  */
 public class Navaid {
 
-  public enum eType{
+  public enum eType {
     vor,
     ndb,
     fix,
@@ -23,7 +22,11 @@ public class Navaid {
     airport,
     auxiliary
   }
-  
+  public static final double SPEED_TO_OVER_NAVAID_DISTANCE_MULTIPLIER = 0.007;
+
+  public static double getOverNavaidDistance(int speed) {
+    return speed * SPEED_TO_OVER_NAVAID_DISTANCE_MULTIPLIER;
+  }
   private Coordinate coordinate;
   private String name;
   private eType type;

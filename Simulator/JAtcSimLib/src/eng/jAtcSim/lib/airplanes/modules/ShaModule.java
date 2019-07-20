@@ -8,6 +8,7 @@ import eng.eSystem.geo.Coordinate;
 import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.*;
+import eng.jAtcSim.lib.airplanes.behaviors.NewApproachBehavior;
 import eng.jAtcSim.lib.airplanes.interfaces.modules.IShaRO;
 import eng.jAtcSim.lib.airplanes.navigators.HeadingNavigator;
 import eng.jAtcSim.lib.airplanes.navigators.INavigator;
@@ -202,11 +203,23 @@ public class ShaModule implements IShaRO {
     return (int) altitude.value;
   }
 
+  @Override
+  public int getGS() {
+return this.getTAS();
+  }
+
+  @Override
+  public int getTAS() {
+    double m = 1 + this.getAltitude() / 100000d;
+    double ret = this.getSpeed() * m;
+    return (int) Math.round(ret);
+  }
+
   //endregion
   //region Speed-methods
 
-  public double getVerticalSpeed() {
-    return this.lastVerticalSpeed;
+  public int getVerticalSpeed() {
+    return (int) Math.round(this.lastVerticalSpeed);
   }
 
   public void clearTargetSpeedRestriction() {
@@ -359,7 +372,8 @@ public class ShaModule implements IShaRO {
           restrictedDescentRate = 2000;
           break;
         case longFinal:
-          restrictedDescentRate = parent.tryGetAssignedApproach().getApproach().getType() == Approach.ApproachType.visual ?
+          NewApproachBehavior nab = this.parent.getBehaviorModule().getAs(NewApproachBehavior.class);
+          restrictedDescentRate = nab.getApproachInfo().getType() == Approach.ApproachType.visual ?
               2000 : 1300;
           break;
         case shortFinal:

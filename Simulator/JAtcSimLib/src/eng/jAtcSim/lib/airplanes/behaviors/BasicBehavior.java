@@ -8,8 +8,6 @@ import eng.jAtcSim.lib.global.Headings;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.PassingClearanceLimitNotification;
 import eng.jAtcSim.lib.world.Navaid;
 
-import static eng.jAtcSim.lib.airplanes.pilots.Pilot.SPEED_TO_OVER_NAVAID_DISTANCE_MULTIPLIER;
-
 public abstract class BasicBehavior extends DivertableBehavior {
   private boolean clearanceLimitWarningSent = false;
 
@@ -21,7 +19,7 @@ public abstract class BasicBehavior extends DivertableBehavior {
     if (targetCoordinate != null) {
 
       double warningDistance = plane.getSha().getSpeed() * .02;
-      double overNavaidDistance = plane.getSha().getSpeed() * SPEED_TO_OVER_NAVAID_DISTANCE_MULTIPLIER;
+      double overNavaidDistance = Navaid.getOverNavaidDistance(plane.getSha().getSpeed());
 
       double dist = Coordinates.getDistanceInNM(plane.getCoordinate(), targetCoordinate);
       if (!clearanceLimitWarningSent && dist < warningDistance && !plane.getRoutingModule().hasLateralDirectionAfterCoordinate()) {

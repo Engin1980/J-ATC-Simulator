@@ -6,7 +6,7 @@ import eng.eSystem.collections.*;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.jAtcSim.lib.Acc;
-import eng.jAtcSim.lib.airplanes.interfaces.IAirplaneRead;
+import eng.jAtcSim.lib.airplanes.interfaces.IAirplaneRO;
 import eng.jAtcSim.lib.airplanes.interfaces.IAirplaneWriteSimple;
 import eng.jAtcSim.lib.atcs.planeResponsibility.SwitchRoutingRequest;
 import eng.jAtcSim.lib.global.DelayedList;
@@ -55,8 +55,8 @@ public abstract class ComputerAtc extends Atc {
   }
 
   private void switchConfirmedPlanesIfReady() {
-    IReadOnlyList<IAirplaneRead> planes = getPrm().getConfirmedSwitchesByAtc(this, true);
-    for (IAirplaneRead plane : planes) {
+    IReadOnlyList<IAirplaneRO> planes = getPrm().getConfirmedSwitchesByAtc(this, true);
+    for (IAirplaneRO plane : planes) {
       if (this.shouldBeSwitched(plane))
         this.applySwitchHangOff(plane);
     }
@@ -96,10 +96,10 @@ public abstract class ComputerAtc extends Atc {
     }
   }
 
-  protected abstract boolean acceptsNewRouting(IAirplaneRead plane, SwitchRoutingRequest srr);
+  protected abstract boolean acceptsNewRouting(IAirplaneRO plane, SwitchRoutingRequest srr);
 
   private void processPlaneSwitchMessage(Message m) {
-    IAirplaneRead plane = m.<PlaneSwitchMessage>getContent().plane;
+    IAirplaneRO plane = m.<PlaneSwitchMessage>getContent().plane;
     Atc targetAtc = m.getSource();
     if (getPrm().isUnderSwitchRequest(plane, this, targetAtc)) {
       // other ATC confirms our request, plane is going to hang off
@@ -122,20 +122,20 @@ public abstract class ComputerAtc extends Atc {
     }
   }
 
-  private void rejectChangedRouting(IAirplaneRead plane, Atc targetAtc){
+  private void rejectChangedRouting(IAirplaneRO plane, Atc targetAtc){
     getPrm().resetSwitchRequest(this, plane);
     Message m = new Message(this, targetAtc, new StringMessageContent( plane.getSqwk() + "{" + plane.getFlightModule().getCallsign() + "} routing change rejected."));
     sendMessage(m);
   }
 
-  private void rejectSwitch(IAirplaneRead plane, Atc targetAtc, RequestResult planeAcceptance) {
+  private void rejectSwitch(IAirplaneRO plane, Atc targetAtc, RequestResult planeAcceptance) {
     getPrm().rejectSwitchRequest(plane, this);
     Message nm = new Message(this, targetAtc,
         new PlaneSwitchMessage(plane, PlaneSwitchMessage.eMessageType.rejection, planeAcceptance.message));
     sendMessage(nm);
   }
 
-  private void acceptSwitch(IAirplaneRead plane, Atc targetAtc) {
+  private void acceptSwitch(IAirplaneRO plane, Atc targetAtc) {
     getPrm().confirmSwitchRequest(plane, this, null);
     Message nm = new Message(this, targetAtc,
         new PlaneSwitchMessage(plane, PlaneSwitchMessage.eMessageType.confirmation));
@@ -144,11 +144,11 @@ public abstract class ComputerAtc extends Atc {
 
   protected abstract void processNonPlaneSwitchMessageFromAtc(Message m);
 
-  protected abstract boolean shouldBeSwitched(IAirplaneRead plane);
+  protected abstract boolean shouldBeSwitched(IAirplaneRO plane);
 
-  protected abstract RequestResult canIAcceptPlane(IAirplaneRead p);
+  protected abstract RequestResult canIAcceptPlane(IAirplaneRO p);
 
-  private void confirmGoodDayNotificationIfRequired(IAirplaneRead p, SpeechList spchs) {
+  private void confirmGoodDayNotificationIfRequired(IAirplaneRO p, SpeechList spchs) {
     IList<GoodDayNotification> gdns = spchs.where(q -> q instanceof GoodDayNotification);
     // todo implement directly into if without gdns variable
     gdns = gdns.where(q -> q.isRepeated() == false);
@@ -163,15 +163,15 @@ public abstract class ComputerAtc extends Atc {
     }
   }
 
-  protected abstract void processMessagesFromPlane(IAirplaneRead p, SpeechList spchs);
+  protected abstract void processMessagesFromPlane(IAirplaneRO p, SpeechList spchs);
 
   /**
    * Checks for planes ready to switch and switch them.
    */
   private void checkAndProcessPlanesReadyToSwitch() {
 
-    IReadOnlyList<IAirplaneRead> myPlanes = getPrm().getPlanes(this);
-    for (IAirplaneRead myPlane : myPlanes) {
+    IReadOnlyList<IAirplaneRO> myPlanes = getPrm().getPlanes(this);
+    for (IAirplaneRO myPlane : myPlanes) {
       if (getPrm().isUnderSwitchRequest(myPlane, this, null))
         continue;
 
@@ -189,11 +189,11 @@ public abstract class ComputerAtc extends Atc {
    * @return Target atc, or null if plane not ready to switch.
    */
   @Nullable
-  protected abstract Atc getTargetAtcIfPlaneIsReadyToSwitch(@NotNull IAirplaneRead plane);
+  protected abstract Atc getTargetAtcIfPlaneIsReadyToSwitch(@NotNull IAirplaneRO plane);
 
   private void repeatOldSwitchRequests() {
-    IReadOnlyList<IAirplaneRead> awaitings = getPrm().getSwitchRequestsToRepeatByAtc(this);
-    for (IAirplaneRead p : awaitings) {
+    IReadOnlyList<IAirplaneRO> awaitings = getPrm().getSwitchRequestsToRepeatByAtc(this);
+    for (IAirplaneRO p : awaitings) {
       if (speechDelayer.isAny(q -> q.getContent() instanceof PlaneSwitchMessage && ((PlaneSwitchMessage) q.getContent()).plane.equals(p)))
         continue; // if message about this plane is delayed and waiting to process
       Message m = new Message(this, Acc.atcApp(),
@@ -203,14 +203,14 @@ public abstract class ComputerAtc extends Atc {
     }
   }
 
-  protected void requestNewSwitch(IAirplaneRead plane, Atc targetAtc) {
+  protected void requestNewSwitch(IAirplaneRO plane, Atc targetAtc) {
     getPrm().createSwitchRequest(this, targetAtc, plane);
     Message m = new Message(this, targetAtc,
         new PlaneSwitchMessage(plane, PlaneSwitchMessage.eMessageType.request));
     sendMessage(m);
   }
 
-  private void applySwitchHangOff(IAirplaneRead plane) {
+  private void applySwitchHangOff(IAirplaneRO plane) {
     getPrm().applyConfirmedSwitch(this, plane);
     Atc newTargetAtc = getPrm().getResponsibleAtc(plane);
     Message msg = new Message(this, plane,

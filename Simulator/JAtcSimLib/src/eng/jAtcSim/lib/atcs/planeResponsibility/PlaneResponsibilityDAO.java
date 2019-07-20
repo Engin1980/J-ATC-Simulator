@@ -6,7 +6,7 @@ import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.Callsign;
-import eng.jAtcSim.lib.airplanes.interfaces.IAirplaneRead;
+import eng.jAtcSim.lib.airplanes.interfaces.IAirplaneRO;
 import eng.jAtcSim.lib.atcs.Atc;
 
 class PlaneResponsibilityDAO {
@@ -20,7 +20,7 @@ class PlaneResponsibilityDAO {
     }
   }
 
-  public AirplaneResponsibilityInfo get(IAirplaneRead plane) {
+  public AirplaneResponsibilityInfo get(IAirplaneRO plane) {
     AirplaneResponsibilityInfo ret = all.getFirst(q -> q.getPlane() == plane);
     return ret;
   }

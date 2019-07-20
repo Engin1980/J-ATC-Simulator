@@ -35,7 +35,6 @@ public class EmergencyModule implements IEmergencyModuleRO {
   }
 
   public boolean hasElapsedEmergencyTime() {
-
     assert this.emergencyWanishTime != null;
     boolean ret = this.emergencyWanishTime.isBefore(Acc.now());
     return ret;

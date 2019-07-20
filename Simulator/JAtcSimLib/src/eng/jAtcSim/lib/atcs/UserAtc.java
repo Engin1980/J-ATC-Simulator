@@ -12,7 +12,7 @@ import eng.eSystem.utilites.RegexUtils;
 import eng.eSystem.validation.Validator;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.*;
-import eng.jAtcSim.lib.airplanes.interfaces.IAirplaneRead;
+import eng.jAtcSim.lib.airplanes.interfaces.IAirplaneRO;
 import eng.jAtcSim.lib.atcs.planeResponsibility.SwitchRoutingRequest;
 import eng.jAtcSim.lib.messaging.Message;
 import eng.jAtcSim.lib.messaging.Messenger;
@@ -81,7 +81,7 @@ public class UserAtc extends Atc {
   }
 
   public void sendToPlane(Callsign c, SpeechList speeches) {
-    IAirplaneRead pln = Airplanes.tryGetByCallsign(Acc.planes(), c);
+    IAirplaneRO pln = Airplanes.tryGetByCallsign(Acc.planes(), c);
     if (pln == null) {
       raiseError("No such plane for callsign \"" + c.toString() + "\".");
       return;
@@ -121,7 +121,7 @@ public class UserAtc extends Atc {
     super.sendMessage(m);
   }
 
-  public void sendPlaneSwitchMessageToAtc(Atc.eType type, IAirplaneRead plane, String additionalMessage) {
+  public void sendPlaneSwitchMessageToAtc(Atc.eType type, IAirplaneRO plane, String additionalMessage) {
     Atc otherAtc = Acc.atc(type);
     PlaneSwitchMessage.eMessageType msgType;
 
@@ -183,16 +183,17 @@ public class UserAtc extends Atc {
     return parser;
   }
 
-  private Tuple<SwitchRoutingRequest, String> decodeAdditionalRouting(String text, IAirplaneRead plane) {
+  private Tuple<SwitchRoutingRequest, String> decodeAdditionalRouting(String text, IAirplaneRO plane) {
     Validator.isNotNull(plane);
 
     Matcher m =
         Pattern.compile("(\\d{1,2}[lrcLRC]?)?(\\/(.+))?")
             .matcher(text);
-    m.find();
+    boolean found =  m.find();
+    assert found;
     ActiveRunwayThreshold threshold;
     if (m.group(1) == null)
-      threshold = plane.getExpectedRunwayThreshold();
+      threshold = plane.getRoutingModule().getAssignedRunwayThreshold();
     else {
       threshold = Acc.airport().tryGetRunwayThreshold(m.group(1));
       if (threshold == null) {
@@ -202,14 +203,14 @@ public class UserAtc extends Atc {
 
     Route route;
     if (m.group(3) == null) {
-      if (threshold == plane.getExpectedRunwayThreshold())
+      if (threshold == plane.getRoutingModule().getAssignedRunwayThreshold())
         route = plane.getRoutingModule().getAssignedRoute();
       else
         route = plane.getFlightModule().isArrival()
-            ? threshold.getArrivalRouteForPlane(plane.getType(), plane.getSha().getTargetAltitude(), plane.getEntryExitFix(), true)
-            : threshold.getDepartureRouteForPlane(plane.getType(), plane.getEntryExitFix(), true);
+            ? threshold.getArrivalRouteForPlane(plane.getType(), plane.getSha().getTargetAltitude(), plane.getRoutingModule().getEntryExitPoint(), true)
+            : threshold.getDepartureRouteForPlane(plane.getType(), plane.getRoutingModule().getEntryExitPoint(), true);
     } else if (m.group(3).toUpperCase().equals("V")) {
-      route = Route.createNewVectoringByFix(plane.getEntryExitFix());
+      route = Route.createNewVectoringByFix(plane.getRoutingModule().getEntryExitPoint());
     } else {
       route = threshold.getRoutes().tryGetFirst(q -> q.getName().equals(m.group(3)));
       if (route == null)
@@ -217,10 +218,10 @@ public class UserAtc extends Atc {
     }
 
     Tuple<SwitchRoutingRequest, String> ret;
-    if (threshold == plane.getExpectedRunwayThreshold() && route == plane.getAssigneRoute())
+    if (threshold == plane.getRoutingModule().getAssignedRunwayThreshold() && route == plane.getRoutingModule().getAssignedRoute())
       ret = new Tuple<>(null, null);
     else
-      ret = new Tuple(new SwitchRoutingRequest(threshold, route), null);
+      ret = new Tuple<>(new SwitchRoutingRequest(threshold, route), null);
     return ret;
   }
 
@@ -248,17 +249,17 @@ public class UserAtc extends Atc {
   }
 
   @Override
-  public void unregisterPlaneUnderControl(IAirplaneRead plane) {
+  public void unregisterPlaneUnderControl(IAirplaneRO plane) {
 
   }
 
   @Override
-  public void removePlaneDeletedFromGame(IAirplaneRead plane) {
+  public void removePlaneDeletedFromGame(IAirplaneRO plane) {
 
   }
 
   @Override
-  public void registerNewPlaneUnderControl(IAirplaneRead plane, boolean finalRegistration) {
+  public void registerNewPlaneUnderControl(IAirplaneRO plane, boolean finalRegistration) {
 
   }
 
@@ -284,13 +285,13 @@ public class UserAtc extends Atc {
     }
   }
 
-  private void sendToPlane(IAirplaneRead plane, SpeechList speeches) {
+  private void sendToPlane(IAirplaneRO plane, SpeechList speeches) {
     confirmAtcChangeInPlaneResponsibilityManagerIfRequired(plane, speeches);
     Message m = new Message(this, plane, speeches);
     super.sendMessage(m);
   }
 
-  private void confirmAtcChangeInPlaneResponsibilityManagerIfRequired(IAirplaneRead plane, SpeechList speeches) {
+  private void confirmAtcChangeInPlaneResponsibilityManagerIfRequired(IAirplaneRO plane, SpeechList speeches) {
     ContactCommand cc = (ContactCommand) speeches.tryGetFirst(q -> q instanceof ContactCommand);
     if (cc != null) {
       getPrm().applyConfirmedSwitch(this, plane);

@@ -12,7 +12,7 @@ import eng.jAtcSim.lib.speaking.IFromAirplane;
 import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.world.Navaid;
 
-public interface IAirplaneWriteSimple extends IAirplaneRead {
+public interface IAirplaneWriteSimple extends IAirplaneRO {
 
   void adjustTargetSpeed();
 

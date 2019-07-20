@@ -11,10 +11,10 @@ public interface IRoutingModuleRO {
 
   Navaid getDepartureLastNavaid();
 
-  Navaid getEntryExitFix();
+  Navaid getEntryExitPoint();
 
   default boolean isOnWayToPassDeparturePoint(){
-    return this.isGoingToFlightOverNavaid(this.getEntryExitFix());
+    return this.isGoingToFlightOverNavaid(this.getEntryExitPoint());
   }
 
   boolean isRouteEmpty();
