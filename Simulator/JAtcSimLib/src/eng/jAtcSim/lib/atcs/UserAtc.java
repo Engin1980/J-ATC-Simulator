@@ -12,6 +12,7 @@ import eng.eSystem.utilites.RegexUtils;
 import eng.eSystem.validation.Validator;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.*;
+import eng.jAtcSim.lib.airplanes.interfaces.IAirplane4Atc;
 import eng.jAtcSim.lib.airplanes.interfaces.IAirplaneRO;
 import eng.jAtcSim.lib.atcs.planeResponsibility.SwitchRoutingRequest;
 import eng.jAtcSim.lib.messaging.Message;
@@ -81,7 +82,7 @@ public class UserAtc extends Atc {
   }
 
   public void sendToPlane(Callsign c, SpeechList speeches) {
-    IAirplaneRO pln = Airplanes.tryGetByCallsign(Acc.planes(), c);
+    IAirplane4Atc pln = Airplanes.tryGetByCallsign(Acc.planes(), c);
     if (pln == null) {
       raiseError("No such plane for callsign \"" + c.toString() + "\".");
       return;
@@ -121,7 +122,7 @@ public class UserAtc extends Atc {
     super.sendMessage(m);
   }
 
-  public void sendPlaneSwitchMessageToAtc(Atc.eType type, IAirplaneRO plane, String additionalMessage) {
+  public void sendPlaneSwitchMessageToAtc(Atc.eType type, IAirplane4Atc plane, String additionalMessage) {
     Atc otherAtc = Acc.atc(type);
     PlaneSwitchMessage.eMessageType msgType;
 
@@ -249,17 +250,17 @@ public class UserAtc extends Atc {
   }
 
   @Override
-  public void unregisterPlaneUnderControl(IAirplaneRO plane) {
+  public void unregisterPlaneUnderControl(IAirplane4Atc plane) {
 
   }
 
   @Override
-  public void removePlaneDeletedFromGame(IAirplaneRO plane) {
+  public void removePlaneDeletedFromGame(IAirplane4Atc plane) {
 
   }
 
   @Override
-  public void registerNewPlaneUnderControl(IAirplaneRO plane, boolean finalRegistration) {
+  public void registerNewPlaneUnderControl(IAirplane4Atc plane, boolean finalRegistration) {
 
   }
 
@@ -285,13 +286,13 @@ public class UserAtc extends Atc {
     }
   }
 
-  private void sendToPlane(IAirplaneRO plane, SpeechList speeches) {
+  private void sendToPlane(IAirplane4Atc plane, SpeechList speeches) {
     confirmAtcChangeInPlaneResponsibilityManagerIfRequired(plane, speeches);
     Message m = new Message(this, plane, speeches);
     super.sendMessage(m);
   }
 
-  private void confirmAtcChangeInPlaneResponsibilityManagerIfRequired(IAirplaneRO plane, SpeechList speeches) {
+  private void confirmAtcChangeInPlaneResponsibilityManagerIfRequired(IAirplane4Atc plane, SpeechList speeches) {
     ContactCommand cc = (ContactCommand) speeches.tryGetFirst(q -> q instanceof ContactCommand);
     if (cc != null) {
       getPrm().applyConfirmedSwitch(this, plane);

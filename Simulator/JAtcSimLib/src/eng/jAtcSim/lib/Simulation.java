@@ -445,26 +445,26 @@ public class Simulation {
   private void evalAirproxes() {
     Airplanes.evaluateAirproxes(Acc.planes());
     Acc.planes()
-        .where(q -> q.getAirprox() == AirproxType.full && Acc.prm().getResponsibleAtc(q) == Acc.atcApp())
-        .forEach(q -> q.getMood().experience(Mood.SharedExperience.airprox));
+        .where(q -> q.getMrvaAirproxModule().getAirprox() == AirproxType.full && Acc.prm().getResponsibleAtc(q) == Acc.atcApp())
+        .forEach(q -> q.getAdvanced().addExperience(Mood.SharedExperience.airprox));
   }
 
   private void evalMrvas() {
     this.mrvaManager.evaluateMrvaFails();
     Acc.planes()
-        .where(q -> q.isMrvaError() && Acc.prm().getResponsibleAtc(q) == Acc.atcApp())
-        .forEach(q -> q.getMood().experience(Mood.SharedExperience.mrvaViolation));
+        .where(q -> q.getMrvaAirproxModule().isMrvaError() && Acc.prm().getResponsibleAtc(q) == Acc.atcApp())
+        .forEach(q -> q.getAdvanced().addExperience(Mood.SharedExperience.mrvaViolation));
   }
 
   private void generateEmergencyIfRequired() {
     if (this.emergencyManager.isEmergencyTimeElapsed()) {
-      if (!Acc.planes().isAny(q -> q.isEmergency())) {
+      if (!Acc.planes().isAny(q -> q.getEmergencyModule().isEmergency())) {
         Airplane p = Acc.planes()
             .where(q -> q.getState().is(Airplane.State.departingLow,
                 Airplane.State.departingHigh, Airplane.State.arrivingHigh, Airplane.State.arrivingLow, Airplane.State.arrivingCloseFaf))
             .tryGetRandom();
         if (p != null)
-          p.raiseEmergency();
+          p.getAdvanced().raiseEmergency();
       }
       this.emergencyManager.generateEmergencyTime(this.now);
     }

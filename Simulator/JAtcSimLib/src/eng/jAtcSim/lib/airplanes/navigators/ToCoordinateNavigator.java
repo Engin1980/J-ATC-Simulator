@@ -2,6 +2,7 @@ package eng.jAtcSim.lib.airplanes.navigators;
 
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
+import eng.jAtcSim.lib.airplanes.interfaces.modules.ISha4Navigator;
 import eng.jAtcSim.lib.airplanes.modules.ShaModule;
 
 public class ToCoordinateNavigator implements INavigator2Coordinate {
@@ -14,10 +15,10 @@ public class ToCoordinateNavigator implements INavigator2Coordinate {
   }
 
   @Override
-  public void navigate(ShaModule sha, Coordinate planeCoordinates) {
+  public void navigate(ISha4Navigator sha, Coordinate planeCoordinates) {
     int heading = (int) Math.round(
         Coordinates.getBearing(planeCoordinates, this.coordinate));
-    sha._setTargetHeading(heading);
+    sha.setTargetHeading(heading);
   }
 
   @Override

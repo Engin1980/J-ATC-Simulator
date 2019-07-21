@@ -2,6 +2,7 @@ package eng.jAtcSim.lib.airplanes.navigators;
 
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.geo.Coordinate;
+import eng.jAtcSim.lib.airplanes.interfaces.modules.ISha4Navigator;
 import eng.jAtcSim.lib.airplanes.modules.ShaModule;
 import eng.jAtcSim.lib.global.HeadingsNew;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeHeadingCommand;
@@ -40,7 +41,7 @@ public class HeadingNavigator implements INavigator {
   }
 
   @Override
-  public void navigate(ShaModule sha, Coordinate planeCoordinates) {
+  public void navigate(ISha4Navigator sha, Coordinate planeCoordinates) {
     if (!this.isApplied) {
       boolean useLeftTurn;
       switch(turn){
@@ -57,7 +58,7 @@ public class HeadingNavigator implements INavigator {
         default:
           throw new EEnumValueUnsupportedException(turn);
       }
-      sha._setTargetHeading(heading, useLeftTurn);
+      sha.setTargetHeading(heading, useLeftTurn);
       this.isApplied = true;
     }
   }

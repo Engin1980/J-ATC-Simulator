@@ -6,6 +6,8 @@ import eng.jAtcSim.lib.world.Navaid;
 public interface IAirplaneFlightRO {
   Callsign getCallsign();
 
+  int getDelayDifference();
+
   boolean isArrival();
 
   default boolean isDeparture(){

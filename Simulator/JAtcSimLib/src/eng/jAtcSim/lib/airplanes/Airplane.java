@@ -2,10 +2,12 @@ package eng.jAtcSim.lib.airplanes;
 
 import eng.eSystem.collections.IList;
 import eng.eSystem.eXml.XElement;
+import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.utilites.EnumUtils;
+import eng.eSystem.utilites.NumberUtils;
 import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.behaviors.*;
@@ -16,6 +18,7 @@ import eng.jAtcSim.lib.airplanes.interfaces.IAirplaneWriteSimple;
 import eng.jAtcSim.lib.airplanes.interfaces.modules.*;
 import eng.jAtcSim.lib.airplanes.modules.*;
 import eng.jAtcSim.lib.airplanes.moods.Mood;
+import eng.jAtcSim.lib.airplanes.moods.MoodResult;
 import eng.jAtcSim.lib.airplanes.navigators.HeadingNavigator;
 import eng.jAtcSim.lib.airplanes.navigators.INavigator;
 import eng.jAtcSim.lib.airplanes.navigators.ToCoordinateNavigator;
@@ -24,8 +27,11 @@ import eng.jAtcSim.lib.exceptions.ToDoException;
 import eng.jAtcSim.lib.global.ETime;
 import eng.jAtcSim.lib.global.Headings;
 import eng.jAtcSim.lib.global.Restriction;
+import eng.jAtcSim.lib.global.UnitProvider;
+import eng.jAtcSim.lib.messaging.IMessageContent;
 import eng.jAtcSim.lib.messaging.Message;
 import eng.jAtcSim.lib.speaking.IFromAtc;
+import eng.jAtcSim.lib.speaking.ISpeech;
 import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.DivertingNotification;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.GoingAroundNotification;
@@ -169,6 +175,11 @@ public class Airplane implements IAirplaneWriteSimple, IAirplane4Mrva, IAirplane
     }
 
     @Override
+    public void addExperience(Mood.SharedExperience experience) {
+      Airplane.this.mood.experience(experience);
+    }
+
+    @Override
     public void clearedToApproach(NewApproachInfo newApproachInfo) {
 // abort holding, only if fix was found
       if (Airplane.this.state == Airplane.State.holding) {
@@ -247,6 +258,21 @@ public class Airplane implements IAirplaneWriteSimple, IAirplane4Mrva, IAirplane
           inboundRadial,
           leftTurn);
       Airplane.this.setBehaviorAndState(hold, Airplane.State.holding);
+    }
+
+    @Override
+    public void raiseEmergency() {
+      int minsE = Acc.rnd().nextInt(5, 60);
+      double distToAip = Coordinates.getDistanceInNM(Airplane.this.coordinate, Acc.airport().getLocation());
+      int minA = (int) (distToAip / 250d * 60);
+      ETime wt = Acc.now().addMinutes(minsE + minA);
+
+      int alt = Math.max(Airplane.this.sha.getAltitude(), Acc.airport().getAltitude() + 4000);
+      alt = (int) NumberUtils.ceil(alt, 3);
+      Airplane.this.sha.setTargetAltitude(alt);
+
+      Airplane.this.emergencyModule.setEmergencyWanishTime(wt);
+      Airplane.this.flightModule.raiseEmergency();
     }
 
     @Override
@@ -587,6 +613,16 @@ public class Airplane implements IAirplaneWriteSimple, IAirplane4Mrva, IAirplane
     }
   }
 
+  public void elapseSecond() {
+
+    processMessages();
+    drivePlane();
+    this.sha.elapseSecond();
+    updateCoordinates();
+
+    flightRecorder.logFDR(this);
+  }
+
   @Override // IAirplaneWriteSimple
   public IAirplaneWriteAdvanced getAdvanced() {
     return null;
@@ -622,9 +658,9 @@ public class Airplane implements IAirplaneWriteSimple, IAirplane4Mrva, IAirplane
     return this.flightModule;
   }
 
-  @Override // IMessageParticipant
-  public String getName() {
-    return this.flightModule.getCallsign().toString();
+  @Override // IAirplaneRO
+  public IMrvaAirproxModule getMrvaAirproxModule() {
+    return this.mrvaAirproxModule;
   }
 
   //region Inner classes
@@ -799,6 +835,11 @@ public class Airplane implements IAirplaneWriteSimple, IAirplane4Mrva, IAirplane
 
   //endregion
 
+  @Override // IMessageParticipant
+  public String getName() {
+    return this.flightModule.getCallsign().toString();
+  }
+
   @Override
   public Airplane4Display getPlane4Display() {
     return this.plane4Display;
@@ -839,9 +880,17 @@ public class Airplane implements IAirplaneWriteSimple, IAirplane4Mrva, IAirplane
     return this.airplaneType;
   }
 
+  public void increaseAirprox(AirproxType airproxType) {
+    this.mrvaAirproxModule.increaseAirprox(airproxType);
+  }
+
   @Override // IAirplaneWriteSimple
   public void processRadarContactConfirmation() {
     this.atcModule.setHasRadarContact();
+  }
+
+  public void resetAirprox() {
+    this.mrvaAirproxModule.resetAirprox();
   }
 
   @Override // IAirplaneWriteSimple
@@ -926,14 +975,6 @@ public class Airplane implements IAirplaneWriteSimple, IAirplane4Mrva, IAirplane
   public void tuneAtc(Atc atc) {
     this.atcModule.changeAtc(atc);
   }
-
-  private int getBoundedValueIn(int min, int value, int max) {
-    if (value < min)
-      value = min;
-    if (value > max)
-      value = max;
-    return value;
-  }
 //
 //  @XmlConstructor
 //  private Airplane() {
@@ -943,17 +984,16 @@ public class Airplane implements IAirplaneWriteSimple, IAirplane4Mrva, IAirplane
 //    this.pilot = new Pilot(this.new Airplane4Pilot(), null, null);
 //    this.mood = null;
 //  }
-//
-//  public void elapseSecond() {
-//
-//    processMessages();
-//    drivePlane();
-//    this.sha.elapseSecond();
-//    updateCoordinates();
-//
-//    flightRecorder.logFDR(this, this.pilot);
-//  }
-//
+
+  private int getBoundedValueIn(int min, int value, int max) {
+    if (value < min)
+      value = min;
+    if (value > max)
+      value = max;
+    return value;
+  }
+
+  //
 //  public AdvancedReader getAdvanced() {
 //    return this.advancedReader;
 //  }
@@ -982,10 +1022,10 @@ public class Airplane implements IAirplaneWriteSimple, IAirplane4Mrva, IAirplane
 //    return pilot.getRoutingModule().getEntryExitPoint();
 //  }
 //
-//  public MoodResult getEvaluatedMood() {
-//    MoodResult ret = this.mood.evaluate(this.flightModule.getCallsign(), this.flightModule.getFinalDelayMinutes());
-//    return ret;
-//  }
+  public MoodResult getEvaluatedMood() {
+    MoodResult ret = this.mood.evaluate(this.flightModule.getCallsign(), this.flightModule.getFinalDelayMinutes());
+    return ret;
+  }
 //
 //  public ActiveRunwayThreshold getExpectedRunwayThreshold() {
 //    return pilot.getRoutingModule().getExpectedRunwayThreshold();
@@ -1016,7 +1056,7 @@ public class Airplane implements IAirplaneWriteSimple, IAirplane4Mrva, IAirplane
 //  }
 //
 
-//
+  //
 //  public Pilot getPilot() {
 //    return this.pilot;
 //  }
@@ -1126,75 +1166,69 @@ public class Airplane implements IAirplaneWriteSimple, IAirplane4Mrva, IAirplane
 //  }
 //
 //  //region Private methods
-//  private void drivePlane() {
-//    pilot.elapseSecond();
-//  }
-//
-//  private boolean isValidMessageForAirplane(IMessageContent msg) {
-//    if (msg instanceof IFromAtc)
-//      return true;
-//    else if (msg instanceof SpeechList) {
-//      for (ISpeech o : (SpeechList<ISpeech>) msg) {
-//        if (!(o instanceof IFromAtc)) {
-//          return false;
-//        }
-//      }
-//      return true;
-//    }
-//    return false;
-//  }
-//
-//  private void processCommands(SpeechList speeches) {
-//    this.pilot.getRoutingModule().addNewSpeeches(speeches);
-//  }
-//
-//  private void processMessage(Message msg) {
-//    // if item from non-tuned ATC, then is ignored
-//    if (msg.getSource() != this.pilot.getAtcModule().getTunedAtc()) {
-//      return;
-//    }
-//
-//    SpeechList cmds;
-//    IMessageContent s = msg.getContent();
-//    if (isValidMessageForAirplane(s)) {
-//      if (s instanceof SpeechList)
-//        cmds = (SpeechList) s;
-//      else {
-//        cmds = new SpeechList();
-//        cmds.add((ISpeech) s);
-//      }
-//    } else {
-//      throw new EApplicationException("Airplane can only deal with messages containing \"IFromAtc\" or \"List<IFromAtc>\".");
-//    }
-//
-//    processCommands(cmds);
-//  }
-//
-//  private void processMessages() {
-//    IList<Message> msgs = Acc.messenger().getMessagesByListener(this, true);
-//    for (Message m : msgs) {
-//      processMessage(m);
-//    }
-//  }
-//
-//  private void updateCoordinates() {
-//    double dist = this.getGS() * secondFraction;
-//    Coordinate newC
-//        = Coordinates.getCoordinate(coordinate, this.sha.getHeading(), dist);
-//
-//    // add wind if flying
-//    if (this.getState().is(
-//        State.holdingPoint,
-//        State.takeOffRoll,
-//        State.landed
-//    ) == false)
-//      newC = Coordinates.getCoordinate(
-//          newC,
-//          Acc.weather().getWindHeading(),
-//          UnitProvider.ftToNm(Acc.weather().getWindSpeedOrWindGustSpeed()));
-//
-//    this.coordinate = newC;
-//  }
-//
+  private void drivePlane() {
+    this.routingModule.elapseSecond();
+    this.behaviorModule.elapseSecond();
+    this.atcModule.elapseSecond();
+    this.divertModule.elapseSecond();
+
+//    printAfterCommands();
+//    this.recorder.logPostponedAfterSpeeches(this.afterCommands);
+  }
+  private boolean isValidMessageForAirplane(IMessageContent msg) {
+    if (msg instanceof IFromAtc)
+      return true;
+    else if (msg instanceof SpeechList) {
+      for (ISpeech o : (SpeechList<ISpeech>) msg) {
+        if (!(o instanceof IFromAtc)) {
+          return false;
+        }
+      }
+      return true;
+    }
+    return false;
+  }
+
+  private void processMessages() {
+    IList<Message> msgs = Acc.messenger().getMessagesByListener(this, true);
+
+    // only responds to messages from tuned atc
+    msgs = msgs.where(q -> q.getSource() == this.atcModule.getTunedAtc());
+
+    // check type validity
+    if (msgs.isAny(q -> !isValidMessageForAirplane(q.getContent())))
+      throw new EApplicationException("Airplane can only deal with messages containing \"IFromAtc\" or \"List<IFromAtc>\".");
+
+    // extract contents
+    IList<IMessageContent> contents = msgs.select(q -> q.getContent());
+    for (IMessageContent c : contents) {
+      SpeechList cmds;
+      if (c instanceof SpeechList)
+        cmds = (SpeechList) c;
+      else {
+        cmds = new SpeechList((ISpeech) c);
+      }
+      this.routingModule.addNewSpeeches(cmds);
+    }
+  }
+
+  private void updateCoordinates() {
+    double dist = this.sha.getGS() * secondFraction;
+    Coordinate newC
+        = Coordinates.getCoordinate(coordinate, this.sha.getHeading(), dist);
+
+    // add wind if flying
+    if (this.getState().is(
+        State.holdingPoint,
+        State.takeOffRoll,
+        State.landed
+    ) == false)
+      newC = Coordinates.getCoordinate(
+          newC,
+          Acc.weather().getWindHeading(),
+          UnitProvider.ftToNm(Acc.weather().getWindSpeedOrWindGustSpeed()));
+
+    this.coordinate = newC;
+  }
 //  //endregion
 }

@@ -319,7 +319,7 @@ public class DebugFormatter extends Formatter {
     String ret = String.format(
         "%s {%s} %s",
         msg.plane.getSqwk(),
-        msg.plane.getCallsign().toString(),
+        msg.plane.getFlightModule().getCallsign().toString(),
         msg.getMessageText(),
         sender.getName());
     return ret;

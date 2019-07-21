@@ -16,6 +16,8 @@ public interface IAirplaneWriteAdvanced {
 
   void addExperience(Mood.DepartureExperience experience);
 
+  void addExperience(Mood.SharedExperience experience);
+
   void clearedToApproach(NewApproachInfo newApproachInfo);
 
   void divert(boolean isInvokedByAtc);
@@ -23,6 +25,8 @@ public interface IAirplaneWriteAdvanced {
   void goAround(GoingAroundNotification.GoAroundReason reason);
 
   void hold(Navaid navaid, int inboundRadial, boolean leftTurn);
+
+  void raiseEmergency();
 
   void setHoldingPointState(Coordinate coordinate, int course);
 

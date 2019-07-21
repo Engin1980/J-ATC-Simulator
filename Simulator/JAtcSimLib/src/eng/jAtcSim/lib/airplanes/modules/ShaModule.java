@@ -9,6 +9,7 @@ import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.*;
 import eng.jAtcSim.lib.airplanes.behaviors.NewApproachBehavior;
+import eng.jAtcSim.lib.airplanes.interfaces.modules.ISha4Navigator;
 import eng.jAtcSim.lib.airplanes.interfaces.modules.IShaRO;
 import eng.jAtcSim.lib.airplanes.navigators.HeadingNavigator;
 import eng.jAtcSim.lib.airplanes.navigators.INavigator;
@@ -19,7 +20,28 @@ import eng.jAtcSim.lib.global.Restriction;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeHeadingCommand;
 import eng.jAtcSim.lib.world.newApproaches.Approach;
 
-public class ShaModule implements IShaRO {
+public class ShaModule implements IShaRO{
+
+  class Sha4Navigator implements ISha4Navigator{
+
+    @Override
+    public int getHeading() {
+      return ShaModule.this.getHeading();
+    }
+
+    @Override
+    public void setTargetHeading(int heading, boolean leftTurn) {
+      ShaModule.this.finalHeading = heading;
+      ShaModule.this.finalHeadingLeftTurn = leftTurn;
+    }
+
+    @Override
+    public void setTargetHeading(int heading) {
+      boolean leftTurn
+          = HeadingsNew.getBetterDirectionToTurn(ShaModule.this.getHeading(), heading) == ChangeHeadingCommand.eDirection.left;
+      this.setTargetHeading(heading, leftTurn);
+    }
+  }
 
   private static class RestrictableItem {
     private int orderedValue;
@@ -150,6 +172,7 @@ public class ShaModule implements IShaRO {
   private RestrictableItem speedOrders;
   //endregion
   private INavigator navigator;
+  private final Sha4Navigator sha4Navigator = new Sha4Navigator();
 
   public ShaModule(Airplane parent) {
     assert parent != null;
@@ -282,7 +305,7 @@ return this.getTAS();
     } else if (this.lastVerticalSpeed != 0)
       this.lastVerticalSpeed = 0;
 
-    navigator.navigate(this, parent.getCoordinate());
+    navigator.navigate(this.sha4Navigator, parent.getCoordinate());
     if (finalHeading != heading.getValue()) {
       adjustHeading();
     } else {
@@ -311,11 +334,6 @@ return this.getTAS();
       return nc.getTargetCoordinate();
     } else
       return null;
-  }
-
-  void _setTargetHeading(int heading, boolean leftTurn) {
-    this.finalHeading = heading;
-    this.finalHeadingLeftTurn = leftTurn;
   }
 
   private ValueRequest getSpeedRequest() {

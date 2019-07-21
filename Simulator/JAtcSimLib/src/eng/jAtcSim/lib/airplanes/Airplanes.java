@@ -86,7 +86,7 @@ public class Airplanes {
 
   public static void evaluateAirproxes(IReadOnlyList<Airplane> planes) {
     for (Airplane p : planes) {
-      p.getMrvaAirproxModule().resetAirprox();
+      p.resetAirprox();
     }
 
     for (int i = 0; i < planes.size() - 1; i++) {
@@ -110,8 +110,8 @@ public class Airplanes {
             Acc.prm().getResponsibleAtc(b) == Acc.atcApp()))
           at = AirproxType.partial;
 
-        a.getMrvaAirproxModule().increaseAirprox(at);
-        b.getMrvaAirproxModule().increaseAirprox(at);
+        a.increaseAirprox(at);
+        b.increaseAirprox(at);
       }
     }
   }
@@ -119,7 +119,7 @@ public class Airplanes {
   private static AirproxType isInAirprox(Airplane a, Airplane b) {
     AirproxType ret;
 
-    double alt = Math.abs(a.getAltitude() - b.getAltitude());
+    double alt = Math.abs(a.getSha().getAltitude() - b.getSha().getAltitude());
 
     if (alt >= 1500) {
       return AirproxType.none;
@@ -147,10 +147,10 @@ public class Airplanes {
       }
     } else {
       if (dist < AIRPROX_STANDARD_DISTANCE) {
-        if (a.getAltitude() == b.getAltitude())
+        if (a.getSha().getAltitude() == b.getSha().getAltitude())
           ret = AirproxType.warning;
-        else if ((a.getAltitude() > b.getAltitude() && a.getVerticalSpeed() < 0 && b.getVerticalSpeed() > 0)
-          || (a.getAltitude() < b.getAltitude() && a.getVerticalSpeed() > 0 && b.getVerticalSpeed() < 0))
+        else if ((a.getSha().getAltitude() > b.getSha().getAltitude() && a.getSha().getVerticalSpeed() < 0 && b.getSha().getVerticalSpeed() > 0)
+          || (a.getSha().getAltitude() < b.getSha().getAltitude() && a.getSha().getVerticalSpeed() > 0 && b.getSha().getVerticalSpeed() < 0))
           ret = AirproxType.warning;
         else
           ret = AirproxType.none;

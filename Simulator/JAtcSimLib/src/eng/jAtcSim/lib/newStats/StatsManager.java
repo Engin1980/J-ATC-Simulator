@@ -86,14 +86,14 @@ public class StatsManager {
     MoodResult mr = plane.getEvaluatedMood();
     this.moodResults.add(mr);
     for (Collector collector : collectors) {
-      if (plane.isArrival()) {
+      if (plane.getFlightModule().isArrival()) {
         collector.getFinishedPlanesMoods().getArrivals().add(mr);
-        if (!plane.isEmergency())
-          collector.getFinishedPlanesDelays().getArrivals().add(plane.getDelayDifference());
+        if (!plane.getEmergencyModule().isEmergency())
+          collector.getFinishedPlanesDelays().getArrivals().add(plane.getFlightModule().getDelayDifference());
       } else {
         collector.getFinishedPlanesMoods().getDepartures().add(mr);
-        if (!plane.isEmergency())
-          collector.getFinishedPlanesDelays().getDepartures().add(plane.getDelayDifference());
+        if (!plane.getEmergencyModule().isEmergency())
+          collector.getFinishedPlanesDelays().getDepartures().add(plane.getFlightModule().getDelayDifference());
       }
     }
     recentStats.registerFinishedPlane(plane);
@@ -186,7 +186,7 @@ public class StatsManager {
     AnalysedPlanes ret = new AnalysedPlanes();
     for (Airplane plane : Acc.prm().getPlanes()) {
       boolean isApp = Acc.prm().getResponsibleAtc(plane) == Acc.atcApp();
-      if (plane.isArrival()) {
+      if (plane.getFlightModule().isArrival()) {
         ret.arrivals++;
         if (isApp) ret.appArrivals++;
       } else {
@@ -194,8 +194,8 @@ public class StatsManager {
         if (isApp) ret.appDepartures++;
       }
       if (isApp) {
-        if (plane.isMrvaError()) ret.mrvaErrors++;
-        if (plane.getAirprox() == AirproxType.full) ret.airproxErrors++;
+        if (plane.getMrvaAirproxModule().isMrvaError()) ret.mrvaErrors++;
+        if (plane.getMrvaAirproxModule().getAirprox() == AirproxType.full) ret.airproxErrors++;
       }
     }
     return ret;

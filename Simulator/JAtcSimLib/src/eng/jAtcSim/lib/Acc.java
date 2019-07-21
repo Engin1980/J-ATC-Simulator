@@ -134,7 +134,7 @@ public class Acc {
   }
 
   public static boolean isSomeActiveEmergency() {
-    boolean ret = Acc.planes().isAny(q->q.isEmergency() && q.isArrival());
+    boolean ret = Acc.planes().isAny(q->q.getEmergencyModule().isEmergency() && q.getFlightModule().isArrival());
     return ret;
   }
 }

@@ -1,15 +1,15 @@
 package eng.jAtcSim.lib.airplanes.modules;
 
-import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.AirproxType;
+import eng.jAtcSim.lib.airplanes.interfaces.IAirplaneWriteSimple;
+import eng.jAtcSim.lib.airplanes.interfaces.modules.IMrvaAirproxModule;
 
-public class MrvaAirproxModule {
-  private final Airplane parent;
+public class MrvaAirproxModule extends Module implements IMrvaAirproxModule {
   private AirproxType airprox = AirproxType.none;
   private boolean mrvaError;
 
-  public MrvaAirproxModule(Airplane parent) {
-    this.parent = parent;
+  public MrvaAirproxModule(IAirplaneWriteSimple parent) {
+    super(parent);
   }
 
   public AirproxType getAirprox() {

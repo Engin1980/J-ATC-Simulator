@@ -23,6 +23,8 @@ public interface IAirplaneRO extends IMessageParticipant {
 
   IRoutingModuleRO getRoutingModule();
 
+  IMrvaAirproxModule getMrvaAirproxModule();
+
   IShaRO getSha();
 
   Squawk getSqwk();

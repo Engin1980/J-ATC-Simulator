@@ -10,7 +10,6 @@ import eng.jAtcSim.lib.airplanes.AirproxType;
 import eng.jAtcSim.lib.global.ETime;
 import eng.jAtcSim.lib.newStats.model.ElapsedSecondDurationModel;
 import eng.jAtcSim.lib.newStats.properties.TimedValue;
-import sun.security.krb5.internal.ETypeInfo;
 
 public class RecentStats {
 
@@ -175,9 +174,9 @@ public class RecentStats {
     int aarrs = 0;
     int adeps = 0;
     for (Airplane plane : planes) {
-      if (plane.getAirprox() == AirproxType.full)
+      if (plane.getMrvaAirproxModule().getAirprox() == AirproxType.full)
         airproxErs++;
-      if (plane.isMrvaError())
+      if (plane.getMrvaAirproxModule().isMrvaError())
         mrvaErs++;
 
       boolean isApp = Acc.prm().getResponsibleAtc(plane) == Acc.atcApp();
@@ -261,7 +260,7 @@ public class RecentStats {
       this.finishedArrivals++;
     else
       this.finishedDepartures++;
-    planeDelays.add(new TimedValue<>(Acc.now().clone(), plane.getDelayDifference()));
+    planeDelays.add(new TimedValue<>(Acc.now().clone(), plane.getFlightModule().getDelayDifference()));
   }
 
   public void registerHoldingPointDelay(int delay) {
