@@ -5,7 +5,7 @@ import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.interfaces.IAirplaneRO;
 import eng.jAtcSim.lib.airplanes.interfaces.IAirplaneWriteSimple;
-import eng.jAtcSim.lib.world.newApproaches.ApproachEntry;
+import eng.jAtcSim.lib.world.approaches.ApproachEntry;
 import eng.jAtcSim.lib.global.Restriction;
 import eng.jAtcSim.lib.speaking.IFromAirplane;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.HighOrderedSpeedForApproach;
@@ -13,8 +13,8 @@ import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.Reje
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.rejections.UnableToEnterApproachFromDifficultPosition;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ClearedToApproachCommand;
 import eng.jAtcSim.lib.world.ActiveRunwayThreshold;
-import eng.jAtcSim.lib.world.newApproaches.Approach;
-import eng.jAtcSim.lib.world.newApproaches.NewApproachInfo;
+import eng.jAtcSim.lib.world.approaches.Approach;
+import eng.jAtcSim.lib.world.approaches.NewApproachInfo;
 
 public class ClearedToApproachApplication extends CommandApplication<ClearedToApproachCommand> {
 

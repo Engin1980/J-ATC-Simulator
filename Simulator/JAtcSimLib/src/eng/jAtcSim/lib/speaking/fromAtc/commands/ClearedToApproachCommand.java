@@ -8,7 +8,7 @@ package eng.jAtcSim.lib.speaking.fromAtc.commands;
 
 import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
-import eng.jAtcSim.lib.world.newApproaches.Approach;
+import eng.jAtcSim.lib.world.approaches.Approach;
 
 /**
  *

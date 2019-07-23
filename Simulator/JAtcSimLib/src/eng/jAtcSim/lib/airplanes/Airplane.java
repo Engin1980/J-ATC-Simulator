@@ -42,7 +42,7 @@ import eng.jAtcSim.lib.speaking.fromAtc.commands.ThenCommand;
 import eng.jAtcSim.lib.world.ActiveRunwayThreshold;
 import eng.jAtcSim.lib.world.Navaid;
 import eng.jAtcSim.lib.world.Route;
-import eng.jAtcSim.lib.world.newApproaches.NewApproachInfo;
+import eng.jAtcSim.lib.world.approaches.NewApproachInfo;
 
 public class Airplane implements IAirplaneWriteSimple, IAirplane4Mrva, IAirplane4Atc {
 

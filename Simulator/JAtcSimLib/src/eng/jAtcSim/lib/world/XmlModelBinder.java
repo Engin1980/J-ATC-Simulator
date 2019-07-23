@@ -18,17 +18,17 @@ import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.*;
 import eng.jAtcSim.lib.textProcessing.parsing.Parser;
 import eng.jAtcSim.lib.textProcessing.parsing.shortBlockParser.ShortBlockParser;
-import eng.jAtcSim.lib.world.newApproaches.*;
-import eng.jAtcSim.lib.world.newApproaches.entryLocations.IApproachEntryLocation;
-import eng.jAtcSim.lib.world.newApproaches.entryLocations.FixRelatedApproachEntryLocation;
-import eng.jAtcSim.lib.world.newApproaches.entryLocations.RegionalApproachEntryLocation;
-import eng.jAtcSim.lib.world.newApproaches.stages.*;
-import eng.jAtcSim.lib.world.newApproaches.stages.checks.CheckAirportVisibilityStage;
-import eng.jAtcSim.lib.world.newApproaches.stages.checks.CheckPlaneLocationStage;
-import eng.jAtcSim.lib.world.newApproaches.stages.checks.CheckPlaneShaStage;
+import eng.jAtcSim.lib.world.approaches.*;
+import eng.jAtcSim.lib.world.approaches.entryLocations.IApproachEntryLocation;
+import eng.jAtcSim.lib.world.approaches.entryLocations.FixRelatedApproachEntryLocation;
+import eng.jAtcSim.lib.world.approaches.entryLocations.RegionalApproachEntryLocation;
+import eng.jAtcSim.lib.world.approaches.stages.*;
+import eng.jAtcSim.lib.world.approaches.stages.checks.CheckAirportVisibilityStage;
+import eng.jAtcSim.lib.world.approaches.stages.checks.CheckPlaneLocationStage;
+import eng.jAtcSim.lib.world.approaches.stages.checks.CheckPlaneShaStage;
 import eng.jAtcSim.lib.world.xmlModel.*;
-import eng.jAtcSim.lib.world.xmlModel.approaches.*;
-import eng.jAtcSim.lib.world.xmlModel.approaches.approachStages.*;
+import eng.jAtcSim.lib.world.xmlModel.approachesOld.*;
+import eng.jAtcSim.lib.world.xmlModel.approachesOld.approachStages.*;
 
 import java.awt.geom.Line2D;
 
@@ -522,8 +522,8 @@ public class XmlModelBinder {
 
     if (x instanceof XmlCheckAirportVisibilityStage)
       ret = new CheckAirportVisibilityStage();
-    else if (x instanceof XmlVisualFinalStage)
-      ret = new VisualFinalStage(context.threshold);
+    else if (x instanceof XmlLandingStage)
+      ret = new LandingStage(context.threshold);
     else if (x instanceof XmlCheckPlaneLocationStage)
       ret = convertCheckPlaneLocationStage((XmlCheckPlaneLocationStage) x, context);
     else if (x instanceof XmlCheckPlaneStateStage)
@@ -667,7 +667,7 @@ public class XmlModelBinder {
             new XmlDescendStage(context.airport.getMainAirportNavaid().getName(), context.airport.getAltitude(), x.slope,
                 null, da));
         app.stages.add(new XmlCheckAirportVisibilityStage());
-        app.stages.add(new XmlVisualFinalStage());
+        app.stages.add(new XmlLandingStage());
 
         ret.add(app);
       }
@@ -697,7 +697,7 @@ public class XmlModelBinder {
           new XmlDescendStage(tmp, x.initialAltitude, x.slope,
               null, da));
       app.stages.add(new XmlCheckAirportVisibilityStage());
-      app.stages.add(new XmlVisualFinalStage());
+      app.stages.add(new XmlLandingStage());
 
       ret.add(app);
     }
@@ -728,7 +728,7 @@ public class XmlModelBinder {
           new XmlDescendStage(tmp, x.initialAltitude, x.slope,
               null, da));
       app.stages.add(new XmlCheckAirportVisibilityStage());
-      app.stages.add(new XmlVisualFinalStage());
+      app.stages.add(new XmlLandingStage());
 
       ret.add(app);
     }

@@ -7,10 +7,10 @@ import eng.eSystem.geo.Headings;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.interfaces.IAirplaneWriteSimple;
 import eng.jAtcSim.lib.airplanes.interfaces.modules.IShaRO;
-import eng.jAtcSim.lib.world.newApproaches.stages.CheckStage;
-import eng.jAtcSim.lib.world.newApproaches.stages.checks.CheckAirportVisibilityStage;
-import eng.jAtcSim.lib.world.newApproaches.stages.checks.CheckPlaneLocationStage;
-import eng.jAtcSim.lib.world.newApproaches.stages.checks.CheckPlaneShaStage;
+import eng.jAtcSim.lib.world.approaches.stages.CheckStage;
+import eng.jAtcSim.lib.world.approaches.stages.checks.CheckAirportVisibilityStage;
+import eng.jAtcSim.lib.world.approaches.stages.checks.CheckPlaneLocationStage;
+import eng.jAtcSim.lib.world.approaches.stages.checks.CheckPlaneShaStage;
 
 public class CheckStagePilot implements IApproachStagePilot<CheckStage> {
 

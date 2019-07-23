@@ -4,7 +4,7 @@ import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IMap;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.validation.Validator;
-import eng.jAtcSim.lib.world.newApproaches.stages.*;
+import eng.jAtcSim.lib.world.approaches.stages.*;
 
 public class ApproachStagePilotProvider {
 

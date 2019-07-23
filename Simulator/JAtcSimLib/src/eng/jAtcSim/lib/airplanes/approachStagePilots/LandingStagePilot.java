@@ -2,7 +2,7 @@ package eng.jAtcSim.lib.airplanes.approachStagePilots;
 
 import eng.jAtcSim.lib.airplanes.interfaces.IAirplaneWriteSimple;
 import eng.jAtcSim.lib.exceptions.ToDoException;
-import eng.jAtcSim.lib.world.newApproaches.stages.LandingStage;
+import eng.jAtcSim.lib.world.approaches.stages.LandingStage;
 
 public class LandingStagePilot implements IApproachStagePilot<LandingStage> {
   @Override

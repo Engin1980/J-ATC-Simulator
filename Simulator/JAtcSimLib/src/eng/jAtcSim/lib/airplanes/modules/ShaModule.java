@@ -18,7 +18,7 @@ import eng.jAtcSim.lib.global.Headings;
 import eng.jAtcSim.lib.global.HeadingsNew;
 import eng.jAtcSim.lib.global.Restriction;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeHeadingCommand;
-import eng.jAtcSim.lib.world.newApproaches.Approach;
+import eng.jAtcSim.lib.world.approaches.Approach;
 
 public class ShaModule implements IShaRO{
 

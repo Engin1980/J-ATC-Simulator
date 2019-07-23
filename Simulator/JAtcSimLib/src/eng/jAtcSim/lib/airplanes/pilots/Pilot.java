@@ -48,7 +48,7 @@
 //import eng.jAtcSim.lib.world.ActiveRunwayThreshold;
 //import eng.jAtcSim.lib.world.Navaid;
 //import eng.jAtcSim.lib.world.Route;
-//import eng.jAtcSim.lib.world.newApproaches.NewApproachInfo;
+//import eng.jAtcSim.lib.world.approachesOld.NewApproachInfo;
 //
 //import java.lang.reflect.Constructor;
 //import java.lang.reflect.InvocationTargetException;

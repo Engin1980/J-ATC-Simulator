@@ -4,7 +4,7 @@ import eng.eSystem.geo.Coordinates;
 import eng.jAtcSim.lib.airplanes.interfaces.IAirplaneWriteSimple;
 import eng.jAtcSim.lib.airplanes.navigators.HeadingNavigator;
 import eng.jAtcSim.lib.airplanes.navigators.ToCoordinateNavigator;
-import eng.jAtcSim.lib.world.newApproaches.stages.FlyToPointStage;
+import eng.jAtcSim.lib.world.approaches.stages.FlyToPointStage;
 
 public class FlyToPointStagePilot implements IApproachStagePilot<FlyToPointStage> {
   private static final double OVER_THE_POINT_DISTANCE_NM = 1; // in NM

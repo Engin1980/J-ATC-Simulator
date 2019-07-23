@@ -6,7 +6,7 @@ import eng.eSystem.geo.Coordinate;
 import eng.eSystem.xmlSerialization.annotations.XmlItemElement;
 import eng.eSystem.xmlSerialization.annotations.XmlOptional;
 import eng.jAtcSim.lib.world.Route;
-import eng.jAtcSim.lib.world.xmlModel.approaches.*;
+import eng.jAtcSim.lib.world.xmlModel.approachesOld.*;
 
 public class XmlActiveRunwayThreshold {
   @XmlItemElement(elementName = "ilsApproach", type = XmlIlsApproach.class)

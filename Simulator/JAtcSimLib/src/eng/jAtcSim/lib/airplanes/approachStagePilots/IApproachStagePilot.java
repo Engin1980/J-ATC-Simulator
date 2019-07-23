@@ -1,7 +1,7 @@
 package eng.jAtcSim.lib.airplanes.approachStagePilots;
 
 import eng.jAtcSim.lib.airplanes.interfaces.IAirplaneWriteSimple;
-import eng.jAtcSim.lib.world.newApproaches.stages.IApproachStage;
+import eng.jAtcSim.lib.world.approaches.stages.IApproachStage;
 
 public interface IApproachStagePilot<T extends IApproachStage>  {
   enum eResult {

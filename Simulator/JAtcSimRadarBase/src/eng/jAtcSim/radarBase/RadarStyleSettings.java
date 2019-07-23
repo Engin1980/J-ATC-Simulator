@@ -213,7 +213,7 @@ public class RadarStyleSettings {
   public ColorWidthSettings activeRunway;
   public ColorWidthSettings closedRunway;
 
-  // approaches
+  // approachesOld
   public ColorWidthLengthSettings ilsApproach;
   public ColorWidthLengthSettings gnssApproach;
   public ColorWidthLengthSettings vorApproach;

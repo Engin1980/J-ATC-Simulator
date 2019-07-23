@@ -7,8 +7,8 @@ import eng.jAtcSim.lib.airplanes.approachStagePilots.ApproachStagePilotProvider;
 import eng.jAtcSim.lib.airplanes.approachStagePilots.IApproachStagePilot;
 import eng.jAtcSim.lib.airplanes.interfaces.IAirplaneWriteSimple;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.GoingAroundNotification;
-import eng.jAtcSim.lib.world.newApproaches.NewApproachInfo;
-import eng.jAtcSim.lib.world.newApproaches.stages.IApproachStage;
+import eng.jAtcSim.lib.world.approaches.NewApproachInfo;
+import eng.jAtcSim.lib.world.approaches.stages.IApproachStage;
 
 public class NewApproachBehavior extends Behavior {
 

@@ -3,7 +3,7 @@ package eng.jAtcSim.lib.airplanes.approachStagePilots;
 import eng.jAtcSim.lib.airplanes.interfaces.IAirplaneWriteSimple;
 import eng.jAtcSim.lib.airplanes.navigators.HeadingNavigator;
 import eng.jAtcSim.lib.airplanes.navigators.RadialNavigator;
-import eng.jAtcSim.lib.world.newApproaches.stages.RadialStage;
+import eng.jAtcSim.lib.world.approaches.stages.RadialStage;
 
 public class RadialStagePilot implements IApproachStagePilot<RadialStage> {
   @Override
