@@ -8,7 +8,6 @@
         <element id="module-output" name="SwingRadar" />
         <element id="module-output" name="JAtcSimRadarBase" />
       </element>
-      <element id="library" level="project" name="eng.eSystem.xmlSerialization" />
       <element id="library" level="project" name="eng.eSystem" />
       <element id="directory" name="_Sounds">
         <element id="dir-copy" path="$PROJECT_DIR$/Simulator/_Sounds" />

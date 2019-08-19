@@ -7,12 +7,23 @@
 package eng.jAtcSim.lib.world;
 
 
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.geo.Coordinate;
+import eng.jAtcSim.lib.world.xml.XmlLoader;
 
 /**
  * @author Marek
  */
 public class Navaid {
+
+  public static Navaid load(XElement source){
+    Coordinate coordinate = XmlLoader.loadCoordinate(source, "coordinate");
+    String name = XmlLoader.loadString(source, "name");
+    eType type = XmlLoader.loadEnum(source, "type", eType.class);
+
+    Navaid ret = new Navaid(name, type, coordinate);
+    return ret;
+  }
 
   public enum eType {
     vor,
@@ -31,7 +42,7 @@ public class Navaid {
   private String name;
   private eType type;
 
-  public Navaid(String name, eType type, Coordinate coordinate) {
+  private Navaid(String name, eType type, Coordinate coordinate) {
     this.coordinate = coordinate;
     this.name = name;
     this.type = type;

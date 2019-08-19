@@ -43,6 +43,7 @@ import eng.jAtcSim.lib.world.ActiveRunwayThreshold;
 import eng.jAtcSim.lib.world.Navaid;
 import eng.jAtcSim.lib.world.Route;
 import eng.jAtcSim.lib.world.approaches.NewApproachInfo;
+import eng.jAtcSim.lib.world.xml.XmlLoader;
 
 public class Airplane implements IAirplaneWriteSimple, IAirplane4Mrva, IAirplane4Atc {
 

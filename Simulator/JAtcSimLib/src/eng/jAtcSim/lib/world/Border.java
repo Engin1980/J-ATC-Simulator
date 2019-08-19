@@ -10,12 +10,13 @@ import eng.eSystem.Tuple;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.utilites.NumberUtils;
-import eng.eSystem.xmlSerialization.annotations.*;
 import eng.eSystem.geo.Coordinate;
 import eng.jAtcSim.lib.global.Headings;
+import eng.jAtcSim.lib.world.xml.XmlLoader;
 
 import java.awt.geom.Line2D;
 import java.util.Comparator;
@@ -24,6 +25,25 @@ import java.util.Comparator;
  * @author Marek
  */
 public class Border {
+
+  public static Border load(XElement element){
+    XmlLoader.setContext(element);
+    String name = XmlLoader.loadString( "name", true);
+    eType type = XmlLoader.loadEnum( "type", eType.class , true);
+    boolean enclosed = XmlLoader.loadBoolean("enclosed", true);
+    int minAltitude = XmlLoader.loadInteger("minAltitude", true);
+    int maxAltitude = XmlLoader.loadInteger("maxAltitude", true);
+    Coordinate labelCoordinate = XmlLoader.loadCoordinate("labelCoordinate", false);
+
+    IList<BorderPoint> points = new EList<>();
+    for (XElement child : element.getChild("points").getChildren()) {
+
+    }
+
+
+    Border ret = new Border(name, type, points, enclosed, minAltitude, maxAltitude, labelCoordinate);
+    return ret;
+  }
 
   public enum eType {
     country,
@@ -50,7 +70,7 @@ public class Border {
   private final double globalMinLat;
   private final double globalMaxLat;
 
-  public Border(String name, eType type, IList<BorderPoint> points, boolean enclosed, int minAltitude, int maxAltitude, Coordinate labelCoordinate) {
+  private Border(String name, eType type, IList<BorderPoint> points, boolean enclosed, int minAltitude, int maxAltitude, Coordinate labelCoordinate) {
     this.name = name;
     this.type = type;
     this.points = points;

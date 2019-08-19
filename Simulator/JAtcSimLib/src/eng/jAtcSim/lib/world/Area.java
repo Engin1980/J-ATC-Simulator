@@ -6,21 +6,51 @@
 package eng.jAtcSim.lib.world;
 
 import eng.eSystem.EStringBuilder;
+import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.ISet;
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
+import eng.jAtcSim.lib.world.approaches.stages.checks.CheckAirportVisibilityStage;
+import eng.jAtcSim.lib.world.xml.XmlLoader;
 
 /**
  * @author Marek
  */
 public class Area {
 
+  public static Area load(XElement element){
+    String icao = XmlLoader.loadString(element, "icao");
+
+    NavaidList navaidList = new NavaidList();
+    for (XElement child : element.getChild("navaids").getChildren("navaid")) {
+      Navaid navaid = Navaid.load(child);
+      navaidList.add(navaid);
+    }
+
+    IList<Border> borderList = new EList<>();
+    for (XElement child : element.getChild("borders").getChildren("border")) {
+      Border border = Border.load(child);
+      borderList.add(border);
+    }
+
+    IList<Airport> airportList = new EList<>();
+    for (XElement child : element.getChild("airports").getChildren("airport")) {
+      Airport airport = Airport.load(child, navaidList);
+      airportList.add(airport);
+    }
+
+    Area ret = new Area(icao, airportList, navaidList, borderList);
+    return ret;
+  }
+
   private final IList<Airport> airports;
   private final NavaidList navaids;
   private final IList<Border> borders;
   private final String icao;
 
-  public Area(String icao, IList<Airport> airports, NavaidList navaids, IList<Border> borders) {
+
+  private Area(String icao, IList<Airport> airports, NavaidList navaids, IList<Border> borders) {
     this.icao = icao;
     this.airports = airports;
     this.navaids = navaids;
