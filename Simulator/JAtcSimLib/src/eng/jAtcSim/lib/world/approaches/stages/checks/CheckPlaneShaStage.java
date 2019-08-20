@@ -1,9 +1,9 @@
 package eng.jAtcSim.lib.world.approaches.stages.checks;
 
 import eng.eSystem.validation.Validator;
-import eng.jAtcSim.lib.world.approaches.stages.CheckStage;
+import eng.jAtcSim.lib.world.approaches.stages.ICheckStage;
 
-public class CheckPlaneShaStage implements CheckStage {
+public class CheckPlaneShaStage implements ICheckStage {
   private final Integer minAltitude;
   private final Integer maxAltitude;
   private final Integer minHeading;

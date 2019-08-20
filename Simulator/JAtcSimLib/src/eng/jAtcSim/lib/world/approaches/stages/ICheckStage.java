@@ -1,6 +1,6 @@
 package eng.jAtcSim.lib.world.approaches.stages;
 
-public interface CheckStage extends IApproachStage {
+public interface ICheckStage extends IApproachStage {
 //
 //  @Override
 //  public eResult initStage(IPilot4Behavior pilot) {

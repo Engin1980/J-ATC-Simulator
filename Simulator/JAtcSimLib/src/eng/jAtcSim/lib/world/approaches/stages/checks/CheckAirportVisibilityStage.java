@@ -1,8 +1,8 @@
 package eng.jAtcSim.lib.world.approaches.stages.checks;
 
-import eng.jAtcSim.lib.world.approaches.stages.CheckStage;
+import eng.jAtcSim.lib.world.approaches.stages.ICheckStage;
 
-public class CheckAirportVisibilityStage implements CheckStage {
+public class CheckAirportVisibilityStage implements ICheckStage {
 //  @Override
 //  protected eResult check(IPilot5Behavior pilot) {
 //    Weather w = Acc.weather();

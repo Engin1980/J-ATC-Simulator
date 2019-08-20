@@ -14,7 +14,7 @@ public class ApproachStagePilotProvider {
     Validator.isNotNull(stage);
 
     IApproachStagePilot ret;
-    if (stage instanceof CheckStage)
+    if (stage instanceof ICheckStage)
       ret = getInstance(CheckStagePilot.class);
     else if (stage instanceof FlyToPointStage)
       ret = getInstance(FlyToPointStagePilot.class);

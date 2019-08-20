@@ -7,25 +7,25 @@ import eng.eSystem.geo.Headings;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.interfaces.IAirplaneWriteSimple;
 import eng.jAtcSim.lib.airplanes.interfaces.modules.IShaRO;
-import eng.jAtcSim.lib.world.approaches.stages.CheckStage;
+import eng.jAtcSim.lib.world.approaches.stages.ICheckStage;
 import eng.jAtcSim.lib.world.approaches.stages.checks.CheckAirportVisibilityStage;
 import eng.jAtcSim.lib.world.approaches.stages.checks.CheckPlaneLocationStage;
 import eng.jAtcSim.lib.world.approaches.stages.checks.CheckPlaneShaStage;
 
-public class CheckStagePilot implements IApproachStagePilot<CheckStage> {
+public class CheckStagePilot implements IApproachStagePilot<ICheckStage> {
 
   @Override
-  public eResult disposeStage(IAirplaneWriteSimple plane, CheckStage stage) {
+  public eResult disposeStage(IAirplaneWriteSimple plane, ICheckStage stage) {
     return eResult.ok;
   }
 
   @Override
-  public eResult flyStage(IAirplaneWriteSimple plane, CheckStage stage) {
+  public eResult flyStage(IAirplaneWriteSimple plane, ICheckStage stage) {
     return eResult.ok;
   }
 
   @Override
-  public eResult initStage(IAirplaneWriteSimple plane, CheckStage stage) {
+  public eResult initStage(IAirplaneWriteSimple plane, ICheckStage stage) {
     eResult ret;
     if (stage instanceof CheckAirportVisibilityStage)
       ret = evaluateCheckAirportVisibility(plane);
@@ -40,7 +40,7 @@ public class CheckStagePilot implements IApproachStagePilot<CheckStage> {
   }
 
   @Override
-  public boolean isFinishedStage(IAirplaneWriteSimple plane, CheckStage stage) {
+  public boolean isFinishedStage(IAirplaneWriteSimple plane, ICheckStage stage) {
     return true;
   }
 

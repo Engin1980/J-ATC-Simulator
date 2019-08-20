@@ -5,9 +5,9 @@ import eng.eSystem.geo.Coordinate;
 public class RadialStage implements IApproachStage {
   private Coordinate fix;
   private int inboundRadial;
-  private IRadialStageExitCondition exitCondition;
+  private IExitCondition exitCondition;
 
-  public IRadialStageExitCondition getExitCondition() {
+  public IExitCondition getExitCondition() {
     return exitCondition;
   }
 

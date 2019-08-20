@@ -1,9 +1,9 @@
 package eng.jAtcSim.lib.world.approaches.stages.checks;
 
 import eng.eSystem.geo.Coordinate;
-import eng.jAtcSim.lib.world.approaches.stages.CheckStage;
+import eng.jAtcSim.lib.world.approaches.stages.ICheckStage;
 
-public class CheckPlaneLocationStage implements CheckStage {
+public class CheckPlaneLocationStage implements ICheckStage {
   private final Coordinate coordinate;
   private final int fromInboundRadial;
   private final int toInboundRadial;
