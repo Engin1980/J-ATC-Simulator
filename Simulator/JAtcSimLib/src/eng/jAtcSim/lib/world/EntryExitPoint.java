@@ -1,50 +1,56 @@
 package eng.jAtcSim.lib.world;
 
-import eng.eSystem.Tuple;
+import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
+import eng.eSystem.collections.IReadOnlyList;
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.geo.Coordinates;
-import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
-import eng.jAtcSim.lib.Acc;
-import eng.eSystem.geo.Coordinate;
+import eng.jAtcSim.lib.world.xml.XmlLoader;
 
-public class EntryExitPoint {
+public class EntryExitPoint extends Parentable<Airport> {
+
   public enum Type {
     entry,
     exit,
     both
   }
 
-  private final Airport parent;
+  public static EntryExitPointList loadList(IReadOnlyList<XElement> sources, NavaidList navaids) {
+    IList<EntryExitPoint> tmp = new EList<>();
+
+    for (XElement source : sources) {
+      EntryExitPoint eep = EntryExitPoint.load(source, navaids);
+      tmp.add(eep);
+    }
+
+    EntryExitPointList ret = new EntryExitPointList(tmp);
+    return ret;
+  }
+
+  private static EntryExitPoint load(XElement source, NavaidList navaids) {
+    XmlLoader.setContext(source);
+    String navaidName = XmlLoader.loadString("name",true);
+    Type type = XmlLoader.loadEnum("type", Type.class,true);
+    Integer maxMrvaAltitude = XmlLoader.loadInteger("maxMrvaAltitude",false);
+    Navaid navaid = navaids.get(navaidName);
+    EntryExitPoint ret = new EntryExitPoint(navaid, type, maxMrvaAltitude);
+    return ret;
+  }
+
+
   private final Navaid navaid;
   private final Type type;
   private final Integer maxMrvaAltitude;
-  private final int radialFromAirport;
+  private int radialFromAirport;
 
-  public EntryExitPoint(Airport parent, Navaid navaid, Type type, Integer maxMrvaAltitude) {
-    this.parent = parent;
+  private EntryExitPoint(Navaid navaid, Type type, Integer maxMrvaAltitude) {
     this.navaid = navaid;
     this.type = type;
     this.maxMrvaAltitude = maxMrvaAltitude;
-    this.radialFromAirport = (int) Math.round(Coordinates.getBearing(parent.getLocation(), navaid.getCoordinate()));
-  }
-
-  public Airport getParent() {
-    return parent;
-  }
-
-  public Navaid getNavaid() {
-    return navaid;
-  }
-
-  public Type getType() {
-    return type;
-  }
-
-  public int getMaxMrvaAltitudeOrHigh() {
-    if (maxMrvaAltitude == null)
-      return 0;
-    else
-      return maxMrvaAltitude;
+    super.getOnParentSet().add(
+        () -> this.radialFromAirport = (int) Math.round(Coordinates.getBearing(
+            super.getParent().getLocation(), navaid.getCoordinate()))
+    );
   }
 
   public void adjustBy(EntryExitPoint eep) {
@@ -58,16 +64,31 @@ public class EntryExitPoint {
 //      this.kind = Type.both;
   }
 
-  @Override
-  public String toString() {
-    return  this.getName() + " (" + this.type + ") {entryExitPoint}";
+  public int getMaxMrvaAltitudeOrHigh() {
+    if (maxMrvaAltitude == null)
+      return 0;
+    else
+      return maxMrvaAltitude;
   }
 
   public String getName() {
     return this.navaid.getName();
   }
 
+  public Navaid getNavaid() {
+    return navaid;
+  }
+
   public int getRadialFromAirport() {
     return radialFromAirport;
+  }
+
+  public Type getType() {
+    return type;
+  }
+
+  @Override
+  public String toString() {
+    return this.getName() + " (" + this.type + ") {entryExitPoint}";
   }
 }

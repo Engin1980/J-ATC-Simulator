@@ -6,14 +6,42 @@
 
 package eng.jAtcSim.lib.world;
 
+import eng.eSystem.collections.EList;
+import eng.eSystem.collections.IList;
+import eng.eSystem.collections.IReadOnlyList;
+import eng.eSystem.eXml.XElement;
+import eng.jAtcSim.lib.world.xml.XmlLoader;
+
 /**
  *
  * @author Marek
  */
 public class PublishedHold{
+
+  public static IList<PublishedHold> loadList(IReadOnlyList<XElement> sources, NavaidList navaids) {
+    IList<PublishedHold> ret = new EList<>();
+    for (XElement source : sources) {
+      PublishedHold hold = PublishedHold.load(source, navaids);
+      ret.add(hold);
+    }
+    return ret;
+  }
+
+  private static PublishedHold load(XElement source, NavaidList navaids) {
+    XmlLoader.setContext(source);
+    String navaidName = XmlLoader.loadString("name",true);
+    Navaid navaid = navaids.get(navaidName);
+
+    int inboundRadial = XmlLoader.loadInteger("inboundRadial", true);
+    boolean leftTurn = XmlLoader.loadString("turn",true).equals("left");
+
+    PublishedHold ret = new PublishedHold(navaid, inboundRadial, leftTurn);
+    return ret;
+  }
+
   private Navaid navaid;
   private int inboundRadial;
-  private boolean _leftTurn;
+  private boolean leftTurn;
   private Airport _parent;
 
   public Navaid getNavaid() {
@@ -25,16 +53,16 @@ public class PublishedHold{
   }
 
   public boolean isLeftTurn() {
-    return _leftTurn;
+    return leftTurn;
   }
   public boolean isRightTurn() {
-    return !_leftTurn;
+    return !leftTurn;
   }
 
-  public PublishedHold(Navaid navaid, int inboundRadial, boolean _leftTurn, Airport _parent) {
+  private PublishedHold(Navaid navaid, int inboundRadial, boolean leftTurn, Airport _parent) {
     this.navaid = navaid;
     this.inboundRadial = inboundRadial;
-    this._leftTurn = _leftTurn;
+    this.leftTurn = leftTurn;
     this._parent = _parent;
   }
 

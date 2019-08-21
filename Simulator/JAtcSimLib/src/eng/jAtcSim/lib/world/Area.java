@@ -20,7 +20,7 @@ import eng.jAtcSim.lib.world.xml.XmlLoader;
 public class Area {
 
   public static Area load(XElement element){
-    String icao = XmlLoader.loadString(element, "icao");
+    String icao = XmlLoader.loadString(element, "icao", true);
 
     NavaidList navaidList = new NavaidList();
     for (XElement child : element.getChild("navaids").getChildren("navaid")) {
@@ -30,7 +30,7 @@ public class Area {
 
     IList<Border> borderList = new EList<>();
     for (XElement child : element.getChild("borders").getChildren("border")) {
-      Border border = Border.load(child);
+      Border border = Border.load(child, navaidList);
       borderList.add(border);
     }
 

@@ -58,7 +58,7 @@ public abstract class XmlLoader {
     else
       try {
         ret = (T) Enum.valueOf((Class) type, tmp);
-      } catch (Exception ex){
+      } catch (Exception ex) {
         throw throwConvertFail(tmp, type, ex);
       }
     return ret;
@@ -107,6 +107,26 @@ public abstract class XmlLoader {
         ret = Integer.parseInt(tmp);
       } catch (Exception ex) {
         throw throwConvertFail(tmp, Integer.class, ex);
+      }
+    return ret;
+  }
+
+  public static Double loadDouble(String key, boolean isMandatory) {
+    assert context != null;
+    Double ret = loadDouble(context, key, isMandatory);
+    return ret;
+  }
+
+  public static Double loadDouble(XElement source, String key, boolean isMandatory) {
+    Double ret;
+    String tmp = loadString(source, key, isMandatory);
+    if (tmp == null)
+      ret = null;
+    else
+      try {
+        ret = Double.parseDouble(tmp);
+      } catch (Exception ex) {
+        throw throwConvertFail(tmp, Double.class, ex);
       }
     return ret;
   }

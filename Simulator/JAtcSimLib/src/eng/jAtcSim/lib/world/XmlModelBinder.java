@@ -32,6 +32,7 @@ import eng.jAtcSim.lib.world.xmlModel.approachesOld.approachStages.*;
 
 import java.awt.geom.Line2D;
 
+//TODO delete this class when everything is anywhere else
 public class XmlModelBinder {
 
   public static class Context {

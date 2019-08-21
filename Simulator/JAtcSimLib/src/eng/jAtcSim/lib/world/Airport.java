@@ -6,13 +6,42 @@
 package eng.jAtcSim.lib.world;
 
 import eng.eSystem.collections.*;
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.geo.Coordinate;
 import eng.jAtcSim.lib.atcs.AtcTemplate;
+import eng.jAtcSim.lib.world.xml.XmlLoader;
 
 /**
  * @author Marek
  */
-public class Airport {
+public class Airport extends Parentable<Area> {
+
+  public static Airport load(XElement source, NavaidList navaids){
+    XmlLoader.setContext(source);
+    String icao = XmlLoader.loadString("icao", true);
+    String name = XmlLoader.loadString("name",true);
+    int altitude = XmlLoader.loadInteger("altitude",true);
+    int transitionAltitude = XmlLoader.loadInteger("transitionAltitude",true);
+    int vfrAltitude = XmlLoader.loadInteger("vfrAltitude",true);
+    double declination = XmlLoader.loadDouble("declination",true);
+    int coveredDistance = XmlLoader.loadInteger("coveredDistance",true);
+    String mainAirportNavaidName = XmlLoader.loadString("mainAirportNavaidName",true);
+
+    InitialPosition initialPosition = InitialPosition.load(source.getChild("initialPosition"));
+    IList<AtcTemplate> atcTemplates = AtcTemplate.loadList(source.getChild("atcTemplates").getChildren());
+    Navaid mainAirportNavaid = navaids.get(mainAirportNavaidName);
+    EntryExitPointList entryExitPointList = EntryExitPoint.loadList(source.getChild("entryExitPoints").getChildren(), navaids);
+    IList<PublishedHold> holds = PublishedHold.loadList(source.getChild("holds").getChildren(), navaids);
+    IList<InactiveRunway> inactiveRunways = InactiveRunway.loadList(source.getChild("inactiveRunways"));
+
+//    private final IList<ActiveRunway> runways;
+//    private final IList<InactiveRunway> inactiveRunways;
+//    private final IList<RunwayConfiguration> runwayConfigurations;
+//    private final IList<Route> routes;
+
+    // bind entryexitpointlist
+    // bind holds
+  }
 
   private final InitialPosition initialPosition;
   private final IList<ActiveRunway> runways;
@@ -27,12 +56,11 @@ public class Airport {
   private final int vfrAltitude;
   private final double declination;
   private final Navaid mainAirportNavaid;
-  private final Area parent;
   private final int coveredDistance;
   private final IList<RunwayConfiguration> runwayConfigurations;
   private final IList<Route> routes;
 
-  public Airport(String icao, String name, Navaid mainAirportNavaid, int altitude, int vfrAltitude, int transitionAltitude, int coveredDistance, double declination, InitialPosition initialPosition, IList<AtcTemplate> atcTemplates, IList<ActiveRunway> runways, IList<InactiveRunway> inactiveRunways, IList<PublishedHold> holds, IList<EntryExitPoint> entryExitPoints, IList<RunwayConfiguration> runwayConfigurations, IMap<String, IList<Route>> sharedRoutesGroups, Area parent) {
+  private Airport(String icao, String name, Navaid mainAirportNavaid, int altitude, int vfrAltitude, int transitionAltitude, int coveredDistance, double declination, InitialPosition initialPosition, IList<AtcTemplate> atcTemplates, IList<ActiveRunway> runways, IList<InactiveRunway> inactiveRunways, IList<PublishedHold> holds, IList<EntryExitPoint> entryExitPoints, IList<RunwayConfiguration> runwayConfigurations, IMap<String, IList<Route>> sharedRoutesGroups, Area parent) {
     this.initialPosition = initialPosition;
     this.runways = runways;
     this.inactiveRunways = inactiveRunways;
@@ -46,7 +74,6 @@ public class Airport {
     this.vfrAltitude = vfrAltitude;
     this.declination = declination;
     this.mainAirportNavaid = mainAirportNavaid;
-    this.parent = parent;
     this.coveredDistance = coveredDistance;
     this.runwayConfigurations = runwayConfigurations;
 
@@ -107,10 +134,6 @@ public class Airport {
 
   public int getAltitude() {
     return altitude;
-  }
-
-  public Area getParent() {
-    return parent;
   }
 
   public IReadOnlyList<PublishedHold> getHolds() {

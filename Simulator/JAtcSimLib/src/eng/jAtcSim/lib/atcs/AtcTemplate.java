@@ -6,10 +6,44 @@
 
 package eng.jAtcSim.lib.atcs;
 
+import eng.eSystem.collections.EList;
+import eng.eSystem.collections.IList;
+import eng.eSystem.collections.IReadOnlyList;
+import eng.eSystem.eXml.XElement;
+import eng.jAtcSim.lib.world.xml.XmlLoader;
+
 /**
  * @author Marek
  */
 public class AtcTemplate {
+
+  public static IList<AtcTemplate> loadList(IReadOnlyList<XElement> sources){
+    IList<AtcTemplate> ret = new EList<>();
+
+    for (XElement source : sources) {
+      AtcTemplate atcTemplate = AtcTemplate.load(source);
+      ret.add(atcTemplate);
+    }
+
+    return ret;
+  }
+
+  public static AtcTemplate load(XElement source){
+    XmlLoader.setContext(source);
+    Atc.eType type = XmlLoader.loadEnum("type", Atc.eType.class,true);
+    String name = XmlLoader.loadString("name",true);
+    double frequency = XmlLoader.loadDouble("frequency",true);
+    int acceptAltitude = XmlLoader.loadInteger("acceptAltitude",true);
+    int releaseAltitude = XmlLoader.loadInteger("releaseAltitude",true);;
+    int orderedAltitude = XmlLoader.loadInteger("orderedAltitude",true);;
+    Integer ctrAcceptDistance = XmlLoader.loadInteger("ctrAcceptDistance",false);
+    Integer ctrNavaidAcceptDistance = XmlLoader.loadInteger("ctrNavaidAcceptDistance",false);
+
+    AtcTemplate ret = new AtcTemplate(type, name, frequency,acceptAltitude,
+        releaseAltitude,orderedAltitude,ctrAcceptDistance, ctrNavaidAcceptDistance);
+    return ret;
+  }
+
   private Atc.eType type;
   private String name;
   private double frequency;
@@ -19,7 +53,7 @@ public class AtcTemplate {
   private Integer ctrAcceptDistance = null;
   private Integer ctrNavaidAcceptDistance = null;
 
-  public AtcTemplate(Atc.eType type, String name, double frequency, int acceptAltitude, int releaseAltitude, int orderedAltitude, Integer ctrAcceptDistance, Integer ctrNavaidAcceptDistance) {
+  private AtcTemplate(Atc.eType type, String name, double frequency, int acceptAltitude, int releaseAltitude, int orderedAltitude, Integer ctrAcceptDistance, Integer ctrNavaidAcceptDistance) {
     this.type = type;
     this.name = name;
     this.frequency = frequency;

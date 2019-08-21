@@ -6,30 +6,33 @@
 
 package eng.jAtcSim.lib.world;
 
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.geo.Coordinate;
+import eng.jAtcSim.lib.world.xml.XmlLoader;
 
 import java.util.Objects;
 
 /**
- *
  * @author Marek
  */
 public class BorderPoint {
-  private Coordinate coordinate;
 
-  public Coordinate getCoordinate() {
-    return coordinate;
+  public static BorderPoint load(XElement source) {
+    Coordinate coordinate = XmlLoader.loadCoordinate(source, "coordinate", true);
+    BorderPoint ret = new BorderPoint(coordinate);
+    return ret;
   }
 
-  public BorderPoint(Coordinate coordinate) {
+  public static BorderPoint create(Coordinate coordinate) {
+    BorderPoint ret = new BorderPoint(coordinate);
+    return ret;
+  }
+
+  private final Coordinate coordinate;
+
+  private BorderPoint(Coordinate coordinate) {
+    assert coordinate != null;
     this.coordinate = coordinate;
-  }
-
-  @Override
-  public int hashCode() {
-    int hash = 7;
-    hash = 97 * hash + Objects.hashCode(this.coordinate);
-    return hash;
   }
 
   @Override
@@ -45,5 +48,16 @@ public class BorderPoint {
       return false;
     }
     return true;
+  }
+
+  public Coordinate getCoordinate() {
+    return coordinate;
+  }
+
+  @Override
+  public int hashCode() {
+    int hash = 7;
+    hash = 97 * hash + Objects.hashCode(this.coordinate);
+    return hash;
   }
 }
