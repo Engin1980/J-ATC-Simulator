@@ -30,21 +30,29 @@
           <thresholds>
             <threshold name="06" coordinate="50 06 06.61 N 014 13 34.58 E" initialDepartureAltitude="5000" mapping="06">
               <approaches>
-                <ilsApproach gaRoute="FH 061 CM 40" radial="061" initialAltitude="4000" iafMapping="06;06OKL">
+                <ilsApproach radial="061" initialAltitude="4000" iafMapping="06;06OKL">
+                  <gaRoute>
+                    <heading value="061"/>
+                    <altitude value="4000"/>
+                  </gaRoute>
                   <categories>
                     <category type="I" daA="1247" daB="1357" daC="1367" daD="1380"/>
                   </categories>
                 </ilsApproach>
                 <gnssApproach gaRoute="FH 061 CM 40" radial="061" daA="1515" daB="1515" daC="1515" daD="1515"
                               initialAltitude="4000"
-                              iafMapping="06"/>
+                              iafMapping="06">
+                  <gaRoute>
+                    <heading value="061"/>
+                    <altitude value="4000"/>
+                  </gaRoute>
+                </gnssApproach>
                 <unpreciseApproach gaRoute="CM 40 FH 061" radial="061" type="ndb" faf="PH/061/8.8" mapt="PH/061/0.5"
                                    mdaA="1600" mdaB="1600"
                                    mdaC="1600" mdaD="1600" iafMapping="06;06OKL" initialAltitude="4000"/>
               </approaches>
             </threshold>
-            <threshold name="24" coordinate="50 06 57.43 N 014 16 24.12 E" initialDepartureAltitude="5000" mapping="24"
-                       preferred="true">
+            <threshold name="24" coordinate="50 06 57.43 N 014 16 24.12 E" initialDepartureAltitude="5000" mapping="24">
               <approaches>
                 <ilsApproach gaRoute="FH 241 CM 40" radial="241" iafMapping="24" initialAltitude="4000">
                   <categories>
@@ -66,7 +74,8 @@
             <threshold name="12" coordinate="50 06 28.84 N 014 14 43.32 E" initialDepartureAltitude="5000" mapping="12">
               <approaches>
                 <unpreciseApproach gaRoute="FH 123 CM 40" radial="127" type="vor" faf="OKL/127/9.8" mapt="OKL/127/1.8"
-                                   mdaA="1530" mdaB="1530" mdaC="1530" mdaD="1530" initialAltitude="4000" iafMapping="12unp" />
+                                   mdaA="1530" mdaB="1530" mdaC="1530" mdaD="1530" initialAltitude="4000"
+                                   iafMapping="12unp"/>
                 <gnssApproach gaRoute="FH 123 CM 40" radial="123" daA="1453" daB="1453" daC="1453" daD="1453"
                               iafMapping="12" initialAltitude="4000"/>
                 <ilsApproach gaRoute="FH 123 CM 40" radial="123" iafMapping="12;12ils" initialAltitude="4000">
@@ -81,7 +90,7 @@
                 <unpreciseApproach gaRoute="FH 303 CM 40" radial="299" type="vor"
                                    faf="OKL/119/9.3"
                                    mapt="OKL/119/1.5" mdaA="1630"
-                                   mdaB="1630" mdaC="1630" mdaD="1630" initialAltitude="4000" iafMapping="30unp" />
+                                   mdaB="1630" mdaC="1630" mdaD="1630" initialAltitude="4000" iafMapping="30unp"/>
                 <gnssApproach gaRoute="FH 303 CM 40" radial="303" iafMapping="30" daA="1516" daB="1516"
                               daC="1516" daD="1516" initialAltitude="4000"/>
                 <ilsApproach gaRoute="FH 303 CM 40" radial="303" iafMapping="30" initialAltitude="4000">

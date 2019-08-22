@@ -14,6 +14,7 @@ import eng.eSystem.geo.Coordinates;
 import eng.jAtcSim.lib.airplanes.AirplaneType;
 import eng.jAtcSim.lib.global.Headings;
 import eng.jAtcSim.lib.world.approaches.Approach;
+import eng.jAtcSim.lib.world.approaches.IafRoute;
 import eng.jAtcSim.lib.world.xml.XmlLoader;
 
 /**
@@ -21,41 +22,11 @@ import eng.jAtcSim.lib.world.xml.XmlLoader;
  */
 public class ActiveRunwayThreshold extends Parentable<Runway> {
 
-  public static IList<ActiveRunwayThreshold> loadList(IReadOnlyList<XElement> sources){
+  public static IList<ActiveRunwayThreshold> loadList(IReadOnlyList<XElement> sources, IList<Route> routes, IList<IafRoute> iafRoutes){
     assert sources.size() == 2 : "There must be two thresholds";
 
-    ActiveRunwayThreshold a = ActiveRunwayThreshold.load(sources.get(0));
-    ActiveRunwayThreshold b = ActiveRunwayThreshold.load(sources.get(1));
-    a.other = b;
-    b.other = a;
-    a.course = Coordinates.getBearing(a.coordinate, b.coordinate);
-    b.course = Coordinates.getBearing(b.coordinate, a.coordinate);
-
-    IList<ActiveRunwayThreshold> ret = new EList<>();
-    ret.add(a);
-    ret.add(b);
-    return ret;
-  }
-
-  private static ActiveRunwayThreshold load(XElement source){
-    XmlLoader.setContext(source);
-    String name = XmlLoader.loadString("name", true);
-    Coordinate coordinate = XmlLoader.loadCoordinate("coordinate",true);
-    int initialDepartureAltitude = XmlLoader.loadInteger("initialDepartureAltitude", true);
-
-
-    InactiveRunwayThreshold ret = new ActiveRunwayThreshold(name, coordinate);
-    return ret;
-  }
-
-  public static ActiveRunwayThreshold[] create(
-      String aName, Coordinate aCoordinate, int aInitialDepartureAltitude, IList<Approach> aApproaches, IList<Route> aRoutes,
-      String bName, Coordinate bCoordinate, int bInitialDepartureAltitude, IList<Approach> bApproaches, IList<Route> bRoutes,
-      ActiveRunway parent
-  ) {
-    ActiveRunwayThreshold a = new ActiveRunwayThreshold(aName, aCoordinate, aInitialDepartureAltitude, aApproaches, aRoutes, parent);
-    ActiveRunwayThreshold b = new ActiveRunwayThreshold(bName, bCoordinate, bInitialDepartureAltitude, bApproaches, bRoutes, parent);
-
+    ActiveRunwayThreshold a = ActiveRunwayThreshold.load(sources.get(0), routes, iafRoutes);
+    ActiveRunwayThreshold b = ActiveRunwayThreshold.load(sources.get(1), routes, iafRoutes);
     a.other = b;
     b.other = a;
     a.course = Coordinates.getBearing(a.coordinate, b.coordinate);
@@ -69,7 +40,26 @@ public class ActiveRunwayThreshold extends Parentable<Runway> {
         Headings.getOpposite(b.course),
         9);
 
-    return new ActiveRunwayThreshold[]{a, b};
+    IList<ActiveRunwayThreshold> ret = new EList<>();
+    ret.add(a);
+    ret.add(b);
+    return ret;
+  }
+
+  private static ActiveRunwayThreshold load(XElement source, IList<Route> routes, IList<IafRoute> iafRoutes){
+    XmlLoader.setContext(source);
+    String name = XmlLoader.loadString("name", true);
+    Coordinate coordinate = XmlLoader.loadCoordinate("coordinate",true);
+    int initialDepartureAltitude = XmlLoader.loadInteger("initialDepartureAltitude", true);
+    String mappingString = XmlLoader.loadString("mapping", true);
+    IList<String> mapping = new EList<>(mappingString.split(";"));
+
+    IList<Route> thresholdRoutes = routes.where(q->q.mappingAccepts(mapping));
+    IList<Approach> approaches = Approach.loadList(source.getChild("approaches").getChildren(), iafRoutes);
+
+    ActiveRunwayThreshold ret = new ActiveRunwayThreshold(
+        name, coordinate, initialDepartureAltitude, approaches, thresholdRoutes);
+    return ret;
   }
 
   private final IList<Approach> approaches;
@@ -79,11 +69,10 @@ public class ActiveRunwayThreshold extends Parentable<Runway> {
   private double course;
   private final int initialDepartureAltitude;
   private ActiveRunwayThreshold other;
-  private final boolean preferred = false;
   @Deprecated
   private Coordinate estimatedFafPoint;
 
-  private ActiveRunwayThreshold(String name, Coordinate coordinate, int initialDepartureAltitude, IList<Approach> approaches, IList<Route> routes, ActiveRunway parent) {
+  private ActiveRunwayThreshold(String name, Coordinate coordinate, int initialDepartureAltitude, IList<Approach> approaches, IList<Route> routes) {
     this.approaches = approaches;
     this.routes = routes;
     this.name = name;
@@ -93,10 +82,6 @@ public class ActiveRunwayThreshold extends Parentable<Runway> {
 
   public int getInitialDepartureAltitude() {
     return initialDepartureAltitude;
-  }
-
-  public boolean isPreferred() {
-    return preferred;
   }
 
   public String getName() {

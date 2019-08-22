@@ -34,7 +34,7 @@ public class Route {
     Route ret = new Route(eType.vectoring, n.getName() + "/v",
         PlaneCategoryDefinitions.getAll(),
         n, -1, null, new SpeechList<>(),
-        new EList<>(), null, Acc.airport());
+        new EList<>(), null, null, Acc.airport());
 
     return ret;
   }
@@ -48,9 +48,11 @@ public class Route {
   private final Navaid mainNavaid;
   private final Integer entryFL;
   private final Integer maxMrvaFL;
+  private final IList<String> mapping;
 
   public Route(eType type, String name, PlaneCategoryDefinitions category, Navaid mainNavaid, double routeLength,
                Integer entryFL, SpeechList<IAtcCommand> routeCommands, IList<Navaid> routeNavaids, Integer maxMrvaFL,
+               IList<String> mapping,
                Airport parent) {
     this.type = type;
     this.name = name;
@@ -62,6 +64,17 @@ public class Route {
     this.mainNavaid = mainNavaid;
     this.entryFL = entryFL;
     this.maxMrvaFL = maxMrvaFL;
+    this.mapping = mapping;
+  }
+
+  public boolean mappingAccepts(String mapped){
+    IList<String> mappedList = new EList<>(mapped.split(";"));
+    return this.mappingAccepts(mappedList);
+  }
+
+  public boolean mappingAccepts(IList<String> mapped){
+    boolean ret = this.mapping.isAny(q -> mapped.contains(q));
+    return ret;
   }
 
   public Integer getEntryFL() {
