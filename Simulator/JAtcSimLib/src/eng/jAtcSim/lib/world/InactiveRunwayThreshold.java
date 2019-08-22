@@ -1,33 +1,49 @@
 package eng.jAtcSim.lib.world;
 
-import eng.eSystem.geo.Coordinates;
+import eng.eSystem.collections.EList;
+import eng.eSystem.collections.IList;
+import eng.eSystem.collections.IReadOnlyList;
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.geo.Coordinate;
+import eng.eSystem.geo.Coordinates;
+import eng.jAtcSim.lib.world.xml.XmlLoader;
 
-public class InactiveRunwayThreshold {
-  public static InactiveRunwayThreshold[] create(String aName, Coordinate aCoordinate, String bName, Coordinate bCoordinate,
-                                                 InactiveRunway parent) {
-    InactiveRunwayThreshold a = new InactiveRunwayThreshold(aName, aCoordinate, parent);
-    InactiveRunwayThreshold b = new InactiveRunwayThreshold(bName, bCoordinate, parent);
+public class InactiveRunwayThreshold extends Parentable<Runway> {
+
+  public static IList<InactiveRunwayThreshold> loadList(IReadOnlyList<XElement> sources){
+    assert sources.size() == 2 : "There must be two thresholds";
+
+    InactiveRunwayThreshold a = InactiveRunwayThreshold.load(sources.get(0));
+    InactiveRunwayThreshold b = InactiveRunwayThreshold.load(sources.get(1));
     a.other = b;
     b.other = a;
     a.course = Coordinates.getBearing(a.coordinate, b.coordinate);
     b.course = Coordinates.getBearing(b.coordinate, a.coordinate);
 
-    return new InactiveRunwayThreshold[]{a, b};
+    IList<InactiveRunwayThreshold> ret = new EList<>();
+    ret.add(a);
+    ret.add(b);
+    return ret;
+  }
+
+  private static InactiveRunwayThreshold load(XElement source){
+    XmlLoader.setContext(source);
+    String name = XmlLoader.loadString("name", true);
+    Coordinate coordinate = XmlLoader.loadCoordinate("coordinate",true);
+
+    InactiveRunwayThreshold ret = new InactiveRunwayThreshold(name, coordinate);
+    return ret;
   }
 
   private final String name;
   private final Coordinate coordinate;
-  private final InactiveRunway parent;
   private double course;
   private InactiveRunwayThreshold other;
 
-  public InactiveRunwayThreshold(String name, Coordinate coordinate, InactiveRunway parent) {
+  private InactiveRunwayThreshold(String name, Coordinate coordinate) {
     this.name = name;
     this.coordinate = coordinate;
-    this.parent = parent;
   }
-
 
   public String getName() {
     return name;
@@ -35,10 +51,6 @@ public class InactiveRunwayThreshold {
 
   public Coordinate getCoordinate() {
     return coordinate;
-  }
-
-  public InactiveRunway getParent() {
-    return parent;
   }
 
   public double getCourse() {
@@ -52,14 +64,5 @@ public class InactiveRunwayThreshold {
   @Override
   public String toString() {
     return this.getName() + "{inactive-rwyThr}";
-  }
-
-  public void bind() {
-    this.other
-        = this.getParent().getThresholdA().equals(this)
-        ? this.getParent().getThresholdB()
-        : this.getParent().getThresholdA();
-    this.course
-        = Coordinates.getBearing(this.coordinate, other.coordinate);
   }
 }

@@ -3,6 +3,7 @@
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
            xmlns:sh="https://github.com/Engin1980/J-ATC-Simulator/shared"
            xmlns:tr="https://github.com/Engin1980/J-ATC-Simulator/traffic"
+           xmlns:cm="https://github.com/Engin1980/J-ATC-Simulator/commands"
            targetNamespace="https://github.com/Engin1980/J-ATC-Simulator/area"
            xmlns="https://github.com/Engin1980/J-ATC-Simulator/area"
            elementFormDefault="qualified">
@@ -163,46 +164,8 @@
           </xs:sequence>
         </xs:complexType>
       </xs:element>
-      <xs:element name="sharedRoutesGroups" minOccurs="0" maxOccurs="1">
-        <xs:complexType>
-          <xs:sequence>
-            <xs:element name="sharedRoutesGroup" minOccurs="1" maxOccurs="unbounded">
-              <xs:complexType>
-                <xs:sequence>
-                  <xs:element name="routes" minOccurs="1" maxOccurs="1">
-                    <xs:complexType>
-                      <xs:sequence>
-                        <xs:element name="route" type="route" minOccurs="1" maxOccurs="unbounded" />
-                      </xs:sequence>
-                    </xs:complexType>
-                  </xs:element>
-                </xs:sequence>
-                <xs:attribute name="groupName" type="groupNames" use="required" />
-              </xs:complexType>
-            </xs:element>
-          </xs:sequence>
-        </xs:complexType>
-      </xs:element>
-      <xs:element name="sharedIafRoutesGroups" minOccurs="0" maxOccurs="1">
-        <xs:complexType>
-          <xs:sequence>
-            <xs:element name="sharedIafRoutesGroup" minOccurs="1" maxOccurs="unbounded">
-              <xs:complexType>
-                <xs:sequence >
-                  <xs:element name="iafRoutes" minOccurs="1" maxOccurs="1">
-                    <xs:complexType>
-                      <xs:sequence>
-                        <xs:element name="route" type="iafRoute" minOccurs="1" maxOccurs="unbounded"/>
-                      </xs:sequence>
-                    </xs:complexType>
-                  </xs:element>
-                </xs:sequence>
-                <xs:attribute name="groupName" type="sh:nonEmptyString" use="required" />
-              </xs:complexType>
-            </xs:element>
-          </xs:sequence>
-        </xs:complexType>
-      </xs:element>
+      <xs:element name="daRoutes" type="daGroup" minOccurs="1" maxOccurs="1" />
+      <xs:element name="iafRoutes" type="iafGroup" minOccurs="1" maxOccurs="1" />
     </xs:sequence>
     <xs:attribute name="icao" type="xs:string" use="required"/>
     <xs:attribute name="name" type="xs:string" use="required"/>
@@ -212,6 +175,20 @@
     <xs:attribute name="mainAirportNavaidName" type="xs:string" use="required"/>
     <xs:attribute name="declination" type="xs:double" use="required"/>
     <xs:attribute name="coveredDistance" type="xs:positiveInteger" use="required"/>
+  </xs:complexType>
+
+  <xs:complexType name="daGroup">
+    <xs:choice>
+      <xs:element name="group" type="daGroup" minOccurs="0" maxOccurs="unbounded" />
+      <xs:element name="route" type="route" minOccurs="0" maxOccurs="unbounded" />
+    </xs:choice>
+  </xs:complexType>
+
+  <xs:complexType name="iafGroup">
+    <xs:choice>
+      <xs:element name="group" type="iafGroup" minOccurs="0" maxOccurs="unbounded" />
+      <xs:element name="iafRoute" type="iafRoute" minOccurs="0" maxOccurs="unbounded" />
+    </xs:choice>
   </xs:complexType>
 
   <xs:complexType name="runwayConfigurations">
@@ -292,34 +269,29 @@
           </xs:choice>
         </xs:complexType>
       </xs:element>
-      <xs:element name="routes" minOccurs="0" maxOccurs="1" >
-        <xs:complexType>
-          <xs:sequence>
-            <xs:element name="route" type="route" minOccurs="0" maxOccurs="unbounded" />
-          </xs:sequence>
-        </xs:complexType>
-      </xs:element>
     </xs:choice>
-    <xs:attribute name="includeRoutesGroups" type="groupNames" use="optional" />
     <xs:attribute name="name" type="sh:nonEmptyString" use="required"/>
     <xs:attribute name="coordinate" type="sh:nonEmptyString" use="required"/>
     <xs:attribute name="initialDepartureAltitude" type="sh:flightLevelAltitude" use="required"/>
+    <xs:attribute name="mapping" type="mappingName" use="required"/>
     <xs:attribute name="preferred" type="xs:boolean" use="optional"/>
   </xs:complexType>
 
-  <xs:simpleType name="groupNames">
+  <xs:simpleType name="mappingName">
     <xs:restriction base="xs:string">
       <xs:pattern value="[A-Za-z0-9]+(;[A-Za-z0-9]+)*"/>
     </xs:restriction>
   </xs:simpleType>
 
-  <xs:complexType name="routes">
-    <xs:sequence>
-      <xs:element name="route" type="route" minOccurs="0" maxOccurs="unbounded"/>
-    </xs:sequence>
-  </xs:complexType>
-
   <xs:complexType name="route">
+    <xs:choice>
+      <xs:element name="then" type="cm:Then" />
+      <xs:element name="proceedDirect" type="cm:ToNavaid" />
+      <xs:element name="speed" type="cm:Speed" />
+      <xs:element name="altitude" type="cm:Altitude" />
+      <xs:element name="heading" type="cm:Heading" />
+      <xs:element name="hold" type="cm:Hold" />
+    </xs:choice>
     <xs:attribute name="type" use="required">
       <xs:simpleType>
         <xs:restriction>
@@ -330,20 +302,16 @@
       </xs:simpleType>
     </xs:attribute>
     <xs:attribute name="name" type="sh:nonEmptyString" use="required"/>
-    <xs:attribute name="route" type="sh:nonEmptyString" use="required"/>
+    <xs:attribute name="mapping" type="mappingName" use="required"/>
     <xs:attribute name="category" type="sh:planeCategory" use="optional"/>
     <xs:attribute name="entryFL" type="sh:flightLevelAltitude" use="optional"/>
     <xs:attribute name="mainFix" type="sh:nonEmptyString" use="optional"/>
   </xs:complexType>
 
-
   <xs:complexType name="approach">
-    <xs:sequence minOccurs="0" maxOccurs="1">
-      <xs:element name="iafRoutes" type="iafRoutes" minOccurs="0" maxOccurs="unbounded"/>
-    </xs:sequence>
     <xs:attribute name="gaRoute" type="xs:string" use="required"/>
     <xs:attribute name="radial" type="xs:int" use="required"/>
-    <xs:attribute name="includeIafRoutesGroups" type="sh:nonEmptyString" use="optional"/>
+    <xs:attribute name="iafMapping" type="mappingName" use="required"/>
     <xs:attribute name="initialAltitude" type="xs:int" use="required"/>
   </xs:complexType>
 
@@ -423,6 +391,7 @@
     <xs:attribute name="iaf" type="xs:string" use="required"/>
     <xs:attribute name="category" type="sh:planeCategory" use="optional"/>
     <xs:attribute name="route" type="xs:string" use="required"/>
+    <xs:attribute name="iafMapping" type="mappingName" use="required" />
   </xs:complexType>
 
   <xs:complexType name="hold">

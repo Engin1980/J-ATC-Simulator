@@ -46,6 +46,21 @@
     </xs:sequence>
   </xs:complexType>
 
+  <xs:simpleType name="LeftRight">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="left" />
+      <xs:enumeration value="right" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="LeftRightNearest">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="left" />
+      <xs:enumeration value="right" />
+      <xs:enumeration value="nearest" />
+    </xs:restriction>
+  </xs:simpleType>
+
   <xs:complexType name="textContent">
     <xs:simpleContent>
       <xs:extension base="nonEmptyString" />

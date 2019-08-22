@@ -32,13 +32,15 @@ public class Airport extends Parentable<Area> {
     Navaid mainAirportNavaid = navaids.get(mainAirportNavaidName);
     EntryExitPointList entryExitPointList = EntryExitPoint.loadList(source.getChild("entryExitPoints").getChildren(), navaids);
     IList<PublishedHold> holds = PublishedHold.loadList(source.getChild("holds").getChildren(), navaids);
-    IList<InactiveRunway> inactiveRunways = InactiveRunway.loadList(source.getChild("inactiveRunways"));
+    // TODO put inactive and active runways to one upper element
+    IList<InactiveRunway> inactiveRunways = InactiveRunway.loadList(source.getChild("inactiveRunways").getChildren());
+    IList<ActiveRunway> activeRunways = ActiveRunway.loadList(source.getChild("activeRunways").getChildren());
 
-//    private final IList<ActiveRunway> runways;
-//    private final IList<InactiveRunway> inactiveRunways;
 //    private final IList<RunwayConfiguration> runwayConfigurations;
 //    private final IList<Route> routes;
 
+
+    // binding should be done in constructor
     // bind entryexitpointlist
     // bind holds
   }

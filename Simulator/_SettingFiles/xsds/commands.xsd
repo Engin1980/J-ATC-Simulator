@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:sh="https://github.com/Engin1980/J-ATC-Simulator/shared"
+           targetNamespace="https://github.com/Engin1980/J-ATC-Simulator/commands"
+           xmlns="https://github.com/Engin1980/J-ATC-Simulator/commands"
+           elementFormDefault="qualified">
+
+  <xs:complexType name="Then">
+  </xs:complexType>
+
+  <xs:complexType name="ToNavaid">
+    <xs:attribute name="fix" type="sh:nonEmptyString" use="required" />
+  </xs:complexType>
+
+  <xs:complexType name="Speed">
+    <xs:attribute name="restriction" type="RestrictionType" use="required" />
+    <xs:attribute name="value" type="xs:positiveInteger" use="required" />
+  </xs:complexType>
+
+  <xs:complexType name="Altitude">
+    <xs:attribute name="value" type="xs:positiveInteger" use="required" />
+  </xs:complexType>
+
+  <xs:complexType name="Heading">
+    <xs:attribute name="value" type="xs:positiveInteger" use="required" />
+    <xs:attribute name="turns" type="sh:LeftRightNearest" use="optional" />
+  </xs:complexType>
+
+  <xs:complexType name="Hold">
+    <xs:attribute name="fix" type="sh:nonEmptyString" use="required" />
+    <xs:attribute name="inboundRadial" type="sh:heading" use="optional" />
+    <xs:attribute name="turns" type="sh:LeftRight" use="optional" />
+  </xs:complexType>
+
+  <xs:simpleType name="RestrictionType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="below" />
+      <xs:enumeration value="above" />
+      <xs:enumeration value="exactly" />
+    </xs:restriction>
+  </xs:simpleType>
+
+</xs:schema>
