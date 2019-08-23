@@ -1,18 +1,20 @@
 package eng.jAtcSim.lib.world.approaches;
 
+import eng.eSystem.collections.IList;
+import eng.eSystem.collections.IReadOnlyList;
 import eng.jAtcSim.lib.global.PlaneCategoryDefinitions;
 import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
 import eng.jAtcSim.lib.world.Navaid;
+import eng.jAtcSim.lib.world.Route;
 
-public class IafRoute {
+public class IafRoute extends Route {
   private Navaid navaid;
-  private SpeechList<IAtcCommand> routeCommands;
   private PlaneCategoryDefinitions category = PlaneCategoryDefinitions.getAll();
 
-  public IafRoute(Navaid navaid, SpeechList<IAtcCommand> routeCommands, PlaneCategoryDefinitions category) {
+  public IafRoute(Navaid navaid, IList<IAtcCommand> routeCommands, PlaneCategoryDefinitions category, String mapping) {
+    super(mapping, routeCommands);
     this.navaid = navaid;
-    this.routeCommands = routeCommands;
     this.category = category;
   }
 
@@ -22,9 +24,5 @@ public class IafRoute {
 
   public Navaid getNavaid() {
     return navaid;
-  }
-
-  public SpeechList<IAtcCommand> getRouteCommands() {
-    return routeCommands;
   }
 }

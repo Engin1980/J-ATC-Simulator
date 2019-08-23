@@ -1,13 +1,13 @@
 package eng.jAtcSim.lib.atcs.planeResponsibility;
 
-import eng.jAtcSim.lib.world.Route;
+import eng.jAtcSim.lib.world.DARoute;
 import eng.jAtcSim.lib.world.ActiveRunwayThreshold;
 
 public class SwitchRoutingRequest {
   public final ActiveRunwayThreshold threshold;
-  public final Route route;
+  public final DARoute route;
 
-  public SwitchRoutingRequest(ActiveRunwayThreshold threshold, Route route) {
+  public SwitchRoutingRequest(ActiveRunwayThreshold threshold, DARoute route) {
     this.threshold = threshold;
     this.route = route;
   }

@@ -10,8 +10,6 @@ import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.interfaces.IAirplane4Atc;
-import eng.jAtcSim.lib.airplanes.interfaces.IAirplane4Atc;
-import eng.jAtcSim.lib.airplanes.interfaces.IAirplaneWriteSimple;
 import eng.jAtcSim.lib.atcs.planeResponsibility.SwitchRoutingRequest;
 import eng.jAtcSim.lib.global.ETime;
 import eng.jAtcSim.lib.global.Headings;
@@ -29,7 +27,7 @@ import eng.jAtcSim.lib.speaking.fromAtc.notifications.RadarContactConfirmationNo
 import eng.jAtcSim.lib.weathers.Weather;
 import eng.jAtcSim.lib.world.ActiveRunway;
 import eng.jAtcSim.lib.world.ActiveRunwayThreshold;
-import eng.jAtcSim.lib.world.Route;
+import eng.jAtcSim.lib.world.DARoute;
 import eng.jAtcSim.lib.world.RunwayConfiguration;
 
 public class TowerAtc extends ComputerAtc {
@@ -326,7 +324,7 @@ public class TowerAtc extends ComputerAtc {
 //
 //    if (ret) {
     ret = srr.threshold.getRoutes()
-        .isAny(q -> (q == srr.route || srr.route.getType() == Route.eType.vectoring)
+        .isAny(q -> (q == srr.route || srr.route.getType() == DARoute.eType.vectoring)
             && srr.route.isValidForCategory(plane.getType().category)
             && srr.route.getMaxMrvaAltitude() <= plane.getType().maxAltitude
             && q.getMainNavaid().equals(plane.getRoutingModule().getEntryExitPoint()));
@@ -901,7 +899,7 @@ class DepartureManager {
   public void registerNewDeparture(IAirplane4Atc plane, ActiveRunwayThreshold runwayThreshold) {
     this.holdingPointNotReady.add(plane);
     holdingPointWaitingTimeMap.set(plane, Acc.now().clone());
-    Route r = runwayThreshold.getDepartureRouteForPlane(plane.getType(), plane.getRoutingModule().getEntryExitPoint(), true);
+    DARoute r = runwayThreshold.getDepartureRouteForPlane(plane.getType(), plane.getRoutingModule().getEntryExitPoint(), true);
     plane.setRouting(r, runwayThreshold);
   }
 

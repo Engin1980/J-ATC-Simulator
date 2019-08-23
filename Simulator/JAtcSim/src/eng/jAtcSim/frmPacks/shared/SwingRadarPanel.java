@@ -46,18 +46,18 @@ public class SwingRadarPanel extends JPanel {
   );
   private IMap<Integer, RadarViewPort> storedRadarPositions = new EMap<>();
   private IList<ButtonBinding> bndgs = new EList();
-  private AdjustSelectionPanelWrapper<Route> wrpRoutes;
+  private AdjustSelectionPanelWrapper<DARoute> wrpRoutes;
   private AdjustSelectionPanelWrapper<Approach> wrpApproaches;
 
-  class RoutesAdjustSelectionPanelWrapperListener implements AdjustSelectionPanelWrapper.ActionSelectionPanelWraperListener<Route>{
+  class RoutesAdjustSelectionPanelWrapperListener implements AdjustSelectionPanelWrapper.ActionSelectionPanelWraperListener<DARoute>{
 
     @Override
-    public Tuple<Iterable<Route>, Selector<Route, String>> doInit() {
-      Tuple<Iterable<Route>, Selector<Route, String>> ret = new Tuple<>();
+    public Tuple<Iterable<DARoute>, Selector<DARoute, String>> doInit() {
+      Tuple<Iterable<DARoute>, Selector<DARoute, String>> ret = new Tuple<>();
 
-      IMap<Route, IList<ActiveRunwayThreshold>> tmp = new EMap<>();
+      IMap<DARoute, IList<ActiveRunwayThreshold>> tmp = new EMap<>();
       for (ActiveRunwayThreshold threshold : Acc.airport().getAllThresholds()) {
-        for (Route route : threshold.getRoutes()) {
+        for (DARoute route : threshold.getRoutes()) {
           IList<ActiveRunwayThreshold> lst = tmp.tryGet(route);
           if (lst == null) {
             lst = new EList<>();
@@ -66,7 +66,7 @@ public class SwingRadarPanel extends JPanel {
           lst.add(threshold);
         }
       }
-      IList<Route> orderedRoutes = tmp.getKeys().toList();
+      IList<DARoute> orderedRoutes = tmp.getKeys().toList();
       orderedRoutes.sort(new RouteComparator(tmp));
 
       ret.setA(orderedRoutes);
@@ -96,12 +96,12 @@ public class SwingRadarPanel extends JPanel {
     }
 
     @Override
-    public Iterable<Route> doRequest() {
+    public Iterable<DARoute> doRequest() {
       return radar.getDrawnRoutes();
     }
 
     @Override
-    public void doResponse(Iterable<Route> routes) {
+    public void doResponse(Iterable<DARoute> routes) {
       radar.setDrawnRoutes(routes);
       radar.redraw(true);
     }
@@ -660,16 +660,16 @@ class ButtonBinding {
   }
 }
 
-class RouteComparator implements Comparator<Route> {
+class RouteComparator implements Comparator<DARoute> {
 
-  private IMap<Route, IList<ActiveRunwayThreshold>> map;
+  private IMap<DARoute, IList<ActiveRunwayThreshold>> map;
 
-  public RouteComparator(IMap<Route, IList<ActiveRunwayThreshold>> map) {
+  public RouteComparator(IMap<DARoute, IList<ActiveRunwayThreshold>> map) {
     this.map = map;
   }
 
   @Override
-  public int compare(Route a, Route b) {
+  public int compare(DARoute a, DARoute b) {
     int ret;
 
     String sa;

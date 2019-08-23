@@ -6,9 +6,12 @@ import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
+import eng.eSystem.geo.Coordinate;
+import eng.eSystem.geo.Headings;
 import eng.jAtcSim.lib.global.PlaneCategoryDefinitions;
 import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
+import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeHeadingCommand;
 import eng.jAtcSim.lib.world.ActiveRunwayThreshold;
 import eng.jAtcSim.lib.world.Parentable;
 import eng.jAtcSim.lib.world.approaches.entryLocations.FixRelatedApproachEntryLocation;
@@ -47,16 +50,33 @@ public class Approach extends Parentable<ActiveRunwayThreshold> {
     return ret;
   }
 
-  public static IList<Approach> loadIlss(XElement source, IReadOnlyList<IafRoute> iafRoutes){
+  public static IList<Approach> loadIlss(XElement source, Coordinate thresholdCoordinate, int runwayThresholdCourse, IReadOnlyList<IafRoute> iafRoutes, IReadOnlyList<GaRoute> gaRoutes){
     XmlLoader.setContext(source);
     Double tmp = XmlLoader.loadDouble("glidePathPercentage", false);
+    String gaMapping = XmlLoader.loadString("gaMapping",true);
+    String iafMapping = XmlLoader.loadString("iafMapping",true);
     double glidePathPercentage = tmp != null ? tmp : 3;
 
+    // build approach entry
     IList<ApproachEntry> entries = new EList<>();
-    entries.add(new ApproachEntry(
-        new FixRelatedApproachEntryLocation()
-    ));
+    ApproachEntry ae;
+    ae = ApproachEntry.createForIls(thresholdCoordinate, runwayThresholdCourse);
+    entries.add(ae);
+    for (IafRoute iafRoute : iafRoutes.where(q->q.isMappingMatch(iafMapping))) {
+      ae = ApproachEntry.createForIaf(iafRoute);
+      entries.add(ae);
+    }
 
+    // build stages
+    IList<IApproachStage> stages = new EList<>();
+    stages.add(
+        new radia
+    );
+
+    // ga route
+    GaRoute gaRoute = gaRoutes.getFirst(q->q.isMappingMatch(iafMapping));
+
+    // process ILS categories
     for (XElement child : source.getChild("categories").getChildren("category")) {
       XmlLoader.setContext(child);
       int daA = XmlLoader.loadInteger("daA",true);
@@ -71,13 +91,12 @@ public class Approach extends Parentable<ActiveRunwayThreshold> {
       if (approachType == ApproachType.visual)
         throw new EApplicationException(sf("Unknown approach type '%s'.", ilsType));
 
+      Approach app = new Approach(approachType,entries, stages, gaRoute);
 
-
-      Approach app = new Approach(type,)
-
-          ga-routes should be shared too !
+      ret.add(app);
     }
 
+    return ret;
   }
 
   public enum ApproachType {
@@ -92,7 +111,7 @@ public class Approach extends Parentable<ActiveRunwayThreshold> {
 
   private final IList<ApproachEntry> entries;
   private final IList<IApproachStage> stages;
-  private final SpeechList<IAtcCommand> gaCommands;
+  private final GaRoute gaRoute;
   private final ApproachType type;
 
   private Approach(ApproachType type,

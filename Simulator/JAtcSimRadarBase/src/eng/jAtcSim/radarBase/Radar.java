@@ -341,7 +341,7 @@ public class Radar {
   private final MessageManager messageManager;
   private final AirplaneDisplayInfoList planeInfos = new AirplaneDisplayInfoList();
   private final NavaidDisplayInfoList navaids = new NavaidDisplayInfoList();
-  private final IList<Route> drawnRoutes = new EDistinctList<>(EDistinctList.Behavior.skip);
+  private final IList<DARoute> drawnRoutes = new EDistinctList<>(EDistinctList.Behavior.skip);
   private final IList<Approach> drawnApproaches = new EDistinctList<>(EDistinctList.Behavior.skip);
   private InfoLine infoLine;
   private Callsign selectedCallsign;
@@ -493,11 +493,11 @@ public class Radar {
     return gotFocusEvent;
   }
 
-  public IReadOnlyList<Route> getDrawnRoutes() {
+  public IReadOnlyList<DARoute> getDrawnRoutes() {
     return this.drawnRoutes;
   }
 
-  public void setDrawnRoutes(Iterable<Route> drawnRoutes) {
+  public void setDrawnRoutes(Iterable<DARoute> drawnRoutes) {
     this.drawnRoutes.clear();
     this.drawnRoutes.add(drawnRoutes);
   }
@@ -537,11 +537,11 @@ public class Radar {
     rc.getArrivals()
         .where(q -> q.isShowRoutes())
         .forEach(q -> this.drawnRoutes.add(
-            q.getThreshold().getRoutes().where(p -> p.getType() != Route.eType.sid)));
+            q.getThreshold().getRoutes().where(p -> p.getType() != DARoute.eType.sid)));
     rc.getDepartures()
         .where(q -> q.isShowRoutes())
         .forEach(q -> this.drawnRoutes.add(
-            q.getThreshold().getRoutes().where(p -> p.getType() == Route.eType.sid)));
+            q.getThreshold().getRoutes().where(p -> p.getType() == DARoute.eType.sid)));
   }
 
   private void buildLocalNavaidList() {
@@ -558,7 +558,7 @@ public class Radar {
             .where(q -> q.isShowRoutes())
             .select(q -> q.getThreshold());
     for (ActiveRunwayThreshold rt : rts) {
-      for (Route route : rt.getRoutes().where(q -> q.getType() != Route.eType.sid)) {
+      for (DARoute route : rt.getRoutes().where(q -> q.getType() != DARoute.eType.sid)) {
         for (Navaid navaid : route.getNavaids()) {
           NavaidDisplayInfo ndi = this.navaids.getByNavaid(navaid);
           ndi.isRoute = true;
@@ -566,7 +566,7 @@ public class Radar {
       }
     }
     for (ActiveRunwayThreshold rt : rts) {
-      for (Route route : rt.getRoutes().where(q -> q.getType() == Route.eType.sid)) {
+      for (DARoute route : rt.getRoutes().where(q -> q.getType() == DARoute.eType.sid)) {
         for (Navaid navaid : route.getNavaids()) {
           NavaidDisplayInfo ndi = this.navaids.getByNavaid(navaid);
           ndi.isRoute = true;
@@ -863,7 +863,7 @@ public class Radar {
   }
 
   private void drawRoutes() {
-    for (Route route : drawnRoutes) {
+    for (DARoute route : drawnRoutes) {
       if (route.getNavaids().isEmpty()) continue;
       switch (route.getType()) {
         case sid:

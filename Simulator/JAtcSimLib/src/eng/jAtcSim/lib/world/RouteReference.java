@@ -1,15 +1,15 @@
 package eng.jAtcSim.lib.world;
 
 public class RouteReference {
-  public final Route route;
+  public final DARoute route;
   public final ActiveRunwayThreshold threshold;
 
-  public RouteReference(Route route, ActiveRunwayThreshold threshold) {
+  public RouteReference(DARoute route, ActiveRunwayThreshold threshold) {
     this.route = route;
     this.threshold = threshold;
   }
 
-  public Route getRoute() {
+  public DARoute getRoute() {
     return route;
   }
 

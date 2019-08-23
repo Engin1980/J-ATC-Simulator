@@ -2,10 +2,10 @@ package eng.jAtcSim.lib.world.xmlModel;
 
 import eng.eSystem.xmlSerialization.annotations.XmlOptional;
 import eng.jAtcSim.lib.global.PlaneCategoryDefinitions;
-import eng.jAtcSim.lib.world.Route;
+import eng.jAtcSim.lib.world.DARoute;
 
 public class XmlRoute {
-  public Route.eType type;
+  public DARoute.eType type;
   public String name;
   public String route;
   @XmlOptional

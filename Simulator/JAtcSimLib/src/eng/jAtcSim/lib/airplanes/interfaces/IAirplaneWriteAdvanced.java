@@ -6,7 +6,7 @@ import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.GoingAroundNotification;
 import eng.jAtcSim.lib.world.ActiveRunwayThreshold;
 import eng.jAtcSim.lib.world.Navaid;
-import eng.jAtcSim.lib.world.Route;
+import eng.jAtcSim.lib.world.DARoute;
 import eng.jAtcSim.lib.world.approaches.NewApproachInfo;
 
 public interface IAirplaneWriteAdvanced {
@@ -33,7 +33,7 @@ public interface IAirplaneWriteAdvanced {
   @Deprecated
   void setRoute(SpeechList route);
 
-  void setRouting(Route route, ActiveRunwayThreshold activeRunwayThreshold);
+  void setRouting(DARoute route, ActiveRunwayThreshold activeRunwayThreshold);
 
   void takeOff(ActiveRunwayThreshold runwayThreshold);
 }

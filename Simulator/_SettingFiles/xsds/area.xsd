@@ -165,6 +165,7 @@
       </xs:element>
       <xs:element name="daRoutes" type="daGroup" minOccurs="1" maxOccurs="1"/>
       <xs:element name="iafRoutes" type="iafGroup" minOccurs="1" maxOccurs="1"/>
+      <xs:element name="gaRoutes" type="gaGroup" minOccurs="1" maxOccurs="1"/>
     </xs:sequence>
     <xs:attribute name="icao" type="xs:string" use="required"/>
     <xs:attribute name="name" type="xs:string" use="required"/>
@@ -187,6 +188,13 @@
     <xs:choice>
       <xs:element name="group" type="iafGroup" minOccurs="0" maxOccurs="unbounded"/>
       <xs:element name="iafRoute" type="iafRoute" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:choice>
+  </xs:complexType>
+
+  <xs:complexType name="gaGroup">
+    <xs:choice>
+      <xs:element name="group" type="gaGroup" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="gaRoute" type="gaRoute" minOccurs="0" maxOccurs="unbounded"/>
     </xs:choice>
   </xs:complexType>
 
@@ -282,37 +290,31 @@
     </xs:restriction>
   </xs:simpleType>
 
-  <xs:complexType name="route">
-    <xs:choice>
-      <xs:element name="then" type="cm:Then"/>
-      <xs:element name="proceedDirect" type="cm:ToNavaid"/>
-      <xs:element name="speed" type="cm:Speed"/>
-      <xs:element name="altitude" type="cm:Altitude"/>
-      <xs:element name="heading" type="cm:Heading"/>
-      <xs:element name="hold" type="cm:Hold"/>
-    </xs:choice>
-    <xs:attribute name="type" use="required">
-      <xs:simpleType>
-        <xs:restriction>
-          <xs:enumeration value="sid"/>
-          <xs:enumeration value="star"/>
-          <xs:enumeration value="transition"/>
-        </xs:restriction>
-      </xs:simpleType>
-    </xs:attribute>
-    <xs:attribute name="name" type="sh:nonEmptyString" use="required"/>
-    <xs:attribute name="mapping" type="mappingName" use="required"/>
-    <xs:attribute name="category" type="sh:planeCategory" use="optional"/>
-    <xs:attribute name="entryFL" type="sh:flightLevelAltitude" use="optional"/>
-    <xs:attribute name="mainFix" type="sh:nonEmptyString" use="optional"/>
+  <xs:complexType name="daRoute">
+    <xs:complexContent>
+      <xs:extension base="route">
+        <xs:attribute name="type" use="required">
+          <xs:simpleType>
+            <xs:restriction>
+              <xs:enumeration value="sid"/>
+              <xs:enumeration value="star"/>
+              <xs:enumeration value="transition"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="name" type="sh:nonEmptyString" use="required"/>
+        <xs:attribute name="mapping" type="mappingName" use="required"/>
+        <xs:attribute name="category" type="sh:planeCategory" use="optional"/>
+        <xs:attribute name="entryFL" type="sh:flightLevelAltitude" use="optional"/>
+        <xs:attribute name="mainFix" type="sh:nonEmptyString" use="optional"/>
+      </xs:extension>
+    </xs:complexContent>
   </xs:complexType>
 
   <xs:complexType name="approach">
-    <xs:choice>
-      <xs:element name="gaRoute" type="routeCommands" minOccurs="1" maxOccurs="1"/>
-    </xs:choice>
     <xs:attribute name="radial" type="xs:int" use="required"/>
     <xs:attribute name="iafMapping" type="mappingName" use="required"/>
+    <xs:attribute name="gaMapping" type="mappingName" use="required"/>
     <xs:attribute name="initialAltitude" type="xs:int" use="required"/>
   </xs:complexType>
 
@@ -400,10 +402,49 @@
   </xs:complexType>
 
   <xs:complexType name="iafRoute">
-    <xs:attribute name="iaf" type="xs:string" use="required"/>
-    <xs:attribute name="category" type="sh:planeCategory" use="optional"/>
-    <xs:attribute name="route" type="xs:string" use="required"/>
-    <xs:attribute name="iafMapping" type="mappingName" use="required"/>
+    <xs:complexContent>
+      <xs:extension base="route">
+        <xs:attribute name="type" use="required">
+          <xs:simpleType>
+            <xs:restriction>
+              <xs:enumeration value="sid"/>
+              <xs:enumeration value="star"/>
+              <xs:enumeration value="transition"/>
+            </xs:restriction>
+          </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="iaf" type="xs:string" use="required"/>
+        <xs:attribute name="category" type="sh:planeCategory" use="optional"/>
+        <xs:attribute name="iafMapping" type="mappingName" use="required"/>
+      </xs:extension>
+    </xs:complexContent>
+
+  </xs:complexType>
+
+  <xs:complexType name="gaRoutes">
+    <xs:sequence>
+      <xs:element name="gaRoute" type="gaRoute" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="gaRoute">
+    <xs:complexContent>
+      <xs:extension base="route">
+        <xs:attribute name="gaMapping" type="mappingName" use="required"/>
+      </xs:extension>
+    </xs:complexContent>
+
+  </xs:complexType>
+
+  <xs:complexType name="route">
+    <xs:choice>
+      <xs:element name="then" type="cm:Then"/>
+      <xs:element name="proceedDirect" type="cm:ToNavaid"/>
+      <xs:element name="speed" type="cm:Speed"/>
+      <xs:element name="altitude" type="cm:Altitude"/>
+      <xs:element name="heading" type="cm:Heading"/>
+      <xs:element name="hold" type="cm:Hold"/>
+    </xs:choice>
   </xs:complexType>
 
   <xs:complexType name="hold">

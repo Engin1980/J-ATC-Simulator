@@ -41,9 +41,8 @@ import eng.jAtcSim.lib.speaking.fromAtc.commands.ProceedDirectCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ThenCommand;
 import eng.jAtcSim.lib.world.ActiveRunwayThreshold;
 import eng.jAtcSim.lib.world.Navaid;
-import eng.jAtcSim.lib.world.Route;
+import eng.jAtcSim.lib.world.DARoute;
 import eng.jAtcSim.lib.world.approaches.NewApproachInfo;
-import eng.jAtcSim.lib.world.xml.XmlLoader;
 
 public class Airplane implements IAirplaneWriteSimple, IAirplane4Mrva, IAirplane4Atc {
 
@@ -69,7 +68,7 @@ public class Airplane implements IAirplaneWriteSimple, IAirplane4Mrva, IAirplane
       return Airplane.this.mrvaAirproxModule.getAirprox();
     }
 
-    public Route getAssignedRoute() {
+    public DARoute getAssignedRoute() {
       return Airplane.this.routingModule.getAssignedRoute();
     }
 
@@ -204,7 +203,7 @@ public class Airplane implements IAirplaneWriteSimple, IAirplane4Mrva, IAirplane
       }
 
       Navaid divertNavaid = getDivertNavaid();
-      Route route = Route.createNewVectoringByFix(divertNavaid);
+      DARoute route = DARoute.createNewVectoringByFix(divertNavaid);
 
       Airplane.this.flightModule.divert();
       Airplane.this.routingModule.setRoute(route);
@@ -294,7 +293,7 @@ public class Airplane implements IAirplaneWriteSimple, IAirplane4Mrva, IAirplane
     }
 
     @Override
-    public void setRouting(Route route, ActiveRunwayThreshold activeRunwayThreshold) {
+    public void setRouting(DARoute route, ActiveRunwayThreshold activeRunwayThreshold) {
       Airplane.this.routingModule.setRouting(route, activeRunwayThreshold);
     }
 
@@ -311,15 +310,15 @@ public class Airplane implements IAirplaneWriteSimple, IAirplane4Mrva, IAirplane
     }
 
     private Navaid getDivertNavaid() {
-      IList<Route> rts = Acc
+      IList<DARoute> rts = Acc
           .atcTwr().getRunwayConfigurationInUse()
           .getDepartures()
           .where(q -> q.isForCategory(Airplane.this.airplaneType.category))
           .getRandom()
           .getThreshold()
           .getRoutes()
-          .where(q -> q.getType() == Route.eType.sid);
-      Route r = rts.getRandom();
+          .where(q -> q.getType() == DARoute.eType.sid);
+      DARoute r = rts.getRandom();
       //TODO here can null-pointer-exception occur when no route is found for threshold and category
       Navaid ret = r.getMainNavaid();
       return ret;
@@ -598,7 +597,7 @@ public class Airplane implements IAirplaneWriteSimple, IAirplane4Mrva, IAirplane
   @Override // IAirplaneWriteSimple
   public void applyShortcut(Navaid navaid) {
     this.routingModule.applyShortcut(navaid);
-    Route r = this.routingModule.getAssignedRoute();
+    DARoute r = this.routingModule.getAssignedRoute();
     if (r == null) return;
     if (r.getNavaids().isEmpty()) return;
     if (r.getNavaids().getLast().equals(navaid)) {
@@ -929,7 +928,7 @@ public class Airplane implements IAirplaneWriteSimple, IAirplane4Mrva, IAirplane
   }
 
   @Override // IAirplane4Atc
-  public void setRouting(Route r, ActiveRunwayThreshold runwayThreshold) {
+  public void setRouting(DARoute r, ActiveRunwayThreshold runwayThreshold) {
     this.airplaneWriteAdvanced.setRouting(r, runwayThreshold);
   }
 

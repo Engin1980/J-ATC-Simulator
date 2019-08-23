@@ -5,7 +5,7 @@ import eng.eSystem.collections.IList;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.xmlSerialization.annotations.XmlItemElement;
 import eng.eSystem.xmlSerialization.annotations.XmlOptional;
-import eng.jAtcSim.lib.world.Route;
+import eng.jAtcSim.lib.world.DARoute;
 import eng.jAtcSim.lib.world.xmlModel.approachesOld.*;
 
 public class XmlActiveRunwayThreshold {
@@ -15,7 +15,7 @@ public class XmlActiveRunwayThreshold {
   @XmlItemElement(elementName = "customApproach", type = XmlCustomApproach.class)
   public final IList<XmlApproach> approaches = new EList<>();
   @XmlOptional
-  @XmlItemElement(elementName = "route", type = Route.class)
+  @XmlItemElement(elementName = "route", type = DARoute.class)
   public final IList<XmlRoute> routes = new EList<>();
   @XmlOptional
   public String includeRoutesGroups = null;

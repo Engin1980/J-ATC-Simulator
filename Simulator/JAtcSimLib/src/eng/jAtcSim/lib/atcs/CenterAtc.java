@@ -19,7 +19,7 @@ import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.*;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.afters.AfterNavaidCommand;
 import eng.jAtcSim.lib.world.Navaid;
-import eng.jAtcSim.lib.world.Route;
+import eng.jAtcSim.lib.world.DARoute;
 import eng.jAtcSim.lib.world.ActiveRunwayThreshold;
 
 public class CenterAtc extends ComputerAtc {
@@ -110,9 +110,9 @@ public class CenterAtc extends ComputerAtc {
   protected boolean acceptsNewRouting(IAirplane4Atc plane, SwitchRoutingRequest srr) {
     boolean ret;
     ret = srr.route.isValidForCategory(plane.getType().category)
-        && (srr.route.getType() == Route.eType.vectoring
-        || srr.route.getType() == Route.eType.star
-        || srr.route.getType() == Route.eType.transition);
+        && (srr.route.getType() == DARoute.eType.vectoring
+        || srr.route.getType() == DARoute.eType.star
+        || srr.route.getType() == DARoute.eType.transition);
     return ret;
   }
 
@@ -126,8 +126,8 @@ public class CenterAtc extends ComputerAtc {
 
       // assigns route
       Navaid n = plane.getRoutingModule().getEntryExitPoint();
-      Tuple<Route, ActiveRunwayThreshold> rrt = getRoutingForPlaneAndFix(plane, n);
-      Route r = rrt.getA();
+      Tuple<DARoute, ActiveRunwayThreshold> rrt = getRoutingForPlaneAndFix(plane, n);
+      DARoute r = rrt.getA();
       ActiveRunwayThreshold rt = rrt.getB();
       cmds.add(new ProceedDirectCommand(n));
       cmds.add(new ClearedToRouteCommand(r, rt));
@@ -256,9 +256,9 @@ public class CenterAtc extends ComputerAtc {
     LoadSave.loadField(elm, this, "closeArrivals");
   }
 
-  private Tuple<Route, ActiveRunwayThreshold> getRoutingForPlaneAndFix(IAirplane4Atc plane, Navaid n) {
-    Tuple<Route, ActiveRunwayThreshold> ret;
-    Route r = null;
+  private Tuple<DARoute, ActiveRunwayThreshold> getRoutingForPlaneAndFix(IAirplane4Atc plane, Navaid n) {
+    Tuple<DARoute, ActiveRunwayThreshold> ret;
+    DARoute r = null;
     ActiveRunwayThreshold rt = null;
     IList<ActiveRunwayThreshold> thresholdsCopy = new EList<>();
 

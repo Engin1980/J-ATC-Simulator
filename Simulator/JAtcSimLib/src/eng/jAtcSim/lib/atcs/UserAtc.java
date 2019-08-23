@@ -24,7 +24,7 @@ import eng.jAtcSim.lib.speaking.fromAtc.atc2atc.PlaneSwitchMessage;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ContactCommand;
 import eng.jAtcSim.lib.textProcessing.parsing.Parser;
 import eng.jAtcSim.lib.textProcessing.parsing.shortBlockParser.ShortBlockParser;
-import eng.jAtcSim.lib.world.Route;
+import eng.jAtcSim.lib.world.DARoute;
 import eng.jAtcSim.lib.world.ActiveRunwayThreshold;
 
 import java.util.regex.Matcher;
@@ -202,7 +202,7 @@ public class UserAtc extends Atc {
       }
     }
 
-    Route route;
+    DARoute route;
     if (m.group(3) == null) {
       if (threshold == plane.getRoutingModule().getAssignedRunwayThreshold())
         route = plane.getRoutingModule().getAssignedRoute();
@@ -211,7 +211,7 @@ public class UserAtc extends Atc {
             ? threshold.getArrivalRouteForPlane(plane.getType(), plane.getSha().getTargetAltitude(), plane.getRoutingModule().getEntryExitPoint(), true)
             : threshold.getDepartureRouteForPlane(plane.getType(), plane.getRoutingModule().getEntryExitPoint(), true);
     } else if (m.group(3).toUpperCase().equals("V")) {
-      route = Route.createNewVectoringByFix(plane.getRoutingModule().getEntryExitPoint());
+      route = DARoute.createNewVectoringByFix(plane.getRoutingModule().getEntryExitPoint());
     } else {
       route = threshold.getRoutes().tryGetFirst(q -> q.getName().equals(m.group(3)));
       if (route == null)

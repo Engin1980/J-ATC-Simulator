@@ -5,22 +5,22 @@ import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.xmlSerialization.XmlSerializer;
 import eng.eSystem.xmlSerialization.supports.IElementParser;
 import eng.jAtcSim.lib.world.Airport;
-import eng.jAtcSim.lib.world.Route;
+import eng.jAtcSim.lib.world.DARoute;
 import eng.jAtcSim.lib.world.ActiveRunway;
 import eng.jAtcSim.lib.world.ActiveRunwayThreshold;
 
-public class RouteParser implements IElementParser<Route> {
+public class RouteParser implements IElementParser<DARoute> {
 
   private Airport known;
 
   @Override
-  public Route parse(XElement xElement, XmlSerializer.Deserializer deserializer)  {
+  public DARoute parse(XElement xElement, XmlSerializer.Deserializer deserializer)  {
     String c = xElement.getContent();
-Route ret = null;
+DARoute ret = null;
 
     for (ActiveRunway runway : known.getRunways()) {
       for (ActiveRunwayThreshold threshold : runway.getThresholds()) {
-        for (Route route : threshold.getRoutes()) {
+        for (DARoute route : threshold.getRoutes()) {
           if (route.getName().equals(c)){
             ret = route;
             break;
@@ -35,7 +35,7 @@ Route ret = null;
   }
 
   @Override
-  public void format(Route route, XElement xElement, XmlSerializer.Serializer serializer) {
+  public void format(DARoute route, XElement xElement, XmlSerializer.Serializer serializer) {
     xElement.setContent(route.getName());
   }
 

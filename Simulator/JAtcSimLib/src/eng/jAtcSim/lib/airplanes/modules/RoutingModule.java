@@ -26,7 +26,7 @@ import eng.jAtcSim.lib.speaking.fromAtc.commands.afters.*;
 import eng.jAtcSim.lib.speaking.fromAtc.notifications.RadarContactConfirmationNotification;
 import eng.jAtcSim.lib.world.ActiveRunwayThreshold;
 import eng.jAtcSim.lib.world.Navaid;
-import eng.jAtcSim.lib.world.Route;
+import eng.jAtcSim.lib.world.DARoute;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -42,7 +42,7 @@ public class RoutingModule extends Module implements IRoutingModuleRO {
     extension
   }
 
-  private Route assignedRoute;
+  private DARoute assignedRoute;
   private ActiveRunwayThreshold expectedRunwayThreshold;
   private Navaid entryExitPoint;
 
@@ -87,7 +87,7 @@ public class RoutingModule extends Module implements IRoutingModuleRO {
     return afterCommands.hasLateralDirectionAfterCoordinate(coordinate);
   }
 
-  public Route getAssignedRoute() {
+  public DARoute getAssignedRoute() {
     return this.assignedRoute;
   }
 
@@ -96,7 +96,7 @@ public class RoutingModule extends Module implements IRoutingModuleRO {
     return afterCommands.isRouteEmpty();
   }
 
-  public void setRoute(Route route) {
+  public void setRoute(DARoute route) {
     afterCommands.clearAll();
     this.assignedRoute = route;
   }
@@ -107,7 +107,7 @@ public class RoutingModule extends Module implements IRoutingModuleRO {
     processSpeeches(route, CommandSource.procedure);
   }
 
-  public void setRouting(Route newRoute, ActiveRunwayThreshold expectedRunwayThreshold) {
+  public void setRouting(DARoute newRoute, ActiveRunwayThreshold expectedRunwayThreshold) {
     this.expectedRunwayThreshold = expectedRunwayThreshold;
     this.assignedRoute = newRoute;
     this.afterCommands.clearRoute();

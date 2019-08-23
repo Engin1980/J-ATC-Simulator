@@ -60,9 +60,9 @@ public class Airport extends Parentable<Area> {
   private final Navaid mainAirportNavaid;
   private final int coveredDistance;
   private final IList<RunwayConfiguration> runwayConfigurations;
-  private final IList<Route> routes;
+  private final IList<DARoute> routes;
 
-  private Airport(String icao, String name, Navaid mainAirportNavaid, int altitude, int vfrAltitude, int transitionAltitude, int coveredDistance, double declination, InitialPosition initialPosition, IList<AtcTemplate> atcTemplates, IList<ActiveRunway> runways, IList<InactiveRunway> inactiveRunways, IList<PublishedHold> holds, IList<EntryExitPoint> entryExitPoints, IList<RunwayConfiguration> runwayConfigurations, IMap<String, IList<Route>> sharedRoutesGroups, Area parent) {
+  private Airport(String icao, String name, Navaid mainAirportNavaid, int altitude, int vfrAltitude, int transitionAltitude, int coveredDistance, double declination, InitialPosition initialPosition, IList<AtcTemplate> atcTemplates, IList<ActiveRunway> runways, IList<InactiveRunway> inactiveRunways, IList<PublishedHold> holds, IList<EntryExitPoint> entryExitPoints, IList<RunwayConfiguration> runwayConfigurations, IMap<String, IList<DARoute>> sharedRoutesGroups, Area parent) {
     this.initialPosition = initialPosition;
     this.runways = runways;
     this.inactiveRunways = inactiveRunways;
@@ -87,11 +87,11 @@ public class Airport extends Parentable<Area> {
   }
 
   public void bindEntryExitPointsByRoutes() {
-    for (Route route : this.routes) {
+    for (DARoute route : this.routes) {
       EntryExitPoint eep = new EntryExitPoint(
           this,
           route.getMainNavaid(),
-          route.getType() == Route.eType.sid ? EntryExitPoint.Type.exit : EntryExitPoint.Type.entry,
+          route.getType() == DARoute.eType.sid ? EntryExitPoint.Type.exit : EntryExitPoint.Type.entry,
           route.getMaxMrvaAltitude());
 
       this.entryExitPoints.add(eep);
@@ -190,7 +190,7 @@ public class Airport extends Parentable<Area> {
     return this.initialPosition;
   }
 
-  public IReadOnlyList<Route> getRoutes() {
+  public IReadOnlyList<DARoute> getRoutes() {
     return routes;
   }
 }

@@ -5,15 +5,15 @@ import eng.jAtcSim.lib.airplanes.interfaces.IAirplaneWriteSimple;
 import eng.jAtcSim.lib.speaking.IFromAirplane;
 import eng.jAtcSim.lib.speaking.fromAirplane.notifications.commandResponses.Rejection;
 import eng.jAtcSim.lib.speaking.fromAtc.commands.ClearedToRouteCommand;
-import eng.jAtcSim.lib.world.Route;
+import eng.jAtcSim.lib.world.DARoute;
 
 public class ClearedToRouteApplication extends CommandApplication<ClearedToRouteCommand> {
 
   @Override
   protected IFromAirplane checkCommandSanity(IAirplaneWriteSimple plane, ClearedToRouteCommand c) {
-    if (plane.getFlightModule().isArrival() && c.getRoute().getType() == Route.eType.sid)
+    if (plane.getFlightModule().isArrival() && c.getRoute().getType() == DARoute.eType.sid)
       return new Rejection("We are arrival, cannot be cleared to SID route.", c);
-    else if (plane.getFlightModule().isDeparture() && c.getRoute().getType() != Route.eType.sid)
+    else if (plane.getFlightModule().isDeparture() && c.getRoute().getType() != DARoute.eType.sid)
       return new Rejection("We are departure, can be cleared only to SID route",c );
 
     return null;

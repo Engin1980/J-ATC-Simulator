@@ -2,10 +2,10 @@ package eng.jAtcSim.lib.airplanes.interfaces.modules;
 
 import eng.jAtcSim.lib.world.ActiveRunwayThreshold;
 import eng.jAtcSim.lib.world.Navaid;
-import eng.jAtcSim.lib.world.Route;
+import eng.jAtcSim.lib.world.DARoute;
 
 public interface IRoutingModuleRO {
-  Route getAssignedRoute();
+  DARoute getAssignedRoute();
 
   ActiveRunwayThreshold getAssignedRunwayThreshold();
 

@@ -2,25 +2,25 @@ package eng.jAtcSim.lib.speaking.fromAtc.commands;
 
 import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
-import eng.jAtcSim.lib.world.Route;
+import eng.jAtcSim.lib.world.DARoute;
 import eng.jAtcSim.lib.world.ActiveRunwayThreshold;
 
 public class ClearedToRouteCommand implements IAtcCommand {
 
-  private Route route;
+  private DARoute route;
   private ActiveRunwayThreshold expectedRunwayThreshold;
 
   @XmlConstructor
   private ClearedToRouteCommand() {
   }
 
-  public ClearedToRouteCommand(Route route, ActiveRunwayThreshold expectedRunwayThreshold) {
+  public ClearedToRouteCommand(DARoute route, ActiveRunwayThreshold expectedRunwayThreshold) {
 
     this.route = route;
     this.expectedRunwayThreshold = expectedRunwayThreshold;
   }
 
-  public Route getRoute() {
+  public DARoute getRoute() {
     return route;
   }
 

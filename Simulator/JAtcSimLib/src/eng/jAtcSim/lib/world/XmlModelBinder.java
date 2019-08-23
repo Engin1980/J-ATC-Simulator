@@ -137,7 +137,7 @@ public class XmlModelBinder {
     IList<PublishedHold> holds = new EList<>();
     IList<RunwayConfiguration> runwayConfigurations = new EList<>();
     IList<EntryExitPoint> entryExitPoints = new EList<>();
-    IMap<String, IList<Route>> sharedRoutesGroups = convertSharedRoutes(x, context);
+    IMap<String, IList<DARoute>> sharedRoutesGroups = convertSharedRoutes(x, context);
     IMap<String, IList<IafRoute>> sharedIafRoutesGroups = convertSharedIafRoutes(x, context);
 
     Airport ret = new Airport(
@@ -300,13 +300,13 @@ public class XmlModelBinder {
     return ret;
   }
 
-  private static IMap<String, IList<Route>> convertSharedRoutes(XmlAirport x, Context context) {
-    IMap<String, IList<Route>> ret = new EMap<>();
+  private static IMap<String, IList<DARoute>> convertSharedRoutes(XmlAirport x, Context context) {
+    IMap<String, IList<DARoute>> ret = new EMap<>();
     for (XmlAirport.XmlSharedRoutesGroup xmlSharedRoutesGroup : x.sharedRoutesGroups) {
-      IList<Route> lst = new EList<>();
+      IList<DARoute> lst = new EList<>();
       ret.set(xmlSharedRoutesGroup.groupName, lst);
       for (XmlRoute xmlRoute : xmlSharedRoutesGroup.routes) {
-        Route route = convert(xmlRoute, context);
+        DARoute route = convert(xmlRoute, context);
         lst.add(route);
       }
     }
@@ -327,7 +327,7 @@ public class XmlModelBinder {
   }
 
   private static ActiveRunway convert(XmlActiveRunway x,
-                                      IMap<String, IList<Route>> sharedRoutesGroups,
+                                      IMap<String, IList<DARoute>> sharedRoutesGroups,
                                       IMap<String, IList<IafRoute>> sharedIafRoutesGroups,
                                       Context context) {
     assert x.thresholds.size() == 2;
@@ -338,9 +338,9 @@ public class XmlModelBinder {
     XmlActiveRunwayThreshold xb = x.thresholds.get(1);
 
     IList<Approach> aApproaches = new EList<>();
-    IList<Route> aRoutes = new EList<>();
+    IList<DARoute> aRoutes = new EList<>();
     IList<Approach> bApproaches = new EList<>();
-    IList<Route> bRoutes = new EList<>();
+    IList<DARoute> bRoutes = new EList<>();
 
 
     ActiveRunwayThreshold[] t = ActiveRunwayThreshold.create(
@@ -737,17 +737,17 @@ public class XmlModelBinder {
   }
 
 
-  private static void buildRoutesForActiveRunwayThreshold(XmlActiveRunwayThreshold xa, IList<Route> aRoutes, IMap<String, IList<Route>> sharedRoutesGroups,
+  private static void buildRoutesForActiveRunwayThreshold(XmlActiveRunwayThreshold xa, IList<DARoute> aRoutes, IMap<String, IList<DARoute>> sharedRoutesGroups,
                                                           Context context) {
     for (XmlRoute xmlRoute : xa.routes) {
-      Route route = convert(xmlRoute, context);
+      DARoute route = convert(xmlRoute, context);
       aRoutes.add(route);
     }
     if (xa.includeRoutesGroups != null) {
       String[] groupNames = xa.includeRoutesGroups.split(";");
       for (String groupName : groupNames) {
         try {
-          IList<Route> routes = sharedRoutesGroups.get(groupName);
+          IList<DARoute> routes = sharedRoutesGroups.get(groupName);
           aRoutes.add(routes);
         } catch (Exception ex) {
           throw new EApplicationException("Unable to find route group named " + groupName + " required for runway threshold " + xa.name);
@@ -756,7 +756,7 @@ public class XmlModelBinder {
     }
   }
 
-  private static Route convert(XmlRoute x, Context context) {
+  private static DARoute convert(XmlRoute x, Context context) {
     SpeechList routeCommands = decodeRouteCommands(x);
     IList<Navaid> routeNavaids = routeCommands
         .where(q -> q instanceof ToNavaidCommand)
@@ -766,12 +766,12 @@ public class XmlModelBinder {
 
     double routeLength = calculateRouteLength(routeNavaids);
     int maxMrvaFL = calculateMaxMrvaFL(mainNavaid, routeNavaids, context);
-    Route ret = new Route(x.type, x.name, x.category, mainNavaid, routeLength, x.entryFL, routeCommands,
+    DARoute ret = new DARoute(x.type, x.name, x.category, mainNavaid, routeLength, x.entryFL, routeCommands,
         routeNavaids, maxMrvaFL, context.airport);
     return ret;
   }
 
-  private static Navaid evaluateMainRouteNavaid(String routeName, Route.eType type, String customMainFixName, IList<Navaid> routeNavaids, Context context) {
+  private static Navaid evaluateMainRouteNavaid(String routeName, DARoute.eType type, String customMainFixName, IList<Navaid> routeNavaids, Context context) {
     Navaid customMainFix = customMainFixName != null && !customMainFixName.isEmpty()
         ? context.area.getNavaids().get(customMainFixName)
         : null;
@@ -876,7 +876,7 @@ public class XmlModelBinder {
     }
 
     // hold at the end of SID via main point
-    if (route.type == Route.eType.sid) {
+    if (route.type == DARoute.eType.sid) {
       ToNavaidCommand tnc = (ToNavaidCommand) ret.tryGetLast(q -> q instanceof ToNavaidCommand);
       assert tnc != null : "No ToNavaidCommand in SID???";
       if (tnc instanceof HoldCommand == false) {

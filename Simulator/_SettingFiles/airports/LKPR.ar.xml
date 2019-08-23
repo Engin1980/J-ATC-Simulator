@@ -30,39 +30,30 @@
           <thresholds>
             <threshold name="06" coordinate="50 06 06.61 N 014 13 34.58 E" initialDepartureAltitude="5000" mapping="06">
               <approaches>
-                <ilsApproach radial="061" initialAltitude="4000" iafMapping="06;06OKL">
-                  <gaRoute>
-                    <heading value="061"/>
-                    <altitude value="4000"/>
-                  </gaRoute>
+                <ilsApproach radial="061" initialAltitude="4000" iafMapping="06;06OKL" gaMapping="06">
                   <categories>
                     <category type="I" daA="1247" daB="1357" daC="1367" daD="1380"/>
                   </categories>
                 </ilsApproach>
-                <gnssApproach gaRoute="FH 061 CM 40" radial="061" daA="1515" daB="1515" daC="1515" daD="1515"
+                <gnssApproach radial="061" daA="1515" daB="1515" daC="1515" daD="1515"
                               initialAltitude="4000"
-                              iafMapping="06">
-                  <gaRoute>
-                    <heading value="061"/>
-                    <altitude value="4000"/>
-                  </gaRoute>
-                </gnssApproach>
-                <unpreciseApproach gaRoute="CM 40 FH 061" radial="061" type="ndb" faf="PH/061/8.8" mapt="PH/061/0.5"
+                              iafMapping="06" gaMapping="06" />
+                <unpreciseApproach radial="061" type="ndb" faf="PH/061/8.8" mapt="PH/061/0.5" gaMapping="06"
                                    mdaA="1600" mdaB="1600"
                                    mdaC="1600" mdaD="1600" iafMapping="06;06OKL" initialAltitude="4000"/>
               </approaches>
             </threshold>
             <threshold name="24" coordinate="50 06 57.43 N 014 16 24.12 E" initialDepartureAltitude="5000" mapping="24">
               <approaches>
-                <ilsApproach gaRoute="FH 241 CM 40" radial="241" iafMapping="24" initialAltitude="4000">
+                <ilsApproach gaMapping="24" radial="241" iafMapping="24" initialAltitude="4000">
                   <categories>
                     <category type="I" daA="1295" daB="1303" daC="1313" daD="1321"/>
                     <category type="II" daA="1207" daB="1218" daC="1231" daD="1244"/>
                   </categories>
                 </ilsApproach>
-                <gnssApproach gaRoute="FH 241 CM 40" radial="241" daA="1479" daB="1479" daC="1479" daD="1479"
+                <gnssApproach gaMapping="24" radial="241" daA="1479" daB="1479" daC="1479" daD="1479"
                               iafMapping="24" initialAltitude="4000"/>
-                <unpreciseApproach gaRoute="FH 241 CM 40" radial="241" type="ndb" faf="PH/241/10.6" mapt="L" mdaA="1460"
+                <unpreciseApproach gaMapping="24" radial="241" type="ndb" faf="PH/241/10.6" mapt="L" mdaA="1460"
                                    mdaB="1460"
                                    mdaC="1460" mdaD="1460" iafMapping="24" initialAltitude="4000"/>
               </approaches>
@@ -73,12 +64,12 @@
           <thresholds>
             <threshold name="12" coordinate="50 06 28.84 N 014 14 43.32 E" initialDepartureAltitude="5000" mapping="12">
               <approaches>
-                <unpreciseApproach gaRoute="FH 123 CM 40" radial="127" type="vor" faf="OKL/127/9.8" mapt="OKL/127/1.8"
+                <unpreciseApproach gaMapping="12" radial="127" type="vor" faf="OKL/127/9.8" mapt="OKL/127/1.8"
                                    mdaA="1530" mdaB="1530" mdaC="1530" mdaD="1530" initialAltitude="4000"
                                    iafMapping="12unp"/>
-                <gnssApproach gaRoute="FH 123 CM 40" radial="123" daA="1453" daB="1453" daC="1453" daD="1453"
+                <gnssApproach gaMapping="12" radial="123" daA="1453" daB="1453" daC="1453" daD="1453"
                               iafMapping="12" initialAltitude="4000"/>
-                <ilsApproach gaRoute="FH 123 CM 40" radial="123" iafMapping="12;12ils" initialAltitude="4000">
+                <ilsApproach gaMapping="12" radial="123" iafMapping="12;12ils" initialAltitude="4000">
                   <categories>
                     <category type="I" daA="1310" daB="1325" daC="1341" daD="1357"/>
                   </categories>
@@ -87,13 +78,13 @@
             </threshold>
             <threshold name="30" coordinate="50 05 25.68 N 014 16 53.02 E" initialDepartureAltitude="5000" mapping="30">
               <approaches>
-                <unpreciseApproach gaRoute="FH 303 CM 40" radial="299" type="vor"
+                <unpreciseApproach gaMapping="30" radial="299" type="vor"
                                    faf="OKL/119/9.3"
                                    mapt="OKL/119/1.5" mdaA="1630"
                                    mdaB="1630" mdaC="1630" mdaD="1630" initialAltitude="4000" iafMapping="30unp"/>
-                <gnssApproach gaRoute="FH 303 CM 40" radial="303" iafMapping="30" daA="1516" daB="1516"
+                <gnssApproach gaMapping="30" radial="303" iafMapping="30" daA="1516" daB="1516"
                               daC="1516" daD="1516" initialAltitude="4000"/>
-                <ilsApproach gaRoute="FH 303 CM 40" radial="303" iafMapping="30" initialAltitude="4000">
+                <ilsApproach gaMapping="30" radial="303" iafMapping="30" initialAltitude="4000">
                   <categories>
                     <category type="I" daA="1369" daB="1377" daC="1387" daD="1395"/>
                   </categories>
@@ -166,29 +157,133 @@
               <then/>
               <heading value="242"/>
             </route>
-            <route type="star" name="VLM1T" mapping="06"
-                   route="PD VLM T PD PR721 T PD PR722 T SL 250 PD PR723 T PD PR523 T SL 220 PD PR521 T PD AKEVA T FH 242"/>
-            <route type="star" name="GOSEK2T" mapping="06"
-                   route="PD GOSEK T SL 250 PD PR718 T PD PR719 T SL 220 PD PR521 T PD AKEVA T FH 242"/>
+            <route type="star" name="VLM1T" mapping="06">
+              <proceedDirect fix="VLM"/>
+              <then/>
+              <proceedDirect fix="PR721"/>
+              <then/>
+              <proceedDirect fix="PR722"/>
+              <then/>
+              <speed restriction="below" value="250"/>
+              <proceedDirect fix="PR723"/>
+              <then/>
+              <proceedDirect fix="PR523"/>
+              <then/>
+              <speed restriction="below" value="220"/>
+              <proceedDirect fix="PR521"/>
+              <then/>
+              <proceedDirect fix="AKEVA"/>
+              <then/>
+              <heading value="242"/>
+            </route>
+            <route type="star" name="GOSEK2T" mapping="06" >
+              <proceedDirect fix="GOSEK"/>
+              <then/>
+              <speed restriction="below" value="250"/>
+              <proceedDirect fix="PR718"/>
+              <then/>
+              <proceedDirect fix="PR719"/>
+              <then/>
+              <speed restriction="below" value="220"/>
+              <proceedDirect fix="PR521"/>
+              <then/>
+              <proceedDirect fix="AKEVA"/>
+              <then/>
+              <heading value="242"/>
+            </route>
           </group>
           <group>
-            <route type="sid" name="VOZ1E" category="CD" mapping="06"
-                   route="PD PR619 T PD PR633 T PD PR635 T PD VOZ"/>
-            <route type="sid" name="VOZ1D" category="AB" mapping="06"
-                   route="PD PR619 T PD PR625 T PD PR626 T PD PR627 T PD VOZ"/>
-            <route type="sid" name="BALTU2E" category="CD" mapping="06"
-                   route="PD PR619 T PD PR631 T PD PR632 T PD PR621 T PD ESINU T PD BALTU"/>
-            <route type="sid" name="BALTU2D" category="AB" mapping="06"
-                   route="PD PR619 T PD PR621 T PD ESINU T PD BALTU"/>
-            <route type="sid" name="DOBEN2E" category="CD" mapping="06"
-                   route="PD PR619 T PD PR631 T PD PR632 T PD PR621 T PD ESINU T PD DOBEN"/>
-            <route type="sid" name="DOBEN2D" category="AB" mapping="06"
-                   route="PD PR619 T PD PR621 T PD ESINU T PD DOBEN"/>
-            <route type="sid" name="VENOX2D" category="AB" mapping="06"
-                   route="PD PR619 T PD PR621 T PD PR622 T PD VENOX"/>
-            <route type="sid" name="VENOX1E" category="CD" mapping="06"
-                   route="PD PR619 T PD PR631 T PD PR632 T PD VENOX"/>
-            <route type="sid" name="ARTUP1E" mapping="06" route="PD PR619 T PD PR633 T PD PR634 T PD ARTUP"/>
+            <route type="sid" name="VOZ1E" category="CD" mapping="06">
+              <proceedDirect fix="PR619"/>
+              <then/>
+              <proceedDirect fix="PR633"/>
+              <then/>
+              <proceedDirect fix="PR635"/>
+              <then/>
+              <proceedDirect fix="VOZ"/>
+            </route>
+            <route type="sid" name="VOZ1D" category="AB" mapping="06">
+              <proceedDirect fix="PR619"/>
+              <then/>
+              <proceedDirect fix="PR625"/>
+              <then/>
+              <proceedDirect fix="PR626"/>
+              <then/>
+              <proceedDirect fix="PR627"/>
+              <then/>
+              <proceedDirect fix="VOZ"/>
+            </route>
+            <route type="sid" name="BALTU2E" category="CD" mapping="06">
+              <proceedDirect fix="PR619"/>
+              <then/>
+              <proceedDirect fix="PR631"/>
+              <then/>
+              <proceedDirect fix="PR632"/>
+              <then/>
+              <proceedDirect fix="PR621"/>
+              <then/>
+              <proceedDirect fix="ESINU"/>
+              <then/>
+              <proceedDirect fix="BALTU"/>
+            </route>
+            <route type="sid" name="BALTU2D" category="AB" mapping="06">
+              <proceedDirect fix="PR619"/>
+              <then/>
+              <proceedDirect fix="PR621"/>
+              <then/>
+              <proceedDirect fix="ESINU"/>
+              <then/>
+              <proceedDirect fix="BALTU"/>
+            </route>
+            <route type="sid" name="DOBEN2E" category="CD" mapping="06">
+              <proceedDirect fix="PR619"/>
+              <then/>
+              <proceedDirect fix="PR631"/>
+              <then/>
+              <proceedDirect fix="PR632"/>
+              <then/>
+              <proceedDirect fix="PR621"/>
+              <then/>
+              <proceedDirect fix="ESINU"/>
+              <then/>
+              <proceedDirect fix="DOBEN"/>
+            </route>
+            <route type="sid" name="DOBEN2D" category="AB" mapping="06">
+              <proceedDirect fix="PR619"/>
+              <then/>
+              <proceedDirect fix="PR621"/>
+              <then/>
+              <proceedDirect fix="ESINU"/>
+              <then/>
+              <proceedDirect fix="DOBEN"/>
+            </route>
+            <route type="sid" name="VENOX2D" category="AB" mapping="06">
+              <proceedDirect fix="PR619"/>
+              <then/>
+              <proceedDirect fix="PR621"/>
+              <then/>
+              <proceedDirect fix="PR622"/>
+              <then/>
+              <proceedDirect fix="VENOX"/>
+            </route>
+            <route type="sid" name="VENOX1E" category="CD" mapping="06">
+              <proceedDirect fix="PR619"/>
+              <then/>
+              <proceedDirect fix="PR631"/>
+              <then/>
+              <proceedDirect fix="PR632"/>
+              <then/>
+              <proceedDirect fix="VENOX"/>
+            </route>
+            <route type="sid" name="ARTUP1E" mapping="06">
+              <proceedDirect fix="PR619"/>
+              <then/>
+              <proceedDirect fix="PR633"/>
+              <then/>
+              <proceedDirect fix="PR634"/>
+              <then/>
+              <proceedDirect fix="ARTUP"/>
+            </route>
           </group>
         </group>
         <group>
@@ -274,9 +369,28 @@
       </daRoutes>
       <iafRoutes>
         <group>
-          <iafRoute iaf="KUVIX" route="DM 40 PD PR741 T PD PR742 T FH 061" iafMapping="06"/>
-          <iafRoute iaf="BAROX" route="DM 40 PD PR742 T FH 061" iafMapping="06"/>
-          <iafRoute iaf="AKEVA" route="DM 40 PD PR740 T PD PR742 T  FH 061" iafMapping="06"/>
+          <iafRoute iaf="KUVIX" iafMapping="06">
+            <altitude direction="set" value="4000" />
+            <proceedDirect fix="PR741"/>
+            <then/>
+            <proceedDirect fix="PR742"/>
+            <then/>
+            <heading value="061"/>
+          </iafRoute>
+          <iafRoute iaf="BAROX" iafMapping="06">
+            <altitude direction="set" value="4000" />
+            <proceedDirect fix="PR742"/>
+            <then/>
+            <heading value="061"/>
+          </iafRoute>
+          <iafRoute iaf="AKEVA" iafMapping="06">
+            <altitude direction="set" value="4000" />
+            <proceedDirect fix="PR740"/>
+            <then/>
+            <proceedDirect fix="PR742"/>
+            <then/>
+            <heading value="061"/>
+          </iafRoute>
         </group>
         <group>
           <iafRoute iaf="OKL" route="DM 40 PD OKL/247/9.9 T PD OKL/260/13 T PD PR742 T FH 061" iafMapping="06OKL"/>
@@ -303,6 +417,24 @@
         <iafRoute iaf="EVEMI" route="FH 303 AD OKL/14.2 FH 213 AR OKL/313 PD OKL/127/12.9 T FH 127" iafMapping="12unp"/>
         <iafRoute iaf="SOMIS" route="FH 303 AD OKL/13.9 FH 033 AR OKL/300 PD OKL/127/12.9 T FH 127" iafMapping="12unp"/>
       </iafRoutes>
+      <gaRoutes>
+        <gaRoute gaMapping="06">
+          <heading value="061"/>
+          <altitude value="4000" direction="set"/>
+        </gaRoute>
+        <gaRoute gaMapping="24">
+          <heading value="241"/>
+          <altitude value="4000" direction="set"/>
+        </gaRoute>
+        <gaRoute gaMapping="12">
+          <heading value="123"/>
+          <altitude value="4000" direction="set"/>
+        </gaRoute>
+        <gaRoute gaMapping="30">
+          <heading value="303"/>
+          <altitude value="4000" direction="set"/>
+        </gaRoute>
+      </gaRoutes>
     </airport>
     <airport icao="LKMT" name="Ostrava Mošnov" altitude="844" transitionAltitude="5000" vfrAltitude="2500"
              mainAirportNavaidName="OTA" declination="4.833" coveredDistance="50">

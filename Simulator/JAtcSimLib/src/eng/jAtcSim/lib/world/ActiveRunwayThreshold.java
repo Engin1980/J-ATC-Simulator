@@ -22,7 +22,7 @@ import eng.jAtcSim.lib.world.xml.XmlLoader;
  */
 public class ActiveRunwayThreshold extends Parentable<Runway> {
 
-  public static IList<ActiveRunwayThreshold> loadList(IReadOnlyList<XElement> sources, IList<Route> routes, IList<IafRoute> iafRoutes){
+  public static IList<ActiveRunwayThreshold> loadList(IReadOnlyList<XElement> sources, IList<DARoute> routes, IList<IafRoute> iafRoutes){
     assert sources.size() == 2 : "There must be two thresholds";
 
     ActiveRunwayThreshold a = ActiveRunwayThreshold.load(sources.get(0), routes, iafRoutes);
@@ -46,7 +46,7 @@ public class ActiveRunwayThreshold extends Parentable<Runway> {
     return ret;
   }
 
-  private static ActiveRunwayThreshold load(XElement source, IList<Route> routes, IList<IafRoute> iafRoutes){
+  private static ActiveRunwayThreshold load(XElement source, IList<DARoute> routes, IList<IafRoute> iafRoutes){
     XmlLoader.setContext(source);
     String name = XmlLoader.loadString("name", true);
     Coordinate coordinate = XmlLoader.loadCoordinate("coordinate",true);
@@ -54,7 +54,7 @@ public class ActiveRunwayThreshold extends Parentable<Runway> {
     String mappingString = XmlLoader.loadString("mapping", true);
     IList<String> mapping = new EList<>(mappingString.split(";"));
 
-    IList<Route> thresholdRoutes = routes.where(q->q.mappingAccepts(mapping));
+    IList<DARoute> thresholdRoutes = routes.where(q->q.mappingAccepts(mapping));
     IList<Approach> approaches = Approach.loadList(source.getChild("approaches").getChildren(), iafRoutes);
 
     ActiveRunwayThreshold ret = new ActiveRunwayThreshold(
@@ -63,7 +63,7 @@ public class ActiveRunwayThreshold extends Parentable<Runway> {
   }
 
   private final IList<Approach> approaches;
-  private final IList<Route> routes;
+  private final IList<DARoute> routes;
   private final String name;
   private final Coordinate coordinate;
   private double course;
@@ -72,7 +72,7 @@ public class ActiveRunwayThreshold extends Parentable<Runway> {
   @Deprecated
   private Coordinate estimatedFafPoint;
 
-  private ActiveRunwayThreshold(String name, Coordinate coordinate, int initialDepartureAltitude, IList<Approach> approaches, IList<Route> routes) {
+  private ActiveRunwayThreshold(String name, Coordinate coordinate, int initialDepartureAltitude, IList<Approach> approaches, IList<DARoute> routes) {
     this.approaches = approaches;
     this.routes = routes;
     this.name = name;
@@ -96,7 +96,7 @@ public class ActiveRunwayThreshold extends Parentable<Runway> {
     return approaches;
   }
 
-  public IList<Route> getRoutes() {
+  public IList<DARoute> getRoutes() {
     return routes;
   }
 
@@ -104,34 +104,34 @@ public class ActiveRunwayThreshold extends Parentable<Runway> {
     return this.course;
   }
 
-  public Route getDepartureRouteForPlane(AirplaneType type, Navaid mainNavaid, boolean canBeVectoring) {
-    Route ret = this.getRoutes().where(
-        q -> q.getType() == Route.eType.sid
+  public DARoute getDepartureRouteForPlane(AirplaneType type, Navaid mainNavaid, boolean canBeVectoring) {
+    DARoute ret = this.getRoutes().where(
+        q -> q.getType() == DARoute.eType.sid
             && q.isValidForCategory(type.category)
             && q.getMaxMrvaAltitude() < type.maxAltitude
             && q.getMainNavaid().equals(mainNavaid))
         .tryGetRandom();
     if (ret == null && canBeVectoring)
-      ret = Route.createNewVectoringByFix(mainNavaid);
+      ret = DARoute.createNewVectoringByFix(mainNavaid);
     return ret;
   }
 
-  public Route getArrivalRouteForPlane(AirplaneType type, int currentAltitude, Navaid mainNavaid, boolean canBeVectoring) {
-    Route ret = this.getRoutes().where(
-        q -> q.getType() == Route.eType.transition
+  public DARoute getArrivalRouteForPlane(AirplaneType type, int currentAltitude, Navaid mainNavaid, boolean canBeVectoring) {
+    DARoute ret = this.getRoutes().where(
+        q -> q.getType() == DARoute.eType.transition
             && q.isValidForCategory(type.category)
             && q.getMaxMrvaAltitude() < currentAltitude
             && q.getMainNavaid().equals(mainNavaid))
         .tryGetRandom();
     if (ret == null)
       ret = this.getRoutes().where(
-          q -> q.getType() == Route.eType.star
+          q -> q.getType() == DARoute.eType.star
               && q.isValidForCategory(type.category)
               && q.getMaxMrvaAltitude() < currentAltitude
               && q.getMainNavaid().equals(mainNavaid))
           .tryGetRandom();
     if (ret == null && canBeVectoring)
-      ret = Route.createNewVectoringByFix(mainNavaid);
+      ret = DARoute.createNewVectoringByFix(mainNavaid);
     return ret;
   }
 
