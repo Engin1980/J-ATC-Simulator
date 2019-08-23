@@ -14,6 +14,7 @@ import eng.eSystem.geo.Coordinates;
 import eng.jAtcSim.lib.airplanes.AirplaneType;
 import eng.jAtcSim.lib.global.Headings;
 import eng.jAtcSim.lib.world.approaches.Approach;
+import eng.jAtcSim.lib.world.approaches.GaRoute;
 import eng.jAtcSim.lib.world.approaches.IafRoute;
 import eng.jAtcSim.lib.world.xml.XmlLoader;
 
@@ -46,7 +47,8 @@ public class ActiveRunwayThreshold extends Parentable<Runway> {
     return ret;
   }
 
-  private static ActiveRunwayThreshold load(XElement source, IList<DARoute> routes, IList<IafRoute> iafRoutes){
+  private static ActiveRunwayThreshold load(XElement source, int airportAltitude, NavaidList navaids, int course,
+                                            IReadOnlyList<DARoute> routes, IReadOnlyList<IafRoute> iafRoutes, IReadOnlyList<GaRoute> gaRoutes){
     XmlLoader.setContext(source);
     String name = XmlLoader.loadString("name", true);
     Coordinate coordinate = XmlLoader.loadCoordinate("coordinate",true);
@@ -54,8 +56,9 @@ public class ActiveRunwayThreshold extends Parentable<Runway> {
     String mappingString = XmlLoader.loadString("mapping", true);
     IList<String> mapping = new EList<>(mappingString.split(";"));
 
-    IList<DARoute> thresholdRoutes = routes.where(q->q.mappingAccepts(mapping));
-    IList<Approach> approaches = Approach.loadList(source.getChild("approaches").getChildren(), iafRoutes);
+    IList<DARoute> thresholdRoutes = routes.where(q->q.isMappingMatch(mapping));
+    IList<Approach> approaches = Approach.loadList(source.getChild("approaches").getChildren(),
+        coordinate, course, airportAltitude, navaids,iafRoutes, gaRoutes);
 
     ActiveRunwayThreshold ret = new ActiveRunwayThreshold(
         name, coordinate, initialDepartureAltitude, approaches, thresholdRoutes);

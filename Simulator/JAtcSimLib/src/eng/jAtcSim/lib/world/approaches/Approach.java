@@ -39,7 +39,7 @@ public class Approach extends Parentable<ActiveRunwayThreshold> {
 
   public static IList<Approach> loadList(IReadOnlyList<XElement> sources,
                                          Coordinate thresholdCoordinate, int thresholdCourse, int thresholdAltitude,
-                                         int initialAltitude, NavaidList navaids,
+                                         NavaidList navaids,
                                          IReadOnlyList<IafRoute> iafRoutes,
                                          IReadOnlyList<GaRoute> gaRoutes) {
     IList<Approach> ret = new EList<>();
@@ -54,7 +54,7 @@ public class Approach extends Parentable<ActiveRunwayThreshold> {
             iafRoutes, gaRoutes);
         ret.add(tmp);
       } else if (source.getName().equals("unpreciseApproach")) {
-        Approach tmp = loadUnprecise(source, initialAltitude, thresholdCoordinate, thresholdAltitude,
+        Approach tmp = loadUnprecise(source, thresholdCoordinate, thresholdAltitude,
             iafRoutes, gaRoutes, navaids);
         ret.add(tmp);
       } else if (source.getName().equals("customApproach")) {
@@ -164,7 +164,7 @@ public class Approach extends Parentable<ActiveRunwayThreshold> {
     return ret;
   }
 
-  public static Approach loadUnprecise(XElement source, int initialAltitude, Coordinate thresholdCoordinate, int thresholdAltitude,
+  public static Approach loadUnprecise(XElement source, Coordinate thresholdCoordinate, int thresholdAltitude,
                                        IReadOnlyList<IafRoute> iafRoutes, IReadOnlyList<GaRoute> gaRoutes,
                                        NavaidList navaids) {
     XmlLoader.setContext(source);
@@ -172,6 +172,7 @@ public class Approach extends Parentable<ActiveRunwayThreshold> {
     String iafMapping = XmlLoader.loadString("iafMapping", true);
     String fafName = XmlLoader.loadString("faf",true);
     String maptName = XmlLoader.loadString("mapt",true);
+    int initialAltitude = XmlLoader.loadInteger("initialAltitude", true);
 //    int outboundRadial = XmlLoader.loadInteger("radial",true);
 //    int inboundRadial = Headings.getOpposite(outboundRadial);
     int daA = XmlLoader.loadInteger("mdaA", true);
