@@ -9,7 +9,7 @@ public class RadialStagePilot implements IApproachStagePilot<RadialStage> {
   @Override
   public eResult initStage(IAirplaneWriteSimple plane, RadialStage stage) {
     plane.setNavigator(
-        new RadialNavigator(stage.getFix(), stage.getInboundRadial(), RadialNavigator.AggresivityMode.standard));
+        new RadialNavigator(stage.getCoordinate(), stage.getInboundRadial(), RadialNavigator.AggresivityMode.standard));
     return eResult.ok;
   }
 
