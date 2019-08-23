@@ -89,6 +89,12 @@ public class Headings {
     return ret;
   }
 
+  public static int getOpposite(int course) {
+    int ret = course - 180;
+    ret = (int) Headings.to(ret);
+    return ret;
+  }
+
   public static double getHeadingToFollowRadial(Coordinate currentPosition, Coordinate radialSourcePosition, double radial,
                                                 double maxHeadingDifference, double speedInKt) {
     double ret = RadialCalculator.getHeadingToFollowRadial(currentPosition, radialSourcePosition, radial,

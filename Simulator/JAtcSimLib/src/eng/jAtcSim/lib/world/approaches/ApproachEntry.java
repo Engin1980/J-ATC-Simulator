@@ -26,6 +26,13 @@ public class ApproachEntry {
     return new ApproachEntry(ael, iafRoute);
   }
 
+  public static ApproachEntry createForUnprecise(Coordinate fafCoordinate, double inboundRadial) {
+    IApproachEntryLocation ael = new FixRelatedApproachEntryLocation(fafCoordinate, 15,
+        Headings.subtract(inboundRadial, 60),
+        Headings.add(inboundRadial,60));
+    return new ApproachEntry(ael);
+  }
+
   private final IApproachEntryLocation location;
   private final IafRoute iafRoute;
 //  private final IReadOnlyList<IAtcCommand> routeCommands;
