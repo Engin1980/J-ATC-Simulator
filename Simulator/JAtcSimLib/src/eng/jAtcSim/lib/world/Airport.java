@@ -8,6 +8,7 @@ package eng.jAtcSim.lib.world;
 import eng.eSystem.collections.*;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.geo.Coordinate;
+import eng.eSystem.geo.geocoding.HereGeocoding;
 import eng.jAtcSim.lib.atcs.AtcTemplate;
 import eng.jAtcSim.lib.world.xml.XmlLoader;
 
@@ -32,9 +33,14 @@ public class Airport extends Parentable<Area> {
     Navaid mainAirportNavaid = navaids.get(mainAirportNavaidName);
     EntryExitPointList entryExitPointList = EntryExitPoint.loadList(source.getChild("entryExitPoints").getChildren(), navaids);
     IList<PublishedHold> holds = PublishedHold.loadList(source.getChild("holds").getChildren(), navaids);
+
+    load routes here
+
+        
     // TODO put inactive and active runways to one upper element
     IList<InactiveRunway> inactiveRunways = InactiveRunway.loadList(source.getChild("inactiveRunways").getChildren());
-    IList<ActiveRunway> activeRunways = ActiveRunway.loadList(source.getChild("activeRunways").getChildren());
+    IList<ActiveRunway> activeRunways = ActiveRunway.loadList(source.getChild("activeRunways").getChildren(),
+        altitude, navaids, routes, iafRoutes, gaRoutes );
 
 //    private final IList<RunwayConfiguration> runwayConfigurations;
 //    private final IList<Route> routes;

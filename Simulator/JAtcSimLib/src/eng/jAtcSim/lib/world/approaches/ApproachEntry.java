@@ -1,16 +1,9 @@
 package eng.jAtcSim.lib.world.approaches;
 
-import eng.eSystem.collections.EList;
-import eng.eSystem.collections.IList;
-import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Headings;
-import eng.jAtcSim.lib.speaking.SpeechList;
-import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
-import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeHeadingCommand;
 import eng.jAtcSim.lib.world.approaches.entryLocations.FixRelatedApproachEntryLocation;
 import eng.jAtcSim.lib.world.approaches.entryLocations.IApproachEntryLocation;
-import eng.jAtcSim.lib.world.approaches.entryLocations.RegionalApproachEntryLocation;
 
 public class ApproachEntry {
   public static ApproachEntry createForIls(Coordinate thresholdCoordinate, int runwayThresholdCourse) {
@@ -44,6 +37,15 @@ public class ApproachEntry {
   private  ApproachEntry(IApproachEntryLocation location, IafRoute route){
     this.location = location;
     this.iafRoute = route;
+  }
+
+  public boolean isForCategory(char category){
+    boolean ret;
+    if (this.iafRoute == null)
+      ret = true;
+    else
+      ret = this.iafRoute.getCategory().contains(category);
+    return ret;
   }
 
   public IApproachEntryLocation getLocation() {

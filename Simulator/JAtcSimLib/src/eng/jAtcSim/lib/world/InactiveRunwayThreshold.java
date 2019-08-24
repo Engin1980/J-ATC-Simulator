@@ -8,7 +8,7 @@ import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
 import eng.jAtcSim.lib.world.xml.XmlLoader;
 
-public class InactiveRunwayThreshold extends Parentable<Runway> {
+public class InactiveRunwayThreshold extends Parentable<InactiveRunway> {
 
   public static IList<InactiveRunwayThreshold> loadList(IReadOnlyList<XElement> sources){
     assert sources.size() == 2 : "There must be two thresholds";

@@ -5,8 +5,6 @@
  */
 package eng.jAtcSim.lib.global;
 
-import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
-
 import java.time.LocalTime;
 import java.util.Calendar;
 import java.util.Objects;

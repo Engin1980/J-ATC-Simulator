@@ -3,12 +3,12 @@ package eng.jAtcSim.lib.world;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 
-public abstract class Runway<ThresholdType extends Parentable<Runway>> extends Parentable<Airport> {
+public abstract class Runway<TParentType, ThresholdType extends Parentable<TParentType>> extends Parentable<Airport> {
   private final IList<ThresholdType> thresholds;
 
   public Runway(IList<ThresholdType> thresholds) {
     this.thresholds = thresholds;
-    this.thresholds.forEach(q->q.setParent(this));
+//    this.thresholds.forEach(q->q.setParent(this));
   }
 
   public ThresholdType get(int index){

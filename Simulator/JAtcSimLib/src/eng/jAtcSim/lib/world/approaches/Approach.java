@@ -9,14 +9,15 @@ import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
 import eng.jAtcSim.lib.exceptions.ToDoException;
 import eng.jAtcSim.lib.global.UnitProvider;
+import eng.jAtcSim.lib.speaking.fromAtc.commands.ProceedDirectCommand;
 import eng.jAtcSim.lib.world.ActiveRunwayThreshold;
 import eng.jAtcSim.lib.world.Navaid;
 import eng.jAtcSim.lib.world.NavaidList;
 import eng.jAtcSim.lib.world.Parentable;
-import eng.jAtcSim.lib.world.approaches.stages.FlyToPointStage;
 import eng.jAtcSim.lib.world.approaches.stages.IApproachStage;
 import eng.jAtcSim.lib.world.approaches.stages.LandingStage;
 import eng.jAtcSim.lib.world.approaches.stages.RadialWithDescendStage;
+import eng.jAtcSim.lib.world.approaches.stages.RouteStage;
 import eng.jAtcSim.lib.world.approaches.stages.checks.CheckAirportVisibilityStage;
 import eng.jAtcSim.lib.world.approaches.stages.exitConditions.AltitudeExitCondition;
 import eng.jAtcSim.lib.world.approaches.stages.exitConditions.CoordinateCloseExitCondition;
@@ -208,7 +209,9 @@ public class Approach extends Parentable<ActiveRunwayThreshold> {
     // build stages
     IList<IApproachStage> stages = new EList<>();
     stages.add(
-        new FlyToPointStage(faf.getCoordinate(), new CoordinateCloseExitCondition(faf.getCoordinate(), 1d)));
+        new RouteStage(
+            new CoordinateCloseExitCondition(faf.getCoordinate(), 1d),
+            new ProceedDirectCommand(faf)));
     stages.add(
         new RadialWithDescendStage(faf.getCoordinate(), (int) Math.round(inboundRadial),
             initialAltitude, -slope,

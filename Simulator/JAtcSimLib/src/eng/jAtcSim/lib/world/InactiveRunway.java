@@ -5,7 +5,7 @@ import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.eXml.XElement;
 
-public class InactiveRunway extends Runway<InactiveRunwayThreshold> {
+public class InactiveRunway extends Runway<InactiveRunway, InactiveRunwayThreshold> {
 
   public static IList<InactiveRunway> loadList(IReadOnlyList<XElement> sources){
     IList<InactiveRunway> ret = new EList<>();
@@ -28,6 +28,7 @@ public class InactiveRunway extends Runway<InactiveRunwayThreshold> {
 
   private InactiveRunway(IList<InactiveRunwayThreshold> thresholds) {
     super(thresholds);
+    thresholds.forEach(q->q.setParent(this));
   }
 
   @Override
