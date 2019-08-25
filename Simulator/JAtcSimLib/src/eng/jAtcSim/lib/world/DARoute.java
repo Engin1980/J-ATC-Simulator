@@ -8,8 +8,10 @@ package eng.jAtcSim.lib.world;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
+import eng.eSystem.eXml.XElement;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.global.PlaneCategoryDefinitions;
+import eng.jAtcSim.lib.speaking.IFromAtc;
 import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
 
@@ -39,11 +41,28 @@ public class DARoute extends Route {
     return ret;
   }
 
+  public static IList<DARoute> loadList(XElement source, NavaidList navaids) {
+    IList<XElement> daElements = Route.lookForElementRecursively(source, "route");
+
+    IList<DARoute> ret = new EList<>();
+    for (XElement daElement : daElements) {
+      DARoute tmp = DARoute.load(daElement, navaids);
+      ret.add(tmp);
+    }
+    return ret;
+  }
+
+  public static DARoute load(XElement source, NavaidList navaids){
+    IList<IAtcCommand> cmds = Route.loadCommands(source, navaids);
+
+    DARoute ret = new DARoute(???);
+    return ret;
+  }
+
   private final eType type;
   private final String name;
   private final Airport parent;
   private final PlaneCategoryDefinitions category;
-  private final SpeechList<IAtcCommand> routeCommands;
   private final IList<Navaid> routeNavaids;
   private final double routeLength;
   private final Navaid mainNavaid;
@@ -51,7 +70,7 @@ public class DARoute extends Route {
   private final Integer maxMrvaFL;
 
   public DARoute(eType type, String name, PlaneCategoryDefinitions category, Navaid mainNavaid, double routeLength,
-                 Integer entryFL, SpeechList<IAtcCommand> routeCommands, IList<Navaid> routeNavaids, Integer maxMrvaFL,
+                 Integer entryFL, IList<IAtcCommand> routeCommands, IList<Navaid> routeNavaids, Integer maxMrvaFL,
                  String mapping,
                  Airport parent) {
     super(mapping, routeCommands);
@@ -59,7 +78,6 @@ public class DARoute extends Route {
     this.name = name;
     this.parent = parent;
     this.category = category;
-    this.routeCommands = routeCommands;
     this.routeNavaids = routeNavaids;
     this.routeLength = routeLength;
     this.mainNavaid = mainNavaid;
@@ -71,7 +89,7 @@ public class DARoute extends Route {
     return this.category;
   }
 
-  public SpeechList<IAtcCommand> getCommands() {
+  public IReadOnlyList<IAtcCommand> getCommands() {
     return routeCommands;
   }
 

@@ -4,6 +4,7 @@ import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.geo.Coordinate;
 import eng.jAtcSim.lib.exceptions.ToDoException;
+import eng.jAtcSim.lib.global.Restriction;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
@@ -144,4 +145,5 @@ public abstract class XmlLoader {
         "The conversion of the value %s to type %s has failed.", value, targetType.getName()
     ));
   }
+
 }

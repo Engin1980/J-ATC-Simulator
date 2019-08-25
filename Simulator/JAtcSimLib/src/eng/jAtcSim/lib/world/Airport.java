@@ -10,6 +10,8 @@ import eng.eSystem.eXml.XElement;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.geocoding.HereGeocoding;
 import eng.jAtcSim.lib.atcs.AtcTemplate;
+import eng.jAtcSim.lib.world.approaches.GaRoute;
+import eng.jAtcSim.lib.world.approaches.IafRoute;
 import eng.jAtcSim.lib.world.xml.XmlLoader;
 
 /**
@@ -34,13 +36,15 @@ public class Airport extends Parentable<Area> {
     EntryExitPointList entryExitPointList = EntryExitPoint.loadList(source.getChild("entryExitPoints").getChildren(), navaids);
     IList<PublishedHold> holds = PublishedHold.loadList(source.getChild("holds").getChildren(), navaids);
 
-    load routes here
+    IList<DARoute> daRoutes = DARoute.loadList(source.getChild("daRoutes"), navaids);
+    IList<IafRoute> iafRoutes = IafRoute.loadList(source.getChild("iafRoutes"),navaids);
+    IList<GaRoute> gaRoutes = GaRoute.loadList(source.getChild("gaRoutes"),navaids);
 
-        
+
     // TODO put inactive and active runways to one upper element
     IList<InactiveRunway> inactiveRunways = InactiveRunway.loadList(source.getChild("inactiveRunways").getChildren());
     IList<ActiveRunway> activeRunways = ActiveRunway.loadList(source.getChild("activeRunways").getChildren(),
-        altitude, navaids, routes, iafRoutes, gaRoutes );
+        altitude, navaids, daRoutes, iafRoutes, gaRoutes );
 
 //    private final IList<RunwayConfiguration> runwayConfigurations;
 //    private final IList<Route> routes;
