@@ -2,7 +2,7 @@
 //
 //import eng.eSystem.geo.Coordinate;
 //import eng.eSystem.geo.Coordinates;
-//import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
+//;
 //import eng.jAtcSim.lib.speaking.IFromAtc;
 //import eng.jAtcSim.lib.speaking.SpeechList;
 //import eng.jAtcSim.lib.world.ActiveRunwayThreshold;

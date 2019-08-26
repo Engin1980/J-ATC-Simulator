@@ -5,7 +5,7 @@ import eng.eSystem.eXml.XElement;
 import eng.eSystem.events.EventAnonymousSimple;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.geo.Coordinates;
-import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
+;
 import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Airplane;

@@ -27,17 +27,20 @@ public class EntryExitPoint extends Parentable<Airport> {
     return ret;
   }
 
-  private static EntryExitPoint load(XElement source, NavaidList navaids) {
-    XmlLoader.setContext(source);
-    String navaidName = XmlLoader.loadString("name",true);
-    Type type = XmlLoader.loadEnum("type", Type.class,true);
-    Integer maxMrvaAltitude = XmlLoader.loadInteger("maxMrvaAltitude",false);
-    Navaid navaid = navaids.get(navaidName);
+  public static EntryExitPoint create(Navaid navaid, Type type, Integer maxMrvaAltitude) {
     EntryExitPoint ret = new EntryExitPoint(navaid, type, maxMrvaAltitude);
     return ret;
   }
 
-
+  private static EntryExitPoint load(XElement source, NavaidList navaids) {
+    XmlLoader.setContext(source);
+    String navaidName = XmlLoader.loadString("name");
+    Type type = XmlLoader.loadEnum("type", Type.class);
+    Integer maxMrvaAltitude = XmlLoader.loadInteger("maxMrvaAltitude", null);
+    Navaid navaid = navaids.get(navaidName);
+    EntryExitPoint ret = new EntryExitPoint(navaid, type, maxMrvaAltitude);
+    return ret;
+  }
   private final Navaid navaid;
   private final Type type;
   private final Integer maxMrvaAltitude;

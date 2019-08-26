@@ -1,7 +1,6 @@
 package eng.jAtcSim.lib.atcs;
 
 import eng.eSystem.eXml.XElement;
-import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.interfaces.IAirplane4Atc;
 import eng.jAtcSim.lib.atcs.planeResponsibility.PlaneResponsibilityManager;

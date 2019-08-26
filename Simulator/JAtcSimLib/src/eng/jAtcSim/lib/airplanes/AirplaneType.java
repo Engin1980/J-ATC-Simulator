@@ -5,8 +5,6 @@
  */
 package eng.jAtcSim.lib.airplanes;
 
-import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
-
 /**
  *
  * @author Marek

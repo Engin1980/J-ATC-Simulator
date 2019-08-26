@@ -10,7 +10,7 @@ import eng.jAtcSim.lib.world.xml.XmlLoader;
 
 public class InactiveRunwayThreshold extends Parentable<InactiveRunway> {
 
-  public static IList<InactiveRunwayThreshold> loadList(IReadOnlyList<XElement> sources){
+  public static IList<InactiveRunwayThreshold> loadList(IReadOnlyList<XElement> sources) {
     assert sources.size() == 2 : "There must be two thresholds";
 
     InactiveRunwayThreshold a = InactiveRunwayThreshold.load(sources.get(0));
@@ -26,10 +26,10 @@ public class InactiveRunwayThreshold extends Parentable<InactiveRunway> {
     return ret;
   }
 
-  private static InactiveRunwayThreshold load(XElement source){
+  private static InactiveRunwayThreshold load(XElement source) {
     XmlLoader.setContext(source);
-    String name = XmlLoader.loadString("name", true);
-    Coordinate coordinate = XmlLoader.loadCoordinate("coordinate",true);
+    String name = XmlLoader.loadString("name");
+    Coordinate coordinate = XmlLoader.loadCoordinate("coordinate");
 
     InactiveRunwayThreshold ret = new InactiveRunwayThreshold(name, coordinate);
     return ret;
@@ -45,16 +45,16 @@ public class InactiveRunwayThreshold extends Parentable<InactiveRunway> {
     this.coordinate = coordinate;
   }
 
-  public String getName() {
-    return name;
-  }
-
   public Coordinate getCoordinate() {
     return coordinate;
   }
 
   public double getCourse() {
     return this.course;
+  }
+
+  public String getName() {
+    return name;
   }
 
   public InactiveRunwayThreshold getOtherThreshold() {

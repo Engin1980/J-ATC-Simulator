@@ -7,6 +7,7 @@
 package eng.jAtcSim.lib.world;
 
 
+import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.geo.Coordinate;
 import eng.jAtcSim.lib.world.xml.XmlLoader;
@@ -16,15 +17,6 @@ import eng.jAtcSim.lib.world.xml.XmlLoader;
  */
 public class Navaid {
 
-  public static Navaid load(XElement source){
-    Coordinate coordinate = XmlLoader.loadCoordinate(source, "coordinate");
-    String name = XmlLoader.loadString(source, "name");
-    eType type = XmlLoader.loadEnum(source, "type", eType.class);
-
-    Navaid ret = new Navaid(name, type, coordinate);
-    return ret;
-  }
-
   public enum eType {
     vor,
     ndb,
@@ -33,11 +25,34 @@ public class Navaid {
     airport,
     auxiliary
   }
+
   public static final double SPEED_TO_OVER_NAVAID_DISTANCE_MULTIPLIER = 0.007;
+
+  public static Navaid load(XElement source) {
+    XmlLoader.setContext(source);
+    Coordinate coordinate = XmlLoader.loadCoordinate("coordinate");
+    String name = XmlLoader.loadString("name");
+    eType type = XmlLoader.loadEnum("type", eType.class);
+
+    Navaid ret = new Navaid(name, type, coordinate);
+    return ret;
+  }
 
   public static double getOverNavaidDistance(int speed) {
     return speed * SPEED_TO_OVER_NAVAID_DISTANCE_MULTIPLIER;
   }
+
+  public static NavaidList loadList(IReadOnlyList<XElement> sources) {
+    NavaidList ret = new NavaidList();
+
+    for (XElement child : sources) {
+      Navaid navaid = Navaid.load(child);
+      ret.add(navaid);
+    }
+
+    return ret;
+  }
+
   private Coordinate coordinate;
   private String name;
   private eType type;

@@ -93,6 +93,12 @@
             </threshold>
           </thresholds>
         </runway>
+        <inactiveRunway>
+          <thresholds>
+            <threshold name="04" coordinate="50 05 15.77 N 014 16 00.06 E"/>
+            <threshold name="22" coordinate="50 06 10.50 N 014 17 04.00 E"/>
+          </thresholds>
+        </inactiveRunway>
       </runways>
       <runwayConfigurations>
         <configuration windFrom="0" windTo="359" windSpeedTo="10">
@@ -102,14 +108,6 @@
           <departures name="30" category="AB" showRoutes="false"/>
         </configuration>
       </runwayConfigurations>
-      <inactiveRunways>
-        <runway>
-          <thresholds>
-            <threshold name="04" coordinate="50 05 15.77 N 014 16 00.06 E"/>
-            <threshold name="22" coordinate="50 06 10.50 N 014 17 04.00 E"/>
-          </thresholds>
-        </runway>
-      </inactiveRunways>
       <holds>
         <!-- generic -->
         <hold navaidName="LOMKI" inboundRadial="091" turn="right"/>

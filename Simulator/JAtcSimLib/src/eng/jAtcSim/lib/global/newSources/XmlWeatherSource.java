@@ -1,7 +1,7 @@
 package eng.jAtcSim.lib.global.newSources;
 
 import eng.eSystem.validation.Validator;
-import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
+;
 import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 import eng.jAtcSim.lib.weathers.PresetWeatherProvider;
 import eng.jAtcSim.lib.weathers.Weather;

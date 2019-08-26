@@ -6,7 +6,7 @@
 package eng.jAtcSim.lib.airplanes;
 
 import eng.eSystem.collections.EDistinctList;
-import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
+;
 
 /**
  *

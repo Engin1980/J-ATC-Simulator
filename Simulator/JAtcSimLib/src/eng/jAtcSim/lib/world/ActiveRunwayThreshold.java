@@ -29,10 +29,8 @@ public class ActiveRunwayThreshold extends Parentable<ActiveRunway> {
                                                       IReadOnlyList<GaRoute> gaRoutes) {
     assert sources.size() == 2 : "There must be two thresholds";
 
-    Coordinate aCoordinate = XmlLoader.loadCoordinate(
-        sources.get(0), "coordinate", true);
-    Coordinate bCoordinate = XmlLoader.loadCoordinate(
-        sources.get(1), "coordinate", true);
+    Coordinate aCoordinate = XmlLoader.loadCoordinate(sources.get(0), "coordinate");
+    Coordinate bCoordinate = XmlLoader.loadCoordinate(sources.get(1), "coordinate");
 
     ActiveRunwayThreshold a = ActiveRunwayThreshold.load(sources.get(0), airportAltitude, navaids,
         bCoordinate, routes, iafRoutes, gaRoutes);
@@ -50,10 +48,10 @@ public class ActiveRunwayThreshold extends Parentable<ActiveRunway> {
   private static ActiveRunwayThreshold load(XElement source, int airportAltitude, NavaidList navaids, Coordinate otherThresholdCoordinate,
                                             IReadOnlyList<DARoute> routes, IReadOnlyList<IafRoute> iafRoutes, IReadOnlyList<GaRoute> gaRoutes) {
     XmlLoader.setContext(source);
-    String name = XmlLoader.loadString("name", true);
-    Coordinate coordinate = XmlLoader.loadCoordinate("coordinate", true);
-    int initialDepartureAltitude = XmlLoader.loadInteger("initialDepartureAltitude", true);
-    String mappingString = XmlLoader.loadString("mapping", true);
+    String name = XmlLoader.loadString("name");
+    Coordinate coordinate = XmlLoader.loadCoordinate("coordinate");
+    int initialDepartureAltitude = XmlLoader.loadInteger("initialDepartureAltitude");
+    String mappingString = XmlLoader.loadString("mapping");
     IList<String> mapping = new EList<>(mappingString.split(";"));
 
     double course = Coordinates.getBearing(coordinate, otherThresholdCoordinate);

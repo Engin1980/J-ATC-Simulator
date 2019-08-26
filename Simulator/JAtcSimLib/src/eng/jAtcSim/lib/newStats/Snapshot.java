@@ -2,7 +2,7 @@ package eng.jAtcSim.lib.newStats;
 
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
-import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
+;
 import eng.jAtcSim.lib.airplanes.moods.MoodResult;
 import eng.jAtcSim.lib.global.ETime;
 import eng.jAtcSim.lib.newStats.model.ArrivalDepartureModel;

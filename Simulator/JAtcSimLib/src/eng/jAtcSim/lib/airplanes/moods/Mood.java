@@ -2,7 +2,7 @@ package eng.jAtcSim.lib.airplanes.moods;
 
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
-import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
+;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.Callsign;
 import eng.jAtcSim.lib.global.ETime;
@@ -14,12 +14,6 @@ public class Mood {
   private static class Experience<T> {
     public final ETime time;
     public final T type;
-
-    @XmlConstructor
-    private Experience() {
-      time = null;
-      type = null;
-    }
 
     public Experience(ETime time, T type) {
       this.time = time.clone();

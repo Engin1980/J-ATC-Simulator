@@ -13,7 +13,7 @@ import eng.jAtcSim.lib.world.xml.XmlLoader;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
-public abstract class Route {
+public abstract class Route extends Parentable<Airport> {
   protected static IList<XElement> lookForElementRecursively(XElement source, String elementName) {
     IList<XElement> ret = new EList<>();
     extractElementsRecursively(source, elementName, ret);
@@ -29,7 +29,7 @@ public abstract class Route {
     }
   }
 
-  protected static IList<IAtcCommand> loadCommands(XElement source, NavaidList navaids) {
+  protected static IList<IAtcCommand> loadCommands(XElement source, NavaidList navaids, IReadOnlyList<PublishedHold> holds) {
     IList<IAtcCommand> ret = new EList<>();
     IAtcCommand cmd;
     for (XElement child : source.getChildren()) {
@@ -49,9 +49,9 @@ public abstract class Route {
         case "heading":
           cmd = loadHeading(child);
           break;
-
-        analyse another kinds of commands
-
+        case "hold":
+          cmd = loadHold(child, navaids, holds);
+          break;
         default:
           throw new EApplicationException(sf(
               "Cannot load route command from xml-element '%s'. Unknown element name.", child.getName()));
@@ -62,9 +62,28 @@ public abstract class Route {
     return ret;
   }
 
+  private static IAtcCommand loadHold(XElement source, NavaidList navaids, IReadOnlyList<PublishedHold> publishedHolds) {
+    String navaidName = XmlLoader.loadString(source, "fix");
+    String turns = XmlLoader.loadStringRestricted(source, "turns", new String[]{"left", "right"}, null);
+    Integer inboundRadial = XmlLoader.loadInteger(source, "inboundRadial", null);
+    HoldCommand ret;
+    if (inboundRadial == null) {
+      PublishedHold hold = publishedHolds.getFirst(
+          q -> q.getNavaid().getName().equals(navaidName),
+          new EApplicationException(
+              sf("Unable to find published hold over '%s' required to load hold command.", navaidName)));
+      ret = new HoldCommand(hold);
+    } else {
+      Navaid navaid = navaids.get(navaidName);
+      ret = new HoldCommand(navaid, inboundRadial, turns.equals("left"));
+    }
+    return ret;
+  }
+
   private static IAtcCommand loadHeading(XElement source) {
-    int value = XmlLoader.loadInteger(source, "value", true);
-    String restrictionS = XmlLoader.loadString(source, "restriction", false);
+    int value = XmlLoader.loadInteger(source, "value");
+    String restrictionS = XmlLoader.loadStringRestricted(source, "restriction",
+        new String[]{"left", "right", "nearest"}, "nearest");
     ChangeHeadingCommand.eDirection direction;
     if (restrictionS == null) {
       direction = ChangeHeadingCommand.eDirection.any;
@@ -87,8 +106,9 @@ public abstract class Route {
   }
 
   private static IAtcCommand loadAltitude(XElement source) {
-    int value = XmlLoader.loadInteger(source, "value", true);
-    String restrictionS = XmlLoader.loadString(source, "restriction", true);
+    int value = XmlLoader.loadInteger(source, "value");
+    String restrictionS = XmlLoader.loadStringRestricted(source, "restriction",
+    new String[]{"descend", "climb", "set"}, "set");
     ChangeAltitudeCommand.eDirection restrictionDirection;
     switch (restrictionS) {
       case "descend":
@@ -112,15 +132,16 @@ public abstract class Route {
   }
 
   private static IAtcCommand loadProceedDirect(XElement source, NavaidList navaids) {
-    String navaidName = XmlLoader.loadString(source, "fix", true);
+    String navaidName = XmlLoader.loadString(source, "fix");
     Navaid navaid = navaids.get(navaidName);
     ProceedDirectCommand cmd = new ProceedDirectCommand(navaid);
     return cmd;
   }
 
   private static IAtcCommand loadSpeed(XElement source) {
-    int value = XmlLoader.loadInteger(source, "value", true);
-    String restrictionS = XmlLoader.loadString(source, "restriction", true);
+    int value = XmlLoader.loadInteger(source, "value");
+    String restrictionS = XmlLoader.loadStringRestricted(source, "restriction",
+        new String[]{"below", "above", "exactly"}, "exactly");
     Restriction.eDirection restrictionDirection;
     switch (restrictionS) {
       case "below":

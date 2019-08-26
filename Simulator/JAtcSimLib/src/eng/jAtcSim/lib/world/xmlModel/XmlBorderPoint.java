@@ -1,4 +1,4 @@
-package eng.jAtcSim.lib.world.xmlModel;
-
-public class XmlBorderPoint {
-}
+//package eng.jAtcSim.lib.world.xmlModel;
+//
+//public class XmlBorderPoint {
+//}

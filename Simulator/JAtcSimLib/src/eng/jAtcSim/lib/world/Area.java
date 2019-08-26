@@ -20,27 +20,22 @@ import eng.jAtcSim.lib.world.xml.XmlLoader;
 public class Area {
 
   public static Area load(XElement element){
-    String icao = XmlLoader.loadString(element, "icao", true);
+    String icao = XmlLoader.loadString(element, "icao");
 
-    NavaidList navaidList = new NavaidList();
-    for (XElement child : element.getChild("navaids").getChildren("navaid")) {
-      Navaid navaid = Navaid.load(child);
-      navaidList.add(navaid);
-    }
+    NavaidList navaids = Navaid.loadList(
+        element.getChild("navaids").getChildren("navaid"));
 
-    IList<Border> borderList = new EList<>();
-    for (XElement child : element.getChild("borders").getChildren("border")) {
-      Border border = Border.load(child, navaidList);
-      borderList.add(border);
-    }
 
-    IList<Airport> airportList = new EList<>();
+    IList<Border> borders = Border.loadList(
+        element.getChild("borders").getChildren("border"), navaids);
+
+    IList<Airport> airports = new EList<>();
     for (XElement child : element.getChild("airports").getChildren("airport")) {
-      Airport airport = Airport.load(child, navaidList);
-      airportList.add(airport);
+      Airport airport = Airport.load(child, navaids, borders);
+      airports.add(airport);
     }
 
-    Area ret = new Area(icao, airportList, navaidList, borderList);
+    Area ret = new Area(icao, airports, navaids, borders);
     return ret;
   }
 

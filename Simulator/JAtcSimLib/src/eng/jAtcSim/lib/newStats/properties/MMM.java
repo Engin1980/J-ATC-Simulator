@@ -1,7 +1,7 @@
 package eng.jAtcSim.lib.newStats.properties;
 
 import eng.eSystem.collections.IReadOnlyList;
-import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
+;
 
 public class MMM {
   private double minimum;

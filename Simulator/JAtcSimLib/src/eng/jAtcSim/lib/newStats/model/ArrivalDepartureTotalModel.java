@@ -1,7 +1,7 @@
 package eng.jAtcSim.lib.newStats.model;
 
 import eng.eSystem.validation.Validator;
-import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
+;
 
 public class ArrivalDepartureTotalModel<T> extends ArrivalDepartureModel<T> {
   private T total;

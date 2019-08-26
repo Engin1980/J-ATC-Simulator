@@ -5,7 +5,7 @@
 //import eng.eSystem.geo.Coordinates;
 //import eng.eSystem.utilites.EnumUtils;
 //import eng.eSystem.validation.Validator;
-//import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
+//;
 //import eng.jAtcSim.lib.Acc;
 //import eng.jAtcSim.lib.airplanes.Airplane;
 //import eng.jAtcSim.lib.airplanes.AirproxType;

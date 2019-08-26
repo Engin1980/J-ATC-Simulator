@@ -13,10 +13,9 @@ import eng.eSystem.eXml.XElement;
 import eng.jAtcSim.lib.world.xml.XmlLoader;
 
 /**
- *
  * @author Marek
  */
-public class PublishedHold{
+public class PublishedHold extends Parentable<Airport> {
 
   public static IList<PublishedHold> loadList(IReadOnlyList<XElement> sources, NavaidList navaids) {
     IList<PublishedHold> ret = new EList<>();
@@ -29,11 +28,11 @@ public class PublishedHold{
 
   private static PublishedHold load(XElement source, NavaidList navaids) {
     XmlLoader.setContext(source);
-    String navaidName = XmlLoader.loadString("name",true);
+    String navaidName = XmlLoader.loadString("name");
     Navaid navaid = navaids.get(navaidName);
 
-    int inboundRadial = XmlLoader.loadInteger("inboundRadial", true);
-    boolean leftTurn = XmlLoader.loadString("turn",true).equals("left");
+    int inboundRadial = XmlLoader.loadInteger("inboundRadial");
+    boolean leftTurn = XmlLoader.loadStringRestricted("turn", new String[]{"left", "right"}).equals("left");
 
     PublishedHold ret = new PublishedHold(navaid, inboundRadial, leftTurn);
     return ret;
@@ -42,36 +41,27 @@ public class PublishedHold{
   private Navaid navaid;
   private int inboundRadial;
   private boolean leftTurn;
-  private Airport _parent;
 
-  public Navaid getNavaid() {
-    return navaid;
+  private PublishedHold(Navaid navaid, int inboundRadial, boolean leftTurn) {
+    this.navaid = navaid;
+    this.inboundRadial = inboundRadial;
+    this.leftTurn = leftTurn;
   }
 
   public int getInboundRadial() {
     return inboundRadial;
   }
 
+  public Navaid getNavaid() {
+    return navaid;
+  }
+
   public boolean isLeftTurn() {
     return leftTurn;
   }
+
   public boolean isRightTurn() {
     return !leftTurn;
-  }
-
-  private PublishedHold(Navaid navaid, int inboundRadial, boolean leftTurn, Airport _parent) {
-    this.navaid = navaid;
-    this.inboundRadial = inboundRadial;
-    this.leftTurn = leftTurn;
-    this._parent = _parent;
-  }
-
-  void setParent(Airport airport) {
-    this._parent = airport;
-  }
-  
-  public Airport getParent(){
-    return this._parent;
   }
 
   @Override

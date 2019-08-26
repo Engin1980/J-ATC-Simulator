@@ -19,6 +19,7 @@ import eng.jAtcSim.lib.global.Headings;
 import eng.jAtcSim.lib.world.xml.XmlLoader;
 
 import java.awt.geom.Line2D;
+import java.util.Comparator;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
@@ -26,6 +27,22 @@ import static eng.eSystem.utilites.FunctionShortcuts.sf;
  * @author Marek
  */
 public class Border {
+
+  public static class ByDisjointsComparator implements Comparator<Border> {
+
+    @Override
+    public int compare(Border a, Border b) {
+      if (a.disjoints.contains(b.getName()))
+        if (b.disjoints.contains(a.getName()))
+          throw new EApplicationException("Borders has cyclic dependency in disjoints definition. Borders. " + a.getName() + ", " + b.getName());
+        else
+          return 1;
+      else if (b.disjoints.contains(a.getName()))
+        return -1;
+      else
+        return 0;
+    }
+  }
 
   public enum eType {
     country,
@@ -37,30 +54,43 @@ public class Border {
     other
   }
 
-  public static Border load(XElement element, IReadOnlyList<Navaid> navaids) {
-    XmlLoader.setContext(element);
-    String name = XmlLoader.loadString("name", true);
-    eType type = XmlLoader.loadEnum("type", eType.class, true);
-    boolean enclosed = XmlLoader.loadBoolean("enclosed", true);
-    int minAltitude = XmlLoader.loadInteger("minAltitude", true);
-    int maxAltitude = XmlLoader.loadInteger("maxAltitude", true);
-    Coordinate labelCoordinate = XmlLoader.loadCoordinate("labelCoordinate", false);
+  public static Border load(XElement source, IReadOnlyList<Navaid> navaids) {
+    XmlLoader.setContext(source);
+    String name = XmlLoader.loadString("name");
+    eType type = XmlLoader.loadEnum("type", eType.class);
+    boolean enclosed = XmlLoader.loadBoolean("enclosed");
+    int minAltitude = XmlLoader.loadInteger("minAltitude");
+    int maxAltitude = XmlLoader.loadInteger("maxAltitude");
+    Coordinate labelCoordinate = XmlLoader.loadCoordinate("labelCoordinate", null);
 
-    IReadOnlyList<XElement> pointElements = element.getChild("points").getChildren();
+    IReadOnlyList<XElement> pointElements = source.getChild("points").getChildren();
     IList<BorderPoint> points;
     if (pointElements.size() == 1 && pointElements.get(0).getName().equals("circle"))
       points = loadPointsFromCircle(pointElements.get(0));
     else
-      points = loadPoints(element.getChild("points").getChildren(), navaids);
+      points = loadPoints(source.getChild("points").getChildren(), navaids);
 
-    Border ret = new Border(name, type, points, enclosed, minAltitude, maxAltitude, labelCoordinate);
+    IList<String> disjoints = new EList<>();
+    source.getChild("disjoints").getChildren().forEach(q -> disjoints.add(q.getContent()));
+
+    Border ret = new Border(name, type, points, enclosed, minAltitude, maxAltitude, disjoints, labelCoordinate);
     return ret;
   }
 
-  private static IList<BorderPoint> loadPointsFromCircle(XElement source){
+  public static IList<Border> loadList(IReadOnlyList<XElement> sources, IReadOnlyList<Navaid> navaids) {
+    IList<Border> ret = new EList<>();
+    for (XElement child : sources) {
+      Border border = Border.load(child, navaids);
+      ret.add(border);
+    }
+    ret.sort(new Border.ByDisjointsComparator());
+    return ret;
+  }
+
+  private static IList<BorderPoint> loadPointsFromCircle(XElement source) {
     IList<BorderPoint> ret = new EList<>();
-    Coordinate coord = XmlLoader.loadCoordinate(source,"coordinate",true);
-    double dist = XmlLoader.loadDouble(source,"distance",true);
+    Coordinate coord = XmlLoader.loadCoordinate(source, "coordinate");
+    double dist = XmlLoader.loadDouble(source, "distance");
     Coordinate pointCoordinate = Coordinates.getCoordinate(coord, 0, dist);
     BorderPoint point = BorderPoint.create(pointCoordinate);
     IList<BorderPoint> tmp = generateArcPoints(point, coord, true, point);
@@ -84,9 +114,9 @@ public class Border {
           arcTuples.add(new Tuple<>(ret.size(), node));
           break;
         case "crd":
-          Coordinate coordinate = XmlLoader.loadCoordinate(node, "coordinate", true);
-          int radial = XmlLoader.loadInteger(node, "radial", true);
-          double distance = XmlLoader.loadDouble(node, "distance", true);
+          Coordinate coordinate = XmlLoader.loadCoordinate(node, "coordinate");
+          int radial = XmlLoader.loadInteger(node, "radial");
+          double distance = XmlLoader.loadDouble(node, "distance");
           Coordinate borderPointCoordinate = Coordinates.getCoordinate(
               coordinate, radial, distance);
           point = BorderPoint.create(borderPointCoordinate);
@@ -99,8 +129,9 @@ public class Border {
 
     for (Tuple<Integer, XElement> arcTuple : arcTuples) {
       int index = arcTuple.getA();
-      Coordinate coordinate = XmlLoader.loadCoordinate(arcTuple.getB(), "coordinate", true);
-      boolean isClockwise = XmlLoader.loadString(arcTuple.getB(), "direction", true).equals("clockwise");
+      Coordinate coordinate = XmlLoader.loadCoordinate(arcTuple.getB(), "coordinate");
+      boolean isClockwise = XmlLoader.loadStringRestricted(arcTuple.getB(), "direction",
+          new String[]{"clockwise", "counterclockwise"}).equals("clockwise");
       IList<BorderPoint> arcPoints = generateArcPoints(
           ret.get(index - 1), coordinate, isClockwise, ret.get(index));
       ret.insert(index, arcPoints);
@@ -154,8 +185,11 @@ public class Border {
   private final double globalMinLat;
   private final double globalMaxLat;
   private boolean enclosed;
+  private IList<String> disjoints;
 
-  private Border(String name, eType type, IList<BorderPoint> points, boolean enclosed, int minAltitude, int maxAltitude, Coordinate labelCoordinate) {
+  private Border(String name, eType type, IList<BorderPoint> points,
+                 boolean enclosed, int minAltitude, int maxAltitude, IList<String> disjoints,
+                 Coordinate labelCoordinate) {
     this.name = name;
     this.type = type;
     this.points = points;
@@ -163,6 +197,7 @@ public class Border {
     this.minAltitude = minAltitude;
     this.maxAltitude = maxAltitude;
     this.labelCoordinate = labelCoordinate;
+    this.disjoints = disjoints;
 
     this.globalMinLat = points.minDouble(q -> q.getCoordinate().getLatitude().get());
     this.globalMaxLat = points.maxDouble(q -> q.getCoordinate().getLatitude().get());

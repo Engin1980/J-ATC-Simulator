@@ -5,7 +5,7 @@
  */
 package eng.jAtcSim.lib.speaking.fromAtc.commands;
 
-import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
+;
 import eng.jAtcSim.lib.world.Navaid;
 import eng.jAtcSim.lib.world.PublishedHold;
 

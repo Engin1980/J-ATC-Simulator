@@ -5,7 +5,6 @@ import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.geo.Coordinate;
-import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.*;
 import eng.jAtcSim.lib.airplanes.behaviors.NewApproachBehavior;

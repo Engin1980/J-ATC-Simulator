@@ -138,17 +138,11 @@
         <xs:complexType>
           <xs:choice minOccurs="1" maxOccurs="unbounded">
             <xs:element name="runway" type="runway" maxOccurs="unbounded"/>
+            <xs:element name="inactiveRunway" type="inactiveRunway" maxOccurs="unbounded"/>
           </xs:choice>
         </xs:complexType>
       </xs:element>
       <xs:element name="runwayConfigurations" minOccurs="0" maxOccurs="1" type="runwayConfigurations"/>
-      <xs:element name="inactiveRunways" minOccurs="0">
-        <xs:complexType>
-          <xs:sequence minOccurs="1" maxOccurs="unbounded">
-            <xs:element name="runway" type="inactiveRunway" maxOccurs="unbounded"/>
-          </xs:sequence>
-        </xs:complexType>
-      </xs:element>
       <xs:element name="holds" minOccurs="1" maxOccurs="1">
         <xs:complexType>
           <xs:sequence>
@@ -180,7 +174,7 @@
   <xs:complexType name="daGroup">
     <xs:choice>
       <xs:element name="group" type="daGroup" minOccurs="0" maxOccurs="unbounded"/>
-      <xs:element name="route" type="route" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="route" type="daRoute" minOccurs="0" maxOccurs="unbounded"/>
     </xs:choice>
   </xs:complexType>
 

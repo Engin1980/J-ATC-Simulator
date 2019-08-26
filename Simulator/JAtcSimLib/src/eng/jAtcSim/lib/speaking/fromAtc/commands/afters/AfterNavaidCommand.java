@@ -6,7 +6,7 @@
 
 package eng.jAtcSim.lib.speaking.fromAtc.commands.afters;
 
-import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
+;
 import eng.jAtcSim.lib.world.Navaid;
 
 /**

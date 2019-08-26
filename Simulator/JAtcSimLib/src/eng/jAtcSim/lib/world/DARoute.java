@@ -5,15 +5,20 @@
  */
 package eng.jAtcSim.lib.world;
 
+import eng.eSystem.Tuple;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.eXml.XElement;
+import eng.eSystem.geo.Coordinate;
+import eng.eSystem.geo.Coordinates;
+import eng.eSystem.utilites.RegexUtils;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.global.PlaneCategoryDefinitions;
-import eng.jAtcSim.lib.speaking.IFromAtc;
 import eng.jAtcSim.lib.speaking.SpeechList;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
+import eng.jAtcSim.lib.speaking.fromAtc.commands.ToNavaidCommand;
+import eng.jAtcSim.lib.world.xml.XmlLoader;
 
 /**
  * @author Marek
@@ -33,74 +38,150 @@ public class DARoute extends Route {
   }
 
   public static DARoute createNewVectoringByFix(Navaid n) {
-    DARoute ret = new DARoute(eType.vectoring, n.getName() + "/v",
-        PlaneCategoryDefinitions.getAll(),
-        n, -1, null, new SpeechList<>(),
-        new EList<>(), null, null, Acc.airport());
+    DARoute ret = new DARoute(eType.vectoring, n.getName()+"/v",
+        PlaneCategoryDefinitions.getAll(), n, -1, null, new EList<>(), null, "");
 
     return ret;
   }
 
-  public static IList<DARoute> loadList(XElement source, NavaidList navaids) {
+  public static IList<DARoute> loadList(XElement source,
+                                        NavaidList navaids, IReadOnlyList<PublishedHold> holds, IReadOnlyList<Border> mrvas) {
     IList<XElement> daElements = Route.lookForElementRecursively(source, "route");
 
     IList<DARoute> ret = new EList<>();
     for (XElement daElement : daElements) {
-      DARoute tmp = DARoute.load(daElement, navaids);
+      DARoute tmp = DARoute.load(daElement, navaids, holds, mrvas);
       ret.add(tmp);
     }
     return ret;
   }
 
-  public static DARoute load(XElement source, NavaidList navaids){
-    IList<IAtcCommand> cmds = Route.loadCommands(source, navaids);
+  public static DARoute load(XElement source, NavaidList navaids, IReadOnlyList<PublishedHold> holds,
+                             IReadOnlyList<Border> mrvas) {
+    XmlLoader.setContext(source);
+    DARoute.eType type = XmlLoader.loadEnum("type", DARoute.eType.class);
+    String name = XmlLoader.loadString("name");
+    String mapping = XmlLoader.loadString("mapping");
+    PlaneCategoryDefinitions category = XmlLoader.loadPlaneCategory("category", "ABCD");
+    Integer entryAltitude = XmlLoader.loadAltitude("entryFL", null);
+    String mainFixName = XmlLoader.loadString("mainFix", null);
+    Navaid mainNavaid = mainFixName != null ? navaids.get(mainFixName) : getMainRouteNavaidFromRouteName(name, navaids);
 
-    DARoute ret = new DARoute(???);
+    IList<IAtcCommand> cmds = Route.loadCommands(source, navaids, holds);
+
+    IList<Navaid> routeNavaids = evaluateRouteNavaids(cmds, type, mainNavaid);
+    double routeLength = evaluateRouteLength(routeNavaids);
+    Integer maxMrvaAltitude = evaluateMaxMrvaAltitude(mainNavaid, routeNavaids, mrvas);
+    DARoute ret = new DARoute(type, name, category, mainNavaid, routeLength, entryAltitude, cmds, maxMrvaAltitude, mapping);
+    return ret;
+  }
+
+  private static Integer evaluateMaxMrvaAltitude(Navaid mainNavaid, IReadOnlyList<Navaid> routeNavaids, IReadOnlyList<Border> mrvas) {
+    IList<Tuple<Coordinate, Coordinate>> pointLines = convertPointsToLines(routeNavaids);
+    mrvas = mrvas.where(q->q.getType() == Border.eType.mrva);
+
+    int maxMrvaAlt = 0;
+    for (Border mrva : mrvas) {
+      if (hasMrvaIntersection(pointLines, mrva))
+        maxMrvaAlt = Math.max(maxMrvaAlt, mrva.getMaxAltitude());
+    }
+    if (maxMrvaAlt == 0) {
+      Navaid routePoint = mainNavaid;
+      Border mrva = mrvas.tryGetFirst(q -> q.isIn(routePoint.getCoordinate()));
+      if (mrva != null)
+        maxMrvaAlt = mrva.getMaxAltitude();
+    }
+    int ret = maxMrvaAlt;
+    return ret;
+  }
+
+  private static boolean hasMrvaIntersection(IList<Tuple<Coordinate, Coordinate>> pointLines, Border mrva) {
+    boolean ret = pointLines.isAny(q -> mrva.hasIntersectionWithLine(q));
+    return ret;
+  }
+
+  private static IList<Tuple<Coordinate, Coordinate>> convertPointsToLines(IReadOnlyList<Navaid> points) {
+    IList<Tuple<Coordinate, Coordinate>> ret = new EList<>();
+
+    for (int i = 1; i < points.size(); i++) {
+      Navaid bef = points.get(i - 1);
+      Navaid aft = points.get(i);
+      ret.add(new Tuple<>(bef.getCoordinate(), aft.getCoordinate()));
+    }
+
+    return ret;
+  }
+
+  private static Navaid getMainRouteNavaidFromRouteName(String routeName, NavaidList navaids) {
+    String name = RegexUtils.extractGroupContent(routeName, "^([A-Z]+)\\d.+", 1);
+    Navaid ret = navaids.get(name);
+    return ret;
+  }
+
+  private static IList<Navaid> evaluateRouteNavaids(IList<IAtcCommand> routeCommands, DARoute.eType type, Navaid mainFix) {
+    IList<Navaid> ret = routeCommands
+        .where(q -> q instanceof ToNavaidCommand)
+        .select(q -> ((ToNavaidCommand) q).getNavaid());
+
+    if (ret.contains(mainFix) == false) {
+      switch (type) {
+        case sid:
+          ret.add(mainFix);
+          break;
+        case star:
+        case transition:
+          ret.insert(0, mainFix);
+          break;
+      }
+    }
+    return ret;
+  }
+
+  private static double evaluateRouteLength(IReadOnlyList<Navaid> routeNavaids) {
+    double ret = 0;
+    Navaid prev = null;
+
+    for (Navaid routeNavaid : routeNavaids) {
+      if (prev == null) {
+        prev = routeNavaid;
+      } else {
+        Navaid curr = routeNavaid;
+        double dist = Coordinates.getDistanceInNM(prev.getCoordinate(), curr.getCoordinate());
+        ret += dist;
+        prev = curr;
+      }
+    }
+
     return ret;
   }
 
   private final eType type;
   private final String name;
-  private final Airport parent;
   private final PlaneCategoryDefinitions category;
-  private final IList<Navaid> routeNavaids;
   private final double routeLength;
   private final Navaid mainNavaid;
-  private final Integer entryFL;
-  private final Integer maxMrvaFL;
+  private final Integer entryAltitude;
+  private final Integer maxMrvaaltitude;
 
   public DARoute(eType type, String name, PlaneCategoryDefinitions category, Navaid mainNavaid, double routeLength,
-                 Integer entryFL, IList<IAtcCommand> routeCommands, IList<Navaid> routeNavaids, Integer maxMrvaFL,
-                 String mapping,
-                 Airport parent) {
+                 Integer entryAltitude, IList<IAtcCommand> routeCommands, Integer maxMrvaaltitude,
+                 String mapping) {
     super(mapping, routeCommands);
     this.type = type;
     this.name = name;
-    this.parent = parent;
     this.category = category;
-    this.routeNavaids = routeNavaids;
     this.routeLength = routeLength;
     this.mainNavaid = mainNavaid;
-    this.entryFL = entryFL;
-    this.maxMrvaFL = maxMrvaFL;
+    this.entryAltitude = entryAltitude;
+    this.maxMrvaaltitude = maxMrvaaltitude;
   }
 
   public PlaneCategoryDefinitions getCategory() {
     return this.category;
   }
 
-  public IReadOnlyList<IAtcCommand> getCommands() {
-    return routeCommands;
-  }
-
-  public SpeechList<IAtcCommand> getCommandsListClone() {
-    SpeechList<IAtcCommand> ret = new SpeechList<>();
-    ret.add(routeCommands);
-    return ret;
-  }
-
-  public Integer getEntryFL() {
-    return entryFL;
+  public Integer getEntryAltitude() {
+    return entryAltitude;
   }
 
   public Navaid getMainNavaid() {
@@ -108,20 +189,12 @@ public class DARoute extends Route {
   }
 
   public int getMaxMrvaAltitude() {
-    int ret = maxMrvaFL == null ? 0 : maxMrvaFL * 100;
+    int ret = maxMrvaaltitude == null ? 0 : maxMrvaaltitude * 100;
     return ret;
   }
 
   public String getName() {
     return name;
-  }
-
-  public IReadOnlyList<Navaid> getNavaids() {
-    return this.routeNavaids;
-  }
-
-  public Airport getParent() {
-    return parent;
   }
 
   public double getRouteLength() {

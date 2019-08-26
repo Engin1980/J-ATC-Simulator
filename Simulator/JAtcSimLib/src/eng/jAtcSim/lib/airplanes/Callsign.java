@@ -6,7 +6,7 @@
 
 package eng.jAtcSim.lib.airplanes;
 
-import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
+;
 import eng.jAtcSim.lib.Acc;
 
 import java.util.Objects;
