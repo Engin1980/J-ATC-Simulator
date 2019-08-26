@@ -13,9 +13,23 @@ import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
 import eng.jAtcSim.lib.airplanes.AirplaneType;
 import eng.jAtcSim.lib.global.Headings;
+import eng.jAtcSim.lib.global.PlaneCategoryDefinitions;
+import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
+import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeAltitudeCommand;
+import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeHeadingCommand;
+import eng.jAtcSim.lib.speaking.fromAtc.commands.ProceedDirectCommand;
+import eng.jAtcSim.lib.speaking.fromAtc.commands.ThenCommand;
 import eng.jAtcSim.lib.world.approaches.Approach;
+import eng.jAtcSim.lib.world.approaches.ApproachEntry;
 import eng.jAtcSim.lib.world.approaches.GaRoute;
 import eng.jAtcSim.lib.world.approaches.IafRoute;
+import eng.jAtcSim.lib.world.approaches.entryLocations.FixRelatedApproachEntryLocation;
+import eng.jAtcSim.lib.world.approaches.entryLocations.IApproachEntryLocation;
+import eng.jAtcSim.lib.world.approaches.entryLocations.RegionalApproachEntryLocation;
+import eng.jAtcSim.lib.world.approaches.stages.IApproachStage;
+import eng.jAtcSim.lib.world.approaches.stages.RadialWithDescendStage;
+import eng.jAtcSim.lib.world.approaches.stages.RouteStage;
+import eng.jAtcSim.lib.world.approaches.stages.exitConditions.AltitudeExitCondition;
 import eng.jAtcSim.lib.world.xml.XmlLoader;
 
 /**
@@ -60,6 +74,12 @@ public class ActiveRunwayThreshold extends Parentable<ActiveRunway> {
     IList<DARoute> thresholdRoutes = routes.where(q -> q.isMappingMatch(mapping));
     IList<Approach> approaches = Approach.loadList(source.getChild("approaches").getChildren(),
         coordinate, (int) Math.round(course), airportAltitude, navaids, iafRoutes, gaRoutes);
+
+    if (approaches.isNone(q -> q.getType() == Approach.ApproachType.visual)){
+      Approach visual = Approach.generateDefaultVisualApproach(name,
+          coordinate, course, airportAltitude, navaids);
+      approaches.add(visual);
+    }
 
     ActiveRunwayThreshold ret = new ActiveRunwayThreshold(
         name, coordinate, course, initialDepartureAltitude, estimatedFafPoint, approaches, thresholdRoutes);

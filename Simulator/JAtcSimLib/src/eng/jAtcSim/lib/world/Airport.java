@@ -22,6 +22,7 @@ public class Airport extends Parentable<Area> {
 
   public static Airport load(XElement source, NavaidList navaids,
                              IReadOnlyList<Border> borders) {
+    IList<Border> mrvas = borders.where(q->q.getType() == Border.eType.mrva);
     XmlLoader.setContext(source);
     String icao = XmlLoader.loadString("icao");
     String name = XmlLoader.loadString("name");
@@ -35,11 +36,12 @@ public class Airport extends Parentable<Area> {
     InitialPosition initialPosition = InitialPosition.load(source.getChild("initialPosition"));
     IList<AtcTemplate> atcTemplates = AtcTemplate.loadList(source.getChild("atcTemplates").getChildren());
     Navaid mainAirportNavaid = navaids.get(mainAirportNavaidName);
-    EntryExitPointList entryExitPointList = EntryExitPoint.loadList(source.getChild("entryExitPoints").getChildren(), navaids);
+    EntryExitPointList entryExitPointList = EntryExitPoint.loadList(source.getChild("entryExitPoints").getChildren(), navaids,
+        mainAirportNavaid, mrvas);
     IList<PublishedHold> holds = PublishedHold.loadList(source.getChild("holds").getChildren(), navaids);
 
     IList<DARoute> daRoutes = DARoute.loadList(source.getChild("daRoutes"), navaids, holds,
-        borders.where(q -> q.getType() == Border.eType.mrva));
+        mrvas);
     IList<IafRoute> iafRoutes = IafRoute.loadList(source.getChild("iafRoutes"), navaids, holds);
     IList<GaRoute> gaRoutes = GaRoute.loadList(source.getChild("gaRoutes"), navaids, holds);
 

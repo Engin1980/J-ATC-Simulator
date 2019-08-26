@@ -13,8 +13,11 @@ import static eng.eSystem.utilites.FunctionShortcuts.sf;
 public abstract class XmlLoader {
 
   private static XElement context;
+  private static boolean printLogToConsole = false;
 
   public static void setContext(XElement context) {
+    if (printLogToConsole)
+      System.out.println("XmlLoader - context change " + context.toXmlPath(true));
     XmlLoader.context = context;
   }
 
@@ -287,6 +290,8 @@ public abstract class XmlLoader {
   }
 
   private static String readValueFromXml(XElement source, String key) {
+    if (printLogToConsole)
+      System.out.println("XmlLoader - loading value  " + context.toXmlPath(true) + " -- looking for " + key);
     String ret = source.getAttribute(key);
     if (ret == null) {
       XElement child = source.getChild(key);
@@ -318,5 +323,13 @@ public abstract class XmlLoader {
     return new EApplicationException(sf(
         "The conversion of the value %s to type %s has failed.", value, targetType.getName()
     ), innerException);
+  }
+
+  public static boolean isPrintLogToConsole() {
+    return printLogToConsole;
+  }
+
+  public static void setPrintLogToConsole(boolean printLogToConsole) {
+    XmlLoader.printLogToConsole = printLogToConsole;
   }
 }

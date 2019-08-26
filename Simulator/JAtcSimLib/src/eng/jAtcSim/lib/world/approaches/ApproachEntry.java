@@ -1,7 +1,10 @@
 package eng.jAtcSim.lib.world.approaches;
 
+import eng.eSystem.collections.IList;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Headings;
+import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
+import eng.jAtcSim.lib.world.Navaid;
 import eng.jAtcSim.lib.world.approaches.entryLocations.FixRelatedApproachEntryLocation;
 import eng.jAtcSim.lib.world.approaches.entryLocations.IApproachEntryLocation;
 
@@ -24,6 +27,11 @@ public class ApproachEntry {
         Headings.subtract(inboundRadial, 60),
         Headings.add(inboundRadial,60));
     return new ApproachEntry(ael);
+  }
+
+  public static ApproachEntry createForVisual(Navaid navaid, IApproachEntryLocation entryLocation, IList<IAtcCommand> iafRouteCommands) {
+    IafRoute iafRoute = IafRoute.create(navaid, iafRouteCommands);
+    return new ApproachEntry(entryLocation, iafRoute);
   }
 
   private final IApproachEntryLocation location;

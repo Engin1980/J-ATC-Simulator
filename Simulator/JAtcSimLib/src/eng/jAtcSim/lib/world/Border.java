@@ -73,8 +73,23 @@ public class Border {
     IList<String> disjoints = new EList<>();
     source.getChild("disjoints").getChildren().forEach(q -> disjoints.add(q.getContent()));
 
+    if (labelCoordinate == null)
+      labelCoordinate = generateLabelCoordinate(points);
+
     Border ret = new Border(name, type, points, enclosed, minAltitude, maxAltitude, disjoints, labelCoordinate);
     return ret;
+  }
+
+  private static Coordinate generateLabelCoordinate(IList<BorderPoint> points) {
+    double latMin = points.minDouble(q -> q.getCoordinate().getLatitude().get());
+    double latMax = points.maxDouble(q -> q.getCoordinate().getLatitude().get());
+    double lngMin = points.minDouble(q -> q.getCoordinate().getLongitude().get());
+    double lngMax = points.maxDouble(q -> q.getCoordinate().getLongitude().get());
+
+    double lat = (latMax + latMin) / 2;
+    double lng = (lngMax + lngMin) / 2;
+
+    return new Coordinate(lat, lng);
   }
 
   public static IList<Border> loadList(IReadOnlyList<XElement> sources, IReadOnlyList<Navaid> navaids) {

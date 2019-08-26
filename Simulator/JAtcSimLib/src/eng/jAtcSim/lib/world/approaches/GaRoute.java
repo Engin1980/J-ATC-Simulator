@@ -25,12 +25,16 @@ public class GaRoute extends Route {
 
   public static GaRoute load(XElement source, NavaidList navaids, IReadOnlyList<PublishedHold> holds) {
     XmlLoader.setContext(source);
-    String gaMapping = XmlLoader.loadString("gaMapping", true);
+    String gaMapping = XmlLoader.loadString("gaMapping");
 
     IList<IAtcCommand> cmds = Route.loadCommands(source, navaids, holds);
 
     GaRoute ret = new GaRoute(gaMapping, cmds);
     return ret;
+  }
+
+  public static GaRoute create(IList<IAtcCommand> gaCommands) {
+    return new GaRoute("", gaCommands);
   }
 
   public GaRoute(String mapping, IList<IAtcCommand> routeCommands) {

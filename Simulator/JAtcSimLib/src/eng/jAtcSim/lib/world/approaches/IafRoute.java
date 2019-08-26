@@ -26,11 +26,9 @@ public class IafRoute extends Route {
   public static IafRoute load(XElement source, NavaidList navaids, IReadOnlyList<PublishedHold> holds) {
     XmlLoader.setContext(source);
 
-    String iafName = XmlLoader.loadString("iaf", true);
-    String categoryS = XmlLoader.loadString("category", false);
-    PlaneCategoryDefinitions category = categoryS == null ?
-        PlaneCategoryDefinitions.getAll() : new PlaneCategoryDefinitions(categoryS);
-    String iafMapping = XmlLoader.loadString("iafMapping", true);
+    String iafName = XmlLoader.loadString("iaf");
+    PlaneCategoryDefinitions category = XmlLoader.loadPlaneCategory("category", "ABCD");
+    String iafMapping = XmlLoader.loadString("iafMapping");
 
     Navaid iaf = navaids.get(iafName);
 
@@ -40,8 +38,12 @@ public class IafRoute extends Route {
     return ret;
   }
 
-  private Navaid navaid;
-  private PlaneCategoryDefinitions category = PlaneCategoryDefinitions.getAll();
+  public static IafRoute create(Navaid navaid, IList<IAtcCommand> iafRouteCommands) {
+    return new IafRoute(navaid, iafRouteCommands, PlaneCategoryDefinitions.getAll(), "");
+  }
+
+  private final Navaid navaid;
+  private final PlaneCategoryDefinitions category;
 
   public IafRoute(Navaid navaid, IList<IAtcCommand> routeCommands, PlaneCategoryDefinitions category, String mapping) {
     super(mapping, routeCommands);
