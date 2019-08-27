@@ -5,6 +5,7 @@ import eng.eSystem.collections.IList;
 import eng.eSystem.eXml.XDocument;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.exceptions.EXmlException;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.xmlSerialization.XmlSerializer;
@@ -48,21 +49,37 @@ public class XmlTrafficSource extends TrafficSource {
   public void init() {
     TrafficDefinition def;
 
-    XmlSettings sett = new XmlSettings();
-    sett.forType(int.class)
-        .setCustomParser(new AltitudeValueParser());
-    sett.forType(Integer.class)
-        .setCustomParser(new AltitudeValueParser());
-    sett.forType(Coordinate.class)
-        .setCustomParser(new CoordinateValueParser());
-
-    XmlSerializer ser = new XmlSerializer(sett);
+//    XmlSettings sett = new XmlSettings();
+//    sett.forType(int.class)
+//        .setCustomParser(new AltitudeValueParser());
+//    sett.forType(Integer.class)
+//        .setCustomParser(new AltitudeValueParser());
+//    sett.forType(Coordinate.class)
+//        .setCustomParser(new CoordinateValueParser());
+//
+//    XmlSerializer ser = new XmlSerializer(sett);
     try {
-      def = ser.deserialize(this.fileName, TrafficDefinition.class);
-      if (def.traffic instanceof FlightListTraffic){
-        ((FlightListTraffic)def.traffic).bind();
+//      def = ser.deserialize(this.fileName, TrafficDefinition.class);
+//      if (def.traffic instanceof FlightListTraffic){
+//        ((FlightListTraffic)def.traffic).bind();
+//      }
+//      this.traffic = def.traffic;
+      XDocument doc = XDocument.load(this.fileName);
+      XElement source = doc.getRoot().getChildren().getFirst(q->!q.getName().equals("meta"));
+
+      switch (source.getName()){
+        case "genericTraffic":
+          this.traffic = GenericTraffic.load(source);
+          break;
+        case "densityTraffic":
+          this.traffic = DensityBasedTraffic.load(source);
+          break;
+        case "flightListTraffic":
+          this.traffic = FlightListTraffic.load(source);
+          break;
+        default:
+          throw new EEnumValueUnsupportedException(source.getName());
       }
-      this.traffic = def.traffic;
     } catch (Exception e) {
       throw new EApplicationException("Unable to load traffic from file '" + this.fileName + "'.", e);
     }

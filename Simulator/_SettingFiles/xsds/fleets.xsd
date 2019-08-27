@@ -15,17 +15,11 @@
   </xs:complexType>
 
   <xs:complexType name="company">
-    <xs:sequence minOccurs="1" maxOccurs="1">
-      <xs:element name="types" type="types" />
-    </xs:sequence>
-    <xs:attribute name="icao" type="sh:nonEmptyString" use="required"/>
-    <xs:attribute name="name" type="sh:nonEmptyString" use="optional"/>
-  </xs:complexType>
-
-  <xs:complexType name="types">
     <xs:sequence minOccurs="0" maxOccurs="unbounded">
       <xs:element name="type" type="type" />
     </xs:sequence>
+    <xs:attribute name="icao" type="sh:nonEmptyString" use="required"/>
+    <xs:attribute name="name" type="sh:nonEmptyString" use="optional"/>
   </xs:complexType>
 
   <xs:complexType name="type">

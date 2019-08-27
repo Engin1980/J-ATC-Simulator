@@ -6,7 +6,6 @@ import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 import eng.jAtcSim.lib.weathers.StaticWeatherProvider;
 import eng.jAtcSim.lib.weathers.Weather;
 import eng.jAtcSim.lib.weathers.WeatherProvider;
-import eng.jAtcSim.lib.weathers.presets.PresetWeather;
 
 public class UserWeatherSource extends WeatherSource {
   private WeatherProvider content;

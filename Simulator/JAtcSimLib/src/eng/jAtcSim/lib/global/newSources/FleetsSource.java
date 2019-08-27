@@ -1,19 +1,22 @@
 package eng.jAtcSim.lib.global.newSources;
 
-import eng.eSystem.xmlSerialization.XmlSerializer;
-import eng.eSystem.xmlSerialization.XmlSettings;
+import eng.eSystem.eXml.XDocument;
+import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.EXmlException;
 import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 import eng.jAtcSim.lib.airplanes.AirplaneTypes;
 import eng.jAtcSim.lib.traffic.fleets.Fleets;
+
+import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class FleetsSource extends Source<Fleets> {
 
   @XmlIgnore
   private Fleets content;
-  private String xmlFileName;
+  private String fileName;
 
-  public FleetsSource(String xmlFileName) {
-    this.xmlFileName = xmlFileName;
+  public FleetsSource(String fileName) {
+    this.fileName = fileName;
   }
 
   @Override
@@ -22,10 +25,13 @@ public class FleetsSource extends Source<Fleets> {
   }
 
   public void init(AirplaneTypes types) {
-    XmlSettings sett = new XmlSettings();
-    XmlSerializer ser = new XmlSerializer(sett);
-    this.content = ser.deserialize(this.xmlFileName, Fleets.class);
-    this.content.init(types);
+    try {
+      XDocument xDocument = XDocument.load(this.fileName);
+      this.content = Fleets.load(xDocument.getRoot(), types);
+    } catch (EXmlException e) {
+      throw new EApplicationException(sf("Failed to load xml-fleets-file from '%s'", this.fileName), e);
+    }
+
     super.setInitialized();
   }
 }

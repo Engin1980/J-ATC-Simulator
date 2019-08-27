@@ -10,14 +10,15 @@ import eng.jAtcSim.lib.airplanes.Airplane;
 import eng.jAtcSim.lib.airplanes.Callsign;
 
 public abstract class GeneratedTraffic extends Traffic {
-  private boolean useExtendedCallsigns = true;
+  private final boolean useExtendedCallsigns;
+
+  public GeneratedTraffic(double delayProbability, int maxDelayInMinutesPerStep, boolean useExtendedCallsigns) {
+    super(delayProbability, maxDelayInMinutesPerStep);
+    this.useExtendedCallsigns = useExtendedCallsigns;
+  }
 
   public boolean isUseExtendedCallsigns() {
     return useExtendedCallsigns;
-  }
-
-  public void setUseExtendedCallsigns(boolean useExtendedCallsigns) {
-    this.useExtendedCallsigns = useExtendedCallsigns;
   }
 
   protected int generateDelayMinutes() {
@@ -26,6 +27,12 @@ public abstract class GeneratedTraffic extends Traffic {
       int del = Acc.rnd().nextInt(getMaxDelayInMinutesPerStep());
       ret += del;
     }
+    return ret;
+  }
+
+  private Callsign generateRandomCallsign(@Nullable String prefix, boolean isPrefixCountryCode) {
+    Callsign ret =
+        CallsignGenerator.generateCallsign(prefix, !isPrefixCountryCode, useExtendedCallsigns);
     return ret;
   }
 
@@ -52,12 +59,6 @@ public abstract class GeneratedTraffic extends Traffic {
 
     return ret;
   }
-
-  private Callsign generateRandomCallsign(@Nullable String prefix, boolean isPrefixCountryCode) {
-    Callsign ret =
-        CallsignGenerator.generateCallsign(prefix, !isPrefixCountryCode, useExtendedCallsigns);
-    return ret;
-  }
 }
 
 class CallsignGenerator {
@@ -67,19 +68,8 @@ class CallsignGenerator {
     NNX,
     NNN
   }
-  public static Character[]numericalChars;
 
-  static{
-    IList<Character> tmp = new EList<>();
-    for (int i = 'A'; i <= 'Z'; i++) {
-      tmp.add((char)i);
-    }
-    tmp.remove('I');
-    tmp.remove('O');
-    tmp.remove('Q');
-    numericalChars = tmp.toArray(Character.class);
-  }
-
+  public static Character[] numericalChars;
   private static final double COMPANY_THREE_CHAR_NUMBER_PROBABILITY = 0.3;
   private static final double EXTENDED_CALLSIGN_PROBABILITY = 0.3;
 
@@ -100,7 +90,7 @@ class CallsignGenerator {
     Type ret;
     if (!useExtended)
       ret = Type.NNN;
-    else{
+    else {
       if (Acc.rnd().nextDouble() > EXTENDED_CALLSIGN_PROBABILITY)
         ret = Type.NNN;
       else if (Acc.rnd().nextDouble() < .5)
@@ -152,6 +142,17 @@ class CallsignGenerator {
       ret.append(c);
     }
     return ret.toString();
+  }
+
+  static {
+    IList<Character> tmp = new EList<>();
+    for (int i = 'A'; i <= 'Z'; i++) {
+      tmp.add((char) i);
+    }
+    tmp.remove('I');
+    tmp.remove('O');
+    tmp.remove('Q');
+    numericalChars = tmp.toArray(Character.class);
   }
 
 }

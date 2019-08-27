@@ -31,7 +31,7 @@ public class AirplaneTypesSource extends Source<AirplaneTypes> {
       XDocument xDocument = XDocument.load(this.fileName);
       this.content = AirplaneTypes.load(xDocument.getRoot());
     } catch (EXmlException e) {
-      throw new EApplicationException(sf("Failed to load xml-area-file from '%s'", this.fileName), e);
+      throw new EApplicationException(sf("Failed to load xml-airplaneTypes-file from '%s'", this.fileName), e);
     }
   }
 }

@@ -9,7 +9,6 @@ import eng.jAtcSim.lib.weathers.WeatherProvider;
 import eng.jAtcSim.lib.weathers.downloaders.MetarDownloaderNoaaGov;
 
 public class OnlineWeatherSource extends WeatherSource {
-  private boolean refreshOnInit;
   private String icao;
   private Weather defaultWeather;
   @XmlIgnore
