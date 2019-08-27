@@ -1,6 +1,5 @@
 package eng.jAtcSim.lib.traffic;
 
-import eng.eSystem.collections.EDistinctList;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
@@ -8,46 +7,78 @@ import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
-import eng.eSystem.xmlSerialization.XmlSerializer;
-import eng.eSystem.xmlSerialization.annotations.XmlAttribute;
-import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
-import eng.eSystem.xmlSerialization.annotations.XmlItemElement;
-import eng.eSystem.xmlSerialization.annotations.XmlOptional;
-import eng.eSystem.xmlSerialization.common.parsers.JavaTimeLocalTimeValueParser;
-import eng.eSystem.xmlSerialization.supports.IElementParser;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.AirplaneType;
+import eng.jAtcSim.lib.airplanes.AirplaneTypes;
 import eng.jAtcSim.lib.airplanes.Callsign;
-import eng.jAtcSim.lib.global.DataFormat;
 import eng.jAtcSim.lib.global.ETime;
+import eng.jAtcSim.lib.world.xml.XmlLoader;
+
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+
+import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class FlightListTraffic extends Traffic {
 
-  private static final int EMPTY_HEADING = -1;
-
   public static class Flight {
-    protected String callsign;
-    @XmlIgnore
-    protected Callsign bindedCallsign;
-    @XmlIgnore
-    protected Flight bindedFollows;
-    @XmlOptional
-    private int heading = EMPTY_HEADING;
-    @XmlOptional
-    private Coordinate otherAirport = null;
-    private eKind kind;
-    private String planeType;
-    @XmlAttribute(parser = JavaTimeLocalTimeValueParser.class)
-    private java.time.LocalTime time;
-    @XmlOptional
-    private String follows = null;
+    public static IList<Flight> loadList(IReadOnlyList<XElement> sources) {
+      IList<Flight> ret = new EList<>();
+
+      for (XElement source : sources) {
+        Flight f = Flight.load(source);
+        ret.add(f);
+      }
+
+      return ret;
+    }
+
+    private static Flight load(XElement source) {
+      XmlLoader.setContext(source);
+      String timeS = XmlLoader.loadString("time");
+      java.time.LocalTime time = java.time.LocalTime.parse(
+          timeS,
+          DateTimeFormatter.ofPattern("HH:mm"));
+      String callsignS = XmlLoader.loadString("callsign");
+      Callsign callsign = new Callsign(callsignS);
+      eKind kind = XmlLoader.loadEnum("kind", eKind.class);
+      int heading = XmlLoader.loadInteger("heading", EMPTY_HEADING);
+      Coordinate otherAirportCoordinate = XmlLoader.loadCoordinate("otherAirport", null);
+      String airplaneType = XmlLoader.loadString("planeType", null);
+      String follows = XmlLoader.loadString("follows", null);
+
+      Flight ret = new Flight(
+          callsign, heading, otherAirportCoordinate, kind, airplaneType, time, follows);
+      return ret;
+
+    }
+
+    protected final Callsign callsign;
+    protected Flight bindedFollows = null;
+    private final int heading;
+    private final Coordinate otherAirport;
+    private final eKind kind;
+    private final String planeType;
+    private final java.time.LocalTime time;
+    private final String follows;
+
+    public Flight(Callsign callsign, int heading, Coordinate otherAirport, eKind kind,
+                  String planeType, LocalTime time, String follows) {
+      this.callsign = callsign;
+      this.heading = heading;
+      this.otherAirport = otherAirport;
+      this.kind = kind;
+      this.planeType = planeType;
+      this.time = time;
+      this.follows = follows;
+    }
 
     public boolean isArrival() {
       return kind == eKind.arrival;
     }
 
     public boolean isCommercial() {
-      return Character.isDigit(bindedCallsign.getNumber().charAt(0)) == false;
+      return Character.isDigit(callsign.getNumber().charAt(0)) == false;
     }
 
     public Movement toMovement() {
@@ -55,10 +86,12 @@ public class FlightListTraffic extends Traffic {
       if (type == null)
         throw new EApplicationException("Unable to create flight. Required airplane kind '" + this.planeType + "' not found.");
 
-      if (this.heading == EMPTY_HEADING){
+      int currentHeading;
+      if (this.heading == EMPTY_HEADING) {
         double radial = Coordinates.getBearing(Acc.airport().getLocation(), this.otherAirport);
-        this.heading = (int) radial;
-      }
+        currentHeading = (int) radial;
+      } else
+        currentHeading = this.heading;
 
       ETime initTime;
       if (this.isArrival())
@@ -67,11 +100,11 @@ public class FlightListTraffic extends Traffic {
         initTime = new ETime(this.time);
 
       Movement ret = new Movement(
-          this.bindedCallsign, type,
+          this.callsign, type,
           initTime,
           0,
           !this.isArrival(),
-          this.heading);
+          currentHeading);
       return ret;
     }
   }
@@ -81,27 +114,25 @@ public class FlightListTraffic extends Traffic {
     arrival
   }
 
-  @XmlItemElement(elementName = "flight", type = Flight.class)
-  private IList<Flight> flights = new EList<>();
+  private static final int EMPTY_HEADING = -1;
 
-  public void bind() {
-    for (Flight flight : flights) {
-      try {
-        flight.bindedCallsign = new Callsign(flight.callsign);
-      } catch (Exception ex) {
-        throw new EApplicationException("Unable to create a callsign from " + flight.callsign + ".", ex);
-      }
+  public static FlightListTraffic load(XElement source) {
+    XmlLoader.setContext(source);
+    double delayProbability = XmlLoader.loadDouble("delayProbability");
+    int maxDelayInMinutesPerStep = XmlLoader.loadInteger("maxDelayInMinutesPerStep");
 
-      if (flight.heading == EMPTY_HEADING && flight.otherAirport == null)
-        throw new EApplicationException("Flight " + flight.callsign + " has neither heading nor other-airport coordinate.");
+    IList<Flight> flights = Flight.loadList(source.getChildren("flight"));
 
-      if (flight.follows != null)
-        try {
-          flight.bindedFollows = flights.getFirst(q -> q.callsign.equals(flight.follows));
-        } catch (Exception ex) {
-          throw new EApplicationException("Unable to find previous flight with the callsign " + flight.follows + ".", ex);
-        }
-    }
+    FlightListTraffic ret = new FlightListTraffic(delayProbability, maxDelayInMinutesPerStep, flights);
+    return ret;
+  }
+
+  private final IList<Flight> flights;
+
+  public FlightListTraffic(double delayProbability, int maxDelayInMinutesPerStep, IList<Flight> flights) {
+    super(delayProbability, maxDelayInMinutesPerStep);
+    this.flights = flights;
+    bind();
   }
 
   @Override
@@ -144,13 +175,23 @@ public class FlightListTraffic extends Traffic {
   }
 
   public IList<String> getRequiredPlaneTypes() {
-    IList<String> ret = new EDistinctList<>(EDistinctList.Behavior.skip);
-
-    for (Flight flight : flights) {
-      ret.add(flight.planeType);
-    }
-
+    IList<String> ret = this.flights.select(q->q.planeType).distinct();
     return ret;
+  }
+
+  private void bind() {
+    for (Flight flight : flights) {
+
+      if (flight.heading == EMPTY_HEADING && flight.otherAirport == null)
+        throw new EApplicationException("Flight " + flight.callsign + " has neither heading nor other-airport coordinate.");
+
+      if (flight.follows != null)
+        try {
+          flight.bindedFollows = flights.getFirst(q -> q.callsign.equals(flight.follows));
+        } catch (Exception ex) {
+          throw new EApplicationException("Unable to find previous flight with the callsign " + flight.follows + ".", ex);
+        }
+    }
   }
 
   private IList<Movement> generateNewMovements(int hours) {
