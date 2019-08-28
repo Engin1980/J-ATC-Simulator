@@ -1,6 +1,7 @@
 package eng.jAtcSim.lib.managers;
 
 ;
+import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.global.ETime;
 

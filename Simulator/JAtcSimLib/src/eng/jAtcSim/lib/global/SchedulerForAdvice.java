@@ -1,6 +1,7 @@
 package eng.jAtcSim.lib.global;
 
 ;
+import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
 import eng.jAtcSim.lib.Acc;
 
 public class SchedulerForAdvice {

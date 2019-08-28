@@ -8,6 +8,7 @@ import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.utilites.EnumUtils;
 import eng.eSystem.utilites.NumberUtils;
+import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.behaviors.*;
 import eng.jAtcSim.lib.airplanes.interfaces.IAirplane4Atc;

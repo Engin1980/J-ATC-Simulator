@@ -3,6 +3,7 @@ package eng.jAtcSim.lib.global.newSources;
 import eng.eSystem.eXml.XDocument;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EXmlException;
+import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 import eng.jAtcSim.lib.world.Airport;
 import eng.jAtcSim.lib.world.Area;
 
