@@ -304,7 +304,7 @@ public class Airplane implements IAirplaneWriteSimple, IAirplane4Mrva, IAirplane
           new TakeOffBehavior(Airplane.this.airplaneType.category, runwayThreshold),
           Airplane.State.takeOffRoll);
       Airplane.this.sha.setTargetSpeed(
-          Airplane.this.airplaneType.getV2());
+          Airplane.this.airplaneType.v2);
       Airplane.this.sha.setNavigator(
           new HeadingNavigator(runwayThreshold.getCourse()));
     }
@@ -597,6 +597,7 @@ public class Airplane implements IAirplaneWriteSimple, IAirplane4Mrva, IAirplane
   @Override // IAirplaneWriteSimple
   public void applyShortcut(Navaid navaid) {
     this.routingModule.applyShortcut(navaid);
+    //TODO this is not correct. Shortcut must be checked only against only not-already-flown-through points.
     DARoute r = this.routingModule.getAssignedRoute();
     if (r == null) return;
     if (r.getNavaids().isEmpty()) return;

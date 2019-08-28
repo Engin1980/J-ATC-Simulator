@@ -30,14 +30,14 @@ public class AtcTemplate {
 
   public static AtcTemplate load(XElement source){
     XmlLoader.setContext(source);
-    Atc.eType type = XmlLoader.loadEnum("type", Atc.eType.class,true);
-    String name = XmlLoader.loadString("name",true);
-    double frequency = XmlLoader.loadDouble("frequency",true);
-    int acceptAltitude = XmlLoader.loadInteger("acceptAltitude",true);
-    int releaseAltitude = XmlLoader.loadInteger("releaseAltitude",true);;
-    int orderedAltitude = XmlLoader.loadInteger("orderedAltitude",true);;
-    Integer ctrAcceptDistance = XmlLoader.loadInteger("ctrAcceptDistance",false);
-    Integer ctrNavaidAcceptDistance = XmlLoader.loadInteger("ctrNavaidAcceptDistance",false);
+    Atc.eType type = XmlLoader.loadEnum("type", Atc.eType.class);
+    String name = XmlLoader.loadString("name");
+    double frequency = XmlLoader.loadDouble("frequency");
+    int acceptAltitude = XmlLoader.loadInteger("acceptAltitude");
+    int releaseAltitude = XmlLoader.loadInteger("releaseAltitude");
+    int orderedAltitude = XmlLoader.loadInteger("orderedAltitude");
+    Integer ctrAcceptDistance = XmlLoader.loadInteger("ctrAcceptDistance", null);
+    Integer ctrNavaidAcceptDistance = XmlLoader.loadInteger("ctrNavaidAcceptDistance", null);
 
     AtcTemplate ret = new AtcTemplate(type, name, frequency,acceptAltitude,
         releaseAltitude,orderedAltitude,ctrAcceptDistance, ctrNavaidAcceptDistance);

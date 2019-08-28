@@ -118,7 +118,7 @@ public class DARoute extends Route {
     return ret;
   }
 
-  private static IList<Navaid> evaluateRouteNavaids(IList<IAtcCommand> routeCommands, DARoute.eType type, Navaid mainFix) {
+  private static IList<Navaid> evaluateRouteNavaids(IReadOnlyList<IAtcCommand> routeCommands, DARoute.eType type, Navaid mainFix) {
     IList<Navaid> ret = routeCommands
         .where(q -> q instanceof ToNavaidCommand)
         .select(q -> ((ToNavaidCommand) q).getNavaid());
@@ -134,6 +134,11 @@ public class DARoute extends Route {
           break;
       }
     }
+    return ret;
+  }
+
+  public IReadOnlyList<Navaid> getNavaids(){
+    IList<Navaid> ret = evaluateRouteNavaids(this.getRouteCommands(), this.type, this.mainNavaid);
     return ret;
   }
 

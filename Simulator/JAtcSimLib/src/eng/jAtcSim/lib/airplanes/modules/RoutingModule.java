@@ -114,7 +114,7 @@ public class RoutingModule extends Module implements IRoutingModuleRO {
 
     SpeechList<IFromAtc> cmds;
     cmds = new SpeechList<>();
-    cmds.add(assignedRoute.getCommands());
+    cmds.add(assignedRoute.getRouteCommands());
     expandThenCommands(cmds);
     processSpeeches(cmds, CommandSource.procedure);
   }
@@ -150,7 +150,7 @@ public class RoutingModule extends Module implements IRoutingModuleRO {
   }
 
   public void processNewSpeeches() {
-    SpeechList current = new SpeechList(this.queue.getAndElapse());
+    SpeechList current = new SpeechList<>(this.queue.getAndElapse());
 
     if (current.isEmpty()) return;
 
