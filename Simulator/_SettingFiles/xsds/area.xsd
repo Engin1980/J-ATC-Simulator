@@ -176,6 +176,7 @@
       <xs:element name="group" type="daGroup" minOccurs="0" maxOccurs="unbounded"/>
       <xs:element name="route" type="daRoute" minOccurs="0" maxOccurs="unbounded"/>
     </xs:choice>
+    <xs:attribute name="note" type="xs:string" use="optional" />
   </xs:complexType>
 
   <xs:complexType name="iafGroup">
@@ -183,6 +184,7 @@
       <xs:element name="group" type="iafGroup" minOccurs="0" maxOccurs="unbounded"/>
       <xs:element name="iafRoute" type="iafRoute" minOccurs="0" maxOccurs="unbounded"/>
     </xs:choice>
+    <xs:attribute name="note" type="xs:string" use="optional" />
   </xs:complexType>
 
   <xs:complexType name="gaGroup">
@@ -399,15 +401,6 @@
   <xs:complexType name="iafRoute">
     <xs:complexContent>
       <xs:extension base="route">
-        <xs:attribute name="type" use="required">
-          <xs:simpleType>
-            <xs:restriction>
-              <xs:enumeration value="sid"/>
-              <xs:enumeration value="star"/>
-              <xs:enumeration value="transition"/>
-            </xs:restriction>
-          </xs:simpleType>
-        </xs:attribute>
         <xs:attribute name="iaf" type="xs:string" use="required"/>
         <xs:attribute name="category" type="sh:planeCategory" use="optional"/>
         <xs:attribute name="iafMapping" type="mappingName" use="required"/>
@@ -439,6 +432,7 @@
       <xs:element name="altitude" type="cm:Altitude"/>
       <xs:element name="heading" type="cm:Heading"/>
       <xs:element name="hold" type="cm:Hold"/>
+      <xs:element name="after" type="cm:After"/>
     </xs:choice>
   </xs:complexType>
 

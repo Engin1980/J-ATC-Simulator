@@ -26,7 +26,6 @@
       </atcTemplates>
       <runways>
         <runway>
-
           <thresholds>
             <threshold name="06" coordinate="50 06 06.61 N 014 13 34.58 E" initialDepartureAltitude="5000" mapping="06">
               <approaches>
@@ -37,7 +36,7 @@
                 </ilsApproach>
                 <gnssApproach radial="061" daA="1515" daB="1515" daC="1515" daD="1515"
                               initialAltitude="4000"
-                              iafMapping="06" gaMapping="06" />
+                              iafMapping="06" gaMapping="06"/>
                 <unpreciseApproach radial="061" type="ndb" faf="PH/061/8.8" mapt="PH/061/0.5" gaMapping="06"
                                    mdaA="1600" mdaB="1600"
                                    mdaC="1600" mdaD="1600" iafMapping="06;06OKL" initialAltitude="4000"/>
@@ -127,8 +126,8 @@
         <hold navaidName="KENOK" inboundRadial="304" turn="left"/>
       </holds>
       <daRoutes>
-        <group> <!-- 06 -->
-          <group>
+        <group note="06">
+          <group note="stars">
             <route type="star" name="LOMKI5T" mapping="06">
               <proceedDirect fix="LOMKI"/>
               <then/>
@@ -174,7 +173,7 @@
               <then/>
               <heading value="242"/>
             </route>
-            <route type="star" name="GOSEK2T" mapping="06" >
+            <route type="star" name="GOSEK2T" mapping="06">
               <proceedDirect fix="GOSEK"/>
               <then/>
               <speed restriction="below" value="250"/>
@@ -190,7 +189,7 @@
               <heading value="242"/>
             </route>
           </group>
-          <group>
+          <group note="sids">
             <route type="sid" name="VOZ1E" category="CD" mapping="06">
               <proceedDirect fix="PR619"/>
               <then/>
@@ -284,91 +283,427 @@
             </route>
           </group>
         </group>
-        <group>
-          <route type="star" name="VLM1S" mapping="24"
-                 route="PD VLM T SL 250 PD PR522 T SL 220 PD PR523 T PD RATEV T FH 062"/>
-          <route type="star" name="GOSEK2S" mapping="24"
-                 route="PD GOSEK T SL 250 PD PR521 T SL 220 PD PR523 T PD RATEV T FH 062"/>
-          <route type="star" name="LOMKI4S" mapping="24"
-                 route="PD LOMKI T PD PR511 T SL 250 PD PR512 T SL 220 PD PR513 T PD PR518 T PD ERASU T FH 062"/>
-          <route type="star" name="GOLOP1S" mapping="24"
-                 route="PD GOLOP T SL 250 PD PR516 T SL 220 PD PR517 T PD PR518 T PD ERASU T FH 062"/>
-          <route type="sid" name="ARTUP1M" category="AB" mapping="24"
-                 route="AA 017 PD PR407 T PD BAGRU T PD PR409 T PD ARTUP"/>
-          <route type="sid" name="ARTUP1A" category="CD" mapping="24"
-                 route="PD PR402 T PD PR405 T PD PR406 T PD PR407 T PD BAGRU T PD PR409 T PD ARTUP"/>
-          <route type="sid" name="VENOX1M" category="AB" mapping="24"
-                 route="AA 017 PD PR407 T PD VENOX"/>
-          <route type="sid" name="VENOX1A" category="CD" mapping="24"
-                 route="PD PR402 T PD PR405 T PD PR406 T PD VENOX"/>
-          <route type="sid" name="BALTU2A" mapping="24"
-                 route="PD PR402 T PD PR405 T PD BALTU"/>
-          <route type="sid" name="DOBEN2A" mapping="24"
-                 route="PD PR402 T PD DOBEN"/>
-          <route type="sid" name="VOZ1M" category="AB" mapping="24"
-                 route="AA 017 PD PR411 T PD PR412 T PD VOZ"/>
-          <route type="sid" name="VOZ1A" category="CD" mapping="24"
-                 route="PD PR402 T PD PR403 T PD PR404 T PD VOZ"/>
+        <group note="24">
+          <group note="stars">
+            <route type="star" name="VLM1S" mapping="24">
+              <proceedDirect fix="VLM"/>
+              <then/>
+              <speed restriction="below" value="250"/>
+              <proceedDirect fix="PR522"/>
+              <then/>
+              <speed restriction="below" value="220"/>
+              <proceedDirect fix="PR523"/>
+              <then/>
+              <proceedDirect fix="RATEV"/>
+              <then/>
+              <heading value="062" direction="nearest"/>
+            </route>
+            <route type="star" name="GOSEK2S" mapping="24">
+              <proceedDirect fix="GOSEK"/>
+              <then/>
+              <speed restriction="below" value="250"/>
+              <proceedDirect fix="PR521"/>
+              <then/>
+              <speed restriction="below" value="220"/>
+              <proceedDirect fix="PR523"/>
+              <then/>
+              <proceedDirect fix="RATEV"/>
+              <then/>
+              <heading value="062" direction="nearest"/>
+            </route>
+            <route type="star" name="LOMKI4S" mapping="24">
+              <proceedDirect fix="LOMKI"/>
+              <then/>
+              <proceedDirect fix="PR511"/>
+              <then/>
+              <speed restriction="below" value="250"/>
+              <proceedDirect fix="PR512"/>
+              <then/>
+              <speed restriction="below" value="220"/>
+              <proceedDirect fix="PR513"/>
+              <then/>
+              <proceedDirect fix="PR518"/>
+              <then/>
+              <proceedDirect fix="ERASU"/>
+              <then/>
+              <heading value="062" direction="nearest"/>
+            </route>
+            <route type="star" name="GOLOP1S" mapping="24">
+              <proceedDirect fix="GOLOP"/>
+              <then/>
+              <speed restriction="below" value="250"/>
+              <proceedDirect fix="PR516"/>
+              <then/>
+              <speed restriction="below" value="220"/>
+              <proceedDirect fix="PR517"/>
+              <then/>
+              <proceedDirect fix="PR518"/>
+              <then/>
+              <proceedDirect fix="ERASU"/>
+              <then/>
+              <heading value="062" direction="nearest"/>
+            </route>
+          </group>
+          <group note="sids">
+            <route type="sid" name="ARTUP1M" category="AB" mapping="24">
+              <after property="altitude" value="1700"/>
+              <proceedDirect fix="PR407"/>
+              <then/>
+              <proceedDirect fix="BAGRU"/>
+              <then/>
+              <proceedDirect fix="PR409"/>
+              <then/>
+              <proceedDirect fix="ARTUP"/>
+            </route>
+            <route type="sid" name="ARTUP1A" category="CD" mapping="24">
+              <proceedDirect fix="PR402"/>
+              <then/>
+              <proceedDirect fix="PR405"/>
+              <then/>
+              <proceedDirect fix="PR406"/>
+              <then/>
+              <proceedDirect fix="PR407"/>
+              <then/>
+              <proceedDirect fix="BAGRU"/>
+              <then/>
+              <proceedDirect fix="PR409"/>
+              <then/>
+              <proceedDirect fix="ARTUP"/>
+            </route>
+            <route type="sid" name="VENOX1M" category="AB" mapping="24">
+              <after property="altitude" value="1700"/>
+              <proceedDirect fix="PR407"/>
+              <then/>
+              <proceedDirect fix="VENOX"/>
+            </route>
+            <route type="sid" name="VENOX1A" category="CD" mapping="24">
+              <proceedDirect fix="PR402"/>
+              <then/>
+              <proceedDirect fix="PR405"/>
+              <then/>
+              <proceedDirect fix="PR406"/>
+              <then/>
+              <proceedDirect fix="VENOX"/>
+            </route>
+            <route type="sid" name="BALTU2A" mapping="24">
+              <proceedDirect fix="PR402"/>
+              <then/>
+              <proceedDirect fix="PR405"/>
+              <then/>
+              <proceedDirect fix="BALTU"/>
+            </route>
+            <route type="sid" name="DOBEN2A" mapping="24">
+              <proceedDirect fix="PR402"/>
+              <then/>
+              <proceedDirect fix="DOBEN"/>
+            </route>
+            <route type="sid" name="VOZ1M" category="AB" mapping="24">
+              <after property="altitude" value="1700"/>
+              <proceedDirect fix="PR411"/>
+              <then/>
+              <proceedDirect fix="PR412"/>
+              <then/>
+              <proceedDirect fix="VOZ"/>
+            </route>
+            <route type="sid" name="VOZ1A" category="CD" mapping="24">
+              <proceedDirect fix="PR402"/>
+              <then/>
+              <proceedDirect fix="PR403"/>
+              <then/>
+              <proceedDirect fix="PR404"/>
+              <then/>
+              <proceedDirect fix="VOZ"/>
+            </route>
+          </group>
         </group>
-        <group>
-          <route type="star" name="GOLOP2R" mapping="30"
-                 route="PD GOLOP T SL 250 PD BAGRU T PD PR914 T SL 220 PD PR915 T PD ARVEG T FH 124"/>
-          <route type="star" name="LOMKI6R" mapping="30"
-                 route="PD LOMKI T PD PR511 T SL 250 PD PR512 T PD PR914 T SL 220 PD PR915 T PD ARVEG T FH 124"/>
-          <route type="star" name="VLM1R" mapping="30"
-                 route="PD VLM T SL 250 PD PR904 T SL 220 PD KENOK T H KENOK"/>
-          <route type="star" name="GOSEK3R" mapping="30"
-                 route="PD GOSEK T SL 250 PD PR901 T PD PR902 T PD PR903 T SL 220 PD PR904 T PD KENOK T H KENOK"/>
-          <route type="sid" name="VOZ1N" category="AB" mapping="30"
-                 route="AA 017 PD PR807 T PD PR808 T PD VOZ"/>
-          <route type="sid" name="VOZ1B" category="CD" mapping="30"
-                 route="PD PR813 T PD PR814 T PD PR403 T PD PR404 T PD VOZ"/>
-          <route type="sid" name="DOBEN2B" mapping="30"
-                 route="PD PR813 T PD PR814 T PD PR817 T PD DOBEN"/>
-          <route type="sid" name="BALTU2B" mapping="30"
-                 route="PD PR813 T PD PR815 T PD BALTU"/>
-          <route type="sid" name="VENOX1B" category="CD" mapping="30"
-                 route="PD PR813 T PD PR815 T PD PR816 T PD VENOX"/>
-          <route type="sid" name="VENOX1N" category="AB" mapping="30"
-                 route="AA 017 PD PR818 T PD VENOX"/>
-          <route type="sid" name="ARTUP1N" category="AB" mapping="30"
-                 route="AA 017 PD PR818 T PD PR819 T PD ARTUP"/>
-          <route type="sid" name="ARTUP1B" category="CD" mapping="30"
-                 route="PD PR813 T PD PR815 T PD PR816 T PD PR818 T PD PR819 T PD ARTUP"/>
+        <group note="30">
+          <group note="stars">
+            <route type="star" name="GOLOP2R" mapping="30">
+              <proceedDirect fix="GOLOP"/>
+              <then/>
+              <speed restriction="below" value="250"/>
+              <proceedDirect fix="BAGRU"/>
+              <then/>
+              <proceedDirect fix="PR914"/>
+              <then/>
+              <speed restriction="below" value="220"/>
+              <proceedDirect fix="PR915"/>
+              <then/>
+              <proceedDirect fix="ARVEG"/>
+              <then/>
+              <heading value="124" direction="nearest"/>
+            </route>
+            <route type="star" name="LOMKI6R" mapping="30">
+              <proceedDirect fix="LOMKI"/>
+              <then/>
+              <proceedDirect fix="PR511"/>
+              <then/>
+              <speed restriction="below" value="250"/>
+              <proceedDirect fix="PR512"/>
+              <then/>
+              <proceedDirect fix="PR914"/>
+              <then/>
+              <speed restriction="below" value="220"/>
+              <proceedDirect fix="PR915"/>
+              <then/>
+              <proceedDirect fix="ARVEG"/>
+              <then/>
+              <heading value="124" direction="nearest"/>
+            </route>
+            <route type="star" name="VLM1R" mapping="30">
+              <proceedDirect fix="VLM"/>
+              <then/>
+              <speed restriction="below" value="250"/>
+              <proceedDirect fix="PR904"/>
+              <then/>
+              <speed restriction="below" value="220"/>
+              <proceedDirect fix="KENOK"/>
+              <then/>
+              <hold fix="KENOK"/>
+            </route>
+            <route type="star" name="GOSEK3R" mapping="30">
+              <proceedDirect fix="GOSEK"/>
+              <then/>
+              <speed restriction="below" value="250"/>
+              <proceedDirect fix="PR901"/>
+              <then/>
+              <proceedDirect fix="PR902"/>
+              <then/>
+              <proceedDirect fix="PR903"/>
+              <then/>
+              <speed restriction="below" value="220"/>
+              <proceedDirect fix="PR904"/>
+              <then/>
+              <proceedDirect fix="KENOK"/>
+              <then/>
+              <hold fix="KENOK"/>
+            </route>
+          </group>
+          <group note="sids">
+            <route type="sid" name="VOZ1N" category="AB" mapping="30">
+              <after property="altitude" value="1700"/>
+              <proceedDirect fix="PR807"/>
+              <then/>
+              <proceedDirect fix="PR808"/>
+              <then/>
+              <proceedDirect fix="VOZ"/>
+            </route>
+            <route type="sid" name="VOZ1B" category="CD" mapping="30">
+              <proceedDirect fix="PR813"/>
+              <then/>
+              <proceedDirect fix="PR814"/>
+              <then/>
+              <proceedDirect fix="PR403"/>
+              <then/>
+              <proceedDirect fix="PR404"/>
+              <then/>
+              <proceedDirect fix="VOZ"/>
+            </route>
+            <route type="sid" name="DOBEN2B" mapping="30">
+              <proceedDirect fix="PR813"/>
+              <then/>
+              <proceedDirect fix="PR814"/>
+              <then/>
+              <proceedDirect fix="PR817"/>
+              <then/>
+              <proceedDirect fix="DOBEN"/>
+            </route>
+            <route type="sid" name="BALTU2B" mapping="30">
+              <proceedDirect fix="PR813"/>
+              <then/>
+              <proceedDirect fix="PR815"/>
+              <then/>
+              <proceedDirect fix="BALTU"/>
+            </route>
+            <route type="sid" name="VENOX1B" category="CD" mapping="30">
+              <proceedDirect fix="PR813" />
+              <then />
+              <proceedDirect fix="PR815" />
+              <then />
+              <proceedDirect fix="PR816" />
+              <then />
+              <proceedDirect fix="VENOX" />
+            </route>
+            <route type="sid" name="VENOX1N" category="AB" mapping="30">
+              <after property="altitude" value="1700" />
+              <proceedDirect fix="PR818" />
+              <then />
+              <proceedDirect fix="VENOX" />
+            </route>
+            <route type="sid" name="ARTUP1N" category="AB" mapping="30">
+              <after property="altitude" value="1700" />
+              <proceedDirect fix="PR818" />
+              <then />
+              <proceedDirect fix="PR819" />
+              <then />
+              <proceedDirect fix="ARTUP" />
+            </route>
+            <route type="sid" name="ARTUP1B" category="CD" mapping="30">
+              <proceedDirect fix="PR813" />
+              <then />
+              <proceedDirect fix="PR815" />
+              <then />
+              <proceedDirect fix="PR816" />
+              <then />
+              <proceedDirect fix="PR818" />
+              <then />
+              <proceedDirect fix="PR819" />
+              <then />
+              <proceedDirect fix="ARTUP" />
+            </route>
+          </group>
         </group>
-        <group>
-          <route type="star" name="GOLOP1P" mapping="12"
-                 route="PD GOLOP T SL 250 PD PR957 T SL 220 PD PR958 T PD EVEMI T FH 304"/>
-          <route type="star" name="VLM1P" mapping="12"
-                 route="PD VLM T PD PR950 T SL 250 PD PR951 T PD PR952 T SL 220 PD PR958 T PD EVEMI T FH 304"/>
-          <route type="star" name="LOMKI4P" mapping="12"
-                 route="PD LOMKI T SL 250 PD PR707 T PD PR956 T SL 220 PD PR954 T PD SOMIS T FH 304"/>
-          <route type="star" name="GOSEK2P" mapping="12"
-                 route="PD GOSEK T SL 250 PD PR953 T SL 220 PD PR954 T PD SOMIS T FH 304"/>
-          <route type="sid" name="VENOX1H" mapping="12"
-                 route="PD PR626 T PD PR856 T PD UTORO T PD PR858 T PD VENOX"/>
-          <route type="sid" name="BALTU2H" mapping="12"
-                 route="PD PR626 T PD PR856 T PD UTORO T PD PR858 T PD ESINU T PD BALTU"/>
-          <route type="sid" name="DOBEN2H" category="CD" mapping="12"
-                 route="PD PR626 T PD PR856 T PD UTORO T PD PR858 T PD ESINU T PD DOBEN"/>
-          <route type="sid" name="DOBEN1G" category="AB" mapping="12"
-                 route="AA 017 PD PR854 T PD PR855 T PD DOBEN"/>
-          <route type="sid" name="VOZ1G" category="AB" mapping="12"
-                 route="AA 017 PD PR411 T PD PR404 T PD VOZ"/>
-          <route type="sid" name="VOZ1Q" category="AB" mapping="12"
-                 route="AA 017 PD PR411 T PD PR412 T PD VOZ"/>
-          <route type="sid" name="VOZ1K" category="CD" mapping="12"
-                 route="PD PR626 T PD PR627 T PD VOZ"/>
-          <route type="sid" name="VOZ1H" category="CD" mapping="12"
-                 route="PD PR626 T PD PR412 T PD VOZ"/>
-          <route type="sid" name="ARTUP1H" mapping="12"
-                 route="PD PR626 T PD PR861 T PD ARTUP"/>
+        <group note="12">
+          <group note="stars">
+            <route type="star" name="GOLOP1P" mapping="12">
+              <proceedDirect fix="GOLOP" />
+              <then />
+              <speed restriction="below" value="250"/>
+              <proceedDirect fix="PR957" />
+              <then />
+              <speed restriction="below" value="220"/>
+              <proceedDirect fix="PR958" />
+              <then />
+              <proceedDirect fix="EVEMI" />
+              <then />
+              <heading value="304" direction="nearest" />
+            </route>
+            <route type="star" name="VLM1P" mapping="12">
+              <proceedDirect fix="VLM" />
+              <then />
+              <proceedDirect fix="PR950" />
+              <then />
+              <speed restriction="below" value="250"/>
+              <proceedDirect fix="PR951" />
+              <then />
+              <proceedDirect fix="PR952" />
+              <then />
+              <speed restriction="below" value="220"/>
+              <proceedDirect fix="PR958" />
+              <then />
+              <proceedDirect fix="EVEMI" />
+              <then />
+              <heading value="304" direction="nearest" />
+            </route>
+            <route type="star" name="LOMKI4P" mapping="12">
+              <proceedDirect fix="LOMKI" />
+              <then />
+              <speed restriction="below" value="250"/>
+              <proceedDirect fix="PR707" />
+              <then />
+              <proceedDirect fix="PR956" />
+              <then />
+              <speed restriction="below" value="220"/>
+              <proceedDirect fix="PR954" />
+              <then />
+              <proceedDirect fix="SOMIS" />
+              <then />
+              <heading value="304" direction="nearest" />
+            </route>
+            <route type="star" name="GOSEK2P" mapping="12">
+              <proceedDirect fix="GOSEK" />
+              <then />
+              <speed restriction="below" value="250"/>
+              <proceedDirect fix="PR953" />
+              <then />
+              <speed restriction="below" value="220"/>
+              <proceedDirect fix="PR954" />
+              <then />
+              <proceedDirect fix="SOMIS" />
+              <then />
+              <heading value="304" direction="nearest" />
+            </route>
+          </group>
+          <group note="sids">
+            <route type="sid" name="VENOX1H" mapping="12">
+              <proceedDirect fix="PR626" />
+              <then />
+              <proceedDirect fix="PR856" />
+              <then />
+              <proceedDirect fix="UTORO" />
+              <then />
+              <proceedDirect fix="PR858" />
+              <then />
+              <proceedDirect fix="VENOX" />
+            </route>
+            <route type="sid" name="BALTU2H" mapping="12">
+              <proceedDirect fix="PR626" />
+              <then />
+              <proceedDirect fix="PR856" />
+              <then />
+              <proceedDirect fix="UTORO" />
+              <then />
+              <proceedDirect fix="PR858" />
+              <then />
+              <proceedDirect fix="ESINU" />
+              <then />
+              <proceedDirect fix="BALTU" /></route>
+            <route type="sid" name="DOBEN2H" category="CD" mapping="12">
+              <proceedDirect fix="PR626" />
+              <then />
+              <proceedDirect fix="PR856" />
+              <then />
+              <proceedDirect fix="UTORO" />
+              <then />
+              <proceedDirect fix="PR858" />
+              <then />
+              <proceedDirect fix="ESINU" />
+              <then />
+              <proceedDirect fix="DOBEN" />
+
+            </route>
+            <route type="sid" name="DOBEN1G" category="AB" mapping="12">
+              <after property="altitude" value="1700" />
+              <proceedDirect fix="PR854" />
+              <then />
+              <proceedDirect fix="PR855" />
+              <then />
+              <proceedDirect fix="DOBEN" />
+            </route>
+            <route type="sid" name="VOZ1G" category="AB" mapping="12">
+              <after property="altitude" value="1700" />
+              <proceedDirect fix="PR411" />
+              <then />
+              <proceedDirect fix="PR404" />
+              <then />
+              <proceedDirect fix="VOZ" />
+            </route>
+            <route type="sid" name="VOZ1Q" category="AB" mapping="12">
+              <after property="altitude" value="1700" />
+              <proceedDirect fix="PR411" />
+              <then />
+              <proceedDirect fix="PR412" />
+              <then />
+              <proceedDirect fix="VOZ" />
+            </route>
+            <route type="sid" name="VOZ1K" category="CD" mapping="12">
+              <proceedDirect fix="PR626" />
+              <then />
+              <proceedDirect fix="PR627" />
+              <then />
+              <proceedDirect fix="VOZ" />
+            </route>
+            <route type="sid" name="VOZ1H" category="CD" mapping="12">
+              <proceedDirect fix="PR626" />
+              <then />
+              <proceedDirect fix="PR412" />
+              <then />
+              <proceedDirect fix="VOZ" />
+            </route>
+            <route type="sid" name="ARTUP1H" mapping="12">
+              <proceedDirect fix="PR626" />
+              <then />
+              <proceedDirect fix="PR861" />
+              <then />
+              <proceedDirect fix="ARTUP" />
+            </route>
+          </group>
         </group>
       </daRoutes>
       <iafRoutes>
-        <group>
+        <group note="06 + 06OKL">
           <iafRoute iaf="KUVIX" iafMapping="06">
-            <altitude direction="set" value="4000" />
+            <altitude direction="set" value="4000"/>
             <proceedDirect fix="PR741"/>
             <then/>
             <proceedDirect fix="PR742"/>
@@ -376,13 +711,13 @@
             <heading value="061"/>
           </iafRoute>
           <iafRoute iaf="BAROX" iafMapping="06">
-            <altitude direction="set" value="4000" />
+            <altitude direction="set" value="4000"/>
             <proceedDirect fix="PR742"/>
             <then/>
             <heading value="061"/>
           </iafRoute>
           <iafRoute iaf="AKEVA" iafMapping="06">
-            <altitude direction="set" value="4000" />
+            <altitude direction="set" value="4000"/>
             <proceedDirect fix="PR740"/>
             <then/>
             <proceedDirect fix="PR742"/>
@@ -391,29 +726,130 @@
           </iafRoute>
         </group>
         <group>
-          <iafRoute iaf="OKL" route="DM 40 PD OKL/247/9.9 T PD OKL/260/13 T PD PR742 T FH 061" iafMapping="06OKL"/>
+          <iafRoute iaf="OKL" iafMapping="06OKL">
+            <altitude direction="descend" value="40" />
+            <proceedDirect fix="OKL/247/9.9" />
+            <then />
+            <proceedDirect fix="OKL/260/13" />
+            <then />
+            <proceedDirect fix="PR742" />
+            <then />
+            <heading value="061" direction="nearest" />
+          </iafRoute>
         </group>
         <group>
-          <iafRoute iaf="ERASU" route="DM 40 PD PR531 T PD PR532 T FH 241" iafMapping="24"/>
-          <iafRoute iaf="RATEV" route="DM 40 PD PR530 T PD PR532 T FH 241" iafMapping="24"/>
+          <iafRoute iaf="ERASU" iafMapping="24">
+            <altitude direction="descend" value="40" />
+            <proceedDirect fix="PR531" />
+            <then />
+            <proceedDirect fix="PR532" />
+            <then />
+            <heading value="241" direction="nearest" />
+          </iafRoute>
+          <iafRoute iaf="RATEV" iafMapping="24">
+            <altitude direction="descend" value="40" />
+            <proceedDirect fix="PR530" />
+            <then />
+            <proceedDirect fix="PR532" />
+            <then />
+            <heading value="241" direction="nearest" />
+          </iafRoute>
         </group>
         <group>
-          <iafRoute iaf="EVEMI" route="PD PR961 T PD PR962 T FH 123" iafMapping="12"/>
-          <iafRoute iaf="SOMIS" route="PD PR960 T PD PR962 T FH 123" iafMapping="12"/>
+          <iafRoute iaf="EVEMI" iafMapping="12">
+            <proceedDirect fix="PR961" />
+            <then />
+            <proceedDirect fix="PR962" />
+            <then />
+            <heading value="123" direction="nearest" />
+          </iafRoute>
+          <iafRoute iaf="SOMIS" iafMapping="12">
+            <proceedDirect fix="PR960" />
+            <then />
+            <proceedDirect fix="PR962" />
+            <then />
+            <heading value="123" direction="nearest" />
+          </iafRoute>
         </group>
         <group>
-          <iafRoute iaf="ARVEG" route="PD PR905 T PD PR906 T PD PR912 T FH 303" iafMapping="30"/>
-          <iafRoute iaf="OKL" route="PD OKL/123/9.2 T FH 168 T PD PR912 T FH 303" iafMapping="30"/>
-          <iafRoute iaf="KENOK" route="PD PR906 T PD PR912 T FH 303" iafMapping="30"/>
+          <iafRoute iaf="ARVEG" iafMapping="30">
+            <proceedDirect fix="PR905" />
+            <then />
+            <proceedDirect fix="PR906" />
+            <then />
+            <proceedDirect fix="PR912" />
+            <then />
+            <heading value="303" direction="nearest" />
+          </iafRoute>
+          <iafRoute iaf="OKL" iafMapping="30">
+            <proceedDirect fix="OKL/123/9.2" />
+            <then />
+            <heading value="168" direction="nearest" />
+            <then />
+            <proceedDirect fix="PR912" />
+            <then />
+            <heading value="303" direction="nearest" />
+          </iafRoute>
+          <iafRoute iaf="KENOK"  iafMapping="30">
+            <proceedDirect fix="PR906" />
+            <then />
+            <proceedDirect fix="PR912" />
+            <then />
+            <heading value="303" direction="nearest" />
+          </iafRoute>
         </group>
         <group>
-          <iafRoute iaf="ARVEG" route="FH 123 AD OKL/19.3 PD OKL/119/13.5 T FH 299" iafMapping="30unp"/>
-          <iafRoute iaf="OKL" route="PD OKL/119/9.3 T TR 164 T PD OKL/119/13.5 T FH 299" iafMapping="30unp"/>
-          <iafRoute iaf="KENOK" route="FH 343 AD VOZ/21.8 PD OKL/119/13.5 T FH 299" iafMapping="30unp"/>
+          <iafRoute iaf="ARVEG" iafMapping="30unp">
+            <heading value="123" direction="nearest" />
+            <after property="distance" value="OKL/19.3" />
+            <proceedDirect fix="OKL/119/13.5" />
+            <then />
+            <heading value="299" direction="nearest" />
+          </iafRoute>
+          <iafRoute iaf="OKL" iafMapping="30unp">
+            <proceedDirect fix="OKL/119/9.3" />
+            <then />
+            <heading value="164" direction="right" />
+            <then />
+            <proceedDirect fix="OKL/119/13.5" />
+            <then />
+            <heading value="299" direction="nearest" />
+          </iafRoute>
+          <iafRoute iaf="KENOK" iafMapping="30unp">
+            <heading value="343" direction="nearest" />
+            <after property="distance" value="VOZ/21.8" />
+            <proceedDirect fix="OKL/119/13.5" />
+            <then />
+            <heading value="299" direction="nearest" />
+          </iafRoute>
         </group>
-        <iafRoute iaf="OKL" route="PD OKL/302/9.8 T FH 348 T PD PR962 T FH 123" iafMapping="12ils"/>
-        <iafRoute iaf="EVEMI" route="FH 303 AD OKL/14.2 FH 213 AR OKL/313 PD OKL/127/12.9 T FH 127" iafMapping="12unp"/>
-        <iafRoute iaf="SOMIS" route="FH 303 AD OKL/13.9 FH 033 AR OKL/300 PD OKL/127/12.9 T FH 127" iafMapping="12unp"/>
+        <iafRoute iaf="OKL" iafMapping="12ils">
+          <proceedDirect fix="OKL/302/9.8" />
+          <then />
+          <heading value="348" direction="nearest" />
+          <then />
+          <proceedDirect fix="PR962" />
+          <then />
+          <heading value="123" direction="nearest" />
+        </iafRoute>
+        <iafRoute iaf="EVEMI" iafMapping="12unp">
+          <heading value="303" direction="nearest" />
+          <after property="distance" value="OKL/14.2" />
+          <heading value="213" direction="nearest" />
+          <after property="radial" value="OKL/313" />
+          <proceedDirect fix="OKL/127/12.9" />
+          <then />
+          <heading value="127" direction="nearest" />
+        </iafRoute>
+        <iafRoute iaf="SOMIS" iafMapping="12unp">
+          <heading value="303" direction="nearest" />
+          <after property="distance" value="OKL/13.9" />
+          <heading value="033" direction="nearest" />
+          <after property="radial" value="OKL/300" />
+          <proceedDirect fix="OKL/127/12.9" />
+          <then />
+          <heading value="127" direction="nearest" />
+        </iafRoute>
       </iafRoutes>
       <gaRoutes>
         <gaRoute gaMapping="06">
