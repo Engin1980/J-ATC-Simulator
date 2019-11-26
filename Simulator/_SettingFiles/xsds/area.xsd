@@ -192,6 +192,7 @@
       <xs:element name="group" type="gaGroup" minOccurs="0" maxOccurs="unbounded"/>
       <xs:element name="gaRoute" type="gaRoute" minOccurs="0" maxOccurs="unbounded"/>
     </xs:choice>
+    <xs:attribute name="note" type="xs:string" use="optional" />
   </xs:complexType>
 
   <xs:complexType name="runwayConfigurations">

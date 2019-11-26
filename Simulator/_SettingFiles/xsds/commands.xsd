@@ -15,7 +15,7 @@
 
   <xs:complexType name="Speed">
     <xs:attribute name="restriction" type="RestrictionType" use="required"/>
-    <xs:attribute name="value" type="xs:positiveInteger" use="required"/>
+    <xs:attribute name="value" type="xs:positiveInteger" use="optional"/>
   </xs:complexType>
 
   <xs:complexType name="Altitude">
@@ -51,6 +51,7 @@
           <xs:enumeration value="heading" />
           <xs:enumeration value="distance" />
           <xs:enumeration value="radial" />
+          <xs:enumeration value="navaid" />
         </xs:restriction>
       </xs:simpleType>
     </xs:attribute>
@@ -62,6 +63,7 @@
       <xs:enumeration value="below"/>
       <xs:enumeration value="above"/>
       <xs:enumeration value="exactly"/>
+      <xs:enumeration value="clear"/>
     </xs:restriction>
   </xs:simpleType>
 
