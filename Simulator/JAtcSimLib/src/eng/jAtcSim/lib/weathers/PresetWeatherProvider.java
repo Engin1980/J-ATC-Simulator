@@ -1,13 +1,9 @@
 package eng.jAtcSim.lib.weathers;
 
+import eng.eSystem.eXml.XDocument;
 import eng.eSystem.exceptions.EApplicationException;
-import eng.eSystem.xmlSerialization.XmlSerializer;
-import eng.eSystem.xmlSerialization.XmlSettings;
 import eng.jAtcSim.lib.Acc;
-import eng.jAtcSim.lib.weathers.presets.PresetWeather;
 import eng.jAtcSim.lib.weathers.presets.PresetWeatherList;
-
-import java.util.prefs.NodeChangeEvent;
 
 public class PresetWeatherProvider extends WeatherProvider {
 
@@ -16,20 +12,15 @@ public class PresetWeatherProvider extends WeatherProvider {
   private int weatherIndex = -1;
 
   public PresetWeatherProvider(String sourceFileName) {
-
-    XmlSettings sett = new XmlSettings();
-    XmlSerializer ser = new XmlSerializer(sett);
-
     try {
-      presetWeathers = ser.deserialize(sourceFileName, PresetWeatherList.class);
+      XDocument doc = XDocument.load(sourceFileName);
+      this.presetWeathers = PresetWeatherList.load(doc.getRoot());
     } catch (Exception ex) {
       throw new EApplicationException("Failed to load preset weather from " + sourceFileName + ".", ex);
     }
 
     if (presetWeathers.size() == 0)
       throw new EApplicationException("There is no weather descriptions specified in the file " + sourceFileName + ".");
-
-    presetWeathers.sort();
   }
 
   @Override

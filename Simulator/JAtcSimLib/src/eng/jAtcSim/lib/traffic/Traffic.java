@@ -30,11 +30,18 @@ public abstract class Traffic {
   /**
    * Specifies delay probability, range 0.0-1.0.
    */
-  private final double delayProbability = 0.3;
+  private final double delayProbability;// = 0.3;
   /**
    * Max delay in minutes per step.
    */
-  private final int maxDelayInMinutesPerStep = 15;
+  private final int maxDelayInMinutesPerStep; // = 15;
+
+  protected Traffic(double delayProbability, int maxDelayInMinutesPerStep) {
+    assert delayProbability >= 0 && delayProbability <= 1 : "Delay probability must be between 0 - 1";
+    assert maxDelayInMinutesPerStep >= 0;
+    this.delayProbability = delayProbability;
+    this.maxDelayInMinutesPerStep = maxDelayInMinutesPerStep;
+  }
 
   public double getDelayProbability() {
     return delayProbability;

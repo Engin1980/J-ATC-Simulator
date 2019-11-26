@@ -1,6 +1,5 @@
 package eng.jAtcSim.lib.global.newSources;
 
-import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 import eng.jAtcSim.lib.traffic.Traffic;
 
 public class UserTrafficSource extends TrafficSource {

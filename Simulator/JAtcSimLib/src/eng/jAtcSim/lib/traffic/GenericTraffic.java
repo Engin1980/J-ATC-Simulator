@@ -1,27 +1,67 @@
 package eng.jAtcSim.lib.traffic;
 
-import com.sun.javafx.iio.common.ImageLoaderImpl;
 import eng.eSystem.Tuple;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.utilites.ArrayUtils;
 import eng.eSystem.utilites.NumberUtils;
-
-;
-import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.AirplaneType;
 import eng.jAtcSim.lib.airplanes.Callsign;
+import eng.jAtcSim.lib.exceptions.ToDoException;
 import eng.jAtcSim.lib.global.ETime;
 import eng.jAtcSim.lib.traffic.fleets.CompanyFleet;
-import sun.security.krb5.internal.ETypeInfo;
+import eng.jAtcSim.lib.world.xml.XmlLoader;
 
 /**
  * @author Marek Vajgl
  */
 public class GenericTraffic extends GeneratedTraffic {
+
+  public static GenericTraffic load(XElement source) {
+    XmlLoader.setContext(source);
+    double delayProbability = XmlLoader.loadDouble("delayProbability");
+    int maxDelayInMinutesPerStep = XmlLoader.loadInteger("maxDelayInMinutesPerStep");
+    double probabilityOfNonCommercialFlight = XmlLoader.loadDouble("probabilityOfNonCommercialFlight");
+    double probabilityOfDeparture = XmlLoader.loadDouble("probabilityOfDeparture");
+    boolean useExtendedCallsigns = XmlLoader.loadBoolean("useExtendedCallsigns");
+
+    int[] mph = new int[24];
+    int i = 0;
+    for (XElement child : source.getChild("movementsPerHour").getChildren("item")) {
+      mph[i++] = Integer.parseInt(child.getContent());
+    }
+
+    double[] poc = new double[4];
+    i = 0;
+    for (XElement child : source.getChild("probabilityOfCategory").getChildren("item")) {
+      poc[i++] = Double.parseDouble(child.getContent());
+    }
+
+    IList<String> companies = new EList<>();
+    for (XElement child : source.getChild("companies").getChildren("item")) {
+      companies.add(child.getContent());
+    }
+
+    IList<String> countryCodes = new EList<>();
+    for (XElement child : source.getChild("countryCodes").getChildren("item")) {
+      countryCodes.add(child.getContent());
+    }
+
+    GenericTraffic ret = new GenericTraffic(
+        companies.toArray(String.class), countryCodes.toArray(String.class),
+        mph, probabilityOfDeparture, probabilityOfNonCommercialFlight,
+        poc[0], poc[1], poc[2], poc[3],
+        delayProbability, maxDelayInMinutesPerStep, useExtendedCallsigns);
+    return ret;
+  }
+
+  public static GenericTraffic create() {
+    throw new ToDoException();
+  }
 
   private final String[] companies;
   private final String[] countryCodes;
@@ -44,20 +84,13 @@ public class GenericTraffic extends GeneratedTraffic {
    */
   private final double[] probabilityOfCategory = new double[4];
 
-  @XmlIgnore
   private char[] orderedCategoriesByProbabilityDesc = null;
 
-  @XmlConstructor
-  private GenericTraffic() {
-    this.probabilityOfDeparture = 0.5;
-    this.probabilityOfNonCommercialFlight = 0;
-    this.companies = new String[0];
-    this.countryCodes = new String[0];
-  }
-
-  public GenericTraffic(String companies, String countryCodes, int[] movementsPerHour, double probabilityOfDeparture, double probabilityOfNonCommercialFlight,
-                        int trafficCustomWeightTypeA, int trafficCustomWeightTypeB, int trafficCustomWeightTypeC, int trafficCustomWeightTypeD,
-                        boolean useExtendedCallsigns) {
+  public GenericTraffic(String[] companies, String[] countryCodes, int[] movementsPerHour,
+                        double probabilityOfDeparture, double probabilityOfNonCommercialFlight,
+                        double trafficCustomWeightTypeA, double trafficCustomWeightTypeB, double trafficCustomWeightTypeC, double trafficCustomWeightTypeD,
+                        double delayProbability, int maxDelayInMinutesPerStep, boolean useExtendedCallsigns) {
+    super(delayProbability, maxDelayInMinutesPerStep, useExtendedCallsigns);
 
     if (movementsPerHour == null) {
       throw new IllegalArgumentException("Value of {movementsPerHour} cannot not be null.");
@@ -75,8 +108,8 @@ public class GenericTraffic extends GeneratedTraffic {
       throw new IllegalArgumentException("\"probabilityOfDeparture\" must be between 0 and 1.");
     }
 
-    this.companies = companies.split(";");
-    this.countryCodes = countryCodes.split(";");
+    this.companies = companies;
+    this.countryCodes = countryCodes;
 
     for (int i = 0; i < this.movementsPerHour.length; i++) {
       this.movementsPerHour[i] = movementsPerHour[i];
@@ -94,7 +127,8 @@ public class GenericTraffic extends GeneratedTraffic {
       probabilityOfCategory[3] = trafficCustomWeightTypeD / sum;
     }
 
-    super.setUseExtendedCallsigns(useExtendedCallsigns);
+    this.orderedCategoriesByProbabilityDesc = new char[4];
+    this.fillOrderedCategories();
   }
 
   @Override
@@ -132,24 +166,17 @@ public class GenericTraffic extends GeneratedTraffic {
     return ret;
   }
 
-  private char getRandomCategory() {
-    char ret = 'A';
-    double sum = 0;
-    for (double v : probabilityOfCategory) {
-      sum += v;
+  private void fillOrderedCategories() {
+    IList<Tuple<Character, Double>> tmp = new EList<>();
+    tmp.add(new Tuple<>('A', probabilityOfCategory[0]));
+    tmp.add(new Tuple<>('B', probabilityOfCategory[1]));
+    tmp.add(new Tuple<>('C', probabilityOfCategory[2]));
+    tmp.add(new Tuple<>('D', probabilityOfCategory[3]));
+    tmp.sort(q -> -q.getB());
+
+    for (int i = 0; i < tmp.size(); i++) {
+      this.orderedCategoriesByProbabilityDesc[i] = tmp.get(i).getA();
     }
-    double tmp = Acc.rnd().nextDouble(sum);
-    int index = -1;
-    while (index < probabilityOfCategory.length) {
-      index++;
-      if (tmp < probabilityOfCategory[index]) {
-        ret = (char) ((int) ret + index);
-        break;
-      } else {
-        tmp -= probabilityOfCategory[index];
-      }
-    }
-    return ret;
   }
 
   private Movement generateMovement(int hour) {
@@ -182,9 +209,7 @@ public class GenericTraffic extends GeneratedTraffic {
     String icao = null;
     AirplaneType type = null;
 
-    IList<CompanyFleet> flts = Acc.fleets().where(
-        q ->
-            ArrayUtils.contains(this.companies, q.icao));
+    IList<CompanyFleet> flts = Acc.fleets().getCompaniesByIcao(this.companies);
 
     // this will try restrict to required category
     IList<CompanyFleet> tmp = flts.where(q -> q.getTypes().isAny(p -> p.getAirplaneType().category == category));
@@ -194,21 +219,21 @@ public class GenericTraffic extends GeneratedTraffic {
         tmp = flts.where(q -> q.getTypes().isAny(p -> p.getAirplaneType().category == c));
         if (!tmp.isEmpty()) {
           companyFleet = tmp.getRandom();
-          icao = companyFleet.icao;
+          icao = companyFleet.getIcao();
           type = companyFleet.getTypes().where(q -> q.getAirplaneType().category == c).getRandom().getAirplaneType();
           break;
         }
       }
       if (companyFleet == null) {
         companyFleet = flts.getRandom();
-        icao = companyFleet.icao;
+        icao = companyFleet.getIcao();
         type = companyFleet.getTypes().getRandom().getAirplaneType();
       }
       if (companyFleet == null)
         throw new EApplicationException("There is no plane kind matching requested category and company.");
     } else {
       companyFleet = tmp.getRandom();
-      icao = companyFleet.icao;
+      icao = companyFleet.getIcao();
       type = companyFleet.getTypes().where(q -> q.getAirplaneType().category == category).getRandom().getAirplaneType();
     }
 
@@ -220,17 +245,24 @@ public class GenericTraffic extends GeneratedTraffic {
     return ret;
   }
 
-  private void fillOrderedCategories() {
-    IList<Tuple<Character, Double>> tmp = new EList<>();
-    tmp.add(new Tuple('A', probabilityOfCategory[0]));
-    tmp.add(new Tuple('B', probabilityOfCategory[1]));
-    tmp.add(new Tuple('C', probabilityOfCategory[2]));
-    tmp.add(new Tuple('D', probabilityOfCategory[3]));
-    tmp.sort(q -> -q.getB());
-    this.orderedCategoriesByProbabilityDesc = new char[4];
-    for (int i = 0; i < tmp.size(); i++) {
-      this.orderedCategoriesByProbabilityDesc[i] = tmp.get(i).getA();
+  private char getRandomCategory() {
+    char ret = 'A';
+    double sum = 0;
+    for (double v : probabilityOfCategory) {
+      sum += v;
     }
+    double tmp = Acc.rnd().nextDouble(sum);
+    int index = -1;
+    while (index < probabilityOfCategory.length) {
+      index++;
+      if (tmp < probabilityOfCategory[index]) {
+        ret = (char) ((int) ret + index);
+        break;
+      } else {
+        tmp -= probabilityOfCategory[index];
+      }
+    }
+    return ret;
   }
 }
 

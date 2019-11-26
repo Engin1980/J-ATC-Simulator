@@ -2,27 +2,22 @@ package eng.jAtcSim.lib.traffic.fleets;
 
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
-import eng.eSystem.xmlSerialization.annotations.XmlItemElement;
+import eng.eSystem.eXml.XElement;
+import eng.eSystem.utilites.ArrayUtils;
 import eng.jAtcSim.lib.airplanes.AirplaneTypes;
 
-@XmlItemElement(elementName = "company", type=CompanyFleet.class)
-public class Fleets extends EList<CompanyFleet> {
+public class Fleets {
 
-  public void init(AirplaneTypes types){
-    for (CompanyFleet companyFleet : this) {
-      companyFleet.bindFleetTypes(types);
-    }
-  }
+  public static Fleets load(XElement source, AirplaneTypes airplaneTypes) {
 
-  public CompanyFleet tryGetByIcao(String companyIcao) {
-    
-    CompanyFleet ret = null;
-    for (CompanyFleet cf : this) {
-      if (cf.icao.equals(companyIcao)) {
-        ret = cf;
-        break;
-      }
+    IList<CompanyFleet> tmp = new EList<>();
+
+    for (XElement child : source.getChildren("company")) {
+      CompanyFleet cf = CompanyFleet.load(child, airplaneTypes);
+      tmp.add(cf);
     }
+
+    Fleets ret = new Fleets(tmp);
     return ret;
   }
 
@@ -31,9 +26,25 @@ public class Fleets extends EList<CompanyFleet> {
     return ret;
   }
 
+  private final IList<CompanyFleet> inner;
+
+  private Fleets(IList<CompanyFleet> inner) {
+    this.inner = inner;
+  }
+
+  public IList<CompanyFleet> getCompaniesByIcao(String[] companies) {
+    return inner.where( q ->
+        ArrayUtils.contains(companies, q.getIcao()));
+  }
+
   public String[] getIcaos() {
-    IList<String> lst = this.select(q->q.icao);
+    IList<String> lst = this.inner.select(q -> q.getIcao());
     String[] ret = lst.toArray(String.class);
+    return ret;
+  }
+
+  public CompanyFleet tryGetByIcao(String companyIcao) {
+    CompanyFleet ret = this.inner.tryGetFirst(q->q.getIcao().equals(companyIcao));
     return ret;
   }
 }

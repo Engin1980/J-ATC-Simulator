@@ -5,86 +5,64 @@
  */
 package eng.jAtcSim.lib.airplanes;
 
-import eng.eSystem.xmlSerialization.annotations.XmlItemElement;
-import eng.jAtcSim.lib.Acc;
-import eng.eSystem.utilites.CollectionUtils;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import eng.eSystem.collections.*;
+import eng.eSystem.eXml.XElement;
 
 /**
  * @author Marek
  */
-@XmlItemElement(elementName = "kind", type = AirplaneType.class)
-public class AirplaneTypes extends ArrayList<AirplaneType> {
+public class AirplaneTypes {
 
-  private int lastRefreshCount = -1;
+  public static AirplaneTypes load(XElement root) {
 
-  private Map<Character, List<AirplaneType>> inner = new HashMap();
+    AirplaneTypes ret = new AirplaneTypes();
+
+    for (XElement child : root.getChildren("type")) {
+      AirplaneType at = AirplaneType.load(child);
+      ret.allList.add(at);
+      ret.typeMap.get(at.category).add(at);
+    }
+
+    return ret;
+  }
+
+  private final IList<AirplaneType> allList;
+  private final IMap<Character, IList<AirplaneType>> typeMap;
+
+  private AirplaneTypes(){
+    allList = new EList<>();
+    typeMap = new EMap<>();
+    typeMap.set('A', new EList<>());
+    typeMap.set('B', new EList<>());
+    typeMap.set('C', new EList<>());
+    typeMap.set('D', new EList<>());
+
+  }
 
   public AirplaneType tryGetByName(String name) {
-    AirplaneType ret = CollectionUtils.tryGetFirst(this, o -> o.name.equals(name));
+    AirplaneType ret = allList.tryGetFirst(q->q.name.equals(name));
     return ret;
   }
 
   public static AirplaneType getDefaultType() {
-    AirplaneType ret = new AirplaneType();
-    ret.name = "A319";
-    ret.category = 'C';
-    ret.maxAltitude = 39000;
-    ret.vMinApp = 120;
-    ret.vApp = 130;
-    ret.vMaxApp = 160;
-    ret.vMinClean = 190;
-    ret.vMaxClean = 330;
-    ret.vCruise = 287;
-    ret.lowClimbRate = 5000;
-    ret.highClimbRate = 700;
-    ret.lowDescendRate = 2000;
-    ret.highDescendRate = 3500;
-    ret.speedIncreaseRate = 3;
-    ret.speedDecreaseRate = 3;
-    ret.headingChangeRate = 3;
+    AirplaneType ret = new AirplaneType(
+        "A319", "Airbus A319",
+        'C', 39000, 145,
+        120, 160, 130, 190, 330,
+        287, 210,
+        5000, 700, 2000, 3500,
+        3,3,3    );
     return ret;
   }
 
   public AirplaneType getRandomFromCategory(char category) {
     AirplaneType ret;
-
-    rebuild();
-
-    List<AirplaneType> tmp = inner.get(category);
-    ret = tmp.get(Acc.rnd().nextInt(tmp.size()));
-
+    ret = this.typeMap.get(category).getRandom();
     return ret;
   }
-
-
 
   public AirplaneType getRandom() {
-    AirplaneType ret = CollectionUtils.getRandom(this);
+    AirplaneType ret = this.allList.getRandom();
     return ret;
   }
-
-  private void rebuild() {
-    if (lastRefreshCount == this.size()) {
-      return;
-    }
-
-    inner.clear();
-    inner.put('A', new ArrayList<AirplaneType>());
-    inner.put('B', new ArrayList<AirplaneType>());
-    inner.put('C', new ArrayList<AirplaneType>());
-    inner.put('D', new ArrayList<AirplaneType>());
-
-    for (AirplaneType t : this) {
-      inner.get(t.category).add(t);
-    }
-
-    lastRefreshCount = this.size();
-  }
-
-
 }

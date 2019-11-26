@@ -59,8 +59,10 @@ public class ActiveRunwayThreshold extends Parentable<ActiveRunway> {
     return ret;
   }
 
-  private static ActiveRunwayThreshold load(XElement source, int airportAltitude, NavaidList navaids, Coordinate otherThresholdCoordinate,
-                                            IReadOnlyList<DARoute> routes, IReadOnlyList<IafRoute> iafRoutes, IReadOnlyList<GaRoute> gaRoutes) {
+  private static ActiveRunwayThreshold load(XElement source, int airportAltitude, NavaidList navaids,
+                                            Coordinate otherThresholdCoordinate,
+                                            IReadOnlyList<DARoute> routes, IReadOnlyList<IafRoute> iafRoutes,
+                                            IReadOnlyList<GaRoute> gaRoutes) {
     XmlLoader.setContext(source);
     String name = XmlLoader.loadString("name");
     Coordinate coordinate = XmlLoader.loadCoordinate("coordinate");

@@ -12,6 +12,7 @@ import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.utilites.ConversionUtils;
 ;
+import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
 import eng.jAtcSim.lib.Acc;
 import eng.eSystem.geo.Coordinate;
 import eng.jAtcSim.lib.airplanes.interfaces.IAirplaneRO;

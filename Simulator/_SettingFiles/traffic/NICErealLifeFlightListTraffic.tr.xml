@@ -6,7 +6,6 @@
     <date>2018-10-02</date>
   </meta>
   <flightListTraffic delayProbability="0" maxDelayInMinutesPerStep="0">
-    <flights>
       <flight callsign="TOM4127" kind="arrival" otherAirport="20.603000 -101.349000" planeType="B737" time="0:25"/>
       <flight callsign="EZY8692" kind="arrival" otherAirport="20.603000 -101.349000" planeType="A320" time="0:25"/>
       <flight callsign="BAW2563" kind="arrival" otherAirport="36.766000 28.808000" planeType="A320" time="0:30"/>
@@ -816,6 +815,5 @@
       <flight callsign="EZY8668" kind="arrival" otherAirport="38.344000 -0.480000" planeType="A21N" time="23:45"/>
       <flight callsign="JMC1269" kind="arrival" otherAirport="35.342000 25.153000" planeType="A321" time="23:55"/>
       <flight callsign="EZY8758" kind="arrival" otherAirport="39.619000 19.908000" planeType="A320" time="23:55"/>
-    </flights>
   </flightListTraffic>
 </trafficDefinition>
