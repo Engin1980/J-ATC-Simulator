@@ -31,6 +31,14 @@
     <xs:attribute name="value" type="xs:positiveInteger" use="required"/>
   </xs:complexType>
 
+  <xs:complexType name="AltitudeRestriction">
+    <xs:attribute name="restriction" type="RestrictionType" use="required"/>
+    <xs:attribute name="value" type="xs:positiveInteger" use="required" />
+  </xs:complexType>
+
+  <xs:complexType name="AltitudeRestrictionClear">
+  </xs:complexType>
+
   <xs:complexType name="Heading">
     <xs:attribute name="value" type="xs:positiveInteger" use="required"/>
     <xs:attribute name="direction" type="sh:LeftRightNearest" use="optional"/>

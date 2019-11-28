@@ -431,6 +431,8 @@
       <xs:element name="proceedDirect" type="cm:ToNavaid"/>
       <xs:element name="speed" type="cm:Speed"/>
       <xs:element name="altitude" type="cm:Altitude"/>
+      <xs:element name="altitudeRestriction" type="cm:AltitudeRestriction" />
+      <xs:element name="altitudeRestrictionClear" type="cm:AltitudeRestrictionClear" />
       <xs:element name="heading" type="cm:Heading"/>
       <xs:element name="hold" type="cm:Hold"/>
       <xs:element name="after" type="cm:After"/>
