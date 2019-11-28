@@ -29,37 +29,17 @@
         <runway>
           <thresholds>
             <threshold name="05" coordinate="N 53 37 11.85 E 009 58 01.80"
-                       initialDepartureAltitude="5000">
+                       initialDepartureAltitude="5000" mapping="05">
               <approaches>
-                <ilsApproach gaRoute="CM 40 PD HOS T H HAM" radial="048" initialAltitude="3000">
+                <ilsApproach gaMapping="05" iafMapping="05" radial="048" initialAltitude="3000">
                   <categories>
                     <category type="I" daA="188" daB="197" daC="207" daD="217"/>
                   </categories>
                 </ilsApproach>
-                <unpreciseApproach gaRoute="CM 40 PD HOS T H HAM" radial="049" initialAltitude="3000" type="ndb"
+                <unpreciseApproach gaMapping="05" iafMapping="05;05-LBV" radial="049" initialAltitude="3000" type="ndb"
                                    faf="ALF/229/10.5" mapt="ALF/229/1.8" mdaA="570" mdaB="570" mdaC="570" mdaD="570">
-                  <iafRoutes>
-                    <route iaf="LBV" route="PD LBV/153/8.4 T TL 079"/>
-                  </iafRoutes>
                 </unpreciseApproach>
               </approaches>
-              <routes>
-                <route type="transition" name="RIBSO05" entryFL="FL110"
-                       route="PD RIBSO T DM 40 PD DH210 T SL 220 PD DH211 T PD DH213 T PD DH214 T PD DH215 T PD DH255 T PD DH256 T PD DH257 T DM 30 PD DH025 T PD ANEXI"/>
-                <route type="transition" name="NOLGO05" entryFL="FL110"
-                       route="PD NOLGO T DM 40 PD DH230 T SL 220 PD DH231 T PD DH232 T PD DH232 T PD DH233 T PD DH234 T PD DH235 T PD DH255 T PD DH256 T PD DH257 T DM 30 PD DH025 T PD ANEXI"/>
-                <route type="transition" name="RARUP05" entryFL="FL110"
-                       route="PD RARUP T DM 40 PD DH230 T SL 220 PD DH231 T PD DH232 T PD DH232 T PD DH233 T PD DH234 T PD DH235 T PD DH255 T PD DH256 T PD DH257 T DM 30 PD DH025 T PD ANEXI"/>
-                <route type="transition" name="BOGMU05" entryFL="FL110"
-                       route="PD BOGMU T DM 40 PD DH225 T SL 220 PD DH226 T PD DH227 T PD DH228 T PD DH229 T PD DH230 T SL 220 PD DH231 T PD DH232 T PD DH232 T PD DH233 T PD DH234 T PD DH235 T PD DH255 T PD DH256 T PD DH257 T DM 30 PD DH025 T PD ANEXI"/>
-                <route type="sid" name="EKERN8C" route="PD ALF/048/7.2 T PD EKERN"/>
-                <route type="sid" name="LUB9C" route="PD ALF/048/7.2 T PD LUB"/>
-                <route type="sid" name="RAMAR3C" route="PD ALF/048/7.2 T PD LYE T PD RAMAR"/>
-                <route type="sid" name="AMLUH8C" route="PD ALF/048/7.2 T PD HAM T PD AMLUH"/>
-                <route type="sid" name="WSN2C" route="PD ALF/048/7.2 T TR 244 PD HAM/296/7 T PD LBV T PD WSN"/>
-                <route type="sid" name="BASUM1C" route="PD ALF/048/7.2 T TR 244 PD HAM/296/7 T PD LBV T PD BASUM"/>
-                <route type="sid" name="IDEKO5C" route="PD ALF/048/7.2 T TR 244 PD HAM/296/7 T PD LBV T PD IDEKO"/>
-              </routes>
             </threshold>
             <threshold name="23" coordinate="N 53 38 09.64 E 009 59 58.76"
                        initialDepartureAltitude="5000" preferred="true">
@@ -194,6 +174,206 @@
         <hold navaidName="LBV" inboundRadial="110" turn="right"/>
         <hold navaidName="HAM" inboundRadial="007" turn="right"/>
       </holds>
+      <daRoutes>
+        <group note="05">
+          <route type="transition" name="RIBSO05" entryFL="FL110" mapping="05">
+            <proceedDirect fix="RIBSO" />
+            <then />
+            <altitude direction="descend" value="40" />
+            <proceedDirect fix="DH210" />
+            <then />
+            <speed restriction="below" value="220"/>
+            <proceedDirect fix="DH211" />
+            <then />
+            <proceedDirect fix="DH213" />
+            <then />
+            <proceedDirect fix="DH214" />
+            <then />
+            <proceedDirect fix="DH215" />
+            <then />
+            <proceedDirect fix="DH255" />
+            <then />
+            <proceedDirect fix="DH256" />
+            <then />
+            <proceedDirect fix="DH257" />
+            <then />
+            <altitude direction="descend" value="30" />
+            <proceedDirect fix="DH025" />
+            <then />
+            <proceedDirect fix="ANEXI" />
+          </route>
+          <route type="transition" name="NOLGO05" entryFL="FL110" mapping="05">
+            <proceedDirect fix="NOLGO" />
+            <then />
+            <altitude direction="descend" value="40" />
+            <proceedDirect fix="DH230" />
+            <then />
+            <speed restriction="below" value="220"/>
+            <proceedDirect fix="DH231" />
+            <then />
+            <proceedDirect fix="DH232" />
+            <then />
+            <proceedDirect fix="DH232" />
+            <then />
+            <proceedDirect fix="DH233" />
+            <then />
+            <proceedDirect fix="DH234" />
+            <then />
+            <proceedDirect fix="DH235" />
+            <then />
+            <proceedDirect fix="DH255" />
+            <then />
+            <proceedDirect fix="DH256" />
+            <then />
+            <proceedDirect fix="DH257" />
+            <then />
+            <altitude direction="descend" value="30" />
+            <proceedDirect fix="DH025" />
+            <then />
+            <proceedDirect fix="ANEXI" />
+          </route>
+          <route type="transition" name="RARUP05" entryFL="FL110" mapping="05">
+            <proceedDirect fix="RARUP" />
+            <then />
+            <altitude direction="descend" value="40" />
+            <proceedDirect fix="DH230" />
+            <then />
+            <speed restriction="below" value="220"/>
+            <proceedDirect fix="DH231" />
+            <then />
+            <proceedDirect fix="DH232" />
+            <then />
+            <proceedDirect fix="DH232" />
+            <then />
+            <proceedDirect fix="DH233" />
+            <then />
+            <proceedDirect fix="DH234" />
+            <then />
+            <proceedDirect fix="DH235" />
+            <then />
+            <proceedDirect fix="DH255" />
+            <then />
+            <proceedDirect fix="DH256" />
+            <then />
+            <proceedDirect fix="DH257" />
+            <then />
+            <altitude direction="descend" value="30" />
+            <proceedDirect fix="DH025" />
+            <then />
+            <proceedDirect fix="ANEXI" />
+          </route>
+          <route type="transition" name="BOGMU05" entryFL="FL110" mapping="05">
+            <proceedDirect fix="BOGMU" />
+            <then />
+            <altitude direction="descend" value="40" />
+            <proceedDirect fix="DH225" />
+            <then />
+            <speed restriction="below" value="220"/>
+            <proceedDirect fix="DH226" />
+            <then />
+            <proceedDirect fix="DH227" />
+            <then />
+            <proceedDirect fix="DH228" />
+            <then />
+            <proceedDirect fix="DH229" />
+            <then />
+            <proceedDirect fix="DH230" />
+            <then />
+            <speed restriction="below" value="220"/>
+            <proceedDirect fix="DH231" />
+            <then />
+            <proceedDirect fix="DH232" />
+            <then />
+            <proceedDirect fix="DH232" />
+            <then />
+            <proceedDirect fix="DH233" />
+            <then />
+            <proceedDirect fix="DH234" />
+            <then />
+            <proceedDirect fix="DH235" />
+            <then />
+            <proceedDirect fix="DH255" />
+            <then />
+            <proceedDirect fix="DH256" />
+            <then />
+            <proceedDirect fix="DH257" />
+            <then />
+            <altitude direction="descend" value="30" />
+            <proceedDirect fix="DH025" />
+            <then />
+            <proceedDirect fix="ANEXI" />
+          </route>
+          <route type="sid" name="EKERN8C"  mapping="05">
+            <proceedDirect fix="ALF/048/7.2" />
+            <then />
+            <proceedDirect fix="EKERN" />
+          </route>
+          <route type="sid" name="LUB9C"  mapping="05">
+            <proceedDirect fix="ALF/048/7.2" />
+            <then />
+            <proceedDirect fix="LUB" />
+          </route>
+          <route type="sid" name="RAMAR3C"  mapping="05">
+            <proceedDirect fix="ALF/048/7.2" />
+            <then />
+            <proceedDirect fix="LYE" />
+            <then />
+            <proceedDirect fix="RAMAR" />
+          </route>
+          <route type="sid" name="AMLUH8C"  mapping="05">
+            <proceedDirect fix="ALF/048/7.2" />
+            <then />
+            <proceedDirect fix="HAM" />
+            <then />
+            <proceedDirect fix="AMLUH" />
+          </route>
+          <route type="sid" name="WSN2C"  mapping="05">
+            <proceedDirect fix="ALF/048/7.2" />
+            <then />
+            <heading value="244" direction="right" />
+            <proceedDirect fix="HAM/296/7" />
+            <then />
+            <proceedDirect fix="LBV" />
+            <then />
+            <proceedDirect fix="WSN" />
+          </route>
+          <route type="sid" name="BASUM1C"  mapping="05">
+            <proceedDirect fix="ALF/048/7.2" />
+            <then />
+            <heading value="244" direction="right" />
+            <proceedDirect fix="HAM/296/7" />
+            <then />
+            <proceedDirect fix="LBV" />
+            <then />
+            <proceedDirect fix="BASUM" />
+          </route>
+          <route type="sid" name="IDEKO5C"  mapping="05">
+            <proceedDirect fix="ALF/048/7.2" />
+            <then />
+            <heading value="244" direction="right" />
+            <proceedDirect fix="HAM/296/7" />
+            <then />
+            <proceedDirect fix="LBV" />
+            <then />
+            <proceedDirect fix="IDEKO" />
+          </route>
+        </group>
+      </daRoutes>
+      <iafRoutes>
+        <iafRoute iaf="LBV" iafMapping="05-LBV">
+          <proceedDirect fix="LBV/153/8.4" />
+          <then />
+          <heading value="079" direction="left" />
+        </iafRoute>
+      </iafRoutes>
+      <gaRoutes>
+        <gaRoute gaMapping="05">
+          <altitude direction="climb" value="40" />
+          <proceedDirect fix="HOS" />
+          <then />
+          <hold fix="HAM" />
+        </gaRoute>
+      </gaRoutes>
     </airport>
   </airports>
   <navaids>
