@@ -884,7 +884,7 @@
             <threshold name="04" coordinate="49 41 07.16 N 018 05 35.69 E" initialDepartureAltitude="4000" mapping="04">
               <approaches>
                 <gnssApproach gaMapping="04"
-                              radial="042" daA="1190" daB="1190" daC="1190" daD="1190" iafMapping="04"
+                              radial="042" daA="1190" daB="1190" daC="1190" daD="1190" iafMapping="04gnss"
                               initialAltitude="3200"/>
                 <unpreciseApproach gaMapping="04"
                                    radial="042" type="ndb" mapt="N" faf="OTA/222/8.2" mdaA="1220" mdaB="1220"
@@ -1129,6 +1129,34 @@
             <then/>
             <heading value="039" direction="nearest"/>
           </iafRoute>
+          <iafRoute iaf="OTA" iafMapping="04gnss">
+            <proceedDirect fix="ODRAN"/>
+            <then/>
+            <proceedDirect fix="MT603"/>
+            <then/>
+            <proceedDirect fix="MT604"/>
+            <then/>
+            <heading value="042" direction="nearest"/>
+          </iafRoute>
+          <iafRoute iaf="ODRAN" iafMapping="04gnss">
+            <proceedDirect fix="MT603"/>
+            <then/>
+            <proceedDirect fix="MT604"/>
+            <then/>
+            <heading value="042" direction="nearest"/>
+          </iafRoute>
+          <iafRoute iaf="MORUV" iafMapping="04gnss">
+            <proceedDirect fix="MT716"/>
+            <then/>
+            <proceedDirect fix="MT604"/>
+            <then/>
+            <heading value="042" direction="nearest"/>
+          </iafRoute>
+          <iafRoute iaf="POLOM" iafMapping="04gnss">
+            <proceedDirect fix="MT604"/>
+            <then/>
+            <heading value="042" direction="nearest"/>
+          </iafRoute>
         </group>
       </iafRoutes>
       <gaRoutes>
@@ -1144,17 +1172,6 @@
           </gaRoute>
         </group>
       </gaRoutes>
-      <sharedIafRoutesGroups>
-        <!-- tady netusim proc tu jsou tyhle trasy mirne odlisne od tech v iafRoutes -->
-        <sharedIafRoutesGroup groupName="04">
-          <iafRoutes>
-            <route iaf="OTA" route="PD ODRAN T PD MT603 T PD MT604 T FH 042"/>
-            <route iaf="ODRAN" route="PD MT603 T PD MT604 T FH 042"/>
-            <route iaf="MORUV" route="PD MT716 T PD MT604 T FH 042"/>
-            <route iaf="POLOM" route="PD MT604"/>
-          </iafRoutes>
-        </sharedIafRoutesGroup>
-      </sharedIafRoutesGroups>
     </airport>
   </airports>
   <navaids>
