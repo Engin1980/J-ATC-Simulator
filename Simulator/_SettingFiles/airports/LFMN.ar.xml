@@ -30,27 +30,23 @@
       <runways>
         <runway>
           <thresholds>
-            <threshold name="04L" coordinate="43 39 06.50 N 007 12 14.55 E" initialDepartureAltitude="4000"
-                       preferred="true" includeRoutesGroups="sid04;star">
+            <threshold name="04L" mapping="sid04;star" coordinate="43 39 06.50 N 007 12 14.55 E" initialDepartureAltitude="4000">
               <approaches>
-                <ilsApproach gaRoute="CM 20 SL 220 FH 043 AD NIZ/1.2 PD AZR/117/10 T SC PD NERAS" radial="043"
-                             includeIafRoutesGroups="04" initialAltitude="4000">
+                <ilsApproach gaMapping="04Lils" iafMapping="04" radial="043" initialAltitude="4000">
                   <categories>
                     <category type="I" daA="210" daB="210" daC="220" daD="230"/>
                   </categories>
                 </ilsApproach>
-                <unpreciseApproach gaRoute="CM 20 SL 220 PD AZR/117/10 T SC PD NERAS" radial="354"
+                <unpreciseApproach gaMapping="04Lvor" iafMapping="04" radial="354"
                                    initialAltitude="3000" type="vor"
                                    faf="CGS/174/8.1" mapt="CGS/174/5" mdaA="2000" mdaB="2000" mdaC="2000" mdaD="2000"/>
               </approaches>
             </threshold>
-            <threshold name="22R" coordinate="43 40 06.76 N 007 13 37.42 E" initialDepartureAltitude="4000"
-                       includeRoutesGroups="sid22;star">
+            <threshold name="22R" coordinate="43 40 06.76 N 007 13 37.42 E" initialDepartureAltitude="4000" mapping="sid22;star">
               <approaches>
-                <unpreciseApproach gaRoute="CM 30 PD CGS/113/10 T PD NERAS" radial="263" includeIafRoutesGroups="22"
+                <unpreciseApproach gaMapping="223vor" iafMapping="22" radial="263"
                                    initialAltitude="3000" type="vor"
-                                   faf="CGS/083/15" mapt="CGS/083/9" mdaA="1500" mdaB="1500" mdaC="1500" mdaD="1500">
-                </unpreciseApproach>
+                                   faf="CGS/083/15" mapt="CGS/083/9" mdaA="1500" mdaB="1500" mdaC="1500" mdaD="1500" />
               </approaches>
             </threshold>
           </thresholds>
@@ -58,21 +54,21 @@
         <runway>
           <thresholds>
             <threshold name="04R" coordinate="43 38 48.26 N 007 12 08.98 E" initialDepartureAltitude="4000"
-                       includeRoutesGroups="sid04">
+                       mapping="sid04;star">
               <approaches>
-                <ilsApproach gaRoute="SM 220 AA 20+ SC PD NERAS" radial="041" includeIafRoutesGroups="04"
+                <ilsApproach gaMapping="04R" radial="041" iafMapping="04"
                              initialAltitude="4000">
                   <categories>
                     <category type="I" daA="260" daB="260" daC="260" daD="280"/>
                   </categories>
                 </ilsApproach>
-                <unpreciseApproach gaRoute="SM 220 AA 20+ SC PD NERAS" radial="041" includeIafRoutesGroups="04"
+                <unpreciseApproach gaMapping="04R" radial="041" iafMapping="04"
                                    initialAltitude="4000" type="ndb" faf="NA/221/12.5"
                                    mapt="NA" mdaA="500" mdaB="500" mdaC="500" mdaD="500"/>
               </approaches>
             </threshold>
             <threshold name="22L" coordinate="43 39 56.19 N 007 13 42.40 E" initialDepartureAltitude="4000"
-                       includeRoutesGroups="sid22">
+                       mapping="sid22;star">
               <approaches>
                 <!-- any published approach -->
               </approaches>
@@ -86,153 +82,1036 @@
         <hold navaidName="MUS" inboundRadial="150" turn="left"/>
         <hold navaidName="AMFOU" inboundRadial="136" turn="right"/>
       </holds>
-      <sharedRoutesGroups>
-        <sharedRoutesGroup groupName="star">
-          <routes>
-            <route type="star" name="NISAR6R"
-                   route="PD NISAR T PD XIRBI T PD ABDIL T PD GIROL T PD AMFOU T SL 250 PD TIPIK T PD MUS T H MUS"
-                   entryFL="340"/>
-            <route type="star" name="ABDIL6R"
-                   route="PD ABDIL T PD GIROL T PD AMFOU T PD AMFOU T SL 250 PD TIPIK T PD MUS T H MUS"
-                   entryFL="190"/>
-            <route type="star" name="ABLAK6R" route="PD ABLAK T PD ABILI T PD AMFOU T SL 250 PD TIPIK T PD MUS T H MUS"
-                   entryFL="200"/>
-            <route type="star" name="PERUS6R" route="PD PERUS T PD AMFOU T SL 210 PD TIPIK T PD MUS T H MUS"
-                   entryFL="190"/>
-            <route type="star" name="BIRGO6C" route="PD BIRGO T PD LUC T PD MUS T H MUS" entryFL="110"/>
-            <route type="star" name="VEVAR6R"
-                   route="PD VEVAR T PD GAPDO T PD AMGEL T PD MIKRU T PD PIRAM T PD AZR/112/35 T PD NERAS T H NERAS"/>
-            <route type="star" name="BORDI6R"
-                   route="PD BORDI T PD AMGEL T PD MIKRU T PD PIRAM T PD AZR/112/35 T PD NERAS T H NERAS"
-                   entryFL="170"/>
-            <route type="star" name="KERIT6C"
-                   route="PD KERIT T PD NIZ/112/51 T PD AZR/114/47 T PD KESAK T PD NERAS T H NERAS" entryFL="170"/>
-            <route type="star" name="SODRI6R" route="PD SODRI T PD KESAK T PD NERAS T H NERAS"/>
-            <route type="star" name="LONSU6R" route="PD LONSU T PD KESAK T PD NERAS T H NERAS"/>
-            <route type="star" name="MERLU6C" route="PD MERLU T PD AZR/121/40 T PD NERAS T H NERAS"/>
-          </routes>
-        </sharedRoutesGroup>
-        <sharedRoutesGroup groupName="sid04">
-          <routes>
-            <route type="sid" name="IRMAR6A" category="CD"
-                   route="CM 130 SM 210 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD NC T SC PD BARSO T PD IRMAR"/>
-            <route type="sid" name="BADOD6A" category="CD"
-                   route="CM 130 SM 210 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD NC T SC PD AMIRO T PD BADOD"/>
-            <route type="sid" name="OKTET6A" category="CD"
-                   route="CM 130 SM 210 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD NC T SC PD AMIRO T PD OKTET"/>
-            <route type="sid" name="BODRU6A" category="ABCD"
-                   route="CM 130 SM 210 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD NC T SC PD AMIRO T PD BODRU"/>
-            <route type="sid" name="PERUS6A" category="ABCD"
-                   route="CM 130 SM 210 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD NC T SC PD AMIRO T PD PERUS"/>
-            <route type="sid" name="IRMAR6C" category="AB"
-                   route="CM 70 AA 4+ FH 138 AD NIZ/8 PD MN052 T PD NIZ T PD BARSO T PD IRMAR"/>
-            <route type="sid" name="OKTET6C" category="AB"
-                   route="CM 70 AA 4+ FH 138 AD NIZ/8 PD MN052 T PD NIZ T PD BARSO T PD OKTET"/>
-            <route type="sid" name="BADOD6C" category="ABCD"
-                   route="CM 70 AA 4+ FH 138 AD NIZ/8 PD MN052 T PD NIZ T PD BADOD"/>
-            <route type="sid" name="BASIP6A" category="AB"
-                   route="CM 70 AA 4+ FH 138 AD NIZ/8 PD MN052 T PD MN054 T PD USANO T PD TIVNO T PD BASIP"/>
-            <route type="sid" name="RUBIT6A" category="CD"
-                   route="CM 100 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD MN236 T PD RESBO T PD STP T PD RUBIT"/>
-            <route type="sid" name="LANKO6A" category="CD"
-                   route="CM 100 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD MN236 T PD RESBO T PD STP T PD RUBIT T PD LANKO"/>
-            <route type="sid" name="TURIL6A" category="CD"
-                   route="CM 100 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD MN236 T PD RESBO T PD STP T PD RUBIT T PD TURIL"/>
-            <route type="sid" name="EPOLO6A" category="CD"
-                   route="CM 100 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD MN236 T PD RESBO T PD EPOLO"/>
-            <route type="sid" name="RUBAS6A" category="ABCD"
-                   route="CM 100 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD MN236 T PD RESBO T PD RUBAS"/>
-            <route type="sid" name="RUBIT6B" category="AB"
-                   route="CM 70 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD MN234 T PD MN238 T PD RESBO T PD STP T PD RUBIT"/>
-            <route type="sid" name="LANKO6B" category="AB"
-                   route="CM 70 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD MN234 T PD MN238 T PD RESBO T PD STP T PD RUBIT T PD LANKO"/>
-            <route type="sid" name="TURIL6B" category="AB"
-                   route="CM 70 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD MN234 T PD MN238 T PD RESBO T PD STP T PD RUBIT T PD TURIL"/>
-            <route type="sid" name="EPOLO6B" category="AB"
-                   route="CM 70 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD MN234 T PD MN238 T PD LERMA T PD EPOLO"/>
-            <route type="sid" name="VAREK6A" category="CD"
-                   route="CM 100 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN046 T PD OMARD T PD VAREK"/>
-            <route type="sid" name="LONSU6A" category="CD"
-                   route="CM 100 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN046 T PD OMARD T PD MERLU T PD LONSU"/>
-            <route type="sid" name="SODRI6A" category="CD"
-                   route="CM 100 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN046 T PD OMARD T PD MERLU T PD SODRI"/>
-            <route type="sid" name="VAREK6B" category="AB"
-                   route="CM 70 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD MN244 T PD OMARD T PD VAREK"/>
-            <route type="sid" name="LONSU6B" category="AB"
-                   route="CM 70 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD MN244 T PD OMARD T PD MERLU T PD LONSU"/>
-            <route type="sid" name="SODRI6B" category="AB"
-                   route="CM 70 AA 4+ FH 138 AD NIZ/8 PD MN044 T PD MN048 T PD MN244 T PD OMARD T PD MERLU T PD SODRI"/>
-          </routes>
-        </sharedRoutesGroup>
-        <sharedRoutesGroup groupName="sid22">
-          <routes>
-            <route type="sid" name="IRMAR6X" category="CD"
-                   route="CM 130 PD MN222 T PD MN223 T SL 210 PD MN224 T PD MN226 T SC PD MN228 T PD BARSO T PD IRMAR"/>
-            <route type="sid" name="BADOD6X" category="CD"
-                   route="CM 130 PD MN222 T PD MN223 T SL 210 PD MN224 T PD MN226 T SC PD AMIRO T PD BADOD"/>
-            <route type="sid" name="OKTET6X" category="CD"
-                   route="CM 130 PD MN222 T PD MN223 T SL 210 PD MN224 T PD MN226 T SC PD AMIRO T PD OKTET"/>
-            <route type="sid" name="BODRU6X" category="ABCD"
-                   route="CM 130 PD MN222 T PD MN223 T SL 210 PD MN224 T PD MN226 T SC PD AMIRO T PD BODRU"/>
-            <route type="sid" name="PERUS6X" category="ABCD"
-                   route="CM 130 PD MN222 T PD MN223 T SL 210 PD MN224 T PD MN226 T SC PD AMIRO T PD PERUS"/>
-            <route type="sid" name="IRMAR6Z" category="AB"
-                   route="PD MN222 T PD MN223 T PD MN246 T PD MN248 T PD NIZ T PD BARSO T PD IRMAR"/>
-            <route type="sid" name="OKTET6Z" category="AB"
-                   route="PD MN222 T PD MN223 T PD MN246 T PD MN248 T PD NIZ T PD BARSO T PD OKTET"/>
-            <route type="sid" name="BADOD6Z" category="AB"
-                   route="PD MN222 T PD MN223 T PD MN246 T PD MN248 T PD NIZ T PD BADOD"/>
-            <route type="sid" name="BASIP6X" category="ABCD"
-                   route="CM 70 PD MN222 T PD MN223 T PD MN246 T PD MN248 T PD USANO T PD TIVNO T PD BASIP"/>
-            <route type="sid" name="RUBIT6X" category="CD"
-                   route="CM 100 PD MN222 T PD MN223 T PD MN232 T PD MN234 T PD MN236 T PD RESBO T PD STP T PD RUBIT"/>
-            <route type="sid" name="LANKO6X" category="CD"
-                   route="CM 100 PD MN222 T PD MN223 T PD MN232 T PD MN234 T PD MN236 T PD RESBO T PD STP T PD RUBIT T PD LANKO"/>
-            <route type="sid" name="TURIL6X" category="CD"
-                   route="CM 100 PD MN222 T PD MN223 T PD MN232 T PD MN234 T PD MN236 T PD RESBO T PD STP T PD RUBIT T PD TURIL"/>
-            <route type="sid" name="EPOLO6X" category="CD"
-                   route="CM 100 PD MN222 T PD MN223 T PD MN232 T PD MN234 T PD MN236 T PD RESBO T PD EPOLO"/>
-            <route type="sid" name="RUBAS6X" category="ABCD"
-                   route="CM 100 PD MN222 T PD MN223 T PD MN232 T PD MN234 T PD MN236 T PD RESBO T PD RUBAS"/>
-            <route type="sid" name="RUBIT6Y" category="AB"
-                   route="CM 70 PD MN222 T PD MN223 T PD MN232 T PD MN234 T PD MN238 T PD RESBO T PD STP T PD RUBIT"/>
-            <route type="sid" name="LANKO6Y" category="AB"
-                   route="CM 70 PD MN222 T PD MN223 T PD MN232 T PD MN234 T PD MN238 T PD RESBO T PD STP T PD RUBIT T PD LANKO"/>
-            <route type="sid" name="TURIL6Y" category="AB"
-                   route="CM 70 PD MN222 T PD MN223 T PD MN232 T PD MN234 T PD MN238 T PD RESBO T PD STP T PD RUBIT T PD TURIL"/>
-            <route type="sid" name="EPOLO6Y" category="AB"
-                   route="CM 70 PD MN222 T PD MN223 T PD MN232 T PD MN234 T PD MN238 T PD LERMA T PD EPOLO"/>
-            <route type="sid" name="VAREK6X" category="CD"
-                   route="CM 100 PD MN222 T PD MN223 T PD MN232 T PD MN242 T PD OMARD T PD VAREK"/>
-            <route type="sid" name="LONSU6X" category="CD"
-                   route="CM 100 PD MN222 T PD MN223 T PD MN232 T PD MN242 T PD OMARD T PD MERLU T PD LONSU"/>
-            <route type="sid" name="SODRI6X" category="CD"
-                   route="CM 100 PD MN222 T PD MN223 T PD MN232 T PD MN242 T PD OMARD T PD MERLU T PD SODRI"/>
-            <route type="sid" name="VAREK6Y" category="AB"
-                   route="CM 70 PD MN222 T PD MN223 T PD MN232 T PD MN244 T PD OMARD T PD VAREK"/>
-            <route type="sid" name="LONSU6Y" category="AB"
-                   route="CM 70 PD MN222 T PD MN223 T PD MN232 T PD MN244 T PD OMARD T PD MERLU T PD LONSU"/>
-            <route type="sid" name="SODRI6Y" category="AB"
-                   route="CM 70 PD MN222 T PD MN223 T PD MN232 T PD MN244 T PD OMARD T PD MERLU T PD SODRI"/>
-          </routes>
-        </sharedRoutesGroup>
-      </sharedRoutesGroups>
-      <sharedIafRoutesGroups>
-        <sharedIafRoutesGroup groupName="04">
-          <iafRoutes>
-            <route iaf="MUS" route="DM 40 PD AZR/223/22 T PD AZR/223/17 T FH 042"/>
-            <route iaf="NERAS"
-                   route="DM 40 PD AZR/117/26 T PD AZR/130/27 T PD AZR/150/27 T PD AZR/170/27 T PD AZR/190/27 T PD AZR/210/27 T PD AZR/223/17 T FH 042"/>
-          </iafRoutes>
-        </sharedIafRoutesGroup>
-        <sharedIafRoutesGroup groupName="22">
-          <iafRoutes>
-            <route iaf="NERAS" route="DM 40 PD CGS/113/25 T PD CGS/093/23 T DM 30 PD CGS/083/18 T FH 262"/>
-            <route iaf="MUS"
-                   route="DM 50 PD LUC/088/30 T DM 40 PD LUC/088/53 T PD CGS/113/23 T DM 30 PD CGS/093/23 T PD CGS/083/18 T FH 262"/>
-          </iafRoutes>
-        </sharedIafRoutesGroup>
-      </sharedIafRoutesGroups>
+      <daRoutes>
+        <group note="star">
+          <route type="star" name="NISAR6R" mapping="star"                 entryFL="340">
+            <proceedDirect fix="NISAR" />
+            <then />
+            <proceedDirect fix="XIRBI" />
+            <then />
+            <proceedDirect fix="ABDIL" />
+            <then />
+            <proceedDirect fix="GIROL" />
+            <then />
+            <proceedDirect fix="AMFOU" />
+            <then />
+            <speed restriction="below" value="250"/>
+            <proceedDirect fix="TIPIK" />
+            <then />
+            <proceedDirect fix="MUS" />
+            <then />
+            <hold fix="MUS" />
+          </route>
+          <route type="star" name="ABDIL6R" mapping="star" entryFL="190">
+            <proceedDirect fix="ABDIL" />
+            <then />
+            <proceedDirect fix="GIROL" />
+            <then />
+            <proceedDirect fix="AMFOU" />
+            <then />
+            <proceedDirect fix="AMFOU" />
+            <then />
+            <speed restriction="below" value="250"/>
+            <proceedDirect fix="TIPIK" />
+            <then />
+            <proceedDirect fix="MUS" />
+            <then />
+            <hold fix="MUS" />
+          </route>
+          <route type="star" name="ABLAK6R"  mapping="star">
+            <proceedDirect fix="ABLAK" />
+            <then />
+            <proceedDirect fix="ABILI" />
+            <then />
+            <proceedDirect fix="AMFOU" />
+            <then />
+            <speed restriction="below" value="250"/>
+            <proceedDirect fix="TIPIK" />
+            <then />
+            <proceedDirect fix="MUS" />
+            <then />
+            <hold fix="MUS" />
+          </route>
+          <route type="star" name="PERUS6R" mapping="star"                 entryFL="190">
+            <proceedDirect fix="PERUS" />
+            <then />
+            <proceedDirect fix="AMFOU" />
+            <then />
+            <speed restriction="below" value="210"/>
+            <proceedDirect fix="TIPIK" />
+            <then />
+            <proceedDirect fix="MUS" />
+            <then />
+            <hold fix="MUS" />
+          </route>
+          <route type="star" name="BIRGO6C" mapping="star" entryFL="110">
+            <proceedDirect fix="BIRGO" />
+            <then />
+            <proceedDirect fix="LUC" />
+            <then />
+            <proceedDirect fix="MUS" />
+            <then />
+            <hold fix="MUS" />
+          </route>
+          <route type="star" name="VEVAR6R" mapping="star">
+            <proceedDirect fix="VEVAR" />
+            <then />
+            <proceedDirect fix="GAPDO" />
+            <then />
+            <proceedDirect fix="AMGEL" />
+            <then />
+            <proceedDirect fix="MIKRU" />
+            <then />
+            <proceedDirect fix="PIRAM" />
+            <then />
+            <proceedDirect fix="AZR/112/35" />
+            <then />
+            <proceedDirect fix="NERAS" />
+            <then />
+            <hold fix="NERAS" />
+          </route>
+          <route type="star" name="BORDI6R" mapping="star"                 entryFL="170">
+            <proceedDirect fix="BORDI" />
+            <then />
+            <proceedDirect fix="AMGEL" />
+            <then />
+            <proceedDirect fix="MIKRU" />
+            <then />
+            <proceedDirect fix="PIRAM" />
+            <then />
+            <proceedDirect fix="AZR/112/35" />
+            <then />
+            <proceedDirect fix="NERAS" />
+            <then />
+            <hold fix="NERAS" />
+          </route>
+          <route type="star" name="KERIT6C" mapping="star" entryFL="170">
+            <proceedDirect fix="KERIT" />
+            <then />
+            <proceedDirect fix="NIZ/112/51" />
+            <then />
+            <proceedDirect fix="AZR/114/47" />
+            <then />
+            <proceedDirect fix="KESAK" />
+            <then />
+            <proceedDirect fix="NERAS" />
+            <then />
+            <hold fix="NERAS" />
+          </route>
+          <route type="star" name="SODRI6R"  mapping="star">
+            <proceedDirect fix="SODRI" />
+            <then />
+            <proceedDirect fix="KESAK" />
+            <then />
+            <proceedDirect fix="NERAS" />
+            <then />
+            <hold fix="NERAS" />
+          </route>
+          <route type="star" name="LONSU6R"  mapping="star">
+            <proceedDirect fix="LONSU" />
+            <then />
+            <proceedDirect fix="KESAK" />
+            <then />
+            <proceedDirect fix="NERAS" />
+            <then />
+            <hold fix="NERAS" />
+          </route>
+          <route type="star" name="MERLU6C"  mapping="star">
+            <proceedDirect fix="MERLU" />
+            <then />
+            <proceedDirect fix="AZR/121/40" />
+            <then />
+            <proceedDirect fix="NERAS" />
+            <then />
+            <hold fix="NERAS" />
+          </route>
+        </group>
+        <group note="sid04">
+          <route type="sid" name="IRMAR6A" category="CD" mapping="sid04">
+            <altitude direction="climb" value="13000" />
+            <speed restriction="above" value="210"/>
+            <after property="altitude" value="400+" />
+            <heading value="138" direction="nearest" />
+            <after property="distance" value="NIZ/8" />
+            <proceedDirect fix="MN044" />
+            <then />
+            <proceedDirect fix="MN048" />
+            <then />
+            <proceedDirect fix="NC" />
+            <then />
+            <speed restriction="clear" />
+            <proceedDirect fix="BARSO" />
+            <then />
+            <proceedDirect fix="IRMAR" />
+          </route>
+          <route type="sid" name="BADOD6A" category="CD" mapping="sid04">
+            <altitude direction="climb" value="13000" />
+            <speed restriction="above" value="210"/>
+            <after property="altitude" value="400+" />
+            <heading value="138" direction="nearest" />
+            <after property="distance" value="NIZ/8" />
+            <proceedDirect fix="MN044" />
+            <then />
+            <proceedDirect fix="MN048" />
+            <then />
+            <proceedDirect fix="NC" />
+            <then />
+            <speed restriction="clear" />
+            <proceedDirect fix="AMIRO" />
+            <then />
+            <proceedDirect fix="BADOD" />
+          </route>
+          <route type="sid" name="OKTET6A" category="CD" mapping="sid04">
+            <altitude direction="climb" value="13000" />
+            <speed restriction="above" value="210"/>
+            <after property="altitude" value="400+" />
+            <heading value="138" direction="nearest" />
+            <after property="distance" value="NIZ/8" />
+            <proceedDirect fix="MN044" />
+            <then />
+            <proceedDirect fix="MN048" />
+            <then />
+            <proceedDirect fix="NC" />
+            <then />
+            <speed restriction="clear" />
+            <proceedDirect fix="AMIRO" />
+            <then />
+            <proceedDirect fix="OKTET" />
+          </route>
+          <route type="sid" name="BODRU6A" category="ABCD" mapping="sid04">
+            <altitude direction="climb" value="13000" />
+            <speed restriction="above" value="210"/>
+            <after property="altitude" value="400+" />
+            <heading value="138" direction="nearest" />
+            <after property="distance" value="NIZ/8" />
+            <proceedDirect fix="MN044" />
+            <then />
+            <proceedDirect fix="MN048" />
+            <then />
+            <proceedDirect fix="NC" />
+            <then />
+            <speed restriction="clear" />
+            <proceedDirect fix="AMIRO" />
+            <then />
+            <proceedDirect fix="BODRU" />
+          </route>
+          <route type="sid" name="PERUS6A" category="ABCD" mapping="sid04">
+            <altitude direction="climb" value="13000" />
+            <speed restriction="above" value="210"/>
+            <after property="altitude" value="400+" />
+            <heading value="138" direction="nearest" />
+            <after property="distance" value="NIZ/8" />
+            <proceedDirect fix="MN044" />
+            <then />
+            <proceedDirect fix="MN048" />
+            <then />
+            <proceedDirect fix="NC" />
+            <then />
+            <speed restriction="clear" />
+            <proceedDirect fix="AMIRO" />
+            <then />
+            <proceedDirect fix="PERUS" />
+          </route>
+          <route type="sid" name="IRMAR6C" category="AB" mapping="sid04">
+            <altitude direction="climb" value="7000" />
+            <after property="altitude" value="400+" />
+            <heading value="138" direction="nearest" />
+            <after property="distance" value="NIZ/8" />
+            <proceedDirect fix="MN052" />
+            <then />
+            <proceedDirect fix="NIZ" />
+            <then />
+            <proceedDirect fix="BARSO" />
+            <then />
+            <proceedDirect fix="IRMAR" />
+          </route>
+          <route type="sid" name="OKTET6C" category="AB" mapping="sid04">
+            <altitude direction="climb" value="7000" />
+            <after property="altitude" value="400+" />
+            <heading value="138" direction="nearest" />
+            <after property="distance" value="NIZ/8" />
+            <proceedDirect fix="MN052" />
+            <then />
+            <proceedDirect fix="NIZ" />
+            <then />
+            <proceedDirect fix="BARSO" />
+            <then />
+            <proceedDirect fix="OKTET" />
+          </route>
+          <route type="sid" name="BADOD6C" category="ABCD" mapping="sid04">
+            <altitude direction="climb" value="7000" />
+            <after property="altitude" value="400+" />
+            <heading value="138" direction="nearest" />
+            <after property="distance" value="NIZ/8" />
+            <proceedDirect fix="MN052" />
+            <then />
+            <proceedDirect fix="NIZ" />
+            <then />
+            <proceedDirect fix="BADOD" />
+          </route>
+          <route type="sid" name="BASIP6A" category="AB" mapping="sid04">
+            <altitude direction="climb" value="7000" />
+            <after property="altitude" value="400+" />
+            <heading value="138" direction="nearest" />
+            <after property="distance" value="NIZ/8" />
+            <proceedDirect fix="MN052" />
+            <then />
+            <proceedDirect fix="MN054" />
+            <then />
+            <proceedDirect fix="USANO" />
+            <then />
+            <proceedDirect fix="TIVNO" />
+            <then />
+            <proceedDirect fix="BASIP" />
+          </route>
+          <route type="sid" name="RUBIT6A" category="CD" mapping="sid04">
+            <altitude direction="climb" value="10000" />
+            <after property="altitude" value="400+" />
+            <heading value="138" direction="nearest" />
+            <after property="distance" value="NIZ/8" />
+            <proceedDirect fix="MN044" />
+            <then />
+            <proceedDirect fix="MN048" />
+            <then />
+            <proceedDirect fix="MN236" />
+            <then />
+            <proceedDirect fix="RESBO" />
+            <then />
+            <proceedDirect fix="STP" />
+            <then />
+            <proceedDirect fix="RUBIT" />
+          </route>
+          <route type="sid" name="LANKO6A" category="CD" mapping="sid04">
+            <altitude direction="climb" value="10000" />
+            <after property="altitude" value="400+" />
+            <heading value="138" direction="nearest" />
+            <after property="distance" value="NIZ/8" />
+            <proceedDirect fix="MN044" />
+            <then />
+            <proceedDirect fix="MN048" />
+            <then />
+            <proceedDirect fix="MN236" />
+            <then />
+            <proceedDirect fix="RESBO" />
+            <then />
+            <proceedDirect fix="STP" />
+            <then />
+            <proceedDirect fix="RUBIT" />
+            <then />
+            <proceedDirect fix="LANKO" />
+          </route>
+          <route type="sid" name="TURIL6A" category="CD" mapping="sid04">
+            <altitude direction="climb" value="10000" />
+            <after property="altitude" value="400+" />
+            <heading value="138" direction="nearest" />
+            <after property="distance" value="NIZ/8" />
+            <proceedDirect fix="MN044" />
+            <then />
+            <proceedDirect fix="MN048" />
+            <then />
+            <proceedDirect fix="MN236" />
+            <then />
+            <proceedDirect fix="RESBO" />
+            <then />
+            <proceedDirect fix="STP" />
+            <then />
+            <proceedDirect fix="RUBIT" />
+            <then />
+            <proceedDirect fix="TURIL" />
+          </route>
+          <route type="sid" name="EPOLO6A" category="CD" mapping="sid04">
+            <altitude direction="climb" value="10000" />
+            <after property="altitude" value="400+" />
+            <heading value="138" direction="nearest" />
+            <after property="distance" value="NIZ/8" />
+            <proceedDirect fix="MN044" />
+            <then />
+            <proceedDirect fix="MN048" />
+            <then />
+            <proceedDirect fix="MN236" />
+            <then />
+            <proceedDirect fix="RESBO" />
+            <then />
+            <proceedDirect fix="EPOLO" />
+          </route>
+          <route type="sid" name="RUBAS6A" category="ABCD" mapping="sid04">
+            <altitude direction="climb" value="10000" />
+            <after property="altitude" value="400+" />
+            <heading value="138" direction="nearest" />
+            <after property="distance" value="NIZ/8" />
+            <proceedDirect fix="MN044" />
+            <then />
+            <proceedDirect fix="MN048" />
+            <then />
+            <proceedDirect fix="MN236" />
+            <then />
+            <proceedDirect fix="RESBO" />
+            <then />
+            <proceedDirect fix="RUBAS" />
+          </route>
+          <route type="sid" name="RUBIT6B" category="AB" mapping="sid04">
+            <altitude direction="climb" value="7000" />
+            <after property="altitude" value="400+" />
+            <heading value="138" direction="nearest" />
+            <after property="distance" value="NIZ/8" />
+            <proceedDirect fix="MN044" />
+            <then />
+            <proceedDirect fix="MN048" />
+            <then />
+            <proceedDirect fix="MN234" />
+            <then />
+            <proceedDirect fix="MN238" />
+            <then />
+            <proceedDirect fix="RESBO" />
+            <then />
+            <proceedDirect fix="STP" />
+            <then />
+            <proceedDirect fix="RUBIT" />
+          </route>
+          <route type="sid" name="LANKO6B" category="AB" mapping="sid04">
+            <altitude direction="climb" value="7000" />
+            <after property="altitude" value="400+" />
+            <heading value="138" direction="nearest" />
+            <after property="distance" value="NIZ/8" />
+            <proceedDirect fix="MN044" />
+            <then />
+            <proceedDirect fix="MN048" />
+            <then />
+            <proceedDirect fix="MN234" />
+            <then />
+            <proceedDirect fix="MN238" />
+            <then />
+            <proceedDirect fix="RESBO" />
+            <then />
+            <proceedDirect fix="STP" />
+            <then />
+            <proceedDirect fix="RUBIT" />
+            <then />
+            <proceedDirect fix="LANKO" />
+          </route>
+          <route type="sid" name="TURIL6B" category="AB" mapping="sid04">
+            <altitude direction="climb" value="7000" />
+            <after property="altitude" value="400+" />
+            <heading value="138" direction="nearest" />
+            <after property="distance" value="NIZ/8" />
+            <proceedDirect fix="MN044" />
+            <then />
+            <proceedDirect fix="MN048" />
+            <then />
+            <proceedDirect fix="MN234" />
+            <then />
+            <proceedDirect fix="MN238" />
+            <then />
+            <proceedDirect fix="RESBO" />
+            <then />
+            <proceedDirect fix="STP" />
+            <then />
+            <proceedDirect fix="RUBIT" />
+            <then />
+            <proceedDirect fix="TURIL" />
+          </route>
+          <route type="sid" name="EPOLO6B" category="AB" mapping="sid04">
+            <altitude direction="climb" value="7000" />
+            <after property="altitude" value="400+" />
+            <heading value="138" direction="nearest" />
+            <after property="distance" value="NIZ/8" />
+            <proceedDirect fix="MN044" />
+            <then />
+            <proceedDirect fix="MN048" />
+            <then />
+            <proceedDirect fix="MN234" />
+            <then />
+            <proceedDirect fix="MN238" />
+            <then />
+            <proceedDirect fix="LERMA" />
+            <then />
+            <proceedDirect fix="EPOLO" />
+          </route>
+          <route type="sid" name="VAREK6A" category="CD" mapping="sid04">
+            <altitude direction="climb" value="10000" />
+            <after property="altitude" value="400+" />
+            <heading value="138" direction="nearest" />
+            <after property="distance" value="NIZ/8" />
+            <proceedDirect fix="MN044" />
+            <then />
+            <proceedDirect fix="MN046" />
+            <then />
+            <proceedDirect fix="OMARD" />
+            <then />
+            <proceedDirect fix="VAREK" />
+          </route>
+          <route type="sid" name="LONSU6A" category="CD" mapping="sid04">
+            <altitude direction="climb" value="10000" />
+            <after property="altitude" value="400+" />
+            <heading value="138" direction="nearest" />
+            <after property="distance" value="NIZ/8" />
+            <proceedDirect fix="MN044" />
+            <then />
+            <proceedDirect fix="MN046" />
+            <then />
+            <proceedDirect fix="OMARD" />
+            <then />
+            <proceedDirect fix="MERLU" />
+            <then />
+            <proceedDirect fix="LONSU" />
+          </route>
+          <route type="sid" name="SODRI6A" category="CD" mapping="sid04">
+            <altitude direction="climb" value="10000" />
+            <after property="altitude" value="400+" />
+            <heading value="138" direction="nearest" />
+            <after property="distance" value="NIZ/8" />
+            <proceedDirect fix="MN044" />
+            <then />
+            <proceedDirect fix="MN046" />
+            <then />
+            <proceedDirect fix="OMARD" />
+            <then />
+            <proceedDirect fix="MERLU" />
+            <then />
+            <proceedDirect fix="SODRI" />
+          </route>
+          <route type="sid" name="VAREK6B" category="AB" mapping="sid04">
+            <altitude direction="climb" value="7000" />
+            <after property="altitude" value="400+" />
+            <heading value="138" direction="nearest" />
+            <after property="distance" value="NIZ/8" />
+            <proceedDirect fix="MN044" />
+            <then />
+            <proceedDirect fix="MN048" />
+            <then />
+            <proceedDirect fix="MN244" />
+            <then />
+            <proceedDirect fix="OMARD" />
+            <then />
+            <proceedDirect fix="VAREK" />
+          </route>
+          <route type="sid" name="LONSU6B" category="AB" mapping="sid04">
+            <altitude direction="climb" value="7000" />
+            <after property="altitude" value="400+" />
+            <heading value="138" direction="nearest" />
+            <after property="distance" value="NIZ/8" />
+            <proceedDirect fix="MN044" />
+            <then />
+            <proceedDirect fix="MN048" />
+            <then />
+            <proceedDirect fix="MN244" />
+            <then />
+            <proceedDirect fix="OMARD" />
+            <then />
+            <proceedDirect fix="MERLU" />
+            <then />
+            <proceedDirect fix="LONSU" />
+          </route>
+          <route type="sid" name="SODRI6B" category="AB" mapping="sid04">
+            <altitude direction="climb" value="7000" />
+            <after property="altitude" value="400+" />
+            <heading value="138" direction="nearest" />
+            <after property="distance" value="NIZ/8" />
+            <proceedDirect fix="MN044" />
+            <then />
+            <proceedDirect fix="MN048" />
+            <then />
+            <proceedDirect fix="MN244" />
+            <then />
+            <proceedDirect fix="OMARD" />
+            <then />
+            <proceedDirect fix="MERLU" />
+            <then />
+            <proceedDirect fix="SODRI" />
+          </route>
+        </group>
+        <group note="sid22">
+          <route type="sid" name="IRMAR6X" category="CD" mapping="sid22">
+            <altitude direction="climb" value="13000" />
+            <proceedDirect fix="MN222" />
+            <then />
+            <proceedDirect fix="MN223" />
+            <then />
+            <speed restriction="below" value="210"/>
+            <proceedDirect fix="MN224" />
+            <then />
+            <proceedDirect fix="MN226" />
+            <then />
+            <speed restriction="clear" />
+            <proceedDirect fix="MN228" />
+            <then />
+            <proceedDirect fix="BARSO" />
+            <then />
+            <proceedDirect fix="IRMAR" />
+          </route>
+          <route type="sid" name="BADOD6X" category="CD" mapping="sid22">
+            <altitude direction="climb" value="13000" />
+            <proceedDirect fix="MN222" />
+            <then />
+            <proceedDirect fix="MN223" />
+            <then />
+            <speed restriction="below" value="210"/>
+            <proceedDirect fix="MN224" />
+            <then />
+            <proceedDirect fix="MN226" />
+            <then />
+            <speed restriction="clear" />
+            <proceedDirect fix="AMIRO" />
+            <then />
+            <proceedDirect fix="BADOD" />
+          </route>
+          <route type="sid" name="OKTET6X" category="CD" mapping="sid22">
+            <altitude direction="climb" value="13000" />
+            <proceedDirect fix="MN222" />
+            <then />
+            <proceedDirect fix="MN223" />
+            <then />
+            <speed restriction="below" value="210"/>
+            <proceedDirect fix="MN224" />
+            <then />
+            <proceedDirect fix="MN226" />
+            <then />
+            <speed restriction="clear" />
+            <proceedDirect fix="AMIRO" />
+            <then />
+            <proceedDirect fix="OKTET" />
+          </route>
+          <route type="sid" name="BODRU6X" category="ABCD" mapping="sid22">
+            <altitude direction="climb" value="13000" />
+            <proceedDirect fix="MN222" />
+            <then />
+            <proceedDirect fix="MN223" />
+            <then />
+            <speed restriction="below" value="210"/>
+            <proceedDirect fix="MN224" />
+            <then />
+            <proceedDirect fix="MN226" />
+            <then />
+            <speed restriction="clear" />
+            <proceedDirect fix="AMIRO" />
+            <then />
+            <proceedDirect fix="BODRU" />
+          </route>
+          <route type="sid" name="PERUS6X" category="ABCD" mapping="sid22">
+            <altitude direction="climb" value="13000" />
+            <proceedDirect fix="MN222" />
+            <then />
+            <proceedDirect fix="MN223" />
+            <then />
+            <speed restriction="below" value="210"/>
+            <proceedDirect fix="MN224" />
+            <then />
+            <proceedDirect fix="MN226" />
+            <then />
+            <speed restriction="clear" />
+            <proceedDirect fix="AMIRO" />
+            <then />
+            <proceedDirect fix="PERUS" />
+          </route>
+          <route type="sid" name="IRMAR6Z" category="AB" mapping="sid22">
+            <proceedDirect fix="MN222" />
+            <then />
+            <proceedDirect fix="MN223" />
+            <then />
+            <proceedDirect fix="MN246" />
+            <then />
+            <proceedDirect fix="MN248" />
+            <then />
+            <proceedDirect fix="NIZ" />
+            <then />
+            <proceedDirect fix="BARSO" />
+            <then />
+            <proceedDirect fix="IRMAR" />
+
+          </route>
+          <route type="sid" name="OKTET6Z" category="AB" mapping="sid22">
+            <proceedDirect fix="MN222" />
+            <then />
+            <proceedDirect fix="MN223" />
+            <then />
+            <proceedDirect fix="MN246" />
+            <then />
+            <proceedDirect fix="MN248" />
+            <then />
+            <proceedDirect fix="NIZ" />
+            <then />
+            <proceedDirect fix="BARSO" />
+            <then />
+            <proceedDirect fix="OKTET" />
+          </route>
+          <route type="sid" name="BADOD6Z" category="AB" mapping="sid22">
+            <proceedDirect fix="MN222" />
+            <then />
+            <proceedDirect fix="MN223" />
+            <then />
+            <proceedDirect fix="MN246" />
+            <then />
+            <proceedDirect fix="MN248" />
+            <then />
+            <proceedDirect fix="NIZ" />
+            <then />
+            <proceedDirect fix="BADOD" />
+          </route>
+          <route type="sid" name="BASIP6X" category="ABCD" mapping="sid22">
+            <altitude direction="climb" value="7000" />
+            <proceedDirect fix="MN222" />
+            <then />
+            <proceedDirect fix="MN223" />
+            <then />
+            <proceedDirect fix="MN246" />
+            <then />
+            <proceedDirect fix="MN248" />
+            <then />
+            <proceedDirect fix="USANO" />
+            <then />
+            <proceedDirect fix="TIVNO" />
+            <then />
+            <proceedDirect fix="BASIP" />
+          </route>
+          <route type="sid" name="RUBIT6X" category="CD" mapping="sid22">
+            <altitude direction="climb" value="10000" />
+            <proceedDirect fix="MN222" />
+            <then />
+            <proceedDirect fix="MN223" />
+            <then />
+            <proceedDirect fix="MN232" />
+            <then />
+            <proceedDirect fix="MN234" />
+            <then />
+            <proceedDirect fix="MN236" />
+            <then />
+            <proceedDirect fix="RESBO" />
+            <then />
+            <proceedDirect fix="STP" />
+            <then />
+            <proceedDirect fix="RUBIT" />
+          </route>
+          <route type="sid" name="LANKO6X" category="CD" mapping="sid22">
+            <altitude direction="climb" value="10000" />
+            <proceedDirect fix="MN222" />
+            <then />
+            <proceedDirect fix="MN223" />
+            <then />
+            <proceedDirect fix="MN232" />
+            <then />
+            <proceedDirect fix="MN234" />
+            <then />
+            <proceedDirect fix="MN236" />
+            <then />
+            <proceedDirect fix="RESBO" />
+            <then />
+            <proceedDirect fix="STP" />
+            <then />
+            <proceedDirect fix="RUBIT" />
+            <then />
+            <proceedDirect fix="LANKO" />
+          </route>
+          <route type="sid" name="TURIL6X" category="CD" mapping="sid22">
+            <altitude direction="climb" value="10000" />
+            <proceedDirect fix="MN222" />
+            <then />
+            <proceedDirect fix="MN223" />
+            <then />
+            <proceedDirect fix="MN232" />
+            <then />
+            <proceedDirect fix="MN234" />
+            <then />
+            <proceedDirect fix="MN236" />
+            <then />
+            <proceedDirect fix="RESBO" />
+            <then />
+            <proceedDirect fix="STP" />
+            <then />
+            <proceedDirect fix="RUBIT" />
+            <then />
+            <proceedDirect fix="TURIL" />
+          </route>
+          <route type="sid" name="EPOLO6X" category="CD" mapping="sid22">
+            <altitude direction="climb" value="10000" />
+            <proceedDirect fix="MN222" />
+            <then />
+            <proceedDirect fix="MN223" />
+            <then />
+            <proceedDirect fix="MN232" />
+            <then />
+            <proceedDirect fix="MN234" />
+            <then />
+            <proceedDirect fix="MN236" />
+            <then />
+            <proceedDirect fix="RESBO" />
+            <then />
+            <proceedDirect fix="EPOLO" />
+          </route>
+          <route type="sid" name="RUBAS6X" category="ABCD" mapping="sid22">
+            <altitude direction="climb" value="10000" />
+            <proceedDirect fix="MN222" />
+            <then />
+            <proceedDirect fix="MN223" />
+            <then />
+            <proceedDirect fix="MN232" />
+            <then />
+            <proceedDirect fix="MN234" />
+            <then />
+            <proceedDirect fix="MN236" />
+            <then />
+            <proceedDirect fix="RESBO" />
+            <then />
+            <proceedDirect fix="RUBAS" />
+          </route>
+          <route type="sid" name="RUBIT6Y" category="AB" mapping="sid22">
+            <altitude direction="climb" value="7000" />
+            <proceedDirect fix="MN222" />
+            <then />
+            <proceedDirect fix="MN223" />
+            <then />
+            <proceedDirect fix="MN232" />
+            <then />
+            <proceedDirect fix="MN234" />
+            <then />
+            <proceedDirect fix="MN238" />
+            <then />
+            <proceedDirect fix="RESBO" />
+            <then />
+            <proceedDirect fix="STP" />
+            <then />
+            <proceedDirect fix="RUBIT" />
+          </route>
+          <route type="sid" name="LANKO6Y" category="AB" mapping="sid22">
+            <altitude direction="climb" value="7000" />
+            <proceedDirect fix="MN222" />
+            <then />
+            <proceedDirect fix="MN223" />
+            <then />
+            <proceedDirect fix="MN232" />
+            <then />
+            <proceedDirect fix="MN234" />
+            <then />
+            <proceedDirect fix="MN238" />
+            <then />
+            <proceedDirect fix="RESBO" />
+            <then />
+            <proceedDirect fix="STP" />
+            <then />
+            <proceedDirect fix="RUBIT" />
+            <then />
+            <proceedDirect fix="LANKO" />
+          </route>
+          <route type="sid" name="TURIL6Y" category="AB" mapping="sid22">
+            <altitude direction="climb" value="7000" />
+            <proceedDirect fix="MN222" />
+            <then />
+            <proceedDirect fix="MN223" />
+            <then />
+            <proceedDirect fix="MN232" />
+            <then />
+            <proceedDirect fix="MN234" />
+            <then />
+            <proceedDirect fix="MN238" />
+            <then />
+            <proceedDirect fix="RESBO" />
+            <then />
+            <proceedDirect fix="STP" />
+            <then />
+            <proceedDirect fix="RUBIT" />
+            <then />
+            <proceedDirect fix="TURIL" />
+          </route>
+          <route type="sid" name="EPOLO6Y" category="AB" mapping="sid22">
+            <altitude direction="climb" value="7000" />
+            <proceedDirect fix="MN222" />
+            <then />
+            <proceedDirect fix="MN223" />
+            <then />
+            <proceedDirect fix="MN232" />
+            <then />
+            <proceedDirect fix="MN234" />
+            <then />
+            <proceedDirect fix="MN238" />
+            <then />
+            <proceedDirect fix="LERMA" />
+            <then />
+            <proceedDirect fix="EPOLO" />
+          </route>
+          <route type="sid" name="VAREK6X" category="CD" mapping="sid22">
+            <altitude direction="climb" value="10000" />
+            <proceedDirect fix="MN222" />
+            <then />
+            <proceedDirect fix="MN223" />
+            <then />
+            <proceedDirect fix="MN232" />
+            <then />
+            <proceedDirect fix="MN242" />
+            <then />
+            <proceedDirect fix="OMARD" />
+            <then />
+            <proceedDirect fix="VAREK" />
+          </route>
+          <route type="sid" name="LONSU6X" category="CD" mapping="sid22">
+            <altitude direction="climb" value="10000" />
+            <proceedDirect fix="MN222" />
+            <then />
+            <proceedDirect fix="MN223" />
+            <then />
+            <proceedDirect fix="MN232" />
+            <then />
+            <proceedDirect fix="MN242" />
+            <then />
+            <proceedDirect fix="OMARD" />
+            <then />
+            <proceedDirect fix="MERLU" />
+            <then />
+            <proceedDirect fix="LONSU" />
+          </route>
+          <route type="sid" name="SODRI6X" category="CD" mapping="sid22">
+            <altitude direction="climb" value="10000" />
+            <proceedDirect fix="MN222" />
+            <then />
+            <proceedDirect fix="MN223" />
+            <then />
+            <proceedDirect fix="MN232" />
+            <then />
+            <proceedDirect fix="MN242" />
+            <then />
+            <proceedDirect fix="OMARD" />
+            <then />
+            <proceedDirect fix="MERLU" />
+            <then />
+            <proceedDirect fix="SODRI" />
+          </route>
+          <route type="sid" name="VAREK6Y" category="AB" mapping="sid22">
+            <altitude direction="climb" value="7000" />
+            <proceedDirect fix="MN222" />
+            <then />
+            <proceedDirect fix="MN223" />
+            <then />
+            <proceedDirect fix="MN232" />
+            <then />
+            <proceedDirect fix="MN244" />
+            <then />
+            <proceedDirect fix="OMARD" />
+            <then />
+            <proceedDirect fix="VAREK" />
+          </route>
+          <route type="sid" name="LONSU6Y" category="AB" mapping="sid22">
+            <altitude direction="climb" value="7000" />
+            <proceedDirect fix="MN222" />
+            <then />
+            <proceedDirect fix="MN223" />
+            <then />
+            <proceedDirect fix="MN232" />
+            <then />
+            <proceedDirect fix="MN244" />
+            <then />
+            <proceedDirect fix="OMARD" />
+            <then />
+            <proceedDirect fix="MERLU" />
+            <then />
+            <proceedDirect fix="LONSU" />
+          </route>
+          <route type="sid" name="SODRI6Y" category="AB" mapping="sid22">
+            <altitude direction="climb" value="7000" />
+            <proceedDirect fix="MN222" />
+            <then />
+            <proceedDirect fix="MN223" />
+            <then />
+            <proceedDirect fix="MN232" />
+            <then />
+            <proceedDirect fix="MN244" />
+            <then />
+            <proceedDirect fix="OMARD" />
+            <then />
+            <proceedDirect fix="MERLU" />
+            <then />
+            <proceedDirect fix="SODRI" />
+          </route>
+        </group>
+      </daRoutes>
+      <iafRoutes>
+        <group note="04">
+          <iafRoute iaf="MUS" iafMapping="04">
+            <altitude direction="descend" value="4000" />
+            <proceedDirect fix="AZR/223/22" />
+            <then />
+            <proceedDirect fix="AZR/223/17" />
+            <then />
+            <heading value="042" direction="nearest" />
+          </iafRoute>
+          <iafRoute iaf="NERAS" iafMapping="04">
+            <altitude direction="descend" value="4000" />
+            <proceedDirect fix="AZR/117/26" />
+            <then />
+            <proceedDirect fix="AZR/130/27" />
+            <then />
+            <proceedDirect fix="AZR/150/27" />
+            <then />
+            <proceedDirect fix="AZR/170/27" />
+            <then />
+            <proceedDirect fix="AZR/190/27" />
+            <then />
+            <proceedDirect fix="AZR/210/27" />
+            <then />
+            <proceedDirect fix="AZR/223/17" />
+            <then />
+            <heading value="042" direction="nearest" />
+          </iafRoute>
+        </group>
+        <group note="22">
+          <iafRoute iaf="NERAS"  iafMapping="22">
+            <altitude direction="descend" value="4000" />
+            <proceedDirect fix="CGS/113/25" />
+            <then />
+            <proceedDirect fix="CGS/093/23" />
+            <then />
+            <altitude direction="descend" value="3000" />
+            <proceedDirect fix="CGS/083/18" />
+            <then />
+            <heading value="262" direction="nearest" />
+          </iafRoute>
+          <iafRoute iaf="MUS" iafMapping="22">
+            <altitude direction="descend" value="5000" />
+            <proceedDirect fix="LUC/088/30" />
+            <then />
+            <altitude direction="descend" value="4000" />
+            <proceedDirect fix="LUC/088/53" />
+            <then />
+            <proceedDirect fix="CGS/113/23" />
+            <then />
+            <altitude direction="descend" value="3000" />
+            <proceedDirect fix="CGS/093/23" />
+            <then />
+            <proceedDirect fix="CGS/083/18" />
+            <then />
+            <heading value="262" direction="nearest" />
+          </iafRoute>
+        </group>
+      </iafRoutes>
+      <gaRoutes>
+        <gaRoute gaMapping="04Lils">
+          <altitude direction="climb" value="2000" />
+          <speed restriction="below" value="220"/>
+          <heading value="043" direction="nearest" />
+          <after property="distance" value="NIZ/1.2" />
+          <proceedDirect fix="AZR/117/10" />
+          <then />
+          <speed restriction="clear" />
+          <proceedDirect fix="NERAS" />
+        </gaRoute>
+        <gaRoute gaMapping="04Lvor">
+          <altitude direction="climb" value="2000" />
+          <speed restriction="below" value="220"/>
+          <proceedDirect fix="AZR/117/10" />
+          <then />
+          <speed restriction="clear" />
+          <proceedDirect fix="NERAS" />
+        </gaRoute>
+        <gaRoute gaMapping="22Rvor">
+          <altitude direction="climb" value="3000" />
+          <proceedDirect fix="CGS/113/10" />
+          <then />
+          <proceedDirect fix="NERAS" />
+        </gaRoute>
+        <gaRoute gaMapping="04Rils">
+          <speed restriction="above" value="220"/>
+          <after property="altitude" value="200+" />
+          <speed restriction="clear" />
+          <proceedDirect fix="NERAS" />
+        </gaRoute>
+      </gaRoutes>
     </airport>
   </airports>
   <navaids>

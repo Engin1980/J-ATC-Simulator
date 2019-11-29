@@ -30,28 +30,13 @@
       <runways>
         <runway>
           <thresholds>
-            <threshold name="08R" coordinate="51 08 45.10 N 000 12 24.59 W" initialDepartureAltitude="4000" includeRoutesGroups="stars">
-              <routes>
-                <route type="sid" name="LAM1Z"
-                       route="AL 40 PD KKE02 T PD KKE12 T AL 50 PD SUNAV T PD KKE35 T PD KKN43 T AL 60 PD KKN48 T PD LAM"/>
-                <route type="sid" name="BIG2Z"
-                       route="AL 40 PD KKE04 T PD KKE10 T AL 50 PD KKE17 T SL 210 AL 60 PD KKE23 T PD BIG"/>
-                <route type="sid" name="CLN2Z"
-                       route="AL 40 PD KKE04 T PD KKE10 T AL 50 PD KKE17 T PD KKE25 T PD DET T AL 60 PD KKN52 T PD DAGGA T PD CLN"/>
-                <route type="sid" name="KENET1Z"
-                       route="SL 220 AL 40 PD KKE05 T PD KKN09 T SC PD KKW19 T PD KKW26 T PD KKW44 T PD KENET"/>
-                <route type="sid" name="SAM3Z"
-                       route="SL 220 AL 40 PD KKE05 T PD KKN09 T SC PD KKW19 T PD KKW26 T PD SAM"/>
-                <route type="sid" name="SFD4Z"
-                       route="SL 220 AL 40 PD KKE03 T SC PD KKS08 T PD KKS12 T AL 50 PD KKS16 T AL 60 PD KKS22 T PD SFD"/>
-                <route type="sid" name="ODVIK2Z"
-                       route="AL 40 PD KKE04 T PD KKE10 T AL 50 PD KKE17 T AL 60 PD ODVIK"/>
-              </routes>
+            <threshold name="08R" coordinate="51 08 45.10 N 000 12 24.59 W" initialDepartureAltitude="4000"
+                       mapping="stars;08R">
               <approaches>
-                <gnssApproach gaRoute="CM 30 AA 20+ TR 179" radial="078" includeIafRoutesGroups="26L" daA="700"
+                <gnssApproach radial="078" gaMapping="08R" iafMapping="08R" daA="700"
                               daB="700"
                               daC="700" daD="700" initialAltitude="3000"/>
-                <ilsApproach gaRoute="CM 30 AA 20+ TR 179" radial="078" includeIafRoutesGroups="26L"
+                <ilsApproach gaMapping="08R" iafMapping="08R" radial="078"
                              initialAltitude="3000">
                   <categories>
                     <category type="I" daA="336" daB="345" daC="357" daD="370"/>
@@ -60,57 +45,29 @@
                 </ilsApproach>
               </approaches>
             </threshold>
-            <threshold name="26L" coordinate="51 09 02.43 N 000 10 18.93 W" initialDepartureAltitude="4000" includeRoutesGroups="stars"
-                       preferred="true">
-              <routes>
-                <route type="sid" name="BOGNA1X"
-                       route="SL 220 AL 40 PD KKW06 T PD KKW08 T PD KKS11 T AL 50 SC PD KKS17 T AL 60 PD KKS20 T PD KKS25 T PD BOGNA"/>
-                <route type="sid" name="LAM2X"
-                       route="SL 220 AL 40 PD KKW02 T PD KKE09 T SL 250 PD KKE11 T AL 50 PD SUNAV T PD KKE35 T PD KKN43 T AL 60 PD KKN48 T PD LAM"/>
-                <route type="sid" name="BIG2X"
-                       route="SL 220 AL 40 PD KKW02 T PD KKE09 T SL 230 PD KKE11 T PD KKE15 T AL 50 PD SUNAV T AL 60 PD KKE38 T PD BIG"/>
-                <route type="sid" name="CLN4X"
-                       route="SL 220 AL 40 PD KKW02 T PD KKE09 T SC PD KKE11 T PD KKE15 T AL 50 PD SUNAV T PD KKE42 T PD DET T AL 60 PD KKN52 T PD DAGGA T PD CLN"/>
-                <route type="sid" name="HARDY1X"
-                       route="SL 220 AL 40 PD KKW06 T PD KKW08 T PD KKS11 T SC AL 50 PD KKS17 T AL 60 PD KKS20 T PD KKS25 T PD BOGNA T PD HARDY"/>
-                <route type="sid" name="KENET1X"
-                       route="PD KKW07 T PD KKW09 T PD MID T PD KKW28 T PD KENET"/>
-                <route type="sid" name="SAM1X"
-                       route="PD KKW07 T PD KKW09 T PD MID T PD SAM"/>
-                <route type="sid" name="SFD1X"
-                       route="SL 220 AL 40 PD KKW06 T PD KKW10 T PD KKW11 T SC PD KKS13 T AL 50 PD KKS19 T AL 60 PD KKS21 T PD SFD"/>
-                <route type="sid" name="WIZAD1X"
-                       route="SL 220 AL 40 PD KKW04 T PD KKS06 T SC PD KKS09 T PD KKS14 T AL 50 PD MAY T AL 60 PD KKS33 T PD WIZAD"/>
-                <route type="sid" name="ADMAG2X"
-                       route="SL 220 AL 40 PD KKW02 T PD KKW09 T SC PD KKE11 T PD KKE15 T AL 50 PD SUNAV T AL 60 PD ADMAG"/>
-                <route type="sid" name="TIGER1X" mainFix="LAM"
-                       route="SL 220 AL 40 PD KKW04 T PD KKS06 T SC PD KKS09 T PD KKS14 T AL 50 PD MAY T PD KKS36 T PD LAM"/>
-                <route type="sid" name="DAGGA1X"
-                       route="SL 220 AL 40 PD KKW04 T PD KKS06 T SC PD KKS09 T PD KKS14 T AL 50 PD MAY T PD KKS36 T PD DET T PD DAGGA T PD CLN"/>
-              </routes>
+            <threshold name="26L" coordinate="51 09 02.43 N 000 10 18.93 W" initialDepartureAltitude="4000"
+                       mapping="stars;26L">
               <approaches>
-                <ilsApproach gaRoute="CM 30 AA 20+ FH 179" radial="258" includeIafRoutesGroups="08R"
+                <ilsApproach gaMapping="26L" iafMapping="26L" radial="258"
                              initialAltitude="2000">
                   <categories>
                     <category type="I" daA="335" daB="344" daC="356" daD="370"/>
                     <category type="II" daA="245" daB="255" daC="268" daD="281"/>
                   </categories>
                 </ilsApproach>
-                <gnssApproach gaRoute="CM 30 AA 20+ FH 179" radial="258" includeIafRoutesGroups="08R" daA="580"
+                <gnssApproach gaMapping="26L" iafMapping="26L" radial="258" daA="580"
                               daB="580" daC="580" daD="580" initialAltitude="2000"/>
               </approaches>
             </threshold>
           </thresholds>
         </runway>
-      </runways>
-      <inactiveRunways>
-        <runway>
+        <inactiveRunway>
           <thresholds>
             <threshold name="08L" coordinate="51 08 51.04 N 000 12 29.18 W"/>
             <threshold name="26R" coordinate="51 09 03.69 N 000 10 57.40 W"/>
           </thresholds>
-        </runway>
-      </inactiveRunways>
+        </inactiveRunway>
+      </runways>
       <holds>
         <hold navaidName="TIMBA" inboundRadial="309" turn="right"/>
         <hold navaidName="ARNUN" inboundRadial="217" turn="right"/>
@@ -126,48 +83,562 @@
         <!--
         -->
       </holds>
-      <sharedRoutesGroups>
-        <sharedRoutesGroup groupName="stars">
-          <routes>
-            <route type="star" name="TELTU1G" entryFL="220"
-                   route="PD TELTU T SL 220 PD SFD T PD TIMBA T H TIMBA"/>
-            <route type="star" name="AMDUT1G" entryFL="220"
-                   route="PD AMDUT T SL 220 PD SFD T PD WILLO T H WILLO"/>
-            <route type="star" name="ARNUN1G" entryFL="220"
-                   route="PD ARNUN T PD HASTY T SL 220 PD SFD T PD WILLO T H WILLO"/>
-            <route type="star" name="OTMET1G" entryFL="220"
-                   route="PD OTMET T PD SOKDU T PD NEDUL T SL 250 PD TELTU T SL 220 PD HOLLY T PD WILLO T H WILLO"/>
-            <route type="star" name="VASUX1G" entryFL="220"
-                   route="PD VASUX T PD DISVO T SL 250 PD TELTU T SL 220 PD HOLLY T PD WILLO T H WILLO"/>
-            <route type="star" name="TIMBA2G" entryFL="220" mainFix="NEVIL"
-                   route="PD NEVIL T PD OSPOL T PD NETVU T PD ELDAX T PD AMDUT T SL 250 PD KKE64 T PD TIMBA T H TIMBA"/>
-            <route type="star" name="TIMBA4B" mainFix="KUNAV"
-                   route="PD KUNAV T PD AMDUT T SL 250 PD KKE64 T PD TIMBA T H TIMBA"/>
-            <route type="star" name="TIMBA3F" mainFix="KONAN"
-                   route="PD KONAN T PD ARNUN T SL 250 PD KKE63 T PD LARCK T PD TIMBA T H TIMBA"/>
-            <route type="star" name="TIMBA1J" mainFix="ERING"
-                   route="PD ERING T PD ABTUM T PD ARNUN T SL 250 PD KKE63 T PD LARCK T PD TIMBA T H TIMBA"/>
-            <route type="star" name="TIMBA1K" mainFix="TEBRA"
-                   route="PD TEBRA T PD ABTUM T PD ARNUN T SL 250 PD KKE63 T PD LARCK T PD TIMBA T H TIMBA"/>
-          </routes>
-        </sharedRoutesGroup>
-      </sharedRoutesGroups>
-      <sharedIafRoutesGroups>
-        <sharedIafRoutesGroup groupName="26L">
-          <iafRoutes>
-            <route iaf="TIMBA" route="DM 40 PD MAY T PD MAY/275/23 T TR 050 T DM 30 FH 080"/>
-            <route iaf="WILLO" route="DM 40 PD MID/105/5 T TR 050 T DM 30 FH 080"/>
-          </iafRoutes>
-        </sharedIafRoutesGroup>
-        <sharedIafRoutesGroup groupName="08R">
-          <iafRoutes>
-            <route iaf="TIMBA" route="DM 40 PD MAY T DM 30 PD MAY/003/3 T DM 20 PD MAY/003/8.5 T FH 290"/>
-            <route iaf="WILLO"
-                   route="DM 40 PD MID/117/22 T PD MAY T DM 30 PD MAY/003/3 T DM 20 PD MAY/003/8.5 T FH 290"/>
-          </iafRoutes>
-        </sharedIafRoutesGroup>
-      </sharedIafRoutesGroups>
-
+      <daRoutes>
+        <group note="stars">
+          <route type="star" name="TELTU1G" entryFL="220" mapping="stars">
+            <proceedDirect fix="TELTU"/>
+            <then/>
+            <speed restriction="below" value="220"/>
+            <proceedDirect fix="SFD"/>
+            <then/>
+            <proceedDirect fix="TIMBA"/>
+            <then/>
+            <hold fix="TIMBA"/>
+          </route>
+          <route type="star" name="AMDUT1G" entryFL="220" mapping="stars">
+            <proceedDirect fix="AMDUT"/>
+            <then/>
+            <speed restriction="below" value="220"/>
+            <proceedDirect fix="SFD"/>
+            <then/>
+            <proceedDirect fix="WILLO"/>
+            <then/>
+            <hold fix="WILLO"/>
+          </route>
+          <route type="star" name="ARNUN1G" entryFL="220" mapping="stars">
+            <proceedDirect fix="ARNUN"/>
+            <then/>
+            <proceedDirect fix="HASTY"/>
+            <then/>
+            <speed restriction="below" value="220"/>
+            <proceedDirect fix="SFD"/>
+            <then/>
+            <proceedDirect fix="WILLO"/>
+            <then/>
+            <hold fix="WILLO"/>
+          </route>
+          <route type="star" name="OTMET1G" entryFL="220" mapping="stars">
+            <proceedDirect fix="OTMET"/>
+            <then/>
+            <proceedDirect fix="SOKDU"/>
+            <then/>
+            <proceedDirect fix="NEDUL"/>
+            <then/>
+            <speed restriction="below" value="250"/>
+            <proceedDirect fix="TELTU"/>
+            <then/>
+            <speed restriction="below" value="220"/>
+            <proceedDirect fix="HOLLY"/>
+            <then/>
+            <proceedDirect fix="WILLO"/>
+            <then/>
+            <hold fix="WILLO"/>
+          </route>
+          <route type="star" name="VASUX1G" entryFL="220" mapping="stars">
+            <proceedDirect fix="VASUX"/>
+            <then/>
+            <proceedDirect fix="DISVO"/>
+            <then/>
+            <speed restriction="below" value="250"/>
+            <proceedDirect fix="TELTU"/>
+            <then/>
+            <speed restriction="below" value="220"/>
+            <proceedDirect fix="HOLLY"/>
+            <then/>
+            <proceedDirect fix="WILLO"/>
+            <then/>
+            <hold fix="WILLO"/>
+          </route>
+          <route type="star" name="TIMBA2G" entryFL="220" mainFix="NEVIL" mapping="stars">
+            <proceedDirect fix="NEVIL"/>
+            <then/>
+            <proceedDirect fix="OSPOL"/>
+            <then/>
+            <proceedDirect fix="NETVU"/>
+            <then/>
+            <proceedDirect fix="ELDAX"/>
+            <then/>
+            <proceedDirect fix="AMDUT"/>
+            <then/>
+            <speed restriction="below" value="250"/>
+            <proceedDirect fix="KKE64"/>
+            <then/>
+            <proceedDirect fix="TIMBA"/>
+            <then/>
+            <hold fix="TIMBA"/>
+          </route>
+          <route type="star" name="TIMBA4B" mainFix="KUNAV" mapping="stars">
+            <proceedDirect fix="KUNAV"/>
+            <then/>
+            <proceedDirect fix="AMDUT"/>
+            <then/>
+            <speed restriction="below" value="250"/>
+            <proceedDirect fix="KKE64"/>
+            <then/>
+            <proceedDirect fix="TIMBA"/>
+            <then/>
+            <hold fix="TIMBA"/>
+          </route>
+          <route type="star" name="TIMBA3F" mainFix="KONAN" mapping="stars">
+            <proceedDirect fix="KONAN"/>
+            <then/>
+            <proceedDirect fix="ARNUN"/>
+            <then/>
+            <speed restriction="below" value="250"/>
+            <proceedDirect fix="KKE63"/>
+            <then/>
+            <proceedDirect fix="LARCK"/>
+            <then/>
+            <proceedDirect fix="TIMBA"/>
+            <then/>
+            <hold fix="TIMBA"/>
+          </route>
+          <route type="star" name="TIMBA1J" mainFix="ERING" mapping="stars">
+            <proceedDirect fix="ERING"/>
+            <then/>
+            <proceedDirect fix="ABTUM"/>
+            <then/>
+            <proceedDirect fix="ARNUN"/>
+            <then/>
+            <speed restriction="below" value="250"/>
+            <proceedDirect fix="KKE63"/>
+            <then/>
+            <proceedDirect fix="LARCK"/>
+            <then/>
+            <proceedDirect fix="TIMBA"/>
+            <then/>
+            <hold fix="TIMBA"/>
+          </route>
+          <route type="star" name="TIMBA1K" mainFix="TEBRA" mapping="stars">
+            <proceedDirect fix="TEBRA"/>
+            <then/>
+            <proceedDirect fix="ABTUM"/>
+            <then/>
+            <proceedDirect fix="ARNUN"/>
+            <then/>
+            <speed restriction="below" value="250"/>
+            <proceedDirect fix="KKE63"/>
+            <then/>
+            <proceedDirect fix="LARCK"/>
+            <then/>
+            <proceedDirect fix="TIMBA"/>
+            <then/>
+            <hold fix="TIMBA"/>
+          </route>
+        </group>
+        <group note="08Rsid">
+          <route type="sid" name="LAM1Z" mapping="08R">
+            <altitudeRouteRestriction restriction="above" value="4000"/>
+            <proceedDirect fix="KKE02"/>
+            <then/>
+            <proceedDirect fix="KKE12"/>
+            <then/>
+            <altitudeRouteRestriction restriction="above" value="5000"/>
+            <proceedDirect fix="SUNAV"/>
+            <then/>
+            <proceedDirect fix="KKE35"/>
+            <then/>
+            <proceedDirect fix="KKN43"/>
+            <then/>
+            <altitudeRouteRestriction restriction="above" value="6000"/>
+            <proceedDirect fix="KKN48"/>
+            <then/>
+            <proceedDirect fix="LAM"/>
+          </route>
+          <route type="sid" name="BIG2Z" mapping="08R">
+            <altitudeRouteRestriction restriction="above" value="4000"/>
+            <proceedDirect fix="KKE04"/>
+            <then/>
+            <proceedDirect fix="KKE10"/>
+            <then/>
+            <altitudeRouteRestriction restriction="above" value="5000"/>
+            <proceedDirect fix="KKE17"/>
+            <then/>
+            <speed restriction="below" value="210"/>
+            <altitudeRouteRestriction restriction="above" value="6000"/>
+            <proceedDirect fix="KKE23"/>
+            <then/>
+            <proceedDirect fix="BIG"/>
+            <speed restriction="clear"/>
+          </route>
+          <route type="sid" name="CLN2Z" mapping="08R">
+            <altitudeRouteRestriction restriction="above" value="4000"/>
+            <proceedDirect fix="KKE04"/>
+            <then/>
+            <proceedDirect fix="KKE10"/>
+            <then/>
+            <altitudeRouteRestriction restriction="above" value="5000"/>
+            <proceedDirect fix="KKE17"/>
+            <then/>
+            <proceedDirect fix="KKE25"/>
+            <then/>
+            <proceedDirect fix="DET"/>
+            <then/>
+            <altitudeRouteRestriction restriction="above" value="6000"/>
+            <proceedDirect fix="KKN52"/>
+            <then/>
+            <proceedDirect fix="DAGGA"/>
+            <then/>
+            <proceedDirect fix="CLN"/>
+          </route>
+          <route type="sid" name="KENET1Z" mapping="08R">
+            <speed restriction="below" value="220"/>
+            <altitudeRouteRestriction restriction="above" value="4000"/>
+            <proceedDirect fix="KKE05"/>
+            <then/>
+            <proceedDirect fix="KKN09"/>
+            <then/>
+            <speed restriction="clear"/>
+            <proceedDirect fix="KKW19"/>
+            <then/>
+            <proceedDirect fix="KKW26"/>
+            <then/>
+            <proceedDirect fix="KKW44"/>
+            <then/>
+            <proceedDirect fix="KENET"/>
+          </route>
+          <route type="sid" name="SAM3Z" mapping="08R">
+            <speed restriction="below" value="220"/>
+            <altitudeRouteRestriction restriction="above" value="4000"/>
+            <proceedDirect fix="KKE05"/>
+            <then/>
+            <proceedDirect fix="KKN09"/>
+            <then/>
+            <speed restriction="clear"/>
+            <proceedDirect fix="KKW19"/>
+            <then/>
+            <proceedDirect fix="KKW26"/>
+            <then/>
+            <proceedDirect fix="SAM"/>
+          </route>
+          <route type="sid" name="SFD4Z" mapping="08R">
+            <speed restriction="below" value="220"/>
+            <altitudeRouteRestriction restriction="above" value="4000"/>
+            <proceedDirect fix="KKE03"/>
+            <then/>
+            <speed restriction="clear"/>
+            <proceedDirect fix="KKS08"/>
+            <then/>
+            <proceedDirect fix="KKS12"/>
+            <then/>
+            <altitudeRouteRestriction restriction="above" value="5000"/>
+            <proceedDirect fix="KKS16"/>
+            <then/>
+            <altitudeRouteRestriction restriction="above" value="6000"/>
+            <proceedDirect fix="KKS22"/>
+            <then/>
+            <proceedDirect fix="SFD"/>
+          </route>
+          <route type="sid" name="ODVIK2Z" mapping="08R">
+            <altitudeRouteRestriction restriction="above" value="4000"/>
+            <proceedDirect fix="KKE04"/>
+            <then/>
+            <proceedDirect fix="KKE10"/>
+            <then/>
+            <altitudeRouteRestriction restriction="above" value="5000"/>
+            <proceedDirect fix="KKE17"/>
+            <then/>
+            <altitudeRouteRestriction restriction="above" value="6000"/>
+            <proceedDirect fix="ODVIK"/>
+          </route>
+        </group>
+        <group note="26Lsid">
+          <route type="sid" name="BOGNA1X" mapping="26L">
+            <speed restriction="below" value="220"/>
+            <altitudeRouteRestriction restriction="above" value="4000"/>
+            <proceedDirect fix="KKW06"/>
+            <then/>
+            <proceedDirect fix="KKW08"/>
+            <then/>
+            <proceedDirect fix="KKS11"/>
+            <then/>
+            <altitudeRouteRestriction restriction="above" value="5000"/>
+            <speed restriction="clear"/>
+            <proceedDirect fix="KKS17"/>
+            <then/>
+            <altitudeRouteRestriction restriction="above" value="6000"/>
+            <proceedDirect fix="KKS20"/>
+            <then/>
+            <proceedDirect fix="KKS25"/>
+            <then/>
+            <proceedDirect fix="BOGNA"/>
+          </route>
+          <route type="sid" name="LAM2X" mapping="26L">
+            <speed restriction="below" value="220"/>
+            <altitudeRouteRestriction restriction="above" value="4000"/>
+            <proceedDirect fix="KKW02"/>
+            <then/>
+            <proceedDirect fix="KKE09"/>
+            <then/>
+            <speed restriction="below" value="250"/>
+            <proceedDirect fix="KKE11"/>
+            <then/>
+            <altitudeRouteRestriction restriction="above" value="5000"/>
+            <proceedDirect fix="SUNAV"/>
+            <then/>
+            <proceedDirect fix="KKE35"/>
+            <then/>
+            <proceedDirect fix="KKN43"/>
+            <then/>
+            <altitudeRouteRestriction restriction="above" value="6000"/>
+            <proceedDirect fix="KKN48"/>
+            <then/>
+            <proceedDirect fix="LAM"/>
+          </route>
+          <route type="sid" name="BIG2X" mapping="26L">
+            <speed restriction="below" value="220"/>
+            <altitudeRouteRestriction restriction="above" value="4000"/>
+            <proceedDirect fix="KKW02"/>
+            <then/>
+            <proceedDirect fix="KKE09"/>
+            <then/>
+            <speed restriction="below" value="230"/>
+            <proceedDirect fix="KKE11"/>
+            <then/>
+            <proceedDirect fix="KKE15"/>
+            <then/>
+            <altitudeRouteRestriction restriction="above" value="5000"/>
+            <proceedDirect fix="SUNAV"/>
+            <then/>
+            <altitudeRouteRestriction restriction="above" value="6000"/>
+            <proceedDirect fix="KKE38"/>
+            <then/>
+            <proceedDirect fix="BIG"/>
+          </route>
+          <route type="sid" name="CLN4X" mapping="26L">
+            <speed restriction="below" value="220"/>
+            <altitudeRouteRestriction restriction="above" value="4000"/>
+            <proceedDirect fix="KKW02"/>
+            <then/>
+            <proceedDirect fix="KKE09"/>
+            <then/>
+            <speed restriction="clear"/>
+            <proceedDirect fix="KKE11"/>
+            <then/>
+            <proceedDirect fix="KKE15"/>
+            <then/>
+            <altitudeRouteRestriction restriction="above" value="5000"/>
+            <proceedDirect fix="SUNAV"/>
+            <then/>
+            <proceedDirect fix="KKE42"/>
+            <then/>
+            <proceedDirect fix="DET"/>
+            <then/>
+            <altitudeRouteRestriction restriction="above" value="6000"/>
+            <proceedDirect fix="KKN52"/>
+            <then/>
+            <proceedDirect fix="DAGGA"/>
+            <then/>
+            <proceedDirect fix="CLN"/>
+          </route>
+          <route type="sid" name="HARDY1X" mapping="26L">
+            <speed restriction="below" value="220"/>
+            <altitudeRouteRestriction restriction="above" value="4000"/>
+            <proceedDirect fix="KKW06"/>
+            <then/>
+            <proceedDirect fix="KKW08"/>
+            <then/>
+            <proceedDirect fix="KKS11"/>
+            <then/>
+            <speed restriction="clear"/>
+            <altitudeRouteRestriction restriction="above" value="5000"/>
+            <proceedDirect fix="KKS17"/>
+            <then/>
+            <altitudeRouteRestriction restriction="above" value="6000"/>
+            <proceedDirect fix="KKS20"/>
+            <then/>
+            <proceedDirect fix="KKS25"/>
+            <then/>
+            <proceedDirect fix="BOGNA"/>
+            <then/>
+            <proceedDirect fix="HARDY"/>
+          </route>
+          <route type="sid" name="KENET1X" mapping="26L">
+            <proceedDirect fix="KKW07"/>
+            <then/>
+            <proceedDirect fix="KKW09"/>
+            <then/>
+            <proceedDirect fix="MID"/>
+            <then/>
+            <proceedDirect fix="KKW28"/>
+            <then/>
+            <proceedDirect fix="KENET"/>
+          </route>
+          <route type="sid" name="SAM1X" mapping="26L">
+            <proceedDirect fix="KKW07"/>
+            <then/>
+            <proceedDirect fix="KKW09"/>
+            <then/>
+            <proceedDirect fix="MID"/>
+            <then/>
+            <proceedDirect fix="SAM"/>
+          </route>
+          <route type="sid" name="SFD1X" mapping="26L">
+            <speed restriction="below" value="220"/>
+            <altitudeRouteRestriction restriction="above" value="4000"/>
+            <proceedDirect fix="KKW06"/>
+            <then/>
+            <proceedDirect fix="KKW10"/>
+            <then/>
+            <proceedDirect fix="KKW11"/>
+            <then/>
+            <speed restriction="clear"/>
+            <proceedDirect fix="KKS13"/>
+            <then/>
+            <altitudeRouteRestriction restriction="above" value="5000"/>
+            <proceedDirect fix="KKS19"/>
+            <then/>
+            <altitudeRouteRestriction restriction="above" value="6000"/>
+            <proceedDirect fix="KKS21"/>
+            <then/>
+            <proceedDirect fix="SFD"/>
+          </route>
+          <route type="sid" name="WIZAD1X" mapping="26L">
+            <speed restriction="below" value="220"/>
+            <altitudeRouteRestriction restriction="above" value="4000"/>
+            <proceedDirect fix="KKW04"/>
+            <then/>
+            <proceedDirect fix="KKS06"/>
+            <then/>
+            <speed restriction="clear"/>
+            <proceedDirect fix="KKS09"/>
+            <then/>
+            <proceedDirect fix="KKS14"/>
+            <then/>
+            <altitudeRouteRestriction restriction="above" value="5000"/>
+            <proceedDirect fix="MAY"/>
+            <then/>
+            <altitudeRouteRestriction restriction="above" value="6000"/>
+            <proceedDirect fix="KKS33"/>
+            <then/>
+            <proceedDirect fix="WIZAD"/>
+          </route>
+          <route type="sid" name="ADMAG2X" mapping="26L">
+            <speed restriction="below" value="220"/>
+            <altitudeRouteRestriction restriction="above" value="4000"/>
+            <proceedDirect fix="KKW02"/>
+            <then/>
+            <proceedDirect fix="KKW09"/>
+            <then/>
+            <speed restriction="clear"/>
+            <proceedDirect fix="KKE11"/>
+            <then/>
+            <proceedDirect fix="KKE15"/>
+            <then/>
+            <altitudeRouteRestriction restriction="above" value="5000"/>
+            <proceedDirect fix="SUNAV"/>
+            <then/>
+            <altitudeRouteRestriction restriction="above" value="6000"/>
+            <proceedDirect fix="ADMAG"/>
+          </route>
+          <route type="sid" name="TIGER1X" mainFix="LAM" mapping="26L">
+            <speed restriction="below" value="220"/>
+            <altitudeRouteRestriction restriction="above" value="4000"/>
+            <proceedDirect fix="KKW04"/>
+            <then/>
+            <proceedDirect fix="KKS06"/>
+            <then/>
+            <speed restriction="clear"/>
+            <proceedDirect fix="KKS09"/>
+            <then/>
+            <proceedDirect fix="KKS14"/>
+            <then/>
+            <altitudeRouteRestriction restriction="above" value="5000"/>
+            <proceedDirect fix="MAY"/>
+            <then/>
+            <proceedDirect fix="KKS36"/>
+            <then/>
+            <proceedDirect fix="LAM"/>
+          </route>
+          <route type="sid" name="DAGGA1X" mapping="26L">
+            <speed restriction="below" value="220"/>
+            <altitudeRouteRestriction restriction="above" value="4000"/>
+            <proceedDirect fix="KKW04"/>
+            <then/>
+            <proceedDirect fix="KKS06"/>
+            <then/>
+            <speed restriction="clear"/>
+            <proceedDirect fix="KKS09"/>
+            <then/>
+            <proceedDirect fix="KKS14"/>
+            <then/>
+            <altitudeRouteRestriction restriction="above" value="5000"/>
+            <proceedDirect fix="MAY"/>
+            <then/>
+            <proceedDirect fix="KKS36"/>
+            <then/>
+            <proceedDirect fix="DET"/>
+            <then/>
+            <proceedDirect fix="DAGGA"/>
+            <then/>
+            <proceedDirect fix="CLN"/>
+          </route>
+        </group>
+      </daRoutes>
+      <iafRoutes>
+        <group note="26L">
+          <iafRoute iaf="TIMBA" iafMapping="26L">
+            <altitude direction="descend" value="4000"/>
+            <proceedDirect fix="MAY"/>
+            <then/>
+            <proceedDirect fix="MAY/275/23"/>
+            <then/>
+            <heading value="050" direction="right"/>
+            <then/>
+            <altitude direction="descend" value="3000"/>
+            <heading value="080" direction="nearest"/>
+          </iafRoute>
+          <iafRoute iaf="WILLO" iafMapping="26L">
+            <altitude direction="descend" value="4000"/>
+            <proceedDirect fix="MID/105/5"/>
+            <then/>
+            <heading value="050" direction="right"/>
+            <then/>
+            <altitude direction="descend" value="3000"/>
+            <heading value="080" direction="nearest"/>
+          </iafRoute>
+        </group>
+        <group note="08R">
+          <iafRoute iaf="TIMBA" iafMapping="08R">
+            <altitude direction="descend" value="4000"/>
+            <proceedDirect fix="MAY"/>
+            <then/>
+            <altitude direction="descend" value="3000"/>
+            <proceedDirect fix="MAY/003/3"/>
+            <then/>
+            <altitude direction="descend" value="2000"/>
+            <proceedDirect fix="MAY/003/8.5"/>
+            <then/>
+            <heading value="290" direction="nearest"/>
+          </iafRoute>
+          <iafRoute iaf="WILLO" iafMapping="08R">
+            <altitude direction="descend" value="4000"/>
+            <proceedDirect fix="MID/117/22"/>
+            <then/>
+            <proceedDirect fix="MAY"/>
+            <then/>
+            <altitude direction="descend" value="3000"/>
+            <proceedDirect fix="MAY/003/3"/>
+            <then/>
+            <altitude direction="descend" value="2000"/>
+            <proceedDirect fix="MAY/003/8.5"/>
+            <then/>
+            <heading value="290" direction="nearest"/>
+          </iafRoute>
+        </group>
+      </iafRoutes>
+      <gaRoutes>
+        <gaRoute gaMapping="08R">
+          <altitude direction="climb" value="3000"/>
+          <after property="altitude" value="2000+"/>
+          <heading value="179" direction="right"/>
+        </gaRoute>
+        <gaRoute gaMapping="26L">
+          <altitude direction="climb" value="3000"/>
+          <after property="altitude" value="2000+"/>
+          <heading value="179" direction="nearest"/>
+        </gaRoute>
+      </gaRoutes>
     </airport>
   </airports>
   <navaids>
