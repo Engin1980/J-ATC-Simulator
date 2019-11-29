@@ -1,0 +1,9 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="AreaLib (delete later)" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="eng.jAtcSim.lib.world.ToDelete" />
+    <module name="AreaLib" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

@@ -1,0 +1,36 @@
+package eng.jAtcSim.lib.area;
+
+import eng.eSystem.collections.IList;
+import eng.eSystem.collections.IReadOnlyList;
+
+public abstract class Runway<TParentType, ThresholdType extends Parentable<TParentType>> extends Parentable<Airport> {
+  private final IList<ThresholdType> thresholds;
+
+  public Runway(IList<ThresholdType> thresholds) {
+    this.thresholds = thresholds;
+//    this.thresholds.forEach(q->q.setParent(this));
+  }
+
+  public ThresholdType get(int index){
+    return thresholds.get(index);
+  }
+
+  public IReadOnlyList<ThresholdType> getThresholds(){
+    return this.thresholds;
+  }
+
+  public ThresholdType getThresholdA(){
+    return thresholds.get(0);
+  }
+
+  public ThresholdType getThresholdB(){
+    return thresholds.get(1);
+  }
+
+  public abstract String getName();
+
+  @Override
+  public String toString() {
+    return this.getName() + "{rwy}";
+  }
+}
