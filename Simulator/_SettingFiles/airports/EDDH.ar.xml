@@ -9,7 +9,8 @@
     <description>
       Real-life Hamburg airport.
 
-      Typically arrivals on 23, departures from 33. Arrivals via transitions at 4000ft. Departures has altitude restriction at 4000ft.
+      Typically arrivals on 23, departures from 33. Arrivals via transitions at 4000ft. Departures has altitude
+      restriction at 4000ft.
     </description>
   </meta>
   <airports>
@@ -31,14 +32,13 @@
             <threshold name="05" coordinate="N 53 37 11.85 E 009 58 01.80"
                        initialDepartureAltitude="5000" mapping="05">
               <approaches>
-                <ilsApproach gaMapping="05" iafMapping="05" radial="048" initialAltitude="3000">
+                <ilsApproach gaMapping="05" iafMapping="05;05LBV" radial="048" initialAltitude="3000">
                   <categories>
                     <category type="I" daA="188" daB="197" daC="207" daD="217"/>
                   </categories>
                 </ilsApproach>
-                <unpreciseApproach gaMapping="05" iafMapping="05;05-LBV" radial="049" initialAltitude="3000" type="ndb"
-                                   faf="ALF/229/10.5" mapt="ALF/229/1.8" mdaA="570" mdaB="570" mdaC="570" mdaD="570">
-                </unpreciseApproach>
+                <unpreciseApproach gaMapping="05" iafMapping="05;05LBV" radial="049" initialAltitude="3000" type="ndb"
+                                   faf="ALF/229/10.5" mapt="ALF/229/1.8" mdaA="570" mdaB="570" mdaC="570" mdaD="570" />
               </approaches>
             </threshold>
             <threshold name="23" coordinate="N 53 38 09.64 E 009 59 58.76"
@@ -51,7 +51,7 @@
                   </categories>
                 </ilsApproach>
                 <unpreciseApproach gaMapping="23" iafMapping="23" radial="228" initialAltitude="3000" type="ndb"
-                                   faf="ALF/048/9.3" mapt="ALF/048/0.7" mdaA="490" mdaB="490" mdaC="490" mdaD="490" />
+                                   faf="ALF/048/9.3" mapt="ALF/048/0.7" mdaA="490" mdaB="490" mdaC="490" mdaD="490"/>
               </approaches>
             </threshold>
           </thresholds>
@@ -60,51 +60,28 @@
           <thresholds>
             <threshold name="15" mapping="15" coordinate="N 53 39 15.88 E 009 58 30.76" initialDepartureAltitude="5000">
               <approaches>
-                <ilsApproach gaMapping="15" iafMapping="15-LBV" radial="150" initialAltitude="3000">
+                <ilsApproach gaMapping="15" iafMapping="15LBV" radial="150" initialAltitude="3000">
                   <categories>
                     <category type="I" daA="179" daB="188" daC="198" daD="208"/>
                   </categories>
                 </ilsApproach>
-                <unpreciseApproach gaMapping="15" iafMapping="15-LBV" radial="151" initialAltitude="3000" type="ndb"
-                                   faf="ALF/331/10.4" mapt="ALF/331/1.8" mdaA="560" mdaB="560" mdaC="560" mdaD="560" />
+                <unpreciseApproach gaMapping="15" iafMapping="15LBV" radial="151" initialAltitude="3000" type="ndb"
+                                   faf="ALF/331/10.4" mapt="ALF/331/1.8" mdaA="560" mdaB="560" mdaC="560" mdaD="560"/>
               </approaches>
             </threshold>
-            <threshold name="33" coordinate="N 53 37 43.25 E 009 59 50.81" initialDepartureAltitude="5000">
+            <threshold name="33" coordinate="N 53 37 43.25 E 009 59 50.81" initialDepartureAltitude="5000"
+                       mapping="33">
               <approaches>
                 <!-- NO PUBLISHED APPROACH, ONLY LOC/LLZ -->
               </approaches>
-              <routes>
-                <route type="sid" name="EKERN8G"
-                       route="AL 40 PD ALF/331/3 T PD ALF/358/5.6 T PD GT/031/15 T PD EKERN"/>
-                <route type="sid" name="LUB9G"
-                       route="AL 40 PD ALF/331/3 T PD ALF/358/5 T PD LUB/242/14 T PD LUB"/>
-                <route type="sid" name="RAMAR3G"
-                       route="AL 40 PD ALF/331/3 T PD ALF/358/5 T PD LUB/242/14 T PD LYE T PD RAMAR"/>
-                <route type="sid" name="AMLUH8G"
-                       route="AL 40 PD ALF/331/3 T PD ALF/358/5 T PD HAM T PD AMLUH"/>
-                <route type="sid" name="IDEKO4G"
-                       route="AL 40 PD ALF/331/4 T PD LBV T PD IDEKO"/>
-                <route type="sid" name="BASUM10G"
-                       route="AL 40 PD ALF/331/4 T PD LBV T PD BASUM"/>
-                <route type="sid" name="WSN2G"
-                       route="AL 40 PD ALF/331/4 T PD LBV T PD WSN"/>
-                <route type="transition" name="RIBSO33" entryFL="FL110"
-                       route="PD RIBSO T DM 40 PD DH804 T SL 220 PD DH805 T PD DH806 T PD DH807 T PD DH808 T PD DH809 T PD DH810 T PD DH811 T PD DH812 T PD DH813 T PD DH814 T PD DH815 T PD DH854 T PD DH855 T PD DH856 T PD DH857 T PD DH858 T DM 30 PD SOSAX"/>
-                <route type="transition" name="NOLGO33" entryFL="FL110"
-                       route="PD NOLGO T DM 80 PD DH832 T SL 220 DM 40 T PD DH833 T PD DH834 T PD DH835 T PD DH854 T PD DH855 T PD DH856 T PD DH857 T PD DH858 T DM 30 PD SOSAX"/>
-                <route type="transition" name="RARUP33" entryFL="FL110"
-                       route="PD RARUP T DM 40 PD DH829 T SL 220 PD DH830 T PD DH831 T PD DH832 T PD DH833 T PD DH834 T PD DH835 T PD DH854 T PD DH855 T PD DH856 T PD DH857 T PD DH858 T DM 30 PD SOSAX"/>
-                <route type="transition" name="BOGMU33" entryFL="FL110"
-                       route="PD BOGMU T DM 40 PD DH829 T SL 220 PD DH830 T PD DH831 T PD DH832 T PD DH833 T PD DH834 T PD DH835 T PD DH854 T PD DH855 T PD DH856 T PD DH857 T PD DH858 T DM 30 PD SOSAX"/>
-              </routes>
             </threshold>
           </thresholds>
         </runway>
       </runways>
       <runwayConfigurations>
         <configuration windSpeedTo="10">
-          <arrivals name="23" />
-          <departures name="33" />
+          <arrivals name="23"/>
+          <departures name="33"/>
         </configuration>
       </runwayConfigurations>
       <holds>
@@ -118,554 +95,756 @@
       <daRoutes>
         <group note="05">
           <route type="transition" name="RIBSO05" entryFL="FL110" mapping="05">
-            <proceedDirect fix="RIBSO" />
-            <then />
-            <altitude direction="descend" value="40" />
-            <proceedDirect fix="DH210" />
-            <then />
+            <proceedDirect fix="RIBSO"/>
+            <then/>
+            <altitude direction="descend" value="40"/>
+            <proceedDirect fix="DH210"/>
+            <then/>
             <speed restriction="below" value="220"/>
-            <proceedDirect fix="DH211" />
-            <then />
-            <proceedDirect fix="DH213" />
-            <then />
-            <proceedDirect fix="DH214" />
-            <then />
-            <proceedDirect fix="DH215" />
-            <then />
-            <proceedDirect fix="DH255" />
-            <then />
-            <proceedDirect fix="DH256" />
-            <then />
-            <proceedDirect fix="DH257" />
-            <then />
-            <altitude direction="descend" value="30" />
-            <proceedDirect fix="DH025" />
-            <then />
-            <proceedDirect fix="ANEXI" />
+            <proceedDirect fix="DH211"/>
+            <then/>
+            <proceedDirect fix="DH213"/>
+            <then/>
+            <proceedDirect fix="DH214"/>
+            <then/>
+            <proceedDirect fix="DH215"/>
+            <then/>
+            <proceedDirect fix="DH255"/>
+            <then/>
+            <proceedDirect fix="DH256"/>
+            <then/>
+            <proceedDirect fix="DH257"/>
+            <then/>
+            <altitude direction="descend" value="30"/>
+            <proceedDirect fix="DH025"/>
+            <then/>
+            <proceedDirect fix="ANEXI"/>
           </route>
           <route type="transition" name="NOLGO05" entryFL="FL110" mapping="05">
-            <proceedDirect fix="NOLGO" />
-            <then />
-            <altitude direction="descend" value="40" />
-            <proceedDirect fix="DH230" />
-            <then />
+            <proceedDirect fix="NOLGO"/>
+            <then/>
+            <altitude direction="descend" value="40"/>
+            <proceedDirect fix="DH230"/>
+            <then/>
             <speed restriction="below" value="220"/>
-            <proceedDirect fix="DH231" />
-            <then />
-            <proceedDirect fix="DH232" />
-            <then />
-            <proceedDirect fix="DH232" />
-            <then />
-            <proceedDirect fix="DH233" />
-            <then />
-            <proceedDirect fix="DH234" />
-            <then />
-            <proceedDirect fix="DH235" />
-            <then />
-            <proceedDirect fix="DH255" />
-            <then />
-            <proceedDirect fix="DH256" />
-            <then />
-            <proceedDirect fix="DH257" />
-            <then />
-            <altitude direction="descend" value="30" />
-            <proceedDirect fix="DH025" />
-            <then />
-            <proceedDirect fix="ANEXI" />
+            <proceedDirect fix="DH231"/>
+            <then/>
+            <proceedDirect fix="DH232"/>
+            <then/>
+            <proceedDirect fix="DH232"/>
+            <then/>
+            <proceedDirect fix="DH233"/>
+            <then/>
+            <proceedDirect fix="DH234"/>
+            <then/>
+            <proceedDirect fix="DH235"/>
+            <then/>
+            <proceedDirect fix="DH255"/>
+            <then/>
+            <proceedDirect fix="DH256"/>
+            <then/>
+            <proceedDirect fix="DH257"/>
+            <then/>
+            <altitude direction="descend" value="30"/>
+            <proceedDirect fix="DH025"/>
+            <then/>
+            <proceedDirect fix="ANEXI"/>
           </route>
           <route type="transition" name="RARUP05" entryFL="FL110" mapping="05">
-            <proceedDirect fix="RARUP" />
-            <then />
-            <altitude direction="descend" value="40" />
-            <proceedDirect fix="DH230" />
-            <then />
+            <proceedDirect fix="RARUP"/>
+            <then/>
+            <altitude direction="descend" value="40"/>
+            <proceedDirect fix="DH230"/>
+            <then/>
             <speed restriction="below" value="220"/>
-            <proceedDirect fix="DH231" />
-            <then />
-            <proceedDirect fix="DH232" />
-            <then />
-            <proceedDirect fix="DH232" />
-            <then />
-            <proceedDirect fix="DH233" />
-            <then />
-            <proceedDirect fix="DH234" />
-            <then />
-            <proceedDirect fix="DH235" />
-            <then />
-            <proceedDirect fix="DH255" />
-            <then />
-            <proceedDirect fix="DH256" />
-            <then />
-            <proceedDirect fix="DH257" />
-            <then />
-            <altitude direction="descend" value="30" />
-            <proceedDirect fix="DH025" />
-            <then />
-            <proceedDirect fix="ANEXI" />
+            <proceedDirect fix="DH231"/>
+            <then/>
+            <proceedDirect fix="DH232"/>
+            <then/>
+            <proceedDirect fix="DH232"/>
+            <then/>
+            <proceedDirect fix="DH233"/>
+            <then/>
+            <proceedDirect fix="DH234"/>
+            <then/>
+            <proceedDirect fix="DH235"/>
+            <then/>
+            <proceedDirect fix="DH255"/>
+            <then/>
+            <proceedDirect fix="DH256"/>
+            <then/>
+            <proceedDirect fix="DH257"/>
+            <then/>
+            <altitude direction="descend" value="30"/>
+            <proceedDirect fix="DH025"/>
+            <then/>
+            <proceedDirect fix="ANEXI"/>
           </route>
           <route type="transition" name="BOGMU05" entryFL="FL110" mapping="05">
-            <proceedDirect fix="BOGMU" />
-            <then />
-            <altitude direction="descend" value="40" />
-            <proceedDirect fix="DH225" />
-            <then />
+            <proceedDirect fix="BOGMU"/>
+            <then/>
+            <altitude direction="descend" value="40"/>
+            <proceedDirect fix="DH225"/>
+            <then/>
             <speed restriction="below" value="220"/>
-            <proceedDirect fix="DH226" />
-            <then />
-            <proceedDirect fix="DH227" />
-            <then />
-            <proceedDirect fix="DH228" />
-            <then />
-            <proceedDirect fix="DH229" />
-            <then />
-            <proceedDirect fix="DH230" />
-            <then />
+            <proceedDirect fix="DH226"/>
+            <then/>
+            <proceedDirect fix="DH227"/>
+            <then/>
+            <proceedDirect fix="DH228"/>
+            <then/>
+            <proceedDirect fix="DH229"/>
+            <then/>
+            <proceedDirect fix="DH230"/>
+            <then/>
             <speed restriction="below" value="220"/>
-            <proceedDirect fix="DH231" />
-            <then />
-            <proceedDirect fix="DH232" />
-            <then />
-            <proceedDirect fix="DH232" />
-            <then />
-            <proceedDirect fix="DH233" />
-            <then />
-            <proceedDirect fix="DH234" />
-            <then />
-            <proceedDirect fix="DH235" />
-            <then />
-            <proceedDirect fix="DH255" />
-            <then />
-            <proceedDirect fix="DH256" />
-            <then />
-            <proceedDirect fix="DH257" />
-            <then />
-            <altitude direction="descend" value="30" />
-            <proceedDirect fix="DH025" />
-            <then />
-            <proceedDirect fix="ANEXI" />
+            <proceedDirect fix="DH231"/>
+            <then/>
+            <proceedDirect fix="DH232"/>
+            <then/>
+            <proceedDirect fix="DH232"/>
+            <then/>
+            <proceedDirect fix="DH233"/>
+            <then/>
+            <proceedDirect fix="DH234"/>
+            <then/>
+            <proceedDirect fix="DH235"/>
+            <then/>
+            <proceedDirect fix="DH255"/>
+            <then/>
+            <proceedDirect fix="DH256"/>
+            <then/>
+            <proceedDirect fix="DH257"/>
+            <then/>
+            <altitude direction="descend" value="30"/>
+            <proceedDirect fix="DH025"/>
+            <then/>
+            <proceedDirect fix="ANEXI"/>
           </route>
-          <route type="sid" name="EKERN8C"  mapping="05">
-            <proceedDirect fix="ALF/048/7.2" />
-            <then />
-            <proceedDirect fix="EKERN" />
+          <route type="sid" name="EKERN8C" mapping="05">
+            <proceedDirect fix="ALF/048/7.2"/>
+            <then/>
+            <proceedDirect fix="EKERN"/>
           </route>
-          <route type="sid" name="LUB9C"  mapping="05">
-            <proceedDirect fix="ALF/048/7.2" />
-            <then />
-            <proceedDirect fix="LUB" />
+          <route type="sid" name="LUB9C" mapping="05">
+            <proceedDirect fix="ALF/048/7.2"/>
+            <then/>
+            <proceedDirect fix="LUB"/>
           </route>
-          <route type="sid" name="RAMAR3C"  mapping="05">
-            <proceedDirect fix="ALF/048/7.2" />
-            <then />
-            <proceedDirect fix="LYE" />
-            <then />
-            <proceedDirect fix="RAMAR" />
+          <route type="sid" name="RAMAR3C" mapping="05">
+            <proceedDirect fix="ALF/048/7.2"/>
+            <then/>
+            <proceedDirect fix="LYE"/>
+            <then/>
+            <proceedDirect fix="RAMAR"/>
           </route>
-          <route type="sid" name="AMLUH8C"  mapping="05">
-            <proceedDirect fix="ALF/048/7.2" />
-            <then />
-            <proceedDirect fix="HAM" />
-            <then />
-            <proceedDirect fix="AMLUH" />
+          <route type="sid" name="AMLUH8C" mapping="05">
+            <proceedDirect fix="ALF/048/7.2"/>
+            <then/>
+            <proceedDirect fix="HAM"/>
+            <then/>
+            <proceedDirect fix="AMLUH"/>
           </route>
-          <route type="sid" name="WSN2C"  mapping="05">
-            <proceedDirect fix="ALF/048/7.2" />
-            <then />
-            <heading value="244" direction="right" />
-            <proceedDirect fix="HAM/296/7" />
-            <then />
-            <proceedDirect fix="LBV" />
-            <then />
-            <proceedDirect fix="WSN" />
+          <route type="sid" name="WSN2C" mapping="05">
+            <proceedDirect fix="ALF/048/7.2"/>
+            <then/>
+            <heading value="244" direction="right"/>
+            <proceedDirect fix="HAM/296/7"/>
+            <then/>
+            <proceedDirect fix="LBV"/>
+            <then/>
+            <proceedDirect fix="WSN"/>
           </route>
-          <route type="sid" name="BASUM1C"  mapping="05">
-            <proceedDirect fix="ALF/048/7.2" />
-            <then />
-            <heading value="244" direction="right" />
-            <proceedDirect fix="HAM/296/7" />
-            <then />
-            <proceedDirect fix="LBV" />
-            <then />
-            <proceedDirect fix="BASUM" />
+          <route type="sid" name="BASUM1C" mapping="05">
+            <proceedDirect fix="ALF/048/7.2"/>
+            <then/>
+            <heading value="244" direction="right"/>
+            <proceedDirect fix="HAM/296/7"/>
+            <then/>
+            <proceedDirect fix="LBV"/>
+            <then/>
+            <proceedDirect fix="BASUM"/>
           </route>
-          <route type="sid" name="IDEKO5C"  mapping="05">
-            <proceedDirect fix="ALF/048/7.2" />
-            <then />
-            <heading value="244" direction="right" />
-            <proceedDirect fix="HAM/296/7" />
-            <then />
-            <proceedDirect fix="LBV" />
-            <then />
-            <proceedDirect fix="IDEKO" />
+          <route type="sid" name="IDEKO5C" mapping="05">
+            <proceedDirect fix="ALF/048/7.2"/>
+            <then/>
+            <heading value="244" direction="right"/>
+            <proceedDirect fix="HAM/296/7"/>
+            <then/>
+            <proceedDirect fix="LBV"/>
+            <then/>
+            <proceedDirect fix="IDEKO"/>
           </route>
         </group>
         <group note="23">
           <route type="sid" name="EKERN8B" mapping="23">
-            <after property="altitude" value="4000+" />
-            <proceedDirect fix="ALF/230/5.5" />
-            <then />
-            <proceedDirect fix="GT" />
-            <then />
-            <proceedDirect fix="EKERN" />
+            <after property="altitude" value="4000+"/>
+            <proceedDirect fix="ALF/230/5.5"/>
+            <then/>
+            <proceedDirect fix="GT"/>
+            <then/>
+            <proceedDirect fix="EKERN"/>
           </route>
           <route type="sid" name="LUB1B" mapping="23">
-            <altitudeRestriction restriction="above" value="4000" />
-            <proceedDirect fix="ALF/230/5.5" />
-            <then />
-            <proceedDirect fix="GT" />
-            <then />
-            <proceedDirect fix="LUB" />
+            <altitudeRouteRestriction restriction="above" value="4000"/>
+            <proceedDirect fix="ALF/230/5.5"/>
+            <then/>
+            <proceedDirect fix="GT"/>
+            <then/>
+            <proceedDirect fix="LUB"/>
           </route>
           <route type="sid" name="RAMAR3B" mapping="23">
-            <altitudeRestriction restriction="above" value="4000" />
-            <proceedDirect fix="ALF/230/5.5" />
-            <then />
-            <proceedDirect fix="GT" />
-            <then />
-            <proceedDirect fix="GT/063/14" />
-            <then />
-            <proceedDirect fix="LYE" />
-            <then />
-            <proceedDirect fix="RAMAR" />
+            <altitudeRouteRestriction restriction="above" value="4000"/>
+            <proceedDirect fix="ALF/230/5.5"/>
+            <then/>
+            <proceedDirect fix="GT"/>
+            <then/>
+            <proceedDirect fix="GT/063/14"/>
+            <then/>
+            <proceedDirect fix="LYE"/>
+            <then/>
+            <proceedDirect fix="RAMAR"/>
           </route>
           <route type="sid" name="AMLUH9B" mapping="23">
-            <altitudeRestriction restriction="above" value="4000" />
-            <proceedDirect fix="ALF/230/5.5" />
-            <then />
-            <proceedDirect fix="AMLUH" />
+            <altitudeRouteRestriction restriction="above" value="4000"/>
+            <proceedDirect fix="ALF/230/5.5"/>
+            <then/>
+            <proceedDirect fix="AMLUH"/>
           </route>
           <route type="sid" name="IDEKO5B" mapping="23">
-            <altitudeRestriction restriction="above" value="4000" />
-            <proceedDirect fix="ALF/230/5.5" />
-            <then />
-            <proceedDirect fix="ALF/229/20" />
-            <then />
-            <proceedDirect fix="IDEKO" />
+            <altitudeRouteRestriction restriction="above" value="4000"/>
+            <proceedDirect fix="ALF/230/5.5"/>
+            <then/>
+            <proceedDirect fix="ALF/229/20"/>
+            <then/>
+            <proceedDirect fix="IDEKO"/>
           </route>
           <route type="sid" name="BASUM3B" mapping="23">
-            <altitudeRestriction restriction="above" value="4000" />
-            <proceedDirect fix="ALF/230/5.5" />
-            <then />
-            <proceedDirect fix="ALF/235/18" />
-            <then />
-            <proceedDirect fix="BASUM" />
+            <altitudeRouteRestriction restriction="above" value="4000"/>
+            <proceedDirect fix="ALF/230/5.5"/>
+            <then/>
+            <proceedDirect fix="ALF/235/18"/>
+            <then/>
+            <proceedDirect fix="BASUM"/>
           </route>
           <route type="sid" name="WSN1B" mapping="23">
-            <altitudeRestriction restriction="above" value="4000" />
-            <proceedDirect fix="ALF/230/5.5" />
-            <then />
-            <proceedDirect fix="WSN" />
+            <altitudeRouteRestriction restriction="above" value="4000"/>
+            <proceedDirect fix="ALF/230/5.5"/>
+            <then/>
+            <proceedDirect fix="WSN"/>
           </route>
-          <route type="sid" name="LBV1B"  mapping="23">
-            <altitudeRestriction restriction="above" value="4000" />
-            <proceedDirect fix="ALF/230/5.5" />
-            <then />
-            <proceedDirect fix="LBV" />
+          <route type="sid" name="LBV1B" mapping="23">
+            <altitudeRouteRestriction restriction="above" value="4000"/>
+            <proceedDirect fix="ALF/230/5.5"/>
+            <then/>
+            <proceedDirect fix="LBV"/>
           </route>
           <route type="transition" name="RARUP23" entryFL="FL110" mapping="23">
-            <proceedDirect fix="RARUP" />
-            <then />
-            <altitude direction="descend" value="4000" />
-            <proceedDirect fix="DH600" />
-            <then />
+            <proceedDirect fix="RARUP"/>
+            <then/>
+            <altitude direction="descend" value="4000"/>
+            <proceedDirect fix="DH600"/>
+            <then/>
             <speed restriction="below" value="200"/>
-            <proceedDirect fix="DH611" />
-            <then />
-            <proceedDirect fix="DH612" />
-            <then />
-            <proceedDirect fix="DH613" />
-            <then />
-            <proceedDirect fix="DH614" />
-            <then />
-            <proceedDirect fix="DH615" />
-            <then />
-            <proceedDirect fix="DH655" />
-            <then />
-            <proceedDirect fix="DH656" />
-            <then />
-            <proceedDirect fix="DH657" />
-            <then />
-            <proceedDirect fix="DH658" />
-            <then />
-            <altitude direction="descend" value="3000" />
-            <proceedDirect fix="PISAS" />
+            <proceedDirect fix="DH611"/>
+            <then/>
+            <proceedDirect fix="DH612"/>
+            <then/>
+            <proceedDirect fix="DH613"/>
+            <then/>
+            <proceedDirect fix="DH614"/>
+            <then/>
+            <proceedDirect fix="DH615"/>
+            <then/>
+            <proceedDirect fix="DH655"/>
+            <then/>
+            <proceedDirect fix="DH656"/>
+            <then/>
+            <proceedDirect fix="DH657"/>
+            <then/>
+            <proceedDirect fix="DH658"/>
+            <then/>
+            <altitude direction="descend" value="3000"/>
+            <proceedDirect fix="PISAS"/>
           </route>
           <route type="transition" name="NOLGO23" entryFL="FL110" mapping="23">
-            <proceedDirect fix="NOLGO" />
-            <then />
-            <altitude direction="descend" value="4000" />
-            <proceedDirect fix="DH611" />
-            <then />
+            <proceedDirect fix="NOLGO"/>
+            <then/>
+            <altitude direction="descend" value="4000"/>
+            <proceedDirect fix="DH611"/>
+            <then/>
             <speed restriction="below" value="220"/>
-            <proceedDirect fix="DH612" />
-            <then />
-            <proceedDirect fix="DH613" />
-            <then />
-            <proceedDirect fix="DH614" />
-            <then />
-            <proceedDirect fix="DH615" />
-            <then />
-            <proceedDirect fix="DH655" />
-            <then />
-            <proceedDirect fix="DH656" />
-            <then />
-            <proceedDirect fix="DH657" />
-            <then />
-            <proceedDirect fix="DH658" />
-            <then />
-            <altitude direction="descend" value="3000" />
-            <proceedDirect fix="PISAS" />
+            <proceedDirect fix="DH612"/>
+            <then/>
+            <proceedDirect fix="DH613"/>
+            <then/>
+            <proceedDirect fix="DH614"/>
+            <then/>
+            <proceedDirect fix="DH615"/>
+            <then/>
+            <proceedDirect fix="DH655"/>
+            <then/>
+            <proceedDirect fix="DH656"/>
+            <then/>
+            <proceedDirect fix="DH657"/>
+            <then/>
+            <proceedDirect fix="DH658"/>
+            <then/>
+            <altitude direction="descend" value="3000"/>
+            <proceedDirect fix="PISAS"/>
           </route>
           <route type="transition" name="BOGMU23" entryFL="FL110" mapping="23">
-            <proceedDirect fix="BOGMU" />
-            <then />
-            <altitude direction="descend" value="4000" />
-            <proceedDirect fix="DH634" />
-            <then />
+            <proceedDirect fix="BOGMU"/>
+            <then/>
+            <altitude direction="descend" value="4000"/>
+            <proceedDirect fix="DH634"/>
+            <then/>
             <speed restriction="below" value="220"/>
-            <proceedDirect fix="DH635" />
-            <then />
-            <proceedDirect fix="DH655" />
-            <then />
-            <proceedDirect fix="DH656" />
-            <then />
-            <proceedDirect fix="DH657" />
-            <then />
-            <proceedDirect fix="DH658" />
-            <then />
-            <altitude direction="descend" value="3000" />
-            <proceedDirect fix="PISAS" />
+            <proceedDirect fix="DH635"/>
+            <then/>
+            <proceedDirect fix="DH655"/>
+            <then/>
+            <proceedDirect fix="DH656"/>
+            <then/>
+            <proceedDirect fix="DH657"/>
+            <then/>
+            <proceedDirect fix="DH658"/>
+            <then/>
+            <altitude direction="descend" value="3000"/>
+            <proceedDirect fix="PISAS"/>
           </route>
           <route type="transition" name="RIBSO23" entryFL="FL110" mapping="23">
-            <proceedDirect fix="RIBSO" />
-            <then />
-            <altitude direction="descend" value="4000" />
-            <proceedDirect fix="DH620" />
-            <then />
-            <proceedDirect fix="DH633" />
-            <then />
+            <proceedDirect fix="RIBSO"/>
+            <then/>
+            <altitude direction="descend" value="4000"/>
+            <proceedDirect fix="DH620"/>
+            <then/>
+            <proceedDirect fix="DH633"/>
+            <then/>
             <speed restriction="below" value="220"/>
-            <proceedDirect fix="DH634" />
-            <then />
-            <proceedDirect fix="DH635" />
-            <then />
-            <proceedDirect fix="DH655" />
-            <then />
-            <proceedDirect fix="DH656" />
-            <then />
-            <proceedDirect fix="DH657" />
-            <then />
-            <proceedDirect fix="DH658" />
-            <then />
-            <altitude direction="descend" value="3000" />
-            <proceedDirect fix="PISAS" />
+            <proceedDirect fix="DH634"/>
+            <then/>
+            <proceedDirect fix="DH635"/>
+            <then/>
+            <proceedDirect fix="DH655"/>
+            <then/>
+            <proceedDirect fix="DH656"/>
+            <then/>
+            <proceedDirect fix="DH657"/>
+            <then/>
+            <proceedDirect fix="DH658"/>
+            <then/>
+            <altitude direction="descend" value="3000"/>
+            <proceedDirect fix="PISAS"/>
           </route>
         </group>
         <group note="15">
-          <route type="sid" name="EKERN9D" mapping="15" >
-            <altitudeRestriction restriction="above" value="4000" />
-            <proceedDirect fix="ALF/151/2.5" />
-            <then />
-            <proceedDirect fix="HAM" />
-            <then />
-            <proceedDirect fix="HAM/344/25" />
-            <then />
-            <altitudeRestrictionClear />
-            <proceedDirect fix="EKERN" />
+          <route type="sid" name="EKERN9D" mapping="15">
+            <altitudeRouteRestriction restriction="above" value="4000"/>
+            <proceedDirect fix="ALF/151/2.5"/>
+            <then/>
+            <proceedDirect fix="HAM"/>
+            <then/>
+            <proceedDirect fix="HAM/344/25"/>
+            <then/>
+            <altitudeRouteRestrictionClear/>
+            <proceedDirect fix="EKERN"/>
           </route>
           <route type="sid" name="LUB9D" mapping="15">
-            <altitudeRestriction restriction="above" value="4000" />
-            <proceedDirect fix="ALF/151/2.5" />
+            <altitudeRouteRestriction restriction="above" value="4000"/>
+            <proceedDirect fix="ALF/151/2.5"/>
+            <then/>
+            <proceedDirect fix="HAM"/>
+            <then/>
+            <proceedDirect fix="LUB"/>
+          </route>
+          <route type="sid" name="RAMAR2D" mapping="15">
+            <altitudeRouteRestriction restriction="above" value="4000"/>
+            <proceedDirect fix="ALF/151/7.1"/>
+            <then/>
+            <proceedDirect fix="HAM/094/8"/>
+            <then/>
+            <proceedDirect fix="LYE"/>
+            <then/>
+            <proceedDirect fix="RAMAR"/>
+          </route>
+          <route type="sid" name="AMLUH8D" mapping="15">
+            <altitudeRouteRestriction restriction="above" value="4000"/>
+            <proceedDirect fix="ALF/151/8.6"/>
+            <then/>
+            <proceedDirect fix="AMLUH"/>
+          </route>
+          <route type="sid" name="LBV1D" mapping="15">
+            <altitudeRouteRestriction restriction="above" value="4000"/>
+            <proceedDirect fix="ALF/151/5"/>
+            <then/>
+            <proceedDirect fix="WSN/074/37"/>
+            <then/>
+            <proceedDirect fix="LBV"/>
+          </route>
+          <route type="sid" name="WSN" mapping="15">
+            <altitudeRouteRestriction restriction="above" value="4000"/>
+            <proceedDirect fix="ALF/151/5"/>
+            <then/>
+            <proceedDirect fix="WSN/074/37"/>
+            <then/>
+            <proceedDirect fix="WSN"/>
+          </route>
+          <route type="sid" name="BASUM4D" mapping="15">
+            <altitudeRouteRestriction restriction="above" value="4000"/>
+            <proceedDirect fix="ALF/151/5"/>
+            <then/>
+            <proceedDirect fix="WSN/074/20"/>
+            <then/>
+            <proceedDirect fix="BASUM"/>
+          </route>
+          <route type="sid" name="IDEKO5D" mapping="15">
+            <altitudeRouteRestriction restriction="above" value="4000"/>
+            <proceedDirect fix="ALF/151/5"/>
+            <then/>
+            <proceedDirect fix="WSN/074/27"/>
+            <then/>
+            <proceedDirect fix="IDEKO"/>
+          </route>
+          <route type="transition" name="RIBSO15" entryFL="FL110" mapping="15">
+            <proceedDirect fix="RIBSO"/>
+            <then/>
+            <altitude direction="descend" value="4000"/>
+            <speed restriction="below" value="220"/>
+            <proceedDirect fix="DH434"/>
+            <then/>
+            <proceedDirect fix="DH435"/>
+            <then/>
+            <proceedDirect fix="DH455"/>
+            <then/>
+            <proceedDirect fix="DH456"/>
+            <then/>
+            <proceedDirect fix="DH457"/>
+            <then/>
+            <altitude direction="descend" value="3000"/>
+            <proceedDirect fix="DH458"/>
+            <then/>
+            <proceedDirect fix="DEVOD"/>
+          </route>
+          <route type="transition" name="NOLGO15" entryFL="FL110" mapping="15">
+            <proceedDirect fix="NOLGO"/>
+            <then/>
+            <altitude direction="descend" value="4000"/>
+            <proceedDirect fix="DH406"/>
+            <then/>
+            <proceedDirect fix="DH408"/>
+            <then/>
+            <proceedDirect fix="DH409"/>
+            <then/>
+            <speed restriction="below" value="220"/>
+            <proceedDirect fix="DH412"/>
+            <then/>
+            <proceedDirect fix="DH413"/>
+            <then/>
+            <proceedDirect fix="DH414"/>
+            <then/>
+            <proceedDirect fix="DH416"/>
+            <then/>
+            <proceedDirect fix="DH455"/>
+            <then/>
+            <proceedDirect fix="DH456"/>
+            <then/>
+            <proceedDirect fix="DH457"/>
+            <then/>
+            <altitude direction="descend" value="3000"/>
+            <proceedDirect fix="DH458"/>
+            <then/>
+            <proceedDirect fix="DEVOD"/>
+          </route>
+          <route type="transition" name="BOGMU15" entryFL="FL110" mapping="15">
+            <proceedDirect fix="BOGMU"/>
+            <then/>
+            <altitude direction="descend" value="4000"/>
+            <speed restriction="below" value="220"/>
+            <proceedDirect fix="DH412"/>
+            <then/>
+            <proceedDirect fix="DH413"/>
+            <then/>
+            <proceedDirect fix="DH414"/>
+            <then/>
+            <proceedDirect fix="DH416"/>
+            <then/>
+            <proceedDirect fix="DH455"/>
+            <then/>
+            <proceedDirect fix="DH456"/>
+            <then/>
+            <proceedDirect fix="DH457"/>
+            <then/>
+            <altitude direction="descend" value="3000"/>
+            <proceedDirect fix="DH458"/>
+            <then/>
+            <proceedDirect fix="DEVOD"/>
+          </route>
+          <route type="transition" name="RARUP15" entryFL="FL110" mapping="15">
+            <proceedDirect fix="RARUP"/>
+            <then/>
+            <altitude direction="descend" value="4000"/>
+            <proceedDirect fix="DH417"/>
+            <then/>
+            <speed restriction="below" value="220"/>
+            <proceedDirect fix="DH412"/>
+            <then/>
+            <proceedDirect fix="DH413"/>
+            <then/>
+            <proceedDirect fix="DH414"/>
+            <then/>
+            <proceedDirect fix="DH416"/>
+            <then/>
+            <proceedDirect fix="DH455"/>
+            <then/>
+            <proceedDirect fix="DH456"/>
+            <then/>
+            <proceedDirect fix="DH457"/>
+            <then/>
+            <altitude direction="descend" value="3000"/>
+            <proceedDirect fix="DH458"/>
+            <then/>
+            <proceedDirect fix="DEVOD"/>
+          </route>
+        </group>
+        <group note="33">
+          <route type="sid" name="EKERN8G" mapping="33">
+            <altitudeRouteRestriction restriction="above" value="4000" />
+            <proceedDirect fix="ALF/331/3" />
             <then />
-            <proceedDirect fix="HAM" />
+            <proceedDirect fix="ALF/358/5.6" />
+            <then />
+            <proceedDirect fix="GT/031/15" />
+            <then />
+            <proceedDirect fix="EKERN" />
+          </route>
+          <route type="sid" name="LUB9G" mapping="33">
+            <altitudeRouteRestriction restriction="above" value="4000" />
+            <proceedDirect fix="ALF/331/3" />
+            <then />
+            <proceedDirect fix="ALF/358/5" />
+            <then />
+            <proceedDirect fix="LUB/242/14" />
             <then />
             <proceedDirect fix="LUB" />
           </route>
-          <route type="sid" name="RAMAR2D" mapping="15">
-            <altitudeRestriction restriction="above" value="4000" />
-            <proceedDirect fix="ALF/151/7.1" />
+          <route type="sid" name="RAMAR3G" mapping="33">
+            <altitudeRouteRestriction restriction="above" value="4000" />
+            <proceedDirect fix="ALF/331/3" />
             <then />
-            <proceedDirect fix="HAM/094/8" />
+            <proceedDirect fix="ALF/358/5" />
+            <then />
+            <proceedDirect fix="LUB/242/14" />
             <then />
             <proceedDirect fix="LYE" />
             <then />
             <proceedDirect fix="RAMAR" />
           </route>
-          <route type="sid" name="AMLUH8D" mapping="15">
-            <altitudeRestriction restriction="above" value="4000" />
-            <proceedDirect fix="ALF/151/8.6" />
+          <route type="sid" name="AMLUH8G" mapping="33">
+            <altitudeRouteRestriction restriction="above" value="4000" />
+            <proceedDirect fix="ALF/331/3" />
+            <then />
+            <proceedDirect fix="ALF/358/5" />
+            <then />
+            <proceedDirect fix="HAM" />
             <then />
             <proceedDirect fix="AMLUH" />
           </route>
-          <route type="sid" name="LBV1D" mapping="15">
-            <altitudeRestriction restriction="above" value="4000" />
-            <proceedDirect fix="ALF/151/5" />
-            <then />
-            <proceedDirect fix="WSN/074/37" />
+          <route type="sid" name="IDEKO4G" mapping="33">
+            <altitudeRouteRestriction restriction="above" value="4000" />
+            <proceedDirect fix="ALF/331/4" />
             <then />
             <proceedDirect fix="LBV" />
-          </route>
-          <route type="sid" name="WSN" mapping="15">
-            <altitudeRestriction restriction="above" value="4000" />
-            <proceedDirect fix="ALF/151/5" />
-            <then />
-            <proceedDirect fix="WSN/074/37" />
-            <then />
-            <proceedDirect fix="WSN" />
-          </route>
-          <route type="sid" name="BASUM4D" mapping="15">
-            <altitudeRestriction restriction="above" value="4000" />
-            <proceedDirect fix="ALF/151/5" />
-            <then />
-            <proceedDirect fix="WSN/074/20" />
-            <then />
-            <proceedDirect fix="BASUM" />
-          </route>
-          <route type="sid" name="IDEKO5D" mapping="15">
-            <altitudeRestriction restriction="above" value="4000" />
-            <proceedDirect fix="ALF/151/5" />
-            <then />
-            <proceedDirect fix="WSN/074/27" />
             <then />
             <proceedDirect fix="IDEKO" />
           </route>
-          <route type="transition" name="RIBSO15" entryFL="FL110" mapping="15">
+          <route type="sid" name="BASUM10G" mapping="33">
+            <altitudeRouteRestriction restriction="above" value="4000" />
+            <proceedDirect fix="ALF/331/4" />
+            <then />
+            <proceedDirect fix="LBV" />
+            <then />
+            <proceedDirect fix="BASUM" />
+          </route>
+          <route type="sid" name="WSN2G" mapping="33">
+            <altitudeRouteRestriction restriction="above" value="4000" />
+            <proceedDirect fix="ALF/331/4" />
+            <then />
+            <proceedDirect fix="LBV" />
+            <then />
+            <proceedDirect fix="WSN" />
+          </route>
+          <route type="transition" name="RIBSO33" entryFL="FL110" mapping="33">
             <proceedDirect fix="RIBSO" />
             <then />
             <altitude direction="descend" value="4000" />
+            <proceedDirect fix="DH804" />
+            <then />
             <speed restriction="below" value="220"/>
-            <proceedDirect fix="DH434" />
+            <proceedDirect fix="DH805" />
             <then />
-            <proceedDirect fix="DH435" />
+            <proceedDirect fix="DH806" />
             <then />
-            <proceedDirect fix="DH455" />
+            <proceedDirect fix="DH807" />
             <then />
-            <proceedDirect fix="DH456" />
+            <proceedDirect fix="DH808" />
             <then />
-            <proceedDirect fix="DH457" />
+            <proceedDirect fix="DH809" />
+            <then />
+            <proceedDirect fix="DH810" />
+            <then />
+            <proceedDirect fix="DH811" />
+            <then />
+            <proceedDirect fix="DH812" />
+            <then />
+            <proceedDirect fix="DH813" />
+            <then />
+            <proceedDirect fix="DH814" />
+            <then />
+            <proceedDirect fix="DH815" />
+            <then />
+            <proceedDirect fix="DH854" />
+            <then />
+            <proceedDirect fix="DH855" />
+            <then />
+            <proceedDirect fix="DH856" />
+            <then />
+            <proceedDirect fix="DH857" />
+            <then />
+            <proceedDirect fix="DH858" />
             <then />
             <altitude direction="descend" value="3000" />
-            <proceedDirect fix="DH458" />
-            <then />
-            <proceedDirect fix="DEVOD" />
+            <proceedDirect fix="SOSAX" />
           </route>
-          <route type="transition" name="NOLGO15" entryFL="FL110" mapping="15">
+          <route type="transition" name="NOLGO33" entryFL="FL110" mapping="33">
             <proceedDirect fix="NOLGO" />
             <then />
-            <altitude direction="descend" value="4000" />
-            <proceedDirect fix="DH406" />
-            <then />
-            <proceedDirect fix="DH408" />
-            <then />
-            <proceedDirect fix="DH409" />
+            <altitude direction="descend" value="8000" />
+            <proceedDirect fix="DH832" />
             <then />
             <speed restriction="below" value="220"/>
-            <proceedDirect fix="DH412" />
-            <then />
-            <proceedDirect fix="DH413" />
-            <then />
-            <proceedDirect fix="DH414" />
-            <then />
-            <proceedDirect fix="DH416" />
-            <then />
-            <proceedDirect fix="DH455" />
-            <then />
-            <proceedDirect fix="DH456" />
-            <then />
-            <proceedDirect fix="DH457" />
-            <then />
-            <altitude direction="descend" value="3000" />
-            <proceedDirect fix="DH458" />
-            <then />
-            <proceedDirect fix="DEVOD" />
-          </route>
-          <route type="transition" name="BOGMU15" entryFL="FL110" mapping="15">
-            <proceedDirect fix="BOGMU" />
-            <then />
             <altitude direction="descend" value="4000" />
-            <speed restriction="below" value="220"/>
-            <proceedDirect fix="DH412" />
             <then />
-            <proceedDirect fix="DH413" />
+            <proceedDirect fix="DH833" />
             <then />
-            <proceedDirect fix="DH414" />
+            <proceedDirect fix="DH834" />
             <then />
-            <proceedDirect fix="DH416" />
+            <proceedDirect fix="DH835" />
             <then />
-            <proceedDirect fix="DH455" />
+            <proceedDirect fix="DH854" />
             <then />
-            <proceedDirect fix="DH456" />
+            <proceedDirect fix="DH855" />
             <then />
-            <proceedDirect fix="DH457" />
+            <proceedDirect fix="DH856" />
+            <then />
+            <proceedDirect fix="DH857" />
+            <then />
+            <proceedDirect fix="DH858" />
             <then />
             <altitude direction="descend" value="3000" />
-            <proceedDirect fix="DH458" />
-            <then />
-            <proceedDirect fix="DEVOD" />
+            <proceedDirect fix="SOSAX" />
           </route>
-          <route type="transition" name="RARUP15" entryFL="FL110" mapping="15">
+          <route type="transition" name="RARUP33" entryFL="FL110" mapping="33">
             <proceedDirect fix="RARUP" />
             <then />
             <altitude direction="descend" value="4000" />
-            <proceedDirect fix="DH417" />
+            <proceedDirect fix="DH829" />
             <then />
             <speed restriction="below" value="220"/>
-            <proceedDirect fix="DH412" />
+            <proceedDirect fix="DH830" />
             <then />
-            <proceedDirect fix="DH413" />
+            <proceedDirect fix="DH831" />
             <then />
-            <proceedDirect fix="DH414" />
+            <proceedDirect fix="DH832" />
             <then />
-            <proceedDirect fix="DH416" />
+            <proceedDirect fix="DH833" />
             <then />
-            <proceedDirect fix="DH455" />
+            <proceedDirect fix="DH834" />
             <then />
-            <proceedDirect fix="DH456" />
+            <proceedDirect fix="DH835" />
             <then />
-            <proceedDirect fix="DH457" />
+            <proceedDirect fix="DH854" />
+            <then />
+            <proceedDirect fix="DH855" />
+            <then />
+            <proceedDirect fix="DH856" />
+            <then />
+            <proceedDirect fix="DH857" />
+            <then />
+            <proceedDirect fix="DH858" />
             <then />
             <altitude direction="descend" value="3000" />
-            <proceedDirect fix="DH458" />
+            <proceedDirect fix="SOSAX" />
+          </route>
+          <route type="transition" name="BOGMU33" entryFL="FL110" mapping="33">
+            <proceedDirect fix="BOGMU" />
             <then />
-            <proceedDirect fix="DEVOD" />
+            <altitude direction="descend" value="4000" />
+            <proceedDirect fix="DH829" />
+            <then />
+            <speed restriction="below" value="220"/>
+            <proceedDirect fix="DH830" />
+            <then />
+            <proceedDirect fix="DH831" />
+            <then />
+            <proceedDirect fix="DH832" />
+            <then />
+            <proceedDirect fix="DH833" />
+            <then />
+            <proceedDirect fix="DH834" />
+            <then />
+            <proceedDirect fix="DH835" />
+            <then />
+            <proceedDirect fix="DH854" />
+            <then />
+            <proceedDirect fix="DH855" />
+            <then />
+            <proceedDirect fix="DH856" />
+            <then />
+            <proceedDirect fix="DH857" />
+            <then />
+            <proceedDirect fix="DH858" />
+            <then />
+            <altitude direction="descend" value="3000" />
+            <proceedDirect fix="SOSAX" />
           </route>
         </group>
       </daRoutes>
       <iafRoutes>
-        <iafRoute iaf="LBV" iafMapping="05-LBV">
-          <proceedDirect fix="LBV/153/8.4" />
-          <then />
-          <heading value="079" direction="left" />
+        <iafRoute iaf="LBV" iafMapping="05LBV">
+          <proceedDirect fix="LBV/153/8.4"/>
+          <then/>
+          <heading value="079" direction="left"/>
         </iafRoute>
-        <iafRoute iaf="LBV" iafMapping="23-LBV">
-          <proceedDirect fix="LBV/228/21.8" />
-          <then />
-          <heading value="198" direction="right" />
+        <iafRoute iaf="LBV" iafMapping="23LBV">
+          <proceedDirect fix="LBV/228/21.8"/>
+          <then/>
+          <heading value="198" direction="right"/>
         </iafRoute>
-        <iafRoute iaf="LBV" iafMapping="15-LBV">
-          <proceedDirect fix="LBV/034/11.3" />
-          <then />
-          <heading value="121" direction="right" />
+        <iafRoute iaf="LBV" iafMapping="15LBV">
+          <proceedDirect fix="LBV/034/11.3"/>
+          <then/>
+          <heading value="121" direction="right"/>
         </iafRoute>
       </iafRoutes>
       <gaRoutes>
         <gaRoute gaMapping="05">
-          <altitude direction="climb" value="4000" />
-          <proceedDirect fix="HOS" />
-          <then />
-          <hold fix="HAM" />
+          <altitude direction="climb" value="4000"/>
+          <proceedDirect fix="HOS"/>
+          <then/>
+          <hold fix="HAM"/>
         </gaRoute>
         <gaRoute gaMapping="23">
-          <altitude direction="climb" value="4000" />
-          <proceedDirect fix="ALF/228/5.5" />
-          <then />
-          <hold fix="HAM" />
+          <altitude direction="climb" value="4000"/>
+          <proceedDirect fix="ALF/228/5.5"/>
+          <then/>
+          <hold fix="HAM"/>
         </gaRoute>
         <gaRoute gaMapping="15">
-          <altitude direction="climb" value="4000" />
-          <proceedDirect fix="ALF/150/3" />
-          <then />
-          <hold fix="HAM" />
+          <altitude direction="climb" value="4000"/>
+          <proceedDirect fix="ALF/150/3"/>
+          <then/>
+          <hold fix="HAM"/>
         </gaRoute>
       </gaRoutes>
     </airport>
@@ -906,43 +1085,43 @@
     <navaid name="SOSAX" type="fixMinor" coordinate="N 53 29 35.01 E 010 06 50.96"/>
 
 
-    <navaid name="EDFH" type="airport" coordinate="53.994329 9.579080" />
-    <navaid name="EDHM" type="airport" coordinate="53.915419 10.034739" />
-    <navaid name="EDHW" type="airport" coordinate="53.970737 10.224940" />
-    <navaid name="EDHG" type="airport" coordinate="53.249972 10.457559" />
-    <navaid name="EDHU" type="airport" coordinate="53.206856 9.573606" />
-    <navaid name="EDXS" type="airport" coordinate="53.337831 9.262992" />
-    <navaid name="EDHI" type="airport" coordinate="53.533072 9.833592" />
-    <navaid name="EDHO" type="airport" coordinate="53.701467 9.740545" />
-    <navaid name="EDHL" type="airport" coordinate="53.803969 10.709335" />
+    <navaid name="EDFH" type="airport" coordinate="53.994329 9.579080"/>
+    <navaid name="EDHM" type="airport" coordinate="53.915419 10.034739"/>
+    <navaid name="EDHW" type="airport" coordinate="53.970737 10.224940"/>
+    <navaid name="EDHG" type="airport" coordinate="53.249972 10.457559"/>
+    <navaid name="EDHU" type="airport" coordinate="53.206856 9.573606"/>
+    <navaid name="EDXS" type="airport" coordinate="53.337831 9.262992"/>
+    <navaid name="EDHI" type="airport" coordinate="53.533072 9.833592"/>
+    <navaid name="EDHO" type="airport" coordinate="53.701467 9.740545"/>
+    <navaid name="EDHL" type="airport" coordinate="53.803969 10.709335"/>
   </navaids>
   <borders>
     <border name="EDDH CTR" type="ctr" enclosed="true" minAltitude="0" maxAltitude="2500">
       <points>
-        <point coordinate="53.777379 10.170100" />
-        <point coordinate="53.707210 10.021496" />
-        <point coordinate="53.823979 9.915223" />
-        <point coordinate="53.781128 9.772923" />
-        <point coordinate="53.667037 9.864787" />
-        <point coordinate="53.623115 9.856682" />
-        <point coordinate="53.485991 9.581991" />
-        <point coordinate="53.401360 9.691867" />
-        <point coordinate="53.502596 9.906216" />
-        <point coordinate="53.499382 9.999881" />
-        <point coordinate="53.456531 10.035906" />
-        <point coordinate="53.499382 10.188112" />
-        <point coordinate="53.585084 10.119665" />
-        <point coordinate="53.634899 10.133174" />
-        <point coordinate="53.707746 10.262864" />
+        <point coordinate="53.777379 10.170100"/>
+        <point coordinate="53.707210 10.021496"/>
+        <point coordinate="53.823979 9.915223"/>
+        <point coordinate="53.781128 9.772923"/>
+        <point coordinate="53.667037 9.864787"/>
+        <point coordinate="53.623115 9.856682"/>
+        <point coordinate="53.485991 9.581991"/>
+        <point coordinate="53.401360 9.691867"/>
+        <point coordinate="53.502596 9.906216"/>
+        <point coordinate="53.499382 9.999881"/>
+        <point coordinate="53.456531 10.035906"/>
+        <point coordinate="53.499382 10.188112"/>
+        <point coordinate="53.585084 10.119665"/>
+        <point coordinate="53.634899 10.133174"/>
+        <point coordinate="53.707746 10.262864"/>
       </points>
     </border>
     <border name="EDDH TMA I" type="tma" enclosed="true" minAltitude="2500" maxAltitude="FL100">
       <points>
-        <point coordinate="53.401360 9.691867" />
-        <point coordinate="53.383684 9.781029" />
-        <arc coordinate="53.631149 9.986372" direction="counterclockwise" />
-        <point coordinate="53.546518 9.544164" />
-        <point coordinate="53.485991 9.581991" />
+        <point coordinate="53.401360 9.691867"/>
+        <point coordinate="53.383684 9.781029"/>
+        <arc coordinate="53.631149 9.986372" direction="counterclockwise"/>
+        <point coordinate="53.546518 9.544164"/>
+        <point coordinate="53.485991 9.581991"/>
       </points>
       <disjoints>
         <disjoint>EDDH CTR</disjoint>
@@ -950,12 +1129,12 @@
     </border>
     <border name="EDDH TMA II" type="tma" enclosed="true" minAltitude="4500" maxAltitude="FL100">
       <points>
-        <point coordinate="53.921927 9.558555" />
-        <arc coordinate="53.631149 9.986372" direction="counterclockwise" />
-        <point coordinate="53.276818 9.776122" />
-        <point coordinate="53.345966 10.409667" />
-        <arc coordinate="53.631149 9.986372" direction="counterclockwise" />
-        <point coordinate="53.994329 10.224940" />
+        <point coordinate="53.921927 9.558555"/>
+        <arc coordinate="53.631149 9.986372" direction="counterclockwise"/>
+        <point coordinate="53.276818 9.776122"/>
+        <point coordinate="53.345966 10.409667"/>
+        <arc coordinate="53.631149 9.986372" direction="counterclockwise"/>
+        <point coordinate="53.994329 10.224940"/>
       </points>
       <disjoints>
         <disjoint>EDDH TMA I</disjoint>
@@ -963,16 +1142,16 @@
     </border>
     <border name="EDDH TMA III" type="tma" enclosed="true" minAltitude="FL60" maxAltitude="FL100">
       <points>
-        <point coordinate="53.921927 9.558555" />
-        <point coordinate="53.900776 9.380669" />
-        <arc coordinate="53.631149 9.986372" direction="counterclockwise" />
-        <point coordinate="53.256480 9.594132" />
-        <point coordinate="53.276818 9.776122" />
-        <point coordinate="53.345966 10.409667" />
-        <point coordinate="53.362236 10.591657" />
-        <arc coordinate="53.631149 9.986372" direction="counterclockwise" />
-        <point coordinate="54.013040 10.408298" />
-        <point coordinate="53.994329 10.224940" />
+        <point coordinate="53.921927 9.558555"/>
+        <point coordinate="53.900776 9.380669"/>
+        <arc coordinate="53.631149 9.986372" direction="counterclockwise"/>
+        <point coordinate="53.256480 9.594132"/>
+        <point coordinate="53.276818 9.776122"/>
+        <point coordinate="53.345966 10.409667"/>
+        <point coordinate="53.362236 10.591657"/>
+        <arc coordinate="53.631149 9.986372" direction="counterclockwise"/>
+        <point coordinate="54.013040 10.408298"/>
+        <point coordinate="53.994329 10.224940"/>
       </points>
       <disjoints>
         <disjoint>EDDH TMA II</disjoint>
@@ -980,51 +1159,51 @@
         <disjoint>EDDH CTR</disjoint>
       </disjoints>
     </border>
-    
+
     <border name="EDDH MRVA 494" type="mrva" enclosed="true" maxAltitude="1600">
       <points>
-        <point coordinate="N 53 40 12.0000 E 9 31 21.0000" />
-        <arc coordinate="N 53 38 13.0000 E 9 59 43.0000" direction="clockwise" />
-        <point coordinate="N 53 54 48.0000 E 10 5 48.0000" />
-        <point coordinate="N 53 52 4.0000 E 9 56 49.0000" />
-        <point coordinate="N 53 49 28.0000 E 9 54 55.0000" />
-        <point coordinate="N 53 46 54.0000 E 9 46 23.0000" />
-        <point coordinate="N 53 40 12.0000 E 9 31 21.0000" />
+        <point coordinate="N 53 40 12.0000 E 9 31 21.0000"/>
+        <arc coordinate="N 53 38 13.0000 E 9 59 43.0000" direction="clockwise"/>
+        <point coordinate="N 53 54 48.0000 E 10 5 48.0000"/>
+        <point coordinate="N 53 52 4.0000 E 9 56 49.0000"/>
+        <point coordinate="N 53 49 28.0000 E 9 54 55.0000"/>
+        <point coordinate="N 53 46 54.0000 E 9 46 23.0000"/>
+        <point coordinate="N 53 40 12.0000 E 9 31 21.0000"/>
         <!--<arc coordinate="N 53 38 13.0000 E 9 59 43.0000" direction="clockwise" />-->
       </points>
     </border>
-    
+
     <border name="EDDH MRVA 152" type="mrva" enclosed="true" maxAltitude="3500">
       <points>
-        <point coordinate="N 53 37 39.0000 E 9 52 14.0000" />
-        <point coordinate="N 53 37 59.0000 E 10 0 36.0000" />
-        <point coordinate="N 53 33 2.0000 E 10 15 27.0000" />
-        <point coordinate="N 53 27 36.0000 E 10 11 37.0000" />
-        <point coordinate="N 53 25 2.0000 E 9 59 35.0000" />
-        <point coordinate="N 53 27 54.0000 E 9 55 56.0000" />
-        <point coordinate="N 53 28 24.0000 E 9 49 56.0000" />
+        <point coordinate="N 53 37 39.0000 E 9 52 14.0000"/>
+        <point coordinate="N 53 37 59.0000 E 10 0 36.0000"/>
+        <point coordinate="N 53 33 2.0000 E 10 15 27.0000"/>
+        <point coordinate="N 53 27 36.0000 E 10 11 37.0000"/>
+        <point coordinate="N 53 25 2.0000 E 9 59 35.0000"/>
+        <point coordinate="N 53 27 54.0000 E 9 55 56.0000"/>
+        <point coordinate="N 53 28 24.0000 E 9 49 56.0000"/>
       </points>
     </border>
 
     <border name="EDDH MRVA 389" type="mrva" enclosed="true" maxAltitude="2000">
       <points>
-        <point coordinate="N 53 21 15.0000 E 9 58 42.0000" />
-        <arc coordinate="N 53 38 13.0000 E 9 59 43.0000" direction="clockwise" />
-        <point coordinate="N 53 23 6.0000 E 9 46 46.0000" />
-        <point coordinate="N 53 23 33.0000 E 9 44 31.0000" />
-        <point coordinate="N 53 26 13.0000 E 9 45 7.0000" />
-        <point coordinate="N 53 28 24.0000 E 9 49 56.0000" />
-        <point coordinate="N 53 27 54.0000 E 9 55 56.0000" />
-        <point coordinate="N 53 25 2.0000 E 9 59 35.0000" />
+        <point coordinate="N 53 21 15.0000 E 9 58 42.0000"/>
+        <arc coordinate="N 53 38 13.0000 E 9 59 43.0000" direction="clockwise"/>
+        <point coordinate="N 53 23 6.0000 E 9 46 46.0000"/>
+        <point coordinate="N 53 23 33.0000 E 9 44 31.0000"/>
+        <point coordinate="N 53 26 13.0000 E 9 45 7.0000"/>
+        <point coordinate="N 53 28 24.0000 E 9 49 56.0000"/>
+        <point coordinate="N 53 27 54.0000 E 9 55 56.0000"/>
+        <point coordinate="N 53 25 2.0000 E 9 59 35.0000"/>
       </points>
     </border>
-    
+
     <border name="EDDH MRVA 388" type="mrva" enclosed="true" maxAltitude="1800">
       <points>
         <point coordinate="N 54 0 0.0000 E 11 0 0.0000"/>
         <point coordinate="N 53 41 0.0000 E 11 10 0.0000"/>
         <point coordinate="N 53 33 16.0000 E 10 27 1.0000"/>
-        <arc coordinate="N 53 38 13.0000 E 9 59 43.0000" direction="clockwise" />
+        <arc coordinate="N 53 38 13.0000 E 9 59 43.0000" direction="clockwise"/>
         <point coordinate="N 53 21 15.0000 E 9 58 42.0000"/>
         <point coordinate="N 53 25 2.0000 E 9 59 35.0000"/>
         <point coordinate="N 53 27 36.0000 E 10 11 37.0000"/>
@@ -1037,13 +1216,13 @@
         <point coordinate="N 53 24 8.0000 E 9 41 33.0000"/>
         <point coordinate="N 53 29 10.0000 E 9 34 58.0000"/>
         <point coordinate="N 53 32 45.0000 E 9 32 43.0000"/>
-        <arc coordinate="N 53 38 13.0000 E 9 59 43.0000" direction="clockwise" />
+        <arc coordinate="N 53 38 13.0000 E 9 59 43.0000" direction="clockwise"/>
         <point coordinate="N 53 40 12.0000 E 9 31 21.0000"/>
         <point coordinate="N 53 46 54.0000 E 9 46 23.0000"/>
         <point coordinate="N 53 49 28.0000 E 9 54 55.0000"/>
         <point coordinate="N 53 52 4.0000 E 9 56 49.0000"/>
         <point coordinate="N 53 54 48.0000 E 10 5 48.0000"/>
-        <arc coordinate="N 53 38 13.0000 E 9 59 43.0000" direction="clockwise" />
+        <arc coordinate="N 53 38 13.0000 E 9 59 43.0000" direction="clockwise"/>
         <point coordinate="N 53 51 57.0000 E 10 16 31.0000"/>
       </points>
     </border>
@@ -1054,7 +1233,7 @@
         <point coordinate="N 54 9 49.0000 E 9 24 39.0000"/>
         <point coordinate="N 54 13 40.0000 E 9 55 40.0000"/>
         <point coordinate="N 53 54 36.0000 E 9 52 20.0000"/>
-        <arc coordinate="N 53 38 13.0000 E 9 59 43.0000" direction="counterclockwise" />
+        <arc coordinate="N 53 38 13.0000 E 9 59 43.0000" direction="counterclockwise"/>
         <point coordinate="N 53 32 45.0000 E 9 32 43.0000"/>
         <point coordinate="N 53 29 10.0000 E 9 34 58.0000"/>
         <point coordinate="N 53 24 8.0000 E 9 41 33.0000"/>
@@ -1083,7 +1262,7 @@
         <point coordinate="N 53 24 15.0000 E 8 28 0.0000"/>
         <point coordinate="N 53 25 38.0000 E 8 31 42.0000"/>
         <point coordinate="N 53 20 10.0000 E 8 34 27.0000"/>
-        <arc coordinate="N 53 30 10.0000 E 8 34 30.0000" direction="counterclockwise" />
+        <arc coordinate="N 53 30 10.0000 E 8 34 30.0000" direction="counterclockwise"/>
         <point coordinate="N 53 24 11.0000 E 8 47 55.0000"/>
         <point coordinate="N 53 35 56.0000 E 8 41 45.0000"/>
         <point coordinate="N 53 37 56.0000 E 8 58 41.0000"/>

@@ -426,13 +426,13 @@
   </xs:complexType>
 
   <xs:complexType name="route">
-    <xs:choice>
+    <xs:choice maxOccurs="unbounded">
       <xs:element name="then" type="cm:Then"/>
       <xs:element name="proceedDirect" type="cm:ToNavaid"/>
       <xs:element name="speed" type="cm:Speed"/>
       <xs:element name="altitude" type="cm:Altitude"/>
-      <xs:element name="altitudeRestriction" type="cm:AltitudeRestriction" />
-      <xs:element name="altitudeRestrictionClear" type="cm:AltitudeRestrictionClear" />
+      <xs:element name="altitudeRouteRestriction" type="cm:AltitudeRestriction" />
+      <xs:element name="altitudeRouteRestrictionClear" type="cm:AltitudeRestrictionClear" />
       <xs:element name="heading" type="cm:Heading"/>
       <xs:element name="hold" type="cm:Hold"/>
       <xs:element name="after" type="cm:After"/>

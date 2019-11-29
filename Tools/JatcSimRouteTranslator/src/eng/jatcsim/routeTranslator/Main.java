@@ -109,10 +109,10 @@ public class Main {
     maps.put("AD (\\S+)", "<after property=\"distance\" value=\":1\" />");
     maps.put("AR (\\S+)", "<after property=\"radial\" value=\":1\" />");
     maps.put("AN (\\S+)", "<after property=\"navaid\" value=\":1\" />");
-    maps.put("AL (\\d+)", "<altitudeRestriction restriction=\"above\" value=\":100\" />");
-    maps.put("AM (\\d+)", "<altitudeRestriction restriction=\"below\" value=\":100\" />");
-    maps.put("AE (\\d+)", "<altitudeRestriction restriction=\"exactly\" value=\":100\" />");
-    maps.put("AC", "<altitudeRestrictionClear />");
+    maps.put("AL (\\d+)", "<altitudeRouteRestriction restriction=\"above\" value=\":100\" />");
+    maps.put("AM (\\d+)", "<altitudeRouteRestriction restriction=\"below\" value=\":100\" />");
+    maps.put("AE (\\d+)", "<altitudeRouteRestriction restriction=\"exactly\" value=\":100\" />");
+    maps.put("AC", "<altitudeRouteRestrictionClear />");
 
     maps.put("DM (\\d{2,3})", "<altitude direction=\"descend\" value=\":100\" />");
     maps.put("CM (\\d{2,3})", "<altitude direction=\"climb\" value=\":100\" />");

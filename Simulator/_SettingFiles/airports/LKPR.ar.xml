@@ -906,16 +906,13 @@
                 </ilsApproach>
                 <unpreciseApproach type="vor" mapt="OTA/046/1.7" faf="OTA/046/7.7" radial="226" mdaA="1170" mdaB="1170"
                                    mdaC="1170" mdaD="1170" gaMapping="22vor" iafMapping="22vor"
-                                   initialAltitude="3000">
-                </unpreciseApproach>
+                                   initialAltitude="3000" />
                 <unpreciseApproach type="ndb" mapt="N" faf="OTA/042/7.7" radial="222" mdaA="1170" mdaB="1170"
                                    mdaC="1170" mdaD="1170" gaMapping="22ndb" iafMapping="22ndb"
-                                   initialAltitude="3000">
-                </unpreciseApproach>
+                                   initialAltitude="3000" />
                 <gnssApproach daA="1062" daB="1074" daC="1083" daD="1093" radial="222"
                               gaMapping="22gnss" iafMapping="22gnss"
-                              initialAltitude="3000">
-                </gnssApproach>
+                              initialAltitude="3000" />
               </approaches>
             </threshold>
           </thresholds>
