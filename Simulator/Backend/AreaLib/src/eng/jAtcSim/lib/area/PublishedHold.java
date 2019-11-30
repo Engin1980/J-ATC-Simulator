@@ -6,35 +6,18 @@
 
 package eng.jAtcSim.lib.area;
 
-import eng.eSystem.collections.EList;
-import eng.eSystem.collections.IList;
-import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.eXml.XElement;
-import eng.jAtcSim.lib.area.xml.XmlLoader;
+import eng.jAtcSim.sharedLib.xml.XmlLoader;
 
 /**
  * @author Marek
  */
 public class PublishedHold extends Parentable<Airport> {
 
-  public static IList<PublishedHold> loadList(IReadOnlyList<XElement> sources, NavaidList navaids) {
-    IList<PublishedHold> ret = new EList<>();
-    for (XElement source : sources) {
-      PublishedHold hold = PublishedHold.load(source, navaids);
-      ret.add(hold);
-    }
-    return ret;
-  }
-
-  private static PublishedHold load(XElement source, NavaidList navaids) {
-    XmlLoader.setContext(source);
-    String navaidName = XmlLoader.loadString("name");
-    Navaid navaid = navaids.get(navaidName);
-
-    int inboundRadial = XmlLoader.loadInteger("inboundRadial");
-    boolean leftTurn = XmlLoader.loadStringRestricted("turn", new String[]{"left", "right"}).equals("left");
-
-    PublishedHold ret = new PublishedHold(navaid, inboundRadial, leftTurn);
+  public static PublishedHold load(XElement source, Airport airport) {
+    PublishedHold ret = new PublishedHold();
+    ret.setParent(airport);
+    ret.read(source);
     return ret;
   }
 
@@ -42,10 +25,7 @@ public class PublishedHold extends Parentable<Airport> {
   private int inboundRadial;
   private boolean leftTurn;
 
-  private PublishedHold(Navaid navaid, int inboundRadial, boolean leftTurn) {
-    this.navaid = navaid;
-    this.inboundRadial = inboundRadial;
-    this.leftTurn = leftTurn;
+  private PublishedHold() {
   }
 
   public int getInboundRadial() {
@@ -67,5 +47,14 @@ public class PublishedHold extends Parentable<Airport> {
   @Override
   public String toString() {
     return "Published hold {" + this.getNavaid().getName() + "}";
+  }
+
+  private void read(XElement source) {
+    XmlLoader.setContext(source);
+    String navaidName = XmlLoader.loadString("name");
+    this.navaid = this.getParent().getParent().getNavaids().get(navaidName);
+
+    this.inboundRadial = XmlLoader.loadInteger("inboundRadial");
+    this.leftTurn = XmlLoader.loadStringRestricted("turn", new String[]{"left", "right"}).equals("left");
   }
 }

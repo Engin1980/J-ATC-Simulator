@@ -1,13 +1,11 @@
 package eng.jAtcSim.lib.area;
 
 import eng.eSystem.Tuple;
-import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
-import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
-import eng.jAtcSim.lib.area.xml.XmlLoader;
+import eng.jAtcSim.sharedLib.xml.XmlLoader;
 
 public class EntryExitPoint extends Parentable<Airport> {
 
@@ -17,47 +15,25 @@ public class EntryExitPoint extends Parentable<Airport> {
     both
   }
 
-  public static EntryExitPointList loadList(IReadOnlyList<XElement> sources, NavaidList navaids,
-                                            Navaid airportMainNavaid,
-                                            IReadOnlyList<Border> mrvas) {
-    IList<EntryExitPoint> tmp = new EList<>();
-
-    for (XElement source : sources) {
-      EntryExitPoint eep = EntryExitPoint.load(source, navaids, airportMainNavaid, mrvas);
-      tmp.add(eep);
-    }
-
-    EntryExitPointList ret = new EntryExitPointList(tmp);
-    return ret;
-  }
-
   public static EntryExitPoint create(Navaid navaid, Type type, Integer maxMrvaAltitude) {
     EntryExitPoint ret = new EntryExitPoint(navaid, type, maxMrvaAltitude);
     return ret;
   }
 
-  private static EntryExitPoint load(XElement source, NavaidList navaids,
-                                     Navaid airportMainNavaid,
-                                     IReadOnlyList<Border> mrvas) {
-    XmlLoader.setContext(source);
-    String navaidName = XmlLoader.loadString("name");
-    Type type = XmlLoader.loadEnum("type", Type.class);
-    Navaid navaid = navaids.get(navaidName);
-    Integer maxMrvaAltitude = XmlLoader.loadInteger("maxMrvaAltitude", null);
-    maxMrvaAltitude = evaluateMaxMrvaAltitude(maxMrvaAltitude, navaid, airportMainNavaid, mrvas);
-
-    EntryExitPoint ret = new EntryExitPoint(navaid, type, maxMrvaAltitude);
+  public static EntryExitPoint load(XElement source, Airport airport) {
+    EntryExitPoint ret = new EntryExitPoint();
+    ret.setParent(airport);
+    ret.read(source);
     return ret;
   }
 
-  private static Integer evaluateMaxMrvaAltitude(Integer customMaxMrvaAltitude, Navaid navaid, Navaid airportMainNavaid,
-                                                 IReadOnlyList<Border> mrvas) {
-    Integer maxMrvaAltitude;
-    mrvas = mrvas.where(q -> q.getType() == Border.eType.mrva);
+  private static int evaluateMaxMrvaAltitude(Integer customMaxMrvaAltitude, Navaid navaid, Airport airport) {
+    int ret;
+    IList<Border> mrvas = airport.getParent().getBorders().where(q -> q.getType() == Border.eType.mrva);
     Tuple<Coordinate, Coordinate> line =
         new Tuple<>(
             navaid.getCoordinate(),
-            airportMainNavaid.getCoordinate()
+            airport.getMainAirportNavaid().getCoordinate()
         );
 
     int maxMrvaAlt = 0;
@@ -67,16 +43,29 @@ public class EntryExitPoint extends Parentable<Airport> {
     }
 
     if (customMaxMrvaAltitude == null)
-      maxMrvaAltitude = maxMrvaAlt;
+      ret = maxMrvaAlt;
     else
-      maxMrvaAltitude = Math.min(customMaxMrvaAltitude, maxMrvaAlt);
-    return maxMrvaAltitude;
+      ret = Math.min(customMaxMrvaAltitude, maxMrvaAlt);
+    return ret;
   }
 
-  private final Navaid navaid;
-  private final Type type;
-  private final Integer maxMrvaAltitude;
+  private Navaid navaid;
+  private Type type;
+  private Integer maxMrvaAltitude;
   private int radialFromAirport;
+
+  public EntryExitPoint() {
+  }
+
+  private void read(XElement source){
+    XmlLoader.setContext(source);
+    String navaidName = XmlLoader.loadString("name");
+    this.type = XmlLoader.loadEnum("type", Type.class);
+    this.navaid = this.getParent().getParent().getNavaids().get(navaidName);
+    Integer maxMrvaAltitude = XmlLoader.loadInteger("maxMrvaAltitude", null);
+    this.maxMrvaAltitude = evaluateMaxMrvaAltitude(maxMrvaAltitude, navaid, this.getParent());
+    this.radialFromAirport = (int) Coordinates.getBearing(this.getParent().getLocation(), this.navaid.getCoordinate());
+  }
 
   private EntryExitPoint(Navaid navaid, Type type, Integer maxMrvaAltitude) {
     this.navaid = navaid;

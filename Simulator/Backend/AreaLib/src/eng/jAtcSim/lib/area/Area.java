@@ -6,50 +6,47 @@
 package eng.jAtcSim.lib.area;
 
 import eng.eSystem.EStringBuilder;
+import eng.eSystem.collections.EDistinctList;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.ISet;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
-import eng.jAtcSim.lib.area.xml.XmlLoader;
+import eng.jAtcSim.sharedLib.xml.XmlLoader;
 
 /**
  * @author Marek
  */
-public class Area {
+public final class Area {
 
-  public static Area load(XElement element){
-    String icao = XmlLoader.loadString(element, "icao");
+  private IList<Airport> airports;
+  private NavaidList navaids;
+  private IList<Border> borders;
+  private String icao;
 
-    NavaidList navaids = Navaid.loadList(
-        element.getChild("navaids").getChildren("navaid"));
-
-
-    IList<Border> borders = Border.loadList(
-        element.getChild("borders").getChildren("border"), navaids);
-
-    IList<Airport> airports = new EList<>();
-    for (XElement child : element.getChild("airports").getChildren("airport")) {
-      Airport airport = Airport.load(child, navaids, borders);
-      airports.add(airport);
-    }
-
-    Area ret = new Area(icao, airports, navaids, borders);
+  public static Area loadArea(XElement element) {
+    Area ret = new Area();
+    ret.icao = XmlLoader.loadString(element, "icao");
+    ret.navaids = new NavaidList();
+    XmlLoader.loadList(
+        element.getChild("navaids").getChildren("navaid"),
+        ret.navaids,
+        q -> Navaid.load(q));
+    ret.borders = new EList<>();
+    XmlLoader.loadList(
+        element.getChild("borders").getChildren("border"),
+        ret.borders,
+        q-> Border.load(q, ret));
+    ret.airports = new EDistinctList<>();
+    XmlLoader.loadList(
+        element.getChild("airports").getChildren("airport"),
+        ret.airports,
+        a -> Airport.load(a, ret)
+    );
     return ret;
   }
 
-  private final IList<Airport> airports;
-  private final NavaidList navaids;
-  private final IList<Border> borders;
-  private final String icao;
-
-
-  private Area(String icao, IList<Airport> airports, NavaidList navaids, IList<Border> borders) {
-    this.icao = icao;
-    this.airports = airports;
-    this.navaids = navaids;
-    this.borders = borders;
-  }
+  private Area(){}
 
   public IList<Airport> getAirports() {
     return airports;

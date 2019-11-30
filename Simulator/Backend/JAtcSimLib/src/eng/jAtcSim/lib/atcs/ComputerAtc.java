@@ -8,7 +8,6 @@ import eng.eSystem.exceptions.EApplicationException;
 import eng.jAtcSim.lib.Acc;
 import eng.jAtcSim.lib.airplanes.interfaces.IAirplane4Atc;
 import eng.jAtcSim.lib.airplanes.interfaces.IAirplaneRO;
-import eng.jAtcSim.lib.airplanes.interfaces.IAirplaneWriteSimple;
 import eng.jAtcSim.lib.atcs.planeResponsibility.SwitchRoutingRequest;
 import eng.jAtcSim.lib.global.DelayedList;
 import eng.jAtcSim.lib.global.Global;

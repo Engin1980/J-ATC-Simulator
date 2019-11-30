@@ -1,14 +1,15 @@
 package eng.jAtcSim.sharedLib.xml;
 
-import eng.eSystem.collections.*;
-
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
+import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.geo.Coordinate;
 import eng.jAtcSim.sharedLib.PlaneCategoryDefinitions;
 import eng.jAtcSim.sharedLib.exceptions.ToDoException;
+
+import java.util.function.Function;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
@@ -17,215 +18,15 @@ public abstract class XmlLoader {
   private static XElement context;
   private static boolean printLogToConsole = false;
 
-  public static void setContext(XElement context) {
-    if (printLogToConsole)
-      System.out.println("XmlLoader - context change " + context.toXmlPath(true));
-    XmlLoader.context = context;
+  public static boolean isPrintLogToConsole() {
+    return printLogToConsole;
   }
 
-  public static String loadString(String key) {
-    assert context != null;
-    String ret = loadString(context, key);
-    return ret;
-  }
-
-  public static String loadString(String key, String defaultValue) {
-    assert context != null;
-    String ret = loadString(context, key, defaultValue);
-    return ret;
-  }
-
-  public static String loadStringRestricted(String key, String[] possibleValues) {
-    String ret = loadStringRestricted(XmlLoader.context, key, possibleValues);
-    return ret;
-  }
-
-  public static String loadStringRestricted(String key, String[] possibleValues, String defaultValue) {
-    String ret = loadStringRestricted(XmlLoader.context, key, possibleValues, defaultValue);
-    return ret;
-  }
-
-  public static String loadString(XElement source, String key) {
-    String ret = readValueFromXml(source, key);
-    if (ret == null) throw throwNotFound(source, key);
-    return ret;
-  }
-
-  public static String loadString(XElement source, String key, String defaultValue) {
-    String ret = readValueFromXml(source, key);
-    if (ret == null) ret = defaultValue;
-    return ret;
-  }
-
-  public static String loadStringRestricted(XElement source, String key, String[] possibleValues) {
-    String ret = loadString(source, key);
-    checkValueIsInPossibilities(ret, possibleValues);
-    return ret;
-  }
-
-  public static String loadStringRestricted(XElement source, String key, String[] possibleValues, String defaultValue) {
-    String ret = loadString(source, key, defaultValue);
-    checkValueIsInPossibilities(ret, possibleValues);
-    return ret;
-  }
-
-  public static Coordinate loadCoordinate(String key) {
-    assert context != null;
-    Coordinate ret = loadCoordinate(context, key, null);
-    return ret;
-  }
-
-  public static Coordinate loadCoordinate(String key, Coordinate defaultValue) {
-    assert context != null;
-    Coordinate ret = loadCoordinate(context, key, defaultValue);
-    return ret;
-  }
-
-  public static Coordinate loadCoordinate(XElement source, String key) {
-    String tmp = loadString(source, key, null);
-    if (tmp == null)
-      throw throwNotFound(source, key);
-    throw new ToDoException();
-  }
-
-  public static Coordinate loadCoordinate(XElement source, String key, Coordinate defaultValue) {
-    String tmp = loadString(source, key, null);
-    if (tmp == null)
-      return defaultValue;
-    else
-      throw new ToDoException();
-  }
-
-  public static <T> T loadEnum(String key, Class<? extends T> type, T defaultValue) {
-    assert context != null;
-    T ret = loadEnum(context, key, type, defaultValue);
-    return ret;
-  }
-
-  public static <T> T loadEnum(String key, Class<? extends T> type) {
-    assert context != null;
-    T ret = loadEnum(context, key, type);
-    return ret;
-  }
-
-  public static <T> T loadEnum(XElement source, String key, Class<? extends T> type) {
-    T ret = loadEnum(source, key, type, null);
-    if (ret == null)
-      throw throwNotFound(source, key);
-    return ret;
-  }
-
-  public static <T> T loadEnum(XElement source, String key, Class<? extends T> type, T defaultValue) {
-    T ret;
-    String tmp = loadString(source, key, null);
-    if (tmp == null)
-      ret = defaultValue;
-    else
-      try {
-        ret = (T) Enum.valueOf((Class) type, tmp);
-      } catch (Exception ex) {
-        throw throwConvertFail(tmp, type, ex);
-      }
-    return ret;
-  }
-
-  public static boolean loadBoolean(String key) {
-    assert context != null;
-    return loadBoolean(context, key);
-  }
-
-  public static Boolean loadBoolean(String key, Boolean defaultValue) {
-    assert context != null;
-    return loadBoolean(context, key, defaultValue);
-  }
-
-  public static Boolean loadBoolean(XElement source, String key, Boolean defaultValue) {
-    Boolean ret;
-    String tmp = loadString(source, key, null);
-    if (tmp == null)
-      ret = defaultValue;
-    else
-      switch (tmp.toUpperCase()) {
-        case "0":
-        case "FALSE":
-          ret = false;
-          break;
-        case "1":
-        case "TRUE":
-          ret = true;
-          break;
-        default:
-          throw throwConvertFail(tmp, Boolean.class);
-      }
-    return ret;
-  }
-
-  public static boolean loadBoolean(XElement source, String key) {
-    Boolean ret = loadBoolean(source, key, null);
-    if (ret == null) throw throwNotFound(source, key);
-    return ret;
-  }
-
-  public static int loadInteger(String key) {
-    assert context != null;
-    return loadInteger(context, key);
-  }
-
-  public static Integer loadInteger(String key, Integer defaultValue) {
-    assert context != null;
-    return loadInteger(context, key, defaultValue);
-  }
-
-  public static int loadInteger(XElement source, String key) {
-    Integer tmp = loadInteger(source, key, null);
-    if (tmp == null)
-      throw throwNotFound(source, key);
-    return tmp;
-  }
-
-  public static Integer loadInteger(XElement source, String key, Integer defaultValue) {
-    Integer ret;
-    String tmp = loadString(source, key, null);
-    if (tmp == null)
-      ret = defaultValue;
-    else
-      try {
-        ret = Integer.parseInt(tmp);
-      } catch (Exception ex) {
-        throw throwConvertFail(tmp, Integer.class, ex);
-      }
-    return ret;
-  }
-
-  public static Double loadDouble(String key, Double defaultValue) {
-    assert context != null;
-    return loadDouble(context, key, defaultValue);
-  }
-
-  public static double loadDouble(String key) {
-    assert context != null;
-    return loadDouble(context, key);
-  }
-
-  public static double loadDouble(XElement source, String key) {
-    Double ret = loadDouble(source, key, null);
-    if (ret == null)
-      throw throwNotFound(source, key);
-    return ret;
-  }
-
-  public static Double loadDouble(XElement source, String key, Double defaultValue) {
-    Double ret;
-    String tmp = loadString(source, key, null);
-    if (tmp == null)
-      ret = defaultValue;
-    else
-      try {
-        ret = Double.parseDouble(tmp);
-      } catch (Exception ex) {
-        throw throwConvertFail(tmp, Double.class, ex);
-      }
-    return ret;
+  public static <T> void loadList(IReadOnlyList<XElement> elements, IList<T> list, Function<XElement, T> function){
+    for (XElement element : elements) {
+      T item = function.apply(element);
+      list.add(item);
+    }
   }
 
   public static int loadAltitude(String key) {
@@ -267,6 +68,165 @@ public abstract class XmlLoader {
     return ret;
   }
 
+  public static boolean loadBoolean(String key) {
+    assert context != null;
+    return loadBoolean(context, key);
+  }
+
+  public static Boolean loadBoolean(String key, Boolean defaultValue) {
+    assert context != null;
+    return loadBoolean(context, key, defaultValue);
+  }
+
+  public static Boolean loadBoolean(XElement source, String key, Boolean defaultValue) {
+    Boolean ret;
+    String tmp = loadString(source, key, null);
+    if (tmp == null)
+      ret = defaultValue;
+    else
+      switch (tmp.toUpperCase()) {
+        case "0":
+        case "FALSE":
+          ret = false;
+          break;
+        case "1":
+        case "TRUE":
+          ret = true;
+          break;
+        default:
+          throw throwConvertFail(tmp, Boolean.class);
+      }
+    return ret;
+  }
+
+  public static boolean loadBoolean(XElement source, String key) {
+    Boolean ret = loadBoolean(source, key, null);
+    if (ret == null) throw throwNotFound(source, key);
+    return ret;
+  }
+
+  public static Coordinate loadCoordinate(String key) {
+    assert context != null;
+    Coordinate ret = loadCoordinate(context, key, null);
+    return ret;
+  }
+
+  public static Coordinate loadCoordinate(String key, Coordinate defaultValue) {
+    assert context != null;
+    Coordinate ret = loadCoordinate(context, key, defaultValue);
+    return ret;
+  }
+
+  public static Coordinate loadCoordinate(XElement source, String key) {
+    String tmp = loadString(source, key, null);
+    if (tmp == null)
+      throw throwNotFound(source, key);
+    throw new ToDoException();
+  }
+
+  public static Coordinate loadCoordinate(XElement source, String key, Coordinate defaultValue) {
+    String tmp = loadString(source, key, null);
+    if (tmp == null)
+      return defaultValue;
+    else
+      throw new ToDoException();
+  }
+
+  public static Double loadDouble(String key, Double defaultValue) {
+    assert context != null;
+    return loadDouble(context, key, defaultValue);
+  }
+
+  public static double loadDouble(String key) {
+    assert context != null;
+    return loadDouble(context, key);
+  }
+
+  public static double loadDouble(XElement source, String key) {
+    Double ret = loadDouble(source, key, null);
+    if (ret == null)
+      throw throwNotFound(source, key);
+    return ret;
+  }
+
+  public static Double loadDouble(XElement source, String key, Double defaultValue) {
+    Double ret;
+    String tmp = loadString(source, key, null);
+    if (tmp == null)
+      ret = defaultValue;
+    else
+      try {
+        ret = Double.parseDouble(tmp);
+      } catch (Exception ex) {
+        throw throwConvertFail(tmp, Double.class, ex);
+      }
+    return ret;
+  }
+
+  public static <T> T loadEnum(String key, Class<? extends T> type, T defaultValue) {
+    assert context != null;
+    T ret = loadEnum(context, key, type, defaultValue);
+    return ret;
+  }
+
+  public static <T> T loadEnum(String key, Class<? extends T> type) {
+    assert context != null;
+    T ret = loadEnum(context, key, type);
+    return ret;
+  }
+
+  public static <T> T loadEnum(XElement source, String key, Class<? extends T> type) {
+    T ret = loadEnum(source, key, type, null);
+    if (ret == null)
+      throw throwNotFound(source, key);
+    return ret;
+  }
+
+  public static <T> T loadEnum(XElement source, String key, Class<? extends T> type, T defaultValue) {
+    T ret;
+    String tmp = loadString(source, key, null);
+    if (tmp == null)
+      ret = defaultValue;
+    else
+      try {
+        ret = (T) Enum.valueOf((Class) type, tmp);
+      } catch (Exception ex) {
+        throw throwConvertFail(tmp, type, ex);
+      }
+    return ret;
+  }
+
+  public static int loadInteger(String key) {
+    assert context != null;
+    return loadInteger(context, key);
+  }
+
+  public static Integer loadInteger(String key, Integer defaultValue) {
+    assert context != null;
+    return loadInteger(context, key, defaultValue);
+  }
+
+  public static int loadInteger(XElement source, String key) {
+    Integer tmp = loadInteger(source, key, null);
+    if (tmp == null)
+      throw throwNotFound(source, key);
+    return tmp;
+  }
+
+  public static Integer loadInteger(XElement source, String key, Integer defaultValue) {
+    Integer ret;
+    String tmp = loadString(source, key, null);
+    if (tmp == null)
+      ret = defaultValue;
+    else
+      try {
+        ret = Integer.parseInt(tmp);
+      } catch (Exception ex) {
+        throw throwConvertFail(tmp, Integer.class, ex);
+      }
+    return ret;
+  }
+
   public static PlaneCategoryDefinitions loadPlaneCategory(String key, String defaultValue) {
     assert context != null;
     return loadPlaneCategory(context, key, defaultValue);
@@ -289,6 +249,62 @@ public abstract class XmlLoader {
         PlaneCategoryDefinitions.getAll() :
         new PlaneCategoryDefinitions(tmp);
     return ret;
+  }
+
+  public static String loadString(String key) {
+    assert context != null;
+    String ret = loadString(context, key);
+    return ret;
+  }
+
+  public static String loadString(String key, String defaultValue) {
+    assert context != null;
+    String ret = loadString(context, key, defaultValue);
+    return ret;
+  }
+
+  public static String loadString(XElement source, String key) {
+    String ret = readValueFromXml(source, key);
+    if (ret == null) throw throwNotFound(source, key);
+    return ret;
+  }
+
+  public static String loadString(XElement source, String key, String defaultValue) {
+    String ret = readValueFromXml(source, key);
+    if (ret == null) ret = defaultValue;
+    return ret;
+  }
+
+  public static String loadStringRestricted(String key, String[] possibleValues) {
+    String ret = loadStringRestricted(XmlLoader.context, key, possibleValues);
+    return ret;
+  }
+
+  public static String loadStringRestricted(String key, String[] possibleValues, String defaultValue) {
+    String ret = loadStringRestricted(XmlLoader.context, key, possibleValues, defaultValue);
+    return ret;
+  }
+
+  public static String loadStringRestricted(XElement source, String key, String[] possibleValues) {
+    String ret = loadString(source, key);
+    checkValueIsInPossibilities(ret, possibleValues);
+    return ret;
+  }
+
+  public static String loadStringRestricted(XElement source, String key, String[] possibleValues, String defaultValue) {
+    String ret = loadString(source, key, defaultValue);
+    checkValueIsInPossibilities(ret, possibleValues);
+    return ret;
+  }
+
+  public static void setContext(XElement context) {
+    if (printLogToConsole)
+      System.out.println("XmlLoader - context change " + context.toXmlPath(true));
+    XmlLoader.context = context;
+  }
+
+  public static void setPrintLogToConsole(boolean printLogToConsole) {
+    XmlLoader.printLogToConsole = printLogToConsole;
   }
 
   private static String readValueFromXml(XElement source, String key) {
@@ -325,13 +341,5 @@ public abstract class XmlLoader {
     return new EApplicationException(sf(
         "The conversion of the value %s to type %s has failed.", value, targetType.getName()
     ), innerException);
-  }
-
-  public static boolean isPrintLogToConsole() {
-    return printLogToConsole;
-  }
-
-  public static void setPrintLogToConsole(boolean printLogToConsole) {
-    XmlLoader.printLogToConsole = printLogToConsole;
   }
 }

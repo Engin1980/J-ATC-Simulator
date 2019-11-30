@@ -1,129 +1,56 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package eng.jAtcSim.lib.area;
 
+import eng.eSystem.collections.EDistinctList;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.geo.Coordinate;
-import eng.jAtcSim.lib.area.xml.XmlLoader;
-import eng.jAtcSim.lib.atcs.AtcTemplate;
-import eng.jAtcSim.lib.world.approaches.GaRoute;
-import eng.jAtcSim.lib.world.approaches.IafRoute;
+import eng.jAtcSim.lib.area.routes.DARoute;
+import eng.jAtcSim.lib.area.routes.GaRoute;
+import eng.jAtcSim.lib.area.routes.IafRoute;
+import eng.jAtcSim.sharedLib.exceptions.ToDoException;
+import eng.jAtcSim.sharedLib.xml.XmlLoader;
 
 /**
  * @author Marek
  */
 public class Airport extends Parentable<Area> {
 
-  public static Airport load(XElement source, NavaidList navaids,
-                             IReadOnlyList<Border> borders) {
-    IList<Border> mrvas = borders.where(q->q.getType() == Border.eType.mrva);
-    XmlLoader.setContext(source);
-    String icao = XmlLoader.loadString("icao");
-    String name = XmlLoader.loadString("name");
-    int altitude = XmlLoader.loadInteger("altitude");
-    int transitionAltitude = XmlLoader.loadInteger("transitionAltitude");
-    int vfrAltitude = XmlLoader.loadInteger("vfrAltitude");
-    double declination = XmlLoader.loadDouble("declination");
-    int coveredDistance = XmlLoader.loadInteger("coveredDistance");
-    String mainAirportNavaidName = XmlLoader.loadString("mainAirportNavaidName");
-
-    InitialPosition initialPosition = InitialPosition.load(source.getChild("initialPosition"));
-    IList<AtcTemplate> atcTemplates = AtcTemplate.loadList(source.getChild("atcTemplates").getChildren());
-    Navaid mainAirportNavaid = navaids.get(mainAirportNavaidName);
-    EntryExitPointList entryExitPointList = EntryExitPoint.loadList(source.getChild("entryExitPoints").getChildren(), navaids,
-        mainAirportNavaid, mrvas);
-    IList<PublishedHold> holds = PublishedHold.loadList(source.getChild("holds").getChildren(), navaids);
-
-    IList<DARoute> daRoutes = DARoute.loadList(source.getChild("daRoutes"), navaids, holds,
-        mrvas);
-    IList<IafRoute> iafRoutes = IafRoute.loadList(source.getChild("iafRoutes"), navaids, holds);
-    IList<GaRoute> gaRoutes = GaRoute.loadList(source.getChild("gaRoutes"), navaids, holds);
-
-    // TODO put inactive and active runways to one upper element
-    IList<InactiveRunway> inactiveRunways = InactiveRunway.loadList(source.getChild("runways").getChildren("inactiveRunway"));
-    IList<ActiveRunway> activeRunways = ActiveRunway.loadList(source.getChild("runways").getChildren("runway"),
-        altitude, navaids, daRoutes, iafRoutes, gaRoutes);
-
-    IList<RunwayConfiguration> runwayConfigurations = RunwayConfiguration.loadList(
-        source.getChild("runwayConfigurations").getChildren(),
-        activeRunways);
-
-    // binding should be done in constructor
-    // bind entryexitpointlist
-    // bind holds
-
-    Airport ret = new Airport(icao, name, mainAirportNavaid, altitude,
-        vfrAltitude, transitionAltitude, coveredDistance,
-        declination, initialPosition, atcTemplates,
-        activeRunways, inactiveRunways,
-        holds, entryExitPointList, runwayConfigurations,
-        daRoutes, iafRoutes, gaRoutes);
-
+  public static Airport load(XElement source, Area area) {
+    Airport ret = new Airport();
+    ret.setParent(area);
+    ret.read(source);
+    throw new ToDoException("Do mapping of routing here");
+//    ret.getAllThresholds().forEach(q -> ret.daRoutes.add(q.getRoutes())); // adds threshold specific routes
+    ret.bindEntryExitPointsByRoutes();
     return ret;
   }
 
-  private final InitialPosition initialPosition;
-  private final IList<ActiveRunway> runways;
-  private final IList<InactiveRunway> inactiveRunways;
-  private final IList<AtcTemplate> atcTemplates;
-  private final IList<PublishedHold> holds;
-  private final EntryExitPointList entryExitPoints;
-  private final String icao;
-  private final String name;
-  private final int altitude;
-  private final int transitionAltitude;
-  private final int vfrAltitude;
-  private final double declination;
-  private final Navaid mainAirportNavaid;
-  private final int coveredDistance;
-  private final IList<RunwayConfiguration> runwayConfigurations;
-  private final IList<DARoute> routes;
-  private final IList<IafRoute> iafRoutes;
-  private final IList<GaRoute> gaRoutes;
+  private InitialPosition initialPosition;
+  private IList<ActiveRunway> runways;
+  private IList<InactiveRunway> inactiveRunways;
+  private IList<Atc> atcs;
+  private IList<PublishedHold> holds;
+  private EntryExitPointList entryExitPoints;
+  private String icao;
+  private String name;
+  private int altitude;
+  private int transitionAltitude;
+  private int vfrAltitude;
+  private double declination;
+  private Navaid mainAirportNavaid;
+  private int coveredDistance;
+  private IList<RunwayConfiguration> runwayConfigurations;
+  private IList<DARoute> daRoutes;
+  private IList<IafRoute> iafRoutes;
+  private IList<GaRoute> gaRoutes;
 
-  private Airport(String icao, String name, Navaid mainAirportNavaid, int altitude, int vfrAltitude, int transitionAltitude,
-                  int coveredDistance, double declination, InitialPosition initialPosition,
-                  IList<AtcTemplate> atcTemplates, IList<ActiveRunway> runways, IList<InactiveRunway> inactiveRunways,
-                  IList<PublishedHold> holds, EntryExitPointList entryExitPoints, IList<RunwayConfiguration> runwayConfigurations,
-                  IList<DARoute> daRoutes, IList<IafRoute> iafRoutes, IList<GaRoute> gaRoutes) {
-    this.initialPosition = initialPosition;
-    this.runways = runways;
-    this.inactiveRunways = inactiveRunways;
-    this.atcTemplates = atcTemplates;
-    this.holds = holds;
-    this.entryExitPoints = entryExitPoints;
-    this.icao = icao;
-    this.name = name;
-    this.altitude = altitude;
-    this.transitionAltitude = transitionAltitude;
-    this.vfrAltitude = vfrAltitude;
-    this.declination = declination;
-    this.mainAirportNavaid = mainAirportNavaid;
-    this.coveredDistance = coveredDistance;
-    this.runwayConfigurations = runwayConfigurations;
-    this.routes = daRoutes;
-    this.iafRoutes = iafRoutes;
-    this.gaRoutes = gaRoutes;
-
-    this.runways.forEach(q->q.setParent(this));
-    this.inactiveRunways.forEach(q->q.setParent(this));
-    this.holds.forEach(q->q.setParent(this));
-    this.routes.forEach(q->q.setParent(this));
-    this.iafRoutes.forEach(q->q.setParent(this));
-    this.gaRoutes.forEach(q->q.setParent(this));
-
-    this.getAllThresholds().forEach(q -> this.routes.add(q.getRoutes())); // adds threshold specific routes
-    bindEntryExitPointsByRoutes();
+  private Airport() {
   }
 
   public void bindEntryExitPointsByRoutes() {
-    for (DARoute route : this.routes) {
+    for (DARoute route : this.daRoutes) {
       EntryExitPoint eep = EntryExitPoint.create(
           route.getMainNavaid(),
           route.getType() == DARoute.eType.sid ? EntryExitPoint.Type.exit : EntryExitPoint.Type.entry,
@@ -148,12 +75,16 @@ public class Airport extends Parentable<Area> {
     return altitude;
   }
 
-  public IReadOnlyList<AtcTemplate> getAtcTemplates() {
-    return atcTemplates;
+  public IReadOnlyList<Atc> getAtcTemplates() {
+    return atcs;
   }
 
   public int getCoveredDistance() {
     return coveredDistance;
+  }
+
+  public IReadOnlyList<DARoute> getDaRoutes() {
+    return daRoutes;
   }
 
   public double getDeclination() {
@@ -192,10 +123,6 @@ public class Airport extends Parentable<Area> {
     return name;
   }
 
-  public IReadOnlyList<DARoute> getRoutes() {
-    return routes;
-  }
-
   public IReadOnlyList<RunwayConfiguration> getRunwayConfigurations() {
     return runwayConfigurations;
   }
@@ -228,5 +155,87 @@ public class Airport extends Parentable<Area> {
       }
     }
     return null;
+  }
+
+  private IReadOnlyList<XElement> extractRoutes(XElement source, String lookForElementName) {
+    IList<XElement> ret = new EList<>();
+
+    ret.add(source.getChildren(lookForElementName));
+
+    IReadOnlyList<XElement> groups = source.getChildren("group");
+    groups.forEach(q -> ret.add(extractRoutes(q, lookForElementName)));
+
+    return ret;
+  }
+
+  private void read(XElement source) {
+    XmlLoader.setContext(source);
+    this.icao = XmlLoader.loadString("icao");
+    this.name = XmlLoader.loadString("name");
+    this.altitude = XmlLoader.loadInteger("altitude");
+    this.transitionAltitude = XmlLoader.loadInteger("transitionAltitude");
+    this.vfrAltitude = XmlLoader.loadInteger("vfrAltitude");
+    this.declination = XmlLoader.loadDouble("declination");
+    this.coveredDistance = XmlLoader.loadInteger("coveredDistance");
+    this.mainAirportNavaid = this.getParent().getNavaids().get(XmlLoader.loadString("mainAirportNavaidName"));
+    this.initialPosition = InitialPosition.load(source.getChild("initialPosition"));
+    this.atcs = new EDistinctList<>(q -> q.getName(), EDistinctList.Behavior.exception);
+    XmlLoader.loadList(
+        source.getChild("atcTemplates").getChildren(),
+        this.atcs, q -> Atc.load(q));
+    {
+      EList<EntryExitPoint> tmp = new EList<>();
+      XmlLoader.loadList(
+          source.getChild("entryExitPoints").getChildren(),
+          tmp,
+          q -> EntryExitPoint.load(q, this));
+      this.entryExitPoints = new EntryExitPointList(tmp);
+    }
+    this.holds = new EList<>();
+    XmlLoader.loadList(
+        source.getChild("holds").getChildren(),
+        this.holds,
+        q -> PublishedHold.load(q, this));
+
+    this.daRoutes = new EDistinctList<>(q -> q.getName(), EDistinctList.Behavior.exception);
+    IReadOnlyList<XElement> routes = extractRoutes(source.getChild("daRoutes"), "route");
+    XmlLoader.loadList(
+        routes,
+        this.daRoutes,
+        q -> DARoute.load(q, this));
+
+    this.iafRoutes = new EList<>();
+    routes = extractRoutes(source.getChild("iafRoutes"), "iafRoute");
+    XmlLoader.loadList(
+        source.getChild("iafRoutes").getChildren(),
+        this.iafRoutes,
+        q -> IafRoute.load(q, this));
+
+    this.gaRoutes = new EList<>();
+    routes = extractRoutes(source.getChild("gaRoutes"), "gaRoute");
+    XmlLoader.loadList(
+        source.getChild("gaRoutes").getChildren(),
+        this.gaRoutes,
+        q -> GaRoute.load(q, this));
+
+    // TODO put inactive and active runways to one upper element
+    this.inactiveRunways = new EList<>();
+    XmlLoader.loadList(
+        source.getChild("runways").getChildren("inactiveRunway"),
+        this.inactiveRunways,
+        q->InactiveRunway.load(q, this));
+
+    this.inactiveRunways = new EList<>();
+    XmlLoader.loadList(
+        source.getChild("runways").getChildren("runway"),
+        this.runways,
+        q->ActiveRunway.load(q, this));
+
+    this.runwayConfigurations = RunwayConfiguration.loadList(source.getChild("runwayConfigurations").getChildren(), this.;
+
+    // TODO check this
+    // binding should be done in constructor
+    // bind entryexitpointlist
+    // bind holds
   }
 }

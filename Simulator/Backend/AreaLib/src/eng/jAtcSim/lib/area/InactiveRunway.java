@@ -7,18 +7,15 @@ import eng.eSystem.eXml.XElement;
 
 public class InactiveRunway extends Runway<InactiveRunway, InactiveRunwayThreshold> {
 
-  public static IList<InactiveRunway> loadList(IReadOnlyList<XElement> sources){
-    IList<InactiveRunway> ret = new EList<>();
-
-    for (XElement source : sources) {
-      InactiveRunway inactiveRunway = InactiveRunway.load(source);
-      ret.add(inactiveRunway);
-    }
-
+  public static InactiveRunway load(XElement source, Airport airport){
+    InactiveRunway ret = new InactiveRunway();
+    ret.setParent(airport);
+    ret.read(source);
+    assert ret.getThresholds().size() == 2;
     return ret;
   }
 
-  public static InactiveRunway load(XElement source){
+  public void read(XElement source){
     InactiveRunway ret;
     IList<InactiveRunwayThreshold> thresholds = InactiveRunwayThreshold.loadList(source.getChild("thresholds").getChildren());
     assert thresholds.size() == 2;
