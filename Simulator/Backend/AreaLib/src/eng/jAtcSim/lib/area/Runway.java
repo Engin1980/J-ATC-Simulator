@@ -1,15 +1,22 @@
 package eng.jAtcSim.lib.area;
 
+import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
+import eng.eSystem.eXml.XElement;
 
 public abstract class Runway<TParentType, ThresholdType extends Parentable<TParentType>> extends Parentable<Airport> {
-  private final IList<ThresholdType> thresholds;
+  private IList<ThresholdType> thresholds;
 
-  public Runway(IList<ThresholdType> thresholds) {
-    this.thresholds = thresholds;
-//    this.thresholds.forEach(q->q.setParent(this));
+  protected Runway(){}
+
+  protected void read(XElement source){
+    IList<ThresholdType> thresholds = readThresholds(source);
+    this.thresholds = new EList<>();
+    this.thresholds.add(thresholds);
   }
+
+  protected abstract IList<ThresholdType> readThresholds(XElement source);
 
   public ThresholdType get(int index){
     return thresholds.get(index);

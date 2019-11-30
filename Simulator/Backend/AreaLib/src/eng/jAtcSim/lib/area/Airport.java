@@ -231,7 +231,11 @@ public class Airport extends Parentable<Area> {
         this.runways,
         q->ActiveRunway.load(q, this));
 
-    this.runwayConfigurations = RunwayConfiguration.loadList(source.getChild("runwayConfigurations").getChildren(), this.;
+    this.runwayConfigurations = new EList<>();
+    XmlLoader.loadList(
+        source.getChild("runwayConfigurations").getChildren(),
+        this.runwayConfigurations,
+        q->RunwayConfiguration.load(q, this));
 
     // TODO check this
     // binding should be done in constructor

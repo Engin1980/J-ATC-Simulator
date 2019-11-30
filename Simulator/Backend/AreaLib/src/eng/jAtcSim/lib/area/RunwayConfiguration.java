@@ -6,57 +6,13 @@ import eng.eSystem.collections.*;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
+import eng.eSystem.geo.Headings;
 import eng.eSystem.utilites.NumberUtils;
-import eng.jAtcSim.lib.area.xml.XmlLoader;
-import eng.jAtcSim.lib.global.Headings;
+import eng.jAtcSim.sharedLib.xml.XmlLoader;
 
 import java.awt.geom.Line2D;
 
 public class RunwayConfiguration {
-
-  public static IList<RunwayConfiguration> loadList(IReadOnlyList<XElement> sources, IReadOnlyList<ActiveRunway> activeRunways) {
-    IList<RunwayConfiguration> ret = new EList<>();
-
-    for (XElement source : sources) {
-      RunwayConfiguration tmp = RunwayConfiguration.load(source, activeRunways);
-      ret.add(tmp);
-    }
-
-    return ret;
-  }
-
-  public static RunwayConfiguration load(XElement source, IReadOnlyList<ActiveRunway> activeRunways) {
-    XmlLoader.setContext(source);
-    int windFrom = XmlLoader.loadInteger("windFrom", 0);
-    int windTo = XmlLoader.loadInteger("windTo", 359);
-    int windSpeedFrom = XmlLoader.loadInteger("windSpeedFrom", 0);
-    int windSpeedTo = XmlLoader.loadInteger("windSpeedTo", 999);
-
-    IList<RunwayThresholdConfiguration> deps = new EList<>();
-    IList<RunwayThresholdConfiguration> arrs = new EList<>();
-
-    for (XElement child : source.getChildren()) {
-      RunwayThresholdConfiguration rtc = RunwayThresholdConfiguration.load(child, activeRunways);
-      switch (child.getName()) {
-        case "departure":
-          deps.add(rtc);
-          break;
-        case "arrivals":
-          arrs.add(rtc);
-          break;
-        default:
-          throw new EEnumValueUnsupportedException(child.getName());
-      }
-    }
-
-    checkAllCategoriesAreApplied(deps, arrs);
-    IList<ISet<ActiveRunwayThreshold>> cts = buildCrossedThresholdsSet(deps, arrs);
-
-    RunwayConfiguration ret = new RunwayConfiguration(
-        windFrom, windTo, windSpeedFrom, windSpeedTo,
-        arrs, deps, cts);
-    return ret;
-  }
 
   public static RunwayConfiguration createForThresholds(IList<ActiveRunwayThreshold> rts) {
     throw new UnsupportedOperationException("This must also includes somehow created crossedThresholdsSet, what is n ow in XmlModelBinder.");
@@ -65,6 +21,12 @@ public class RunwayConfiguration {
 //    RunwayConfiguration ret = new RunwayConfiguration(0, 359, 0, 999, lst, lst);
 //    ret.bind();
 //    return ret;
+  }
+
+  public static RunwayConfiguration load(XElement source, Airport airport) {
+    RunwayConfiguration ret = new RunwayConfiguration();
+    ret.read(source, airport);
+    return ret;
   }
 
   private static IList<ISet<ActiveRunwayThreshold>> buildCrossedThresholdsSet(
@@ -133,24 +95,15 @@ public class RunwayConfiguration {
     }
   }
 
-  private final int windFrom;
-  private final int windTo;
-  private final int windSpeedFrom;
-  private final int windSpeedTo;
-  private final IList<RunwayThresholdConfiguration> arrivals;
-  private final IList<RunwayThresholdConfiguration> departures;
-  private final IList<ISet<ActiveRunwayThreshold>> crossedThresholdSets;
+  private int windFrom;
+  private int windTo;
+  private int windSpeedFrom;
+  private int windSpeedTo;
+  private IList<RunwayThresholdConfiguration> arrivals;
+  private IList<RunwayThresholdConfiguration> departures;
+  private IList<ISet<ActiveRunwayThreshold>> crossedThresholdSets;
 
-  public RunwayConfiguration(int windFrom, int windTo, int windSpeedFrom, int windSpeedTo,
-                             IList<RunwayThresholdConfiguration> arrivals, IList<RunwayThresholdConfiguration> departures,
-                             IList<ISet<ActiveRunwayThreshold>> crossedThresholdSets) {
-    this.windFrom = windFrom;
-    this.windTo = windTo;
-    this.windSpeedFrom = windSpeedFrom;
-    this.windSpeedTo = windSpeedTo;
-    this.arrivals = arrivals;
-    this.departures = departures;
-    this.crossedThresholdSets = crossedThresholdSets;
+  private RunwayConfiguration() {
   }
 
   public boolean accepts(int heading, int speed) {
@@ -222,5 +175,42 @@ public class RunwayConfiguration {
         ", ");
 
     return sb.toString();
+  }
+
+  private void read(XElement source, Airport airport) {
+    XmlLoader.setContext(source);
+    this.windFrom = XmlLoader.loadInteger("windFrom", 0);
+    this.windTo = XmlLoader.loadInteger("windTo", 359);
+    this.windSpeedFrom = XmlLoader.loadInteger("windSpeedFrom", 0);
+    this.windSpeedTo = XmlLoader.loadInteger("windSpeedTo", 999);
+
+    IList<RunwayThresholdConfiguration> deps = new EList<>();
+    IList<RunwayThresholdConfiguration> arrs = new EList<>();
+
+    for (XElement child : source.getChildren()) {
+      RunwayThresholdConfiguration rtc = RunwayThresholdConfiguration.load(child, airport);
+      switch (child.getName()) {
+        case "departure":
+          deps.add(rtc);
+          break;
+        case "arrivals":
+          arrs.add(rtc);
+          break;
+        default:
+          throw new EEnumValueUnsupportedException(child.getName());
+      }
+    }
+
+    checkAllCategoriesAreApplied(deps, arrs);
+    IList<ISet<ActiveRunwayThreshold>> cts = buildCrossedThresholdsSet(deps, arrs);
+
+    RunwayConfiguration ret = new RunwayConfiguration();
+    ret.windFrom = windFrom;
+    ret.windTo = windTo;
+    ret.windSpeedFrom = windSpeedFrom;
+    ret.windSpeedTo = windSpeedTo;
+    ret.arrivals = arrs;
+    ret.departures = deps;
+    ret.crossedThresholdSets = cts;
   }
 }

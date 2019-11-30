@@ -26,27 +26,25 @@ import eng.jAtcSim.lib.world.approaches.GaRoute;
 import eng.jAtcSim.lib.world.approaches.IafRoute;
 import eng.jAtcSim.lib.world.approaches.stages.RadialWithDescendStage;
 import eng.jAtcSim.lib.world.approaches.stages.RouteStage;
+import eng.jAtcSim.sharedLib.xml.XmlLoader;
 
 /**
  * @author Marek
  */
 public class ActiveRunwayThreshold extends Parentable<ActiveRunway> {
 
-  public static IList<ActiveRunwayThreshold> loadList(IReadOnlyList<XElement> sources, int airportAltitude,
-                                                      NavaidList navaids,
-                                                      IReadOnlyList<DARoute> routes, IReadOnlyList<IafRoute> iafRoutes,
-                                                      IReadOnlyList<GaRoute> gaRoutes) {
+  public static IList<ActiveRunwayThreshold> loadBoth(IReadOnlyList<XElement> sources, ActiveRunway runway) {
     assert sources.size() == 2 : "There must be two thresholds";
 
     Coordinate aCoordinate = XmlLoader.loadCoordinate(sources.get(0), "coordinate");
     Coordinate bCoordinate = XmlLoader.loadCoordinate(sources.get(1), "coordinate");
 
-    ActiveRunwayThreshold a = ActiveRunwayThreshold.load(sources.get(0), airportAltitude, navaids,
-        bCoordinate, routes, iafRoutes, gaRoutes);
-    ActiveRunwayThreshold b = ActiveRunwayThreshold.load(sources.get(1), airportAltitude, navaids,
-        aCoordinate, routes, iafRoutes, gaRoutes);
+    ActiveRunwayThreshold a = ActiveRunwayThreshold.load(sources.get(0), runway);
+    ActiveRunwayThreshold b = ActiveRunwayThreshold.load(sources.get(1), runway);
     a.other = b;
     b.other = a;
+
+    tady to musim nejak dodelat at si preadji ta data jak vzajemne jsou, zatim to nepujde tak jak to je
 
     IList<ActiveRunwayThreshold> ret = new EList<>();
     ret.add(a);
@@ -54,10 +52,7 @@ public class ActiveRunwayThreshold extends Parentable<ActiveRunway> {
     return ret;
   }
 
-  private static ActiveRunwayThreshold load(XElement source, int airportAltitude, NavaidList navaids,
-                                            Coordinate otherThresholdCoordinate,
-                                            IReadOnlyList<DARoute> routes, IReadOnlyList<IafRoute> iafRoutes,
-                                            IReadOnlyList<GaRoute> gaRoutes) {
+  private void read(XElement source) {
     XmlLoader.setContext(source);
     String name = XmlLoader.loadString("name");
     Coordinate coordinate = XmlLoader.loadCoordinate("coordinate");
@@ -83,14 +78,21 @@ public class ActiveRunwayThreshold extends Parentable<ActiveRunway> {
     return ret;
   }
 
-  private final IList<Approach> approaches;
-  private final IList<DARoute> routes;
-  private final String name;
-  private final Coordinate coordinate;
-  private final double course;
-  private final int initialDepartureAltitude;
+  private static ActiveRunwayThreshold load(XElement source, ActiveRunway runway) {
+    ActiveRunwayThreshold ret = new ActiveRunwayThreshold();
+    ret.setParent(runway);
+    ret.read(source);
+    return ret;
+  }
+
+  private IList<Approach> approaches;
+  private IList<DARoute> routes;
+  private String name;
+  private Coordinate coordinate;
+  private double course;
+  private int initialDepartureAltitude;
   @Deprecated
-  private final Coordinate estimatedFafPoint;
+  private Coordinate estimatedFafPoint;
   private ActiveRunwayThreshold other;
 
   private ActiveRunwayThreshold(String name, Coordinate coordinate, double course,

@@ -2,20 +2,26 @@ package eng.jAtcSim.lib.area;
 
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.eXml.XElement;
-import eng.jAtcSim.lib.area.xml.XmlLoader;
-import eng.jAtcSim.lib.global.PlaneCategoryDefinitions;
+import eng.jAtcSim.sharedLib.PlaneCategoryDefinitions;
+import eng.jAtcSim.sharedLib.xml.XmlLoader;
 
 import java.util.Objects;
 
 public class RunwayThresholdConfiguration {
-  public static RunwayThresholdConfiguration load(XElement source, IReadOnlyList<ActiveRunway> activeRunways) {
+  public static RunwayThresholdConfiguration load(XElement source, Airport airport) {
+    RunwayThresholdConfiguration ret = new RunwayThresholdConfiguration();
+    ret.read(source, airport);
+    return ret;
+  }
+
+  private void read(XElement source, Airport airport) {
+    IReadOnlyList<ActiveRunway> activeRunways = airport.getRunways();
     XmlLoader.setContext(source);
     String name = XmlLoader.loadString("name");
-    boolean isPrimary = XmlLoader.loadBoolean("primary", false);
-    boolean showRoutes = XmlLoader.loadBoolean("showRoutes", true);
-    boolean showApproach = XmlLoader.loadBoolean("showApproach", true);
-    String categoryS = XmlLoader.loadString("category", "ABCD");
-    PlaneCategoryDefinitions category = new PlaneCategoryDefinitions(categoryS);
+    this.primary = XmlLoader.loadBoolean("primary", false);
+    this. showRoutes = XmlLoader.loadBoolean("showRoutes", true);
+    this. showApproach = XmlLoader.loadBoolean("showApproach", true);
+    this.categories = XmlLoader.loadPlaneCategory("category", "ABCD");
 
     ActiveRunwayThreshold threshold = null;
     for (ActiveRunway activeRunway : activeRunways) {
@@ -27,26 +33,16 @@ public class RunwayThresholdConfiguration {
         }
       }
     }
-
-    RunwayThresholdConfiguration ret = new RunwayThresholdConfiguration(
-        threshold, category, isPrimary, showRoutes, showApproach);
-
-    return ret;
+    this.threshold = threshold;
   }
 
-  private final PlaneCategoryDefinitions categories;
-  private final ActiveRunwayThreshold threshold;
-  private final boolean primary;
-  private final boolean showRoutes;
-  private final boolean showApproach;
+  private  PlaneCategoryDefinitions categories;
+  private  ActiveRunwayThreshold threshold;
+  private  boolean primary;
+  private  boolean showRoutes;
+  private  boolean showApproach;
 
-  public RunwayThresholdConfiguration(ActiveRunwayThreshold threshold, PlaneCategoryDefinitions categories,
-                                      boolean primary, boolean showRoutes, boolean showApproach) {
-    this.categories = categories;
-    this.threshold = threshold;
-    this.primary = primary;
-    this.showRoutes = showRoutes;
-    this.showApproach = showApproach;
+  private RunwayThresholdConfiguration() {
   }
 
   @Override
