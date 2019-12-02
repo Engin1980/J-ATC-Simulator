@@ -61,6 +61,14 @@ public class Airport extends Parentable<Area> {
     }
   }
 
+  public IReadOnlyList<IafRoute> getIafRoutes(){
+    return this.iafRoutes;
+  }
+
+  public IReadOnlyList<GaRoute> getGaRoutes(){
+    return this.gaRoutes;
+  }
+
   public IReadOnlyList<ActiveRunwayThreshold> getAllThresholds() {
     IList<ActiveRunwayThreshold> ret = new EList<>();
     for (ActiveRunway runway : this.getRunways()) {

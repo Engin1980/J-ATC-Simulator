@@ -1,18 +1,20 @@
-package eng.jAtcSim.lib.world.approaches;
+package eng.jAtcSim.lib.area.approaches;
 
 import eng.eSystem.collections.IList;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Headings;
+import eng.jAtcSim.lib.area.ActiveRunwayThreshold;
+import eng.jAtcSim.lib.area.Navaid;
+import eng.jAtcSim.lib.area.approaches.entryLocations.FixRelatedApproachEntryLocation;
+import eng.jAtcSim.lib.area.approaches.entryLocations.IApproachEntryLocation;
+import eng.jAtcSim.lib.area.routes.IafRoute;
 import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
-import eng.jAtcSim.lib.world.Navaid;
-import eng.jAtcSim.lib.world.approaches.entryLocations.FixRelatedApproachEntryLocation;
-import eng.jAtcSim.lib.world.approaches.entryLocations.IApproachEntryLocation;
 
 public class ApproachEntry {
   public static ApproachEntry createForIls(ActiveRunwayThreshold threshold) {
-    IApproachEntryLocation ael = new FixRelatedApproachEntryLocation(thresholdCoordinate, 15,
-        Headings.subtract(runwayThresholdCourse, 15),
-        Headings.add(runwayThresholdCourse,15));
+    IApproachEntryLocation ael = new FixRelatedApproachEntryLocation(threshold.getCoordinate(), 15,
+        Headings.subtract(threshold.getCourse(), 15),
+        Headings.add(threshold.getCourse(),15));
     return new ApproachEntry(ael);
   }
 

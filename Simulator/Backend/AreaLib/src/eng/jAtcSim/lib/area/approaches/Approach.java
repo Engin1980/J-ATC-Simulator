@@ -9,7 +9,8 @@ import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
 import eng.jAtcSim.lib.area.NavaidList;
 import eng.jAtcSim.lib.area.Parentable;
-import eng.jAtcSim.lib.area.xml.XmlLoader;
+import eng.jAtcSim.lib.area.routes.GaRoute;
+import eng.jAtcSim.lib.area.routes.IafRoute;
 import eng.jAtcSim.lib.exceptions.ToDoException;
 import eng.jAtcSim.lib.global.Headings;
 import eng.jAtcSim.lib.global.UnitProvider;
@@ -24,13 +25,12 @@ import eng.jAtcSim.lib.area.approaches.entryLocations.FixRelatedApproachEntryLoc
 import eng.jAtcSim.lib.area.approaches.entryLocations.IApproachEntryLocation;
 import eng.jAtcSim.lib.area.approaches.entryLocations.RegionalApproachEntryLocation;
 import eng.jAtcSim.lib.area.approaches.stages.IApproachStage;
-import eng.jAtcSim.lib.world.approaches.stages.LandingStage;
-import eng.jAtcSim.lib.world.approaches.stages.RadialWithDescendStage;
-import eng.jAtcSim.lib.world.approaches.stages.RouteStage;
 import eng.jAtcSim.lib.area.approaches.stages.checks.CheckAirportVisibilityStage;
 import eng.jAtcSim.lib.area.approaches.stages.exitConditions.AltitudeExitCondition;
 import eng.jAtcSim.lib.area.approaches.stages.exitConditions.CoordinateCloseExitCondition;
 import eng.jAtcSim.lib.area.approaches.stages.exitConditions.CoordinatePassedExitCondition;
+import eng.jAtcSim.sharedLib.xml.XmlLoadException;
+import eng.jAtcSim.sharedLib.xml.XmlLoader;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
@@ -46,38 +46,31 @@ public class Approach extends Parentable<ActiveRunwayThreshold> {
     visual
   }
 
-  public static IList<Approach> loadList(IReadOnlyList<XElement> sources,
-                                         Coordinate thresholdCoordinate, int thresholdCourse, int thresholdAltitude,
-                                         NavaidList navaids,
-                                         IReadOnlyList<IafRoute> iafRoutes,
-                                         IReadOnlyList<GaRoute> gaRoutes) {
-    IList<Approach> ret = new EList<>();
-
-    for (XElement source : sources) {
-      if (source.getName().equals("ilsApproach")) {
-        IList<Approach> tmp = loadIlss(source, thresholdCoordinate, thresholdCourse, thresholdAltitude,
-            iafRoutes, gaRoutes);
-        ret.add(tmp);
-      } else if (source.getName().equals("gnssApproach")) {
-        Approach tmp = loadGnss(source, thresholdCoordinate, thresholdCourse, thresholdAltitude,
-            iafRoutes, gaRoutes);
-        ret.add(tmp);
-      } else if (source.getName().equals("unpreciseApproach")) {
-        Approach tmp = loadUnprecise(source, thresholdCoordinate, thresholdAltitude,
-            iafRoutes, gaRoutes, navaids);
-        ret.add(tmp);
-      } else if (source.getName().equals("customApproach")) {
-        Approach tmp = loadCustom(source);
-        ret.add(tmp);
-      } else {
-        throw new EApplicationException(sf("Unknown approach type '%s'.", source.getName()));
-      }
+  public static Approach load(XElement source, ActiveRunwayThreshold parent){
+    Approach ret =  new Approach();
+    ret.setParent(parent);
+    switch (source.getName()){
+      case "ilsApproach":
+        ret.readAsILS(source);
+        break;
+      case "gnssApproach":
+        ret = loadGnss(source);
+        break;
+      case "unpreciseApproach":
+        ret = loadUnprecise(source);
+        break;
+      case "customApproach":
+        ret=loadCustom(source);
+        break;
+      default:
+        throw new XmlLoadException("Unknown approach type " + source.getName() + ".");
     }
     return ret;
   }
 
-  public static IList<Approach> loadIlss(XElement source, Coordinate thresholdCoordinate, int thresholdCourse, int thresholdAltitude, IReadOnlyList<IafRoute> iafRoutes, IReadOnlyList<GaRoute> gaRoutes) {
-    IList<Approach> ret = new EList<>();
+  private void readAsILS(XElement source) {
+    //Coordinate thresholdCoordinate, int thresholdCourse, int thresholdAltitude, IReadOnlyList<IafRoute> iafRoutes, IReadOnlyList<GaRoute> gaRoutes
+
     XmlLoader.setContext(source);
     Double tmp = XmlLoader.loadDouble("glidePathDegrees", 3d);
     String gaMapping = XmlLoader.loadString("gaMapping");
@@ -85,17 +78,17 @@ public class Approach extends Parentable<ActiveRunwayThreshold> {
     double slope = convertGlidePathDegreesToSlope(tmp);
 
     // build approach entry
-    IList<ApproachEntry> entries = new EList<>();
+    this.entries = new EList<>();
     ApproachEntry ae;
-    ae = ApproachEntry.createForIls(thresholdCoordinate, thresholdCourse);
+    ae = ApproachEntry.createForIls(this.getParent());
     entries.add(ae);
-    for (IafRoute iafRoute : iafRoutes.where(q -> q.isMappingMatch(iafMapping))) {
+    for (IafRoute iafRoute : this.getParent().getParent().getParent().getIafRoutes().where(q -> q.isMappingMatch(iafMapping))) {
       ae = ApproachEntry.createForIaf(iafRoute);
       entries.add(ae);
     }
 
     // ga route
-    GaRoute gaRoute = gaRoutes.getFirst(q -> q.isMappingMatch(gaMapping));
+    GaRoute gaRoute = this.getParent().getParent().getParent().getGaRoutes().getFirst(q -> q.isMappingMatch(gaMapping));
 
     // process ILS categories
     for (XElement child : source.getChild("categories").getChildren("category")) {
@@ -331,10 +324,10 @@ public class Approach extends Parentable<ActiveRunwayThreshold> {
   private static double convertGlidePathDegreesToSlope(double gpDegrees) {
     return Math.tan(Math.toRadians(gpDegrees));
   }
-  private final IList<ApproachEntry> entries;
-  private final IList<IApproachStage> stages;
-  private final GaRoute gaRoute;
-  private final ApproachType type;
+  private IList<ApproachEntry> entries;
+  private IList<IApproachStage> stages;
+  private GaRoute gaRoute;
+  private ApproachType type;
 
   private Approach(ApproachType type,
                    IList<ApproachEntry> entries, IList<IApproachStage> stages, GaRoute gaRoute) {

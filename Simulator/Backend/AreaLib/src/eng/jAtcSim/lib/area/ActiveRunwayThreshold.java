@@ -11,21 +11,10 @@ import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
+import eng.eSystem.geo.Headings;
 import eng.jAtcSim.lib.airplanes.AirplaneType;
 import eng.jAtcSim.lib.area.approaches.Approach;
-import eng.jAtcSim.lib.area.xml.XmlLoader;
-import eng.jAtcSim.lib.global.Headings;
-import eng.jAtcSim.lib.global.PlaneCategoryDefinitions;
-import eng.jAtcSim.lib.speaking.fromAtc.IAtcCommand;
-import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeAltitudeCommand;
-import eng.jAtcSim.lib.speaking.fromAtc.commands.ChangeHeadingCommand;
-import eng.jAtcSim.lib.speaking.fromAtc.commands.ProceedDirectCommand;
-import eng.jAtcSim.lib.speaking.fromAtc.commands.ThenCommand;
-import eng.jAtcSim.lib.world.approaches.ApproachEntry;
-import eng.jAtcSim.lib.world.approaches.GaRoute;
-import eng.jAtcSim.lib.world.approaches.IafRoute;
-import eng.jAtcSim.lib.world.approaches.stages.RadialWithDescendStage;
-import eng.jAtcSim.lib.world.approaches.stages.RouteStage;
+import eng.jAtcSim.lib.area.routes.DARoute;
 import eng.jAtcSim.sharedLib.xml.XmlLoader;
 
 /**
@@ -36,15 +25,9 @@ public class ActiveRunwayThreshold extends Parentable<ActiveRunway> {
   public static IList<ActiveRunwayThreshold> loadBoth(IReadOnlyList<XElement> sources, ActiveRunway runway) {
     assert sources.size() == 2 : "There must be two thresholds";
 
-    Coordinate aCoordinate = XmlLoader.loadCoordinate(sources.get(0), "coordinate");
-    Coordinate bCoordinate = XmlLoader.loadCoordinate(sources.get(1), "coordinate");
-
     ActiveRunwayThreshold a = ActiveRunwayThreshold.load(sources.get(0), runway);
     ActiveRunwayThreshold b = ActiveRunwayThreshold.load(sources.get(1), runway);
-    a.other = b;
-    b.other = a;
-
-    tady to musim nejak dodelat at si preadji ta data jak vzajemne jsou, zatim to nepujde tak jak to je
+    bindOppositeThresholds(a, b);
 
     IList<ActiveRunwayThreshold> ret = new EList<>();
     ret.add(a);
@@ -52,30 +35,17 @@ public class ActiveRunwayThreshold extends Parentable<ActiveRunway> {
     return ret;
   }
 
-  private void read(XElement source) {
-    XmlLoader.setContext(source);
-    String name = XmlLoader.loadString("name");
-    Coordinate coordinate = XmlLoader.loadCoordinate("coordinate");
-    int initialDepartureAltitude = XmlLoader.loadInteger("initialDepartureAltitude");
-    String mappingString = XmlLoader.loadString("mapping");
-    IList<String> mapping = new EList<>(mappingString.split(";"));
+  private static void bindOppositeThresholds(ActiveRunwayThreshold a, ActiveRunwayThreshold b) {
+    a.other = b;
+    b.other = a;
 
-    double course = Coordinates.getBearing(coordinate, otherThresholdCoordinate);
-    Coordinate estimatedFafPoint = Coordinates.getCoordinate(coordinate, Headings.getOpposite(course), 9);
+    a.course = Coordinates.getBearing(a.coordinate, b.coordinate);
+    b.course = Coordinates.getBearing(b.coordinate, a.coordinate);
 
-    IList<DARoute> thresholdRoutes = routes.where(q -> q.isMappingMatch(mapping));
-    IList<Approach> approaches = Approach.loadList(source.getChild("approaches").getChildren(),
-        coordinate, (int) Math.round(course), airportAltitude, navaids, iafRoutes, gaRoutes);
-
-    if (approaches.isNone(q -> q.getType() == Approach.ApproachType.visual)){
-      Approach visual = Approach.generateDefaultVisualApproach(name,
-          coordinate, course, airportAltitude, navaids);
-      approaches.add(visual);
-    }
-
-    ActiveRunwayThreshold ret = new ActiveRunwayThreshold(
-        name, coordinate, course, initialDepartureAltitude, estimatedFafPoint, approaches, thresholdRoutes);
-    return ret;
+    a.estimatedFafPoint = Coordinates.getCoordinate(a.coordinate,
+        Headings.getOpposite(a.course), 9);
+    b.estimatedFafPoint = Coordinates.getCoordinate(b.coordinate,
+        Headings.getOpposite(b.course), 9);
   }
 
   private static ActiveRunwayThreshold load(XElement source, ActiveRunway runway) {
@@ -91,20 +61,10 @@ public class ActiveRunwayThreshold extends Parentable<ActiveRunway> {
   private Coordinate coordinate;
   private double course;
   private int initialDepartureAltitude;
-  @Deprecated
   private Coordinate estimatedFafPoint;
   private ActiveRunwayThreshold other;
 
-  private ActiveRunwayThreshold(String name, Coordinate coordinate, double course,
-                                int initialDepartureAltitude, Coordinate estimatedFafPoint,
-                                IList<Approach> approaches, IList<DARoute> routes) {
-    this.approaches = approaches;
-    this.routes = routes;
-    this.name = name;
-    this.coordinate = coordinate;
-    this.initialDepartureAltitude = initialDepartureAltitude;
-    this.course = course;
-    this.estimatedFafPoint = estimatedFafPoint;
+  private ActiveRunwayThreshold() {
   }
 
   public IList<Approach> getApproaches() {
@@ -117,24 +77,24 @@ public class ActiveRunwayThreshold extends Parentable<ActiveRunway> {
     return ret;
   }
 
-  public DARoute getArrivalRouteForPlane(AirplaneType type, int currentAltitude, Navaid mainNavaid, boolean canBeVectoring) {
-    DARoute ret = this.getRoutes().where(
-        q -> q.getType() == DARoute.eType.transition
-            && q.isValidForCategory(type.category)
-            && q.getMaxMrvaAltitude() < currentAltitude
-            && q.getMainNavaid().equals(mainNavaid))
-        .tryGetRandom();
-    if (ret == null)
-      ret = this.getRoutes().where(
-          q -> q.getType() == DARoute.eType.star
-              && q.isValidForCategory(type.category)
-              && q.getMaxMrvaAltitude() < currentAltitude
-              && q.getMainNavaid().equals(mainNavaid))
-          .tryGetRandom();
-    if (ret == null && canBeVectoring)
-      ret = DARoute.createNewVectoringByFix(mainNavaid);
-    return ret;
-  }
+//  public DARoute getArrivalRouteForPlane(AirplaneType type, int currentAltitude, Navaid mainNavaid, boolean canBeVectoring) {
+//    DARoute ret = this.getRoutes().where(
+//        q -> q.getType() == DARoute.eType.transition
+//            && q.isValidForCategory(type.category)
+//            && q.getMaxMrvaAltitude() < currentAltitude
+//            && q.getMainNavaid().equals(mainNavaid))
+//        .tryGetRandom();
+//    if (ret == null)
+//      ret = this.getRoutes().where(
+//          q -> q.getType() == DARoute.eType.star
+//              && q.isValidForCategory(type.category)
+//              && q.getMaxMrvaAltitude() < currentAltitude
+//              && q.getMainNavaid().equals(mainNavaid))
+//          .tryGetRandom();
+//    if (ret == null && canBeVectoring)
+//      ret = DARoute.createNewVectoringByFix(mainNavaid);
+//    return ret;
+//  }
 
   public Coordinate getCoordinate() {
     return coordinate;
@@ -144,17 +104,17 @@ public class ActiveRunwayThreshold extends Parentable<ActiveRunway> {
     return this.course;
   }
 
-  public DARoute getDepartureRouteForPlane(AirplaneType type, Navaid mainNavaid, boolean canBeVectoring) {
-    DARoute ret = this.getRoutes().where(
-        q -> q.getType() == DARoute.eType.sid
-            && q.isValidForCategory(type.category)
-            && q.getMaxMrvaAltitude() < type.maxAltitude
-            && q.getMainNavaid().equals(mainNavaid))
-        .tryGetRandom();
-    if (ret == null && canBeVectoring)
-      ret = DARoute.createNewVectoringByFix(mainNavaid);
-    return ret;
-  }
+//  public DARoute getDepartureRouteForPlane(AirplaneType type, Navaid mainNavaid, boolean canBeVectoring) {
+//    DARoute ret = this.getRoutes().where(
+//        q -> q.getType() == DARoute.eType.sid
+//            && q.isValidForCategory(type.category)
+//            && q.getMaxMrvaAltitude() < type.maxAltitude
+//            && q.getMainNavaid().equals(mainNavaid))
+//        .tryGetRandom();
+//    if (ret == null && canBeVectoring)
+//      ret = DARoute.createNewVectoringByFix(mainNavaid);
+//    return ret;
+//  }
 
   @Deprecated
   public Coordinate getEstimatedFafPoint() {
@@ -221,5 +181,32 @@ public class ActiveRunwayThreshold extends Parentable<ActiveRunway> {
       ret = this.approaches.tryGetFirst(q -> q.getType() == Approach.ApproachType.ndb);
 
     return ret;
+  }
+
+  private void read(XElement source) {
+    XmlLoader.setContext(source);
+    this. name = XmlLoader.loadString("name");
+    this. coordinate = XmlLoader.loadCoordinate("coordinate");
+    this.initialDepartureAltitude = XmlLoader.loadInteger("initialDepartureAltitude");
+    String mappingString = XmlLoader.loadString("mapping");
+    IList<String> mapping = new EList<>(mappingString.split(";"));
+
+    this.routes = this.getParent().getParent().getDaRoutes().where(q -> q.isMappingMatch(mapping));
+
+    this.approaches = new EList<>();
+    XmlLoader.loadList(
+        source.getChild("approaches").getChildren(),
+        this.approaches,
+        q->Approach.load(q, this)
+    );
+
+    // adds visual approach if none exists
+    if (this.approaches.isNone(q -> q.getType() == Approach.ApproachType.visual)) {
+      Approach visual = Approach.generateDefaultVisualApproach(name,
+          coordinate, course,
+          this.getParent().getParent().getAltitude(),
+          this.getParent().getParent().getParent().getNavaids());
+      approaches.add(visual);
+    }
   }
 }
