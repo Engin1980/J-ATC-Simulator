@@ -9,6 +9,9 @@ import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
 import eng.jAtcSim.lib.area.NavaidList;
 import eng.jAtcSim.lib.area.Parentable;
+import eng.jAtcSim.lib.area.approaches.stages.LandingStage;
+import eng.jAtcSim.lib.area.approaches.stages.RadialWithDescendStage;
+import eng.jAtcSim.lib.area.approaches.stages.RouteStage;
 import eng.jAtcSim.lib.area.routes.GaRoute;
 import eng.jAtcSim.lib.area.routes.IafRoute;
 import eng.jAtcSim.lib.exceptions.ToDoException;
@@ -54,13 +57,13 @@ public class Approach extends Parentable<ActiveRunwayThreshold> {
         ret.readAsILS(source);
         break;
       case "gnssApproach":
-        ret = loadGnss(source);
+        ret.readAsGnss(source);
         break;
       case "unpreciseApproach":
-        ret = loadUnprecise(source);
+        ret.readAsUnprecise(source);
         break;
       case "customApproach":
-        ret=loadCustom(source);
+        ret.readAsCustom(source);
         break;
       default:
         throw new XmlLoadException("Unknown approach type " + source.getName() + ".");
@@ -69,12 +72,71 @@ public class Approach extends Parentable<ActiveRunwayThreshold> {
   }
 
   private void readAsILS(XElement source) {
-    //Coordinate thresholdCoordinate, int thresholdCourse, int thresholdAltitude, IReadOnlyList<IafRoute> iafRoutes, IReadOnlyList<GaRoute> gaRoutes
 
     XmlLoader.setContext(source);
     Double tmp = XmlLoader.loadDouble("glidePathDegrees", 3d);
     String gaMapping = XmlLoader.loadString("gaMapping");
     String iafMapping = XmlLoader.loadString("iafMapping");
+    double slope = convertGlidePathDegreesToSlope(tmp);
+
+    // build approach entries
+    this.entries = new EList<>();
+    ApproachEntry ae;
+    ae = ApproachEntry.createForIls(this.getParent());
+    this.entries.add(ae);
+    for (IafRoute iafRoute : this.getParent().getParent().getParent().getIafRoutes().where(q -> q.isMappingMatch(iafMapping))) {
+      ae = ApproachEntry.createForIaf(iafRoute);
+      this.entries.add(ae);
+    }
+
+    // ga route
+    this.gaRoute = this.getParent().getParent().getParent().getGaRoutes().getFirst(q -> q.isMappingMatch(gaMapping));
+
+    // process ILS categories
+    for (XElement child : source.getChild("categories").getChildren("category")) {
+      XmlLoader.setContext(child);
+      int daA = XmlLoader.loadInteger("daA");
+      int daB = XmlLoader.loadInteger("daB");
+      int daC = XmlLoader.loadInteger("daC");
+      int daD = XmlLoader.loadInteger("daD");
+      String ilsType = XmlLoader.loadStringRestricted("type", new String[]{"I", "II", "III"});
+
+      switch (ilsType) {
+        case "I":
+          this.type = ApproachType.ils_I;
+          break;
+        case "II":
+          this.type = ApproachType.ils_II;
+          break;
+        case "III":
+          this.type = ApproachType.ils_III;
+          break;
+        default:
+          throw new EApplicationException(sf("Unknown approach type '%s' for ILS.", ilsType));
+      }
+
+      // build stages
+      this.stages = new EList<>();
+      stages.add(
+          new RadialWithDescendStage(
+              this.getParent().getCoordinate(),
+              this.getParent().getCourseInt(),
+              this.getParent().getParent().getParent().getAltitude(), slope,
+              new AltitudeExitCondition(AltitudeExitCondition.eDirection.below, daA, daB, daC, daD)));
+      stages.add(new CheckAirportVisibilityStage());
+      stages.add(new LandingStage());
+    }
+  }
+
+  private void readAsGnss(XElement source) {
+    XmlLoader.setContext(source);
+    String gaMapping = XmlLoader.loadString("gaMapping");
+    String iafMapping = XmlLoader.loadString("iafMapping");
+    int daA = XmlLoader.loadInteger("daA");
+    int daB = XmlLoader.loadInteger("daB");
+    int daC = XmlLoader.loadInteger("daC");
+    int daD = XmlLoader.loadInteger("daD");
+    Double tmp = XmlLoader.loadDouble("glidePathPercentage", 3d);
     double slope = convertGlidePathDegreesToSlope(tmp);
 
     // build approach entry
@@ -88,137 +150,73 @@ public class Approach extends Parentable<ActiveRunwayThreshold> {
     }
 
     // ga route
-    GaRoute gaRoute = this.getParent().getParent().getParent().getGaRoutes().getFirst(q -> q.isMappingMatch(gaMapping));
-
-    // process ILS categories
-    for (XElement child : source.getChild("categories").getChildren("category")) {
-      XmlLoader.setContext(child);
-      int daA = XmlLoader.loadInteger("daA");
-      int daB = XmlLoader.loadInteger("daB");
-      int daC = XmlLoader.loadInteger("daC");
-      int daD = XmlLoader.loadInteger("daD");
-      String ilsType = XmlLoader.loadStringRestricted("type", new String[]{"I", "II", "III"});
-
-      ApproachType approachType = ilsType.equals("I") ?
-          ApproachType.ils_I : ilsType.equals("II") ?
-          ApproachType.ils_II : ilsType.equals("III") ?
-          ApproachType.ils_III : ApproachType.visual;
-      if (approachType == ApproachType.visual)
-        throw new EApplicationException(sf("Unknown approach type '%s'.", ilsType));
-
-      // build stages
-      IList<IApproachStage> stages = new EList<>();
-      stages.add(
-          new RadialWithDescendStage(thresholdCoordinate, thresholdCourse,
-              thresholdAltitude, slope,
-              new AltitudeExitCondition(AltitudeExitCondition.eDirection.below, daA, daB, daC, daD)));
-      stages.add(new CheckAirportVisibilityStage());
-      stages.add(new LandingStage());
-
-      Approach app = new Approach(approachType, entries, stages, gaRoute);
-
-      ret.add(app);
-    }
-
-    return ret;
-  }
-
-  public static Approach loadGnss(XElement source, Coordinate thresholdCoordinate, int thresholdCourse, int thresholdAltitude, IReadOnlyList<IafRoute> iafRoutes, IReadOnlyList<GaRoute> gaRoutes) {
-    XmlLoader.setContext(source);
-    String gaMapping = XmlLoader.loadString("gaMapping");
-    String iafMapping = XmlLoader.loadString("iafMapping");
-    int daA = XmlLoader.loadInteger("daA");
-    int daB = XmlLoader.loadInteger("daB");
-    int daC = XmlLoader.loadInteger("daC");
-    int daD = XmlLoader.loadInteger("daD");
-    Double tmp = XmlLoader.loadDouble("glidePathPercentage", 3d);
-    double slope = convertGlidePathDegreesToSlope(tmp);
-
-    // build approach entry
-    IList<ApproachEntry> entries = new EList<>();
-    ApproachEntry ae;
-    ae = ApproachEntry.createForIls(thresholdCoordinate, thresholdCourse);
-    entries.add(ae);
-    for (IafRoute iafRoute : iafRoutes.where(q -> q.isMappingMatch(iafMapping))) {
-      ae = ApproachEntry.createForIaf(iafRoute);
-      entries.add(ae);
-    }
-
-    // ga route
-    GaRoute gaRoute = gaRoutes.getFirst(q -> q.isMappingMatch(gaMapping));
+    this.gaRoute = this.getParent().getParent().getParent().getGaRoutes().getFirst(q -> q.isMappingMatch(gaMapping));
 
     // build stages
-    IList<IApproachStage> stages = new EList<>();
+    this.stages = new EList<>();
     stages.add(
-        new RadialWithDescendStage(thresholdCoordinate, thresholdCourse,
-            thresholdAltitude, slope,
+        new RadialWithDescendStage(
+            this.getParent().getCoordinate(),
+            this.getParent().getCourseInt(),
+            this.getParent().getParent().getParent().getAltitude(),
+            slope,
             new AltitudeExitCondition(AltitudeExitCondition.eDirection.below, daA, daB, daC, daD)));
     stages.add(new CheckAirportVisibilityStage());
     stages.add(new LandingStage());
-
-    Approach ret = new Approach(ApproachType.gnss, entries, stages, gaRoute);
-    return ret;
   }
 
-  public static Approach loadUnprecise(XElement source, Coordinate thresholdCoordinate, int thresholdAltitude,
-                                       IReadOnlyList<IafRoute> iafRoutes, IReadOnlyList<GaRoute> gaRoutes,
-                                       NavaidList navaids) {
+  public void readAsUnprecise(XElement source) {
     XmlLoader.setContext(source);
     String gaMapping = XmlLoader.loadString("gaMapping");
     String iafMapping = XmlLoader.loadString("iafMapping");
     String fafName = XmlLoader.loadString("faf");
     String maptName = XmlLoader.loadString("mapt");
     int initialAltitude = XmlLoader.loadInteger("initialAltitude");
-//    int outboundRadial = XmlLoader.loadInteger("radial",true);
-//    int inboundRadial = Headings.getOpposite(outboundRadial);
     int daA = XmlLoader.loadInteger("mdaA");
     int daB = XmlLoader.loadInteger("mdaB");
     int daC = XmlLoader.loadInteger("mdaC");
     int daD = XmlLoader.loadInteger("mdaD");
-    Navaid faf = navaids.get(fafName);
-    Navaid mapt = navaids.getOrGenerate(maptName);
+    Navaid faf = this.getParent().getParent().getParent().getParent().getNavaids().get(fafName);
+    Navaid mapt = this.getParent().getParent().getParent().getParent().getNavaids().getOrGenerate(maptName);
     double inboundRadial = Coordinates.getBearing(faf.getCoordinate(), mapt.getCoordinate());
 
     // build approach entry
-    IList<ApproachEntry> entries = new EList<>();
+    this.entries = new EList<>();
     ApproachEntry ae;
     ae = ApproachEntry.createForUnprecise(faf.getCoordinate(), inboundRadial);
-    entries.add(ae);
-    for (IafRoute iafRoute : iafRoutes.where(q -> q.isMappingMatch(iafMapping))) {
+    this.entries.add(ae);
+    for (IafRoute iafRoute : this.getParent().getParent().getParent().getIafRoutes().where(q -> q.isMappingMatch(iafMapping))) {
       ae = ApproachEntry.createForIaf(iafRoute);
-      entries.add(ae);
+      this.entries.add(ae);
     }
 
     // double slope
     double slope;
     {
-      double distance = Coordinates.getDistanceInNM(faf.getCoordinate(), thresholdCoordinate);
+      double distance = Coordinates.getDistanceInNM(faf.getCoordinate(), this.getParent().getCoordinate());
       distance = UnitProvider.nmToFt(distance);
-      double altDelta = initialAltitude - thresholdAltitude;
+      double altDelta = initialAltitude - this.getParent().getParent().getParent().getAltitude();
       slope = altDelta / distance;
     }
 
     // ga route
-    GaRoute gaRoute = gaRoutes.getFirst(q -> q.isMappingMatch(gaMapping));
+    this.gaRoute = this.getParent().getParent().getParent().getGaRoutes().getFirst(q -> q.isMappingMatch(gaMapping));
 
     // build stages
-    IList<IApproachStage> stages = new EList<>();
-    stages.add(
+    this.stages = new EList<>();
+    this.stages.add(
         new RouteStage(
             new CoordinateCloseExitCondition(faf.getCoordinate(), 1d),
             new ProceedDirectCommand(faf)));
-    stages.add(
+    this.stages.add(
         new RadialWithDescendStage(faf.getCoordinate(), (int) Math.round(inboundRadial),
             initialAltitude, -slope,
             new CoordinatePassedExitCondition(mapt.getCoordinate(), inboundRadial)));
-    stages.add(new CheckAirportVisibilityStage());
-    stages.add(new LandingStage());
-
-    Approach ret = new Approach(ApproachType.gnss, entries, stages, gaRoute);
-    return ret;
+    this.stages.add(new CheckAirportVisibilityStage());
+    this.stages.add(new LandingStage());
   }
 
-  public static Approach loadCustom(XElement source) {
+  public void readAsCustom(XElement source) {
     throw new ToDoException();
   }
 

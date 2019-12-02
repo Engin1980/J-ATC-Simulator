@@ -100,6 +100,10 @@ public class ActiveRunwayThreshold extends Parentable<ActiveRunway> {
     return coordinate;
   }
 
+  public int getCourseInt() {
+    return (int) Math.round(this.course);
+  }
+
   public double getCourse() {
     return this.course;
   }

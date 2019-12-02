@@ -1,6 +1,6 @@
 package eng.jAtcSim.lib.area.approaches.stages.checks;
 
-import eng.jAtcSim.lib.world.approaches.stages.ICheckStage;
+import eng.jAtcSim.lib.area.approaches.stages.ICheckStage;
 
 public class CheckAirportVisibilityStage implements ICheckStage {
 //  @Override
