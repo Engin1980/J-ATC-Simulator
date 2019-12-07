@@ -3,10 +3,10 @@ package eng.jAtcSim.frmPacks.shared;
 import eng.eSystem.events.EventAnonymous;
 import eng.eSystem.events.EventAnonymousSimple;
 import eng.jAtcSim.SwingRadar.Coloring;
-import eng.jAtcSim.lib.Acc;
-import eng.jAtcSim.lib.airplanes.Airplane;
-import eng.jAtcSim.lib.airplanes.Callsign;
-import eng.jAtcSim.lib.world.Navaid;
+import eng.jAtcSim.newLib.Acc;
+import eng.jAtcSim.newLib.airplanes.Airplane;
+import eng.jAtcSim.newLib.airplanes.Callsign;
+import eng.jAtcSim.newLib.world.Navaid;
 import eng.jAtcSim.radarBase.global.Color;
 import eng.eSystem.swing.LayoutManager;
 

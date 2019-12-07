@@ -7,11 +7,11 @@ import eng.eSystem.events.Event;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.swing.LayoutManager;
 import eng.jAtcSim.AppSettings;
-import eng.jAtcSim.lib.Simulation;
-import eng.jAtcSim.lib.airplanes.Airplane;
-import eng.jAtcSim.lib.airplanes.AirplaneDataFormatter;
-import eng.jAtcSim.lib.airplanes.AirproxType;
-import eng.jAtcSim.lib.airplanes.Callsign;
+import eng.jAtcSim.newLib.Simulation;
+import eng.jAtcSim.newLib.airplanes.Airplane;
+import eng.jAtcSim.newLib.airplanes.AirplaneDataFormatter;
+import eng.jAtcSim.newLib.airplanes.AirproxType;
+import eng.jAtcSim.newLib.airplanes.Callsign;
 
 import javax.swing.*;
 import java.awt.*;

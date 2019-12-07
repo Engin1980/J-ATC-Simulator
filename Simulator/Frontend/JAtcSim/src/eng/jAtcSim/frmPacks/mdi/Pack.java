@@ -8,13 +8,13 @@ package eng.jAtcSim.frmPacks.mdi;
 
 import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IMap;
-import eng.jAtcSim.lib.Game;
+import eng.jAtcSim.newLib.Game;
 import eng.jAtcSim.radarBase.RadarStyleSettings;
 import eng.eSystem.events.EventSimple;
 import eng.jAtcSim.AppSettings;
 import eng.jAtcSim.XmlLoadHelper;
-import eng.jAtcSim.lib.Simulation;
-import eng.jAtcSim.lib.world.Area;
+import eng.jAtcSim.newLib.Simulation;
+import eng.jAtcSim.newLib.world.Area;
 
 /**
  * @author Marek

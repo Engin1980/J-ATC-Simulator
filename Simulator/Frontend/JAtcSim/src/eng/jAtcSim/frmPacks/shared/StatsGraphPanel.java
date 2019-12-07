@@ -7,8 +7,8 @@ import eng.eSystem.swing.LayoutManager;
 import eng.eSystem.swing.extenders.ComboBoxExtender;
 import eng.eSystem.utilites.ArrayUtils;
 import eng.jAtcSim.app.controls.ImagePanel;
-import eng.jAtcSim.lib.newStats.Snapshot;
-import eng.jAtcSim.lib.newStats.StatsManager;
+import eng.jAtcSim.newLib.newStats.Snapshot;
+import eng.jAtcSim.newLib.newStats.StatsManager;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.CategoryAxis;
 import org.jfree.chart.axis.CategoryLabelPositions;
@@ -18,7 +18,6 @@ import org.jfree.chart.labels.StandardCategoryItemLabelGenerator;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.renderer.category.CategoryItemRenderer;
 import org.jfree.chart.renderer.category.LineAndShapeRenderer;
-import org.jfree.chart.renderer.category.LineRenderer3D;
 import org.jfree.chart.renderer.category.StackedBarRenderer;
 import org.jfree.data.category.DefaultCategoryDataset;
 

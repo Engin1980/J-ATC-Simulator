@@ -2,13 +2,13 @@ package eng.jAtcSim;
 
 import eng.eSystem.xmlSerialization.XmlSerializer;
 import eng.eSystem.xmlSerialization.XmlSettings;
-import eng.jAtcSim.lib.airplanes.AirplaneTypes;
-import eng.jAtcSim.lib.airplanes.Callsign;
-import eng.jAtcSim.lib.textProcessing.formatting.SpeechFormatter;
-import eng.jAtcSim.lib.speaking.fromAirplane.notifications.GoodDayNotification;
-import eng.jAtcSim.lib.traffic.fleets.Fleets;
-import eng.jAtcSim.lib.world.Area;
-import eng.jAtcSim.lib.world.xml.AltitudeValueParser;
+import eng.jAtcSim.newLib.airplanes.AirplaneTypes;
+import eng.jAtcSim.newLib.airplanes.Callsign;
+import eng.jAtcSim.newLib.textProcessing.formatting.SpeechFormatter;
+import eng.jAtcSim.newLib.speaking.fromAirplane.notifications.GoodDayNotification;
+import eng.jAtcSim.newLib.traffic.fleets.Fleets;
+import eng.jAtcSim.newLib.world.Area;
+import eng.jAtcSim.newLib.world.xml.AltitudeValueParser;
 
 import java.nio.file.Paths;
 

@@ -2,9 +2,9 @@ package eng.jAtcSim.frmPacks.shared;
 
 import eng.eSystem.collections.IReadOnlyList;
 import eng.jAtcSim.AppSettings;
-import eng.jAtcSim.lib.Simulation;
-import eng.jAtcSim.lib.airplanes.Callsign;
-import eng.jAtcSim.lib.traffic.Movement;
+import eng.jAtcSim.newLib.Simulation;
+import eng.jAtcSim.newLib.airplanes.Callsign;
+import eng.jAtcSim.newLib.traffic.Movement;
 import eng.eSystem.swing.LayoutManager;
 
 import javax.swing.*;

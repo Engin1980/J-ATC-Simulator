@@ -1,10 +1,10 @@
 package eng.jAtcSim.frmPacks.shared;
 
 import eng.eSystem.swing.LayoutManager;
-import eng.jAtcSim.lib.Simulation;
-import eng.jAtcSim.lib.global.ETime;
-import eng.jAtcSim.lib.newStats.RecentStats;
-import eng.jAtcSim.lib.newStats.StatsManager;
+import eng.jAtcSim.newLib.Simulation;
+import eng.jAtcSim.newLib.global.ETime;
+import eng.jAtcSim.newLib.newStats.RecentStats;
+import eng.jAtcSim.newLib.newStats.StatsManager;
 
 import javax.swing.*;
 import java.awt.*;

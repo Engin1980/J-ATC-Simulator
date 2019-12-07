@@ -7,7 +7,7 @@ package eng.jAtcSim.frmPacks.mdi;
 
 import eng.jAtcSim.AppSettings;
 import eng.jAtcSim.frmPacks.shared.FlightListPanel;
-import eng.jAtcSim.lib.Simulation;
+import eng.jAtcSim.newLib.Simulation;
 
 import java.awt.*;
 

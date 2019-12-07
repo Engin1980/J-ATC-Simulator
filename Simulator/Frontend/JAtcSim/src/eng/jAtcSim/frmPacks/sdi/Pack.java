@@ -6,11 +6,11 @@ import eng.eSystem.events.EventSimple;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.jAtcSim.AppSettings;
 import eng.jAtcSim.XmlLoadHelper;
-import eng.jAtcSim.lib.Game;
-import eng.jAtcSim.lib.Simulation;
-import eng.jAtcSim.lib.global.ETime;
-import eng.jAtcSim.lib.world.Airport;
-import eng.jAtcSim.lib.world.Area;
+import eng.jAtcSim.newLib.Game;
+import eng.jAtcSim.newLib.Simulation;
+import eng.jAtcSim.newLib.global.ETime;
+import eng.jAtcSim.newLib.world.Airport;
+import eng.jAtcSim.newLib.world.Area;
 import eng.jAtcSim.radarBase.RadarStyleSettings;
 import eng.jAtcSim.radarBase.RadarViewPort;
 

@@ -9,10 +9,10 @@ import eng.eSystem.utilites.ExceptionUtils;
 import eng.jAtcSim.app.extenders.XmlFileSelectorExtender;
 import eng.jAtcSim.app.extenders.swingFactory.SwingFactory;
 import eng.jAtcSim.app.startupSettings.StartupSettings;
-import eng.jAtcSim.lib.Acc;
-import eng.jAtcSim.lib.global.logging.ApplicationLog;
-import eng.jAtcSim.lib.global.newSources.AreaSource;
-import eng.jAtcSim.lib.world.Area;
+import eng.jAtcSim.newLib.Acc;
+import eng.jAtcSim.newLib.global.logging.ApplicationLog;
+import eng.jAtcSim.newLib.global.newSources.AreaSource;
+import eng.jAtcSim.newLib.world.Area;
 import eng.jAtcSim.shared.MessageBox;
 
 import javax.swing.*;

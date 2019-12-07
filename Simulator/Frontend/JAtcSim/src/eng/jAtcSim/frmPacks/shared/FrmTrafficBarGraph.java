@@ -4,7 +4,7 @@ import eng.eSystem.collections.*;
 import eng.eSystem.swing.extenders.ComboBoxExtender;
 import eng.eSystem.validation.Validator;
 import eng.jAtcSim.app.controls.ImagePanel;
-import eng.jAtcSim.lib.traffic.Traffic;
+import eng.jAtcSim.newLib.traffic.Traffic;
 import eng.eSystem.swing.LayoutManager;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.CategoryAxis;

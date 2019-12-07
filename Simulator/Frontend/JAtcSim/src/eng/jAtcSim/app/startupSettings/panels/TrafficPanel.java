@@ -14,11 +14,11 @@ import eng.jAtcSim.app.extenders.*;
 import eng.jAtcSim.app.extenders.swingFactory.SwingFactory;
 import eng.jAtcSim.app.startupSettings.StartupSettings;
 import eng.jAtcSim.frmPacks.shared.FrmTrafficBarGraph;
-import eng.jAtcSim.lib.global.newSources.TrafficSource;
-import eng.jAtcSim.lib.global.newSources.XmlTrafficSource;
-import eng.jAtcSim.lib.traffic.GenericTraffic;
-import eng.jAtcSim.lib.traffic.Traffic;
-import eng.jAtcSim.lib.traffic.fleets.Fleets;
+import eng.jAtcSim.newLib.global.newSources.TrafficSource;
+import eng.jAtcSim.newLib.global.newSources.XmlTrafficSource;
+import eng.jAtcSim.newLib.traffic.GenericTraffic;
+import eng.jAtcSim.newLib.traffic.Traffic;
+import eng.jAtcSim.newLib.traffic.fleets.Fleets;
 import eng.eSystem.swing.LayoutManager;
 
 import javax.swing.*;

@@ -2,8 +2,8 @@ package eng.jAtcSim.frmPacks.shared;
 
 import eng.eSystem.exceptions.EApplicationException;
 import eng.jAtcSim.Stylist;
-import eng.jAtcSim.lib.Acc;
-import eng.jAtcSim.lib.global.logging.ApplicationLog;
+import eng.jAtcSim.newLib.Acc;
+import eng.jAtcSim.newLib.global.logging.ApplicationLog;
 
 import javax.swing.*;
 import javax.swing.text.BadLocationException;

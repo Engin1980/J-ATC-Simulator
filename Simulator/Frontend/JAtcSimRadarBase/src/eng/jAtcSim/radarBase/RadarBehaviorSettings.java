@@ -1,7 +1,7 @@
 package eng.jAtcSim.radarBase;
 
-import eng.jAtcSim.lib.textProcessing.formatting.Formatter;
-import eng.jAtcSim.lib.textProcessing.formatting.IFormatter;
+import eng.jAtcSim.newLib.textProcessing.formatting.Formatter;
+import eng.jAtcSim.newLib.textProcessing.formatting.IFormatter;
 
 public class RadarBehaviorSettings {
   private final boolean paintMessages;

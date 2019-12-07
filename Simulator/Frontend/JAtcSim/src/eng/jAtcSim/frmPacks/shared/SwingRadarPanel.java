@@ -13,12 +13,12 @@ import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.exceptions.ERuntimeException;
 import eng.eSystem.utilites.Selector;
 import eng.jAtcSim.SwingRadar.SwingCanvas;
-import eng.jAtcSim.lib.Acc;
-import eng.jAtcSim.lib.Simulation;
-import eng.jAtcSim.lib.atcs.Atc;
-import eng.jAtcSim.lib.atcs.UserAtc;
-import eng.jAtcSim.lib.world.*;
-import eng.jAtcSim.lib.world.approachesOld.Approach;
+import eng.jAtcSim.newLib.Acc;
+import eng.jAtcSim.newLib.Simulation;
+import eng.jAtcSim.newLib.atcs.Atc;
+import eng.jAtcSim.newLib.atcs.UserAtc;
+import eng.jAtcSim.newLib.world.*;
+import eng.jAtcSim.newLib.world.approachesOld.Approach;
 import eng.jAtcSim.radarBase.*;
 import eng.eSystem.swing.LayoutManager;
 
