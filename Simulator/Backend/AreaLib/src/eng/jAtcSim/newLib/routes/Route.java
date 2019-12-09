@@ -9,6 +9,8 @@ import eng.jAtcSim.newLib.area.Parentable;
 import eng.jAtcSim.newLib.speeches.IAtcCommand;
 import eng.jAtcSim.sharedLib.exceptions.ToDoException;
 
+import javax.swing.text.StyledEditorKit;
+
 public abstract class Route extends Parentable<Airport> {
 
   //  protected static IList<XElement> lookForElementRecursively(XElement source, String elementName) {
@@ -184,7 +186,11 @@ public abstract class Route extends Parentable<Airport> {
   public void read(XElement source, String mapping) {
     this.mapping.add(mapping.toLowerCase().split(";"));
     IReadOnlyList<XElement> routeElements = source.getChildren();
-    throw new ToDoException("Implement route commands loading here");
+    for (XElement routeElement : routeElements) {
+      IAtcCommand cmd = XmlRouteFactory.load(
+          routeElement, this.getParent().getParent());
+      this.routeCommands.add(cmd);
+    }
   }
 
   protected void fill(IList<IAtcCommand> routeCommands){

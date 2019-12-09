@@ -21,7 +21,11 @@ public class NewApproachInfo {
     assert approach.getEntries().contains(entry) : "Entry must be related to the approach";
 
     this.stages = new EList<>(approach.getStages());
-    this.stages.insert(0, new RouteStage(entry.getIafRoute().getRouteCommands()));
+    this.stages.insert(0, new RouteStage(
+        entry.getIafRoute().getRouteCommands(),
+        // tady vymyslet jak předat exit condition (takže jak ukončit a přejít do landing)
+        // nebo automaticky bude landing v stages? )
+        );
     this.gaCommands = new EList<>(approach.getGaRoute().getRouteCommands());
     this.runwayThreshold = approach.getParent();
     this.type = approach.getType();

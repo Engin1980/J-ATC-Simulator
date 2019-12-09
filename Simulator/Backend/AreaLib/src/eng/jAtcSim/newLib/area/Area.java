@@ -8,14 +8,12 @@ import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.jAtcSim.sharedLib.xml.XmlLoader;
 
-/**
- * @author Marek
- */
-public final class Area {
+public class Area {
 
   public static Area load(XElement source) {
     Area area = new Area();
     area.read(source);
+    area.checkForDuplicits();
     return area;
   }
 
@@ -27,7 +25,7 @@ public final class Area {
   private Area() {
   }
 
-  public void checkForDuplicits() {
+  private void checkForDuplicits() {
     ISet<String> set;
 
     set = this.airports.getDuplicateItems(q -> q.getIcao()).select(q -> q.getIcao()).selectCount(5);
