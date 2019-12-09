@@ -6,6 +6,7 @@
 
 package eng.jAtcSim.newLib.speeches.atc2airplane;
 
+import eng.eSystem.eXml.XElement;
 import eng.jAtcSim.newLib.speeches.IAtcCommand;
 
 public class ThenCommand implements IAtcCommand {
@@ -13,6 +14,11 @@ public class ThenCommand implements IAtcCommand {
   public static ThenCommand create(){
     ThenCommand ret = new ThenCommand();
     return ret;
+  }
+
+  public static IAtcCommand load(XElement element) {
+    assert element.getName().equals("then");
+    return new ThenCommand();
   }
 
   private ThenCommand() {

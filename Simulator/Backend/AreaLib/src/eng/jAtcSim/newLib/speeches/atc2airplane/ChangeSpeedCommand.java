@@ -1,8 +1,10 @@
 package eng.jAtcSim.newLib.speeches.atc2airplane;
 
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.jAtcSim.newLib.speeches.IAtcCommand;
 import eng.jAtcSim.sharedLib.exceptions.ApplicationException;
+import eng.jAtcSim.sharedLib.xml.XmlLoader;
 
 public class ChangeSpeedCommand implements IAtcCommand {
 
@@ -10,6 +12,25 @@ public class ChangeSpeedCommand implements IAtcCommand {
     below,
     above,
     exactly
+  }
+
+  public static IAtcCommand load(XElement element) {
+    assert element.getName().equals("speed");
+    XmlLoader.setContext(element);
+    /*
+      <xs:simpleType name="RestrictionType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="below"/>
+      <xs:enumeration value="above"/>
+      <xs:enumeration value="exactly"/>
+      <xs:enumeration value="clear"/>
+    </xs:restriction>
+  </xs:simpleType>
+     */
+    String restriction = XmlLoader.loadString("restriction");
+    int speed = XmlLoader.loadInteger("value");
+
+    ChangeSpeedCommand ret = new ChangeSpeedCommand();
   }
 
   private final eRestriction restriction;
