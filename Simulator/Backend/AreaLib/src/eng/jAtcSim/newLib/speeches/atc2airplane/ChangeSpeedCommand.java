@@ -8,33 +8,11 @@ import eng.jAtcSim.sharedLib.xml.XmlLoader;
 
 public class ChangeSpeedCommand implements IAtcCommand {
 
-  public enum eRestriction{
+  public enum eRestriction {
     below,
     above,
     exactly
   }
-
-  public static IAtcCommand load(XElement element) {
-    assert element.getName().equals("speed");
-    XmlLoader.setContext(element);
-    /*
-      <xs:simpleType name="RestrictionType">
-    <xs:restriction base="xs:string">
-      <xs:enumeration value="below"/>
-      <xs:enumeration value="above"/>
-      <xs:enumeration value="exactly"/>
-      <xs:enumeration value="clear"/>
-    </xs:restriction>
-  </xs:simpleType>
-     */
-    String restriction = XmlLoader.loadString("restriction");
-    int speed = XmlLoader.loadInteger("value");
-
-    ChangeSpeedCommand ret = new ChangeSpeedCommand();
-  }
-
-  private final eRestriction restriction;
-  private final Integer value;
 
   public static ChangeSpeedCommand create(eRestriction direction, int speedInKts) {
     ChangeSpeedCommand ret = new ChangeSpeedCommand(direction, speedInKts);
@@ -45,6 +23,24 @@ public class ChangeSpeedCommand implements IAtcCommand {
     ChangeSpeedCommand ret = new ChangeSpeedCommand(eRestriction.exactly, null);
     return ret;
   }
+
+  public static IAtcCommand load(XElement element) {
+    assert element.getName().equals("speed");
+    ChangeSpeedCommand ret;
+    XmlLoader.setContext(element);
+    String rs = XmlLoader.loadString("restriction");
+    if (rs.equals("clear")) {
+      ret = ChangeSpeedCommand.createResumeOwnSpeed();
+    } else {
+      eRestriction restriction = Enum.valueOf(eRestriction.class, rs);
+      int speed = XmlLoader.loadInteger("value");
+      ret = ChangeSpeedCommand.create(restriction, speed);
+    }
+    return ret;
+  }
+
+  private final eRestriction restriction;
+  private final Integer value;
 
   private ChangeSpeedCommand(eRestriction restriction, Integer value) {
     this.restriction = restriction;

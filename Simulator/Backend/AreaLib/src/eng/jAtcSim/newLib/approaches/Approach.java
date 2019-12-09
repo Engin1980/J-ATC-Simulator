@@ -218,7 +218,8 @@ public class Approach extends Parentable<ActiveRunwayThreshold> {
     int daC = XmlLoader.loadInteger("mdaC");
     int daD = XmlLoader.loadInteger("mdaD");
     Navaid faf = this.getParent().getParent().getParent().getParent().getNavaids().get(fafName);
-    Navaid mapt = this.getParent().getParent().getParent().getParent().getNavaids().getOrGenerate(maptName);
+    Navaid mapt = this.getParent().getParent().getParent().getParent().getNavaids().getOrGenerate(
+        maptName, this.getParent().getParent().getParent());
     double inboundRadial = Coordinates.getBearing(faf.getCoordinate(), mapt.getCoordinate());
 
     // build approach entry
