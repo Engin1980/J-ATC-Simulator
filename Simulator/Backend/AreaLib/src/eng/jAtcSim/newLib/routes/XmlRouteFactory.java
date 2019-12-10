@@ -17,12 +17,12 @@ public class XmlRouteFactory {
       case "speed":
         return ChangeSpeedCommand.load(element);
       case "altitude":
-        return ChangeAltitudeCommand.load(element, parent);
+        return ChangeAltitudeCommand.load(element);
       case "altitudeRouteRestriction":
       case "altitudeRouteRestrictionClear":
-        return AltitudeRestrictionCommand.load(element, parent);
+        return AltitudeRestrictionCommand.load(element);
       case "heading":
-        return ChangeHeadingCommand.load(element, parent);
+        return ChangeHeadingCommand.load(element);
       case "hold":
         return HoldCommand.load(element, parent);
       case "after":

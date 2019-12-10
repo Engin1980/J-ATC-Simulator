@@ -188,7 +188,7 @@ public abstract class Route extends Parentable<Airport> {
     IReadOnlyList<XElement> routeElements = source.getChildren();
     for (XElement routeElement : routeElements) {
       IAtcCommand cmd = XmlRouteFactory.load(
-          routeElement, this.getParent().getParent());
+          routeElement, this.getParent());
       this.routeCommands.add(cmd);
     }
   }
