@@ -346,7 +346,7 @@
           </group>
           <group note="sids">
             <route type="sid" name="ARTUP1M" category="AB" mapping="24">
-              <after property="altitude" value="1700"/>
+              <afterAltitude value="1700" extension="orAbove" />
               <proceedDirect fix="PR407"/>
               <then/>
               <proceedDirect fix="BAGRU"/>
@@ -371,7 +371,7 @@
               <proceedDirect fix="ARTUP"/>
             </route>
             <route type="sid" name="VENOX1M" category="AB" mapping="24">
-              <after property="altitude" value="1700"/>
+              <afterAltitude value="1700" extension="orAbove" />
               <proceedDirect fix="PR407"/>
               <then/>
               <proceedDirect fix="VENOX"/>
@@ -398,7 +398,7 @@
               <proceedDirect fix="DOBEN"/>
             </route>
             <route type="sid" name="VOZ1M" category="AB" mapping="24">
-              <after property="altitude" value="1700"/>
+              <afterAltitude value="1700" extension="orAbove" />
               <proceedDirect fix="PR411"/>
               <then/>
               <proceedDirect fix="PR412"/>
@@ -481,7 +481,7 @@
           </group>
           <group note="sids">
             <route type="sid" name="VOZ1N" category="AB" mapping="30">
-              <after property="altitude" value="1700"/>
+              <afterAltitude value="1700" extension="orAbove" />
               <proceedDirect fix="PR807"/>
               <then/>
               <proceedDirect fix="PR808"/>
@@ -525,13 +525,13 @@
               <proceedDirect fix="VENOX"/>
             </route>
             <route type="sid" name="VENOX1N" category="AB" mapping="30">
-              <after property="altitude" value="1700"/>
+              <afterAltitude value="1700" extension="orAbove" />
               <proceedDirect fix="PR818"/>
               <then/>
               <proceedDirect fix="VENOX"/>
             </route>
             <route type="sid" name="ARTUP1N" category="AB" mapping="30">
-              <after property="altitude" value="1700"/>
+              <afterAltitude value="1700" extension="orAbove" />
               <proceedDirect fix="PR818"/>
               <then/>
               <proceedDirect fix="PR819"/>
@@ -654,7 +654,7 @@
 
             </route>
             <route type="sid" name="DOBEN1G" category="AB" mapping="12">
-              <after property="altitude" value="1700"/>
+              <afterAltitude value="1700" extension="orAbove" />
               <proceedDirect fix="PR854"/>
               <then/>
               <proceedDirect fix="PR855"/>
@@ -662,7 +662,7 @@
               <proceedDirect fix="DOBEN"/>
             </route>
             <route type="sid" name="VOZ1G" category="AB" mapping="12">
-              <after property="altitude" value="1700"/>
+              <afterAltitude value="1700" extension="orAbove" />
               <proceedDirect fix="PR411"/>
               <then/>
               <proceedDirect fix="PR404"/>
@@ -670,7 +670,7 @@
               <proceedDirect fix="VOZ"/>
             </route>
             <route type="sid" name="VOZ1Q" category="AB" mapping="12">
-              <after property="altitude" value="1700"/>
+              <afterAltitude value="1700" extension="orAbove" />
               <proceedDirect fix="PR411"/>
               <then/>
               <proceedDirect fix="PR412"/>
@@ -780,18 +780,18 @@
           </iafRoute>
           <iafRoute iaf="EVEMI" iafMapping="12unp">
             <heading value="303" direction="nearest"/>
-            <after property="distance" value="OKL/14.2"/>
+            <afterDistance fix="OKL" distance="14.3" />
             <heading value="213" direction="nearest"/>
-            <after property="radial" value="OKL/313"/>
+            <afterRadial fix="OKL" radial="313" />
             <proceedDirect fix="OKL/127/12.9"/>
             <then/>
             <heading value="127" direction="nearest"/>
           </iafRoute>
           <iafRoute iaf="SOMIS" iafMapping="12unp">
             <heading value="303" direction="nearest"/>
-            <after property="distance" value="OKL/13.9"/>
+            <afterDistance fix="OKL" distance="13.9"/>
             <heading value="033" direction="nearest"/>
-            <after property="radial" value="OKL/300"/>
+            <afterRadial fix="OKL" radial="300"/>
             <proceedDirect fix="OKL/127/12.9"/>
             <then/>
             <heading value="127" direction="nearest"/>
@@ -825,7 +825,7 @@
           </iafRoute>
           <iafRoute iaf="ARVEG" iafMapping="30unp">
             <heading value="123" direction="nearest"/>
-            <after property="distance" value="OKL/19.3"/>
+            <afterDistance fix="OKL" distance="19.3"/>
             <proceedDirect fix="OKL/119/13.5"/>
             <then/>
             <heading value="299" direction="nearest"/>
@@ -841,7 +841,7 @@
           </iafRoute>
           <iafRoute iaf="KENOK" iafMapping="30unp">
             <heading value="343" direction="nearest"/>
-            <after property="distance" value="VOZ/21.8"/>
+            <afterDistance fix="VOZ" distance="21.8" />
             <proceedDirect fix="OKL/119/13.5"/>
             <then/>
             <heading value="299" direction="nearest"/>
@@ -1358,10 +1358,10 @@
           <gaRoute gaMapping="04">
             <heading value="039" direction="nearest"/>
             <altitude direction="climb" value="025"/>
-            <after property="altitude" value="2500+"/>
+            <afterAltitude value="2500" extension="orAbove" />
             <proceedDirect fix="MT598"/>
             <altitude direction="climb" value="035"/>
-            <after property="navaid" value="MT598"/>
+            <afterNavaid fix="MT598"/>
             <proceedDirect fix="ODRAN"/>
           </gaRoute>
         </group>
@@ -1369,21 +1369,21 @@
           <gaRoute gaMapping="22ils">
             <altitude direction="climb" value="30"/>
             <heading value="222" direction="nearest"/>
-            <after property="altitude" value="500+"/>
+            <afterAltitude value="500" extension="orAbove" />
             <proceedDirect fix="MT598"/>
             <then/>
             <proceedDirect fix="BOGTU"/>
           </gaRoute>
           <gaRoute gaMapping="22vor">
             <heading value="226" direction="nearest"/>
-            <after property="altitude" value="2500+"/>
+            <afterAltitude value="2500" extension="orAbove" />
             <proceedDirect fix="MT598"/>
             <then/>
             <proceedDirect fix="BOGTU"/>
           </gaRoute>
           <gaRoute gaMapping="22ndb">
             <heading value="226" direction="nearest" />
-            <after property="altitude" value="2500+" />
+            <afterAltitude value="2500" extension="orAbove" />
             <proceedDirect fix="MT598" />
             <then />
             <proceedDirect fix="BOGTU" />

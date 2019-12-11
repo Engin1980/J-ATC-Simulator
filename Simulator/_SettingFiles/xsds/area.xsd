@@ -317,12 +317,12 @@
 
   <xs:complexType name="routeCommands">
     <xs:choice>
-      <xs:element name="then" type="cm:Then"/>
-      <xs:element name="proceedDirect" type="cm:ToNavaid"/>
-      <xs:element name="speed" type="cm:Speed"/>
-      <xs:element name="altitude" type="cm:Altitude"/>
-      <xs:element name="heading" type="cm:Heading"/>
-      <xs:element name="hold" type="cm:Hold"/>
+      <xs:element name="then" type="cm:ThenCommand"/>
+      <xs:element name="proceedDirect" type="cm:ToNavaidCommand"/>
+      <xs:element name="speed" type="cm:SpeedCommand"/>
+      <xs:element name="altitude" type="cm:AltitudeCommand"/>
+      <xs:element name="heading" type="cm:HeadingCommand"/>
+      <xs:element name="hold" type="cm:HoldCommand"/>
     </xs:choice>
   </xs:complexType>
 
@@ -427,15 +427,20 @@
 
   <xs:complexType name="route">
     <xs:choice maxOccurs="unbounded">
-      <xs:element name="then" type="cm:Then"/>
-      <xs:element name="proceedDirect" type="cm:ToNavaid"/>
-      <xs:element name="speed" type="cm:Speed"/>
-      <xs:element name="altitude" type="cm:Altitude"/>
-      <xs:element name="altitudeRouteRestriction" type="cm:AltitudeRestriction" />
-      <xs:element name="altitudeRouteRestrictionClear" type="cm:AltitudeRestrictionClear" />
-      <xs:element name="heading" type="cm:Heading"/>
-      <xs:element name="hold" type="cm:Hold"/>
-      <xs:element name="after" type="cm:After"/>
+      <xs:element name="then" type="cm:ThenCommand"/>
+      <xs:element name="proceedDirect" type="cm:ToNavaidCommand"/>
+      <xs:element name="speed" type="cm:SpeedCommand"/>
+      <xs:element name="altitude" type="cm:AltitudeCommand"/>
+      <xs:element name="altitudeRouteRestriction" type="cm:AltitudeRestrictionCommand" />
+      <xs:element name="altitudeRouteRestrictionClear" type="cm:AltitudeRestrictionClearCommand" />
+      <xs:element name="heading" type="cm:HeadingCommand"/>
+      <xs:element name="hold" type="cm:HoldCommand"/>
+      <xs:element name="afterSpeed" type="cm:AfterSpeedCommand"/>
+      <xs:element name="afterHeading" type="cm:AfterHeadingCommand"/>
+      <xs:element name="afterAltitude" type="cm:AfterAltitudeCommand"/>
+      <xs:element name="afterDistance" type="cm:AfterDistanceCommand"/>
+      <xs:element name="afterRadial" type="cm:AfterRadialCommand"/>
+      <xs:element name="afterNavaid" type="cm:AfterNavaidCommand"/>
     </xs:choice>
   </xs:complexType>
 

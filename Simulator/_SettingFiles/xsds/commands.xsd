@@ -6,19 +6,19 @@
            xmlns="https://github.com/Engin1980/J-ATC-Simulator/commands"
            elementFormDefault="qualified">
 
-  <xs:complexType name="Then">
+  <xs:complexType name="ThenCommand">
   </xs:complexType>
 
-  <xs:complexType name="ToNavaid">
+  <xs:complexType name="ToNavaidCommand">
     <xs:attribute name="fix" type="sh:nonEmptyString" use="required"/>
   </xs:complexType>
 
-  <xs:complexType name="Speed">
+  <xs:complexType name="SpeedCommand">
     <xs:attribute name="restriction" type="RestrictionType" use="required"/>
     <xs:attribute name="value" type="xs:positiveInteger" use="optional"/>
   </xs:complexType>
 
-  <xs:complexType name="Altitude">
+  <xs:complexType name="AltitudeCommand">
     <xs:attribute name="direction" use="required">
       <xs:simpleType>
         <xs:restriction base="xs:string">
@@ -31,40 +31,95 @@
     <xs:attribute name="value" type="xs:positiveInteger" use="required"/>
   </xs:complexType>
 
-  <xs:complexType name="AltitudeRestriction">
+  <xs:complexType name="AltitudeRestrictionCommand">
     <xs:attribute name="restriction" type="RestrictionType" use="required"/>
     <xs:attribute name="value" type="xs:positiveInteger" use="required" />
   </xs:complexType>
 
-  <xs:complexType name="AltitudeRestrictionClear">
+  <xs:complexType name="AltitudeRestrictionClearCommand">
   </xs:complexType>
 
-  <xs:complexType name="Heading">
+  <xs:complexType name="HeadingCommand">
     <xs:attribute name="value" type="xs:positiveInteger" use="required"/>
     <xs:attribute name="direction" type="sh:LeftRightNearest" use="optional"/>
   </xs:complexType>
 
-  <xs:complexType name="Hold">
+  <xs:complexType name="HoldCommand">
     <xs:attribute name="fix" type="sh:nonEmptyString" use="required"/>
     <xs:attribute name="inboundRadial" type="sh:heading" use="optional"/>
     <xs:attribute name="turns" type="sh:LeftRight" use="optional"/>
   </xs:complexType>
 
-  <xs:complexType name="After">
-    <xs:attribute name="property">
-      <xs:simpleType>
-        <xs:restriction base="xs:string">
-          <xs:enumeration value="speed" />
-          <xs:enumeration value="altitude" />
-          <xs:enumeration value="heading" />
-          <xs:enumeration value="distance" />
-          <xs:enumeration value="radial" />
-          <xs:enumeration value="navaid" />
-        </xs:restriction>
-      </xs:simpleType>
-    </xs:attribute>
-    <xs:attribute name="value" type="xs:string" />
+<!--  <xs:complexType name="After">-->
+<!--    <xs:attribute name="property">-->
+<!--      <xs:simpleType>-->
+<!--        <xs:restriction base="xs:string">-->
+<!--          <xs:enumeration value="speed" />-->
+<!--          <xs:enumeration value="altitude" />-->
+<!--          <xs:enumeration value="heading" />-->
+<!--          <xs:enumeration value="distance" />-->
+<!--          <xs:enumeration value="radial" />-->
+<!--          <xs:enumeration value="navaid" />-->
+<!--        </xs:restriction>-->
+<!--      </xs:simpleType>-->
+<!--    </xs:attribute>-->
+<!--    <xs:attribute name="value" type="xs:string" />-->
+<!--  </xs:complexType>-->
+
+  <xs:complexType name="AfterCommandWithValue">
+    <xs:attribute name="value" type="xs:positiveInteger" use="required" />
+    <xs:attribute name="extension" type="AfterValueExtension" use="optional" />
   </xs:complexType>
+  <xs:complexType name="AfterCommandWithNavaid">
+    <xs:attribute name="fix" type="sh:nonEmptyString" use="required" />
+  </xs:complexType>
+
+  <xs:complexType name="AfterSpeedCommand">
+    <xs:complexContent>
+      <xs:extension base="AfterCommandWithValue" />
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="AfterHeadingCommand">
+    <xs:complexContent>
+      <xs:extension base="AfterCommandWithValue" />
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="AfterAltitudeCommand">
+    <xs:complexContent>
+      <xs:extension base="AfterCommandWithValue" />
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="AfterDistanceCommand">
+    <xs:complexContent>
+      <xs:extension base="AfterCommandWithNavaid">
+        <xs:attribute name="distance" type="sh:positiveDouble" use="required"/>
+        <xs:attribute name="extension" type="AfterValueExtension" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="AfterRadialCommand">
+    <xs:complexContent>
+      <xs:extension base="AfterCommandWithNavaid">
+        <xs:attribute name="radial" type="xs:positiveInteger" use="required"/>
+        <xs:attribute name="extension" type="AfterValueExtension" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="AfterNavaidCommand">
+    <xs:complexContent>
+      <xs:extension base="AfterCommandWithNavaid">
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+
+  <xs:simpleType name="AfterValueExtension">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="orAbove" />
+      <xs:enumeration value="orBelow" />
+      <xs:enumeration value="exactly" />
+    </xs:restriction>
+  </xs:simpleType>
 
   <xs:simpleType name="RestrictionType">
     <xs:restriction base="xs:string">
