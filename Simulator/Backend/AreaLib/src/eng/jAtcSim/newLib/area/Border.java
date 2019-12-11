@@ -16,7 +16,7 @@ import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.geo.Headings;
 import eng.eSystem.utilites.NumberUtils;
-import eng.jAtcSim.sharedLib.xml.XmlLoader;
+import eng.jAtcSim.newLib.shared.xml.XmlLoader;
 
 import java.awt.geom.Line2D;
 import java.util.Comparator;

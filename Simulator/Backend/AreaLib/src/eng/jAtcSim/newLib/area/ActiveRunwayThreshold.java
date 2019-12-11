@@ -14,7 +14,7 @@ import eng.eSystem.geo.Coordinates;
 import eng.eSystem.geo.Headings;
 import eng.jAtcSim.newLib.approaches.Approach;
 import eng.jAtcSim.newLib.routes.DARoute;
-import eng.jAtcSim.sharedLib.xml.XmlLoader;
+import eng.jAtcSim.newLib.shared.xml.XmlLoader;
 
 /**
  * @author Marek

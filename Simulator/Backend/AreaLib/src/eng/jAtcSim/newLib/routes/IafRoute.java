@@ -5,8 +5,8 @@ import eng.eSystem.eXml.XElement;
 import eng.jAtcSim.newLib.area.Airport;
 import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.speeches.IAtcCommand;
-import eng.jAtcSim.sharedLib.PlaneCategoryDefinitions;
-import eng.jAtcSim.sharedLib.xml.XmlLoader;
+import eng.jAtcSim.newLib.shared.PlaneCategoryDefinitions;
+import eng.jAtcSim.newLib.shared.xml.XmlLoader;
 
 public class IafRoute extends Route {
 

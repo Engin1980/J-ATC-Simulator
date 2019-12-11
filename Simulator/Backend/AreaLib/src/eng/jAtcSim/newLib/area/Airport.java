@@ -9,8 +9,8 @@ import eng.eSystem.geo.Coordinate;
 import eng.jAtcSim.newLib.routes.DARoute;
 import eng.jAtcSim.newLib.routes.GaRoute;
 import eng.jAtcSim.newLib.routes.IafRoute;
-import eng.jAtcSim.sharedLib.exceptions.ToDoException;
-import eng.jAtcSim.sharedLib.xml.XmlLoader;
+import eng.jAtcSim.newLib.shared.exceptions.ToDoException;
+import eng.jAtcSim.newLib.shared.xml.XmlLoader;
 
 public class Airport extends Parentable<Area> {
 

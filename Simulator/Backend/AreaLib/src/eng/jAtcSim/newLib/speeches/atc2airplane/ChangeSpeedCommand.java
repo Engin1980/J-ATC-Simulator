@@ -3,8 +3,8 @@ package eng.jAtcSim.newLib.speeches.atc2airplane;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.jAtcSim.newLib.speeches.IAtcCommand;
-import eng.jAtcSim.sharedLib.exceptions.ApplicationException;
-import eng.jAtcSim.sharedLib.xml.XmlLoader;
+import eng.jAtcSim.newLib.shared.exceptions.ApplicationException;
+import eng.jAtcSim.newLib.shared.xml.XmlLoader;
 
 public class ChangeSpeedCommand implements IAtcCommand {
 

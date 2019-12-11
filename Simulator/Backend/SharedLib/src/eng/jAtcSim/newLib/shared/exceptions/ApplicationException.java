@@ -1,4 +1,4 @@
-package eng.jAtcSim.sharedLib.exceptions;
+package eng.jAtcSim.newLib.shared.exceptions;
 
 import eng.eSystem.collections.*;
 

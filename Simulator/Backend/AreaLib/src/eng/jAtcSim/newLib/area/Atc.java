@@ -7,7 +7,7 @@
 package eng.jAtcSim.newLib.area;
 
 import eng.eSystem.eXml.XElement;
-import eng.jAtcSim.sharedLib.xml.XmlLoader;
+import eng.jAtcSim.newLib.shared.xml.XmlLoader;
 
 /**
  * @author Marek

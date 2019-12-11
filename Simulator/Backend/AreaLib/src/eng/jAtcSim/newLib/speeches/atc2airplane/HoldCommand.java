@@ -4,8 +4,8 @@ import eng.eSystem.eXml.XElement;
 import eng.jAtcSim.newLib.area.Airport;
 import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.area.PublishedHold;
-import eng.jAtcSim.sharedLib.exceptions.ApplicationException;
-import eng.jAtcSim.sharedLib.xml.XmlLoader;
+import eng.jAtcSim.newLib.shared.exceptions.ApplicationException;
+import eng.jAtcSim.newLib.shared.xml.XmlLoader;
 
 public class HoldCommand extends ToNavaidCommand {
 

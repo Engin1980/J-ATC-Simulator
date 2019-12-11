@@ -1,4 +1,4 @@
-package eng.jAtcSim.sharedLib.xml;
+package eng.jAtcSim.newLib.shared.xml;
 
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
@@ -6,8 +6,8 @@ import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.geo.Coordinate;
-import eng.jAtcSim.sharedLib.PlaneCategoryDefinitions;
-import eng.jAtcSim.sharedLib.exceptions.ToDoException;
+import eng.jAtcSim.newLib.shared.PlaneCategoryDefinitions;
+import eng.jAtcSim.newLib.shared.exceptions.ToDoException;
 
 import java.util.function.Function;
 

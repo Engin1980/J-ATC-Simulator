@@ -3,7 +3,7 @@ package eng.jAtcSim.newLib.speeches.atc2airplane.afterCommands;
 import eng.eSystem.eXml.XElement;
 import eng.jAtcSim.newLib.area.Airport;
 import eng.jAtcSim.newLib.area.Navaid;
-import eng.jAtcSim.sharedLib.xml.XmlLoader;
+import eng.jAtcSim.newLib.shared.xml.XmlLoader;
 
 public abstract class AfterCommandWithNavaid extends AfterCommand {
   private Navaid navaid;

@@ -6,7 +6,7 @@ import eng.eSystem.collections.IList;
 import eng.eSystem.collections.ISet;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
-import eng.jAtcSim.sharedLib.xml.XmlLoader;
+import eng.jAtcSim.newLib.shared.xml.XmlLoader;
 
 public class Area {
 

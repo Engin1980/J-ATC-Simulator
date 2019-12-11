@@ -13,8 +13,8 @@ import eng.jAtcSim.newLib.area.Border;
 import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.area.NavaidList;
 import eng.jAtcSim.newLib.speeches.atc2airplane.ToNavaidCommand;
-import eng.jAtcSim.sharedLib.PlaneCategoryDefinitions;
-import eng.jAtcSim.sharedLib.xml.XmlLoader;
+import eng.jAtcSim.newLib.shared.PlaneCategoryDefinitions;
+import eng.jAtcSim.newLib.shared.xml.XmlLoader;
 
 public class DARoute extends Route {
   public enum eType {

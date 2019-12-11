@@ -6,7 +6,7 @@ import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
-import eng.jAtcSim.sharedLib.xml.XmlLoader;
+import eng.jAtcSim.newLib.shared.xml.XmlLoader;
 
 public class InactiveRunwayThreshold extends Parentable<InactiveRunway> {
 

@@ -1,12 +1,10 @@
 package eng.jAtcSim.newLib.speeches;
 
-import eng.eSystem.collections.*;
 import eng.eSystem.eXml.XElement;
-import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.exceptions.SwitchCaseNotFoundException;
 import eng.jAtcSim.newLib.area.Airport;
 import eng.jAtcSim.newLib.speeches.atc2airplane.afterCommands.*;
-import eng.jAtcSim.sharedLib.xml.XmlLoader;
+import eng.jAtcSim.newLib.shared.xml.XmlLoader;
 
 public class XmlAfterCommandFactory {
 

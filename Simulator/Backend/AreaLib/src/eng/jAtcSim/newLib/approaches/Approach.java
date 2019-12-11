@@ -29,10 +29,10 @@ import eng.jAtcSim.newLib.speeches.atc2airplane.ChangeAltitudeCommand;
 import eng.jAtcSim.newLib.speeches.atc2airplane.ChangeHeadingCommand;
 import eng.jAtcSim.newLib.speeches.atc2airplane.ProceedDirectCommand;
 import eng.jAtcSim.newLib.speeches.atc2airplane.ThenCommand;
-import eng.jAtcSim.sharedLib.UnitProvider;
-import eng.jAtcSim.sharedLib.exceptions.ToDoException;
-import eng.jAtcSim.sharedLib.xml.XmlLoadException;
-import eng.jAtcSim.sharedLib.xml.XmlLoader;
+import eng.jAtcSim.newLib.shared.UnitProvider;
+import eng.jAtcSim.newLib.shared.exceptions.ToDoException;
+import eng.jAtcSim.newLib.shared.xml.XmlLoadException;
+import eng.jAtcSim.newLib.shared.xml.XmlLoader;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 

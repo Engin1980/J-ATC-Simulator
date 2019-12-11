@@ -1,11 +1,7 @@
 package eng.jAtcSim.newLib.area;
 
-import eng.eSystem.collections.EList;
-import eng.eSystem.collections.IList;
 import eng.eSystem.eXml.XDocument;
-import eng.eSystem.eXml.XElement;
-import eng.jAtcSim.sharedLib.xml.XmlLoadException;
-import eng.jAtcSim.sharedLib.xml.XmlLoader;
+import eng.jAtcSim.newLib.shared.xml.XmlLoadException;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 

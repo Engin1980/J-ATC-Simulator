@@ -2,8 +2,8 @@ package eng.jAtcSim.newLib.area;
 
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.eXml.XElement;
-import eng.jAtcSim.sharedLib.PlaneCategoryDefinitions;
-import eng.jAtcSim.sharedLib.xml.XmlLoader;
+import eng.jAtcSim.newLib.shared.PlaneCategoryDefinitions;
+import eng.jAtcSim.newLib.shared.xml.XmlLoader;
 
 import java.util.Objects;
 

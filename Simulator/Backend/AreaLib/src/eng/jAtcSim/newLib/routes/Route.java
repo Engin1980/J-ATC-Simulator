@@ -7,9 +7,6 @@ import eng.eSystem.eXml.XElement;
 import eng.jAtcSim.newLib.area.Airport;
 import eng.jAtcSim.newLib.area.Parentable;
 import eng.jAtcSim.newLib.speeches.IAtcCommand;
-import eng.jAtcSim.sharedLib.exceptions.ToDoException;
-
-import javax.swing.text.StyledEditorKit;
 
 public abstract class Route extends Parentable<Airport> {
 

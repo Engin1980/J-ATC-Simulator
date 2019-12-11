@@ -1,7 +1,7 @@
 package eng.jAtcSim.newLib.speeches.atc2airplane.afterCommands;
 
 import eng.eSystem.eXml.XElement;
-import eng.jAtcSim.sharedLib.xml.XmlLoader;
+import eng.jAtcSim.newLib.shared.xml.XmlLoader;
 
 public class AfterAltitudeCommand extends AfterCommand {
   public static AfterAltitudeCommand load(XElement element) {

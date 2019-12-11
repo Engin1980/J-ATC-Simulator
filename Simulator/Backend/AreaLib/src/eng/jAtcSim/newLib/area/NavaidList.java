@@ -5,7 +5,7 @@ import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.geo.Headings;
-import eng.jAtcSim.sharedLib.RegexGrouper;
+import eng.jAtcSim.newLib.shared.RegexGrouper;
 
 public class NavaidList extends EList<Navaid> {
 

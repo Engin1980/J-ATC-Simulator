@@ -1,4 +1,4 @@
-package eng.jAtcSim.sharedLib;
+package eng.jAtcSim.newLib.shared;
 
 import eng.eSystem.EStringBuilder;
 import eng.eSystem.collections.*;
