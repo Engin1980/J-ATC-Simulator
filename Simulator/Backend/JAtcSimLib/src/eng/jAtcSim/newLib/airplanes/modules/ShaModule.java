@@ -7,7 +7,8 @@ import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
 import eng.jAtcSim.newLib.Acc;
-import eng.jAtcSim.newLib.airplanes.*;
+import eng.jAtcSim.newLib.airplanes.Airplane;
+import eng.jAtcSim.newLib.airplanes.AirplaneType;
 import eng.jAtcSim.newLib.airplanes.behaviors.NewApproachBehavior;
 import eng.jAtcSim.newLib.airplanes.interfaces.modules.ISha4Navigator;
 import eng.jAtcSim.newLib.airplanes.interfaces.modules.IShaRO;
@@ -20,28 +21,7 @@ import eng.jAtcSim.newLib.global.Restriction;
 import eng.jAtcSim.newLib.speaking.fromAtc.commands.ChangeHeadingCommand;
 import eng.jAtcSim.newLib.world.approaches.Approach;
 
-public class ShaModule implements IShaRO{
-
-  class Sha4Navigator implements ISha4Navigator{
-
-    @Override
-    public int getHeading() {
-      return ShaModule.this.getHeading();
-    }
-
-    @Override
-    public void setTargetHeading(int heading, boolean leftTurn) {
-      ShaModule.this.finalHeading = heading;
-      ShaModule.this.finalHeadingLeftTurn = leftTurn;
-    }
-
-    @Override
-    public void setTargetHeading(int heading) {
-      boolean leftTurn
-          = HeadingsNew.getBetterDirectionToTurn(ShaModule.this.getHeading(), heading) == ChangeHeadingCommand.eDirection.left;
-      this.setTargetHeading(heading, leftTurn);
-    }
-  }
+public class ShaModule implements IShaRO {
 
   private static class RestrictableItem {
     private int orderedValue;
@@ -52,11 +32,6 @@ public class ShaModule implements IShaRO{
       setTargetValue(targetValue);
     }
 
-    public final void setRestriction(Restriction restriction) {
-      this.restrictedValue = restriction;
-      this.refresh();
-    }
-
     public final void clearRestriction() {
       this.restrictedValue = null;
       this.refresh();
@@ -64,6 +39,11 @@ public class ShaModule implements IShaRO{
 
     public int getTargetValue() {
       return this.targetValue;
+    }
+
+    public final void setRestriction(Restriction restriction) {
+      this.restrictedValue = restriction;
+      this.refresh();
     }
 
     public final void setTargetValue(int value) {
@@ -92,6 +72,26 @@ public class ShaModule implements IShaRO{
     }
   }
 
+  class Sha4Navigator implements ISha4Navigator {
+
+    @Override
+    public int getHeading() {
+      return ShaModule.this.getHeading();
+    }
+
+    @Override
+    public void setTargetHeading(int heading, boolean leftTurn) {
+      ShaModule.this.finalHeading = heading;
+      ShaModule.this.finalHeadingLeftTurn = leftTurn;
+    }
+
+    @Override
+    public void setTargetHeading(int heading) {
+      boolean leftTurn
+          = HeadingsNew.getBetterDirectionToTurn(ShaModule.this.getHeading(), heading) == ChangeHeadingCommand.eDirection.left;
+      this.setTargetHeading(heading, leftTurn);
+    }
+  }
   private final static double GROUND_SPEED_CHANGE_MULTIPLIER = 1.5; //1.5; //3.0;
 
   private static double getHeadingChangeDenominator(AirplaneType planeType) {
@@ -157,6 +157,7 @@ public class ShaModule implements IShaRO{
   }
 
   private final Airplane parent;
+  private final Sha4Navigator sha4Navigator = new Sha4Navigator();
   //region Heading fields
   private int finalHeading;
   private HeadingInertialValue heading;
@@ -172,108 +173,19 @@ public class ShaModule implements IShaRO{
   private RestrictableItem speedOrders;
   //endregion
   private INavigator navigator;
-  private final Sha4Navigator sha4Navigator = new Sha4Navigator();
 
   public ShaModule(Airplane parent) {
     assert parent != null;
     this.parent = parent;
   }
 
-  public void init(int heading, int altitude, int speed, AirplaneType planeType, int airportAltitude) {
-    this.altitudeOrders = new RestrictableItem(altitude);
-    this.finalHeading = heading;
-    this.speedOrders = new RestrictableItem(speed);
-
-    double headingChangeDenominator = getHeadingChangeDenominator(planeType);
-    this.heading = new HeadingInertialValue(
-        heading,
-        planeType.headingChangeRate,
-        planeType.headingChangeRate / headingChangeDenominator);
-
-    this.altitude = new InertialValue(
-        altitude,
-        planeType.lowClimbRate / 7d / 60,
-        planeType.highDescendRate / 7d / 60,
-        (double) airportAltitude);
-
-    this.speed = new InertialValue(
-        speed,
-        planeType.speedIncreaseRate / 4d,
-        planeType.speedDecreaseRate / 6d,
-        0d);
-
-    this.navigator = new HeadingNavigator(heading);
-  }
-
-  //region Altitude-methods
-  public void setAltitudeRestriction(Restriction altitudeRestriction) {
-    this.altitudeOrders.setRestriction(altitudeRestriction);
-  }
-
   public void clearTargetAltitudeRestriction() {
     this.altitudeOrders.clearRestriction();
-  }
-
-  public int getTargetAltitude() {
-    return altitudeOrders.getTargetValue();
-  }
-
-  public void setTargetAltitude(int altitude) {
-    this.altitudeOrders.setTargetValue(altitude);
-  }
-
-  public int getAltitude() {
-    return (int) altitude.value;
-  }
-
-  @Override
-  public int getGS() {
-return this.getTAS();
-  }
-
-  @Override
-  public int getTAS() {
-    double m = 1 + this.getAltitude() / 100000d;
-    double ret = this.getSpeed() * m;
-    return (int) Math.round(ret);
-  }
-
-  //endregion
-  //region Speed-methods
-
-  public int getVerticalSpeed() {
-    return (int) Math.round(this.lastVerticalSpeed);
   }
 
   public void clearTargetSpeedRestriction() {
     this.speedOrders.clearRestriction();
   }
-
-  public int getTargetSpeed() {
-    return speedOrders.getTargetValue();
-  }
-
-  public void setTargetSpeed(int speed) {
-    this.speedOrders.setTargetValue(speed);
-  }
-
-  public int getSpeed() {
-    return (int) Math.round(speed.value);
-  }
-
-  //endregion
-
-  //region Heading-methods
-
-  public int getTargetHeading() {
-    return finalHeading;
-  }
-
-  public int getHeading() {
-    return (int) Math.round(heading.value);
-  }
-
-  //endregion
 
   //region Elapse-Second
   public void elapseSecond() {
@@ -313,6 +225,88 @@ return this.getTAS();
     }
   }
 
+  public int getAltitude() {
+    return (int) altitude.value;
+  }
+
+  @Override
+  public int getGS() {
+    return this.getTAS();
+  }
+
+  public int getHeading() {
+    return (int) Math.round(heading.value);
+  }
+
+  public int getSpeed() {
+    return (int) Math.round(speed.value);
+  }
+
+  public Restriction getSpeedRestriction() {
+    return this.speedOrders.restrictedValue;
+  }
+
+  //endregion
+  //region Speed-methods
+
+  @Override
+  public int getTAS() {
+    double m = 1 + this.getAltitude() / 100000d;
+    double ret = this.getSpeed() * m;
+    return (int) Math.round(ret);
+  }
+
+  public int getTargetAltitude() {
+    return altitudeOrders.getTargetValue();
+  }
+
+  public int getTargetHeading() {
+    return finalHeading;
+  }
+
+  public int getTargetSpeed() {
+    return speedOrders.getTargetValue();
+  }
+
+  public int getVerticalSpeed() {
+    return (int) Math.round(this.lastVerticalSpeed);
+  }
+
+  //endregion
+
+  //region Heading-methods
+
+  public void init(int heading, int altitude, int speed, AirplaneType planeType, int airportAltitude) {
+    this.altitudeOrders = new RestrictableItem(altitude);
+    this.finalHeading = heading;
+    this.speedOrders = new RestrictableItem(speed);
+
+    double headingChangeDenominator = getHeadingChangeDenominator(planeType);
+    this.heading = new HeadingInertialValue(
+        heading,
+        planeType.headingChangeRate,
+        planeType.headingChangeRate / headingChangeDenominator);
+
+    this.altitude = new InertialValue(
+        altitude,
+        planeType.lowClimbRate / 7d / 60,
+        planeType.highDescendRate / 7d / 60,
+        (double) airportAltitude);
+
+    this.speed = new InertialValue(
+        speed,
+        planeType.speedIncreaseRate / 4d,
+        planeType.speedDecreaseRate / 6d,
+        0d);
+
+    this.navigator = new HeadingNavigator(heading);
+  }
+
+  //region Altitude-methods
+  public void setAltitudeRestriction(Restriction altitudeRestriction) {
+    this.altitudeOrders.setRestriction(altitudeRestriction);
+  }
+
   //endregion
 
   public void setNavigator(INavigator navigator) {
@@ -320,12 +314,18 @@ return this.getTAS();
     this.navigator = navigator;
   }
 
-  public Restriction getSpeedRestriction() {
-    return this.speedOrders.restrictedValue;
-  }
+  //endregion
 
   public void setSpeedRestriction(Restriction speedRestriction) {
     this.speedOrders.setRestriction(speedRestriction);
+  }
+
+  public void setTargetAltitude(int altitude) {
+    this.altitudeOrders.setTargetValue(altitude);
+  }
+
+  public void setTargetSpeed(int speed) {
+    this.speedOrders.setTargetValue(speed);
   }
 
   public Coordinate tryGetTargetCoordinate() {
@@ -336,49 +336,17 @@ return this.getTAS();
       return null;
   }
 
-  private ValueRequest getSpeedRequest() {
-    ValueRequest ret;
-    double delta = speedOrders.targetValue - speed.getValue();
-    if (delta == 0) {
-      // no change required
-      ret = new ValueRequest();
-      ret.energy = 0;
-      ret.value = 0;
+  private void adjustAltitude(ValueRequest altitudeRequest) {
+    if (parent.getState().is(Airplane.State.takeOffRoll, Airplane.State.landed, Airplane.State.holdingPoint)) {
+      // not adjusting altitude at this states
+      this.altitude.reset(Acc.airport().getAltitude());
     } else {
-      double incStep = parent.getType().speedIncreaseRate;
-      double decStep = parent.getType().speedDecreaseRate;
-      if (parent.getState().isOnGround()) {
-        incStep *= GROUND_SPEED_CHANGE_MULTIPLIER;
-        decStep *= GROUND_SPEED_CHANGE_MULTIPLIER;
+      this.altitude.add(altitudeRequest.value);
+      this.lastVerticalSpeed = this.altitude.getInertia() * 60;
+      if (this.altitude.getValue() < Acc.airport().getAltitude()) {
+        this.altitude.reset(Acc.airport().getAltitude());
       }
-      ret = getRequest(
-          this.speed.getValue(),
-          this.speedOrders.targetValue,
-          incStep, decStep);
     }
-
-    return ret;
-  }
-
-  private ValueRequest getAltitudeRequest() {
-    ValueRequest ret;
-    // if on ground, nothing required
-    if (parent.getState().isOnGround() && altitude.getValue() == Acc.airport().getAltitude()) {
-      ret = new ValueRequest();
-      ret.energy = 0;
-      ret.value = 0;
-    } else {
-      double climbRateForAltitude = parent.getType().getClimbRateForAltitude(this.altitude.getValue());
-      double descentRateForAltitude = parent.getType().getDescendRateForAltitude(this.altitude.getValue());
-      descentRateForAltitude = adjustDescentRateByApproachStateIfRequired(descentRateForAltitude);
-      ret = getRequest(
-          this.altitude.getValue(),
-          this.altitudeOrders.targetValue,
-          climbRateForAltitude,
-          descentRateForAltitude);
-    }
-
-    return ret;
   }
 
   private double adjustDescentRateByApproachStateIfRequired(double descentRateForAltitude) {
@@ -407,23 +375,6 @@ return this.getTAS();
     return ret;
   }
 
-  private void adjustSpeed(ValueRequest speedRequest) {
-    this.speed.add(speedRequest.value);
-  }
-
-  private void adjustAltitude(ValueRequest altitudeRequest) {
-    if (parent.getState().is(Airplane.State.takeOffRoll, Airplane.State.landed, Airplane.State.holdingPoint)) {
-      // not adjusting altitude at this states
-      this.altitude.reset(Acc.airport().getAltitude());
-    } else {
-      this.altitude.add(altitudeRequest.value);
-      this.lastVerticalSpeed = this.altitude.getInertia() * 60;
-      if (this.altitude.getValue() < Acc.airport().getAltitude()) {
-        this.altitude.reset(Acc.airport().getAltitude());
-      }
-    }
-  }
-
   private void adjustHeading() {
     double diff = Headings.getDifference(heading.getValue(), finalHeading, true);
 
@@ -435,6 +386,55 @@ return this.getTAS();
       this.heading.add(-diff);
     else
       this.heading.add(diff);
+  }
+
+  private void adjustSpeed(ValueRequest speedRequest) {
+    this.speed.add(speedRequest.value);
+  }
+
+  private ValueRequest getAltitudeRequest() {
+    ValueRequest ret;
+    // if on ground, nothing required
+    if (parent.getState().isOnGround() && altitude.getValue() == Acc.airport().getAltitude()) {
+      ret = new ValueRequest();
+      ret.energy = 0;
+      ret.value = 0;
+    } else {
+      double climbRateForAltitude = parent.getType().getClimbRateForAltitude(this.altitude.getValue());
+      double descentRateForAltitude = parent.getType().getDescendRateForAltitude(this.altitude.getValue());
+      descentRateForAltitude = adjustDescentRateByApproachStateIfRequired(descentRateForAltitude);
+      ret = getRequest(
+          this.altitude.getValue(),
+          this.altitudeOrders.targetValue,
+          climbRateForAltitude,
+          descentRateForAltitude);
+    }
+
+    return ret;
+  }
+
+  private ValueRequest getSpeedRequest() {
+    ValueRequest ret;
+    double delta = speedOrders.targetValue - speed.getValue();
+    if (delta == 0) {
+      // no change required
+      ret = new ValueRequest();
+      ret.energy = 0;
+      ret.value = 0;
+    } else {
+      double incStep = parent.getType().speedIncreaseRate;
+      double decStep = parent.getType().speedDecreaseRate;
+      if (parent.getState().isOnGround()) {
+        incStep *= GROUND_SPEED_CHANGE_MULTIPLIER;
+        decStep *= GROUND_SPEED_CHANGE_MULTIPLIER;
+      }
+      ret = getRequest(
+          this.speed.getValue(),
+          this.speedOrders.targetValue,
+          incStep, decStep);
+    }
+
+    return ret;
   }
   //endregion
 }
@@ -462,11 +462,6 @@ class InertialValue {
     this.maxNegativeInertiaChange = maxNegativeInertiaChange;
   }
 
-  public void reset(double value) {
-    this.value = value;
-    this.inertia = 0;
-  }
-
   public void add(double val) {
     double adjustedValue;
     if (val > inertia)
@@ -483,25 +478,30 @@ class InertialValue {
     }
   }
 
-  public void set(double value) {
-    double diff = value - this.value;
-    this.add(diff);
-  }
-
-  public double getValue() {
-    return value;
-  }
-
   public double getInertia() {
     return inertia;
+  }
+
+  public double getMaxNegativeInertiaChange() {
+    return maxNegativeInertiaChange;
   }
 
   public double getMaxPositiveInertiaChange() {
     return maxPositiveInertiaChange;
   }
 
-  public double getMaxNegativeInertiaChange() {
-    return maxNegativeInertiaChange;
+  public double getValue() {
+    return value;
+  }
+
+  public void reset(double value) {
+    this.value = value;
+    this.inertia = 0;
+  }
+
+  public void set(double value) {
+    double diff = value - this.value;
+    this.add(diff);
   }
 }
 
@@ -524,11 +524,6 @@ class HeadingInertialValue {
   private HeadingInertialValue() {
     maxInertia = Double.MIN_VALUE;
     maxInertiaChange = Double.MIN_VALUE;
-  }
-
-  public void reset(double value) {
-    this.value = value;
-    this.inertiaStep = 0;
   }
 
   public void add(double val) {
@@ -555,10 +550,6 @@ class HeadingInertialValue {
     this.value = Headings.to(this.value);
   }
 
-  public double getValue() {
-    return value;
-  }
-
   public double getInertia() {
     return inertiaStep * maxInertiaChange;
   }
@@ -567,9 +558,13 @@ class HeadingInertialValue {
     return maxInertia;
   }
 
-  void resetInertia() {
-    if (this.inertiaStep != 0)
-      this.inertiaStep = 0;
+  public double getValue() {
+    return value;
+  }
+
+  public void reset(double value) {
+    this.value = value;
+    this.inertiaStep = 0;
   }
 
   private void buildHashMap() {
@@ -607,6 +602,11 @@ class HeadingInertialValue {
     if (isNeg)
       ret = -ret;
     return ret;
+  }
+
+  void resetInertia() {
+    if (this.inertiaStep != 0)
+      this.inertiaStep = 0;
   }
 }
 
