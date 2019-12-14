@@ -1,13 +1,6 @@
 package eng.jAtcSim.newLib.airplanes.sha;
 
-import com.sun.istack.internal.Nullable;
-import eng.eSystem.collections.EList;
-import eng.eSystem.collections.IList;
-import eng.eSystem.exceptions.EEnumValueUnsupportedException;
-import eng.eSystem.geo.Headings;
-import eng.jAtcSim.newLib.airplanes.sha.drivers.HeadingDriver;
-import eng.jAtcSim.newLib.airplanes.sha.drivers.IShaDriver;
-import eng.jAtcSim.newLib.shared.Restriction;
+import eng.jAtcSim.newLib.airplaneType.AirplaneType;
 
 public class Sha {
   public static Sha create(int heading, int altitude, int speed, AirplaneType planeType, int airportAltitude) {
@@ -33,8 +26,6 @@ public class Sha {
         planeType.speedIncreaseRate / 4d,
         planeType.speedDecreaseRate / 6d,
         0d);
-
-    ret.driver = new HeadingDriver(heading);
 
     return ret;
   }
@@ -62,7 +53,6 @@ public class Sha {
   private final ShaSpeed speed = new ShaSpeed();
   private final ShaAltitude altitude = new ShaAltitude();
   private final ShaHeading heading = new ShaHeading();
-  private IShaDriver driver = null;
 
   private Sha() {
   }
