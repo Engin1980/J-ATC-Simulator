@@ -1,4 +1,4 @@
-package eng.jAtcSim.newLib.traffic.fleets;
+package eng.jAtcSim.newLib.fleet;
 
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
@@ -20,11 +20,6 @@ public class Fleets {
     return ret;
   }
 
-  public static CompanyFleet getDefaultCompanyFleet() {
-    CompanyFleet ret = CompanyFleet.getDefault();
-    return ret;
-  }
-
   private final IList<CompanyFleet> inner;
 
   private Fleets(IList<CompanyFleet> inner) {
@@ -32,7 +27,7 @@ public class Fleets {
   }
 
   public IList<CompanyFleet> getCompaniesByIcao(String[] companies) {
-    return inner.where( q ->
+    return inner.where(q ->
         ArrayUtils.contains(companies, q.getIcao()));
   }
 
@@ -43,7 +38,7 @@ public class Fleets {
   }
 
   public CompanyFleet tryGetByIcao(String companyIcao) {
-    CompanyFleet ret = this.inner.tryGetFirst(q->q.getIcao().equals(companyIcao));
+    CompanyFleet ret = this.inner.tryGetFirst(q -> q.getIcao().equals(companyIcao));
     return ret;
   }
 }

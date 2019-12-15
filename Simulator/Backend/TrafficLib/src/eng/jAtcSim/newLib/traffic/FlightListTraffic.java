@@ -7,13 +7,10 @@ import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
-import eng.jAtcSim.newLib.Acc;
-import eng.jAtcSim.newLib.airplanes.AirplaneType;
-import eng.jAtcSim.newLib.airplanes.Callsign;
-import eng.jAtcSim.newLib.global.ETime;
 import eng.jAtcSim.newLib.shared.Callsign;
+import eng.jAtcSim.newLib.shared.SharedFactory;
+import eng.jAtcSim.newLib.shared.time.ETimeStamp;
 import eng.jAtcSim.newLib.shared.xml.XmlLoader;
-import eng.jAtcSim.newLib.world.xml.XmlLoader;
 
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -92,11 +89,11 @@ public class FlightListTraffic extends Traffic {
       } else
         currentHeading = this.heading;
 
-      ETime initTime;
+      ETimeStamp initTime;
       if (this.isArrival())
-        initTime = new ETime(this.time.plusMinutes(-25));
+        initTime = new ETimeStamp(this.time.plusMinutes(-25));
       else
-        initTime = new ETime(this.time);
+        initTime = new ETimeStamp(this.time);
 
       Movement ret = new Movement(
           this.callsign, type,
@@ -142,18 +139,18 @@ public class FlightListTraffic extends Traffic {
     if (nextHour == null) {
       movements = new EList<>();
       movements.add(
-          generateNewMovements(Acc.now().getHours())
+          generateNewMovements(SharedFactory.getNow().getHours())
       );
       movements.add(
-          generateNewMovements(Acc.now().getHours() + 1)
+          generateNewMovements(SharedFactory.getNow().getHours() + 1)
       );
-      nextHour = Acc.now().getHours() + 1;
+      nextHour = SharedFactory.getNow().getHours() + 1;
     } else {
       nextHour++;
       movements = generateNewMovements(nextHour);
     }
 
-    ret = new GeneratedMovementsResponse(Acc.now().getRoundedToNextHour(), nextHour, movements);
+    ret = new GeneratedMovementsResponse(SharedFactory.getNow().getRoundedToNextHour(), nextHour, movements);
     return ret;
   }
 
@@ -163,7 +160,7 @@ public class FlightListTraffic extends Traffic {
 
     for (Flight flight : flights) {
       ExpectedMovement em = new ExpectedMovement(
-          new ETime(flight.time),
+          new ETimeStamp(flight.time),
           flight.isArrival(),
           flight.isCommercial(),
           'C');

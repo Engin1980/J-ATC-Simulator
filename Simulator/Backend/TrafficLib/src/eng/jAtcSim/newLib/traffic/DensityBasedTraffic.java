@@ -11,7 +11,6 @@ import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.SharedFactory;
 import eng.jAtcSim.newLib.shared.time.ETimeStamp;
 import eng.jAtcSim.newLib.shared.xml.XmlLoader;
-import eng.jAtcSim.newLib.traffic.fleets.CompanyFleet;
 
 import static eng.jAtcSim.newLib.shared.SharedFactory.getRnd;
 

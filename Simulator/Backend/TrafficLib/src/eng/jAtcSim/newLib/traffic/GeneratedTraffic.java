@@ -5,12 +5,7 @@ import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.utilites.ArrayUtils;
-import eng.jAtcSim.newLib.Acc;
-import eng.jAtcSim.newLib.airplanes.Airplane;
-import eng.jAtcSim.newLib.airplanes.Callsign;
-import eng.jAtcSim.newLib.shared.Factory;
-
-import java.util.Random;
+import eng.jAtcSim.newLib.shared.Callsign;
 
 import static eng.jAtcSim.newLib.shared.SharedFactory.getRnd;
 
@@ -21,7 +16,7 @@ public abstract class GeneratedTraffic extends Traffic {
     super(delayProbability, maxDelayInMinutesPerStep);
     this.useExtendedCallsigns = useExtendedCallsigns;
   }
-  
+
   public boolean isUseExtendedCallsigns() {
     return useExtendedCallsigns;
   }
@@ -36,32 +31,7 @@ public abstract class GeneratedTraffic extends Traffic {
   }
 
   private Callsign generateRandomCallsign(@Nullable String prefix, boolean isPrefixCountryCode) {
-    Callsign ret =
-        CallsignGenerator.generateCallsign(prefix, !isPrefixCountryCode, useExtendedCallsigns);
-    return ret;
-  }
-
-  protected Callsign generateUnusedCallsign(String companyOrCountryPrefix, boolean isPrefixCountryCode) {
-    Callsign ret = null;
-
-    while (ret == null) {
-
-      ret = generateRandomCallsign(companyOrCountryPrefix, isPrefixCountryCode);
-      for (Airplane p : Acc.planes()) { // check not existing in current planes
-        if (ret.equals(p.getFlightModule().getCallsign())) {
-          ret = null;
-          break;
-        }
-      }
-      for (Movement m : Acc.scheduledMovements()) { // check not existing in future planes
-        if (m.getCallsign().equals(ret)) {
-          ret = null;
-          break;
-        }
-      }
-
-    }
-
+    Callsign ret = CallsignGenerator.generateCallsign(prefix, !isPrefixCountryCode, useExtendedCallsigns);
     return ret;
   }
 }
@@ -74,7 +44,7 @@ class CallsignGenerator {
     NNN
   }
 
-  public static Character[] numericalChars;
+  private static Character[] numericalChars;
   private static final double COMPANY_THREE_CHAR_NUMBER_PROBABILITY = 0.3;
   private static final double EXTENDED_CALLSIGN_PROBABILITY = 0.3;
 

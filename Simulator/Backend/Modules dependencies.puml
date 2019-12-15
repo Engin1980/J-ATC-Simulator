@@ -1,0 +1,38 @@
+@startuml
+
+title Components - Component Diagram
+
+[SharedLib (sl)] as sl
+[AreaLib (al)] as al
+[AirplanesLib (pl)] as pl
+[AirplaneTypeLib (atl)] as atl
+
+[TrafficLib (tl)] as tl
+note right of tl: Includes Traffic generation\nand movement generating
+
+[WeatherLib (wl)] as wl
+[SimulationLib (simlib)] as simlib
+
+[FleetLib (fl)] as fl
+note bottom of fl : Only fleet defintion,\nno traffic data
+
+sl <-up- wl
+sl <-up- al
+sl <-up- atl
+sl <-up- tl
+
+atl <-up- pl
+
+al <-up- pl
+
+pl <-up-simlib
+
+tl <-up- simlib
+
+wl <-up- simlib
+
+fl <-up- simlib
+
+
+
+@enduml

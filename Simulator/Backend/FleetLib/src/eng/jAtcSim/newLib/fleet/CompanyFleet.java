@@ -1,4 +1,4 @@
-package eng.jAtcSim.newLib.traffic.fleets;
+package eng.jAtcSim.newLib.fleet;
 
 import eng.eSystem.collections.*;
 import eng.eSystem.eXml.XElement;

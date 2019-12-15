@@ -1,5 +1,6 @@
 package eng.jAtcSim.newLib.traffic;
 
+import eng.eSystem.ERandom;
 import eng.eSystem.Tuple;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
@@ -12,7 +13,12 @@ import eng.jAtcSim.newLib.airplanes.AirplaneType;
 import eng.jAtcSim.newLib.airplanes.Callsign;
 import eng.jAtcSim.newLib.exceptions.ToDoException;
 import eng.jAtcSim.newLib.global.ETime;
+import eng.jAtcSim.newLib.shared.Callsign;
+import eng.jAtcSim.newLib.shared.SharedFactory;
+import eng.jAtcSim.newLib.shared.time.ETimeStamp;
+import eng.jAtcSim.newLib.shared.xml.XmlLoader;
 import eng.jAtcSim.newLib.traffic.fleets.CompanyFleet;
+import eng.jAtcSim.newLib.traffic.movementTemplating.IMovementTemplate;
 import eng.jAtcSim.newLib.world.xml.XmlLoader;
 
 /**
@@ -130,24 +136,24 @@ public class GenericTraffic extends GeneratedTraffic {
     this.fillOrderedCategories();
   }
 
-  @Override
-  public GeneratedMovementsResponse generateMovements(Object syncObject) {
-    IList<Movement> lst = new EList<>();
-
-    int currentHour = Acc.now().getHours();
-    int expMovs = movementsPerHour[currentHour];
-    for (int i = 0; i < expMovs; i++) {
-      Movement m = generateMovement(currentHour);
-      lst.add(m);
-    }
-
-    // what will this to over midnight?
-    ETime nextGenTime = Acc.now().getRoundedToNextHour();
-
-    GeneratedMovementsResponse ret = new GeneratedMovementsResponse(
-        nextGenTime, null, lst);
-    return ret;
-  }
+//  @Override
+//  public GeneratedMovementsResponse generateMovements(Object syncObject) {
+//    IList<Movement> lst = new EList<>();
+//
+//    int currentHour = Acc.now().getHours();
+//    int expMovs = movementsPerHour[currentHour];
+//    for (int i = 0; i < expMovs; i++) {
+//      Movement m = generateMovement(currentHour);
+//      lst.add(m);
+//    }
+//
+//    // what will this to over midnight?
+//    ETime nextGenTime = Acc.now().getRoundedToNextHour();
+//
+//    GeneratedMovementsResponse ret = new GeneratedMovementsResponse(
+//        nextGenTime, null, lst);
+//    return ret;
+//  }
 
   @Override
   public IReadOnlyList<ExpectedMovement> getExpectedTimesForDay() {
@@ -178,17 +184,16 @@ public class GenericTraffic extends GeneratedTraffic {
     }
   }
 
-  private Movement generateMovement(int hour) {
-
-    ETime initTime = new ETime(hour, Acc.rnd().nextInt(0, 60), Acc.rnd().nextInt(0, 60));
-    boolean isDeparture = (Acc.rnd().nextDouble() <= this.probabilityOfDeparture);
-    boolean isNonCommercial = Acc.rnd().nextDouble() < this.probabilityOfNonCommercialFlight;
+  private IMovementTemplate generateMovement(int hour) {
+    ERandom rnd = SharedFactory.getRnd();
+    ETimeStamp initTime = new ETimeStamp(hour, rnd.nextInt(0, 60), rnd.nextInt(0, 60));
+    boolean isDeparture = (rnd.nextDouble() <= this.probabilityOfDeparture);
+    boolean isNonCommercial = rnd.nextDouble() < this.probabilityOfNonCommercialFlight;
     char category = getRandomCategory();
 
     String prefix;
-    AirplaneType type;
     if (isNonCommercial) {
-      prefix = this.countryCodes[Acc.rnd().nextInt(this.countryCodes.length)];
+      prefix = this.countryCodes[rnd.nextInt(this.countryCodes.length)];
       type = Acc.sim().getAirplaneTypes().getRandomFromCategory(category);
     } else {
       Tuple<String, AirplaneType> tmp = getCompanyPrefixAndAirplaneType(category);
@@ -196,9 +201,9 @@ public class GenericTraffic extends GeneratedTraffic {
       type = tmp.getB();
     }
 
-    Callsign cls = generateUnusedCallsign(prefix, isNonCommercial);
+    Callsign cls = generate(prefix, isNonCommercial);
     int delayInMinutes = generateDelayMinutes();
-    int entryRadial = Acc.rnd().nextInt(360);
+    int entryRadial = rnd.nextInt(360);
     Movement ret = new Movement(cls, type, initTime, delayInMinutes, isDeparture, entryRadial);
     return ret;
   }
