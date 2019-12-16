@@ -6,9 +6,8 @@
 package eng.jAtcSim.newLib.traffic;
 
 /**
- *
  * @author Marek Vajgl
  */
-public abstract class TestTraffic extends Traffic{
-
+public abstract class TestTraffic extends Traffic {
+  public static String AIRPLANE_TYPE = "A320";
 }

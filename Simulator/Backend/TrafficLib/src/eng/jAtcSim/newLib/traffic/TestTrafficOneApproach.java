@@ -8,51 +8,42 @@ package eng.jAtcSim.newLib.traffic;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
-import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
-import eng.jAtcSim.newLib.Acc;
-import eng.jAtcSim.newLib.airplanes.AirplaneType;
-import eng.jAtcSim.newLib.airplanes.Callsign;
+import eng.jAtcSim.newLib.shared.Callsign;
+import eng.jAtcSim.newLib.shared.time.ETimeStamp;
+import eng.jAtcSim.newLib.traffic.movementTemplating.ArrivalEntryInfo;
+import eng.jAtcSim.newLib.traffic.movementTemplating.ArrivalMovementTemplate;
+import eng.jAtcSim.newLib.traffic.movementTemplating.IMovementTemplate;
+import eng.jAtcSim.newLib.traffic.movementTemplating.MovementTemplate;
 
 /**
  * @author Marek Vajgl
  */
 public class TestTrafficOneApproach extends TestTraffic {
 
-  @XmlIgnore
-  private String[] clsgnNumbers = new String[]{"5555"}; //, "6666", "7777"};
-
-  @Override
-  public GeneratedMovementsResponse generateMovements(Object syncObject) {
-    Boolean done = (Boolean) syncObject;
-    IList<Movement> lst = new EList<>();
-    if (done == null || done == false) {
-      Movement mov;
-      for (String clsgnNumber : clsgnNumbers) {
-        mov = generateMovement(clsgnNumber);
-        lst.add(mov);
-      }
-    }
-
-    GeneratedMovementsResponse ret = new GeneratedMovementsResponse(Acc.now().addHours(10), true, lst);
-    return ret;
-  }
-
   @Override
   public IReadOnlyList<ExpectedMovement> getExpectedTimesForDay() {
     return new EList<>();
   }
 
-  private Movement generateMovement(String number) {
-    Movement ret;
-
-    AirplaneType pt = Acc.sim().getAirplaneTypes().tryGetByName("A319");
-    assert pt != null;
-
-    ret = new Movement(
-        new Callsign("CSA", number),
-        pt,
-        Acc.now().clone(), 0, false, 290);
-
+  @Override
+  public IReadOnlyList<IMovementTemplate> getMovements(ETimeStamp fromTimeInclusive, ETimeStamp toTimeExclusive) {
+    IList<IMovementTemplate> ret = new EList<>();
+    ETimeStamp time;
+    if (fromTimeInclusive.getMinutes() == 0 && fromTimeInclusive.getSeconds() == 0)
+      time = fromTimeInclusive;
+    else
+      time = new ETimeStamp(fromTimeInclusive.getDays(), fromTimeInclusive.getHours(), fromTimeInclusive.getMinutes(), fromTimeInclusive.getSeconds());
+    while (time.isBefore(toTimeExclusive)) {
+      MovementTemplate tmp = new ArrivalMovementTemplate(
+          new Callsign("CSA", time.getHours() + "00"),
+          TestTraffic.AIRPLANE_TYPE,
+          time,
+          0,
+          new ArrivalEntryInfo(290)
+      );
+      ret.add(tmp);
+      time = time.addHours(1);
+    }
     return ret;
   }
 }
