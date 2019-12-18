@@ -6,25 +6,26 @@ import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.eXml.XElement;
-import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.utilites.NumberUtils;
-import eng.jAtcSim.newLib.Acc;
-import eng.jAtcSim.newLib.airplanes.AirplaneType;
-import eng.jAtcSim.newLib.airplanes.Callsign;
-import eng.jAtcSim.newLib.exceptions.ToDoException;
-import eng.jAtcSim.newLib.global.ETime;
-import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.SharedFactory;
 import eng.jAtcSim.newLib.shared.time.ETimeStamp;
 import eng.jAtcSim.newLib.shared.xml.XmlLoader;
-import eng.jAtcSim.newLib.traffic.fleets.CompanyFleet;
-import eng.jAtcSim.newLib.traffic.movementTemplating.IMovementTemplate;
-import eng.jAtcSim.newLib.world.xml.XmlLoader;
+import eng.jAtcSim.newLib.traffic.movementTemplating.CategoryMovementTemplate;
+import eng.jAtcSim.newLib.traffic.movementTemplating.EntryExitInfo;
+import eng.jAtcSim.newLib.traffic.movementTemplating.MovementTemplate;
 
 /**
  * @author Marek Vajgl
  */
 public class GenericTraffic extends GeneratedTraffic {
+
+  public static GenericTraffic create(String[] companies, String[] countryCodes, int[] movementsPerHour,
+                                      double probabilityOfDeparture, double probabilityOfNonCommercialFlight,
+                                      double trafficCustomWeightTypeA, double trafficCustomWeightTypeB, double trafficCustomWeightTypeC, double trafficCustomWeightTypeD,
+                                      double delayProbability, int maxDelayInMinutesPerStep, boolean useExtendedCallsigns) {
+    GenericTraffic ret = new GenericTraffic(companies, countryCodes, movementsPerHour, probabilityOfDeparture, probabilityOfNonCommercialFlight, trafficCustomWeightTypeA, trafficCustomWeightTypeB, trafficCustomWeightTypeC, trafficCustomWeightTypeD, delayProbability, maxDelayInMinutesPerStep, useExtendedCallsigns);
+    return ret;
+  }
 
   public static GenericTraffic load(XElement source) {
     XmlLoader.setContext(source);
@@ -64,10 +65,6 @@ public class GenericTraffic extends GeneratedTraffic {
     return ret;
   }
 
-  public static GenericTraffic create() {
-    throw new ToDoException();
-  }
-
   private final String[] companies;
   private final String[] countryCodes;
 
@@ -90,11 +87,31 @@ public class GenericTraffic extends GeneratedTraffic {
   private final double[] probabilityOfCategory = new double[4];
 
   private char[] orderedCategoriesByProbabilityDesc = null;
+  private ERandom rnd = null;
 
-  public GenericTraffic(String[] companies, String[] countryCodes, int[] movementsPerHour,
-                        double probabilityOfDeparture, double probabilityOfNonCommercialFlight,
-                        double trafficCustomWeightTypeA, double trafficCustomWeightTypeB, double trafficCustomWeightTypeC, double trafficCustomWeightTypeD,
-                        double delayProbability, int maxDelayInMinutesPerStep, boolean useExtendedCallsigns) {
+//  @Override
+//  public GeneratedMovementsResponse generateMovements(Object syncObject) {
+//    IList<Movement> lst = new EList<>();
+//
+//    int currentHour = Acc.now().getHours();
+//    int expMovs = movementsPerHour[currentHour];
+//    for (int i = 0; i < expMovs; i++) {
+//      Movement m = generateMovement(currentHour);
+//      lst.add(m);
+//    }
+//
+//    // what will this to over midnight?
+//    ETime nextGenTime = Acc.now().getRoundedToNextHour();
+//
+//    GeneratedMovementsResponse ret = new GeneratedMovementsResponse(
+//        nextGenTime, null, lst);
+//    return ret;
+//  }
+
+  private GenericTraffic(String[] companies, String[] countryCodes, int[] movementsPerHour,
+                         double probabilityOfDeparture, double probabilityOfNonCommercialFlight,
+                         double trafficCustomWeightTypeA, double trafficCustomWeightTypeB, double trafficCustomWeightTypeC, double trafficCustomWeightTypeD,
+                         double delayProbability, int maxDelayInMinutesPerStep, boolean useExtendedCallsigns) {
     super(delayProbability, maxDelayInMinutesPerStep, useExtendedCallsigns);
 
     if (movementsPerHour == null) {
@@ -136,39 +153,26 @@ public class GenericTraffic extends GeneratedTraffic {
     this.fillOrderedCategories();
   }
 
-//  @Override
-//  public GeneratedMovementsResponse generateMovements(Object syncObject) {
-//    IList<Movement> lst = new EList<>();
-//
-//    int currentHour = Acc.now().getHours();
-//    int expMovs = movementsPerHour[currentHour];
-//    for (int i = 0; i < expMovs; i++) {
-//      Movement m = generateMovement(currentHour);
-//      lst.add(m);
-//    }
-//
-//    // what will this to over midnight?
-//    ETime nextGenTime = Acc.now().getRoundedToNextHour();
-//
-//    GeneratedMovementsResponse ret = new GeneratedMovementsResponse(
-//        nextGenTime, null, lst);
-//    return ret;
-//  }
-
   @Override
   public IReadOnlyList<ExpectedMovement> getExpectedTimesForDay() {
+    ERandom rnd = SharedFactory.getRnd();
     IList<ExpectedMovement> ret = new EList<>();
     for (int i = 0; i < 24; i++) {
       for (int j = 0; j < movementsPerHour[i]; j++) {
-        ETime time = new ETime(i, Acc.rnd().nextInt(0, 60), Acc.rnd().nextInt(0, 60));
-        boolean isArrival = this.probabilityOfDeparture < Acc.rnd().nextDouble();
-        boolean isCommercial = this.probabilityOfNonCommercialFlight > Acc.rnd().nextDouble();
+        ETimeStamp time = new ETimeStamp(i, rnd.nextInt(0, 60), rnd.nextInt(0, 60));
+        boolean isArrival = this.probabilityOfDeparture < rnd.nextDouble();
+        boolean isCommercial = this.probabilityOfNonCommercialFlight > rnd.nextDouble();
         char category = getRandomCategory();
         ExpectedMovement em = new ExpectedMovement(time, isArrival, isCommercial, category);
         ret.add(em);
       }
     }
     return ret;
+  }
+
+  @Override
+  public IReadOnlyList<MovementTemplate> getMovements(ETimeStamp fromTimeInclusive, ETimeStamp toTimeExclusive) {
+    return null;
   }
 
   private void fillOrderedCategories() {
@@ -184,70 +188,61 @@ public class GenericTraffic extends GeneratedTraffic {
     }
   }
 
-  private IMovementTemplate generateMovement(int hour) {
+  private CategoryMovementTemplate generateMovement(int hour) {
     ERandom rnd = SharedFactory.getRnd();
     ETimeStamp initTime = new ETimeStamp(hour, rnd.nextInt(0, 60), rnd.nextInt(0, 60));
-    boolean isDeparture = (rnd.nextDouble() <= this.probabilityOfDeparture);
+    MovementTemplate.eKind kind = (rnd.nextDouble() <= this.probabilityOfDeparture) ? MovementTemplate.eKind.departure : MovementTemplate.eKind.arrival;
     boolean isNonCommercial = rnd.nextDouble() < this.probabilityOfNonCommercialFlight;
     char category = getRandomCategory();
-
-    String prefix;
-    if (isNonCommercial) {
-      prefix = this.countryCodes[rnd.nextInt(this.countryCodes.length)];
-      type = Acc.sim().getAirplaneTypes().getRandomFromCategory(category);
-    } else {
-      Tuple<String, AirplaneType> tmp = getCompanyPrefixAndAirplaneType(category);
-      prefix = tmp.getA();
-      type = tmp.getB();
-    }
-
-    Callsign cls = generate(prefix, isNonCommercial);
     int delayInMinutes = generateDelayMinutes();
     int entryRadial = rnd.nextInt(360);
-    Movement ret = new Movement(cls, type, initTime, delayInMinutes, isDeparture, entryRadial);
+
+    CategoryMovementTemplate ret = new CategoryMovementTemplate(
+        category, !isNonCommercial, kind, initTime, delayInMinutes, new EntryExitInfo(entryRadial)
+    );
     return ret;
   }
 
-  private Tuple<String, AirplaneType> getCompanyPrefixAndAirplaneType(char category) {
-    CompanyFleet companyFleet = null;
-    String icao = null;
-    AirplaneType type = null;
-
-    IList<CompanyFleet> flts = Acc.fleets().getCompaniesByIcao(this.companies);
-
-    // this will try restrict to required category
-    IList<CompanyFleet> tmp = flts.where(q -> q.getTypes().isAny(p -> p.getAirplaneType().category == category));
-    if (tmp.isEmpty()) {
-      if (this.orderedCategoriesByProbabilityDesc == null) fillOrderedCategories();
-      for (char c : this.orderedCategoriesByProbabilityDesc) {
-        tmp = flts.where(q -> q.getTypes().isAny(p -> p.getAirplaneType().category == c));
-        if (!tmp.isEmpty()) {
-          companyFleet = tmp.getRandom();
-          icao = companyFleet.getIcao();
-          type = companyFleet.getTypes().where(q -> q.getAirplaneType().category == c).getRandom().getAirplaneType();
-          break;
-        }
-      }
-      if (companyFleet == null) {
-        companyFleet = flts.getRandom();
-        icao = companyFleet.getIcao();
-        type = companyFleet.getTypes().getRandom().getAirplaneType();
-      }
-      if (companyFleet == null)
-        throw new EApplicationException("There is no plane kind matching requested category and company.");
-    } else {
-      companyFleet = tmp.getRandom();
-      icao = companyFleet.getIcao();
-      type = companyFleet.getTypes().where(q -> q.getAirplaneType().category == category).getRandom().getAirplaneType();
-    }
-
-    //those should be set
-    assert icao != null;
-    assert type != null;
-
-    Tuple<String, AirplaneType> ret = new Tuple<>(icao, type);
-    return ret;
-  }
+//  private Tuple<String, AirplaneType> getCompanyPrefixAndAirplaneType(char category) {
+//    CompanyFleet companyFleet = null;
+//    String icao = null;
+//    AirplaneType type = null;
+//
+//    IList<CompanyFleet> flts = Acc.fleets().getCompaniesByIcao(this.companies);
+//
+//    // this will try restrict to required category
+//    IList<CompanyFleet> tmp = flts.where(q -> q.getTypes().isAny(p -> p.getAirplaneType().category == category));
+//    if (tmp.isEmpty()) {
+//      if (this.orderedCategoriesByProbabilityDesc == null) fillOrderedCategories();
+//      for (char c : this.orderedCategoriesByProbabilityDesc) {
+//        tmp = flts.where(q -> q.getTypes().isAny(p -> p.getAirplaneType().category == c));
+//        if (!tmp.isEmpty()) {
+//          companyFleet = tmp.getRandom();
+//          icao = companyFleet.getIcao();
+//          type = companyFleet.getTypes().where(q -> q.getAirplaneType().category == c).getRandom().getAirplaneType();
+//          break;
+//        }
+//      }
+//      if (companyFleet == null) {
+//        companyFleet = flts.getRandom();
+//        icao = companyFleet.getIcao();
+//        type = companyFleet.getTypes().getRandom().getAirplaneType();
+//      }
+//      if (companyFleet == null)
+//        throw new EApplicationException("There is no plane kind matching requested category and company.");
+//    } else {
+//      companyFleet = tmp.getRandom();
+//      icao = companyFleet.getIcao();
+//      type = companyFleet.getTypes().where(q -> q.getAirplaneType().category == category).getRandom().getAirplaneType();
+//    }
+//
+//    //those should be set
+//    assert icao != null;
+//    assert type != null;
+//
+//    Tuple<String, AirplaneType> ret = new Tuple<>(icao, type);
+//    return ret;
+//  }
 
   private char getRandomCategory() {
     char ret = 'A';
@@ -255,7 +250,7 @@ public class GenericTraffic extends GeneratedTraffic {
     for (double v : probabilityOfCategory) {
       sum += v;
     }
-    double tmp = Acc.rnd().nextDouble(sum);
+    double tmp = getRnd().nextDouble(sum);
     int index = -1;
     while (index < probabilityOfCategory.length) {
       index++;
@@ -267,6 +262,12 @@ public class GenericTraffic extends GeneratedTraffic {
       }
     }
     return ret;
+  }
+
+  private ERandom getRnd() {
+    if (rnd == null)
+      this.rnd = SharedFactory.getRnd();
+    return rnd;
   }
 }
 

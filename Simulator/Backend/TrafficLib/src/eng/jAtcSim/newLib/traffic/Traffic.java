@@ -7,7 +7,7 @@ package eng.jAtcSim.newLib.traffic;
 
 import eng.eSystem.collections.IReadOnlyList;
 import eng.jAtcSim.newLib.shared.time.ETimeStamp;
-import eng.jAtcSim.newLib.traffic.movementTemplating.IMovementTemplate;
+import eng.jAtcSim.newLib.traffic.movementTemplating.MovementTemplate;
 
 /**
  * @author Marek Vajgl
@@ -24,9 +24,6 @@ public abstract class Traffic {
     this.maxDelayInMinutesPerStep = maxDelayInMinutesPerStep;
   }
 
-  public abstract IReadOnlyList<IMovementTemplate> getMovements(
-      ETimeStamp fromTimeInclusive, ETimeStamp toTimeExclusive);
-
   public double getDelayProbability() {
     return delayProbability;
   }
@@ -36,6 +33,9 @@ public abstract class Traffic {
   public int getMaxDelayInMinutesPerStep() {
     return maxDelayInMinutesPerStep;
   }
+
+  public abstract IReadOnlyList<MovementTemplate> getMovements(
+      ETimeStamp fromTimeInclusive, ETimeStamp toTimeExclusive);
 }
 
 

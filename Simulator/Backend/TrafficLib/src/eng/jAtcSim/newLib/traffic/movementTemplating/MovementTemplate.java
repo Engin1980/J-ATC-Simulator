@@ -1,34 +1,51 @@
 package eng.jAtcSim.newLib.traffic.movementTemplating;
 
-import eng.jAtcSim.newLib.shared.Callsign;
+import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.time.ETimeStamp;
 
-public abstract class MovementTemplate implements IMovementTemplate {
-  private Callsign callsign;
-  private ETimeStamp time;
-  private String airplaneTypeName;
-  private int delayInMinutes;
-
-  public MovementTemplate(Callsign callsign, String airplaneTypeName, ETimeStamp time, int delayInMinutes) {
-    this.callsign = callsign;
-    this.time = time;
-    this.airplaneTypeName = airplaneTypeName;
-    this.delayInMinutes = delayInMinutes;
+public abstract class MovementTemplate {
+  public enum eKind {
+    arrival,
+    departure
   }
 
-  public Callsign getCallsign() {
-    return callsign;
+  private final eKind kind;
+  private final ETimeStamp time;
+  private final int delayInMinutes;
+  private final EntryExitInfo entryExitInfo;
+
+  public MovementTemplate(eKind kind, ETimeStamp time, int delayInMinutes, EntryExitInfo entryExitInfo) {
+    EAssert.isNotNull(time);
+    EAssert.isTrue(delayInMinutes >= 0);
+    EAssert.isNotNull(entryExitInfo);
+
+    this.kind = kind;
+    this.time = time;
+    this.delayInMinutes = delayInMinutes;
+    this.entryExitInfo = entryExitInfo;
+  }
+
+  public int getDelayInMinutes() {
+    return delayInMinutes;
+  }
+
+  public EntryExitInfo getEntryExitInfo() {
+    return entryExitInfo;
+  }
+
+  public eKind getKind() {
+    return kind;
   }
 
   public ETimeStamp getTime() {
     return time;
   }
 
-  public String getAirplaneTypeName() {
-    return airplaneTypeName;
+  public boolean isArrival() {
+    return kind == eKind.arrival;
   }
 
-  public int getDelayInMinutes() {
-    return delayInMinutes;
+  public boolean isDeparture() {
+    return kind == eKind.departure;
   }
 }
