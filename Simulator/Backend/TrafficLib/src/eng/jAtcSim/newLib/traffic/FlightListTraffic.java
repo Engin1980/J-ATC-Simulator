@@ -6,16 +6,17 @@ import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.geo.Coordinate;
-import eng.eSystem.geo.Coordinates;
 import eng.jAtcSim.newLib.shared.Callsign;
-import eng.jAtcSim.newLib.shared.SharedFactory;
 import eng.jAtcSim.newLib.shared.time.ETimeStamp;
 import eng.jAtcSim.newLib.shared.xml.XmlLoader;
+import eng.jAtcSim.newLib.traffic.movementTemplating.EntryExitInfo;
+import eng.jAtcSim.newLib.traffic.movementTemplating.FlightMovementTemplate;
+import eng.jAtcSim.newLib.traffic.movementTemplating.MovementTemplate;
 
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
-public class FlightListTraffic extends Traffic {
+public class FlightListTraffic extends TrafficOld {
 
   public static class Flight {
     public static IList<Flight> loadList(IReadOnlyList<XElement> sources) {
@@ -50,13 +51,13 @@ public class FlightListTraffic extends Traffic {
     }
 
     protected final Callsign callsign;
-    protected Flight bindedFollows = null;
     private final int heading;
     private final Coordinate otherAirport;
     private final eKind kind;
     private final String planeType;
     private final LocalTime time;
     private final String follows;
+    protected Flight bindedFollows = null;
 
     public Flight(Callsign callsign, int heading, Coordinate otherAirport, eKind kind,
                   String planeType, LocalTime time, String follows) {
@@ -69,6 +70,10 @@ public class FlightListTraffic extends Traffic {
       this.follows = follows;
     }
 
+    public ETimeStamp getTimeStamp() {
+      return new ETimeStamp(this.time);
+    }
+
     public boolean isArrival() {
       return kind == eKind.arrival;
     }
@@ -77,30 +82,14 @@ public class FlightListTraffic extends Traffic {
       return Character.isDigit(callsign.getNumber().charAt(0)) == false;
     }
 
-    public Movement toMovement() {
-      AirplaneType type = Acc.types().tryGetByName(this.planeType);
-      if (type == null)
-        throw new EApplicationException("Unable to create flight. Required airplane kind '" + this.planeType + "' not found.");
-
-      int currentHeading;
-      if (this.heading == EMPTY_HEADING) {
-        double radial = Coordinates.getBearing(Acc.airport().getLocation(), this.otherAirport);
-        currentHeading = (int) radial;
-      } else
-        currentHeading = this.heading;
-
-      ETimeStamp initTime;
-      if (this.isArrival())
-        initTime = new ETimeStamp(this.time.plusMinutes(-25));
-      else
-        initTime = new ETimeStamp(this.time);
-
-      Movement ret = new Movement(
-          this.callsign, type,
-          initTime,
-          0,
-          !this.isArrival(),
-          currentHeading);
+    public MovementTemplate toMovement() {
+      MovementTemplate ret = new FlightMovementTemplate(
+          this.callsign,
+          this.planeType,
+          this.isArrival() ? MovementTemplate.eKind.arrival : MovementTemplate.eKind.departure,
+          new ETimeStamp(this.time),
+          0, // delay
+          new EntryExitInfo(this.otherAirport));
       return ret;
     }
   }
@@ -125,34 +114,34 @@ public class FlightListTraffic extends Traffic {
 
   private final IList<Flight> flights;
 
-  public FlightListTraffic(double delayProbability, int maxDelayInMinutesPerStep, IList<Flight> flights) {
+  private FlightListTraffic(double delayProbability, int maxDelayInMinutesPerStep, IList<Flight> flights) {
     super(delayProbability, maxDelayInMinutesPerStep);
     this.flights = flights;
     bind();
   }
 
-  @Override
-  public GeneratedMovementsResponse generateMovements(Object syncObject) {
-    GeneratedMovementsResponse ret;
-    IList<Movement> movements;
-    Integer nextHour = (Integer) syncObject;
-    if (nextHour == null) {
-      movements = new EList<>();
-      movements.add(
-          generateNewMovements(SharedFactory.getNow().getHours())
-      );
-      movements.add(
-          generateNewMovements(SharedFactory.getNow().getHours() + 1)
-      );
-      nextHour = SharedFactory.getNow().getHours() + 1;
-    } else {
-      nextHour++;
-      movements = generateNewMovements(nextHour);
-    }
-
-    ret = new GeneratedMovementsResponse(SharedFactory.getNow().getRoundedToNextHour(), nextHour, movements);
-    return ret;
-  }
+//  @Override
+//  public GeneratedMovementsResponse generateMovements(Object syncObject) {
+//    GeneratedMovementsResponse ret;
+//    IList<Movement> movements;
+//    Integer nextHour = (Integer) syncObject;
+//    if (nextHour == null) {
+//      movements = new EList<>();
+//      movements.add(
+//          generateNewMovements(SharedFactory.getNow().getHours())
+//      );
+//      movements.add(
+//          generateNewMovements(SharedFactory.getNow().getHours() + 1)
+//      );
+//      nextHour = SharedFactory.getNow().getHours() + 1;
+//    } else {
+//      nextHour++;
+//      movements = generateNewMovements(nextHour);
+//    }
+//
+//    ret = new GeneratedMovementsResponse(SharedFactory.getNow().getRoundedToNextHour(), nextHour, movements);
+//    return ret;
+//  }
 
   @Override
   public IReadOnlyList<ExpectedMovement> getExpectedTimesForDay() {
@@ -170,8 +159,17 @@ public class FlightListTraffic extends Traffic {
     return ret;
   }
 
+  @Override
+  public IReadOnlyList<MovementTemplate> getMovements(ETimeStamp fromTimeInclusive, ETimeStamp toTimeExclusive) {
+    IList<MovementTemplate> ret = this.flights
+        .where(q -> q.getTimeStamp().isAfterOrEq(fromTimeInclusive) &&
+            q.getTimeStamp().isBefore(toTimeExclusive))
+        .select(q -> q.toMovement());
+    return ret;
+  }
+
   public IList<String> getRequiredPlaneTypes() {
-    IList<String> ret = this.flights.select(q->q.planeType).distinct();
+    IList<String> ret = this.flights.select(q -> q.planeType).distinct();
     return ret;
   }
 
@@ -183,20 +181,10 @@ public class FlightListTraffic extends Traffic {
 
       if (flight.follows != null)
         try {
-          flight.bindedFollows = flights.getFirst(q -> q.callsign.equals(flight.follows));
+          flight.bindedFollows = flights.getFirst(q -> q.callsign.toString(false).equals(flight.follows));
         } catch (Exception ex) {
           throw new EApplicationException("Unable to find previous flight with the callsign " + flight.follows + ".", ex);
         }
     }
-  }
-
-  private IList<Movement> generateNewMovements(int hours) {
-    IList<Flight> flights = this.flights.where(q -> q.time.getHour() == hours);
-    IList<Movement> ret = new EList<>();
-    for (Flight flight : flights) {
-      Movement m = flight.toMovement();
-      ret.add(m);
-    }
-    return ret;
   }
 }

@@ -1,4 +1,4 @@
-package eng.jAtcSim.newLib.traffic;
+package eng.jAtcSim.newLib.traffic.models;
 
 import com.sun.istack.internal.Nullable;
 import eng.eSystem.collections.*;
@@ -9,12 +9,9 @@ import eng.jAtcSim.newLib.traffic.movementTemplating.MovementTemplate;
 
 import static eng.jAtcSim.newLib.shared.SharedFactory.getRnd;
 
-public abstract class GeneratedTraffic extends Traffic {
+public abstract class DayGeneratedTrafficModel {
   private final CallsignGenerator callsignGenerator = new CallsignGenerator();
-
-  public GeneratedTraffic(IReadOnlyList<MovementTemplate> movements) {
-    super(movements);
-  }
+  public abstract IReadOnlyList<MovementTemplate> generateMovementsForOneDay();
 
   protected int generateDelayMinutes(double probability, int perStepDelay) {
     int ret = 0;

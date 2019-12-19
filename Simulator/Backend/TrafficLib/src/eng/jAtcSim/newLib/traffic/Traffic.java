@@ -1,41 +1,29 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package eng.jAtcSim.newLib.traffic;
 
+import eng.eSystem.collections.EList;
+import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
-import eng.jAtcSim.newLib.shared.time.ETimeStamp;
+import eng.eSystem.validation.EAssert;
+import eng.jAtcSim.newLib.shared.time.ETimeOnlyStamp;
 import eng.jAtcSim.newLib.traffic.movementTemplating.MovementTemplate;
 
-/**
- * @author Marek Vajgl
- */
-public abstract class Traffic {
+public abstract class Traffic implements ITraffic {
+  private final IReadOnlyList<MovementTemplate> movements;
 
-  private final double delayProbability;// = 0.3;
-  private final int maxDelayInMinutesPerStep; // = 15;
-
-  protected Traffic(double delayProbability, int maxDelayInMinutesPerStep) {
-    assert delayProbability >= 0 && delayProbability <= 1 : "Delay probability must be between 0 - 1";
-    assert maxDelayInMinutesPerStep >= 0;
-    this.delayProbability = delayProbability;
-    this.maxDelayInMinutesPerStep = maxDelayInMinutesPerStep;
+  @Override
+  public IReadOnlyList<ExpectedMovement> getExpectedTimesForDay() {
+    return null;
   }
 
-  public double getDelayProbability() {
-    return delayProbability;
+  @Override
+  public IReadOnlyList<MovementTemplate> getMovements(ETimeOnlyStamp fromTimeInclusive, ETimeOnlyStamp toTimeExclusive) {
+    IList<MovementTemplate> ret = this.movements
+      .where(q->q.getTime().getValue() >= fromTimeInclusive.getValue() && q.getTime().getValue() < toTimeExclusive.getValue());
+    return ret;
   }
 
-  public abstract IReadOnlyList<ExpectedMovement> getExpectedTimesForDay();
-
-  public int getMaxDelayInMinutesPerStep() {
-    return maxDelayInMinutesPerStep;
+  public Traffic(IReadOnlyList<MovementTemplate> movements) {
+    EAssert.isNotNull(movements);
+    this.movements = movements;
   }
-
-  public abstract IReadOnlyList<MovementTemplate> getMovements(
-      ETimeStamp fromTimeInclusive, ETimeStamp toTimeExclusive);
 }
-
-

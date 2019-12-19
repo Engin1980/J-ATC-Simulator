@@ -1,5 +1,7 @@
 package eng.jAtcSim.newLib.traffic.movementTemplating;
 
+import eng.eSystem.geo.Coordinate;
+import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.SharedFactory;
 
 public class EntryExitInfo {
@@ -9,29 +11,38 @@ public class EntryExitInfo {
     return ret;
   }
 
-  private String navaid;
-  private Integer radial;
+  private final String navaid;
+  private final Integer radial;
+  private final Coordinate otherAirportCoordinate;
 
-  public EntryExitInfo(String navaid) {
-    if (navaid == null) {
-      throw new IllegalArgumentException("Value of {navaid} cannot not be null.");
-    }
-
-    this.navaid = navaid;
+  public EntryExitInfo(Coordinate otherAirportCoordinate) {
+    EAssert.isNotNull(otherAirportCoordinate);
+    this.otherAirportCoordinate = otherAirportCoordinate;
+    this.navaid = null;
     this.radial = null;
   }
 
+  public EntryExitInfo(String navaid) {
+    EAssert.isNotNull(navaid);
+    this.navaid = navaid;
+    this.radial = null;
+    this.otherAirportCoordinate = null;
+  }
+
   public EntryExitInfo(Integer radial) {
-    if (radial == null) {
-      throw new IllegalArgumentException("Value of {radial} cannot not be null.");
-    }
+    EAssert.isNotNull(radial);
 
     this.radial = radial;
     this.navaid = null;
+    this.otherAirportCoordinate = null;
   }
 
   public String getNavaid() {
     return navaid;
+  }
+
+  public Coordinate getOtherAirportCoordinate() {
+    return otherAirportCoordinate;
   }
 
   public Integer getRadial() {

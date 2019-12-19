@@ -8,8 +8,10 @@ import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.geo.Coordinate;
 import eng.jAtcSim.newLib.shared.PlaneCategoryDefinitions;
 import eng.jAtcSim.newLib.shared.exceptions.ToDoException;
+import eng.jAtcSim.newLib.shared.time.ETimeStamp;
 
 import java.util.function.Function;
+import java.util.regex.Pattern;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
@@ -20,13 +22,6 @@ public abstract class XmlLoader {
 
   public static boolean isPrintLogToConsole() {
     return printLogToConsole;
-  }
-
-  public static <T> void loadList(IReadOnlyList<XElement> elements, IList<T> list, Function<XElement, T> function){
-    for (XElement element : elements) {
-      T item = function.apply(element);
-      list.add(item);
-    }
   }
 
   public static int loadAltitude(String key) {
@@ -225,6 +220,13 @@ public abstract class XmlLoader {
         throw throwConvertFail(tmp, Integer.class, ex);
       }
     return ret;
+  }
+
+  public static <T> void loadList(IReadOnlyList<XElement> elements, IList<T> list, Function<XElement, T> function) {
+    for (XElement element : elements) {
+      T item = function.apply(element);
+      list.add(item);
+    }
   }
 
   public static PlaneCategoryDefinitions loadPlaneCategory(String key, String defaultValue) {

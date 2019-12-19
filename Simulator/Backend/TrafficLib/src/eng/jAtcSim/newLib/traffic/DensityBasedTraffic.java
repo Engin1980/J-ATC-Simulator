@@ -11,6 +11,7 @@ import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.SharedFactory;
 import eng.jAtcSim.newLib.shared.time.ETimeStamp;
 import eng.jAtcSim.newLib.shared.xml.XmlLoader;
+import eng.jAtcSim.newLib.traffic.movementTemplating.MovementTemplate;
 
 import static eng.jAtcSim.newLib.shared.SharedFactory.getRnd;
 
@@ -153,11 +154,67 @@ public class DensityBasedTraffic extends GeneratedTraffic {
     return ret;
   }
 
+  private static IList<MovementTemplate> generateMovements(IList<HourBlockMovements> density) {
+    IList<MovementTemplate> ret = new EList<>();
+
+    for (int i = 0; i < 24; i++) {
+      int hour = i;
+      HourBlockMovements hbm = density.getFirst(q -> q.hour == hour);
+      IList<MovementTemplate> tmp;
+      tmp = generateMovementsByKind(hour, hbm.departures, MovementTemplate.eKind.departure);
+      ret.add(tmp);
+      tmp = generateMovementsByKind(hour, hbm.arrivals, MovementTemplate.eKind.arrival);
+      ret.add(tmp);
+    }
+    ret.sort(q -> q.getTime());
+    return ret;
+  }
+
+  private static IList<MovementTemplate> generateMovementsByKind(int hour, int count, MovementTemplate.eKind departure) {
+    IList<MovementTemplate> ret = new EList<>();
+    for (int i = 0; i < count; i++) {
+      MovementTemplate tmp = generateMovementByKind();
+    }
+    return ret;
+  }
+
+  private static MovementTemplate generateMovementByKind(
+      double delayProbability, int maxDelayInMinutesPerStep, boolean useExtendedCallsigns,
+      CodeWeightList companies, CodeWeightList countries,
+      IList<HourBlockMovements> density, IList<DirectionWeight> directions,
+      double nonCommercialFlightProbability) {
+    String prefix;
+    boolean isNonCommercial = getRnd().nextDouble() < nonCommercialFlightProbability;
+    if (isNonCommercial)
+      prefix = countries.getRandomCode().code;
+    else
+      prefix = companies.getRandomCode().code;
+
+    Callsign cls = super.gene(prefix, isNonCommercial);
+    ETimeStamp initTime = new ETimeStamp(hour, getRnd().nextInt(0, 59), getRnd().nextInt(0, 59));
+    int delay = super.generateDelayMinutes();
+
+    AirplaneType type;
+    if (isNonCommercial)
+      //TODO here should be some like category probability
+      type = Acc.types().getRandom();
+    else {
+      CompanyFleet cf = Acc.fleets().tryGetByIcao(prefix);
+      if (cf == null) cf = Acc.fleets().getDefaultCompanyFleet();
+      type = cf.getRandom().getAirplaneType();
+    }
+
+    int entryRadial = getRandomEntryRadial();
+
+    Movement m = new Movement(cls, type, initTime, delay, isDeparture, entryRadial);
+    return m;
+  }
   private final CodeWeightList companies;
   private final CodeWeightList countries;
   private final IList<HourBlockMovements> density;
   private final IList<DirectionWeight> directions;
   private final double nonCommercialFlightProbability;
+  private final EList<MovementTemplate> movements;
   private boolean initialized = false;
 
   private DensityBasedTraffic(double delayProbability, int maxDelayInMinutesPerStep, boolean useExtendedCallsigns,
@@ -170,33 +227,35 @@ public class DensityBasedTraffic extends GeneratedTraffic {
     this.density = density;
     this.directions = directions;
     this.nonCommercialFlightProbability = nonCommercialFlightProbability;
+
+    this.movements = generateMovements(density);
   }
 
+//  @Override
+//  public GeneratedMovementsResponse generateMovements(Object syncObject) {
+//    Tuple<Integer, IReadOnlyList<Movement>> tmp = null;
+//    GeneratedMovementsResponse ret;
+//
+//    Integer lastGeneratedHour = (Integer) syncObject;
+//    if (!initialized || lastGeneratedHour == SharedFactory.getNow().getHours()) {
+//      tmp = generateNewMovements(lastGeneratedHour);
+//
+//      ret = new GeneratedMovementsResponse(
+//          SharedFactory.getNow().getRoundedToNextHour(),
+//          tmp.getA(),
+//          tmp.getB());
+//    } else
+//      ret = new GeneratedMovementsResponse(
+//          SharedFactory.getNow().getRoundedToNextHour(),
+//          syncObject,
+//          new EList<>());
+//
+//    return ret;
+//  }
+
   @Override
-  public GeneratedMovementsResponse generateMovements(Object syncObject) {
-    Tuple<Integer, IReadOnlyList<Movement>> tmp = null;
-    GeneratedMovementsResponse ret;
-
-    Integer lastGeneratedHour = (Integer) syncObject;
-    if (!initialized || lastGeneratedHour == SharedFactory.getNow().getHours()) {
-      tmp = generateNewMovements(lastGeneratedHour);
-
-      ret = new GeneratedMovementsResponse(
-          SharedFactory.getNow().getRoundedToNextHour(),
-          tmp.getA(),
-          tmp.getB());
-    } else
-      ret = new GeneratedMovementsResponse(
-          SharedFactory.getNow().getRoundedToNextHour(),
-          syncObject,
-          new EList<>());
-
-    return ret;
-  }
-
-  @Override
-  public IReadOnlyList<Traffic.ExpectedMovement> getExpectedTimesForDay() {
-    IList<Traffic.ExpectedMovement> ret = new EList<>();
+  public IReadOnlyList<TrafficOld.ExpectedMovement> getExpectedTimesForDay() {
+    IList<TrafficOld.ExpectedMovement> ret = new EList<>();
 
     for (int i = 0; i < 24; i++) {
       int l = i;
@@ -207,12 +266,12 @@ public class DensityBasedTraffic extends GeneratedTraffic {
         char category = '-';
         for (int k = 0; k < hbm.arrivals; k++) {
           ETimeStamp time = new ETimeStamp(i, getRnd().nextInt(0, 60), 30);
-          Traffic.ExpectedMovement em = new Traffic.ExpectedMovement(time, true, isCommercial, category);
+          TrafficOld.ExpectedMovement em = new TrafficOld.ExpectedMovement(time, true, isCommercial, category);
           ret.add(em);
         }
         for (int k = 0; k < hbm.departures; k++) {
           ETimeStamp time = new ETimeStamp(i, getRnd().nextInt(0, 60), 30);
-          Traffic.ExpectedMovement em = new Traffic.ExpectedMovement(time, false, isCommercial, category);
+          TrafficOld.ExpectedMovement em = new TrafficOld.ExpectedMovement(time, false, isCommercial, category);
           ret.add(em);
         }
       }

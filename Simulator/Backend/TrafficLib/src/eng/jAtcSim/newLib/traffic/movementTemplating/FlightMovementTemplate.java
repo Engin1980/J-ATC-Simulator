@@ -2,6 +2,7 @@ package eng.jAtcSim.newLib.traffic.movementTemplating;
 
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.Callsign;
+import eng.jAtcSim.newLib.shared.time.ETimeOnlyStamp;
 import eng.jAtcSim.newLib.shared.time.ETimeStamp;
 
 public class FlightMovementTemplate extends MovementTemplate {
@@ -9,7 +10,7 @@ public class FlightMovementTemplate extends MovementTemplate {
   private String airplaneTypeName;
 
   public FlightMovementTemplate(Callsign callsign, String airplaneTypeName,
-                                eKind kind, ETimeStamp time, int delayInMinutes,
+                                eKind kind, ETimeOnlyStamp time, int delayInMinutes,
                                 EntryExitInfo entryExitInfo) {
     super(kind, time, delayInMinutes, entryExitInfo);
     EAssert.isNotNull(callsign);
