@@ -98,6 +98,31 @@ public abstract class XmlLoader {
     return ret;
   }
 
+  public static char loadChar(String key) {
+    assert context != null;
+    return loadChar(context, key);
+  }
+
+  public static char loadChar(XElement source, String key) {
+    Character ret = loadChar(source, key, null);
+    if (ret == null)
+      throw throwNotFound(source, key);
+    return ret;
+  }
+
+  public static Character loadChar(String key, Character defaultValue) {
+    assert context != null;
+    return loadChar(context, key, defaultValue);
+  }
+
+  public static Character loadChar(XElement source, String key, Character defaultValue) {
+    String s = XmlLoader.loadString(source, key, null);
+    if (s == null || s.length() < 1)
+      return defaultValue;
+    else
+      return s.charAt(0);
+  }
+
   public static Coordinate loadCoordinate(String key) {
     assert context != null;
     Coordinate ret = loadCoordinate(context, key, null);

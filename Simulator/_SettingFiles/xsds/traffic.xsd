@@ -24,9 +24,10 @@
     <xs:attribute name="maxDelayInMinutesPerStep" type="xs:int" use="required"/>
   </xs:complexType>
 
-  <xs:complexType name="codeWeight">
-    <xs:attribute name="code" type="xs:string" use="required"/>
+  <xs:complexType name="company">
+    <xs:attribute name="icao" type="xs:string" use="required"/>
     <xs:attribute name="weight" type="xs:double" use="required"/>
+    <xs:attribute name="category" type="sh:planeCategory" use="optional" />
   </xs:complexType>
 
   <xs:complexType name="densityTraffic">
@@ -36,16 +37,9 @@
           <xs:element name="companies">
             <xs:complexType>
               <xs:sequence>
-                <xs:element name="company" type="codeWeight" maxOccurs="unbounded" minOccurs="1"/>
+                <xs:element name="company" type="company" maxOccurs="unbounded" minOccurs="1"/>
               </xs:sequence>
               <xs:attribute name="isFullDayTraffic" type="xs:boolean" use="required"/>
-            </xs:complexType>
-          </xs:element>
-          <xs:element name="countries">
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element name="country" type="codeWeight" maxOccurs="unbounded" minOccurs="1"/>
-              </xs:sequence>
             </xs:complexType>
           </xs:element>
           <xs:element name="density">

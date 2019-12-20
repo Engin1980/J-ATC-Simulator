@@ -1,6 +1,7 @@
 package eng.jAtcSim.newLib.traffic;
 
-import eng.jAtcSim.newLib.shared.timeOld.ETimeStamp;
+
+import eng.jAtcSim.newLib.shared.time.ETimeStamp;
 
 public class ExpectedMovement {
   public ETimeStamp time;

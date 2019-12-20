@@ -8,36 +8,13 @@
   <densityTraffic delayProbability=".5" maxDelayInMinutesPerStep="20"
                   nonCommercialFlightProbability="0.5"
                   useExtendedCallsigns="true">
-    <commercials>
-      <weights>
-        <weight code="A" weight="0" />
-        <weight code="B" weight="0" />
-        <weight code="C" weight="1" />
-        <weight code="D" weight="1" />
-      </weights>
-      <companies isFullDayTraffic="true">
-        <company code="TVS" weight="15"/>
-        <company code="TAR" weight="2"/>
-        <company code="RYR" weight="2"/>
-        <company code="OHY" weight="2"/>
-        <company code="CSA" weight="4"/>
-      </companies>
-    </commercials>
-    <nonCommercials>
-      <weights>
-        <weight code="A" weight="5" />
-        <weight code="B" weight="0" />
-        <weight code="C" weight="1" />
-        <weight code="D" weight="0" />
-      </weights>
-      <countries>
-        <country code="OK" weight="4"/>
-        <country code="OM" weight="3"/>
-        <country code="PL" weight="1"/>
-        <country code="DE" weight="1"/>
-        <country code="AT" weight="1"/>
-      </countries>
-    </nonCommercials>
+    <companies isFullDayTraffic="true">
+      <company icao="TVS" weight="15" category="C"/>
+      <company icao="TAR" weight="2"/>
+      <company icao="RYR" weight="2"/>
+      <company icao="OHY" weight="2"/>
+      <company icao="CSA" weight="4"/>
+    </companies>
     <density>
       <item hour="0" departures="0" arrivals="0"/>
       <item hour="1" departures="0" arrivals="0"/>

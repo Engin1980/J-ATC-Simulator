@@ -10,7 +10,8 @@ import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.SharedFactory;
 import eng.jAtcSim.newLib.shared.time.ETimeStamp;
 import eng.jAtcSim.newLib.traffic.models.base.DayGeneratedTrafficModel;
-import eng.jAtcSim.newLib.traffic.movementTemplating.CategoryMovementTemplate;
+import eng.jAtcSim.newLib.traffic.movementTemplating.GeneralAviationMovementTemplate;
+import eng.jAtcSim.newLib.traffic.movementTemplating.GeneralCommercialMovementTemplate;
 import eng.jAtcSim.newLib.traffic.movementTemplating.EntryExitInfo;
 import eng.jAtcSim.newLib.traffic.movementTemplating.MovementTemplate;
 
@@ -83,16 +84,22 @@ public class SimpleGenericTraffic extends DayGeneratedTrafficModel {
     }
   }
 
-  private CategoryMovementTemplate generateMovement(int hour) {
+  private MovementTemplate generateMovement(int hour) {
     ETimeStamp initTime = new ETimeStamp(hour, rnd.nextInt(0, 60), rnd.nextInt(0, 60));
     MovementTemplate.eKind kind = (rnd.nextDouble() <= this.probabilityOfDeparture) ? MovementTemplate.eKind.departure : MovementTemplate.eKind.arrival;
     boolean isNonCommercial = rnd.nextDouble() < this.probabilityOfNonCommercialFlight;
     char category = getRandomCategory();
     int delayInMinutes = generateDelayMinutes();
-    int entryRadial = rnd.nextInt(360);
+    int radial = rnd.nextInt(360);
 
-    CategoryMovementTemplate ret = new CategoryMovementTemplate(
-        category, !isNonCommercial, kind, initTime, delayInMinutes, new EntryExitInfo(entryRadial)
+    MovementTemplate ret;
+    if (isNonCommercial)
+      ret = new GeneralAviationMovementTemplate(kind, initTime, delayInMinutes, new EntryExitInfo(radial));
+    else
+    ret = new GeneralCommercialMovementTemplate(null, category, )
+
+    GeneralCommercialMovementTemplate ret = new GeneralCommercialMovementTemplate(
+        category, !isNonCommercial, kind, initTime, delayInMinutes, new EntryExitInfo(radial)
     );
     return ret;
   }

@@ -6,64 +6,73 @@ import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.utilites.Selector;
+import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.SharedFactory;
 import eng.jAtcSim.newLib.shared.time.ETimeStamp;
 import eng.jAtcSim.newLib.shared.xml.XmlLoader;
 import eng.jAtcSim.newLib.traffic.models.base.DayGeneratedTrafficModel;
 import eng.jAtcSim.newLib.traffic.movementTemplating.EntryExitInfo;
-import eng.jAtcSim.newLib.traffic.movementTemplating.FlightMovementTemplate;
+import eng.jAtcSim.newLib.traffic.movementTemplating.GeneralAviationMovementTemplate;
+import eng.jAtcSim.newLib.traffic.movementTemplating.GeneralCommercialMovementTemplate;
 import eng.jAtcSim.newLib.traffic.movementTemplating.MovementTemplate;
 
-public class DensityBasedTrafficModel extends DayGeneratedTrafficModel {
-  public static class CodeWeight {
-    public final String code;
-    public final double weight;
+import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
-    public CodeWeight(String code, double weight) {
-      this.code = code;
+public class DensityBasedTrafficModel extends DayGeneratedTrafficModel {
+  public static class Company {
+    public final String icao;
+    public final double weight;
+    public final Character category;
+
+    public Company(String icao, double weight) {
+      this(icao, null, weight);
+    }
+
+    public Company(String icao, Character category, double weight) {
+      EAssert.isNonemptyString(icao);
+      EAssert.isTrue(weight >= 0);
+      this.icao = icao;
       this.weight = weight;
+      this.category = category;
     }
 
     @Override
     public String toString() {
-      return String.format("%s -> %.3f", code, weight);
+      return sf("%s -> %.3f", icao, weight);
     }
   }
 
-  public static class CodeWeightList {
-    public static CodeWeightList load(IReadOnlyList<XElement> sources) {
-      return load(sources, "code", "weight");
-    }
-
-    public static CodeWeightList load(IReadOnlyList<XElement> sources, String codeXmlName, String weightXmlName) {
-      IList<CodeWeight> tmp = new EList<>();
+  public static class CompanyList {
+    public static CompanyList load(IReadOnlyList<XElement> sources) {
+      IList<Company> tmp = new EList<>();
 
       for (XElement source : sources) {
-        String code = XmlLoader.loadString(source, codeXmlName);
-        double weight = XmlLoader.loadDouble(source, weightXmlName);
-        CodeWeight cw = new CodeWeight(code, weight);
+        String code = XmlLoader.loadString(source, "icao");
+        double weight = XmlLoader.loadDouble(source, "weight");
+        Character category = XmlLoader.loadChar(source, "category", null);
+        Company cw = new Company(code, category, weight);
         tmp.add(cw);
       }
 
-      CodeWeightList ret = new CodeWeightList(tmp);
+      CompanyList ret = new CompanyList(tmp);
       return ret;
     }
 
-    private final IList<CodeWeight> inner;
+    private final IList<Company> inner;
     private final double weightSum;
 
-    public CodeWeightList(IList<CodeWeight> items) {
+    public CompanyList(IList<Company> items) {
       this.inner = items;
       this.weightSum = inner.sumDouble(q -> q.weight);
     }
 
-    public CodeWeight getRandomCode() {
+    public Company getRandom() {
       double rnd = SharedFactory.getRnd().nextDouble(0, weightSum);
       int index = 0;
-      CodeWeight ret = null;
+      Company ret = null;
       while (rnd > 0) {
-        CodeWeight cw = this.inner.get(index);
+        Company cw = this.inner.get(index);
         if (rnd < cw.weight) {
           ret = cw;
           break;
@@ -77,12 +86,18 @@ public class DensityBasedTrafficModel extends DayGeneratedTrafficModel {
       return ret;
     }
 
-    public <T> IList<T> select(Selector<CodeWeight, T> selector) {
+    public <T> IList<T> select(Selector<Company, T> selector) {
       return inner.select(selector);
     }
   }
 
   public static class DirectionWeight {
+    public static DirectionWeight load(XElement source) {
+      int heading = XmlLoader.loadInteger(source, "heading");
+      double weight = XmlLoader.loadDouble(source, "weight");
+      return new DirectionWeight(heading, weight);
+    }
+
     public final int heading;
     public final double weight;
 
@@ -138,35 +153,33 @@ public class DensityBasedTrafficModel extends DayGeneratedTrafficModel {
 
     //TODO isFullDayTraffic not implemented
     boolean isFullDayTraffic = XmlLoader.loadBoolean(source.getChild("companies"), "isFullDayTraffic");
-    CodeWeightList companies = CodeWeightList.load(source.getChild("companies").getChildren("company"));
-    CodeWeightList countries = CodeWeightList.load(source.getChild("countries").getChildren("country"));
+    CompanyList companies = CompanyList.load(source.getChild("companies").getChildren("company"));
     IList<HourBlockMovements> density = HourBlockMovements.loadList(source.getChild("density").getChildren("item"));
-    CodeWeightList directionsCW = CodeWeightList.load(source.getChild("directions").getChildren("direction"),
-        "heading", "weight");
-    IList<DirectionWeight> directions = directionsCW.select(q -> new DirectionWeight(
-        Integer.parseInt(q.code), q.weight));
+
+    IList<DirectionWeight> directions = new EList<>();
+    XmlLoader.loadList(source.getChild("directions").getChildren("direction"),
+        directions,
+        q -> DirectionWeight.load(q));
 
     DensityBasedTrafficModel ret = new DensityBasedTrafficModel(
-        delayProbability, maxDelayInMinutesPerStep, useExtendedCallsigns, companies, countries,
+        delayProbability, maxDelayInMinutesPerStep, useExtendedCallsigns, companies,
         density, directions, nonCommercialFlightProbability
     );
     return ret;
   }
 
-  private CodeWeightList companies;
-  private CodeWeightList countries;
-  private IList<HourBlockMovements> density;
-  private IList<DirectionWeight> directions;
-  private double nonCommercialFlightProbability;
-  private ERandom rnd = SharedFactory.getRnd();
+  private final CompanyList companies;
+  private final IList<HourBlockMovements> density;
+  private final IList<DirectionWeight> directions;
+  private final double nonCommercialFlightProbability;
+  private final ERandom rnd = SharedFactory.getRnd();
 
   private DensityBasedTrafficModel(double delayProbability, int maxDelayInMinutesPerStep, boolean useExtendedCallsigns,
-                                   CodeWeightList companies, CodeWeightList countries,
+                                   CompanyList companies,
                                    IList<HourBlockMovements> density, IList<DirectionWeight> directions,
                                    double nonCommercialFlightProbability) {
     super(delayProbability, maxDelayInMinutesPerStep, useExtendedCallsigns);
     this.companies = companies;
-    this.countries = countries;
     this.density = density;
     this.directions = directions;
     this.nonCommercialFlightProbability = nonCommercialFlightProbability;
@@ -201,29 +214,24 @@ public class DensityBasedTrafficModel extends DayGeneratedTrafficModel {
   }
 
   private MovementTemplate generateNewMovement(int hour, MovementTemplate.eKind kind) {
-    String prefix;
+    String icao;
     boolean isCommercial = !(rnd.nextDouble() < nonCommercialFlightProbability);
-    if (isCommercial == false)
-      prefix = this.countries.getRandomCode().code;
-    else
-      prefix = this.companies.getRandomCode().code;
 
-    Callsign cls = super.generateRandomCallsign(prefix, isCommercial);
+    Company company = this.companies.getRandom();
+    Character category = company.category;
+    String companyIcao = company.icao;
     ETimeStamp time = new ETimeStamp(hour, rnd.nextInt(0, 59), rnd.nextInt(0, 59));
     int delay = super.generateDelayMinutes();
-
-    String typeName;
-    if (isCommercial == false)
-      //TODO here should be some like category probability
-      ???
-    else {
-      ???
-    }
-
     int radial = getRandomEntryRadial();
 
-    FlightMovementTemplate ret = new FlightMovementTemplate(
-        cls, typeName, kind, time, delay, new EntryExitInfo(radial));
+    MovementTemplate ret;
+    if (isCommercial == false)
+      //TODO here should be some like category probability
+      ret = new GeneralCommercialMovementTemplate(
+          companyIcao, category, kind, time, delay, new EntryExitInfo(radial));
+    else {
+      ret = new GeneralAviationMovementTemplate(kind, time, delay, new EntryExitInfo(radial));
+    }
     return ret;
   }
 
