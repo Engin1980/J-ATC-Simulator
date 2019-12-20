@@ -13,14 +13,14 @@ public abstract class DayGeneratedTrafficModel {
   private final CallsignGenerator callsignGenerator = new CallsignGenerator();
   private double delayProbability;
   private int perStepDelay;
-  private boolean useExtendedCallsigns;
+//  private boolean useExtendedCallsigns;
 
   public DayGeneratedTrafficModel(double delayProbability, int perStepDelay, boolean useExtendedCallsigns) {
     EAssert.isTrue(NumberUtils.isBetweenOrEqual(0, delayProbability, 1));
     EAssert.isTrue(perStepDelay >= 0);
     this.delayProbability = delayProbability;
     this.perStepDelay = perStepDelay;
-    this.useExtendedCallsigns = useExtendedCallsigns;
+//    this.useExtendedCallsigns = useExtendedCallsigns;
   }
 
   public abstract IReadOnlyList<MovementTemplate> generateMovementsForOneDay();
@@ -34,9 +34,9 @@ public abstract class DayGeneratedTrafficModel {
     return ret;
   }
 
-  protected Callsign generateRandomCallsign(@Nullable String prefix, boolean isCommercialFlight) {
-    Callsign ret = this.callsignGenerator.generateCallsign(prefix, isCommercialFlight, useExtendedCallsigns);
-    return ret;
-  }
+//  protected Callsign generateRandomCallsign(@Nullable String prefix, boolean isCommercialFlight) {
+//    Callsign ret = this.callsignGenerator.generateCallsign(prefix, isCommercialFlight, useExtendedCallsigns);
+//    return ret;
+//  }
 }
 

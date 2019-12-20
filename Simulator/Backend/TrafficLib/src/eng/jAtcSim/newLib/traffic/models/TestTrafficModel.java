@@ -25,6 +25,7 @@ public class TestTrafficModel extends DayGeneratedTrafficModel {
   private FlightMovementTemplate.eKind kind;
 
   public TestTrafficModel(int countPerHour, FlightMovementTemplate.eKind kind) {
+    super(delayProbability, perStepDelay, useExctendedCallsigns);
     this.count = countPerHour;
     this.kind = kind;
   }
