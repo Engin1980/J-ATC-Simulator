@@ -11,22 +11,15 @@ public abstract class MovementTemplate {
 
   private final eKind kind;
   private final ETimeStamp time;
-  private final int delayInMinutes;
   private final EntryExitInfo entryExitInfo;
 
-  public MovementTemplate(eKind kind, ETimeStamp time, int delayInMinutes, EntryExitInfo entryExitInfo) {
+  public MovementTemplate(eKind kind, ETimeStamp time, EntryExitInfo entryExitInfo) {
     EAssert.isNotNull(time);
-    EAssert.isTrue(delayInMinutes >= 0);
     EAssert.isNotNull(entryExitInfo);
 
     this.kind = kind;
     this.time = time;
-    this.delayInMinutes = delayInMinutes;
     this.entryExitInfo = entryExitInfo;
-  }
-
-  public int getDelayInMinutes() {
-    return delayInMinutes;
   }
 
   public EntryExitInfo getEntryExitInfo() {

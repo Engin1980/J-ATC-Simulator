@@ -24,10 +24,7 @@ public class SimpleGenericTraffic extends DayGeneratedTrafficModel {
   private ERandom rnd = SharedFactory.getRnd();
 
   public SimpleGenericTraffic(int[] movementsPerHour,
-                              double probabilityOfDeparture, double probabilityOfNonCommercialFlight,
-                              double delayProbability, int maxDelayInMinutesPerStep, boolean useExtendedCallsigns) {
-    super(delayProbability, maxDelayInMinutesPerStep, useExtendedCallsigns);
-
+                              double probabilityOfDeparture, double probabilityOfNonCommercialFlight) {
     EAssert.isNotNull(movementsPerHour);
     EAssert.isTrue(movementsPerHour.length == 24);
     for (int i : movementsPerHour) {
@@ -60,15 +57,14 @@ public class SimpleGenericTraffic extends DayGeneratedTrafficModel {
     MovementTemplate.eKind kind = (rnd.nextDouble() <= this.probabilityOfDeparture) ?
         MovementTemplate.eKind.departure : MovementTemplate.eKind.arrival;
     boolean isNonCommercial = rnd.nextDouble() < this.probabilityOfNonCommercialFlight;
-    int delayInMinutes = generateDelayMinutes();
     int radial = rnd.nextInt(360);
 
     MovementTemplate ret;
     if (isNonCommercial)
-      ret = new GeneralAviationMovementTemplate(kind, initTime, delayInMinutes, new EntryExitInfo(radial));
+      ret = new GeneralAviationMovementTemplate(kind, initTime,new EntryExitInfo(radial));
     else
       ret = new GeneralCommercialMovementTemplate(null, null,
-          kind, initTime, delayInMinutes, new EntryExitInfo(radial));
+          kind, initTime, new EntryExitInfo(radial));
     return ret;
   }
 }

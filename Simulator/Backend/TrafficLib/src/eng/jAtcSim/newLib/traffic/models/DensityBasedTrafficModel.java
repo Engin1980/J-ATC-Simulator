@@ -7,7 +7,6 @@ import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.utilites.Selector;
 import eng.eSystem.validation.EAssert;
-import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.SharedFactory;
 import eng.jAtcSim.newLib.shared.time.ETimeStamp;
 import eng.jAtcSim.newLib.shared.xml.XmlLoader;
@@ -178,7 +177,6 @@ public class DensityBasedTrafficModel extends DayGeneratedTrafficModel {
                                    CompanyList companies,
                                    IList<HourBlockMovements> density, IList<DirectionWeight> directions,
                                    double nonCommercialFlightProbability) {
-    super(delayProbability, maxDelayInMinutesPerStep, useExtendedCallsigns);
     this.companies = companies;
     this.density = density;
     this.directions = directions;
@@ -221,16 +219,15 @@ public class DensityBasedTrafficModel extends DayGeneratedTrafficModel {
     Character category = company.category;
     String companyIcao = company.icao;
     ETimeStamp time = new ETimeStamp(hour, rnd.nextInt(0, 59), rnd.nextInt(0, 59));
-    int delay = super.generateDelayMinutes();
     int radial = getRandomEntryRadial();
 
     MovementTemplate ret;
     if (isCommercial == false)
       //TODO here should be some like category probability
       ret = new GeneralCommercialMovementTemplate(
-          companyIcao, category, kind, time, delay, new EntryExitInfo(radial));
+          companyIcao, category, kind, time, new EntryExitInfo(radial));
     else {
-      ret = new GeneralAviationMovementTemplate(kind, time, delay, new EntryExitInfo(radial));
+      ret = new GeneralAviationMovementTemplate(kind, time, new EntryExitInfo(radial));
     }
     return ret;
   }

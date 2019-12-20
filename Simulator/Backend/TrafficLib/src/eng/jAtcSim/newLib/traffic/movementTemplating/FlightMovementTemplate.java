@@ -9,9 +9,9 @@ public class FlightMovementTemplate extends MovementTemplate {
   private String airplaneTypeName;
 
   public FlightMovementTemplate(Callsign callsign, String airplaneTypeName,
-                                eKind kind, ETimeStamp time, int delayInMinutes,
+                                eKind kind, ETimeStamp time,
                                 EntryExitInfo entryExitInfo) {
-    super(kind, time, delayInMinutes, entryExitInfo);
+    super(kind, time, entryExitInfo);
     EAssert.isNotNull(callsign);
     EAssert.isNonemptyString(airplaneTypeName);
     this.callsign = callsign;
