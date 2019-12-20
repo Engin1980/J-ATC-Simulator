@@ -1,7 +1,7 @@
 package eng.jAtcSim.newLib.traffic.movementTemplating;
 
 import eng.eSystem.validation.EAssert;
-import eng.jAtcSim.newLib.shared.timeOld.ETimeStamp;
+import eng.jAtcSim.newLib.shared.time.ETimeStamp;
 
 public class CategoryMovementTemplate extends MovementTemplate {
   private char category;

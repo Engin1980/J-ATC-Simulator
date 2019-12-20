@@ -1,7 +1,7 @@
 package eng.jAtcSim.newLib.traffic.movementTemplating;
 
 import eng.eSystem.validation.EAssert;
-import eng.jAtcSim.newLib.shared.timeOld.ETimeOnlyStamp;
+import eng.jAtcSim.newLib.shared.time.ETimeStamp;
 
 public abstract class MovementTemplate {
   public enum eKind {
@@ -10,11 +10,11 @@ public abstract class MovementTemplate {
   }
 
   private final eKind kind;
-  private final ETimeOnlyStamp time;
+  private final ETimeStamp time;
   private final int delayInMinutes;
   private final EntryExitInfo entryExitInfo;
 
-  public MovementTemplate(eKind kind, ETimeOnlyStamp time, int delayInMinutes, EntryExitInfo entryExitInfo) {
+  public MovementTemplate(eKind kind, ETimeStamp time, int delayInMinutes, EntryExitInfo entryExitInfo) {
     EAssert.isNotNull(time);
     EAssert.isTrue(delayInMinutes >= 0);
     EAssert.isNotNull(entryExitInfo);
@@ -37,7 +37,7 @@ public abstract class MovementTemplate {
     return kind;
   }
 
-  public ETimeOnlyStamp getTime() {
+  public ETimeStamp getTime() {
     return time;
   }
 

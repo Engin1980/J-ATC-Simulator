@@ -1,32 +1,14 @@
-package eng.jAtcSim.newLib.traffic.models;
+package eng.jAtcSim.newLib.traffic.models.base;
 
-import com.sun.istack.internal.Nullable;
-import eng.eSystem.collections.*;
+import eng.eSystem.collections.EList;
+import eng.eSystem.collections.ESet;
+import eng.eSystem.collections.IList;
+import eng.eSystem.collections.ISet;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.utilites.ArrayUtils;
 import eng.jAtcSim.newLib.shared.Callsign;
-import eng.jAtcSim.newLib.traffic.movementTemplating.MovementTemplate;
 
 import static eng.jAtcSim.newLib.shared.SharedFactory.getRnd;
-
-public abstract class DayGeneratedTrafficModel {
-  private final CallsignGenerator callsignGenerator = new CallsignGenerator();
-  public abstract IReadOnlyList<MovementTemplate> generateMovementsForOneDay();
-
-  protected int generateDelayMinutes(double probability, int perStepDelay) {
-    int ret = 0;
-    while (getRnd().nextDouble() < probability) {
-      int del = getRnd().nextInt(perStepDelay);
-      ret += del;
-    }
-    return ret;
-  }
-
-  protected Callsign generateRandomCallsign(@Nullable String prefix, boolean isCommercialFlight, boolean useExtendedCallsigns) {
-    Callsign ret = this.callsignGenerator.generateCallsign(prefix, isCommercialFlight, useExtendedCallsigns);
-    return ret;
-  }
-}
 
 class CallsignGenerator {
 

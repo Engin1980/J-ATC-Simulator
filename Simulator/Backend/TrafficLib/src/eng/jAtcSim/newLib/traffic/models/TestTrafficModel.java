@@ -3,14 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package eng.jAtcSim.newLib.traffic;
+package eng.jAtcSim.newLib.traffic.models;
 
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.jAtcSim.newLib.shared.Callsign;
-import eng.jAtcSim.newLib.shared.timeOld.ETimeOnlyStamp;
-import eng.jAtcSim.newLib.traffic.models.DayGeneratedTrafficModel;
+import eng.jAtcSim.newLib.shared.time.ETimeStamp;
+import eng.jAtcSim.newLib.traffic.models.base.DayGeneratedTrafficModel;
 import eng.jAtcSim.newLib.traffic.movementTemplating.EntryExitInfo;
 import eng.jAtcSim.newLib.traffic.movementTemplating.FlightMovementTemplate;
 import eng.jAtcSim.newLib.traffic.movementTemplating.MovementTemplate;
@@ -41,7 +41,7 @@ public class TestTrafficModel extends DayGeneratedTrafficModel {
                 i + "0" + count),
             TestTrafficModel.AIRPLANE_TYPE,
             this.kind,
-            new ETimeOnlyStamp(i, 0, 0),
+            new ETimeStamp(i, 0, 0),
             0,
             new EntryExitInfo(290)
         );

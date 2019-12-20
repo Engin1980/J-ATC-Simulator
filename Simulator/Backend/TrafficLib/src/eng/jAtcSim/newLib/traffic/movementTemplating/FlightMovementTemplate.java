@@ -2,14 +2,14 @@ package eng.jAtcSim.newLib.traffic.movementTemplating;
 
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.Callsign;
-import eng.jAtcSim.newLib.shared.timeOld.ETimeOnlyStamp;
+import eng.jAtcSim.newLib.shared.time.ETimeStamp;
 
 public class FlightMovementTemplate extends MovementTemplate {
   private Callsign callsign;
   private String airplaneTypeName;
 
   public FlightMovementTemplate(Callsign callsign, String airplaneTypeName,
-                                eKind kind, ETimeOnlyStamp time, int delayInMinutes,
+                                eKind kind, ETimeStamp time, int delayInMinutes,
                                 EntryExitInfo entryExitInfo) {
     super(kind, time, delayInMinutes, entryExitInfo);
     EAssert.isNotNull(callsign);
