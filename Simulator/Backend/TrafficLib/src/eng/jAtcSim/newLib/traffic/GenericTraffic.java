@@ -8,7 +8,7 @@ import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.utilites.NumberUtils;
 import eng.jAtcSim.newLib.shared.SharedFactory;
-import eng.jAtcSim.newLib.shared.time.ETimeStamp;
+import eng.jAtcSim.newLib.shared.timeOld.ETimeStamp;
 import eng.jAtcSim.newLib.shared.xml.XmlLoader;
 import eng.jAtcSim.newLib.traffic.movementTemplating.CategoryMovementTemplate;
 import eng.jAtcSim.newLib.traffic.movementTemplating.EntryExitInfo;

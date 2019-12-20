@@ -2,8 +2,7 @@ package eng.jAtcSim.newLib.traffic.movementTemplating;
 
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.Callsign;
-import eng.jAtcSim.newLib.shared.time.ETimeOnlyStamp;
-import eng.jAtcSim.newLib.shared.time.ETimeStamp;
+import eng.jAtcSim.newLib.shared.timeOld.ETimeOnlyStamp;
 
 public class FlightMovementTemplate extends MovementTemplate {
   private Callsign callsign;

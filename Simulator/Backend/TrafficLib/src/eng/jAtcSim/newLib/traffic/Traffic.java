@@ -1,10 +1,9 @@
 package eng.jAtcSim.newLib.traffic;
 
-import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.validation.EAssert;
-import eng.jAtcSim.newLib.shared.time.ETimeOnlyStamp;
+import eng.jAtcSim.newLib.shared.timeOld.ETimeOnlyStamp;
 import eng.jAtcSim.newLib.traffic.movementTemplating.MovementTemplate;
 
 public abstract class Traffic implements ITraffic {

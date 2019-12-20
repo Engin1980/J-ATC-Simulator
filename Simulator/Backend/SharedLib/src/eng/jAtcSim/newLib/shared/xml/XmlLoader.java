@@ -8,10 +8,8 @@ import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.geo.Coordinate;
 import eng.jAtcSim.newLib.shared.PlaneCategoryDefinitions;
 import eng.jAtcSim.newLib.shared.exceptions.ToDoException;
-import eng.jAtcSim.newLib.shared.time.ETimeStamp;
 
 import java.util.function.Function;
-import java.util.regex.Pattern;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 

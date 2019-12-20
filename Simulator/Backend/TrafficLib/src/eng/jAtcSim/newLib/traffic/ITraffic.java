@@ -1,7 +1,7 @@
 package eng.jAtcSim.newLib.traffic;
 
 import eng.eSystem.collections.IReadOnlyList;
-import eng.jAtcSim.newLib.shared.time.ETimeOnlyStamp;
+import eng.jAtcSim.newLib.shared.timeOld.ETimeOnlyStamp;
 import eng.jAtcSim.newLib.traffic.movementTemplating.MovementTemplate;
 
 public interface ITraffic {

@@ -9,7 +9,7 @@ import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.utilites.Selector;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.SharedFactory;
-import eng.jAtcSim.newLib.shared.time.ETimeStamp;
+import eng.jAtcSim.newLib.shared.timeOld.ETimeStamp;
 import eng.jAtcSim.newLib.shared.xml.XmlLoader;
 import eng.jAtcSim.newLib.traffic.movementTemplating.MovementTemplate;
 

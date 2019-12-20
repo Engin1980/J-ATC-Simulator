@@ -9,7 +9,7 @@ import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.jAtcSim.newLib.shared.Callsign;
-import eng.jAtcSim.newLib.shared.time.ETimeOnlyStamp;
+import eng.jAtcSim.newLib.shared.timeOld.ETimeOnlyStamp;
 import eng.jAtcSim.newLib.traffic.models.DayGeneratedTrafficModel;
 import eng.jAtcSim.newLib.traffic.movementTemplating.EntryExitInfo;
 import eng.jAtcSim.newLib.traffic.movementTemplating.FlightMovementTemplate;

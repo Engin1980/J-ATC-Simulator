@@ -1,33 +1,24 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package eng.jAtcSim.newLib.shared.time;
 
+import eng.eSystem.utilites.NumberUtils;
+import eng.eSystem.validation.EAssert;
+
 import java.time.LocalTime;
-import java.util.Objects;
 
-/**
- *
- * @author Marek
- */
-public class ETimeStamp extends ETime {
-
+public class ETimeStamp extends ETime implements ITimeComparable<ETimeStamp>, ITimeGetter {
   public ETimeStamp(int value) {
     super(value);
   }
 
-  public ETimeStamp(int hour, int minute, int second) {
-    super(hour, minute, second);
-  }
-
-  public ETimeStamp(int day, int hour, int minute, int second) {
-    super(day, hour, minute, second);
+  public ETimeStamp(int hours, int minutes, int seconds) {
+    super(hours * SECONDS_PER_HOUR + minutes * SECONDS_PER_MINUTE + seconds);
+    EAssert.isTrue(NumberUtils.isBetweenOrEqual(0, hours, 23));
+    EAssert.isTrue(NumberUtils.isBetweenOrEqual(0, minutes, 59));
+    EAssert.isTrue(NumberUtils.isBetweenOrEqual(0, seconds, 59));
   }
 
   public ETimeStamp(LocalTime localTime) {
-    super(localTime);
+    this(localTime.getHour(), localTime.getMinute(), localTime.getSecond());
   }
 
   @Override

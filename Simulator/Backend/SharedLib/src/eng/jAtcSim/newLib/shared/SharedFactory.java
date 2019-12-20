@@ -1,8 +1,7 @@
 package eng.jAtcSim.newLib.shared;
 
 import eng.eSystem.ERandom;
-import eng.jAtcSim.newLib.shared.time.ERunningTime;
-import eng.jAtcSim.newLib.shared.time.ETime;
+import eng.jAtcSim.newLib.shared.timeOld.ETime;
 
 public class SharedFactory {
   public static ETime getNow() {
