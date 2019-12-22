@@ -1,4 +1,4 @@
-package eng.jAtcSim.newLib.airplanes.behaviors;
+package eng.jAtcSim.newLib.area.airplanes.behaviors;
 
 public abstract class DivertableBehavior extends Behavior {
 

@@ -10,7 +10,7 @@ import eng.eSystem.exceptions.EXmlException;
 import eng.jAtcSim.newLib.global.ETime;
 import eng.jAtcSim.newLib.global.logging.ApplicationLog;
 import eng.jAtcSim.newLib.global.newSources.*;
-import eng.jAtcSim.newLib.serialization.LoadSave;
+import eng.jAtcSim.newLib.area.serialization.LoadSave;
 import eng.jAtcSim.newLib.traffic.Traffic;
 import eng.jAtcSim.newLib.traffic.TrafficManager;
 import eng.jAtcSim.newLib.weathers.Weather;

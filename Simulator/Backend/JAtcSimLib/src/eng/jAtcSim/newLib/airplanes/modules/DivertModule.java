@@ -1,11 +1,11 @@
-package eng.jAtcSim.newLib.airplanes.modules;
+package eng.jAtcSim.newLib.area.airplanes.modules;
 
 import eng.jAtcSim.newLib.Acc;
-import eng.jAtcSim.newLib.airplanes.Airplane;
-import eng.jAtcSim.newLib.airplanes.interfaces.IAirplaneWriteSimple;
-import eng.jAtcSim.newLib.airplanes.interfaces.modules.IDivertModuleRO;
+import eng.jAtcSim.newLib.area.airplanes.Airplane;
+import eng.jAtcSim.newLib.area.airplanes.interfaces.IAirplaneWriteSimple;
+import eng.jAtcSim.newLib.area.airplanes.interfaces.modules.IDivertModuleRO;
 import eng.jAtcSim.newLib.global.ETime;
-import eng.jAtcSim.newLib.speaking.fromAirplane.notifications.DivertTimeNotification;
+import eng.jAtcSim.newLib.area.speaking.fromAirplane.notifications.DivertTimeNotification;
 
 public class DivertModule extends Module implements IDivertModuleRO {
 

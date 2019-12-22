@@ -1,4 +1,4 @@
-package eng.jAtcSim.newLib.serialization;
+package eng.jAtcSim.newLib.area.serialization;
 
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;

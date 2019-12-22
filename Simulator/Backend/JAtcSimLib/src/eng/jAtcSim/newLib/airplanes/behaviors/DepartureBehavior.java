@@ -1,7 +1,7 @@
-package eng.jAtcSim.newLib.airplanes.behaviors;
+package eng.jAtcSim.newLib.area.airplanes.behaviors;
 
-import eng.jAtcSim.newLib.airplanes.Airplane;
-import eng.jAtcSim.newLib.airplanes.interfaces.IAirplaneWriteSimple;
+import eng.jAtcSim.newLib.area.airplanes.Airplane;
+import eng.jAtcSim.newLib.area.airplanes.interfaces.IAirplaneWriteSimple;
 
 public class DepartureBehavior extends BasicBehavior {
 

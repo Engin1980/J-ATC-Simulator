@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package eng.jAtcSim.newLib.weathers.downloaders;
+package eng.jAtcSim.newLib.area.weathers.downloaders;
 
 import eng.eSystem.exceptions.ERuntimeException;
 

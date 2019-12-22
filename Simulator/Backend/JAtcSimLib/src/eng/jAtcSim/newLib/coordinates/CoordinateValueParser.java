@@ -1,4 +1,4 @@
-package eng.jAtcSim.newLib.coordinates;
+package eng.jAtcSim.newLib.area.coordinates;
 
 import eng.eSystem.EStringBuilder;
 import eng.eSystem.geo.Coordinate;

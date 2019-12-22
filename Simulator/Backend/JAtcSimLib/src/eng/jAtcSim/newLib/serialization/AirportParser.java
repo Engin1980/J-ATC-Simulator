@@ -1,4 +1,4 @@
-package eng.jAtcSim.newLib.serialization;
+package eng.jAtcSim.newLib.area.serialization;
 
 import eng.eSystem.collections.IList;
 import eng.eSystem.eXml.XElement;

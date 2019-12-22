@@ -1,9 +1,9 @@
-package eng.jAtcSim.newLib.textProcessing.parsing;
+package eng.jAtcSim.newLib.area.textProcessing.parsing;
 
-import eng.jAtcSim.newLib.speaking.SpeechList;
-import eng.jAtcSim.newLib.speaking.fromAtc.IAtc2Atc;
-import eng.jAtcSim.newLib.speaking.fromAtc.IAtcCommand;
-import eng.jAtcSim.newLib.speaking.IFromAtc;
+import eng.jAtcSim.newLib.area.speaking.SpeechList;
+import eng.jAtcSim.newLib.area.speaking.fromAtc.IAtc2Atc;
+import eng.jAtcSim.newLib.area.speaking.fromAtc.IAtcCommand;
+import eng.jAtcSim.newLib.area.speaking.IFromAtc;
 
 public abstract class Parser {
   public abstract SpeechList<IFromAtc> parseMulti(String text);

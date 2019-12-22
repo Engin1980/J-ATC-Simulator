@@ -1,4 +1,4 @@
-package eng.jAtcSim.newLib.global;
+package eng.jAtcSim.newLib.area.global;
 
 ;
 import eng.eSystem.xmlSerialization.annotations.XmlConstructor;

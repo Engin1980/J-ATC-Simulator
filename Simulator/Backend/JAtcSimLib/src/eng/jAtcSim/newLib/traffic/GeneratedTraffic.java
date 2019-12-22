@@ -1,4 +1,4 @@
-package eng.jAtcSim.newLib.traffic;
+package eng.jAtcSim.newLib.area.traffic;
 
 import com.sun.istack.internal.Nullable;
 import eng.eSystem.collections.EList;
@@ -8,6 +8,7 @@ import eng.eSystem.utilites.ArrayUtils;
 import eng.jAtcSim.newLib.Acc;
 import eng.jAtcSim.newLib.airplanes.Airplane;
 import eng.jAtcSim.newLib.airplanes.Callsign;
+import eng.jAtcSim.newLib.area.airplanes.Callsign;
 
 public abstract class GeneratedTraffic extends Traffic {
   private final boolean useExtendedCallsigns;

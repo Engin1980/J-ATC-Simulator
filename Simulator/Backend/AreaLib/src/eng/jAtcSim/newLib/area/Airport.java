@@ -6,9 +6,9 @@ import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.geo.Coordinate;
-import eng.jAtcSim.newLib.routes.DARoute;
-import eng.jAtcSim.newLib.routes.GaRoute;
-import eng.jAtcSim.newLib.routes.IafRoute;
+import eng.jAtcSim.newLib.area.routes.DARoute;
+import eng.jAtcSim.newLib.area.routes.GaRoute;
+import eng.jAtcSim.newLib.area.routes.IafRoute;
 import eng.jAtcSim.newLib.shared.exceptions.ToDoException;
 import eng.jAtcSim.newLib.shared.xml.XmlLoader;
 

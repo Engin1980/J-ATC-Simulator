@@ -4,12 +4,12 @@
  * and open the template in the editor.
  */
 
-package eng.jAtcSim.newLib.speaking.fromAtc.atc2atc;
+package eng.jAtcSim.newLib.area.speaking.fromAtc.atc2atc;
 
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
-import eng.jAtcSim.newLib.airplanes.interfaces.IAirplaneRO;
-import eng.jAtcSim.newLib.speaking.fromAtc.IAtc2Atc;
+import eng.jAtcSim.newLib.area.airplanes.interfaces.IAirplaneRO;
+import eng.jAtcSim.newLib.area.speaking.fromAtc.IAtc2Atc;
 
 /**
  * @author Marek

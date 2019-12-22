@@ -1,4 +1,4 @@
-package eng.jAtcSim.newLib.newStats.properties;
+package eng.jAtcSim.newLib.area.newStats.properties;
 
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.xmlSerialization.annotations.XmlConstructor;

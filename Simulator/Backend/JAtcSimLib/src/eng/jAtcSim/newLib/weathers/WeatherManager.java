@@ -1,4 +1,4 @@
-package eng.jAtcSim.newLib.weathers;
+package eng.jAtcSim.newLib.area.weathers;
 
 import eng.eSystem.validation.Validator;
 import eng.jAtcSim.newLib.Acc;

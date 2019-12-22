@@ -1,10 +1,10 @@
-package eng.jAtcSim.newLib.serialization;
+package eng.jAtcSim.newLib.area.serialization;
 
 import eng.eSystem.collections.IList;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.xmlSerialization.XmlSerializer;
 import eng.eSystem.xmlSerialization.supports.IElementParser;
-import eng.jAtcSim.newLib.airplanes.Airplane;
+import eng.jAtcSim.newLib.area.airplanes.Airplane;
 
 public class AirplaneParser implements IElementParser<Airplane> {
 

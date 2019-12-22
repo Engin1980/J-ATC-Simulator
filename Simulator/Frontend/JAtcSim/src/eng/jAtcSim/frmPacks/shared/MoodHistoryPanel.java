@@ -3,10 +3,10 @@ package eng.jAtcSim.frmPacks.shared;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.utilites.awt.ComponentUtils;
-import eng.jAtcSim.newLib.airplanes.Callsign;
-import eng.jAtcSim.newLib.airplanes.moods.MoodExperienceResult;
-import eng.jAtcSim.newLib.airplanes.moods.MoodResult;
-import eng.jAtcSim.newLib.global.ETime;
+import eng.jAtcSim.newLib.area.airplanes.Callsign;
+import eng.jAtcSim.newLib.area.airplanes.moods.MoodExperienceResult;
+import eng.jAtcSim.newLib.area.airplanes.moods.MoodResult;
+import eng.jAtcSim.newLib.area.global.ETime;
 import eng.eSystem.swing.LayoutManager;
 
 import javax.swing.*;

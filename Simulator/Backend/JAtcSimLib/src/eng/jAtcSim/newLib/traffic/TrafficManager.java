@@ -1,4 +1,4 @@
-package eng.jAtcSim.newLib.traffic;
+package eng.jAtcSim.newLib.area.traffic;
 
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
@@ -16,6 +16,12 @@ import eng.jAtcSim.newLib.airplanes.AirplaneType;
 import eng.jAtcSim.newLib.airplanes.Callsign;
 import eng.jAtcSim.newLib.airplanes.Squawk;
 import eng.eSystem.geo.Coordinate;
+import eng.jAtcSim.newLib.area.airplanes.AirplaneType;
+import eng.jAtcSim.newLib.area.airplanes.Callsign;
+import eng.jAtcSim.newLib.area.airplanes.Squawk;
+import eng.jAtcSim.newLib.area.messaging.Message;
+import eng.jAtcSim.newLib.area.messaging.Messenger;
+import eng.jAtcSim.newLib.area.messaging.StringMessageContent;
 import eng.jAtcSim.newLib.global.ETime;
 import eng.jAtcSim.newLib.global.Headings;
 import eng.jAtcSim.newLib.messaging.Message;

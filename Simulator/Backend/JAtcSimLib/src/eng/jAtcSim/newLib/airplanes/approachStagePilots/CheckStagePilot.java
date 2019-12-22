@@ -1,12 +1,12 @@
-package eng.jAtcSim.newLib.airplanes.approachStagePilots;
+package eng.jAtcSim.newLib.area.airplanes.approachStagePilots;
 
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.geo.Headings;
 import eng.jAtcSim.newLib.Acc;
-import eng.jAtcSim.newLib.airplanes.interfaces.IAirplaneWriteSimple;
-import eng.jAtcSim.newLib.airplanes.interfaces.modules.IShaRO;
+import eng.jAtcSim.newLib.area.airplanes.interfaces.IAirplaneWriteSimple;
+import eng.jAtcSim.newLib.area.airplanes.interfaces.modules.IShaRO;
 import eng.jAtcSim.newLib.world.approaches.stages.ICheckStage;
 import eng.jAtcSim.newLib.world.approaches.stages.checks.CheckAirportVisibilityStage;
 import eng.jAtcSim.newLib.world.approaches.stages.checks.CheckPlaneLocationStage;

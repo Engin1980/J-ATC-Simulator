@@ -9,12 +9,12 @@ import eng.eSystem.utilites.Selector;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.SharedFactory;
 import eng.jAtcSim.newLib.shared.time.ETimeStamp;
-import eng.jAtcSim.newLib.shared.xml.XmlLoader;
 import eng.jAtcSim.newLib.traffic.models.base.DayGeneratedTrafficModel;
 import eng.jAtcSim.newLib.traffic.movementTemplating.EntryExitInfo;
 import eng.jAtcSim.newLib.traffic.movementTemplating.GeneralAviationMovementTemplate;
 import eng.jAtcSim.newLib.traffic.movementTemplating.GeneralCommercialMovementTemplate;
 import eng.jAtcSim.newLib.traffic.movementTemplating.MovementTemplate;
+import eng.jAtcSim.newLib.shared.xml.XmlLoader;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 

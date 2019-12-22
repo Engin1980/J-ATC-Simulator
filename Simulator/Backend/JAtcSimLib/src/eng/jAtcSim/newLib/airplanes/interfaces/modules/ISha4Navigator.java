@@ -1,6 +1,4 @@
-package eng.jAtcSim.newLib.airplanes.interfaces.modules;
-
-import eng.eSystem.collections.*;
+package eng.jAtcSim.newLib.area.airplanes.interfaces.modules;
 
 public interface ISha4Navigator {
   int getHeading();

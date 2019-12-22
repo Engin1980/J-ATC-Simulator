@@ -1,4 +1,4 @@
-package eng.jAtcSim.newLib.newStats;
+package eng.jAtcSim.newLib.area.newStats;
 
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
@@ -8,14 +8,12 @@ import eng.eSystem.validation.Validator;
 ;
 import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
 import eng.jAtcSim.newLib.Acc;
-import eng.jAtcSim.newLib.airplanes.Airplane;
-import eng.jAtcSim.newLib.airplanes.AirproxType;
-import eng.jAtcSim.newLib.airplanes.moods.MoodResult;
+import eng.jAtcSim.newLib.area.airplanes.Airplane;
+import eng.jAtcSim.newLib.area.airplanes.AirproxType;
+import eng.jAtcSim.newLib.area.airplanes.moods.MoodResult;
+import eng.jAtcSim.newLib.area.newStats.properties.CounterProperty;
 import eng.jAtcSim.newLib.global.ETime;
-import eng.jAtcSim.newLib.newStats.properties.CounterProperty;
-import eng.jAtcSim.newLib.newStats.properties.MMM;
-import eng.jAtcSim.newLib.newStats.properties.StatisticProperty;
-import eng.jAtcSim.newLib.serialization.LoadSave;
+import eng.jAtcSim.newLib.area.serialization.LoadSave;
 
 public class StatsManager {
   private RecentStats recentStats = new RecentStats();

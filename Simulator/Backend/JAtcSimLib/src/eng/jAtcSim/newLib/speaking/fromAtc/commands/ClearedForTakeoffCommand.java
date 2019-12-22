@@ -4,9 +4,9 @@
  * and open the template in the editor.
  */
 
-package eng.jAtcSim.newLib.speaking.fromAtc.commands;
+package eng.jAtcSim.newLib.area.speaking.fromAtc.commands;
 
-import eng.jAtcSim.newLib.speaking.fromAtc.IAtcCommand;
+import eng.jAtcSim.newLib.area.speaking.fromAtc.IAtcCommand;
 import eng.jAtcSim.newLib.world.ActiveRunwayThreshold;
 
 /**

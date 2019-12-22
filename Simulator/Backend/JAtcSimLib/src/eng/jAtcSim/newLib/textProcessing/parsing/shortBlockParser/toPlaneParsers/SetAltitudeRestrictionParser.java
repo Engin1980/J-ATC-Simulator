@@ -1,9 +1,9 @@
-package eng.jAtcSim.newLib.textProcessing.parsing.shortBlockParser.toPlaneParsers;
+package eng.jAtcSim.newLib.area.textProcessing.parsing.shortBlockParser.toPlaneParsers;
 
 import eng.eSystem.collections.IList;
+import eng.jAtcSim.newLib.area.speaking.fromAtc.commands.SetAltitudeRestriction;
+import eng.jAtcSim.newLib.area.textProcessing.parsing.shortBlockParser.SpeechParser;
 import eng.jAtcSim.newLib.global.Restriction;
-import eng.jAtcSim.newLib.speaking.fromAtc.commands.SetAltitudeRestriction;
-import eng.jAtcSim.newLib.textProcessing.parsing.shortBlockParser.SpeechParser;
 
 public class SetAltitudeRestrictionParser extends SpeechParser<SetAltitudeRestriction> {
 

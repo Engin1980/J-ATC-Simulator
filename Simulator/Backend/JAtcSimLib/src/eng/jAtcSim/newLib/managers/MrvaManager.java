@@ -1,11 +1,10 @@
-package eng.jAtcSim.newLib.managers;
+package eng.jAtcSim.newLib.area.managers;
 
 import eng.eSystem.collections.*;
 import eng.eSystem.geo.Coordinates;
 import eng.jAtcSim.newLib.Acc;
-import eng.jAtcSim.newLib.airplanes.Airplane;
-import eng.eSystem.geo.Coordinate;
-import eng.jAtcSim.newLib.airplanes.interfaces.IAirplane4Mrva;
+import eng.jAtcSim.newLib.area.airplanes.Airplane;
+import eng.jAtcSim.newLib.area.airplanes.interfaces.IAirplane4Mrva;
 import eng.jAtcSim.newLib.world.Border;
 
 public class MrvaManager {

@@ -1,4 +1,4 @@
-package eng.jAtcSim.newLib.traffic;
+package eng.jAtcSim.newLib.area.traffic;
 
 import eng.eSystem.collections.IReadOnlyList;
 import eng.jAtcSim.newLib.global.ETime;

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package eng.jAtcSim.newLib.speaking.fromAtc.commands;
+package eng.jAtcSim.newLib.area.speaking.fromAtc.commands;
 
 ;
 import eng.eSystem.xmlSerialization.annotations.XmlConstructor;

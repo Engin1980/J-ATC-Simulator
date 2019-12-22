@@ -1,15 +1,15 @@
-package eng.jAtcSim.newLib.airplanes.interfaces;
+package eng.jAtcSim.newLib.area.airplanes.interfaces;
 
 import eng.eSystem.geo.Coordinate;
-import eng.jAtcSim.newLib.airplanes.Airplane;
-import eng.jAtcSim.newLib.airplanes.FlightRecorder;
-import eng.jAtcSim.newLib.airplanes.behaviors.Behavior;
-import eng.jAtcSim.newLib.airplanes.navigators.HeadingNavigator;
-import eng.jAtcSim.newLib.airplanes.navigators.INavigator;
-import eng.jAtcSim.newLib.atcs.Atc;
+import eng.jAtcSim.newLib.area.airplanes.Airplane;
+import eng.jAtcSim.newLib.area.airplanes.FlightRecorder;
+import eng.jAtcSim.newLib.area.airplanes.behaviors.Behavior;
+import eng.jAtcSim.newLib.area.airplanes.navigators.HeadingNavigator;
+import eng.jAtcSim.newLib.area.airplanes.navigators.INavigator;
+import eng.jAtcSim.newLib.area.atcs.Atc;
 import eng.jAtcSim.newLib.global.Restriction;
-import eng.jAtcSim.newLib.speaking.IFromAirplane;
-import eng.jAtcSim.newLib.speaking.SpeechList;
+import eng.jAtcSim.newLib.area.speaking.IFromAirplane;
+import eng.jAtcSim.newLib.area.speaking.SpeechList;
 
 public interface IAirplaneWriteSimple extends IAirplaneRO {
 

@@ -1,6 +1,4 @@
-package eng.jAtcSim.newLib.airplanes.sha;
-
-import eng.eSystem.collections.*;
+package eng.jAtcSim.newLib.area.airplanes.sha;
 
 class ShaHeading {
   public int finalHeading;

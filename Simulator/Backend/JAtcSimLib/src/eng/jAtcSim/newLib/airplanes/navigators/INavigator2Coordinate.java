@@ -1,4 +1,4 @@
-package eng.jAtcSim.newLib.airplanes.navigators;
+package eng.jAtcSim.newLib.area.airplanes.navigators;
 
 import eng.eSystem.geo.Coordinate;
 

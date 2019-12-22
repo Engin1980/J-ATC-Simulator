@@ -1,4 +1,4 @@
-package eng.jAtcSim.newLib.atcs;
+package eng.jAtcSim.newLib.area.atcs;
 
 import eng.eSystem.collections.*;
 import eng.eSystem.eXml.XElement;
@@ -9,22 +9,22 @@ import eng.eSystem.geo.Coordinates;
 import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
 import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 import eng.jAtcSim.newLib.Acc;
-import eng.jAtcSim.newLib.airplanes.Airplane;
-import eng.jAtcSim.newLib.airplanes.interfaces.IAirplane4Atc;
-import eng.jAtcSim.newLib.atcs.planeResponsibility.SwitchRoutingRequest;
+import eng.jAtcSim.newLib.area.airplanes.Airplane;
+import eng.jAtcSim.newLib.area.airplanes.interfaces.IAirplane4Atc;
+import eng.jAtcSim.newLib.area.atcs.planeResponsibility.SwitchRoutingRequest;
+import eng.jAtcSim.newLib.messaging.Message;
+import eng.jAtcSim.newLib.messaging.StringMessageContent;
+import eng.jAtcSim.newLib.area.serialization.LoadSave;
+import eng.jAtcSim.newLib.area.speaking.SpeechList;
+import eng.jAtcSim.newLib.area.speaking.fromAirplane.notifications.GoingAroundNotification;
+import eng.jAtcSim.newLib.area.speaking.fromAtc.atc2atc.RunwayUse;
+import eng.jAtcSim.newLib.area.speaking.fromAtc.atc2atc.StringResponse;
+import eng.jAtcSim.newLib.area.speaking.fromAtc.commands.ChangeAltitudeCommand;
+import eng.jAtcSim.newLib.area.speaking.fromAtc.commands.ClearedForTakeoffCommand;
+import eng.jAtcSim.newLib.area.speaking.fromAtc.notifications.RadarContactConfirmationNotification;
 import eng.jAtcSim.newLib.global.ETime;
 import eng.jAtcSim.newLib.global.Headings;
 import eng.jAtcSim.newLib.global.SchedulerForAdvice;
-import eng.jAtcSim.newLib.messaging.Message;
-import eng.jAtcSim.newLib.messaging.StringMessageContent;
-import eng.jAtcSim.newLib.serialization.LoadSave;
-import eng.jAtcSim.newLib.speaking.SpeechList;
-import eng.jAtcSim.newLib.speaking.fromAirplane.notifications.GoingAroundNotification;
-import eng.jAtcSim.newLib.speaking.fromAtc.atc2atc.RunwayUse;
-import eng.jAtcSim.newLib.speaking.fromAtc.atc2atc.StringResponse;
-import eng.jAtcSim.newLib.speaking.fromAtc.commands.ChangeAltitudeCommand;
-import eng.jAtcSim.newLib.speaking.fromAtc.commands.ClearedForTakeoffCommand;
-import eng.jAtcSim.newLib.speaking.fromAtc.notifications.RadarContactConfirmationNotification;
 import eng.jAtcSim.newLib.weathers.Weather;
 import eng.jAtcSim.newLib.world.ActiveRunway;
 import eng.jAtcSim.newLib.world.ActiveRunwayThreshold;
@@ -556,8 +556,8 @@ public class TowerAtc extends ComputerAtc {
     }
   }
 
-  private void processMessageFromAtc(eng.jAtcSim.newLib.speaking.fromAtc.atc2atc.RunwayCheck rrct) {
-    if (rrct.type == eng.jAtcSim.newLib.speaking.fromAtc.atc2atc.RunwayCheck.eType.askForTime) {
+  private void processMessageFromAtc(eng.jAtcSim.newLib.area.speaking.fromAtc.atc2atc.RunwayCheck rrct) {
+    if (rrct.type == eng.jAtcSim.newLib.area.speaking.fromAtc.atc2atc.RunwayCheck.eType.askForTime) {
       RunwayCheck rc = this.runwayChecks.tryGet(rrct.runway);
       if (rc != null)
         announceScheduledRunwayCheck(rrct.runway, rc);
@@ -567,7 +567,7 @@ public class TowerAtc extends ComputerAtc {
           announceScheduledRunwayCheck(runway, rc);
         }
       }
-    } else if (rrct.type == eng.jAtcSim.newLib.speaking.fromAtc.atc2atc.RunwayCheck.eType.doCheck) {
+    } else if (rrct.type == eng.jAtcSim.newLib.area.speaking.fromAtc.atc2atc.RunwayCheck.eType.doCheck) {
       ActiveRunway rwy = rrct.runway;
       RunwayCheck rc = this.runwayChecks.tryGet(rwy);
       if (rwy == null && this.runwayChecks.size() == 1) {
@@ -609,8 +609,8 @@ public class TowerAtc extends ComputerAtc {
 
   @Override
   protected void processNonPlaneSwitchMessageFromAtc(Message m) {
-    if (m.getContent() instanceof eng.jAtcSim.newLib.speaking.fromAtc.atc2atc.RunwayCheck) {
-      eng.jAtcSim.newLib.speaking.fromAtc.atc2atc.RunwayCheck rrct = m.getContent();
+    if (m.getContent() instanceof eng.jAtcSim.newLib.area.speaking.fromAtc.atc2atc.RunwayCheck) {
+      eng.jAtcSim.newLib.area.speaking.fromAtc.atc2atc.RunwayCheck rrct = m.getContent();
       processMessageFromAtc(rrct);
     } else if (m.getContent() instanceof RunwayUse) {
       RunwayUse ru = m.getContent();

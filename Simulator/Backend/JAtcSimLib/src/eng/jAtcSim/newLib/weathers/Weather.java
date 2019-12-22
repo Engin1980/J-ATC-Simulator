@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package eng.jAtcSim.newLib.weathers;
+package eng.jAtcSim.newLib.area.weathers;
 
 import eng.eSystem.EStringBuilder;
 import eng.jAtcSim.newLib.Acc;

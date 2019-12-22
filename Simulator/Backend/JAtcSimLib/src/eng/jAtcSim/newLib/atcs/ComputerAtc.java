@@ -1,4 +1,4 @@
-package eng.jAtcSim.newLib.atcs;
+package eng.jAtcSim.newLib.area.atcs;
 
 import com.sun.istack.internal.NotNull;
 import com.sun.istack.internal.Nullable;
@@ -6,18 +6,18 @@ import eng.eSystem.collections.*;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.jAtcSim.newLib.Acc;
-import eng.jAtcSim.newLib.airplanes.interfaces.IAirplane4Atc;
-import eng.jAtcSim.newLib.airplanes.interfaces.IAirplaneRO;
-import eng.jAtcSim.newLib.atcs.planeResponsibility.SwitchRoutingRequest;
-import eng.jAtcSim.newLib.global.DelayedList;
-import eng.jAtcSim.newLib.global.Global;
+import eng.jAtcSim.newLib.area.airplanes.interfaces.IAirplane4Atc;
+import eng.jAtcSim.newLib.area.airplanes.interfaces.IAirplaneRO;
+import eng.jAtcSim.newLib.area.atcs.planeResponsibility.SwitchRoutingRequest;
 import eng.jAtcSim.newLib.messaging.Message;
 import eng.jAtcSim.newLib.messaging.StringMessageContent;
-import eng.jAtcSim.newLib.speaking.SpeechList;
-import eng.jAtcSim.newLib.speaking.fromAirplane.notifications.GoodDayNotification;
-import eng.jAtcSim.newLib.speaking.fromAtc.atc2atc.PlaneSwitchMessage;
-import eng.jAtcSim.newLib.speaking.fromAtc.commands.ContactCommand;
-import eng.jAtcSim.newLib.speaking.fromAtc.notifications.RadarContactConfirmationNotification;
+import eng.jAtcSim.newLib.area.speaking.SpeechList;
+import eng.jAtcSim.newLib.area.speaking.fromAirplane.notifications.GoodDayNotification;
+import eng.jAtcSim.newLib.area.speaking.fromAtc.atc2atc.PlaneSwitchMessage;
+import eng.jAtcSim.newLib.area.speaking.fromAtc.commands.ContactCommand;
+import eng.jAtcSim.newLib.area.speaking.fromAtc.notifications.RadarContactConfirmationNotification;
+import eng.jAtcSim.newLib.global.DelayedList;
+import eng.jAtcSim.newLib.global.Global;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 

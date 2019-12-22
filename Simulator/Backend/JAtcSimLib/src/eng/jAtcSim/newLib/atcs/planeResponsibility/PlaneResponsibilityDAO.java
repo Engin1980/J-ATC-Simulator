@@ -1,13 +1,13 @@
-package eng.jAtcSim.newLib.atcs.planeResponsibility;
+package eng.jAtcSim.newLib.area.atcs.planeResponsibility;
 
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
-import eng.jAtcSim.newLib.airplanes.Airplane;
-import eng.jAtcSim.newLib.airplanes.Callsign;
-import eng.jAtcSim.newLib.airplanes.interfaces.IAirplaneRO;
-import eng.jAtcSim.newLib.atcs.Atc;
+import eng.jAtcSim.newLib.area.airplanes.Airplane;
+import eng.jAtcSim.newLib.area.airplanes.Callsign;
+import eng.jAtcSim.newLib.area.airplanes.interfaces.IAirplaneRO;
+import eng.jAtcSim.newLib.area.atcs.Atc;
 
 class PlaneResponsibilityDAO {
   private final IList<AirplaneResponsibilityInfo> all = new EList<>();

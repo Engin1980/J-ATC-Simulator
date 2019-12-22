@@ -3,19 +3,30 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package eng.jAtcSim.newLib.global.logging;
+package eng.jAtcSim.newLib.area.global.logging;
 
 import eng.eSystem.EStringBuilder;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.jAtcSim.newLib.airplanes.Airplane;
-import eng.jAtcSim.newLib.atcs.Atc;
-import eng.jAtcSim.newLib.textProcessing.formatting.IFormatter;
-import eng.jAtcSim.newLib.textProcessing.formatting.SpeechFormatter;
-import eng.jAtcSim.newLib.speaking.fromAtc.atc2atc.PlaneSwitchMessage;
 import eng.jAtcSim.newLib.messaging.IMessageContent;
 import eng.jAtcSim.newLib.messaging.IMessageParticipant;
 import eng.jAtcSim.newLib.messaging.Messenger;
 import eng.jAtcSim.newLib.messaging.StringMessageContent;
+import eng.jAtcSim.newLib.area.speaking.ICommand;
+import eng.jAtcSim.newLib.area.speaking.ISpeech;
+import eng.jAtcSim.newLib.area.speaking.SpeechList;
+import eng.jAtcSim.newLib.area.speaking.fromAirplane.notifications.GoingAroundNotification;
+import eng.jAtcSim.newLib.area.speaking.fromAirplane.notifications.commandResponses.Confirmation;
+import eng.jAtcSim.newLib.area.speaking.fromAtc.IAtc2Atc;
+import eng.jAtcSim.newLib.area.speaking.fromAtc.IAtcCommand;
+import eng.jAtcSim.newLib.area.speaking.fromAtc.atc2atc.PlaneSwitchMessage;
+import eng.jAtcSim.newLib.area.speaking.fromAtc.notifications.RadarContactConfirmationNotification;
+import eng.jAtcSim.newLib.area.textProcessing.formatting.IFormatter;
+import eng.jAtcSim.newLib.area.textProcessing.formatting.SpeechFormatter;
+import eng.jAtcSim.newLib.atcs.Atc;
+import eng.jAtcSim.newLib.textProcessing.formatting.IFormatter;
+import eng.jAtcSim.newLib.textProcessing.formatting.SpeechFormatter;
+import eng.jAtcSim.newLib.speaking.fromAtc.atc2atc.PlaneSwitchMessage;
 import eng.jAtcSim.newLib.speaking.ICommand;
 import eng.jAtcSim.newLib.speaking.ISpeech;
 import eng.jAtcSim.newLib.speaking.SpeechList;

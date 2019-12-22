@@ -1,6 +1,6 @@
-package eng.jAtcSim.newLib.airplanes.interfaces.modules;
+package eng.jAtcSim.newLib.area.airplanes.interfaces.modules;
 
-import eng.jAtcSim.newLib.atcs.Atc;
+import eng.jAtcSim.newLib.area.atcs.Atc;
 
 public interface IAtcModuleRO {
   int getSecondsWithoutRadarContact();

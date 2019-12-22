@@ -1,6 +1,6 @@
-package eng.jAtcSim.newLib.airplanes.interfaces.modules;
+package eng.jAtcSim.newLib.area.airplanes.interfaces.modules;
 
-import eng.jAtcSim.newLib.airplanes.AirproxType;
+import eng.jAtcSim.newLib.area.airplanes.AirproxType;
 
 public interface IMrvaAirproxModule {
   AirproxType getAirprox();

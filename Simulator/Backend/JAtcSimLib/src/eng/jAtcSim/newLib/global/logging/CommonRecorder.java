@@ -1,9 +1,9 @@
-package eng.jAtcSim.newLib.global.logging;
+package eng.jAtcSim.newLib.area.global.logging;
 
 public class CommonRecorder extends Recorder {
   public CommonRecorder(String recorderName, String fileName, String fromTimeSeparator) {
     super(recorderName,
-        new FileSaver(Recorder.getRecorderFileName(fileName)),
+        new FileSaver(getRecorderFileName(fileName)),
         fromTimeSeparator);
   }
 

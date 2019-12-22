@@ -1,9 +1,9 @@
-package eng.jAtcSim.newLib.airplanes.interfaces;
+package eng.jAtcSim.newLib.area.airplanes.interfaces;
 
 import eng.eSystem.geo.Coordinate;
-import eng.jAtcSim.newLib.airplanes.moods.Mood;
-import eng.jAtcSim.newLib.speaking.SpeechList;
-import eng.jAtcSim.newLib.speaking.fromAirplane.notifications.GoingAroundNotification;
+import eng.jAtcSim.newLib.area.airplanes.moods.Mood;
+import eng.jAtcSim.newLib.area.speaking.SpeechList;
+import eng.jAtcSim.newLib.area.speaking.fromAirplane.notifications.GoingAroundNotification;
 import eng.jAtcSim.newLib.world.ActiveRunwayThreshold;
 import eng.jAtcSim.newLib.world.Navaid;
 import eng.jAtcSim.newLib.world.DARoute;

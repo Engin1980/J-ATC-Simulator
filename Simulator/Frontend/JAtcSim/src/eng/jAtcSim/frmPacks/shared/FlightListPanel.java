@@ -8,10 +8,10 @@ import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.swing.LayoutManager;
 import eng.jAtcSim.AppSettings;
 import eng.jAtcSim.newLib.Simulation;
-import eng.jAtcSim.newLib.airplanes.Airplane;
-import eng.jAtcSim.newLib.airplanes.AirplaneDataFormatter;
-import eng.jAtcSim.newLib.airplanes.AirproxType;
-import eng.jAtcSim.newLib.airplanes.Callsign;
+import eng.jAtcSim.newLib.area.airplanes.Airplane;
+import eng.jAtcSim.newLib.area.airplanes.AirplaneDataFormatter;
+import eng.jAtcSim.newLib.area.airplanes.AirproxType;
+import eng.jAtcSim.newLib.area.airplanes.Callsign;
 
 import javax.swing.*;
 import java.awt.*;

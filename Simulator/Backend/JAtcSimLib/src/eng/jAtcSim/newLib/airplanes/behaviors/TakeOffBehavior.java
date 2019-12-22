@@ -1,12 +1,12 @@
-package eng.jAtcSim.newLib.airplanes.behaviors;
+package eng.jAtcSim.newLib.area.airplanes.behaviors;
 
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.geo.Coordinates;
 ;
 import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
 import eng.jAtcSim.newLib.Acc;
-import eng.jAtcSim.newLib.airplanes.Airplane;
-import eng.jAtcSim.newLib.airplanes.interfaces.IAirplaneWriteSimple;
+import eng.jAtcSim.newLib.area.airplanes.Airplane;
+import eng.jAtcSim.newLib.area.airplanes.interfaces.IAirplaneWriteSimple;
 import eng.jAtcSim.newLib.world.ActiveRunwayThreshold;
 
 public class TakeOffBehavior extends Behavior {

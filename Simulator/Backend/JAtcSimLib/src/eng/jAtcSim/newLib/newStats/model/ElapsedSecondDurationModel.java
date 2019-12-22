@@ -1,4 +1,4 @@
-package eng.jAtcSim.newLib.newStats.model;
+package eng.jAtcSim.newLib.area.newStats.model;
 
 public class ElapsedSecondDurationModel {
   private static int HISTORY_LENGTH_IN_SECONDS = 60 * 10;

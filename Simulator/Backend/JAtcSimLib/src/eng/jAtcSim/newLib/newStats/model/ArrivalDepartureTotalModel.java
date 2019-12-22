@@ -1,4 +1,4 @@
-package eng.jAtcSim.newLib.newStats.model;
+package eng.jAtcSim.newLib.area.newStats.model;
 
 import eng.eSystem.validation.Validator;
 import eng.eSystem.xmlSerialization.annotations.XmlConstructor;

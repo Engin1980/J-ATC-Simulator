@@ -1,7 +1,7 @@
-package eng.jAtcSim.newLib.speaking.fromAtc;
+package eng.jAtcSim.newLib.area.speaking.fromAtc;
 
-import eng.jAtcSim.newLib.speaking.ICommand;
-import eng.jAtcSim.newLib.speaking.IFromAtc;
+import eng.jAtcSim.newLib.area.speaking.ICommand;
+import eng.jAtcSim.newLib.area.speaking.IFromAtc;
 
 public interface IAtcCommand extends ICommand, IFromAtc {
 }

@@ -1,9 +1,9 @@
-package eng.jAtcSim.newLib.textProcessing.formatting;
+package eng.jAtcSim.newLib.area.textProcessing.formatting;
 
 import eng.eSystem.exceptions.EApplicationException;
-import eng.jAtcSim.newLib.atcs.Atc;
-import eng.jAtcSim.newLib.speaking.fromAtc.atc2atc.PlaneSwitchMessage;
-import eng.jAtcSim.newLib.speaking.ISpeech;
+import eng.jAtcSim.newLib.area.atcs.Atc;
+import eng.jAtcSim.newLib.area.speaking.fromAtc.atc2atc.PlaneSwitchMessage;
+import eng.jAtcSim.newLib.area.speaking.ISpeech;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

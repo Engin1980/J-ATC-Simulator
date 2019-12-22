@@ -1,8 +1,9 @@
-package eng.jAtcSim.newLib.world.approaches;
+package eng.jAtcSim.newLib.area.world.approaches;
 
 import eng.eSystem.collections.IList;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Headings;
+import eng.jAtcSim.newLib.area.speaking.fromAtc.IAtcCommand;
 import eng.jAtcSim.newLib.speaking.fromAtc.IAtcCommand;
 import eng.jAtcSim.newLib.world.Navaid;
 import eng.jAtcSim.newLib.world.approaches.entryLocations.FixRelatedApproachEntryLocation;

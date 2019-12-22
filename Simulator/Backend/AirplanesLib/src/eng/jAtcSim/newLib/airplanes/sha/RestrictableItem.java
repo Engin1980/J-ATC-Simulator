@@ -1,6 +1,5 @@
-package eng.jAtcSim.newLib.airplanes.sha;
+package eng.jAtcSim.newLib.area.airplanes.sha;
 
-import eng.eSystem.collections.*;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.jAtcSim.newLib.shared.Restriction;
 

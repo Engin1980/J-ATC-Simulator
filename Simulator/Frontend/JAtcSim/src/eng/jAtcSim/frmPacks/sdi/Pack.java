@@ -8,7 +8,7 @@ import eng.jAtcSim.AppSettings;
 import eng.jAtcSim.XmlLoadHelper;
 import eng.jAtcSim.newLib.Game;
 import eng.jAtcSim.newLib.Simulation;
-import eng.jAtcSim.newLib.global.ETime;
+import eng.jAtcSim.newLib.area.global.ETime;
 import eng.jAtcSim.newLib.world.Airport;
 import eng.jAtcSim.newLib.world.Area;
 import eng.jAtcSim.radarBase.RadarStyleSettings;

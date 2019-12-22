@@ -1,4 +1,4 @@
-package eng.jAtcSim.newLib.airplanes.behaviors;
+package eng.jAtcSim.newLib.area.airplanes.behaviors;
 
 import eng.eSystem.EStringBuilder;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
@@ -6,9 +6,9 @@ import eng.eSystem.geo.Coordinates;
 ;
 import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
 import eng.jAtcSim.newLib.Acc;
-import eng.jAtcSim.newLib.airplanes.Airplane;
-import eng.jAtcSim.newLib.airplanes.interfaces.IAirplaneWriteSimple;
-import eng.jAtcSim.newLib.airplanes.moods.Mood;
+import eng.jAtcSim.newLib.area.airplanes.Airplane;
+import eng.jAtcSim.newLib.area.airplanes.interfaces.IAirplaneWriteSimple;
+import eng.jAtcSim.newLib.area.airplanes.moods.Mood;
 import eng.jAtcSim.newLib.global.ETime;
 import eng.jAtcSim.newLib.global.Headings;
 import eng.jAtcSim.newLib.world.Navaid;

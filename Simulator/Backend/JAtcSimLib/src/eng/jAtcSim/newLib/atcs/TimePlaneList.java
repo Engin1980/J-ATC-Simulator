@@ -4,12 +4,11 @@
  * and open the template in the editor.
  */
 
-package eng.jAtcSim.newLib.atcs;
+package eng.jAtcSim.newLib.area.atcs;
 
-import eng.jAtcSim.newLib.airplanes.Airplane;
+import eng.jAtcSim.newLib.area.airplanes.Airplane;
 import eng.jAtcSim.newLib.global.ETime;
-import eng.jAtcSim.newLib.airplanes.Airplane;
-import eng.jAtcSim.newLib.global.ETime;
+
 import java.util.LinkedList;
 import java.util.List;
 

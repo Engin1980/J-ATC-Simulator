@@ -1,4 +1,4 @@
-package eng.jAtcSim.newLib.airplanes.moods;
+package eng.jAtcSim.newLib.area.airplanes.moods;
 
 import eng.jAtcSim.newLib.global.ETime;
 

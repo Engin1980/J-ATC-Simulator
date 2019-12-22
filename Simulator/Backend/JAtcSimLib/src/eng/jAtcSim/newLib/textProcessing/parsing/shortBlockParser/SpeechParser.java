@@ -1,10 +1,10 @@
-package eng.jAtcSim.newLib.textProcessing.parsing.shortBlockParser;
+package eng.jAtcSim.newLib.area.textProcessing.parsing.shortBlockParser;
 
 import eng.eSystem.EStringBuilder;
 import eng.eSystem.collections.IList;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.utilites.ReflectionUtils;
-import eng.jAtcSim.newLib.speaking.IFromAtc;
+import eng.jAtcSim.newLib.area.speaking.IFromAtc;
 
 import java.lang.reflect.Type;
 import java.util.Arrays;

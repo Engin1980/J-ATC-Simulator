@@ -1,7 +1,7 @@
-package eng.jAtcSim.newLib.speaking.fromAirplane.notifications.commandResponses.rejections;
+package eng.jAtcSim.newLib.area.speaking.fromAirplane.notifications.commandResponses.rejections;
 
-import eng.jAtcSim.newLib.speaking.fromAtc.commands.ClearedToApproachCommand;
-import eng.jAtcSim.newLib.speaking.fromAirplane.notifications.commandResponses.Rejection;
+import eng.jAtcSim.newLib.area.speaking.fromAtc.commands.ClearedToApproachCommand;
+import eng.jAtcSim.newLib.area.speaking.fromAirplane.notifications.commandResponses.Rejection;
 
 public class UnableToEnterApproachFromDifficultPosition extends Rejection {
   public UnableToEnterApproachFromDifficultPosition(ClearedToApproachCommand origin, String reason) {

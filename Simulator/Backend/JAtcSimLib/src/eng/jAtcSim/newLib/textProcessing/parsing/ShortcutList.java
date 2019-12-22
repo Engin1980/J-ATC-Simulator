@@ -1,4 +1,4 @@
-package eng.jAtcSim.newLib.textProcessing.parsing;
+package eng.jAtcSim.newLib.area.textProcessing.parsing;
 
 import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IMap;

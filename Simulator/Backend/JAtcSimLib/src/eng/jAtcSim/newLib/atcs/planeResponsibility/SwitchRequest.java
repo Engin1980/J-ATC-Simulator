@@ -1,7 +1,7 @@
-package eng.jAtcSim.newLib.atcs.planeResponsibility;
+package eng.jAtcSim.newLib.area.atcs.planeResponsibility;
 
 import eng.jAtcSim.newLib.Acc;
-import eng.jAtcSim.newLib.atcs.Atc;
+import eng.jAtcSim.newLib.area.atcs.Atc;
 import eng.jAtcSim.newLib.global.ETime;
 
 public class SwitchRequest {

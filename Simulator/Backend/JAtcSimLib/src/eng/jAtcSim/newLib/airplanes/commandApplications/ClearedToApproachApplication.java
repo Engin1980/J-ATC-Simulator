@@ -1,17 +1,17 @@
-package eng.jAtcSim.newLib.airplanes.commandApplications;
+package eng.jAtcSim.newLib.area.airplanes.commandApplications;
 
 import eng.eSystem.collections.IReadOnlyList;
 import eng.jAtcSim.newLib.Acc;
-import eng.jAtcSim.newLib.airplanes.Airplane;
-import eng.jAtcSim.newLib.airplanes.interfaces.IAirplaneRO;
-import eng.jAtcSim.newLib.airplanes.interfaces.IAirplaneWriteSimple;
+import eng.jAtcSim.newLib.area.airplanes.Airplane;
+import eng.jAtcSim.newLib.area.airplanes.interfaces.IAirplaneRO;
+import eng.jAtcSim.newLib.area.airplanes.interfaces.IAirplaneWriteSimple;
+import eng.jAtcSim.newLib.area.speaking.IFromAirplane;
+import eng.jAtcSim.newLib.area.speaking.fromAirplane.notifications.HighOrderedSpeedForApproach;
+import eng.jAtcSim.newLib.area.speaking.fromAirplane.notifications.commandResponses.Rejection;
+import eng.jAtcSim.newLib.area.speaking.fromAirplane.notifications.commandResponses.rejections.UnableToEnterApproachFromDifficultPosition;
+import eng.jAtcSim.newLib.area.speaking.fromAtc.commands.ClearedToApproachCommand;
 import eng.jAtcSim.newLib.world.approaches.ApproachEntry;
 import eng.jAtcSim.newLib.global.Restriction;
-import eng.jAtcSim.newLib.speaking.IFromAirplane;
-import eng.jAtcSim.newLib.speaking.fromAirplane.notifications.HighOrderedSpeedForApproach;
-import eng.jAtcSim.newLib.speaking.fromAirplane.notifications.commandResponses.Rejection;
-import eng.jAtcSim.newLib.speaking.fromAirplane.notifications.commandResponses.rejections.UnableToEnterApproachFromDifficultPosition;
-import eng.jAtcSim.newLib.speaking.fromAtc.commands.ClearedToApproachCommand;
 import eng.jAtcSim.newLib.world.ActiveRunwayThreshold;
 import eng.jAtcSim.newLib.world.approaches.Approach;
 import eng.jAtcSim.newLib.world.approaches.NewApproachInfo;

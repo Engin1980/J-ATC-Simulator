@@ -1,10 +1,10 @@
-package eng.jAtcSim.newLib.textProcessing.parsing.shortBlockParser.toPlaneParsers;
+package eng.jAtcSim.newLib.area.textProcessing.parsing.shortBlockParser.toPlaneParsers;
 
 import eng.eSystem.collections.IList;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
-import eng.jAtcSim.newLib.atcs.Atc;
-import eng.jAtcSim.newLib.speaking.fromAtc.commands.ContactCommand;
-import eng.jAtcSim.newLib.textProcessing.parsing.shortBlockParser.SpeechParser;
+import eng.jAtcSim.newLib.area.atcs.Atc;
+import eng.jAtcSim.newLib.area.speaking.fromAtc.commands.ContactCommand;
+import eng.jAtcSim.newLib.area.textProcessing.parsing.shortBlockParser.SpeechParser;
 
 public class ContactParser extends SpeechParser<ContactCommand> {
 

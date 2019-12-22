@@ -3,13 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package eng.jAtcSim.newLib.traffic;
+package eng.jAtcSim.newLib.area.traffic;
 
 ;
 import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
 import eng.jAtcSim.newLib.Acc;
 import eng.jAtcSim.newLib.airplanes.AirplaneType;
 import eng.jAtcSim.newLib.airplanes.Callsign;
+import eng.jAtcSim.newLib.area.airplanes.AirplaneType;
+import eng.jAtcSim.newLib.area.airplanes.Callsign;
 import eng.jAtcSim.newLib.global.ETime;
 
 /**

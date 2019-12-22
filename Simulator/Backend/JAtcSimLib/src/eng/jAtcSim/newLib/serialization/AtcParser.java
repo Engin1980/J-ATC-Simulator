@@ -1,10 +1,10 @@
-package eng.jAtcSim.newLib.serialization;
+package eng.jAtcSim.newLib.area.serialization;
 
 import eng.eSystem.collections.EList;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.xmlSerialization.XmlSerializer;
 import eng.eSystem.xmlSerialization.supports.IElementParser;
-import eng.jAtcSim.newLib.atcs.Atc;
+import eng.jAtcSim.newLib.area.atcs.Atc;
 
 public class AtcParser implements IElementParser<Atc> {
 

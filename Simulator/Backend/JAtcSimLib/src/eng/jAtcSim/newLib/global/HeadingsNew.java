@@ -1,5 +1,6 @@
-package eng.jAtcSim.newLib.global;
+package eng.jAtcSim.newLib.area.global;
 
+import eng.jAtcSim.newLib.area.speaking.fromAtc.commands.ChangeHeadingCommand;
 import eng.jAtcSim.newLib.speaking.fromAtc.commands.ChangeHeadingCommand;
 
 //TODO move to Headings class

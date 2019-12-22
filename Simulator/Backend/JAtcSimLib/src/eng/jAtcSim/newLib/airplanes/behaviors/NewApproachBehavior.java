@@ -1,12 +1,12 @@
-package eng.jAtcSim.newLib.airplanes.behaviors;
+package eng.jAtcSim.newLib.area.airplanes.behaviors;
 
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.validation.Validator;
-import eng.jAtcSim.newLib.airplanes.approachStagePilots.ApproachStagePilotProvider;
-import eng.jAtcSim.newLib.airplanes.approachStagePilots.IApproachStagePilot;
-import eng.jAtcSim.newLib.airplanes.interfaces.IAirplaneWriteSimple;
-import eng.jAtcSim.newLib.speaking.fromAirplane.notifications.GoingAroundNotification;
+import eng.jAtcSim.newLib.area.airplanes.approachStagePilots.ApproachStagePilotProvider;
+import eng.jAtcSim.newLib.area.airplanes.approachStagePilots.IApproachStagePilot;
+import eng.jAtcSim.newLib.area.airplanes.interfaces.IAirplaneWriteSimple;
+import eng.jAtcSim.newLib.area.speaking.fromAirplane.notifications.GoingAroundNotification;
 import eng.jAtcSim.newLib.world.approaches.NewApproachInfo;
 import eng.jAtcSim.newLib.world.approaches.stages.IApproachStage;
 

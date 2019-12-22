@@ -3,14 +3,13 @@ package eng.jAtcSim.app;
 import eng.jAtcSim.JAtcSim;
 import eng.jAtcSim.Stylist;
 import eng.jAtcSim.newLib.Acc;
-import eng.jAtcSim.newLib.global.logging.ApplicationLog;
+import eng.jAtcSim.newLib.area.global.logging.ApplicationLog;
 import eng.eSystem.swing.LayoutManager;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.net.URL;
 
 public class FrmStartupProgress extends JFrame {
   private final int listenerId;

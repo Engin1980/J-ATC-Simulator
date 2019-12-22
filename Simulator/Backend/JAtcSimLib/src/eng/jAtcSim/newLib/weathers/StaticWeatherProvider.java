@@ -1,4 +1,4 @@
-package eng.jAtcSim.newLib.weathers;
+package eng.jAtcSim.newLib.area.weathers;
 
 import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 

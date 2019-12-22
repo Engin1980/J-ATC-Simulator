@@ -1,11 +1,11 @@
-package eng.jAtcSim.newLib.serialization;
+package eng.jAtcSim.newLib.area.serialization;
 
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.xmlSerialization.XmlSerializer;
 import eng.eSystem.xmlSerialization.exceptions.XmlSerializationException;
 import eng.eSystem.xmlSerialization.supports.IElementParser;
-import eng.jAtcSim.newLib.airplanes.AirplaneType;
-import eng.jAtcSim.newLib.airplanes.AirplaneTypes;
+import eng.jAtcSim.newLib.area.airplanes.AirplaneType;
+import eng.jAtcSim.newLib.area.airplanes.AirplaneTypes;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 

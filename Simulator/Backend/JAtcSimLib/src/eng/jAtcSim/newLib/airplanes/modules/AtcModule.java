@@ -1,10 +1,10 @@
-package eng.jAtcSim.newLib.airplanes.modules;
+package eng.jAtcSim.newLib.area.airplanes.modules;
 
-import eng.jAtcSim.newLib.airplanes.interfaces.IAirplaneWriteSimple;
-import eng.jAtcSim.newLib.airplanes.interfaces.modules.IAtcModuleRO;
-import eng.jAtcSim.newLib.atcs.Atc;
+import eng.jAtcSim.newLib.area.airplanes.interfaces.IAirplaneWriteSimple;
+import eng.jAtcSim.newLib.area.airplanes.interfaces.modules.IAtcModuleRO;
+import eng.jAtcSim.newLib.area.atcs.Atc;
 import eng.jAtcSim.newLib.global.Global;
-import eng.jAtcSim.newLib.speaking.fromAirplane.notifications.GoodDayNotification;
+import eng.jAtcSim.newLib.area.speaking.fromAirplane.notifications.GoodDayNotification;
 
 public class AtcModule extends Module implements IAtcModuleRO {
   //TODO delete if not used

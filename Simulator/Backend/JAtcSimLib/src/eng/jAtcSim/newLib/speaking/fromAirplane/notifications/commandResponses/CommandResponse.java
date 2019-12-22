@@ -1,7 +1,7 @@
-package eng.jAtcSim.newLib.speaking.fromAirplane.notifications.commandResponses;
+package eng.jAtcSim.newLib.area.speaking.fromAirplane.notifications.commandResponses;
 
-import eng.jAtcSim.newLib.speaking.fromAtc.IAtcCommand;
-import eng.jAtcSim.newLib.speaking.fromAirplane.IAirplaneNotification;
+import eng.jAtcSim.newLib.area.speaking.fromAtc.IAtcCommand;
+import eng.jAtcSim.newLib.area.speaking.fromAirplane.IAirplaneNotification;
 
 public abstract class CommandResponse implements IAirplaneNotification {
 

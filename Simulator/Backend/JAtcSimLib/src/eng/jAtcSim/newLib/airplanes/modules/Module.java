@@ -1,6 +1,6 @@
-package eng.jAtcSim.newLib.airplanes.modules;
+package eng.jAtcSim.newLib.area.airplanes.modules;
 
-import eng.jAtcSim.newLib.airplanes.interfaces.IAirplaneWriteSimple;
+import eng.jAtcSim.newLib.area.airplanes.interfaces.IAirplaneWriteSimple;
 
 public abstract class Module {
   protected final IAirplaneWriteSimple parent;

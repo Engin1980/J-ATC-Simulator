@@ -1,11 +1,11 @@
-package eng.jAtcSim.newLib.airplanes.commandApplications;
+package eng.jAtcSim.newLib.area.airplanes.commandApplications;
 
-import eng.jAtcSim.newLib.airplanes.Airplane;
-import eng.jAtcSim.newLib.airplanes.interfaces.IAirplaneWriteSimple;
-import eng.jAtcSim.newLib.speaking.IFromAirplane;
-import eng.jAtcSim.newLib.speaking.fromAirplane.notifications.DivertTimeNotification;
-import eng.jAtcSim.newLib.speaking.fromAirplane.notifications.commandResponses.Rejection;
-import eng.jAtcSim.newLib.speaking.fromAtc.commands.ReportDivertTime;
+import eng.jAtcSim.newLib.area.airplanes.Airplane;
+import eng.jAtcSim.newLib.area.airplanes.interfaces.IAirplaneWriteSimple;
+import eng.jAtcSim.newLib.area.speaking.IFromAirplane;
+import eng.jAtcSim.newLib.area.speaking.fromAirplane.notifications.DivertTimeNotification;
+import eng.jAtcSim.newLib.area.speaking.fromAirplane.notifications.commandResponses.Rejection;
+import eng.jAtcSim.newLib.area.speaking.fromAtc.commands.ReportDivertTime;
 
 public class ReportDivertTimeCommandApplication extends CommandApplication<ReportDivertTime> {
 

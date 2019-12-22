@@ -1,4 +1,4 @@
-package eng.jAtcSim.newLib.airplanes.sha;
+package eng.jAtcSim.newLib.area.airplanes.sha;
 
 import eng.jAtcSim.newLib.airplaneType.AirplaneType;
 

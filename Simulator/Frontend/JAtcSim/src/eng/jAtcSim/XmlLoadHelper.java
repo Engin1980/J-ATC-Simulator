@@ -1,6 +1,5 @@
 package eng.jAtcSim;
 
-import eng.eSystem.collections.IList;
 import eng.eSystem.exceptions.ERuntimeException;
 import eng.eSystem.utilites.ExceptionUtils;
 import eng.eSystem.xmlSerialization.*;
@@ -10,10 +9,7 @@ import eng.eSystem.xmlSerialization.exceptions.XmlSerializationException;
 import eng.eSystem.xmlSerialization.supports.IValueParser;
 import eng.jAtcSim.frmPacks.shared.FlightStripSettings;
 import eng.jAtcSim.newLib.Acc;
-import eng.jAtcSim.newLib.airplanes.AirplaneTypes;
-import eng.jAtcSim.newLib.global.logging.ApplicationLog;
-import eng.jAtcSim.newLib.traffic.Traffic;
-import eng.jAtcSim.newLib.traffic.fleets.Fleets;
+import eng.jAtcSim.newLib.area.global.logging.ApplicationLog;
 import eng.jAtcSim.newLib.world.*;
 import eng.jAtcSim.newLib.world.xml.ElementFromValueParser;
 import eng.jAtcSim.radarBase.RadarStyleSettings;

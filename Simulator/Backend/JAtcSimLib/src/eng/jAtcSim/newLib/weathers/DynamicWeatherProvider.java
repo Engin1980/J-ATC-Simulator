@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package eng.jAtcSim.newLib.weathers;
+package eng.jAtcSim.newLib.area.weathers;
 
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.utilites.Action;

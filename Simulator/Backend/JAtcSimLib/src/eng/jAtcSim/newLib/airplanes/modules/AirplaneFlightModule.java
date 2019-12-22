@@ -1,8 +1,8 @@
-package eng.jAtcSim.newLib.airplanes.modules;
+package eng.jAtcSim.newLib.area.airplanes.modules;
 
 import eng.jAtcSim.newLib.Acc;
-import eng.jAtcSim.newLib.airplanes.Callsign;
-import eng.jAtcSim.newLib.airplanes.interfaces.modules.IAirplaneFlightRO;
+import eng.jAtcSim.newLib.area.airplanes.Callsign;
+import eng.jAtcSim.newLib.area.airplanes.interfaces.modules.IAirplaneFlightRO;
 import eng.jAtcSim.newLib.global.ETime;
 
 public class AirplaneFlightModule implements IAirplaneFlightRO {

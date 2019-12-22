@@ -1,7 +1,6 @@
-package eng.jAtcSim.newLib.airplanes.sha;
+package eng.jAtcSim.newLib.area.airplanes.sha;
 
 import com.sun.istack.internal.Nullable;
-import eng.eSystem.collections.*;
 
 class InertialValue {
   private final double maxPositiveInertiaChange;

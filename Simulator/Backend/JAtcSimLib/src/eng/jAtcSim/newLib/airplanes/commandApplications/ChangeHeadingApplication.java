@@ -1,12 +1,12 @@
-package eng.jAtcSim.newLib.airplanes.commandApplications;
+package eng.jAtcSim.newLib.area.airplanes.commandApplications;
 
 import eng.jAtcSim.newLib.Acc;
-import eng.jAtcSim.newLib.airplanes.Airplane;
-import eng.jAtcSim.newLib.airplanes.interfaces.IAirplaneWriteSimple;
+import eng.jAtcSim.newLib.area.airplanes.Airplane;
+import eng.jAtcSim.newLib.area.airplanes.interfaces.IAirplaneWriteSimple;
 import eng.jAtcSim.newLib.global.Headings;
 import eng.jAtcSim.newLib.global.HeadingsNew;
-import eng.jAtcSim.newLib.speaking.IFromAirplane;
-import eng.jAtcSim.newLib.speaking.fromAtc.commands.ChangeHeadingCommand;
+import eng.jAtcSim.newLib.area.speaking.IFromAirplane;
+import eng.jAtcSim.newLib.area.speaking.fromAtc.commands.ChangeHeadingCommand;
 
 public class ChangeHeadingApplication extends CommandApplication<ChangeHeadingCommand> {
 

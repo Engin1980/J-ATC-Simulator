@@ -1,4 +1,4 @@
-package eng.jAtcSim.newLib.speaking.fromAtc.commands.afters;
+package eng.jAtcSim.newLib.area.speaking.fromAtc.commands.afters;
 
 public class AfterHeadingCommand extends AfterCommand {
   private int heading;

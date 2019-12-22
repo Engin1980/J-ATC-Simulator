@@ -1,4 +1,4 @@
-package eng.jAtcSim.newLib.world.approaches.stages;
+package eng.jAtcSim.newLib.area.world.approaches.stages;
 
 import eng.eSystem.geo.Coordinate;
 

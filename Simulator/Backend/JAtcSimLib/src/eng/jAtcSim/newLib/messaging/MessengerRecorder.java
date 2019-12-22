@@ -1,6 +1,5 @@
 package eng.jAtcSim.newLib.messaging;
 
-import eng.jAtcSim.newLib.Acc;
 import eng.jAtcSim.newLib.global.logging.FileSaver;
 import eng.jAtcSim.newLib.global.logging.Recorder;
 

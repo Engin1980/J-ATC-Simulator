@@ -8,12 +8,12 @@ package eng.jAtcSim.newLib.traffic.models;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
-import eng.jAtcSim.newLib.shared.Callsign;
-import eng.jAtcSim.newLib.shared.time.ETimeStamp;
 import eng.jAtcSim.newLib.traffic.models.base.DayGeneratedTrafficModel;
 import eng.jAtcSim.newLib.traffic.movementTemplating.EntryExitInfo;
-import eng.jAtcSim.newLib.traffic.movementTemplating.FlightMovementTemplate;
 import eng.jAtcSim.newLib.traffic.movementTemplating.MovementTemplate;
+import eng.jAtcSim.newLib.shared.Callsign;
+import eng.jAtcSim.newLib.shared.time.ETimeStamp;
+import eng.jAtcSim.newLib.traffic.movementTemplating.FlightMovementTemplate;
 
 /**
  * @author Marek Vajgl

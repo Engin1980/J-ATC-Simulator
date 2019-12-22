@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package eng.jAtcSim.newLib.speaking.fromAtc.commands.afters;
+package eng.jAtcSim.newLib.area.speaking.fromAtc.commands.afters;
 
 import eng.eSystem.Tuple;
 import eng.eSystem.collections.EList;
@@ -15,12 +15,12 @@ import eng.eSystem.utilites.ConversionUtils;
 import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
 import eng.jAtcSim.newLib.Acc;
 import eng.eSystem.geo.Coordinate;
-import eng.jAtcSim.newLib.airplanes.interfaces.IAirplaneRO;
+import eng.jAtcSim.newLib.area.airplanes.interfaces.IAirplaneRO;
+import eng.jAtcSim.newLib.area.speaking.fromAtc.commands.*;
 import eng.jAtcSim.newLib.global.Headings;
-import eng.jAtcSim.newLib.speaking.fromAtc.commands.*;
-import eng.jAtcSim.newLib.speaking.IFromAtc;
-import eng.jAtcSim.newLib.speaking.SpeechList;
-import eng.jAtcSim.newLib.speaking.fromAtc.IAtcCommand;
+import eng.jAtcSim.newLib.area.speaking.IFromAtc;
+import eng.jAtcSim.newLib.area.speaking.SpeechList;
+import eng.jAtcSim.newLib.area.speaking.fromAtc.IAtcCommand;
 import eng.jAtcSim.newLib.world.Navaid;
 
 import java.util.function.Predicate;

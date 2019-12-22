@@ -1,11 +1,11 @@
-package eng.jAtcSim.newLib.airplanes.commandApplications;
+package eng.jAtcSim.newLib.area.airplanes.commandApplications;
 
-import eng.jAtcSim.newLib.airplanes.Airplane;
-import eng.jAtcSim.newLib.airplanes.interfaces.IAirplaneWriteSimple;
-import eng.jAtcSim.newLib.speaking.IFromAirplane;
-import eng.jAtcSim.newLib.speaking.fromAirplane.notifications.commandResponses.Confirmation;
-import eng.jAtcSim.newLib.speaking.fromAirplane.notifications.commandResponses.Rejection;
-import eng.jAtcSim.newLib.speaking.fromAtc.IAtcCommand;
+import eng.jAtcSim.newLib.area.airplanes.Airplane;
+import eng.jAtcSim.newLib.area.airplanes.interfaces.IAirplaneWriteSimple;
+import eng.jAtcSim.newLib.area.speaking.IFromAirplane;
+import eng.jAtcSim.newLib.area.speaking.fromAirplane.notifications.commandResponses.Confirmation;
+import eng.jAtcSim.newLib.area.speaking.fromAirplane.notifications.commandResponses.Rejection;
+import eng.jAtcSim.newLib.area.speaking.fromAtc.IAtcCommand;
 
 public abstract class CommandApplication<T extends IAtcCommand> {
 

@@ -1,4 +1,4 @@
-package eng.jAtcSim.newLib.weathers.presets;
+package eng.jAtcSim.newLib.area.weathers.presets;
 
 import eng.eSystem.xmlSerialization.exceptions.XmlSerializationException;
 import eng.eSystem.xmlSerialization.supports.IValueParser;

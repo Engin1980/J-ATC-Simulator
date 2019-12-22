@@ -1,9 +1,10 @@
-package eng.jAtcSim.newLib.traffic.fleets;
+package eng.jAtcSim.newLib.area.traffic.fleets;
 
 import eng.eSystem.collections.*;
 import eng.eSystem.eXml.XElement;
 import eng.jAtcSim.newLib.Acc;
 import eng.jAtcSim.newLib.airplanes.AirplaneTypes;
+import eng.jAtcSim.newLib.area.airplanes.AirplaneTypes;
 import eng.jAtcSim.newLib.world.xml.XmlLoader;
 
 public class CompanyFleet {

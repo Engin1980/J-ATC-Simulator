@@ -1,7 +1,7 @@
-package eng.jAtcSim.newLib.speaking.fromAirplane.notifications.commandResponses.rejections;
+package eng.jAtcSim.newLib.area.speaking.fromAirplane.notifications.commandResponses.rejections;
 
-import eng.jAtcSim.newLib.speaking.fromAtc.commands.ShortcutCommand;
-import eng.jAtcSim.newLib.speaking.fromAirplane.notifications.commandResponses.Rejection;
+import eng.jAtcSim.newLib.area.speaking.fromAtc.commands.ShortcutCommand;
+import eng.jAtcSim.newLib.area.speaking.fromAirplane.notifications.commandResponses.Rejection;
 
 public class ShortCutToFixNotOnRoute extends Rejection {
   public ShortCutToFixNotOnRoute(ShortcutCommand origin) {

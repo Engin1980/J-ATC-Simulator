@@ -1,4 +1,4 @@
-package eng.jAtcSim.newLib.airplanes.approachStagePilots;
+package eng.jAtcSim.newLib.area.airplanes.approachStagePilots;
 
 import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IMap;

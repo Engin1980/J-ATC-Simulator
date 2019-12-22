@@ -1,11 +1,11 @@
-package eng.jAtcSim.newLib.speaking;
+package eng.jAtcSim.newLib.area.speaking;
 
 import eng.eSystem.EStringBuilder;
 import eng.eSystem.collections.EList;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.NullArgumentException;
 import eng.jAtcSim.newLib.messaging.IMessageContent;
-import eng.jAtcSim.newLib.speaking.fromAtc.IAtcCommand;
+import eng.jAtcSim.newLib.area.speaking.fromAtc.IAtcCommand;
 
 public class SpeechList<T extends ISpeech> extends EList<T> implements IMessageContent {
 

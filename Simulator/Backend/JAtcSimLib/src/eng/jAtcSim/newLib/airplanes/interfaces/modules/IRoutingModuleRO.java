@@ -1,4 +1,4 @@
-package eng.jAtcSim.newLib.airplanes.interfaces.modules;
+package eng.jAtcSim.newLib.area.airplanes.interfaces.modules;
 
 import eng.jAtcSim.newLib.world.ActiveRunwayThreshold;
 import eng.jAtcSim.newLib.world.Navaid;

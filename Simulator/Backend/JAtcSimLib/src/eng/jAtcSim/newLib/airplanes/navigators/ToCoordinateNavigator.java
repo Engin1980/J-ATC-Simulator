@@ -1,9 +1,8 @@
-package eng.jAtcSim.newLib.airplanes.navigators;
+package eng.jAtcSim.newLib.area.airplanes.navigators;
 
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
-import eng.jAtcSim.newLib.airplanes.interfaces.modules.ISha4Navigator;
-import eng.jAtcSim.newLib.airplanes.modules.ShaModule;
+import eng.jAtcSim.newLib.area.airplanes.interfaces.modules.ISha4Navigator;
 
 public class ToCoordinateNavigator implements INavigator2Coordinate {
 

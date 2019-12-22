@@ -1,7 +1,7 @@
-package eng.jAtcSim.newLib.airplanes.behaviors;
+package eng.jAtcSim.newLib.area.airplanes.behaviors;
 
 import eng.eSystem.exceptions.ERuntimeException;
-import eng.jAtcSim.newLib.airplanes.interfaces.IAirplaneWriteSimple;
+import eng.jAtcSim.newLib.area.airplanes.interfaces.IAirplaneWriteSimple;
 
 public abstract class Behavior {
 

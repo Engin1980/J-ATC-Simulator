@@ -2,24 +2,32 @@
 
 title Components - Component Diagram
 
-[SharedLib (sl)] as sl
-[AreaLib (al)] as al
-[AirplanesLib (pl)] as pl
-[AirplaneTypeLib (atl)] as atl
+package Shared{
+  [SharedLib (sl)] as sl
+}
 
-[TrafficLib (tl)] as tl
-note right of tl: Includes Traffic generation\nand movement generating
+package "Base dependencies"{
+  [AreaLib (al)] as al
+  [AirplaneTypeLib (atl)] as atl
+  [TrafficLib (tl)] as tl
+  [FleetLib (fl)] as fl
+  [WeatherLib (wl)] as wl
+  [MessagingLib (ml)] as ml
+}
 
-[WeatherLib (wl)] as wl
-[SimulationLib (simlib)] as simlib
+package "Higher"{
+  [AirplanesLib (pl)] as pl
+}
 
-[FleetLib (fl)] as fl
-note bottom of fl : Only fleet defintion,\nno traffic data
+package "Sim"{
+  [SimulationLib (simlib)] as simlib
+}
 
 sl <-up- wl
 sl <-up- al
 sl <-up- atl
 sl <-up- tl
+sl <-up- ml
 
 atl <-up- pl
 

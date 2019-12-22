@@ -1,6 +1,6 @@
-package eng.jAtcSim.newLib.speaking.fromAtc.atc2atc;
+package eng.jAtcSim.newLib.area.speaking.fromAtc.atc2atc;
 
-import eng.jAtcSim.newLib.speaking.fromAtc.IAtc2Atc;
+import eng.jAtcSim.newLib.area.speaking.fromAtc.IAtc2Atc;
 
 public class RunwayUse implements IAtc2Atc {
 

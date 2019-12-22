@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package eng.jAtcSim.newLib.speaking.fromAtc.commands.afters;
+package eng.jAtcSim.newLib.area.speaking.fromAtc.commands.afters;
 
 /**
  *

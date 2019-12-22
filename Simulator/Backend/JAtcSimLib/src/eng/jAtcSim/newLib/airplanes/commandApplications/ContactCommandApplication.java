@@ -1,14 +1,14 @@
-package eng.jAtcSim.newLib.airplanes.commandApplications;
+package eng.jAtcSim.newLib.area.airplanes.commandApplications;
 
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.jAtcSim.newLib.Acc;
-import eng.jAtcSim.newLib.airplanes.Airplane;
-import eng.jAtcSim.newLib.airplanes.interfaces.IAirplaneWriteSimple;
-import eng.jAtcSim.newLib.atcs.Atc;
-import eng.jAtcSim.newLib.exceptions.ToDoException;
-import eng.jAtcSim.newLib.speaking.IFromAirplane;
-import eng.jAtcSim.newLib.speaking.fromAirplane.notifications.GoodDayNotification;
-import eng.jAtcSim.newLib.speaking.fromAtc.commands.ContactCommand;
+import eng.jAtcSim.newLib.area.airplanes.Airplane;
+import eng.jAtcSim.newLib.area.airplanes.interfaces.IAirplaneWriteSimple;
+import eng.jAtcSim.newLib.area.exceptions.ToDoException;
+import eng.jAtcSim.newLib.area.atcs.Atc;
+import eng.jAtcSim.newLib.area.speaking.IFromAirplane;
+import eng.jAtcSim.newLib.area.speaking.fromAirplane.notifications.GoodDayNotification;
+import eng.jAtcSim.newLib.area.speaking.fromAtc.commands.ContactCommand;
 
 public class ContactCommandApplication extends CommandApplication<ContactCommand> {
 

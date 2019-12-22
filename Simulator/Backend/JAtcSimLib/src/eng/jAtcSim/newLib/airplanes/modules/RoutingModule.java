@@ -1,37 +1,35 @@
-package eng.jAtcSim.newLib.airplanes.modules;
+package eng.jAtcSim.newLib.area.airplanes.modules;
 
 import eng.eSystem.Tuple;
 import eng.eSystem.collections.IList;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.utilites.ConversionUtils;
-import eng.jAtcSim.newLib.airplanes.Airplane;
-import eng.jAtcSim.newLib.airplanes.behaviors.HoldBehavior;
-import eng.jAtcSim.newLib.airplanes.commandApplications.ApplicationManager;
-import eng.jAtcSim.newLib.airplanes.commandApplications.ApplicationResult;
-import eng.jAtcSim.newLib.airplanes.commandApplications.ConfirmationResult;
-import eng.jAtcSim.newLib.airplanes.interfaces.IAirplaneWriteSimple;
-import eng.jAtcSim.newLib.airplanes.interfaces.modules.IRoutingModuleRO;
-import eng.jAtcSim.newLib.atcs.Atc;
+import eng.jAtcSim.newLib.area.airplanes.Airplane;
+import eng.jAtcSim.newLib.area.airplanes.behaviors.HoldBehavior;
+import eng.jAtcSim.newLib.area.airplanes.commandApplications.ApplicationManager;
+import eng.jAtcSim.newLib.area.airplanes.commandApplications.ApplicationResult;
+import eng.jAtcSim.newLib.area.airplanes.commandApplications.ConfirmationResult;
+import eng.jAtcSim.newLib.area.airplanes.interfaces.IAirplaneWriteSimple;
+import eng.jAtcSim.newLib.area.airplanes.interfaces.modules.IRoutingModuleRO;
+import eng.jAtcSim.newLib.area.atcs.Atc;
+import eng.jAtcSim.newLib.area.speaking.fromAtc.commands.*;
+import eng.jAtcSim.newLib.area.speaking.fromAtc.commands.afters.*;
 import eng.jAtcSim.newLib.global.DelayedList;
-import eng.jAtcSim.newLib.speaking.IFromAtc;
-import eng.jAtcSim.newLib.speaking.ISpeech;
-import eng.jAtcSim.newLib.speaking.SpeechList;
-import eng.jAtcSim.newLib.speaking.fromAirplane.notifications.RequestRadarContactNotification;
-import eng.jAtcSim.newLib.speaking.fromAirplane.notifications.commandResponses.IllegalThenCommandRejection;
-import eng.jAtcSim.newLib.speaking.fromAirplane.notifications.commandResponses.Rejection;
-import eng.jAtcSim.newLib.speaking.fromAtc.IAtcCommand;
-import eng.jAtcSim.newLib.speaking.fromAtc.commands.*;
-import eng.jAtcSim.newLib.speaking.fromAtc.commands.afters.*;
-import eng.jAtcSim.newLib.speaking.fromAtc.notifications.RadarContactConfirmationNotification;
+import eng.jAtcSim.newLib.area.speaking.IFromAtc;
+import eng.jAtcSim.newLib.area.speaking.ISpeech;
+import eng.jAtcSim.newLib.area.speaking.SpeechList;
+import eng.jAtcSim.newLib.area.speaking.fromAirplane.notifications.RequestRadarContactNotification;
+import eng.jAtcSim.newLib.area.speaking.fromAirplane.notifications.commandResponses.IllegalThenCommandRejection;
+import eng.jAtcSim.newLib.area.speaking.fromAirplane.notifications.commandResponses.Rejection;
+import eng.jAtcSim.newLib.area.speaking.fromAtc.IAtcCommand;
+import eng.jAtcSim.newLib.area.speaking.fromAtc.notifications.RadarContactConfirmationNotification;
 import eng.jAtcSim.newLib.world.ActiveRunwayThreshold;
 import eng.jAtcSim.newLib.world.Navaid;
 import eng.jAtcSim.newLib.world.DARoute;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class RoutingModule extends Module implements IRoutingModuleRO {
 

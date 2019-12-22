@@ -1,4 +1,4 @@
-package eng.jAtcSim.newLib.textProcessing.formatting;
+package eng.jAtcSim.newLib.area.textProcessing.formatting;
 
 import eng.eSystem.collections.*;
 import eng.eSystem.eXml.XDocument;
@@ -7,16 +7,16 @@ import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.exceptions.EXmlException;
 import eng.jAtcSim.newLib.Acc;
-import eng.jAtcSim.newLib.atcs.Atc;
+import eng.jAtcSim.newLib.area.atcs.Atc;
+import eng.jAtcSim.newLib.area.speaking.fromAirplane.notifications.*;
+import eng.jAtcSim.newLib.area.speaking.fromAtc.commands.*;
+import eng.jAtcSim.newLib.area.speaking.fromAtc.commands.afters.*;
 import eng.jAtcSim.newLib.global.DataFormat;
-import eng.jAtcSim.newLib.speaking.ISpeech;
-import eng.jAtcSim.newLib.speaking.fromAirplane.notifications.*;
-import eng.jAtcSim.newLib.speaking.fromAtc.commands.*;
-import eng.jAtcSim.newLib.speaking.fromAtc.commands.afters.*;
-import eng.jAtcSim.newLib.speaking.fromAirplane.notifications.commandResponses.Confirmation;
-import eng.jAtcSim.newLib.speaking.fromAirplane.notifications.commandResponses.Rejection;
-import eng.jAtcSim.newLib.speaking.fromAirplane.notifications.commandResponses.rejections.UnableToEnterApproachFromDifficultPosition;
-import eng.jAtcSim.newLib.speaking.fromAtc.atc2atc.PlaneSwitchMessage;
+import eng.jAtcSim.newLib.area.speaking.ISpeech;
+import eng.jAtcSim.newLib.area.speaking.fromAirplane.notifications.commandResponses.Confirmation;
+import eng.jAtcSim.newLib.area.speaking.fromAirplane.notifications.commandResponses.Rejection;
+import eng.jAtcSim.newLib.area.speaking.fromAirplane.notifications.commandResponses.rejections.UnableToEnterApproachFromDifficultPosition;
+import eng.jAtcSim.newLib.area.speaking.fromAtc.atc2atc.PlaneSwitchMessage;
 import eng.jAtcSim.newLib.world.approaches.Approach;
 
 import java.nio.file.Path;

@@ -1,8 +1,8 @@
-package eng.jAtcSim.newLib.airplanes.modules;
+package eng.jAtcSim.newLib.area.airplanes.modules;
 
-import eng.jAtcSim.newLib.airplanes.AirproxType;
-import eng.jAtcSim.newLib.airplanes.interfaces.IAirplaneWriteSimple;
-import eng.jAtcSim.newLib.airplanes.interfaces.modules.IMrvaAirproxModule;
+import eng.jAtcSim.newLib.area.airplanes.AirproxType;
+import eng.jAtcSim.newLib.area.airplanes.interfaces.IAirplaneWriteSimple;
+import eng.jAtcSim.newLib.area.airplanes.interfaces.modules.IMrvaAirproxModule;
 
 public class MrvaAirproxModule extends Module implements IMrvaAirproxModule {
   private AirproxType airprox = AirproxType.none;

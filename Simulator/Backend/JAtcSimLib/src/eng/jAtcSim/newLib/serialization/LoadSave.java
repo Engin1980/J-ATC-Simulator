@@ -1,4 +1,4 @@
-package eng.jAtcSim.newLib.serialization;
+package eng.jAtcSim.newLib.area.serialization;
 
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
@@ -11,16 +11,16 @@ import eng.eSystem.xmlSerialization.XmlSerializer;
 import eng.eSystem.xmlSerialization.XmlSettings;
 import eng.eSystem.xmlSerialization.exceptions.XmlSerializationException;
 import eng.eSystem.xmlSerialization.supports.IFactory;
-import eng.jAtcSim.newLib.airplanes.Airplane;
-import eng.jAtcSim.newLib.airplanes.AirplaneType;
-import eng.jAtcSim.newLib.airplanes.AirplaneTypes;
-import eng.jAtcSim.newLib.atcs.Atc;
-import eng.jAtcSim.newLib.atcs.CenterAtc;
-import eng.jAtcSim.newLib.atcs.TowerAtc;
-import eng.jAtcSim.newLib.atcs.UserAtc;
-import eng.jAtcSim.newLib.speaking.fromAtc.atc2atc.PlaneSwitchMessage;
-import eng.jAtcSim.newLib.speaking.fromAtc.atc2atc.RunwayCheck;
-import eng.jAtcSim.newLib.speaking.fromAtc.atc2atc.StringResponse;
+import eng.jAtcSim.newLib.area.airplanes.Airplane;
+import eng.jAtcSim.newLib.area.airplanes.AirplaneType;
+import eng.jAtcSim.newLib.area.airplanes.AirplaneTypes;
+import eng.jAtcSim.newLib.area.atcs.Atc;
+import eng.jAtcSim.newLib.area.atcs.CenterAtc;
+import eng.jAtcSim.newLib.area.atcs.UserAtc;
+import eng.jAtcSim.newLib.area.speaking.fromAtc.atc2atc.PlaneSwitchMessage;
+import eng.jAtcSim.newLib.area.speaking.fromAtc.atc2atc.RunwayCheck;
+import eng.jAtcSim.newLib.area.speaking.fromAtc.atc2atc.StringResponse;
+import eng.jAtcSim.newLib.area.atcs.TowerAtc;
 
 import java.lang.reflect.Field;
 

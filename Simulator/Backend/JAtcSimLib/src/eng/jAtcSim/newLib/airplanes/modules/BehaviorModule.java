@@ -1,8 +1,8 @@
-package eng.jAtcSim.newLib.airplanes.modules;
+package eng.jAtcSim.newLib.area.airplanes.modules;
 
-import eng.jAtcSim.newLib.airplanes.behaviors.Behavior;
-import eng.jAtcSim.newLib.airplanes.interfaces.IAirplaneWriteSimple;
-import eng.jAtcSim.newLib.airplanes.interfaces.modules.IBehaviorModuleRO;
+import eng.jAtcSim.newLib.area.airplanes.behaviors.Behavior;
+import eng.jAtcSim.newLib.area.airplanes.interfaces.IAirplaneWriteSimple;
+import eng.jAtcSim.newLib.area.airplanes.interfaces.modules.IBehaviorModuleRO;
 
 public class BehaviorModule extends Module implements IBehaviorModuleRO {
   private Behavior behavior;

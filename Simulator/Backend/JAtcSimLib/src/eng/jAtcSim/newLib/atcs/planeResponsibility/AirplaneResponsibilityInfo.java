@@ -1,10 +1,10 @@
-package eng.jAtcSim.newLib.atcs.planeResponsibility;
+package eng.jAtcSim.newLib.area.atcs.planeResponsibility;
 
 import eng.eSystem.validation.Validator;
 ;
 import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
-import eng.jAtcSim.newLib.airplanes.Airplane;
-import eng.jAtcSim.newLib.atcs.Atc;
+import eng.jAtcSim.newLib.area.airplanes.Airplane;
+import eng.jAtcSim.newLib.area.atcs.Atc;
 
 public class AirplaneResponsibilityInfo {
   private Airplane plane;

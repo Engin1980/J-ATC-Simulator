@@ -1,6 +1,6 @@
-package eng.jAtcSim.newLib.speaking.fromAtc.notifications;
+package eng.jAtcSim.newLib.area.speaking.fromAtc.notifications;
 
-import eng.jAtcSim.newLib.speaking.fromAtc.IAtcNotification;
+import eng.jAtcSim.newLib.area.speaking.fromAtc.IAtcNotification;
 
 /**
  * Confirmation of radar contact from ATC to plane.

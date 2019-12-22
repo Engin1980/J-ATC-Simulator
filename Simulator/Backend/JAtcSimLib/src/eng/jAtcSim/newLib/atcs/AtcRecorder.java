@@ -3,15 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package eng.jAtcSim.newLib.atcs;
+package eng.jAtcSim.newLib.area.atcs;
 
 import eng.jAtcSim.newLib.Acc;
 import eng.eSystem.EStringBuilder;
+import eng.jAtcSim.newLib.messaging.Message;
 import eng.jAtcSim.newLib.global.ETime;
 import eng.jAtcSim.newLib.global.logging.AbstractSaver;
 import eng.jAtcSim.newLib.global.logging.FileSaver;
 import eng.jAtcSim.newLib.global.logging.Recorder;
-import eng.jAtcSim.newLib.messaging.Message;
 
 /**
  *

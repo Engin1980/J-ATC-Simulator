@@ -1,13 +1,13 @@
-package eng.jAtcSim.newLib.airplanes.commandApplications;
+package eng.jAtcSim.newLib.area.airplanes.commandApplications;
 
-import eng.jAtcSim.newLib.airplanes.interfaces.IAirplaneWriteSimple;
-import eng.jAtcSim.newLib.speaking.IFromAtc;
-import eng.jAtcSim.newLib.speaking.fromAirplane.notifications.commandResponses.Confirmation;
-import eng.jAtcSim.newLib.speaking.fromAtc.IAtcCommand;
-import eng.jAtcSim.newLib.speaking.fromAtc.IAtcNotification;
-import eng.jAtcSim.newLib.speaking.fromAtc.commands.*;
-import eng.jAtcSim.newLib.speaking.fromAtc.commands.afters.AfterCommand;
-import eng.jAtcSim.newLib.speaking.fromAtc.notifications.RadarContactConfirmationNotification;
+import eng.jAtcSim.newLib.area.airplanes.interfaces.IAirplaneWriteSimple;
+import eng.jAtcSim.newLib.area.speaking.IFromAtc;
+import eng.jAtcSim.newLib.area.speaking.fromAirplane.notifications.commandResponses.Confirmation;
+import eng.jAtcSim.newLib.area.speaking.fromAtc.IAtcCommand;
+import eng.jAtcSim.newLib.area.speaking.fromAtc.IAtcNotification;
+import eng.jAtcSim.newLib.area.speaking.fromAtc.commands.*;
+import eng.jAtcSim.newLib.area.speaking.fromAtc.commands.afters.AfterCommand;
+import eng.jAtcSim.newLib.area.speaking.fromAtc.notifications.RadarContactConfirmationNotification;
 
 import java.util.HashMap;
 import java.util.Map;

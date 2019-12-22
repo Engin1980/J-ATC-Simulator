@@ -1,4 +1,4 @@
-package eng.jAtcSim.newLib.airplanes;
+package eng.jAtcSim.newLib.area.airplanes;
 
 import eng.jAtcSim.newLib.Acc;
 

@@ -1,8 +1,8 @@
-package eng.jAtcSim.newLib.airplanes.approachStagePilots;
+package eng.jAtcSim.newLib.area.airplanes.approachStagePilots;
 
-import eng.jAtcSim.newLib.airplanes.interfaces.IAirplaneWriteSimple;
-import eng.jAtcSim.newLib.airplanes.navigators.HeadingNavigator;
-import eng.jAtcSim.newLib.airplanes.navigators.RadialNavigator;
+import eng.jAtcSim.newLib.area.airplanes.interfaces.IAirplaneWriteSimple;
+import eng.jAtcSim.newLib.area.airplanes.navigators.HeadingNavigator;
+import eng.jAtcSim.newLib.area.airplanes.navigators.RadialNavigator;
 import eng.jAtcSim.newLib.world.approaches.stages.RadialStage;
 
 public class RadialStagePilot implements IApproachStagePilot<RadialStage> {

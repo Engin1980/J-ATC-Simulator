@@ -10,7 +10,6 @@ import eng.eSystem.collections.IMap;
 import eng.eSystem.events.EventSimple;
 import eng.jAtcSim.AppSettings;
 import eng.jAtcSim.newLib.Game;
-import eng.jAtcSim.newLib.Simulation;
 import eng.jAtcSim.newLib.world.Area;
 
 /**

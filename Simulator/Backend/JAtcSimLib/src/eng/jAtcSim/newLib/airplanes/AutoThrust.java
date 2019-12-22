@@ -3,10 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package eng.jAtcSim.newLib.airplanes;
+package eng.jAtcSim.newLib.area.airplanes;
 
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
-import eng.jAtcSim.newLib.airplanes.Airplane;
 import eng.eSystem.EStringBuilder;
 import eng.jAtcSim.newLib.global.Restriction;
 

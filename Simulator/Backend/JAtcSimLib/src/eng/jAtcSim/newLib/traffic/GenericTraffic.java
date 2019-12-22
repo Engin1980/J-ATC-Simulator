@@ -1,4 +1,4 @@
-package eng.jAtcSim.newLib.traffic;
+package eng.jAtcSim.newLib.area.traffic;
 
 import eng.eSystem.Tuple;
 import eng.eSystem.collections.EList;
@@ -6,11 +6,13 @@ import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
-import eng.eSystem.utilites.ArrayUtils;
 import eng.eSystem.utilites.NumberUtils;
 import eng.jAtcSim.newLib.Acc;
 import eng.jAtcSim.newLib.airplanes.AirplaneType;
 import eng.jAtcSim.newLib.airplanes.Callsign;
+import eng.jAtcSim.newLib.area.airplanes.AirplaneType;
+import eng.jAtcSim.newLib.area.airplanes.Callsign;
+import eng.jAtcSim.newLib.area.exceptions.ToDoException;
 import eng.jAtcSim.newLib.exceptions.ToDoException;
 import eng.jAtcSim.newLib.global.ETime;
 import eng.jAtcSim.newLib.traffic.fleets.CompanyFleet;

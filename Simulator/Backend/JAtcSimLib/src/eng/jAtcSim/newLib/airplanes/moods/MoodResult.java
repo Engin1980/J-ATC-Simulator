@@ -1,10 +1,9 @@
-package eng.jAtcSim.newLib.airplanes.moods;
+package eng.jAtcSim.newLib.area.airplanes.moods;
 
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
-import eng.jAtcSim.newLib.airplanes.Callsign;
+import eng.jAtcSim.newLib.area.airplanes.Callsign;
 import eng.jAtcSim.newLib.global.ETime;
-import sun.security.krb5.internal.ETypeInfo;
 
 public class MoodResult {
   private ETime time;

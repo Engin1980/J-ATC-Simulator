@@ -1,7 +1,6 @@
 
-package eng.jAtcSim.newLib.airplanes;
+package eng.jAtcSim.newLib.area.airplanes;
 
-import eng.eSystem.geo.Coordinate;
 import eng.jAtcSim.newLib.global.ETime;
 import eng.jAtcSim.newLib.global.Headings;
 

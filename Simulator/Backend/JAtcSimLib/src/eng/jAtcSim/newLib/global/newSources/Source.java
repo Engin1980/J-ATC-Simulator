@@ -1,4 +1,4 @@
-package eng.jAtcSim.newLib.global.newSources;
+package eng.jAtcSim.newLib.area.global.newSources;
 
 import eng.eSystem.exceptions.EApplicationException;
 

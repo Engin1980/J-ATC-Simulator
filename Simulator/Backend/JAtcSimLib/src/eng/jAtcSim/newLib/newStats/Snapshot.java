@@ -1,15 +1,15 @@
-package eng.jAtcSim.newLib.newStats;
+package eng.jAtcSim.newLib.area.newStats;
 
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 ;
 import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
-import eng.jAtcSim.newLib.airplanes.moods.MoodResult;
+import eng.jAtcSim.newLib.area.airplanes.moods.MoodResult;
+import eng.jAtcSim.newLib.area.newStats.model.ArrivalDepartureModel;
+import eng.jAtcSim.newLib.area.newStats.model.ArrivalDepartureTotalModel;
+import eng.jAtcSim.newLib.area.newStats.properties.MMM;
+import eng.jAtcSim.newLib.area.newStats.properties.StatisticProperty;
 import eng.jAtcSim.newLib.global.ETime;
-import eng.jAtcSim.newLib.newStats.model.ArrivalDepartureModel;
-import eng.jAtcSim.newLib.newStats.model.ArrivalDepartureTotalModel;
-import eng.jAtcSim.newLib.newStats.properties.MMM;
-import eng.jAtcSim.newLib.newStats.properties.StatisticProperty;
 
 public class Snapshot {
   private ETime time;

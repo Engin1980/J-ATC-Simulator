@@ -1,4 +1,4 @@
-package eng.jAtcSim.newLib.global.logging;
+package eng.jAtcSim.newLib.area.global.logging;
 
 import java.io.*;
 

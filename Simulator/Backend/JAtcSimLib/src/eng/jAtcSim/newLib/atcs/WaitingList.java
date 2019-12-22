@@ -3,14 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package eng.jAtcSim.newLib.atcs;
+package eng.jAtcSim.newLib.area.atcs;
 
 import eng.eSystem.Tuple;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.jAtcSim.newLib.Acc;
-import eng.jAtcSim.newLib.airplanes.Airplane;
+import eng.jAtcSim.newLib.area.airplanes.Airplane;
 import eng.jAtcSim.newLib.global.ETime;
 
 /**

@@ -1,10 +1,10 @@
-package eng.jAtcSim.newLib.airplanes.interfaces;
+package eng.jAtcSim.newLib.area.airplanes.interfaces;
 
 import eng.eSystem.geo.Coordinate;
-import eng.jAtcSim.newLib.airplanes.Airplane;
-import eng.jAtcSim.newLib.airplanes.AirplaneType;
-import eng.jAtcSim.newLib.airplanes.Squawk;
-import eng.jAtcSim.newLib.airplanes.interfaces.modules.*;
+import eng.jAtcSim.newLib.area.airplanes.Airplane;
+import eng.jAtcSim.newLib.area.airplanes.AirplaneType;
+import eng.jAtcSim.newLib.area.airplanes.Squawk;
+import eng.jAtcSim.newLib.area.airplanes.interfaces.modules.*;
 import eng.jAtcSim.newLib.messaging.IMessageParticipant;
 
 public interface IAirplaneRO extends IMessageParticipant {

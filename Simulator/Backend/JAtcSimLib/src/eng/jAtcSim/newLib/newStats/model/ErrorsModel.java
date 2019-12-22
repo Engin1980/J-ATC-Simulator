@@ -1,6 +1,6 @@
-package eng.jAtcSim.newLib.newStats.model;
+package eng.jAtcSim.newLib.area.newStats.model;
 
-import eng.jAtcSim.newLib.newStats.properties.CounterProperty;
+import eng.jAtcSim.newLib.area.newStats.properties.CounterProperty;
 
 public class ErrorsModel {
   private CounterProperty mrvaErros;

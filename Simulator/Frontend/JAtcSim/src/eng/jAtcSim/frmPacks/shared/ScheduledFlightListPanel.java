@@ -3,8 +3,8 @@ package eng.jAtcSim.frmPacks.shared;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.jAtcSim.AppSettings;
 import eng.jAtcSim.newLib.Simulation;
-import eng.jAtcSim.newLib.airplanes.Callsign;
-import eng.jAtcSim.newLib.traffic.Movement;
+import eng.jAtcSim.newLib.area.airplanes.Callsign;
+import eng.jAtcSim.newLib.area.traffic.Movement;
 import eng.eSystem.swing.LayoutManager;
 
 import javax.swing.*;

@@ -1,4 +1,4 @@
-package eng.jAtcSim.newLib.airplanes.interfaces.modules;
+package eng.jAtcSim.newLib.area.airplanes.interfaces.modules;
 
 import eng.eSystem.geo.Coordinate;
 import eng.jAtcSim.newLib.global.Restriction;

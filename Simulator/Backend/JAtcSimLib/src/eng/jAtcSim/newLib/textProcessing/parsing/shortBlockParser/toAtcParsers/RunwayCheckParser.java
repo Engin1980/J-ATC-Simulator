@@ -1,10 +1,10 @@
-package eng.jAtcSim.newLib.textProcessing.parsing.shortBlockParser.toAtcParsers;
+package eng.jAtcSim.newLib.area.textProcessing.parsing.shortBlockParser.toAtcParsers;
 
 import eng.eSystem.collections.IList;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.jAtcSim.newLib.Acc;
-import eng.jAtcSim.newLib.speaking.fromAtc.atc2atc.RunwayCheck;
-import eng.jAtcSim.newLib.textProcessing.parsing.shortBlockParser.SpeechParser;
+import eng.jAtcSim.newLib.area.speaking.fromAtc.atc2atc.RunwayCheck;
+import eng.jAtcSim.newLib.area.textProcessing.parsing.shortBlockParser.SpeechParser;
 import eng.jAtcSim.newLib.world.ActiveRunway;
 import eng.jAtcSim.newLib.world.ActiveRunwayThreshold;
 

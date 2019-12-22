@@ -1,8 +1,8 @@
-package eng.jAtcSim.newLib.textProcessing.parsing.shortBlockParser.toAtcParsers;
+package eng.jAtcSim.newLib.area.textProcessing.parsing.shortBlockParser.toAtcParsers;
 
 import eng.eSystem.collections.IList;
-import eng.jAtcSim.newLib.speaking.fromAtc.atc2atc.RunwayUse;
-import eng.jAtcSim.newLib.textProcessing.parsing.shortBlockParser.SpeechParser;
+import eng.jAtcSim.newLib.area.speaking.fromAtc.atc2atc.RunwayUse;
+import eng.jAtcSim.newLib.area.textProcessing.parsing.shortBlockParser.SpeechParser;
 
 public class RunwayUseParser extends SpeechParser<RunwayUse> {
   private static final String[][] patterns = {

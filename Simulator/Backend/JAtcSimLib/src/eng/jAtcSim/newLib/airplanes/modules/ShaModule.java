@@ -1,4 +1,4 @@
-package eng.jAtcSim.newLib.airplanes.modules;
+package eng.jAtcSim.newLib.area.airplanes.modules;
 
 import com.sun.istack.internal.Nullable;
 import eng.eSystem.collections.EList;
@@ -7,18 +7,18 @@ import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
 import eng.jAtcSim.newLib.Acc;
-import eng.jAtcSim.newLib.airplanes.Airplane;
-import eng.jAtcSim.newLib.airplanes.AirplaneType;
-import eng.jAtcSim.newLib.airplanes.behaviors.NewApproachBehavior;
-import eng.jAtcSim.newLib.airplanes.interfaces.modules.ISha4Navigator;
-import eng.jAtcSim.newLib.airplanes.interfaces.modules.IShaRO;
-import eng.jAtcSim.newLib.airplanes.navigators.HeadingNavigator;
-import eng.jAtcSim.newLib.airplanes.navigators.INavigator;
-import eng.jAtcSim.newLib.airplanes.navigators.INavigator2Coordinate;
+import eng.jAtcSim.newLib.area.airplanes.Airplane;
+import eng.jAtcSim.newLib.area.airplanes.AirplaneType;
+import eng.jAtcSim.newLib.area.airplanes.behaviors.NewApproachBehavior;
+import eng.jAtcSim.newLib.area.airplanes.interfaces.modules.ISha4Navigator;
+import eng.jAtcSim.newLib.area.airplanes.interfaces.modules.IShaRO;
+import eng.jAtcSim.newLib.area.airplanes.navigators.HeadingNavigator;
+import eng.jAtcSim.newLib.area.airplanes.navigators.INavigator;
+import eng.jAtcSim.newLib.area.airplanes.navigators.INavigator2Coordinate;
 import eng.jAtcSim.newLib.global.Headings;
 import eng.jAtcSim.newLib.global.HeadingsNew;
 import eng.jAtcSim.newLib.global.Restriction;
-import eng.jAtcSim.newLib.speaking.fromAtc.commands.ChangeHeadingCommand;
+import eng.jAtcSim.newLib.area.speaking.fromAtc.commands.ChangeHeadingCommand;
 import eng.jAtcSim.newLib.world.approaches.Approach;
 
 public class ShaModule implements IShaRO {

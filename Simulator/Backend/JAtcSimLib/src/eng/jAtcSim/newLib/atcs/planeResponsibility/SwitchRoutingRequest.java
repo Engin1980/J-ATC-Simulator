@@ -1,4 +1,4 @@
-package eng.jAtcSim.newLib.atcs.planeResponsibility;
+package eng.jAtcSim.newLib.area.atcs.planeResponsibility;
 
 import eng.jAtcSim.newLib.world.DARoute;
 import eng.jAtcSim.newLib.world.ActiveRunwayThreshold;

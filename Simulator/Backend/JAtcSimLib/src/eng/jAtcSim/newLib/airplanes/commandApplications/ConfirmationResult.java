@@ -1,6 +1,6 @@
-package eng.jAtcSim.newLib.airplanes.commandApplications;
+package eng.jAtcSim.newLib.area.airplanes.commandApplications;
 
-import eng.jAtcSim.newLib.speaking.IFromAirplane;
+import eng.jAtcSim.newLib.area.speaking.IFromAirplane;
 
 public class ConfirmationResult  {
   public IFromAirplane confirmation = null;

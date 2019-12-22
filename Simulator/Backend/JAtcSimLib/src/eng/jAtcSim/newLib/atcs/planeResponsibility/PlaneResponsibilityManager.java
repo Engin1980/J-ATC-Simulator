@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package eng.jAtcSim.newLib.atcs.planeResponsibility;
+package eng.jAtcSim.newLib.area.atcs.planeResponsibility;
 
 import com.sun.istack.internal.Nullable;
 import eng.eSystem.collections.*;
@@ -11,13 +11,11 @@ import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.validation.Validator;
 import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 import eng.jAtcSim.newLib.Acc;
-import eng.jAtcSim.newLib.airplanes.Airplane;
-import eng.jAtcSim.newLib.airplanes.Callsign;
-import eng.jAtcSim.newLib.airplanes.interfaces.IAirplane4Atc;
-import eng.jAtcSim.newLib.atcs.Atc;
-import eng.jAtcSim.newLib.atcs.ComputerAtc;
-
-import static eng.eSystem.utilites.FunctionShortcuts.sf;
+import eng.jAtcSim.newLib.area.airplanes.Airplane;
+import eng.jAtcSim.newLib.area.airplanes.Callsign;
+import eng.jAtcSim.newLib.area.airplanes.interfaces.IAirplane4Atc;
+import eng.jAtcSim.newLib.area.atcs.Atc;
+import eng.jAtcSim.newLib.area.atcs.ComputerAtc;
 
 public class PlaneResponsibilityManager {
 

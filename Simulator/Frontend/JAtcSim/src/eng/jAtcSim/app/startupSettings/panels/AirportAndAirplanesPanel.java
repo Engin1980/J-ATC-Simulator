@@ -10,8 +10,8 @@ import eng.jAtcSim.app.extenders.XmlFileSelectorExtender;
 import eng.jAtcSim.app.extenders.swingFactory.SwingFactory;
 import eng.jAtcSim.app.startupSettings.StartupSettings;
 import eng.jAtcSim.newLib.Acc;
-import eng.jAtcSim.newLib.global.logging.ApplicationLog;
-import eng.jAtcSim.newLib.global.newSources.AreaSource;
+import eng.jAtcSim.newLib.area.global.logging.ApplicationLog;
+import eng.jAtcSim.newLib.area.global.newSources.AreaSource;
 import eng.jAtcSim.newLib.world.Area;
 import eng.jAtcSim.shared.MessageBox;
 

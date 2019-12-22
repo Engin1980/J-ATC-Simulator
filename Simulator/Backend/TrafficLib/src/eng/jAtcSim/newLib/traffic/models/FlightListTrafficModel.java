@@ -6,13 +6,13 @@ import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.geo.Coordinate;
+import eng.jAtcSim.newLib.traffic.movementTemplating.EntryExitInfo;
+import eng.jAtcSim.newLib.traffic.movementTemplating.MovementTemplate;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.time.ETimeStamp;
 import eng.jAtcSim.newLib.shared.xml.XmlLoader;
 import eng.jAtcSim.newLib.traffic.models.base.ITrafficModel;
-import eng.jAtcSim.newLib.traffic.movementTemplating.EntryExitInfo;
 import eng.jAtcSim.newLib.traffic.movementTemplating.FlightMovementTemplate;
-import eng.jAtcSim.newLib.traffic.movementTemplating.MovementTemplate;
 
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;

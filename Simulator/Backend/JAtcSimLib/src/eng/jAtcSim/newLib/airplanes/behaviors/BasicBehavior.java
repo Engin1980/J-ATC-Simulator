@@ -1,11 +1,11 @@
-package eng.jAtcSim.newLib.airplanes.behaviors;
+package eng.jAtcSim.newLib.area.airplanes.behaviors;
 
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
 import eng.jAtcSim.newLib.Acc;
-import eng.jAtcSim.newLib.airplanes.interfaces.IAirplaneWriteSimple;
+import eng.jAtcSim.newLib.area.airplanes.interfaces.IAirplaneWriteSimple;
 import eng.jAtcSim.newLib.global.Headings;
-import eng.jAtcSim.newLib.speaking.fromAirplane.notifications.PassingClearanceLimitNotification;
+import eng.jAtcSim.newLib.area.speaking.fromAirplane.notifications.PassingClearanceLimitNotification;
 import eng.jAtcSim.newLib.world.Navaid;
 
 public abstract class BasicBehavior extends DivertableBehavior {

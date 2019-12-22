@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package eng.jAtcSim.newLib.atcs;
+package eng.jAtcSim.newLib.area.atcs;
 
 import eng.eSystem.Tuple;
 import eng.eSystem.eXml.XElement;
@@ -11,19 +11,22 @@ import eng.eSystem.exceptions.ERuntimeException;
 import eng.eSystem.utilites.RegexUtils;
 import eng.eSystem.validation.Validator;
 import eng.jAtcSim.newLib.Acc;
-import eng.jAtcSim.newLib.airplanes.*;
-import eng.jAtcSim.newLib.airplanes.interfaces.IAirplane4Atc;
-import eng.jAtcSim.newLib.airplanes.interfaces.IAirplaneRO;
-import eng.jAtcSim.newLib.atcs.planeResponsibility.SwitchRoutingRequest;
+import eng.jAtcSim.newLib.area.airplanes.Airplane;
+import eng.jAtcSim.newLib.area.airplanes.interfaces.IAirplane4Atc;
+import eng.jAtcSim.newLib.area.airplanes.interfaces.IAirplaneRO;
+import eng.jAtcSim.newLib.area.airplanes.Airplanes;
+import eng.jAtcSim.newLib.area.airplanes.Callsign;
+import eng.jAtcSim.newLib.area.airplanes.Squawk;
+import eng.jAtcSim.newLib.area.atcs.planeResponsibility.SwitchRoutingRequest;
 import eng.jAtcSim.newLib.messaging.Message;
 import eng.jAtcSim.newLib.messaging.Messenger;
 import eng.jAtcSim.newLib.messaging.StringMessageContent;
-import eng.jAtcSim.newLib.speaking.SpeechList;
-import eng.jAtcSim.newLib.speaking.fromAtc.IAtc2Atc;
-import eng.jAtcSim.newLib.speaking.fromAtc.atc2atc.PlaneSwitchMessage;
-import eng.jAtcSim.newLib.speaking.fromAtc.commands.ContactCommand;
-import eng.jAtcSim.newLib.textProcessing.parsing.Parser;
-import eng.jAtcSim.newLib.textProcessing.parsing.shortBlockParser.ShortBlockParser;
+import eng.jAtcSim.newLib.area.speaking.SpeechList;
+import eng.jAtcSim.newLib.area.speaking.fromAtc.IAtc2Atc;
+import eng.jAtcSim.newLib.area.speaking.fromAtc.atc2atc.PlaneSwitchMessage;
+import eng.jAtcSim.newLib.area.speaking.fromAtc.commands.ContactCommand;
+import eng.jAtcSim.newLib.area.textProcessing.parsing.Parser;
+import eng.jAtcSim.newLib.area.textProcessing.parsing.shortBlockParser.ShortBlockParser;
 import eng.jAtcSim.newLib.world.DARoute;
 import eng.jAtcSim.newLib.world.ActiveRunwayThreshold;
 

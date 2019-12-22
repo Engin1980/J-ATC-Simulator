@@ -1,18 +1,19 @@
-package eng.jAtcSim.newLib.textProcessing.parsing.shortBlockParser;
+package eng.jAtcSim.newLib.area.textProcessing.parsing.shortBlockParser;
 
 import eng.eSystem.EStringBuilder;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
-import eng.jAtcSim.newLib.exceptions.EInvalidCommandException;
-import eng.jAtcSim.newLib.speaking.IFromAtc;
-import eng.jAtcSim.newLib.speaking.ISpeech;
-import eng.jAtcSim.newLib.speaking.SpeechList;
-import eng.jAtcSim.newLib.speaking.fromAtc.IAtc2Atc;
-import eng.jAtcSim.newLib.textProcessing.parsing.Parser;
-import eng.jAtcSim.newLib.textProcessing.parsing.ShortcutList;
-import eng.jAtcSim.newLib.textProcessing.parsing.shortBlockParser.toAtcParsers.*;
-import eng.jAtcSim.newLib.textProcessing.parsing.shortBlockParser.toPlaneParsers.*;
+import eng.jAtcSim.newLib.area.textProcessing.parsing.shortBlockParser.toAtcParsers.RunwayCheckParser;
+import eng.jAtcSim.newLib.area.textProcessing.parsing.shortBlockParser.toAtcParsers.RunwayUseParser;
+import eng.jAtcSim.newLib.area.textProcessing.parsing.shortBlockParser.toPlaneParsers.*;
+import eng.jAtcSim.newLib.area.exceptions.EInvalidCommandException;
+import eng.jAtcSim.newLib.area.speaking.IFromAtc;
+import eng.jAtcSim.newLib.area.speaking.ISpeech;
+import eng.jAtcSim.newLib.area.speaking.SpeechList;
+import eng.jAtcSim.newLib.area.speaking.fromAtc.IAtc2Atc;
+import eng.jAtcSim.newLib.area.textProcessing.parsing.Parser;
+import eng.jAtcSim.newLib.area.textProcessing.parsing.ShortcutList;
 
 import java.util.Arrays;
 import java.util.regex.Pattern;

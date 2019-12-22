@@ -1,10 +1,11 @@
-package eng.jAtcSim.newLib.global.newSources;
+package eng.jAtcSim.newLib.area.global.newSources;
 
 import eng.eSystem.eXml.XDocument;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EXmlException;
 import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 import eng.jAtcSim.newLib.airplanes.AirplaneTypes;
+import eng.jAtcSim.newLib.area.airplanes.AirplaneTypes;
 import eng.jAtcSim.newLib.traffic.fleets.Fleets;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;

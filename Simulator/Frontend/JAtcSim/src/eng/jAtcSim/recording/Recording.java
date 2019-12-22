@@ -5,7 +5,7 @@ import eng.eSystem.utilites.ExceptionUtils;
 import eng.jAtcSim.BitmapRadar.BitmapCanvas;
 import eng.jAtcSim.newLib.Acc;
 import eng.jAtcSim.newLib.Simulation;
-import eng.jAtcSim.newLib.global.logging.ApplicationLog;
+import eng.jAtcSim.newLib.area.global.logging.ApplicationLog;
 import eng.jAtcSim.newLib.world.Area;
 import eng.jAtcSim.newLib.world.InitialPosition;
 import eng.jAtcSim.radarBase.RadarBehaviorSettings;

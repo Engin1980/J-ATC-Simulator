@@ -1,6 +1,5 @@
 package eng.jAtcSim.newLib.traffic.movementTemplating;
 
-import eng.eSystem.collections.*;
 import eng.jAtcSim.newLib.shared.time.ETimeStamp;
 
 public class GeneralAviationMovementTemplate extends MovementTemplate {

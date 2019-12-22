@@ -1,15 +1,15 @@
-package eng.jAtcSim.newLib.airplanes.modules;
+package eng.jAtcSim.newLib.area.airplanes.modules;
 
 import eng.eSystem.EStringBuilder;
 import eng.eSystem.Tuple;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.jAtcSim.newLib.global.logging.AbstractSaver;
 import eng.jAtcSim.newLib.global.logging.Recorder;
-import eng.jAtcSim.newLib.speaking.ISpeech;
-import eng.jAtcSim.newLib.speaking.SpeechList;
-import eng.jAtcSim.newLib.speaking.fromAtc.IAtcCommand;
-import eng.jAtcSim.newLib.speaking.fromAtc.commands.afters.AfterCommand;
-import eng.jAtcSim.newLib.speaking.fromAtc.commands.afters.AfterCommandList;
+import eng.jAtcSim.newLib.area.speaking.ISpeech;
+import eng.jAtcSim.newLib.area.speaking.SpeechList;
+import eng.jAtcSim.newLib.area.speaking.fromAtc.IAtcCommand;
+import eng.jAtcSim.newLib.area.speaking.fromAtc.commands.afters.AfterCommand;
+import eng.jAtcSim.newLib.area.speaking.fromAtc.commands.afters.AfterCommandList;
 
 //TODO let this extends Module, probably?
 public class PilotRecorderModule extends Recorder {

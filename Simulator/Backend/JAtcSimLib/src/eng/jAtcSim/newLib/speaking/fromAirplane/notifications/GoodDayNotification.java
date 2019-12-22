@@ -1,7 +1,7 @@
-package eng.jAtcSim.newLib.speaking.fromAirplane.notifications;
+package eng.jAtcSim.newLib.area.speaking.fromAirplane.notifications;
 
-import eng.jAtcSim.newLib.airplanes.Callsign;
-import eng.jAtcSim.newLib.speaking.fromAirplane.IAirplaneNotification;
+import eng.jAtcSim.newLib.area.airplanes.Callsign;
+import eng.jAtcSim.newLib.area.speaking.fromAirplane.IAirplaneNotification;
 
 public class GoodDayNotification implements IAirplaneNotification {
   private final Callsign callsign;

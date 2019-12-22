@@ -1,10 +1,10 @@
-package eng.jAtcSim.newLib.airplanes.navigators;
+package eng.jAtcSim.newLib.area.airplanes.navigators;
 
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.geo.Headings;
-import eng.jAtcSim.newLib.airplanes.interfaces.modules.ISha4Navigator;
+import eng.jAtcSim.newLib.area.airplanes.interfaces.modules.ISha4Navigator;
 
 public class RadialNavigator implements INavigator2Coordinate {
   public enum AggresivityMode {

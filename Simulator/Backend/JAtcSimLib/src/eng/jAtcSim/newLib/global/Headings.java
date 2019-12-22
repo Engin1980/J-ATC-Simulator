@@ -4,13 +4,14 @@
  * and open the template in the editor.
  */
 
-package eng.jAtcSim.newLib.global;
+package eng.jAtcSim.newLib.area.global;
 
 import eng.eSystem.Tuple;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.geometry2D.Line;
+import eng.jAtcSim.newLib.area.speaking.fromAtc.commands.ChangeHeadingCommand;
 import eng.jAtcSim.newLib.speaking.fromAtc.commands.ChangeHeadingCommand;
 
 /**

@@ -4,11 +4,10 @@
  * and open the template in the editor.
  */
 
-package eng.jAtcSim.newLib.airplanes;
+package eng.jAtcSim.newLib.area.airplanes;
 
 ;
 import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
-import eng.jAtcSim.newLib.Acc;
 
 import java.util.Objects;
 

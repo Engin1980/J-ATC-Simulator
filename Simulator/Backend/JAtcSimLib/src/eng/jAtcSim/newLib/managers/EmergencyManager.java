@@ -1,4 +1,4 @@
-package eng.jAtcSim.newLib.managers;
+package eng.jAtcSim.newLib.area.managers;
 
 ;
 import eng.eSystem.xmlSerialization.annotations.XmlConstructor;

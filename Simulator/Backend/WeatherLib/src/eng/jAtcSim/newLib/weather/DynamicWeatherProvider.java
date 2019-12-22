@@ -9,9 +9,9 @@ import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.utilites.Action;
 import eng.eSystem.utilites.ExceptionUtils;
 import eng.eSystem.validation.Validator;
+import eng.jAtcSim.newLib.weather.downloaders.MetarDownloader;
 import eng.jAtcSim.newLib.shared.Factory;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
-import eng.jAtcSim.newLib.weather.downloaders.MetarDownloader;
 
 /**
  * @author Marek Vajgl

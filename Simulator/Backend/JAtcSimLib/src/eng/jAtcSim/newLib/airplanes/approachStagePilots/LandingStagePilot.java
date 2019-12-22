@@ -1,7 +1,7 @@
-package eng.jAtcSim.newLib.airplanes.approachStagePilots;
+package eng.jAtcSim.newLib.area.airplanes.approachStagePilots;
 
-import eng.jAtcSim.newLib.airplanes.interfaces.IAirplaneWriteSimple;
-import eng.jAtcSim.newLib.exceptions.ToDoException;
+import eng.jAtcSim.newLib.area.airplanes.interfaces.IAirplaneWriteSimple;
+import eng.jAtcSim.newLib.area.exceptions.ToDoException;
 import eng.jAtcSim.newLib.world.approaches.stages.LandingStage;
 
 public class LandingStagePilot implements IApproachStagePilot<LandingStage> {

@@ -1,4 +1,4 @@
-package eng.jAtcSim.newLib.speaking;
+package eng.jAtcSim.newLib.area.speaking;
 
 public interface INotification extends  ISpeech {
 }

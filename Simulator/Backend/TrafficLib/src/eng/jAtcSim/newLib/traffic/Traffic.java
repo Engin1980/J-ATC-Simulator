@@ -4,10 +4,10 @@ import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IMap;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.validation.EAssert;
-import eng.jAtcSim.newLib.shared.exceptions.ToDoException;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 import eng.jAtcSim.newLib.traffic.models.base.ITrafficModel;
 import eng.jAtcSim.newLib.traffic.movementTemplating.MovementTemplate;
+import eng.jAtcSim.newLib.shared.exceptions.ToDoException;
 
 public abstract class Traffic {
   private ITrafficModel trafficModel;
