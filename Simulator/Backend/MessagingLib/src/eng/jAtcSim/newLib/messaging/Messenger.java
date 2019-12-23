@@ -3,7 +3,7 @@ package eng.jAtcSim.newLib.messaging;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.exceptions.EApplicationException;
-import eng.eSystem.validation.Validator;
+import eng.eSystem.validation.EAssert;
 
 public class Messenger {
 
@@ -41,8 +41,8 @@ public class Messenger {
   private IList<ListenerInfo> listeners = new EList<>();
 
   public void registerListener(Object listener, IMessageParticipant messageTarget) {
-    Validator.isNotNull(listener);
-    Validator.isNotNull(messageTarget);
+    EAssert.isNotNull(listener);
+    EAssert.isNotNull(messageTarget);
     if (listeners.isAny(q -> q.listener == listener))
       throw new EApplicationException("Listener " + listener.toString() + " already registered.");
 
@@ -51,7 +51,7 @@ public class Messenger {
   }
 
   public void unregisterListener(Object listener) {
-    Validator.isNotNull(listener);
+    EAssert.isNotNull(listener);
     ListenerInfo li = listeners.getFirst(q -> q.listener == listener);
     listeners.remove(li);
   }

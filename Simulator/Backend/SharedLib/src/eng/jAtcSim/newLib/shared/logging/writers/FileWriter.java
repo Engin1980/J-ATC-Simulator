@@ -7,23 +7,17 @@ import java.io.IOException;
 
 public class FileWriter implements ILogWriter {
   private final String fileName;
-  private final boolean autoNewLine;
+  private final boolean autoFlush;
   private BufferedWriter bw = null;
 
-  public FileWriter(String fileName, boolean autoNewLine) {
+  public FileWriter(String fileName, boolean autoFlush) {
     EAssert.isNotNull(fileName, "Value of {fileName} cannot not be null.");
     this.fileName = fileName;
-    this.autoNewLine = autoNewLine;
+    this.autoFlush = autoFlush;
   }
 
-  @Override
-  public void write(String text) throws IOException {
-    if (bw == null)
-      openWriter();
-    bw.write(text);
-    if (autoNewLine)
-      bw.newLine();
-    bw.flush();
+  public FileWriter(String fileName) {
+    this(fileName, true);
   }
 
   @Override
@@ -35,6 +29,20 @@ public class FileWriter implements ILogWriter {
       } finally {
         bw = null;
       }
+  }
+
+  @Override
+  public void newLine() throws IOException {
+    bw.newLine();
+    if (autoFlush) bw.flush();
+  }
+
+  @Override
+  public void write(String text) throws IOException {
+    if (bw == null)
+      openWriter();
+    bw.write(text);
+    if (autoFlush) bw.flush();
   }
 
   private void openWriter() throws IOException {

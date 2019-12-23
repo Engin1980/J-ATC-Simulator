@@ -17,4 +17,8 @@ public interface ITimeGetter extends ITime {
   default int getSeconds() {
     return this.getValue() % SECONDS_PER_MINUTE;
   }
+
+  default String toTimeString(){
+    return String.format("%02d:%02d:%02d", getHours(), getMinutes(), getSeconds());
+  }
 }

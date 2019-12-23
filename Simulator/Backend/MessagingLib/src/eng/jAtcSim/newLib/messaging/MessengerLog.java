@@ -1,9 +1,10 @@
 package eng.jAtcSim.newLib.messaging;
 
-import eng.jAtcSim.newLib.global.logging.FileSaver;
-import eng.jAtcSim.newLib.global.logging.Recorder;
+import eng.jAtcSim.newLib.shared.logging.writers.AutoNewLineLogWriter;
+import eng.jAtcSim.newLib.shared.logging.writers.FileWriter;
+import eng.jAtcSim.newLib.shared.logging.writers.SimTimePipeLogWriter;
 
-public class MessengerLog extends Recorder {
+public class MessengerLog extends eng.jAtcSim.newLib.shared.logging.Log {
 
   public enum eAction {
     ADD,
@@ -13,8 +14,10 @@ public class MessengerLog extends Recorder {
   public MessengerLog(String name, String file) {
     super(
         name,
-        new FileSaver(Recorder.getRecorderFileName(file)),
-        "; ");
+        true,
+        new AutoNewLineLogWriter(
+            new SimTimePipeLogWriter(
+                new FileWriter(file))));
   }
 
   public void recordMessage(eAction action, Message msg) {
