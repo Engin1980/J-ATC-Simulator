@@ -1,6 +1,6 @@
 package eng.jAtcSim.newLib.stats.properties;
 
-import eng.eSystem.validation.Validator;
+import eng.eSystem.validation.EAssert;
 
 public class StatisticProperty {
 
@@ -23,7 +23,7 @@ public class StatisticProperty {
   }
 
   public void add(double value, int count) {
-    Validator.check(count > 0);
+    EAssert.isTrue(count > 0);
     adjustMinimumAndMaximum(value);
     this.sum += value * count;
     this.count += count;

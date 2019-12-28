@@ -2,7 +2,7 @@ package eng.jAtcSim.newLib.stats;
 
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
-import eng.jAtcSim.newLib.area.airplanes.moods.MoodResult;
+import eng.jAtcSim.newLib.mood.MoodResult;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 import eng.jAtcSim.newLib.stats.model.ArrivalDepartureModel;
 import eng.jAtcSim.newLib.stats.model.ArrivalDepartureTotalModel;

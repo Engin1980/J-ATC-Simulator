@@ -8,4 +8,8 @@ public class EDayTimeRun extends ETime implements ITimeComparable<EDayTimeStamp>
   public void addSecond(){
     super.addSecond();
   }
+
+  public EDayTimeStamp toStamp() {
+    return new EDayTimeStamp(this.getValue());
+  }
 }

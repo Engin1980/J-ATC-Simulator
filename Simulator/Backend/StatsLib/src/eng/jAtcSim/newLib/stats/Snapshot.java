@@ -2,33 +2,32 @@ package eng.jAtcSim.newLib.stats;
 
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
-import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
-import eng.jAtcSim.newLib.area.airplanes.moods.MoodResult;
-import eng.jAtcSim.newLib.area.newStats.model.ArrivalDepartureModel;
-import eng.jAtcSim.newLib.area.newStats.model.ArrivalDepartureTotalModel;
-import eng.jAtcSim.newLib.area.newStats.properties.MMM;
-import eng.jAtcSim.newLib.area.newStats.properties.StatisticProperty;
-import eng.jAtcSim.newLib.global.ETime;
+import eng.jAtcSim.newLib.mood.MoodResult;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
+import eng.jAtcSim.newLib.stats.model.ArrivalDepartureModel;
 import eng.jAtcSim.newLib.stats.model.ArrivalDepartureTotalModel;
 import eng.jAtcSim.newLib.stats.properties.MMM;
-
-;
+import eng.jAtcSim.newLib.stats.properties.StatisticProperty;
 
 public class Snapshot {
-  private EDayTimeStamp time;
-  private ArrivalDepartureTotalModel<MMM> planesInSim;
-  private ArrivalDepartureTotalModel<MMM> planesUnderApp;
-  private ArrivalDepartureTotalModel<Double> runwayMovementsPerHour;
-  private ArrivalDepartureTotalModel<MMM> finishedPlanesDelays;
-  private ArrivalDepartureTotalModel<MMM> finishedPlanesMoods;
-  private MMM holdingPointDelayStats;
-  private int mrvaErrorsCount;
-  private int airproxErrorsCount;
-  private int holdingPointMaximumCount;
+  public static Snapshot createMerge(IReadOnlyList<Snapshot> snapshots) {
+    Snapshot ret = new Snapshot();
+    ret.time = mergeTime(snapshots.select(q -> q.time));
+    ret.planesInSim = mergeArrivalDepartureTotalModelOfMMM(snapshots.select(q -> q.planesInSim));
+    ret.planesUnderApp = mergeArrivalDepartureTotalModelOfMMM(snapshots.select(q -> q.planesUnderApp));
+    ret.runwayMovementsPerHour = mergeArrivalDepartureTotalModelOfDoubleAsMean(snapshots.select(q -> q.runwayMovementsPerHour));
+    ret.finishedPlanesDelays = mergeArrivalDepartureTotalModelOfMMM(snapshots.select(q -> q.finishedPlanesDelays));
+    ret.finishedPlanesMoods = mergeArrivalDepartureTotalModelOfMMM(snapshots.select(q -> q.finishedPlanesMoods));
+    ret.holdingPointDelayStats = MMM.createMerge(snapshots.select(q -> q.holdingPointDelayStats));
+    ret.mrvaErrorsCount = snapshots.sumInt(q -> q.mrvaErrorsCount);
+    ret.airproxErrorsCount = snapshots.sumInt(q -> q.airproxErrorsCount);
+    ret.holdingPointMaximumCount = snapshots.maxInt(q -> q.holdingPointMaximumCount);
+
+    return ret;
+  }
 
   public static Snapshot of(Collector collector) {
-    int totalSeconds = collector.getToTime().getTotalSeconds() - collector.getFromTime().getTotalSeconds();
+    int totalSeconds = collector.getToTime().getValue() - collector.getFromTime().getValue();
     Snapshot ret = new Snapshot();
     ret.time = collector.getFromTime().addSeconds(totalSeconds / 2);
 
@@ -55,24 +54,8 @@ public class Snapshot {
     return ret;
   }
 
-  public static Snapshot createMerge(IReadOnlyList<Snapshot> snapshots) {
-    Snapshot ret = new Snapshot();
-    ret.time = mergeTime(snapshots.select(q -> q.time));
-    ret.planesInSim = mergeArrivalDepartureTotalModelOfMMM(snapshots.select(q -> q.planesInSim));
-    ret.planesUnderApp = mergeArrivalDepartureTotalModelOfMMM(snapshots.select(q -> q.planesUnderApp));
-    ret.runwayMovementsPerHour = mergeArrivalDepartureTotalModelOfDoubleAsMean(snapshots.select(q -> q.runwayMovementsPerHour));
-    ret.finishedPlanesDelays = mergeArrivalDepartureTotalModelOfMMM(snapshots.select(q -> q.finishedPlanesDelays));
-    ret.finishedPlanesMoods = mergeArrivalDepartureTotalModelOfMMM(snapshots.select(q -> q.finishedPlanesMoods));
-    ret.holdingPointDelayStats = MMM.createMerge(snapshots.select(q -> q.holdingPointDelayStats));
-    ret.mrvaErrorsCount = snapshots.sumInt(q -> q.mrvaErrorsCount);
-    ret.airproxErrorsCount = snapshots.sumInt(q -> q.airproxErrorsCount);
-    ret.holdingPointMaximumCount = snapshots.maxInt(q -> q.holdingPointMaximumCount);
-
-    return ret;
-  }
-
   private static EDayTimeStamp mergeTime(IReadOnlyList<EDayTimeStamp> times) {
-    int meanOfSeconds = (int) times.mean(q -> (double) q.getTotalSeconds());
+    int meanOfSeconds = (int) times.mean(q -> (double) q.getValue());
     EDayTimeStamp ret = new EDayTimeStamp(meanOfSeconds);
     return ret;
   }
@@ -87,9 +70,9 @@ public class Snapshot {
 
   private static ArrivalDepartureTotalModel<Double> mergeArrivalDepartureTotalModelOfDoubleAsMean(IList<ArrivalDepartureTotalModel<Double>> models) {
     ArrivalDepartureTotalModel<Double> ret = new ArrivalDepartureTotalModel<>(
-        models.select(q->q.getArrivals()).mean(q->q),
-        models.select(q->q.getDepartures()).mean(q->q),
-        models.select(q->q.getArrivals()).mean(q->q));
+        models.select(q -> q.getArrivals()).mean(q -> q),
+        models.select(q -> q.getDepartures()).mean(q -> q),
+        models.select(q -> q.getArrivals()).mean(q -> q));
     return ret;
   }
 
@@ -107,7 +90,7 @@ public class Snapshot {
     // arrivals
     tmp = finishedPlanesMoods.getArrivals();
     MMM arrivals = new MMM(
-        tmp.minInt(q -> q.getPoints(),0),
+        tmp.minInt(q -> q.getPoints(), 0),
         tmp.maxInt(q -> q.getPoints(), 0),
         tmp.mean(q -> (double) q.getPoints(), 0));
 
@@ -144,24 +127,19 @@ public class Snapshot {
     return ret;
   }
 
-  @XmlConstructor
-  private Snapshot() {
-  }
+  private EDayTimeStamp time;
+  private ArrivalDepartureTotalModel<MMM> planesInSim;
+  private ArrivalDepartureTotalModel<MMM> planesUnderApp;
+  private ArrivalDepartureTotalModel<Double> runwayMovementsPerHour;
+  private ArrivalDepartureTotalModel<MMM> finishedPlanesDelays;
+  private ArrivalDepartureTotalModel<MMM> finishedPlanesMoods;
+  private MMM holdingPointDelayStats;
+  private int mrvaErrorsCount;
+  private int airproxErrorsCount;
+  private int holdingPointMaximumCount;
 
-  public EDayTimeStamp getTime() {
-    return time;
-  }
-
-  public ArrivalDepartureTotalModel<MMM> getPlanesInSim() {
-    return planesInSim;
-  }
-
-  public ArrivalDepartureTotalModel<MMM> getPlanesUnderApp() {
-    return planesUnderApp;
-  }
-
-  public ArrivalDepartureTotalModel<Double> getRunwayMovementsPerHour() {
-    return runwayMovementsPerHour;
+  public int getAirproxErrorsCount() {
+    return airproxErrorsCount;
   }
 
   public ArrivalDepartureTotalModel<MMM> getFinishedPlanesDelays() {
@@ -176,15 +154,27 @@ public class Snapshot {
     return holdingPointDelayStats;
   }
 
+  public int getHoldingPointMaximumCount() {
+    return this.holdingPointMaximumCount;
+  }
+
   public int getMrvaErrorsCount() {
     return mrvaErrorsCount;
   }
 
-  public int getAirproxErrorsCount() {
-    return airproxErrorsCount;
+  public ArrivalDepartureTotalModel<MMM> getPlanesInSim() {
+    return planesInSim;
   }
 
-  public int getHoldingPointMaximumCount() {
-    return this.holdingPointMaximumCount;
+  public ArrivalDepartureTotalModel<MMM> getPlanesUnderApp() {
+    return planesUnderApp;
+  }
+
+  public ArrivalDepartureTotalModel<Double> getRunwayMovementsPerHour() {
+    return runwayMovementsPerHour;
+  }
+
+  public EDayTimeStamp getTime() {
+    return time;
   }
 }

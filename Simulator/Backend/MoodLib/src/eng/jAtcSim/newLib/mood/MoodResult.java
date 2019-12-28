@@ -1,19 +1,23 @@
-package eng.jAtcSim.newLib.area.airplanes.moods;
+package eng.jAtcSim.newLib.mood;
 
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
-import eng.jAtcSim.newLib.area.airplanes.Callsign;
-import eng.jAtcSim.newLib.global.ETime;
+import eng.jAtcSim.newLib.shared.Callsign;
+import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 
 public class MoodResult {
-  private edaytimestamp time;
+  private EDayTimeStamp time;
   private Callsign callsing;
   private IList<MoodExperienceResult> experiences;
 
-  public MoodResult(ETime time, Callsign callsign, IList<MoodExperienceResult> experiences) {
+  public MoodResult(EDayTimeStamp time, Callsign callsign, IList<MoodExperienceResult> experiences) {
     this.time = time;
     this.callsing = callsign;
     this.experiences = experiences;
+  }
+
+  public Callsign getCallsing() {
+    return callsing;
   }
 
   public IReadOnlyList<MoodExperienceResult> getExperiences() {
@@ -25,11 +29,7 @@ public class MoodResult {
     return ret;
   }
 
-  public ETime getTime() {
+  public EDayTimeStamp getTime() {
     return time;
-  }
-
-  public Callsign getCallsing() {
-    return callsing;
   }
 }

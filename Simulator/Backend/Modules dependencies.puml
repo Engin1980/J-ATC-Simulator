@@ -13,6 +13,8 @@ package "Base dependencies"{
   [FleetLib (fl)] as fl
   [WeatherLib (wl)] as wl
   [MessagingLib (ml)] as ml
+  [MoodLib (mol)] as mol
+  [StatsLib (stl)] as stl
 }
 
 package "Higher"{
@@ -23,11 +25,14 @@ package "Sim"{
   [SimulationLib (simlib)] as simlib
 }
 
+note top of stl : StatsManager and\nRecentStats should\nbe moved to SimulationLib
+
 sl <-up- wl
 sl <-up- al
 sl <-up- atl
 sl <-up- tl
 sl <-up- ml
+sl <-up- mol
 
 atl <-up- pl
 
@@ -40,6 +45,8 @@ tl <-up- simlib
 wl <-up- simlib
 
 fl <-up- simlib
+
+mol <-up- stl
 
 
 
