@@ -1,8 +1,8 @@
 package eng.jAtcSim.newLib.weather;
 
 import eng.eSystem.validation.Validator;
-import eng.jAtcSim.newLib.Acc;
-import eng.jAtcSim.newLib.weathers.decoders.MetarDecoder;
+import eng.jAtcSim.newLib.shared.SharedFactory;
+import eng.jAtcSim.newLib.weather.decoders.MetarDecoder;
 
 public class WeatherManager {
   private Weather currentWeather;
@@ -16,18 +16,6 @@ public class WeatherManager {
     this.newWeatherFlag = true;
   }
 
-  public boolean isNewWeatherFlagAndResetIt() {
-    boolean ret = newWeatherFlag;
-    if (newWeatherFlag) newWeatherFlag = false;
-    return ret;
-  }
-
-  public Weather getWeather() {
-    synchronized (provider) {
-      return currentWeather;
-    }
-  }
-
   public void elapseSecond() {
     Weather newWeather = provider.tryGetNewWeather();
     if (newWeather != null) {
@@ -38,12 +26,21 @@ public class WeatherManager {
     }
   }
 
-  public void setWeather(Weather weather) {
-    Validator.isNotNull(weather);
+  public Weather getWeather() {
     synchronized (provider) {
-      this.currentWeather = weather;
-      this.newWeatherFlag = true;
+      return currentWeather;
     }
+  }
+
+  public void init() {
+    this.currentWeather = provider.tryGetNewWeather();
+    assert this.currentWeather != null;
+  }
+
+  public boolean isNewWeatherFlagAndResetIt() {
+    boolean ret = newWeatherFlag;
+    if (newWeatherFlag) newWeatherFlag = false;
+    return ret;
   }
 
   public void setWeather(String metarString) {
@@ -51,12 +48,15 @@ public class WeatherManager {
       Weather tmp = MetarDecoder.decode(metarString);
       setWeather(tmp);
     } catch (Exception ex) {
-      Acc.sim().sendTextMessageForUser("Failed to decode metar. " + ex.getMessage());
+      SharedFactory.getSimLog().sendTextMessageForUser("Failed to decode metar. " + ex.getMessage());
     }
   }
 
-  public void init() {
-    this.currentWeather = provider.tryGetNewWeather();
-    assert this.currentWeather != null;
+  public void setWeather(Weather weather) {
+    Validator.isNotNull(weather);
+    synchronized (provider) {
+      this.currentWeather = weather;
+      this.newWeatherFlag = true;
+    }
   }
 }

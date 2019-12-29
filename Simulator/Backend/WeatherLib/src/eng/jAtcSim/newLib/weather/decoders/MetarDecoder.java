@@ -7,6 +7,8 @@ package eng.jAtcSim.newLib.weather.decoders;
 
 import eng.eSystem.exceptions.ERuntimeException;
 import eng.eSystem.utilites.RegexUtils;
+import eng.jAtcSim.newLib.weather.Weather;
+import eng.jAtcSim.newLib.weather.presets.PresetWeather;
 
 import java.time.LocalTime;
 import java.util.regex.Matcher;

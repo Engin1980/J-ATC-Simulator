@@ -1,10 +1,7 @@
 package eng.jAtcSim.newLib.weather;
 
-import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
-
 public class StaticWeatherProvider extends WeatherProvider {
 
-  @XmlIgnore
   private boolean wasReturned = false;
   private Weather weather;
 

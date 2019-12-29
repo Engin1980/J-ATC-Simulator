@@ -11,9 +11,6 @@ public class Factory {
   private static final IMap<Class<?>, Object> classInstances = new EMap<>();
   private static final IMap<Class<?>, IMap<Object, Object>> classKeyInstancew = new EMap<>();
 
-  private Factory() {
-  }
-
   public static <T> T getInstance(Class<? extends T> type) {
     if (classKeyInstancew.containsKey(type) == false) {
       throw new EApplicationException(sf("Type '%s' not stored in the Factory.", type.getName()));
@@ -35,17 +32,20 @@ public class Factory {
     return ret;
   }
 
-  public static <T> void setInstance(T value) {
-    classInstances.set(value.getClass(), value);
+  public static <T> void setInstance(Class<? extends T> type, T value) {
+    classInstances.set(type, value);
   }
 
-  public static <T> void setInstance(Object key, T value) {
+  public static <T> void setInstance(Class<? extends T> type, Object key, T value) {
     if (key == null) {
       throw new EApplicationException(sf("Null key cannot be used for storing type '%s'.", value.getClass().getName()));
     }
     if (value == null)
       throw new EApplicationException(sf("Null value cannot be stored under key '%s'.", key));
-    IMap<Object, Object> in = classKeyInstancew.getOrSet(value.getClass(), new EMap<>());
+    IMap<Object, Object> in = classKeyInstancew.getOrSet(type, new EMap<>());
     in.set(key, value);
+  }
+
+  private Factory() {
   }
 }

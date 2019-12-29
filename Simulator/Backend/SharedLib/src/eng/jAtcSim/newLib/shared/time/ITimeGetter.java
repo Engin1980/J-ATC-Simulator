@@ -1,5 +1,7 @@
 package eng.jAtcSim.newLib.shared.time;
 
+import java.time.LocalTime;
+
 public interface ITimeGetter extends ITime {
 
   int SECONDS_PER_MINUTE = 60;
@@ -18,7 +20,11 @@ public interface ITimeGetter extends ITime {
     return this.getValue() % SECONDS_PER_MINUTE;
   }
 
-  default String toTimeString(){
+  default LocalTime toLocalTime() {
+    return LocalTime.of(getHours(), getMinutes(), getSeconds());
+  }
+
+  default String toTimeString() {
     return String.format("%02d:%02d:%02d", getHours(), getMinutes(), getSeconds());
   }
 }

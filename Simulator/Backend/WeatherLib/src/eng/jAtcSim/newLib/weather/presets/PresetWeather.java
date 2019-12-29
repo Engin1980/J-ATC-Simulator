@@ -1,16 +1,19 @@
 package eng.jAtcSim.newLib.weather.presets;
 
 import eng.eSystem.eXml.XElement;
-import eng.jAtcSim.newLib.weathers.Weather;
-import eng.jAtcSim.newLib.world.xml.XmlLoader;
+import eng.jAtcSim.newLib.shared.xml.XmlLoader;
+import eng.jAtcSim.newLib.weather.Weather;
 
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 public class PresetWeather extends Weather {
   public static PresetWeather load(XElement source) {
     XmlLoader.setContext(source);
     String timeS = XmlLoader.loadString("time");
-    LocalTime time = new LocalTimeParser().parse(timeS);
+    LocalTime time = LocalTime.parse(
+        timeS,
+        DateTimeFormatter.ofPattern("HH:mm"));
     int cloudBaseAltitude = XmlLoader.loadInteger("cloudBaseAltitude");
     double cloudBaseProbability = XmlLoader.loadDouble("cloudBaseProbability");
     int visibility = XmlLoader.loadInteger("visibility");
@@ -26,12 +29,12 @@ public class PresetWeather extends Weather {
 
   private LocalTime time;
 
-  public LocalTime getTime() {
-    return time;
-  }
-
   public PresetWeather(LocalTime time, int windHeading, int windSpeedInKts, int windGustSpeedInKts, int visibilityInM, int cloudBaseInFt, double cloudBaseHitProbability, eSnowState snowState) {
     super(windHeading, windSpeedInKts, windGustSpeedInKts, visibilityInM, cloudBaseInFt, cloudBaseHitProbability, snowState);
     this.time = time;
+  }
+
+  public LocalTime getTime() {
+    return time;
   }
 }

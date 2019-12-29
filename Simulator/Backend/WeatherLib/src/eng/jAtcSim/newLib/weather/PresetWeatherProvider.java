@@ -2,11 +2,13 @@ package eng.jAtcSim.newLib.weather;
 
 import eng.eSystem.eXml.XDocument;
 import eng.eSystem.exceptions.EApplicationException;
-import eng.jAtcSim.newLib.Acc;
-import eng.jAtcSim.newLib.weathers.presets.PresetWeatherList;
+import eng.jAtcSim.newLib.shared.SharedFactory;
+import eng.jAtcSim.newLib.weather.presets.PresetWeatherList;
 
 public class PresetWeatherProvider extends WeatherProvider {
 
+  private static final int NO_CHANGE = -2;
+  private static final int NEXT_DAY = -1;
   private PresetWeatherList presetWeathers;
   private int dayIndex = -1;
   private int weatherIndex = -1;
@@ -30,9 +32,9 @@ public class PresetWeatherProvider extends WeatherProvider {
       int index = getFirstWeatherIndex();
       ret = presetWeathers.get(index);
       weatherIndex = index;
-      dayIndex = Acc.now().getDays();
+      dayIndex = SharedFactory.getNow().getDays();
     } else {
-      if (dayIndex == Acc.now().getDays()) {
+      if (dayIndex == SharedFactory.getNow().getDays()) {
         // evaluating current day
         int newIndex = getSuggestedWeatherIndex();
         if (newIndex == NEXT_DAY) {
@@ -51,11 +53,27 @@ public class PresetWeatherProvider extends WeatherProvider {
     return ret;
   }
 
-  private static final int NO_CHANGE = -2;
-  private static final int NEXT_DAY = -1;
+  private int getFirstWeatherIndex() {
+    if (presetWeathers.size() == 1)
+      return 0;
+
+    int index = -1;
+    java.time.LocalTime now = SharedFactory.getNow().toLocalTime();
+    for (int i = 0; i < presetWeathers.size(); i++) {
+      if (presetWeathers.get(i).getTime().isAfter(now)) {
+        index = i - 1;
+        break;
+      }
+    }
+    if (index == -1)
+      index = presetWeathers.size() - 1;
+
+    return index;
+  }
+
   private int getSuggestedWeatherIndex() {
     int ret;
-    java.time.LocalTime now = Acc.now().toLocalTime();
+    java.time.LocalTime now = SharedFactory.getNow().toLocalTime();
 
     if (weatherIndex + 1 == presetWeathers.size())
       ret = NEXT_DAY;
@@ -68,23 +86,5 @@ public class PresetWeatherProvider extends WeatherProvider {
       ret = suggestedIndex;
     }
     return ret;
-  }
-
-  private int getFirstWeatherIndex() {
-    if (presetWeathers.size() == 1)
-      return 0;
-
-    int index = -1;
-    java.time.LocalTime now = Acc.now().toLocalTime();
-    for (int i = 0; i < presetWeathers.size(); i++) {
-      if (presetWeathers.get(i).getTime().isAfter(now)) {
-        index = i - 1;
-        break;
-      }
-    }
-    if (index == -1)
-      index = presetWeathers.size() - 1;
-
-    return index;
   }
 }

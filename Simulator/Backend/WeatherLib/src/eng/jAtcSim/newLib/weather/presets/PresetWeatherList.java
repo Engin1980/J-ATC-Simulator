@@ -2,7 +2,7 @@ package eng.jAtcSim.newLib.weather.presets;
 
 import eng.eSystem.collections.EList;
 import eng.eSystem.eXml.XElement;
-import eng.jAtcSim.newLib.weathers.decoders.MetarDecoder;
+import eng.jAtcSim.newLib.weather.decoders.MetarDecoder;
 
 public class PresetWeatherList extends EList<PresetWeather> {
   public static PresetWeatherList load(XElement root) {
@@ -14,7 +14,7 @@ public class PresetWeatherList extends EList<PresetWeather> {
         String metar = child.getContent();
         PresetWeather pw = MetarDecoder.decode(metar);
         ret.add(pw);
-      } else if (child.getName().equals("weather")){
+      } else if (child.getName().equals("weather")) {
         PresetWeather pw = PresetWeather.load(child);
         ret.add(pw);
       }
@@ -28,8 +28,8 @@ public class PresetWeatherList extends EList<PresetWeather> {
   private PresetWeatherList() {
   }
 
-  private void sort(){
-    this.sort(q->q.getTime());
+  private void sort() {
+    this.sort(q -> q.getTime());
   }
 }
 

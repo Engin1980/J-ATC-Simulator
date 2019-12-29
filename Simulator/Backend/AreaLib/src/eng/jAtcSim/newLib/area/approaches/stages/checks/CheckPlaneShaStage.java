@@ -1,6 +1,6 @@
 package eng.jAtcSim.newLib.area.approaches.stages.checks;
 
-import eng.eSystem.validation.Validator;
+import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.area.approaches.stages.ICheckStage;
 
 public class CheckPlaneShaStage implements ICheckStage {
@@ -12,10 +12,8 @@ public class CheckPlaneShaStage implements ICheckStage {
   private final Integer maxSpeed;
 
   public CheckPlaneShaStage(Integer minAltitude, Integer maxAltitude, Integer minHeading, Integer maxHeading, Integer minSpeed, Integer maxSpeed) {
-    if (minHeading != null || maxHeading != null)
-      Validator.check(
-          minHeading != null && maxHeading != null,
-          new IllegalArgumentException("Either none or both 'minHeading' and 'maxHeading' must be set."));
+    EAssert.isTrue(minHeading != null && maxHeading != null,
+        new IllegalArgumentException("Either none or both 'minHeading' and 'maxHeading' must be set."));
     this.minAltitude = minAltitude;
     this.maxAltitude = maxAltitude;
     this.minHeading = minHeading;
@@ -24,28 +22,28 @@ public class CheckPlaneShaStage implements ICheckStage {
     this.maxSpeed = maxSpeed;
   }
 
-  public Integer getMinAltitude() {
-    return minAltitude;
-  }
-
   public Integer getMaxAltitude() {
     return maxAltitude;
-  }
-
-  public Integer getMinHeading() {
-    return minHeading;
   }
 
   public Integer getMaxHeading() {
     return maxHeading;
   }
 
-  public Integer getMinSpeed() {
-    return minSpeed;
-  }
-
   public Integer getMaxSpeed() {
     return maxSpeed;
+  }
+
+  public Integer getMinAltitude() {
+    return minAltitude;
+  }
+
+  public Integer getMinHeading() {
+    return minHeading;
+  }
+
+  public Integer getMinSpeed() {
+    return minSpeed;
   }
 
   //  @Override

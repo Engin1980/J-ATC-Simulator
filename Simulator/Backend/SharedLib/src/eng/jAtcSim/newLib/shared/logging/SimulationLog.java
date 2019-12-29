@@ -1,6 +1,7 @@
-//package eng.jAtcSim.newLib.shared.logging;
-//
-//public abstract class SimulationLog extends Log {
+package eng.jAtcSim.newLib.shared.logging;
+
+public abstract class SimulationLog {
+  public abstract void sendTextMessageForUser(String s);
 //
 //  public boolean addSimulationTime;
 //  public String simulationTimeSeparator = " ";
@@ -36,4 +37,4 @@
 //    }
 //    super.writeLine(format, params);
 //  }
-//}
+}
