@@ -1,29 +1,23 @@
 package eng.jAtcSim.newLib.speeches.atc2airplane.afterCommands;
 
-import eng.eSystem.eXml.XElement;
-import eng.jAtcSim.newLib.shared.xml.XmlLoader;
+import eng.eSystem.validation.EAssert;
 
 public class AfterAltitudeCommand extends AfterCommand {
-  public static AfterAltitudeCommand load(XElement element) {
-    XmlLoader.setContext(element);
 
-    AfterAltitudeCommand ret = new AfterAltitudeCommand();
-    ret.altitude = XmlLoader.loadInteger("value");
-    ret.extension = XmlLoader.loadEnum("extension", AfterValueExtension.class, AfterValueExtension.exactly);
+  public static AfterAltitudeCommand create(int altitude, AfterValuePosition extension){
+    AfterAltitudeCommand ret = new AfterAltitudeCommand(altitude, extension);
     return ret;
   }
 
-  private int altitude;
-  private AfterValueExtension extension;
+  private final int altitude;
 
-  private AfterAltitudeCommand() {
+  public AfterAltitudeCommand(int altitude, AfterValuePosition position) {
+    super(position);
+    EAssert.Argument.isTrue(altitude >= 0);
+    this.altitude = altitude;
   }
 
   public int getAltitude() {
     return altitude;
-  }
-
-  public AfterValueExtension getExtension() {
-    return extension;
   }
 }

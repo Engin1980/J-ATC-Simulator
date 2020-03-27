@@ -1,22 +1,22 @@
 package eng.jAtcSim.newLib.speeches.atc2airplane.afterCommands;
 
-import eng.eSystem.eXml.XElement;
-import eng.jAtcSim.newLib.area.Airport;
-import eng.jAtcSim.newLib.area.Navaid;
-import eng.jAtcSim.newLib.shared.xml.XmlLoader;
+import eng.eSystem.validation.EAssert;
 
 public abstract class AfterCommandWithNavaid extends AfterCommand {
-  private Navaid navaid;
+  private final String navaidName;
 
-  protected void read(XElement element, Airport parent) {
-    String fix = XmlLoader.loadString(element, "fix");
-    this.navaid = parent.getParent().getNavaids().getOrGenerate(fix, parent);
+//  protected void read(XElement element, Airport parent) {
+//    String fix = XmlLoader.loadString(element, "fix");
+//    this.navaid = parent.getParent().getNavaids().getOrGenerate(fix, parent);
+//  }
+
+  protected AfterCommandWithNavaid(String navaidName, AfterValuePosition position) {
+    super(position);
+    EAssert.Argument.isNonEmptyString(navaidName);
+    this.navaidName = navaidName;
   }
 
-  protected AfterCommandWithNavaid() {
-  }
-
-  public Navaid getNavaid() {
-    return navaid;
+  public String getNavaidName() {
+    return navaidName;
   }
 }

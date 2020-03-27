@@ -1,9 +1,9 @@
 package eng.jAtcSim.newLib.speeches.atc2airplane;
 
-import eng.eSystem.eXml.XElement;
-import eng.jAtcSim.newLib.area.speeches.IAtcCommand;
-import eng.jAtcSim.newLib.shared.exceptions.ApplicationException;
-import eng.jAtcSim.newLib.shared.xml.XmlLoader;
+import eng.eSystem.validation.EAssert;
+import eng.jAtcSim.newLib.speeches.IAtcCommand;
+
+import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class ChangeHeadingCommand implements IAtcCommand {
 
@@ -23,27 +23,13 @@ public class ChangeHeadingCommand implements IAtcCommand {
     return ret;
   }
 
-  public static ChangeHeadingCommand load(XElement source){
-    assert source.getName().equals("heading");
-
-    XmlLoader.setContext(source);
-    String dirS = XmlLoader.loadString("direction", "nearest");
-    eDirection dir;
-    if (dirS.equals("nearest"))
-      dir = eDirection.any;
-    else
-      dir = Enum.valueOf(eDirection.class, dirS);
-    int hdg = XmlLoader.loadInteger("value");
-    ChangeHeadingCommand ret  = new ChangeHeadingCommand(hdg,dir);
-    return ret;
-  }
-
   private final Integer heading;
   private final eDirection direction;
 
   private ChangeHeadingCommand(Integer heading, eDirection direction) {
     if (heading != null) {
-      if (heading != 360) {
+      EAssert.Argument.isTrue(heading >= 0, sf("Heading cannot be negative (%d).", heading));
+      if (heading > 360) {
         heading = heading % 360;
       }
       this.heading = heading;
@@ -56,8 +42,8 @@ public class ChangeHeadingCommand implements IAtcCommand {
   }
 
   public int getHeading() {
-    if (this.heading == null)
-      throw new ApplicationException("Unable to return heading, when 'ChangeHeadingCommant' represents 'Fly current heading'");
+    EAssert.isNotNull(this.heading,
+        "Unable to return heading, when 'ChangeHeadingCommand' represents 'Fly current heading'");
     return heading;
   }
 

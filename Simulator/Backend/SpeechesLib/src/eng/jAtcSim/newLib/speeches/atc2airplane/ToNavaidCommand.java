@@ -8,7 +8,7 @@ public abstract class ToNavaidCommand implements IAtcCommand {
   protected final String navaidName;
 
   protected ToNavaidCommand(String navaidName) {
-    EAssert.Argument.isNonemptyString(navaidName, "navaidName");
+    EAssert.Argument.isNonEmptyString(navaidName, "navaidName");
     this.navaidName = navaidName;
   }
 

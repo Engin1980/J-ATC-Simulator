@@ -1,14 +1,13 @@
 package eng.jAtcSim.newLib.speeches.atc2airplane;
 
-import eng.eSystem.eXml.XElement;
-import eng.eSystem.exceptions.EEnumValueUnsupportedException;
+import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.Restriction;
 import eng.jAtcSim.newLib.shared.exceptions.ApplicationException;
-import eng.jAtcSim.newLib.shared.xml.XmlLoader;
 import eng.jAtcSim.newLib.speeches.IAtcCommand;
 
 public class AltitudeRestrictionCommand implements IAtcCommand {
   public static AltitudeRestrictionCommand create(Restriction.eDirection direction, int value) {
+    EAssert.Argument.isTrue(value >= 0);
     Restriction res = new Restriction(direction, value);
     AltitudeRestrictionCommand ret = new AltitudeRestrictionCommand(res);
     return ret;
@@ -19,36 +18,7 @@ public class AltitudeRestrictionCommand implements IAtcCommand {
     return ret;
   }
 
-  public static IAtcCommand load(XElement element) {
-    assert element.getName().equals("AltitudeRestriction") ||
-        element.getName().equals("AltitudeRestrictionClear");
-    AltitudeRestrictionCommand ret;
 
-    XmlLoader.setContext(element);
-
-    if (element.getName().equals("AltitudeRestrictionClear"))
-      ret = AltitudeRestrictionCommand.createClearRestriction();
-    else {
-      String resString = XmlLoader.loadString("restriction");
-      int value = XmlLoader.loadInteger("value");
-      Restriction.eDirection restriction;
-      switch (resString) {
-        case "above":
-          restriction = Restriction.eDirection.atLeast;
-          break;
-        case "below":
-          restriction = Restriction.eDirection.atMost;
-          break;
-        case "exactly":
-          restriction = Restriction.eDirection.exactly;
-          break;
-        default:
-          throw new EEnumValueUnsupportedException(resString);
-      }
-      ret = AltitudeRestrictionCommand.create(restriction, value);
-    }
-    return ret;
-  }
   private final Restriction restriction;
 
   private AltitudeRestrictionCommand(Restriction restriction) {

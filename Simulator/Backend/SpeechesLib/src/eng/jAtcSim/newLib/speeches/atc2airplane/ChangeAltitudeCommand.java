@@ -1,8 +1,9 @@
 package eng.jAtcSim.newLib.speeches.atc2airplane;
 
-import eng.eSystem.eXml.XElement;
-import eng.jAtcSim.newLib.area.speeches.IAtcCommand;
-import eng.jAtcSim.newLib.shared.xml.XmlLoader;
+import eng.eSystem.validation.EAssert;
+import eng.jAtcSim.newLib.speeches.IAtcCommand;
+
+import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class ChangeAltitudeCommand implements IAtcCommand {
 
@@ -32,25 +33,12 @@ public class ChangeAltitudeCommand implements IAtcCommand {
     return ret;
   }
 
-  public static ChangeAltitudeCommand load(XElement source) {
-    assert source.getName().equals("altitude");
-
-    XmlLoader.setContext(source);
-    String dirS = XmlLoader.loadString("direction", "set");
-    eDirection dir;
-    if (dirS.equals("set"))
-      dir = eDirection.any;
-    else
-      dir = Enum.valueOf(eDirection.class, dirS);
-    int alt = XmlLoader.loadAltitude("value");
-    ChangeAltitudeCommand ret = new ChangeAltitudeCommand(dir, alt);
-    return ret;
-  }
-
   private final eDirection direction;
   private final int altitudeInFt;
 
   private ChangeAltitudeCommand(eDirection direction, int altitudeInFt) {
+    EAssert.Argument.isTrue(altitudeInFt >= 0,
+        sf("Altitude must be greater or equal to zero (current: %d).", altitudeInFt));
     this.direction = direction;
     this.altitudeInFt = altitudeInFt;
   }
