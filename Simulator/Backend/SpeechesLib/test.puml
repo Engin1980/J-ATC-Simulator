@@ -1,0 +1,34 @@
+@startuml
+
+class Navaid{
+}
+
+class NavaidList{
+  getNavaidOrGenerate(double : declination)
+}
+
+package AreaLib{
+  class Airport{
+  }
+
+  class Area{
+    navaids : NavaidList
+    airports : Airport[]
+  }
+}
+
+
+
+class ToNavaidCommand{
+  navaid : Navaid
+  loadXml(NavaidList)
+}
+
+Area -down-> Airport
+
+NavaidList -down-> Navaid
+Area -down-> NavaidList
+ToNavaidCommand -> NavaidList
+
+ToNavaidCommand -down-> Navaid
+@enduml

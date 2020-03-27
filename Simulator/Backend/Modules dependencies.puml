@@ -15,6 +15,7 @@ package "Base dependencies"{
   [MessagingLib (ml)] as ml
   [MoodLib (mol)] as mol
   [StatsLib (stl)] as stl
+  [BasicSpeechList (bsl)] as bsl
 }
 
 package "Higher"{
@@ -33,8 +34,12 @@ sl <-up- atl
 sl <-up- tl
 sl <-up- ml
 sl <-up- mol
+sl <-up- bsl
+
+bsl <-up- al
 
 atl <-up- pl
+
 
 al <-up- pl
 

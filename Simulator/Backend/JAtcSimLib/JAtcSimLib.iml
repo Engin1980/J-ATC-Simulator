@@ -9,6 +9,7 @@
       <excludeFolder url="file://$MODULE_DIR$/src/eng/jAtcSim/newLib/coordinates" />
       <excludeFolder url="file://$MODULE_DIR$/src/eng/jAtcSim/newLib/global" />
       <excludeFolder url="file://$MODULE_DIR$/src/eng/jAtcSim/newLib/interfacing" />
+      <excludeFolder url="file://$MODULE_DIR$/src/eng/jAtcSim/newLib/messaging" />
       <excludeFolder url="file://$MODULE_DIR$/src/eng/jAtcSim/newLib/traffic" />
       <excludeFolder url="file://$MODULE_DIR$/src/eng/jAtcSim/newLib/weathers" />
       <excludeFolder url="file://$MODULE_DIR$/src/eng/jAtcSim/newLib/world" />
