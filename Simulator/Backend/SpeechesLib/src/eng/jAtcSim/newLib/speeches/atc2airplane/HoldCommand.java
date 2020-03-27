@@ -1,52 +1,20 @@
 package eng.jAtcSim.newLib.speeches.atc2airplane;
 
-import eng.eSystem.eXml.XElement;
-import eng.jAtcSim.newLib.area.Airport;
-import eng.jAtcSim.newLib.area.Navaid;
-import eng.jAtcSim.newLib.area.PublishedHold;
-import eng.jAtcSim.newLib.shared.exceptions.ApplicationException;
-import eng.jAtcSim.newLib.shared.xml.XmlLoader;
+import eng.eSystem.validation.EAssert;
 
 public class HoldCommand extends ToNavaidCommand {
 
-  public static HoldCommand create(PublishedHold publishedHold) {
-    if (publishedHold == null) {
-      throw new IllegalArgumentException("Value of {publishedHold} cannot not be null.");
-    }
+  public static HoldCommand createPublished(String navaidName) {
+    EAssert.Argument.isNotNull(navaidName, "navaidName");
 
-    HoldCommand ret = new HoldCommand(publishedHold.getNavaid(), false, publishedHold.getInboundRadial(), publishedHold.isLeftTurn());
+    HoldCommand ret = new HoldCommand(navaidName,true, 0, false);
     return ret;
   }
 
-  public static HoldCommand create(Navaid navaid, int inboundRadial, boolean isLeftTurn) {
-    if (navaid == null) {
-      throw new IllegalArgumentException("Value of {navaid} cannot not be null.");
-    }
+  public static HoldCommand createExplicit(String navaidName, int inboundRadial, boolean isLeftTurn) {
+    EAssert.Argument.isNotNull(navaidName, "navaidName");
 
-    HoldCommand ret = new HoldCommand(navaid, false, inboundRadial, isLeftTurn);
-    return ret;
-  }
-
-  public static HoldCommand load(XElement element, Airport parent) {
-    assert element.getName().equals("hold");
-
-    HoldCommand ret;
-
-    XmlLoader.setContext(element);
-    String fix = XmlLoader.loadString("fix");
-    Integer inboundRadial = XmlLoader.loadInteger("inboundRadial", null);
-    String turns = XmlLoader.loadStringRestricted("turns", new String[]{"left", "right"}, null);
-
-    Navaid navaid = parent.getParent().getNavaids().get(fix);
-
-    if (inboundRadial == null && turns == null) {
-      PublishedHold publishedHold = parent.getHolds().getFirst(q -> q.getNavaid().equals(navaid));
-      ret = HoldCommand.create(publishedHold);
-    } else if (inboundRadial == null || turns == null) {
-      throw new ApplicationException("For hold command, both or none of 'inboundRadial' and 'turns' must be set.");
-    } else {
-      ret = HoldCommand.create(navaid, inboundRadial, turns.equals("left"));
-    }
+    HoldCommand ret = new HoldCommand(navaidName, false, inboundRadial, isLeftTurn);
     return ret;
   }
 
@@ -54,8 +22,8 @@ public class HoldCommand extends ToNavaidCommand {
   private final int inboundHeading;
   private final boolean leftTurn;
 
-  private HoldCommand(Navaid navaid, boolean published, int inboundHeading, boolean leftTurn) {
-    super(navaid);
+  private HoldCommand(String navaidName, boolean published, int inboundHeading, boolean leftTurn) {
+    super(navaidName);
     this.published = published;
     this.inboundHeading = inboundHeading;
     this.leftTurn = leftTurn;
@@ -66,6 +34,7 @@ public class HoldCommand extends ToNavaidCommand {
   }
 
   public boolean isLeftTurn() {
+    EAssert.isFalse(this.published);
     return leftTurn;
   }
 
@@ -74,15 +43,16 @@ public class HoldCommand extends ToNavaidCommand {
   }
 
   public boolean isRightTurn() {
+    EAssert.isFalse(this.published);
     return !isLeftTurn();
   }
 
   @Override
   public String toString() {
     if (isPublished()) {
-      return "Hold over " + super.getNavaid().getName() + " as published {command}";
+      return "Hold over " + super.getNavaidName() + " as published {command}";
     } else {
-      return "Hold over " + getNavaid().getName()
+      return "Hold over " + getNavaidName()
           + " inbound " + leftTurn
           + " turns " + (leftTurn ? "left" : "right")
           + " {command}";

@@ -1,22 +1,18 @@
 package eng.jAtcSim.newLib.speeches.atc2airplane;
 
 
-import eng.jAtcSim.newLib.area.Navaid;
-import eng.jAtcSim.newLib.area.speeches.IAtcCommand;
+import eng.eSystem.validation.EAssert;
+import eng.jAtcSim.newLib.speeches.IAtcCommand;
 
 public abstract class ToNavaidCommand implements IAtcCommand {
-  protected final Navaid navaid;
+  protected final String navaidName;
 
-  protected ToNavaidCommand(Navaid navaid) {
-    if (navaid == null) {
-      throw new IllegalArgumentException("Argument \"navaid\" cannot be null.");
-    }
-    
-    this.navaid = navaid;
+  protected ToNavaidCommand(String navaidName) {
+    EAssert.Argument.isNonemptyString(navaidName, "navaidName");
+    this.navaidName = navaidName;
   }
 
-  public Navaid getNavaid() {
-    return navaid;
+  public String getNavaidName() {
+    return navaidName;
   }
-  
 }

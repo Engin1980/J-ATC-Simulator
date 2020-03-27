@@ -2,10 +2,10 @@ package eng.jAtcSim.newLib.speeches.atc2airplane;
 
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
-import eng.jAtcSim.newLib.area.speeches.IAtcCommand;
 import eng.jAtcSim.newLib.shared.Restriction;
 import eng.jAtcSim.newLib.shared.exceptions.ApplicationException;
 import eng.jAtcSim.newLib.shared.xml.XmlLoader;
+import eng.jAtcSim.newLib.speeches.IAtcCommand;
 
 public class AltitudeRestrictionCommand implements IAtcCommand {
   public static AltitudeRestrictionCommand create(Restriction.eDirection direction, int value) {

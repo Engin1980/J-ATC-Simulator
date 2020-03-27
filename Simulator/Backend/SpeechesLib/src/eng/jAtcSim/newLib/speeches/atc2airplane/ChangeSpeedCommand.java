@@ -1,10 +1,9 @@
 package eng.jAtcSim.newLib.speeches.atc2airplane;
 
-import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
-import eng.jAtcSim.newLib.area.speeches.IAtcCommand;
+import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.exceptions.ApplicationException;
-import eng.jAtcSim.newLib.shared.xml.XmlLoader;
+import eng.jAtcSim.newLib.speeches.IAtcCommand;
 
 public class ChangeSpeedCommand implements IAtcCommand {
 
@@ -15,27 +14,13 @@ public class ChangeSpeedCommand implements IAtcCommand {
   }
 
   public static ChangeSpeedCommand create(eRestriction direction, int speedInKts) {
+    EAssert.Argument.isTrue(speedInKts > 0);
     ChangeSpeedCommand ret = new ChangeSpeedCommand(direction, speedInKts);
     return ret;
   }
 
   public static ChangeSpeedCommand createResumeOwnSpeed() {
     ChangeSpeedCommand ret = new ChangeSpeedCommand(eRestriction.exactly, null);
-    return ret;
-  }
-
-  public static IAtcCommand load(XElement element) {
-    assert element.getName().equals("speed");
-    ChangeSpeedCommand ret;
-    XmlLoader.setContext(element);
-    String rs = XmlLoader.loadString("restriction");
-    if (rs.equals("clear")) {
-      ret = ChangeSpeedCommand.createResumeOwnSpeed();
-    } else {
-      eRestriction restriction = Enum.valueOf(eRestriction.class, rs);
-      int speed = XmlLoader.loadInteger("value");
-      ret = ChangeSpeedCommand.create(restriction, speed);
-    }
     return ret;
   }
 
