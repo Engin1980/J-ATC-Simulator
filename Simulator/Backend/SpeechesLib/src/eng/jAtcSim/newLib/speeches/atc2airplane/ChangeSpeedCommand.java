@@ -3,9 +3,9 @@ package eng.jAtcSim.newLib.speeches.atc2airplane;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.exceptions.ApplicationException;
-import eng.jAtcSim.newLib.speeches.IAtcCommand;
+import eng.jAtcSim.newLib.speeches.ICommand;
 
-public class ChangeSpeedCommand implements IAtcCommand {
+public class ChangeSpeedCommand implements  ICommand {
 
   public enum eRestriction {
     below,

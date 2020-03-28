@@ -4,7 +4,6 @@ import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.jAtcSim.newLib.shared.Restriction;
 import eng.jAtcSim.newLib.shared.xml.XmlLoader;
-import eng.jAtcSim.newLib.speeches.IAtcCommand;
 import eng.jAtcSim.newLib.speeches.atc2airplane.AltitudeRestrictionCommand;
 
 public class AltitudeRestrictionCommandFactory {

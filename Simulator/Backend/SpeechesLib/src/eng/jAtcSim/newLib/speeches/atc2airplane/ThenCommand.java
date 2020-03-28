@@ -6,9 +6,9 @@
 
 package eng.jAtcSim.newLib.speeches.atc2airplane;
 
-import eng.jAtcSim.newLib.speeches.IAtcCommand;
+import eng.jAtcSim.newLib.speeches.ICommand;
 
-public class ThenCommand implements IAtcCommand {
+public class ThenCommand implements  ICommand {
 
   public static ThenCommand create() {
     ThenCommand ret = new ThenCommand();

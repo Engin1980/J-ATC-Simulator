@@ -1,11 +1,11 @@
 package eng.jAtcSim.newLib.speeches.atc2airplane;
 
 import eng.eSystem.validation.EAssert;
-import eng.jAtcSim.newLib.speeches.IAtcCommand;
+import eng.jAtcSim.newLib.speeches.ICommand;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
-public class ChangeHeadingCommand implements IAtcCommand {
+public class ChangeHeadingCommand implements  ICommand {
 
   public enum eDirection {
     any,

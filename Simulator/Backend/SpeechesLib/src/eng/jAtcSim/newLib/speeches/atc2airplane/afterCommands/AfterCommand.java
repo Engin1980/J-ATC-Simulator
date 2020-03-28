@@ -1,8 +1,8 @@
 package eng.jAtcSim.newLib.speeches.atc2airplane.afterCommands;
 
-import eng.jAtcSim.newLib.speeches.IAtcCommand;
+import eng.jAtcSim.newLib.speeches.ICommand;
 
-public abstract class AfterCommand implements IAtcCommand {
+public abstract class AfterCommand implements ICommand {
   private final AfterValuePosition extension;
 
   protected AfterCommand(AfterValuePosition extension) {

@@ -2,9 +2,9 @@ package eng.jAtcSim.newLib.speeches.atc2airplane;
 
 
 import eng.eSystem.validation.EAssert;
-import eng.jAtcSim.newLib.speeches.IAtcCommand;
+import eng.jAtcSim.newLib.speeches.ICommand;
 
-public abstract class ToNavaidCommand implements IAtcCommand {
+public abstract class ToNavaidCommand implements ICommand {
   protected final String navaidName;
 
   protected ToNavaidCommand(String navaidName) {
