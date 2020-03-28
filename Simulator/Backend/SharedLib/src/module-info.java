@@ -6,4 +6,5 @@ module JAtcSim.Modules.Backend.SharedLib {
   exports eng.jAtcSim.newLib.shared.xml;
   exports eng.jAtcSim.newLib.shared.logging;
   exports eng.jAtcSim.newLib.shared.logging.writers;
+  exports eng.jAtcSim.newLib.shared.enums;
 }
