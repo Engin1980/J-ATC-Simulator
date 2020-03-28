@@ -1,0 +1,39 @@
+@startuml
+
+package Backend{
+[AirplanesLib]
+[AirplaneTypeLib]
+[AreaLib]
+[FleetLib]
+[JAtcSimLib]
+[MessagingLib]
+[MoodsLib]
+[SharedLib]
+[StatsLib]
+[TrafficLib]
+[WeatherLib]
+}
+
+[AirplanesLib] -down-> [AreaLib]
+'[AirplanesLib] -down-> [SharedLib]
+[AirplanesLib] -down-> [AirplaneTypeLib]
+
+[AirplaneTypeLib] -down-> [SharedLib]
+
+[AreaLib] -down-> [SharedLib]
+
+[FleetLib] -down-> [SharedLib]
+
+[MessagingLib] -down-> [SharedLib]
+
+[MoodsLib] -down-> [SharedLib]
+
+[StatsLib] -down-> [MoodsLib]
+'[StatsLib] -down-> [SharedLib]
+
+[TrafficLib] -down-> [SharedLib]
+
+[WeatherLib] -down-> [AreaLib]
+'[WeatherLib] -down-> [SharedLib]
+
+@enduml
