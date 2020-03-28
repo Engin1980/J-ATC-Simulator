@@ -7,11 +7,11 @@ import eng.jAtcSim.newLib.speeches.xml.atc2airplane.afterCommands.*;
 
 public class XmlAfterCommandFactory {
 
-  public static IAtcCommand load(XElement element) {
+  public static ICommand load(XElement element) {
     throw new UnsupportedOperationException();
   }
 
-  private static IAtcCommand loadAfterCommand(XElement element) {
+  private static ICommand loadAfterCommand(XElement element) {
     assert element.getName().equals("after");
     XmlLoader.setContext(element);
     String property = XmlLoader.loadStringRestricted("property",

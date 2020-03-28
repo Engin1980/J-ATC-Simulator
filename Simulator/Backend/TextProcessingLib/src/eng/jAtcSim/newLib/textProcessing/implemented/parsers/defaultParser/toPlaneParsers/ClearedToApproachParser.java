@@ -1,10 +1,10 @@
-package eng.jAtcSim.newLib.textProcessing.implemented.parsers.shortBlockParser.toPlaneParsers;
+package eng.jAtcSim.newLib.textProcessing.implemented.parsers.defaultParser.toPlaneParsers;
 
 import eng.eSystem.collections.IList;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.jAtcSim.newLib.shared.enums.ApproachType;
 import eng.jAtcSim.newLib.speeches.atc2airplane.ClearedToApproachCommand;
-import eng.jAtcSim.newLib.textProcessing.implemented.parsers.shortBlockParser.SpeechParser;
+import eng.jAtcSim.newLib.textProcessing.implemented.parsers.defaultParser.common.SpeechParser;
 
 public class ClearedToApproachParser extends SpeechParser<ClearedToApproachCommand> {
 

@@ -10,8 +10,6 @@ import eng.eSystem.geo.Headings;
 import eng.eSystem.utilites.NumberUtils;
 import eng.jAtcSim.newLib.shared.xml.XmlLoader;
 
-import java.awt.geom.Line2D;
-
 public class RunwayConfiguration {
 
   public static RunwayConfiguration createForThresholds(IList<ActiveRunwayThreshold> rts) {
@@ -64,17 +62,31 @@ public class RunwayConfiguration {
   }
 
   private static boolean isIntersectionBetweenRunways(ActiveRunway a, ActiveRunway b) {
-    Line2D lineA = new Line2D.Float(
+//    Line2D lineA = new Line2D.Float(
+//        (float) a.getThresholdA().getCoordinate().getLatitude().get(),
+//        (float) a.getThresholdA().getCoordinate().getLongitude().get(),
+//        (float) a.getThresholdB().getCoordinate().getLatitude().get(),
+//        (float) a.getThresholdB().getCoordinate().getLongitude().get());
+//    Line2D lineB = new Line2D.Float(
+//        (float) b.getThresholdA().getCoordinate().getLatitude().get(),
+//        (float) b.getThresholdA().getCoordinate().getLongitude().get(),
+//        (float) b.getThresholdB().getCoordinate().getLatitude().get(),
+//        (float) b.getThresholdB().getCoordinate().getLongitude().get());
+//    boolean ret = lineA.intersectsLine(lineB);
+
+    boolean ret = LineUtils.linesIntersect(
+        //l1-from
         (float) a.getThresholdA().getCoordinate().getLatitude().get(),
         (float) a.getThresholdA().getCoordinate().getLongitude().get(),
+        //l1-to
         (float) a.getThresholdB().getCoordinate().getLatitude().get(),
-        (float) a.getThresholdB().getCoordinate().getLongitude().get());
-    Line2D lineB = new Line2D.Float(
+        (float) a.getThresholdB().getCoordinate().getLongitude().get(),
+        //l2-from
         (float) b.getThresholdA().getCoordinate().getLatitude().get(),
         (float) b.getThresholdA().getCoordinate().getLongitude().get(),
+        //l2-to
         (float) b.getThresholdB().getCoordinate().getLatitude().get(),
         (float) b.getThresholdB().getCoordinate().getLongitude().get());
-    boolean ret = lineA.intersectsLine(lineB);
     return ret;
   }
 

@@ -25,7 +25,7 @@ public class DebugFormatter extends Formatter {
 
   @Override
   protected String formatAfterAltitudeCommand(AfterAltitudeCommand cmd) {
-    return "when passing " + Format.formatAltitudeOrFlightLevel(cmd.getAltitude(), true);
+    return "when passing " + Format.Altitude.toAlfOrFLLong(cmd.getAltitude());
   }
 
   @Override
@@ -62,13 +62,12 @@ public class DebugFormatter extends Formatter {
       StringBuilder sb = new StringBuilder();
       sb.append("altitude ");
       sb.append(
-          Format.formatAltitudeShort(
-              cmd.getRestriction().value, false));
+          Format.Altitude.toFLShort(cmd.getRestriction().value));
       switch (cmd.getRestriction().direction) {
-        case atLeast:
+        case above:
           sb.append(" or more");
           break;
-        case atMost:
+        case below:
           sb.append(" or less");
           break;
       }
@@ -91,7 +90,7 @@ public class DebugFormatter extends Formatter {
       default:
         throw new UnsupportedOperationException();
     }
-    sb.append(Format.formatAltitudeOrFlightLevel(cmd.getAltitudeInFt(), true));
+    sb.append(Format.Altitude.toAlfOrFLLong(cmd.getAltitudeInFt()));
     return sb.toString();
   }
 
@@ -261,7 +260,7 @@ public class DebugFormatter extends Formatter {
 
     sb.append(cmd.getCallsign().toString())
         .append(" with you at ")
-        .append(Format.Altitude.toStandardAltitudeOrFL(cmd.getAltitude()));
+        .append(Format.Altitude.toAlfOrFLLong((int) cmd.getAltitude()));
     return sb.toString();
   }
 

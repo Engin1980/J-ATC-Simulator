@@ -1,10 +1,10 @@
-package eng.jAtcSim.newLib.textProcessing.implemented.parsers.shortBlockParser.toPlaneParsers;
+package eng.jAtcSim.newLib.textProcessing.implemented.parsers.defaultParser.toPlaneParsers;
 
 import eng.eSystem.collections.IList;
 import eng.jAtcSim.newLib.shared.RegexGrouper;
 import eng.jAtcSim.newLib.speeches.atc2airplane.afterCommands.AfterRadialCommand;
 import eng.jAtcSim.newLib.speeches.atc2airplane.afterCommands.AfterValuePosition;
-import eng.jAtcSim.newLib.textProcessing.implemented.parsers.shortBlockParser.SpeechParser;
+import eng.jAtcSim.newLib.textProcessing.implemented.parsers.defaultParser.common.SpeechParser;
 
 public class AfterRadialParser extends SpeechParser<AfterRadialCommand> {
   private static final String BLOCK_PATTERN = "(\\S+)/(\\d{1,3})";

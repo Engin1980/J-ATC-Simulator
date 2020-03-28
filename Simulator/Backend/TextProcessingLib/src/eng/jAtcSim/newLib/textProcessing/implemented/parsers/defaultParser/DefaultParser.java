@@ -1,15 +1,22 @@
-package eng.jAtcSim.newLib.textProcessing.implemented.parsers.shortBlockParser;
+package eng.jAtcSim.newLib.textProcessing.implemented.parsers.defaultParser;
 
 import eng.eSystem.EStringBuilder;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
+import eng.jAtcSim.newLib.speeches.ISpeech;
+import eng.jAtcSim.newLib.speeches.SpeechList;
+import eng.jAtcSim.newLib.textProcessing.base.EInvalidCommandException;
 import eng.jAtcSim.newLib.textProcessing.base.Parser;
+import eng.jAtcSim.newLib.textProcessing.implemented.parsers.defaultParser.common.ShortcutList;
+import eng.jAtcSim.newLib.textProcessing.implemented.parsers.defaultParser.common.SpeechParser;
+import eng.jAtcSim.newLib.textProcessing.implemented.parsers.defaultParser.toPlaneParsers.*;
+import eng.jAtcSim.newLib.textProcessing.implemented.parsers.defaultParser.toAtcParsers.*;
 
 import java.util.Arrays;
 import java.util.regex.Pattern;
 
-public class ShortBlockParser extends Parser {
+public class DefaultParser extends Parser {
 
   private static final IList<SpeechParser> planeParsers;
   private static final IList<SpeechParser> atcParsers;
@@ -44,7 +51,7 @@ public class ShortBlockParser extends Parser {
     planeParsers.add(new ReportDivertTimeParser());
     planeParsers.add(new DivertParser());
 
-    planeParsers.add(new SetAltitudeRestrictionParser());
+    planeParsers.add(new AltitudeRestrictionCommandParser());
 
     atcParsers = new EList<>();
     atcParsers.add(new RunwayCheckParser());
@@ -74,7 +81,7 @@ public class ShortBlockParser extends Parser {
   }
 
   @Override
-  public SpeechList<IFromAtc> parseMulti(String line) {
+  public SpeechList<ISpeech> parse(String line) {
     IList<String> tokens = tokenize(line);
     SpeechList ret = new SpeechList();
 
@@ -161,7 +168,7 @@ public class ShortBlockParser extends Parser {
   }
 
   @Override
-  public IAtc2Atc parseAtc(String text) {
+  public ISpeech parseAtc2Atc(String text) {
     IList<String> toDo = tokenize(text);
     IList<String> done = new EList<>();
 
@@ -181,7 +188,7 @@ public class ShortBlockParser extends Parser {
           toLineString(done));
     }
 
-    IAtc2Atc ret = (IAtc2Atc) p.parse(used);
+    ISpeech ret = (ISpeech) p.parse(used);
     return ret;
   }
 

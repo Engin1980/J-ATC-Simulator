@@ -3,11 +3,13 @@ package eng.jAtcSim.newLib.speeches.xml.atc2airplane;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.jAtcSim.newLib.shared.Restriction;
+import eng.jAtcSim.newLib.shared.enums.AboveBelowExactly;
 import eng.jAtcSim.newLib.shared.xml.XmlLoader;
+import eng.jAtcSim.newLib.speeches.ICommand;
 import eng.jAtcSim.newLib.speeches.atc2airplane.AltitudeRestrictionCommand;
 
 public class AltitudeRestrictionCommandFactory {
-  public static IAtcCommand load(XElement element) {
+  public static ICommand load(XElement element) {
     assert element.getName().equals("AltitudeRestriction") ||
         element.getName().equals("AltitudeRestrictionClear");
     AltitudeRestrictionCommand ret;
@@ -19,16 +21,16 @@ public class AltitudeRestrictionCommandFactory {
     else {
       String resString = XmlLoader.loadString("restriction");
       int value = XmlLoader.loadInteger("value");
-      Restriction.eDirection restriction;
+      AboveBelowExactly restriction;
       switch (resString) {
         case "above":
-          restriction = Restriction.eDirection.atLeast;
+          restriction = AboveBelowExactly.above;
           break;
         case "below":
-          restriction = Restriction.eDirection.atMost;
+          restriction = AboveBelowExactly.below;
           break;
         case "exactly":
-          restriction = Restriction.eDirection.exactly;
+          restriction = AboveBelowExactly.exactly;
           break;
         default:
           throw new EEnumValueUnsupportedException(resString);

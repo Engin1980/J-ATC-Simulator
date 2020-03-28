@@ -1,12 +1,8 @@
-package eng.jAtcSim.newLib.textProcessing.implemented.parsers.shortBlockParser.toAtcParsers;
+package eng.jAtcSim.newLib.textProcessing.implemented.parsers.defaultParser.toAtcParsers;
 
 import eng.eSystem.collections.IList;
-import eng.eSystem.exceptions.EApplicationException;
-import eng.jAtcSim.newLib.Acc;
-import eng.jAtcSim.newLib.area.speaking.fromAtc.atc2atc.RunwayCheck;
-import eng.jAtcSim.newLib.area.textProcessing.parsing.shortBlockParser.SpeechParser;
-import eng.jAtcSim.newLib.world.ActiveRunway;
-import eng.jAtcSim.newLib.world.ActiveRunwayThreshold;
+import eng.jAtcSim.newLib.speeches.atc2atc.RunwayCheck;
+import eng.jAtcSim.newLib.textProcessing.implemented.parsers.defaultParser.common.SpeechParser;
 
 public class RunwayCheckParser extends SpeechParser<RunwayCheck> {
   private static final String[][] patterns = {
@@ -44,17 +40,17 @@ public class RunwayCheckParser extends SpeechParser<RunwayCheck> {
     if (blocks.size() == 3)
       rwyName = blocks.get(2);
 
-    ActiveRunway rwy;
-    if (rwyName == null)
-      rwy = null;
-    else {
-      ActiveRunwayThreshold rt = Acc.airport().tryGetRunwayThreshold(rwyName);
-      if (rt == null) {
-        throw new EApplicationException("Unable to find threshold name " + rwyName + ".");
-      } else {
-        rwy = rt.getParent();
-      }
-    }
+//    ActiveRunway rwy;
+//    if (rwyName == null)
+//      rwy = null;
+//    else {
+//      ActiveRunwayThreshold rt = Acc.airport().tryGetRunwayThreshold(rwyName);
+//      if (rt == null) {
+//        throw new EApplicationException("Unable to find threshold name " + rwyName + ".");
+//      } else {
+//        rwy = rt.getParent();
+//      }
+//    }
 
     RunwayCheck.eType type;
     switch (action) {
@@ -68,7 +64,7 @@ public class RunwayCheckParser extends SpeechParser<RunwayCheck> {
         throw new UnsupportedOperationException();
     }
 
-    RunwayCheck ret = new RunwayCheck(rwy, type);
+    RunwayCheck ret = new RunwayCheck(rwyName, type);
     return ret;
   }
 }

@@ -1,8 +1,8 @@
-package eng.jAtcSim.newLib.textProcessing.implemented.parsers.shortBlockParser.toPlaneParsers;
+package eng.jAtcSim.newLib.textProcessing.implemented.parsers.defaultParser.toPlaneParsers;
 
 import eng.eSystem.collections.IList;
 import eng.jAtcSim.newLib.speeches.atc2airplane.ReportDivertTimeNotification;
-import eng.jAtcSim.newLib.textProcessing.implemented.parsers.shortBlockParser.SpeechParser;
+import eng.jAtcSim.newLib.textProcessing.implemented.parsers.defaultParser.common.SpeechParser;
 
 public class ReportDivertTimeParser extends SpeechParser<ReportDivertTimeNotification> {
 

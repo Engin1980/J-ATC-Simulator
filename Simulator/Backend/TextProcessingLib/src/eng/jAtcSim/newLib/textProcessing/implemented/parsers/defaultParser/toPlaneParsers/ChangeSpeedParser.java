@@ -1,9 +1,9 @@
-package eng.jAtcSim.newLib.textProcessing.implemented.parsers.shortBlockParser.toPlaneParsers;
+package eng.jAtcSim.newLib.textProcessing.implemented.parsers.defaultParser.toPlaneParsers;
 
 import eng.eSystem.collections.IList;
 import eng.jAtcSim.newLib.shared.enums.AboveBelowExactly;
 import eng.jAtcSim.newLib.speeches.atc2airplane.ChangeSpeedCommand;
-import eng.jAtcSim.newLib.textProcessing.implemented.parsers.shortBlockParser.SpeechParser;
+import eng.jAtcSim.newLib.textProcessing.implemented.parsers.defaultParser.common.SpeechParser;
 
 public class ChangeSpeedParser extends SpeechParser<ChangeSpeedCommand> {
 

@@ -18,7 +18,6 @@ import eng.eSystem.geo.Headings;
 import eng.eSystem.utilites.NumberUtils;
 import eng.jAtcSim.newLib.shared.xml.XmlLoader;
 
-import java.awt.geom.Line2D;
 import java.util.Comparator;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
@@ -317,7 +316,7 @@ public class Border {
   }
 
   private boolean isLineIntersection(Tuple<Coordinate, Coordinate> a, Tuple<Coordinate, Coordinate> b) {
-    boolean ret = Line2D.linesIntersect(
+    boolean ret =LineUtils.linesIntersect(
         a.getA().getLatitude().get(), a.getA().getLongitude().get(),
         a.getB().getLatitude().get(), a.getB().getLongitude().get(),
         b.getA().getLatitude().get(), b.getA().getLongitude().get(),

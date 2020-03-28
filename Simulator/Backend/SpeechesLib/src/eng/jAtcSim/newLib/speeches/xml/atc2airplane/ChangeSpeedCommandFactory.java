@@ -1,6 +1,7 @@
 package eng.jAtcSim.newLib.speeches.xml.atc2airplane;
 
 import eng.eSystem.eXml.XElement;
+import eng.jAtcSim.newLib.shared.enums.AboveBelowExactly;
 import eng.jAtcSim.newLib.shared.xml.XmlLoader;
 import eng.jAtcSim.newLib.speeches.atc2airplane.ChangeSpeedCommand;
 
@@ -13,7 +14,7 @@ public class ChangeSpeedCommandFactory {
     if (rs.equals("clear")) {
       ret = ChangeSpeedCommand.createResumeOwnSpeed();
     } else {
-      ChangeSpeedCommand.eRestriction restriction = Enum.valueOf(ChangeSpeedCommand.eRestriction.class, rs);
+      AboveBelowExactly restriction = Enum.valueOf(AboveBelowExactly.class, rs);
       int speed = XmlLoader.loadInteger("value");
       ret = ChangeSpeedCommand.create(restriction, speed);
     }

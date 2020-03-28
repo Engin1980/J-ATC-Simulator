@@ -1,4 +1,4 @@
-package eng.jAtcSim.newLib.textProcessing.implemented.parsers.shortBlockParser;
+package eng.jAtcSim.newLib.textProcessing.implemented.parsers.defaultParser.common;
 
 import eng.eSystem.EStringBuilder;
 import eng.eSystem.collections.IList;
