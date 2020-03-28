@@ -14,7 +14,7 @@
 //import eng.jAtcSim.newLib.airplanes.Airplane;
 //import eng.jAtcSim.newLib.airplanes.AirplaneType;
 //import eng.jAtcSim.newLib.airplanes.Callsign;
-//import eng.jAtcSim.newLib.airplanes.Squawk;
+//import eng.jAtcSim.newLib.airplanes.eng.jAtcSim.newLib.shared.Squawk;
 //import eng.jAtcSim.newLib.global.ETime;
 //import eng.jAtcSim.newLib.global.Headings;
 //import eng.jAtcSim.newLib.messaging.Message;
@@ -171,7 +171,7 @@
 //    EntryExitPoint entryPoint = tryGetRandomEntryPoint(m.getEntryRadial(), false, pt);
 //    if (entryPoint == null) return null; // no route means disallowed IFR
 //    Coordinate coord = Acc.airport().getLocation();
-//    Squawk sqwk = generateSqwk();
+//    eng.jAtcSim.newLib.shared.Squawk sqwk = generateSqwk();
 //
 //    int heading = 0;
 //    int alt = Acc.airport().getAltitude();
@@ -220,7 +220,7 @@
 //    heading = (int) Coordinates.getBearing(coord, entryPoint.getNavaid().getCoordinate());
 //    alt = generateArrivingPlaneAltitude(entryPoint, coord, pt);
 //
-//    Squawk sqwk = generateSqwk();
+//    eng.jAtcSim.newLib.shared.Squawk sqwk = generateSqwk();
 //    spd = pt.vCruise;
 //
 //    ret = new Airplane(
@@ -281,14 +281,14 @@
 //    return ret;
 //  }
 //
-//  private Squawk generateSqwk() {
+//  private eng.jAtcSim.newLib.shared.Squawk generateSqwk() {
 //    String[] illegals = new String[]{
 //        "7500", "7600", "7700"
 //    };
 //
 //    int len = 4;
 //    char[] tmp;
-//    Squawk ret = null;
+//    eng.jAtcSim.newLib.shared.Squawk ret = null;
 //    while (ret == null) {
 //      tmp = new char[len];
 //      for (int i = 0; i < len; i++) {
@@ -296,7 +296,7 @@
 //      }
 //      if (ArrayUtils.contains(illegals, tmp.toString()))
 //        continue;
-//      ret = Squawk.create(tmp);
+//      ret = eng.jAtcSim.newLib.shared.Squawk.create(tmp);
 //      for (Airplane p : Acc.planes()) {
 //        if (p.getSqwk().equals(ret)) {
 //          ret = null;
