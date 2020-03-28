@@ -61,8 +61,8 @@ public class SpeechList<T extends ISpeech> extends EList<T> implements IMessageC
       throw new EApplicationException("Some speech is null.");
   }
 
-  public IAtcCommand getAsCommand(int index) {
-    IAtcCommand ret = getAs(index);
+  public ICommand getAsCommand(int index) {
+    ICommand ret = getAs(index);
     return ret;
   }
 
