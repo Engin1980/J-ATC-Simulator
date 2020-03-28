@@ -2,7 +2,7 @@ package eng.jAtcSim.newLib.textProcessing.base;
 
 import eng.jAtcSim.newLib.speeches.ISpeech;
 import eng.jAtcSim.newLib.speeches.SpeechList;
-import eng.jAtcSim.newLib.textProcessing.parsing.ShortcutList;
+import eng.jAtcSim.newLib.textProcessing.implemented.parsers.shortBlockParser.ShortcutList;
 
 public abstract class Parser {
   public abstract String getHelp();

@@ -2,37 +2,32 @@ package eng.jAtcSim.newLib.speeches.atc2airplane;
 
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.validation.EAssert;
+import eng.jAtcSim.newLib.shared.enums.AboveBelowExactly;
 import eng.jAtcSim.newLib.shared.exceptions.ApplicationException;
 import eng.jAtcSim.newLib.speeches.ICommand;
 
 public class ChangeSpeedCommand implements  ICommand {
 
-  public enum eRestriction {
-    below,
-    above,
-    exactly
-  }
-
-  public static ChangeSpeedCommand create(eRestriction direction, int speedInKts) {
+  public static ChangeSpeedCommand create(AboveBelowExactly direction, int speedInKts) {
     EAssert.Argument.isTrue(speedInKts > 0);
     ChangeSpeedCommand ret = new ChangeSpeedCommand(direction, speedInKts);
     return ret;
   }
 
   public static ChangeSpeedCommand createResumeOwnSpeed() {
-    ChangeSpeedCommand ret = new ChangeSpeedCommand(eRestriction.exactly, null);
+    ChangeSpeedCommand ret = new ChangeSpeedCommand(AboveBelowExactly.exactly, null);
     return ret;
   }
 
-  private final eRestriction restriction;
+  private final AboveBelowExactly restriction;
   private final Integer value;
 
-  private ChangeSpeedCommand(eRestriction restriction, Integer value) {
+  private ChangeSpeedCommand(AboveBelowExactly restriction, Integer value) {
     this.restriction = restriction;
     this.value = value;
   }
 
-  public eRestriction getDirection() {
+  public AboveBelowExactly getDirection() {
     if (isResumeOwnSpeed())
       throw new ApplicationException("Unable to call this on 'ResumeOwnSpeed' command.");
     return this.restriction;

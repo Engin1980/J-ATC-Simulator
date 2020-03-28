@@ -2,11 +2,12 @@ package eng.jAtcSim.newLib.speeches.atc2airplane;
 
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.Restriction;
+import eng.jAtcSim.newLib.shared.enums.AboveBelowExactly;
 import eng.jAtcSim.newLib.shared.exceptions.ApplicationException;
 import eng.jAtcSim.newLib.speeches.ICommand;
 
 public class AltitudeRestrictionCommand implements ICommand {
-  public static AltitudeRestrictionCommand create(Restriction.eDirection direction, int value) {
+  public static AltitudeRestrictionCommand create(AboveBelowExactly direction, int value) {
     EAssert.Argument.isTrue(value >= 0);
     Restriction res = new Restriction(direction, value);
     AltitudeRestrictionCommand ret = new AltitudeRestrictionCommand(res);

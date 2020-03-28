@@ -1,17 +1,13 @@
 package eng.jAtcSim.newLib.shared;
 
+import eng.jAtcSim.newLib.shared.enums.AboveBelowExactly;
+
 public class Restriction {
-  
-  public enum eDirection{
-    atMost,
-    atLeast,
-    exactly
-  }
-  
-  public final eDirection direction;
+
+  public final AboveBelowExactly direction;
   public final int value;
 
-  public Restriction(eDirection direction, int value) {
+  public Restriction(AboveBelowExactly direction, int value) {
     this.direction = direction;
     this.value = value;
   }
