@@ -2,7 +2,7 @@ package eng.jAtcSim.newLib.area.speeches.atc2airplane;
 
 import eng.eSystem.eXml.XElement;
 import eng.jAtcSim.newLib.area.speeches.IAtcCommand;
-import eng.jAtcSim.newLib.shared.xml.XmlLoader;
+import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
 
 public class ChangeAltitudeCommand implements IAtcCommand {
 
@@ -35,14 +35,14 @@ public class ChangeAltitudeCommand implements IAtcCommand {
   public static ChangeAltitudeCommand load(XElement source) {
     assert source.getName().equals("altitude");
 
-    XmlLoader.setContext(source);
-    String dirS = XmlLoader.loadString("direction", "set");
+    XmlLoaderUtils.setContext(source);
+    String dirS = XmlLoaderUtils.loadString("direction", "set");
     eDirection dir;
     if (dirS.equals("set"))
       dir = eDirection.any;
     else
       dir = Enum.valueOf(eDirection.class, dirS);
-    int alt = XmlLoader.loadAltitude("value");
+    int alt = XmlLoaderUtils.loadAltitude("value");
     ChangeAltitudeCommand ret = new ChangeAltitudeCommand(dir, alt);
     return ret;
   }

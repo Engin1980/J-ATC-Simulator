@@ -13,7 +13,7 @@ import java.util.function.Function;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
-public abstract class XmlLoader {
+public abstract class XmlLoaderUtils {
 
   private static XElement context;
   private static boolean printLogToConsole = false;
@@ -116,7 +116,7 @@ public abstract class XmlLoader {
   }
 
   public static Character loadChar(XElement source, String key, Character defaultValue) {
-    String s = XmlLoader.loadString(source, key, null);
+    String s = XmlLoaderUtils.loadString(source, key, null);
     if (s == null || s.length() < 1)
       return defaultValue;
     else
@@ -301,12 +301,12 @@ public abstract class XmlLoader {
   }
 
   public static String loadStringRestricted(String key, String[] possibleValues) {
-    String ret = loadStringRestricted(XmlLoader.context, key, possibleValues);
+    String ret = loadStringRestricted(XmlLoaderUtils.context, key, possibleValues);
     return ret;
   }
 
   public static String loadStringRestricted(String key, String[] possibleValues, String defaultValue) {
-    String ret = loadStringRestricted(XmlLoader.context, key, possibleValues, defaultValue);
+    String ret = loadStringRestricted(XmlLoaderUtils.context, key, possibleValues, defaultValue);
     return ret;
   }
 
@@ -325,11 +325,11 @@ public abstract class XmlLoader {
   public static void setContext(XElement context) {
     if (printLogToConsole)
       System.out.println("XmlLoader - context change " + context.toXmlPath(true));
-    XmlLoader.context = context;
+    XmlLoaderUtils.context = context;
   }
 
   public static void setPrintLogToConsole(boolean printLogToConsole) {
-    XmlLoader.printLogToConsole = printLogToConsole;
+    XmlLoaderUtils.printLogToConsole = printLogToConsole;
   }
 
   private static String readValueFromXml(XElement source, String key) {

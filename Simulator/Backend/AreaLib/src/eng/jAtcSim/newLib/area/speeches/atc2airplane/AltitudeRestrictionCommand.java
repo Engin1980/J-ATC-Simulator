@@ -6,7 +6,7 @@ import eng.jAtcSim.newLib.shared.Restriction;
 import eng.jAtcSim.newLib.shared.enums.AboveBelowExactly;
 import eng.jAtcSim.newLib.shared.exceptions.ApplicationException;
 import eng.jAtcSim.newLib.area.speeches.IAtcCommand;
-import eng.jAtcSim.newLib.shared.xml.XmlLoader;
+import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
 
 public class AltitudeRestrictionCommand implements IAtcCommand {
   public static AltitudeRestrictionCommand create(AboveBelowExactly direction, int value) {
@@ -25,13 +25,13 @@ public class AltitudeRestrictionCommand implements IAtcCommand {
         element.getName().equals("AltitudeRestrictionClear");
     AltitudeRestrictionCommand ret;
 
-    XmlLoader.setContext(element);
+    XmlLoaderUtils.setContext(element);
 
     if (element.getName().equals("AltitudeRestrictionClear"))
       ret = AltitudeRestrictionCommand.createClearRestriction();
     else {
-      String resString = XmlLoader.loadString("restriction");
-      int value = XmlLoader.loadInteger("value");
+      String resString = XmlLoaderUtils.loadString("restriction");
+      int value = XmlLoaderUtils.loadInteger("value");
       AboveBelowExactly restriction;
       switch (resString) {
         case "above":

@@ -2,15 +2,15 @@ package eng.jAtcSim.newLib.area;
 
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.geo.Coordinate;
-import eng.jAtcSim.newLib.shared.xml.XmlLoader;
+import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
 
 public class InitialPosition {
 
-  static class XmlReader {
+  static class XmlLoader {
     static InitialPosition load(XElement source) {
-      XmlLoader.setContext(source);
-      Coordinate coordinate = XmlLoader.loadCoordinate("coordinate");
-      int range = XmlLoader.loadInteger("range");
+      XmlLoaderUtils.setContext(source);
+      Coordinate coordinate = XmlLoaderUtils.loadCoordinate("coordinate");
+      int range = XmlLoaderUtils.loadInteger("range");
       InitialPosition ret = new InitialPosition(coordinate, range);
       return ret;
     }

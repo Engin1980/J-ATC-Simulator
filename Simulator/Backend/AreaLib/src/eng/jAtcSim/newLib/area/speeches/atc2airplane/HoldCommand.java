@@ -5,7 +5,7 @@ import eng.jAtcSim.newLib.area.Airport;
 import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.area.PublishedHold;
 import eng.jAtcSim.newLib.shared.exceptions.ApplicationException;
-import eng.jAtcSim.newLib.shared.xml.XmlLoader;
+import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
 
 public class HoldCommand extends ToNavaidCommand {
 
@@ -32,10 +32,10 @@ public class HoldCommand extends ToNavaidCommand {
 
     HoldCommand ret;
 
-    XmlLoader.setContext(element);
-    String fix = XmlLoader.loadString("fix");
-    Integer inboundRadial = XmlLoader.loadInteger("inboundRadial", null);
-    String turns = XmlLoader.loadStringRestricted("turns", new String[]{"left", "right"}, null);
+    XmlLoaderUtils.setContext(element);
+    String fix = XmlLoaderUtils.loadString("fix");
+    Integer inboundRadial = XmlLoaderUtils.loadInteger("inboundRadial", null);
+    String turns = XmlLoaderUtils.loadStringRestricted("turns", new String[]{"left", "right"}, null);
 
     Navaid navaid = parent.getParent().getNavaids().get(fix);
 

@@ -5,7 +5,7 @@ import eng.eSystem.eXml.XElement;
 
 public class InactiveRunway extends Runway<InactiveRunway, InactiveRunwayThreshold> {
 
-  static class XmlReader {
+  static class XmlLoader {
     public static InactiveRunway load(XElement source, Airport airport) {
       InactiveRunway ret = new InactiveRunway();
       ret.setParent(airport);
@@ -15,7 +15,7 @@ public class InactiveRunway extends Runway<InactiveRunway, InactiveRunwayThresho
 
     protected static void readThresholds(
         XElement source, InactiveRunway activeRunway) {
-      IList<InactiveRunwayThreshold> thresholds = InactiveRunwayThreshold.XmlReader.loadBoth(
+      IList<InactiveRunwayThreshold> thresholds = InactiveRunwayThreshold.XmlLoader.loadBoth(
           source.getChild("thresholds").getChildren(), activeRunway);
       activeRunway.setThresholds(thresholds);
     }

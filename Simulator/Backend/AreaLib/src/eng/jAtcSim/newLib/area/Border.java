@@ -16,7 +16,7 @@ import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.geo.Headings;
 import eng.eSystem.utilites.NumberUtils;
-import eng.jAtcSim.newLib.shared.xml.XmlLoader;
+import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
 
 import java.util.Comparator;
 
@@ -42,7 +42,7 @@ public class Border {
     }
   }
 
-  static class XmlReader {
+  static class XmlLoader {
     static Border load(XElement source, Area area) {
       Border ret = new Border();
       read(source, ret, area);
@@ -50,13 +50,13 @@ public class Border {
     }
 
     private static void read(XElement source, Border border, Area area) {
-      XmlLoader.setContext(source);
-      border.name = XmlLoader.loadString("name");
-      border.type = XmlLoader.loadEnum("type", eType.class);
-      border.enclosed = XmlLoader.loadBoolean("enclosed");
-      border.minAltitude = XmlLoader.loadInteger("minAltitude");
-      border.maxAltitude = XmlLoader.loadInteger("maxAltitude");
-      border.labelCoordinate = XmlLoader.loadCoordinate("labelCoordinate", null);
+      XmlLoaderUtils.setContext(source);
+      border.name = XmlLoaderUtils.loadString("name");
+      border.type = XmlLoaderUtils.loadEnum("type", eType.class);
+      border.enclosed = XmlLoaderUtils.loadBoolean("enclosed");
+      border.minAltitude = XmlLoaderUtils.loadInteger("minAltitude");
+      border.maxAltitude = XmlLoaderUtils.loadInteger("maxAltitude");
+      border.labelCoordinate = XmlLoaderUtils.loadCoordinate("labelCoordinate", null);
 
       IReadOnlyList<XElement> pointElements = source.getChild("points").getChildren();
       if (pointElements.size() == 1 && pointElements.get(0).getName().equals("circle"))
@@ -88,8 +88,8 @@ public class Border {
 
     private static IList<BorderPoint> loadPointsFromCircle(XElement source) {
       IList<BorderPoint> ret = new EList<>();
-      Coordinate coord = XmlLoader.loadCoordinate(source, "coordinate");
-      double dist = XmlLoader.loadDouble(source, "distance");
+      Coordinate coord = XmlLoaderUtils.loadCoordinate(source, "coordinate");
+      double dist = XmlLoaderUtils.loadDouble(source, "distance");
       Coordinate pointCoordinate = Coordinates.getCoordinate(coord, 0, dist);
       BorderPoint point = BorderPoint.create(pointCoordinate);
       IList<BorderPoint> tmp = generateArcPoints(point, coord, true, point);
@@ -106,16 +106,16 @@ public class Border {
       for (XElement node : nodes) {
         switch (node.getName()) {
           case "point":
-            point = BorderPoint.XmlReader.load(node);
+            point = BorderPoint.XmlLoader.load(node);
             ret.add(point);
             break;
           case "arc":
             arcTuples.add(new Tuple<>(ret.size(), node));
             break;
           case "crd":
-            Coordinate coordinate = XmlLoader.loadCoordinate(node, "coordinate");
-            int radial = XmlLoader.loadInteger(node, "radial");
-            double distance = XmlLoader.loadDouble(node, "distance");
+            Coordinate coordinate = XmlLoaderUtils.loadCoordinate(node, "coordinate");
+            int radial = XmlLoaderUtils.loadInteger(node, "radial");
+            double distance = XmlLoaderUtils.loadDouble(node, "distance");
             Coordinate borderPointCoordinate = Coordinates.getCoordinate(
                 coordinate, radial, distance);
             point = BorderPoint.create(borderPointCoordinate);
@@ -128,8 +128,8 @@ public class Border {
 
       for (Tuple<Integer, XElement> arcTuple : arcTuples) {
         int index = arcTuple.getA();
-        Coordinate coordinate = XmlLoader.loadCoordinate(arcTuple.getB(), "coordinate");
-        boolean isClockwise = XmlLoader.loadStringRestricted(arcTuple.getB(), "direction",
+        Coordinate coordinate = XmlLoaderUtils.loadCoordinate(arcTuple.getB(), "coordinate");
+        boolean isClockwise = XmlLoaderUtils.loadStringRestricted(arcTuple.getB(), "direction",
             new String[]{"clockwise", "counterclockwise"}).equals("clockwise");
         IList<BorderPoint> arcPoints = generateArcPoints(
             ret.get(index - 1), coordinate, isClockwise, ret.get(index));

@@ -4,15 +4,15 @@ import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.SwitchCaseNotFoundException;
 import eng.jAtcSim.newLib.area.Airport;
 import eng.jAtcSim.newLib.area.speeches.atc2airplane.afterCommands.*;
-import eng.jAtcSim.newLib.shared.xml.XmlLoader;
+import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
 
 public class XmlAfterCommandFactory {
 
 
   public static IAtcCommand load(XElement element, Airport parent) {
     assert element.getName().equals("after");
-    XmlLoader.setContext(element);
-    String property = XmlLoader.loadStringRestricted("property",
+    XmlLoaderUtils.setContext(element);
+    String property = XmlLoaderUtils.loadStringRestricted("property",
         new String[]{"speed", "altitude", "heading","distance","radial","navaid"});
     switch (property){
       case "speed":

@@ -5,7 +5,7 @@ import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.eXml.XElement;
 import eng.jAtcSim.newLib.area.Airport;
 import eng.jAtcSim.newLib.area.speeches.IAtcCommand;
-import eng.jAtcSim.newLib.shared.xml.XmlLoader;
+import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
 
 public class GaRoute extends Route {
 
@@ -27,7 +27,7 @@ public class GaRoute extends Route {
     GaRoute ret = new GaRoute();
     ret.read(
         source,
-        XmlLoader.loadString(source, "gaMapping"));
+        XmlLoaderUtils.loadString(source, "gaMapping"));
   }
 
   public static GaRoute create(IList<IAtcCommand> gaCommands) {

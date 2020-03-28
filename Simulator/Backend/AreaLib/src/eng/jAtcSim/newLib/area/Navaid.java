@@ -2,11 +2,11 @@ package eng.jAtcSim.newLib.area;
 
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.geo.Coordinate;
-import eng.jAtcSim.newLib.shared.xml.XmlLoader;
+import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
 
 public class Navaid {
 
-  static class XmlReader {
+  static class XmlLoader {
     public static Navaid load(XElement source) {
       Navaid ret = new Navaid();
       read(source, ret);
@@ -14,10 +14,10 @@ public class Navaid {
     }
 
     private static void read(XElement source, Navaid navaid) {
-      XmlLoader.setContext(source);
-      navaid.coordinate = XmlLoader.loadCoordinate("coordinate");
-      navaid.name = XmlLoader.loadString("name");
-      navaid.type = XmlLoader.loadEnum("type", eType.class);
+      XmlLoaderUtils.setContext(source);
+      navaid.coordinate = XmlLoaderUtils.loadCoordinate("coordinate");
+      navaid.name = XmlLoaderUtils.loadString("name");
+      navaid.type = XmlLoaderUtils.loadEnum("type", eType.class);
     }
   }
 

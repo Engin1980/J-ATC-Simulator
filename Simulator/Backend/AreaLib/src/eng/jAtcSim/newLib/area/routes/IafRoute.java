@@ -6,7 +6,7 @@ import eng.jAtcSim.newLib.area.Airport;
 import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.area.speeches.IAtcCommand;
 import eng.jAtcSim.newLib.shared.PlaneCategoryDefinitions;
-import eng.jAtcSim.newLib.shared.xml.XmlLoader;
+import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
 
 public class IafRoute extends Route {
 
@@ -40,16 +40,16 @@ public class IafRoute extends Route {
 
   private void fill(Navaid navaid, IList<IAtcCommand> routeCommands) {
     this.navaid = navaid;
-    this.category = XmlLoader.loadPlaneCategory("category", "ABCD");
+    this.category = XmlLoaderUtils.loadPlaneCategory("category", "ABCD");
     super.fill(routeCommands);
   }
 
   private void read(XElement source) {
-    XmlLoader.setContext(source);
-    String iafName = XmlLoader.loadString("iaf");
+    XmlLoaderUtils.setContext(source);
+    String iafName = XmlLoaderUtils.loadString("iaf");
     this.navaid = this.getParent().getParent().getNavaids().get(iafName);
-    this.category = XmlLoader.loadPlaneCategory("category", "ABCD");
-    String iafMapping = XmlLoader.loadString("iafMapping");
+    this.category = XmlLoaderUtils.loadPlaneCategory("category", "ABCD");
+    String iafMapping = XmlLoaderUtils.loadString("iafMapping");
     super.read(source, iafMapping);
   }
 }

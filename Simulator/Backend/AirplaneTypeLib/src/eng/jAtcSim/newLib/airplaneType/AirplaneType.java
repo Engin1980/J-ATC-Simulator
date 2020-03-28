@@ -1,30 +1,30 @@
 package eng.jAtcSim.newLib.airplaneType;
 
 import eng.eSystem.eXml.XElement;
-import eng.jAtcSim.newLib.shared.xml.XmlLoader;
+import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
 
 public class AirplaneType {
   public static AirplaneType load(XElement source) {
-    XmlLoader.setContext(source);
-    String name = XmlLoader.loadString("name");
-    String fullName = XmlLoader.loadString("fullName");
-    char category = XmlLoader.loadStringRestricted("category", new String[]{"A", "B", "C", "D"}).charAt(0);
-    int maxAltitude = XmlLoader.loadInteger("maxAltitude");
-    int vMinApp = XmlLoader.loadInteger("vMinApp");
-    int vApp = XmlLoader.loadInteger("vApp");
-    int vMaxApp = XmlLoader.loadInteger("vMaxApp");
-    int vR = XmlLoader.loadInteger("vR");
-    int vDep = XmlLoader.loadInteger("vDep");
-    int vMinClean = XmlLoader.loadInteger("vMinClean");
-    int vMaxClean = XmlLoader.loadInteger("vMaxClean");
-    int vCruise = XmlLoader.loadInteger("vCruise");
-    int lowClimbRate = XmlLoader.loadInteger("lowClimbRate");
-    int highClimbRate = XmlLoader.loadInteger("highClimbRate");
-    int lowDescendRate = XmlLoader.loadInteger("lowDescendRate");
-    int highDescendRate = XmlLoader.loadInteger("highDescendRate");
-    int speedIncreaseRate = XmlLoader.loadInteger("speedIncreaseRate");
-    int speedDecreaseRate = XmlLoader.loadInteger("speedDecreaseRate");
-    int headingChangeRate = XmlLoader.loadInteger("headingChangeRate");
+    XmlLoaderUtils.setContext(source);
+    String name = XmlLoaderUtils.loadString("name");
+    String fullName = XmlLoaderUtils.loadString("fullName");
+    char category = XmlLoaderUtils.loadStringRestricted("category", new String[]{"A", "B", "C", "D"}).charAt(0);
+    int maxAltitude = XmlLoaderUtils.loadInteger("maxAltitude");
+    int vMinApp = XmlLoaderUtils.loadInteger("vMinApp");
+    int vApp = XmlLoaderUtils.loadInteger("vApp");
+    int vMaxApp = XmlLoaderUtils.loadInteger("vMaxApp");
+    int vR = XmlLoaderUtils.loadInteger("vR");
+    int vDep = XmlLoaderUtils.loadInteger("vDep");
+    int vMinClean = XmlLoaderUtils.loadInteger("vMinClean");
+    int vMaxClean = XmlLoaderUtils.loadInteger("vMaxClean");
+    int vCruise = XmlLoaderUtils.loadInteger("vCruise");
+    int lowClimbRate = XmlLoaderUtils.loadInteger("lowClimbRate");
+    int highClimbRate = XmlLoaderUtils.loadInteger("highClimbRate");
+    int lowDescendRate = XmlLoaderUtils.loadInteger("lowDescendRate");
+    int highDescendRate = XmlLoaderUtils.loadInteger("highDescendRate");
+    int speedIncreaseRate = XmlLoaderUtils.loadInteger("speedIncreaseRate");
+    int speedDecreaseRate = XmlLoaderUtils.loadInteger("speedDecreaseRate");
+    int headingChangeRate = XmlLoaderUtils.loadInteger("headingChangeRate");
 
     AirplaneType ret = new AirplaneType(name, fullName, category,maxAltitude,
         vR, vMinApp, vMaxApp, vApp,

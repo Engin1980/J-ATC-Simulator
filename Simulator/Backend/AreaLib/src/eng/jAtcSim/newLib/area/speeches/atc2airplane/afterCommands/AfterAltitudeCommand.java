@@ -1,15 +1,15 @@
 package eng.jAtcSim.newLib.area.speeches.atc2airplane.afterCommands;
 
 import eng.eSystem.eXml.XElement;
-import eng.jAtcSim.newLib.shared.xml.XmlLoader;
+import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
 
 public class AfterAltitudeCommand extends AfterCommand {
   public static AfterAltitudeCommand load(XElement element) {
-    XmlLoader.setContext(element);
+    XmlLoaderUtils.setContext(element);
 
     AfterAltitudeCommand ret = new AfterAltitudeCommand();
-    ret.altitude = XmlLoader.loadInteger("value");
-    ret.extension = XmlLoader.loadEnum("extension", AfterValueExtension.class, AfterValueExtension.exactly);
+    ret.altitude = XmlLoaderUtils.loadInteger("value");
+    ret.extension = XmlLoaderUtils.loadEnum("extension", AfterValueExtension.class, AfterValueExtension.exactly);
     return ret;
   }
 

@@ -8,11 +8,11 @@ import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.geo.Headings;
 import eng.eSystem.utilites.NumberUtils;
-import eng.jAtcSim.newLib.shared.xml.XmlLoader;
+import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
 
 public class RunwayConfiguration {
 
-  static class XmlReader{
+  static class XmlLoader {
     static RunwayConfiguration load(XElement source, Airport airport) {
       RunwayConfiguration ret = new RunwayConfiguration();
       read(source, ret, airport);
@@ -20,17 +20,17 @@ public class RunwayConfiguration {
     }
 
     private static void read(XElement source, RunwayConfiguration runwayConfiguration, Airport airport) {
-      XmlLoader.setContext(source);
-      runwayConfiguration.windFrom = XmlLoader.loadInteger("windFrom", 0);
-      runwayConfiguration.windTo = XmlLoader.loadInteger("windTo", 359);
-      runwayConfiguration.windSpeedFrom = XmlLoader.loadInteger("windSpeedFrom", 0);
-      runwayConfiguration.windSpeedTo = XmlLoader.loadInteger("windSpeedTo", 999);
+      XmlLoaderUtils.setContext(source);
+      runwayConfiguration.windFrom = XmlLoaderUtils.loadInteger("windFrom", 0);
+      runwayConfiguration.windTo = XmlLoaderUtils.loadInteger("windTo", 359);
+      runwayConfiguration.windSpeedFrom = XmlLoaderUtils.loadInteger("windSpeedFrom", 0);
+      runwayConfiguration.windSpeedTo = XmlLoaderUtils.loadInteger("windSpeedTo", 999);
 
       runwayConfiguration.departures = new EList<>();
       runwayConfiguration.arrivals = new EList<>();
 
       for (XElement child : source.getChildren()) {
-        RunwayThresholdConfiguration rtc = RunwayThresholdConfiguration.XmlReader.load(child, airport);
+        RunwayThresholdConfiguration rtc = RunwayThresholdConfiguration.XmlLoader.load(child, airport);
         switch (child.getName()) {
           case "departure":
             runwayConfiguration.departures.add(rtc);

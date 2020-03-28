@@ -10,11 +10,11 @@ import eng.jAtcSim.newLib.area.routes.DARoute;
 import eng.jAtcSim.newLib.area.routes.GaRoute;
 import eng.jAtcSim.newLib.area.routes.IafRoute;
 import eng.jAtcSim.newLib.shared.exceptions.ToDoException;
-import eng.jAtcSim.newLib.shared.xml.XmlLoader;
+import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
 
 public class Airport extends Parentable<Area> {
 
-  static class XmlReader{
+  static class XmlLoader {
     public static Airport load(XElement source, Area area) {
       Airport ret = new Airport();
       ret.setParent(area);
@@ -25,73 +25,73 @@ public class Airport extends Parentable<Area> {
     }
 
     private static void read(XElement source, Airport airport) {
-      XmlLoader.setContext(source);
-      airport.icao = XmlLoader.loadString("icao");
-      airport.name = XmlLoader.loadString("name");
-      airport.altitude = XmlLoader.loadInteger("altitude");
-      airport.transitionAltitude = XmlLoader.loadInteger("transitionAltitude");
-      airport.vfrAltitude = XmlLoader.loadInteger("vfrAltitude");
-      airport.declination = XmlLoader.loadDouble("declination");
-      airport.coveredDistance = XmlLoader.loadInteger("coveredDistance");
-      airport.mainAirportNavaid = airport.getParent().getNavaids().get(XmlLoader.loadString("mainAirportNavaidName"));
-      airport.initialPosition = InitialPosition.XmlReader.load(source.getChild("initialPosition"));
+      XmlLoaderUtils.setContext(source);
+      airport.icao = XmlLoaderUtils.loadString("icao");
+      airport.name = XmlLoaderUtils.loadString("name");
+      airport.altitude = XmlLoaderUtils.loadInteger("altitude");
+      airport.transitionAltitude = XmlLoaderUtils.loadInteger("transitionAltitude");
+      airport.vfrAltitude = XmlLoaderUtils.loadInteger("vfrAltitude");
+      airport.declination = XmlLoaderUtils.loadDouble("declination");
+      airport.coveredDistance = XmlLoaderUtils.loadInteger("coveredDistance");
+      airport.mainAirportNavaid = airport.getParent().getNavaids().get(XmlLoaderUtils.loadString("mainAirportNavaidName"));
+      airport.initialPosition = InitialPosition.XmlLoader.load(source.getChild("initialPosition"));
       airport.atcs = new EDistinctList<>(q -> q.getName(), EDistinctList.Behavior.exception);
-      XmlLoader.loadList(
+      XmlLoaderUtils.loadList(
           source.getChild("atcTemplates").getChildren(),
-          airport.atcs, q -> Atc.XmlReader.load(q));
+          airport.atcs, q -> Atc.XmlLoader.load(q));
       {
         EList<EntryExitPoint> tmp = new EList<>();
-        XmlLoader.loadList(
+        XmlLoaderUtils.loadList(
             source.getChild("entryExitPoints").getChildren(),
             tmp,
-            q -> EntryExitPoint.XmlReader.load(q, airport));
+            q -> EntryExitPoint.XmlLoader.load(q, airport));
         airport.entryExitPoints = new EntryExitPointList(tmp);
       }
       airport.holds = new EList<>();
-      XmlLoader.loadList(
+      XmlLoaderUtils.loadList(
           source.getChild("holds").getChildren(),
           airport.holds,
-          q -> PublishedHold.XmlReader.load(q, airport));
+          q -> PublishedHold.XmlLoader.load(q, airport));
 
       airport.daRoutes = new EDistinctList<>(q -> q.getName(), EDistinctList.Behavior.exception);
       IReadOnlyList<XElement> routes = extractRoutes(source.getChild("daRoutes"), "route");
-      XmlLoader.loadList(
+      XmlLoaderUtils.loadList(
           routes,
           airport.daRoutes,
           q -> DARoute.load(q, airport));
 
       airport.iafRoutes = new EList<>();
       routes = extractRoutes(source.getChild("iafRoutes"), "iafRoute");
-      XmlLoader.loadList(
+      XmlLoaderUtils.loadList(
           routes,
           airport.iafRoutes,
           q -> IafRoute.load(q, airport));
 
       airport.gaRoutes = new EList<>();
       routes = extractRoutes(source.getChild("gaRoutes"), "gaRoute");
-      XmlLoader.loadList(
+      XmlLoaderUtils.loadList(
           routes,
           airport.gaRoutes,
           q -> GaRoute.load(q, airport));
 
       // TODO put inactive and active runways to one upper element
       airport.inactiveRunways = new EList<>();
-      XmlLoader.loadList(
+      XmlLoaderUtils.loadList(
           source.getChild("runways").getChildren("inactiveRunway"),
           airport.inactiveRunways,
-          q -> InactiveRunway.XmlReader.load(q, airport));
+          q -> InactiveRunway.XmlLoader.load(q, airport));
 
       airport.runways = new EList<>();
-      XmlLoader.loadList(
+      XmlLoaderUtils.loadList(
           source.getChild("runways").getChildren("runway"),
           airport.runways,
-          q -> ActiveRunway.XmlReader.load(q, airport));
+          q -> ActiveRunway.XmlLoader.load(q, airport));
 
       airport.runwayConfigurations = new EList<>();
-      XmlLoader.loadList(
+      XmlLoaderUtils.loadList(
           source.getChild("runwayConfigurations").getChildren(),
           airport.runwayConfigurations,
-          q -> RunwayConfiguration.XmlReader.load(q, airport));
+          q -> RunwayConfiguration.XmlLoader.load(q, airport));
 
       // TODO check airport
       // binding should be done in constructor

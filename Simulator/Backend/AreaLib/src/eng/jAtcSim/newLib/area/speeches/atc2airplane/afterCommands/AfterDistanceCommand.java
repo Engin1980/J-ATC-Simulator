@@ -2,7 +2,7 @@ package eng.jAtcSim.newLib.area.speeches.atc2airplane.afterCommands;
 
 import eng.eSystem.eXml.XElement;
 import eng.jAtcSim.newLib.area.Airport;
-import eng.jAtcSim.newLib.shared.xml.XmlLoader;
+import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
 
 public class AfterDistanceCommand extends AfterCommandWithNavaid {
   public static AfterDistanceCommand load(XElement element, Airport parent) {
@@ -28,7 +28,7 @@ public class AfterDistanceCommand extends AfterCommandWithNavaid {
   @Override
   protected void read(XElement element, Airport parent) {
     super.read(element, parent);
-    this.distance = XmlLoader.loadInteger(element, "distance");
-    this.extension = XmlLoader.loadEnum(element, "extension", AfterValueExtension.class, AfterValueExtension.exactly);
+    this.distance = XmlLoaderUtils.loadInteger(element, "distance");
+    this.extension = XmlLoaderUtils.loadEnum(element, "extension", AfterValueExtension.class, AfterValueExtension.exactly);
   }
 }

@@ -7,14 +7,14 @@
 package eng.jAtcSim.newLib.area;
 
 import eng.eSystem.eXml.XElement;
-import eng.jAtcSim.newLib.shared.xml.XmlLoader;
+import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
 
 /**
  * @author Marek
  */
 public class PublishedHold extends Parentable<Airport> {
 
-  static class XmlReader {
+  static class XmlLoader {
     public static PublishedHold load(XElement source, Airport airport) {
       PublishedHold ret = new PublishedHold();
       ret.setParent(airport);
@@ -23,12 +23,12 @@ public class PublishedHold extends Parentable<Airport> {
     }
 
     private static void read(XElement source, PublishedHold hold) {
-      XmlLoader.setContext(source);
-      String navaidName = XmlLoader.loadString("name");
+      XmlLoaderUtils.setContext(source);
+      String navaidName = XmlLoaderUtils.loadString("name");
       hold.navaid = hold.getParent().getParent().getNavaids().get(navaidName);
 
-      hold.inboundRadial = XmlLoader.loadInteger("inboundRadial");
-      hold.leftTurn = XmlLoader.loadStringRestricted("turn", new String[]{"left", "right"}).equals("left");
+      hold.inboundRadial = XmlLoaderUtils.loadInteger("inboundRadial");
+      hold.leftTurn = XmlLoaderUtils.loadStringRestricted("turn", new String[]{"left", "right"}).equals("left");
     }
   }
 

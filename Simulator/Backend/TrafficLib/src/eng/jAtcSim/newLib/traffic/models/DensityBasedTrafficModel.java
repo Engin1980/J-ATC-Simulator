@@ -14,7 +14,7 @@ import eng.jAtcSim.newLib.traffic.movementTemplating.EntryExitInfo;
 import eng.jAtcSim.newLib.traffic.movementTemplating.GeneralAviationMovementTemplate;
 import eng.jAtcSim.newLib.traffic.movementTemplating.GeneralCommercialMovementTemplate;
 import eng.jAtcSim.newLib.traffic.movementTemplating.MovementTemplate;
-import eng.jAtcSim.newLib.shared.xml.XmlLoader;
+import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
@@ -47,9 +47,9 @@ public class DensityBasedTrafficModel extends DayGeneratedTrafficModel {
       IList<Company> tmp = new EList<>();
 
       for (XElement source : sources) {
-        String code = XmlLoader.loadString(source, "icao");
-        double weight = XmlLoader.loadDouble(source, "weight");
-        Character category = XmlLoader.loadChar(source, "category", null);
+        String code = XmlLoaderUtils.loadString(source, "icao");
+        double weight = XmlLoaderUtils.loadDouble(source, "weight");
+        Character category = XmlLoaderUtils.loadChar(source, "category", null);
         Company cw = new Company(code, category, weight);
         tmp.add(cw);
       }
@@ -92,8 +92,8 @@ public class DensityBasedTrafficModel extends DayGeneratedTrafficModel {
 
   public static class DirectionWeight {
     public static DirectionWeight load(XElement source) {
-      int heading = XmlLoader.loadInteger(source, "heading");
-      double weight = XmlLoader.loadDouble(source, "weight");
+      int heading = XmlLoaderUtils.loadInteger(source, "heading");
+      double weight = XmlLoaderUtils.loadDouble(source, "weight");
       return new DirectionWeight(heading, weight);
     }
 
@@ -116,9 +116,9 @@ public class DensityBasedTrafficModel extends DayGeneratedTrafficModel {
       IList<HourBlockMovements> ret = new EList<>();
 
       for (XElement child : children) {
-        int hour = XmlLoader.loadInteger(child, "hour");
-        int arrs = XmlLoader.loadInteger(child, "arrivals");
-        int deps = XmlLoader.loadInteger(child, "departures");
+        int hour = XmlLoaderUtils.loadInteger(child, "hour");
+        int arrs = XmlLoaderUtils.loadInteger(child, "arrivals");
+        int deps = XmlLoaderUtils.loadInteger(child, "departures");
 
         HourBlockMovements hbm = new HourBlockMovements(hour, arrs, deps);
         ret.add(hbm);
@@ -144,19 +144,19 @@ public class DensityBasedTrafficModel extends DayGeneratedTrafficModel {
   }
 
   public static DensityBasedTrafficModel load(XElement source) {
-    XmlLoader.setContext(source);
-    double delayProbability = XmlLoader.loadDouble("delayProbability");
-    int maxDelayInMinutesPerStep = XmlLoader.loadInteger("maxDelayInMinutesPerStep");
-    double nonCommercialFlightProbability = XmlLoader.loadDouble("nonCommercialFlightProbability");
-    boolean useExtendedCallsigns = XmlLoader.loadBoolean("useExtendedCallsigns");
+    XmlLoaderUtils.setContext(source);
+    double delayProbability = XmlLoaderUtils.loadDouble("delayProbability");
+    int maxDelayInMinutesPerStep = XmlLoaderUtils.loadInteger("maxDelayInMinutesPerStep");
+    double nonCommercialFlightProbability = XmlLoaderUtils.loadDouble("nonCommercialFlightProbability");
+    boolean useExtendedCallsigns = XmlLoaderUtils.loadBoolean("useExtendedCallsigns");
 
     //TODO isFullDayTraffic not implemented
-    boolean isFullDayTraffic = XmlLoader.loadBoolean(source.getChild("companies"), "isFullDayTraffic");
+    boolean isFullDayTraffic = XmlLoaderUtils.loadBoolean(source.getChild("companies"), "isFullDayTraffic");
     CompanyList companies = CompanyList.load(source.getChild("companies").getChildren("company"));
     IList<HourBlockMovements> density = HourBlockMovements.loadList(source.getChild("density").getChildren("item"));
 
     IList<DirectionWeight> directions = new EList<>();
-    XmlLoader.loadList(source.getChild("directions").getChildren("direction"),
+    XmlLoaderUtils.loadList(source.getChild("directions").getChildren("direction"),
         directions,
         q -> DirectionWeight.load(q));
 

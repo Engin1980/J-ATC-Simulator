@@ -2,7 +2,7 @@ package eng.jAtcSim.newLib.area.speeches.atc2airplane.afterCommands;
 
 import eng.eSystem.eXml.XElement;
 import eng.jAtcSim.newLib.area.Airport;
-import eng.jAtcSim.newLib.shared.xml.XmlLoader;
+import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
 
 public class AfterRadialCommand extends AfterCommandWithNavaid {
   public static AfterRadialCommand load(XElement element, Airport parent) {
@@ -28,7 +28,7 @@ public class AfterRadialCommand extends AfterCommandWithNavaid {
   @Override
   protected void read(XElement element, Airport parent) {
     super.read(element, parent);
-    this.radial = XmlLoader.loadInteger(element, "radial");
-    this.extension = XmlLoader.loadEnum(element, "extension", AfterValueExtension.class, AfterValueExtension.exactly);
+    this.radial = XmlLoaderUtils.loadInteger(element, "radial");
+    this.extension = XmlLoaderUtils.loadEnum(element, "extension", AfterValueExtension.class, AfterValueExtension.exactly);
   }
 }

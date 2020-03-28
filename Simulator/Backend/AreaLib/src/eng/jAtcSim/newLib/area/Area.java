@@ -7,11 +7,11 @@ import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.collections.ISet;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
-import eng.jAtcSim.newLib.shared.xml.XmlLoader;
+import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
 
 public class Area {
 
-  public static class XmlReader{
+  public static class XmlLoader {
     public Area load(XElement source) {
       Area area = new Area();
       read(source, area);
@@ -20,27 +20,27 @@ public class Area {
     }
 
     private static void read(XElement source, Area area) {
-      XmlLoader.setContext(source);
-      area.icao = XmlLoader.loadString("icao");
+      XmlLoaderUtils.setContext(source);
+      area.icao = XmlLoaderUtils.loadString("icao");
 
       area.navaids = new NavaidList();
-      XmlLoader.loadList(
+      XmlLoaderUtils.loadList(
           source.getChild("navaids").getChildren("navaid"),
           area.navaids,
-          q -> Navaid.XmlReader.load(q)
+          q -> Navaid.XmlLoader.load(q)
       );
 
       area.borders = new EList<>();
-      XmlLoader.loadList(
+      XmlLoaderUtils.loadList(
           source.getChild("borders").getChildren("border"),
           area.borders,
-          q -> Border.XmlReader.load(q, area));
+          q -> Border.XmlLoader.load(q, area));
 
       area.airports = new EList<>();
-      XmlLoader.loadList(
+      XmlLoaderUtils.loadList(
           source.getChild("airports").getChildren("airport"),
           area.airports,
-          q -> Airport.XmlReader.load(q, area));
+          q -> Airport.XmlLoader.load(q, area));
     }
 
     private static void checkForDuplicits(Area area) {

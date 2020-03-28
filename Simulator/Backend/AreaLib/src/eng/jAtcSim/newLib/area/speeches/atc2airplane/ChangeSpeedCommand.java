@@ -4,7 +4,7 @@ import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.jAtcSim.newLib.shared.exceptions.ApplicationException;
 import eng.jAtcSim.newLib.area.speeches.IAtcCommand;
-import eng.jAtcSim.newLib.shared.xml.XmlLoader;
+import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
 
 public class ChangeSpeedCommand implements IAtcCommand {
 
@@ -27,13 +27,13 @@ public class ChangeSpeedCommand implements IAtcCommand {
   public static IAtcCommand load(XElement element) {
     assert element.getName().equals("speed");
     ChangeSpeedCommand ret;
-    XmlLoader.setContext(element);
-    String rs = XmlLoader.loadString("restriction");
+    XmlLoaderUtils.setContext(element);
+    String rs = XmlLoaderUtils.loadString("restriction");
     if (rs.equals("clear")) {
       ret = ChangeSpeedCommand.createResumeOwnSpeed();
     } else {
       eRestriction restriction = Enum.valueOf(eRestriction.class, rs);
-      int speed = XmlLoader.loadInteger("value");
+      int speed = XmlLoaderUtils.loadInteger("value");
       ret = ChangeSpeedCommand.create(restriction, speed);
     }
     return ret;

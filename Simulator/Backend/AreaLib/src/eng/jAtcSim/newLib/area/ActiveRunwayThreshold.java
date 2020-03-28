@@ -14,19 +14,19 @@ import eng.eSystem.geo.Coordinates;
 import eng.eSystem.geo.Headings;
 import eng.jAtcSim.newLib.area.approaches.Approach;
 import eng.jAtcSim.newLib.area.routes.DARoute;
-import eng.jAtcSim.newLib.shared.xml.XmlLoader;
+import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
 
 /**
  * @author Marek
  */
 public class ActiveRunwayThreshold extends Parentable<ActiveRunway> {
 
-  static class XmlReader {
+  static class XmlLoader {
     static IList<ActiveRunwayThreshold> loadBoth(IReadOnlyList<XElement> sources, ActiveRunway runway) {
       assert sources.size() == 2 : "There must be two thresholds";
 
-      ActiveRunwayThreshold a = ActiveRunwayThreshold.XmlReader.load(sources.get(0), runway);
-      ActiveRunwayThreshold b = ActiveRunwayThreshold.XmlReader.load(sources.get(1), runway);
+      ActiveRunwayThreshold a = XmlLoader.load(sources.get(0), runway);
+      ActiveRunwayThreshold b = XmlLoader.load(sources.get(1), runway);
       bindOppositeThresholds(a, b);
 
       IList<ActiveRunwayThreshold> ret = new EList<>();
@@ -56,17 +56,17 @@ public class ActiveRunwayThreshold extends Parentable<ActiveRunway> {
     }
 
     private static void read(XElement source, ActiveRunwayThreshold activeRunwayThreshold) {
-      XmlLoader.setContext(source);
-      activeRunwayThreshold.name = XmlLoader.loadString("name");
-      activeRunwayThreshold.coordinate = XmlLoader.loadCoordinate("coordinate");
-      activeRunwayThreshold.initialDepartureAltitude = XmlLoader.loadInteger("initialDepartureAltitude");
-      String mappingString = XmlLoader.loadString("mapping");
+      XmlLoaderUtils.setContext(source);
+      activeRunwayThreshold.name = XmlLoaderUtils.loadString("name");
+      activeRunwayThreshold.coordinate = XmlLoaderUtils.loadCoordinate("coordinate");
+      activeRunwayThreshold.initialDepartureAltitude = XmlLoaderUtils.loadInteger("initialDepartureAltitude");
+      String mappingString = XmlLoaderUtils.loadString("mapping");
       IList<String> mapping = new EList<>(mappingString.split(";"));
 
       activeRunwayThreshold.routes = activeRunwayThreshold.getParent().getParent().getDaRoutes().where(q -> q.isMappingMatch(mapping));
 
       activeRunwayThreshold.approaches = new EList<>();
-      XmlLoader.loadList(
+      XmlLoaderUtils.loadList(
           source.getChild("approaches").getChildren(),
           activeRunwayThreshold.approaches,
           q -> Approach.load(q, activeRunwayThreshold)

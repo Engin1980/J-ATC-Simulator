@@ -8,7 +8,7 @@ package eng.jAtcSim.newLib.area;
 
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.geo.Coordinate;
-import eng.jAtcSim.newLib.shared.xml.XmlLoader;
+import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
 
 import java.util.Objects;
 
@@ -17,9 +17,9 @@ import java.util.Objects;
  */
 public class BorderPoint {
 
-  static class XmlReader {
+  static class XmlLoader {
     public static BorderPoint load(XElement source) {
-      Coordinate coordinate = XmlLoader.loadCoordinate(source, "coordinate");
+      Coordinate coordinate = XmlLoaderUtils.loadCoordinate(source, "coordinate");
       BorderPoint ret = new BorderPoint(coordinate);
       return ret;
     }

@@ -32,7 +32,7 @@ import eng.jAtcSim.newLib.area.speeches.atc2airplane.ChangeHeadingCommand;
 import eng.jAtcSim.newLib.area.speeches.atc2airplane.ProceedDirectCommand;
 import eng.jAtcSim.newLib.area.speeches.atc2airplane.ThenCommand;
 import eng.jAtcSim.newLib.shared.exceptions.ToDoException;
-import eng.jAtcSim.newLib.shared.xml.XmlLoader;
+import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
@@ -206,17 +206,17 @@ public class Approach extends Parentable<ActiveRunwayThreshold> {
   }
 
   public void readAsUnprecise(XElement source) {
-    XmlLoader.setContext(source);
-    String gaMapping = XmlLoader.loadString("gaMapping");
-    String iafMapping = XmlLoader.loadString("iafMapping");
-    String fafName = XmlLoader.loadString("faf");
-    String maptName = XmlLoader.loadString("mapt");
-    int initialAltitude = XmlLoader.loadInteger("initialAltitude");
+    XmlLoaderUtils.setContext(source);
+    String gaMapping = XmlLoaderUtils.loadString("gaMapping");
+    String iafMapping = XmlLoaderUtils.loadString("iafMapping");
+    String fafName = XmlLoaderUtils.loadString("faf");
+    String maptName = XmlLoaderUtils.loadString("mapt");
+    int initialAltitude = XmlLoaderUtils.loadInteger("initialAltitude");
     //TODO why the following values are ignored?
-    int daA = XmlLoader.loadInteger("mdaA");
-    int daB = XmlLoader.loadInteger("mdaB");
-    int daC = XmlLoader.loadInteger("mdaC");
-    int daD = XmlLoader.loadInteger("mdaD");
+    int daA = XmlLoaderUtils.loadInteger("mdaA");
+    int daB = XmlLoaderUtils.loadInteger("mdaB");
+    int daC = XmlLoaderUtils.loadInteger("mdaC");
+    int daD = XmlLoaderUtils.loadInteger("mdaD");
     Navaid faf = this.getParent().getParent().getParent().getParent().getNavaids().get(fafName);
     Navaid mapt = this.getParent().getParent().getParent().getParent().getNavaids().getOrGenerate(
         maptName, this.getParent().getParent().getParent());
@@ -259,14 +259,14 @@ public class Approach extends Parentable<ActiveRunwayThreshold> {
   }
 
   private void readAsGnss(XElement source) {
-    XmlLoader.setContext(source);
-    String gaMapping = XmlLoader.loadString("gaMapping");
-    String iafMapping = XmlLoader.loadString("iafMapping");
-    int daA = XmlLoader.loadInteger("daA");
-    int daB = XmlLoader.loadInteger("daB");
-    int daC = XmlLoader.loadInteger("daC");
-    int daD = XmlLoader.loadInteger("daD");
-    Double tmp = XmlLoader.loadDouble("glidePathPercentage", 3d);
+    XmlLoaderUtils.setContext(source);
+    String gaMapping = XmlLoaderUtils.loadString("gaMapping");
+    String iafMapping = XmlLoaderUtils.loadString("iafMapping");
+    int daA = XmlLoaderUtils.loadInteger("daA");
+    int daB = XmlLoaderUtils.loadInteger("daB");
+    int daC = XmlLoaderUtils.loadInteger("daC");
+    int daD = XmlLoaderUtils.loadInteger("daD");
+    Double tmp = XmlLoaderUtils.loadDouble("glidePathPercentage", 3d);
     double slope = convertGlidePathDegreesToSlope(tmp);
 
     // build approach entry
@@ -297,10 +297,10 @@ public class Approach extends Parentable<ActiveRunwayThreshold> {
 
   private void readAsILS(XElement source) {
 
-    XmlLoader.setContext(source);
-    Double tmp = XmlLoader.loadDouble("glidePathDegrees", 3d);
-    String gaMapping = XmlLoader.loadString("gaMapping");
-    String iafMapping = XmlLoader.loadString("iafMapping");
+    XmlLoaderUtils.setContext(source);
+    Double tmp = XmlLoaderUtils.loadDouble("glidePathDegrees", 3d);
+    String gaMapping = XmlLoaderUtils.loadString("gaMapping");
+    String iafMapping = XmlLoaderUtils.loadString("iafMapping");
     double slope = convertGlidePathDegreesToSlope(tmp);
 
     // build approach entries
@@ -318,12 +318,12 @@ public class Approach extends Parentable<ActiveRunwayThreshold> {
 
     // process ILS categories
     for (XElement child : source.getChild("categories").getChildren("category")) {
-      XmlLoader.setContext(child);
-      int daA = XmlLoader.loadInteger("daA");
-      int daB = XmlLoader.loadInteger("daB");
-      int daC = XmlLoader.loadInteger("daC");
-      int daD = XmlLoader.loadInteger("daD");
-      String ilsType = XmlLoader.loadStringRestricted("type", new String[]{"I", "II", "III"});
+      XmlLoaderUtils.setContext(child);
+      int daA = XmlLoaderUtils.loadInteger("daA");
+      int daB = XmlLoaderUtils.loadInteger("daB");
+      int daC = XmlLoaderUtils.loadInteger("daC");
+      int daD = XmlLoaderUtils.loadInteger("daD");
+      String ilsType = XmlLoaderUtils.loadStringRestricted("type", new String[]{"I", "II", "III"});
 
       switch (ilsType) {
         case "I":

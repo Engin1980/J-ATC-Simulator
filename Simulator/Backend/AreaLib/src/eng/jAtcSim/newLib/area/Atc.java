@@ -7,7 +7,7 @@
 package eng.jAtcSim.newLib.area;
 
 import eng.eSystem.eXml.XElement;
-import eng.jAtcSim.newLib.shared.xml.XmlLoader;
+import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
 
 /**
  * @author Marek
@@ -21,7 +21,7 @@ public class Atc {
     ctr
   }
   
-  static class XmlReader{
+  static class XmlLoader {
     public static Atc load(XElement source) {
       Atc ret = new Atc();
       read(source,ret);
@@ -29,15 +29,15 @@ public class Atc {
     }
 
     private static void read(XElement source, Atc atc) {
-      XmlLoader.setContext(source);
-      atc.type = XmlLoader.loadEnum("type", Atc.eType.class);
-      atc.name = XmlLoader.loadString("name");
-      atc.frequency = XmlLoader.loadDouble("frequency");
-      atc.acceptAltitude = XmlLoader.loadInteger("acceptAltitude");
-      atc.releaseAltitude = XmlLoader.loadInteger("releaseAltitude");
-      atc.orderedAltitude = XmlLoader.loadInteger("orderedAltitude");
-      atc.ctrAcceptDistance = XmlLoader.loadInteger("ctrAcceptDistance", null);
-      atc.ctrNavaidAcceptDistance = XmlLoader.loadInteger("ctrNavaidAcceptDistance", null);
+      XmlLoaderUtils.setContext(source);
+      atc.type = XmlLoaderUtils.loadEnum("type", Atc.eType.class);
+      atc.name = XmlLoaderUtils.loadString("name");
+      atc.frequency = XmlLoaderUtils.loadDouble("frequency");
+      atc.acceptAltitude = XmlLoaderUtils.loadInteger("acceptAltitude");
+      atc.releaseAltitude = XmlLoaderUtils.loadInteger("releaseAltitude");
+      atc.orderedAltitude = XmlLoaderUtils.loadInteger("orderedAltitude");
+      atc.ctrAcceptDistance = XmlLoaderUtils.loadInteger("ctrAcceptDistance", null);
+      atc.ctrNavaidAcceptDistance = XmlLoaderUtils.loadInteger("ctrNavaidAcceptDistance", null);
     }
   }
 

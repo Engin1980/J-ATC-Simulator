@@ -6,16 +6,16 @@ import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
-import eng.jAtcSim.newLib.shared.xml.XmlLoader;
+import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
 
 public class InactiveRunwayThreshold extends Parentable<InactiveRunway> {
 
-  static class XmlReader {
+  static class XmlLoader {
     static IList<InactiveRunwayThreshold> loadBoth(IReadOnlyList<XElement> sources, InactiveRunway parent) {
       assert sources.size() == 2 : "There must be two thresholds";
 
-      InactiveRunwayThreshold a = InactiveRunwayThreshold.XmlReader.load(sources.get(0), parent);
-      InactiveRunwayThreshold b = InactiveRunwayThreshold.XmlReader.load(sources.get(1), parent);
+      InactiveRunwayThreshold a = XmlLoader.load(sources.get(0), parent);
+      InactiveRunwayThreshold b = XmlLoader.load(sources.get(1), parent);
       a.other = b;
       b.other = a;
       a.course = Coordinates.getBearing(a.coordinate, b.coordinate);
@@ -35,10 +35,10 @@ public class InactiveRunwayThreshold extends Parentable<InactiveRunway> {
     }
 
     private static void read(XElement source, InactiveRunwayThreshold inactiveRunwayThreshold) {
-      XmlLoader.setContext(source);
-      XmlLoader.setContext(source);
-      inactiveRunwayThreshold.name = XmlLoader.loadString("name");
-      inactiveRunwayThreshold.coordinate = XmlLoader.loadCoordinate("coordinate");
+      XmlLoaderUtils.setContext(source);
+      XmlLoaderUtils.setContext(source);
+      inactiveRunwayThreshold.name = XmlLoaderUtils.loadString("name");
+      inactiveRunwayThreshold.coordinate = XmlLoaderUtils.loadCoordinate("coordinate");
     }
   }
 

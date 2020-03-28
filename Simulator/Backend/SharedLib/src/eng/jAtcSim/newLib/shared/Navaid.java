@@ -2,7 +2,7 @@ package eng.jAtcSim.newLib.shared;
 
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.geo.Coordinate;
-import eng.jAtcSim.newLib.shared.xml.XmlLoader;
+import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
 
 public class Navaid {
 
@@ -39,10 +39,10 @@ public class Navaid {
   }
 
   private void read(XElement source){
-    XmlLoader.setContext(source);
-    this. coordinate = XmlLoader.loadCoordinate("coordinate");
-    this. name = XmlLoader.loadString("name");
-    this. type = XmlLoader.loadEnum("type", eType.class);
+    XmlLoaderUtils.setContext(source);
+    this. coordinate = XmlLoaderUtils.loadCoordinate("coordinate");
+    this. name = XmlLoaderUtils.loadString("name");
+    this. type = XmlLoaderUtils.loadEnum("type", eType.class);
   }
 
   public static double getOverNavaidDistance(int speed) {

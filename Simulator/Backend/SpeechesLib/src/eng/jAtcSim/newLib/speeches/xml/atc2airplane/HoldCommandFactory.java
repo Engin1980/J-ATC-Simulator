@@ -1,9 +1,8 @@
 package eng.jAtcSim.newLib.speeches.xml.atc2airplane;
 
-import eng.eSystem.collections.*;
 import eng.eSystem.eXml.XElement;
 import eng.jAtcSim.newLib.shared.exceptions.ApplicationException;
-import eng.jAtcSim.newLib.shared.xml.XmlLoader;
+import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
 import eng.jAtcSim.newLib.speeches.atc2airplane.HoldCommand;
 
 public class HoldCommandFactory {
@@ -12,10 +11,10 @@ public class HoldCommandFactory {
 
     HoldCommand ret;
 
-    XmlLoader.setContext(element);
-    String fix = XmlLoader.loadString("fix");
-    Integer inboundRadial = XmlLoader.loadInteger("inboundRadial", null);
-    String turns = XmlLoader.loadStringRestricted("turns", new String[]{"left", "right"}, null);
+    XmlLoaderUtils.setContext(element);
+    String fix = XmlLoaderUtils.loadString("fix");
+    Integer inboundRadial = XmlLoaderUtils.loadInteger("inboundRadial", null);
+    String turns = XmlLoaderUtils.loadStringRestricted("turns", new String[]{"left", "right"}, null);
 
     if (inboundRadial == null && turns == null) {
       ret = HoldCommand.createPublished(fix);

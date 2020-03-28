@@ -1,15 +1,15 @@
 package eng.jAtcSim.newLib.area.speeches.atc2airplane.afterCommands;
 
 import eng.eSystem.eXml.XElement;
-import eng.jAtcSim.newLib.shared.xml.XmlLoader;
+import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
 
 public class AfterSpeedCommand extends AfterCommand {
   public static AfterSpeedCommand load(XElement element) {
-    XmlLoader.setContext(element);
+    XmlLoaderUtils.setContext(element);
 
     AfterSpeedCommand ret = new AfterSpeedCommand();
-    ret.speed = XmlLoader.loadInteger("value");
-    ret.extension = XmlLoader.loadEnum("extension", AfterValueExtension.class, AfterValueExtension.exactly);
+    ret.speed = XmlLoaderUtils.loadInteger("value");
+    ret.extension = XmlLoaderUtils.loadEnum("extension", AfterValueExtension.class, AfterValueExtension.exactly);
     return ret;
   }
 

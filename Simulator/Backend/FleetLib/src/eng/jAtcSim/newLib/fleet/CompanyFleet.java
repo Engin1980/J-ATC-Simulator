@@ -2,15 +2,15 @@ package eng.jAtcSim.newLib.fleet;
 
 import eng.eSystem.collections.*;
 import eng.eSystem.eXml.XElement;
-import eng.jAtcSim.newLib.shared.xml.XmlLoader;
+import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
 
 public class CompanyFleet {
 
   public static CompanyFleet load(XElement child) {
-    String icao = XmlLoader.loadString(child, "icao");
-    String name = XmlLoader.loadString(child, "name", "(N/A)");
+    String icao = XmlLoaderUtils.loadString(child, "icao");
+    String name = XmlLoaderUtils.loadString(child, "name", "(N/A)");
     IList<FleetType> types = new EList<>();
-    XmlLoader.loadList(
+    XmlLoaderUtils.loadList(
         child.getChildren("type"),
         types,
         q -> FleetType.load(q)

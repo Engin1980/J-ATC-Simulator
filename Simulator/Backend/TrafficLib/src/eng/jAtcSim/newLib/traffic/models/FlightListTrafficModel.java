@@ -10,7 +10,7 @@ import eng.jAtcSim.newLib.traffic.movementTemplating.EntryExitInfo;
 import eng.jAtcSim.newLib.traffic.movementTemplating.MovementTemplate;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.time.ETimeStamp;
-import eng.jAtcSim.newLib.shared.xml.XmlLoader;
+import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
 import eng.jAtcSim.newLib.traffic.models.base.ITrafficModel;
 import eng.jAtcSim.newLib.traffic.movementTemplating.FlightMovementTemplate;
 
@@ -22,18 +22,18 @@ public class FlightListTrafficModel implements ITrafficModel {
   private static class Flight {
 
     private static Flight load(XElement source) {
-      XmlLoader.setContext(source);
-      String timeS = XmlLoader.loadString("time");
+      XmlLoaderUtils.setContext(source);
+      String timeS = XmlLoaderUtils.loadString("time");
       LocalTime time = LocalTime.parse(
           timeS,
           DateTimeFormatter.ofPattern("HH:mm"));
-      String callsignS = XmlLoader.loadString("callsign");
+      String callsignS = XmlLoaderUtils.loadString("callsign");
       Callsign callsign = new Callsign(callsignS);
-      MovementTemplate.eKind kind = XmlLoader.loadEnum("kind", MovementTemplate.eKind.class);
-      int heading = XmlLoader.loadInteger("heading", EMPTY_HEADING);
-      Coordinate otherAirportCoordinate = XmlLoader.loadCoordinate("otherAirport", null);
-      String airplaneType = XmlLoader.loadString("planeType", null);
-      String follows = XmlLoader.loadString("follows", null);
+      MovementTemplate.eKind kind = XmlLoaderUtils.loadEnum("kind", MovementTemplate.eKind.class);
+      int heading = XmlLoaderUtils.loadInteger("heading", EMPTY_HEADING);
+      Coordinate otherAirportCoordinate = XmlLoaderUtils.loadCoordinate("otherAirport", null);
+      String airplaneType = XmlLoaderUtils.loadString("planeType", null);
+      String follows = XmlLoaderUtils.loadString("follows", null);
 
       Flight ret = new Flight(
           callsign, heading, otherAirportCoordinate, kind, airplaneType, time, follows);
@@ -65,10 +65,10 @@ public class FlightListTrafficModel implements ITrafficModel {
   private static final int EMPTY_HEADING = -1;
 
   public static FlightListTrafficModel load(XElement source) {
-    XmlLoader.setContext(source);
+    XmlLoaderUtils.setContext(source);
 
     IList<Flight> flights = new EList<>();
-    XmlLoader.loadList(source.getChildren("flight"),
+    XmlLoaderUtils.loadList(source.getChildren("flight"),
         flights,
         q -> Flight.load(q));
 

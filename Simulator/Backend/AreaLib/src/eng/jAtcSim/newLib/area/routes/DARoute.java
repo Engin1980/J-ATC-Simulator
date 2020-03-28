@@ -14,7 +14,7 @@ import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.area.NavaidList;
 import eng.jAtcSim.newLib.area.speeches.atc2airplane.ToNavaidCommand;
 import eng.jAtcSim.newLib.shared.PlaneCategoryDefinitions;
-import eng.jAtcSim.newLib.shared.xml.XmlLoader;
+import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
 
 public class DARoute extends Route {
   public enum eType {
@@ -182,14 +182,14 @@ public class DARoute extends Route {
   }
 
   private void read(XElement source) {
-    XmlLoader.setContext(source);
+    XmlLoaderUtils.setContext(source);
 
-    this.type = XmlLoader.loadEnum("type", eType.class);
-    this.name = XmlLoader.loadString("name");
-    String mapping = XmlLoader.loadString("mapping");
-    this.category = XmlLoader.loadPlaneCategory("category", "ABCD");
-    this.entryAltitude = XmlLoader.loadAltitude("entryFL", null);
-    String mainFixName = XmlLoader.loadString("mainFix", null);
+    this.type = XmlLoaderUtils.loadEnum("type", eType.class);
+    this.name = XmlLoaderUtils.loadString("name");
+    String mapping = XmlLoaderUtils.loadString("mapping");
+    this.category = XmlLoaderUtils.loadPlaneCategory("category", "ABCD");
+    this.entryAltitude = XmlLoaderUtils.loadAltitude("entryFL", null);
+    String mainFixName = XmlLoaderUtils.loadString("mainFix", null);
     this.mainNavaid = mainFixName != null ?
         this.getParent().getParent().getNavaids().get(mainFixName) :
         getMainRouteNavaidFromRouteName(name, this.getParent().getParent().getNavaids());

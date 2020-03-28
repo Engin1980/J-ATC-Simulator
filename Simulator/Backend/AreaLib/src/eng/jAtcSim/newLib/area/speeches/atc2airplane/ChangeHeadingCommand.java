@@ -3,7 +3,7 @@ package eng.jAtcSim.newLib.area.speeches.atc2airplane;
 import eng.eSystem.eXml.XElement;
 import eng.jAtcSim.newLib.shared.exceptions.ApplicationException;
 import eng.jAtcSim.newLib.area.speeches.IAtcCommand;
-import eng.jAtcSim.newLib.shared.xml.XmlLoader;
+import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
 
 public class ChangeHeadingCommand implements IAtcCommand {
 
@@ -26,14 +26,14 @@ public class ChangeHeadingCommand implements IAtcCommand {
   public static ChangeHeadingCommand load(XElement source){
     assert source.getName().equals("heading");
 
-    XmlLoader.setContext(source);
-    String dirS = XmlLoader.loadString("direction", "nearest");
+    XmlLoaderUtils.setContext(source);
+    String dirS = XmlLoaderUtils.loadString("direction", "nearest");
     eDirection dir;
     if (dirS.equals("nearest"))
       dir = eDirection.any;
     else
       dir = Enum.valueOf(eDirection.class, dirS);
-    int hdg = XmlLoader.loadInteger("value");
+    int hdg = XmlLoaderUtils.loadInteger("value");
     ChangeHeadingCommand ret  = new ChangeHeadingCommand(hdg,dir);
     return ret;
   }

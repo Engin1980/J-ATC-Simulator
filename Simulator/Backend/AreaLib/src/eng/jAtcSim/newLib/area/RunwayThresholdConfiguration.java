@@ -3,13 +3,13 @@ package eng.jAtcSim.newLib.area;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.eXml.XElement;
 import eng.jAtcSim.newLib.shared.PlaneCategoryDefinitions;
-import eng.jAtcSim.newLib.shared.xml.XmlLoader;
+import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
 
 import java.util.Objects;
 
 public class RunwayThresholdConfiguration {
 
-  static class XmlReader{
+  static class XmlLoader {
     static RunwayThresholdConfiguration load(XElement source, Airport airport) {
       RunwayThresholdConfiguration ret = new RunwayThresholdConfiguration();
       read(source, ret, airport);
@@ -18,12 +18,12 @@ public class RunwayThresholdConfiguration {
 
     private static void read(XElement source, RunwayThresholdConfiguration rtc, Airport airport) {
       IReadOnlyList<ActiveRunway> activeRunways = airport.getRunways();
-      XmlLoader.setContext(source);
-      String name = XmlLoader.loadString("name");
-      rtc.primary = XmlLoader.loadBoolean("primary", false);
-      rtc. showRoutes = XmlLoader.loadBoolean("showRoutes", true);
-      rtc. showApproach = XmlLoader.loadBoolean("showApproach", true);
-      rtc.categories = XmlLoader.loadPlaneCategory("category", "ABCD");
+      XmlLoaderUtils.setContext(source);
+      String name = XmlLoaderUtils.loadString("name");
+      rtc.primary = XmlLoaderUtils.loadBoolean("primary", false);
+      rtc. showRoutes = XmlLoaderUtils.loadBoolean("showRoutes", true);
+      rtc. showApproach = XmlLoaderUtils.loadBoolean("showApproach", true);
+      rtc.categories = XmlLoaderUtils.loadPlaneCategory("category", "ABCD");
 
       ActiveRunwayThreshold threshold = null;
       for (ActiveRunway activeRunway : activeRunways) {
