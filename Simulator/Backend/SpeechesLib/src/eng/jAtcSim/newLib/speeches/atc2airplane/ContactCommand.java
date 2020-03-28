@@ -10,19 +10,25 @@ import eng.jAtcSim.newLib.speeches.ICommand;
  * @author Marek
  */
 public class ContactCommand implements ICommand {
-  private final eAtcType atcType;
+  private final String atcName;
+  private final double frequency;
 
-  public ContactCommand(eAtcType atcType) {
-    this.atcType = atcType;
+  public ContactCommand(String atcName, double frequency) {
+    this.atcName = atcName;
+    this.frequency = frequency;
   }
 
-  public eAtcType getAtcType() {
-    return atcType;
+  public String getAtcName() {
+    return atcName;
+  }
+
+  public double getAtcFrequency() {
+    return frequency;
   }
 
   @Override
   public String toString(){
-    String ret = "Contact " + atcType.toString() + " {command}";
+    String ret = "Contact " + atcName + " (" + frequency + ") {command}";
 
     return ret;
   }

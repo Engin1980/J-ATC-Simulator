@@ -19,18 +19,18 @@ public class HoldCommand extends ToNavaidCommand {
   }
 
   private final boolean published;
-  private final int inboundHeading;
+  private final int inboundRadial;
   private final boolean leftTurn;
 
-  private HoldCommand(String navaidName, boolean published, int inboundHeading, boolean leftTurn) {
+  private HoldCommand(String navaidName, boolean published, int inboundRadial, boolean leftTurn) {
     super(navaidName);
     this.published = published;
-    this.inboundHeading = inboundHeading;
+    this.inboundRadial = inboundRadial;
     this.leftTurn = leftTurn;
   }
 
-  public int getInboundHeading() {
-    return inboundHeading;
+  public int getInboundRadial() {
+    return inboundRadial;
   }
 
   public boolean isLeftTurn() {

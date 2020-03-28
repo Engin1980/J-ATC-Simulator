@@ -9,5 +9,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="SpeechesLib" />
     <orderEntry type="module" module-name="SharedLib" />
+    <orderEntry type="library" name="eng.eSystem" level="project" />
   </component>
 </module>
