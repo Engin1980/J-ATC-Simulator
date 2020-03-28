@@ -1,18 +1,7 @@
 package eng.jAtcSim.newLib.textProcessing.formatting;
 
-import eng.jAtcSim.newLib.Acc;
-import eng.jAtcSim.newLib.area.airplanes.AirplaneDataFormatter;
-import eng.jAtcSim.newLib.area.atcs.Atc;
-import eng.jAtcSim.newLib.area.speaking.fromAirplane.notifications.*;
-import eng.jAtcSim.newLib.area.speaking.fromAirplane.notifications.commandResponses.Confirmation;
-import eng.jAtcSim.newLib.area.speaking.fromAirplane.notifications.commandResponses.Rejection;
-import eng.jAtcSim.newLib.area.speaking.fromAirplane.notifications.commandResponses.rejections.UnableToEnterApproachFromDifficultPosition;
-import eng.jAtcSim.newLib.area.speaking.fromAtc.atc2atc.PlaneSwitchMessage;
-import eng.jAtcSim.newLib.area.speaking.fromAtc.commands.*;
-import eng.jAtcSim.newLib.area.speaking.fromAtc.commands.afters.*;
-import eng.jAtcSim.newLib.area.speaking.fromAtc.notifications.RadarContactConfirmationNotification;
-import eng.jAtcSim.newLib.global.DataFormat;
-import eng.jAtcSim.newLib.global.Headings;
+import eng.jAtcSim.newLib.speeches.atc2airplane.*;
+import eng.jAtcSim.newLib.speeches.atc2airplane.afterCommands.*;
 
 public class DebugFormatter extends Formatter {
 
@@ -22,7 +11,7 @@ public class DebugFormatter extends Formatter {
     return "when passing " + Acc.toAltS(cmd.getAltitudeInFt(), true) + " ";
   }
 
-  public String format(AfterNavaidCommand cmd) {
+  public String format(AfterDistanceCommand cmd) {
     return "after " + cmd.getNavaid().getName() + " ";
   }
 

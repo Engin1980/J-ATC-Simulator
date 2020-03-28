@@ -1,4 +1,4 @@
-module JAtcSim.Modules.Backend.Speeches {
+module JAtcSim.Modules.Backend.SpeechesLib {
   requires transitive JAtcSim.Modules.Backend.SharedLib;
   requires transitive JAtcSim.Modules.Backend.MessagingLib;
   requires eng.eSystem;
