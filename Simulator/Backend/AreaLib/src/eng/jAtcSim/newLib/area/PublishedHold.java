@@ -14,11 +14,22 @@ import eng.jAtcSim.newLib.shared.xml.XmlLoader;
  */
 public class PublishedHold extends Parentable<Airport> {
 
-  public static PublishedHold load(XElement source, Airport airport) {
-    PublishedHold ret = new PublishedHold();
-    ret.setParent(airport);
-    ret.read(source);
-    return ret;
+  static class XmlReader {
+    public static PublishedHold load(XElement source, Airport airport) {
+      PublishedHold ret = new PublishedHold();
+      ret.setParent(airport);
+      read(source, ret);
+      return ret;
+    }
+
+    private static void read(XElement source, PublishedHold hold) {
+      XmlLoader.setContext(source);
+      String navaidName = XmlLoader.loadString("name");
+      hold.navaid = hold.getParent().getParent().getNavaids().get(navaidName);
+
+      hold.inboundRadial = XmlLoader.loadInteger("inboundRadial");
+      hold.leftTurn = XmlLoader.loadStringRestricted("turn", new String[]{"left", "right"}).equals("left");
+    }
   }
 
   private Navaid navaid;
@@ -49,12 +60,5 @@ public class PublishedHold extends Parentable<Airport> {
     return "Published hold {" + this.getNavaid().getName() + "}";
   }
 
-  private void read(XElement source) {
-    XmlLoader.setContext(source);
-    String navaidName = XmlLoader.loadString("name");
-    this.navaid = this.getParent().getParent().getNavaids().get(navaidName);
 
-    this.inboundRadial = XmlLoader.loadInteger("inboundRadial");
-    this.leftTurn = XmlLoader.loadStringRestricted("turn", new String[]{"left", "right"}).equals("left");
-  }
 }

@@ -6,6 +6,21 @@ import eng.jAtcSim.newLib.shared.xml.XmlLoader;
 
 public class Navaid {
 
+  static class XmlReader {
+    public static Navaid load(XElement source) {
+      Navaid ret = new Navaid();
+      read(source, ret);
+      return ret;
+    }
+
+    private static void read(XElement source, Navaid navaid) {
+      XmlLoader.setContext(source);
+      navaid.coordinate = XmlLoader.loadCoordinate("coordinate");
+      navaid.name = XmlLoader.loadString("name");
+      navaid.type = XmlLoader.loadEnum("type", eType.class);
+    }
+  }
+
   public enum eType {
     vor,
     ndb,
@@ -14,15 +29,14 @@ public class Navaid {
     airport,
     auxiliary
   }
-
   public static final double SPEED_TO_OVER_NAVAID_DISTANCE_MULTIPLIER = 0.007;
 
   public static Navaid create(String name, eType type, Coordinate coordinate) {
     if (name == null) {
-        throw new IllegalArgumentException("Value of {name} cannot not be null.");
+      throw new IllegalArgumentException("Value of {name} cannot not be null.");
     }
     if (coordinate == null) {
-        throw new IllegalArgumentException("Value of {coordinate} cannot not be null.");
+      throw new IllegalArgumentException("Value of {coordinate} cannot not be null.");
     }
 
     Navaid ret = new Navaid();
@@ -30,19 +44,6 @@ public class Navaid {
     ret.name = name;
     ret.type = type;
     return ret;
-  }
-
-  public static Navaid load(XElement source) {
-    Navaid ret = new Navaid();
-    ret.read(source);
-    return ret;
-  }
-
-  private void read(XElement source){
-    XmlLoader.setContext(source);
-    this. coordinate = XmlLoader.loadCoordinate("coordinate");
-    this. name = XmlLoader.loadString("name");
-    this. type = XmlLoader.loadEnum("type", eType.class);
   }
 
   public static double getOverNavaidDistance(int speed) {
@@ -53,7 +54,8 @@ public class Navaid {
   private String name;
   private eType type;
 
-  private Navaid(){}
+  private Navaid() {
+  }
 
   public Coordinate getCoordinate() {
     return coordinate;

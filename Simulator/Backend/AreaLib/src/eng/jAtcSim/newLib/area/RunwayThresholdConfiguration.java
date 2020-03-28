@@ -8,32 +8,35 @@ import eng.jAtcSim.newLib.shared.xml.XmlLoader;
 import java.util.Objects;
 
 public class RunwayThresholdConfiguration {
-  public static RunwayThresholdConfiguration load(XElement source, Airport airport) {
-    RunwayThresholdConfiguration ret = new RunwayThresholdConfiguration();
-    ret.read(source, airport);
-    return ret;
-  }
 
-  private void read(XElement source, Airport airport) {
-    IReadOnlyList<ActiveRunway> activeRunways = airport.getRunways();
-    XmlLoader.setContext(source);
-    String name = XmlLoader.loadString("name");
-    this.primary = XmlLoader.loadBoolean("primary", false);
-    this. showRoutes = XmlLoader.loadBoolean("showRoutes", true);
-    this. showApproach = XmlLoader.loadBoolean("showApproach", true);
-    this.categories = XmlLoader.loadPlaneCategory("category", "ABCD");
+  static class XmlReader{
+    static RunwayThresholdConfiguration load(XElement source, Airport airport) {
+      RunwayThresholdConfiguration ret = new RunwayThresholdConfiguration();
+      read(source, ret, airport);
+      return ret;
+    }
 
-    ActiveRunwayThreshold threshold = null;
-    for (ActiveRunway activeRunway : activeRunways) {
-      if (threshold != null) break;
-      for (ActiveRunwayThreshold activeRunwayThreshold : activeRunway.getThresholds()) {
-        if (activeRunwayThreshold.getName().equals(name)) {
-          threshold = activeRunwayThreshold;
-          break;
+    private static void read(XElement source, RunwayThresholdConfiguration rtc, Airport airport) {
+      IReadOnlyList<ActiveRunway> activeRunways = airport.getRunways();
+      XmlLoader.setContext(source);
+      String name = XmlLoader.loadString("name");
+      rtc.primary = XmlLoader.loadBoolean("primary", false);
+      rtc. showRoutes = XmlLoader.loadBoolean("showRoutes", true);
+      rtc. showApproach = XmlLoader.loadBoolean("showApproach", true);
+      rtc.categories = XmlLoader.loadPlaneCategory("category", "ABCD");
+
+      ActiveRunwayThreshold threshold = null;
+      for (ActiveRunway activeRunway : activeRunways) {
+        if (threshold != null) break;
+        for (ActiveRunwayThreshold activeRunwayThreshold : activeRunway.getThresholds()) {
+          if (activeRunwayThreshold.getName().equals(name)) {
+            threshold = activeRunwayThreshold;
+            break;
+          }
         }
       }
+      rtc.threshold = threshold;
     }
-    this.threshold = threshold;
   }
 
   private  PlaneCategoryDefinitions categories;

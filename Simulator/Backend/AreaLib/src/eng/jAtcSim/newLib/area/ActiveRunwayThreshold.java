@@ -21,37 +21,63 @@ import eng.jAtcSim.newLib.shared.xml.XmlLoader;
  */
 public class ActiveRunwayThreshold extends Parentable<ActiveRunway> {
 
-  public static IList<ActiveRunwayThreshold> loadBoth(IReadOnlyList<XElement> sources, ActiveRunway runway) {
-    assert sources.size() == 2 : "There must be two thresholds";
+  static class XmlReader {
+    static IList<ActiveRunwayThreshold> loadBoth(IReadOnlyList<XElement> sources, ActiveRunway runway) {
+      assert sources.size() == 2 : "There must be two thresholds";
 
-    ActiveRunwayThreshold a = ActiveRunwayThreshold.load(sources.get(0), runway);
-    ActiveRunwayThreshold b = ActiveRunwayThreshold.load(sources.get(1), runway);
-    bindOppositeThresholds(a, b);
+      ActiveRunwayThreshold a = ActiveRunwayThreshold.XmlReader.load(sources.get(0), runway);
+      ActiveRunwayThreshold b = ActiveRunwayThreshold.XmlReader.load(sources.get(1), runway);
+      bindOppositeThresholds(a, b);
 
-    IList<ActiveRunwayThreshold> ret = new EList<>();
-    ret.add(a);
-    ret.add(b);
-    return ret;
-  }
+      IList<ActiveRunwayThreshold> ret = new EList<>();
+      ret.add(a);
+      ret.add(b);
+      return ret;
+    }
 
-  private static void bindOppositeThresholds(ActiveRunwayThreshold a, ActiveRunwayThreshold b) {
-    a.other = b;
-    b.other = a;
+    private static void bindOppositeThresholds(ActiveRunwayThreshold a, ActiveRunwayThreshold b) {
+      a.other = b;
+      b.other = a;
 
-    a.course = Coordinates.getBearing(a.coordinate, b.coordinate);
-    b.course = Coordinates.getBearing(b.coordinate, a.coordinate);
+      a.course = Coordinates.getBearing(a.coordinate, b.coordinate);
+      b.course = Coordinates.getBearing(b.coordinate, a.coordinate);
 
-    a.estimatedFafPoint = Coordinates.getCoordinate(a.coordinate,
-        Headings.getOpposite(a.course), 9);
-    b.estimatedFafPoint = Coordinates.getCoordinate(b.coordinate,
-        Headings.getOpposite(b.course), 9);
-  }
+      a.estimatedFafPoint = Coordinates.getCoordinate(a.coordinate,
+          Headings.getOpposite(a.course), 9);
+      b.estimatedFafPoint = Coordinates.getCoordinate(b.coordinate,
+          Headings.getOpposite(b.course), 9);
+    }
 
-  private static ActiveRunwayThreshold load(XElement source, ActiveRunway runway) {
-    ActiveRunwayThreshold ret = new ActiveRunwayThreshold();
-    ret.setParent(runway);
-    ret.read(source);
-    return ret;
+    private static ActiveRunwayThreshold load(XElement source, ActiveRunway runway) {
+      ActiveRunwayThreshold ret = new ActiveRunwayThreshold();
+      ret.setParent(runway);
+      read(source, ret);
+      return ret;
+    }
+
+    private static void read(XElement source, ActiveRunwayThreshold activeRunwayThreshold) {
+      XmlLoader.setContext(source);
+      activeRunwayThreshold.name = XmlLoader.loadString("name");
+      activeRunwayThreshold.coordinate = XmlLoader.loadCoordinate("coordinate");
+      activeRunwayThreshold.initialDepartureAltitude = XmlLoader.loadInteger("initialDepartureAltitude");
+      String mappingString = XmlLoader.loadString("mapping");
+      IList<String> mapping = new EList<>(mappingString.split(";"));
+
+      activeRunwayThreshold.routes = activeRunwayThreshold.getParent().getParent().getDaRoutes().where(q -> q.isMappingMatch(mapping));
+
+      activeRunwayThreshold.approaches = new EList<>();
+      XmlLoader.loadList(
+          source.getChild("approaches").getChildren(),
+          activeRunwayThreshold.approaches,
+          q -> Approach.load(q, activeRunwayThreshold)
+      );
+
+      // adds visual approach if none exists
+      if (activeRunwayThreshold.approaches.isNone(q -> q.getType() == Approach.ApproachType.visual)) {
+        Approach visual = Approach.generateDefaultVisualApproach(activeRunwayThreshold);
+        activeRunwayThreshold.approaches.add(visual);
+      }
+    }
   }
 
   private IList<Approach> approaches;
@@ -66,7 +92,7 @@ public class ActiveRunwayThreshold extends Parentable<ActiveRunway> {
   private ActiveRunwayThreshold() {
   }
 
-  public IList<Approach> getApproaches() {
+  public IReadOnlyList<Approach> getApproaches() {
     return approaches;
   }
 
@@ -99,12 +125,12 @@ public class ActiveRunwayThreshold extends Parentable<ActiveRunway> {
     return coordinate;
   }
 
-  public int getCourseInt() {
-    return (int) Math.round(this.course);
-  }
-
   public double getCourse() {
     return this.course;
+  }
+
+  public int getCourseInt() {
+    return (int) Math.round(this.course);
   }
 
 //  public DARoute getDepartureRouteForPlane(AirplaneType type, Navaid mainNavaid, boolean canBeVectoring) {
@@ -140,7 +166,7 @@ public class ActiveRunwayThreshold extends Parentable<ActiveRunway> {
     return other;
   }
 
-  public IList<ActiveRunwayThreshold> getParallelGroup() {
+  public IReadOnlyList<ActiveRunwayThreshold> getParallelGroup() {
     IList<ActiveRunwayThreshold> ret = new EList<>();
 
     double crs = this.getCourse();
@@ -186,27 +212,5 @@ public class ActiveRunwayThreshold extends Parentable<ActiveRunway> {
     return ret;
   }
 
-  private void read(XElement source) {
-    XmlLoader.setContext(source);
-    this. name = XmlLoader.loadString("name");
-    this. coordinate = XmlLoader.loadCoordinate("coordinate");
-    this.initialDepartureAltitude = XmlLoader.loadInteger("initialDepartureAltitude");
-    String mappingString = XmlLoader.loadString("mapping");
-    IList<String> mapping = new EList<>(mappingString.split(";"));
 
-    this.routes = this.getParent().getParent().getDaRoutes().where(q -> q.isMappingMatch(mapping));
-
-    this.approaches = new EList<>();
-    XmlLoader.loadList(
-        source.getChild("approaches").getChildren(),
-        this.approaches,
-        q->Approach.load(q, this)
-    );
-
-    // adds visual approach if none exists
-    if (this.approaches.isNone(q -> q.getType() == Approach.ApproachType.visual)) {
-      Approach visual = Approach.generateDefaultVisualApproach(this);
-      approaches.add(visual);
-    }
-  }
 }

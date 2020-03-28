@@ -20,11 +20,25 @@ public class Atc {
     app,
     ctr
   }
+  
+  static class XmlReader{
+    public static Atc load(XElement source) {
+      Atc ret = new Atc();
+      read(source,ret);
+      return ret;
+    }
 
-  public static Atc load(XElement source) {
-    Atc ret = new Atc();
-    ret.read(source);
-    return ret;
+    private static void read(XElement source, Atc atc) {
+      XmlLoader.setContext(source);
+      atc.type = XmlLoader.loadEnum("type", Atc.eType.class);
+      atc.name = XmlLoader.loadString("name");
+      atc.frequency = XmlLoader.loadDouble("frequency");
+      atc.acceptAltitude = XmlLoader.loadInteger("acceptAltitude");
+      atc.releaseAltitude = XmlLoader.loadInteger("releaseAltitude");
+      atc.orderedAltitude = XmlLoader.loadInteger("orderedAltitude");
+      atc.ctrAcceptDistance = XmlLoader.loadInteger("ctrAcceptDistance", null);
+      atc.ctrNavaidAcceptDistance = XmlLoader.loadInteger("ctrNavaidAcceptDistance", null);
+    }
   }
 
   private Atc.eType type;
@@ -71,15 +85,4 @@ public class Atc {
     return type;
   }
 
-  private void read(XElement source) {
-    XmlLoader.setContext(source);
-    this.type = XmlLoader.loadEnum("type", Atc.eType.class);
-    this.name = XmlLoader.loadString("name");
-    this.frequency = XmlLoader.loadDouble("frequency");
-    this.acceptAltitude = XmlLoader.loadInteger("acceptAltitude");
-    this.releaseAltitude = XmlLoader.loadInteger("releaseAltitude");
-    this.orderedAltitude = XmlLoader.loadInteger("orderedAltitude");
-    this.ctrAcceptDistance = XmlLoader.loadInteger("ctrAcceptDistance", null);
-    this.ctrNavaidAcceptDistance = XmlLoader.loadInteger("ctrNavaidAcceptDistance", null);
-  }
 }

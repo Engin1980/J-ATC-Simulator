@@ -12,56 +12,77 @@ import eng.jAtcSim.newLib.shared.xml.XmlLoader;
 
 public class RunwayConfiguration {
 
-  public static RunwayConfiguration createForThresholds(IList<ActiveRunwayThreshold> rts) {
-    throw new UnsupportedOperationException("This must also includes somehow created crossedThresholdsSet, what is n ow in XmlModelBinder.");
-//    IList<RunwayThresholdConfiguration> lst;
-//    lst = rts.select(q -> new RunwayThresholdConfiguration(q));
-//    RunwayConfiguration ret = new RunwayConfiguration(0, 359, 0, 999, lst, lst);
-//    ret.bind();
-//    return ret;
-  }
-
-  public static RunwayConfiguration load(XElement source, Airport airport) {
-    RunwayConfiguration ret = new RunwayConfiguration();
-    ret.read(source, airport);
-    return ret;
-  }
-
-  private static IList<ISet<ActiveRunwayThreshold>> buildCrossedThresholdsSet(
-      IList<RunwayThresholdConfiguration> departures,
-      IList<RunwayThresholdConfiguration> arrivals) {
-    // detection and saving the crossed runways
-    IList<ISet<ActiveRunwayThreshold>> ret = new EList<>();
-
-    IList<ActiveRunway> rwys = new EDistinctList<>(EDistinctList.Behavior.skip);
-    rwys.add(arrivals.select(q -> q.getThreshold().getParent()).distinct());
-    rwys.add(departures.select(q -> q.getThreshold().getParent()).distinct());
-    IList<ISet<ActiveRunway>> crossedRwys = new EList<>();
-    while (rwys.isEmpty() == false) {
-      ISet<ActiveRunway> set = new ESet<>();
-      ActiveRunway r = rwys.get(0);
-      rwys.removeAt(0);
-      set.add(r);
-      set.add(
-          rwys.where(q -> isIntersectionBetweenRunways(r, q))
-      );
-      rwys.tryRemove(set);
-      crossedRwys.add(set);
+  static class XmlReader{
+    static RunwayConfiguration load(XElement source, Airport airport) {
+      RunwayConfiguration ret = new RunwayConfiguration();
+      read(source, ret, airport);
+      return ret;
     }
 
-    ISet<ActiveRunwayThreshold> set;
-    for (ISet<ActiveRunway> crossedRwy : crossedRwys) {
-      set = new ESet<>();
-      for (ActiveRunway runway : crossedRwy) {
-        set.add(runway.getThresholds());
+    private static void read(XElement source, RunwayConfiguration runwayConfiguration, Airport airport) {
+      XmlLoader.setContext(source);
+      runwayConfiguration.windFrom = XmlLoader.loadInteger("windFrom", 0);
+      runwayConfiguration.windTo = XmlLoader.loadInteger("windTo", 359);
+      runwayConfiguration.windSpeedFrom = XmlLoader.loadInteger("windSpeedFrom", 0);
+      runwayConfiguration.windSpeedTo = XmlLoader.loadInteger("windSpeedTo", 999);
+
+      runwayConfiguration.departures = new EList<>();
+      runwayConfiguration.arrivals = new EList<>();
+
+      for (XElement child : source.getChildren()) {
+        RunwayThresholdConfiguration rtc = RunwayThresholdConfiguration.XmlReader.load(child, airport);
+        switch (child.getName()) {
+          case "departure":
+            runwayConfiguration.departures.add(rtc);
+            break;
+          case "arrivals":
+            runwayConfiguration.arrivals.add(rtc);
+            break;
+          default:
+            throw new EEnumValueUnsupportedException(child.getName());
+        }
       }
-      ret.add(set);
+
+      checkAllCategoriesAreApplied(runwayConfiguration.departures, runwayConfiguration.arrivals);
+      runwayConfiguration.crossedThresholdSets = buildCrossedThresholdsSet(
+          runwayConfiguration.departures, runwayConfiguration.arrivals);
     }
 
-    return ret;
-  }
+    private static IList<ISet<ActiveRunwayThreshold>> buildCrossedThresholdsSet(
+        IList<RunwayThresholdConfiguration> departures,
+        IList<RunwayThresholdConfiguration> arrivals) {
+      // detection and saving the crossed runways
+      IList<ISet<ActiveRunwayThreshold>> ret = new EList<>();
 
-  private static boolean isIntersectionBetweenRunways(ActiveRunway a, ActiveRunway b) {
+      IList<ActiveRunway> rwys = new EDistinctList<>(EDistinctList.Behavior.skip);
+      rwys.add(arrivals.select(q -> q.getThreshold().getParent()).distinct());
+      rwys.add(departures.select(q -> q.getThreshold().getParent()).distinct());
+      IList<ISet<ActiveRunway>> crossedRwys = new EList<>();
+      while (rwys.isEmpty() == false) {
+        ISet<ActiveRunway> set = new ESet<>();
+        ActiveRunway r = rwys.get(0);
+        rwys.removeAt(0);
+        set.add(r);
+        set.add(
+            rwys.where(q -> isIntersectionBetweenRunways(r, q))
+        );
+        rwys.tryRemove(set);
+        crossedRwys.add(set);
+      }
+
+      ISet<ActiveRunwayThreshold> set;
+      for (ISet<ActiveRunway> crossedRwy : crossedRwys) {
+        set = new ESet<>();
+        for (ActiveRunway runway : crossedRwy) {
+          set.add(runway.getThresholds());
+        }
+        ret.add(set);
+      }
+
+      return ret;
+    }
+
+    private static boolean isIntersectionBetweenRunways(ActiveRunway a, ActiveRunway b) {
 //    Line2D lineA = new Line2D.Float(
 //        (float) a.getThresholdA().getCoordinate().getLatitude().get(),
 //        (float) a.getThresholdA().getCoordinate().getLongitude().get(),
@@ -74,37 +95,47 @@ public class RunwayConfiguration {
 //        (float) b.getThresholdB().getCoordinate().getLongitude().get());
 //    boolean ret = lineA.intersectsLine(lineB);
 
-    boolean ret = LineUtils.linesIntersect(
-        //l1-from
-        (float) a.getThresholdA().getCoordinate().getLatitude().get(),
-        (float) a.getThresholdA().getCoordinate().getLongitude().get(),
-        //l1-to
-        (float) a.getThresholdB().getCoordinate().getLatitude().get(),
-        (float) a.getThresholdB().getCoordinate().getLongitude().get(),
-        //l2-from
-        (float) b.getThresholdA().getCoordinate().getLatitude().get(),
-        (float) b.getThresholdA().getCoordinate().getLongitude().get(),
-        //l2-to
-        (float) b.getThresholdB().getCoordinate().getLatitude().get(),
-        (float) b.getThresholdB().getCoordinate().getLongitude().get());
-    return ret;
+      boolean ret = LineUtils.linesIntersect(
+          //l1-from
+          (float) a.getThresholdA().getCoordinate().getLatitude().get(),
+          (float) a.getThresholdA().getCoordinate().getLongitude().get(),
+          //l1-to
+          (float) a.getThresholdB().getCoordinate().getLatitude().get(),
+          (float) a.getThresholdB().getCoordinate().getLongitude().get(),
+          //l2-from
+          (float) b.getThresholdA().getCoordinate().getLatitude().get(),
+          (float) b.getThresholdA().getCoordinate().getLongitude().get(),
+          //l2-to
+          (float) b.getThresholdB().getCoordinate().getLatitude().get(),
+          (float) b.getThresholdB().getCoordinate().getLongitude().get());
+      return ret;
+    }
+
+    private static void checkAllCategoriesAreApplied(
+        IList<RunwayThresholdConfiguration> departures,
+        IList<RunwayThresholdConfiguration> arrivals) {
+      IList<ActiveRunway> rwys = new EDistinctList<>(EDistinctList.Behavior.skip);
+      rwys.add(arrivals.select(q -> q.getThreshold().getParent()).distinct());
+      rwys.add(departures.select(q -> q.getThreshold().getParent()).distinct());
+
+      // check if all categories are applied
+      for (char i = 'A'; i <= 'D'; i++) {
+        char c = i;
+        if (!arrivals.isAny(q -> q.isForCategory(c)))
+          throw new EApplicationException("Unable to find arrival threshold for category " + c);
+        if (!departures.isAny(q -> q.isForCategory(c)))
+          throw new EApplicationException("Unable to find departure threshold for category " + c);
+      }
+    }
   }
 
-  private static void checkAllCategoriesAreApplied(
-      IList<RunwayThresholdConfiguration> departures,
-      IList<RunwayThresholdConfiguration> arrivals) {
-    IList<ActiveRunway> rwys = new EDistinctList<>(EDistinctList.Behavior.skip);
-    rwys.add(arrivals.select(q -> q.getThreshold().getParent()).distinct());
-    rwys.add(departures.select(q -> q.getThreshold().getParent()).distinct());
-
-    // check if all categories are applied
-    for (char i = 'A'; i <= 'D'; i++) {
-      char c = i;
-      if (!arrivals.isAny(q -> q.isForCategory(c)))
-        throw new EApplicationException("Unable to find arrival threshold for category " + c);
-      if (!departures.isAny(q -> q.isForCategory(c)))
-        throw new EApplicationException("Unable to find departure threshold for category " + c);
-    }
+  public static RunwayConfiguration createForThresholds(IList<ActiveRunwayThreshold> rts) {
+    throw new UnsupportedOperationException("This must also includes somehow created crossedThresholdsSet, what is n ow in XmlModelBinder.");
+//    IList<RunwayThresholdConfiguration> lst;
+//    lst = rts.select(q -> new RunwayThresholdConfiguration(q));
+//    RunwayConfiguration ret = new RunwayConfiguration(0, 359, 0, 999, lst, lst);
+//    ret.bind();
+//    return ret;
   }
 
   private int windFrom;
@@ -189,40 +220,5 @@ public class RunwayConfiguration {
     return sb.toString();
   }
 
-  private void read(XElement source, Airport airport) {
-    XmlLoader.setContext(source);
-    this.windFrom = XmlLoader.loadInteger("windFrom", 0);
-    this.windTo = XmlLoader.loadInteger("windTo", 359);
-    this.windSpeedFrom = XmlLoader.loadInteger("windSpeedFrom", 0);
-    this.windSpeedTo = XmlLoader.loadInteger("windSpeedTo", 999);
 
-    IList<RunwayThresholdConfiguration> deps = new EList<>();
-    IList<RunwayThresholdConfiguration> arrs = new EList<>();
-
-    for (XElement child : source.getChildren()) {
-      RunwayThresholdConfiguration rtc = RunwayThresholdConfiguration.load(child, airport);
-      switch (child.getName()) {
-        case "departure":
-          deps.add(rtc);
-          break;
-        case "arrivals":
-          arrs.add(rtc);
-          break;
-        default:
-          throw new EEnumValueUnsupportedException(child.getName());
-      }
-    }
-
-    checkAllCategoriesAreApplied(deps, arrs);
-    IList<ISet<ActiveRunwayThreshold>> cts = buildCrossedThresholdsSet(deps, arrs);
-
-    RunwayConfiguration ret = new RunwayConfiguration();
-    ret.windFrom = windFrom;
-    ret.windTo = windTo;
-    ret.windSpeedFrom = windSpeedFrom;
-    ret.windSpeedTo = windSpeedTo;
-    ret.arrivals = arrs;
-    ret.departures = deps;
-    ret.crossedThresholdSets = cts;
-  }
 }

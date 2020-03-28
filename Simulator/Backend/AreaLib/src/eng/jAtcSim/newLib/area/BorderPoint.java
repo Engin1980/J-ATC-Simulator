@@ -17,10 +17,12 @@ import java.util.Objects;
  */
 public class BorderPoint {
 
-  public static BorderPoint load(XElement source) {
-    Coordinate coordinate = XmlLoader.loadCoordinate(source, "coordinate");
-    BorderPoint ret = new BorderPoint(coordinate);
-    return ret;
+  static class XmlReader {
+    public static BorderPoint load(XElement source) {
+      Coordinate coordinate = XmlLoader.loadCoordinate(source, "coordinate");
+      BorderPoint ret = new BorderPoint(coordinate);
+      return ret;
+    }
   }
 
   public static BorderPoint create(Coordinate coordinate) {

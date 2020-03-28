@@ -6,12 +6,14 @@ import eng.jAtcSim.newLib.shared.xml.XmlLoader;
 
 public class InitialPosition {
 
-  public static InitialPosition load(XElement source) {
-    XmlLoader.setContext(source);
-    Coordinate coordinate = XmlLoader.loadCoordinate("coordinate");
-    int range = XmlLoader.loadInteger("range");
-    InitialPosition ret = new InitialPosition(coordinate, range);
-    return ret;
+  static class XmlReader {
+    static InitialPosition load(XElement source) {
+      XmlLoader.setContext(source);
+      Coordinate coordinate = XmlLoader.loadCoordinate("coordinate");
+      int range = XmlLoader.loadInteger("range");
+      InitialPosition ret = new InitialPosition(coordinate, range);
+      return ret;
+    }
   }
 
   private final Coordinate coordinate;

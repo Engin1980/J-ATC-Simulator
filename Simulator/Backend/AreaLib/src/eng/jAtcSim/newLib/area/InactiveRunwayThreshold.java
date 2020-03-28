@@ -10,33 +10,36 @@ import eng.jAtcSim.newLib.shared.xml.XmlLoader;
 
 public class InactiveRunwayThreshold extends Parentable<InactiveRunway> {
 
-  public static IList<InactiveRunwayThreshold> loadBoth(IReadOnlyList<XElement> sources, InactiveRunway parent) {
-    assert sources.size() == 2 : "There must be two thresholds";
+  static class XmlReader {
+    static IList<InactiveRunwayThreshold> loadBoth(IReadOnlyList<XElement> sources, InactiveRunway parent) {
+      assert sources.size() == 2 : "There must be two thresholds";
 
-    InactiveRunwayThreshold a = InactiveRunwayThreshold.load(sources.get(0), parent);
-    InactiveRunwayThreshold b = InactiveRunwayThreshold.load(sources.get(1), parent);
-    a.other = b;
-    b.other = a;
-    a.course = Coordinates.getBearing(a.coordinate, b.coordinate);
-    b.course = Coordinates.getBearing(b.coordinate, a.coordinate);
+      InactiveRunwayThreshold a = InactiveRunwayThreshold.XmlReader.load(sources.get(0), parent);
+      InactiveRunwayThreshold b = InactiveRunwayThreshold.XmlReader.load(sources.get(1), parent);
+      a.other = b;
+      b.other = a;
+      a.course = Coordinates.getBearing(a.coordinate, b.coordinate);
+      b.course = Coordinates.getBearing(b.coordinate, a.coordinate);
 
-    IList<InactiveRunwayThreshold> ret = new EList<>();
-    ret.add(a);
-    ret.add(b);
-    return ret;
-  }
+      IList<InactiveRunwayThreshold> ret = new EList<>();
+      ret.add(a);
+      ret.add(b);
+      return ret;
+    }
 
-  private static InactiveRunwayThreshold load(XElement source, InactiveRunway parent) {
-    InactiveRunwayThreshold ret = new InactiveRunwayThreshold();
-    ret.setParent(parent);
-    ret.read(source);
-    return ret;
-  }
+    private static InactiveRunwayThreshold load(XElement source, InactiveRunway runway) {
+      InactiveRunwayThreshold ret = new InactiveRunwayThreshold();
+      ret.setParent(runway);
+      read(source, ret);
+      return ret;
+    }
 
-  private void read(XElement source) {
-    XmlLoader.setContext(source);
-    this.name = XmlLoader.loadString("name");
-    this. coordinate = XmlLoader.loadCoordinate("coordinate");
+    private static void read(XElement source, InactiveRunwayThreshold inactiveRunwayThreshold) {
+      XmlLoader.setContext(source);
+      XmlLoader.setContext(source);
+      inactiveRunwayThreshold.name = XmlLoader.loadString("name");
+      inactiveRunwayThreshold.coordinate = XmlLoader.loadCoordinate("coordinate");
+    }
   }
 
   private String name;

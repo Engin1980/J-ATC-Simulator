@@ -10,28 +10,24 @@ import eng.eSystem.collections.IList;
 import eng.eSystem.eXml.XElement;
 
 /**
- *
  * @author Marek
  */
 public class ActiveRunway extends Runway<ActiveRunway, ActiveRunwayThreshold> {
 
+  static class XmlReader {
+    static ActiveRunway load(XElement source, Airport airport) {
+      ActiveRunway ret = new ActiveRunway();
+      ret.setParent(airport);
+      readThresholds(source, ret);
+      return ret;
+    }
 
-  public static ActiveRunway load(XElement source, Airport airport){
-    ActiveRunway ret = new ActiveRunway();
-    ret.setParent(airport);
-    ret.read(source);
-    return ret;
-  }
-
-  protected void read(XElement source){
-    super.read(source);
-  }
-
-  @Override
-  protected IList<ActiveRunwayThreshold> readThresholds(XElement source) {
-    IList<ActiveRunwayThreshold> ret = ActiveRunwayThreshold.loadBoth(
-        source.getChild("thresholds").getChildren(), this);
-    return ret;
+    protected static void readThresholds(
+        XElement source, ActiveRunway activeRunway) {
+      IList<ActiveRunwayThreshold> thresholds = ActiveRunwayThreshold.XmlReader.loadBoth(
+          source.getChild("thresholds").getChildren(), activeRunway);
+      activeRunway.setThresholds(thresholds);
+    }
   }
 
   private ActiveRunway() {

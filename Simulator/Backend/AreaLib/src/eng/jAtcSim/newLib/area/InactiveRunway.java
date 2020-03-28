@@ -5,11 +5,20 @@ import eng.eSystem.eXml.XElement;
 
 public class InactiveRunway extends Runway<InactiveRunway, InactiveRunwayThreshold> {
 
-  public static InactiveRunway load(XElement source, Airport airport) {
-    InactiveRunway ret = new InactiveRunway();
-    ret.setParent(airport);
-    ret.read(source);
-    return ret;
+  static class XmlReader {
+    public static InactiveRunway load(XElement source, Airport airport) {
+      InactiveRunway ret = new InactiveRunway();
+      ret.setParent(airport);
+      readThresholds(source, ret);
+      return ret;
+    }
+
+    protected static void readThresholds(
+        XElement source, InactiveRunway activeRunway) {
+      IList<InactiveRunwayThreshold> thresholds = InactiveRunwayThreshold.XmlReader.loadBoth(
+          source.getChild("thresholds").getChildren(), activeRunway);
+      activeRunway.setThresholds(thresholds);
+    }
   }
 
   private InactiveRunway() {
@@ -20,18 +29,8 @@ public class InactiveRunway extends Runway<InactiveRunway, InactiveRunwayThresho
     return getThresholdA().getName() + "-" + getThresholdB().getName() + "{inact}";
   }
 
-  protected void read(XElement source) {
-    super.read(source);
-  }
-
   @Override
   public String toString() {
     return this.getName() + "{inactive-rwy}";
-  }
-
-  @Override
-  protected IList<InactiveRunwayThreshold> readThresholds(XElement source) {
-    IList<InactiveRunwayThreshold> ret = InactiveRunwayThreshold.loadBoth(source.getChildren(), this);
-    return ret;
   }
 }
