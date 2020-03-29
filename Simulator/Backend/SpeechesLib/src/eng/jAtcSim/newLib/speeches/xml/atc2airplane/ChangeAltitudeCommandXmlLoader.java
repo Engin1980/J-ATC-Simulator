@@ -1,11 +1,13 @@
 package eng.jAtcSim.newLib.speeches.xml.atc2airplane;
 
 import eng.eSystem.eXml.XElement;
+import eng.jAtcSim.newLib.shared.xml.IXmlLoader;
 import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
 import eng.jAtcSim.newLib.speeches.atc2airplane.ChangeAltitudeCommand;
 
-public class ChangeAltitudeCommandFactory {
-  public static ChangeAltitudeCommand load(XElement source) {
+public class ChangeAltitudeCommandXmlLoader implements IXmlLoader<ChangeAltitudeCommand> {
+  @Override
+  public ChangeAltitudeCommand load(XElement source) {
     assert source.getName().equals("altitude");
 
     XmlLoaderUtils.setContext(source);

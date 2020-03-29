@@ -2,11 +2,13 @@ package eng.jAtcSim.newLib.speeches.xml.atc2airplane;
 
 import eng.eSystem.eXml.XElement;
 import eng.jAtcSim.newLib.shared.exceptions.ApplicationException;
+import eng.jAtcSim.newLib.shared.xml.IXmlLoader;
 import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
 import eng.jAtcSim.newLib.speeches.atc2airplane.HoldCommand;
 
-public class HoldCommandFactory {
-  public static HoldCommand load(XElement element) {
+public class HoldCommandXmlLoader implements IXmlLoader<HoldCommand> {
+  @Override
+  public HoldCommand load(XElement element) {
     assert element.getName().equals("hold");
 
     HoldCommand ret;

@@ -1,13 +1,15 @@
 package eng.jAtcSim.newLib.speeches.xml.atc2airplane.afterCommands;
 
 import eng.eSystem.eXml.XElement;
+import eng.jAtcSim.newLib.shared.xml.IXmlLoader;
 import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
 import eng.jAtcSim.newLib.speeches.atc2airplane.afterCommands.AfterDistanceCommand;
 import eng.jAtcSim.newLib.speeches.atc2airplane.afterCommands.AfterValuePosition;
 
-public class AfterDistanceCommandFactory {
+public class AfterDistanceCommandXmlLoader implements IXmlLoader<AfterDistanceCommand> {
 
-  public static AfterDistanceCommand load(XElement element) {
+  @Override
+  public AfterDistanceCommand load(XElement element) {
     String navaidName = Shared.loadNavaidName(element);
     double distance = XmlLoaderUtils.loadDouble(element, "distance");
     AfterValuePosition extension = Shared.loadAfterValuePosition(element);

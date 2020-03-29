@@ -18,17 +18,17 @@ public class XmlAfterCommandFactory {
         new String[]{"speed", "altitude", "heading", "distance", "radial", "navaid"});
     switch (property) {
       case "speed":
-        return AfterSpeedCommandFactory.load(element);
+        return AfterSpeedCommandXmlLoader.load(element);
       case "altitude":
-        return AfterAltitudeCommandFactory.load(element);
+        return AfterAltitudeCommandXmlLoader.load(element);
       case "heading":
-        return AfterHeadingCommandFactory.load(element);
+        return AfterHeadingCommandXmlLoader.load(element);
       case "distance":
-        return AfterDistanceCommandFactory.load(element);
+        return AfterDistanceCommandXmlLoader.load(element);
       case "radial":
-        return AfterRadialCommandFactory.load(element);
+        return AfterRadialCommandXmlLoader.load(element);
       case "navaid":
-        return AfterNavaidCommandFactory.load(element);
+        return AfterNavaidCommandXmlLoader.load(element);
       default:
         throw new SwitchCaseNotFoundException(property);
     }
