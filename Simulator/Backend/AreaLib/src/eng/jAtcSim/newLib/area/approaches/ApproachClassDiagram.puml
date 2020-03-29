@@ -1,6 +1,11 @@
 @startuml
 
-class Approach
+class Approach{
+  -entries : IList<ApproachEntry>
+  -stages:IList<IApproachStage>
+  -gaRoute : GaRoute
+  -type : ApproachType
+}
 class ApproachEntry
 
 package stages{
