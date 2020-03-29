@@ -6,7 +6,7 @@ import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.eXml.XElement;
 import eng.jAtcSim.newLib.area.Airport;
 import eng.jAtcSim.newLib.area.Parentable;
-import eng.jAtcSim.newLib.area.speeches.IAtcCommand;
+import eng.jAtcSim.newLib.speeches.ICommand;
 
 public abstract class Route extends Parentable<Airport> {
 
@@ -57,7 +57,7 @@ public abstract class Route extends Parentable<Airport> {
 //
 //    return ret;
 //  }
-  private final IList<IAtcCommand> routeCommands = new EList<>();
+  private final IList<ICommand> routeCommands = new EList<>();
   //
 //  private static IAtcCommand loadHold(XElement source, NavaidList navaids, IReadOnlyList<PublishedHold> publishedHolds) {
 //    String navaidName = XmlLoader.loadString(source, "fix");
@@ -161,11 +161,11 @@ public abstract class Route extends Parentable<Airport> {
   protected Route() {
   }
 
-  protected Route(IReadOnlyList<IAtcCommand> routeCommands) {
+  protected Route(IReadOnlyList<ICommand> routeCommands) {
     this.routeCommands.add(routeCommands);
   }
 
-  public IReadOnlyList<IAtcCommand> getRouteCommands() {
+  public IReadOnlyList<ICommand> getRouteCommands() {
     return routeCommands;
   }
 
@@ -184,13 +184,13 @@ public abstract class Route extends Parentable<Airport> {
     this.mapping.add(mapping.toLowerCase().split(";"));
     IReadOnlyList<XElement> routeElements = source.getChildren();
     for (XElement routeElement : routeElements) {
-      IAtcCommand cmd = XmlRouteFactory.load(
+      ICommand cmd = XmlRouteFactory.load(
           routeElement, this.getParent());
       this.routeCommands.add(cmd);
     }
   }
 
-  protected void fill(IList<IAtcCommand> routeCommands){
+  protected void fill(IList<ICommand> routeCommands){
     if (routeCommands == null) {
         throw new IllegalArgumentException("Value of {routeCommands} cannot not be null.");
     }

@@ -7,7 +7,7 @@ import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.utilites.Selector;
 import eng.eSystem.validation.EAssert;
-import eng.jAtcSim.newLib.shared.SharedFactory;
+import eng.jAtcSim.newLib.shared.SharedInstanceProvider;
 import eng.jAtcSim.newLib.shared.time.ETimeStamp;
 import eng.jAtcSim.newLib.traffic.models.base.DayGeneratedTrafficModel;
 import eng.jAtcSim.newLib.traffic.movementTemplating.EntryExitInfo;
@@ -67,7 +67,7 @@ public class DensityBasedTrafficModel extends DayGeneratedTrafficModel {
     }
 
     public Company getRandom() {
-      double rnd = SharedFactory.getRnd().nextDouble(0, weightSum);
+      double rnd = SharedInstanceProvider.getRnd().nextDouble(0, weightSum);
       int index = 0;
       Company ret = null;
       while (rnd > 0) {
@@ -171,7 +171,7 @@ public class DensityBasedTrafficModel extends DayGeneratedTrafficModel {
   private final IList<HourBlockMovements> density;
   private final IList<DirectionWeight> directions;
   private final double nonCommercialFlightProbability;
-  private final ERandom rnd = SharedFactory.getRnd();
+  private final ERandom rnd = SharedInstanceProvider.getRnd();
 
   private DensityBasedTrafficModel(double delayProbability, int maxDelayInMinutesPerStep, boolean useExtendedCallsigns,
                                    CompanyList companies,

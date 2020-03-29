@@ -2,7 +2,7 @@ package eng.jAtcSim.newLib.stats;
 
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
-import eng.jAtcSim.newLib.shared.SharedFactory;
+import eng.jAtcSim.newLib.shared.SharedInstanceProvider;
 import eng.jAtcSim.newLib.shared.time.EDayTimeRun;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 import eng.jAtcSim.newLib.stats.model.ElapsedSecondDurationModel;
@@ -160,7 +160,7 @@ public class RecentStats {
   private int finishedDepartures;
 
   private static EDayTimeRun getNow(){
-    return SharedFactory.getNow();
+    return SharedInstanceProvider.getNow();
   }
 
   public CurrentPlanesCount getCurrentPlanesCount() {

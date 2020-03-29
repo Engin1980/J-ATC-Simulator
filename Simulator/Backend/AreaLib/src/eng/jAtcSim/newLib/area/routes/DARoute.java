@@ -12,9 +12,9 @@ import eng.jAtcSim.newLib.area.Airport;
 import eng.jAtcSim.newLib.area.Border;
 import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.area.NavaidList;
-import eng.jAtcSim.newLib.area.speeches.atc2airplane.ToNavaidCommand;
 import eng.jAtcSim.newLib.shared.PlaneCategoryDefinitions;
 import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
+import eng.jAtcSim.newLib.speeches.atc2airplane.ToNavaidCommand;
 
 public class DARoute extends Route {
   public enum eType {
@@ -29,6 +29,88 @@ public class DARoute extends Route {
     }
   }
 
+  static class XmlLoader{
+    public static DARoute load(XElement source, Airport airport) {
+      DARoute ret = new DARoute();
+      ret.setParent(airport);
+      read(source, ret);
+      return ret;
+    }
+
+    private static void read(XElement source, DARoute route) {
+      XmlLoaderUtils.setContext(source);
+
+      route.type = XmlLoaderUtils.loadEnum("type", eType.class);
+      route.name = XmlLoaderUtils.loadString("name");
+      String mapping = XmlLoaderUtils.loadString("mapping");
+      route.category = XmlLoaderUtils.loadPlaneCategory("category", "ABCD");
+      route.entryAltitude = XmlLoaderUtils.loadAltitude("entryFL", null);
+      String mainFixName = XmlLoaderUtils.loadString("mainFix", null);
+      route.mainNavaid = mainFixName != null ?
+          route.getParent().getParent().getNavaids().get(mainFixName) :
+          getMainRouteNavaidFromRouteName(route.name, route.getParent().getParent().getNavaids());
+
+      super.read(source, mapping);
+
+      normalizeRouteNavaids(route);
+      evaluateRouteLength(route);
+      evaluateMaxMrvaAltitude(route);
+    }
+
+    private static void evaluateMaxMrvaAltitude(DARoute route) {
+      IReadOnlyList<Navaid> routeNavaids = route.getNavaids();
+      IList<Tuple<Coordinate, Coordinate>> pointLines = convertPointsToLines(routeNavaids);
+      IList<Border> mrvas = route.getParent().getParent().getBorders().where(q -> q.getType() == Border.eType.mrva);
+
+      int maxMrvaAlt = 0;
+      for (Border mrva : mrvas) {
+        if (hasMrvaIntersection(pointLines, mrva))
+          maxMrvaAlt = Math.max(maxMrvaAlt, mrva.getMaxAltitude());
+      }
+      if (maxMrvaAlt == 0) {
+        Navaid routePoint = route.mainNavaid;
+        Border mrva = mrvas.tryGetFirst(q -> q.isIn(routePoint.getCoordinate()));
+        if (mrva != null)
+          maxMrvaAlt = mrva.getMaxAltitude();
+      }
+      route.maxMrvaAltitude = maxMrvaAlt;
+    }
+
+    private static void evaluateRouteLength(DARoute route) {
+      IReadOnlyList<String> routeNavaids = route.getNavaidsNames();
+      double tmp = 0;
+      Navaid prev = null;
+
+      for (Navaid routeNavaid : routeNavaids) {
+        if (prev == null) {
+          prev = routeNavaid;
+        } else {
+          Navaid curr = routeNavaid;
+          double dist = Coordinates.getDistanceInNM(prev.getCoordinate(), curr.getCoordinate());
+          tmp += dist;
+          prev = curr;
+        }
+      }
+
+      route.routeLength = tmp;
+    }
+
+    private static void normalizeRouteNavaids(DARoute route) {
+//      IList<String> tmp = route.getNavaidNames();
+//      if (tmp.contains(route.mainNavaid.getName()) == false) {
+//        switch (route.type) {
+//          case sid:
+//            tmp.add(route.mainNavaid);
+//            break;
+//          case star:
+//          case transition:
+//            tmp.insert(0, route.mainNavaid);
+//            break;
+//        }
+//      }
+    }
+  }
+
   public static DARoute createNewVectoringByFix(Navaid n) {
     DARoute ret = new DARoute();
     ret.type = eType.vectoring;
@@ -37,13 +119,6 @@ public class DARoute extends Route {
     ret.mainNavaid = n;
     ret.routeLength = -1;
     ret.maxMrvaAltitude = null;
-    return ret;
-  }
-
-  public static DARoute load(XElement source, Airport airport) {
-    DARoute ret = new DARoute();
-    ret.setParent(airport);
-    ret.read(source);
     return ret;
   }
 
@@ -121,83 +196,15 @@ public class DARoute extends Route {
         ",'" + name + "'}";
   }
 
-  private void evaluateMaxMrvaAltitude() {
-    IReadOnlyList<Navaid> routeNavaids = getNavaids();
-    IList<Tuple<Coordinate, Coordinate>> pointLines = convertPointsToLines(routeNavaids);
-    IList<Border> mrvas = this.getParent().getParent().getBorders().where(q -> q.getType() == Border.eType.mrva);
 
-    int maxMrvaAlt = 0;
-    for (Border mrva : mrvas) {
-      if (hasMrvaIntersection(pointLines, mrva))
-        maxMrvaAlt = Math.max(maxMrvaAlt, mrva.getMaxAltitude());
-    }
-    if (maxMrvaAlt == 0) {
-      Navaid routePoint = mainNavaid;
-      Border mrva = mrvas.tryGetFirst(q -> q.isIn(routePoint.getCoordinate()));
-      if (mrva != null)
-        maxMrvaAlt = mrva.getMaxAltitude();
-    }
-    this.maxMrvaAltitude = maxMrvaAlt;
-  }
 
-  private void evaluateRouteLength() {
-    IReadOnlyList<Navaid> routeNavaids = getNavaids();
-    double tmp = 0;
-    Navaid prev = null;
-
-    for (Navaid routeNavaid : routeNavaids) {
-      if (prev == null) {
-        prev = routeNavaid;
-      } else {
-        Navaid curr = routeNavaid;
-        double dist = Coordinates.getDistanceInNM(prev.getCoordinate(), curr.getCoordinate());
-        tmp += dist;
-        prev = curr;
-      }
-    }
-
-    this.routeLength = tmp;
-  }
-
-  private IList<Navaid> getNavaids() {
-    IList<Navaid> ret = this.getRouteCommands()
+  private IList<String> getNavaidNames() {
+    //TODO this is strange. In XmlLoadere there is a function which extends
+    // this set, but it is not used anywhere???
+    IList<String> ret = this.getRouteCommands()
         .where(q -> q instanceof ToNavaidCommand)
-        .select(q -> ((ToNavaidCommand) q).getNavaid());
+        .select(q -> ((ToNavaidCommand) q).getNavaidName());
     return ret;
   }
 
-  private void normalizeRouteNavaids() {
-    IList<Navaid> tmp = this.getNavaids();
-    if (tmp.contains(this.mainNavaid) == false) {
-      switch (type) {
-        case sid:
-          tmp.add(this.mainNavaid);
-          break;
-        case star:
-        case transition:
-          tmp.insert(0, this.mainNavaid);
-          break;
-      }
-    }
-  }
-
-  private void read(XElement source) {
-    XmlLoaderUtils.setContext(source);
-
-    this.type = XmlLoaderUtils.loadEnum("type", eType.class);
-    this.name = XmlLoaderUtils.loadString("name");
-    String mapping = XmlLoaderUtils.loadString("mapping");
-    this.category = XmlLoaderUtils.loadPlaneCategory("category", "ABCD");
-    this.entryAltitude = XmlLoaderUtils.loadAltitude("entryFL", null);
-    String mainFixName = XmlLoaderUtils.loadString("mainFix", null);
-    this.mainNavaid = mainFixName != null ?
-        this.getParent().getParent().getNavaids().get(mainFixName) :
-        getMainRouteNavaidFromRouteName(name, this.getParent().getParent().getNavaids());
-
-    super.read(source, mapping);
-
-    this.normalizeRouteNavaids();
-    this.evaluateRouteLength();
-    this.evaluateMaxMrvaAltitude();
-  }
 }

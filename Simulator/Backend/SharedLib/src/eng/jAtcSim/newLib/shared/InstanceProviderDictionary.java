@@ -6,7 +6,7 @@ import eng.eSystem.exceptions.EApplicationException;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
-public class Factory {
+public class InstanceProviderDictionary {
 
   private static final IMap<Class<?>, Object> classInstances = new EMap<>();
   private static final IMap<Class<?>, IMap<Object, Object>> classKeyInstancew = new EMap<>();
@@ -46,6 +46,6 @@ public class Factory {
     in.set(key, value);
   }
 
-  private Factory() {
+  private InstanceProviderDictionary() {
   }
 }

@@ -7,7 +7,7 @@
 package eng.jAtcSim.newLib.weather;
 
 import eng.eSystem.EStringBuilder;
-import eng.jAtcSim.newLib.shared.SharedFactory;
+import eng.jAtcSim.newLib.shared.SharedInstanceProvider;
 import eng.jAtcSim.newLib.shared.UnitProvider;
 
 /**
@@ -107,7 +107,7 @@ public class Weather {
   }
 
   public int getWindSpeedOrWindGustSpeed() {
-    if (SharedFactory.getRnd().nextDouble() < WIND_GUST_PROBABILITY)
+    if (SharedInstanceProvider.getRnd().nextDouble() < WIND_GUST_PROBABILITY)
       return windGustSpeedInKts;
     else
       return windSpeetInKts;
@@ -124,11 +124,11 @@ public class Weather {
 
   public String toInfoString() {
     EStringBuilder sb = new EStringBuilder();
-    if (SharedFactory.getSettings().isGetWeatherInfoStringAsMetar()) {
+    if (SharedInstanceProvider.getSettings().isGetWeatherInfoStringAsMetar()) {
       sb.append("METAR ");
-      sb.append(SharedFactory.getAirportIcao()).append(" ");
+      sb.append(SharedInstanceProvider.getAirportIcao()).append(" ");
       sb.appendFormat("%02d", java.time.LocalDate.now().getDayOfMonth());
-      sb.appendFormat("%02d%02dZ ", SharedFactory.getNow().getHours(), SharedFactory.getNow().getMinutes());
+      sb.appendFormat("%02d%02dZ ", SharedInstanceProvider.getNow().getHours(), SharedInstanceProvider.getNow().getMinutes());
       if (this.getWindSpeetInKts() == this.getWindGustSpeedInKts())
         sb.appendFormat("%03d%02dKT ", this.getWindHeading(), this.getWindSpeetInKts());
       else

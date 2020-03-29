@@ -12,7 +12,7 @@ import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
 public class Area {
 
   public static class XmlLoader {
-    public Area load(XElement source) {
+    public static Area load(XElement source) {
       Area area = new Area();
       read(source, area);
       checkForDuplicits(area);

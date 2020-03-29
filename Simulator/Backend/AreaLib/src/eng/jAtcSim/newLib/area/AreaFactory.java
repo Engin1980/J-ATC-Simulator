@@ -14,7 +14,7 @@ public class AreaFactory {
       throw new XmlLoadException(sf("Failed to load area from '{0}'.", fileName));
     }
 
-    Area area = Area.load(doc.getRoot());
+    Area area = Area.XmlLoader.load(doc.getRoot());
     return area;
   }
 }

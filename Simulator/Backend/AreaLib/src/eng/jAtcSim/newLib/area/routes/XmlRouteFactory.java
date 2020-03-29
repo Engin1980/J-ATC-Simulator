@@ -3,12 +3,11 @@ package eng.jAtcSim.newLib.area.routes;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.SwitchCaseNotFoundException;
 import eng.jAtcSim.newLib.area.Airport;
-import eng.jAtcSim.newLib.area.speeches.IAtcCommand;
-import eng.jAtcSim.newLib.area.speeches.XmlAfterCommandFactory;
-import eng.jAtcSim.newLib.area.speeches.atc2airplane.*;
+import eng.jAtcSim.newLib.speeches.ICommand;
+import eng.jAtcSim.newLib.speeches.atc2airplane.*;
 
-public class XmlRouteFactory {
-  public static IAtcCommand load(XElement element, Airport parent) {
+class XmlRouteFactory {
+  public static ICommand load(XElement element, Airport parent) {
     switch (element.getName()) {
       case "then":
         return ThenCommand.load(element);

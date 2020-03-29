@@ -2,7 +2,7 @@ package eng.jAtcSim.newLib.textProcessing.implemented.formatters;
 
 import eng.eSystem.geo.Headings;
 import eng.jAtcSim.newLib.shared.Format;
-import eng.jAtcSim.newLib.shared.SharedFactory;
+import eng.jAtcSim.newLib.shared.SharedInstanceProvider;
 import eng.jAtcSim.newLib.speeches.airplane2atc.*;
 import eng.jAtcSim.newLib.speeches.airplane2atc.responses.IllegalThenCommandRejection;
 import eng.jAtcSim.newLib.speeches.airplane2atc.responses.ShortCutToFixNotOnRouteNotification;
@@ -249,7 +249,7 @@ public class DebugFormatter extends Formatter {
 
   @Override
   protected String formatGoodDayNotification(GoodDayNotification cmd) {
-    double d = SharedFactory.getRnd().nextDouble();
+    double d = SharedInstanceProvider.getRnd().nextDouble();
     d = d * greetings.length;
     StringBuilder sb = new StringBuilder();
     sb

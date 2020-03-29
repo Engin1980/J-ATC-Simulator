@@ -3,7 +3,7 @@ package eng.jAtcSim.newLib.mood;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.jAtcSim.newLib.shared.Callsign;
-import eng.jAtcSim.newLib.shared.SharedFactory;
+import eng.jAtcSim.newLib.shared.SharedInstanceProvider;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
@@ -66,7 +66,7 @@ public class Mood {
   private static final double DELAY_PER_MINUTE_POINTS = -1;
 
   private static EDayTimeStamp getNowStamp() {
-    return SharedFactory.getNow().toStamp();
+    return SharedInstanceProvider.getNow().toStamp();
   }
 
   private IList<Experience<ArrivalExperience>> arrivalExperiences;

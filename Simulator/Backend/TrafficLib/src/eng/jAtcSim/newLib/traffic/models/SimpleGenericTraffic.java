@@ -6,7 +6,7 @@ import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.utilites.NumberUtils;
 import eng.eSystem.validation.EAssert;
-import eng.jAtcSim.newLib.shared.SharedFactory;
+import eng.jAtcSim.newLib.shared.SharedInstanceProvider;
 import eng.jAtcSim.newLib.shared.time.ETimeStamp;
 import eng.jAtcSim.newLib.traffic.models.base.DayGeneratedTrafficModel;
 import eng.jAtcSim.newLib.traffic.movementTemplating.EntryExitInfo;
@@ -21,7 +21,7 @@ public class SimpleGenericTraffic extends DayGeneratedTrafficModel {
   private final double probabilityOfNonCommercialFlight;
   private final double probabilityOfDeparture; // 0-1
   private final int[] movementsPerHour; // int[24]
-  private ERandom rnd = SharedFactory.getRnd();
+  private ERandom rnd = SharedInstanceProvider.getRnd();
 
   public SimpleGenericTraffic(int[] movementsPerHour,
                               double probabilityOfDeparture, double probabilityOfNonCommercialFlight) {

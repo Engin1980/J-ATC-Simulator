@@ -1,7 +1,7 @@
 package eng.jAtcSim.newLib.weather;
 
 import eng.eSystem.validation.Validator;
-import eng.jAtcSim.newLib.shared.SharedFactory;
+import eng.jAtcSim.newLib.shared.SharedInstanceProvider;
 import eng.jAtcSim.newLib.weather.decoders.MetarDecoder;
 
 public class WeatherManager {
@@ -48,7 +48,7 @@ public class WeatherManager {
       Weather tmp = MetarDecoder.decode(metarString);
       setWeather(tmp);
     } catch (Exception ex) {
-      SharedFactory.getSimLog().sendTextMessageForUser("Failed to decode metar. " + ex.getMessage());
+      SharedInstanceProvider.getSimLog().sendTextMessageForUser("Failed to decode metar. " + ex.getMessage());
     }
   }
 
