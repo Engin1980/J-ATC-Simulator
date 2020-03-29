@@ -10,13 +10,13 @@ import eng.jAtcSim.newLib.area.*;
 import eng.jAtcSim.newLib.area.routes.DARoute;
 import eng.jAtcSim.newLib.area.routes.GaRoute;
 import eng.jAtcSim.newLib.area.routes.IafRoute;
-import eng.jAtcSim.newLib.shared.exceptions.ToDoException;
+import eng.jAtcSim.newLib.area.xml.routes.DARouteXmlLoader;
+import eng.jAtcSim.newLib.area.xml.routes.GaRouteXmlLoader;
+import eng.jAtcSim.newLib.area.xml.routes.IafRouteXmlLoader;
 import eng.jAtcSim.newLib.shared.xml.IXmlLoader;
 import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
 
 public class AirportXmlLoader implements IXmlLoader<Airport> {
-
-
 
   private static IReadOnlyList<XElement> extractRoutes(XElement source, String lookForElementName) {
     IList<XElement> ret = new EList<>();
@@ -69,22 +69,20 @@ public class AirportXmlLoader implements IXmlLoader<Airport> {
         source.getChild("holds").getChildren(),
         new PublishedHoldXmlLoader(navaids));
 
+    XmlMappingDictinary<DARoute> daMappings = new XmlMappingDictinary<>();
+    XmlMappingDictinary<IafRoute> iafMappings = new XmlMappingDictinary<>();
+    XmlMappingDictinary<GaRoute> gaMappings = new XmlMappingDictinary<>();
 
     IList<DARoute> daRoutes = new EDistinctList<>(q -> q.getName(), EDistinctList.Behavior.exception);
     IReadOnlyList<XElement> routes = extractRoutes(source.getChild("daRoutes"), "route");
-    XmlLoaderUtils.loadList(routes, daRoutes, new DARouteXmlLoader(navaids));
+    XmlLoaderUtils.loadList(routes, daRoutes, new DARouteXmlLoader(navaids, borders, daMappings));
 
     routes = extractRoutes(source.getChild("iafRoutes"), "iafRoute");
-    IList<IafRoute> iafRoutes = XmlLoaderUtils.loadList(
-        routes,
-        new IafRouteXmlLoader(navaids));
+    IList<IafRoute> iafRoutes = XmlLoaderUtils.loadList(routes, new IafRouteXmlLoader(navaids, iafMappings));
 
     routes = extractRoutes(source.getChild("gaRoutes"), "gaRoute");
-    IList<GaRoute> gaRoutes = XmlLoaderUtils.loadList(
-        routes,
-        new GaRouteXmlLoader(navaids));
+    IList<GaRoute> gaRoutes = XmlLoaderUtils.loadList(routes, new GaRouteXmlLoader(navaids, gaMappings));
 
-    // TODO put inactive and active runways to one upper element
     IList<InactiveRunway> inactiveRunways = XmlLoaderUtils.loadList(
         source.getChild("runways").getChildren("inactiveRunway"),
         new InactiveRunwayXmlLoader());

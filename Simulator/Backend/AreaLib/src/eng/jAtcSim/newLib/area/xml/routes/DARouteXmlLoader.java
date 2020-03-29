@@ -1,4 +1,4 @@
-package eng.jAtcSim.newLib.area.xml;
+package eng.jAtcSim.newLib.area.xml.routes;
 
 import eng.eSystem.Tuple;
 import eng.eSystem.collections.EList;
@@ -12,6 +12,8 @@ import eng.jAtcSim.newLib.area.Border;
 import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.area.NavaidList;
 import eng.jAtcSim.newLib.area.routes.DARoute;
+import eng.jAtcSim.newLib.area.xml.XmlLoaderWithNavaids;
+import eng.jAtcSim.newLib.area.xml.XmlMappingDictinary;
 import eng.jAtcSim.newLib.shared.PlaneCategoryDefinitions;
 import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
 import eng.jAtcSim.newLib.speeches.ICommand;
@@ -20,16 +22,13 @@ import eng.jAtcSim.newLib.speeches.atc2airplane.ToNavaidCommand;
 public class DARouteXmlLoader extends XmlLoaderWithNavaids<DARoute> {
 
   private final IReadOnlyList<Border> borders;
-  private final IReadOnlyList<DARoute> daRoutes;
   private final XmlMappingDictinary<DARoute> mappings;
 
   public DARouteXmlLoader(NavaidList navaids,
                           IReadOnlyList<Border> borders,
-                          IReadOnlyList<DARoute> daRoutes,
                           XmlMappingDictinary<DARoute> mappings) {
     super(navaids);
     this.borders = borders;
-    this.daRoutes = daRoutes;
     this.mappings = mappings;
   }
 

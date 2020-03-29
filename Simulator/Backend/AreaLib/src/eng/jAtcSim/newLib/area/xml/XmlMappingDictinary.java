@@ -12,7 +12,7 @@ public class XmlMappingDictinary<T> {
     }
   }
 
-  public IReadOnlyList<T> get(String mapping) {
+  public IList<T> get(String mapping) {
     String[] pts = mapping.toLowerCase().split(";");
     IList<T> ret = new EList<>();
     for (String pt : pts) {

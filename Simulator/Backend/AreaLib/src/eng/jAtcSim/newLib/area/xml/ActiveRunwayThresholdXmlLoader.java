@@ -14,10 +14,10 @@ import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
 import static eng.eSystem.utilites.FunctionShortcuts.*;
 
 public class ActiveRunwayThresholdXmlLoader {
-  private final IReadOnlyList<DARoute> daRoutes;
+  private final XmlMappingDictinary<DARoute> mappings;
 
-  public ActiveRunwayThresholdXmlLoader(IReadOnlyList<DARoute> daRoutes) {
-    this.daRoutes = daRoutes;
+  public ActiveRunwayThresholdXmlLoader(XmlMappingDictinary<DARoute> mappings) {
+    this.mappings = mappings;
   }
 
   IList<ActiveRunwayThreshold> loadBoth(IReadOnlyList<XElement> sources) {
@@ -35,10 +35,9 @@ public class ActiveRunwayThresholdXmlLoader {
     String name = XmlLoaderUtils.loadString("name");
     Coordinate coordinate = XmlLoaderUtils.loadCoordinate("coordinate");
     int initialDepartureAltitude = XmlLoaderUtils.loadInteger("initialDepartureAltitude");
-    String mappingString = XmlLoaderUtils.loadString("mapping");
-    IList<String> mapping = new EList<>(mappingString.split(";"));
+    String mapping = XmlLoaderUtils.loadString("mapping");
 
-    IList<DARoute> routes = daRoutes.where(q -> q.isMappingMatch(mapping));
+    IList<DARoute> routes = mappings.get(mapping);
 
     IList<Approach> approaches = XmlLoaderUtils.loadList(
         source.getChild("approaches").getChildren(),
