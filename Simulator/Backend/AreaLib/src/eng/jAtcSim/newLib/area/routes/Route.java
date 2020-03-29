@@ -4,6 +4,7 @@ import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.eXml.XElement;
+import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.area.Airport;
 import eng.jAtcSim.newLib.area.Parentable;
 import eng.jAtcSim.newLib.speeches.ICommand;
@@ -57,7 +58,7 @@ public abstract class Route extends Parentable<Airport> {
 //
 //    return ret;
 //  }
-  private final IList<ICommand> routeCommands = new EList<>();
+  private final IList<ICommand> routeCommands;
   //
 //  private static IAtcCommand loadHold(XElement source, NavaidList navaids, IReadOnlyList<PublishedHold> publishedHolds) {
 //    String navaidName = XmlLoader.loadString(source, "fix");
@@ -156,45 +157,31 @@ public abstract class Route extends Parentable<Airport> {
 //    ChangeSpeedCommand cmd = new ChangeSpeedCommand(restrictionDirection, value);
 //    return cmd;
 //  }
-  private final IList<String> mapping = new EList<>();
 
-  protected Route() {
-  }
-
-  protected Route(IReadOnlyList<ICommand> routeCommands) {
-    this.routeCommands.add(routeCommands);
+  public Route(IList<ICommand> routeCommands) {
+    EAssert.Argument.isNotNull(routeCommands, "routeCommands");
+    this.routeCommands = routeCommands;
   }
 
   public IReadOnlyList<ICommand> getRouteCommands() {
     return routeCommands;
   }
 
-  public boolean isMappingMatch(IList<String> otherMapping) {
+//  public void read(XElement source, String mapping) {
+//    this.mapping.add(mapping.toLowerCase().split(";"));
+//    IReadOnlyList<XElement> routeElements = source.getChildren();
+//    for (XElement routeElement : routeElements) {
+//      ICommand cmd = XmlRouteFactory.load(
+//          routeElement, this.getParent());
+//      this.routeCommands.add(cmd);
+//    }
+//  }
 
-    return mapping.isAny(q -> otherMapping.contains(q));
-  }
-
-  public boolean isMappingMatch(String otherMapping) {
-    assert otherMapping != null;
-    IList<String> tmp = new EList<>(otherMapping.split(";"));
-    return isMappingMatch(tmp);
-  }
-
-  public void read(XElement source, String mapping) {
-    this.mapping.add(mapping.toLowerCase().split(";"));
-    IReadOnlyList<XElement> routeElements = source.getChildren();
-    for (XElement routeElement : routeElements) {
-      ICommand cmd = XmlRouteFactory.load(
-          routeElement, this.getParent());
-      this.routeCommands.add(cmd);
-    }
-  }
-
-  protected void fill(IList<ICommand> routeCommands){
-    if (routeCommands == null) {
-        throw new IllegalArgumentException("Value of {routeCommands} cannot not be null.");
-    }
-    this.routeCommands.clear();
-    this.routeCommands.add(routeCommands);
-  }
+//  protected void fill(IList<ICommand> routeCommands){
+//    if (routeCommands == null) {
+//        throw new IllegalArgumentException("Value of {routeCommands} cannot not be null.");
+//    }
+//    this.routeCommands.clear();
+//    this.routeCommands.add(routeCommands);
+//  }
 }

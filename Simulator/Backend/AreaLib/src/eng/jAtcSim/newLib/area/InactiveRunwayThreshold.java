@@ -6,48 +6,52 @@ import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
+import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
 
 public class InactiveRunwayThreshold extends Parentable<InactiveRunway> {
 
-  static class XmlLoader {
-    static IList<InactiveRunwayThreshold> loadBoth(IReadOnlyList<XElement> sources, InactiveRunway parent) {
-      assert sources.size() == 2 : "There must be two thresholds";
+  public static class Prototype{
+    public String name;
+    public Coordinate coordinate;
 
-      InactiveRunwayThreshold a = XmlLoader.load(sources.get(0), parent);
-      InactiveRunwayThreshold b = XmlLoader.load(sources.get(1), parent);
-      a.other = b;
-      b.other = a;
-      a.course = Coordinates.getBearing(a.coordinate, b.coordinate);
-      b.course = Coordinates.getBearing(b.coordinate, a.coordinate);
-
-      IList<InactiveRunwayThreshold> ret = new EList<>();
-      ret.add(a);
-      ret.add(b);
-      return ret;
-    }
-
-    private static InactiveRunwayThreshold load(XElement source, InactiveRunway runway) {
-      InactiveRunwayThreshold ret = new InactiveRunwayThreshold();
-      ret.setParent(runway);
-      read(source, ret);
-      return ret;
-    }
-
-    private static void read(XElement source, InactiveRunwayThreshold inactiveRunwayThreshold) {
-      XmlLoaderUtils.setContext(source);
-      XmlLoaderUtils.setContext(source);
-      inactiveRunwayThreshold.name = XmlLoaderUtils.loadString("name");
-      inactiveRunwayThreshold.coordinate = XmlLoaderUtils.loadCoordinate("coordinate");
+    public Prototype(String name, Coordinate coordinate) {
+      this.name = name;
+      this.coordinate = coordinate;
     }
   }
 
-  private String name;
-  private Coordinate coordinate;
+  public static IList<InactiveRunwayThreshold> create(
+      Prototype firstThreshold,
+      Prototype secondThreshold
+  ){
+    EAssert.Argument.isNotNull(firstThreshold, "Parameter 'firstThreshold' cannot be null.");
+    EAssert.Argument.isNotNull(secondThreshold, "Parameter 'secondThreshold' cannot be null.");
+
+    InactiveRunwayThreshold a = new InactiveRunwayThreshold(firstThreshold.name, firstThreshold.coordinate);
+    InactiveRunwayThreshold b = new InactiveRunwayThreshold(secondThreshold.name, secondThreshold.coordinate);
+
+    a.other = b;
+    b.other = a;
+    a.course = Coordinates.getBearing(a.coordinate, b.coordinate);
+    b.course = Coordinates.getBearing(b.coordinate, a.coordinate);
+
+    IList<InactiveRunwayThreshold> ret = new EList<>();
+    ret.add(a);
+    ret.add(b);
+    return ret;
+  }
+
+  private final String name;
+  private final Coordinate coordinate;
   private double course;
   private InactiveRunwayThreshold other;
 
-  private InactiveRunwayThreshold() {
+  private InactiveRunwayThreshold(String name, Coordinate coordinate) {
+    EAssert.Argument.isNotNull(name, "Parameter 'name' cannot be null.");
+    EAssert.Argument.isNotNull(coordinate, "Parameter 'coordinate' cannot be null.");
+    this.name = name;
+    this.coordinate = coordinate;
   }
 
   public Coordinate getCoordinate() {

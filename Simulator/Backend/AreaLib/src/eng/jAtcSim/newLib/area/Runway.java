@@ -1,12 +1,15 @@
 package eng.jAtcSim.newLib.area;
 
-import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
+import eng.eSystem.validation.EAssert;
 
 public abstract class Runway<TParentType, ThresholdType extends Parentable<TParentType>> extends Parentable<Airport> {
-  private IList<ThresholdType> thresholds;
+  private final IReadOnlyList<ThresholdType> thresholds;
 
-  protected Runway() {
+  public Runway(IReadOnlyList<ThresholdType> thresholds) {
+    EAssert.Argument.isNotNull(thresholds, "Parameter 'thresholds' cannot be null.");
+    EAssert.Argument.isTrue(thresholds.size() == 2);
+    this.thresholds = thresholds;
   }
 
   public ThresholdType get(int index) {
@@ -30,9 +33,5 @@ public abstract class Runway<TParentType, ThresholdType extends Parentable<TPare
   @Override
   public String toString() {
     return this.getName() + "{rwy}";
-  }
-
-  protected void setThresholds(IList<ThresholdType> thresholds) {
-    this.thresholds = thresholds;
   }
 }

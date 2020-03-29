@@ -12,84 +12,91 @@ import eng.eSystem.eXml.XElement;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.geo.Headings;
+import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.area.approaches.Approach;
 import eng.jAtcSim.newLib.area.routes.DARoute;
 import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
+
+import static eng.eSystem.utilites.FunctionShortcuts.*;
 
 /**
  * @author Marek
  */
 public class ActiveRunwayThreshold extends Parentable<ActiveRunway> {
 
-  static class XmlLoader {
-    static IList<ActiveRunwayThreshold> loadBoth(IReadOnlyList<XElement> sources, ActiveRunway runway) {
-      assert sources.size() == 2 : "There must be two thresholds";
+  public static class Prototype {
+    public String name;
+    public Coordinate coordinate;
+    public int initialDepartureAltitude;
+    public IList<Approach> approaches;
+    public IList<DARoute> routes;
 
-      ActiveRunwayThreshold a = XmlLoader.load(sources.get(0), runway);
-      ActiveRunwayThreshold b = XmlLoader.load(sources.get(1), runway);
-      bindOppositeThresholds(a, b);
-
-      IList<ActiveRunwayThreshold> ret = new EList<>();
-      ret.add(a);
-      ret.add(b);
-      return ret;
-    }
-
-    private static void bindOppositeThresholds(ActiveRunwayThreshold a, ActiveRunwayThreshold b) {
-      a.other = b;
-      b.other = a;
-
-      a.course = Coordinates.getBearing(a.coordinate, b.coordinate);
-      b.course = Coordinates.getBearing(b.coordinate, a.coordinate);
-
-      a.estimatedFafPoint = Coordinates.getCoordinate(a.coordinate,
-          Headings.getOpposite(a.course), 9);
-      b.estimatedFafPoint = Coordinates.getCoordinate(b.coordinate,
-          Headings.getOpposite(b.course), 9);
-    }
-
-    private static ActiveRunwayThreshold load(XElement source, ActiveRunway runway) {
-      ActiveRunwayThreshold ret = new ActiveRunwayThreshold();
-      ret.setParent(runway);
-      read(source, ret);
-      return ret;
-    }
-
-    private static void read(XElement source, ActiveRunwayThreshold activeRunwayThreshold) {
-      XmlLoaderUtils.setContext(source);
-      activeRunwayThreshold.name = XmlLoaderUtils.loadString("name");
-      activeRunwayThreshold.coordinate = XmlLoaderUtils.loadCoordinate("coordinate");
-      activeRunwayThreshold.initialDepartureAltitude = XmlLoaderUtils.loadInteger("initialDepartureAltitude");
-      String mappingString = XmlLoaderUtils.loadString("mapping");
-      IList<String> mapping = new EList<>(mappingString.split(";"));
-
-      activeRunwayThreshold.routes = activeRunwayThreshold.getParent().getParent().getDaRoutes().where(q -> q.isMappingMatch(mapping));
-
-      activeRunwayThreshold.approaches = new EList<>();
-      XmlLoaderUtils.loadList(
-          source.getChild("approaches").getChildren(),
-          activeRunwayThreshold.approaches,
-          q -> Approach.load(q, activeRunwayThreshold)
-      );
-
-      // adds visual approach if none exists
-      if (activeRunwayThreshold.approaches.isNone(q -> q.getType() == Approach.ApproachType.visual)) {
-        Approach visual = Approach.generateDefaultVisualApproach(activeRunwayThreshold);
-        activeRunwayThreshold.approaches.add(visual);
-      }
+    public Prototype(String name, Coordinate coordinate, int initialDepartureAltitude, IList<Approach> approaches, IList<DARoute> routes) {
+      this.name = name;
+      this.coordinate = coordinate;
+      this.initialDepartureAltitude = initialDepartureAltitude;
+      this.approaches = approaches;
+      this.routes = routes;
     }
   }
 
-  private IList<Approach> approaches;
-  private IList<DARoute> routes;
-  private String name;
-  private Coordinate coordinate;
+  public static IList<ActiveRunwayThreshold> create(
+      Prototype firstThreshold,
+      Prototype secondThreshold) {
+    EAssert.Argument.isNotNull(firstThreshold, "Parameter 'firstThreshold' cannot be null.");
+    EAssert.Argument.isNotNull(secondThreshold, "Parameter 'secondThreshold' cannot be null.");
+
+    ActiveRunwayThreshold a = new ActiveRunwayThreshold(
+        firstThreshold.name, firstThreshold.coordinate, firstThreshold.initialDepartureAltitude,
+        firstThreshold.approaches, firstThreshold.routes);
+    ActiveRunwayThreshold b = new ActiveRunwayThreshold(
+        secondThreshold.name, secondThreshold.coordinate, secondThreshold.initialDepartureAltitude,
+        secondThreshold.approaches, secondThreshold.routes);
+
+    a.other = b;
+    b.other = a;
+    a.course = Coordinates.getBearing(a.coordinate, b.coordinate);
+    b.course = Coordinates.getBearing(b.coordinate, a.coordinate);
+
+    IList<ActiveRunwayThreshold> ret = new EList<>();
+    ret.add(a);
+    ret.add(b);
+    return ret;
+  }
+
+  private final IList<Approach> approaches;
+  private final IReadOnlyList<DARoute> routes;
+  private final String name;
+  private final Coordinate coordinate;
+  private final int initialDepartureAltitude;
   private double course;
-  private int initialDepartureAltitude;
   private Coordinate estimatedFafPoint;
   private ActiveRunwayThreshold other;
 
-  private ActiveRunwayThreshold() {
+  public ActiveRunwayThreshold(String name, Coordinate coordinate, int initialDepartureAltitude,
+                               IList<Approach> approaches, IReadOnlyList<DARoute> routes) {
+    EAssert.Argument.isNotNull(approaches, "approaches");
+    EAssert.Argument.isNotNull(routes, "routes");
+    EAssert.Argument.isNotNull(coordinate, "coordinate");
+    EAssert.Argument.matchPattern(name, "^\\d{2}[LRC]?$", sf("Runway name '%s' is not valid.", name));
+    EAssert.Argument.isTrue(initialDepartureAltitude > 0);
+    this.approaches = approaches;
+    this.routes = routes;
+    this.name = name;
+    this.coordinate = coordinate;
+    this.initialDepartureAltitude = initialDepartureAltitude;
+
+    // add visual approach if any exists
+    if (this.approaches.isNone(q -> q.getType() == Approach.ApproachType.visual)) {
+      Approach visual = Approach.generateDefaultVisualApproach(this);
+      this.approaches.add(visual);
+    }
+
+    // estimate faf
+    this.estimatedFafPoint = Coordinates.getCoordinate(
+        this.coordinate,
+        Headings.getOpposite(this.course),
+        9);
   }
 
   public IReadOnlyList<Approach> getApproaches() {
@@ -185,7 +192,7 @@ public class ActiveRunwayThreshold extends Parentable<ActiveRunway> {
     return ret;
   }
 
-  public IList<DARoute> getRoutes() {
+  public IReadOnlyList<DARoute> getRoutes() {
     return routes;
   }
 

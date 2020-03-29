@@ -7,6 +7,7 @@ import eng.eSystem.geo.Coordinate;
 import eng.jAtcSim.newLib.area.routes.DARoute;
 import eng.jAtcSim.newLib.area.routes.GaRoute;
 import eng.jAtcSim.newLib.area.routes.IafRoute;
+import eng.jAtcSim.newLib.shared.exceptions.ToDoException;
 
 public class Airport extends Parentable<Area> {
 
@@ -29,13 +30,18 @@ public class Airport extends Parentable<Area> {
   private final IList<IafRoute> iafRoutes;
   private final IList<GaRoute> gaRoutes;
 
-  public Airport(String icao, String name, Navaid mainAirportNavaid, int altitude, int transitionAltitude, int vfrAltitude, double declination, InitialPosition initialPosition, int coveredDistance, IList<ActiveRunway> runways, IList<InactiveRunway> inactiveRunways, IList<Atc> atcs, IList<PublishedHold> holds, EntryExitPointList entryExitPoints, IList<RunwayConfiguration> runwayConfigurations, IList<DARoute> daRoutes, IList<IafRoute> iafRoutes, IList<GaRoute> gaRoutes) {
+  public Airport(String icao, String name, Navaid mainAirportNavaid,
+                 int altitude, int transitionAltitude, int vfrAltitude, double declination,
+                 InitialPosition initialPosition, int coveredDistance,
+                 IList<ActiveRunway> runways, IList<InactiveRunway> inactiveRunways,
+                 IList<Atc> atcs,
+                 IList<PublishedHold> holds, EntryExitPointList customEntryExitPoints, IList<RunwayConfiguration> runwayConfigurations, IList<DARoute> daRoutes, IList<IafRoute> iafRoutes, IList<GaRoute> gaRoutes) {
     this.initialPosition = initialPosition;
     this.runways = runways;
     this.inactiveRunways = inactiveRunways;
     this.atcs = atcs;
     this.holds = holds;
-    this.entryExitPoints = entryExitPoints;
+    this.entryExitPoints = customEntryExitPoints;
     this.icao = icao;
     this.name = name;
     this.altitude = altitude;
@@ -48,6 +54,9 @@ public class Airport extends Parentable<Area> {
     this.daRoutes = daRoutes;
     this.iafRoutes = iafRoutes;
     this.gaRoutes = gaRoutes;
+
+    bindEntryExitPointsByRoutes();
+    bindRoutes();
   }
 
   public IReadOnlyList<ActiveRunwayThreshold> getAllThresholds() {
@@ -152,6 +161,24 @@ public class Airport extends Parentable<Area> {
       }
     }
     return null;
+  }
+
+  private void bindEntryExitPointsByRoutes() {
+    for (DARoute route : this.daRoutes) {
+      EntryExitPoint eep = EntryExitPoint.create(
+          route.getMainNavaid(),
+          route.getType() == DARoute.eType.sid ? EntryExitPoint.Type.exit : EntryExitPoint.Type.entry,
+          route.getMaxMrvaAltitude());
+      eep.setParent(this);
+
+      this.entryExitPoints.add(eep);
+    }
+  }
+
+  private void bindRoutes() {
+    //bind daRoutes, iafRoutes, gaRoutes by mappings
+    //    ret.getAllThresholds().forEach(q -> ret.daRoutes.add(q.getRoutes())); // adds threshold specific routes
+    throw new ToDoException();
   }
 
 }

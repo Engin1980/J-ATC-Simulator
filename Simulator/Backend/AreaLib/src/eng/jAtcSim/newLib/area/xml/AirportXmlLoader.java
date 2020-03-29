@@ -16,23 +16,7 @@ import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
 
 public class AirportXmlLoader implements IXmlLoader<Airport> {
 
-  private static void bindEntryExitPointsByRoutes(Airport airport) {
-    for (DARoute route : airport.daRoutes) {
-      EntryExitPoint eep = EntryExitPoint.create(
-          route.getMainNavaid(),
-          route.getType() == DARoute.eType.sid ? EntryExitPoint.Type.exit : EntryExitPoint.Type.entry,
-          route.getMaxMrvaAltitude());
-      eep.setParent(airport);
 
-      airport.entryExitPoints.add(eep);
-    }
-  }
-
-  private static void bindRoutes(Airport airport) {
-    //bind daRoutes, iafRoutes, gaRoutes by mappings
-    //    ret.getAllThresholds().forEach(q -> ret.daRoutes.add(q.getRoutes())); // adds threshold specific routes
-    throw new ToDoException();
-  }
 
   private static IReadOnlyList<XElement> extractRoutes(XElement source, String lookForElementName) {
     IList<XElement> ret = new EList<>();
@@ -103,23 +87,20 @@ public class AirportXmlLoader implements IXmlLoader<Airport> {
     // TODO put inactive and active runways to one upper element
     IList<InactiveRunway> inactiveRunways = XmlLoaderUtils.loadList(
         source.getChild("runways").getChildren("inactiveRunway"),
-        new InactiveRunwayXmlLoader(navaids));
+        new InactiveRunwayXmlLoader());
 
     IList<ActiveRunway> runways = XmlLoaderUtils.loadList(
         source.getChild("runways").getChildren("runway"),
-        new ActiveRunwayXmlLoader(navaids));
+        new ActiveRunwayXmlLoader(daRoutes));
 
     IList<RunwayConfiguration> runwayConfigurations = XmlLoaderUtils.loadList(
         source.getChild("runwayConfigurations").getChildren(),
-        new RunwayConfigurationXmlLoader(navaids));
+        new RunwayConfigurationXmlLoader(navaids, runways));
 
     // TODO check airport
     // binding should be done in constructor
     // bind entryexitpointlist
     // bind holds
-
-    bindRoutes(ret);
-    bindEntryExitPointsByRoutes(ret);
 
     Airport ret = new Airport(icao, name, mainAirportNavaid, altitude, transitionAltitude, vfrAltitude, declination,
         initialPosition, coveredDistance,

@@ -7,6 +7,7 @@
 package eng.jAtcSim.newLib.area;
 
 import eng.eSystem.collections.IList;
+import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.eXml.XElement;
 
 /**
@@ -14,23 +15,8 @@ import eng.eSystem.eXml.XElement;
  */
 public class ActiveRunway extends Runway<ActiveRunway, ActiveRunwayThreshold> {
 
-  static class XmlLoader {
-    static ActiveRunway load(XElement source, Airport airport) {
-      ActiveRunway ret = new ActiveRunway();
-      ret.setParent(airport);
-      readThresholds(source, ret);
-      return ret;
-    }
-
-    protected static void readThresholds(
-        XElement source, ActiveRunway activeRunway) {
-      IList<ActiveRunwayThreshold> thresholds = ActiveRunwayThreshold.XmlLoader.loadBoth(
-          source.getChild("thresholds").getChildren(), activeRunway);
-      activeRunway.setThresholds(thresholds);
-    }
-  }
-
-  private ActiveRunway() {
+  public ActiveRunway(IReadOnlyList<ActiveRunwayThreshold> thresholds) {
+    super(thresholds);
   }
 
   @Override
