@@ -17,14 +17,6 @@ import java.util.Objects;
  */
 public class BorderPoint {
 
-  static class XmlLoader {
-    public static BorderPoint load(XElement source) {
-      Coordinate coordinate = XmlLoaderUtils.loadCoordinate(source, "coordinate");
-      BorderPoint ret = new BorderPoint(coordinate);
-      return ret;
-    }
-  }
-
   public static BorderPoint create(Coordinate coordinate) {
     BorderPoint ret = new BorderPoint(coordinate);
     return ret;

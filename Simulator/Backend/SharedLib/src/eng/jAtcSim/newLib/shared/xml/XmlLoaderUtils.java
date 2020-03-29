@@ -252,6 +252,22 @@ public abstract class XmlLoaderUtils {
     }
   }
 
+  public static <T> IList<T> loadList(IReadOnlyList<XElement> elements, IXmlLoader<T> xmlLoader) {
+    IList<T> ret = new EList<>();
+    for (XElement element : elements) {
+      T item = xmlLoader.load(element);
+      ret.add(item);
+    }
+    return ret;
+  }
+
+  public static <T> void loadList(IReadOnlyList<XElement> elements, IList<T> list, IXmlLoader<T> xmlLoader) {
+    for (XElement element : elements) {
+      T item = xmlLoader.load(element);
+      list.add(item);
+    }
+  }
+
   public static PlaneCategoryDefinitions loadPlaneCategory(String key, String defaultValue) {
     assert context != null;
     return loadPlaneCategory(context, key, defaultValue);

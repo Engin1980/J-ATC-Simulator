@@ -1,25 +1,20 @@
 package eng.jAtcSim.newLib.area;
 
-import eng.eSystem.eXml.XElement;
 import eng.eSystem.geo.Coordinate;
-import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
+import eng.eSystem.validation.EAssert;
 
 public class InitialPosition {
-
-  static class XmlLoader {
-    static InitialPosition load(XElement source) {
-      XmlLoaderUtils.setContext(source);
-      Coordinate coordinate = XmlLoaderUtils.loadCoordinate("coordinate");
-      int range = XmlLoaderUtils.loadInteger("range");
-      InitialPosition ret = new InitialPosition(coordinate, range);
-      return ret;
-    }
-  }
 
   private final Coordinate coordinate;
   private final int range;
 
+  public static InitialPosition create(Coordinate coordinate, int range){
+    return new InitialPosition(coordinate, range);
+  }
+
   private InitialPosition(Coordinate coordinate, int range) {
+    EAssert.Argument.isNotNull(coordinate);
+    EAssert.Argument.isTrue(range > 0);
     this.coordinate = coordinate;
     this.range = range;
   }

@@ -9,43 +9,18 @@ import java.util.Objects;
 
 public class RunwayThresholdConfiguration {
 
-  static class XmlLoader {
-    static RunwayThresholdConfiguration load(XElement source, Airport airport) {
-      RunwayThresholdConfiguration ret = new RunwayThresholdConfiguration();
-      read(source, ret, airport);
-      return ret;
-    }
+  private final PlaneCategoryDefinitions categories;
+  private final ActiveRunwayThreshold threshold;
+  private final boolean primary;
+  private final boolean showRoutes;
+  private final boolean showApproach;
 
-    private static void read(XElement source, RunwayThresholdConfiguration rtc, Airport airport) {
-      IReadOnlyList<ActiveRunway> activeRunways = airport.getRunways();
-      XmlLoaderUtils.setContext(source);
-      String name = XmlLoaderUtils.loadString("name");
-      rtc.primary = XmlLoaderUtils.loadBoolean("primary", false);
-      rtc. showRoutes = XmlLoaderUtils.loadBoolean("showRoutes", true);
-      rtc. showApproach = XmlLoaderUtils.loadBoolean("showApproach", true);
-      rtc.categories = XmlLoaderUtils.loadPlaneCategory("category", "ABCD");
-
-      ActiveRunwayThreshold threshold = null;
-      for (ActiveRunway activeRunway : activeRunways) {
-        if (threshold != null) break;
-        for (ActiveRunwayThreshold activeRunwayThreshold : activeRunway.getThresholds()) {
-          if (activeRunwayThreshold.getName().equals(name)) {
-            threshold = activeRunwayThreshold;
-            break;
-          }
-        }
-      }
-      rtc.threshold = threshold;
-    }
-  }
-
-  private  PlaneCategoryDefinitions categories;
-  private  ActiveRunwayThreshold threshold;
-  private  boolean primary;
-  private  boolean showRoutes;
-  private  boolean showApproach;
-
-  private RunwayThresholdConfiguration() {
+  public RunwayThresholdConfiguration(PlaneCategoryDefinitions categories, ActiveRunwayThreshold threshold, boolean primary, boolean showRoutes, boolean showApproach) {
+    this.categories = categories;
+    this.threshold = threshold;
+    this.primary = primary;
+    this.showRoutes = showRoutes;
+    this.showApproach = showApproach;
   }
 
   @Override

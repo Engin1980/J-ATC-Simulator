@@ -14,29 +14,14 @@ import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
  */
 public class PublishedHold extends Parentable<Airport> {
 
-  static class XmlLoader {
-    public static PublishedHold load(XElement source, Airport airport) {
-      PublishedHold ret = new PublishedHold();
-      ret.setParent(airport);
-      read(source, ret);
-      return ret;
-    }
+  private final Navaid navaid;
+  private final int inboundRadial;
+  private final boolean leftTurn;
 
-    private static void read(XElement source, PublishedHold hold) {
-      XmlLoaderUtils.setContext(source);
-      String navaidName = XmlLoaderUtils.loadString("name");
-      hold.navaid = hold.getParent().getParent().getNavaids().get(navaidName);
-
-      hold.inboundRadial = XmlLoaderUtils.loadInteger("inboundRadial");
-      hold.leftTurn = XmlLoaderUtils.loadStringRestricted("turn", new String[]{"left", "right"}).equals("left");
-    }
-  }
-
-  private Navaid navaid;
-  private int inboundRadial;
-  private boolean leftTurn;
-
-  private PublishedHold() {
+  public PublishedHold(Navaid navaid, int inboundRadial, boolean leftTurn) {
+    this.navaid = navaid;
+    this.inboundRadial = inboundRadial;
+    this.leftTurn = leftTurn;
   }
 
   public int getInboundRadial() {

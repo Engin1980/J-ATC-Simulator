@@ -42,133 +42,47 @@ public class Border {
     }
   }
 
+  public static Border create(String name, Border.eType type, boolean enclosed,
+                              int minAltitude, int maxAltitude, Coordinate labelCoordinate,
+                              IList<BorderPoint> points,
+                              IList<String> disjoints){
+    Border ret = new Border();
+    ret.name = name;
+    ret.type = type;
+    ret.points = points;
+    ret.minAltitude = minAltitude;
+    ret.maxAltitude = maxAltitude;
+    ret.labelCoordinate = labelCoordinate;
+    ret.enclosed = enclosed;
+    ret.disjoints = disjoints;
+
+
+    if (ret.labelCoordinate == null)
+      ret.labelCoordinate = generateLabelCoordinate(ret.points);
+    ret.updateBoundingBox();
+
+    return ret;
+  }
+
+  //TODO to instance
+  private static Coordinate generateLabelCoordinate(IList<BorderPoint> points) {
+    double latMin = points.minDouble(q -> q.getCoordinate().getLatitude().get());
+    double latMax = points.maxDouble(q -> q.getCoordinate().getLatitude().get());
+    double lngMin = points.minDouble(q -> q.getCoordinate().getLongitude().get());
+    double lngMax = points.maxDouble(q -> q.getCoordinate().getLongitude().get());
+
+    double lat = (latMax + latMin) / 2;
+    double lng = (lngMax + lngMin) / 2;
+
+    return new Coordinate(lat, lng);
+  }
+
   static class XmlLoader {
-    static Border load(XElement source, Area area) {
-      Border ret = new Border();
-      read(source, ret, area);
-      return ret;
-    }
-
-    private static void read(XElement source, Border border, Area area) {
-      XmlLoaderUtils.setContext(source);
-      border.name = XmlLoaderUtils.loadString("name");
-      border.type = XmlLoaderUtils.loadEnum("type", eType.class);
-      border.enclosed = XmlLoaderUtils.loadBoolean("enclosed");
-      border.minAltitude = XmlLoaderUtils.loadInteger("minAltitude");
-      border.maxAltitude = XmlLoaderUtils.loadInteger("maxAltitude");
-      border.labelCoordinate = XmlLoaderUtils.loadCoordinate("labelCoordinate", null);
-
-      IReadOnlyList<XElement> pointElements = source.getChild("points").getChildren();
-      if (pointElements.size() == 1 && pointElements.get(0).getName().equals("circle"))
-        border.points = loadPointsFromCircle(pointElements.get(0));
-      else
-        border.points = loadPoints(source.getChild("points").getChildren(), area.getNavaids());
 
 
-      border.disjoints = new EList<>();
-      source.getChild("disjoints").getChildren().forEach(q -> border.disjoints.add(q.getContent()));
 
-      if (border.labelCoordinate == null)
-        border.labelCoordinate = generateLabelCoordinate(border.points);
 
-      border.updateBoundingBox();
-    }
 
-    private static Coordinate generateLabelCoordinate(IList<BorderPoint> points) {
-      double latMin = points.minDouble(q -> q.getCoordinate().getLatitude().get());
-      double latMax = points.maxDouble(q -> q.getCoordinate().getLatitude().get());
-      double lngMin = points.minDouble(q -> q.getCoordinate().getLongitude().get());
-      double lngMax = points.maxDouble(q -> q.getCoordinate().getLongitude().get());
-
-      double lat = (latMax + latMin) / 2;
-      double lng = (lngMax + lngMin) / 2;
-
-      return new Coordinate(lat, lng);
-    }
-
-    private static IList<BorderPoint> loadPointsFromCircle(XElement source) {
-      IList<BorderPoint> ret = new EList<>();
-      Coordinate coord = XmlLoaderUtils.loadCoordinate(source, "coordinate");
-      double dist = XmlLoaderUtils.loadDouble(source, "distance");
-      Coordinate pointCoordinate = Coordinates.getCoordinate(coord, 0, dist);
-      BorderPoint point = BorderPoint.create(pointCoordinate);
-      IList<BorderPoint> tmp = generateArcPoints(point, coord, true, point);
-      ret.add(point);
-      ret.add(tmp);
-      return ret;
-    }
-
-    private static IList<BorderPoint> loadPoints(IReadOnlyList<XElement> nodes, IReadOnlyList<Navaid> navaids) {
-      IList<BorderPoint> ret = new EList<>();
-      IList<Tuple<Integer, XElement>> arcTuples = new EList<>();
-      BorderPoint point;
-
-      for (XElement node : nodes) {
-        switch (node.getName()) {
-          case "point":
-            point = BorderPoint.XmlLoader.load(node);
-            ret.add(point);
-            break;
-          case "arc":
-            arcTuples.add(new Tuple<>(ret.size(), node));
-            break;
-          case "crd":
-            Coordinate coordinate = XmlLoaderUtils.loadCoordinate(node, "coordinate");
-            int radial = XmlLoaderUtils.loadInteger(node, "radial");
-            double distance = XmlLoaderUtils.loadDouble(node, "distance");
-            Coordinate borderPointCoordinate = Coordinates.getCoordinate(
-                coordinate, radial, distance);
-            point = BorderPoint.create(borderPointCoordinate);
-            ret.add(point);
-            break;
-          default:
-            throw new EApplicationException(sf("Unknown type of point '%s' in border.", node.getName()));
-        }
-      }
-
-      for (Tuple<Integer, XElement> arcTuple : arcTuples) {
-        int index = arcTuple.getA();
-        Coordinate coordinate = XmlLoaderUtils.loadCoordinate(arcTuple.getB(), "coordinate");
-        boolean isClockwise = XmlLoaderUtils.loadStringRestricted(arcTuple.getB(), "direction",
-            new String[]{"clockwise", "counterclockwise"}).equals("clockwise");
-        IList<BorderPoint> arcPoints = generateArcPoints(
-            ret.get(index - 1), coordinate, isClockwise, ret.get(index));
-        ret.insert(index, arcPoints);
-      }
-
-      return ret;
-    }
-
-    private static IList<BorderPoint> generateArcPoints(BorderPoint prev, Coordinate currCoordinate, boolean isClockwise, BorderPoint next) {
-      final int BORDER_ARC_POINT_DRAW_STEP = 10;
-      IList<BorderPoint> ret = new EList<>();
-
-      double prevHdg = Coordinates.getBearing(currCoordinate, prev.getCoordinate());
-      double nextHdg = Coordinates.getBearing(currCoordinate, next.getCoordinate());
-      double dist = Coordinates.getDistanceInNM(currCoordinate, prev.getCoordinate());
-      dist = (dist + Coordinates.getDistanceInNM(currCoordinate, next.getCoordinate())) / 2;
-      double step;
-      if (isClockwise) {
-        prevHdg = Math.ceil(prevHdg);
-        nextHdg = Math.floor(nextHdg);
-        step = 1;
-      } else {
-        prevHdg = Math.floor(prevHdg);
-        nextHdg = Math.ceil(nextHdg);
-        step = -+1;
-      }
-      double pt = prevHdg;
-      while (pt != nextHdg) {
-        pt = Headings.add(pt, step);
-        if (((int) pt) % BORDER_ARC_POINT_DRAW_STEP == 0) {
-          Coordinate c = Coordinates.getCoordinate(currCoordinate, pt, dist);
-          BorderPoint p = BorderPoint.create(c);
-          ret.add(p);
-        }
-      }
-
-      return ret;
-    }
   }
 
   public enum eType {

@@ -6,39 +6,24 @@
 
 package eng.jAtcSim.newLib.area;
 
-import eng.eSystem.eXml.XElement;
-import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
+import eng.eSystem.validation.EAssert;
 
 /**
  * @author Marek
  */
 public class Atc {
 
-  public enum eType{
+  public enum eType {
     gnd,
     twr,
     app,
     ctr
   }
-  
-  static class XmlLoader {
-    public static Atc load(XElement source) {
-      Atc ret = new Atc();
-      read(source,ret);
-      return ret;
-    }
 
-    private static void read(XElement source, Atc atc) {
-      XmlLoaderUtils.setContext(source);
-      atc.type = XmlLoaderUtils.loadEnum("type", Atc.eType.class);
-      atc.name = XmlLoaderUtils.loadString("name");
-      atc.frequency = XmlLoaderUtils.loadDouble("frequency");
-      atc.acceptAltitude = XmlLoaderUtils.loadInteger("acceptAltitude");
-      atc.releaseAltitude = XmlLoaderUtils.loadInteger("releaseAltitude");
-      atc.orderedAltitude = XmlLoaderUtils.loadInteger("orderedAltitude");
-      atc.ctrAcceptDistance = XmlLoaderUtils.loadInteger("ctrAcceptDistance", null);
-      atc.ctrNavaidAcceptDistance = XmlLoaderUtils.loadInteger("ctrNavaidAcceptDistance", null);
-    }
+  public static Atc create(String name, eType type, double frequency, int acceptAltitude, int releaseAltitude, int orderedAltitude, Integer ctrAcceptDistance, Integer ctrNavaidAcceptDistance) {
+    Atc ret = new Atc(name, type, frequency, acceptAltitude, releaseAltitude, orderedAltitude,
+        ctrAcceptDistance, ctrNavaidAcceptDistance);
+    return ret;
   }
 
   private Atc.eType type;
@@ -47,10 +32,24 @@ public class Atc {
   private int acceptAltitude;
   private int releaseAltitude;
   private int orderedAltitude;
-  private Integer ctrAcceptDistance = null;
-  private Integer ctrNavaidAcceptDistance = null;
+  private Integer ctrAcceptDistance;
+  private Integer ctrNavaidAcceptDistance;
 
-  private Atc() {
+  private Atc(String name, eType type, double frequency, int acceptAltitude, int releaseAltitude, int orderedAltitude, Integer ctrAcceptDistance, Integer ctrNavaidAcceptDistance) {
+    EAssert.Argument.isNotNull(name);
+    EAssert.Argument.isTrue(frequency > 100 && frequency < 150);
+    EAssert.Argument.isTrue(acceptAltitude > 0);
+    EAssert.Argument.isTrue(releaseAltitude > 0);
+    EAssert.Argument.isTrue(acceptAltitude > releaseAltitude);
+    EAssert.Argument.isTrue(orderedAltitude > 0);
+    this.type = type;
+    this.name = name;
+    this.frequency = frequency;
+    this.acceptAltitude = acceptAltitude;
+    this.releaseAltitude = releaseAltitude;
+    this.orderedAltitude = orderedAltitude;
+    this.ctrAcceptDistance = ctrAcceptDistance;
+    this.ctrNavaidAcceptDistance = ctrNavaidAcceptDistance;
   }
 
   public int getAcceptAltitude() {

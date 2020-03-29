@@ -6,21 +6,6 @@ import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
 
 public class Navaid {
 
-  static class XmlLoader {
-    public static Navaid load(XElement source) {
-      Navaid ret = new Navaid();
-      read(source, ret);
-      return ret;
-    }
-
-    private static void read(XElement source, Navaid navaid) {
-      XmlLoaderUtils.setContext(source);
-      navaid.coordinate = XmlLoaderUtils.loadCoordinate("coordinate");
-      navaid.name = XmlLoaderUtils.loadString("name");
-      navaid.type = XmlLoaderUtils.loadEnum("type", eType.class);
-    }
-  }
-
   public enum eType {
     vor,
     ndb,
