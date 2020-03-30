@@ -8,14 +8,12 @@ package eng.jAtcSim.newLib.area;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
-import eng.eSystem.eXml.XElement;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.geo.Headings;
 import eng.eSystem.validation.EAssert;
-import eng.jAtcSim.newLib.area.approaches.Approach;
+import eng.jAtcSim.newLib.area.oldApproaches.Approach;
 import eng.jAtcSim.newLib.area.routes.DARoute;
-import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
 
 import static eng.eSystem.utilites.FunctionShortcuts.*;
 

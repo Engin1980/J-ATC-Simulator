@@ -1,0 +1,133 @@
+@startuml
+
+abstract class PCValue<T>{
+  a : T
+  b : T
+  c : T
+  d : T
+  PCValue(a : T, b : T, c : T, d : T)
+  PCValue(abcd : T)
+  get(category : char) : T
+}
+
+class PCDoubleValue
+PCDoubleValue -up-|> PCValue : double
+class PCIntValue
+PCIntValue -up-|> PCValue : int
+
+package locations{
+    interface ILocation
+
+    class RegionalLocation{
+        coordinates : List<Coordinate>
+    }
+    class FixRelatedLocation{
+        navaid : Navaid
+        radialFrom : int
+        radialTo : int
+        maximalDistance : PCDoubleValue
+    }
+
+    FixRelatedLocation .up.|> ILocation
+    RegionalLocation .up.|> ILocation
+}
+
+
+package conditions{
+    interface ICondition
+
+    class PlaneShaCondition{
+      minAltitude : PCIntValue
+      maxAltitude : PCIntValue
+      minSpeed : PCIntValue
+      maxSpeed : PCIntValue
+      minHeading : PCIntValue
+      maxHeading : PCIntValue
+    }
+
+    class LocationCondition{
+      location : ILocation
+    }
+
+    class AggregatingCondition{
+      conditions : IList<ICondition>
+      agregator : EConditionAgregator
+    }
+    class RunwayThresholdVisibilityCondition
+
+    class FlyRouteBehaviorEmptyCondition{
+      flyRouteBehavior : FlyRouteBehavior
+    }
+
+    enum EConditionAgregator{
+      and
+      or
+    }
+
+}
+
+
+
+PlaneShaCondition .up.|> ICondition
+LocationCondition .up.|> ICondition
+LocationCondition ..> ILocation
+AggregatingCondition .up.|> ICondition
+AggregatingCondition ..> EConditionAgregator
+RunwayThresholdVisibilityCondition .up.|> ICondition
+FlyRouteBehaviorEmptyCondition .up.|> ICondition
+
+
+
+package approachBehaviors{
+    interface IApproachBehavior
+
+    class FlyRouteBehavior{
+     commands : List<ICommand>
+    }
+
+    class FlyRadialBehavior{
+      coordinate : Coordinate
+      inboundRadial : int
+      <<static>> createInbound(coordinate : Coordinate, inboundRadial : int) : FlyRadialBehavior
+      <<static>> createOutbound(coordinate : Coordinate, outboundRadial : int) : FlyRadialBehavior
+    }
+
+    class FlyRadialWithDescendBehavior{
+      altitudeFixCoordinate : Coordinate
+      altitudeFixValue : int
+      slope : double
+    }
+
+}
+
+FlyRouteBehavior .up.|> IApproachBehavior
+FlyRadialBehavior .up.|> IApproachBehavior
+FlyRadialWithDescendBehavior -up-|> FlyRadialBehavior
+FlyRouteBehaviorEmptyCondition ..> FlyRouteBehavior
+
+class ApproachStage{
+  exitConditions : List<ICondition>
+  errorConditions : List<ICondition>
+  behavior : IApproachBehavior
+}
+
+ApproachStage ..> ICondition
+ApproachStage ..> IApproachBehavior
+
+class Approach{
+  entries : List<IApproachEntry>
+  stages : List<ApproachStage>
+  type : EApproachType
+  gaRoute : GaRoute
+}
+Approach ..> ApproachStage
+Approach ..> ApproachEntry
+
+class ApproachEntry{
+  iafRoute : IafRoute
+  entryLocation : ILocation
+}
+
+ApproachEntry ..> ILocation
+
+@enduml
