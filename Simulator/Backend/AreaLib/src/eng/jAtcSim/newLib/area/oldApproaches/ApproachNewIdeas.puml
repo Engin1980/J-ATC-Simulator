@@ -115,7 +115,7 @@ ApproachStage ..> ICondition
 ApproachStage ..> IApproachBehavior
 
 class Approach{
-  entries : List<IApproachEntry>
+  entries : List<ApproachEntry>
   stages : List<ApproachStage>
   type : EApproachType
   gaRoute : GaRoute

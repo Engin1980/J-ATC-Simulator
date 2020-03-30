@@ -8,7 +8,7 @@ public class ApproachEntry {
 private final IafRoute iafRoute;
 private final ILocation entryLocation;
 
-  public ApproachEntry(IafRoute iafRoute, ILocation entryLocation) {
+  public ApproachEntry(ILocation entryLocation, IafRoute iafRoute) {
     EAssert.Argument.isNotNull(iafRoute, "iafRoute");
     EAssert.Argument.isNotNull(entryLocation, "entryLocation");
     this.iafRoute = iafRoute;
