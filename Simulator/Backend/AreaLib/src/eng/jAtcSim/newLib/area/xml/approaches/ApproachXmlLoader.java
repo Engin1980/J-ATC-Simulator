@@ -4,26 +4,19 @@ import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.eXml.XElement;
-import eng.eSystem.geo.Coordinate;
 import eng.jAtcSim.newLib.area.NavaidList;
+import eng.jAtcSim.newLib.area.approaches.Approach;
+import eng.jAtcSim.newLib.area.approaches.ApproachEntry;
 import eng.jAtcSim.newLib.area.approaches.ApproachFactory;
 import eng.jAtcSim.newLib.area.approaches.factories.ApproachEntryFactory;
 import eng.jAtcSim.newLib.area.approaches.factories.ThresholdInfo;
 import eng.jAtcSim.newLib.area.approaches.locations.ILocation;
-import eng.jAtcSim.newLib.area.oldApproaches.Approach;
-import eng.jAtcSim.newLib.area.oldApproaches.ApproachEntry;
-import eng.jAtcSim.newLib.area.oldApproaches.stages.LandingStage;
-import eng.jAtcSim.newLib.area.oldApproaches.stages.RadialWithDescendStage;
-import eng.jAtcSim.newLib.area.oldApproaches.stages.checks.CheckAirportVisibilityStage;
-import eng.jAtcSim.newLib.area.oldApproaches.stages.exitConditions.AltitudeExitCondition;
 import eng.jAtcSim.newLib.area.routes.GaRoute;
 import eng.jAtcSim.newLib.area.routes.IafRoute;
 import eng.jAtcSim.newLib.area.xml.XmlLoaderWithNavaids;
 import eng.jAtcSim.newLib.area.xml.XmlMappingDictinary;
 import eng.jAtcSim.newLib.shared.xml.XmlLoadException;
 import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
-
-import java.util.FormatterClosedException;
 
 public class ApproachXmlLoader extends XmlLoaderWithNavaids<Approach> {
 
@@ -68,6 +61,8 @@ public class ApproachXmlLoader extends XmlLoaderWithNavaids<Approach> {
     int daB = XmlLoaderUtils.loadInteger("daB");
     int daC = XmlLoaderUtils.loadInteger("daC");
     int daD = XmlLoaderUtils.loadInteger("daD");
+    int radial = XmlLoaderUtils.loadInteger("radial");
+    int initialAltitude = XmlLoaderUtils.loadInteger("initialAltitude");
     Double tmp = XmlLoaderUtils.loadDouble("glidePathPercentage", 3d);
     double slope = convertGlidePathDegreesToSlope(tmp);
 
@@ -75,7 +70,9 @@ public class ApproachXmlLoader extends XmlLoaderWithNavaids<Approach> {
     IList<ApproachEntry> entries = new EList<>();
     IReadOnlyList<IafRoute> iafRoutes = this.iafRoutes.get(iafMapping);
     for (IafRoute iafRoute : iafRoutes) {
-      ILocation approachEntryLocation = ApproachFactory.Entry.Location.createApproachEntryLocationFoRoute(iafRoute);
+      ILocation approachEntryLocation = ApproachFactory.Entry.Location.createApproachEntryLocationFoRoute(iafRoute, this.navaids);
+      ApproachEntry entry = new ApproachEntry(approachEntryLocation, iafRoute);
+      entries.add(entry);
     }
     
     ApproachEntry ae;
