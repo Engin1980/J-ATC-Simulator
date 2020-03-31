@@ -6,8 +6,10 @@ import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.geo.Coordinate;
 import eng.jAtcSim.newLib.area.NavaidList;
+import eng.jAtcSim.newLib.area.approaches.ApproachFactory;
 import eng.jAtcSim.newLib.area.approaches.factories.ApproachEntryFactory;
 import eng.jAtcSim.newLib.area.approaches.factories.ThresholdInfo;
+import eng.jAtcSim.newLib.area.approaches.locations.ILocation;
 import eng.jAtcSim.newLib.area.oldApproaches.Approach;
 import eng.jAtcSim.newLib.area.oldApproaches.ApproachEntry;
 import eng.jAtcSim.newLib.area.oldApproaches.stages.LandingStage;
@@ -73,7 +75,7 @@ public class ApproachXmlLoader extends XmlLoaderWithNavaids<Approach> {
     IList<ApproachEntry> entries = new EList<>();
     IReadOnlyList<IafRoute> iafRoutes = this.iafRoutes.get(iafMapping);
     for (IafRoute iafRoute : iafRoutes) {
-      
+      ILocation approachEntryLocation = ApproachFactory.Entry.Location.createApproachEntryLocationFoRoute(iafRoute);
     }
     
     ApproachEntry ae;
