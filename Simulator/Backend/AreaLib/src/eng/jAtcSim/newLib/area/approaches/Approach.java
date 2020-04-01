@@ -1,14 +1,16 @@
 package eng.jAtcSim.newLib.area.approaches;
 
-import eng.eSystem.collections.*;
+import eng.eSystem.collections.IList;
+import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.area.routes.GaRoute;
 import eng.jAtcSim.newLib.shared.enums.ApproachType;
 import eng.jAtcSim.newLib.speeches.ICommand;
 
-import static eng.eSystem.utilites.FunctionShortcuts.*;
-
 public class Approach {
+  public static Approach create(ApproachType type, IList<ApproachEntry> entries, IList<ICommand> beforeStagesCommands, IList<ApproachStage> stages, GaRoute gaRoute) {
+    return new Approach(type, entries, beforeStagesCommands, stages, gaRoute);
+  }
   private final ApproachType type;
   private final IList<ApproachEntry> entries;
   private final IList<ICommand> beforeStagesCommands;
@@ -26,5 +28,25 @@ public class Approach {
     this.beforeStagesCommands = beforeStagesCommands;
     this.stages = stages;
     this.gaRoute = gaRoute;
+  }
+
+  public ApproachType getType() {
+    return type;
+  }
+
+  public IReadOnlyList<ApproachEntry> getEntries() {
+    return entries;
+  }
+
+  public IReadOnlyList<ICommand> getBeforeStagesCommands() {
+    return beforeStagesCommands;
+  }
+
+  public IReadOnlyList<ApproachStage> getStages() {
+    return stages;
+  }
+
+  public GaRoute getGaRoute() {
+    return gaRoute;
   }
 }

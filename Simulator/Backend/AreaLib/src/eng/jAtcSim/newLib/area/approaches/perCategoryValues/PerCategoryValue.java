@@ -1,9 +1,6 @@
 package eng.jAtcSim.newLib.area.approaches.perCategoryValues;
 
-import eng.eSystem.collections.*;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
-
-import static eng.eSystem.utilites.FunctionShortcuts.*;
 
 public class PerCategoryValue<T extends Number> {
   private final T a;
@@ -11,18 +8,14 @@ public class PerCategoryValue<T extends Number> {
   private final T c;
   private final T d;
 
-  public PerCategoryValue(T a, T b, T c, T d) {
+  protected PerCategoryValue(T a, T b, T c, T d) {
     this.a = a;
     this.b = b;
     this.c = c;
     this.d = d;
   }
 
-  public PerCategoryValue(T value){
-    this(value, value, value,value);
-  }
-
-  public T get(char category){
+  public T get(char category) {
     switch (category) {
       case 'a':
       case 'A':

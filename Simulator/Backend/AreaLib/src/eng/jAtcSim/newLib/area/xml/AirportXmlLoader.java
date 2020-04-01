@@ -52,6 +52,8 @@ public class AirportXmlLoader implements IXmlLoader<Airport> {
         XmlLoaderUtils.loadString("mainAirportNavaidName"));
     InitialPosition initialPosition = new InitialPositionXmlLoader().load(source.getChild("initialPosition"));
 
+    navaids.registerDeclination(mainAirportNavaid.getCoordinate(), declination);
+
     IList<Atc> atcs = new EDistinctList<>(q -> q.getName(), EDistinctList.Behavior.exception);
     XmlLoaderUtils.loadList(
         source.getChild("atcTemplates").getChildren(),

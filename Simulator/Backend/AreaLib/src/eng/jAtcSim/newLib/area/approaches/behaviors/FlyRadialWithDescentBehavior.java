@@ -1,28 +1,24 @@
 package eng.jAtcSim.newLib.area.approaches.behaviors;
 
-import eng.eSystem.collections.*;
 import eng.eSystem.geo.Coordinate;
-
-import static eng.eSystem.utilites.FunctionShortcuts.*;
+import eng.jAtcSim.newLib.area.approaches.perCategoryValues.DoublePerCategoryValue;
 
 public class FlyRadialWithDescentBehavior extends FlyRadialBehavior {
 
-  private final Coordinate altitudeFixCoordinate;
-  private final int altitudeFixValue;
-  private final double slope;
-
-  public FlyRadialWithDescentBehavior(Coordinate radialCoordinate, int inboundRadial,
-                                      Coordinate altitudeFixCoordinate, int altitudeFixValue, double slope) {
-    super(radialCoordinate, inboundRadial);
-    this.altitudeFixCoordinate = altitudeFixCoordinate;
-    this.altitudeFixValue = altitudeFixValue;
-    this.slope = slope;
+  public static FlyRadialWithDescentBehavior create(
+      Coordinate coordinate, int radial, int altitudeOverCoordinate,
+      DoublePerCategoryValue slope) {
+    return new FlyRadialWithDescentBehavior(coordinate, radial, coordinate, altitudeOverCoordinate, slope);
   }
 
-  public FlyRadialWithDescentBehavior(Coordinate coordinate, int inboundRadial, int altitudeOverCoordinate, double slope) {
+  private final Coordinate altitudeFixCoordinate;
+  private final int altitudeFixValue;
+  private final DoublePerCategoryValue slope;
+
+  private FlyRadialWithDescentBehavior(Coordinate coordinate, int inboundRadial, Coordinate altitudeFixCoordinate, int altitudeFixValue, DoublePerCategoryValue slope) {
     super(coordinate, inboundRadial);
-    this.altitudeFixCoordinate = coordinate;
-    this.altitudeFixValue = altitudeOverCoordinate;
+    this.altitudeFixCoordinate = altitudeFixCoordinate;
+    this.altitudeFixValue = altitudeFixValue;
     this.slope = slope;
   }
 
@@ -34,7 +30,7 @@ public class FlyRadialWithDescentBehavior extends FlyRadialBehavior {
     return altitudeFixValue;
   }
 
-  public double getSlope() {
+  public DoublePerCategoryValue getSlope() {
     return slope;
   }
 }

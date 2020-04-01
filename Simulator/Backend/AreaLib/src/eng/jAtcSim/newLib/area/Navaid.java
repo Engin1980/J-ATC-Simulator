@@ -1,8 +1,7 @@
 package eng.jAtcSim.newLib.area;
 
-import eng.eSystem.eXml.XElement;
 import eng.eSystem.geo.Coordinate;
-import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
+import eng.jAtcSim.newLib.shared.RegexGrouper;
 
 public class Navaid {
 

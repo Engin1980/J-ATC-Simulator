@@ -18,6 +18,18 @@ import static eng.eSystem.utilites.FunctionShortcuts.sf;
 public class ApproachFactory {
   public static class Entry {
     public static class Location {
+      public static ILocation createApproachEntryLocationBetweenMaptAndFaf(String maptName, String fafName, NavaidList navaids) {
+        Navaid faf = navaids.getWithPBD(fafName);
+        Navaid mapt = navaids.getWithPBD(maptName);
+        double distance = Coordinates.getDistanceInNM(faf.getCoordinate(), mapt.getCoordinate());
+        double radial = Coordinates.getBearing(faf.getCoordinate(), mapt.getCoordinate());
+        ILocation ret = new FixRelatedLocation(mapt.getCoordinate(),
+            (int) Headings.add(radial, -30),
+            (int) Headings.add(radial, +30),
+            distance + 1);
+        return ret;
+      }
+
       public static ILocation createApproachEntryLocationFoRoute(IafRoute route, NavaidList navaids) {
         double expHeading = getOptimalEntryHeadingForRoute(route, navaids);
         int fromRadial = (int) Headings.add(expHeading, 115);
@@ -43,6 +55,15 @@ public class ApproachFactory {
             (int) Headings.add(radial, -45),
             (int) Headings.add(radial, 45),
             10);
+        return ret;
+      }
+
+      public static ILocation createApproachEntryLocationForFAF(String fafName, int course, NavaidList navaids) {
+        Navaid navaid = navaids.getWithPBD(fafName);
+        ILocation ret = new FixRelatedLocation(navaid.getCoordinate(),
+            (int) Headings.add(course, -45),
+            (int) Headings.add(course, 45),
+            20);
         return ret;
       }
 
