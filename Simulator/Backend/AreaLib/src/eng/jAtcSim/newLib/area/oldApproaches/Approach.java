@@ -33,6 +33,7 @@ import eng.jAtcSim.newLib.area.speeches.atc2airplane.ProceedDirectCommand;
 import eng.jAtcSim.newLib.area.speeches.atc2airplane.ThenCommand;
 import eng.jAtcSim.newLib.shared.exceptions.ToDoException;
 import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
+import eng.jAtcSim.newLib.speeches.ICommand;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
@@ -178,6 +179,7 @@ public class Approach extends Parentable<ActiveRunwayThreshold> {
   }
 
   private IList<ApproachEntry> entries;
+  private IList<ICommand> beforeStagesCommands;
   private IList<IApproachStage> stages;
   private GaRoute gaRoute;
   private ApproachType type;

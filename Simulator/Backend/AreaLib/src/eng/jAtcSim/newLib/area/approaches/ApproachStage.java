@@ -1,36 +1,36 @@
 package eng.jAtcSim.newLib.area.approaches;
 
-import eng.eSystem.collections.*;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.area.approaches.behaviors.IApproachBehavior;
 import eng.jAtcSim.newLib.area.approaches.conditions.ICondition;
 
-import static eng.eSystem.utilites.FunctionShortcuts.*;
-
 public class ApproachStage {
-  private final IList<ICondition> exitConditions;
-  private final IList<ICondition> errorConditions;
+  private final ICondition exitCondition;
+  private final ICondition errorCondition;
   private final IApproachBehavior behavior;
+  private final String name;
 
-  public ApproachStage( IApproachBehavior behavior, IList<ICondition> exitConditions, IList<ICondition> errorConditions) {
+  public ApproachStage(IApproachBehavior behavior, ICondition exitCondition, ICondition errorCondition) {
+    this(behavior, exitCondition, errorCondition, "Unnamed stage");
+  }
+
+  public ApproachStage(IApproachBehavior behavior, ICondition exitCondition, ICondition errorCondition, String name) {
     EAssert.Argument.isNotNull(behavior, "behavior");
-    EAssert.Argument.isNotNull(exitConditions, "exitConditions");
-    EAssert.Argument.isTrue(!exitConditions.isEmpty(), "There must be at least one exit condition.");
-    EAssert.Argument.isNotNull(errorConditions, "errorConditions");
-    this.exitConditions = exitConditions;
-    this.errorConditions = errorConditions;
+    this.exitCondition = exitCondition;
+    this.errorCondition = errorCondition;
     this.behavior = behavior;
-  }
-
-  public IList<ICondition> getExitConditions() {
-    return exitConditions;
-  }
-
-  public IList<ICondition> getErrorConditions() {
-    return errorConditions;
+    this.name = name;
   }
 
   public IApproachBehavior getBehavior() {
     return behavior;
+  }
+
+  public ICondition getErrorCondition() {
+    return errorCondition;
+  }
+
+  public ICondition getExitCondition() {
+    return exitCondition;
   }
 }

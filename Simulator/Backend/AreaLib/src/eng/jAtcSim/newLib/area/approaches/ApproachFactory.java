@@ -34,6 +34,18 @@ public class ApproachFactory {
         return ret;
       }
 
+      public static ILocation createApproachEntryLocationForFAF(
+          Coordinate coordinate, int coordinateAltitude, int radial, int altitude, double slope) {
+        double dist = (altitude - coordinateAltitude) / slope;
+        Coordinate fafCoordinate = Coordinates.getCoordinate(
+            coordinate, Headings.getOpposite(radial), dist);
+        ILocation ret = new FixRelatedLocation(fafCoordinate,
+            (int) Headings.add(radial, -45),
+            (int) Headings.add(radial, 45),
+            10);
+        return ret;
+      }
+
       private static double getOptimalEntryHeadingForRoute(IafRoute route, NavaidList navaids) {
         EAssert.Argument.isNotNull(route);
         EAssert.Argument.isTrue(route.getRouteCommands().isEmpty() == false);

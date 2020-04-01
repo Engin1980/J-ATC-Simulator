@@ -8,17 +8,13 @@ import static eng.eSystem.utilites.FunctionShortcuts.*;
 public class ThresholdInfo{
   public final Coordinate coordinate;
   public final int course;
+  public final int altitude;
+  public final String name;
 
-  public ThresholdInfo(Coordinate coordinate, int course) {
+  public ThresholdInfo(Coordinate coordinate, int course, int altitude, String name) {
     this.coordinate = coordinate;
     this.course = course;
-  }
-
-  public Coordinate getCoordinate() {
-    return coordinate;
-  }
-
-  public int getCourse() {
-    return course;
+    this.altitude = altitude;
+    this.name = name;
   }
 }

@@ -5,10 +5,14 @@ import eng.eSystem.validation.EAssert;
 
 import static eng.eSystem.utilites.FunctionShortcuts.*;
 
-public class AggregatingCondition {
+public class AggregatingCondition implements ICondition {
   public enum eConditionAggregator{
     and,
     or
+  }
+
+  public static AggregatingCondition create(eConditionAggregator aggregator, ICondition  ... conditions) {
+    return new AggregatingCondition(EList.of(conditions), aggregator);
   }
 
   private final IList<ICondition> conditions;
