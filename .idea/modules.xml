@@ -6,7 +6,7 @@
       <module fileurl="file://$PROJECT_DIR$/Simulator/Backend/AirplaneTypeLib/AirplaneTypeLib.iml" filepath="$PROJECT_DIR$/Simulator/Backend/AirplaneTypeLib/AirplaneTypeLib.iml" />
       <module fileurl="file://$PROJECT_DIR$/Simulator/Backend/AirplanesLib/AirplanesLib.iml" filepath="$PROJECT_DIR$/Simulator/Backend/AirplanesLib/AirplanesLib.iml" />
       <module fileurl="file://$PROJECT_DIR$/Simulator/Backend/AreaLib/AreaLib.iml" filepath="$PROJECT_DIR$/Simulator/Backend/AreaLib/AreaLib.iml" />
-      <module fileurl="file://$PROJECT_DIR$/Simulator/Backend/xml/AreaXmlLoaderLib/AreaXmlLoaderLib.iml" filepath="$PROJECT_DIR$/Simulator/Backend/xml/AreaXmlLoaderLib/AreaXmlLoaderLib.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Simulator/Backend/AreaXmlLoaderLib/AreaXmlLoaderLib.iml" filepath="$PROJECT_DIR$/Simulator/Backend/AreaXmlLoaderLib/AreaXmlLoaderLib.iml" />
       <module fileurl="file://$PROJECT_DIR$/Simulator/Frontend/BitmapRadar/BitmapRadar.iml" filepath="$PROJECT_DIR$/Simulator/Frontend/BitmapRadar/BitmapRadar.iml" />
       <module fileurl="file://$PROJECT_DIR$/Tools/CoordinatesViewer/CoordinatesViewer.iml" filepath="$PROJECT_DIR$/Tools/CoordinatesViewer/CoordinatesViewer.iml" />
       <module fileurl="file://$PROJECT_DIR$/Simulator/Backend/FleetLib/FleetLib.iml" filepath="$PROJECT_DIR$/Simulator/Backend/FleetLib/FleetLib.iml" />

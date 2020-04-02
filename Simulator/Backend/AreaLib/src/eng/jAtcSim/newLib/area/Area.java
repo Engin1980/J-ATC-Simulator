@@ -95,7 +95,11 @@ public class Area {
   private final IList<Border> borders;
   private final String icao;
 
-  public Area(String icao, IList<Airport> airports, NavaidList navaids, IList<Border> borders) {
+  public static Area create(String icao, IList<Airport> airports, NavaidList navaids, IList<Border> borders){
+    return new Area(icao, airports, navaids, borders);
+  }
+
+  private Area(String icao, IList<Airport> airports, NavaidList navaids, IList<Border> borders) {
     EAssert.Argument.isNotNull(icao, "Parameter 'icao' cannot be null.");
     EAssert.Argument.isNotNull(navaids, "Parameter 'navaids' cannot be null.");
     EAssert.Argument.isNotNull(borders, "Parameter 'borders' cannot be null.");
