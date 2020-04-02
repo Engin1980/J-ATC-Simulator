@@ -7,15 +7,15 @@ public class FlyRadialWithDescentBehavior extends FlyRadialBehavior {
 
   public static FlyRadialWithDescentBehavior create(
       Coordinate coordinate, int radial, int altitudeOverCoordinate,
-      DoublePerCategoryValue slope) {
+      double slope) {
     return new FlyRadialWithDescentBehavior(coordinate, radial, coordinate, altitudeOverCoordinate, slope);
   }
 
   private final Coordinate altitudeFixCoordinate;
   private final int altitudeFixValue;
-  private final DoublePerCategoryValue slope;
+  private final double slope;
 
-  private FlyRadialWithDescentBehavior(Coordinate coordinate, int inboundRadial, Coordinate altitudeFixCoordinate, int altitudeFixValue, DoublePerCategoryValue slope) {
+  private FlyRadialWithDescentBehavior(Coordinate coordinate, int inboundRadial, Coordinate altitudeFixCoordinate, int altitudeFixValue, double slope) {
     super(coordinate, inboundRadial);
     this.altitudeFixCoordinate = altitudeFixCoordinate;
     this.altitudeFixValue = altitudeFixValue;
@@ -30,7 +30,7 @@ public class FlyRadialWithDescentBehavior extends FlyRadialBehavior {
     return altitudeFixValue;
   }
 
-  public DoublePerCategoryValue getSlope() {
+  public double getSlope() {
     return slope;
   }
 }

@@ -85,12 +85,6 @@ public class ActiveRunwayThreshold extends Parentable<ActiveRunway> {
     this.coordinate = coordinate;
     this.initialDepartureAltitude = initialDepartureAltitude;
 
-    // add visual approach if any exists
-    if (this.approaches.isNone(q -> q.getType() == ApproachType.visual)) {
-      Approach visual = Approach.generateDefaultVisualApproach(this);
-      this.approaches.add(visual);
-    }
-
     // estimate faf
     this.estimatedFafPoint = Coordinates.getCoordinate(
         this.coordinate,

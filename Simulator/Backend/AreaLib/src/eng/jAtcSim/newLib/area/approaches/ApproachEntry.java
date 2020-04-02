@@ -5,21 +5,29 @@ import eng.jAtcSim.newLib.area.approaches.locations.ILocation;
 import eng.jAtcSim.newLib.area.routes.IafRoute;
 
 public class ApproachEntry {
-private final IafRoute iafRoute;
-private final ILocation entryLocation;
+  public static ApproachEntry createDirect(ILocation entryLocation) {
+    return new ApproachEntry(null, entryLocation);
+  }
 
-  public ApproachEntry(ILocation entryLocation, IafRoute iafRoute) {
+  public static ApproachEntry create(ILocation entryLocation, IafRoute iafRoute) {
     EAssert.Argument.isNotNull(iafRoute, "iafRoute");
+    return new ApproachEntry(iafRoute, entryLocation);
+  }
+
+  private final IafRoute iafRoute;
+  private final ILocation entryLocation;
+
+  private ApproachEntry(IafRoute iafRoute, ILocation entryLocation) {
     EAssert.Argument.isNotNull(entryLocation, "entryLocation");
     this.iafRoute = iafRoute;
     this.entryLocation = entryLocation;
   }
 
-  public IafRoute getIafRoute() {
-    return iafRoute;
-  }
-
   public ILocation getEntryLocation() {
     return entryLocation;
+  }
+
+  public IafRoute getIafRoute() {
+    return iafRoute;
   }
 }

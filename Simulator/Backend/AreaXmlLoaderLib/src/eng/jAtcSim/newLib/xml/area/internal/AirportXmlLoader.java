@@ -50,6 +50,10 @@ class AirportXmlLoader extends  XmlLoader<Airport> {
     context.area.navaids.registerDeclination(mainAirportNavaid.getCoordinate(), declination);
     context.airport.icao = icao;
     context.airport.mainNavaid = mainAirportNavaid;
+    context.airport.altitude = altitude;
+    context.airport.daMappings = new XmlMappingDictinary<>();
+    context.airport.iafMappings = new XmlMappingDictinary<>();
+    context.airport.gaMappings = new XmlMappingDictinary<>();
 
     IList<Atc> atcs = new EDistinctList<>(q -> q.getName(), EDistinctList.Behavior.exception);
     XmlLoaderUtils.loadList(
@@ -68,10 +72,6 @@ class AirportXmlLoader extends  XmlLoader<Airport> {
         source.getChild("holds").getChildren(),
         new PublishedHoldXmlLoader(context));
 
-    context.airport.daMappings = new XmlMappingDictinary<>();
-    context.airport.iafMappings = new XmlMappingDictinary<>();
-    context.airport.gaMappings = new XmlMappingDictinary<>();
-
     IList<DARoute> daRoutes = new EDistinctList<>(q -> q.getName(), EDistinctList.Behavior.exception);
     IReadOnlyList<XElement> routes = extractRoutes(source.getChild("daRoutes"), "route");
     XmlLoaderUtils.loadList(routes, daRoutes, new DARouteXmlLoader(context));
@@ -88,7 +88,7 @@ class AirportXmlLoader extends  XmlLoader<Airport> {
 
     IList<ActiveRunway> runways = XmlLoaderUtils.loadList(
         source.getChild("runways").getChildren("runway"),
-        new ActiveRunwayXmlLoader(daRoutes));
+        new ActiveRunwayXmlLoader(context));
     context.airport.activeRunways = runways;
 
     IList<RunwayConfiguration> runwayConfigurations = XmlLoaderUtils.loadList(

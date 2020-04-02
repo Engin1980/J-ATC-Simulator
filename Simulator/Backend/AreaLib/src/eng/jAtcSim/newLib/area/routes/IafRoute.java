@@ -11,7 +11,11 @@ public class IafRoute extends Route {
   private final Navaid navaid;
   private final PlaneCategoryDefinitions category;
 
-  public IafRoute(IList<ICommand> routeCommands, Navaid navaid, PlaneCategoryDefinitions category) {
+  public static IafRoute create(IList<ICommand> routeCommands, Navaid navaid, PlaneCategoryDefinitions category){
+    return new IafRoute(routeCommands, navaid, category);
+  }
+
+  private IafRoute(IList<ICommand> routeCommands, Navaid navaid, PlaneCategoryDefinitions category) {
     super(routeCommands);
     EAssert.Argument.isNotNull(navaid, "navaid");
     this.navaid = navaid;
