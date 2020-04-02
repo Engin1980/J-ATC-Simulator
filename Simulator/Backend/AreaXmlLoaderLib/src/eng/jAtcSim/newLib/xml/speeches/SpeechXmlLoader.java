@@ -1,20 +1,20 @@
-package eng.jAtcSim.newLib.speeches.xml;
+package eng.jAtcSim.newLib.xml.speeches;
 
 import eng.eSystem.collections.*;
 import eng.eSystem.eXml.XElement;
 import eng.jAtcSim.newLib.shared.xml.IXmlLoader;
 import eng.jAtcSim.newLib.shared.xml.XmlLoadException;
 import eng.jAtcSim.newLib.speeches.ICommand;
-import eng.jAtcSim.newLib.speeches.xml.atc2airplane.*;
-import eng.jAtcSim.newLib.speeches.xml.atc2airplane.afterCommands.*;
+import eng.jAtcSim.newLib.xml.speeches.atc2airplane.*;
+import eng.jAtcSim.newLib.xml.speeches.atc2airplane.afterCommands.*;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
-public class XmlLoader implements IXmlLoader<ICommand> {
+public class SpeechXmlLoader implements IXmlLoader<ICommand> {
 
   private final IMap<String, IXmlLoader<? extends ICommand>> loaders;
 
-  public XmlLoader() {
+  public SpeechXmlLoader() {
     this.loaders = new EMap<>();
     this.loaders.set("proceedDirect", new ProceedDirectCommandXmlLoader());
     this.loaders.set("then", new ThenCommandXmlLoader());

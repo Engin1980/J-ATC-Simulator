@@ -10,26 +10,19 @@ import eng.eSystem.geo.Coordinates;
 import eng.eSystem.utilites.RegexUtils;
 import eng.jAtcSim.newLib.area.Border;
 import eng.jAtcSim.newLib.area.Navaid;
-import eng.jAtcSim.newLib.area.NavaidList;
 import eng.jAtcSim.newLib.area.routes.DARoute;
-import eng.jAtcSim.newLib.xml.area.internal.XmlLoaderWithNavaids;
-import eng.jAtcSim.newLib.xml.area.internal.XmlMappingDictinary;
 import eng.jAtcSim.newLib.shared.PlaneCategoryDefinitions;
 import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
 import eng.jAtcSim.newLib.speeches.ICommand;
 import eng.jAtcSim.newLib.speeches.atc2airplane.ToNavaidCommand;
+import eng.jAtcSim.newLib.xml.area.internal.XmlLoader;
+import eng.jAtcSim.newLib.xml.area.internal.context.Context;
+import eng.jAtcSim.newLib.xml.speeches.SpeechXmlLoader;
 
-public class DARouteXmlLoader extends XmlLoaderWithNavaids<DARoute> {
+public class DARouteXmlLoader extends XmlLoader<DARoute> {
 
-  private final IReadOnlyList<Border> borders;
-  private final XmlMappingDictinary<DARoute> mappings;
-
-  public DARouteXmlLoader(NavaidList navaids,
-                          IReadOnlyList<Border> borders,
-                          XmlMappingDictinary<DARoute> mappings) {
-    super(navaids);
-    this.borders = borders;
-    this.mappings = mappings;
+  public DARouteXmlLoader(Context context) {
+    super(context);
   }
 
   @Override
@@ -43,12 +36,12 @@ public class DARouteXmlLoader extends XmlLoaderWithNavaids<DARoute> {
     Integer entryAltitude = XmlLoaderUtils.loadAltitude("entryFL", null);
     String mainFixName = XmlLoaderUtils.loadString("mainFix", null);
     Navaid mainNavaid = mainFixName != null ?
-        navaids.get(mainFixName) :
+        context.area.navaids.get(mainFixName) :
         getMainRouteNavaidFromRouteName(name);
 
     IList<ICommand> commands = XmlLoaderUtils.loadList(
         source.getChildren(),
-        new eng.jAtcSim.newLib.speeches.xml.XmlLoader()
+        new SpeechXmlLoader()
     );
 
     IReadOnlyList<Navaid> routeNavaids = getNavaidsFromCommands(commands);
@@ -56,8 +49,8 @@ public class DARouteXmlLoader extends XmlLoaderWithNavaids<DARoute> {
     double length = evaluateRouteLength(routeNavaids);
     int maxMrvaAltitude = evaluateMaxMrvaAltitude(routeNavaids, mainNavaid);
 
-    DARoute ret = new DARoute(commands, type, name, category, length,mainNavaid, entryAltitude, maxMrvaAltitude);
-    mappings.add(mapping, ret);
+    DARoute ret = new DARoute(commands, type, name, category, length, mainNavaid, entryAltitude, maxMrvaAltitude);
+    context.airport.daMappings.add(mapping, ret);
 
     return ret;
   }
@@ -76,7 +69,7 @@ public class DARouteXmlLoader extends XmlLoaderWithNavaids<DARoute> {
 
   private int evaluateMaxMrvaAltitude(IReadOnlyList<Navaid> routeNavaids, Navaid mainRouteNavaid) {
     IList<Tuple<Coordinate, Coordinate>> pointLines = convertPointsToLines(routeNavaids);
-    IList<Border> mrvas = borders.where(q -> q.getType() == Border.eType.mrva);
+    IList<Border> mrvas = context.area.borders.where(q -> q.getType() == Border.eType.mrva);
 
     int maxMrvaAlt = 0;
     for (Border mrva : mrvas) {
@@ -112,7 +105,7 @@ public class DARouteXmlLoader extends XmlLoaderWithNavaids<DARoute> {
 
   private Navaid getMainRouteNavaidFromRouteName(String routeName) {
     String name = RegexUtils.extractGroupContent(routeName, "^([A-Z]+)\\d.+", 1);
-    Navaid ret = navaids.get(name);
+    Navaid ret = context.area.navaids.get(name);
     return ret;
   }
 
@@ -120,7 +113,7 @@ public class DARouteXmlLoader extends XmlLoaderWithNavaids<DARoute> {
     IList<String> navaidNames = commands
         .where(q -> q instanceof ToNavaidCommand)
         .select(q -> ((ToNavaidCommand) q).getNavaidName());
-    IList<Navaid> ret = navaidNames.select(q -> navaids.get(q));
+    IList<Navaid> ret = navaidNames.select(q -> context.area.navaids.get(q));
     return ret;
   }
 

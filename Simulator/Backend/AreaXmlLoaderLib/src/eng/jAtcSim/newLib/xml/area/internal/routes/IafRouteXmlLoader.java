@@ -3,39 +3,35 @@ package eng.jAtcSim.newLib.xml.area.internal.routes;
 import eng.eSystem.collections.IList;
 import eng.eSystem.eXml.XElement;
 import eng.jAtcSim.newLib.area.Navaid;
-import eng.jAtcSim.newLib.area.NavaidList;
-import eng.jAtcSim.newLib.area.routes.DARoute;
 import eng.jAtcSim.newLib.area.routes.IafRoute;
-import eng.jAtcSim.newLib.xml.area.internal.XmlLoaderWithNavaids;
-import eng.jAtcSim.newLib.xml.area.internal.XmlMappingDictinary;
 import eng.jAtcSim.newLib.shared.PlaneCategoryDefinitions;
 import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
 import eng.jAtcSim.newLib.speeches.ICommand;
+import eng.jAtcSim.newLib.xml.area.internal.XmlLoader;
+import eng.jAtcSim.newLib.xml.area.internal.context.Context;
+import eng.jAtcSim.newLib.xml.speeches.SpeechXmlLoader;
 
-public class IafRouteXmlLoader extends XmlLoaderWithNavaids<IafRoute> {
+public class IafRouteXmlLoader extends XmlLoader<IafRoute> {
 
-  private final XmlMappingDictinary<IafRoute> mappings;
-
-  public IafRouteXmlLoader(NavaidList navaids, XmlMappingDictinary<IafRoute> mappings) {
-    super(navaids);
-    this.mappings = mappings;
+  public IafRouteXmlLoader(Context context) {
+    super(context);
   }
 
   @Override
   public IafRoute load(XElement source) {
     XmlLoaderUtils.setContext(source);
     String iafName = XmlLoaderUtils.loadString("iaf");
-    Navaid navaid = navaids.get(iafName);
+    Navaid navaid = context.area.navaids.get(iafName);
     PlaneCategoryDefinitions category = XmlLoaderUtils.loadPlaneCategory("category", "ABCD");
     String mapping = XmlLoaderUtils.loadString("iafMapping");
 
     IList<ICommand> commands = XmlLoaderUtils.loadList(
         source.getChildren(),
-        new eng.jAtcSim.newLib.speeches.xml.XmlLoader()
+        new SpeechXmlLoader()
     );
 
     IafRoute ret = new IafRoute(commands, navaid, category);
-    mappings.add(mapping, ret);
+    context.airport.iafMappings.add(mapping, ret);
     return ret;
   }
 }

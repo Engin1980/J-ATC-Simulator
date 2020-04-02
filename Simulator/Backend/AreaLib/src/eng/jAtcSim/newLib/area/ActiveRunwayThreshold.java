@@ -12,8 +12,9 @@ import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.geo.Headings;
 import eng.eSystem.validation.EAssert;
-import eng.jAtcSim.newLib.area.oldApproaches.Approach;
+import eng.jAtcSim.newLib.area.approaches.Approach;
 import eng.jAtcSim.newLib.area.routes.DARoute;
+import eng.jAtcSim.newLib.shared.enums.ApproachType;
 
 import static eng.eSystem.utilites.FunctionShortcuts.*;
 
@@ -85,7 +86,7 @@ public class ActiveRunwayThreshold extends Parentable<ActiveRunway> {
     this.initialDepartureAltitude = initialDepartureAltitude;
 
     // add visual approach if any exists
-    if (this.approaches.isNone(q -> q.getType() == Approach.ApproachType.visual)) {
+    if (this.approaches.isNone(q -> q.getType() == ApproachType.visual)) {
       Approach visual = Approach.generateDefaultVisualApproach(this);
       this.approaches.add(visual);
     }
@@ -101,7 +102,7 @@ public class ActiveRunwayThreshold extends Parentable<ActiveRunway> {
     return approaches;
   }
 
-  public IReadOnlyList<Approach> getApproaches(Approach.ApproachType type, char category) {
+  public IReadOnlyList<Approach> getApproaches(ApproachType type, char category) {
     IList<Approach> ret = this.approaches.where(q -> q.getType() == type
         && q.getEntries().isAny(p -> p.isForCategory(category)));
     return ret;
@@ -202,17 +203,17 @@ public class ActiveRunwayThreshold extends Parentable<ActiveRunway> {
   public Approach tryGetHighestApproachExceptVisuals() {
     Approach ret;
 
-    ret = this.approaches.tryGetFirst(q -> q.getType() == Approach.ApproachType.ils_III);
+    ret = this.approaches.tryGetFirst(q -> q.getType() == ApproachType.ils_III);
     if (ret == null)
-      ret = this.approaches.tryGetFirst(q -> q.getType() == Approach.ApproachType.ils_II);
+      ret = this.approaches.tryGetFirst(q -> q.getType() == ApproachType.ils_II);
     if (ret == null)
-      ret = this.approaches.tryGetFirst(q -> q.getType() == Approach.ApproachType.ils_I);
+      ret = this.approaches.tryGetFirst(q -> q.getType() == ApproachType.ils_I);
     if (ret == null)
-      ret = this.approaches.tryGetFirst(q -> q.getType() == Approach.ApproachType.gnss);
+      ret = this.approaches.tryGetFirst(q -> q.getType() == ApproachType.gnss);
     if (ret == null)
-      ret = this.approaches.tryGetFirst(q -> q.getType() == Approach.ApproachType.vor);
+      ret = this.approaches.tryGetFirst(q -> q.getType() == ApproachType.vor);
     if (ret == null)
-      ret = this.approaches.tryGetFirst(q -> q.getType() == Approach.ApproachType.ndb);
+      ret = this.approaches.tryGetFirst(q -> q.getType() == ApproachType.ndb);
 
     return ret;
   }

@@ -17,7 +17,7 @@ import eng.jAtcSim.newLib.xml.area.internal.routes.IafRouteXmlLoader;
 import eng.jAtcSim.newLib.shared.xml.IXmlLoader;
 import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
 
-class AirportXmlLoader extends  XmlLoader {
+class AirportXmlLoader extends  XmlLoader<Airport> {
 
   AirportXmlLoader(Context context) {
     super(context);

@@ -30,7 +30,7 @@ public class ApproachFactory {
         return ret;
       }
 
-      public static ILocation createApproachEntryLocationFoRoute(IafRoute route, NavaidList navaids) {
+      public static ILocation createApproachEntryLocationForRoute(IafRoute route, NavaidList navaids) {
         double expHeading = getOptimalEntryHeadingForRoute(route, navaids);
         int fromRadial = (int) Headings.add(expHeading, 115);
         int toRadial = (int) Headings.add(expHeading, 115);

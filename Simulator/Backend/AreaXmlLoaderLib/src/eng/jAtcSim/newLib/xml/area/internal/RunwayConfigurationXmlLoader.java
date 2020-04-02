@@ -8,12 +8,13 @@ import eng.jAtcSim.newLib.area.*;
 import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
 import eng.jAtcSim.newLib.xml.area.internal.context.Context;
 
-public class RunwayConfigurationXmlLoader extends XmlLoader {
+public class RunwayConfigurationXmlLoader extends XmlLoader<RunwayConfiguration> {
 
-  public RunwayConfigurationXmlLoader(Context context) {
+  protected RunwayConfigurationXmlLoader(Context context) {
     super(context);
   }
 
+  @Override
   public RunwayConfiguration load(XElement source) {
     XmlLoaderUtils.setContext(source);
     int windFrom = XmlLoaderUtils.loadInteger("windFrom", 0);

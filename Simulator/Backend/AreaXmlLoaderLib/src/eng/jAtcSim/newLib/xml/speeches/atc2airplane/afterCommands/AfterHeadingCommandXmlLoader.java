@@ -1,4 +1,4 @@
-package eng.jAtcSim.newLib.speeches.xml.atc2airplane.afterCommands;
+package eng.jAtcSim.newLib.xml.speeches.atc2airplane.afterCommands;
 
 import eng.eSystem.eXml.XElement;
 import eng.jAtcSim.newLib.shared.xml.IXmlLoader;

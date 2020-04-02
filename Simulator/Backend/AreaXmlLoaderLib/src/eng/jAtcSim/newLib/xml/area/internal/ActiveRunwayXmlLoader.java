@@ -7,18 +7,18 @@ import eng.jAtcSim.newLib.area.ActiveRunway;
 import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
 import eng.jAtcSim.newLib.area.routes.DARoute;
 import eng.jAtcSim.newLib.shared.xml.IXmlLoader;
+import eng.jAtcSim.newLib.xml.area.internal.context.Context;
 
-public class ActiveRunwayXmlLoader implements IXmlLoader<ActiveRunway> {
+public class ActiveRunwayXmlLoader extends XmlLoader<ActiveRunway> {
 
-  private final IReadOnlyList<DARoute> daRoutes;
 
-  public ActiveRunwayXmlLoader(IReadOnlyList<DARoute> daRoutes) {
-    this.daRoutes = daRoutes;
+  protected ActiveRunwayXmlLoader(Context context) {
+    super(context);
   }
 
   @Override
   public ActiveRunway load(XElement source) {
-    IList<ActiveRunwayThreshold> thresholds = new ActiveRunwayThresholdXmlLoader(daRoutes).loadBoth(
+    IList<ActiveRunwayThreshold> thresholds = new ActiveRunwayThresholdXmlLoader(context).loadBoth(
         source.getChild("thresholds").getChildren());
     ActiveRunway ret = new ActiveRunway(thresholds);
     return ret;

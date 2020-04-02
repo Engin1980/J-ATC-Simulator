@@ -2,21 +2,20 @@ package eng.jAtcSim.newLib.xml.area.internal.routes;
 
 import eng.eSystem.collections.IList;
 import eng.eSystem.eXml.XElement;
-import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.area.NavaidList;
 import eng.jAtcSim.newLib.area.routes.GaRoute;
-import eng.jAtcSim.newLib.area.routes.IafRoute;
+import eng.jAtcSim.newLib.xml.area.internal.XmlLoader;
 import eng.jAtcSim.newLib.xml.area.internal.XmlLoaderWithNavaids;
 import eng.jAtcSim.newLib.xml.area.internal.XmlMappingDictinary;
 import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
 import eng.jAtcSim.newLib.speeches.ICommand;
+import eng.jAtcSim.newLib.xml.area.internal.context.Context;
+import eng.jAtcSim.newLib.xml.speeches.SpeechXmlLoader;
 
-public class GaRouteXmlLoader extends XmlLoaderWithNavaids<GaRoute> {
-  private final XmlMappingDictinary<GaRoute> mappings;
+public class GaRouteXmlLoader extends XmlLoader<GaRoute> {
 
-  public GaRouteXmlLoader(NavaidList navaids, XmlMappingDictinary<GaRoute> mappings) {
-    super(navaids);
-    this.mappings = mappings;
+  public GaRouteXmlLoader(Context context) {
+    super(context);
   }
 
   @Override
@@ -26,11 +25,11 @@ public class GaRouteXmlLoader extends XmlLoaderWithNavaids<GaRoute> {
 
     IList<ICommand> commands = XmlLoaderUtils.loadList(
         source.getChildren(),
-        new eng.jAtcSim.newLib.speeches.xml.XmlLoader()
+        new SpeechXmlLoader()
     );
 
     GaRoute ret = new GaRoute(commands);
-    mappings.add(mapping, ret);
+    context.airport.gaMappings.add(mapping, ret);
     return ret;
   }
 }

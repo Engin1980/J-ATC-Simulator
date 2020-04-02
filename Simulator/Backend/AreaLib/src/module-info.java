@@ -10,4 +10,9 @@ module JAtcSim.Modules.Backend.AreaLib {
   exports eng.jAtcSim.newLib.area.oldApproaches.stages.exitConditions;
   exports eng.jAtcSim.newLib.area.routes;
   exports eng.jAtcSim.newLib.area.speeches;
+  exports eng.jAtcSim.newLib.area.approaches;
+  exports eng.jAtcSim.newLib.area.approaches.behaviors;
+  exports eng.jAtcSim.newLib.area.approaches.conditions;
+  exports eng.jAtcSim.newLib.area.approaches.locations;
+  exports eng.jAtcSim.newLib.area.approaches.perCategoryValues;
 }

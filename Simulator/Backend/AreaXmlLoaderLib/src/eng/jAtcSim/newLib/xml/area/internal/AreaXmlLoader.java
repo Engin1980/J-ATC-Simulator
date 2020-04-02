@@ -9,11 +9,12 @@ import eng.jAtcSim.newLib.area.NavaidList;
 import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
 import eng.jAtcSim.newLib.xml.area.internal.context.Context;
 
-public class AreaXmlLoader extends XmlLoader {
+public class AreaXmlLoader extends XmlLoader<Area> {
   public AreaXmlLoader(Context context) {
     super(context);
   }
 
+  @Override
   public Area load(XElement source) {
     XmlLoaderUtils.setContext(source);
     context.area.icao = XmlLoaderUtils.loadString("icao");

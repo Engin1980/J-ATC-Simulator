@@ -6,7 +6,6 @@ import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.area.Navaid;
-import eng.jAtcSim.newLib.area.NavaidList;
 import eng.jAtcSim.newLib.area.approaches.Approach;
 import eng.jAtcSim.newLib.area.approaches.ApproachEntry;
 import eng.jAtcSim.newLib.area.approaches.ApproachFactory;
@@ -14,37 +13,30 @@ import eng.jAtcSim.newLib.area.approaches.ApproachStage;
 import eng.jAtcSim.newLib.area.approaches.behaviors.FlyRadialWithDescentBehavior;
 import eng.jAtcSim.newLib.area.approaches.behaviors.LandingBehavior;
 import eng.jAtcSim.newLib.area.approaches.conditions.*;
-import eng.jAtcSim.newLib.area.approaches.factories.ThresholdInfo;
 import eng.jAtcSim.newLib.area.approaches.locations.FixRelatedLocation;
 import eng.jAtcSim.newLib.area.approaches.locations.ILocation;
 import eng.jAtcSim.newLib.area.approaches.perCategoryValues.DoublePerCategoryValue;
 import eng.jAtcSim.newLib.area.approaches.perCategoryValues.IntegerPerCategoryValue;
 import eng.jAtcSim.newLib.area.routes.GaRoute;
 import eng.jAtcSim.newLib.area.routes.IafRoute;
-import eng.jAtcSim.newLib.xml.area.internal.XmlLoaderWithNavaids;
-import eng.jAtcSim.newLib.xml.area.internal.XmlMappingDictinary;
 import eng.jAtcSim.newLib.shared.enums.ApproachType;
 import eng.jAtcSim.newLib.shared.xml.XmlLoadException;
 import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
 import eng.jAtcSim.newLib.speeches.ICommand;
 import eng.jAtcSim.newLib.speeches.atc2airplane.ChangeAltitudeCommand;
+import eng.jAtcSim.newLib.xml.area.internal.XmlLoader;
+import eng.jAtcSim.newLib.xml.area.internal.context.Context;
 
-public class ApproachXmlLoader extends XmlLoaderWithNavaids<Approach> {
+public class ApproachXmlLoader extends XmlLoader<Approach> {
 
   private static double convertGlidePathDegreesToSlope(double gpDegrees) {
     return Math.tan(Math.toRadians(gpDegrees));
   }
 
-  private final XmlMappingDictinary<IafRoute> iafRoutes;
-  private final XmlMappingDictinary<GaRoute> gaRoutes;
-  private final ThresholdInfo threshold;
-
-  public ApproachXmlLoader(NavaidList navaids, XmlMappingDictinary<IafRoute> iafRoutes, XmlMappingDictinary<GaRoute> gaRoutes, ThresholdInfo threshold) {
-    super(navaids);
-    this.iafRoutes = iafRoutes;
-    this.gaRoutes = gaRoutes;
-    this.threshold = threshold;
+  protected ApproachXmlLoader(Context context) {
+    super(context);
   }
+
 
   @Override
   public Approach load(XElement source) {
@@ -83,9 +75,9 @@ public class ApproachXmlLoader extends XmlLoaderWithNavaids<Approach> {
 
     // build approach entry
     IList<ApproachEntry> entries = new EList<>();
-    IReadOnlyList<IafRoute> iafRoutes = this.iafRoutes.get(iafMapping);
+    IReadOnlyList<IafRoute> iafRoutes = context.airport.iafMappings.get(iafMapping);
     for (IafRoute iafRoute : iafRoutes) {
-      ILocation entryLocation = ApproachFactory.Entry.Location.createApproachEntryLocationFoRoute(iafRoute, this.navaids);
+      ILocation entryLocation = ApproachFactory.Entry.Location.createApproachEntryLocationForRoute(iafRoute, context.area.navaids);
       ApproachEntry entry = new ApproachEntry(entryLocation, iafRoute);
       entries.add(entry);
     }
@@ -161,7 +153,7 @@ public class ApproachXmlLoader extends XmlLoaderWithNavaids<Approach> {
     IList<ApproachEntry> entries = new EList<>();
     IReadOnlyList<IafRoute> iafRoutes = this.iafRoutes.get(iafMapping);
     for (IafRoute iafRoute : iafRoutes) {
-      ILocation entryLocation = ApproachFactory.Entry.Location.createApproachEntryLocationFoRoute(iafRoute, this.navaids);
+      ILocation entryLocation = ApproachFactory.Entry.Location.createApproachEntryLocationForRoute(iafRoute, this.navaids);
       ApproachEntry entry = new ApproachEntry(entryLocation, iafRoute);
       entries.add(entry);
     }

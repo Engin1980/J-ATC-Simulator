@@ -10,5 +10,6 @@
     <orderEntry type="module" module-name="SharedLib" exported="" />
     <orderEntry type="library" name="eng.eSystem" level="project" />
     <orderEntry type="module" module-name="AreaLib" />
+    <orderEntry type="module" module-name="SpeechesLib" />
   </component>
 </module>

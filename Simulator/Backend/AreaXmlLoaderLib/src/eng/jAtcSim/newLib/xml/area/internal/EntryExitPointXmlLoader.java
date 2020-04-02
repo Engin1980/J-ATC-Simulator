@@ -8,27 +8,23 @@ import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
 import eng.jAtcSim.newLib.area.*;
 import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
+import eng.jAtcSim.newLib.xml.area.internal.context.Context;
 
-class EntryExitPointXmlLoader extends XmlLoaderWithNavaids<EntryExitPoint> {
-  private final Navaid airportMainNavaid;
-  private final IReadOnlyList<Border> borders;
+class EntryExitPointXmlLoader extends XmlLoader<EntryExitPoint> {
 
-  EntryExitPointXmlLoader(NavaidList navaids, Navaid airportMainNavaid, IReadOnlyList<Border> borders) {
-    super(navaids);
-    this.airportMainNavaid = airportMainNavaid;
-    this.borders = borders;
+  EntryExitPointXmlLoader(Context context) {
+    super(context);
   }
 
   @Override
   public EntryExitPoint load(XElement source) {
     XmlLoaderUtils.setContext(source);
     String navaidName = XmlLoaderUtils.loadString("name");
-    Navaid navaid = navaids.get(navaidName);
+    Navaid navaid = context.area.navaids.get(navaidName);
     EntryExitPoint.Type type = XmlLoaderUtils.loadEnum("type", EntryExitPoint.Type.class);
 
     Integer maxMrvaAltitude = XmlLoaderUtils.loadInteger("maxMrvaAltitude", null);
     maxMrvaAltitude = evaluateMaxMrvaAltitude(maxMrvaAltitude, navaid);
-    int radialFromAirport = (int) Coordinates.getBearing(this.airportMainNavaid.getCoordinate(), navaid.getCoordinate());
 
     EntryExitPoint ret = EntryExitPoint.create(navaid, type, maxMrvaAltitude);
     return ret;
@@ -36,11 +32,11 @@ class EntryExitPointXmlLoader extends XmlLoaderWithNavaids<EntryExitPoint> {
 
   private int evaluateMaxMrvaAltitude(Integer customMaxMrvaAltitude, Navaid navaid) {
     int ret;
-    IList<Border> mrvas = borders.where(q -> q.getType() == Border.eType.mrva);
+    IList<Border> mrvas = context.area.borders.where(q -> q.getType() == Border.eType.mrva);
     Tuple<Coordinate, Coordinate> line =
         new Tuple<>(
             navaid.getCoordinate(),
-            this.airportMainNavaid.getCoordinate()
+            context.airport.mainNavaid.getCoordinate()
         );
 
     int maxMrvaAlt = 0;
