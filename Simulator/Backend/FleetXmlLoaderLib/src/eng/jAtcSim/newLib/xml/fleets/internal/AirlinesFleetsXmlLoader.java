@@ -3,16 +3,14 @@ package eng.jAtcSim.newLib.xml.fleets.internal;
 import eng.eSystem.collections.*;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.validation.EAssert;
-import eng.jAtcSim.newLib.fleet.CompanyFleet;
-import eng.jAtcSim.newLib.fleet.FleetType;
-import eng.jAtcSim.newLib.fleet.Fleets;
+import eng.jAtcSim.newLib.fleet.TypeAndWeight;
+import eng.jAtcSim.newLib.fleet.airliners.CompanyFleet;
+import eng.jAtcSim.newLib.fleet.airliners.AirlinesFleets;
 import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
 
-import static eng.eSystem.utilites.FunctionShortcuts.*;
-
-public class FleetsXmlLoader {
-  public Fleets load(XElement root) {
-    EAssert.isTrue(root.getName().equals("fleets"), "Incorrect loading xml element");
+public class AirlinesFleetsXmlLoader {
+  public AirlinesFleets load(XElement root) {
+    EAssert.isTrue(root.getName().equals("airlinersFleets"), "Incorrect loading xml element");
 
     IList<CompanyFleet> tmp = new EDistinctList<>(q->q.getIcao(), EDistinctList.Behavior.exception);
     XmlLoaderUtils.loadList(
@@ -20,14 +18,26 @@ public class FleetsXmlLoader {
         tmp,
         q->loadCompany(q));
 
-    Fleets ret = Fleets.create(tmp);
+    CompanyFleet defaultFleet = loadDefault(root.getChild("default"));
+
+    AirlinesFleets ret = AirlinesFleets.create(tmp, defaultFleet);
+    return ret;
+  }
+
+  private CompanyFleet loadDefault(XElement source) {
+    IList<TypeAndWeight> types = XmlLoaderUtils.loadList(
+        source.getChildren("type"),
+        q -> loadFleet(q)
+    );
+
+    CompanyFleet ret = new CompanyFleet("-default-", "-default-", types);
     return ret;
   }
 
   private CompanyFleet loadCompany(XElement source) {
     String icao = XmlLoaderUtils.loadString(source, "icao");
     String name = XmlLoaderUtils.loadString(source, "name", "(N/A)");
-    IList<FleetType> types = XmlLoaderUtils.loadList(
+    IList<TypeAndWeight> types = XmlLoaderUtils.loadList(
         source.getChildren("type"),
         q -> loadFleet(q)
     );
@@ -36,14 +46,12 @@ public class FleetsXmlLoader {
     return ret;
   }
 
-  private FleetType loadFleet(XElement source){
+  private TypeAndWeight loadFleet(XElement source){
     XmlLoaderUtils.setContext(source);
     String name = XmlLoaderUtils.loadString("name");
     int weight = XmlLoaderUtils.loadInteger("weight");
 
-    FleetType ret = FleetType.create(name, weight);
+    TypeAndWeight ret = TypeAndWeight.create(name, weight);
     return ret;
   }
-
-
 }

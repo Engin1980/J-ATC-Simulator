@@ -81,9 +81,10 @@
             <xs:complexType>
               <xs:sequence>
                 <xs:element name="item" maxOccurs="24" minOccurs="24">
-                  <xs:simpleType>
-                    <xs:restriction base="xs:int"/>
-                  </xs:simpleType>
+                  <xs:complexType>
+                    <xs:attribute name="count" type="xs:nonNegativeInteger" use="required" />
+                    <xs:attribute name="departureProbability" type="xs:double" use="optional" />
+                  </xs:complexType>
                 </xs:element>
               </xs:sequence>
             </xs:complexType>
@@ -122,9 +123,10 @@
             </xs:complexType>
           </xs:element>
         </xs:sequence>
-        <xs:attribute name="probabilityOfNonCommercialFlight" type="xs:double" use="required"/>
-        <xs:attribute name="probabilityOfDeparture" type="xs:double" use="required"/>
+        <xs:attribute name="defaultProbabilityOfNonCommercialFlight" type="xs:double" use="required"/>
+        <xs:attribute name="defaultProbabilityOfDeparture" type="xs:double" use="required"/>
         <xs:attribute name="useExtendedCallsigns" type="xs:boolean" use="required"/>
+        <xs:attribute name="defaultMovementsPerHour" type="xs:nonNegativeInteger" use="required" />
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>

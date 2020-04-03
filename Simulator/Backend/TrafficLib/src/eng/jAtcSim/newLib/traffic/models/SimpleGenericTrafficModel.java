@@ -16,15 +16,15 @@ import eng.jAtcSim.newLib.traffic.movementTemplating.MovementTemplate;
 
 import java.util.Arrays;
 
-public class SimpleGenericTraffic extends DayGeneratedTrafficModel {
+public class SimpleGenericTrafficModel extends DayGeneratedTrafficModel {
 
   private final double probabilityOfNonCommercialFlight;
   private final double probabilityOfDeparture; // 0-1
   private final int[] movementsPerHour; // int[24]
   private ERandom rnd = SharedInstanceProvider.getRnd();
 
-  public SimpleGenericTraffic(int[] movementsPerHour,
-                              double probabilityOfDeparture, double probabilityOfNonCommercialFlight) {
+  public SimpleGenericTrafficModel(int[] movementsPerHour,
+                                   double probabilityOfDeparture, double probabilityOfNonCommercialFlight) {
     EAssert.isNotNull(movementsPerHour);
     EAssert.isTrue(movementsPerHour.length == 24);
     for (int i : movementsPerHour) {

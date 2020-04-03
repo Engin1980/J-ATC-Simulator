@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<generalAviationFleets
+        xmlns="https://github.com/Engin1980/J-ATC-Simulator/countriesFleets">
+  <country code="CZ" aircraftPrefix="OK" name="Czech republic">
+    <type name="C172" weight="8"/>
+    <type name="C152" weight="2"/>
+  </country>
+  <country code="UK" aircraftPrefix="OK" name="Czech republic">
+    <type name="C172" weight="8"/>
+    <type name="C152" weight="2"/>
+  </country>
+  <default aircraftPrefix="XY">
+    <type name="C172" weight="1"/>
+  </default>
+</generalAviationFleets>

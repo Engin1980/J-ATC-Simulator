@@ -1,19 +1,18 @@
-package eng.jAtcSim.newLib.fleet;
+package eng.jAtcSim.newLib.fleet.airliners;
 
 import eng.eSystem.collections.*;
-import eng.eSystem.eXml.XElement;
 import eng.eSystem.validation.EAssert;
-import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
+import eng.jAtcSim.newLib.fleet.TypeAndWeight;
 
 public class CompanyFleet {
 
   private final String icao;
   private final String name;
-  private final IReadOnlyList<FleetType> types;
+  private final IReadOnlyList<TypeAndWeight> types;
 //  private final double fleetWeightSum;
 //  private final IMap<Character, Double> categoryFleetWeightSum;
 
-  public CompanyFleet(String icao, String name, IReadOnlyList<FleetType> types) {
+  public CompanyFleet(String icao, String name, IReadOnlyList<TypeAndWeight> types) {
     EAssert.Argument.isNonemptyString(icao, "icao");
     EAssert.Argument.isNonemptyString(name, "name");
     EAssert.Argument.isNotNull(types, "types");
@@ -51,7 +50,7 @@ public class CompanyFleet {
 //    return ret;
 //  }
 
-  public IReadOnlyList<FleetType> getTypes() {
+  public IReadOnlyList<TypeAndWeight> getTypes() {
     return types;
   }
 

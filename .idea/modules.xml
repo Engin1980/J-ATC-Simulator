@@ -26,6 +26,7 @@
       <module fileurl="file://$PROJECT_DIR$/Simulator/Frontend/SwingRadar/SwingRadar.iml" filepath="$PROJECT_DIR$/Simulator/Frontend/SwingRadar/SwingRadar.iml" />
       <module fileurl="file://$PROJECT_DIR$/Simulator/Backend/TextProcessingLib/TextProcessingLib.iml" filepath="$PROJECT_DIR$/Simulator/Backend/TextProcessingLib/TextProcessingLib.iml" />
       <module fileurl="file://$PROJECT_DIR$/Simulator/Backend/TrafficLib/TrafficLib.iml" filepath="$PROJECT_DIR$/Simulator/Backend/TrafficLib/TrafficLib.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Simulator/Backend/TrafficXmlLoaderLib/TrafficXmlLoaderLib.iml" filepath="$PROJECT_DIR$/Simulator/Backend/TrafficXmlLoaderLib/TrafficXmlLoaderLib.iml" />
       <module fileurl="file://$PROJECT_DIR$/Simulator/Backend/WeatherLib/WeatherLib.iml" filepath="$PROJECT_DIR$/Simulator/Backend/WeatherLib/WeatherLib.iml" />
     </modules>
   </component>

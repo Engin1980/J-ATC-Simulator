@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           targetNamespace="https://github.com/Engin1980/J-ATC-Simulator/countriesFleets"
+           xmlns:sh="https://github.com/Engin1980/J-ATC-Simulator/shared"
+           xmlns="https://github.com/Engin1980/J-ATC-Simulator/countriesFleets"
+           elementFormDefault="qualified">
+
+  <xs:element name="generalAviationFleets" type="fleets"/>
+
+  <xs:complexType name="fleets">
+    <xs:sequence>
+      <xs:element name="country" type="country" maxOccurs="unbounded"/>
+      <xs:element name="default" type="default" minOccurs="1" maxOccurs="1" />
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="country">
+    <xs:sequence minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="type" type="type" />
+    </xs:sequence>
+    <xs:attribute name="code" type="sh:nonEmptyString" use="required"/>
+    <xs:attribute name="aircraftPrefix" type="sh:nonEmptyString" use="required" />
+    <xs:attribute name="name" type="sh:nonEmptyString" use="optional"/>
+  </xs:complexType>
+
+  <xs:complexType name="default">
+    <xs:sequence minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="type" type="type" />
+    </xs:sequence>
+    <xs:attribute name="aircraftPrefix" type="sh:nonEmptyString" use="required" />
+  </xs:complexType>
+
+  <xs:complexType name="type">
+    <xs:attribute name="name" type="sh:nonEmptyString" use="required" />
+    <xs:attribute name="weight" type="xs:double" use="required" />
+  </xs:complexType>
+
+
+</xs:schema>

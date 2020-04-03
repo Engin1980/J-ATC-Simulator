@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<fleets
-        xmlns="https://github.com/Engin1980/J-ATC-Simulator/fleets">
+<airlinesFleets
+        xmlns="https://github.com/Engin1980/J-ATC-Simulator/airlinesFleets">
+  <default>
+    <type name="B737" weight="3" />
+    <type name="A319" weight="3" />
+    <type name="ATR72" weight="1" />
+  </default>
   <company icao="ABP" name="Aba Air">
     <type name="E145" weight="1"/>
   </company>
@@ -11045,4 +11050,4 @@
     <type name="CRJ" weight="4"/>
 
   </company>
-</fleets>
+</airlinesFleets>

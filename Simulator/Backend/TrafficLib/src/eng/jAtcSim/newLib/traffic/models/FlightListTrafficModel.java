@@ -19,28 +19,7 @@ import java.time.format.DateTimeFormatter;
 
 public class FlightListTrafficModel implements ITrafficModel {
 
-  private static class Flight {
-
-    private static Flight load(XElement source) {
-      XmlLoaderUtils.setContext(source);
-      String timeS = XmlLoaderUtils.loadString("time");
-      LocalTime time = LocalTime.parse(
-          timeS,
-          DateTimeFormatter.ofPattern("HH:mm"));
-      String callsignS = XmlLoaderUtils.loadString("callsign");
-      Callsign callsign = new Callsign(callsignS);
-      MovementTemplate.eKind kind = XmlLoaderUtils.loadEnum("kind", MovementTemplate.eKind.class);
-      int heading = XmlLoaderUtils.loadInteger("heading", EMPTY_HEADING);
-      Coordinate otherAirportCoordinate = XmlLoaderUtils.loadCoordinate("otherAirport", null);
-      String airplaneType = XmlLoaderUtils.loadString("planeType", null);
-      String follows = XmlLoaderUtils.loadString("follows", null);
-
-      Flight ret = new Flight(
-          callsign, heading, otherAirportCoordinate, kind, airplaneType, time, follows);
-      return ret;
-
-    }
-
+  public static class Flight {
     private final Callsign callsign;
     private final int heading;
     private final Coordinate otherAirport;
@@ -50,7 +29,7 @@ public class FlightListTrafficModel implements ITrafficModel {
     private final String follows;
     private Flight bindedFollows = null;
 
-    Flight(Callsign callsign, int heading, Coordinate otherAirport, MovementTemplate.eKind kind,
+    public Flight(Callsign callsign, int heading, Coordinate otherAirport, MovementTemplate.eKind kind,
            String planeType, LocalTime time, String follows) {
       this.callsign = callsign;
       this.heading = heading;
@@ -64,21 +43,9 @@ public class FlightListTrafficModel implements ITrafficModel {
 
   private static final int EMPTY_HEADING = -1;
 
-  public static FlightListTrafficModel load(XElement source) {
-    XmlLoaderUtils.setContext(source);
-
-    IList<Flight> flights = new EList<>();
-    XmlLoaderUtils.loadList(source.getChildren("flight"),
-        flights,
-        q -> Flight.load(q));
-
-    FlightListTrafficModel ret = new FlightListTrafficModel(flights);
-    return ret;
-  }
-
   private final IList<Flight> flights;
 
-  private FlightListTrafficModel(IList<Flight> flights) {
+  public FlightListTrafficModel(IList<Flight> flights) {
     this.flights = flights;
     bind();
   }
@@ -89,7 +56,6 @@ public class FlightListTrafficModel implements ITrafficModel {
     IList<MovementTemplate> ret = flights.select(q -> convertFlightToMovementTemplate(q));
     return ret;
   }
-
 
   private void bind() {
     for (Flight flight : flights) {

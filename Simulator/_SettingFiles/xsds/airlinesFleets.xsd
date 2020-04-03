@@ -1,16 +1,23 @@
 <?xml version="1.0"?>
 
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           targetNamespace="https://github.com/Engin1980/J-ATC-Simulator/fleets"
+           targetNamespace="https://github.com/Engin1980/J-ATC-Simulator/airlinesFleets"
            xmlns:sh="https://github.com/Engin1980/J-ATC-Simulator/shared"
-           xmlns="https://github.com/Engin1980/J-ATC-Simulator/fleets"
+           xmlns="https://github.com/Engin1980/J-ATC-Simulator/airlinesFleets"
            elementFormDefault="qualified">
 
-  <xs:element name="fleets" type="fleets"/>
+  <xs:element name="airlinesFleets" type="fleets"/>
 
   <xs:complexType name="fleets">
     <xs:sequence>
+      <xs:element name="default" type="default" minOccurs="1" maxOccurs="1" />
       <xs:element name="company" type="company" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="default">
+    <xs:sequence minOccurs="0" maxOccurs="unbounded">
+      <xs:element name="type" type="type" />
     </xs:sequence>
   </xs:complexType>
 

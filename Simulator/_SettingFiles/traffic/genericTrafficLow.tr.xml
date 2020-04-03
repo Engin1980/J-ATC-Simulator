@@ -8,33 +8,36 @@
       Generic low traffic defines very low traffic with morning and afternoon low peaks (up to 10 movements/hour).
     </description>
   </meta>
-  <genericTraffic delayProbability=".3" maxDelayInMinutesPerStep="15" probabilityOfDeparture=".5"
-                  probabilityOfNonCommercialFlight=".1" useExtendedCallsigns="true">
+  <genericTraffic delayProbability=".3" maxDelayInMinutesPerStep="15"
+                  defaultProbabilityOfDeparture=".5"
+                  defaultProbabilityOfNonCommercialFlight=".1"
+                  defaultMovementsPerHour="0"
+                  useExtendedCallsigns="true">
     <movementsPerHour>
-      <item>0</item>
-      <item>0</item>
-      <item>0</item>
-      <item>0</item>
-      <item>0</item>
-      <item>3</item>
-      <item>5</item>
-      <item>4</item>
-      <item>8</item>
-      <item>3</item>
-      <item>4</item>
-      <item>7</item>
-      <item>8</item>
-      <item>4</item>
-      <item>2</item>
-      <item>5</item>
-      <item>10</item>
-      <item>6</item>
-      <item>3</item>
-      <item>2</item>
-      <item>9</item>
-      <item>5</item>
-      <item>2</item>
-      <item>1</item>
+      <item count="0" departureProbability="0" />
+      <item count="0" departureProbability="0" />
+      <item count="0" departureProbability="0" />
+      <item count="0" departureProbability="0" />
+      <item count="0" departureProbability="0" />
+      <item count="3" departureProbability="1" />
+      <item count="5" departureProbability="0" />
+      <item count="4" departureProbability="0" />
+      <item count="8" departureProbability="0" />
+      <item count="3" departureProbability="0" />
+      <item count="4" departureProbability="0" />
+      <item count="7" departureProbability="0" />
+      <item count="8" departureProbability="0" />
+      <item count="4" departureProbability="0" />
+      <item count="2" departureProbability="0" />
+      <item count="5" departureProbability="0" />
+      <item count="10" departureProbability="0" />
+      <item count="6" departureProbability="0" />
+      <item count="3" departureProbability="0" />
+      <item count="2" departureProbability="0" />
+      <item count="9" departureProbability="0" />
+      <item count="5" departureProbability="0" />
+      <item count="2" departureProbability="0" />
+      <item count="1" departureProbability="0" />
     </movementsPerHour>
     <probabilityOfCategory>
       <item>.1</item>
