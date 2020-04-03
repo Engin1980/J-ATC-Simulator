@@ -1,24 +1,21 @@
 package eng.jAtcSim.newLib.fleet;
 
 
-import eng.eSystem.eXml.XElement;
-import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
+import eng.eSystem.validation.EAssert;
+import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class FleetType {
 
-  public static FleetType load(XElement source) {
-    XmlLoaderUtils.setContext(source);
-    String name = XmlLoaderUtils.loadString("name");
-    int weight = XmlLoaderUtils.loadInteger("weight");
-
-    FleetType ret = new FleetType(name, weight);
-    return ret;
+  public static FleetType create(String name, int weight) {
+    return new FleetType(name, weight);
   }
 
   private final int weight;
   private final String typeName;
 
   private FleetType(String typeName, int weight) {
+    EAssert.Argument.isNonemptyString(typeName, "typeName");
+    EAssert.Argument.isTrue(weight >= 0, sf("Weight must be non-negative number (value=%d).", weight));
     this.weight = weight;
     this.typeName = typeName;
   }

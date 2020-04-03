@@ -1,29 +1,21 @@
 package eng.jAtcSim.newLib.fleet;
 
-import eng.eSystem.collections.EList;
+import eng.eSystem.collections.EDistinctList;
 import eng.eSystem.collections.IList;
-import eng.eSystem.eXml.XElement;
 import eng.eSystem.utilites.ArrayUtils;
+import eng.eSystem.validation.EAssert;
 
 public class Fleets {
 
-  public static Fleets load(XElement source) {
-
-    IList<CompanyFleet> tmp = new EList<>();
-
-    for (XElement child : source.getChildren("company")) {
-      CompanyFleet cf = CompanyFleet.load(child);
-      tmp.add(cf);
-    }
-
-    Fleets ret = new Fleets(tmp);
-    return ret;
+  public static Fleets create(IList<CompanyFleet> companyFleets) {
+    return new Fleets(companyFleets);
   }
 
-  private final IList<CompanyFleet> inner;
+  private final IList<CompanyFleet> inner = new EDistinctList<>(q->q.getIcao(), EDistinctList.Behavior.exception);
 
-  private Fleets(IList<CompanyFleet> inner) {
-    this.inner = inner;
+  private Fleets(IList<CompanyFleet> companyFleets) {
+    EAssert.Argument.isNotNull(companyFleets, "companyFleets");
+    this.inner.add(companyFleets);
   }
 
   public IList<CompanyFleet> getCompaniesByIcao(String[] companies) {

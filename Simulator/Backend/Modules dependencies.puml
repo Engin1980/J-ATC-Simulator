@@ -22,6 +22,10 @@ package "Higher"{
   [AirplanesLib (pl)] as pl
 }
 
+package "Xml"{
+  [AreaXmlLoader]
+}
+
 package "Sim"{
   [SimulationLib (simlib)] as simlib
 }
@@ -52,7 +56,6 @@ wl <-up- simlib
 fl <-up- simlib
 
 mol <-up- stl
-
 
 
 @enduml

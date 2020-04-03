@@ -10,6 +10,7 @@
       <module fileurl="file://$PROJECT_DIR$/Simulator/Frontend/BitmapRadar/BitmapRadar.iml" filepath="$PROJECT_DIR$/Simulator/Frontend/BitmapRadar/BitmapRadar.iml" />
       <module fileurl="file://$PROJECT_DIR$/Tools/CoordinatesViewer/CoordinatesViewer.iml" filepath="$PROJECT_DIR$/Tools/CoordinatesViewer/CoordinatesViewer.iml" />
       <module fileurl="file://$PROJECT_DIR$/Simulator/Backend/FleetLib/FleetLib.iml" filepath="$PROJECT_DIR$/Simulator/Backend/FleetLib/FleetLib.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Simulator/Backend/FleetXmlLoaderLib/FleetXmlLoaderLib.iml" filepath="$PROJECT_DIR$/Simulator/Backend/FleetXmlLoaderLib/FleetXmlLoaderLib.iml" />
       <module fileurl="file://$PROJECT_DIR$/Tools/FlightRadarRealTrafficConverter/FlightRadarRealTrafficConverter.iml" filepath="$PROJECT_DIR$/Tools/FlightRadarRealTrafficConverter/FlightRadarRealTrafficConverter.iml" />
       <module fileurl="file://$PROJECT_DIR$/Simulator/Frontend/JAtcSim/JAtcSim.iml" filepath="$PROJECT_DIR$/Simulator/Frontend/JAtcSim/JAtcSim.iml" />
       <module fileurl="file://$PROJECT_DIR$/Simulator/Frontend/JAtcSimFX/JAtcSimFX.iml" filepath="$PROJECT_DIR$/Simulator/Frontend/JAtcSimFX/JAtcSimFX.iml" />

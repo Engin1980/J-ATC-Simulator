@@ -2,23 +2,10 @@ package eng.jAtcSim.newLib.fleet;
 
 import eng.eSystem.collections.*;
 import eng.eSystem.eXml.XElement;
+import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
 
 public class CompanyFleet {
-
-  public static CompanyFleet load(XElement child) {
-    String icao = XmlLoaderUtils.loadString(child, "icao");
-    String name = XmlLoaderUtils.loadString(child, "name", "(N/A)");
-    IList<FleetType> types = new EList<>();
-    XmlLoaderUtils.loadList(
-        child.getChildren("type"),
-        types,
-        q -> FleetType.load(q)
-    );
-
-    CompanyFleet ret = new CompanyFleet(icao, name, types);
-    return ret;
-  }
 
   private final String icao;
   private final String name;
@@ -27,6 +14,9 @@ public class CompanyFleet {
 //  private final IMap<Character, Double> categoryFleetWeightSum;
 
   public CompanyFleet(String icao, String name, IReadOnlyList<FleetType> types) {
+    EAssert.Argument.isNonemptyString(icao, "icao");
+    EAssert.Argument.isNonemptyString(name, "name");
+    EAssert.Argument.isNotNull(types, "types");
     this.icao = icao;
     this.name = name;
     this.types = types;
