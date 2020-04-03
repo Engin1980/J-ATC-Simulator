@@ -8,7 +8,7 @@ import eng.jAtcSim.newLib.weather.decoders.MetarDecoder;
 public class WeatherManager {
   private Weather currentWeather;
   private boolean newWeatherFlag;
-  private WeatherProvider provider;
+  private final WeatherProvider provider;
 
   public WeatherManager(WeatherProvider provider) {
     EAssert.Argument.isNotNull(provider);
