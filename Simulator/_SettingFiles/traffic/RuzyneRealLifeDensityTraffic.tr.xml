@@ -7,8 +7,7 @@
     Real number of movements and used companies. Only estimated approach/departure directions.</description>
     <author></author>
   </meta>
-    <densityTraffic useExtendedCallsigns="true" defaultGeneralAviationProbability="-0.05"
-                    delayProbability="0.1" maxDelayInMinutesPerStep="45">
+    <densityTraffic defaultGeneralAviationProbability="-0.05">
       <companies isFullDayTraffic="true">
         <company icao="JAI" weight="3"/>
         <company icao="AEE" weight="2"/>

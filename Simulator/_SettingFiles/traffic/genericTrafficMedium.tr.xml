@@ -9,40 +9,33 @@
       (up to 23 movements/hour) and at the late afternoon/evening (up to 31 movements/hour).
     </description>
   </meta>
-  <genericTraffic delayProbability=".3" maxDelayInMinutesPerStep="15" probabilityOfDeparture=".5"
-                  probabilityOfNonCommercialFlight=".1" useExtendedCallsigns="true">
-    <movementsPerHour>
-      <item>0</item>
-      <item>0</item>
-      <item>1</item>
-      <item>0</item>
-      <item>0</item>
-      <item>3</item>
-      <item>11</item>
-      <item>4</item>
-      <item>23</item>
-      <item>3</item>
-      <item>12</item>
-      <item>7</item>
-      <item>11</item>
-      <item>4</item>
-      <item>2</item>
-      <item>5</item>
-      <item>21</item>
-      <item>14</item>
-      <item>15</item>
-      <item>21</item>
-      <item>31</item>
-      <item>17</item>
-      <item>7</item>
-      <item>3</item>
-    </movementsPerHour>
-    <probabilityOfCategory>
-      <item>.1</item>
-      <item>.3</item>
-      <item>.4</item>
-      <item>.2</item>
-    </probabilityOfCategory>
+  <genericTraffic defaultProbabilityOfDeparture=".5" defaultProbabilityOfGeneralAviation=".1">
+    <movements>
+      <movementsForHour count="0"/>
+      <movementsForHour count="0"/>
+      <movementsForHour count="1"/>
+      <movementsForHour count="0"/>
+      <movementsForHour count="0"/>
+      <movementsForHour count="3"/>
+      <movementsForHour count="11"/>
+      <movementsForHour count="4"/>
+      <movementsForHour count="23"/>
+      <movementsForHour count="3"/>
+      <movementsForHour count="12"/>
+      <movementsForHour count="7"/>
+      <movementsForHour count="11"/>
+      <movementsForHour count="4"/>
+      <movementsForHour count="2"/>
+      <movementsForHour count="5"/>
+      <movementsForHour count="21"/>
+      <movementsForHour count="14"/>
+      <movementsForHour count="15"/>
+      <movementsForHour count="21"/>
+      <movementsForHour count="31"/>
+      <movementsForHour count="17"/>
+      <movementsForHour count="7"/>
+      <movementsForHour count="3"/>
+    </movements>
     <companies>
       <item>CSA</item>
       <item>RYR</item>

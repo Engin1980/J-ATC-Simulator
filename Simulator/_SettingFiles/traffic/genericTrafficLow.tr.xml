@@ -9,8 +9,7 @@
     </description>
   </meta>
   <genericTraffic defaultProbabilityOfDeparture=".5"
-                  defaultProbabilityOfGeneralAviation=".1"
-                  useExtendedCallsigns="true">
+                  defaultProbabilityOfGeneralAviation=".1">
     <movements>
       <movementsForHour count="0"/>
       <movementsForHour count="0"/>

@@ -5,26 +5,25 @@
     <title>Arriving and departure waves (busy day)</title>
     <author>Marek Vajgl</author>
     <description>Traffic in waves.
-    Huge arrivals and then departures firstly in the morning, then
-    in the midday, then in the afternoon and finally at the evening is
-    the most aggregated traffic.</description>
+      Huge arrivals and then departures firstly in the morning, then
+      in the midday, then in the afternoon and finally at the evening is
+      the most aggregated traffic.
+    </description>
   </meta>
-  <densityTraffic delayProbability=".5" maxDelayInMinutesPerStep="20"
-                  nonCommercialFlightProbability="0.2"
-                  useExtendedCallsigns="true">
+  <densityTraffic defaultGeneralAviationProbability="0.2">
     <companies isFullDayTraffic="true">
-      <company code="TVS" weight="15"/>
-      <company code="TAR" weight="2"/>
-      <company code="RYR" weight="2"/>
-      <company code="OHY" weight="2"/>
-      <company code="CSA" weight="4"/>
+      <company icao="TVS" weight="15"/>
+      <company icao="TAR" weight="2"/>
+      <company icao="RYR" weight="2"/>
+      <company icao="OHY" weight="2"/>
+      <company icao="CSA" weight="4"/>
     </companies>
     <countries>
-      <country code="OK" weight="4"/>
-      <country code="OM" weight="3"/>
-      <country code="PL" weight="1"/>
-      <country code="DE" weight="1"/>
-      <country code="AT" weight="1"/>
+      <country icao="OK" weight="4"/>
+      <country icao="OM" weight="3"/>
+      <country icao="PL" weight="1"/>
+      <country icao="DE" weight="1"/>
+      <country icao="AT" weight="1"/>
     </countries>
     <density>
       <item hour="0" departures="0" arrivals="0"/>

@@ -6,16 +6,13 @@
     <author>Marek Vajgl</author>
     <description>Real life flight list traffic from LKMT, 2018-07-14. Only 7 movements/day!</description>
   </meta>
-  <flightListTraffic delayProbability=".5"
-                     maxDelayInMinutesPerStep="20">
-    <flights>
-      <flight time="5:00" callsign="TVS1392" kind="departure" heading="100" planeType="B737"/>
-      <flight time="10:40" callsign="TVS1419" kind="arrival" heading="190" planeType="A320"/>
-      <flight time="11:00" callsign="TVS1381" kind="arrival" heading="100" planeType="B737"/>
-      <flight time="11:15" callsign="TVS1393" kind="arrival" heading="100" planeType="B737"/>
-      <flight time="11:30" callsign="TVS1420" kind="departure" heading="190" follows="TVS1419"/>
-      <flight time="12:00" callsign="TVS1380" kind="departure" heading="190" follows="TVS1380"/>
-      <flight time="12:15" callsign="TVS1386" kind="departure" heading="190" follows="TVS1393"/>
-    </flights>
+  <flightListTraffic>
+    <flight time="5:00" callsign="TVS1392" kind="departure" heading="100" planeType="B737"/>
+    <flight time="10:40" callsign="TVS1419" kind="arrival" heading="190" planeType="A320"/>
+    <flight time="11:00" callsign="TVS1381" kind="arrival" heading="100" planeType="B737"/>
+    <flight time="11:15" callsign="TVS1393" kind="arrival" heading="100" planeType="B737"/>
+    <flight time="11:30" callsign="TVS1420" kind="departure" heading="190" follows="TVS1419"/>
+    <flight time="12:00" callsign="TVS1380" kind="departure" heading="190" follows="TVS1380"/>
+    <flight time="12:15" callsign="TVS1386" kind="departure" heading="190" follows="TVS1393"/>
   </flightListTraffic>
 </trafficDefinition>
