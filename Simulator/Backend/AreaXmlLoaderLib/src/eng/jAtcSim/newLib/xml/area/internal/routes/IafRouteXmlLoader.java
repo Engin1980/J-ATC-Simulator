@@ -30,7 +30,7 @@ public class IafRouteXmlLoader extends XmlLoader<IafRoute> {
         new SpeechXmlLoader()
     );
 
-    IafRoute ret = new IafRoute(commands, navaid, category);
+    IafRoute ret = IafRoute.create(commands, navaid, category);
     context.airport.iafMappings.add(mapping, ret);
     return ret;
   }
