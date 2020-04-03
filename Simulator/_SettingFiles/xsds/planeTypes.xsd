@@ -9,9 +9,18 @@
   <xs:element name="planeTypes" type="planeTypes"/>
 
   <xs:complexType name="planeTypes">
-    <xs:sequence>
+    <xs:choice>
       <xs:element name="type" type="planeType" maxOccurs="unbounded"/>
-    </xs:sequence>
+      <xs:element name="group" type="group" maxOccurs="unbounded" />
+    </xs:choice>
+  </xs:complexType>
+
+  <xs:complexType name="group">
+    <xs:choice>
+      <xs:element name="type" type="planeType" maxOccurs="unbounded"/>
+      <xs:element name="group" type="group" maxOccurs="unbounded" />
+    </xs:choice>
+    <xs:attribute name="note" type="xs:string" use="required" />
   </xs:complexType>
 
   <xs:complexType name="planeType">
