@@ -1,12 +1,10 @@
 package eng.jAtcSim.newLib.traffic.models;
 
-import eng.eSystem.ERandom;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.utilites.NumberUtils;
 import eng.eSystem.validation.EAssert;
-import eng.jAtcSim.newLib.shared.SharedInstanceProvider;
 import eng.jAtcSim.newLib.shared.time.ETimeStamp;
 import eng.jAtcSim.newLib.traffic.models.base.DayGeneratedTrafficModel;
 import eng.jAtcSim.newLib.traffic.movementTemplating.EntryExitInfo;
@@ -14,35 +12,104 @@ import eng.jAtcSim.newLib.traffic.movementTemplating.GeneralAviationMovementTemp
 import eng.jAtcSim.newLib.traffic.movementTemplating.GeneralCommercialMovementTemplate;
 import eng.jAtcSim.newLib.traffic.movementTemplating.MovementTemplate;
 
-import java.util.Arrays;
-
 public class SimpleGenericTrafficModel extends DayGeneratedTrafficModel {
 
-  private final double probabilityOfNonCommercialFlight;
-  private final double probabilityOfDeparture; // 0-1
-  private final int[] movementsPerHour; // int[24]
-  private ERandom rnd = SharedInstanceProvider.getRnd();
-
-  public SimpleGenericTrafficModel(int[] movementsPerHour,
-                                   double probabilityOfDeparture, double probabilityOfNonCommercialFlight) {
-    EAssert.isNotNull(movementsPerHour);
-    EAssert.isTrue(movementsPerHour.length == 24);
-    for (int i : movementsPerHour) {
-      EAssert.isTrue(i >= 0, new IllegalArgumentException("Argument \"movementsPerHour\" must have all elements equal or greater than 0."));
+  public static class MovementsForHour {
+    public static MovementsForHour create(int count, double generalAviationProbability, double departureProbability) {
+      return new MovementsForHour(count, generalAviationProbability, departureProbability);
     }
-    EAssert.isTrue(NumberUtils.isBetweenOrEqual(0, probabilityOfDeparture, 1));
 
-    this.movementsPerHour = Arrays.copyOf(movementsPerHour, 24);
-    this.probabilityOfDeparture = probabilityOfDeparture;
-    this.probabilityOfNonCommercialFlight = probabilityOfNonCommercialFlight;
+    private final int count;
+    private final double generalAviationProbability;
+    private final double departureProbability;
+
+    public MovementsForHour(int count, double generalAviationProbability, double departureProbability) {
+      EAssert.Argument.isTrue(count >= 0);
+      EAssert.Argument.isTrue(generalAviationProbability >= 0 && generalAviationProbability <= 1);
+      EAssert.Argument.isTrue(departureProbability > 0 && departureProbability <= 1);
+      this.count = count;
+      this.generalAviationProbability = generalAviationProbability;
+      this.departureProbability = departureProbability;
+    }
   }
+
+  public static class ValueAndWeight {
+    public static ValueAndWeight create(String value, int weight) {
+      return new ValueAndWeight(value, weight);
+    }
+    private final String value;
+    private final int weight;
+
+    private ValueAndWeight(String value, int weight) {
+      EAssert.Argument.isNonemptyString(value, "value");
+      EAssert.Argument.isTrue(weight >= 0);
+      this.value = value;
+      this.weight = weight;
+    }
+
+    public String getValue() {
+      return value;
+    }
+
+    public int getWeight() {
+      return weight;
+    }
+  }
+
+  public static SimpleGenericTrafficModel create(MovementsForHour[] movementsForHours, IList<ValueAndWeight> companies, IList<ValueAndWeight> countries, double delayProbability, int maxDelayInMinutesPerStep, boolean useExtendedCallsigns) {
+    return new SimpleGenericTrafficModel(
+        movementsForHours, companies, countries, delayProbability, maxDelayInMinutesPerStep, useExtendedCallsigns);
+  }
+
+  private final double delayProbability;
+  private final int maxDelayInMinutesPerStep;
+  private final boolean useExtendedCallsigns;
+  private final MovementsForHour[] movementsForHours;
+  private final IList<ValueAndWeight> companies;
+  private final IList<ValueAndWeight> countries;
+
+  private SimpleGenericTrafficModel(MovementsForHour[] movementsForHours, IList<ValueAndWeight> companies, IList<ValueAndWeight> countries, double delayProbability, int maxDelayInMinutesPerStep, boolean useExtendedCallsigns) {
+    EAssert.Argument.isNotNull(movementsForHours, "movementsForHours");
+    EAssert.Argument.isTrue(movementsForHours.length == 24);
+    EAssert.Argument.isNotNull(companies, "companies");
+    EAssert.Argument.isTrue(companies.isEmpty() == false);
+    EAssert.Argument.isNotNull(countries, "countries");
+    EAssert.Argument.isTrue(countries.isEmpty() == false);
+    EAssert.Argument.isTrue(NumberUtils.isBetweenOrEqual(0, delayProbability, 1));
+    EAssert.Argument.isTrue(maxDelayInMinutesPerStep >= 0);
+    this.delayProbability = delayProbability;
+    this.maxDelayInMinutesPerStep = maxDelayInMinutesPerStep;
+    this.useExtendedCallsigns = useExtendedCallsigns;
+    this.movementsForHours = movementsForHours;
+    this.companies = companies;
+    this.countries = countries;
+  }
+
+  //  private final double probabilityOfNonCommercialFlight;
+//  private final double probabilityOfDeparture; // 0-1
+//  private final int[] movementsPerHour; // int[24]
+//  private ERandom rnd = SharedInstanceProvider.getRnd();
+
+//  public SimpleGenericTrafficModel(int[] movementsPerHour,
+//                                   double probabilityOfDeparture, double probabilityOfNonCommercialFlight) {
+//    EAssert.isNotNull(movementsPerHour);
+//    EAssert.isTrue(movementsPerHour.length == 24);
+//    for (int i : movementsPerHour) {
+//      EAssert.isTrue(i >= 0, new IllegalArgumentException("Argument \"movementsPerHour\" must have all elements equal or greater than 0."));
+//    }
+//    EAssert.isTrue(NumberUtils.isBetweenOrEqual(0, probabilityOfDeparture, 1));
+//
+//    this.movementsPerHour = Arrays.copyOf(movementsPerHour, 24);
+//    this.probabilityOfDeparture = probabilityOfDeparture;
+//    this.probabilityOfNonCommercialFlight = probabilityOfNonCommercialFlight;
+//  }
 
   @Override
   public IReadOnlyList<MovementTemplate> generateMovementsForOneDay() {
     IList<MovementTemplate> ret = new EList<>();
 
     for (int i = 0; i < 24; i++) {
-      int cnt = movementsPerHour[i];
+      MovementsForHour cnt = movementsForHours[i];
       for (int c = 0; c < cnt; c++) {
         MovementTemplate tmp = generateMovement(i);
         ret.add(tmp);
@@ -61,7 +128,7 @@ public class SimpleGenericTrafficModel extends DayGeneratedTrafficModel {
 
     MovementTemplate ret;
     if (isNonCommercial)
-      ret = new GeneralAviationMovementTemplate(kind, initTime,new EntryExitInfo(radial));
+      ret = new GeneralAviationMovementTemplate(kind, initTime, new EntryExitInfo(radial));
     else
       ret = new GeneralCommercialMovementTemplate(null, null,
           kind, initTime, new EntryExitInfo(radial));

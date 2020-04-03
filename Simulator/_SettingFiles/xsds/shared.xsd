@@ -107,6 +107,12 @@
       <xs:pattern value="[+-]?\d*(.\d+)"/>
     </xs:restriction>
   </xs:simpleType>
+  
+  <xs:simpleType name="percentage">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="(^1\.0+$)|(^1\.?$)|(^0?\.\d+$)|(^0\.?$)" />
+    </xs:restriction>
+  </xs:simpleType>
 
 
 </xs:schema>

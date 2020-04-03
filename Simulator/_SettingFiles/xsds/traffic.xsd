@@ -20,7 +20,7 @@
   </xs:complexType>
 
   <xs:complexType name="traffic">
-    <xs:attribute name="delayProbability" type="xs:double" use="required"/>
+    <xs:attribute name="delayProbability" type="sh:percentage" use="required"/>
     <xs:attribute name="maxDelayInMinutesPerStep" type="xs:int" use="required"/>
   </xs:complexType>
 
@@ -77,25 +77,15 @@
     <xs:complexContent>
       <xs:extension base="traffic">
         <xs:sequence>
-          <xs:element name="movementsPerHour" minOccurs="1" maxOccurs="1">
+          <xs:element name="movements" minOccurs="1" maxOccurs="1">
             <xs:complexType>
               <xs:sequence>
-                <xs:element name="item" maxOccurs="24" minOccurs="24">
+                <xs:element name="movementsForHour" maxOccurs="24" minOccurs="24">
                   <xs:complexType>
                     <xs:attribute name="count" type="xs:nonNegativeInteger" use="required" />
-                    <xs:attribute name="departureProbability" type="xs:double" use="optional" />
+                    <xs:attribute name="departureProbability" type="sh:percentage" use="optional" />
+                    <xs:attribute name="probabilityOfGeneralAviation" type="sh:percentage" use="optional" />
                   </xs:complexType>
-                </xs:element>
-              </xs:sequence>
-            </xs:complexType>
-          </xs:element>
-          <xs:element name="probabilityOfCategory" minOccurs="1" maxOccurs="1">
-            <xs:complexType>
-              <xs:sequence>
-                <xs:element name="item" minOccurs="4" maxOccurs="4">
-                  <xs:simpleType>
-                    <xs:restriction base="xs:double"/>
-                  </xs:simpleType>
                 </xs:element>
               </xs:sequence>
             </xs:complexType>
@@ -104,9 +94,12 @@
             <xs:complexType>
               <xs:sequence>
                 <xs:element name="item" minOccurs="1" maxOccurs="unbounded">
-                  <xs:simpleType>
-                    <xs:restriction base="xs:string"/>
-                  </xs:simpleType>
+                  <xs:complexType>
+                    <xs:simpleContent>
+                      <xs:restriction base="xs:string"/>
+                    </xs:simpleContent>
+                    <xs:attribute name="weight" type="sh:percentage" use="optional" />
+                  </xs:complexType>
                 </xs:element>
               </xs:sequence>
             </xs:complexType>
@@ -123,10 +116,9 @@
             </xs:complexType>
           </xs:element>
         </xs:sequence>
-        <xs:attribute name="defaultProbabilityOfNonCommercialFlight" type="xs:double" use="required"/>
+        <xs:attribute name="defaultProbabilityOfGeneralAviation" type="xs:double" use="required"/>
         <xs:attribute name="defaultProbabilityOfDeparture" type="xs:double" use="required"/>
         <xs:attribute name="useExtendedCallsigns" type="xs:boolean" use="required"/>
-        <xs:attribute name="defaultMovementsPerHour" type="xs:nonNegativeInteger" use="required" />
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>

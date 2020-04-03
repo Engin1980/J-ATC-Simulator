@@ -10,43 +10,36 @@
   </meta>
   <genericTraffic delayProbability=".3" maxDelayInMinutesPerStep="15"
                   defaultProbabilityOfDeparture=".5"
-                  defaultProbabilityOfNonCommercialFlight=".1"
-                  defaultMovementsPerHour="0"
+                  defaultProbabilityOfGeneralAviation=".1"
                   useExtendedCallsigns="true">
-    <movementsPerHour>
-      <item count="0" departureProbability="0" />
-      <item count="0" departureProbability="0" />
-      <item count="0" departureProbability="0" />
-      <item count="0" departureProbability="0" />
-      <item count="0" departureProbability="0" />
-      <item count="3" departureProbability="1" />
-      <item count="5" departureProbability="0" />
-      <item count="4" departureProbability="0" />
-      <item count="8" departureProbability="0" />
-      <item count="3" departureProbability="0" />
-      <item count="4" departureProbability="0" />
-      <item count="7" departureProbability="0" />
-      <item count="8" departureProbability="0" />
-      <item count="4" departureProbability="0" />
-      <item count="2" departureProbability="0" />
-      <item count="5" departureProbability="0" />
-      <item count="10" departureProbability="0" />
-      <item count="6" departureProbability="0" />
-      <item count="3" departureProbability="0" />
-      <item count="2" departureProbability="0" />
-      <item count="9" departureProbability="0" />
-      <item count="5" departureProbability="0" />
-      <item count="2" departureProbability="0" />
-      <item count="1" departureProbability="0" />
-    </movementsPerHour>
-    <probabilityOfCategory>
-      <item>.1</item>
-      <item>.3</item>
-      <item>.4</item>
-      <item>.2</item>
-    </probabilityOfCategory>
+    <movements>
+      <movementsForHour count="0" />
+      <movementsForHour count="0" />
+      <movementsForHour count="0" />
+      <movementsForHour count="0" />
+      <movementsForHour count="0" />
+      <movementsForHour count="3" departureProbability="1" probabilityOfGeneralAviation="1" />
+      <movementsForHour count="5" departureProbability=".8" probabilityOfGeneralAviation=".8"  />
+      <movementsForHour count="4" departureProbability="0.8" />
+      <movementsForHour count="8" departureProbability="0.8" />
+      <movementsForHour count="3" departureProbability="0.6" />
+      <movementsForHour count="4" departureProbability="0.3" />
+      <movementsForHour count="7" departureProbability="0.5" />
+      <movementsForHour count="8" departureProbability="0.2" />
+      <movementsForHour count="4" departureProbability="0.1" />
+      <movementsForHour count="2" departureProbability="0.3" />
+      <movementsForHour count="5" departureProbability="0.5" />
+      <movementsForHour count="10" departureProbability="0.4" />
+      <movementsForHour count="6" departureProbability="0.7" />
+      <movementsForHour count="3" departureProbability="0.7" />
+      <movementsForHour count="2" departureProbability="0.8" />
+      <movementsForHour count="9" departureProbability="0.6" />
+      <movementsForHour count="5" departureProbability="0.8" probabilityOfGeneralAviation=".4" />
+      <movementsForHour count="2" departureProbability="0.9" />
+      <movementsForHour count="1" departureProbability="1" />
+    </movements>
     <companies>
-      <item>CSA</item>
+      <item weight="5">CSA</item>
       <item>RYR</item>
       <item>EZY</item>
       <item>DHL</item>
