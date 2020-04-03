@@ -8,35 +8,34 @@
       Generic low traffic defines very low traffic with morning and afternoon low peaks (up to 10 movements/hour).
     </description>
   </meta>
-  <genericTraffic delayProbability=".3" maxDelayInMinutesPerStep="15"
-                  defaultProbabilityOfDeparture=".5"
+  <genericTraffic defaultProbabilityOfDeparture=".5"
                   defaultProbabilityOfGeneralAviation=".1"
                   useExtendedCallsigns="true">
     <movements>
-      <movementsForHour count="0" />
-      <movementsForHour count="0" />
-      <movementsForHour count="0" />
-      <movementsForHour count="0" />
-      <movementsForHour count="0" />
-      <movementsForHour count="3" departureProbability="1" probabilityOfGeneralAviation="1" />
-      <movementsForHour count="5" departureProbability=".8" probabilityOfGeneralAviation=".8"  />
-      <movementsForHour count="4" departureProbability="0.8" />
-      <movementsForHour count="8" departureProbability="0.8" />
-      <movementsForHour count="3" departureProbability="0.6" />
-      <movementsForHour count="4" departureProbability="0.3" />
-      <movementsForHour count="7" departureProbability="0.5" />
-      <movementsForHour count="8" departureProbability="0.2" />
-      <movementsForHour count="4" departureProbability="0.1" />
-      <movementsForHour count="2" departureProbability="0.3" />
-      <movementsForHour count="5" departureProbability="0.5" />
-      <movementsForHour count="10" departureProbability="0.4" />
-      <movementsForHour count="6" departureProbability="0.7" />
-      <movementsForHour count="3" departureProbability="0.7" />
-      <movementsForHour count="2" departureProbability="0.8" />
-      <movementsForHour count="9" departureProbability="0.6" />
-      <movementsForHour count="5" departureProbability="0.8" probabilityOfGeneralAviation=".4" />
-      <movementsForHour count="2" departureProbability="0.9" />
-      <movementsForHour count="1" departureProbability="1" />
+      <movementsForHour count="0"/>
+      <movementsForHour count="0"/>
+      <movementsForHour count="0"/>
+      <movementsForHour count="0"/>
+      <movementsForHour count="0"/>
+      <movementsForHour count="3" departureProbability="1" probabilityOfGeneralAviation="1"/>
+      <movementsForHour count="5" departureProbability=".8" probabilityOfGeneralAviation=".8"/>
+      <movementsForHour count="4" departureProbability="0.8"/>
+      <movementsForHour count="8" departureProbability="0.8"/>
+      <movementsForHour count="3" departureProbability="0.6"/>
+      <movementsForHour count="4" departureProbability="0.3"/>
+      <movementsForHour count="7" departureProbability="0.5"/>
+      <movementsForHour count="8" departureProbability="0.2"/>
+      <movementsForHour count="4" departureProbability="0.1"/>
+      <movementsForHour count="2" departureProbability="0.3"/>
+      <movementsForHour count="5" departureProbability="0.5"/>
+      <movementsForHour count="10" departureProbability="0.4"/>
+      <movementsForHour count="6" departureProbability="0.7"/>
+      <movementsForHour count="3" departureProbability="0.7"/>
+      <movementsForHour count="2" departureProbability="0.8"/>
+      <movementsForHour count="9" departureProbability="0.6"/>
+      <movementsForHour count="5" departureProbability="0.8" probabilityOfGeneralAviation=".4"/>
+      <movementsForHour count="2" departureProbability="0.9"/>
+      <movementsForHour count="1" departureProbability="1"/>
     </movements>
     <companies>
       <item weight="5">CSA</item>

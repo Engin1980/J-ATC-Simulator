@@ -5,9 +5,7 @@
     <title>Standard LKMT traffic (busy day)</title>
     <author>Marek Vajgl</author>
   </meta>
-  <densityTraffic delayProbability=".5" maxDelayInMinutesPerStep="20"
-                  nonCommercialFlightProbability="0.5"
-                  useExtendedCallsigns="true">
+  <densityTraffic defaultGeneralAviationProbability="0.5">
     <companies isFullDayTraffic="true">
       <company icao="TVS" weight="15" category="C"/>
       <company icao="TAR" weight="2"/>
@@ -15,6 +13,9 @@
       <company icao="OHY" weight="2"/>
       <company icao="CSA" weight="4"/>
     </companies>
+    <countries>
+      <country icao="OK" weight="1"/>
+    </countries>
     <density>
       <item hour="0" departures="0" arrivals="0"/>
       <item hour="1" departures="0" arrivals="0"/>

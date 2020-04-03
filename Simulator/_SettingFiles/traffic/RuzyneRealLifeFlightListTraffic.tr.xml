@@ -1,501 +1,716 @@
-<?xml version="1.0" encoding="UTF-8"?><trafficDefinition xmlns="https://github.com/Engin1980/J-ATC-Simulator/traffic">
+<?xml version="1.0" encoding="UTF-8"?>
+<trafficDefinition xmlns="https://github.com/Engin1980/J-ATC-Simulator/traffic">
   <meta>
-    <title>Automatically generated traffic.</title>
+    <title>Automatically generated traffic</title>
     <author>Flight radar real traffic converter</author>
     <description>Automatically generated flight-list-traffic generated on 3. října 2018, 00:00:52.</description>
     <date>2018-10-03</date>
   </meta>
-  <flightListTraffic delayProbability="0" maxDelayInMinutesPerStep="0">
-    <flights>
-      <flight callsign="QSC1240" kind="departure" otherAirport="27.251 33.818" planeType="B737" time="0:05"/>
-      <flight callsign="QSC1234" kind="departure" otherAirport="27.251 33.818" planeType="A321" time="0:10"/>
-      <flight callsign="QSC1055" kind="arrival" otherAirport="39.469 -0.377" planeType="B737" time="0:45"/>
-      <flight callsign="AFL2017" kind="departure" otherAirport="55.757 37.615" planeType="A320" time="0:55"/>
-      <flight callsign="QSC1113" kind="arrival" otherAirport="36.448 28.226" planeType="B737" time="0:55"/>
-      <flight callsign="QSC1258" kind="departure" otherAirport="25.068 34.888" planeType="B737" time="1:10"/>
-      <flight callsign="QSC1159" kind="arrival" otherAirport="36.842 -2.464" planeType="B737" time="1:10"/>
-      <flight callsign="QSC1193" kind="arrival" otherAirport="36.879 30.709" planeType="B737" time="1:25"/>
-      <flight callsign="QSC1222" kind="departure" otherAirport="25.068 34.888" planeType="B737" time="1:30"/>
-      <flight callsign="QSC1153" kind="arrival" otherAirport="36.718 -4.42" planeType="B737" time="1:30"/>
-      <flight callsign="QSC1129" kind="arrival" otherAirport="36.89 27.289" planeType="B737" time="1:50"/>
-      <flight callsign="QSC2220" kind="departure" otherAirport="35.507 27.215" planeType="B737" time="3:10"/>
-      <flight callsign="QSC2236" follows="QSC2236" kind="departure" otherAirport="25.538 -103.36" planeType="B737" time="3:15"/>
-      <flight callsign="QSC1124" kind="departure" otherAirport="42.731 -7.327" planeType="B737" time="4:45"/>
-      <flight callsign="QSC1146" follows="QSC1146" kind="departure" otherAirport="36.448 28.226" planeType="B737" time="4:45"/>
-      <flight callsign="QSC1190" kind="departure" otherAirport="36.879 30.709" planeType="B737" time="4:45"/>
-      <flight callsign="QSC1126" kind="departure" otherAirport="36.89 27.289" planeType="B737" time="4:50"/>
-      <flight callsign="QSC1102" follows="QSC1102" kind="departure" otherAirport="35.342 25.153" planeType="B737" time="4:55"/>
-      <flight callsign="QSC1118" kind="departure" otherAirport="37.784 20.898" planeType="B737" time="5:15"/>
-      <flight callsign="TAY89" kind="arrival" otherAirport="50.645 5.573" planeType="B737" time="5:55"/>
-      <flight callsign="CSA960" kind="departure" otherAirport="48.149 17.107" planeType="ATR72" time="6:00"/>
-      <flight callsign="QSC1130" kind="departure" otherAirport="38.958 20.751" planeType="B737" time="6:00"/>
-      <flight callsign="TAP1307" kind="departure" otherAirport="38.726 -9.149" planeType="A319" time="6:00"/>
-      <flight callsign="DLH1403" kind="departure" otherAirport="50.112 8.683" planeType="A321" time="6:00"/>
-      <flight callsign="CHH7937" kind="arrival" otherAirport="39.907 116.388" planeType="A330" time="6:00"/>
-      <flight callsign="QSC2326" follows="QSC2326" kind="departure" otherAirport="40.936 24.414" planeType="B737" time="6:05"/>
-      <flight callsign="CSA923" kind="arrival" otherAirport="46.472 30.737" planeType="A319" time="6:10"/>
-      <flight callsign="RYR2122" kind="departure" otherAirport="50.844 4.356" planeType="B737" time="6:15"/>
-      <flight callsign="CSA917" kind="arrival" otherAirport="50.451 30.524" planeType="A319" time="6:15"/>
-      <flight callsign="CSA979" kind="arrival" otherAirport="48.717 21.253" planeType="ATR72" time="6:20"/>
-      <flight callsign="CSA21" kind="arrival" otherAirport="49.819 18.123" planeType="ATR42" time="6:25"/>
-      <flight callsign="CSA461" kind="arrival" otherAirport="64.146 -21.94" planeType="A319" time="6:25"/>
-      <flight callsign="KLM1350" kind="departure" otherAirport="52.37 4.908" planeType="B737" time="6:30"/>
-      <flight callsign="RYR1014" kind="departure" otherAirport="51.506 -0.127" planeType="B737" time="6:40"/>
-      <flight callsign="TAY89" follows="TAY89" kind="departure" otherAirport="49.197 16.604" planeType="B737" time="6:40"/>
-      <flight callsign="BXI2816" kind="departure" otherAirport="50.844 4.356" planeType="A319" time="6:50"/>
-      <flight callsign="BAW853" kind="departure" otherAirport="51.506 -0.127" planeType="A320" time="6:50"/>
-      <flight callsign="CSA522" kind="departure" otherAirport="51.216 6.777" planeType="ATR72" time="6:55"/>
-      <flight callsign="CSA630" kind="departure" otherAirport="50.844 4.356" planeType="A319" time="6:55"/>
-      <flight callsign="CSA616" follows="CSA616" kind="departure" otherAirport="52.37 4.908" planeType="A319" time="7:00"/>
-      <flight callsign="CSA510" kind="departure" otherAirport="56.153 10.205" planeType="ATR72" time="7:05"/>
-      <flight callsign="CSA718" kind="departure" otherAirport="45.468 9.182" planeType="A319" time="7:05"/>
-      <flight callsign="CSA776" follows="CSA776" kind="departure" otherAirport="52.236 21.01" planeType="ATR42" time="7:05"/>
-      <flight callsign="CSA534" kind="departure" otherAirport="50.112 8.683" planeType="ATR72" time="7:10"/>
-      <flight callsign="CSA504" kind="departure" otherAirport="55.676 12.568" planeType="B737" time="7:10"/>
-      <flight callsign="CSA758" follows="CSA758" kind="departure" otherAirport="48.857 2.341" planeType="A319" time="7:10"/>
-      <flight callsign="LOT530" kind="departure" otherAirport="52.236 21.01" planeType="DH8A" time="7:15"/>
-      <flight callsign="CSA786" kind="departure" otherAirport="47.5 19.055" planeType="ATR72" time="7:20"/>
-      <flight callsign="CSA251" kind="arrival" otherAirport="54.75 55.986" planeType="A319" time="7:20"/>
-      <flight callsign="CSA744" follows="CSA744" kind="departure" otherAirport="43.7 7.278" planeType="A319" time="7:30"/>
-      <flight callsign="AUA703" kind="arrival" otherAirport="48.203 16.368" planeType="E195" time="7:30"/>
-      <flight callsign="FDB781" kind="arrival" otherAirport="25.27 55.309" planeType="B737" time="7:40"/>
-      <flight callsign="QTR289" kind="arrival" otherAirport="25.295 51.519" planeType="A320" time="7:40"/>
-      <flight callsign="CHH7937" follows="CHH7937" kind="departure" otherAirport="44.813 20.463" planeType="A330" time="7:50"/>
-      <flight callsign="SAS1767" kind="arrival" otherAirport="59.333 18.067" planeType="B737" time="8:00"/>
-      <flight callsign="SNG2094" kind="arrival" otherAirport="43.606 1.449" planeType="A319" time="8:10"/>
-      <flight callsign="AUA704" follows="AUA704" kind="departure" otherAirport="48.203 16.368" planeType="E195" time="8:15"/>
-      <flight callsign="BTI479" kind="arrival" otherAirport="56.946 24.115" planeType="DH8A" time="8:20"/>
-      <flight callsign="KLM1351" kind="arrival" otherAirport="52.37 4.908" planeType="E195" time="8:20"/>
-      <flight callsign="EWG9772" kind="arrival" otherAirport="51.216 6.777" planeType="A320" time="8:25"/>
-      <flight callsign="SWR1472" kind="arrival" otherAirport="46.208 6.143" planeType="BCS" time="8:25"/>
-      <flight callsign="SNG2095" follows="SNG2095" kind="departure" otherAirport="43.606 1.449" planeType="A319" time="8:35"/>
-      <flight callsign="PSD4030" kind="arrival" otherAirport="48.857 2.341" planeType="B737" time="8:35"/>
-      <flight callsign="SNG2536" kind="arrival" otherAirport="43.293 5.371" planeType="B717" time="8:35"/>
-      <flight callsign="SAS1768" follows="SAS1768" kind="departure" otherAirport="59.333 18.067" planeType="B737" time="8:40"/>
-      <flight callsign="FDB782" follows="FDB782" kind="departure" otherAirport="25.27 55.309" planeType="B737" time="8:40"/>
-      <flight callsign="RYR8331" kind="arrival" otherAirport="41.903 12.496" planeType="B737" time="8:40"/>
-      <flight callsign="QSC1263" kind="arrival" otherAirport="32.086 34.79" planeType="B737" time="8:40"/>
-      <flight callsign="EZY4855" kind="arrival" otherAirport="40.84 14.252" planeType="A320" time="8:40"/>
-      <flight callsign="BTI480" follows="BTI480" kind="departure" otherAirport="56.946 24.115" planeType="DH8A" time="8:45"/>
-      <flight callsign="THY1767" kind="arrival" otherAirport="41.061 28.988" planeType="A321" time="8:45"/>
-      <flight callsign="FOS8652" kind="arrival" otherAirport="41.388 2.17" planeType="A320" time="8:45"/>
-      <flight callsign="ROT225" kind="arrival" otherAirport="44.434 26.103" planeType="B737" time="8:45"/>
-      <flight callsign="KLM1352" follows="KLM1352" kind="departure" otherAirport="52.37 4.908" planeType="E195" time="8:50"/>
-      <flight callsign="CSA892" follows="CSA892" kind="departure" otherAirport="55.757 37.615" planeType="A319" time="8:50"/>
-      <flight callsign="ASL610" kind="arrival" otherAirport="44.813 20.463" planeType="B737" time="8:50"/>
-      <flight callsign="EWG9773" follows="EWG9773" kind="departure" otherAirport="51.216 6.777" planeType="A320" time="9:00"/>
-      <flight callsign="SNG2537" follows="SNG2537" kind="departure" otherAirport="43.293 5.371" planeType="B717" time="9:00"/>
-      <flight callsign="AFR1382" kind="arrival" otherAirport="48.857 2.341" planeType="A320" time="9:00"/>
-      <flight callsign="DLH1688" kind="arrival" otherAirport="48.136 11.578" planeType="CRJ" time="9:00"/>
-      <flight callsign="RYR8330" follows="RYR8330" kind="departure" otherAirport="41.903 12.496" planeType="B737" time="9:05"/>
-      <flight callsign="SWR1473" follows="SWR1473" kind="departure" otherAirport="46.208 6.143" planeType="BCS" time="9:10"/>
-      <flight callsign="EZY4856" follows="EZY4856" kind="departure" otherAirport="40.84 14.252" planeType="A320" time="9:10"/>
-      <flight callsign="PSD4031" follows="PSD4031" kind="departure" otherAirport="48.857 2.341" planeType="B737" time="9:15"/>
-      <flight callsign="QTR290" follows="QTR290" kind="departure" otherAirport="25.295 51.519" planeType="A320" time="9:15"/>
-      <flight callsign="AFL2010" kind="arrival" otherAirport="55.757 37.615" planeType="A320" time="9:15"/>
-      <flight callsign="CSA734" follows="CSA734" kind="departure" otherAirport="45.438 12.318" planeType="ATR72" time="9:20"/>
-      <flight callsign="AAL52" kind="arrival" otherAirport="39.952 -75.162" planeType="B767" time="9:20"/>
-      <flight callsign="EZY6961" kind="arrival" otherAirport="55.954 -3.201" planeType="A320" time="9:20"/>
-      <flight callsign="FOS7979" follows="FOS7979" kind="departure" otherAirport="47.377 8.54" planeType="A320" time="9:25"/>
-      <flight callsign="ROT226" follows="ROT226" kind="departure" otherAirport="44.434 26.103" planeType="B737" time="9:30"/>
-      <flight callsign="RYR1826" kind="arrival" otherAirport="51.436 5.485" planeType="B737" time="9:30"/>
-      <flight callsign="LOT523" kind="arrival" otherAirport="52.236 21.01" planeType="E195" time="9:30"/>
-      <flight callsign="ASL611" follows="ASL611" kind="departure" otherAirport="44.813 20.463" planeType="B737" time="9:40"/>
-      <flight callsign="THY1768" follows="THY1768" kind="departure" otherAirport="41.061 28.988" planeType="A321" time="9:40"/>
-      <flight callsign="QSC2237" kind="arrival" otherAirport="25.538 -103.36" planeType="B737" time="9:40"/>
-      <flight callsign="DLH1689" follows="DLH1689" kind="departure" otherAirport="48.136 11.578" planeType="CRJ" time="9:45"/>
-      <flight callsign="QSC1241" kind="arrival" otherAirport="27.251 33.818" planeType="A321" time="9:45"/>
-      <flight callsign="RYR2121" kind="arrival" otherAirport="50.844 4.356" planeType="B737" time="9:45"/>
-      <flight callsign="SWR1484" kind="arrival" otherAirport="47.377 8.54" planeType="BCS" time="9:45"/>
-      <flight callsign="AFR1383" follows="AFR1383" kind="departure" otherAirport="48.857 2.341" planeType="A320" time="9:50"/>
-      <flight callsign="EZY6962" follows="EZY6962" kind="departure" otherAirport="55.954 -3.201" planeType="A320" time="9:50"/>
-      <flight callsign="EXS887" kind="arrival" otherAirport="53.48 -2.249" planeType="B737" time="9:50"/>
-      <flight callsign="QSC1235" kind="arrival" otherAirport="27.251 33.818" planeType="B737" time="9:50"/>
-      <flight callsign="RYR1827" follows="RYR1827" kind="departure" otherAirport="51.436 5.485" planeType="B737" time="9:55"/>
-      <flight callsign="QSC2221" kind="arrival" otherAirport="35.507 27.215" planeType="B737" time="9:55"/>
-      <flight callsign="SBI857" kind="arrival" otherAirport="55.04 82.91" planeType="A320" time="10:00"/>
-      <flight callsign="LOT524" follows="LOT524" kind="departure" otherAirport="52.236 21.01" planeType="E195" time="10:05"/>
-      <flight callsign="NAX4575" kind="arrival" otherAirport="57.701 11.968" planeType="B737" time="10:05"/>
-      <flight callsign="DLH1392" kind="arrival" otherAirport="50.112 8.683" planeType="A321" time="10:05"/>
-      <flight callsign="ELY2521" kind="arrival" otherAirport="32.086 34.79" planeType="B737" time="10:05"/>
-      <flight callsign="RYR5508" follows="RYR5508" kind="departure" otherAirport="45.468 9.182" planeType="B737" time="10:10"/>
-      <flight callsign="EZY7365" kind="arrival" otherAirport="-37.568 140.133" planeType="A319" time="10:10"/>
-      <flight callsign="AFL2011" follows="AFL2011" kind="departure" otherAirport="55.757 37.615" planeType="A320" time="10:15"/>
-      <flight callsign="QSC1200" kind="departure" otherAirport="25.27 55.309" planeType="B737" time="10:20"/>
-      <flight callsign="CSA545" kind="arrival" otherAirport="53.554 9.992" planeType="A319" time="10:20"/>
-      <flight callsign="AFL6621" kind="arrival" otherAirport="59.933 30.306" planeType="A319" time="10:20"/>
-      <flight callsign="SWR1485" follows="SWR1485" kind="departure" otherAirport="47.377 8.54" planeType="BCS" time="10:25"/>
-      <flight callsign="BAW854" kind="arrival" otherAirport="51.506 -0.127" planeType="A320" time="10:30"/>
-      <flight callsign="CSA631" kind="arrival" otherAirport="50.844 4.356" planeType="A319" time="10:35"/>
-      <flight callsign="AEE864" kind="arrival" otherAirport="37.976 23.736" planeType="A320" time="10:35"/>
-      <flight callsign="CSA505" kind="arrival" otherAirport="55.676 12.568" planeType="B737" time="10:35"/>
-      <flight callsign="NAX4576" follows="NAX4576" kind="departure" otherAirport="57.701 11.968" planeType="B737" time="10:40"/>
-      <flight callsign="EZY7366" follows="EZY7366" kind="departure" otherAirport="-37.568 140.133" planeType="A319" time="10:40"/>
-      <flight callsign="CAI551" kind="arrival" otherAirport="36.879 30.709" planeType="B737" time="10:40"/>
-      <flight callsign="CSA777" kind="arrival" otherAirport="52.236 21.01" planeType="ATR42" time="10:45"/>
-      <flight callsign="CSA787" kind="arrival" otherAirport="47.5 19.055" planeType="ATR72" time="10:45"/>
-      <flight callsign="AUA705" kind="arrival" otherAirport="48.203 16.368" planeType="DH8A" time="10:45"/>
-      <flight callsign="DLH1393" follows="DLH1393" kind="departure" otherAirport="50.112 8.683" planeType="A321" time="10:50"/>
-      <flight callsign="EXS888" follows="EXS888" kind="departure" otherAirport="53.48 -2.249" planeType="B737" time="10:50"/>
-      <flight callsign="QSC1198" follows="QSC1198" kind="departure" otherAirport="55.757 37.615" planeType="B737" time="10:50"/>
-      <flight callsign="CSA535" kind="arrival" otherAirport="50.112 8.683" planeType="ATR72" time="10:50"/>
-      <flight callsign="CSA719" kind="arrival" otherAirport="45.468 9.182" planeType="A319" time="10:50"/>
-      <flight callsign="FIN1221" kind="arrival" otherAirport="60.171 24.933" planeType="A321" time="10:50"/>
-      <flight callsign="RYR1013" kind="arrival" otherAirport="51.506 -0.127" planeType="B737" time="10:55"/>
-      <flight callsign="CSA961" kind="arrival" otherAirport="48.149 17.107" planeType="ATR72" time="10:55"/>
-      <flight callsign="QSC1119" kind="arrival" otherAirport="37.784 20.898" planeType="B737" time="10:55"/>
-      <flight callsign="QSC1287" kind="arrival" otherAirport="32.086 34.79" planeType="B737" time="10:55"/>
-      <flight callsign="CSA617" kind="arrival" otherAirport="52.37 4.908" planeType="A319" time="10:55"/>
-      <flight callsign="SBI858" follows="SBI858" kind="departure" otherAirport="55.04 82.91" planeType="A320" time="11:00"/>
-      <flight callsign="BXI2809" kind="arrival" otherAirport="50.844 4.356" planeType="A319" time="11:00"/>
-      <flight callsign="TSC100" kind="arrival" otherAirport="45.512 -73.555" planeType="A310" time="11:05"/>
-      <flight callsign="DLH1394" kind="arrival" otherAirport="50.112 8.683" planeType="A319" time="11:05"/>
-      <flight callsign="CSA523" kind="arrival" otherAirport="51.216 6.777" planeType="ATR72" time="11:05"/>
-      <flight callsign="QSC1125" kind="arrival" otherAirport="42.731 -7.327" planeType="B737" time="11:05"/>
-      <flight callsign="CSA802" follows="CSA802" kind="departure" otherAirport="44.434 26.103" planeType="ATR72" time="11:10"/>
-      <flight callsign="AFL6622" follows="AFL6622" kind="departure" otherAirport="59.933 30.306" planeType="A319" time="11:10"/>
-      <flight callsign="QSC1259" kind="arrival" otherAirport="25.068 34.888" planeType="B737" time="11:10"/>
-      <flight callsign="CSA700" follows="CSA700" kind="departure" otherAirport="40.42 -3.706" planeType="A321" time="11:15"/>
-      <flight callsign="QSC1026" follows="QSC1026" kind="departure" otherAirport="38.973 16.317" planeType="B737" time="11:15"/>
-      <flight callsign="BAW855" follows="BAW855" kind="departure" otherAirport="51.506 -0.127" planeType="A320" time="11:15"/>
-      <flight callsign="LZB301" kind="arrival" otherAirport="42.697 23.324" planeType="E195" time="11:15"/>
-      <flight callsign="QSC1127" kind="arrival" otherAirport="36.89 27.289" planeType="B737" time="11:15"/>
-      <flight callsign="QSC1131" kind="arrival" otherAirport="38.958 20.751" planeType="B737" time="11:15"/>
-      <flight callsign="CSA886" follows="CSA886" kind="departure" otherAirport="59.933 30.306" planeType="A319" time="11:20"/>
-      <flight callsign="AUA706" follows="AUA706" kind="departure" otherAirport="48.203 16.368" planeType="DH8A" time="11:20"/>
-      <flight callsign="NAX4571" kind="arrival" otherAirport="59.333 18.067" planeType="B737" time="11:20"/>
-      <flight callsign="QSC1147" kind="arrival" otherAirport="36.448 28.226" planeType="B737" time="11:20"/>
-      <flight callsign="AEE865" follows="AEE865" kind="departure" otherAirport="37.976 23.736" planeType="A320" time="11:25"/>
-      <flight callsign="ELY2522" follows="ELY2522" kind="departure" otherAirport="32.086 34.79" planeType="B737" time="11:25"/>
-      <flight callsign="CSA688" follows="CSA688" kind="departure" otherAirport="41.388 2.17" planeType="B737" time="11:25"/>
-      <flight callsign="QSC1148" follows="QSC1148" kind="departure" otherAirport="36.448 28.226" planeType="B737" time="11:25"/>
-      <flight callsign="QSC1103" kind="arrival" otherAirport="35.342 25.153" planeType="B737" time="11:25"/>
-      <flight callsign="QSC1144" follows="QSC1144" kind="departure" otherAirport="37.784 20.898" planeType="B737" time="11:30"/>
-      <flight callsign="CAI552" follows="CAI552" kind="departure" otherAirport="36.879 30.709" planeType="B737" time="11:30"/>
-      <flight callsign="QSC1223" kind="arrival" otherAirport="25.068 34.888" planeType="B737" time="11:30"/>
-      <flight callsign="CSA759" kind="arrival" otherAirport="48.857 2.341" planeType="A319" time="11:30"/>
-      <flight callsign="AAL53" follows="AAL53" kind="departure" otherAirport="39.952 -75.162" planeType="B767" time="11:35"/>
-      <flight callsign="FIN1222" follows="FIN1222" kind="departure" otherAirport="60.171 24.933" planeType="A321" time="11:35"/>
-      <flight callsign="QSC1191" kind="arrival" otherAirport="36.879 30.709" planeType="B737" time="11:35"/>
-      <flight callsign="CSA480" follows="CSA480" kind="departure" otherAirport="60.171 24.933" planeType="A319" time="11:40"/>
-      <flight callsign="BXI2810" follows="BXI2810" kind="departure" otherAirport="50.844 4.356" planeType="A319" time="11:40"/>
-      <flight callsign="CSA490" follows="CSA490" kind="departure" otherAirport="59.333 18.067" planeType="B737" time="11:40"/>
-      <flight callsign="CSA511" kind="arrival" otherAirport="56.153 10.205" planeType="ATR72" time="11:40"/>
-      <flight callsign="TGZ787" kind="arrival" otherAirport="41.709 44.796" planeType="E195" time="11:45"/>
-      <flight callsign="NAX4572" follows="NAX4572" kind="departure" otherAirport="59.333 18.067" planeType="B737" time="11:50"/>
-      <flight callsign="DLH1395" follows="DLH1395" kind="departure" otherAirport="50.112 8.683" planeType="A319" time="11:50"/>
-      <flight callsign="QSC1196" follows="QSC1196" kind="departure" otherAirport="36.879 30.709" planeType="B737" time="11:50"/>
-      <flight callsign="CSA496" follows="CSA496" kind="departure" otherAirport="57.701 11.968" planeType="ATR72" time="11:50"/>
-      <flight callsign="CSA745" kind="arrival" otherAirport="43.7 7.278" planeType="A319" time="11:50"/>
-      <flight callsign="DAL411" kind="arrival" otherAirport="40.715 -74.007" planeType="B767" time="11:55"/>
-      <flight callsign="EZY8993" kind="arrival" otherAirport="51.506 -0.127" planeType="A319" time="11:55"/>
-      <flight callsign="QSC1104" follows="QSC1104" kind="departure" otherAirport="35.342 25.153" planeType="B737" time="12:00"/>
-      <flight callsign="QSC2036" follows="QSC2036" kind="departure" otherAirport="9.899 -74.86" planeType="B737" time="12:00"/>
-      <flight callsign="NAX1502" kind="arrival" otherAirport="59.912 10.75" planeType="B737" time="12:00"/>
-      <flight callsign="CSA24" follows="CSA24" kind="departure" otherAirport="49.819 18.123" planeType="ATR42" time="12:05"/>
-      <flight callsign="CSA782" follows="CSA782" kind="departure" otherAirport="52.236 21.01" planeType="ATR72" time="12:05"/>
-      <flight callsign="CSA724" follows="CSA724" kind="departure" otherAirport="41.903 12.496" planeType="A319" time="12:05"/>
-      <flight callsign="AFL2012" kind="arrival" otherAirport="55.757 37.615" planeType="A320" time="12:05"/>
-      <flight callsign="LZB302" follows="LZB302" kind="departure" otherAirport="42.697 23.324" planeType="E195" time="12:10"/>
-      <flight callsign="CSA790" follows="CSA790" kind="departure" otherAirport="47.5 19.055" planeType="ATR72" time="12:10"/>
-      <flight callsign="CSA972" follows="CSA972" kind="departure" otherAirport="48.717 21.253" planeType="ATR72" time="12:15"/>
-      <flight callsign="QSC1084" kind="departure" otherAirport="42.643 18.111" planeType="B737" time="12:15"/>
-      <flight callsign="QSC1162" follows="QSC1162" kind="departure" otherAirport="38.906 1.42" planeType="B737" time="12:15"/>
-      <flight callsign="QSC1170" follows="QSC1170" kind="departure" otherAirport="32.647 -16.909" planeType="B737" time="12:20"/>
-      <flight callsign="RLA4412" kind="arrival" otherAirport="45.759 4.829" planeType="CRJ" time="12:20"/>
-      <flight callsign="QSC1082" follows="QSC1082" kind="departure" otherAirport="43.507 16.442" planeType="B737" time="12:25"/>
-      <flight callsign="EZY8994" follows="EZY8994" kind="departure" otherAirport="51.506 -0.127" planeType="A319" time="12:25"/>
-      <flight callsign="CSA760" follows="CSA760" kind="departure" otherAirport="48.857 2.341" planeType="A319" time="12:25"/>
-      <flight callsign="DLH1690" kind="arrival" otherAirport="48.136 11.578" planeType="A319" time="12:25"/>
-      <flight callsign="LOT527" kind="arrival" otherAirport="52.236 21.01" planeType="E175" time="12:25"/>
-      <flight callsign="QSC1020" follows="QSC1020" kind="departure" otherAirport="40.918 9.496" planeType="B737" time="12:30"/>
-      <flight callsign="QSC1096" follows="QSC1096" kind="departure" otherAirport="51.506 -0.127" planeType="B737" time="12:30"/>
-      <flight callsign="NAX1503" follows="NAX1503" kind="departure" otherAirport="59.912 10.75" planeType="B737" time="12:30"/>
-      <flight callsign="TSC101" follows="TSC101" kind="departure" otherAirport="45.512 -73.555" planeType="A310" time="12:35"/>
-      <flight callsign="TGZ788" follows="TGZ788" kind="departure" otherAirport="41.709 44.796" planeType="E195" time="12:40"/>
-      <flight callsign="CSA894" follows="CSA894" kind="departure" otherAirport="55.757 37.615" planeType="A319" time="12:40"/>
-      <flight callsign="QSC1284" follows="QSC1284" kind="departure" otherAirport="32.086 34.79" planeType="B737" time="12:45"/>
-      <flight callsign="CHH7938" kind="arrival" otherAirport="44.813 20.463" planeType="A330" time="12:45"/>
-      <flight callsign="FOS7978" kind="arrival" otherAirport="47.377 8.54" planeType="A320" time="12:45"/>
-      <flight callsign="RYR4069" follows="RYR4069" kind="departure" otherAirport="50.06 19.932" planeType="B737" time="12:55"/>
-      <flight callsign="SNG2206" kind="arrival" otherAirport="47.218 -1.553" planeType="A319" time="12:55"/>
-      <flight callsign="CSA662" follows="CSA662" kind="departure" otherAirport="52.479 -1.906" planeType="A319" time="13:00"/>
-      <flight callsign="DLH1691" follows="DLH1691" kind="departure" otherAirport="48.136 11.578" planeType="A319" time="13:00"/>
-      <flight callsign="LOT528" follows="LOT528" kind="departure" otherAirport="52.236 21.01" planeType="E175" time="13:00"/>
-      <flight callsign="BAW862" kind="arrival" otherAirport="51.506 -0.127" planeType="A320" time="13:00"/>
-      <flight callsign="EZY2581" kind="arrival" otherAirport="45.468 9.182" planeType="A320" time="13:00"/>
-      <flight callsign="EZY7905" kind="arrival" otherAirport="52.37 4.908" planeType="A320" time="13:00"/>
-      <flight callsign="UAE139" kind="arrival" otherAirport="25.27 55.309" planeType="A380" time="13:00"/>
-      <flight callsign="AFL2013" follows="AFL2013" kind="departure" otherAirport="55.757 37.615" planeType="A320" time="13:05"/>
-      <flight callsign="BRU861" kind="arrival" otherAirport="53.904 27.565" planeType="B737" time="13:05"/>
-      <flight callsign="RLA4413" follows="RLA4413" kind="departure" otherAirport="45.759 4.829" planeType="CRJ" time="13:10"/>
-      <flight callsign="QTR291" kind="arrival" otherAirport="25.295 51.519" planeType="A320" time="13:10"/>
-      <flight callsign="SNG2207" follows="SNG2207" kind="departure" otherAirport="47.218 -1.553" planeType="A319" time="13:20"/>
-      <flight callsign="FOS8653" follows="FOS8653" kind="departure" otherAirport="41.388 2.17" planeType="A320" time="13:25"/>
-      <flight callsign="RYR5507" kind="arrival" otherAirport="45.468 9.182" planeType="B737" time="13:25"/>
-      <flight callsign="CSA735" kind="arrival" otherAirport="45.438 12.318" planeType="ATR72" time="13:25"/>
-      <flight callsign="EZY2582" follows="EZY2582" kind="departure" otherAirport="45.468 9.182" planeType="A320" time="13:30"/>
-      <flight callsign="EZY7906" follows="EZY7906" kind="departure" otherAirport="52.37 4.908" planeType="A320" time="13:30"/>
-      <flight callsign="DLH1396" kind="arrival" otherAirport="50.112 8.683" planeType="A320" time="13:30"/>
-      <flight callsign="CYP260" kind="arrival" otherAirport="34.916 33.62" planeType="A319" time="13:35"/>
-      <flight callsign="KLM1355" kind="arrival" otherAirport="52.37 4.908" planeType="B737" time="13:35"/>
-      <flight callsign="DAL211" follows="DAL211" kind="departure" otherAirport="40.715 -74.007" planeType="B767" time="13:40"/>
-      <flight callsign="THY1771" kind="arrival" otherAirport="41.061 28.988" planeType="A321" time="13:40"/>
-      <flight callsign="BAW863" follows="BAW863" kind="departure" otherAirport="51.506 -0.127" planeType="A320" time="13:45"/>
-      <flight callsign="BRU862" follows="BRU862" kind="departure" otherAirport="53.904 27.565" planeType="B737" time="13:50"/>
-      <flight callsign="SWR1486" kind="arrival" otherAirport="47.377 8.54" planeType="A320" time="13:55"/>
-      <flight callsign="AUA707" kind="arrival" otherAirport="48.203 16.368" planeType="DH8A" time="13:55"/>
-      <flight callsign="BAW7339" kind="arrival" otherAirport="51.506 -0.127" planeType="E195" time="14:10"/>
-      <flight callsign="RYR8562" follows="RYR8562" kind="departure" otherAirport="53.41 -2.978" planeType="B737" time="14:15"/>
-      <flight callsign="DLH1397" follows="DLH1397" kind="departure" otherAirport="50.112 8.683" planeType="A320" time="14:15"/>
-      <flight callsign="KLM1356" follows="KLM1356" kind="departure" otherAirport="52.37 4.908" planeType="B737" time="14:20"/>
-      <flight callsign="CSA730" follows="CSA730" kind="departure" otherAirport="44.505 11.345" planeType="ATR72" time="14:20"/>
-      <flight callsign="CYP261" follows="CYP261" kind="departure" otherAirport="34.916 33.62" planeType="A319" time="14:35"/>
-      <flight callsign="SWR1487" follows="SWR1487" kind="departure" otherAirport="47.377 8.54" planeType="A320" time="14:35"/>
-      <flight callsign="THY1772" follows="THY1772" kind="departure" otherAirport="41.061 28.988" planeType="A321" time="14:35"/>
-      <flight callsign="AFL2018" kind="arrival" otherAirport="55.757 37.615" planeType="SU95" time="14:35"/>
-      <flight callsign="EZY3067" kind="arrival" otherAirport="51.506 -0.127" planeType="A319" time="14:35"/>
-      <flight callsign="AFR1082" kind="arrival" otherAirport="48.857 2.341" planeType="A321" time="14:35"/>
-      <flight callsign="FAJ301" kind="arrival" otherAirport="41.061 28.988" planeType="A320" time="14:40"/>
-      <flight callsign="CHH7938" follows="CHH7938" kind="departure" otherAirport="39.907 116.388" planeType="A330" time="14:45"/>
-      <flight callsign="BAW7338" follows="BAW7338" kind="departure" otherAirport="51.506 -0.127" planeType="E195" time="14:50"/>
-      <flight callsign="TRA5235" kind="arrival" otherAirport="51.436 5.485" planeType="B737" time="14:50"/>
-      <flight callsign="FOS6160" kind="arrival" otherAirport="41.903 12.496" planeType="A320" time="14:50"/>
-      <flight callsign="IBE3148" kind="arrival" otherAirport="40.42 -3.706" planeType="A321" time="14:55"/>
-      <flight callsign="CSA893" kind="arrival" otherAirport="55.757 37.615" planeType="A319" time="15:00"/>
-      <flight callsign="EZY3068" follows="EZY3068" kind="departure" otherAirport="51.506 -0.127" planeType="A319" time="15:05"/>
-      <flight callsign="LGL5483" kind="arrival" otherAirport="49.61 6.13" planeType="DH8A" time="15:05"/>
-      <flight callsign="TAR7254" kind="arrival" otherAirport="35.771 10.823" planeType="A320" time="15:05"/>
-      <flight callsign="AUA708" follows="AUA708" kind="departure" otherAirport="48.203 16.368" planeType="DH8A" time="15:20"/>
-      <flight callsign="AFR1083" follows="AFR1083" kind="departure" otherAirport="48.857 2.341" planeType="A321" time="15:25"/>
-      <flight callsign="SNG1466" kind="arrival" otherAirport="45.438 12.318" planeType="B717" time="15:25"/>
-      <flight callsign="TRA5236" follows="TRA5236" kind="departure" otherAirport="51.436 5.485" planeType="B737" time="15:30"/>
-      <flight callsign="FAJ302" follows="FAJ302" kind="departure" otherAirport="41.061 28.988" planeType="A320" time="15:30"/>
-      <flight callsign="FOS6161" follows="FOS6161" kind="departure" otherAirport="41.903 12.496" planeType="A320" time="15:30"/>
-      <flight callsign="RYR4070" kind="arrival" otherAirport="50.06 19.932" planeType="B737" time="15:35"/>
-      <flight callsign="AUI807" kind="arrival" otherAirport="50.451 30.524" planeType="B737" time="15:35"/>
-      <flight callsign="IBE3149" follows="IBE3149" kind="departure" otherAirport="40.42 -3.706" planeType="A321" time="15:40"/>
-      <flight callsign="LGL5484" follows="LGL5484" kind="departure" otherAirport="49.61 6.13" planeType="DH8A" time="15:40"/>
-      <flight callsign="EIN644" kind="arrival" otherAirport="53.348 -6.248" planeType="A320" time="15:45"/>
-      <flight callsign="KLM1353" kind="arrival" otherAirport="52.37 4.908" planeType="E195" time="15:45"/>
-      <flight callsign="SNG2419" follows="SNG2419" kind="departure" otherAirport="44.837 -0.581" planeType="B717" time="15:50"/>
-      <flight callsign="DLH1692" kind="arrival" otherAirport="48.136 11.578" planeType="A319" time="15:50"/>
-      <flight callsign="AFL2019" follows="AFL2019" kind="departure" otherAirport="55.757 37.615" planeType="SU95" time="15:55"/>
-      <flight callsign="UAE140" follows="UAE140" kind="departure" otherAirport="25.27 55.309" planeType="A380" time="15:55"/>
-      <flight callsign="RYR7327" follows="RYR7327" kind="departure" otherAirport="53.348 -6.248" planeType="B737" time="16:00"/>
-      <flight callsign="CSA710" follows="CSA710" kind="departure" otherAirport="38.726 -9.149" planeType="A319" time="16:00"/>
-      <flight callsign="TAR7255" follows="TAR7255" kind="departure" otherAirport="35.771 10.823" planeType="A320" time="16:00"/>
-      <flight callsign="CSA973" kind="arrival" otherAirport="48.717 21.253" planeType="ATR72" time="16:00"/>
-      <flight callsign="CSA791" kind="arrival" otherAirport="47.5 19.055" planeType="ATR72" time="16:05"/>
-      <flight callsign="CSA25" kind="arrival" otherAirport="49.819 18.123" planeType="ATR42" time="16:10"/>
-      <flight callsign="CSA783" kind="arrival" otherAirport="52.236 21.01" planeType="ATR72" time="16:15"/>
-      <flight callsign="QSC1083" kind="arrival" otherAirport="43.507 16.442" planeType="B737" time="16:15"/>
-      <flight callsign="AUI808" follows="AUI808" kind="departure" otherAirport="50.451 30.524" planeType="B737" time="16:20"/>
-      <flight callsign="EWG9774" kind="arrival" otherAirport="51.216 6.777" planeType="A320" time="16:20"/>
-      <flight callsign="EIN645" follows="EIN645" kind="departure" otherAirport="53.348 -6.248" planeType="A320" time="16:25"/>
-      <flight callsign="DLH1693" follows="DLH1693" kind="departure" otherAirport="48.136 11.578" planeType="A319" time="16:25"/>
-      <flight callsign="BAW860" kind="arrival" otherAirport="51.506 -0.127" planeType="A320" time="16:25"/>
-      <flight callsign="CSA491" kind="arrival" otherAirport="59.333 18.067" planeType="B737" time="16:25"/>
-      <flight callsign="CSA740" follows="CSA740" kind="departure" otherAirport="48.585 7.736" planeType="ATR72" time="16:30"/>
-      <flight callsign="QSC1027" kind="arrival" otherAirport="38.973 16.317" planeType="B737" time="16:30"/>
-      <flight callsign="QSC1085" kind="arrival" otherAirport="42.643 18.111" planeType="B737" time="16:30"/>
-      <flight callsign="LOT521" kind="arrival" otherAirport="52.236 21.01" planeType="DH8A" time="16:35"/>
-      <flight callsign="SVR701" kind="arrival" otherAirport="56.838 60.599" planeType="A320" time="16:35"/>
-      <flight callsign="BEE6180" kind="arrival" otherAirport="-37.568 140.133" planeType="E195" time="16:35"/>
-      <flight callsign="CSA725" kind="arrival" otherAirport="41.903 12.496" planeType="A319" time="16:40"/>
-      <flight callsign="FOS9496" kind="arrival" otherAirport="48.857 2.341" planeType="A320" time="16:40"/>
-      <flight callsign="KLM1354" follows="KLM1354" kind="departure" otherAirport="52.37 4.908" planeType="E195" time="16:45"/>
-      <flight callsign="IBK3580" kind="arrival" otherAirport="55.676 12.568" planeType="B737" time="16:45"/>
-      <flight callsign="EWG7778" kind="arrival" otherAirport="53.554 9.992" planeType="A320" time="16:45"/>
-      <flight callsign="EZY3381" kind="arrival" otherAirport="45.438 12.318" planeType="A319" time="16:45"/>
-      <flight callsign="CSA761" kind="arrival" otherAirport="48.857 2.341" planeType="A319" time="16:45"/>
-      <flight callsign="AFL2014" kind="arrival" otherAirport="55.757 37.615" planeType="A320" time="16:50"/>
-      <flight callsign="EWG9775" kind="departure" otherAirport="51.216 6.777" planeType="A320" time="16:55"/>
-      <flight callsign="AZA512" kind="arrival" otherAirport="41.903 12.496" planeType="A320" time="16:55"/>
-      <flight callsign="KAL935" kind="arrival" otherAirport="37.559 127" planeType="B747" time="16:55"/>
-      <flight callsign="CSA481" kind="arrival" otherAirport="60.171 24.933" planeType="A319" time="16:55"/>
-      <flight callsign="CSA689" kind="arrival" otherAirport="41.388 2.17" planeType="B737" time="16:55"/>
-      <flight callsign="CSA497" kind="arrival" otherAirport="57.701 11.968" planeType="ATR72" time="16:55"/>
-      <flight callsign="CSA887" kind="arrival" otherAirport="59.933 30.306" planeType="A319" time="17:00"/>
-      <flight callsign="LOT522" follows="LOT522" kind="departure" otherAirport="52.236 21.01" planeType="DH8A" time="17:10"/>
-      <flight callsign="BEE6181" follows="BEE6181" kind="departure" otherAirport="-37.568 140.133" planeType="E195" time="17:10"/>
-      <flight callsign="QTR292" follows="QTR292" kind="departure" otherAirport="25.295 51.519" planeType="A320" time="17:10"/>
-      <flight callsign="QSC1199" kind="arrival" otherAirport="55.757 37.615" planeType="B737" time="17:10"/>
-      <flight callsign="IBK3581" follows="IBK3581" kind="departure" otherAirport="55.676 12.568" planeType="B737" time="17:15"/>
-      <flight callsign="EZY3382" follows="EZY3382" kind="departure" otherAirport="45.438 12.318" planeType="A319" time="17:15"/>
-      <flight callsign="BAW861" follows="BAW861" kind="departure" otherAirport="51.506 -0.127" planeType="A320" time="17:15"/>
-      <flight callsign="QSC1097" kind="arrival" otherAirport="51.506 -0.127" planeType="B737" time="17:15"/>
-      <flight callsign="QSC1145" kind="arrival" otherAirport="37.784 20.898" planeType="B737" time="17:15"/>
-      <flight callsign="EWG7779" follows="EWG7779" kind="departure" otherAirport="53.554 9.992" planeType="A320" time="17:20"/>
-      <flight callsign="FOS9497" follows="FOS9497" kind="departure" otherAirport="48.857 2.341" planeType="A320" time="17:20"/>
-      <flight callsign="CSA803" kind="arrival" otherAirport="44.434 26.103" planeType="ATR72" time="17:20"/>
-      <flight callsign="SVR702" follows="SVR702" kind="departure" otherAirport="56.838 60.599" planeType="A320" time="17:25"/>
-      <flight callsign="QSC1021" kind="arrival" otherAirport="40.918 9.496" planeType="B737" time="17:25"/>
-      <flight callsign="RYR3039" kind="arrival" otherAirport="41.388 2.17" planeType="B737" time="17:25"/>
-      <flight callsign="CSA618" follows="CSA618" kind="departure" otherAirport="52.37 4.908" planeType="A319" time="17:30"/>
-      <flight callsign="DLH1400" kind="arrival" otherAirport="50.112 8.683" planeType="A320" time="17:30"/>
-      <flight callsign="CSA526" follows="CSA526" kind="departure" otherAirport="51.216 6.777" planeType="ATR72" time="17:35"/>
-      <flight callsign="CSA766" follows="CSA766" kind="departure" otherAirport="48.857 2.341" planeType="A319" time="17:35"/>
-      <flight callsign="CSA966" follows="CSA966" kind="departure" otherAirport="48.149 17.107" planeType="ATR42" time="17:35"/>
-      <flight callsign="CSA536" follows="CSA536" kind="departure" otherAirport="50.112 8.683" planeType="ATR72" time="17:35"/>
-      <flight callsign="CSA778" follows="CSA778" kind="departure" otherAirport="52.236 21.01" planeType="ATR72" time="17:40"/>
-      <flight callsign="CSA904" follows="CSA904" kind="departure" otherAirport="55.757 37.615" planeType="A319" time="17:40"/>
-      <flight callsign="CSA636" follows="CSA636" kind="departure" otherAirport="50.844 4.356" planeType="A319" time="17:40"/>
-      <flight callsign="CSA663" kind="arrival" otherAirport="52.479 -1.906" planeType="A319" time="17:40"/>
-      <flight callsign="AZA513" follows="AZA513" kind="departure" otherAirport="41.903 12.496" planeType="A320" time="17:45"/>
-      <flight callsign="CSA508" follows="CSA508" kind="departure" otherAirport="55.676 12.568" planeType="B737" time="17:45"/>
-      <flight callsign="KLM1357" kind="arrival" otherAirport="52.37 4.908" planeType="B737" time="17:45"/>
-      <flight callsign="CSA788" follows="CSA788" kind="departure" otherAirport="47.5 19.055" planeType="ATR72" time="17:50"/>
-      <flight callsign="AFL2015" follows="AFL2015" kind="departure" otherAirport="55.757 37.615" planeType="A320" time="17:50"/>
-      <flight callsign="BXI2811" kind="arrival" otherAirport="50.844 4.356" planeType="A319" time="17:50"/>
-      <flight callsign="CSA722" follows="CSA722" kind="departure" otherAirport="45.468 9.182" planeType="A319" time="17:55"/>
-      <flight callsign="CSA191" kind="arrival" otherAirport="37.559 127" planeType="A330" time="17:55"/>
-      <flight callsign="CSA701" kind="arrival" otherAirport="40.42 -3.706" planeType="A321" time="17:55"/>
-      <flight callsign="QSC1106" follows="QSC1106" kind="departure" otherAirport="35.342 25.153" planeType="B737" time="18:00"/>
-      <flight callsign="QSC1149" kind="arrival" otherAirport="36.448 28.226" planeType="B737" time="18:00"/>
-      <flight callsign="AUA709" kind="arrival" otherAirport="48.203 16.368" planeType="E195" time="18:00"/>
-      <flight callsign="RYR3040" follows="RYR3040" kind="departure" otherAirport="41.388 2.17" planeType="B737" time="18:05"/>
-      <flight callsign="QSC1152" follows="QSC1152" kind="departure" otherAirport="36.718 -4.42" planeType="B737" time="18:05"/>
-      <flight callsign="QSC1164" follows="QSC1164" kind="departure" otherAirport="39.571 2.647" planeType="B737" time="18:05"/>
-      <flight callsign="QSC1114" follows="QSC1114" kind="departure" otherAirport="39.619 19.908" planeType="B737" time="18:15"/>
-      <flight callsign="ADR568" kind="arrival" otherAirport="46.051 14.503" planeType="CRJ" time="18:15"/>
-      <flight callsign="DLH1401" follows="DLH1401" kind="departure" otherAirport="50.112 8.683" planeType="A320" time="18:20"/>
-      <flight callsign="QSC1112" follows="QSC1112" kind="departure" otherAirport="36.448 28.226" planeType="B737" time="18:20"/>
-      <flight callsign="QSC1163" kind="arrival" otherAirport="38.906 1.42" planeType="B737" time="18:25"/>
-      <flight callsign="THY1769" kind="arrival" otherAirport="41.061 28.988" planeType="A321" time="18:25"/>
-      <flight callsign="KLM1358" follows="KLM1358" kind="departure" otherAirport="52.37 4.908" planeType="B737" time="18:30"/>
-      <flight callsign="QSC1116" follows="QSC1116" kind="departure" otherAirport="39.619 19.908" planeType="B737" time="18:30"/>
-      <flight callsign="QSC1105" kind="arrival" otherAirport="35.342 25.153" planeType="B737" time="18:30"/>
-      <flight callsign="QSC2327" kind="arrival" otherAirport="40.936 24.414" planeType="B737" time="18:30"/>
-      <flight callsign="QSC1054" follows="QSC1054" kind="departure" otherAirport="39.469 -0.377" planeType="B737" time="18:35"/>
-      <flight callsign="QSC1192" follows="QSC1192" kind="departure" otherAirport="36.879 30.709" planeType="B737" time="18:35"/>
-      <flight callsign="NAX1516" kind="arrival" otherAirport="60.391 5.333" planeType="B737" time="18:35"/>
-      <flight callsign="EXS667" kind="arrival" otherAirport="52.479 -1.906" planeType="B737" time="18:35"/>
-      <flight callsign="AUA710" follows="AUA710" kind="departure" otherAirport="48.203 16.368" planeType="E195" time="18:40"/>
-      <flight callsign="BXI2812" follows="BXI2812" kind="departure" otherAirport="50.844 4.356" planeType="A319" time="18:40"/>
-      <flight callsign="QSC1128" follows="QSC1128" kind="departure" otherAirport="36.89 27.289" planeType="B737" time="18:45"/>
-      <flight callsign="ADR568" follows="ADR568" kind="departure" otherAirport="52.236 21.01" planeType="CRJ" time="18:45"/>
-      <flight callsign="FIN1223" kind="arrival" otherAirport="60.171 24.933" planeType="A321" time="18:45"/>
-      <flight callsign="KAL936" follows="KAL936" kind="departure" otherAirport="37.559 127" planeType="B747" time="18:50"/>
-      <flight callsign="CSA731" kind="arrival" otherAirport="44.505 11.345" planeType="ATR72" time="18:50"/>
-      <flight callsign="CSA895" kind="arrival" otherAirport="55.757 37.615" planeType="A319" time="18:50"/>
-      <flight callsign="QSC1197" kind="arrival" otherAirport="36.879 30.709" planeType="B737" time="18:50"/>
-      <flight callsign="AFL2024" kind="arrival" otherAirport="55.757 37.615" planeType="A320" time="18:50"/>
-      <flight callsign="TAP1300" kind="arrival" otherAirport="38.726 -9.149" planeType="A321" time="18:50"/>
-      <flight callsign="EZY1217" kind="arrival" otherAirport="47.549 7.588" planeType="A320" time="18:50"/>
-      <flight callsign="RYR8561" kind="arrival" otherAirport="53.41 -2.978" planeType="B737" time="19:00"/>
-      <flight callsign="NAX1517" follows="NAX1517" kind="departure" otherAirport="60.391 5.333" planeType="B737" time="19:05"/>
-      <flight callsign="BTI483" kind="arrival" otherAirport="56.946 24.115" planeType="DH8A" time="19:10"/>
-      <flight callsign="LOT525" kind="arrival" otherAirport="52.236 21.01" planeType="E175" time="19:15"/>
-      <flight callsign="SWR1498" kind="arrival" otherAirport="47.377 8.54" planeType="A320" time="19:15"/>
-      <flight callsign="EXS668" follows="EXS668" kind="departure" otherAirport="52.479 -1.906" planeType="B737" time="19:20"/>
-      <flight callsign="QSC1150" follows="QSC1150" kind="departure" otherAirport="36.448 28.226" planeType="B737" time="19:20"/>
-      <flight callsign="THY1770" follows="THY1770" kind="departure" otherAirport="41.061 28.988" planeType="A321" time="19:20"/>
-      <flight callsign="EZY1218" follows="EZY1218" kind="departure" otherAirport="47.549 7.588" planeType="A320" time="19:20"/>
-      <flight callsign="RYR2014" follows="RYR2014" kind="departure" otherAirport="51.506 -0.127" planeType="B737" time="19:25"/>
-      <flight callsign="BAW856" kind="arrival" otherAirport="51.506 -0.127" planeType="A320" time="19:25"/>
-      <flight callsign="EXS509" kind="arrival" otherAirport="-32.928 151.773" planeType="B737" time="19:25"/>
-      <flight callsign="FIN1224" follows="FIN1224" kind="departure" otherAirport="60.171 24.933" planeType="A321" time="19:30"/>
-      <flight callsign="EXS153" kind="arrival" otherAirport="55.858 -4.243" planeType="B737" time="19:30"/>
-      <flight callsign="BTI484" follows="BTI484" kind="departure" otherAirport="56.946 24.115" planeType="DH8A" time="19:35"/>
-      <flight callsign="TAP1305" follows="TAP1305" kind="departure" otherAirport="38.726 -9.149" planeType="A321" time="19:35"/>
-      <flight callsign="AFR1582" kind="arrival" otherAirport="48.857 2.341" planeType="A321" time="19:45"/>
-      <flight callsign="LOT526" follows="LOT526" kind="departure" otherAirport="52.236 21.01" planeType="E175" time="19:50"/>
-      <flight callsign="AFL2025" follows="AFL2025" kind="departure" otherAirport="55.757 37.615" planeType="A320" time="19:50"/>
-      <flight callsign="CSA544" follows="CSA544" kind="departure" otherAirport="53.554 9.992" planeType="A319" time="19:50"/>
-      <flight callsign="IBK448" kind="arrival" otherAirport="60.171 24.933" planeType="B737" time="19:50"/>
-      <flight callsign="SWR1499" follows="SWR1499" kind="departure" otherAirport="47.377 8.54" planeType="A320" time="19:55"/>
-      <flight callsign="UAE137" kind="arrival" otherAirport="25.27 55.309" planeType="B777" time="19:55"/>
-      <flight callsign="QTR8231" kind="arrival" otherAirport="47.5 19.055" planeType="A330" time="19:55"/>
-      <flight callsign="RYR1374" kind="arrival" otherAirport="51.506 -0.127" planeType="B737" time="20:00"/>
-      <flight callsign="CSA741" kind="arrival" otherAirport="48.585 7.736" planeType="ATR72" time="20:00"/>
-      <flight callsign="EWG9770" kind="arrival" otherAirport="51.216 6.777" planeType="A320" time="20:00"/>
-      <flight callsign="QTR8232" kind="arrival" otherAirport="47.5 19.055" planeType="A330" time="20:00"/>
-      <flight callsign="EXS510" follows="EXS510" kind="departure" otherAirport="-32.928 151.773" planeType="B737" time="20:10"/>
-      <flight callsign="BAW857" follows="BAW857" kind="departure" otherAirport="51.506 -0.127" planeType="A320" time="20:15"/>
-      <flight callsign="PSD4038" kind="arrival" otherAirport="48.857 2.341" planeType="B737" time="20:15"/>
-      <flight callsign="EZY7907" kind="arrival" otherAirport="52.37 4.908" planeType="A320" time="20:15"/>
-      <flight callsign="DLH1694" kind="arrival" otherAirport="48.136 11.578" planeType="E195" time="20:15"/>
-      <flight callsign="IBK449" follows="IBK449" kind="departure" otherAirport="60.171 24.933" planeType="B737" time="20:20"/>
-      <flight callsign="EXS154" follows="EXS154" kind="departure" otherAirport="55.858 -4.243" planeType="B737" time="20:20"/>
-      <flight callsign="RYR1375" follows="RYR1375" kind="departure" otherAirport="51.506 -0.127" planeType="B737" time="20:25"/>
-      <flight callsign="ADR569" follows="ADR569" kind="departure" otherAirport="46.051 14.503" planeType="SB20" time="20:25"/>
-      <flight callsign="QTR8232" follows="QTR8232" kind="departure" otherAirport="25.295 51.519" planeType="A330" time="20:25"/>
-      <flight callsign="EWG772" kind="arrival" otherAirport="50.942 6.955" planeType="A320" time="20:25"/>
-      <flight callsign="AFR1583" follows="AFR1583" kind="departure" otherAirport="48.857 2.341" planeType="A321" time="20:35"/>
-      <flight callsign="EWG9771" follows="EWG9771" kind="departure" otherAirport="51.216 6.777" planeType="A320" time="20:35"/>
-      <flight callsign="EZY1801" kind="arrival" otherAirport="53.48 -2.249" planeType="A320" time="20:35"/>
-      <flight callsign="EZY7908" follows="EZY7908" kind="departure" otherAirport="52.37 4.908" planeType="A320" time="20:45"/>
-      <flight callsign="DLH1695" follows="DLH1695" kind="departure" otherAirport="48.136 11.578" planeType="E195" time="20:50"/>
-      <flight callsign="TRA5237" kind="arrival" otherAirport="51.436 5.485" planeType="B737" time="20:50"/>
-      <flight callsign="AUA711" kind="arrival" otherAirport="48.203 16.368" planeType="DH8A" time="20:50"/>
-      <flight callsign="FOS8656" kind="arrival" otherAirport="41.388 2.17" planeType="A320" time="20:50"/>
-      <flight callsign="PSD4039" follows="PSD4039" kind="departure" otherAirport="48.857 2.341" planeType="B737" time="20:55"/>
-      <flight callsign="SNG2418" kind="arrival" otherAirport="44.837 -0.581" planeType="B717" time="20:55"/>
-      <flight callsign="EWG773" follows="EWG773" kind="departure" otherAirport="50.942 6.955" planeType="A320" time="21:00"/>
-      <flight callsign="LOT529" kind="arrival" otherAirport="52.236 21.01" planeType="DH8A" time="21:00"/>
-      <flight callsign="EZY1802" follows="EZY1802" kind="departure" otherAirport="53.48 -2.249" planeType="A320" time="21:05"/>
-      <flight callsign="SAS767" kind="arrival" otherAirport="55.676 12.568" planeType="CRJ" time="21:05"/>
-      <flight callsign="SAS1769" kind="arrival" otherAirport="59.333 18.067" planeType="A320" time="21:05"/>
-      <flight callsign="AFL2016" kind="arrival" otherAirport="55.757 37.615" planeType="A320" time="21:05"/>
-      <flight callsign="CSA789" kind="arrival" otherAirport="47.5 19.055" planeType="ATR72" time="21:10"/>
-      <flight callsign="CSA509" kind="arrival" otherAirport="55.676 12.568" planeType="B737" time="21:10"/>
-      <flight callsign="CSA779" kind="arrival" otherAirport="52.236 21.01" planeType="ATR72" time="21:15"/>
-      <flight callsign="WZZ2602" kind="arrival" otherAirport="51.506 -0.127" planeType="A321" time="21:15"/>
-      <flight callsign="CSA537" kind="arrival" otherAirport="50.112 8.683" planeType="ATR72" time="21:15"/>
-      <flight callsign="CSA619" kind="arrival" otherAirport="52.37 4.908" planeType="A319" time="21:15"/>
-      <flight callsign="CSA637" kind="arrival" otherAirport="50.844 4.356" planeType="A319" time="21:15"/>
-      <flight callsign="SNG1467" follows="SNG1467" kind="departure" otherAirport="45.438 12.318" planeType="B717" time="21:20"/>
-      <flight callsign="AUA712" follows="AUA712" kind="departure" otherAirport="48.203 16.368" planeType="DH8A" time="21:20"/>
-      <flight callsign="EZY6267" kind="arrival" otherAirport="51.454 -2.592" planeType="A320" time="21:20"/>
-      <flight callsign="EZY2585" kind="arrival" otherAirport="45.468 9.182" planeType="A320" time="21:25"/>
-      <flight callsign="EZY8997" kind="arrival" otherAirport="51.506 -0.127" planeType="A320" time="21:25"/>
-      <flight callsign="NAX1504" kind="arrival" otherAirport="59.912 10.75" planeType="B737" time="21:25"/>
-      <flight callsign="TRA5238" follows="TRA5238" kind="departure" otherAirport="51.436 5.485" planeType="B737" time="21:30"/>
-      <flight callsign="FOS8657" follows="FOS8657" kind="departure" otherAirport="41.388 2.17" planeType="A320" time="21:30"/>
-      <flight callsign="QSC1285" kind="arrival" otherAirport="32.086 34.79" planeType="B737" time="21:30"/>
-      <flight callsign="UAE138" follows="UAE138" kind="departure" otherAirport="25.27 55.309" planeType="B777" time="21:35"/>
-      <flight callsign="CSA527" kind="arrival" otherAirport="51.216 6.777" planeType="ATR72" time="21:35"/>
-      <flight callsign="AUI809" kind="arrival" otherAirport="50.451 30.524" planeType="B737" time="21:35"/>
-      <flight callsign="RYR7326" kind="arrival" otherAirport="53.348 -6.248" planeType="B737" time="21:40"/>
-      <flight callsign="SAS768" follows="SAS768" kind="departure" otherAirport="55.676 12.568" planeType="CRJ" time="21:45"/>
-      <flight callsign="SAS1770" follows="SAS1770" kind="departure" otherAirport="59.333 18.067" planeType="B737" time="21:45"/>
-      <flight callsign="CSA723" kind="arrival" otherAirport="45.468 9.182" planeType="A319" time="21:45"/>
-      <flight callsign="EZY6268" follows="EZY6268" kind="departure" otherAirport="51.454 -2.592" planeType="A320" time="21:50"/>
-      <flight callsign="WZZ2601" follows="WZZ2601" kind="departure" otherAirport="51.506 -0.127" planeType="A321" time="21:50"/>
-      <flight callsign="EZY6268" follows="EZY6268" kind="departure" otherAirport="51.454 -2.592" planeType="A320" time="21:50"/>
-      <flight callsign="WZZ2601" follows="WZZ2601" kind="departure" otherAirport="51.506 -0.127" planeType="A321" time="21:50"/>
-      <flight callsign="CSA818" follows="CSA818" kind="departure" otherAirport="45.807 15.968" planeType="ATR72" time="21:55"/>
-      <flight callsign="EZY2586" follows="EZY2586" kind="departure" otherAirport="45.468 9.182" planeType="A320" time="21:55"/>
-      <flight callsign="EZY8998" follows="EZY8998" kind="departure" otherAirport="51.506 -0.127" planeType="A320" time="21:55"/>
-      <flight callsign="NAX1505" follows="NAX1505" kind="departure" otherAirport="59.912 10.75" planeType="B737" time="21:55"/>
-      <flight callsign="CSA818" follows="CSA818" kind="departure" otherAirport="45.807 15.968" planeType="ATR72" time="21:55"/>
-      <flight callsign="EZY2586" follows="EZY2586" kind="departure" otherAirport="45.468 9.182" planeType="A320" time="21:55"/>
-      <flight callsign="EZY8998" follows="EZY8998" kind="departure" otherAirport="51.506 -0.127" planeType="A320" time="21:55"/>
-      <flight callsign="NAX1505" follows="NAX1505" kind="departure" otherAirport="59.912 10.75" planeType="B737" time="21:55"/>
-      <flight callsign="CSA767" kind="arrival" otherAirport="48.857 2.341" planeType="A319" time="21:55"/>
-      <flight callsign="CSA767" kind="arrival" otherAirport="48.857 2.341" planeType="A319" time="21:55"/>
-      <flight callsign="CSA20" follows="CSA20" kind="departure" otherAirport="49.819 18.123" planeType="ATR72" time="22:00"/>
-      <flight callsign="CSA912" follows="CSA912" kind="departure" otherAirport="56.838 60.599" planeType="A319" time="22:00"/>
-      <flight callsign="CSA20" follows="CSA20" kind="departure" otherAirport="49.819 18.123" planeType="ATR72" time="22:00"/>
-      <flight callsign="CSA912" follows="CSA912" kind="departure" otherAirport="56.838 60.599" planeType="A319" time="22:00"/>
-      <flight callsign="QSC1171" kind="arrival" otherAirport="32.647 -16.909" planeType="B737" time="22:10"/>
-      <flight callsign="CSA978" follows="CSA978" kind="departure" otherAirport="48.717 21.253" planeType="ATR72" time="22:15"/>
-      <flight callsign="BXI2815" kind="arrival" otherAirport="50.844 4.356" planeType="A319" time="22:25"/>
-      <flight callsign="KLM1359" kind="arrival" otherAirport="52.37 4.908" planeType="B737" time="22:30"/>
-      <flight callsign="CSA967" kind="arrival" otherAirport="48.149 17.107" planeType="ATR42" time="22:30"/>
-      <flight callsign="CSA916" follows="CSA916" kind="departure" otherAirport="50.451 30.524" planeType="B737" time="22:40"/>
-      <flight callsign="CSA914" kind="departure" otherAirport="47.227 39.717" planeType="A319" time="22:40"/>
-      <flight callsign="BAW858" kind="arrival" otherAirport="51.506 -0.127" planeType="A320" time="23:00"/>
-      <flight callsign="QSC2037" kind="arrival" otherAirport="9.899 -74.86" planeType="B737" time="23:05"/>
-      <flight callsign="DLH1402" kind="arrival" otherAirport="50.112 8.683" planeType="A320" time="23:15"/>
-      <flight callsign="QSC1115" kind="arrival" otherAirport="39.619 19.908" planeType="B737" time="23:30"/>
-      <flight callsign="QSC1117" kind="arrival" otherAirport="39.619 19.908" planeType="B737" time="23:40"/>
-      <flight callsign="CSA711" kind="arrival" otherAirport="38.726 -9.149" planeType="A319" time="23:40"/>
-      <flight callsign="QSC1286" follows="QSC1286" kind="departure" otherAirport="32.086 34.79" planeType="B737" time="23:45"/>
-      <flight callsign="RYR2013" kind="arrival" otherAirport="51.506 -0.127" planeType="B737" time="23:45"/>
-      <flight callsign="QSC1165" kind="arrival" otherAirport="39.571 2.647" planeType="B737" time="23:50"/>
-      <flight callsign="CSA905" kind="arrival" otherAirport="55.757 37.615" planeType="A319" time="23:55"/>
-    </flights>
+  <flightListTraffic>
+    <flight callsign="QSC1240" kind="departure" otherAirport="27.251 33.818" planeType="B737" time="0:05"/>
+    <flight callsign="QSC1234" kind="departure" otherAirport="27.251 33.818" planeType="A321" time="0:10"/>
+    <flight callsign="QSC1055" kind="arrival" otherAirport="39.469 -0.377" planeType="B737" time="0:45"/>
+    <flight callsign="AFL2017" kind="departure" otherAirport="55.757 37.615" planeType="A320" time="0:55"/>
+    <flight callsign="QSC1113" kind="arrival" otherAirport="36.448 28.226" planeType="B737" time="0:55"/>
+    <flight callsign="QSC1258" kind="departure" otherAirport="25.068 34.888" planeType="B737" time="1:10"/>
+    <flight callsign="QSC1159" kind="arrival" otherAirport="36.842 -2.464" planeType="B737" time="1:10"/>
+    <flight callsign="QSC1193" kind="arrival" otherAirport="36.879 30.709" planeType="B737" time="1:25"/>
+    <flight callsign="QSC1222" kind="departure" otherAirport="25.068 34.888" planeType="B737" time="1:30"/>
+    <flight callsign="QSC1153" kind="arrival" otherAirport="36.718 -4.42" planeType="B737" time="1:30"/>
+    <flight callsign="QSC1129" kind="arrival" otherAirport="36.89 27.289" planeType="B737" time="1:50"/>
+    <flight callsign="QSC2220" kind="departure" otherAirport="35.507 27.215" planeType="B737" time="3:10"/>
+    <flight callsign="QSC2236" follows="QSC2236" kind="departure" otherAirport="25.538 -103.36" planeType="B737"
+            time="3:15"/>
+    <flight callsign="QSC1124" kind="departure" otherAirport="42.731 -7.327" planeType="B737" time="4:45"/>
+    <flight callsign="QSC1146" follows="QSC1146" kind="departure" otherAirport="36.448 28.226" planeType="B737"
+            time="4:45"/>
+    <flight callsign="QSC1190" kind="departure" otherAirport="36.879 30.709" planeType="B737" time="4:45"/>
+    <flight callsign="QSC1126" kind="departure" otherAirport="36.89 27.289" planeType="B737" time="4:50"/>
+    <flight callsign="QSC1102" follows="QSC1102" kind="departure" otherAirport="35.342 25.153" planeType="B737"
+            time="4:55"/>
+    <flight callsign="QSC1118" kind="departure" otherAirport="37.784 20.898" planeType="B737" time="5:15"/>
+    <flight callsign="TAY89" kind="arrival" otherAirport="50.645 5.573" planeType="B737" time="5:55"/>
+    <flight callsign="CSA960" kind="departure" otherAirport="48.149 17.107" planeType="ATR72" time="6:00"/>
+    <flight callsign="QSC1130" kind="departure" otherAirport="38.958 20.751" planeType="B737" time="6:00"/>
+    <flight callsign="TAP1307" kind="departure" otherAirport="38.726 -9.149" planeType="A319" time="6:00"/>
+    <flight callsign="DLH1403" kind="departure" otherAirport="50.112 8.683" planeType="A321" time="6:00"/>
+    <flight callsign="CHH7937" kind="arrival" otherAirport="39.907 116.388" planeType="A330" time="6:00"/>
+    <flight callsign="QSC2326" follows="QSC2326" kind="departure" otherAirport="40.936 24.414" planeType="B737"
+            time="6:05"/>
+    <flight callsign="CSA923" kind="arrival" otherAirport="46.472 30.737" planeType="A319" time="6:10"/>
+    <flight callsign="RYR2122" kind="departure" otherAirport="50.844 4.356" planeType="B737" time="6:15"/>
+    <flight callsign="CSA917" kind="arrival" otherAirport="50.451 30.524" planeType="A319" time="6:15"/>
+    <flight callsign="CSA979" kind="arrival" otherAirport="48.717 21.253" planeType="ATR72" time="6:20"/>
+    <flight callsign="CSA21" kind="arrival" otherAirport="49.819 18.123" planeType="ATR42" time="6:25"/>
+    <flight callsign="CSA461" kind="arrival" otherAirport="64.146 -21.94" planeType="A319" time="6:25"/>
+    <flight callsign="KLM1350" kind="departure" otherAirport="52.37 4.908" planeType="B737" time="6:30"/>
+    <flight callsign="RYR1014" kind="departure" otherAirport="51.506 -0.127" planeType="B737" time="6:40"/>
+    <flight callsign="TAY89" follows="TAY89" kind="departure" otherAirport="49.197 16.604" planeType="B737"
+            time="6:40"/>
+    <flight callsign="BXI2816" kind="departure" otherAirport="50.844 4.356" planeType="A319" time="6:50"/>
+    <flight callsign="BAW853" kind="departure" otherAirport="51.506 -0.127" planeType="A320" time="6:50"/>
+    <flight callsign="CSA522" kind="departure" otherAirport="51.216 6.777" planeType="ATR72" time="6:55"/>
+    <flight callsign="CSA630" kind="departure" otherAirport="50.844 4.356" planeType="A319" time="6:55"/>
+    <flight callsign="CSA616" follows="CSA616" kind="departure" otherAirport="52.37 4.908" planeType="A319"
+            time="7:00"/>
+    <flight callsign="CSA510" kind="departure" otherAirport="56.153 10.205" planeType="ATR72" time="7:05"/>
+    <flight callsign="CSA718" kind="departure" otherAirport="45.468 9.182" planeType="A319" time="7:05"/>
+    <flight callsign="CSA776" follows="CSA776" kind="departure" otherAirport="52.236 21.01" planeType="ATR42"
+            time="7:05"/>
+    <flight callsign="CSA534" kind="departure" otherAirport="50.112 8.683" planeType="ATR72" time="7:10"/>
+    <flight callsign="CSA504" kind="departure" otherAirport="55.676 12.568" planeType="B737" time="7:10"/>
+    <flight callsign="CSA758" follows="CSA758" kind="departure" otherAirport="48.857 2.341" planeType="A319"
+            time="7:10"/>
+    <flight callsign="LOT530" kind="departure" otherAirport="52.236 21.01" planeType="DH8A" time="7:15"/>
+    <flight callsign="CSA786" kind="departure" otherAirport="47.5 19.055" planeType="ATR72" time="7:20"/>
+    <flight callsign="CSA251" kind="arrival" otherAirport="54.75 55.986" planeType="A319" time="7:20"/>
+    <flight callsign="CSA744" follows="CSA744" kind="departure" otherAirport="43.7 7.278" planeType="A319" time="7:30"/>
+    <flight callsign="AUA703" kind="arrival" otherAirport="48.203 16.368" planeType="E195" time="7:30"/>
+    <flight callsign="FDB781" kind="arrival" otherAirport="25.27 55.309" planeType="B737" time="7:40"/>
+    <flight callsign="QTR289" kind="arrival" otherAirport="25.295 51.519" planeType="A320" time="7:40"/>
+    <flight callsign="CHH7937" follows="CHH7937" kind="departure" otherAirport="44.813 20.463" planeType="A330"
+            time="7:50"/>
+    <flight callsign="SAS1767" kind="arrival" otherAirport="59.333 18.067" planeType="B737" time="8:00"/>
+    <flight callsign="SNG2094" kind="arrival" otherAirport="43.606 1.449" planeType="A319" time="8:10"/>
+    <flight callsign="AUA704" follows="AUA704" kind="departure" otherAirport="48.203 16.368" planeType="E195"
+            time="8:15"/>
+    <flight callsign="BTI479" kind="arrival" otherAirport="56.946 24.115" planeType="DH8A" time="8:20"/>
+    <flight callsign="KLM1351" kind="arrival" otherAirport="52.37 4.908" planeType="E195" time="8:20"/>
+    <flight callsign="EWG9772" kind="arrival" otherAirport="51.216 6.777" planeType="A320" time="8:25"/>
+    <flight callsign="SWR1472" kind="arrival" otherAirport="46.208 6.143" planeType="BCS" time="8:25"/>
+    <flight callsign="SNG2095" follows="SNG2095" kind="departure" otherAirport="43.606 1.449" planeType="A319"
+            time="8:35"/>
+    <flight callsign="PSD4030" kind="arrival" otherAirport="48.857 2.341" planeType="B737" time="8:35"/>
+    <flight callsign="SNG2536" kind="arrival" otherAirport="43.293 5.371" planeType="B717" time="8:35"/>
+    <flight callsign="SAS1768" follows="SAS1768" kind="departure" otherAirport="59.333 18.067" planeType="B737"
+            time="8:40"/>
+    <flight callsign="FDB782" follows="FDB782" kind="departure" otherAirport="25.27 55.309" planeType="B737"
+            time="8:40"/>
+    <flight callsign="RYR8331" kind="arrival" otherAirport="41.903 12.496" planeType="B737" time="8:40"/>
+    <flight callsign="QSC1263" kind="arrival" otherAirport="32.086 34.79" planeType="B737" time="8:40"/>
+    <flight callsign="EZY4855" kind="arrival" otherAirport="40.84 14.252" planeType="A320" time="8:40"/>
+    <flight callsign="BTI480" follows="BTI480" kind="departure" otherAirport="56.946 24.115" planeType="DH8A"
+            time="8:45"/>
+    <flight callsign="THY1767" kind="arrival" otherAirport="41.061 28.988" planeType="A321" time="8:45"/>
+    <flight callsign="FOS8652" kind="arrival" otherAirport="41.388 2.17" planeType="A320" time="8:45"/>
+    <flight callsign="ROT225" kind="arrival" otherAirport="44.434 26.103" planeType="B737" time="8:45"/>
+    <flight callsign="KLM1352" follows="KLM1352" kind="departure" otherAirport="52.37 4.908" planeType="E195"
+            time="8:50"/>
+    <flight callsign="CSA892" follows="CSA892" kind="departure" otherAirport="55.757 37.615" planeType="A319"
+            time="8:50"/>
+    <flight callsign="ASL610" kind="arrival" otherAirport="44.813 20.463" planeType="B737" time="8:50"/>
+    <flight callsign="EWG9773" follows="EWG9773" kind="departure" otherAirport="51.216 6.777" planeType="A320"
+            time="9:00"/>
+    <flight callsign="SNG2537" follows="SNG2537" kind="departure" otherAirport="43.293 5.371" planeType="B717"
+            time="9:00"/>
+    <flight callsign="AFR1382" kind="arrival" otherAirport="48.857 2.341" planeType="A320" time="9:00"/>
+    <flight callsign="DLH1688" kind="arrival" otherAirport="48.136 11.578" planeType="CRJ" time="9:00"/>
+    <flight callsign="RYR8330" follows="RYR8330" kind="departure" otherAirport="41.903 12.496" planeType="B737"
+            time="9:05"/>
+    <flight callsign="SWR1473" follows="SWR1473" kind="departure" otherAirport="46.208 6.143" planeType="BCS"
+            time="9:10"/>
+    <flight callsign="EZY4856" follows="EZY4856" kind="departure" otherAirport="40.84 14.252" planeType="A320"
+            time="9:10"/>
+    <flight callsign="PSD4031" follows="PSD4031" kind="departure" otherAirport="48.857 2.341" planeType="B737"
+            time="9:15"/>
+    <flight callsign="QTR290" follows="QTR290" kind="departure" otherAirport="25.295 51.519" planeType="A320"
+            time="9:15"/>
+    <flight callsign="AFL2010" kind="arrival" otherAirport="55.757 37.615" planeType="A320" time="9:15"/>
+    <flight callsign="CSA734" follows="CSA734" kind="departure" otherAirport="45.438 12.318" planeType="ATR72"
+            time="9:20"/>
+    <flight callsign="AAL52" kind="arrival" otherAirport="39.952 -75.162" planeType="B767" time="9:20"/>
+    <flight callsign="EZY6961" kind="arrival" otherAirport="55.954 -3.201" planeType="A320" time="9:20"/>
+    <flight callsign="FOS7979" follows="FOS7979" kind="departure" otherAirport="47.377 8.54" planeType="A320"
+            time="9:25"/>
+    <flight callsign="ROT226" follows="ROT226" kind="departure" otherAirport="44.434 26.103" planeType="B737"
+            time="9:30"/>
+    <flight callsign="RYR1826" kind="arrival" otherAirport="51.436 5.485" planeType="B737" time="9:30"/>
+    <flight callsign="LOT523" kind="arrival" otherAirport="52.236 21.01" planeType="E195" time="9:30"/>
+    <flight callsign="ASL611" follows="ASL611" kind="departure" otherAirport="44.813 20.463" planeType="B737"
+            time="9:40"/>
+    <flight callsign="THY1768" follows="THY1768" kind="departure" otherAirport="41.061 28.988" planeType="A321"
+            time="9:40"/>
+    <flight callsign="QSC2237" kind="arrival" otherAirport="25.538 -103.36" planeType="B737" time="9:40"/>
+    <flight callsign="DLH1689" follows="DLH1689" kind="departure" otherAirport="48.136 11.578" planeType="CRJ"
+            time="9:45"/>
+    <flight callsign="QSC1241" kind="arrival" otherAirport="27.251 33.818" planeType="A321" time="9:45"/>
+    <flight callsign="RYR2121" kind="arrival" otherAirport="50.844 4.356" planeType="B737" time="9:45"/>
+    <flight callsign="SWR1484" kind="arrival" otherAirport="47.377 8.54" planeType="BCS" time="9:45"/>
+    <flight callsign="AFR1383" follows="AFR1383" kind="departure" otherAirport="48.857 2.341" planeType="A320"
+            time="9:50"/>
+    <flight callsign="EZY6962" follows="EZY6962" kind="departure" otherAirport="55.954 -3.201" planeType="A320"
+            time="9:50"/>
+    <flight callsign="EXS887" kind="arrival" otherAirport="53.48 -2.249" planeType="B737" time="9:50"/>
+    <flight callsign="QSC1235" kind="arrival" otherAirport="27.251 33.818" planeType="B737" time="9:50"/>
+    <flight callsign="RYR1827" follows="RYR1827" kind="departure" otherAirport="51.436 5.485" planeType="B737"
+            time="9:55"/>
+    <flight callsign="QSC2221" kind="arrival" otherAirport="35.507 27.215" planeType="B737" time="9:55"/>
+    <flight callsign="SBI857" kind="arrival" otherAirport="55.04 82.91" planeType="A320" time="10:00"/>
+    <flight callsign="LOT524" follows="LOT524" kind="departure" otherAirport="52.236 21.01" planeType="E195"
+            time="10:05"/>
+    <flight callsign="NAX4575" kind="arrival" otherAirport="57.701 11.968" planeType="B737" time="10:05"/>
+    <flight callsign="DLH1392" kind="arrival" otherAirport="50.112 8.683" planeType="A321" time="10:05"/>
+    <flight callsign="ELY2521" kind="arrival" otherAirport="32.086 34.79" planeType="B737" time="10:05"/>
+    <flight callsign="RYR5508" follows="RYR5508" kind="departure" otherAirport="45.468 9.182" planeType="B737"
+            time="10:10"/>
+    <flight callsign="EZY7365" kind="arrival" otherAirport="-37.568 140.133" planeType="A319" time="10:10"/>
+    <flight callsign="AFL2011" follows="AFL2011" kind="departure" otherAirport="55.757 37.615" planeType="A320"
+            time="10:15"/>
+    <flight callsign="QSC1200" kind="departure" otherAirport="25.27 55.309" planeType="B737" time="10:20"/>
+    <flight callsign="CSA545" kind="arrival" otherAirport="53.554 9.992" planeType="A319" time="10:20"/>
+    <flight callsign="AFL6621" kind="arrival" otherAirport="59.933 30.306" planeType="A319" time="10:20"/>
+    <flight callsign="SWR1485" follows="SWR1485" kind="departure" otherAirport="47.377 8.54" planeType="BCS"
+            time="10:25"/>
+    <flight callsign="BAW854" kind="arrival" otherAirport="51.506 -0.127" planeType="A320" time="10:30"/>
+    <flight callsign="CSA631" kind="arrival" otherAirport="50.844 4.356" planeType="A319" time="10:35"/>
+    <flight callsign="AEE864" kind="arrival" otherAirport="37.976 23.736" planeType="A320" time="10:35"/>
+    <flight callsign="CSA505" kind="arrival" otherAirport="55.676 12.568" planeType="B737" time="10:35"/>
+    <flight callsign="NAX4576" follows="NAX4576" kind="departure" otherAirport="57.701 11.968" planeType="B737"
+            time="10:40"/>
+    <flight callsign="EZY7366" follows="EZY7366" kind="departure" otherAirport="-37.568 140.133" planeType="A319"
+            time="10:40"/>
+    <flight callsign="CAI551" kind="arrival" otherAirport="36.879 30.709" planeType="B737" time="10:40"/>
+    <flight callsign="CSA777" kind="arrival" otherAirport="52.236 21.01" planeType="ATR42" time="10:45"/>
+    <flight callsign="CSA787" kind="arrival" otherAirport="47.5 19.055" planeType="ATR72" time="10:45"/>
+    <flight callsign="AUA705" kind="arrival" otherAirport="48.203 16.368" planeType="DH8A" time="10:45"/>
+    <flight callsign="DLH1393" follows="DLH1393" kind="departure" otherAirport="50.112 8.683" planeType="A321"
+            time="10:50"/>
+    <flight callsign="EXS888" follows="EXS888" kind="departure" otherAirport="53.48 -2.249" planeType="B737"
+            time="10:50"/>
+    <flight callsign="QSC1198" follows="QSC1198" kind="departure" otherAirport="55.757 37.615" planeType="B737"
+            time="10:50"/>
+    <flight callsign="CSA535" kind="arrival" otherAirport="50.112 8.683" planeType="ATR72" time="10:50"/>
+    <flight callsign="CSA719" kind="arrival" otherAirport="45.468 9.182" planeType="A319" time="10:50"/>
+    <flight callsign="FIN1221" kind="arrival" otherAirport="60.171 24.933" planeType="A321" time="10:50"/>
+    <flight callsign="RYR1013" kind="arrival" otherAirport="51.506 -0.127" planeType="B737" time="10:55"/>
+    <flight callsign="CSA961" kind="arrival" otherAirport="48.149 17.107" planeType="ATR72" time="10:55"/>
+    <flight callsign="QSC1119" kind="arrival" otherAirport="37.784 20.898" planeType="B737" time="10:55"/>
+    <flight callsign="QSC1287" kind="arrival" otherAirport="32.086 34.79" planeType="B737" time="10:55"/>
+    <flight callsign="CSA617" kind="arrival" otherAirport="52.37 4.908" planeType="A319" time="10:55"/>
+    <flight callsign="SBI858" follows="SBI858" kind="departure" otherAirport="55.04 82.91" planeType="A320"
+            time="11:00"/>
+    <flight callsign="BXI2809" kind="arrival" otherAirport="50.844 4.356" planeType="A319" time="11:00"/>
+    <flight callsign="TSC100" kind="arrival" otherAirport="45.512 -73.555" planeType="A310" time="11:05"/>
+    <flight callsign="DLH1394" kind="arrival" otherAirport="50.112 8.683" planeType="A319" time="11:05"/>
+    <flight callsign="CSA523" kind="arrival" otherAirport="51.216 6.777" planeType="ATR72" time="11:05"/>
+    <flight callsign="QSC1125" kind="arrival" otherAirport="42.731 -7.327" planeType="B737" time="11:05"/>
+    <flight callsign="CSA802" follows="CSA802" kind="departure" otherAirport="44.434 26.103" planeType="ATR72"
+            time="11:10"/>
+    <flight callsign="AFL6622" follows="AFL6622" kind="departure" otherAirport="59.933 30.306" planeType="A319"
+            time="11:10"/>
+    <flight callsign="QSC1259" kind="arrival" otherAirport="25.068 34.888" planeType="B737" time="11:10"/>
+    <flight callsign="CSA700" follows="CSA700" kind="departure" otherAirport="40.42 -3.706" planeType="A321"
+            time="11:15"/>
+    <flight callsign="QSC1026" follows="QSC1026" kind="departure" otherAirport="38.973 16.317" planeType="B737"
+            time="11:15"/>
+    <flight callsign="BAW855" follows="BAW855" kind="departure" otherAirport="51.506 -0.127" planeType="A320"
+            time="11:15"/>
+    <flight callsign="LZB301" kind="arrival" otherAirport="42.697 23.324" planeType="E195" time="11:15"/>
+    <flight callsign="QSC1127" kind="arrival" otherAirport="36.89 27.289" planeType="B737" time="11:15"/>
+    <flight callsign="QSC1131" kind="arrival" otherAirport="38.958 20.751" planeType="B737" time="11:15"/>
+    <flight callsign="CSA886" follows="CSA886" kind="departure" otherAirport="59.933 30.306" planeType="A319"
+            time="11:20"/>
+    <flight callsign="AUA706" follows="AUA706" kind="departure" otherAirport="48.203 16.368" planeType="DH8A"
+            time="11:20"/>
+    <flight callsign="NAX4571" kind="arrival" otherAirport="59.333 18.067" planeType="B737" time="11:20"/>
+    <flight callsign="QSC1147" kind="arrival" otherAirport="36.448 28.226" planeType="B737" time="11:20"/>
+    <flight callsign="AEE865" follows="AEE865" kind="departure" otherAirport="37.976 23.736" planeType="A320"
+            time="11:25"/>
+    <flight callsign="ELY2522" follows="ELY2522" kind="departure" otherAirport="32.086 34.79" planeType="B737"
+            time="11:25"/>
+    <flight callsign="CSA688" follows="CSA688" kind="departure" otherAirport="41.388 2.17" planeType="B737"
+            time="11:25"/>
+    <flight callsign="QSC1148" follows="QSC1148" kind="departure" otherAirport="36.448 28.226" planeType="B737"
+            time="11:25"/>
+    <flight callsign="QSC1103" kind="arrival" otherAirport="35.342 25.153" planeType="B737" time="11:25"/>
+    <flight callsign="QSC1144" follows="QSC1144" kind="departure" otherAirport="37.784 20.898" planeType="B737"
+            time="11:30"/>
+    <flight callsign="CAI552" follows="CAI552" kind="departure" otherAirport="36.879 30.709" planeType="B737"
+            time="11:30"/>
+    <flight callsign="QSC1223" kind="arrival" otherAirport="25.068 34.888" planeType="B737" time="11:30"/>
+    <flight callsign="CSA759" kind="arrival" otherAirport="48.857 2.341" planeType="A319" time="11:30"/>
+    <flight callsign="AAL53" follows="AAL53" kind="departure" otherAirport="39.952 -75.162" planeType="B767"
+            time="11:35"/>
+    <flight callsign="FIN1222" follows="FIN1222" kind="departure" otherAirport="60.171 24.933" planeType="A321"
+            time="11:35"/>
+    <flight callsign="QSC1191" kind="arrival" otherAirport="36.879 30.709" planeType="B737" time="11:35"/>
+    <flight callsign="CSA480" follows="CSA480" kind="departure" otherAirport="60.171 24.933" planeType="A319"
+            time="11:40"/>
+    <flight callsign="BXI2810" follows="BXI2810" kind="departure" otherAirport="50.844 4.356" planeType="A319"
+            time="11:40"/>
+    <flight callsign="CSA490" follows="CSA490" kind="departure" otherAirport="59.333 18.067" planeType="B737"
+            time="11:40"/>
+    <flight callsign="CSA511" kind="arrival" otherAirport="56.153 10.205" planeType="ATR72" time="11:40"/>
+    <flight callsign="TGZ787" kind="arrival" otherAirport="41.709 44.796" planeType="E195" time="11:45"/>
+    <flight callsign="NAX4572" follows="NAX4572" kind="departure" otherAirport="59.333 18.067" planeType="B737"
+            time="11:50"/>
+    <flight callsign="DLH1395" follows="DLH1395" kind="departure" otherAirport="50.112 8.683" planeType="A319"
+            time="11:50"/>
+    <flight callsign="QSC1196" follows="QSC1196" kind="departure" otherAirport="36.879 30.709" planeType="B737"
+            time="11:50"/>
+    <flight callsign="CSA496" follows="CSA496" kind="departure" otherAirport="57.701 11.968" planeType="ATR72"
+            time="11:50"/>
+    <flight callsign="CSA745" kind="arrival" otherAirport="43.7 7.278" planeType="A319" time="11:50"/>
+    <flight callsign="DAL411" kind="arrival" otherAirport="40.715 -74.007" planeType="B767" time="11:55"/>
+    <flight callsign="EZY8993" kind="arrival" otherAirport="51.506 -0.127" planeType="A319" time="11:55"/>
+    <flight callsign="QSC1104" follows="QSC1104" kind="departure" otherAirport="35.342 25.153" planeType="B737"
+            time="12:00"/>
+    <flight callsign="QSC2036" follows="QSC2036" kind="departure" otherAirport="9.899 -74.86" planeType="B737"
+            time="12:00"/>
+    <flight callsign="NAX1502" kind="arrival" otherAirport="59.912 10.75" planeType="B737" time="12:00"/>
+    <flight callsign="CSA24" follows="CSA24" kind="departure" otherAirport="49.819 18.123" planeType="ATR42"
+            time="12:05"/>
+    <flight callsign="CSA782" follows="CSA782" kind="departure" otherAirport="52.236 21.01" planeType="ATR72"
+            time="12:05"/>
+    <flight callsign="CSA724" follows="CSA724" kind="departure" otherAirport="41.903 12.496" planeType="A319"
+            time="12:05"/>
+    <flight callsign="AFL2012" kind="arrival" otherAirport="55.757 37.615" planeType="A320" time="12:05"/>
+    <flight callsign="LZB302" follows="LZB302" kind="departure" otherAirport="42.697 23.324" planeType="E195"
+            time="12:10"/>
+    <flight callsign="CSA790" follows="CSA790" kind="departure" otherAirport="47.5 19.055" planeType="ATR72"
+            time="12:10"/>
+    <flight callsign="CSA972" follows="CSA972" kind="departure" otherAirport="48.717 21.253" planeType="ATR72"
+            time="12:15"/>
+    <flight callsign="QSC1084" kind="departure" otherAirport="42.643 18.111" planeType="B737" time="12:15"/>
+    <flight callsign="QSC1162" follows="QSC1162" kind="departure" otherAirport="38.906 1.42" planeType="B737"
+            time="12:15"/>
+    <flight callsign="QSC1170" follows="QSC1170" kind="departure" otherAirport="32.647 -16.909" planeType="B737"
+            time="12:20"/>
+    <flight callsign="RLA4412" kind="arrival" otherAirport="45.759 4.829" planeType="CRJ" time="12:20"/>
+    <flight callsign="QSC1082" follows="QSC1082" kind="departure" otherAirport="43.507 16.442" planeType="B737"
+            time="12:25"/>
+    <flight callsign="EZY8994" follows="EZY8994" kind="departure" otherAirport="51.506 -0.127" planeType="A319"
+            time="12:25"/>
+    <flight callsign="CSA760" follows="CSA760" kind="departure" otherAirport="48.857 2.341" planeType="A319"
+            time="12:25"/>
+    <flight callsign="DLH1690" kind="arrival" otherAirport="48.136 11.578" planeType="A319" time="12:25"/>
+    <flight callsign="LOT527" kind="arrival" otherAirport="52.236 21.01" planeType="E175" time="12:25"/>
+    <flight callsign="QSC1020" follows="QSC1020" kind="departure" otherAirport="40.918 9.496" planeType="B737"
+            time="12:30"/>
+    <flight callsign="QSC1096" follows="QSC1096" kind="departure" otherAirport="51.506 -0.127" planeType="B737"
+            time="12:30"/>
+    <flight callsign="NAX1503" follows="NAX1503" kind="departure" otherAirport="59.912 10.75" planeType="B737"
+            time="12:30"/>
+    <flight callsign="TSC101" follows="TSC101" kind="departure" otherAirport="45.512 -73.555" planeType="A310"
+            time="12:35"/>
+    <flight callsign="TGZ788" follows="TGZ788" kind="departure" otherAirport="41.709 44.796" planeType="E195"
+            time="12:40"/>
+    <flight callsign="CSA894" follows="CSA894" kind="departure" otherAirport="55.757 37.615" planeType="A319"
+            time="12:40"/>
+    <flight callsign="QSC1284" follows="QSC1284" kind="departure" otherAirport="32.086 34.79" planeType="B737"
+            time="12:45"/>
+    <flight callsign="CHH7938" kind="arrival" otherAirport="44.813 20.463" planeType="A330" time="12:45"/>
+    <flight callsign="FOS7978" kind="arrival" otherAirport="47.377 8.54" planeType="A320" time="12:45"/>
+    <flight callsign="RYR4069" follows="RYR4069" kind="departure" otherAirport="50.06 19.932" planeType="B737"
+            time="12:55"/>
+    <flight callsign="SNG2206" kind="arrival" otherAirport="47.218 -1.553" planeType="A319" time="12:55"/>
+    <flight callsign="CSA662" follows="CSA662" kind="departure" otherAirport="52.479 -1.906" planeType="A319"
+            time="13:00"/>
+    <flight callsign="DLH1691" follows="DLH1691" kind="departure" otherAirport="48.136 11.578" planeType="A319"
+            time="13:00"/>
+    <flight callsign="LOT528" follows="LOT528" kind="departure" otherAirport="52.236 21.01" planeType="E175"
+            time="13:00"/>
+    <flight callsign="BAW862" kind="arrival" otherAirport="51.506 -0.127" planeType="A320" time="13:00"/>
+    <flight callsign="EZY2581" kind="arrival" otherAirport="45.468 9.182" planeType="A320" time="13:00"/>
+    <flight callsign="EZY7905" kind="arrival" otherAirport="52.37 4.908" planeType="A320" time="13:00"/>
+    <flight callsign="UAE139" kind="arrival" otherAirport="25.27 55.309" planeType="A380" time="13:00"/>
+    <flight callsign="AFL2013" follows="AFL2013" kind="departure" otherAirport="55.757 37.615" planeType="A320"
+            time="13:05"/>
+    <flight callsign="BRU861" kind="arrival" otherAirport="53.904 27.565" planeType="B737" time="13:05"/>
+    <flight callsign="RLA4413" follows="RLA4413" kind="departure" otherAirport="45.759 4.829" planeType="CRJ"
+            time="13:10"/>
+    <flight callsign="QTR291" kind="arrival" otherAirport="25.295 51.519" planeType="A320" time="13:10"/>
+    <flight callsign="SNG2207" follows="SNG2207" kind="departure" otherAirport="47.218 -1.553" planeType="A319"
+            time="13:20"/>
+    <flight callsign="FOS8653" follows="FOS8653" kind="departure" otherAirport="41.388 2.17" planeType="A320"
+            time="13:25"/>
+    <flight callsign="RYR5507" kind="arrival" otherAirport="45.468 9.182" planeType="B737" time="13:25"/>
+    <flight callsign="CSA735" kind="arrival" otherAirport="45.438 12.318" planeType="ATR72" time="13:25"/>
+    <flight callsign="EZY2582" follows="EZY2582" kind="departure" otherAirport="45.468 9.182" planeType="A320"
+            time="13:30"/>
+    <flight callsign="EZY7906" follows="EZY7906" kind="departure" otherAirport="52.37 4.908" planeType="A320"
+            time="13:30"/>
+    <flight callsign="DLH1396" kind="arrival" otherAirport="50.112 8.683" planeType="A320" time="13:30"/>
+    <flight callsign="CYP260" kind="arrival" otherAirport="34.916 33.62" planeType="A319" time="13:35"/>
+    <flight callsign="KLM1355" kind="arrival" otherAirport="52.37 4.908" planeType="B737" time="13:35"/>
+    <flight callsign="DAL211" follows="DAL211" kind="departure" otherAirport="40.715 -74.007" planeType="B767"
+            time="13:40"/>
+    <flight callsign="THY1771" kind="arrival" otherAirport="41.061 28.988" planeType="A321" time="13:40"/>
+    <flight callsign="BAW863" follows="BAW863" kind="departure" otherAirport="51.506 -0.127" planeType="A320"
+            time="13:45"/>
+    <flight callsign="BRU862" follows="BRU862" kind="departure" otherAirport="53.904 27.565" planeType="B737"
+            time="13:50"/>
+    <flight callsign="SWR1486" kind="arrival" otherAirport="47.377 8.54" planeType="A320" time="13:55"/>
+    <flight callsign="AUA707" kind="arrival" otherAirport="48.203 16.368" planeType="DH8A" time="13:55"/>
+    <flight callsign="BAW7339" kind="arrival" otherAirport="51.506 -0.127" planeType="E195" time="14:10"/>
+    <flight callsign="RYR8562" follows="RYR8562" kind="departure" otherAirport="53.41 -2.978" planeType="B737"
+            time="14:15"/>
+    <flight callsign="DLH1397" follows="DLH1397" kind="departure" otherAirport="50.112 8.683" planeType="A320"
+            time="14:15"/>
+    <flight callsign="KLM1356" follows="KLM1356" kind="departure" otherAirport="52.37 4.908" planeType="B737"
+            time="14:20"/>
+    <flight callsign="CSA730" follows="CSA730" kind="departure" otherAirport="44.505 11.345" planeType="ATR72"
+            time="14:20"/>
+    <flight callsign="CYP261" follows="CYP261" kind="departure" otherAirport="34.916 33.62" planeType="A319"
+            time="14:35"/>
+    <flight callsign="SWR1487" follows="SWR1487" kind="departure" otherAirport="47.377 8.54" planeType="A320"
+            time="14:35"/>
+    <flight callsign="THY1772" follows="THY1772" kind="departure" otherAirport="41.061 28.988" planeType="A321"
+            time="14:35"/>
+    <flight callsign="AFL2018" kind="arrival" otherAirport="55.757 37.615" planeType="SU95" time="14:35"/>
+    <flight callsign="EZY3067" kind="arrival" otherAirport="51.506 -0.127" planeType="A319" time="14:35"/>
+    <flight callsign="AFR1082" kind="arrival" otherAirport="48.857 2.341" planeType="A321" time="14:35"/>
+    <flight callsign="FAJ301" kind="arrival" otherAirport="41.061 28.988" planeType="A320" time="14:40"/>
+    <flight callsign="CHH7938" follows="CHH7938" kind="departure" otherAirport="39.907 116.388" planeType="A330"
+            time="14:45"/>
+    <flight callsign="BAW7338" follows="BAW7338" kind="departure" otherAirport="51.506 -0.127" planeType="E195"
+            time="14:50"/>
+    <flight callsign="TRA5235" kind="arrival" otherAirport="51.436 5.485" planeType="B737" time="14:50"/>
+    <flight callsign="FOS6160" kind="arrival" otherAirport="41.903 12.496" planeType="A320" time="14:50"/>
+    <flight callsign="IBE3148" kind="arrival" otherAirport="40.42 -3.706" planeType="A321" time="14:55"/>
+    <flight callsign="CSA893" kind="arrival" otherAirport="55.757 37.615" planeType="A319" time="15:00"/>
+    <flight callsign="EZY3068" follows="EZY3068" kind="departure" otherAirport="51.506 -0.127" planeType="A319"
+            time="15:05"/>
+    <flight callsign="LGL5483" kind="arrival" otherAirport="49.61 6.13" planeType="DH8A" time="15:05"/>
+    <flight callsign="TAR7254" kind="arrival" otherAirport="35.771 10.823" planeType="A320" time="15:05"/>
+    <flight callsign="AUA708" follows="AUA708" kind="departure" otherAirport="48.203 16.368" planeType="DH8A"
+            time="15:20"/>
+    <flight callsign="AFR1083" follows="AFR1083" kind="departure" otherAirport="48.857 2.341" planeType="A321"
+            time="15:25"/>
+    <flight callsign="SNG1466" kind="arrival" otherAirport="45.438 12.318" planeType="B717" time="15:25"/>
+    <flight callsign="TRA5236" follows="TRA5236" kind="departure" otherAirport="51.436 5.485" planeType="B737"
+            time="15:30"/>
+    <flight callsign="FAJ302" follows="FAJ302" kind="departure" otherAirport="41.061 28.988" planeType="A320"
+            time="15:30"/>
+    <flight callsign="FOS6161" follows="FOS6161" kind="departure" otherAirport="41.903 12.496" planeType="A320"
+            time="15:30"/>
+    <flight callsign="RYR4070" kind="arrival" otherAirport="50.06 19.932" planeType="B737" time="15:35"/>
+    <flight callsign="AUI807" kind="arrival" otherAirport="50.451 30.524" planeType="B737" time="15:35"/>
+    <flight callsign="IBE3149" follows="IBE3149" kind="departure" otherAirport="40.42 -3.706" planeType="A321"
+            time="15:40"/>
+    <flight callsign="LGL5484" follows="LGL5484" kind="departure" otherAirport="49.61 6.13" planeType="DH8A"
+            time="15:40"/>
+    <flight callsign="EIN644" kind="arrival" otherAirport="53.348 -6.248" planeType="A320" time="15:45"/>
+    <flight callsign="KLM1353" kind="arrival" otherAirport="52.37 4.908" planeType="E195" time="15:45"/>
+    <flight callsign="SNG2419" follows="SNG2419" kind="departure" otherAirport="44.837 -0.581" planeType="B717"
+            time="15:50"/>
+    <flight callsign="DLH1692" kind="arrival" otherAirport="48.136 11.578" planeType="A319" time="15:50"/>
+    <flight callsign="AFL2019" follows="AFL2019" kind="departure" otherAirport="55.757 37.615" planeType="SU95"
+            time="15:55"/>
+    <flight callsign="UAE140" follows="UAE140" kind="departure" otherAirport="25.27 55.309" planeType="A380"
+            time="15:55"/>
+    <flight callsign="RYR7327" follows="RYR7327" kind="departure" otherAirport="53.348 -6.248" planeType="B737"
+            time="16:00"/>
+    <flight callsign="CSA710" follows="CSA710" kind="departure" otherAirport="38.726 -9.149" planeType="A319"
+            time="16:00"/>
+    <flight callsign="TAR7255" follows="TAR7255" kind="departure" otherAirport="35.771 10.823" planeType="A320"
+            time="16:00"/>
+    <flight callsign="CSA973" kind="arrival" otherAirport="48.717 21.253" planeType="ATR72" time="16:00"/>
+    <flight callsign="CSA791" kind="arrival" otherAirport="47.5 19.055" planeType="ATR72" time="16:05"/>
+    <flight callsign="CSA25" kind="arrival" otherAirport="49.819 18.123" planeType="ATR42" time="16:10"/>
+    <flight callsign="CSA783" kind="arrival" otherAirport="52.236 21.01" planeType="ATR72" time="16:15"/>
+    <flight callsign="QSC1083" kind="arrival" otherAirport="43.507 16.442" planeType="B737" time="16:15"/>
+    <flight callsign="AUI808" follows="AUI808" kind="departure" otherAirport="50.451 30.524" planeType="B737"
+            time="16:20"/>
+    <flight callsign="EWG9774" kind="arrival" otherAirport="51.216 6.777" planeType="A320" time="16:20"/>
+    <flight callsign="EIN645" follows="EIN645" kind="departure" otherAirport="53.348 -6.248" planeType="A320"
+            time="16:25"/>
+    <flight callsign="DLH1693" follows="DLH1693" kind="departure" otherAirport="48.136 11.578" planeType="A319"
+            time="16:25"/>
+    <flight callsign="BAW860" kind="arrival" otherAirport="51.506 -0.127" planeType="A320" time="16:25"/>
+    <flight callsign="CSA491" kind="arrival" otherAirport="59.333 18.067" planeType="B737" time="16:25"/>
+    <flight callsign="CSA740" follows="CSA740" kind="departure" otherAirport="48.585 7.736" planeType="ATR72"
+            time="16:30"/>
+    <flight callsign="QSC1027" kind="arrival" otherAirport="38.973 16.317" planeType="B737" time="16:30"/>
+    <flight callsign="QSC1085" kind="arrival" otherAirport="42.643 18.111" planeType="B737" time="16:30"/>
+    <flight callsign="LOT521" kind="arrival" otherAirport="52.236 21.01" planeType="DH8A" time="16:35"/>
+    <flight callsign="SVR701" kind="arrival" otherAirport="56.838 60.599" planeType="A320" time="16:35"/>
+    <flight callsign="BEE6180" kind="arrival" otherAirport="-37.568 140.133" planeType="E195" time="16:35"/>
+    <flight callsign="CSA725" kind="arrival" otherAirport="41.903 12.496" planeType="A319" time="16:40"/>
+    <flight callsign="FOS9496" kind="arrival" otherAirport="48.857 2.341" planeType="A320" time="16:40"/>
+    <flight callsign="KLM1354" follows="KLM1354" kind="departure" otherAirport="52.37 4.908" planeType="E195"
+            time="16:45"/>
+    <flight callsign="IBK3580" kind="arrival" otherAirport="55.676 12.568" planeType="B737" time="16:45"/>
+    <flight callsign="EWG7778" kind="arrival" otherAirport="53.554 9.992" planeType="A320" time="16:45"/>
+    <flight callsign="EZY3381" kind="arrival" otherAirport="45.438 12.318" planeType="A319" time="16:45"/>
+    <flight callsign="CSA761" kind="arrival" otherAirport="48.857 2.341" planeType="A319" time="16:45"/>
+    <flight callsign="AFL2014" kind="arrival" otherAirport="55.757 37.615" planeType="A320" time="16:50"/>
+    <flight callsign="EWG9775" kind="departure" otherAirport="51.216 6.777" planeType="A320" time="16:55"/>
+    <flight callsign="AZA512" kind="arrival" otherAirport="41.903 12.496" planeType="A320" time="16:55"/>
+    <flight callsign="KAL935" kind="arrival" otherAirport="37.559 127" planeType="B747" time="16:55"/>
+    <flight callsign="CSA481" kind="arrival" otherAirport="60.171 24.933" planeType="A319" time="16:55"/>
+    <flight callsign="CSA689" kind="arrival" otherAirport="41.388 2.17" planeType="B737" time="16:55"/>
+    <flight callsign="CSA497" kind="arrival" otherAirport="57.701 11.968" planeType="ATR72" time="16:55"/>
+    <flight callsign="CSA887" kind="arrival" otherAirport="59.933 30.306" planeType="A319" time="17:00"/>
+    <flight callsign="LOT522" follows="LOT522" kind="departure" otherAirport="52.236 21.01" planeType="DH8A"
+            time="17:10"/>
+    <flight callsign="BEE6181" follows="BEE6181" kind="departure" otherAirport="-37.568 140.133" planeType="E195"
+            time="17:10"/>
+    <flight callsign="QTR292" follows="QTR292" kind="departure" otherAirport="25.295 51.519" planeType="A320"
+            time="17:10"/>
+    <flight callsign="QSC1199" kind="arrival" otherAirport="55.757 37.615" planeType="B737" time="17:10"/>
+    <flight callsign="IBK3581" follows="IBK3581" kind="departure" otherAirport="55.676 12.568" planeType="B737"
+            time="17:15"/>
+    <flight callsign="EZY3382" follows="EZY3382" kind="departure" otherAirport="45.438 12.318" planeType="A319"
+            time="17:15"/>
+    <flight callsign="BAW861" follows="BAW861" kind="departure" otherAirport="51.506 -0.127" planeType="A320"
+            time="17:15"/>
+    <flight callsign="QSC1097" kind="arrival" otherAirport="51.506 -0.127" planeType="B737" time="17:15"/>
+    <flight callsign="QSC1145" kind="arrival" otherAirport="37.784 20.898" planeType="B737" time="17:15"/>
+    <flight callsign="EWG7779" follows="EWG7779" kind="departure" otherAirport="53.554 9.992" planeType="A320"
+            time="17:20"/>
+    <flight callsign="FOS9497" follows="FOS9497" kind="departure" otherAirport="48.857 2.341" planeType="A320"
+            time="17:20"/>
+    <flight callsign="CSA803" kind="arrival" otherAirport="44.434 26.103" planeType="ATR72" time="17:20"/>
+    <flight callsign="SVR702" follows="SVR702" kind="departure" otherAirport="56.838 60.599" planeType="A320"
+            time="17:25"/>
+    <flight callsign="QSC1021" kind="arrival" otherAirport="40.918 9.496" planeType="B737" time="17:25"/>
+    <flight callsign="RYR3039" kind="arrival" otherAirport="41.388 2.17" planeType="B737" time="17:25"/>
+    <flight callsign="CSA618" follows="CSA618" kind="departure" otherAirport="52.37 4.908" planeType="A319"
+            time="17:30"/>
+    <flight callsign="DLH1400" kind="arrival" otherAirport="50.112 8.683" planeType="A320" time="17:30"/>
+    <flight callsign="CSA526" follows="CSA526" kind="departure" otherAirport="51.216 6.777" planeType="ATR72"
+            time="17:35"/>
+    <flight callsign="CSA766" follows="CSA766" kind="departure" otherAirport="48.857 2.341" planeType="A319"
+            time="17:35"/>
+    <flight callsign="CSA966" follows="CSA966" kind="departure" otherAirport="48.149 17.107" planeType="ATR42"
+            time="17:35"/>
+    <flight callsign="CSA536" follows="CSA536" kind="departure" otherAirport="50.112 8.683" planeType="ATR72"
+            time="17:35"/>
+    <flight callsign="CSA778" follows="CSA778" kind="departure" otherAirport="52.236 21.01" planeType="ATR72"
+            time="17:40"/>
+    <flight callsign="CSA904" follows="CSA904" kind="departure" otherAirport="55.757 37.615" planeType="A319"
+            time="17:40"/>
+    <flight callsign="CSA636" follows="CSA636" kind="departure" otherAirport="50.844 4.356" planeType="A319"
+            time="17:40"/>
+    <flight callsign="CSA663" kind="arrival" otherAirport="52.479 -1.906" planeType="A319" time="17:40"/>
+    <flight callsign="AZA513" follows="AZA513" kind="departure" otherAirport="41.903 12.496" planeType="A320"
+            time="17:45"/>
+    <flight callsign="CSA508" follows="CSA508" kind="departure" otherAirport="55.676 12.568" planeType="B737"
+            time="17:45"/>
+    <flight callsign="KLM1357" kind="arrival" otherAirport="52.37 4.908" planeType="B737" time="17:45"/>
+    <flight callsign="CSA788" follows="CSA788" kind="departure" otherAirport="47.5 19.055" planeType="ATR72"
+            time="17:50"/>
+    <flight callsign="AFL2015" follows="AFL2015" kind="departure" otherAirport="55.757 37.615" planeType="A320"
+            time="17:50"/>
+    <flight callsign="BXI2811" kind="arrival" otherAirport="50.844 4.356" planeType="A319" time="17:50"/>
+    <flight callsign="CSA722" follows="CSA722" kind="departure" otherAirport="45.468 9.182" planeType="A319"
+            time="17:55"/>
+    <flight callsign="CSA191" kind="arrival" otherAirport="37.559 127" planeType="A330" time="17:55"/>
+    <flight callsign="CSA701" kind="arrival" otherAirport="40.42 -3.706" planeType="A321" time="17:55"/>
+    <flight callsign="QSC1106" follows="QSC1106" kind="departure" otherAirport="35.342 25.153" planeType="B737"
+            time="18:00"/>
+    <flight callsign="QSC1149" kind="arrival" otherAirport="36.448 28.226" planeType="B737" time="18:00"/>
+    <flight callsign="AUA709" kind="arrival" otherAirport="48.203 16.368" planeType="E195" time="18:00"/>
+    <flight callsign="RYR3040" follows="RYR3040" kind="departure" otherAirport="41.388 2.17" planeType="B737"
+            time="18:05"/>
+    <flight callsign="QSC1152" follows="QSC1152" kind="departure" otherAirport="36.718 -4.42" planeType="B737"
+            time="18:05"/>
+    <flight callsign="QSC1164" follows="QSC1164" kind="departure" otherAirport="39.571 2.647" planeType="B737"
+            time="18:05"/>
+    <flight callsign="QSC1114" follows="QSC1114" kind="departure" otherAirport="39.619 19.908" planeType="B737"
+            time="18:15"/>
+    <flight callsign="ADR568" kind="arrival" otherAirport="46.051 14.503" planeType="CRJ" time="18:15"/>
+    <flight callsign="DLH1401" follows="DLH1401" kind="departure" otherAirport="50.112 8.683" planeType="A320"
+            time="18:20"/>
+    <flight callsign="QSC1112" follows="QSC1112" kind="departure" otherAirport="36.448 28.226" planeType="B737"
+            time="18:20"/>
+    <flight callsign="QSC1163" kind="arrival" otherAirport="38.906 1.42" planeType="B737" time="18:25"/>
+    <flight callsign="THY1769" kind="arrival" otherAirport="41.061 28.988" planeType="A321" time="18:25"/>
+    <flight callsign="KLM1358" follows="KLM1358" kind="departure" otherAirport="52.37 4.908" planeType="B737"
+            time="18:30"/>
+    <flight callsign="QSC1116" follows="QSC1116" kind="departure" otherAirport="39.619 19.908" planeType="B737"
+            time="18:30"/>
+    <flight callsign="QSC1105" kind="arrival" otherAirport="35.342 25.153" planeType="B737" time="18:30"/>
+    <flight callsign="QSC2327" kind="arrival" otherAirport="40.936 24.414" planeType="B737" time="18:30"/>
+    <flight callsign="QSC1054" follows="QSC1054" kind="departure" otherAirport="39.469 -0.377" planeType="B737"
+            time="18:35"/>
+    <flight callsign="QSC1192" follows="QSC1192" kind="departure" otherAirport="36.879 30.709" planeType="B737"
+            time="18:35"/>
+    <flight callsign="NAX1516" kind="arrival" otherAirport="60.391 5.333" planeType="B737" time="18:35"/>
+    <flight callsign="EXS667" kind="arrival" otherAirport="52.479 -1.906" planeType="B737" time="18:35"/>
+    <flight callsign="AUA710" follows="AUA710" kind="departure" otherAirport="48.203 16.368" planeType="E195"
+            time="18:40"/>
+    <flight callsign="BXI2812" follows="BXI2812" kind="departure" otherAirport="50.844 4.356" planeType="A319"
+            time="18:40"/>
+    <flight callsign="QSC1128" follows="QSC1128" kind="departure" otherAirport="36.89 27.289" planeType="B737"
+            time="18:45"/>
+    <flight callsign="ADR568" follows="ADR568" kind="departure" otherAirport="52.236 21.01" planeType="CRJ"
+            time="18:45"/>
+    <flight callsign="FIN1223" kind="arrival" otherAirport="60.171 24.933" planeType="A321" time="18:45"/>
+    <flight callsign="KAL936" follows="KAL936" kind="departure" otherAirport="37.559 127" planeType="B747"
+            time="18:50"/>
+    <flight callsign="CSA731" kind="arrival" otherAirport="44.505 11.345" planeType="ATR72" time="18:50"/>
+    <flight callsign="CSA895" kind="arrival" otherAirport="55.757 37.615" planeType="A319" time="18:50"/>
+    <flight callsign="QSC1197" kind="arrival" otherAirport="36.879 30.709" planeType="B737" time="18:50"/>
+    <flight callsign="AFL2024" kind="arrival" otherAirport="55.757 37.615" planeType="A320" time="18:50"/>
+    <flight callsign="TAP1300" kind="arrival" otherAirport="38.726 -9.149" planeType="A321" time="18:50"/>
+    <flight callsign="EZY1217" kind="arrival" otherAirport="47.549 7.588" planeType="A320" time="18:50"/>
+    <flight callsign="RYR8561" kind="arrival" otherAirport="53.41 -2.978" planeType="B737" time="19:00"/>
+    <flight callsign="NAX1517" follows="NAX1517" kind="departure" otherAirport="60.391 5.333" planeType="B737"
+            time="19:05"/>
+    <flight callsign="BTI483" kind="arrival" otherAirport="56.946 24.115" planeType="DH8A" time="19:10"/>
+    <flight callsign="LOT525" kind="arrival" otherAirport="52.236 21.01" planeType="E175" time="19:15"/>
+    <flight callsign="SWR1498" kind="arrival" otherAirport="47.377 8.54" planeType="A320" time="19:15"/>
+    <flight callsign="EXS668" follows="EXS668" kind="departure" otherAirport="52.479 -1.906" planeType="B737"
+            time="19:20"/>
+    <flight callsign="QSC1150" follows="QSC1150" kind="departure" otherAirport="36.448 28.226" planeType="B737"
+            time="19:20"/>
+    <flight callsign="THY1770" follows="THY1770" kind="departure" otherAirport="41.061 28.988" planeType="A321"
+            time="19:20"/>
+    <flight callsign="EZY1218" follows="EZY1218" kind="departure" otherAirport="47.549 7.588" planeType="A320"
+            time="19:20"/>
+    <flight callsign="RYR2014" follows="RYR2014" kind="departure" otherAirport="51.506 -0.127" planeType="B737"
+            time="19:25"/>
+    <flight callsign="BAW856" kind="arrival" otherAirport="51.506 -0.127" planeType="A320" time="19:25"/>
+    <flight callsign="EXS509" kind="arrival" otherAirport="-32.928 151.773" planeType="B737" time="19:25"/>
+    <flight callsign="FIN1224" follows="FIN1224" kind="departure" otherAirport="60.171 24.933" planeType="A321"
+            time="19:30"/>
+    <flight callsign="EXS153" kind="arrival" otherAirport="55.858 -4.243" planeType="B737" time="19:30"/>
+    <flight callsign="BTI484" follows="BTI484" kind="departure" otherAirport="56.946 24.115" planeType="DH8A"
+            time="19:35"/>
+    <flight callsign="TAP1305" follows="TAP1305" kind="departure" otherAirport="38.726 -9.149" planeType="A321"
+            time="19:35"/>
+    <flight callsign="AFR1582" kind="arrival" otherAirport="48.857 2.341" planeType="A321" time="19:45"/>
+    <flight callsign="LOT526" follows="LOT526" kind="departure" otherAirport="52.236 21.01" planeType="E175"
+            time="19:50"/>
+    <flight callsign="AFL2025" follows="AFL2025" kind="departure" otherAirport="55.757 37.615" planeType="A320"
+            time="19:50"/>
+    <flight callsign="CSA544" follows="CSA544" kind="departure" otherAirport="53.554 9.992" planeType="A319"
+            time="19:50"/>
+    <flight callsign="IBK448" kind="arrival" otherAirport="60.171 24.933" planeType="B737" time="19:50"/>
+    <flight callsign="SWR1499" follows="SWR1499" kind="departure" otherAirport="47.377 8.54" planeType="A320"
+            time="19:55"/>
+    <flight callsign="UAE137" kind="arrival" otherAirport="25.27 55.309" planeType="B777" time="19:55"/>
+    <flight callsign="QTR8231" kind="arrival" otherAirport="47.5 19.055" planeType="A330" time="19:55"/>
+    <flight callsign="RYR1374" kind="arrival" otherAirport="51.506 -0.127" planeType="B737" time="20:00"/>
+    <flight callsign="CSA741" kind="arrival" otherAirport="48.585 7.736" planeType="ATR72" time="20:00"/>
+    <flight callsign="EWG9770" kind="arrival" otherAirport="51.216 6.777" planeType="A320" time="20:00"/>
+    <flight callsign="QTR8232" kind="arrival" otherAirport="47.5 19.055" planeType="A330" time="20:00"/>
+    <flight callsign="EXS510" follows="EXS510" kind="departure" otherAirport="-32.928 151.773" planeType="B737"
+            time="20:10"/>
+    <flight callsign="BAW857" follows="BAW857" kind="departure" otherAirport="51.506 -0.127" planeType="A320"
+            time="20:15"/>
+    <flight callsign="PSD4038" kind="arrival" otherAirport="48.857 2.341" planeType="B737" time="20:15"/>
+    <flight callsign="EZY7907" kind="arrival" otherAirport="52.37 4.908" planeType="A320" time="20:15"/>
+    <flight callsign="DLH1694" kind="arrival" otherAirport="48.136 11.578" planeType="E195" time="20:15"/>
+    <flight callsign="IBK449" follows="IBK449" kind="departure" otherAirport="60.171 24.933" planeType="B737"
+            time="20:20"/>
+    <flight callsign="EXS154" follows="EXS154" kind="departure" otherAirport="55.858 -4.243" planeType="B737"
+            time="20:20"/>
+    <flight callsign="RYR1375" follows="RYR1375" kind="departure" otherAirport="51.506 -0.127" planeType="B737"
+            time="20:25"/>
+    <flight callsign="ADR569" follows="ADR569" kind="departure" otherAirport="46.051 14.503" planeType="SB20"
+            time="20:25"/>
+    <flight callsign="QTR8232" follows="QTR8232" kind="departure" otherAirport="25.295 51.519" planeType="A330"
+            time="20:25"/>
+    <flight callsign="EWG772" kind="arrival" otherAirport="50.942 6.955" planeType="A320" time="20:25"/>
+    <flight callsign="AFR1583" follows="AFR1583" kind="departure" otherAirport="48.857 2.341" planeType="A321"
+            time="20:35"/>
+    <flight callsign="EWG9771" follows="EWG9771" kind="departure" otherAirport="51.216 6.777" planeType="A320"
+            time="20:35"/>
+    <flight callsign="EZY1801" kind="arrival" otherAirport="53.48 -2.249" planeType="A320" time="20:35"/>
+    <flight callsign="EZY7908" follows="EZY7908" kind="departure" otherAirport="52.37 4.908" planeType="A320"
+            time="20:45"/>
+    <flight callsign="DLH1695" follows="DLH1695" kind="departure" otherAirport="48.136 11.578" planeType="E195"
+            time="20:50"/>
+    <flight callsign="TRA5237" kind="arrival" otherAirport="51.436 5.485" planeType="B737" time="20:50"/>
+    <flight callsign="AUA711" kind="arrival" otherAirport="48.203 16.368" planeType="DH8A" time="20:50"/>
+    <flight callsign="FOS8656" kind="arrival" otherAirport="41.388 2.17" planeType="A320" time="20:50"/>
+    <flight callsign="PSD4039" follows="PSD4039" kind="departure" otherAirport="48.857 2.341" planeType="B737"
+            time="20:55"/>
+    <flight callsign="SNG2418" kind="arrival" otherAirport="44.837 -0.581" planeType="B717" time="20:55"/>
+    <flight callsign="EWG773" follows="EWG773" kind="departure" otherAirport="50.942 6.955" planeType="A320"
+            time="21:00"/>
+    <flight callsign="LOT529" kind="arrival" otherAirport="52.236 21.01" planeType="DH8A" time="21:00"/>
+    <flight callsign="EZY1802" follows="EZY1802" kind="departure" otherAirport="53.48 -2.249" planeType="A320"
+            time="21:05"/>
+    <flight callsign="SAS767" kind="arrival" otherAirport="55.676 12.568" planeType="CRJ" time="21:05"/>
+    <flight callsign="SAS1769" kind="arrival" otherAirport="59.333 18.067" planeType="A320" time="21:05"/>
+    <flight callsign="AFL2016" kind="arrival" otherAirport="55.757 37.615" planeType="A320" time="21:05"/>
+    <flight callsign="CSA789" kind="arrival" otherAirport="47.5 19.055" planeType="ATR72" time="21:10"/>
+    <flight callsign="CSA509" kind="arrival" otherAirport="55.676 12.568" planeType="B737" time="21:10"/>
+    <flight callsign="CSA779" kind="arrival" otherAirport="52.236 21.01" planeType="ATR72" time="21:15"/>
+    <flight callsign="WZZ2602" kind="arrival" otherAirport="51.506 -0.127" planeType="A321" time="21:15"/>
+    <flight callsign="CSA537" kind="arrival" otherAirport="50.112 8.683" planeType="ATR72" time="21:15"/>
+    <flight callsign="CSA619" kind="arrival" otherAirport="52.37 4.908" planeType="A319" time="21:15"/>
+    <flight callsign="CSA637" kind="arrival" otherAirport="50.844 4.356" planeType="A319" time="21:15"/>
+    <flight callsign="SNG1467" follows="SNG1467" kind="departure" otherAirport="45.438 12.318" planeType="B717"
+            time="21:20"/>
+    <flight callsign="AUA712" follows="AUA712" kind="departure" otherAirport="48.203 16.368" planeType="DH8A"
+            time="21:20"/>
+    <flight callsign="EZY6267" kind="arrival" otherAirport="51.454 -2.592" planeType="A320" time="21:20"/>
+    <flight callsign="EZY2585" kind="arrival" otherAirport="45.468 9.182" planeType="A320" time="21:25"/>
+    <flight callsign="EZY8997" kind="arrival" otherAirport="51.506 -0.127" planeType="A320" time="21:25"/>
+    <flight callsign="NAX1504" kind="arrival" otherAirport="59.912 10.75" planeType="B737" time="21:25"/>
+    <flight callsign="TRA5238" follows="TRA5238" kind="departure" otherAirport="51.436 5.485" planeType="B737"
+            time="21:30"/>
+    <flight callsign="FOS8657" follows="FOS8657" kind="departure" otherAirport="41.388 2.17" planeType="A320"
+            time="21:30"/>
+    <flight callsign="QSC1285" kind="arrival" otherAirport="32.086 34.79" planeType="B737" time="21:30"/>
+    <flight callsign="UAE138" follows="UAE138" kind="departure" otherAirport="25.27 55.309" planeType="B777"
+            time="21:35"/>
+    <flight callsign="CSA527" kind="arrival" otherAirport="51.216 6.777" planeType="ATR72" time="21:35"/>
+    <flight callsign="AUI809" kind="arrival" otherAirport="50.451 30.524" planeType="B737" time="21:35"/>
+    <flight callsign="RYR7326" kind="arrival" otherAirport="53.348 -6.248" planeType="B737" time="21:40"/>
+    <flight callsign="SAS768" follows="SAS768" kind="departure" otherAirport="55.676 12.568" planeType="CRJ"
+            time="21:45"/>
+    <flight callsign="SAS1770" follows="SAS1770" kind="departure" otherAirport="59.333 18.067" planeType="B737"
+            time="21:45"/>
+    <flight callsign="CSA723" kind="arrival" otherAirport="45.468 9.182" planeType="A319" time="21:45"/>
+    <flight callsign="EZY6268" follows="EZY6268" kind="departure" otherAirport="51.454 -2.592" planeType="A320"
+            time="21:50"/>
+    <flight callsign="WZZ2601" follows="WZZ2601" kind="departure" otherAirport="51.506 -0.127" planeType="A321"
+            time="21:50"/>
+    <flight callsign="EZY6268" follows="EZY6268" kind="departure" otherAirport="51.454 -2.592" planeType="A320"
+            time="21:50"/>
+    <flight callsign="WZZ2601" follows="WZZ2601" kind="departure" otherAirport="51.506 -0.127" planeType="A321"
+            time="21:50"/>
+    <flight callsign="CSA818" follows="CSA818" kind="departure" otherAirport="45.807 15.968" planeType="ATR72"
+            time="21:55"/>
+    <flight callsign="EZY2586" follows="EZY2586" kind="departure" otherAirport="45.468 9.182" planeType="A320"
+            time="21:55"/>
+    <flight callsign="EZY8998" follows="EZY8998" kind="departure" otherAirport="51.506 -0.127" planeType="A320"
+            time="21:55"/>
+    <flight callsign="NAX1505" follows="NAX1505" kind="departure" otherAirport="59.912 10.75" planeType="B737"
+            time="21:55"/>
+    <flight callsign="CSA818" follows="CSA818" kind="departure" otherAirport="45.807 15.968" planeType="ATR72"
+            time="21:55"/>
+    <flight callsign="EZY2586" follows="EZY2586" kind="departure" otherAirport="45.468 9.182" planeType="A320"
+            time="21:55"/>
+    <flight callsign="EZY8998" follows="EZY8998" kind="departure" otherAirport="51.506 -0.127" planeType="A320"
+            time="21:55"/>
+    <flight callsign="NAX1505" follows="NAX1505" kind="departure" otherAirport="59.912 10.75" planeType="B737"
+            time="21:55"/>
+    <flight callsign="CSA767" kind="arrival" otherAirport="48.857 2.341" planeType="A319" time="21:55"/>
+    <flight callsign="CSA767" kind="arrival" otherAirport="48.857 2.341" planeType="A319" time="21:55"/>
+    <flight callsign="CSA20" follows="CSA20" kind="departure" otherAirport="49.819 18.123" planeType="ATR72"
+            time="22:00"/>
+    <flight callsign="CSA912" follows="CSA912" kind="departure" otherAirport="56.838 60.599" planeType="A319"
+            time="22:00"/>
+    <flight callsign="CSA20" follows="CSA20" kind="departure" otherAirport="49.819 18.123" planeType="ATR72"
+            time="22:00"/>
+    <flight callsign="CSA912" follows="CSA912" kind="departure" otherAirport="56.838 60.599" planeType="A319"
+            time="22:00"/>
+    <flight callsign="QSC1171" kind="arrival" otherAirport="32.647 -16.909" planeType="B737" time="22:10"/>
+    <flight callsign="CSA978" follows="CSA978" kind="departure" otherAirport="48.717 21.253" planeType="ATR72"
+            time="22:15"/>
+    <flight callsign="BXI2815" kind="arrival" otherAirport="50.844 4.356" planeType="A319" time="22:25"/>
+    <flight callsign="KLM1359" kind="arrival" otherAirport="52.37 4.908" planeType="B737" time="22:30"/>
+    <flight callsign="CSA967" kind="arrival" otherAirport="48.149 17.107" planeType="ATR42" time="22:30"/>
+    <flight callsign="CSA916" follows="CSA916" kind="departure" otherAirport="50.451 30.524" planeType="B737"
+            time="22:40"/>
+    <flight callsign="CSA914" kind="departure" otherAirport="47.227 39.717" planeType="A319" time="22:40"/>
+    <flight callsign="BAW858" kind="arrival" otherAirport="51.506 -0.127" planeType="A320" time="23:00"/>
+    <flight callsign="QSC2037" kind="arrival" otherAirport="9.899 -74.86" planeType="B737" time="23:05"/>
+    <flight callsign="DLH1402" kind="arrival" otherAirport="50.112 8.683" planeType="A320" time="23:15"/>
+    <flight callsign="QSC1115" kind="arrival" otherAirport="39.619 19.908" planeType="B737" time="23:30"/>
+    <flight callsign="QSC1117" kind="arrival" otherAirport="39.619 19.908" planeType="B737" time="23:40"/>
+    <flight callsign="CSA711" kind="arrival" otherAirport="38.726 -9.149" planeType="A319" time="23:40"/>
+    <flight callsign="QSC1286" follows="QSC1286" kind="departure" otherAirport="32.086 34.79" planeType="B737"
+            time="23:45"/>
+    <flight callsign="RYR2013" kind="arrival" otherAirport="51.506 -0.127" planeType="B737" time="23:45"/>
+    <flight callsign="QSC1165" kind="arrival" otherAirport="39.571 2.647" planeType="B737" time="23:50"/>
+    <flight callsign="CSA905" kind="arrival" otherAirport="55.757 37.615" planeType="A319" time="23:55"/>
   </flightListTraffic>
 </trafficDefinition>

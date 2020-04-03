@@ -14,7 +14,7 @@ import java.time.format.DateTimeFormatter;
 import static eng.eSystem.utilites.FunctionShortcuts.*;
 
 public class FlightListTraffixModelXmlLoader {
-  public static FlightListTrafficModel load(XElement source) {
+  public FlightListTrafficModel load(XElement source) {
     XmlLoaderUtils.setContext(source);
 
     IList<FlightListTrafficModel.Flight> flights = new EList<>();
@@ -26,7 +26,7 @@ public class FlightListTraffixModelXmlLoader {
     return ret;
   }
 
-  private static FlightListTrafficModel.Flight loadFlight(XElement source) {
+  private FlightListTrafficModel.Flight loadFlight(XElement source) {
     XmlLoaderUtils.setContext(source);
     String timeS = XmlLoaderUtils.loadString("time");
     LocalTime time = LocalTime.parse(
@@ -35,7 +35,7 @@ public class FlightListTraffixModelXmlLoader {
     String callsignS = XmlLoaderUtils.loadString("callsign");
     Callsign callsign = new Callsign(callsignS);
     MovementTemplate.eKind kind = XmlLoaderUtils.loadEnum("kind", MovementTemplate.eKind.class);
-    int heading = XmlLoaderUtils.loadInteger("heading", EMPTY_HEADING);
+    Integer heading = XmlLoaderUtils.loadInteger("heading", null);
     Coordinate otherAirportCoordinate = XmlLoaderUtils.loadCoordinate("otherAirport", null);
     String airplaneType = XmlLoaderUtils.loadString("planeType", null);
     String follows = XmlLoaderUtils.loadString("follows", null);

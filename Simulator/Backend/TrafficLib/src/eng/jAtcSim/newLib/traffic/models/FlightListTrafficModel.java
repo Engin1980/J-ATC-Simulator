@@ -6,6 +6,7 @@ import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.geo.Coordinate;
+import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.traffic.movementTemplating.EntryExitInfo;
 import eng.jAtcSim.newLib.traffic.movementTemplating.MovementTemplate;
 import eng.jAtcSim.newLib.shared.Callsign;
@@ -21,7 +22,7 @@ public class FlightListTrafficModel implements ITrafficModel {
 
   public static class Flight {
     private final Callsign callsign;
-    private final int heading;
+    private final Integer heading;
     private final Coordinate otherAirport;
     private final MovementTemplate.eKind kind;
     private final String planeType;
@@ -29,8 +30,14 @@ public class FlightListTrafficModel implements ITrafficModel {
     private final String follows;
     private Flight bindedFollows = null;
 
-    public Flight(Callsign callsign, int heading, Coordinate otherAirport, MovementTemplate.eKind kind,
+    public Flight(Callsign callsign, Integer heading, Coordinate otherAirport, MovementTemplate.eKind kind,
            String planeType, LocalTime time, String follows) {
+
+      EAssert.Argument.isNotNull(callsign, "callsign");
+      EAssert.Argument.isTrue(heading != null || otherAirport != null, "Heading or other-airport location must be set.");
+      EAssert.Argument.isNonemptyString(planeType, "planeType");
+      EAssert.Argument.isNotNull(time, "time");
+
       this.callsign = callsign;
       this.heading = heading;
       this.otherAirport = otherAirport;
@@ -40,8 +47,6 @@ public class FlightListTrafficModel implements ITrafficModel {
       this.follows = follows;
     }
   }
-
-  private static final int EMPTY_HEADING = -1;
 
   private final IList<Flight> flights;
 
@@ -59,10 +64,6 @@ public class FlightListTrafficModel implements ITrafficModel {
 
   private void bind() {
     for (Flight flight : flights) {
-
-      if (flight.heading == EMPTY_HEADING && flight.otherAirport == null)
-        throw new EApplicationException("Flight " + flight.callsign + " has neither heading nor other-airport coordinate.");
-
       if (flight.follows != null)
         try {
           flight.bindedFollows = flights.getFirst(q -> q.callsign.toString(false).equals(flight.follows));
