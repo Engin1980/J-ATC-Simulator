@@ -14,44 +14,45 @@ public class SimpleGenericTrafficModelXmlLoader {
     double defaultProbabilityOfGeneralAviation = XmlLoaderUtils.loadDouble("defaultProbabilityOfGeneralAviation");
     boolean useExtendedCallsigns = XmlLoaderUtils.loadBoolean("useExtendedCallsigns");
 
-    IList<MovementsForHour> movementsForHours = XmlLoaderUtils.loadList(
+    IList<SimpleGenericTrafficModel.MovementsForHour> movementsForHours = XmlLoaderUtils.loadList(
         source.getChild("movements").getChildren("movementsForHour"),
         q -> loadMovementsForHour(q, defaultProbabilityOfDeparture, defaultProbabilityOfGeneralAviation));
 
-    IList<ValueAndWeight> companies = XmlLoaderUtils.loadList(
+    IList<SimpleGenericTrafficModel.ValueAndWeight> companies = XmlLoaderUtils.loadList(
         source.getChild("companies").getChildren("item"),
         q -> loadValueAndWeight(q)
     );
 
-    IList<ValueAndWeight> countries = XmlLoaderUtils.loadList(
+    IList<SimpleGenericTrafficModel.ValueAndWeight> countries = XmlLoaderUtils.loadList(
         source.getChild("countryCodes").getChildren("item"),
         q -> loadValueAndWeight(q)
     );
 
     SimpleGenericTrafficModel ret = SimpleGenericTrafficModel.create(
-        movementsForHours, companies, countries, delayProbability, maxDelayInMinutesPerStep, useExtendedCallsigns
+        movementsForHours.toArray(SimpleGenericTrafficModel.MovementsForHour.class),
+        companies, countries, delayProbability, maxDelayInMinutesPerStep, useExtendedCallsigns
     );
     return ret;
   }
 
-  private ValueAndWeight loadValueAndWeight(XElement source) {
+  private SimpleGenericTrafficModel.ValueAndWeight loadValueAndWeight(XElement source) {
     String value = source.getContent();
     int weight = XmlLoaderUtils.loadInteger(source, "weight", 1);
 
-    ValueAndWeight ret = ValueAndWeight.create(value,weight);
+    SimpleGenericTrafficModel.ValueAndWeight ret = SimpleGenericTrafficModel.ValueAndWeight.create(value,weight);
     return ret;
   }
 
-  private MovementsForHour loadMovementsForHour(XElement source,
-                                                double defaultProbabilityOfDeparture,
-                                                double defaultProbabilityOfGeneralAviation) {
+  private SimpleGenericTrafficModel.MovementsForHour loadMovementsForHour(XElement source,
+                                                                          double defaultProbabilityOfDeparture,
+                                                                          double defaultProbabilityOfGeneralAviation) {
     XmlLoaderUtils.setContext(source);
 
     int count = XmlLoaderUtils.loadInteger("count");
     double departureProbability = XmlLoaderUtils.loadDouble("departureProbability", defaultProbabilityOfDeparture);
     double gaProbability = XmlLoaderUtils.loadDouble("probabilityOfGeneralAviation", defaultProbabilityOfGeneralAviation);
 
-    MovementsForHour ret = MovementsForHour.create(count, gaProbability, departureProbability);
+    SimpleGenericTrafficModel.MovementsForHour ret = SimpleGenericTrafficModel.MovementsForHour.create(count, gaProbability, departureProbability);
     return ret;
   }
 }

@@ -1,5 +1,6 @@
 package eng.jAtcSim.newLib.traffic.models;
 
+import eng.eSystem.ERandom;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
@@ -37,6 +38,7 @@ public class SimpleGenericTrafficModel extends DayGeneratedTrafficModel {
     public static ValueAndWeight create(String value, int weight) {
       return new ValueAndWeight(value, weight);
     }
+
     private final String value;
     private final int weight;
 
@@ -56,7 +58,11 @@ public class SimpleGenericTrafficModel extends DayGeneratedTrafficModel {
     }
   }
 
-  public static SimpleGenericTrafficModel create(MovementsForHour[] movementsForHours, IList<ValueAndWeight> companies, IList<ValueAndWeight> countries, double delayProbability, int maxDelayInMinutesPerStep, boolean useExtendedCallsigns) {
+  public static SimpleGenericTrafficModel create(
+      MovementsForHour[] movementsForHours,
+      IList<ValueAndWeight> companies,
+      IList<ValueAndWeight> countries,
+      double delayProbability, int maxDelayInMinutesPerStep, boolean useExtendedCallsigns) {
     return new SimpleGenericTrafficModel(
         movementsForHours, companies, countries, delayProbability, maxDelayInMinutesPerStep, useExtendedCallsigns);
   }
@@ -67,6 +73,7 @@ public class SimpleGenericTrafficModel extends DayGeneratedTrafficModel {
   private final MovementsForHour[] movementsForHours;
   private final IList<ValueAndWeight> companies;
   private final IList<ValueAndWeight> countries;
+  private final ERandom rnd = new ERandom();
 
   private SimpleGenericTrafficModel(MovementsForHour[] movementsForHours, IList<ValueAndWeight> companies, IList<ValueAndWeight> countries, double delayProbability, int maxDelayInMinutesPerStep, boolean useExtendedCallsigns) {
     EAssert.Argument.isNotNull(movementsForHours, "movementsForHours");
@@ -109,9 +116,9 @@ public class SimpleGenericTrafficModel extends DayGeneratedTrafficModel {
     IList<MovementTemplate> ret = new EList<>();
 
     for (int i = 0; i < 24; i++) {
-      MovementsForHour cnt = movementsForHours[i];
-      for (int c = 0; c < cnt; c++) {
-        MovementTemplate tmp = generateMovement(i);
+      MovementsForHour mvm = movementsForHours[i];
+      for (int c = 0; c < mvm.count; c++) {
+        MovementTemplate tmp = generateMovement(i, mvm);
         ret.add(tmp);
       }
     }
@@ -119,19 +126,33 @@ public class SimpleGenericTrafficModel extends DayGeneratedTrafficModel {
     return ret;
   }
 
-  private MovementTemplate generateMovement(int hour) {
+  private MovementTemplate generateMovement(int hour, MovementsForHour mvm) {
     ETimeStamp initTime = new ETimeStamp(hour, rnd.nextInt(0, 60), rnd.nextInt(0, 60));
-    MovementTemplate.eKind kind = (rnd.nextDouble() <= this.probabilityOfDeparture) ?
+    MovementTemplate.eKind kind = (rnd.nextDouble() <= mvm.departureProbability) ?
         MovementTemplate.eKind.departure : MovementTemplate.eKind.arrival;
-    boolean isNonCommercial = rnd.nextDouble() < this.probabilityOfNonCommercialFlight;
+    boolean isNonCommercial = rnd.nextDouble() < mvm.generalAviationProbability;
     int radial = rnd.nextInt(360);
+    int delay = 0;
+
+
+    while (rnd.nextDouble() < delayProbability) {
+      delay += rnd.nextInt(maxDelayInMinutesPerStep);
+    }
 
     MovementTemplate ret;
-    if (isNonCommercial)
-      ret = new GeneralAviationMovementTemplate(kind, initTime, new EntryExitInfo(radial));
-    else
-      ret = new GeneralCommercialMovementTemplate(null, null,
-          kind, initTime, new EntryExitInfo(radial));
+    if (isNonCommercial) {
+      String countryIcao = this.countries.getRandomByWeights(q -> (double) q.weight, rnd).value;
+      ret = new GeneralAviationMovementTemplate(kind, initTime, countryIcao,
+          new EntryExitInfo(radial),
+          delay);
+    } else {
+      String companyIcao = this.companies.getRandomByWeights(q -> (double) q.weight, rnd).value;
+      ret = new GeneralCommercialMovementTemplate(companyIcao, null,
+          kind, initTime, new EntryExitInfo(radial),
+          delay);
+
+    }
+
     return ret;
   }
 }
