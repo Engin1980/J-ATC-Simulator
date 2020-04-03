@@ -8,20 +8,20 @@ public class GeneralCommercialMovementTemplate extends MovementTemplate {
   private String companyIcao;
   private Character category;
 
-  public GeneralCommercialMovementTemplate(eKind kind, ETimeStamp time, EntryExitInfo entryExitInfo, int delay) {
-    this(null, null, kind, time, entryExitInfo, delay);
+  public GeneralCommercialMovementTemplate(eKind kind, ETimeStamp time, EntryExitInfo entryExitInfo) {
+    this(null, null, kind, time, entryExitInfo);
   }
 
-  public GeneralCommercialMovementTemplate(String companyIcao, eKind kind, ETimeStamp time, EntryExitInfo entryExitInfo, int delay) {
-    this(companyIcao, null, kind, time, entryExitInfo, delay);
+  public GeneralCommercialMovementTemplate(String companyIcao, eKind kind, ETimeStamp time, EntryExitInfo entryExitInfo) {
+    this(companyIcao, null, kind, time, entryExitInfo);
   }
 
-  public GeneralCommercialMovementTemplate(Character category, eKind kind, ETimeStamp time, EntryExitInfo entryExitInfo, int delay) {
-    this(null, category, kind, time, entryExitInfo, delay);
+  public GeneralCommercialMovementTemplate(Character category, eKind kind, ETimeStamp time, EntryExitInfo entryExitInfo) {
+    this(null, category, kind, time, entryExitInfo);
   }
 
-  public GeneralCommercialMovementTemplate(String companyIcao, Character category, eKind kind, ETimeStamp time, EntryExitInfo entryExitInfo, int delay) {
-    super(kind, time, entryExitInfo, delay);
+  public GeneralCommercialMovementTemplate(String companyIcao, Character category, eKind kind, ETimeStamp time, EntryExitInfo entryExitInfo) {
+    super(kind, time, entryExitInfo);
     EAssert.isTrue(companyIcao == null || companyIcao.length() > 0);
     EAssert.isTrue(category == null || PlaneCategoryDefinitions.getAll().contains(category));
     this.companyIcao = companyIcao;

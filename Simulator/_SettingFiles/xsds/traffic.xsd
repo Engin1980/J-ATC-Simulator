@@ -27,7 +27,7 @@
   <xs:complexType name="company">
     <xs:attribute name="icao" type="xs:string" use="required"/>
     <xs:attribute name="weight" type="xs:double" use="required"/>
-    <xs:attribute name="category" type="sh:planeCategory" use="optional" />
+    <xs:attribute name="category" type="sh:planeCategory" use="optional"/>
   </xs:complexType>
 
   <xs:complexType name="densityTraffic">
@@ -42,6 +42,13 @@
               <xs:attribute name="isFullDayTraffic" type="xs:boolean" use="required"/>
             </xs:complexType>
           </xs:element>
+          <xs:element name="countries">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="country" type="company" maxOccurs="unbounded" minOccurs="1"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
           <xs:element name="density">
             <xs:complexType>
               <xs:sequence>
@@ -50,6 +57,7 @@
                     <xs:attribute name="hour" type="xs:int" use="required"/>
                     <xs:attribute name="departures" type="xs:int" use="required"/>
                     <xs:attribute name="arrivals" type="xs:int" use="required"/>
+                    <xs:attribute name="generalAviationProbability" type="sh:percentage" use="optional" />
                   </xs:complexType>
                 </xs:element>
               </xs:sequence>
@@ -60,7 +68,7 @@
               <xs:sequence>
                 <xs:element name="direction" maxOccurs="unbounded">
                   <xs:complexType>
-                    <xs:attribute name="heading" type="xs:int" use="required"/>
+                    <xs:attribute name="heading" type="sh:heading" use="required"/>
                     <xs:attribute name="weight" type="xs:double" use="required"/>
                   </xs:complexType>
                 </xs:element>
@@ -68,7 +76,8 @@
             </xs:complexType>
           </xs:element>
         </xs:sequence>
-        <xs:attribute name="nonCommercialFlightProbability" type="xs:double" use="required"/>
+        <xs:attribute name="defaultGeneralAviationProbability" type="sh:percentage" use="required"/>
+        <xs:attribute name="useExtendedCallsigns" type="xs:boolean" />
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -82,9 +91,9 @@
               <xs:sequence>
                 <xs:element name="movementsForHour" maxOccurs="24" minOccurs="24">
                   <xs:complexType>
-                    <xs:attribute name="count" type="xs:nonNegativeInteger" use="required" />
-                    <xs:attribute name="departureProbability" type="sh:percentage" use="optional" />
-                    <xs:attribute name="probabilityOfGeneralAviation" type="sh:percentage" use="optional" />
+                    <xs:attribute name="count" type="xs:nonNegativeInteger" use="required"/>
+                    <xs:attribute name="departureProbability" type="sh:percentage" use="optional"/>
+                    <xs:attribute name="probabilityOfGeneralAviation" type="sh:percentage" use="optional"/>
                   </xs:complexType>
                 </xs:element>
               </xs:sequence>
@@ -98,7 +107,7 @@
                     <xs:simpleContent>
                       <xs:restriction base="xs:string"/>
                     </xs:simpleContent>
-                    <xs:attribute name="weight" type="sh:percentage" use="optional" />
+                    <xs:attribute name="weight" type="sh:percentage" use="optional"/>
                   </xs:complexType>
                 </xs:element>
               </xs:sequence>

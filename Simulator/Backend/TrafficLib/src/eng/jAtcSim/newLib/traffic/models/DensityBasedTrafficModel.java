@@ -5,16 +5,15 @@ import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.eXml.XElement;
-import eng.eSystem.utilites.Selector;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.SharedInstanceProvider;
 import eng.jAtcSim.newLib.shared.time.ETimeStamp;
+import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
 import eng.jAtcSim.newLib.traffic.models.base.DayGeneratedTrafficModel;
 import eng.jAtcSim.newLib.traffic.movementTemplating.EntryExitInfo;
 import eng.jAtcSim.newLib.traffic.movementTemplating.GeneralAviationMovementTemplate;
 import eng.jAtcSim.newLib.traffic.movementTemplating.GeneralCommercialMovementTemplate;
 import eng.jAtcSim.newLib.traffic.movementTemplating.MovementTemplate;
-import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
@@ -42,54 +41,6 @@ public class DensityBasedTrafficModel extends DayGeneratedTrafficModel {
     }
   }
 
-  public static class CompanyList {
-    public static CompanyList load(IReadOnlyList<XElement> sources) {
-      IList<Company> tmp = new EList<>();
-
-      for (XElement source : sources) {
-        String code = XmlLoaderUtils.loadString(source, "icao");
-        double weight = XmlLoaderUtils.loadDouble(source, "weight");
-        Character category = XmlLoaderUtils.loadChar(source, "category", null);
-        Company cw = new Company(code, category, weight);
-        tmp.add(cw);
-      }
-
-      CompanyList ret = new CompanyList(tmp);
-      return ret;
-    }
-
-    private final IList<Company> inner;
-    private final double weightSum;
-
-    public CompanyList(IList<Company> items) {
-      this.inner = items;
-      this.weightSum = inner.sumDouble(q -> q.weight);
-    }
-
-    public Company getRandom() {
-      double rnd = SharedInstanceProvider.getRnd().nextDouble(0, weightSum);
-      int index = 0;
-      Company ret = null;
-      while (rnd > 0) {
-        Company cw = this.inner.get(index);
-        if (rnd < cw.weight) {
-          ret = cw;
-          break;
-        } else {
-          rnd -= cw.weight;
-          index++;
-        }
-      }
-      assert ret != null;
-
-      return ret;
-    }
-
-    public <T> IList<T> select(Selector<Company, T> selector) {
-      return inner.select(selector);
-    }
-  }
-
   public static class DirectionWeight {
     public static DirectionWeight load(XElement source) {
       int heading = XmlLoaderUtils.loadInteger(source, "heading");
@@ -112,75 +63,48 @@ public class DensityBasedTrafficModel extends DayGeneratedTrafficModel {
   }
 
   public static class HourBlockMovements {
-    public static IList<HourBlockMovements> loadList(IReadOnlyList<XElement> children) {
-      IList<HourBlockMovements> ret = new EList<>();
 
-      for (XElement child : children) {
-        int hour = XmlLoaderUtils.loadInteger(child, "hour");
-        int arrs = XmlLoaderUtils.loadInteger(child, "arrivals");
-        int deps = XmlLoaderUtils.loadInteger(child, "departures");
-
-        HourBlockMovements hbm = new HourBlockMovements(hour, arrs, deps);
-        ret.add(hbm);
-      }
-
-      return ret;
-    }
-
-    public final int hour;
     public final int arrivals;
     public final int departures;
+    public final double generalAviationProbability;
 
-    public HourBlockMovements(int hour, int arrivals, int departures) {
-      this.hour = hour;
+    public HourBlockMovements(int arrivals, int departures, double generalAviationProbability) {
       this.arrivals = arrivals;
       this.departures = departures;
-    }
-
-    @Override
-    public String toString() {
-      return String.format("%s:00 -> %d / %d", hour, departures, arrivals);
+      this.generalAviationProbability = generalAviationProbability;
     }
   }
 
-  public static DensityBasedTrafficModel load(XElement source) {
-    XmlLoaderUtils.setContext(source);
-    double delayProbability = XmlLoaderUtils.loadDouble("delayProbability");
-    int maxDelayInMinutesPerStep = XmlLoaderUtils.loadInteger("maxDelayInMinutesPerStep");
-    double nonCommercialFlightProbability = XmlLoaderUtils.loadDouble("nonCommercialFlightProbability");
-    boolean useExtendedCallsigns = XmlLoaderUtils.loadBoolean("useExtendedCallsigns");
-
-    //TODO isFullDayTraffic not implemented
-    boolean isFullDayTraffic = XmlLoaderUtils.loadBoolean(source.getChild("companies"), "isFullDayTraffic");
-    CompanyList companies = CompanyList.load(source.getChild("companies").getChildren("company"));
-    IList<HourBlockMovements> density = HourBlockMovements.loadList(source.getChild("density").getChildren("item"));
-
-    IList<DirectionWeight> directions = new EList<>();
-    XmlLoaderUtils.loadList(source.getChild("directions").getChildren("direction"),
-        directions,
-        q -> DirectionWeight.load(q));
-
-    DensityBasedTrafficModel ret = new DensityBasedTrafficModel(
-        delayProbability, maxDelayInMinutesPerStep, useExtendedCallsigns, companies,
-        density, directions, nonCommercialFlightProbability
-    );
-    return ret;
+  public static DensityBasedTrafficModel create(
+      HourBlockMovements[] perHourMovements,
+      IList<Company> companies,
+      IList<Company> countries,
+      IList<DirectionWeight> directions
+  ) {
+    return new DensityBasedTrafficModel(perHourMovements, companies, countries, directions);
   }
 
-  private final CompanyList companies;
-  private final IList<HourBlockMovements> density;
+  private final IList<Company> companies;
+  private final IList<Company> countries;
+  private final HourBlockMovements[] perHourMovements;
   private final IList<DirectionWeight> directions;
-  private final double nonCommercialFlightProbability;
   private final ERandom rnd = SharedInstanceProvider.getRnd();
 
-  private DensityBasedTrafficModel(double delayProbability, int maxDelayInMinutesPerStep, boolean useExtendedCallsigns,
-                                   CompanyList companies,
-                                   IList<HourBlockMovements> density, IList<DirectionWeight> directions,
-                                   double nonCommercialFlightProbability) {
+  private DensityBasedTrafficModel(
+      HourBlockMovements[] perHourMovements,
+      IList<Company> companies,
+      IList<Company> countries,
+      IList<DirectionWeight> directions) {
+    EAssert.Argument.isNotNull(perHourMovements, "perHourMovements");
+    EAssert.Argument.isTrue(perHourMovements.length == 24);
+    EAssert.Argument.isTrue(EList.of(perHourMovements).isAll(q -> q != null));
+    EAssert.Argument.isNotNull(companies, "companies");
+    EAssert.Argument.isNotNull(countries, "countries");
+    EAssert.Argument.isNotNull(directions, "directions");
     this.companies = companies;
-    this.density = density;
+    this.countries = countries;
+    this.perHourMovements = perHourMovements;
     this.directions = directions;
-    this.nonCommercialFlightProbability = nonCommercialFlightProbability;
   }
 
   @Override
@@ -188,46 +112,45 @@ public class DensityBasedTrafficModel extends DayGeneratedTrafficModel {
     IList<MovementTemplate> ret = new EList<>();
 
     for (int i = 0; i < 24; i++) {
-      int hour = i;
       IReadOnlyList<MovementTemplate> tmp;
-      HourBlockMovements hbm = density.getFirst(q -> q.hour == hour);
-      tmp = generateMovementsForHour(hbm.departures, MovementTemplate.eKind.departure, hour);
+      HourBlockMovements hbm = perHourMovements[i];
+      tmp = generateMovementsForHour(hbm.departures, hbm.generalAviationProbability, MovementTemplate.eKind.departure, i);
       ret.add(tmp);
-      tmp = generateMovementsForHour(hbm.arrivals, MovementTemplate.eKind.arrival, hour);
+      tmp = generateMovementsForHour(hbm.arrivals, hbm.generalAviationProbability, MovementTemplate.eKind.arrival, i);
       ret.add(tmp);
     }
 
     return ret;
   }
 
-  private IReadOnlyList<MovementTemplate> generateMovementsForHour(int count, MovementTemplate.eKind kind, int hour) {
+  private IReadOnlyList<MovementTemplate> generateMovementsForHour(
+      int count, double gaProb, MovementTemplate.eKind kind, int hour) {
     IList<MovementTemplate> ret = new EList<>();
 
     for (int i = 0; i < count; i++) {
-      MovementTemplate mt = generateNewMovement(hour, kind);
+      MovementTemplate mt = generateNewMovement(hour, rnd.nextDouble() < gaProb, kind);
       ret.add(mt);
     }
 
     return ret;
   }
 
-  private MovementTemplate generateNewMovement(int hour, MovementTemplate.eKind kind) {
-    String icao;
-    boolean isCommercial = !(rnd.nextDouble() < nonCommercialFlightProbability);
+  private MovementTemplate generateNewMovement(int hour, boolean isGA, MovementTemplate.eKind kind) {
 
-    Company company = this.companies.getRandom();
-    Character category = company.category;
-    String companyIcao = company.icao;
     ETimeStamp time = new ETimeStamp(hour, rnd.nextInt(0, 59), rnd.nextInt(0, 59));
     int radial = getRandomEntryRadial();
 
     MovementTemplate ret;
-    if (isCommercial == false)
-      //TODO here should be some like category probability
+    if (isGA == false) {
+      Company company = this.companies.getRandomByWeights(q -> q.weight, rnd);
+      Character category = company.category;
+      String companyIcao = company.icao;
       ret = new GeneralCommercialMovementTemplate(
           companyIcao, category, kind, time, new EntryExitInfo(radial));
-    else {
-      ret = new GeneralAviationMovementTemplate(kind, time, new EntryExitInfo(radial));
+    } else {
+      Company country = this.countries.getRandomByWeights(q -> q.weight, rnd);
+      String countryPrefix = country.icao;
+      ret = new GeneralAviationMovementTemplate(kind, time, countryPrefix, new EntryExitInfo(radial));
     }
     return ret;
   }

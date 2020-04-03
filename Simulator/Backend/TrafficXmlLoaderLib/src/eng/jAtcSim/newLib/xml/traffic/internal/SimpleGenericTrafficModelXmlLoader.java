@@ -8,11 +8,8 @@ import eng.jAtcSim.newLib.traffic.models.SimpleGenericTrafficModel;
 public class SimpleGenericTrafficModelXmlLoader {
   public SimpleGenericTrafficModel load(XElement source) {
     XmlLoaderUtils.setContext(source);
-    double delayProbability = XmlLoaderUtils.loadDouble("delayProbability");
-    int maxDelayInMinutesPerStep = XmlLoaderUtils.loadInteger("maxDelayInMinutesPerStep");
     double defaultProbabilityOfDeparture = XmlLoaderUtils.loadDouble("defaultProbabilityOfDeparture");
     double defaultProbabilityOfGeneralAviation = XmlLoaderUtils.loadDouble("defaultProbabilityOfGeneralAviation");
-    boolean useExtendedCallsigns = XmlLoaderUtils.loadBoolean("useExtendedCallsigns");
 
     IList<SimpleGenericTrafficModel.MovementsForHour> movementsForHours = XmlLoaderUtils.loadList(
         source.getChild("movements").getChildren("movementsForHour"),
@@ -30,8 +27,7 @@ public class SimpleGenericTrafficModelXmlLoader {
 
     SimpleGenericTrafficModel ret = SimpleGenericTrafficModel.create(
         movementsForHours.toArray(SimpleGenericTrafficModel.MovementsForHour.class),
-        companies, countries, delayProbability, maxDelayInMinutesPerStep, useExtendedCallsigns
-    );
+        companies, countries);
     return ret;
   }
 

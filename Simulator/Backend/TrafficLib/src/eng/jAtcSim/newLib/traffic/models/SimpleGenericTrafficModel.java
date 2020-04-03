@@ -4,7 +4,6 @@ import eng.eSystem.ERandom;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
-import eng.eSystem.utilites.NumberUtils;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.time.ETimeStamp;
 import eng.jAtcSim.newLib.traffic.models.base.DayGeneratedTrafficModel;
@@ -61,55 +60,26 @@ public class SimpleGenericTrafficModel extends DayGeneratedTrafficModel {
   public static SimpleGenericTrafficModel create(
       MovementsForHour[] movementsForHours,
       IList<ValueAndWeight> companies,
-      IList<ValueAndWeight> countries,
-      double delayProbability, int maxDelayInMinutesPerStep, boolean useExtendedCallsigns) {
-    return new SimpleGenericTrafficModel(
-        movementsForHours, companies, countries, delayProbability, maxDelayInMinutesPerStep, useExtendedCallsigns);
+      IList<ValueAndWeight> countries) {
+    return new SimpleGenericTrafficModel(movementsForHours, companies, countries);
   }
 
-  private final double delayProbability;
-  private final int maxDelayInMinutesPerStep;
-  private final boolean useExtendedCallsigns;
   private final MovementsForHour[] movementsForHours;
   private final IList<ValueAndWeight> companies;
   private final IList<ValueAndWeight> countries;
   private final ERandom rnd = new ERandom();
 
-  private SimpleGenericTrafficModel(MovementsForHour[] movementsForHours, IList<ValueAndWeight> companies, IList<ValueAndWeight> countries, double delayProbability, int maxDelayInMinutesPerStep, boolean useExtendedCallsigns) {
+  private SimpleGenericTrafficModel(MovementsForHour[] movementsForHours, IList<ValueAndWeight> companies, IList<ValueAndWeight> countries) {
     EAssert.Argument.isNotNull(movementsForHours, "movementsForHours");
     EAssert.Argument.isTrue(movementsForHours.length == 24);
     EAssert.Argument.isNotNull(companies, "companies");
     EAssert.Argument.isTrue(companies.isEmpty() == false);
     EAssert.Argument.isNotNull(countries, "countries");
     EAssert.Argument.isTrue(countries.isEmpty() == false);
-    EAssert.Argument.isTrue(NumberUtils.isBetweenOrEqual(0, delayProbability, 1));
-    EAssert.Argument.isTrue(maxDelayInMinutesPerStep >= 0);
-    this.delayProbability = delayProbability;
-    this.maxDelayInMinutesPerStep = maxDelayInMinutesPerStep;
-    this.useExtendedCallsigns = useExtendedCallsigns;
     this.movementsForHours = movementsForHours;
     this.companies = companies;
     this.countries = countries;
   }
-
-  //  private final double probabilityOfNonCommercialFlight;
-//  private final double probabilityOfDeparture; // 0-1
-//  private final int[] movementsPerHour; // int[24]
-//  private ERandom rnd = SharedInstanceProvider.getRnd();
-
-//  public SimpleGenericTrafficModel(int[] movementsPerHour,
-//                                   double probabilityOfDeparture, double probabilityOfNonCommercialFlight) {
-//    EAssert.isNotNull(movementsPerHour);
-//    EAssert.isTrue(movementsPerHour.length == 24);
-//    for (int i : movementsPerHour) {
-//      EAssert.isTrue(i >= 0, new IllegalArgumentException("Argument \"movementsPerHour\" must have all elements equal or greater than 0."));
-//    }
-//    EAssert.isTrue(NumberUtils.isBetweenOrEqual(0, probabilityOfDeparture, 1));
-//
-//    this.movementsPerHour = Arrays.copyOf(movementsPerHour, 24);
-//    this.probabilityOfDeparture = probabilityOfDeparture;
-//    this.probabilityOfNonCommercialFlight = probabilityOfNonCommercialFlight;
-//  }
 
   @Override
   public IReadOnlyList<MovementTemplate> generateMovementsForOneDay() {
@@ -132,24 +102,16 @@ public class SimpleGenericTrafficModel extends DayGeneratedTrafficModel {
         MovementTemplate.eKind.departure : MovementTemplate.eKind.arrival;
     boolean isNonCommercial = rnd.nextDouble() < mvm.generalAviationProbability;
     int radial = rnd.nextInt(360);
-    int delay = 0;
-
-
-    while (rnd.nextDouble() < delayProbability) {
-      delay += rnd.nextInt(maxDelayInMinutesPerStep);
-    }
 
     MovementTemplate ret;
     if (isNonCommercial) {
       String countryIcao = this.countries.getRandomByWeights(q -> (double) q.weight, rnd).value;
       ret = new GeneralAviationMovementTemplate(kind, initTime, countryIcao,
-          new EntryExitInfo(radial),
-          delay);
+          new EntryExitInfo(radial));
     } else {
       String companyIcao = this.companies.getRandomByWeights(q -> (double) q.weight, rnd).value;
       ret = new GeneralCommercialMovementTemplate(companyIcao, null,
-          kind, initTime, new EntryExitInfo(radial),
-          delay);
+          kind, initTime, new EntryExitInfo(radial));
 
     }
 

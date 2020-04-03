@@ -6,9 +6,8 @@ public class GeneralAviationMovementTemplate extends MovementTemplate {
   private final String countryIcao;
   public GeneralAviationMovementTemplate(
       eKind kind, ETimeStamp time, String countryIcao,
-      EntryExitInfo entryExitInfo,
-      int delay) {
-    super(kind, time, entryExitInfo, delay);
+      EntryExitInfo entryExitInfo) {
+    super(kind, time, entryExitInfo);
     this.countryIcao = countryIcao;
   }
 
