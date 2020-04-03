@@ -8,7 +8,7 @@ public class Rejection extends Response {
 
   public Rejection(ICommand origin, String reason) {
     super(origin);
-    EAssert.Argument.isNonEmptyString(reason);
+    EAssert.Argument.isNonemptyString(reason);
     this.reason = reason;
   }
 

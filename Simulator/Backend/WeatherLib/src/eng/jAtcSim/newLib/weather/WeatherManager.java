@@ -1,5 +1,6 @@
 package eng.jAtcSim.newLib.weather;
 
+import eng.eSystem.validation.EAssert;
 import eng.eSystem.validation.Validator;
 import eng.jAtcSim.newLib.shared.SharedInstanceProvider;
 import eng.jAtcSim.newLib.weather.decoders.MetarDecoder;
@@ -10,7 +11,7 @@ public class WeatherManager {
   private WeatherProvider provider;
 
   public WeatherManager(WeatherProvider provider) {
-    Validator.isNotNull(provider);
+    EAssert.Argument.isNotNull(provider);
 
     this.provider = provider;
     this.newWeatherFlag = true;
@@ -53,7 +54,7 @@ public class WeatherManager {
   }
 
   public void setWeather(Weather weather) {
-    Validator.isNotNull(weather);
+    EAssert.Argument.isNotNull(weather);
     synchronized (provider) {
       this.currentWeather = weather;
       this.newWeatherFlag = true;

@@ -11,8 +11,8 @@ public class ClearedToRouteCommand implements ICommand {
   private String expectedRunwayThresholdName;
 
   public ClearedToRouteCommand(String routeName, DARouteType routeType, String expectedRunwayThresholdName) {
-    EAssert.Argument.isNonEmptyString(routeName);
-    EAssert.Argument.isNonEmptyString(expectedRunwayThresholdName);
+    EAssert.Argument.isNonemptyString(routeName);
+    EAssert.Argument.isNonemptyString(expectedRunwayThresholdName);
     this.routeName = routeName;
     this.routeType = routeType;
     this.expectedRunwayThresholdName = expectedRunwayThresholdName;

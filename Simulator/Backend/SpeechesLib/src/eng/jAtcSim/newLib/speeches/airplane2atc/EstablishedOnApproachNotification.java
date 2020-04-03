@@ -8,7 +8,7 @@ public class EstablishedOnApproachNotification implements INotification {
   private String thresholdName;
 
   public EstablishedOnApproachNotification(String thresholdName) {
-    EAssert.Argument.isNonEmptyString(thresholdName);
+    EAssert.Argument.isNonemptyString(thresholdName);
     this.thresholdName = thresholdName;
   }
 

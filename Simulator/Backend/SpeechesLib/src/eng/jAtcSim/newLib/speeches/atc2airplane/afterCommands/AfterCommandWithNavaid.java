@@ -12,7 +12,7 @@ public abstract class AfterCommandWithNavaid extends AfterCommand {
 
   protected AfterCommandWithNavaid(String navaidName, AfterValuePosition position) {
     super(position);
-    EAssert.Argument.isNonEmptyString(navaidName);
+    EAssert.Argument.isNonemptyString(navaidName);
     this.navaidName = navaidName;
   }
 

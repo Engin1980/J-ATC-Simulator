@@ -245,12 +245,13 @@ public abstract class XmlLoaderUtils {
     return ret;
   }
 
-  public static <T> void loadList(IReadOnlyList<XElement> elements, IList<T> list, Function<XElement, T> function) {
-    for (XElement element : elements) {
-      T item = function.apply(element);
-      list.add(item);
-    }
-  }
+  // this is duplicite with IXmlLoader as IXmlLoader is functional interface
+//  public static <T> void loadList(IReadOnlyList<XElement> elements, IList<T> list, Function<XElement, T> function) {
+//    for (XElement element : elements) {
+//      T item = function.apply(element);
+//      list.add(item);
+//    }
+//  }
 
   public static <T> IList<T> loadList(IReadOnlyList<XElement> elements, IXmlLoader<T> xmlLoader) {
     IList<T> ret = new EList<>();

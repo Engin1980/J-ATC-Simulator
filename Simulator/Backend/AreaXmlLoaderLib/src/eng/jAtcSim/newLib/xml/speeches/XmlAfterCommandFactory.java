@@ -1,8 +1,9 @@
-package eng.jAtcSim.newLib.speeches;
+package eng.jAtcSim.newLib.xml.speeches;
 
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.SwitchCaseNotFoundException;
 import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
+import eng.jAtcSim.newLib.speeches.ICommand;
 import eng.jAtcSim.newLib.xml.speeches.atc2airplane.afterCommands.*;
 
 public class XmlAfterCommandFactory {

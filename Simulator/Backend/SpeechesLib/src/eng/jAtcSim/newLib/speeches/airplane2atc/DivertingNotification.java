@@ -7,7 +7,7 @@ public class DivertingNotification implements INotification {
   private String exitNavaidName;
 
   public DivertingNotification(String exitNavaidName) {
-    EAssert.Argument.isNonEmptyString(exitNavaidName);
+    EAssert.Argument.isNonemptyString(exitNavaidName);
     this.exitNavaidName = exitNavaidName;
   }
 

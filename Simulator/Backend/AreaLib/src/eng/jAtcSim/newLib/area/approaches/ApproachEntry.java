@@ -30,4 +30,11 @@ public class ApproachEntry {
   public IafRoute getIafRoute() {
     return iafRoute;
   }
+
+  public boolean isForCategory(char c){
+    if (iafRoute == null)
+      return true;
+    else
+      return iafRoute.getCategory().contains(c);
+  }
 }

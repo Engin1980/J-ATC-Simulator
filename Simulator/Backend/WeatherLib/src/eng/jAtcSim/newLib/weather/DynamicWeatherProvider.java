@@ -8,6 +8,7 @@ package eng.jAtcSim.newLib.weather;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.utilites.Action;
 import eng.eSystem.utilites.ExceptionUtils;
+import eng.eSystem.validation.EAssert;
 import eng.eSystem.validation.Validator;
 import eng.jAtcSim.newLib.weather.downloaders.MetarDownloader;
 import eng.jAtcSim.newLib.shared.InstanceProviderDictionary;
@@ -39,9 +40,9 @@ public class DynamicWeatherProvider extends WeatherProvider {
     private Action<UpdateResult> onFinished;
 
     public UpdateThread(String icao, MetarDownloader downloader, Action<UpdateResult> onFinished) {
-      Validator.isNotNull(icao);
-      Validator.isNotNull(downloader);
-      Validator.isNotNull(onFinished);
+      EAssert.Argument.isNotNull(icao);
+      EAssert.Argument.isNotNull(downloader);
+      EAssert.Argument.isNotNull(onFinished);
       this.icao = icao;
       this.downloader = downloader;
       this.onFinished = onFinished;
@@ -69,9 +70,9 @@ public class DynamicWeatherProvider extends WeatherProvider {
   private Weather updatedWeather = null;
 
   public DynamicWeatherProvider(MetarDownloader downloader, String icao, Weather initialWeather, boolean downloadNow) {
-    Validator.isNotNull(downloader);
-    Validator.matchPattern(icao, "^[A-Z]{4}$");
-    Validator.isNotNull(initialWeather);
+    EAssert.Argument.isNotNull(downloader);
+    EAssert.Argument.matchPattern(icao, "^[A-Z]{4}$");
+    EAssert.Argument.isNotNull(initialWeather);
     this.downloader = downloader;
     this.icao = icao;
     this.updatedWeather = initialWeather;
