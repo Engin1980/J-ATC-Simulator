@@ -5,7 +5,7 @@ import eng.jAtcSim.newLib.area.airplanes.interfaces.IAirplaneWriteSimple;
 import eng.jAtcSim.newLib.area.airplanes.interfaces.modules.IEmergencyModuleRO;
 import eng.jAtcSim.newLib.global.ETime;
 
-public class EmergencyModule extends Module implements IEmergencyModuleRO {
+public class EmergencyModule{
   private ETime emergencyWanishTime = null;
 
   public EmergencyModule(IAirplaneWriteSimple parent) {
