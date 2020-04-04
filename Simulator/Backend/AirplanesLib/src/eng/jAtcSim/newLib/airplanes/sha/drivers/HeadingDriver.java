@@ -1,4 +1,4 @@
-package eng.jAtcSim.newLib.area.airplanes.sha.drivers;
+package eng.jAtcSim.newLib.airplanes.sha.drivers;
 
 import eng.jAtcSim.newLib.shared.exceptions.ToDoException;
 

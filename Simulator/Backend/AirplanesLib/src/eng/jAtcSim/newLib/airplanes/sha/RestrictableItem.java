@@ -1,4 +1,4 @@
-package eng.jAtcSim.newLib.area.airplanes.sha;
+package eng.jAtcSim.newLib.airplanes.sha;
 
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.jAtcSim.newLib.shared.Restriction;
@@ -36,10 +36,10 @@ class RestrictableItem {
       this.targetValue = this.orderedValue;
     else {
       switch (restrictedValue.direction) {
-        case atLeast:
+        case above:
           this.targetValue = Math.max(this.orderedValue, this.restrictedValue.value);
           break;
-        case atMost:
+        case below:
           this.targetValue = Math.min(this.orderedValue, this.restrictedValue.value);
           break;
         case exactly:

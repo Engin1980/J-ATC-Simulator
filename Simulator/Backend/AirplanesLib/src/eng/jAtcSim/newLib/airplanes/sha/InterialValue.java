@@ -1,6 +1,4 @@
-package eng.jAtcSim.newLib.area.airplanes.sha;
-
-import com.sun.istack.internal.Nullable;
+package eng.jAtcSim.newLib.airplanes.sha;
 
 class InertialValue {
   private final double maxPositiveInertiaChange;
@@ -11,10 +9,10 @@ class InertialValue {
 
   public InertialValue(double value,
                        double maxPositiveInertiaChange, double maxNegativeInertiaChange,
-                       @Nullable Double minimum) {
+                       Double minimumOrNull) {
     this.value = value;
     this.inertia = 0;
-    this.minimum = minimum;
+    this.minimum = minimumOrNull;
     this.maxPositiveInertiaChange = maxPositiveInertiaChange;
     this.maxNegativeInertiaChange = maxNegativeInertiaChange;
   }

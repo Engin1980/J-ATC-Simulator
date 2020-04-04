@@ -1,4 +1,4 @@
-package eng.jAtcSim.newLib.area.airplanes.sha;
+package eng.jAtcSim.newLib.airplanes.sha;
 
 class ShaSpeed {
   public InertialValue speed;
