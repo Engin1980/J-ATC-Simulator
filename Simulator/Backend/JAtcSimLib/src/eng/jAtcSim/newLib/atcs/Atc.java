@@ -5,7 +5,6 @@ import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 import eng.jAtcSim.newLib.Acc;
 import eng.jAtcSim.newLib.area.airplanes.interfaces.IAirplane4Atc;
 import eng.jAtcSim.newLib.area.atcs.planeResponsibility.PlaneResponsibilityManager;
-import eng.jAtcSim.newLib.messaging.IMessageParticipant;
 import eng.jAtcSim.newLib.messaging.Message;
 import eng.jAtcSim.newLib.area.serialization.LoadSave;
 

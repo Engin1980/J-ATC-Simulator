@@ -10,6 +10,10 @@ public class EDayTimeStamp extends ETime implements ITimeComparable<EDayTimeStam
     super(value);
   }
 
+  public EDayTimeStamp addMinutes(int minutes) {
+    return this.addSeconds(minutes * 60);
+  }
+
   public EDayTimeStamp addSeconds(int seconds) {
     return new EDayTimeStamp(this.getValue() + seconds);
   }

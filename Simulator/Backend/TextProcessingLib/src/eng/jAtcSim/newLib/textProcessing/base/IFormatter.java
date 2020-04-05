@@ -1,7 +1,6 @@
 package eng.jAtcSim.newLib.textProcessing.base;
 
 import eng.eSystem.validation.EAssert;
-import eng.jAtcSim.newLib.messaging.IMessageParticipant;
 import eng.jAtcSim.newLib.speeches.ISpeech;
 
 public interface IFormatter {

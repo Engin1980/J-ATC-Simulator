@@ -7,28 +7,12 @@ import eng.eSystem.validation.EAssert;
 
 public class Messenger {
 
-  public static class XSystem implements IMessageParticipant {
-    public XSystem() {
-
-    }
-
-    @Override
-    public String getName() {
-      return "SYSTEM";
-    }
-
-    @Override
-    public String toString() {
-      return "SYSTEM";
-    }
-  }
-
   public static class ListenerInfo {
     public final Object listener;
-    public final IMessageParticipant messageTarget;
+    public final Participant messageTarget;
     public final IList<Message> queue;
 
-    public ListenerInfo(Object listener, IMessageParticipant messageTarget) {
+    public ListenerInfo(Object listener, Participant messageTarget) {
       this.listener = listener;
       this.messageTarget = messageTarget;
       this.queue = new EList<>();
@@ -37,10 +21,10 @@ public class Messenger {
   //TODO recorder reimplementation
 //  @XmlIgnore
 //  private MessengerRecorder recorder = new MessengerRecorder("Messenger log", "messenger.log");
-  public static final XSystem SYSTEM = new XSystem();
+  public static final Participant SYSTEM = Participant.createSystem();
   private IList<ListenerInfo> listeners = new EList<>();
 
-  public void registerListener(Object listener, IMessageParticipant messageTarget) {
+  public void registerListener(Object listener, Participant messageTarget) {
     EAssert.isNotNull(listener);
     EAssert.isNotNull(messageTarget);
     if (listeners.isAny(q -> q.listener == listener))

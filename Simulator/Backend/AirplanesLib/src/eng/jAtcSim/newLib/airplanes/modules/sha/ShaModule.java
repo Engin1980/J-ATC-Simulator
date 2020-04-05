@@ -1,6 +1,7 @@
 package eng.jAtcSim.newLib.airplanes.modules.sha;
 
 import eng.jAtcSim.newLib.airplaneType.AirplaneType;
+import eng.jAtcSim.newLib.airplanes.AirplaneInstanceProvider;
 import eng.jAtcSim.newLib.shared.Restriction;
 
 public class ShaModule {
@@ -127,7 +128,7 @@ public class ShaModule {
     return (int) Math.round(this.lastVerticalSpeed);
   }
 
-  public ShaModule(int heading, int altitude, int speed, AirplaneType planeType, int airportAltitude) {
+  public ShaModule(int heading, int altitude, int speed, AirplaneType planeType) {
     this.targetAltitude = new RestrictableItem(altitude);
     this.targetHeading = heading;
     this.targetSpeed = new RestrictableItem(speed);
@@ -142,7 +143,7 @@ public class ShaModule {
         altitude,
         planeType.lowClimbRate / 7d / 60,
         planeType.highDescendRate / 7d / 60,
-        (double) airportAltitude);
+        (double) AirplaneInstanceProvider.getAirport().getAltitude());
 
     this.speed = new InertialValue(
         speed,

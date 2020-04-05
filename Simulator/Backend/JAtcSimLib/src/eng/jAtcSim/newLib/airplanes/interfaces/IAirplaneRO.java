@@ -5,7 +5,6 @@ import eng.jAtcSim.newLib.area.airplanes.Airplane;
 import eng.jAtcSim.newLib.area.airplanes.AirplaneType;
 import eng.jAtcSim.newLib.area.airplanes.Squawk;
 import eng.jAtcSim.newLib.area.airplanes.interfaces.modules.*;
-import eng.jAtcSim.newLib.messaging.IMessageParticipant;
 
 public interface IAirplaneRO extends IMessageParticipant {
 

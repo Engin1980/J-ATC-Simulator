@@ -1,29 +1,29 @@
-package eng.jAtcSim.newLib.area.airplanes.modules;
+package eng.jAtcSim.newLib.airplanes.modules;
 
 import eng.eSystem.Tuple;
-import eng.eSystem.collections.IList;
+import eng.eSystem.collections.*;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.utilites.ConversionUtils;
 import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
 import eng.jAtcSim.newLib.area.Navaid;
-import eng.jAtcSim.newLib.area.airplanes.Airplane;
-import eng.jAtcSim.newLib.area.airplanes.behaviors.HoldBehavior;
-import eng.jAtcSim.newLib.area.airplanes.commandApplications.ApplicationManager;
-import eng.jAtcSim.newLib.area.airplanes.commandApplications.ApplicationResult;
-import eng.jAtcSim.newLib.area.airplanes.commandApplications.ConfirmationResult;
-import eng.jAtcSim.newLib.area.airplanes.interfaces.IAirplaneWriteSimple;
-import eng.jAtcSim.newLib.area.airplanes.interfaces.modules.IRoutingModuleRO;
-import eng.jAtcSim.newLib.area.atcs.Atc;
 import eng.jAtcSim.newLib.area.routes.DARoute;
+import eng.jAtcSim.newLib.messaging.Participant;
 import eng.jAtcSim.newLib.shared.DelayedList;
+import eng.jAtcSim.newLib.speeches.ICommand;
 import eng.jAtcSim.newLib.speeches.ISpeech;
+import eng.jAtcSim.newLib.speeches.SpeechList;
+import eng.jAtcSim.newLib.speeches.atc2airplane.*;
+import eng.jAtcSim.newLib.speeches.atc2airplane.afterCommands.AfterAltitudeCommand;
+import eng.jAtcSim.newLib.speeches.atc2airplane.afterCommands.AfterCommand;
+import eng.jAtcSim.newLib.speeches.atc2airplane.afterCommands.AfterDistanceCommand;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class RoutingModule extends Module implements IRoutingModuleRO {
+import static eng.eSystem.utilites.FunctionShortcuts.*;
 
+public class RoutingModule {
   public enum CommandSource {
     procedure,
     atc,
@@ -37,11 +37,7 @@ public class RoutingModule extends Module implements IRoutingModuleRO {
 
   private final DelayedList<ISpeech> queue = new DelayedList<>(2, 7); //Min/max item delay
   private final AfterCommandList afterCommands = new AfterCommandList();
-  private final Map<Atc, SpeechList> saidText = new HashMap<>();
-
-  public RoutingModule(IAirplaneWriteSimple parent) {
-    super(parent);
-  }
+  private final Map<Participant, SpeechList> saidText = new HashMap<>();
 
   public void elapseSecond() {
     processNewSpeeches();
@@ -61,12 +57,12 @@ public class RoutingModule extends Module implements IRoutingModuleRO {
   @Override
   public Navaid getDepartureLastNavaid() {
     if (this.parent.getFlightModule().isDeparture() == false)
-        throw new EApplicationException(sf(
-            "This method should not be called on departure aircraft %s.",
-            this.parent.getFlightModule().getCallsign().toString()));
+      throw new EApplicationException(sf(
+          "This method should not be called on departure aircraft %s.",
+          this.parent.getFlightModule().getCallsign().toString()));
 
-      Navaid ret = this.assignedRoute.getMainNavaid();
-      return ret;
+    Navaid ret = this.assignedRoute.getMainNavaid();
+    return ret;
   }
 
   @Override
@@ -93,7 +89,7 @@ public class RoutingModule extends Module implements IRoutingModuleRO {
   public void setRoute(SpeechList<IFromAtc> route) {
     this.afterCommands.clearAll();
     expandThenCommands(route);
-    processSpeeches(route, CommandSource.procedure);
+    processSpeeches(route, eng.jAtcSim.newLib.area.airplanes.modules.RoutingModule.CommandSource.procedure);
   }
 
   public void setRouting(DARoute newRoute, ActiveRunwayThreshold expectedRunwayThreshold) {
@@ -101,11 +97,11 @@ public class RoutingModule extends Module implements IRoutingModuleRO {
     this.assignedRoute = newRoute;
     this.afterCommands.clearRoute();
 
-    SpeechList<IFromAtc> cmds;
+    SpeechList<ICommand> cmds;
     cmds = new SpeechList<>();
     cmds.add(assignedRoute.getRouteCommands());
     expandThenCommands(cmds);
-    processSpeeches(cmds, CommandSource.procedure);
+    processSpeeches(cmds, eng.jAtcSim.newLib.area.airplanes.modules.RoutingModule.CommandSource.procedure);
   }
 
   public ActiveRunwayThreshold getExpectedRunwayThreshold() {
@@ -135,7 +131,7 @@ public class RoutingModule extends Module implements IRoutingModuleRO {
 
   public void applyShortcut(Navaid navaid) {
     SpeechList<IFromAtc> skippedCommands = this.afterCommands.doShortcutTo(navaid);
-    this.processSpeeches(skippedCommands, CommandSource.procedure);
+    this.processSpeeches(skippedCommands, eng.jAtcSim.newLib.area.airplanes.modules.RoutingModule.CommandSource.procedure);
   }
 
   public void processNewSpeeches() {
@@ -151,7 +147,7 @@ public class RoutingModule extends Module implements IRoutingModuleRO {
       say(new RequestRadarContactNotification());
       this.queue.clear();
     } else {
-      processSpeeches(current, CommandSource.atc);
+      processSpeeches(current, eng.jAtcSim.newLib.area.airplanes.modules.RoutingModule.CommandSource.atc);
     }
   }
 
@@ -160,23 +156,23 @@ public class RoutingModule extends Module implements IRoutingModuleRO {
     SpeechList<IAtcCommand> cmds;
 
     Coordinate targetCoordinate = parent.getSha().tryGetTargetCoordinate();
-    if (targetCoordinate == null && parent.getBehaviorModule().is(HoldBehavior.class)) {
-      HoldBehavior hb = parent.getBehaviorModule().getAs(HoldBehavior.class);
+    if (targetCoordinate == null && parent.getBehaviorModule().is(eng.jAtcSim.newLib.area.airplanes.behaviors.HoldBehavior.class)) {
+      eng.jAtcSim.newLib.area.airplanes.behaviors.HoldBehavior hb = parent.getBehaviorModule().getAs(eng.jAtcSim.newLib.area.airplanes.behaviors.HoldBehavior.class);
       targetCoordinate = hb.navaid.getCoordinate();
     }
 
     cmds = afterCommands.getAndRemoveSatisfiedCommands(
         parent, targetCoordinate, AfterCommandList.Type.extensions);
     parent.getRecorderModule().logProcessedAfterSpeeches(cmds, "extensions");
-    processSpeeches(cmds, CommandSource.extension);
+    processSpeeches(cmds, eng.jAtcSim.newLib.area.airplanes.modules.RoutingModule.CommandSource.extension);
 
     cmds = afterCommands.getAndRemoveSatisfiedCommands(
         parent, targetCoordinate, AfterCommandList.Type.route);
     parent.getRecorderModule().logProcessedAfterSpeeches(cmds, "route");
-    processSpeeches(cmds, CommandSource.route);
+    processSpeeches(cmds, eng.jAtcSim.newLib.area.airplanes.modules.RoutingModule.CommandSource.route);
   }
 
-  private void processSpeeches(SpeechList<? extends IFromAtc> queue, CommandSource cs) {
+  private void processSpeeches(SpeechList<? extends IFromAtc> queue, eng.jAtcSim.newLib.area.airplanes.modules.RoutingModule.CommandSource cs) {
     while (!queue.isEmpty()) {
       IFromAtc cmd = queue.get(0);
       if (cmd instanceof AfterCommand) {
@@ -189,19 +185,19 @@ public class RoutingModule extends Module implements IRoutingModuleRO {
 
   private void processNormalSpeech(
       SpeechList<? extends IFromAtc> queue, IFromAtc cmd,
-      CommandSource cs, IAirplaneWriteSimple plane) {
+      eng.jAtcSim.newLib.area.airplanes.modules.RoutingModule.CommandSource cs, eng.jAtcSim.newLib.area.airplanes.interfaces.IAirplaneWriteSimple plane) {
 
-    ConfirmationResult cres = ApplicationManager.confirm(plane, cmd, cs == CommandSource.atc, true);
+    eng.jAtcSim.newLib.area.airplanes.commandApplications.ConfirmationResult cres = eng.jAtcSim.newLib.area.airplanes.commandApplications.ApplicationManager.confirm(plane, cmd, cs == eng.jAtcSim.newLib.area.airplanes.modules.RoutingModule.CommandSource.atc, true);
     if (cres.rejection != null) {
       // command was rejected
       say(cres.rejection);
     } else {
       affectAfterCommands(cmd, cs);
       // new commands from atc when needs to be confirmed, are confirmed
-      if (cs == CommandSource.atc && cres.confirmation != null)
+      if (cs == eng.jAtcSim.newLib.area.airplanes.modules.RoutingModule.CommandSource.atc && cres.confirmation != null)
         say(cres.confirmation);
       // command is applied
-      ApplicationResult ares = ApplicationManager.apply(parent, cmd);
+      eng.jAtcSim.newLib.area.airplanes.commandApplications.ApplicationResult ares = eng.jAtcSim.newLib.area.airplanes.commandApplications.ApplicationManager.apply(parent, cmd);
       assert ares.rejection == null : "This should not be rejected as was confirmed a few moments before.";
       ares.informations.forEach(q -> say(q));
     }
@@ -209,7 +205,7 @@ public class RoutingModule extends Module implements IRoutingModuleRO {
     queue.removeAt(0);
   }
 
-  private void affectAfterCommands(IFromAtc cmd, CommandSource cs) {
+  private void affectAfterCommands(IFromAtc cmd, eng.jAtcSim.newLib.area.airplanes.modules.RoutingModule.CommandSource cs) {
     final Class[] lateralCommands = new Class[]{ProceedDirectCommand.class, ChangeHeadingCommand.class, HoldCommand.class};
     switch (cs) {
       case procedure:
@@ -282,32 +278,32 @@ public class RoutingModule extends Module implements IRoutingModuleRO {
     }
   }
 
-  private void processAfterSpeechWithConsequents(IList<? extends ISpeech> queue, CommandSource cs) {
+  private void processAfterSpeechWithConsequents(IList<? extends ISpeech> queue, eng.jAtcSim.newLib.area.airplanes.modules.RoutingModule.CommandSource cs) {
 
-    Airplane.State[] unableProcessAfterCommandsStates = {
-        Airplane.State.flyingIaf2Faf,
-        Airplane.State.approachEnter,
-        Airplane.State.approachDescend,
-        Airplane.State.longFinal,
-        Airplane.State.shortFinal,
-        Airplane.State.landed,
-        Airplane.State.takeOffRoll,
-        Airplane.State.takeOffGoAround
+    eng.jAtcSim.newLib.area.airplanes.Airplane.State[] unableProcessAfterCommandsStates = {
+        eng.jAtcSim.newLib.area.airplanes.Airplane.State.flyingIaf2Faf,
+        eng.jAtcSim.newLib.area.airplanes.Airplane.State.approachEnter,
+        eng.jAtcSim.newLib.area.airplanes.Airplane.State.approachDescend,
+        eng.jAtcSim.newLib.area.airplanes.Airplane.State.longFinal,
+        eng.jAtcSim.newLib.area.airplanes.Airplane.State.shortFinal,
+        eng.jAtcSim.newLib.area.airplanes.Airplane.State.landed,
+        eng.jAtcSim.newLib.area.airplanes.Airplane.State.takeOffRoll,
+        eng.jAtcSim.newLib.area.airplanes.Airplane.State.takeOffGoAround
     };
 
     AfterCommand af = (AfterCommand) queue.get(0);
     queue.removeAt(0);
 
-    if (cs == CommandSource.atc && parent.getState().is(unableProcessAfterCommandsStates)) {
+    if (cs == eng.jAtcSim.newLib.area.airplanes.modules.RoutingModule.CommandSource.atc && parent.getState().is(unableProcessAfterCommandsStates)) {
       ISpeech rej = new Rejection("Unable to process after-command during approach/take-off.", af);
       say(rej);
       return;
     }
 
-    ConfirmationResult cres;
-    boolean sayConfirmations = cs == CommandSource.atc;
+    eng.jAtcSim.newLib.area.airplanes.commandApplications.ConfirmationResult cres;
+    boolean sayConfirmations = cs == eng.jAtcSim.newLib.area.airplanes.modules.RoutingModule.CommandSource.atc;
 
-    cres = ApplicationManager.confirm(parent, af, true, false);
+    cres = eng.jAtcSim.newLib.area.airplanes.commandApplications.ApplicationManager.confirm(parent, af, true, false);
     if (sayConfirmations) say(cres.confirmation);
 
     while (queue.isEmpty() == false) {
@@ -321,10 +317,10 @@ public class RoutingModule extends Module implements IRoutingModuleRO {
           break;
 
         queue.removeAt(0);
-        cres = ApplicationManager.confirm(parent, cmd, true, false);
+        cres = eng.jAtcSim.newLib.area.airplanes.commandApplications.ApplicationManager.confirm(parent, cmd, true, false);
         if (sayConfirmations) say(cres.confirmation);
 
-        if (cs == CommandSource.procedure) {
+        if (cs == eng.jAtcSim.newLib.area.airplanes.modules.RoutingModule.CommandSource.procedure) {
           afterCommands.addRoute(af, cmd);
         } else
           afterCommands.addExtension(af, cmd);
@@ -334,7 +330,7 @@ public class RoutingModule extends Module implements IRoutingModuleRO {
 
   private void say(ISpeech speech) {
     // if no tuned atc, nothing is said
-    Atc atc = parent.getAtcModule().getTunedAtc();
+    eng.jAtcSim.newLib.area.atcs.Atc atc = parent.getAtcModule().getTunedAtc();
 
     if (atc == null) return;
 
@@ -346,7 +342,7 @@ public class RoutingModule extends Module implements IRoutingModuleRO {
   }
 
   private void flushSaidTextToAtc() {
-    for (Atc a : saidText.keySet()) {
+    for (eng.jAtcSim.newLib.area.atcs.Atc a : saidText.keySet()) {
       SpeechList saidTextToAtc = saidText.get(a);
       if (!saidTextToAtc.isEmpty()) {
         parent.sendMessage(a, saidText.get(a));
@@ -357,7 +353,7 @@ public class RoutingModule extends Module implements IRoutingModuleRO {
     }
   }
 
-  private void expandThenCommands(SpeechList<IFromAtc> speeches) {
+  private void expandThenCommands(SpeechList<ICommand> speeches) {
     if (speeches.isEmpty()) {
       return;
     }
@@ -371,11 +367,11 @@ public class RoutingModule extends Module implements IRoutingModuleRO {
           speeches.clear();
           return;
         }
-        IAtcCommand prev = (IAtcCommand) speeches.get(i - 1);
+        ICommand prev = (ICommand) speeches.get(i - 1);
 
         AfterCommand n; // new
         if (prev instanceof ProceedDirectCommand) {
-          n = new AfterNavaidCommand(((ProceedDirectCommand) prev).getNavaid());
+          n = new AfterDistanceCommand(((ProceedDirectCommand) prev).getNavaid(), 0);
         } else if (prev instanceof ChangeAltitudeCommand) {
           ChangeAltitudeCommand ca = (ChangeAltitudeCommand) prev;
           AfterAltitudeCommand.ERestriction restriction;

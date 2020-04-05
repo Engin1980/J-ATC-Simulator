@@ -29,5 +29,8 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="SharedLib" />
+    <orderEntry type="module" module-name="SpeechesLib" />
+    <orderEntry type="module" module-name="AreaLib" />
   </component>
 </module>
