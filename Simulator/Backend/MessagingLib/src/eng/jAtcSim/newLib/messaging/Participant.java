@@ -3,6 +3,8 @@ package eng.jAtcSim.newLib.messaging;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.jAtcSim.newLib.shared.Callsign;
 
+import java.util.Objects;
+
 public class Participant {
   public enum eType {
     atc,
@@ -10,6 +12,7 @@ public class Participant {
     user,
     system
   }
+
   private static final Participant systemParticipant = new Participant(eType.system, "-system-");
   private static final Participant userParticipant = new Participant(eType.user, "-user-");
 
@@ -28,12 +31,22 @@ public class Participant {
   public static Participant createUser() {
     return userParticipant;
   }
+
   private final eType type;
   private final String id;
 
   private Participant(eType type, String id) {
     this.type = type;
     this.id = id;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    Participant that = (Participant) o;
+    return type == that.type &&
+        id.equals(that.id);
   }
 
   public String getId() {
@@ -45,8 +58,13 @@ public class Participant {
   }
 
   @Override
-  public String toString(){
-    switch (type){
+  public int hashCode() {
+    return Objects.hash(type, id);
+  }
+
+  @Override
+  public String toString() {
+    switch (type) {
       case airplane:
         return "✉ " + id + " (plane)";
       case atc:

@@ -1,13 +1,21 @@
 package eng.jAtcSim.newLib.airplanes;
 
-import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
 import eng.jAtcSim.newLib.area.Airport;
 import eng.jAtcSim.newLib.area.Area;
+import eng.jAtcSim.newLib.messaging.Messenger;
 import eng.jAtcSim.newLib.shared.InstanceProviderDictionary;
 
-public class AirplaneInstanceProvider {
+public class LocalInstanceProvider {
   public static Area getArea() {
     return InstanceProviderDictionary.getInstance(Area.class, "area");
+  }
+
+  public static Messenger getMessenger() {
+    return InstanceProviderDictionary.getInstance(Messenger.class);
+  }
+
+  public static void setMessenger(Messenger messenger) {
+    InstanceProviderDictionary.setInstance(Messenger.class, messenger);
   }
 
   public static void setArea(Area area) {

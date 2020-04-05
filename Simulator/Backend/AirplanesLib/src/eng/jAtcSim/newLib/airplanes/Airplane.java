@@ -1,5 +1,6 @@
 package eng.jAtcSim.newLib.airplanes;
 
+import eng.eSystem.collections.IList;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
@@ -8,14 +9,20 @@ import eng.jAtcSim.newLib.airplanes.modules.*;
 import eng.jAtcSim.newLib.airplanes.modules.sha.ShaModule;
 import eng.jAtcSim.newLib.airplanes.other.CockpitVoiceRecorder;
 import eng.jAtcSim.newLib.airplanes.other.FlightDataRecorder;
+import eng.jAtcSim.newLib.airplanes.pilots.IPilot;
 import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
 import eng.jAtcSim.newLib.area.Navaid;
+import eng.jAtcSim.newLib.messaging.IMessageContent;
+import eng.jAtcSim.newLib.messaging.Message;
+import eng.jAtcSim.newLib.messaging.Participant;
 import eng.jAtcSim.newLib.mood.Mood;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.Restriction;
 import eng.jAtcSim.newLib.shared.SharedInstanceProvider;
 import eng.jAtcSim.newLib.shared.Squawk;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
+import eng.jAtcSim.newLib.speeches.ISpeech;
+import eng.jAtcSim.newLib.speeches.SpeechList;
 
 public class Airplane {
 //  public class Airplane4Display {
@@ -493,7 +500,7 @@ public class Airplane {
   private final MrvaAirproxModule mrvaAirproxModule;
   private final BehaviorModule behaviorModule;
   private final AtcModule atcModule;
-  private final RoutingModule routingModule;
+  private final PilotDataModule pilotDataModule;
   private final DivertModule divertModule;
   private final Mood mood;
   private final FlightDataRecorder fdr;
@@ -501,6 +508,7 @@ public class Airplane {
   private final AirplaneType airplaneType;
   private Coordinate coordinate;
   private State state;
+  private IPilot pilot;
 
   private Airplane(Callsign callsign, Coordinate coordinate, Squawk sqwk, AirplaneType airplaneType,
                    int heading, int altitude, int speed, boolean isDeparture,
@@ -515,7 +523,7 @@ public class Airplane {
     this.emergencyModule = new EmergencyModule();
     this.mrvaAirproxModule = new MrvaAirproxModule();
     this.atcModule = new AtcModule();
-    //this.routingModule = new
+    this.pilotDataModule = new PilotDataModule();
     if (isDeparture)
       this.divertModule = null;
     else
@@ -1134,15 +1142,15 @@ public class Airplane {
 //    pilot.getRoutingModule().setRouting(route, expectedRunwayThreshold);
 //  }
 //
-//  //region Private methods
-//  private void drivePlane() {
-//    this.routingModule.elapseSecond();
-//    this.behaviorModule.elapseSecond();
-//    this.atcModule.elapseSecond();
-//    this.divertModule.elapseSecond();
+  //region Private methods
+  private void drivePlane() {
+    this.pilot.elapseSecond();
+    this.behaviorModule.elapseSecond();
+    this.atcModule.elapseSecond();
+    this.divertModule.elapseSecond();
 
-//    printAfterCommands();
-//    this.recorder.logPostponedAfterSpeeches(this.afterCommands);
+    printAfterCommands();
+    this.recorder.logPostponedAfterSpeeches(this.afterCommands);
 }
 //
 //  public ActiveRunwayThreshold getExpectedRunwayThreshold() {
@@ -1174,43 +1182,25 @@ public class Airplane {
 //  }
 //
 
+  private void processMessages() {
+    IList<Message> msgs = LocalInstanceProvider.getMessenger().getMessagesByListener(
+        Participant.createAirplane(this.flightModule.getCallsign()), true);
 
-//  private boolean isValidMessageForAirplane(IMessageContent msg) {
-//    if (msg instanceof IFromAtc)
-//      return true;
-//    else if (msg instanceof SpeechList) {
-//      for (ISpeech o : (SpeechList<ISpeech>) msg) {
-//        if (!(o instanceof IFromAtc)) {
-//          return false;
-//        }
-//      }
-//      return true;
-//    }
-//    return false;
-//  }
+    // only responds to messages from tuned atc
+    msgs = msgs.where(q -> q.getSource().equals(Participant.createAtc(this.atcModule.getTunedAtc())));
 
-//  private void processMessages() {
-//    IList<Message> msgs = Acc.messenger().getMessagesByListener(this, true);
-//
-//    // only responds to messages from tuned atc
-//    msgs = msgs.where(q -> q.getSource() == this.atcModule.getTunedAtc());
-//
-//    // check type validity
-//    if (msgs.isAny(q -> !isValidMessageForAirplane(q.getContent())))
-//      throw new EApplicationException("Airplane can only deal with messages containing \"IFromAtc\" or \"List<IFromAtc>\".");
-//
-//    // extract contents
-//    IList<IMessageContent> contents = msgs.select(q -> q.getContent());
-//    for (IMessageContent c : contents) {
-//      SpeechList cmds;
-//      if (c instanceof SpeechList)
-//        cmds = (SpeechList) c;
-//      else {
-//        cmds = new SpeechList((ISpeech) c);
-//      }
-//      this.routingModule.addNewSpeeches(cmds);
-//    }
-//  }
+    // extract contents
+    IList<IMessageContent> contents = msgs.select(q -> q.getContent());
+    for (IMessageContent c : contents) {
+      SpeechList cmds;
+      if (c instanceof SpeechList)
+        cmds = (SpeechList) c;
+      else {
+        cmds = new SpeechList((ISpeech) c);
+      }
+      this.pilotDataModule.addNewSpeeches(cmds);
+    }
+  }
 
   private void updateCoordinates() {
     double dist = this.sha.getGS() * secondFraction;

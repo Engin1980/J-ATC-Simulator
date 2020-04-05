@@ -1,7 +1,7 @@
 package eng.jAtcSim.newLib.airplanes.modules.sha;
 
 import eng.jAtcSim.newLib.airplaneType.AirplaneType;
-import eng.jAtcSim.newLib.airplanes.AirplaneInstanceProvider;
+import eng.jAtcSim.newLib.airplanes.LocalInstanceProvider;
 import eng.jAtcSim.newLib.shared.Restriction;
 
 public class ShaModule {
@@ -143,7 +143,7 @@ public class ShaModule {
         altitude,
         planeType.lowClimbRate / 7d / 60,
         planeType.highDescendRate / 7d / 60,
-        (double) AirplaneInstanceProvider.getAirport().getAltitude());
+        (double) LocalInstanceProvider.getAirport().getAltitude());
 
     this.speed = new InertialValue(
         speed,
