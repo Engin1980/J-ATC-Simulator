@@ -16,7 +16,7 @@ import eng.jAtcSim.newLib.area.approaches.Approach;
 import eng.jAtcSim.newLib.area.routes.DARoute;
 import eng.jAtcSim.newLib.shared.enums.ApproachType;
 
-import static eng.eSystem.utilites.FunctionShortcuts.*;
+import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 /**
  * @author Marek
@@ -24,18 +24,20 @@ import static eng.eSystem.utilites.FunctionShortcuts.*;
 public class ActiveRunwayThreshold extends Parentable<ActiveRunway> {
 
   public static class Prototype {
-    public String name;
-    public Coordinate coordinate;
-    public int initialDepartureAltitude;
-    public IList<Approach> approaches;
-    public IList<DARoute> routes;
+    public final String name;
+    public final Coordinate coordinate;
+    public final int initialDepartureAltitude;
+    public final IList<Approach> approaches;
+    public final IList<DARoute> routes;
+    public final int accelerationAltitude;
 
-    public Prototype(String name, Coordinate coordinate, int initialDepartureAltitude, IList<Approach> approaches, IList<DARoute> routes) {
+    public Prototype(String name, Coordinate coordinate, int initialDepartureAltitude, int accelerationAltitude, IList<Approach> approaches, IList<DARoute> routes) {
       this.name = name;
       this.coordinate = coordinate;
       this.initialDepartureAltitude = initialDepartureAltitude;
       this.approaches = approaches;
       this.routes = routes;
+      this.accelerationAltitude = accelerationAltitude;
     }
   }
 
@@ -47,9 +49,11 @@ public class ActiveRunwayThreshold extends Parentable<ActiveRunway> {
 
     ActiveRunwayThreshold a = new ActiveRunwayThreshold(
         firstThreshold.name, firstThreshold.coordinate, firstThreshold.initialDepartureAltitude,
+        firstThreshold.accelerationAltitude,
         firstThreshold.approaches, firstThreshold.routes);
     ActiveRunwayThreshold b = new ActiveRunwayThreshold(
         secondThreshold.name, secondThreshold.coordinate, secondThreshold.initialDepartureAltitude,
+        secondThreshold.accelerationAltitude,
         secondThreshold.approaches, secondThreshold.routes);
 
     a.other = b;
@@ -68,11 +72,13 @@ public class ActiveRunwayThreshold extends Parentable<ActiveRunway> {
   private final String name;
   private final Coordinate coordinate;
   private final int initialDepartureAltitude;
+  private final int accelerationAltitude;
   private double course;
   private Coordinate estimatedFafPoint;
   private ActiveRunwayThreshold other;
 
   public ActiveRunwayThreshold(String name, Coordinate coordinate, int initialDepartureAltitude,
+                               int accelerationAltitude,
                                IList<Approach> approaches, IReadOnlyList<DARoute> routes) {
     EAssert.Argument.isNotNull(approaches, "approaches");
     EAssert.Argument.isNotNull(routes, "routes");
@@ -84,12 +90,17 @@ public class ActiveRunwayThreshold extends Parentable<ActiveRunway> {
     this.name = name;
     this.coordinate = coordinate;
     this.initialDepartureAltitude = initialDepartureAltitude;
+    this.accelerationAltitude = accelerationAltitude;
 
     // estimate faf
     this.estimatedFafPoint = Coordinates.getCoordinate(
         this.coordinate,
         Headings.getOpposite(this.course),
         9);
+  }
+
+  public int getAccelerationAltitude() {
+    return accelerationAltitude;
   }
 
   public IReadOnlyList<Approach> getApproaches() {
@@ -102,7 +113,7 @@ public class ActiveRunwayThreshold extends Parentable<ActiveRunway> {
     return ret;
   }
 
-//  public DARoute getArrivalRouteForPlane(AirplaneType type, int currentAltitude, Navaid mainNavaid, boolean canBeVectoring) {
+  //  public DARoute getArrivalRouteForPlane(AirplaneType type, int currentAltitude, Navaid mainNavaid, boolean canBeVectoring) {
 //    DARoute ret = this.getRoutes().where(
 //        q -> q.getType() == DARoute.eType.transition
 //            && q.isValidForCategory(type.category)

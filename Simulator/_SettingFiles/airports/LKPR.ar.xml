@@ -27,7 +27,8 @@
       <runways>
         <runway>
           <thresholds>
-            <threshold name="06" coordinate="50 06 06.61 N 014 13 34.58 E" initialDepartureAltitude="5000" mapping="06">
+            <threshold name="06" coordinate="50 06 06.61 N 014 13 34.58 E" initialDepartureAltitude="5000"
+                       accelerationAltitude="4200" mapping="06">
               <approaches>
                 <ilsApproach radial="061" initialAltitude="4000" iafMapping="06;06OKL" gaMapping="06">
                   <categories>

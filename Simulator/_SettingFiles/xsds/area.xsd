@@ -277,6 +277,7 @@
     <xs:attribute name="name" type="sh:nonEmptyString" use="required"/>
     <xs:attribute name="coordinate" type="sh:nonEmptyString" use="required"/>
     <xs:attribute name="initialDepartureAltitude" type="sh:flightLevelAltitude" use="required"/>
+    <xs:attribute name="accelerationAltitude" type="sh:flightLevelAltitude" use="optional" />
     <xs:attribute name="mapping" type="mappingName" use="required"/>
     <xs:attribute name="preferred" type="xs:boolean" use="prohibited"/>
   </xs:complexType>

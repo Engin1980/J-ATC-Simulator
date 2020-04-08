@@ -630,7 +630,18 @@ public class Airplane {
   public void elapseSecond() {
 
     processMessages();
-    drivePlane();
+    //drivePlane();
+
+    this.pilot.elapseSecond();
+
+    this.behaviorModule.elapseSecond();
+    this.atcModule.elapseSecond();
+    this.divertModule.elapseSecond();
+
+    printAfterCommands();
+    this.recorder.logPostponedAfterSpeeches(this.afterCommands);
+
+
     this.sha.elapseSecond();
     updateCoordinates();
 

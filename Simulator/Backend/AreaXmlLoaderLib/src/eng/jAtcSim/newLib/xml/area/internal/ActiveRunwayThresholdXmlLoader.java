@@ -180,6 +180,8 @@ public class ActiveRunwayThresholdXmlLoader extends XmlLoader<ActiveRunwayThresh
     String name = XmlLoaderUtils.loadString("name");
     Coordinate coordinate = XmlLoaderUtils.loadCoordinate("coordinate");
     int initialDepartureAltitude = XmlLoaderUtils.loadInteger("initialDepartureAltitude");
+    int accelerationAltitude = XmlLoaderUtils.loadInteger("accelerationAltitude",
+        context.airport.altitude + 1500); // default acc-alt is 1500 ft above airport
     String mapping = XmlLoaderUtils.loadString("mapping");
 
     context.threshold.coordinate = coordinate;
@@ -194,7 +196,7 @@ public class ActiveRunwayThresholdXmlLoader extends XmlLoader<ActiveRunwayThresh
     IList<Approach> approaches = approachesList.selectMany(q -> q);
 
     ActiveRunwayThreshold.Prototype ret = new ActiveRunwayThreshold.Prototype(
-        name, coordinate, initialDepartureAltitude,
+        name, coordinate, initialDepartureAltitude, accelerationAltitude,
         approaches, routes);
     return ret;
   }
