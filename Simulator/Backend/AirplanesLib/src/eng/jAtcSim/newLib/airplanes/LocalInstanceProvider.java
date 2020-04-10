@@ -2,6 +2,7 @@ package eng.jAtcSim.newLib.airplanes;
 
 import eng.jAtcSim.newLib.area.Airport;
 import eng.jAtcSim.newLib.area.Area;
+import eng.jAtcSim.newLib.area.RunwayConfiguration;
 import eng.jAtcSim.newLib.messaging.Messenger;
 import eng.jAtcSim.newLib.shared.InstanceProviderDictionary;
 
@@ -28,5 +29,13 @@ public class LocalInstanceProvider {
 
   public static void setAirport(Airport airport) {
     InstanceProviderDictionary.setInstance(Airport.class, "airport", airport);
+  }
+
+  public static RunwayConfiguration getCurrentRunwayConfiguration(){
+    return InstanceProviderDictionary.getInstance(RunwayConfiguration.class);
+  }
+
+  public static void setCurrentRunwayConfiguration(RunwayConfiguration value){
+    InstanceProviderDictionary.setInstance(RunwayConfiguration.class, value);
   }
 }

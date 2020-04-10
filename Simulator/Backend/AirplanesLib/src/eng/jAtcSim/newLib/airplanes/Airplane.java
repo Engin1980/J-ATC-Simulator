@@ -9,9 +9,10 @@ import eng.jAtcSim.newLib.airplanes.modules.*;
 import eng.jAtcSim.newLib.airplanes.modules.sha.ShaModule;
 import eng.jAtcSim.newLib.airplanes.other.CockpitVoiceRecorder;
 import eng.jAtcSim.newLib.airplanes.other.FlightDataRecorder;
-import eng.jAtcSim.newLib.airplanes.pilots.IPilot;
+import eng.jAtcSim.newLib.airplanes.pilots.Pilot;
 import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
 import eng.jAtcSim.newLib.area.Navaid;
+import eng.jAtcSim.newLib.area.routes.DARoute;
 import eng.jAtcSim.newLib.messaging.IMessageContent;
 import eng.jAtcSim.newLib.messaging.Message;
 import eng.jAtcSim.newLib.messaging.Participant;
@@ -508,7 +509,7 @@ public class Airplane {
   private final AirplaneType airplaneType;
   private Coordinate coordinate;
   private State state;
-  private IPilot pilot;
+  private Pilot pilot;
 
   private Airplane(Callsign callsign, Coordinate coordinate, Squawk sqwk, AirplaneType airplaneType,
                    int heading, int altitude, int speed, boolean isDeparture,
@@ -536,77 +537,7 @@ public class Airplane {
     this.airplaneType = airplaneType;
   }
 
-  @Override // IAirplaneWriteSimple
-  public void adjustTargetSpeed() {
-    int minOrdered;
-    int maxOrdered;
-    Restriction speedRestriction = this.sha.getSpeedRestriction();
-    if (speedRestriction != null) {
-      switch (speedRestriction.direction) {
-        case exactly:
-          minOrdered = speedRestriction.value;
-          maxOrdered = speedRestriction.value;
-          break;
-        case above:
-          minOrdered = speedRestriction.value;
-          maxOrdered = Integer.MAX_VALUE;
-          break;
-        case below:
-          minOrdered = Integer.MIN_VALUE;
-          maxOrdered = speedRestriction.value;
-          break;
-        default:
-          throw new EEnumValueUnsupportedException(speedRestriction.direction);
-      }
-    } else {
-      minOrdered = Integer.MIN_VALUE;
-      maxOrdered = Integer.MAX_VALUE;
-    }
-    int ts;
-    switch (this.state) {
-      case holdingPoint:
-      case landed:
-        ts = 0;
-        break;
-      case takeOffRoll:
-      case takeOffGoAround:
-        ts = this.getType().vR + 10;
-        break;
-      case departingLow:
-      case arrivingLow:
-        ts = getBoundedValueIn(minOrdered, Math.min(250, this.airplaneType.vCruise), maxOrdered);
-        break;
-      case departingHigh:
-      case arrivingHigh:
-        ts = getBoundedValueIn(minOrdered, Math.min(287, this.airplaneType.vCruise), maxOrdered);
-        break;
-      case arrivingCloseFaf:
-      case flyingIaf2Faf:
-        ts = getBoundedValueIn(minOrdered, Math.min(287, this.airplaneType.vMinClean + 15), maxOrdered);
-        break;
-      case approachEnter:
-        ts = getBoundedValueIn(minOrdered, Math.min(this.airplaneType.vMaxApp, this.airplaneType.vMinClean), maxOrdered);
-        break;
-      case approachDescend:
-        ts = getBoundedValueIn(minOrdered, this.airplaneType.vApp, maxOrdered);
-        break;
-      case longFinal:
-      case shortFinal:
-        minOrdered = Math.max(minOrdered, this.airplaneType.vMinApp);
-        maxOrdered = Math.min(maxOrdered, this.airplaneType.vMaxApp);
-        ts = getBoundedValueIn(minOrdered, this.airplaneType.vApp, maxOrdered);
-        break;
-      case holding:
-        if (this.sha.getTargetAltitude() > 10000)
-          ts = getBoundedValueIn(minOrdered, Math.min(250, this.airplaneType.vCruise), maxOrdered);
-        else
-          ts = getBoundedValueIn(minOrdered, Math.min(220, this.airplaneType.vCruise), maxOrdered);
-        break;
-      default:
-        throw new EEnumValueUnsupportedException(this.state);
-    }
-    this.sha.setTargetSpeed(ts);
-  }
+
 
   public void applyShortcut(Navaid navaid) {
     this.routingModule.applyShortcut(navaid);

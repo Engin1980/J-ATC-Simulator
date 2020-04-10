@@ -1,72 +1,54 @@
 package eng.jAtcSim.newLib.airplanes.pilots;
 
-import eng.eSystem.collections.*;
-import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.geo.Coordinates;
-import eng.jAtcSim.newLib.Acc;
+import eng.eSystem.validation.EAssert;
+import eng.jAtcSim.newLib.airplanes.Airplane;
 import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
 
-import static eng.eSystem.utilites.FunctionShortcuts.*;
-
-public class TakeOffPilot implements IPilot {
+public class TakeOffPilot extends Pilot {
   //TODO add to airport config the acceleration altitude and use it here
   private ActiveRunwayThreshold toThreshold;
 
-  public TakeOffBehavior(char planeCategory, ActiveRunwayThreshold toThreshold) {
-
-    this.toThreshold = toThreshold;
-    int accAlt;
-    switch (planeCategory) {
-      case 'A':
-        accAlt = 300;
-        break;
-      case 'B':
-        accAlt = 1000;
-        break;
-      case 'C':
-      case 'D':
-        accAlt = 1500;
-        break;
-      default:
-        throw new EEnumValueUnsupportedException(planeCategory);
-    }
-    this.accelerationAltitude = Acc.airport().getAltitude() + accAlt;
+  public TakeOffPilot(IPilotsPlane plane, ActiveRunwayThreshold takeOffThreshold) {
+    super(plane);
+    EAssert.Argument.isNotNull(takeOffThreshold, "takeOffThreshold");
+    this.toThreshold = takeOffThreshold;
   }
 
   @Override
-  public void fly(eng.jAtcSim.newLib.area.airplanes.interfaces.IAirplaneWriteSimple plane) {
+  public void elapseSecond() {
     switch (plane.getState()) {
       case takeOffRoll:
         double targetHeading = Coordinates.getBearing(
             plane.getCoordinate(), toThreshold.getOtherThreshold().getCoordinate());
         plane.setTargetHeading(targetHeading);
 
-        if (plane.getSha().getSpeed() > plane.getType().vR) {
-          plane.setBehaviorAndState(this, eng.jAtcSim.newLib.area.airplanes.Airplane.State.takeOffGoAround);
+        if (plane.getSpeed() > plane.getType().vR) {
+          plane.setState(Airplane.State.takeOffGoAround);
         }
         break;
       case takeOffGoAround:
         // keeps last heading
         // altitude already set
         // speed set
-        if (plane.getSha().getAltitude() > this.accelerationAltitude)
-          if (plane.getFlightModule().isArrival()) {
+        if (plane.getAltitude() > this.toThreshold.getAccelerationAltitude())
+          if (plane.isArrival()) {
             // antecedent G/A
-            plane.setBehaviorAndState(new ArrivalBehavior(), eng.jAtcSim.newLib.area.airplanes.Airplane.State.arrivingHigh);
+            plane.changePilot(new ArrivalPilot(plane), Airplane.State.arrivingHigh);
           } else {
-            plane.setBehaviorAndState(
-                new DepartureBehavior(),
-                eng.jAtcSim.newLib.area.airplanes.Airplane.State.departingLow
+            plane.changePilot(
+                new DeparturePilot(super.plane),
+                Airplane.State.departingLow
             );
           }
         break;
       default:
-        super.throwIllegalStateException(plane);
+        super.throwIllegalStateException();
     }
   }
 
   @Override
-  public String toLogString() {
-    return "TKO";
+  public boolean isDivertable() {
+    return false;
   }
 }

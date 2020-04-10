@@ -1,5 +1,6 @@
 package eng.jAtcSim.newLib.airplanes.modules.sha;
 
+import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.jAtcSim.newLib.airplaneType.AirplaneType;
 import eng.jAtcSim.newLib.airplanes.LocalInstanceProvider;
 import eng.jAtcSim.newLib.shared.Restriction;
@@ -167,6 +168,7 @@ public class ShaModule {
   public void setTargetSpeed(int speed) {
     this.targetSpeed.setTargetValue(speed);
   }
+
 }
 
 
