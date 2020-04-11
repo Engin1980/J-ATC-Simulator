@@ -5,4 +5,5 @@ module JAtcSim.Modules.Backend.AirplanesLib {
   requires eng.eSystem;
   requires JAtcSim.Modules.Backend.MoodLib;
   requires JAtcSim.Modules.Backend.SpeechesLib;
+  requires JAtcSim.Modules.Backend.WeatherLib;
 }

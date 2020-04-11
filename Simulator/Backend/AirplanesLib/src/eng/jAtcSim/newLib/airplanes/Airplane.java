@@ -20,10 +20,12 @@ import eng.jAtcSim.newLib.mood.Mood;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.SharedInstanceProvider;
 import eng.jAtcSim.newLib.shared.Squawk;
+import eng.jAtcSim.newLib.shared.UnitProvider;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 import eng.jAtcSim.newLib.speeches.ISpeech;
 import eng.jAtcSim.newLib.speeches.SpeechList;
 import eng.jAtcSim.newLib.speeches.airplane2atc.GoodDayNotification;
+import eng.jAtcSim.newLib.weather.Weather;
 
 public class Airplane {
 //  public class Airplane4Display {
@@ -419,8 +421,7 @@ public class Airplane {
     }
   }
 
-  private static final int MINIMAL_DIVERT_TIME_MINUTES = 45;
-  private static final int MAXIMAL_DIVERT_TIME_MINUTES = 120;
+
   private static final double secondFraction = 1 / 60d / 60d;
 
 //  public static Airplane load(XElement elm) {
@@ -485,11 +486,7 @@ public class Airplane {
     return ret;
   }
 
-  private static EDayTimeStamp generateDivertTime(EDayTimeStamp now) {
-    int divertTimeMinutes = SharedInstanceProvider.getRnd().nextInt(MINIMAL_DIVERT_TIME_MINUTES, MAXIMAL_DIVERT_TIME_MINUTES);
-    EDayTimeStamp ret = now.addMinutes(divertTimeMinutes);
-    return ret;
-  }
+
 
   //  private final AirplaneWriteAdvanced airplaneWriteAdvanced = new AirplaneWriteAdvanced();
 //  private final Airplane4Display plane4Display = new Airplane4Display();
@@ -519,15 +516,15 @@ public class Airplane {
     this.flightModule = new AirplaneFlightModule(
         callsign, delayInitialMinutes, delayExpectedTime, isDeparture);
 
-    this.sha = new ShaModule(heading, altitude, speed, airplaneType);
+    this.sha = new ShaModule(imp, heading, altitude, speed, airplaneType);
     this.emergencyModule = new EmergencyModule();
     this.mrvaAirproxModule = new MrvaAirproxModule();
-    this.atcModule = new AtcModule();
+    this.atcModule = new AtcModule(imp);
     this.pilotDataModule = new PilotDataModule();
     if (isDeparture)
       this.divertModule = null;
     else
-      this.divertModule = new DivertModule(generateDivertTime(SharedInstanceProvider.getNow().toStamp()));
+      this.divertModule = new DivertModule(imp);
     this.mood = new Mood();
     this.fdr = new FlightDataRecorder(this.flightModule.getCallsign());
     this.cvr = new CockpitVoiceRecorder(this.flightModule.getCallsign());
@@ -538,24 +535,24 @@ public class Airplane {
 
 
 
-  public void applyShortcut(Navaid navaid) {
-    this.routingModule.applyShortcut(navaid);
-    //TODO this is not correct. Shortcut must be checked only against only not-already-flown-through points.
-    DARoute r = this.routingModule.getAssignedRoute();
-    if (r == null) return;
-    if (r.getNavaids().isEmpty()) return;
-    if (r.getNavaids().getLast().equals(navaid)) {
-      if (Airplane.this.flightModule.isArrival()) {
-        if (Airplane.this.sha.getAltitude() > 1e4)
-          mood.experience(Mood.ArrivalExperience.shortcutToIafAbove100);
-      } else {
-        if (Airplane.this.sha.getAltitude() > 1e4)
-          mood.experience(Mood.DepartureExperience.shortcutToExitPointBelow100);
-        else
-          mood.experience(Mood.DepartureExperience.shortctuToExitPointAbove100);
-      }
-    }
-  }
+//  public void applyShortcut(Navaid navaid) {
+//    this.routingModule.applyShortcut(navaid);
+//    //TODO this is not correct. Shortcut must be checked only against only not-already-flown-through points.
+//    DARoute r = this.routingModule.getAssignedRoute();
+//    if (r == null) return;
+//    if (r.getNavaids().isEmpty()) return;
+//    if (r.getNavaids().getLast().equals(navaid)) {
+//      if (Airplane.this.flightModule.isArrival()) {
+//        if (Airplane.this.sha.getAltitude() > 1e4)
+//          mood.experience(Mood.ArrivalExperience.shortcutToIafAbove100);
+//      } else {
+//        if (Airplane.this.sha.getAltitude() > 1e4)
+//          mood.experience(Mood.DepartureExperience.shortcutToExitPointBelow100);
+//        else
+//          mood.experience(Mood.DepartureExperience.shortctuToExitPointAbove100);
+//      }
+//    }
+//  }
 
   public void elapseSecond() {
 
@@ -564,21 +561,27 @@ public class Airplane {
     this.atcModule.elapseSecond();
     this.divertModule.elapseSecond();
 
-    printAfterCommands();
-    this.recorder.logPostponedAfterSpeeches(this.afterCommands);
-
-
     this.sha.elapseSecond();
     updateCoordinates();
 
-    flightRecorder.logFDR(this);
+    logToFdr();
 
-
-    printAfterCommands();
-    this.recorder.logPostponedAfterSpeeches(this.afterCommands);
+    //printAfterCommands();
+    //this.recorder.logPostponedAfterSpeeches(this.afterCommands);
   }
 
-  private IPilotPlane acc;
+  private void logToFdr() {
+    fdr.log(
+        coordinate,
+        sha.getHeading(), sha.getTargetHeading(),
+        sha.getAltitude(), sha.getVerticalSpeed(), sha.getTargetAltitude(),
+        sha.getSpeed(), sha.getGS(), sha.getTargetSpeed(),
+        state
+    );
+  }
+
+  private IPilotPlane ipp;
+  private IModulePlane imp;
 
 
 
@@ -1149,11 +1152,13 @@ public class Airplane {
         State.holdingPoint,
         State.takeOffRoll,
         State.landed
-    ) == false)
+    ) == false) {
+      Weather weather = Acc.weather();
       newC = Coordinates.getCoordinate(
           newC,
-          Acc.weather().getWindHeading(),
-          UnitProvider.ftToNm(Acc.weather().getWindSpeedOrWindGustSpeed()));
+          weather.getWindHeading(),
+          UnitProvider.ftToNm(weather.getWindSpeedOrWindGustSpeed()));
+    }
 
     this.coordinate = newC;
   }

@@ -188,7 +188,7 @@ public class ShaModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
   }
 
   @Override
-  protected void elapseSecond() {
+  public void elapseSecond() {
     // TODO here is && or || ???
     boolean isSpeedPreffered = plane.getState().is(
         Airplane.State.takeOffGoAround, Airplane.State.takeOffRoll);

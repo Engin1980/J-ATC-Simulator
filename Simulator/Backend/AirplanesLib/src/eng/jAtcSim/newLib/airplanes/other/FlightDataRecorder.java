@@ -27,7 +27,7 @@ public class FlightDataRecorder extends AirplaneRecorder {
                 new FileWriter("R:\\" + callsign.toString() + ".fdr.txt"))));
   }
 
-  void log(Coordinate coordinate,
+  public void log(Coordinate coordinate,
            int heading, int targetHeading,
            int altitude, int verticalSpeed, int targetAltitude,
            int speed, int groundSpeed, int targetSpeed,

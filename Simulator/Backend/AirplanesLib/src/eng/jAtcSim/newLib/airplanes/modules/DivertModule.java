@@ -11,14 +11,23 @@ public class DivertModule extends Module{
   private final EDayTimeStamp divertTime;
   private int lastAnnouncedMinute = Integer.MAX_VALUE;
   private boolean isPossible = true;
+  private static final int MINIMAL_DIVERT_TIME_MINUTES = 45;
+  private static final int MAXIMAL_DIVERT_TIME_MINUTES = 120;
 
   public void disable() {
     this.isPossible = false;
   }
 
-  public DivertModule(IModulePlane plane, EDayTimeStamp divertTime) {
+  private static EDayTimeStamp generateDivertTime() {
+    EDayTimeStamp now = SharedInstanceProvider.getNow().toStamp();
+    int divertTimeMinutes = SharedInstanceProvider.getRnd().nextInt(MINIMAL_DIVERT_TIME_MINUTES, MAXIMAL_DIVERT_TIME_MINUTES);
+    EDayTimeStamp ret = now.addMinutes(divertTimeMinutes);
+    return ret;
+  }
+
+  public DivertModule(IModulePlane plane) {
     super(plane);
-    this.divertTime = divertTime;
+    this.divertTime = generateDivertTime();
   }
 
   @Override

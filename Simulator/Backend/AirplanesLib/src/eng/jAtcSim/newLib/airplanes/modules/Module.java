@@ -11,5 +11,5 @@ public abstract class Module {
     this.plane = plane;
   }
 
-  protected abstract void elapseSecond();
+  public abstract void elapseSecond();
 }
