@@ -9,7 +9,7 @@ public class ArrivalPilot extends BasicPilot {
   private final static double LOW_SPEED_DOWN_ALTITUDE = 11000;
   private final static double FAF_SPEED_DOWN_DISTANCE_IN_NM = 15;
 
-  public ArrivalPilot(IPilotsPlane plane) {
+  public ArrivalPilot(IPilotPlane plane) {
     super(plane);
   }
 

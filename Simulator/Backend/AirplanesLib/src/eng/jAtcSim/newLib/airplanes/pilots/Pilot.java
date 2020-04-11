@@ -8,9 +8,9 @@ import eng.jAtcSim.newLib.shared.Restriction;
 
 public abstract class Pilot {
 
-  protected final IPilotsPlane plane;
+  protected final IPilotPlane plane;
 
-  public Pilot(IPilotsPlane plane) {
+  public Pilot(IPilotPlane plane) {
     EAssert.Argument.isNotNull(plane, "plane");
     this.plane = plane;
   }

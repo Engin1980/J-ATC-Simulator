@@ -6,7 +6,7 @@ import eng.jAtcSim.newLib.mood.Mood;
 import eng.jAtcSim.newLib.speeches.ISpeech;
 import eng.jAtcSim.newLib.speeches.airplane2atc.PassingClearanceLimitNotification;
 
-public interface IPilotsPlaneWriter {
+public interface IPilotPlaneWriter {
   void addExperience(Mood.ArrivalExperience experience);
 
   void addExperience(Mood.DepartureExperience experience);

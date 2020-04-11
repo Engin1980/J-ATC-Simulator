@@ -20,6 +20,10 @@ public interface ITimeGetter extends ITime {
     return this.getValue() % SECONDS_PER_MINUTE;
   }
 
+  default int getTotalMinutes() {
+    return getMinutes() + getHours() * 60;
+  }
+
   default LocalTime toLocalTime() {
     return LocalTime.of(getHours(), getMinutes(), getSeconds());
   }

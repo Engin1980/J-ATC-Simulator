@@ -1,7 +1,6 @@
 package eng.jAtcSim.newLib.airplanes;
 
 import eng.eSystem.collections.IList;
-import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
 import eng.jAtcSim.newLib.airplaneType.AirplaneType;
@@ -9,6 +8,7 @@ import eng.jAtcSim.newLib.airplanes.modules.*;
 import eng.jAtcSim.newLib.airplanes.modules.sha.ShaModule;
 import eng.jAtcSim.newLib.airplanes.other.CockpitVoiceRecorder;
 import eng.jAtcSim.newLib.airplanes.other.FlightDataRecorder;
+import eng.jAtcSim.newLib.airplanes.pilots.IPilotPlane;
 import eng.jAtcSim.newLib.airplanes.pilots.Pilot;
 import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
 import eng.jAtcSim.newLib.area.Navaid;
@@ -18,12 +18,12 @@ import eng.jAtcSim.newLib.messaging.Message;
 import eng.jAtcSim.newLib.messaging.Participant;
 import eng.jAtcSim.newLib.mood.Mood;
 import eng.jAtcSim.newLib.shared.Callsign;
-import eng.jAtcSim.newLib.shared.Restriction;
 import eng.jAtcSim.newLib.shared.SharedInstanceProvider;
 import eng.jAtcSim.newLib.shared.Squawk;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 import eng.jAtcSim.newLib.speeches.ISpeech;
 import eng.jAtcSim.newLib.speeches.SpeechList;
+import eng.jAtcSim.newLib.speeches.airplane2atc.GoodDayNotification;
 
 public class Airplane {
 //  public class Airplane4Display {
@@ -499,7 +499,6 @@ public class Airplane {
   private final ShaModule sha;
   private final EmergencyModule emergencyModule;
   private final MrvaAirproxModule mrvaAirproxModule;
-  private final BehaviorModule behaviorModule;
   private final AtcModule atcModule;
   private final PilotDataModule pilotDataModule;
   private final DivertModule divertModule;
@@ -561,11 +560,7 @@ public class Airplane {
   public void elapseSecond() {
 
     processMessages();
-    //drivePlane();
-
     this.pilot.elapseSecond();
-
-    this.behaviorModule.elapseSecond();
     this.atcModule.elapseSecond();
     this.divertModule.elapseSecond();
 
@@ -577,7 +572,15 @@ public class Airplane {
     updateCoordinates();
 
     flightRecorder.logFDR(this);
+
+
+    printAfterCommands();
+    this.recorder.logPostponedAfterSpeeches(this.afterCommands);
   }
+
+  private IPilotPlane acc;
+
+
 
 //  @Override // IAirplaneWriteSimple
 //  public IAirplaneWriteAdvanced getAdvanced() {
@@ -1085,15 +1088,7 @@ public class Airplane {
 //  }
 //
   //region Private methods
-  private void drivePlane() {
-    this.pilot.elapseSecond();
-    this.behaviorModule.elapseSecond();
-    this.atcModule.elapseSecond();
-    this.divertModule.elapseSecond();
 
-    printAfterCommands();
-    this.recorder.logPostponedAfterSpeeches(this.afterCommands);
-}
 //
 //  public ActiveRunwayThreshold getExpectedRunwayThreshold() {
 //    return pilot.getRoutingModule().getExpectedRunwayThreshold();

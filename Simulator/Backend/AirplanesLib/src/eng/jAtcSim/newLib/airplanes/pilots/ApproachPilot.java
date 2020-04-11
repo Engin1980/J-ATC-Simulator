@@ -1,31 +1,21 @@
 package eng.jAtcSim.newLib.airplanes.pilots;
 
-import eng.eSystem.collections.*;
-
-import static eng.eSystem.utilites.FunctionShortcuts.*;
+import eng.jAtcSim.newLib.airplanes.Airplane;
+import eng.jAtcSim.newLib.shared.exceptions.ToDoException;
 
 public class ApproachPilot extends Pilot {
 
-  public enum State{
-    star,
-    iaf2faf,
-    approach
-  }
-
-  private State state;
-
-  public ApproachPilot(IPilotsPlane plane) {
+  public ApproachPilot(IPilotPlane plane) {
     super(plane);
-    this.state = State.star;
   }
 
   @Override
   public void elapseSecond() {
-
+    throw new ToDoException();
   }
 
   @Override
   public boolean isDivertable() {
-    return state != State.approach;
+    return plane.getState() != Airplane.State.approachDescend;
   }
 }

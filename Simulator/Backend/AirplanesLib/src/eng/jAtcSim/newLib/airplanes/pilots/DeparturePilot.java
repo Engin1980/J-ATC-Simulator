@@ -3,7 +3,7 @@ package eng.jAtcSim.newLib.airplanes.pilots;
 import eng.jAtcSim.newLib.airplanes.Airplane;
 
 public class DeparturePilot extends BasicPilot {
-  public DeparturePilot(IPilotsPlane plane) {
+  public DeparturePilot(IPilotPlane plane) {
     super(plane);
   }
 

@@ -1,6 +1,5 @@
 package eng.jAtcSim.newLib.airplanes.pilots;
 
-import eng.eSystem.collections.*;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.geo.Headings;
@@ -9,13 +8,11 @@ import eng.jAtcSim.newLib.airplanes.LocalInstanceProvider;
 import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.speeches.airplane2atc.PassingClearanceLimitNotification;
 
-import static eng.eSystem.utilites.FunctionShortcuts.*;
-
 public abstract class BasicPilot extends Pilot {
 
   private boolean clearanceLimitWarningSent = false;
 
-  public BasicPilot(IPilotsPlane plane) {
+  public BasicPilot(IPilotPlane plane) {
     super(plane);
   }
 

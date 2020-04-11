@@ -1,11 +1,20 @@
 package eng.jAtcSim.newLib.airplanes.modules.sha;
 
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
+import eng.eSystem.geo.Headings;
+import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplaneType.AirplaneType;
+import eng.jAtcSim.newLib.airplanes.Airplane;
 import eng.jAtcSim.newLib.airplanes.LocalInstanceProvider;
+import eng.jAtcSim.newLib.airplanes.modules.IModulePlane;
+import eng.jAtcSim.newLib.airplanes.modules.sha.navigators.HeadingNavigator;
+import eng.jAtcSim.newLib.airplanes.modules.sha.navigators.Navigator;
+import eng.jAtcSim.newLib.airplanes.modules.sha.navigators.NavigatorResult;
 import eng.jAtcSim.newLib.shared.Restriction;
+import eng.jAtcSim.newLib.shared.enums.LeftRight;
+import eng.jAtcSim.newLib.speeches.atc2airplane.ChangeHeadingCommand;
 
-public class ShaModule {
+public class ShaModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
 
   private final static double GROUND_SPEED_CHANGE_MULTIPLIER = 1.5; //1.5; //3.0;
 
@@ -71,7 +80,9 @@ public class ShaModule {
     return ret;
   }
 
+  private Navigator navigator;
   private int targetHeading;
+  private LeftRight targetHeadingTurn;
   private HeadingInertialValue heading;
   private InertialValue altitude;
   private RestrictableItem targetAltitude;
@@ -129,11 +140,13 @@ public class ShaModule {
     return (int) Math.round(this.lastVerticalSpeed);
   }
 
-  public ShaModule(int heading, int altitude, int speed, AirplaneType planeType) {
+  public ShaModule(IModulePlane plane, int heading, int altitude, int speed, AirplaneType planeType) {
+    super(plane);
     this.targetAltitude = new RestrictableItem(altitude);
     this.targetHeading = heading;
     this.targetSpeed = new RestrictableItem(speed);
 
+    this.navigator = new HeadingNavigator(heading);
     double headingChangeDenominator = getHeadingChangeDenominator(planeType);
     this.heading = new HeadingInertialValue(
         heading,
@@ -169,6 +182,165 @@ public class ShaModule {
     this.targetSpeed.setTargetValue(speed);
   }
 
+  public void setNavigator(Navigator navigator){
+    EAssert.Argument.isNotNull(navigator, "navigator");
+    this.navigator = navigator;
+  }
+
+  @Override
+  protected void elapseSecond() {
+    // TODO here is && or || ???
+    boolean isSpeedPreffered = plane.getState().is(
+        Airplane.State.takeOffGoAround, Airplane.State.takeOffRoll);
+
+
+    if (this.getTargetAltitude() != this.getAltitude()
+        || this.getTargetSpeed() != this.getSpeed()) {
+      ValueRequest speedRequest = getSpeedRequest();
+      ValueRequest altitudeRequest = getAltitudeRequest();
+
+      double totalEnergy = Math.abs(speedRequest.energy + altitudeRequest.energy);
+      if (totalEnergy > 1) {
+        if (!isSpeedPreffered) {
+          double energyMultiplier = 1 / totalEnergy;
+          speedRequest.multiply(energyMultiplier);
+          altitudeRequest.multiply(energyMultiplier);
+        } else {
+          // when speed is preferred
+          double energyLeft = 1 - speedRequest.energy;
+          altitudeRequest.multiply(energyLeft);
+        }
+      }
+
+      adjustSpeed(speedRequest);
+      adjustAltitude(altitudeRequest);
+
+    } else if (this.lastVerticalSpeed != 0)
+      this.lastVerticalSpeed = 0;
+
+    NavigatorResult nr = this.navigator.navigate(plane);
+    if (nr != null){
+      this.targetHeading = nr.getHeading();
+      this.targetHeadingTurn = nr.getTurn();
+    }
+    if (targetHeading != heading.getValue()) {
+      adjustHeading();
+    } else {
+      this.heading.resetInertia();
+    }
+  }
+
+  private void adjustHeading() {
+    double diff = Headings.getDifference(heading.getValue(), targetHeading, true);
+
+    LeftRight turn = targetHeadingTurn;
+    if (diff < 5)
+      turn = Navigator.getBetterDirectionToTurn(heading.getValue(), targetHeading);
+
+    switch (turn){
+      case left:
+        this.heading.add(-diff);
+        break;
+      case right:
+        this.heading.add(diff);
+        break;
+      default:
+        throw new EEnumValueUnsupportedException(turn);
+    }
+  }
+
+  private void adjustAltitude(ValueRequest altitudeRequest) {
+    int airportAltitude = LocalInstanceProvider.getAirport().getAltitude();
+    if (plane.getState().is(Airplane.State.takeOffRoll, Airplane.State.landed, Airplane.State.holdingPoint)) {
+      // not adjusting altitude at this states
+      this.altitude.reset(airportAltitude);
+    } else {
+      this.altitude.add(altitudeRequest.value);
+      this.lastVerticalSpeed = this.altitude.getInertia() * 60;
+      if (this.altitude.getValue() < airportAltitude) {
+        this.altitude.reset(airportAltitude);
+      }
+    }
+  }
+
+  private void adjustSpeed(ValueRequest speedRequest) {
+    this.speed.add(speedRequest.value);
+  }
+
+  private ValueRequest getSpeedRequest() {
+    ValueRequest ret;
+    double delta = targetSpeed.getTargetValue() - speed.getValue();
+    if (delta == 0) {
+      // no change required
+      ret = new ValueRequest();
+      ret.energy = 0;
+      ret.value = 0;
+    } else {
+      double incStep = plane.getType().speedIncreaseRate;
+      double decStep = plane.getType().speedDecreaseRate;
+      if (plane.getState().isOnGround()) {
+        incStep *= GROUND_SPEED_CHANGE_MULTIPLIER;
+        decStep *= GROUND_SPEED_CHANGE_MULTIPLIER;
+      }
+      ret = getRequest(
+          this.speed.getValue(),
+          this.targetSpeed.getTargetValue(),
+          incStep, decStep);
+    }
+
+    return ret;
+  }
+
+  private ValueRequest getAltitudeRequest() {
+    ValueRequest ret;
+    // if on ground, nothing required
+    if (plane.getState().isOnGround()){ // && altitude.getValue() == Acc.airport().getAltitude()) {
+      ret = new ValueRequest();
+      ret.energy = 0;
+      ret.value = 0;
+    } else {
+      double climbRateForAltitude = plane.getType().getClimbRateForAltitude(this.altitude.getValue());
+      double descentRateForAltitude = plane.getType().getDescendRateForAltitude(this.altitude.getValue());
+      descentRateForAltitude = adjustDescentRateByApproachStateIfRequired(descentRateForAltitude);
+      ret = getRequest(
+          this.altitude.getValue(),
+          this.targetAltitude.getTargetValue(),
+          climbRateForAltitude,
+          descentRateForAltitude);
+    }
+
+    return ret;
+  }
+
+  private double adjustDescentRateByApproachStateIfRequired(double descentRateForAltitude) {
+    double ret;
+    if (plane.getState().is(Airplane.State.approachDescend, Airplane.State.longFinal, Airplane.State.shortFinal)) {
+      double restrictedDescentRate;
+      switch (plane.getState()) {
+        case approachDescend:
+          restrictedDescentRate = 2000;
+          break;
+        case longFinal:
+          // maxNegativeVerticalSpeedMustBeSet
+//          ApproachPilot ap = plane.getPilot
+//          eng.jAtcSim.newLib.area.airplanes.behaviors.NewApproachBehavior nab = this.parent.getBehaviorModule().getAs(eng.jAtcSim.newLib.area.airplanes.behaviors.NewApproachBehavior.class);
+//          restrictedDescentRate = nab.getApproachInfo().getType() == Approach.ApproachType.visual ?
+//              2000 : 1300;
+//          break;
+          restrictedDescentRate = 1700;
+          break;
+        case shortFinal:
+          restrictedDescentRate = 1300;
+          break;
+        default:
+          throw new UnsupportedOperationException("This situation is not supported.");
+      }
+      restrictedDescentRate /= 60d;
+      ret = Math.min(descentRateForAltitude, restrictedDescentRate);
+    } else
+      ret = descentRateForAltitude;
+    return ret;
+  }
 }
 
 

@@ -10,7 +10,7 @@ public class AfterDistanceCommand extends AfterCommandWithNavaid {
 
   private final double distance;
 
-  private AfterDistanceCommand(String navaidName, double distance, AfterValuePosition position) {
+  protected AfterDistanceCommand(String navaidName, double distance, AfterValuePosition position) {
     super(navaidName, position);
     EAssert.Argument.isTrue(distance >= 0);
     this.distance = distance;

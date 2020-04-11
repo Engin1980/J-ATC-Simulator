@@ -5,14 +5,17 @@ import eng.eSystem.geo.Coordinate;
 import eng.jAtcSim.newLib.airplaneType.AirplaneType;
 import eng.jAtcSim.newLib.airplanes.Airplane;
 import eng.jAtcSim.newLib.area.routes.DARoute;
+import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.Restriction;
 
 import static eng.eSystem.utilites.FunctionShortcuts.*;
 
-public interface IPilotsPlaneReader {
+public interface IPilotPlaneReader {
   int getAltitude();
 
   DARoute getAssignedRoute();
+
+  Callsign getCallsign();
 
   Coordinate getCoordinate();
 
@@ -34,6 +37,8 @@ public interface IPilotsPlaneReader {
   boolean hasLateralDirectionAfterCoordinate();
 
   boolean isArrival();
+
+  boolean isEmergency();
 
   Coordinate tryGetTargetCoordinate();
 }

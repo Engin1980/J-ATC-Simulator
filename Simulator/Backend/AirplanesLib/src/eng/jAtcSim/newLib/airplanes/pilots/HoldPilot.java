@@ -36,7 +36,7 @@ public class HoldPilot extends Pilot {
   public EDayTimeStamp secondTurnTime;
   public boolean isLeftTurned;
 
-  public HoldPilot(IPilotsPlane pilot, Navaid navaid, int inboundRadial, boolean isLeftTurned) {
+  public HoldPilot(IPilotPlane pilot, Navaid navaid, int inboundRadial, boolean isLeftTurned) {
     super(pilot);
     this.navaid = navaid;
     this.inboundRadial = inboundRadial;

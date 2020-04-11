@@ -6,6 +6,7 @@
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/test" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/src/eng/jAtcSim/newLib/airplanes/moods" />
+      <excludeFolder url="file://$MODULE_DIR$/src/eng/jAtcSim/newLib/airplanes/navigators" />
       <excludeFolder url="file://$MODULE_DIR$/src/eng/jAtcSim/newLib/coordinates" />
       <excludeFolder url="file://$MODULE_DIR$/src/eng/jAtcSim/newLib/global" />
       <excludeFolder url="file://$MODULE_DIR$/src/eng/jAtcSim/newLib/interfacing" />

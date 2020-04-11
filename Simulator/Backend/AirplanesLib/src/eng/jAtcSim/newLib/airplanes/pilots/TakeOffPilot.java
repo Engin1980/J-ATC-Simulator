@@ -9,7 +9,7 @@ public class TakeOffPilot extends Pilot {
   //TODO add to airport config the acceleration altitude and use it here
   private ActiveRunwayThreshold toThreshold;
 
-  public TakeOffPilot(IPilotsPlane plane, ActiveRunwayThreshold takeOffThreshold) {
+  public TakeOffPilot(IPilotPlane plane, ActiveRunwayThreshold takeOffThreshold) {
     super(plane);
     EAssert.Argument.isNotNull(takeOffThreshold, "takeOffThreshold");
     this.toThreshold = takeOffThreshold;
