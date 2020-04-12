@@ -18,7 +18,11 @@ public interface IModulePlaneReader {
 
   int getTargetAltitude();
 
+  String getTunedAtc();
+
   AirplaneType getType();
+
+  boolean hasRadarContact();
 
   boolean isDivertable();
 

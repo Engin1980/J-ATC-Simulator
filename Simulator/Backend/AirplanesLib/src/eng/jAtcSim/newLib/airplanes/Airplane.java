@@ -1,30 +1,22 @@
 package eng.jAtcSim.newLib.airplanes;
 
-import eng.eSystem.collections.IList;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
 import eng.jAtcSim.newLib.airplaneType.AirplaneType;
 import eng.jAtcSim.newLib.airplanes.modules.*;
 import eng.jAtcSim.newLib.airplanes.modules.sha.ShaModule;
+import eng.jAtcSim.newLib.airplanes.modules.SpeechesModule;
 import eng.jAtcSim.newLib.airplanes.other.CockpitVoiceRecorder;
 import eng.jAtcSim.newLib.airplanes.other.FlightDataRecorder;
 import eng.jAtcSim.newLib.airplanes.pilots.IPilotPlane;
 import eng.jAtcSim.newLib.airplanes.pilots.Pilot;
 import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
 import eng.jAtcSim.newLib.area.Navaid;
-import eng.jAtcSim.newLib.area.routes.DARoute;
-import eng.jAtcSim.newLib.messaging.IMessageContent;
-import eng.jAtcSim.newLib.messaging.Message;
-import eng.jAtcSim.newLib.messaging.Participant;
 import eng.jAtcSim.newLib.mood.Mood;
 import eng.jAtcSim.newLib.shared.Callsign;
-import eng.jAtcSim.newLib.shared.SharedInstanceProvider;
 import eng.jAtcSim.newLib.shared.Squawk;
 import eng.jAtcSim.newLib.shared.UnitProvider;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
-import eng.jAtcSim.newLib.speeches.ISpeech;
-import eng.jAtcSim.newLib.speeches.SpeechList;
-import eng.jAtcSim.newLib.speeches.airplane2atc.GoodDayNotification;
 import eng.jAtcSim.newLib.weather.Weather;
 
 public class Airplane {
@@ -502,6 +494,7 @@ public class Airplane {
   private final FlightDataRecorder fdr;
   private final CockpitVoiceRecorder cvr;
   private final AirplaneType airplaneType;
+  private final SpeechesModule speechesModule;
   private Coordinate coordinate;
   private State state;
   private Pilot pilot;
@@ -519,6 +512,7 @@ public class Airplane {
     this.emergencyModule = new EmergencyModule();
     this.mrvaAirproxModule = new MrvaAirproxModule();
     this.atcModule = new AtcModule(imp);
+    this.speechesModule = new SpeechesModule(imp);
     if (isDeparture)
       this.divertModule = null;
     else
@@ -554,7 +548,7 @@ public class Airplane {
 
   public void elapseSecond() {
 
-    processMessages();
+    this.speechesModule.elapseSecond();
     this.pilot.elapseSecond();
     this.atcModule.elapseSecond();
     this.divertModule.elapseSecond();
@@ -1119,26 +1113,6 @@ public class Airplane {
 //    return mrvaAirproxModule;
 //  }
 //
-
-  private void processMessages() {
-    IList<Message> msgs = LocalInstanceProvider.getMessenger().getMessagesByListener(
-        Participant.createAirplane(this.flightModule.getCallsign()), true);
-
-    // only responds to messages from tuned atc
-    msgs = msgs.where(q -> q.getSource().equals(Participant.createAtc(this.atcModule.getTunedAtc())));
-
-    // extract contents
-    IList<IMessageContent> contents = msgs.select(q -> q.getContent());
-    for (IMessageContent c : contents) {
-      SpeechList cmds;
-      if (c instanceof SpeechList)
-        cmds = (SpeechList) c;
-      else {
-        cmds = new SpeechList((ISpeech) c);
-      }
-      this.pilot.data.addNewSpeeches(cmds);
-    }
-  }
 
   private void updateCoordinates() {
     double dist = this.sha.getGS() * secondFraction;

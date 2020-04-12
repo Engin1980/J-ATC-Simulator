@@ -9,7 +9,6 @@ import eng.jAtcSim.newLib.shared.Restriction;
 public abstract class Pilot {
 
   protected final IPilotPlane plane;
-  public PilotData data;
 
   public Pilot(IPilotPlane plane) {
     EAssert.Argument.isNotNull(plane, "plane");
