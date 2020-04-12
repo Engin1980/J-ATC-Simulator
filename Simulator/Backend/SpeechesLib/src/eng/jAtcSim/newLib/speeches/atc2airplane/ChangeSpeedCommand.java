@@ -2,6 +2,7 @@ package eng.jAtcSim.newLib.speeches.atc2airplane;
 
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.validation.EAssert;
+import eng.jAtcSim.newLib.shared.Restriction;
 import eng.jAtcSim.newLib.shared.enums.AboveBelowExactly;
 import eng.jAtcSim.newLib.shared.exceptions.ApplicationException;
 import eng.jAtcSim.newLib.speeches.ICommand;
@@ -19,42 +20,37 @@ public class ChangeSpeedCommand implements  ICommand {
     return ret;
   }
 
-  private final AboveBelowExactly restriction;
-  private final Integer value;
+  private final Restriction restriction;
 
   private ChangeSpeedCommand(AboveBelowExactly restriction, Integer value) {
-    this.restriction = restriction;
-    this.value = value;
+    if (value == null)
+      this.restriction = null;
+    else
+      this.restriction = new Restriction(restriction, value);
   }
 
-  public AboveBelowExactly getDirection() {
+  public Restriction getRestriction() {
     if (isResumeOwnSpeed())
       throw new ApplicationException("Unable to call this on 'ResumeOwnSpeed' command.");
     return this.restriction;
   }
 
-  public int getSpeedInKts() {
-    if (isResumeOwnSpeed())
-      throw new ApplicationException("Unable to call this on 'ResumeOwnSpeed' command.");
-    return this.value;
-  }
-
   public boolean isResumeOwnSpeed() {
-    return this.value == null;
+    return this.restriction == null;
   }
 
   @Override
   public String toString() {
-    if (isResumeOwnSpeed()) {
+    if (this.restriction == null) {
       return "Resume own speed {command}";
     } else {
-      switch (this.restriction) {
+      switch (this.restriction.direction) {
         case above:
-          return "Speed at least " + this.value + "kts {command}";
+          return "Speed at least " + this.restriction.value + "kts {command}";
         case below:
-          return "Speed at most " + this.value + "kts {command}";
+          return "Speed at most " + this.restriction.value + "kts {command}";
         case exactly:
-          return "Speed exactly " + this.value + "kts {command}";
+          return "Speed exactly " + this.restriction.value + "kts {command}";
         default:
           throw new EEnumValueUnsupportedException(this.restriction);
       }

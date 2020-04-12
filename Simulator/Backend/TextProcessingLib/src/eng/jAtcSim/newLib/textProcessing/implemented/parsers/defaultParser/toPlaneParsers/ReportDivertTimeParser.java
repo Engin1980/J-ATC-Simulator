@@ -1,10 +1,10 @@
 package eng.jAtcSim.newLib.textProcessing.implemented.parsers.defaultParser.toPlaneParsers;
 
 import eng.eSystem.collections.IList;
-import eng.jAtcSim.newLib.speeches.atc2airplane.ReportDivertTimeNotification;
+import eng.jAtcSim.newLib.speeches.atc2airplane.ReportDivertTimeCommand;
 import eng.jAtcSim.newLib.textProcessing.implemented.parsers.defaultParser.common.SpeechParser;
 
-public class ReportDivertTimeParser extends SpeechParser<ReportDivertTimeNotification> {
+public class ReportDivertTimeParser extends SpeechParser<ReportDivertTimeCommand> {
 
   private static final String [][]patterns = {{"RDVT"}};
   public String getHelp() {
@@ -21,7 +21,7 @@ public class ReportDivertTimeParser extends SpeechParser<ReportDivertTimeNotific
   }
 
   @Override
-  public ReportDivertTimeNotification parse(IList<String> blocks) {
-    return new ReportDivertTimeNotification();
+  public ReportDivertTimeCommand parse(IList<String> blocks) {
+    return new ReportDivertTimeCommand();
   }
 }

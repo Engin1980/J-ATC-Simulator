@@ -145,7 +145,7 @@ public class FormatterAdapter extends Formatter {
   }
 
   @Override
-  protected String formatReportDivertTimeNotification(ReportDivertTimeNotification command) {
+  protected String formatReportDivertTimeNotification(ReportDivertTimeCommand command) {
     throw new UnsupportedOperationException("This operation is not implemented.");
   }
 

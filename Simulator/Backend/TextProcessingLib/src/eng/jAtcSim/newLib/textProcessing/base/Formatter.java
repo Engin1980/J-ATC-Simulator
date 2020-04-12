@@ -12,8 +12,6 @@ import eng.jAtcSim.newLib.speeches.airplane2atc.responses.UnableToEnterApproachF
 import eng.jAtcSim.newLib.speeches.atc2airplane.*;
 import eng.jAtcSim.newLib.speeches.atc2airplane.afterCommands.*;
 import eng.jAtcSim.newLib.speeches.atc2atc.PlaneSwitchMessage;
-import eng.jAtcSim.newLib.speeches.atc2atc.RunwayCheck;
-import eng.jAtcSim.newLib.speeches.atc2atc.RunwayUse;
 
 public abstract class Formatter {
 
@@ -43,8 +41,8 @@ public abstract class Formatter {
     else if (speech instanceof ProceedDirectCommand) ret = formatProceedDirectCommand((ProceedDirectCommand) speech);
     else if (speech instanceof RadarContactConfirmationNotification)
       ret = formatRadarContactConfirmationNotification((RadarContactConfirmationNotification) speech);
-    else if (speech instanceof ReportDivertTimeNotification)
-      ret = formatReportDivertTimeNotification((ReportDivertTimeNotification) speech);
+    else if (speech instanceof ReportDivertTimeCommand)
+      ret = formatReportDivertTimeNotification((ReportDivertTimeCommand) speech);
     else if (speech instanceof ShortcutCommand) ret = formatShortcutCommand((ShortcutCommand) speech);
     else if (speech instanceof ThenCommand) ret = formatThenCommand((ThenCommand) speech);
     else if (speech instanceof AfterAltitudeCommand) ret = formatAfterAltitudeCommand((AfterAltitudeCommand) speech);
@@ -142,7 +140,7 @@ public abstract class Formatter {
     return "Unable " + this.format(cmd.getOrigin()) + ". " + cmd.getReason();
   }
 
-  protected abstract String formatReportDivertTimeNotification(ReportDivertTimeNotification command);
+  protected abstract String formatReportDivertTimeNotification(ReportDivertTimeCommand command);
 
   protected abstract String formatRequestRadarContactNotification(RequestRadarContactNotification command);
 

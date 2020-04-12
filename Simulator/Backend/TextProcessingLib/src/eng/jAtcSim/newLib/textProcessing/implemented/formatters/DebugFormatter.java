@@ -18,7 +18,7 @@ public class DebugFormatter extends Formatter {
 
   private final String[] greetings = new String[]{"Good day", "Hello", "Hi"};
 
-  public String format(ReportDivertTimeNotification cmd) {
+  public String format(ReportDivertTimeCommand cmd) {
     String ret = ""; // this is empty as this is used as a confirmation.
     return ret;
   }
@@ -311,7 +311,7 @@ public class DebugFormatter extends Formatter {
   }
 
   @Override
-  protected String formatReportDivertTimeNotification(ReportDivertTimeNotification cmd) {
+  protected String formatReportDivertTimeNotification(ReportDivertTimeCommand cmd) {
     String ret = ""; // this is empty as this is used as a confirmation.
     return ret;
   }
