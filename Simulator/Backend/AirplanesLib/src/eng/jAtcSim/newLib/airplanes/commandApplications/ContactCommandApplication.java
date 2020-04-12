@@ -1,20 +1,17 @@
 package eng.jAtcSim.newLib.airplanes.commandApplications;
 
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
-import eng.jAtcSim.newLib.Acc;
-import eng.jAtcSim.newLib.area.airplanes.Airplane;
-import eng.jAtcSim.newLib.area.airplanes.interfaces.IAirplaneWriteSimple;
-import eng.jAtcSim.newLib.area.atcs.Atc;
-import eng.jAtcSim.newLib.area.exceptions.ToDoException;
-import eng.jAtcSim.newLib.area.speaking.IFromAirplane;
-import eng.jAtcSim.newLib.area.speaking.fromAirplane.notifications.GoodDayNotification;
-import eng.jAtcSim.newLib.area.speaking.fromAtc.commands.ContactCommand;
+import eng.jAtcSim.newLib.airplanes.Airplane;
+import eng.jAtcSim.newLib.shared.exceptions.ToDoException;
+import eng.jAtcSim.newLib.speeches.Rejection;
+import eng.jAtcSim.newLib.speeches.airplane2atc.GoodDayNotification;
+import eng.jAtcSim.newLib.speeches.atc2airplane.ContactCommand;
 
 public class ContactCommandApplication extends CommandApplication<ContactCommand> {
 
   @Override
-  protected ApplicationResult adjustAirplane(IAirplaneWriteSimple plane, ContactCommand c) {
-    Atc a;
+  protected ApplicationResult adjustAirplane(IAirplaneCommand plane, ContactCommand c) {
+    String a;
     switch (c.getAtcType()) {
       case app:
         a = Acc.atcApp();
@@ -35,11 +32,11 @@ public class ContactCommandApplication extends CommandApplication<ContactCommand
     plane.tuneAtc(a);
     // rewritten
     // TODO now switch is realised in no-time, there is no delay between "frequency change confirmation" and "new atc call"
-    IFromAirplane s = new GoodDayNotification(
-        plane.getFlightModule().getCallsign(),
-        plane.getSha().getAltitude(),
-        plane.getSha().getTargetAltitude(),
-        plane.getEmergencyModule().isEmergency(),
+    GoodDayNotification s = new GoodDayNotification(
+        plane.getCallsign(),
+        plane.getAltitude(),
+        plane.getTargetAltitude(),
+        plane.isEmergency(),
         false);
     plane.sendMessage(s);
     //TODO when everything is done, I should update this to report ga-reason to the newly switched atc
@@ -50,12 +47,12 @@ public class ContactCommandApplication extends CommandApplication<ContactCommand
   }
 
   @Override
-  protected IFromAirplane checkCommandSanity(IAirplaneWriteSimple plane, ContactCommand c) {
+  protected Rejection checkCommandSanity(IAirplaneCommand plane, ContactCommand c) {
     return null;
   }
 
   @Override
   protected Airplane.State[] getInvalidStates() {
-    return new Airplane.State[0];
+    return new Airplane.State[]{};
   }
 }

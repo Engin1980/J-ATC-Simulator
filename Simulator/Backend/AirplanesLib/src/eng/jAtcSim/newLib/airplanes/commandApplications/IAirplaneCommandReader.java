@@ -4,12 +4,15 @@ import eng.eSystem.collections.*;
 import eng.eSystem.geo.Coordinate;
 import eng.jAtcSim.newLib.airplaneType.AirplaneType;
 import eng.jAtcSim.newLib.airplanes.Airplane;
+import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.Restriction;
 
 import static eng.eSystem.utilites.FunctionShortcuts.*;
 
 public interface IAirplaneCommandReader {
   int getAltitude();
+
+  Callsign getCallsign();
 
   Coordinate getCoordinate();
 
@@ -22,4 +25,6 @@ public interface IAirplaneCommandReader {
   int getTargetAltitude();
 
   AirplaneType getType();
+
+  boolean isEmergency();
 }
