@@ -5,6 +5,7 @@ import eng.jAtcSim.newLib.area.Area;
 import eng.jAtcSim.newLib.area.RunwayConfiguration;
 import eng.jAtcSim.newLib.messaging.Messenger;
 import eng.jAtcSim.newLib.shared.InstanceProviderDictionary;
+import eng.jAtcSim.newLib.weather.Weather;
 
 public class LocalInstanceProvider {
   public static Area getArea() {
@@ -37,5 +38,9 @@ public class LocalInstanceProvider {
 
   public static void setCurrentRunwayConfiguration(RunwayConfiguration value){
     InstanceProviderDictionary.setInstance(RunwayConfiguration.class, value);
+  }
+
+  public static Weather getWeather(){
+    return InstanceProviderDictionary.getInstance(Weather.class);
   }
 }

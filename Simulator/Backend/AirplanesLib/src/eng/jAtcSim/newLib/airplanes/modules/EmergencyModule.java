@@ -6,6 +6,8 @@ import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 public class EmergencyModule{
   private EDayTimeStamp emergencyWanishTime = null;
 
+  //TODO narvat emergency generating here s pomocí static items
+
   public boolean isEmergency() {
     return this.emergencyWanishTime != null;
   }

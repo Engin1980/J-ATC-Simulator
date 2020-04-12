@@ -497,7 +497,6 @@ public class Airplane {
   private final EmergencyModule emergencyModule;
   private final MrvaAirproxModule mrvaAirproxModule;
   private final AtcModule atcModule;
-  private final PilotDataModule pilotDataModule;
   private final DivertModule divertModule;
   private final Mood mood;
   private final FlightDataRecorder fdr;
@@ -520,7 +519,6 @@ public class Airplane {
     this.emergencyModule = new EmergencyModule();
     this.mrvaAirproxModule = new MrvaAirproxModule();
     this.atcModule = new AtcModule(imp);
-    this.pilotDataModule = new PilotDataModule();
     if (isDeparture)
       this.divertModule = null;
     else
@@ -1138,7 +1136,7 @@ public class Airplane {
       else {
         cmds = new SpeechList((ISpeech) c);
       }
-      this.pilotDataModule.addNewSpeeches(cmds);
+      this.pilot.data.addNewSpeeches(cmds);
     }
   }
 
@@ -1153,7 +1151,7 @@ public class Airplane {
         State.takeOffRoll,
         State.landed
     ) == false) {
-      Weather weather = Acc.weather();
+      Weather weather = LocalInstanceProvider.getWeather();
       newC = Coordinates.getCoordinate(
           newC,
           weather.getWindHeading(),
