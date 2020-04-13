@@ -1125,7 +1125,7 @@ public class Airplane {
         State.takeOffRoll,
         State.landed
     ) == false) {
-      Weather weather = LocalInstanceProvider.getWeather();
+      Weather weather = LAcc.getWeather();
       newC = Coordinates.getCoordinate(
           newC,
           weather.getWindHeading(),

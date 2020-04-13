@@ -3,13 +3,12 @@ package eng.jAtcSim.newLib.airplanes.commandApplications;
 
 import eng.eSystem.collections.IReadOnlyList;
 import eng.jAtcSim.newLib.airplanes.Airplane;
-import eng.jAtcSim.newLib.airplanes.LocalInstanceProvider;
+import eng.jAtcSim.newLib.airplanes.LAcc;
 import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
 import eng.jAtcSim.newLib.area.approaches.Approach;
 import eng.jAtcSim.newLib.shared.Restriction;
 import eng.jAtcSim.newLib.shared.enums.AboveBelowExactly;
 import eng.jAtcSim.newLib.speeches.INotification;
-import eng.jAtcSim.newLib.speeches.ISpeech;
 import eng.jAtcSim.newLib.speeches.Rejection;
 import eng.jAtcSim.newLib.speeches.airplane2atc.HighOrderedSpeedForApproach;
 import eng.jAtcSim.newLib.speeches.airplane2atc.responses.UnableToEnterApproachFromDifficultPosition;
@@ -22,7 +21,7 @@ public class ClearedToApproachApplication extends CommandApplication<ClearedToAp
     Rejection ret = null;
     NewApproachInfo nai;
 
-    ActiveRunwayThreshold rt = LocalInstanceProvider.getAirport().tryGetRunwayThreshold(c.getThresholdName());
+    ActiveRunwayThreshold rt = LAcc.getAirport().tryGetRunwayThreshold(c.getThresholdName());
     if (rt == null) {
       ret = new Rejection(
           "Cannot be cleared to approach. There is no runway designated as " + c.getThresholdName(), c);
@@ -94,7 +93,7 @@ public class ClearedToApproachApplication extends CommandApplication<ClearedToAp
       ret.informations.add(tmp);
     }
 
-    ActiveRunwayThreshold rt = LocalInstanceProvider.getAirport().tryGetRunwayThreshold(c.getThresholdName());
+    ActiveRunwayThreshold rt = LAcc.getAirport().tryGetRunwayThreshold(c.getThresholdName());
     IReadOnlyList<Approach> apps = rt.getApproaches(c.getType(), plane.getType().category);
     NewApproachInfo nai = tryCreateApproachInfo(apps, plane);
     assert nai != null;

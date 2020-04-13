@@ -25,7 +25,7 @@ public class DelayedList<T> {
   private final int maximalDelay;
   private int currentDelay = 0;
   private List<DelayedItem<T>> inner = new LinkedList<>();
-  private ERandom rnd = SharedInstanceProvider.getRnd();
+  private ERandom rnd = GAcc.getRnd();
 
   public DelayedList(int minimalDelay, int maximalDelay) {
     this.minimalDelay = minimalDelay;

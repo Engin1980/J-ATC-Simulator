@@ -6,7 +6,7 @@ import eng.eSystem.geo.Headings;
 import eng.jAtcSim.newLib.airplanes.Airplane;
 import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.mood.Mood;
-import eng.jAtcSim.newLib.shared.SharedInstanceProvider;
+import eng.jAtcSim.newLib.shared.GAcc;
 import eng.jAtcSim.newLib.shared.exceptions.ToDoException;
 import eng.jAtcSim.newLib.shared.time.EDayTimeRun;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
@@ -58,7 +58,7 @@ public class HoldPilot extends Pilot {
     if (plane.getState() != Airplane.State.holding)
       super.throwIllegalStateException();
 
-    EDayTimeRun now = SharedInstanceProvider.getNow();
+    EDayTimeRun now = GAcc.getNow();
 
     switch (this.phase) {
       case directEntry:

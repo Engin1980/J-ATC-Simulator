@@ -3,7 +3,7 @@ package eng.jAtcSim.newLib.airplanes.commandApplications;
 
 import eng.eSystem.geo.Headings;
 import eng.jAtcSim.newLib.airplanes.Airplane;
-import eng.jAtcSim.newLib.airplanes.LocalInstanceProvider;
+import eng.jAtcSim.newLib.airplanes.LAcc;
 import eng.jAtcSim.newLib.airplanes.modules.sha.navigators.Navigator;
 import eng.jAtcSim.newLib.shared.enums.LeftRight;
 import eng.jAtcSim.newLib.shared.enums.LeftRightAny;
@@ -43,7 +43,7 @@ public class ChangeHeadingApplication extends CommandApplication<ChangeHeadingCo
       targetHeading =
           Headings.add(
               c.getHeading(),
-              LocalInstanceProvider.getAirport().getDeclination());
+              LAcc.getAirport().getDeclination());
     }
     LeftRight turn;
 

@@ -2,7 +2,7 @@ package eng.jAtcSim.newLib.airplanes.modules;
 
 
 import eng.jAtcSim.newLib.airplanes.Airplane;
-import eng.jAtcSim.newLib.shared.SharedInstanceProvider;
+import eng.jAtcSim.newLib.shared.GAcc;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 import eng.jAtcSim.newLib.speeches.airplane2atc.DivertTimeNotification;
 
@@ -19,8 +19,8 @@ public class DivertModule extends Module{
   }
 
   private static EDayTimeStamp generateDivertTime() {
-    EDayTimeStamp now = SharedInstanceProvider.getNow().toStamp();
-    int divertTimeMinutes = SharedInstanceProvider.getRnd().nextInt(MINIMAL_DIVERT_TIME_MINUTES, MAXIMAL_DIVERT_TIME_MINUTES);
+    EDayTimeStamp now = GAcc.getNow().toStamp();
+    int divertTimeMinutes = GAcc.getRnd().nextInt(MINIMAL_DIVERT_TIME_MINUTES, MAXIMAL_DIVERT_TIME_MINUTES);
     EDayTimeStamp ret = now.addMinutes(divertTimeMinutes);
     return ret;
   }
@@ -62,7 +62,7 @@ public class DivertModule extends Module{
   }
 
   private int getMinutesLeft() {
-    int diff = divertTime.getTotalMinutes() - SharedInstanceProvider.getNow().getTotalMinutes();
+    int diff = divertTime.getTotalMinutes() - GAcc.getNow().getTotalMinutes();
     return diff;
   }
 

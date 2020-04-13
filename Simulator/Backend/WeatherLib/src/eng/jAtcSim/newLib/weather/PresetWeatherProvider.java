@@ -2,7 +2,7 @@ package eng.jAtcSim.newLib.weather;
 
 import eng.eSystem.eXml.XDocument;
 import eng.eSystem.exceptions.EApplicationException;
-import eng.jAtcSim.newLib.shared.SharedInstanceProvider;
+import eng.jAtcSim.newLib.shared.GAcc;
 import eng.jAtcSim.newLib.weather.presets.PresetWeatherList;
 
 public class PresetWeatherProvider extends WeatherProvider {
@@ -32,9 +32,9 @@ public class PresetWeatherProvider extends WeatherProvider {
       int index = getFirstWeatherIndex();
       ret = presetWeathers.get(index);
       weatherIndex = index;
-      dayIndex = SharedInstanceProvider.getNow().getDays();
+      dayIndex = GAcc.getNow().getDays();
     } else {
-      if (dayIndex == SharedInstanceProvider.getNow().getDays()) {
+      if (dayIndex == GAcc.getNow().getDays()) {
         // evaluating current day
         int newIndex = getSuggestedWeatherIndex();
         if (newIndex == NEXT_DAY) {
@@ -58,7 +58,7 @@ public class PresetWeatherProvider extends WeatherProvider {
       return 0;
 
     int index = -1;
-    java.time.LocalTime now = SharedInstanceProvider.getNow().toLocalTime();
+    java.time.LocalTime now = GAcc.getNow().toLocalTime();
     for (int i = 0; i < presetWeathers.size(); i++) {
       if (presetWeathers.get(i).getTime().isAfter(now)) {
         index = i - 1;
@@ -73,7 +73,7 @@ public class PresetWeatherProvider extends WeatherProvider {
 
   private int getSuggestedWeatherIndex() {
     int ret;
-    java.time.LocalTime now = SharedInstanceProvider.getNow().toLocalTime();
+    java.time.LocalTime now = GAcc.getNow().toLocalTime();
 
     if (weatherIndex + 1 == presetWeathers.size())
       ret = NEXT_DAY;

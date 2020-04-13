@@ -1,13 +1,19 @@
 package eng.jAtcSim.newLib.airplanes;
 
-import eng.jAtcSim.newLib.area.Airport;
-import eng.jAtcSim.newLib.area.Area;
-import eng.jAtcSim.newLib.area.RunwayConfiguration;
+import eng.jAtcSim.newLib.area.*;
 import eng.jAtcSim.newLib.messaging.Messenger;
 import eng.jAtcSim.newLib.shared.InstanceProviderDictionary;
+import eng.jAtcSim.newLib.speeches.atc2airplane.ToNavaidCommand;
 import eng.jAtcSim.newLib.weather.Weather;
 
-public class LocalInstanceProvider {
+public class LAcc {
+
+  public static class Smart{
+    public static Navaid getNavaid(ToNavaidCommand command) {
+      return getArea().getNavaids().get(command.getNavaidName());
+    }
+  }
+
   public static Area getArea() {
     return InstanceProviderDictionary.getInstance(Area.class, "area");
   }
@@ -42,5 +48,9 @@ public class LocalInstanceProvider {
 
   public static Weather getWeather(){
     return InstanceProviderDictionary.getInstance(Weather.class);
+  }
+
+  public static NavaidList getNavaids(){
+    return getArea().getNavaids();
   }
 }

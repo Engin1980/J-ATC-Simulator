@@ -3,11 +3,15 @@ package eng.jAtcSim.newLib.airplanes.modules;
 import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IMap;
-import eng.jAtcSim.newLib.airplanes.LocalInstanceProvider;
+import eng.jAtcSim.newLib.airplanes.LAcc;
+import eng.jAtcSim.newLib.airplanes.commandApplications.ApplicationManager;
+import eng.jAtcSim.newLib.airplanes.commandApplications.ApplicationResult;
+import eng.jAtcSim.newLib.airplanes.commandApplications.ConfirmationResult;
 import eng.jAtcSim.newLib.messaging.IMessageContent;
 import eng.jAtcSim.newLib.messaging.Message;
 import eng.jAtcSim.newLib.messaging.Participant;
 import eng.jAtcSim.newLib.shared.DelayedList;
+import eng.jAtcSim.newLib.shared.enums.AboveBelowExactly;
 import eng.jAtcSim.newLib.speeches.ISpeech;
 import eng.jAtcSim.newLib.speeches.SpeechList;
 import eng.jAtcSim.newLib.speeches.airplane2atc.RequestRadarContactNotification;
@@ -85,28 +89,32 @@ public class SpeechesModule extends eng.jAtcSim.newLib.airplanes.modules.Module 
 
         AfterCommand n; // new
         if (prev instanceof ProceedDirectCommand) {
-          n = AfterDistanceCommand.create(((ProceedDirectCommand) prev).getNavaidName(), 0, AfterValuePosition.exactly);
+          n = AfterDistanceCommand.create(((ProceedDirectCommand) prev).getNavaidName(), 0, AboveBelowExactly.exactly);
         } else if (prev instanceof ChangeAltitudeCommand) {
           ChangeAltitudeCommand ca = (ChangeAltitudeCommand) prev;
-          AfterValuePosition restriction;
+          AboveBelowExactly restriction;
           switch (ca.getDirection()) {
             case any:
-              restriction = AfterValuePosition.exactly;
+              restriction = AboveBelowExactly.exactly;
               break;
             case climb:
-              restriction = AfterValuePosition.aboveOrAfter;
+              restriction = AboveBelowExactly.above;
               break;
             case descend:
-              restriction = AfterValuePosition.belowOrBefore;
+              restriction = AboveBelowExactly.below;
               break;
             default:
               throw new UnsupportedOperationException();
           }
           n = new AfterAltitudeCommand(ca.getAltitudeInFt(), restriction);
         } else if (prev instanceof ChangeSpeedCommand) {
-          n = AfterSpeedCommand.create(((ChangeSpeedCommand) prev).getSpeedInKts(), AfterValuePosition.exactly);
+          ChangeSpeedCommand cmd = (ChangeSpeedCommand) prev;
+          n = AfterSpeedCommand.create(
+              cmd.getRestriction().value,
+              cmd.getRestriction().direction);
         } else if (prev instanceof ChangeHeadingCommand) {
-          n = AfterHeadingCommand.create(((ChangeHeadingCommand) prev).getHeading(), AfterValuePosition.exactly);
+          ChangeHeadingCommand cmd = (ChangeHeadingCommand) prev;
+          n = AfterHeadingCommand.create(cmd.getHeading());
         } else {
           plane.sendMessage(
               new IllegalThenCommandRejection(
@@ -121,7 +129,7 @@ public class SpeechesModule extends eng.jAtcSim.newLib.airplanes.modules.Module 
   }
 
   private void obtainNewSpeeches() {
-    IList<Message> msgs = LocalInstanceProvider.getMessenger().getMessagesByListener(
+    IList<Message> msgs = LAcc.getMessenger().getMessagesByListener(
         Participant.createAirplane(plane.getCallsign()), true);
 
     // only responds to messages from tuned atc
@@ -144,8 +152,8 @@ public class SpeechesModule extends eng.jAtcSim.newLib.airplanes.modules.Module 
   private void processNormalSpeech(
       SpeechList<? extends ISpeech> queue, ISpeech cmd, CommandSource cs) {
 
-    eng.jAtcSim.newLib.area.airplanes.commandApplications.ConfirmationResult cres =
-        eng.jAtcSim.newLib.area.airplanes.commandApplications.ApplicationManager.confirm(
+    ConfirmationResult cres =
+        ApplicationManager.confirm(
             plane, cmd, cs == CommandSource.atc, true);
     if (cres.rejection != null) {
       // command was rejected
@@ -153,10 +161,10 @@ public class SpeechesModule extends eng.jAtcSim.newLib.airplanes.modules.Module 
     } else {
       affectAfterCommands(cmd, cs);
       // new commands from atc when needs to be confirmed, are confirmed
-      if (cs == eng.jAtcSim.newLib.area.airplanes.modules.RoutingModule.CommandSource.atc && cres.confirmation != null)
+      if (cs == SpeechesModule.CommandSource.atc && cres.confirmation != null)
         say(cres.confirmation);
       // command is applied
-      eng.jAtcSim.newLib.area.airplanes.commandApplications.ApplicationResult ares = eng.jAtcSim.newLib.area.airplanes.commandApplications.ApplicationManager.apply(parent, cmd);
+      ApplicationResult ares = ApplicationManager.apply(super.plane, cmd);
       assert ares.rejection == null : "This should not be rejected as was confirmed a few moments before.";
       ares.informations.forEach(q -> say(q));
     }

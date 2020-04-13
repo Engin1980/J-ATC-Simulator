@@ -1,6 +1,7 @@
 package eng.jAtcSim.newLib.textProcessing.implemented.parsers.defaultParser.toPlaneParsers;
 
 import eng.eSystem.collections.IList;
+import eng.jAtcSim.newLib.shared.enums.LeftRightAny;
 import eng.jAtcSim.newLib.speeches.atc2airplane.ChangeHeadingCommand;
 import eng.jAtcSim.newLib.textProcessing.implemented.parsers.defaultParser.common.SpeechParser;
 
@@ -33,16 +34,16 @@ public class ChangeHeadingParser extends SpeechParser<ChangeHeadingCommand> {
 
   @Override
   public ChangeHeadingCommand parse(IList<String> blocks) {
-    ChangeHeadingCommand.eDirection d;
+    LeftRightAny d;
     switch (blocks.get(0)) {
       case "FH":
-        d = ChangeHeadingCommand.eDirection.any;
+        d = LeftRightAny.any;
         break;
       case "TL":
-        d = ChangeHeadingCommand.eDirection.left;
+        d = LeftRightAny.left;
         break;
       case "TR":
-        d = ChangeHeadingCommand.eDirection.right;
+        d = LeftRightAny.right;
         break;
       default:
         throw new UnsupportedOperationException();

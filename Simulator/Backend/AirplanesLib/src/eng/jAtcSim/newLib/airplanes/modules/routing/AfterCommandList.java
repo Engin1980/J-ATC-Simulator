@@ -5,16 +5,16 @@ import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.geo.Coordinates;
+import eng.eSystem.geo.Headings;
 import eng.eSystem.utilites.ConversionUtils;
 import eng.eSystem.geo.Coordinate;
+import eng.jAtcSim.newLib.airplanes.LAcc;
+import eng.jAtcSim.newLib.airplanes.commandApplications.IAirplaneCommand;
 import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.speeches.ICommand;
 import eng.jAtcSim.newLib.speeches.SpeechList;
 import eng.jAtcSim.newLib.speeches.atc2airplane.*;
-import eng.jAtcSim.newLib.speeches.atc2airplane.afterCommands.AfterAltitudeCommand;
-import eng.jAtcSim.newLib.speeches.atc2airplane.afterCommands.AfterCommand;
-import eng.jAtcSim.newLib.speeches.atc2airplane.afterCommands.AfterDistanceCommand;
-import eng.jAtcSim.newLib.speeches.atc2airplane.afterCommands.AfterNavaidCommand;
+import eng.jAtcSim.newLib.speeches.atc2airplane.afterCommands.*;
 
 import java.util.function.Predicate;
 
@@ -42,7 +42,7 @@ public class AfterCommandList {
     boolean ret = false;
     if (item.antecedent instanceof AfterDistanceCommand) {
       AfterNavaidCommand anc = (AfterNavaidCommand) item.antecedent;
-      Navaid navaid = anc.getNavaidName();
+      Navaid navaid = LAcc.getNavaids().get(anc.getNavaidName());
       if (navaid.getCoordinate().equals(coordinate)) {
         if (item.consequent instanceof ChangeHeadingCommand ||
             item.consequent instanceof ProceedDirectCommand ||
@@ -55,41 +55,44 @@ public class AfterCommandList {
     return ret;
   }
 
-  private static boolean isAFItemPassed(AFItem item, IAirplaneRO plane, Coordinate currentTargetCoordinateOrNull) {
+  private static boolean isAFItemPassed(AFItem item, IAirplaneCommand plane, Coordinate currentTargetCoordinateOrNull) {
     boolean ret;
 
     if (item.antecedent instanceof AfterAltitudeCommand) {
       AfterAltitudeCommand cmd = (AfterAltitudeCommand) item.antecedent;
       ret = isAfterAltitudePassed(cmd, plane.getAltitude());
     } else if (item.antecedent instanceof AfterSpeedCommand) {
-      int trgSpd = ((AfterSpeedCommand) item.antecedent).getSpeedInKts();
-      ret = (Math.abs(trgSpd - plane.getSha().getSpeed()) < 10);
+      int trgSpd = ((AfterSpeedCommand) item.antecedent).getSpeed();
+      ret = (Math.abs(trgSpd - plane.getSpeed()) < 10);
     } else if (item.antecedent instanceof AfterNavaidCommand) {
       AfterNavaidCommand anc = (AfterNavaidCommand) item.antecedent;
-      if ((anc.getNavaid().getCoordinate().equals(currentTargetCoordinateOrNull) == false)) {
+      Navaid navaid = LAcc.getNavaids().get(anc.getNavaidName());
+      if ((navaid.getCoordinate().equals(currentTargetCoordinateOrNull) == false)) {
         // flying over some navaid, but not over current targeted by plane(pilot)
         ret = false;
       } else {
         double dist
             = Coordinates.getDistanceInNM(
-            ((AfterNavaidCommand) item.antecedent).getNavaid().getCoordinate(),
+            navaid.getCoordinate(),
             plane.getCoordinate());
-        double overDist = Navaid.getOverNavaidDistance( plane.getSha().getSpeed());
+        double overDist = Navaid.getOverNavaidDistance( plane.getSpeed());
         ret = (dist < overDist);
       }
     } else if (item.antecedent instanceof AfterHeadingCommand) {
       AfterHeadingCommand anc = (AfterHeadingCommand) item.antecedent;
-      double trgHdg = Headings.add(anc.getHeading(), Acc.airport().getDeclination());
-      double diff = Headings.getDifference(plane.getSha().getHeading(), trgHdg, true);
+      double trgHdg = Headings.add(anc.getHeading(), LAcc.getAirport().getDeclination());
+      double diff = Headings.getDifference(plane.getHeading(), trgHdg, true);
       ret = (diff < 3);
     } else if (item.antecedent instanceof AfterDistanceCommand) {
       AfterDistanceCommand anc = (AfterDistanceCommand) item.antecedent;
-      double dist = Coordinates.getDistanceInNM(plane.getCoordinate(), anc.getNavaid().getCoordinate());
-      double diff = Math.abs(dist - anc.getDistanceInNm());
+      Navaid navaid = LAcc.getNavaids().get(anc.getNavaidName());
+      double dist = Coordinates.getDistanceInNM(plane.getCoordinate(), navaid.getCoordinate());
+      double diff = Math.abs(dist - anc.getDistance());
       ret = (diff < 0.3);
     } else if (item.antecedent instanceof AfterRadialCommand) {
       AfterRadialCommand anc = (AfterRadialCommand) item.antecedent;
-      double rad = Coordinates.getBearing(anc.getNavaid().getCoordinate(), plane.getCoordinate());
+      Navaid navaid = LAcc.getNavaids().get(anc.getNavaidName());
+      double rad = Coordinates.getBearing(navaid.getCoordinate(), plane.getCoordinate());
       double diff = Headings.getDifference(rad, anc.getRadial(), true);
       ret = (diff < 3);
     } else {
@@ -98,12 +101,12 @@ public class AfterCommandList {
     return ret;
   }
 
-  private static SpeechList<IAtcCommand> getAndRemoveSatisfiedCommands(
+  private static SpeechList<ICommand> getAndRemoveSatisfiedCommands(
       IList<AFItem> lst,
-      IAirplaneRO referencePlane, Coordinate currentTargetCoordinateOrNull,
+      IAirplaneCommand referencePlane, Coordinate currentTargetCoordinateOrNull,
       boolean untilFirstNotSatisfied) {
 
-    SpeechList<IAtcCommand> ret = new SpeechList<>();
+    SpeechList<ICommand> ret = new SpeechList<>();
 
     int i = 0;
     while (i < lst.size()) {
@@ -123,16 +126,16 @@ public class AfterCommandList {
   }
 
   private static boolean isAfterAltitudePassed(AfterAltitudeCommand cmd, double altitudeInFt) {
-    int trgAlt = cmd.getAltitudeInFt();
+    int trgAlt = cmd.getAltitude();
     boolean ret;
-    switch (cmd.getRestriction()) {
-      case exact:
+    switch (cmd.getPosition()) {
+      case exactly:
         ret = Math.abs(trgAlt - altitudeInFt) < 100;
         break;
-      case andAbove:
+      case aboveOrAfter:
         ret = altitudeInFt > trgAlt;
         break;
-      case andBelow:
+      case belowOrBefore:
         ret = altitudeInFt < trgAlt;
         break;
       default:
@@ -148,13 +151,13 @@ public class AfterCommandList {
     if (isArrival)
       prd = afItem -> {
         ChangeSpeedCommand c = (ChangeSpeedCommand) afItem.consequent;
-        boolean ret = c.getSpeedInKts() >= referenceSpeed;
+        boolean ret = c.getRestriction().value >= referenceSpeed;
         return ret;
       };
     else
       prd = afItem -> {
         ChangeSpeedCommand c = (ChangeSpeedCommand) afItem.consequent;
-        boolean ret = c.getSpeedInKts() <= referenceSpeed;
+        boolean ret = c.getRestriction().value <= referenceSpeed;
         return ret;
       };
     tmp.retain(prd);
@@ -165,7 +168,7 @@ public class AfterCommandList {
     Predicate<AFItem> cond = q -> {
       boolean ret =
           (q.consequent instanceof ToNavaidCommand &&
-              ((ToNavaidCommand) q.consequent).getNavaid().equals(navaid));
+              LAcc.Smart.getNavaid((ToNavaidCommand) q.consequent).equals(navaid));
       return ret;
     };
     boolean ret = items.isAny(q -> cond.test(q));
@@ -206,14 +209,15 @@ public class AfterCommandList {
     Predicate<AFItem> cond = q -> {
       boolean ret =
           (q.consequent instanceof ToNavaidCommand &&
-              ((ToNavaidCommand) q.consequent).getNavaid().equals(navaid));
+              LAcc.Smart.getNavaid((ToNavaidCommand) q.consequent).equals(navaid));
       return ret;
     };
     boolean ret = hasProceedDirectToNavaidAsConseqent(this.rt, navaid) || hasProceedDirectToNavaidAsConseqent(this.ex, navaid);
     return ret;
   }
 
-  public SpeechList<ICommand> getAndRemoveSatisfiedCommands(IAirplaneRO referencePlane, Coordinate currentTargetCoordinateOrNull, Type type) {
+  public SpeechList<ICommand> getAndRemoveSatisfiedCommands(
+      IAirplaneCommand referencePlane, Coordinate currentTargetCoordinateOrNull, Type type) {
     SpeechList<ICommand> ret;
     IList<AFItem> tmp;
     boolean untilFirstNotSatisfied;
@@ -279,8 +283,8 @@ public class AfterCommandList {
       i++;
       if ((it.antecedent instanceof AfterSpeedCommand) == false) continue;
       AfterSpeedCommand tmp = (AfterSpeedCommand) it.antecedent;
-      if (referenceSpeedOrNull != null && (isArrival && tmp.getSpeedInKts() < referenceSpeedOrNull)) continue;
-      if (referenceSpeedOrNull != null && (!isArrival && tmp.getSpeedInKts() > referenceSpeedOrNull)) continue;
+      if (referenceSpeedOrNull != null && (isArrival && tmp.getSpeed() < referenceSpeedOrNull)) continue;
+      if (referenceSpeedOrNull != null && (!isArrival && tmp.getSpeed() > referenceSpeedOrNull)) continue;
 
       i--;
       AfterCommand a = this.rt.get(i - 1).antecedent;
@@ -298,8 +302,8 @@ public class AfterCommandList {
   }
 
   public boolean clearAllAltitudeRestrictions() {
-    boolean ret = this.rt.isAny(q -> q.consequent instanceof SetAltitudeRestriction);
-    this.rt.remove(q -> q.consequent instanceof SetAltitudeRestriction);
+    boolean ret = this.rt.isAny(q -> q.consequent instanceof AltitudeRestrictionCommand);
+    this.rt.remove(q -> q.consequent instanceof AltitudeRestrictionCommand);
     return ret;
   }
 
@@ -321,7 +325,7 @@ public class AfterCommandList {
       AFItem it = lst.get(0);
       lst.removeAt(0);
       ret.add(it.consequent);
-      if ((it.consequent instanceof ToNavaidCommand) && ((ToNavaidCommand) it.consequent).getNavaid().equals(n))
+      if ((it.consequent instanceof ToNavaidCommand) && LAcc.Smart.getNavaid((ToNavaidCommand) it.consequent).equals(n))
         break;
     }
 
@@ -330,21 +334,12 @@ public class AfterCommandList {
 }
 
 class AFItem {
-
-  private final int antecedentDerivativeSourceHex; // used for saving/loading
-  private final int consequentHex; // used for saving/loading
   public final AfterCommand antecedent;
   public final ICommand consequent;
 
   public AFItem(AfterCommand antecedent, ICommand consequent) {
     this.antecedent = antecedent;
     this.consequent = consequent;
-    if (antecedent.getDerivationSource() != null) {
-      antecedentDerivativeSourceHex = antecedent.getDerivationSource().hashCode();
-    } else {
-      this.antecedentDerivativeSourceHex = -1;
-    }
-    this.consequentHex = consequent.hashCode();
   }
 
   @Override

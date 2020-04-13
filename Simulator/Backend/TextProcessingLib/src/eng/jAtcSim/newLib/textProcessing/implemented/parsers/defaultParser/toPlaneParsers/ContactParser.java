@@ -1,21 +1,27 @@
 package eng.jAtcSim.newLib.textProcessing.implemented.parsers.defaultParser.toPlaneParsers;
 
 import eng.eSystem.collections.IList;
+import eng.eSystem.collections.IReadOnlyList;
+import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.EEnumValueUnsupportedException;
+import eng.jAtcSim.newLib.shared.AtcId;
+import eng.jAtcSim.newLib.shared.enums.eAtcType;
 import eng.jAtcSim.newLib.speeches.atc2airplane.ContactCommand;
+import eng.jAtcSim.newLib.textProcessing.implemented.parsers.defaultParser.LocalInstanceProvider;
 import eng.jAtcSim.newLib.textProcessing.implemented.parsers.defaultParser.common.SpeechParser;
 
 public class ContactParser extends SpeechParser<ContactCommand> {
 
   private static final String[][] patterns = {
-      {"CNT"}};
+      {"((CT)|(CC))|(CNT ([A-Z_]+))"}};
 
   @Override
   public String getHelp() {
     String ret = super.buildHelpString(
         "Contact other ATC",
-        "CNT {atc_name} - contact atc with the specified name",
+        "CNT {atc_name} - contact atc with the specified name\nCC - contact CTR\nCT - contact TWR",
         "Orders airplane to contact other ATC",
-        "CNT LKPR_TWR");
+        "CNT LKPR_TWR\nCT\nCC");
     return ret;
   }
 
@@ -26,23 +32,27 @@ public class ContactParser extends SpeechParser<ContactCommand> {
 
   @Override
   public ContactCommand parse(IList<String> blocks) {
-//    AtcType tuddla;
-//    switch (blocks.get(0)) {
-//      case "CT":
-//        t = Atc.eType.twr;
-//        break;
-//      case "CC":
-//        t = Atc.eType.ctr;
-//        break;
-//      default:
-//        throw new EEnumValueUnsupportedException(blocks.get(0));
-//    }
-//    ContactCommand ret = new ContactCommand(t);
-//    return ret;
+    IReadOnlyList<AtcId> atcs = LocalInstanceProvider.getAtcIds();
+    AtcId atcId;
+    if (blocks.get(1) != null){
+      switch (blocks.get(1)) {
+      case "CT":
+        atcId = atcs.getFirst(q->q.getAtcType() == eAtcType.ctr);
+        break;
+      case "CC":
+        atcId = atcs.getFirst(q->q.getAtcType() == eAtcType.twr);
+        break;
+      default:
+        throw new EEnumValueUnsupportedException(blocks.get(1));
+    }
+    } else if (blocks.get(5) != null){
+      // CNT variant
+      String atcName = blocks.get(6);
+      atcId = atcs.getFirst(q-> q.getId().equals(atcName));
+    } else
+      throw new EApplicationException("Some error when analysing contact parse command.");
 
-    ContactCommand ret;
-    String atcName = blocks.get(1);
-    ret = new ContactCommand(atcName, 0);
+    ContactCommand ret = new ContactCommand(atcId);
     return ret;
   }
 }

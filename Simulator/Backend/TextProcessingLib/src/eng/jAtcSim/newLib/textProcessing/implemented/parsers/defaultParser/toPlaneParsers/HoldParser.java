@@ -1,6 +1,7 @@
 package eng.jAtcSim.newLib.textProcessing.implemented.parsers.defaultParser.toPlaneParsers;
 
 import eng.eSystem.collections.IList;
+import eng.jAtcSim.newLib.shared.enums.LeftRight;
 import eng.jAtcSim.newLib.speeches.atc2airplane.HoldCommand;
 import eng.jAtcSim.newLib.textProcessing.implemented.parsers.defaultParser.common.SpeechParser;
 
@@ -37,8 +38,8 @@ public class HoldParser extends SpeechParser<HoldCommand> {
       int heading = getInt(rg, 2);
       char leftOrRight = rg.get(3).charAt(0);
 
-      boolean left = leftOrRight == 'L';
-      ret = HoldCommand.createExplicit(ns, heading, left);
+      LeftRight turn = leftOrRight == 'L' ? LeftRight.left : LeftRight.right;
+      ret = HoldCommand.createExplicit(ns, heading, turn);
     }
 
     return ret;

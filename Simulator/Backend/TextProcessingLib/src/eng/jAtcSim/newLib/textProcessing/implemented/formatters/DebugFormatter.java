@@ -2,7 +2,8 @@ package eng.jAtcSim.newLib.textProcessing.implemented.formatters;
 
 import eng.eSystem.geo.Headings;
 import eng.jAtcSim.newLib.shared.Format;
-import eng.jAtcSim.newLib.shared.SharedInstanceProvider;
+import eng.jAtcSim.newLib.shared.GAcc;
+import eng.jAtcSim.newLib.shared.enums.LeftRight;
 import eng.jAtcSim.newLib.speeches.airplane2atc.*;
 import eng.jAtcSim.newLib.speeches.airplane2atc.responses.IllegalThenCommandRejection;
 import eng.jAtcSim.newLib.speeches.airplane2atc.responses.ShortCutToFixNotOnRouteRejection;
@@ -126,9 +127,9 @@ public class DebugFormatter extends Formatter {
     } else {
       StringBuilder sb = new StringBuilder();
       sb.append("speed ");
-      sb.append(cmd.getSpeedInKts());
+      sb.append(cmd.getRestriction().value);
       sb.append(" kts");
-      switch (cmd.getDirection()) {
+      switch (cmd.getRestriction().direction) {
         case above:
           sb.append(" or more");
           break;
@@ -180,28 +181,28 @@ public class DebugFormatter extends Formatter {
   @Override
   protected String formatClearedToRouteCommand(ClearedToRouteCommand cmd) {
     String type;
-    switch (cmd.getRouteType()) {
-      case sid:
-        type = "departure";
-        break;
-      case star:
-        type = "arrival";
-        break;
-      case transition:
-        type = "transition";
-        break;
-      case vectoring:
-        type = "via vectoring";
-        break;
-      default:
-        throw new UnsupportedOperationException();
-    }
-    return "Clear to proceed " + cmd.getRouteName() + " " + type;
+//    switch (cmd.getRouteType()) {
+//      case sid:
+//        type = "departure";
+//        break;
+//      case star:
+//        type = "arrival";
+//        break;
+//      case transition:
+//        type = "transition";
+//        break;
+//      case vectoring:
+//        type = "via vectoring";
+//        break;
+//      default:
+//        throw new UnsupportedOperationException();
+//    }
+    return "Clear to proceed " + cmd.getRouteName(); // + " " + type;
   }
 
   @Override
   protected String formatContactCommand(ContactCommand cmd) {
-    String ret = String.format("Contact %s at %.3f", cmd.getAtcName(), cmd.getAtcFrequency());
+    String ret = String.format("Contact %s at %.3f", cmd.getAtc().getId(), cmd.getAtc().getFrequency());
     return ret;
   }
 
@@ -249,7 +250,7 @@ public class DebugFormatter extends Formatter {
 
   @Override
   protected String formatGoodDayNotification(GoodDayNotification cmd) {
-    double d = SharedInstanceProvider.getRnd().nextDouble();
+    double d = GAcc.getRnd().nextDouble();
     d = d * greetings.length;
     StringBuilder sb = new StringBuilder();
     sb
@@ -284,7 +285,7 @@ public class DebugFormatter extends Formatter {
     } else {
       sb.append(" inbound ");
       sb.append(Headings.format(cmd.getInboundRadial()));
-      sb.append(cmd.isLeftTurn() ? " left turns " : " right turns ");
+      sb.append(cmd.getTurn() == LeftRight.left ? " left turns " : " right turns ");
     }
     return sb.toString();
   }

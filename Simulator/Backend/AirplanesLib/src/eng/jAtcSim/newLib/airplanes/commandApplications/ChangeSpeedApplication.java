@@ -2,7 +2,7 @@ package eng.jAtcSim.newLib.airplanes.commandApplications;
 
 import eng.eSystem.geo.Coordinates;
 import eng.jAtcSim.newLib.airplanes.Airplane;
-import eng.jAtcSim.newLib.airplanes.LocalInstanceProvider;
+import eng.jAtcSim.newLib.airplanes.LAcc;
 import eng.jAtcSim.newLib.shared.Restriction;
 import eng.jAtcSim.newLib.shared.enums.AboveBelowExactly;
 import eng.jAtcSim.newLib.speeches.Rejection;
@@ -38,7 +38,7 @@ public class ChangeSpeedApplication extends CommandApplication<ChangeSpeedComman
       int cMin = !isInApproach ? plane.getType().vMinClean : plane.getType().vMinApp;
       // next "if" allows speed under vMinClean (like flaps-1) near the FAF
       if (!isInApproach && Coordinates.getDistanceInNM(
-          plane.getCoordinate(), LocalInstanceProvider.getAirport().getLocation()) < 20) {
+          plane.getCoordinate(), LAcc.getAirport().getLocation()) < 20) {
         //cMin = (int) (cMin * 0.85);
         cMin = plane.getType().vMaxApp;
       }

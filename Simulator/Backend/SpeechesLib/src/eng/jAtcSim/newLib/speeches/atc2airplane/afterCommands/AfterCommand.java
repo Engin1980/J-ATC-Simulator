@@ -1,15 +1,16 @@
 package eng.jAtcSim.newLib.speeches.atc2airplane.afterCommands;
 
+import eng.jAtcSim.newLib.shared.enums.AboveBelowExactly;
 import eng.jAtcSim.newLib.speeches.ICommand;
 
 public abstract class AfterCommand implements ICommand {
-  private final AfterValuePosition position;
+  private final AboveBelowExactly position;
 
-  protected AfterCommand(AfterValuePosition position) {
+  protected AfterCommand(AboveBelowExactly position) {
     this.position = position;
   }
 
-  public AfterValuePosition getPosition() {
+  public AboveBelowExactly getPosition() {
     return position;
   }
 }

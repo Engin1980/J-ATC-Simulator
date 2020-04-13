@@ -5,7 +5,7 @@ import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 import eng.jAtcSim.newLib.shared.logging.SimulationLog;
 import eng.jAtcSim.newLib.shared.time.EDayTimeRun;
 
-public class SharedInstanceProvider {
+public class GAcc {
   public static String getAirportIcao() {
     return InstanceProviderDictionary.getInstance(String.class, "airportIcao");
   }

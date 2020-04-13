@@ -4,7 +4,7 @@ import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.geo.Headings;
 import eng.jAtcSim.newLib.airplanes.Airplane;
-import eng.jAtcSim.newLib.airplanes.LocalInstanceProvider;
+import eng.jAtcSim.newLib.airplanes.LAcc;
 import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.speeches.airplane2atc.PassingClearanceLimitNotification;
 
@@ -42,7 +42,7 @@ public abstract class BasicPilot extends Pilot {
           Navaid n = plane.getAssignedRoute().getMainNavaid();
           dist = Coordinates.getDistanceInNM(plane.getCoordinate(), n.getCoordinate());
           if (dist < 1.5) {
-            int rad = (int) Coordinates.getBearing(LocalInstanceProvider.getAirport().getLocation(), n.getCoordinate());
+            int rad = (int) Coordinates.getBearing(LAcc.getAirport().getLocation(), n.getCoordinate());
             rad = rad % 90;
             plane.changePilot(
                 new HoldPilot(plane, n, rad, true),

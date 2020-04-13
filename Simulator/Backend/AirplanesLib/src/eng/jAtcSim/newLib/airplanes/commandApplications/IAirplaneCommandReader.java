@@ -19,6 +19,8 @@ public interface IAirplaneCommandReader {
 
   int getHeading();
 
+  int getSpeed();
+
   Restriction getSpeedRestriction();
 
   Airplane.State getState();
