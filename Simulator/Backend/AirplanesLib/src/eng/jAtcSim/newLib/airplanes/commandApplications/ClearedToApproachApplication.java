@@ -4,6 +4,7 @@ package eng.jAtcSim.newLib.airplanes.commandApplications;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.jAtcSim.newLib.airplanes.Airplane;
 import eng.jAtcSim.newLib.airplanes.LAcc;
+import eng.jAtcSim.newLib.airplanes.other.NewApproachInfo;
 import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
 import eng.jAtcSim.newLib.area.approaches.Approach;
 import eng.jAtcSim.newLib.area.approaches.ApproachEntry;
@@ -33,7 +34,7 @@ public class ClearedToApproachApplication extends CommandApplication<ClearedToAp
             "Cannot be cleared to approach. There is no approach kind "
                 + c.getType() + " for runway " + rt.getName() + " for our plane.", c);
       else {
-        nai = tryCreateApproachInfo(apps, plane);
+        nai = createApproachInfo(apps, plane);
         if (nai == null)
           ret = new UnableToEnterApproachFromDifficultPosition(c, "We are not in the correct position to enter the approach.");
       }
@@ -96,7 +97,7 @@ public class ClearedToApproachApplication extends CommandApplication<ClearedToAp
 
     ActiveRunwayThreshold rt = LAcc.getAirport().tryGetRunwayThreshold(c.getThresholdName());
     IReadOnlyList<Approach> apps = rt.getApproaches(c.getType(), plane.getType().category);
-    NewApproachInfo nai = tryCreateApproachInfo(apps, plane);
+    NewApproachInfo nai = createApproachInfo(apps, plane);
     assert nai != null;
 
     plane.clearedToApproach(nai);
@@ -104,7 +105,7 @@ public class ClearedToApproachApplication extends CommandApplication<ClearedToAp
     return ret;
   }
 
-  private NewApproachInfo tryCreateApproachInfo(IReadOnlyList<Approach> apps, IAirplaneCommand pilot) {
+  private NewApproachInfo createApproachInfo(IReadOnlyList<Approach> apps, IAirplaneCommand pilot) {
     NewApproachInfo ret = null;
 
     for (Approach approach : apps) {

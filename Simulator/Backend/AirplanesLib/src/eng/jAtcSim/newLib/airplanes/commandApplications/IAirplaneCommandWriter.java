@@ -1,6 +1,7 @@
 package eng.jAtcSim.newLib.airplanes.commandApplications;
 
 import eng.jAtcSim.newLib.airplanes.modules.sha.navigators.Navigator;
+import eng.jAtcSim.newLib.airplanes.other.NewApproachInfo;
 import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
 import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.area.routes.DARoute;
