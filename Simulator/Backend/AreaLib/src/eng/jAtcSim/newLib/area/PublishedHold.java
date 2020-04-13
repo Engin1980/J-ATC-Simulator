@@ -6,8 +6,7 @@
 
 package eng.jAtcSim.newLib.area;
 
-import eng.eSystem.eXml.XElement;
-import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
+import eng.jAtcSim.newLib.shared.enums.LeftRight;
 
 /**
  * @author Marek
@@ -16,12 +15,12 @@ public class PublishedHold extends Parentable<Airport> {
 
   private final Navaid navaid;
   private final int inboundRadial;
-  private final boolean leftTurn;
+  private final LeftRight turn;
 
-  public PublishedHold(Navaid navaid, int inboundRadial, boolean leftTurn) {
+  public PublishedHold(Navaid navaid, int inboundRadial, LeftRight turn) {
     this.navaid = navaid;
     this.inboundRadial = inboundRadial;
-    this.leftTurn = leftTurn;
+    this.turn = turn;
   }
 
   public int getInboundRadial() {
@@ -32,12 +31,8 @@ public class PublishedHold extends Parentable<Airport> {
     return navaid;
   }
 
-  public boolean isLeftTurn() {
-    return leftTurn;
-  }
-
-  public boolean isRightTurn() {
-    return !leftTurn;
+  public LeftRight getTurn() {
+    return turn;
   }
 
   @Override

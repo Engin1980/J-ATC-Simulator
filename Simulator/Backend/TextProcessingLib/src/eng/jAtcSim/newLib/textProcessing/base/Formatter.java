@@ -7,7 +7,7 @@ import eng.jAtcSim.newLib.speeches.ISpeech;
 import eng.jAtcSim.newLib.speeches.Rejection;
 import eng.jAtcSim.newLib.speeches.airplane2atc.*;
 import eng.jAtcSim.newLib.speeches.airplane2atc.responses.IllegalThenCommandRejection;
-import eng.jAtcSim.newLib.speeches.airplane2atc.responses.ShortCutToFixNotOnRouteNotification;
+import eng.jAtcSim.newLib.speeches.airplane2atc.responses.ShortCutToFixNotOnRouteRejection;
 import eng.jAtcSim.newLib.speeches.airplane2atc.responses.UnableToEnterApproachFromDifficultPosition;
 import eng.jAtcSim.newLib.speeches.atc2airplane.*;
 import eng.jAtcSim.newLib.speeches.atc2airplane.afterCommands.*;
@@ -67,8 +67,8 @@ public abstract class Formatter {
       ret = formatRequestRadarContactNotification((RequestRadarContactNotification) speech);
     else if (speech instanceof IllegalThenCommandRejection)
       ret = formatIllegalThenCommandRejection((IllegalThenCommandRejection) speech);
-    else if (speech instanceof ShortCutToFixNotOnRouteNotification)
-      ret = formatShortCutToFixNotOnRouteNotification((ShortCutToFixNotOnRouteNotification) speech);
+    else if (speech instanceof ShortCutToFixNotOnRouteRejection)
+      ret = formatShortCutToFixNotOnRouteNotification((ShortCutToFixNotOnRouteRejection) speech);
     else if (speech instanceof UnableToEnterApproachFromDifficultPosition)
       ret = formatUnableToEnterApproachFromDifficultPosition((UnableToEnterApproachFromDifficultPosition) speech);
     else {
@@ -144,7 +144,7 @@ public abstract class Formatter {
 
   protected abstract String formatRequestRadarContactNotification(RequestRadarContactNotification command);
 
-  protected abstract String formatShortCutToFixNotOnRouteNotification(ShortCutToFixNotOnRouteNotification command);
+  protected abstract String formatShortCutToFixNotOnRouteNotification(ShortCutToFixNotOnRouteRejection command);
 
   protected abstract String formatShortcutCommand(ShortcutCommand command);
 

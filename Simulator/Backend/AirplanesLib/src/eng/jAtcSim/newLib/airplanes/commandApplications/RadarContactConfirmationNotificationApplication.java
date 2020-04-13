@@ -1,7 +1,6 @@
 package eng.jAtcSim.newLib.airplanes.commandApplications;
 
-import eng.jAtcSim.newLib.area.airplanes.interfaces.IAirplaneWriteSimple;
-import eng.jAtcSim.newLib.area.speaking.fromAtc.notifications.RadarContactConfirmationNotification;
+import eng.jAtcSim.newLib.speeches.atc2airplane.RadarContactConfirmationNotification;
 
 public class RadarContactConfirmationNotificationApplication extends NotificationApplication<RadarContactConfirmationNotification> {
   public ConfirmationResult confirm(IAirplaneCommand plane, RadarContactConfirmationNotification c) {

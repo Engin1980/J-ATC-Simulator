@@ -5,7 +5,7 @@ import eng.jAtcSim.newLib.shared.Format;
 import eng.jAtcSim.newLib.shared.SharedInstanceProvider;
 import eng.jAtcSim.newLib.speeches.airplane2atc.*;
 import eng.jAtcSim.newLib.speeches.airplane2atc.responses.IllegalThenCommandRejection;
-import eng.jAtcSim.newLib.speeches.airplane2atc.responses.ShortCutToFixNotOnRouteNotification;
+import eng.jAtcSim.newLib.speeches.airplane2atc.responses.ShortCutToFixNotOnRouteRejection;
 import eng.jAtcSim.newLib.speeches.airplane2atc.responses.UnableToEnterApproachFromDifficultPosition;
 import eng.jAtcSim.newLib.speeches.atc2airplane.*;
 import eng.jAtcSim.newLib.speeches.atc2airplane.afterCommands.*;
@@ -322,7 +322,7 @@ public class DebugFormatter extends Formatter {
   }
 
   @Override
-  protected String formatShortCutToFixNotOnRouteNotification(ShortCutToFixNotOnRouteNotification cmd) {
+  protected String formatShortCutToFixNotOnRouteNotification(ShortCutToFixNotOnRouteRejection cmd) {
     return null;
   }
 

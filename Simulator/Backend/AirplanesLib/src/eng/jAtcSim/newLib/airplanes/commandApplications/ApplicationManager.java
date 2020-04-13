@@ -14,7 +14,7 @@ public class ApplicationManager {
   private static IMap<Class<? extends ICommand>, CommandApplication> cmdApps;
   private static IMap<Class<? extends INotification>, NotificationApplication> notApps;
 
-  public static ConfirmationResult confirm(IAirplaneWriteSimple plane, ISpeech speech, boolean checkStateSanity, boolean checkCommandSanity) {
+  public static ConfirmationResult confirm(IAirplaneCommand plane, ISpeech speech, boolean checkStateSanity, boolean checkCommandSanity) {
     ConfirmationResult ret;
 
     if (speech instanceof AfterCommand) {
@@ -40,7 +40,7 @@ public class ApplicationManager {
 
   }
 
-  public static ApplicationResult apply(IAirplaneWriteSimple plane, ISpeech speech) {
+  public static ApplicationResult apply(IAirplaneCommand plane, ISpeech speech) {
     ApplicationResult ret;
 
     if (speech instanceof ICommand) {

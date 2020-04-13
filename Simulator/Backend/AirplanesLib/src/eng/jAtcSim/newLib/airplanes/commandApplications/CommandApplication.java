@@ -1,11 +1,16 @@
 package eng.jAtcSim.newLib.airplanes.commandApplications;
 
 import eng.jAtcSim.newLib.airplanes.Airplane;
+import eng.jAtcSim.newLib.shared.exceptions.ToDoException;
 import eng.jAtcSim.newLib.speeches.Confirmation;
 import eng.jAtcSim.newLib.speeches.ICommand;
 import eng.jAtcSim.newLib.speeches.Rejection;
 
 public abstract class CommandApplication<T extends ICommand> {
+
+  protected Rejection getIllegalNavaidRejection(String navaidName){
+    throw new ToDoException();
+  }
 
   //region Public methods
   public ConfirmationResult confirm(IAirplaneCommand plane, T c, boolean checkStateSanity, boolean checkCommandSanity) {

@@ -4,8 +4,8 @@ package eng.jAtcSim.newLib.speeches.airplane2atc.responses;
 import eng.jAtcSim.newLib.speeches.Rejection;
 import eng.jAtcSim.newLib.speeches.atc2airplane.ShortcutCommand;
 
-public class ShortCutToFixNotOnRouteNotification extends Rejection {
-  public ShortCutToFixNotOnRouteNotification(ShortcutCommand origin) {
+public class ShortCutToFixNotOnRouteRejection extends Rejection {
+  public ShortCutToFixNotOnRouteRejection(ShortcutCommand origin) {
     super(origin,"Unable to shortcut to " + origin.getNavaidName() + ", fix not on our route!");
   }
 

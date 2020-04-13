@@ -4,29 +4,19 @@ import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.shared.PlaneCategoryDefinitions;
+import eng.jAtcSim.newLib.shared.enums.DARouteType;
 import eng.jAtcSim.newLib.speeches.ICommand;
 
 public class DARoute extends Route {
-  public enum eType {
-
-    sid,
-    star,
-    transition,
-    vectoring;
-
-    public boolean isArrival() {
-      return this == star || this == transition;
-    }
-  }
 
   public static DARoute createNewVectoringByFix(Navaid n) {
     DARoute ret = new DARoute(new EList<>(),
-        eType.vectoring, n.getName() + "/v", PlaneCategoryDefinitions.getAll(),
+        DARouteType.vectoring, n.getName() + "/v", PlaneCategoryDefinitions.getAll(),
         -1, n, null, null);
     return ret;
   }
 
-  private final eType type;
+  private final DARouteType type;
   private final String name;
   private final PlaneCategoryDefinitions category;
   private final double routeLength;
@@ -34,7 +24,7 @@ public class DARoute extends Route {
   private final Integer entryAltitude;
   private final Integer maxMrvaAltitude;
 
-  public DARoute(IList<ICommand> routeCommands, eType type, String name, PlaneCategoryDefinitions category, double routeLength, Navaid mainNavaid, Integer entryAltitude, Integer maxMrvaAltitude) {
+  public DARoute(IList<ICommand> routeCommands, DARouteType type, String name, PlaneCategoryDefinitions category, double routeLength, Navaid mainNavaid, Integer entryAltitude, Integer maxMrvaAltitude) {
     super(routeCommands);
     this.type = type;
     this.name = name;
@@ -70,7 +60,7 @@ public class DARoute extends Route {
     return routeLength;
   }
 
-  public eType getType() {
+  public DARouteType getType() {
     return type;
   }
 

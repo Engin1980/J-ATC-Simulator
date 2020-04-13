@@ -1,11 +1,10 @@
 package eng.jAtcSim.newLib.airplanes.commandApplications;
 
-import eng.jAtcSim.newLib.area.airplanes.Airplane;
-import eng.jAtcSim.newLib.area.airplanes.interfaces.IAirplaneWriteSimple;
-import eng.jAtcSim.newLib.area.speaking.IFromAirplane;
-import eng.jAtcSim.newLib.area.speaking.fromAirplane.notifications.commandResponses.rejections.ShortCutToFixNotOnRoute;
-import eng.jAtcSim.newLib.area.speaking.fromAtc.commands.ShortcutCommand;
+import eng.jAtcSim.newLib.airplanes.Airplane;
+import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.speeches.Rejection;
+import eng.jAtcSim.newLib.speeches.airplane2atc.responses.ShortCutToFixNotOnRouteRejection;
+import eng.jAtcSim.newLib.speeches.atc2airplane.ShortcutCommand;
 
 public class ShortcutCommandApplication extends CommandApplication<ShortcutCommand> {
 
@@ -26,8 +25,12 @@ public class ShortcutCommandApplication extends CommandApplication<ShortcutComma
   protected Rejection checkCommandSanity(IAirplaneCommand plane, ShortcutCommand c) {
     Rejection ret = null;
 
-    if (!plane.getRoutingModule().isGoingToFlightOverNavaid(c.getNavaid())) {
-      ret = new ShortCutToFixNotOnRoute(c);
+    Navaid n = Gimme.tryGetNavaid(c.getNavaidName());
+    if (n == null)
+      return super.getIllegalNavaidRejection(c.getNavaidName());
+
+    if (!plane.isGoingToFlightOverNavaid(n) == false) {
+      ret = new ShortCutToFixNotOnRouteRejection(c);
     }
 
     return ret;
@@ -37,10 +40,11 @@ public class ShortcutCommandApplication extends CommandApplication<ShortcutComma
   protected ApplicationResult adjustAirplane(IAirplaneCommand plane, ShortcutCommand c) {
     // hold abort only if fix was found
     if (plane.getState() == Airplane.State.holding) {
-      plane.getAdvanced().abortHolding();
+      plane.abortHolding();
     }
 
-    plane.applyShortcut(c.getNavaid());
+    Navaid n = Gimme.tryGetNavaid(c.getNavaidName());
+    plane.applyShortcut(n);
 
     return ApplicationResult.getEmpty();
   }

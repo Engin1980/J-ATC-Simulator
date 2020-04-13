@@ -1,19 +1,27 @@
 package eng.jAtcSim.newLib.airplanes.commandApplications;
 
-import eng.jAtcSim.newLib.area.airplanes.Airplane;
-import eng.jAtcSim.newLib.area.airplanes.interfaces.IAirplaneWriteSimple;
-import eng.jAtcSim.newLib.area.speaking.IFromAirplane;
-import eng.jAtcSim.newLib.area.speaking.fromAirplane.notifications.commandResponses.Rejection;
-import eng.jAtcSim.newLib.area.speaking.fromAtc.commands.ClearedToRouteCommand;
-import eng.jAtcSim.newLib.world.DARoute;
+
+import eng.jAtcSim.newLib.airplanes.Airplane;
+import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
+import eng.jAtcSim.newLib.area.routes.DARoute;
+import eng.jAtcSim.newLib.shared.enums.DARouteType;
+import eng.jAtcSim.newLib.speeches.Rejection;
+import eng.jAtcSim.newLib.speeches.atc2airplane.ClearedToRouteCommand;
+
+import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class ClearedToRouteApplication extends CommandApplication<ClearedToRouteCommand> {
 
   @Override
-  protected IFromAirplane checkCommandSanity(IAirplaneWriteSimple plane, ClearedToRouteCommand c) {
-    if (plane.getFlightModule().isArrival() && c.getRoute().getType() == DARoute.eType.sid)
+  protected Rejection checkCommandSanity(IAirplaneCommand plane, ClearedToRouteCommand c) {
+
+    DARoute route = Gimme.tryGetDARoute(c.getRouteName());
+    if (route == null)
+      return new Rejection(sf("Unable to find route '%s'.", c.getRouteName()), c);
+
+    if (plane.isArrival() && route.getType() == DARouteType.sid)
       return new Rejection("We are arrival, cannot be cleared to SID route.", c);
-    else if (plane.getFlightModule().isDeparture() && c.getRoute().getType() != DARoute.eType.sid)
+    else if (plane.isDeparture() && route.getType() != DARouteType.sid)
       return new Rejection("We are departure, can be cleared only to SID route",c );
 
     return null;
@@ -36,8 +44,10 @@ public class ClearedToRouteApplication extends CommandApplication<ClearedToRoute
   }
 
   @Override
-  protected ApplicationResult adjustAirplane(IAirplaneWriteSimple plane, ClearedToRouteCommand c) {
-    plane.getAdvanced().setRouting(c.getRoute(), c.getExpectedRunwayThreshold());
+  protected ApplicationResult adjustAirplane(IAirplaneCommand plane, ClearedToRouteCommand c) {
+    ActiveRunwayThreshold threshold = Gimme.tryGetRunwayThreshold(c.getExpectedRunwayThresholdName());
+    DARoute route = Gimme.tryGetDARoute(c.getRouteName());
+    plane.setRouting(route, threshold);
     return ApplicationResult.getEmpty();
   }
 }
