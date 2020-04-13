@@ -1,10 +1,10 @@
 package eng.jAtcSim.newLib.airplanes.commandApplications;
 
-import eng.jAtcSim.newLib.area.airplanes.Airplane;
-import eng.jAtcSim.newLib.area.airplanes.interfaces.IAirplaneWriteSimple;
-import eng.jAtcSim.newLib.area.speaking.IFromAirplane;
-import eng.jAtcSim.newLib.area.speaking.fromAirplane.notifications.GoingAroundNotification;
-import eng.jAtcSim.newLib.area.speaking.fromAtc.commands.GoAroundCommand;
+
+import eng.jAtcSim.newLib.airplanes.Airplane;
+import eng.jAtcSim.newLib.speeches.Rejection;
+import eng.jAtcSim.newLib.speeches.airplane2atc.GoingAroundNotification;
+import eng.jAtcSim.newLib.speeches.atc2airplane.GoAroundCommand;
 
 public class GoAroundCommandApplication extends CommandApplication<GoAroundCommand>{
 
@@ -25,15 +25,15 @@ public class GoAroundCommandApplication extends CommandApplication<GoAroundComma
   }
 
   @Override
-  protected IFromAirplane checkCommandSanity(IAirplaneWriteSimple plane, GoAroundCommand c) {
+  protected Rejection checkCommandSanity(IAirplaneCommand plane, GoAroundCommand c) {
     return null;
   }
 
   @Override
-  protected ApplicationResult adjustAirplane(IAirplaneWriteSimple plane, GoAroundCommand c) {
+  protected ApplicationResult adjustAirplane(IAirplaneCommand plane, GoAroundCommand c) {
     ApplicationResult ret = new ApplicationResult();
 
-    plane.getAdvanced().goAround(GoingAroundNotification.GoAroundReason.atcDecision);
+    plane.goAround(GoingAroundNotification.GoAroundReason.atcDecision);
 
     return ret;
   }

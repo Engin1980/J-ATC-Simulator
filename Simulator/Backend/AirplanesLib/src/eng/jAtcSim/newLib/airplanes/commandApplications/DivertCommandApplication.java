@@ -1,18 +1,17 @@
 package eng.jAtcSim.newLib.airplanes.commandApplications;
 
-import eng.jAtcSim.newLib.area.airplanes.Airplane;
-import eng.jAtcSim.newLib.area.airplanes.interfaces.IAirplaneWriteSimple;
-import eng.jAtcSim.newLib.area.speaking.IFromAirplane;
-import eng.jAtcSim.newLib.area.speaking.fromAirplane.notifications.commandResponses.Rejection;
-import eng.jAtcSim.newLib.area.speaking.fromAtc.commands.DivertCommand;
+
+import eng.jAtcSim.newLib.airplanes.Airplane;
+import eng.jAtcSim.newLib.speeches.Rejection;
+import eng.jAtcSim.newLib.speeches.atc2airplane.DivertCommand;
 
 public class DivertCommandApplication extends CommandApplication<DivertCommand> {
 
   @Override
-  protected IFromAirplane checkCommandSanity(IAirplaneWriteSimple plane, DivertCommand c) {
-    IFromAirplane ret = null;
+  protected Rejection checkCommandSanity(IAirplaneCommand plane, DivertCommand c) {
+    Rejection ret = null;
 
-    if (plane.getFlightModule().isArrival() == false)
+    if (plane.isDeparture())
       ret = new Rejection("We are departing, we will not divert.", c);
 
     return ret;
@@ -32,10 +31,10 @@ public class DivertCommandApplication extends CommandApplication<DivertCommand> 
   }
 
   @Override
-  protected ApplicationResult adjustAirplane(IAirplaneWriteSimple plane, DivertCommand c) {
+  protected ApplicationResult adjustAirplane(IAirplaneCommand plane, DivertCommand c) {
     ApplicationResult ret = new ApplicationResult();
 
-    plane.getAdvanced().divert(true);
+    plane.divert(true);
 
     return ret;
   }

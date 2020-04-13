@@ -1,9 +1,8 @@
 package eng.jAtcSim.newLib.airplanes.commandApplications;
 
-import eng.jAtcSim.newLib.area.airplanes.Airplane;
-import eng.jAtcSim.newLib.area.airplanes.interfaces.IAirplaneWriteSimple;
-import eng.jAtcSim.newLib.area.speaking.IFromAirplane;
-import eng.jAtcSim.newLib.area.speaking.fromAtc.commands.HoldCommand;
+import eng.jAtcSim.newLib.airplanes.Airplane;
+import eng.jAtcSim.newLib.speeches.Rejection;
+import eng.jAtcSim.newLib.speeches.atc2airplane.HoldCommand;
 
 public class HoldCommandApplication extends CommandApplication<HoldCommand> {
 
@@ -23,15 +22,13 @@ public class HoldCommandApplication extends CommandApplication<HoldCommand> {
   }
 
   @Override
-  protected IFromAirplane checkCommandSanity(IAirplaneWriteSimple plane, HoldCommand c) {
+  protected Rejection checkCommandSanity(IAirplaneCommand plane, HoldCommand c) {
     return null;
   }
 
   @Override
-  protected ApplicationResult adjustAirplane(IAirplaneWriteSimple plane, HoldCommand c) {
-    //TODO the first line is probably useless
-    plane.setTargetCoordinate(null);
-    plane.getAdvanced().hold(c.getNavaid(), c.getInboundRadial(), c.isLeftTurn());
+  protected ApplicationResult adjustAirplane(IAirplaneCommand plane, HoldCommand c) {
+    plane.hold(c.getNavaidName(), c.getInboundRadial(), c.getTurn());
     return ApplicationResult.getEmpty();
   }
 }

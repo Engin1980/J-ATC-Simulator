@@ -26,5 +26,9 @@ public interface IAirplaneCommandReader {
 
   AirplaneType getType();
 
+  boolean isArrival();
+
+  boolean isDeparture();
+
   boolean isEmergency();
 }

@@ -5,6 +5,7 @@ import eng.jAtcSim.newLib.area.airplanes.interfaces.IAirplaneWriteSimple;
 import eng.jAtcSim.newLib.area.speaking.IFromAirplane;
 import eng.jAtcSim.newLib.area.speaking.fromAirplane.notifications.commandResponses.rejections.ShortCutToFixNotOnRoute;
 import eng.jAtcSim.newLib.area.speaking.fromAtc.commands.ShortcutCommand;
+import eng.jAtcSim.newLib.speeches.Rejection;
 
 public class ShortcutCommandApplication extends CommandApplication<ShortcutCommand> {
 
@@ -22,8 +23,8 @@ public class ShortcutCommandApplication extends CommandApplication<ShortcutComma
   }
 
   @Override
-  protected IFromAirplane checkCommandSanity(IAirplaneWriteSimple plane, ShortcutCommand c) {
-    IFromAirplane ret = null;
+  protected Rejection checkCommandSanity(IAirplaneCommand plane, ShortcutCommand c) {
+    Rejection ret = null;
 
     if (!plane.getRoutingModule().isGoingToFlightOverNavaid(c.getNavaid())) {
       ret = new ShortCutToFixNotOnRoute(c);
@@ -33,7 +34,7 @@ public class ShortcutCommandApplication extends CommandApplication<ShortcutComma
   }
 
   @Override
-  protected ApplicationResult adjustAirplane(IAirplaneWriteSimple plane, ShortcutCommand c) {
+  protected ApplicationResult adjustAirplane(IAirplaneCommand plane, ShortcutCommand c) {
     // hold abort only if fix was found
     if (plane.getState() == Airplane.State.holding) {
       plane.getAdvanced().abortHolding();

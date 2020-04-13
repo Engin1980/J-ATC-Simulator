@@ -1,7 +1,7 @@
 package eng.jAtcSim.newLib.airplanes.commandApplications;
 
-import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.jAtcSim.newLib.airplanes.Airplane;
+import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.exceptions.ToDoException;
 import eng.jAtcSim.newLib.speeches.Rejection;
 import eng.jAtcSim.newLib.speeches.airplane2atc.GoodDayNotification;
@@ -11,20 +11,7 @@ public class ContactCommandApplication extends CommandApplication<ContactCommand
 
   @Override
   protected ApplicationResult adjustAirplane(IAirplaneCommand plane, ContactCommand c) {
-    String a;
-    switch (c.getAtcType()) {
-      case app:
-        a = Acc.atcApp();
-        break;
-      case ctr:
-        a = Acc.atcCtr();
-        break;
-      case twr:
-        a = Acc.atcTwr();
-        break;
-      default:
-        throw new EEnumValueUnsupportedException(c.getAtcType());
-    }
+    AtcId a = c.getAtc();
     // confirmation to previous atc
 
 

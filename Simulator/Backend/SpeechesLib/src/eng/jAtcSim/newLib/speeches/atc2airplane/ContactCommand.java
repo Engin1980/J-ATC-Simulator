@@ -2,6 +2,7 @@
 package eng.jAtcSim.newLib.speeches.atc2airplane;
 
 
+import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.enums.eAtcType;
 import eng.jAtcSim.newLib.speeches.ICommand;
 
@@ -10,25 +11,19 @@ import eng.jAtcSim.newLib.speeches.ICommand;
  * @author Marek
  */
 public class ContactCommand implements ICommand {
-  private final String atcName;
-  private final double frequency;
+  private final AtcId atc;
 
-  public ContactCommand(String atcName, double frequency) {
-    this.atcName = atcName;
-    this.frequency = frequency;
+  public ContactCommand(AtcId atc) {
+    this.atc = atc;
   }
 
-  public String getAtcName() {
-    return atcName;
-  }
-
-  public double getAtcFrequency() {
-    return frequency;
+  public AtcId getAtc() {
+    return atc;
   }
 
   @Override
   public String toString(){
-    String ret = "Contact " + atcName + " (" + frequency + ") {command}";
+    String ret = "Contact " + atc.getId() + " {command}";
 
     return ret;
   }
