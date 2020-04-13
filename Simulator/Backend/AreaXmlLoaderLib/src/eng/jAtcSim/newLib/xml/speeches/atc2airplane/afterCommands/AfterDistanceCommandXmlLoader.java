@@ -1,6 +1,7 @@
 package eng.jAtcSim.newLib.xml.speeches.atc2airplane.afterCommands;
 
 import eng.eSystem.eXml.XElement;
+import eng.jAtcSim.newLib.shared.enums.AboveBelowExactly;
 import eng.jAtcSim.newLib.shared.xml.IXmlLoader;
 import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
 import eng.jAtcSim.newLib.speeches.atc2airplane.afterCommands.AfterDistanceCommand;
@@ -11,7 +12,7 @@ public class AfterDistanceCommandXmlLoader implements IXmlLoader<AfterDistanceCo
   public AfterDistanceCommand load(XElement element) {
     String navaidName = Shared.loadNavaidName(element);
     double distance = XmlLoaderUtils.loadDouble(element, "distance");
-    AfterValuePosition extension = Shared.loadAfterValuePosition(element);
+    AboveBelowExactly extension = Shared.loadAfterValuePosition(element);
     AfterDistanceCommand ret = AfterDistanceCommand.create(navaidName, distance, extension);
     return ret;
   }

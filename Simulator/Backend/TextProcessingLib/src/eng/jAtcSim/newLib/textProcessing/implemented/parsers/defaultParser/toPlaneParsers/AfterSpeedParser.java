@@ -1,6 +1,7 @@
 package eng.jAtcSim.newLib.textProcessing.implemented.parsers.defaultParser.toPlaneParsers;
 
 import eng.eSystem.collections.IList;
+import eng.jAtcSim.newLib.shared.enums.AboveBelowExactly;
 import eng.jAtcSim.newLib.speeches.atc2airplane.afterCommands.AfterSpeedCommand;
 import eng.jAtcSim.newLib.textProcessing.implemented.parsers.defaultParser.common.SpeechParser;
 
@@ -25,7 +26,7 @@ public class AfterSpeedParser extends SpeechParser<AfterSpeedCommand> {
   @Override
   public AfterSpeedCommand parse(IList<String> blocks) {
     int s = super.getInt(blocks, 1);
-    AfterSpeedCommand ret = AfterSpeedCommand.create(s, AfterValuePosition.exactly);
+    AfterSpeedCommand ret = AfterSpeedCommand.create(s, AboveBelowExactly.exactly);
     return ret;
   }
 }

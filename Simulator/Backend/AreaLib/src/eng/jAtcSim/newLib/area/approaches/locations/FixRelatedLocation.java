@@ -1,6 +1,8 @@
 package eng.jAtcSim.newLib.area.approaches.locations;
 
 import eng.eSystem.geo.Coordinate;
+import eng.eSystem.geo.Coordinates;
+import eng.eSystem.utilites.NumberUtils;
 import eng.eSystem.validation.EAssert;
 
 public class FixRelatedLocation implements ILocation {
@@ -43,5 +45,19 @@ public class FixRelatedLocation implements ILocation {
 
   public Integer getToRadial() {
     return toRadial;
+  }
+
+  @Override
+  public boolean isInside(Coordinate coordinate) {
+    EAssert.Argument.isNotNull(coordinate, "coordinate");
+    double dist = Coordinates.getDistanceInNM(coordinate, this.coordinate);
+    double radial = Coordinates.getBearing(this.coordinate, coordinate);
+    if (maximalDistance < dist) return false;
+    if (fromRadial <= toRadial)
+      return NumberUtils.isBetweenOrEqual(fromRadial, radial, toRadial);
+    else
+      return
+          NumberUtils.isBetweenOrEqual(fromRadial, radial, 360)
+              || NumberUtils.isBetweenOrEqual(0, radial, toRadial);
   }
 }

@@ -1,5 +1,5 @@
 package eng.jAtcSim.newLib.messaging;
 
 public interface IMessageContent {
-  String toLogString();
+//  String toLogString();
 }

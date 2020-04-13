@@ -7,6 +7,7 @@ import eng.eSystem.geo.Coordinate;
 import eng.jAtcSim.newLib.area.routes.DARoute;
 import eng.jAtcSim.newLib.area.routes.GaRoute;
 import eng.jAtcSim.newLib.area.routes.IafRoute;
+import eng.jAtcSim.newLib.shared.enums.DARouteType;
 import eng.jAtcSim.newLib.shared.exceptions.ToDoException;
 
 public class Airport extends Parentable<Area> {
@@ -167,7 +168,7 @@ public class Airport extends Parentable<Area> {
     for (DARoute route : this.daRoutes) {
       EntryExitPoint eep = EntryExitPoint.create(
           route.getMainNavaid(),
-          route.getType() == DARoute.eType.sid ? EntryExitPoint.Type.exit : EntryExitPoint.Type.entry,
+          route.getType() == DARouteType.sid ? EntryExitPoint.Type.exit : EntryExitPoint.Type.entry,
           route.getMaxMrvaAltitude());
       eep.setParent(this);
 

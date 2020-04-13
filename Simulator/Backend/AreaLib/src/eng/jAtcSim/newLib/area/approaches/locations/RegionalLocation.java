@@ -27,4 +27,10 @@ public class RegionalLocation implements ILocation {
   public IReadOnlyList<Coordinate> getPoints() {
     return points;
   }
+
+  @Override
+  public boolean isInside(Coordinate coordinate) {
+
+
+  }
 }

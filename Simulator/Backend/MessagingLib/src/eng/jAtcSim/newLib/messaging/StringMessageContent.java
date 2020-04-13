@@ -26,11 +26,6 @@ public class StringMessageContent implements IMessageContent {
   }
 
   @Override
-  public String toLogString() {
-    return this.toString();
-  }
-
-  @Override
   public String toString() {
     return messageText + "{StringMessageContent}";
   }

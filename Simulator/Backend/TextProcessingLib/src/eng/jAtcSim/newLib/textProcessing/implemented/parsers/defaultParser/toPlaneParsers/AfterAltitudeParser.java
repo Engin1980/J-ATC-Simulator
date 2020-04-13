@@ -1,6 +1,7 @@
 package eng.jAtcSim.newLib.textProcessing.implemented.parsers.defaultParser.toPlaneParsers;
 
 import eng.eSystem.collections.IList;
+import eng.jAtcSim.newLib.shared.enums.AboveBelowExactly;
 import eng.jAtcSim.newLib.speeches.atc2airplane.afterCommands.AfterAltitudeCommand;
 import eng.jAtcSim.newLib.textProcessing.implemented.parsers.defaultParser.common.SpeechParser;
 
@@ -27,19 +28,19 @@ public class AfterAltitudeParser extends SpeechParser<AfterAltitudeCommand> {
   @Override
   public AfterAltitudeCommand parse(IList<String> blocks) {
     String s = blocks.get(1);
-    AfterValuePosition res;
+    AboveBelowExactly res;
     char c = s.charAt(s.length() - 1);
     switch (c) {
       case '-':
-        res = AfterValuePosition.belowOrBefore;
+        res = AboveBelowExactly.below;
         s = s.substring(0, s.length() - 1);
         break;
       case '+':
-        res = AfterValuePosition.aboveOrAfter;
+        res = AboveBelowExactly.above;
         s = s.substring(0, s.length() - 1);
         break;
       default:
-        res = AfterValuePosition.exactly;
+        res = AboveBelowExactly.exactly;
         break;
     }
     int alt = Integer.parseInt(s) * 100;

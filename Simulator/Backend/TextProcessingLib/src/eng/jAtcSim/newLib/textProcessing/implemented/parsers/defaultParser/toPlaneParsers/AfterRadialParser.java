@@ -2,6 +2,7 @@ package eng.jAtcSim.newLib.textProcessing.implemented.parsers.defaultParser.toPl
 
 import eng.eSystem.collections.IList;
 import eng.jAtcSim.newLib.shared.RegexGrouper;
+import eng.jAtcSim.newLib.shared.enums.AboveBelowExactly;
 import eng.jAtcSim.newLib.speeches.atc2airplane.afterCommands.AfterRadialCommand;
 import eng.jAtcSim.newLib.textProcessing.implemented.parsers.defaultParser.common.SpeechParser;
 
@@ -31,7 +32,7 @@ public class AfterRadialParser extends SpeechParser<AfterRadialCommand> {
     RegexGrouper rg = RegexGrouper.apply(blocks.get(1), BLOCK_PATTERN);
     String ns = rg.getString(1);
     int rad = rg.getInt(2);
-    AfterRadialCommand ret = AfterRadialCommand.create(ns, rad, AfterValuePosition.exactly);
+    AfterRadialCommand ret = AfterRadialCommand.create(ns, rad);
     return ret;
   }
 }

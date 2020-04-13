@@ -1,6 +1,7 @@
 package eng.jAtcSim.newLib.xml.speeches.atc2airplane;
 
 import eng.eSystem.eXml.XElement;
+import eng.jAtcSim.newLib.shared.enums.LeftRight;
 import eng.jAtcSim.newLib.shared.exceptions.ApplicationException;
 import eng.jAtcSim.newLib.shared.xml.IXmlLoader;
 import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
@@ -16,14 +17,12 @@ public class HoldCommandXmlLoader implements IXmlLoader<HoldCommand> {
     XmlLoaderUtils.setContext(element);
     String fix = XmlLoaderUtils.loadString("fix");
     Integer inboundRadial = XmlLoaderUtils.loadInteger("inboundRadial", null);
-    String turns = XmlLoaderUtils.loadStringRestricted("turns", new String[]{"left", "right"}, null);
+    LeftRight turn = XmlLoaderUtils.loadEnum("turns", LeftRight.class, LeftRight.left);
 
-    if (inboundRadial == null && turns == null) {
+    if (inboundRadial == null) {
       ret = HoldCommand.createPublished(fix);
-    } else if (inboundRadial == null || turns == null) {
-      throw new ApplicationException("For hold command, both or none of 'inboundRadial' and 'turns' must be set.");
     } else {
-      ret = HoldCommand.createExplicit(fix, inboundRadial, turns.equals("left"));
+      ret = HoldCommand.createExplicit(fix, inboundRadial, turn);
     }
     return ret;
   }

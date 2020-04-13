@@ -12,6 +12,7 @@ import eng.jAtcSim.newLib.area.Border;
 import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.area.routes.DARoute;
 import eng.jAtcSim.newLib.shared.PlaneCategoryDefinitions;
+import eng.jAtcSim.newLib.shared.enums.DARouteType;
 import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
 import eng.jAtcSim.newLib.speeches.ICommand;
 import eng.jAtcSim.newLib.speeches.atc2airplane.ToNavaidCommand;
@@ -29,7 +30,7 @@ public class DARouteXmlLoader extends XmlLoader<DARoute> {
   public DARoute load(XElement source) {
     XmlLoaderUtils.setContext(source);
 
-    DARoute.eType type = XmlLoaderUtils.loadEnum("type", DARoute.eType.class);
+    DARouteType type = XmlLoaderUtils.loadEnum("type", DARouteType.class);
     String name = XmlLoaderUtils.loadString("name");
     String mapping = XmlLoaderUtils.loadString("mapping");
     PlaneCategoryDefinitions category = XmlLoaderUtils.loadPlaneCategory("category", "ABCD");

@@ -2,6 +2,7 @@ package eng.jAtcSim.newLib.textProcessing.implemented.parsers.defaultParser.toPl
 
 import eng.eSystem.collections.IList;
 import eng.jAtcSim.newLib.shared.RegexGrouper;
+import eng.jAtcSim.newLib.shared.enums.AboveBelowExactly;
 import eng.jAtcSim.newLib.speeches.atc2airplane.afterCommands.AfterDistanceCommand;
 import eng.jAtcSim.newLib.textProcessing.implemented.parsers.defaultParser.common.SpeechParser;
 
@@ -30,7 +31,7 @@ public class AfterDistanceParser extends SpeechParser<AfterDistanceCommand> {
     RegexGrouper rg = RegexGrouper.apply(blocks.get(1), BLOCK_PATTERN);
     String ns = rg.getString(1);
     double d = rg.getDouble(2);
-    AfterDistanceCommand ret = AfterDistanceCommand.create(ns, d, AfterValuePosition.exactly);
+    AfterDistanceCommand ret = AfterDistanceCommand.create(ns, d, AboveBelowExactly.exactly);
     return ret;
   }
 }

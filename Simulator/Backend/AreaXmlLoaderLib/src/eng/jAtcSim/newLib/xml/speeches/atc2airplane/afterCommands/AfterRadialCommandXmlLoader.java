@@ -10,8 +10,7 @@ public class AfterRadialCommandXmlLoader implements IXmlLoader<AfterRadialComman
   public AfterRadialCommand load(XElement element) {
     String navaidName = Shared.loadNavaidName(element);
     int radial = XmlLoaderUtils.loadInteger(element, "radial");
-    AfterValuePosition extension = Shared.loadAfterValuePosition(element);
-    AfterRadialCommand ret = AfterRadialCommand.create(navaidName, radial, extension);
+    AfterRadialCommand ret = AfterRadialCommand.create(navaidName, radial);
     return ret;
   }
 }

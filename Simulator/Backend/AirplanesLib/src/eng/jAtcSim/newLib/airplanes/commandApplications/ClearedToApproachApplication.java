@@ -6,6 +6,7 @@ import eng.jAtcSim.newLib.airplanes.Airplane;
 import eng.jAtcSim.newLib.airplanes.LAcc;
 import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
 import eng.jAtcSim.newLib.area.approaches.Approach;
+import eng.jAtcSim.newLib.area.approaches.ApproachEntry;
 import eng.jAtcSim.newLib.shared.Restriction;
 import eng.jAtcSim.newLib.shared.enums.AboveBelowExactly;
 import eng.jAtcSim.newLib.speeches.INotification;
@@ -103,14 +104,14 @@ public class ClearedToApproachApplication extends CommandApplication<ClearedToAp
     return ret;
   }
 
-  private NewApproachInfo tryCreateApproachInfo(IReadOnlyList<Approach> apps, IAirplaneRO pilot) {
+  private NewApproachInfo tryCreateApproachInfo(IReadOnlyList<Approach> apps, IAirplaneCommand pilot) {
     NewApproachInfo ret = null;
 
     for (Approach approach : apps) {
       if (ret != null) break;
       for (ApproachEntry entry : approach.getEntries()) {
         if (ret != null) break;
-        if (entry.getLocation().isInside(pilot.getCoordinate())){
+        if (entry.getEntryLocation().isInside(pilot.getCoordinate())){
           ret = new NewApproachInfo(entry, approach);
         }
       }
