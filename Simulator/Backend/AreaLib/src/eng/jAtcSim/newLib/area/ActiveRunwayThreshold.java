@@ -107,12 +107,6 @@ public class ActiveRunwayThreshold extends Parentable<ActiveRunway> {
     return approaches;
   }
 
-  public IReadOnlyList<Approach> getApproaches(ApproachType type, char category) {
-    IList<Approach> ret = this.approaches.where(q -> q.getType() == type
-        && q.getEntries().isAny(p -> p.isForCategory(category)));
-    return ret;
-  }
-
   //  public DARoute getArrivalRouteForPlane(AirplaneType type, int currentAltitude, Navaid mainNavaid, boolean canBeVectoring) {
 //    DARoute ret = this.getRoutes().where(
 //        q -> q.getType() == DARoute.eType.transition

@@ -26,15 +26,6 @@ public class ApproachStage {
     this.name = name;
   }
 
-  public ApproachStage createCopy() {
-    ApproachStage ret = new ApproachStage(
-        this.behavior.createCopy(),
-        this.exitCondition == null ? null : exitCondition.createCopy(),
-        this.errorCondition == null ? null : errorCondition.createCopy()
-    );
-    return ret;
-  }
-
   public IApproachBehavior getBehavior() {
     return behavior;
   }

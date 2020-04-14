@@ -1,8 +1,12 @@
 package eng.jAtcSim.newLib.airplanes.pilots;
 
+import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.geo.Coordinate;
 import eng.jAtcSim.newLib.airplanes.Airplane;
+import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
+import eng.jAtcSim.newLib.area.routes.IafRoute;
 import eng.jAtcSim.newLib.mood.Mood;
+import eng.jAtcSim.newLib.speeches.ICommand;
 import eng.jAtcSim.newLib.speeches.ISpeech;
 import eng.jAtcSim.newLib.speeches.airplane2atc.PassingClearanceLimitNotification;
 
@@ -14,6 +18,10 @@ public interface IPilotPlaneWriter {
   void changePilot(Pilot pilot, Airplane.State state);
 
   void sendMessage(ISpeech speech);
+
+  void setRouting(IafRoute iafRoute, ActiveRunwayThreshold parent);
+
+  void setRouting(IReadOnlyList<ICommand> routeCommands);
 
   void setState(Airplane.State state);
 

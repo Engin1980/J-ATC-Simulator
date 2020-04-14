@@ -3,11 +3,13 @@ package eng.jAtcSim.newLib.area.approaches;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.validation.EAssert;
+import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
+import eng.jAtcSim.newLib.area.Parentable;
 import eng.jAtcSim.newLib.area.routes.GaRoute;
 import eng.jAtcSim.newLib.shared.enums.ApproachType;
 import eng.jAtcSim.newLib.speeches.ICommand;
 
-public class Approach {
+public class Approach extends Parentable<ActiveRunwayThreshold> {
   public static Approach create(ApproachType type, IList<ApproachEntry> entries, IList<ICommand> beforeStagesCommands, IList<ApproachStage> stages, GaRoute gaRoute) {
     return new Approach(type, entries, beforeStagesCommands, stages, gaRoute);
   }

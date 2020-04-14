@@ -1,28 +1,24 @@
 package eng.jAtcSim.newLib.airplanes.pilots;
 
+import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.exceptions.ERuntimeException;
+import eng.eSystem.utilites.ArrayUtils;
 import eng.eSystem.utilites.NumberUtils;
 import eng.eSystem.validation.EAssert;
+import eng.jAtcSim.newLib.airplanes.Airplane;
 import eng.jAtcSim.newLib.shared.Restriction;
+
+import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public abstract class Pilot {
 
   protected final IPilotPlane plane;
+  private boolean isFirstElapseSecond = true;
 
   public Pilot(IPilotPlane plane) {
     EAssert.Argument.isNotNull(plane, "plane");
     this.plane = plane;
-  }
-
-  public abstract void elapseSecond();
-
-  public abstract boolean isDivertable();
-
-  void throwIllegalStateException() {
-    throw new ERuntimeException(
-        "Illegal state " + plane.getState() + " for behavior " + this.getClass().getSimpleName() + "."
-    );
   }
 
   public void adjustTargetSpeed() {
@@ -94,5 +90,37 @@ public abstract class Pilot {
         throw new EEnumValueUnsupportedException(plane.getState());
     }
     plane.setTargetSpeed(ts);
+  }
+
+  public final void elapseSecond() {
+    if (isFirstElapseSecond) {
+      if (ArrayUtils.contains(getInitialStates(), plane.getState()) == false)
+        throw new EApplicationException(sf(
+            "Airplane %s has illegal initial state %s for pilot %s.",
+            plane.getCallsign().toString(), plane.getState().toString(), this.getClass().getName()
+        ));
+      isFirstElapseSecond = false;
+    } else {
+      if (ArrayUtils.contains(getValidStates(), plane.getState()) == false)
+        throw new EApplicationException(sf(
+            "Airplane %s has illegal state %s for pilot %s.",
+            plane.getCallsign().toString(), plane.getState().toString(), this.getClass().getName()
+        ));
+    }
+    elapseSecondInternal();
+  }
+
+  public abstract boolean isDivertable();
+
+  protected abstract void elapseSecondInternal();
+
+  protected abstract Airplane.State[] getInitialStates();
+
+  protected abstract Airplane.State[] getValidStates();
+
+  void throwIllegalStateException() {
+    throw new ERuntimeException(
+        "Illegal state " + plane.getState() + " for behavior " + this.getClass().getSimpleName() + "."
+    );
   }
 }

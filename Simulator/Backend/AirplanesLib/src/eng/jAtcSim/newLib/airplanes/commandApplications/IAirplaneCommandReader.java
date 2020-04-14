@@ -15,6 +15,8 @@ public interface IAirplaneCommandReader {
 
   Callsign getCallsign();
 
+  char getCategory();
+
   Coordinate getCoordinate();
 
   int getHeading();

@@ -27,9 +27,7 @@ public class HoldPilot extends Pilot {
   }
 
   private static final double NEAR_FIX_DISTANCE = 0.5;
-  private static final int FL100 = 10000;
   //TODO Make all fields private
-  public Boolean isBelowFL100 = null;
   public Navaid navaid;
   public int inboundRadial;
   public eHoldPhase phase;

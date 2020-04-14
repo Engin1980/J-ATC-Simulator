@@ -40,5 +40,7 @@ public interface IPilotPlaneReader {
 
   boolean isEmergency();
 
+  boolean isRoutingEmpty();
+
   Coordinate tryGetTargetCoordinate();
 }

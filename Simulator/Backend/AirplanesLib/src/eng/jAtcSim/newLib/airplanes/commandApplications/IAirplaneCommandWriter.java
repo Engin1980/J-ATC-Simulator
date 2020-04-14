@@ -1,9 +1,10 @@
 package eng.jAtcSim.newLib.airplanes.commandApplications;
 
 import eng.jAtcSim.newLib.airplanes.modules.sha.navigators.Navigator;
-import eng.jAtcSim.newLib.airplanes.other.NewApproachInfo;
 import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
 import eng.jAtcSim.newLib.area.Navaid;
+import eng.jAtcSim.newLib.area.approaches.Approach;
+import eng.jAtcSim.newLib.area.approaches.ApproachEntry;
 import eng.jAtcSim.newLib.area.routes.DARoute;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.Restriction;
@@ -16,7 +17,7 @@ public interface IAirplaneCommandWriter {
 
   void applyShortcut(Navaid navaid);
 
-  void clearedToApproach(NewApproachInfo nai);
+  void clearedToApproach(Approach approach, ApproachEntry entry);
 
   void divert(boolean unknown);
 

@@ -158,9 +158,9 @@ public abstract class Route extends Parentable<Airport> {
 //    return cmd;
 //  }
 
-  public Route(IList<ICommand> routeCommands) {
+  public Route(IReadOnlyList<ICommand> routeCommands) {
     EAssert.Argument.isNotNull(routeCommands, "routeCommands");
-    this.routeCommands = routeCommands;
+    this.routeCommands = new EList<>(routeCommands);
   }
 
   public IReadOnlyList<ICommand> getRouteCommands() {
