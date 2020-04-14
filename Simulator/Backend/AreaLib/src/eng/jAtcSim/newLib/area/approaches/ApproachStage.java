@@ -12,6 +12,7 @@ public class ApproachStage {
   public static ApproachStage create(IApproachBehavior behavior, ICondition exitCondition, ICondition errorCondition, String name) {
     return new ApproachStage(behavior, exitCondition, errorCondition, name);
   }
+
   private final ICondition exitCondition;
   private final ICondition errorCondition;
   private final IApproachBehavior behavior;
@@ -23,6 +24,15 @@ public class ApproachStage {
     this.errorCondition = errorCondition;
     this.behavior = behavior;
     this.name = name;
+  }
+
+  public ApproachStage createCopy() {
+    ApproachStage ret = new ApproachStage(
+        this.behavior.createCopy(),
+        this.exitCondition == null ? null : exitCondition.createCopy(),
+        this.errorCondition == null ? null : errorCondition.createCopy()
+    );
+    return ret;
   }
 
   public IApproachBehavior getBehavior() {

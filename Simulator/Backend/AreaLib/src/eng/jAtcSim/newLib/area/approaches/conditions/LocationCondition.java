@@ -14,4 +14,8 @@ public class LocationCondition implements ICondition {
     EAssert.Argument.isNotNull(location, "location");
     this.location = location;
   }
+
+  @Override
+  public ICondition createCopy() {
+  }
 }

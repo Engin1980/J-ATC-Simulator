@@ -14,6 +14,11 @@ public class FlyRouteBehavior implements IApproachBehavior {
     this.commands = commands;
   }
 
+  @Override
+  public FlyRouteBehavior createCopy() {
+    return new FlyRouteBehavior(new EList<>(commands));
+  }
+
   public IReadOnlyList<ICommand> getCommands() {
     return commands;
   }

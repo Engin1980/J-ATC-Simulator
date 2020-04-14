@@ -11,6 +11,11 @@ public class FlyRouteBehaviorEmptyCondition implements ICondition {
     this.flyRouteBehavior = flyRouteBehavior;
   }
 
+  @Override
+  public ICondition createCopy() {
+    return new FlyRouteBehaviorEmptyCondition(this.flyRouteBehavior.createCopy());
+  }
+
   public FlyRouteBehavior getFlyRouteBehavior() {
     return flyRouteBehavior;
   }
