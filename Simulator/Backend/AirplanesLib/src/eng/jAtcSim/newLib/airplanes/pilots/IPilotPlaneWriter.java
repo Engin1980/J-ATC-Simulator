@@ -17,6 +17,8 @@ public interface IPilotPlaneWriter {
 
   void changePilot(Pilot pilot, Airplane.State state);
 
+  void goAround();
+
   void sendMessage(ISpeech speech);
 
   void setRouting(IafRoute iafRoute, ActiveRunwayThreshold parent);

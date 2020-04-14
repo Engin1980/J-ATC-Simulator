@@ -15,7 +15,7 @@ public class LocationCondition implements ICondition {
     this.location = location;
   }
 
-  @Override
-  public ICondition createCopy() {
+  public ILocation getLocation() {
+    return location;
   }
 }

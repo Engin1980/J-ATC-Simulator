@@ -8,13 +8,10 @@ import eng.jAtcSim.newLib.area.approaches.Approach;
 import eng.jAtcSim.newLib.area.approaches.ApproachEntry;
 import eng.jAtcSim.newLib.area.approaches.ApproachStage;
 import eng.jAtcSim.newLib.area.approaches.behaviors.FlyRadialBehavior;
-import eng.jAtcSim.newLib.area.approaches.behaviors.FlyRadialWithDescentBehavior;
 import eng.jAtcSim.newLib.area.approaches.behaviors.FlyRouteBehavior;
 import eng.jAtcSim.newLib.area.approaches.behaviors.IApproachBehavior;
 import eng.jAtcSim.newLib.area.approaches.conditions.ICondition;
 import eng.jAtcSim.newLib.area.routes.IafRoute;
-
-import java.util.concurrent.ExecutionException;
 
 public class ApproachPilot extends Pilot {
 
@@ -88,17 +85,12 @@ public class ApproachPilot extends Pilot {
     else
       throw new EApplicationException("Unknown behavior type at this place.");
 
-    ICondition it = getConditionTrue(stage.getErrorCondition());
-    if (it != null)
-      goAround(it);
+    if (isConditionTrue(stage.getErrorCondition()))
+      goAround();
   }
 
-  private boolean isConditionTrue(ICondition condition) {
-    return getConditionTrue(condition) != null;
-  }
-
-  private ICondition getConditionTrue(ICondition condition) {
-return condition which is true
+  private void goAround() {
+    plane.goAround();
   }
 
   @Override
@@ -120,5 +112,9 @@ return condition which is true
         Airplane.State.shortFinal,
         Airplane.State.landed
     };
+  }
+
+  private boolean isConditionTrue(ICondition condition) {
+    return ConditionEvaluator.check(condition, plane);
   }
 }

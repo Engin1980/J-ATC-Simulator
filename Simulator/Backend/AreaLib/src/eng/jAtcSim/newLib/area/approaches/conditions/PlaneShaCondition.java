@@ -25,6 +25,12 @@ public class PlaneShaCondition implements ICondition {
   private final IntegerPerCategoryValue maxHeading;
 
   private PlaneShaCondition(IntegerPerCategoryValue minAltitude, IntegerPerCategoryValue maxAltitude, IntegerPerCategoryValue minSpeed, IntegerPerCategoryValue maxSpeed, IntegerPerCategoryValue minHeading, IntegerPerCategoryValue maxHeading) {
+    EAssert.Argument.isTrue(
+        (minHeading != null && maxHeading != null)
+        ||
+            (maxHeading == null && minHeading == null),
+        "Both min/max heading or none must be set or empty."
+    );
     this.minAltitude = minAltitude;
     this.maxAltitude = maxAltitude;
     this.minSpeed = minSpeed;
