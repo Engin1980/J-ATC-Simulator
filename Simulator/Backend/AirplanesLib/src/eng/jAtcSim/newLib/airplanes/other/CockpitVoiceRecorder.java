@@ -29,7 +29,7 @@ public class CockpitVoiceRecorder extends AirplaneRecorder {
 
     String src = m.getSource().toString();
     String trg = m.getTarget().toString();
-    String cnt = m.getContent().toLogString();
+    String cnt = m.getContent().toString(); //toLogString();
 
     sb.appendFormat("FROM: %s ", src).append(SEPARATOR);
     sb.appendFormat("TO: %s ", trg).append(SEPARATOR);
@@ -56,11 +56,11 @@ public class CockpitVoiceRecorder extends AirplaneRecorder {
     }
   }
 
-  public void logProcessedAfterSpeeches(SpeechList<ICommand> cmds, String extensions) {
+  public void logProcessedAfterSpeeches(SpeechList<? extends ISpeech> cmds, String extensions) {
     EStringBuilder sb = new EStringBuilder();
     sb.appendLine("Processed after speeches of " + extensions);
     for (int i = 0; i < cmds.size(); i++) {
-      ICommand cmd = cmds.get(i);
+      ISpeech cmd = cmds.get(i);
       sb.appendLine("\t").appendLine(cmd.toString()).appendLine();
     }
     try {

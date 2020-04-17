@@ -1,6 +1,7 @@
 package eng.jAtcSim.newLib.airplanes.commandApplications;
 
 import eng.jAtcSim.newLib.airplanes.Airplane;
+import eng.jAtcSim.newLib.airplanes.accessors.IPlaneInterface;
 import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.area.PublishedHold;
 import eng.jAtcSim.newLib.speeches.Rejection;
@@ -11,7 +12,7 @@ import static eng.eSystem.utilites.FunctionShortcuts.sf;
 public class HoldCommandApplication extends CommandApplication<HoldCommand> {
 
   @Override
-  protected ApplicationResult adjustAirplane(IAirplaneCommand plane, HoldCommand c) {
+  protected ApplicationResult adjustAirplane(IPlaneInterface plane, HoldCommand c) {
     if (c.isPublished()) {
       PublishedHold h = Gimme.tryGetPublishedHold(c.getNavaidName());
       plane.hold(h.getNavaid(), h.getInboundRadial(), h.getTurn());
@@ -23,7 +24,7 @@ public class HoldCommandApplication extends CommandApplication<HoldCommand> {
   }
 
   @Override
-  protected Rejection checkCommandSanity(IAirplaneCommand plane, HoldCommand c) {
+  protected Rejection checkCommandSanity(IPlaneInterface plane, HoldCommand c) {
     if (Gimme.tryGetNavaid(c.getNavaidName()) == null)
       return super.getIllegalNavaidRejection(c.getNavaidName());
 

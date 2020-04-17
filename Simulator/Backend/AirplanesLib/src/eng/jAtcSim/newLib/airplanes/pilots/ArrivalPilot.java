@@ -3,13 +3,14 @@ package eng.jAtcSim.newLib.airplanes.pilots;
 import eng.eSystem.geo.Coordinates;
 import eng.jAtcSim.newLib.airplanes.Airplane;
 import eng.jAtcSim.newLib.airplanes.LAcc;
+import eng.jAtcSim.newLib.airplanes.accessors.IPlaneInterface;
 
 public class ArrivalPilot extends BasicPilot {
 
   private final static double LOW_SPEED_DOWN_ALTITUDE = 11000;
   private final static double FAF_SPEED_DOWN_DISTANCE_IN_NM = 15;
 
-  public ArrivalPilot(IPilotPlane plane) {
+  public ArrivalPilot(IPlaneInterface plane) {
     super(plane);
   }
 
@@ -32,6 +33,19 @@ public class ArrivalPilot extends BasicPilot {
       default:
         super.throwIllegalStateException();
     }
+  }
+
+  @Override
+  protected Airplane.State[] getInitialStates() {
+    return new Airplane.State[]{
+        Airplane.State.arrivingHigh,
+        Airplane.State.arrivingLow
+    };
+  }
+
+  @Override
+  protected Airplane.State[] getValidStates() {
+    return getInitialStates();
   }
 
   private void setArrivingCloseFafStateIfReady() {

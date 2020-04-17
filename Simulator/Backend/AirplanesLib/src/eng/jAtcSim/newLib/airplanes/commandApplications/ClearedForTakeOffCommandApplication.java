@@ -3,6 +3,7 @@ package eng.jAtcSim.newLib.airplanes.commandApplications;
 
 import eng.jAtcSim.newLib.airplanes.Airplane;
 import eng.jAtcSim.newLib.airplanes.LAcc;
+import eng.jAtcSim.newLib.airplanes.accessors.IPlaneInterface;
 import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
 import eng.jAtcSim.newLib.speeches.Rejection;
 import eng.jAtcSim.newLib.speeches.atc2airplane.ClearedForTakeoffCommand;
@@ -30,7 +31,7 @@ public class ClearedForTakeOffCommandApplication extends CommandApplication<Clea
   }
 
   @Override
-  protected Rejection checkCommandSanity(IAirplaneCommand plane, ClearedForTakeoffCommand c) {
+  protected Rejection checkCommandSanity(IPlaneInterface plane, ClearedForTakeoffCommand c) {
     Rejection ret = null;
     if (LAcc.getAirport().tryGetRunwayThreshold(c.getRunwayThresholdName()) == null){
       ret =  new Rejection(c, "Unable to find runway threshold " + c.getRunwayThresholdName());
@@ -39,7 +40,7 @@ public class ClearedForTakeOffCommandApplication extends CommandApplication<Clea
   }
 
   @Override
-  protected ApplicationResult adjustAirplane(IAirplaneCommand plane, ClearedForTakeoffCommand c) {
+  protected ApplicationResult adjustAirplane(IPlaneInterface plane, ClearedForTakeoffCommand c) {
     ActiveRunwayThreshold threshold = LAcc.getAirport().tryGetRunwayThreshold(c.getRunwayThresholdName());
     plane.takeOff(threshold);
     return ApplicationResult.getEmpty();

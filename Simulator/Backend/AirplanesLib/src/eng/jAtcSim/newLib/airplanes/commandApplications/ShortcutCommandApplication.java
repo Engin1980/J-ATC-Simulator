@@ -1,6 +1,7 @@
 package eng.jAtcSim.newLib.airplanes.commandApplications;
 
 import eng.jAtcSim.newLib.airplanes.Airplane;
+import eng.jAtcSim.newLib.airplanes.accessors.IPlaneInterface;
 import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.speeches.Rejection;
 import eng.jAtcSim.newLib.speeches.airplane2atc.responses.ShortCutToFixNotOnRouteRejection;
@@ -22,7 +23,7 @@ public class ShortcutCommandApplication extends CommandApplication<ShortcutComma
   }
 
   @Override
-  protected Rejection checkCommandSanity(IAirplaneCommand plane, ShortcutCommand c) {
+  protected Rejection checkCommandSanity(IPlaneInterface plane, ShortcutCommand c) {
     Rejection ret = null;
 
     Navaid n = Gimme.tryGetNavaid(c.getNavaidName());
@@ -37,7 +38,7 @@ public class ShortcutCommandApplication extends CommandApplication<ShortcutComma
   }
 
   @Override
-  protected ApplicationResult adjustAirplane(IAirplaneCommand plane, ShortcutCommand c) {
+  protected ApplicationResult adjustAirplane(IPlaneInterface plane, ShortcutCommand c) {
     // hold abort only if fix was found
     if (plane.getState() == Airplane.State.holding) {
       plane.abortHolding();

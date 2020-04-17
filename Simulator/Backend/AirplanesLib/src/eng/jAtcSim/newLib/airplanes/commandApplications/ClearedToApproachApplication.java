@@ -7,6 +7,7 @@ import eng.eSystem.geo.Coordinate;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplanes.Airplane;
 import eng.jAtcSim.newLib.airplanes.LAcc;
+import eng.jAtcSim.newLib.airplanes.accessors.IPlaneInterface;
 import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
 import eng.jAtcSim.newLib.area.approaches.Approach;
 import eng.jAtcSim.newLib.area.approaches.ApproachEntry;
@@ -24,7 +25,7 @@ import static eng.eSystem.utilites.FunctionShortcuts.sf;
 public class ClearedToApproachApplication extends CommandApplication<ClearedToApproachCommand> {
 
   @Override
-  protected ApplicationResult adjustAirplane(IAirplaneCommand plane, ClearedToApproachCommand c) {
+  protected ApplicationResult adjustAirplane(IPlaneInterface plane, ClearedToApproachCommand c) {
     ApplicationResult ret = new ApplicationResult();
 
     Restriction sr = plane.getSpeedRestriction();
@@ -47,7 +48,7 @@ public class ClearedToApproachApplication extends CommandApplication<ClearedToAp
   }
 
   @Override
-  protected Rejection checkCommandSanity(IAirplaneCommand plane, ClearedToApproachCommand c) {
+  protected Rejection checkCommandSanity(IPlaneInterface plane, ClearedToApproachCommand c) {
     Rejection ret;
 
     ActiveRunwayThreshold rt = LAcc.getAirport().tryGetRunwayThreshold(c.getThresholdName());

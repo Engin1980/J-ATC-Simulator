@@ -3,25 +3,28 @@ package eng.jAtcSim.newLib.airplanes.pilots;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplanes.Airplane;
+import eng.jAtcSim.newLib.airplanes.accessors.IPlaneInterface;
+import eng.jAtcSim.newLib.airplanes.modules.sha.navigators.HeadingNavigator;
 import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
+import eng.jAtcSim.newLib.shared.enums.LeftRightAny;
 
 public class TakeOffPilot extends Pilot {
   //TODO add to airport config the acceleration altitude and use it here
   private ActiveRunwayThreshold toThreshold;
 
-  public TakeOffPilot(IPilotPlane plane, ActiveRunwayThreshold takeOffThreshold) {
+  public TakeOffPilot(IPlaneInterface plane, ActiveRunwayThreshold takeOffThreshold) {
     super(plane);
     EAssert.Argument.isNotNull(takeOffThreshold, "takeOffThreshold");
     this.toThreshold = takeOffThreshold;
   }
 
   @Override
-  public void elapseSecond() {
+  public void elapseSecondInternal() {
     switch (plane.getState()) {
       case takeOffRoll:
         double targetHeading = Coordinates.getBearing(
             plane.getCoordinate(), toThreshold.getOtherThreshold().getCoordinate());
-        plane.setTargetHeading(targetHeading);
+        plane.setTargetHeading(new HeadingNavigator(targetHeading, LeftRightAny.any));
 
         if (plane.getSpeed() > plane.getType().vR) {
           plane.setState(Airplane.State.takeOffGoAround);
@@ -45,6 +48,21 @@ public class TakeOffPilot extends Pilot {
       default:
         super.throwIllegalStateException();
     }
+  }
+
+  @Override
+  protected Airplane.State[] getInitialStates() {
+    return new Airplane.State[]{
+        Airplane.State.holdingPoint
+    };
+  }
+
+  @Override
+  protected Airplane.State[] getValidStates() {
+    return new Airplane.State[]{
+        Airplane.State.takeOffRoll,
+        Airplane.State.takeOffGoAround
+    };
   }
 
   @Override

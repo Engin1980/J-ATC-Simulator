@@ -1,12 +1,12 @@
 package eng.jAtcSim.newLib.airplanes.modules;
 
 import eng.eSystem.validation.EAssert;
-import eng.jAtcSim.newLib.airplanes.pilots.IPilotPlane;
+import eng.jAtcSim.newLib.airplanes.accessors.IPlaneInterface;
 
 public abstract class Module {
-  protected final IModulePlane plane;
+  protected final IPlaneInterface plane;
 
-  protected Module(IModulePlane plane) {
+  protected Module(IPlaneInterface plane) {
     EAssert.Argument.isNotNull(plane, "plane");
     this.plane = plane;
   }

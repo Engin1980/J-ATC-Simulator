@@ -1,4 +1,4 @@
-package eng.jAtcSim.newLib.airplanes.modules.routing;
+package eng.jAtcSim.newLib.airplanes.modules.speeches;
 
 import eng.eSystem.Tuple;
 import eng.eSystem.collections.EList;
@@ -9,7 +9,7 @@ import eng.eSystem.geo.Headings;
 import eng.eSystem.utilites.ConversionUtils;
 import eng.eSystem.geo.Coordinate;
 import eng.jAtcSim.newLib.airplanes.LAcc;
-import eng.jAtcSim.newLib.airplanes.commandApplications.IAirplaneCommand;
+import eng.jAtcSim.newLib.airplanes.accessors.IPlaneInterface;
 import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.speeches.ICommand;
 import eng.jAtcSim.newLib.speeches.SpeechList;
@@ -55,7 +55,7 @@ public class AfterCommandList {
     return ret;
   }
 
-  private static boolean isAFItemPassed(AFItem item, IAirplaneCommand plane, Coordinate currentTargetCoordinateOrNull) {
+  private static boolean isAFItemPassed(AFItem item, IPlaneInterface plane, Coordinate currentTargetCoordinateOrNull) {
     boolean ret;
 
     if (item.antecedent instanceof AfterAltitudeCommand) {
@@ -103,7 +103,7 @@ public class AfterCommandList {
 
   private static SpeechList<ICommand> getAndRemoveSatisfiedCommands(
       IList<AFItem> lst,
-      IAirplaneCommand referencePlane, Coordinate currentTargetCoordinateOrNull,
+      IPlaneInterface referencePlane, Coordinate currentTargetCoordinateOrNull,
       boolean untilFirstNotSatisfied) {
 
     SpeechList<ICommand> ret = new SpeechList<>();
@@ -132,10 +132,10 @@ public class AfterCommandList {
       case exactly:
         ret = Math.abs(trgAlt - altitudeInFt) < 100;
         break;
-      case aboveOrAfter:
+      case above:
         ret = altitudeInFt > trgAlt;
         break;
-      case belowOrBefore:
+      case below:
         ret = altitudeInFt < trgAlt;
         break;
       default:
@@ -217,7 +217,7 @@ public class AfterCommandList {
   }
 
   public SpeechList<ICommand> getAndRemoveSatisfiedCommands(
-      IAirplaneCommand referencePlane, Coordinate currentTargetCoordinateOrNull, Type type) {
+      IPlaneInterface referencePlane, Coordinate currentTargetCoordinateOrNull, Type type) {
     SpeechList<ICommand> ret;
     IList<AFItem> tmp;
     boolean untilFirstNotSatisfied;

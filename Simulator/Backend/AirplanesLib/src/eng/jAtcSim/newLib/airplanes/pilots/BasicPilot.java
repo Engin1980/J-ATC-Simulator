@@ -5,26 +5,22 @@ import eng.eSystem.geo.Coordinates;
 import eng.eSystem.geo.Headings;
 import eng.jAtcSim.newLib.airplanes.Airplane;
 import eng.jAtcSim.newLib.airplanes.LAcc;
+import eng.jAtcSim.newLib.airplanes.accessors.IPlaneInterface;
+import eng.jAtcSim.newLib.airplanes.modules.sha.navigators.HeadingNavigator;
 import eng.jAtcSim.newLib.area.Navaid;
+import eng.jAtcSim.newLib.shared.enums.LeftRightAny;
 import eng.jAtcSim.newLib.speeches.airplane2atc.PassingClearanceLimitNotification;
 
 public abstract class BasicPilot extends Pilot {
 
   private boolean clearanceLimitWarningSent = false;
 
-  public BasicPilot(IPilotPlane plane) {
+  public BasicPilot(IPlaneInterface plane) {
     super(plane);
   }
 
   @Override
-  public final boolean isDivertable() {
-    return true;
-  }
-
-  protected abstract void elapseSecondInternal();
-
-  @Override
-  public final void elapseSecond() {
+  public final void elapseSecondInternal() {
     Coordinate targetCoordinate = plane.tryGetTargetCoordinate();
     if (targetCoordinate != null) {
 
@@ -58,11 +54,18 @@ public abstract class BasicPilot extends Pilot {
         double heading = Coordinates.getBearing(plane.getCoordinate(), targetCoordinate);
         heading = Headings.to(heading);
         if (heading != plane.getTargetHeading()) {
-          plane.setTargetHeading(heading);
+          plane.setTargetHeading(new HeadingNavigator(heading, LeftRightAny.any));
         }
       }
     }
-    elapseSecondInternal();
+    elapseSecondInternalBasic();
   }
+
+  @Override
+  public final boolean isDivertable() {
+    return true;
+  }
+
+  protected abstract void elapseSecondInternalBasic();
 
 }

@@ -2,6 +2,7 @@ package eng.jAtcSim.newLib.airplanes.modules;
 
 
 import eng.jAtcSim.newLib.airplanes.Airplane;
+import eng.jAtcSim.newLib.airplanes.accessors.IPlaneInterface;
 import eng.jAtcSim.newLib.shared.GAcc;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 import eng.jAtcSim.newLib.speeches.airplane2atc.DivertTimeNotification;
@@ -25,7 +26,7 @@ public class DivertModule extends Module{
     return ret;
   }
 
-  public DivertModule(IModulePlane plane) {
+  public DivertModule(IPlaneInterface plane) {
     super(plane);
     this.divertTime = generateDivertTime();
   }

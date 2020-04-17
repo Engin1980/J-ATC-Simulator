@@ -1,8 +1,11 @@
 package eng.jAtcSim.newLib.messaging;
 
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
+import eng.eSystem.validation.EAssert;
+import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.Callsign;
 
+import java.lang.invoke.CallSite;
 import java.util.Objects;
 
 public class Participant {
@@ -17,11 +20,13 @@ public class Participant {
   private static final Participant userParticipant = new Participant(eType.user, "-user-");
 
   public static Participant createAirplane(Callsign callsign) {
+    EAssert.Argument.isNotNull(callsign, "callsign");
     return new Participant(eType.airplane, callsign.toString());
   }
 
-  public static Participant createAtc(String id) {
-    return new Participant(eType.atc, id);
+  public static Participant createAtc(AtcId atcId) {
+    EAssert.Argument.isNotNull(atcId, "atcId");
+    return new Participant(eType.atc, atcId.getId());
   }
 
   public static Participant createSystem() {

@@ -1,6 +1,7 @@
 package eng.jAtcSim.newLib.airplanes.commandApplications;
 
 import eng.jAtcSim.newLib.airplanes.Airplane;
+import eng.jAtcSim.newLib.airplanes.accessors.IPlaneInterface;
 import eng.jAtcSim.newLib.airplanes.modules.sha.navigators.ToCoordinateNavigator;
 import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.speeches.Rejection;
@@ -9,7 +10,7 @@ import eng.jAtcSim.newLib.speeches.atc2airplane.ProceedDirectCommand;
 public class ProceedDirectApplication extends CommandApplication<ProceedDirectCommand> {
 
   @Override
-  protected ApplicationResult adjustAirplane(IAirplaneCommand plane, ProceedDirectCommand c) {
+  protected ApplicationResult adjustAirplane(IPlaneInterface plane, ProceedDirectCommand c) {
     if (plane.getState() == Airplane.State.holding) {
       plane.abortHolding();
     }
@@ -20,7 +21,7 @@ public class ProceedDirectApplication extends CommandApplication<ProceedDirectCo
   }
 
   @Override
-  protected Rejection checkCommandSanity(IAirplaneCommand plane, ProceedDirectCommand c) {
+  protected Rejection checkCommandSanity(IPlaneInterface plane, ProceedDirectCommand c) {
     Rejection ret = null;
 
     if (Gimme.tryGetNavaid(c.getNavaidName()) == null)

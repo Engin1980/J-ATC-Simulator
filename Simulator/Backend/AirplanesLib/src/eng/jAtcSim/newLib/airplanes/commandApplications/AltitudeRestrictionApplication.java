@@ -1,6 +1,7 @@
 package eng.jAtcSim.newLib.airplanes.commandApplications;
 
 import eng.jAtcSim.newLib.airplanes.Airplane;
+import eng.jAtcSim.newLib.airplanes.accessors.IPlaneInterface;
 import eng.jAtcSim.newLib.shared.enums.AboveBelowExactly;
 import eng.jAtcSim.newLib.speeches.Rejection;
 import eng.jAtcSim.newLib.speeches.atc2airplane.AltitudeRestrictionCommand;
@@ -21,7 +22,7 @@ public class AltitudeRestrictionApplication extends CommandApplication<AltitudeR
   }
 
   @Override
-  protected Rejection checkCommandSanity(IAirplaneCommand plane, AltitudeRestrictionCommand c) {
+  protected Rejection checkCommandSanity(IPlaneInterface plane, AltitudeRestrictionCommand c) {
     Rejection ret;
 
     if (c.getRestriction() != null &&
@@ -36,7 +37,7 @@ public class AltitudeRestrictionApplication extends CommandApplication<AltitudeR
   }
 
   @Override
-  protected ApplicationResult adjustAirplane(IAirplaneCommand plane, AltitudeRestrictionCommand c) {
+  protected ApplicationResult adjustAirplane(IPlaneInterface plane, AltitudeRestrictionCommand c) {
     plane.setAltitudeRestriction(c.getRestriction());
     return ApplicationResult.getEmpty();
   }

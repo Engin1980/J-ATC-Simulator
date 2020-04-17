@@ -4,7 +4,7 @@ import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.geo.Headings;
-import eng.jAtcSim.newLib.airplanes.modules.IModulePlane;
+import eng.jAtcSim.newLib.airplanes.accessors.IPlaneInterface;
 import eng.jAtcSim.newLib.shared.enums.LeftRight;
 
 public class RadialNavigator extends Navigator {
@@ -60,7 +60,7 @@ public class RadialNavigator extends Navigator {
   }
 
   @Override
-  public NavigatorResult navigate(IModulePlane plane) {
+  public NavigatorResult navigate(IPlaneInterface plane) {
     double targetHeading = getHeadingToRadial(plane.getCoordinate(), this.coordinate, this.inboundRadial, this.mode);
     LeftRight turn = getBetterDirectionToTurn(plane.getHeading(), targetHeading);
     return new NavigatorResult((int) Math.round(targetHeading), turn);

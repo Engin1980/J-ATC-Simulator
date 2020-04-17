@@ -6,7 +6,7 @@ import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplaneType.AirplaneType;
 import eng.jAtcSim.newLib.airplanes.Airplane;
 import eng.jAtcSim.newLib.airplanes.LAcc;
-import eng.jAtcSim.newLib.airplanes.modules.IModulePlane;
+import eng.jAtcSim.newLib.airplanes.accessors.IPlaneInterface;
 import eng.jAtcSim.newLib.airplanes.modules.sha.navigators.HeadingNavigator;
 import eng.jAtcSim.newLib.airplanes.modules.sha.navigators.Navigator;
 import eng.jAtcSim.newLib.airplanes.modules.sha.navigators.NavigatorResult;
@@ -139,7 +139,7 @@ public class ShaModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
     return (int) Math.round(this.lastVerticalSpeed);
   }
 
-  public ShaModule(IModulePlane plane, int heading, int altitude, int speed, AirplaneType planeType) {
+  public ShaModule(IPlaneInterface plane, int heading, int altitude, int speed, AirplaneType planeType) {
     super(plane);
     this.targetAltitude = new RestrictableItem(altitude);
     this.targetHeading = heading;

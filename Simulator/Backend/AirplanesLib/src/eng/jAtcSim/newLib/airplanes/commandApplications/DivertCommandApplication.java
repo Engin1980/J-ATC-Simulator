@@ -2,13 +2,14 @@ package eng.jAtcSim.newLib.airplanes.commandApplications;
 
 
 import eng.jAtcSim.newLib.airplanes.Airplane;
+import eng.jAtcSim.newLib.airplanes.accessors.IPlaneInterface;
 import eng.jAtcSim.newLib.speeches.Rejection;
 import eng.jAtcSim.newLib.speeches.atc2airplane.DivertCommand;
 
 public class DivertCommandApplication extends CommandApplication<DivertCommand> {
 
   @Override
-  protected Rejection checkCommandSanity(IAirplaneCommand plane, DivertCommand c) {
+  protected Rejection checkCommandSanity(IPlaneInterface plane, DivertCommand c) {
     Rejection ret = null;
 
     if (plane.isDeparture())
@@ -31,7 +32,7 @@ public class DivertCommandApplication extends CommandApplication<DivertCommand> 
   }
 
   @Override
-  protected ApplicationResult adjustAirplane(IAirplaneCommand plane, DivertCommand c) {
+  protected ApplicationResult adjustAirplane(IPlaneInterface plane, DivertCommand c) {
     ApplicationResult ret = new ApplicationResult();
 
     plane.divert(true);

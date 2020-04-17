@@ -4,17 +4,15 @@ package eng.jAtcSim.newLib.airplanes.commandApplications;
 import eng.eSystem.geo.Headings;
 import eng.jAtcSim.newLib.airplanes.Airplane;
 import eng.jAtcSim.newLib.airplanes.LAcc;
+import eng.jAtcSim.newLib.airplanes.accessors.IPlaneInterface;
 import eng.jAtcSim.newLib.airplanes.modules.sha.navigators.HeadingNavigator;
-import eng.jAtcSim.newLib.airplanes.modules.sha.navigators.Navigator;
-import eng.jAtcSim.newLib.shared.enums.LeftRight;
-import eng.jAtcSim.newLib.shared.enums.LeftRightAny;
 import eng.jAtcSim.newLib.speeches.Rejection;
 import eng.jAtcSim.newLib.speeches.atc2airplane.ChangeHeadingCommand;
 
 public class ChangeHeadingApplication extends CommandApplication<ChangeHeadingCommand> {
 
   @Override
-  protected Rejection checkCommandSanity(IAirplaneCommand pilot, ChangeHeadingCommand c) {
+  protected Rejection checkCommandSanity(IPlaneInterface pilot, ChangeHeadingCommand c) {
     return null;
   }
 
@@ -33,7 +31,7 @@ public class ChangeHeadingApplication extends CommandApplication<ChangeHeadingCo
   }
 
   @Override
-  protected ApplicationResult adjustAirplane(IAirplaneCommand pilot, ChangeHeadingCommand c) {
+  protected ApplicationResult adjustAirplane(IPlaneInterface pilot, ChangeHeadingCommand c) {
     if (pilot.getState() == Airplane.State.holding)
       pilot.abortHolding();
 

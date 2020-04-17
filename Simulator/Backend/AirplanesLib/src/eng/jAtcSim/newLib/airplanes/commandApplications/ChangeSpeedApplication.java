@@ -3,6 +3,7 @@ package eng.jAtcSim.newLib.airplanes.commandApplications;
 import eng.eSystem.geo.Coordinates;
 import eng.jAtcSim.newLib.airplanes.Airplane;
 import eng.jAtcSim.newLib.airplanes.LAcc;
+import eng.jAtcSim.newLib.airplanes.accessors.IPlaneInterface;
 import eng.jAtcSim.newLib.shared.Restriction;
 import eng.jAtcSim.newLib.shared.enums.AboveBelowExactly;
 import eng.jAtcSim.newLib.speeches.Rejection;
@@ -22,7 +23,7 @@ public class ChangeSpeedApplication extends CommandApplication<ChangeSpeedComman
   }
 
   @Override
-  protected Rejection checkCommandSanity(IAirplaneCommand plane, ChangeSpeedCommand c) {
+  protected Rejection checkCommandSanity(IPlaneInterface plane, ChangeSpeedCommand c) {
     Rejection ret;
 
     if (c.isResumeOwnSpeed() == false) {
@@ -57,7 +58,7 @@ public class ChangeSpeedApplication extends CommandApplication<ChangeSpeedComman
   }
 
   @Override
-  protected ApplicationResult adjustAirplane(IAirplaneCommand plane, ChangeSpeedCommand c) {
+  protected ApplicationResult adjustAirplane(IPlaneInterface plane, ChangeSpeedCommand c) {
     plane.setSpeedRestriction(c.getRestriction());
     return ApplicationResult.getEmpty();
   }

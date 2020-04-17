@@ -4,7 +4,7 @@ import eng.jAtcSim.newLib.speeches.ISpeech;
 import eng.jAtcSim.newLib.speeches.Rejection;
 import eng.jAtcSim.newLib.speeches.SpeechList;
 
-class ApplicationResult {
+public class ApplicationResult {
   public Rejection rejection = null;
   public SpeechList<ISpeech> informations = new SpeechList<>();
 

@@ -1,6 +1,7 @@
 package eng.jAtcSim.newLib.airplanes.commandApplications;
 
 import eng.jAtcSim.newLib.airplanes.Airplane;
+import eng.jAtcSim.newLib.airplanes.accessors.IPlaneInterface;
 import eng.jAtcSim.newLib.shared.exceptions.ToDoException;
 import eng.jAtcSim.newLib.speeches.Confirmation;
 import eng.jAtcSim.newLib.speeches.ICommand;
@@ -13,7 +14,7 @@ public abstract class CommandApplication<T extends ICommand> {
   }
 
   //region Public methods
-  public ConfirmationResult confirm(IAirplaneCommand plane, T c, boolean checkStateSanity, boolean checkCommandSanity) {
+  public ConfirmationResult confirm(IPlaneInterface plane, T c, boolean checkStateSanity, boolean checkCommandSanity) {
     ConfirmationResult ret = new ConfirmationResult();
     if (checkStateSanity)
       ret.rejection = getRejectionIfAirplaneStateIsInvalid(plane.getState(), c);
@@ -25,7 +26,7 @@ public abstract class CommandApplication<T extends ICommand> {
     return ret;
   }
 
-  public ApplicationResult apply(IAirplaneCommand plane, T c, boolean checkStateSanity) {
+  public ApplicationResult apply(IPlaneInterface plane, T c, boolean checkStateSanity) {
     ApplicationResult ret;
     Rejection rejection = null;
     if (checkStateSanity)
@@ -44,11 +45,11 @@ public abstract class CommandApplication<T extends ICommand> {
 
   //region Protected methods
 
-  protected abstract Rejection checkCommandSanity(IAirplaneCommand plane, T c);
+  protected abstract Rejection checkCommandSanity(IPlaneInterface plane, T c);
 
   protected abstract Airplane.State [] getInvalidStates();
 
-  protected abstract ApplicationResult adjustAirplane(IAirplaneCommand plane, T c);
+  protected abstract ApplicationResult adjustAirplane(IPlaneInterface plane, T c);
 
   protected Rejection getRejection(ICommand c, String reason) {
     Rejection ret = new Rejection("Unable to comply the command in the current state.", c);
@@ -60,7 +61,7 @@ public abstract class CommandApplication<T extends ICommand> {
     return ret;
   }
 
-  protected boolean isUnableDueToState(IAirplaneCommand plane, Airplane.State... states) {
+  protected boolean isUnableDueToState(IPlaneInterface plane, Airplane.State... states) {
     boolean ret = plane.getState().is(states);
     return ret;
   }

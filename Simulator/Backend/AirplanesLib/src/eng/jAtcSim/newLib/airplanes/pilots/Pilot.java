@@ -7,16 +7,17 @@ import eng.eSystem.utilites.ArrayUtils;
 import eng.eSystem.utilites.NumberUtils;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplanes.Airplane;
+import eng.jAtcSim.newLib.airplanes.accessors.IPlaneInterface;
 import eng.jAtcSim.newLib.shared.Restriction;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public abstract class Pilot {
 
-  protected final IPilotPlane plane;
+  protected final IPlaneInterface plane;
   private boolean isFirstElapseSecond = true;
 
-  public Pilot(IPilotPlane plane) {
+  public Pilot(IPlaneInterface plane) {
     EAssert.Argument.isNotNull(plane, "plane");
     this.plane = plane;
   }

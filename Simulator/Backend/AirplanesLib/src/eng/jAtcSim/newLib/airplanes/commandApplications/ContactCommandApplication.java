@@ -1,6 +1,7 @@
 package eng.jAtcSim.newLib.airplanes.commandApplications;
 
 import eng.jAtcSim.newLib.airplanes.Airplane;
+import eng.jAtcSim.newLib.airplanes.accessors.IPlaneInterface;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.exceptions.ToDoException;
 import eng.jAtcSim.newLib.speeches.Rejection;
@@ -10,7 +11,7 @@ import eng.jAtcSim.newLib.speeches.atc2airplane.ContactCommand;
 public class ContactCommandApplication extends CommandApplication<ContactCommand> {
 
   @Override
-  protected ApplicationResult adjustAirplane(IAirplaneCommand plane, ContactCommand c) {
+  protected ApplicationResult adjustAirplane(IPlaneInterface plane, ContactCommand c) {
     AtcId a = c.getAtc();
     // confirmation to previous atc
 
@@ -34,7 +35,7 @@ public class ContactCommandApplication extends CommandApplication<ContactCommand
   }
 
   @Override
-  protected Rejection checkCommandSanity(IAirplaneCommand plane, ContactCommand c) {
+  protected Rejection checkCommandSanity(IPlaneInterface plane, ContactCommand c) {
     return null;
   }
 

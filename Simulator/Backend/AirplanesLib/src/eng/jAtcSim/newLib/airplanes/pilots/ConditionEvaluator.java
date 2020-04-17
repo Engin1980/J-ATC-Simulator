@@ -3,15 +3,14 @@ package eng.jAtcSim.newLib.airplanes.pilots;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.geo.Headings;
 import eng.jAtcSim.newLib.airplanes.LAcc;
-import eng.jAtcSim.newLib.area.Airport;
+import eng.jAtcSim.newLib.airplanes.accessors.IPlaneInterface;
 import eng.jAtcSim.newLib.area.approaches.conditions.*;
 import eng.jAtcSim.newLib.shared.GAcc;
-import eng.jAtcSim.newLib.shared.InstanceProviderDictionary;
 import eng.jAtcSim.newLib.weather.Weather;
 
 public class ConditionEvaluator {
 
-  public static boolean check(ICondition condition, IPilotPlane plane) {
+  public static boolean check(ICondition condition, IPlaneInterface plane) {
     if (condition instanceof AggregatingCondition)
       return checkTrue((AggregatingCondition) condition, plane);
     else if (condition instanceof FlyRouteBehaviorEmptyCondition)
@@ -30,7 +29,7 @@ public class ConditionEvaluator {
       throw new UnsupportedOperationException("Unknown condition type.");
   }
 
-  private static boolean checkTrue(RunwayThresholdVisibilityCondition condition, IPilotPlane plane){
+  private static boolean checkTrue(RunwayThresholdVisibilityCondition condition, IPlaneInterface plane){
     Weather w = LAcc.getWeather();
     if (w.getCloudBaseInFt() > plane.getAltitude())
       return true;
@@ -38,11 +37,11 @@ public class ConditionEvaluator {
       return GAcc.getRnd().nextDouble() > w.getCloudBaseHitProbability();
   }
 
-  private static boolean checkTrue(FlyRouteBehaviorEmptyCondition condition, IPilotPlane plane){
+  private static boolean checkTrue(FlyRouteBehaviorEmptyCondition condition, IPlaneInterface plane){
     return plane.isRoutingEmpty();
   }
 
-  private static boolean checkTrue(PlaneShaCondition condition, IPilotPlane plane) {
+  private static boolean checkTrue(PlaneShaCondition condition, IPlaneInterface plane) {
     char c = plane.getType().category;
     if (condition.getMinAltitude() != null && condition.getMinAltitude().get(c) > plane.getAltitude())
       return false;
@@ -58,12 +57,12 @@ public class ConditionEvaluator {
     return true;
   }
 
-  private static boolean checkTrue(PlaneOrderedAltitudeDifferenceCondition condition, IPilotPlane plane) {
+  private static boolean checkTrue(PlaneOrderedAltitudeDifferenceCondition condition, IPlaneInterface plane) {
     int diff = plane.getTargetAltitude() - plane.getAltitude();
     return condition.getActualMinusTargetAltitudeMaximalDifference().get(plane.getType().category) > diff;
   }
 
-  private static boolean checkTrue(AggregatingCondition condition, IPilotPlane plane) {
+  private static boolean checkTrue(AggregatingCondition condition, IPlaneInterface plane) {
     switch (condition.getAggregator()) {
       case and:
         return condition.getConditions().isAll(q -> check(q, plane));
@@ -74,11 +73,11 @@ public class ConditionEvaluator {
     }
   }
 
-  private static boolean checkTrue(LocationCondition condition, IPilotPlane plane) {
+  private static boolean checkTrue(LocationCondition condition, IPlaneInterface plane) {
     return condition.getLocation().isInside(plane.getCoordinate());
   }
 
-  private static boolean checkTrue(NegationCondition condition, IPilotPlane plane) {
+  private static boolean checkTrue(NegationCondition condition, IPlaneInterface plane) {
     return !check(condition, plane);
   }
 }

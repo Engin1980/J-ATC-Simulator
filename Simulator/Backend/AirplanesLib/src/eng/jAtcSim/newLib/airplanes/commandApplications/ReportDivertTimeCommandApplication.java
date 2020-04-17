@@ -1,20 +1,21 @@
 package eng.jAtcSim.newLib.airplanes.commandApplications;
 
 import eng.jAtcSim.newLib.airplanes.Airplane;
+import eng.jAtcSim.newLib.airplanes.accessors.IPlaneInterface;
 import eng.jAtcSim.newLib.speeches.Rejection;
 import eng.jAtcSim.newLib.speeches.atc2airplane.ReportDivertTimeCommand;
 
 public class ReportDivertTimeCommandApplication extends CommandApplication<ReportDivertTimeCommand> {
 
   @Override
-  protected ApplicationResult adjustAirplane(IAirplaneCommand pilot, ReportDivertTimeCommand c) {
+  protected ApplicationResult adjustAirplane(IPlaneInterface pilot, ReportDivertTimeCommand c) {
     pilot.reportDivertTimeLeft();
     ApplicationResult ret = ApplicationResult.getEmpty();
     return ret;
   }
 
   @Override
-  protected Rejection checkCommandSanity(IAirplaneCommand pilot, ReportDivertTimeCommand c) {
+  protected Rejection checkCommandSanity(IPlaneInterface pilot, ReportDivertTimeCommand c) {
     Rejection ret;
 
     if (pilot.isDeparture())

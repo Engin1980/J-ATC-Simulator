@@ -1,6 +1,7 @@
 package eng.jAtcSim.newLib.airplanes.modules;
 
 import eng.eSystem.validation.EAssert;
+import eng.jAtcSim.newLib.airplanes.accessors.IPlaneInterface;
 import eng.jAtcSim.newLib.speeches.airplane2atc.GoodDayNotification;
 
 public class AtcModule extends Module {
@@ -8,7 +9,7 @@ public class AtcModule extends Module {
   private String atcName;
   private int secondsWithoutRadarContact = 0;
 
-  public AtcModule(IModulePlane plane) {
+  public AtcModule(IPlaneInterface plane) {
     super(plane);
   }
 

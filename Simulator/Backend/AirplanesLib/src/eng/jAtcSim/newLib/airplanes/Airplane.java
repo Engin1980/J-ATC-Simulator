@@ -1,14 +1,16 @@
 package eng.jAtcSim.newLib.airplanes;
 
+import eng.eSystem.collections.EList;
+import eng.eSystem.collections.IList;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
 import eng.jAtcSim.newLib.airplaneType.AirplaneType;
+import eng.jAtcSim.newLib.airplanes.accessors.IPlaneInterface;
 import eng.jAtcSim.newLib.airplanes.modules.*;
 import eng.jAtcSim.newLib.airplanes.modules.sha.ShaModule;
-import eng.jAtcSim.newLib.airplanes.modules.SpeechesModule;
+import eng.jAtcSim.newLib.airplanes.modules.speeches.SpeechesModule;
 import eng.jAtcSim.newLib.airplanes.other.CockpitVoiceRecorder;
 import eng.jAtcSim.newLib.airplanes.other.FlightDataRecorder;
-import eng.jAtcSim.newLib.airplanes.pilots.IPilotPlane;
 import eng.jAtcSim.newLib.airplanes.pilots.Pilot;
 import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
 import eng.jAtcSim.newLib.area.Navaid;
@@ -397,6 +399,13 @@ public class Airplane {
      */
     holding;
 
+    public static State[] valuesExcept(State... exceptions) {
+      IList<State> ret = new EList<>(State.values());
+      IList<State> exs = new EList<>(exceptions);
+      ret.remove(exs);
+      return ret.toArray(State.class);
+    }
+
     public boolean is(State... values) {
       boolean ret = false;
       for (State value : values) {
@@ -479,7 +488,6 @@ public class Airplane {
   }
 
 
-
   //  private final AirplaneWriteAdvanced airplaneWriteAdvanced = new AirplaneWriteAdvanced();
 //  private final Airplane4Display plane4Display = new Airplane4Display();
 //  private final AirplaneType airplaneType;
@@ -498,6 +506,27 @@ public class Airplane {
   private Coordinate coordinate;
   private State state;
   private Pilot pilot;
+  private IPlaneInterface imp;
+
+
+//  public void applyShortcut(Navaid navaid) {
+//    this.routingModule.applyShortcut(navaid);
+//    //TODO this is not correct. Shortcut must be checked only against only not-already-flown-through points.
+//    DARoute r = this.routingModule.getAssignedRoute();
+//    if (r == null) return;
+//    if (r.getNavaids().isEmpty()) return;
+//    if (r.getNavaids().getLast().equals(navaid)) {
+//      if (Airplane.this.flightModule.isArrival()) {
+//        if (Airplane.this.sha.getAltitude() > 1e4)
+//          mood.experience(Mood.ArrivalExperience.shortcutToIafAbove100);
+//      } else {
+//        if (Airplane.this.sha.getAltitude() > 1e4)
+//          mood.experience(Mood.DepartureExperience.shortcutToExitPointBelow100);
+//        else
+//          mood.experience(Mood.DepartureExperience.shortctuToExitPointAbove100);
+//      }
+//    }
+//  }
 
   private Airplane(Callsign callsign, Coordinate coordinate, Squawk sqwk, AirplaneType airplaneType,
                    int heading, int altitude, int speed, boolean isDeparture,
@@ -525,27 +554,6 @@ public class Airplane {
     this.airplaneType = airplaneType;
   }
 
-
-
-//  public void applyShortcut(Navaid navaid) {
-//    this.routingModule.applyShortcut(navaid);
-//    //TODO this is not correct. Shortcut must be checked only against only not-already-flown-through points.
-//    DARoute r = this.routingModule.getAssignedRoute();
-//    if (r == null) return;
-//    if (r.getNavaids().isEmpty()) return;
-//    if (r.getNavaids().getLast().equals(navaid)) {
-//      if (Airplane.this.flightModule.isArrival()) {
-//        if (Airplane.this.sha.getAltitude() > 1e4)
-//          mood.experience(Mood.ArrivalExperience.shortcutToIafAbove100);
-//      } else {
-//        if (Airplane.this.sha.getAltitude() > 1e4)
-//          mood.experience(Mood.DepartureExperience.shortcutToExitPointBelow100);
-//        else
-//          mood.experience(Mood.DepartureExperience.shortctuToExitPointAbove100);
-//      }
-//    }
-//  }
-
   public void elapseSecond() {
 
     this.speechesModule.elapseSecond();
@@ -571,11 +579,6 @@ public class Airplane {
         state
     );
   }
-
-  private IPilotPlane ipp;
-  private IModulePlane imp;
-
-
 
 //  @Override // IAirplaneWriteSimple
 //  public IAirplaneWriteAdvanced getAdvanced() {

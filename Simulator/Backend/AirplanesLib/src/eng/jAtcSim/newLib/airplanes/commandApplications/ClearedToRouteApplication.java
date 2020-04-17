@@ -2,6 +2,7 @@ package eng.jAtcSim.newLib.airplanes.commandApplications;
 
 
 import eng.jAtcSim.newLib.airplanes.Airplane;
+import eng.jAtcSim.newLib.airplanes.accessors.IPlaneInterface;
 import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
 import eng.jAtcSim.newLib.area.routes.DARoute;
 import eng.jAtcSim.newLib.shared.enums.DARouteType;
@@ -13,7 +14,7 @@ import static eng.eSystem.utilites.FunctionShortcuts.sf;
 public class ClearedToRouteApplication extends CommandApplication<ClearedToRouteCommand> {
 
   @Override
-  protected Rejection checkCommandSanity(IAirplaneCommand plane, ClearedToRouteCommand c) {
+  protected Rejection checkCommandSanity(IPlaneInterface plane, ClearedToRouteCommand c) {
 
     DARoute route = Gimme.tryGetDARoute(c.getRouteName());
     if (route == null)
@@ -44,7 +45,7 @@ public class ClearedToRouteApplication extends CommandApplication<ClearedToRoute
   }
 
   @Override
-  protected ApplicationResult adjustAirplane(IAirplaneCommand plane, ClearedToRouteCommand c) {
+  protected ApplicationResult adjustAirplane(IPlaneInterface plane, ClearedToRouteCommand c) {
     ActiveRunwayThreshold threshold = Gimme.tryGetRunwayThreshold(c.getExpectedRunwayThresholdName());
     DARoute route = Gimme.tryGetDARoute(c.getRouteName());
     plane.setRouting(route, threshold);

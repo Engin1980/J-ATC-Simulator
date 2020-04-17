@@ -1,6 +1,7 @@
 package eng.jAtcSim.newLib.airplanes.commandApplications;
 
 import eng.jAtcSim.newLib.airplanes.Airplane;
+import eng.jAtcSim.newLib.airplanes.accessors.IPlaneInterface;
 import eng.jAtcSim.newLib.speeches.Rejection;
 import eng.jAtcSim.newLib.speeches.atc2airplane.ChangeAltitudeCommand;
 
@@ -20,7 +21,7 @@ public class ChangeAltitudeApplication extends CommandApplication<ChangeAltitude
   }
 
   @Override
-  protected Rejection checkCommandSanity(IAirplaneCommand pilot, ChangeAltitudeCommand c) {
+  protected Rejection checkCommandSanity(IPlaneInterface pilot, ChangeAltitudeCommand c) {
     Rejection ret;
 
     if ((c.getDirection() == ChangeAltitudeCommand.eDirection.climb) && (pilot.getAltitude() > c.getAltitudeInFt())) {
@@ -44,7 +45,7 @@ public class ChangeAltitudeApplication extends CommandApplication<ChangeAltitude
   }
 
   @Override
-  protected ApplicationResult adjustAirplane(IAirplaneCommand  pilot, ChangeAltitudeCommand c) {
+  protected ApplicationResult adjustAirplane(IPlaneInterface pilot, ChangeAltitudeCommand c) {
     pilot.setTargetAltitude(c.getAltitudeInFt());
     return ApplicationResult.getEmpty();
   }

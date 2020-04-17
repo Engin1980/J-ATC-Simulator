@@ -2,6 +2,7 @@ package eng.jAtcSim.newLib.airplanes.commandApplications;
 
 
 import eng.jAtcSim.newLib.airplanes.Airplane;
+import eng.jAtcSim.newLib.airplanes.accessors.IPlaneInterface;
 import eng.jAtcSim.newLib.speeches.Rejection;
 import eng.jAtcSim.newLib.speeches.airplane2atc.GoingAroundNotification;
 import eng.jAtcSim.newLib.speeches.atc2airplane.GoAroundCommand;
@@ -25,12 +26,12 @@ public class GoAroundCommandApplication extends CommandApplication<GoAroundComma
   }
 
   @Override
-  protected Rejection checkCommandSanity(IAirplaneCommand plane, GoAroundCommand c) {
+  protected Rejection checkCommandSanity(IPlaneInterface plane, GoAroundCommand c) {
     return null;
   }
 
   @Override
-  protected ApplicationResult adjustAirplane(IAirplaneCommand plane, GoAroundCommand c) {
+  protected ApplicationResult adjustAirplane(IPlaneInterface plane, GoAroundCommand c) {
     ApplicationResult ret = new ApplicationResult();
 
     plane.goAround(GoingAroundNotification.GoAroundReason.atcDecision);
