@@ -13,6 +13,7 @@ import eng.jAtcSim.newLib.airplanes.accessors.IPlaneInterface;
 import eng.jAtcSim.newLib.airplanes.commandApplications.ApplicationManager;
 import eng.jAtcSim.newLib.airplanes.commandApplications.ApplicationResult;
 import eng.jAtcSim.newLib.airplanes.commandApplications.ConfirmationResult;
+import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.messaging.IMessageContent;
 import eng.jAtcSim.newLib.messaging.Message;
 import eng.jAtcSim.newLib.messaging.Participant;
@@ -43,6 +44,11 @@ public class SpeechesModule extends eng.jAtcSim.newLib.airplanes.modules.Module 
 
   public SpeechesModule(IPlaneInterface plane) {
     super(plane);
+  }
+
+  public void applyShortcut(Navaid navaid) {
+    SpeechList<ICommand> skippedCommands = this.afterCommands.doShortcutTo(navaid);
+    this.processSpeeches(skippedCommands, CommandSource.procedure);
   }
 
   @Override

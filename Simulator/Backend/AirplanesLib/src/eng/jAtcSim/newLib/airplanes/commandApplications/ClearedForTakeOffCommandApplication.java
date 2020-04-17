@@ -42,7 +42,7 @@ public class ClearedForTakeOffCommandApplication extends CommandApplication<Clea
   @Override
   protected ApplicationResult adjustAirplane(IPlaneInterface plane, ClearedForTakeoffCommand c) {
     ActiveRunwayThreshold threshold = LAcc.getAirport().tryGetRunwayThreshold(c.getRunwayThresholdName());
-    plane.takeOff(threshold);
+    plane.startTakeOff(threshold);
     return ApplicationResult.getEmpty();
   }
 }

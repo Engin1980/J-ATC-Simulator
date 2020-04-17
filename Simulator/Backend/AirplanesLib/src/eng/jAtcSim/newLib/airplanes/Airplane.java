@@ -2,26 +2,349 @@ package eng.jAtcSim.newLib.airplanes;
 
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
+import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
 import eng.jAtcSim.newLib.airplaneType.AirplaneType;
 import eng.jAtcSim.newLib.airplanes.accessors.IPlaneInterface;
+import eng.jAtcSim.newLib.airplanes.accessors.IPlaneReader;
+import eng.jAtcSim.newLib.airplanes.accessors.IPlaneWriter;
 import eng.jAtcSim.newLib.airplanes.modules.*;
 import eng.jAtcSim.newLib.airplanes.modules.sha.ShaModule;
+import eng.jAtcSim.newLib.airplanes.modules.sha.navigators.Navigator;
 import eng.jAtcSim.newLib.airplanes.modules.speeches.SpeechesModule;
 import eng.jAtcSim.newLib.airplanes.other.CockpitVoiceRecorder;
 import eng.jAtcSim.newLib.airplanes.other.FlightDataRecorder;
+import eng.jAtcSim.newLib.airplanes.pilots.ApproachPilot;
+import eng.jAtcSim.newLib.airplanes.pilots.ArrivalPilot;
+import eng.jAtcSim.newLib.airplanes.pilots.DeparturePilot;
 import eng.jAtcSim.newLib.airplanes.pilots.Pilot;
 import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
 import eng.jAtcSim.newLib.area.Navaid;
+import eng.jAtcSim.newLib.area.approaches.Approach;
+import eng.jAtcSim.newLib.area.approaches.ApproachEntry;
+import eng.jAtcSim.newLib.area.approaches.behaviors.IApproachBehavior;
+import eng.jAtcSim.newLib.area.routes.DARoute;
+import eng.jAtcSim.newLib.area.routes.IafRoute;
 import eng.jAtcSim.newLib.mood.Mood;
-import eng.jAtcSim.newLib.shared.Callsign;
-import eng.jAtcSim.newLib.shared.Squawk;
-import eng.jAtcSim.newLib.shared.UnitProvider;
+import eng.jAtcSim.newLib.shared.*;
+import eng.jAtcSim.newLib.shared.enums.LeftRight;
+import eng.jAtcSim.newLib.shared.exceptions.ToDoException;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
+import eng.jAtcSim.newLib.speeches.ICommand;
+import eng.jAtcSim.newLib.speeches.ISpeech;
+import eng.jAtcSim.newLib.speeches.SpeechList;
+import eng.jAtcSim.newLib.speeches.airplane2atc.DivertingNotification;
+import eng.jAtcSim.newLib.speeches.airplane2atc.GoingAroundNotification;
 import eng.jAtcSim.newLib.weather.Weather;
 
 public class Airplane {
+
+  public class AirplaneInterface implements IPlaneReader, IPlaneWriter {
+
+    //region IPlaneWriter
+    @Override
+    public void abortHolding() {
+      if (Airplane.this.flightModule.isArrival())
+        setPilotAndState(new ArrivalPilot(Airplane.this.imp), Airplane.State.arrivingHigh);
+      else
+        setPilotAndState(new DeparturePilot(Airplane.this.imp), Airplane.State.departingLow);
+      throw new ToDoException("next line?");
+      //Pilot.this.pilotWriteSimple.adjustTargetSpeed();
+    }
+
+    @Override
+    public void addExperience(Mood.ArrivalExperience experience) {
+      Airplane.this.mood.experience(experience);
+    }
+
+    @Override
+    public void addExperience(Mood.DepartureExperience experience) {
+      Airplane.this.mood.experience(experience);
+    }
+
+    @Override
+    public void applyShortcut(Navaid navaid) {
+      Airplane.this.speechesModule.applyShortcut(navaid);
+    }
+
+    @Override
+    public void clearedToApproach(Approach approach, ApproachEntry entry) {
+      ApproachPilot approachPilot = new ApproachPilot(Airplane.this.imp, approach, entry);
+      setPilotAndState(approachPilot, State.flyingIaf2Faf);
+    }
+
+    @Override
+    public void divert(boolean isInvokedByAtc) {
+      if (isInvokedByAtc) {
+        if (this.isEmergency())
+          this.addExperience(Mood.DepartureExperience.divertedAsEmergency);
+        else if (!LAcc.isSomeActiveEmergency() == false)
+          this.addExperience(Mood.ArrivalExperience.divertOrderedByAtcWhenNoEmergency);
+        Airplane.this.divertModule.disable();
+      } else {
+        this.addExperience(Mood.ArrivalExperience.divertOrderedByCaptain);
+      }
+
+      Navaid divertNavaid = getDivertNavaid();
+      Route route = Route.createNewVectoringByFix(divertNavaid);
+
+      Pilot.this.parent.divert();
+      Pilot.this.routingModule.setRoute(route);
+      setPilotAndState(new DeparturePilot(Airplane.this.imp), Airplane.State.departingLow);
+
+      if (!isInvokedByAtc)
+        Pilot.this.pilotWriteSimple.passMessageToAtc(
+            new DivertingNotification(divertNavaid.getName()));
+    }
+
+    @Override
+    public int getAltitude() {
+      return Airplane.this.sha.getAltitude();
+    }
+
+    @Override
+    public DARoute getAssignedRoute() {
+      return Airplane.this.speechesModule.getAssignedRoute();
+    }
+
+    @Override
+    public CockpitVoiceRecorder getCVR() {
+      return Airplane.this.cvr;
+    }
+
+    @Override
+    public Callsign getCallsign() {
+      return Airplane.this.flightModule.getCallsign();
+    }
+
+    @Override
+    public char getCategory() {
+      return Airplane.this.airplaneType.category;
+    }
+
+    @Override
+    public Coordinate getCoordinate() {
+      return Airplane.this.coordinate;
+    }
+
+    @Override
+    public int getHeading() {
+      return Airplane.this.sha.getHeading();
+    }
+
+    @Override
+    public int getSpeed() {
+      return Airplane.this.sha.getSpeed();
+    }
+
+    @Override
+    public Restriction getSpeedRestriction() {
+      return Airplane.this.sha.getSpeedRestriction();
+    }
+
+    @Override
+    public void setSpeedRestriction(Restriction restriction) {
+
+    }
+
+    @Override
+    public State getState() {
+      return Airplane.this.state;
+    }
+
+    @Override
+    public void setState(State state) {
+
+    }
+
+    @Override
+    public int getTargetAltitude() {
+      return Airplane.this.sha.getTargetAltitude();
+    }
+
+    @Override
+    public void setTargetAltitude(int altitudeInFt) {
+
+    }
+
+    @Override
+    public int getTargetHeading() {
+      return Airplane.this.sha.getTargetHeading();
+    }
+
+    @Override
+    public void setTargetHeading(Navigator navigator) {
+
+    }
+
+    @Override
+    public AtcId getTunedAtc() {
+      return Airplane.this.atcModule.getTunedAtc();
+    }
+
+    @Override
+    public AirplaneType getType() {
+      return Airplane.this.airplaneType;
+    }
+
+    @Override
+    public void goAround() {
+
+    }
+
+    @Override
+    public void goAround(GoingAroundNotification.GoAroundReason reason) {
+
+    }
+
+    @Override
+    public boolean hasLateralDirectionAfterCoordinate() {
+      return false;
+    }
+
+    @Override
+    public boolean hasRadarContact() {
+      return Airplane.this.atcModule.hasRadarContact();
+    }
+
+    @Override
+    public void hold(Navaid navaid, int inboundRadial, LeftRight turn) {
+
+    }
+
+    @Override
+    public boolean isArrival() {
+      return Airplane.this.flightModule.isArrival();
+    }
+
+    //endregion
+
+    //region IPlaneReader
+
+    @Override
+    public boolean isDeparture() {
+      return Airplane.this.flightModule.isDeparture();
+    }
+
+    @Override
+    public boolean isDivertable() {
+      return Airplane.this.pilot.isDivertable();
+    }
+
+    @Override
+    public boolean isEmergency() {
+      return Airplane.this.emergencyModule.isEmergency();
+    }
+
+    @Override
+    public boolean isGoingToFlightOverNavaid(Navaid n) {
+      return null;
+    }
+
+    @Override
+    public boolean isRoutingEmpty() {
+      return false;
+    }
+
+    @Override
+    public void processRadarContactConfirmation() {
+
+    }
+
+    @Override
+    public void reportDivertTimeLeft() {
+
+    }
+
+    @Override
+    public void sendMessage(ISpeech speech) {
+
+    }
+
+    @Override
+    public void sendMessage(AtcId atcId, SpeechList<ISpeech> iSpeeches) {
+
+    }
+
+    @Override
+    public void setAltitudeRestriction(Restriction restriction) {
+
+    }
+
+    @Override
+    public void setRouting(IafRoute iafRoute, ActiveRunwayThreshold parent) {
+
+    }
+
+    @Override
+    public void setRouting(IReadOnlyList<ICommand> routeCommands) {
+
+    }
+
+    @Override
+    public void setRouting(DARoute daRoute, ActiveRunwayThreshold threshold) {
+
+    }
+
+    @Override
+    public void setTargetCoordinate(Coordinate coordinate) {
+
+    }
+
+    @Override
+    public void setTargetSpeed(int speed) {
+
+    }
+
+    @Override
+    public void startArriving() {
+      setPilotAndState(
+          new ArrivalPilot(Airplane.this.imp),
+          State.arrivingHigh
+      );
+    }
+
+    @Override
+    public void startDeparting() {
+      setPilotAndState(
+          new DeparturePilot(Airplane.this.imp),
+          State.departingLow);
+    }
+
+    @Override
+    public void startHolding(IPlaneInterface plane, Navaid n, int rad, LeftRight left) {
+
+    }
+
+    @Override
+    public void startTakeOff(ActiveRunwayThreshold threshold) {
+
+    }
+
+    @Override
+    public Coordinate tryGetTargetCoordinate() {
+      return null;
+    }
+
+    @Override
+    public Coordinate tryGetTargetOrHoldCoordinate() {
+      return null;
+    }
+
+    @Override
+    public void tuneAtc(AtcId atc) {
+
+    }
+
+    private void setPilotAndState(Pilot pilot, State state) {
+      Airplane.this.pilot = pilot;
+      Airplane.this.state = state;
+    }
+
+    //endregion IPlaneReader
+  }
+
 //  public class Airplane4Display {
 //
 //    public int altitude() {

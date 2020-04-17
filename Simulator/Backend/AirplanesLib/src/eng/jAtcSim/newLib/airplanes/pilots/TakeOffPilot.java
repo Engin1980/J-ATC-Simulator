@@ -10,12 +10,12 @@ import eng.jAtcSim.newLib.shared.enums.LeftRightAny;
 
 public class TakeOffPilot extends Pilot {
   //TODO add to airport config the acceleration altitude and use it here
-  private ActiveRunwayThreshold toThreshold;
+  private final ActiveRunwayThreshold takeOffThreshold;
 
   public TakeOffPilot(IPlaneInterface plane, ActiveRunwayThreshold takeOffThreshold) {
     super(plane);
     EAssert.Argument.isNotNull(takeOffThreshold, "takeOffThreshold");
-    this.toThreshold = takeOffThreshold;
+    this.takeOffThreshold = takeOffThreshold;
   }
 
   @Override
@@ -23,7 +23,7 @@ public class TakeOffPilot extends Pilot {
     switch (plane.getState()) {
       case takeOffRoll:
         double targetHeading = Coordinates.getBearing(
-            plane.getCoordinate(), toThreshold.getOtherThreshold().getCoordinate());
+            plane.getCoordinate(), takeOffThreshold.getOtherThreshold().getCoordinate());
         plane.setTargetHeading(new HeadingNavigator(targetHeading, LeftRightAny.any));
 
         if (plane.getSpeed() > plane.getType().vR) {
@@ -34,15 +34,12 @@ public class TakeOffPilot extends Pilot {
         // keeps last heading
         // altitude already set
         // speed set
-        if (plane.getAltitude() > this.toThreshold.getAccelerationAltitude())
+        if (plane.getAltitude() > this.takeOffThreshold.getAccelerationAltitude())
           if (plane.isArrival()) {
             // antecedent G/A
-            plane.changePilot(new ArrivalPilot(plane), Airplane.State.arrivingHigh);
+            plane.startArriving();
           } else {
-            plane.changePilot(
-                new DeparturePilot(super.plane),
-                Airplane.State.departingLow
-            );
+            plane.startDeparting();
           }
         break;
       default:

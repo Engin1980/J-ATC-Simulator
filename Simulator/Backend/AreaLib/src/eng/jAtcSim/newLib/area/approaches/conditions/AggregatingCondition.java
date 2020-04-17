@@ -24,14 +24,6 @@ public class AggregatingCondition implements ICondition {
     this.aggregator = aggregator;
   }
 
-  @Override
-  public ICondition createCopy() {
-    return new AggregatingCondition(
-        this.conditions.select(q->q.createCopy()),
-        this.aggregator
-    );
-  }
-
   public IList<ICondition> getConditions() {
     return conditions;
   }

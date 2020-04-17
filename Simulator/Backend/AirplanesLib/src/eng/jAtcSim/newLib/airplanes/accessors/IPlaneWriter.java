@@ -5,7 +5,6 @@ import eng.eSystem.geo.Coordinate;
 import eng.jAtcSim.newLib.airplanes.Airplane;
 import eng.jAtcSim.newLib.airplanes.modules.sha.navigators.Navigator;
 import eng.jAtcSim.newLib.airplanes.other.CockpitVoiceRecorder;
-import eng.jAtcSim.newLib.airplanes.pilots.Pilot;
 import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
 import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.area.approaches.Approach;
@@ -30,7 +29,8 @@ public interface IPlaneWriter {
 
   void applyShortcut(Navaid navaid);
 
-  void changePilot(Pilot pilot, Airplane.State state);
+  //TODO this should be replace with specific methods to start specific behaviors??
+  //void changePilot(Pilot pilot, Airplane.State state);
 
   void clearedToApproach(Approach approach, ApproachEntry entry);
 
@@ -48,7 +48,8 @@ public interface IPlaneWriter {
 
   void reportDivertTimeLeft();
 
-  @Deprecated // force to set AtcId to be send to?
+  @Deprecated
+    // force to set AtcId to be send to?
   void sendMessage(ISpeech speech);
 
   void sendMessage(AtcId atcId, SpeechList<ISpeech> iSpeeches);
@@ -73,7 +74,13 @@ public interface IPlaneWriter {
 
   void setTargetSpeed(int speed);
 
-  void takeOff(ActiveRunwayThreshold threshold);
+  void startArriving();
+
+  void startDeparting();
+
+  void startHolding(IPlaneInterface plane, Navaid n, int rad, LeftRight left);
+
+  void startTakeOff(ActiveRunwayThreshold threshold);
 
   void tuneAtc(AtcId atc);
 }

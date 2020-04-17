@@ -15,7 +15,7 @@ public class ArrivalPilot extends BasicPilot {
   }
 
   @Override
-  protected void elapseSecondInternal() {
+  protected void elapseSecondInternalBasic() {
     switch (plane.getState()) {
       case arrivingHigh:
         if (plane.getAltitude() < LOW_SPEED_DOWN_ALTITUDE)

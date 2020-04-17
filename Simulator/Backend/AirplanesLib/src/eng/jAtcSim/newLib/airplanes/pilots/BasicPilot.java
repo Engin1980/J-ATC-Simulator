@@ -8,6 +8,7 @@ import eng.jAtcSim.newLib.airplanes.LAcc;
 import eng.jAtcSim.newLib.airplanes.accessors.IPlaneInterface;
 import eng.jAtcSim.newLib.airplanes.modules.sha.navigators.HeadingNavigator;
 import eng.jAtcSim.newLib.area.Navaid;
+import eng.jAtcSim.newLib.shared.enums.LeftRight;
 import eng.jAtcSim.newLib.shared.enums.LeftRightAny;
 import eng.jAtcSim.newLib.speeches.airplane2atc.PassingClearanceLimitNotification;
 
@@ -40,10 +41,7 @@ public abstract class BasicPilot extends Pilot {
           if (dist < 1.5) {
             int rad = (int) Coordinates.getBearing(LAcc.getAirport().getLocation(), n.getCoordinate());
             rad = rad % 90;
-            plane.changePilot(
-                new HoldPilot(plane, n, rad, true),
-                Airplane.State.holding
-            );
+            plane.startHolding(plane, n, rad, LeftRight.left);
             return;
           }
         } else {
