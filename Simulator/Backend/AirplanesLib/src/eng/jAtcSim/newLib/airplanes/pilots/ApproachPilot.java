@@ -3,10 +3,14 @@ package eng.jAtcSim.newLib.airplanes.pilots;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.geo.Coordinates;
+import eng.eSystem.geo.Headings;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplanes.Airplane;
+import eng.jAtcSim.newLib.airplanes.LAcc;
 import eng.jAtcSim.newLib.airplanes.accessors.IPlaneInterface;
 import eng.jAtcSim.newLib.airplanes.modules.sha.navigators.HeadingNavigator;
+import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
+import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.area.approaches.Approach;
 import eng.jAtcSim.newLib.area.approaches.ApproachEntry;
 import eng.jAtcSim.newLib.area.approaches.ApproachStage;
@@ -18,6 +22,13 @@ import eng.jAtcSim.newLib.area.approaches.conditions.ICondition;
 import eng.jAtcSim.newLib.area.routes.IafRoute;
 import eng.jAtcSim.newLib.shared.RadialCalculator;
 import eng.jAtcSim.newLib.shared.enums.LeftRightAny;
+import eng.jAtcSim.newLib.speeches.ICommand;
+import eng.jAtcSim.newLib.speeches.SpeechList;
+import eng.jAtcSim.newLib.speeches.airplane2atc.GoingAroundNotification;
+import eng.jAtcSim.newLib.speeches.atc2airplane.ChangeAltitudeCommand;
+import eng.jAtcSim.newLib.speeches.atc2airplane.ChangeHeadingCommand;
+import eng.jAtcSim.newLib.speeches.atc2airplane.ProceedDirectCommand;
+import eng.jAtcSim.newLib.speeches.atc2airplane.ThenCommand;
 
 public class ApproachPilot extends Pilot {
 
@@ -36,6 +47,38 @@ public class ApproachPilot extends Pilot {
 
     this.approach = approach;
     this.iafRoute = entry.getIafRoute() == null ? null : entry.getIafRoute().createClone();
+  }
+
+  public SpeechList<ICommand> getGoAroundRouting() {
+    SpeechList<ICommand> ret = new SpeechList<>(this.approach.getGaRoute().getRouteCommands());
+    ChangeAltitudeCommand cac = null; // remember climb command and add it as first at the end
+    if (ret.get(0) instanceof ChangeAltitudeCommand) {
+      cac = (ChangeAltitudeCommand) ret.get(0);
+      ret.removeAt(0);
+    }
+    ret.insert(0,
+        ChangeHeadingCommand.create((int) this.getRunwayThreshold().getCourse(), LeftRightAny.any));
+
+    // check if is before runway threshold.
+    // if is far before, then first point will still be runway threshold
+    if (isBeforeRunwayThreshold()) {
+      Navaid runwayThresholdNavaid = LAcc.getNavaids().addRunwayThresholdPoint(
+          this.getRunwayThreshold().getParent().getParent().getIcao(),
+          this.getRunwayThreshold().getName(),
+          this.getRunwayThreshold().getCoordinate()
+      );
+      ret.insert(0, ProceedDirectCommand.create(runwayThresholdNavaid.getName()));
+      ret.insert(1, ThenCommand.create());
+    }
+
+    if (cac != null)
+      ret.insert(0, cac);
+
+    return ret;
+  }
+
+  public ActiveRunwayThreshold getRunwayThreshold() {
+    return approach.getParent();
   }
 
   @Override
@@ -112,7 +155,7 @@ public class ApproachPilot extends Pilot {
       throw new EApplicationException("Unknown behavior type at this place.");
 
     if (isConditionTrue(stage.getErrorCondition()))
-      goAround();
+      goAround(GoingAroundNotification.GoAroundReason.notStabilizedAirplane);
   }
 
   @Override
@@ -136,8 +179,20 @@ public class ApproachPilot extends Pilot {
     };
   }
 
-  private void goAround() {
-    plane.goAround();
+  private void goAround(GoingAroundNotification.GoAroundReason reason) {
+    plane.goAround(reason);
+  }
+
+  private boolean isBeforeRunwayThreshold() {
+    double dist = Coordinates.getDistanceInNM(plane.getCoordinate(), this.getRunwayThreshold().getCoordinate());
+    double hdg = Coordinates.getBearing(plane.getCoordinate(), this.getRunwayThreshold().getCoordinate());
+    boolean ret;
+    if (dist < 3)
+      ret = false;
+    else {
+      ret = Headings.isBetween(this.getRunwayThreshold().getCourse() - 70, hdg, this.getRunwayThreshold().getCourse() + 70);
+    }
+    return ret;
   }
 
   private boolean isConditionTrue(ICondition condition) {

@@ -15,11 +15,12 @@ public class NavaidList extends EList<Navaid> {
 
   private final IMap<Coordinate, Double> declinations = new EMap<>();
 
-  public void addRunwayThresholdPoint(String airportIcao, String thresholdName, Coordinate thresholdCoordinate) {
+  public Navaid addRunwayThresholdPoint(String airportIcao, String thresholdName, Coordinate thresholdCoordinate) {
     EAssert.Argument.matchPattern(airportIcao, "^[A-Z]{4}$");
     EAssert.Argument.matchPattern(thresholdName, "^\\d{2}[RLC]?$");
     Navaid navaid = Navaid.create(airportIcao + ":" + thresholdName, Navaid.eType.auxiliary, thresholdCoordinate);
     super.add(navaid);
+    return navaid;
   }
 
   public Navaid get(String name) {

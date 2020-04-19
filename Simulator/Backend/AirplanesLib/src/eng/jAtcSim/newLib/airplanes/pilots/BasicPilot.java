@@ -36,7 +36,7 @@ public abstract class BasicPilot extends Pilot {
         clearanceLimitWarningSent = true;
       } else if (dist < overNavaidDistance) {
         if (plane.isArrival() == false) {
-          Navaid n = plane.getAssignedRoute().getMainNavaid();
+          Navaid n = plane.getEntryExitPoint();
           dist = Coordinates.getDistanceInNM(plane.getCoordinate(), n.getCoordinate());
           if (dist < 1.5) {
             int rad = (int) Coordinates.getBearing(LAcc.getAirport().getLocation(), n.getCoordinate());

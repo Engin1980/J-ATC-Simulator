@@ -10,6 +10,7 @@ import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.area.approaches.Approach;
 import eng.jAtcSim.newLib.area.approaches.ApproachEntry;
 import eng.jAtcSim.newLib.area.routes.DARoute;
+import eng.jAtcSim.newLib.area.routes.GaRoute;
 import eng.jAtcSim.newLib.area.routes.IafRoute;
 import eng.jAtcSim.newLib.mood.Mood;
 import eng.jAtcSim.newLib.shared.AtcId;
@@ -38,8 +39,6 @@ public interface IPlaneWriter {
 
   CockpitVoiceRecorder getCVR();
 
-  void goAround();
-
   void goAround(GoingAroundNotification.GoAroundReason reason);
 
   void hold(Navaid navaid, int inboundRadial, LeftRight turn);
@@ -48,19 +47,19 @@ public interface IPlaneWriter {
 
   void reportDivertTimeLeft();
 
-  @Deprecated
-    // force to set AtcId to be send to?
-  void sendMessage(ISpeech speech);
+default void sendMessage(AtcId atcId, ISpeech speech){
+  SpeechList<ISpeech> speeches = new SpeechList<>();
+  speeches.add(speech);
+  sendMessage(atcId, speeches);
+}
 
   void sendMessage(AtcId atcId, SpeechList<ISpeech> iSpeeches);
 
   void setAltitudeRestriction(Restriction restriction);
 
   void setRouting(IafRoute iafRoute, ActiveRunwayThreshold parent);
-
-  void setRouting(IReadOnlyList<ICommand> routeCommands);
-
   void setRouting(DARoute daRoute, ActiveRunwayThreshold threshold);
+  void setRouting(IReadOnlyList<ICommand> commands);
 
   void setSpeedRestriction(Restriction restriction);
 
@@ -78,7 +77,7 @@ public interface IPlaneWriter {
 
   void startDeparting();
 
-  void startHolding(IPlaneInterface plane, Navaid n, int rad, LeftRight left);
+  void startHolding(Navaid navaid, int inboundRadial, LeftRight turn);
 
   void startTakeOff(ActiveRunwayThreshold threshold);
 

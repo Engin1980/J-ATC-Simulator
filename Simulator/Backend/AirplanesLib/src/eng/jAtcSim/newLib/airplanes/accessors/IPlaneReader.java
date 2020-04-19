@@ -12,13 +12,13 @@ import eng.jAtcSim.newLib.shared.Restriction;
 public interface IPlaneReader {
   int getAltitude();
 
-  DARoute getAssignedRoute();
-
   Callsign getCallsign();
 
   char getCategory();
 
   Coordinate getCoordinate();
+
+  Navaid getEntryExitPoint();
 
   int getHeading();
 

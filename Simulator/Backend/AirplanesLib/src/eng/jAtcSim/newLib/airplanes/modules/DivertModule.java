@@ -11,12 +11,16 @@ public class DivertModule extends Module{
   private final int[] divertAnnounceTimes = new int[]{30, 15, 10, 5};
   private final EDayTimeStamp divertTime;
   private int lastAnnouncedMinute = Integer.MAX_VALUE;
-  private boolean isPossible = true;
+  private boolean possible = true;
   private static final int MINIMAL_DIVERT_TIME_MINUTES = 45;
   private static final int MAXIMAL_DIVERT_TIME_MINUTES = 120;
 
+  public boolean isPossible() {
+    return possible;
+  }
+
   public void disable() {
-    this.isPossible = false;
+    this.possible = false;
   }
 
   private static EDayTimeStamp generateDivertTime() {
@@ -37,7 +41,7 @@ public class DivertModule extends Module{
   }
 
   private void checkForDivert() {
-    if (isPossible
+    if (possible
         && plane.isDivertable()
         && plane.getState().is(
         Airplane.State.arrivingHigh, Airplane.State.arrivingLow,

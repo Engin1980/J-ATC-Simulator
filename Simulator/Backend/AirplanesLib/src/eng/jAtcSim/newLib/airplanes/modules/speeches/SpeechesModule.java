@@ -3,6 +3,7 @@ package eng.jAtcSim.newLib.airplanes.modules.speeches;
 import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IMap;
+import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.utilites.ConversionUtils;
@@ -13,6 +14,7 @@ import eng.jAtcSim.newLib.airplanes.accessors.IPlaneInterface;
 import eng.jAtcSim.newLib.airplanes.commandApplications.ApplicationManager;
 import eng.jAtcSim.newLib.airplanes.commandApplications.ApplicationResult;
 import eng.jAtcSim.newLib.airplanes.commandApplications.ConfirmationResult;
+import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
 import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.messaging.IMessageContent;
 import eng.jAtcSim.newLib.messaging.Message;
@@ -31,8 +33,8 @@ import eng.jAtcSim.newLib.speeches.atc2airplane.afterCommands.*;
 
 public class SpeechesModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
 
-  public enum CommandSource {
-    procedure,
+  private enum CommandSource {
+    shortcutSkipped,
     atc,
     route,
     extension
@@ -41,6 +43,8 @@ public class SpeechesModule extends eng.jAtcSim.newLib.airplanes.modules.Module 
   private final DelayedList<ICommand> queue = new DelayedList<>(2, 7); //Min/max item delay
   private final IMap<AtcId, SpeechList<ISpeech>> saidText = new EMap<>();
   private final AfterCommandList afterCommands = new AfterCommandList();
+  private Navaid entryExitPoint;
+  private ActiveRunwayThreshold runwayThreshold;
 
   public SpeechesModule(IPlaneInterface plane) {
     super(plane);
@@ -48,7 +52,7 @@ public class SpeechesModule extends eng.jAtcSim.newLib.airplanes.modules.Module 
 
   public void applyShortcut(Navaid navaid) {
     SpeechList<ICommand> skippedCommands = this.afterCommands.doShortcutTo(navaid);
-    this.processSpeeches(skippedCommands, CommandSource.procedure);
+    this.processSpeeches(skippedCommands, CommandSource.shortcutSkipped);
   }
 
   @Override
@@ -57,6 +61,23 @@ public class SpeechesModule extends eng.jAtcSim.newLib.airplanes.modules.Module 
     processNewSpeeches();
     processAfterSpeeches();
     flushSaidTextToAtc();
+  }
+
+  public Navaid getEntryExitPoint() {
+    return entryExitPoint;
+  }
+
+  public ActiveRunwayThreshold getRunwayThreshold() {
+    return runwayThreshold;
+  }
+
+  public boolean hasLateralDirectionAfterCoordinate(Coordinate coordinate) {
+    EAssert.Argument.isNotNull(coordinate, "coordinate");
+    return afterCommands.hasLateralDirectionAfterCoordinate(coordinate);
+  }
+
+  public boolean isGoingToFlightOverNavaid(Navaid navaid) {
+    return afterCommands.hasProceedDirectToNavaidAsConseqent(navaid);
   }
 
   public void processNewSpeeches() {
@@ -76,21 +97,26 @@ public class SpeechesModule extends eng.jAtcSim.newLib.airplanes.modules.Module 
     }
   }
 
-  private void flushSaidTextToAtc() {
-    for (AtcId atcId : saidText.getKeys()) {
-      SpeechList<ISpeech> saidTextToAtc = saidText.get(atcId);
-      if (!saidTextToAtc.isEmpty()) {
-        plane.sendMessage(atcId, saidTextToAtc);
-        saidText.set(atcId, new SpeechList<>());
-        // here new list must be created
-        // the old one is send to messenger for further processing
-      }
-    }
+  public void setEntryExitPoint(Navaid entryExitNavaid) {
+    EAssert.Argument.isNotNull(entryExitNavaid, "entryExitNavaid");
+    this.entryExitPoint = entryExitNavaid;
+  }
+
+  public void setRouting(IReadOnlyList<ICommand> routeCommands) {
+    SpeechList<ICommand> cmds = tryExpandThenCommands(routeCommands);
+    if (cmds == null) return; // some error
+    afterCommands.clearAll();
+    processSpeeches(cmds, CommandSource.route);
+  }
+
+  public void setRunwayThreshold(ActiveRunwayThreshold activeRunwayThreshold) {
+    EAssert.Argument.isNotNull(activeRunwayThreshold, "activeRunwayThreshold");
+    this.runwayThreshold = activeRunwayThreshold;
   }
 
   private void addNewSpeeches(SpeechList<ICommand> speeches) {
     this.queue.newRandomDelay();
-    expandThenCommands(speeches);
+    tryExpandThenCommands(speeches);
     for (ICommand speech : speeches) {
       this.queue.add(speech);
     }
@@ -100,7 +126,7 @@ public class SpeechesModule extends eng.jAtcSim.newLib.airplanes.modules.Module 
   private void affectAfterCommands(ICommand cmd, CommandSource cs) {
     final Class[] lateralCommands = new Class[]{ProceedDirectCommand.class, ChangeHeadingCommand.class, HoldCommand.class};
     switch (cs) {
-      case procedure:
+      case shortcutSkipped:
         // nothing
         break;
       case route:
@@ -170,23 +196,26 @@ public class SpeechesModule extends eng.jAtcSim.newLib.airplanes.modules.Module 
     }
   }
 
-  private void expandThenCommands(SpeechList<ICommand> speeches) {
+  private SpeechList<ICommand> tryExpandThenCommands(IReadOnlyList<ICommand> speeches) {
     if (speeches.isEmpty()) {
-      return;
+      return new SpeechList<>();
     }
 
-    for (int i = 0; i < speeches.size(); i++) {
-      if (speeches.get(i) instanceof ThenCommand) {
-        if (i == 0 || i == speeches.size() - 1) {
+    SpeechList<ICommand> ret = new SpeechList<>(speeches);
+
+    for (int i = 0; i < ret.size(); i++) {
+      if (ret.get(i) instanceof ThenCommand) {
+        if (i == 0 || i == ret.size() - 1) {
           plane.sendMessage(
+              plane.getTunedAtc(),
               new IllegalThenCommandRejection(
-                  (ThenCommand) speeches.get(i),
+                  (ThenCommand) ret.get(i),
                   "{Then} command cannot be first or last in queue. The whole command block is ignored.")
           );
-          speeches.clear();
-          return;
+          ret.clear();
+          return null;
         }
-        ISpeech prev = speeches.get(i - 1);
+        ISpeech prev = ret.get(i - 1);
 
         AfterCommand n; // new
         if (prev instanceof ProceedDirectCommand) {
@@ -218,13 +247,27 @@ public class SpeechesModule extends eng.jAtcSim.newLib.airplanes.modules.Module 
           n = AfterHeadingCommand.create(cmd.getHeading());
         } else {
           plane.sendMessage(
+              plane.getTunedAtc(),
               new IllegalThenCommandRejection(
-                  (ThenCommand) speeches.get(i),
+                  (ThenCommand) ret.get(i),
                   "{Then} command is antecedent a strange command, it does not make sense. The whole command block is ignored."));
-          speeches.clear();
-          return;
+          ret.clear();
+          return null;
         }
-        speeches.set(i, n);
+        ret.set(i, n);
+      }
+    }
+    return ret;
+  }
+
+  private void flushSaidTextToAtc() {
+    for (AtcId atcId : saidText.getKeys()) {
+      SpeechList<ISpeech> saidTextToAtc = saidText.get(atcId);
+      if (!saidTextToAtc.isEmpty()) {
+        plane.sendMessage(atcId, saidTextToAtc);
+        saidText.set(atcId, new SpeechList<>());
+        // here new list must be created
+        // the old one is send to messenger for further processing
       }
     }
   }
@@ -293,7 +336,7 @@ public class SpeechesModule extends eng.jAtcSim.newLib.airplanes.modules.Module 
         cres = ApplicationManager.confirm(plane, cmd, true, false);
         if (sayConfirmations) say(cres.confirmation);
 
-        if (cs == CommandSource.procedure) {
+        if (cs == CommandSource.shortcutSkipped) {
           afterCommands.addRoute(af, cmd);
         } else
           afterCommands.addExtension(af, cmd);

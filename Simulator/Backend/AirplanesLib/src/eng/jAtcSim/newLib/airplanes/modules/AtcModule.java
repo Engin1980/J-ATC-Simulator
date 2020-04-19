@@ -2,11 +2,12 @@ package eng.jAtcSim.newLib.airplanes.modules;
 
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplanes.accessors.IPlaneInterface;
+import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.speeches.airplane2atc.GoodDayNotification;
 
 public class AtcModule extends Module {
   private static final int REPEATED_RADAR_CONTACT_REQUEST_SECONDS = 45;
-  private String atcName;
+  private AtcId atcId;
   private int secondsWithoutRadarContact = 0;
 
   public AtcModule(IPlaneInterface plane) {
@@ -27,9 +28,9 @@ public class AtcModule extends Module {
       }
   }
 
-  public void changeAtc(String atcName) {
-    EAssert.Argument.isNonemptyString(atcName);
-    this.atcName = atcName;
+  public void changeAtc(AtcId atcId) {
+    EAssert.Argument.isNotNull(atcId);
+    this.atcId = atcId;
     this.secondsWithoutRadarContact = 1;
   }
 
@@ -43,8 +44,8 @@ public class AtcModule extends Module {
     return this.secondsWithoutRadarContact;
   }
 
-  public String getTunedAtc() {
-    return this.atcName;
+  public AtcId getTunedAtc() {
+    return this.atcId;
   }
 
   public boolean hasRadarContact() {
