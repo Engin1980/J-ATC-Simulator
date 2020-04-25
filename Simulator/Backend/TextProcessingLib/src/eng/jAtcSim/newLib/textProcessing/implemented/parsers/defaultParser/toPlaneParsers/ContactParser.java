@@ -5,7 +5,7 @@ import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.jAtcSim.newLib.shared.AtcId;
-import eng.jAtcSim.newLib.shared.enums.eAtcType;
+import eng.jAtcSim.newLib.shared.enums.AtcType;
 import eng.jAtcSim.newLib.speeches.atc2airplane.ContactCommand;
 import eng.jAtcSim.newLib.textProcessing.implemented.parsers.defaultParser.LocalInstanceProvider;
 import eng.jAtcSim.newLib.textProcessing.implemented.parsers.defaultParser.common.SpeechParser;
@@ -37,10 +37,10 @@ public class ContactParser extends SpeechParser<ContactCommand> {
     if (blocks.get(1) != null){
       switch (blocks.get(1)) {
       case "CT":
-        atcId = atcs.getFirst(q->q.getAtcType() == eAtcType.ctr);
+        atcId = atcs.getFirst(q->q.getAtcType() == AtcType.ctr);
         break;
       case "CC":
-        atcId = atcs.getFirst(q->q.getAtcType() == eAtcType.twr);
+        atcId = atcs.getFirst(q->q.getAtcType() == AtcType.twr);
         break;
       default:
         throw new EEnumValueUnsupportedException(blocks.get(1));

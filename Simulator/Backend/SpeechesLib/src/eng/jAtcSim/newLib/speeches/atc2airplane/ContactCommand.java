@@ -3,7 +3,6 @@ package eng.jAtcSim.newLib.speeches.atc2airplane;
 
 
 import eng.jAtcSim.newLib.shared.AtcId;
-import eng.jAtcSim.newLib.shared.enums.eAtcType;
 import eng.jAtcSim.newLib.speeches.ICommand;
 
 /**

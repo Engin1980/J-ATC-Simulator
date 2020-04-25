@@ -19,6 +19,7 @@ public class AtcModule extends Module {
       int seconds = getAndIncreaseSecondsWithoutRadarContactIfRequired();
       if (seconds % AtcModule.REPEATED_RADAR_CONTACT_REQUEST_SECONDS == 0){
         plane.sendMessage(
+            this.getTunedAtc(),
             new GoodDayNotification(
                 plane.getCallsign(),
                 plane.getAltitude(),

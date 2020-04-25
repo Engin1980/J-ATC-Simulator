@@ -59,6 +59,7 @@ public class DivertModule extends Module{
     for (int dit : divertAnnounceTimes) {
       if (lastAnnouncedMinute > dit && minLeft < dit) {
         plane.sendMessage(
+            plane.getTunedAtc(),
             new DivertTimeNotification(minLeft));
         this.lastAnnouncedMinute = minLeft;
         break;
@@ -67,7 +68,7 @@ public class DivertModule extends Module{
   }
 
   private int getMinutesLeft() {
-    int diff = divertTime.getTotalMinutes() - GAcc.getNow().getTotalMinutes();
+    int diff = (int) Math.ceil((divertTime.getValue() - GAcc.getNow().getValue()) / 60d);
     return diff;
   }
 

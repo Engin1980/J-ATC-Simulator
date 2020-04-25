@@ -47,11 +47,11 @@ public interface IPlaneWriter {
 
   void reportDivertTimeLeft();
 
-default void sendMessage(AtcId atcId, ISpeech speech){
-  SpeechList<ISpeech> speeches = new SpeechList<>();
-  speeches.add(speech);
-  sendMessage(atcId, speeches);
-}
+  default void sendMessage(AtcId atcId, ISpeech speech){
+    SpeechList<ISpeech> speeches = new SpeechList<>();
+    speeches.add(speech);
+    sendMessage(atcId, speeches);
+  }
 
   void sendMessage(AtcId atcId, SpeechList<ISpeech> iSpeeches);
 

@@ -32,7 +32,9 @@ public abstract class BasicPilot extends Pilot {
       if (!clearanceLimitWarningSent
           && dist < warningDistance
           && !plane.hasLateralDirectionAfterCoordinate()) {
-        plane.sendMessage(new PassingClearanceLimitNotification());
+        plane.sendMessage(
+            plane.getTunedAtc(),
+            new PassingClearanceLimitNotification());
         clearanceLimitWarningSent = true;
       } else if (dist < overNavaidDistance) {
         if (plane.isArrival() == false) {
@@ -41,7 +43,7 @@ public abstract class BasicPilot extends Pilot {
           if (dist < 1.5) {
             int rad = (int) Coordinates.getBearing(LAcc.getAirport().getLocation(), n.getCoordinate());
             rad = rad % 90;
-            plane.startHolding(plane, n, rad, LeftRight.left);
+            plane.startHolding(n, rad, LeftRight.left);
             return;
           }
         } else {

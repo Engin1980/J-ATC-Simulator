@@ -7,35 +7,29 @@
 package eng.jAtcSim.newLib.area;
 
 import eng.eSystem.validation.EAssert;
+import eng.jAtcSim.newLib.shared.enums.AtcType;
 
 /**
  * @author Marek
  */
 public class Atc {
 
-  public enum eType {
-    gnd,
-    twr,
-    app,
-    ctr
-  }
-
-  public static Atc create(String name, eType type, double frequency, int acceptAltitude, int releaseAltitude, int orderedAltitude, Integer ctrAcceptDistance, Integer ctrNavaidAcceptDistance) {
+  public static Atc create(String name, AtcType type, double frequency, int acceptAltitude, int releaseAltitude, int orderedAltitude, Integer ctrAcceptDistance, Integer ctrNavaidAcceptDistance) {
     Atc ret = new Atc(name, type, frequency, acceptAltitude, releaseAltitude, orderedAltitude,
         ctrAcceptDistance, ctrNavaidAcceptDistance);
     return ret;
   }
 
-  private Atc.eType type;
-  private String name;
-  private double frequency;
-  private int acceptAltitude;
-  private int releaseAltitude;
-  private int orderedAltitude;
-  private Integer ctrAcceptDistance;
-  private Integer ctrNavaidAcceptDistance;
+  private final AtcType type;
+  private final String name;
+  private final double frequency;
+  private final int acceptAltitude;
+  private final int releaseAltitude;
+  private final int orderedAltitude;
+  private final Integer ctrAcceptDistance;
+  private final Integer ctrNavaidAcceptDistance;
 
-  private Atc(String name, eType type, double frequency, int acceptAltitude, int releaseAltitude, int orderedAltitude, Integer ctrAcceptDistance, Integer ctrNavaidAcceptDistance) {
+  private Atc(String name, AtcType type, double frequency, int acceptAltitude, int releaseAltitude, int orderedAltitude, Integer ctrAcceptDistance, Integer ctrNavaidAcceptDistance) {
     EAssert.Argument.isNotNull(name);
     EAssert.Argument.isTrue(frequency > 100 && frequency < 150);
     EAssert.Argument.isTrue(acceptAltitude > 0);
@@ -80,7 +74,7 @@ public class Atc {
     return releaseAltitude;
   }
 
-  public Atc.eType getType() {
+  public AtcType getType() {
     return type;
   }
 

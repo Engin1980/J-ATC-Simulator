@@ -26,6 +26,8 @@ import eng.jAtcSim.newLib.area.approaches.Approach;
 import eng.jAtcSim.newLib.area.approaches.ApproachEntry;
 import eng.jAtcSim.newLib.area.routes.DARoute;
 import eng.jAtcSim.newLib.area.routes.IafRoute;
+import eng.jAtcSim.newLib.messaging.Message;
+import eng.jAtcSim.newLib.messaging.Participant;
 import eng.jAtcSim.newLib.mood.Mood;
 import eng.jAtcSim.newLib.shared.*;
 import eng.jAtcSim.newLib.shared.enums.DARouteType;
@@ -299,14 +301,18 @@ public class Airplane {
     }
 
     @Override
-    public void sendMessage(AtcId atcId, SpeechList<ISpeech> iSpeeches) {
-throw new ToDoException(); bubla toto error blbý
+    public void sendMessage(AtcId atcId, SpeechList<ISpeech> speechList) {
+      Message m = new Message(
+          Participant.createAirplane(this.getCallsign()),
+          Participant.createAtc(this.getTunedAtc()),
+          speechList);
+      LAcc.getMessenger().send(m);
     }
 
     @Override
     public void setAltitudeRestriction(Restriction restriction) {
       EAssert.Argument.isNotNull(restriction, "restriction");
-Airplane.this.sha.setAltitudeRestriction(restriction);
+      Airplane.this.sha.setAltitudeRestriction(restriction);
     }
 
     @Override
@@ -330,7 +336,7 @@ Airplane.this.sha.setAltitudeRestriction(restriction);
     @Override
     public void setTargetCoordinate(Coordinate coordinate) {
       EAssert.Argument.isNotNull(coordinate, "coordinate");
-Airplane.this.sha.setNavigator(new ToCoordinateNavigator(coordinate));
+      Airplane.this.sha.setNavigator(new ToCoordinateNavigator(coordinate));
     }
 
     @Override
@@ -384,7 +390,7 @@ Airplane.this.sha.setTargetSpeed(speed);
     @Override
     public void tuneAtc(AtcId atcId) {
       EAssert.Argument.isNotNull(atcId, "atcId");
-Airplane.this.atcModule.changeAtc(atcId);
+      Airplane.this.atcModule.changeAtc(atcId);
     }
 
     private void setPilotAndState(Pilot pilot, State state) {

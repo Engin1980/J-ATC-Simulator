@@ -26,7 +26,9 @@ public class ContactCommandApplication extends CommandApplication<ContactCommand
         plane.getTargetAltitude(),
         plane.isEmergency(),
         false);
-    plane.sendMessage(s);
+    plane.sendMessage(
+        plane.getTunedAtc(),
+        s);
     //TODO when everything is done, I should update this to report ga-reason to the newly switched atc
     throw new ToDoException();
 //    if (plane.getFlightModule().isArrival())
