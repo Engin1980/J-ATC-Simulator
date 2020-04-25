@@ -46,7 +46,7 @@ public class Atc {
 
   public abstract void registerNewPlaneUnderControl(IAirplane4Atc plane, boolean initialRegistration);
 
-  protected PlaneResponsibilityManager.PlaneResponsibilityManagerForAtc getPrm(){
+  protected PlaneResponsibilityManager.PlaneResponsibilityManagerForAtc getPrm() {
     return Acc.prm().forAtc();
   }
 
@@ -90,7 +90,8 @@ public class Atc {
   }
 
   private AtcId atcId = null;
-  public AtcId getAtcId(){
+
+  public AtcId getAtcId() {
     if (atcId == null)
       this.atcId = new AtcId(this.name, this.frequency, this.type);
     return this.atcId;
@@ -101,7 +102,7 @@ public class Atc {
     return this.name;
   }
 
-  protected void sendMessage(Message msg){
+  protected void sendMessage(Message msg) {
     LAcc.getMessenger().send(msg);
     recorder.write(msg);
   }
