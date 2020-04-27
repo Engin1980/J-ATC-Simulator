@@ -4,7 +4,7 @@ import eng.jAtcSim.newLib.messaging.Message;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.enums.AtcType;
 
-public class Atc {
+public abstract class Atc {
 
   private final AtcType type;
 
@@ -45,10 +45,6 @@ public class Atc {
   public abstract void removePlaneDeletedFromGame(IAirplane4Atc plane);
 
   public abstract void registerNewPlaneUnderControl(IAirplane4Atc plane, boolean initialRegistration);
-
-  protected PlaneResponsibilityManager.PlaneResponsibilityManagerForAtc getPrm() {
-    return Acc.prm().forAtc();
-  }
 
   public Atc(eng.jAtcSim.newLib.area.Atc template) {
     this.type = template.getType();

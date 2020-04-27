@@ -55,7 +55,7 @@ public abstract class ComputerAtc extends Atc {
   }
 
   private void switchConfirmedPlanesIfReady() {
-    IReadOnlyList<IAirplane4Atc> planes = getPrm().getConfirmedSwitchesByAtc(this, true);
+    IReadOnlyList<IAirplane4Atc> planes = LAcc.getPrm().getConfirmedSwitchesByAtc(this, true);
     for (IAirplane4Atc plane : planes) {
       if (this.shouldBeSwitched(plane))
         this.applySwitchHangOff(plane);

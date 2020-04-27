@@ -5,7 +5,7 @@ import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.Callsign;
 
 public class AirplaneResponsibilityInfo {
-  private Callsign plane;
+  private final Callsign plane;
   private AtcId atc;
   private SwitchRequest switchRequest;
 

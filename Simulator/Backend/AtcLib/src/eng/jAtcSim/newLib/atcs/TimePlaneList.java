@@ -8,6 +8,7 @@ package eng.jAtcSim.newLib.atcs;
 
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
+import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.time.ETime;
 
 /**
@@ -15,18 +16,18 @@ import eng.jAtcSim.newLib.shared.time.ETime;
  * @author Marek
  */
 public class TimePlaneList  {
-  private IList<TimeItem> inner = new EList<>();
+  private final IList<TimeItem> inner = new EList<>();
   
-  public void add (ETime time, Airplane plane){
+  public void add (ETime time, Callsign plane){
     inner.add(new TimeItem(plane, time)); 
   }
 }
 
 class TimeItem{
-  public final Airplane plane;
+  public final Callsign plane;
   public final ETime time;
 
-  public TimeItem(Airplane plane, ETime time) {
+  public TimeItem(Callsign plane, ETime time) {
     this.plane = plane;
     this.time = time;
   }
