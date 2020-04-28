@@ -2,6 +2,7 @@ package eng.jAtcSim.newLib.atcs;
 
 import eng.jAtcSim.newLib.messaging.Message;
 import eng.jAtcSim.newLib.shared.AtcId;
+import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.enums.AtcType;
 
 public abstract class Atc {
@@ -40,11 +41,11 @@ public abstract class Atc {
 //  protected abstract void _save(XElement elm);
 //  protected abstract void _load(XElement elm);
 
-  public abstract void unregisterPlaneUnderControl(IAirplane4Atc plane);
+  public abstract void unregisterPlaneUnderControl(Callsign plane);
 
-  public abstract void removePlaneDeletedFromGame(IAirplane4Atc plane);
+  public abstract void removePlaneDeletedFromGame(Callsign plane);
 
-  public abstract void registerNewPlaneUnderControl(IAirplane4Atc plane, boolean initialRegistration);
+  public abstract void registerNewPlaneUnderControl(Callsign plane, boolean initialRegistration);
 
   public Atc(eng.jAtcSim.newLib.area.Atc template) {
     this.type = template.getType();

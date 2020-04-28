@@ -5,12 +5,18 @@
  */
 package eng.jAtcSim.newLib.atcs.planeResponsibility;
 
+import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.validation.EAssert;
+import eng.jAtcSim.newLib.atcs.Atc;
+import eng.jAtcSim.newLib.atcs.IAirplane4Atc;
+import eng.jAtcSim.newLib.atcs.LAcc;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.GAcc;
+import eng.jAtcSim.newLib.shared.enums.AtcType;
+import eng.jAtcSim.newLib.shared.exceptions.ToDoException;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
@@ -44,54 +50,58 @@ public class PlaneResponsibilityManager {
       tmp = tmp.where(q -> q.getSwitchRequest() != null
           && q.getAtc() == sender
           && q.getSwitchRequest().isConfirmed() == false
-          && q.getSwitchRequest().getRepeatRequestTime().isBefore(GAcc.getNow()));
+          && q.getSwitchRequest().getRepeatRequestTime().isBefore(GAcc.getNow().toStamp()));
       tmp.forEach(q -> q.getSwitchRequest().updateLastRequestTime());
       IReadOnlyList<Callsign> ret = tmp.select(q -> q.getPlane());
       return ret;
     }
 
-    public void createSwitchRequest(AtcId sender, AtcId targetAtc, Callsign plane) {
+    public void createSwitchRequest(AtcId sender, AtcId targetAtc, Callsign callsign) {
       EAssert.Argument.isNotNull(sender);
       EAssert.Argument.isNotNull(targetAtc);
-      EAssert.Argument.isNotNull(plane);
+      EAssert.Argument.isNotNull(callsign);
 
-      AirplaneResponsibilityInfo ai = dao.get(plane);
+      AirplaneResponsibilityInfo ai = dao.get(callsign);
+
+      IAirplane4Atc plane = LAcc.getPlane(ai.getPlane());
+      Atc atc = LAcc.getAtc(ai.getAtc());
 
       // auto-cancel
-      if (ai.getAtc() == targetAtc && ai.getPlane().getAtcModule().getTunedAtc() == sender) {
+      if (ai.getAtc() == targetAtc && plane.getTunedAtc() == sender) {
         ai.setAtc(sender);
         ai.setSwitchRequest(null);
         return;
       }
 
       if (ai.getSwitchRequest() != null)
-        throw new EApplicationException("Airplane " + plane.getFlightModule().getCallsign() + " is already under request switch from "
-            + ai.getAtc().getType().toString() + " to " + ai.getSwitchRequest().getAtc().getType().toString() + ".");
+        throw new EApplicationException("Airplane " + plane.getCallsign() + " is already under request switch from "
+            + atc.getType().toString() + " to " + ai.getSwitchRequest().getAtc().getAtcType().toString() + ".");
       if (ai.getAtc() != sender)
-        throw new EApplicationException("Airplane " + plane.getFlightModule().getCallsign()
+        throw new EApplicationException("Airplane " + plane.getCallsign()
             + " is requested to be switched from incorrect atc. Current is "
-            + ai.getAtc().getType().toString() + ", requested from is " + sender.getType().toString() + ".");
+            + atc.getType().toString() + ", requested from is " + sender.getAtcType().toString() + ".");
 
-      if ((sender.getType() == Atc.eType.ctr || sender.getType() == Atc.eType.twr) && targetAtc.getType() != Atc.eType.app)
+      if ((sender.getAtcType() == AtcType.ctr || sender.getAtcType() == AtcType.twr)
+          && targetAtc.getAtcType() != AtcType.app)
         throw new EApplicationException("Invalid request direction.");
 
       SwitchRequest sr = new SwitchRequest(targetAtc);
       ai.setSwitchRequest(sr);
     }
 
-    public IReadOnlyList<IAirplane4Atc> getConfirmedSwitchesByAtc(AtcId sender, boolean excludeWithRerouting) {
+    public IReadOnlyList<Callsign> getConfirmedSwitchesByAtc(AtcId sender, boolean excludeWithRerouting) {
       IReadOnlyList<AirplaneResponsibilityInfo> tmp = dao.getByAtc(sender);
        tmp = tmp
           .where(q -> q.getSwitchRequest() != null && q.getSwitchRequest().isConfirmed());
        if (excludeWithRerouting)
          tmp = tmp.where(q->q.getSwitchRequest().getRouting() == null);
-      IList<IAirplane4Atc> ret = tmp.select(q->q.getPlane());
+      IList<Callsign> ret = tmp.select(q->q.getPlane());
       return ret;
 
     }
 
-    public void confirmSwitchRequest(Callsign plane, AtcId targetAtc, @Nullable SwitchRoutingRequest updatedRoutingIfRequired) {
-      AirplaneResponsibilityInfo ai = dao.get(plane);
+    public void confirmSwitchRequest(Callsign callsign, AtcId targetAtc, SwitchRoutingRequest updatedRoutingIfRequired) {
+      AirplaneResponsibilityInfo ai = dao.get(callsign);
       if (ai.getSwitchRequest() == null || ai.getSwitchRequest().getAtc() != targetAtc) { // probably canceled
         return;
       }
@@ -99,8 +109,8 @@ public class PlaneResponsibilityManager {
       sr.setConfirmed(updatedRoutingIfRequired);
     }
 
-    public void rejectSwitchRequest(Callsign plane, AtcId targetAtc) {
-      AirplaneResponsibilityInfo ai = dao.get(plane);
+    public void rejectSwitchRequest(Callsign callsign, AtcId targetAtc) {
+      AirplaneResponsibilityInfo ai = dao.get(callsign);
       if (ai.getSwitchRequest() == null || ai.getSwitchRequest().getAtc() != targetAtc) { // probably canceled
         return;
       }
@@ -112,28 +122,33 @@ public class PlaneResponsibilityManager {
       ai.setSwitchRequest(null);
     }
 
-    public void applyConfirmedSwitch(AtcId sender, Callsign plane) {
-      AirplaneResponsibilityInfo ai = dao.get(plane);
+    public void applyConfirmedSwitch(AtcId sender, Callsign callsign) {
+      AirplaneResponsibilityInfo ai = dao.get(callsign);
       if (ai.getSwitchRequest() == null || ai.getAtc() != sender) { // probably canceled
         return;
       }
       SwitchRequest sr = ai.getSwitchRequest();
 
-      ai.getAtc().unregisterPlaneUnderControl(plane);
+      Atc atc;
+
+      atc = LAcc.getAtc(ai.getAtc());
+      atc.unregisterPlaneUnderControl(callsign);
       ai.setAtc(sr.getAtc());
-      ai.getAtc().registerNewPlaneUnderControl(plane, false);
+
+      atc = LAcc.getAtc(ai.getAtc());
+      atc.registerNewPlaneUnderControl(callsign, false);
       ai.setSwitchRequest(null);
     }
 
-    public SwitchRoutingRequest getRoutingForSwitchRequest(AtcId sender, Callsign plane) {
-      AirplaneResponsibilityInfo ari = dao.get(plane);
+    public SwitchRoutingRequest getRoutingForSwitchRequest(AtcId sender, Callsign callsign) {
+      AirplaneResponsibilityInfo ari = dao.get(callsign);
       SwitchRequest sr = ari.getSwitchRequest();
       SwitchRoutingRequest srr = sr.getRouting();
       return srr;
     }
 
-    public void resetSwitchRequest(AtcId sender, Callsign plane) {
-      AirplaneResponsibilityInfo ari = dao.get(plane);
+    public void resetSwitchRequest(AtcId sender, Callsign callsign) {
+      AirplaneResponsibilityInfo ari = dao.get(callsign);
       SwitchRequest sr = ari.getSwitchRequest();
 
       assert ari.getAtc() == sender;
@@ -141,20 +156,21 @@ public class PlaneResponsibilityManager {
       sr.reset();
     }
 
-    public void confirmRerouting(AtcId sender, Callsign plane) {
-      AirplaneResponsibilityInfo ari = dao.get(plane);
+    public void confirmRerouting(AtcId sender, Callsign callsign) {
+      AirplaneResponsibilityInfo ari = dao.get(callsign);
       SwitchRequest sr = ari.getSwitchRequest();
 
       assert ari.getAtc() == sender;
 
-      SwitchRoutingRequest srr = sr.getRouting();
-      Airplane fullPlane = PlaneResponsibilityManager.this.getPlanes().getFirst(q->q == plane);
-      fullPlane.getAdvanced().setRouting(srr.route, srr.threshold);
-      sr.deleteConfirmedRouting();
+      //FIXME update this
+      throw new ToDoException("This must be rewritten without usage of writing to plane.");
+//      SwitchRoutingRequest srr = sr.getRouting();
+//      Airplane fullPlane = PlaneResponsibilityManager.this.getPlanes().getFirst(q->q == callsign);
+//      fullPlane.getAdvanced().setRouting(srr.route, srr.threshold);
+//      sr.deleteConfirmedRouting();
     }
   }
 
-  @XmlIgnore
   private PlaneResponsibilityManagerForAtc forAtc = new PlaneResponsibilityManagerForAtc();
   private PlaneResponsibilityDAO dao = new PlaneResponsibilityDAO();
 
@@ -165,42 +181,46 @@ public class PlaneResponsibilityManager {
     return this.forAtc;
   }
 
-  public void init() {
-    dao.init();
-  }
-
-  public AtcId getResponsibleAtc(Callsign plane) {
-    Atc ret;
-    AirplaneResponsibilityInfo ai = dao.get(plane);
+  public AtcId getResponsibleAtc(Callsign callsign) {
+    AtcId ret;
+    AirplaneResponsibilityInfo ai = dao.get(callsign);
     ret = ai.getAtc();
     return ret;
   }
 
-  public void registerNewPlane(AtcId atc, Callsign plane) {
-    if (dao.getAll().isAny(q -> q.getPlane() == plane)) {
-      throw new EApplicationException(sf("Second registration of already registered plane %s!", plane.getFlightModule().getCallsign()));
+  public void registerNewPlane(AtcId atcId, Callsign callsign) {
+    if (dao.getAll().isAny(q -> q.getPlane() == callsign)) {
+      throw new EApplicationException(sf(
+          "Second registration of already registered plane %s!",
+          callsign));
     }
 
-    dao.add(new AirplaneResponsibilityInfo(plane, atc));
-    atc.registerNewPlaneUnderControl(plane, true);
+    dao.add(new AirplaneResponsibilityInfo(callsign, atcId));
+
+    Atc atc = LAcc.getAtc(atcId);
+    atc.registerNewPlaneUnderControl(callsign, true);
   }
 
-  public void unregisterPlane(Callsign plane) {
-    AirplaneResponsibilityInfo ai = dao.getAll().tryGetFirst(q -> q.getPlane() == plane);
+  public void unregisterPlane(Callsign callsign) {
+    AirplaneResponsibilityInfo ai = dao.getAll().tryGetFirst(q -> q.getPlane() == callsign);
     if (ai == null) {
-      throw new EApplicationException(sf("Plane %s is not registered, cannot be unregistered!", plane.getFlightModule().getCallsign()));
+      throw new EApplicationException(sf(
+          "Plane %s is not registered, cannot be unregistered!",
+          callsign));
     }
     dao.remove(ai);
-    ai.getAtc().removePlaneDeletedFromGame(plane);
+
+    Atc atc = LAcc.getAtc(ai.getAtc());
+    atc.removePlaneDeletedFromGame(callsign);
 //    Acc.atcApp().removePlaneDeletedFromGame(plane);
 //    Acc.atcTwr().removePlaneDeletedFromGame(plane);
 //    Acc.atcCtr().removePlaneDeletedFromGame(plane);
   }
 
-  public IReadOnlyList<Airplane.Airplane4Display> getPlanesToDisplay() {
-    IReadOnlyList<Airplane.Airplane4Display> ret = dao.getDisplays();
-    return ret;
-  }
+//  public IReadOnlyList<Airplane.Airplane4Display> getPlanesToDisplay() {
+//    IReadOnlyList<Airplane.Airplane4Display> ret = dao.getDisplays();
+//    return ret;
+//  }
 
   public IReadOnlyList<Callsign> getPlanes() {
     return dao.getAll().select(q -> q.getPlane());

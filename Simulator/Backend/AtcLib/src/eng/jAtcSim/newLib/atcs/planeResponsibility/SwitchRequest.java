@@ -2,12 +2,13 @@ package eng.jAtcSim.newLib.atcs.planeResponsibility;
 
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.GAcc;
+import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 import eng.jAtcSim.newLib.shared.time.ETime;
 
 public class SwitchRequest {
-  private ETime creationTime;
+  private EDayTimeStamp creationTime;
   private AtcId atc;
-  private ETime repeatRequestTime;
+  private EDayTimeStamp repeatRequestTime;
   private ETime confirmedTime = null;
   private SwitchRoutingRequest routing;
 
@@ -26,11 +27,11 @@ public class SwitchRequest {
     return routing;
   }
 
-  public ETime getRepeatRequestTime() {
+  public EDayTimeStamp getRepeatRequestTime() {
     return repeatRequestTime;
   }
 
-  public ETime getCreationTime() {
+  public EDayTimeStamp getCreationTime() {
     return creationTime;
   }
 
