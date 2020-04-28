@@ -7,6 +7,7 @@ import eng.eSystem.exceptions.EApplicationException;
 import eng.jAtcSim.newLib.messaging.Message;
 import eng.jAtcSim.newLib.messaging.Participant;
 import eng.jAtcSim.newLib.messaging.StringMessageContent;
+import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.DelayedList;
 import eng.jAtcSim.newLib.shared.enums.AtcType;
 import eng.jAtcSim.newLib.speeches.SpeechList;
@@ -55,8 +56,8 @@ public abstract class ComputerAtc extends Atc {
   }
 
   private void switchConfirmedPlanesIfReady() {
-    IReadOnlyList<IAirplane4Atc> planes = LAcc.getPrm().getConfirmedSwitchesByAtc(this, true);
-    for (IAirplane4Atc plane : planes) {
+    IReadOnlyList<Callsign> planes = LAcc.getPrm().forAtc().getConfirmedSwitchesByAtc(this.getAtcId(), true);
+    for (Callsign plane : planes) {
       if (this.shouldBeSwitched(plane))
         this.applySwitchHangOff(plane);
     }
@@ -67,14 +68,14 @@ public abstract class ComputerAtc extends Atc {
       try {
         recorder.write(m); // incoming item
 
-        if (m.isSourceOfType(IAirplane4Atc.class)) {
+        if (m.getSource().getType() == Participant.eType.airplane) {
           // messages from planes
-          IAirplane4Atc p = m.getSource();
+          Callsign callsign = new Callsign(m.getSource().getId());
           SpeechList spchs = m.getContent();
 
           if (spchs.containsType(GoodDayNotification.class))
-            confirmGoodDayNotificationIfRequired(p, spchs);
-          processMessagesFromPlane(p, spchs);
+            confirmGoodDayNotificationIfRequired(callsign, spchs);
+          processMessagesFromPlane(callsign, spchs);
         } else if (m.getSource().getType() == Participant.eType.atc) {
           elapseSecondProcessMessageFromAtc(m);
         }
@@ -82,7 +83,7 @@ public abstract class ComputerAtc extends Atc {
         throw new EApplicationException(sf(
             "Failed to process a message for Atc. Atc: %s. Message from %s. Message itself: %s.",
             this.getName(),
-            m.getSource().getName(),
+            m.getSource().getId(),
             m.toString()), ex);
       }
     }
@@ -145,18 +146,18 @@ public abstract class ComputerAtc extends Atc {
 
   protected abstract void processNonPlaneSwitchMessageFromAtc(Message m);
 
-  protected abstract boolean shouldBeSwitched(IAirplane4Atc plane);
+  protected abstract boolean shouldBeSwitched(Callsign plane);
 
   protected abstract RequestResult canIAcceptPlane(IAirplane4Atc p);
 
-  private void confirmGoodDayNotificationIfRequired(IAirplane4Atc p, SpeechList spchs) {
+  private void confirmGoodDayNotificationIfRequired(Callsign p, SpeechList spchs) {
     IList<GoodDayNotification> gdns = spchs.where(q -> q instanceof GoodDayNotification);
     // todo implement directly into if without gdns variable
     gdns = gdns.where(q -> q.isRepeated() == false);
     if (gdns.isEmpty() == false) {
       SpeechList lst = new SpeechList();
       lst.add(new RadarContactConfirmationNotification());
-      if (getPrm().getResponsibleAtc(p) != this) {
+      if (LAcc.getPrm().forAtc().getResponsibleAtc(p) != this) {
         lst.add(new ContactCommand(AtcType.app));
       }
       Message msg = new Message(this, p, lst);
@@ -210,7 +211,7 @@ public abstract class ComputerAtc extends Atc {
     sendMessage(m);
   }
 
-  private void applySwitchHangOff(IAirplane4Atc plane) {
+  private void applySwitchHangOff(Callsign plane) {
     getPrm().applyConfirmedSwitch(this, plane);
     Atc newTargetAtc = getPrm().getResponsibleAtc(plane);
     Message msg = new Message(this, plane,

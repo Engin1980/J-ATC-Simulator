@@ -9,18 +9,10 @@ import eng.jAtcSim.newLib.shared.InstanceProviderDictionary;
 import eng.jAtcSim.newLib.shared.exceptions.ToDoException;
 
 public class LAcc {
-  public static Atc getAtc(AtcId atcId) {
-    EAssert.Argument.isNotNull(atcId, "atcId");
-    throw new ToDoException();
-  }
+
 
   public static Messenger getMessenger() {
     return InstanceProviderDictionary.getInstance(Messenger.class);
-  }
-
-  public static IAirplane4Atc getPlane(Callsign callsign) {
-    EAssert.Argument.isNotNull(callsign, "callsign");
-    throw new ToDoException();
   }
 
   public static PlaneResponsibilityManager getPrm(){
