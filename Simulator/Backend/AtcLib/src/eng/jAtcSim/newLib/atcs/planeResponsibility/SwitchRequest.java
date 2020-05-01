@@ -9,7 +9,7 @@ public class SwitchRequest {
   private EDayTimeStamp creationTime;
   private AtcId atc;
   private EDayTimeStamp repeatRequestTime;
-  private ETime confirmedTime = null;
+  private EDayTimeStamp confirmedTime = null;
   private SwitchRoutingRequest routing;
 
   public void setConfirmed(SwitchRoutingRequest newRoutingIfRequired) {
@@ -52,7 +52,7 @@ public class SwitchRequest {
     this.atc = oldAtc;
   }
 
-  public ETime getConfirmedTime() {
+  public EDayTimeStamp getConfirmedTime() {
     return confirmedTime;
   }
 

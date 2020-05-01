@@ -11,7 +11,7 @@ import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.atcs.Atc;
 import eng.jAtcSim.newLib.atcs.IAirplane4Atc;
-import eng.jAtcSim.newLib.atcs.LAcc;
+import eng.jAtcSim.newLib.atcs.XAcc;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.GAcc;
@@ -63,8 +63,8 @@ public class PlaneResponsibilityManager {
 
       AirplaneResponsibilityInfo ai = dao.get(callsign);
 
-      IAirplane4Atc plane = LAcc.getPlane(ai.getPlane());
-      Atc atc = LAcc.getAtc(ai.getAtc());
+      IAirplane4Atc plane = XAcc.getPlane(ai.getPlane());
+      Atc atc = XAcc.getAtc(ai.getAtc());
 
       // auto-cancel
       if (ai.getAtc() == targetAtc && plane.getTunedAtc() == sender) {
@@ -131,11 +131,11 @@ public class PlaneResponsibilityManager {
 
       Atc atc;
 
-      atc = LAcc.getAtc(ai.getAtc());
+      atc = XAcc.getAtc(ai.getAtc());
       atc.unregisterPlaneUnderControl(callsign);
       ai.setAtc(sr.getAtc());
 
-      atc = LAcc.getAtc(ai.getAtc());
+      atc = XAcc.getAtc(ai.getAtc());
       atc.registerNewPlaneUnderControl(callsign, false);
       ai.setSwitchRequest(null);
     }
@@ -197,7 +197,7 @@ public class PlaneResponsibilityManager {
 
     dao.add(new AirplaneResponsibilityInfo(callsign, atcId));
 
-    Atc atc = LAcc.getAtc(atcId);
+    Atc atc = XAcc.getAtc(atcId);
     atc.registerNewPlaneUnderControl(callsign, true);
   }
 
@@ -210,7 +210,7 @@ public class PlaneResponsibilityManager {
     }
     dao.remove(ai);
 
-    Atc atc = LAcc.getAtc(ai.getAtc());
+    Atc atc = XAcc.getAtc(ai);
     atc.removePlaneDeletedFromGame(callsign);
 //    Acc.atcApp().removePlaneDeletedFromGame(plane);
 //    Acc.atcTwr().removePlaneDeletedFromGame(plane);
