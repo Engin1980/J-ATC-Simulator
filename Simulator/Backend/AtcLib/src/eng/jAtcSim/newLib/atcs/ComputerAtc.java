@@ -104,7 +104,7 @@ public abstract class ComputerAtc extends Atc {
     }
   }
 
-  protected abstract boolean acceptsNewRouting(IAirplane4Atc plane, SwitchRoutingRequest srr);
+  protected abstract boolean acceptsNewRouting(Callsign callsign, SwitchRoutingRequest srr);
 
   private void processPlaneSwitchMessage(Message m) {
     PlaneResponsibilityManager prm = LAcc.getPrm();
@@ -119,7 +119,7 @@ public abstract class ComputerAtc extends Atc {
       if (srr != null) {
         // the other ATC tries to change plane routing, we can check in and reject it if required
         if (acceptsNewRouting(callsign, srr) == false)
-          rejectChangedRouting(callsign, targetAtc);
+          rejectChangedRouting(callsign, targetAtc.getAtcId());
         else
           prm.forAtc().confirmRerouting(this.getAtcId(), callsign);
       }
@@ -164,7 +164,7 @@ public abstract class ComputerAtc extends Atc {
 
   protected abstract boolean shouldBeSwitched(Callsign plane);
 
-  protected abstract RequestResult canIAcceptPlane(IAirplane4Atc p);
+  protected abstract RequestResult canIAcceptPlane(Callsign callsign);
 
   private void confirmGoodDayNotificationIfRequired(Callsign p, SpeechList spchs) {
     IList<GoodDayNotification> gdns = spchs.where(q -> q instanceof GoodDayNotification);
@@ -209,9 +209,11 @@ public abstract class ComputerAtc extends Atc {
   protected abstract Atc getTargetAtcIfPlaneIsReadyToSwitch(Callsign callsign);
 
   private void repeatOldSwitchRequests() {
-    IReadOnlyList<IAirplane4Atc> awaitings = getPrm().getSwitchRequestsToRepeatByAtc(this);
-    for (IAirplane4Atc p : awaitings) {
-      if (speechDelayer.isAny(q -> q.getContent() instanceof PlaneSwitchMessage && ((PlaneSwitchMessage) q.getContent()).plane.equals(p)))
+    PlaneResponsibilityManager prm = LAcc.getPrm();
+    IReadOnlyList<Callsign> awaitings = prm.forAtc().getSwitchRequestsToRepeatByAtc(this.getAtcId());
+    for (Callsign p : awaitings) {
+      if (speechDelayer
+          .isAny(q -> q.getContent() instanceof PlaneSwitchMessage && ((PlaneSwitchMessage) q.getContent()).plane.equals(p)))
         continue; // if message about this plane is delayed and waiting to process
       Message m = new Message(this, Acc.atcApp(),
           new PlaneSwitchMessage(p, PlaneSwitchMessage.eMessageType.request, "(repeated)"));
@@ -227,12 +229,15 @@ public abstract class ComputerAtc extends Atc {
     sendMessage(m);
   }
 
-  private void applySwitchHangOff(Callsign plane) {
-    getPrm().applyConfirmedSwitch(this, plane);
-    Atc newTargetAtc = getPrm().getResponsibleAtc(plane);
-    Message msg = new Message(this, plane,
+  private void applySwitchHangOff(Callsign callsign) {
+    PlaneResponsibilityManager prm = LAcc.getPrm();
+    prm.forAtc().applyConfirmedSwitch(this.getAtcId(), callsign);
+    AtcId newTargetAtc = prm.getResponsibleAtc(callsign);
+    Message msg = new Message(
+        Participant.createAtc(this.getAtcId()),
+        Participant.createAirplane(callsign),
         new SpeechList<>(
-            new ContactCommand(newTargetAtc.getType())));
+            new ContactCommand(newTargetAtc)));
     LAcc.getMessenger().send(msg);
   }
 
