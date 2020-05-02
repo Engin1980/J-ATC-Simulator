@@ -17,7 +17,7 @@ import eng.jAtcSim.newLib.messaging.Participant;
 import eng.jAtcSim.newLib.messaging.StringMessageContent;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.Callsign;
-import eng.jAtcSim.newLib.shared.GAcc;
+import eng.jAtcSim.newLib.shared.SharedAcc;
 import eng.jAtcSim.newLib.shared.enums.AtcType;
 import eng.jAtcSim.newLib.shared.enums.DARouteType;
 import eng.jAtcSim.newLib.speeches.ICommand;
@@ -47,7 +47,7 @@ public class CenterAtc extends ComputerAtc {
   public void elapseSecond() {
     super.elapseSecond();
 
-    if (GAcc.getNow().getValue() % 16 == 0) {
+    if (SharedAcc.getNow().getValue() % 16 == 0) {
       double dist;
 
       IList<IAirplane4Atc> tmp = new EList<>();
@@ -67,7 +67,7 @@ public class CenterAtc extends ComputerAtc {
         dist = Coordinates.getDistanceInNM(plane.getEntryExitPoint().getCoordinate(), plane.getCoordinate());
         if (dist < 50) {
           if (plane.getAltitude() > 29_000) {
-            int newAlt = GAcc.getRnd().nextInt(25, 29) * 1_000;
+            int newAlt = SharedAcc.getRnd().nextInt(25, 29) * 1_000;
             SpeechList sl = new SpeechList();
             sl.add(ChangeAltitudeCommand.create(ChangeAltitudeCommand.eDirection.descend, newAlt));
             Message m = new Message(
@@ -207,7 +207,7 @@ public class CenterAtc extends ComputerAtc {
         throw new UnsupportedOperationException();
     }
     min = Math.max(p.getAltitude() / 1000, min);
-    int ret = GAcc.getRnd().nextInt(min, p.getType().maxAltitude / 1000);
+    int ret = SharedAcc.getRnd().nextInt(min, p.getType().maxAltitude / 1000);
     ret = ret * 1000;
     return ret;
   }

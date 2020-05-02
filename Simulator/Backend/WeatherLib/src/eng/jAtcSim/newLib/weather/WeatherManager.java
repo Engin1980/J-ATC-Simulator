@@ -1,7 +1,7 @@
 package eng.jAtcSim.newLib.weather;
 
 import eng.eSystem.validation.EAssert;
-import eng.jAtcSim.newLib.shared.GAcc;
+import eng.jAtcSim.newLib.shared.SharedAcc;
 import eng.jAtcSim.newLib.weather.decoders.MetarDecoder;
 
 public class WeatherManager {
@@ -48,7 +48,7 @@ public class WeatherManager {
       Weather tmp = MetarDecoder.decode(metarString);
       setWeather(tmp);
     } catch (Exception ex) {
-      GAcc.getSimLog().sendTextMessageForUser("Failed to decode metar. " + ex.getMessage());
+      SharedAcc.getSimLog().sendTextMessageForUser("Failed to decode metar. " + ex.getMessage());
     }
   }
 

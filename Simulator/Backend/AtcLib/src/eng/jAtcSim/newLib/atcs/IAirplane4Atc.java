@@ -1,9 +1,8 @@
 package eng.jAtcSim.newLib.atcs;
 
 import eng.eSystem.geo.Coordinate;
-import eng.eSystem.geo.Coordinates;
 import eng.jAtcSim.newLib.airplaneType.AirplaneType;
-import eng.jAtcSim.newLib.airplanes.Airplane;
+import eng.jAtcSim.newLib.airplanes.internal.Airplane;
 import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
 import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.area.routes.DARoute;
@@ -27,7 +26,7 @@ public interface IAirplane4Atc {
 
   String getSqwk();
 
-  Airplane.State getState();
+  AirplaneState getState();
 
   int getTargetAltitude();
 

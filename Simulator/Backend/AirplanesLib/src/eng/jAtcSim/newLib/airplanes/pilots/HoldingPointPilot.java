@@ -1,10 +1,10 @@
 package eng.jAtcSim.newLib.airplanes.pilots;
 
-import eng.jAtcSim.newLib.airplanes.Airplane;
-import eng.jAtcSim.newLib.airplanes.accessors.IPlaneInterface;
+import eng.jAtcSim.newLib.airplanes.AirplaneState;
+import eng.jAtcSim.newLib.airplanes.internal.Airplane;
 
 public class HoldingPointPilot extends Pilot {
-  public HoldingPointPilot(IPlaneInterface plane) {
+  public HoldingPointPilot(Airplane plane) {
     super(plane);
   }
 
@@ -14,12 +14,12 @@ public class HoldingPointPilot extends Pilot {
   }
 
   @Override
-  protected Airplane.State[] getInitialStates() {
-    return new Airplane.State[]{Airplane.State.holdingPoint};
+  protected AirplaneState[] getInitialStates() {
+    return new AirplaneState[]{AirplaneState.holdingPoint};
   }
 
   @Override
-  protected Airplane.State[] getValidStates() {
+  protected AirplaneState[] getValidStates() {
     return getInitialStates();
   }
 

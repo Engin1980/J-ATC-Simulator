@@ -264,7 +264,7 @@ public class TowerAtc extends ComputerAtc {
   @Override
   public void unregisterPlaneUnderControl(IAirplane4Atc plane) {
     if (plane.getFlightModule().isArrival()) {
-      if (plane.getState() == Airplane.State.landed) {
+      if (plane.getState() == AirplaneState.landed) {
         arrivalManager.unregisterFinishedArrival(plane);
       }
       //GO-AROUNDed planes are not unregistered, they have been unregistered previously
@@ -280,7 +280,7 @@ public class TowerAtc extends ComputerAtc {
       Acc.stats().registerDeparture(diffSecs);
     }
 
-    if (plane.getEmergencyModule().isEmergency() && plane.getState() == Airplane.State.landed) {
+    if (plane.getEmergencyModule().isEmergency() && plane.getState() == AirplaneState.landed) {
       // if it is landed emergency, close runway for amount of time
       ActiveRunway rwy = plane.getRoutingModule().getAssignedRunwayThreshold().getParent();
       RunwayCheck rwyCheck = RunwayCheck.createImmediateAfterEmergency();
@@ -757,13 +757,13 @@ class ArrivalManager {
     IList<Airplane> tmp = Acc.planes().where(q -> threshold.equals(q.getRoutingModule().getAssignedRunwayThreshold()));
     double ret = Double.MAX_VALUE;
     for (Airplane plane : tmp) {
-      if (plane.getState() == Airplane.State.landed) {
+      if (plane.getState() == AirplaneState.landed) {
         ret = 0;
         break;
       } else if (plane.getState().is(
-          Airplane.State.shortFinal,
-          Airplane.State.longFinal,
-          Airplane.State.approachDescend
+          AirplaneState.shortFinal,
+          AirplaneState.longFinal,
+          AirplaneState.approachDescend
       )) {
         double dist = Coordinates.getDistanceInNM(plane.getCoordinate(), threshold.getCoordinate());
         if (dist < ret)
@@ -788,7 +788,7 @@ class ArrivalManager {
   public boolean isSomeArrivalOnRunway(ActiveRunway rwy) {
     boolean ret = this.landingPlanesList
         .where(q -> rwy.getThresholds().contains(q.getRoutingModule().getAssignedRunwayThreshold()))
-        .isAny(q -> q.getState() == Airplane.State.landed);
+        .isAny(q -> q.getState() == AirplaneState.landed);
     return ret;
   }
 
@@ -799,7 +799,7 @@ class ArrivalManager {
 
     assert plane.getFlightModule().isArrival();
     assert plane.getRoutingModule().getAssignedRunwayThreshold() != null : "Assigned arrival for " + plane.getFlightModule().getCallsign() + " is null.";
-    if (plane.getState().is(Airplane.State.approachEnter, Airplane.State.approachDescend, Airplane.State.longFinal, Airplane.State.shortFinal))
+    if (plane.getState().is(AirplaneState.approachEnter, AirplaneState.approachDescend, AirplaneState.longFinal, AirplaneState.shortFinal))
       this.landingPlanesList.add(plane);
     else
       this.goAroundedPlanesToSwitchList.add(plane);
@@ -891,7 +891,7 @@ class DepartureManager {
   public boolean isSomeDepartureOnRunway(ActiveRunway runway) {
     for (ActiveRunwayThreshold rt : runway.getThresholds()) {
       IAirplane4Atc aip = this.lastDepartingPlane.tryGet(rt);
-      if (aip != null && aip.getState() == Airplane.State.takeOffRoll)
+      if (aip != null && aip.getState() == AirplaneState.takeOffRoll)
         return true;
     }
     return false;

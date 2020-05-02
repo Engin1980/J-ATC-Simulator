@@ -5,11 +5,11 @@ import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.geo.Headings;
 import eng.eSystem.validation.EAssert;
-import eng.jAtcSim.newLib.airplanes.Airplane;
-import eng.jAtcSim.newLib.airplanes.LAcc;
-import eng.jAtcSim.newLib.airplanes.accessors.IPlaneInterface;
+import eng.jAtcSim.newLib.airplanes.AirplaneState;
+import eng.jAtcSim.newLib.airplanes.internal.Airplane;
 import eng.jAtcSim.newLib.airplanes.modules.sha.navigators.HeadingNavigator;
 import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
+import eng.jAtcSim.newLib.area.AreaAcc;
 import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.area.approaches.Approach;
 import eng.jAtcSim.newLib.area.approaches.ApproachEntry;
@@ -37,13 +37,13 @@ public class ApproachPilot extends Pilot {
   private final IafRoute iafRoute;
   private Integer currentStageIndex = null;
 
-  public ApproachPilot(IPlaneInterface plane,
+  public ApproachPilot(Airplane plane,
                        Approach approach, ApproachEntry entry) {
     super(plane);
     EAssert.Argument.isNotNull(approach, "approach");
     EAssert.Argument.isNotNull(entry, "entry");
     EAssert.Argument.isTrue(approach.getEntries().contains(entry));
-    EAssert.Argument.isTrue(entry.getEntryLocation().isInside(plane.getCoordinate()));
+    EAssert.Argument.isTrue(entry.getEntryLocation().isInside(plane.getReader().getCoordinate()));
 
     this.approach = approach;
     this.iafRoute = entry.getIafRoute() == null ? null : entry.getIafRoute().createClone();
@@ -62,7 +62,7 @@ public class ApproachPilot extends Pilot {
     // check if is before runway threshold.
     // if is far before, then first point will still be runway threshold
     if (isBeforeRunwayThreshold()) {
-      Navaid runwayThresholdNavaid = LAcc.getNavaids().addRunwayThresholdPoint(
+      Navaid runwayThresholdNavaid = AreaAcc.getNavaids().addRunwayThresholdPoint(
           this.getRunwayThreshold().getParent().getParent().getIcao(),
           this.getRunwayThreshold().getName(),
           this.getRunwayThreshold().getCoordinate()
@@ -83,23 +83,23 @@ public class ApproachPilot extends Pilot {
 
   @Override
   public boolean isDivertable() {
-    return plane.getState() != Airplane.State.approachDescend;
+    return rdr.getState() != AirplaneState.approachDescend;
   }
 
   @Override
   protected void elapseSecondInternal() {
-    switch (plane.getState()) {
+    switch (rdr.getState()) {
       case arrivingHigh:
       case arrivingLow:
-        plane.setRouting(iafRoute, approach.getParent());
-        plane.setState(Airplane.State.flyingIaf2Faf);
+        wrt.setRouting(iafRoute, approach.getParent());
+        wrt.setState(AirplaneState.flyingIaf2Faf);
         break;
       case flyingIaf2Faf:
-        if (plane.isRoutingEmpty() && currentStageIndex == null) {
-          plane.setRouting(approach.getBeforeStagesCommands());
+        if (rdr.getRouting().isRoutingEmpty() && currentStageIndex == null) {
+          wrt.setRouting(approach.getBeforeStagesCommands());
           currentStageIndex = -1;
-        } else if (plane.isRoutingEmpty() && currentStageIndex != null) {
-          plane.setState(Airplane.State.approachEnter);
+        } else if (rdr.getRouting().isRoutingEmpty() && currentStageIndex != null) {
+          wrt.setState(AirplaneState.approachEnter);
           setNextStage();
           flyStage();
         }
@@ -113,7 +113,7 @@ public class ApproachPilot extends Pilot {
       case landed:
         break;
       default:
-        throw new EEnumValueUnsupportedException(plane.getState());
+        throw new EEnumValueUnsupportedException(rdr.getState());
     }
   }
 
@@ -122,18 +122,18 @@ public class ApproachPilot extends Pilot {
       flyRadialWithDescentBehavior((FlyRadialWithDescentBehavior) behavior);
     }
     double heading = RadialCalculator.getHeadingToFollowRadial(
-        plane.getCoordinate(), behavior.getCoordinate(), behavior.getInboundRadial(),
-        MAX_HEADING_DIFFERENCE, plane.getSpeed());
+        rdr.getCoordinate(), behavior.getCoordinate(), behavior.getInboundRadial(),
+        MAX_HEADING_DIFFERENCE, rdr.getSha().getSpeed());
 
-    plane.setTargetHeading(
+    wrt.setTargetHeading(
         new HeadingNavigator(heading, LeftRightAny.any));
   }
 
   private void flyRadialWithDescentBehavior(FlyRadialWithDescentBehavior behavior) {
-    double distance = Coordinates.getDistanceInNM(behavior.getCoordinate(), plane.getCoordinate());
+    double distance = Coordinates.getDistanceInNM(behavior.getCoordinate(), rdr.getCoordinate());
     double altitudeDouble = behavior.getAltitudeFixValue() + behavior.getSlope() * distance;
     int altitudeInt = (int) Math.round(altitudeDouble);
-    plane.setTargetAltitude(altitudeInt);
+    wrt.setTargetAltitude(altitudeInt);
   }
 
   private void flyStage() {
@@ -159,33 +159,33 @@ public class ApproachPilot extends Pilot {
   }
 
   @Override
-  protected Airplane.State[] getInitialStates() {
-    return new Airplane.State[]{
-        Airplane.State.arrivingHigh,
-        Airplane.State.arrivingLow
+  protected AirplaneState[] getInitialStates() {
+    return new AirplaneState[]{
+        AirplaneState.arrivingHigh,
+        AirplaneState.arrivingLow
     };
   }
 
   @Override
-  protected Airplane.State[] getValidStates() {
-    return new Airplane.State[]{
-        Airplane.State.arrivingCloseFaf,
-        Airplane.State.flyingIaf2Faf,
-        Airplane.State.approachEnter,
-        Airplane.State.approachDescend,
-        Airplane.State.longFinal,
-        Airplane.State.shortFinal,
-        Airplane.State.landed
+  protected AirplaneState[] getValidStates() {
+    return new AirplaneState[]{
+        AirplaneState.arrivingCloseFaf,
+        AirplaneState.flyingIaf2Faf,
+        AirplaneState.approachEnter,
+        AirplaneState.approachDescend,
+        AirplaneState.longFinal,
+        AirplaneState.shortFinal,
+        AirplaneState.landed
     };
   }
 
   private void goAround(GoingAroundNotification.GoAroundReason reason) {
-    plane.goAround(reason);
+    wrt.goAround(reason);
   }
 
   private boolean isBeforeRunwayThreshold() {
-    double dist = Coordinates.getDistanceInNM(plane.getCoordinate(), this.getRunwayThreshold().getCoordinate());
-    double hdg = Coordinates.getBearing(plane.getCoordinate(), this.getRunwayThreshold().getCoordinate());
+    double dist = Coordinates.getDistanceInNM(rdr.getCoordinate(), this.getRunwayThreshold().getCoordinate());
+    double hdg = Coordinates.getBearing(rdr.getCoordinate(), this.getRunwayThreshold().getCoordinate());
     boolean ret;
     if (dist < 3)
       ret = false;
@@ -196,7 +196,7 @@ public class ApproachPilot extends Pilot {
   }
 
   private boolean isConditionTrue(ICondition condition) {
-    return ConditionEvaluator.check(condition, plane);
+    return ConditionEvaluator.check(condition, rdr);
   }
 
   private void setNextStage() {
@@ -205,7 +205,7 @@ public class ApproachPilot extends Pilot {
     ApproachStage stage = approach.getStages().get(currentStageIndex);
     IApproachBehavior beh = stage.getBehavior();
     if (beh instanceof FlyRouteBehavior) {
-      plane.setRouting(((FlyRouteBehavior) beh).getCommands());
+      wrt.setRouting(((FlyRouteBehavior) beh).getCommands());
     }
 
   }

@@ -34,15 +34,15 @@ public class MrvaManager {
 
   private void evaluateMrvaFail(IAirplane4Mrva airplane) {
     if (airplane.getState().is(
-        Airplane.State.holdingPoint,
-        Airplane.State.takeOffRoll,
-        Airplane.State.takeOffGoAround,
-        Airplane.State.flyingIaf2Faf,
-        Airplane.State.approachEnter,
-        Airplane.State.approachDescend,
-        Airplane.State.longFinal,
-        Airplane.State.shortFinal,
-        Airplane.State.landed
+        AirplaneState.holdingPoint,
+        AirplaneState.takeOffRoll,
+        AirplaneState.takeOffGoAround,
+        AirplaneState.flyingIaf2Faf,
+        AirplaneState.approachEnter,
+        AirplaneState.approachDescend,
+        AirplaneState.longFinal,
+        AirplaneState.shortFinal,
+        AirplaneState.landed
     )) {
       airplane.setMrvaError(false);
       if (maps.get(airplane) != null) maps.set(airplane, null);
@@ -60,7 +60,7 @@ public class MrvaManager {
 
       boolean isOutOfAltitude = false;
       if (m != null) isOutOfAltitude = m.isIn(airplane.getSha().getAltitude());
-      if (isOutOfAltitude && airplane.getState().is(Airplane.State.arrivingLow, Airplane.State.departingLow)) {
+      if (isOutOfAltitude && airplane.getState().is(AirplaneState.arrivingLow, AirplaneState.departingLow)) {
         // this is for departures/goarounds when close to runway, very low, so are omitted
         double d = Coordinates.getDistanceInNM(airplane.getCoordinate(), Acc.airport().getLocation());
         if (d < 3)

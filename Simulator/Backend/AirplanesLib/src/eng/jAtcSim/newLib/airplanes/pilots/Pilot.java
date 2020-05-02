@@ -6,26 +6,30 @@ import eng.eSystem.exceptions.ERuntimeException;
 import eng.eSystem.utilites.ArrayUtils;
 import eng.eSystem.utilites.NumberUtils;
 import eng.eSystem.validation.EAssert;
-import eng.jAtcSim.newLib.airplanes.Airplane;
-import eng.jAtcSim.newLib.airplanes.accessors.IPlaneInterface;
+import eng.jAtcSim.newLib.airplanes.AirplaneState;
+import eng.jAtcSim.newLib.airplanes.IAirplaneWriter;
+import eng.jAtcSim.newLib.airplanes.internal.Airplane;
+import eng.jAtcSim.newLib.airplanes.IAirplane;
 import eng.jAtcSim.newLib.shared.Restriction;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public abstract class Pilot {
 
-  protected final IPlaneInterface plane;
+  protected final IAirplane rdr;
+  protected final IAirplaneWriter wrt;
   private boolean isFirstElapseSecond = true;
 
-  public Pilot(IPlaneInterface plane) {
+  public Pilot(Airplane plane) {
     EAssert.Argument.isNotNull(plane, "plane");
-    this.plane = plane;
+    this.rdr = plane.getReader();
+    this.wrt = plane.getWriter();
   }
 
   public void adjustTargetSpeed() {
     int minOrdered;
     int maxOrdered;
-    Restriction speedRestriction = plane.getSpeedRestriction();
+    Restriction speedRestriction = rdr.getSha().getSpeedRestriction();
     if (speedRestriction != null) {
       switch (speedRestriction.direction) {
         case exactly:
@@ -48,64 +52,64 @@ public abstract class Pilot {
       maxOrdered = Integer.MAX_VALUE;
     }
     int ts;
-    switch (plane.getState()) {
+    switch (rdr.getState()) {
       case holdingPoint:
       case landed:
         ts = 0;
         break;
       case takeOffRoll:
       case takeOffGoAround:
-        ts = plane.getType().vR + 10;
+        ts = rdr.getType().vR + 10;
         break;
       case departingLow:
       case arrivingLow:
-        ts = NumberUtils.boundBetween(minOrdered, Math.min(250, plane.getType().vCruise), maxOrdered);
+        ts = NumberUtils.boundBetween(minOrdered, Math.min(250, rdr.getType().vCruise), maxOrdered);
         break;
       case departingHigh:
       case arrivingHigh:
-        ts = NumberUtils.boundBetween(minOrdered, Math.min(287, plane.getType().vCruise), maxOrdered);
+        ts = NumberUtils.boundBetween(minOrdered, Math.min(287, rdr.getType().vCruise), maxOrdered);
         break;
       case arrivingCloseFaf:
       case flyingIaf2Faf:
-        ts = NumberUtils.boundBetween(minOrdered, Math.min(287, plane.getType().vMinClean + 15), maxOrdered);
+        ts = NumberUtils.boundBetween(minOrdered, Math.min(287, rdr.getType().vMinClean + 15), maxOrdered);
         break;
       case approachEnter:
-        ts = NumberUtils.boundBetween(minOrdered, Math.min(plane.getType().vMaxApp, plane.getType().vMinClean), maxOrdered);
+        ts = NumberUtils.boundBetween(minOrdered, Math.min(rdr.getType().vMaxApp, rdr.getType().vMinClean), maxOrdered);
         break;
       case approachDescend:
-        ts = NumberUtils.boundBetween(minOrdered, plane.getType().vApp, maxOrdered);
+        ts = NumberUtils.boundBetween(minOrdered, rdr.getType().vApp, maxOrdered);
         break;
       case longFinal:
       case shortFinal:
-        minOrdered = Math.max(minOrdered, plane.getType().vMinApp);
-        maxOrdered = Math.min(maxOrdered, plane.getType().vMaxApp);
-        ts = NumberUtils.boundBetween(minOrdered, plane.getType().vApp, maxOrdered);
+        minOrdered = Math.max(minOrdered, rdr.getType().vMinApp);
+        maxOrdered = Math.min(maxOrdered, rdr.getType().vMaxApp);
+        ts = NumberUtils.boundBetween(minOrdered, rdr.getType().vApp, maxOrdered);
         break;
       case holding:
-        if (plane.getTargetAltitude() > 10000)
-          ts = NumberUtils.boundBetween(minOrdered, Math.min(250, plane.getType().vCruise), maxOrdered);
+        if (rdr.getSha().getTargetAltitude() > 10000)
+          ts = NumberUtils.boundBetween(minOrdered, Math.min(250, rdr.getType().vCruise), maxOrdered);
         else
-          ts = NumberUtils.boundBetween(minOrdered, Math.min(220, plane.getType().vCruise), maxOrdered);
+          ts = NumberUtils.boundBetween(minOrdered, Math.min(220, rdr.getType().vCruise), maxOrdered);
         break;
       default:
-        throw new EEnumValueUnsupportedException(plane.getState());
+        throw new EEnumValueUnsupportedException(rdr.getState());
     }
-    plane.setTargetSpeed(ts);
+    wrt.setTargetSpeed(ts);
   }
 
   public final void elapseSecond() {
     if (isFirstElapseSecond) {
-      if (ArrayUtils.contains(getInitialStates(), plane.getState()) == false)
+      if (ArrayUtils.contains(getInitialStates(), rdr.getState()) == false)
         throw new EApplicationException(sf(
             "Airplane %s has illegal initial state %s for pilot %s.",
-            plane.getCallsign().toString(), plane.getState().toString(), this.getClass().getName()
+            rdr.getCallsign().toString(), rdr.getState().toString(), this.getClass().getName()
         ));
       isFirstElapseSecond = false;
     } else {
-      if (ArrayUtils.contains(getValidStates(), plane.getState()) == false)
+      if (ArrayUtils.contains(getValidStates(), rdr.getState()) == false)
         throw new EApplicationException(sf(
             "Airplane %s has illegal state %s for pilot %s.",
-            plane.getCallsign().toString(), plane.getState().toString(), this.getClass().getName()
+            rdr.getCallsign().toString(), rdr.getState().toString(), this.getClass().getName()
         ));
     }
     elapseSecondInternal();
@@ -115,13 +119,13 @@ public abstract class Pilot {
 
   protected abstract void elapseSecondInternal();
 
-  protected abstract Airplane.State[] getInitialStates();
+  protected abstract AirplaneState[] getInitialStates();
 
-  protected abstract Airplane.State[] getValidStates();
+  protected abstract AirplaneState[] getValidStates();
 
   void throwIllegalStateException() {
     throw new ERuntimeException(
-        "Illegal state " + plane.getState() + " for behavior " + this.getClass().getSimpleName() + "."
+        "Illegal state " + rdr.getState() + " for behavior " + this.getClass().getSimpleName() + "."
     );
   }
 }

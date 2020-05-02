@@ -5,9 +5,9 @@ import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.validation.EAssert;
-import eng.jAtcSim.newLib.airplanes.Airplane;
+import eng.jAtcSim.newLib.airplanes.AirplaneState;
+import eng.jAtcSim.newLib.airplanes.internal.Airplane;
 import eng.jAtcSim.newLib.airplanes.LAcc;
-import eng.jAtcSim.newLib.airplanes.accessors.IPlaneInterface;
 import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
 import eng.jAtcSim.newLib.area.approaches.Approach;
 import eng.jAtcSim.newLib.area.approaches.ApproachEntry;
@@ -25,30 +25,30 @@ import static eng.eSystem.utilites.FunctionShortcuts.sf;
 public class ClearedToApproachApplication extends CommandApplication<ClearedToApproachCommand> {
 
   @Override
-  protected ApplicationResult adjustAirplane(IPlaneInterface plane, ClearedToApproachCommand c) {
+  protected ApplicationResult adjustAirplane(Airplane plane, ClearedToApproachCommand c) {
     ApplicationResult ret = new ApplicationResult();
 
-    Restriction sr = plane.getSpeedRestriction();
+    Restriction sr = plane.getReader().getSha().getSpeedRestriction();
 
     if (sr != null &&
         (sr.direction == AboveBelowExactly.above ||
             sr.direction == AboveBelowExactly.exactly) &&
-        sr.value > plane.getType().vApp) {
-      INotification tmp = new HighOrderedSpeedForApproach(sr.value, plane.getType().vApp);
+        sr.value > plane.getReader().getType().vApp) {
+      INotification tmp = new HighOrderedSpeedForApproach(sr.value, plane.getReader().getType().vApp);
       ret.informations.add(tmp);
     }
 
     ActiveRunwayThreshold rt = LAcc.getAirport().tryGetRunwayThreshold(c.getThresholdName());
-    ApproachInfo ai = ApproachInfo.create(rt, c.getType(), plane.getType().category, plane.getCoordinate());
+    ApproachInfo ai = ApproachInfo.create(rt, c.getType(), plane.getReader().getType().category, plane.getReader().getCoordinate());
     assert ai.status == ApproachInfo.Status.ok : "Error to obtain approach.";
 
-    plane.clearedToApproach(ai.approach, ai.entry);
+    plane.getWriter().clearedToApproach(ai.approach, ai.entry);
 
     return ret;
   }
 
   @Override
-  protected Rejection checkCommandSanity(IPlaneInterface plane, ClearedToApproachCommand c) {
+  protected Rejection checkCommandSanity(Airplane plane, ClearedToApproachCommand c) {
     Rejection ret;
 
     ActiveRunwayThreshold rt = LAcc.getAirport().tryGetRunwayThreshold(c.getThresholdName());
@@ -56,7 +56,7 @@ public class ClearedToApproachApplication extends CommandApplication<ClearedToAp
       ret = new Rejection(
           "Cannot be cleared to approach. There is no runway designated as " + c.getThresholdName(), c);
     } else {
-      ApproachInfo ai = ApproachInfo.create(rt, c.getType(), plane.getCategory(), plane.getCoordinate());
+      ApproachInfo ai = ApproachInfo.create(rt, c.getType(), plane.getReader().getType().category, plane.getReader().getCoordinate());
       switch (ai.status) {
         case noApproachAtAll:
           ret = new Rejection(
@@ -87,19 +87,19 @@ public class ClearedToApproachApplication extends CommandApplication<ClearedToAp
   }
 
   @Override
-  protected Airplane.State[] getInvalidStates() {
-    return new Airplane.State[]{
-        Airplane.State.holdingPoint,
-        Airplane.State.takeOffRoll,
-        Airplane.State.takeOffGoAround,
-        Airplane.State.departingLow,
-        Airplane.State.departingHigh,
-        Airplane.State.flyingIaf2Faf,
-        Airplane.State.approachEnter,
-        Airplane.State.approachDescend,
-        Airplane.State.longFinal,
-        Airplane.State.shortFinal,
-        Airplane.State.landed
+  protected AirplaneState[] getInvalidStates() {
+    return new AirplaneState[]{
+        AirplaneState.holdingPoint,
+        AirplaneState.takeOffRoll,
+        AirplaneState.takeOffGoAround,
+        AirplaneState.departingLow,
+        AirplaneState.departingHigh,
+        AirplaneState.flyingIaf2Faf,
+        AirplaneState.approachEnter,
+        AirplaneState.approachDescend,
+        AirplaneState.longFinal,
+        AirplaneState.shortFinal,
+        AirplaneState.landed
     };
   }
 }

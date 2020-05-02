@@ -1,25 +1,25 @@
 package eng.jAtcSim.newLib.airplanes.pilots;
 
 import eng.eSystem.geo.Coordinates;
-import eng.jAtcSim.newLib.airplanes.Airplane;
+import eng.jAtcSim.newLib.airplanes.AirplaneState;
+import eng.jAtcSim.newLib.airplanes.internal.Airplane;
 import eng.jAtcSim.newLib.airplanes.LAcc;
-import eng.jAtcSim.newLib.airplanes.accessors.IPlaneInterface;
 
 public class ArrivalPilot extends BasicPilot {
 
   private final static double LOW_SPEED_DOWN_ALTITUDE = 11000;
   private final static double FAF_SPEED_DOWN_DISTANCE_IN_NM = 15;
 
-  public ArrivalPilot(IPlaneInterface plane) {
+  public ArrivalPilot(Airplane plane) {
     super(plane);
   }
 
   @Override
   protected void elapseSecondInternalBasic() {
-    switch (plane.getState()) {
+    switch (rdr.getState()) {
       case arrivingHigh:
-        if (plane.getAltitude() < LOW_SPEED_DOWN_ALTITUDE)
-          plane.setState(Airplane.State.arrivingLow);
+        if (rdr.getSha().getAltitude() < LOW_SPEED_DOWN_ALTITUDE)
+          wrt.setState(AirplaneState.arrivingLow);
         else {
           setArrivingCloseFafStateIfReady();
         }
@@ -36,24 +36,24 @@ public class ArrivalPilot extends BasicPilot {
   }
 
   @Override
-  protected Airplane.State[] getInitialStates() {
-    return new Airplane.State[]{
-        Airplane.State.arrivingHigh,
-        Airplane.State.arrivingLow
+  protected AirplaneState[] getInitialStates() {
+    return new AirplaneState[]{
+        AirplaneState.arrivingHigh,
+        AirplaneState.arrivingLow
     };
   }
 
   @Override
-  protected Airplane.State[] getValidStates() {
+  protected AirplaneState[] getValidStates() {
     return getInitialStates();
   }
 
   private void setArrivingCloseFafStateIfReady() {
     double distToFaf = LAcc.getCurrentRunwayConfiguration()
-        .getArrivals().where(q -> q.isForCategory(plane.getType().category))
-        .minDouble(q -> Coordinates.getDistanceInNM(plane.getCoordinate(), q.getThreshold().getEstimatedFafPoint()));
+        .getArrivals().where(q -> q.isForCategory(rdr.getType().category))
+        .minDouble(q -> Coordinates.getDistanceInNM(rdr.getCoordinate(), q.getThreshold().getEstimatedFafPoint()));
     if (distToFaf < FAF_SPEED_DOWN_DISTANCE_IN_NM) {
-      plane.setState(Airplane.State.arrivingCloseFaf);
+      wrt.setState(AirplaneState.arrivingCloseFaf);
     }
   }
 }

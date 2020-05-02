@@ -2,15 +2,15 @@ package eng.jAtcSim.newLib.airplanes.modules.sha.navigators;
 
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
-import eng.jAtcSim.newLib.airplanes.accessors.IPlaneInterface;
+import eng.jAtcSim.newLib.airplanes.IAirplane;
 import eng.jAtcSim.newLib.shared.enums.LeftRight;
 
 public class ToCoordinateNavigator extends Navigator {
   @Override
-  public NavigatorResult navigate(IPlaneInterface plane) {
+  public NavigatorResult navigate(IAirplane plane) {
     int heading = (int) Math.round(
         Coordinates.getBearing(plane.getCoordinate(), this.coordinate));
-    LeftRight turn = getBetterDirectionToTurn(plane.getHeading(), heading);
+    LeftRight turn = getBetterDirectionToTurn(plane.getSha().getHeading(), heading);
     return new NavigatorResult(heading, turn);
   }
 

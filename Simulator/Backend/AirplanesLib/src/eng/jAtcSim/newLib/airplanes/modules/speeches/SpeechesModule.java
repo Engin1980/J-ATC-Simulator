@@ -8,9 +8,9 @@ import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.utilites.ConversionUtils;
 import eng.eSystem.validation.EAssert;
-import eng.jAtcSim.newLib.airplanes.Airplane;
+import eng.jAtcSim.newLib.airplanes.AirplaneState;
+import eng.jAtcSim.newLib.airplanes.internal.Airplane;
 import eng.jAtcSim.newLib.airplanes.LAcc;
-import eng.jAtcSim.newLib.airplanes.accessors.IPlaneInterface;
 import eng.jAtcSim.newLib.airplanes.commandApplications.ApplicationManager;
 import eng.jAtcSim.newLib.airplanes.commandApplications.ApplicationResult;
 import eng.jAtcSim.newLib.airplanes.commandApplications.ConfirmationResult;
@@ -46,7 +46,7 @@ public class SpeechesModule extends eng.jAtcSim.newLib.airplanes.modules.Module 
   private Navaid entryExitPoint;
   private ActiveRunwayThreshold runwayThreshold;
 
-  public SpeechesModule(IPlaneInterface plane) {
+  public SpeechesModule(Airplane plane) {
     super(plane);
   }
 
@@ -85,10 +85,10 @@ public class SpeechesModule extends eng.jAtcSim.newLib.airplanes.modules.Module 
 
     if (current.isEmpty()) return;
 
-    plane.getCVR().logProcessedCurrentSpeeches(current);
+    wrt.getCVR().logProcessedCurrentSpeeches(current);
 
     // if has not confirmed radar contact and the first command in the queue is not radar contact confirmation
-    if (plane.hasRadarContact() == false
+    if (rdr.getAtc().hasRadarContact() == false
         && !(current.getFirst() instanceof RadarContactConfirmationNotification)) {
       say(new RequestRadarContactNotification());
       this.queue.clear();
@@ -144,19 +144,19 @@ public class SpeechesModule extends eng.jAtcSim.newLib.airplanes.modules.Module 
         } else if (cmd instanceof ChangeAltitudeCommand) {
           // rule 4
           ChangeAltitudeCommand tmp = (ChangeAltitudeCommand) cmd;
-          this.afterCommands.clearChangeAltitudeClass(tmp.getAltitudeInFt(), plane.isArrival());
+          this.afterCommands.clearChangeAltitudeClass(tmp.getAltitudeInFt(), rdr.isArrival());
         } else if (cmd instanceof ChangeSpeedCommand) {
           ChangeSpeedCommand tmp = (ChangeSpeedCommand) cmd;
           if (tmp.isResumeOwnSpeed() == false) {
             // rule 5
             this.afterCommands.clearChangeSpeedClass(
-                tmp.getRestriction().value, plane.isArrival(), AfterCommandList.Type.route);
+                tmp.getRestriction().value, rdr.isArrival(), AfterCommandList.Type.route);
             this.afterCommands.clearChangeSpeedClass(
-                tmp.getRestriction().value, plane.isArrival(), AfterCommandList.Type.extensions);
+                tmp.getRestriction().value, rdr.isArrival(), AfterCommandList.Type.extensions);
           } else {
             // rule 6
             this.afterCommands.clearChangeSpeedClassOfRouteWithTransferConsequent(
-                null, plane.isArrival());
+                null, rdr.isArrival());
             this.afterCommands.clearExtensionsByConsequent(ChangeSpeedCommand.class);
           }
         } else if (cmd instanceof ClearedToApproachCommand) {
@@ -174,16 +174,16 @@ public class SpeechesModule extends eng.jAtcSim.newLib.airplanes.modules.Module 
         } else if (cmd instanceof AfterAltitudeCommand) {
           // rule 9
           ChangeAltitudeCommand tmp = (ChangeAltitudeCommand) cmd;
-          this.afterCommands.clearChangeAltitudeClass(tmp.getAltitudeInFt(), plane.isArrival());
+          this.afterCommands.clearChangeAltitudeClass(tmp.getAltitudeInFt(), rdr.isArrival());
         } else if (cmd instanceof ChangeSpeedCommand) {
           ChangeSpeedCommand tmp = (ChangeSpeedCommand) cmd;
           if (tmp.isResumeOwnSpeed() == false) {
             // rule 10
-            this.afterCommands.clearChangeSpeedClass(tmp.getRestriction().value, plane.isArrival(), AfterCommandList.Type.extensions);
+            this.afterCommands.clearChangeSpeedClass(tmp.getRestriction().value, rdr.isArrival(), AfterCommandList.Type.extensions);
           } else {
             // rule 11
             this.afterCommands.clearChangeSpeedClassOfRouteWithTransferConsequent(
-                null, plane.isArrival());
+                null, rdr.isArrival());
             this.afterCommands.clearExtensionsByConsequent(ChangeSpeedCommand.class);
           }
         } else if (cmd instanceof ClearedToApproachCommand) {
@@ -206,8 +206,8 @@ public class SpeechesModule extends eng.jAtcSim.newLib.airplanes.modules.Module 
     for (int i = 0; i < ret.size(); i++) {
       if (ret.get(i) instanceof ThenCommand) {
         if (i == 0 || i == ret.size() - 1) {
-          plane.sendMessage(
-              plane.getTunedAtc(),
+          wrt.sendMessage(
+              rdr.getAtc().getTunedAtc(),
               new IllegalThenCommandRejection(
                   (ThenCommand) ret.get(i),
                   "{Then} command cannot be first or last in queue. The whole command block is ignored.")
@@ -246,8 +246,8 @@ public class SpeechesModule extends eng.jAtcSim.newLib.airplanes.modules.Module 
           ChangeHeadingCommand cmd = (ChangeHeadingCommand) prev;
           n = AfterHeadingCommand.create(cmd.getHeading());
         } else {
-          plane.sendMessage(
-              plane.getTunedAtc(),
+          wrt.sendMessage(
+              rdr.getAtc().getTunedAtc(),
               new IllegalThenCommandRejection(
                   (ThenCommand) ret.get(i),
                   "{Then} command is antecedent a strange command, it does not make sense. The whole command block is ignored."));
@@ -264,7 +264,7 @@ public class SpeechesModule extends eng.jAtcSim.newLib.airplanes.modules.Module 
     for (AtcId atcId : saidText.getKeys()) {
       SpeechList<ISpeech> saidTextToAtc = saidText.get(atcId);
       if (!saidTextToAtc.isEmpty()) {
-        plane.sendMessage(atcId, saidTextToAtc);
+        wrt.sendMessage(atcId, saidTextToAtc);
         saidText.set(atcId, new SpeechList<>());
         // here new list must be created
         // the old one is send to messenger for further processing
@@ -274,10 +274,10 @@ public class SpeechesModule extends eng.jAtcSim.newLib.airplanes.modules.Module 
 
   private void obtainNewSpeeches() {
     IList<Message> msgs = LAcc.getMessenger().getMessagesByListener(
-        Participant.createAirplane(plane.getCallsign()), true);
+        Participant.createAirplane(rdr.getCallsign()), true);
 
     // only responds to messages from tuned atc
-    msgs = msgs.where(q -> q.getSource().equals(Participant.createAtc(plane.getTunedAtc())));
+    msgs = msgs.where(q -> q.getSource().equals(Participant.createAtc(rdr.getAtc().getTunedAtc())));
 
     // extract contents
     IList<IMessageContent> contents = msgs.select(q -> q.getContent());
@@ -298,21 +298,21 @@ public class SpeechesModule extends eng.jAtcSim.newLib.airplanes.modules.Module 
 
   private void processAfterSpeechWithConsequents(IList<? extends ISpeech> queue, CommandSource cs) {
 
-    Airplane.State[] unableProcessAfterCommandsStates = {
-        Airplane.State.flyingIaf2Faf,
-        Airplane.State.approachEnter,
-        Airplane.State.approachDescend,
-        Airplane.State.longFinal,
-        Airplane.State.shortFinal,
-        Airplane.State.landed,
-        Airplane.State.takeOffRoll,
-        Airplane.State.takeOffGoAround
+    AirplaneState[] unableProcessAfterCommandsStates = {
+        AirplaneState.flyingIaf2Faf,
+        AirplaneState.approachEnter,
+        AirplaneState.approachDescend,
+        AirplaneState.longFinal,
+        AirplaneState.shortFinal,
+        AirplaneState.landed,
+        AirplaneState.takeOffRoll,
+        AirplaneState.takeOffGoAround
     };
 
     AfterCommand af = (AfterCommand) queue.get(0);
     queue.removeAt(0);
 
-    if (cs == CommandSource.atc && plane.getState().is(unableProcessAfterCommandsStates)) {
+    if (cs == CommandSource.atc && rdr.getState().is(unableProcessAfterCommandsStates)) {
       ISpeech rej = new Rejection("Unable to process after-command during approach/take-off.", af);
       say(rej);
       return;
@@ -348,18 +348,18 @@ public class SpeechesModule extends eng.jAtcSim.newLib.airplanes.modules.Module 
 
     SpeechList<ICommand> cmds;
 
-    Coordinate targetCoordinate = plane.tryGetTargetOrHoldCoordinate();
+    Coordinate targetCoordinate = rdr.getRouting().tryGetTargetOrHoldCoordinate();
 
     // TODO when this function uses plane.tryGetTargetOrHoldingCoordinate(), then
     // this can be evaluated in the following function
     cmds = afterCommands.getAndRemoveSatisfiedCommands(
-        plane, targetCoordinate, AfterCommandList.Type.extensions);
-    plane.getCVR().logProcessedAfterSpeeches(cmds, "extensions");
+        rdr, targetCoordinate, AfterCommandList.Type.extensions);
+    wrt.getCVR().logProcessedAfterSpeeches(cmds, "extensions");
     processSpeeches(cmds, CommandSource.extension);
 
     cmds = afterCommands.getAndRemoveSatisfiedCommands(
-        plane, targetCoordinate, AfterCommandList.Type.route);
-    plane.getCVR().logProcessedAfterSpeeches(cmds, "route");
+        rdr, targetCoordinate, AfterCommandList.Type.route);
+    wrt.getCVR().logProcessedAfterSpeeches(cmds, "route");
     processSpeeches(cmds, CommandSource.route);
   }
 
@@ -398,7 +398,7 @@ public class SpeechesModule extends eng.jAtcSim.newLib.airplanes.modules.Module 
   }
 
   private void say(ISpeech speech) {
-    AtcId atc = plane.getTunedAtc();
+    AtcId atc = rdr.getAtc().getTunedAtc();
 
     // if no tuned atc, nothing is said
     if (atc == null) return;

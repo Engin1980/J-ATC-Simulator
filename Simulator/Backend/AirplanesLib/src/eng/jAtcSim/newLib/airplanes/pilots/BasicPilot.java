@@ -3,9 +3,8 @@ package eng.jAtcSim.newLib.airplanes.pilots;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.geo.Headings;
-import eng.jAtcSim.newLib.airplanes.Airplane;
 import eng.jAtcSim.newLib.airplanes.LAcc;
-import eng.jAtcSim.newLib.airplanes.accessors.IPlaneInterface;
+import eng.jAtcSim.newLib.airplanes.internal.Airplane;
 import eng.jAtcSim.newLib.airplanes.modules.sha.navigators.HeadingNavigator;
 import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.shared.enums.LeftRight;
@@ -16,45 +15,45 @@ public abstract class BasicPilot extends Pilot {
 
   private boolean clearanceLimitWarningSent = false;
 
-  public BasicPilot(IPlaneInterface plane) {
+  public BasicPilot(Airplane plane) {
     super(plane);
   }
 
   @Override
   public final void elapseSecondInternal() {
-    Coordinate targetCoordinate = plane.tryGetTargetCoordinate();
+    Coordinate targetCoordinate = rdr.getRouting().tryGetTargetCoordinate();
     if (targetCoordinate != null) {
 
-      double warningDistance = plane.getSpeed() * .02;
-      double overNavaidDistance = Navaid.getOverNavaidDistance(plane.getSpeed());
+      double warningDistance = rdr.getSha().getSpeed() * .02;
+      double overNavaidDistance = Navaid.getOverNavaidDistance(rdr.getSha().getSpeed());
 
-      double dist = Coordinates.getDistanceInNM(plane.getCoordinate(), targetCoordinate);
+      double dist = Coordinates.getDistanceInNM(rdr.getCoordinate(), targetCoordinate);
       if (!clearanceLimitWarningSent
           && dist < warningDistance
-          && !plane.hasLateralDirectionAfterCoordinate()) {
-        plane.sendMessage(
-            plane.getTunedAtc(),
+          && !rdr.getRouting().hasLateralDirectionAfterCoordinate()) {
+        wrt.sendMessage(
+            rdr.getAtc().getTunedAtc(),
             new PassingClearanceLimitNotification());
         clearanceLimitWarningSent = true;
       } else if (dist < overNavaidDistance) {
-        if (plane.isArrival() == false) {
-          Navaid n = plane.getEntryExitPoint();
-          dist = Coordinates.getDistanceInNM(plane.getCoordinate(), n.getCoordinate());
+        if (rdr.isArrival() == false) {
+          Navaid n = rdr.getRouting().getEntryExitPoint();
+          dist = Coordinates.getDistanceInNM(rdr.getCoordinate(), n.getCoordinate());
           if (dist < 1.5) {
             int rad = (int) Coordinates.getBearing(LAcc.getAirport().getLocation(), n.getCoordinate());
             rad = rad % 90;
-            plane.startHolding(n, rad, LeftRight.left);
+            wrt.startHolding(n, rad, LeftRight.left);
             return;
           }
         } else {
-          plane.setTargetCoordinate(null);
+          wrt.setTargetCoordinate(null);
           clearanceLimitWarningSent = false;
         }
       } else {
-        double heading = Coordinates.getBearing(plane.getCoordinate(), targetCoordinate);
+        double heading = Coordinates.getBearing(rdr.getCoordinate(), targetCoordinate);
         heading = Headings.to(heading);
-        if (heading != plane.getTargetHeading()) {
-          plane.setTargetHeading(new HeadingNavigator(heading, LeftRightAny.any));
+        if (heading != rdr.getSha().getTargetHeading()) {
+          wrt.setTargetHeading(new HeadingNavigator(heading, LeftRightAny.any));
         }
       }
     }

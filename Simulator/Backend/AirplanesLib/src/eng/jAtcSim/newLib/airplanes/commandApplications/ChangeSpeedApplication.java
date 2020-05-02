@@ -1,9 +1,9 @@
 package eng.jAtcSim.newLib.airplanes.commandApplications;
 
 import eng.eSystem.geo.Coordinates;
-import eng.jAtcSim.newLib.airplanes.Airplane;
+import eng.jAtcSim.newLib.airplanes.AirplaneState;
+import eng.jAtcSim.newLib.airplanes.internal.Airplane;
 import eng.jAtcSim.newLib.airplanes.LAcc;
-import eng.jAtcSim.newLib.airplanes.accessors.IPlaneInterface;
 import eng.jAtcSim.newLib.shared.Restriction;
 import eng.jAtcSim.newLib.shared.enums.AboveBelowExactly;
 import eng.jAtcSim.newLib.speeches.Rejection;
@@ -12,36 +12,36 @@ import eng.jAtcSim.newLib.speeches.atc2airplane.ChangeSpeedCommand;
 public class ChangeSpeedApplication extends CommandApplication<ChangeSpeedCommand> {
 
   @Override
-  protected Airplane.State[] getInvalidStates() {
-    return new Airplane.State[]{
-        Airplane.State.holdingPoint,
-        Airplane.State.takeOffRoll,
-        Airplane.State.longFinal,
-        Airplane.State.shortFinal,
-        Airplane.State.landed
+  protected AirplaneState[] getInvalidStates() {
+    return new AirplaneState[]{
+        AirplaneState.holdingPoint,
+        AirplaneState.takeOffRoll,
+        AirplaneState.longFinal,
+        AirplaneState.shortFinal,
+        AirplaneState.landed
     };
   }
 
   @Override
-  protected Rejection checkCommandSanity(IPlaneInterface plane, ChangeSpeedCommand c) {
+  protected Rejection checkCommandSanity(Airplane plane, ChangeSpeedCommand c) {
     Rejection ret;
 
     if (c.isResumeOwnSpeed() == false) {
       // not resume speed
 
-      boolean isInApproach = plane.getState().is(
-          Airplane.State.approachEnter,
-          Airplane.State.approachDescend
+      boolean isInApproach = plane.getReader().getState().is(
+          AirplaneState.approachEnter,
+          AirplaneState.approachDescend
       );
 
       Restriction r = c.getRestriction();
-      int cMax = !isInApproach ? plane.getType().vMaxClean : plane.getType().vMaxApp;
-      int cMin = !isInApproach ? plane.getType().vMinClean : plane.getType().vMinApp;
+      int cMax = !isInApproach ? plane.getReader().getType().vMaxClean : plane.getReader().getType().vMaxApp;
+      int cMin = !isInApproach ? plane.getReader().getType().vMinClean : plane.getReader().getType().vMinApp;
       // next "if" allows speed under vMinClean (like flaps-1) near the FAF
       if (!isInApproach && Coordinates.getDistanceInNM(
-          plane.getCoordinate(), LAcc.getAirport().getLocation()) < 20) {
+          plane.getReader().getCoordinate(), LAcc.getAirport().getLocation()) < 20) {
         //cMin = (int) (cMin * 0.85);
-        cMin = plane.getType().vMaxApp;
+        cMin = plane.getReader().getType().vMaxApp;
       }
 
       if (r.direction != AboveBelowExactly.below && r.value > cMax) {
@@ -58,8 +58,8 @@ public class ChangeSpeedApplication extends CommandApplication<ChangeSpeedComman
   }
 
   @Override
-  protected ApplicationResult adjustAirplane(IPlaneInterface plane, ChangeSpeedCommand c) {
-    plane.setSpeedRestriction(c.getRestriction());
+  protected ApplicationResult adjustAirplane(Airplane plane, ChangeSpeedCommand c) {
+    plane.getWriter().setSpeedRestriction(c.getRestriction());
     return ApplicationResult.getEmpty();
   }
 }

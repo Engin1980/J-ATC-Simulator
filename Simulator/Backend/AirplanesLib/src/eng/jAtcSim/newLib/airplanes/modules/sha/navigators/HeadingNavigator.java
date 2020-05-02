@@ -1,7 +1,7 @@
 package eng.jAtcSim.newLib.airplanes.modules.sha.navigators;
 
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
-import eng.jAtcSim.newLib.airplanes.accessors.IPlaneInterface;
+import eng.jAtcSim.newLib.airplanes.IAirplane;
 import eng.jAtcSim.newLib.shared.enums.LeftRight;
 import eng.jAtcSim.newLib.shared.enums.LeftRightAny;
 
@@ -34,14 +34,14 @@ public class HeadingNavigator extends Navigator {
   }
 
   @Override
-  public NavigatorResult navigate(IPlaneInterface plane) {
+  public NavigatorResult navigate(IAirplane plane) {
     NavigatorResult ret;
     if (!this.isApplied) {
       LeftRight resultTurn;
       switch(turn){
         case any:
           resultTurn
-              = getBetterDirectionToTurn(plane.getHeading(), this.heading);
+              = getBetterDirectionToTurn(plane.getSha().getHeading(), this.heading);
           break;
         case right:
           resultTurn = LeftRight.right;

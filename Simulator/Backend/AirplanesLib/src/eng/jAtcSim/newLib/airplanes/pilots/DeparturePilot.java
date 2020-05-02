@@ -1,36 +1,36 @@
 package eng.jAtcSim.newLib.airplanes.pilots;
 
-import eng.jAtcSim.newLib.airplanes.Airplane;
-import eng.jAtcSim.newLib.airplanes.accessors.IPlaneInterface;
+import eng.jAtcSim.newLib.airplanes.AirplaneState;
+import eng.jAtcSim.newLib.airplanes.internal.Airplane;
 
 public class DeparturePilot extends BasicPilot {
-  public DeparturePilot(IPlaneInterface plane) {
+  public DeparturePilot(Airplane plane) {
     super(plane);
   }
 
   @Override
-  protected Airplane.State[] getInitialStates() {
-    return new Airplane.State[]{
-        Airplane.State.takeOffGoAround,
-        Airplane.State.departingLow,
-        Airplane.State.departingHigh
+  protected AirplaneState[] getInitialStates() {
+    return new AirplaneState[]{
+        AirplaneState.takeOffGoAround,
+        AirplaneState.departingLow,
+        AirplaneState.departingHigh
     };
   }
 
   @Override
-  protected Airplane.State[] getValidStates() {
-    return new Airplane.State[]{
-        Airplane.State.departingLow,
-        Airplane.State.departingHigh
+  protected AirplaneState[] getValidStates() {
+    return new AirplaneState[]{
+        AirplaneState.departingLow,
+        AirplaneState.departingHigh
     };
   }
 
   @Override
   protected void elapseSecondInternalBasic() {
-    switch (plane.getState()) {
+    switch (rdr.getState()) {
       case departingLow:
-        if (plane.getAltitude() > 10000)
-          plane.setState(Airplane.State.departingHigh);
+        if (rdr.getSha().getAltitude() > 10000)
+          wrt.setState(AirplaneState.departingHigh);
         break;
       case departingHigh:
         break;

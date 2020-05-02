@@ -1,7 +1,8 @@
 package eng.jAtcSim.newLib.airplanes.modules;
 
 import eng.eSystem.validation.EAssert;
-import eng.jAtcSim.newLib.airplanes.accessors.IPlaneInterface;
+import eng.jAtcSim.newLib.airplanes.IAirplane;
+import eng.jAtcSim.newLib.airplanes.internal.Airplane;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.speeches.airplane2atc.GoodDayNotification;
 
@@ -10,7 +11,7 @@ public class AtcModule extends Module {
   private AtcId atcId;
   private int secondsWithoutRadarContact = 0;
 
-  public AtcModule(IPlaneInterface plane) {
+  public AtcModule(Airplane plane) {
     super(plane);
   }
 
@@ -18,13 +19,13 @@ public class AtcModule extends Module {
   public void elapseSecond() {
       int seconds = getAndIncreaseSecondsWithoutRadarContactIfRequired();
       if (seconds % AtcModule.REPEATED_RADAR_CONTACT_REQUEST_SECONDS == 0){
-        plane.sendMessage(
+        wrt.sendMessage(
             this.getTunedAtc(),
             new GoodDayNotification(
-                plane.getCallsign(),
-                plane.getAltitude(),
-                plane.getTargetAltitude(),
-                plane.isEmergency(),
+                rdr.getCallsign(),
+                rdr.getSha().getAltitude(),
+                rdr.getSha().getTargetAltitude(),
+                rdr.isEmergency(),
                 true));
       }
   }

@@ -3,12 +3,12 @@ package eng.jAtcSim.newLib.airplanes.pilots;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.geo.Headings;
-import eng.jAtcSim.newLib.airplanes.Airplane;
-import eng.jAtcSim.newLib.airplanes.accessors.IPlaneInterface;
+import eng.jAtcSim.newLib.airplanes.AirplaneState;
+import eng.jAtcSim.newLib.airplanes.internal.Airplane;
 import eng.jAtcSim.newLib.airplanes.modules.sha.navigators.HeadingNavigator;
 import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.mood.Mood;
-import eng.jAtcSim.newLib.shared.GAcc;
+import eng.jAtcSim.newLib.shared.SharedAcc;
 import eng.jAtcSim.newLib.shared.enums.LeftRight;
 import eng.jAtcSim.newLib.shared.enums.LeftRightAny;
 import eng.jAtcSim.newLib.shared.exceptions.ToDoException;
@@ -38,8 +38,8 @@ public class HoldPilot extends Pilot {
   public EDayTimeStamp secondTurnTime;
   public LeftRight turn;
 
-  public HoldPilot(IPlaneInterface pilot, Navaid navaid, int inboundRadial, LeftRight turn) {
-    super(pilot);
+  public HoldPilot(Airplane plane, Navaid navaid, int inboundRadial, LeftRight turn) {
+    super(plane);
     this.navaid = navaid;
     this.inboundRadial = inboundRadial;
     this.turn = turn;
@@ -48,39 +48,39 @@ public class HoldPilot extends Pilot {
 
   @Override
   public void elapseSecondInternal() {
-    if (plane.getState() != Airplane.State.holding)
+    if (rdr.getState() != AirplaneState.holding)
       super.throwIllegalStateException();
 
-    EDayTimeRun now = GAcc.getNow();
+    EDayTimeRun now = SharedAcc.getNow();
 
     switch (this.phase) {
       case directEntry:
-        if (Coordinates.getDistanceInNM(plane.getCoordinate(), this.navaid.getCoordinate()) < NEAR_FIX_DISTANCE) {
+        if (Coordinates.getDistanceInNM(rdr.getCoordinate(), this.navaid.getCoordinate()) < NEAR_FIX_DISTANCE) {
           setTargetHeading(this.getOutboundHeading(), turn.toLeftRightAny());
           this.phase = eHoldPhase.firstTurn;
         } else {
-          int newHeading = (int) Coordinates.getBearing(plane.getCoordinate(), this.navaid.getCoordinate());
+          int newHeading = (int) Coordinates.getBearing(rdr.getCoordinate(), this.navaid.getCoordinate());
           setTargetHeading(newHeading, LeftRightAny.any);
         }
         break;
       case inbound:
-        if (Coordinates.getDistanceInNM(plane.getCoordinate(), this.navaid.getCoordinate()) < NEAR_FIX_DISTANCE) {
+        if (Coordinates.getDistanceInNM(rdr.getCoordinate(), this.navaid.getCoordinate()) < NEAR_FIX_DISTANCE) {
           setTargetHeading(this.getOutboundHeading(), turn.toLeftRightAny());
           this.phase = eHoldPhase.firstTurn;
-          if (plane.isArrival())
-            plane.addExperience(Mood.ArrivalExperience.holdCycleFinished);
+          if (rdr.isArrival())
+            wrt.addExperience(Mood.ArrivalExperience.holdCycleFinished);
           else
-            plane.addExperience(Mood.DepartureExperience.holdCycleFinished);
+            wrt.addExperience(Mood.DepartureExperience.holdCycleFinished);
         } else {
           double newHeading = Coordinates.getHeadingToRadial(
-              plane.getCoordinate(), this.navaid.getCoordinate(), this.inboundRadial,
+              rdr.getCoordinate(), this.navaid.getCoordinate(), this.inboundRadial,
               Coordinates.eHeadingToRadialBehavior.standard);
           setTargetHeading(newHeading, LeftRightAny.any);
 
         }
         break;
       case firstTurn:
-        if (plane.getTargetHeading() == plane.getHeading()) {
+        if (rdr.getSha().getTargetHeading() == rdr.getSha().getHeading()) {
           this.secondTurnTime = now.toStamp().addSeconds(60);
           this.phase = eHoldPhase.outbound;
         }
@@ -92,13 +92,13 @@ public class HoldPilot extends Pilot {
         }
         break;
       case secondTurn:
-        if (plane.getTargetHeading() == plane.getHeading()) {
+        if (rdr.getSha().getTargetHeading() == rdr.getSha().getHeading()) {
           this.phase = eHoldPhase.inbound;
         }
         break;
 
       case tearEntry:
-        if (Coordinates.getDistanceInNM(plane.getCoordinate(), this.navaid.getCoordinate()) < NEAR_FIX_DISTANCE) {
+        if (Coordinates.getDistanceInNM(rdr.getCoordinate(), this.navaid.getCoordinate()) < NEAR_FIX_DISTANCE) {
 
           double newHeading;
           newHeading = this.turn == LeftRight.left
@@ -109,7 +109,7 @@ public class HoldPilot extends Pilot {
 
           this.phase = eHoldPhase.tearAgainst;
         } else {
-          double newHeading = Coordinates.getBearing(plane.getCoordinate(), this.navaid.getCoordinate());
+          double newHeading = Coordinates.getBearing(rdr.getCoordinate(), this.navaid.getCoordinate());
           setTargetHeading(newHeading, LeftRightAny.any);
         }
         break;
@@ -123,12 +123,12 @@ public class HoldPilot extends Pilot {
         break;
 
       case parallelEntry:
-        if (Coordinates.getDistanceInNM(plane.getCoordinate(), this.navaid.getCoordinate()) < NEAR_FIX_DISTANCE) {
+        if (Coordinates.getDistanceInNM(rdr.getCoordinate(), this.navaid.getCoordinate()) < NEAR_FIX_DISTANCE) {
           setTargetHeading(this.getOutboundHeading(), turn.getOpposite().toLeftRightAny());
           this.secondTurnTime = now.toStamp().addSeconds(60);
           this.phase = eHoldPhase.parallelAgainst;
         } else {
-          int newHeading = (int) Coordinates.getBearing(plane.getCoordinate(), this.navaid.getCoordinate());
+          int newHeading = (int) Coordinates.getBearing(rdr.getCoordinate(), this.navaid.getCoordinate());
           setTargetHeading(newHeading, LeftRightAny.any);
         }
         break;
@@ -144,7 +144,7 @@ public class HoldPilot extends Pilot {
         break;
 
       case parallelTurn:
-        if (plane.getHeading() == plane.getTargetHeading()) {
+        if (rdr.getSha().getHeading() == rdr.getSha().getTargetHeading()) {
           this.phase = eHoldPhase.directEntry;
         }
         break;
@@ -180,13 +180,13 @@ public class HoldPilot extends Pilot {
   }
 
   @Override
-  protected Airplane.State[] getInitialStates() {
-    return new Airplane.State[]{
-        Airplane.State.arrivingHigh,
-        Airplane.State.arrivingLow,
-        Airplane.State.holding,
-        Airplane.State.departingLow,
-        Airplane.State.departingHigh
+  protected AirplaneState[] getInitialStates() {
+    return new AirplaneState[]{
+        AirplaneState.arrivingHigh,
+        AirplaneState.arrivingLow,
+        AirplaneState.holding,
+        AirplaneState.departingLow,
+        AirplaneState.departingHigh
     };
   }
 
@@ -195,12 +195,12 @@ public class HoldPilot extends Pilot {
   }
 
   @Override
-  protected Airplane.State[] getValidStates() {
-    return new Airplane.State[]{Airplane.State.holding};
+  protected AirplaneState[] getValidStates() {
+    return new AirplaneState[]{AirplaneState.holding};
   }
 
   private void setHoldDataByEntry() {
-    double y = Coordinates.getBearing(plane.getCoordinate(), this.navaid.getCoordinate());
+    double y = Coordinates.getBearing(rdr.getCoordinate(), this.navaid.getCoordinate());
     y = Headings.add(y, 180);
 
     int h = this.inboundRadial;
@@ -228,6 +228,6 @@ public class HoldPilot extends Pilot {
   }
 
   private void setTargetHeading(double heading, LeftRightAny turn) {
-    plane.setTargetHeading(new HeadingNavigator(heading, turn));
+    wrt.setTargetHeading(new HeadingNavigator(heading, turn));
   }
 }

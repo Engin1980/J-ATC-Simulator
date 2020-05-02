@@ -1,5 +1,6 @@
 package eng.jAtcSim.newLib.airplanes;
 
+import eng.eSystem.Producer;
 import eng.jAtcSim.newLib.area.*;
 import eng.jAtcSim.newLib.messaging.Messenger;
 import eng.jAtcSim.newLib.shared.InstanceProviderDictionary;
@@ -14,6 +15,8 @@ public class LAcc {
       return getArea().getNavaids().get(command.getNavaidName());
     }
   }
+
+  private static Producer<Boolean> someEmergencyProducer;
 
   public static Area getArea() {
     return InstanceProviderDictionary.getInstance(Area.class, "area");
@@ -49,13 +52,5 @@ public class LAcc {
 
   public static void setCurrentRunwayConfiguration(RunwayConfiguration value){
     InstanceProviderDictionary.setInstance(RunwayConfiguration.class, value);
-  }
-
-  public static Weather getWeather(){
-    return InstanceProviderDictionary.getInstance(Weather.class);
-  }
-
-  public static NavaidList getNavaids(){
-    return getArea().getNavaids();
   }
 }

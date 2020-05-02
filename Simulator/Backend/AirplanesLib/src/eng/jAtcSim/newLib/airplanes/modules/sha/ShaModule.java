@@ -4,9 +4,9 @@ import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.geo.Headings;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplaneType.AirplaneType;
-import eng.jAtcSim.newLib.airplanes.Airplane;
+import eng.jAtcSim.newLib.airplanes.AirplaneState;
+import eng.jAtcSim.newLib.airplanes.internal.Airplane;
 import eng.jAtcSim.newLib.airplanes.LAcc;
-import eng.jAtcSim.newLib.airplanes.accessors.IPlaneInterface;
 import eng.jAtcSim.newLib.airplanes.modules.sha.navigators.HeadingNavigator;
 import eng.jAtcSim.newLib.airplanes.modules.sha.navigators.Navigator;
 import eng.jAtcSim.newLib.airplanes.modules.sha.navigators.NavigatorResult;
@@ -139,7 +139,7 @@ public class ShaModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
     return (int) Math.round(this.lastVerticalSpeed);
   }
 
-  public ShaModule(IPlaneInterface plane, int heading, int altitude, int speed, AirplaneType planeType) {
+  public ShaModule(Airplane plane, int heading, int altitude, int speed, AirplaneType planeType) {
     super(plane);
     this.targetAltitude = new RestrictableItem(altitude);
     this.targetHeading = heading;
@@ -189,8 +189,8 @@ public class ShaModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
   @Override
   public void elapseSecond() {
     // TODO here is && or || ???
-    boolean isSpeedPreffered = plane.getState().is(
-        Airplane.State.takeOffGoAround, Airplane.State.takeOffRoll);
+    boolean isSpeedPreffered = rdr.getState().is(
+        AirplaneState.takeOffGoAround, AirplaneState.takeOffRoll);
 
 
     if (this.getTargetAltitude() != this.getAltitude()
@@ -217,7 +217,7 @@ public class ShaModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
     } else if (this.lastVerticalSpeed != 0)
       this.lastVerticalSpeed = 0;
 
-    NavigatorResult nr = this.navigator.navigate(plane);
+    NavigatorResult nr = this.navigator.navigate(rdr);
     if (nr != null){
       this.targetHeading = nr.getHeading();
       this.targetHeadingTurn = nr.getTurn();
@@ -250,7 +250,7 @@ public class ShaModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
 
   private void adjustAltitude(ValueRequest altitudeRequest) {
     int airportAltitude = LAcc.getAirport().getAltitude();
-    if (plane.getState().is(Airplane.State.takeOffRoll, Airplane.State.landed, Airplane.State.holdingPoint)) {
+    if (rdr.getState().is(AirplaneState.takeOffRoll, AirplaneState.landed, AirplaneState.holdingPoint)) {
       // not adjusting altitude at this states
       this.altitude.reset(airportAltitude);
     } else {
@@ -275,9 +275,9 @@ public class ShaModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
       ret.energy = 0;
       ret.value = 0;
     } else {
-      double incStep = plane.getType().speedIncreaseRate;
-      double decStep = plane.getType().speedDecreaseRate;
-      if (plane.getState().isOnGround()) {
+      double incStep = rdr.getType().speedIncreaseRate;
+      double decStep = rdr.getType().speedDecreaseRate;
+      if (rdr.getState().isOnGround()) {
         incStep *= GROUND_SPEED_CHANGE_MULTIPLIER;
         decStep *= GROUND_SPEED_CHANGE_MULTIPLIER;
       }
@@ -293,13 +293,13 @@ public class ShaModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
   private ValueRequest getAltitudeRequest() {
     ValueRequest ret;
     // if on ground, nothing required
-    if (plane.getState().isOnGround()){ // && altitude.getValue() == Acc.airport().getAltitude()) {
+    if (rdr.getState().isOnGround()){ // && altitude.getValue() == Acc.airport().getAltitude()) {
       ret = new ValueRequest();
       ret.energy = 0;
       ret.value = 0;
     } else {
-      double climbRateForAltitude = plane.getType().getClimbRateForAltitude(this.altitude.getValue());
-      double descentRateForAltitude = plane.getType().getDescendRateForAltitude(this.altitude.getValue());
+      double climbRateForAltitude = rdr.getType().getClimbRateForAltitude(this.altitude.getValue());
+      double descentRateForAltitude = rdr.getType().getDescendRateForAltitude(this.altitude.getValue());
       descentRateForAltitude = adjustDescentRateByApproachStateIfRequired(descentRateForAltitude);
       ret = getRequest(
           this.altitude.getValue(),
@@ -313,9 +313,9 @@ public class ShaModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
 
   private double adjustDescentRateByApproachStateIfRequired(double descentRateForAltitude) {
     double ret;
-    if (plane.getState().is(Airplane.State.approachDescend, Airplane.State.longFinal, Airplane.State.shortFinal)) {
+    if (rdr.getState().is(AirplaneState.approachDescend, AirplaneState.longFinal, AirplaneState.shortFinal)) {
       double restrictedDescentRate;
-      switch (plane.getState()) {
+      switch (rdr.getState()) {
         case approachDescend:
           restrictedDescentRate = 2000;
           break;

@@ -14,7 +14,7 @@ import eng.jAtcSim.newLib.atcs.IAirplane4Atc;
 import eng.jAtcSim.newLib.atcs.XAcc;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.Callsign;
-import eng.jAtcSim.newLib.shared.GAcc;
+import eng.jAtcSim.newLib.shared.SharedAcc;
 import eng.jAtcSim.newLib.shared.enums.AtcType;
 import eng.jAtcSim.newLib.shared.exceptions.ToDoException;
 
@@ -50,7 +50,7 @@ public class PlaneResponsibilityManager {
       tmp = tmp.where(q -> q.getSwitchRequest() != null
           && q.getAtc() == sender
           && q.getSwitchRequest().isConfirmed() == false
-          && q.getSwitchRequest().getRepeatRequestTime().isBefore(GAcc.getNow().toStamp()));
+          && q.getSwitchRequest().getRepeatRequestTime().isBefore(SharedAcc.getNow().toStamp()));
       tmp.forEach(q -> q.getSwitchRequest().updateLastRequestTime());
       IReadOnlyList<Callsign> ret = tmp.select(q -> q.getPlane());
       return ret;

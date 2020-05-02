@@ -2,7 +2,7 @@ package eng.jAtcSim.newLib.airplanes.commandApplications;
 
 import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IMap;
-import eng.jAtcSim.newLib.airplanes.accessors.IPlaneInterface;
+import eng.jAtcSim.newLib.airplanes.internal.Airplane;
 import eng.jAtcSim.newLib.speeches.Confirmation;
 import eng.jAtcSim.newLib.speeches.ICommand;
 import eng.jAtcSim.newLib.speeches.INotification;
@@ -15,7 +15,7 @@ public class ApplicationManager {
   private static IMap<Class<? extends ICommand>, CommandApplication> cmdApps;
   private static IMap<Class<? extends INotification>, NotificationApplication> notApps;
 
-  public static ConfirmationResult confirm(IPlaneInterface plane, ISpeech speech, boolean checkStateSanity, boolean checkCommandSanity) {
+  public static ConfirmationResult confirm(Airplane plane, ISpeech speech, boolean checkStateSanity, boolean checkCommandSanity) {
     ConfirmationResult ret;
 
     if (speech instanceof AfterCommand) {
@@ -41,7 +41,7 @@ public class ApplicationManager {
 
   }
 
-  public static ApplicationResult apply(IPlaneInterface plane, ISpeech speech) {
+  public static ApplicationResult apply(Airplane plane, ISpeech speech) {
     ApplicationResult ret;
 
     if (speech instanceof ICommand) {

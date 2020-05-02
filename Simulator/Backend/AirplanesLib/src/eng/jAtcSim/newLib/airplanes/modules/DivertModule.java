@@ -1,9 +1,9 @@
 package eng.jAtcSim.newLib.airplanes.modules;
 
 
-import eng.jAtcSim.newLib.airplanes.Airplane;
-import eng.jAtcSim.newLib.airplanes.accessors.IPlaneInterface;
-import eng.jAtcSim.newLib.shared.GAcc;
+import eng.jAtcSim.newLib.airplanes.AirplaneState;
+import eng.jAtcSim.newLib.airplanes.internal.Airplane;
+import eng.jAtcSim.newLib.shared.SharedAcc;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 import eng.jAtcSim.newLib.speeches.airplane2atc.DivertTimeNotification;
 
@@ -24,13 +24,13 @@ public class DivertModule extends Module{
   }
 
   private static EDayTimeStamp generateDivertTime() {
-    EDayTimeStamp now = GAcc.getNow().toStamp();
-    int divertTimeMinutes = GAcc.getRnd().nextInt(MINIMAL_DIVERT_TIME_MINUTES, MAXIMAL_DIVERT_TIME_MINUTES);
+    EDayTimeStamp now = SharedAcc.getNow().toStamp();
+    int divertTimeMinutes = SharedAcc.getRnd().nextInt(MINIMAL_DIVERT_TIME_MINUTES, MAXIMAL_DIVERT_TIME_MINUTES);
     EDayTimeStamp ret = now.addMinutes(divertTimeMinutes);
     return ret;
   }
 
-  public DivertModule(IPlaneInterface plane) {
+  public DivertModule(Airplane plane) {
     super(plane);
     this.divertTime = generateDivertTime();
   }
@@ -42,11 +42,11 @@ public class DivertModule extends Module{
 
   private void checkForDivert() {
     if (possible
-        && plane.isDivertable()
-        && plane.getState().is(
-        Airplane.State.arrivingHigh, Airplane.State.arrivingLow,
-        Airplane.State.holding)
-        && plane.isEmergency() == false) {
+        && rdr.getRouting().isDivertable()
+        && rdr.getState().is(
+        AirplaneState.arrivingHigh, AirplaneState.arrivingLow,
+        AirplaneState.holding)
+        && rdr.isEmergency() == false) {
       boolean isDiverting = this.divertIfRequested();
       if (!isDiverting) {
         adviceDivertTimeIfRequested();
@@ -58,8 +58,8 @@ public class DivertModule extends Module{
     int minLeft = getMinutesLeft();
     for (int dit : divertAnnounceTimes) {
       if (lastAnnouncedMinute > dit && minLeft < dit) {
-        plane.sendMessage(
-            plane.getTunedAtc(),
+        wrt.sendMessage(
+            rdr.getAtc().getTunedAtc(),
             new DivertTimeNotification(minLeft));
         this.lastAnnouncedMinute = minLeft;
         break;
@@ -68,13 +68,13 @@ public class DivertModule extends Module{
   }
 
   private int getMinutesLeft() {
-    int diff = (int) Math.ceil((divertTime.getValue() - GAcc.getNow().getValue()) / 60d);
+    int diff = (int) Math.ceil((divertTime.getValue() - SharedAcc.getNow().getValue()) / 60d);
     return diff;
   }
 
   private boolean divertIfRequested() {
     if (this.getMinutesLeft() <= 0) {
-      plane.divert(false);
+      wrt.divert(false);
       return true;
     } else {
       return false;

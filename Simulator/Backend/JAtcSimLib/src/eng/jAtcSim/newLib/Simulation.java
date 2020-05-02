@@ -460,8 +460,8 @@ public class Simulation {
     if (this.emergencyManager.isEmergencyTimeElapsed()) {
       if (!Acc.planes().isAny(q -> q.getEmergencyModule().isEmergency())) {
         Airplane p = Acc.planes()
-            .where(q -> q.getState().is(Airplane.State.departingLow,
-                Airplane.State.departingHigh, Airplane.State.arrivingHigh, Airplane.State.arrivingLow, Airplane.State.arrivingCloseFaf))
+            .where(q -> q.getState().is(AirplaneState.departingLow,
+                AirplaneState.departingHigh, AirplaneState.arrivingHigh, AirplaneState.arrivingLow, AirplaneState.arrivingCloseFaf))
             .tryGetRandom();
         if (p != null)
           p.getAdvanced().raiseEmergency();

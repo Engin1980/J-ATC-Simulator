@@ -2,6 +2,7 @@ package eng.jAtcSim.newLib.xml.area.internal;
 
 import eng.eSystem.eXml.XElement;
 import eng.jAtcSim.newLib.area.Atc;
+import eng.jAtcSim.newLib.shared.enums.AtcType;
 import eng.jAtcSim.newLib.shared.xml.IXmlLoader;
 import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
 
@@ -9,7 +10,7 @@ public class AtcXmlLoader implements IXmlLoader<Atc> {
   @Override
   public Atc load(XElement source) {
     XmlLoaderUtils.setContext(source);
-    Atc.eType type = XmlLoaderUtils.loadEnum("type", Atc.eType.class);
+    AtcType type = XmlLoaderUtils.loadEnum("type", AtcType.class);
     String name = XmlLoaderUtils.loadString("name");
     double frequency = XmlLoaderUtils.loadDouble("frequency");
     int acceptAltitude = XmlLoaderUtils.loadInteger("acceptAltitude");

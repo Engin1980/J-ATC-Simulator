@@ -3,7 +3,8 @@ package eng.jAtcSim.newLib.airplanes.other;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.EStringBuilder;
 import eng.eSystem.geo.Headings;
-import eng.jAtcSim.newLib.airplanes.Airplane;
+import eng.jAtcSim.newLib.airplanes.AirplaneState;
+import eng.jAtcSim.newLib.airplanes.internal.Airplane;
 import eng.jAtcSim.newLib.airplanes.LAcc;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.logging.writers.*;
@@ -31,7 +32,7 @@ public class FlightDataRecorder extends AirplaneRecorder {
            int heading, int targetHeading,
            int altitude, int verticalSpeed, int targetAltitude,
            int speed, int groundSpeed, int targetSpeed,
-           Airplane.State state) {
+           AirplaneState state) {
     EStringBuilder sb = new EStringBuilder(DEFAULT_STRING_BUILDER_SIZE);
     sb.appendFormat(" %s ", this.callsign.toString()).append(SEPARATOR);
 

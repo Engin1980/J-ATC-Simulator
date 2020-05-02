@@ -2,15 +2,21 @@ package eng.jAtcSim.newLib.atcs;
 
 
 import eng.eSystem.collections.*;
+import eng.eSystem.geo.Coordinates;
 import eng.jAtcSim.newLib.airplaneType.AirplaneType;
-import eng.jAtcSim.newLib.airplanes.Airplane;
+import eng.jAtcSim.newLib.airplanes.internal.Airplane;
 import eng.jAtcSim.newLib.area.ActiveRunway;
 import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
 import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.area.routes.DARoute;
-import eng.jAtcSim.newLib.shared.GAcc;
+import eng.jAtcSim.newLib.messaging.Message;
+import eng.jAtcSim.newLib.messaging.Participant;
+import eng.jAtcSim.newLib.shared.SharedAcc;
 import eng.jAtcSim.newLib.shared.enums.DARouteType;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
+import eng.jAtcSim.newLib.speeches.ICommand;
+import eng.jAtcSim.newLib.speeches.SpeechList;
+import eng.jAtcSim.newLib.speeches.atc2airplane.ClearedToRouteCommand;
 
 public class TowerAtc extends ComputerAtc {
   public static class RunwayCheck {
@@ -30,9 +36,9 @@ public class TowerAtc extends ComputerAtc {
     public static RunwayCheck createNormal(boolean isInitial) {
       int maxTime;
       if (isInitial)
-        maxTime = GAcc.getRnd().nextInt(MAX_NORMAL_MAINTENANCE_INTERVAL);
+        maxTime = SharedAcc.getRnd().nextInt(MAX_NORMAL_MAINTENANCE_INTERVAL);
       else
-        maxTime = GAcc.getRnd().nextInt(MIN_NORMAL_MAINTENANCE_INTERVAL, MAX_NORMAL_MAINTENANCE_INTERVAL);
+        maxTime = SharedAcc.getRnd().nextInt(MIN_NORMAL_MAINTENANCE_INTERVAL, MAX_NORMAL_MAINTENANCE_INTERVAL);
 
       RunwayCheck ret = new RunwayCheck(maxTime, NORMAL_MAINTENACE_DURATION);
       return ret;
@@ -40,17 +46,17 @@ public class TowerAtc extends ComputerAtc {
 
     public static RunwayCheck createSnowCleaning(boolean isInitial, boolean isIntensive) {
       int maxTime = isIntensive
-          ? GAcc.getRnd().nextInt(MIN_SNOW_INTENSIVE_MAINTENANCE_INTERVAL, MAX_SNOW_INTENSIVE_MAINTENANCE_INTERVAL)
-          : GAcc.getRnd().nextInt(MIN_SNOW_MAINTENANCE_INTERVAL, MAX_SNOW_MAINTENANCE_INTERVAL);
+          ? SharedAcc.getRnd().nextInt(MIN_SNOW_INTENSIVE_MAINTENANCE_INTERVAL, MAX_SNOW_INTENSIVE_MAINTENANCE_INTERVAL)
+          : SharedAcc.getRnd().nextInt(MIN_SNOW_MAINTENANCE_INTERVAL, MAX_SNOW_MAINTENANCE_INTERVAL);
       if (isInitial)
-        maxTime = GAcc.getRnd().nextInt(maxTime);
+        maxTime = SharedAcc.getRnd().nextInt(maxTime);
 
       RunwayCheck ret = new RunwayCheck(maxTime, SNOW_MAINENANCE_DURATION);
       return ret;
     }
 
     public static RunwayCheck createImmediateAfterEmergency() {
-      int closeDuration = GAcc.getRnd().nextInt(MIN_EMERGENCY_MAINTENANCE_DURATION, MAX_EMERGENCY_MAINTENANCE_DURATION);
+      int closeDuration = SharedAcc.getRnd().nextInt(MIN_EMERGENCY_MAINTENANCE_DURATION, MAX_EMERGENCY_MAINTENANCE_DURATION);
       RunwayCheck ret = new RunwayCheck(0, closeDuration);
       return ret;
     }
@@ -74,7 +80,7 @@ public class TowerAtc extends ComputerAtc {
 
     public void start() {
       double durationRangeSeconds = expectedDurationInMinutes * 60 * 0.2d;
-      int realDurationSeconds = (int) GAcc.getRnd().nextDouble(
+      int realDurationSeconds = (int) SharedAcc.getRnd().nextDouble(
           expectedDurationInMinutes * 60 - durationRangeSeconds,
           expectedDurationInMinutes * 60 + durationRangeSeconds);
       realDurationEnd = Acc.now().addSeconds(realDurationSeconds);
@@ -245,7 +251,7 @@ public class TowerAtc extends ComputerAtc {
   @Override
   public void unregisterPlaneUnderControl(IAirplane4Atc plane) {
     if (plane.getFlightModule().isArrival()) {
-      if (plane.getState() == Airplane.State.landed) {
+      if (plane.getState() == AirplaneState.landed) {
         arrivalManager.unregisterFinishedArrival(plane);
       }
       //GO-AROUNDed planes are not unregistered, they have been unregistered previously
@@ -261,7 +267,7 @@ public class TowerAtc extends ComputerAtc {
       Acc.stats().registerDeparture(diffSecs);
     }
 
-    if (plane.getEmergencyModule().isEmergency() && plane.getState() == Airplane.State.landed) {
+    if (plane.getEmergencyModule().isEmergency() && plane.getState() == AirplaneState.landed) {
       // if it is landed emergency, close runway for amount of time
       ActiveRunway rwy = plane.getRoutingModule().getAssignedRunwayThreshold().getParent();
       RunwayCheck rwyCheck = RunwayCheck.createImmediateAfterEmergency();
@@ -738,13 +744,13 @@ class ArrivalManager {
     IList<Airplane> tmp = Acc.planes().where(q -> threshold.equals(q.getRoutingModule().getAssignedRunwayThreshold()));
     double ret = Double.MAX_VALUE;
     for (Airplane plane : tmp) {
-      if (plane.getState() == Airplane.State.landed) {
+      if (plane.getState() == AirplaneState.landed) {
         ret = 0;
         break;
       } else if (plane.getState().is(
-          Airplane.State.shortFinal,
-          Airplane.State.longFinal,
-          Airplane.State.approachDescend
+          AirplaneState.shortFinal,
+          AirplaneState.longFinal,
+          AirplaneState.approachDescend
       )) {
         double dist = Coordinates.getDistanceInNM(plane.getCoordinate(), threshold.getCoordinate());
         if (dist < ret)
@@ -769,7 +775,7 @@ class ArrivalManager {
   public boolean isSomeArrivalOnRunway(ActiveRunway rwy) {
     boolean ret = this.landingPlanesList
         .where(q -> rwy.getThresholds().contains(q.getRoutingModule().getAssignedRunwayThreshold()))
-        .isAny(q -> q.getState() == Airplane.State.landed);
+        .isAny(q -> q.getState() == AirplaneState.landed);
     return ret;
   }
 
@@ -780,7 +786,7 @@ class ArrivalManager {
 
     assert plane.getFlightModule().isArrival();
     assert plane.getRoutingModule().getAssignedRunwayThreshold() != null : "Assigned arrival for " + plane.getFlightModule().getCallsign() + " is null.";
-    if (plane.getState().is(Airplane.State.approachEnter, Airplane.State.approachDescend, Airplane.State.longFinal, Airplane.State.shortFinal))
+    if (plane.getState().is(AirplaneState.approachEnter, AirplaneState.approachDescend, AirplaneState.longFinal, AirplaneState.shortFinal))
       this.landingPlanesList.add(plane);
     else
       this.goAroundedPlanesToSwitchList.add(plane);
@@ -837,7 +843,7 @@ class DepartureManager {
     this.holdingPointReady.remove(plane);
     this.departing.add(plane);
     this.lastDepartingPlane.set(th, plane);
-    this.lastDeparturesTime.set(th, GAcc.getNow().toStamp());
+    this.lastDeparturesTime.set(th, SharedAcc.getNow().toStamp());
     this.departureSwitchAltitude.set(plane, switchAltitude);
   }
 
@@ -872,18 +878,20 @@ class DepartureManager {
   public boolean isSomeDepartureOnRunway(ActiveRunway runway) {
     for (ActiveRunwayThreshold rt : runway.getThresholds()) {
       IAirplane4Atc aip = this.lastDepartingPlane.tryGet(rt);
-      if (aip != null && aip.getState() == Airplane.State.takeOffRoll)
+      if (aip != null && aip.getState() == AirplaneState.takeOffRoll)
         return true;
     }
     return false;
   }
 
-  public void registerNewDeparture(IAirplane4Atc plane, ActiveRunwayThreshold runwayThreshold) {
+  public void registerNewDeparture(IAirplane4Atc plane, ActiveRunwayThreshold runwayThreshold, TowerAtc atc) {
     this.holdingPointNotReady.add(plane);
-    holdingPointWaitingTimeMap.set(plane, GAcc.getNow().toStamp());
+    holdingPointWaitingTimeMap.set(plane, SharedAcc.getNow().toStamp());
     DARoute r = getDepartureRouteForPlane(runwayThreshold,plane.getType(), plane.getEntryExitPoint(), true);
-    plane.setRouting(r, runwayThreshold);
-    //TODO tohle se musí přepsat přes vnucení cesty
+    Message m = new Message(
+        Participant.createAtc(atc.getAtcId()),
+        Participant.createAirplane(plane.getCallsign()),
+        new SpeechList<ICommand>(ClearedToRouteCommand.create(r.getName(), runwayThreshold.getName())));
   }
 
   public IAirplane4Atc tryGetTheLastDepartedPlane(ActiveRunwayThreshold rt) {

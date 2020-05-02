@@ -1,26 +1,26 @@
 package eng.jAtcSim.newLib.airplanes.commandApplications;
 
-import eng.jAtcSim.newLib.airplanes.Airplane;
-import eng.jAtcSim.newLib.airplanes.accessors.IPlaneInterface;
+import eng.jAtcSim.newLib.airplanes.AirplaneState;
+import eng.jAtcSim.newLib.airplanes.internal.Airplane;
 import eng.jAtcSim.newLib.speeches.Rejection;
 import eng.jAtcSim.newLib.speeches.atc2airplane.ReportDivertTimeCommand;
 
 public class ReportDivertTimeCommandApplication extends CommandApplication<ReportDivertTimeCommand> {
 
   @Override
-  protected ApplicationResult adjustAirplane(IPlaneInterface pilot, ReportDivertTimeCommand c) {
-    pilot.reportDivertTimeLeft();
+  protected ApplicationResult adjustAirplane(Airplane pilot, ReportDivertTimeCommand c) {
+    pilot.getWriter().reportDivertTimeLeft();
     ApplicationResult ret = ApplicationResult.getEmpty();
     return ret;
   }
 
   @Override
-  protected Rejection checkCommandSanity(IPlaneInterface pilot, ReportDivertTimeCommand c) {
+  protected Rejection checkCommandSanity(Airplane pilot, ReportDivertTimeCommand c) {
     Rejection ret;
 
-    if (pilot.isDeparture())
+    if (pilot.getReader().isDeparture())
       ret = new Rejection("We do not have divert time as we are a departure.", c);
-    else if (pilot.getState().is(Airplane.State.longFinal, Airplane.State.shortFinal)) {
+    else if (pilot.getReader().getState().is(AirplaneState.longFinal, AirplaneState.shortFinal)) {
       ret = new Rejection("We cannot report divert time at this moment.", c);
     } else {
       ret = null;
@@ -30,7 +30,7 @@ public class ReportDivertTimeCommandApplication extends CommandApplication<Repor
   }
 
   @Override
-  protected Airplane.State[] getInvalidStates() {
-    return new Airplane.State[0];
+  protected AirplaneState[] getInvalidStates() {
+    return new AirplaneState[0];
   }
 }

@@ -6,7 +6,7 @@ import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.validation.EAssert;
-import eng.jAtcSim.newLib.shared.GAcc;
+import eng.jAtcSim.newLib.shared.SharedAcc;
 import eng.jAtcSim.newLib.shared.time.ETimeStamp;
 import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
 import eng.jAtcSim.newLib.traffic.models.base.DayGeneratedTrafficModel;
@@ -88,7 +88,7 @@ public class DensityBasedTrafficModel extends DayGeneratedTrafficModel {
   private final IList<Company> countries;
   private final HourBlockMovements[] perHourMovements;
   private final IList<DirectionWeight> directions;
-  private final ERandom rnd = GAcc.getRnd();
+  private final ERandom rnd = SharedAcc.getRnd();
 
   private DensityBasedTrafficModel(
       HourBlockMovements[] perHourMovements,
