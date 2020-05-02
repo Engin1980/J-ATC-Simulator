@@ -1,6 +1,7 @@
-package eng.jAtcSim.newLib.atcs;
+package eng.jAtcSim.newLib.atcs.internal;
 
 import eng.jAtcSim.newLib.messaging.Message;
+import eng.jAtcSim.newLib.messaging.MessagingAcc;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.enums.AtcType;
@@ -100,7 +101,7 @@ public abstract class Atc {
   }
 
   protected void sendMessage(Message msg) {
-    LAcc.getMessenger().send(msg);
+    MessagingAcc.getMessenger().send(msg);
     recorder.write(msg);
   }
 

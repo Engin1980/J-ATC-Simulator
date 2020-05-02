@@ -3,6 +3,7 @@ package eng.jAtcSim.newLib.airplanes;
 import eng.eSystem.geo.Coordinate;
 import eng.jAtcSim.newLib.airplaneType.AirplaneType;
 import eng.jAtcSim.newLib.shared.Callsign;
+import eng.jAtcSim.newLib.shared.Squawk;
 
 public interface IAirplane {
 
@@ -15,6 +16,8 @@ public interface IAirplane {
   IAirplaneRouting getRouting();
 
   IAirplaneSHA getSha();
+
+  Squawk getSqwk();
 
   AirplaneState getState();
 

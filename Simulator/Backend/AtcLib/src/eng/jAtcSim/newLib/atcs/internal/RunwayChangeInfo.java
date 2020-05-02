@@ -1,4 +1,4 @@
-package eng.jAtcSim.newLib.atcs;
+package eng.jAtcSim.newLib.atcs.internal;
 
 import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
 import eng.jAtcSim.newLib.shared.time.ETime;

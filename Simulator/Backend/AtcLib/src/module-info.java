@@ -6,4 +6,5 @@ module JAtcSim.Modules.Backend.AtcLib {
   requires JAtcSim.Modules.Backend.MessagingLib;
   requires JAtcSim.Modules.Backend.SpeechesLib;
   requires JAtcSim.Modules.Backend.AirplaneTypeLib;
+  requires JAtcSim.Modules.Backend.WeatherLib;
 }

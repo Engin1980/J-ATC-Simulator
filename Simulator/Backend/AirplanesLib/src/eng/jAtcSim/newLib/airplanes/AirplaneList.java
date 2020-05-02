@@ -2,6 +2,7 @@ package eng.jAtcSim.newLib.airplanes;
 
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
+import eng.eSystem.collections.IReadOnlyList;
 import eng.jAtcSim.newLib.airplanes.internal.Airplane;
 
 import java.util.Iterator;
@@ -13,5 +14,9 @@ public class AirplaneList implements Iterable<IAirplane> {
   @Override
   public Iterator<IAirplane> iterator() {
     return readers.iterator();
+  }
+
+  public IReadOnlyList<IAirplane> toList() {
+    return readers;
   }
 }

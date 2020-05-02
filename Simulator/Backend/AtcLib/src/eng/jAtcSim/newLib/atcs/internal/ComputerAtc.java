@@ -1,13 +1,14 @@
-package eng.jAtcSim.newLib.atcs;
+package eng.jAtcSim.newLib.atcs.internal;
 
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
-import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.validation.EAssert;
+import eng.jAtcSim.newLib.airplanes.IAirplane;
 import eng.jAtcSim.newLib.atcs.planeResponsibility.PlaneResponsibilityManager;
 import eng.jAtcSim.newLib.atcs.planeResponsibility.SwitchRoutingRequest;
 import eng.jAtcSim.newLib.messaging.Message;
+import eng.jAtcSim.newLib.messaging.MessagingAcc;
 import eng.jAtcSim.newLib.messaging.Participant;
 import eng.jAtcSim.newLib.messaging.StringMessageContent;
 import eng.jAtcSim.newLib.shared.AtcId;
@@ -19,9 +20,6 @@ import eng.jAtcSim.newLib.speeches.airplane2atc.GoodDayNotification;
 import eng.jAtcSim.newLib.speeches.atc2airplane.ContactCommand;
 import eng.jAtcSim.newLib.speeches.atc2airplane.RadarContactConfirmationNotification;
 import eng.jAtcSim.newLib.speeches.atc2atc.PlaneSwitchMessage;
-
-import java.lang.invoke.CallSite;
-import java.security.cert.CertificateNotYetValidException;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
@@ -50,7 +48,7 @@ public abstract class ComputerAtc extends Atc {
 
   public void elapseSecond() {
 
-    IList<Message> msgs = LAcc.getMessenger().getMessagesByListener(this, true);
+    IList<Message> msgs = MessagingAcc.getMessenger().getMessagesByListener(this, true);
     speechDelayer.add(msgs);
 
     msgs = speechDelayer.getAndElapse();
@@ -63,7 +61,7 @@ public abstract class ComputerAtc extends Atc {
   }
 
   private void switchConfirmedPlanesIfReady() {
-    IReadOnlyList<Callsign> planes = LAcc.getPrm().forAtc().getConfirmedSwitchesByAtc(this.getAtcId(), true);
+    IReadOnlyList<Callsign> planes = XAcc.getPrm().forAtc().getConfirmedSwitchesByAtc(this.getAtcId(), true);
     for (Callsign plane : planes) {
       if (this.shouldBeSwitched(plane))
         this.applySwitchHangOff(plane);
@@ -107,7 +105,7 @@ public abstract class ComputerAtc extends Atc {
   protected abstract boolean acceptsNewRouting(Callsign callsign, SwitchRoutingRequest srr);
 
   private void processPlaneSwitchMessage(Message m) {
-    PlaneResponsibilityManager prm = LAcc.getPrm();
+    PlaneResponsibilityManager prm = XAcc.getPrm();
     PlaneSwitchMessage psm = m.getContent();
     Callsign callsign = psm.getCallsign();
     EAssert.isTrue(m.getSource().getType() == Participant.eType.atc);
@@ -134,9 +132,9 @@ public abstract class ComputerAtc extends Atc {
   }
 
   private void rejectChangedRouting(Callsign callsign, AtcId targetAtcId) {
-    PlaneResponsibilityManager prm = LAcc.getPrm();
+    PlaneResponsibilityManager prm = XAcc.getPrm();
     prm.forAtc().resetSwitchRequest(this.getAtcId(), callsign);
-    IAirplane4Atc plane = XAcc.getPlane(callsign);
+    IAirplane plane = XAcc.getPlane(callsign);
     Message m = new Message(
         Participant.createAtc(this.getAtcId()),
         Participant.createAtc(targetAtcId),
@@ -145,7 +143,7 @@ public abstract class ComputerAtc extends Atc {
   }
 
   private void rejectSwitch(Callsign callsign, AtcId targetAtcId, RequestResult planeAcceptance) {
-    PlaneResponsibilityManager prm = LAcc.getPrm();
+    PlaneResponsibilityManager prm = XAcc.getPrm();
     prm.forAtc().rejectSwitchRequest(callsign, this.getAtcId());
     Message nm = new Message(
         Participant.createAtc(this.getAtcId()),
@@ -155,7 +153,7 @@ public abstract class ComputerAtc extends Atc {
   }
 
   private void acceptSwitch(Callsign callsign, AtcId targetAtcId) {
-    PlaneResponsibilityManager prm = LAcc.getPrm();
+    PlaneResponsibilityManager prm = XAcc.getPrm();
     prm.forAtc().confirmSwitchRequest(callsign, this.getAtcId(), null);
     Message nm = new Message(
         Participant.createAtc(this.getAtcId()),
@@ -177,7 +175,7 @@ public abstract class ComputerAtc extends Atc {
     if (gdns.isEmpty() == false) {
       SpeechList lst = new SpeechList();
       lst.add(new RadarContactConfirmationNotification());
-      if (LAcc.getPrm().forAtc().getResponsibleAtc(callsign).equals(this.getAtcId())) {
+      if (XAcc.getPrm().forAtc().getResponsibleAtc(callsign).equals(this.getAtcId())) {
         AtcId atcId = XAcc.getAtc(AtcType.app).getAtcId();
         lst.add(new ContactCommand(atcId));
       }
@@ -195,7 +193,7 @@ public abstract class ComputerAtc extends Atc {
    * Checks for planes ready to switch and switch them.
    */
   private void checkAndProcessPlanesReadyToSwitch() {
-    PlaneResponsibilityManager prm = LAcc.getPrm();
+    PlaneResponsibilityManager prm = XAcc.getPrm();
     IReadOnlyList<Callsign> myPlanes = prm.forAtc().getPlanes(this.getAtcId());
     for (Callsign myPlane : myPlanes) {
       if (prm.forAtc().isUnderSwitchRequest(myPlane, this.getAtcId(), null))
@@ -217,7 +215,7 @@ public abstract class ComputerAtc extends Atc {
   protected abstract AtcId getTargetAtcIfPlaneIsReadyToSwitch(Callsign callsign);
 
   private void repeatOldSwitchRequests() {
-    PlaneResponsibilityManager prm = LAcc.getPrm();
+    PlaneResponsibilityManager prm = XAcc.getPrm();
     IReadOnlyList<Callsign> awaitings = prm.forAtc().getSwitchRequestsToRepeatByAtc(this.getAtcId());
     for (Callsign callsign : awaitings) {
       if (speechDelayer
@@ -227,13 +225,13 @@ public abstract class ComputerAtc extends Atc {
           Participant.createAtc(this.getAtcId()),
           Participant.createAtc(XAcc.getAtc(AtcType.app).getAtcId()),
           new PlaneSwitchMessage(callsign, PlaneSwitchMessage.eMessageType.request, "(repeated)"));
-      LAcc.getMessenger().send(m);
+      MessagingAcc.getMessenger().send(m);
       recorder.write(m);
     }
   }
 
   protected void requestNewSwitch(Callsign callsign, AtcId targetAtcId) {
-    PlaneResponsibilityManager prm = LAcc.getPrm();
+    PlaneResponsibilityManager prm = XAcc.getPrm();
     prm.forAtc().createSwitchRequest(this.getAtcId(), targetAtcId, callsign);
     Message m = new Message(
         Participant.createAtc(this.getAtcId()),
@@ -243,7 +241,7 @@ public abstract class ComputerAtc extends Atc {
   }
 
   private void applySwitchHangOff(Callsign callsign) {
-    PlaneResponsibilityManager prm = LAcc.getPrm();
+    PlaneResponsibilityManager prm = XAcc.getPrm();
     prm.forAtc().applyConfirmedSwitch(this.getAtcId(), callsign);
     AtcId newTargetAtc = prm.getResponsibleAtc(callsign);
     Message msg = new Message(
@@ -251,7 +249,7 @@ public abstract class ComputerAtc extends Atc {
         Participant.createAirplane(callsign),
         new SpeechList<>(
             new ContactCommand(newTargetAtc)));
-    LAcc.getMessenger().send(msg);
+    MessagingAcc.getMessenger().send(msg);
   }
 
 //  @Override

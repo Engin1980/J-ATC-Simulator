@@ -7,14 +7,14 @@ import eng.eSystem.validation.EAssert;
 import static eng.eSystem.utilites.FunctionShortcuts.*;
 
 public class MessagingAcc {
-  private Producer<Messenger> messengerProducer;
+  private static Producer<Messenger> messengerProducer;
 
-  public void setMessengerProducer(Producer<Messenger> messengerProducer) {
+  public static void setMessengerProducer(Producer<Messenger> messengerProducer) {
     EAssert.Argument.isNotNull(messengerProducer, "messengerProducer");
-    this.messengerProducer = messengerProducer;
+    messengerProducer = messengerProducer;
   }
 
-  public Messenger getMessenger() {
+  public static Messenger getMessenger() {
     return messengerProducer.produce();
   }
 }

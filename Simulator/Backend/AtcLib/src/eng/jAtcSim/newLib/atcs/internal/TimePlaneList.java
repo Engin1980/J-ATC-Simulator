@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package eng.jAtcSim.newLib.atcs;
+package eng.jAtcSim.newLib.atcs.internal;
 
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;

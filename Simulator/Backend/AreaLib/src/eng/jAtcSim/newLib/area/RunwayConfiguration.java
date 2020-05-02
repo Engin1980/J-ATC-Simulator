@@ -8,7 +8,7 @@ import eng.eSystem.utilites.NumberUtils;
 
 public class RunwayConfiguration {
 
-  public static RunwayConfiguration createForThresholds(IList<ActiveRunwayThreshold> rts) {
+  public static RunwayConfiguration createForThresholds(IReadOnlyList<ActiveRunwayThreshold> rts) {
     throw new UnsupportedOperationException("This must also includes somehow created crossedThresholdsSet, what is n ow in XmlModelBinder.");
 //    IList<RunwayThresholdConfiguration> lst;
 //    lst = rts.select(q -> new RunwayThresholdConfiguration(q));
