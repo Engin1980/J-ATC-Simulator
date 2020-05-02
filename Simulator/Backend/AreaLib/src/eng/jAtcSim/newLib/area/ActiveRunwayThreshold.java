@@ -121,17 +121,7 @@ public class ActiveRunwayThreshold extends Parentable<ActiveRunway> {
     return (int) Math.round(this.course);
   }
 
-//  public DARoute getDepartureRouteForPlane(AirplaneType type, Navaid mainNavaid, boolean canBeVectoring) {
-//    DARoute ret = this.getRoutes().where(
-//        q -> q.getType() == DARoute.eType.sid
-//            && q.isValidForCategory(type.category)
-//            && q.getMaxMrvaAltitude() < type.maxAltitude
-//            && q.getMainNavaid().equals(mainNavaid))
-//        .tryGetRandom();
-//    if (ret == null && canBeVectoring)
-//      ret = DARoute.createNewVectoringByFix(mainNavaid);
-//    return ret;
-//  }
+
 
   @Deprecated
   public Coordinate getEstimatedFafPoint() {

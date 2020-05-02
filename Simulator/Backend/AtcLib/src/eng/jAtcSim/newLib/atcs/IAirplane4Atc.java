@@ -3,6 +3,7 @@ package eng.jAtcSim.newLib.atcs;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
 import eng.jAtcSim.newLib.airplaneType.AirplaneType;
+import eng.jAtcSim.newLib.airplanes.Airplane;
 import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
 import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.area.routes.DARoute;
@@ -14,6 +15,8 @@ public interface IAirplane4Atc {
 
   DARoute getAssignedRoute();
 
+  ActiveRunwayThreshold getAssignedRunwayThreshold();
+
   Callsign getCallsign();
 
   Coordinate getCoordinate();
@@ -23,6 +26,8 @@ public interface IAirplane4Atc {
   Navaid getEntryExitPoint();
 
   String getSqwk();
+
+  Airplane.State getState();
 
   int getTargetAltitude();
 

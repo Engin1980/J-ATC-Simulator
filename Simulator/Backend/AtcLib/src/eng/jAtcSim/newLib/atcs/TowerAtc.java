@@ -1,7 +1,15 @@
 package eng.jAtcSim.newLib.atcs;
 
 
+import eng.eSystem.collections.*;
+import eng.jAtcSim.newLib.airplaneType.AirplaneType;
+import eng.jAtcSim.newLib.airplanes.Airplane;
+import eng.jAtcSim.newLib.area.ActiveRunway;
+import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
+import eng.jAtcSim.newLib.area.Navaid;
+import eng.jAtcSim.newLib.area.routes.DARoute;
 import eng.jAtcSim.newLib.shared.GAcc;
+import eng.jAtcSim.newLib.shared.enums.DARouteType;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 
 public class TowerAtc extends ComputerAtc {
@@ -793,12 +801,12 @@ class DepartureManager {
   private final IList<IAirplane4Atc> holdingPointReady = new EDistinctList<>(EDistinctList.Behavior.exception);
   private final IList<IAirplane4Atc> departing = new EList<>();
   private final IMap<IAirplane4Atc, Double> departureSwitchAltitude = new EMap<>();
-  private final IMap<IAirplane4Atc, ETime> holdingPointWaitingTimeMap = new EMap<>();
+  private final IMap<IAirplane4Atc, EDayTimeStamp> holdingPointWaitingTimeMap = new EMap<>();
   private final IMap<ActiveRunwayThreshold, IAirplane4Atc> lastDepartingPlane = new EMap<>();
-  private final IMap<ActiveRunwayThreshold, ETime> lastDeparturesTime = new EMap<>();
+  private final IMap<ActiveRunwayThreshold, EDayTimeStamp> lastDeparturesTime = new EMap<>();
 
   public boolean canBeSwitched(IAirplane4Atc plane) {
-    if (departureSwitchAltitude.containsKey(plane) && departureSwitchAltitude.get(plane) < plane.getSha().getAltitude()) {
+    if (departureSwitchAltitude.containsKey(plane) && departureSwitchAltitude.get(plane) < plane.getAltitude()) {
       departureSwitchAltitude.remove(plane);
       return true;
     } else
@@ -829,21 +837,21 @@ class DepartureManager {
     this.holdingPointReady.remove(plane);
     this.departing.add(plane);
     this.lastDepartingPlane.set(th, plane);
-    this.lastDeparturesTime.set(th, Acc.now().clone());
+    this.lastDeparturesTime.set(th, GAcc.getNow().toStamp());
     this.departureSwitchAltitude.set(plane, switchAltitude);
   }
 
-  public ETime getAndEraseHoldingPointEntryTime(IAirplane4Atc plane) {
-    ETime ret = holdingPointWaitingTimeMap.get(plane);
+  public EDayTimeStamp getAndEraseHoldingPointEntryTime(IAirplane4Atc plane) {
+    EDayTimeStamp ret = holdingPointWaitingTimeMap.get(plane);
     holdingPointWaitingTimeMap.remove(plane);
     return ret;
   }
 
-  public ETime getLastDepartureTime(ActiveRunwayThreshold rt) {
-    ETime ret;
+  public EDayTimeStamp getLastDepartureTime(ActiveRunwayThreshold rt) {
+    EDayTimeStamp ret;
     ret = this.lastDeparturesTime.tryGet(rt);
     if (ret == null)
-      ret = new ETime(0);
+      ret = new EDayTimeStamp(0);
     return ret;
   }
 
@@ -854,8 +862,8 @@ class DepartureManager {
   public IMap<ActiveRunwayThreshold, IAirplane4Atc> getTheLinedUpPlanes() {
     IMap<ActiveRunwayThreshold, IAirplane4Atc> ret = new EMap<>();
     for (IAirplane4Atc airplane : holdingPointReady) {
-      if (ret.containsKey(airplane.getRoutingModule().getAssignedRunwayThreshold()) == false) {
-        ret.set(airplane.getRoutingModule().getAssignedRunwayThreshold(), airplane);
+      if (ret.containsKey(airplane.getAssignedRunwayThreshold()) == false) {
+        ret.set(airplane.getAssignedRunwayThreshold(), airplane);
       }
     }
     return ret;
@@ -872,9 +880,10 @@ class DepartureManager {
 
   public void registerNewDeparture(IAirplane4Atc plane, ActiveRunwayThreshold runwayThreshold) {
     this.holdingPointNotReady.add(plane);
-    holdingPointWaitingTimeMap.set(plane, Acc.now().clone());
-    DARoute r = runwayThreshold.getDepartureRouteForPlane(plane.getType(), plane.getRoutingModule().getEntryExitPoint(), true);
+    holdingPointWaitingTimeMap.set(plane, GAcc.getNow().toStamp());
+    DARoute r = getDepartureRouteForPlane(runwayThreshold,plane.getType(), plane.getEntryExitPoint(), true);
     plane.setRouting(r, runwayThreshold);
+    //TODO tohle se musí přepsat přes vnucení cesty
   }
 
   public IAirplane4Atc tryGetTheLastDepartedPlane(ActiveRunwayThreshold rt) {
@@ -888,5 +897,16 @@ class DepartureManager {
     lastDepartingPlane.remove(q -> q.getValue() == plane);
   }
 
+    private DARoute getDepartureRouteForPlane(ActiveRunwayThreshold rt, AirplaneType type, Navaid mainNavaid, boolean canBeVectoring) {
+    DARoute ret = rt.getRoutes().where(
+        q -> q.getType() == DARouteType.sid
+            && q.isValidForCategory(type.category)
+            && q.getMaxMrvaAltitude() < type.maxAltitude
+            && q.getMainNavaid().equals(mainNavaid))
+        .tryGetRandom();
+    if (ret == null && canBeVectoring)
+      ret = DARoute.createNewVectoringByFix(mainNavaid);
+    return ret;
+  }
 
 }
