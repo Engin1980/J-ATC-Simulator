@@ -7,6 +7,9 @@
 package eng.jAtcSim.newLib.speeches.atc2atc;
 
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
+import eng.eSystem.validation.EAssert;
+import eng.jAtcSim.newLib.messaging.IMessageContent;
+import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.speeches.ICommand;
 import eng.jAtcSim.newLib.speeches.IRejectable;
 import eng.jAtcSim.newLib.speeches.ISpeech;
@@ -16,7 +19,7 @@ import static eng.eSystem.utilites.FunctionShortcuts.sf;
 /**
  * @author Marek
  */
-public class PlaneSwitchMessage implements ICommand, IRejectable {
+public class PlaneSwitchMessage implements ICommand, IRejectable, IMessageContent {
 
   public enum eMessageType {
     request,
@@ -25,16 +28,19 @@ public class PlaneSwitchMessage implements ICommand, IRejectable {
     rejection
   }
 
+  public final Callsign callsign;
   public final eMessageType messageType;
   public final String additionalMessageText;
 
-  public PlaneSwitchMessage(eMessageType messageType) {
-    this(messageType, null);
+  public PlaneSwitchMessage(Callsign callsign, eMessageType messageType) {
+    this(callsign, messageType, null);
   }
 
-  public PlaneSwitchMessage(eMessageType messageType, String additionalMessageText) {
+  public PlaneSwitchMessage(Callsign callsign, eMessageType messageType, String additionalMessageText) {
+    EAssert.Argument.isNotNull(callsign, "callsign");
     this.messageType = messageType;
     this.additionalMessageText = additionalMessageText;
+    this.callsign = callsign;
   }
 
 //  public String getAsString() {
@@ -54,6 +60,11 @@ public class PlaneSwitchMessage implements ICommand, IRejectable {
 //
 //    return ret;
 //  }
+
+
+  public Callsign getCallsign() {
+    return callsign;
+  }
 
   public String getMessageText() {
     StringBuilder sb = new StringBuilder();

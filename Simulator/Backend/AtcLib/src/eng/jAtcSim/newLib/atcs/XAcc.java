@@ -4,10 +4,15 @@ import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.atcs.planeResponsibility.AirplaneResponsibilityInfo;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.Callsign;
+import eng.jAtcSim.newLib.shared.enums.AtcType;
 import eng.jAtcSim.newLib.shared.exceptions.ToDoException;
 
 public class XAcc {
   public static Atc getAtc(String atcName) {
+    throw new ToDoException();
+  }
+
+  public static Atc getAtc(AtcType atcType) {
     throw new ToDoException();
   }
 

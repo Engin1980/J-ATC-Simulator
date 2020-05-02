@@ -109,17 +109,16 @@ public abstract class ComputerAtc extends Atc {
   private void processPlaneSwitchMessage(Message m) {
     PlaneResponsibilityManager prm = LAcc.getPrm();
     PlaneSwitchMessage psm = m.getContent();
-    Callsign callsign = psm.plane;
-    //IAirplane4Atc plane = psm.plane;
+    Callsign callsign = psm.getCallsign();
     EAssert.isTrue(m.getSource().getType() == Participant.eType.atc);
-    Atc targetAtc = XAcc.getAtc(m.getSource().getId());
-    if (prm.forAtc().isUnderSwitchRequest(callsign, this.getAtcId(), targetAtc.getAtcId())) {
+    AtcId targetAtcId = XAcc.getAtc(m.getSource().getId()).getAtcId();
+    if (prm.forAtc().isUnderSwitchRequest(callsign, this.getAtcId(), targetAtcId)) {
       // other ATC confirms our request, plane is going to hang off
       SwitchRoutingRequest srr =prm.forAtc().getRoutingForSwitchRequest(this.getAtcId(), callsign);
       if (srr != null) {
         // the other ATC tries to change plane routing, we can check in and reject it if required
         if (acceptsNewRouting(callsign, srr) == false)
-          rejectChangedRouting(callsign, targetAtc.getAtcId());
+          rejectChangedRouting(callsign, targetAtcId);
         else
           prm.forAtc().confirmRerouting(this.getAtcId(), callsign);
       }
@@ -127,9 +126,9 @@ public abstract class ComputerAtc extends Atc {
       // other ATC offers us a plane
       RequestResult planeAcceptance = canIAcceptPlane(callsign);
       if (planeAcceptance.isAccepted) {
-        acceptSwitch(callsign, targetAtc);
+        acceptSwitch(callsign, targetAtcId);
       } else {
-        rejectSwitch(callsign, targetAtc, planeAcceptance);
+        rejectSwitch(callsign, targetAtcId, planeAcceptance);
       }
     }
   }
@@ -145,18 +144,23 @@ public abstract class ComputerAtc extends Atc {
     sendMessage(m);
   }
 
-  private void rejectSwitch(Callsign callsign, Atc targetAtc, RequestResult planeAcceptance) {
+  private void rejectSwitch(Callsign callsign, AtcId targetAtcId, RequestResult planeAcceptance) {
     PlaneResponsibilityManager prm = LAcc.getPrm();
-    prm.forAtc().rejectSwitchRequest(callsign, this);
-    Message nm = new Message(this, targetAtc,
+    prm.forAtc().rejectSwitchRequest(callsign, this.getAtcId());
+    Message nm = new Message(
+        Participant.createAtc(this.getAtcId()),
+        Participant.createAtc(targetAtcId),
         new PlaneSwitchMessage(callsign, PlaneSwitchMessage.eMessageType.rejection, planeAcceptance.message));
     sendMessage(nm);
   }
 
-  private void acceptSwitch(Callsign callsign, Atc targetAtc) {
-    getPrm().confirmSwitchRequest(plane, this, null);
-    Message nm = new Message(this, targetAtc,
-        new PlaneSwitchMessage(plane, PlaneSwitchMessage.eMessageType.confirmation));
+  private void acceptSwitch(Callsign callsign, AtcId targetAtcId) {
+    PlaneResponsibilityManager prm = LAcc.getPrm();
+    prm.forAtc().confirmSwitchRequest(callsign, this.getAtcId(), null);
+    Message nm = new Message(
+        Participant.createAtc(this.getAtcId()),
+        Participant.createAtc(targetAtcId),
+        new PlaneSwitchMessage(callsign, PlaneSwitchMessage.eMessageType.confirmation));
     sendMessage(nm);
   }
 
@@ -166,17 +170,21 @@ public abstract class ComputerAtc extends Atc {
 
   protected abstract RequestResult canIAcceptPlane(Callsign callsign);
 
-  private void confirmGoodDayNotificationIfRequired(Callsign p, SpeechList spchs) {
+  private void confirmGoodDayNotificationIfRequired(Callsign callsign, SpeechList spchs) {
     IList<GoodDayNotification> gdns = spchs.where(q -> q instanceof GoodDayNotification);
     // todo implement directly into if without gdns variable
     gdns = gdns.where(q -> q.isRepeated() == false);
     if (gdns.isEmpty() == false) {
       SpeechList lst = new SpeechList();
       lst.add(new RadarContactConfirmationNotification());
-      if (LAcc.getPrm().forAtc().getResponsibleAtc(p) != this) {
-        lst.add(new ContactCommand(AtcType.app));
+      if (LAcc.getPrm().forAtc().getResponsibleAtc(callsign).equals(this.getAtcId())) {
+        AtcId atcId = XAcc.getAtc(AtcType.app).getAtcId();
+        lst.add(new ContactCommand(atcId));
       }
-      Message msg = new Message(this, p, lst);
+      Message msg = new Message(
+          Participant.createAtc(this.getAtcId()),
+          Participant.createAirplane(callsign),
+          lst);
       sendMessage(msg);
     }
   }
@@ -187,15 +195,15 @@ public abstract class ComputerAtc extends Atc {
    * Checks for planes ready to switch and switch them.
    */
   private void checkAndProcessPlanesReadyToSwitch() {
-
-    IReadOnlyList<IAirplane4Atc> myPlanes = getPrm().getPlanes(this);
-    for (IAirplane4Atc myPlane : myPlanes) {
-      if (getPrm().isUnderSwitchRequest(myPlane, this, null))
+    PlaneResponsibilityManager prm = LAcc.getPrm();
+    IReadOnlyList<Callsign> myPlanes = prm.forAtc().getPlanes(this.getAtcId());
+    for (Callsign myPlane : myPlanes) {
+      if (prm.forAtc().isUnderSwitchRequest(myPlane, this.getAtcId(), null))
         continue;
 
-      Atc targetAtc = getTargetAtcIfPlaneIsReadyToSwitch(myPlane);
-      if (targetAtc != null) {
-        this.requestNewSwitch(myPlane, targetAtc);
+      AtcId targetAtcId = getTargetAtcIfPlaneIsReadyToSwitch(myPlane);
+      if (targetAtcId != null) {
+        this.requestNewSwitch(myPlane, targetAtcId);
       }
     }
   }
@@ -206,25 +214,30 @@ public abstract class ComputerAtc extends Atc {
    * @param callsign Plane checked if ready to switch
    * @return Target atc, or null if plane not ready to switch.
    */
-  protected abstract Atc getTargetAtcIfPlaneIsReadyToSwitch(Callsign callsign);
+  protected abstract AtcId getTargetAtcIfPlaneIsReadyToSwitch(Callsign callsign);
 
   private void repeatOldSwitchRequests() {
     PlaneResponsibilityManager prm = LAcc.getPrm();
     IReadOnlyList<Callsign> awaitings = prm.forAtc().getSwitchRequestsToRepeatByAtc(this.getAtcId());
-    for (Callsign p : awaitings) {
+    for (Callsign callsign : awaitings) {
       if (speechDelayer
-          .isAny(q -> q.getContent() instanceof PlaneSwitchMessage && ((PlaneSwitchMessage) q.getContent()).plane.equals(p)))
+          .isAny(q -> q.getContent() instanceof PlaneSwitchMessage && ((PlaneSwitchMessage) q.getContent()).getCallsign().equals(callsign)))
         continue; // if message about this plane is delayed and waiting to process
-      Message m = new Message(this, Acc.atcApp(),
-          new PlaneSwitchMessage(p, PlaneSwitchMessage.eMessageType.request, "(repeated)"));
-      Acc.messenger().send(m);
+      Message m = new Message(
+          Participant.createAtc(this.getAtcId()),
+          Participant.createAtc(XAcc.getAtc(AtcType.app).getAtcId()),
+          new PlaneSwitchMessage(callsign, PlaneSwitchMessage.eMessageType.request, "(repeated)"));
+      LAcc.getMessenger().send(m);
       recorder.write(m);
     }
   }
 
-  protected void requestNewSwitch(Callsign callsign, Atc targetAtc) {
-    getPrm().createSwitchRequest(this, targetAtc, callsign);
-    Message m = new Message(this, targetAtc,
+  protected void requestNewSwitch(Callsign callsign, AtcId targetAtcId) {
+    PlaneResponsibilityManager prm = LAcc.getPrm();
+    prm.forAtc().createSwitchRequest(this.getAtcId(), targetAtcId, callsign);
+    Message m = new Message(
+        Participant.createAtc(this.getAtcId()),
+        Participant.createAtc(targetAtcId),
         new PlaneSwitchMessage(callsign, PlaneSwitchMessage.eMessageType.request));
     sendMessage(m);
   }
@@ -248,6 +261,7 @@ public abstract class ComputerAtc extends Atc {
 //  @Override
 //  protected void _load(XElement elm) {
 //  }
+
 
   @Override
   public void init() {

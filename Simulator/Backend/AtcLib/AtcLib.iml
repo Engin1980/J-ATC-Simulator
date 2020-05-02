@@ -13,5 +13,7 @@
     <orderEntry type="module" module-name="SharedLib" />
     <orderEntry type="module" module-name="MessagingLib" />
     <orderEntry type="module" module-name="SpeechesLib" />
+    <orderEntry type="module" module-name="AirplaneTypeLib" />
+    <orderEntry type="module" module-name="AirplaneTypeLib" />
   </component>
 </module>

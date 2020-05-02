@@ -100,25 +100,25 @@ public class PlaneResponsibilityManager {
 
     }
 
-    public void confirmSwitchRequest(Callsign callsign, AtcId targetAtc, SwitchRoutingRequest updatedRoutingIfRequired) {
+    public void confirmSwitchRequest(Callsign callsign, AtcId targetAtcId, SwitchRoutingRequest updatedRoutingIfRequired) {
       AirplaneResponsibilityInfo ai = dao.get(callsign);
-      if (ai.getSwitchRequest() == null || ai.getSwitchRequest().getAtc() != targetAtc) { // probably canceled
+      if (ai.getSwitchRequest() == null || ai.getSwitchRequest().getAtc() != targetAtcId) { // probably canceled
         return;
       }
       SwitchRequest sr = ai.getSwitchRequest();
       sr.setConfirmed(updatedRoutingIfRequired);
     }
 
-    public void rejectSwitchRequest(Callsign callsign, AtcId targetAtc) {
+    public void rejectSwitchRequest(Callsign callsign, AtcId targetAtcId) {
       AirplaneResponsibilityInfo ai = dao.get(callsign);
-      if (ai.getSwitchRequest() == null || ai.getSwitchRequest().getAtc() != targetAtc) { // probably canceled
+      if (ai.getSwitchRequest() == null || ai.getSwitchRequest().getAtc() != targetAtcId) { // probably canceled
         return;
       }
       ai.setSwitchRequest(null);
     }
 
-    public void cancelSwitchRequest(AtcId sender, Callsign plane) {
-      AirplaneResponsibilityInfo ai = dao.get(plane);
+    public void cancelSwitchRequest(AtcId sender, Callsign callsign) {
+      AirplaneResponsibilityInfo ai = dao.get(callsign);
       ai.setSwitchRequest(null);
     }
 

@@ -9,7 +9,11 @@ public class ClearedToRouteCommand implements ICommand {
   private String routeName;
   private String expectedRunwayThresholdName;
 
-  public ClearedToRouteCommand(String routeName, String expectedRunwayThresholdName) {
+  public static ClearedToRouteCommand create(String routeName, String expectedRunwayThresholdName) {
+    return new ClearedToRouteCommand(routeName, expectedRunwayThresholdName);
+  }
+
+  private ClearedToRouteCommand(String routeName, String expectedRunwayThresholdName) {
     EAssert.Argument.isNonemptyString(routeName);
     EAssert.Argument.isNonemptyString(expectedRunwayThresholdName);
     this.routeName = routeName;

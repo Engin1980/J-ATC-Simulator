@@ -1,27 +1,5 @@
 package eng.jAtcSim.newLib.area.atcs;
 
-import eng.eSystem.Tuple;
-import eng.eSystem.collections.EList;
-import eng.eSystem.collections.IList;
-import eng.eSystem.collections.IReadOnlyList;
-import eng.eSystem.eXml.XElement;
-import eng.eSystem.exceptions.EApplicationException;
-import eng.eSystem.geo.Coordinates;
-import eng.jAtcSim.newLib.Acc;
-import eng.jAtcSim.newLib.area.airplanes.interfaces.IAirplane4Atc;
-import eng.jAtcSim.newLib.area.atcs.planeResponsibility.SwitchRoutingRequest;
-import eng.jAtcSim.newLib.messaging.Message;
-import eng.jAtcSim.newLib.messaging.StringMessageContent;
-import eng.jAtcSim.newLib.area.speaking.SpeechList;
-import eng.jAtcSim.newLib.area.speaking.fromAirplane.notifications.GoodDayNotification;
-import eng.jAtcSim.newLib.area.speaking.fromAtc.IAtcCommand;
-import eng.jAtcSim.newLib.area.speaking.fromAtc.commands.*;
-import eng.jAtcSim.newLib.area.speaking.fromAtc.commands.afters.AfterNavaidCommand;
-import eng.jAtcSim.newLib.area.serialization.LoadSave;
-import eng.jAtcSim.newLib.world.Navaid;
-import eng.jAtcSim.newLib.world.DARoute;
-import eng.jAtcSim.newLib.world.ActiveRunwayThreshold;
-
 public class CenterAtc extends ComputerAtc {
 
   private int ctrAcceptDistance = 40;

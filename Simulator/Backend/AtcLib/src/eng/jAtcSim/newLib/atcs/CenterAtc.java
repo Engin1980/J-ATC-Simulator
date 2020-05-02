@@ -4,11 +4,27 @@ import eng.eSystem.Tuple;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
-import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.geo.Coordinates;
+import eng.jAtcSim.newLib.airplaneType.AirplaneType;
+import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
+import eng.jAtcSim.newLib.area.Navaid;
+import eng.jAtcSim.newLib.area.routes.DARoute;
+import eng.jAtcSim.newLib.atcs.planeResponsibility.PlaneResponsibilityManager;
+import eng.jAtcSim.newLib.atcs.planeResponsibility.SwitchRoutingRequest;
 import eng.jAtcSim.newLib.messaging.Message;
+import eng.jAtcSim.newLib.messaging.Participant;
 import eng.jAtcSim.newLib.messaging.StringMessageContent;
+import eng.jAtcSim.newLib.shared.AtcId;
+import eng.jAtcSim.newLib.shared.Callsign;
+import eng.jAtcSim.newLib.shared.GAcc;
+import eng.jAtcSim.newLib.shared.enums.AtcType;
+import eng.jAtcSim.newLib.shared.enums.DARouteType;
+import eng.jAtcSim.newLib.speeches.ICommand;
+import eng.jAtcSim.newLib.speeches.SpeechList;
+import eng.jAtcSim.newLib.speeches.airplane2atc.GoodDayNotification;
+import eng.jAtcSim.newLib.speeches.atc2airplane.*;
+import eng.jAtcSim.newLib.speeches.atc2airplane.afterCommands.AfterNavaidCommand;
 
 public class CenterAtc extends ComputerAtc {
 
@@ -19,7 +35,7 @@ public class CenterAtc extends ComputerAtc {
   private IList<IAirplane4Atc> middleArrivals = new EList<>();
   private IList<IAirplane4Atc> closeArrivals = new EList<>();
 
-  public CenterAtc(AtcTemplate template) {
+  public CenterAtc(eng.jAtcSim.newLib.area.Atc template) {
     super(template);
     if (template.getCtrAcceptDistance() != null)
       this.ctrAcceptDistance = template.getCtrAcceptDistance();
@@ -27,19 +43,11 @@ public class CenterAtc extends ComputerAtc {
       this.ctrNavaidAcceptDistance = template.getCtrNavaidAcceptDistance();
   }
 
-  public int getCtrAcceptDistance() {
-    return ctrAcceptDistance;
-  }
-
-  public int getCtrNavaidAcceptDistance() {
-    return ctrNavaidAcceptDistance;
-  }
-
   @Override
   public void elapseSecond() {
     super.elapseSecond();
 
-    if (Acc.now().getTotalSeconds() % 16 == 0) {
+    if (GAcc.getNow().getValue() % 16 == 0) {
       double dist;
 
       IList<IAirplane4Atc> tmp = new EList<>();
@@ -48,7 +56,7 @@ public class CenterAtc extends ComputerAtc {
         try {
           evaluateMiddleArrivalsForCloseArrivals(tmp, plane);
         } catch (Exception ex) {
-          throw new EApplicationException("Failed to evaluate " + plane.getFlightModule().getCallsign() + ".", ex);
+          throw new EApplicationException("Failed to evaluate " + plane.getCallsign() + ".", ex);
         }
       }
       middleArrivals.remove(tmp);
@@ -56,13 +64,16 @@ public class CenterAtc extends ComputerAtc {
       tmp.clear();
 
       for (IAirplane4Atc plane : farArrivals) {
-        dist = Coordinates.getDistanceInNM(plane.getRoutingModule().getEntryExitPoint().getCoordinate(), plane.getCoordinate());
+        dist = Coordinates.getDistanceInNM(plane.getEntryExitPoint().getCoordinate(), plane.getCoordinate());
         if (dist < 50) {
-          if (plane.getSha().getAltitude() > 29_000) {
-            int newAlt = Acc.rnd().nextInt(25, 29) * 1_000;
+          if (plane.getAltitude() > 29_000) {
+            int newAlt = GAcc.getRnd().nextInt(25, 29) * 1_000;
             SpeechList sl = new SpeechList();
-            sl.add(new ChangeAltitudeCommand(ChangeAltitudeCommand.eDirection.descend, newAlt));
-            Message m = new Message(this, plane, sl);
+            sl.add(ChangeAltitudeCommand.create(ChangeAltitudeCommand.eDirection.descend, newAlt));
+            Message m = new Message(
+                Participant.createAtc(this.getAtcId()),
+                Participant.createAirplane(plane.getCallsign()),
+                sl);
             super.sendMessage(m);
           }
           tmp.add(plane);
@@ -74,9 +85,30 @@ public class CenterAtc extends ComputerAtc {
     }
   }
 
+  public int getCtrAcceptDistance() {
+    return ctrAcceptDistance;
+  }
+
+  public int getCtrNavaidAcceptDistance() {
+    return ctrNavaidAcceptDistance;
+  }
+
   @Override
-  public void unregisterPlaneUnderControl(IAirplane4Atc plane) {
-    if (plane.getFlightModule().isArrival()) {
+  public void registerNewPlaneUnderControl(Callsign callsign, boolean finalRegistration) {
+    IAirplane4Atc plane = XAcc.getPlane(callsign);
+    if (plane.isArrival())
+      farArrivals.add(plane);
+  }
+
+  @Override
+  public void removePlaneDeletedFromGame(Callsign callsign) {
+    // intentionally blank
+  }
+
+  @Override
+  public void unregisterPlaneUnderControl(Callsign callsign) {
+    IAirplane4Atc plane = XAcc.getPlane(callsign);
+    if (plane.isArrival()) {
       farArrivals.tryRemove(plane);
       middleArrivals.tryRemove(plane);
       closeArrivals.tryRemove(plane);
@@ -84,90 +116,44 @@ public class CenterAtc extends ComputerAtc {
   }
 
   @Override
-  public void removePlaneDeletedFromGame(IAirplane4Atc plane) {
-
-  }
-
-  @Override
-  public void registerNewPlaneUnderControl(IAirplane4Atc plane, boolean finalRegistration) {
-    if (plane.getFlightModule().isArrival())
-      farArrivals.add(plane);
-  }
-
-  @Override
-  protected boolean acceptsNewRouting(IAirplane4Atc plane, SwitchRoutingRequest srr) {
+  protected boolean acceptsNewRouting(Callsign callsign, SwitchRoutingRequest srr) {
+    IAirplane4Atc plane = XAcc.getPlane(callsign);
     boolean ret;
     ret = srr.route.isValidForCategory(plane.getType().category)
-        && (srr.route.getType() == DARoute.eType.vectoring
-        || srr.route.getType() == DARoute.eType.star
-        || srr.route.getType() == DARoute.eType.transition);
+        && (srr.route.getType() == DARouteType.vectoring
+        || srr.route.getType() == DARouteType.star
+        || srr.route.getType() == DARouteType.transition);
     return ret;
   }
 
-  private void evaluateMiddleArrivalsForCloseArrivals(IList<IAirplane4Atc> tmp, IAirplane4Atc plane) {
-    double dist;
-    dist = Coordinates.getDistanceInNM(plane.getRoutingModule().getEntryExitPoint().getCoordinate(), plane.getCoordinate());
-    if (dist < 27) {
-      SpeechList<IAtcCommand> cmds = new SpeechList<>();
-      if (plane.getSha().getTargetAltitude() > Acc.atcCtr().getOrderedAltitude())
-        cmds.add(new ChangeAltitudeCommand(ChangeAltitudeCommand.eDirection.descend, Acc.atcCtr().getOrderedAltitude()));
-
-      // assigns route
-      Navaid n = plane.getRoutingModule().getEntryExitPoint();
-      Tuple<DARoute, ActiveRunwayThreshold> rrt = getRoutingForPlaneAndFix(plane, n);
-      DARoute r = rrt.getA();
-      ActiveRunwayThreshold rt = rrt.getB();
-      cmds.add(new ProceedDirectCommand(n));
-      cmds.add(new ClearedToRouteCommand(r, rt));
-      Message msg = new Message(this, plane, cmds);
-      super.sendMessage(msg);
-
-      tmp.add(plane);
-    }
-  }
-
   @Override
-  protected void processNonPlaneSwitchMessageFromAtc(Message m) {
-    // do nothing , ctr has no messages acceptable from ATC
-    super.sendMessage(new Message(
-        this,
-        m.getSource(),
-        new StringMessageContent("Unable.")
-    ));
-  }
-
-  @Override
-  protected boolean shouldBeSwitched(IAirplane4Atc plane) {
-    return true;
-  }
-
-  @Override
-  protected RequestResult canIAcceptPlane(IAirplane4Atc p) {
+  protected RequestResult canIAcceptPlane(Callsign callsign) {
     RequestResult ret;
-    if (p.getFlightModule().isArrival()) {
-      ret = new RequestResult(false, String.format("%s is an arrival.", p.getFlightModule().getCallsign().toString()));
+    IAirplane4Atc plane = XAcc.getPlane(callsign);
+    if (plane.isArrival()) {
+      ret = new RequestResult(false, String.format("%s is an arrival.", plane.getCallsign().toString()));
     } else {
-      if (p.getRoutingModule().isOnWayToPassDeparturePoint() == false) {
+      if (plane.isOnWayToPassDeparturePoint() == false) {
         ret = new RequestResult(false,
             String.format("%s is not heading (or on the route to) departure fix %s",
-                p.getFlightModule().getCallsign().toString(),
-                p.getRoutingModule().getAssignedRoute().getMainNavaid().getName()));
+                plane.getCallsign().toString(),
+                plane.getAssignedRoute().getMainNavaid().getName()));
       } else {
-        if (p.getSha().getAltitude() > super.acceptAltitude || p.getSha().getAltitude() > (p.getType().maxAltitude * .666)) {
+        if (plane.getAltitude() > super.acceptAltitude || plane.getAltitude() > (plane.getType().maxAltitude * .666)) {
           ret = new RequestResult(true, null);
         } else {
-          double aipDist = Coordinates.getDistanceInNM(p.getCoordinate(), Acc.airport().getLocation());
+          double aipDist = Coordinates.getDistanceInNM(plane.getCoordinate(), LAcc.getAirport().getLocation());
           if (aipDist > this.ctrAcceptDistance) {
             ret = new RequestResult(true, null);
           } else {
-            double navDist = Coordinates.getDistanceInNM(p.getCoordinate(), p.getRoutingModule().getDepartureLastNavaid().getCoordinate());
+            double navDist = Coordinates.getDistanceInNM(plane.getCoordinate(), plane.getDepartureLastNavaid().getCoordinate());
             if (navDist < this.ctrNavaidAcceptDistance) {
               ret = new RequestResult(true, null);
             } else {
               ret = new RequestResult(false, String.format(
                   "%s is too far from departure fix %s, or not enough far from airport, or not enough high.",
-                  p.getFlightModule().getCallsign().toString(),
-                  p.getRoutingModule().getAssignedRoute().getName()
+                  plane.getCallsign().toString(),
+                  plane.getAssignedRoute().getName()
               ));
             }
           }
@@ -177,105 +163,31 @@ public class CenterAtc extends ComputerAtc {
     return ret;
   }
 
-  @Override
-  protected void processMessagesFromPlane(IAirplane4Atc plane, SpeechList spchs) {
-    for (Object o : spchs) {
-      if (o instanceof GoodDayNotification) {
-        if (((GoodDayNotification) o).isRepeated()) continue; // repeated g-d-n are ignored
-        if (plane.getFlightModule().isDeparture() && Acc.prm().getResponsibleAtc(plane) == this) {
-          SpeechList cmds = new SpeechList();
+  private void evaluateMiddleArrivalsForCloseArrivals(IList<IAirplane4Atc> tmp, IAirplane4Atc plane) {
+    double dist;
+    dist = Coordinates.getDistanceInNM(plane.getEntryExitPoint().getCoordinate(), plane.getCoordinate());
+    if (dist < 27) {
+      SpeechList<ICommand> cmds = new SpeechList<>();
+      if (plane.getTargetAltitude() > XAcc.getAtc(AtcType.ctr).getOrderedAltitude())
+        cmds.add(ChangeAltitudeCommand.create(
+            ChangeAltitudeCommand.eDirection.descend,
+            XAcc.getAtc(AtcType.ctr).getOrderedAltitude()));
 
-          cmds.add(
-              new ChangeAltitudeCommand(ChangeAltitudeCommand.eDirection.climb, getDepartureRandomTargetAltitude(plane)));
-          cmds.add(
-              new SetAltitudeRestriction(null)); // to abort altitude restriction
-          cmds.add(
-              new ChangeSpeedCommand()); // to abort speeed restriction
+      // assigns route
+      Navaid n = plane.getEntryExitPoint();
+      Tuple<DARoute, ActiveRunwayThreshold> rrt = getRoutingForPlaneAndFix(plane, n);
+      DARoute r = rrt.getA();
+      ActiveRunwayThreshold rt = rrt.getB();
+      cmds.add(ProceedDirectCommand.create(n.getName()));
+      cmds.add(ClearedToRouteCommand.create(r.getName(), rt.getName()));
+      Message msg = new Message(
+          Participant.createAtc(this.getAtcId()),
+          Participant.createAirplane(plane.getCallsign()),
+          cmds);
+      super.sendMessage(msg);
 
-          // order to continue after last fix
-          Navaid n = plane.getRoutingModule().getDepartureLastNavaid();
-          cmds.add(new AfterNavaidCommand(n));
-          cmds.add(new ChangeHeadingCommand());
-
-          Message m = new Message(this, plane, cmds);
-          super.sendMessage(m);
-        }
-      }
-
+      tmp.add(plane);
     }
-    // nothing to process
-  }
-
-  @Override
-  protected Atc getTargetAtcIfPlaneIsReadyToSwitch(IAirplane4Atc plane) {
-    Atc ret;
-    if (plane.getFlightModule().isArrival()) {
-      if (plane.getEmergencyModule().isEmergency())
-        ret = Acc.atcApp();
-      else {
-        if (closeArrivals.contains(plane) == false) {
-          return null;
-        }
-        Navaid n = plane.getRoutingModule().getEntryExitPoint();
-        double dist = Coordinates.getDistanceInNM(plane.getCoordinate(), n.getCoordinate());
-        if (dist <= 10) {
-          ret = Acc.atcApp();
-        } else
-          ret = null;
-      }
-    } else
-      ret = null;
-    return ret;
-  }
-
-  @Override
-  protected void _save(XElement elm) {
-    super._save(elm);
-    LoadSave.saveField(elm, this, "farArrivals");
-    LoadSave.saveField(elm, this, "middleArrivals");
-    LoadSave.saveField(elm, this, "closeArrivals");
-  }
-
-  @Override
-  protected void _load(XElement elm) {
-    super._load(elm);
-    LoadSave.loadField(elm, this, "farArrivals");
-    LoadSave.loadField(elm, this, "middleArrivals");
-    LoadSave.loadField(elm, this, "closeArrivals");
-  }
-
-  private Tuple<DARoute, ActiveRunwayThreshold> getRoutingForPlaneAndFix(IAirplane4Atc plane, Navaid n) {
-    Tuple<DARoute, ActiveRunwayThreshold> ret;
-    DARoute r = null;
-    ActiveRunwayThreshold rt = null;
-    IList<ActiveRunwayThreshold> thresholdsCopy = new EList<>();
-
-    IReadOnlyList<ActiveRunwayThreshold> thresholds;
-    // if is arrival, scheduled thresholds are taken into account
-    if (Acc.atcTwr().tryGetRunwayConfigurationScheduled() != null)
-      thresholds = Acc.atcTwr().tryGetRunwayConfigurationScheduled().getArrivals()
-          .where(q -> q.isForCategory(plane.getType().category))
-          .select(q -> q.getThreshold());
-    else
-      thresholds = Acc.atcTwr().getRunwayConfigurationInUse().getArrivals()
-          .where(q -> q.isForCategory(plane.getType().category))
-          .select(q -> q.getThreshold());
-
-    thresholdsCopy = new EList<>(thresholds);
-    while (r == null && !thresholdsCopy.isEmpty()) {
-      rt = thresholdsCopy.getRandom();
-      thresholdsCopy.remove(rt);
-      r = rt.getArrivalRouteForPlane(plane.getType(), plane.getSha().getTargetAltitude(), plane.getRoutingModule().getEntryExitPoint(), false);
-    }
-    if (thresholdsCopy.isEmpty() && r == null) {
-      rt = thresholds.getRandom();
-      r = rt.getArrivalRouteForPlane(plane.getType(), plane.getSha().getTargetAltitude(), plane.getRoutingModule().getEntryExitPoint(), true);
-    }
-    assert rt != null;
-    assert r != null;
-
-    ret = new Tuple<>(r, rt);
-    return ret;
   }
 
   private int getDepartureRandomTargetAltitude(IAirplane4Atc p) {
@@ -294,9 +206,151 @@ public class CenterAtc extends ComputerAtc {
       default:
         throw new UnsupportedOperationException();
     }
-    min = Math.max(p.getSha().getAltitude() / 1000, min);
-    int ret = Acc.rnd().nextInt(min, p.getType().maxAltitude / 1000);
+    min = Math.max(p.getAltitude() / 1000, min);
+    int ret = GAcc.getRnd().nextInt(min, p.getType().maxAltitude / 1000);
     ret = ret * 1000;
     return ret;
+  }
+
+  private Tuple<DARoute, ActiveRunwayThreshold> getRoutingForPlaneAndFix(IAirplane4Atc plane, Navaid n) {
+    Tuple<DARoute, ActiveRunwayThreshold> ret;
+    DARoute r = null;
+    ActiveRunwayThreshold rt = null;
+    IList<ActiveRunwayThreshold> thresholdsCopy;
+
+    IReadOnlyList<ActiveRunwayThreshold> thresholds;
+    // if is arrival, scheduled thresholds are taken into account
+    if (LAcc.tryGetRunwayConfigurationScheduled() != null)
+      thresholds = LAcc.tryGetRunwayConfigurationScheduled().getArrivals()
+          .where(q -> q.isForCategory(plane.getType().category))
+          .select(q -> q.getThreshold());
+    else
+      thresholds = LAcc.getRunwayConfigurationInUse().getArrivals()
+          .where(q -> q.isForCategory(plane.getType().category))
+          .select(q -> q.getThreshold());
+
+    thresholdsCopy = new EList<>(thresholds);
+    while (r == null && !thresholdsCopy.isEmpty()) {
+      rt = thresholdsCopy.getRandom();
+      thresholdsCopy.remove(rt);
+      r = getArrivalRouteForPlane(rt, plane.getType(), plane.getTargetAltitude(), plane.getEntryExitPoint(), false);
+    }
+    if (thresholdsCopy.isEmpty() && r == null) {
+      rt = thresholds.getRandom();
+      r = getArrivalRouteForPlane(rt, plane.getType(), plane.getTargetAltitude(), plane.getEntryExitPoint(), true);
+    }
+    assert rt != null;
+    assert r != null;
+
+    ret = new Tuple<>(r, rt);
+    return ret;
+  }
+
+    private DARoute getArrivalRouteForPlane(ActiveRunwayThreshold rt, AirplaneType type, int currentAltitude, Navaid mainNavaid, boolean canBeVectoring) {
+    DARoute ret = rt.getRoutes().where(
+        q -> q.getType() == DARouteType.transition
+            && q.isValidForCategory(type.category)
+            && q.getMaxMrvaAltitude() < currentAltitude
+            && q.getMainNavaid().equals(mainNavaid))
+        .tryGetRandom();
+    if (ret == null)
+      ret = rt.getRoutes().where(
+          q -> q.getType() == DARouteType.star
+              && q.isValidForCategory(type.category)
+              && q.getMaxMrvaAltitude() < currentAltitude
+              && q.getMainNavaid().equals(mainNavaid))
+          .tryGetRandom();
+    if (ret == null && canBeVectoring)
+      ret = DARoute.createNewVectoringByFix(mainNavaid);
+    return ret;
+  }
+
+  @Override
+  protected AtcId getTargetAtcIfPlaneIsReadyToSwitch(Callsign callsign) {
+    AtcId ret;
+    IAirplane4Atc plane = XAcc.getPlane(callsign);
+    if (plane.isArrival()) {
+      if (plane.isEmergency())
+        ret = XAcc.getAtc(AtcType.app).getAtcId();
+      else {
+        if (closeArrivals.contains(plane) == false) {
+          ret = null;
+        } else {
+          Navaid n = plane.getEntryExitPoint();
+          double dist = Coordinates.getDistanceInNM(plane.getCoordinate(), n.getCoordinate());
+          if (dist <= 10) {
+            ret = XAcc.getAtc(AtcType.app).getAtcId();
+          } else
+            ret = null;
+        }
+      }
+    } else
+      ret = null;
+    return ret;
+  }
+
+  @Override
+  protected void processMessagesFromPlane(Callsign callsign, SpeechList spchs) {
+    IAirplane4Atc plane = XAcc.getPlane(callsign);
+    PlaneResponsibilityManager prm = LAcc.getPrm();
+    for (Object o : spchs) {
+      if (o instanceof GoodDayNotification) {
+        if (((GoodDayNotification) o).isRepeated()) continue; // repeated g-d-n are ignored
+        if (plane.isDeparture() && prm.forAtc().getResponsibleAtc(callsign).equals(this.getAtcId())) {
+          SpeechList<ICommand> cmds = new SpeechList<>();
+
+          cmds.add(
+              ChangeAltitudeCommand.create(ChangeAltitudeCommand.eDirection.climb, getDepartureRandomTargetAltitude(plane)));
+          cmds.add(
+              AltitudeRestrictionCommand.createClearRestriction());
+          cmds.add(
+              ChangeSpeedCommand.createResumeOwnSpeed());
+
+          // order to continue after last fix
+          Navaid n = plane.getDepartureLastNavaid();
+          cmds.add(AfterNavaidCommand.create(n.getName()));
+          cmds.add(ChangeHeadingCommand.createContinueCurrentHeading());
+
+          Message m = new Message(
+              Participant.createAtc(this.getAtcId()),
+              Participant.createAirplane(plane.getCallsign()),
+              cmds);
+          super.sendMessage(m);
+        }
+      }
+
+    }
+    // nothing to process
+  }
+
+//  @Override
+//  protected void _save(XElement elm) {
+//    super._save(elm);
+//    LoadSave.saveField(elm, this, "farArrivals");
+//    LoadSave.saveField(elm, this, "middleArrivals");
+//    LoadSave.saveField(elm, this, "closeArrivals");
+//  }
+//
+//  @Override
+//  protected void _load(XElement elm) {
+//    super._load(elm);
+//    LoadSave.loadField(elm, this, "farArrivals");
+//    LoadSave.loadField(elm, this, "middleArrivals");
+//    LoadSave.loadField(elm, this, "closeArrivals");
+//  }
+
+  @Override
+  protected void processNonPlaneSwitchMessageFromAtc(Message m) {
+    // do nothing , ctr has no messages acceptable from ATC
+    super.sendMessage(new Message(
+        Participant.createAtc(this.getAtcId()),
+        m.getSource(),
+        new StringMessageContent("Unable.")
+    ));
+  }
+
+  @Override
+  protected boolean shouldBeSwitched(Callsign callsign) {
+    return true;
   }
 }
