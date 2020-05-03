@@ -97,7 +97,7 @@ public class CenterAtc extends ComputerAtc {
 
   @Override
   public void registerNewPlaneUnderControl(Callsign callsign, boolean finalRegistration) {
-    IAirplane plane = XAcc.getPlane(callsign);
+    IAirplane plane = InternalAcc.getPlane(callsign);
     if (plane.isArrival())
       farArrivals.add(plane);
   }
@@ -109,7 +109,7 @@ public class CenterAtc extends ComputerAtc {
 
   @Override
   public void unregisterPlaneUnderControl(Callsign callsign) {
-    IAirplane plane = XAcc.getPlane(callsign);
+    IAirplane plane = InternalAcc.getPlane(callsign);
     if (plane.isArrival()) {
       farArrivals.tryRemove(plane);
       middleArrivals.tryRemove(plane);
@@ -119,7 +119,7 @@ public class CenterAtc extends ComputerAtc {
 
   @Override
   protected boolean acceptsNewRouting(Callsign callsign, SwitchRoutingRequest srr) {
-    IAirplane plane = XAcc.getPlane(callsign);
+    IAirplane plane = InternalAcc.getPlane(callsign);
     boolean ret;
     ret = srr.route.isValidForCategory(plane.getType().category)
         && (srr.route.getType() == DARouteType.vectoring
@@ -131,7 +131,7 @@ public class CenterAtc extends ComputerAtc {
   @Override
   protected RequestResult canIAcceptPlane(Callsign callsign) {
     RequestResult ret;
-    IAirplane plane = XAcc.getPlane(callsign);
+    IAirplane plane = InternalAcc.getPlane(callsign);
     if (plane.isArrival()) {
       ret = new RequestResult(false, String.format("%s is an arrival.", plane.getCallsign().toString()));
     } else {
@@ -170,10 +170,10 @@ public class CenterAtc extends ComputerAtc {
     dist = Coordinates.getDistanceInNM(plane.getRouting().getEntryExitPoint().getCoordinate(), plane.getCoordinate());
     if (dist < 27) {
       SpeechList<ICommand> cmds = new SpeechList<>();
-      if (plane.getSha().getTargetAltitude() > XAcc.getAtc(AtcType.ctr).getOrderedAltitude())
+      if (plane.getSha().getTargetAltitude() > InternalAcc.getAtc(AtcType.ctr).getOrderedAltitude())
         cmds.add(ChangeAltitudeCommand.create(
             ChangeAltitudeCommand.eDirection.descend,
-            XAcc.getAtc(AtcType.ctr).getOrderedAltitude()));
+            InternalAcc.getAtc(AtcType.ctr).getOrderedAltitude()));
 
       // assigns route
       Navaid n = plane.getRouting().getEntryExitPoint();
@@ -270,10 +270,10 @@ public class CenterAtc extends ComputerAtc {
   @Override
   protected AtcId getTargetAtcIfPlaneIsReadyToSwitch(Callsign callsign) {
     AtcId ret;
-    IAirplane plane = XAcc.getPlane(callsign);
+    IAirplane plane = InternalAcc.getPlane(callsign);
     if (plane.isArrival()) {
       if (plane.isEmergency())
-        ret = XAcc.getAtc(AtcType.app).getAtcId();
+        ret = InternalAcc.getAtc(AtcType.app).getAtcId();
       else {
         if (closeArrivals.contains(plane) == false) {
           ret = null;
@@ -281,7 +281,7 @@ public class CenterAtc extends ComputerAtc {
           Navaid n = plane.getRouting().getEntryExitPoint();
           double dist = Coordinates.getDistanceInNM(plane.getCoordinate(), n.getCoordinate());
           if (dist <= 10) {
-            ret = XAcc.getAtc(AtcType.app).getAtcId();
+            ret = InternalAcc.getAtc(AtcType.app).getAtcId();
           } else
             ret = null;
         }
@@ -293,8 +293,8 @@ public class CenterAtc extends ComputerAtc {
 
   @Override
   protected void processMessagesFromPlane(Callsign callsign, SpeechList spchs) {
-    IAirplane plane = XAcc.getPlane(callsign);
-    PlaneResponsibilityManager prm = XAcc.getPrm();
+    IAirplane plane = InternalAcc.getPlane(callsign);
+    PlaneResponsibilityManager prm = InternalAcc.getPrm();
     for (Object o : spchs) {
       if (o instanceof GoodDayNotification) {
         if (((GoodDayNotification) o).isRepeated()) continue; // repeated g-d-n are ignored

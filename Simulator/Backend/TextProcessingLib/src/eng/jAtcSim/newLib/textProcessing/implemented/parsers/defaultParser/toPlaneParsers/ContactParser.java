@@ -37,10 +37,10 @@ public class ContactParser extends SpeechParser<ContactCommand> {
     if (blocks.get(1) != null){
       switch (blocks.get(1)) {
       case "CT":
-        atcId = atcs.getFirst(q->q.getAtcType() == AtcType.ctr);
+        atcId = atcs.getFirst(q->q.getType() == AtcType.ctr);
         break;
       case "CC":
-        atcId = atcs.getFirst(q->q.getAtcType() == AtcType.twr);
+        atcId = atcs.getFirst(q->q.getType() == AtcType.twr);
         break;
       default:
         throw new EEnumValueUnsupportedException(blocks.get(1));
@@ -48,7 +48,7 @@ public class ContactParser extends SpeechParser<ContactCommand> {
     } else if (blocks.get(5) != null){
       // CNT variant
       String atcName = blocks.get(6);
-      atcId = atcs.getFirst(q-> q.getId().equals(atcName));
+      atcId = atcs.getFirst(q-> q.getName().equals(atcName));
     } else
       throw new EApplicationException("Some error when analysing contact parse command.");
 

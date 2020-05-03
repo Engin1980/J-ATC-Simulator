@@ -23,6 +23,11 @@ public interface ITime {
 
   int getValue();
 
+  default String toHourMinuteString(){
+    return sf("%02d:%02d",
+        this.getHours(), this.getMinutes());
+  }
+
   default String toTimeString(){
     return sf("%d:%02d:%02d",
         this.getHours(), this.getMinutes(), this.getSeconds());

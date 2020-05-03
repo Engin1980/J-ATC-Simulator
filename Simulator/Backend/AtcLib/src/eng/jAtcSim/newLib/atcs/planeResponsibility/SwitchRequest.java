@@ -3,7 +3,6 @@ package eng.jAtcSim.newLib.atcs.planeResponsibility;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.SharedAcc;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
-import eng.jAtcSim.newLib.shared.time.ETime;
 
 public class SwitchRequest {
   private EDayTimeStamp creationTime;

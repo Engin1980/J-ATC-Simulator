@@ -202,7 +202,7 @@ public class DebugFormatter extends Formatter {
 
   @Override
   protected String formatContactCommand(ContactCommand cmd) {
-    String ret = String.format("Contact %s at %.3f", cmd.getAtc().getId(), cmd.getAtc().getFrequency());
+    String ret = String.format("Contact %s at %.3f", cmd.getAtc().getName(), cmd.getAtc().getFrequency());
     return ret;
   }
 

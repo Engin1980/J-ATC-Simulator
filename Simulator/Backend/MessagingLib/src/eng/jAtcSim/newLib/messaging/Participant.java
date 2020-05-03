@@ -5,7 +5,6 @@ import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.Callsign;
 
-import java.lang.invoke.CallSite;
 import java.util.Objects;
 
 public class Participant {
@@ -26,7 +25,7 @@ public class Participant {
 
   public static Participant createAtc(AtcId atcId) {
     EAssert.Argument.isNotNull(atcId, "atcId");
-    return new Participant(eType.atc, atcId.getId());
+    return new Participant(eType.atc, atcId.getName());
   }
 
   public static Participant createSystem() {

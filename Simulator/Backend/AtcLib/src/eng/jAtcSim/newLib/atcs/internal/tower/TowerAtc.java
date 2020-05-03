@@ -3,24 +3,31 @@ package eng.jAtcSim.newLib.atcs.internal.tower;
 
 import eng.eSystem.collections.*;
 import eng.eSystem.events.EventAnonymousSimple;
+import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.geo.Headings;
+import eng.jAtcSim.newLib.airplanes.AirplaneAcc;
 import eng.jAtcSim.newLib.airplanes.AirplaneState;
 import eng.jAtcSim.newLib.airplanes.IAirplane;
 import eng.jAtcSim.newLib.area.*;
-import eng.jAtcSim.newLib.area.routes.DARoute;
 import eng.jAtcSim.newLib.atcs.internal.Atc;
 import eng.jAtcSim.newLib.atcs.internal.ComputerAtc;
+import eng.jAtcSim.newLib.atcs.internal.InternalAcc;
 import eng.jAtcSim.newLib.atcs.planeResponsibility.SwitchRoutingRequest;
 import eng.jAtcSim.newLib.messaging.Message;
 import eng.jAtcSim.newLib.messaging.Participant;
+import eng.jAtcSim.newLib.messaging.StringMessageContent;
+import eng.jAtcSim.newLib.shared.AtcId;
+import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.SharedAcc;
 import eng.jAtcSim.newLib.shared.enums.DARouteType;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 import eng.jAtcSim.newLib.speeches.SpeechList;
+import eng.jAtcSim.newLib.speeches.airplane2atc.GoingAroundNotification;
 import eng.jAtcSim.newLib.speeches.atc2airplane.ChangeAltitudeCommand;
 import eng.jAtcSim.newLib.speeches.atc2airplane.ClearedForTakeoffCommand;
 import eng.jAtcSim.newLib.speeches.atc2airplane.RadarContactConfirmationNotification;
+import eng.jAtcSim.newLib.speeches.atc2atc.RunwayUse;
 import eng.jAtcSim.newLib.speeches.atc2atc.StringResponse;
 import eng.jAtcSim.newLib.weather.Weather;
 import eng.jAtcSim.newLib.weather.WeatherAcc;
@@ -208,7 +215,8 @@ public class TowerAtc extends ComputerAtc {
   }
 
   @Override
-  public void registerNewPlaneUnderControl(IAirplane plane, boolean initialRegistration) {
+  public void registerNewPlaneUnderControl(Callsign callsign, boolean initialRegistration) {
+    IAirplane plane = InternalAcc.getPlane(callsign);
     if (plane.isArrival())
       arrivalManager.registerNewArrival(plane);
     else {
@@ -218,7 +226,8 @@ public class TowerAtc extends ComputerAtc {
   }
 
   @Override
-  public void removePlaneDeletedFromGame(IAirplane plane) {
+  public void removePlaneDeletedFromGame(Callsign callsign) {
+    IAirplane plane = InternalAcc.getPlane(callsign);
     if (plane.isArrival()) {
       arrivalManager.deletePlane(plane);
       //TODO this will add to stats even planes deleted from the game by a user(?)
@@ -239,7 +248,8 @@ public class TowerAtc extends ComputerAtc {
   }
 
   @Override
-  public void unregisterPlaneUnderControl(IAirplane plane) {
+  public void unregisterPlaneUnderControl(Callsign callsign) {
+    IAirplane plane = InternalAcc.getPlane(callsign);
     if (plane.isArrival()) {
       if (plane.getState() == AirplaneState.landed) {
         arrivalManager.unregisterFinishedArrival(plane);
@@ -286,7 +296,8 @@ public class TowerAtc extends ComputerAtc {
 //  }
 
   @Override
-  protected boolean acceptsNewRouting(IAirplane plane, SwitchRoutingRequest srr) {
+  protected boolean acceptsNewRouting(Callsign callsign, SwitchRoutingRequest srr) {
+    IAirplane plane = InternalAcc.getPlane(callsign);
     assert plane.isDeparture() : "It is nonsense to have this call here for arrival.";
 
     boolean ret;
@@ -332,7 +343,10 @@ public class TowerAtc extends ComputerAtc {
       rc.scheduler.nowAnnounced();
     }
 
-    Message msg = new Message(this, Acc.atcApp(), cnt);
+    Message msg = new Message(
+        Participant.createAtc(this.getAtcId()),
+        Participant.createAtc(InternalAcc.getApp().getAtcId()),
+        cnt);
     super.sendMessage(msg);
 
   }
@@ -340,31 +354,35 @@ public class TowerAtc extends ComputerAtc {
   private void beginRunwayMaintenance(ActiveRunway runway, RunwayCheck rc) {
     StringResponse cnt = StringResponse.create(
         "Maintenance of the runway %s is now in progress for approx %d minutes.", runway.getName(), rc.expectedDurationInMinutes);
-    Message m = new Message(this, Acc.atcApp(), cnt);
+    Message m = new Message(
+        Participant.createAtc(this.getAtcId()),
+        Participant.createAtc(InternalAcc.getApp().getAtcId()),
+        cnt);
     super.sendMessage(m);
 
     rc.start();
   }
 
   @Override
-  protected ComputerAtc.RequestResult canIAcceptPlane(IAirplane p) {
-    if (p.getFlightModule().isDeparture()) {
-      return new ComputerAtc.RequestResult(false, String.format("%s is a departure.", p.getFlightModule().getCallsign()));
+  protected ComputerAtc.RequestResult canIAcceptPlane(Callsign callsign) {
+    IAirplane plane = InternalAcc.getPlane(callsign);
+    if (plane.isDeparture()) {
+      return new ComputerAtc.RequestResult(false, String.format("%s is a departure.", plane.getCallsign()));
     }
-    if (getPrm().getResponsibleAtc(p) != Acc.atcApp()) {
-      return new ComputerAtc.RequestResult(false, String.format("%s is not from APP.", p.getFlightModule().getCallsign()));
+    if (getPrm().getResponsibleAtc(plane) != InternalAcc.getApp()) {
+      return new ComputerAtc.RequestResult(false, String.format("%s is not from APP.", plane.getCallsign()));
     }
-    if (isOnApproachOfTheRunwayInUse(p) == false)
-      return new ComputerAtc.RequestResult(false, String.format("%s is cleared to approach on the inactive runway.", p.getFlightModule().getCallsign()));
-    if (isRunwayThresholdUnderMaintenance(p.getRoutingModule().getAssignedRunwayThreshold()) == false) {
-      return new RequestResult(false, String.format("Runway %s is closed now.", p.getRoutingModule().getAssignedRunwayThreshold().getParent().getName()));
+    if (isOnApproachOfTheRunwayInUse(plane) == false)
+      return new ComputerAtc.RequestResult(false, String.format("%s is cleared to approach on the inactive runway.", plane.getCallsign()));
+    if (isRunwayThresholdUnderMaintenance(plane.getRouting().getAssignedRunwayThreshold()) == false) {
+      return new RequestResult(false, String.format("Runway %s is closed now.", plane.getRouting().getAssignedRunwayThreshold().getParent().getName()));
     }
-    if (p.getSha().getAltitude() > this.acceptAltitude) {
-      return new ComputerAtc.RequestResult(false, String.format("%s is too high.", p.getFlightModule().getCallsign()));
+    if (plane.getSha().getAltitude() > this.acceptAltitude) {
+      return new ComputerAtc.RequestResult(false, String.format("%s is too high.", plane.getCallsign()));
     }
-    double dist = Coordinates.getDistanceInNM(p.getCoordinate(), AreaAcc.getAirport().getLocation());
+    double dist = Coordinates.getDistanceInNM(plane.getCoordinate(), AreaAcc.getAirport().getLocation());
     if (dist > MAXIMAL_ACCEPT_DISTANCE_IN_NM) {
-      return new ComputerAtc.RequestResult(false, String.format("%s is too far.", p.getFlightModule().getCallsign()));
+      return new ComputerAtc.RequestResult(false, String.format("%s is too far.", plane.getCallsign()));
     }
 
     return new RequestResult(true, null);
@@ -393,7 +411,7 @@ public class TowerAtc extends ComputerAtc {
 
     boolean isSame = inUseInfo.current.isUsingTheSameRunwayConfiguration(newSuggested);
     if (!isSame) {
-      inUseInfo.scheduler = new SchedulerForAdvice(Acc.now().addSeconds(10 * 60), RWY_CHANGE_ANNOUNCE_INTERVALS);
+      inUseInfo.scheduler = new SchedulerForAdvice(SharedAcc.getNow().addSeconds(10 * 60), RWY_CHANGE_ANNOUNCE_INTERVALS);
       inUseInfo.scheduled = newSuggested;
     }
   }
@@ -402,7 +420,10 @@ public class TowerAtc extends ComputerAtc {
     StringResponse cnt = StringResponse.create(
         "Maintenance of the runway %s has ended.", runway.getName()
     );
-    Message m = new Message(this, Acc.atcApp(), cnt);
+    Message m = new Message(
+        Participant.createAtc(this.getAtcId()),
+        Participant.createAtc(InternalAcc.getApp().getAtcId()),
+        cnt);
     super.sendMessage(m);
 
     rc = RunwayCheck.createNormal(false);
@@ -412,12 +433,12 @@ public class TowerAtc extends ComputerAtc {
   private double getDepartingPlaneSwitchAltitude(char category) {
     switch (category) {
       case 'A':
-        return (double) AreaAcc.getAirport().getAltitude() + Acc.rnd().nextInt(100, 250);
+        return (double) AreaAcc.getAirport().getAltitude() + SharedAcc.getRnd().nextInt(100, 250);
       case 'B':
-        return (double) AreaAcc.getAirport().getAltitude() + Acc.rnd().nextInt(150, 400);
+        return (double) AreaAcc.getAirport().getAltitude() + SharedAcc.getRnd().nextInt(150, 400);
       case 'C':
       case 'D':
-        return (double) AreaAcc.getAirport().getAltitude() + Acc.rnd().nextInt(200, 750);
+        return (double) AreaAcc.getAirport().getAltitude() + SharedAcc.getRnd().nextInt(200, 750);
       default:
         throw new EEnumValueUnsupportedException(category);
     }
@@ -437,19 +458,20 @@ public class TowerAtc extends ComputerAtc {
   }
 
   @Override
-  protected Atc getTargetAtcIfPlaneIsReadyToSwitch(IAirplane plane) {
-    Atc ret = null;
+  protected AtcId getTargetAtcIfPlaneIsReadyToSwitch(Callsign callsign) {
+    IAirplane plane = InternalAcc.getPlane(callsign);
+    AtcId ret = null;
     if (this.arrivalManager.checkIfPlaneIsReadyToSwitchAndRemoveIt(plane)) {
-      ret = Acc.atcApp();
-    } else if (plane.getFlightModule().isDeparture()) {
-      ret = Acc.atcApp();
+      ret = InternalAcc.getApp().getAtcId();
+    } else if (plane.isDeparture()) {
+      ret = InternalAcc.getApp().getAtcId();
     }
     return ret;
   }
 
-  private boolean isOnApproachOfTheRunwayInUse(IAirplane p) {
-    boolean ret = p.getEmergencyModule().isEmergency() || inUseInfo.current.getArrivals()
-        .isAny(q -> q.getThreshold().equals(p.getRoutingModule().getAssignedRunwayThreshold()) && q.isForCategory(p.getType().category));
+  private boolean isOnApproachOfTheRunwayInUse(IAirplane plane) {
+    boolean ret = plane.isEmergency() || inUseInfo.current.getArrivals()
+        .isAny(q -> q.getThreshold().equals(plane.getRouting().getAssignedRunwayThreshold()) && q.isForCategory(plane.getType().category));
     return ret;
   }
 
@@ -484,7 +506,7 @@ public class TowerAtc extends ComputerAtc {
     ISet<ActiveRunwayThreshold> crts = inUseInfo.current.getCrossedSetForThreshold(rt);
 
     for (ActiveRunwayThreshold crt : crts) {
-      IAirplane4Atc lastDep = departureManager.tryGetTheLastDepartedPlane(crt);
+      IAirplane lastDep = departureManager.tryGetTheLastDepartedPlane(crt);
       if (lastDep == null) continue; // no last departure
       if (lastDep.getSha().getAltitude() > clearAltitude) continue; // last departure has safe altitude
       double dist = Coordinates.getDistanceInNM(rt.getOtherThreshold().getCoordinate(), lastDep.getCoordinate());
@@ -499,7 +521,7 @@ public class TowerAtc extends ComputerAtc {
   }
 
   private boolean isRunwayThresholdHavingRecentDeparture(ActiveRunwayThreshold runwayThreshold) {
-    boolean ret = departureManager.getLastDepartureTime(runwayThreshold).addSeconds(60).isAfterOrEq(Acc.now());
+    boolean ret = departureManager.getLastDepartureTime(runwayThreshold).addSeconds(60).isAfterOrEq(SharedAcc.getNow());
     return ret;
   }
 
@@ -512,8 +534,8 @@ public class TowerAtc extends ComputerAtc {
     if (ru.isAsksForChange()) {
       if (inUseInfo.scheduled == null) {
         Message msg = new Message(
-            this,
-            Acc.atcApp(),
+            Participant.createAtc(this.getAtcId()),
+            Participant.createAtc(InternalAcc.getApp().getAtcId()),
             new StringMessageContent("There is no scheduled runway change."));
         super.sendMessage(msg);
       } else {
@@ -533,8 +555,8 @@ public class TowerAtc extends ComputerAtc {
     }
   }
 
-  private void processMessageFromAtc(eng.jAtcSim.newLib.area.speaking.fromAtc.atc2atc.RunwayCheck rrct) {
-    if (rrct.type == eng.jAtcSim.newLib.area.speaking.fromAtc.atc2atc.RunwayCheck.eType.askForTime) {
+  private void processMessageFromAtc(RunwayCheck rrct) {
+    if (rrct.type == RunwayCheck.eType.askForTime) {
       RunwayCheck rc = this.runwayChecks.tryGet(rrct.runway);
       if (rc != null)
         announceScheduledRunwayCheck(rrct.runway, rc);
@@ -544,7 +566,7 @@ public class TowerAtc extends ComputerAtc {
           announceScheduledRunwayCheck(runway, rc);
         }
       }
-    } else if (rrct.type == eng.jAtcSim.newLib.area.speaking.fromAtc.atc2atc.RunwayCheck.eType.doCheck) {
+    } else if (rrct.type == RunwayCheck.eType.doCheck) {
       ActiveRunway rwy = rrct.runway;
       RunwayCheck rc = this.runwayChecks.tryGet(rwy);
       if (rwy == null && this.runwayChecks.size() == 1) {
@@ -552,22 +574,30 @@ public class TowerAtc extends ComputerAtc {
         rc = this.runwayChecks.get(rwy);
       }
       if (rc == null) {
-        Message msg = new Message(this, Acc.atcApp(),
+        Message msg = new Message(
+            Participant.createAtc(this.getAtcId()),
+            Participant.createAtc(InternalAcc.getApp().getAtcId()),
             StringResponse.createRejection("Sorry, you must specify exact runway (threshold) at which I can start the maintenance."));
         super.sendMessage(msg);
       } else {
         if (rc.isActive()) {
-          Message msg = new Message(this, Acc.atcApp(),
+          Message msg = new Message(
+              Participant.createAtc(this.getAtcId()),
+              Participant.createAtc(InternalAcc.getApp().getAtcId()),
               StringResponse.createRejection("The runway %s is already under maintenance right now.",
                   rwy.getName()));
           super.sendMessage(msg);
         } else if (rc.scheduler.getMinutesLeft() > 30) {
-          Message msg = new Message(this, Acc.atcApp(),
+          Message msg = new Message(
+              Participant.createAtc(this.getAtcId()),
+              Participant.createAtc(InternalAcc.getApp().getAtcId()),
               StringResponse.createRejection("Sorry, the runway %s is scheduled for the maintenance in more than 30 minutes.",
                   rwy.getName()));
           super.sendMessage(msg);
         } else {
-          Message msg = new Message(this, Acc.atcApp(),
+          Message msg = new Message(
+              Participant.createAtc(this.getAtcId()),
+              Participant.createAtc(InternalAcc.getApp().getAtcId()),
               StringResponse.create("The maintenance of the runway %s is approved and will start shortly.",
                   rwy.getName()));
           super.sendMessage(msg);
@@ -578,7 +608,7 @@ public class TowerAtc extends ComputerAtc {
   }
 
   @Override
-  protected void processMessagesFromPlane(IAirplane plane, SpeechList spchs) {
+  protected void processMessagesFromPlane(Callsign callsign, SpeechList spchs) {
     if (spchs.containsType(GoingAroundNotification.class)) {
       arrivalManager.goAroundPlane(plane);
     }
@@ -639,7 +669,9 @@ public class TowerAtc extends ComputerAtc {
   }
 
   private void sendMessageToUser(String text) {
-    Message msg = new Message(this, Acc.atcApp(),
+    Message msg = new Message(
+        Participant.createAtc(this.getAtcId()),
+        Participant.createAtc(InternalAcc.getApp().getAtcId()),
         new StringMessageContent(text));
     super.sendMessage(msg);
   }

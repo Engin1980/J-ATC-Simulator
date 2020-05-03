@@ -1,9 +1,10 @@
 package eng.jAtcSim.newLib.speeches.atc2atc;
 
+import eng.jAtcSim.newLib.messaging.IMessageContent;
 import eng.jAtcSim.newLib.speeches.INotification;
 import eng.jAtcSim.newLib.speeches.IRejectable;
 
-public class StringResponse implements INotification, IRejectable {
+public class StringResponse implements INotification, IRejectable, IMessageContent {
   public static StringResponse create(String format, Object... params) {
     StringResponse ret = new StringResponse(false, format, params);
     return ret;

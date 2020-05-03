@@ -9,9 +9,9 @@ import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.validation.EAssert;
+import eng.jAtcSim.newLib.airplanes.IAirplane;
 import eng.jAtcSim.newLib.atcs.internal.Atc;
-import eng.jAtcSim.newLib.atcs.internal.IAirplane4Atc;
-import eng.jAtcSim.newLib.atcs.internal.XAcc;
+import eng.jAtcSim.newLib.atcs.internal.InternalAcc;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.SharedAcc;
@@ -63,11 +63,11 @@ public class PlaneResponsibilityManager {
 
       AirplaneResponsibilityInfo ai = dao.get(callsign);
 
-      IAirplane4Atc plane = XAcc.getPlane(ai.getPlane());
-      Atc atc = XAcc.getAtc(ai.getAtc());
+      IAirplane plane = InternalAcc.getPlane(ai.getPlane());
+      Atc atc = InternalAcc.getAtc(ai.getAtc());
 
       // auto-cancel
-      if (ai.getAtc() == targetAtc && plane.getTunedAtc() == sender) {
+      if (ai.getAtc() == targetAtc && plane.getAtc().getTunedAtc() == sender) {
         ai.setAtc(sender);
         ai.setSwitchRequest(null);
         return;
@@ -75,14 +75,14 @@ public class PlaneResponsibilityManager {
 
       if (ai.getSwitchRequest() != null)
         throw new EApplicationException("Airplane " + plane.getCallsign() + " is already under request switch from "
-            + atc.getType().toString() + " to " + ai.getSwitchRequest().getAtc().getAtcType().toString() + ".");
+            + atc.getType().toString() + " to " + ai.getSwitchRequest().getAtc().getType().toString() + ".");
       if (ai.getAtc() != sender)
         throw new EApplicationException("Airplane " + plane.getCallsign()
             + " is requested to be switched from incorrect atc. Current is "
-            + atc.getType().toString() + ", requested from is " + sender.getAtcType().toString() + ".");
+            + atc.getType().toString() + ", requested from is " + sender.getType().toString() + ".");
 
-      if ((sender.getAtcType() == AtcType.ctr || sender.getAtcType() == AtcType.twr)
-          && targetAtc.getAtcType() != AtcType.app)
+      if ((sender.getType() == AtcType.ctr || sender.getType() == AtcType.twr)
+          && targetAtc.getType() != AtcType.app)
         throw new EApplicationException("Invalid request direction.");
 
       SwitchRequest sr = new SwitchRequest(targetAtc);
@@ -131,11 +131,11 @@ public class PlaneResponsibilityManager {
 
       Atc atc;
 
-      atc = XAcc.getAtc(ai.getAtc());
+      atc = InternalAcc.getAtc(ai.getAtc());
       atc.unregisterPlaneUnderControl(callsign);
       ai.setAtc(sr.getAtc());
 
-      atc = XAcc.getAtc(ai.getAtc());
+      atc = InternalAcc.getAtc(ai.getAtc());
       atc.registerNewPlaneUnderControl(callsign, false);
       ai.setSwitchRequest(null);
     }
@@ -197,7 +197,7 @@ public class PlaneResponsibilityManager {
 
     dao.add(new AirplaneResponsibilityInfo(callsign, atcId));
 
-    Atc atc = XAcc.getAtc(atcId);
+    Atc atc = InternalAcc.getAtc(atcId);
     atc.registerNewPlaneUnderControl(callsign, true);
   }
 
@@ -210,7 +210,7 @@ public class PlaneResponsibilityManager {
     }
     dao.remove(ai);
 
-    Atc atc = XAcc.getAtc(ai);
+    Atc atc = InternalAcc.getAtc(ai);
     atc.removePlaneDeletedFromGame(callsign);
 //    Acc.atcApp().removePlaneDeletedFromGame(plane);
 //    Acc.atcTwr().removePlaneDeletedFromGame(plane);

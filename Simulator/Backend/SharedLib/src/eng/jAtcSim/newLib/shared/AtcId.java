@@ -5,27 +5,27 @@ import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.enums.AtcType;
 
 public class AtcId {
-  private final String id;
+  private final String name;
   private final double frequency;
-  private final AtcType atcType;
+  private final AtcType type;
 
-  public AtcId(String id, double frequency, AtcType atcType) {
-    EAssert.Argument.isNonemptyString(id, "id");
+  public AtcId(String name, double frequency, AtcType type) {
+    EAssert.Argument.isNonemptyString(name, "name");
     EAssert.Argument.isTrue(NumberUtils.isBetweenOrEqual(117, frequency, 140));
-    this.id = id;
+    this.name = name;
     this.frequency = frequency;
-    this.atcType = atcType;
+    this.type = type;
   }
 
-  public String getId() {
-    return id;
+  public String getName() {
+    return name;
   }
 
   public double getFrequency() {
     return frequency;
   }
 
-  public AtcType getAtcType() {
-    return atcType;
+  public AtcType getType() {
+    return type;
   }
 }

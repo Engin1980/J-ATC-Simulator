@@ -32,7 +32,7 @@ class ArrivalManager {
   }
 
   public double getClosestLandingPlaneDistanceForThreshold(ActiveRunwayThreshold threshold) {
-    IList<IAirplane> tmp = AirplaneAcc.getAirplaneList().toList()
+    IList<IAirplane> tmp = AirplaneAcc.getAirplanes()
         .where(q -> threshold.equals(q.getRouting().getAssignedRunwayThreshold()));
     double ret = Double.MAX_VALUE;
     for (IAirplane plane : tmp) {

@@ -22,7 +22,7 @@ public class ContactCommand implements ICommand {
 
   @Override
   public String toString(){
-    String ret = "Contact " + atc.getId() + " {command}";
+    String ret = "Contact " + atc.getName() + " {command}";
 
     return ret;
   }

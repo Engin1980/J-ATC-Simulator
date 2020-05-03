@@ -4,14 +4,10 @@ import eng.jAtcSim.newLib.messaging.Message;
 import eng.jAtcSim.newLib.messaging.MessagingAcc;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.Callsign;
-import eng.jAtcSim.newLib.shared.enums.AtcType;
 
 public abstract class Atc {
 
-  private final AtcType type;
-
-  private final String name;
-  private final double frequency;
+  protected final AtcId atcId;
   protected final int acceptAltitude;
   protected final int releaseAltitude;
   protected final int orderedAltitude;
@@ -49,9 +45,8 @@ public abstract class Atc {
   public abstract void registerNewPlaneUnderControl(Callsign plane, boolean initialRegistration);
 
   public Atc(eng.jAtcSim.newLib.area.Atc template) {
-    this.type = template.getType();
-    this.name = template.getName();
-    this.frequency = template.getFrequency();
+    this.atcId = new AtcId(
+        template.getName(), template.getFrequency(), template.getType());
     this.acceptAltitude = template.getAcceptAltitude();
     this.releaseAltitude = template.getReleaseAltitude();
     this.orderedAltitude = template.getOrderedAltitude();
@@ -63,20 +58,12 @@ public abstract class Atc {
 
   public abstract boolean isHuman();
 
-  public AtcType getType() {
-    return type;
-  }
-
-  public String getName() {
-    return name;
-  }
-
   public int getReleaseAltitude() {
     return releaseAltitude;
   }
 
-  public double getFrequency() {
-    return frequency;
+  public AtcId getAtcId() {
+    return atcId;
   }
 
   public int getAcceptAltitude() {
@@ -87,17 +74,9 @@ public abstract class Atc {
     return orderedAltitude;
   }
 
-  private AtcId atcId = null;
-
-  public AtcId getAtcId() {
-    if (atcId == null)
-      this.atcId = new AtcId(this.name, this.frequency, this.type);
-    return this.atcId;
-  }
-
   @Override
   public String toString() {
-    return this.name;
+    return this.atcId.getName();
   }
 
   protected void sendMessage(Message msg) {
