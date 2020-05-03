@@ -6,7 +6,7 @@ import eng.jAtcSim.newLib.shared.logging.writers.AutoNewLineLogWriter;
 import eng.jAtcSim.newLib.shared.logging.writers.ConsoleWriter;
 import eng.jAtcSim.newLib.shared.logging.writers.RealTimePipeLogWriter;
 
-public class ApplicationLog extends Log {
+public class ApplicationLog {
 
   public static class Message {
     public final String text;
@@ -18,6 +18,8 @@ public class ApplicationLog extends Log {
     }
   }
 
+  private final Journal journal;
+
   public enum eType {
     info,
     warning,
@@ -27,7 +29,8 @@ public class ApplicationLog extends Log {
   public EventAnonymous<Message> onNewMessage = new EventAnonymous<>();
 
   public ApplicationLog() {
-    super("Application log",
+    this.journal = new Journal(
+        "Application log",
         false,
         new AutoNewLineLogWriter(
             new RealTimePipeLogWriter(
@@ -40,7 +43,7 @@ public class ApplicationLog extends Log {
 
   public void writeLine(eType type, String format, Object... params) {
     String s = String.format(format, params);
-    super.writeLine("JAtcSim - %s: %s", type, s);
+    this.journal.writeLine("JAtcSim - %s: %s", type, s);
     onNewMessage.raise(new Message(s, type));
   }
 }

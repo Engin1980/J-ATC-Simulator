@@ -1,6 +1,8 @@
 package eng.jAtcSim.newLib.shared;
 
 public class Settings {
+  public String logPath;
+
   private boolean getWeatherInfoStringAsMetar;
 
   public Settings(boolean getWeatherInfoStringAsMetar) {

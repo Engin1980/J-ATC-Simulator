@@ -12,16 +12,14 @@ import eng.jAtcSim.newLib.messaging.IMessageContent;
 import eng.jAtcSim.newLib.messaging.Message;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.SharedAcc;
-import eng.jAtcSim.newLib.shared.logging.Log;
-import eng.jAtcSim.newLib.shared.logging.writers.FileWriter;
+import eng.jAtcSim.newLib.shared.logging.Journal;
+import eng.jAtcSim.newLib.shared.logging.writers.*;
 
-/**
- * @author Marek Vajgl
- */
-public class AtcRecorder extends Log {
+public class AtcRecorder  {
 
   private final static int DEFAULT_STRING_BUILDER_SIZE = 256;
   private final static String SEPARATOR = ";";
+  private final Journal journal;
 
   public static AtcRecorder create(AtcId atcId) {
     AtcRecorder ret = new AtcRecorder(atcId);
@@ -32,9 +30,15 @@ public class AtcRecorder extends Log {
   private final EStringBuilder sb = new EStringBuilder(DEFAULT_STRING_BUILDER_SIZE);
 
   private AtcRecorder(AtcId atcId) {
-    super(atcId.getName(), true,
-        new FileWriter(atcId.getName() + ".txt", true));
     EAssert.Argument.isNotNull(atcId, "atcId");
+
+    ILogWriter wrt = new FileWriter(atcId.getName() + ".txt", true);
+    wrt = new AutoNewLineLogWriter(wrt);
+    wrt = new SimTimePipeLogWriter(wrt);
+    wrt = new RealTimePipeLogWriter(wrt);
+    this.journal = new Journal(
+        atcId.getName(), true, wrt);
+
     this.atcId = atcId;
   }
 
@@ -54,7 +58,7 @@ public class AtcRecorder extends Log {
     sb.appendFormat(" %s ", cnt);
 
     sb.appendLine();
-    this.writeToLog(sb.toString());
+    this.journal.write(sb.toString());
   }
 
   public void write(String type, String content) {
@@ -66,14 +70,10 @@ public class AtcRecorder extends Log {
         this.atcId.getName(),
         SEPARATOR,
         content);
-    this.writeToLog(s);
+    this.journal.write(s);
   }
 
   private String getMessageContentString(IMessageContent content) {
     return content.toString();
-  }
-
-  private void writeToLog(String text) {
-    super.write(text);
   }
 }

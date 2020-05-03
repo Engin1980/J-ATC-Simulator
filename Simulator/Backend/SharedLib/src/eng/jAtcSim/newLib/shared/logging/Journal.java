@@ -9,13 +9,13 @@ import eng.jAtcSim.newLib.shared.logging.writers.ILogWriter;
 import java.io.IOException;
 import java.util.Arrays;
 
-public abstract class Log {
+public final class Journal {
 
   private final IReadOnlyList<ILogWriter> writers;
   private final String name;
   private final boolean errorForgiving;
 
-  public Log(String name, boolean errorForgiving, ILogWriter... outputStreams) {
+  public Journal(String name, boolean errorForgiving, ILogWriter... outputStreams) {
     ILogWriter[] writers = Arrays.copyOf(outputStreams, outputStreams.length);
     this.writers = new EList<>(writers);
     this.name = name;
