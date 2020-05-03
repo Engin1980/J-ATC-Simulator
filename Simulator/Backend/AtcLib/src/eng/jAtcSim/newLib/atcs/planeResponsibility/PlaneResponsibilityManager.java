@@ -75,11 +75,11 @@ public class PlaneResponsibilityManager {
 
       if (ai.getSwitchRequest() != null)
         throw new EApplicationException("Airplane " + plane.getCallsign() + " is already under request switch from "
-            + atc.getType().toString() + " to " + ai.getSwitchRequest().getAtc().getType().toString() + ".");
+            + atc.getAtcId().getType().toString() + " to " + ai.getSwitchRequest().getAtc().getType().toString() + ".");
       if (ai.getAtc() != sender)
         throw new EApplicationException("Airplane " + plane.getCallsign()
             + " is requested to be switched from incorrect atc. Current is "
-            + atc.getType().toString() + ", requested from is " + sender.getType().toString() + ".");
+            + atc.getAtcId().getType().toString() + ", requested from is " + sender.getType().toString() + ".");
 
       if ((sender.getType() == AtcType.ctr || sender.getType() == AtcType.twr)
           && targetAtc.getType() != AtcType.app)

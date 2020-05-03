@@ -8,6 +8,7 @@ import eng.jAtcSim.newLib.airplanes.AirplaneState;
 import eng.jAtcSim.newLib.airplanes.IAirplane;
 import eng.jAtcSim.newLib.area.ActiveRunway;
 import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
+import eng.jAtcSim.newLib.atcs.internal.InternalAcc;
 
 class ArrivalManager {
   private final TowerAtc parent;
@@ -57,7 +58,8 @@ class ArrivalManager {
     goAroundedPlanesToSwitchList.add(plane);
   }
 
-  public boolean isSomeArrivalApproachingOrOnRunway(ActiveRunway runway) {
+  public boolean isSomeArrivalApproachingOrOnRunway(String rwyName) {
+    ActiveRunway runway = InternalAcc.getRunway(rwyName);
     if (runway == null) {
       throw new IllegalArgumentException("Value of {runway} cannot not be null.");
     }

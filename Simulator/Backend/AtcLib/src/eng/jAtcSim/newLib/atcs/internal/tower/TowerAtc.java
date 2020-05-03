@@ -6,11 +6,9 @@ import eng.eSystem.events.EventAnonymousSimple;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.geo.Headings;
-import eng.jAtcSim.newLib.airplanes.AirplaneAcc;
 import eng.jAtcSim.newLib.airplanes.AirplaneState;
 import eng.jAtcSim.newLib.airplanes.IAirplane;
 import eng.jAtcSim.newLib.area.*;
-import eng.jAtcSim.newLib.atcs.internal.Atc;
 import eng.jAtcSim.newLib.atcs.internal.ComputerAtc;
 import eng.jAtcSim.newLib.atcs.internal.InternalAcc;
 import eng.jAtcSim.newLib.atcs.planeResponsibility.SwitchRoutingRequest;
@@ -27,76 +25,14 @@ import eng.jAtcSim.newLib.speeches.airplane2atc.GoingAroundNotification;
 import eng.jAtcSim.newLib.speeches.atc2airplane.ChangeAltitudeCommand;
 import eng.jAtcSim.newLib.speeches.atc2airplane.ClearedForTakeoffCommand;
 import eng.jAtcSim.newLib.speeches.atc2airplane.RadarContactConfirmationNotification;
+import eng.jAtcSim.newLib.speeches.atc2atc.RunwayCheck;
 import eng.jAtcSim.newLib.speeches.atc2atc.RunwayUse;
 import eng.jAtcSim.newLib.speeches.atc2atc.StringResponse;
 import eng.jAtcSim.newLib.weather.Weather;
 import eng.jAtcSim.newLib.weather.WeatherAcc;
 
 public class TowerAtc extends ComputerAtc {
-  public static class RunwayCheck {
-    private static final int[] RWY_CHECK_ANNOUNCE_INTERVALS = new int[]{30, 15, 10, 5};
 
-    private static final int MIN_NORMAL_MAINTENANCE_INTERVAL = 200;
-    private static final int MAX_NORMAL_MAINTENANCE_INTERVAL = 240;
-    private static final int NORMAL_MAINTENACE_DURATION = 5;
-    private static final int MIN_SNOW_MAINTENANCE_INTERVAL = 45;
-    private static final int MAX_SNOW_MAINTENANCE_INTERVAL = 180;
-    private static final int MIN_SNOW_INTENSIVE_MAINTENANCE_INTERVAL = 20;
-    private static final int MAX_SNOW_INTENSIVE_MAINTENANCE_INTERVAL = 45;
-    private static final int SNOW_MAINENANCE_DURATION = 20;
-    private static final int MIN_EMERGENCY_MAINTENANCE_DURATION = 5;
-    private static final int MAX_EMERGENCY_MAINTENANCE_DURATION = 45;
-
-    public static RunwayCheck createImmediateAfterEmergency() {
-      int closeDuration = SharedAcc.getRnd().nextInt(MIN_EMERGENCY_MAINTENANCE_DURATION, MAX_EMERGENCY_MAINTENANCE_DURATION);
-      RunwayCheck ret = new RunwayCheck(0, closeDuration);
-      return ret;
-    }
-
-    public static RunwayCheck createNormal(boolean isInitial) {
-      int maxTime;
-      if (isInitial)
-        maxTime = SharedAcc.getRnd().nextInt(MAX_NORMAL_MAINTENANCE_INTERVAL);
-      else
-        maxTime = SharedAcc.getRnd().nextInt(MIN_NORMAL_MAINTENANCE_INTERVAL, MAX_NORMAL_MAINTENANCE_INTERVAL);
-
-      RunwayCheck ret = new RunwayCheck(maxTime, NORMAL_MAINTENACE_DURATION);
-      return ret;
-    }
-
-    public static RunwayCheck createSnowCleaning(boolean isInitial, boolean isIntensive) {
-      int maxTime = isIntensive
-          ? SharedAcc.getRnd().nextInt(MIN_SNOW_INTENSIVE_MAINTENANCE_INTERVAL, MAX_SNOW_INTENSIVE_MAINTENANCE_INTERVAL)
-          : SharedAcc.getRnd().nextInt(MIN_SNOW_MAINTENANCE_INTERVAL, MAX_SNOW_MAINTENANCE_INTERVAL);
-      if (isInitial)
-        maxTime = SharedAcc.getRnd().nextInt(maxTime);
-
-      RunwayCheck ret = new RunwayCheck(maxTime, SNOW_MAINENANCE_DURATION);
-      return ret;
-    }
-    private int expectedDurationInMinutes;
-    private EDayTimeStamp realDurationEnd;
-    private SchedulerForAdvice scheduler;
-
-    private RunwayCheck(int minutesToNextCheck, int expectedDurationInMinutes) {
-      EDayTimeStamp et = SharedAcc.getNow().toStamp().addMinutes(minutesToNextCheck);
-      this.scheduler = new SchedulerForAdvice(et, RWY_CHECK_ANNOUNCE_INTERVALS);
-      this.expectedDurationInMinutes = expectedDurationInMinutes;
-    }
-
-    public boolean isActive() {
-      return scheduler == null;
-    }
-
-    public void start() {
-      double durationRangeSeconds = expectedDurationInMinutes * 60 * 0.2d;
-      int realDurationSeconds = (int) SharedAcc.getRnd().nextDouble(
-          expectedDurationInMinutes * 60 - durationRangeSeconds,
-          expectedDurationInMinutes * 60 + durationRangeSeconds);
-      realDurationEnd = SharedAcc.getNow().toStamp().addSeconds(realDurationSeconds);
-      this.scheduler = null;
-    }
-  }
 
   public static class RunwaysInUseInfo {
     private SchedulerForAdvice scheduler;
@@ -165,7 +101,7 @@ public class TowerAtc extends ComputerAtc {
   private final ArrivalManager arrivalManager = new ArrivalManager(this);
   private final EventAnonymousSimple onRunwayChanged = new EventAnonymousSimple();
   private RunwaysInUseInfo inUseInfo = null;
-  private EMap<ActiveRunway, RunwayCheck> runwayChecks = null;
+  private EMap<String, RunwayCheckInfo> runwayChecks = null;
   private boolean isUpdatedWeather;
 
   public TowerAtc(eng.jAtcSim.newLib.area.Atc template) {
@@ -200,8 +136,8 @@ public class TowerAtc extends ComputerAtc {
 
     runwayChecks = new EMap<>();
     for (ActiveRunway runway : AreaAcc.getAirport().getRunways()) {
-      RunwayCheck rc = RunwayCheck.createNormal(true);
-      runwayChecks.set(runway, rc);
+      RunwayCheckInfo rc = RunwayCheckInfo.createNormal(true);
+      runwayChecks.set(runway.getName(), rc);
     }
 
     inUseInfo = new RunwaysInUseInfo();
@@ -210,7 +146,7 @@ public class TowerAtc extends ComputerAtc {
   }
 
   public boolean isRunwayThresholdUnderMaintenance(ActiveRunwayThreshold threshold) {
-    boolean ret = runwayChecks.get(threshold.getParent()).isActive() == false;
+    boolean ret = runwayChecks.get(threshold.getParent().getName()).isActive() == false;
     return ret;
   }
 
@@ -270,8 +206,8 @@ public class TowerAtc extends ComputerAtc {
     if (plane.isEmergency() && plane.getState() == AirplaneState.landed) {
       // if it is landed emergency, close runway for amount of time
       ActiveRunway rwy = plane.getRouting().getAssignedRunwayThreshold().getParent();
-      RunwayCheck rwyCheck = RunwayCheck.createImmediateAfterEmergency();
-      runwayChecks.set(rwy, rwyCheck);
+      RunwayCheckInfo rwyCheck = RunwayCheckInfo.createImmediateAfterEmergency();
+      runwayChecks.set(rwy.getName(), rwyCheck);
     }
   }
 
@@ -328,19 +264,19 @@ public class TowerAtc extends ComputerAtc {
     sendMessageToUser(msgTxt);
   }
 
-  private void announceScheduledRunwayCheck(ActiveRunway rwy, RunwayCheck rc) {
+  private void announceScheduledRunwayCheck(String runwayName, RunwayCheckInfo rc) {
     StringResponse cnt;
     if (rc.isActive())
       cnt = StringResponse.create("Runway %s is under maintenance right now until approximately %s.",
-          rwy.getName(),
-          rc.realDurationEnd.toHourMinuteString()
+          runwayName,
+          rc.getRealDurationEnd().toHourMinuteString()
       );
     else {
       cnt = StringResponse.create("Runway %s maintenance is scheduled at %s for approximately %d minutes.",
-          rwy.getName(),
-          rc.scheduler.getScheduledTime().toHourMinuteString(),
-          rc.expectedDurationInMinutes);
-      rc.scheduler.nowAnnounced();
+          runwayName,
+          rc.getScheduler().getScheduledTime().toHourMinuteString(),
+          rc.getExpectedDurationInMinutes());
+      rc.getScheduler().nowAnnounced();
     }
 
     Message msg = new Message(
@@ -351,9 +287,10 @@ public class TowerAtc extends ComputerAtc {
 
   }
 
-  private void beginRunwayMaintenance(ActiveRunway runway, RunwayCheck rc) {
+  private void beginRunwayMaintenance(String rwyName, RunwayCheckInfo rc) {
     StringResponse cnt = StringResponse.create(
-        "Maintenance of the runway %s is now in progress for approx %d minutes.", runway.getName(), rc.expectedDurationInMinutes);
+        "Maintenance of the runway %s is now in progress for approx %d minutes.",
+        rwyName, rc.getExpectedDurationInMinutes());
     Message m = new Message(
         Participant.createAtc(this.getAtcId()),
         Participant.createAtc(InternalAcc.getApp().getAtcId()),
@@ -369,7 +306,7 @@ public class TowerAtc extends ComputerAtc {
     if (plane.isDeparture()) {
       return new ComputerAtc.RequestResult(false, String.format("%s is a departure.", plane.getCallsign()));
     }
-    if (getPrm().getResponsibleAtc(plane) != InternalAcc.getApp()) {
+    if (InternalAcc.getPrm().forAtc().getResponsibleAtc(callsign).equals(InternalAcc.getApp().getAtcId())) {
       return new ComputerAtc.RequestResult(false, String.format("%s is not from APP.", plane.getCallsign()));
     }
     if (isOnApproachOfTheRunwayInUse(plane) == false)
@@ -401,7 +338,7 @@ public class TowerAtc extends ComputerAtc {
         this.inUseInfo.current.getDepartures()
             .select(q -> q.getThreshold().getParent())
             .union(this.inUseInfo.current.getArrivals().select(q -> q.getThreshold().getParent()));
-    tmp.forEach(q -> announceScheduledRunwayCheck(q, this.runwayChecks.get(q)));
+    tmp.forEach(q -> announceScheduledRunwayCheck(q.getName(), this.runwayChecks.get(q.getName())));
 
     onRunwayChanged.raise();
   }
@@ -416,9 +353,9 @@ public class TowerAtc extends ComputerAtc {
     }
   }
 
-  private void finishRunwayMaintenance(ActiveRunway runway, RunwayCheck rc) {
+  private void finishRunwayMaintenance(String rwyName, RunwayCheckInfo rc) {
     StringResponse cnt = StringResponse.create(
-        "Maintenance of the runway %s has ended.", runway.getName()
+        "Maintenance of the runway %s has ended.", rwyName
     );
     Message m = new Message(
         Participant.createAtc(this.getAtcId()),
@@ -426,8 +363,8 @@ public class TowerAtc extends ComputerAtc {
         cnt);
     super.sendMessage(m);
 
-    rc = RunwayCheck.createNormal(false);
-    runwayChecks.set(runway, rc);
+    rc = RunwayCheckInfo.createNormal(false);
+    runwayChecks.set(rwyName, rc);
   }
 
   private double getDepartingPlaneSwitchAltitude(char category) {
@@ -494,7 +431,7 @@ public class TowerAtc extends ComputerAtc {
     ret = crts
         .isAny(q ->
             arrivalManager.isSomeArrivalOnRunway(rt.getParent())
-                || departureManager.isSomeDepartureOnRunway(rt.getParent()));
+                || departureManager.isSomeDepartureOnRunway(rt.getParent().getName()));
     return ret;
   }
 
@@ -526,7 +463,7 @@ public class TowerAtc extends ComputerAtc {
   }
 
   private boolean isRunwayUnderMaintenance(ActiveRunway runway) {
-    return this.runwayChecks.get(runway).isActive();
+    return this.runwayChecks.get(runway.getName()).isActive();
   }
 
   private void processMessageFromAtc(RunwayUse ru) {
@@ -557,21 +494,22 @@ public class TowerAtc extends ComputerAtc {
 
   private void processMessageFromAtc(RunwayCheck rrct) {
     if (rrct.type == RunwayCheck.eType.askForTime) {
-      RunwayCheck rc = this.runwayChecks.tryGet(rrct.runway);
+      RunwayCheckInfo rc = this.runwayChecks.tryGet(rrct.runway);
       if (rc != null)
         announceScheduledRunwayCheck(rrct.runway, rc);
       else {
-        for (ActiveRunway runway : this.runwayChecks.getKeys()) {
-          rc = this.runwayChecks.get(runway);
-          announceScheduledRunwayCheck(runway, rc);
+        for (String runwayName : this.runwayChecks.getKeys()) {
+          rc = this.runwayChecks.get(runwayName);
+          announceScheduledRunwayCheck(runwayName, rc);
         }
       }
     } else if (rrct.type == RunwayCheck.eType.doCheck) {
-      ActiveRunway rwy = rrct.runway;
-      RunwayCheck rc = this.runwayChecks.tryGet(rwy);
-      if (rwy == null && this.runwayChecks.size() == 1) {
-        rwy = this.runwayChecks.getKeys().getFirst();
-        rc = this.runwayChecks.get(rwy);
+      //ActiveRunway rwy = rrct.runway;
+      String rwyName = rrct.runway;
+      RunwayCheckInfo rc = this.runwayChecks.tryGet(rwyName);
+      if (rwyName == null && this.runwayChecks.size() == 1) {
+        rwyName = this.runwayChecks.getKeys().getFirst();
+        rc = this.runwayChecks.get(rwyName);
       }
       if (rc == null) {
         Message msg = new Message(
@@ -585,23 +523,23 @@ public class TowerAtc extends ComputerAtc {
               Participant.createAtc(this.getAtcId()),
               Participant.createAtc(InternalAcc.getApp().getAtcId()),
               StringResponse.createRejection("The runway %s is already under maintenance right now.",
-                  rwy.getName()));
+                  rwyName));
           super.sendMessage(msg);
-        } else if (rc.scheduler.getMinutesLeft() > 30) {
+        } else if (rc.getScheduler().getMinutesLeft() > 30) {
           Message msg = new Message(
               Participant.createAtc(this.getAtcId()),
               Participant.createAtc(InternalAcc.getApp().getAtcId()),
               StringResponse.createRejection("Sorry, the runway %s is scheduled for the maintenance in more than 30 minutes.",
-                  rwy.getName()));
+                  rwyName));
           super.sendMessage(msg);
         } else {
           Message msg = new Message(
               Participant.createAtc(this.getAtcId()),
               Participant.createAtc(InternalAcc.getApp().getAtcId()),
               StringResponse.create("The maintenance of the runway %s is approved and will start shortly.",
-                  rwy.getName()));
+                  rwyName));
           super.sendMessage(msg);
-          rc.scheduler.setApprovedTrue();
+          rc.getScheduler().setApprovedTrue();
         }
       }
     }
@@ -610,14 +548,14 @@ public class TowerAtc extends ComputerAtc {
   @Override
   protected void processMessagesFromPlane(Callsign callsign, SpeechList spchs) {
     if (spchs.containsType(GoingAroundNotification.class)) {
-      arrivalManager.goAroundPlane(plane);
+      arrivalManager.goAroundPlane(callsign);
     }
   }
 
   @Override
   protected void processNonPlaneSwitchMessageFromAtc(Message m) {
-    if (m.getContent() instanceof eng.jAtcSim.newLib.area.speaking.fromAtc.atc2atc.RunwayCheck) {
-      eng.jAtcSim.newLib.area.speaking.fromAtc.atc2atc.RunwayCheck rrct = m.getContent();
+    if (m.getContent() instanceof RunwayCheckInfo) {
+      RunwayCheck rrct = m.getContent();
       processMessageFromAtc(rrct);
     } else if (m.getContent() instanceof RunwayUse) {
       RunwayUse ru = m.getContent();
@@ -628,7 +566,7 @@ public class TowerAtc extends ComputerAtc {
   private void processRunwayChangeBackground() {
     if (inUseInfo.scheduler == null) {
       if (isUpdatedWeather) {
-        if (Acc.weather().getSnowState() != Weather.eSnowState.none)
+        if (WeatherAcc.getWeather().getSnowState() != Weather.eSnowState.none)
           updateRunwayMaintenanceDueToSnow();
         checkForRunwayChange();
         isUpdatedWeather = false;
@@ -643,17 +581,18 @@ public class TowerAtc extends ComputerAtc {
   }
 
   private void processRunwayCheckBackground() {
-    for (ActiveRunway runway : runwayChecks.getKeys()) {
-      RunwayCheck rc = runwayChecks.get(runway);
+    for (String runwayName : runwayChecks.getKeys()) {
+      RunwayCheckInfo rc = runwayChecks.get(runwayName);
       if (rc.isActive()) {
-        if (rc.realDurationEnd.isBeforeOrEq(Acc.now()))
-          finishRunwayMaintenance(runway, rc);
+        if (rc.getRealDurationEnd().isBeforeOrEq(SharedAcc.getNow()))
+          finishRunwayMaintenance(runwayName, rc);
       } else {
-        if (rc.scheduler.isElapsed()) {
-          if (this.departureManager.isSomeDepartureOnRunway(runway) == false && this.arrivalManager.isSomeArrivalApproachingOrOnRunway(runway))
-            beginRunwayMaintenance(runway, rc);
-        } else if (rc.scheduler.shouldBeAnnouncedNow()) {
-          announceScheduledRunwayCheck(runway, rc);
+        if (rc.getScheduler().isElapsed()) {
+          if (this.departureManager.isSomeDepartureOnRunway(runwayName) == false
+              && this.arrivalManager.isSomeArrivalApproachingOrOnRunway(runwayName))
+            beginRunwayMaintenance(runwayName, rc);
+        } else if (rc.getScheduler().shouldBeAnnouncedNow()) {
+          announceScheduledRunwayCheck(runwayName, rc);
         }
       }
     }
@@ -662,8 +601,8 @@ public class TowerAtc extends ComputerAtc {
   private void restrictToRunwaysNotUnderLongMaintenance(IList<ActiveRunwayThreshold> rts, boolean onlyLongTimeMaintenance) {
     rts.remove(q -> {
       ActiveRunway r = q.getParent();
-      RunwayCheck rt = runwayChecks.get(r);
-      boolean ret = rt.isActive() && rt.expectedDurationInMinutes > 5;
+      RunwayCheckInfo rt = runwayChecks.get(r.getName());
+      boolean ret = rt.isActive() && rt.getExpectedDurationInMinutes() > 5;
       return ret;
     });
   }
@@ -714,6 +653,7 @@ public class TowerAtc extends ComputerAtc {
     departureManager.departAndGetHoldingPointEntryTime(toReadyPlane, availableThreshold, getDepartingPlaneSwitchAltitude(toReadyPlane.getType().category));
     toReadyPlane.setHoldingPointState(availableThreshold);
 
+
     SpeechList lst = new SpeechList();
     lst.add(new RadarContactConfirmationNotification());
 
@@ -732,18 +672,18 @@ public class TowerAtc extends ComputerAtc {
   }
 
   private void updateRunwayMaintenanceDueToSnow() {
-    for (ActiveRunway key : this.runwayChecks.getKeys()) {
-      RunwayCheck rc = this.runwayChecks.get(key);
+    for (String rwyName : this.runwayChecks.getKeys()) {
+      RunwayCheckInfo rc = this.runwayChecks.get(rwyName);
       if (rc.isActive()) continue;
       int maxInterval = WeatherAcc.getWeather().getSnowState() == Weather.eSnowState.intensive
-          ? RunwayCheck.MAX_SNOW_INTENSIVE_MAINTENANCE_INTERVAL
-          : RunwayCheck.MAX_SNOW_MAINTENANCE_INTERVAL;
-      if (rc.scheduler.getMinutesLeft() > maxInterval) {
-        rc = RunwayCheck.createSnowCleaning(
+          ? RunwayCheckInfo.MAX_SNOW_INTENSIVE_MAINTENANCE_INTERVAL
+          : RunwayCheckInfo.MAX_SNOW_MAINTENANCE_INTERVAL;
+      if (rc.getScheduler().getMinutesLeft() > maxInterval) {
+        rc = RunwayCheckInfo.createSnowCleaning(
             false,
             WeatherAcc.getWeather().getSnowState() == Weather.eSnowState.intensive);
-        runwayChecks.set(key, rc);
-        announceScheduledRunwayCheck(key, rc);
+        runwayChecks.set(rwyName, rc);
+        announceScheduledRunwayCheck(rwyName, rc);
       }
     }
   }

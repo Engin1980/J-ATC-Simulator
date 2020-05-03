@@ -4,6 +4,8 @@ import eng.eSystem.Producer;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplanes.AirplaneAcc;
 import eng.jAtcSim.newLib.airplanes.IAirplane;
+import eng.jAtcSim.newLib.area.ActiveRunway;
+import eng.jAtcSim.newLib.area.AreaAcc;
 import eng.jAtcSim.newLib.atcs.AtcList;
 import eng.jAtcSim.newLib.atcs.planeResponsibility.AirplaneResponsibilityInfo;
 import eng.jAtcSim.newLib.atcs.planeResponsibility.PlaneResponsibilityManager;
@@ -66,6 +68,10 @@ public class InternalAcc {
 
   public static PlaneResponsibilityManager getPrm() {
     return prm;
+  }
+
+  public static ActiveRunway getRunway(String rwyName) {
+    return AreaAcc.getAirport().getRunways().getFirst(q->q.getName().equals(rwyName));
   }
 
   public static Atc getTwr() {
