@@ -1,22 +1,33 @@
 package eng.jAtcSim.newLib.airplanes;
 
+import eng.eSystem.collections.EDistinctList;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
-import eng.eSystem.collections.IReadOnlyList;
-import eng.jAtcSim.newLib.airplanes.internal.Airplane;
+import eng.eSystem.validation.EAssert;
+import eng.jAtcSim.newLib.shared.Callsign;
 
 import java.util.Iterator;
+import java.util.function.Function;
 
-public class AirplaneList implements Iterable<IAirplane> {
-  private final IList<Airplane> inner = new EList<>();
-  private final IList<IAirplane> readers = new EList<>();
+public class AirplaneList<T> extends EDistinctList<T> {
+  private final Function<T, Callsign> callsignSelector;
+  private T lastGot = null;
 
-  @Override
-  public Iterator<IAirplane> iterator() {
-    return readers.iterator();
+
+  public AirplaneList(Function<T, Callsign> callsignSelector) {
+    super(q -> callsignSelector.apply(q), Behavior.exception);
+    EAssert.Argument.isNotNull(callsignSelector, "callsignSelector");
+    this.callsignSelector = callsignSelector;
   }
 
-  public IReadOnlyList<IAirplane> toList() {
-    return readers;
+  public T get(Callsign callsign) {
+    T ret;
+    if (lastGot != null && callsignSelector.apply(lastGot).equals(callsign))
+      ret = lastGot;
+    else {
+      ret = this.tryGetFirst(q -> this.callsignSelector.apply(q).equals(callsign));
+      if (ret != null) lastGot = ret;
+    }
+    return ret;
   }
 }

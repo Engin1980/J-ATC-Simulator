@@ -1,28 +1,36 @@
 package eng.jAtcSim.newLib.shared.time;
 
-import eng.eSystem.utilites.NumberUtils;
 import eng.eSystem.validation.EAssert;
 
 import java.time.LocalTime;
 
-public class ETimeStamp extends ETime implements ITimeComparable<ETimeStamp>, ITimeGetter {
+import static eng.eSystem.utilites.FunctionShortcuts.sf;
+
+public class ETimeStamp implements ITime, ITimeComparable<ETimeStamp> {
+
+  private final int value;
+
   public ETimeStamp(int value) {
-    super(value);
+    EAssert.Argument.isTrue(value >= 0, "Number of seconds must be non-negative.");
+    EAssert.Argument.isTrue(value < ITime.SECONDS_PER_DAY, "Number of seconds must be less than one day.");
+    this.value = value;
   }
 
   public ETimeStamp(int hours, int minutes, int seconds) {
-    super(hours * SECONDS_PER_HOUR + minutes * SECONDS_PER_MINUTE + seconds);
-    EAssert.isTrue(NumberUtils.isBetweenOrEqual(0, hours, 23));
-    EAssert.isTrue(NumberUtils.isBetweenOrEqual(0, minutes, 59));
-    EAssert.isTrue(NumberUtils.isBetweenOrEqual(0, seconds, 59));
+    this(hours * ITime.SECONDS_PER_HOUR + minutes * ITime.SECONDS_PER_MINUTE + seconds);
   }
 
-  public ETimeStamp(LocalTime localTime) {
-    this(localTime.getHour(), localTime.getMinute(), localTime.getSecond());
+  public ETimeStamp(LocalTime time) {
+    this(time.getHour(), time.getMinute(), time.getSecond());
   }
 
   @Override
-  public ETimeStamp clone() {
-    return new ETimeStamp(this.getValue());
+  public int getValue() {
+    return this.value;
+  }
+
+  @Override
+  public String toString() {
+    return toTimeString();
   }
 }

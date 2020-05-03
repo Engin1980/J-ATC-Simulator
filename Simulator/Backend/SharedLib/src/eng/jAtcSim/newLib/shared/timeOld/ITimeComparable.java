@@ -1,6 +1,7 @@
 package eng.jAtcSim.newLib.shared.time;
 
 public interface ITimeComparable<T extends ITime> extends ITime {
+
   default boolean isAfter(T other) {
     return this.getValue() > other.getValue();
   }

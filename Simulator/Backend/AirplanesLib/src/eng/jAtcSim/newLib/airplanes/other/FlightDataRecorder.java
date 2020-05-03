@@ -5,7 +5,7 @@ import eng.eSystem.EStringBuilder;
 import eng.eSystem.geo.Headings;
 import eng.jAtcSim.newLib.airplanes.AirplaneState;
 import eng.jAtcSim.newLib.airplanes.internal.Airplane;
-import eng.jAtcSim.newLib.airplanes.LAcc;
+import eng.jAtcSim.newLib.area.AreaAcc;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.logging.writers.*;
 
@@ -42,7 +42,7 @@ public class FlightDataRecorder extends AirplaneRecorder {
     // heading
     sb.appendFormat(" H:  %3d => %03d/%03d  ", heading,
         targetHeading,
-        (int) Headings.add(heading, -LAcc.getAirport().getDeclination())
+        (int) Headings.add(heading, -AreaAcc.getAirport().getDeclination())
     ).append(SEPARATOR);
 
     // alt

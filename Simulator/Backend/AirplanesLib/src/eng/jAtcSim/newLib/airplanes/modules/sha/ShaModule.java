@@ -6,10 +6,10 @@ import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplaneType.AirplaneType;
 import eng.jAtcSim.newLib.airplanes.AirplaneState;
 import eng.jAtcSim.newLib.airplanes.internal.Airplane;
-import eng.jAtcSim.newLib.airplanes.LAcc;
 import eng.jAtcSim.newLib.airplanes.modules.sha.navigators.HeadingNavigator;
 import eng.jAtcSim.newLib.airplanes.modules.sha.navigators.Navigator;
 import eng.jAtcSim.newLib.airplanes.modules.sha.navigators.NavigatorResult;
+import eng.jAtcSim.newLib.area.AreaAcc;
 import eng.jAtcSim.newLib.shared.Restriction;
 import eng.jAtcSim.newLib.shared.enums.LeftRight;
 
@@ -156,7 +156,7 @@ public class ShaModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
         altitude,
         planeType.lowClimbRate / 7d / 60,
         planeType.highDescendRate / 7d / 60,
-        (double) LAcc.getAirport().getAltitude());
+        (double) AreaAcc.getAirport().getAltitude());
 
     this.speed = new InertialValue(
         speed,
@@ -249,7 +249,7 @@ public class ShaModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
   }
 
   private void adjustAltitude(ValueRequest altitudeRequest) {
-    int airportAltitude = LAcc.getAirport().getAltitude();
+    int airportAltitude = AreaAcc.getAirport().getAltitude();
     if (rdr.getState().is(AirplaneState.takeOffRoll, AirplaneState.landed, AirplaneState.holdingPoint)) {
       // not adjusting altitude at this states
       this.altitude.reset(airportAltitude);

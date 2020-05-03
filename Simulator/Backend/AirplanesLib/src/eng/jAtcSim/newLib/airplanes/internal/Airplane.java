@@ -18,12 +18,14 @@ import eng.jAtcSim.newLib.airplanes.other.CockpitVoiceRecorder;
 import eng.jAtcSim.newLib.airplanes.other.FlightDataRecorder;
 import eng.jAtcSim.newLib.airplanes.pilots.*;
 import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
+import eng.jAtcSim.newLib.area.AreaAcc;
 import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.area.approaches.Approach;
 import eng.jAtcSim.newLib.area.approaches.ApproachEntry;
 import eng.jAtcSim.newLib.area.routes.DARoute;
 import eng.jAtcSim.newLib.area.routes.IafRoute;
 import eng.jAtcSim.newLib.messaging.Message;
+import eng.jAtcSim.newLib.messaging.MessagingAcc;
 import eng.jAtcSim.newLib.messaging.Participant;
 import eng.jAtcSim.newLib.mood.Mood;
 import eng.jAtcSim.newLib.shared.*;
@@ -88,6 +90,21 @@ public class Airplane {
 
   public class AirplaneRoutingImpl implements IAirplaneRouting {
     @Override
+    public DARoute getAssignedRoute() {
+      throw new ToDoException();
+    }
+
+    @Override
+    public ActiveRunwayThreshold getAssignedRunwayThreshold() {
+      throw new ToDoException();
+    }
+
+    @Override
+    public Navaid getDepartureLastNavaid() {
+      throw new ToDoException();
+    }
+
+    @Override
     public Navaid getEntryExitPoint() {
       return Airplane.this.speechesModule.getEntryExitPoint();
     }
@@ -111,17 +128,17 @@ public class Airplane {
 
     @Override
     public boolean isRoutingEmpty() {
-      return false;
+      throw new ToDoException();
     }
 
     @Override
     public Coordinate tryGetTargetCoordinate() {
-      return null;
+      throw new ToDoException();
     }
 
     @Override
     public Coordinate tryGetTargetOrHoldCoordinate() {
-      return null;
+      throw new ToDoException();
     }
   }
 
@@ -153,6 +170,11 @@ public class Airplane {
     @Override
     public IAirplaneSHA getSha() {
       return sha;
+    }
+
+    @Override
+    public Squawk getSqwk() {
+      return Airplane.this.sqwk;
     }
 
     @Override
@@ -213,7 +235,7 @@ public class Airplane {
       if (isInvokedByAtc) {
         if (Airplane.this.emergencyModule.isEmergency())
           this.addExperience(Mood.DepartureExperience.divertedAsEmergency);
-        else if (!LAcc.isSomeActiveEmergency() == false)
+        else if (!AirplaneAcc.isSomeActiveEmergency() == false)
           this.addExperience(Mood.ArrivalExperience.divertOrderedByAtcWhenNoEmergency);
         Airplane.this.divertModule.disable();
       } else {
@@ -305,7 +327,7 @@ public class Airplane {
           Participant.createAirplane(Airplane.this.getReader().getCallsign()),
           Participant.createAtc(Airplane.this.getReader().getAtc().getTunedAtc()),
           speechList);
-      LAcc.getMessenger().send(m);
+      MessagingAcc.getMessenger().send(m);
     }
 
     @Override
@@ -507,7 +529,7 @@ public class Airplane {
   }
 
   private Navaid getDivertNavaid() {
-    IList<DARoute> rts = LAcc.getCurrentRunwayConfiguration()
+    IList<DARoute> rts = AreaAcc.getCurrentRunwayConfiguration()
         .getDepartures()
         .where(q -> q.isForCategory(Airplane.this.airplaneType.category))
         .getRandom()

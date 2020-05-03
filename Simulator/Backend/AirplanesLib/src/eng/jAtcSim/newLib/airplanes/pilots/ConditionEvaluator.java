@@ -3,7 +3,6 @@ package eng.jAtcSim.newLib.airplanes.pilots;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.geo.Headings;
 import eng.jAtcSim.newLib.airplanes.IAirplane;
-import eng.jAtcSim.newLib.airplanes.LAcc;
 import eng.jAtcSim.newLib.area.approaches.conditions.*;
 import eng.jAtcSim.newLib.shared.SharedAcc;
 import eng.jAtcSim.newLib.weather.Weather;

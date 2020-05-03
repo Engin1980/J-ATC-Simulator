@@ -2,16 +2,16 @@ package eng.jAtcSim.newLib.airplanes.modules;
 
 
 import eng.jAtcSim.newLib.shared.Callsign;
-import eng.jAtcSim.newLib.shared.time.ETime;
+import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 
 public class AirplaneFlightModule {
   private final Callsign callsign;
   private final int delayInitialMinutes;
-  private final ETime delayExpectedTime;
+  private final EDayTimeStamp delayExpectedTime;
   private boolean departure;
   private Integer finalDelayMinutes = null;
 
-  public AirplaneFlightModule(Callsign callsign, int delayInitialMinutes, ETime delayExpectedTime, boolean departure) {
+  public AirplaneFlightModule(Callsign callsign, int delayInitialMinutes, EDayTimeStamp delayExpectedTime, boolean departure) {
     this.callsign = callsign;
     this.delayInitialMinutes = delayInitialMinutes;
     this.delayExpectedTime = delayExpectedTime;
@@ -26,7 +26,7 @@ public class AirplaneFlightModule {
     return delayInitialMinutes;
   }
 
-  public ETime getDelayExpectedTime() {
+  public EDayTimeStamp getDelayExpectedTime() {
     return delayExpectedTime;
   }
 

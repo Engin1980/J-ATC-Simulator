@@ -19,7 +19,7 @@ public class SimTimePipeLogWriter extends PipeLogWriter {
 
   @Override
   public void write(String text) throws IOException {
-    String timeText = SharedAcc.getNow().toDayTimeString();
+    String timeText = SharedAcc.getNow().toString();
     innerWriter.write(timeText + delimiter + text);
   }
 }

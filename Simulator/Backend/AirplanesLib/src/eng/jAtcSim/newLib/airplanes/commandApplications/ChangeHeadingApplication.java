@@ -4,8 +4,8 @@ package eng.jAtcSim.newLib.airplanes.commandApplications;
 import eng.eSystem.geo.Headings;
 import eng.jAtcSim.newLib.airplanes.AirplaneState;
 import eng.jAtcSim.newLib.airplanes.internal.Airplane;
-import eng.jAtcSim.newLib.airplanes.LAcc;
 import eng.jAtcSim.newLib.airplanes.modules.sha.navigators.HeadingNavigator;
+import eng.jAtcSim.newLib.area.AreaAcc;
 import eng.jAtcSim.newLib.speeches.Rejection;
 import eng.jAtcSim.newLib.speeches.atc2airplane.ChangeHeadingCommand;
 
@@ -42,7 +42,7 @@ public class ChangeHeadingApplication extends CommandApplication<ChangeHeadingCo
       targetHeading =
           Headings.add(
               c.getHeading(),
-              LAcc.getAirport().getDeclination());
+              AreaAcc.getAirport().getDeclination());
     }
 
     pilot.getWriter().setTargetHeading(new HeadingNavigator(targetHeading, c.getDirection()));

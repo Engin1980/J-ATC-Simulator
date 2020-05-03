@@ -9,7 +9,7 @@ import eng.eSystem.geo.Headings;
 import eng.eSystem.utilites.ConversionUtils;
 import eng.eSystem.geo.Coordinate;
 import eng.jAtcSim.newLib.airplanes.IAirplane;
-import eng.jAtcSim.newLib.airplanes.LAcc;
+import eng.jAtcSim.newLib.airplanes.internal.InternalAcc;
 import eng.jAtcSim.newLib.area.AreaAcc;
 import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.speeches.ICommand;
@@ -81,7 +81,7 @@ public class AfterCommandList {
       }
     } else if (item.antecedent instanceof AfterHeadingCommand) {
       AfterHeadingCommand anc = (AfterHeadingCommand) item.antecedent;
-      double trgHdg = Headings.add(anc.getHeading(), LAcc.getAirport().getDeclination());
+      double trgHdg = Headings.add(anc.getHeading(), AreaAcc.getAirport().getDeclination());
       double diff = Headings.getDifference(plane.getSha().getHeading(), trgHdg, true);
       ret = (diff < 3);
     } else if (item.antecedent instanceof AfterDistanceCommand) {
@@ -169,7 +169,7 @@ public class AfterCommandList {
     Predicate<AFItem> cond = q -> {
       boolean ret =
           (q.consequent instanceof ToNavaidCommand &&
-              LAcc.Smart.getNavaid((ToNavaidCommand) q.consequent).equals(navaid));
+              InternalAcc.getNavaid((ToNavaidCommand) q.consequent).equals(navaid));
       return ret;
     };
     boolean ret = items.isAny(q -> cond.test(q));
@@ -207,12 +207,12 @@ public class AfterCommandList {
   }
 
   public boolean hasProceedDirectToNavaidAsConseqent(Navaid navaid) {
-    Predicate<AFItem> cond = q -> {
-      boolean ret =
-          (q.consequent instanceof ToNavaidCommand &&
-              LAcc.Smart.getNavaid((ToNavaidCommand) q.consequent).equals(navaid));
-      return ret;
-    };
+//    Predicate<AFItem> cond = q -> {
+//      boolean ret =
+//          (q.consequent instanceof ToNavaidCommand &&
+//              InternalAcc.getNavaid((ToNavaidCommand) q.consequent).equals(navaid));
+//      return ret;
+//    };
     boolean ret = hasProceedDirectToNavaidAsConseqent(this.rt, navaid) || hasProceedDirectToNavaidAsConseqent(this.ex, navaid);
     return ret;
   }
@@ -326,7 +326,7 @@ public class AfterCommandList {
       AFItem it = lst.get(0);
       lst.removeAt(0);
       ret.add(it.consequent);
-      if ((it.consequent instanceof ToNavaidCommand) && LAcc.Smart.getNavaid((ToNavaidCommand) it.consequent).equals(n))
+      if ((it.consequent instanceof ToNavaidCommand) && InternalAcc.getNavaid((ToNavaidCommand) it.consequent).equals(n))
         break;
     }
 

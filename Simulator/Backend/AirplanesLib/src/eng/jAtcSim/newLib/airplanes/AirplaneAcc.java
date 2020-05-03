@@ -4,13 +4,17 @@ import eng.eSystem.Producer;
 
 public class AirplaneAcc {
 
-  private static Producer<AirplaneList> airplaneListProducer = null;
+  private static Producer<AirplaneList<IAirplane>> airplanesProducer = null;
 
-  public static void setAirplaneListProducer(Producer<AirplaneList> airplaneListProducer) {
-    AirplaneAcc.airplaneListProducer = airplaneListProducer;
+  public static boolean isSomeActiveEmergency() {
+    return getAirplanes().isAny(q->q.isEmergency());
   }
 
-  public static AirplaneList getAirplaneList() {
-    return airplaneListProducer.produce();
+  public static void setAirplaneListProducer(Producer<AirplaneList<IAirplane>> airplanesProducer) {
+    AirplaneAcc.airplanesProducer = airplanesProducer;
+  }
+
+  public static AirplaneList<IAirplane> getAirplanes() {
+    return airplanesProducer.produce();
   }
 }
