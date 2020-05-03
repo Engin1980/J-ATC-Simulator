@@ -141,7 +141,7 @@ public class CenterAtc extends ComputerAtc {
                 plane.getCallsign().toString(),
                 plane.getRouting().getAssignedRoute().getMainNavaid().getName()));
       } else {
-        if (plane.getSha().getAltitude() > super.acceptAltitude || plane.getSha().getAltitude() > (plane.getType().maxAltitude * .666)) {
+        if (plane.getSha().getAltitude() > super.getAcceptAltitude() || plane.getSha().getAltitude() > (plane.getType().maxAltitude * .666)) {
           ret = new RequestResult(true, null);
         } else {
           double aipDist = Coordinates.getDistanceInNM(plane.getCoordinate(), AreaAcc.getAirport().getLocation());

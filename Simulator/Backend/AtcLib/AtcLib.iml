@@ -16,5 +16,6 @@
     <orderEntry type="module" module-name="AirplaneTypeLib" />
     <orderEntry type="module" module-name="AirplaneTypeLib" />
     <orderEntry type="module" module-name="WeatherLib" />
+    <orderEntry type="module" module-name="StatsLib" />
   </component>
 </module>

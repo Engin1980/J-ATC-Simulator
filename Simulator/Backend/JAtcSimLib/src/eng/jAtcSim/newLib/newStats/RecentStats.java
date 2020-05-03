@@ -5,11 +5,8 @@ import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 import eng.jAtcSim.newLib.Acc;
-import eng.jAtcSim.newLib.area.airplanes.Airplane;
-import eng.jAtcSim.newLib.area.airplanes.AirproxType;
 import eng.jAtcSim.newLib.area.newStats.model.ElapsedSecondDurationModel;
 import eng.jAtcSim.newLib.area.newStats.properties.TimedValue;
-import eng.jAtcSim.newLib.global.ETime;
 
 public class RecentStats {
 

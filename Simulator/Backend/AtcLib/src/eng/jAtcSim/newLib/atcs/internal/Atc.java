@@ -7,11 +7,11 @@ import eng.jAtcSim.newLib.shared.Callsign;
 
 public abstract class Atc {
 
-  protected final AtcId atcId;
-  protected final int acceptAltitude;
-  protected final int releaseAltitude;
-  protected final int orderedAltitude;
-  protected final AtcRecorder recorder;
+  private final AtcId atcId;
+  private final int acceptAltitude;
+  private final int releaseAltitude;
+  private final int orderedAltitude;
+  private final AtcRecorder recorder;
 
 
 //  public final void save(XElement elm){
@@ -51,7 +51,7 @@ public abstract class Atc {
     this.releaseAltitude = template.getReleaseAltitude();
     this.orderedAltitude = template.getOrderedAltitude();
 
-    this.recorder = AtcRecorder.create(this);
+    this.recorder = AtcRecorder.create(this.getAtcId());
   }
 
   public abstract void init();
@@ -84,4 +84,7 @@ public abstract class Atc {
     recorder.write(msg);
   }
 
+  protected AtcRecorder getRecorder() {
+    return recorder;
+  }
 }

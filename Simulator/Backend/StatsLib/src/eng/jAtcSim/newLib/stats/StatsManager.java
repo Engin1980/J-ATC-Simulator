@@ -6,14 +6,11 @@
 //import eng.eSystem.eXml.XElement;
 //import eng.eSystem.validation.EAssert;
 //import eng.eSystem.validation.Validator;
-//import eng.jAtcSim.newLib.Acc;
-//import eng.jAtcSim.newLib.area.airplanes.Airplane;
-//import eng.jAtcSim.newLib.area.airplanes.AirproxType;
-//import eng.jAtcSim.newLib.area.airplanes.moods.MoodResult;
-//import eng.jAtcSim.newLib.area.serialization.LoadSave;
 //import eng.jAtcSim.newLib.mood.MoodResult;
 //import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 //import eng.jAtcSim.newLib.stats.properties.CounterProperty;
+//
+//import javax.crypto.IllegalBlockSizeException;
 //
 //public class StatsManager {
 //  private RecentStats recentStats = new RecentStats();
@@ -131,7 +128,7 @@
 //    recentStats.registerElapsedSecondDuration(ms);
 //  }
 //
-//  public void registerFinishedPlane(Airplane plane) {
+//  public void registerFinishedPlane(IAirplane plane) {
 //    MoodResult mr = plane.getEvaluatedMood();
 //    this.moodResults.add(mr);
 //    for (Collector collector : collectors) {

@@ -71,7 +71,7 @@ public abstract class ComputerAtc extends Atc {
   private void elapseSecondProcessMessagesForAtc(IList<Message> msgs) {
     for (Message m : msgs) {
       try {
-        recorder.write(m); // incoming item
+        super.getRecorder().write(m); // incoming item
 
         if (m.getSource().getType() == Participant.eType.airplane) {
           // messages from planes
@@ -87,7 +87,7 @@ public abstract class ComputerAtc extends Atc {
       } catch (Exception ex) {
         throw new EApplicationException(sf(
             "Failed to process a message for Atc. Atc: %s. Message from %s. Message itself: %s.",
-            this.getName(),
+            this.getAtcId().getName(),
             m.getSource().getId(),
             m.toString()), ex);
       }
@@ -226,7 +226,7 @@ public abstract class ComputerAtc extends Atc {
           Participant.createAtc(InternalAcc.getAtc(AtcType.app).getAtcId()),
           new PlaneSwitchMessage(callsign, PlaneSwitchMessage.eMessageType.request, "(repeated)"));
       MessagingAcc.getMessenger().send(m);
-      recorder.write(m);
+      super.getRecorder().write(m);
     }
   }
 

@@ -6,74 +6,74 @@
 package eng.jAtcSim.newLib.atcs.internal;
 
 
+import eng.eSystem.EStringBuilder;
 import eng.eSystem.validation.EAssert;
+import eng.jAtcSim.newLib.messaging.IMessageContent;
 import eng.jAtcSim.newLib.messaging.Message;
-import eng.jAtcSim.newLib.shared.exceptions.ToDoException;
+import eng.jAtcSim.newLib.shared.AtcId;
+import eng.jAtcSim.newLib.shared.SharedAcc;
+import eng.jAtcSim.newLib.shared.logging.Log;
+import eng.jAtcSim.newLib.shared.logging.writers.FileWriter;
 
 /**
  * @author Marek Vajgl
  */
-public class AtcRecorder {
+public class AtcRecorder extends Log {
 
-  public static AtcRecorder create(Atc atc) {
-    EAssert.Argument.isNotNull(atc, "atc");
-    AtcRecorder ret = new AtcRecorder(atc);
+  private final static int DEFAULT_STRING_BUILDER_SIZE = 256;
+  private final static String SEPARATOR = ";";
+
+  public static AtcRecorder create(AtcId atcId) {
+    AtcRecorder ret = new AtcRecorder(atcId);
     return ret;
   }
 
-  private final Atc atc;
+  private final AtcId atcId;
+  private final EStringBuilder sb = new EStringBuilder(DEFAULT_STRING_BUILDER_SIZE);
 
-  public AtcRecorder(Atc atc) {
-    this.atc = atc;
+  private AtcRecorder(AtcId atcId) {
+    super(atcId.getName(), true,
+        new FileWriter(atcId.getName() + ".txt", true));
+    EAssert.Argument.isNotNull(atcId, "atcId");
+    this.atcId = atcId;
   }
 
-  public void write(Message msg) {
-    throw new ToDoException();
+  public void write(Message m) {
+    sb.clear();
+
+    String src = m.getSource().toString();
+    String trg = m.getTarget().toString();
+    String cnt = getMessageContentString(m.getContent());
+
+    sb.clear();
+
+    sb.append("MSG ").append(SEPARATOR);
+    sb.appendFormat(" %s ", SharedAcc.getNow().toString()).append(SEPARATOR);
+    sb.appendFormat("FROM: %s ", src).append(SEPARATOR);
+    sb.appendFormat("TO: %s ", trg).append(SEPARATOR);
+    sb.appendFormat(" %s ", cnt);
+
+    sb.appendLine();
+    this.writeToLog(sb.toString());
   }
 
-  //  private final static int DEFAULT_STRING_BUILDER_SIZE = 256;
-//  private final static String SEPARATOR = ";";
-//  private final EStringBuilder sb = new EStringBuilder(DEFAULT_STRING_BUILDER_SIZE);
-//
-//  public static AtcRecorder create(Atc atc) {
-//    String fileName = Recorder.getRecorderFileName(atc.getName() + ".log");
-//    AtcRecorder ret = new AtcRecorder(atc, new FileSaver(fileName));
-//    return ret;
-//  }
-//
-//  private AtcRecorder(Atc atc, AbstractSaver os) {
-//    super(atc.getName(), os, SEPARATOR);
-//  }
-//
-//  public void write(Message m) {
-//    sb.clear();
-//
-//    String src = getMessageObjectString(m.getSource());
-//    String trg = getMessageObjectString(m.getTarget());
-//    String cnt = getMessageContentString(m.getContent());
-//
-//    ETime now = Acc.now();
-//    sb.clear();
-//
-//    sb.append("MSG ").append(SEPARATOR);
-//    sb.appendFormat(" %s ", now.toString()).append(SEPARATOR);
-//    sb.appendFormat("FROM: %s ", src).append(SEPARATOR);
-//    sb.appendFormat("TO: %s ", trg).append(SEPARATOR);
-//    sb.appendFormat(" %s ", cnt);
-//
-//    sb.appendLine();
-//    super.writeLine(sb.toString());
-//  }
-//
-//  public void write(Atc atc, String type, String content){
-//    String s = String.format("%s %s %s %s %s %s %s",
-//      type,
-//      SEPARATOR,
-//      Acc.now().toString(),
-//      SEPARATOR,
-//      atc.getName(),
-//      SEPARATOR,
-//      content);
-//    super.writeLine(s);
-//  }
+  public void write(String type, String content) {
+    String s = String.format("%s %s %s %s %s %s %s",
+        type,
+        SEPARATOR,
+        SharedAcc.getNow().toString(),
+        SEPARATOR,
+        this.atcId.getName(),
+        SEPARATOR,
+        content);
+    this.writeToLog(s);
+  }
+
+  private String getMessageContentString(IMessageContent content) {
+    return content.toString();
+  }
+
+  private void writeToLog(String text) {
+    super.write(text);
+  }
 }

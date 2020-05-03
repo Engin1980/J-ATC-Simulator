@@ -9,6 +9,8 @@ import eng.jAtcSim.newLib.airplanes.IAirplane;
 import eng.jAtcSim.newLib.area.ActiveRunway;
 import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
 import eng.jAtcSim.newLib.atcs.internal.InternalAcc;
+import eng.jAtcSim.newLib.shared.Callsign;
+import eng.jAtcSim.newLib.shared.enums.AboveBelowExactly;
 
 class ArrivalManager {
   private final TowerAtc parent;
@@ -53,7 +55,8 @@ class ArrivalManager {
     return ret;
   }
 
-  public void goAroundPlane(IAirplane plane) {
+  public void goAroundPlane(Callsign callsign) {
+    IAirplane plane = InternalAcc.getPlane(callsign);
     landingPlanesList.remove(plane);
     goAroundedPlanesToSwitchList.add(plane);
   }

@@ -10,6 +10,7 @@
       <excludeFolder url="file://$MODULE_DIR$/src/eng/jAtcSim/newLib/airplanes/modules" />
       <excludeFolder url="file://$MODULE_DIR$/src/eng/jAtcSim/newLib/airplanes/moods" />
       <excludeFolder url="file://$MODULE_DIR$/src/eng/jAtcSim/newLib/airplanes/navigators" />
+      <excludeFolder url="file://$MODULE_DIR$/src/eng/jAtcSim/newLib/atcs" />
       <excludeFolder url="file://$MODULE_DIR$/src/eng/jAtcSim/newLib/coordinates" />
       <excludeFolder url="file://$MODULE_DIR$/src/eng/jAtcSim/newLib/global" />
       <excludeFolder url="file://$MODULE_DIR$/src/eng/jAtcSim/newLib/interfacing" />

@@ -20,14 +20,18 @@ import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.SharedAcc;
 import eng.jAtcSim.newLib.shared.enums.DARouteType;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
+import eng.jAtcSim.newLib.speeches.ICommand;
+import eng.jAtcSim.newLib.speeches.ISpeech;
 import eng.jAtcSim.newLib.speeches.SpeechList;
 import eng.jAtcSim.newLib.speeches.airplane2atc.GoingAroundNotification;
 import eng.jAtcSim.newLib.speeches.atc2airplane.ChangeAltitudeCommand;
 import eng.jAtcSim.newLib.speeches.atc2airplane.ClearedForTakeoffCommand;
 import eng.jAtcSim.newLib.speeches.atc2airplane.RadarContactConfirmationNotification;
+import eng.jAtcSim.newLib.speeches.atc2airplane.TaxiToHoldingPointCommand;
 import eng.jAtcSim.newLib.speeches.atc2atc.RunwayCheck;
 import eng.jAtcSim.newLib.speeches.atc2atc.RunwayUse;
 import eng.jAtcSim.newLib.speeches.atc2atc.StringResponse;
+import eng.jAtcSim.newLib.stats.StatsAcc;
 import eng.jAtcSim.newLib.weather.Weather;
 import eng.jAtcSim.newLib.weather.WeatherAcc;
 
@@ -168,7 +172,7 @@ public class TowerAtc extends ComputerAtc {
       arrivalManager.deletePlane(plane);
       //TODO this will add to stats even planes deleted from the game by a user(?)
       //TODO this stats value should be increased outside of Tower atc??
-      Acc.stats().registerArrival();
+      StatsAcc.getOverallStatsWriter().registerArrival();
     }
     if (plane.isDeparture()) {
       departureManager.deletePlane(plane);
@@ -200,7 +204,7 @@ public class TowerAtc extends ComputerAtc {
       int diffSecs = SharedAcc.getNow().getValue() - holdingPointEntryTime.getValue();
       diffSecs -= 15; // generally let TWR atc asks APP atc to switch 15 seconds before HP.
       if (diffSecs < 0) diffSecs = 0;
-      Acc.stats().registerDeparture(diffSecs);
+      StatsAcc.getOverallStatsWriter().registerDeparture(diffSecs);
     }
 
     if (plane.isEmergency() && plane.getState() == AirplaneState.landed) {
@@ -314,7 +318,7 @@ public class TowerAtc extends ComputerAtc {
     if (isRunwayThresholdUnderMaintenance(plane.getRouting().getAssignedRunwayThreshold()) == false) {
       return new RequestResult(false, String.format("Runway %s is closed now.", plane.getRouting().getAssignedRunwayThreshold().getParent().getName()));
     }
-    if (plane.getSha().getAltitude() > this.acceptAltitude) {
+    if (plane.getSha().getAltitude() > this.getAcceptAltitude()) {
       return new ComputerAtc.RequestResult(false, String.format("%s is too high.", plane.getCallsign()));
     }
     double dist = Coordinates.getDistanceInNM(plane.getCoordinate(), AreaAcc.getAirport().getLocation());
@@ -616,7 +620,8 @@ public class TowerAtc extends ComputerAtc {
   }
 
   @Override
-  protected boolean shouldBeSwitched(IAirplane plane) {
+  protected boolean shouldBeSwitched(Callsign callsign) {
+    IAirplane plane = InternalAcc.getPlane(callsign);
     if (plane.isArrival())
       return true; // this should be go-arounded arrivals
 
@@ -651,11 +656,10 @@ public class TowerAtc extends ComputerAtc {
     // if it gets here, the "toReadyPlane" can proceed take-off
     // add to stats
     departureManager.departAndGetHoldingPointEntryTime(toReadyPlane, availableThreshold, getDepartingPlaneSwitchAltitude(toReadyPlane.getType().category));
-    toReadyPlane.setHoldingPointState(availableThreshold);
 
-
-    SpeechList lst = new SpeechList();
+    SpeechList<ISpeech> lst = new SpeechList<>();
     lst.add(new RadarContactConfirmationNotification());
+    lst.add(TaxiToHoldingPointCommand.create(availableThreshold.getName()));
 
     // TO altitude only when no altitude from SID already processed
     if (toReadyPlane.getSha().getTargetAltitude() <= availableThreshold.getParent().getParent().getAltitude())
