@@ -1,14 +1,21 @@
 package eng.jAtcSim.newLib.simulation.internal;
 
+import eng.jAtcSim.newLib.textProcessing.base.Formatter;
+import eng.jAtcSim.newLib.textProcessing.base.Parser;
+
 public class SimulationSettings {
   private final double emergencyPerDayProbability;
   private int simulationSecondLengthInMs;
   private final int statsSnapshotDistanceInMinutes;
+  private final Parser parser;
+  private final Formatter formatter;
 
-  public SimulationSettings(double emergencyPerDayProbability, int simulationSecondLengthInMs, int statsSnapshotDistanceInMinutes) {
-    this.emergencyPerDayProbability = emergencyPerDayProbability;
-    this.simulationSecondLengthInMs = simulationSecondLengthInMs;
-    this.statsSnapshotDistanceInMinutes = statsSnapshotDistanceInMinutes;
+  public Parser getParser() {
+    return parser;
+  }
+
+  public Formatter getFormatter() {
+    return formatter;
   }
 
   public double getEmergencyPerDayProbability() {

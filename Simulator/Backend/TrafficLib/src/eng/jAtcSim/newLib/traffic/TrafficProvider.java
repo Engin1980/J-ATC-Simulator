@@ -5,6 +5,7 @@ import eng.eSystem.collections.IMap;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.exceptions.ToDoException;
+import eng.jAtcSim.newLib.shared.time.EDayTime;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 import eng.jAtcSim.newLib.traffic.movementTemplating.MovementTemplate;
 
@@ -21,7 +22,7 @@ public class TrafficProvider {
     throw new ToDoException();
   }
 
-  public IReadOnlyList<MovementTemplate> getMovements(EDayTimeStamp fromTimeInclusive, EDayTimeStamp toTimeExclusive) {
+  public IReadOnlyList<MovementTemplate> getMovementsUntilTime(EDayTime untilTime) {
     throw new ToDoException();
 //    IList<MovementTemplate> ret = this.movements
 //      .where(q->q.getTime().getValue() >= fromTimeInclusive.getValue() && q.getTime().getValue() < toTimeExclusive.getValue());

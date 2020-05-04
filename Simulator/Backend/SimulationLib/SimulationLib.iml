@@ -20,5 +20,7 @@
     <orderEntry type="module" module-name="AirplanesLib" />
     <orderEntry type="module" module-name="StatsLib" />
     <orderEntry type="module" module-name="StatsLib" />
+    <orderEntry type="module" module-name="MessagingLib" />
+    <orderEntry type="module" module-name="TextProcessingLib" />
   </component>
 </module>

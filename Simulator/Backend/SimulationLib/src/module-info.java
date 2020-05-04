@@ -8,4 +8,6 @@ module JAtcSim.Modules.Backend.SimulationLib {
   requires JAtcSimLib.Modules.Backend.FleetLib;
   requires JAtcSim.Modules.Backend.AirplanesLib;
   requires JAtcSim.Modules.Backend.StatsLib;
+  requires JAtcSim.Modules.Backend.MessagingLib;
+  requires JAtcSim.modules.backend.TextProcessingLib;
 }

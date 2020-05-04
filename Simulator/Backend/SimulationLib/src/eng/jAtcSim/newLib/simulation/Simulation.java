@@ -61,7 +61,7 @@ public class Simulation {
    * Internal timer used to make simulation ticks.
    */
   @XmlIgnore
-  private final Timer tmr = new Timer(o -> Simulation.this.elapseSecond());
+  private final TimerProvider tmr = new TimerProvider(o -> Simulation.this.elapseSecond());
 
   public Simulation(
       Area area, AirplaneTypes airplaneTypes, Fleets fleets, Traffic traffic, Airport activeAirport,

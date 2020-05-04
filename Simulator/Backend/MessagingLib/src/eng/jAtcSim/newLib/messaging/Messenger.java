@@ -8,11 +8,11 @@ import eng.eSystem.validation.EAssert;
 public class Messenger {
 
   public static class ListenerInfo {
-    public final Object listener;
+    public final Participant listener;
     public final Participant messageTarget;
     public final IList<Message> queue;
 
-    public ListenerInfo(Object listener, Participant messageTarget) {
+    public ListenerInfo(Participant listener, Participant messageTarget) {
       this.listener = listener;
       this.messageTarget = messageTarget;
       this.queue = new EList<>();
@@ -24,7 +24,7 @@ public class Messenger {
   public static final Participant SYSTEM = Participant.createSystem();
   private IList<ListenerInfo> listeners = new EList<>();
 
-  public void registerListener(Object listener, Participant messageTarget) {
+  public void registerListener(Participant listener, Participant messageTarget) {
     EAssert.isNotNull(listener);
     EAssert.isNotNull(messageTarget);
     if (listeners.isAny(q -> q.listener == listener))
@@ -34,7 +34,7 @@ public class Messenger {
     this.listeners.add(li);
   }
 
-  public void unregisterListener(Object listener) {
+  public void unregisterListener(Participant listener) {
     EAssert.isNotNull(listener);
     ListenerInfo li = listeners.getFirst(q -> q.listener == listener);
     listeners.remove(li);
@@ -49,7 +49,7 @@ public class Messenger {
     }
   }
 
-  public IList<Message> getMessagesByListener(Object listener, boolean deleteRetrieved) {
+  public IList<Message> getMessagesByListener(Participant listener, boolean deleteRetrieved) {
     ListenerInfo li;
     IList<Message> ret;
 

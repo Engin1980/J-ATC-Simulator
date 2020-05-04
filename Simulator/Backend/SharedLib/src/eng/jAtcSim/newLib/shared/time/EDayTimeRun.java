@@ -15,7 +15,7 @@ public class EDayTimeRun extends EDayTime {
     this(days * SECONDS_PER_DAY + hours * SECONDS_PER_HOUR + minutes * SECONDS_PER_MINUTE + seconds);
   }
 
-  public void elapseSecond() {
+  public void increaseSecond() {
     this.value++;
   }
 

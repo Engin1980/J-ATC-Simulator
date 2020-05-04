@@ -12,14 +12,14 @@ import eng.eSystem.validation.EAssert;
 
 import java.util.TimerTask;
 
-public class Timer {
+public class TimerProvider {
 
   private java.util.Timer tmr = null;
-  private final EventSimple<Timer> tickEvent = new EventSimple<>(this);
+  private final EventSimple<TimerProvider> tickEvent = new EventSimple<>(this);
   private int tickInterval;
 
-  public Timer(IEventListenerSimple<Timer> listener) {
-
+  public TimerProvider(int tickInterval, IEventListenerSimple<TimerProvider> listener) {
+    setTickInterval(tickInterval);
     this.tickEvent.add(listener);
   }
 
@@ -27,13 +27,15 @@ public class Timer {
     return this.tickInterval;
   }
 
-  public synchronized void start(int ms) {
-    EAssert.Argument.isTrue(ms > 0);
+  public final void setTickInterval(int tickInterval) {
+    EAssert.Argument.isTrue(tickInterval > 0);
+    this.tickInterval = tickInterval;
+  }
+
+  public synchronized void start() {
     if (tmr != null) {
       throw new EApplicationException("Cannot start the timer, its not stopped.");
     }
-
-    this.tickInterval = ms;
 
     TimerTask tt = new TimerTask() {
       @Override
@@ -41,9 +43,8 @@ public class Timer {
         tickEvent.raise();
       }
     };
-    
     tmr = new java.util.Timer(true);
-    tmr.scheduleAtFixedRate(tt, ms, ms);
+    tmr.scheduleAtFixedRate(tt, tickInterval, tickInterval);
   }
 
   public synchronized void stop() {
