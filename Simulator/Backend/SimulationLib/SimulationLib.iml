@@ -9,5 +9,13 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="eng.eSystem" level="project" />
     <orderEntry type="module" module-name="AtcLib" />
+    <orderEntry type="module" module-name="AreaLib" />
+    <orderEntry type="module" module-name="AirplaneTypeLib" />
+    <orderEntry type="module" module-name="AirplaneTypeLib" />
+    <orderEntry type="module" module-name="TrafficLib" />
+    <orderEntry type="module" module-name="WeatherLib" />
+    <orderEntry type="module" module-name="FleetLib" />
+    <orderEntry type="module" module-name="FleetLib" />
+    <orderEntry type="module" module-name="SharedLib" />
   </component>
 </module>
