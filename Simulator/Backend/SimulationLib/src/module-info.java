@@ -6,4 +6,6 @@ module JAtcSim.Modules.Backend.SimulationLib {
   requires JAtcSimLib.Modules.Backend.TrafficLib;
   requires JAtcSim.Modules.Backend.WeatherLib;
   requires JAtcSimLib.Modules.Backend.FleetLib;
+  requires JAtcSim.Modules.Backend.AirplanesLib;
+  requires JAtcSim.Modules.Backend.StatsLib;
 }

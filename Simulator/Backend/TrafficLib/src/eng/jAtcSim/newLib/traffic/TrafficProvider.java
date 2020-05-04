@@ -4,16 +4,15 @@ import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IMap;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.validation.EAssert;
-import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
-import eng.jAtcSim.newLib.traffic.models.base.ITrafficModel;
-import eng.jAtcSim.newLib.traffic.movementTemplating.MovementTemplate;
 import eng.jAtcSim.newLib.shared.exceptions.ToDoException;
+import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
+import eng.jAtcSim.newLib.traffic.movementTemplating.MovementTemplate;
 
-public abstract class Traffic {
+public class TrafficProvider {
   private ITrafficModel trafficModel;
   private IMap<Integer, IReadOnlyList<MovementTemplate>> movementSet = new EMap<>();
 
-  public Traffic(ITrafficModel trafficModel) {
+  public TrafficProvider(ITrafficModel trafficModel) {
     EAssert.isNotNull(trafficModel);
     this.trafficModel = trafficModel;
   }
@@ -27,6 +26,10 @@ public abstract class Traffic {
 //    IList<MovementTemplate> ret = this.movements
 //      .where(q->q.getTime().getValue() >= fromTimeInclusive.getValue() && q.getTime().getValue() < toTimeExclusive.getValue());
 //    return ret;
+  }
+
+  public void init() {
+    // intentionally blank
   }
 
   private void prepareMovementsPerDay(int dayIndex) {

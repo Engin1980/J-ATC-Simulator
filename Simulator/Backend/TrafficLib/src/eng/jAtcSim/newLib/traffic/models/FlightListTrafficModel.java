@@ -1,9 +1,7 @@
 package eng.jAtcSim.newLib.traffic.models;
 
-import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
-import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.validation.EAssert;
@@ -11,12 +9,10 @@ import eng.jAtcSim.newLib.traffic.movementTemplating.EntryExitInfo;
 import eng.jAtcSim.newLib.traffic.movementTemplating.MovementTemplate;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.time.ETimeStamp;
-import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
-import eng.jAtcSim.newLib.traffic.models.base.ITrafficModel;
+import eng.jAtcSim.newLib.traffic.ITrafficModel;
 import eng.jAtcSim.newLib.traffic.movementTemplating.FlightMovementTemplate;
 
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 
 public class FlightListTrafficModel implements ITrafficModel {
 
@@ -78,7 +74,7 @@ public class FlightListTrafficModel implements ITrafficModel {
         flight.callsign,
         flight.planeType,
         flight.kind,
-        new ETimeStamp(flight.time),
+        new ETimeStamp(flight.time.getHour(), flight.time.getMinute(), flight.time.getSecond()),
         new EntryExitInfo(flight.otherAirport));
     return ret;
   }

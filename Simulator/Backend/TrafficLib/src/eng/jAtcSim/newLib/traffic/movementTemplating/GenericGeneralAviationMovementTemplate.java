@@ -1,10 +1,12 @@
 package eng.jAtcSim.newLib.traffic.movementTemplating;
 
+import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 import eng.jAtcSim.newLib.shared.time.ETimeStamp;
 
-public class GeneralAviationMovementTemplate extends MovementTemplate {
+public class GenericGeneralAviationMovementTemplate extends MovementTemplate {
   private final String countryIcao;
-  public GeneralAviationMovementTemplate(
+
+  public GenericGeneralAviationMovementTemplate(
       eKind kind, ETimeStamp time, String countryIcao,
       EntryExitInfo entryExitInfo) {
     super(kind, time, entryExitInfo);

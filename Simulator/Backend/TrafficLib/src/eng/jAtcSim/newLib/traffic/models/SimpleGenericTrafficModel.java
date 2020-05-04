@@ -7,13 +7,13 @@ import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.SharedAcc;
 import eng.jAtcSim.newLib.shared.time.ETimeStamp;
-import eng.jAtcSim.newLib.traffic.models.base.DayGeneratedTrafficModel;
+import eng.jAtcSim.newLib.traffic.ITrafficModel;
 import eng.jAtcSim.newLib.traffic.movementTemplating.EntryExitInfo;
-import eng.jAtcSim.newLib.traffic.movementTemplating.GeneralAviationMovementTemplate;
-import eng.jAtcSim.newLib.traffic.movementTemplating.GeneralCommercialMovementTemplate;
+import eng.jAtcSim.newLib.traffic.movementTemplating.GenericCommercialMovementTemplate;
+import eng.jAtcSim.newLib.traffic.movementTemplating.GenericGeneralAviationMovementTemplate;
 import eng.jAtcSim.newLib.traffic.movementTemplating.MovementTemplate;
 
-public class SimpleGenericTrafficModel extends DayGeneratedTrafficModel {
+public class SimpleGenericTrafficModel implements ITrafficModel {
 
   public static class MovementsForHour {
     public static MovementsForHour create(int count, double generalAviationProbability, double departureProbability) {
@@ -70,7 +70,10 @@ public class SimpleGenericTrafficModel extends DayGeneratedTrafficModel {
   private final IList<ValueAndWeight> countries;
   private final ERandom rnd = SharedAcc.getRnd();
 
-  private SimpleGenericTrafficModel(MovementsForHour[] movementsForHours, IList<ValueAndWeight> companies, IList<ValueAndWeight> countries) {
+  private SimpleGenericTrafficModel(
+      MovementsForHour[] movementsForHours,
+      IList<ValueAndWeight> companies,
+      IList<ValueAndWeight> countries) {
     EAssert.Argument.isNotNull(movementsForHours, "movementsForHours");
     EAssert.Argument.isTrue(movementsForHours.length == 24);
     EAssert.Argument.isNotNull(companies, "companies");
@@ -107,11 +110,11 @@ public class SimpleGenericTrafficModel extends DayGeneratedTrafficModel {
     MovementTemplate ret;
     if (isNonCommercial) {
       String countryIcao = this.countries.getRandomByWeights(q -> (double) q.weight, rnd).value;
-      ret = new GeneralAviationMovementTemplate(kind, initTime, countryIcao,
+      ret = new GenericGeneralAviationMovementTemplate(kind, initTime, countryIcao,
           new EntryExitInfo(radial));
     } else {
       String companyIcao = this.companies.getRandomByWeights(q -> (double) q.weight, rnd).value;
-      ret = new GeneralCommercialMovementTemplate(companyIcao, null,
+      ret = new GenericCommercialMovementTemplate(companyIcao, null,
           kind, initTime, new EntryExitInfo(radial));
 
     }

@@ -17,5 +17,8 @@
     <orderEntry type="module" module-name="FleetLib" />
     <orderEntry type="module" module-name="FleetLib" />
     <orderEntry type="module" module-name="SharedLib" />
+    <orderEntry type="module" module-name="AirplanesLib" />
+    <orderEntry type="module" module-name="StatsLib" />
+    <orderEntry type="module" module-name="StatsLib" />
   </component>
 </module>

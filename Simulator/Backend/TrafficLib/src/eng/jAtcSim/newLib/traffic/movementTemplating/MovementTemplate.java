@@ -1,6 +1,7 @@
 package eng.jAtcSim.newLib.traffic.movementTemplating;
 
 import eng.eSystem.validation.EAssert;
+import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 import eng.jAtcSim.newLib.shared.time.ETimeStamp;
 
 public abstract class MovementTemplate {

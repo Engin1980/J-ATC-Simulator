@@ -8,17 +8,17 @@ package eng.jAtcSim.newLib.traffic.models;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
-import eng.jAtcSim.newLib.traffic.models.base.DayGeneratedTrafficModel;
-import eng.jAtcSim.newLib.traffic.movementTemplating.EntryExitInfo;
-import eng.jAtcSim.newLib.traffic.movementTemplating.MovementTemplate;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.time.ETimeStamp;
+import eng.jAtcSim.newLib.traffic.ITrafficModel;
+import eng.jAtcSim.newLib.traffic.movementTemplating.EntryExitInfo;
 import eng.jAtcSim.newLib.traffic.movementTemplating.FlightMovementTemplate;
+import eng.jAtcSim.newLib.traffic.movementTemplating.MovementTemplate;
 
 /**
  * @author Marek Vajgl
  */
-public class TestTrafficModel extends DayGeneratedTrafficModel {
+public class TestTrafficModel implements ITrafficModel {
   private static String AIRPLANE_TYPE = "A320";
   private static String COMPANY_NAME = "CSA";
   private int count;

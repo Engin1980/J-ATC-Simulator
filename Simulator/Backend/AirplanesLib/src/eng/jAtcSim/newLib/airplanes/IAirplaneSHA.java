@@ -14,4 +14,6 @@ public interface IAirplaneSHA {
   int getTargetAltitude();
 
   int getTargetHeading();
+
+  int getVerticalSpeed();
 }

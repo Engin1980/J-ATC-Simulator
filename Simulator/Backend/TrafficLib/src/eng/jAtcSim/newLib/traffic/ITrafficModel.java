@@ -1,4 +1,4 @@
-package eng.jAtcSim.newLib.traffic.models.base;
+package eng.jAtcSim.newLib.traffic;
 
 import eng.eSystem.collections.IReadOnlyList;
 import eng.jAtcSim.newLib.traffic.movementTemplating.MovementTemplate;

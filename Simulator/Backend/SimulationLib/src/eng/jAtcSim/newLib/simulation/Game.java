@@ -11,7 +11,7 @@ import eng.jAtcSim.newLib.area.serialization.LoadSave;
 import eng.jAtcSim.newLib.global.ETime;
 import eng.jAtcSim.newLib.global.logging.ApplicationLog;
 import eng.jAtcSim.newLib.global.newSources.*;
-import eng.jAtcSim.newLib.traffic.Traffic;
+import eng.jAtcSim.newLib.traffic.TrafficProvider;
 import eng.jAtcSim.newLib.traffic.TrafficManager;
 import eng.jAtcSim.newLib.weathers.Weather;
 
@@ -37,7 +37,7 @@ public class Game {
     public String trafficXmlFile;
     public String weatherXmlFile;
     public String icao;
-    public Traffic specificTraffic;
+    public TrafficProvider specificTraffic;
     public ETime startTime;
     public int secondLengthInMs;
     public double emergencyPerDayProbability;

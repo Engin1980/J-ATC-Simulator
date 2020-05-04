@@ -9,15 +9,15 @@ import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.SharedAcc;
 import eng.jAtcSim.newLib.shared.time.ETimeStamp;
 import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
-import eng.jAtcSim.newLib.traffic.models.base.DayGeneratedTrafficModel;
+import eng.jAtcSim.newLib.traffic.ITrafficModel;
 import eng.jAtcSim.newLib.traffic.movementTemplating.EntryExitInfo;
-import eng.jAtcSim.newLib.traffic.movementTemplating.GeneralAviationMovementTemplate;
-import eng.jAtcSim.newLib.traffic.movementTemplating.GeneralCommercialMovementTemplate;
+import eng.jAtcSim.newLib.traffic.movementTemplating.GenericGeneralAviationMovementTemplate;
+import eng.jAtcSim.newLib.traffic.movementTemplating.GenericCommercialMovementTemplate;
 import eng.jAtcSim.newLib.traffic.movementTemplating.MovementTemplate;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
-public class DensityBasedTrafficModel extends DayGeneratedTrafficModel {
+public class DensityBasedTrafficModel implements ITrafficModel {
   public static class Company {
     public final String icao;
     public final double weight;
@@ -145,12 +145,12 @@ public class DensityBasedTrafficModel extends DayGeneratedTrafficModel {
       Company company = this.companies.getRandomByWeights(q -> q.weight, rnd);
       Character category = company.category;
       String companyIcao = company.icao;
-      ret = new GeneralCommercialMovementTemplate(
+      ret = new GenericCommercialMovementTemplate(
           companyIcao, category, kind, time, new EntryExitInfo(radial));
     } else {
       Company country = this.countries.getRandomByWeights(q -> q.weight, rnd);
       String countryPrefix = country.icao;
-      ret = new GeneralAviationMovementTemplate(kind, time, countryPrefix, new EntryExitInfo(radial));
+      ret = new GenericGeneralAviationMovementTemplate(kind, time, countryPrefix, new EntryExitInfo(radial));
     }
     return ret;
   }
