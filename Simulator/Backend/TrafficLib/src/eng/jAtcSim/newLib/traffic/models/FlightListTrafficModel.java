@@ -70,12 +70,14 @@ public class FlightListTrafficModel implements ITrafficModel {
   }
 
   private MovementTemplate convertFlightToMovementTemplate(Flight flight) {
+    EntryExitInfo eei = flight.otherAirport != null ?
+        new EntryExitInfo(flight.otherAirport) : new EntryExitInfo(flight.heading);
     FlightMovementTemplate ret = new FlightMovementTemplate(
         flight.callsign,
         flight.planeType,
         flight.kind,
         new ETimeStamp(flight.time.getHour(), flight.time.getMinute(), flight.time.getSecond()),
-        new EntryExitInfo(flight.otherAirport));
+        eei);
     return ret;
   }
 }

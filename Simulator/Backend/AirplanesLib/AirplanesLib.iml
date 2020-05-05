@@ -19,5 +19,7 @@
     <orderEntry type="module" module-name="SpeechesLib" />
     <orderEntry type="module" module-name="MessagingLib" />
     <orderEntry type="module" module-name="WeatherLib" />
+    <orderEntry type="module" module-name="TrafficLib" />
+    <orderEntry type="module" module-name="StatsLib" />
   </component>
 </module>

@@ -4,4 +4,6 @@ public interface IOverallStatsWriter {
   void registerArrival();
 
   void registerDeparture(int holdingPointSecondsWaiting);
+
+  void registerFinishedPlane(Object reader);
 }

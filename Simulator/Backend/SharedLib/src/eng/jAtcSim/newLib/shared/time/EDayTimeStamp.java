@@ -15,6 +15,10 @@ public class EDayTimeStamp extends EDayTime {
     this(days * SECONDS_PER_DAY + hours * SECONDS_PER_HOUR + minutes * SECONDS_PER_MINUTE + seconds);
   }
 
+  public EDayTimeStamp(int days, ETimeStamp time) {
+    this(days, time.getHours(), time.getMinutes(), time.getSeconds());
+  }
+
   @Override
   public int getValue() {
     return value;

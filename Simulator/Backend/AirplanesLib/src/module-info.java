@@ -7,4 +7,6 @@ module JAtcSim.Modules.Backend.AirplanesLib {
   requires JAtcSim.Modules.Backend.MoodLib;
   requires JAtcSim.Modules.Backend.SpeechesLib;
   requires JAtcSim.Modules.Backend.WeatherLib;
+  requires JAtcSimLib.Modules.Backend.TrafficLib;
+  requires JAtcSim.Modules.Backend.StatsLib;
 }

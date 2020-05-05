@@ -74,6 +74,11 @@ public class Airplane {
     public int getTargetHeading() {
       return Airplane.this.sha.getTargetHeading();
     }
+
+    @Override
+    public int getVerticalSpeed() {
+      return Airplane.this.sha.getVerticalSpeed();
+    }
   }
 
   public class AirplaneAtcImpl implements IAirplaneAtc {

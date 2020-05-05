@@ -19,11 +19,11 @@ public class AirplaneAcc {
     return getAirplanes().isAny(q -> q.isEmergency());
   }
 
-  public static void setAirplaneListProducer(Producer<AirplaneList<IAirplane>> airplanesProducer) {
+  static void setAirplaneListProducer(Producer<AirplaneList<IAirplane>> airplanesProducer) {
     AirplaneAcc.airplanesProducer = airplanesProducer;
   }
 
-  public static void setAirplanesControllerProducer(Producer<AirplanesController> airplanesControllerProducer) {
+  static void setAirplanesControllerProducer(Producer<AirplanesController> airplanesControllerProducer) {
     AirplaneAcc.airplanesControllerProducer = airplanesControllerProducer;
   }
 }

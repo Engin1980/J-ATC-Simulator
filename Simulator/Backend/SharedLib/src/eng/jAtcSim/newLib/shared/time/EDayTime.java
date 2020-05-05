@@ -17,7 +17,11 @@ public abstract class EDayTime implements ITime, ITimeComparable<EDayTime> {
     return this.getValue() / ITime.SECONDS_PER_DAY;
   }
 
-  public String toDayTimeString(){
+  public ETimeStamp getTime() {
+    return new ETimeStamp(getHours(), getMinutes(), getSeconds());
+  }
+
+  public String toDayTimeString() {
     return sf("%d.%02d:%02d:%02",
         this.getDays(),
         this.getHours(),
@@ -25,7 +29,7 @@ public abstract class EDayTime implements ITime, ITimeComparable<EDayTime> {
         this.getSeconds());
   }
 
-  public LocalTime toLocalTime(){
+  public LocalTime toLocalTime() {
     return LocalTime.of(this.getDays(), this.getMinutes(), this.getSeconds());
   }
 

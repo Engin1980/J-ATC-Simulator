@@ -44,6 +44,8 @@ public interface IAirplaneWriter {
 
   void processRadarContactConfirmation();
 
+  void raiseEmergency();
+
   void reportDivertTimeLeft();
 
   default void sendMessage(AtcId atcId, ISpeech speech){
