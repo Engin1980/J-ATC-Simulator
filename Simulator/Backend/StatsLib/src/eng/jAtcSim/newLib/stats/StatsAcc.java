@@ -7,22 +7,14 @@ import static eng.eSystem.utilites.FunctionShortcuts.*;
 
 public class StatsAcc {
 
-  private static Producer<IOverallStatsWriter> overallStatsWriterProducer = null;
-  private static Producer<IRecentStatsWriter> recentStatsWriterProducer = null;
+  private static Producer<StatsProvider> statsProviderProducer;
 
-  public static void setOverallStatsWriterProducer(Producer<IOverallStatsWriter> overallStatsWriterProducer) {
-    StatsAcc.overallStatsWriterProducer = overallStatsWriterProducer;
+  private static void setStatsProviderProducer(Producer<StatsProvider> statsProviderProducer) {
+    StatsAcc.statsProviderProducer = statsProviderProducer;
   }
 
-  public static void setRecentStatsWriterProducer(Producer<IRecentStatsWriter> recentStatsWriterProducer) {
-    StatsAcc.recentStatsWriterProducer = recentStatsWriterProducer;
+  public static StatsProvider getStatsProvider(){
+    return statsProviderProducer.produce();
   }
 
-  public static IOverallStatsWriter getOverallStatsWriter() {
-    return overallStatsWriterProducer.produce();
-  }
-
-  public static IRecentStatsWriter getRecentStatsWriter() {
-    return recentStatsWriterProducer.produce();
-  }
 }

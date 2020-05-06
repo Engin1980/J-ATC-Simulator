@@ -1,9 +1,9 @@
-package eng.jAtcSim.newLib.stats;
-
-public interface IOverallStatsWriter {
-  void registerArrival();
-
-  void registerDeparture(int holdingPointSecondsWaiting);
-
-  void registerFinishedPlane(Object reader);
-}
+//package eng.jAtcSim.newLib.stats;
+//
+//public interface IOverallStatsWriter {
+//  void registerArrival();
+//
+//  void registerDeparture(int holdingPointSecondsWaiting);
+//
+//  void registerFinishedPlane(Object reader);
+//}

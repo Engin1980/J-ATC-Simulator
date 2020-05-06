@@ -13,6 +13,8 @@ public interface IAirplane {
 
   Coordinate getCoordinate();
 
+  IAirplaneFlight getFlight();
+
   IAirplaneRouting getRouting();
 
   IAirplaneSHA getSha();

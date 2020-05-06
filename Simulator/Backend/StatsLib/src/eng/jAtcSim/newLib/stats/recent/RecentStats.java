@@ -1,10 +1,12 @@
-package eng.jAtcSim.newLib.stats;
+package eng.jAtcSim.newLib.stats.recent;
 
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.jAtcSim.newLib.shared.SharedAcc;
 import eng.jAtcSim.newLib.shared.time.EDayTimeRun;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
+import eng.jAtcSim.newLib.stats.AnalysedPlanes;
+import eng.jAtcSim.newLib.stats.FinishedPlaneStats;
 import eng.jAtcSim.newLib.stats.model.ElapsedSecondDurationModel;
 import eng.jAtcSim.newLib.stats.properties.TimedValue;
 
@@ -124,19 +126,17 @@ public class RecentStats {
   }
 
   private static final int RECENT_INTERVAL_IN_SECONDS = 60;
+
+  private static EDayTimeRun getNow() {
+    return SharedAcc.getNow();
+  }
   private int recentSecondsElapsed;
   private ElapsedSecondDurationModel elapsedSecondDuration = new ElapsedSecondDurationModel();
-  //@XmlIgnore
   private Errors clsErrors = new Errors();
-  //@XmlIgnore
   private Delays clsDelays = new Delays();
-  //@XmlIgnore
   private HoldingPoint clsHP = new HoldingPoint();
-  //@XmlIgnore
   private MovementsPerHour clsMovements = new MovementsPerHour();
-  //@XmlIgnore
   private CurrentPlanesCount clsCurrent = new CurrentPlanesCount();
-  //@XmlIgnore
   private FinishedPlanes clsFinished = new FinishedPlanes();
   private IList<TimedValue<Integer>> airproxErrors = new EList<>();
   private IList<TimedValue<Integer>> mrvaErrors = new EList();
@@ -159,61 +159,123 @@ public class RecentStats {
   private int finishedArrivals;
   private int finishedDepartures;
 
-  private static EDayTimeRun getNow(){
-    return SharedAcc.getNow();
+  public void elapseSecond(AnalysedPlanes analysedPlanes) {
+    if (recentSecondsElapsed < RECENT_INTERVAL_IN_SECONDS)
+      recentSecondsElapsed++;
+
+    EDayTimeStamp nowTime = getNow().toStamp();
+    int airproxErs = analysedPlanes.airproxErrors;
+    int mrvaErs = analysedPlanes.mrvaErrors;
+    int arrs = analysedPlanes.arrivals;
+    int deps = analysedPlanes.departures;
+    int aarrs = analysedPlanes.appArrivals;
+    int adeps = analysedPlanes.appDepartures;
+
+    this.airproxErrors.add(new TimedValue<>(nowTime, airproxErs));
+    this.mrvaErrors.add(new TimedValue<>(nowTime, mrvaErs));
+
+    int hpCount = analysedPlanes.planesAtHoldingPoint;
+    if (hpCount != this.holdingPointCurrentCount)
+      this.holdingPointMaximalCount.add(new TimedValue<>(nowTime, hpCount));
+    this.holdingPointCurrentCount = hpCount;
+
+    boolean upd = false;
+    if (arrs != this.currentArrivals) {
+      this.maximumArrivals.add(new TimedValue<>(nowTime, arrs));
+      upd = true;
+    }
+    this.currentArrivals = arrs;
+    if (deps != this.currentDepartures) {
+      this.maximumDepartures.add(new TimedValue<>(nowTime, deps));
+      upd = true;
+    }
+    this.currentDepartures = deps;
+    if (upd) {
+      this.maximumPlanes.add(new TimedValue<>(nowTime, arrs + deps));
+      upd = false;
+    }
+    if (aarrs != this.currentArrivalsUnderApp) {
+      this.maximumArrivalsUnderApp.add(new TimedValue<>(nowTime, aarrs));
+      upd = true;
+    }
+    this.currentArrivalsUnderApp = aarrs;
+    if (adeps != this.currentDeparturesUnderApp) {
+      this.maximumDeparturesUnderApp.add(new TimedValue<>(nowTime, adeps));
+      upd = true;
+    }
+    this.currentDeparturesUnderApp = adeps;
+    if (upd)
+      this.maximumPlanesUnderApp.add(new TimedValue<>(nowTime, aarrs + adeps));
+
+    EDayTimeStamp lastTime = SharedAcc.getNow().addHours(-1);
+    cleanTimedList(this.airproxErrors, lastTime);
+    cleanTimedList(this.mrvaErrors, lastTime);
+    cleanTimedList(this.planeDelays, lastTime);
+    cleanTimedList(this.holdingPointMaximalCount, lastTime);
+    cleanTimedList(this.holdingPointDelays, lastTime);
+    cleanTimedList(this.maximumArrivals, lastTime);
+    cleanTimedList(this.maximumDepartures, lastTime);
+    cleanTimedList(this.maximumPlanes, lastTime);
+    cleanTimedList(this.maximumArrivalsUnderApp, lastTime);
+    cleanTimedList(this.maximumDeparturesUnderApp, lastTime);
+    cleanTimedList(this.maximumPlanesUnderApp, lastTime);
+    this.numberOfDepartures.remove(q -> q.isBefore(lastTime));
+    this.numberOfLandings.remove(q -> q.isBefore(lastTime));
   }
 
-  public CurrentPlanesCount getCurrentPlanesCount() {
-    return clsCurrent;
-  }
-
-  public Delays getDelays() {
-    return clsDelays;
-  }
-
-  public ElapsedSecondDurationModel getElapsedSecondDuration() {
-    return elapsedSecondDuration;
-  }
-
-  public Errors getErrors() {
-    return clsErrors;
-  }
-
-  public FinishedPlanes getFinishedPlanes() {
-    return clsFinished;
-  }
-
-  public HoldingPoint getHoldingPoint() {
-    return clsHP;
-  }
-
-  public MovementsPerHour getMovementsPerHour() {
-    return clsMovements;
-  }
-
-  public void registerElapsedSecondDuration(int ms) {
-    elapsedSecondDuration.add(ms);
-  }
-
-  public void registerFinishedPlane(boolean isArrival, EDayTimeStamp dayTimeStamp, int delayDifference){
-    if (isArrival)
+  public void registerFinishedPlane(FinishedPlaneStats finishedPlaneStats) {
+    if (finishedPlaneStats.isArrival())
       this.finishedArrivals++;
     else
       this.finishedDepartures++;
-    planeDelays.add(new TimedValue<>(dayTimeStamp, delayDifference));
+    planeDelays.add(new TimedValue<>(SharedAcc.getNow().toStamp(), finishedPlaneStats.getDelayDifference()));
   }
 
-  public void registerHoldingPointDelay(EDayTimeStamp dayTimeStamp, int delay) {
-    // get dayTimeStamp from Acc.now().clone()
-    holdingPointDelays.add(new TimedValue<>(dayTimeStamp, delay));
-  }
+  //  public CurrentPlanesCount getCurrentPlanesCount() {
+//    return clsCurrent;
+//  }
+//
+//  public Delays getDelays() {
+//    return clsDelays;
+//  }
+//
+//  public ElapsedSecondDurationModel getElapsedSecondDuration() {
+//    return elapsedSecondDuration;
+//  }
+//
+//  public Errors getErrors() {
+//    return clsErrors;
+//  }
+//
+//  public FinishedPlanes getFinishedPlanes() {
+//    return clsFinished;
+//  }
+//
+//  public HoldingPoint getHoldingPoint() {
+//    return clsHP;
+//  }
+//
+//  public MovementsPerHour getMovementsPerHour() {
+//    return clsMovements;
+//  }
+//
+//  public void registerElapsedSecondDuration(int ms) {
+//    elapsedSecondDuration.add(ms);
+//  }
+//
 
-  public void registerNewArrivalOrDeparture(boolean isArrival, EDayTimeStamp dayTimeStamp) {
-    if (isArrival)
-      this.numberOfLandings.add(dayTimeStamp);
-    else
-      this.numberOfDepartures.add(dayTimeStamp);
-  }
+//
+//  public void registerHoldingPointDelay(EDayTimeStamp dayTimeStamp, int delay) {
+//    // get dayTimeStamp from Acc.now().clone()
+//    holdingPointDelays.add(new TimedValue<>(dayTimeStamp, delay));
+//  }
+//
+//  public void registerNewArrivalOrDeparture(boolean isArrival, EDayTimeStamp dayTimeStamp) {
+//    if (isArrival)
+//      this.numberOfLandings.add(dayTimeStamp);
+//    else
+//      this.numberOfDepartures.add(dayTimeStamp);
+//  }
 
   private <T> void cleanTimedList(IList<TimedValue<T>> lst, EDayTimeStamp lastTime) {
     lst.remove(q -> q.getTime().isBefore(lastTime));

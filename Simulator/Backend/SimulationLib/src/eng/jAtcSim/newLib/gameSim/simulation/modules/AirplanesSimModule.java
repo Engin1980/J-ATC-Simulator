@@ -33,6 +33,7 @@ import eng.jAtcSim.newLib.shared.SharedAcc;
 import eng.jAtcSim.newLib.shared.enums.AtcType;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
+import eng.jAtcSim.newLib.stats.FinishedPlaneStats;
 import eng.jAtcSim.newLib.stats.StatsAcc;
 import eng.jAtcSim.newLib.traffic.movementTemplating.*;
 
@@ -43,6 +44,17 @@ class AirplanesSimModule extends SimModule {
 
   public AirplanesSimModule(ISimulationModuleParent parent) {
     super(parent);
+  }
+
+  private FinishedPlaneStats buildFinishedAirplaneStats(IAirplane airplane) {
+    int entryDelay = airplane.getFlight().getEntryDelay();
+    int exitDelay = airplane.getFlight().getExitDelay();
+    int delayDifference = exitDelay - entryDelay;
+    FinishedPlaneStats ret = new FinishedPlaneStats(
+        airplane.getCallsign(), airplane.isDeparture(), airplane.isEmergency(), delayDifference,
+        MoodAcc.getMoodManager().getMoodResult(airplane.getCallsign(), delayDifference)
+    );
+    return ret;
   }
 
   private FlightMovementTemplate convertGenericMovementTemplateToFlightMovementTemplate(MovementTemplate m) {
@@ -287,7 +299,7 @@ class AirplanesSimModule extends SimModule {
       // landed
       if (p.isArrival() && p.getSha().getSpeed() < 11) {
         ret.add(p);
-        StatsAcc.getOverallStatsWriter().registerFinishedPlane(p);
+        StatsAcc.getStatsProvider().registerFinishedPlane(buildFinishedAirplaneStats(p));
       }
 
       // departed
@@ -297,7 +309,7 @@ class AirplanesSimModule extends SimModule {
           p.getCoordinate(),
           AreaAcc.getAirport().getLocation()) > AreaAcc.getAirport().getCoveredDistance()) {
         ret.add(p);
-        this.stats.registerFinishedPlane(p);
+        StatsAcc.getStatsProvider().registerFinishedPlane(buildFinishedAirplaneStats(p));
       }
 
       if (p.isEmergency() && p.hasElapsedEmergencyTime()) {

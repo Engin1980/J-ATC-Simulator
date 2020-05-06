@@ -15,6 +15,12 @@ public class MoodManager {
     return inner.get(callsign);
   }
 
+  public MoodResult getMoodResult(Callsign callsign, int delayDifference) {
+    EAssert.Argument.isTrue(inner.containsKey(callsign));
+    MoodResult ret = inner.get(callsign).evaluate(callsign, delayDifference);
+    return ret;
+  }
+
   public void registerCallsign(Callsign callsign) {
     EAssert.isTrue(inner.containsKey(callsign));
     inner.set(callsign, new Mood());

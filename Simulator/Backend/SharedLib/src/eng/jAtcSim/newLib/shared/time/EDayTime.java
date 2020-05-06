@@ -5,6 +5,10 @@ import java.time.LocalTime;
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public abstract class EDayTime implements ITime, ITimeComparable<EDayTime> {
+  public EDayTimeStamp addHours(int hours) {
+    return this.addSeconds(hours * MINUTES_PER_HOUR *ITime.SECONDS_PER_MINUTE);
+  }
+
   public EDayTimeStamp addMinutes(int minutes) {
     return this.addSeconds(minutes * ITime.SECONDS_PER_MINUTE);
   }

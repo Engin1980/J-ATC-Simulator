@@ -10,9 +10,9 @@ public class MMM {
         set.mean(q -> q.mean));
     return ret;
   }
-  private double minimum;
-  private double maximum;
-  private double mean;
+  private final double minimum;
+  private final double maximum;
+  private final double mean;
 
   public MMM(double minimum, double maximum, double mean) {
     this.minimum = minimum;

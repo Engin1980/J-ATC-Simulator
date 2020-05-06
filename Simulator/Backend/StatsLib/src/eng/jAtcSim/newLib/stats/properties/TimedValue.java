@@ -3,8 +3,8 @@ package eng.jAtcSim.newLib.stats.properties;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 
 public class TimedValue<T> {
-  private EDayTimeStamp time;
-  private T value;
+  private final EDayTimeStamp time;
+  private final T value;
 
   public TimedValue(EDayTimeStamp time, T value) {
     this.time = time;
