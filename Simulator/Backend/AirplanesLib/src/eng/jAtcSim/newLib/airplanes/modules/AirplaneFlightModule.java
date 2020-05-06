@@ -6,51 +6,43 @@ import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 
 public class AirplaneFlightModule {
   private final Callsign callsign;
-  private final int delayInitialMinutes;
-  private final EDayTimeStamp delayExpectedTime;
+  private final int entryDelay;
+  private final EDayTimeStamp expectedExitTime;
+  private EDayTimeStamp exitTime = null;
   private boolean departure;
-  private Integer finalDelayMinutes = null;
 
-  public AirplaneFlightModule(Callsign callsign, int delayInitialMinutes, EDayTimeStamp delayExpectedTime, boolean departure) {
+  public AirplaneFlightModule(Callsign callsign, int entryDelay, EDayTimeStamp expectedExitTime, boolean departure) {
     this.callsign = callsign;
-    this.delayInitialMinutes = delayInitialMinutes;
-    this.delayExpectedTime = delayExpectedTime;
+    this.entryDelay = entryDelay;
+    this.expectedExitTime = expectedExitTime;
     this.departure = departure;
-  }
-
-  public Callsign getCallsign() {
-    return callsign;
-  }
-
-  public int getDelayInitialMinutes() {
-    return delayInitialMinutes;
-  }
-
-  public EDayTimeStamp getDelayExpectedTime() {
-    return delayExpectedTime;
-  }
-
-  public boolean isDeparture() {
-    return departure;
-  }
-
-  public boolean isArrival() {
-    return !isDeparture();
-  }
-
-  public void raiseEmergency() {
-    this.departure = false;
-  }
-
-  public Integer getFinalDelayMinutes() {
-    return finalDelayMinutes;
   }
 
   public void divert() {
     this.departure = true;
   }
 
-  public int getDelayDifference() {
-    return finalDelayMinutes;
+  public Callsign getCallsign() {
+    return callsign;
+  }
+
+  public int getEntryDelay() {
+    return entryDelay;
+  }
+
+  public EDayTimeStamp getExpectedExitTime() {
+    return expectedExitTime;
+  }
+
+  public boolean isArrival() {
+    return !isDeparture();
+  }
+
+  public boolean isDeparture() {
+    return departure;
+  }
+
+  public void raiseEmergency() {
+    this.departure = false;
   }
 }

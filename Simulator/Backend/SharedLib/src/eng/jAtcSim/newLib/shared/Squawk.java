@@ -1,18 +1,13 @@
 package eng.jAtcSim.newLib.shared;
 
+import eng.eSystem.collections.EList;
+
 import java.util.Arrays;
 
 /**
- *
  * @author Marek
  */
 public class Squawk {
-
-  private final char[] code;
-
-  private Squawk() {
-    this(new char[]{'7', '7','7','7'});
-  }
 
   public static Squawk create(String code) {
     char[] c = code.toCharArray();
@@ -22,6 +17,20 @@ public class Squawk {
 
   public static Squawk create(char[] code) {
     Squawk ret = new Squawk(code);
+    return ret;
+  }
+
+  public static Squawk generate() {
+    int len = 4;
+    char[] tmp = new char[len];
+
+    // 1st cannot be 7
+    tmp[0] = EList.of('0', '1', '2', '3', '4', '5', '6').getRandom();
+    for (int i = 1; i < len; i++) {
+      tmp[i] = EList.of('0', '1', '2', '3', '4', '5', '6', '7').getRandom();
+    }
+
+    Squawk ret = Squawk.create(tmp);
     return ret;
   }
 
@@ -40,34 +49,15 @@ public class Squawk {
     }
     return ret;
   }
+  private final char[] code;
+
+  private Squawk() {
+    this(new char[]{'7', '7', '7', '7'});
+  }
 
   private Squawk(char[] code) {
     this.code = code;
     checkSanity();
-  }
-
-  private void checkSanity() {
-    if (code.length != 4) {
-      throw new IllegalArgumentException("Sqwk length must be 4");
-    }
-    for (int i = 0; i < code.length; i++) {
-      char c = code[i];
-      if (c < '0' || c > '7') {
-        throw new IllegalArgumentException("Sqwk length must character 0-7.");
-      }
-    }
-  }
-
-  @Override
-  public String toString() {
-    return new String(code);
-  }
-
-  @Override
-  public int hashCode() {
-    int hash = 7;
-    hash = 79 * hash + Arrays.hashCode(this.code);
-    return hash;
   }
 
   @Override
@@ -83,6 +73,30 @@ public class Squawk {
       return false;
     }
     return true;
+  }
+
+  @Override
+  public int hashCode() {
+    int hash = 7;
+    hash = 79 * hash + Arrays.hashCode(this.code);
+    return hash;
+  }
+
+  @Override
+  public String toString() {
+    return new String(code);
+  }
+
+  private void checkSanity() {
+    if (code.length != 4) {
+      throw new IllegalArgumentException("Sqwk length must be 4");
+    }
+    for (int i = 0; i < code.length; i++) {
+      char c = code[i];
+      if (c < '0' || c > '7') {
+        throw new IllegalArgumentException("Sqwk length must character 0-7.");
+      }
+    }
   }
 
 }

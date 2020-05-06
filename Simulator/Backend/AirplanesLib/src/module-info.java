@@ -1,5 +1,6 @@
 module JAtcSim.Modules.Backend.AirplanesLib {
   exports eng.jAtcSim.newLib.airplanes;
+  exports eng.jAtcSim.newLib.airplanes.templates;
   requires JAtcSim.Modules.Backend.AirplaneTypeLib;
   requires JAtcSim.Modules.Backend.SharedLib;
   requires JAtcSim.Modules.Backend.AreaLib;

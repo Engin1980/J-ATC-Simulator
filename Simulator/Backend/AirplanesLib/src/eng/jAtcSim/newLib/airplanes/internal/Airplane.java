@@ -13,10 +13,12 @@ import eng.jAtcSim.newLib.airplanes.modules.sha.ShaModule;
 import eng.jAtcSim.newLib.airplanes.modules.sha.navigators.HeadingNavigator;
 import eng.jAtcSim.newLib.airplanes.modules.sha.navigators.Navigator;
 import eng.jAtcSim.newLib.airplanes.modules.sha.navigators.ToCoordinateNavigator;
-import eng.jAtcSim.newLib.airplanes.modules.speeches.SpeechesModule;
+import eng.jAtcSim.newLib.airplanes.modules.speeches.RoutingModule;
 import eng.jAtcSim.newLib.airplanes.other.CockpitVoiceRecorder;
 import eng.jAtcSim.newLib.airplanes.other.FlightDataRecorder;
 import eng.jAtcSim.newLib.airplanes.pilots.*;
+import eng.jAtcSim.newLib.airplanes.templates.ArrivalAirplaneTemplate;
+import eng.jAtcSim.newLib.airplanes.templates.DepartureAirplaneTemplate;
 import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
 import eng.jAtcSim.newLib.area.AreaAcc;
 import eng.jAtcSim.newLib.area.Navaid;
@@ -111,14 +113,14 @@ public class Airplane {
 
     @Override
     public Navaid getEntryExitPoint() {
-      return Airplane.this.speechesModule.getEntryExitPoint();
+      return Airplane.this.routingModule.getEntryExitPoint();
     }
 
     @Override
     public boolean hasLateralDirectionAfterCoordinate() {
       Coordinate coordinate = tryGetTargetCoordinate();
       assert coordinate != null;
-      return Airplane.this.speechesModule.hasLateralDirectionAfterCoordinate(coordinate);
+      return Airplane.this.routingModule.hasLateralDirectionAfterCoordinate(coordinate);
     }
 
     @Override
@@ -128,7 +130,7 @@ public class Airplane {
 
     @Override
     public boolean isGoingToFlightOverNavaid(Navaid n) {
-      return Airplane.this.speechesModule.isGoingToFlightOverNavaid(n);
+      return Airplane.this.routingModule.isGoingToFlightOverNavaid(n);
     }
 
     @Override
@@ -226,7 +228,7 @@ public class Airplane {
 
     @Override
     public void applyShortcut(Navaid navaid) {
-      Airplane.this.speechesModule.applyShortcut(navaid);
+      Airplane.this.routingModule.applyShortcut(navaid);
     }
 
     @Override
@@ -251,7 +253,7 @@ public class Airplane {
       DARoute route = DARoute.createNewVectoringByFix(divertNavaid);
 
       Airplane.this.flightModule.divert();
-      setRouting(route, Airplane.this.speechesModule.getRunwayThreshold());
+      setRouting(route, Airplane.this.routingModule.getRunwayThreshold());
       setPilotAndState(new DeparturePilot(Airplane.this), AirplaneState.departingLow);
 
       if (!isInvokedByAtc)
@@ -315,6 +317,12 @@ public class Airplane {
     }
 
     @Override
+    public void raiseEmergency() {
+      //TODO Implement this: how to raise an emergency
+      throw new ToDoException("how to raise an emergency");
+    }
+
+    @Override
     public void reportDivertTimeLeft() {
       EAssert.isTrue(Airplane.this.flightModule.isArrival());
       EDayTimeStamp divertTime = Airplane.this.divertModule.getDivertTime();
@@ -343,20 +351,20 @@ public class Airplane {
 
     @Override
     public void setRouting(IafRoute iafRoute, ActiveRunwayThreshold activeRunwayThreshold) {
-      Airplane.this.speechesModule.setRunwayThreshold(activeRunwayThreshold);
-      Airplane.this.speechesModule.setRouting(iafRoute.getRouteCommands());
+      Airplane.this.routingModule.setRunwayThreshold(activeRunwayThreshold);
+      Airplane.this.routingModule.setRouting(iafRoute.getRouteCommands());
     }
 
     @Override
     public void setRouting(IReadOnlyList<ICommand> routeCommands) {
-      Airplane.this.speechesModule.setRouting(routeCommands);
+      Airplane.this.routingModule.setRouting(routeCommands);
     }
 
     @Override
     public void setRouting(DARoute daRoute, ActiveRunwayThreshold activeRunwayThreshold) {
-      Airplane.this.speechesModule.setRunwayThreshold(activeRunwayThreshold);
-      Airplane.this.speechesModule.setEntryExitPoint(daRoute.getMainNavaid());
-      Airplane.this.speechesModule.setRouting(daRoute.getRouteCommands());
+      Airplane.this.routingModule.setRunwayThreshold(activeRunwayThreshold);
+      Airplane.this.routingModule.setEntryExitPoint(daRoute.getMainNavaid());
+      Airplane.this.routingModule.setRouting(daRoute.getRouteCommands());
     }
 
     @Override
@@ -439,27 +447,20 @@ public class Airplane {
 
   private static final double secondFraction = 1 / 60d / 60d;
 
-  public static Airplane createArrival(
-      Callsign callsign, Coordinate coordinate, Squawk sqwk, AirplaneType airplaneType,
-      int heading, int altitude, int speed,
-      Navaid entryPoint, int delayInitialMinutes, EDayTimeStamp delayExpectedTime
-  ) {
+  public static Airplane createArrival(ArrivalAirplaneTemplate template, Squawk sqwk  ) {
     Airplane ret = new Airplane(
-        callsign, coordinate, sqwk, airplaneType,
-        heading, altitude, speed, false,
-        entryPoint, delayInitialMinutes, delayExpectedTime
+        template.getCallsign(), template.getCoordinate(), sqwk, template.getAirplaneType(),
+        template.getHeading(), template.getAltitude(), template.getSpeed(), false,
+        template.getEntryPoint().getNavaid(), template.getExpectedExitTime(), template.getEntryDelay()
     );
     return ret;
   }
 
-  public static Airplane createDeparture(
-      Callsign callsign, Squawk sqwk, AirplaneType airplaneType,
-      ActiveRunwayThreshold activeRunwayThreshold,
-      Navaid exitPoint, int delayInitialMinutes, EDayTimeStamp delayExpectedTime) {
+  public static Airplane createDeparture(DepartureAirplaneTemplate template, Squawk sqwk) {
     Airplane ret = new Airplane(
-        callsign, activeRunwayThreshold.getCoordinate(), sqwk, airplaneType,
-        activeRunwayThreshold.getCourseInt(), activeRunwayThreshold.getParent().getParent().getAltitude(),
-        0, true, exitPoint, delayInitialMinutes, delayExpectedTime
+        template.getCallsign(), AreaAcc.getAirport().getLocation(), sqwk, template.getAirplaneType(),
+        0, AreaAcc.getAirport().getAltitude(), 0, true,
+        template.getExitPoint().getNavaid(), template.getExpectedExitTime(), template.getEntryDelay()
     );
     return ret;
   }
@@ -469,14 +470,14 @@ public class Airplane {
   private final AirplaneFlightModule flightModule;
   private final ShaModule sha;
   private final EmergencyModule emergencyModule;
-  private final MrvaAirproxModule mrvaAirproxModule;
+//  private final MrvaAirproxModule mrvaAirproxModule;
   private final AtcModule atcModule;
   private final DivertModule divertModule;
   private final Mood mood;
   private final FlightDataRecorder fdr;
   private final CockpitVoiceRecorder cvr;
   private final AirplaneType airplaneType;
-  private final SpeechesModule speechesModule;
+  private final RoutingModule routingModule;
   private final IAirplane rdr = new AirplaneImpl();
   private final IAirplaneWriter wrt = new AirplaneWriterImpl();
   private Coordinate coordinate;
@@ -485,18 +486,18 @@ public class Airplane {
 
   private Airplane(Callsign callsign, Coordinate coordinate, Squawk sqwk, AirplaneType airplaneType,
                    int heading, int altitude, int speed, boolean isDeparture,
-                   Navaid entryExitPoint, int delayInitialMinutes, EDayTimeStamp delayExpectedTime) {
+                   Navaid entryExitPoint, EDayTimeStamp expectedExitTime, int entryDelay) {
 
 
     this.sqwk = sqwk;
     this.flightModule = new AirplaneFlightModule(
-        callsign, delayInitialMinutes, delayExpectedTime, isDeparture);
+        callsign, entryDelay, expectedExitTime, isDeparture);
 
     this.sha = new ShaModule(this, heading, altitude, speed, airplaneType);
     this.emergencyModule = new EmergencyModule();
-    this.mrvaAirproxModule = new MrvaAirproxModule();
+//    this.mrvaAirproxModule = new MrvaAirproxModule();
     this.atcModule = new AtcModule(this);
-    this.speechesModule = new SpeechesModule(this);
+    this.routingModule = new RoutingModule(this, entryExitPoint);
     if (isDeparture)
       this.divertModule = null;
     else
@@ -511,7 +512,7 @@ public class Airplane {
 
   public void elapseSecond() {
 
-    this.speechesModule.elapseSecond();
+    this.routingModule.elapseSecond();
     this.pilot.elapseSecond();
     this.atcModule.elapseSecond();
     this.divertModule.elapseSecond();

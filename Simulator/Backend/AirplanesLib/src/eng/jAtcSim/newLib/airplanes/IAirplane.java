@@ -23,6 +23,8 @@ public interface IAirplane {
 
   AirplaneType getType();
 
+  boolean hasElapsedEmergencyTime();
+
   boolean isArrival();
 
   default boolean isDeparture() {

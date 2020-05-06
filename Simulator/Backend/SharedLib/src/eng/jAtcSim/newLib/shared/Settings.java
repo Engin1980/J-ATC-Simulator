@@ -5,9 +5,19 @@ public class Settings {
 
   private boolean getWeatherInfoStringAsMetar;
   private boolean useExtendedCallsigns;
+  private double delayStepProbability;
+  private int delayStep;
 
   public Settings(boolean getWeatherInfoStringAsMetar) {
     this.getWeatherInfoStringAsMetar = getWeatherInfoStringAsMetar;
+  }
+
+  public int getDelayStep() {
+    return delayStep;
+  }
+
+  public double getDelayStepProbability() {
+    return delayStepProbability;
   }
 
   public String getLogPath() {

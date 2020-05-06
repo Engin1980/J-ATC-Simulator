@@ -2,16 +2,17 @@ package eng.jAtcSim.newLib.airplanes;
 
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
-import eng.eSystem.collections.IReadOnlyList;
+import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.geo.Coordinates;
-import eng.jAtcSim.newLib.Acc;
+import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplanes.internal.Airplane;
-import eng.jAtcSim.newLib.airplanes.internal.InternalAcc;
-import eng.jAtcSim.newLib.area.AreaAcc;
+import eng.jAtcSim.newLib.airplanes.templates.AirplaneTemplate;
+import eng.jAtcSim.newLib.airplanes.templates.ArrivalAirplaneTemplate;
+import eng.jAtcSim.newLib.airplanes.templates.DepartureAirplaneTemplate;
 import eng.jAtcSim.newLib.shared.Callsign;
+import eng.jAtcSim.newLib.shared.Squawk;
+import eng.jAtcSim.newLib.shared.enums.AtcType;
 import eng.jAtcSim.newLib.shared.exceptions.ToDoException;
-import eng.jAtcSim.newLib.stats.StatsAcc;
-import eng.jAtcSim.newLib.traffic.movementTemplating.MovementTemplate;
 
 public class AirplanesController {
   private final IList<AirplaneTemplate> preparedPlanes = new EList<>();
@@ -55,7 +56,7 @@ public class AirplanesController {
     int index = 0;
     while (index < preparedPlanes.count()) {
       AirplaneTemplate at = preparedPlanes.get(index);
-      if (isInSeparationConflictWithTraffic(at))
+      if (at instanceof ArrivalAirplaneTemplate && isInSeparationConflictWithTraffic((ArrivalAirplaneTemplate) at))
         index++;
       else {
         convertAndRegisterPlane(at);
@@ -64,27 +65,53 @@ public class AirplanesController {
     }
   }
 
-  private boolean isInSeparationConflictWithTraffic(AirplaneTemplate checkedPlane) {
+  private void convertAndRegisterPlane(AirplaneTemplate at) {
+    EAssert.Argument.isNotNull(at, "at");
+    Squawk sqwk = generateAvailableSquawk();
+    Airplane airplane;
+    if (at instanceof  DepartureAirplaneTemplate){
+      airplane = Airplane.createDeparture((DepartureAirplaneTemplate) at, sqwk);
+    } else if (at instanceof ArrivalAirplaneTemplate) {
+      airplane = Airplane.createArrival((ArrivalAirplaneTemplate) at, sqwk);
+    } else
+      throw new EApplicationException("Unknown airplane template type " + at.getClass().getName());
+
+    planes.add(airplane);
+  }
+
+  private Squawk generateAvailableSquawk() {
+    IList<Squawk> squawks = this.planes.select(q->q.getReader().getSqwk());
+    Squawk ret;
+    do{
+      ret = Squawk.generate();
+      if (squawks.contains(ret)) ret = null;
+    } while (ret == null);
+    return ret;
+  }
+
+  private boolean isInSeparationConflictWithTraffic(ArrivalAirplaneTemplate template) {
     Integer checkedAtEntryPointSeconds = null;
 
     boolean ret = false;
+
     for (Airplane plane : this.planes) {
-      if (plane.getReader().isDeparture())
+      IAirplane rdr = plane.getReader();
+      if (rdr.isDeparture())
         continue;
-      tady pokračovat ale nevím jak.
-      if (prm.getResponsibleAtc(plane) != ctrAtc)
+      if (rdr.getAtc().getTunedAtc().getType() != AtcType.ctr)
         continue;
-      if (checkedPlane.entryExitPoint.equals(plane.getRoutingModule().getEntryExitPoint()) == false)
+
+      if (template.getEntryPoint().getNavaid().equals(rdr.getRouting().getEntryExitPoint()) == false)
         continue;
 
       double dist = Coordinates.getDistanceInNM(
-          plane.getRoutingModule().getEntryExitPoint().getCoordinate(), plane.getCoordinate());
-      int atEntryPointSeconds = (int) (dist / plane.getSha().getSpeed() * 3600);
+          rdr.getRouting().getEntryExitPoint().getCoordinate(), rdr.getCoordinate());
+      int atEntryPointSeconds = (int) (dist / rdr.getSha().getSpeed() * 3600);
 
       if (checkedAtEntryPointSeconds == null) {
         dist = Coordinates.getDistanceInNM(
-            checkedPlane.getRoutingModule().getEntryExitPoint().getCoordinate(), checkedPlane.getCoordinate());
-        checkedAtEntryPointSeconds = (int) (dist / checkedPlane.getSha().getSpeed() * 3600);
+            template.getEntryPoint().getNavaid().getCoordinate(), template.getCoordinate());
+        checkedAtEntryPointSeconds = (int) (dist / template.getSpeed() * 3600);
       }
 
       if (Math.abs(atEntryPointSeconds - checkedAtEntryPointSeconds) < 120) {

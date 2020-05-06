@@ -31,7 +31,7 @@ import eng.jAtcSim.newLib.speeches.airplane2atc.responses.IllegalThenCommandReje
 import eng.jAtcSim.newLib.speeches.atc2airplane.*;
 import eng.jAtcSim.newLib.speeches.atc2airplane.afterCommands.*;
 
-public class SpeechesModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
+public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
 
   private enum CommandSource {
     shortcutSkipped,
@@ -46,8 +46,9 @@ public class SpeechesModule extends eng.jAtcSim.newLib.airplanes.modules.Module 
   private Navaid entryExitPoint;
   private ActiveRunwayThreshold runwayThreshold;
 
-  public SpeechesModule(Airplane plane) {
+  public RoutingModule(Airplane plane, Navaid entryExitPoint) {
     super(plane);
+    this.entryExitPoint = entryExitPoint;
   }
 
   public void applyShortcut(Navaid navaid) {
@@ -375,7 +376,7 @@ public class SpeechesModule extends eng.jAtcSim.newLib.airplanes.modules.Module 
     } else {
       affectAfterCommands(cmd, cs);
       // new commands from atc when needs to be confirmed, are confirmed
-      if (cs == SpeechesModule.CommandSource.atc && cres.confirmation != null)
+      if (cs == RoutingModule.CommandSource.atc && cres.confirmation != null)
         say(cres.confirmation);
       // command is applied
       ApplicationResult ares = ApplicationManager.apply(super.plane, cmd);

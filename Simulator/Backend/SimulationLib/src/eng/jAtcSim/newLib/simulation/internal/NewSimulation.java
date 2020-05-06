@@ -1,5 +1,6 @@
 package eng.jAtcSim.newLib.simulation.internal;
 
+import eng.eSystem.ERandom;
 import eng.eSystem.TryResult;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
@@ -12,7 +13,9 @@ import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplaneType.AirplaneType;
 import eng.jAtcSim.newLib.airplaneType.AirplaneTypeAcc;
 import eng.jAtcSim.newLib.airplanes.*;
-import eng.jAtcSim.newLib.airplanes.internal.Airplane;
+import eng.jAtcSim.newLib.airplanes.templates.AirplaneTemplate;
+import eng.jAtcSim.newLib.airplanes.templates.ArrivalAirplaneTemplate;
+import eng.jAtcSim.newLib.airplanes.templates.DepartureAirplaneTemplate;
 import eng.jAtcSim.newLib.area.AreaAcc;
 import eng.jAtcSim.newLib.area.Border;
 import eng.jAtcSim.newLib.area.EntryExitPoint;
@@ -43,6 +46,8 @@ import static eng.eSystem.utilites.FunctionShortcuts.sf;
 public class NewSimulation {
 
   class Airplanes {
+    private static final int MAX_ALLOWED_DELAY = 120;
+
     private FlightMovementTemplate convertGenericMovementTemplateToFlightMovementTemplate(MovementTemplate m) {
       FlightMovementTemplate ret;
       EAssert.Argument.isTrue(m instanceof GenericCommercialMovementTemplate || m instanceof GenericGeneralAviationMovementTemplate);
@@ -155,7 +160,7 @@ public class NewSimulation {
     }
 
     private TryResult<AirplaneTemplate> generateNewArrivalPlaneFromMovement(FlightMovementTemplate m) {
-      AirplaneTemplate ret;
+      ArrivalAirplaneTemplate ret;
 
       Callsign cs = m.getCallsign();
 
@@ -173,18 +178,38 @@ public class NewSimulation {
       int alt = generateArrivingPlaneAltitude(entryPoint, coord, pt);
       int spd = pt.vCruise;
 
-      EDayTimeStamp appearanceTime =
+      EDayTimeStamp entryTime =
           m.getAppearanceTime().isAfterOrEq(SharedAcc.getNow().getTime()) ?
               new EDayTimeStamp(SharedAcc.getNow().getDays(), m.getAppearanceTime()) :
               new EDayTimeStamp(SharedAcc.getNow().getDays() + 1, m.getAppearanceTime());
-      ret = new AirplaneTemplate(
-          cs, coord, pt, heading, alt, spd, m.isDeparture(), entryPoint, appearanceTime);
+
+      EDayTimeStamp expectedExitTime = entryTime.addMinutes(25);
+      int delay = generateDelay();
+
+      ret = new ArrivalAirplaneTemplate(
+          cs, pt ,entryPoint, entryTime, delay, expectedExitTime, coord, heading, alt, spd);
 
       return new TryResult<>(ret);
     }
 
+    private int generateDelay() {
+      double delayStepProbability = SharedAcc.getSettings().getDelayStepProbability();
+      int delayStep = SharedAcc.getSettings().getDelayStep();
+      ERandom rnd = SharedAcc.getRnd();
+
+      int ret = 0;
+      while (rnd.nextDouble() <= delayStepProbability){
+        int tmp = rnd.nextInt(delayStep+1);
+        ret += tmp;
+
+        if (ret > MAX_ALLOWED_DELAY) break;
+      }
+
+      return ret;
+    }
+
     private TryResult<AirplaneTemplate> generateNewDepartureAirplaneFromMovement(FlightMovementTemplate m) {
-      AirplaneTemplate ret;
+      DepartureAirplaneTemplate ret;
 
       Callsign cs = m.getCallsign();
       AirplaneType pt = AirplaneTypeAcc.getAirplaneTypes().tryGetByName(m.getAirplaneTypeName());
@@ -196,17 +221,17 @@ public class NewSimulation {
         return new TryResult<>(new EApplicationException("Unable to find routing.")); // no route means disallowed IFR
       }
 
-      Coordinate coord = AreaAcc.getAirport().getLocation();
-      int heading = 0;
-      int alt = AreaAcc.getAirport().getAltitude();
-      int spd = 0;
-
-      EDayTimeStamp appearanceTime =
+      EDayTimeStamp entryTime =
           m.getAppearanceTime().isAfterOrEq(SharedAcc.getNow().getTime()) ?
               new EDayTimeStamp(SharedAcc.getNow().getDays(), m.getAppearanceTime()) :
               new EDayTimeStamp(SharedAcc.getNow().getDays() + 1, m.getAppearanceTime());
-      ret = new AirplaneTemplate(
-          cs, coord, pt, heading, alt, spd, m.isDeparture(), entryPoint, appearanceTime);
+
+      int entryDelay = generateDelay();
+
+      EDayTimeStamp expectedExitTime = entryTime.addMinutes(3); // 3 minutes from hp to take-off
+
+      ret = new DepartureAirplaneTemplate(
+          cs, pt, entryPoint, entryTime, entryDelay, expectedExitTime);
 
       return new TryResult<>(ret);
     }
