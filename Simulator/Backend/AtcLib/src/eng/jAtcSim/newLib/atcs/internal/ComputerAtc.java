@@ -48,7 +48,8 @@ public abstract class ComputerAtc extends Atc {
 
   public void elapseSecond() {
 
-    IList<Message> msgs = MessagingAcc.getMessenger().getMessagesByListener(this, true);
+    IList<Message> msgs = MessagingAcc.getMessenger().getMessagesByListener(
+        Participant.createAtc(this.getAtcId()), true);
     speechDelayer.add(msgs);
 
     msgs = speechDelayer.getAndElapse();
