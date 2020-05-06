@@ -1,6 +1,8 @@
 # J-ATC-Simulator
 Approach Air Traffic Controller simulator
 
+**Note: Project is now under deep revision!**
+
 This simulator is trying to model the approach traffic over a selected airport, with user controlling departing and arriving airplanes. 
 
 * For **source codes** you are go to [Project code page](https://github.com/Engin1980/J-ATC-Simulator).
