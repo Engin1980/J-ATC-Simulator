@@ -79,7 +79,7 @@ public class SystemMessagesProcessor {
           m.getSource(),
           new StringMessageContent("Unable to remove airplane from game. Squawk {%s} not found.", sqwk));
     } else {
-      AirplaneAcc.getAirplanesController().unregisterPlane(plane);
+      AirplaneAcc.getAirplanesController().unregisterPlane(plane.getCallsign());
       sendMessage(
           m.getSource(),
           new StringMessageContent("Airplane %s {%s} removed from game.",

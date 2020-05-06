@@ -22,5 +22,6 @@
     <orderEntry type="module" module-name="StatsLib" />
     <orderEntry type="module" module-name="MessagingLib" />
     <orderEntry type="module" module-name="TextProcessingLib" />
+    <orderEntry type="module" module-name="MoodLib" />
   </component>
 </module>

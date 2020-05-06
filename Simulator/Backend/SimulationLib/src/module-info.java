@@ -10,4 +10,5 @@ module JAtcSim.Modules.Backend.SimulationLib {
   requires JAtcSim.Modules.Backend.StatsLib;
   requires JAtcSim.Modules.Backend.MessagingLib;
   requires JAtcSim.modules.backend.TextProcessingLib;
+  requires JAtcSim.Modules.Backend.MoodLib;
 }

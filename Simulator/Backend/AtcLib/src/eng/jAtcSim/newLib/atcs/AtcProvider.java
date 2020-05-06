@@ -26,6 +26,10 @@ public class AtcProvider {
     AtcAcc.setAtcListProducer(() -> atcIds);
   }
 
+  public void elapseSecond() {
+    todo bubla pokračovat tady
+  }
+
   public void init() {
     atcs.forEach(q -> q.init());
   }

@@ -28,6 +28,16 @@ public class AirplanesController {
     startNewPreparedPlanes();
   }
 
+  public void elapseSecond() {
+    for (Airplane plane : planes) {
+      try {
+        plane.elapseSecond();
+      } catch (Exception ex) {
+        throw new EApplicationException("Error processing elapseSecond() on plane " + plane.getReader().getCallsign() + ".", ex);
+      }
+    }
+  }
+
   public void init() {
     AirplaneAcc.setAirplaneListProducer(() -> this.publicPlanes);
     AirplaneAcc.setAirplanesControllerProducer(() -> this);
@@ -45,31 +55,18 @@ public class AirplanesController {
 
   public void unregisterPlane(Callsign callsign) {
 
-    planes.remove(q->q.getReader().getCallsign().equals(callsign));
-    publicPlanes.remove(q->q.getCallsign().equals(callsign));
+    planes.remove(q -> q.getReader().getCallsign().equals(callsign));
+    publicPlanes.remove(q -> q.getCallsign().equals(callsign));
 
     //TODO Implement this:
     throw new ToDoException();
-  }
-
-  private void startNewPreparedPlanes() {
-    int index = 0;
-    while (index < preparedPlanes.count()) {
-      AirplaneTemplate at = preparedPlanes.get(index);
-      if (at instanceof ArrivalAirplaneTemplate && isInSeparationConflictWithTraffic((ArrivalAirplaneTemplate) at))
-        index++;
-      else {
-        convertAndRegisterPlane(at);
-        preparedPlanes.removeAt(index);
-      }
-    }
   }
 
   private void convertAndRegisterPlane(AirplaneTemplate at) {
     EAssert.Argument.isNotNull(at, "at");
     Squawk sqwk = generateAvailableSquawk();
     Airplane airplane;
-    if (at instanceof  DepartureAirplaneTemplate){
+    if (at instanceof DepartureAirplaneTemplate) {
       airplane = Airplane.createDeparture((DepartureAirplaneTemplate) at, sqwk);
     } else if (at instanceof ArrivalAirplaneTemplate) {
       airplane = Airplane.createArrival((ArrivalAirplaneTemplate) at, sqwk);
@@ -80,9 +77,9 @@ public class AirplanesController {
   }
 
   private Squawk generateAvailableSquawk() {
-    IList<Squawk> squawks = this.planes.select(q->q.getReader().getSqwk());
+    IList<Squawk> squawks = this.planes.select(q -> q.getReader().getSqwk());
     Squawk ret;
-    do{
+    do {
       ret = Squawk.generate();
       if (squawks.contains(ret)) ret = null;
     } while (ret == null);
@@ -120,5 +117,18 @@ public class AirplanesController {
       }
     }
     return ret;
+  }
+
+  private void startNewPreparedPlanes() {
+    int index = 0;
+    while (index < preparedPlanes.count()) {
+      AirplaneTemplate at = preparedPlanes.get(index);
+      if (at instanceof ArrivalAirplaneTemplate && isInSeparationConflictWithTraffic((ArrivalAirplaneTemplate) at))
+        index++;
+      else {
+        convertAndRegisterPlane(at);
+        preparedPlanes.removeAt(index);
+      }
+    }
   }
 }
