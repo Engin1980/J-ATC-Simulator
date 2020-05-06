@@ -1,8 +1,10 @@
 package eng.jAtcSim.newLib.atcs;
 
 import eng.eSystem.collections.EDistinctList;
+import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.utilites.Selector;
 import eng.jAtcSim.newLib.shared.AtcId;
+import eng.jAtcSim.newLib.shared.enums.AtcType;
 
 public class AtcList<T> extends EDistinctList<T> {
 

@@ -1,10 +1,11 @@
-package eng.jAtcSim.newLib.simulation.internal;
+package eng.jAtcSim.newLib.gameSim.simulation.controllers;
 
 import eng.eSystem.EStringBuilder;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.ISet;
 import eng.jAtcSim.newLib.airplanes.AirplaneAcc;
 import eng.jAtcSim.newLib.airplanes.IAirplane;
+import eng.jAtcSim.newLib.gameSim.simulation.InternalAcc;
 import eng.jAtcSim.newLib.messaging.*;
 import eng.jAtcSim.newLib.shared.Squawk;
 import eng.jAtcSim.newLib.textProcessing.base.Parser;
@@ -14,7 +15,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class SystemMessagesProcessor {
+public class SystemMessagesController {
   private static final String SYSMES_COMMANDS = "?";
   private static final Pattern SYSMES_CHANGE_SPEED = Pattern.compile("TICK (\\d+)");
   private static final Pattern SYSMES_METAR = Pattern.compile("METAR");

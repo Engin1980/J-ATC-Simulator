@@ -17,6 +17,7 @@ public class WeatherManager {
   }
 
   public void elapseSecond() {
+    this.newWeatherFlag = false;
     Weather newWeather = provider.tryGetNewWeather();
     if (newWeather != null) {
       synchronized (provider) {
@@ -37,10 +38,8 @@ public class WeatherManager {
     assert this.currentWeather != null;
   }
 
-  public boolean isNewWeatherFlagAndResetIt() {
-    boolean ret = newWeatherFlag;
-    if (newWeatherFlag) newWeatherFlag = false;
-    return ret;
+  public boolean isNewWeather() {
+    return newWeatherFlag;
   }
 
   public void setWeather(String metarString) {

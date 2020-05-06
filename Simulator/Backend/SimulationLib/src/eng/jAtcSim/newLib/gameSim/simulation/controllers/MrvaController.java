@@ -1,16 +1,12 @@
-package eng.jAtcSim.newLib.simulation.internal;
+package eng.jAtcSim.newLib.gameSim.simulation.controllers;
 
 import eng.eSystem.collections.*;
 import eng.eSystem.geo.Coordinates;
-import eng.jAtcSim.newLib.airplanes.AirplaneAcc;
 import eng.jAtcSim.newLib.airplanes.AirplaneState;
-import eng.jAtcSim.newLib.airplanes.AirproxType;
 import eng.jAtcSim.newLib.airplanes.IAirplane;
 import eng.jAtcSim.newLib.area.AreaAcc;
 import eng.jAtcSim.newLib.area.Border;
-import eng.jAtcSim.newLib.atcs.AtcAcc;
 import eng.jAtcSim.newLib.shared.Callsign;
-import eng.jAtcSim.newLib.shared.enums.AtcType;
 
 public class MrvaController {
   private final IReadOnlyList<Border> mrvas;

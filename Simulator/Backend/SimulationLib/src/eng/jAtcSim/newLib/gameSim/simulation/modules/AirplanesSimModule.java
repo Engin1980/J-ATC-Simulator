@@ -1,4 +1,4 @@
-package eng.jAtcSim.newLib.simulation.internal;
+package eng.jAtcSim.newLib.gameSim.simulation.modules;
 
 import eng.eSystem.ERandom;
 import eng.eSystem.TryResult;

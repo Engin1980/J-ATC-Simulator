@@ -1,4 +1,4 @@
-package eng.jAtcSim.newLib.simulation;
+package eng.jAtcSim.newLib.gameSim;
 
 import eng.eSystem.collections.IMap;
 import eng.eSystem.eXml.XDocument;

@@ -5,10 +5,12 @@ import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.jAtcSim.newLib.area.Airport;
 import eng.jAtcSim.newLib.atcs.internal.Atc;
 import eng.jAtcSim.newLib.atcs.internal.CenterAtc;
+import eng.jAtcSim.newLib.atcs.internal.ComputerAtc;
 import eng.jAtcSim.newLib.atcs.internal.UserAtc;
 import eng.jAtcSim.newLib.atcs.internal.tower.TowerAtc;
 import eng.jAtcSim.newLib.atcs.planeResponsibility.PlaneResponsibilityManager;
 import eng.jAtcSim.newLib.shared.AtcId;
+import eng.jAtcSim.newLib.shared.enums.AtcType;
 
 public class AtcProvider {
   private final AtcList<Atc> atcs = new AtcList<>(
@@ -26,8 +28,17 @@ public class AtcProvider {
     AtcAcc.setAtcListProducer(() -> atcIds);
   }
 
+  public void adviceWeatherUpdated() {
+    this.atcs
+        .whereItemClassIs(TowerAtc.class, false)
+        .forEach(q->q.setUpdatedWeatherFlag());
+  }
+
   public void elapseSecond() {
-    todo bubla pokračovat tady
+    for (ComputerAtc atc : atcs.whereItemClassIs(
+        ComputerAtc.class, true)) {
+      atc.elapseSecond();
+    }
   }
 
   public void init() {

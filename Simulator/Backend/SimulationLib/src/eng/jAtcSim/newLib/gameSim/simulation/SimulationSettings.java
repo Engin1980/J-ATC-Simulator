@@ -1,4 +1,4 @@
-package eng.jAtcSim.newLib.simulation.internal;
+package eng.jAtcSim.newLib.gameSim.simulation;
 
 import eng.jAtcSim.newLib.textProcessing.base.Formatter;
 import eng.jAtcSim.newLib.textProcessing.base.Parser;

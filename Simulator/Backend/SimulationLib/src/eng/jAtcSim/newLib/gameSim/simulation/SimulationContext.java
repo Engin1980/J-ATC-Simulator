@@ -1,4 +1,4 @@
-package eng.jAtcSim.newLib.simulation.internal;
+package eng.jAtcSim.newLib.gameSim.simulation;
 
 import eng.jAtcSim.newLib.airplaneType.AirplaneTypes;
 import eng.jAtcSim.newLib.area.Airport;
@@ -6,7 +6,6 @@ import eng.jAtcSim.newLib.area.Area;
 import eng.jAtcSim.newLib.fleet.airliners.AirlinesFleets;
 import eng.jAtcSim.newLib.fleet.generalAviation.GeneralAviationFleets;
 import eng.jAtcSim.newLib.traffic.ITrafficModel;
-import eng.jAtcSim.newLib.traffic.TrafficProvider;
 import eng.jAtcSim.newLib.weather.WeatherProvider;
 
 public class SimulationContext {

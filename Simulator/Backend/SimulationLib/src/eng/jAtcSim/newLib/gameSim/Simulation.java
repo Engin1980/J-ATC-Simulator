@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package eng.jAtcSim.newLib.simulation;
+package eng.jAtcSim.newLib.gameSim;
 
 import eng.eSystem.ERandom;
 import eng.eSystem.EStringBuilder;
@@ -12,6 +12,7 @@ import eng.eSystem.eXml.XElement;
 import eng.eSystem.events.EventSimple;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.geo.Coordinates;
+import eng.jAtcSim.newLib.gameSim.simulation.controllers.TimerController;
 
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -61,7 +62,7 @@ public class Simulation {
    * Internal timer used to make simulation ticks.
    */
   @XmlIgnore
-  private final TimerProvider tmr = new TimerProvider(o -> Simulation.this.elapseSecond());
+  private final TimerController tmr = new TimerController(o -> Simulation.this.elapseSecond());
 
   public Simulation(
       Area area, AirplaneTypes airplaneTypes, Fleets fleets, Traffic traffic, Airport activeAirport,

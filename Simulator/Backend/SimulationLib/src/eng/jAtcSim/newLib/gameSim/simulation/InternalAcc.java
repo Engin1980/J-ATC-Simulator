@@ -1,18 +1,18 @@
-package eng.jAtcSim.newLib.simulation.internal;
+package eng.jAtcSim.newLib.gameSim.simulation;
 
 import eng.eSystem.Producer;
-import eng.jAtcSim.newLib.simulation.TimerProvider;
+import eng.jAtcSim.newLib.gameSim.simulation.controllers.TimerController;
 import eng.jAtcSim.newLib.textProcessing.base.Parser;
 
 public class InternalAcc {
-  private static Producer<TimerProvider> timerProviderProducer;
+  private static Producer<TimerController> timerProviderProducer;
   private static Producer<Parser> parserProducer;
 
   public static Parser getParser() {
     return parserProducer.produce();
   }
 
-  public static TimerProvider getTimerProvider() {
+  public static TimerController getTimerProvider() {
     return timerProviderProducer.produce();
   }
 
@@ -20,7 +20,7 @@ public class InternalAcc {
     InternalAcc.parserProducer = parserProducer;
   }
 
-  public static void setTimerProviderProducer(Producer<TimerProvider> timerProviderProducer) {
+  public static void setTimerProviderProducer(Producer<TimerController> timerProviderProducer) {
     InternalAcc.timerProviderProducer = timerProviderProducer;
   }
 }

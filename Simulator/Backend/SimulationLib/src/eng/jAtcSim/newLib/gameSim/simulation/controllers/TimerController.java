@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package eng.jAtcSim.newLib.simulation;
+package eng.jAtcSim.newLib.gameSim.simulation.controllers;
 
 import eng.eSystem.events.EventSimple;
 import eng.eSystem.events.IEventListenerSimple;
@@ -12,13 +12,13 @@ import eng.eSystem.validation.EAssert;
 
 import java.util.TimerTask;
 
-public class TimerProvider {
+public class TimerController {
 
   private java.util.Timer tmr = null;
-  private final EventSimple<TimerProvider> tickEvent = new EventSimple<>(this);
+  private final EventSimple<TimerController> tickEvent = new EventSimple<>(this);
   private int tickInterval;
 
-  public TimerProvider(int tickInterval, IEventListenerSimple<TimerProvider> listener) {
+  public TimerController(int tickInterval, IEventListenerSimple<TimerController> listener) {
     setTickInterval(tickInterval);
     this.tickEvent.add(listener);
   }

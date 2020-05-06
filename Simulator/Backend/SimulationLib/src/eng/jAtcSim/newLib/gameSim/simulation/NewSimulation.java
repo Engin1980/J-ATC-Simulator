@@ -1,18 +1,31 @@
-package eng.jAtcSim.newLib.simulation.internal;
+package eng.jAtcSim.newLib.gameSim.simulation;
 
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplanes.AirplanesController;
 import eng.jAtcSim.newLib.area.Border;
+import eng.jAtcSim.newLib.atcs.AtcAcc;
 import eng.jAtcSim.newLib.atcs.AtcProvider;
+import eng.jAtcSim.newLib.gameSim.simulation.controllers.AirproxController;
+import eng.jAtcSim.newLib.gameSim.simulation.controllers.EmergencyAppearanceController;
+import eng.jAtcSim.newLib.gameSim.simulation.controllers.MrvaController;
+import eng.jAtcSim.newLib.gameSim.simulation.controllers.SystemMessagesController;
+import eng.jAtcSim.newLib.gameSim.simulation.modules.AirplanesSimModule;
+import eng.jAtcSim.newLib.gameSim.simulation.modules.ISimulationModuleParent;
+import eng.jAtcSim.newLib.messaging.Message;
+import eng.jAtcSim.newLib.messaging.MessagingAcc;
+import eng.jAtcSim.newLib.messaging.Participant;
+import eng.jAtcSim.newLib.messaging.StringMessageContent;
 import eng.jAtcSim.newLib.shared.SharedAcc;
+import eng.jAtcSim.newLib.shared.enums.AtcType;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 import eng.jAtcSim.newLib.shared.time.EDayTimeRun;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
-import eng.jAtcSim.newLib.simulation.TimerProvider;
+import eng.jAtcSim.newLib.gameSim.simulation.controllers.TimerController;
 import eng.jAtcSim.newLib.stats.StatsProvider;
 import eng.jAtcSim.newLib.textProcessing.base.Formatter;
 import eng.jAtcSim.newLib.textProcessing.base.Parser;
 import eng.jAtcSim.newLib.traffic.TrafficProvider;
+import eng.jAtcSim.newLib.weather.WeatherAcc;
 import eng.jAtcSim.newLib.weather.WeatherManager;
 
 public class NewSimulation {
@@ -63,8 +76,8 @@ public class NewSimulation {
   private final AirplanesController airplanesController = new AirplanesController();
   private final WeatherManager weatherManager;
   private final TrafficProvider trafficProvider;
-  private final TimerProvider timer;
-  private final SystemMessagesProcessor systemMessagesProcessor = new SystemMessagesProcessor();
+  private final TimerController timer;
+  private final SystemMessagesController systemMessagesProcessor = new SystemMessagesController();
   private final Parser parser;
   private final Formatter formatter;
   private final AirplanesSimModule airplanesSimModule = new AirplanesSimModule(this.new SimulationModuleParent());
@@ -94,7 +107,7 @@ public class NewSimulation {
     this.parser = settings.getParser();
     this.formatter = settings.getFormatter();
 
-    this.timer = new TimerProvider(settings.getSimulationSecondLengthInMs(), this::timerTicked);
+    this.timer = new TimerController(settings.getSimulationSecondLengthInMs(), this::timerTicked);
   }
 
   public void init() {
@@ -127,9 +140,38 @@ public class NewSimulation {
 
     // atc stuff
     atcProvider.elapseSecond();
+
+    // stats here
+
+    // weather
+    WeatherAcc.getWeatherManager().elapseSecond();
+    if (WeatherAcc.getWeatherManager().isNewWeather()) {
+      this.atcProvider.adviceWeatherUpdated();
+      sendTextMessageForUser("Weather updated: " + this.weatherManager.getWeather().toInfoString());
+    }
+
+    // finalize
+    long elapseEndMs = System.currentTimeMillis();
+    //stats.registerElapseSecondCalculationDuration((int) (elapseEndMs - elapseStartMs));
+
+    isElapseSecondCalculationRunning = false;
+
+    // raises event
+//    this.onSecondElapsed.raise();
+
+    if (DEBUG_STYLE_TIMER)
+      this.timer.start();
   }
 
-  private void timerTicked(TimerProvider sender) {
+  private void sendTextMessageForUser(String text) {
+    Message m = new Message(
+        Participant.createSystem(),
+        Participant.createAtc(AtcAcc.getAtcList().getFirst(q -> q.getType() == AtcType.app)),
+        new StringMessageContent(text));
+    MessagingAcc.getMessenger().send(m);
+  }
+
+  private void timerTicked(TimerController sender) {
     elapseSecond();
   }
 }

@@ -1,4 +1,6 @@
-package eng.jAtcSim.newLib.simulation.internal;
+package eng.jAtcSim.newLib.gameSim.simulation.modules;
+
+import eng.jAtcSim.newLib.gameSim.simulation.modules.ISimulationModuleParent;
 
 public abstract class SimModule {
   protected final ISimulationModuleParent parent;
