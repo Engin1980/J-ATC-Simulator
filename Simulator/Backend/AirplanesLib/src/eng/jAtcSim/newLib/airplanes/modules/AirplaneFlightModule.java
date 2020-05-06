@@ -1,6 +1,7 @@
 package eng.jAtcSim.newLib.airplanes.modules;
 
 
+import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 
@@ -28,6 +29,13 @@ public class AirplaneFlightModule {
 
   public int getEntryDelay() {
     return entryDelay;
+  }
+
+  public int getExitDelay() {
+    EAssert.isTrue(exitTime != null, "Exit time was not registered, so exit delay cannot be calculated for.");
+    int diff = exitTime.getValue() - expectedExitTime.getValue();
+    diff = diff / 60; // to minutes
+    return diff;
   }
 
   public EDayTimeStamp getExpectedExitTime() {

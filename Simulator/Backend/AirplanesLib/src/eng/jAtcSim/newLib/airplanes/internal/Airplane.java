@@ -95,6 +95,19 @@ public class Airplane {
     }
   }
 
+  public class AirplaneFlightImpl implements  IAirplaneFlight{
+
+    @Override
+    public int getEntryDelay() {
+      return Airplane.this.flightModule.getEntryDelay();
+    }
+
+    @Override
+    public int getExitDelay() {
+      return Airplane.this.flightModule.getExitDelay();
+    }
+  }
+
   public class AirplaneRoutingImpl implements IAirplaneRouting {
     @Override
     public DARoute getAssignedRoute() {
@@ -153,6 +166,7 @@ public class Airplane {
     private final IAirplaneAtc atc = Airplane.this.new AirplaneAtcImpl();
     private final IAirplaneSHA sha = Airplane.this.new AirplaneShaImpl();
     private final IAirplaneRouting routing = Airplane.this.new AirplaneRoutingImpl();
+    private final IAirplaneFlight flight = Airplane.this.new AirplaneFlightImpl();
 
     @Override
     public IAirplaneAtc getAtc() {
@@ -167,6 +181,11 @@ public class Airplane {
     @Override
     public Coordinate getCoordinate() {
       return Airplane.this.coordinate;
+    }
+
+    @Override
+    public IAirplaneFlight getFlight() {
+      return flight;
     }
 
     @Override
@@ -192,6 +211,11 @@ public class Airplane {
     @Override
     public AirplaneType getType() {
       return Airplane.this.airplaneType;
+    }
+
+    @Override
+    public boolean hasElapsedEmergencyTime() {
+      return false;
     }
 
     @Override

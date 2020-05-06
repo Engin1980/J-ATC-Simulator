@@ -2,10 +2,7 @@ package eng.jAtcSim.newLib.stats;
 
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
-import eng.jAtcSim.newLib.mood.Mood;
-import eng.jAtcSim.newLib.mood.MoodAcc;
 import eng.jAtcSim.newLib.mood.MoodResult;
-import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.SharedAcc;
 import eng.jAtcSim.newLib.shared.exceptions.ToDoException;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;

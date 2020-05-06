@@ -1,20 +1,20 @@
 package eng.jAtcSim.newLib.messaging;
 
+import eng.jAtcSim.newLib.shared.logging.Journal;
 import eng.jAtcSim.newLib.shared.logging.writers.AutoNewLineLogWriter;
 import eng.jAtcSim.newLib.shared.logging.writers.FileWriter;
 import eng.jAtcSim.newLib.shared.logging.writers.SimTimePipeLogWriter;
 
-public class MessengerLog extends eng.jAtcSim.newLib.shared.logging.Log {
+public class MessengerLog {
 
   public enum eAction {
     ADD,
     GET
   }
+  private Journal journal;
 
   public MessengerLog(String name, String file) {
-    super(
-        name,
-        true,
+    this.journal = new Journal(name, true,
         new AutoNewLineLogWriter(
             new SimTimePipeLogWriter(
                 new FileWriter(file))));
@@ -28,6 +28,6 @@ public class MessengerLog extends eng.jAtcSim.newLib.shared.logging.Log {
         msg.getTarget().toString(),
         msg.getContent().toString()
     );
-    super.writeLine(line);
+    this.journal.writeLine(line);
   }
 }
