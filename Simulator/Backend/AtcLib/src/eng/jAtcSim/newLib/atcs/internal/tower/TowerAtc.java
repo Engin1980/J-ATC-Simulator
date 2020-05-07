@@ -171,7 +171,7 @@ public class TowerAtc extends ComputerAtc {
       arrivalManager.deletePlane(plane);
       //TODO this will add to stats even planes deleted from the game by a user(?)
       //TODO this stats value should be increased outside of Tower atc??
-      StatsAcc.getOverallStatsWriter().registerArrival();
+      StatsAcc.getStatsProvider().registerArrival();
     }
     if (plane.isDeparture()) {
       departureManager.deletePlane(plane);
@@ -203,7 +203,8 @@ public class TowerAtc extends ComputerAtc {
       int diffSecs = SharedAcc.getNow().getValue() - holdingPointEntryTime.getValue();
       diffSecs -= 15; // generally let TWR atc asks APP atc to switch 15 seconds before HP.
       if (diffSecs < 0) diffSecs = 0;
-      StatsAcc.getOverallStatsWriter().registerDeparture(diffSecs);
+      //TODO this stats value should be increased outside of Tower atc??
+      StatsAcc.getStatsProvider().registerDeparture(diffSecs);
     }
 
     if (plane.isEmergency() && plane.getState() == AirplaneState.landed) {

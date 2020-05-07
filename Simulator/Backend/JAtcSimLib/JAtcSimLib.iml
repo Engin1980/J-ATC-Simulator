@@ -5,6 +5,7 @@
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/test" isTestSource="true" />
+      <excludeFolder url="file://$MODULE_DIR$/src/eng/jAtcSim/newLib" />
       <excludeFolder url="file://$MODULE_DIR$/src/eng/jAtcSim/newLib/airplanes" />
       <excludeFolder url="file://$MODULE_DIR$/src/eng/jAtcSim/newLib/airplanes/commandApplications" />
       <excludeFolder url="file://$MODULE_DIR$/src/eng/jAtcSim/newLib/airplanes/modules" />
@@ -12,9 +13,13 @@
       <excludeFolder url="file://$MODULE_DIR$/src/eng/jAtcSim/newLib/airplanes/navigators" />
       <excludeFolder url="file://$MODULE_DIR$/src/eng/jAtcSim/newLib/atcs" />
       <excludeFolder url="file://$MODULE_DIR$/src/eng/jAtcSim/newLib/coordinates" />
+      <excludeFolder url="file://$MODULE_DIR$/src/eng/jAtcSim/newLib/exceptions" />
       <excludeFolder url="file://$MODULE_DIR$/src/eng/jAtcSim/newLib/global" />
       <excludeFolder url="file://$MODULE_DIR$/src/eng/jAtcSim/newLib/interfacing" />
+      <excludeFolder url="file://$MODULE_DIR$/src/eng/jAtcSim/newLib/managers" />
       <excludeFolder url="file://$MODULE_DIR$/src/eng/jAtcSim/newLib/messaging" />
+      <excludeFolder url="file://$MODULE_DIR$/src/eng/jAtcSim/newLib/newStats" />
+      <excludeFolder url="file://$MODULE_DIR$/src/eng/jAtcSim/newLib/serialization" />
       <excludeFolder url="file://$MODULE_DIR$/src/eng/jAtcSim/newLib/speaking" />
       <excludeFolder url="file://$MODULE_DIR$/src/eng/jAtcSim/newLib/textProcessing" />
       <excludeFolder url="file://$MODULE_DIR$/src/eng/jAtcSim/newLib/traffic" />

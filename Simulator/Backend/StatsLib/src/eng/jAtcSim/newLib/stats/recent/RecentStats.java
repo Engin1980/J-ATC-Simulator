@@ -130,6 +130,7 @@ public class RecentStats {
   private static EDayTimeRun getNow() {
     return SharedAcc.getNow();
   }
+
   private int recentSecondsElapsed;
   private ElapsedSecondDurationModel elapsedSecondDuration = new ElapsedSecondDurationModel();
   private Errors clsErrors = new Errors();
@@ -223,12 +224,8 @@ public class RecentStats {
     this.numberOfLandings.remove(q -> q.isBefore(lastTime));
   }
 
-  public void registerFinishedPlane(FinishedPlaneStats finishedPlaneStats) {
-    if (finishedPlaneStats.isArrival())
-      this.finishedArrivals++;
-    else
-      this.finishedDepartures++;
-    planeDelays.add(new TimedValue<>(SharedAcc.getNow().toStamp(), finishedPlaneStats.getDelayDifference()));
+  public void registerElapsedSecondDuration(int ms) {
+    elapsedSecondDuration.add(ms);
   }
 
   //  public CurrentPlanesCount getCurrentPlanesCount() {
@@ -259,23 +256,24 @@ public class RecentStats {
 //    return clsMovements;
 //  }
 
-  public void registerElapsedSecondDuration(int ms) {
-    elapsedSecondDuration.add(ms);
+  public void registerFinishedPlane(FinishedPlaneStats finishedPlaneStats) {
+    if (finishedPlaneStats.isArrival())
+      this.finishedArrivals++;
+    else
+      this.finishedDepartures++;
+    planeDelays.add(new TimedValue<>(SharedAcc.getNow().toStamp(), finishedPlaneStats.getDelayDifference()));
   }
 
+  public void registerHoldingPointDelay(int delay) {
+    holdingPointDelays.add(new TimedValue<>(SharedAcc.getNow().toStamp(), delay));
+  }
 
-//
-//  public void registerHoldingPointDelay(EDayTimeStamp dayTimeStamp, int delay) {
-//    // get dayTimeStamp from Acc.now().clone()
-//    holdingPointDelays.add(new TimedValue<>(dayTimeStamp, delay));
-//  }
-//
-//  public void registerNewArrivalOrDeparture(boolean isArrival, EDayTimeStamp dayTimeStamp) {
-//    if (isArrival)
-//      this.numberOfLandings.add(dayTimeStamp);
-//    else
-//      this.numberOfDepartures.add(dayTimeStamp);
-//  }
+  public void registerNewArrivalOrDeparture(boolean isArrival) {
+    if (isArrival)
+      this.numberOfLandings.add(SharedAcc.getNow().toStamp());
+    else
+      this.numberOfDepartures.add(SharedAcc.getNow().toStamp());
+  }
 
   private <T> void cleanTimedList(IList<TimedValue<T>> lst, EDayTimeStamp lastTime) {
     lst.remove(q -> q.getTime().isBefore(lastTime));

@@ -4,7 +4,6 @@ import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.jAtcSim.newLib.mood.MoodResult;
 import eng.jAtcSim.newLib.shared.SharedAcc;
-import eng.jAtcSim.newLib.shared.exceptions.ToDoException;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 import eng.jAtcSim.newLib.stats.properties.CounterProperty;
 import eng.jAtcSim.newLib.stats.recent.RecentStats;
@@ -15,11 +14,11 @@ public class StatsProvider {
   private final IList<Collector> collectors = new EList<>();
   private EDayTimeStamp nextCollectorStartTime = null;
   private final IList<Snapshot> snapshots = new EList<>();
-  private int statsSnapshotDistanceInMinutes;
+  private final int statsSnapshotDistanceInMinutes;
   private final IList<MoodResult> moodResults = new EList<>();
 
   public StatsProvider(int statsSnapshotDistanceInMinutes) {
-    throw new ToDoException();
+    this.statsSnapshotDistanceInMinutes = statsSnapshotDistanceInMinutes;
   }
 
   public void elapseSecond(AnalysedPlanes analysedPlanes) {
@@ -45,7 +44,23 @@ public class StatsProvider {
 
   }
 
-    public void registerElapseSecondDuration(int ms) {
+  public void registerArrival() {
+    for (Collector collector : collectors) {
+      collector.getRunwayMovements().getArrivals().add();
+    }
+    recentStats.registerNewArrivalOrDeparture(true);
+  }
+
+  public void registerDeparture(int holdingPointSeconds) {
+    for (Collector collector : collectors) {
+      collector.getHoldingPointDelayStats().add(holdingPointSeconds);
+      collector.getRunwayMovements().getDepartures().add();
+    }
+    recentStats.registerHoldingPointDelay(holdingPointSeconds);
+    recentStats.registerNewArrivalOrDeparture(false);
+  }
+
+  public void registerElapseSecondDuration(int ms) {
     for (Collector collector : collectors) {
       collector.getBusyCounter().add(ms);
     }

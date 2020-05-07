@@ -122,9 +122,9 @@ public class Weather {
     return windSpeetInKts;
   }
 
-  public String toInfoString() {
+  public String toInfoString(boolean fullText) {
     EStringBuilder sb = new EStringBuilder();
-    if (SharedAcc.getSettings().isGetWeatherInfoStringAsMetar()) {
+    if (fullText) {
       sb.append("METAR ");
       sb.append(SharedAcc.getAirportIcao()).append(" ");
       sb.appendFormat("%02d", java.time.LocalDate.now().getDayOfMonth());
