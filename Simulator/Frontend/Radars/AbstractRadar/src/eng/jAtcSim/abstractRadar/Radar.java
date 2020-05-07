@@ -6,29 +6,22 @@ import eng.eSystem.events.Event;
 import eng.eSystem.events.EventSimple;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
-import eng.eSystem.geo.Coordinates;
-import eng.jAtcSim.newLib.Acc;
-import eng.jAtcSim.newLib.Simulation;
-import eng.jAtcSim.newLib.area.airplanes.*;
-import eng.jAtcSim.newLib.area.atcs.Atc;
 import eng.eSystem.geo.Coordinate;
-import eng.jAtcSim.newLib.area.global.Global;
-import eng.jAtcSim.newLib.area.global.Headings;
-import eng.jAtcSim.newLib.area.global.logging.ApplicationLog;
-import eng.jAtcSim.newLib.messaging.IMessageParticipant;
-import eng.jAtcSim.newLib.messaging.Message;
-import eng.jAtcSim.newLib.messaging.Messenger;
-import eng.jAtcSim.newLib.messaging.StringMessageContent;
-import eng.jAtcSim.newLib.area.speaking.ISpeech;
-import eng.jAtcSim.newLib.area.speaking.SpeechList;
-import eng.jAtcSim.newLib.area.speaking.fromAirplane.notifications.commandResponses.Rejection;
-import eng.jAtcSim.newLib.area.speaking.fromAtc.IAtc2Atc;
-import eng.jAtcSim.newLib.area.speaking.fromAtc.atc2atc.PlaneSwitchMessage;
-import eng.jAtcSim.newLib.area.speaking.fromAtc.atc2atc.StringResponse;
+import eng.eSystem.geo.Coordinates;
+import eng.eSystem.geo.Headings;
 import eng.jAtcSim.abstractRadar.global.*;
 import eng.jAtcSim.abstractRadar.global.events.EMouseEventArg;
 import eng.jAtcSim.abstractRadar.global.events.KeyEventArg;
 import eng.jAtcSim.abstractRadar.global.events.WithCoordinateEventArg;
+import eng.jAtcSim.newLib.airplaneType.AirplaneType;
+import eng.jAtcSim.newLib.airplanes.AirproxType;
+import eng.jAtcSim.newLib.area.*;
+import eng.jAtcSim.newLib.area.approaches.Approach;
+import eng.jAtcSim.newLib.area.routes.DARoute;
+import eng.jAtcSim.newLib.shared.*;
+import eng.jAtcSim.newLib.shared.enums.AtcType;
+import eng.jAtcSim.newLib.shared.enums.DARouteType;
+import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 
 import java.util.*;
 
@@ -78,20 +71,20 @@ public class Radar {
       this.lifeCounter = lifeCounter;
     }
 
-    public IMessageParticipant getSource() {
-      return source;
-    }
-
-    public String getText() {
-      return text;
+    public void decreaseLifeCounter() {
+      this.lifeCounter--;
     }
 
     public int getLifeCounter() {
       return lifeCounter;
     }
 
-    public void decreaseLifeCounter() {
-      this.lifeCounter--;
+    public IMessageParticipant getSource() {
+      return source;
+    }
+
+    public String getText() {
+      return text;
     }
   }
 
@@ -105,10 +98,10 @@ public class Radar {
     public Coordinate coordinate;
     public int heading;
     public int ias;
-    public double tas;
+    public int tas;
     public int verticalSpeed;
-    public Atc tunedAtc;
-    public Atc responsibleAtc;
+    public AtcId tunedAtc;
+    public AtcId responsibleAtc;
     public boolean hasRadarContact;
     public AirplaneType type;
     public Point labelShift;
@@ -116,44 +109,17 @@ public class Radar {
     public boolean isConfirmedSwitch;
     private Squawk squawk;
     private int targetHeading;
-    private double targetSpeed;
+    private int targetSpeed;
     private int altitude;
     private int targetAltitude;
     private boolean emergency;
 
 
-    public AirplaneDisplayInfo(Airplane.Airplane4Display planeInfo) {
+    public AirplaneDisplayInfo(IAirplaneInfo planeInfo) {
       this.callsign = planeInfo.callsign();
       this.type = planeInfo.planeType();
       this.squawk = planeInfo.squawk();
       this.setDefaultLabelPosition();
-    }
-
-    public void updateInfo(Airplane.Airplane4Display plane) {
-      wasUpdatedFlag = true;
-
-      this.ias = plane.ias();
-      this.tas = plane.tas();
-      this.targetSpeed = plane.targetSpeed();
-      this.altitude = plane.altitude();
-      this.targetAltitude = plane.targetAltitude();
-      this.verticalSpeed = plane.verticalSpeed();
-      this.heading = plane.heading();
-      this.targetHeading = plane.targetHeading();
-
-      this.tunedAtc = plane.tunedAtc();
-      this.responsibleAtc = plane.responsibleAtc();
-      this.hasRadarContact = plane.hasRadarContact();
-
-      this.airprox = plane.getAirprox();
-      this.mrvaError = plane.isMrvaError();
-      this.emergency = plane.isEmergency();
-
-      this.coordinate = plane.coordinate();
-
-      this.isConfirmedSwitch = Acc.prm().isUnderConfirmedSwitch(plane.callsign());
-
-      planeDotHistory.add(plane.coordinate());
     }
 
     public String format(String pattern) {
@@ -178,6 +144,33 @@ public class Radar {
       this.labelShift = new Point(DEFAULT_LABEL_SHIFT, DEFAULT_LABEL_SHIFT);
     }
 
+    public void updateInfo(IAirplaneInfo plane) {
+      wasUpdatedFlag = true;
+
+      this.ias = plane.ias();
+      this.tas = (int) plane.tas();
+      this.targetSpeed = (int) plane.targetSpeed();
+      this.altitude = plane.altitude();
+      this.targetAltitude = plane.targetAltitude();
+      this.verticalSpeed = plane.verticalSpeed();
+      this.heading = plane.heading();
+      this.targetHeading = plane.targetHeading();
+
+      this.tunedAtc = plane.tunedAtc();
+      this.responsibleAtc = plane.responsibleAtc();
+      this.hasRadarContact = plane.hasRadarContact();
+
+      this.airprox = plane.getAirprox();
+      this.mrvaError = plane.isMrvaError();
+      this.emergency = plane.isEmergency();
+
+      this.coordinate = plane.coordinate();
+
+      this.isConfirmedSwitch = plane.isUnderConfirmedSwitch();
+
+      planeDotHistory.add(plane.coordinate());
+    }
+
     private String getFormatValueByIndex(int index) {
       switch (index) {
         case 1:
@@ -192,45 +185,45 @@ public class Radar {
         case 4:
           return this.type.name;
         case 5:
-          return AirplaneDataFormatter.formatTypeCategory(this.type);
+          return Character.toString(this.type.category);
         case 8:
-          return AirplaneDataFormatter.formatSqwk(this.squawk);
+          return this.squawk.toString();
         case 11:
-          return AirplaneDataFormatter.formatHeadingLong(this.heading);
+          return Format.Heading.to(this.heading);
         case 12:
-          return AirplaneDataFormatter.formatHeadingShort(this.heading);
+          return Format.Heading.toShort(this.heading);
         case 15:
-          return AirplaneDataFormatter.formatHeadingLong(this.targetHeading);
+          return Format.Heading.to(this.targetHeading);
         case 16:
-          return AirplaneDataFormatter.formatHeadingShort(this.targetHeading);
+          return Format.Heading.toShort(this.targetHeading);
         case 21:
-          return AirplaneDataFormatter.formatSpeedLong(this.tas);
+          return Format.Speed.toLong(this.tas);
         case 22:
-          return AirplaneDataFormatter.formatSpeedShort(this.tas);
+          return Format.Speed.toShort(this.tas);
         case 23:
-          return AirplaneDataFormatter.formatSpeedAligned(this.tas);
+          return Format.Speed.toRightAligned(this.tas);
         case 31:
-          return AirplaneDataFormatter.formatSpeedLong(this.targetSpeed);
+          return Format.Speed.toLong(this.targetSpeed);
         case 32:
-          return AirplaneDataFormatter.formatSpeedShort(this.targetSpeed);
+          return Format.Speed.toShort(this.targetSpeed);
         case 33:
-          return AirplaneDataFormatter.formatAltitudeLong(this.altitude);
+          return Format.Altitude.toFLLong(this.altitude);
         case 34:
-          return AirplaneDataFormatter.formatAltitudeShort(this.altitude, true);
+          return Format.Altitude.toFLShort(this.altitude);
         case 35:
-          return AirplaneDataFormatter.formatAltitudeInFt(this.altitude, true);
+          return Format.Altitude.toAlfOrFLLong(this.altitude);
         case 36:
-          return AirplaneDataFormatter.formatAltitudeLong(this.targetAltitude);
+          return Format.Altitude.toFLLong(this.targetAltitude);
         case 37:
-          return AirplaneDataFormatter.formatAltitudeShort(this.targetAltitude, true);
+          return Format.Altitude.toFLShort(this.targetAltitude);
         case 38:
-          return AirplaneDataFormatter.formatAltitudeInFt(this.targetAltitude, true);
+          return Format.Altitude.toAlfOrFLLong(this.targetAltitude);
         case 41:
-          return AirplaneDataFormatter.formatVerticalSpeedLong(this.verticalSpeed);
+          return Format.VerticalSpeed.formatVerticalSpeedLong(this.verticalSpeed);
         case 42:
-          return AirplaneDataFormatter.formatVerticalSpeedShort(this.verticalSpeed);
+          return Format.VerticalSpeed.formatVerticalSpeedShort(this.verticalSpeed);
         case 43:
-          return AirplaneDataFormatter.getClimbDescendChar(this.verticalSpeed);
+          return Format.VerticalSpeed.getClimbDescendChar(this.verticalSpeed);
         default:
           return "???";
       }
@@ -253,23 +246,23 @@ public class Radar {
 
     private IMap<Callsign, AirplaneDisplayInfo> inner = new EMap<>();
 
+    public ICollection<AirplaneDisplayInfo> getList() {
+      return inner.getValues();
+    }
+
     public boolean isEmpty() {
       return inner.isEmpty();
     }
 
-    public void update(IReadOnlyList<Airplane.Airplane4Display> planes) {
+    public void update(IReadOnlyList<IAirplaneInfo> planes) {
       resetWasUpdatedFlag();
 
-      for (Airplane.Airplane4Display plane : planes) {
+      for (IAirplaneInfo plane : planes) {
         AirplaneDisplayInfo adi = tryGetOrAdd(plane);
         adi.updateInfo(plane);
       }
 
       removeUnupdated();
-    }
-
-    public ICollection<AirplaneDisplayInfo> getList() {
-      return inner.getValues();
     }
 
     private void removeUnupdated() {
@@ -279,7 +272,11 @@ public class Radar {
       toRem.forEach(q -> inner.remove(q));
     }
 
-    private AirplaneDisplayInfo tryGetOrAdd(Airplane.Airplane4Display plane) {
+    private void resetWasUpdatedFlag() {
+      inner.forEach(q -> q.getValue().wasUpdatedFlag = false);
+    }
+
+    private AirplaneDisplayInfo tryGetOrAdd(IAirplaneInfo plane) {
       AirplaneDisplayInfo ret;
       if (inner.containsKey(plane.callsign()))
         ret = inner.get(plane.callsign());
@@ -288,10 +285,6 @@ public class Radar {
         inner.set(plane.callsign(), ret);
       }
       return ret;
-    }
-
-    private void resetWasUpdatedFlag() {
-      inner.forEach(q -> q.getValue().wasUpdatedFlag = false);
     }
   }
 
@@ -323,7 +316,9 @@ public class Radar {
       return inner.iterator();
     }
   }
-
+  public static final int BORDER_ALTITUDE_MAXIMUM_VALUE = 99000;
+  //  private static final int DRAW_STEP = 10;
+  public static final int BORDER_ALTITUDE_MINIMUM_VALUE = 0;
   private static final double MAX_NM_DIFFERENCE_FOR_SELECTION = 2.5;
   private final TransformationLayer tl;
   private final ICanvas c;
@@ -335,7 +330,7 @@ public class Radar {
   private final RadarStyleSettings styleSettings;
   private final RadarBehaviorSettings behaviorSettings;
   private final RadarDisplaySettings displaySettings;
-  private final Simulation simulation;
+  private final ISimulation simulation;
   private final Area area;
   private final MessageManager messageManager;
   private final AirplaneDisplayInfoList planeInfos = new AirplaneDisplayInfoList();
@@ -350,7 +345,7 @@ public class Radar {
   private boolean switchFlagTrue = false;
 
   public Radar(ICanvas canvas, InitialPosition initialPosition,
-               Simulation sim, Area area,
+               ISimulation sim, Area area,
                RadarStyleSettings styleSettings,
                RadarDisplaySettings displaySettings,
                RadarBehaviorSettings behaviorSettings) {
@@ -364,7 +359,7 @@ public class Radar {
 
     this.c = canvas;
 
-    this.tl = new TransformationLayer(this.c, initialPosition.coordinate, initialPosition.range);
+    this.tl = new TransformationLayer(this.c, initialPosition.getCoordinate(), initialPosition.getRange());
     this.styleSettings = styleSettings;
     this.behaviorSettings = behaviorSettings;
     this.displaySettings = displaySettings;
@@ -379,7 +374,7 @@ public class Radar {
     this.messageManager = new MessageManager(this.styleSettings.displayTextDelay);
     if (this.styleSettings.displayTextDelay > Global.REPEATED_SWITCH_REQUEST_SECONDS ||
         this.styleSettings.displayTextDelay > Global.REPEATED_RADAR_CONTACT_REQUEST_SECONDS) {
-      Acc.log().writeLine(ApplicationLog.eType.warning,
+      simulation.getAppLog().writeLine(ApplicationLog.eType.warning,
           "Radar message display interval in seconds (%d) is higher than plane repeated " +
               "radar-contact request interval (%d) or ATC repeated request switch interval (%d). " + "" +
               "The repetition messages will overlap.",
@@ -399,27 +394,6 @@ public class Radar {
     this.c.getResizedEvent().add(o -> tl.resetPosition());
   }
 
-  public void start(int redrawInterval, int planeRepositionInterval) {
-    assert redrawInterval > 0;
-    assert planeRepositionInterval > 0;
-    this.planeRedrawCounter = new Counter(planeRepositionInterval);
-    this.radarRedrawCounter = new Counter(redrawInterval);
-    // listen to simulation seconds for redraw
-    this.simulationSecondListenerHandler = this.simulation.getOnSecondElapsed().add(o -> redraw(false));
-  }
-
-  public void stop() {
-    this.simulation.getOnSecondElapsed().remove(this.simulationSecondListenerHandler);
-  }
-
-  public void zoomIn() {
-    zoomBy(0.9);
-  }
-
-  public void zoomOut() {
-    zoomBy(1.1);
-  }
-
   public void centerAt(Coordinate coordinate) {
     double distLat
         = tl.getTopLeft().getLatitude().get() - tl.getBottomRight().getLatitude().get();
@@ -434,6 +408,54 @@ public class Radar {
             coordinate.getLatitude().get() + distLat,
             coordinate.getLongitude().get() + distLon));
     redraw(true);
+  }
+
+  public RadarDisplaySettings getDisplaySettings() {
+    return displaySettings;
+  }
+
+  public Iterable<Approach> getDrawnApproaches() {
+    return drawnApproaches;
+  }
+
+  public void setDrawnApproaches(Iterable<Approach> drawnApproaches) {
+    this.drawnApproaches.clear();
+    this.drawnApproaches.add(drawnApproaches);
+  }
+
+  public IReadOnlyList<DARoute> getDrawnRoutes() {
+    return this.drawnRoutes;
+  }
+
+  public void setDrawnRoutes(Iterable<DARoute> drawnRoutes) {
+    this.drawnRoutes.clear();
+    this.drawnRoutes.add(drawnRoutes);
+  }
+
+  public EventSimple<Radar> getGotFocusEvent() {
+    return gotFocusEvent;
+  }
+
+  public InitialPosition getPosition() {
+    InitialPosition ret = InitialPosition.create(
+        this.tl.getMiddle(),
+        (int) this.tl.getWidthInNM());
+    return ret;
+  }
+
+  public Event<Radar, Callsign> getSelectedAirplaneChangedEvent() {
+    return selectedAirplaneChangedEvent;
+  }
+
+  public Callsign getSelectedCallsign() {
+    return selectedCallsign;
+  }
+
+  public void setSelectedCallsign(Callsign selectedCallsign) {
+    Callsign bef = this.selectedCallsign;
+    this.selectedCallsign = selectedCallsign;
+    if (bef != this.selectedCallsign)
+      this.selectedAirplaneChangedEvent.raise(this.selectedCallsign);
   }
 
   public RadarViewPort getViewPort() {
@@ -462,64 +484,31 @@ public class Radar {
     }
   }
 
-  public RadarDisplaySettings getDisplaySettings() {
-    return displaySettings;
+  public void start(int redrawInterval, int planeRepositionInterval) {
+    assert redrawInterval > 0;
+    assert planeRepositionInterval > 0;
+    this.planeRedrawCounter = new Counter(planeRepositionInterval);
+    this.radarRedrawCounter = new Counter(redrawInterval);
+    // listen to simulation seconds for redraw
+    this.simulationSecondListenerHandler = this.simulation.getOnSecondElapsed().add(o -> redraw(false));
   }
 
-  public Event<Radar, Callsign> getSelectedAirplaneChangedEvent() {
-    return selectedAirplaneChangedEvent;
+  public void stop() {
+    this.simulation.getOnSecondElapsed().remove(this.simulationSecondListenerHandler);
   }
 
-  public Callsign getSelectedCallsign() {
-    return selectedCallsign;
+  public void zoomIn() {
+    zoomBy(0.9);
   }
 
-  public void setSelectedCallsign(Callsign selectedCallsign) {
-    Callsign bef = this.selectedCallsign;
-    this.selectedCallsign = selectedCallsign;
-    if (bef != this.selectedCallsign)
-      this.selectedAirplaneChangedEvent.raise(this.selectedCallsign);
-  }
-
-  public InitialPosition getPosition() {
-    InitialPosition ret = new InitialPosition();
-    ret.coordinate = this.tl.getMiddle();
-    ret.range = this.tl.getWidthInNM();
-    return ret;
-  }
-
-  public EventSimple<Radar> getGotFocusEvent() {
-    return gotFocusEvent;
-  }
-
-  public IReadOnlyList<DARoute> getDrawnRoutes() {
-    return this.drawnRoutes;
-  }
-
-  public void setDrawnRoutes(Iterable<DARoute> drawnRoutes) {
-    this.drawnRoutes.clear();
-    this.drawnRoutes.add(drawnRoutes);
-  }
-
-  public Iterable<Approach> getDrawnApproaches() {
-    return drawnApproaches;
-  }
-
-  public void setDrawnApproaches(Iterable<Approach> drawnApproaches) {
-    this.drawnApproaches.clear();
-    this.drawnApproaches.add(drawnApproaches);
-  }
-
-  private void sim_runwayChanged(Simulation simulation) {
-    buildLocalNavaidList();
-    buildDrawnRoutesList();
-    buildDrawnApproachesList();
+  public void zoomOut() {
+    zoomBy(1.1);
   }
 
   private void buildDrawnApproachesList() {
     this.drawnApproaches.clear();
     RunwayConfiguration rc =
-        Acc.atcTwr().getRunwayConfigurationInUse();
+        simulation.getRunwayConfigurationInUse();
 
     IList<Approach> approachesToDraw =
         rc.getArrivals()
@@ -532,15 +521,15 @@ public class Radar {
 
   private void buildDrawnRoutesList() {
     this.drawnRoutes.clear();
-    RunwayConfiguration rc = Acc.atcTwr().getRunwayConfigurationInUse();
+    RunwayConfiguration rc = simulation.getRunwayConfigurationInUse();
     rc.getArrivals()
         .where(q -> q.isShowRoutes())
         .forEach(q -> this.drawnRoutes.add(
-            q.getThreshold().getRoutes().where(p -> p.getType() != DARoute.eType.sid)));
+            q.getThreshold().getRoutes().where(p -> p.getType() != DARouteType.sid)));
     rc.getDepartures()
         .where(q -> q.isShowRoutes())
         .forEach(q -> this.drawnRoutes.add(
-            q.getThreshold().getRoutes().where(p -> p.getType() == DARoute.eType.sid)));
+            q.getThreshold().getRoutes().where(p -> p.getType() == DARouteType.sid)));
   }
 
   private void buildLocalNavaidList() {
@@ -553,25 +542,45 @@ public class Radar {
     }
 
     IReadOnlyList<ActiveRunwayThreshold> rts =
-        Acc.atcTwr().getRunwayConfigurationInUse().getArrivals()
+        simulation.getRunwayConfigurationInUse().getArrivals()
             .where(q -> q.isShowRoutes())
             .select(q -> q.getThreshold());
     for (ActiveRunwayThreshold rt : rts) {
-      for (DARoute route : rt.getRoutes().where(q -> q.getType() != DARoute.eType.sid)) {
-        for (Navaid navaid : route.getNavaids()) {
+      for (DARoute route : rt.getRoutes().where(q -> q.getType() != DARouteType.sid)) {
+        for (Navaid navaid : route.getRouteNavaids()) {
           NavaidDisplayInfo ndi = this.navaids.getByNavaid(navaid);
           ndi.isRoute = true;
         }
       }
     }
     for (ActiveRunwayThreshold rt : rts) {
-      for (DARoute route : rt.getRoutes().where(q -> q.getType() == DARoute.eType.sid)) {
-        for (Navaid navaid : route.getNavaids()) {
+      for (DARoute route : rt.getRoutes().where(q -> q.getType() == DARouteType.sid)) {
+        for (Navaid navaid : route.getRouteNavaids()) {
           NavaidDisplayInfo ndi = this.navaids.getByNavaid(navaid);
           ndi.isRoute = true;
         }
       }
     }
+  }
+
+  private String buildPlaneString(String lineFormat, AirplaneDisplayInfo adi) {
+    String ret = adi.format(lineFormat);
+    return ret;
+  }
+
+  private void canvas_onKeyPress(ICanvas sender, KeyEventArg e) {
+    // Key codes from KeyEvent class from java.awt
+    switch (e.getKeyCode()) {
+      case 0x22: // Page down
+        zoomIn();
+        break;
+      case 0x21: // Page up
+        zoomOut();
+        break;
+      default:
+        this.keyPressEvent.raise(e);
+    }
+
   }
 
   private void canvas_onMouseMove(ICanvas sender, EMouseEventArg e) {
@@ -641,46 +650,6 @@ public class Radar {
 
   }
 
-  private Double tryGetRelativeSpeed(Coordinate fromCoordinate) {
-    AirplaneDisplayInfo adi = null;
-    double dist = Double.MAX_VALUE;
-    for (AirplaneDisplayInfo radi : this.planeInfos.getList()) {
-      double rdist = Coordinates.getDistanceInNM(radi.coordinate, fromCoordinate);
-      if (rdist < dist) {
-        dist = rdist;
-        adi = radi;
-      }
-    }
-    if (dist > 3)
-      adi = null;
-    if (adi != null)
-      return adi.tas;
-    else
-      return null;
-  }
-
-  private AirplaneDisplayInfo tryGetAirplaneDisplayInfoByPoint(Point p) {
-    Coordinate c = tl.toCoordinate(p);
-    return tryGetSelectedAirplane(c);
-  }
-
-  private AirplaneDisplayInfo tryGetSelectedAirplane(Coordinate c) {
-    AirplaneDisplayInfo bestAdi = null;
-    double bestDiff = Double.MAX_VALUE;
-    for (AirplaneDisplayInfo adi : this.planeInfos.getList()) {
-      double tmpDif = Coordinates.getDistanceInNM(c, adi.coordinate);
-      if (tmpDif < bestDiff) {
-        bestDiff = tmpDif;
-        bestAdi = adi;
-      }
-    }
-
-    if (bestDiff > MAX_NM_DIFFERENCE_FOR_SELECTION)
-      return null;
-    else
-      return bestAdi;
-  }
-
   private void canvas_onPaint(ICanvas sender) {
     if (tl.isReady() == false) {
       drawBackground();
@@ -703,90 +672,162 @@ public class Radar {
     c.afterDraw();
   }
 
-  private void drawInfoLine() {
-    if (this.infoLine != null) {
+  private MessageSet createMessageSet(List<VisualisedMessage> msgs) {
+    MessageSet ret = new MessageSet();
 
-      RadarStyleSettings.ColorWidthFontSettings cwfs = this.styleSettings.infoLine;
+    for (VisualisedMessage m : msgs) {
+      if (m.getSource() == Messenger.SYSTEM) {
+        ret.system.add(">> " + m.getText());
+      } else if (m.getSource() instanceof Atc) {
+        ret.atc.add("[" + m.getSource().getName() + "] " + m.getText());
+      } else if (m.getSource() instanceof Airplane) {
+        ret.plane.add(m.getSource().getName() + ": " + m.getText());
+      } else {
+        throw new UnsupportedOperationException();
+      }
+    }
+    return ret;
+  }
 
-      tl.drawLine(
-          this.infoLine.from,
-          this.infoLine.to,
-          cwfs.getColor(),
-          cwfs.getWidth()
-      );
+  private List<String> decodeSystemMultilines(List<String> system) {
+    List<String> ret = new ArrayList<>();
+    String del = "\r\n";
+    for (String s : system) {
+      String[] spl = s.split(del);
+      ret.addAll(Arrays.asList(spl));
+    }
+    return ret;
+  }
 
-      String distS = String.format("%03d %.1fnm", this.infoLine.heading, this.infoLine.distanceInNm);
-      String timeS;
-      if (this.infoLine.isRelativeSpeedUsed == false)
-        timeS = String.format("%s:%s/%s:%s/%s:%s",
-            InfoLine.toIntegerMinutes(this.infoLine.seconds280),
-            infoLine.toIntegerSeconds(this.infoLine.seconds280),
-            InfoLine.toIntegerMinutes(this.infoLine.seconds250),
-            infoLine.toIntegerSeconds(this.infoLine.seconds250),
-            InfoLine.toIntegerMinutes(this.infoLine.seconds200),
-            infoLine.toIntegerSeconds(this.infoLine.seconds200));
+  private void drawAirplanes() {
+    if (this.planeInfos.isEmpty()) return;
+
+    RadarStyleSettings.TextSettings dt = styleSettings.callsign;
+    Size s = c.getEstimatedTextSize(dt.getFont(), 12, 3);
+    tl.adjustPlaneLabelOverlying(s.width, s.height);
+
+    // first draw non-user controlled planes
+    for (AirplaneDisplayInfo adi : this.planeInfos.getList()) {
+      if (isUserControlledPlane(adi)) continue;
+      drawPlanePoint(adi);
+    }
+    for (AirplaneDisplayInfo adi : this.planeInfos.getList()) {
+      if (isUserControlledPlane(adi)) continue;
+      drawPlaneLabel(adi);
+    }
+    // over them draw user-controlled planes
+    for (AirplaneDisplayInfo adi : this.planeInfos.getList()) {
+      if (!isUserControlledPlane(adi)) continue;
+      drawPlanePoint(adi);
+    }
+    for (AirplaneDisplayInfo adi : this.planeInfos.getList()) {
+      if (!isUserControlledPlane(adi)) continue;
+      drawPlaneLabel(adi);
+    }
+
+    boolean isFullAirprox = this.planeInfos.getList().isAny(
+        p -> p.airprox == AirproxType.full);
+    if (isFullAirprox)
+      SoundManager.playAirprox();
+  }
+
+  private void drawAirport(Airport a) {
+    for (InactiveRunway r : a.getInactiveRunways()) {
+      drawInactiveRunway(r);
+    }
+
+    for (ActiveRunway r : a.getRunways()) {
+      drawRunway(r);
+    }
+  }
+
+  private void drawAirports() {
+    for (Airport a : area.getAirports()) {
+      drawAirport(a);
+    }
+  }
+
+  private void drawApproach(Approach approach) {
+    RadarStyleSettings.ColorWidthLengthSettings dispSett;
+    if (approach instanceof IlsApproach)
+      dispSett = styleSettings.ilsApproach;
+    else if (approach instanceof GnssApproach)
+      dispSett = styleSettings.gnssApproach;
+    else if (approach instanceof VisualApproach)
+      return;
+    else if (approach instanceof UnpreciseApproach) {
+      UnpreciseApproach ua = (UnpreciseApproach) approach;
+      if (ua.getType() == UnpreciseApproach.Kind.ndb)
+        dispSett = styleSettings.ndbApproach;
+      else if (ua.getType() == UnpreciseApproach.Kind.vor)
+        dispSett = styleSettings.vorApproach;
       else
-        timeS = String.format("%s:%s",
-            InfoLine.toIntegerMinutes(this.infoLine.secondsSpeed),
-            InfoLine.toIntegerSeconds(this.infoLine.secondsSpeed));
+        throw new EApplicationException("Not supported");
+    } else
+      throw new EApplicationException("Not supported");
+    Coordinate start = Coordinates.getCoordinate(
+        approach.getParent().getCoordinate(),
+        Headings.getOpposite(approach.getGeographicalRadial()),
+        dispSett.getLength());
+    tl.drawLine(start, approach.getParent().getCoordinate(), dispSett.getColor(), dispSett.getWidth());
+  }
 
-
-      tl.drawText(distS, this.infoLine.to,
-          3, -cwfs.getFont().getSize() * 2 - 3,
-          cwfs.getFont(), cwfs.getColor());
-
-      tl.drawText(timeS, this.infoLine.to,
-          3, -cwfs.getFont().getSize(),
-          cwfs.getFont(), cwfs.getColor());
+  private void drawApproaches() {
+    if (displaySettings.isApproachesVisible() == false) return;
+    for (Approach drawnApproach : this.drawnApproaches) {
+      drawApproach(drawnApproach);
     }
   }
 
-  private void canvas_onKeyPress(ICanvas sender, KeyEventArg e) {
-    // Key codes from KeyEvent class from java.awt
-    switch (e.getKeyCode()) {
-      case 0x22: // Page down
-        zoomIn();
-        break;
-      case 0x21: // Page up
-        zoomOut();
-        break;
-      default:
-        this.keyPressEvent.raise(e);
-    }
-
-  }
-
-  private void zoomBy(double multiplier) {
-    double distLat
-        = tl.getTopLeft().getLatitude().get() - tl.getBottomRight().getLatitude().get();
-    double distLon
-        = tl.getTopLeft().getLongitude().get() - tl.getBottomRight().getLongitude().get();
-
-    distLat = distLat / 2d;
-    distLon = distLon / 2d;
-
-    double distShiftLat = distLat * multiplier - distLat;
-    double distShiftLon = distLon * multiplier - distLon;
-
-    tl.setPosition(
-        new Coordinate(
-            tl.getTopLeft().getLatitude().get() + distShiftLat,
-            tl.getTopLeft().getLongitude().get() + distShiftLon),
-        tl.getWidthInNM() * multiplier);
-
-    redraw(true);
-
-  }
-
-  private void moveMapBy(Coordinate c) {
-    tl.setPosition(
-        tl.getTopLeft().add(c));
-    redraw(true);
-  }
+//  private void drawArc(BorderExactPoint bPrev, BorderArcPoint borderArcPoint, BorderExactPoint bNext, Color color) {
+//    double startBear = Coordinates.getBearing(borderArcPoint.getCoordinate(), bPrev.getCoordinate());
+//    double endBear = Coordinates.getBearing(borderArcPoint.getCoordinate(), bNext.getCoordinate());
+//    double distance = Coordinates.getDistanceInNM(borderArcPoint.getCoordinate(), bPrev.getCoordinate());
+//    if (borderArcPoint.getDirection() == BorderArcPoint.eDirection.counterclockwise) {
+//      double tmp = startBear;
+//      startBear = endBear;
+//      endBear = tmp;
+//    }
+//
+//    tl.drawArc(borderArcPoint.getCoordinate(), startBear, endBear, distance, color);
+//  }
 
   private void drawBackground() {
     Color color = styleSettings.mapBackcolor;
     tl.clear(color);
+  }
+
+  private void drawBorder(Border border) {
+
+    RadarStyleSettings.ColorWidthSettings ds = getDispSettBy(border);
+
+    Coordinate last = null;
+    for (int i = 0; i < border.getPoints().size(); i++) {
+      BorderPoint bep = border.getPoints().get(i);
+      if (last != null) {
+        tl.drawLine(last, bep.getCoordinate(), ds.getColor(), ds.getWidth());
+      }
+      last = bep.getCoordinate();
+    }
+  }
+
+  private void drawBorderAltitude(Border border) {
+    String maxS =
+        border.getMaxAltitude() == BORDER_ALTITUDE_MAXIMUM_VALUE ?
+            null
+            :
+            Format.Altitude.toAlfOrFLLong(border.getMaxAltitude());
+    String minS =
+        border.getMinAltitude() == BORDER_ALTITUDE_MINIMUM_VALUE ?
+            null
+            :
+            Format.Altitude.toAlfOrFLLong(border.getMinAltitude());
+    if (minS == null && maxS == null) return;
+    RadarStyleSettings.ColorWidthFontSettings ds = (RadarStyleSettings.ColorWidthFontSettings) getDispSettBy(border);
+    tl.drawAltitudeRangeText(
+        border.getLabelCoordinate(),
+        minS, maxS,
+        0, 0, ds.getFont(), ds.getColor());
   }
 
   private void drawBorders() {
@@ -828,113 +869,143 @@ public class Radar {
     }
   }
 
-  private void drawBorderAltitude(Border border) {
-    String maxS =
-        border.getMaxAltitude() == Border.ALTITUDE_MAXIMUM_VALUE ?
-            null
-            :
-            AirplaneDataFormatter.formatAltitudeLong(border.getMaxAltitude(), false);
-    String minS =
-        border.getMinAltitude() == Border.ALTITUDE_MINIMUM_VALUE ?
-            null
-            :
-            AirplaneDataFormatter.formatAltitudeLong(border.getMinAltitude(), false);
-    if (minS == null && maxS == null) return;
-    RadarStyleSettings.ColorWidthFontSettings ds = (RadarStyleSettings.ColorWidthFontSettings) getDispSettBy(border);
-    tl.drawAltitudeRangeText(
-        border.getLabelCoordinate(),
-        minS, maxS,
-        0, 0, ds.getFont(), ds.getColor());
-  }
+  private void drawCaptions() {
+    Messenger ms = simulation.getMessenger();
+    IList<Message> msgs = ms.getMessagesByListener(this, true);
 
-  private void drawBorder(Border border) {
-
-    RadarStyleSettings.ColorWidthSettings ds = getDispSettBy(border);
-
-    Coordinate last = null;
-    for (int i = 0; i < border.getExactPoints().size(); i++) {
-      BorderExactPoint bep = border.getExactPoints().get(i);
-      if (last != null) {
-        tl.drawLine(last, bep.getCoordinate(), ds.getColor(), ds.getWidth());
-      }
-      last = bep.getCoordinate();
+    for (Message msg : msgs) {
+      String formattedText =
+          getMessageContentAsString(msg);
+      messageManager.add(msg.getSource(), formattedText);
     }
-  }
 
-  private void drawRoutes() {
-    for (DARoute route : drawnRoutes) {
-      if (route.getNavaids().isEmpty()) continue;
-      switch (route.getType()) {
-        case sid:
-          if (!displaySettings.isSidVisible()) continue;
-          for (ActiveRunwayThreshold runwayThreshold : Acc.atcTwr().getRunwayConfigurationInUse()
-              .getDepartures()
-              .select(q -> q.getThreshold())
-              .where(q -> q.getRoutes().contains(route))) {
-            drawSidIntro(runwayThreshold.getOtherThreshold().getCoordinate(), route.getNavaids().getFirst());
-          }
-          drawRoute(route.getNavaids(), styleSettings.sid);
-          break;
-        case star:
-        case transition:
-          if (!displaySettings.isStarVisible()) continue;
-          drawRoute(route.getNavaids(), styleSettings.star);
-          break;
-        default:
-          throw new EEnumValueUnsupportedException(route.getType());
-      }
+    boolean containsSystemMessage =
+        msgs.isAny(q -> q.isSourceOfType(Messenger.XSystem.class));
+
+    IList<Message> atcMsgs = msgs.where(q -> q.isSourceOfType(Atc.class));
+    boolean containsAtcMessage = atcMsgs.isEmpty() == false;
+    boolean isAtcMessageNegative = false;
+    if (containsAtcMessage) {
+      atcMsgs = atcMsgs.where(q -> q.isContentOfType(IAtc2Atc.class));
+      isAtcMessageNegative = atcMsgs.isAny(q -> q.<IAtc2Atc>getContent().isRejection());
     }
-  }
 
-  private void drawRoute(IReadOnlyList<Navaid> navaidPoints, RadarStyleSettings.ColorWidthSettings sett) {
-    for (int i = 0; i < navaidPoints.size() - 1; i++) {
-      tl.drawLine(
-          navaidPoints.get(i).getCoordinate(),
-          navaidPoints.get(i + 1).getCoordinate(),
-          sett.getColor(),
-          sett.getWidth());
+    IList<Message> planeMsgs = msgs.where(q -> q.isSourceOfType(Airplane.class));
+    boolean containsPlaneMessage = planeMsgs.isEmpty() == false;
+    boolean isPlaneMessageNegative = false;
+    if (containsPlaneMessage) {
+//      for (Message planeMsg : planeMsgs) {
+//        isPlaneMessageNegative = ((SpeechList) planeMsg.getContent()).isAny(q -> q instanceof Rejection);
+//        if (isPlaneMessageNegative) break;
+//
+//      }
+      isPlaneMessageNegative = planeMsgs.isAny(q -> ((SpeechList) q.getContent()).isAny(p -> p instanceof Rejection));
     }
+
+    if (containsAtcMessage) {
+      SoundManager.playAtcNewMessage(isAtcMessageNegative);
+    } else if (containsPlaneMessage) {
+      SoundManager.playPlaneNewMessage(isPlaneMessageNegative);
+    } else if (containsSystemMessage) {
+      SoundManager.playSystemMessage();
+    }
+
+    drawMessages(messageManager.getCurrent());
+
+    messageManager.decreaseMessagesLifeCounter();
   }
 
-  private void drawSidIntro(Coordinate thresholdCoordinate, Navaid firstNavaid) {
-    RadarStyleSettings.ColorWidthSettings sett = styleSettings.sid;
+  private void drawInactiveRunway(InactiveRunway runway) {
+    RadarStyleSettings.ColorWidthSettings ds = getDispSettBy(runway);
+
     tl.drawLine(
-        thresholdCoordinate,
-        firstNavaid.getCoordinate(),
-        sett.getColor(),
-        sett.getWidth());
+        runway.getThresholdA().getCoordinate(),
+        runway.getThresholdB().getCoordinate(),
+        ds.getColor(), ds.getWidth());
   }
 
-  private void drawApproaches() {
-    if (displaySettings.isApproachesVisible() == false) return;
-    for (Approach drawnApproach : this.drawnApproaches) {
-      drawApproach(drawnApproach);
+  private void drawInfoLine() {
+    if (this.infoLine != null) {
+
+      RadarStyleSettings.ColorWidthFontSettings cwfs = this.styleSettings.infoLine;
+
+      tl.drawLine(
+          this.infoLine.from,
+          this.infoLine.to,
+          cwfs.getColor(),
+          cwfs.getWidth()
+      );
+
+      String distS = String.format("%03d %.1fnm", this.infoLine.heading, this.infoLine.distanceInNm);
+      String timeS;
+      if (this.infoLine.isRelativeSpeedUsed == false)
+        timeS = String.format("%s:%s/%s:%s/%s:%s",
+            InfoLine.toIntegerMinutes(this.infoLine.seconds280),
+            infoLine.toIntegerSeconds(this.infoLine.seconds280),
+            InfoLine.toIntegerMinutes(this.infoLine.seconds250),
+            infoLine.toIntegerSeconds(this.infoLine.seconds250),
+            InfoLine.toIntegerMinutes(this.infoLine.seconds200),
+            infoLine.toIntegerSeconds(this.infoLine.seconds200));
+      else
+        timeS = String.format("%s:%s",
+            InfoLine.toIntegerMinutes(this.infoLine.secondsSpeed),
+            InfoLine.toIntegerSeconds(this.infoLine.secondsSpeed));
+
+
+      tl.drawText(distS, this.infoLine.to,
+          3, -cwfs.getFont().getSize() * 2 - 3,
+          cwfs.getFont(), cwfs.getColor());
+
+      tl.drawText(timeS, this.infoLine.to,
+          3, -cwfs.getFont().getSize(),
+          cwfs.getFont(), cwfs.getColor());
     }
   }
 
-  private void drawApproach(Approach approach) {
-    RadarStyleSettings.ColorWidthLengthSettings dispSett;
-    if (approach instanceof IlsApproach)
-      dispSett = styleSettings.ilsApproach;
-    else if (approach instanceof GnssApproach)
-      dispSett = styleSettings.gnssApproach;
-    else if (approach instanceof VisualApproach)
-      return;
-    else if (approach instanceof UnpreciseApproach) {
-      UnpreciseApproach ua = (UnpreciseApproach) approach;
-      if (ua.getType() == UnpreciseApproach.Kind.ndb)
-        dispSett = styleSettings.ndbApproach;
-      else if (ua.getType() == UnpreciseApproach.Kind.vor)
-        dispSett = styleSettings.vorApproach;
-      else
-        throw new EApplicationException("Not supported");
-    } else
-      throw new EApplicationException("Not supported");
-    Coordinate start = Coordinates.getCoordinate(
-        approach.getParent().getCoordinate(),
-        Headings.getOpposite(approach.getGeographicalRadial()),
-        dispSett.getLength());
-    tl.drawLine(start, approach.getParent().getCoordinate(), dispSett.getColor(), dispSett.getWidth());
+  private void drawMessages(List<VisualisedMessage> msgs) {
+    MessageSet ms = createMessageSet(msgs);
+
+    RadarStyleSettings.TextSettings dt;
+
+    dt = styleSettings.atc;
+    tl.drawTextBlock(ms.atc, TextBlockLocation.bottomRight, dt.getFont(), dt.getColor());
+
+    dt = styleSettings.plane;
+    tl.drawTextBlock(ms.plane, TextBlockLocation.bottomLeft, dt.getFont(), dt.getColor());
+
+    dt = styleSettings.system;
+    tl.drawTextBlock(decodeSystemMultilines(ms.system), TextBlockLocation.topRight, dt.getFont(), dt.getColor());
+  }
+
+  private void drawNavaid(Navaid navaid) {
+    RadarStyleSettings.ColorWidthBorderSettings ds = getDispSettBy(navaid);
+    RadarStyleSettings.TextSettings dt = styleSettings.navaid;
+
+    switch (navaid.getType()) {
+      case vor:
+        tl.drawPoint(navaid.getCoordinate(), ds.getColor(), ds.getWidth());
+        tl.drawCircleAround(navaid.getCoordinate(), ds.getBorderDistance(), ds.getColor(), ds.getBorderWidth());
+        tl.drawText(navaid.getName(), navaid.getCoordinate(), 3, 3, dt.getFont(), ds.getColor());
+        break;
+      case ndb:
+        tl.drawPoint(navaid.getCoordinate(), ds.getColor(), ds.getWidth());
+        tl.drawTriangleAround(navaid.getCoordinate(), ds.getBorderDistance(), ds.getColor(), ds.getBorderWidth());
+        tl.drawText(navaid.getName(), navaid.getCoordinate(), 3, 3, dt.getFont(), ds.getColor());
+        break;
+      case fix:
+        tl.drawPoint(navaid.getCoordinate(), ds.getColor(), ds.getWidth());
+        tl.drawText(navaid.getName(), navaid.getCoordinate(), 3, 0, dt.getFont(), ds.getColor());
+        break;
+      case fixMinor:
+        tl.drawPoint(navaid.getCoordinate(), ds.getColor(), ds.getWidth());
+        tl.drawText(navaid.getName(), navaid.getCoordinate(), 3, 0, dt.getFont(), ds.getColor());
+        break;
+      case airport:
+        tl.drawPoint(navaid.getCoordinate(), ds.getColor(), ds.getWidth());
+        tl.drawText(navaid.getName(), navaid.getCoordinate(), 3, 3, dt.getFont(), ds.getColor());
+        break;
+    }
+
   }
 
   private void drawNavaids() {
@@ -969,108 +1040,6 @@ public class Radar {
     }
   }
 
-  private void drawNavaid(Navaid navaid) {
-    RadarStyleSettings.ColorWidthBorderSettings ds = getDispSettBy(navaid);
-    RadarStyleSettings.TextSettings dt = styleSettings.navaid;
-
-    switch (navaid.getType()) {
-      case vor:
-        tl.drawPoint(navaid.getCoordinate(), ds.getColor(), ds.getWidth());
-        tl.drawCircleAround(navaid.getCoordinate(), ds.getBorderDistance(), ds.getColor(), ds.getBorderWidth());
-        tl.drawText(navaid.getName(), navaid.getCoordinate(), 3, 3, dt.getFont(), ds.getColor());
-        break;
-      case ndb:
-        tl.drawPoint(navaid.getCoordinate(), ds.getColor(), ds.getWidth());
-        tl.drawTriangleAround(navaid.getCoordinate(), ds.getBorderDistance(), ds.getColor(), ds.getBorderWidth());
-        tl.drawText(navaid.getName(), navaid.getCoordinate(), 3, 3, dt.getFont(), ds.getColor());
-        break;
-      case fix:
-        tl.drawPoint(navaid.getCoordinate(), ds.getColor(), ds.getWidth());
-        tl.drawText(navaid.getName(), navaid.getCoordinate(), 3, 0, dt.getFont(), ds.getColor());
-        break;
-      case fixMinor:
-        tl.drawPoint(navaid.getCoordinate(), ds.getColor(), ds.getWidth());
-        tl.drawText(navaid.getName(), navaid.getCoordinate(), 3, 0, dt.getFont(), ds.getColor());
-        break;
-      case airport:
-        tl.drawPoint(navaid.getCoordinate(), ds.getColor(), ds.getWidth());
-        tl.drawText(navaid.getName(), navaid.getCoordinate(), 3, 3, dt.getFont(), ds.getColor());
-        break;
-    }
-
-  }
-
-  private void drawAirports() {
-    for (Airport a : area.getAirports()) {
-      drawAirport(a);
-    }
-  }
-
-  private void drawAirport(Airport a) {
-    for (InactiveRunway r : a.getInactiveRunways()) {
-      drawInactiveRunway(r);
-    }
-
-    for (ActiveRunway r : a.getRunways()) {
-      drawRunway(r);
-    }
-  }
-
-  private void drawRunway(ActiveRunway runway) {
-    RadarStyleSettings.ColorWidthSettings ds = getDispSettBy(runway);
-
-    tl.drawLine(
-        runway.getThresholdA().getCoordinate(),
-        runway.getThresholdB().getCoordinate(),
-        ds.getColor(), ds.getWidth());
-  }
-
-  private void drawInactiveRunway(InactiveRunway runway) {
-    RadarStyleSettings.ColorWidthSettings ds = getDispSettBy(runway);
-
-    tl.drawLine(
-        runway.getThresholdA().getCoordinate(),
-        runway.getThresholdB().getCoordinate(),
-        ds.getColor(), ds.getWidth());
-  }
-
-  private boolean isUserControlledPlane(AirplaneDisplayInfo adi) {
-    boolean ret = adi.tunedAtc.getType() == Atc.eType.app;
-    return ret;
-  }
-
-  private void drawAirplanes() {
-    if (this.planeInfos.isEmpty()) return;
-
-    RadarStyleSettings.TextSettings dt = styleSettings.callsign;
-    Size s = c.getEstimatedTextSize(dt.getFont(), 12, 3);
-    tl.adjustPlaneLabelOverlying(s.width, s.height);
-
-    // first draw non-user controlled planes
-    for (AirplaneDisplayInfo adi : this.planeInfos.getList()) {
-      if (isUserControlledPlane(adi)) continue;
-      drawPlanePoint(adi);
-    }
-    for (AirplaneDisplayInfo adi : this.planeInfos.getList()) {
-      if (isUserControlledPlane(adi)) continue;
-      drawPlaneLabel(adi);
-    }
-    // over them draw user-controlled planes
-    for (AirplaneDisplayInfo adi : this.planeInfos.getList()) {
-      if (!isUserControlledPlane(adi)) continue;
-      drawPlanePoint(adi);
-    }
-    for (AirplaneDisplayInfo adi : this.planeInfos.getList()) {
-      if (!isUserControlledPlane(adi)) continue;
-      drawPlaneLabel(adi);
-    }
-
-    boolean isFullAirprox = this.planeInfos.getList().isAny(
-        p -> p.airprox == AirproxType.full);
-    if (isFullAirprox)
-      SoundManager.playAirprox();
-  }
-
   private void drawPlaneLabel(AirplaneDisplayInfo adi) {
     RadarStyleSettings.PlaneLabelSettings dp = getPlaneLabelDisplaySettingsBy(adi);
     if (dp.isVisible() == false) {
@@ -1094,14 +1063,10 @@ public class Radar {
 
     // if is of ATC, intelligent drawing with respect to the other radar labels
     // silly drawing otherwise
-    if (adi.tunedAtc.getType() == Atc.eType.app)
+    if (adi.tunedAtc.getType() == AtcType.app)
       tl.drawPlaneLabel(sb.toString(), adi.fixedLabelShift, adi.coordinate, adi.labelShift, dt.getFont(), c, cc);
     else
       tl.drawText(sb.toString(), adi.coordinate, adi.labelShift.x, adi.labelShift.y, dt.getFont(), c);
-  }
-
-  private boolean isAirplaneUnderConfirmedSwitch(AirplaneDisplayInfo adi) {
-    return adi.isConfirmedSwitch && adi.altitude > Acc.airport().getAltitude();
   }
 
   private void drawPlanePoint(AirplaneDisplayInfo adi) {
@@ -1123,7 +1088,7 @@ public class Radar {
 
     // separation ring
     if (displaySettings.isRingsVisible()) {
-      if (adi.altitude > Acc.airport().getAltitude()) {
+      if (adi.altitude > this.simulation.airport().getAltitude()) {
         tl.drawCircleAroundInNM(adi.coordinate, dp.getSeparationRingRadius(),
             c, 1);
       }
@@ -1144,102 +1109,57 @@ public class Radar {
     }
   }
 
-  private Color resolvePlaneDrawColor(AirplaneDisplayInfo adi, RadarStyleSettings.PlaneLabelSettings dp) {
-    Color c = dp.getColor();
-    if (adi.airprox == AirproxType.full) {
-      c = styleSettings.airproxFull;
-    } else if (adi.airprox == AirproxType.partial) {
-      c = styleSettings.airproxPartial;
-    } else if (adi.mrvaError) {
-      c = styleSettings.mrvaError;
-    } else if (adi.airprox == AirproxType.warning) {
-      c = styleSettings.airproxWarning;
-    } else if (switchFlagTrue && isAirplaneUnderConfirmedSwitch(adi)) {
-      c = styleSettings.switchingPlaneAlternatingColor;
-    } else if (this.selectedCallsign == adi.callsign) {
-      c = styleSettings.selected.getColor();
+  private void drawRoute(IReadOnlyList<Navaid> navaidPoints, RadarStyleSettings.ColorWidthSettings sett) {
+    for (int i = 0; i < navaidPoints.size() - 1; i++) {
+      tl.drawLine(
+          navaidPoints.get(i).getCoordinate(),
+          navaidPoints.get(i + 1).getCoordinate(),
+          sett.getColor(),
+          sett.getWidth());
     }
-    return c;
   }
 
-  private RadarStyleSettings.PlaneLabelSettings getPlaneLabelDisplaySettingsBy(AirplaneDisplayInfo adi) {
-    RadarStyleSettings.PlaneLabelSettings ret;
-
-    if (adi.emergency)
-      ret = styleSettings.emergency;
-    else if (adi.ias == 0)
-      ret = styleSettings.stopped;
-    else if (adi.responsibleAtc.getType() == Atc.eType.app)
-      ret = styleSettings.app;
-    else if (adi.responsibleAtc.getType() == Atc.eType.twr)
-      ret = styleSettings.twr;
-    else if (adi.responsibleAtc.getType() == Atc.eType.ctr)
-      ret = styleSettings.ctr;
-    else
-      throw new UnsupportedOperationException();
-
-    return ret;
+  private void drawRoutes() {
+    for (DARoute route : drawnRoutes) {
+      if (route.getRouteNavaids().isEmpty()) continue;
+      switch (route.getType()) {
+        case sid:
+          if (!displaySettings.isSidVisible()) continue;
+          for (ActiveRunwayThreshold runwayThreshold : this.simulation.getRunwayConfigurationInUse()
+              .getDepartures()
+              .select(q -> q.getThreshold())
+              .where(q -> q.getRoutes().contains(route))) {
+            drawSidIntro(runwayThreshold.getOtherThreshold().getCoordinate(), route.getRouteNavaids().getFirst());
+          }
+          drawRoute(route.getRouteNavaids(), styleSettings.sid);
+          break;
+        case star:
+        case transition:
+          if (!displaySettings.isStarVisible()) continue;
+          drawRoute(route.getRouteNavaids(), styleSettings.star);
+          break;
+        default:
+          throw new EEnumValueUnsupportedException(route.getType());
+      }
+    }
   }
 
-  private void drawCaptions() {
-    Messenger ms = simulation.getMessenger();
-    IList<Message> msgs = ms.getMessagesByListener(this, true);
+  private void drawRunway(ActiveRunway runway) {
+    RadarStyleSettings.ColorWidthSettings ds = getDispSettBy(runway);
 
-    for (Message msg : msgs) {
-      String formattedText =
-          getMessageContentAsString(msg);
-      messageManager.add(msg.getSource(), formattedText);
-    }
-
-    boolean containsSystemMessage =
-        msgs.isAny(q -> q.isSourceOfType(Messenger.XSystem.class));
-
-    IList<Message> atcMsgs = msgs.where(q -> q.isSourceOfType(Atc.class));
-    boolean containsAtcMessage = atcMsgs.isEmpty() == false;
-    boolean isAtcMessageNegative = false;
-    if (containsAtcMessage) {
-      atcMsgs = atcMsgs.where(q -> q.isContentOfType(IAtc2Atc.class));
-      isAtcMessageNegative = atcMsgs.isAny(q -> q.<IAtc2Atc>getContent().isRejection());
-    }
-
-    IList<Message> planeMsgs = msgs.where(q -> q.isSourceOfType(Airplane.class));
-    boolean containsPlaneMessage = planeMsgs.isEmpty() == false;
-    boolean isPlaneMessageNegative = false;
-    if (containsPlaneMessage) {
-//      for (Message planeMsg : planeMsgs) {
-//        isPlaneMessageNegative = ((SpeechList) planeMsg.getContent()).isAny(q -> q instanceof Rejection);
-//        if (isPlaneMessageNegative) break;
-//
-//      }
-      isPlaneMessageNegative = planeMsgs.isAny(q->((SpeechList)q.getContent()).isAny(p -> p instanceof Rejection));
-    }
-
-    if (containsAtcMessage) {
-      SoundManager.playAtcNewMessage(isAtcMessageNegative);
-    } else if (containsPlaneMessage) {
-      SoundManager.playPlaneNewMessage(isPlaneMessageNegative);
-    } else if (containsSystemMessage) {
-      SoundManager.playSystemMessage();
-    }
-
-    drawMessages(messageManager.getCurrent());
-
-    messageManager.decreaseMessagesLifeCounter();
+    tl.drawLine(
+        runway.getThresholdA().getCoordinate(),
+        runway.getThresholdB().getCoordinate(),
+        ds.getColor(), ds.getWidth());
   }
 
-  private void drawMessages(List<VisualisedMessage> msgs) {
-    MessageSet ms = createMessageSet(msgs);
-
-    RadarStyleSettings.TextSettings dt;
-
-    dt = styleSettings.atc;
-    tl.drawTextBlock(ms.atc, TextBlockLocation.bottomRight, dt.getFont(), dt.getColor());
-
-    dt = styleSettings.plane;
-    tl.drawTextBlock(ms.plane, TextBlockLocation.bottomLeft, dt.getFont(), dt.getColor());
-
-    dt = styleSettings.system;
-    tl.drawTextBlock(decodeSystemMultilines(ms.system), TextBlockLocation.topRight, dt.getFont(), dt.getColor());
+  private void drawSidIntro(Coordinate thresholdCoordinate, Navaid firstNavaid) {
+    RadarStyleSettings.ColorWidthSettings sett = styleSettings.sid;
+    tl.drawLine(
+        thresholdCoordinate,
+        firstNavaid.getCoordinate(),
+        sett.getColor(),
+        sett.getWidth());
   }
 
   private void drawTime() {
@@ -1251,44 +1171,19 @@ public class Radar {
     tl.drawTextBlock(lst, TextBlockLocation.topLeft, dt.getFont(), dt.getColor());
   }
 
-  private MessageSet createMessageSet(List<VisualisedMessage> msgs) {
-    MessageSet ret = new MessageSet();
-
-    for (VisualisedMessage m : msgs) {
-      if (m.getSource() == Messenger.SYSTEM) {
-        ret.system.add(">> " + m.getText());
-      } else if (m.getSource() instanceof Atc) {
-        ret.atc.add("[" + m.getSource().getName() + "] " + m.getText());
-      } else if (m.getSource() instanceof Airplane) {
-        ret.plane.add(m.getSource().getName() + ": " + m.getText());
-      } else {
-        throw new UnsupportedOperationException();
-      }
+  private String formatToVisualSentence(List<String> sentences) {
+    EStringBuilder ret = new EStringBuilder();
+    for (int i = 0; i < sentences.size(); i++) {
+      String sentence = sentences.get(i);
+      if (sentence.trim().length() == 0) continue;
+      if (i == 0)
+        sentence = makeBeginSentence(sentence);
+      else
+        ret.append(", ");
+      ret.append(sentence);
     }
-    return ret;
-  }
-
-  private List<String> decodeSystemMultilines(List<String> system) {
-    List<String> ret = new ArrayList<>();
-    String del = "\r\n";
-    for (String s : system) {
-      String[] spl = s.split(del);
-      ret.addAll(Arrays.asList(spl));
-    }
-    return ret;
-  }
-
-  private void drawArc(BorderExactPoint bPrev, BorderArcPoint borderArcPoint, BorderExactPoint bNext, Color color) {
-    double startBear = Coordinates.getBearing(borderArcPoint.getCoordinate(), bPrev.getCoordinate());
-    double endBear = Coordinates.getBearing(borderArcPoint.getCoordinate(), bNext.getCoordinate());
-    double distance = Coordinates.getDistanceInNM(borderArcPoint.getCoordinate(), bPrev.getCoordinate());
-    if (borderArcPoint.getDirection() == BorderArcPoint.eDirection.counterclockwise) {
-      double tmp = startBear;
-      startBear = endBear;
-      endBear = tmp;
-    }
-
-    tl.drawArc(borderArcPoint.getCoordinate(), startBear, endBear, distance, color);
+    ret.append(".");
+    return ret.toString();
   }
 
   private RadarStyleSettings.ColorWidthSettings getDispSettBy(Border border) {
@@ -1334,11 +1229,6 @@ public class Radar {
     }
   }
 
-  private String buildPlaneString(String lineFormat, AirplaneDisplayInfo adi) {
-    String ret = adi.format(lineFormat);
-    return ret;
-  }
-
   private String getMessageContentAsString(Message msg) {
     String ret;
     if (msg.isSourceOfType(Airplane.class)) {
@@ -1373,19 +1263,32 @@ public class Radar {
     return ret;
   }
 
-  private String formatToVisualSentence(List<String> sentences) {
-    EStringBuilder ret = new EStringBuilder();
-    for (int i = 0; i < sentences.size(); i++) {
-      String sentence = sentences.get(i);
-      if (sentence.trim().length() == 0) continue;
-      if (i == 0)
-        sentence = makeBeginSentence(sentence);
-      else
-        ret.append(", ");
-      ret.append(sentence);
-    }
-    ret.append(".");
-    return ret.toString();
+  private RadarStyleSettings.PlaneLabelSettings getPlaneLabelDisplaySettingsBy(AirplaneDisplayInfo adi) {
+    RadarStyleSettings.PlaneLabelSettings ret;
+
+    if (adi.emergency)
+      ret = styleSettings.emergency;
+    else if (adi.ias == 0)
+      ret = styleSettings.stopped;
+    else if (adi.responsibleAtc.getType() == AtcType.app)
+      ret = styleSettings.app;
+    else if (adi.responsibleAtc.getType() == AtcType.twr)
+      ret = styleSettings.twr;
+    else if (adi.responsibleAtc.getType() == AtcType.ctr)
+      ret = styleSettings.ctr;
+    else
+      throw new UnsupportedOperationException();
+
+    return ret;
+  }
+
+  private boolean isAirplaneUnderConfirmedSwitch(AirplaneDisplayInfo adi) {
+    return adi.isConfirmedSwitch && adi.altitude > this.simulation.airport().getAltitude();
+  }
+
+  private boolean isUserControlledPlane(AirplaneDisplayInfo adi) {
+    boolean ret = adi.tunedAtc.getType() == AtcType.app;
+    return ret;
   }
 
   private String makeBeginSentence(String sentence) {
@@ -1399,19 +1302,101 @@ public class Radar {
 
     return ret.toString();
   }
+
+  private void moveMapBy(Coordinate c) {
+    tl.setPosition(
+        tl.getTopLeft().add(c));
+    redraw(true);
+  }
+
+  private Color resolvePlaneDrawColor(AirplaneDisplayInfo adi, RadarStyleSettings.PlaneLabelSettings dp) {
+    Color c = dp.getColor();
+    if (adi.airprox == AirproxType.full) {
+      c = styleSettings.airproxFull;
+    } else if (adi.airprox == AirproxType.partial) {
+      c = styleSettings.airproxPartial;
+    } else if (adi.mrvaError) {
+      c = styleSettings.mrvaError;
+    } else if (adi.airprox == AirproxType.warning) {
+      c = styleSettings.airproxWarning;
+    } else if (switchFlagTrue && isAirplaneUnderConfirmedSwitch(adi)) {
+      c = styleSettings.switchingPlaneAlternatingColor;
+    } else if (this.selectedCallsign == adi.callsign) {
+      c = styleSettings.selected.getColor();
+    }
+    return c;
+  }
+
+  private void sim_runwayChanged(ISimulation simulation) {
+    buildLocalNavaidList();
+    buildDrawnRoutesList();
+    buildDrawnApproachesList();
+  }
+
+  private AirplaneDisplayInfo tryGetAirplaneDisplayInfoByPoint(Point p) {
+    Coordinate c = tl.toCoordinate(p);
+    return tryGetSelectedAirplane(c);
+  }
+
+  private Double tryGetRelativeSpeed(Coordinate fromCoordinate) {
+    AirplaneDisplayInfo adi = null;
+    double dist = Double.MAX_VALUE;
+    for (AirplaneDisplayInfo radi : this.planeInfos.getList()) {
+      double rdist = Coordinates.getDistanceInNM(radi.coordinate, fromCoordinate);
+      if (rdist < dist) {
+        dist = rdist;
+        adi = radi;
+      }
+    }
+    if (dist > 3)
+      adi = null;
+    if (adi != null)
+      return (double) adi.tas;
+    else
+      return null;
+  }
+
+  private AirplaneDisplayInfo tryGetSelectedAirplane(Coordinate c) {
+    AirplaneDisplayInfo bestAdi = null;
+    double bestDiff = Double.MAX_VALUE;
+    for (AirplaneDisplayInfo adi : this.planeInfos.getList()) {
+      double tmpDif = Coordinates.getDistanceInNM(c, adi.coordinate);
+      if (tmpDif < bestDiff) {
+        bestDiff = tmpDif;
+        bestAdi = adi;
+      }
+    }
+
+    if (bestDiff > MAX_NM_DIFFERENCE_FOR_SELECTION)
+      return null;
+    else
+      return bestAdi;
+  }
+
+  private void zoomBy(double multiplier) {
+    double distLat
+        = tl.getTopLeft().getLatitude().get() - tl.getBottomRight().getLatitude().get();
+    double distLon
+        = tl.getTopLeft().getLongitude().get() - tl.getBottomRight().getLongitude().get();
+
+    distLat = distLat / 2d;
+    distLon = distLon / 2d;
+
+    double distShiftLat = distLat * multiplier - distLat;
+    double distShiftLon = distLon * multiplier - distLon;
+
+    tl.setPosition(
+        new Coordinate(
+            tl.getTopLeft().getLatitude().get() + distShiftLat,
+            tl.getTopLeft().getLongitude().get() + distShiftLon),
+        tl.getWidthInNM() * multiplier);
+
+    redraw(true);
+
+  }
 }
 
 class InfoLine {
-  public final Coordinate from;
-  public final Coordinate to;
-  public final int heading;
-  public final double distanceInNm;
-  public final double seconds200;
-  public final double seconds250;
-  public final double seconds280;
-  public final double secondsSpeed;
-  public final boolean isRelativeSpeedUsed;
-
   public static String toIntegerMinutes(double value) {
     int tmp = (int) (value / 60);
     return Integer.toString(tmp);
@@ -1421,6 +1406,15 @@ class InfoLine {
     double tmp = value % 60;
     return String.format("%02.0f", tmp);
   }
+  public final Coordinate from;
+  public final Coordinate to;
+  public final int heading;
+  public final double distanceInNm;
+  public final double seconds200;
+  public final double seconds250;
+  public final double seconds280;
+  public final double secondsSpeed;
+  public final boolean isRelativeSpeedUsed;
 
   public InfoLine(Coordinate from, Coordinate to, Double refSpeed) {
     this.from = from;

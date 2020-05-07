@@ -86,6 +86,18 @@ public class Format {
     }
   }
 
+  public static class PlaneInfo{
+    public static String toDepartureArrivalChar(boolean isDeparture) {
+      if (isDeparture) {
+        return "▲";
+      } else {
+        return "▼";
+      }
+    }
+
+
+  }
+
   //TODO fix this to be get from getActiveAirport().getTransitionAltitude()
   private static final int TRANSITION_ALTITUDE = 5000;
 
@@ -102,11 +114,5 @@ public class Format {
 //    return Character.toString(value.category);
 //  }
 
-  public static String toDepartureArrivalChar(boolean isDeparture) {
-    if (isDeparture) {
-      return "▲";
-    } else {
-      return "▼";
-    }
-  }
+
 }

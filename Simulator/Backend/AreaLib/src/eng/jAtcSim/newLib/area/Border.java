@@ -106,9 +106,7 @@ public class Border {
 //    return ret;
 //  }
 
-  //  private static final int DRAW_STEP = 10;
-//  public static final int ALTITUDE_MINIMUM_VALUE = 0;
-//  public static final int ALTITUDE_MAXIMUM_VALUE = 99000;
+
   private String name;
   private eType type;
   private IList<BorderPoint> points;

@@ -1,19 +1,9 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package eng.jAtcSim.abstractRadar;
 
-import eng.eSystem.xmlSerialization.annotations.XmlOptional;
 import eng.jAtcSim.abstractRadar.global.Color;
 import eng.jAtcSim.abstractRadar.global.Font;
 
-/**
- *
- * @author Marek
- */
-public class  RadarStyleSettings {
+public class RadarStyleSettings {
 
   ///region Inner classes
   public static class ColorWidthSettings {
@@ -37,7 +27,7 @@ public class  RadarStyleSettings {
     }
   }
 
-  public static class ColorWidthFontSettings extends ColorWidthSettings{
+  public static class ColorWidthFontSettings extends ColorWidthSettings {
     private Font font;
 
     public Font getFont() {
@@ -49,7 +39,7 @@ public class  RadarStyleSettings {
     }
   }
 
-  public static class ColorWidthLengthSettings extends ColorWidthSettings{
+  public static class ColorWidthLengthSettings extends ColorWidthSettings {
     private double length;
 
     public double getLength() {
@@ -65,14 +55,6 @@ public class  RadarStyleSettings {
     private int borderWidth;
     private int borderDistance;
 
-    public int getBorderWidth() {
-      return borderWidth;
-    }
-
-    public void setBorderWidth(int borderWidth) {
-      this.borderWidth = borderWidth;
-    }
-
     public int getBorderDistance() {
       return borderDistance;
     }
@@ -80,11 +62,18 @@ public class  RadarStyleSettings {
     public void setBorderDistance(int borderDistance) {
       this.borderDistance = borderDistance;
     }
+
+    public int getBorderWidth() {
+      return borderWidth;
+    }
+
+    public void setBorderWidth(int borderWidth) {
+      this.borderWidth = borderWidth;
+    }
   }
 
-  public static class PlaneLabelSettings{
+  public static class PlaneLabelSettings {
 
-    @XmlOptional
     private boolean visible = true;
 
     private Color color;
@@ -98,32 +87,24 @@ public class  RadarStyleSettings {
     private String secondLineFormat;
     private String thirdLineFormat;
 
-    public boolean isVisible() {
-      return visible;
-    }
-
-    public void setVisible(boolean visible) {
-      this.visible = visible;
-    }
-
     public Color getColor() {
       return color;
-    }
-
-    public Color getConnectorColor() {
-      return connectorColor;
     }
 
     public void setColor(Color color) {
       this.color = color;
     }
 
-    public int getPointWidth() {
-      return pointWidth;
+    public Color getConnectorColor() {
+      return connectorColor;
     }
 
-    public void setPointWidth(int pointWidth) {
-      this.pointWidth = pointWidth;
+    public String getFirstLineFormat() {
+      return firstLineFormat;
+    }
+
+    public void setFirstLineFormat(String firstLineFormat) {
+      this.firstLineFormat = firstLineFormat;
     }
 
     public int getHeadingLineLength() {
@@ -150,20 +131,12 @@ public class  RadarStyleSettings {
       this.historyDotStep = historyDotStep;
     }
 
-    public int getSeparationRingRadius() {
-      return separationRingRadius;
+    public int getPointWidth() {
+      return pointWidth;
     }
 
-    public void setSeparationRingRadius(int separationRingRadius) {
-      this.separationRingRadius = separationRingRadius;
-    }
-
-    public String getFirstLineFormat() {
-      return firstLineFormat;
-    }
-
-    public void setFirstLineFormat(String firstLineFormat) {
-      this.firstLineFormat = firstLineFormat;
+    public void setPointWidth(int pointWidth) {
+      this.pointWidth = pointWidth;
     }
 
     public String getSecondLineFormat() {
@@ -174,6 +147,14 @@ public class  RadarStyleSettings {
       this.secondLineFormat = secondLineFormat;
     }
 
+    public int getSeparationRingRadius() {
+      return separationRingRadius;
+    }
+
+    public void setSeparationRingRadius(int separationRingRadius) {
+      this.separationRingRadius = separationRingRadius;
+    }
+
     public String getThirdLineFormat() {
       return thirdLineFormat;
     }
@@ -181,9 +162,17 @@ public class  RadarStyleSettings {
     public void setThirdLineFormat(String thirdLineFormat) {
       this.thirdLineFormat = thirdLineFormat;
     }
+
+    public boolean isVisible() {
+      return visible;
+    }
+
+    public void setVisible(boolean visible) {
+      this.visible = visible;
+    }
   }
 
-  public static class TextSettings{
+  public static class TextSettings {
     private Color color;
     private Font font;
 
@@ -234,7 +223,9 @@ public class  RadarStyleSettings {
   public ColorWidthFontSettings borderRestricted;
 
   // mapBack
-  /** Map background color in hex */
+  /**
+   * Map background color in hex
+   */
   public Color mapBackcolor;
 
   // routes
@@ -248,7 +239,6 @@ public class  RadarStyleSettings {
   public TextSettings time;
   public TextSettings callsign;
   public TextSettings navaid;
-  @XmlOptional
   public Color switchingPlaneAlternatingColor = null;
 
   // plane labels
