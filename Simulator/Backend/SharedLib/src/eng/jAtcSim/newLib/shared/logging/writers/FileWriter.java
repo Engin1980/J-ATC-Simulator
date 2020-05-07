@@ -1,9 +1,14 @@
 package eng.jAtcSim.newLib.shared.logging.writers;
 
 import eng.eSystem.validation.EAssert;
+import eng.jAtcSim.newLib.shared.SharedAcc;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class FileWriter implements ILogWriter {
   private final String fileName;
@@ -45,11 +50,21 @@ public class FileWriter implements ILogWriter {
     if (autoFlush) bw.flush();
   }
 
+  private String getFullFileName() {
+    Path ret;
+    if (Paths.get(this.fileName).isAbsolute() == false) {
+      Path parent = Paths.get(SharedAcc.getLogPath());
+      ret = parent.resolve(this.fileName);
+    } else
+      ret = Paths.get(this.fileName);
+    return ret.toAbsolutePath().toString();
+  }
+
   private void openWriter() throws IOException {
     try {
-      bw = new BufferedWriter(new java.io.FileWriter(this.fileName));
+      bw = new BufferedWriter(new java.io.FileWriter(this.getFullFileName()));
     } catch (IOException ex) {
-      throw new IOException("Unable to open a file " + this.fileName + " for writing.", ex);
+      throw new IOException(sf("Unable to open a file %s (%s) for writing.", this.fileName, this.getFullFileName()), ex);
     }
   }
 }

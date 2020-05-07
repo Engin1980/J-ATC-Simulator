@@ -23,5 +23,10 @@
     <orderEntry type="module" module-name="MessagingLib" />
     <orderEntry type="module" module-name="TextProcessingLib" />
     <orderEntry type="module" module-name="MoodLib" />
+    <orderEntry type="module" module-name="AreaXmlLoaderLib" />
+    <orderEntry type="module" module-name="AirplaneTypeXmlLoaderLib" />
+    <orderEntry type="module" module-name="FleetXmlLoaderLib" />
+    <orderEntry type="module" module-name="JAtcSim" />
+    <orderEntry type="module" module-name="TrafficXmlLoaderLib" />
   </component>
 </module>

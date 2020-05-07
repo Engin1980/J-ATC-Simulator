@@ -45,6 +45,13 @@ public class StatsProvider {
 
   }
 
+    public void registerElapseSecondDuration(int ms) {
+    for (Collector collector : collectors) {
+      collector.getBusyCounter().add(ms);
+    }
+    recentStats.registerElapsedSecondDuration(ms);
+  }
+
   public void registerFinishedPlane(FinishedPlaneStats finishedPlaneStats) {
     MoodResult mr = finishedPlaneStats.getMoodResult();
     this.moodResults.add(mr);

@@ -7,7 +7,7 @@ import eng.jAtcSim.newLib.shared.xml.XmlLoadException;
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class AirplaneTypesXmlLoader {
-  public static AirplaneTypes loadAirlinesFleets(String fileName) {
+  public static AirplaneTypes load(String fileName) {
     XDocument doc;
     try {
       doc = XDocument.load(fileName);

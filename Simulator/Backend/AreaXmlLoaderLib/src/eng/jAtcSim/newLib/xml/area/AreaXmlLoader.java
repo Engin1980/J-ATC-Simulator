@@ -8,7 +8,7 @@ import eng.jAtcSim.newLib.xml.area.internal.context.Context;
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class AreaXmlLoader {
-  public static Area create(String fileName) {
+  public static Area load(String fileName) {
     XDocument doc;
     try {
       doc = XDocument.load(fileName);

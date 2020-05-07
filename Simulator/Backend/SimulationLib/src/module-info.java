@@ -11,4 +11,8 @@ module JAtcSim.Modules.Backend.SimulationLib {
   requires JAtcSim.Modules.Backend.MessagingLib;
   requires JAtcSim.modules.backend.TextProcessingLib;
   requires JAtcSim.Modules.Backend.MoodLib;
+  requires AreaXmlLoaderLib;
+  requires AirplaneTypeXmlLoaderLib;
+  requires FleetXmlLoaderLib;
+  requires TrafficXmlLoaderLib;
 }

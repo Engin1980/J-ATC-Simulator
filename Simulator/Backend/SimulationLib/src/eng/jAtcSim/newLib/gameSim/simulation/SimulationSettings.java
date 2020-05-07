@@ -1,32 +1,20 @@
 package eng.jAtcSim.newLib.gameSim.simulation;
 
+import eng.jAtcSim.newLib.gameSim.game.startupInfos.SimulationStartupSettingsInfo;
+import eng.jAtcSim.newLib.gameSim.game.startupInfos.TrafficStartupSettingsInfo;
 import eng.jAtcSim.newLib.textProcessing.base.Formatter;
 import eng.jAtcSim.newLib.textProcessing.base.Parser;
 
 public class SimulationSettings {
-  private final double emergencyPerDayProbability;
-  private int simulationSecondLengthInMs;
-  private final int statsSnapshotDistanceInMinutes;
-  private final Parser parser;
-  private final Formatter formatter;
+  public final Parser parser;
+  public final Formatter formatter;
+  public final TrafficStartupSettingsInfo trafficSettings;
+  public final SimulationStartupSettingsInfo simulationSettings;
 
-  public Parser getParser() {
-    return parser;
-  }
-
-  public Formatter getFormatter() {
-    return formatter;
-  }
-
-  public double getEmergencyPerDayProbability() {
-    return emergencyPerDayProbability;
-  }
-
-  public int getSimulationSecondLengthInMs() {
-    return simulationSecondLengthInMs;
-  }
-
-  public int getStatsSnapshotDistanceInMinutes() {
-    return statsSnapshotDistanceInMinutes;
+  public SimulationSettings(Parser parser, Formatter formatter, TrafficStartupSettingsInfo trafficSettings, SimulationStartupSettingsInfo simulationSettings) {
+    this.parser = parser;
+    this.formatter = formatter;
+    this.trafficSettings = trafficSettings;
+    this.simulationSettings = simulationSettings;
   }
 }

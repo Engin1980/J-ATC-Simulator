@@ -29,6 +29,7 @@ import eng.jAtcSim.newLib.messaging.Participant;
 import eng.jAtcSim.newLib.mood.Mood;
 import eng.jAtcSim.newLib.mood.MoodAcc;
 import eng.jAtcSim.newLib.shared.Callsign;
+import eng.jAtcSim.newLib.shared.CallsignFactory;
 import eng.jAtcSim.newLib.shared.SharedAcc;
 import eng.jAtcSim.newLib.shared.enums.AtcType;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
@@ -39,11 +40,17 @@ import eng.jAtcSim.newLib.traffic.movementTemplating.*;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
-class AirplanesSimModule extends SimModule {
+public class AirplanesSimModule extends SimModule {
   private static final int MAX_ALLOWED_DELAY = 120;
+  private final double delayStepProbability;
+  private final int delayStep;
+  private final CallsignFactory callsignFactory;
 
-  public AirplanesSimModule(ISimulationModuleParent parent) {
+  public AirplanesSimModule(ISimulationModuleParent parent, double delayStepProbability, int delayStep, boolean useExtendedCallsigns) {
     super(parent);
+    this.delayStepProbability = delayStepProbability;
+    this.delayStep = delayStep;
+    this.callsignFactory = new CallsignFactory(useExtendedCallsigns);
   }
 
   private FinishedPlaneStats buildFinishedAirplaneStats(IAirplane airplane) {
@@ -68,7 +75,7 @@ class AirplanesSimModule extends SimModule {
       GenericCommercialMovementTemplate gcmt = (GenericCommercialMovementTemplate) m;
 
       CompanyFleet companyFleet = parent.getContext().getAirlinesFleets().tryGetByIcaoOrDefault(gcmt.getCompanyIcao());
-      callsign = Callsign.generateCommercial(companyFleet.getIcao());
+      callsign = this.callsignFactory.generateCommercial(companyFleet.getIcao());
       IList<TypeAndWeight> availableTypes = companyFleet.getTypes()
           .where(q -> parent.getContext().getAirplaneTypes()
               .getTypeNames()
@@ -83,7 +90,7 @@ class AirplanesSimModule extends SimModule {
       GenericGeneralAviationMovementTemplate ggamt = (GenericGeneralAviationMovementTemplate) m;
 
       CountryFleet countryFleet = parent.getContext().getGaFleets().tryGetByIcaoOrDefault(ggamt.getCountryIcao());
-      callsign = Callsign.generateGeneralAviation(countryFleet.getAircraftPrefix());
+      callsign = this.callsignFactory.generateGeneralAviation(countryFleet.getAircraftPrefix());
       IList<TypeAndWeight> availableTypes = countryFleet.getTypes()
           .where(q -> parent.getContext().getAirplaneTypes()
               .getTypeNames()
@@ -182,8 +189,8 @@ class AirplanesSimModule extends SimModule {
   }
 
   private int generateDelay() {
-    double delayStepProbability = SharedAcc.getSettings().getDelayStepProbability();
-    int delayStep = SharedAcc.getSettings().getDelayStep();
+    double delayStepProbability = this.delayStepProbability;
+    int delayStep = this.delayStep;
     ERandom rnd = SharedAcc.getRnd();
 
     int ret = 0;
@@ -284,7 +291,7 @@ class AirplanesSimModule extends SimModule {
       parent.getTrafficProvider().prepareTrafficForDay(SharedAcc.getNow().getDays() + 1);
   }
 
-  void manageTrafficPerSecond() {
+  public void elapseSecond() {
     introduceNewPlanes();
     removeOldPlanes();
     generateEmergencyIfRequired();

@@ -12,8 +12,37 @@ public class SharedAcc {
   private static Producer<ApplicationLog> applicationLogProducer;
   private static Producer<EDayTimeRun> nowProducer;
   private static Producer<ERandom> randomProducer;
-  private static Producer<Settings> settingsProducer;
+//  private static Producer<Settings> settingsProducer;
   private static Producer<SimulationLog> simulationLogProducer;
+  private static Producer<String> logPathProducer;
+
+  public static String getAirportIcao() {
+    return airportIcaoProducer.produce();
+  }
+
+  public static ApplicationLog getAppLog() {
+    return applicationLogProducer.produce();
+  }
+
+  public static String getLogPath() {
+    return logPathProducer.produce();
+  }
+
+  public static EDayTimeRun getNow() {
+    return nowProducer.produce();
+  }
+
+  public static ERandom getRnd() {
+    return randomProducer.produce();
+  }
+
+//  public static Settings getSettings() {
+//    return settingsProducer.produce();
+//  }
+
+  public static SimulationLog getSimLog() {
+    return simulationLogProducer.produce();
+  }
 
   public static void setAirportIcaoProducer(Producer<String> airportIcaoProducer) {
     EAssert.Argument.isNotNull(airportIcaoProducer, "airportIcaoProducer");
@@ -23,6 +52,10 @@ public class SharedAcc {
   public static void setApplicationLogProducer(Producer<ApplicationLog> applicationLogProducer) {
     EAssert.Argument.isNotNull(applicationLogProducer, "applicationLogProducer");
     SharedAcc.applicationLogProducer = applicationLogProducer;
+  }
+
+  public static void setLogPathProducer(Producer<String> logPathProducer) {
+    SharedAcc.logPathProducer = logPathProducer;
   }
 
   public static void setNowProducer(Producer<EDayTimeRun> nowProducer) {
@@ -35,37 +68,13 @@ public class SharedAcc {
     SharedAcc.randomProducer = randomProducer;
   }
 
-  public static void setSettingsProducer(Producer<Settings> settingsProducer) {
-    EAssert.Argument.isNotNull(settingsProducer, "settingsProducer");
-    SharedAcc.settingsProducer = settingsProducer;
-  }
+//  public static void setSettingsProducer(Producer<Settings> settingsProducer) {
+//    EAssert.Argument.isNotNull(settingsProducer, "settingsProducer");
+//    SharedAcc.settingsProducer = settingsProducer;
+//  }
 
   public static void setSimulationLogProducer(Producer<SimulationLog> simulationLogProducer) {
     EAssert.Argument.isNotNull(simulationLogProducer, "simulationLogProducer");
     SharedAcc.simulationLogProducer = simulationLogProducer;
-  }
-
-  public static String getAirportIcao() {
-    return airportIcaoProducer.produce();
-  }
-
-  public static ApplicationLog getAppLog() {
-    return applicationLogProducer.produce();
-  }
-
-  public static EDayTimeRun getNow() {
-    return nowProducer.produce();
-  }
-
-  public static ERandom getRnd() {
-    return randomProducer.produce();
-  }
-
-  public static Settings getSettings() {
-    return settingsProducer.produce();
-  }
-
-  public static SimulationLog getSimLog() {
-    return simulationLogProducer.produce();
   }
 }

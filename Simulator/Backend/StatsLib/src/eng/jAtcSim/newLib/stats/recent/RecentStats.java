@@ -258,11 +258,11 @@ public class RecentStats {
 //  public MovementsPerHour getMovementsPerHour() {
 //    return clsMovements;
 //  }
-//
-//  public void registerElapsedSecondDuration(int ms) {
-//    elapsedSecondDuration.add(ms);
-//  }
-//
+
+  public void registerElapsedSecondDuration(int ms) {
+    elapsedSecondDuration.add(ms);
+  }
+
 
 //
 //  public void registerHoldingPointDelay(EDayTimeStamp dayTimeStamp, int delay) {

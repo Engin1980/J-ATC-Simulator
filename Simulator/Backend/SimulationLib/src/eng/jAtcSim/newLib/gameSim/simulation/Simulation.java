@@ -5,10 +5,7 @@ import eng.jAtcSim.newLib.airplanes.AirplanesController;
 import eng.jAtcSim.newLib.area.Border;
 import eng.jAtcSim.newLib.atcs.AtcAcc;
 import eng.jAtcSim.newLib.atcs.AtcProvider;
-import eng.jAtcSim.newLib.gameSim.simulation.controllers.AirproxController;
-import eng.jAtcSim.newLib.gameSim.simulation.controllers.EmergencyAppearanceController;
-import eng.jAtcSim.newLib.gameSim.simulation.controllers.MrvaController;
-import eng.jAtcSim.newLib.gameSim.simulation.controllers.SystemMessagesController;
+import eng.jAtcSim.newLib.gameSim.simulation.controllers.*;
 import eng.jAtcSim.newLib.gameSim.simulation.modules.AirplanesSimModule;
 import eng.jAtcSim.newLib.gameSim.simulation.modules.ISimulationModuleParent;
 import eng.jAtcSim.newLib.messaging.Message;
@@ -19,8 +16,8 @@ import eng.jAtcSim.newLib.shared.SharedAcc;
 import eng.jAtcSim.newLib.shared.enums.AtcType;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 import eng.jAtcSim.newLib.shared.time.EDayTimeRun;
-import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
-import eng.jAtcSim.newLib.gameSim.simulation.controllers.TimerController;
+import eng.jAtcSim.newLib.shared.time.ETimeStamp;
+import eng.jAtcSim.newLib.stats.StatsAcc;
 import eng.jAtcSim.newLib.stats.StatsProvider;
 import eng.jAtcSim.newLib.textProcessing.base.Formatter;
 import eng.jAtcSim.newLib.textProcessing.base.Parser;
@@ -28,41 +25,40 @@ import eng.jAtcSim.newLib.traffic.TrafficProvider;
 import eng.jAtcSim.newLib.weather.WeatherAcc;
 import eng.jAtcSim.newLib.weather.WeatherManager;
 
-public class NewSimulation {
+public class Simulation {
 
   public class SimulationModuleParent implements ISimulationModuleParent {
 
     @Override
     public AirplanesController getAirplanesController() {
-      return NewSimulation.this.airplanesController;
+      return Simulation.this.airplanesController;
     }
 
     @Override
     public AirproxController getAirproxController() {
-      return NewSimulation.this.airproxController;
+      return Simulation.this.airproxController;
     }
 
     @Override
     public SimulationContext getContext() {
-      return NewSimulation.this.context;
+      return Simulation.this.context;
     }
 
     @Override
     public EmergencyAppearanceController getEmergencyAppearanceController() {
-      return NewSimulation.this.emergencyAppearanceController;
+      return Simulation.this.emergencyAppearanceController;
     }
 
     @Override
     public MrvaController getMrvaController() {
-      return NewSimulation.this.mrvaController;
+      return Simulation.this.mrvaController;
     }
 
     @Override
     public TrafficProvider getTrafficProvider() {
-      return NewSimulation.this.trafficProvider;
+      return Simulation.this.trafficProvider;
     }
   }
-
 
   private static final boolean DEBUG_STYLE_TIMER = false;
   private final SimulationContext context;
@@ -80,34 +76,40 @@ public class NewSimulation {
   private final SystemMessagesController systemMessagesProcessor = new SystemMessagesController();
   private final Parser parser;
   private final Formatter formatter;
-  private final AirplanesSimModule airplanesSimModule = new AirplanesSimModule(this.new SimulationModuleParent());
+  private final AirplanesSimModule airplanesSimModule;
   private boolean isElapseSecondCalculationRunning = false;
 
-  public NewSimulation(
+  public Simulation(
       SimulationContext simulationContext,
-      SimulationSettings simulationSettings,
-      EDayTimeStamp simulationStartTime) {
+      SimulationSettings simulationSettings) {
     EAssert.Argument.isNotNull(simulationContext, "simulationContext");
     EAssert.Argument.isNotNull(simulationSettings, "simulationSettings");
-    EAssert.Argument.isNotNull(simulationStartTime, "simulationStartTime");
+    ETimeStamp simulationStartTime = simulationSettings.simulationSettings.startTime;
     this.context = simulationContext;
     this.settings = simulationSettings;
     this.now = new EDayTimeRun(simulationStartTime.getValue());
 
+
     this.atcProvider = new AtcProvider(context.getActiveAirport());
     this.trafficProvider = new TrafficProvider(context.getTraffic());
     this.emergencyAppearanceController = new EmergencyAppearanceController(
-        simulationSettings.getEmergencyPerDayProbability());
+        simulationSettings.trafficSettings.emergencyPerDayProbability);
     this.mrvaController = new MrvaController(
         context.getArea().getBorders().where(q -> q.getType() == Border.eType.mrva));
     this.airproxController = new AirproxController();
-    this.statsProvider = new StatsProvider(settings.getStatsSnapshotDistanceInMinutes());
+    this.statsProvider = new StatsProvider(settings.simulationSettings.statsSnapshotDistanceInMinutes);
     this.weatherManager = new WeatherManager(simulationContext.getWeatherProvider());
 
-    this.parser = settings.getParser();
-    this.formatter = settings.getFormatter();
+    this.parser = settings.parser;
+    this.formatter = settings.formatter;
 
-    this.timer = new TimerController(settings.getSimulationSecondLengthInMs(), this::timerTicked);
+    this.airplanesSimModule = new AirplanesSimModule(
+        this.new SimulationModuleParent(),
+        simulationSettings.trafficSettings.trafficDelayStepProbability,
+        simulationSettings.trafficSettings.trafficDelayStep,
+        simulationSettings.trafficSettings.useExtendedCallsigns);
+
+    this.timer = new TimerController(settings.simulationSettings.secondLengthInMs, this::timerTicked);
   }
 
   public void init() {
@@ -136,7 +138,7 @@ public class NewSimulation {
     systemMessagesProcessor.elapseSecond();
 
     // airplanes stuff
-    airplanesSimModule.manageTrafficPerSecond();
+    airplanesSimModule.elapseSecond();
 
     // atc stuff
     atcProvider.elapseSecond();
@@ -152,7 +154,7 @@ public class NewSimulation {
 
     // finalize
     long elapseEndMs = System.currentTimeMillis();
-    //stats.registerElapseSecondCalculationDuration((int) (elapseEndMs - elapseStartMs));
+    StatsAcc.getStatsProvider().registerElapseSecondDuration((int) (elapseEndMs - elapseStartMs));
 
     isElapseSecondCalculationRunning = false;
 
