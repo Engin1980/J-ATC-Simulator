@@ -1,14 +1,13 @@
 package eng.jAtcSim.javaFXRadar;
 
 import eng.eSystem.events.Event;
-import eng.eSystem.events.EventAnonymousSimple;
 import eng.eSystem.events.EventSimple;
-import eng.jAtcSim.radarBase.ICanvas;
-import eng.jAtcSim.radarBase.global.Point;
-import eng.jAtcSim.radarBase.global.Size;
-import eng.jAtcSim.radarBase.global.TextBlockLocation;
-import eng.jAtcSim.radarBase.global.events.EKeyboardModifier;
-import eng.jAtcSim.radarBase.global.events.EMouseEventArg;
+import eng.jAtcSim.abstractRadar.ICanvas;
+import eng.jAtcSim.abstractRadar.global.Point;
+import eng.jAtcSim.abstractRadar.global.Size;
+import eng.jAtcSim.abstractRadar.global.TextBlockLocation;
+import eng.jAtcSim.abstractRadar.global.events.EKeyboardModifier;
+import eng.jAtcSim.abstractRadar.global.events.EMouseEventArg;
 import javafx.geometry.Bounds;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -244,33 +243,33 @@ public class JavaFXCanvas implements ICanvas<Canvas> {
   }
 
   @Override
-  public void drawLine(int x1, int y1, int x2, int y2, eng.jAtcSim.radarBase.global.Color color, int width) {
+  public void drawLine(int x1, int y1, int x2, int y2, eng.jAtcSim.abstractRadar.global.Color color, int width) {
     g.setStroke(Coloring.get(color));
     g.strokeLine(x1, y1, x2, y2);
   }
 
   @Override
-  public void fillRectangle(int x, int y, int width, int height, eng.jAtcSim.radarBase.global.Color color) {
+  public void fillRectangle(int x, int y, int width, int height, eng.jAtcSim.abstractRadar.global.Color color) {
     g.setFill(Coloring.get(color));
     g.fillRect(x, y, width, height);
   }
 
   @Override
-  public void drawPoint(int x, int y, eng.jAtcSim.radarBase.global.Color color, int width) {
+  public void drawPoint(int x, int y, eng.jAtcSim.abstractRadar.global.Color color, int width) {
     g.setFill(Coloring.get(color));
     int step = width / 2;
     g.fillOval(x - step, y - step, width, width);
   }
 
   @Override
-  public void drawCircleAround(Point p, int distanceInPixels, eng.jAtcSim.radarBase.global.Color color, int width) {
+  public void drawCircleAround(Point p, int distanceInPixels, eng.jAtcSim.abstractRadar.global.Color color, int width) {
     g.setStroke(Coloring.get(color));
     int step = distanceInPixels / 2;
     g.strokeOval(p.x - step, p.y - step, distanceInPixels, distanceInPixels);
   }
 
   @Override
-  public void drawTriangleAround(Point p, int distanceInPixels, eng.jAtcSim.radarBase.global.Color color, int width) {
+  public void drawTriangleAround(Point p, int distanceInPixels, eng.jAtcSim.abstractRadar.global.Color color, int width) {
     Point[] pts = new Point[3];
     double tStep = distanceInPixels / 3d;
     pts[0] = new Point(p.x, p.y - (int) (2 * tStep));
@@ -285,7 +284,7 @@ public class JavaFXCanvas implements ICanvas<Canvas> {
   }
 
   @Override
-  public void drawCross(Point p, eng.jAtcSim.radarBase.global.Color color, int length, int width) {
+  public void drawCross(Point p, eng.jAtcSim.abstractRadar.global.Color color, int length, int width) {
     int hl = length / 2;
 
     Point topLeft = new Point(p.x - hl, p.y - hl);
@@ -298,7 +297,7 @@ public class JavaFXCanvas implements ICanvas<Canvas> {
   }
 
   @Override
-  public void drawArc(Point p, int xRadius, int yRadius, int fromAngle, int toAngle, eng.jAtcSim.radarBase.global.Color color) {
+  public void drawArc(Point p, int xRadius, int yRadius, int fromAngle, int toAngle, eng.jAtcSim.abstractRadar.global.Color color) {
     g.setStroke(Coloring.get(color));
     Point orig = new Point(p.x - xRadius, p.y - yRadius);
     int angleLength = (toAngle < fromAngle) ? (toAngle + 360) : toAngle - fromAngle;
@@ -307,7 +306,7 @@ public class JavaFXCanvas implements ICanvas<Canvas> {
   }
 
   @Override
-  public void drawText(String text, Point p, int xShiftInPixels, int yShiftInPixels, eng.jAtcSim.radarBase.global.Font font, eng.jAtcSim.radarBase.global.Color color) {
+  public void drawText(String text, Point p, int xShiftInPixels, int yShiftInPixels, eng.jAtcSim.abstractRadar.global.Font font, eng.jAtcSim.abstractRadar.global.Color color) {
     String[] lines = text.split(System.getProperty("line.separator"));
 
     int x = p.x + xShiftInPixels;
@@ -327,7 +326,7 @@ public class JavaFXCanvas implements ICanvas<Canvas> {
   }
 
   @Override
-  public void drawTextBlock(java.util.List<String> lines, TextBlockLocation location, eng.jAtcSim.radarBase.global.Font font, eng.jAtcSim.radarBase.global.Color color) {
+  public void drawTextBlock(java.util.List<String> lines, TextBlockLocation location, eng.jAtcSim.abstractRadar.global.Font font, eng.jAtcSim.abstractRadar.global.Color color) {
     if (lines.isEmpty()) {
       return;
     }
@@ -343,7 +342,7 @@ public class JavaFXCanvas implements ICanvas<Canvas> {
   }
 
   @Override
-  public void clear(eng.jAtcSim.radarBase.global.Color backColor) {
+  public void clear(eng.jAtcSim.abstractRadar.global.Color backColor) {
     int h = getHeight();
     int w = getWidth();
     g.fillRect(0, 0, w, h);
@@ -388,12 +387,12 @@ public class JavaFXCanvas implements ICanvas<Canvas> {
   }
 
   @Override
-  public Size getEstimatedTextSize(eng.jAtcSim.radarBase.global.Font font, int rowsCount, int columnsCount) {
+  public Size getEstimatedTextSize(eng.jAtcSim.abstractRadar.global.Font font, int rowsCount, int columnsCount) {
     throw new UnsupportedOperationException("This method is not implemented, but should be.");
   }
 
   @Override
-  public java.awt.Rectangle getStringBounds(String text, eng.jAtcSim.radarBase.global.Font font) {
+  public java.awt.Rectangle getStringBounds(String text, eng.jAtcSim.abstractRadar.global.Font font) {
     Font fxFont = Fonting.get(font);
     Bounds bounds = getTextBounds(text, fxFont);
     java.awt.Rectangle ret = new java.awt.Rectangle(

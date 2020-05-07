@@ -11,7 +11,7 @@
     <orderEntry type="library" name="eng.eSystem" level="project" />
     <orderEntry type="module" module-name="JAtcSimLib" />
     <orderEntry type="module" module-name="SwingRadar" />
-    <orderEntry type="module" module-name="JAtcSimRadarBase" />
+    <orderEntry type="module" module-name="AbstractRadar" />
     <orderEntry type="module" module-name="BitmapRadar" />
     <orderEntry type="library" name="JFreeCharts" level="project" />
   </component>

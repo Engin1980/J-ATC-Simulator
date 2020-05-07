@@ -1,6 +1,6 @@
 package eng.jAtcSim.javaFXRadar;
 
-import eng.jAtcSim.radarBase.global.Font;
+import eng.jAtcSim.abstractRadar.global.Font;
 
 import java.util.HashMap;
 

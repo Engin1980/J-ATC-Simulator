@@ -8,10 +8,10 @@ import eng.jAtcSim.newLib.Simulation;
 import eng.jAtcSim.newLib.area.global.logging.ApplicationLog;
 import eng.jAtcSim.newLib.world.Area;
 import eng.jAtcSim.newLib.world.InitialPosition;
-import eng.jAtcSim.radarBase.RadarBehaviorSettings;
-import eng.jAtcSim.radarBase.RadarDisplaySettings;
-import eng.jAtcSim.radarBase.RadarStyleSettings;
-import eng.jAtcSim.radarBase.Radar;
+import eng.jAtcSim.abstractRadar.RadarBehaviorSettings;
+import eng.jAtcSim.abstractRadar.RadarDisplaySettings;
+import eng.jAtcSim.abstractRadar.RadarStyleSettings;
+import eng.jAtcSim.abstractRadar.Radar;
 
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;

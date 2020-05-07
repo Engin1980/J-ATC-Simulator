@@ -6,7 +6,7 @@
         <element id="module-output" name="JAtcSim" />
         <element id="module-output" name="JAtcSimLib" />
         <element id="module-output" name="SwingRadar" />
-        <element id="module-output" name="JAtcSimRadarBase" />
+        <element id="module-output" name="AbstractRadar" />
       </element>
       <element id="library" level="project" name="eng.eSystem" />
       <element id="directory" name="_Sounds">

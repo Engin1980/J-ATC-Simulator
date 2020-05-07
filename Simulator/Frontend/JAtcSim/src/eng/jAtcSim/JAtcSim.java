@@ -21,7 +21,7 @@ import eng.jAtcSim.newLib.area.global.logging.Recorder;
 import eng.jAtcSim.newLib.area.traffic.GenericTraffic;
 import eng.jAtcSim.newLib.area.traffic.Traffic;
 import eng.jAtcSim.newLib.area.weathers.Weather;
-import eng.jAtcSim.radarBase.global.SoundManager;
+import eng.jAtcSim.abstractRadar.global.SoundManager;
 import eng.jAtcSim.app.FrmIntro;
 import eng.jAtcSim.app.FrmStartupProgress;
 import eng.jAtcSim.app.startupSettings.StartupSettings;

@@ -19,7 +19,7 @@ import eng.jAtcSim.newLib.area.atcs.Atc;
 import eng.jAtcSim.newLib.area.atcs.UserAtc;
 import eng.jAtcSim.newLib.world.*;
 import eng.jAtcSim.newLib.world.approachesOld.Approach;
-import eng.jAtcSim.radarBase.*;
+import eng.jAtcSim.abstractRadar.*;
 import eng.eSystem.swing.LayoutManager;
 
 import javax.swing.*;

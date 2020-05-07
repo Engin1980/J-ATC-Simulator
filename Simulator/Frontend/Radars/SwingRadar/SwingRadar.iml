@@ -7,7 +7,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="eng.eSystem" level="project" />
     <orderEntry type="module" module-name="AbstractRadar" />
+    <orderEntry type="library" name="eng.eSystem" level="project" />
   </component>
 </module>

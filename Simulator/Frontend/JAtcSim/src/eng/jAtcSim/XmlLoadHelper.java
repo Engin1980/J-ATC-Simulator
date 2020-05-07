@@ -12,9 +12,9 @@ import eng.jAtcSim.newLib.Acc;
 import eng.jAtcSim.newLib.area.global.logging.ApplicationLog;
 import eng.jAtcSim.newLib.world.*;
 import eng.jAtcSim.newLib.world.xml.ElementFromValueParser;
-import eng.jAtcSim.radarBase.RadarStyleSettings;
-import eng.jAtcSim.radarBase.parsing.RadarColorValueParser;
-import eng.jAtcSim.radarBase.parsing.RadarFontParser;
+import eng.jAtcSim.abstractRadar.RadarStyleSettings;
+import eng.jAtcSim.abstractRadar.parsing.RadarColorValueParser;
+import eng.jAtcSim.abstractRadar.parsing.RadarFontParser;
 import eng.jAtcSim.app.startupSettings.StartupSettings;
 
 import java.time.LocalTime;
@@ -81,8 +81,8 @@ public class XmlLoadHelper {
     XmlSettings xmlSett = new XmlSettings();
 
     // own parsers
-    xmlSett.forType(eng.jAtcSim.radarBase.global.Color.class).setCustomParser(new RadarColorValueParser());
-    xmlSett.forType(eng.jAtcSim.radarBase.global.Font.class).setCustomParser(new RadarFontParser());
+    xmlSett.forType(eng.jAtcSim.abstractRadar.global.Color.class).setCustomParser(new RadarColorValueParser());
+    xmlSett.forType(eng.jAtcSim.abstractRadar.global.Font.class).setCustomParser(new RadarFontParser());
 
     RadarStyleSettings ret = (RadarStyleSettings) deserialize(fileName, RadarStyleSettings.class, xmlSett);
     return ret;

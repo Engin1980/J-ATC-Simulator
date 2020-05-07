@@ -1,6 +1,6 @@
 package eng.jAtcSim.javaFXRadar;
 
-import eng.jAtcSim.radarBase.global.Color;
+import eng.jAtcSim.abstractRadar.global.Color;
 
 import java.util.HashMap;
 
