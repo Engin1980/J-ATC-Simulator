@@ -1,6 +1,6 @@
 package eng.jAtcSim.newLib.airplanes.commandApplications;
 
-import eng.jAtcSim.newLib.speeches.ISpeech;
+import eng.jAtcSim.newLib.speeches.base.ISpeech;
 import eng.jAtcSim.newLib.speeches.Rejection;
 import eng.jAtcSim.newLib.speeches.SpeechList;
 

@@ -1,7 +1,6 @@
 package eng.jAtcSim.newLib.airplanes.internal;
 
 import eng.eSystem.collections.IList;
-import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.utilites.EnumUtils;
@@ -35,12 +34,11 @@ import eng.jAtcSim.newLib.shared.enums.DARouteType;
 import eng.jAtcSim.newLib.shared.enums.LeftRight;
 import eng.jAtcSim.newLib.shared.exceptions.ToDoException;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
-import eng.jAtcSim.newLib.speeches.ICommand;
-import eng.jAtcSim.newLib.speeches.ISpeech;
 import eng.jAtcSim.newLib.speeches.SpeechList;
-import eng.jAtcSim.newLib.speeches.airplane2atc.DivertTimeNotification;
-import eng.jAtcSim.newLib.speeches.airplane2atc.DivertingNotification;
-import eng.jAtcSim.newLib.speeches.airplane2atc.GoingAroundNotification;
+import eng.jAtcSim.newLib.speeches.airplane.ICommand;
+import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.DivertTimeNotification;
+import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.DivertingNotification;
+import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.GoingAroundNotification;
 import eng.jAtcSim.newLib.weather.Weather;
 import eng.jAtcSim.newLib.weather.WeatherAcc;
 
@@ -359,7 +357,7 @@ public class Airplane {
     }
 
     @Override
-    public void sendMessage(AtcId atcId, SpeechList<ISpeech> speechList) {
+    public void sendMessage(AtcId atcId, SpeechList<ICommand> speechList) {
       Message m = new Message(
           Participant.createAirplane(Airplane.this.getReader().getCallsign()),
           Participant.createAtc(Airplane.this.getReader().getAtc().getTunedAtc()),

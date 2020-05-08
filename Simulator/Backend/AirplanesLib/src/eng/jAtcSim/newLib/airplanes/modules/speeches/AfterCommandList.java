@@ -12,10 +12,9 @@ import eng.jAtcSim.newLib.airplanes.IAirplane;
 import eng.jAtcSim.newLib.airplanes.internal.InternalAcc;
 import eng.jAtcSim.newLib.area.AreaAcc;
 import eng.jAtcSim.newLib.area.Navaid;
-import eng.jAtcSim.newLib.speeches.ICommand;
+import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ICommand;
 import eng.jAtcSim.newLib.speeches.SpeechList;
-import eng.jAtcSim.newLib.speeches.atc2airplane.*;
-import eng.jAtcSim.newLib.speeches.atc2airplane.afterCommands.*;
+import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.*;
 
 import java.util.function.Predicate;
 

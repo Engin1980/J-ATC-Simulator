@@ -1,12 +1,10 @@
 package eng.jAtcSim.newLib.textProcessing.base;
 
-import eng.jAtcSim.newLib.speeches.airplane2atc.*;
-import eng.jAtcSim.newLib.speeches.airplane2atc.responses.IllegalThenCommandRejection;
-import eng.jAtcSim.newLib.speeches.airplane2atc.responses.ShortCutToFixNotOnRouteRejection;
-import eng.jAtcSim.newLib.speeches.airplane2atc.responses.UnableToEnterApproachFromDifficultPosition;
-import eng.jAtcSim.newLib.speeches.atc2airplane.*;
-import eng.jAtcSim.newLib.speeches.atc2airplane.afterCommands.*;
-import eng.jAtcSim.newLib.speeches.atc2atc.PlaneSwitchMessage;
+import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.responses.IllegalThenCommandRejection;
+import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.responses.ShortCutToFixNotOnRouteRejection;
+import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.responses.UnableToEnterApproachFromDifficultPosition;
+import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.*;
+import eng.jAtcSim.newLib.speeches.atc.PlaneSwitch;
 
 public class FormatterAdapter extends Formatter {
   @Override
@@ -175,7 +173,7 @@ public class FormatterAdapter extends Formatter {
   }
 
   @Override
-  protected String formatPlaneSwitchMessage(PlaneSwitchMessage speech) {
+  protected String formatPlaneSwitchMessage(PlaneSwitch speech) {
     throw new UnsupportedOperationException("This operation is not implemented.");
   }
 }

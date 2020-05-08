@@ -1,6 +1,6 @@
 package eng.jAtcSim.newLib.textProcessing.base;
 
-import eng.jAtcSim.newLib.speeches.ISpeech;
+import eng.jAtcSim.newLib.speeches.base.ISpeech;
 import eng.jAtcSim.newLib.speeches.SpeechList;
 import eng.jAtcSim.newLib.textProcessing.implemented.parsers.defaultParser.common.ShortcutList;
 

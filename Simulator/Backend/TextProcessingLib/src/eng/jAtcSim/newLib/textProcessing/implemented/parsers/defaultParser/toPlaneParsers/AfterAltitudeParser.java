@@ -2,7 +2,7 @@ package eng.jAtcSim.newLib.textProcessing.implemented.parsers.defaultParser.toPl
 
 import eng.eSystem.collections.IList;
 import eng.jAtcSim.newLib.shared.enums.AboveBelowExactly;
-import eng.jAtcSim.newLib.speeches.atc2airplane.afterCommands.AfterAltitudeCommand;
+import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.afterCommands.AfterAltitudeCommand;
 import eng.jAtcSim.newLib.textProcessing.implemented.parsers.defaultParser.common.SpeechParser;
 
 public class AfterAltitudeParser extends SpeechParser<AfterAltitudeCommand> {

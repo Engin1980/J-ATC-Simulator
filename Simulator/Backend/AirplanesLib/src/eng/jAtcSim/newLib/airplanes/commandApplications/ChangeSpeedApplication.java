@@ -7,7 +7,7 @@ import eng.jAtcSim.newLib.area.AreaAcc;
 import eng.jAtcSim.newLib.shared.Restriction;
 import eng.jAtcSim.newLib.shared.enums.AboveBelowExactly;
 import eng.jAtcSim.newLib.speeches.Rejection;
-import eng.jAtcSim.newLib.speeches.atc2airplane.ChangeSpeedCommand;
+import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ChangeSpeedCommand;
 
 public class ChangeSpeedApplication extends CommandApplication<ChangeSpeedCommand> {
 

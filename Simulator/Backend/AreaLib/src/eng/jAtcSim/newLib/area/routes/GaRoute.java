@@ -1,7 +1,7 @@
 package eng.jAtcSim.newLib.area.routes;
 
 import eng.eSystem.collections.IList;
-import eng.jAtcSim.newLib.speeches.ICommand;
+import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ICommand;
 
 public class GaRoute extends Route {
 

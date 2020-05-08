@@ -13,12 +13,19 @@ import eng.jAtcSim.abstractRadar.global.*;
 import eng.jAtcSim.abstractRadar.global.events.EMouseEventArg;
 import eng.jAtcSim.abstractRadar.global.events.KeyEventArg;
 import eng.jAtcSim.abstractRadar.global.events.WithCoordinateEventArg;
+import eng.jAtcSim.abstractRadar.published.IMessage;
+import eng.jAtcSim.abstractRadar.published.ISimulation;
 import eng.jAtcSim.newLib.airplaneType.AirplaneType;
 import eng.jAtcSim.newLib.airplanes.AirproxType;
 import eng.jAtcSim.newLib.area.*;
 import eng.jAtcSim.newLib.area.approaches.Approach;
 import eng.jAtcSim.newLib.area.routes.DARoute;
-import eng.jAtcSim.newLib.shared.*;
+import eng.jAtcSim.newLib.messaging.Participant;
+import eng.jAtcSim.newLib.shared.AtcId;
+import eng.jAtcSim.newLib.shared.Callsign;
+import eng.jAtcSim.newLib.shared.Format;
+import eng.jAtcSim.newLib.shared.Squawk;
+import eng.jAtcSim.newLib.shared.enums.ApproachType;
 import eng.jAtcSim.newLib.shared.enums.AtcType;
 import eng.jAtcSim.newLib.shared.enums.DARouteType;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
@@ -43,8 +50,8 @@ public class Radar {
       this.delay = delay;
     }
 
-    public void add(IMessageParticipant source, String text) {
-      VisualisedMessage di = new VisualisedMessage(source, text, delay);
+    public void add(IMessage message) {
+      VisualisedMessage di = new VisualisedMessage(message, delay);
       items.add(di);
     }
 
@@ -61,13 +68,11 @@ public class Radar {
   }
 
   static class VisualisedMessage {
-    private final IMessageParticipant source;
-    private final String text;
+    private final IMessage message;
     private int lifeCounter;
 
-    public VisualisedMessage(IMessageParticipant source, String text, int lifeCounter) {
-      this.source = source;
-      this.text = text;
+    public VisualisedMessage(IMessage message, int lifeCounter) {
+      this.message = message;
       this.lifeCounter = lifeCounter;
     }
 
@@ -79,12 +84,8 @@ public class Radar {
       return lifeCounter;
     }
 
-    public IMessageParticipant getSource() {
-      return source;
-    }
-
-    public String getText() {
-      return text;
+    public IMessage getMessage() {
+      return this.message;
     }
   }
 
@@ -316,6 +317,69 @@ public class Radar {
       return inner.iterator();
     }
   }
+
+  class InfoLine {
+    public static String toIntegerMinutes(double value) {
+      int tmp = (int) (value / 60);
+      return Integer.toString(tmp);
+    }
+
+    public static String toIntegerSeconds(double value) {
+      double tmp = value % 60;
+      return String.format("%02.0f", tmp);
+    }
+
+    public final Coordinate from;
+    public final Coordinate to;
+    public final int heading;
+    public final double distanceInNm;
+    public final double seconds200;
+    public final double seconds250;
+    public final double seconds280;
+    public final double secondsSpeed;
+    public final boolean isRelativeSpeedUsed;
+
+    public InfoLine(Coordinate from, Coordinate to, Double refSpeed) {
+      this.from = from;
+      this.to = to;
+      this.distanceInNm = Coordinates.getDistanceInNM(from, to);
+      this.heading = (int) Coordinates.getBearing(from, to);
+      if (refSpeed == null) {
+        this.seconds200 = this.distanceInNm / 200d * 3600d;
+        this.seconds250 = this.distanceInNm / 250d * 3600d;
+        this.seconds280 = this.distanceInNm / 280d * 3600d;
+        this.secondsSpeed = 0;
+        this.isRelativeSpeedUsed = false;
+      } else {
+        this.secondsSpeed = this.distanceInNm / refSpeed * 3600d;
+        this.seconds200 = 0;
+        this.seconds250 = 0;
+        this.seconds280 = 0;
+        this.isRelativeSpeedUsed = true;
+      }
+    }
+  }
+
+  class Counter {
+    private final int maximum;
+    private int value;
+
+    public Counter(int maximum) {
+      assert maximum > 0;
+      this.maximum = maximum;
+      this.value = 0;
+    }
+
+    public boolean increase() {
+      value++;
+      if (value == maximum) {
+        value = 0;
+        return true;
+      } else
+        return false;
+    }
+  }
+
   public static final int BORDER_ALTITUDE_MAXIMUM_VALUE = 99000;
   //  private static final int DRAW_STEP = 10;
   public static final int BORDER_ALTITUDE_MINIMUM_VALUE = 0;
@@ -365,7 +429,10 @@ public class Radar {
     this.displaySettings = displaySettings;
     this.simulation = sim;
     this.area = area;
-    Acc.messenger().registerListener(this, Acc.atcApp());
+    this.simulation.registerMessageListenerByReceiver(this,
+        Participant.createAtc(
+            this.simulation.getAtcs().getFirst(q -> q.getType() == AtcType.app)
+        ));
 
     buildLocalNavaidList();
     buildDrawnRoutesList();
@@ -676,12 +743,12 @@ public class Radar {
     MessageSet ret = new MessageSet();
 
     for (VisualisedMessage m : msgs) {
-      if (m.getSource() == Messenger.SYSTEM) {
-        ret.system.add(">> " + m.getText());
-      } else if (m.getSource() instanceof Atc) {
-        ret.atc.add("[" + m.getSource().getName() + "] " + m.getText());
-      } else if (m.getSource() instanceof Airplane) {
-        ret.plane.add(m.getSource().getName() + ": " + m.getText());
+      if (m.message.getSender().getType() == Participant.eType.system) {
+        ret.system.add(">> " + m.message.getText());
+      } else if (m.message.getSender().getType() == Participant.eType.atc) {
+        ret.atc.add("[" + m.message.getSender().getId() + "] " + m.message.getText());
+      } else if (m.message.getSender().getType() == Participant.eType.airplane) {
+        ret.plane.add(m.message.getSender().getId() + ": " + m.message.getText());
       } else {
         throw new UnsupportedOperationException();
       }
@@ -749,20 +816,16 @@ public class Radar {
 
   private void drawApproach(Approach approach) {
     RadarStyleSettings.ColorWidthLengthSettings dispSett;
-    if (approach instanceof IlsApproach)
+    if (approach.getType().isILS())
       dispSett = styleSettings.ilsApproach;
-    else if (approach instanceof GnssApproach)
+    else if (approach.getType() == ApproachType.gnss)
       dispSett = styleSettings.gnssApproach;
-    else if (approach instanceof VisualApproach)
+    else if (approach.getType() == ApproachType.visual)
       return;
-    else if (approach instanceof UnpreciseApproach) {
-      UnpreciseApproach ua = (UnpreciseApproach) approach;
-      if (ua.getType() == UnpreciseApproach.Kind.ndb)
-        dispSett = styleSettings.ndbApproach;
-      else if (ua.getType() == UnpreciseApproach.Kind.vor)
-        dispSett = styleSettings.vorApproach;
-      else
-        throw new EApplicationException("Not supported");
+    else if (approach.getType() == ApproachType.vor) {
+      dispSett = styleSettings.vorApproach;
+    } else if (approach.getType() == ApproachType.ndb) {
+      dispSett = styleSettings.ndbApproach;
     } else
       throw new EApplicationException("Not supported");
     Coordinate start = Coordinates.getCoordinate(
@@ -870,19 +933,16 @@ public class Radar {
   }
 
   private void drawCaptions() {
-    Messenger ms = simulation.getMessenger();
-    IList<Message> msgs = ms.getMessagesByListener(this, true);
+    IList<IMessage> msgs = this.simulation.getMessages(this);
 
-    for (Message msg : msgs) {
-      String formattedText =
-          getMessageContentAsString(msg);
-      messageManager.add(msg.getSource(), formattedText);
+    for (IMessage msg : msgs) {
+      messageManager.add(msg);
     }
 
     boolean containsSystemMessage =
-        msgs.isAny(q -> q.isSourceOfType(Messenger.XSystem.class));
+        msgs.isAny(q -> q.getSender().getType() == Participant.eType.system);
 
-    IList<Message> atcMsgs = msgs.where(q -> q.isSourceOfType(Atc.class));
+    IList<IMessage> atcMsgs = msgs.where(q -> q.getSender().getType() == Participant.eType.atc);
     boolean containsAtcMessage = atcMsgs.isEmpty() == false;
     boolean isAtcMessageNegative = false;
     if (containsAtcMessage) {
@@ -1229,39 +1289,39 @@ public class Radar {
     }
   }
 
-  private String getMessageContentAsString(Message msg) {
-    String ret;
-    if (msg.isSourceOfType(Airplane.class)) {
-      if (msg.isContentOfType(IList.class)) {
-        List<String> sentences = new ArrayList();
-        SpeechList<ISpeech> lst = msg.getContent();
-        for (ISpeech iSpeech : lst) {
-          String sentence = behaviorSettings.getFormatter().format(iSpeech);
-          if (sentence == null || sentence.trim().length() == 0) continue;
-          sentences.add(sentence);
-        }
-        ret = formatToVisualSentence(sentences);
-      } else {
-        ISpeech sp = msg.getContent();
-        ret = behaviorSettings.getFormatter().format(sp);
-      }
-    } else if (msg.isSourceOfType(Atc.class)) {
-      if (msg.isContentOfType(PlaneSwitchMessage.class)) {
-        PlaneSwitchMessage psm = msg.getContent();
-        ret = behaviorSettings.getFormatter().format(msg.getSource(), psm);
-      } else if (msg.isContentOfType(StringResponse.class)) {
-        ret = msg.<StringResponse>getContent().text;
-      } else if (msg.isContentOfType(StringMessageContent.class)) {
-        ret = msg.<StringMessageContent>getContent().getMessageText();
-      } else {
-        throw new UnsupportedOperationException();
-      }
-    } else {
-      // system messages
-      ret = msg.<StringMessageContent>getContent().getMessageText();
-    }
-    return ret;
-  }
+//  private String getMessageContentAsString(Message msg) {
+//    String ret;
+//    if (msg.isSourceOfType(Airplane.class)) {
+//      if (msg.isContentOfType(IList.class)) {
+//        List<String> sentences = new ArrayList();
+//        SpeechList<ISpeech> lst = msg.getContent();
+//        for (ISpeech iSpeech : lst) {
+//          String sentence = behaviorSettings.getFormatter().format(iSpeech);
+//          if (sentence == null || sentence.trim().length() == 0) continue;
+//          sentences.add(sentence);
+//        }
+//        ret = formatToVisualSentence(sentences);
+//      } else {
+//        ISpeech sp = msg.getContent();
+//        ret = behaviorSettings.getFormatter().format(sp);
+//      }
+//    } else if (msg.isSourceOfType(Atc.class)) {
+//      if (msg.isContentOfType(PlaneSwitchMessage.class)) {
+//        PlaneSwitchMessage psm = msg.getContent();
+//        ret = behaviorSettings.getFormatter().format(msg.getSource(), psm);
+//      } else if (msg.isContentOfType(StringResponse.class)) {
+//        ret = msg.<StringResponse>getContent().text;
+//      } else if (msg.isContentOfType(StringMessageContent.class)) {
+//        ret = msg.<StringMessageContent>getContent().getMessageText();
+//      } else {
+//        throw new UnsupportedOperationException();
+//      }
+//    } else {
+//      // system messages
+//      ret = msg.<StringMessageContent>getContent().getMessageText();
+//    }
+//    return ret;
+//  }
 
   private RadarStyleSettings.PlaneLabelSettings getPlaneLabelDisplaySettingsBy(AirplaneDisplayInfo adi) {
     RadarStyleSettings.PlaneLabelSettings ret;
@@ -1393,66 +1453,5 @@ public class Radar {
 
     redraw(true);
 
-  }
-}
-
-class InfoLine {
-  public static String toIntegerMinutes(double value) {
-    int tmp = (int) (value / 60);
-    return Integer.toString(tmp);
-  }
-
-  public static String toIntegerSeconds(double value) {
-    double tmp = value % 60;
-    return String.format("%02.0f", tmp);
-  }
-  public final Coordinate from;
-  public final Coordinate to;
-  public final int heading;
-  public final double distanceInNm;
-  public final double seconds200;
-  public final double seconds250;
-  public final double seconds280;
-  public final double secondsSpeed;
-  public final boolean isRelativeSpeedUsed;
-
-  public InfoLine(Coordinate from, Coordinate to, Double refSpeed) {
-    this.from = from;
-    this.to = to;
-    this.distanceInNm = Coordinates.getDistanceInNM(from, to);
-    this.heading = (int) Coordinates.getBearing(from, to);
-    if (refSpeed == null) {
-      this.seconds200 = this.distanceInNm / 200d * 3600d;
-      this.seconds250 = this.distanceInNm / 250d * 3600d;
-      this.seconds280 = this.distanceInNm / 280d * 3600d;
-      this.secondsSpeed = 0;
-      this.isRelativeSpeedUsed = false;
-    } else {
-      this.secondsSpeed = this.distanceInNm / refSpeed * 3600d;
-      this.seconds200 = 0;
-      this.seconds250 = 0;
-      this.seconds280 = 0;
-      this.isRelativeSpeedUsed = true;
-    }
-  }
-}
-
-class Counter {
-  private final int maximum;
-  private int value;
-
-  public Counter(int maximum) {
-    assert maximum > 0;
-    this.maximum = maximum;
-    this.value = 0;
-  }
-
-  public boolean increase() {
-    value++;
-    if (value == maximum) {
-      value = 0;
-      return true;
-    } else
-      return false;
   }
 }

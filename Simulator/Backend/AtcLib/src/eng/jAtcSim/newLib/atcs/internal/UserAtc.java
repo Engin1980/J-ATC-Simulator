@@ -23,8 +23,8 @@ import eng.jAtcSim.newLib.shared.Squawk;
 import eng.jAtcSim.newLib.shared.enums.AtcType;
 import eng.jAtcSim.newLib.shared.exceptions.ToDoException;
 import eng.jAtcSim.newLib.speeches.SpeechList;
-import eng.jAtcSim.newLib.speeches.atc2airplane.ContactCommand;
-import eng.jAtcSim.newLib.speeches.atc2atc.PlaneSwitchMessage;
+import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ContactCommand;
+import eng.jAtcSim.newLib.speeches.atc.PlaneSwitch;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -129,18 +129,18 @@ public class UserAtc extends Atc {
   public void sendPlaneSwitchMessageToAtc(AtcId atcId, Callsign callsign, String additionalMessage) {
     Atc otherAtc = InternalAcc.getAtc(atcId);
     PlaneResponsibilityManager prm = InternalAcc.getPrm();
-    PlaneSwitchMessage.eMessageType msgType;
+    PlaneSwitch.eMessageType msgType;
 
     if (prm.getResponsibleAtc(callsign).equals(this.getAtcId())) {
       // it is my plane
       if (prm.forAtc().isUnderSwitchRequest(callsign, this.getAtcId(), null)) {
         // is already under switch request?
         prm.forAtc().cancelSwitchRequest(this.getAtcId(), callsign);
-        msgType = PlaneSwitchMessage.eMessageType.cancelation;
+        msgType = PlaneSwitch.eMessageType.cancelation;
       } else {
         // create new switch request
         prm.forAtc().createSwitchRequest(this.getAtcId(), otherAtc.getAtcId(), callsign);
-        msgType = PlaneSwitchMessage.eMessageType.request;
+        msgType = PlaneSwitch.eMessageType.request;
       }
     } else {
       // it is not my plane
@@ -148,7 +148,7 @@ public class UserAtc extends Atc {
         // is under switch request to me, I am making a confirmation
         if (additionalMessage == null) {
           prm.forAtc().confirmSwitchRequest(callsign, this.getAtcId(), null);
-          msgType = PlaneSwitchMessage.eMessageType.confirmation;
+          msgType = PlaneSwitch.eMessageType.confirmation;
         } else {
           Tuple<SwitchRoutingRequest, String> routing = decodeAdditionalRouting(
               additionalMessage, callsign);
@@ -157,7 +157,7 @@ public class UserAtc extends Atc {
             return;
           } else
             prm.forAtc().confirmSwitchRequest(callsign, this.getAtcId(), routing.getA());
-          msgType = PlaneSwitchMessage.eMessageType.confirmation;
+          msgType = PlaneSwitch.eMessageType.confirmation;
         }
       } else {
         // making a confirmation to non-requested switch? or probably an error
@@ -167,7 +167,7 @@ public class UserAtc extends Atc {
       }
     }
 
-    PlaneSwitchMessage msg = new PlaneSwitchMessage(callsign, msgType);
+    PlaneSwitch msg = new PlaneSwitch(callsign, msgType);
     Message m = new Message(
         Participant.createAtc(this.getAtcId()),
         Participant.createAtc(otherAtc.getAtcId()),

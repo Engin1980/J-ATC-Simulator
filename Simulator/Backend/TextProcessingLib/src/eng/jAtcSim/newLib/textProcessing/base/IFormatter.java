@@ -2,7 +2,7 @@ package eng.jAtcSim.newLib.textProcessing.base;
 
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.messaging.Participant;
-import eng.jAtcSim.newLib.speeches.ISpeech;
+import eng.jAtcSim.newLib.speeches.base.ISpeech;
 
 public interface IFormatter {
   String format(ISpeech speech);

@@ -4,11 +4,11 @@ import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IMap;
 import eng.jAtcSim.newLib.airplanes.internal.Airplane;
 import eng.jAtcSim.newLib.speeches.Confirmation;
-import eng.jAtcSim.newLib.speeches.ICommand;
+import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ICommand;
 import eng.jAtcSim.newLib.speeches.INotification;
-import eng.jAtcSim.newLib.speeches.ISpeech;
-import eng.jAtcSim.newLib.speeches.atc2airplane.*;
-import eng.jAtcSim.newLib.speeches.atc2airplane.afterCommands.AfterCommand;
+import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.*;
+import eng.jAtcSim.newLib.speeches.base.ISpeech;
+import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.afterCommands.AfterCommand;
 
 public class ApplicationManager {
 

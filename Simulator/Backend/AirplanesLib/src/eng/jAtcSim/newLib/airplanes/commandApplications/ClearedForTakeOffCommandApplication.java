@@ -6,7 +6,7 @@ import eng.jAtcSim.newLib.airplanes.internal.Airplane;
 import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
 import eng.jAtcSim.newLib.area.AreaAcc;
 import eng.jAtcSim.newLib.speeches.Rejection;
-import eng.jAtcSim.newLib.speeches.atc2airplane.ClearedForTakeoffCommand;
+import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ClearedForTakeoffCommand;
 
 public class ClearedForTakeOffCommandApplication extends CommandApplication<ClearedForTakeoffCommand> {
 

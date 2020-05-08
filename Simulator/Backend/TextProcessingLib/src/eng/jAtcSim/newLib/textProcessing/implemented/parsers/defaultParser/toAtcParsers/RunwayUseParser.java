@@ -1,7 +1,7 @@
 package eng.jAtcSim.newLib.textProcessing.implemented.parsers.defaultParser.toAtcParsers;
 
 import eng.eSystem.collections.IList;
-import eng.jAtcSim.newLib.speeches.atc2atc.RunwayUse;
+import eng.jAtcSim.newLib.speeches.atc.RunwayUse;
 import eng.jAtcSim.newLib.textProcessing.implemented.parsers.defaultParser.common.SpeechParser;
 
 public class RunwayUseParser extends SpeechParser<RunwayUse> {

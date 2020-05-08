@@ -6,7 +6,7 @@ import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.enums.AtcType;
-import eng.jAtcSim.newLib.speeches.atc2airplane.ContactCommand;
+import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ContactCommand;
 import eng.jAtcSim.newLib.textProcessing.implemented.parsers.defaultParser.LocalInstanceProvider;
 import eng.jAtcSim.newLib.textProcessing.implemented.parsers.defaultParser.common.SpeechParser;
 

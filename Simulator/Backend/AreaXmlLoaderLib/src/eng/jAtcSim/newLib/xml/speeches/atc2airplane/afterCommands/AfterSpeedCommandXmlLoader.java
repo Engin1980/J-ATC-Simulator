@@ -4,7 +4,7 @@ import eng.eSystem.eXml.XElement;
 import eng.jAtcSim.newLib.shared.enums.AboveBelowExactly;
 import eng.jAtcSim.newLib.shared.xml.IXmlLoader;
 import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
-import eng.jAtcSim.newLib.speeches.atc2airplane.afterCommands.AfterSpeedCommand;
+import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.afterCommands.AfterSpeedCommand;
 
 public class AfterSpeedCommandXmlLoader implements IXmlLoader<AfterSpeedCommand> {
   @Override

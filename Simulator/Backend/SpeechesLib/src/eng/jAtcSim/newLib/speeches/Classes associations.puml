@@ -1,0 +1,61 @@
+@startuml
+
+package "Base"{
+ interface ISpeech
+ class Response<T>
+ ISpeech <|-- Response
+ class Rejection<T>
+
+ Response <|-- Confirmation
+ Response <|-- Rejection
+ class Confirmation
+ class Rejection{
+  reason: String
+ }
+}
+
+package "2Airplane"{
+ interface IPlaneSpeech
+ IPlaneSpeech --|> ISpeech
+ interface ICommand
+ ICommand --|> IPlaneSpeech
+ interface INotification
+ INotification --|> IPlaneSpeech
+
+ class PlaneRejection
+ PlaneRejection --|> Rejection
+ PlaneRejection .up.|> INotification
+
+ class PlaneConfirmation
+ PlaneConfirmation --|> Confirmation
+ PlaneConfirmation .up.|> INotification
+}
+
+package "2Atc"{
+ class IAtcSpeech
+ IAtcSpeech --|> ISpeech
+
+ class PlaneSwitchRequest
+ PlaneSwitchRequest ..|> IAtcSpeech
+
+ class AtcConfirmation
+ AtcConfirmation --|> Confirmation
+ AtcConfirmation --|> IAtcSpeech
+
+ class AtcRejection
+ AtcRejection --|> Rejection
+ AtcRejection --|> IAtcSpeech
+}
+
+package "2System"{
+  interface ISystemSpeech
+  ISystemSpeech --|> ISpeech
+  interface IUserRequest
+  IUserRequest --|> ISystemSpeech
+  interface ISystemNotification
+  ISystemNotification --|> ISystemSpeech
+}
+
+
+
+@enduml

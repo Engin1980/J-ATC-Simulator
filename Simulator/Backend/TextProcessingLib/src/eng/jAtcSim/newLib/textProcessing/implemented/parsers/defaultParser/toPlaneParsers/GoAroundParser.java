@@ -1,7 +1,7 @@
 package eng.jAtcSim.newLib.textProcessing.implemented.parsers.defaultParser.toPlaneParsers;
 
 import eng.eSystem.collections.IList;
-import eng.jAtcSim.newLib.speeches.atc2airplane.GoAroundCommand;
+import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.GoAroundCommand;
 import eng.jAtcSim.newLib.textProcessing.implemented.parsers.defaultParser.common.SpeechParser;
 
 public class GoAroundParser extends SpeechParser<GoAroundCommand> {

@@ -5,8 +5,8 @@ import eng.jAtcSim.newLib.airplanes.internal.Airplane;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.exceptions.ToDoException;
 import eng.jAtcSim.newLib.speeches.Rejection;
-import eng.jAtcSim.newLib.speeches.airplane2atc.GoodDayNotification;
-import eng.jAtcSim.newLib.speeches.atc2airplane.ContactCommand;
+import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.GoodDayNotification;
+import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ContactCommand;
 
 public class ContactCommandApplication extends CommandApplication<ContactCommand> {
 

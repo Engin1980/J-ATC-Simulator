@@ -5,7 +5,7 @@
 //import eng.jAtcSim.newLib.messaging.Messenger;
 //import eng.jAtcSim.newLib.shared.InstanceProviderDictionary;
 //import eng.jAtcSim.newLib.shared.exceptions.ToDoException;
-//import eng.jAtcSim.newLib.speeches.atc2airplane.ToNavaidCommand;
+//import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ToNavaidCommand;
 //import eng.jAtcSim.newLib.weather.Weather;
 //
 //public class LAcc {

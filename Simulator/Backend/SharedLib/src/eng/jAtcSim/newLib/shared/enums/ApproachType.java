@@ -9,5 +9,13 @@ public enum ApproachType {
   ndb,
   vor,
   gnss,
-  visual
+  visual;
+
+  public boolean isILS() {
+    return this == ils_I || this == ils_II || this == ils_III;
+  }
+
+  public boolean isUnprecise() {
+    return this == vor || this == ndb;
+  }
 }

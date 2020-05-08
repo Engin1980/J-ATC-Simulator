@@ -4,13 +4,11 @@ import eng.eSystem.geo.Headings;
 import eng.jAtcSim.newLib.shared.Format;
 import eng.jAtcSim.newLib.shared.SharedAcc;
 import eng.jAtcSim.newLib.shared.enums.LeftRight;
-import eng.jAtcSim.newLib.speeches.airplane2atc.*;
-import eng.jAtcSim.newLib.speeches.airplane2atc.responses.IllegalThenCommandRejection;
-import eng.jAtcSim.newLib.speeches.airplane2atc.responses.ShortCutToFixNotOnRouteRejection;
-import eng.jAtcSim.newLib.speeches.airplane2atc.responses.UnableToEnterApproachFromDifficultPosition;
-import eng.jAtcSim.newLib.speeches.atc2airplane.*;
-import eng.jAtcSim.newLib.speeches.atc2airplane.afterCommands.*;
-import eng.jAtcSim.newLib.speeches.atc2atc.PlaneSwitchMessage;
+import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.responses.IllegalThenCommandRejection;
+import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.responses.ShortCutToFixNotOnRouteRejection;
+import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.responses.UnableToEnterApproachFromDifficultPosition;
+import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.*;
+import eng.jAtcSim.newLib.speeches.atc.PlaneSwitch;
 import eng.jAtcSim.newLib.textProcessing.base.Formatter;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
@@ -344,7 +342,7 @@ public class DebugFormatter extends Formatter {
   }
 
   @Override
-  protected String formatPlaneSwitchMessage(PlaneSwitchMessage speech) {
+  protected String formatPlaneSwitchMessage(PlaneSwitch speech) {
 //    @Override
 //    public String format(Atc sender, PlaneSwitchMessage msg) {
 //      String ret = String.format(

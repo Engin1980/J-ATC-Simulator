@@ -7,7 +7,7 @@ import eng.jAtcSim.newLib.airplanes.internal.Airplane;
 import eng.jAtcSim.newLib.airplanes.modules.sha.navigators.HeadingNavigator;
 import eng.jAtcSim.newLib.area.AreaAcc;
 import eng.jAtcSim.newLib.speeches.Rejection;
-import eng.jAtcSim.newLib.speeches.atc2airplane.ChangeHeadingCommand;
+import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ChangeHeadingCommand;
 
 public class ChangeHeadingApplication extends CommandApplication<ChangeHeadingCommand> {
 

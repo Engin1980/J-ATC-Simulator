@@ -2,7 +2,6 @@ package eng.jAtcSim.newLib.airplanes;
 
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.geo.Coordinate;
-import eng.jAtcSim.newLib.airplanes.AirplaneState;
 import eng.jAtcSim.newLib.airplanes.modules.sha.navigators.Navigator;
 import eng.jAtcSim.newLib.airplanes.other.CockpitVoiceRecorder;
 import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
@@ -15,10 +14,9 @@ import eng.jAtcSim.newLib.mood.Mood;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.Restriction;
 import eng.jAtcSim.newLib.shared.enums.LeftRight;
-import eng.jAtcSim.newLib.speeches.ICommand;
-import eng.jAtcSim.newLib.speeches.ISpeech;
+import eng.jAtcSim.newLib.speeches.airplane.ICommand;
 import eng.jAtcSim.newLib.speeches.SpeechList;
-import eng.jAtcSim.newLib.speeches.airplane2atc.GoingAroundNotification;
+import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.GoingAroundNotification;
 
 public interface IAirplaneWriter {
   void abortHolding();
@@ -48,13 +46,13 @@ public interface IAirplaneWriter {
 
   void reportDivertTimeLeft();
 
-  default void sendMessage(AtcId atcId, ISpeech speech){
-    SpeechList<ISpeech> speeches = new SpeechList<>();
+  default void sendMessage(AtcId atcId, ICommand speech){
+    SpeechList<ICommand> speeches = new SpeechList<>();
     speeches.add(speech);
     sendMessage(atcId, speeches);
   }
 
-  void sendMessage(AtcId atcId, SpeechList<ISpeech> iSpeeches);
+  void sendMessage(AtcId atcId, SpeechList<ICommand> iSpeeches);
 
   void setAltitudeRestriction(Restriction restriction);
 

@@ -4,8 +4,8 @@ import eng.jAtcSim.newLib.airplanes.AirplaneState;
 import eng.jAtcSim.newLib.airplanes.internal.Airplane;
 import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.speeches.Rejection;
-import eng.jAtcSim.newLib.speeches.airplane2atc.responses.ShortCutToFixNotOnRouteRejection;
-import eng.jAtcSim.newLib.speeches.atc2airplane.ShortcutCommand;
+import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.responses.ShortCutToFixNotOnRouteRejection;
+import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ShortcutCommand;
 
 public class ShortcutCommandApplication extends CommandApplication<ShortcutCommand> {
 

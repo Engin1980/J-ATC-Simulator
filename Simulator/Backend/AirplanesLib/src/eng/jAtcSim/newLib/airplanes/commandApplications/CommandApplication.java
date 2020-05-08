@@ -4,7 +4,7 @@ import eng.jAtcSim.newLib.airplanes.AirplaneState;
 import eng.jAtcSim.newLib.airplanes.internal.Airplane;
 import eng.jAtcSim.newLib.shared.exceptions.ToDoException;
 import eng.jAtcSim.newLib.speeches.Confirmation;
-import eng.jAtcSim.newLib.speeches.ICommand;
+import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ICommand;
 import eng.jAtcSim.newLib.speeches.Rejection;
 
 public abstract class CommandApplication<T extends ICommand> {

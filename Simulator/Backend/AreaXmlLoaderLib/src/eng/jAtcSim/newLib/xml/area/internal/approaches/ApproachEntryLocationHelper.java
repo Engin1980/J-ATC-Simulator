@@ -10,9 +10,9 @@
 //import eng.jAtcSim.newLib.area.approaches.locations.FixRelatedLocation;
 //import eng.jAtcSim.newLib.area.approaches.locations.ILocation;
 //import eng.jAtcSim.newLib.area.routes.IafRoute;
-//import eng.jAtcSim.newLib.speeches.ICommand;
-//import eng.jAtcSim.newLib.speeches.atc2airplane.ChangeHeadingCommand;
-//import eng.jAtcSim.newLib.speeches.atc2airplane.ProceedDirectCommand;
+//import eng.jAtcSim.newLib.speeches.airplane.ICommand;
+//import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ChangeHeadingCommand;
+//import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ProceedDirectCommand;
 //import eng.jAtcSim.newLib.xml.area.internal.context.Context;
 //
 //import static eng.eSystem.utilites.FunctionShortcuts.*;

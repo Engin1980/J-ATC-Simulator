@@ -4,7 +4,7 @@ import eng.eSystem.collections.*;
 import eng.eSystem.eXml.XElement;
 import eng.jAtcSim.newLib.shared.xml.IXmlLoader;
 import eng.jAtcSim.newLib.shared.xml.XmlLoadException;
-import eng.jAtcSim.newLib.speeches.ICommand;
+import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ICommand;
 import eng.jAtcSim.newLib.xml.speeches.atc2airplane.*;
 import eng.jAtcSim.newLib.xml.speeches.atc2airplane.afterCommands.*;
 

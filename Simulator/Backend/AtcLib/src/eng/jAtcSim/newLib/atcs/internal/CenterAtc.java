@@ -22,11 +22,11 @@ import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.SharedAcc;
 import eng.jAtcSim.newLib.shared.enums.AtcType;
 import eng.jAtcSim.newLib.shared.enums.DARouteType;
-import eng.jAtcSim.newLib.speeches.ICommand;
+import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ICommand;
 import eng.jAtcSim.newLib.speeches.SpeechList;
-import eng.jAtcSim.newLib.speeches.airplane2atc.GoodDayNotification;
-import eng.jAtcSim.newLib.speeches.atc2airplane.*;
-import eng.jAtcSim.newLib.speeches.atc2airplane.afterCommands.AfterNavaidCommand;
+import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.GoodDayNotification;
+import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.*;
+import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.afterCommands.AfterNavaidCommand;
 
 public class CenterAtc extends ComputerAtc {
 

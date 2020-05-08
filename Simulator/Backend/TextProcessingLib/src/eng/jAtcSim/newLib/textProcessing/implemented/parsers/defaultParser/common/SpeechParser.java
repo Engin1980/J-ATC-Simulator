@@ -4,7 +4,7 @@ import eng.eSystem.EStringBuilder;
 import eng.eSystem.collections.IList;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.utilites.ReflectionUtils;
-import eng.jAtcSim.newLib.speeches.ISpeech;
+import eng.jAtcSim.newLib.speeches.base.ISpeech;
 
 import java.lang.reflect.Type;
 import java.util.Arrays;

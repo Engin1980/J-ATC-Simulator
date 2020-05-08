@@ -4,7 +4,7 @@ import eng.eSystem.eXml.XElement;
 import eng.jAtcSim.newLib.shared.enums.LeftRightAny;
 import eng.jAtcSim.newLib.shared.xml.IXmlLoader;
 import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
-import eng.jAtcSim.newLib.speeches.atc2airplane.ChangeHeadingCommand;
+import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ChangeHeadingCommand;
 
 public class ChangeHeadingCommandXmlLoader implements IXmlLoader<ChangeHeadingCommand> {
   @Override

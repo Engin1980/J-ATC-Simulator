@@ -16,10 +16,10 @@ import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.DelayedList;
 import eng.jAtcSim.newLib.shared.enums.AtcType;
 import eng.jAtcSim.newLib.speeches.SpeechList;
-import eng.jAtcSim.newLib.speeches.airplane2atc.GoodDayNotification;
-import eng.jAtcSim.newLib.speeches.atc2airplane.ContactCommand;
-import eng.jAtcSim.newLib.speeches.atc2airplane.RadarContactConfirmationNotification;
-import eng.jAtcSim.newLib.speeches.atc2atc.PlaneSwitchMessage;
+import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.GoodDayNotification;
+import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ContactCommand;
+import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.RadarContactConfirmationNotification;
+import eng.jAtcSim.newLib.speeches.atc.PlaneSwitch;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
@@ -96,7 +96,7 @@ public abstract class ComputerAtc extends Atc {
   }
 
   private void elapseSecondProcessMessageFromAtc(Message m) {
-    if (m.getContent() instanceof PlaneSwitchMessage) {
+    if (m.getContent() instanceof PlaneSwitch) {
       processPlaneSwitchMessage(m);
     } else {
       processNonPlaneSwitchMessageFromAtc(m);
@@ -107,7 +107,7 @@ public abstract class ComputerAtc extends Atc {
 
   private void processPlaneSwitchMessage(Message m) {
     PlaneResponsibilityManager prm = InternalAcc.getPrm();
-    PlaneSwitchMessage psm = m.getContent();
+    PlaneSwitch psm = m.getContent();
     Callsign callsign = psm.getCallsign();
     EAssert.isTrue(m.getSource().getType() == Participant.eType.atc);
     AtcId targetAtcId = InternalAcc.getAtc(m.getSource().getId()).getAtcId();
@@ -149,7 +149,7 @@ public abstract class ComputerAtc extends Atc {
     Message nm = new Message(
         Participant.createAtc(this.getAtcId()),
         Participant.createAtc(targetAtcId),
-        new PlaneSwitchMessage(callsign, PlaneSwitchMessage.eMessageType.rejection, planeAcceptance.message));
+        new PlaneSwitch(callsign, PlaneSwitch.eMessageType.rejection, planeAcceptance.message));
     sendMessage(nm);
   }
 
@@ -159,7 +159,7 @@ public abstract class ComputerAtc extends Atc {
     Message nm = new Message(
         Participant.createAtc(this.getAtcId()),
         Participant.createAtc(targetAtcId),
-        new PlaneSwitchMessage(callsign, PlaneSwitchMessage.eMessageType.confirmation));
+        new PlaneSwitch(callsign, PlaneSwitch.eMessageType.confirmation));
     sendMessage(nm);
   }
 
@@ -220,12 +220,12 @@ public abstract class ComputerAtc extends Atc {
     IReadOnlyList<Callsign> awaitings = prm.forAtc().getSwitchRequestsToRepeatByAtc(this.getAtcId());
     for (Callsign callsign : awaitings) {
       if (speechDelayer
-          .isAny(q -> q.getContent() instanceof PlaneSwitchMessage && ((PlaneSwitchMessage) q.getContent()).getCallsign().equals(callsign)))
+          .isAny(q -> q.getContent() instanceof PlaneSwitch && ((PlaneSwitch) q.getContent()).getCallsign().equals(callsign)))
         continue; // if message about this plane is delayed and waiting to process
       Message m = new Message(
           Participant.createAtc(this.getAtcId()),
           Participant.createAtc(InternalAcc.getAtc(AtcType.app).getAtcId()),
-          new PlaneSwitchMessage(callsign, PlaneSwitchMessage.eMessageType.request, "(repeated)"));
+          new PlaneSwitch(callsign, PlaneSwitch.eMessageType.request, "(repeated)"));
       MessagingAcc.getMessenger().send(m);
       super.getRecorder().write(m);
     }
@@ -237,7 +237,7 @@ public abstract class ComputerAtc extends Atc {
     Message m = new Message(
         Participant.createAtc(this.getAtcId()),
         Participant.createAtc(targetAtcId),
-        new PlaneSwitchMessage(callsign, PlaneSwitchMessage.eMessageType.request));
+        new PlaneSwitch(callsign, PlaneSwitch.eMessageType.request));
     sendMessage(m);
   }
 

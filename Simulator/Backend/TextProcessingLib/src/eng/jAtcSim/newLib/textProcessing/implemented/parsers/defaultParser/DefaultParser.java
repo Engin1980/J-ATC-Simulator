@@ -4,7 +4,7 @@ import eng.eSystem.EStringBuilder;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
-import eng.jAtcSim.newLib.speeches.ISpeech;
+import eng.jAtcSim.newLib.speeches.base.ISpeech;
 import eng.jAtcSim.newLib.speeches.SpeechList;
 import eng.jAtcSim.newLib.textProcessing.base.EInvalidCommandException;
 import eng.jAtcSim.newLib.textProcessing.base.Parser;

@@ -16,9 +16,9 @@ import eng.jAtcSim.newLib.shared.enums.AboveBelowExactly;
 import eng.jAtcSim.newLib.shared.enums.ApproachType;
 import eng.jAtcSim.newLib.speeches.INotification;
 import eng.jAtcSim.newLib.speeches.Rejection;
-import eng.jAtcSim.newLib.speeches.airplane2atc.HighOrderedSpeedForApproach;
-import eng.jAtcSim.newLib.speeches.airplane2atc.responses.UnableToEnterApproachFromDifficultPosition;
-import eng.jAtcSim.newLib.speeches.atc2airplane.ClearedToApproachCommand;
+import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.HighOrderedSpeedForApproach;
+import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.responses.UnableToEnterApproachFromDifficultPosition;
+import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ClearedToApproachCommand;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 

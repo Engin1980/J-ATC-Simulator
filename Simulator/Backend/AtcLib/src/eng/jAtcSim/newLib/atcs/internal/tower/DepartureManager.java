@@ -14,11 +14,9 @@ import eng.jAtcSim.newLib.messaging.Participant;
 import eng.jAtcSim.newLib.shared.SharedAcc;
 import eng.jAtcSim.newLib.shared.enums.DARouteType;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
-import eng.jAtcSim.newLib.speeches.ICommand;
+import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ICommand;
 import eng.jAtcSim.newLib.speeches.SpeechList;
-import eng.jAtcSim.newLib.speeches.atc2airplane.ClearedToRouteCommand;
-
-import static eng.eSystem.utilites.FunctionShortcuts.*;
+import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ClearedToRouteCommand;
 
 class DepartureManager {
 

@@ -22,14 +22,13 @@ import eng.jAtcSim.newLib.messaging.Participant;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.DelayedList;
 import eng.jAtcSim.newLib.shared.enums.AboveBelowExactly;
-import eng.jAtcSim.newLib.speeches.ICommand;
-import eng.jAtcSim.newLib.speeches.ISpeech;
+import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ICommand;
+import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.*;
+import eng.jAtcSim.newLib.speeches.base.ISpeech;
 import eng.jAtcSim.newLib.speeches.Rejection;
 import eng.jAtcSim.newLib.speeches.SpeechList;
-import eng.jAtcSim.newLib.speeches.airplane2atc.RequestRadarContactNotification;
-import eng.jAtcSim.newLib.speeches.airplane2atc.responses.IllegalThenCommandRejection;
-import eng.jAtcSim.newLib.speeches.atc2airplane.*;
-import eng.jAtcSim.newLib.speeches.atc2airplane.afterCommands.*;
+import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.RequestRadarContactNotification;
+import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.responses.IllegalThenCommandRejection;
 
 public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
 

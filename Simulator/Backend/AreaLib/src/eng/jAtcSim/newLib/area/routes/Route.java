@@ -3,11 +3,10 @@ package eng.jAtcSim.newLib.area.routes;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
-import eng.eSystem.eXml.XElement;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.area.Airport;
 import eng.jAtcSim.newLib.area.Parentable;
-import eng.jAtcSim.newLib.speeches.ICommand;
+import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ICommand;
 
 public abstract class Route extends Parentable<Airport> {
 

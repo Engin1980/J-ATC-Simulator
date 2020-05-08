@@ -7,8 +7,8 @@ import eng.jAtcSim.newLib.area.AreaAcc;
 import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.shared.PlaneCategoryDefinitions;
 import eng.jAtcSim.newLib.shared.enums.DARouteType;
-import eng.jAtcSim.newLib.speeches.ICommand;
-import eng.jAtcSim.newLib.speeches.atc2airplane.ToNavaidCommand;
+import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ICommand;
+import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ToNavaidCommand;
 
 public class DARoute extends Route {
 

@@ -5,7 +5,7 @@ import eng.jAtcSim.newLib.messaging.Message;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.logging.Journal;
 import eng.jAtcSim.newLib.shared.logging.writers.*;
-import eng.jAtcSim.newLib.speeches.ISpeech;
+import eng.jAtcSim.newLib.speeches.base.ISpeech;
 import eng.jAtcSim.newLib.speeches.SpeechList;
 
 public class CockpitVoiceRecorder extends AirplaneRecorder {

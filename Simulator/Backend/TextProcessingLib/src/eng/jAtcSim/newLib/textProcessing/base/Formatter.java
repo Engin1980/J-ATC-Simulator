@@ -3,15 +3,13 @@ package eng.jAtcSim.newLib.textProcessing.base;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.exceptions.ApplicationException;
 import eng.jAtcSim.newLib.speeches.Confirmation;
-import eng.jAtcSim.newLib.speeches.ISpeech;
+import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.*;
+import eng.jAtcSim.newLib.speeches.base.ISpeech;
 import eng.jAtcSim.newLib.speeches.Rejection;
-import eng.jAtcSim.newLib.speeches.airplane2atc.*;
-import eng.jAtcSim.newLib.speeches.airplane2atc.responses.IllegalThenCommandRejection;
-import eng.jAtcSim.newLib.speeches.airplane2atc.responses.ShortCutToFixNotOnRouteRejection;
-import eng.jAtcSim.newLib.speeches.airplane2atc.responses.UnableToEnterApproachFromDifficultPosition;
-import eng.jAtcSim.newLib.speeches.atc2airplane.*;
-import eng.jAtcSim.newLib.speeches.atc2airplane.afterCommands.*;
-import eng.jAtcSim.newLib.speeches.atc2atc.PlaneSwitchMessage;
+import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.responses.IllegalThenCommandRejection;
+import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.responses.ShortCutToFixNotOnRouteRejection;
+import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.responses.UnableToEnterApproachFromDifficultPosition;
+import eng.jAtcSim.newLib.speeches.atc.PlaneSwitch;
 
 public abstract class Formatter {
 
@@ -152,5 +150,5 @@ public abstract class Formatter {
 
   protected abstract String formatUnableToEnterApproachFromDifficultPosition(UnableToEnterApproachFromDifficultPosition command);
 
-  protected abstract String formatPlaneSwitchMessage(PlaneSwitchMessage speech);
+  protected abstract String formatPlaneSwitchMessage(PlaneSwitch speech);
 }

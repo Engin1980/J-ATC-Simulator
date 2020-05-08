@@ -1,10 +1,9 @@
 package eng.jAtcSim.newLib.airplanes.modules;
 
 import eng.eSystem.validation.EAssert;
-import eng.jAtcSim.newLib.airplanes.IAirplane;
 import eng.jAtcSim.newLib.airplanes.internal.Airplane;
 import eng.jAtcSim.newLib.shared.AtcId;
-import eng.jAtcSim.newLib.speeches.airplane2atc.GoodDayNotification;
+import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.GoodDayNotification;
 
 public class AtcModule extends Module {
   private static final int REPEATED_RADAR_CONTACT_REQUEST_SECONDS = 45;

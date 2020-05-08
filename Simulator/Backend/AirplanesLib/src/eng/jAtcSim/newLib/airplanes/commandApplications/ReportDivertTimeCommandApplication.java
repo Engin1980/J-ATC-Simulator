@@ -3,7 +3,7 @@ package eng.jAtcSim.newLib.airplanes.commandApplications;
 import eng.jAtcSim.newLib.airplanes.AirplaneState;
 import eng.jAtcSim.newLib.airplanes.internal.Airplane;
 import eng.jAtcSim.newLib.speeches.Rejection;
-import eng.jAtcSim.newLib.speeches.atc2airplane.ReportDivertTimeCommand;
+import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ReportDivertTimeCommand;
 
 public class ReportDivertTimeCommandApplication extends CommandApplication<ReportDivertTimeCommand> {
 

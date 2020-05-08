@@ -5,7 +5,7 @@ import eng.jAtcSim.newLib.airplanes.internal.Airplane;
 import eng.jAtcSim.newLib.airplanes.modules.sha.navigators.ToCoordinateNavigator;
 import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.speeches.Rejection;
-import eng.jAtcSim.newLib.speeches.atc2airplane.ProceedDirectCommand;
+import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ProceedDirectCommand;
 
 public class ProceedDirectApplication extends CommandApplication<ProceedDirectCommand> {
 

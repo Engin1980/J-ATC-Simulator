@@ -7,7 +7,7 @@ import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
 import eng.jAtcSim.newLib.area.routes.DARoute;
 import eng.jAtcSim.newLib.shared.enums.DARouteType;
 import eng.jAtcSim.newLib.speeches.Rejection;
-import eng.jAtcSim.newLib.speeches.atc2airplane.ClearedToRouteCommand;
+import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ClearedToRouteCommand;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 

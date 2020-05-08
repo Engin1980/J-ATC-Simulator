@@ -9,7 +9,7 @@ import eng.jAtcSim.newLib.area.AreaAcc;
 import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.shared.enums.LeftRight;
 import eng.jAtcSim.newLib.shared.enums.LeftRightAny;
-import eng.jAtcSim.newLib.speeches.airplane2atc.PassingClearanceLimitNotification;
+import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.PassingClearanceLimitNotification;
 
 public abstract class BasicPilot extends Pilot {
 

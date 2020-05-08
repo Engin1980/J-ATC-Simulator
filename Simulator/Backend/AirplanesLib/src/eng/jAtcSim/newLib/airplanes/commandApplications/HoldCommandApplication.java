@@ -5,7 +5,7 @@ import eng.jAtcSim.newLib.airplanes.internal.Airplane;
 import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.area.PublishedHold;
 import eng.jAtcSim.newLib.speeches.Rejection;
-import eng.jAtcSim.newLib.speeches.atc2airplane.HoldCommand;
+import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.HoldCommand;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
