@@ -1,9 +1,9 @@
 package eng.jAtcSim.newLib.speeches.airplane.airplane2atc;
 
 import eng.jAtcSim.newLib.shared.Callsign;
-import eng.jAtcSim.newLib.speeches.airplane.INotification;
+import eng.jAtcSim.newLib.speeches.airplane.IFromPlaneSpeech;
 
-public class GoodDayNotification implements INotification {
+public class GoodDayNotification implements IFromPlaneSpeech {
   private final Callsign callsign;
   private final double altitude;
   private final double targetAltitude;

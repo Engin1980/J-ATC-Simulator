@@ -2,7 +2,7 @@ package eng.jAtcSim.newLib.area.approaches.behaviors;
 
 import eng.eSystem.collections.*;
 import eng.eSystem.validation.EAssert;
-import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ICommand;
+import eng.jAtcSim.newLib.speeches.airplane.ICommand;
 
 public class FlyRouteBehavior implements IApproachBehavior {
   private final IList<ICommand> commands;

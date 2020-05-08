@@ -16,9 +16,13 @@ import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.DelayedList;
 import eng.jAtcSim.newLib.shared.enums.AtcType;
 import eng.jAtcSim.newLib.speeches.SpeechList;
+import eng.jAtcSim.newLib.speeches.airplane.IForPlaneSpeech;
+import eng.jAtcSim.newLib.speeches.airplane.IFromPlaneSpeech;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.GoodDayNotification;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ContactCommand;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.RadarContactConfirmationNotification;
+import eng.jAtcSim.newLib.speeches.atc.AtcConfirmation;
+import eng.jAtcSim.newLib.speeches.atc.AtcRejection;
 import eng.jAtcSim.newLib.speeches.atc.PlaneSwitch;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
@@ -77,7 +81,7 @@ public abstract class ComputerAtc extends Atc {
         if (m.getSource().getType() == Participant.eType.airplane) {
           // messages from planes
           Callsign callsign = new Callsign(m.getSource().getId());
-          SpeechList spchs = m.getContent();
+          SpeechList<IFromPlaneSpeech> spchs = m.getContent();
 
           if (spchs.containsType(GoodDayNotification.class))
             confirmGoodDayNotificationIfRequired(callsign, spchs);
@@ -146,10 +150,13 @@ public abstract class ComputerAtc extends Atc {
   private void rejectSwitch(Callsign callsign, AtcId targetAtcId, RequestResult planeAcceptance) {
     PlaneResponsibilityManager prm = InternalAcc.getPrm();
     prm.forAtc().rejectSwitchRequest(callsign, this.getAtcId());
+    //TODO rewrite in some different way let requestResult is not used and in
+    // atcRejection new PlaneSwitch is not created
+    // .. do the same in the acceptSwitch() method
     Message nm = new Message(
         Participant.createAtc(this.getAtcId()),
         Participant.createAtc(targetAtcId),
-        new PlaneSwitch(callsign, PlaneSwitch.eMessageType.rejection, planeAcceptance.message));
+        new AtcRejection(new PlaneSwitch(callsign), planeAcceptance.message));
     sendMessage(nm);
   }
 
@@ -159,7 +166,7 @@ public abstract class ComputerAtc extends Atc {
     Message nm = new Message(
         Participant.createAtc(this.getAtcId()),
         Participant.createAtc(targetAtcId),
-        new PlaneSwitch(callsign, PlaneSwitch.eMessageType.confirmation));
+        new AtcConfirmation(new PlaneSwitch(callsign)));
     sendMessage(nm);
   }
 
@@ -174,7 +181,7 @@ public abstract class ComputerAtc extends Atc {
     // todo implement directly into if without gdns variable
     gdns = gdns.where(q -> q.isRepeated() == false);
     if (gdns.isEmpty() == false) {
-      SpeechList lst = new SpeechList();
+      SpeechList<IForPlaneSpeech> lst = new SpeechList<>();
       lst.add(new RadarContactConfirmationNotification());
       if (InternalAcc.getPrm().forAtc().getResponsibleAtc(callsign).equals(this.getAtcId())) {
         AtcId atcId = InternalAcc.getAtc(AtcType.app).getAtcId();
@@ -225,7 +232,7 @@ public abstract class ComputerAtc extends Atc {
       Message m = new Message(
           Participant.createAtc(this.getAtcId()),
           Participant.createAtc(InternalAcc.getAtc(AtcType.app).getAtcId()),
-          new PlaneSwitch(callsign, PlaneSwitch.eMessageType.request, "(repeated)"));
+          new PlaneSwitch(callsign, true));
       MessagingAcc.getMessenger().send(m);
       super.getRecorder().write(m);
     }
@@ -237,7 +244,7 @@ public abstract class ComputerAtc extends Atc {
     Message m = new Message(
         Participant.createAtc(this.getAtcId()),
         Participant.createAtc(targetAtcId),
-        new PlaneSwitch(callsign, PlaneSwitch.eMessageType.request));
+        new PlaneSwitch(callsign, false));
     sendMessage(m);
   }
 

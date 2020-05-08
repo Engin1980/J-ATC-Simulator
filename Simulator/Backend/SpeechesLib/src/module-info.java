@@ -8,4 +8,6 @@ module JAtcSim.Modules.Backend.SpeechesLib {
   exports eng.jAtcSim.newLib.speeches.airplane.airplane2atc.responses;
   exports eng.jAtcSim.newLib.speeches.atc;
   exports eng.jAtcSim.newLib.speeches.airplane;
+  exports eng.jAtcSim.newLib.speeches.airplane.atc2airplane;
+  exports eng.jAtcSim.newLib.speeches.base;
 }

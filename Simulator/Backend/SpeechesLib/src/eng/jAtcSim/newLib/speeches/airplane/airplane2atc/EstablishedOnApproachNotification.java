@@ -1,9 +1,9 @@
 package eng.jAtcSim.newLib.speeches.airplane.airplane2atc;
 
 import eng.eSystem.validation.EAssert;
-import eng.jAtcSim.newLib.speeches.airplane.INotification;
+import eng.jAtcSim.newLib.speeches.airplane.IFromPlaneSpeech;
 
-public class EstablishedOnApproachNotification implements INotification {
+public class EstablishedOnApproachNotification implements IFromPlaneSpeech {
 
   private String thresholdName;
 

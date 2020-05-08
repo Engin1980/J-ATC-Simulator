@@ -1,8 +1,8 @@
 package eng.jAtcSim.newLib.speeches.airplane.airplane2atc;
 
-import eng.jAtcSim.newLib.speeches.airplane.INotification;
+import eng.jAtcSim.newLib.speeches.airplane.IFromPlaneSpeech;
 
-public class RequestRadarContactNotification implements INotification {
+public class RequestRadarContactNotification implements IFromPlaneSpeech {
 
   @Override
   public String toString(){

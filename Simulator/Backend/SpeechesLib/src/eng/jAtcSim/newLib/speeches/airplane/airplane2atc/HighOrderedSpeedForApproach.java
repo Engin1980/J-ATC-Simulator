@@ -1,9 +1,9 @@
 package eng.jAtcSim.newLib.speeches.airplane.airplane2atc;
 
 import eng.eSystem.validation.EAssert;
-import eng.jAtcSim.newLib.speeches.airplane.INotification;
+import eng.jAtcSim.newLib.speeches.airplane.IFromPlaneSpeech;
 
-public class HighOrderedSpeedForApproach implements INotification {
+public class HighOrderedSpeedForApproach implements IFromPlaneSpeech {
   private int orderedSpeed;
   private int requiredSpeed;
 

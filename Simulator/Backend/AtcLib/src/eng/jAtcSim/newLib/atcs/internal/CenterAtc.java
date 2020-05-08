@@ -22,7 +22,8 @@ import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.SharedAcc;
 import eng.jAtcSim.newLib.shared.enums.AtcType;
 import eng.jAtcSim.newLib.shared.enums.DARouteType;
-import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ICommand;
+import eng.jAtcSim.newLib.speeches.airplane.ICommand;
+import eng.jAtcSim.newLib.speeches.airplane.IForPlaneSpeech;
 import eng.jAtcSim.newLib.speeches.SpeechList;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.GoodDayNotification;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.*;
@@ -70,7 +71,7 @@ public class CenterAtc extends ComputerAtc {
         if (dist < 50) {
           if (plane.getSha().getAltitude() > 29_000) {
             int newAlt = SharedAcc.getRnd().nextInt(25, 29) * 1_000;
-            SpeechList sl = new SpeechList();
+            SpeechList<IForPlaneSpeech> sl = new SpeechList<>();
             sl.add(ChangeAltitudeCommand.create(ChangeAltitudeCommand.eDirection.descend, newAlt));
             Message m = new Message(
                 Participant.createAtc(this.getAtcId()),

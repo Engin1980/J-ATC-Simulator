@@ -20,7 +20,7 @@ import eng.jAtcSim.newLib.shared.time.ETimeStamp;
 import eng.jAtcSim.newLib.stats.StatsAcc;
 import eng.jAtcSim.newLib.stats.StatsProvider;
 import eng.jAtcSim.newLib.textProcessing.base.Formatter;
-import eng.jAtcSim.newLib.textProcessing.base.Parser;
+import eng.jAtcSim.newLib.textProcessing.base.IParser;
 import eng.jAtcSim.newLib.traffic.TrafficProvider;
 import eng.jAtcSim.newLib.weather.WeatherAcc;
 import eng.jAtcSim.newLib.weather.WeatherManager;
@@ -74,7 +74,7 @@ public class Simulation {
   private final TrafficProvider trafficProvider;
   private final TimerController timer;
   private final SystemMessagesController systemMessagesProcessor = new SystemMessagesController();
-  private final Parser parser;
+  private final IParser parser;
   private final Formatter formatter;
   private final AirplanesSimModule airplanesSimModule;
   private boolean isElapseSecondCalculationRunning = false;

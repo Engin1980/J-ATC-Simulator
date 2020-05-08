@@ -22,7 +22,7 @@ import eng.jAtcSim.newLib.area.approaches.conditions.ICondition;
 import eng.jAtcSim.newLib.area.routes.IafRoute;
 import eng.jAtcSim.newLib.shared.RadialCalculator;
 import eng.jAtcSim.newLib.shared.enums.LeftRightAny;
-import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ICommand;
+import eng.jAtcSim.newLib.speeches.airplane.ICommand;
 import eng.jAtcSim.newLib.speeches.SpeechList;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.GoingAroundNotification;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ChangeAltitudeCommand;

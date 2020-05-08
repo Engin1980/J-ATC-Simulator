@@ -4,12 +4,12 @@ import eng.eSystem.EStringBuilder;
 import eng.eSystem.collections.IList;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.utilites.ReflectionUtils;
-import eng.jAtcSim.newLib.speeches.base.ISpeech;
+import eng.jAtcSim.newLib.speeches.airplane.IForPlaneSpeech;
 
 import java.lang.reflect.Type;
 import java.util.Arrays;
 
-public abstract class SpeechParser<T extends ISpeech> {
+public abstract class SpeechParser<T extends IForPlaneSpeech> {
 
 
   public final String[] getPrefixes() {

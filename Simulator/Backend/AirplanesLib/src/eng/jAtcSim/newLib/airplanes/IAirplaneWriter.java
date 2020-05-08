@@ -16,6 +16,8 @@ import eng.jAtcSim.newLib.shared.Restriction;
 import eng.jAtcSim.newLib.shared.enums.LeftRight;
 import eng.jAtcSim.newLib.speeches.airplane.ICommand;
 import eng.jAtcSim.newLib.speeches.SpeechList;
+import eng.jAtcSim.newLib.speeches.airplane.IForPlaneSpeech;
+import eng.jAtcSim.newLib.speeches.airplane.IFromPlaneSpeech;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.GoingAroundNotification;
 
 public interface IAirplaneWriter {
@@ -46,13 +48,13 @@ public interface IAirplaneWriter {
 
   void reportDivertTimeLeft();
 
-  default void sendMessage(AtcId atcId, ICommand speech){
-    SpeechList<ICommand> speeches = new SpeechList<>();
+  default void sendMessage(AtcId atcId, IFromPlaneSpeech speech){
+    SpeechList<IFromPlaneSpeech> speeches = new SpeechList<>();
     speeches.add(speech);
     sendMessage(atcId, speeches);
   }
 
-  void sendMessage(AtcId atcId, SpeechList<ICommand> iSpeeches);
+  void sendMessage(AtcId atcId, SpeechList<IFromPlaneSpeech> iSpeeches);
 
   void setAltitudeRestriction(Restriction restriction);
 

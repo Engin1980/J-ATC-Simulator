@@ -22,10 +22,11 @@ import eng.jAtcSim.newLib.messaging.Participant;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.DelayedList;
 import eng.jAtcSim.newLib.shared.enums.AboveBelowExactly;
-import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ICommand;
+import eng.jAtcSim.newLib.speeches.airplane.ICommand;
+import eng.jAtcSim.newLib.speeches.airplane.IFromPlaneSpeech;
+import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.PlaneRejection;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.*;
-import eng.jAtcSim.newLib.speeches.base.ISpeech;
-import eng.jAtcSim.newLib.speeches.Rejection;
+import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.afterCommands.*;
 import eng.jAtcSim.newLib.speeches.SpeechList;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.RequestRadarContactNotification;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.responses.IllegalThenCommandRejection;
@@ -40,7 +41,7 @@ public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
   }
 
   private final DelayedList<ICommand> queue = new DelayedList<>(2, 7); //Min/max item delay
-  private final IMap<AtcId, SpeechList<ISpeech>> saidText = new EMap<>();
+  private final IMap<AtcId, SpeechList<IFromPlaneSpeech>> saidText = new EMap<>();
   private final AfterCommandList afterCommands = new AfterCommandList();
   private Navaid entryExitPoint;
   private ActiveRunwayThreshold runwayThreshold;
@@ -215,7 +216,7 @@ public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
           ret.clear();
           return null;
         }
-        ISpeech prev = ret.get(i - 1);
+        ICommand prev = ret.get(i - 1);
 
         AfterCommand n; // new
         if (prev instanceof ProceedDirectCommand) {
@@ -262,7 +263,7 @@ public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
 
   private void flushSaidTextToAtc() {
     for (AtcId atcId : saidText.getKeys()) {
-      SpeechList<ISpeech> saidTextToAtc = saidText.get(atcId);
+      SpeechList<IFromPlaneSpeech> saidTextToAtc = saidText.get(atcId);
       if (!saidTextToAtc.isEmpty()) {
         wrt.sendMessage(atcId, saidTextToAtc);
         saidText.set(atcId, new SpeechList<>());
@@ -284,10 +285,10 @@ public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
     for (IMessageContent c : contents) {
       SpeechList<ICommand> cmds;
       if (c instanceof SpeechList) {
-        SpeechList<ISpeech> tmp = (SpeechList) c;
+        SpeechList<ICommand> tmp = (SpeechList<ICommand>) c;
         EAssert.isTrue(tmp.isAll(q -> q instanceof ICommand));
         cmds = new SpeechList<>();
-        tmp.forEach(q -> cmds.add((ICommand) q));
+        tmp.forEach(q -> cmds.add(q));
       } else if (c instanceof ICommand) {
         cmds = new SpeechList<>((ICommand) c);
       } else
@@ -296,7 +297,7 @@ public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
     }
   }
 
-  private void processAfterSpeechWithConsequents(IList<? extends ISpeech> queue, CommandSource cs) {
+  private void processAfterSpeechWithConsequents(IList<? extends ICommand> queue, CommandSource cs) {
 
     AirplaneState[] unableProcessAfterCommandsStates = {
         AirplaneState.flyingIaf2Faf,
@@ -313,7 +314,7 @@ public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
     queue.removeAt(0);
 
     if (cs == CommandSource.atc && rdr.getState().is(unableProcessAfterCommandsStates)) {
-      ISpeech rej = new Rejection("Unable to process after-command during approach/take-off.", af);
+      IFromPlaneSpeech rej = new PlaneRejection(af, "Unable to process after-command during approach/take-off.");
       say(rej);
       return;
     }
@@ -325,7 +326,7 @@ public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
     if (sayConfirmations) say(cres.confirmation);
 
     while (queue.isEmpty() == false) {
-      ISpeech sp = queue.get(0);
+      ICommand sp = queue.get(0);
       if (sp instanceof AfterCommand)
         break;
       else {
@@ -364,7 +365,7 @@ public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
   }
 
   private void processNormalSpeech(
-      SpeechList<? extends ISpeech> queue, ICommand cmd, CommandSource cs) {
+      SpeechList<? extends ICommand> queue, ICommand cmd, CommandSource cs) {
 
     ConfirmationResult cres =
         ApplicationManager.confirm(
@@ -397,7 +398,7 @@ public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
     }
   }
 
-  private void say(ISpeech speech) {
+  private void say(IFromPlaneSpeech speech) {
     AtcId atc = rdr.getAtc().getTunedAtc();
 
     // if no tuned atc, nothing is said

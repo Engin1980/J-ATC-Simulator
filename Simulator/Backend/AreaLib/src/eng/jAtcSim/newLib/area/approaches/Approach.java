@@ -9,7 +9,7 @@ import eng.jAtcSim.newLib.area.Parentable;
 import eng.jAtcSim.newLib.area.approaches.behaviors.FlyRadialBehavior;
 import eng.jAtcSim.newLib.area.routes.GaRoute;
 import eng.jAtcSim.newLib.shared.enums.ApproachType;
-import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ICommand;
+import eng.jAtcSim.newLib.speeches.airplane.ICommand;
 
 public class Approach extends Parentable<ActiveRunwayThreshold> {
   public static Approach create(ApproachType type, IList<ApproachEntry> entries, IList<ICommand> beforeStagesCommands, IList<ApproachStage> stages, GaRoute gaRoute) {

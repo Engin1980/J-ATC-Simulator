@@ -6,7 +6,7 @@ import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.area.Airport;
 import eng.jAtcSim.newLib.area.Parentable;
-import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ICommand;
+import eng.jAtcSim.newLib.speeches.airplane.ICommand;
 
 public abstract class Route extends Parentable<Airport> {
 

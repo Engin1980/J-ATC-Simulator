@@ -10,14 +10,24 @@ import static eng.eSystem.utilites.FunctionShortcuts.sf;
  */
 public class PlaneSwitch implements IAtcSpeech {
 
-  public final Callsign callsign;
+  private final Callsign callsign;
+  private final boolean repeated;
 
-  public PlaneSwitch(Callsign callsign) {
+  public PlaneSwitch(Callsign callsign, boolean isRepeated) {
     EAssert.Argument.isNotNull(callsign, "callsign");
     this.callsign = callsign;
+    this.repeated = isRepeated;
   }
 
-//  public String getAsString() {
+  public PlaneSwitch(Callsign callsign) {
+    this(callsign, false);
+  }
+
+  public boolean isRepeated() {
+    return repeated;
+  }
+
+  //  public String getAsString() {
 //    if (plane.getRoutingModule().getAssignedRoute() == null)
 //      throw new EApplicationException("Plane " + plane.getFlightModule().getCallsign() + " does not have assigned route.");
 //    if (plane.getRoutingModule().getAssignedRunwayThreshold() == null)
