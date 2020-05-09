@@ -21,9 +21,9 @@ import eng.jAtcSim.newLib.speeches.airplane.IFromPlaneSpeech;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.GoodDayNotification;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ContactCommand;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.RadarContactConfirmationNotification;
-import eng.jAtcSim.newLib.speeches.atc.AtcConfirmation;
-import eng.jAtcSim.newLib.speeches.atc.AtcRejection;
-import eng.jAtcSim.newLib.speeches.atc.PlaneSwitch;
+import eng.jAtcSim.newLib.speeches.atc.atc2user.AtcConfirmation;
+import eng.jAtcSim.newLib.speeches.atc.atc2user.AtcRejection;
+import eng.jAtcSim.newLib.speeches.atc.user2atc.PlaneSwitchRequest;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
@@ -100,7 +100,7 @@ public abstract class ComputerAtc extends Atc {
   }
 
   private void elapseSecondProcessMessageFromAtc(Message m) {
-    if (m.getContent() instanceof PlaneSwitch) {
+    if (m.getContent() instanceof PlaneSwitchRequest) {
       processPlaneSwitchMessage(m);
     } else {
       processNonPlaneSwitchMessageFromAtc(m);
@@ -111,8 +111,8 @@ public abstract class ComputerAtc extends Atc {
 
   private void processPlaneSwitchMessage(Message m) {
     PlaneResponsibilityManager prm = InternalAcc.getPrm();
-    PlaneSwitch psm = m.getContent();
-    Callsign callsign = psm.getCallsign();
+    PlaneSwitchRequest psm = m.getContent();
+    Callsign callsign = psm.getSquawk();
     EAssert.isTrue(m.getSource().getType() == Participant.eType.atc);
     AtcId targetAtcId = InternalAcc.getAtc(m.getSource().getId()).getAtcId();
     if (prm.forAtc().isUnderSwitchRequest(callsign, this.getAtcId(), targetAtcId)) {
@@ -156,7 +156,7 @@ public abstract class ComputerAtc extends Atc {
     Message nm = new Message(
         Participant.createAtc(this.getAtcId()),
         Participant.createAtc(targetAtcId),
-        new AtcRejection(new PlaneSwitch(callsign), planeAcceptance.message));
+        new AtcRejection(new PlaneSwitchRequest(callsign), planeAcceptance.message));
     sendMessage(nm);
   }
 
@@ -166,7 +166,7 @@ public abstract class ComputerAtc extends Atc {
     Message nm = new Message(
         Participant.createAtc(this.getAtcId()),
         Participant.createAtc(targetAtcId),
-        new AtcConfirmation(new PlaneSwitch(callsign)));
+        new AtcConfirmation(new PlaneSwitchRequest(callsign)));
     sendMessage(nm);
   }
 
@@ -227,12 +227,12 @@ public abstract class ComputerAtc extends Atc {
     IReadOnlyList<Callsign> awaitings = prm.forAtc().getSwitchRequestsToRepeatByAtc(this.getAtcId());
     for (Callsign callsign : awaitings) {
       if (speechDelayer
-          .isAny(q -> q.getContent() instanceof PlaneSwitch && ((PlaneSwitch) q.getContent()).getCallsign().equals(callsign)))
+          .isAny(q -> q.getContent() instanceof PlaneSwitchRequest && ((PlaneSwitchRequest) q.getContent()).getSquawk().equals(callsign)))
         continue; // if message about this plane is delayed and waiting to process
       Message m = new Message(
           Participant.createAtc(this.getAtcId()),
           Participant.createAtc(InternalAcc.getAtc(AtcType.app).getAtcId()),
-          new PlaneSwitch(callsign, true));
+          new PlaneSwitchRequest(callsign, true));
       MessagingAcc.getMessenger().send(m);
       super.getRecorder().write(m);
     }
@@ -244,7 +244,7 @@ public abstract class ComputerAtc extends Atc {
     Message m = new Message(
         Participant.createAtc(this.getAtcId()),
         Participant.createAtc(targetAtcId),
-        new PlaneSwitch(callsign, false));
+        new PlaneSwitchRequest(callsign, false));
     sendMessage(m);
   }
 

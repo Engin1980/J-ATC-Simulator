@@ -2,7 +2,7 @@ package eng.jAtcSim.newLib.gameSim.simulation;
 
 import eng.eSystem.Producer;
 import eng.jAtcSim.newLib.gameSim.simulation.controllers.TimerController;
-import eng.jAtcSim.newLib.textProcessing.base.IParser;
+import eng.jAtcSim.newLib.textProcessing.parsing.IParser;
 
 public class InternalAcc {
   private static Producer<TimerController> timerProviderProducer;

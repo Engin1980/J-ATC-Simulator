@@ -8,7 +8,7 @@ import eng.jAtcSim.newLib.airplanes.IAirplane;
 import eng.jAtcSim.newLib.gameSim.simulation.InternalAcc;
 import eng.jAtcSim.newLib.messaging.*;
 import eng.jAtcSim.newLib.shared.Squawk;
-import eng.jAtcSim.newLib.textProcessing.base.IParser;
+import eng.jAtcSim.newLib.textProcessing.parsing.IParser;
 import eng.jAtcSim.newLib.weather.WeatherAcc;
 
 import java.util.Map;

@@ -2,8 +2,8 @@ package eng.jAtcSim.newLib.gameSim.simulation;
 
 import eng.jAtcSim.newLib.gameSim.game.startupInfos.SimulationStartupSettingsInfo;
 import eng.jAtcSim.newLib.gameSim.game.startupInfos.TrafficStartupSettingsInfo;
-import eng.jAtcSim.newLib.textProcessing.base.Formatter;
-import eng.jAtcSim.newLib.textProcessing.base.IParser;
+import eng.jAtcSim.newLib.textProcessing.old.base.Formatter;
+import eng.jAtcSim.newLib.textProcessing.parsing.IParser;
 
 public class SimulationSettings {
   public final IParser parser;

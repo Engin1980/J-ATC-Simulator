@@ -6,6 +6,7 @@ package "Base"{
 interface IParser<T> {
   parse (in : Object) : T
   canAccept (in : Object) : boolean
+  acceptsType(type : Class) : boolean
 }
 
 interface AtcParser<S>

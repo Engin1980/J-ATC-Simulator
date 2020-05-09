@@ -27,7 +27,9 @@ import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ChangeAltitudeCommand;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ClearedForTakeoffCommand;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.RadarContactConfirmationNotification;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.TaxiToHoldingPointCommand;
-import eng.jAtcSim.newLib.speeches.atc.*;
+import eng.jAtcSim.newLib.speeches.atc.atc2user.*;
+import eng.jAtcSim.newLib.speeches.atc.user2atc.RunwayMaintenanceRequest;
+import eng.jAtcSim.newLib.speeches.atc.user2atc.RunwayInUseRequest;
 import eng.jAtcSim.newLib.stats.StatsAcc;
 import eng.jAtcSim.newLib.weather.Weather;
 import eng.jAtcSim.newLib.weather.WeatherAcc;
@@ -462,9 +464,9 @@ public class TowerAtc extends ComputerAtc {
     return this.runwayChecks.get(runway.getName()).isActive();
   }
 
-  private void processMessageFromAtc(RunwayUseRequest ru) {
+  private void processMessageFromAtc(RunwayInUseRequest ru) {
 
-    if (ru.getType() == RunwayUseRequest.eType.changeNowRequest) {
+    if (ru.getType() == RunwayInUseRequest.eType.changeNowRequest) {
       if (inUseInfo.scheduled == null) {
         Message msg = new Message(
             Participant.createAtc(this.getAtcId()),
@@ -488,8 +490,8 @@ public class TowerAtc extends ComputerAtc {
     }
   }
 
-  private void processMessageFromAtc(RunwayCheckRequest rrct) {
-    if (rrct.type == RunwayCheckRequest.eType.askForTime) {
+  private void processMessageFromAtc(RunwayMaintenanceRequest rrct) {
+    if (rrct.type == RunwayMaintenanceRequest.eType.askForTime) {
       RunwayCheckInfo rc = this.runwayChecks.tryGet(rrct.runway);
       if (rc != null)
         announceScheduledRunwayCheck(rrct.runway, rc);
@@ -499,7 +501,7 @@ public class TowerAtc extends ComputerAtc {
           announceScheduledRunwayCheck(runwayName, rc);
         }
       }
-    } else if (rrct.type == RunwayCheckRequest.eType.doCheck) {
+    } else if (rrct.type == RunwayMaintenanceRequest.eType.doCheck) {
       //ActiveRunway rwy = rrct.runway;
       String rwyName = rrct.runway;
       RunwayCheckInfo rc = this.runwayChecks.tryGet(rwyName);
@@ -549,10 +551,10 @@ public class TowerAtc extends ComputerAtc {
   @Override
   protected void processNonPlaneSwitchMessageFromAtc(Message m) {
     if (m.getContent() instanceof RunwayCheckInfo) {
-      RunwayCheckRequest rrct = m.getContent();
+      RunwayMaintenanceRequest rrct = m.getContent();
       processMessageFromAtc(rrct);
-    } else if (m.getContent() instanceof RunwayUseRequest) {
-      RunwayUseRequest ru = m.getContent();
+    } else if (m.getContent() instanceof RunwayInUseRequest) {
+      RunwayInUseRequest ru = m.getContent();
       processMessageFromAtc(ru);
     }
   }

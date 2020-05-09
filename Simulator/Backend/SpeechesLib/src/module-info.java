@@ -10,4 +10,7 @@ module JAtcSim.Modules.Backend.SpeechesLib {
   exports eng.jAtcSim.newLib.speeches.airplane;
   exports eng.jAtcSim.newLib.speeches.airplane.atc2airplane;
   exports eng.jAtcSim.newLib.speeches.base;
+  exports eng.jAtcSim.newLib.speeches.system;
+  exports eng.jAtcSim.newLib.speeches.atc.user2atc;
+  exports eng.jAtcSim.newLib.speeches.system.user2system;
 }
