@@ -14,7 +14,7 @@ import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.afterCommands.AfterComm
 public class ApplicationManager {
 
   private static IMap<Class<? extends ICommand>, CommandApplication> cmdApps;
-  private static IMap<Class<? extends IForPlaneSpeech>, NotificationApplication> notApps;
+  private static IMap<Class<? extends IForPlaneSpeech>, NonCommandApplication> nonCmdApps;
 
   public static ConfirmationResult confirm(Airplane plane, ISpeech speech, boolean checkStateSanity, boolean checkCommandSanity) {
     ConfirmationResult ret;
@@ -31,9 +31,9 @@ public class ApplicationManager {
       ret = ca.confirm(plane, command, checkStateSanity, checkCommandSanity);
     } else if (speech instanceof IForPlaneSpeech) {
       IForPlaneSpeech notification = (IForPlaneSpeech) speech;
-      NotificationApplication na = notApps.get(notification.getClass());
-      assert na != null;
-      ret = na.confirm(plane, notification);
+      NonCommandApplication nca = nonCmdApps.get(notification.getClass());
+      assert nca != null;
+      ret = nca.confirm(plane, notification);
     } else {
       throw new UnsupportedOperationException();
     }
@@ -50,7 +50,7 @@ public class ApplicationManager {
       ret = cmdApps.get(command.getClass()).apply(plane, command, false);
     } else if (speech instanceof IFromPlaneSpeech) {
       IForPlaneSpeech notification = (IForPlaneSpeech) speech;
-      ret = notApps.get(notification.getClass()).apply(plane, notification);
+      ret = nonCmdApps.get(notification.getClass()).apply(plane, notification);
     } else {
       throw new UnsupportedOperationException();
     }
@@ -76,7 +76,7 @@ public class ApplicationManager {
     cmdApps.set(AltitudeRestrictionCommand.class, new AltitudeRestrictionApplication());
     cmdApps.set(ClearedToRouteCommand.class, new ClearedToRouteApplication());
 
-    notApps = new EMap<>();
-    notApps.set(RadarContactConfirmationNotification.class, new RadarContactConfirmationNotificationApplication());
+    nonCmdApps = new EMap<>();
+    nonCmdApps.set(RadarContactConfirmationNotification.class, new RadarContactConfirmationNotificationApplication());
   }
 }
