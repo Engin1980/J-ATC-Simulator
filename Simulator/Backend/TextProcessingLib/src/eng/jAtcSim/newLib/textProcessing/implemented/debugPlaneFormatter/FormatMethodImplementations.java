@@ -1,29 +1,26 @@
-package eng.jAtcSim.newLib.area.textProcessing.formatting;
+package eng.jAtcSim.newLib.textProcessing.implemented.debugPlaneFormatter;
 
-import eng.jAtcSim.newLib.Acc;
-import eng.jAtcSim.newLib.area.airplanes.AirplaneDataFormatter;
-import eng.jAtcSim.newLib.area.atcs.Atc;
-import eng.jAtcSim.newLib.area.speaking.fromAirplane.notifications.*;
-import eng.jAtcSim.newLib.area.speaking.fromAtc.commands.*;
-import eng.jAtcSim.newLib.area.speaking.fromAtc.commands.afters.*;
-import eng.jAtcSim.newLib.global.DataFormat;
-import eng.jAtcSim.newLib.global.Headings;
-import eng.jAtcSim.newLib.area.speaking.fromAirplane.notifications.commandResponses.Confirmation;
-import eng.jAtcSim.newLib.area.speaking.fromAirplane.notifications.commandResponses.Rejection;
-import eng.jAtcSim.newLib.area.speaking.fromAirplane.notifications.commandResponses.rejections.UnableToEnterApproachFromDifficultPosition;
-import eng.jAtcSim.newLib.area.speaking.fromAtc.atc2atc.PlaneSwitchMessage;
-import eng.jAtcSim.newLib.area.speaking.fromAtc.notifications.RadarContactConfirmationNotification;
+import eng.eSystem.collections.*;
+import eng.eSystem.geo.Headings;
+import eng.jAtcSim.newLib.shared.Format;
+import eng.jAtcSim.newLib.shared.SharedAcc;
+import eng.jAtcSim.newLib.shared.enums.LeftRight;
+import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.*;
+import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.responses.UnableToEnterApproachFromDifficultPosition;
+import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.*;
+import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.afterCommands.*;
 
-public class DebugFormatter extends Formatter {
+import static eng.eSystem.utilites.FunctionShortcuts.*;
 
+class FormatMethodImplementations {
   private final String[] greetings = new String[]{"Good day", "Hello", "Hi"};
 
   public String format(AfterAltitudeCommand cmd) {
-    return "when passing " + Acc.toAltS(cmd.getAltitudeInFt(), true) + " ";
+    return "when passing " + Format.Altitude.toAlfOrFLLong(cmd.getAltitude()) + " ";
   }
 
   public String format(AfterNavaidCommand cmd) {
-    return "after " + cmd.getNavaid().getName() + " ";
+    return "after " + cmd.getNavaidName() + " ";
   }
 
   public String format(AfterHeadingCommand cmd) {
@@ -31,15 +28,15 @@ public class DebugFormatter extends Formatter {
   }
 
   public String format(AfterRadialCommand cmd) {
-    return "after radial " + cmd.getNavaid().getName() + "/" + cmd.getRadial() + " ";
+    return "after radial " + cmd.getNavaidName() + "/" + cmd.getRadial() + " ";
   }
 
   public String format(AfterDistanceCommand cmd) {
-    return "after distance " + cmd.getNavaid().getName() + "/" + cmd.getDistanceInNm() + " ";
+    return "after distance " + cmd.getNavaidName() + "/" + cmd.getDistance() + " ";
   }
 
   public String format(AfterSpeedCommand cmd) {
-    return "at speed " + cmd.getSpeedInKts() + "kts ";
+    return "at speed " + cmd.getSpeed() + "kts ";
   }
 
   public String format(ChangeAltitudeCommand cmd) {
@@ -57,7 +54,7 @@ public class DebugFormatter extends Formatter {
       default:
         throw new UnsupportedOperationException();
     }
-    sb.append(Acc.toAltS(cmd.getAltitudeInFt(), true));
+    sb.append(Format.Altitude.toAlfOrFLLong(cmd.getAltitudeInFt()));
     return sb.toString();
   }
 
@@ -96,13 +93,13 @@ public class DebugFormatter extends Formatter {
     } else {
       StringBuilder sb = new StringBuilder();
       sb.append("speed ");
-      sb.append(cmd.getSpeedInKts());
+      sb.append(cmd.getRestriction().value);
       sb.append(" kts");
-      switch (cmd.getDirection()) {
-        case atLeast:
+      switch (cmd.getRestriction().direction) {
+        case above:
           sb.append(" or more");
           break;
-        case atMost:
+        case below:
           sb.append(" or less");
           break;
       }
@@ -110,20 +107,19 @@ public class DebugFormatter extends Formatter {
     }
   }
 
-  public String format(SetAltitudeRestriction cmd) {
+  public String format(AltitudeRestrictionCommand cmd) {
     if (cmd.getRestriction() == null) {
       return "cancel altitude restrictions";
     } else {
       StringBuilder sb = new StringBuilder();
       sb.append("altitude ");
       sb.append(
-          AirplaneDataFormatter.formatAltitudeShort(
-              cmd.getRestriction().value, false));
+          Format.Altitude.toAlfOrFLLong(cmd.getRestriction().value));
       switch (cmd.getRestriction().direction) {
-        case atLeast:
+        case above:
           sb.append(" or more");
           break;
-        case atMost:
+        case below:
           sb.append(" or less");
           break;
       }
@@ -132,7 +128,7 @@ public class DebugFormatter extends Formatter {
   }
 
   public String format(ClearedForTakeoffCommand cmd) {
-    return "cleared for takeoff " + cmd.getRunwayThreshold().getName();
+    return "cleared for takeoff " + cmd.getRunwayThresholdName();
   }
 
   public String format(ClearedToApproachCommand cmd) {
@@ -167,21 +163,20 @@ public class DebugFormatter extends Formatter {
   }
 
   public String format(ContactCommand cmd) {
-    Atc atc = Acc.atc(cmd.getAtcType());
-    String ret = String.format("Contact %s at %.3f", atc.getName(), atc.getFrequency());
+    String ret = String.format("Contact %s at %.3f", cmd.getAtc().getName(), cmd.getAtc().getFrequency());
     return ret;
   }
 
   public String format(HoldCommand cmd) {
     StringBuilder sb = new StringBuilder();
     sb.append("hold over ");
-    sb.append(cmd.getNavaid().getName());
+    sb.append(cmd.getNavaidName());
     if (cmd.isPublished()) {
       sb.append(" as published");
     } else {
       sb.append(" inbound ");
       sb.append(Headings.format(cmd.getInboundRadial()));
-      sb.append(cmd.isLeftTurn() ? " left turns " : " right turns ");
+      sb.append(cmd.getTurn() == LeftRight.left ? " left turns " : " right turns ");
     }
     return sb.toString();
   }
@@ -189,14 +184,14 @@ public class DebugFormatter extends Formatter {
   public String format(ProceedDirectCommand cmd) {
     StringBuilder sb = new StringBuilder();
     sb.append("proceed direct ");
-    sb.append(cmd.getNavaid().getName());
+    sb.append(cmd.getNavaidName());
     return sb.toString();
   }
 
   public String format(ShortcutCommand cmd) {
     StringBuilder sb = new StringBuilder();
     sb.append("shortcut to ");
-    sb.append(cmd.getNavaid().getName());
+    sb.append(cmd.getNavaidName());
     return sb.toString();
   }
 
@@ -212,25 +207,17 @@ public class DebugFormatter extends Formatter {
     return "Approaching to clearance limit";
   }
 
-  public String format(Confirmation cmd) {
-    return super.format(cmd.getOrigin());
-  }
-
-  public String format(Rejection cmd) {
-    return "Unable " + super.format(cmd.getOrigin()) + ". " + cmd.getReason();
-  }
-
   public String format(RequestRadarContactNotification cmd) {
     return "Unable to follow ordered fromAtc, please confirm our radar contact first";
   }
 
   public String format(EmergencyNotification cmd){
-    return "Pan-Pan-Pan, we have an emergency situation, request landing at " + Acc.airport().getIcao() + " immediately";
+    return "Pan-Pan-Pan, we have an emergency situation, request landing immediately";
   }
 
   public String format(ClearedToRouteCommand cmd){
     String type;
-    switch (cmd.getRoute().getType()){
+    switch (cmd.getRouteType()){
       case sid:
         type = "departure";
         break;
@@ -246,11 +233,11 @@ public class DebugFormatter extends Formatter {
       default:
         throw new UnsupportedOperationException();
     }
-    return "Clear to proceed " + cmd.getRoute().getName() + " " + type;
+    return "Clear to proceed " + cmd.getRouteName() + " " + type;
   }
 
   public String format(UnableToEnterApproachFromDifficultPosition cmd) {
-    return cmd.reason;
+    return cmd.getReason();
   }
 
   public String format(HighOrderedSpeedForApproach cmd) {
@@ -267,23 +254,22 @@ public class DebugFormatter extends Formatter {
   }
 
   public String format(GoodDayNotification cmd) {
-    double d = Acc.rnd().nextDouble();
-    d = d * greetings.length;
+    int greetingIndex = SharedAcc.getRnd().nextInt(greetings.length);
     StringBuilder sb = new StringBuilder();
     sb
-        .append(greetings[(int) d])
+        .append(greetings[greetingIndex])
         .append(", ");
     if (cmd.isEmergency())
       sb.append("mayday ");
 
     sb.append(cmd.getCallsign().toString())
         .append(" with you at ")
-        .append(DataFormat.Altitude.toStandardAltitudeOrFL(cmd.getAltitude(), Acc.airport().getTransitionAltitude()));
+        .append(Format.Altitude.toAlfOrFLLong(cmd.getAltitude()));
     return sb.toString();
   }
 
   public String format(EstablishedOnApproachNotification speech) {
-    return "Short final " + speech.getThreshold().getName();
+    return "Short final " + speech.getThresholdName();
   }
 
   public String format(DivertTimeNotification speech) {
@@ -299,7 +285,7 @@ public class DebugFormatter extends Formatter {
     return ret;
   }
 
-  public String format(ReportDivertTime cmd) {
+  public String format(ReportDivertTimeCommand cmd) {
     String ret = ""; // this is empty as this is used as a confirmation.
     return ret;
   }
@@ -310,7 +296,7 @@ public class DebugFormatter extends Formatter {
   }
 
   public String format(DivertingNotification cmd) {
-    String ret = "we are diverting via " + cmd.getExitNavaid().getName();
+    String ret = "we are diverting via " + cmd.getExitNavaidName();
     return ret;
   }
 }

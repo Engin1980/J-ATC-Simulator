@@ -5,12 +5,12 @@ import eng.jAtcSim.newLib.speeches.airplane.IFromPlaneSpeech;
 
 public class GoodDayNotification implements IFromPlaneSpeech {
   private final Callsign callsign;
-  private final double altitude;
-  private final double targetAltitude;
+  private final int altitude;
+  private final int targetAltitude;
   private final boolean emergency;
   private final boolean repeated;
 
-  public GoodDayNotification(Callsign callsign, double altitude, double targetAltitude, boolean emergecny, boolean repeated) {
+  public GoodDayNotification(Callsign callsign, int altitude, int targetAltitude, boolean emergecny, boolean repeated) {
     if (callsign == null)
       throw new IllegalArgumentException("Argument \"callsign\" cannot be null.");
 
@@ -21,20 +21,20 @@ public class GoodDayNotification implements IFromPlaneSpeech {
     this.repeated = repeated;
   }
 
-  public boolean isEmergency() {
-    return emergency;
+  public int getAltitude() {
+    return altitude;
   }
 
   public Callsign getCallsign() {
     return callsign;
   }
 
-  public double getAltitude() {
-    return altitude;
+  public int getTargetAltitude() {
+    return targetAltitude;
   }
 
-  public double getTargetAltitude() {
-    return targetAltitude;
+  public boolean isEmergency() {
+    return emergency;
   }
 
   public boolean isRepeated() {
@@ -42,7 +42,7 @@ public class GoodDayNotification implements IFromPlaneSpeech {
   }
 
   @Override
-  public String toString(){
+  public String toString() {
     String ret = "Welcome greeting from plane " + this.callsign.toString() + " {notification}";
     if (emergency)
       ret += "{emergency}";
