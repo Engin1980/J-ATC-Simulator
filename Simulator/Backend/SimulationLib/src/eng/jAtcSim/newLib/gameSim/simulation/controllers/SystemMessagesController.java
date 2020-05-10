@@ -8,6 +8,7 @@ import eng.jAtcSim.newLib.airplanes.IAirplane;
 import eng.jAtcSim.newLib.gameSim.simulation.InternalAcc;
 import eng.jAtcSim.newLib.messaging.*;
 import eng.jAtcSim.newLib.shared.Squawk;
+import eng.jAtcSim.newLib.speeches.system.system2user.CurrentTickNotification;
 import eng.jAtcSim.newLib.textProcessing.parsing.IParser;
 import eng.jAtcSim.newLib.weather.WeatherAcc;
 
@@ -142,7 +143,7 @@ public class SystemMessagesController {
           new Message(
               Participant.createSystem(),
               m.getSource(),
-              new StringMessageContent("Current tick speed is " + interval + ". To change use ?tick <value>.", tickS)));
+              new CurrentTickNotification(interval, false)));
       return;
     }
     InternalAcc.getTimerProvider().setTickInterval(tickI);

@@ -217,7 +217,7 @@ public class UserAtc extends Atc {
   }
 
   public void sendToPlane(Callsign c, SpeechList speeches) {
-    //TODO Implement this: rewrite in such manner that parsing is already done here and callsign should exist here?
+    TODO Implement this: rewrite in such manner that parsing is already done here and callsign should exist here?
     throw new ToDoException("rewrite in such manner that parsing is already done here and callsign should exist here?");
 //    if (AirplaneAcc.getAirplanes().tryGet(c) == null) {
 //      raiseError("No such plane for callsign \"" + c.toString() + "\".");

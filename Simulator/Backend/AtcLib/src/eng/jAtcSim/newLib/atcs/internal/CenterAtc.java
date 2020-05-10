@@ -6,6 +6,7 @@ import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.geo.Coordinates;
+import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplaneType.AirplaneType;
 import eng.jAtcSim.newLib.airplanes.IAirplane;
 import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
@@ -28,6 +29,8 @@ import eng.jAtcSim.newLib.speeches.SpeechList;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.GoodDayNotification;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.*;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.afterCommands.AfterNavaidCommand;
+import eng.jAtcSim.newLib.speeches.atc.IAtcSpeech;
+import eng.jAtcSim.newLib.speeches.atc.atc2user.AtcRejection;
 
 public class CenterAtc extends ComputerAtc {
 
@@ -345,11 +348,12 @@ public class CenterAtc extends ComputerAtc {
   @Override
   protected void processNonPlaneSwitchMessageFromAtc(Message m) {
     // do nothing , ctr has no messages acceptable from ATC
+    EAssert.isTrue(m.getContent() instanceof IAtcSpeech);
+    IAtcSpeech origin = m.getContent();
     super.sendMessage(new Message(
         Participant.createAtc(this.getAtcId()),
         m.getSource(),
-        new StringMessageContent("Unable.")
-    ));
+        new AtcRejection(origin, "Unable.")));
   }
 
   @Override
