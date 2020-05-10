@@ -2,9 +2,9 @@ package eng.jAtcSim.newLib.textProcessing.implemented.planeParser.typedParsers;
 
 import eng.eSystem.collections.IList;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ProceedDirectCommand;
-import eng.jAtcSim.newLib.textProcessing.parsing.textParsing.SpeechParser;
+import eng.jAtcSim.newLib.textProcessing.implemented.parserHelpers.TextSpeechParser;
 
-public class ProceedDirectParser extends SpeechParser<ProceedDirectCommand> {
+public class ProceedDirectParser extends TextSpeechParser<ProceedDirectCommand> {
 
   private static final String[][] patterns = {{"PD", "\\S+"}};
 

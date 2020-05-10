@@ -3,9 +3,9 @@ package eng.jAtcSim.newLib.textProcessing.implemented.planeParser.typedParsers;
 import eng.eSystem.collections.IList;
 import eng.jAtcSim.newLib.shared.enums.LeftRightAny;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ChangeHeadingCommand;
-import eng.jAtcSim.newLib.textProcessing.parsing.textParsing.SpeechParser;
+import eng.jAtcSim.newLib.textProcessing.implemented.parserHelpers.TextSpeechParser;
 
-public class ChangeHeadingParser extends SpeechParser<ChangeHeadingCommand> {
+public class ChangeHeadingParser extends TextSpeechParser<ChangeHeadingCommand> {
 
   private static final String[][] patterns = {
       {"TL", "\\d{1,3}?"},

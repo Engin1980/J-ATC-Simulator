@@ -2,9 +2,9 @@ package eng.jAtcSim.newLib.textProcessing.implemented.planeParser.typedParsers;
 
 import eng.eSystem.collections.IList;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ThenCommand;
-import eng.jAtcSim.newLib.textProcessing.parsing.textParsing.SpeechParser;
+import eng.jAtcSim.newLib.textProcessing.implemented.parserHelpers.TextSpeechParser;
 
-public class ThenParser extends SpeechParser<ThenCommand> {
+public class ThenParser extends TextSpeechParser<ThenCommand> {
 
   private static final String [][]patterns = {{"T"}};
   public String getHelp() {

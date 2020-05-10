@@ -2,15 +2,10 @@ package eng.jAtcSim.newLib.textProcessing.implemented.atcParser.typedParsers;
 
 import eng.eSystem.collections.*;
 import eng.jAtcSim.newLib.shared.Squawk;
-import eng.jAtcSim.newLib.speeches.atc.user2atc.PlaneSwitchRequest;
 import eng.jAtcSim.newLib.speeches.atc.user2atc.PlaneSwitchRequestCancelation;
-import eng.jAtcSim.newLib.textProcessing.old.text.ITextParser;
-import eng.jAtcSim.newLib.textProcessing.parsing.shortcuts.ShortcutList;
-import eng.jAtcSim.newLib.textProcessing.parsing.textParsing.SpeechParser;
+import eng.jAtcSim.newLib.textProcessing.implemented.parserHelpers.TextSpeechParser;
 
-import static eng.eSystem.utilites.FunctionShortcuts.*;
-
-public class PlaneSwitchRequestCancelationParser extends SpeechParser<PlaneSwitchRequestCancelation> {
+public class PlaneSwitchRequestCancelationParser extends TextSpeechParser<PlaneSwitchRequestCancelation> {
 
   private static final String[][] patterns = {
       {"disreg","\\d{4}"}

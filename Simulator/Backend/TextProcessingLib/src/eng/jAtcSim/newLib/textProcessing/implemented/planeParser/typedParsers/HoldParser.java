@@ -3,9 +3,9 @@ package eng.jAtcSim.newLib.textProcessing.implemented.planeParser.typedParsers;
 import eng.eSystem.collections.IList;
 import eng.jAtcSim.newLib.shared.enums.LeftRight;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.HoldCommand;
-import eng.jAtcSim.newLib.textProcessing.parsing.textParsing.SpeechParser;
+import eng.jAtcSim.newLib.textProcessing.implemented.parserHelpers.TextSpeechParser;
 
-public class HoldParser extends SpeechParser<HoldCommand> {
+public class HoldParser extends TextSpeechParser<HoldCommand> {
 
   private static final String[][] patterns = {
       {"H", "\\S{1,5}", "\\d{3}", "R|L"},

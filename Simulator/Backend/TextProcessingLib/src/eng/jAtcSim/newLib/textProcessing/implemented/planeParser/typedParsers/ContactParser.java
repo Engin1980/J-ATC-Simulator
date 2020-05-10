@@ -8,9 +8,9 @@ import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.enums.AtcType;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ContactCommand;
 import eng.jAtcSim.newLib.textProcessing.old.implemented.parsers.defaultParser.LocalInstanceProvider;
-import eng.jAtcSim.newLib.textProcessing.parsing.textParsing.SpeechParser;
+import eng.jAtcSim.newLib.textProcessing.implemented.parserHelpers.TextSpeechParser;
 
-public class ContactParser extends SpeechParser<ContactCommand> {
+public class ContactParser extends TextSpeechParser<ContactCommand> {
 
   private static final String[][] patterns = {
       {"((CT)|(CC))|(CNT ([A-Z_]+))"}};

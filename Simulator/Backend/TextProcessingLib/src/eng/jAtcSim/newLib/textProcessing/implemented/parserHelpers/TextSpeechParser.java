@@ -1,4 +1,4 @@
-package eng.jAtcSim.newLib.textProcessing.parsing.textParsing;
+package eng.jAtcSim.newLib.textProcessing.implemented.parserHelpers;
 
 import eng.eSystem.EStringBuilder;
 import eng.eSystem.collections.IList;
@@ -9,8 +9,7 @@ import eng.jAtcSim.newLib.speeches.base.ISpeech;
 import java.lang.reflect.Type;
 import java.util.Arrays;
 
-public abstract class SpeechParser<T extends ISpeech> {
-
+public abstract class TextSpeechParser<T extends ISpeech> {
 
   public final String[] getPrefixes() {
     //TODO optimalize according to kind, as this method always returns the same for the same class kind

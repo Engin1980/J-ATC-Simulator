@@ -4,9 +4,9 @@ import eng.eSystem.collections.IList;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.jAtcSim.newLib.shared.enums.ApproachType;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ClearedToApproachCommand;
-import eng.jAtcSim.newLib.textProcessing.parsing.textParsing.SpeechParser;
+import eng.jAtcSim.newLib.textProcessing.implemented.parserHelpers.TextSpeechParser;
 
-public class ClearedToApproachParser extends SpeechParser<ClearedToApproachCommand> {
+public class ClearedToApproachParser extends TextSpeechParser<ClearedToApproachCommand> {
 
   private static final String pattern = "C (I|II|III|G|V|R|N|GNSS|VOR|NDB|VISUAL) (\\S+)";
   private static final String[][] patterns = {

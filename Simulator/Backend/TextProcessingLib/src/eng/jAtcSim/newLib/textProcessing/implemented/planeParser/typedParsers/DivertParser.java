@@ -2,9 +2,9 @@ package eng.jAtcSim.newLib.textProcessing.implemented.planeParser.typedParsers;
 
 import eng.eSystem.collections.IList;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.DivertCommand;
-import eng.jAtcSim.newLib.textProcessing.parsing.textParsing.SpeechParser;
+import eng.jAtcSim.newLib.textProcessing.implemented.parserHelpers.TextSpeechParser;
 
-public class DivertParser extends SpeechParser<DivertCommand> {
+public class DivertParser extends TextSpeechParser<DivertCommand> {
 
   private static final String[][] patterns = {{"DVT"}};
   @Override

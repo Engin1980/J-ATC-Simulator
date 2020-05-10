@@ -2,9 +2,9 @@ package eng.jAtcSim.newLib.textProcessing.implemented.planeParser.typedParsers;
 
 import eng.eSystem.collections.IList;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ChangeAltitudeCommand;
-import eng.jAtcSim.newLib.textProcessing.parsing.textParsing.SpeechParser;
+import eng.jAtcSim.newLib.textProcessing.implemented.parserHelpers.TextSpeechParser;
 
-public class ChangeAltitudeParser extends SpeechParser<ChangeAltitudeCommand> {
+public class ChangeAltitudeParser extends TextSpeechParser<ChangeAltitudeCommand> {
 
   private static final String[][] patterns = {
       {"MA", "\\d{1,3}"},

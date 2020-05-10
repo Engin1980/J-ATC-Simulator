@@ -3,9 +3,9 @@ package eng.jAtcSim.newLib.textProcessing.implemented.planeParser.typedParsers;
 import eng.eSystem.collections.IList;
 import eng.jAtcSim.newLib.shared.RegexGrouper;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.afterCommands.AfterRadialCommand;
-import eng.jAtcSim.newLib.textProcessing.parsing.textParsing.SpeechParser;
+import eng.jAtcSim.newLib.textProcessing.implemented.parserHelpers.TextSpeechParser;
 
-public class AfterRadialParser extends SpeechParser<AfterRadialCommand> {
+public class AfterRadialParser extends TextSpeechParser<AfterRadialCommand> {
   private static final String BLOCK_PATTERN = "(\\S+)/(\\d{1,3})";
   private static final String[][] patterns = {{"AR", BLOCK_PATTERN}};
 

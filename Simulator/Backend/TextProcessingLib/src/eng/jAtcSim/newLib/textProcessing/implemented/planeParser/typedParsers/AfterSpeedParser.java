@@ -3,9 +3,9 @@ package eng.jAtcSim.newLib.textProcessing.implemented.planeParser.typedParsers;
 import eng.eSystem.collections.IList;
 import eng.jAtcSim.newLib.shared.enums.AboveBelowExactly;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.afterCommands.AfterSpeedCommand;
-import eng.jAtcSim.newLib.textProcessing.parsing.textParsing.SpeechParser;
+import eng.jAtcSim.newLib.textProcessing.implemented.parserHelpers.TextSpeechParser;
 
-public class AfterSpeedParser extends SpeechParser<AfterSpeedCommand> {
+public class AfterSpeedParser extends TextSpeechParser<AfterSpeedCommand> {
 
   private static final String[][] patterns = {{"AS","\\d{1,3}"}};
   @Override

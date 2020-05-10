@@ -3,9 +3,9 @@ package eng.jAtcSim.newLib.textProcessing.implemented.planeParser.typedParsers;
 import eng.eSystem.collections.IList;
 import eng.jAtcSim.newLib.shared.enums.AboveBelowExactly;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.AltitudeRestrictionCommand;
-import eng.jAtcSim.newLib.textProcessing.parsing.textParsing.SpeechParser;
+import eng.jAtcSim.newLib.textProcessing.implemented.parserHelpers.TextSpeechParser;
 
-public class AltitudeRestrictionCommandParser extends SpeechParser<AltitudeRestrictionCommand> {
+public class AltitudeRestrictionCommandParser extends TextSpeechParser<AltitudeRestrictionCommand> {
 
   private static final String[][] patterns = {
       {"AC"},

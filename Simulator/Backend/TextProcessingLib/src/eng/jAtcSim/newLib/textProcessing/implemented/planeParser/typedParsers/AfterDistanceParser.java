@@ -4,9 +4,9 @@ import eng.eSystem.collections.IList;
 import eng.jAtcSim.newLib.shared.RegexGrouper;
 import eng.jAtcSim.newLib.shared.enums.AboveBelowExactly;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.afterCommands.AfterDistanceCommand;
-import eng.jAtcSim.newLib.textProcessing.parsing.textParsing.SpeechParser;
+import eng.jAtcSim.newLib.textProcessing.implemented.parserHelpers.TextSpeechParser;
 
-public class AfterDistanceParser extends SpeechParser<AfterDistanceCommand> {
+public class AfterDistanceParser extends TextSpeechParser<AfterDistanceCommand> {
   private static final String BLOCK_PATTERN = "(\\S+)/(\\d+(\\.\\d+)?)";
   private static final String[][] patterns = {
       {"AD", BLOCK_PATTERN}

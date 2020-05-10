@@ -3,9 +3,9 @@ package eng.jAtcSim.newLib.textProcessing.implemented.planeParser.typedParsers;
 import eng.eSystem.collections.IList;
 import eng.jAtcSim.newLib.shared.enums.AboveBelowExactly;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.afterCommands.AfterAltitudeCommand;
-import eng.jAtcSim.newLib.textProcessing.parsing.textParsing.SpeechParser;
+import eng.jAtcSim.newLib.textProcessing.implemented.parserHelpers.TextSpeechParser;
 
-public class AfterAltitudeParser extends SpeechParser<AfterAltitudeCommand> {
+public class AfterAltitudeParser extends TextSpeechParser<AfterAltitudeCommand> {
 
   private static final String[][] patterns = {
       {"AA", "\\d{1,3}[+-]?"}

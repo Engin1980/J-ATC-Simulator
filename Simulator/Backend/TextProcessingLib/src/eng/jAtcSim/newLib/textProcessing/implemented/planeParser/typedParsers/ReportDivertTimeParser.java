@@ -2,9 +2,9 @@ package eng.jAtcSim.newLib.textProcessing.implemented.planeParser.typedParsers;
 
 import eng.eSystem.collections.IList;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ReportDivertTimeCommand;
-import eng.jAtcSim.newLib.textProcessing.parsing.textParsing.SpeechParser;
+import eng.jAtcSim.newLib.textProcessing.implemented.parserHelpers.TextSpeechParser;
 
-public class ReportDivertTimeParser extends SpeechParser<ReportDivertTimeCommand> {
+public class ReportDivertTimeParser extends TextSpeechParser<ReportDivertTimeCommand> {
 
   private static final String [][]patterns = {{"RDVT"}};
   public String getHelp() {

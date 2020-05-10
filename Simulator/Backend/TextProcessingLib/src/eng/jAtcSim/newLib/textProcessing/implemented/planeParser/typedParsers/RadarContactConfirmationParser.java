@@ -2,9 +2,9 @@ package eng.jAtcSim.newLib.textProcessing.implemented.planeParser.typedParsers;
 
 import eng.eSystem.collections.IList;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.RadarContactConfirmationNotification;
-import eng.jAtcSim.newLib.textProcessing.parsing.textParsing.SpeechParser;
+import eng.jAtcSim.newLib.textProcessing.implemented.parserHelpers.TextSpeechParser;
 
-public class RadarContactConfirmationParser extends SpeechParser<RadarContactConfirmationNotification> {
+public class RadarContactConfirmationParser extends TextSpeechParser<RadarContactConfirmationNotification> {
 
   private static final String[][] patterns = {{"RC"}};
 

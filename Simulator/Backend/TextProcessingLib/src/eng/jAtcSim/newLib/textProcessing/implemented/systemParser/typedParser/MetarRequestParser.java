@@ -2,15 +2,9 @@ package eng.jAtcSim.newLib.textProcessing.implemented.systemParser.typedParser;
 
 import eng.eSystem.collections.*;
 import eng.jAtcSim.newLib.speeches.system.user2system.MetarRequest;
-import eng.jAtcSim.newLib.textProcessing.parsing.textParsing.SpeechParser;
+import eng.jAtcSim.newLib.textProcessing.implemented.parserHelpers.TextSpeechParser;
 
-import java.util.regex.Pattern;
-
-import static eng.eSystem.utilites.FunctionShortcuts.*;
-
-public class MetarRequestParser extends SpeechParser<MetarRequest> {
-  private static final Pattern SYSMES_METAR = Pattern.compile("METAR");
-
+public class MetarRequestParser extends TextSpeechParser<MetarRequest> {
   private static final String[][] patterns =
       {{"METAR"}};
 
@@ -21,11 +15,16 @@ public class MetarRequestParser extends SpeechParser<MetarRequest> {
 
   @Override
   public String getHelp() {
-    return null;
+    return super.buildHelpString(
+        "METAR",
+        "METAR",
+        "Returns current weather/metar",
+        "-METAR"
+    );
   }
 
   @Override
   public MetarRequest parse(IList<String> blocks) {
-    return null;
+    return new MetarRequest();
   }
 }

@@ -2,9 +2,9 @@ package eng.jAtcSim.newLib.textProcessing.implemented.atcParser.typedParsers;
 
 import eng.eSystem.collections.IList;
 import eng.jAtcSim.newLib.speeches.atc.user2atc.RunwayMaintenanceRequest;
-import eng.jAtcSim.newLib.textProcessing.parsing.textParsing.SpeechParser;
+import eng.jAtcSim.newLib.textProcessing.implemented.parserHelpers.TextSpeechParser;
 
-public class RunwayMaintenanceRequestParser extends SpeechParser<RunwayMaintenanceRequest> {
+public class RunwayMaintenanceRequestParser extends TextSpeechParser<RunwayMaintenanceRequest> {
   private static final String[][] patterns = {
       {"RWYCHECK", "TIME", ".+"},
       {"RWYCHECK", "TIME"},

@@ -2,9 +2,9 @@ package eng.jAtcSim.newLib.textProcessing.implemented.planeParser.typedParsers;
 
 import eng.eSystem.collections.IList;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.afterCommands.AfterHeadingCommand;
-import eng.jAtcSim.newLib.textProcessing.parsing.textParsing.SpeechParser;
+import eng.jAtcSim.newLib.textProcessing.implemented.parserHelpers.TextSpeechParser;
 
-public class AfterHeadingParser extends SpeechParser<AfterHeadingCommand> {
+public class AfterHeadingParser extends TextSpeechParser<AfterHeadingCommand> {
 
   private static final String[][] patterns = {{"AH", "\\d{1,3}"}};
 

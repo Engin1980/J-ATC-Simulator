@@ -2,9 +2,9 @@ package eng.jAtcSim.newLib.textProcessing.implemented.atcParser.typedParsers;
 
 import eng.eSystem.collections.IList;
 import eng.jAtcSim.newLib.speeches.atc.user2atc.RunwayInUseRequest;
-import eng.jAtcSim.newLib.textProcessing.parsing.textParsing.SpeechParser;
+import eng.jAtcSim.newLib.textProcessing.implemented.parserHelpers.TextSpeechParser;
 
-public class RunwayInUseRequestParser extends SpeechParser<RunwayInUseRequest> {
+public class RunwayInUseRequestParser extends TextSpeechParser<RunwayInUseRequest> {
   private static final String[][] patterns = {
       {"RWYUSE", "CHANGE"},
       {"RWYUSE"}};
