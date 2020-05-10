@@ -1,17 +1,10 @@
 package eng.jAtcSim.newLib.textProcessing.implemented.planeFormatter.typeFormatters;
 
-import eng.eSystem.collections.*;
 import eng.jAtcSim.newLib.shared.Format;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ChangeAltitudeCommand;
-import eng.jAtcSim.newLib.textProcessing.implemented.formatterHelpers.TextSpeechFormatter;
+import eng.jAtcSim.newLib.textProcessing.formatting.IFormatter;
 
-import static eng.eSystem.utilites.FunctionShortcuts.*;
-
-public class ChangeAltitudeCommandFormatter extends TextSpeechFormatter<ChangeAltitudeCommand> {
-  @Override
-  public Class<? extends ChangeAltitudeCommand> getSourceType() {
-    return ChangeAltitudeCommand.class;
-  }
+public class ChangeAltitudeCommandFormatter extends SmartTextSpeechFormatter<ChangeAltitudeCommand> {
 
   @Override
   public String format(ChangeAltitudeCommand cmd) {

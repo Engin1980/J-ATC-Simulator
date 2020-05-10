@@ -6,23 +6,23 @@ import eng.jAtcSim.newLib.speeches.base.ISpeech;
 
 import static eng.eSystem.utilites.FunctionShortcuts.*;
 
-public class TextSpeechFormatterList {
+public class TextSpeechFormatterList<T extends ISpeech> {
 
-  private final IMap<Class<?>, TextSpeechFormatter<?>> inner = new EMap<>();
+  private final IMap<Class<?>, TextSpeechFormatter<? extends T>> inner = new EMap<>();
 
-  public void add(TextSpeechFormatter<?> formatter){
-    Class<?> type  = formatter.getSourceType();
+  public void add(TextSpeechFormatter<? extends T> formatter){
+    Class<? extends T> type  = formatter.getSourceType();
     if (inner.containsKey(type)) inner.remove(type);
     inner.set(type, formatter);
   }
 
-  public TextSpeechFormatter<?> get(Object input) {
-    Class<?> type = input.getClass();
+  public TextSpeechFormatter<? extends T> get(ISpeech input) {
+    Class<? extends ISpeech> type = input.getClass();
     return getByType(type);
   }
 
-  public TextSpeechFormatter<?> getByType(Class<?> type){
-    TextSpeechFormatter<?> ret = inner.tryGet(type);
+  public TextSpeechFormatter<? extends T> getByType(Class<? extends ISpeech> type){
+    TextSpeechFormatter<? extends T> ret = inner.tryGet(type);
     return ret;
   }
 }
