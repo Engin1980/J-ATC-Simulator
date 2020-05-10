@@ -171,6 +171,8 @@ public class PlaneResponsibilityManager {
     }
   }
 
+  //TODO PSR build based on squawks and not callsigns as ATC uses them that way and now they need
+  // to recode sqwk to callsign and back repeately
   private PlaneResponsibilityManagerForAtc forAtc = new PlaneResponsibilityManagerForAtc();
   private PlaneResponsibilityDAO dao = new PlaneResponsibilityDAO();
 

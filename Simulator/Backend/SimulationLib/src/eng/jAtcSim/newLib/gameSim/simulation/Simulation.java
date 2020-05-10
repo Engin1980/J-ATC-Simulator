@@ -9,15 +9,13 @@ import eng.jAtcSim.newLib.gameSim.game.startupInfos.ParserFormatterStartInfo;
 import eng.jAtcSim.newLib.gameSim.simulation.controllers.*;
 import eng.jAtcSim.newLib.gameSim.simulation.modules.AirplanesSimModule;
 import eng.jAtcSim.newLib.gameSim.simulation.modules.ISimulationModuleParent;
-import eng.jAtcSim.newLib.messaging.Message;
-import eng.jAtcSim.newLib.messaging.MessagingAcc;
-import eng.jAtcSim.newLib.messaging.Participant;
-import eng.jAtcSim.newLib.messaging.StringMessageContent;
+import eng.jAtcSim.newLib.messaging.*;
 import eng.jAtcSim.newLib.shared.SharedAcc;
 import eng.jAtcSim.newLib.shared.enums.AtcType;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 import eng.jAtcSim.newLib.shared.time.EDayTimeRun;
 import eng.jAtcSim.newLib.shared.time.ETimeStamp;
+import eng.jAtcSim.newLib.speeches.system.system2user.MetarNotification;
 import eng.jAtcSim.newLib.stats.StatsAcc;
 import eng.jAtcSim.newLib.stats.StatsProvider;
 import eng.jAtcSim.newLib.traffic.TrafficProvider;
@@ -146,7 +144,7 @@ public class Simulation {
     WeatherAcc.getWeatherManager().elapseSecond();
     if (WeatherAcc.getWeatherManager().isNewWeather()) {
       this.atcProvider.adviceWeatherUpdated();
-      sendTextMessageForUser("Weather updated: " + this.weatherManager.getWeather().toInfoString());
+      sendTextMessageForUser(new MetarNotification(true));
     }
 
     // finalize
@@ -162,11 +160,11 @@ public class Simulation {
       this.timer.start();
   }
 
-  private void sendTextMessageForUser(String text) {
+  private void sendTextMessageForUser(IMessageContent content) {
     Message m = new Message(
         Participant.createSystem(),
         Participant.createAtc(AtcAcc.getAtcList().getFirst(q -> q.getType() == AtcType.app)),
-        new StringMessageContent(text));
+        content);
     MessagingAcc.getMessenger().send(m);
   }
 

@@ -20,6 +20,8 @@ public class MetarNotificationFormatter extends SmartTextSpeechFormatter<MetarNo
     } else {
       ret = toWeatherString(WeatherAcc.getWeather());
     }
+    if (input.isUpdated())
+      ret = "Weather updated. " + ret;
     return ret;
   }
 

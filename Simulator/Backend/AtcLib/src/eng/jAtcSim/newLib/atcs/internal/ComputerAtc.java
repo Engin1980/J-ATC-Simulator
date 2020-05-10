@@ -123,7 +123,7 @@ public abstract class ComputerAtc extends Atc {
       if (srr != null) {
         // the other ATC tries to change plane routing, we can check in and reject it if required
         if (acceptsNewRouting(callsign, srr) == false)
-          rejectChangedRouting(callsign, targetAtcId);
+          rejectChangedRouting(callsign, targetAtcId, psm);
         else
           prm.forAtc().confirmRerouting(this.getAtcId(), callsign);
       }
@@ -131,46 +131,40 @@ public abstract class ComputerAtc extends Atc {
       // other ATC offers us a plane
       RequestResult planeAcceptance = canIAcceptPlane(callsign);
       if (planeAcceptance.isAccepted) {
-        acceptSwitch(callsign, targetAtcId);
+        acceptSwitch(callsign, targetAtcId, psm);
       } else {
-        rejectSwitch(callsign, targetAtcId, planeAcceptance);
+        rejectSwitch(callsign, targetAtcId, planeAcceptance, psm);
       }
     }
   }
 
-  private void rejectChangedRouting(Callsign callsign, AtcId targetAtcId) {
+  private void rejectChangedRouting(Callsign callsign, AtcId targetAtcId, PlaneSwitchRequest psr) {
     PlaneResponsibilityManager prm = InternalAcc.getPrm();
     prm.forAtc().resetSwitchRequest(this.getAtcId(), callsign);
-    IAirplane plane = InternalAcc.getPlane(callsign);
     Message m = new Message(
         Participant.createAtc(this.getAtcId()),
         Participant.createAtc(targetAtcId),
-        new StringMessageContent(plane.getSqwk() + "{" + plane.getCallsign() + "} routing change rejected."));
+        new AtcRejection(psr, "New routing rejected."));
     sendMessage(m);
   }
 
-  private void rejectSwitch(Callsign callsign, AtcId targetAtcId, RequestResult planeAcceptance) {
+  private void rejectSwitch(Callsign callsign, AtcId targetAtcId, RequestResult planeAcceptance, PlaneSwitchRequest psr) {
     PlaneResponsibilityManager prm = InternalAcc.getPrm();
     prm.forAtc().rejectSwitchRequest(callsign, this.getAtcId());
-    //TODO rewrite in some different way let requestResult is not used and in
-    // atcRejection new PlaneSwitch is not created
-    // .. do the same in the acceptSwitch() method
-    Squawk sqwk = InternalAcc.getSquawkFromCallsign(callsign);
     Message nm = new Message(
         Participant.createAtc(this.getAtcId()),
         Participant.createAtc(targetAtcId),
-        new AtcRejection(PlaneSwitchRequest.createFromComputer(sqwk), planeAcceptance.message));
+        new AtcRejection(psr, planeAcceptance.message));
     sendMessage(nm);
   }
 
-  private void acceptSwitch(Callsign callsign, AtcId targetAtcId) {
+  private void acceptSwitch(Callsign callsign, AtcId targetAtcId, PlaneSwitchRequest psr) {
     PlaneResponsibilityManager prm = InternalAcc.getPrm();
     prm.forAtc().confirmSwitchRequest(callsign, this.getAtcId(), null);
-    Squawk sqwk = InternalAcc.getSquawkFromCallsign(callsign);
     Message nm = new Message(
         Participant.createAtc(this.getAtcId()),
         Participant.createAtc(targetAtcId),
-        new AtcConfirmation(PlaneSwitchRequest.createFromComputer(sqwk)));
+        new AtcConfirmation(psr));
     sendMessage(nm);
   }
 

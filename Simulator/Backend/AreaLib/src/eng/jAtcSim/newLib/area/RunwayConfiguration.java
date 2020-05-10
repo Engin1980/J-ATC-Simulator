@@ -154,6 +154,7 @@ public class RunwayConfiguration {
     return ret;
   }
 
+  @Deprecated
   public String toInfoString(String departureArrivalSeparator) {
     EStringBuilder sb = new EStringBuilder();
 

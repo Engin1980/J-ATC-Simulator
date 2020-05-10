@@ -15,4 +15,5 @@ module JAtcSim.Modules.Backend.SimulationLib {
   requires AirplaneTypeXmlLoaderLib;
   requires FleetXmlLoaderLib;
   requires TrafficXmlLoaderLib;
+  requires JAtcSim.Modules.Backend.SpeechesLib;
 }

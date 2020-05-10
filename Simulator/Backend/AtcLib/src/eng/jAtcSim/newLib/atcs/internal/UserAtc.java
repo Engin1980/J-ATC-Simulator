@@ -16,7 +16,9 @@ import eng.jAtcSim.newLib.area.AreaAcc;
 import eng.jAtcSim.newLib.area.routes.DARoute;
 import eng.jAtcSim.newLib.atcs.planeResponsibility.PlaneResponsibilityManager;
 import eng.jAtcSim.newLib.atcs.planeResponsibility.SwitchRoutingRequest;
-import eng.jAtcSim.newLib.messaging.*;
+import eng.jAtcSim.newLib.messaging.IMessageContent;
+import eng.jAtcSim.newLib.messaging.Message;
+import eng.jAtcSim.newLib.messaging.Participant;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.Squawk;
@@ -26,6 +28,7 @@ import eng.jAtcSim.newLib.speeches.SpeechList;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ContactCommand;
 import eng.jAtcSim.newLib.speeches.atc.IAtcSpeech;
 import eng.jAtcSim.newLib.speeches.atc.atc2user.AtcConfirmation;
+import eng.jAtcSim.newLib.speeches.atc.atc2user.AtcRejection;
 import eng.jAtcSim.newLib.speeches.atc.user2atc.PlaneSwitchRequest;
 import eng.jAtcSim.newLib.speeches.atc.user2atc.PlaneSwitchRequestCancelation;
 
@@ -84,11 +87,11 @@ public class UserAtc extends Atc {
 
   }
 
-  public void sendError(String message) {
+  public void sendError(IMessageContent content) {
     Message m = new Message(
         Participant.createSystem(),
         Participant.createAtc(this.getAtcId()),
-        new StringMessageContent(message));
+        content);
     super.sendMessage(m);
   }
 
@@ -101,24 +104,27 @@ public class UserAtc extends Atc {
   }
 
   public void sendPlaneSwitchMessageToAtc(AtcType type, String message) {
-    if (message.matches("\\d{4}.*")) {
-      //TODO rewrite using custom message class
-      // it is plane switch message
-      String[] tmp = RegexUtils.extractGroups(message, "^(\\d{4})( (.+))?$");
-      Squawk s = Squawk.tryCreate(tmp[1]);
-      if (s == null) {
-        raiseError("\"" + tmp[1] + "\" is not valid transponder code.");
-        return;
-      }
-      IAirplane plane = AirplaneAcc.getAirplanes().tryGet(s);
-      if (plane == null) {
-        raiseError("SQWK " + s.toString() + " does not exist.");
-        return;
-      }
-      AtcId atcId = InternalAcc.getAtc(type).getAtcId();
-      sendPlaneSwitchMessageToAtc(atcId, plane.getCallsign(), tmp[3]);
-    } else {
-      throw new ToDoException("Rewrite using custom command/notification classes.");
+    //TODO Implement this: Rewrite using new idea when parsing is already done here
+    throw new ToDoException("Rewrite using new idea when parsing is already done here");
+
+//    if (message.matches("\\d{4}.*")) {
+//      //TODO rewrite using custom message class
+//      // it is plane switch message
+//      String[] tmp = RegexUtils.extractGroups(message, "^(\\d{4})( (.+))?$");
+//      Squawk s = Squawk.tryCreate(tmp[1]);
+//      if (s == null) {
+//        raiseError("\"" + tmp[1] + "\" is not valid transponder code.");
+//        return;
+//      }
+//      IAirplane plane = AirplaneAcc.getAirplanes().tryGet(s);
+//      if (plane == null) {
+//        raiseError("SQWK " + s.toString() + " does not exist.");
+//        return;
+//      }
+//      AtcId atcId = InternalAcc.getAtc(type).getAtcId();
+//      sendPlaneSwitchMessageToAtc(atcId, plane.getCallsign(), tmp[3]);
+//    } else {
+//      throw new ToDoException("Rewrite using custom command/notification classes.");
       // it is different message to atc
 //      try {
 //        IAtc2Atc content = parser.parseAtc(message);
@@ -126,7 +132,7 @@ public class UserAtc extends Atc {
 //      } catch (Exception ex) {
 //        raiseError("\"" + message + "\" has invalid syntax as message for ATC");
 //      }
-    }
+//    }
   }
 
   public void sendPlaneSwitchMessageToAtc(AtcId atcId, Callsign callsign, String additionalMessage) {
@@ -144,7 +150,7 @@ public class UserAtc extends Atc {
       } else {
         // create new switch request
         prm.forAtc().createSwitchRequest(this.getAtcId(), otherAtc.getAtcId(), callsign);
-        msg = PlaneSwitchRequest.createFromUser(sqwk,null,null);
+        msg = PlaneSwitchRequest.createFromUser(sqwk, null, null);
       }
     } else {
       // it is not my plane
@@ -158,7 +164,7 @@ public class UserAtc extends Atc {
           Tuple<SwitchRoutingRequest, String> routing = decodeAdditionalRouting(
               additionalMessage, callsign);
           if (routing.getB() != null) {
-            sendError(routing.getB());
+            sendError(new AtcRejection(PlaneSwitchRequest.createFromComputer(sqwk), routing.getB()));
             return;
           } else
             prm.forAtc().confirmSwitchRequest(callsign, this.getAtcId(), routing.getA());
@@ -166,7 +172,8 @@ public class UserAtc extends Atc {
         }
       } else {
         // making a confirmation to non-requested switch? or probably an error
-        sendError("SQWK " + sqwk + " not under your control and not under a switch request.");
+        sendError(new AtcRejection(PlaneSwitchRequest.createFromComputer(sqwk),
+            "SQWK " + sqwk + " not under your control and not under a switch request."));
         return;
       }
     }
@@ -178,14 +185,11 @@ public class UserAtc extends Atc {
     super.sendMessage(m);
   }
 
-  public void sendSystem(String message) {
-    if (message.trim().isEmpty()) {
-      message = "?";
-    }
+  public void sendSystem(IMessageContent content) {
     Message m = new Message(
         Participant.createAtc(this.getAtcId()),
         Participant.createSystem(),
-        new StringMessageContent(message.trim()));
+        content);
     super.sendMessage(m);
   }
 
@@ -213,10 +217,12 @@ public class UserAtc extends Atc {
   }
 
   public void sendToPlane(Callsign c, SpeechList speeches) {
-    if (AirplaneAcc.getAirplanes().tryGet(c) == null) {
-      raiseError("No such plane for callsign \"" + c.toString() + "\".");
-      return;
-    }
+    //TODO Implement this: rewrite in such manner that parsing is already done here and callsign should exist here?
+    throw new ToDoException("rewrite in such manner that parsing is already done here and callsign should exist here?");
+//    if (AirplaneAcc.getAirplanes().tryGet(c) == null) {
+//      raiseError("No such plane for callsign \"" + c.toString() + "\".");
+//      return;
+//    }
 
     confirmAtcChangeInPlaneResponsibilityManagerIfRequired(c, speeches);
     Message m = new Message(
@@ -296,7 +302,7 @@ public class UserAtc extends Atc {
 
   private void raiseError(String text) {
     //TODO do not know what this is doing:
-    super.getRecorder().write( "ERR", text);
+    super.getRecorder().write("ERR", text);
     switch (this.errorBehavior) {
       case sendSystemErrors:
         sendError(text);

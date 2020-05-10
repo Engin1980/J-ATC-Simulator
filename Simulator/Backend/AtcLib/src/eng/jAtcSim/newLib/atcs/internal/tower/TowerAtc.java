@@ -12,6 +12,7 @@ import eng.jAtcSim.newLib.area.*;
 import eng.jAtcSim.newLib.atcs.internal.ComputerAtc;
 import eng.jAtcSim.newLib.atcs.internal.InternalAcc;
 import eng.jAtcSim.newLib.atcs.planeResponsibility.SwitchRoutingRequest;
+import eng.jAtcSim.newLib.messaging.IMessageContent;
 import eng.jAtcSim.newLib.messaging.Message;
 import eng.jAtcSim.newLib.messaging.Participant;
 import eng.jAtcSim.newLib.messaging.StringMessageContent;
@@ -264,10 +265,13 @@ public class TowerAtc extends ComputerAtc {
   }
 
   private void announceChangeRunwayInUse() {
-    String msgTxt = this.inUseInfo.scheduled.toInfoString("\n");
-    msgTxt = "Expected runway change to:\n" + msgTxt +
-        "\nExpected runway change at " + this.inUseInfo.scheduler.getScheduledTime().toTimeString();
-    sendMessageToUser(msgTxt);
+    sendMessageToUser(
+        new RunwayInUseNotification(
+            this.inUseInfo.scheduled.getDepartures().select(q-> new RunwayInUseNotification.RunwayThresholdInUseInfo(q.getThreshold().getName(), q.getCategories())),
+            this.inUseInfo.scheduled.getArrivals().select(q->new RunwayInUseNotification.RunwayThresholdInUseInfo(q.getThreshold().getName(), q.getCategories())),
+            this.inUseInfo.scheduler.getScheduledTime()
+        )
+    );
   }
 
   private void announceScheduledRunwayCheck(String runwayName, RunwayCheckInfo rc) {
@@ -600,11 +604,11 @@ public class TowerAtc extends ComputerAtc {
     });
   }
 
-  private void sendMessageToUser(String text) {
+  private void sendMessageToUser(IMessageContent content) {
     Message msg = new Message(
         Participant.createAtc(this.getAtcId()),
         Participant.createAtc(InternalAcc.getApp().getAtcId()),
-        new StringMessageContent(text));
+        content);
     super.sendMessage(msg);
   }
 
