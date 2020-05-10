@@ -3,9 +3,10 @@ package eng.jAtcSim.newLib.airplanes.commandApplications;
 import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IMap;
 import eng.jAtcSim.newLib.airplanes.internal.Airplane;
-import eng.jAtcSim.newLib.speeches.Confirmation;
-import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ICommand;
-import eng.jAtcSim.newLib.speeches.INotification;
+import eng.jAtcSim.newLib.speeches.airplane.ICommand;
+import eng.jAtcSim.newLib.speeches.airplane.IForPlaneSpeech;
+import eng.jAtcSim.newLib.speeches.airplane.IFromPlaneSpeech;
+import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.PlaneConfirmation;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.*;
 import eng.jAtcSim.newLib.speeches.base.ISpeech;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.afterCommands.AfterCommand;
@@ -13,14 +14,14 @@ import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.afterCommands.AfterComm
 public class ApplicationManager {
 
   private static IMap<Class<? extends ICommand>, CommandApplication> cmdApps;
-  private static IMap<Class<? extends INotification>, NotificationApplication> notApps;
+  private static IMap<Class<? extends IForPlaneSpeech>, NotificationApplication> notApps;
 
   public static ConfirmationResult confirm(Airplane plane, ISpeech speech, boolean checkStateSanity, boolean checkCommandSanity) {
     ConfirmationResult ret;
 
     if (speech instanceof AfterCommand) {
       ret = new ConfirmationResult();
-      ret.confirmation = new Confirmation((ICommand) speech);
+      ret.confirmation = new PlaneConfirmation((ICommand) speech);
     } else if (speech instanceof ICommand) {
       ICommand command = (ICommand) speech;
       CommandApplication ca = cmdApps.get(command.getClass());
@@ -28,8 +29,8 @@ public class ApplicationManager {
       assert plane != null;
       assert command != null;
       ret = ca.confirm(plane, command, checkStateSanity, checkCommandSanity);
-    } else if (speech instanceof INotification) {
-      INotification notification = (INotification) speech;
+    } else if (speech instanceof IForPlaneSpeech) {
+      IForPlaneSpeech notification = (IForPlaneSpeech) speech;
       NotificationApplication na = notApps.get(notification.getClass());
       assert na != null;
       ret = na.confirm(plane, notification);
@@ -47,8 +48,8 @@ public class ApplicationManager {
     if (speech instanceof ICommand) {
       ICommand command = (ICommand) speech;
       ret = cmdApps.get(command.getClass()).apply(plane, command, false);
-    } else if (speech instanceof INotification) {
-      INotification notification = (INotification) speech;
+    } else if (speech instanceof IFromPlaneSpeech) {
+      IForPlaneSpeech notification = (IForPlaneSpeech) speech;
       ret = notApps.get(notification.getClass()).apply(plane, notification);
     } else {
       throw new UnsupportedOperationException();

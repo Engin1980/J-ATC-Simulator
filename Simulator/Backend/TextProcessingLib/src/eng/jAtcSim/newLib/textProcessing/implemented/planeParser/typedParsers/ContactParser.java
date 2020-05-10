@@ -5,9 +5,9 @@ import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.jAtcSim.newLib.shared.AtcId;
+import eng.jAtcSim.newLib.shared.SharedAcc;
 import eng.jAtcSim.newLib.shared.enums.AtcType;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ContactCommand;
-import eng.jAtcSim.newLib.textProcessing.old.implemented.parsers.defaultParser.LocalInstanceProvider;
 import eng.jAtcSim.newLib.textProcessing.implemented.parserHelpers.TextSpeechParser;
 
 public class ContactParser extends TextSpeechParser<ContactCommand> {
@@ -32,7 +32,7 @@ public class ContactParser extends TextSpeechParser<ContactCommand> {
 
   @Override
   public ContactCommand parse(IList<String> blocks) {
-    IReadOnlyList<AtcId> atcs = LocalInstanceProvider.getAtcIds();
+    IReadOnlyList<AtcId> atcs = SharedAcc.getAtcs();
     AtcId atcId;
     if (blocks.get(1) != null){
       switch (blocks.get(1)) {

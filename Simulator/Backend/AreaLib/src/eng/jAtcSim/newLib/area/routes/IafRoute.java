@@ -5,7 +5,7 @@ import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.shared.PlaneCategoryDefinitions;
-import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ICommand;
+import eng.jAtcSim.newLib.speeches.airplane.ICommand;
 
 public class IafRoute extends Route {
 

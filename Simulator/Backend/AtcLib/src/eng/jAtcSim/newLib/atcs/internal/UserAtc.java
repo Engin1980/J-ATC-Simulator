@@ -24,7 +24,10 @@ import eng.jAtcSim.newLib.shared.enums.AtcType;
 import eng.jAtcSim.newLib.shared.exceptions.ToDoException;
 import eng.jAtcSim.newLib.speeches.SpeechList;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ContactCommand;
+import eng.jAtcSim.newLib.speeches.atc.IAtcSpeech;
+import eng.jAtcSim.newLib.speeches.atc.atc2user.AtcConfirmation;
 import eng.jAtcSim.newLib.speeches.atc.user2atc.PlaneSwitchRequest;
+import eng.jAtcSim.newLib.speeches.atc.user2atc.PlaneSwitchRequestCancelation;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -129,18 +132,19 @@ public class UserAtc extends Atc {
   public void sendPlaneSwitchMessageToAtc(AtcId atcId, Callsign callsign, String additionalMessage) {
     Atc otherAtc = InternalAcc.getAtc(atcId);
     PlaneResponsibilityManager prm = InternalAcc.getPrm();
-    PlaneSwitchRequest.eMessageType msgType;
+    IAtcSpeech msg;
+    Squawk sqwk = InternalAcc.getSquawkFromCallsign(callsign);
 
     if (prm.getResponsibleAtc(callsign).equals(this.getAtcId())) {
       // it is my plane
       if (prm.forAtc().isUnderSwitchRequest(callsign, this.getAtcId(), null)) {
         // is already under switch request?
         prm.forAtc().cancelSwitchRequest(this.getAtcId(), callsign);
-        msgType = PlaneSwitchRequest.eMessageType.cancelation;
+        msg = new PlaneSwitchRequestCancelation(sqwk);
       } else {
         // create new switch request
         prm.forAtc().createSwitchRequest(this.getAtcId(), otherAtc.getAtcId(), callsign);
-        msgType = PlaneSwitchRequest.eMessageType.request;
+        msg = PlaneSwitchRequest.createFromUser(sqwk,null,null);
       }
     } else {
       // it is not my plane
@@ -148,7 +152,8 @@ public class UserAtc extends Atc {
         // is under switch request to me, I am making a confirmation
         if (additionalMessage == null) {
           prm.forAtc().confirmSwitchRequest(callsign, this.getAtcId(), null);
-          msgType = PlaneSwitchRequest.eMessageType.confirmation;
+          //TODO this is not correct, the original message should be passed somehow here
+          msg = new AtcConfirmation(PlaneSwitchRequest.createFromComputer(sqwk));
         } else {
           Tuple<SwitchRoutingRequest, String> routing = decodeAdditionalRouting(
               additionalMessage, callsign);
@@ -157,17 +162,15 @@ public class UserAtc extends Atc {
             return;
           } else
             prm.forAtc().confirmSwitchRequest(callsign, this.getAtcId(), routing.getA());
-          msgType = PlaneSwitchRequest.eMessageType.confirmation;
+          msg = new AtcConfirmation(PlaneSwitchRequest.createFromComputer(sqwk));
         }
       } else {
         // making a confirmation to non-requested switch? or probably an error
-        IAirplane plane = InternalAcc.getPlane(callsign);
-        sendError("SQWK " + plane.getSqwk() + " not under your control and not under a switch request.");
+        sendError("SQWK " + sqwk + " not under your control and not under a switch request.");
         return;
       }
     }
 
-    PlaneSwitchRequest msg = new PlaneSwitchRequest(callsign, msgType);
     Message m = new Message(
         Participant.createAtc(this.getAtcId()),
         Participant.createAtc(otherAtc.getAtcId()),

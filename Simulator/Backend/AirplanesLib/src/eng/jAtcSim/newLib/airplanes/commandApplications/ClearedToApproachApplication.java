@@ -14,9 +14,9 @@ import eng.jAtcSim.newLib.area.approaches.ApproachEntry;
 import eng.jAtcSim.newLib.shared.Restriction;
 import eng.jAtcSim.newLib.shared.enums.AboveBelowExactly;
 import eng.jAtcSim.newLib.shared.enums.ApproachType;
-import eng.jAtcSim.newLib.speeches.INotification;
-import eng.jAtcSim.newLib.speeches.Rejection;
+import eng.jAtcSim.newLib.speeches.airplane.IFromPlaneSpeech;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.HighOrderedSpeedForApproach;
+import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.PlaneRejection;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.responses.UnableToEnterApproachFromDifficultPosition;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ClearedToApproachCommand;
 
@@ -34,7 +34,7 @@ public class ClearedToApproachApplication extends CommandApplication<ClearedToAp
         (sr.direction == AboveBelowExactly.above ||
             sr.direction == AboveBelowExactly.exactly) &&
         sr.value > plane.getReader().getType().vApp) {
-      INotification tmp = new HighOrderedSpeedForApproach(sr.value, plane.getReader().getType().vApp);
+      IFromPlaneSpeech tmp = new HighOrderedSpeedForApproach(sr.value, plane.getReader().getType().vApp);
       ret.informations.add(tmp);
     }
 
@@ -48,30 +48,30 @@ public class ClearedToApproachApplication extends CommandApplication<ClearedToAp
   }
 
   @Override
-  protected Rejection checkCommandSanity(Airplane plane, ClearedToApproachCommand c) {
-    Rejection ret;
+  protected PlaneRejection checkCommandSanity(Airplane plane, ClearedToApproachCommand c) {
+    PlaneRejection ret;
 
     ActiveRunwayThreshold rt = AreaAcc.getAirport().tryGetRunwayThreshold(c.getThresholdName());
     if (rt == null) {
-      ret = new Rejection(
-          "Cannot be cleared to approach. There is no runway designated as " + c.getThresholdName(), c);
+      ret = new PlaneRejection(c,
+          "Cannot be cleared to approach. There is no runway designated as " + c.getThresholdName());
     } else {
       ApproachInfo ai = ApproachInfo.create(rt, c.getType(), plane.getReader().getType().category, plane.getReader().getCoordinate());
       switch (ai.status) {
         case noApproachAtAll:
-          ret = new Rejection(
+          ret = new PlaneRejection(c,
               sf("Cannot be cleared to approach. There is no approach for runway %s.",
-                  c.getType().toString(), rt.getName()), c);
+                  c.getType().toString(), rt.getName()));
           break;
         case noApproachKind:
-          ret = new Rejection(
+          ret = new PlaneRejection(c,
               sf("Cannot be cleared to approach. There is no approach kind %s for runway %s.",
-                  c.getType().toString(), rt.getName()), c);
+                  c.getType().toString(), rt.getName()));
           break;
         case noApproachForPlaneType:
-          ret = new Rejection(
+          ret = new PlaneRejection(c,
               sf("Cannot be cleared to approach. There is no approach kind %s for runway %s for our plane type.",
-                  c.getType().toString(), rt.getName()), c);
+                  c.getType().toString(), rt.getName()));
           break;
         case noApproachForPlaneLocation:
           ret = new UnableToEnterApproachFromDifficultPosition(c, "We are not in the correct position to enter the approach.");
@@ -122,7 +122,7 @@ class ApproachInfo {
     if (apps.isEmpty())
       return new ApproachInfo(Status.noApproachAtAll);
 
-    apps = apps.where(q->q.getType() == type);
+    apps = apps.where(q -> q.getType() == type);
     if (apps.isEmpty())
       return new ApproachInfo(Status.noApproachKind);
 

@@ -3,13 +3,13 @@ package eng.jAtcSim.newLib.airplanes.commandApplications;
 import eng.jAtcSim.newLib.airplanes.AirplaneState;
 import eng.jAtcSim.newLib.airplanes.internal.Airplane;
 import eng.jAtcSim.newLib.shared.exceptions.ToDoException;
-import eng.jAtcSim.newLib.speeches.Confirmation;
-import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ICommand;
-import eng.jAtcSim.newLib.speeches.Rejection;
+import eng.jAtcSim.newLib.speeches.airplane.ICommand;
+import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.PlaneConfirmation;
+import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.PlaneRejection;
 
 public abstract class CommandApplication<T extends ICommand> {
 
-  protected Rejection getIllegalNavaidRejection(String navaidName){
+  protected PlaneRejection getIllegalNavaidRejection(String navaidName){
     throw new ToDoException();
   }
 
@@ -22,13 +22,13 @@ public abstract class CommandApplication<T extends ICommand> {
       ret.rejection = checkCommandSanity(plane, c);
     }
     if (ret.rejection == null)
-      ret.confirmation = new Confirmation(c);
+      ret.confirmation = new PlaneConfirmation(c);
     return ret;
   }
 
   public ApplicationResult apply(Airplane plane, T c, boolean checkStateSanity) {
     ApplicationResult ret;
-    Rejection rejection = null;
+    PlaneRejection rejection = null;
     if (checkStateSanity)
       rejection = getRejectionIfAirplaneStateIsInvalid(plane.getReader().getState(), c);
     if (rejection == null)
@@ -45,19 +45,19 @@ public abstract class CommandApplication<T extends ICommand> {
 
   //region Protected methods
 
-  protected abstract Rejection checkCommandSanity(Airplane plane, T c);
+  protected abstract PlaneRejection checkCommandSanity(Airplane plane, T c);
 
   protected abstract AirplaneState [] getInvalidStates();
 
   protected abstract ApplicationResult adjustAirplane(Airplane plane, T c);
 
-  protected Rejection getRejection(ICommand c, String reason) {
-    Rejection ret = new Rejection("Unable to comply the command in the current state.", c);
+  protected PlaneRejection getRejection(ICommand c, String reason) {
+    PlaneRejection ret = new PlaneRejection(c,"Unable to comply the command in the current state.");
     return ret;
   }
 
-  protected Rejection getUnableDueToState(ICommand c) {
-    Rejection ret = getRejection(c, "Unable to comply the command in the current state.");
+  protected PlaneRejection getUnableDueToState(ICommand c) {
+    PlaneRejection ret = getRejection(c, "Unable to comply the command in the current state.");
     return ret;
   }
 
@@ -70,11 +70,11 @@ public abstract class CommandApplication<T extends ICommand> {
 
   //region Private methods
 
-  private Rejection getRejectionIfAirplaneStateIsInvalid(AirplaneState state, ICommand cmd){
-    Rejection ret;
+  private PlaneRejection getRejectionIfAirplaneStateIsInvalid(AirplaneState state, ICommand cmd){
+    PlaneRejection ret;
     AirplaneState [] invalidStates = getInvalidStates();
     if (state.is(invalidStates)) {
-      ret = new Rejection("Unable to comply a command now, does not fit our state.", cmd);
+      ret = new PlaneRejection(cmd, "Unable to comply a command now, does not fit our state.");
     } else
       ret = null;
     return ret;

@@ -25,7 +25,7 @@ import eng.jAtcSim.newLib.shared.enums.ApproachType;
 import eng.jAtcSim.newLib.shared.exceptions.ToDoException;
 import eng.jAtcSim.newLib.shared.xml.XmlLoadException;
 import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
-import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ICommand;
+import eng.jAtcSim.newLib.speeches.airplane.ICommand;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ChangeAltitudeCommand;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ChangeHeadingCommand;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ProceedDirectCommand;

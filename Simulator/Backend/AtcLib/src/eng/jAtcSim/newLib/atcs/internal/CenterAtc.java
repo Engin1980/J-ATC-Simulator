@@ -182,7 +182,7 @@ public class CenterAtc extends ComputerAtc {
       DARoute r = rrt.getA();
       ActiveRunwayThreshold rt = rrt.getB();
       cmds.add(ProceedDirectCommand.create(n.getName()));
-      cmds.add(ClearedToRouteCommand.create(r.getName(), rt.getName()));
+      cmds.add(ClearedToRouteCommand.create(r.getName(), r.getType(), rt.getName()));
       Message msg = new Message(
           Participant.createAtc(this.getAtcId()),
           Participant.createAirplane(plane.getCallsign()),

@@ -2,7 +2,7 @@ package eng.jAtcSim.newLib.airplanes.commandApplications;
 
 import eng.jAtcSim.newLib.airplanes.AirplaneState;
 import eng.jAtcSim.newLib.airplanes.internal.Airplane;
-import eng.jAtcSim.newLib.speeches.Rejection;
+import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.PlaneRejection;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ChangeAltitudeCommand;
 
 public class ChangeAltitudeApplication extends CommandApplication<ChangeAltitudeCommand> {
@@ -21,23 +21,23 @@ public class ChangeAltitudeApplication extends CommandApplication<ChangeAltitude
   }
 
   @Override
-  protected Rejection checkCommandSanity(Airplane pilot, ChangeAltitudeCommand c) {
-    Rejection ret;
+  protected PlaneRejection checkCommandSanity(Airplane pilot, ChangeAltitudeCommand c) {
+    PlaneRejection ret;
 
     if ((c.getDirection() == ChangeAltitudeCommand.eDirection.climb) && (pilot.getReader().getSha().getAltitude() > c.getAltitudeInFt())) {
-      ret = new Rejection("we are higher", c);
+      ret = new PlaneRejection(c,"we are higher");
       if (pilot.getReader().getSha().getTargetAltitude() < c.getAltitudeInFt())
         pilot.getWriter().setTargetAltitude(c.getAltitudeInFt());
       return ret;
     } else if ((c.getDirection() == ChangeAltitudeCommand.eDirection.descend) && (pilot.getReader().getSha().getAltitude() < c.getAltitudeInFt())) {
       if (pilot.getReader().getSha().getTargetAltitude() > c.getAltitudeInFt())
         pilot.getWriter().setTargetAltitude(c.getAltitudeInFt());
-      ret = new Rejection("we are lower", c);
+      ret = new PlaneRejection(c,"we are lower");
       return ret;
     }
 
     if (c.getAltitudeInFt() > pilot.getReader().getType().maxAltitude) {
-      ret = new Rejection("too high", c);
+      ret = new PlaneRejection(c,"too high");
       return ret;
     }
 

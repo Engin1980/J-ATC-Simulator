@@ -11,6 +11,7 @@ import eng.jAtcSim.newLib.atcs.planeResponsibility.AirplaneResponsibilityInfo;
 import eng.jAtcSim.newLib.atcs.planeResponsibility.PlaneResponsibilityManager;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.Callsign;
+import eng.jAtcSim.newLib.shared.Squawk;
 import eng.jAtcSim.newLib.shared.enums.AtcType;
 import eng.jAtcSim.newLib.shared.exceptions.ToDoException;
 
@@ -50,6 +51,10 @@ public class InternalAcc {
     return InternalAcc.getAtc(airplaneResponsibilityInfo.getAtc());
   }
 
+  public static Callsign getCallsignFromSquawk(Squawk squawk) {
+    return AirplaneAcc.getAirplanes().get(squawk).getCallsign();
+  }
+
   public static Atc getCtr() {
     if (ctr == null)
       ctr = atcProducer.produce().getFirst(q -> q.getAtcId().getType() == AtcType.ctr);
@@ -72,6 +77,10 @@ public class InternalAcc {
 
   public static ActiveRunway getRunway(String rwyName) {
     return AreaAcc.getAirport().getRunways().getFirst(q->q.getName().equals(rwyName));
+  }
+
+  public static Squawk getSquawkFromCallsign(Callsign callsign) {
+    return AirplaneAcc.getAirplanes().get(callsign).getSqwk();
   }
 
   public static Atc getTwr() {

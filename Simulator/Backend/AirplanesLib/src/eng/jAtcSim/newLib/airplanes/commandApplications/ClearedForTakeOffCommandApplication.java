@@ -5,7 +5,7 @@ import eng.jAtcSim.newLib.airplanes.AirplaneState;
 import eng.jAtcSim.newLib.airplanes.internal.Airplane;
 import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
 import eng.jAtcSim.newLib.area.AreaAcc;
-import eng.jAtcSim.newLib.speeches.Rejection;
+import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.PlaneRejection;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ClearedForTakeoffCommand;
 
 public class ClearedForTakeOffCommandApplication extends CommandApplication<ClearedForTakeoffCommand> {
@@ -31,10 +31,10 @@ public class ClearedForTakeOffCommandApplication extends CommandApplication<Clea
   }
 
   @Override
-  protected Rejection checkCommandSanity(Airplane plane, ClearedForTakeoffCommand c) {
-    Rejection ret = null;
+  protected PlaneRejection checkCommandSanity(Airplane plane, ClearedForTakeoffCommand c) {
+    PlaneRejection ret = null;
     if (AreaAcc.getAirport().tryGetRunwayThreshold(c.getRunwayThresholdName()) == null){
-      ret =  new Rejection(c, "Unable to find runway threshold " + c.getRunwayThresholdName());
+      ret =  new PlaneRejection(c, "Unable to find runway threshold " + c.getRunwayThresholdName());
     }
     return ret;
   }

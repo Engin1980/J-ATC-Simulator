@@ -6,7 +6,7 @@ import eng.jAtcSim.newLib.airplanes.internal.Airplane;
 import eng.jAtcSim.newLib.area.AreaAcc;
 import eng.jAtcSim.newLib.shared.Restriction;
 import eng.jAtcSim.newLib.shared.enums.AboveBelowExactly;
-import eng.jAtcSim.newLib.speeches.Rejection;
+import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.PlaneRejection;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ChangeSpeedCommand;
 
 public class ChangeSpeedApplication extends CommandApplication<ChangeSpeedCommand> {
@@ -23,8 +23,8 @@ public class ChangeSpeedApplication extends CommandApplication<ChangeSpeedComman
   }
 
   @Override
-  protected Rejection checkCommandSanity(Airplane plane, ChangeSpeedCommand c) {
-    Rejection ret;
+  protected PlaneRejection checkCommandSanity(Airplane plane, ChangeSpeedCommand c) {
+    PlaneRejection ret;
 
     if (c.isResumeOwnSpeed() == false) {
       // not resume speed
@@ -45,10 +45,10 @@ public class ChangeSpeedApplication extends CommandApplication<ChangeSpeedComman
       }
 
       if (r.direction != AboveBelowExactly.below && r.value > cMax) {
-        ret = new Rejection("Unable to reach speed " + r.value + " kts, maximum is " + cMax, c);
+        ret = new PlaneRejection(c,"Unable to reach speed " + r.value + " kts, maximum is " + cMax);
         return ret;
       } else if (r.direction != AboveBelowExactly.above && r.value < cMin) {
-        ret = new Rejection("Unable to reach speed " + r.value + " kts, minimum is " + cMin , c);
+        ret = new PlaneRejection(c,"Unable to reach speed " + r.value + " kts, minimum is " + cMin );
         return ret;
       }
     }

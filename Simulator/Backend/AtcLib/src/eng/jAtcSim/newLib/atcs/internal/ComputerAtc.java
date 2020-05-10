@@ -4,6 +4,7 @@ import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.validation.EAssert;
+import eng.jAtcSim.newLib.airplanes.AirplaneAcc;
 import eng.jAtcSim.newLib.airplanes.IAirplane;
 import eng.jAtcSim.newLib.atcs.planeResponsibility.PlaneResponsibilityManager;
 import eng.jAtcSim.newLib.atcs.planeResponsibility.SwitchRoutingRequest;
@@ -14,6 +15,7 @@ import eng.jAtcSim.newLib.messaging.StringMessageContent;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.DelayedList;
+import eng.jAtcSim.newLib.shared.Squawk;
 import eng.jAtcSim.newLib.shared.enums.AtcType;
 import eng.jAtcSim.newLib.speeches.SpeechList;
 import eng.jAtcSim.newLib.speeches.airplane.IForPlaneSpeech;
@@ -112,7 +114,7 @@ public abstract class ComputerAtc extends Atc {
   private void processPlaneSwitchMessage(Message m) {
     PlaneResponsibilityManager prm = InternalAcc.getPrm();
     PlaneSwitchRequest psm = m.getContent();
-    Callsign callsign = psm.getSquawk();
+    Callsign callsign = InternalAcc.getCallsignFromSquawk(psm.getSquawk());
     EAssert.isTrue(m.getSource().getType() == Participant.eType.atc);
     AtcId targetAtcId = InternalAcc.getAtc(m.getSource().getId()).getAtcId();
     if (prm.forAtc().isUnderSwitchRequest(callsign, this.getAtcId(), targetAtcId)) {
@@ -153,20 +155,22 @@ public abstract class ComputerAtc extends Atc {
     //TODO rewrite in some different way let requestResult is not used and in
     // atcRejection new PlaneSwitch is not created
     // .. do the same in the acceptSwitch() method
+    Squawk sqwk = InternalAcc.getSquawkFromCallsign(callsign);
     Message nm = new Message(
         Participant.createAtc(this.getAtcId()),
         Participant.createAtc(targetAtcId),
-        new AtcRejection(new PlaneSwitchRequest(callsign), planeAcceptance.message));
+        new AtcRejection(PlaneSwitchRequest.createFromComputer(sqwk), planeAcceptance.message));
     sendMessage(nm);
   }
 
   private void acceptSwitch(Callsign callsign, AtcId targetAtcId) {
     PlaneResponsibilityManager prm = InternalAcc.getPrm();
     prm.forAtc().confirmSwitchRequest(callsign, this.getAtcId(), null);
+    Squawk sqwk = InternalAcc.getSquawkFromCallsign(callsign);
     Message nm = new Message(
         Participant.createAtc(this.getAtcId()),
         Participant.createAtc(targetAtcId),
-        new AtcConfirmation(new PlaneSwitchRequest(callsign)));
+        new AtcConfirmation(PlaneSwitchRequest.createFromComputer(sqwk)));
     sendMessage(nm);
   }
 
@@ -229,10 +233,11 @@ public abstract class ComputerAtc extends Atc {
       if (speechDelayer
           .isAny(q -> q.getContent() instanceof PlaneSwitchRequest && ((PlaneSwitchRequest) q.getContent()).getSquawk().equals(callsign)))
         continue; // if message about this plane is delayed and waiting to process
+      Squawk sqwk = InternalAcc.getSquawkFromCallsign(callsign);
       Message m = new Message(
           Participant.createAtc(this.getAtcId()),
           Participant.createAtc(InternalAcc.getAtc(AtcType.app).getAtcId()),
-          new PlaneSwitchRequest(callsign, true));
+          PlaneSwitchRequest.createFromComputer(sqwk, true));
       MessagingAcc.getMessenger().send(m);
       super.getRecorder().write(m);
     }
@@ -241,10 +246,11 @@ public abstract class ComputerAtc extends Atc {
   protected void requestNewSwitch(Callsign callsign, AtcId targetAtcId) {
     PlaneResponsibilityManager prm = InternalAcc.getPrm();
     prm.forAtc().createSwitchRequest(this.getAtcId(), targetAtcId, callsign);
+    Squawk sqwk = InternalAcc.getSquawkFromCallsign(callsign);
     Message m = new Message(
         Participant.createAtc(this.getAtcId()),
         Participant.createAtc(targetAtcId),
-        new PlaneSwitchRequest(callsign, false));
+        PlaneSwitchRequest.createFromComputer(sqwk, false));
     sendMessage(m);
   }
 

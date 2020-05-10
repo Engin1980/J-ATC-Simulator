@@ -2,6 +2,7 @@ package eng.jAtcSim.newLib.shared;
 
 import eng.eSystem.ERandom;
 import eng.eSystem.Producer;
+import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 import eng.jAtcSim.newLib.shared.logging.SimulationLog;
@@ -15,6 +16,11 @@ public class SharedAcc {
 //  private static Producer<Settings> settingsProducer;
   private static Producer<SimulationLog> simulationLogProducer;
   private static Producer<String> logPathProducer;
+  private static Producer<IReadOnlyList<AtcId>> atcsProducer;
+
+  public static void setAtcsProducer(Producer<IReadOnlyList<AtcId>> atcIdProducer) {
+    SharedAcc.atcsProducer = atcIdProducer;
+  }
 
   public static String getAirportIcao() {
     return airportIcaoProducer.produce();
@@ -22,6 +28,10 @@ public class SharedAcc {
 
   public static ApplicationLog getAppLog() {
     return applicationLogProducer.produce();
+  }
+
+  public static IReadOnlyList<AtcId> getAtcs() {
+    return atcsProducer.produce();
   }
 
   public static String getLogPath() {

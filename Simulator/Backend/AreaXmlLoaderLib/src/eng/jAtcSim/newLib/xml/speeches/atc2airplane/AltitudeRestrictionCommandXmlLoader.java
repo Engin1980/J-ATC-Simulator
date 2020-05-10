@@ -5,7 +5,7 @@ import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.jAtcSim.newLib.shared.enums.AboveBelowExactly;
 import eng.jAtcSim.newLib.shared.xml.IXmlLoader;
 import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
-import eng.jAtcSim.newLib.speeches.atc2airplane.AltitudeRestrictionCommand;
+import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.AltitudeRestrictionCommand;
 
 public class AltitudeRestrictionCommandXmlLoader implements IXmlLoader<AltitudeRestrictionCommand> {
   @Override

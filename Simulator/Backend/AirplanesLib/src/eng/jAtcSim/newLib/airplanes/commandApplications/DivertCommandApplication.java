@@ -3,17 +3,17 @@ package eng.jAtcSim.newLib.airplanes.commandApplications;
 
 import eng.jAtcSim.newLib.airplanes.AirplaneState;
 import eng.jAtcSim.newLib.airplanes.internal.Airplane;
-import eng.jAtcSim.newLib.speeches.Rejection;
+import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.PlaneRejection;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.DivertCommand;
 
 public class DivertCommandApplication extends CommandApplication<DivertCommand> {
 
   @Override
-  protected Rejection checkCommandSanity(Airplane plane, DivertCommand c) {
-    Rejection ret = null;
+  protected PlaneRejection checkCommandSanity(Airplane plane, DivertCommand c) {
+    PlaneRejection ret = null;
 
     if (plane.getReader().isDeparture())
-      ret = new Rejection("We are departing, we will not divert.", c);
+      ret = new PlaneRejection(c,"We are departing, we will not divert.");
 
     return ret;
   }

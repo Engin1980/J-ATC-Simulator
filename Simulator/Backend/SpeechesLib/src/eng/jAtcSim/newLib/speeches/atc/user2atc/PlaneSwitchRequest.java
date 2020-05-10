@@ -28,7 +28,7 @@ public class PlaneSwitchRequest implements IAtcSpeech {
   private final String runwayName;
   private final String routeName;
 
-  public PlaneSwitchRequest(Squawk squawk, boolean repeated, String runwayName, String routeName) {
+  private PlaneSwitchRequest(Squawk squawk, boolean repeated, String runwayName, String routeName) {
     EAssert.Argument.isNotNull(squawk, "squawk");
     this.squawk = squawk;
     this.repeated = repeated;

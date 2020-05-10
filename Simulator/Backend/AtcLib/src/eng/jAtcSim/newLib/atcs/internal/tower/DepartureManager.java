@@ -14,8 +14,8 @@ import eng.jAtcSim.newLib.messaging.Participant;
 import eng.jAtcSim.newLib.shared.SharedAcc;
 import eng.jAtcSim.newLib.shared.enums.DARouteType;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
-import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ICommand;
 import eng.jAtcSim.newLib.speeches.SpeechList;
+import eng.jAtcSim.newLib.speeches.airplane.ICommand;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ClearedToRouteCommand;
 
 class DepartureManager {
@@ -114,7 +114,7 @@ class DepartureManager {
     Message m = new Message(
         Participant.createAtc(this.parent.getAtcId()),
         Participant.createAirplane(plane.getCallsign()),
-        new SpeechList<ICommand>(ClearedToRouteCommand.create(r.getName(), runwayThreshold.getName())));
+        new SpeechList<ICommand>(ClearedToRouteCommand.create(r.getName(), r.getType(), runwayThreshold.getName())));
   }
 
   public IAirplane tryGetTheLastDepartedPlane(ActiveRunwayThreshold rt) {

@@ -2,7 +2,7 @@ package eng.jAtcSim.newLib.airplanes.commandApplications;
 
 import eng.jAtcSim.newLib.airplanes.AirplaneState;
 import eng.jAtcSim.newLib.airplanes.internal.Airplane;
-import eng.jAtcSim.newLib.speeches.Rejection;
+import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.PlaneRejection;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ReportDivertTimeCommand;
 
 public class ReportDivertTimeCommandApplication extends CommandApplication<ReportDivertTimeCommand> {
@@ -15,13 +15,13 @@ public class ReportDivertTimeCommandApplication extends CommandApplication<Repor
   }
 
   @Override
-  protected Rejection checkCommandSanity(Airplane pilot, ReportDivertTimeCommand c) {
-    Rejection ret;
+  protected PlaneRejection checkCommandSanity(Airplane pilot, ReportDivertTimeCommand c) {
+    PlaneRejection ret;
 
     if (pilot.getReader().isDeparture())
-      ret = new Rejection("We do not have divert time as we are a departure.", c);
+      ret = new PlaneRejection(c, "We do not have divert time as we are a departure.");
     else if (pilot.getReader().getState().is(AirplaneState.longFinal, AirplaneState.shortFinal)) {
-      ret = new Rejection("We cannot report divert time at this moment.", c);
+      ret = new PlaneRejection(c, "We cannot report divert time at this moment.");
     } else {
       ret = null;
     }

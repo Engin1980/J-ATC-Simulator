@@ -6,31 +6,31 @@ import eng.jAtcSim.newLib.speeches.airplane.ICommand;
 
 public class ClearedToRouteCommand implements ICommand {
 
-  private final String routeName;
-  private final DARouteType routeType;
-  private final String expectedRunwayThresholdName;
-
   public static ClearedToRouteCommand create(String routeName, DARouteType routeType, String expectedRunwayThresholdName) {
     return new ClearedToRouteCommand(routeName, routeType, expectedRunwayThresholdName);
   }
+  private final String routeName;
+  private final DARouteType routeType;
+  private final String expectedRunwayThresholdName;
 
   private ClearedToRouteCommand(String routeName, DARouteType routeType, String expectedRunwayThresholdName) {
     EAssert.Argument.isNonemptyString(routeName);
     EAssert.Argument.isNonemptyString(expectedRunwayThresholdName);
     this.routeName = routeName;
     this.expectedRunwayThresholdName = expectedRunwayThresholdName;
+    this.routeType = routeType;
   }
 
-  public DARouteType getRouteType() {
-    return routeType;
+  public String getExpectedRunwayThresholdName() {
+    return expectedRunwayThresholdName;
   }
 
   public String getRouteName() {
     return routeName;
   }
 
-  public String getExpectedRunwayThresholdName() {
-    return expectedRunwayThresholdName;
+  public DARouteType getRouteType() {
+    return routeType;
   }
 
   @Override

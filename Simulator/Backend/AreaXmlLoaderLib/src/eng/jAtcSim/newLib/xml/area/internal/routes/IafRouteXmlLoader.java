@@ -6,7 +6,7 @@ import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.area.routes.IafRoute;
 import eng.jAtcSim.newLib.shared.PlaneCategoryDefinitions;
 import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
-import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ICommand;
+import eng.jAtcSim.newLib.speeches.airplane.ICommand;
 import eng.jAtcSim.newLib.xml.area.internal.XmlLoader;
 import eng.jAtcSim.newLib.xml.area.internal.context.Context;
 import eng.jAtcSim.newLib.xml.speeches.SpeechXmlLoader;
