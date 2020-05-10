@@ -13,4 +13,5 @@ module JAtcSim.Modules.Backend.SpeechesLib {
   exports eng.jAtcSim.newLib.speeches.system;
   exports eng.jAtcSim.newLib.speeches.atc.user2atc;
   exports eng.jAtcSim.newLib.speeches.system.user2system;
+  exports eng.jAtcSim.newLib.speeches.atc.atc2user;
 }

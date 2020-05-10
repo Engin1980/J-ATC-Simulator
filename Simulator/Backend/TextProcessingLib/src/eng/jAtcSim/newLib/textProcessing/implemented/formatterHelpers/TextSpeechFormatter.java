@@ -13,5 +13,5 @@ public abstract class TextSpeechFormatter<T extends ISpeech> {
 
   public abstract Class<? extends T> getSourceType();
 
-  public abstract String format(T input);
+  public abstract String format(ISpeech input);
 }
