@@ -7,6 +7,10 @@ public class RunwayMaintenanceProceedingNotificationFormatter extends
     SmartTextSpeechFormatter<RunwayMaintenanceProceedingNotification> {
   @Override
   public String _format(RunwayMaintenanceProceedingNotification input) {
-    return null;
+    return String.format(
+        "The runway %s is now under maintenance. The maintenance expected end time is at %s.",
+        input.getRunwayName(),
+        input.getExpectedMaintenanceEndTime().toHourMinuteString()
+    );
   }
 }

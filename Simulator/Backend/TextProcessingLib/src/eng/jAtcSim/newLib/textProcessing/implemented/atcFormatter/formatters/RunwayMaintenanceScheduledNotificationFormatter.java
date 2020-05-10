@@ -7,6 +7,10 @@ public class RunwayMaintenanceScheduledNotificationFormatter
     extends SmartTextSpeechFormatter<RunwayMaintenanceScheduledNotification> {
   @Override
   public String _format(RunwayMaintenanceScheduledNotification input) {
-    return null;
+    return String.format(
+        "Maintenance of the runway %s is scheduled at least at %s for approximately %d minutes.",
+        input.getRunwayName(),
+        input.getMaintenanceStartTime().toHourMinuteString(),
+        input.getMaintenanceDurationInMinutes());
   }
 }
