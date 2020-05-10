@@ -5,6 +5,7 @@ import eng.jAtcSim.newLib.airplanes.AirplanesController;
 import eng.jAtcSim.newLib.area.Border;
 import eng.jAtcSim.newLib.atcs.AtcAcc;
 import eng.jAtcSim.newLib.atcs.AtcProvider;
+import eng.jAtcSim.newLib.gameSim.game.startupInfos.ParserFormatterStartInfo;
 import eng.jAtcSim.newLib.gameSim.simulation.controllers.*;
 import eng.jAtcSim.newLib.gameSim.simulation.modules.AirplanesSimModule;
 import eng.jAtcSim.newLib.gameSim.simulation.modules.ISimulationModuleParent;
@@ -19,8 +20,6 @@ import eng.jAtcSim.newLib.shared.time.EDayTimeRun;
 import eng.jAtcSim.newLib.shared.time.ETimeStamp;
 import eng.jAtcSim.newLib.stats.StatsAcc;
 import eng.jAtcSim.newLib.stats.StatsProvider;
-import eng.jAtcSim.newLib.textProcessing.old.base.Formatter;
-import eng.jAtcSim.newLib.textProcessing.parsing.IParser;
 import eng.jAtcSim.newLib.traffic.TrafficProvider;
 import eng.jAtcSim.newLib.weather.WeatherAcc;
 import eng.jAtcSim.newLib.weather.WeatherManager;
@@ -74,8 +73,7 @@ public class Simulation {
   private final TrafficProvider trafficProvider;
   private final TimerController timer;
   private final SystemMessagesController systemMessagesProcessor = new SystemMessagesController();
-  private final IParser parser;
-  private final Formatter formatter;
+  private final ParserFormatterStartInfo parseFormat;
   private final AirplanesSimModule airplanesSimModule;
   private boolean isElapseSecondCalculationRunning = false;
 
@@ -100,8 +98,7 @@ public class Simulation {
     this.statsProvider = new StatsProvider(settings.simulationSettings.statsSnapshotDistanceInMinutes);
     this.weatherManager = new WeatherManager(simulationContext.getWeatherProvider());
 
-    this.parser = settings.parser;
-    this.formatter = settings.formatter;
+    this.parseFormat = simulationSettings.parserFormatterStartInfo;
 
     this.airplanesSimModule = new AirplanesSimModule(
         this.new SimulationModuleParent(),
