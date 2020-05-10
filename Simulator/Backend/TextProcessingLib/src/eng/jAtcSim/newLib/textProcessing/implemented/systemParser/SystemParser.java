@@ -11,7 +11,7 @@ import eng.jAtcSim.newLib.textProcessing.implemented.parserHelpers.TextSpeechPar
 import eng.jAtcSim.newLib.textProcessing.implemented.systemParser.typedParser.MetarRequestParser;
 import eng.jAtcSim.newLib.textProcessing.implemented.systemParser.typedParser.ShortcutRequestParser;
 import eng.jAtcSim.newLib.textProcessing.implemented.systemParser.typedParser.TickSpeedRequestParser;
-import eng.jAtcSim.newLib.textProcessing.old.base.EInvalidCommandException;
+import eng.jAtcSim.newLib.textProcessing.parsing.EInvalidCommandException;
 import eng.jAtcSim.newLib.textProcessing.parsing.ISystemParser;
 
 public class SystemParser implements ISystemParser, IWithHelp {

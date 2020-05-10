@@ -11,7 +11,7 @@ import eng.jAtcSim.newLib.textProcessing.implemented.atcParser.typedParsers.Runw
 import eng.jAtcSim.newLib.textProcessing.implemented.parserHelpers.TextParsing;
 import eng.jAtcSim.newLib.textProcessing.implemented.parserHelpers.TextSpeechParser;
 import eng.jAtcSim.newLib.textProcessing.implemented.parserHelpers.TextSpeechParserList;
-import eng.jAtcSim.newLib.textProcessing.old.base.EInvalidCommandException;
+import eng.jAtcSim.newLib.textProcessing.parsing.EInvalidCommandException;
 import eng.jAtcSim.newLib.textProcessing.parsing.IAtcParser;
 import eng.jAtcSim.newLib.textProcessing.parsing.shortcuts.IWithShortcuts;
 import eng.jAtcSim.newLib.textProcessing.parsing.shortcuts.ShortcutList;

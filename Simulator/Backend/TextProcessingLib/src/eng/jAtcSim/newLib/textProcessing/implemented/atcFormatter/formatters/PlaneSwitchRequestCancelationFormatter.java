@@ -7,6 +7,6 @@ public class PlaneSwitchRequestCancelationFormatter extends SmartTextSpeechForma
 
   @Override
   public String _format(PlaneSwitchRequestCancelation input) {
-    return null;
+    return String.format("%s cancellation", input.getSquawk().toString());
   }
 }

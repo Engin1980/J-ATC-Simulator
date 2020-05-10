@@ -9,7 +9,7 @@ import eng.jAtcSim.newLib.speeches.airplane.IForPlaneSpeech;
 import eng.jAtcSim.newLib.textProcessing.IWithHelp;
 import eng.jAtcSim.newLib.textProcessing.implemented.parserHelpers.TextParsing;
 import eng.jAtcSim.newLib.textProcessing.implemented.parserHelpers.TextSpeechParserList;
-import eng.jAtcSim.newLib.textProcessing.old.base.EInvalidCommandException;
+import eng.jAtcSim.newLib.textProcessing.parsing.EInvalidCommandException;
 import eng.jAtcSim.newLib.textProcessing.implemented.parserHelpers.TextSpeechParser;
 import eng.jAtcSim.newLib.textProcessing.implemented.planeParser.typedParsers.*;
 import eng.jAtcSim.newLib.textProcessing.parsing.IPlaneParser;
