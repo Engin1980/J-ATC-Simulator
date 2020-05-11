@@ -6,10 +6,8 @@
 package eng.jAtcSim.newLib.atcs.internal;
 
 import eng.eSystem.Tuple;
-import eng.eSystem.exceptions.ERuntimeException;
-import eng.eSystem.utilites.RegexUtils;
+import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.validation.EAssert;
-import eng.jAtcSim.newLib.airplanes.AirplaneAcc;
 import eng.jAtcSim.newLib.airplanes.IAirplane;
 import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
 import eng.jAtcSim.newLib.area.AreaAcc;
@@ -25,6 +23,7 @@ import eng.jAtcSim.newLib.shared.Squawk;
 import eng.jAtcSim.newLib.shared.enums.AtcType;
 import eng.jAtcSim.newLib.shared.exceptions.ToDoException;
 import eng.jAtcSim.newLib.speeches.SpeechList;
+import eng.jAtcSim.newLib.speeches.airplane.IForPlaneSpeech;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ContactCommand;
 import eng.jAtcSim.newLib.speeches.atc.IAtcSpeech;
 import eng.jAtcSim.newLib.speeches.atc.atc2user.AtcConfirmation;
@@ -125,7 +124,7 @@ public class UserAtc extends Atc {
 //      sendPlaneSwitchMessageToAtc(atcId, plane.getCallsign(), tmp[3]);
 //    } else {
 //      throw new ToDoException("Rewrite using custom command/notification classes.");
-      // it is different message to atc
+    // it is different message to atc
 //      try {
 //        IAtc2Atc content = parser.parseAtc(message);
 //        sendOtherMessageToAtc(type, content);
@@ -217,12 +216,12 @@ public class UserAtc extends Atc {
   }
 
   public void sendToPlane(Callsign c, SpeechList speeches) {
-    TODO Implement this: rewrite in such manner that parsing is already done here and callsign should exist here?
-    throw new ToDoException("rewrite in such manner that parsing is already done here and callsign should exist here?");
-//    if (AirplaneAcc.getAirplanes().tryGet(c) == null) {
-//      raiseError("No such plane for callsign \"" + c.toString() + "\".");
-//      return;
-//    }
+    //TODO remove after some verification
+    try {
+      InternalAcc.getPlane(c);
+    } catch (Exception ex) {
+      throw new EApplicationException("Messages for plane " + c + " cannot be send. Plane not found.");
+    }
 
     confirmAtcChangeInPlaneResponsibilityManagerIfRequired(c, speeches);
     Message m = new Message(
@@ -247,7 +246,7 @@ public class UserAtc extends Atc {
 //
 //  }
 
-  private void confirmAtcChangeInPlaneResponsibilityManagerIfRequired(Callsign callsign, SpeechList speeches) {
+  private void confirmAtcChangeInPlaneResponsibilityManagerIfRequired(Callsign callsign, SpeechList<IForPlaneSpeech> speeches) {
     ContactCommand cc = (ContactCommand) speeches.tryGetFirst(q -> q instanceof ContactCommand);
     if (cc != null) {
       InternalAcc.getPrm().forAtc().applyConfirmedSwitch(this.getAtcId(), callsign);
@@ -300,31 +299,31 @@ public class UserAtc extends Atc {
     return ret;
   }
 
-  private void raiseError(String text) {
-    //TODO do not know what this is doing:
-    super.getRecorder().write("ERR", text);
-    switch (this.errorBehavior) {
-      case sendSystemErrors:
-        sendError(text);
-        break;
-      case throwExceptions:
-        throw new ERuntimeException(text);
-      default:
-        throw new UnsupportedOperationException();
-    }
-  }
+//  private void raiseError(String text) {
+//    //TODO do not know what this is doing:
+//    super.getRecorder().write("ERR", text);
+//    switch (this.errorBehavior) {
+//      case sendSystemErrors:
+//        sendError(text);
+//        break;
+//      case throwExceptions:
+//        throw new ERuntimeException(text);
+//      default:
+//        throw new UnsupportedOperationException();
+//    }
+//  }
 
-  private String[] splitToCallsignAndMessages(String msg) {
-    String[] ret = new String[2];
-    int i = msg.indexOf(" ");
-    if (i == msg.length() || i < 0) {
-      ret[0] = msg;
-      ret[1] = "";
-    } else {
-      ret[0] = msg.substring(0, i);
-      ret[1] = msg.substring(i + 1);
-    }
-    return ret;
-  }
+//  private String[] splitToCallsignAndMessages(String msg) {
+//    String[] ret = new String[2];
+//    int i = msg.indexOf(" ");
+//    if (i == msg.length() || i < 0) {
+//      ret[0] = msg;
+//      ret[1] = "";
+//    } else {
+//      ret[0] = msg.substring(0, i);
+//      ret[1] = msg.substring(i + 1);
+//    }
+//    return ret;
+//  }
 
 }

@@ -10,4 +10,5 @@ public class GameStartupInfo {
   public TrafficStartupSourceInfo trafficSource;
   public TrafficStartupSettingsInfo trafficSettings;
   public SimulationStartupSettingsInfo simulationSettings;
+  public ParserFormatterStartInfo parserFormatterStartInfo;
 }

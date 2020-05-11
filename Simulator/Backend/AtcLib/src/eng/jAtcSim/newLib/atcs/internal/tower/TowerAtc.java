@@ -15,7 +15,6 @@ import eng.jAtcSim.newLib.atcs.planeResponsibility.SwitchRoutingRequest;
 import eng.jAtcSim.newLib.messaging.IMessageContent;
 import eng.jAtcSim.newLib.messaging.Message;
 import eng.jAtcSim.newLib.messaging.Participant;
-import eng.jAtcSim.newLib.messaging.StringMessageContent;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.SharedAcc;
@@ -330,13 +329,19 @@ public class TowerAtc extends ComputerAtc {
   }
 
   private void changeRunwayInUse() {
-
-    String msgTxt = "Changed runway(s) in use now to: " + inUseInfo.scheduled.toInfoString("; ");
-    sendMessageToUser(msgTxt);
-
     this.inUseInfo.current = this.inUseInfo.scheduled;
     this.inUseInfo.scheduled = null;
     this.inUseInfo.scheduler = null;
+
+    sendMessageToUser(new RunwayInUseNotification(
+        inUseInfo.current.getDepartures().select(q->new RunwayInUseNotification.RunwayThresholdInUseInfo(
+            q.getThreshold().getName(),
+            q.getCategories())),
+        inUseInfo.current.getArrivals().select(q->new RunwayInUseNotification.RunwayThresholdInUseInfo(
+            q.getThreshold().getName(),
+            q.getCategories())),
+        null));
+
 
     IList<ActiveRunway> tmp =
         this.inUseInfo.current.getDepartures()
@@ -479,14 +484,24 @@ public class TowerAtc extends ComputerAtc {
         changeRunwayInUse();
       }
     } else {
-      String msgTxt = inUseInfo.current.toInfoString("\n");
-      sendMessageToUser("Runway(s) in use: \n" + msgTxt);
+      sendMessageToUser(new RunwayInUseNotification(
+          inUseInfo.current.getDepartures().select(q->new RunwayInUseNotification.RunwayThresholdInUseInfo(
+              q.getThreshold().getName(),
+              q.getCategories())),
+          inUseInfo.current.getArrivals().select(q->new RunwayInUseNotification.RunwayThresholdInUseInfo(
+              q.getThreshold().getName(),
+              q.getCategories())),
+          null));
 
       if (inUseInfo.scheduled != null) {
-        msgTxt = inUseInfo.scheduled.toInfoString("\n");
-        msgTxt = "Scheduled runways to use: \n" + msgTxt +
-            ". \nScheduled runways active from " + inUseInfo.scheduler.getScheduledTime().toHourMinuteString();
-        sendMessageToUser(msgTxt);
+        sendMessageToUser(new RunwayInUseNotification(
+            inUseInfo.current.getDepartures().select(q->new RunwayInUseNotification.RunwayThresholdInUseInfo(
+                q.getThreshold().getName(),
+                q.getCategories())),
+            inUseInfo.current.getArrivals().select(q->new RunwayInUseNotification.RunwayThresholdInUseInfo(
+                q.getThreshold().getName(),
+                q.getCategories())),
+            inUseInfo.scheduler.getScheduledTime()));
       }
     }
   }

@@ -13,6 +13,7 @@ import eng.jAtcSim.abstractRadar.global.*;
 import eng.jAtcSim.abstractRadar.global.events.EMouseEventArg;
 import eng.jAtcSim.abstractRadar.global.events.KeyEventArg;
 import eng.jAtcSim.abstractRadar.global.events.WithCoordinateEventArg;
+import eng.jAtcSim.abstractRadar.published.IAirplaneInfo;
 import eng.jAtcSim.abstractRadar.published.IMessage;
 import eng.jAtcSim.abstractRadar.published.ISimulation;
 import eng.jAtcSim.newLib.airplaneType.AirplaneType;
@@ -944,23 +945,11 @@ public class Radar {
 
     IList<IMessage> atcMsgs = msgs.where(q -> q.getSender().getType() == Participant.eType.atc);
     boolean containsAtcMessage = atcMsgs.isEmpty() == false;
-    boolean isAtcMessageNegative = false;
-    if (containsAtcMessage) {
-      atcMsgs = atcMsgs.where(q -> q.isContentOfType(IAtc2Atc.class));
-      isAtcMessageNegative = atcMsgs.isAny(q -> q.<IAtc2Atc>getContent().isRejection());
-    }
+    boolean isAtcMessageNegative = atcMsgs.isAny(q->q.getType() == IMessage.eType.rejection);
 
-    IList<Message> planeMsgs = msgs.where(q -> q.isSourceOfType(Airplane.class));
+    IList<IMessage> planeMsgs = msgs.where(q->q.getSender().getType() == Participant.eType.airplane);
     boolean containsPlaneMessage = planeMsgs.isEmpty() == false;
-    boolean isPlaneMessageNegative = false;
-    if (containsPlaneMessage) {
-//      for (Message planeMsg : planeMsgs) {
-//        isPlaneMessageNegative = ((SpeechList) planeMsg.getContent()).isAny(q -> q instanceof Rejection);
-//        if (isPlaneMessageNegative) break;
-//
-//      }
-      isPlaneMessageNegative = planeMsgs.isAny(q -> ((SpeechList) q.getContent()).isAny(p -> p instanceof Rejection));
-    }
+    boolean isPlaneMessageNegative = planeMsgs.isAny(q->q.getType() == IMessage.eType.rejection);
 
     if (containsAtcMessage) {
       SoundManager.playAtcNewMessage(isAtcMessageNegative);
@@ -1053,9 +1042,6 @@ public class Radar {
         tl.drawText(navaid.getName(), navaid.getCoordinate(), 3, 3, dt.getFont(), ds.getColor());
         break;
       case fix:
-        tl.drawPoint(navaid.getCoordinate(), ds.getColor(), ds.getWidth());
-        tl.drawText(navaid.getName(), navaid.getCoordinate(), 3, 0, dt.getFont(), ds.getColor());
-        break;
       case fixMinor:
         tl.drawPoint(navaid.getCoordinate(), ds.getColor(), ds.getWidth());
         tl.drawText(navaid.getName(), navaid.getCoordinate(), 3, 0, dt.getFont(), ds.getColor());

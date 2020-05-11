@@ -1,9 +1,9 @@
 package eng.jAtcSim.abstractRadar.global;
 
 public class Font {
-  private String name;
-  private int style;
-  private int size;
+  private final String name;
+  private final int style;
+  private final int size;
 
   public Font(String name, int size, int style) {
     this.name = name;

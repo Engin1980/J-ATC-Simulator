@@ -90,7 +90,7 @@ public class Game {
           game.weatherSource.getContent()
       );
       SimulationSettings simulationSettings = new SimulationSettings(
-          null, null,
+          gsi.parserFormatterStartInfo,
           gsi.trafficSettings,
           gsi.simulationSettings
       );

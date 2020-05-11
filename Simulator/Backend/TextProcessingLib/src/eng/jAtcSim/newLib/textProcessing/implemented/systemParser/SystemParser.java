@@ -8,9 +8,7 @@ import eng.jAtcSim.newLib.textProcessing.IWithHelp;
 import eng.jAtcSim.newLib.textProcessing.implemented.parserHelpers.TextParsing;
 import eng.jAtcSim.newLib.textProcessing.implemented.parserHelpers.TextSpeechParser;
 import eng.jAtcSim.newLib.textProcessing.implemented.parserHelpers.TextSpeechParserList;
-import eng.jAtcSim.newLib.textProcessing.implemented.systemParser.typedParser.MetarRequestParser;
-import eng.jAtcSim.newLib.textProcessing.implemented.systemParser.typedParser.ShortcutRequestParser;
-import eng.jAtcSim.newLib.textProcessing.implemented.systemParser.typedParser.TickSpeedRequestParser;
+import eng.jAtcSim.newLib.textProcessing.implemented.systemParser.typedParser.*;
 import eng.jAtcSim.newLib.textProcessing.parsing.EInvalidCommandException;
 import eng.jAtcSim.newLib.textProcessing.parsing.ISystemParser;
 
@@ -23,6 +21,8 @@ public class SystemParser implements ISystemParser, IWithHelp {
     systemParsers.add(new MetarRequestParser());
     systemParsers.add(new ShortcutRequestParser());
     systemParsers.add(new TickSpeedRequestParser());
+    systemParsers.add(new DeletePlaneRequestParser());
+    systemParsers.add(new GetHelpRequestParser());
   }
 
   @Override

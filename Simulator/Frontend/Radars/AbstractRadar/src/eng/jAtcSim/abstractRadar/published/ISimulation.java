@@ -2,7 +2,6 @@ package eng.jAtcSim.abstractRadar.published;
 
 import eng.eSystem.collections.*;
 import eng.eSystem.events.EventSimple;
-import eng.jAtcSim.abstractRadar.IAirplaneInfo;
 import eng.jAtcSim.abstractRadar.Radar;
 import eng.jAtcSim.newLib.area.Airport;
 import eng.jAtcSim.newLib.area.RunwayConfiguration;
@@ -10,8 +9,6 @@ import eng.jAtcSim.newLib.messaging.Participant;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
-
-import java.util.SortedSet;
 
 public interface ISimulation {
   Airport airport();

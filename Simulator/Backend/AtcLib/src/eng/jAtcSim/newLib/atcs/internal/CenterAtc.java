@@ -17,7 +17,6 @@ import eng.jAtcSim.newLib.atcs.planeResponsibility.PlaneResponsibilityManager;
 import eng.jAtcSim.newLib.atcs.planeResponsibility.SwitchRoutingRequest;
 import eng.jAtcSim.newLib.messaging.Message;
 import eng.jAtcSim.newLib.messaging.Participant;
-import eng.jAtcSim.newLib.messaging.StringMessageContent;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.SharedAcc;
@@ -26,6 +25,7 @@ import eng.jAtcSim.newLib.shared.enums.DARouteType;
 import eng.jAtcSim.newLib.speeches.airplane.ICommand;
 import eng.jAtcSim.newLib.speeches.airplane.IForPlaneSpeech;
 import eng.jAtcSim.newLib.speeches.SpeechList;
+import eng.jAtcSim.newLib.speeches.airplane.IFromPlaneSpeech;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.GoodDayNotification;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.*;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.afterCommands.AfterNavaidCommand;
@@ -296,7 +296,7 @@ public class CenterAtc extends ComputerAtc {
   }
 
   @Override
-  protected void processMessagesFromPlane(Callsign callsign, SpeechList spchs) {
+  protected void processMessagesFromPlane(Callsign callsign, SpeechList<IFromPlaneSpeech> spchs) {
     IAirplane plane = InternalAcc.getPlane(callsign);
     PlaneResponsibilityManager prm = InternalAcc.getPrm();
     for (Object o : spchs) {

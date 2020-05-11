@@ -1,4 +1,4 @@
-package eng.jAtcSim.abstractRadar;
+package eng.jAtcSim.abstractRadar.published;
 
 import eng.eSystem.collections.*;
 import eng.eSystem.geo.Coordinate;

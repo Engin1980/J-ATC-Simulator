@@ -7,7 +7,6 @@
 package eng.jAtcSim.newLib.area.types;
 
 import eng.eSystem.geo.CoordinateValue;
-import eng.jAtcSim.newLib.global.Global;
 import org.junit.Test;
 import static org.junit.Assert.*;
 

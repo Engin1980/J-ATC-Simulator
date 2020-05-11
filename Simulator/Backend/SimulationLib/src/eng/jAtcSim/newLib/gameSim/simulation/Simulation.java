@@ -9,9 +9,14 @@ import eng.jAtcSim.newLib.gameSim.game.startupInfos.ParserFormatterStartInfo;
 import eng.jAtcSim.newLib.gameSim.simulation.controllers.*;
 import eng.jAtcSim.newLib.gameSim.simulation.modules.AirplanesSimModule;
 import eng.jAtcSim.newLib.gameSim.simulation.modules.ISimulationModuleParent;
-import eng.jAtcSim.newLib.messaging.*;
+import eng.jAtcSim.newLib.gameSim.simulation.modules.SystemMessagesModule;
+import eng.jAtcSim.newLib.messaging.IMessageContent;
+import eng.jAtcSim.newLib.messaging.Message;
+import eng.jAtcSim.newLib.messaging.MessagingAcc;
+import eng.jAtcSim.newLib.messaging.Participant;
 import eng.jAtcSim.newLib.shared.SharedAcc;
 import eng.jAtcSim.newLib.shared.enums.AtcType;
+import eng.jAtcSim.newLib.shared.exceptions.ToDoException;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 import eng.jAtcSim.newLib.shared.time.EDayTimeRun;
 import eng.jAtcSim.newLib.shared.time.ETimeStamp;
@@ -47,8 +52,19 @@ public class Simulation {
     }
 
     @Override
+    public IOController getIO() {
+      return Simulation.this.ioController;
+    }
+
+    @Override
     public MrvaController getMrvaController() {
       return Simulation.this.mrvaController;
+    }
+
+    @Override
+    public SimulationController getSimulation() {
+      //TODO Implement this: How this will be implemented?
+      throw new ToDoException("How this will be implemented?");
     }
 
     @Override
@@ -70,8 +86,9 @@ public class Simulation {
   private final WeatherManager weatherManager;
   private final TrafficProvider trafficProvider;
   private final TimerController timer;
-  private final SystemMessagesController systemMessagesProcessor = new SystemMessagesController();
+  private final SystemMessagesModule systemMessagesProcessor;
   private final ParserFormatterStartInfo parseFormat;
+  private final IOController ioController;
   private final AirplanesSimModule airplanesSimModule;
   private boolean isElapseSecondCalculationRunning = false;
 
@@ -93,6 +110,7 @@ public class Simulation {
     this.mrvaController = new MrvaController(
         context.getArea().getBorders().where(q -> q.getType() == Border.eType.mrva));
     this.airproxController = new AirproxController();
+    this.ioController = new IOController();
     this.statsProvider = new StatsProvider(settings.simulationSettings.statsSnapshotDistanceInMinutes);
     this.weatherManager = new WeatherManager(simulationContext.getWeatherProvider());
 
@@ -103,6 +121,7 @@ public class Simulation {
         simulationSettings.trafficSettings.trafficDelayStepProbability,
         simulationSettings.trafficSettings.trafficDelayStep,
         simulationSettings.trafficSettings.useExtendedCallsigns);
+    this.systemMessagesProcessor = new SystemMessagesModule(this.new SimulationModuleParent());
 
     this.timer = new TimerController(settings.simulationSettings.secondLengthInMs, this::timerTicked);
   }
