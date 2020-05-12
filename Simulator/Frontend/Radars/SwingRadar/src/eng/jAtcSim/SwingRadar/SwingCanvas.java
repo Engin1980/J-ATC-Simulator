@@ -44,7 +44,7 @@ public class SwingCanvas implements ICanvas<JComponent> {
     private java.awt.Point dragStartPoint = null;
     private int dragStartModifiers = 0;
     private int dragStartButton = 0;
-    private int MINIMUM_DRAG_SHIFT = 3;
+    private static final int MINIMUM_DRAG_SHIFT = 3;
 
     void clicked(MouseEvent e) {
       EMouseEventArg eme;

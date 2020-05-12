@@ -1,4 +1,7 @@
-module JAtcSim.Modules.Frontend.Radars.AbstractRadar {
+module JAtcSim.Modules.Frontend.Radars.AbstractRadarModule {
+  exports eng.jAtcSim.abstractRadar;
+  exports eng.jAtcSim.abstractRadar.global;
+  exports eng.jAtcSim.abstractRadar.global.events;
   requires eng.eSystem;
   requires JAtcSim.Modules.Backend.SharedLib;
   requires JAtcSim.Modules.Backend.AirplanesLib;
