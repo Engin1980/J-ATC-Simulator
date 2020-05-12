@@ -1,4 +1,4 @@
-package eng.jAtcSim.abstractRadar;
+package eng.jAtcSim.abstractRadar.settngs;
 
 public class RadarBehaviorSettings {
   private final boolean paintMessages;

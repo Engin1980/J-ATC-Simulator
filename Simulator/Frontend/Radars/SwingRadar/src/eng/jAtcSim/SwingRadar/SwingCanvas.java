@@ -99,6 +99,7 @@ public class SwingCanvas implements ICanvas<JComponent> {
           Math.abs(dragEndPoint.x - dragStartPoint.x),
           Math.abs(dragEndPoint.y - dragStartPoint.y));
       if (diffPoint.x < MINIMUM_DRAG_SHIFT && diffPoint.y < MINIMUM_DRAG_SHIFT) {
+        // intentionally blank
       } else {
         EMouseEventArg.eButton btn = convertFromSwingButton(e.getButton());
         EMouseEventArg eme = EMouseEventArg.createDragged(
@@ -149,15 +150,15 @@ public class SwingCanvas implements ICanvas<JComponent> {
   private static final int TEXT_HEIGHT_MARGIN = 0;
   private final JComponent c;
   private Graphics g;
-  private eng.eSystem.events.Event<ICanvas, EMouseEventArg> mouseEvent =
+  private final eng.eSystem.events.Event<ICanvas<?>, EMouseEventArg> mouseEvent =
       new eng.eSystem.events.Event<>(this);
-  private eng.eSystem.events.EventSimple<ICanvas> paintEvent =
+  private final eng.eSystem.events.EventSimple<ICanvas<?>> paintEvent =
       new eng.eSystem.events.EventSimple<>(this);
-  private Event<ICanvas, Object> keyEvent =
+  private final Event<ICanvas<?>, Object> keyEvent =
       new Event<>(this);
-  private eng.eSystem.events.EventSimple<ICanvas> resizedEvent =
+  private final eng.eSystem.events.EventSimple<ICanvas<?>> resizedEvent =
       new eng.eSystem.events.EventSimple<>(this);
-  private MouseProcessor mp = this.new MouseProcessor();
+  private final MouseProcessor mp = this.new MouseProcessor();
 
   private static String getTheFirstLine(String line) {
     int lineBreakIndex = line.indexOf('\n');
@@ -382,22 +383,22 @@ public class SwingCanvas implements ICanvas<JComponent> {
   }
 
   @Override
-  public eng.eSystem.events.Event<ICanvas, EMouseEventArg> getMouseEvent() {
+  public eng.eSystem.events.Event<ICanvas<?>, EMouseEventArg> getMouseEvent() {
     return mouseEvent;
   }
 
   @Override
-  public eng.eSystem.events.EventSimple<ICanvas> getPaintEvent() {
+  public eng.eSystem.events.EventSimple<ICanvas<?>> getPaintEvent() {
     return paintEvent;
   }
 
   @Override
-  public Event<ICanvas, Object> getKeyEvent() {
+  public Event<ICanvas<?>, Object> getKeyEvent() {
     return keyEvent;
   }
 
   @Override
-  public EventSimple<ICanvas> getResizedEvent() {
+  public EventSimple<ICanvas<?>> getResizedEvent() {
     return resizedEvent;
   }
 

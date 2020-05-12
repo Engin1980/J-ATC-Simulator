@@ -9,10 +9,7 @@ import eng.jAtcSim.newLib.atcs.planeResponsibility.SwitchRoutingRequest;
 import eng.jAtcSim.newLib.messaging.Message;
 import eng.jAtcSim.newLib.messaging.MessagingAcc;
 import eng.jAtcSim.newLib.messaging.Participant;
-import eng.jAtcSim.newLib.shared.AtcId;
-import eng.jAtcSim.newLib.shared.Callsign;
-import eng.jAtcSim.newLib.shared.DelayedList;
-import eng.jAtcSim.newLib.shared.Squawk;
+import eng.jAtcSim.newLib.shared.*;
 import eng.jAtcSim.newLib.shared.enums.AtcType;
 import eng.jAtcSim.newLib.speeches.SpeechList;
 import eng.jAtcSim.newLib.speeches.airplane.IForPlaneSpeech;
@@ -37,10 +34,9 @@ public abstract class ComputerAtc extends Atc {
       this.message = message;
     }
   }
-  private static int MINIMUM_ATC_SPEECH_DELAY_SECONDS = 2;
-  private static int MAXIMUM_ATC_SPEECH_DELAY_SECONDS = 10;
+
   private final DelayedList<Message> speechDelayer = new DelayedList<>(
-      MINIMUM_ATC_SPEECH_DELAY_SECONDS, MAXIMUM_ATC_SPEECH_DELAY_SECONDS);
+      Global.MINIMUM_ATC_SPEECH_DELAY_SECONDS, Global.MAXIMUM_ATC_SPEECH_DELAY_SECONDS);
 
   public ComputerAtc(eng.jAtcSim.newLib.area.Atc template) {
     super(template);

@@ -7,8 +7,8 @@ package eng.jAtcSim.frmPacks.mdi;
 
 import eng.jAtcSim.frmPacks.shared.SwingRadarPanel;
 import eng.jAtcSim.newLib.area.textProcessing.formatting.SpeechFormatter;
-import eng.jAtcSim.abstractRadar.RadarBehaviorSettings;
-import eng.jAtcSim.abstractRadar.RadarDisplaySettings;
+import eng.jAtcSim.abstractRadar.settngs.RadarBehaviorSettings;
+import eng.jAtcSim.abstractRadar.settngs.RadarDisplaySettings;
 
 import javax.swing.*;
 import java.awt.*;

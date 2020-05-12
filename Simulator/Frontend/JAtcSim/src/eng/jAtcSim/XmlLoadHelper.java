@@ -12,7 +12,7 @@ import eng.jAtcSim.newLib.Acc;
 import eng.jAtcSim.newLib.area.global.logging.ApplicationLog;
 import eng.jAtcSim.newLib.world.*;
 import eng.jAtcSim.newLib.world.xml.ElementFromValueParser;
-import eng.jAtcSim.abstractRadar.RadarStyleSettings;
+import eng.jAtcSim.abstractRadar.settngs.RadarStyleSettings;
 import eng.jAtcSim.abstractRadar.parsing.RadarColorValueParser;
 import eng.jAtcSim.abstractRadar.parsing.RadarFontParser;
 import eng.jAtcSim.app.startupSettings.StartupSettings;

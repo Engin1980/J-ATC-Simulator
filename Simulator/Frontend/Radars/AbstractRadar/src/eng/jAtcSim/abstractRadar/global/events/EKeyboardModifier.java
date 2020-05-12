@@ -1,5 +1,7 @@
 package eng.jAtcSim.abstractRadar.global.events;
 
+import eng.jAtcSim.newLib.shared.exceptions.ToDoException;
+
 /**
  *
  * @author Marek Vajgl
@@ -19,6 +21,7 @@ public class EKeyboardModifier {
   }
 
   public EKeyboardModifier(int springModifierValue) {
+    //TODO solve those obsoletes:
     boolean isAlt = (springModifierValue & java.awt.event.InputEvent.ALT_MASK) > 0;
     boolean isCtr = (springModifierValue & java.awt.event.InputEvent.CTRL_MASK) > 0;
     boolean isShift = (springModifierValue & java.awt.event.InputEvent.SHIFT_MASK) > 0;

@@ -1,11 +1,12 @@
 package eng.jAtcSim.newLib.atcs.planeResponsibility;
 
 import eng.jAtcSim.newLib.shared.AtcId;
+import eng.jAtcSim.newLib.shared.Global;
 import eng.jAtcSim.newLib.shared.SharedAcc;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 
 public class SwitchRequest {
-  private EDayTimeStamp creationTime;
+  private final EDayTimeStamp creationTime;
   private AtcId atc;
   private EDayTimeStamp repeatRequestTime;
   private EDayTimeStamp confirmedTime = null;
@@ -60,6 +61,6 @@ public class SwitchRequest {
   }
 
   public void updateLastRequestTime() {
-    this.repeatRequestTime = SharedAcc.getNow().toStamp().addSeconds(30);
+    this.repeatRequestTime = SharedAcc.getNow().addSeconds(Global.REPEATED_RADAR_CONTACT_REQUEST_SECONDS);
   }
 }

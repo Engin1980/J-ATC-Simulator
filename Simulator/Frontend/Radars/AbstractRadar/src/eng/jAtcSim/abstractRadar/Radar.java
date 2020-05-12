@@ -1,6 +1,5 @@
 package eng.jAtcSim.abstractRadar;
 
-import eng.eSystem.EStringBuilder;
 import eng.eSystem.collections.*;
 import eng.eSystem.events.Event;
 import eng.eSystem.events.EventSimple;
@@ -13,19 +12,18 @@ import eng.jAtcSim.abstractRadar.global.*;
 import eng.jAtcSim.abstractRadar.global.events.EMouseEventArg;
 import eng.jAtcSim.abstractRadar.global.events.KeyEventArg;
 import eng.jAtcSim.abstractRadar.global.events.WithCoordinateEventArg;
-import eng.jAtcSim.abstractRadar.published.IAirplaneInfo;
 import eng.jAtcSim.abstractRadar.published.IMessage;
 import eng.jAtcSim.abstractRadar.published.ISimulation;
-import eng.jAtcSim.newLib.airplaneType.AirplaneType;
+import eng.jAtcSim.abstractRadar.settngs.RadarBehaviorSettings;
+import eng.jAtcSim.abstractRadar.settngs.RadarDisplaySettings;
+import eng.jAtcSim.abstractRadar.settngs.RadarStyleSettings;
+import eng.jAtcSim.abstractRadar.support.*;
 import eng.jAtcSim.newLib.airplanes.AirproxType;
 import eng.jAtcSim.newLib.area.*;
 import eng.jAtcSim.newLib.area.approaches.Approach;
 import eng.jAtcSim.newLib.area.routes.DARoute;
 import eng.jAtcSim.newLib.messaging.Participant;
-import eng.jAtcSim.newLib.shared.AtcId;
-import eng.jAtcSim.newLib.shared.Callsign;
-import eng.jAtcSim.newLib.shared.Format;
-import eng.jAtcSim.newLib.shared.Squawk;
+import eng.jAtcSim.newLib.shared.*;
 import eng.jAtcSim.newLib.shared.enums.ApproachType;
 import eng.jAtcSim.newLib.shared.enums.AtcType;
 import eng.jAtcSim.newLib.shared.enums.DARouteType;
@@ -35,369 +33,23 @@ import java.util.*;
 
 public class Radar {
 
-
-  static class MessageSet {
-
-    public final List<String> atc = new ArrayList<>();
-    public final List<String> plane = new ArrayList<>();
-    public final List<String> system = new ArrayList<>();
-  }
-
-  static class MessageManager {
-    private final int delay;
-    private List<VisualisedMessage> items = new ArrayList<>();
-
-    public MessageManager(int delay) {
-      this.delay = delay;
-    }
-
-    public void add(IMessage message) {
-      VisualisedMessage di = new VisualisedMessage(message, delay);
-      items.add(di);
-    }
-
-    public void decreaseMessagesLifeCounter() {
-      for (VisualisedMessage item : items) {
-        item.decreaseLifeCounter();
-      }
-      items.removeIf(q -> q.getLifeCounter() <= 0);
-    }
-
-    public List<VisualisedMessage> getCurrent() {
-      return items;
-    }
-  }
-
-  static class VisualisedMessage {
-    private final IMessage message;
-    private int lifeCounter;
-
-    public VisualisedMessage(IMessage message, int lifeCounter) {
-      this.message = message;
-      this.lifeCounter = lifeCounter;
-    }
-
-    public void decreaseLifeCounter() {
-      this.lifeCounter--;
-    }
-
-    public int getLifeCounter() {
-      return lifeCounter;
-    }
-
-    public IMessage getMessage() {
-      return this.message;
-    }
-  }
-
-  static class AirplaneDisplayInfo {
-    private static final int DEFAULT_LABEL_SHIFT = 3;
-    public final List<Coordinate> planeDotHistory = new LinkedList<>();
-    public boolean wasUpdatedFlag = false;
-    public Callsign callsign;
-    public AirproxType airprox;
-    public boolean mrvaError;
-    public Coordinate coordinate;
-    public int heading;
-    public int ias;
-    public int tas;
-    public int verticalSpeed;
-    public AtcId tunedAtc;
-    public AtcId responsibleAtc;
-    public boolean hasRadarContact;
-    public AirplaneType type;
-    public Point labelShift;
-    public boolean fixedLabelShift = false;
-    public boolean isConfirmedSwitch;
-    private Squawk squawk;
-    private int targetHeading;
-    private int targetSpeed;
-    private int altitude;
-    private int targetAltitude;
-    private boolean emergency;
-
-
-    public AirplaneDisplayInfo(IAirplaneInfo planeInfo) {
-      this.callsign = planeInfo.callsign();
-      this.type = planeInfo.planeType();
-      this.squawk = planeInfo.squawk();
-      this.setDefaultLabelPosition();
-    }
-
-    public String format(String pattern) {
-      StringBuilder sb = new StringBuilder(pattern);
-      int[] p = new int[2];
-
-      while (true) {
-        updatePair(sb, p);
-        if (p[0] < 0) {
-          break;
-        }
-
-        String tmp = sb.substring(p[0] + 1, p[1]);
-        int index = Integer.parseInt(tmp);
-        sb.replace(p[0], p[1] + 1, getFormatValueByIndex(index));
-      }
-
-      return sb.toString();
-    }
-
-    public void setDefaultLabelPosition() {
-      this.labelShift = new Point(DEFAULT_LABEL_SHIFT, DEFAULT_LABEL_SHIFT);
-    }
-
-    public void updateInfo(IAirplaneInfo plane) {
-      wasUpdatedFlag = true;
-
-      this.ias = plane.ias();
-      this.tas = (int) plane.tas();
-      this.targetSpeed = (int) plane.targetSpeed();
-      this.altitude = plane.altitude();
-      this.targetAltitude = plane.targetAltitude();
-      this.verticalSpeed = plane.verticalSpeed();
-      this.heading = plane.heading();
-      this.targetHeading = plane.targetHeading();
-
-      this.tunedAtc = plane.tunedAtc();
-      this.responsibleAtc = plane.responsibleAtc();
-      this.hasRadarContact = plane.hasRadarContact();
-
-      this.airprox = plane.getAirprox();
-      this.mrvaError = plane.isMrvaError();
-      this.emergency = plane.isEmergency();
-
-      this.coordinate = plane.coordinate();
-
-      this.isConfirmedSwitch = plane.isUnderConfirmedSwitch();
-
-      planeDotHistory.add(plane.coordinate());
-    }
-
-    private String getFormatValueByIndex(int index) {
-      switch (index) {
-        case 1:
-          if (this.emergency)
-            return this.callsign.toString() + " !";
-          else
-            return this.callsign.toString();
-        case 2:
-          return this.callsign.getCompany();
-        case 3:
-          return this.callsign.getNumber();
-        case 4:
-          return this.type.name;
-        case 5:
-          return Character.toString(this.type.category);
-        case 8:
-          return this.squawk.toString();
-        case 11:
-          return Format.Heading.to(this.heading);
-        case 12:
-          return Format.Heading.toShort(this.heading);
-        case 15:
-          return Format.Heading.to(this.targetHeading);
-        case 16:
-          return Format.Heading.toShort(this.targetHeading);
-        case 21:
-          return Format.Speed.toLong(this.tas);
-        case 22:
-          return Format.Speed.toShort(this.tas);
-        case 23:
-          return Format.Speed.toRightAligned(this.tas);
-        case 31:
-          return Format.Speed.toLong(this.targetSpeed);
-        case 32:
-          return Format.Speed.toShort(this.targetSpeed);
-        case 33:
-          return Format.Altitude.toFLLong(this.altitude);
-        case 34:
-          return Format.Altitude.toFLShort(this.altitude);
-        case 35:
-          return Format.Altitude.toAlfOrFLLong(this.altitude);
-        case 36:
-          return Format.Altitude.toFLLong(this.targetAltitude);
-        case 37:
-          return Format.Altitude.toFLShort(this.targetAltitude);
-        case 38:
-          return Format.Altitude.toAlfOrFLLong(this.targetAltitude);
-        case 41:
-          return Format.VerticalSpeed.formatVerticalSpeedLong(this.verticalSpeed);
-        case 42:
-          return Format.VerticalSpeed.formatVerticalSpeedShort(this.verticalSpeed);
-        case 43:
-          return Format.VerticalSpeed.getClimbDescendChar(this.verticalSpeed);
-        default:
-          return "???";
-      }
-    }
-
-    private void updatePair(StringBuilder ret, int[] p) {
-      int start = ret.indexOf("{");
-      if (start < 0) {
-        p[0] = -1;
-        return;
-      }
-      p[0] = start;
-      int end = ret.indexOf("}", start);
-      p[1] = end;
-    }
-
-  }
-
-  static class AirplaneDisplayInfoList {
-
-    private IMap<Callsign, AirplaneDisplayInfo> inner = new EMap<>();
-
-    public ICollection<AirplaneDisplayInfo> getList() {
-      return inner.getValues();
-    }
-
-    public boolean isEmpty() {
-      return inner.isEmpty();
-    }
-
-    public void update(IReadOnlyList<IAirplaneInfo> planes) {
-      resetWasUpdatedFlag();
-
-      for (IAirplaneInfo plane : planes) {
-        AirplaneDisplayInfo adi = tryGetOrAdd(plane);
-        adi.updateInfo(plane);
-      }
-
-      removeUnupdated();
-    }
-
-    private void removeUnupdated() {
-      // todo rewrite with ISet.remove(predicate) function
-      ISet<Callsign> toRem =
-          inner.getKeys().where(q -> inner.get(q).wasUpdatedFlag == false);
-      toRem.forEach(q -> inner.remove(q));
-    }
-
-    private void resetWasUpdatedFlag() {
-      inner.forEach(q -> q.getValue().wasUpdatedFlag = false);
-    }
-
-    private AirplaneDisplayInfo tryGetOrAdd(IAirplaneInfo plane) {
-      AirplaneDisplayInfo ret;
-      if (inner.containsKey(plane.callsign()))
-        ret = inner.get(plane.callsign());
-      else {
-        ret = new AirplaneDisplayInfo(plane);
-        inner.set(plane.callsign(), ret);
-      }
-      return ret;
-    }
-  }
-
-  static class NavaidDisplayInfo {
-    public Navaid navaid;
-    public boolean isRoute;
-  }
-
-  static class NavaidDisplayInfoList implements Iterable<NavaidDisplayInfo> {
-    private List<NavaidDisplayInfo> inner = new ArrayList<>();
-
-    public void add(NavaidDisplayInfo ndi) {
-      inner.add(ndi);
-    }
-
-    public NavaidDisplayInfo getByNavaid(Navaid navaid) {
-      NavaidDisplayInfo ret = null;
-      for (NavaidDisplayInfo navaidDisplayInfo : inner) {
-        if (navaidDisplayInfo.navaid == navaid) {
-          ret = navaidDisplayInfo;
-          break;
-        }
-      }
-      return ret;
-    }
-
-    @Override
-    public Iterator<NavaidDisplayInfo> iterator() {
-      return inner.iterator();
-    }
-  }
-
-  class InfoLine {
-    public static String toIntegerMinutes(double value) {
-      int tmp = (int) (value / 60);
-      return Integer.toString(tmp);
-    }
-
-    public static String toIntegerSeconds(double value) {
-      double tmp = value % 60;
-      return String.format("%02.0f", tmp);
-    }
-
-    public final Coordinate from;
-    public final Coordinate to;
-    public final int heading;
-    public final double distanceInNm;
-    public final double seconds200;
-    public final double seconds250;
-    public final double seconds280;
-    public final double secondsSpeed;
-    public final boolean isRelativeSpeedUsed;
-
-    public InfoLine(Coordinate from, Coordinate to, Double refSpeed) {
-      this.from = from;
-      this.to = to;
-      this.distanceInNm = Coordinates.getDistanceInNM(from, to);
-      this.heading = (int) Coordinates.getBearing(from, to);
-      if (refSpeed == null) {
-        this.seconds200 = this.distanceInNm / 200d * 3600d;
-        this.seconds250 = this.distanceInNm / 250d * 3600d;
-        this.seconds280 = this.distanceInNm / 280d * 3600d;
-        this.secondsSpeed = 0;
-        this.isRelativeSpeedUsed = false;
-      } else {
-        this.secondsSpeed = this.distanceInNm / refSpeed * 3600d;
-        this.seconds200 = 0;
-        this.seconds250 = 0;
-        this.seconds280 = 0;
-        this.isRelativeSpeedUsed = true;
-      }
-    }
-  }
-
-  class Counter {
-    private final int maximum;
-    private int value;
-
-    public Counter(int maximum) {
-      assert maximum > 0;
-      this.maximum = maximum;
-      this.value = 0;
-    }
-
-    public boolean increase() {
-      value++;
-      if (value == maximum) {
-        value = 0;
-        return true;
-      } else
-        return false;
-    }
-  }
-
   public static final int BORDER_ALTITUDE_MAXIMUM_VALUE = 99000;
   //  private static final int DRAW_STEP = 10;
   public static final int BORDER_ALTITUDE_MINIMUM_VALUE = 0;
   private static final double MAX_NM_DIFFERENCE_FOR_SELECTION = 2.5;
   private final TransformationLayer tl;
-  private final ICanvas c;
-  private final Event<Radar, WithCoordinateEventArg> mouseMoveEvent = new Event(this);
-  private final Event<Radar, WithCoordinateEventArg> mouseClickEvent = new Event(this);
-  private final Event<Radar, KeyEventArg> keyPressEvent = new Event(this);
+  private final ICanvas<?> c;
+  private final Event<Radar, WithCoordinateEventArg> mouseMoveEvent = new Event<>(this);
+  private final Event<Radar, WithCoordinateEventArg> mouseClickEvent = new Event<>(this);
+  private final Event<Radar, KeyEventArg> keyPressEvent = new Event<>(this);
   private final Event<Radar, Callsign> selectedAirplaneChangedEvent = new Event<>(this);
-  private final EventSimple<Radar> gotFocusEvent = new EventSimple(this);
+  private final EventSimple<Radar> gotFocusEvent = new EventSimple<>(this);
   private final RadarStyleSettings styleSettings;
   private final RadarBehaviorSettings behaviorSettings;
   private final RadarDisplaySettings displaySettings;
   private final ISimulation simulation;
   private final Area area;
-  private final MessageManager messageManager;
+  private final VisualisedMessageManager messageManager;
   private final AirplaneDisplayInfoList planeInfos = new AirplaneDisplayInfoList();
   private final NavaidDisplayInfoList navaids = new NavaidDisplayInfoList();
   private final IList<DARoute> drawnRoutes = new EDistinctList<>(EDistinctList.Behavior.skip);
@@ -409,7 +61,7 @@ public class Radar {
   private Counter radarRedrawCounter;
   private boolean switchFlagTrue = false;
 
-  public Radar(ICanvas canvas, InitialPosition initialPosition,
+  public Radar(ICanvas<?> canvas, InitialPosition initialPosition,
                ISimulation sim, Area area,
                RadarStyleSettings styleSettings,
                RadarDisplaySettings displaySettings,
@@ -439,7 +91,7 @@ public class Radar {
     buildDrawnRoutesList();
     buildDrawnApproachesList();
 
-    this.messageManager = new MessageManager(this.styleSettings.displayTextDelay);
+    this.messageManager = new VisualisedMessageManager(this.styleSettings.displayTextDelay);
     if (this.styleSettings.displayTextDelay > Global.REPEATED_SWITCH_REQUEST_SECONDS ||
         this.styleSettings.displayTextDelay > Global.REPEATED_RADAR_CONTACT_REQUEST_SECONDS) {
       simulation.getAppLog().writeLine(ApplicationLog.eType.warning,
@@ -454,11 +106,11 @@ public class Radar {
     sim.getOnRunwayChanged().add(this::sim_runwayChanged);
 
     this.c.getMouseEvent().add(
-        (sender, e) -> Radar.this.canvas_onMouseMove((ICanvas) sender, (EMouseEventArg) e));
+        (sender, e) -> Radar.this.canvas_onMouseMove((ICanvas<?>) sender, (EMouseEventArg) e));
     this.c.getPaintEvent().add(
-        (c) -> Radar.this.canvas_onPaint((ICanvas) c));
+        (c) -> Radar.this.canvas_onPaint(c));
     this.c.getKeyEvent().add(
-        (c, o) -> Radar.this.canvas_onKeyPress((ICanvas) c, (KeyEventArg) o));
+        (c, o) -> Radar.this.canvas_onKeyPress((ICanvas<?>) c, (KeyEventArg) o));
     this.c.getResizedEvent().add(o -> tl.resetPosition());
   }
 
@@ -636,7 +288,7 @@ public class Radar {
     return ret;
   }
 
-  private void canvas_onKeyPress(ICanvas sender, KeyEventArg e) {
+  private void canvas_onKeyPress(ICanvas<?> sender, KeyEventArg e) {
     // Key codes from KeyEvent class from java.awt
     switch (e.getKeyCode()) {
       case 0x22: // Page down
@@ -651,7 +303,7 @@ public class Radar {
 
   }
 
-  private void canvas_onMouseMove(ICanvas sender, EMouseEventArg e) {
+  private void canvas_onMouseMove(ICanvas<?> sender, EMouseEventArg e) {
     Point pt = e.getPoint();
     Coordinate coord = tl.toCoordinate(pt);
     switch (e.type) {
@@ -718,7 +370,7 @@ public class Radar {
 
   }
 
-  private void canvas_onPaint(ICanvas sender) {
+  private void canvas_onPaint(ICanvas<?> sender) {
     if (tl.isReady() == false) {
       drawBackground();
       return;
@@ -744,12 +396,12 @@ public class Radar {
     MessageSet ret = new MessageSet();
 
     for (VisualisedMessage m : msgs) {
-      if (m.message.getSender().getType() == Participant.eType.system) {
-        ret.system.add(">> " + m.message.getText());
-      } else if (m.message.getSender().getType() == Participant.eType.atc) {
-        ret.atc.add("[" + m.message.getSender().getId() + "] " + m.message.getText());
-      } else if (m.message.getSender().getType() == Participant.eType.airplane) {
-        ret.plane.add(m.message.getSender().getId() + ": " + m.message.getText());
+      if (m.getMessage().getSender().getType() == Participant.eType.system) {
+        ret.system.add(">> " + m.getMessage().getText());
+      } else if (m.getMessage().getSender().getType() == Participant.eType.atc) {
+        ret.atc.add("[" + m.getMessage().getSender().getId() + "] " + m.getMessage().getText());
+      } else if (m.getMessage().getSender().getType() == Participant.eType.airplane) {
+        ret.plane.add(m.getMessage().getSender().getId() + ": " + m.getMessage().getText());
       } else {
         throw new UnsupportedOperationException();
       }
@@ -990,11 +642,11 @@ public class Radar {
       if (this.infoLine.isRelativeSpeedUsed == false)
         timeS = String.format("%s:%s/%s:%s/%s:%s",
             InfoLine.toIntegerMinutes(this.infoLine.seconds280),
-            infoLine.toIntegerSeconds(this.infoLine.seconds280),
+            InfoLine.toIntegerSeconds(this.infoLine.seconds280),
             InfoLine.toIntegerMinutes(this.infoLine.seconds250),
-            infoLine.toIntegerSeconds(this.infoLine.seconds250),
+            InfoLine.toIntegerSeconds(this.infoLine.seconds250),
             InfoLine.toIntegerMinutes(this.infoLine.seconds200),
-            infoLine.toIntegerSeconds(this.infoLine.seconds200));
+            InfoLine.toIntegerSeconds(this.infoLine.seconds200));
       else
         timeS = String.format("%s:%s",
             InfoLine.toIntegerMinutes(this.infoLine.secondsSpeed),
@@ -1211,26 +863,28 @@ public class Radar {
   private void drawTime() {
 
     // todo rewritten, check
+    //TODO rewrite using my list?
     RadarStyleSettings.TextSettings dt = styleSettings.time;
-    List<String> lst = new ArrayList(1);
+    List<String> lst = new ArrayList<>(1);
     lst.add(simulation.getNow().toString());
     tl.drawTextBlock(lst, TextBlockLocation.topLeft, dt.getFont(), dt.getColor());
   }
 
-  private String formatToVisualSentence(List<String> sentences) {
-    EStringBuilder ret = new EStringBuilder();
-    for (int i = 0; i < sentences.size(); i++) {
-      String sentence = sentences.get(i);
-      if (sentence.trim().length() == 0) continue;
-      if (i == 0)
-        sentence = makeBeginSentence(sentence);
-      else
-        ret.append(", ");
-      ret.append(sentence);
-    }
-    ret.append(".");
-    return ret.toString();
-  }
+  // never used, commented
+//  private String formatToVisualSentence(List<String> sentences) {
+//    EStringBuilder ret = new EStringBuilder();
+//    for (int i = 0; i < sentences.size(); i++) {
+//      String sentence = sentences.get(i);
+//      if (sentence.trim().length() == 0) continue;
+//      if (i == 0)
+//        sentence = makeBeginSentence(sentence);
+//      else
+//        ret.append(", ");
+//      ret.append(sentence);
+//    }
+//    ret.append(".");
+//    return ret.toString();
+//  }
 
   private RadarStyleSettings.ColorWidthSettings getDispSettBy(Border border) {
     switch (border.getType()) {

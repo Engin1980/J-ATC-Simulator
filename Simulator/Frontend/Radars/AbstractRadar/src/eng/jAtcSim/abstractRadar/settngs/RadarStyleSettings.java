@@ -1,4 +1,4 @@
-package eng.jAtcSim.abstractRadar;
+package eng.jAtcSim.abstractRadar.settngs;
 
 import eng.jAtcSim.abstractRadar.global.Color;
 import eng.jAtcSim.abstractRadar.global.Font;

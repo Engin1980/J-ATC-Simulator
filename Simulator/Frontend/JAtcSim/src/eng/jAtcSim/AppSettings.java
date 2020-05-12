@@ -9,7 +9,7 @@ import eng.eSystem.exceptions.EXmlException;
 import eng.eSystem.xmlSerialization.XmlSerializer;
 import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 import eng.jAtcSim.frmPacks.shared.FlightStripSettings;
-import eng.jAtcSim.abstractRadar.RadarDisplaySettings;
+import eng.jAtcSim.abstractRadar.settngs.RadarDisplaySettings;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;

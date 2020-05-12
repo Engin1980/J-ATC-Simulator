@@ -24,17 +24,17 @@ public class BitmapCanvas implements ICanvas<BufferedImage> {
   private final int height;
   private BufferedImage c;
   private Graphics g;
-  private eng.eSystem.events.Event<ICanvas, EMouseEventArg> mouseEvent =
+  private final eng.eSystem.events.Event<ICanvas<?>, EMouseEventArg> mouseEvent =
       new eng.eSystem.events.Event<>(this);
-  private eng.eSystem.events.EventSimple<ICanvas> paintEvent =
+  private final eng.eSystem.events.EventSimple<ICanvas<?>> paintEvent =
       new eng.eSystem.events.EventSimple<>(this);
-  private eng.eSystem.events.Event<ICanvas, Object> keyEvent =
+  private final eng.eSystem.events.Event<ICanvas<?>, Object> keyEvent =
       new eng.eSystem.events.Event<>(this);
-  private eng.eSystem.events.EventSimple<ICanvas> resizedEvent =
+  private final eng.eSystem.events.EventSimple<ICanvas<?>> resizedEvent =
       new eng.eSystem.events.EventSimple<>(this);
 
-  private final EventSimple<BitmapCanvas> imageDrawn = new EventSimple(this);
-  private final EventSimple<BitmapCanvas> imageDrawing = new EventSimple(this);
+  private final EventSimple<BitmapCanvas> imageDrawn = new EventSimple<>(this);
+  private final EventSimple<BitmapCanvas> imageDrawing = new EventSimple<>(this);
 
   public EventSimple<BitmapCanvas> getImageDrawn() {
     return imageDrawn;
@@ -229,22 +229,22 @@ public class BitmapCanvas implements ICanvas<BufferedImage> {
   }
 
   @Override
-  public eng.eSystem.events.Event<ICanvas, EMouseEventArg> getMouseEvent() {
+  public eng.eSystem.events.Event<ICanvas<?>, EMouseEventArg> getMouseEvent() {
     return mouseEvent;
   }
 
   @Override
-  public eng.eSystem.events.EventSimple<ICanvas> getPaintEvent() {
+  public eng.eSystem.events.EventSimple<ICanvas<?>> getPaintEvent() {
     return paintEvent;
   }
 
   @Override
-  public Event<ICanvas, Object> getKeyEvent() {
+  public Event<ICanvas<?>, Object> getKeyEvent() {
     return keyEvent;
   }
 
   @Override
-  public EventSimple<ICanvas> getResizedEvent() {
+  public EventSimple<ICanvas<?>> getResizedEvent() {
     return resizedEvent;
   }
 

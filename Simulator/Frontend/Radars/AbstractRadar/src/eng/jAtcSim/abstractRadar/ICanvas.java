@@ -54,13 +54,13 @@ public interface ICanvas<T> {
 
   T getGuiControl();
 
-  Event<ICanvas, EMouseEventArg> getMouseEvent();
+  Event<ICanvas<?>, EMouseEventArg> getMouseEvent();
 
-  EventSimple<ICanvas> getPaintEvent();
+  EventSimple<ICanvas<?>> getPaintEvent();
 
-  Event<ICanvas, Object> getKeyEvent();
+  Event<ICanvas<?>, Object> getKeyEvent();
 
-  EventSimple<ICanvas> getResizedEvent();
+  EventSimple<ICanvas<?>> getResizedEvent();
 
   Size getEstimatedTextSize(Font font, int rowsCount, int columnsCount);
 
