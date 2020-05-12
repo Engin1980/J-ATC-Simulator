@@ -6,8 +6,6 @@ import eng.eSystem.collections.IList;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.ERuntimeException;
 import eng.eSystem.swing.other.HistoryForJFileChooser;
-import eng.eSystem.xmlSerialization.XmlSerializer;
-import eng.eSystem.xmlSerialization.XmlSettings;
 
 import java.awt.*;
 import java.io.IOException;
@@ -16,7 +14,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
 public class FileHistoryManager {
-  private static Dimension defaultDimension = new Dimension(500, 100);
+  private static final Dimension defaultDimension = new Dimension(500, 100);
   private static EMap<String, EList<String>> histories = new eng.eSystem.collections.EMap<>();
   private static boolean initialized = false;
 

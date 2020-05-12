@@ -8,8 +8,6 @@ import eng.eSystem.exceptions.ERuntimeException;
 import eng.eSystem.swing.LayoutManager;
 import eng.eSystem.swing.other.HistoryForJFileChooser;
 import eng.eSystem.swing.other.JFileChooserAsidePanel;
-import eng.eSystem.xmlSerialization.XmlSerializer;
-import eng.eSystem.xmlSerialization.XmlSettings;
 import eng.jAtcSim.frmPacks.shared.MoodHistoryPanel;
 
 import javax.swing.*;

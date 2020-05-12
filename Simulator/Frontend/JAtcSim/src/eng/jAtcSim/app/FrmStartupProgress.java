@@ -2,9 +2,9 @@ package eng.jAtcSim.app;
 
 import eng.jAtcSim.JAtcSim;
 import eng.jAtcSim.Stylist;
-import eng.jAtcSim.newLib.Acc;
-import eng.jAtcSim.newLib.area.global.logging.ApplicationLog;
 import eng.eSystem.swing.LayoutManager;
+import eng.jAtcSim.newLib.shared.SharedAcc;
+import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 
 import javax.swing.*;
 import java.awt.*;
@@ -20,12 +20,12 @@ public class FrmStartupProgress extends JFrame {
 
     JAtcSim.setIconToFrame(this, "logIcon.png");
 
-    listenerId = Acc.log().getOnNewMessage().add(q -> appendInfo(q));
+    listenerId = SharedAcc.getAppLog().getOnNewMessage().add(q -> appendInfo(q));
     this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
     this.addWindowListener(new WindowAdapter() {
       @Override
       public void windowClosed(WindowEvent e) {
-        Acc.log().getOnNewMessage().remove(listenerId);
+        SharedAcc.getAppLog().getOnNewMessage().remove(listenerId);
       }
     });
 
