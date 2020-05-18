@@ -3,7 +3,7 @@ package eng.jAtcSim.newLib.fleet;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
-import eng.eSystem.utilites.Selector;
+import eng.eSystem.functionalInterfaces.Selector;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.fleet.airliners.CompanyFleet;
 

@@ -3,9 +3,15 @@ package eng.jAtcSim.app.extenders.swingFactory;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IList;
+import eng.eSystem.collections.IMap;
+import eng.eSystem.eXml.XDocument;
+import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.ERuntimeException;
+import eng.eSystem.exceptions.EXmlException;
 import eng.eSystem.swing.other.HistoryForJFileChooser;
+import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
+import eng.jAtcSim.newLib.shared.xml.XmlSaverUtils;
 
 import java.awt.*;
 import java.io.IOException;
@@ -15,7 +21,7 @@ import java.nio.file.StandardCopyOption;
 
 public class FileHistoryManager {
   private static final Dimension defaultDimension = new Dimension(500, 100);
-  private static EMap<String, EList<String>> histories = new eng.eSystem.collections.EMap<>();
+  private static IMap<String, IList<String>> histories = new EMap<>();
   private static boolean initialized = false;
 
   public static HistoryForJFileChooser getAsidePanel(String key) {
@@ -23,7 +29,7 @@ public class FileHistoryManager {
       init();
     HistoryForJFileChooser ret = new HistoryForJFileChooser(defaultDimension);
     IList<String> hs = histories.getOrSet(key, new EList<>());
-    IList<Path> hp = hs.select(q->Paths.get(q));
+    IList<Path> hp = hs.select(q -> Paths.get(q));
     ret.setHistory(hp);
     return ret;
   }
@@ -34,47 +40,11 @@ public class FileHistoryManager {
   }
 
   public static void updateHistory(String key, String path) {
-    EList<String> lst = histories.getOrSet(key, new EList<>());
+    IList<String> lst = histories.getOrSet(key, new EList<>());
     if (lst.contains(path))
       lst.remove(path);
     lst.insert(0, path);
     saveHistories();
-  }
-
-  private static void loadHistories() {
-    Path userHomeHistoryFile = getHistoryFilePath();
-
-    if (java.nio.file.Files.exists(userHomeHistoryFile) == false)
-      return;
-
-    XmlSettings sett = getXmlHistorySettings();
-    XmlSerializer ser = new XmlSerializer(sett);
-    EMap<String, EList<String>> tmp;
-    try {
-      tmp = ser.deserialize(userHomeHistoryFile.toAbsolutePath().toString(), EMap.class);
-      FileHistoryManager.histories = tmp;
-    } catch (Exception ex) {
-      throw new EApplicationException("Failed to load history of loaded files.", ex);
-    }
-  }
-
-  private static void saveHistories() {
-    Path userHomeHistoryFile = getHistoryFilePath();
-
-    XmlSettings sett = getXmlHistorySettings();
-    XmlSerializer ser = new XmlSerializer(sett);
-    Path tmpFile;
-    try {
-      tmpFile = java.nio.file.Files.createTempFile("", "");
-    } catch (IOException e) {
-      throw new ERuntimeException("Failed to create a temp file.", e);
-    }
-    ser.serialize(tmpFile.toAbsolutePath().toString(), histories);
-    try {
-      java.nio.file.Files.copy(tmpFile, userHomeHistoryFile, StandardCopyOption.REPLACE_EXISTING);
-    } catch (IOException e) {
-      throw new ERuntimeException("Failed to replace existing history file.", e);
-    }
   }
 
   private static Path getHistoryFilePath() {
@@ -83,9 +53,53 @@ public class FileHistoryManager {
     return ret;
   }
 
-  private static XmlSettings getXmlHistorySettings() {
-    XmlSettings ret = new XmlSettings();
+  private static void loadHistories() {
+    Path userHomeHistoryFile = getHistoryFilePath();
 
-    return ret;
+    if (java.nio.file.Files.exists(userHomeHistoryFile) == false)
+      return;
+
+
+    XDocument doc;
+    IMap<String, IList<String>> tmp = new EMap<>();
+    try {
+      doc = XDocument.load(userHomeHistoryFile.toAbsolutePath().toString());
+    } catch (Exception ex) {
+      throw new EApplicationException("Failed to load history of loaded files.", ex);
+    }
+
+    XmlLoaderUtils.loadMap(doc.getRoot(), tmp,
+        e -> e.getAttribute("key"),
+        e -> XmlLoaderUtils.loadList(e, new EList<String>(),
+            f -> f.getContent()));
+
+    FileHistoryManager.histories = tmp;
+  }
+
+  private static void saveHistories() {
+    Path userHomeHistoryFile = getHistoryFilePath();
+
+    XElement root = new XElement("root");
+    XmlSaverUtils.saveMap(histories, root,
+        q -> "entry",
+        (q, e) -> e.setAttribute("key", q),
+        (q, e) -> XmlSaverUtils.saveList(q, e,
+            p -> "item",
+            (p, f) -> f.setContent(p)));
+
+    XDocument doc = new XDocument(root);
+
+    Path tmpFile;
+    try {
+      tmpFile = java.nio.file.Files.createTempFile("", "");
+      doc.save(tmpFile);
+    } catch (IOException | EXmlException e) {
+      throw new ERuntimeException("Failed to create a temp xml file '%s'.", e);
+    }
+    try {
+      java.nio.file.Files.copy(tmpFile, userHomeHistoryFile, StandardCopyOption.REPLACE_EXISTING);
+    } catch (IOException e) {
+      throw new ERuntimeException("Failed to replace existing history file.", e);
+    }
   }
 }

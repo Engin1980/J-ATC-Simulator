@@ -1,15 +1,15 @@
 package eng.jAtcSim;
 
 
+import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.eXml.XDocument;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EXmlException;
 
-import eng.eSystem.xmlSerialization.XmlSerializer;
-import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 import eng.jAtcSim.frmPacks.shared.FlightStripSettings;
 import eng.jAtcSim.abstractRadar.settngs.RadarDisplaySettings;
+import eng.jAtcSim.newLib.shared.xml.SmartXmlLoaderUtils;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -24,6 +24,28 @@ public class AppSettings {
 
   public static class Radar {
     public static class DisplaySettings {
+      public static DisplaySettings load(XElement elm) {
+        DisplaySettings ret = new DisplaySettings();
+
+        ret.tma = SmartXmlLoaderUtils.loadBoolean(elm, "tma");
+        ret.country = SmartXmlLoaderUtils.loadBoolean(elm, "country");
+        ret.mrva = SmartXmlLoaderUtils.loadBoolean(elm, "mrva");
+        ret.mrvaLabel = SmartXmlLoaderUtils.loadBoolean(elm, "mrvaLabel");
+        ret.ctr = SmartXmlLoaderUtils.loadBoolean(elm, "ctr");
+        ret.vor = SmartXmlLoaderUtils.loadBoolean(elm, "vor");
+        ret.ndb = SmartXmlLoaderUtils.loadBoolean(elm, "ndb");
+        ret.sid = SmartXmlLoaderUtils.loadBoolean(elm, "sid");
+        ret.star = SmartXmlLoaderUtils.loadBoolean(elm, "star");
+        ret.fix = SmartXmlLoaderUtils.loadBoolean(elm, "fix");
+        ret.routeFix = SmartXmlLoaderUtils.loadBoolean(elm, "routeFix");
+        ret.minorFix = SmartXmlLoaderUtils.loadBoolean(elm, "minorFix");
+        ret.rings = SmartXmlLoaderUtils.loadBoolean(elm, "rings");
+        ret.history = SmartXmlLoaderUtils.loadBoolean(elm, "history");
+        ret.minAltitude = SmartXmlLoaderUtils.loadInteger(elm, "minAltitude");
+        ret.maxAltitude = SmartXmlLoaderUtils.loadInteger(elm, "maxAltitude");
+        return ret;
+      }
+
       public boolean tma = true;
       public boolean country = true;
       public boolean mrva = true;
@@ -73,11 +95,11 @@ public class AppSettings {
     public int intervalInSeconds;
     public Path path;
   }
-  @XmlIgnore
+  //@XmlIgnore
   private static Path applicationFolder;
-  @XmlIgnore
+  //@XmlIgnore
   private static java.time.LocalDateTime startDateTime;
-  @XmlIgnore
+  //@XmlIgnore
   private static boolean initialized = false;
   public AutoSave autosave = new AutoSave();
   public Radar radar = new Radar();
@@ -87,7 +109,7 @@ public class AppSettings {
   public Path stripSettingsFile;
   public Path speechFormatterFile;
   public Stats stats = new Stats();
-  @XmlIgnore
+  //@XmlIgnore
   private FlightStripSettings flightStripSettings = null;
 
   public static Path getApplicationFolder() {
@@ -146,8 +168,9 @@ public class AppSettings {
       tmp = radarElement.getChild("styleSettingsFile").getContent();
       ret.radar.styleSettingsFile = decodePath(tmp);
       ret.radar.displayTextDelay = Integer.parseInt(radarElement.getChild("displayTextDelay").getContent());
-      ret.radar.displaySettings = new XmlSerializer().deserialize(
-          radarElement.getChild("displaySettings"), Radar.DisplaySettings.class);
+      ret.radar.displaySettings = Radar.DisplaySettings.load(radarElement.getChild("displaySettings"));
+      //) new XmlSerializer().deserialize(
+      //    radarElement.getChild("displaySettings"), Radar.DisplaySettings.class);
 
       XElement autosaveElement = doc.getRoot().getChild("autosave");
       ret.autosave.intervalInSeconds = Integer.parseInt(autosaveElement.getAttribute("intervalInMinutes")) * 60;

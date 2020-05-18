@@ -5,13 +5,13 @@ import eng.eSystem.utilites.ExceptionUtils;
 import eng.eSystem.utilites.awt.ComponentUtils;
 import eng.jAtcSim.XmlLoadHelper;
 import eng.jAtcSim.app.extenders.swingFactory.FileHistoryManager;
-import eng.jAtcSim.newLib.Acc;
-import eng.jAtcSim.newLib.area.global.logging.ApplicationLog;
-import eng.jAtcSim.newLib.area.traffic.FlightListTraffic;
-import eng.jAtcSim.newLib.area.traffic.Traffic;
 import eng.eSystem.swing.LayoutManager;
 import eng.jAtcSim.app.extenders.swingFactory.SwingFactory;
 import eng.jAtcSim.app.startupSettings.panels.*;
+import eng.jAtcSim.newLib.gameSim.game.sources.AirplaneTypesSource;
+import eng.jAtcSim.newLib.gameSim.game.sources.FleetsSource;
+import eng.jAtcSim.newLib.shared.SharedAcc;
+import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 import eng.jAtcSim.shared.MessageBox;
 
 import javax.swing.*;
@@ -93,7 +93,7 @@ public class FrmStartupSettings extends JPanel {
     try {
       types.init();
     } catch (Exception ex) {
-      Acc.log().writeLine(ApplicationLog.eType.warning, "Failed to load types from '%s'. '%s'", ss.files.planesXmlFile,
+      SharedAcc.getAppLog().writeLine(ApplicationLog.eType.warning, "Failed to load types from '%s'. '%s'", ss.files.planesXmlFile,
           ExceptionUtils.toFullString(ex));
       MessageBox.show("Failed to load types from file " + ss.files.planesXmlFile + ". " + ex.getMessage(), "Error...");
       btnValidate.setEnabled(true);
@@ -102,7 +102,7 @@ public class FrmStartupSettings extends JPanel {
     try {
       fleets.init(types.getContent());
     } catch (Exception ex) {
-      Acc.log().writeLine(ApplicationLog.eType.warning, "Failed to load fleets from '%s'. '%s'", ss.files.fleetsXmlFile,
+      SharedAcc.getAppLog().writeLine(ApplicationLog.eType.warning, "Failed to load fleets from '%s'. '%s'", ss.files.fleetsXmlFile,
           ExceptionUtils.toFullString(ex));
       MessageBox.show("Failed to load fleets from file " + ss.files.fleetsXmlFile + ". " + ex.getMessage(), "Error...");
       btnValidate.setEnabled(true);
@@ -114,7 +114,7 @@ public class FrmStartupSettings extends JPanel {
       try{
         ws.init();
       } catch (Exception ex){
-        Acc.log().writeLine(ApplicationLog.eType.warning, "Failed to load weather from '%s'. '%s'", ss.files.weatherXmlFile,
+        SharedAcc.getAppLog().writeLine(ApplicationLog.eType.warning, "Failed to load weather from '%s'. '%s'", ss.files.weatherXmlFile,
             ExceptionUtils.toFullString(ex));
         MessageBox.show("Failed to load weather from file " + ss.files.weatherXmlFile + ". " + ex.getMessage(), "Error...");
         btnValidate.setEnabled(true);
@@ -127,7 +127,7 @@ public class FrmStartupSettings extends JPanel {
       try {
         traffics.init();
       } catch (Exception ex) {
-        Acc.log().writeLine(ApplicationLog.eType.warning, "Failed to load traffic from '%s'. '%s'", ss.files.trafficXmlFile,
+        SharedAcc.getAppLog().writeLine(ApplicationLog.eType.warning, "Failed to load traffic from '%s'. '%s'", ss.files.trafficXmlFile,
             ExceptionUtils.toFullString(ex));
         MessageBox.show("Failed to load traffic from file " + ss.files.trafficXmlFile + ". " + ex.getMessage(), "Error...");
         btnValidate.setEnabled(true);
@@ -141,7 +141,7 @@ public class FrmStartupSettings extends JPanel {
 
         for (String requiredPlaneType : requiredPlaneTypes) {
           if (types.getContent().tryGetByName(requiredPlaneType) == null) {
-            Acc.log().writeLine(ApplicationLog.eType.warning, "Required plane kind '%s' not found in known plane types.", requiredPlaneType);
+            SharedAcc.getAppLog().writeLine(ApplicationLog.eType.warning, "Required plane kind '%s' not found in known plane types.", requiredPlaneType);
             someFail = true;
           }
         }

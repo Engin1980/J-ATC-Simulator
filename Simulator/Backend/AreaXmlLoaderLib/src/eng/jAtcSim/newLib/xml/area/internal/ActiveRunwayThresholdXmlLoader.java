@@ -27,7 +27,7 @@ import eng.jAtcSim.newLib.area.routes.GaRoute;
 import eng.jAtcSim.newLib.area.routes.IafRoute;
 import eng.jAtcSim.newLib.shared.PlaneCategoryDefinitions;
 import eng.jAtcSim.newLib.shared.enums.ApproachType;
-import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
+import eng.jAtcSim.newLib.shared.xml.SmartXmlLoaderUtils;
 import eng.jAtcSim.newLib.speeches.airplane.ICommand;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ChangeAltitudeCommand;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ChangeHeadingCommand;
@@ -176,20 +176,20 @@ public class ActiveRunwayThresholdXmlLoader extends XmlLoader<ActiveRunwayThresh
   }
 
   private ActiveRunwayThreshold.Prototype loadOne(XElement source) {
-    XmlLoaderUtils.setContext(source);
-    String name = XmlLoaderUtils.loadString("name");
-    Coordinate coordinate = XmlLoaderUtils.loadCoordinate("coordinate");
-    int initialDepartureAltitude = XmlLoaderUtils.loadInteger("initialDepartureAltitude");
-    int accelerationAltitude = XmlLoaderUtils.loadInteger("accelerationAltitude",
+    SmartXmlLoaderUtils.setContext(source);
+    String name = SmartXmlLoaderUtils.loadString("name");
+    Coordinate coordinate = SmartXmlLoaderUtils.loadCoordinate("coordinate");
+    int initialDepartureAltitude = SmartXmlLoaderUtils.loadInteger("initialDepartureAltitude");
+    int accelerationAltitude = SmartXmlLoaderUtils.loadInteger("accelerationAltitude",
         context.airport.altitude + 1500); // default acc-alt is 1500 ft above airport
-    String mapping = XmlLoaderUtils.loadString("mapping");
+    String mapping = SmartXmlLoaderUtils.loadString("mapping");
 
     context.threshold.coordinate = coordinate;
     context.threshold.name = name;
 
     IList<DARoute> routes = context.airport.daMappings.get(mapping);
 
-    IList<IList<Approach>> approachesList = XmlLoaderUtils.loadList(
+    IList<IList<Approach>> approachesList = SmartXmlLoaderUtils.loadList(
         source.getChild("approaches").getChildren(),
         new ApproachXmlLoader(context));
 

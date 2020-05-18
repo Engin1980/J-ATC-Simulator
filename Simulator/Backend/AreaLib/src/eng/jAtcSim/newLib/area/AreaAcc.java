@@ -1,6 +1,6 @@
 package eng.jAtcSim.newLib.area;
 
-import eng.eSystem.Producer;
+import eng.eSystem.functionalInterfaces.Producer;
 
 public class AreaAcc {
   private static Producer<Area> areaProducer = null;

@@ -13,7 +13,7 @@ import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.area.routes.DARoute;
 import eng.jAtcSim.newLib.shared.PlaneCategoryDefinitions;
 import eng.jAtcSim.newLib.shared.enums.DARouteType;
-import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
+import eng.jAtcSim.newLib.shared.xml.SmartXmlLoaderUtils;
 import eng.jAtcSim.newLib.speeches.airplane.ICommand;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ToNavaidCommand;
 import eng.jAtcSim.newLib.xml.area.internal.XmlLoader;
@@ -28,19 +28,19 @@ public class DARouteXmlLoader extends XmlLoader<DARoute> {
 
   @Override
   public DARoute load(XElement source) {
-    XmlLoaderUtils.setContext(source);
+    SmartXmlLoaderUtils.setContext(source);
 
-    DARouteType type = XmlLoaderUtils.loadEnum("type", DARouteType.class);
-    String name = XmlLoaderUtils.loadString("name");
-    String mapping = XmlLoaderUtils.loadString("mapping");
-    PlaneCategoryDefinitions category = XmlLoaderUtils.loadPlaneCategory("category", "ABCD");
-    Integer entryAltitude = XmlLoaderUtils.loadAltitude("entryFL", null);
-    String mainFixName = XmlLoaderUtils.loadString("mainFix", null);
+    DARouteType type = SmartXmlLoaderUtils.loadEnum("type", DARouteType.class);
+    String name = SmartXmlLoaderUtils.loadString("name");
+    String mapping = SmartXmlLoaderUtils.loadString("mapping");
+    PlaneCategoryDefinitions category = SmartXmlLoaderUtils.loadPlaneCategory("category", "ABCD");
+    Integer entryAltitude = SmartXmlLoaderUtils.loadAltitude("entryFL", null);
+    String mainFixName = SmartXmlLoaderUtils.loadString("mainFix", null);
     Navaid mainNavaid = mainFixName != null ?
         context.area.navaids.get(mainFixName) :
         getMainRouteNavaidFromRouteName(name);
 
-    IList<ICommand> commands = XmlLoaderUtils.loadList(
+    IList<ICommand> commands = SmartXmlLoaderUtils.loadList(
         source.getChildren(),
         new SpeechXmlLoader()
     );

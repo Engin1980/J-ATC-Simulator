@@ -14,5 +14,6 @@
     <orderEntry type="module" module-name="BitmapRadar" />
     <orderEntry type="library" name="JFreeCharts" level="project" />
     <orderEntry type="module" module-name="SharedLib" />
+    <orderEntry type="module" module-name="SimulationLib" />
   </component>
 </module>

@@ -2,12 +2,10 @@ package eng.jAtcSim.newLib.xml.area.internal;
 
 import eng.eSystem.Tuple;
 import eng.eSystem.collections.IList;
-import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.geo.Coordinate;
-import eng.eSystem.geo.Coordinates;
 import eng.jAtcSim.newLib.area.*;
-import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
+import eng.jAtcSim.newLib.shared.xml.SmartXmlLoaderUtils;
 import eng.jAtcSim.newLib.xml.area.internal.context.Context;
 
 class EntryExitPointXmlLoader extends XmlLoader<EntryExitPoint> {
@@ -18,12 +16,12 @@ class EntryExitPointXmlLoader extends XmlLoader<EntryExitPoint> {
 
   @Override
   public EntryExitPoint load(XElement source) {
-    XmlLoaderUtils.setContext(source);
-    String navaidName = XmlLoaderUtils.loadString("name");
+    SmartXmlLoaderUtils.setContext(source);
+    String navaidName = SmartXmlLoaderUtils.loadString("name");
     Navaid navaid = context.area.navaids.get(navaidName);
-    EntryExitPoint.Type type = XmlLoaderUtils.loadEnum("type", EntryExitPoint.Type.class);
+    EntryExitPoint.Type type = SmartXmlLoaderUtils.loadEnum("type", EntryExitPoint.Type.class);
 
-    Integer maxMrvaAltitude = XmlLoaderUtils.loadInteger("maxMrvaAltitude", null);
+    Integer maxMrvaAltitude = SmartXmlLoaderUtils.loadInteger("maxMrvaAltitude", null);
     maxMrvaAltitude = evaluateMaxMrvaAltitude(maxMrvaAltitude, navaid);
 
     EntryExitPoint ret = EntryExitPoint.create(navaid, type, maxMrvaAltitude);

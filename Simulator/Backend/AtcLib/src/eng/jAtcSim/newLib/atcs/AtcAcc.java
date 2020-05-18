@@ -1,7 +1,7 @@
 package eng.jAtcSim.newLib.atcs;
 
-import eng.eSystem.Producer;
-import eng.eSystem.utilites.Selector;
+import eng.eSystem.functionalInterfaces.Producer;
+import eng.eSystem.functionalInterfaces.Selector;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.Callsign;
 

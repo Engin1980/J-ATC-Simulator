@@ -1,7 +1,7 @@
 package eng.jAtcSim.newLib.weather.presets;
 
 import eng.eSystem.eXml.XElement;
-import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
+import eng.jAtcSim.newLib.shared.xml.SmartXmlLoaderUtils;
 import eng.jAtcSim.newLib.weather.Weather;
 
 import java.time.LocalTime;
@@ -9,16 +9,16 @@ import java.time.format.DateTimeFormatter;
 
 public class PresetWeather extends Weather {
   public static PresetWeather load(XElement source) {
-    XmlLoaderUtils.setContext(source);
-    String timeS = XmlLoaderUtils.loadString("time");
+    SmartXmlLoaderUtils.setContext(source);
+    String timeS = SmartXmlLoaderUtils.loadString("time");
     LocalTime time = LocalTime.parse(
         timeS,
         DateTimeFormatter.ofPattern("HH:mm"));
-    int cloudBaseAltitude = XmlLoaderUtils.loadInteger("cloudBaseAltitude");
-    double cloudBaseProbability = XmlLoaderUtils.loadDouble("cloudBaseProbability");
-    int visibility = XmlLoaderUtils.loadInteger("visibility");
-    int windDirection = XmlLoaderUtils.loadInteger("windDirection");
-    int windSpeed = XmlLoaderUtils.loadInteger("windSpeed");
+    int cloudBaseAltitude = SmartXmlLoaderUtils.loadInteger("cloudBaseAltitude");
+    double cloudBaseProbability = SmartXmlLoaderUtils.loadDouble("cloudBaseProbability");
+    int visibility = SmartXmlLoaderUtils.loadInteger("visibility");
+    int windDirection = SmartXmlLoaderUtils.loadInteger("windDirection");
+    int windSpeed = SmartXmlLoaderUtils.loadInteger("windSpeed");
 
     //TODO doesn't load snow state
     PresetWeather ret = new PresetWeather(time, windDirection, windSpeed,

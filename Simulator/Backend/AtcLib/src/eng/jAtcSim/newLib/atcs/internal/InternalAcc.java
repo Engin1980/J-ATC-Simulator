@@ -1,6 +1,6 @@
 package eng.jAtcSim.newLib.atcs.internal;
 
-import eng.eSystem.Producer;
+import eng.eSystem.functionalInterfaces.Producer;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplanes.AirplaneAcc;
 import eng.jAtcSim.newLib.airplanes.IAirplane;

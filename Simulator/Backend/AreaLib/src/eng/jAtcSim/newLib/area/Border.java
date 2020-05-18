@@ -7,20 +7,12 @@
 package eng.jAtcSim.newLib.area;
 
 import eng.eSystem.Tuple;
-import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
-import eng.eSystem.collections.IReadOnlyList;
-import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.geo.Coordinate;
-import eng.eSystem.geo.Coordinates;
-import eng.eSystem.geo.Headings;
 import eng.eSystem.utilites.NumberUtils;
-import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
 
 import java.util.Comparator;
-
-import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 /**
  * @author Marek

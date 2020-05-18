@@ -2,12 +2,9 @@ package eng.jAtcSim.newLib.area;
 
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
-import eng.eSystem.collections.IReadOnlyList;
-import eng.eSystem.eXml.XElement;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.validation.EAssert;
-import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
 
 public class InactiveRunwayThreshold extends Parentable<InactiveRunway> {
 

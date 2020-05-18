@@ -11,7 +11,7 @@ import eng.eSystem.events.EventAnonymousSimple;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.exceptions.ERuntimeException;
-import eng.eSystem.utilites.Selector;
+import eng.eSystem.functionalInterfaces.Selector;
 import eng.jAtcSim.SwingRadar.SwingCanvas;
 import eng.jAtcSim.abstractRadar.settngs.RadarBehaviorSettings;
 import eng.jAtcSim.abstractRadar.settngs.RadarDisplaySettings;

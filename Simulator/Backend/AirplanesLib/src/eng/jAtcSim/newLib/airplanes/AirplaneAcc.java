@@ -1,6 +1,6 @@
 package eng.jAtcSim.newLib.airplanes;
 
-import eng.eSystem.Producer;
+import eng.eSystem.functionalInterfaces.Producer;
 
 public class AirplaneAcc {
 

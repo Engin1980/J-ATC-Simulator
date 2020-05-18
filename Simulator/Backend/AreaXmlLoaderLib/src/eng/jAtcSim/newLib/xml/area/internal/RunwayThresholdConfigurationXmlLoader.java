@@ -1,14 +1,11 @@
 package eng.jAtcSim.newLib.xml.area.internal;
 
-import eng.eSystem.collections.*;
 import eng.eSystem.eXml.XElement;
-import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.area.ActiveRunway;
 import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
 import eng.jAtcSim.newLib.area.RunwayThresholdConfiguration;
 import eng.jAtcSim.newLib.shared.PlaneCategoryDefinitions;
-import eng.jAtcSim.newLib.shared.xml.IXmlLoader;
-import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
+import eng.jAtcSim.newLib.shared.xml.SmartXmlLoaderUtils;
 import eng.jAtcSim.newLib.xml.area.internal.context.Context;
 
 public class RunwayThresholdConfigurationXmlLoader extends XmlLoader {
@@ -18,12 +15,12 @@ public class RunwayThresholdConfigurationXmlLoader extends XmlLoader {
   }
 
   public RunwayThresholdConfiguration load(XElement source) {
-    XmlLoaderUtils.setContext(source);
-    String name = XmlLoaderUtils.loadString("name");
-    boolean primary = XmlLoaderUtils.loadBoolean("primary", false);
-    boolean showRoutes = XmlLoaderUtils.loadBoolean("showRoutes", true);
-    boolean showApproach = XmlLoaderUtils.loadBoolean("showApproach", true);
-    PlaneCategoryDefinitions categories = XmlLoaderUtils.loadPlaneCategory("category", "ABCD");
+    SmartXmlLoaderUtils.setContext(source);
+    String name = SmartXmlLoaderUtils.loadString("name");
+    boolean primary = SmartXmlLoaderUtils.loadBoolean("primary", false);
+    boolean showRoutes = SmartXmlLoaderUtils.loadBoolean("showRoutes", true);
+    boolean showApproach = SmartXmlLoaderUtils.loadBoolean("showApproach", true);
+    PlaneCategoryDefinitions categories = SmartXmlLoaderUtils.loadPlaneCategory("category", "ABCD");
 
     ActiveRunwayThreshold threshold = null;
     for (ActiveRunway activeRunway : context.airport.activeRunways) {

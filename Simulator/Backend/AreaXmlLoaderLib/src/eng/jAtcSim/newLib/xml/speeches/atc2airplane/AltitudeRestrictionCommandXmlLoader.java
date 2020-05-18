@@ -4,7 +4,7 @@ import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.jAtcSim.newLib.shared.enums.AboveBelowExactly;
 import eng.jAtcSim.newLib.shared.xml.IXmlLoader;
-import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
+import eng.jAtcSim.newLib.shared.xml.SmartXmlLoaderUtils;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.AltitudeRestrictionCommand;
 
 public class AltitudeRestrictionCommandXmlLoader implements IXmlLoader<AltitudeRestrictionCommand> {
@@ -14,13 +14,13 @@ public class AltitudeRestrictionCommandXmlLoader implements IXmlLoader<AltitudeR
         element.getName().equals("AltitudeRestrictionClear");
     AltitudeRestrictionCommand ret;
 
-    XmlLoaderUtils.setContext(element);
+    SmartXmlLoaderUtils.setContext(element);
 
     if (element.getName().equals("AltitudeRestrictionClear"))
       ret = AltitudeRestrictionCommand.createClearRestriction();
     else {
-      String resString = XmlLoaderUtils.loadString("restriction");
-      int value = XmlLoaderUtils.loadInteger("value");
+      String resString = SmartXmlLoaderUtils.loadString("restriction");
+      int value = SmartXmlLoaderUtils.loadInteger("value");
       AboveBelowExactly restriction;
       switch (resString) {
         case "above":

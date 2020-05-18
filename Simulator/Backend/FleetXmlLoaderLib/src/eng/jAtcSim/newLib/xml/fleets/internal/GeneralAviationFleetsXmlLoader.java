@@ -4,17 +4,16 @@ import eng.eSystem.collections.*;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.fleet.TypeAndWeight;
-import eng.jAtcSim.newLib.fleet.airliners.CompanyFleet;
 import eng.jAtcSim.newLib.fleet.generalAviation.CountryFleet;
 import eng.jAtcSim.newLib.fleet.generalAviation.GeneralAviationFleets;
-import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
+import eng.jAtcSim.newLib.shared.xml.SmartXmlLoaderUtils;
 
 public class GeneralAviationFleetsXmlLoader {
   public GeneralAviationFleets load(XElement root) {
     EAssert.isTrue(root.getName().equals("airlinersFleets"), "Incorrect loading xml element");
 
     IList<CountryFleet> tmp = new EDistinctList<>(q->q.getCountryCode(), EDistinctList.Behavior.exception);
-    XmlLoaderUtils.loadList(
+    SmartXmlLoaderUtils.loadList(
         root.getChildren("company"),
         tmp,
         q-> loadCountry(q));
@@ -26,8 +25,8 @@ public class GeneralAviationFleetsXmlLoader {
   }
 
   private CountryFleet loadDefault(XElement source) {
-    String prefix = XmlLoaderUtils.loadString(source, "aircraftPrefix");
-    IList<TypeAndWeight> types = XmlLoaderUtils.loadList(
+    String prefix = SmartXmlLoaderUtils.loadString(source, "aircraftPrefix");
+    IList<TypeAndWeight> types = SmartXmlLoaderUtils.loadList(
         source.getChildren("type"),
         q -> loadFleet(q)
     );
@@ -37,10 +36,10 @@ public class GeneralAviationFleetsXmlLoader {
   }
 
   private CountryFleet loadCountry(XElement source) {
-    String code = XmlLoaderUtils.loadString(source, "code");
-    String prefix = XmlLoaderUtils.loadString(source, "aircraftPrefix");
-    String name = XmlLoaderUtils.loadString(source, "name", "(N/A)");
-    IList<TypeAndWeight> types = XmlLoaderUtils.loadList(
+    String code = SmartXmlLoaderUtils.loadString(source, "code");
+    String prefix = SmartXmlLoaderUtils.loadString(source, "aircraftPrefix");
+    String name = SmartXmlLoaderUtils.loadString(source, "name", "(N/A)");
+    IList<TypeAndWeight> types = SmartXmlLoaderUtils.loadList(
         source.getChildren("type"),
         q -> loadFleet(q)
     );
@@ -50,9 +49,9 @@ public class GeneralAviationFleetsXmlLoader {
   }
 
   private TypeAndWeight loadFleet(XElement source){
-    XmlLoaderUtils.setContext(source);
-    String name = XmlLoaderUtils.loadString("name");
-    int weight = XmlLoaderUtils.loadInteger("weight");
+    SmartXmlLoaderUtils.setContext(source);
+    String name = SmartXmlLoaderUtils.loadString("name");
+    int weight = SmartXmlLoaderUtils.loadInteger("weight");
 
     TypeAndWeight ret = TypeAndWeight.create(name, weight);
     return ret;

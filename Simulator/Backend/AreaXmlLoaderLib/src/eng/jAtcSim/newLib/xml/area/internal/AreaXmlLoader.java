@@ -4,9 +4,8 @@ import eng.eSystem.collections.IList;
 import eng.eSystem.eXml.XElement;
 import eng.jAtcSim.newLib.area.Airport;
 import eng.jAtcSim.newLib.area.Area;
-import eng.jAtcSim.newLib.area.Border;
 import eng.jAtcSim.newLib.area.NavaidList;
-import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
+import eng.jAtcSim.newLib.shared.xml.SmartXmlLoaderUtils;
 import eng.jAtcSim.newLib.xml.area.internal.context.Context;
 
 public class AreaXmlLoader extends XmlLoader<Area> {
@@ -16,21 +15,21 @@ public class AreaXmlLoader extends XmlLoader<Area> {
 
   @Override
   public Area load(XElement source) {
-    XmlLoaderUtils.setContext(source);
-    context.area.icao = XmlLoaderUtils.loadString("icao");
+    SmartXmlLoaderUtils.setContext(source);
+    context.area.icao = SmartXmlLoaderUtils.loadString("icao");
 
     context.area.navaids = new NavaidList();
-    XmlLoaderUtils.loadList(
+    SmartXmlLoaderUtils.loadList(
         source.getChild("navaids").getChildren("navaid"),
         context.area.navaids,
         new NavaidXmlLoader()
     );
 
-    context.area.borders = XmlLoaderUtils.loadList(
+    context.area.borders = SmartXmlLoaderUtils.loadList(
         source.getChild("borders").getChildren("border"),
         new BorderXmlLoader());
 
-    IList<Airport> airports = XmlLoaderUtils.loadList(
+    IList<Airport> airports = SmartXmlLoaderUtils.loadList(
         source.getChild("airports").getChildren("airport"),
         new AirportXmlLoader(context));
 

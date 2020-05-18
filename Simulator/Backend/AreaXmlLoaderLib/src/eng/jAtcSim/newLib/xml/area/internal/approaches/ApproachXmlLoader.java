@@ -24,7 +24,7 @@ import eng.jAtcSim.newLib.area.routes.IafRoute;
 import eng.jAtcSim.newLib.shared.enums.ApproachType;
 import eng.jAtcSim.newLib.shared.exceptions.ToDoException;
 import eng.jAtcSim.newLib.shared.xml.XmlLoadException;
-import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
+import eng.jAtcSim.newLib.shared.xml.SmartXmlLoaderUtils;
 import eng.jAtcSim.newLib.speeches.airplane.ICommand;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ChangeAltitudeCommand;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ChangeHeadingCommand;
@@ -145,16 +145,16 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
   }
 
   private IList<Approach> loadGnss(XElement source) {
-    XmlLoaderUtils.setContext(source);
-    String gaMapping = XmlLoaderUtils.loadString("gaMapping");
-    String iafMapping = XmlLoaderUtils.loadString("iafMapping");
-    int daA = XmlLoaderUtils.loadInteger("daA");
-    int daB = XmlLoaderUtils.loadInteger("daB");
-    int daC = XmlLoaderUtils.loadInteger("daC");
-    int daD = XmlLoaderUtils.loadInteger("daD");
-    int radial = XmlLoaderUtils.loadInteger("radial");
-    int initialAltitude = XmlLoaderUtils.loadInteger("initialAltitude");
-    Double glidePathPercentage = XmlLoaderUtils.loadDouble("glidePathPercentage", 3d);
+    SmartXmlLoaderUtils.setContext(source);
+    String gaMapping = SmartXmlLoaderUtils.loadString("gaMapping");
+    String iafMapping = SmartXmlLoaderUtils.loadString("iafMapping");
+    int daA = SmartXmlLoaderUtils.loadInteger("daA");
+    int daB = SmartXmlLoaderUtils.loadInteger("daB");
+    int daC = SmartXmlLoaderUtils.loadInteger("daC");
+    int daD = SmartXmlLoaderUtils.loadInteger("daD");
+    int radial = SmartXmlLoaderUtils.loadInteger("radial");
+    int initialAltitude = SmartXmlLoaderUtils.loadInteger("initialAltitude");
+    Double glidePathPercentage = SmartXmlLoaderUtils.loadDouble("glidePathPercentage", 3d);
     double slope = convertGlidePathDegreesToSlope(glidePathPercentage);
 
     // build approach entry
@@ -215,12 +215,12 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
   private IList<Approach> loadIls(XElement source) {
     IList<Approach> ret = new EList<>();
 
-    XmlLoaderUtils.setContext(source);
-    String gaMapping = XmlLoaderUtils.loadString("gaMapping");
-    String iafMapping = XmlLoaderUtils.loadString("iafMapping");
-    int radial = XmlLoaderUtils.loadInteger("radial");
-    int initialAltitude = XmlLoaderUtils.loadInteger("initialAltitude");
-    Double glidePathPercentage = XmlLoaderUtils.loadDouble("glidePathPercentage", 3d);
+    SmartXmlLoaderUtils.setContext(source);
+    String gaMapping = SmartXmlLoaderUtils.loadString("gaMapping");
+    String iafMapping = SmartXmlLoaderUtils.loadString("iafMapping");
+    int radial = SmartXmlLoaderUtils.loadInteger("radial");
+    int initialAltitude = SmartXmlLoaderUtils.loadInteger("initialAltitude");
+    Double glidePathPercentage = SmartXmlLoaderUtils.loadDouble("glidePathPercentage", 3d);
     double slope = convertGlidePathDegreesToSlope(glidePathPercentage);
 
     // build approach entry
@@ -245,10 +245,10 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
         ChangeAltitudeCommand.createDescend(initialAltitude));
 
     for (XElement categorySource : source.getChild("categories").getChildren("category")) {
-      XmlLoaderUtils.setContext(categorySource);
+      SmartXmlLoaderUtils.setContext(categorySource);
       ApproachType type;
       {
-        String ilsType = XmlLoaderUtils.loadString("type");
+        String ilsType = SmartXmlLoaderUtils.loadString("type");
         switch (ilsType) {
           case "I":
             type = ApproachType.ils_I;
@@ -263,10 +263,10 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
             throw new EEnumValueUnsupportedException(ilsType);
         }
       }
-      int daA = XmlLoaderUtils.loadInteger("daA");
-      int daB = XmlLoaderUtils.loadInteger("daB");
-      int daC = XmlLoaderUtils.loadInteger("daC");
-      int daD = XmlLoaderUtils.loadInteger("daD");
+      int daA = SmartXmlLoaderUtils.loadInteger("daA");
+      int daB = SmartXmlLoaderUtils.loadInteger("daB");
+      int daC = SmartXmlLoaderUtils.loadInteger("daC");
+      int daD = SmartXmlLoaderUtils.loadInteger("daD");
 
       IList<ApproachStage> stages = new EList<>();
       { // radial descent stage
@@ -306,19 +306,19 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
   }
 
   private IList<Approach> loadUnprecise(XElement source) {
-    XmlLoaderUtils.setContext(source);
-    String gaMapping = XmlLoaderUtils.loadString("gaMapping");
-    String iafMapping = XmlLoaderUtils.loadString("iafMapping");
-    int mdaA = XmlLoaderUtils.loadInteger("mdaA");
-    int mdaB = XmlLoaderUtils.loadInteger("mdaB");
-    int mdaC = XmlLoaderUtils.loadInteger("mdaC");
-    int mdaD = XmlLoaderUtils.loadInteger("mdaD");
-    int radial = XmlLoaderUtils.loadInteger("radial");
-    ApproachType approachType = XmlLoaderUtils.loadEnum("type", ApproachType.class);
+    SmartXmlLoaderUtils.setContext(source);
+    String gaMapping = SmartXmlLoaderUtils.loadString("gaMapping");
+    String iafMapping = SmartXmlLoaderUtils.loadString("iafMapping");
+    int mdaA = SmartXmlLoaderUtils.loadInteger("mdaA");
+    int mdaB = SmartXmlLoaderUtils.loadInteger("mdaB");
+    int mdaC = SmartXmlLoaderUtils.loadInteger("mdaC");
+    int mdaD = SmartXmlLoaderUtils.loadInteger("mdaD");
+    int radial = SmartXmlLoaderUtils.loadInteger("radial");
+    ApproachType approachType = SmartXmlLoaderUtils.loadEnum("type", ApproachType.class);
     EAssert.isTrue(approachType == ApproachType.ndb || approachType == ApproachType.vor);
-    String fafName = XmlLoaderUtils.loadString("faf");
-    String maptName = XmlLoaderUtils.loadString("mapt");
-    int initialAltitude = XmlLoaderUtils.loadInteger("initialAltitude");
+    String fafName = SmartXmlLoaderUtils.loadString("faf");
+    String maptName = SmartXmlLoaderUtils.loadString("mapt");
+    int initialAltitude = SmartXmlLoaderUtils.loadInteger("initialAltitude");
 //    double slope = ?? get from trheshold +
 
     Navaid faf = context.area.navaids.getWithPBD(fafName);

@@ -1,6 +1,6 @@
 package eng.jAtcSim.newLib.airplaneType;
 
-import eng.eSystem.Producer;
+import eng.eSystem.functionalInterfaces.Producer;
 import eng.eSystem.collections.*;
 
 import static eng.eSystem.utilites.FunctionShortcuts.*;

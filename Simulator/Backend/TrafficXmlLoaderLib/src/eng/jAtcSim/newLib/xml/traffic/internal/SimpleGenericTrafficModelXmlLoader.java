@@ -2,25 +2,25 @@ package eng.jAtcSim.newLib.xml.traffic.internal;
 
 import eng.eSystem.collections.IList;
 import eng.eSystem.eXml.XElement;
-import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
+import eng.jAtcSim.newLib.shared.xml.SmartXmlLoaderUtils;
 import eng.jAtcSim.newLib.traffic.models.SimpleGenericTrafficModel;
 
 public class SimpleGenericTrafficModelXmlLoader {
   public SimpleGenericTrafficModel load(XElement source) {
-    XmlLoaderUtils.setContext(source);
-    double defaultProbabilityOfDeparture = XmlLoaderUtils.loadDouble("defaultProbabilityOfDeparture");
-    double defaultProbabilityOfGeneralAviation = XmlLoaderUtils.loadDouble("defaultProbabilityOfGeneralAviation");
+    SmartXmlLoaderUtils.setContext(source);
+    double defaultProbabilityOfDeparture = SmartXmlLoaderUtils.loadDouble("defaultProbabilityOfDeparture");
+    double defaultProbabilityOfGeneralAviation = SmartXmlLoaderUtils.loadDouble("defaultProbabilityOfGeneralAviation");
 
-    IList<SimpleGenericTrafficModel.MovementsForHour> movementsForHours = XmlLoaderUtils.loadList(
+    IList<SimpleGenericTrafficModel.MovementsForHour> movementsForHours = SmartXmlLoaderUtils.loadList(
         source.getChild("movements").getChildren("movementsForHour"),
         q -> loadMovementsForHour(q, defaultProbabilityOfDeparture, defaultProbabilityOfGeneralAviation));
 
-    IList<SimpleGenericTrafficModel.ValueAndWeight> companies = XmlLoaderUtils.loadList(
+    IList<SimpleGenericTrafficModel.ValueAndWeight> companies = SmartXmlLoaderUtils.loadList(
         source.getChild("companies").getChildren("item"),
         q -> loadValueAndWeight(q)
     );
 
-    IList<SimpleGenericTrafficModel.ValueAndWeight> countries = XmlLoaderUtils.loadList(
+    IList<SimpleGenericTrafficModel.ValueAndWeight> countries = SmartXmlLoaderUtils.loadList(
         source.getChild("countryCodes").getChildren("item"),
         q -> loadValueAndWeight(q)
     );
@@ -33,7 +33,7 @@ public class SimpleGenericTrafficModelXmlLoader {
 
   private SimpleGenericTrafficModel.ValueAndWeight loadValueAndWeight(XElement source) {
     String value = source.getContent();
-    int weight = XmlLoaderUtils.loadInteger(source, "weight", 1);
+    int weight = SmartXmlLoaderUtils.loadInteger(source, "weight", 1);
 
     SimpleGenericTrafficModel.ValueAndWeight ret = SimpleGenericTrafficModel.ValueAndWeight.create(value,weight);
     return ret;
@@ -42,11 +42,11 @@ public class SimpleGenericTrafficModelXmlLoader {
   private SimpleGenericTrafficModel.MovementsForHour loadMovementsForHour(XElement source,
                                                                           double defaultProbabilityOfDeparture,
                                                                           double defaultProbabilityOfGeneralAviation) {
-    XmlLoaderUtils.setContext(source);
+    SmartXmlLoaderUtils.setContext(source);
 
-    int count = XmlLoaderUtils.loadInteger("count");
-    double departureProbability = XmlLoaderUtils.loadDouble("departureProbability", defaultProbabilityOfDeparture);
-    double gaProbability = XmlLoaderUtils.loadDouble("probabilityOfGeneralAviation", defaultProbabilityOfGeneralAviation);
+    int count = SmartXmlLoaderUtils.loadInteger("count");
+    double departureProbability = SmartXmlLoaderUtils.loadDouble("departureProbability", defaultProbabilityOfDeparture);
+    double gaProbability = SmartXmlLoaderUtils.loadDouble("probabilityOfGeneralAviation", defaultProbabilityOfGeneralAviation);
 
     SimpleGenericTrafficModel.MovementsForHour ret = SimpleGenericTrafficModel.MovementsForHour.create(count, gaProbability, departureProbability);
     return ret;

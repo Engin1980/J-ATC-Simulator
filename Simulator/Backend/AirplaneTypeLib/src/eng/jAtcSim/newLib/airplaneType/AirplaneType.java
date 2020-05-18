@@ -1,8 +1,5 @@
 package eng.jAtcSim.newLib.airplaneType;
 
-import eng.eSystem.eXml.XElement;
-import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
-
 public class AirplaneType {
 
   /**

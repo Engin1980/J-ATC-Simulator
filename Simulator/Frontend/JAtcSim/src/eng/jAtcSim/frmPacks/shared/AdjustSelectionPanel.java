@@ -7,7 +7,7 @@ import eng.eSystem.swing.DialogResult;
 import eng.eSystem.swing.Factory;
 import eng.eSystem.swing.LayoutManager;
 import eng.eSystem.swing.extenders.CheckedListBoxExtender;
-import eng.eSystem.utilites.Selector;
+import eng.eSystem.functionalInterfaces.Selector;
 import eng.eSystem.utilites.StringUtils;
 
 import javax.swing.*;

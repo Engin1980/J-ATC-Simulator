@@ -3,7 +3,7 @@ package eng.jAtcSim.newLib.xml.speeches.atc2airplane;
 import eng.eSystem.eXml.XElement;
 import eng.jAtcSim.newLib.shared.enums.LeftRight;
 import eng.jAtcSim.newLib.shared.xml.IXmlLoader;
-import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
+import eng.jAtcSim.newLib.shared.xml.SmartXmlLoaderUtils;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.HoldCommand;
 
 public class HoldCommandXmlLoader implements IXmlLoader<HoldCommand> {
@@ -13,10 +13,10 @@ public class HoldCommandXmlLoader implements IXmlLoader<HoldCommand> {
 
     HoldCommand ret;
 
-    XmlLoaderUtils.setContext(element);
-    String fix = XmlLoaderUtils.loadString("fix");
-    Integer inboundRadial = XmlLoaderUtils.loadInteger("inboundRadial", null);
-    LeftRight turn = XmlLoaderUtils.loadEnum("turns", LeftRight.class, LeftRight.left);
+    SmartXmlLoaderUtils.setContext(element);
+    String fix = SmartXmlLoaderUtils.loadString("fix");
+    Integer inboundRadial = SmartXmlLoaderUtils.loadInteger("inboundRadial", null);
+    LeftRight turn = SmartXmlLoaderUtils.loadEnum("turns", LeftRight.class, LeftRight.left);
 
     if (inboundRadial == null) {
       ret = HoldCommand.createPublished(fix);

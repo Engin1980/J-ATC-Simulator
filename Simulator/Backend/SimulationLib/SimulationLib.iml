@@ -26,7 +26,6 @@
     <orderEntry type="module" module-name="AreaXmlLoaderLib" />
     <orderEntry type="module" module-name="AirplaneTypeXmlLoaderLib" />
     <orderEntry type="module" module-name="FleetXmlLoaderLib" />
-    <orderEntry type="module" module-name="JAtcSim" />
     <orderEntry type="module" module-name="TrafficXmlLoaderLib" />
     <orderEntry type="module" module-name="SpeechesLib" />
   </component>

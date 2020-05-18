@@ -3,7 +3,7 @@ package eng.jAtcSim.frmPacks.shared;
 import eng.eSystem.Tuple;
 import eng.eSystem.swing.DialogResult;
 import eng.eSystem.swing.extenders.DisplayItem;
-import eng.eSystem.utilites.Selector;
+import eng.eSystem.functionalInterfaces.Selector;
 
 import javax.swing.*;
 import java.awt.*;

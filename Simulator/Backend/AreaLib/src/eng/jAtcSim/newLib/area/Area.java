@@ -1,16 +1,9 @@
 package eng.jAtcSim.newLib.area;
 
-import eng.eSystem.EStringBuilder;
-import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
-import eng.eSystem.collections.ISet;
-import eng.eSystem.eXml.XElement;
-import eng.eSystem.events.EventAnonymous;
-import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.exceptions.ToDoException;
-import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
 
 public class Area {
 

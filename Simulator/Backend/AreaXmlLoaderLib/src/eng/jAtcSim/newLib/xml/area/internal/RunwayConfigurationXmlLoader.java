@@ -5,7 +5,7 @@ import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.jAtcSim.newLib.area.*;
-import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
+import eng.jAtcSim.newLib.shared.xml.SmartXmlLoaderUtils;
 import eng.jAtcSim.newLib.xml.area.internal.context.Context;
 
 public class RunwayConfigurationXmlLoader extends XmlLoader<RunwayConfiguration> {
@@ -16,11 +16,11 @@ public class RunwayConfigurationXmlLoader extends XmlLoader<RunwayConfiguration>
 
   @Override
   public RunwayConfiguration load(XElement source) {
-    XmlLoaderUtils.setContext(source);
-    int windFrom = XmlLoaderUtils.loadInteger("windFrom", 0);
-    int windTo = XmlLoaderUtils.loadInteger("windTo", 359);
-    int windSpeedFrom = XmlLoaderUtils.loadInteger("windSpeedFrom", 0);
-    int windSpeedTo = XmlLoaderUtils.loadInteger("windSpeedTo", 999);
+    SmartXmlLoaderUtils.setContext(source);
+    int windFrom = SmartXmlLoaderUtils.loadInteger("windFrom", 0);
+    int windTo = SmartXmlLoaderUtils.loadInteger("windTo", 359);
+    int windSpeedFrom = SmartXmlLoaderUtils.loadInteger("windSpeedFrom", 0);
+    int windSpeedTo = SmartXmlLoaderUtils.loadInteger("windSpeedTo", 999);
 
     IList<RunwayThresholdConfiguration> departures = new EList<>();
     IList<RunwayThresholdConfiguration> arrivals = new EList<>();

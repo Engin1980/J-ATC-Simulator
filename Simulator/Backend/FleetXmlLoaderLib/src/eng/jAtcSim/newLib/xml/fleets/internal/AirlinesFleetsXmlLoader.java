@@ -6,14 +6,14 @@ import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.fleet.TypeAndWeight;
 import eng.jAtcSim.newLib.fleet.airliners.CompanyFleet;
 import eng.jAtcSim.newLib.fleet.airliners.AirlinesFleets;
-import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
+import eng.jAtcSim.newLib.shared.xml.SmartXmlLoaderUtils;
 
 public class AirlinesFleetsXmlLoader {
   public AirlinesFleets load(XElement root) {
     EAssert.isTrue(root.getName().equals("airlinersFleets"), "Incorrect loading xml element");
 
     IList<CompanyFleet> tmp = new EDistinctList<>(q->q.getIcao(), EDistinctList.Behavior.exception);
-    XmlLoaderUtils.loadList(
+    SmartXmlLoaderUtils.loadList(
         root.getChildren("company"),
         tmp,
         q->loadCompany(q));
@@ -25,7 +25,7 @@ public class AirlinesFleetsXmlLoader {
   }
 
   private CompanyFleet loadDefault(XElement source) {
-    IList<TypeAndWeight> types = XmlLoaderUtils.loadList(
+    IList<TypeAndWeight> types = SmartXmlLoaderUtils.loadList(
         source.getChildren("type"),
         q -> loadFleet(q)
     );
@@ -35,9 +35,9 @@ public class AirlinesFleetsXmlLoader {
   }
 
   private CompanyFleet loadCompany(XElement source) {
-    String icao = XmlLoaderUtils.loadString(source, "icao");
-    String name = XmlLoaderUtils.loadString(source, "name", "(N/A)");
-    IList<TypeAndWeight> types = XmlLoaderUtils.loadList(
+    String icao = SmartXmlLoaderUtils.loadString(source, "icao");
+    String name = SmartXmlLoaderUtils.loadString(source, "name", "(N/A)");
+    IList<TypeAndWeight> types = SmartXmlLoaderUtils.loadList(
         source.getChildren("type"),
         q -> loadFleet(q)
     );
@@ -47,9 +47,9 @@ public class AirlinesFleetsXmlLoader {
   }
 
   private TypeAndWeight loadFleet(XElement source){
-    XmlLoaderUtils.setContext(source);
-    String name = XmlLoaderUtils.loadString("name");
-    int weight = XmlLoaderUtils.loadInteger("weight");
+    SmartXmlLoaderUtils.setContext(source);
+    String name = SmartXmlLoaderUtils.loadString("name");
+    int weight = SmartXmlLoaderUtils.loadInteger("weight");
 
     TypeAndWeight ret = TypeAndWeight.create(name, weight);
     return ret;

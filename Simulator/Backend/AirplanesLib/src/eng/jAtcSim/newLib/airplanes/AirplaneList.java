@@ -3,7 +3,7 @@ package eng.jAtcSim.newLib.airplanes;
 import eng.eSystem.collections.EDistinctList;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
-import eng.eSystem.utilites.Selector;
+import eng.eSystem.functionalInterfaces.Selector;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.Squawk;

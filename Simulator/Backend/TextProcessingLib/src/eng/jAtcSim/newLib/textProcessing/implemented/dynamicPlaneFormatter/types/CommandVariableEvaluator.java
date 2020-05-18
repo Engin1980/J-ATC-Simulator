@@ -3,7 +3,7 @@ package eng.jAtcSim.newLib.textProcessing.implemented.dynamicPlaneFormatter.type
 import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IMap;
 import eng.eSystem.exceptions.EApplicationException;
-import eng.eSystem.utilites.Selector;
+import eng.eSystem.functionalInterfaces.Selector;
 import eng.jAtcSim.newLib.shared.Format;
 import eng.jAtcSim.newLib.shared.enums.ApproachType;
 import eng.jAtcSim.newLib.shared.enums.LeftRight;

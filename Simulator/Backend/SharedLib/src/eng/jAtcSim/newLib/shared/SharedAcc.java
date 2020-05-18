@@ -1,8 +1,8 @@
 package eng.jAtcSim.newLib.shared;
 
 import eng.eSystem.ERandom;
-import eng.eSystem.Producer;
 import eng.eSystem.collections.IReadOnlyList;
+import eng.eSystem.functionalInterfaces.Producer;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 import eng.jAtcSim.newLib.shared.logging.SimulationLog;

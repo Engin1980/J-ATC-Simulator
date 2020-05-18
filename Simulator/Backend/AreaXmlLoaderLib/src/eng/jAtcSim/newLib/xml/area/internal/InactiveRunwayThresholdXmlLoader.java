@@ -5,7 +5,7 @@ import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.geo.Coordinate;
 import eng.jAtcSim.newLib.area.InactiveRunwayThreshold;
-import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
+import eng.jAtcSim.newLib.shared.xml.SmartXmlLoaderUtils;
 
 class InactiveRunwayThresholdXmlLoader  {
 
@@ -20,9 +20,9 @@ class InactiveRunwayThresholdXmlLoader  {
   }
 
   private InactiveRunwayThreshold.Prototype load(XElement source) {
-    XmlLoaderUtils.setContext(source);
-    String name = XmlLoaderUtils.loadString("name");
-    Coordinate coordinate = XmlLoaderUtils.loadCoordinate("coordinate");
+    SmartXmlLoaderUtils.setContext(source);
+    String name = SmartXmlLoaderUtils.loadString("name");
+    Coordinate coordinate = SmartXmlLoaderUtils.loadCoordinate("coordinate");
 
     InactiveRunwayThreshold.Prototype ret = new InactiveRunwayThreshold.Prototype(name, coordinate);
     return ret;

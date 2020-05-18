@@ -1,9 +1,6 @@
 package eng.jAtcSim.newLib.mood;
 
-import eng.eSystem.Producer;
-import eng.eSystem.collections.*;
-
-import static eng.eSystem.utilites.FunctionShortcuts.*;
+import eng.eSystem.functionalInterfaces.Producer;
 
 public class MoodAcc {
   private static Producer<MoodManager> moodManagerProducer;

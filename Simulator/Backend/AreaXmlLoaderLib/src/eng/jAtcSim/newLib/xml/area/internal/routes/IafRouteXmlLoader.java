@@ -5,7 +5,7 @@ import eng.eSystem.eXml.XElement;
 import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.area.routes.IafRoute;
 import eng.jAtcSim.newLib.shared.PlaneCategoryDefinitions;
-import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
+import eng.jAtcSim.newLib.shared.xml.SmartXmlLoaderUtils;
 import eng.jAtcSim.newLib.speeches.airplane.ICommand;
 import eng.jAtcSim.newLib.xml.area.internal.XmlLoader;
 import eng.jAtcSim.newLib.xml.area.internal.context.Context;
@@ -19,13 +19,13 @@ public class IafRouteXmlLoader extends XmlLoader<IafRoute> {
 
   @Override
   public IafRoute load(XElement source) {
-    XmlLoaderUtils.setContext(source);
-    String iafName = XmlLoaderUtils.loadString("iaf");
+    SmartXmlLoaderUtils.setContext(source);
+    String iafName = SmartXmlLoaderUtils.loadString("iaf");
     Navaid navaid = context.area.navaids.get(iafName);
-    PlaneCategoryDefinitions category = XmlLoaderUtils.loadPlaneCategory("category", "ABCD");
-    String mapping = XmlLoaderUtils.loadString("iafMapping");
+    PlaneCategoryDefinitions category = SmartXmlLoaderUtils.loadPlaneCategory("category", "ABCD");
+    String mapping = SmartXmlLoaderUtils.loadString("iafMapping");
 
-    IList<ICommand> commands = XmlLoaderUtils.loadList(
+    IList<ICommand> commands = SmartXmlLoaderUtils.loadList(
         source.getChildren(),
         new SpeechXmlLoader()
     );

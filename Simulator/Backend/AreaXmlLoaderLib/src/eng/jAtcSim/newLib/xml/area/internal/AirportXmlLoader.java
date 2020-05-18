@@ -5,7 +5,6 @@ import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.eXml.XElement;
-import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.area.*;
 import eng.jAtcSim.newLib.area.routes.DARoute;
 import eng.jAtcSim.newLib.area.routes.GaRoute;
@@ -14,8 +13,7 @@ import eng.jAtcSim.newLib.xml.area.internal.context.Context;
 import eng.jAtcSim.newLib.xml.area.internal.routes.DARouteXmlLoader;
 import eng.jAtcSim.newLib.xml.area.internal.routes.GaRouteXmlLoader;
 import eng.jAtcSim.newLib.xml.area.internal.routes.IafRouteXmlLoader;
-import eng.jAtcSim.newLib.shared.xml.IXmlLoader;
-import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
+import eng.jAtcSim.newLib.shared.xml.SmartXmlLoaderUtils;
 
 class AirportXmlLoader extends  XmlLoader<Airport> {
 
@@ -35,16 +33,16 @@ class AirportXmlLoader extends  XmlLoader<Airport> {
   }
 
   public Airport load(XElement source) {
-    XmlLoaderUtils.setContext(source);
-    String icao = XmlLoaderUtils.loadString("icao");
-    String name = XmlLoaderUtils.loadString("name");
-    int altitude = XmlLoaderUtils.loadInteger("altitude");
-    int transitionAltitude = XmlLoaderUtils.loadInteger("transitionAltitude");
-    int vfrAltitude = XmlLoaderUtils.loadInteger("vfrAltitude");
-    double declination = XmlLoaderUtils.loadDouble("declination");
-    int coveredDistance = XmlLoaderUtils.loadInteger("coveredDistance");
+    SmartXmlLoaderUtils.setContext(source);
+    String icao = SmartXmlLoaderUtils.loadString("icao");
+    String name = SmartXmlLoaderUtils.loadString("name");
+    int altitude = SmartXmlLoaderUtils.loadInteger("altitude");
+    int transitionAltitude = SmartXmlLoaderUtils.loadInteger("transitionAltitude");
+    int vfrAltitude = SmartXmlLoaderUtils.loadInteger("vfrAltitude");
+    double declination = SmartXmlLoaderUtils.loadDouble("declination");
+    int coveredDistance = SmartXmlLoaderUtils.loadInteger("coveredDistance");
     Navaid mainAirportNavaid = context.area.navaids.get(
-        XmlLoaderUtils.loadString("mainAirportNavaidName"));
+        SmartXmlLoaderUtils.loadString("mainAirportNavaidName"));
     InitialPosition initialPosition = new InitialPositionXmlLoader().load(source.getChild("initialPosition"));
 
     context.area.navaids.registerDeclination(mainAirportNavaid.getCoordinate(), declination);
@@ -56,42 +54,42 @@ class AirportXmlLoader extends  XmlLoader<Airport> {
     context.airport.gaMappings = new XmlMappingDictinary<>();
 
     IList<Atc> atcs = new EDistinctList<>(q -> q.getName(), EDistinctList.Behavior.exception);
-    XmlLoaderUtils.loadList(
+    SmartXmlLoaderUtils.loadList(
         source.getChild("atcTemplates").getChildren(),
         atcs,
         new AtcXmlLoader());
 
     EntryExitPointList entryExitPoints;
     {
-      IList<EntryExitPoint> tmp = XmlLoaderUtils.loadList(
+      IList<EntryExitPoint> tmp = SmartXmlLoaderUtils.loadList(
           source.getChild("entryExitPoints").getChildren(),
           new EntryExitPointXmlLoader(context));
       entryExitPoints = new EntryExitPointList(tmp);
     }
-    IList<PublishedHold> holds = XmlLoaderUtils.loadList(
+    IList<PublishedHold> holds = SmartXmlLoaderUtils.loadList(
         source.getChild("holds").getChildren(),
         new PublishedHoldXmlLoader(context));
 
     IList<DARoute> daRoutes = new EDistinctList<>(q -> q.getName(), EDistinctList.Behavior.exception);
     IReadOnlyList<XElement> routes = extractRoutes(source.getChild("daRoutes"), "route");
-    XmlLoaderUtils.loadList(routes, daRoutes, new DARouteXmlLoader(context));
+    SmartXmlLoaderUtils.loadList(routes, daRoutes, new DARouteXmlLoader(context));
 
     routes = extractRoutes(source.getChild("iafRoutes"), "iafRoute");
-    IList<IafRoute> iafRoutes = XmlLoaderUtils.loadList(routes, new IafRouteXmlLoader(context));
+    IList<IafRoute> iafRoutes = SmartXmlLoaderUtils.loadList(routes, new IafRouteXmlLoader(context));
 
     routes = extractRoutes(source.getChild("gaRoutes"), "gaRoute");
-    IList<GaRoute> gaRoutes = XmlLoaderUtils.loadList(routes, new GaRouteXmlLoader(context));
+    IList<GaRoute> gaRoutes = SmartXmlLoaderUtils.loadList(routes, new GaRouteXmlLoader(context));
 
-    IList<InactiveRunway> inactiveRunways = XmlLoaderUtils.loadList(
+    IList<InactiveRunway> inactiveRunways = SmartXmlLoaderUtils.loadList(
         source.getChild("runways").getChildren("inactiveRunway"),
         new InactiveRunwayXmlLoader());
 
-    IList<ActiveRunway> runways = XmlLoaderUtils.loadList(
+    IList<ActiveRunway> runways = SmartXmlLoaderUtils.loadList(
         source.getChild("runways").getChildren("runway"),
         new ActiveRunwayXmlLoader(context));
     context.airport.activeRunways = runways;
 
-    IList<RunwayConfiguration> runwayConfigurations = XmlLoaderUtils.loadList(
+    IList<RunwayConfiguration> runwayConfigurations = SmartXmlLoaderUtils.loadList(
         source.getChild("runwayConfigurations").getChildren(),
         new RunwayConfigurationXmlLoader(context));
 

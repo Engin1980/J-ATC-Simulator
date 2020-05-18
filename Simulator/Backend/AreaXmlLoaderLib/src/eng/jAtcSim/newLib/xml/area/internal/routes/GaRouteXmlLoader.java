@@ -5,7 +5,7 @@ import eng.eSystem.eXml.XElement;
 import eng.jAtcSim.newLib.area.routes.GaRoute;
 import eng.jAtcSim.newLib.speeches.airplane.ICommand;
 import eng.jAtcSim.newLib.xml.area.internal.XmlLoader;
-import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
+import eng.jAtcSim.newLib.shared.xml.SmartXmlLoaderUtils;
 import eng.jAtcSim.newLib.xml.area.internal.context.Context;
 import eng.jAtcSim.newLib.xml.speeches.SpeechXmlLoader;
 
@@ -17,10 +17,10 @@ public class GaRouteXmlLoader extends XmlLoader<GaRoute> {
 
   @Override
   public GaRoute load(XElement source) {
-    XmlLoaderUtils.setContext(source);
-    String mapping = XmlLoaderUtils.loadString("gaMapping");
+    SmartXmlLoaderUtils.setContext(source);
+    String mapping = SmartXmlLoaderUtils.loadString("gaMapping");
 
-    IList<ICommand> commands = XmlLoaderUtils.loadList(
+    IList<ICommand> commands = SmartXmlLoaderUtils.loadList(
         source.getChildren(),
         new SpeechXmlLoader()
     );

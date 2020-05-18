@@ -8,7 +8,7 @@ import eng.eSystem.eXml.XElement;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.SharedAcc;
 import eng.jAtcSim.newLib.shared.time.ETimeStamp;
-import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
+import eng.jAtcSim.newLib.shared.xml.SmartXmlLoaderUtils;
 import eng.jAtcSim.newLib.traffic.ITrafficModel;
 import eng.jAtcSim.newLib.traffic.movementTemplating.EntryExitInfo;
 import eng.jAtcSim.newLib.traffic.movementTemplating.GenericGeneralAviationMovementTemplate;
@@ -43,8 +43,8 @@ public class DensityBasedTrafficModel implements ITrafficModel {
 
   public static class DirectionWeight {
     public static DirectionWeight load(XElement source) {
-      int heading = XmlLoaderUtils.loadInteger(source, "heading");
-      double weight = XmlLoaderUtils.loadDouble(source, "weight");
+      int heading = SmartXmlLoaderUtils.loadInteger(source, "heading");
+      double weight = SmartXmlLoaderUtils.loadDouble(source, "weight");
       return new DirectionWeight(heading, weight);
     }
 

@@ -1,6 +1,6 @@
 package eng.jAtcSim.newLib.gameSim.simulation;
 
-import eng.eSystem.Producer;
+import eng.eSystem.functionalInterfaces.Producer;
 import eng.jAtcSim.newLib.gameSim.simulation.controllers.TimerController;
 import eng.jAtcSim.newLib.textProcessing.parsing.IParser;
 
