@@ -9,4 +9,5 @@ module JAtcSim.Modules.Frontend.Radars.AbstractRadarModule {
   requires JAtcSim.Modules.Backend.AirplaneTypeLib;
   requires java.desktop;
   requires JAtcSim.Modules.Backend.MessagingLib;
+  requires JAtcSim.Modules.Backend.SimulationLib;
 }

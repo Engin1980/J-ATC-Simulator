@@ -58,6 +58,11 @@ public class FlightListTrafficModel implements ITrafficModel {
     return ret;
   }
 
+  public IReadOnlyList<String> getRequiredPlaneTypes() {
+    IList<String> ret = flights.select(q->q.planeType).distinct();
+    return ret;
+  }
+
   private void bind() {
     for (Flight flight : flights) {
       if (flight.follows != null)

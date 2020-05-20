@@ -2,9 +2,9 @@ package eng.jAtcSim.abstractRadar.support;
 
 import eng.eSystem.geo.Coordinate;
 import eng.jAtcSim.abstractRadar.global.Point;
-import eng.jAtcSim.abstractRadar.published.IAirplaneInfo;
 import eng.jAtcSim.newLib.airplaneType.AirplaneType;
 import eng.jAtcSim.newLib.airplanes.AirproxType;
+import eng.jAtcSim.newLib.gameSim.IAirplaneInfo;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.Format;

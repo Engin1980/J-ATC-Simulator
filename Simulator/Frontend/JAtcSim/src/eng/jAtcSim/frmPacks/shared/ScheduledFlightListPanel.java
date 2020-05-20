@@ -1,11 +1,9 @@
 package eng.jAtcSim.frmPacks.shared;
 
-import eng.eSystem.collections.IReadOnlyList;
 import eng.jAtcSim.AppSettings;
-import eng.jAtcSim.newLib.Simulation;
-import eng.jAtcSim.newLib.area.airplanes.Callsign;
-import eng.jAtcSim.newLib.area.traffic.Movement;
 import eng.eSystem.swing.LayoutManager;
+import eng.jAtcSim.newLib.gameSim.ISimulation;
+import eng.jAtcSim.newLib.shared.Callsign;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,13 +12,13 @@ public class ScheduledFlightListPanel extends JPanel {
 
   private JPanel pnlContent;
   private JScrollPane pnlScroll;
-  private Simulation sim;
+  private ISimulation sim;
   private Callsign firstItemCallsign = null;
   private Callsign lastItemCallsign = null;
   private Integer itemCount = null;
 
 
-  public void init(Simulation sim, AppSettings appSettings) {
+  public void init(ISimulation sim, AppSettings appSettings) {
     this.sim = sim;
     ScheduledFlightStripPanel.setStripSettings(appSettings.getLoadedFlightStripSettings());
 

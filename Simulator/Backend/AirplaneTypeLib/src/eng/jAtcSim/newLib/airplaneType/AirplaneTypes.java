@@ -3,6 +3,7 @@ package eng.jAtcSim.newLib.airplaneType;
 import eng.eSystem.collections.EDistinctList;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
+import eng.eSystem.collections.IReadOnlyList;
 
 public class AirplaneTypes {
 
@@ -20,7 +21,7 @@ public class AirplaneTypes {
     return inner.tryGetFirst(q->q.name.equals(airplaneTypeName));
   }
 
-  public IList<String> getTypeNames() {
+  public IReadOnlyList<String> getTypeNames() {
     return typeNamesOnly;
   }
 

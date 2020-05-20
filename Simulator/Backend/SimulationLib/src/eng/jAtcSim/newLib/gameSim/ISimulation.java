@@ -1,8 +1,7 @@
-package eng.jAtcSim.abstractRadar.published;
+package eng.jAtcSim.newLib.gameSim;
 
 import eng.eSystem.collections.*;
 import eng.eSystem.events.EventSimple;
-import eng.jAtcSim.abstractRadar.Radar;
 import eng.jAtcSim.newLib.area.Airport;
 import eng.jAtcSim.newLib.area.RunwayConfiguration;
 import eng.jAtcSim.newLib.messaging.Participant;
@@ -21,7 +20,7 @@ public interface ISimulation {
 
   EventSimple<ISimulation> getOnRunwayChanged();
 
-  EventSimple<Radar> getOnSecondElapsed() ;
+  EventSimple<?> getOnSecondElapsed();
 
   IReadOnlyList<IAirplaneInfo> getPlanesToDisplay();
 

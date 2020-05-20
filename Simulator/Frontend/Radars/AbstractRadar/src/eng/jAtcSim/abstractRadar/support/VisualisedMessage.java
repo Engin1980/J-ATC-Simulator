@@ -1,6 +1,7 @@
 package eng.jAtcSim.abstractRadar.support;
 
-import eng.jAtcSim.abstractRadar.published.IMessage;
+
+import eng.jAtcSim.newLib.gameSim.IMessage;
 
 public class VisualisedMessage {
   private final IMessage message;

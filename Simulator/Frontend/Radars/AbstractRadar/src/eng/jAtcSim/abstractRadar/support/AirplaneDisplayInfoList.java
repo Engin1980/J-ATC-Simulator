@@ -1,7 +1,7 @@
 package eng.jAtcSim.abstractRadar.support;
 
 import eng.eSystem.collections.*;
-import eng.jAtcSim.abstractRadar.published.IAirplaneInfo;
+import eng.jAtcSim.newLib.gameSim.IAirplaneInfo;
 import eng.jAtcSim.newLib.shared.Callsign;
 
 public class AirplaneDisplayInfoList {

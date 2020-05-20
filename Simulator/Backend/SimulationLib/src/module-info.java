@@ -1,4 +1,5 @@
 module JAtcSim.Modules.Backend.SimulationLib {
+  exports eng.jAtcSim.newLib.gameSim;
   requires eng.eSystem;
   requires JAtcSim.Modules.Backend.AtcLib;
   requires JAtcSim.Modules.Backend.AreaLib;

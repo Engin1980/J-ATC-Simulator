@@ -1,6 +1,6 @@
 package eng.jAtcSim.abstractRadar.support;
 
-import eng.jAtcSim.abstractRadar.published.IMessage;
+import eng.jAtcSim.newLib.gameSim.IMessage;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -3,15 +3,15 @@ package eng.jAtcSim.recording;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.utilites.ExceptionUtils;
 import eng.jAtcSim.BitmapRadar.BitmapCanvas;
-import eng.jAtcSim.newLib.Acc;
-import eng.jAtcSim.newLib.Simulation;
-import eng.jAtcSim.newLib.area.global.logging.ApplicationLog;
-import eng.jAtcSim.newLib.world.Area;
-import eng.jAtcSim.newLib.world.InitialPosition;
+import eng.jAtcSim.newLib.gameSim.ISimulation;
 import eng.jAtcSim.abstractRadar.settngs.RadarBehaviorSettings;
 import eng.jAtcSim.abstractRadar.settngs.RadarDisplaySettings;
 import eng.jAtcSim.abstractRadar.settngs.RadarStyleSettings;
 import eng.jAtcSim.abstractRadar.Radar;
+import eng.jAtcSim.newLib.area.Area;
+import eng.jAtcSim.newLib.area.InitialPosition;
+import eng.jAtcSim.newLib.shared.SharedAcc;
+import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
@@ -28,13 +28,13 @@ import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class Recording {
   private final Settings settings;
-  private final Simulation simulation;
+  private final ISimulation simulation;
   private final Radar radar;
   private final BitmapCanvas bmpCanvas;
   private int imgCounter;
   private boolean isActive;
 
-  public Recording(Settings settings, Simulation sim, Area area, InitialPosition initialPosition,
+  public Recording(Settings settings, ISimulation sim, Area area, InitialPosition initialPosition,
                    RadarStyleSettings ss, RadarDisplaySettings ds, RadarBehaviorSettings bs) {
 
     File f = new File(settings.getPath());
@@ -85,7 +85,7 @@ public class Recording {
           break;
       }
     } catch (Exception e) {
-      Acc.log().writeLine(ApplicationLog.eType.critical,
+      SharedAcc.getAppLog().writeLine(ApplicationLog.eType.critical,
           "Recording error. " + ExceptionUtils.toFullString(e, "\n\t"));
       this.stop();
     }

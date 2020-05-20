@@ -16,14 +16,15 @@ import eng.jAtcSim.SwingRadar.SwingCanvas;
 import eng.jAtcSim.abstractRadar.settngs.RadarBehaviorSettings;
 import eng.jAtcSim.abstractRadar.settngs.RadarDisplaySettings;
 import eng.jAtcSim.abstractRadar.settngs.RadarStyleSettings;
-import eng.jAtcSim.newLib.Acc;
-import eng.jAtcSim.newLib.Simulation;
-import eng.jAtcSim.newLib.area.atcs.Atc;
-import eng.jAtcSim.newLib.area.atcs.UserAtc;
-import eng.jAtcSim.newLib.world.*;
-import eng.jAtcSim.newLib.world.approachesOld.Approach;
 import eng.jAtcSim.abstractRadar.*;
 import eng.eSystem.swing.LayoutManager;
+import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
+import eng.jAtcSim.newLib.area.Area;
+import eng.jAtcSim.newLib.area.AreaAcc;
+import eng.jAtcSim.newLib.area.InitialPosition;
+import eng.jAtcSim.newLib.area.approaches.Approach;
+import eng.jAtcSim.newLib.area.routes.DARoute;
+import eng.jAtcSim.newLib.gameSim.ISimulation;
 
 import javax.swing.*;
 import java.awt.*;
@@ -35,7 +36,7 @@ import java.util.Comparator;
 public class SwingRadarPanel extends JPanel {
   private Radar radar;
   private CommandJTextWraper wrp;
-  private Simulation sim;
+  private ISimulation sim;
   private Area area;
   private RadarStyleSettings styleSettings;
   private RadarDisplaySettings displaySettings;
@@ -59,7 +60,7 @@ public class SwingRadarPanel extends JPanel {
       Tuple<Iterable<DARoute>, Selector<DARoute, String>> ret = new Tuple<>();
 
       IMap<DARoute, IList<ActiveRunwayThreshold>> tmp = new EMap<>();
-      for (ActiveRunwayThreshold threshold : Acc.airport().getAllThresholds()) {
+      for (ActiveRunwayThreshold threshold : AreaAcc.getAirport().getAllThresholds()) {
         for (DARoute route : threshold.getRoutes()) {
           IList<ActiveRunwayThreshold> lst = tmp.tryGet(route);
           if (lst == null) {
@@ -139,7 +140,7 @@ public class SwingRadarPanel extends JPanel {
   }
 
   public void init(InitialPosition initialPosition,
-                   Simulation sim, Area area,
+                   ISimulation sim, Area area,
                    RadarStyleSettings styleSett,
                    RadarDisplaySettings displaySett,
                    RadarBehaviorSettings behSett) {

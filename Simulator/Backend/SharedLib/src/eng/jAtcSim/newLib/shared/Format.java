@@ -1,5 +1,8 @@
 package eng.jAtcSim.newLib.shared;
 
+import eng.eSystem.exceptions.EEnumValueUnsupportedException;
+import eng.jAtcSim.newLib.shared.enums.DepartureArrival;
+
 public class Format {
   public static class Altitude {
     public static String toAlfOrFLLong(int value) {
@@ -98,6 +101,18 @@ public class Format {
 
   }
 
+  public static class Flight{
+    public static char getDepartureArrivalChar(DepartureArrival dir){
+      switch (dir) {
+        case departure:
+          return '↗';
+        case arrival:
+          return '↘';
+        default:throw new EEnumValueUnsupportedException(dir);
+      }
+    }
+  }
+
   //TODO fix this to be get from getActiveAirport().getTransitionAltitude()
   private static final int TRANSITION_ALTITUDE = 5000;
 
@@ -106,9 +121,9 @@ public class Format {
 //    return value.toString();
 //  }
 
-//  public static String formatSqwk(Squawk value) {
-//    return value.toString();
-//  }
+  public static String formatSqwk(Squawk value) {
+    return value.toString();
+  }
 
 //  public static String formatTypeCategory(AirplaneType value) {
 //    return Character.toString(value.category);

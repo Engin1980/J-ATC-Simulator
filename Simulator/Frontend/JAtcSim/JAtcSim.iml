@@ -15,5 +15,9 @@
     <orderEntry type="library" name="JFreeCharts" level="project" />
     <orderEntry type="module" module-name="SharedLib" />
     <orderEntry type="module" module-name="SimulationLib" />
+    <orderEntry type="module" module-name="TrafficLib" />
+    <orderEntry type="module" module-name="AirplaneTypeLib" />
+    <orderEntry type="module" module-name="AreaLib" />
+    <orderEntry type="module" module-name="AirplanesLib" />
   </component>
 </module>

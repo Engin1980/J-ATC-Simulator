@@ -9,15 +9,14 @@ package eng.jAtcSim.frmPacks;
 import eng.eSystem.collections.IMap;
 import eng.eSystem.events.EventSimple;
 import eng.jAtcSim.AppSettings;
-import eng.jAtcSim.newLib.Game;
-import eng.jAtcSim.newLib.world.Area;
+import eng.jAtcSim.newLib.gameSim.IGame;
 
 /**
  *
  * @author Marek
  */
 public abstract class Pack {
-  public abstract void initPack(Game g, AppSettings appSettings);
+  public abstract void initPack(IGame g, AppSettings appSettings);
   public abstract void startPack();
 
   public abstract EventSimple<Pack> getElapseSecondEvent();

@@ -1,17 +1,22 @@
 package eng.jAtcSim.app.startupSettings;
 
-import eng.eSystem.collections.IList;
+import eng.eSystem.collections.IReadOnlyList;
+import eng.eSystem.eXml.XDocument;
+import eng.eSystem.eXml.XElement;
+import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.EXmlException;
+import eng.eSystem.swing.LayoutManager;
 import eng.eSystem.utilites.ExceptionUtils;
 import eng.eSystem.utilites.awt.ComponentUtils;
-import eng.jAtcSim.XmlLoadHelper;
 import eng.jAtcSim.app.extenders.swingFactory.FileHistoryManager;
-import eng.eSystem.swing.LayoutManager;
 import eng.jAtcSim.app.extenders.swingFactory.SwingFactory;
 import eng.jAtcSim.app.startupSettings.panels.*;
-import eng.jAtcSim.newLib.gameSim.game.sources.AirplaneTypesSource;
-import eng.jAtcSim.newLib.gameSim.game.sources.FleetsSource;
+import eng.jAtcSim.newLib.airplaneType.AirplaneTypes;
+import eng.jAtcSim.newLib.gameSim.game.sources.*;
 import eng.jAtcSim.newLib.shared.SharedAcc;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
+import eng.jAtcSim.newLib.traffic.ITrafficModel;
+import eng.jAtcSim.newLib.traffic.models.FlightListTrafficModel;
 import eng.jAtcSim.shared.MessageBox;
 
 import javax.swing.*;
@@ -19,11 +24,13 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.io.File;
 
+import static eng.eSystem.utilites.FunctionShortcuts.sf;
+
 public class FrmStartupSettings extends JPanel {
-  private JPanel pnlContent;
+  private JButton btnValidate;
   private boolean dialogResultOk;
   private String lastStartupSettingsFileName = null;
-  private JButton btnValidate;
+  private JPanel pnlContent;
 
   public FrmStartupSettings() throws HeadlessException {
 
@@ -34,10 +41,6 @@ public class FrmStartupSettings extends JPanel {
     JPanel pnlBottom = createBottomPanel();
 
     LayoutManager.fillBorderedPanel(this, null, pnlBottom, null, null, pnlContent);
-  }
-
-  public boolean isDialogResultOk() {
-    return dialogResultOk;
   }
 
   public void fillBySettings(StartupSettings settings) {
@@ -54,6 +57,58 @@ public class FrmStartupSettings extends JPanel {
           IForSettings ifs = (IForSettings) q;
           ifs.fillSettingsBy(settings);
         });
+  }
+
+  public boolean isDialogResultOk() {
+    return dialogResultOk;
+  }
+
+  private void btnApply_click(ActionEvent actionEvent) {
+    this.dialogResultOk = true;
+    this.getRootPane().getParent().setVisible(false);
+  }
+
+  private void btnLoad_click() {
+    JFileChooser jfc = SwingFactory.createFileDialog(SwingFactory.FileDialogType.startupSettings, lastStartupSettingsFileName);
+
+    int res = jfc.showOpenDialog(this);
+    if (res != JFileChooser.APPROVE_OPTION) return;
+
+    File file = jfc.getSelectedFile();
+    XDocument doc;
+    try {
+      doc = XDocument.load(file);
+    } catch (EXmlException e) {
+      throw new EApplicationException(sf("Unable to load startup settings file from '%s'.", file), e);
+    }
+    StartupSettings sett = StartupSettings.load(doc.getRoot());
+    this.fillBySettings(sett);
+    FileHistoryManager.updateHistory(SwingFactory.FileDialogType.startupSettings.toString(), file.toPath().toString());
+    this.lastStartupSettingsFileName = file.getAbsolutePath();
+  }
+
+  private void btnSave_click() {
+    JFileChooser jfc = SwingFactory.createFileDialog(SwingFactory.FileDialogType.startupSettings, lastStartupSettingsFileName);
+
+    int res = jfc.showSaveDialog(this);
+    if (res != JFileChooser.APPROVE_OPTION) return;
+
+    String fileName = jfc.getSelectedFile().toString();
+    if (fileName.endsWith(SwingFactory.STARTUP_SETTING_FILE_EXTENSION) == false)
+      fileName += SwingFactory.STARTUP_SETTING_FILE_EXTENSION;
+
+    StartupSettings sett = new StartupSettings();
+    this.fillSettingsBy(sett);
+
+    XDocument doc = new XDocument(new XElement("root"));
+    sett.save(doc.getRoot());
+    try {
+      doc.save(fileName);
+    } catch (EXmlException e) {
+      throw new EApplicationException(sf("Failed to save startup settings into file '%s'.", fileName), e);
+    }
+    FileHistoryManager.updateHistory(SwingFactory.FileDialogType.startupSettings.toString(), fileName);
+    this.lastStartupSettingsFileName = fileName;
   }
 
   private JPanel createBottomPanel() {
@@ -83,118 +138,6 @@ public class FrmStartupSettings extends JPanel {
     return ret;
   }
 
-  private void validateSources() {
-    StartupSettings ss = new StartupSettings();
-    this.fillSettingsBy(ss);
-
-    btnValidate.setEnabled(false);
-    AirplaneTypesSource types = new AirplaneTypesSource(ss.files.planesXmlFile);
-    FleetsSource fleets = new FleetsSource(ss.files.fleetsXmlFile);
-    try {
-      types.init();
-    } catch (Exception ex) {
-      SharedAcc.getAppLog().writeLine(ApplicationLog.eType.warning, "Failed to load types from '%s'. '%s'", ss.files.planesXmlFile,
-          ExceptionUtils.toFullString(ex));
-      MessageBox.show("Failed to load types from file " + ss.files.planesXmlFile + ". " + ex.getMessage(), "Error...");
-      btnValidate.setEnabled(true);
-      return;
-    }
-    try {
-      fleets.init(types.getContent());
-    } catch (Exception ex) {
-      SharedAcc.getAppLog().writeLine(ApplicationLog.eType.warning, "Failed to load fleets from '%s'. '%s'", ss.files.fleetsXmlFile,
-          ExceptionUtils.toFullString(ex));
-      MessageBox.show("Failed to load fleets from file " + ss.files.fleetsXmlFile + ". " + ex.getMessage(), "Error...");
-      btnValidate.setEnabled(true);
-      return;
-    }
-
-    if (ss.weather.type == StartupSettings.Weather.WeatherSourceType.xml){
-      WeatherSource ws = new XmlWeatherSource(ss.files.weatherXmlFile);
-      try{
-        ws.init();
-      } catch (Exception ex){
-        SharedAcc.getAppLog().writeLine(ApplicationLog.eType.warning, "Failed to load weather from '%s'. '%s'", ss.files.weatherXmlFile,
-            ExceptionUtils.toFullString(ex));
-        MessageBox.show("Failed to load weather from file " + ss.files.weatherXmlFile + ". " + ex.getMessage(), "Error...");
-        btnValidate.setEnabled(true);
-        return;
-      }
-    }
-
-    if (ss.traffic.type == StartupSettings.Traffic.eTrafficType.xml) {
-      TrafficSource traffics = new XmlTrafficSource(ss.files.trafficXmlFile);
-      try {
-        traffics.init();
-      } catch (Exception ex) {
-        SharedAcc.getAppLog().writeLine(ApplicationLog.eType.warning, "Failed to load traffic from '%s'. '%s'", ss.files.trafficXmlFile,
-            ExceptionUtils.toFullString(ex));
-        MessageBox.show("Failed to load traffic from file " + ss.files.trafficXmlFile + ". " + ex.getMessage(), "Error...");
-        btnValidate.setEnabled(true);
-        return;
-      }
-
-      Traffic trf = traffics.getContent();
-      if (trf instanceof FlightListTraffic) {
-        boolean someFail = false;
-        IList<String> requiredPlaneTypes = ((FlightListTraffic) trf).getRequiredPlaneTypes();
-
-        for (String requiredPlaneType : requiredPlaneTypes) {
-          if (types.getContent().tryGetByName(requiredPlaneType) == null) {
-            SharedAcc.getAppLog().writeLine(ApplicationLog.eType.warning, "Required plane kind '%s' not found in known plane types.", requiredPlaneType);
-            someFail = true;
-          }
-        }
-        if (someFail) {
-          MessageBox.show("Some airplane types required by the traffic file are missing.", "Error...");
-          btnValidate.setEnabled(true);
-          return;
-        }
-      }
-    }
-
-    MessageBox.show("Everything seems to be ok.", "Validation successful.");
-    btnValidate.setEnabled(true);
-  }
-
-  private void btnApply_click(ActionEvent actionEvent) {
-    this.dialogResultOk = true;
-    this.getRootPane().getParent().setVisible(false);
-  }
-
-  private void btnLoad_click() {
-    JFileChooser jfc = SwingFactory.createFileDialog(SwingFactory.FileDialogType.startupSettings, lastStartupSettingsFileName);
-
-    int res = jfc.showOpenDialog(this);
-    if (res != JFileChooser.APPROVE_OPTION) return;
-
-    File file = jfc.getSelectedFile();
-
-    StartupSettings sett;
-    sett = XmlLoadHelper.loadStartupSettings(file.getAbsolutePath());
-    this.fillBySettings(sett);
-    FileHistoryManager.updateHistory(SwingFactory.FileDialogType.startupSettings.toString(), file.toPath().toString());
-    this.lastStartupSettingsFileName = file.getAbsolutePath();
-  }
-
-  private void btnSave_click() {
-    JFileChooser jfc = SwingFactory.createFileDialog(SwingFactory.FileDialogType.startupSettings, lastStartupSettingsFileName);
-
-    int res = jfc.showSaveDialog(this);
-    if (res != JFileChooser.APPROVE_OPTION) return;
-
-    String fileName = jfc.getSelectedFile().toString();
-    if (fileName.endsWith(SwingFactory.STARTUP_SETTING_FILE_EXTENSION) == false)
-      fileName += SwingFactory.STARTUP_SETTING_FILE_EXTENSION;
-
-    StartupSettings sett = new StartupSettings();
-    this.fillSettingsBy(sett);
-
-    XmlLoadHelper.saveStartupSettings(sett, fileName);
-    FileHistoryManager.updateHistory(SwingFactory.FileDialogType.startupSettings.toString(), fileName);
-    this.lastStartupSettingsFileName = fileName;
-  }
-
   private JPanel createContentPanel() {
     JPanel ret = new JPanel();
 
@@ -217,5 +160,82 @@ public class FrmStartupSettings extends JPanel {
     ret.add(tabbedPane);
 
     return ret;
+  }
+
+  private void validateSources() {
+    StartupSettings ss = new StartupSettings();
+    this.fillSettingsBy(ss);
+
+    btnValidate.setEnabled(false);
+    AirplaneTypesSource types = new AirplaneTypesSource(ss.files.planesXmlFile);
+    FleetsSource fleets = new FleetsSource(ss.files.generalAviationFleetsXmlFile, ss.files.companiesFleetsXmlFile);
+    try {
+      types.init();
+    } catch (Exception ex) {
+      SharedAcc.getAppLog().writeLine(ApplicationLog.eType.warning, "Failed to load types from '%s'. '%s'", ss.files.planesXmlFile,
+          ExceptionUtils.toFullString(ex));
+      MessageBox.show("Failed to load types from file " + ss.files.planesXmlFile + ". " + ex.getMessage(), "Error...");
+      btnValidate.setEnabled(true);
+      return;
+    }
+    try {
+      fleets.init();
+    } catch (Exception ex) {
+      SharedAcc.getAppLog().writeLine(ApplicationLog.eType.warning, "Failed to load fleets from '%s' and/or '%s'. '%s'",
+          ss.files.companiesFleetsXmlFile,
+          ss.files.generalAviationFleetsXmlFile,
+          ExceptionUtils.toFullString(ex));
+      MessageBox.show(sf("Failed to load fleets from file '%s' and/or '%s'. %s.",
+          ss.files.companiesFleetsXmlFile, ss.files.generalAviationFleetsXmlFile, ex.getMessage()),
+          "Error...");
+      btnValidate.setEnabled(true);
+      return;
+    }
+
+    if (ss.weather.type == StartupSettings.Weather.WeatherSourceType.xml) {
+      WeatherSource ws = new WeatherXmlSource(ss.files.weatherXmlFile);
+      try {
+        ws.init();
+      } catch (Exception ex) {
+        SharedAcc.getAppLog().writeLine(ApplicationLog.eType.warning, "Failed to load weather from '%s'. '%s'", ss.files.weatherXmlFile,
+            ExceptionUtils.toFullString(ex));
+        MessageBox.show("Failed to load weather from file " + ss.files.weatherXmlFile + ". " + ex.getMessage(), "Error...");
+        btnValidate.setEnabled(true);
+        return;
+      }
+    }
+
+    if (ss.traffic.type == StartupSettings.Traffic.eTrafficType.xml) {
+      TrafficSource traffics = new TrafficXmlSource(ss.files.trafficXmlFile);
+      try {
+        traffics.init();
+      } catch (Exception ex) {
+        SharedAcc.getAppLog().writeLine(ApplicationLog.eType.warning, "Failed to load traffic from '%s'. '%s'", ss.files.trafficXmlFile,
+            ExceptionUtils.toFullString(ex));
+        MessageBox.show("Failed to load traffic from file " + ss.files.trafficXmlFile + ". " + ex.getMessage(), "Error...");
+        btnValidate.setEnabled(true);
+        return;
+      }
+
+      ITrafficModel tm = traffics.getContent();
+      if (tm instanceof FlightListTrafficModel) {
+        FlightListTrafficModel fltm = (FlightListTrafficModel) tm;
+        IReadOnlyList<String> requiredPlaneTypes = fltm.getRequiredPlaneTypes();
+        IReadOnlyList<String> knownPlaneTypes = types.getContent().getTypeNames();
+        IReadOnlyList<String> unknownPlaneTypes = requiredPlaneTypes
+            .where(q -> knownPlaneTypes.contains(q) == false);
+        for (String unknownPlaneType : unknownPlaneTypes) {
+          SharedAcc.getAppLog().writeLine(ApplicationLog.eType.warning, "Required plane kind '%s' not found in known plane types.", unknownPlaneType);
+        }
+        if (unknownPlaneTypes.isEmpty() == false) {
+          MessageBox.show("Some airplane types required by the traffic file are missing.", "Error...");
+          btnValidate.setEnabled(true);
+          return;
+        }
+      }
+    }
+
+    MessageBox.show("Everything seems to be ok.", "Validation successful.");
+    btnValidate.setEnabled(true);
   }
 }
