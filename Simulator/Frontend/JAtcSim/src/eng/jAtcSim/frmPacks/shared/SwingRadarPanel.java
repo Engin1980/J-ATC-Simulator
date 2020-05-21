@@ -12,12 +12,13 @@ import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.exceptions.ERuntimeException;
 import eng.eSystem.functionalInterfaces.Selector;
+import eng.eSystem.swing.LayoutManager;
 import eng.jAtcSim.SwingRadar.SwingCanvas;
+import eng.jAtcSim.abstractRadar.Radar;
+import eng.jAtcSim.abstractRadar.RadarViewPort;
 import eng.jAtcSim.abstractRadar.settngs.RadarBehaviorSettings;
 import eng.jAtcSim.abstractRadar.settngs.RadarDisplaySettings;
 import eng.jAtcSim.abstractRadar.settngs.RadarStyleSettings;
-import eng.jAtcSim.abstractRadar.*;
-import eng.eSystem.swing.LayoutManager;
 import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
 import eng.jAtcSim.newLib.area.Area;
 import eng.jAtcSim.newLib.area.AreaAcc;
@@ -31,9 +32,7 @@ import eng.jAtcSim.newLib.shared.enums.AtcType;
 import eng.jAtcSim.newLib.speeches.SpeechList;
 import eng.jAtcSim.newLib.speeches.airplane.IForPlaneSpeech;
 import eng.jAtcSim.newLib.speeches.atc.IAtcSpeech;
-import eng.jAtcSim.newLib.speeches.base.IToAirplane;
 import eng.jAtcSim.newLib.speeches.system.ISystemSpeech;
-import eng.jAtcSim.newLib.textProcessing.implemented.planeParser.PlaneParser;
 import eng.jAtcSim.newLib.textProcessing.parsing.IAtcParser;
 import eng.jAtcSim.newLib.textProcessing.parsing.IPlaneParser;
 import eng.jAtcSim.newLib.textProcessing.parsing.ISystemParser;
@@ -46,26 +45,7 @@ import java.lang.reflect.Method;
 import java.util.Comparator;
 
 public class SwingRadarPanel extends JPanel {
-  private Radar radar;
-  private CommandJTextWraper wrp;
-  private ISimulation sim;
-  private Area area;
-  private RadarStyleSettings styleSettings;
-  private RadarDisplaySettings displaySettings;
-  private RadarBehaviorSettings behaviorSettings;
-  private InitialPosition initialPosition;
-  private JButtonExtender extBtn = new JButtonExtender(
-      new Color(0, 0, 0),
-      new Color(150, 150, 150),
-      new Color(0, 0, 0),
-      new Color(0, 255, 0)
-  );
-  private IMap<Integer, RadarViewPort> storedRadarPositions = new EMap<>();
-  private IList<ButtonBinding> bndgs = new EList();
-  private AdjustSelectionPanelWrapper<DARoute> wrpRoutes;
-  private AdjustSelectionPanelWrapper<Approach> wrpApproaches;
-
-  class RoutesAdjustSelectionPanelWrapperListener implements AdjustSelectionPanelWrapper.ActionSelectionPanelWraperListener<DARoute>{
+  class RoutesAdjustSelectionPanelWrapperListener implements AdjustSelectionPanelWrapper.ActionSelectionPanelWraperListener<DARoute> {
 
     @Override
     public Tuple<Iterable<DARoute>, Selector<DARoute, String>> doInit() {
@@ -86,7 +66,7 @@ public class SwingRadarPanel extends JPanel {
       orderedRoutes.sort(new RouteComparator(tmp));
 
       ret.setA(orderedRoutes);
-      ret.setB(q->{
+      ret.setB(q -> {
         EStringBuilder sb = new EStringBuilder();
         sb.append(q.getName());
         sb.append(" (");
@@ -123,18 +103,20 @@ public class SwingRadarPanel extends JPanel {
     }
   }
 
-  class ApproachesAdjustSelectionPanelWrapperListener implements AdjustSelectionPanelWrapper.ActionSelectionPanelWraperListener<Approach>{
+  class ApproachesAdjustSelectionPanelWrapperListener
+      implements AdjustSelectionPanelWrapper.ActionSelectionPanelWraperListener<Approach> {
     @Override
-    public Tuple<Iterable<Approach>, Selector<Approach, String>> doInit() {
+    public Tuple<Iterable<Approach>, Selector<Approach, String>> doInit(ISimulation sim) {
       Tuple<Iterable<Approach>, Selector<Approach, String>> ret = new Tuple<>();
-      IList<Approach> tmp = new EList();
+      IList<Approach> tmp = new EList<>();
 
-      for (ActiveRunwayThreshold runwayThreshold : Acc.atcTwr().getRunwayConfigurationInUse().getArrivals().select(q -> q.getThreshold())) {
+      for (ActiveRunwayThreshold runwayThreshold : sim.getRunwayConfigurationInUse().getArrivals()
+          .select(q -> q.getThreshold())) {
         tmp.add(runwayThreshold.getApproaches());
       }
 
       ret.setA(tmp);
-      ret.setB(q->q.getParent().getName()+ " " + q.getTypeString());
+      ret.setB(q -> q.getParent().getName() + " " + q.getType().toString());
 
       return ret;
     }
@@ -149,6 +131,46 @@ public class SwingRadarPanel extends JPanel {
       radar.setDrawnApproaches(routes);
       radar.redraw(true);
     }
+  }
+  private Area area;
+  private RadarBehaviorSettings behaviorSettings;
+  private IList<ButtonBinding> bndgs = new EList();
+  private RadarDisplaySettings displaySettings;
+  private JButtonExtender extBtn = new JButtonExtender(
+      new Color(0, 0, 0),
+      new Color(150, 150, 150),
+      new Color(0, 0, 0),
+      new Color(0, 255, 0)
+  );
+  private InitialPosition initialPosition;
+  private Radar radar;
+  private ISimulation sim;
+  private IMap<Integer, RadarViewPort> storedRadarPositions = new EMap<>();
+  private RadarStyleSettings styleSettings;
+  private CommandJTextWraper wrp;
+  private AdjustSelectionPanelWrapper<Approach> wrpApproaches;
+  private AdjustSelectionPanelWrapper<DARoute> wrpRoutes;
+
+  public void addCommandTextToLine(String text) {
+    wrp.appendText(text, true);
+    wrp.focus();
+  }
+
+  public void eraseCommand() {
+    wrp.erase();
+  }
+
+  public Radar getRadar() {
+    return radar;
+  }
+
+  public IMap<Integer, RadarViewPort> getRadarStoredPositions() {
+    IMap<Integer, RadarViewPort> ret = new EMap<>(this.storedRadarPositions);
+    return ret;
+  }
+
+  public void setRadarStoredPositions(IMap<Integer, RadarViewPort> positions) {
+    this.storedRadarPositions.set(positions);
   }
 
   public void init(InitialPosition initialPosition,
@@ -184,21 +206,8 @@ public class SwingRadarPanel extends JPanel {
     });
   }
 
-  public Radar getRadar() {
-    return radar;
-  }
-
-  public void addCommandTextToLine(String text) {
-    wrp.appendText(text, true);
-    wrp.focus();
-  }
-
   public void sendCommand() {
     wrp.send();
-  }
-
-  public void eraseCommand() {
-    wrp.erase();
   }
 
   public void setFocus(Character keyChar) {
@@ -209,54 +218,31 @@ public class SwingRadarPanel extends JPanel {
     }
   }
 
-  public IMap<Integer, RadarViewPort> getRadarStoredPositions() {
-    IMap<Integer, RadarViewPort> ret = new EMap<>(this.storedRadarPositions);
-    return ret;
+  private Tuple<JPanel, JButton[]> buildButtonBlock(
+      String btnLabel, Object targetObject, String propertyName) {
+
+    JButton btn = new JButton(btnLabel);
+    ButtonBinding bb = new ButtonBinding(targetObject, propertyName, btn);
+    this.bndgs.add(bb);
+
+    JPanel ret = LayoutManager.createGridPanel(1, 1, 0, btn);
+    return new Tuple<>(ret, new JButton[]{btn});
   }
 
-  public void setRadarStoredPositions(IMap<Integer, RadarViewPort> positions) {
-    this.storedRadarPositions.set(positions);
-  }
+  private Tuple<JPanel, JButton[]> buildButtonBlock(
+      String btnLabel, Object targetObject, String propertyName,
+      String btnLabelB, Object targetObjectB, String propertyNameB) {
 
-  private JPanel buildTextPanel() {
+    JButton btn = new JButton(btnLabel);
+    ButtonBinding bb = new ButtonBinding(targetObject, propertyName, btn);
+    this.bndgs.add(bb);
 
-    // textove pole
-    JTextField txtInput = new JTextField();
-    Font font = new Font("Courier New", Font.PLAIN, txtInput.getFont().getSize());
-    txtInput.setFont(font);
-    JPanel ret = LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.middle,
-        3,
-        txtInput);
+    JButton btnB = new JButton(btnLabelB);
+    ButtonBinding bbB = new ButtonBinding(targetObjectB, propertyNameB, btnB);
+    this.bndgs.add(bbB);
 
-    wrp = new CommandJTextWraper(txtInput);
-    wrp.getSendEvent().add(() -> this.wrp_send());
-    wrp.getRecallRadarPosition().add(pos -> this.recallRadarPosition(pos));
-    wrp.getStoreRadarPosition().add(pos -> this.storeRadarPosition(pos));
-    wrp.getPauseUnpauseSimulation().add(() -> this.sim.pauseUnpauseSim());
-    wrp.focus();
-
-    return ret;
-  }
-
-  private void storeRadarPosition(int index) {
-    RadarViewPort rp = radar.getViewPort();
-    storedRadarPositions.set(index, rp);
-  }
-
-  private void recallRadarPosition(int index) {
-    RadarViewPort rp = storedRadarPositions.tryGet(index);
-    if (rp != null) {
-      radar.setViewPort(rp);
-    }
-  }
-
-  private void wrp_send() {
-    String msg = wrp.getText();
-    boolean accepted = sendMessage(msg);
-    if (accepted) {
-      wrp.erase();
-    }
-    wrp.focus();
+    JPanel ret = LayoutManager.createGridPanel(2, 1, 0, btn, btnB);
+    return new Tuple<>(ret, new JButton[]{btn, btnB});
   }
 
   private JPanel buildRadarPanel() {
@@ -279,31 +265,24 @@ public class SwingRadarPanel extends JPanel {
     return ret;
   }
 
-  private Tuple<JPanel, JButton[]> buildButtonBlock(
-      String btnLabel, Object targetObject, String propertyName){
+  private JPanel buildTextPanel() {
 
-    JButton btn = new JButton(btnLabel);
-    ButtonBinding bb = new ButtonBinding(targetObject, propertyName, btn);
-    this.bndgs.add(bb);
+    // textove pole
+    JTextField txtInput = new JTextField();
+    Font font = new Font("Courier New", Font.PLAIN, txtInput.getFont().getSize());
+    txtInput.setFont(font);
+    JPanel ret = LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.middle,
+        3,
+        txtInput);
 
-    JPanel ret = LayoutManager.createGridPanel(1, 1, 0, btn);
-    return new Tuple<>(ret, new JButton[]{btn});
-  }
+    wrp = new CommandJTextWraper(txtInput);
+    wrp.getSendEvent().add(() -> this.wrp_send());
+    wrp.getRecallRadarPosition().add(pos -> this.recallRadarPosition(pos));
+    wrp.getStoreRadarPosition().add(pos -> this.storeRadarPosition(pos));
+    wrp.getPauseUnpauseSimulation().add(() -> this.sim.pauseUnpauseSim());
+    wrp.focus();
 
-  private Tuple<JPanel, JButton[]> buildButtonBlock(
-      String btnLabel, Object targetObject, String propertyName,
-      String btnLabelB, Object targetObjectB, String propertyNameB){
-
-    JButton btn = new JButton(btnLabel);
-    ButtonBinding bb = new ButtonBinding(targetObject, propertyName, btn);
-    this.bndgs.add(bb);
-
-    JButton btnB = new JButton(btnLabelB);
-    ButtonBinding bbB = new ButtonBinding(targetObjectB, propertyNameB, btnB);
-    this.bndgs.add(bbB);
-
-    JPanel ret = LayoutManager.createGridPanel(2, 1, 0, btn, btnB);
-    return new Tuple<>(ret, new JButton[]{btn, btnB});
+    return ret;
   }
 
   private JPanel buildTopPanel() {
@@ -323,7 +302,7 @@ public class SwingRadarPanel extends JPanel {
     pnlx = buildButtonBlock(
         "CTR", this.displaySettings, "CtrBorderVisible",
         "TMA", this.displaySettings, "TmaBorderVisible"
-        );
+    );
     ret.add(pnlx.getA());
 
     pnlx = buildButtonBlock(
@@ -398,54 +377,12 @@ public class SwingRadarPanel extends JPanel {
     return ret;
   }
 
-  private boolean sendMessage(String msg) {
-    msg = normalizeMsg(msg);
-    ISimulation sim;
-    boolean ret;
-    try {
-      if (msg.startsWith("+") || msg.startsWith("-")) {
-        // msg for atc
-        AtcType atcType = msg.startsWith("+") ? AtcType.ctr : AtcType.twr;
-        msg = msg.substring(1);
-        IAtcParser parser = sim.getAtcParser();
-        IAtcSpeech speech = parser.parse(msg);
-        AtcId id = sim.getAtcs().getFirst(q->q.getType() == atcType);
-        sim.sendAtcCommand(id, speech);
-        ret = true;
-      } else if (msg.startsWith("?")) {
-        // system
-        msg = msg.substring(1);
-        ISystemParser parser = sim.getSystemParser();
-        ISystemSpeech speech = parser.parse(msg);
-        sim.sendSystemCommand(speech);
-        ret = true;
-//      } else if (msg.startsWith("!")) {
-//        // application
-//        processApplicationMessage(msg);
-//        ret = true;
-      } else {
-        // plane fromAtc
-        int firstSpaceIndex = msg.indexOf(' ');
-        String callsignString = msg.substring(0, firstSpaceIndex);
-        String messageString = msg.substring(firstSpaceIndex+1);
-        Callsign callsign = getCallsignFromString(callsignString);
-        IPlaneParser parser = sim.getPlaneParser();
-        SpeechList<IForPlaneSpeech> cmds = parser.parse(messageString);
-        sim.sendPlaneCommands(callsign, cmds);
-        ret = true;
-      }
-    } catch (Throwable t) {
-      throw new ERuntimeException("Message invocation failed for item: " + msg, t);
-    }
-    return ret;
-  }
-
   private Callsign getCallsignFromString(String callsignString) {
-    IList<Callsign> clsgns = sim.getPlanesToDisplay().select(q->q.callsign());
-    Callsign ret = clsgns.tryGetFirst(q->q.toString().equals(callsignString));
-    if (ret == null){
-      IList<Callsign> tmp = clsgns.where(q->q.getNumber().equals(callsignString));
-      if (tmp.count() > 1){
+    IList<Callsign> clsgns = sim.getPlanesToDisplay().select(q -> q.callsign());
+    Callsign ret = clsgns.tryGetFirst(q -> q.toString().equals(callsignString));
+    if (ret == null) {
+      IList<Callsign> tmp = clsgns.where(q -> q.getNumber().equals(callsignString));
+      if (tmp.count() > 1) {
         // multiple matches
         throw new EApplicationException("Multiple callsign matches!");
       } else
@@ -470,30 +407,83 @@ public class SwingRadarPanel extends JPanel {
   private void processApplicationMessage(String msg) {
 
   }
+
+  private void recallRadarPosition(int index) {
+    RadarViewPort rp = storedRadarPositions.tryGet(index);
+    if (rp != null) {
+      radar.setViewPort(rp);
+    }
+  }
+
+  private boolean sendMessage(String msg) {
+    msg = normalizeMsg(msg);
+    boolean ret;
+    try {
+      if (msg.startsWith("+") || msg.startsWith("-")) {
+        // msg for atc
+        AtcType atcType = msg.startsWith("+") ? AtcType.ctr : AtcType.twr;
+        msg = msg.substring(1);
+        IAtcParser parser = this.sim.getAtcParser();
+        IAtcSpeech speech = parser.parse(msg);
+        AtcId id = sim.getAtcs().getFirst(q -> q.getType() == atcType);
+        sim.sendAtcCommand(id, speech);
+        ret = true;
+      } else if (msg.startsWith("?")) {
+        // system
+        msg = msg.substring(1);
+        ISystemParser parser = sim.getSystemParser();
+        ISystemSpeech speech = parser.parse(msg);
+        sim.sendSystemCommand(speech);
+        ret = true;
+//      } else if (msg.startsWith("!")) {
+//        // application
+//        processApplicationMessage(msg);
+//        ret = true;
+      } else {
+        // plane fromAtc
+        int firstSpaceIndex = msg.indexOf(' ');
+        String callsignString = msg.substring(0, firstSpaceIndex);
+        String messageString = msg.substring(firstSpaceIndex + 1);
+        Callsign callsign = getCallsignFromString(callsignString);
+        IPlaneParser parser = sim.getPlaneParser();
+        SpeechList<IForPlaneSpeech> cmds = parser.parse(messageString);
+        sim.sendPlaneCommands(callsign, cmds);
+        ret = true;
+      }
+    } catch (Throwable t) {
+      throw new ERuntimeException("Message invocation failed for item: " + msg, t);
+    }
+    return ret;
+  }
+
+  private void storeRadarPosition(int index) {
+    RadarViewPort rp = radar.getViewPort();
+    storedRadarPositions.set(index, rp);
+  }
+
+  private void wrp_send() {
+    String msg = wrp.getText();
+    boolean accepted = sendMessage(msg);
+    if (accepted) {
+      wrp.erase();
+    }
+    wrp.focus();
+  }
 }
 
 class CommandJTextWraper {
 
-  private final JTextField parent;
   private boolean isCtr = false;
+  private final JTextField parent;
+  private EventAnonymousSimple pauseUnpauseSimulation = new EventAnonymousSimple();
+  private EventAnonymous<Integer> recallRadarPosition = new EventAnonymous<>();
   private EventAnonymousSimple sendEvent = new EventAnonymousSimple();
   private EventAnonymous<Integer> storeRadarPosition = new EventAnonymous<>();
-  private EventAnonymous<Integer> recallRadarPosition = new EventAnonymous<>();
-  private EventAnonymousSimple pauseUnpauseSimulation = new EventAnonymousSimple();
-
-  public EventAnonymousSimple getPauseUnpauseSimulation() {
-    return pauseUnpauseSimulation;
-  }
 
   public CommandJTextWraper(JTextField parentJTextField) {
     parent = parentJTextField;
 
     parent.addKeyListener(new KeyListener() {
-
-      @Override
-      public void keyTyped(KeyEvent e) {
-
-      }
 
       @Override
       public void keyPressed(KeyEvent e) {
@@ -564,12 +554,13 @@ class CommandJTextWraper {
         }
       }
 
+      @Override
+      public void keyTyped(KeyEvent e) {
+
+      }
+
 
     });
-  }
-
-  public void focus() {
-    parent.requestFocus();
   }
 
   public void appendText(String text, boolean separate) {
@@ -581,16 +572,20 @@ class CommandJTextWraper {
     parent.setText(tmp);
   }
 
-  public String getText() {
-    return parent.getText().trim().toUpperCase();
-  }
-
-  public void send() {
-    sendEvent.raise();
-  }
-
   public void erase() {
     parent.setText("");
+  }
+
+  public void focus() {
+    parent.requestFocus();
+  }
+
+  public EventAnonymousSimple getPauseUnpauseSimulation() {
+    return pauseUnpauseSimulation;
+  }
+
+  public EventAnonymous<Integer> getRecallRadarPosition() {
+    return recallRadarPosition;
   }
 
   public EventAnonymousSimple getSendEvent() {
@@ -601,8 +596,12 @@ class CommandJTextWraper {
     return storeRadarPosition;
   }
 
-  public EventAnonymous<Integer> getRecallRadarPosition() {
-    return recallRadarPosition;
+  public String getText() {
+    return parent.getText().trim().toUpperCase();
+  }
+
+  public void send() {
+    sendEvent.raise();
   }
 }
 
@@ -632,14 +631,14 @@ class JButtonExtender {
 
 class ButtonBinding {
   private static JButtonExtender ext;
-  private final Object target;
-  private final String propertyName;
-  private final JButton btn;
-  private final EventAnonymousSimple onClicked = new EventAnonymousSimple();
 
   public static void init(JButtonExtender ext) {
     ButtonBinding.ext = ext;
   }
+  private final JButton btn;
+  private final EventAnonymousSimple onClicked = new EventAnonymousSimple();
+  private final String propertyName;
+  private final Object target;
 
   public ButtonBinding(Object target, String propertyName, JButton btn) {
     this.target = target;

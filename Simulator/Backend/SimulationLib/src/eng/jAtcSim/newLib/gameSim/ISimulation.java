@@ -15,6 +15,7 @@ import eng.jAtcSim.newLib.speeches.SpeechList;
 import eng.jAtcSim.newLib.speeches.airplane.IForPlaneSpeech;
 import eng.jAtcSim.newLib.speeches.atc.IAtcSpeech;
 import eng.jAtcSim.newLib.speeches.system.ISystemSpeech;
+import eng.jAtcSim.newLib.textProcessing.parsing.IAtcParser;
 import eng.jAtcSim.newLib.textProcessing.parsing.IPlaneParser;
 import eng.jAtcSim.newLib.textProcessing.parsing.ISystemParser;
 
@@ -22,6 +23,8 @@ public interface ISimulation {
   Airport airport();
 
   ApplicationLog getAppLog();
+
+  IAtcParser getAtcParser();
 
   IReadOnlyList<AtcId> getAtcs();
 
