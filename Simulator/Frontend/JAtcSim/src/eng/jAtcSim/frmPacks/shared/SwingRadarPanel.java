@@ -25,6 +25,18 @@ import eng.jAtcSim.newLib.area.InitialPosition;
 import eng.jAtcSim.newLib.area.approaches.Approach;
 import eng.jAtcSim.newLib.area.routes.DARoute;
 import eng.jAtcSim.newLib.gameSim.ISimulation;
+import eng.jAtcSim.newLib.shared.AtcId;
+import eng.jAtcSim.newLib.shared.Callsign;
+import eng.jAtcSim.newLib.shared.enums.AtcType;
+import eng.jAtcSim.newLib.speeches.SpeechList;
+import eng.jAtcSim.newLib.speeches.airplane.IForPlaneSpeech;
+import eng.jAtcSim.newLib.speeches.atc.IAtcSpeech;
+import eng.jAtcSim.newLib.speeches.base.IToAirplane;
+import eng.jAtcSim.newLib.speeches.system.ISystemSpeech;
+import eng.jAtcSim.newLib.textProcessing.implemented.planeParser.PlaneParser;
+import eng.jAtcSim.newLib.textProcessing.parsing.IAtcParser;
+import eng.jAtcSim.newLib.textProcessing.parsing.IPlaneParser;
+import eng.jAtcSim.newLib.textProcessing.parsing.ISystemParser;
 
 import javax.swing.*;
 import java.awt.*;
@@ -388,38 +400,59 @@ public class SwingRadarPanel extends JPanel {
 
   private boolean sendMessage(String msg) {
     msg = normalizeMsg(msg);
+    ISimulation sim;
     boolean ret;
-    UserAtc app = sim.getAppAtc();
     try {
-      if (msg.startsWith("+")) {
-        // msg for ctr
+      if (msg.startsWith("+") || msg.startsWith("-")) {
+        // msg for atc
+        AtcType atcType = msg.startsWith("+") ? AtcType.ctr : AtcType.twr;
         msg = msg.substring(1);
-        app.sendPlaneSwitchMessageToAtc(Atc.eType.ctr, msg);
+        IAtcParser parser = sim.getAtcParser();
+        IAtcSpeech speech = parser.parse(msg);
+        AtcId id = sim.getAtcs().getFirst(q->q.getType() == atcType);
+        sim.sendAtcCommand(id, speech);
         ret = true;
-
-      } else if (msg.startsWith("-")) {
-        // msg for TWR
-        msg = msg.substring(1);
-        app.sendPlaneSwitchMessageToAtc(Atc.eType.twr, msg);
-        ret = true;
-
       } else if (msg.startsWith("?")) {
         // system
         msg = msg.substring(1);
-        app.sendSystem(msg);
+        ISystemParser parser = sim.getSystemParser();
+        ISystemSpeech speech = parser.parse(msg);
+        sim.sendSystemCommand(speech);
         ret = true;
-      } else if (msg.startsWith("!")) {
-        // application
-        processApplicationMessage(msg);
-        ret = true;
+//      } else if (msg.startsWith("!")) {
+//        // application
+//        processApplicationMessage(msg);
+//        ret = true;
       } else {
         // plane fromAtc
-        app.sendToPlane(msg);
+        int firstSpaceIndex = msg.indexOf(' ');
+        String callsignString = msg.substring(0, firstSpaceIndex);
+        String messageString = msg.substring(firstSpaceIndex+1);
+        Callsign callsign = getCallsignFromString(callsignString);
+        IPlaneParser parser = sim.getPlaneParser();
+        SpeechList<IForPlaneSpeech> cmds = parser.parse(messageString);
+        sim.sendPlaneCommands(callsign, cmds);
         ret = true;
       }
     } catch (Throwable t) {
       throw new ERuntimeException("Message invocation failed for item: " + msg, t);
     }
+    return ret;
+  }
+
+  private Callsign getCallsignFromString(String callsignString) {
+    IList<Callsign> clsgns = sim.getPlanesToDisplay().select(q->q.callsign());
+    Callsign ret = clsgns.tryGetFirst(q->q.toString().equals(callsignString));
+    if (ret == null){
+      IList<Callsign> tmp = clsgns.where(q->q.getNumber().equals(callsignString));
+      if (tmp.count() > 1){
+        // multiple matches
+        throw new EApplicationException("Multiple callsign matches!");
+      } else
+        ret = tmp.tryGetFirst();
+    }
+    if (ret == null)
+      throw new EApplicationException("No callsign match!");
     return ret;
   }
 

@@ -1,9 +1,12 @@
 package eng.jAtcSim.frmPacks.shared;
 
+import eng.eSystem.collections.IReadOnlyList;
 import eng.jAtcSim.AppSettings;
 import eng.eSystem.swing.LayoutManager;
 import eng.jAtcSim.newLib.gameSim.ISimulation;
+import eng.jAtcSim.newLib.gameSim.simulation.IScheduledMovement;
 import eng.jAtcSim.newLib.shared.Callsign;
+import eng.jAtcSim.newLib.shared.enums.DepartureArrival;
 
 import javax.swing.*;
 import java.awt.*;
@@ -39,12 +42,12 @@ public class ScheduledFlightListPanel extends JPanel {
 
   private void updateList() {
     if (refreshNeeded()) {
-      IReadOnlyList<Movement> movements =
-          this.sim.getScheduledMovements().orderBy(q -> q.getAppExpectedTime());
+      IReadOnlyList<IScheduledMovement> movements =
+          this.sim.getScheduledMovements().orderBy(q -> q.getAppExpectedTime().getValue());
 
       pnlContent.removeAll();
       ScheduledFlightStripPanel.resetIndex();
-      for (Movement mvm : movements) {
+      for (IScheduledMovement mvm : movements) {
         JPanel pnlItem = createMovementStrip(mvm);
         pnlItem.setName("MovementStrip_" + mvm.getCallsign().toString());
         pnlContent.add(pnlItem);
@@ -65,7 +68,7 @@ public class ScheduledFlightListPanel extends JPanel {
   }
 
   private boolean refreshNeeded() {
-    IReadOnlyList<Movement> mvm = this.sim.getScheduledMovements();
+    IReadOnlyList<IScheduledMovement> mvm = this.sim.getScheduledMovements();
     if (itemCount == null || itemCount != mvm.size())
       return true;
     if (itemCount > 0) {
@@ -76,7 +79,7 @@ public class ScheduledFlightListPanel extends JPanel {
     return false;
   }
 
-  private JPanel createMovementStrip(Movement mvm) {
+  private JPanel createMovementStrip(IScheduledMovement mvm) {
     JPanel ret = new ScheduledFlightStripPanel(mvm);
     return ret;
   }
@@ -104,11 +107,11 @@ class ScheduledFlightStripPanel extends JPanel {
     index = 0;
   }
 
-  private static Color getColor(Movement mvm) {
+  private static Color getColor(IScheduledMovement mvm) {
     Color ret;
     // pozadi
     boolean isEven = index++ % 2 == 0;
-    if (mvm.isDeparture()) {
+    if (mvm.getDirection() == DepartureArrival.departure) {
       ret = isEven ? stripSettings.twr.even : stripSettings.twr.odd;
     } else {
       ret = isEven ? stripSettings.ctr.even : stripSettings.ctr.odd;
@@ -116,7 +119,7 @@ class ScheduledFlightStripPanel extends JPanel {
     return ret;
   }
 
-  public ScheduledFlightStripPanel(Movement mvm) {
+  public ScheduledFlightStripPanel(IScheduledMovement mvm) {
 
     this.setLayout(new BorderLayout());
 
@@ -129,11 +132,11 @@ class ScheduledFlightStripPanel extends JPanel {
     fillContent(mvm, stripSettings.textColor, color);
   }
 
-  private void fillContent(Movement movement, Color frColor, Color bgColor) {
+  private void fillContent(IScheduledMovement movement, Color frColor, Color bgColor) {
     JLabel lblCallsign = new JLabel(movement.getCallsign().toString());
     setLabelFixedSize(lblCallsign, CALLSIGN_DIMENSION);
 
-    JLabel lblDepartureArrival = new JLabel(movement.isDeparture() ? "DEP" : "ARR");
+    JLabel lblDepartureArrival = new JLabel(movement.getDirection() == DepartureArrival.departure ? "DEP" : "ARR");
     setLabelFixedSize(lblDepartureArrival, FLAG_DIMENSION);
 
     JLabel lblTypeName = new JLabel(movement.getAirplaneType().name);

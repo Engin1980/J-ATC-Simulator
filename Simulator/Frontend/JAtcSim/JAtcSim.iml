@@ -19,5 +19,7 @@
     <orderEntry type="module" module-name="AirplaneTypeLib" />
     <orderEntry type="module" module-name="AreaLib" />
     <orderEntry type="module" module-name="AirplanesLib" />
+    <orderEntry type="module" module-name="TextProcessingLib" />
+    <orderEntry type="module" module-name="SpeechesLib" />
   </component>
 </module>
