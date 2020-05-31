@@ -1,5 +1,7 @@
 package eng.jAtcSim.abstractRadar.settngs;
 
+import eng.eSystem.eXml.XDocument;
+import eng.eSystem.eXml.XElement;
 import eng.jAtcSim.abstractRadar.global.Color;
 import eng.jAtcSim.abstractRadar.global.Font;
 
@@ -254,4 +256,10 @@ public class RadarStyleSettings {
   public Color airproxPartial;
   public Color airproxWarning;
   public Color mrvaError;
+
+  public static RadarStyleSettings load(String fileName){
+    XDocument doc = XDocument.load(fileName);
+    XElement root = doc.getRoot();
+
+  }
 }

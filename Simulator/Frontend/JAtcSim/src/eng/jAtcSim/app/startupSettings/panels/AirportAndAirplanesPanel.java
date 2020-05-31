@@ -9,10 +9,10 @@ import eng.eSystem.utilites.ExceptionUtils;
 import eng.jAtcSim.app.extenders.XmlFileSelectorExtender;
 import eng.jAtcSim.app.extenders.swingFactory.SwingFactory;
 import eng.jAtcSim.app.startupSettings.StartupSettings;
-import eng.jAtcSim.newLib.Acc;
-import eng.jAtcSim.newLib.area.global.logging.ApplicationLog;
-import eng.jAtcSim.newLib.area.global.newSources.AreaSource;
-import eng.jAtcSim.newLib.world.Area;
+import eng.jAtcSim.newLib.area.Area;
+import eng.jAtcSim.newLib.gameSim.game.sources.AreaSource;
+import eng.jAtcSim.newLib.shared.SharedAcc;
+import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 import eng.jAtcSim.shared.MessageBox;
 
 import javax.swing.*;
@@ -39,6 +39,7 @@ public class AirportAndAirplanesPanel extends JStartupPanel {
 
   private ComboBoxExtender<AirportInfo> cmbAirports;
   private XmlFileSelectorExtender fleFleet;
+  private XmlFileSelectorExtender fleGaFleet;
   private XmlFileSelectorExtender fleTypes;
   private XmlFileSelectorExtender fleArea;
   private JButton btnLoadArea;
@@ -61,7 +62,8 @@ public class AirportAndAirplanesPanel extends JStartupPanel {
     cmbAirports.addItem(ai);
     cmbAirports.setSelectedItem(ai);
 
-    fleFleet.setFileName(settings.files.fleetsXmlFile);
+    fleFleet.setFileName(settings.files.companiesFleetsXmlFile);
+    fleGaFleet.setFileName(settings.files.generalAviationFleetsXmlFile);
     fleTypes.setFileName(settings.files.planesXmlFile);
     fleArea.setFileName(settings.files.areaXmlFile);
   }
@@ -69,7 +71,8 @@ public class AirportAndAirplanesPanel extends JStartupPanel {
   @Override
   public void fillSettingsBy(StartupSettings settings) {
     settings.recent.icao = cmbAirports.getSelectedItem().icao;
-    settings.files.fleetsXmlFile = fleFleet.getFileName();
+    settings.files.companiesFleetsXmlFile = fleFleet.getFileName();
+    settings.files.generalAviationFleetsXmlFile = fleGaFleet.getFileName();
     settings.files.planesXmlFile = fleTypes.getFileName();
     settings.files.areaXmlFile = fleArea.getFileName();
   }
@@ -142,7 +145,7 @@ public class AirportAndAirplanesPanel extends JStartupPanel {
     try{
       area.init();
     } catch (Exception ex){
-      Acc.log().writeLine(ApplicationLog.eType.warning, "Failed to area from '%s'. '%s'", fleFleet.getFileName(),
+      SharedAcc.getAppLog().writeLine(ApplicationLog.eType.warning, "Failed to area from '%s'. '%s'", fleFleet.getFileName(),
           ExceptionUtils.toFullString(ex));
       MessageBox.show("Failed to load area from file " + fleFleet.getFileName() + ". " + ex.getMessage(), "Error...");
       btnLoadArea.setEnabled(true);

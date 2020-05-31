@@ -6,9 +6,11 @@
 package eng.jAtcSim.frmPacks.mdi;
 
 import eng.jAtcSim.frmPacks.shared.SwingRadarPanel;
-import eng.jAtcSim.newLib.area.textProcessing.formatting.SpeechFormatter;
 import eng.jAtcSim.abstractRadar.settngs.RadarBehaviorSettings;
 import eng.jAtcSim.abstractRadar.settngs.RadarDisplaySettings;
+import eng.jAtcSim.newLib.textProcessing.formatting.IAtcFormatter;
+import eng.jAtcSim.newLib.textProcessing.formatting.IPlaneFormatter;
+import eng.jAtcSim.newLib.textProcessing.formatting.ISystemFormatter;
 
 import javax.swing.*;
 import java.awt.*;
@@ -64,12 +66,14 @@ public class FrmMain extends javax.swing.JFrame {
 
     this.parent = pack;
 
-    SpeechFormatter formatter = SpeechFormatter.create(pack.getAppSettings().speechFormatterFile);
-    RadarBehaviorSettings behSett = new RadarBehaviorSettings(true, formatter);
+    IPlaneFormatter<String> fmtPlane = pack.getSim().getPlaneFormatter();
+    ISystemFormatter<String> fmtSystem = pack.getSim().getSystemFormatter();
+    IAtcFormatter<String> fmtAtc = pack.getSim().getAtcFormatter();
+    RadarBehaviorSettings behSett = new RadarBehaviorSettings(true, fmtPlane, fmtAtc, fmtSystem);
     RadarDisplaySettings dispSett = pack.getAppSettings().radar.displaySettings.toRadarDisplaySettings();
 
     this.pnlRadar = new SwingRadarPanel();
-    this.pnlRadar.init(this.parent.getSim().getActiveAirport().getInitialPosition(),
+    this.pnlRadar.init(this.parent.getSim().getAirport().getInitialPosition(),
         this.parent.getSim(), this.parent.getArea(),
         this.parent.getDisplaySettings(), dispSett, behSett);
 

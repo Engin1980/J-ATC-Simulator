@@ -4,6 +4,7 @@ import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.events.EventSimple;
 import eng.jAtcSim.newLib.area.Airport;
+import eng.jAtcSim.newLib.area.Area;
 import eng.jAtcSim.newLib.area.RunwayConfiguration;
 import eng.jAtcSim.newLib.gameSim.simulation.IScheduledMovement;
 import eng.jAtcSim.newLib.messaging.Participant;
@@ -20,9 +21,11 @@ import eng.jAtcSim.newLib.textProcessing.parsing.IPlaneParser;
 import eng.jAtcSim.newLib.textProcessing.parsing.ISystemParser;
 
 public interface ISimulation {
-  Airport airport();
+  Airport getAirport();
 
   ApplicationLog getAppLog();
+
+  Area getArea();
 
   IAtcParser getAtcParser();
 
@@ -57,4 +60,6 @@ public interface ISimulation {
   void sendPlaneCommands(Callsign callsign, SpeechList<IForPlaneSpeech> cmds);
 
   void sendSystemCommand(ISystemSpeech speech);
+
+  void start();
 }

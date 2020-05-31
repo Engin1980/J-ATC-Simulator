@@ -7,7 +7,7 @@ package eng.jAtcSim.frmPacks.mdi;
 
 import eng.jAtcSim.AppSettings;
 import eng.jAtcSim.frmPacks.shared.FlightListPanel;
-import eng.jAtcSim.newLib.Simulation;
+import eng.jAtcSim.newLib.gameSim.ISimulation;
 
 import java.awt.*;
 
@@ -22,7 +22,7 @@ public class FrmFlightList extends javax.swing.JFrame {
     initComponents();
   }
 
-  public void init(Simulation sim, AppSettings appSettings) {
+  public void init(ISimulation sim, AppSettings appSettings) {
     flPanel = new FlightListPanel();
     flPanel.init(sim, appSettings);
 

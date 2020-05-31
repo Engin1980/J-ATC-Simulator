@@ -2,7 +2,7 @@ package eng.jAtcSim.frmPacks.mdi;
 
 import eng.jAtcSim.AppSettings;
 import eng.jAtcSim.frmPacks.shared.ScheduledFlightListPanel;
-import eng.jAtcSim.newLib.Simulation;
+import eng.jAtcSim.newLib.gameSim.ISimulation;
 
 import javax.swing.*;
 import java.awt.*;
@@ -17,7 +17,7 @@ public class FrmScheduledTrafficListing extends JFrame {
     initComponents();
   }
 
-  public void init(Simulation sim, AppSettings appSettings){
+  public void init(ISimulation sim, AppSettings appSettings){
     pnlFlights = new ScheduledFlightListPanel();
     pnlFlights.init(sim, appSettings);
 

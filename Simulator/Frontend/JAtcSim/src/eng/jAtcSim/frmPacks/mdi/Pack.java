@@ -8,13 +8,13 @@ package eng.jAtcSim.frmPacks.mdi;
 
 import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IMap;
-import eng.jAtcSim.newLib.Game;
 import eng.jAtcSim.abstractRadar.settngs.RadarStyleSettings;
 import eng.eSystem.events.EventSimple;
 import eng.jAtcSim.AppSettings;
 import eng.jAtcSim.XmlLoadHelper;
-import eng.jAtcSim.newLib.Simulation;
-import eng.jAtcSim.newLib.world.Area;
+import eng.jAtcSim.newLib.area.Area;
+import eng.jAtcSim.newLib.gameSim.IGame;
+import eng.jAtcSim.newLib.gameSim.ISimulation;
 
 /**
  * @author Marek
@@ -22,8 +22,8 @@ import eng.jAtcSim.newLib.world.Area;
 public class Pack extends eng.jAtcSim.frmPacks.Pack {
 
   private final EventSimple<eng.jAtcSim.frmPacks.Pack> em = new EventSimple<>(this);
-  private Game game;
-  private Simulation sim;
+  private IGame game;
+  private ISimulation sim;
   private Area area;
   private RadarStyleSettings displaySettings;
   private FrmMain frmMain;
@@ -35,10 +35,10 @@ public class Pack extends eng.jAtcSim.frmPacks.Pack {
   }
 
   @Override
-  public void initPack(Game game, AppSettings appSettings) {
+  public void initPack(IGame game, AppSettings appSettings) {
 
     String fileName = appSettings.radar.styleSettingsFile.toString();
-    this.displaySettings = XmlLoadHelper.loadNewDisplaySettings(fileName);
+    this.displaySettings = RadarStyleSettings.load(fileName); // XmlLoadHelper.loadNewDisplaySettings(fileName);
     this.appSettings  = appSettings;
 
     // init sim & area
@@ -90,7 +90,7 @@ public class Pack extends eng.jAtcSim.frmPacks.Pack {
 // nothing to do
   }
 
-  Simulation getSim() {
+  ISimulation getSim() {
     return sim;
   }
 

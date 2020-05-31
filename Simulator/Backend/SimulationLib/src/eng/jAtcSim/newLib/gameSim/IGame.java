@@ -1,4 +1,5 @@
 package eng.jAtcSim.newLib.gameSim;
 
-public class IGame {
+public interface IGame {
+  ISimulation getSimulation();
 }
