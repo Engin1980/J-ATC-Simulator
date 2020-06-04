@@ -1,6 +1,6 @@
 package eng.coordinatesViewer;
 
-import eng.eSystem.xmlSerialization.XmlSerializer;
+import eng.eXmlSerialization.XmlSerializer;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -74,7 +74,7 @@ public class Main {
     File file = fileChooser.showOpenDialog(null);
     if (file != null) {
       XmlSerializer ser = new XmlSerializer();
-      this.project = (Project) ser.deserialize(file.toString(), Project.class);
+      this.project = ser.deserializeFromDocument(file.toString(), Project.class);
       this.project.reinit();
       project.getRedrawRequiredEvent().add(() -> updateView());
       updateView();
@@ -89,7 +89,7 @@ public class Main {
     File res = fileChooser.showSaveDialog(null);
     if (res != null) {
       XmlSerializer ser = new XmlSerializer();
-      ser.serialize(res.toString(), this.project);
+      ser.serializeToDocument(this.project, res.toString());
     }
   }
 

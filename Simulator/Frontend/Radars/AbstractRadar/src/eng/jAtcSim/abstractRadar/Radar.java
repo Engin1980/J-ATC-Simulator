@@ -12,9 +12,9 @@ import eng.jAtcSim.abstractRadar.global.*;
 import eng.jAtcSim.abstractRadar.global.events.EMouseEventArg;
 import eng.jAtcSim.abstractRadar.global.events.KeyEventArg;
 import eng.jAtcSim.abstractRadar.global.events.WithCoordinateEventArg;
-import eng.jAtcSim.abstractRadar.settngs.RadarBehaviorSettings;
-import eng.jAtcSim.abstractRadar.settngs.RadarDisplaySettings;
-import eng.jAtcSim.abstractRadar.settngs.RadarStyleSettings;
+import eng.jAtcSim.abstractRadar.settings.RadarBehaviorSettings;
+import eng.jAtcSim.abstractRadar.settings.RadarDisplaySettings;
+import eng.jAtcSim.abstractRadar.settings.RadarStyleSettings;
 import eng.jAtcSim.abstractRadar.support.*;
 import eng.jAtcSim.newLib.airplanes.AirproxType;
 import eng.jAtcSim.newLib.area.*;
@@ -786,7 +786,7 @@ public class Radar {
 
     // separation ring
     if (displaySettings.isRingsVisible()) {
-      if (adi.altitude > this.simulation.airport().getAltitude()) {
+      if (adi.altitude > this.simulation.getAirport().getAltitude()) {
         tl.drawCircleAroundInNM(adi.coordinate, dp.getSeparationRingRadius(),
             c, 1);
       }
@@ -983,7 +983,7 @@ public class Radar {
   }
 
   private boolean isAirplaneUnderConfirmedSwitch(AirplaneDisplayInfo adi) {
-    return adi.isConfirmedSwitch && adi.altitude > this.simulation.airport().getAltitude();
+    return adi.isConfirmedSwitch && adi.altitude > this.simulation.getAirport().getAltitude();
   }
 
   private boolean isUserControlledPlane(AirplaneDisplayInfo adi) {

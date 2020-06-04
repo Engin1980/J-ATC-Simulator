@@ -14,12 +14,9 @@ import eng.jAtcSim.app.extenders.*;
 import eng.jAtcSim.app.extenders.swingFactory.SwingFactory;
 import eng.jAtcSim.app.startupSettings.StartupSettings;
 import eng.jAtcSim.frmPacks.shared.FrmTrafficBarGraph;
-import eng.jAtcSim.newLib.area.global.newSources.TrafficSource;
-import eng.jAtcSim.newLib.area.global.newSources.XmlTrafficSource;
-import eng.jAtcSim.newLib.area.traffic.GenericTraffic;
-import eng.jAtcSim.newLib.area.traffic.Traffic;
-import eng.jAtcSim.newLib.area.traffic.fleets.Fleets;
 import eng.eSystem.swing.LayoutManager;
+import eng.jAtcSim.newLib.gameSim.game.sources.FleetsSource;
+import eng.jAtcSim.newLib.gameSim.game.sources.TrafficSource;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -122,7 +119,7 @@ public class TrafficPanel extends JStartupPanel {
     cmbEmergencyProbability.setSelectedIndex(bestIndex);
   }
 
-  private void fleetsChanged(Fleets fleets) {
+  private void fleetsChanged(FleetsSource.Fleets fleets) {
 
     txtCompanies.setModel(fleets.getIcaos());
   }

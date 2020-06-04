@@ -21,5 +21,7 @@
     <orderEntry type="module" module-name="AirplanesLib" />
     <orderEntry type="module" module-name="TextProcessingLib" />
     <orderEntry type="module" module-name="SpeechesLib" />
+    <orderEntry type="module" module-name="WeatherLib" />
+    <orderEntry type="module" module-name="WeatherLib" />
   </component>
 </module>

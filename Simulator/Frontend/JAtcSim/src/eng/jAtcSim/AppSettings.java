@@ -1,14 +1,13 @@
 package eng.jAtcSim;
 
 
-import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.eXml.XDocument;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EXmlException;
 
 import eng.jAtcSim.frmPacks.shared.FlightStripSettings;
-import eng.jAtcSim.abstractRadar.settngs.RadarDisplaySettings;
+import eng.jAtcSim.abstractRadar.settings.RadarDisplaySettings;
 import eng.jAtcSim.newLib.shared.xml.SmartXmlLoaderUtils;
 
 import java.nio.file.Path;

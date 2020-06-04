@@ -6,8 +6,8 @@
 package eng.jAtcSim.frmPacks.mdi;
 
 import eng.jAtcSim.frmPacks.shared.SwingRadarPanel;
-import eng.jAtcSim.abstractRadar.settngs.RadarBehaviorSettings;
-import eng.jAtcSim.abstractRadar.settngs.RadarDisplaySettings;
+import eng.jAtcSim.abstractRadar.settings.RadarBehaviorSettings;
+import eng.jAtcSim.abstractRadar.settings.RadarDisplaySettings;
 import eng.jAtcSim.newLib.textProcessing.formatting.IAtcFormatter;
 import eng.jAtcSim.newLib.textProcessing.formatting.IPlaneFormatter;
 import eng.jAtcSim.newLib.textProcessing.formatting.ISystemFormatter;

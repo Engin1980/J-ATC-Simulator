@@ -1,9 +1,14 @@
-package eng.jAtcSim.abstractRadar.settngs;
+package eng.jAtcSim.abstractRadar.settings;
 
 import eng.eSystem.eXml.XDocument;
 import eng.eSystem.eXml.XElement;
+import eng.eSystem.exceptions.EXmlException;
+import eng.eXmlSerialization.XmlSerializer;
 import eng.jAtcSim.abstractRadar.global.Color;
 import eng.jAtcSim.abstractRadar.global.Font;
+import eng.jAtcSim.newLib.shared.exceptions.ApplicationException;
+
+import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class RadarStyleSettings {
 
@@ -196,44 +201,50 @@ public class RadarStyleSettings {
   }
   ///end region
 
+  public static RadarStyleSettings load(String fileName) {
+    RadarStyleSettings ret;
+    try {
+      XDocument doc = XDocument.load(fileName);
+      XElement root = doc.getRoot();
+      XmlSerializer ser = new XmlSerializer();
+      ret = ser.deserialize(root, RadarStyleSettings.class);
+    } catch (EXmlException e) {
+      throw new ApplicationException(sf("Unable to load radar style settings from '%s'.", fileName), e);
+    }
+    return ret;
+  }
+
   public int displayTextDelay;
-
   public ColorWidthFontSettings infoLine;
-
   // runways
   public ColorWidthSettings activeRunway;
   public ColorWidthSettings closedRunway;
-
   // approachesOld
   public ColorWidthLengthSettings ilsApproach;
   public ColorWidthLengthSettings gnssApproach;
   public ColorWidthLengthSettings vorApproach;
   public ColorWidthLengthSettings ndbApproach;
-
   // navaids
   public ColorWidthBorderSettings navVOR;
   public ColorWidthBorderSettings navNDB;
   public ColorWidthBorderSettings navFix;
   public ColorWidthBorderSettings navFixMinor;
   public ColorWidthBorderSettings navAirport;
-
   // borders
   public ColorWidthSettings borderCountry;
   public ColorWidthSettings borderCtr;
   public ColorWidthSettings borderTma;
   public ColorWidthFontSettings borderMrva;
-  public ColorWidthFontSettings borderRestricted;
 
   // mapBack
+  public ColorWidthFontSettings borderRestricted;
   /**
    * Map background color in hex
    */
   public Color mapBackcolor;
-
   // routes
   public ColorWidthSettings star;
   public ColorWidthSettings sid;
-
   // text settings
   public TextSettings atc;
   public TextSettings plane;
@@ -242,7 +253,6 @@ public class RadarStyleSettings {
   public TextSettings callsign;
   public TextSettings navaid;
   public Color switchingPlaneAlternatingColor = null;
-
   // plane labels
   public PlaneLabelSettings stopped;
   public PlaneLabelSettings app;
@@ -250,16 +260,9 @@ public class RadarStyleSettings {
   public PlaneLabelSettings twr;
   public PlaneLabelSettings selected;
   public PlaneLabelSettings emergency;
-
   // airproxes
   public Color airproxFull;
   public Color airproxPartial;
   public Color airproxWarning;
   public Color mrvaError;
-
-  public static RadarStyleSettings load(String fileName){
-    XDocument doc = XDocument.load(fileName);
-    XElement root = doc.getRoot();
-
-  }
 }

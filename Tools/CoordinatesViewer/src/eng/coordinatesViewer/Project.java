@@ -2,7 +2,6 @@ package eng.coordinatesViewer;
 
 import eng.eSystem.events.EventAnonymousSimple;
 
-import eng.eSystem.xmlSerialization.annotations.XmlIgnore;
 import javafx.scene.image.Image;
 
 public class Project {

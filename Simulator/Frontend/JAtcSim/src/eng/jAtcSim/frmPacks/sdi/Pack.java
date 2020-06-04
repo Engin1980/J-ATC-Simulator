@@ -11,7 +11,7 @@ import eng.jAtcSim.newLib.Simulation;
 import eng.jAtcSim.newLib.area.global.ETime;
 import eng.jAtcSim.newLib.world.Airport;
 import eng.jAtcSim.newLib.world.Area;
-import eng.jAtcSim.abstractRadar.settngs.RadarStyleSettings;
+import eng.jAtcSim.abstractRadar.settings.RadarStyleSettings;
 import eng.jAtcSim.abstractRadar.RadarViewPort;
 
 import javax.swing.*;

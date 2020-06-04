@@ -10,21 +10,22 @@ import eng.eSystem.collections.IMap;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.exceptions.ERuntimeException;
-import eng.jAtcSim.app.extenders.swingFactory.FileHistoryManager;
-import eng.jAtcSim.frmPacks.Pack;
-import eng.jAtcSim.frmPacks.shared.FrmLog;
-import eng.jAtcSim.newLib.Acc;
-import eng.jAtcSim.newLib.Game;
-import eng.jAtcSim.newLib.area.global.ETime;
-import eng.jAtcSim.newLib.area.global.logging.ApplicationLog;
-import eng.jAtcSim.newLib.area.global.logging.Recorder;
-import eng.jAtcSim.newLib.area.traffic.GenericTraffic;
-import eng.jAtcSim.newLib.area.traffic.Traffic;
-import eng.jAtcSim.newLib.area.weathers.Weather;
 import eng.jAtcSim.abstractRadar.global.SoundManager;
 import eng.jAtcSim.app.FrmIntro;
 import eng.jAtcSim.app.FrmStartupProgress;
+import eng.jAtcSim.app.extenders.swingFactory.FileHistoryManager;
 import eng.jAtcSim.app.startupSettings.StartupSettings;
+import eng.jAtcSim.frmPacks.Pack;
+import eng.jAtcSim.frmPacks.shared.FrmLog;
+import eng.jAtcSim.newLib.Acc;
+import eng.jAtcSim.newLib.area.global.ETime;
+import eng.jAtcSim.newLib.area.global.logging.Recorder;
+import eng.jAtcSim.newLib.area.traffic.GenericTraffic;
+import eng.jAtcSim.newLib.area.weathers.Weather;
+import eng.jAtcSim.newLib.gameSim.game.Game;
+import eng.jAtcSim.newLib.shared.SharedAcc;
+import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
+import eng.jAtcSim.newLib.weather.Weather;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -43,13 +44,63 @@ import static eng.eSystem.utilites.FunctionShortcuts.sf;
 public class JAtcSim {
 
   private static final boolean FAST_START = false;
-  private static final Traffic enginSpecificTraffic =
-       //new eng.jAtcSim.lib.traffic.TestTrafficOneApproach();
-       //new eng.jAtcSim.lib.traffic.TestTrafficOneDeparture();
-       null;
   private static AppSettings appSettings;
-
+  private static final StartupSettings.Traffic enginSpecificTraffic =
+      //new eng.jAtcSim.lib.traffic.TestTrafficOneApproach();
+      //new eng.jAtcSim.lib.traffic.TestTrafficOneDeparture();
+      null;
   private static FrmLog frmLog;
+
+  public static JLabel getAppImage(JFrame frm) {
+    URL url = frm.getClass().getResource("/intro.png");
+    Toolkit tk = frm.getToolkit();
+    Image img = tk.getImage(url);
+    JLabel ret = new JLabel(new ImageIcon(img));
+    return ret;
+  }
+
+  public static void loadSimulation(StartupSettings startupSettings, String xmlFileName) {
+    SharedAcc.getAppLog().writeLine(ApplicationLog.eType.info, "Loading saved simulation game");
+
+    IMap<String, Object> map = new EMap<>();
+
+    FrmStartupProgress frm = new FrmStartupProgress(16);
+    frm.setVisible(true);
+
+    Game g;
+
+    try {
+
+      g = Game.load(xmlFileName, map);
+
+      // enable duplicates
+      try {
+        g.getSimulation().getArea().checkForDuplicits();
+      } catch (Exception ex) {
+        throw new EApplicationException("Some element in source XML files is not unique. Some of the input XML files is not valid.", ex);
+      }
+
+      SharedAcc.getAppLog().writeLine(ApplicationLog.eType.info, "Initializing sound environment");
+      // sound
+      SoundManager.init(appSettings.soundFolder.toString());
+
+      SharedAcc.getAppLog().writeLine(ApplicationLog.eType.info, "Starting a GUI");
+
+    } catch (Exception ex) {
+      throw ex;
+    } finally {
+      frm.setVisible(false);
+    }
+
+    // starting pack & simulation
+    String packType = startupSettings.radar.packClass;
+    Pack simPack = createPackInstance(packType);
+    simPack.initPack(g, appSettings);
+    simPack.startPack();
+
+    simPack.applyStoredData(map);
+
+  }
 
   /**
    * @param args the command line arguments
@@ -79,47 +130,19 @@ public class JAtcSim {
     frmIntro.setVisible(true);
   }
 
-  public static void loadSimulation(StartupSettings startupSettings, String xmlFileName) {
-    Acc.log().writeLine(ApplicationLog.eType.info, "Loading saved simulation game");
+  public static void quit() {
 
-    IMap<String, Object> map = new EMap<>();
+  }
 
-    FrmStartupProgress frm = new FrmStartupProgress(16);
-    frm.setVisible(true);
+  public static void setAppIconToFrame(JFrame frm) {
+    setIconToFrame(frm, "icon.png");
+  }
 
-    Game g;
-
-    try {
-
-      g = Game.load(xmlFileName, map);
-
-      // enable duplicates
-      try {
-        g.getSimulation().getArea().checkForDuplicits();
-      } catch (Exception ex) {
-        throw new EApplicationException("Some element in source XML files is not unique. Some of the input XML files is not valid.", ex);
-      }
-
-      Acc.log().writeLine(ApplicationLog.eType.info, "Initializing sound environment");
-      // sound
-      SoundManager.init(appSettings.soundFolder.toString());
-
-      Acc.log().writeLine(ApplicationLog.eType.info, "Starting a GUI");
-
-    } catch (Exception ex) {
-      throw ex;
-    } finally {
-      frm.setVisible(false);
-    }
-
-    // starting pack & simulation
-    String packType = startupSettings.radar.packClass;
-    Pack simPack = createPackInstance(packType);
-    simPack.initPack(g, appSettings);
-    simPack.startPack();
-
-    simPack.applyStoredData(map);
-
+  public static void setIconToFrame(JFrame frm, String iconFileName) {
+    URL url = frm.getClass().getResource("/" + iconFileName);
+    Toolkit tk = frm.getToolkit();
+    Image img = tk.getImage(url);
+    frm.setIconImage(img);
   }
 
   public static void startSimulation(StartupSettings startupSettings) {
@@ -134,7 +157,7 @@ public class JAtcSim {
 
     FrmStartupProgress frm = new FrmStartupProgress(10);
     frm.setVisible(true);
-    Acc.log().writeLine(ApplicationLog.eType.info, "Starting new simulation game");
+    SharedAcc.getAppLog().writeLine(ApplicationLog.eType.info, "Starting new simulation game");
     try {
       Game.GameStartupInfo gsi = new Game.GameStartupInfo();
       gsi.areaXmlFile = startupSettings.files.areaXmlFile;
@@ -211,7 +234,7 @@ public class JAtcSim {
 
   private static Weather convertStartupWeatherToInitialWeather(StartupSettings.Weather weather) {
     Weather.eSnowState snowState;
-    switch (weather.snowState){
+    switch (weather.snowState) {
       case none:
         snowState = Weather.eSnowState.none;
         break;
@@ -235,36 +258,79 @@ public class JAtcSim {
     return ret;
   }
 
-  public static void quit() {
-
-  }
-
-
-  public static void setAppIconToFrame(JFrame frm) {
-    setIconToFrame(frm, "icon.png");
-  }
-
-  public static void setIconToFrame(JFrame frm, String iconFileName) {
-    URL url = frm.getClass().getResource("/" + iconFileName);
-    Toolkit tk = frm.getToolkit();
-    Image img = tk.getImage(url);
-    frm.setIconImage(img);
-  }
-
-  public static JLabel getAppImage(JFrame frm) {
-    URL url = frm.getClass().getResource("/intro.png");
-    Toolkit tk = frm.getToolkit();
-    Image img = tk.getImage(url);
-    JLabel ret = new JLabel(new ImageIcon(img));
+  private static Pack createPackInstance(String packTypeName) {
+    Class<?> clazz;
+    Object object;
+    try {
+      clazz = Class.forName(packTypeName);
+      Constructor<?> ctor = clazz.getConstructor();
+      object = ctor.newInstance();
+    } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException ex) {
+      throw new ERuntimeException(
+          sf("Failed to create instance of radar pack '%s'.", packTypeName), ex);
+    }
+    Pack ret = (Pack) object;
     return ret;
   }
 
-  private static void initStylist() {
-    initDefault();
-    initIntro();
-    initStartupSettings();
-    initStartupProgress();
-    initMainMenus();
+  private static GenericTraffic generateCustomTraffic(StartupSettings.Traffic trf) {
+    GenericTraffic ret = new GenericTraffic(
+        trf.customTraffic.companies, trf.customTraffic.countryCodes,
+        trf.customTraffic.movementsPerHour,
+        trf.customTraffic.arrivals2departuresRatio / 10d,
+        trf.customTraffic.nonCommercialFlightProbability,
+        trf.customTraffic.weightTypeA,
+        trf.customTraffic.weightTypeB,
+        trf.customTraffic.weightTypeC,
+        trf.customTraffic.weightTypeD,
+        trf.customTraffic.useExtendedCallsigns);
+    return ret;
+  }
+
+  private static void initDefault() {
+    // default theme
+    Stylist.add(
+        "Global - components font",
+        new Stylist.TypeFilter(java.awt.Component.class, true),
+        q -> {
+          Font fnt = new Font("Verdana", 0, 12);
+          q.setFont(fnt);
+        });
+  }
+
+  private static void initIntro() {
+    // intro page
+    Stylist.add(
+        "Frm Intro - frm flightStripSize",
+        new Stylist.TypeFilter(FrmIntro.class, false),
+        q -> {
+          Dimension d = new Dimension(500, 420);
+          q.setMinimumSize(d);
+          q.setPreferredSize(d);
+        });
+
+    Stylist.add(
+        "Frm Intro - JButton style",
+        new Stylist.AndFilter(
+            new Stylist.TypeFilter(javax.swing.JButton.class, false),
+            new Stylist.ParentTypeFilter(FrmIntro.class, true)
+        )
+        ,
+        q -> {
+          Dimension d = new Dimension(450, 32);
+          q.setPreferredSize(d);
+          q.setMinimumSize(d);
+          q.setMaximumSize(d);
+        });
+
+    Stylist.add(
+        "Frm Intro - JPanel dark background style",
+        new Stylist.AndFilter(
+            new Stylist.TypeFilter(JPanel.class, true),
+            new Stylist.ParentTypeFilter(FrmIntro.class, true)
+        ),
+        q -> q.setBackground(Color.DARK_GRAY)
+    );
   }
 
   private static void initMainMenus() {
@@ -370,50 +436,12 @@ public class JAtcSim {
     );
   }
 
-  private static void initIntro() {
-    // intro page
-    Stylist.add(
-        "Frm Intro - frm flightStripSize",
-        new Stylist.TypeFilter(FrmIntro.class, false),
-        q -> {
-          Dimension d = new Dimension(500, 420);
-          q.setMinimumSize(d);
-          q.setPreferredSize(d);
-        });
-
-    Stylist.add(
-        "Frm Intro - JButton style",
-        new Stylist.AndFilter(
-            new Stylist.TypeFilter(javax.swing.JButton.class, false),
-            new Stylist.ParentTypeFilter(FrmIntro.class, true)
-        )
-        ,
-        q -> {
-          Dimension d = new Dimension(450, 32);
-          q.setPreferredSize(d);
-          q.setMinimumSize(d);
-          q.setMaximumSize(d);
-        });
-
-    Stylist.add(
-        "Frm Intro - JPanel dark background style",
-        new Stylist.AndFilter(
-            new Stylist.TypeFilter(JPanel.class, true),
-            new Stylist.ParentTypeFilter(FrmIntro.class, true)
-        ),
-        q -> q.setBackground(Color.DARK_GRAY)
-    );
-  }
-
-  private static void initDefault() {
-    // default theme
-    Stylist.add(
-        "Global - components font",
-        new Stylist.TypeFilter(java.awt.Component.class, true),
-        q -> {
-          Font fnt = new Font("Verdana", 0, 12);
-          q.setFont(fnt);
-        });
+  private static void initStylist() {
+    initDefault();
+    initIntro();
+    initStartupSettings();
+    initStartupProgress();
+    initMainMenus();
   }
 
   private static void resolveShortXmlFileNamesInStartupSettings(AppSettings appSettings, StartupSettings
@@ -428,10 +456,16 @@ public class JAtcSim {
       startupSettings.files.areaXmlFile = tmp.toString();
     }
 
-    tmp = Paths.get(startupSettings.files.fleetsXmlFile);
+    tmp = Paths.get(startupSettings.files.companiesFleetsXmlFile);
     if (tmp.isAbsolute()) {
       tmp = appPath.relativize(tmp);
-      startupSettings.files.fleetsXmlFile = tmp.toString();
+      startupSettings.files.companiesFleetsXmlFile = tmp.toString();
+    }
+
+    tmp = Paths.get(startupSettings.files.generalAviationFleetsXmlFile);
+    if (tmp.isAbsolute()) {
+      tmp = appPath.relativize(tmp);
+      startupSettings.files.generalAviationFleetsXmlFile = tmp.toString();
     }
 
     tmp = Paths.get(startupSettings.files.planesXmlFile);
@@ -455,35 +489,6 @@ public class JAtcSim {
         startupSettings.files.weatherXmlFile = tmp.toString();
       }
     }
-  }
-
-  private static Pack createPackInstance(String packTypeName) {
-    Class<?> clazz;
-    Object object;
-    try {
-      clazz = Class.forName(packTypeName);
-      Constructor<?> ctor = clazz.getConstructor();
-      object = ctor.newInstance();
-    } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException ex) {
-      throw new ERuntimeException(
-          sf("Failed to create instance of radar pack '%s'.", packTypeName), ex);
-    }
-    Pack ret = (Pack) object;
-    return ret;
-  }
-
-  private static GenericTraffic generateCustomTraffic(StartupSettings.Traffic trf) {
-    GenericTraffic ret = new GenericTraffic(
-        trf.customTraffic.companies, trf.customTraffic.countryCodes,
-        trf.customTraffic.movementsPerHour,
-        trf.customTraffic.arrivals2departuresRatio / 10d,
-        trf.customTraffic.nonCommercialFlightProbability,
-        trf.customTraffic.weightTypeA,
-        trf.customTraffic.weightTypeB,
-        trf.customTraffic.weightTypeC,
-        trf.customTraffic.weightTypeD,
-        trf.customTraffic.useExtendedCallsigns);
-    return ret;
   }
 }
 
