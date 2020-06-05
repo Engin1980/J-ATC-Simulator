@@ -16,6 +16,7 @@ import eng.jAtcSim.newLib.speeches.SpeechList;
 import eng.jAtcSim.newLib.speeches.airplane.IForPlaneSpeech;
 import eng.jAtcSim.newLib.speeches.atc.IAtcSpeech;
 import eng.jAtcSim.newLib.speeches.system.ISystemSpeech;
+import eng.jAtcSim.newLib.textProcessing.formatting.IPlaneFormatter;
 import eng.jAtcSim.newLib.textProcessing.parsing.IAtcParser;
 import eng.jAtcSim.newLib.textProcessing.parsing.IPlaneParser;
 import eng.jAtcSim.newLib.textProcessing.parsing.ISystemParser;
@@ -39,7 +40,7 @@ public interface ISimulation {
 
   EventSimple<?> getOnSecondElapsed();
 
-  IPlaneParser getPlaneParser();
+  IParseFormat getParseFormat();
 
   IReadOnlyList<IAirplaneInfo> getPlanesToDisplay();
 

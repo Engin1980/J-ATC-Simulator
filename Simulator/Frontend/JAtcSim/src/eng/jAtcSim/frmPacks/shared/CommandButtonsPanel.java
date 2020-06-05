@@ -3,10 +3,11 @@ package eng.jAtcSim.frmPacks.shared;
 import eng.eSystem.events.EventAnonymous;
 import eng.eSystem.events.EventAnonymousSimple;
 import eng.jAtcSim.SwingRadar.Coloring;
-import eng.jAtcSim.newLib.Acc;
-import eng.jAtcSim.newLib.area.airplanes.Airplane;
-import eng.jAtcSim.newLib.area.airplanes.Callsign;
-import eng.jAtcSim.newLib.world.Navaid;
+import eng.jAtcSim.abstractRadar.support.AirplaneDisplayInfo;
+import eng.jAtcSim.newLib.area.Navaid;
+import eng.jAtcSim.newLib.gameSim.IAirplaneInfo;
+import eng.jAtcSim.newLib.gameSim.ISimulation;
+import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.abstractRadar.global.Color;
 import eng.eSystem.swing.LayoutManager;
 
@@ -23,8 +24,9 @@ public class CommandButtonsPanel extends JPanel {
   private final EventAnonymous<String> generatedEvent = new EventAnonymous();
   private final EventAnonymousSimple sendEvent = new EventAnonymousSimple();
   private final EventAnonymousSimple eraseEvent = new EventAnonymousSimple();
-  private Airplane.Airplane4Display plane;
+  private IAirplaneInfo plane;
   private JPanel pnlSub;
+  private ISimulation sim;
 
   public CommandButtonsPanel() {
     initComponents();
@@ -42,7 +44,7 @@ public class CommandButtonsPanel extends JPanel {
     return eraseEvent;
   }
 
-  public void setPlane(Airplane.Airplane4Display plane) {
+  public void setPlane(IAirplaneInfo plane) {
     this.plane = plane;
     if (this.plane == null) {
       LayoutManager.adjustComponents(this, c -> c.setEnabled(false));
@@ -52,16 +54,11 @@ public class CommandButtonsPanel extends JPanel {
   }
 
   public void setPlane(Callsign callsign) {
-    if (callsign == null)
-      setPlane((Airplane.Airplane4Display) null);
-    else {
-      for (Airplane.Airplane4Display item : Acc.sim().getPlanesToDisplay()) {
-        if (item.callsign() == callsign) {
-          setPlane(item);
-          break;
-        }
-      }
-    }
+    IAirplaneInfo ai = sim.getPlanesToDisplay().tryGetFirst(q->q.callsign().equals(callsign));
+    if (ai == null)
+      setPlane((IAirplaneInfo) null);
+    else
+      setPlane(ai);
   }
 
   private void initComponents() {
@@ -149,7 +146,7 @@ public class CommandButtonsPanel extends JPanel {
     lbtn.addActionListener(o -> pnlSub.setVisible(false));
     pnlSub.add(lbtn);
 
-    for (Navaid navaid : Acc.area().getNavaids()) {
+    for (Navaid navaid : sim.getArea().getNavaids()) {
       if (navaid.getType() != Navaid.eType.fix) continue;
 
       JButton btn = new JButton(navaid.getName());

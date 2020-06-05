@@ -2,7 +2,6 @@ package eng.jAtcSim.app.startupSettings;
 
 import eng.eSystem.EStringBuilder;
 import eng.eSystem.collections.EList;
-import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IList;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.utilites.ArrayUtils;
@@ -25,8 +24,8 @@ public class StartupSettings {
     }
 
     public String areaXmlFile;
-    public String generalAviationFleetsXmlFile;
     public String companiesFleetsXmlFile;
+    public String generalAviationFleetsXmlFile;
     public String planesXmlFile;
     public String trafficXmlFile;
     public String weatherXmlFile;
@@ -163,7 +162,7 @@ public class StartupSettings {
     XmlSaverUtils.savePrimitiveAttribute(elm, ret.traffic, "allowDelays", "densityPercentage",
         "emergencyPerDayProbability", "maxPlanes", "type");
     {
-      elm =  elm.getChild("customTraffic");
+      elm = elm.getChild("customTraffic");
       XmlSaverUtils.savePrimitiveAttribute(elm, ret.traffic.customTraffic, "arrivals2departuresRatio", "companies",
           "countryCodes", "nonCommercialFlightProbability", "useExtendedCallsigns",
           "weightTypeA", "weightTypeB", "weightTypeC", "weightTypeD");

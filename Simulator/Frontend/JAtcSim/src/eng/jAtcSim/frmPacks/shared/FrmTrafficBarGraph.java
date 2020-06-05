@@ -1,11 +1,14 @@
 package eng.jAtcSim.frmPacks.shared;
 
-import eng.eSystem.collections.*;
-import eng.eSystem.swing.extenders.ComboBoxExtender;
-import eng.eSystem.validation.Validator;
-import eng.jAtcSim.app.controls.ImagePanel;
-import eng.jAtcSim.newLib.area.traffic.Traffic;
+import eng.eSystem.collections.EList;
+import eng.eSystem.collections.EMap;
+import eng.eSystem.collections.IList;
+import eng.eSystem.collections.IMap;
 import eng.eSystem.swing.LayoutManager;
+import eng.eSystem.swing.extenders.ComboBoxExtender;
+import eng.eSystem.validation.EAssert;
+import eng.jAtcSim.app.controls.ImagePanel;
+import eng.jAtcSim.newLib.traffic.ITrafficModel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.CategoryAxis;
 import org.jfree.chart.axis.CategoryLabelPositions;
@@ -25,8 +28,8 @@ public class FrmTrafficBarGraph extends JFrame {
 
   private static class DataItem {
     public String domain;
-    public double value;
     public String type;
+    public double value;
 
     public DataItem(String domain, double value, String type) {
       this.domain = domain;
@@ -34,14 +37,13 @@ public class FrmTrafficBarGraph extends JFrame {
       this.type = type;
     }
   }
-
-  private static final int IMG_WIDTH = 1400;
   private static final int IMG_HEIGHT = 500;
+  private static final int IMG_WIDTH = 1400;
   private static final int MARGIN = 20;
   private ComboBoxExtender<String> cmbSerie = new ComboBoxExtender<>();
-  private String title;
-
+  private IMap<String, IList<DataItem>> ds = new EMap<>();
   private ImagePanel pnlImage = new ImagePanel(IMG_WIDTH, IMG_HEIGHT);
+  private String title;
 
   public FrmTrafficBarGraph() {
     initComponents();
@@ -49,78 +51,64 @@ public class FrmTrafficBarGraph extends JFrame {
     this.pack();
   }
 
-  private void initLayout() {
-    JPanel pnlContent =
-        LayoutManager.createBoxPanel(pnlImage);
-    JPanel pnlBottom = LayoutManager.createFlowPanel(cmbSerie.getControl());
-
-    LayoutManager.fillBorderedPanel(this, null, pnlBottom, null, null, pnlContent);
-  }
-
-  private void initComponents() {
-    this.setPreferredSize(new Dimension(IMG_WIDTH + MARGIN, IMG_HEIGHT + 4 * MARGIN));
-    this.add(pnlImage);
-  }
-
-  private IMap<String, IList<DataItem>> ds = new EMap<>();
-
-  public void init(Traffic traffic, String title) {
-    Validator.isNotNull(traffic);
-    Validator.isNotNull(title);
+  public void init(ITrafficModel traffic, String title) {
+    EAssert.Argument.isNotNull(traffic);
+    EAssert.Argument.isNotNull(title);
 
     this.title = title;
 
+    System.out.println("This method contains a lot of todos to resolve:");
     IList<String> keyLst = new EList<>();
-    IReadOnlyList<Traffic.ExpectedMovement> scheduledTimes = traffic.getExpectedTimesForDay();
+//    IReadOnlyList<Traffic.ExpectedMovement> scheduledTimes = traffic.getExpectedTimesForDay();
 
     IList<DataItem> dts = new EList<>();
     DataItem di;
     for (int i = 0; i < 23; i++) {
-      String domain = i + ":00 - " + i + ":59";
-      int ii = i;
-      IReadOnlyList<Traffic.ExpectedMovement> tmp = scheduledTimes.where(q -> q.time.getHours() == ii);
-      int arrivalsCount = tmp.count(q -> q.isArrival);
-      int departuresCount = tmp.size() - arrivalsCount;
-      di = new DataItem(domain, arrivalsCount, "Arrivals");
-      dts.add(di);
-      di = new DataItem(domain, departuresCount, "Departures");
-      dts.add(di);
+//      String domain = i + ":00 - " + i + ":59";
+//      int ii = i;
+//      IReadOnlyList<Traffic.ExpectedMovement> tmp = scheduledTimes.where(q -> q.time.getHours() == ii);
+//      int arrivalsCount = tmp.count(q -> q.isArrival);
+//      int departuresCount = tmp.size() - arrivalsCount;
+//      di = new DataItem(domain, arrivalsCount, "Arrivals");
+//      dts.add(di);
+//      di = new DataItem(domain, departuresCount, "Departures");
+//      dts.add(di);
     }
     ds.set("Arrivals/Departures", dts);
     keyLst.add("Arrivals/Departures");
 
     dts = new EList<>();
     for (int i = 0; i < 23; i++) {
-      String domain = i + ":00 - " + i + ":59";
-      int ii = i;
-      IReadOnlyList<Traffic.ExpectedMovement> tmp = scheduledTimes.where(q -> q.time.getHours() == ii);
-      int commercialsCount = tmp.count(q -> q.isCommercial);
-      int nonCommercialsCount = tmp.size() - commercialsCount;
-      di = new DataItem(domain, commercialsCount, "Commercials");
-      dts.add(di);
-      di = new DataItem(domain, nonCommercialsCount, "Non-commercials");
-      dts.add(di);
+//      String domain = i + ":00 - " + i + ":59";
+//      int ii = i;
+//      IReadOnlyList<Traffic.ExpectedMovement> tmp = scheduledTimes.where(q -> q.time.getHours() == ii);
+//      int commercialsCount = tmp.count(q -> q.isCommercial);
+//      int nonCommercialsCount = tmp.size() - commercialsCount;
+//      di = new DataItem(domain, commercialsCount, "Commercials");
+//      dts.add(di);
+//      di = new DataItem(domain, nonCommercialsCount, "Non-commercials");
+//      dts.add(di);
     }
     ds.set("Commercials/non-commercials", dts);
     keyLst.add("Commercials/non-commercials");
 
     dts = new EList<>();
     for (int i = 0; i < 23; i++) {
-      String domain = i + ":00 - " + i + ":59";
-      int ii = i;
-      IReadOnlyList<Traffic.ExpectedMovement> tmp = scheduledTimes.where(q -> q.time.getHours() == ii);
-      int aCount = tmp.count(q -> q.category == 'A');
-      int bCount = tmp.count(q -> q.category == 'B');
-      int cCount = tmp.count(q -> q.category == 'C');
-      int dCount = tmp.count(q -> q.category == 'D');
-      di = new DataItem(domain, aCount, "Type A");
-      dts.add(di);
-      di = new DataItem(domain, bCount, "Type B");
-      dts.add(di);
-      di = new DataItem(domain, cCount, "Type C");
-      dts.add(di);
-      di = new DataItem(domain, dCount, "Type D");
-      dts.add(di);
+//      String domain = i + ":00 - " + i + ":59";
+//      int ii = i;
+//      IReadOnlyList<Traffic.ExpectedMovement> tmp = scheduledTimes.where(q -> q.time.getHours() == ii);
+//      int aCount = tmp.count(q -> q.category == 'A');
+//      int bCount = tmp.count(q -> q.category == 'B');
+//      int cCount = tmp.count(q -> q.category == 'C');
+//      int dCount = tmp.count(q -> q.category == 'D');
+//      di = new DataItem(domain, aCount, "Type A");
+//      dts.add(di);
+//      di = new DataItem(domain, bCount, "Type B");
+//      dts.add(di);
+//      di = new DataItem(domain, cCount, "Type C");
+//      dts.add(di);
+//      di = new DataItem(domain, dCount, "Type D");
+//      dts.add(di);
     }
     ds.set("Type categories", dts);
     keyLst.add("Type categories");
@@ -132,6 +120,19 @@ public class FrmTrafficBarGraph extends JFrame {
     cmbSerie.getOnSelectionChanged().add(q -> this.updateGraph());
 
     updateGraph();
+  }
+
+  private void initComponents() {
+    this.setPreferredSize(new Dimension(IMG_WIDTH + MARGIN, IMG_HEIGHT + 4 * MARGIN));
+    this.add(pnlImage);
+  }
+
+  private void initLayout() {
+    JPanel pnlContent =
+        LayoutManager.createBoxPanel(pnlImage);
+    JPanel pnlBottom = LayoutManager.createFlowPanel(cmbSerie.getControl());
+
+    LayoutManager.fillBorderedPanel(this, null, pnlBottom, null, null, pnlContent);
   }
 
   private void updateGraph() {
@@ -154,7 +155,7 @@ public class FrmTrafficBarGraph extends JFrame {
 
     renderer.setBaseItemLabelGenerator(
         new StandardCategoryItemLabelGenerator());
-    for (int i = 0; i < ds.select(q->q.type).distinct().size(); i++) {
+    for (int i = 0; i < ds.select(q -> q.type).distinct().size(); i++) {
       renderer.setSeriesItemLabelsVisible(i, Boolean.TRUE);
     }
 

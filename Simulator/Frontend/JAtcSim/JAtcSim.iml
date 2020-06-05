@@ -23,5 +23,8 @@
     <orderEntry type="module" module-name="SpeechesLib" />
     <orderEntry type="module" module-name="WeatherLib" />
     <orderEntry type="module" module-name="WeatherLib" />
+    <orderEntry type="library" name="eng.eXmlSerialization" level="application" />
+    <orderEntry type="module" module-name="MoodLib" />
+    <orderEntry type="module" module-name="StatsLib" />
   </component>
 </module>

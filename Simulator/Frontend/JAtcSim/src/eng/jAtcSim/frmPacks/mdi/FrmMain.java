@@ -5,9 +5,9 @@
  */
 package eng.jAtcSim.frmPacks.mdi;
 
-import eng.jAtcSim.frmPacks.shared.SwingRadarPanel;
 import eng.jAtcSim.abstractRadar.settings.RadarBehaviorSettings;
 import eng.jAtcSim.abstractRadar.settings.RadarDisplaySettings;
+import eng.jAtcSim.frmPacks.shared.SwingRadarPanel;
 import eng.jAtcSim.newLib.textProcessing.formatting.IAtcFormatter;
 import eng.jAtcSim.newLib.textProcessing.formatting.IPlaneFormatter;
 import eng.jAtcSim.newLib.textProcessing.formatting.ISystemFormatter;
@@ -20,13 +20,36 @@ import java.awt.*;
  */
 public class FrmMain extends javax.swing.JFrame {
 
-  private JPanel pnlContent;
   private Pack parent;
-  private JPanel pnlTop;
+  private JPanel pnlContent;
   private SwingRadarPanel pnlRadar;
+  private JPanel pnlTop;
 
   public FrmMain() {
     initComponents();
+  }
+
+  private void formFocusGained(java.awt.event.FocusEvent evt) {
+    this.pnlRadar.requestFocus();
+  }
+
+  void init(Pack pack) {
+
+    this.parent = pack;
+
+//    IPlaneFormatter<String> fmtPlane = (IPlaneFormatter<String>) pack.getSim().getParseFormat().getPlaneFormatter();
+//    ISystemFormatter<String> fmtSystem = (ISystemFormatter<String>) pack.getSim().getParseFormat().getSystemFormatter();
+//    IAtcFormatter<String> fmtAtc = (IAtcFormatter<String>) pack.getSim().getParseFormat().getAtcFormatter();
+    RadarBehaviorSettings behSett = new RadarBehaviorSettings(true); //, fmtPlane, fmtAtc, fmtSystem);
+    RadarDisplaySettings dispSett = pack.getAppSettings().radar.displaySettings.toRadarDisplaySettings();
+
+    this.pnlRadar = new SwingRadarPanel();
+    this.pnlRadar.init(this.parent.getSim().getAirport().getInitialPosition(),
+        this.parent.getSim(), this.parent.getArea(),
+        this.parent.getDisplaySettings(), dispSett, behSett);
+
+    this.pnlContent.add(this.pnlRadar);
+
   }
 
   private void initComponents() {
@@ -56,29 +79,6 @@ public class FrmMain extends javax.swing.JFrame {
         formFocusGained(evt);
       }
     });
-  }
-
-  private void formFocusGained(java.awt.event.FocusEvent evt) {
-    this.pnlRadar.requestFocus();
-  }
-
-  void init(Pack pack) {
-
-    this.parent = pack;
-
-    IPlaneFormatter<String> fmtPlane = pack.getSim().getPlaneFormatter();
-    ISystemFormatter<String> fmtSystem = pack.getSim().getSystemFormatter();
-    IAtcFormatter<String> fmtAtc = pack.getSim().getAtcFormatter();
-    RadarBehaviorSettings behSett = new RadarBehaviorSettings(true, fmtPlane, fmtAtc, fmtSystem);
-    RadarDisplaySettings dispSett = pack.getAppSettings().radar.displaySettings.toRadarDisplaySettings();
-
-    this.pnlRadar = new SwingRadarPanel();
-    this.pnlRadar.init(this.parent.getSim().getAirport().getInitialPosition(),
-        this.parent.getSim(), this.parent.getArea(),
-        this.parent.getDisplaySettings(), dispSett, behSett);
-
-    this.pnlContent.add(this.pnlRadar);
-
   }
 
 }

@@ -7,16 +7,21 @@ package eng.jAtcSim.app.startupSettings.panels;
 
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
+import eng.eSystem.swing.LayoutManager;
 import eng.eSystem.swing.extenders.ComboBoxExtender;
 import eng.eSystem.swing.extenders.DisplayItem;
 import eng.eSystem.utilites.awt.ComponentUtils;
-import eng.jAtcSim.app.extenders.*;
+import eng.jAtcSim.app.extenders.ItemTextFieldExtender;
+import eng.jAtcSim.app.extenders.NumericUpDownExtender;
+import eng.jAtcSim.app.extenders.XmlFileSelectorExtender;
 import eng.jAtcSim.app.extenders.swingFactory.SwingFactory;
 import eng.jAtcSim.app.startupSettings.StartupSettings;
 import eng.jAtcSim.frmPacks.shared.FrmTrafficBarGraph;
-import eng.eSystem.swing.LayoutManager;
 import eng.jAtcSim.newLib.gameSim.game.sources.FleetsSource;
 import eng.jAtcSim.newLib.gameSim.game.sources.TrafficSource;
+import eng.jAtcSim.newLib.gameSim.game.sources.TrafficXmlSource;
+import eng.jAtcSim.newLib.shared.exceptions.ToDoException;
+import eng.jAtcSim.newLib.traffic.ITrafficModel;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -24,26 +29,44 @@ import java.util.Arrays;
 
 public class TrafficPanel extends JStartupPanel {
 
+  private static ITrafficModel generateCustomTrafficModel(StartupSettings.Traffic trf) {
+    // Taken from JAtcSim class ! ! !
+    //TODO remove duplicit
+//    ITrafficModel ret = new
+//    GenericTraffic ret = new SimpleGenericTrafficModel(
+//        trf.customTraffic.companies, trf.customTraffic.countryCodes,
+//        trf.customTraffic.movementsPerHour,
+//        trf.customTraffic.arrivals2departuresRatio / 10d,
+//        trf.customTraffic.nonCommercialFlightProbability,
+//        trf.customTraffic.weightTypeA,
+//        trf.customTraffic.weightTypeB,
+//        trf.customTraffic.weightTypeC,
+//        trf.customTraffic.weightTypeD,
+//        trf.customTraffic.useExtendedCallsigns);
+    throw new ToDoException();
+//    return ret;
+  }
+  private JButton btnAnalyseTraffic;
   private javax.swing.JCheckBox chkAllowDelays;
-  private ComboBoxExtender<DisplayItem<Double>> cmbEmergencyProbability;
   private javax.swing.JCheckBox chkCustomExtendedCallsigns;
+  private ComboBoxExtender<DisplayItem<Double>> cmbEmergencyProbability;
+  private XmlFileSelectorExtender fleTraffic;
   private javax.swing.ButtonGroup grpRdb;
-  private NumericUpDownExtender nudMaxPlanes;
-  private NumericUpDownExtender nudMovements;
-  private NumericUpDownExtender nudNonCommercials;
-  private javax.swing.JRadioButton rdbUser;
-  private javax.swing.JRadioButton rdbXml;
   private NumericUpDownExtender nudA;
-  private JScrollBar sldArrivalsDepartures;
   private NumericUpDownExtender nudB;
   private NumericUpDownExtender nudC;
   private NumericUpDownExtender nudD;
+  private NumericUpDownExtender nudMaxPlanes;
+  private NumericUpDownExtender nudMovements;
+  private NumericUpDownExtender nudNonCommercials;
   private NumericUpDownExtender nudTrafficDensity;
   private JPanel pnlCustomTraffic;
+  private javax.swing.JRadioButton rdbUser;
+  private javax.swing.JRadioButton rdbXml;
+  private JScrollBar sldArrivalsDepartures;
+  private int[] specificMovementValues = null;
   private ItemTextFieldExtender txtCompanies;
   private ItemTextFieldExtender txtCountryCodes;
-  private int[] specificMovementValues = null;
-  private XmlFileSelectorExtender fleTraffic;
 
   public TrafficPanel() {
     initComponents();
@@ -106,93 +129,27 @@ public class TrafficPanel extends JStartupPanel {
     settings.traffic.emergencyPerDayProbability = cmbEmergencyProbability.getSelectedItem().value;
   }
 
-  private void setCmbEmergencyProbabilityByClosestValue(double emergencyPerDayProbability) {
-    double minDiff = Double.MAX_VALUE;
-    int bestIndex = 0;
-    for (int i = 0; i < cmbEmergencyProbability.getItems().size(); i++) {
-      double item = cmbEmergencyProbability.getItem(i).value;
-      if (Math.abs(item - emergencyPerDayProbability) < minDiff) {
-        minDiff = Math.abs(item - emergencyPerDayProbability);
-        bestIndex = i;
-      }
-    }
-    cmbEmergencyProbability.setSelectedIndex(bestIndex);
+  private void adjustRdbSelected(StartupSettings settings) {
+    if (rdbXml.isSelected())
+      settings.traffic.type = StartupSettings.Traffic.eTrafficType.xml;
+    else if (rdbUser.isSelected())
+      settings.traffic.type = StartupSettings.Traffic.eTrafficType.user;
+    else
+      throw new UnsupportedOperationException();
   }
 
-  private void fleetsChanged(FleetsSource.Fleets fleets) {
-
-    txtCompanies.setModel(fleets.getIcaos());
+  private void adjustSelectedRdb(StartupSettings settings) {
+    rdbXml.setSelected(settings.traffic.type == StartupSettings.Traffic.eTrafficType.xml);
+    rdbUser.setSelected(settings.traffic.type == StartupSettings.Traffic.eTrafficType.user);
   }
 
-  private void initComponents() {
-    this.setMinimumSize(LARGE_FRAME_FIELD_DIMENSION);
-    createComponents();
-    createLayout();
-  }
+  private void btnAnalyseTraffic_click(ActionEvent actionEvent) {
+    ITrafficModel tfc = getCurrentTraffic();
 
-  private void createLayout() {
-
-    JPanel pnlGlobalTrafficSettings = createGlobalPanel();
-    JPanel pnlTrafficSource = createTrafficSourcePanel();
-    this.pnlCustomTraffic = createCustomTrafficPanel();
-
-    pnlGlobalTrafficSettings = LayoutManager.createBorderedPanel(8, pnlGlobalTrafficSettings);
-
-    LayoutManager.setPanelBorderText(pnlGlobalTrafficSettings, "Global traffic settings:");
-    LayoutManager.setPanelBorderText(pnlTrafficSource, "Used traffic:");
-    LayoutManager.setPanelBorderText(this.pnlCustomTraffic, "Custom generic traffic settings:");
-
-    pnlGlobalTrafficSettings.setMinimumSize(LARGE_FRAME_FIELD_DIMENSION);
-    pnlTrafficSource.setMinimumSize(LARGE_FRAME_FIELD_DIMENSION);
-    pnlCustomTraffic.setMinimumSize(LARGE_FRAME_FIELD_DIMENSION);
-
-    JPanel pnlMain = LayoutManager.createFormPanel(3, 1,
-        pnlGlobalTrafficSettings, pnlTrafficSource, this.pnlCustomTraffic);
-
-    pnlMain = LayoutManager.createBorderedPanel(DISTANCE, pnlMain);
-
-    this.add(pnlMain);
-  }
-
-  private JPanel createGlobalPanel() {
-    return LayoutManager.createFormPanel(2, 2,
-        new JLabel("Max planes count:"),
-        LayoutManager.createFlowPanel(
-            LayoutManager.eVerticalAlign.baseline,
-            super.DISTANCE,
-            nudMaxPlanes.getControl(),
-            new JLabel("Traffic density (%):"), nudTrafficDensity.getControl(),
-            chkAllowDelays),
-        new JLabel("Emergencies probabilty:"),
-        LayoutManager.createFlowPanel(
-            LayoutManager.eVerticalAlign.baseline,
-            super.DISTANCE,
-            cmbEmergencyProbability.getControl()));
-  }
-
-  private JPanel createTrafficSourcePanel() {
-    return LayoutManager.createFormPanel(3, 2,
-        rdbXml,
-        LayoutManager.createFlowPanel(fleTraffic.getTextControl(), fleTraffic.getButtonControl()),
-        rdbUser, null,
-        null, btnAnalyseTraffic);
-  }
-
-  private JPanel createCustomTrafficPanel() {
-    JPanel ret = LayoutManager.createFormPanel(7, 2,
-        null, chkCustomExtendedCallsigns,
-        new JLabel("Movements / hour:"),
-        LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.baseline, DISTANCE,
-            nudMovements.getControl(),
-            SwingFactory.createButton("Specify precisely", this::btnSpecifyTraffic_click)),
-        new JLabel("Non-commercial flights (%):"), nudNonCommercials.getControl(),
-        new JLabel("Arrivals <-> Departures"), sldArrivalsDepartures,
-        new JLabel("Companies (ICAO;ICAO;...):"), txtCompanies.getControl(),
-        new JLabel("Country codes (as above):"), txtCountryCodes.getControl(),
-        new JLabel("Plane weights A/B/C/D"), LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.baseline, DISTANCE,
-            nudA.getControl(), nudB.getControl(), nudC.getControl(), nudD.getControl())
-    );
-    return ret;
+//    FrmTrafficHistogram frm = new FrmTrafficHistogram();
+    FrmTrafficBarGraph frm = new FrmTrafficBarGraph();
+    frm.init(tfc, "Movements histogram");
+    frm.setVisible(true);
   }
 
   private void btnSpecifyTraffic_click(ActionEvent actionEvent) {
@@ -208,7 +165,6 @@ public class TrafficPanel extends JStartupPanel {
     }
   }
 
-  private JButton btnAnalyseTraffic;
   private void createComponents() {
 
     btnAnalyseTraffic = SwingFactory.createButton("Analyse traffic movements", this::btnAnalyseTraffic_click);
@@ -238,7 +194,7 @@ public class TrafficPanel extends JStartupPanel {
     txtCompanies = new ItemTextFieldExtender();
     txtCountryCodes = new ItemTextFieldExtender();
 
-    cmbEmergencyProbability = new ComboBoxExtender<>(q->q.label);
+    cmbEmergencyProbability = new ComboBoxExtender<>(q -> q.label);
     setCmbEmergencyProbabilityModel();
 
     grpRdb.add(rdbXml);
@@ -246,44 +202,109 @@ public class TrafficPanel extends JStartupPanel {
     rdbUser.setSelected(true);
   }
 
-  private void btnAnalyseTraffic_click(ActionEvent actionEvent) {
-    Traffic tfc = getCurrentTraffic();
-
-//    FrmTrafficHistogram frm = new FrmTrafficHistogram();
-    FrmTrafficBarGraph frm = new FrmTrafficBarGraph();
-    frm.init(tfc, "Movements histogram");
-    frm.setVisible(true);
+  private JPanel createCustomTrafficPanel() {
+    JPanel ret = LayoutManager.createFormPanel(7, 2,
+        null, chkCustomExtendedCallsigns,
+        new JLabel("Movements / hour:"),
+        LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.baseline, DISTANCE,
+            nudMovements.getControl(),
+            SwingFactory.createButton("Specify precisely", this::btnSpecifyTraffic_click)),
+        new JLabel("Non-commercial flights (%):"), nudNonCommercials.getControl(),
+        new JLabel("Arrivals <-> Departures"), sldArrivalsDepartures,
+        new JLabel("Companies (ICAO;ICAO;...):"), txtCompanies.getControl(),
+        new JLabel("Country codes (as above):"), txtCountryCodes.getControl(),
+        new JLabel("Plane weights A/B/C/D"), LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.baseline, DISTANCE,
+            nudA.getControl(), nudB.getControl(), nudC.getControl(), nudD.getControl())
+    );
+    return ret;
   }
 
-  private Traffic getCurrentTraffic() {
-    Traffic ret;
-    if (rdbXml.isSelected()){
-      TrafficSource trafficSource = new XmlTrafficSource(fleTraffic.getFileName());
+  private JPanel createGlobalPanel() {
+    return LayoutManager.createFormPanel(2, 2,
+        new JLabel("Max planes count:"),
+        LayoutManager.createFlowPanel(
+            LayoutManager.eVerticalAlign.baseline,
+            super.DISTANCE,
+            nudMaxPlanes.getControl(),
+            new JLabel("Traffic density (%):"), nudTrafficDensity.getControl(),
+            chkAllowDelays),
+        new JLabel("Emergencies probabilty:"),
+        LayoutManager.createFlowPanel(
+            LayoutManager.eVerticalAlign.baseline,
+            super.DISTANCE,
+            cmbEmergencyProbability.getControl()));
+  }
+
+  private void createLayout() {
+
+    JPanel pnlGlobalTrafficSettings = createGlobalPanel();
+    JPanel pnlTrafficSource = createTrafficSourcePanel();
+    this.pnlCustomTraffic = createCustomTrafficPanel();
+
+    pnlGlobalTrafficSettings = LayoutManager.createBorderedPanel(8, pnlGlobalTrafficSettings);
+
+    LayoutManager.setPanelBorderText(pnlGlobalTrafficSettings, "Global traffic settings:");
+    LayoutManager.setPanelBorderText(pnlTrafficSource, "Used traffic:");
+    LayoutManager.setPanelBorderText(this.pnlCustomTraffic, "Custom generic traffic settings:");
+
+    pnlGlobalTrafficSettings.setMinimumSize(LARGE_FRAME_FIELD_DIMENSION);
+    pnlTrafficSource.setMinimumSize(LARGE_FRAME_FIELD_DIMENSION);
+    pnlCustomTraffic.setMinimumSize(LARGE_FRAME_FIELD_DIMENSION);
+
+    JPanel pnlMain = LayoutManager.createFormPanel(3, 1,
+        pnlGlobalTrafficSettings, pnlTrafficSource, this.pnlCustomTraffic);
+
+    pnlMain = LayoutManager.createBorderedPanel(DISTANCE, pnlMain);
+
+    this.add(pnlMain);
+  }
+
+  private JPanel createTrafficSourcePanel() {
+    return LayoutManager.createFormPanel(3, 2,
+        rdbXml,
+        LayoutManager.createFlowPanel(fleTraffic.getTextControl(), fleTraffic.getButtonControl()),
+        rdbUser, null,
+        null, btnAnalyseTraffic);
+  }
+
+  private void fleetsChanged(FleetsSource.Fleets fleets) {
+    //TODO Implement this: DO not remember what was this good for.
+    throw new ToDoException("DO not remember what was this good for.");
+    //txtCompanies.setModel(fleets.getIcaos());
+  }
+
+  private ITrafficModel getCurrentTraffic() {
+    ITrafficModel ret;
+    if (rdbXml.isSelected()) {
+      TrafficSource trafficSource = new TrafficXmlSource(fleTraffic.getFileName());
       trafficSource.init();
       ret = trafficSource.getContent();
     } else {
       StartupSettings ss = new StartupSettings();
       fillSettingsBy(ss);
-      ret = generateCustomTraffic(ss.traffic);
+      ret = generateCustomTrafficModel(ss.traffic);
     }
 
     return ret;
   }
 
-  private static GenericTraffic generateCustomTraffic(StartupSettings.Traffic trf) {
-    // Taken from JAtcSim class ! ! !
-    //TODO remove duplicit
-    GenericTraffic ret = new GenericTraffic(
-        trf.customTraffic.companies, trf.customTraffic.countryCodes,
-        trf.customTraffic.movementsPerHour,
-        trf.customTraffic.arrivals2departuresRatio / 10d,
-        trf.customTraffic.nonCommercialFlightProbability,
-        trf.customTraffic.weightTypeA,
-        trf.customTraffic.weightTypeB,
-        trf.customTraffic.weightTypeC,
-        trf.customTraffic.weightTypeD,
-        trf.customTraffic.useExtendedCallsigns);
-    return ret;
+  private void initComponents() {
+    this.setMinimumSize(LARGE_FRAME_FIELD_DIMENSION);
+    createComponents();
+    createLayout();
+  }
+
+  private void setCmbEmergencyProbabilityByClosestValue(double emergencyPerDayProbability) {
+    double minDiff = Double.MAX_VALUE;
+    int bestIndex = 0;
+    for (int i = 0; i < cmbEmergencyProbability.getItems().size(); i++) {
+      double item = cmbEmergencyProbability.getItem(i).value;
+      if (Math.abs(item - emergencyPerDayProbability) < minDiff) {
+        minDiff = Math.abs(item - emergencyPerDayProbability);
+        bestIndex = i;
+      }
+    }
+    cmbEmergencyProbability.setSelectedIndex(bestIndex);
   }
 
   private void setCmbEmergencyProbabilityModel() {
@@ -306,19 +327,5 @@ public class TrafficPanel extends JStartupPanel {
   private void updateCustomPanelState() {
     if (pnlCustomTraffic != null && rdbUser != null)
       ComponentUtils.adjustComponentTree(pnlCustomTraffic, q -> q.setEnabled(rdbUser.isSelected()));
-  }
-
-  private void adjustSelectedRdb(StartupSettings settings) {
-    rdbXml.setSelected(settings.traffic.type == StartupSettings.Traffic.eTrafficType.xml);
-    rdbUser.setSelected(settings.traffic.type == StartupSettings.Traffic.eTrafficType.user);
-  }
-
-  private void adjustRdbSelected(StartupSettings settings) {
-    if (rdbXml.isSelected())
-      settings.traffic.type = StartupSettings.Traffic.eTrafficType.xml;
-    else if (rdbUser.isSelected())
-      settings.traffic.type = StartupSettings.Traffic.eTrafficType.user;
-    else
-      throw new UnsupportedOperationException();
   }
 }

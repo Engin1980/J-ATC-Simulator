@@ -7,8 +7,8 @@ import eng.eSystem.swing.LayoutManager;
 import eng.eSystem.swing.extenders.ComboBoxExtender;
 import eng.eSystem.utilites.ArrayUtils;
 import eng.jAtcSim.app.controls.ImagePanel;
-import eng.jAtcSim.newLib.area.newStats.Snapshot;
-import eng.jAtcSim.newLib.area.newStats.StatsManager;
+import eng.jAtcSim.newLib.stats.Snapshot;
+import eng.jAtcSim.newLib.stats.StatsProvider;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.CategoryAxis;
 import org.jfree.chart.axis.CategoryLabelPositions;
@@ -68,7 +68,7 @@ public class StatsGraphPanel extends JPanel {
   private static IReadOnlyList<Measure> measures;
   private ComboBoxExtender<String> cmbMeasures;
   private ImagePanel pnlImage;
-  private StatsManager statsManager;
+  private StatsProvider statsManager;
 
   static {
     EList<Measure> measures = new EList<>();
@@ -128,7 +128,7 @@ public class StatsGraphPanel extends JPanel {
     layoutComponents();
   }
 
-  public void init(StatsManager stats) {
+  public void init(StatsProvider stats) {
     this.statsManager = stats;
   }
 

@@ -1,13 +1,12 @@
 package eng.jAtcSim;
 
-
 import eng.eSystem.eXml.XDocument;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EXmlException;
-
-import eng.jAtcSim.frmPacks.shared.FlightStripSettings;
+import eng.eXmlSerialization.annotations.XmlIgnored;
 import eng.jAtcSim.abstractRadar.settings.RadarDisplaySettings;
+import eng.jAtcSim.frmPacks.shared.FlightStripSettings;
 import eng.jAtcSim.newLib.shared.xml.SmartXmlLoaderUtils;
 
 import java.nio.file.Path;
@@ -44,24 +43,23 @@ public class AppSettings {
         ret.maxAltitude = SmartXmlLoaderUtils.loadInteger(elm, "maxAltitude");
         return ret;
       }
-
-      public boolean tma = true;
+      public boolean airport = true;
       public boolean country = true;
+      public boolean ctr = true;
+      public boolean fix = true;
+      public boolean history = true;
+      public int maxAltitude = 99000;
+      public int minAltitude = 0;
+      public boolean minorFix = true;
       public boolean mrva = true;
       public boolean mrvaLabel = true;
-      public boolean ctr = true;
-      public boolean vor = true;
       public boolean ndb = true;
-      public boolean airport = true;
+      public boolean rings = true;
+      public boolean routeFix = true;
       public boolean sid = true;
       public boolean star = true;
-      public boolean fix = true;
-      public boolean routeFix = true;
-      public boolean minorFix = true;
-      public boolean rings = true;
-      public boolean history = true;
-      public int minAltitude = 0;
-      public int maxAltitude = 99000;
+      public boolean tma = true;
+      public boolean vor = true;
 
       public RadarDisplaySettings toRadarDisplaySettings() {
         RadarDisplaySettings ret = new RadarDisplaySettings();
@@ -85,54 +83,22 @@ public class AppSettings {
         return ret;
       }
     }
-    public Path styleSettingsFile;
-    public int displayTextDelay;
     public DisplaySettings displaySettings;
+    public int displayTextDelay;
+    public Path styleSettingsFile;
   }
 
   public static class AutoSave {
     public int intervalInSeconds;
     public Path path;
   }
-  //@XmlIgnore
+
+  @XmlIgnored
   private static Path applicationFolder;
-  //@XmlIgnore
-  private static java.time.LocalDateTime startDateTime;
-  //@XmlIgnore
+  @XmlIgnored
   private static boolean initialized = false;
-  public AutoSave autosave = new AutoSave();
-  public Radar radar = new Radar();
-  public Path startupSettingsFile;
-  public Path soundFolder;
-  public Path logFolder;
-  public Path stripSettingsFile;
-  public Path speechFormatterFile;
-  public Stats stats = new Stats();
-  //@XmlIgnore
-  private FlightStripSettings flightStripSettings = null;
-
-  public static Path getApplicationFolder() {
-    return applicationFolder;
-  }
-
-  public static void init() {
-    applicationFolder = Paths.get(System.getProperty("user.dir"));
-    startDateTime = LocalDateTime.now();
-    initialized = true;
-  }
-
-  public static Path tryGetAppSettingsFile() {
-    Path ret;
-
-    ret = getUnderAppFolder("appSettings.at.xml");
-    if (ret.toFile().exists() == false) {
-      ret = getUnderAppFolder(Paths.get("_SettingFiles", "appSettings.at.xml").toString());
-      if (ret.toFile().exists() == false)
-        ret = null;
-    }
-
-    return ret;
-  }
+  @XmlIgnored
+  private static java.time.LocalDateTime startDateTime;
 
   public static AppSettings create() {
     AppSettings ret = new AppSettings();
@@ -183,6 +149,29 @@ public class AppSettings {
     return ret;
   }
 
+  public static Path getApplicationFolder() {
+    return applicationFolder;
+  }
+
+  public static void init() {
+    applicationFolder = Paths.get(System.getProperty("user.dir"));
+    startDateTime = LocalDateTime.now();
+    initialized = true;
+  }
+
+  public static Path tryGetAppSettingsFile() {
+    Path ret;
+
+    ret = getUnderAppFolder("appSettings.at.xml");
+    if (ret.toFile().exists() == false) {
+      ret = getUnderAppFolder(Paths.get("_SettingFiles", "appSettings.at.xml").toString());
+      if (ret.toFile().exists() == false)
+        ret = null;
+    }
+
+    return ret;
+  }
+
   private static Path decodePath(String tmp) {
     if (tmp.contains("$time$")) {
       String timeString = startDateTime.format(DateTimeFormatter.ofPattern("yyyy_MM_dd_HH_mm_ss"));
@@ -203,18 +192,16 @@ public class AppSettings {
     Path ret = Paths.get(applicationFolder.toString(), path);
     return ret;
   }
-
-  public FlightStripSettings getLoadedFlightStripSettings(){
-    if (flightStripSettings == null){
-      try {
-        this.flightStripSettings =
-            XmlLoadHelper.loadStripSettings(this.stripSettingsFile.toString());
-      }catch (Exception ex){
-        throw new EApplicationException("Failed to load flight-strip-settings from " + this.startupSettingsFile.toString(), ex);
-      }
-    }
-    return this.flightStripSettings;
-  }
+  public AutoSave autosave = new AutoSave();
+  @XmlIgnored
+  private FlightStripSettings flightStripSettings = null;
+  public Path logFolder;
+  public Radar radar = new Radar();
+  public Path soundFolder;
+  public Path speechFormatterFile;
+  public Path startupSettingsFile;
+  public Stats stats = new Stats();
+  public Path stripSettingsFile;
 
   private AppSettings() {
     if (!initialized)
@@ -225,5 +212,17 @@ public class AppSettings {
     this.logFolder = getUnderAppFolder("_Log");
     this.stripSettingsFile = getUnderAppFolder("stripSettings.at.xml");
     this.radar.styleSettingsFile = getUnderAppFolder("radarStyleSettings.at.xml");
+  }
+
+  public FlightStripSettings getLoadedFlightStripSettings() {
+    if (flightStripSettings == null) {
+      try {
+        this.flightStripSettings =
+            XmlLoadHelper.loadStripSettings(this.stripSettingsFile.toString());
+      } catch (Exception ex) {
+        throw new EApplicationException("Failed to load flight-strip-settings from " + this.startupSettingsFile.toString(), ex);
+      }
+    }
+    return this.flightStripSettings;
   }
 }

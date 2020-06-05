@@ -3,11 +3,11 @@ package eng.jAtcSim.frmPacks.shared;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.utilites.awt.ComponentUtils;
-import eng.jAtcSim.newLib.area.airplanes.Callsign;
-import eng.jAtcSim.newLib.area.airplanes.moods.MoodExperienceResult;
-import eng.jAtcSim.newLib.area.airplanes.moods.MoodResult;
-import eng.jAtcSim.newLib.area.global.ETime;
 import eng.eSystem.swing.LayoutManager;
+import eng.jAtcSim.newLib.mood.MoodExperienceResult;
+import eng.jAtcSim.newLib.mood.MoodResult;
+import eng.jAtcSim.newLib.shared.Callsign;
+import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,7 +16,7 @@ import java.awt.event.MouseEvent;
 
 public class MoodHistoryPanel extends JPanel {
   private class PlaneRow extends JPanel {
-    public PlaneRow(ETime time, Callsign callsign, int points) {
+    public PlaneRow(EDayTimeStamp time, Callsign callsign, int points) {
 
       JLabel lblTime = new JLabel(time.toString());
       LayoutManager.setFixedWidth(lblTime, labelWidth);
@@ -69,7 +69,7 @@ public class MoodHistoryPanel extends JPanel {
 
   public void init(IReadOnlyList<MoodResult> results) {
     pnlTop.removeAll();
-    this.dataSet = results.orderBy(q -> q.getTime());
+    this.dataSet = results.orderBy(q -> q.getTime().getValue());
     this.dataSet.reverse();
     int globalIndex = 0;
     for (MoodResult result : this.dataSet) {
@@ -126,7 +126,7 @@ public class MoodHistoryPanel extends JPanel {
 
   private void init2(IReadOnlyList<MoodExperienceResult> exps) {
     pnlBottom.removeAll();
-    IList<MoodExperienceResult> tmp = exps.orderBy(q -> q.getTime() == null ? new ETime(0) : q.getTime());
+    IList<MoodExperienceResult> tmp = exps.orderBy(q -> q.getTime() == null ? 0 : q.getTime().getValue());
     for (MoodExperienceResult result : tmp) {
       ResultRow pnlResult = new ResultRow(result);
       pnlBottom.add(pnlResult);
