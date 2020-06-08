@@ -39,7 +39,7 @@ public interface ISimulation {
 
   EventSimple<ISimulation> getOnRunwayChanged();
 
-  EventSimple<?> getOnSecondElapsed();
+  EventSimple<ISimulation> getOnSecondElapsed();
 
   IParseFormat getParseFormat();
 

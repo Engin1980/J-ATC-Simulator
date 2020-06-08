@@ -4,7 +4,7 @@
     <root id="root">
       <element id="archive" name="JAtcSim.jar">
         <element id="module-output" name="JAtcSim" />
-        <element id="module-output" name="JAtcSimLib" />
+        <element id="module-output" name="JAtcSimLib(OLD)" />
         <element id="module-output" name="SwingRadar" />
         <element id="module-output" name="AbstractRadar" />
       </element>

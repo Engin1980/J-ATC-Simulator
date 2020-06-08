@@ -14,7 +14,6 @@
     <orderEntry type="module" module-name="SharedLib" />
     <orderEntry type="library" name="eng.eSystem" level="project" />
     <orderEntry type="module" module-name="AirplaneTypeLib" />
-    <orderEntry type="module" module-name="JAtcSimLib" />
     <orderEntry type="module" module-name="MoodLib" />
     <orderEntry type="module" module-name="SpeechesLib" />
     <orderEntry type="module" module-name="MessagingLib" />

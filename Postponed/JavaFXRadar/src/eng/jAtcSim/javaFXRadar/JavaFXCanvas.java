@@ -25,10 +25,10 @@ import java.util.List;
 public class JavaFXCanvas implements ICanvas<Canvas> {
 
   class MouseProcessor {
-    private Point dragStartPoint = null;
-    private int dragStartModifiers = 0;
-    private MouseButton dragStartButton = MouseButton.NONE;
     private int MINIMUM_DRAG_SHIFT = 3;
+    private MouseButton dragStartButton = MouseButton.NONE;
+    private int dragStartModifiers = 0;
+    private Point dragStartPoint = null;
 
     public MouseProcessor() {
       JavaFXCanvas.this.c.addEventHandler(MouseEvent.MOUSE_CLICKED, q -> this.clicked(q));
@@ -77,10 +77,35 @@ public class JavaFXCanvas implements ICanvas<Canvas> {
       return ret;
     }
 
+    void dragged(MouseEvent e) {
+      Point dragEndPoint = new Point((int) e.getX(), (int) e.getY());
+      Point diffPoint = new Point(
+          Math.abs(dragEndPoint.x - dragStartPoint.x),
+          Math.abs(dragEndPoint.y - dragStartPoint.y));
+      if (diffPoint.x < MINIMUM_DRAG_SHIFT && diffPoint.y < MINIMUM_DRAG_SHIFT) {
+        return;
+      }
+      EMouseEventArg.eButton btn = convertToMouseButton(e.getButton());
+      EMouseEventArg eme = EMouseEventArg.createDragging(
+          dragStartPoint.x, dragStartPoint.y, dragEndPoint.x, dragEndPoint.y,
+          btn, new EKeyboardModifier(dragStartModifiers));
+
+      raiseEvent(eme);
+    }
+
+    void moved(MouseEvent e) {
+      EMouseEventArg eme = EMouseEventArg.createMove((int) e.getX(), (int) e.getY());
+      raiseEvent(eme);
+    }
+
     void pressed(MouseEvent e) {
       dragStartPoint = new Point((int) e.getX(), (int) e.getY());
       dragStartModifiers = (e.isAltDown() ? 2 : 0) + (e.isControlDown() ? 4 : 0) + (e.isShiftDown() ? 8 : 0);
       dragStartButton = e.getButton();
+    }
+
+    private void raiseEvent(EMouseEventArg eme) {
+      JavaFXCanvas.this.mouseEvent.raise(eme);
     }
 
     void released(MouseEvent e) {
@@ -103,34 +128,9 @@ public class JavaFXCanvas implements ICanvas<Canvas> {
       }
     }
 
-    void dragged(MouseEvent e) {
-      Point dragEndPoint = new Point((int) e.getX(), (int) e.getY());
-      Point diffPoint = new Point(
-          Math.abs(dragEndPoint.x - dragStartPoint.x),
-          Math.abs(dragEndPoint.y - dragStartPoint.y));
-      if (diffPoint.x < MINIMUM_DRAG_SHIFT && diffPoint.y < MINIMUM_DRAG_SHIFT) {
-        return;
-      }
-      EMouseEventArg.eButton btn = convertToMouseButton(e.getButton());
-      EMouseEventArg eme = EMouseEventArg.createDragging(
-          dragStartPoint.x, dragStartPoint.y, dragEndPoint.x, dragEndPoint.y,
-          btn, new EKeyboardModifier(dragStartModifiers));
-
-      raiseEvent(eme);
-    }
-
-    void moved(MouseEvent e) {
-      EMouseEventArg eme = EMouseEventArg.createMove((int) e.getX(), (int) e.getY());
-      raiseEvent(eme);
-    }
-
     void scrolled(MouseWheelEvent e) {
       EMouseEventArg eme = EMouseEventArg.createScroll(
           e.getPoint().x, e.getPoint().y, e.getWheelRotation());
-      JavaFXCanvas.this.mouseEvent.raise(eme);
-    }
-
-    private void raiseEvent(EMouseEventArg eme) {
       JavaFXCanvas.this.mouseEvent.raise(eme);
     }
   }
@@ -145,15 +145,15 @@ public class JavaFXCanvas implements ICanvas<Canvas> {
   private static final int yMargin = -2;
   private final Canvas c;
   private GraphicsContext g;
-  private eng.eSystem.events.Event<ICanvas, EMouseEventArg> mouseEvent =
-      new eng.eSystem.events.Event<>(this);
-  private eng.eSystem.events.EventSimple<ICanvas> paintEvent =
-      new eng.eSystem.events.EventSimple<>(this);
   private eng.eSystem.events.Event<ICanvas, Object> keyEvent =
       new eng.eSystem.events.Event<>(this);
+  private eng.eSystem.events.Event<ICanvas, EMouseEventArg> mouseEvent =
+      new eng.eSystem.events.Event<>(this);
+  private MouseProcessor mp = this.new MouseProcessor();
+  private eng.eSystem.events.EventSimple<ICanvas> paintEvent =
+      new eng.eSystem.events.EventSimple<>(this);
   private eng.eSystem.events.EventSimple<ICanvas> resizedEvent =
       new eng.eSystem.events.EventSimple<>(this);
-  private MouseProcessor mp = this.new MouseProcessor();
 
   public JavaFXCanvas() {
 
@@ -218,47 +218,27 @@ public class JavaFXCanvas implements ICanvas<Canvas> {
   }
 
   @Override
-  public int getWidth() {
-    int ret = (int) c.getWidth();
-    return ret;
-//    if (g != null)
-//      return g.getClipBounds().width;
-//    else
-//      return 1;
+  public void afterDraw() {
   }
 
   @Override
-  public int getHeight() {
-    int ret = (int) c.getHeight();
-    return ret;
-//    if (g != null)
-//      return g.getClipBounds().height;
-//    else
-//      return 1;
+  public void beforeDraw() {
   }
 
   @Override
-  public boolean isReady() {
-    return g != null;
+  public void clear(eng.jAtcSim.abstractRadar.global.Color backColor) {
+    int h = getHeight();
+    int w = getWidth();
+    g.fillRect(0, 0, w, h);
   }
 
   @Override
-  public void drawLine(int x1, int y1, int x2, int y2, eng.jAtcSim.abstractRadar.global.Color color, int width) {
+  public void drawArc(Point p, int xRadius, int yRadius, int fromAngle, int toAngle, eng.jAtcSim.abstractRadar.global.Color color) {
     g.setStroke(Coloring.get(color));
-    g.strokeLine(x1, y1, x2, y2);
-  }
-
-  @Override
-  public void fillRectangle(int x, int y, int width, int height, eng.jAtcSim.abstractRadar.global.Color color) {
-    g.setFill(Coloring.get(color));
-    g.fillRect(x, y, width, height);
-  }
-
-  @Override
-  public void drawPoint(int x, int y, eng.jAtcSim.abstractRadar.global.Color color, int width) {
-    g.setFill(Coloring.get(color));
-    int step = width / 2;
-    g.fillOval(x - step, y - step, width, width);
+    Point orig = new Point(p.x - xRadius, p.y - yRadius);
+    int angleLength = (toAngle < fromAngle) ? (toAngle + 360) : toAngle - fromAngle;
+    fromAngle = toEJComponentAngle(fromAngle);
+    g.strokeArc(orig.x, orig.y, xRadius + xRadius, yRadius + yRadius, fromAngle, -angleLength, ArcType.OPEN);
   }
 
   @Override
@@ -266,21 +246,6 @@ public class JavaFXCanvas implements ICanvas<Canvas> {
     g.setStroke(Coloring.get(color));
     int step = distanceInPixels / 2;
     g.strokeOval(p.x - step, p.y - step, distanceInPixels, distanceInPixels);
-  }
-
-  @Override
-  public void drawTriangleAround(Point p, int distanceInPixels, eng.jAtcSim.abstractRadar.global.Color color, int width) {
-    Point[] pts = new Point[3];
-    double tStep = distanceInPixels / 3d;
-    pts[0] = new Point(p.x, p.y - (int) (2 * tStep));
-
-    double xStep = Math.sqrt((2 * tStep) * (2 * tStep) - tStep * tStep);
-    pts[1] = new Point(p.x - (int) xStep, p.y + (int) tStep);
-    pts[2] = new Point(p.x + (int) xStep, p.y + (int) tStep);
-
-    drawLine(pts[0], pts[1], color, width);
-    drawLine(pts[1], pts[2], color, width);
-    drawLine(pts[2], pts[0], color, width);
   }
 
   @Override
@@ -297,12 +262,16 @@ public class JavaFXCanvas implements ICanvas<Canvas> {
   }
 
   @Override
-  public void drawArc(Point p, int xRadius, int yRadius, int fromAngle, int toAngle, eng.jAtcSim.abstractRadar.global.Color color) {
+  public void drawLine(int x1, int y1, int x2, int y2, eng.jAtcSim.abstractRadar.global.Color color, int width) {
     g.setStroke(Coloring.get(color));
-    Point orig = new Point(p.x - xRadius, p.y - yRadius);
-    int angleLength = (toAngle < fromAngle) ? (toAngle + 360) : toAngle - fromAngle;
-    fromAngle = toEJComponentAngle(fromAngle);
-    g.strokeArc(orig.x, orig.y, xRadius + xRadius, yRadius + yRadius, fromAngle, -angleLength, ArcType.OPEN);
+    g.strokeLine(x1, y1, x2, y2);
+  }
+
+  @Override
+  public void drawPoint(int x, int y, eng.jAtcSim.abstractRadar.global.Color color, int width) {
+    g.setFill(Coloring.get(color));
+    int step = width / 2;
+    g.fillOval(x - step, y - step, width, width);
   }
 
   @Override
@@ -342,28 +311,49 @@ public class JavaFXCanvas implements ICanvas<Canvas> {
   }
 
   @Override
-  public void clear(eng.jAtcSim.abstractRadar.global.Color backColor) {
-    int h = getHeight();
-    int w = getWidth();
-    g.fillRect(0, 0, w, h);
+  public void drawTriangleAround(Point p, int distanceInPixels, eng.jAtcSim.abstractRadar.global.Color color, int width) {
+    Point[] pts = new Point[3];
+    double tStep = distanceInPixels / 3d;
+    pts[0] = new Point(p.x, p.y - (int) (2 * tStep));
+
+    double xStep = Math.sqrt((2 * tStep) * (2 * tStep) - tStep * tStep);
+    pts[1] = new Point(p.x - (int) xStep, p.y + (int) tStep);
+    pts[2] = new Point(p.x + (int) xStep, p.y + (int) tStep);
+
+    drawLine(pts[0], pts[1], color, width);
+    drawLine(pts[1], pts[2], color, width);
+    drawLine(pts[2], pts[0], color, width);
   }
 
   @Override
-  public void beforeDraw() {
+  public void fillRectangle(int x, int y, int width, int height, eng.jAtcSim.abstractRadar.global.Color color) {
+    g.setFill(Coloring.get(color));
+    g.fillRect(x, y, width, height);
   }
 
   @Override
-  public void afterDraw() {
-  }
-
-  @Override
-  public void invokeRepaint() {
-    throw new UnsupportedOperationException();
+  public Size getEstimatedTextSize(eng.jAtcSim.abstractRadar.global.Font font, int rowsCount, int columnsCount) {
+    throw new UnsupportedOperationException("This method is not implemented, but should be.");
   }
 
   @Override
   public Canvas getGuiControl() {
     return this.c;
+  }
+
+  @Override
+  public int getHeight() {
+    int ret = (int) c.getHeight();
+    return ret;
+//    if (g != null)
+//      return g.getClipBounds().height;
+//    else
+//      return 1;
+  }
+
+  @Override
+  public Event<ICanvas, Object> getKeyEvent() {
+    return keyEvent;
   }
 
   @Override
@@ -377,18 +367,8 @@ public class JavaFXCanvas implements ICanvas<Canvas> {
   }
 
   @Override
-  public Event<ICanvas, Object> getKeyEvent() {
-    return keyEvent;
-  }
-
-  @Override
   public EventSimple<ICanvas> getResizedEvent() {
     return resizedEvent;
-  }
-
-  @Override
-  public Size getEstimatedTextSize(eng.jAtcSim.abstractRadar.global.Font font, int rowsCount, int columnsCount) {
-    throw new UnsupportedOperationException("This method is not implemented, but should be.");
   }
 
   @Override
@@ -414,8 +394,24 @@ public class JavaFXCanvas implements ICanvas<Canvas> {
     return ret;
   }
 
-  private int toEJComponentAngle(int angle) {
-    return 360 - angle + 90;
+  @Override
+  public int getWidth() {
+    int ret = (int) c.getWidth();
+    return ret;
+//    if (g != null)
+//      return g.getClipBounds().width;
+//    else
+//      return 1;
+  }
+
+  @Override
+  public void invokeRepaint() {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public boolean isReady() {
+    return g != null;
   }
 
   private Point[] getPositionsForText(List<String> lines, TextBlockLocation location, Font font) {
@@ -466,6 +462,10 @@ public class JavaFXCanvas implements ICanvas<Canvas> {
         throw new UnsupportedOperationException();
     } // switch
     return ret;
+  }
+
+  private int toEJComponentAngle(int angle) {
+    return 360 - angle + 90;
   }
 
 }

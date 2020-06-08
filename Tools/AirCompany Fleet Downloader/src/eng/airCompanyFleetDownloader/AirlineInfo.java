@@ -4,7 +4,7 @@ import eng.eSystem.collections.EList;
 import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IMap;
-import eng.eSystem.xmlSerialization.annotations.XmlOptional;
+import eng.eXmlSerialization.annotations.XmlOptional;
 
 public class AirlineInfo {
   private final String name;

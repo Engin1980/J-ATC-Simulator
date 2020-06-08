@@ -2,15 +2,16 @@ package eng.coordinatesViewer;
 
 import eng.eSystem.events.EventAnonymousSimple;
 
+import eng.eXmlSerialization.annotations.XmlIgnored;
 import javafx.scene.image.Image;
 
 public class Project {
   private static final double ZOOM_STEP = 0.9;
-  @XmlIgnore
+  @XmlIgnored
   private eng.eSystem.events.EventAnonymousSimple redrawRequiredEvent = new EventAnonymousSimple();
   private String fileName;
   private double ratio;
-  @XmlIgnore
+  @XmlIgnored
   private Image imgRes;
   private double baseWidth;
   private double baseHeight;

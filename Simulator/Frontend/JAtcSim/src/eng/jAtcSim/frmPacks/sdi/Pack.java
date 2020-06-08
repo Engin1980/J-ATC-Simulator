@@ -6,13 +6,13 @@ import eng.eSystem.events.EventSimple;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.jAtcSim.AppSettings;
 import eng.jAtcSim.XmlLoadHelper;
-import eng.jAtcSim.newLib.Game;
-import eng.jAtcSim.newLib.Simulation;
-import eng.jAtcSim.newLib.area.global.ETime;
-import eng.jAtcSim.newLib.world.Airport;
-import eng.jAtcSim.newLib.world.Area;
+import eng.jAtcSim.newLib.area.Airport;
+import eng.jAtcSim.newLib.area.Area;
+import eng.jAtcSim.newLib.gameSim.IGame;
 import eng.jAtcSim.abstractRadar.settings.RadarStyleSettings;
 import eng.jAtcSim.abstractRadar.RadarViewPort;
+import eng.jAtcSim.newLib.gameSim.ISimulation;
+import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 
 import javax.swing.*;
 import java.io.IOException;
@@ -21,20 +21,20 @@ import java.nio.file.Paths;
 
 public class Pack extends eng.jAtcSim.frmPacks.Pack {
 
-  private Game game;
-  private Simulation sim;
+  private IGame game;
+  private ISimulation sim;
   private Area area;
   private Airport aip;
   private AppSettings appSettings;
   private RadarStyleSettings radarStyleSettings;
   private FrmMain frmMain;
 
-  public Game getGame() {
+  public IGame getGame() {
     return game;
   }
 
   @Override
-  public void initPack(Game game, AppSettings appSettings) {
+  public void initPack(IGame game, AppSettings appSettings) {
 
     this.game = game;
     this.sim = game.getSimulation();
@@ -49,7 +49,7 @@ public class Pack extends eng.jAtcSim.frmPacks.Pack {
       }
     }
     this.area = game.getSimulation().getArea();
-    this.aip = sim.getActiveAirport();
+    this.aip = sim.getAirport();
     this.appSettings = appSettings;
 
     String fileName = appSettings.radar.styleSettingsFile.toString();
@@ -89,7 +89,7 @@ public class Pack extends eng.jAtcSim.frmPacks.Pack {
     frmMain.setRadarStoredPositions(storedRadarPositions);
   }
 
-  public Simulation getSim() {
+  public ISimulation getSim() {
     return sim;
   }
 
@@ -105,12 +105,12 @@ public class Pack extends eng.jAtcSim.frmPacks.Pack {
     return radarStyleSettings;
   }
 
-  private void sim_secondElapsed(Simulation simulation) {
-    ETime now = simulation.getNow();
-    int secs = now.getTotalSeconds();
+  private void sim_secondElapsed(ISimulation simulation) {
+    EDayTimeStamp now = simulation.getNow();
+    int secs = now.getValue();
     if (secs % appSettings.autosave.intervalInSeconds == 0) {
       // doing autosave
-      String fileName = simulation.getActiveAirport().getIcao() + "_" +
+      String fileName = simulation.getAirport().getIcao() + "_" +
           String.format("%d_%02d_%02d_%02d", now.getDays(), now.getHours(), now.getMinutes(), now.getSeconds()) +
           ".autosave.sm.xml";
 
