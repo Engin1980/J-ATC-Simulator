@@ -2,6 +2,8 @@ package eng.jAtcSim.frmPacks.shared;
 
 import eng.eSystem.swing.LayoutManager;
 import eng.jAtcSim.newLib.gameSim.ISimulation;
+import eng.jAtcSim.newLib.stats.IStatsProvider;
+import eng.jAtcSim.newLib.stats.recent.RecentStats;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,7 +12,7 @@ public class StatsPanel extends JPanel {
 
   private static Color bgColor = new Color(50, 50, 50);
   private static Color frColor = new Color(200, 200, 200);
-  StatsManager stats;
+  IStatsProvider stats;
   JLabel lblElapsed = new JLabel("Seconds elapsed:");
   JLabel lvlElapsed = new JLabel("-");
   JLabel lblBusyDuration = new JLabel("Recalc duration:");

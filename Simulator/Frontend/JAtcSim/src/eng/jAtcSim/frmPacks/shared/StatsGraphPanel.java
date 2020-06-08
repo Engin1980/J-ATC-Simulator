@@ -7,6 +7,7 @@ import eng.eSystem.swing.LayoutManager;
 import eng.eSystem.swing.extenders.ComboBoxExtender;
 import eng.eSystem.utilites.ArrayUtils;
 import eng.jAtcSim.app.controls.ImagePanel;
+import eng.jAtcSim.newLib.stats.IStatsProvider;
 import eng.jAtcSim.newLib.stats.Snapshot;
 import eng.jAtcSim.newLib.stats.StatsProvider;
 import org.jfree.chart.JFreeChart;
@@ -68,7 +69,7 @@ public class StatsGraphPanel extends JPanel {
   private static IReadOnlyList<Measure> measures;
   private ComboBoxExtender<String> cmbMeasures;
   private ImagePanel pnlImage;
-  private StatsProvider statsManager;
+  private IStatsProvider statsProvider;
 
   static {
     EList<Measure> measures = new EList<>();
@@ -128,8 +129,8 @@ public class StatsGraphPanel extends JPanel {
     layoutComponents();
   }
 
-  public void init(StatsProvider stats) {
-    this.statsManager = stats;
+  public void init(IStatsProvider stats) {
+    this.statsProvider = stats;
   }
 
   private void layoutComponents() {
@@ -201,7 +202,7 @@ public class StatsGraphPanel extends JPanel {
   private GraphDataSet buildGraphDataSet(Measure measure) {
     int step = 1;
     GraphDataSet gds = new GraphDataSet();
-    IReadOnlyList<Snapshot> snapshots = statsManager.getSnapshots(step);
+    IReadOnlyList<Snapshot> snapshots = statsProvider.getSnapshots(step);
 
     gds.title = measure.title;
     gds.yAxisLabel = measure.yLabel;
