@@ -1,7 +1,6 @@
 package eng.jAtcSim.frmPacks.sdi;
 
 import eng.jAtcSim.frmPacks.shared.SwingRadarPanel;
-import eng.jAtcSim.newLib.area.textProcessing.formatting.SpeechFormatter;
 import eng.jAtcSim.abstractRadar.settings.RadarBehaviorSettings;
 import eng.jAtcSim.abstractRadar.settings.RadarDisplaySettings;
 
@@ -38,12 +37,11 @@ public class FrmView extends JFrame {
 
     this.parent = pack;
 
-    SpeechFormatter formatter = SpeechFormatter.create(pack.getAppSettings().speechFormatterFile);
-    RadarBehaviorSettings behSett = new RadarBehaviorSettings(false, formatter);
+    RadarBehaviorSettings behSett = new RadarBehaviorSettings(false);
     RadarDisplaySettings dispSett = pack.getAppSettings().radar.displaySettings.toRadarDisplaySettings();
 
     SwingRadarPanel srp = new SwingRadarPanel();
-    srp.init(this.parent.getSim().getActiveAirport().getInitialPosition(),
+    srp.init(this.parent.getSim().getAirport().getInitialPosition(),
         this.parent.getSim(), this.parent.getArea(),
         this.parent.getRadarStyleSettings(), dispSett, behSett);
 

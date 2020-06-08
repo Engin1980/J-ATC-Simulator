@@ -1,0 +1,33 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+package eng.jAtcSim.newLib.area.speaking.fromAtc.commands;
+
+;
+import eng.eSystem.xmlSerialization.annotations.XmlConstructor;
+import eng.jAtcSim.newLib.world.Navaid;
+
+/**
+ *
+ * @author Marek
+ */
+public class ProceedDirectCommand extends ToNavaidCommand {
+
+  @XmlConstructor
+  private ProceedDirectCommand() {
+    super();
+  }
+
+  public ProceedDirectCommand(Navaid navaid) {
+    super(navaid);
+  }
+  
+    @Override
+  public String toString() {
+    return "Direct to "  + navaid.getName() + " {command}";
+  }
+  
+}

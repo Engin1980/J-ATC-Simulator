@@ -38,8 +38,7 @@ public class FrmView extends JFrame {
 
     this.parent = pack;
 
-    SpeechFormatter formatter = SpeechFormatter.create(pack.getAppSettings().speechFormatterFile);
-    RadarBehaviorSettings behSett = new RadarBehaviorSettings(false, formatter);
+    RadarBehaviorSettings behSett = new RadarBehaviorSettings(false);
     RadarDisplaySettings ds = pack.getAppSettings().radar.displaySettings.toRadarDisplaySettings();
 
     SwingRadarPanel srp = new SwingRadarPanel();

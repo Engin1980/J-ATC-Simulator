@@ -66,4 +66,6 @@ public interface ISimulation {
   void sendSystemCommand(ISystemSpeech speech);
 
   void start();
+
+  void stop();
 }

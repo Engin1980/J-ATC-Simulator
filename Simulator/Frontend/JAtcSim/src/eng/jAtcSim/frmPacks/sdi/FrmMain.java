@@ -10,6 +10,11 @@ import eng.jAtcSim.abstractRadar.settings.RadarBehaviorSettings;
 import eng.jAtcSim.abstractRadar.settings.RadarDisplaySettings;
 import eng.jAtcSim.abstractRadar.RadarViewPort;
 import eng.jAtcSim.abstractRadar.global.SoundManager;
+import eng.jAtcSim.newLib.area.InitialPosition;
+import eng.jAtcSim.newLib.shared.Callsign;
+import eng.jAtcSim.newLib.shared.SharedAcc;
+import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
+import eng.jAtcSim.newLib.speeches.system.user2system.TickSpeedRequest;
 import eng.jAtcSim.recording.Recording;
 import eng.jAtcSim.recording.Settings;
 import eng.eSystem.swing.LayoutManager;
@@ -206,12 +211,12 @@ public class FrmMain extends JFrame {
       mnuView.addSeparator();
       buildMenuItem(mnuView, "Show mood results", null, s -> {
         MoodHistoryPanel pnl = new MoodHistoryPanel();
-        pnl.init(Acc.sim().getStats().getFullMoodHistory());
+        pnl.init(this.parent.getSim().getStats().getFullMoodHistory());
         SwingFactory.show(pnl, "Rating board");
       });
       buildMenuItem(mnuView, "Show stats graphs", null, s -> {
         StatsGraphPanel pnl = new StatsGraphPanel();
-        pnl.init(Acc.sim().getStats());
+        pnl.init(this.parent.getSim().getStats());
         SwingFactory.show(pnl, "Statistical graphs");
       });
       buildMenuItem(mnuView, "Add new radar view", 'r', s -> {
@@ -233,7 +238,7 @@ public class FrmMain extends JFrame {
         try {
           pb.start();
         } catch (IOException e) {
-          Acc.log().writeLine(ApplicationLog.eType.warning, "Failed to start project web pages." + ExceptionUtils.toFullString(e));
+          SharedAcc.getAppLog().writeLine(ApplicationLog.eType.warning, "Failed to start project web pages." + ExceptionUtils.toFullString(e));
         }
       });
       mnuHelp.addSeparator();
@@ -245,7 +250,7 @@ public class FrmMain extends JFrame {
   }
 
   private void setSimulationSpeed(int intervalMs) {
-    parent.getSim().setSimulationSecondInterval(intervalMs);
+    parent.getSim().sendSystemCommand(TickSpeedRequest.createSet(intervalMs));
   }
 
   private void viewRecordingPanel() {
@@ -275,7 +280,7 @@ public class FrmMain extends JFrame {
   }
 
   private void recording_recordingStarted(Settings q) {
-    RadarBehaviorSettings bs = new RadarBehaviorSettings(false, new DebugFormatter());
+    RadarBehaviorSettings bs = new RadarBehaviorSettings(false);
 
     InitialPosition initPos = srpRadar.getRadar().getPosition();
 
@@ -300,7 +305,8 @@ public class FrmMain extends JFrame {
 
       this.parent.getGame().save(fileName, tmp);
       lastFileName = fileName;
-      this.parent.getSim().sendTextMessageForUser("Game saved.");
+      //TODO do somehow:
+//      this.parent.getSim().sendTextMessageForUser("Game saved.");
     }
 
     parent.getSim().start();
@@ -313,13 +319,12 @@ public class FrmMain extends JFrame {
 
     this.parent = pack;
 
-    SpeechFormatter formatter = SpeechFormatter.create(pack.getAppSettings().speechFormatterFile);
-    RadarBehaviorSettings behSett = new RadarBehaviorSettings(true, formatter);
+    RadarBehaviorSettings behSett = new RadarBehaviorSettings(true);
     RadarDisplaySettings dispSett = pack.getAppSettings().radar.displaySettings.toRadarDisplaySettings();
 
     this.srpRadar = new SwingRadarPanel();
     this.srpRadar.init(
-        this.parent.getSim().getActiveAirport().getInitialPosition(),
+        this.parent.getSim().getAirport().getInitialPosition(),
         this.parent.getSim(), this.parent.getArea(),
         this.parent.getRadarStyleSettings(), dispSett, behSett
     );

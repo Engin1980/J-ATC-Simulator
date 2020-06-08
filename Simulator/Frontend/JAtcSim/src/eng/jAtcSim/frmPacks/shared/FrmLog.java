@@ -2,8 +2,8 @@ package eng.jAtcSim.frmPacks.shared;
 
 import eng.eSystem.exceptions.EApplicationException;
 import eng.jAtcSim.Stylist;
-import eng.jAtcSim.newLib.Acc;
-import eng.jAtcSim.newLib.area.global.logging.ApplicationLog;
+import eng.jAtcSim.newLib.shared.SharedAcc;
+import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
@@ -37,7 +37,7 @@ public class FrmLog extends JFrame {
 
     txt.setBackground(bgColor);
 
-    Acc.log().getOnNewMessage().add(this::newLogMessage);
+    SharedAcc.getAppLog().getOnNewMessage().add(this::newLogMessage);
   }
 
   private void newLogMessage(ApplicationLog.Message message) {

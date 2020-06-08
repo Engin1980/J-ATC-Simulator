@@ -1,9 +1,8 @@
 package eng.jAtcSim.frmPacks.shared;
 
 import eng.eSystem.Tuple;
-import eng.eSystem.swing.DialogResult;
-import eng.eSystem.swing.extenders.DisplayItem;
 import eng.eSystem.functionalInterfaces.Selector;
+import eng.eSystem.swing.DialogResult;
 
 import javax.swing.*;
 import java.awt.*;
@@ -21,15 +20,14 @@ public class AdjustSelectionPanelWrapper<T> {
 
     void doResponse(Iterable<T> data);
   }
-
-  private final ActionSelectionPanelWraperListener<T> lis;
   private final JFrame frm;
+  private final ActionSelectionPanelWraperListener<T> lis;
   private final AdjustSelectionPanel<T> pnl;
 
   public AdjustSelectionPanelWrapper(ActionSelectionPanelWraperListener<T> listener, JButton... buttons) {
     this.lis = listener;
 
-    Tuple<Iterable<T>, Selector<T,String>> tmp = lis.doInit();
+    Tuple<Iterable<T>, Selector<T, String>> tmp = lis.doInit();
     this.pnl = new AdjustSelectionPanel<>(tmp.getB());
     this.pnl.setItems(tmp.getA());
 
@@ -64,6 +62,16 @@ public class AdjustSelectionPanelWrapper<T> {
         boolean pressed;
 
         @Override
+        public void mouseEntered(MouseEvent e) {
+          pressed = true;
+        }
+
+        @Override
+        public void mouseExited(MouseEvent e) {
+          pressed = false;
+        }
+
+        @Override
         public void mousePressed(MouseEvent e) {
           button.getModel().setArmed(true);
           button.getModel().setPressed(true);
@@ -86,16 +94,6 @@ public class AdjustSelectionPanelWrapper<T> {
           }
           pressed = false;
 
-        }
-
-        @Override
-        public void mouseEntered(MouseEvent e) {
-          pressed = true;
-        }
-
-        @Override
-        public void mouseExited(MouseEvent e) {
-          pressed = false;
         }
       });
     }
