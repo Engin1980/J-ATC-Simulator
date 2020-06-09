@@ -1,7 +1,7 @@
 package eng.jAtcSim.newLib.gameSim.simulation.controllers;
 
 import eng.eSystem.collections.*;
-import eng.jAtcSim.newLib.shared.exceptions.ToDoException;
+import eng.eSystem.exceptions.ToDoException;
 
 import static eng.eSystem.utilites.FunctionShortcuts.*;
 

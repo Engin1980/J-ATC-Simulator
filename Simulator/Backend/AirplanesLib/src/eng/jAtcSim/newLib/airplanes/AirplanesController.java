@@ -3,6 +3,7 @@ package eng.jAtcSim.newLib.airplanes;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.ToDoException;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplanes.context.AirplaneAcc;
@@ -13,7 +14,6 @@ import eng.jAtcSim.newLib.airplanes.templates.DepartureAirplaneTemplate;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.Squawk;
 import eng.jAtcSim.newLib.shared.enums.AtcType;
-import eng.jAtcSim.newLib.shared.exceptions.ToDoException;
 
 public class AirplanesController {
   private final IList<AirplaneTemplate> preparedPlanes = new EList<>();

@@ -7,7 +7,7 @@ import eng.jAtcSim.abstractRadar.global.Color;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class RadarColorValueParser extends AttributeSerializer {
+public class RadarColorAttributeSerializer extends AttributeSerializer {
   @Override
   public boolean acceptsType(Class<?> aClass) {
     return Color.class.equals(aClass);

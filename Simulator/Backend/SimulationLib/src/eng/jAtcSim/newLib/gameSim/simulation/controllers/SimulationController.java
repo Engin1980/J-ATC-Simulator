@@ -1,10 +1,7 @@
 package eng.jAtcSim.newLib.gameSim.simulation.controllers;
 
-import eng.eSystem.collections.*;
+import eng.eSystem.exceptions.ToDoException;
 import eng.jAtcSim.newLib.shared.Squawk;
-import eng.jAtcSim.newLib.shared.exceptions.ToDoException;
-
-import static eng.eSystem.utilites.FunctionShortcuts.*;
 
 public class SimulationController {
   public void deletePlane(Squawk squawk) {

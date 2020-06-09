@@ -1,11 +1,5 @@
 package eng.jAtcSim.abstractRadar.global.events;
 
-import eng.jAtcSim.newLib.shared.exceptions.ToDoException;
-
-/**
- *
- * @author Marek Vajgl
- */
 public class EKeyboardModifier {
 
   public final boolean alt;

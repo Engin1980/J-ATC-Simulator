@@ -7,6 +7,7 @@ package eng.jAtcSim.app.startupSettings.panels;
 
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
+import eng.eSystem.exceptions.ToDoException;
 import eng.eSystem.swing.LayoutManager;
 import eng.eSystem.swing.extenders.ComboBoxExtender;
 import eng.eSystem.swing.extenders.DisplayItem;
@@ -20,7 +21,6 @@ import eng.jAtcSim.frmPacks.shared.FrmTrafficBarGraph;
 import eng.jAtcSim.newLib.gameSim.game.sources.FleetsSource;
 import eng.jAtcSim.newLib.gameSim.game.sources.TrafficSource;
 import eng.jAtcSim.newLib.gameSim.game.sources.TrafficXmlSource;
-import eng.jAtcSim.newLib.shared.exceptions.ToDoException;
 import eng.jAtcSim.newLib.traffic.ITrafficModel;
 
 import javax.swing.*;

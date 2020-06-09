@@ -2,8 +2,8 @@ package eng.jAtcSim.newLib.area;
 
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
+import eng.eSystem.exceptions.ToDoException;
 import eng.eSystem.validation.EAssert;
-import eng.jAtcSim.newLib.shared.exceptions.ToDoException;
 
 public class Area {
 

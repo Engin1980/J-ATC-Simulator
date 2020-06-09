@@ -1,9 +1,9 @@
 package eng.jAtcSim.newLib.speeches.airplane.atc2airplane;
 
+import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.Restriction;
 import eng.jAtcSim.newLib.shared.enums.AboveBelowExactly;
-import eng.jAtcSim.newLib.shared.exceptions.EApplicationException;
 import eng.jAtcSim.newLib.speeches.airplane.ICommand;
 
 public class AltitudeRestrictionCommand implements ICommand {

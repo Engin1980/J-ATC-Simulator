@@ -1,8 +1,8 @@
 package eng.jAtcSim.newLib.traffic;
 
 import eng.eSystem.collections.*;
+import eng.eSystem.exceptions.ToDoException;
 import eng.eSystem.validation.EAssert;
-import eng.jAtcSim.newLib.shared.exceptions.ToDoException;
 import eng.jAtcSim.newLib.shared.time.EDayTime;
 import eng.jAtcSim.newLib.traffic.movementTemplating.MovementTemplate;
 

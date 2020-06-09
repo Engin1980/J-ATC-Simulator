@@ -2,11 +2,11 @@ package eng.jAtcSim.abstractRadar.settings;
 
 import eng.eSystem.eXml.XDocument;
 import eng.eSystem.eXml.XElement;
+import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EXmlException;
 import eng.eXmlSerialization.XmlSerializer;
 import eng.jAtcSim.abstractRadar.global.Color;
 import eng.jAtcSim.abstractRadar.global.Font;
-import eng.jAtcSim.newLib.shared.exceptions.EApplicationException;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 

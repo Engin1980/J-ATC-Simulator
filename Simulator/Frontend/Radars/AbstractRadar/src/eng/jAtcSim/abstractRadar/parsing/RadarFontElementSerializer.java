@@ -6,7 +6,7 @@ import eng.eXmlSerialization.meta.GenericParameterXmlRuleList;
 import eng.eXmlSerialization.serializers.ElementSerializer;
 import eng.jAtcSim.abstractRadar.global.Font;
 
-public class RadarFontParser extends ElementSerializer {
+public class RadarFontElementSerializer extends ElementSerializer {
 
   private final static String ATTR_FAMILY = "family";
   private final static String ATTR_SIZE = "size";

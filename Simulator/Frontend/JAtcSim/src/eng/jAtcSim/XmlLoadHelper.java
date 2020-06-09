@@ -7,6 +7,9 @@ import eng.eXmlSerialization.XmlSettings;
 import eng.eXmlSerialization.serializers.AttributeSerializer;
 import eng.eXmlSerialization.serializers.implemented.java_awt.AwtFontElementSerializer;
 import eng.eXmlSerialization.serializers.implemented.java_awt.HexToAwtColorAttributeSerializer;
+import eng.jAtcSim.abstractRadar.parsing.RadarColorAttributeSerializer;
+import eng.jAtcSim.abstractRadar.parsing.RadarFontElementSerializer;
+import eng.jAtcSim.abstractRadar.settings.RadarStyleSettings;
 import eng.jAtcSim.app.startupSettings.StartupSettings;
 import eng.jAtcSim.frmPacks.shared.FlightStripSettings;
 import eng.jAtcSim.newLib.shared.context.SharedAcc;
@@ -71,17 +74,15 @@ public class XmlLoadHelper {
           "Failed to save app settings into " + fileName + ". Reason: " + ex.getMessage());
     }
   }
-//
-//  public static RadarStyleSettings loadNewDisplaySettings(String fileName) {
-//    XmlSettings xmlSett = new XmlSettings();
-//
-//    // own parsers
-//    xmlSett.forType(eng.jAtcSim.abstractRadar.global.Color.class).setCustomParser(new RadarColorValueParser());
-//    xmlSett.forType(eng.jAtcSim.abstractRadar.global.Font.class).setCustomParser(new RadarFontParser());
-//
-//    RadarStyleSettings ret = (RadarStyleSettings) deserialize(fileName, RadarStyleSettings.class, xmlSett);
-//    return ret;
-//  }
+  public static RadarStyleSettings loadNewDisplaySettings(String fileName) {
+    XmlSettings sett = new XmlSettings();
+    sett.getSerializers().add(new RadarColorAttributeSerializer());
+    sett.getSerializers().add(new RadarFontElementSerializer());
+    XmlSerializer ser = new XmlSerializer(sett);
+
+    RadarStyleSettings ret = ser.deserializeFromDocument(fileName, RadarStyleSettings.class);
+    return ret;
+  }
 
   public static FlightStripSettings loadStripSettings(String fileName) {
     XmlSettings sett = new XmlSettings();

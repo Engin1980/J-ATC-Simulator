@@ -1,5 +1,6 @@
 package eng.jAtcSim.newLib.atcs.internal;
 
+import eng.eSystem.exceptions.ToDoException;
 import eng.eSystem.functionalInterfaces.Producer;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplanes.context.AirplaneAcc;
@@ -13,7 +14,6 @@ import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.Squawk;
 import eng.jAtcSim.newLib.shared.enums.AtcType;
-import eng.jAtcSim.newLib.shared.exceptions.ToDoException;
 
 public class InternalAcc {
   private static final PlaneResponsibilityManager prm = new PlaneResponsibilityManager();
