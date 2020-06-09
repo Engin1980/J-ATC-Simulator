@@ -6,7 +6,7 @@ import eng.eSystem.exceptions.EXmlException;
 import eng.eXmlSerialization.XmlSerializer;
 import eng.jAtcSim.abstractRadar.global.Color;
 import eng.jAtcSim.abstractRadar.global.Font;
-import eng.jAtcSim.newLib.shared.exceptions.ApplicationException;
+import eng.jAtcSim.newLib.shared.exceptions.EApplicationException;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
@@ -209,7 +209,7 @@ public class RadarStyleSettings {
       XmlSerializer ser = new XmlSerializer();
       ret = ser.deserialize(root, RadarStyleSettings.class);
     } catch (EXmlException e) {
-      throw new ApplicationException(sf("Unable to load radar style settings from '%s'.", fileName), e);
+      throw new EApplicationException(sf("Unable to load radar style settings from '%s'.", fileName), e);
     }
     return ret;
   }

@@ -3,7 +3,7 @@ package eng.jAtcSim.newLib.speeches.airplane.atc2airplane;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.Restriction;
 import eng.jAtcSim.newLib.shared.enums.AboveBelowExactly;
-import eng.jAtcSim.newLib.shared.exceptions.ApplicationException;
+import eng.jAtcSim.newLib.shared.exceptions.EApplicationException;
 import eng.jAtcSim.newLib.speeches.airplane.ICommand;
 
 public class AltitudeRestrictionCommand implements ICommand {
@@ -28,7 +28,7 @@ public class AltitudeRestrictionCommand implements ICommand {
 
   public Restriction getRestriction() {
     if (isClearRestriction())
-      throw new ApplicationException("This method should not be called when 'isClearRestriction()' is true.");
+      throw new EApplicationException("This method should not be called when 'isClearRestriction()' is true.");
     return restriction;
   }
 

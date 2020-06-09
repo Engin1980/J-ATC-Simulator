@@ -1,8 +1,8 @@
 package eng.jAtcSim.newLib.shared.xml;
 
-import eng.jAtcSim.newLib.shared.exceptions.ApplicationException;
+import eng.eSystem.exceptions.EApplicationException;
 
-public class XmlLoadException extends ApplicationException {
+public class XmlLoadException extends EApplicationException {
   public XmlLoadException(String message) {
     super("Xml loading error. " + message);
   }

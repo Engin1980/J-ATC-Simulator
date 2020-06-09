@@ -5,5 +5,4 @@ import eng.jAtcSim.newLib.traffic.ITrafficModel;
 public class TrafficStartupSourceInfo {
   public String trafficXmlFile;
   public ITrafficModel specificTraffic;
-
 }

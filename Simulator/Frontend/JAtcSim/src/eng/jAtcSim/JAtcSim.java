@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package eng.jAtcSim;
 
 import eng.eSystem.collections.EMap;
@@ -18,9 +13,14 @@ import eng.jAtcSim.app.extenders.swingFactory.FileHistoryManager;
 import eng.jAtcSim.app.startupSettings.StartupSettings;
 import eng.jAtcSim.frmPacks.Pack;
 import eng.jAtcSim.frmPacks.shared.FrmLog;
+import eng.jAtcSim.newLib.gameSim.GameFactory;
+import eng.jAtcSim.newLib.gameSim.IGame;
 import eng.jAtcSim.newLib.gameSim.game.Game;
+import eng.jAtcSim.newLib.gameSim.game.startupInfos.*;
 import eng.jAtcSim.newLib.shared.context.SharedAcc;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
+import eng.jAtcSim.newLib.shared.time.ETimeStamp;
+import eng.jAtcSim.newLib.traffic.ITrafficModel;
 import eng.jAtcSim.newLib.traffic.models.SimpleGenericTrafficModel;
 import eng.jAtcSim.newLib.weather.Weather;
 
@@ -35,14 +35,11 @@ import java.nio.file.Paths;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
-/**
- * @author Marek
- */
 public class JAtcSim {
 
   private static final boolean FAST_START = false;
   private static AppSettings appSettings;
-  private static final StartupSettings.Traffic enginSpecificTraffic =
+  private static final ITrafficModel enginSpecificTraffic =
       //new eng.jAtcSim.lib.traffic.TestTrafficOneApproach();
       //new eng.jAtcSim.lib.traffic.TestTrafficOneDeparture();
       null;
@@ -57,45 +54,48 @@ public class JAtcSim {
   }
 
   public static void loadSimulation(StartupSettings startupSettings, String xmlFileName) {
-    SharedAcc.getAppLog().writeLine(ApplicationLog.eType.info, "Loading saved simulation game");
-
-    IMap<String, Object> map = new EMap<>();
-
-    FrmStartupProgress frm = new FrmStartupProgress(16);
-    frm.setVisible(true);
-
-    Game g;
-
-    try {
-
-      g = Game.load(xmlFileName, map);
-
-      // enable duplicates
-      try {
-        g.getSimulation().getArea().checkForDuplicits();
-      } catch (Exception ex) {
-        throw new EApplicationException("Some element in source XML files is not unique. Some of the input XML files is not valid.", ex);
-      }
-
-      SharedAcc.getAppLog().writeLine(ApplicationLog.eType.info, "Initializing sound environment");
-      // sound
-      SoundManager.init(appSettings.soundFolder.toString());
-
-      SharedAcc.getAppLog().writeLine(ApplicationLog.eType.info, "Starting a GUI");
-
-    } catch (Exception ex) {
-      throw ex;
-    } finally {
-      frm.setVisible(false);
-    }
-
-    // starting pack & simulation
-    String packType = startupSettings.radar.packClass;
-    Pack simPack = createPackInstance(packType);
-    simPack.initPack(g, appSettings);
-    simPack.startPack();
-
-    simPack.applyStoredData(map);
+    //TODO Implement this: loading of the simulation
+    throw new ToDoException("loading of the simulation");
+//    SharedAcc.getAppLog().writeLine(ApplicationLog.eType.info, "Loading saved simulation game");
+//
+//    IMap<String, Object> map = new EMap<>();
+//
+//    FrmStartupProgress frm = new FrmStartupProgress(16);
+//    frm.setVisible(true);
+//
+//    Game g;
+//
+//    try {
+//
+//      g = Game.load(xmlFileName, map);
+//
+//      // enable duplicates
+//      //TODO do the following
+////      try {
+////        g.getSimulation().getArea().checkForDuplicits();
+////      } catch (Exception ex) {
+////        throw new EApplicationException("Some element in source XML files is not unique. Some of the input XML files is not valid.", ex);
+////      }
+//
+//      SharedAcc.getAppLog().writeLine(ApplicationLog.eType.info, "Initializing sound environment");
+//      // sound
+//      SoundManager.init(appSettings.soundFolder.toString());
+//
+//      SharedAcc.getAppLog().writeLine(ApplicationLog.eType.info, "Starting a GUI");
+//
+//    } catch (Exception ex) {
+//      throw ex;
+//    } finally {
+//      frm.setVisible(false);
+//    }
+//
+//    // starting pack & simulation
+//    String packType = startupSettings.radar.packClass;
+//    Pack simPack = createPackInstance(packType);
+//    simPack.initPack(g, appSettings);
+//    simPack.startPack();
+//
+//    simPack.applyStoredData(map);
 
   }
 
@@ -109,14 +109,14 @@ public class JAtcSim {
 
     initStylist();
 
-    SharedAcc.setApplicationLogProducer(q->new ApplicationLog());
+    SharedAcc.setApplicationLogProducer(() -> new ApplicationLog());
     frmLog = new FrmLog();
 
     appSettings = AppSettings.create();
 
     // various inits
     FileHistoryManager.init();
-    Recorder.init(appSettings.logFolder.toString(), appSettings.speechFormatterFile);
+//    Recorder.init(appSettings.logFolder.toString(), appSettings.speechFormatterFile);
 
 
     // startupSettings wizard
@@ -156,59 +156,75 @@ public class JAtcSim {
     frm.setVisible(true);
     SharedAcc.getAppLog().writeLine(ApplicationLog.eType.info, "Starting new simulation game");
     try {
-      Game.GameStartupInfo gsi = new Game.GameStartupInfo();
-      gsi.areaXmlFile = startupSettings.files.areaXmlFile;
-      gsi.emergencyPerDayProbability = startupSettings.traffic.emergencyPerDayProbability;
-      gsi.fleetsXmlFile = startupSettings.files.fleetsXmlFile;
-      gsi.icao = startupSettings.recent.icao;
-      gsi.planesXmlFile = startupSettings.files.planesXmlFile;
-      gsi.secondLengthInMs = startupSettings.simulation.secondLengthInMs;
-      if (enginSpecificTraffic != null) {
-        gsi.specificTraffic = enginSpecificTraffic;
-        gsi.trafficSourceType = Game.GameStartupInfo.SourceType.user;
+      GameStartupInfo gsi = new GameStartupInfo();
+
+      gsi.areaSource = new AreaStartupSourceInfo(
+          startupSettings.files.areaXmlFile,
+          startupSettings.recent.icao
+      );
+
+      gsi.simulationSettings = new SimulationStartupSettingsInfo();
+      gsi.simulationSettings.secondLengthInMs = startupSettings.simulation.secondLengthInMs;
+      gsi.simulationSettings.startTime = new ETimeStamp(startupSettings.recent.time);
+      gsi.simulationSettings.statsSnapshotDistanceInMinutes = appSettings.stats.snapshotIntervalDistance;
+
+      gsi.trafficSettings = new TrafficStartupSettingsInfo();
+      gsi.trafficSettings.emergencyPerDayProbability = startupSettings.traffic.emergencyPerDayProbability;
+      gsi.trafficSettings.maxTrafficPlanes = startupSettings.traffic.maxPlanes;
+      gsi.trafficSettings.trafficDensityPercentage = startupSettings.traffic.densityPercentage;
+      if (startupSettings.traffic.allowDelays) {
+        gsi.trafficSettings.trafficDelayStepProbability = 0.2;
+        gsi.trafficSettings.trafficDelayStep = 15;
       } else {
-        if (startupSettings.traffic.type == StartupSettings.Traffic.eTrafficType.xml) {
-          gsi.trafficSourceType = Game.GameStartupInfo.SourceType.xml;
-          gsi.specificTraffic = null;
-        } else {
-          gsi.trafficSourceType = Game.GameStartupInfo.SourceType.user;
-          gsi.specificTraffic = generateCustomTraffic(startupSettings.traffic);
-        }
+        gsi.trafficSettings.trafficDelayStepProbability = 0;
+        gsi.trafficSettings.trafficDelayStep = 0;
       }
 
-      gsi.startTime = new ETime(startupSettings.recent.time);
-      gsi.trafficXmlFile = startupSettings.files.trafficXmlFile;
 
-      gsi.weatherXmlFile = startupSettings.files.weatherXmlFile;
-      gsi.initialWeather = convertStartupWeatherToInitialWeather(startupSettings.weather);
+      gsi.companyFleetsXmlFile = startupSettings.files.companiesFleetsXmlFile;
+      gsi.generalAviationFleetsXmlFile = startupSettings.files.generalAviationFleetsXmlFile;
+      gsi.planesXmlFile = startupSettings.files.planesXmlFile;
+
+      gsi.trafficSource = new TrafficStartupSourceInfo();
+      gsi.trafficSource.trafficXmlFile = startupSettings.files.trafficXmlFile;
+
+      //FIXME local debug hack, should be removed in future
+      if (enginSpecificTraffic != null) {
+        gsi.trafficSource.specificTraffic = enginSpecificTraffic;
+        gsi.trafficSource.trafficXmlFile = null;
+      } else {
+        gsi.trafficSource.specificTraffic = null;
+        gsi.trafficSource.trafficXmlFile = startupSettings.files.trafficXmlFile;
+      }
+
+      gsi.weatherSource = new WeatherStartupSourceInfo();
+      gsi.weatherSource.weatherXmlFile = startupSettings.files.weatherXmlFile;
+      gsi.weatherSource.initialWeather = convertStartupWeatherToInitialWeather(startupSettings.weather);
       switch (startupSettings.weather.type) {
         case user:
-          gsi.weatherProviderType = Game.GameStartupInfo.WeatherSourceType.user;
+          gsi.weatherSource.weatherProviderType = WeatherStartupSourceInfo.WeatherSourceType.user;
           break;
         case online:
-          gsi.weatherProviderType = Game.GameStartupInfo.WeatherSourceType.online;
+          gsi.weatherSource.weatherProviderType = WeatherStartupSourceInfo.WeatherSourceType.online;
           break;
         case xml:
-          gsi.weatherProviderType = Game.GameStartupInfo.WeatherSourceType.xml;
+          gsi.weatherSource.weatherProviderType = WeatherStartupSourceInfo.WeatherSourceType.xml;
           break;
         default:
           throw new EEnumValueUnsupportedException(startupSettings.weather.type);
       }
 
-      gsi.allowTrafficDelays = startupSettings.traffic.allowDelays;
-      gsi.maxTrafficPlanes = startupSettings.traffic.maxPlanes;
-      gsi.trafficDensityPercentage = startupSettings.traffic.densityPercentage;
-      gsi.statsSnapshotDistanceInMinutes = appSettings.stats.snapshotIntervalDistance;
 
-      Game g;
-      g = Game.create(gsi);
+      IGame g;
+      g = new GameFactory().create(gsi);
 
       // enable duplicates
-      try {
-        g.getSimulation().getArea().checkForDuplicits();
-      } catch (Exception ex) {
-        throw new EApplicationException("Some element in source XML files is not unique. Some of the input XML files is not valid.", ex);
-      }
+      //TODO fix the following
+//      try {
+//        g.getSimulation().getArea().checkForDuplicits();
+//      } catch (Exception ex) {
+//        throw new EApplicationException("Some element in source XML files is not unique. Some of the input XML files is not valid.", ex);
+//      }
 
       SharedAcc.getAppLog().writeLine(ApplicationLog.eType.info, "Initializing sound environment");
       // sound

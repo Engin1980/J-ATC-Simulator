@@ -1,10 +1,12 @@
 package eng.jAtcSim.newLib.gameSim.simulation;
 
+import eng.eSystem.exceptions.ToDoException;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplanes.AirplanesController;
 import eng.jAtcSim.newLib.area.Border;
-import eng.jAtcSim.newLib.atcs.AtcAcc;
+import eng.jAtcSim.newLib.atcs.context.AtcAcc;
 import eng.jAtcSim.newLib.atcs.AtcProvider;
+import eng.jAtcSim.newLib.gameSim.ISimulation;
 import eng.jAtcSim.newLib.gameSim.game.startupInfos.ParserFormatterStartInfo;
 import eng.jAtcSim.newLib.gameSim.simulation.controllers.*;
 import eng.jAtcSim.newLib.gameSim.simulation.modules.AirplanesSimModule;
@@ -12,11 +14,10 @@ import eng.jAtcSim.newLib.gameSim.simulation.modules.ISimulationModuleParent;
 import eng.jAtcSim.newLib.gameSim.simulation.modules.SystemMessagesModule;
 import eng.jAtcSim.newLib.messaging.IMessageContent;
 import eng.jAtcSim.newLib.messaging.Message;
-import eng.jAtcSim.newLib.messaging.MessagingAcc;
+import eng.jAtcSim.newLib.messaging.context.MessagingAcc;
 import eng.jAtcSim.newLib.messaging.Participant;
 import eng.jAtcSim.newLib.shared.context.SharedAcc;
 import eng.jAtcSim.newLib.shared.enums.AtcType;
-import eng.jAtcSim.newLib.shared.exceptions.ToDoException;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 import eng.jAtcSim.newLib.shared.time.EDayTimeRun;
 import eng.jAtcSim.newLib.shared.time.ETimeStamp;
@@ -24,10 +25,12 @@ import eng.jAtcSim.newLib.speeches.system.system2user.MetarNotification;
 import eng.jAtcSim.newLib.stats.context.StatsAcc;
 import eng.jAtcSim.newLib.stats.StatsProvider;
 import eng.jAtcSim.newLib.traffic.TrafficProvider;
-import eng.jAtcSim.newLib.weather.WeatherAcc;
+import eng.jAtcSim.newLib.weather.context.WeatherAcc;
 import eng.jAtcSim.newLib.weather.WeatherManager;
 
 public class Simulation {
+
+  public ISimulation isim;
 
   public class SimulationModuleParent implements ISimulationModuleParent {
 

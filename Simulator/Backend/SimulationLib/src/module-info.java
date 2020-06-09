@@ -1,5 +1,4 @@
 module JAtcSim.Modules.Backend.SimulationLib {
-  exports eng.jAtcSim.newLib.gameSim;
   requires eng.eSystem;
   requires JAtcSim.Modules.Backend.AtcLib;
   requires JAtcSim.Modules.Backend.AreaLib;
@@ -17,4 +16,6 @@ module JAtcSim.Modules.Backend.SimulationLib {
   requires FleetXmlLoaderLib;
   requires TrafficXmlLoaderLib;
   requires JAtcSim.Modules.Backend.SpeechesLib;
+  exports eng.jAtcSim.newLib.gameSim;
+  exports eng.jAtcSim.newLib.gameSim.game.startupInfos;
 }

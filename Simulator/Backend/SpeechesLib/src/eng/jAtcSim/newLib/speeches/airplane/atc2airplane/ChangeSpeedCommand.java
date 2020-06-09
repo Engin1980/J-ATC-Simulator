@@ -4,7 +4,7 @@ import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.Restriction;
 import eng.jAtcSim.newLib.shared.enums.AboveBelowExactly;
-import eng.jAtcSim.newLib.shared.exceptions.ApplicationException;
+import eng.jAtcSim.newLib.shared.exceptions.EApplicationException;
 import eng.jAtcSim.newLib.speeches.airplane.ICommand;
 
 public class ChangeSpeedCommand implements ICommand {
@@ -31,7 +31,7 @@ public class ChangeSpeedCommand implements ICommand {
 
   public Restriction getRestriction() {
     if (isResumeOwnSpeed())
-      throw new ApplicationException("Unable to call this on 'ResumeOwnSpeed' command.");
+      throw new EApplicationException("Unable to call this on 'ResumeOwnSpeed' command.");
     return this.restriction;
   }
 
