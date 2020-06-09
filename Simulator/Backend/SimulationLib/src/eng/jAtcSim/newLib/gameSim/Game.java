@@ -61,14 +61,14 @@
 //    Game g = new Game();
 //
 //    try {
-//      Acc.log().writeLine(ApplicationLog.eType.info, "Loading area");
+//      SharedAcc.getAppLog().writeLine(ApplicationLog.eType.info, "Loading area");
 //      g.areaSource = new AreaSource(gsi.areaXmlFile, gsi.icao);
 //      g.areaSource.init();
 //    } catch (Exception ex){
 //      throw new EApplicationException("Unable to load or initialize area.", ex);
 //    }
 //    try {
-//      Acc.log().writeLine(ApplicationLog.eType.info, "Loading plane types");
+//      SharedAcc.getAppLog().writeLine(ApplicationLog.eType.info, "Loading plane types");
 //      g.airplaneTypesSource = new AirplaneTypesSource(gsi.planesXmlFile);
 //      g.airplaneTypesSource.init();
 //    } catch (Exception ex){
@@ -76,7 +76,7 @@
 //    }
 //
 //    try {
-//      Acc.log().writeLine(ApplicationLog.eType.info, "Loading fleets");
+//      SharedAcc.getAppLog().writeLine(ApplicationLog.eType.info, "Loading fleets");
 //      g.fleetsSource = new FleetsSource(gsi.fleetsXmlFile);
 //      g.fleetsSource.init(g.airplaneTypesSource.getContent());
 //    } catch (Exception ex){
@@ -84,7 +84,7 @@
 //    }
 //
 //    try {
-//      Acc.log().writeLine(ApplicationLog.eType.info, "Loading traffic");
+//      SharedAcc.getAppLog().writeLine(ApplicationLog.eType.info, "Loading traffic");
 //      switch (gsi.trafficSourceType) {
 //        case user:
 //          g.trafficSource = new UserTrafficSource(gsi.specificTraffic);
@@ -101,7 +101,7 @@
 //    }
 //
 //    try {
-//      Acc.log().writeLine(ApplicationLog.eType.info, "Initializing weather");
+//      SharedAcc.getAppLog().writeLine(ApplicationLog.eType.info, "Initializing weather");
 //      switch (gsi.weatherProviderType) {
 //        case online:
 //          g.weatherSource = new OnlineWeatherSource(true, gsi.icao, gsi.initialWeather);
@@ -129,7 +129,7 @@
 //    }
 //
 //    try {
-//      Acc.log().writeLine(ApplicationLog.eType.info, "Creating the simulation");
+//      SharedAcc.getAppLog().writeLine(ApplicationLog.eType.info, "Creating the simulation");
 //      g.simulation = new Simulation(
 //          g.areaSource.getContent(), g.airplaneTypesSource.getContent(), g.fleetsSource.getContent(), g.trafficSource.getContent(),
 //          g.areaSource.getActiveAirport(),
@@ -138,7 +138,7 @@
 //          gsi.secondLengthInMs,
 //          gsi.emergencyPerDayProbability,
 //          tms, gsi.statsSnapshotDistanceInMinutes);
-//      Acc.log().writeLine(ApplicationLog.eType.info, "Initializing the simulation");
+//      SharedAcc.getAppLog().writeLine(ApplicationLog.eType.info, "Initializing the simulation");
 //      g.simulation.init();
 //    } catch (Exception ex){
 //      throw new EApplicationException("Unable to create or initialize the simulation.", ex);
@@ -149,7 +149,7 @@
 //  public static Game load(String fileName, IMap<String, Object> customData) {
 //    Game ret = new Game();
 //
-//    Acc.log().writeLine(ApplicationLog.eType.info, "Loading xml document...");
+//    SharedAcc.getAppLog().writeLine(ApplicationLog.eType.info, "Loading xml document...");
 //    XDocument doc;
 //    try {
 //      doc = XDocument.load(fileName);
@@ -159,29 +159,29 @@
 //
 //    XElement root = doc.getRoot();
 //
-//    Acc.log().writeLine(ApplicationLog.eType.info, "Loading area...");
+//    SharedAcc.getAppLog().writeLine(ApplicationLog.eType.info, "Loading area...");
 //    LoadSave.loadField(root, ret, "areaSource");
-//    Acc.log().writeLine(ApplicationLog.eType.info, "Loading airplane types...");
+//    SharedAcc.getAppLog().writeLine(ApplicationLog.eType.info, "Loading airplane types...");
 //    LoadSave.loadField(root, ret, "airplaneTypesSource");
-//    Acc.log().writeLine(ApplicationLog.eType.info, "Loading fleets...");
+//    SharedAcc.getAppLog().writeLine(ApplicationLog.eType.info, "Loading fleets...");
 //    LoadSave.loadField(root, ret, "fleetsSource");
-//    Acc.log().writeLine(ApplicationLog.eType.info, "Loading traffic...");
+//    SharedAcc.getAppLog().writeLine(ApplicationLog.eType.info, "Loading traffic...");
 //    LoadSave.loadField(root, ret, "trafficSource");
-//    Acc.log().writeLine(ApplicationLog.eType.info, "Loading weather...");
+//    SharedAcc.getAppLog().writeLine(ApplicationLog.eType.info, "Loading weather...");
 //    LoadSave.loadField(root, ret, "weatherSource");
 //
-//    Acc.log().writeLine(ApplicationLog.eType.info, "Initializing area...");
+//    SharedAcc.getAppLog().writeLine(ApplicationLog.eType.info, "Initializing area...");
 //    ret.areaSource.init();
-//    Acc.log().writeLine(ApplicationLog.eType.info, "Initializing airplane types...");
+//    SharedAcc.getAppLog().writeLine(ApplicationLog.eType.info, "Initializing airplane types...");
 //    ret.airplaneTypesSource.init();
-//    Acc.log().writeLine(ApplicationLog.eType.info, "Initializing fleets...");
+//    SharedAcc.getAppLog().writeLine(ApplicationLog.eType.info, "Initializing fleets...");
 //    ret.fleetsSource.init(ret.airplaneTypesSource.getContent());
-//    Acc.log().writeLine(ApplicationLog.eType.info, "Initializing traffic...");
+//    SharedAcc.getAppLog().writeLine(ApplicationLog.eType.info, "Initializing traffic...");
 //    ret.trafficSource.init();
-//    Acc.log().writeLine(ApplicationLog.eType.info, "Initializing weather...");
+//    SharedAcc.getAppLog().writeLine(ApplicationLog.eType.info, "Initializing weather...");
 //    ret.weatherSource.init();
 //
-//    Acc.log().writeLine(ApplicationLog.eType.info, "Creating the simulation...");
+//    SharedAcc.getAppLog().writeLine(ApplicationLog.eType.info, "Creating the simulation...");
 //    ret.simulation = new Simulation(
 //        ret.areaSource.getContent(), ret.airplaneTypesSource.getContent(),
 //        ret.fleetsSource.getContent(), ret.trafficSource.getContent(),
@@ -189,20 +189,20 @@
 //        ret.weatherSource.getContent(), new ETime(0), 0, 0,
 //        new TrafficManager.TrafficManagerSettings(false, 0, 0), 5);
 //
-//    Acc.log().writeLine(ApplicationLog.eType.info, "Initializing the simulation...");
+//    SharedAcc.getAppLog().writeLine(ApplicationLog.eType.info, "Initializing the simulation...");
 //    ret.simulation.init();
 //
 //    XElement tmp = root.getChild("simulation");
-//    Acc.log().writeLine(ApplicationLog.eType.info, "Loading the simulation (may take a while)...");
+//    SharedAcc.getAppLog().writeLine(ApplicationLog.eType.info, "Loading the simulation (may take a while)...");
 //    ret.simulation.load(tmp);
 //
-//    Acc.log().writeLine(ApplicationLog.eType.info, "Loading radar shortcuts...");
+//    SharedAcc.getAppLog().writeLine(ApplicationLog.eType.info, "Loading radar shortcuts...");
 //    {
 //      IMap<String, String> shortcuts = (IMap<String, String>) LoadSave.loadFromElement(root, "shortcuts", IMap.class);
 //      ret.simulation.setCommandShortcuts(shortcuts);
 //    }
 //
-//    Acc.log().writeLine(ApplicationLog.eType.info, "Loading custom data...");
+//    SharedAcc.getAppLog().writeLine(ApplicationLog.eType.info, "Loading custom data...");
 //    {
 //      XElement elm = root.getChild("custom");
 //      for (XElement child : elm.getChildren()) {

@@ -10,6 +10,7 @@ import eng.eSystem.collections.IMap;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.exceptions.ERuntimeException;
+import eng.eSystem.exceptions.ToDoException;
 import eng.jAtcSim.abstractRadar.global.SoundManager;
 import eng.jAtcSim.app.FrmIntro;
 import eng.jAtcSim.app.FrmStartupProgress;
@@ -20,6 +21,7 @@ import eng.jAtcSim.frmPacks.shared.FrmLog;
 import eng.jAtcSim.newLib.gameSim.game.Game;
 import eng.jAtcSim.newLib.shared.context.SharedAcc;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
+import eng.jAtcSim.newLib.traffic.models.SimpleGenericTrafficModel;
 import eng.jAtcSim.newLib.weather.Weather;
 
 import javax.swing.*;
@@ -107,7 +109,7 @@ public class JAtcSim {
 
     initStylist();
 
-    Acc.setLog(new ApplicationLog());
+    SharedAcc.setApplicationLogProducer(q->new ApplicationLog());
     frmLog = new FrmLog();
 
     appSettings = AppSettings.create();
@@ -208,11 +210,11 @@ public class JAtcSim {
         throw new EApplicationException("Some element in source XML files is not unique. Some of the input XML files is not valid.", ex);
       }
 
-      Acc.log().writeLine(ApplicationLog.eType.info, "Initializing sound environment");
+      SharedAcc.getAppLog().writeLine(ApplicationLog.eType.info, "Initializing sound environment");
       // sound
       SoundManager.init(appSettings.soundFolder.toString());
 
-      Acc.log().writeLine(ApplicationLog.eType.info, "Starting a GUI");
+      SharedAcc.getAppLog().writeLine(ApplicationLog.eType.info, "Starting a GUI");
       // starting pack & simulation
       String packType = startupSettings.radar.packClass;
       Pack simPack
@@ -268,18 +270,19 @@ public class JAtcSim {
     return ret;
   }
 
-  private static GenericTraffic generateCustomTraffic(StartupSettings.Traffic trf) {
-    GenericTraffic ret = new GenericTraffic(
-        trf.customTraffic.companies, trf.customTraffic.countryCodes,
-        trf.customTraffic.movementsPerHour,
-        trf.customTraffic.arrivals2departuresRatio / 10d,
-        trf.customTraffic.nonCommercialFlightProbability,
-        trf.customTraffic.weightTypeA,
-        trf.customTraffic.weightTypeB,
-        trf.customTraffic.weightTypeC,
-        trf.customTraffic.weightTypeD,
-        trf.customTraffic.useExtendedCallsigns);
-    return ret;
+  private static SimpleGenericTrafficModel generateCustomTraffic(StartupSettings.Traffic trf) {
+    throw new ToDoException();
+//    SimpleGenericTrafficModel ret = SimpleGenericTrafficModel.create(
+//        trf.customTraffic.companies, trf.customTraffic.countryCodes,
+//        trf.customTraffic.movementsPerHour,
+//        trf.customTraffic.arrivals2departuresRatio / 10d,
+//        trf.customTraffic.nonCommercialFlightProbability,
+//        trf.customTraffic.weightTypeA,
+//        trf.customTraffic.weightTypeB,
+//        trf.customTraffic.weightTypeC,
+//        trf.customTraffic.weightTypeD,
+//        trf.customTraffic.useExtendedCallsigns);
+//    return ret;
   }
 
   private static void initDefault() {
