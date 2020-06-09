@@ -5,6 +5,7 @@ import eng.eSystem.collections.IList;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.validation.EAssert;
+import eng.jAtcSim.newLib.airplanes.context.AirplaneAcc;
 import eng.jAtcSim.newLib.airplanes.internal.Airplane;
 import eng.jAtcSim.newLib.airplanes.templates.AirplaneTemplate;
 import eng.jAtcSim.newLib.airplanes.templates.ArrivalAirplaneTemplate;

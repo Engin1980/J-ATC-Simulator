@@ -1,6 +1,6 @@
 package eng.jAtcSim.newLib.shared.logging.writers;
 
-import eng.jAtcSim.newLib.shared.SharedAcc;
+import eng.jAtcSim.newLib.shared.context.SharedAcc;
 
 import java.io.IOException;
 

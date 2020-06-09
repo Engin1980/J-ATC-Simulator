@@ -1,7 +1,9 @@
-package eng.jAtcSim.newLib.weather;
+package eng.jAtcSim.newLib.weather.context;
 
 import eng.eSystem.functionalInterfaces.Producer;
 import eng.eSystem.collections.*;
+import eng.jAtcSim.newLib.weather.Weather;
+import eng.jAtcSim.newLib.weather.WeatherManager;
 
 import static eng.eSystem.utilites.FunctionShortcuts.*;
 

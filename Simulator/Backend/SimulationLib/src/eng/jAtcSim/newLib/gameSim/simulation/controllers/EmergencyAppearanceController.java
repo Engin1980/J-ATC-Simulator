@@ -1,6 +1,6 @@
 package eng.jAtcSim.newLib.gameSim.simulation.controllers;
 
-import eng.jAtcSim.newLib.shared.SharedAcc;
+import eng.jAtcSim.newLib.shared.context.SharedAcc;
 import eng.jAtcSim.newLib.shared.time.EDayTime;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 

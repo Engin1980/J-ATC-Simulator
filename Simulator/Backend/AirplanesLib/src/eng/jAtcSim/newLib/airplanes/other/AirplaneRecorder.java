@@ -2,7 +2,7 @@ package eng.jAtcSim.newLib.airplanes.other;
 
 import eng.eSystem.utilites.ExceptionUtils;
 import eng.jAtcSim.newLib.shared.Callsign;
-import eng.jAtcSim.newLib.shared.SharedAcc;
+import eng.jAtcSim.newLib.shared.context.SharedAcc;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 
 public abstract class AirplaneRecorder {

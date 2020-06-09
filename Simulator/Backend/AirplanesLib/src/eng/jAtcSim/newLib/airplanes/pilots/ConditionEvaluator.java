@@ -4,9 +4,9 @@ import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.geo.Headings;
 import eng.jAtcSim.newLib.airplanes.IAirplane;
 import eng.jAtcSim.newLib.area.approaches.conditions.*;
-import eng.jAtcSim.newLib.shared.SharedAcc;
+import eng.jAtcSim.newLib.shared.context.SharedAcc;
 import eng.jAtcSim.newLib.weather.Weather;
-import eng.jAtcSim.newLib.weather.WeatherAcc;
+import eng.jAtcSim.newLib.weather.context.WeatherAcc;
 
 public class ConditionEvaluator {
 

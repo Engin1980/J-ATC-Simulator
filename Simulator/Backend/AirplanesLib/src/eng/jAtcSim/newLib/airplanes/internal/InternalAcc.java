@@ -3,7 +3,7 @@ package eng.jAtcSim.newLib.airplanes.internal;
 import eng.eSystem.functionalInterfaces.Producer;
 import eng.jAtcSim.newLib.airplanes.AirplaneList;
 import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
-import eng.jAtcSim.newLib.area.AreaAcc;
+import eng.jAtcSim.newLib.area.context.AreaAcc;
 import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.area.PublishedHold;
 import eng.jAtcSim.newLib.area.routes.DARoute;

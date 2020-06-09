@@ -2,7 +2,7 @@ package eng.jAtcSim.newLib.atcs.planeResponsibility;
 
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.Global;
-import eng.jAtcSim.newLib.shared.SharedAcc;
+import eng.jAtcSim.newLib.shared.context.SharedAcc;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 
 public class SwitchRequest {

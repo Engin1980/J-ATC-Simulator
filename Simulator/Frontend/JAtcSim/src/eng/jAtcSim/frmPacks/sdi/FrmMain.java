@@ -12,7 +12,7 @@ import eng.jAtcSim.abstractRadar.RadarViewPort;
 import eng.jAtcSim.abstractRadar.global.SoundManager;
 import eng.jAtcSim.newLib.area.InitialPosition;
 import eng.jAtcSim.newLib.shared.Callsign;
-import eng.jAtcSim.newLib.shared.SharedAcc;
+import eng.jAtcSim.newLib.shared.context.SharedAcc;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 import eng.jAtcSim.newLib.speeches.system.user2system.TickSpeedRequest;
 import eng.jAtcSim.recording.Recording;

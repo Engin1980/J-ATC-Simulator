@@ -7,4 +7,11 @@ module JAtcSim.Modules.Backend.SharedLib {
   exports eng.jAtcSim.newLib.shared.logging;
   exports eng.jAtcSim.newLib.shared.logging.writers;
   exports eng.jAtcSim.newLib.shared.enums;
+  exports eng.jAtcSim.newLib.shared.context to
+      JAtcSim.Modules.Backend.MoodLib,
+      JAtcSim.modules.backend.TextProcessingLib,
+      JAtcSim.Modules.Backend.WeatherLib,
+      JAtcSimLib.Modules.Backend.TrafficLib,
+      JAtcSim.Modules.Backend.StatsLib,
+      JAtcSim.Modules.Backend.AirplanesLib;
 }

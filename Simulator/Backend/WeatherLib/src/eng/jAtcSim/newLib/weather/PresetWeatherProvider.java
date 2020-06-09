@@ -2,7 +2,7 @@ package eng.jAtcSim.newLib.weather;
 
 import eng.eSystem.eXml.XDocument;
 import eng.eSystem.exceptions.EApplicationException;
-import eng.jAtcSim.newLib.shared.SharedAcc;
+import eng.jAtcSim.newLib.shared.context.SharedAcc;
 import eng.jAtcSim.newLib.weather.presets.PresetWeatherList;
 
 public class PresetWeatherProvider extends WeatherProvider {

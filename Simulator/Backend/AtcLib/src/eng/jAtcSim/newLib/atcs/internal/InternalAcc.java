@@ -5,7 +5,7 @@ import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplanes.AirplaneAcc;
 import eng.jAtcSim.newLib.airplanes.IAirplane;
 import eng.jAtcSim.newLib.area.ActiveRunway;
-import eng.jAtcSim.newLib.area.AreaAcc;
+import eng.jAtcSim.newLib.area.context.AreaAcc;
 import eng.jAtcSim.newLib.atcs.AtcList;
 import eng.jAtcSim.newLib.atcs.planeResponsibility.AirplaneResponsibilityInfo;
 import eng.jAtcSim.newLib.atcs.planeResponsibility.PlaneResponsibilityManager;

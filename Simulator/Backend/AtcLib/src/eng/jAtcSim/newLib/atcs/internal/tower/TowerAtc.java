@@ -17,7 +17,7 @@ import eng.jAtcSim.newLib.messaging.Message;
 import eng.jAtcSim.newLib.messaging.Participant;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.Callsign;
-import eng.jAtcSim.newLib.shared.SharedAcc;
+import eng.jAtcSim.newLib.shared.context.SharedAcc;
 import eng.jAtcSim.newLib.shared.enums.DARouteType;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 import eng.jAtcSim.newLib.speeches.SpeechList;
@@ -30,7 +30,7 @@ import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.TaxiToHoldingPointComma
 import eng.jAtcSim.newLib.speeches.atc.atc2user.*;
 import eng.jAtcSim.newLib.speeches.atc.user2atc.RunwayMaintenanceRequest;
 import eng.jAtcSim.newLib.speeches.atc.user2atc.RunwayInUseRequest;
-import eng.jAtcSim.newLib.stats.StatsAcc;
+import eng.jAtcSim.newLib.stats.context.StatsAcc;
 import eng.jAtcSim.newLib.weather.Weather;
 import eng.jAtcSim.newLib.weather.WeatherAcc;
 

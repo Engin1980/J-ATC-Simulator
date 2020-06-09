@@ -3,7 +3,7 @@ package eng.jAtcSim.newLib.airplanes.pilots;
 import eng.eSystem.geo.Coordinates;
 import eng.jAtcSim.newLib.airplanes.AirplaneState;
 import eng.jAtcSim.newLib.airplanes.internal.Airplane;
-import eng.jAtcSim.newLib.area.AreaAcc;
+import eng.jAtcSim.newLib.area.context.AreaAcc;
 
 public class ArrivalPilot extends BasicPilot {
 

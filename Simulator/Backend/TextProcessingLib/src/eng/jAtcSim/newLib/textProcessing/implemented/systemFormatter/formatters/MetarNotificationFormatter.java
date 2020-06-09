@@ -1,11 +1,11 @@
 package eng.jAtcSim.newLib.textProcessing.implemented.systemFormatter.formatters;
 
 import eng.eSystem.EStringBuilder;
-import eng.jAtcSim.newLib.shared.SharedAcc;
+import eng.jAtcSim.newLib.shared.context.SharedAcc;
 import eng.jAtcSim.newLib.speeches.system.system2user.MetarNotification;
 import eng.jAtcSim.newLib.textProcessing.implemented.formatterHelpers.SmartTextSpeechFormatter;
 import eng.jAtcSim.newLib.weather.Weather;
-import eng.jAtcSim.newLib.weather.WeatherAcc;
+import eng.jAtcSim.newLib.weather.context.WeatherAcc;
 
 public class MetarNotificationFormatter extends SmartTextSpeechFormatter<MetarNotification> {
 

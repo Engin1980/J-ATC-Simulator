@@ -11,7 +11,7 @@ import eng.jAtcSim.app.extenders.swingFactory.SwingFactory;
 import eng.jAtcSim.app.startupSettings.StartupSettings;
 import eng.jAtcSim.newLib.area.Area;
 import eng.jAtcSim.newLib.gameSim.game.sources.AreaSource;
-import eng.jAtcSim.newLib.shared.SharedAcc;
+import eng.jAtcSim.newLib.shared.context.SharedAcc;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 import eng.jAtcSim.shared.MessageBox;
 

@@ -13,7 +13,7 @@ import eng.jAtcSim.app.extenders.swingFactory.SwingFactory;
 import eng.jAtcSim.app.startupSettings.panels.*;
 import eng.jAtcSim.newLib.airplaneType.AirplaneTypes;
 import eng.jAtcSim.newLib.gameSim.game.sources.*;
-import eng.jAtcSim.newLib.shared.SharedAcc;
+import eng.jAtcSim.newLib.shared.context.SharedAcc;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 import eng.jAtcSim.newLib.traffic.ITrafficModel;
 import eng.jAtcSim.newLib.traffic.models.FlightListTrafficModel;

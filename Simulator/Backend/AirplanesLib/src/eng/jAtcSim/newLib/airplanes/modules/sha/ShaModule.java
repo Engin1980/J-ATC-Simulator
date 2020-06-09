@@ -9,7 +9,7 @@ import eng.jAtcSim.newLib.airplanes.internal.Airplane;
 import eng.jAtcSim.newLib.airplanes.modules.sha.navigators.HeadingNavigator;
 import eng.jAtcSim.newLib.airplanes.modules.sha.navigators.Navigator;
 import eng.jAtcSim.newLib.airplanes.modules.sha.navigators.NavigatorResult;
-import eng.jAtcSim.newLib.area.AreaAcc;
+import eng.jAtcSim.newLib.area.context.AreaAcc;
 import eng.jAtcSim.newLib.shared.Restriction;
 import eng.jAtcSim.newLib.shared.enums.LeftRight;
 

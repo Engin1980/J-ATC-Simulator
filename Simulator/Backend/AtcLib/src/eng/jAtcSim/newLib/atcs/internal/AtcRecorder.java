@@ -11,7 +11,7 @@ import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.messaging.IMessageContent;
 import eng.jAtcSim.newLib.messaging.Message;
 import eng.jAtcSim.newLib.shared.AtcId;
-import eng.jAtcSim.newLib.shared.SharedAcc;
+import eng.jAtcSim.newLib.shared.context.SharedAcc;
 import eng.jAtcSim.newLib.shared.logging.Journal;
 import eng.jAtcSim.newLib.shared.logging.writers.*;
 

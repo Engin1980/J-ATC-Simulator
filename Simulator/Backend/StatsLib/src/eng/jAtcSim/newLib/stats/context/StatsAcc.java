@@ -1,6 +1,7 @@
-package eng.jAtcSim.newLib.stats;
+package eng.jAtcSim.newLib.stats.context;
 
 import eng.eSystem.functionalInterfaces.Producer;
+import eng.jAtcSim.newLib.stats.StatsProvider;
 
 public class StatsAcc {
 

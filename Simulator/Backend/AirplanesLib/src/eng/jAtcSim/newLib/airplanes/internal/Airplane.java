@@ -8,7 +8,11 @@ import eng.eSystem.utilites.EnumUtils;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplaneType.AirplaneType;
 import eng.jAtcSim.newLib.airplanes.*;
-import eng.jAtcSim.newLib.airplanes.modules.*;
+import eng.jAtcSim.newLib.airplanes.context.AirplaneAcc;
+import eng.jAtcSim.newLib.airplanes.modules.AirplaneFlightModule;
+import eng.jAtcSim.newLib.airplanes.modules.AtcModule;
+import eng.jAtcSim.newLib.airplanes.modules.DivertModule;
+import eng.jAtcSim.newLib.airplanes.modules.EmergencyModule;
 import eng.jAtcSim.newLib.airplanes.modules.sha.ShaModule;
 import eng.jAtcSim.newLib.airplanes.modules.sha.navigators.HeadingNavigator;
 import eng.jAtcSim.newLib.airplanes.modules.sha.navigators.Navigator;
@@ -20,30 +24,30 @@ import eng.jAtcSim.newLib.airplanes.pilots.*;
 import eng.jAtcSim.newLib.airplanes.templates.ArrivalAirplaneTemplate;
 import eng.jAtcSim.newLib.airplanes.templates.DepartureAirplaneTemplate;
 import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
-import eng.jAtcSim.newLib.area.AreaAcc;
 import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.area.approaches.Approach;
 import eng.jAtcSim.newLib.area.approaches.ApproachEntry;
+import eng.jAtcSim.newLib.area.context.AreaAcc;
 import eng.jAtcSim.newLib.area.routes.DARoute;
 import eng.jAtcSim.newLib.area.routes.IafRoute;
 import eng.jAtcSim.newLib.messaging.Message;
-import eng.jAtcSim.newLib.messaging.MessagingAcc;
 import eng.jAtcSim.newLib.messaging.Participant;
+import eng.jAtcSim.newLib.messaging.context.MessagingAcc;
 import eng.jAtcSim.newLib.mood.Mood;
 import eng.jAtcSim.newLib.shared.*;
+import eng.jAtcSim.newLib.shared.context.SharedAcc;
 import eng.jAtcSim.newLib.shared.enums.DARouteType;
 import eng.jAtcSim.newLib.shared.enums.LeftRight;
 import eng.jAtcSim.newLib.shared.exceptions.ToDoException;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 import eng.jAtcSim.newLib.speeches.SpeechList;
 import eng.jAtcSim.newLib.speeches.airplane.ICommand;
-import eng.jAtcSim.newLib.speeches.airplane.IForPlaneSpeech;
 import eng.jAtcSim.newLib.speeches.airplane.IFromPlaneSpeech;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.DivertTimeNotification;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.DivertingNotification;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.GoingAroundNotification;
 import eng.jAtcSim.newLib.weather.Weather;
-import eng.jAtcSim.newLib.weather.WeatherAcc;
+import eng.jAtcSim.newLib.weather.context.WeatherAcc;
 
 public class Airplane {
 
@@ -96,7 +100,7 @@ public class Airplane {
     }
   }
 
-  public class AirplaneFlightImpl implements  IAirplaneFlight{
+  public class AirplaneFlightImpl implements IAirplaneFlight {
 
     @Override
     public int getEntryDelay() {
@@ -165,9 +169,9 @@ public class Airplane {
 
   public class AirplaneImpl implements IAirplane {
     private final IAirplaneAtc atc = Airplane.this.new AirplaneAtcImpl();
-    private final IAirplaneSHA sha = Airplane.this.new AirplaneShaImpl();
-    private final IAirplaneRouting routing = Airplane.this.new AirplaneRoutingImpl();
     private final IAirplaneFlight flight = Airplane.this.new AirplaneFlightImpl();
+    private final IAirplaneRouting routing = Airplane.this.new AirplaneRoutingImpl();
+    private final IAirplaneSHA sha = Airplane.this.new AirplaneShaImpl();
 
     @Override
     public IAirplaneAtc getAtc() {
@@ -472,7 +476,7 @@ public class Airplane {
 
   private static final double secondFraction = 1 / 60d / 60d;
 
-  public static Airplane createArrival(ArrivalAirplaneTemplate template, Squawk sqwk  ) {
+  public static Airplane createArrival(ArrivalAirplaneTemplate template, Squawk sqwk) {
     Airplane ret = new Airplane(
         template.getCallsign(), template.getCoordinate(), sqwk, template.getAirplaneType(),
         template.getHeading(), template.getAltitude(), template.getSpeed(), false,
@@ -489,25 +493,24 @@ public class Airplane {
     );
     return ret;
   }
-
+  private final AirplaneType airplaneType;
+  //  private final MrvaAirproxModule mrvaAirproxModule;
+  private final AtcModule atcModule;
+  private Coordinate coordinate;
+  private final CockpitVoiceRecorder cvr;
+  private final DivertModule divertModule;
+  private final EmergencyModule emergencyModule;
+  private final FlightDataRecorder fdr;
+  private final AirplaneFlightModule flightModule;
+  private final Mood mood;
+  private Pilot pilot;
+  private final IAirplane rdr = new AirplaneImpl();
+  private final RoutingModule routingModule;
+  private final ShaModule sha;
   //  private final Airplane4Display plane4Display = new Airplane4Display();
   private final Squawk sqwk;
-  private final AirplaneFlightModule flightModule;
-  private final ShaModule sha;
-  private final EmergencyModule emergencyModule;
-//  private final MrvaAirproxModule mrvaAirproxModule;
-  private final AtcModule atcModule;
-  private final DivertModule divertModule;
-  private final Mood mood;
-  private final FlightDataRecorder fdr;
-  private final CockpitVoiceRecorder cvr;
-  private final AirplaneType airplaneType;
-  private final RoutingModule routingModule;
-  private final IAirplane rdr = new AirplaneImpl();
-  private final IAirplaneWriter wrt = new AirplaneWriterImpl();
-  private Coordinate coordinate;
   private AirplaneState state;
-  private Pilot pilot;
+  private final IAirplaneWriter wrt = new AirplaneWriterImpl();
 
   private Airplane(Callsign callsign, Coordinate coordinate, Squawk sqwk, AirplaneType airplaneType,
                    int heading, int altitude, int speed, boolean isDeparture,

@@ -1,7 +1,7 @@
 package eng.jAtcSim.newLib.weather;
 
 import eng.eSystem.validation.EAssert;
-import eng.jAtcSim.newLib.shared.SharedAcc;
+import eng.jAtcSim.newLib.shared.context.SharedAcc;
 import eng.jAtcSim.newLib.weather.decoders.MetarDecoder;
 
 public class WeatherManager {

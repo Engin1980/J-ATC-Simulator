@@ -10,7 +10,7 @@ import eng.jAtcSim.abstractRadar.settings.RadarStyleSettings;
 import eng.jAtcSim.abstractRadar.Radar;
 import eng.jAtcSim.newLib.area.Area;
 import eng.jAtcSim.newLib.area.InitialPosition;
-import eng.jAtcSim.newLib.shared.SharedAcc;
+import eng.jAtcSim.newLib.shared.context.SharedAcc;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 
 import javax.imageio.IIOImage;

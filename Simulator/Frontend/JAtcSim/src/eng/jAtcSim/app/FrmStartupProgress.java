@@ -3,7 +3,7 @@ package eng.jAtcSim.app;
 import eng.jAtcSim.JAtcSim;
 import eng.jAtcSim.Stylist;
 import eng.eSystem.swing.LayoutManager;
-import eng.jAtcSim.newLib.shared.SharedAcc;
+import eng.jAtcSim.newLib.shared.context.SharedAcc;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 
 import javax.swing.*;

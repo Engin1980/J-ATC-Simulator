@@ -2,7 +2,7 @@ package eng.jAtcSim.frmPacks.shared;
 
 import eng.eSystem.exceptions.EApplicationException;
 import eng.jAtcSim.Stylist;
-import eng.jAtcSim.newLib.shared.SharedAcc;
+import eng.jAtcSim.newLib.shared.context.SharedAcc;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 
 import javax.swing.*;

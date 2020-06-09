@@ -1,6 +1,6 @@
 package eng.jAtcSim.newLib.atcs.internal.tower;
 
-import eng.jAtcSim.newLib.shared.SharedAcc;
+import eng.jAtcSim.newLib.shared.context.SharedAcc;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 
 public class RunwayCheckInfo {

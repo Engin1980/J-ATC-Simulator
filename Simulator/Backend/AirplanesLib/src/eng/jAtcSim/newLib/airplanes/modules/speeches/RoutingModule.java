@@ -9,27 +9,27 @@ import eng.eSystem.geo.Coordinate;
 import eng.eSystem.utilites.ConversionUtils;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplanes.AirplaneState;
-import eng.jAtcSim.newLib.airplanes.internal.Airplane;
 import eng.jAtcSim.newLib.airplanes.commandApplications.ApplicationManager;
 import eng.jAtcSim.newLib.airplanes.commandApplications.ApplicationResult;
 import eng.jAtcSim.newLib.airplanes.commandApplications.ConfirmationResult;
+import eng.jAtcSim.newLib.airplanes.internal.Airplane;
 import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
 import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.messaging.IMessageContent;
 import eng.jAtcSim.newLib.messaging.Message;
-import eng.jAtcSim.newLib.messaging.MessagingAcc;
 import eng.jAtcSim.newLib.messaging.Participant;
+import eng.jAtcSim.newLib.messaging.context.MessagingAcc;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.DelayedList;
 import eng.jAtcSim.newLib.shared.enums.AboveBelowExactly;
+import eng.jAtcSim.newLib.speeches.SpeechList;
 import eng.jAtcSim.newLib.speeches.airplane.ICommand;
 import eng.jAtcSim.newLib.speeches.airplane.IFromPlaneSpeech;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.PlaneRejection;
-import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.*;
-import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.afterCommands.*;
-import eng.jAtcSim.newLib.speeches.SpeechList;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.RequestRadarContactNotification;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.responses.IllegalThenCommandRejection;
+import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.*;
+import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.afterCommands.*;
 
 public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
 
@@ -39,12 +39,11 @@ public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
     route,
     extension
   }
-
-  private final DelayedList<ICommand> queue = new DelayedList<>(2, 7); //Min/max item delay
-  private final IMap<AtcId, SpeechList<IFromPlaneSpeech>> saidText = new EMap<>();
   private final AfterCommandList afterCommands = new AfterCommandList();
   private Navaid entryExitPoint;
+  private final DelayedList<ICommand> queue = new DelayedList<>(2, 7); //Min/max item delay
   private ActiveRunwayThreshold runwayThreshold;
+  private final IMap<AtcId, SpeechList<IFromPlaneSpeech>> saidText = new EMap<>();
 
   public RoutingModule(Airplane plane, Navaid entryExitPoint) {
     super(plane);
@@ -68,8 +67,18 @@ public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
     return entryExitPoint;
   }
 
+  public void setEntryExitPoint(Navaid entryExitNavaid) {
+    EAssert.Argument.isNotNull(entryExitNavaid, "entryExitNavaid");
+    this.entryExitPoint = entryExitNavaid;
+  }
+
   public ActiveRunwayThreshold getRunwayThreshold() {
     return runwayThreshold;
+  }
+
+  public void setRunwayThreshold(ActiveRunwayThreshold activeRunwayThreshold) {
+    EAssert.Argument.isNotNull(activeRunwayThreshold, "activeRunwayThreshold");
+    this.runwayThreshold = activeRunwayThreshold;
   }
 
   public boolean hasLateralDirectionAfterCoordinate(Coordinate coordinate) {
@@ -98,21 +107,11 @@ public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
     }
   }
 
-  public void setEntryExitPoint(Navaid entryExitNavaid) {
-    EAssert.Argument.isNotNull(entryExitNavaid, "entryExitNavaid");
-    this.entryExitPoint = entryExitNavaid;
-  }
-
   public void setRouting(IReadOnlyList<ICommand> routeCommands) {
     SpeechList<ICommand> cmds = tryExpandThenCommands(routeCommands);
     if (cmds == null) return; // some error
     afterCommands.clearAll();
     processSpeeches(cmds, CommandSource.route);
-  }
-
-  public void setRunwayThreshold(ActiveRunwayThreshold activeRunwayThreshold) {
-    EAssert.Argument.isNotNull(activeRunwayThreshold, "activeRunwayThreshold");
-    this.runwayThreshold = activeRunwayThreshold;
   }
 
   private void addNewSpeeches(SpeechList<ICommand> speeches) {
@@ -195,70 +194,6 @@ public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
       default:
         throw new UnsupportedOperationException();
     }
-  }
-
-  private SpeechList<ICommand> tryExpandThenCommands(IReadOnlyList<ICommand> speeches) {
-    if (speeches.isEmpty()) {
-      return new SpeechList<>();
-    }
-
-    SpeechList<ICommand> ret = new SpeechList<>(speeches);
-
-    for (int i = 0; i < ret.size(); i++) {
-      if (ret.get(i) instanceof ThenCommand) {
-        if (i == 0 || i == ret.size() - 1) {
-          wrt.sendMessage(
-              rdr.getAtc().getTunedAtc(),
-              new IllegalThenCommandRejection(
-                  (ThenCommand) ret.get(i),
-                  "{Then} command cannot be first or last in queue. The whole command block is ignored.")
-          );
-          ret.clear();
-          return null;
-        }
-        ICommand prev = ret.get(i - 1);
-
-        AfterCommand n; // new
-        if (prev instanceof ProceedDirectCommand) {
-          n = AfterDistanceCommand.create(((ProceedDirectCommand) prev).getNavaidName(), 0, AboveBelowExactly.exactly);
-        } else if (prev instanceof ChangeAltitudeCommand) {
-          ChangeAltitudeCommand ca = (ChangeAltitudeCommand) prev;
-          AboveBelowExactly restriction;
-          switch (ca.getDirection()) {
-            case any:
-              restriction = AboveBelowExactly.exactly;
-              break;
-            case climb:
-              restriction = AboveBelowExactly.above;
-              break;
-            case descend:
-              restriction = AboveBelowExactly.below;
-              break;
-            default:
-              throw new UnsupportedOperationException();
-          }
-          n = new AfterAltitudeCommand(ca.getAltitudeInFt(), restriction);
-        } else if (prev instanceof ChangeSpeedCommand) {
-          ChangeSpeedCommand cmd = (ChangeSpeedCommand) prev;
-          n = AfterSpeedCommand.create(
-              cmd.getRestriction().value,
-              cmd.getRestriction().direction);
-        } else if (prev instanceof ChangeHeadingCommand) {
-          ChangeHeadingCommand cmd = (ChangeHeadingCommand) prev;
-          n = AfterHeadingCommand.create(cmd.getHeading());
-        } else {
-          wrt.sendMessage(
-              rdr.getAtc().getTunedAtc(),
-              new IllegalThenCommandRejection(
-                  (ThenCommand) ret.get(i),
-                  "{Then} command is antecedent a strange command, it does not make sense. The whole command block is ignored."));
-          ret.clear();
-          return null;
-        }
-        ret.set(i, n);
-      }
-    }
-    return ret;
   }
 
   private void flushSaidTextToAtc() {
@@ -405,5 +340,69 @@ public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
     if (atc == null) return;
 
     saidText.getOrSet(atc, new SpeechList<>()).add(speech);
+  }
+
+  private SpeechList<ICommand> tryExpandThenCommands(IReadOnlyList<ICommand> speeches) {
+    if (speeches.isEmpty()) {
+      return new SpeechList<>();
+    }
+
+    SpeechList<ICommand> ret = new SpeechList<>(speeches);
+
+    for (int i = 0; i < ret.size(); i++) {
+      if (ret.get(i) instanceof ThenCommand) {
+        if (i == 0 || i == ret.size() - 1) {
+          wrt.sendMessage(
+              rdr.getAtc().getTunedAtc(),
+              new IllegalThenCommandRejection(
+                  (ThenCommand) ret.get(i),
+                  "{Then} command cannot be first or last in queue. The whole command block is ignored.")
+          );
+          ret.clear();
+          return null;
+        }
+        ICommand prev = ret.get(i - 1);
+
+        AfterCommand n; // new
+        if (prev instanceof ProceedDirectCommand) {
+          n = AfterDistanceCommand.create(((ProceedDirectCommand) prev).getNavaidName(), 0, AboveBelowExactly.exactly);
+        } else if (prev instanceof ChangeAltitudeCommand) {
+          ChangeAltitudeCommand ca = (ChangeAltitudeCommand) prev;
+          AboveBelowExactly restriction;
+          switch (ca.getDirection()) {
+            case any:
+              restriction = AboveBelowExactly.exactly;
+              break;
+            case climb:
+              restriction = AboveBelowExactly.above;
+              break;
+            case descend:
+              restriction = AboveBelowExactly.below;
+              break;
+            default:
+              throw new UnsupportedOperationException();
+          }
+          n = new AfterAltitudeCommand(ca.getAltitudeInFt(), restriction);
+        } else if (prev instanceof ChangeSpeedCommand) {
+          ChangeSpeedCommand cmd = (ChangeSpeedCommand) prev;
+          n = AfterSpeedCommand.create(
+              cmd.getRestriction().value,
+              cmd.getRestriction().direction);
+        } else if (prev instanceof ChangeHeadingCommand) {
+          ChangeHeadingCommand cmd = (ChangeHeadingCommand) prev;
+          n = AfterHeadingCommand.create(cmd.getHeading());
+        } else {
+          wrt.sendMessage(
+              rdr.getAtc().getTunedAtc(),
+              new IllegalThenCommandRejection(
+                  (ThenCommand) ret.get(i),
+                  "{Then} command is antecedent a strange command, it does not make sense. The whole command block is ignored."));
+          ret.clear();
+          return null;
+        }
+        ret.set(i, n);
+      }
+    }
+    return ret;
   }
 }

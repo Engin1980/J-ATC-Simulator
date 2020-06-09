@@ -4,7 +4,7 @@ import eng.eSystem.collections.*;
 import eng.eSystem.geo.Coordinates;
 import eng.jAtcSim.newLib.airplanes.AirplaneState;
 import eng.jAtcSim.newLib.airplanes.IAirplane;
-import eng.jAtcSim.newLib.area.AreaAcc;
+import eng.jAtcSim.newLib.area.context.AreaAcc;
 import eng.jAtcSim.newLib.area.Border;
 import eng.jAtcSim.newLib.shared.Callsign;
 

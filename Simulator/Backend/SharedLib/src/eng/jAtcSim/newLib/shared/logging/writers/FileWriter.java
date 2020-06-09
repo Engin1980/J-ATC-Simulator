@@ -1,7 +1,7 @@
 package eng.jAtcSim.newLib.shared.logging.writers;
 
 import eng.eSystem.validation.EAssert;
-import eng.jAtcSim.newLib.shared.SharedAcc;
+import eng.jAtcSim.newLib.shared.context.SharedAcc;
 
 import java.io.BufferedWriter;
 import java.io.IOException;

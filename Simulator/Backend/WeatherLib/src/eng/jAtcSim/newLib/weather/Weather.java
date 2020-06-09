@@ -7,7 +7,7 @@
 package eng.jAtcSim.newLib.weather;
 
 import eng.eSystem.EStringBuilder;
-import eng.jAtcSim.newLib.shared.SharedAcc;
+import eng.jAtcSim.newLib.shared.context.SharedAcc;
 import eng.jAtcSim.newLib.shared.UnitProvider;
 
 /**

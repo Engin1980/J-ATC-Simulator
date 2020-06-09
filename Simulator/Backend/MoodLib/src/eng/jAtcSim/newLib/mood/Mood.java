@@ -3,7 +3,7 @@ package eng.jAtcSim.newLib.mood;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.jAtcSim.newLib.shared.Callsign;
-import eng.jAtcSim.newLib.shared.SharedAcc;
+import eng.jAtcSim.newLib.shared.context.SharedAcc;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;

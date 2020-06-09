@@ -18,7 +18,7 @@ import eng.jAtcSim.app.startupSettings.StartupSettings;
 import eng.jAtcSim.frmPacks.Pack;
 import eng.jAtcSim.frmPacks.shared.FrmLog;
 import eng.jAtcSim.newLib.gameSim.game.Game;
-import eng.jAtcSim.newLib.shared.SharedAcc;
+import eng.jAtcSim.newLib.shared.context.SharedAcc;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 import eng.jAtcSim.newLib.weather.Weather;
 

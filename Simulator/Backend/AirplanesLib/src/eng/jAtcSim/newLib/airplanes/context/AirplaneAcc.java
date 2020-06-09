@@ -1,6 +1,9 @@
-package eng.jAtcSim.newLib.airplanes;
+package eng.jAtcSim.newLib.airplanes.context;
 
 import eng.eSystem.functionalInterfaces.Producer;
+import eng.jAtcSim.newLib.airplanes.AirplaneList;
+import eng.jAtcSim.newLib.airplanes.AirplanesController;
+import eng.jAtcSim.newLib.airplanes.IAirplane;
 
 public class AirplaneAcc {
 
@@ -19,11 +22,11 @@ public class AirplaneAcc {
     return getAirplanes().isAny(q -> q.isEmergency());
   }
 
-  static void setAirplaneListProducer(Producer<AirplaneList<IAirplane>> airplanesProducer) {
+  public static void setAirplaneListProducer(Producer<AirplaneList<IAirplane>> airplanesProducer) {
     AirplaneAcc.airplanesProducer = airplanesProducer;
   }
 
-  static void setAirplanesControllerProducer(Producer<AirplanesController> airplanesControllerProducer) {
+  public static void setAirplanesControllerProducer(Producer<AirplanesController> airplanesControllerProducer) {
     AirplaneAcc.airplanesControllerProducer = airplanesControllerProducer;
   }
 }
