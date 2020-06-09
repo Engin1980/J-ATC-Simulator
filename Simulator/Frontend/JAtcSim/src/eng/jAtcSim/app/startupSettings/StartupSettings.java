@@ -4,12 +4,9 @@ import eng.eSystem.EStringBuilder;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.eXml.XElement;
-import eng.eSystem.utilites.ArrayUtils;
-import eng.jAtcSim.newLib.shared.xml.XmlLoaderUtils;
-import eng.jAtcSim.newLib.shared.xml.XmlSaverUtils;
+import eng.eXmlSerialization.XmlSerializer;
 
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 
 public class StartupSettings {
 
@@ -135,45 +132,48 @@ public class StartupSettings {
   }
 
   public static StartupSettings load(XElement source) {
-    StartupSettings ret = new StartupSettings();
-    XElement elm;
-    elm = source.getChild("files");
-    XmlLoaderUtils.loadPrimitiveAttribute(elm, ret.files, "areaXmlFile",
-        "generalAviationFleetsXmlFile", "companiesFleetsXmlFile", "planesXmlFile",
-        "trafficXmlFile", "weatherXmlFile");
-
-    elm = source.getChild("recent");
-    XmlLoaderUtils.loadPrimitiveAttribute(elm, ret.recent, "icao");
-    elm.setAttribute("time", ret.recent.time.format(
-        DateTimeFormatter.ofPattern("HH:mm")));
-
-    elm = source.getChild("weather");
-    XmlLoaderUtils.loadPrimitiveAttribute(elm, ret.weather, "cloudBaseAltitudeFt", "cloudBaseProbability",
-        "snowState", "type",
-        "visibilityInM", "windDirection", "windSpeed");
-
-    elm = new XElement("simulation");
-    XmlLoaderUtils.loadPrimitiveAttribute(elm, ret.simulation, "secondLengthInMs");
-
-    elm = new XElement("radar");
-    XmlSaverUtils.savePrimitiveAttribute(elm, ret.radar, "packClass");
-
-    elm = new XElement("traffic");
-    XmlSaverUtils.savePrimitiveAttribute(elm, ret.traffic, "allowDelays", "densityPercentage",
-        "emergencyPerDayProbability", "maxPlanes", "type");
-    {
-      elm = elm.getChild("customTraffic");
-      XmlSaverUtils.savePrimitiveAttribute(elm, ret.traffic.customTraffic, "arrivals2departuresRatio", "companies",
-          "countryCodes", "nonCommercialFlightProbability", "useExtendedCallsigns",
-          "weightTypeA", "weightTypeB", "weightTypeC", "weightTypeD");
-      String data = elm.getAttribute("movementsPerHour");
-      String[] pts = data.split(";");
-      IList<String> lstPts = new EList<>(pts);
-      IList<Integer> intPts = lstPts.select(q -> Integer.parseInt(q));
-      ret.traffic.customTraffic.movementsPerHour = ArrayUtils.toPrimitive(intPts.toArray(int.class));
-    }
-
+    XmlSerializer ser = new XmlSerializer();
+    StartupSettings ret = ser.deserialize(source, StartupSettings.class);
     return ret;
+
+//    XElement elm;
+//    elm = source.getChild("files");
+//    XmlLoaderUtils.loadPrimitiveAttribute(elm, ret.files, "areaXmlFile",
+//        "generalAviationFleetsXmlFile", "companiesFleetsXmlFile", "planesXmlFile",
+//        "trafficXmlFile", "weatherXmlFile");
+//
+//    elm = source.getChild("recent");
+//    XmlLoaderUtils.loadPrimitiveAttribute(elm, ret.recent, "icao");
+//    elm.setAttribute("time", ret.recent.time.format(
+//        DateTimeFormatter.ofPattern("HH:mm")));
+//
+//    elm = source.getChild("weather");
+//    XmlLoaderUtils.loadPrimitiveAttribute(elm, ret.weather, "cloudBaseAltitudeFt", "cloudBaseProbability",
+//        "snowState", "type",
+//        "visibilityInM", "windDirection", "windSpeed");
+//
+//    elm = new XElement("simulation");
+//    XmlLoaderUtils.loadPrimitiveAttribute(elm, ret.simulation, "secondLengthInMs");
+//
+//    elm = new XElement("radar");
+//    XmlSaverUtils.savePrimitiveAttribute(elm, ret.radar, "packClass");
+//
+//    elm = new XElement("traffic");
+//    XmlSaverUtils.savePrimitiveAttribute(elm, ret.traffic, "allowDelays", "densityPercentage",
+//        "emergencyPerDayProbability", "maxPlanes", "type");
+//    {
+//      elm = elm.getChild("customTraffic");
+//      XmlSaverUtils.savePrimitiveAttribute(elm, ret.traffic.customTraffic, "arrivals2departuresRatio", "companies",
+//          "countryCodes", "nonCommercialFlightProbability", "useExtendedCallsigns",
+//          "weightTypeA", "weightTypeB", "weightTypeC", "weightTypeD");
+//      String data = elm.getAttribute("movementsPerHour");
+//      String[] pts = data.split(";");
+//      IList<String> lstPts = new EList<>(pts);
+//      IList<Integer> intPts = lstPts.select(q -> Integer.parseInt(q));
+//      ret.traffic.customTraffic.movementsPerHour = ArrayUtils.toPrimitive(intPts.toArray(int.class));
+//    }
+//
+//    return ret;
   }
 
   public final Files files;
@@ -193,47 +193,51 @@ public class StartupSettings {
   }
 
   public void save(XElement target) {
-    XElement elm;
-    elm = new XElement("files");
-    XmlSaverUtils.savePrimitiveAttribute(elm, files, "areaXmlFile",
-        "companiesFleetsXmlFile", "generalAviationFleetsXmlFile",
-        "planesXmlFile",
-        "trafficXmlFile", "weatherXmlFile");
-    target.addElement(elm);
 
-    elm = new XElement("recent");
-    XmlSaverUtils.savePrimitiveAttribute(elm, recent, "icao");
-    elm.setAttribute("time", recent.time.format(
-        DateTimeFormatter.ofPattern("HH:mm")));
-    target.addElement(elm);
+    XmlSerializer ser = new XmlSerializer();
+    ser.serialize(this, target);
 
-    elm = new XElement("weather");
-    XmlSaverUtils.savePrimitiveAttribute(elm, files, "cloudBaseAltitudeFt", "cloudBaseProbability",
-        "snowState", "type",
-        "visibilityInM", "windDirection", "windSpeed");
-    target.addElement(elm);
-
-    elm = new XElement("simulation");
-    XmlSaverUtils.savePrimitiveAttribute(elm, simulation, "secondLengthInMs");
-    target.addElement(elm);
-
-    elm = new XElement("radar");
-    XmlSaverUtils.savePrimitiveAttribute(elm, radar, "packClass");
-    target.addElement(elm);
-
-    elm = new XElement("traffic");
-    XmlSaverUtils.savePrimitiveAttribute(elm, traffic, "allowDelays", "densityPercentage",
-        "emergencyPerDayProbability", "maxPlanes", "type");
-    {
-      XElement tmp = new XElement("customTraffic");
-      elm.addElement(tmp);
-      XmlSaverUtils.savePrimitiveAttribute(elm, traffic, "arrivals2departuresRatio", "companies",
-          "countryCodes", "nonCommercialFlightProbability", "useExtendedCallsigns",
-          "weightTypeA", "weightTypeB", "weightTypeC", "weightTypeD");
-      EStringBuilder sb = new EStringBuilder();
-      sb.appendItems(ArrayUtils.toWrapper(this.traffic.customTraffic.movementsPerHour), ";");
-      tmp.setAttribute("movementsPerHour", sb.toString());
-    }
-    target.addElement(elm);
+//    XElement elm;
+//    elm = new XElement("files");
+//    XmlSaverUtils.savePrimitiveAttribute(elm, files, "areaXmlFile",
+//        "companiesFleetsXmlFile", "generalAviationFleetsXmlFile",
+//        "planesXmlFile",
+//        "trafficXmlFile", "weatherXmlFile");
+//    target.addElement(elm);
+//
+//    elm = new XElement("recent");
+//    XmlSaverUtils.savePrimitiveAttribute(elm, recent, "icao");
+//    elm.setAttribute("time", recent.time.format(
+//        DateTimeFormatter.ofPattern("HH:mm")));
+//    target.addElement(elm);
+//
+//    elm = new XElement("weather");
+//    XmlSaverUtils.savePrimitiveAttribute(elm, files, "cloudBaseAltitudeFt", "cloudBaseProbability",
+//        "snowState", "type",
+//        "visibilityInM", "windDirection", "windSpeed");
+//    target.addElement(elm);
+//
+//    elm = new XElement("simulation");
+//    XmlSaverUtils.savePrimitiveAttribute(elm, simulation, "secondLengthInMs");
+//    target.addElement(elm);
+//
+//    elm = new XElement("radar");
+//    XmlSaverUtils.savePrimitiveAttribute(elm, radar, "packClass");
+//    target.addElement(elm);
+//
+//    elm = new XElement("traffic");
+//    XmlSaverUtils.savePrimitiveAttribute(elm, traffic, "allowDelays", "densityPercentage",
+//        "emergencyPerDayProbability", "maxPlanes", "type");
+//    {
+//      XElement tmp = new XElement("customTraffic");
+//      elm.addElement(tmp);
+//      XmlSaverUtils.savePrimitiveAttribute(elm, traffic, "arrivals2departuresRatio", "companies",
+//          "countryCodes", "nonCommercialFlightProbability", "useExtendedCallsigns",
+//          "weightTypeA", "weightTypeB", "weightTypeC", "weightTypeD");
+//      EStringBuilder sb = new EStringBuilder();
+//      sb.appendItems(ArrayUtils.toWrapper(this.traffic.customTraffic.movementsPerHour), ";");
+//      tmp.setAttribute("movementsPerHour", sb.toString());
+//    }
+//    target.addElement(elm);
   }
 }

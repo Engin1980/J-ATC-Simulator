@@ -219,7 +219,7 @@ public class RadarStyleSettings {
   // runways
   public ColorWidthSettings activeRunway;
   public ColorWidthSettings closedRunway;
-  // approachesOld
+  // approaches
   public ColorWidthLengthSettings ilsApproach;
   public ColorWidthLengthSettings gnssApproach;
   public ColorWidthLengthSettings vorApproach;
@@ -238,9 +238,6 @@ public class RadarStyleSettings {
 
   // mapBack
   public ColorWidthFontSettings borderRestricted;
-  /**
-   * Map background color in hex
-   */
   public Color mapBackcolor;
   // routes
   public ColorWidthSettings star;
