@@ -5,7 +5,7 @@ import eng.eSystem.collections.IMap;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.collections.IReadOnlyMap;
 import eng.eSystem.geo.Coordinates;
-import eng.jAtcSim.newLib.airplanes.AirplaneAcc;
+import eng.jAtcSim.newLib.airplanes.context.AirplaneAcc;
 import eng.jAtcSim.newLib.airplanes.AirplaneState;
 import eng.jAtcSim.newLib.airplanes.AirproxType;
 import eng.jAtcSim.newLib.airplanes.IAirplane;

@@ -10,5 +10,7 @@ module JAtcSim.Modules.Backend.AreaLib {
   exports eng.jAtcSim.newLib.area.approaches.locations;
   exports eng.jAtcSim.newLib.area.approaches.perCategoryValues;
   exports eng.jAtcSim.newLib.area.context to
-      JAtcSim.Modules.Backend.AirplanesLib;
+      JAtcSim.Modules.Backend.AirplanesLib,
+      JAtcSim.Modules.Backend.AtcLib,
+      JAtcSim.Modules.Backend.SimulationLib;
 }

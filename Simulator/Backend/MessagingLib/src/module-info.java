@@ -3,5 +3,7 @@ module JAtcSim.Modules.Backend.MessagingLib {
   requires JAtcSim.Modules.Backend.SharedLib;
   requires eng.eSystem;
   exports eng.jAtcSim.newLib.messaging.context to
-      JAtcSim.Modules.Backend.AirplanesLib;
+      JAtcSim.Modules.Backend.AirplanesLib,
+      JAtcSim.Modules.Backend.AtcLib,
+      JAtcSim.Modules.Backend.SimulationLib;
 }

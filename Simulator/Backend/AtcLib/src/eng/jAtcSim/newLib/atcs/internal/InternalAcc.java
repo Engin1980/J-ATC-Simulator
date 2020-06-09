@@ -2,7 +2,7 @@ package eng.jAtcSim.newLib.atcs.internal;
 
 import eng.eSystem.functionalInterfaces.Producer;
 import eng.eSystem.validation.EAssert;
-import eng.jAtcSim.newLib.airplanes.AirplaneAcc;
+import eng.jAtcSim.newLib.airplanes.context.AirplaneAcc;
 import eng.jAtcSim.newLib.airplanes.IAirplane;
 import eng.jAtcSim.newLib.area.ActiveRunway;
 import eng.jAtcSim.newLib.area.context.AreaAcc;

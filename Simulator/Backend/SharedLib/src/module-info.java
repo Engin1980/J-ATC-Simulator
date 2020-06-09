@@ -13,5 +13,7 @@ module JAtcSim.Modules.Backend.SharedLib {
       JAtcSim.Modules.Backend.WeatherLib,
       JAtcSimLib.Modules.Backend.TrafficLib,
       JAtcSim.Modules.Backend.StatsLib,
-      JAtcSim.Modules.Backend.AirplanesLib;
+      JAtcSim.Modules.Backend.AirplanesLib,
+      JAtcSim.Modules.Backend.AtcLib,
+      JAtcSim.Modules.Backend.SimulationLib;
 }

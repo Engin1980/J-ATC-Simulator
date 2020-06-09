@@ -9,6 +9,7 @@ import eng.eSystem.geo.Headings;
 import eng.jAtcSim.newLib.airplanes.AirplaneState;
 import eng.jAtcSim.newLib.airplanes.IAirplane;
 import eng.jAtcSim.newLib.area.*;
+import eng.jAtcSim.newLib.area.context.AreaAcc;
 import eng.jAtcSim.newLib.atcs.internal.ComputerAtc;
 import eng.jAtcSim.newLib.atcs.internal.InternalAcc;
 import eng.jAtcSim.newLib.atcs.planeResponsibility.SwitchRoutingRequest;
@@ -32,7 +33,7 @@ import eng.jAtcSim.newLib.speeches.atc.user2atc.RunwayMaintenanceRequest;
 import eng.jAtcSim.newLib.speeches.atc.user2atc.RunwayInUseRequest;
 import eng.jAtcSim.newLib.stats.context.StatsAcc;
 import eng.jAtcSim.newLib.weather.Weather;
-import eng.jAtcSim.newLib.weather.WeatherAcc;
+import eng.jAtcSim.newLib.weather.context.WeatherAcc;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 

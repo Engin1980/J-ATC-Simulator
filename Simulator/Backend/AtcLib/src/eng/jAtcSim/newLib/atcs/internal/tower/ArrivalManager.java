@@ -3,7 +3,7 @@ package eng.jAtcSim.newLib.atcs.internal.tower;
 import eng.eSystem.collections.EDistinctList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.geo.Coordinates;
-import eng.jAtcSim.newLib.airplanes.AirplaneAcc;
+import eng.jAtcSim.newLib.airplanes.context.AirplaneAcc;
 import eng.jAtcSim.newLib.airplanes.AirplaneState;
 import eng.jAtcSim.newLib.airplanes.IAirplane;
 import eng.jAtcSim.newLib.area.ActiveRunway;
