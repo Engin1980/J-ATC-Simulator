@@ -28,6 +28,11 @@ public interface ITime {
         this.getHours(), this.getMinutes());
   }
 
+  default String toMinuteSecondString(){
+    return sf("%02d:%02d",
+        this.getMinutes(), this.getSeconds());
+  }
+
   default String toTimeString(){
     return sf("%d:%02d:%02d",
         this.getHours(), this.getMinutes(), this.getSeconds());

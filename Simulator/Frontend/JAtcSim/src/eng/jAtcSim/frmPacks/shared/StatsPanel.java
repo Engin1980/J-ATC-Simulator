@@ -2,6 +2,7 @@ package eng.jAtcSim.frmPacks.shared;
 
 import eng.eSystem.swing.LayoutManager;
 import eng.jAtcSim.newLib.gameSim.ISimulation;
+import eng.jAtcSim.newLib.shared.time.ETimeStamp;
 import eng.jAtcSim.newLib.stats.IStatsProvider;
 import eng.jAtcSim.newLib.stats.recent.RecentStats;
 
@@ -10,35 +11,8 @@ import java.awt.*;
 
 public class StatsPanel extends JPanel {
 
-  private static Color bgColor = new Color(50, 50, 50);
-  private static Color frColor = new Color(200, 200, 200);
-  IStatsProvider stats;
-  JLabel lblElapsed = new JLabel("Seconds elapsed:");
-  JLabel lvlElapsed = new JLabel("-");
-  JLabel lblBusyDuration = new JLabel("Recalc duration:");
-  JLabel lvlBusyDuration = new JLabel("-");
-  JLabel lblFinished = new JLabel("Served planes:");
-  JLabel lvlFinished = new JLabel("-");
-  JLabel lblMaxInGame = new JLabel("Max in simulation:");
-  JLabel lvlMaxInGame = new JLabel("-");
-  JLabel lblMovementsGame = new JLabel("Moves/hour:");
-  JLabel lvlMovementsGame = new JLabel("-");
-  JLabel lblMaxApp = new JLabel("Max under APP:");
-  JLabel lvlMaxApp = new JLabel("-");
-  JLabel lblCurInGame = new JLabel("Now in simulation:");
-  JLabel lvlCurInGame = new JLabel("-");
-  JLabel lblCurApp = new JLabel("Now under APP:");
-  JLabel lvlCurApp = new JLabel("-");
-  JLabel lblHpCount = new JLabel("H-P count:");
-  JLabel lvlHpCount = new JLabel("-");
-  JLabel lblHpTime = new JLabel("H-P time:");
-  JLabel lvlHpTime = new JLabel("-");
-
-  JLabel lblErrors = new JLabel("Errs (a/m):");
-  JLabel lvlErrors = new JLabel("-");
-
-  JLabel lblDelay = new JLabel("Delay:");
-  JLabel lvlDelay = new JLabel("-");
+  private static final Color bgColor = new Color(50, 50, 50);
+  private static final Color frColor = new Color(200, 200, 200);
 
   private static String toTime(double seconds) {
     String ret;
@@ -55,6 +29,32 @@ public class StatsPanel extends JPanel {
     }
     return ret;
   }
+
+  private final JLabel lblBusyDuration = new JLabel("Recalc duration:");
+  private final JLabel lblCurApp = new JLabel("Now under APP:");
+  private final JLabel lblCurInGame = new JLabel("Now in simulation:");
+  private final JLabel lblDelay = new JLabel("Delay:");
+  private final JLabel lblElapsed = new JLabel("Seconds elapsed:");
+  private final JLabel lblErrors = new JLabel("Errs (a/m):");
+  private final JLabel lblFinished = new JLabel("Served planes:");
+  private final JLabel lblHpCount = new JLabel("H-P count:");
+  private final JLabel lblHpTime = new JLabel("H-P time:");
+  private final JLabel lblMaxApp = new JLabel("Max under APP:");
+  private final JLabel lblMaxInGame = new JLabel("Max in simulation:");
+  private final JLabel lblMovementsGame = new JLabel("Moves/hour:");
+  private final JLabel lvlBusyDuration = new JLabel("-");
+  private final JLabel lvlCurApp = new JLabel("-");
+  private final JLabel lvlCurInGame = new JLabel("-");
+  private final JLabel lvlDelay = new JLabel("-");
+  private final JLabel lvlElapsed = new JLabel("-");
+  private final JLabel lvlErrors = new JLabel("-");
+  private final JLabel lvlFinished = new JLabel("-");
+  private final JLabel lvlHpCount = new JLabel("-");
+  private final JLabel lvlHpTime = new JLabel("-");
+  private final JLabel lvlMaxApp = new JLabel("-");
+  private final JLabel lvlMaxInGame = new JLabel("-");
+  private final JLabel lvlMovementsGame = new JLabel("-");
+  private IStatsProvider stats;
 
   public StatsPanel() {
     initComponents();
@@ -154,12 +154,36 @@ public class StatsPanel extends JPanel {
     lvlErrors.setText(s);
   }
 
+  private void updateCurAll(RecentStats view) {
+    int a = view.getCurrentPlanesCount().getArrivals();
+    int d = view.getCurrentPlanesCount().getDepartures();
+    String s = String.format("%d / %d / %d",
+        d, a, a + d);
+    lvlCurInGame.setText(s);
+  }
+
+  private void updateCurApp(RecentStats view) {
+    int a = view.getCurrentPlanesCount().getArrivalsUnderApp();
+    int d = view.getCurrentPlanesCount().getDeparturesUnderApp();
+    String s = String.format("%d / %d / %d",
+        d, a, a + d);
+    lvlCurApp.setText(s);
+  }
+
   private void updateDelays(RecentStats view) {
-    ETime tmean = new ETime((int) view.getDelays().getMean());
-    ETime tmax = new ETime((int) view.getDelays().getMaximum());
+    ETimeStamp tmean = new ETimeStamp((int) view.getDelays().getMean());
+    ETimeStamp tmax = new ETimeStamp((int) view.getDelays().getMaximum());
 
     String s = String.format("%s / %s", tmean.toMinuteSecondString(), tmax.toMinuteSecondString());
     lvlDelay.setText(s);
+  }
+
+  private void updateFinished(RecentStats view) {
+    int a = view.getFinishedPlanes().getArrivals();
+    int d = view.getFinishedPlanes().getDepartures();
+    String s = String.format("%d / %d / %d",
+        d, a, d + a);
+    lvlFinished.setText(s);
   }
 
   private void updateHoldingPointInfo(RecentStats view) {
@@ -175,32 +199,13 @@ public class StatsPanel extends JPanel {
     lvlHpTime.setText(tmp);
   }
 
-  private void updateMovementsPerHour(RecentStats view) {
-    double deps = view.getMovementsPerHour().getDepartures();
-    double arrs = view.getMovementsPerHour().getArrivals();
-    double tots = deps + arrs;
-    String s = String.format("%.0f / %.0f / %.0f",
-        deps,
-        arrs,
-        tots
-    );
-    lvlMovementsGame.setText(s);
-  }
-
-  private void updateCurApp(RecentStats view) {
-    int a = view.getCurrentPlanesCount().getArrivalsUnderApp();
-    int d = view.getCurrentPlanesCount().getDeparturesUnderApp();
+  private void updateMaxAll(RecentStats view) {
+    int a = view.getCurrentPlanesCount().getMaximalArrivals();
+    int d = view.getCurrentPlanesCount().getMaximalDepartures();
+    int t = view.getCurrentPlanesCount().getMaximal();
     String s = String.format("%d / %d / %d",
-        d, a, a + d);
-    lvlCurApp.setText(s);
-  }
-
-  private void updateCurAll(RecentStats view) {
-    int a = view.getCurrentPlanesCount().getArrivals();
-    int d = view.getCurrentPlanesCount().getDepartures();
-    String s = String.format("%d / %d / %d",
-        d, a, a + d);
-    lvlCurInGame.setText(s);
+        d, a, t);
+    lvlMaxInGame.setText(s);
   }
 
   private void updateMaxApp(RecentStats view) {
@@ -212,20 +217,15 @@ public class StatsPanel extends JPanel {
     lvlMaxApp.setText(s);
   }
 
-  private void updateMaxAll(RecentStats view) {
-    int a = view.getCurrentPlanesCount().getMaximalArrivals();
-    int d = view.getCurrentPlanesCount().getMaximalDepartures();
-    int t = view.getCurrentPlanesCount().getMaximal();
-    String s = String.format("%d / %d / %d",
-        d, a, t);
-    lvlMaxInGame.setText(s);
-  }
-
-  private void updateFinished(RecentStats view) {
-    int a = view.getFinishedPlanes().getArrivals();
-    int d = view.getFinishedPlanes().getDepartures();
-    String s = String.format("%d / %d / %d",
-        d, a, d + a);
-    lvlFinished.setText(s);
+  private void updateMovementsPerHour(RecentStats view) {
+    double deps = view.getMovementsPerHour().getDepartures();
+    double arrs = view.getMovementsPerHour().getArrivals();
+    double tots = deps + arrs;
+    String s = String.format("%.0f / %.0f / %.0f",
+        deps,
+        arrs,
+        tots
+    );
+    lvlMovementsGame.setText(s);
   }
 }

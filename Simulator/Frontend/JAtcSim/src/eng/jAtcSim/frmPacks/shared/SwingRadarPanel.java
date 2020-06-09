@@ -48,11 +48,11 @@ public class SwingRadarPanel extends JPanel {
   class RoutesAdjustSelectionPanelWrapperListener implements AdjustSelectionPanelWrapper.ActionSelectionPanelWraperListener<DARoute> {
 
     @Override
-    public Tuple<Iterable<DARoute>, Selector<DARoute, String>> doInit() {
+    public Tuple<Iterable<DARoute>, Selector<DARoute, String>> doInit(ISimulation simulation) {
       Tuple<Iterable<DARoute>, Selector<DARoute, String>> ret = new Tuple<>();
 
       IMap<DARoute, IList<ActiveRunwayThreshold>> tmp = new EMap<>();
-      for (ActiveRunwayThreshold threshold : AreaAcc.getAirport().getAllThresholds()) {
+      for (ActiveRunwayThreshold threshold : simulation.getAirport().getAllThresholds()) {
         for (DARoute route : threshold.getRoutes()) {
           IList<ActiveRunwayThreshold> lst = tmp.tryGet(route);
           if (lst == null) {
@@ -445,7 +445,7 @@ public class SwingRadarPanel extends JPanel {
         String callsignString = msg.substring(0, firstSpaceIndex);
         String messageString = msg.substring(firstSpaceIndex + 1);
         Callsign callsign = getCallsignFromString(callsignString);
-        IPlaneParser parser = sim.getPlaneParser();
+        IPlaneParser parser = sim.getParseFormat().getPlaneParser();
         SpeechList<IForPlaneSpeech> cmds = parser.parse(messageString);
         sim.sendPlaneCommands(callsign, cmds);
         ret = true;

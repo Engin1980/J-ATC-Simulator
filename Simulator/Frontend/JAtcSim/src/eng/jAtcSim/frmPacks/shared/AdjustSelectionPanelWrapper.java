@@ -3,6 +3,7 @@ package eng.jAtcSim.frmPacks.shared;
 import eng.eSystem.Tuple;
 import eng.eSystem.functionalInterfaces.Selector;
 import eng.eSystem.swing.DialogResult;
+import eng.jAtcSim.newLib.gameSim.ISimulation;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,7 +15,7 @@ import java.awt.event.WindowEvent;
 public class AdjustSelectionPanelWrapper<T> {
 
   public interface ActionSelectionPanelWraperListener<T> {
-    Tuple<Iterable<T>, Selector<T, String>> doInit();
+    Tuple<Iterable<T>, Selector<T, String>> doInit(ISimulation simulation);
 
     Iterable<T> doRequest();
 
@@ -27,7 +28,8 @@ public class AdjustSelectionPanelWrapper<T> {
   public AdjustSelectionPanelWrapper(ActionSelectionPanelWraperListener<T> listener, JButton... buttons) {
     this.lis = listener;
 
-    Tuple<Iterable<T>, Selector<T, String>> tmp = lis.doInit();
+    //TODO "null" is not correct on the next line
+    Tuple<Iterable<T>, Selector<T, String>> tmp = lis.doInit(null);
     this.pnl = new AdjustSelectionPanel<>(tmp.getB());
     this.pnl.setItems(tmp.getA());
 

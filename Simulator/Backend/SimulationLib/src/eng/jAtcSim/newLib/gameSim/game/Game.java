@@ -2,6 +2,7 @@ package eng.jAtcSim.newLib.gameSim.game;
 
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
+import eng.jAtcSim.newLib.gameSim.ISimulation;
 import eng.jAtcSim.newLib.gameSim.game.sources.*;
 import eng.jAtcSim.newLib.gameSim.game.startupInfos.GameStartupInfo;
 import eng.jAtcSim.newLib.gameSim.simulation.Simulation;
@@ -109,6 +110,10 @@ public class Game {
   private TrafficSource trafficSource;
   private WeatherSource weatherSource;
   private Simulation simulation;
+
+  public Simulation getSimulation() {
+    return this.simulation;
+  }
 
 //  public static Game load(String fileName, IMap<String, Object> customData) {
 //    eng.jAtcSim.newLib.gameSim.Game ret = new eng.jAtcSim.newLib.gameSim.Game();

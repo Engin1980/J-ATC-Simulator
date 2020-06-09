@@ -53,7 +53,6 @@ public class RecentStats {
     public int getMaximumDelay() {
       return RecentStats.this.holdingPointDelays.maxInt(q -> q.getValue(), 0);
     }
-
   }
 
   public class MovementsPerHour {
@@ -228,33 +227,33 @@ public class RecentStats {
     elapsedSecondDuration.add(ms);
   }
 
-  //  public CurrentPlanesCount getCurrentPlanesCount() {
-//    return clsCurrent;
-//  }
-//
-//  public Delays getDelays() {
-//    return clsDelays;
-//  }
-//
-//  public ElapsedSecondDurationModel getElapsedSecondDuration() {
-//    return elapsedSecondDuration;
-//  }
-//
-//  public Errors getErrors() {
-//    return clsErrors;
-//  }
-//
-//  public FinishedPlanes getFinishedPlanes() {
-//    return clsFinished;
-//  }
-//
-//  public HoldingPoint getHoldingPoint() {
-//    return clsHP;
-//  }
-//
-//  public MovementsPerHour getMovementsPerHour() {
-//    return clsMovements;
-//  }
+    public CurrentPlanesCount getCurrentPlanesCount() {
+    return clsCurrent;
+  }
+
+  public Delays getDelays() {
+    return clsDelays;
+  }
+
+  public ElapsedSecondDurationModel getElapsedSecondDuration() {
+    return elapsedSecondDuration;
+  }
+
+  public Errors getErrors() {
+    return clsErrors;
+  }
+
+  public FinishedPlanes getFinishedPlanes() {
+    return clsFinished;
+  }
+
+  public HoldingPoint getHoldingPoint() {
+    return clsHP;
+  }
+
+  public MovementsPerHour getMovementsPerHour() {
+    return clsMovements;
+  }
 
   public void registerFinishedPlane(FinishedPlaneStats finishedPlaneStats) {
     if (finishedPlaneStats.isArrival())
