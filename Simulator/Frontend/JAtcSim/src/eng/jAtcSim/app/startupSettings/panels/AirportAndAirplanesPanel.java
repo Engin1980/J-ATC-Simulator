@@ -17,6 +17,9 @@ import eng.jAtcSim.shared.MessageBox;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
+import java.util.Objects;
+
+import static eng.eSystem.utilites.FunctionShortcuts.coalesce;
 
 public class AirportAndAirplanesPanel extends JStartupPanel {
 
@@ -33,7 +36,7 @@ public class AirportAndAirplanesPanel extends JStartupPanel {
     public boolean equals(Object obj) {
       if (obj instanceof AirportInfo == false) return false;
       AirportInfo other = (AirportInfo) obj;
-      return this.icao.equals(other.icao);
+      return Objects.equals(this.icao, other.icao);
     }
   }
 
@@ -58,7 +61,7 @@ public class AirportAndAirplanesPanel extends JStartupPanel {
   @Override
   public void fillBySettings(StartupSettings settings) {
     cmbAirports.clearItems();
-    AirportInfo ai = new AirportInfo(settings.recent.icao, settings.recent.icao + " (area not loaded)");
+    AirportInfo ai = new AirportInfo(settings.recent.icao, coalesce(settings.recent.icao, "") + " (area not loaded)");
     cmbAirports.addItem(ai);
     cmbAirports.setSelectedItem(ai);
 
@@ -102,11 +105,13 @@ public class AirportAndAirplanesPanel extends JStartupPanel {
   }
 
   private JPanel createPlanesPanel() {
-    JPanel ret = LayoutManager.createFormPanel(2, 3,
+    JPanel ret = LayoutManager.createFormPanel(3, 3,
         new JLabel("Airplane types:"),
         fleTypes.getTextControl(), fleTypes.getButtonControl(),
-        new JLabel("Fleets:"),
-        fleFleet.getTextControl(), fleFleet.getButtonControl());
+        new JLabel("Airlines fleets:"),
+        fleFleet.getTextControl(), fleFleet.getButtonControl(),
+        new JLabel("General aviation fleets:"),
+        fleGaFleet.getTextControl(), fleGaFleet.getButtonControl());
     return ret;
   }
 
@@ -128,6 +133,7 @@ public class AirportAndAirplanesPanel extends JStartupPanel {
   private void createComponents() {
 
     fleFleet = new XmlFileSelectorExtender(SwingFactory.FileDialogType.fleets);
+    fleGaFleet = new XmlFileSelectorExtender(SwingFactory.FileDialogType.fleets);
     fleTypes = new XmlFileSelectorExtender(SwingFactory.FileDialogType.types);
     fleArea = new XmlFileSelectorExtender(SwingFactory.FileDialogType.area);
     btnLoadArea = SwingFactory.createButton("Load", this::btnLoadArea_click);
