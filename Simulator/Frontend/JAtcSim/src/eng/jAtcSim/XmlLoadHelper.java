@@ -4,6 +4,7 @@ import eng.eSystem.utilites.ExceptionUtils;
 import eng.eXmlSerialization.XmlException;
 import eng.eXmlSerialization.XmlSerializer;
 import eng.eXmlSerialization.XmlSettings;
+import eng.eXmlSerialization.common.Log;
 import eng.eXmlSerialization.serializers.AttributeSerializer;
 import eng.eXmlSerialization.serializers.implemented.java_awt.AwtFontElementSerializer;
 import eng.eXmlSerialization.serializers.implemented.java_awt.HexToAwtColorAttributeSerializer;
@@ -44,6 +45,8 @@ public class XmlLoadHelper {
   public static StartupSettings loadStartupSettings(String fileName) {
     XmlSettings xmlSett = new XmlSettings();
     xmlSett.getSerializers().add(new LocalTimeAttributeSerializer());
+    xmlSett.getLog().getOnLog().add(XmlLoadHelper::log_onLog);
+    xmlSett.getLog().setVerbose(true);
     XmlSerializer ser = new XmlSerializer(xmlSett);
 
     StartupSettings ret;
@@ -59,6 +62,16 @@ public class XmlLoadHelper {
     }
 
     return ret;
+  }
+
+  private static void log_onLog(Log sender, Log.LogEventArgs e) {
+    System.out.print("XML ");
+    for (int i = 0; i < e.indent; i++) {
+      System.out.print(" ");
+    }
+    System.out.print(e.type);
+    System.out.print(" :: ");
+    System.out.println(e.message);
   }
 
   public static void saveStartupSettings(StartupSettings sett, String fileName) {
