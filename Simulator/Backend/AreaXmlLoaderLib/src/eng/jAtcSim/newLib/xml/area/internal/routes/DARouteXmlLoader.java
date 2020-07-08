@@ -114,7 +114,7 @@ public class DARouteXmlLoader extends XmlLoader<DARoute> {
     IList<String> navaidNames = commands
         .where(q -> q instanceof ToNavaidCommand)
         .select(q -> ((ToNavaidCommand) q).getNavaidName());
-    IList<Navaid> ret = navaidNames.select(q -> context.area.navaids.get(q));
+    IList<Navaid> ret = navaidNames.select(q -> context.area.navaids.getWithPBD(q));
     return ret;
   }
 

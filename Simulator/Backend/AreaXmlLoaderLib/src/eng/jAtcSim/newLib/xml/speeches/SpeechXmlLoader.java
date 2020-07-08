@@ -24,40 +24,34 @@ public class SpeechXmlLoader implements IXmlLoader<ICommand> {
     this.loaders.set("altitudeRouteRestrictionClear", new AltitudeRestrictionCommandXmlLoader());
     this.loaders.set("heading", new ChangeHeadingCommandXmlLoader());
     this.loaders.set("hold" , new HoldCommandXmlLoader());
-    this.loaders.set("afterSpeed", new AfterSpeedCommandXmlLoader());
-    this.loaders.set("afterHeading", new AfterHeadingCommandXmlLoader());
-    this.loaders.set("afterAltitude", new AfterAltitudeCommandXmlLoader());
-    this.loaders.set("afterDistance", new AfterDistanceCommandXmlLoader());
-    this.loaders.set("afterRadial", new AfterRadialCommandXmlLoader());
-    this.loaders.set("afterNavaid", new AfterNavaidCommandXmlLoader());
-
-    /*
-    <xs:element name="then" type="cm:ThenCommand"/>
-      <xs:element name="proceedDirect" type="cm:ToNavaidCommand"/>
-      <xs:element name="speed" type="cm:SpeedCommand"/>
-      <xs:element name="altitude" type="cm:AltitudeCommand"/>
-      <xs:element name="altitudeRouteRestriction" type="cm:AltitudeRestrictionCommand" />
-      <xs:element name="altitudeRouteRestrictionClear" type="cm:AltitudeRestrictionClearCommand" />
-      <xs:element name="heading" type="cm:HeadingCommand"/>
-      <xs:element name="hold" type="cm:HoldCommand"/>
-      <xs:element name="afterSpeed" type="cm:AfterSpeedCommand"/>
-      <xs:element name="afterHeading" type="cm:AfterHeadingCommand"/>
-      <xs:element name="afterAltitude" type="cm:AfterAltitudeCommand"/>
-      <xs:element name="afterDistance" type="cm:AfterDistanceCommand"/>
-      <xs:element name="afterRadial" type="cm:AfterRadialCommand"/>
-      <xs:element name="afterNavaid" type="cm:AfterNavaidCommand"/>
-     */
+    this.loaders.set("after+speed", new AfterSpeedCommandXmlLoader());
+    this.loaders.set("after+heading", new AfterHeadingCommandXmlLoader());
+    this.loaders.set("after+altitude", new AfterAltitudeCommandXmlLoader());
+    this.loaders.set("after+distance", new AfterDistanceCommandXmlLoader());
+    this.loaders.set("after+radial", new AfterRadialCommandXmlLoader());
+    this.loaders.set("after+navaid", new AfterNavaidCommandXmlLoader());
   }
 
   @Override
   public ICommand load(XElement source) {
-    IXmlLoader<? extends ICommand> xmlLoader = this.loaders.tryGet(source.getName());
+    String elementName = expandNameIfRequired(source);
+    IXmlLoader<? extends ICommand> xmlLoader = this.loaders.tryGet(elementName);
     if (xmlLoader == null)
       throw new XmlLoadException(
-          sf("Unable to load command from xml-element ''. No loader defined for this element.", source.getName()));
+          sf("Unable to load command from xml-element '%s'. No loader defined for this element.", source.getName()));
     else{
       ICommand ret = xmlLoader.load(source);
       return ret;
     }
+  }
+
+  public static String expandNameIfRequired(XElement elm){
+    String ret;
+    if (elm.getName().equals("after")){
+      ret = elm.getName() + "+" + elm.getAttribute("property");
+    } else {
+      ret = elm.getName();
+    }
+    return ret;
   }
 }

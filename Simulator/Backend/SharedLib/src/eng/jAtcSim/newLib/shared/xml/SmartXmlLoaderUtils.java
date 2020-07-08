@@ -5,20 +5,41 @@ import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
-import eng.eSystem.exceptions.EXmlException;
-import eng.eSystem.exceptions.ToDoException;
 import eng.eSystem.geo.Coordinate;
 import eng.jAtcSim.newLib.shared.PlaneCategoryDefinitions;
+import eng.jAtcSim.newLib.shared.enums.AboveBelowExactly;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public abstract class SmartXmlLoaderUtils {
+
+  public static class ValueAndABE {
+    private AboveBelowExactly abe;
+    private int value;
+
+    public ValueAndABE(int value, AboveBelowExactly abe) {
+      this.value = value;
+      this.abe = abe;
+    }
+
+    public AboveBelowExactly getAbe() {
+      return abe;
+    }
+
+    public int getValue() {
+      return value;
+    }
+  }
 
   private static XElement context;
   private static boolean printLogToConsole = false;
 
   public static boolean isPrintLogToConsole() {
     return printLogToConsole;
+  }
+
+  public static void setPrintLogToConsole(boolean printLogToConsole) {
+    SmartXmlLoaderUtils.printLogToConsole = printLogToConsole;
   }
 
   public static int loadAltitude(String key) {
@@ -147,12 +168,12 @@ public abstract class SmartXmlLoaderUtils {
     if (tmp == null)
       return defaultValue;
     else
-      try{
+      try {
         ret = Coordinate.parse(tmp);
-      } catch (Exception ex){
+      } catch (Exception ex) {
         throw new EApplicationException(sf("Failed to parse coordinate from '%s'.", tmp), ex);
       }
-      return ret;
+    return ret;
   }
 
   public static Double loadDouble(String key, Double defaultValue) {
@@ -236,6 +257,14 @@ public abstract class SmartXmlLoaderUtils {
     return tmp;
   }
 
+  // this is duplicite with IXmlLoader as IXmlLoader is functional interface
+//  public static <T> void loadList(IReadOnlyList<XElement> elements, IList<T> list, Function<XElement, T> function) {
+//    for (XElement element : elements) {
+//      T item = function.apply(element);
+//      list.add(item);
+//    }
+//  }
+
   public static Integer loadInteger(XElement source, String key, Integer defaultValue) {
     Integer ret;
     String tmp = loadString(source, key, null);
@@ -249,14 +278,6 @@ public abstract class SmartXmlLoaderUtils {
       }
     return ret;
   }
-
-  // this is duplicite with IXmlLoader as IXmlLoader is functional interface
-//  public static <T> void loadList(IReadOnlyList<XElement> elements, IList<T> list, Function<XElement, T> function) {
-//    for (XElement element : elements) {
-//      T item = function.apply(element);
-//      list.add(item);
-//    }
-//  }
 
   public static <T> IList<T> loadList(IReadOnlyList<XElement> elements, IXmlLoader<T> xmlLoader) {
     IList<T> ret = new EList<>();
@@ -344,14 +365,40 @@ public abstract class SmartXmlLoaderUtils {
     return ret;
   }
 
+  public static ValueAndABE loadValueAndAboveBelowExactly(String value) {
+    return loadValueAndAboveBelowExactly(context, value);
+  }
+
+  public static ValueAndABE loadValueAndAboveBelowExactly(XElement source, String value) {
+    AboveBelowExactly abe;
+    int val;
+
+    if (value.endsWith("-"))
+      abe = AboveBelowExactly.below;
+    else if (value.endsWith("+"))
+      abe = AboveBelowExactly.above;
+    else
+      abe = AboveBelowExactly.exactly;
+    if (abe != AboveBelowExactly.exactly)
+      value = value.substring(0, value.length() - 1);
+    val = Integer.parseInt(value);
+
+    ValueAndABE ret = new ValueAndABE(val, abe);
+    return ret;
+  }
+
   public static void setContext(XElement context) {
     if (printLogToConsole)
       System.out.println("XmlLoader - context change " + context.toXmlPath(true));
     SmartXmlLoaderUtils.context = context;
   }
 
-  public static void setPrintLogToConsole(boolean printLogToConsole) {
-    SmartXmlLoaderUtils.printLogToConsole = printLogToConsole;
+  private static void checkValueIsInPossibilities(String content, String[] possibleValues) {
+    if (content != null && possibleValues != null) {
+      IList<String> tmp = new EList<>(possibleValues);
+      if (tmp.contains(content) == false)
+        throw new EApplicationException("Error in loading - string does not match any of required values.");
+    }
   }
 
   private static String readValueFromXml(XElement source, String key) {
@@ -368,18 +415,6 @@ public abstract class SmartXmlLoaderUtils {
     return ret;
   }
 
-  private static void checkValueIsInPossibilities(String content, String[] possibleValues) {
-    if (content != null && possibleValues != null) {
-      IList<String> tmp = new EList<>(possibleValues);
-      if (tmp.contains(content) == false)
-        throw new EApplicationException("Error in loading - string does not match any of required values.");
-    }
-  }
-
-  private static RuntimeException throwNotFound(XElement element, String key) {
-    return new EApplicationException(sf("Mandatory value not found for key '%s'", key));
-  }
-
   private static RuntimeException throwConvertFail(Object value, Class<?> targetType) {
     return throwConvertFail(value, targetType, null);
   }
@@ -388,5 +423,9 @@ public abstract class SmartXmlLoaderUtils {
     return new EApplicationException(sf(
         "The conversion of the value %s to type %s has failed.", value, targetType.getName()
     ), innerException);
+  }
+
+  private static RuntimeException throwNotFound(XElement element, String key) {
+    return new EApplicationException(sf("Mandatory value not found for key '%s'", key));
   }
 }

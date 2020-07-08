@@ -84,7 +84,7 @@ public class DARoute extends Route {
     IList<String> navaidNames = this.getRouteCommands()
         .whereItemClassIs(ToNavaidCommand.class,true)
         .select(q->q.getNavaidName());
-    IList<Navaid> ret = navaidNames.select(q -> AreaAcc.getNavaids().get(q));
+    IList<Navaid> ret = navaidNames.select(q -> AreaAcc.getNavaids().getWithPBD(q));
     return ret;
   }
 

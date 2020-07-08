@@ -12,5 +12,5 @@ module JAtcSim.Modules.Backend.AreaLib {
   exports eng.jAtcSim.newLib.area.context to
       JAtcSim.Modules.Backend.AirplanesLib,
       JAtcSim.Modules.Backend.AtcLib,
-      JAtcSim.Modules.Backend.SimulationLib;
+      JAtcSim.Modules.Backend.SimulationLib, AreaXmlLoaderLib;
 }

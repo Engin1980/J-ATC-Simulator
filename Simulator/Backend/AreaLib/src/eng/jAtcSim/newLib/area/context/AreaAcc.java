@@ -11,6 +11,7 @@ public class AreaAcc {
   private static Producer<Airport> airportProducer = null;
   private static Producer<RunwayConfiguration> currentRunwayConfigurationProducer = null;
   private static Producer<RunwayConfiguration> scheduledRunwayConfigurationProducer = null;
+  private static Producer<NavaidList> navaidListProducer = null;
 
   public static Airport getAirport() {
     return airportProducer.produce();
@@ -34,10 +35,19 @@ public class AreaAcc {
 
   public static void setAreaProducer(Producer<Area> areaProducer) {
     AreaAcc.areaProducer = areaProducer;
+    AreaAcc.navaidListProducer = () -> areaProducer.produce().getNavaids();
   }
 
   public static void setCurrentRunwayConfigurationProducer(Producer<RunwayConfiguration> currentRunwayConfigurationProducer) {
     AreaAcc.currentRunwayConfigurationProducer = currentRunwayConfigurationProducer;
+  }
+
+  public static Producer<NavaidList> getNavaidListProducer() {
+    return navaidListProducer;
+  }
+
+  public static void setNavaidsProducer(Producer<NavaidList> navaidListProducer) {
+    AreaAcc.navaidListProducer = navaidListProducer;
   }
 
   public static void setScheduledRunwayConfigurationProducer(Producer<RunwayConfiguration> scheduledRunwayConfigurationProducer) {
@@ -45,6 +55,6 @@ public class AreaAcc {
   }
 
   public static NavaidList getNavaids(){
-    return getArea().getNavaids();
+    return navaidListProducer.produce();
   }
 }

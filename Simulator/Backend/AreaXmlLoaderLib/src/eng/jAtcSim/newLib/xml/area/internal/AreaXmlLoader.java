@@ -20,7 +20,7 @@ public class AreaXmlLoader extends XmlLoader<Area> {
     context.area.icao = SmartXmlLoaderUtils.loadString("icao");
 
     context.area.navaids = new NavaidList();
-    AreaAcc.getNavaids()
+    AreaAcc.setNavaidsProducer(() -> context.area.navaids);
     SmartXmlLoaderUtils.loadList(
         source.getChild("navaids").getChildren("navaid"),
         context.area.navaids,
