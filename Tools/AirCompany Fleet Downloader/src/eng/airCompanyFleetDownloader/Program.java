@@ -5,9 +5,15 @@ import eng.eSystem.collections.EDistinctList;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IList;
+import eng.eSystem.eXml.XDocument;
+import eng.eSystem.eXml.XElement;
+import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.ERuntimeException;
+import eng.eSystem.exceptions.EXmlException;
 import eng.eSystem.utilites.ExceptionUtils;
 import eng.eXmlSerialization.XmlSerializer;
+import eng.eXmlSerialization.XmlSettings;
+import eng.eXmlSerialization.common.Log;
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -25,26 +31,23 @@ public class Program {
   private static final Path path = Paths.get("C:\\temp\\airlines");
   private static EMap<String, String> typeMap = new EMap<>();
 
-  public static void main(String[] params) {
+  public static void main(String[] params) throws EXmlException {
     System.out.println("Target dir " + path.toString());
     try {
       java.nio.file.Files.createDirectory(path);
     } catch (IOException e) {
-      System.out.println("Failed to create target dir. Exit");
-      return;
+      System.out.println("Warning: Output directory already exists. Items may be overwritten.");
     }
 
     //tmp();
-    downloadAirlines();
+    //downloadAirlines();
     downloadAirlinesFleets();
     convertToFleets();
   }
 
-  private static void convertToFleets() {
+  private static void convertToFleets() throws EXmlException {
     XmlSerializer ser = new XmlSerializer();
-    IList<AirlineInfo> lst = (EList<AirlineInfo>) ser.deserializeFromDocument(
-        getAirlinesListFile().toString(),
-        EList.class);
+    IList<AirlineInfo> lst = deserializeFromDocument(ser, getAirlinesListFile().toString(), EList.class);
 
     lst = lst.where(q -> q.getCodes().count(p -> p.length() == 3) == 1);
 
@@ -93,6 +96,19 @@ public class Program {
     index += 20;
 
     String ret = urlBase + "_" + index + ".htm";
+    return ret;
+  }
+
+  private static <T> T deserializeFromDocument(XmlSerializer ser, String fileName, Class<? extends T> type) {
+    XDocument doc;
+    try {
+      doc = XDocument.load(fileName);
+    } catch (EXmlException e) {
+      throw new EApplicationException(sf("Unable to load file '%s'.", fileName), e);
+    }
+
+    T ret = ser.deserialize(doc.getRoot(), type);
+
     return ret;
   }
 
@@ -161,24 +177,23 @@ public class Program {
     airline.setDecoded(true);
   }
 
-  private static void downloadAirlines() {
+  private static void downloadAirlines() throws EXmlException {
 
     IList<AirlineInfo> lst = new EList<>();
     XmlSerializer ser = new XmlSerializer();
 
-    String base = "http://www.airfleets.net/recherche/list-airline-%s.htm";
+    String base = "https://www.airfleets.net/recherche/list-airline-%s.htm";
     for (int i = 'a'; i <= 'z'; i++) {
       char c = (char) i;
       String s = sf(base, c);
       IList<AirlineInfo> tmp = downloadAirlinesByLetter(s);
       lst.add(tmp);
 
-      ser.serializeToDocument(lst, getTmpFile().toString());
+      serializeToDocument(ser, lst, getTmpFile().toString());
     }
 
     lst = lst.where(q -> q.isActive());
-
-    ser.serializeToDocument(lst, getAirlinesListFile().toString());
+    serializeToDocument(ser, lst, getAirlinesListFile().toString());
   }
 
   private static IList<AirlineInfo> downloadAirlinesByLetter(String url) {
@@ -214,8 +229,10 @@ public class Program {
 
   private static void downloadAirlinesFleets() {
     IList<AirlineInfo> src;
-    XmlSerializer ser = new XmlSerializer();
-    src = (IList<AirlineInfo>) ser.deserializeFromDocument(getAirlinesListFile().toString(), EList.class);
+    XmlSettings sett = new XmlSettings();
+    sett.getLog().getOnLog().add(new Log.DefaultOnLogHandler());
+    XmlSerializer ser = new XmlSerializer(sett);
+    src = (IList<AirlineInfo>) deserializeFromDocument(ser, getAirlinesListFile().toString(), EList.class);
     int savedCount = 0;
     int saveStep = 10;
 
@@ -257,12 +274,12 @@ public class Program {
       savedCount++;
       if (savedCount > saveStep) {
         System.out.println("\tsaving");
-        ser.serializeToDocument(src, getAirlinesListFile().toString());
+        serializeToDocument(ser, src, getAirlinesListFile().toString());
         savedCount = 0;
       }
     }
 
-    ser.serializeToDocument(src, getAirlinesListFile().toString());
+    serializeToDocument(ser, src, getAirlinesListFile().toString());
   }
 
   private static Path getAirlinesListFile() {
@@ -291,10 +308,21 @@ public class Program {
     return ret;
   }
 
+  private static <T> void serializeToDocument(XmlSerializer ser, T object, String fileName) {
+    XElement elm = new XElement("root");
+    ser.serialize(object, elm);
+    XDocument doc = new XDocument(elm);
+    try {
+      doc.save(fileName);
+    } catch (EXmlException e) {
+      throw new EApplicationException(sf("Unable to save file '%s'.", fileName), e);
+    }
+  }
+
   private static void tmp() {
     EDistinctList<String> dst = new EDistinctList<>(q -> q, EDistinctList.Behavior.skip);
     XmlSerializer ser = new XmlSerializer();
-    IList<AirlineInfo> lst = (EList<AirlineInfo>) ser.deserializeFromDocument(
+    IList<AirlineInfo> lst = (EList<AirlineInfo>) deserializeFromDocument(ser,
         getAirlinesListFile().toString(),
         EList.class);
 

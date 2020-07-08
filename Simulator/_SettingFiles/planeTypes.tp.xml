@@ -341,15 +341,6 @@
           speedIncreaseRate="3" speedDecreaseRate="3"
           headingChangeRate="3"/>
 
-    <type name="MD11" category="C" maxAltitude="43000"
-          vMinApp="130" vApp="140" vMaxApp="170"
-          vR="145" vDep="155"
-          vMinClean="200" vMaxClean="330" vCruise="287"
-          lowClimbRate="4201" highClimbRate="701"
-          lowDescendRate="1601" highDescendRate="3501"
-          speedIncreaseRate="3" speedDecreaseRate="3"
-          headingChangeRate="3"/>
-
     <type name="AJ21" category="C" maxAltitude="39000"
           vMinApp="120" vApp="130" vMaxApp="160"
           vR="140" vDep="150"
@@ -387,15 +378,6 @@
           headingChangeRate="3"/>
 
     <type name="BCS" category="C" maxAltitude="39000"
-          vMinApp="120" vApp="130" vMaxApp="160"
-          vR="140" vDep="150"
-          vMinClean="190" vMaxClean="330" vCruise="287"
-          lowClimbRate="4501" highClimbRate="701"
-          lowDescendRate="1501" highDescendRate="3501"
-          speedIncreaseRate="3" speedDecreaseRate="3"
-          headingChangeRate="3" />
-
-    <type name="E175" category="C" maxAltitude="39000"
           vMinApp="120" vApp="130" vMaxApp="160"
           vR="140" vDep="150"
           vMinClean="190" vMaxClean="330" vCruise="287"

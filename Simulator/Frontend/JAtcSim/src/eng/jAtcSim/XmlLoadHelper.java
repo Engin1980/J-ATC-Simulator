@@ -1,10 +1,17 @@
 package eng.jAtcSim;
 
+import eng.eSystem.eXml.XDocument;
+import eng.eSystem.eXml.XElement;
+import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.EXmlException;
 import eng.eSystem.utilites.ExceptionUtils;
 import eng.eXmlSerialization.XmlException;
 import eng.eXmlSerialization.XmlSerializer;
 import eng.eXmlSerialization.XmlSettings;
 import eng.eXmlSerialization.common.Log;
+import eng.eXmlSerialization.meta.TypeInfo;
+import eng.eXmlSerialization.meta.XmlRepresentation;
+import eng.eXmlSerialization.meta.XmlRule;
 import eng.eXmlSerialization.serializers.AttributeSerializer;
 import eng.eXmlSerialization.serializers.implemented.java_awt.AwtFontElementSerializer;
 import eng.eXmlSerialization.serializers.implemented.java_awt.HexToAwtColorAttributeSerializer;
@@ -44,15 +51,22 @@ public class XmlLoadHelper {
 //
   public static StartupSettings loadStartupSettings(String fileName) {
     XmlSettings xmlSett = new XmlSettings();
+    {
+      TypeInfo ti = xmlSett.getMeta().forClass(StartupSettings.CustomTraffic.class);
+      ti.forField("movementsPerHour").getRules().add(
+          new XmlRule("item", int.class, XmlRepresentation.element, null)
+      );
+    }
     xmlSett.getSerializers().add(new LocalTimeAttributeSerializer());
     xmlSett.getLog().getOnLog().add(XmlLoadHelper::log_onLog);
-    xmlSett.getLog().setVerbose(true);
     XmlSerializer ser = new XmlSerializer(xmlSett);
 
     StartupSettings ret;
 
     try {
-      ret = ser.deserializeFromDocument(fileName, StartupSettings.class);
+      XDocument doc = XDocument.load(fileName);
+      XElement root = doc.getRoot();
+      ret = ser.deserialize(root, StartupSettings.class);
     } catch (Exception ex) {
       SharedAcc.getAppLog().writeLine(
           ApplicationLog.eType.warning,
@@ -65,35 +79,52 @@ public class XmlLoadHelper {
   }
 
   private static void log_onLog(Log sender, Log.LogEventArgs e) {
+    if (e.type == Log.Type.progressObject) return;
+    if (e.type == Log.Type.progressXml) return;
+    if (e.type == Log.Type.progressSerializer) return;
+
     System.out.print("XML ");
+    System.out.print(String.format("%-20s", e.type));
+    System.out.print(" :: ");
     for (int i = 0; i < e.indent; i++) {
       System.out.print(" ");
     }
-    System.out.print(e.type);
-    System.out.print(" :: ");
     System.out.println(e.message);
   }
 
   public static void saveStartupSettings(StartupSettings sett, String fileName) {
     XmlSettings xmlSett = new XmlSettings();
     xmlSett.getSerializers().add(new LocalTimeAttributeSerializer());
+    xmlSett.getLog().getOnLog().add(XmlLoadHelper::log_onLog);
     XmlSerializer ser = new XmlSerializer(xmlSett);
 
     try {
-      ser.serializeToDocument(sett, fileName);
+      XElement elm = new XElement("startupSettings");
+      XDocument doc = new XDocument(elm);
+      ser.serialize(sett, elm);
+
+      doc.save(fileName);
     } catch (Exception ex) {
       SharedAcc.getAppLog().writeLine(
           ApplicationLog.eType.warning,
           "Failed to save app settings into " + fileName + ". Reason: " + ex.getMessage());
     }
   }
+
   public static RadarStyleSettings loadNewDisplaySettings(String fileName) {
     XmlSettings sett = new XmlSettings();
     sett.getSerializers().add(new RadarColorAttributeSerializer());
     sett.getSerializers().add(new RadarFontElementSerializer());
     XmlSerializer ser = new XmlSerializer(sett);
 
-    RadarStyleSettings ret = ser.deserializeFromDocument(fileName, RadarStyleSettings.class);
+
+    RadarStyleSettings ret = null;
+    try {
+      XDocument doc = XDocument.load(fileName);
+      ret = ser.deserialize(doc.getRoot(), RadarStyleSettings.class);
+    } catch (EXmlException e) {
+      throw new EApplicationException(sf("Unable to load radar-style-settings from '%s'.", fileName), e);
+    }
     return ret;
   }
 
@@ -104,13 +135,26 @@ public class XmlLoadHelper {
 
     XmlSerializer ser = new XmlSerializer(sett);
 
-    FlightStripSettings ret = ser.deserializeFromDocument(fileName, FlightStripSettings.class);
+    FlightStripSettings ret = null;
+    try {
+      XDocument doc = XDocument.load(fileName);
+      ret = ser.deserialize(doc.getRoot(), FlightStripSettings.class);
+    } catch (EXmlException e) {
+      throw new EApplicationException(sf("Unable to load flight-strip-settings from '%s'.", fileName), e);
+    }
     return ret;
   }
 
   public static AppSettings loadApplicationSettings(String fileName) {
     XmlSerializer ser = new XmlSerializer();
-    AppSettings ret = ser.deserializeFromDocument(fileName, AppSettings.class);
+
+    AppSettings ret = null;
+    try {
+      XDocument doc = XDocument.load(fileName);
+      ret = ser.deserialize(doc.getRoot(), AppSettings.class);
+    } catch (EXmlException e) {
+      throw new EApplicationException(sf("Unable to load application-settings from '%s'.", fileName), e);
+    }
     return ret;
   }
 

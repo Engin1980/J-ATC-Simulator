@@ -1,5 +1,9 @@
 package eng.coordinatesViewer;
 
+import eng.eSystem.eXml.XDocument;
+import eng.eSystem.eXml.XElement;
+import eng.eSystem.exceptions.ERuntimeException;
+import eng.eSystem.exceptions.EXmlException;
 import eng.eXmlSerialization.XmlSerializer;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -74,7 +78,12 @@ public class Main {
     File file = fileChooser.showOpenDialog(null);
     if (file != null) {
       XmlSerializer ser = new XmlSerializer();
-      this.project = ser.deserializeFromDocument(file.toString(), Project.class);
+      try {
+        XDocument doc = XDocument.load(file.toString());
+        this.project = ser.deserialize(doc.getRoot(), Project.class);
+      } catch (Exception e) {
+        throw new ERuntimeException("Unable to load " + file.toString());
+      }
       this.project.reinit();
       project.getRedrawRequiredEvent().add(() -> updateView());
       updateView();
@@ -89,7 +98,13 @@ public class Main {
     File res = fileChooser.showSaveDialog(null);
     if (res != null) {
       XmlSerializer ser = new XmlSerializer();
-      ser.serializeToDocument(this.project, res.toString());
+      XDocument doc = new XDocument(new XElement("root"));
+      ser.serialize(this.project, doc.getRoot());
+      try {
+        doc.save(res.toString());
+      } catch (EXmlException e) {
+        throw new ERuntimeException("Unable to save " + res.toString());
+      }
     }
   }
 

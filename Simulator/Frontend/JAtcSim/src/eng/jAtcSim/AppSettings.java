@@ -195,6 +195,7 @@ public class AppSettings {
   public AutoSave autosave = new AutoSave();
   @XmlIgnored
   private FlightStripSettings flightStripSettings = null;
+  public boolean verboseXmlOperations;
   public Path logFolder;
   public Radar radar = new Radar();
   public Path soundFolder;

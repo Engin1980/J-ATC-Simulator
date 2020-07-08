@@ -4,6 +4,7 @@ import eng.eSystem.collections.EList;
 import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IMap;
+import eng.eXmlSerialization.annotations.XmlConstructor;
 import eng.eXmlSerialization.annotations.XmlOptional;
 
 public class AirlineInfo {
@@ -17,6 +18,7 @@ public class AirlineInfo {
   @XmlOptional
   private boolean decoded = false;
 
+  @XmlConstructor
   private AirlineInfo() {
     name = null;
     url = null;

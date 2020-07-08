@@ -1,5 +1,6 @@
 package eng.jAtcSim.app.startupSettings;
 
+import eng.eSystem.ERandom;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.eXml.XDocument;
 import eng.eSystem.eXml.XElement;
@@ -11,7 +12,6 @@ import eng.eSystem.utilites.awt.ComponentUtils;
 import eng.jAtcSim.app.extenders.swingFactory.FileHistoryManager;
 import eng.jAtcSim.app.extenders.swingFactory.SwingFactory;
 import eng.jAtcSim.app.startupSettings.panels.*;
-import eng.jAtcSim.newLib.airplaneType.AirplaneTypes;
 import eng.jAtcSim.newLib.gameSim.game.sources.*;
 import eng.jAtcSim.newLib.shared.context.SharedAcc;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
@@ -165,6 +165,12 @@ public class FrmStartupSettings extends JPanel {
   private void validateSources() {
     StartupSettings ss = new StartupSettings();
     this.fillSettingsBy(ss);
+
+    // init required Acc accessors
+    {
+      ERandom rnd = new ERandom();
+      SharedAcc.setRandomProducer(() -> rnd);
+    }
 
     btnValidate.setEnabled(false);
     AirplaneTypesSource types = new AirplaneTypesSource(ss.files.planesXmlFile);

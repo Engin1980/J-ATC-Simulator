@@ -34,69 +34,6 @@
     <type name="E145" weight="3"/>
   </company>
   <company icao="ADR" name="Adria Airways">
-    <type name="CRJ" weight="10"/>
-    <type name="F70" weight="1"/>
-    <type name="A319" weight="3"/>
-  </company>
-  <company icao="ABH" name="AeBal - Aerolineas Baleares">
-  </company>
-  <company icao="AEE" name="Aegean Airlines">
-    <type name="A319" weight="1"/>
-    <type name="A321" weight="9"/>
-    <type name="A320" weight="37"/>
-  </company>
-  <company icao="AEE" name="Aegean Aviation">
-  </company>
-  <company icao="AOL" name="Aeolian Airlines">
-  </company>
-  <company icao="AAZ" name="Aeolus Air">
-
-
-  </company>
-  <company icao="REA" name="Aer Arann">
-
-
-  </company>
-  <company icao="EIN" name="Aer Lingus">
-
-    <type name="B757" weight="4"/>
-    <type name="A330" weight="12"/>
-    <type name="A321" weight="3"/>
-    <type name="A320" weight="34"/>
-
-  </company>
-  <company icao="ATT" name="Aer Turas">
-
-
-  </company>
-  <company icao="ACL" name="AerCaribe">
-
-    <type name="B737" weight="2"/>
-
-  </company>
-  <company icao="CFV" name="Aereo Calafia">
-
-    <type name="E120" weight="1"/>
-    <type name="E145" weight="4"/>
-
-  </company>
-  <company icao="AIS" name="Aeris">
-
-
-  </company>
-  <company icao="RFO" name="Aero Africa">
-
-
-  </company>
-  <company icao="EAY" name="Aero Airlines">
-
-
-  </company>
-  <company icao="RSO" name="Aero Asia">
-
-
-  </company>
-  <company icao="ADR" name="Adria Airways">
 
     <type name="CRJ" weight="10"/>
     <type name="F70" weight="1"/>
@@ -112,10 +49,6 @@
     <type name="A319" weight="1"/>
     <type name="A321" weight="9"/>
     <type name="A320" weight="37"/>
-
-  </company>
-  <company icao="AEE" name="Aegean Aviation">
-
 
   </company>
   <company icao="AOL" name="Aeolian Airlines">

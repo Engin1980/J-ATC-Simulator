@@ -350,9 +350,9 @@ public abstract class SmartXmlLoaderUtils {
   private static String readValueFromXml(XElement source, String key) {
     if (printLogToConsole)
       System.out.println("XmlLoader - loading value  " + context.toXmlPath(true) + " -- looking for " + key);
-    String ret = source.getAttribute(key);
+    String ret = source.tryGetAttribute(key);
     if (ret == null) {
-      XElement child = source.getChild(key);
+      XElement child = source.tryGetChild(key);
       if (child == null)
         ret = null;
       else

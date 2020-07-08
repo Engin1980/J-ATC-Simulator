@@ -4,7 +4,7 @@ SETLOCAL
 
 ECHO Library eSystem
 SET PF=eng.eSystem.jar
-SET TCPF=..\..\..\_eSystem\eng.eSystem\out\artifacts\%PF%
+SET TCPF=..\..\..\_eSystem\%PF%
 IF EXIST "%TCPF%" (
     ECHO    Library found, updating
     COPY "%TCPF%" "%PF%" /Y
@@ -13,8 +13,8 @@ IF EXIST "%TCPF%" (
 )
 
 ECHO Library xmlSerialization
-SET PF=EXmlSerialization.jar
-SET TCPF=..\..\..\_eSystem\eng.eSystem.xmlSerialization\out\artifacts\EXmlSerialization_jar\%PF%
+SET PF=eng.eXmlSerialization.jar
+SET TCPF=..\..\..\_eSystem\%PF%
 IF EXIST "%TCPF%" (
     ECHO    Library found, updating
     COPY "%TCPF%" "%PF%" /Y

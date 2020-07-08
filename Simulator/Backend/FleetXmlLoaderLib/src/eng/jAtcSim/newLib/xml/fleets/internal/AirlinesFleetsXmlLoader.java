@@ -9,10 +9,15 @@ import eng.jAtcSim.newLib.fleet.airliners.AirlinesFleets;
 import eng.jAtcSim.newLib.shared.xml.SmartXmlLoaderUtils;
 
 public class AirlinesFleetsXmlLoader {
-  public AirlinesFleets load(XElement root) {
-    EAssert.isTrue(root.getName().equals("airlinersFleets"), "Incorrect loading xml element");
+  //TODO solve later
+  private static final boolean ERROR_ON_DUPLICIT_KEYS = false;
 
-    IList<CompanyFleet> tmp = new EDistinctList<>(q->q.getIcao(), EDistinctList.Behavior.exception);
+  public AirlinesFleets load(XElement root) {
+    EAssert.isTrue(root.getName().equals("airlinesFleets"), "Incorrect loading xml element");
+
+    IList<CompanyFleet> tmp = ERROR_ON_DUPLICIT_KEYS ?
+        new EDistinctList<>(q->q.getIcao(), EDistinctList.Behavior.exception) :
+        new EDistinctList<>(q->q.getIcao(), EDistinctList.Behavior.skip);
     SmartXmlLoaderUtils.loadList(
         root.getChildren("company"),
         tmp,

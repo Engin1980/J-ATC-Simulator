@@ -8,6 +8,7 @@
   <xs:element name="settings">
     <xs:complexType>
       <xs:sequence>
+        <xs:element name="verboseXmlOperations" type="xs:boolean" />
         <xs:element name="soundFolder" type="xs:string" />
         <xs:element name="logFolder" type="xs:string" />
         <xs:element name="startupSettingsFile" type="xs:string" />

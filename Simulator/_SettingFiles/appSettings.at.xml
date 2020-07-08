@@ -2,6 +2,7 @@
 <settings
         xmlns="https://github.com/Engin1980/J-ATC-Simulator/appSettings"
 >
+  <verboseXmlOperations>true</verboseXmlOperations>
   <soundFolder>$app$/_Sounds</soundFolder>
   <logFolder>./temp/$time$/</logFolder>
   <startupSettingsFile>$app$/_SettingFiles/defaultStartupSettings.ss.xml</startupSettingsFile>
