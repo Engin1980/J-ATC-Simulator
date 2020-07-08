@@ -3,6 +3,8 @@ package eng.jAtcSim.newLib.area;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.validation.EAssert;
 
+import static eng.eSystem.utilites.FunctionShortcuts.sf;
+
 public class InitialPosition {
 
   private final Coordinate coordinate;
@@ -25,5 +27,10 @@ public class InitialPosition {
 
   public int getRange() {
     return range;
+  }
+
+  @Override
+  public String toString() {
+    return sf("Initial position: %s at %d nm", coordinate.toString(), range);
   }
 }

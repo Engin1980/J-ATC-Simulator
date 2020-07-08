@@ -5,6 +5,7 @@ import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.exceptions.EXmlException;
 import eng.eSystem.exceptions.ToDoException;
 import eng.eSystem.geo.Coordinate;
 import eng.jAtcSim.newLib.shared.PlaneCategoryDefinitions;
@@ -134,18 +135,24 @@ public abstract class SmartXmlLoaderUtils {
   }
 
   public static Coordinate loadCoordinate(XElement source, String key) {
-    String tmp = loadString(source, key, null);
-    if (tmp == null)
+    Coordinate ret = loadCoordinate(source, key, null);
+    if (ret == null)
       throw throwNotFound(source, key);
-    throw new ToDoException();
+    return ret;
   }
 
   public static Coordinate loadCoordinate(XElement source, String key, Coordinate defaultValue) {
+    Coordinate ret;
     String tmp = loadString(source, key, null);
     if (tmp == null)
       return defaultValue;
     else
-      throw new ToDoException();
+      try{
+        ret = Coordinate.parse(tmp);
+      } catch (Exception ex){
+        throw new EApplicationException(sf("Failed to parse coordinate from '%s'.", tmp), ex);
+      }
+      return ret;
   }
 
   public static Double loadDouble(String key, Double defaultValue) {

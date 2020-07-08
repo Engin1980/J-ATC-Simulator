@@ -13,9 +13,9 @@ public class AtcXmlLoader implements IXmlLoader<Atc> {
     AtcType type = SmartXmlLoaderUtils.loadEnum("type", AtcType.class);
     String name = SmartXmlLoaderUtils.loadString("name");
     double frequency = SmartXmlLoaderUtils.loadDouble("frequency");
-    int acceptAltitude = SmartXmlLoaderUtils.loadInteger("acceptAltitude");
-    int releaseAltitude = SmartXmlLoaderUtils.loadInteger("releaseAltitude");
-    int orderedAltitude = SmartXmlLoaderUtils.loadInteger("orderedAltitude");
+    int acceptAltitude = SmartXmlLoaderUtils.loadAltitude("acceptAltitude");
+    int releaseAltitude = SmartXmlLoaderUtils.loadAltitude("releaseAltitude");
+    int orderedAltitude = SmartXmlLoaderUtils.loadAltitude("orderedAltitude");
     Integer ctrAcceptDistance = SmartXmlLoaderUtils.loadInteger("ctrAcceptDistance", null);
     Integer ctrNavaidAcceptDistance = SmartXmlLoaderUtils.loadInteger("ctrNavaidAcceptDistance", null);
 

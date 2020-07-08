@@ -5,6 +5,7 @@ import eng.eSystem.eXml.XElement;
 import eng.jAtcSim.newLib.area.Airport;
 import eng.jAtcSim.newLib.area.Area;
 import eng.jAtcSim.newLib.area.NavaidList;
+import eng.jAtcSim.newLib.area.context.AreaAcc;
 import eng.jAtcSim.newLib.shared.xml.SmartXmlLoaderUtils;
 import eng.jAtcSim.newLib.xml.area.internal.context.Context;
 
@@ -19,6 +20,7 @@ public class AreaXmlLoader extends XmlLoader<Area> {
     context.area.icao = SmartXmlLoaderUtils.loadString("icao");
 
     context.area.navaids = new NavaidList();
+    AreaAcc.getNavaids()
     SmartXmlLoaderUtils.loadList(
         source.getChild("navaids").getChildren("navaid"),
         context.area.navaids,

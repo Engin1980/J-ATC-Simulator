@@ -9,17 +9,15 @@ import eng.jAtcSim.newLib.area.*;
 import eng.jAtcSim.newLib.area.routes.DARoute;
 import eng.jAtcSim.newLib.area.routes.GaRoute;
 import eng.jAtcSim.newLib.area.routes.IafRoute;
+import eng.jAtcSim.newLib.shared.xml.SmartXmlLoaderUtils;
 import eng.jAtcSim.newLib.xml.area.internal.context.Context;
 import eng.jAtcSim.newLib.xml.area.internal.routes.DARouteXmlLoader;
 import eng.jAtcSim.newLib.xml.area.internal.routes.GaRouteXmlLoader;
 import eng.jAtcSim.newLib.xml.area.internal.routes.IafRouteXmlLoader;
-import eng.jAtcSim.newLib.shared.xml.SmartXmlLoaderUtils;
 
-class AirportXmlLoader extends  XmlLoader<Airport> {
+import static eng.eSystem.utilites.FunctionShortcuts.coalesce;
 
-  AirportXmlLoader(Context context) {
-    super(context);
-  }
+class AirportXmlLoader extends XmlLoader<Airport> {
 
   private static IReadOnlyList<XElement> extractRoutes(XElement source, String lookForElementName) {
     IList<XElement> ret = new EList<>();
@@ -30,6 +28,10 @@ class AirportXmlLoader extends  XmlLoader<Airport> {
     groups.forEach(q -> ret.add(extractRoutes(q, lookForElementName)));
 
     return ret;
+  }
+
+  AirportXmlLoader(Context context) {
+    super(context);
   }
 
   public Airport load(XElement source) {
@@ -62,7 +64,7 @@ class AirportXmlLoader extends  XmlLoader<Airport> {
     EntryExitPointList entryExitPoints;
     {
       IList<EntryExitPoint> tmp = SmartXmlLoaderUtils.loadList(
-          source.getChild("entryExitPoints").getChildren(),
+          coalesce(source.tryGetChild("entryExitPoints"), new XElement("tmp")).getChildren(),
           new EntryExitPointXmlLoader(context));
       entryExitPoints = new EntryExitPointList(tmp);
     }

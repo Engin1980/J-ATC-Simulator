@@ -16,7 +16,7 @@ public class PublishedHoldXmlLoader extends XmlLoader<PublishedHold> {
   @Override
   public PublishedHold load(XElement source) {
     SmartXmlLoaderUtils.setContext(source);
-    String navaidName = SmartXmlLoaderUtils.loadString("name");
+    String navaidName = SmartXmlLoaderUtils.loadString("navaidName");
     Navaid navaid = context.area.navaids.get(navaidName);
 
     int inboundRadial = SmartXmlLoaderUtils.loadInteger("inboundRadial");

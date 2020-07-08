@@ -32,10 +32,10 @@ public class Atc {
   private Atc(String name, AtcType type, double frequency, int acceptAltitude, int releaseAltitude, int orderedAltitude, Integer ctrAcceptDistance, Integer ctrNavaidAcceptDistance) {
     EAssert.Argument.isNotNull(name);
     EAssert.Argument.isTrue(frequency > 100 && frequency < 150);
-    EAssert.Argument.isTrue(acceptAltitude > 0);
-    EAssert.Argument.isTrue(releaseAltitude > 0);
-    EAssert.Argument.isTrue(acceptAltitude > releaseAltitude);
-    EAssert.Argument.isTrue(orderedAltitude > 0);
+    //TODO do the check in some different way, like minimal/maximal allowed altitude or something like that
+    if (type != AtcType.app) EAssert.Argument.isTrue(acceptAltitude > 0);
+    if (type != AtcType.app) EAssert.Argument.isTrue(releaseAltitude > 0);
+    if (type != AtcType.app) EAssert.Argument.isTrue(orderedAltitude > 0);
     this.type = type;
     this.name = name;
     this.frequency = frequency;
