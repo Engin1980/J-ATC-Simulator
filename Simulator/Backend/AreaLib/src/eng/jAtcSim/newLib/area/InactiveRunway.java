@@ -8,6 +8,11 @@ public class InactiveRunway extends Runway<InactiveRunway, InactiveRunwayThresho
     super(thresholds);
   }
 
+  public void bind() {
+    this.getThresholdA().setParent(this);
+    this.getThresholdB().setParent(this);
+  }
+
   @Override
   public String getName() {
     return getThresholdA().getName() + "-" + getThresholdB().getName() + "{inact}";

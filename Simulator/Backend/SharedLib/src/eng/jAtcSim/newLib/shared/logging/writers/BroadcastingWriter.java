@@ -36,7 +36,7 @@ public class BroadcastingWriter implements ILogWriter {
         if (exception != exceptions.getFirst()) {
           sb.append(" |||---||| ");
         }
-        String s = ExceptionUtils.toFullString(exception, "==>");
+        String s = ExceptionUtils.toFullString(exception, "\n\t\t");
         sb.append(s);
       }
     }

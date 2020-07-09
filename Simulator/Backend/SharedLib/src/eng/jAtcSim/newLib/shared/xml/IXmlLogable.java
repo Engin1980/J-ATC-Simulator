@@ -14,7 +14,7 @@ public interface IXmlLogable {
     }
     sb.append(String.format(format, params));
     if (VERBOSE_LOG) {
-      SharedAcc.getAppLog().writeLine(
+      SharedAcc.getAppLog().write(
           ApplicationLog.eType.info, sb.toString());
     }
   }

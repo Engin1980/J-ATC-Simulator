@@ -36,11 +36,11 @@ public class FileWriter implements ILogWriter {
       }
   }
 
-  @Override
-  public void newLine() throws IOException {
-    bw.newLine();
-    if (autoFlush) bw.flush();
-  }
+//  @Override
+//  public void newLine() throws IOException {
+//    bw.newLine();
+//    if (autoFlush) bw.flush();
+//  }
 
   @Override
   public void write(String text) throws IOException {

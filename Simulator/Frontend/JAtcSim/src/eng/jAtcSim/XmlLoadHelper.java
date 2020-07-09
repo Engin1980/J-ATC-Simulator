@@ -68,7 +68,7 @@ public class XmlLoadHelper {
       XElement root = doc.getRoot();
       ret = ser.deserialize(root, StartupSettings.class);
     } catch (Exception ex) {
-      SharedAcc.getAppLog().writeLine(
+      SharedAcc.getAppLog().write(
           ApplicationLog.eType.warning,
           "Failed to load startup settings from " + fileName +
               ". Defaults used. Reason: " + ExceptionUtils.toFullString(ex, "\n"));
@@ -105,7 +105,7 @@ public class XmlLoadHelper {
 
       doc.save(fileName);
     } catch (Exception ex) {
-      SharedAcc.getAppLog().writeLine(
+      SharedAcc.getAppLog().write(
           ApplicationLog.eType.warning,
           "Failed to save app settings into " + fileName + ". Reason: " + ex.getMessage());
     }

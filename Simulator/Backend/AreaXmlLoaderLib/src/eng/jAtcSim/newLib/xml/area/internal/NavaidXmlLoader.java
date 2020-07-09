@@ -11,7 +11,7 @@ class NavaidXmlLoader implements IXmlLoader<Navaid> {
       log(1, "Xml-loading navaid");
       SmartXmlLoaderUtils.setContext(source);
       String name = SmartXmlLoaderUtils.loadString("name");
-      log(2, "... navaid '%s'", name);
+      log(1, "... navaid '%s'", name);
       Coordinate coordinate = SmartXmlLoaderUtils.loadCoordinate("coordinate");
       Navaid.eType type = SmartXmlLoaderUtils.loadEnum("type", Navaid.eType.class);
       Navaid ret = Navaid.create(name, type, coordinate);

@@ -10,6 +10,6 @@ public class AutoNewLineLogWriter extends PipeLogWriter {
 
   @Override
   public void write(String text) throws IOException {
-    super.innerWriter.writeLine(text);
+    super.innerWriter.write(text +"\r\n");
   }
 }

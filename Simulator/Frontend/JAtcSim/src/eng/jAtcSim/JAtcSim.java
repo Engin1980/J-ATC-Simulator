@@ -56,7 +56,7 @@ public class JAtcSim {
   public static void loadSimulation(StartupSettings startupSettings, String xmlFileName) {
     //TODO Implement this: loading of the simulation
     throw new ToDoException("loading of the simulation");
-//    SharedAcc.getAppLog().writeLine(ApplicationLog.eType.info, "Loading saved simulation game");
+//    SharedAcc.getAppLog().write(ApplicationLog.eType.info, "Loading saved simulation game");
 //
 //    IMap<String, Object> map = new EMap<>();
 //
@@ -77,11 +77,11 @@ public class JAtcSim {
 ////        throw new EApplicationException("Some element in source XML files is not unique. Some of the input XML files is not valid.", ex);
 ////      }
 //
-//      SharedAcc.getAppLog().writeLine(ApplicationLog.eType.info, "Initializing sound environment");
+//      SharedAcc.getAppLog().write(ApplicationLog.eType.info, "Initializing sound environment");
 //      // sound
 //      SoundManager.init(appSettings.soundFolder.toString());
 //
-//      SharedAcc.getAppLog().writeLine(ApplicationLog.eType.info, "Starting a GUI");
+//      SharedAcc.getAppLog().write(ApplicationLog.eType.info, "Starting a GUI");
 //
 //    } catch (Exception ex) {
 //      throw ex;
@@ -154,7 +154,7 @@ public class JAtcSim {
 
     FrmStartupProgress frm = new FrmStartupProgress(10);
     frm.setVisible(true);
-    SharedAcc.getAppLog().writeLine(ApplicationLog.eType.info, "Starting new simulation game");
+    SharedAcc.getAppLog().write(ApplicationLog.eType.info, "Starting new simulation game");
     try {
       GameStartupInfo gsi = new GameStartupInfo();
 
@@ -226,11 +226,11 @@ public class JAtcSim {
 //        throw new EApplicationException("Some element in source XML files is not unique. Some of the input XML files is not valid.", ex);
 //      }
 
-      SharedAcc.getAppLog().writeLine(ApplicationLog.eType.info, "Initializing sound environment");
+      SharedAcc.getAppLog().write(ApplicationLog.eType.info, "Initializing sound environment");
       // sound
       SoundManager.init(appSettings.soundFolder.toString());
 
-      SharedAcc.getAppLog().writeLine(ApplicationLog.eType.info, "Starting a GUI");
+      SharedAcc.getAppLog().write(ApplicationLog.eType.info, "Starting a GUI");
       // starting pack & simulation
       String packType = startupSettings.radar.packClass;
       Pack simPack

@@ -65,6 +65,6 @@ public class FlightDataRecorder extends AirplaneRecorder {
 //    // from pilot
 //    sb.appendFormat(" BEH: {%s} ", plane.getBehaviorModule().get().toLogString());
 
-    journal.writeLine(sb.toString());
+    journal.write(sb.toString());
   }
 }

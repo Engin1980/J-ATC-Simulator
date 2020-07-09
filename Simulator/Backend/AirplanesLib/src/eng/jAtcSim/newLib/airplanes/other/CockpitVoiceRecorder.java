@@ -29,7 +29,7 @@ public class CockpitVoiceRecorder extends AirplaneRecorder {
     String trg = m.getTarget().toString();
     String cnt = m.getContent().toString(); //toLogString();
 
-    journal.writeLine(
+    journal.write(
         "FROM: %s %s TO: %s %s %s",
         src, SEPARATOR, trg, SEPARATOR, cnt);
   }
@@ -41,7 +41,7 @@ public class CockpitVoiceRecorder extends AirplaneRecorder {
       ISpeech cmd = cmds.get(i);
       sb.appendLine("\t").appendLine(cmd.toString()).appendLine();
     }
-    journal.writeLine(sb.toString());
+    journal.write(sb.toString());
   }
 
   public void logProcessedCurrentSpeeches(SpeechList current) {
@@ -51,7 +51,7 @@ public class CockpitVoiceRecorder extends AirplaneRecorder {
       ISpeech sp = current.get(i);
       sb.append("\t").append(sp.toString()).appendLine();
     }
-    journal.writeLine(sb.toString());
+    journal.write(sb.toString());
   }
 
 }

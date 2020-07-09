@@ -179,7 +179,7 @@ public class ActiveRunwayThresholdXmlLoader extends XmlLoader<ActiveRunwayThresh
     log(3, "Xml-loading active runway");
     SmartXmlLoaderUtils.setContext(source);
     String name = SmartXmlLoaderUtils.loadString("name");
-    log(4, "... active runway", name);
+    log(3, "... active runway '%s'", name);
     Coordinate coordinate = SmartXmlLoaderUtils.loadCoordinate("coordinate");
     int initialDepartureAltitude = SmartXmlLoaderUtils.loadInteger("initialDepartureAltitude");
     int accelerationAltitude = SmartXmlLoaderUtils.loadInteger("accelerationAltitude",

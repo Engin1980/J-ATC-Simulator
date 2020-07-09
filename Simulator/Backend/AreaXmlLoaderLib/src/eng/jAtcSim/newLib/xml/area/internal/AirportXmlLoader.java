@@ -38,7 +38,7 @@ class AirportXmlLoader extends XmlLoader<Airport> {
     log(1, "Xml-loading airport");
     SmartXmlLoaderUtils.setContext(source);
     String icao = SmartXmlLoaderUtils.loadString("icao");
-    log(2, "... airport '%s'", icao);
+    log(1, "... airport '%s'", icao);
     String name = SmartXmlLoaderUtils.loadString("name");
     int altitude = SmartXmlLoaderUtils.loadInteger("altitude");
     int transitionAltitude = SmartXmlLoaderUtils.loadInteger("transitionAltitude");
@@ -93,9 +93,13 @@ class AirportXmlLoader extends XmlLoader<Airport> {
         new ActiveRunwayXmlLoader(context));
     context.airport.activeRunways = runways;
 
-    IList<RunwayConfiguration> runwayConfigurations = SmartXmlLoaderUtils.loadList(
-        source.getChild("runwayConfigurations").getChildren(),
-        new RunwayConfigurationXmlLoader(context));
+    IList<RunwayConfiguration> runwayConfigurations = new EList<>();
+    {
+      SmartXmlLoaderUtils.loadList(
+          source.getChild("runwayConfigurations").getChildren(),
+          runwayConfigurations,
+          new RunwayConfigurationXmlLoader(context));
+    }
 
     // TODO check airport
     // binding should be done in constructor

@@ -15,6 +15,11 @@ import eng.eSystem.eXml.XElement;
  */
 public class ActiveRunway extends Runway<ActiveRunway, ActiveRunwayThreshold> {
 
+  public void bind() {
+    this.getThresholdA().setParent(this);
+    this.getThresholdB().setParent(this);
+  }
+
   public ActiveRunway(IReadOnlyList<ActiveRunwayThreshold> thresholds) {
     super(thresholds);
   }

@@ -37,10 +37,10 @@ public final class Journal {
     writers.forEach(q -> tryWriteToLog(q, tmp));
   }
 
-  public void writeLine(String format, Object... params) {
-    String tmp = prepareText(format, params);
-    writers.forEach(q -> tryWriteLineToLog(q, tmp));
-  }
+//  public void writeLine(String format, Object... params) {
+//    String tmp = prepareText(format, params);
+//    writers.forEach(q -> tryWriteLineToLog(q, tmp));
+//  }
 
   private String prepareText(String format, Object[] params) {
     String tmp;
@@ -58,13 +58,13 @@ public final class Journal {
       throw new ERuntimeException("Log " + this.name + " writing failed.", ex);
   }
 
-  private void tryWriteLineToLog(ILogWriter wrt, String value) {
-    try {
-      wrt.writeLine(value);
-    } catch (IOException ex) {
-      processError(ex);
-    }
-  }
+//  private void tryWriteLineToLog(ILogWriter wrt, String value) {
+//    try {
+//      wrt.writeLine(value);
+//    } catch (IOException ex) {
+//      processError(ex);
+//    }
+//  }
 
   private void tryWriteToLog(ILogWriter wrt, String value) {
     try {

@@ -24,7 +24,7 @@ public class GameFactory {
     Simulation simulation;
 
     try {
-      appLog.writeLine(ApplicationLog.eType.info, "Loading area");
+      appLog.write(ApplicationLog.eType.info, "Loading area");
       areaSource = new AreaSource(gsi.areaSource.areaXmlFile, gsi.areaSource.icao);
       areaSource.init();
     } catch (Exception ex) {
@@ -32,7 +32,7 @@ public class GameFactory {
     }
 
     try {
-      appLog.writeLine(ApplicationLog.eType.info, "Loading plane types");
+      appLog.write(ApplicationLog.eType.info, "Loading plane types");
       airplaneTypesSource = new AirplaneTypesSource(gsi.planesXmlFile);
       airplaneTypesSource.init();
     } catch (Exception ex) {
@@ -40,7 +40,7 @@ public class GameFactory {
     }
 
     try {
-      appLog.writeLine(ApplicationLog.eType.info, "Loading fleets");
+      appLog.write(ApplicationLog.eType.info, "Loading fleets");
       fleetsSource = new FleetsSource(gsi.generalAviationFleetsXmlFile, gsi.companyFleetsXmlFile);
       fleetsSource.init();
     } catch (Exception ex) {
@@ -48,7 +48,7 @@ public class GameFactory {
     }
 
     try {
-      appLog.writeLine(ApplicationLog.eType.info, "Loading traffic");
+      appLog.write(ApplicationLog.eType.info, "Loading traffic");
       if (gsi.trafficSource.specificTraffic != null) {
         trafficSource = new TrafficUserSource(gsi.trafficSource.specificTraffic);
       } else {
@@ -60,7 +60,7 @@ public class GameFactory {
     }
 
     try {
-      appLog.writeLine(ApplicationLog.eType.info, "Initializing weather");
+      appLog.write(ApplicationLog.eType.info, "Initializing weather");
       switch (gsi.weatherSource.weatherProviderType) {
         case online:
           weatherSource = new WeatherOnlineSource(true, gsi.areaSource.icao, gsi.weatherSource.initialWeather);
@@ -88,7 +88,7 @@ public class GameFactory {
 //    }
 
     try {
-      appLog.writeLine(ApplicationLog.eType.info, "Creating the simulation");
+      appLog.write(ApplicationLog.eType.info, "Creating the simulation");
       SimulationContext simulationContext = new SimulationContext(
           areaSource.getContent(),
           areaSource.getIcao(),
@@ -113,7 +113,7 @@ public class GameFactory {
           weatherSource,
           simulation
       );
-      appLog.writeLine(ApplicationLog.eType.info, "Initializing the simulation");
+      appLog.write(ApplicationLog.eType.info, "Initializing the simulation");
       simulation.init();
     } catch (Exception ex) {
       throw new EApplicationException("Unable to create or initialize the simulation.", ex);

@@ -12,7 +12,7 @@ public class AtcXmlLoader implements IXmlLoader<Atc> {
     log(2, "Xml-loading atc");
     SmartXmlLoaderUtils.setContext(source);
     String name = SmartXmlLoaderUtils.loadString("name");
-    log(3, "... atc '%s'", name);
+    log(2, "... atc '%s'", name);
     AtcType type = SmartXmlLoaderUtils.loadEnum("type", AtcType.class);
     double frequency = SmartXmlLoaderUtils.loadDouble("frequency");
     int acceptAltitude = SmartXmlLoaderUtils.loadAltitude("acceptAltitude");

@@ -40,7 +40,7 @@ public class BorderXmlLoader implements IXmlLoader<Border> {
     SmartXmlLoaderUtils.setContext(source);
     String name = SmartXmlLoaderUtils.loadString("name");
     Border.eType type = SmartXmlLoaderUtils.loadEnum("type", Border.eType.class);
-    log(2, "... border '%s (%s)'", name, type.toString());
+    log(1, "... border '%s (%s)'", name, type.toString());
     boolean enclosed = SmartXmlLoaderUtils.loadBoolean("enclosed");
     int minAltitude = EnumUtils.is(type, TYPES_MUST_HAVE_MIN_ALTITUDE)
         ? SmartXmlLoaderUtils.loadInteger("minAltitude")

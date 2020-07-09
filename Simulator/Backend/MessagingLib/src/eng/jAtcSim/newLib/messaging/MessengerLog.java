@@ -28,6 +28,6 @@ public class MessengerLog {
         msg.getTarget().toString(),
         msg.getContent().toString()
     );
-    this.journal.writeLine(line);
+    this.journal.write(line);
   }
 }

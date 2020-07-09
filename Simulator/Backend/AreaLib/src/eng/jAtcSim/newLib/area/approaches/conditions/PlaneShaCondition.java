@@ -17,6 +17,12 @@ public class PlaneShaCondition implements ICondition {
         minAltitude, null, null, null, null, null);
   }
 
+  public static PlaneShaCondition createAsMaximalAltitude(IntegerPerCategoryValue maxAltitude) {
+    EAssert.Argument.isNotNull(maxAltitude, "maxAltitude");
+    return new PlaneShaCondition(
+        null, maxAltitude, null, null, null, null);
+  }
+
   private final IntegerPerCategoryValue minAltitude;
   private final IntegerPerCategoryValue maxAltitude;
   private final IntegerPerCategoryValue minSpeed;

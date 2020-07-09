@@ -85,7 +85,7 @@ public class Recording {
           break;
       }
     } catch (Exception e) {
-      SharedAcc.getAppLog().writeLine(ApplicationLog.eType.critical,
+      SharedAcc.getAppLog().write(ApplicationLog.eType.critical,
           "Recording error. " + ExceptionUtils.toFullString(e, "\n\t"));
       this.stop();
     }

@@ -141,7 +141,7 @@ public class Simulation {
     long elapseStartMs = System.currentTimeMillis();
 
     if (isElapseSecondCalculationRunning) {
-      SharedAcc.getAppLog().writeLine(
+      SharedAcc.getAppLog().write(
           ApplicationLog.eType.warning,
           "elapseSecond() called before the previous one was finished!");
       return;

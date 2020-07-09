@@ -102,7 +102,10 @@ public class Area {
     this.borders = borders;
     this.icao = icao;
 
-    throw new ToDoException("Do Bindings");
+    this.airports.forEach(q->{
+      q.setParent(this);
+      q.bind();
+    });
   }
 
   public IReadOnlyList<Airport> getAirports() {

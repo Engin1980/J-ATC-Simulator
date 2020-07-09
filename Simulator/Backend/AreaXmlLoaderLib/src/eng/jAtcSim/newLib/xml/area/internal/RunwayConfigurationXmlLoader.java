@@ -29,7 +29,7 @@ public class RunwayConfigurationXmlLoader extends XmlLoader<RunwayConfiguration>
     for (XElement child : source.getChildren()) {
       RunwayThresholdConfiguration rtc = rtcxl.load(child);
       switch (child.getName()) {
-        case "departure":
+        case "departures":
           departures.add(rtc);
           break;
         case "arrivals":
@@ -40,28 +40,8 @@ public class RunwayConfigurationXmlLoader extends XmlLoader<RunwayConfiguration>
       }
     }
 
-    checkAllCategoriesAreApplied(departures, arrivals);
-
     RunwayConfiguration ret = new RunwayConfiguration(
         windFrom, windTo, windSpeedFrom, windSpeedTo, arrivals, departures);
     return ret;
-  }
-
-  private static void checkAllCategoriesAreApplied(
-      IList<RunwayThresholdConfiguration> departures,
-      IList<RunwayThresholdConfiguration> arrivals) {
-    //TODO this must be called after binding
-    IList<ActiveRunway> rwys = new EDistinctList<>(EDistinctList.Behavior.skip);
-    rwys.add(arrivals.select(q -> q.getThreshold().getParent()).distinct());
-    rwys.add(departures.select(q -> q.getThreshold().getParent()).distinct());
-
-    // check if all categories are applied
-    for (char i = 'A'; i <= 'D'; i++) {
-      char c = i;
-      if (!arrivals.isAny(q -> q.isForCategory(c)))
-        throw new EApplicationException("Unable to find arrival threshold for category " + c);
-      if (!departures.isAny(q -> q.isForCategory(c)))
-        throw new EApplicationException("Unable to find departure threshold for category " + c);
-    }
   }
 }

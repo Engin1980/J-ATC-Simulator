@@ -14,21 +14,23 @@ import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.area.approaches.Approach;
 import eng.jAtcSim.newLib.area.approaches.ApproachEntry;
 import eng.jAtcSim.newLib.area.approaches.ApproachStage;
+import eng.jAtcSim.newLib.area.approaches.behaviors.FlyRadialBehavior;
 import eng.jAtcSim.newLib.area.approaches.behaviors.FlyRadialWithDescentBehavior;
 import eng.jAtcSim.newLib.area.approaches.behaviors.LandingBehavior;
 import eng.jAtcSim.newLib.area.approaches.conditions.*;
 import eng.jAtcSim.newLib.area.approaches.locations.FixRelatedLocation;
 import eng.jAtcSim.newLib.area.approaches.locations.ILocation;
 import eng.jAtcSim.newLib.area.approaches.perCategoryValues.IntegerPerCategoryValue;
+import eng.jAtcSim.newLib.area.context.AreaAcc;
 import eng.jAtcSim.newLib.area.routes.GaRoute;
 import eng.jAtcSim.newLib.area.routes.IafRoute;
 import eng.jAtcSim.newLib.shared.enums.ApproachType;
-import eng.jAtcSim.newLib.shared.xml.XmlLoadException;
 import eng.jAtcSim.newLib.shared.xml.SmartXmlLoaderUtils;
+import eng.jAtcSim.newLib.shared.xml.XmlLoadException;
 import eng.jAtcSim.newLib.speeches.airplane.ICommand;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ChangeAltitudeCommand;
-import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ChangeHeadingCommand;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ProceedDirectCommand;
+import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ToNavaidCommand;
 import eng.jAtcSim.newLib.xml.area.internal.XmlLoader;
 import eng.jAtcSim.newLib.xml.area.internal.context.Context;
 
@@ -36,8 +38,19 @@ import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
 
-  private final static int MAXIMAL_DISTANCE_FROM_FAF_TO_ENTER_APPROACH = 20;
+  private static class HeadingAndCoordinate {
+    public final Coordinate coordinate;
+    public final int heading;
+    public final int range;
+
+    public HeadingAndCoordinate(int heading, Coordinate coordinate, int range) {
+      this.heading = heading;
+      this.coordinate = coordinate;
+      this.range = range;
+    }
+  }
   private final static int ENTRY_SECTOR_ONE_SIDE_ANGLE = 45;
+  private final static int MAXIMAL_DISTANCE_FROM_FAF_TO_ENTER_APPROACH = 20;
 
   public static double convertGlidePathDegreesToSlope(double gpDegrees) {
     return Math.tan(Math.toRadians(gpDegrees));
@@ -92,17 +105,12 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
   }
 
   private ILocation createApproachEntryLocationForRoute(IafRoute route) {
-    double expHeading = getOptimalEntryHeadingForRoute(route);
-    int fromRadial = (int) Headings.add(expHeading, 115);
-    int toRadial = (int) Headings.add(expHeading, 115);
-    Coordinate coordinate;
-    {
-      String navaidName = ((ProceedDirectCommand) route.getRouteCommands().get(0)).getNavaidName();
-      coordinate = context.area.navaids.get(navaidName).getCoordinate();
-    }
-    double maximalDistance = 10;
+    //IDEA this should somehow allow set custom entry location?
+    HeadingAndCoordinate hac = getOptimalEntryHeadingForRoute(route);
+    int fromRadial = (int) Headings.add(hac.heading, -115);
+    int toRadial = (int) Headings.add(hac.heading, 115);
     FixRelatedLocation ret = FixRelatedLocation.create(
-        coordinate, fromRadial, toRadial, maximalDistance);
+        hac.coordinate, fromRadial, toRadial, hac.range);
     return ret;
   }
 
@@ -118,26 +126,49 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
     return ret;
   }
 
-  private double getOptimalEntryHeadingForRoute(IafRoute route) {
+  private HeadingAndCoordinate getOptimalEntryHeadingForRoute(IafRoute route) {
     EAssert.Argument.isNotNull(route);
     EAssert.Argument.isTrue(route.getRouteCommands().isEmpty() == false);
-    EAssert.Argument.isTrue(route.getRouteCommands().get(0) instanceof ProceedDirectCommand);
-    ProceedDirectCommand first = (ProceedDirectCommand) route.getRouteCommands().get(0);
-    ICommand second = route.getRouteCommands().tryGetFirst(
-        q -> q instanceof ProceedDirectCommand || q instanceof ChangeHeadingCommand);
+
+    HeadingAndCoordinate ret = null;
+
+    for (int i = 0; i < route.getRouteCommands().size(); i++) {
+      ICommand routeCommand = route.getRouteCommands().get(i);
+      if (routeCommand instanceof FlyRadialBehavior) {
+        FlyRadialBehavior flyRadialBehavior = (FlyRadialBehavior) routeCommand;
+        ret = new HeadingAndCoordinate(
+            flyRadialBehavior.getInboundRadial(),
+            flyRadialBehavior.getCoordinate(),
+            25);
+        break;
+      } else if (routeCommand instanceof ToNavaidCommand) {
+        Navaid firstNavaid = AreaAcc.getNavaids().getWithPBD(((ToNavaidCommand) routeCommand).getNavaidName());
+        Navaid secondNavaid = null;
+        for (int j = i + 1; j < route.getRouteCommands().size(); j++) {
+          if (route.getRouteCommands().get(j) instanceof ToNavaidCommand) {
+            secondNavaid = AreaAcc.getNavaids().getWithPBD(((ToNavaidCommand) route.getRouteCommands().get(j)).getNavaidName());
+            break;
+          }
+        }
+        if (secondNavaid == null)
+          ret = new HeadingAndCoordinate(
+              (int) Coordinates.getBearing(firstNavaid.getCoordinate(), AreaAcc.getAirport().getLocation()),
+              firstNavaid.getCoordinate(),
+              15);
+        else
+          ret = new HeadingAndCoordinate(
+              (int) Coordinates.getBearing(firstNavaid.getCoordinate(), secondNavaid.getCoordinate()),
+              firstNavaid.getCoordinate(),
+              10);
+        break;
+      }
+    }
+
     EAssert.isNotNull(
-        second,
-        sf("Iaf-Route does not contain change-heading or proceed-direct on second or later index in commands. Airport: %s, threshold %s",
+        ret,
+        sf("Unable to detect entry heading for iaf-route. Airport: %s, threshold %s",
             context.airport.icao,
             context.threshold.name));
-    double ret;
-    if (second instanceof ProceedDirectCommand) {
-      Navaid a = context.area.navaids.get(first.getNavaidName());
-      Navaid b = context.area.navaids.get(((ProceedDirectCommand) second).getNavaidName());
-      ret = Coordinates.getBearing(a.getCoordinate(), b.getCoordinate());
-    } else if (second instanceof ChangeHeadingCommand) {
-      ret = ((ChangeHeadingCommand) second).getHeading();
-    } else throw new UnsupportedOperationException();
     return ret;
   }
 
@@ -188,7 +219,7 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
       );
       ICondition errorCondition = AggregatingCondition.create(
           AggregatingCondition.eConditionAggregator.or,
-          PlaneShaCondition.createAsMinimalAltitude(IntegerPerCategoryValue.create(daA, daB, daC, daD)),
+          PlaneShaCondition.createAsMaximalAltitude(IntegerPerCategoryValue.create(daA, daB, daC, daD)),
           PlaneOrderedAltitudeDifferenceCondition.create(IntegerPerCategoryValue.create(1000))
       );
       stages.add(ApproachStage.create(
@@ -278,9 +309,9 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
         );
         ICondition errorCondition = AggregatingCondition.create(
             AggregatingCondition.eConditionAggregator.or,
-            PlaneShaCondition.createAsMinimalAltitude(IntegerPerCategoryValue.create(daA, daB, daC, daD)),
-            PlaneOrderedAltitudeDifferenceCondition.create(IntegerPerCategoryValue.create(1000)),
-            PlaneOrderedAltitudeDifferenceCondition.create(IntegerPerCategoryValue.create(-300))
+            PlaneShaCondition.createAsMaximalAltitude(IntegerPerCategoryValue.create(daA, daB, daC, daD)), // is below mda
+            PlaneOrderedAltitudeDifferenceCondition.create(IntegerPerCategoryValue.create(1000)), // cannot be too high
+            PlaneOrderedAltitudeDifferenceCondition.create(IntegerPerCategoryValue.create(-300))  // cannot be too low
         );
         stages.add(ApproachStage.create(
             FlyRadialWithDescentBehavior.create(context.threshold.coordinate, radial, context.airport.altitude, slope),
@@ -348,6 +379,8 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
       entries.add(entry);
     }
 
+    EAssert.isTrue(context.airport.gaMappings.get(gaMapping).count() > 0,
+        sf("Approach has not defined ga-route matching mapping '%s'", gaMapping));
     GaRoute gaRoute = context.airport.gaMappings.get(gaMapping).getFirst();
     IList<ICommand> beforeStagesCommands = EList.of(
         ChangeAltitudeCommand.createDescend(initialAltitude));
@@ -365,7 +398,7 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
       );
       ICondition errorCondition = AggregatingCondition.create(
           AggregatingCondition.eConditionAggregator.or,
-          PlaneShaCondition.createAsMinimalAltitude(IntegerPerCategoryValue.create(mdaA, mdaB, mdaC, mdaD)),
+          PlaneShaCondition.createAsMaximalAltitude(IntegerPerCategoryValue.create(mdaA, mdaB, mdaC, mdaD)),
           PlaneOrderedAltitudeDifferenceCondition.create(IntegerPerCategoryValue.create(1000))
       );
 

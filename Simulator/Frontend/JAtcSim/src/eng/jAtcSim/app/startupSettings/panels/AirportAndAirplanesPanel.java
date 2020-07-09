@@ -151,7 +151,7 @@ public class AirportAndAirplanesPanel extends JStartupPanel {
     try{
       area.init();
     } catch (Exception ex){
-      SharedAcc.getAppLog().writeLine(ApplicationLog.eType.warning, "Failed to area from '%s'. '%s'", fleFleet.getFileName(),
+      SharedAcc.getAppLog().write(ApplicationLog.eType.warning, "Failed to area from '%s'. '%s'", fleFleet.getFileName(),
           ExceptionUtils.toFullString(ex));
       MessageBox.show("Failed to load area from file " + fleFleet.getFileName() + ". " + ex.getMessage(), "Error...");
       btnLoadArea.setEnabled(true);

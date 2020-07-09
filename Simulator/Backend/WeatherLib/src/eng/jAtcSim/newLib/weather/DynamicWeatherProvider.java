@@ -114,19 +114,19 @@ public class DynamicWeatherProvider extends WeatherProvider {
 
   private void newMetarDownloaded(UpdateResult result) {
     if (result.exception != null && !hasFailedAlready) {
-      this.getLog().writeLine(ApplicationLog.eType.warning,
+      this.getLog().write(ApplicationLog.eType.warning,
           "Failed to download metar using %s. Reason: %s.",
           this.downloader.getClass().getName(),
           ExceptionUtils.toFullString(result.exception));
       hasFailedAlready = true;
     } else {
       hasFailedAlready = false;
-      this.getLog().writeLine(ApplicationLog.eType.info,
+      this.getLog().write(ApplicationLog.eType.info,
           "Metar downloaded successfully: %s", result.metar);
       try {
         this.updatedWeather = super.decodeFromMetar(result.metar);
       } catch (Exception ex) {
-        this.getLog().writeLine(ApplicationLog.eType.warning,
+        this.getLog().write(ApplicationLog.eType.warning,
             "Failed to decode weather. Reason: %s.",
             ExceptionUtils.toFullString(result.exception));
       }

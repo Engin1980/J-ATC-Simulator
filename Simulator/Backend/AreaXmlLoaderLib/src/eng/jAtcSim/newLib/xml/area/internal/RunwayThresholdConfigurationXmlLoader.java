@@ -16,7 +16,7 @@ public class RunwayThresholdConfigurationXmlLoader extends XmlLoader {
 
   public RunwayThresholdConfiguration load(XElement source) {
     SmartXmlLoaderUtils.setContext(source);
-    String name = SmartXmlLoaderUtils.loadString("name");
+    String name = SmartXmlLoaderUtils.loadString("threshold");
     boolean primary = SmartXmlLoaderUtils.loadBoolean("primary", false);
     boolean showRoutes = SmartXmlLoaderUtils.loadBoolean("showRoutes", true);
     boolean showApproach = SmartXmlLoaderUtils.loadBoolean("showApproach", true);

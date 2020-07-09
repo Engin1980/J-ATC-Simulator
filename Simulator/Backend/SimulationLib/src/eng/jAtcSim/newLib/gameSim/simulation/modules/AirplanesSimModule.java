@@ -280,7 +280,7 @@ public class AirplanesSimModule extends SimModule {
     for (MovementTemplate newMovement : newMovements) {
       TryResult<AirplaneTemplate> res = convertMovementToAirplane(newMovement);
       if (res.getException() != null)
-        SharedAcc.getAppLog().writeLine(ApplicationLog.eType.warning,
+        SharedAcc.getAppLog().write(ApplicationLog.eType.warning,
             sf("Unable to create a flight, error when creating instance: %s.",
                 res.getException().getMessage()));
       else
@@ -341,7 +341,7 @@ public class AirplanesSimModule extends SimModule {
       tmp = tmp.where(q -> q.getType() == EntryExitPoint.Type.exit || q.getType() == EntryExitPoint.Type.both);
     tmp = tmp.where(q -> q.getMaxMrvaAltitudeOrHigh() < pt.maxAltitude);
     if (tmp.isEmpty()) {
-      SharedAcc.getAppLog().writeLine(ApplicationLog.eType.warning,
+      SharedAcc.getAppLog().write(ApplicationLog.eType.warning,
           sf("There are no available entry/exit points for plane of kind %s with service ceiling at %d ft. " +
                   "Flight must be cancelled.",
               pt.name, pt.maxAltitude));
@@ -353,7 +353,7 @@ public class AirplanesSimModule extends SimModule {
     } else if (entryExitInfo.getNavaid() != null) {
       ret = tmp.tryGetFirst(q -> q.getName().equals(entryExitInfo.getNavaid()));
       if (ret == null) {
-        SharedAcc.getAppLog().writeLine(ApplicationLog.eType.warning,
+        SharedAcc.getAppLog().write(ApplicationLog.eType.warning,
             sf("Plane generation asks for entry point %s, but there is not such " +
                     "entry-exit point available.",
                 entryExitInfo.getNavaid()));

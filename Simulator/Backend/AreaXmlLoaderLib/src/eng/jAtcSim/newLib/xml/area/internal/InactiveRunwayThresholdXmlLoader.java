@@ -24,7 +24,7 @@ class InactiveRunwayThresholdXmlLoader implements IXmlLogable {
     log(3, "Xml-loading inactive threshold");
     SmartXmlLoaderUtils.setContext(source);
     String name = SmartXmlLoaderUtils.loadString("name");
-    log(4, "... inactive runway threshold '%s'", name);
+    log(3, "... inactive runway threshold '%s'", name);
     Coordinate coordinate = SmartXmlLoaderUtils.loadCoordinate("coordinate");
 
     InactiveRunwayThreshold.Prototype ret = new InactiveRunwayThreshold.Prototype(name, coordinate);

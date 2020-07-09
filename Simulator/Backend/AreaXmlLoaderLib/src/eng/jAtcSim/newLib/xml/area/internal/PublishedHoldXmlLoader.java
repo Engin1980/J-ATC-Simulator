@@ -18,7 +18,7 @@ public class PublishedHoldXmlLoader extends XmlLoader<PublishedHold> {
     log(2, "Loading hold");
     SmartXmlLoaderUtils.setContext(source);
     String navaidName = SmartXmlLoaderUtils.loadString("navaidName");
-    log(3, "... hold '%s'", navaidName);
+    log(2, "... hold '%s'", navaidName);
     Navaid navaid = context.area.navaids.get(navaidName);
 
     int inboundRadial = SmartXmlLoaderUtils.loadInteger("inboundRadial");

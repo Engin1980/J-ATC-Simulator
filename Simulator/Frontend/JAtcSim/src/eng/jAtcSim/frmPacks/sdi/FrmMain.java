@@ -238,7 +238,7 @@ public class FrmMain extends JFrame {
         try {
           pb.start();
         } catch (IOException e) {
-          SharedAcc.getAppLog().writeLine(ApplicationLog.eType.warning, "Failed to start project web pages." + ExceptionUtils.toFullString(e));
+          SharedAcc.getAppLog().write(ApplicationLog.eType.warning, "Failed to start project web pages." + ExceptionUtils.toFullString(e));
         }
       });
       mnuHelp.addSeparator();

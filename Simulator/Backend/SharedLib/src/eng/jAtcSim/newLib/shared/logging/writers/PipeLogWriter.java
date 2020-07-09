@@ -17,10 +17,10 @@ public abstract class PipeLogWriter implements ILogWriter {
     innerWriter.close();
   }
 
-  @Override
-  public void newLine() throws IOException {
-    innerWriter.newLine();
-  }
+//  @Override
+//  public void newLine() throws IOException {
+//    innerWriter.newLine();
+//  }
 
   @Override
   public abstract void write(String text) throws IOException;

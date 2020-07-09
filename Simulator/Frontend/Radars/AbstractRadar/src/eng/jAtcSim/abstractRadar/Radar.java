@@ -94,7 +94,7 @@ public class Radar {
     this.messageManager = new VisualisedMessageManager(this.styleSettings.displayTextDelay);
     if (this.styleSettings.displayTextDelay > Global.REPEATED_SWITCH_REQUEST_SECONDS ||
         this.styleSettings.displayTextDelay > Global.REPEATED_RADAR_CONTACT_REQUEST_SECONDS) {
-      simulation.getAppLog().writeLine(ApplicationLog.eType.warning,
+      simulation.getAppLog().write(ApplicationLog.eType.warning,
           "Radar message display interval in seconds (%d) is higher than plane repeated " +
               "radar-contact request interval (%d) or ATC repeated request switch interval (%d). " + "" +
               "The repetition messages will overlap.",

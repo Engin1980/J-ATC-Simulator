@@ -20,6 +20,6 @@ public abstract class AirplaneRecorder {
       sb.append("Exception object is null.");
     else
       sb.append(ex.getMessage()).append(":: " ).append(ExceptionUtils.toFullString(ex));
-    SharedAcc.getAppLog().writeLine(ApplicationLog.eType.critical, sb.toString());
+    SharedAcc.getAppLog().write(ApplicationLog.eType.critical, sb.toString());
   }
 }

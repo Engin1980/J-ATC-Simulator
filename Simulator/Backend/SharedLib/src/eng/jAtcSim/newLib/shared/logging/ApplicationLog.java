@@ -41,9 +41,9 @@ public class ApplicationLog {
     return onNewMessage;
   }
 
-  public void writeLine(eType type, String format, Object... params) {
+  public void write(eType type, String format, Object... params) {
     String s = String.format(format, params);
-    this.journal.writeLine("JAtcSim - %s: %s", type, s);
+    this.journal.write("JAtcSim - %s: %s", type, s);
     onNewMessage.raise(new Message(s, type));
   }
 }
