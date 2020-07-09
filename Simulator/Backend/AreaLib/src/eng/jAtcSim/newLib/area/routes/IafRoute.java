@@ -34,4 +34,9 @@ public class IafRoute extends Route {
   public Navaid getNavaid() {
     return navaid;
   }
+
+  @Override
+  public String toString() {
+    return "IAF-route via " + navaid.getName();
+  }
 }

@@ -8,11 +8,12 @@ import eng.jAtcSim.newLib.shared.xml.SmartXmlLoaderUtils;
 
 class NavaidXmlLoader implements IXmlLoader<Navaid> {
     public Navaid load(XElement source) {
+      log(1, "Xml-loading navaid");
       SmartXmlLoaderUtils.setContext(source);
-      Coordinate coordinate = SmartXmlLoaderUtils.loadCoordinate("coordinate");
       String name = SmartXmlLoaderUtils.loadString("name");
+      log(2, "... navaid '%s'", name);
+      Coordinate coordinate = SmartXmlLoaderUtils.loadCoordinate("coordinate");
       Navaid.eType type = SmartXmlLoaderUtils.loadEnum("type", Navaid.eType.class);
-
       Navaid ret = Navaid.create(name, type, coordinate);
       return ret;
     }

@@ -19,8 +19,10 @@ public class IafRouteXmlLoader extends XmlLoader<IafRoute> {
 
   @Override
   public IafRoute load(XElement source) {
+    log(2, "Xml-loading iaf-route");
     SmartXmlLoaderUtils.setContext(source);
     String iafName = SmartXmlLoaderUtils.loadString("iaf");
+    log(3, "... iaf-route '%s'", iafName);
     Navaid navaid = context.area.navaids.get(iafName);
     PlaneCategoryDefinitions category = SmartXmlLoaderUtils.loadPlaneCategory("category", "ABCD");
     String mapping = SmartXmlLoaderUtils.loadString("iafMapping");

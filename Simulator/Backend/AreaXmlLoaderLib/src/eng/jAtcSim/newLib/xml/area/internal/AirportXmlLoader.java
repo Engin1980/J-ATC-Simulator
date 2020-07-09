@@ -35,8 +35,10 @@ class AirportXmlLoader extends XmlLoader<Airport> {
   }
 
   public Airport load(XElement source) {
+    log(1, "Xml-loading airport");
     SmartXmlLoaderUtils.setContext(source);
     String icao = SmartXmlLoaderUtils.loadString("icao");
+    log(2, "... airport '%s'", icao);
     String name = SmartXmlLoaderUtils.loadString("name");
     int altitude = SmartXmlLoaderUtils.loadInteger("altitude");
     int transitionAltitude = SmartXmlLoaderUtils.loadInteger("transitionAltitude");

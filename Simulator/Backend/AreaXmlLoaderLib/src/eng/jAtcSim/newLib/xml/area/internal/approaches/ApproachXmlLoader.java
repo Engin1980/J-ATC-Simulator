@@ -49,6 +49,7 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
 
   @Override
   public IList<Approach> load(XElement source) {
+    log(4, "Xml-loading approach '%s'", source.getName());
     IList<Approach> ret;
     switch (source.getName()) {
       case "ilsApproach":

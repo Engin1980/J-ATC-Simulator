@@ -18,6 +18,7 @@ public class ActiveRunwayXmlLoader extends XmlLoader<ActiveRunway> {
 
   @Override
   public ActiveRunway load(XElement source) {
+    log(2, "Xml-loading active runway");
     IList<ActiveRunwayThreshold> thresholds = new ActiveRunwayThresholdXmlLoader(context).loadBoth(
         source.getChild("thresholds").getChildren());
     ActiveRunway ret = new ActiveRunway(thresholds);

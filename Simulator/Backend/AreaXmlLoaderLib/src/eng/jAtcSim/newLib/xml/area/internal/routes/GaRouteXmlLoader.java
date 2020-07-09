@@ -17,8 +17,10 @@ public class GaRouteXmlLoader extends XmlLoader<GaRoute> {
 
   @Override
   public GaRoute load(XElement source) {
+    log(2, "Xml-loading ga-route");
     SmartXmlLoaderUtils.setContext(source);
     String mapping = SmartXmlLoaderUtils.loadString("gaMapping");
+    log(3, "... ga-route ga-mapping '%s'", mapping);
 
     IList<ICommand> commands = SmartXmlLoaderUtils.loadList(
         source.getChildren(),

@@ -50,22 +50,6 @@
     <xs:attribute name="turns" type="sh:LeftRight" use="optional"/>
   </xs:complexType>
 
-<!--  <xs:complexType name="After">-->
-<!--    <xs:attribute name="property">-->
-<!--      <xs:simpleType>-->
-<!--        <xs:restriction base="xs:string">-->
-<!--          <xs:enumeration value="speed" />-->
-<!--          <xs:enumeration value="altitude" />-->
-<!--          <xs:enumeration value="heading" />-->
-<!--          <xs:enumeration value="distance" />-->
-<!--          <xs:enumeration value="radial" />-->
-<!--          <xs:enumeration value="navaid" />-->
-<!--        </xs:restriction>-->
-<!--      </xs:simpleType>-->
-<!--    </xs:attribute>-->
-<!--    <xs:attribute name="value" type="xs:string" />-->
-<!--  </xs:complexType>-->
-
   <xs:complexType name="AfterCommandWithValue">
     <xs:attribute name="value" type="xs:positiveInteger" use="required" />
     <xs:attribute name="extension" type="AfterValueExtension" use="optional" />

@@ -365,25 +365,42 @@ public abstract class SmartXmlLoaderUtils {
     return ret;
   }
 
-  public static ValueAndABE loadValueAndAboveBelowExactly(String value) {
-    return loadValueAndAboveBelowExactly(context, value);
+  public static AboveBelowExactly loadAboveBelowExactly(String key) {
+    return loadAboveBelowExactly(context, key);
   }
 
-  public static ValueAndABE loadValueAndAboveBelowExactly(XElement source, String value) {
-    AboveBelowExactly abe;
-    int val;
+  public static AboveBelowExactly loadAboveBelowExactly(String key, AboveBelowExactly defaultValue) {
+    return loadAboveBelowExactly(context, key, defaultValue);
+  }
 
-    if (value.endsWith("-"))
-      abe = AboveBelowExactly.below;
-    else if (value.endsWith("+"))
-      abe = AboveBelowExactly.above;
-    else
-      abe = AboveBelowExactly.exactly;
-    if (abe != AboveBelowExactly.exactly)
-      value = value.substring(0, value.length() - 1);
-    val = Integer.parseInt(value);
+  public static AboveBelowExactly loadAboveBelowExactly(XElement source, String key, AboveBelowExactly defaultValue) {
+    AboveBelowExactly ret = defaultValue;
 
-    ValueAndABE ret = new ValueAndABE(val, abe);
+    if (source.hasAttribute(key)){
+      String val = source.getAttribute(key);
+      switch (val){
+        case "orAbove":
+          ret = AboveBelowExactly.above;
+          break;
+        case "orBelow":
+          ret = AboveBelowExactly.below;
+          break;
+        case "exactly":
+          ret = AboveBelowExactly.exactly;
+          break;
+        default:
+          throw throwConvertFail(val, AboveBelowExactly.class);
+      }
+    }
+
+    return ret;
+  }
+
+  public static AboveBelowExactly loadAboveBelowExactly(XElement source, String key) {
+    AboveBelowExactly ret = loadAboveBelowExactly(source, key, null);
+    if (ret == null)
+      throw throwNotFound(source, key) ;
+
     return ret;
   }
 

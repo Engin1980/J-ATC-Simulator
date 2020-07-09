@@ -230,9 +230,9 @@
           <route type="sid" name="IRMAR6A" category="CD" mapping="sid04">
             <altitude direction="climb" value="13000" />
             <speed restriction="above" value="210"/>
-            <after property="altitude" value="400+" />
+            <afterAltitude value="400" extension="orAbove" />
             <heading value="138" direction="nearest" />
-            <after property="distance" value="NIZ/8" />
+            <afterDistance fix="NIZ" distance="8" />
             <proceedDirect fix="MN044" />
             <then />
             <proceedDirect fix="MN048" />
@@ -247,9 +247,9 @@
           <route type="sid" name="BADOD6A" category="CD" mapping="sid04">
             <altitude direction="climb" value="13000" />
             <speed restriction="above" value="210"/>
-            <after property="altitude" value="400+" />
+            <afterAltitude value="400" extension="orAbove" />
             <heading value="138" direction="nearest" />
-            <after property="distance" value="NIZ/8" />
+            <afterDistance fix="NIZ" distance="8" />
             <proceedDirect fix="MN044" />
             <then />
             <proceedDirect fix="MN048" />
@@ -264,9 +264,9 @@
           <route type="sid" name="OKTET6A" category="CD" mapping="sid04">
             <altitude direction="climb" value="13000" />
             <speed restriction="above" value="210"/>
-            <after property="altitude" value="400+" />
+            <afterAltitude value="400" extension="orAbove" />
             <heading value="138" direction="nearest" />
-            <after property="distance" value="NIZ/8" />
+            <afterDistance fix="NIZ" distance="8" />
             <proceedDirect fix="MN044" />
             <then />
             <proceedDirect fix="MN048" />
@@ -281,9 +281,9 @@
           <route type="sid" name="BODRU6A" category="ABCD" mapping="sid04">
             <altitude direction="climb" value="13000" />
             <speed restriction="above" value="210"/>
-            <after property="altitude" value="400+" />
+            <afterAltitude value="400" extension="orAbove" />
             <heading value="138" direction="nearest" />
-            <after property="distance" value="NIZ/8" />
+            <afterDistance fix="NIZ" distance="8" />
             <proceedDirect fix="MN044" />
             <then />
             <proceedDirect fix="MN048" />
@@ -298,9 +298,9 @@
           <route type="sid" name="PERUS6A" category="ABCD" mapping="sid04">
             <altitude direction="climb" value="13000" />
             <speed restriction="above" value="210"/>
-            <after property="altitude" value="400+" />
+            <afterAltitude value="400" extension="orAbove" />
             <heading value="138" direction="nearest" />
-            <after property="distance" value="NIZ/8" />
+            <afterDistance fix="NIZ" distance="8" />
             <proceedDirect fix="MN044" />
             <then />
             <proceedDirect fix="MN048" />
@@ -314,9 +314,9 @@
           </route>
           <route type="sid" name="IRMAR6C" category="AB" mapping="sid04">
             <altitude direction="climb" value="7000" />
-            <after property="altitude" value="400+" />
+            <afterAltitude value="400" extension="orAbove" />
             <heading value="138" direction="nearest" />
-            <after property="distance" value="NIZ/8" />
+            <afterDistance fix="NIZ" distance="8" />
             <proceedDirect fix="MN052" />
             <then />
             <proceedDirect fix="NIZ" />
@@ -327,9 +327,9 @@
           </route>
           <route type="sid" name="OKTET6C" category="AB" mapping="sid04">
             <altitude direction="climb" value="7000" />
-            <after property="altitude" value="400+" />
+            <afterAltitude value="400" extension="orAbove" />
             <heading value="138" direction="nearest" />
-            <after property="distance" value="NIZ/8" />
+            <afterDistance fix="NIZ" distance="8" />
             <proceedDirect fix="MN052" />
             <then />
             <proceedDirect fix="NIZ" />
@@ -340,9 +340,9 @@
           </route>
           <route type="sid" name="BADOD6C" category="ABCD" mapping="sid04">
             <altitude direction="climb" value="7000" />
-            <after property="altitude" value="400+" />
+            <afterAltitude value="400" extension="orAbove" />
             <heading value="138" direction="nearest" />
-            <after property="distance" value="NIZ/8" />
+            <afterDistance fix="NIZ" distance="8" />
             <proceedDirect fix="MN052" />
             <then />
             <proceedDirect fix="NIZ" />
@@ -351,9 +351,9 @@
           </route>
           <route type="sid" name="BASIP6A" category="AB" mapping="sid04">
             <altitude direction="climb" value="7000" />
-            <after property="altitude" value="400+" />
+            <afterAltitude value="400" extension="orAbove" />
             <heading value="138" direction="nearest" />
-            <after property="distance" value="NIZ/8" />
+            <afterDistance fix="NIZ" distance="8" />
             <proceedDirect fix="MN052" />
             <then />
             <proceedDirect fix="MN054" />
@@ -366,9 +366,9 @@
           </route>
           <route type="sid" name="RUBIT6A" category="CD" mapping="sid04">
             <altitude direction="climb" value="10000" />
-            <after property="altitude" value="400+" />
+            <afterAltitude value="400" extension="orAbove" />
             <heading value="138" direction="nearest" />
-            <after property="distance" value="NIZ/8" />
+            <afterDistance fix="NIZ" distance="8" />
             <proceedDirect fix="MN044" />
             <then />
             <proceedDirect fix="MN048" />
@@ -383,9 +383,9 @@
           </route>
           <route type="sid" name="LANKO6A" category="CD" mapping="sid04">
             <altitude direction="climb" value="10000" />
-            <after property="altitude" value="400+" />
+            <afterAltitude value="400" extension="orAbove" />
             <heading value="138" direction="nearest" />
-            <after property="distance" value="NIZ/8" />
+            <afterDistance fix="NIZ" distance="8" />
             <proceedDirect fix="MN044" />
             <then />
             <proceedDirect fix="MN048" />
@@ -402,9 +402,9 @@
           </route>
           <route type="sid" name="TURIL6A" category="CD" mapping="sid04">
             <altitude direction="climb" value="10000" />
-            <after property="altitude" value="400+" />
+            <afterAltitude value="400" extension="orAbove" />
             <heading value="138" direction="nearest" />
-            <after property="distance" value="NIZ/8" />
+            <afterDistance fix="NIZ" distance="8" />
             <proceedDirect fix="MN044" />
             <then />
             <proceedDirect fix="MN048" />
@@ -421,9 +421,9 @@
           </route>
           <route type="sid" name="EPOLO6A" category="CD" mapping="sid04">
             <altitude direction="climb" value="10000" />
-            <after property="altitude" value="400+" />
+            <afterAltitude value="400" extension="orAbove" />
             <heading value="138" direction="nearest" />
-            <after property="distance" value="NIZ/8" />
+            <afterDistance fix="NIZ" distance="8" />
             <proceedDirect fix="MN044" />
             <then />
             <proceedDirect fix="MN048" />
@@ -436,9 +436,9 @@
           </route>
           <route type="sid" name="RUBAS6A" category="ABCD" mapping="sid04">
             <altitude direction="climb" value="10000" />
-            <after property="altitude" value="400+" />
+            <afterAltitude value="400" extension="orAbove" />
             <heading value="138" direction="nearest" />
-            <after property="distance" value="NIZ/8" />
+            <afterDistance fix="NIZ" distance="8" />
             <proceedDirect fix="MN044" />
             <then />
             <proceedDirect fix="MN048" />
@@ -451,9 +451,9 @@
           </route>
           <route type="sid" name="RUBIT6B" category="AB" mapping="sid04">
             <altitude direction="climb" value="7000" />
-            <after property="altitude" value="400+" />
+            <afterAltitude value="400" extension="orAbove" />
             <heading value="138" direction="nearest" />
-            <after property="distance" value="NIZ/8" />
+            <afterDistance fix="NIZ" distance="8" />
             <proceedDirect fix="MN044" />
             <then />
             <proceedDirect fix="MN048" />
@@ -470,9 +470,9 @@
           </route>
           <route type="sid" name="LANKO6B" category="AB" mapping="sid04">
             <altitude direction="climb" value="7000" />
-            <after property="altitude" value="400+" />
+            <afterAltitude value="400" extension="orAbove" />
             <heading value="138" direction="nearest" />
-            <after property="distance" value="NIZ/8" />
+            <afterDistance fix="NIZ" distance="8" />
             <proceedDirect fix="MN044" />
             <then />
             <proceedDirect fix="MN048" />
@@ -491,9 +491,9 @@
           </route>
           <route type="sid" name="TURIL6B" category="AB" mapping="sid04">
             <altitude direction="climb" value="7000" />
-            <after property="altitude" value="400+" />
+            <afterAltitude value="400" extension="orAbove" />
             <heading value="138" direction="nearest" />
-            <after property="distance" value="NIZ/8" />
+            <afterDistance fix="NIZ" distance="8" />
             <proceedDirect fix="MN044" />
             <then />
             <proceedDirect fix="MN048" />
@@ -512,9 +512,9 @@
           </route>
           <route type="sid" name="EPOLO6B" category="AB" mapping="sid04">
             <altitude direction="climb" value="7000" />
-            <after property="altitude" value="400+" />
+            <afterAltitude value="400" extension="orAbove" />
             <heading value="138" direction="nearest" />
-            <after property="distance" value="NIZ/8" />
+            <afterDistance fix="NIZ" distance="8" />
             <proceedDirect fix="MN044" />
             <then />
             <proceedDirect fix="MN048" />
@@ -529,9 +529,9 @@
           </route>
           <route type="sid" name="VAREK6A" category="CD" mapping="sid04">
             <altitude direction="climb" value="10000" />
-            <after property="altitude" value="400+" />
+            <afterAltitude value="400" extension="orAbove" />
             <heading value="138" direction="nearest" />
-            <after property="distance" value="NIZ/8" />
+            <afterDistance fix="NIZ" distance="8" />
             <proceedDirect fix="MN044" />
             <then />
             <proceedDirect fix="MN046" />
@@ -542,9 +542,9 @@
           </route>
           <route type="sid" name="LONSU6A" category="CD" mapping="sid04">
             <altitude direction="climb" value="10000" />
-            <after property="altitude" value="400+" />
+            <afterAltitude value="400" extension="orAbove" />
             <heading value="138" direction="nearest" />
-            <after property="distance" value="NIZ/8" />
+            <afterDistance fix="NIZ" distance="8" />
             <proceedDirect fix="MN044" />
             <then />
             <proceedDirect fix="MN046" />
@@ -557,9 +557,9 @@
           </route>
           <route type="sid" name="SODRI6A" category="CD" mapping="sid04">
             <altitude direction="climb" value="10000" />
-            <after property="altitude" value="400+" />
+            <afterAltitude value="400" extension="orAbove" />
             <heading value="138" direction="nearest" />
-            <after property="distance" value="NIZ/8" />
+            <afterDistance fix="NIZ" distance="8" />
             <proceedDirect fix="MN044" />
             <then />
             <proceedDirect fix="MN046" />
@@ -572,9 +572,9 @@
           </route>
           <route type="sid" name="VAREK6B" category="AB" mapping="sid04">
             <altitude direction="climb" value="7000" />
-            <after property="altitude" value="400+" />
+            <afterAltitude value="400" extension="orAbove" />
             <heading value="138" direction="nearest" />
-            <after property="distance" value="NIZ/8" />
+            <afterDistance fix="NIZ" distance="8" />
             <proceedDirect fix="MN044" />
             <then />
             <proceedDirect fix="MN048" />
@@ -587,9 +587,9 @@
           </route>
           <route type="sid" name="LONSU6B" category="AB" mapping="sid04">
             <altitude direction="climb" value="7000" />
-            <after property="altitude" value="400+" />
+            <afterAltitude value="400" extension="orAbove" />
             <heading value="138" direction="nearest" />
-            <after property="distance" value="NIZ/8" />
+            <afterDistance fix="NIZ" distance="8" />
             <proceedDirect fix="MN044" />
             <then />
             <proceedDirect fix="MN048" />
@@ -604,9 +604,9 @@
           </route>
           <route type="sid" name="SODRI6B" category="AB" mapping="sid04">
             <altitude direction="climb" value="7000" />
-            <after property="altitude" value="400+" />
+            <afterAltitude value="400" extension="orAbove" />
             <heading value="138" direction="nearest" />
-            <after property="distance" value="NIZ/8" />
+            <afterDistance fix="NIZ" distance="8" />
             <proceedDirect fix="MN044" />
             <then />
             <proceedDirect fix="MN048" />
@@ -1085,7 +1085,7 @@
           <altitude direction="climb" value="2000" />
           <speed restriction="below" value="220"/>
           <heading value="043" direction="nearest" />
-          <after property="distance" value="NIZ/1.2" />
+          <afterDistance fix="NIZ" distance="1.2" />
           <proceedDirect fix="AZR/117/10" />
           <then />
           <speed restriction="clear" />
@@ -1107,7 +1107,7 @@
         </gaRoute>
         <gaRoute gaMapping="04Rils">
           <speed restriction="above" value="220"/>
-          <after property="altitude" value="200+" />
+          <afterAltitude value="200" extension="orAbove" />
           <speed restriction="clear" />
           <proceedDirect fix="NERAS" />
         </gaRoute>

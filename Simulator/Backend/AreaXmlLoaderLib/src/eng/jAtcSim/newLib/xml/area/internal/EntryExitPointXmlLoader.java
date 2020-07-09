@@ -16,8 +16,10 @@ class EntryExitPointXmlLoader extends XmlLoader<EntryExitPoint> {
 
   @Override
   public EntryExitPoint load(XElement source) {
+    log(2, "Xml-loading entry-exit-point");
     SmartXmlLoaderUtils.setContext(source);
     String navaidName = SmartXmlLoaderUtils.loadString("name");
+    log(3, "... e-e-point '%s'", navaidName);
     Navaid navaid = context.area.navaids.get(navaidName);
     EntryExitPoint.Type type = SmartXmlLoaderUtils.loadEnum("type", EntryExitPoint.Type.class);
 

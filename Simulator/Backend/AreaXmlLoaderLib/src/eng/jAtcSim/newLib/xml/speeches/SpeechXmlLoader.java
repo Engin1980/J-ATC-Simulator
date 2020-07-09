@@ -24,18 +24,17 @@ public class SpeechXmlLoader implements IXmlLoader<ICommand> {
     this.loaders.set("altitudeRouteRestrictionClear", new AltitudeRestrictionCommandXmlLoader());
     this.loaders.set("heading", new ChangeHeadingCommandXmlLoader());
     this.loaders.set("hold" , new HoldCommandXmlLoader());
-    this.loaders.set("after+speed", new AfterSpeedCommandXmlLoader());
-    this.loaders.set("after+heading", new AfterHeadingCommandXmlLoader());
-    this.loaders.set("after+altitude", new AfterAltitudeCommandXmlLoader());
-    this.loaders.set("after+distance", new AfterDistanceCommandXmlLoader());
-    this.loaders.set("after+radial", new AfterRadialCommandXmlLoader());
-    this.loaders.set("after+navaid", new AfterNavaidCommandXmlLoader());
+    this.loaders.set("afterSpeed", new AfterSpeedCommandXmlLoader());
+    this.loaders.set("afterHeading", new AfterHeadingCommandXmlLoader());
+    this.loaders.set("afterAltitude", new AfterAltitudeCommandXmlLoader());
+    this.loaders.set("afterDistance", new AfterDistanceCommandXmlLoader());
+    this.loaders.set("afterRadial", new AfterRadialCommandXmlLoader());
+    this.loaders.set("afterNavaid", new AfterNavaidCommandXmlLoader());
   }
 
   @Override
   public ICommand load(XElement source) {
-    String elementName = expandNameIfRequired(source);
-    IXmlLoader<? extends ICommand> xmlLoader = this.loaders.tryGet(elementName);
+    IXmlLoader<? extends ICommand> xmlLoader = this.loaders.tryGet(source.getName());
     if (xmlLoader == null)
       throw new XmlLoadException(
           sf("Unable to load command from xml-element '%s'. No loader defined for this element.", source.getName()));
@@ -43,15 +42,5 @@ public class SpeechXmlLoader implements IXmlLoader<ICommand> {
       ICommand ret = xmlLoader.load(source);
       return ret;
     }
-  }
-
-  public static String expandNameIfRequired(XElement elm){
-    String ret;
-    if (elm.getName().equals("after")){
-      ret = elm.getName() + "+" + elm.getAttribute("property");
-    } else {
-      ret = elm.getName();
-    }
-    return ret;
   }
 }

@@ -16,6 +16,7 @@ public class RunwayConfigurationXmlLoader extends XmlLoader<RunwayConfiguration>
 
   @Override
   public RunwayConfiguration load(XElement source) {
+    log(2, "Xml-loading runway configuration");
     SmartXmlLoaderUtils.setContext(source);
     int windFrom = SmartXmlLoaderUtils.loadInteger("windFrom", 0);
     int windTo = SmartXmlLoaderUtils.loadInteger("windTo", 359);

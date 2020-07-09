@@ -11,6 +11,7 @@ import eng.jAtcSim.newLib.shared.xml.IXmlLoader;
 public class InactiveRunwayXmlLoader implements IXmlLoader<InactiveRunway> {
   @Override
   public InactiveRunway load(XElement source) {
+    log(2, "Xml-loading inactive runway");
     IList<InactiveRunwayThreshold> thresholds = new InactiveRunwayThresholdXmlLoader().loadBoth(
         source.getChild("thresholds").getChildren());
     InactiveRunway ret = new InactiveRunway(thresholds);

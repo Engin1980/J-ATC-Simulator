@@ -28,10 +28,11 @@ public class DARouteXmlLoader extends XmlLoader<DARoute> {
 
   @Override
   public DARoute load(XElement source) {
+    log(2, "Xml-loading DA-route");
     SmartXmlLoaderUtils.setContext(source);
-
-    DARouteType type = SmartXmlLoaderUtils.loadEnum("type", DARouteType.class);
     String name = SmartXmlLoaderUtils.loadString("name");
+    log(3, "... da-route '%s'", name);
+    DARouteType type = SmartXmlLoaderUtils.loadEnum("type", DARouteType.class);
     String mapping = SmartXmlLoaderUtils.loadString("mapping");
     PlaneCategoryDefinitions category = SmartXmlLoaderUtils.loadPlaneCategory("category", "ABCD");
     Integer entryAltitude = SmartXmlLoaderUtils.loadAltitude("entryFL", null);

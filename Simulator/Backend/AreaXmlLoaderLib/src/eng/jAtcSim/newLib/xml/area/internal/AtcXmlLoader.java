@@ -9,9 +9,11 @@ import eng.jAtcSim.newLib.shared.xml.SmartXmlLoaderUtils;
 public class AtcXmlLoader implements IXmlLoader<Atc> {
   @Override
   public Atc load(XElement source) {
+    log(2, "Xml-loading atc");
     SmartXmlLoaderUtils.setContext(source);
-    AtcType type = SmartXmlLoaderUtils.loadEnum("type", AtcType.class);
     String name = SmartXmlLoaderUtils.loadString("name");
+    log(3, "... atc '%s'", name);
+    AtcType type = SmartXmlLoaderUtils.loadEnum("type", AtcType.class);
     double frequency = SmartXmlLoaderUtils.loadDouble("frequency");
     int acceptAltitude = SmartXmlLoaderUtils.loadAltitude("acceptAltitude");
     int releaseAltitude = SmartXmlLoaderUtils.loadAltitude("releaseAltitude");

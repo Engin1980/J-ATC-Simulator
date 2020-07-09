@@ -16,8 +16,10 @@ public class AreaXmlLoader extends XmlLoader<Area> {
 
   @Override
   public Area load(XElement source) {
+    super.log(0, "Xml-loading area");
     SmartXmlLoaderUtils.setContext(source);
     context.area.icao = SmartXmlLoaderUtils.loadString("icao");
+    super.log(1, "... area '%s'", context.area.icao);
 
     context.area.navaids = new NavaidList();
     AreaAcc.setNavaidsProducer(() -> context.area.navaids);
