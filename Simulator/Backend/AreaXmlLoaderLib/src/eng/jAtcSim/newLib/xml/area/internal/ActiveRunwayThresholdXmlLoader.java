@@ -176,10 +176,10 @@ public class ActiveRunwayThresholdXmlLoader extends XmlLoader<ActiveRunwayThresh
   }
 
   private ActiveRunwayThreshold.Prototype loadOne(XElement source) {
-    log(3, "Xml-loading active runway");
+    log(3, "Xml-loading active runway threshold");
     SmartXmlLoaderUtils.setContext(source);
     String name = SmartXmlLoaderUtils.loadString("name");
-    log(3, "... active runway '%s'", name);
+    log(3, "... threshold '%s'", name);
     Coordinate coordinate = SmartXmlLoaderUtils.loadCoordinate("coordinate");
     int initialDepartureAltitude = SmartXmlLoaderUtils.loadInteger("initialDepartureAltitude");
     int accelerationAltitude = SmartXmlLoaderUtils.loadInteger("accelerationAltitude",

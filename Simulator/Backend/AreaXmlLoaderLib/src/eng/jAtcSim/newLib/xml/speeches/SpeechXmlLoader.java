@@ -34,13 +34,20 @@ public class SpeechXmlLoader implements IXmlLoader<ICommand> {
 
   @Override
   public ICommand load(XElement source) {
+    ICommand ret;
     IXmlLoader<? extends ICommand> xmlLoader = this.loaders.tryGet(source.getName());
-    if (xmlLoader == null)
+    if (xmlLoader == null) {
       throw new XmlLoadException(
           sf("Unable to load command from xml-element '%s'. No loader defined for this element.", source.getName()));
-    else{
-      ICommand ret = xmlLoader.load(source);
-      return ret;
     }
+    else{
+      try {
+        ret = xmlLoader.load(source);
+      } catch (Exception e) {
+        throw new XmlLoadException(
+            sf("Failed to parse speech from xml. XmlLoader: '%s', element: '%s'.", xmlLoader, source), e);
+      }
+    }
+    return ret;
   }
 }

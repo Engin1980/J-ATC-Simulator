@@ -93,7 +93,7 @@ public class WeatherPanel extends JStartupPanel {
     rdbWeatherFromUser.addActionListener(
         e -> ComponentUtils.adjustComponentTree(this.userWeatherPanel, q -> q.setEnabled(true)));
     rdbWeatherFromUser.setSelected(true);
-    rdbWeatherFromUser.setText("custom weather:");
+    rdbWeatherFromUser.setText("custom weather");
 
     ButtonGroup group = new ButtonGroup();
     group.add(rdbWeatherFromUser);

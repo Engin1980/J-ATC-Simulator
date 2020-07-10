@@ -106,7 +106,7 @@ public class DARouteXmlLoader extends XmlLoader<DARoute> {
   }
 
   private Navaid getMainRouteNavaidFromRouteName(String routeName) {
-    String name = RegexUtils.extractGroupContent(routeName, "^([A-Z]+)\\d.+", 1);
+    String name = RegexUtils.extractGroupContent(routeName, "^([A-Z]+)(\\d.+)?", 1);
     Navaid ret = context.area.navaids.get(name);
     return ret;
   }

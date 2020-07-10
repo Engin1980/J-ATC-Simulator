@@ -42,7 +42,8 @@ class AirportXmlLoader extends XmlLoader<Airport> {
     String name = SmartXmlLoaderUtils.loadString("name");
     int altitude = SmartXmlLoaderUtils.loadInteger("altitude");
     int transitionAltitude = SmartXmlLoaderUtils.loadInteger("transitionAltitude");
-    int vfrAltitude = SmartXmlLoaderUtils.loadInteger("vfrAltitude");
+    int vfrAltitude = SmartXmlLoaderUtils.loadInteger("vfrAltitude", -1);
+    if (vfrAltitude == -1) vfrAltitude = altitude + 2500;
     double declination = SmartXmlLoaderUtils.loadDouble("declination");
     int coveredDistance = SmartXmlLoaderUtils.loadInteger("coveredDistance");
     Navaid mainAirportNavaid = context.area.navaids.get(
@@ -95,10 +96,12 @@ class AirportXmlLoader extends XmlLoader<Airport> {
 
     IList<RunwayConfiguration> runwayConfigurations = new EList<>();
     {
-      SmartXmlLoaderUtils.loadList(
-          source.getChild("runwayConfigurations").getChildren(),
-          runwayConfigurations,
-          new RunwayConfigurationXmlLoader(context));
+      XElement rc = source.tryGetChild("runwayConfigurations");
+      if (rc != null)
+        SmartXmlLoaderUtils.loadList(
+            rc.getChildren(),
+            runwayConfigurations,
+            new RunwayConfigurationXmlLoader(context));
     }
 
     // TODO check airport

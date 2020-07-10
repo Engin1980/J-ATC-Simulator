@@ -19,7 +19,7 @@
       <initialPosition coordinate="N53 37.8, E009 59.3" range="50"/>
       <atcTemplates>
         <atcTemplate name="EDDH TWR" type="twr" acceptAltitude="3000" frequency="126.85" orderedAltitude="5000"
-                     releaseAltitude="-1"/>
+                     releaseAltitude="4000"/>
         <atcTemplate name="EDDH F APP" type="app" frequency="136.67" acceptAltitude="-1" orderedAltitude="-1"
                      releaseAltitude="-1"/>
         <atcTemplate name="EDWW CTR" type="ctr" acceptAltitude="11000" frequency="125.02"

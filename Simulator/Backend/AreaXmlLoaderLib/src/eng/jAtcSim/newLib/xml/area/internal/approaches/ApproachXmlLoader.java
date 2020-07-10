@@ -29,7 +29,7 @@ import eng.jAtcSim.newLib.shared.xml.SmartXmlLoaderUtils;
 import eng.jAtcSim.newLib.shared.xml.XmlLoadException;
 import eng.jAtcSim.newLib.speeches.airplane.ICommand;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ChangeAltitudeCommand;
-import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ProceedDirectCommand;
+import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ChangeHeadingCommand;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ToNavaidCommand;
 import eng.jAtcSim.newLib.xml.area.internal.XmlLoader;
 import eng.jAtcSim.newLib.xml.area.internal.context.Context;
@@ -49,6 +49,7 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
       this.range = range;
     }
   }
+
   private final static int ENTRY_SECTOR_ONE_SIDE_ANGLE = 45;
   private final static int MAXIMAL_DISTANCE_FROM_FAF_TO_ENTER_APPROACH = 20;
 
@@ -132,34 +133,27 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
 
     HeadingAndCoordinate ret = null;
 
-    for (int i = 0; i < route.getRouteCommands().size(); i++) {
-      ICommand routeCommand = route.getRouteCommands().get(i);
-      if (routeCommand instanceof FlyRadialBehavior) {
+    Navaid firstNavaid = route.getNavaid();
+    for (ICommand routeCommand : route.getRouteCommands()) {
+      if (routeCommand instanceof ChangeHeadingCommand && !((ChangeHeadingCommand) routeCommand).isCurrentHeading()) {
+        ChangeHeadingCommand changeHeadingCommand = (ChangeHeadingCommand) routeCommand;
+        ret = new HeadingAndCoordinate(
+            changeHeadingCommand.getHeading(),
+            firstNavaid.getCoordinate(),
+            25);
+      } else if (routeCommand instanceof FlyRadialBehavior) {
         FlyRadialBehavior flyRadialBehavior = (FlyRadialBehavior) routeCommand;
         ret = new HeadingAndCoordinate(
             flyRadialBehavior.getInboundRadial(),
-            flyRadialBehavior.getCoordinate(),
+            firstNavaid.getCoordinate(),
             25);
         break;
       } else if (routeCommand instanceof ToNavaidCommand) {
-        Navaid firstNavaid = AreaAcc.getNavaids().getWithPBD(((ToNavaidCommand) routeCommand).getNavaidName());
-        Navaid secondNavaid = null;
-        for (int j = i + 1; j < route.getRouteCommands().size(); j++) {
-          if (route.getRouteCommands().get(j) instanceof ToNavaidCommand) {
-            secondNavaid = AreaAcc.getNavaids().getWithPBD(((ToNavaidCommand) route.getRouteCommands().get(j)).getNavaidName());
-            break;
-          }
-        }
-        if (secondNavaid == null)
-          ret = new HeadingAndCoordinate(
-              (int) Coordinates.getBearing(firstNavaid.getCoordinate(), AreaAcc.getAirport().getLocation()),
-              firstNavaid.getCoordinate(),
-              15);
-        else
-          ret = new HeadingAndCoordinate(
-              (int) Coordinates.getBearing(firstNavaid.getCoordinate(), secondNavaid.getCoordinate()),
-              firstNavaid.getCoordinate(),
-              10);
+        Navaid secondNavaid = AreaAcc.getNavaids().getWithPBD(((ToNavaidCommand) routeCommand).getNavaidName());
+        ret = new HeadingAndCoordinate(
+            (int) Coordinates.getBearing(firstNavaid.getCoordinate(), secondNavaid.getCoordinate()),
+            firstNavaid.getCoordinate(),
+            15);
         break;
       }
     }
