@@ -91,7 +91,6 @@ public class Airport extends Parentable<Area> {
     });
     this.runwayConfigurations.forEach(q -> q.bind());
     this.bindEntryExitPointsByRoutes();
-    this.bindRoutes();
   }
 
   public IReadOnlyList<ActiveRunwayThreshold> getAllThresholds() {
@@ -208,12 +207,6 @@ public class Airport extends Parentable<Area> {
 
       this.entryExitPoints.add(eep);
     }
-  }
-
-  private void bindRoutes() {
-    //bind daRoutes, iafRoutes, gaRoutes by mappings
-    //    ret.getAllThresholds().forEach(q -> ret.daRoutes.add(q.getRoutes())); // adds threshold specific routes
-    throw new ToDoException();
   }
 
 }

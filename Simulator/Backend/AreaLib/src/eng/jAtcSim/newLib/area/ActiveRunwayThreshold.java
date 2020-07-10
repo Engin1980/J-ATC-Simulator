@@ -31,7 +31,8 @@ public class ActiveRunwayThreshold extends Parentable<ActiveRunway> {
     public final IList<DARoute> routes;
     public final int accelerationAltitude;
 
-    public Prototype(String name, Coordinate coordinate, int initialDepartureAltitude, int accelerationAltitude, IList<Approach> approaches, IList<DARoute> routes) {
+    public Prototype(String name, Coordinate coordinate, int initialDepartureAltitude, int accelerationAltitude,
+                     IList<Approach> approaches, IList<DARoute> routes) {
       this.name = name;
       this.coordinate = coordinate;
       this.initialDepartureAltitude = initialDepartureAltitude;

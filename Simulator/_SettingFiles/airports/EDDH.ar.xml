@@ -80,8 +80,8 @@
       </runways>
       <runwayConfigurations>
         <configuration windSpeedTo="10">
-          <arrivals name="23"/>
-          <departures name="33"/>
+          <arrivals threshold="23"/>
+          <departures threshold="33"/>
         </configuration>
       </runwayConfigurations>
       <holds>
@@ -278,7 +278,7 @@
         </group>
         <group note="23">
           <route type="sid" name="EKERN8B" mapping="23">
-            <after property="altitude" value="4000+"/>
+            <afterAltitude value="4000" extension="orAbove" />
             <proceedDirect fix="ALF/230/5.5"/>
             <then/>
             <proceedDirect fix="GT"/>

@@ -10,6 +10,7 @@ import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.geo.Headings;
 import eng.eSystem.utilites.EnumUtils;
+import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.area.Border;
 import eng.jAtcSim.newLib.area.BorderPoint;
 import eng.jAtcSim.newLib.shared.xml.IXmlLoader;
@@ -42,12 +43,17 @@ public class BorderXmlLoader implements IXmlLoader<Border> {
     Border.eType type = SmartXmlLoaderUtils.loadEnum("type", Border.eType.class);
     log(1, "... border '%s (%s)'", name, type.toString());
     boolean enclosed = SmartXmlLoaderUtils.loadBoolean("enclosed");
-    int minAltitude = EnumUtils.is(type, TYPES_MUST_HAVE_MIN_ALTITUDE)
-        ? SmartXmlLoaderUtils.loadInteger("minAltitude")
-        : SmartXmlLoaderUtils.loadInteger("minAltitude", 0);
-    int maxAltitude = EnumUtils.is(type, TYPES_MUST_HAVE_MAX_ALTITUDE)
-        ? SmartXmlLoaderUtils.loadInteger("maxAltitude")
-        : SmartXmlLoaderUtils.loadInteger("maxAltitude", 99999);
+    int minAltitude;
+    int maxAltitude;
+    if (EnumUtils.is(type, TYPES_MUST_HAVE_MIN_ALTITUDE))
+      minAltitude = SmartXmlLoaderUtils.loadAltitude("minAltitude");
+    else
+      minAltitude = SmartXmlLoaderUtils.loadAltitude("minAltitude", 0);
+
+    if (EnumUtils.is(type, TYPES_MUST_HAVE_MAX_ALTITUDE))
+      maxAltitude = SmartXmlLoaderUtils.loadAltitude("maxAltitude");
+    else
+      maxAltitude = SmartXmlLoaderUtils.loadAltitude("maxAltitude", 99999);
     Coordinate labelCoordinate = SmartXmlLoaderUtils.loadCoordinate("labelCoordinate", null);
 
     IReadOnlyList<XElement> pointElements = source.getChild("points").getChildren();
@@ -112,6 +118,7 @@ public class BorderXmlLoader implements IXmlLoader<Border> {
           ret.add(point);
           break;
         case "arc":
+          EAssert.isTrue(ret.size() > 0, "Cannot add 'arc' point to border as the first item.");
           arcTuples.add(new Tuple<>(ret.size(), node));
           break;
         case "crd":
@@ -133,8 +140,10 @@ public class BorderXmlLoader implements IXmlLoader<Border> {
       coordinate = SmartXmlLoaderUtils.loadCoordinate(arcTuple.getB(), "coordinate");
       boolean isClockwise = SmartXmlLoaderUtils.loadStringRestricted(arcTuple.getB(), "direction",
           new String[]{"clockwise", "counterclockwise"}).equals("clockwise");
+      BorderPoint beforeBorderPoint = ret.get(index - 1);
+      BorderPoint afterBorderPoint = index == ret.count() ? ret.get(0) : ret.get(index);
       IList<BorderPoint> arcPoints = generateArcPoints(
-          ret.get(index - 1), coordinate, isClockwise, ret.get(index));
+          beforeBorderPoint, coordinate, isClockwise, afterBorderPoint);
       ret.insert(index, arcPoints);
     }
 

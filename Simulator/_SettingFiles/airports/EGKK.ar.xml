@@ -630,12 +630,12 @@
       <gaRoutes>
         <gaRoute gaMapping="08R">
           <altitude direction="climb" value="3000"/>
-          <after property="altitude" value="2000+"/>
+          <afterAltitude value="2000" extension="orAbove" />
           <heading value="179" direction="right"/>
         </gaRoute>
         <gaRoute gaMapping="26L">
           <altitude direction="climb" value="3000"/>
-          <after property="altitude" value="2000+"/>
+          <afterAltitude value="2000" extension="orAbove" />
           <heading value="179" direction="nearest"/>
         </gaRoute>
       </gaRoutes>

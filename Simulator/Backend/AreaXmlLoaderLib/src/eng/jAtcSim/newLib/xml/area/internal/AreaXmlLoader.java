@@ -37,11 +37,15 @@ public class AreaXmlLoader extends XmlLoader<Area> {
         source.getChild("airports").getChildren("airport"),
         new AirportXmlLoader(context));
 
+    super.log(0, "... area '%s' loading completed, compiling", context.area.icao);
+
     Area ret = Area.create(
         context.area.icao,
         airports,
         context.area.navaids,
         context.area.borders);
+
+    super.log(0, "... area '%s' loading done", context.area.icao);
     return ret;
   }
 }

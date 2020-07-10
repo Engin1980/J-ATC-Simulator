@@ -1,6 +1,7 @@
 package eng.jAtcSim.newLib.area;
 
 import eng.eSystem.geo.Coordinates;
+import eng.eSystem.validation.EAssert;
 
 public class EntryExitPoint extends Parentable<Airport> {
 
@@ -35,14 +36,13 @@ public class EntryExitPoint extends Parentable<Airport> {
   }
 
   public void adjustBy(EntryExitPoint eep) {
-    throw new UnsupportedOperationException("I dont know what is this used to do. Check and apply appropriatelly.");
-//    assert this.navaid.equals(eep.navaid);
-//
-//    this.maxMrvaAltitude = Math.min(this.maxMrvaAltitude, eep.maxMrvaAltitude);
-//    if ((eep.kind == Type.both && this.kind != Type.both) ||
-//        (this.kind == Type.entry && eep.kind == Type.exit) ||
-//        (this.kind == Type.exit && eep.kind == Type.entry))
-//      this.kind = Type.both;
+    EAssert.Argument.isTrue(this.navaid.equals(eep.navaid));
+
+    this.maxMrvaAltitude = Math.min(this.maxMrvaAltitude, eep.maxMrvaAltitude);
+    if ((eep.type == Type.both && this.type != Type.both) ||
+        (this.type == Type.entry && eep.type == Type.exit) ||
+        (this.type == Type.exit && eep.type == Type.entry))
+      this.type = Type.both;
   }
 
   public int getMaxMrvaAltitudeOrHigh() {

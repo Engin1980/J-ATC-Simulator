@@ -49,7 +49,8 @@ public abstract class SmartXmlLoaderUtils {
 
   public static Integer loadAltitude(String key, Integer defaultValue) {
     assert context != null;
-    return loadAltitude(context, key, defaultValue);
+    Integer tmp = loadAltitude(context, key, defaultValue);
+    return tmp;
   }
 
   public static int loadAltitude(XElement source, String key) {
@@ -63,7 +64,7 @@ public abstract class SmartXmlLoaderUtils {
     String intS;
     Integer ret;
     if (tmp == null)
-      ret = null;
+      ret = defaultValue;
     else {
       if (tmp.startsWith("FL")) {
         intS = tmp.substring(2);

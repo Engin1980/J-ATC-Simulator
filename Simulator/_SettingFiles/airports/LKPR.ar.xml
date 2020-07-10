@@ -101,11 +101,11 @@
         </inactiveRunway>
       </runways>
       <runwayConfigurations>
-        <configuration windFrom="0" windTo="359" windSpeedTo="10">
-          <arrivals name="24" category="BCD" primary="true"/>
-          <arrivals name="30" category="AB" showRoutes="false"/>
-          <departures name="24" category="BCD"/>
-          <departures name="30" category="AB" showRoutes="false"/>
+        <configuration windSpeedTo="10">
+          <arrivals threshold="24" category="BCD" primary="true"/>
+          <arrivals threshold="30" category="AB" showRoutes="false"/>
+          <departures threshold="24" category="BCD"/>
+          <departures threshold="30" category="AB" showRoutes="false"/>
         </configuration>
       </runwayConfigurations>
       <holds>
