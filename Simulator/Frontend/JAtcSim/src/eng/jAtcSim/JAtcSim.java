@@ -128,7 +128,7 @@ public class JAtcSim {
   }
 
   public static void quit() {
-
+    System.exit(0);
   }
 
   public static void setAppIconToFrame(JFrame frm) {

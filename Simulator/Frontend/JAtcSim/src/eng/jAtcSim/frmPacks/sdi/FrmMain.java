@@ -3,6 +3,7 @@ package eng.jAtcSim.frmPacks.sdi;
 import eng.eSystem.collections.IMap;
 import eng.eSystem.utilites.ExceptionUtils;
 import eng.eSystem.utilites.awt.ComponentUtils;
+import eng.jAtcSim.JAtcSim;
 import eng.jAtcSim.Stylist;
 import eng.jAtcSim.app.FrmAbout;
 import eng.jAtcSim.frmPacks.shared.*;
@@ -161,7 +162,7 @@ public class FrmMain extends JFrame {
       buildMenuItem(mnuFile, "Quit", 'q', s -> {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setVisible(false);
-        System.exit(0);
+        JAtcSim.quit();
       });
     }
 
