@@ -1,14 +1,18 @@
 package eng.jAtcSim.frmPacks.shared;
 
-import eng.eSystem.collections.EList;
-import eng.eSystem.collections.EMap;
-import eng.eSystem.collections.IList;
-import eng.eSystem.collections.IMap;
+import eng.eSystem.ERandom;
+import eng.eSystem.collections.*;
 import eng.eSystem.swing.LayoutManager;
 import eng.eSystem.swing.extenders.ComboBoxExtender;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.app.controls.ImagePanel;
+import eng.jAtcSim.newLib.shared.context.SharedAcc;
+import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 import eng.jAtcSim.newLib.traffic.ITrafficModel;
+import eng.jAtcSim.newLib.traffic.movementTemplating.FlightMovementTemplate;
+import eng.jAtcSim.newLib.traffic.movementTemplating.GenericCommercialMovementTemplate;
+import eng.jAtcSim.newLib.traffic.movementTemplating.GenericGeneralAviationMovementTemplate;
+import eng.jAtcSim.newLib.traffic.movementTemplating.MovementTemplate;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.CategoryAxis;
 import org.jfree.chart.axis.CategoryLabelPositions;
@@ -37,6 +41,7 @@ public class FrmTrafficBarGraph extends JFrame {
       this.type = type;
     }
   }
+
   private static final int IMG_HEIGHT = 500;
   private static final int IMG_WIDTH = 1400;
   private static final int MARGIN = 20;
@@ -57,50 +62,65 @@ public class FrmTrafficBarGraph extends JFrame {
 
     this.title = title;
 
-    System.out.println("This method contains a lot of todos to resolve:");
     IList<String> keyLst = new EList<>();
-//    IReadOnlyList<Traffic.ExpectedMovement> scheduledTimes = traffic.getExpectedTimesForDay();
+
+    SharedAcc.setRandomProducer(() -> new ERandom());
+    IReadOnlyList<MovementTemplate> scheduledTimes = traffic.generateMovementsForOneDay();
+    SharedAcc.setRandomProducer(null);
 
     IList<DataItem> dts = new EList<>();
     DataItem di;
     for (int i = 0; i < 23; i++) {
-//      String domain = i + ":00 - " + i + ":59";
-//      int ii = i;
-//      IReadOnlyList<Traffic.ExpectedMovement> tmp = scheduledTimes.where(q -> q.time.getHours() == ii);
-//      int arrivalsCount = tmp.count(q -> q.isArrival);
-//      int departuresCount = tmp.size() - arrivalsCount;
-//      di = new DataItem(domain, arrivalsCount, "Arrivals");
-//      dts.add(di);
-//      di = new DataItem(domain, departuresCount, "Departures");
-//      dts.add(di);
+      String domain = i + ":00 - " + i + ":59";
+      int ii = i;
+      IReadOnlyList<MovementTemplate> tmp = scheduledTimes.where(q -> q.getAppearanceTime().getHours() == ii);
+      int arrivalsCount = tmp.count(q -> q.isArrival());
+      int departuresCount = tmp.size() - arrivalsCount;
+      di = new DataItem(domain, arrivalsCount, "Arrivals");
+      dts.add(di);
+      di = new DataItem(domain, departuresCount, "Departures");
+      dts.add(di);
     }
     ds.set("Arrivals/Departures", dts);
     keyLst.add("Arrivals/Departures");
 
     dts = new EList<>();
     for (int i = 0; i < 23; i++) {
-//      String domain = i + ":00 - " + i + ":59";
-//      int ii = i;
-//      IReadOnlyList<Traffic.ExpectedMovement> tmp = scheduledTimes.where(q -> q.time.getHours() == ii);
-//      int commercialsCount = tmp.count(q -> q.isCommercial);
-//      int nonCommercialsCount = tmp.size() - commercialsCount;
-//      di = new DataItem(domain, commercialsCount, "Commercials");
-//      dts.add(di);
-//      di = new DataItem(domain, nonCommercialsCount, "Non-commercials");
-//      dts.add(di);
+      String domain = i + ":00 - " + i + ":59";
+      int ii = i;
+      IReadOnlyList<MovementTemplate> tmp = scheduledTimes.where(q -> q.getAppearanceTime().getHours() == ii);
+      int commercialsCount = tmp.count(q -> q instanceof GenericCommercialMovementTemplate);
+      int nonCommercialsCount = tmp.count(q -> q instanceof GenericGeneralAviationMovementTemplate);
+      int unknownCount = tmp.count() - commercialsCount - nonCommercialsCount;
+      di = new DataItem(domain, commercialsCount, "Commercials");
+      dts.add(di);
+      di = new DataItem(domain, nonCommercialsCount, "Non-commercials");
+      dts.add(di);
+      di = new DataItem(domain, unknownCount, "Unknown");
+      dts.add(di);
     }
     ds.set("Commercials/non-commercials", dts);
     keyLst.add("Commercials/non-commercials");
 
     dts = new EList<>();
-    for (int i = 0; i < 23; i++) {
+
+    SharedAcc.getAppLog().write(ApplicationLog.eType.info,
+        "Implementation of type categories overview is not realized.");
+//    for (int i = 0; i < 23; i++) {
 //      String domain = i + ":00 - " + i + ":59";
 //      int ii = i;
-//      IReadOnlyList<Traffic.ExpectedMovement> tmp = scheduledTimes.where(q -> q.time.getHours() == ii);
+//      IReadOnlyList<MovementTemplate> hourMovements = scheduledTimes.where(
+//          q -> q.getAppearanceTime().getHours() == ii);
+//      IReadOnlyList<MovementTemplate> tmp = scheduledTimes.where(q -> q.getAppearanceTime().getHours() == ii);
+//
+//      IReadOnlyList<MovementTemplate> tmx = tmp
+//          .where(q -> !(q instanceof FlightMovementTemplate));
+//
 //      int aCount = tmp.count(q -> q.category == 'A');
 //      int bCount = tmp.count(q -> q.category == 'B');
 //      int cCount = tmp.count(q -> q.category == 'C');
 //      int dCount = tmp.count(q -> q.category == 'D');
+//      int uCount = tmp.count() - aCount - bCount - cCount - dCount
 //      di = new DataItem(domain, aCount, "Type A");
 //      dts.add(di);
 //      di = new DataItem(domain, bCount, "Type B");
@@ -109,7 +129,7 @@ public class FrmTrafficBarGraph extends JFrame {
 //      dts.add(di);
 //      di = new DataItem(domain, dCount, "Type D");
 //      dts.add(di);
-    }
+//    }
     ds.set("Type categories", dts);
     keyLst.add("Type categories");
 

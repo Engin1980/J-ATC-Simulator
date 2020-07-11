@@ -75,7 +75,6 @@ public class SharedAcc {
   }
 
   public static void setRandomProducer(Producer<ERandom> randomProducer) {
-    EAssert.Argument.isNotNull(randomProducer, "randomProducer");
     SharedAcc.randomProducer = randomProducer;
   }
 

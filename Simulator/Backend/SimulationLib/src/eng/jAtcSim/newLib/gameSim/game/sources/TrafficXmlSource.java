@@ -25,6 +25,8 @@ public class TrafficXmlSource extends TrafficSource {
       this.traffic = TrafficXmlLoader.load(this.fileName);
     } catch (Exception e) {
       throw new EApplicationException("Unable to load traffic from file '" + this.fileName + "'.", e);
+    } catch (Throwable t){
+      throw new EApplicationException("Unable to load traffic from file '" + this.fileName + "'.", t);
     }
 
     super.setInitialized();

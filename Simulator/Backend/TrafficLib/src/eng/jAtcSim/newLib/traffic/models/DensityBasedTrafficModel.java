@@ -88,7 +88,6 @@ public class DensityBasedTrafficModel implements ITrafficModel {
   private final IList<Company> countries;
   private final HourBlockMovements[] perHourMovements;
   private final IList<DirectionWeight> directions;
-  private final ERandom rnd = SharedAcc.getRnd();
 
   private DensityBasedTrafficModel(
       HourBlockMovements[] perHourMovements,
@@ -127,6 +126,7 @@ public class DensityBasedTrafficModel implements ITrafficModel {
       int count, double gaProb, MovementTemplate.eKind kind, int hour) {
     IList<MovementTemplate> ret = new EList<>();
 
+    ERandom rnd = SharedAcc.getRnd();
     for (int i = 0; i < count; i++) {
       MovementTemplate mt = generateNewMovement(hour, rnd.nextDouble() < gaProb, kind);
       ret.add(mt);
@@ -136,7 +136,7 @@ public class DensityBasedTrafficModel implements ITrafficModel {
   }
 
   private MovementTemplate generateNewMovement(int hour, boolean isGA, MovementTemplate.eKind kind) {
-
+    ERandom rnd = SharedAcc.getRnd();
     ETimeStamp time = new ETimeStamp(hour, rnd.nextInt(0, 59), rnd.nextInt(0, 59));
     int radial = getRandomEntryRadial();
 
@@ -157,6 +157,7 @@ public class DensityBasedTrafficModel implements ITrafficModel {
 
   private int getRandomEntryRadial() {
     int ret;
+    ERandom rnd = SharedAcc.getRnd();
     if (directions.isEmpty())
       ret = rnd.nextInt(360);
     else {

@@ -58,7 +58,7 @@ public class WeatherPanel extends JStartupPanel {
     JPanel pnlWeather = createWeatherPanel();
     JPanel pnlUserWeather = createUserWeatherPanel();
     LayoutManager.setPanelBorderText(pnlWeather, "Weather source:");
-    LayoutManager.setPanelBorderText(pnlUserWeather, "Custom weather settings:");
+    LayoutManager.setPanelBorderText(pnlUserWeather, "Custom weather:");
 
     pnlWeather = LayoutManager.createBorderedPanel(8, pnlWeather);
     pnlUserWeather = LayoutManager.createBorderedPanel(8, pnlUserWeather);

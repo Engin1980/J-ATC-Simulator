@@ -10,7 +10,7 @@ public interface ITime {
   int SECONDS_PER_DAY = SECONDS_PER_HOUR * HOURS_PER_DAY;
 
   default int getHours() {
-    return this.getValue() % SECONDS_PER_DAY / MINUTES_PER_HOUR;
+    return this.getValue() % SECONDS_PER_DAY / SECONDS_PER_HOUR;
   }
 
   default int getMinutes() {

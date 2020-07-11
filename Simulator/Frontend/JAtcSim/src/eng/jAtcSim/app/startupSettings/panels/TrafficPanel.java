@@ -11,6 +11,7 @@ import eng.eSystem.exceptions.ToDoException;
 import eng.eSystem.swing.LayoutManager;
 import eng.eSystem.swing.extenders.ComboBoxExtender;
 import eng.eSystem.swing.extenders.DisplayItem;
+import eng.eSystem.utilites.ExceptionUtils;
 import eng.eSystem.utilites.awt.ComponentUtils;
 import eng.jAtcSim.app.extenders.ItemTextFieldExtender;
 import eng.jAtcSim.app.extenders.NumericUpDownExtender;
@@ -21,7 +22,10 @@ import eng.jAtcSim.frmPacks.shared.FrmTrafficBarGraph;
 import eng.jAtcSim.newLib.gameSim.game.sources.FleetsSource;
 import eng.jAtcSim.newLib.gameSim.game.sources.TrafficSource;
 import eng.jAtcSim.newLib.gameSim.game.sources.TrafficXmlSource;
+import eng.jAtcSim.newLib.shared.context.SharedAcc;
+import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 import eng.jAtcSim.newLib.traffic.ITrafficModel;
+import eng.jAtcSim.shared.MessageBox;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -144,7 +148,14 @@ public class TrafficPanel extends JStartupPanel {
   }
 
   private void btnAnalyseTraffic_click(ActionEvent actionEvent) {
-    ITrafficModel tfc = getCurrentTraffic();
+    ITrafficModel tfc;
+    try {
+      tfc = getCurrentTraffic();
+    } catch (Exception e) {
+      SharedAcc.getAppLog().write(ApplicationLog.eType.critical, "Failed to load traffic. " + ExceptionUtils.toFullString(e));
+      MessageBox.show("Failed to obtain the traffic. Check the app log for more info.", "Failed to load traffic...");
+      return;
+    }
 
 //    FrmTrafficHistogram frm = new FrmTrafficHistogram();
     FrmTrafficBarGraph frm = new FrmTrafficBarGraph();

@@ -6,6 +6,7 @@ import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 import eng.jAtcSim.newLib.shared.time.ETimeStamp;
 
 public class FlightMovementTemplate extends MovementTemplate {
+
   private final Callsign callsign;
   private final String airplaneTypeName;
 
