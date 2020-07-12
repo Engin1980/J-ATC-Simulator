@@ -3,7 +3,9 @@ package eng.jAtcSim.newLib.traffic.models;
 import eng.eSystem.ERandom;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
+import eng.eSystem.collections.IMap;
 import eng.eSystem.collections.IReadOnlyList;
+import eng.eSystem.utilites.NumberUtils;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.context.SharedAcc;
 import eng.jAtcSim.newLib.shared.time.ETimeStamp;
@@ -20,14 +22,16 @@ public class SimpleGenericTrafficModel implements ITrafficModel {
       return new MovementsForHour(count, generalAviationProbability, departureProbability);
     }
 
-    private final int count;
-    private final double generalAviationProbability;
-    private final double departureProbability;
+    public final int count;
+    public final Double departureProbability;
+    public final Double generalAviationProbability;
 
-    public MovementsForHour(int count, double generalAviationProbability, double departureProbability) {
+    public MovementsForHour(int count, Double generalAviationProbability, Double departureProbability) {
       EAssert.Argument.isTrue(count >= 0);
-      EAssert.Argument.isTrue(generalAviationProbability >= 0 && generalAviationProbability <= 1);
-      EAssert.Argument.isTrue(departureProbability > 0 && departureProbability <= 1);
+      EAssert.Argument.isTrue(generalAviationProbability == null || NumberUtils.isBetweenOrEqual(0, generalAviationProbability, 1),
+          "General-aviation probability must be empty or between 0 and 1.");
+      EAssert.Argument.isTrue(departureProbability == null || NumberUtils.isBetweenOrEqual(0, departureProbability, 1),
+          "Departure probability must be empty or between 0 and 1.");
       this.count = count;
       this.generalAviationProbability = generalAviationProbability;
       this.departureProbability = departureProbability;
@@ -59,18 +63,35 @@ public class SimpleGenericTrafficModel implements ITrafficModel {
   }
 
   public static SimpleGenericTrafficModel create(
+      double globalGeneralAviationProbability,
+      double globalDepartureProbability,
       MovementsForHour[] movementsForHours,
       IList<ValueAndWeight> companies,
       IList<ValueAndWeight> countries) {
-    return new SimpleGenericTrafficModel(movementsForHours, companies, countries);
+    return new SimpleGenericTrafficModel(globalGeneralAviationProbability,
+        globalDepartureProbability, movementsForHours, companies, countries);
   }
 
-  private final MovementsForHour[] movementsForHours;
+  public static SimpleGenericTrafficModel create(
+      double globalGeneralAviationProbability,
+      double globalDepartureProbability,
+      MovementsForHour[] movementsForHours,
+      IMap<String, Integer> companies,
+      IMap<String, Integer> countries) {
+    IList<ValueAndWeight> lstCompanies = companies.getEntries().select(q->new ValueAndWeight(q.getKey(), q.getValue())).toList();
+    IList<ValueAndWeight> lstCountries = countries.getEntries().select(q->new ValueAndWeight(q.getKey(), q.getValue())).toList();
+    return new SimpleGenericTrafficModel(globalGeneralAviationProbability,
+        globalDepartureProbability, movementsForHours, lstCompanies, lstCountries);
+  }
+
   private final IList<ValueAndWeight> companies;
   private final IList<ValueAndWeight> countries;
+  private final MovementsForHour[] movementsForHours;
   private final ERandom rnd = SharedAcc.getRnd();
 
   private SimpleGenericTrafficModel(
+      double globalGeneralAviationProbability,
+      double globalDepartureProbability,
       MovementsForHour[] movementsForHours,
       IList<ValueAndWeight> companies,
       IList<ValueAndWeight> countries) {
@@ -80,7 +101,22 @@ public class SimpleGenericTrafficModel implements ITrafficModel {
     EAssert.Argument.isTrue(companies.isEmpty() == false);
     EAssert.Argument.isNotNull(countries, "countries");
     EAssert.Argument.isTrue(countries.isEmpty() == false);
-    this.movementsForHours = movementsForHours;
+
+    this.movementsForHours = new MovementsForHour[24];
+    for (int i = 0; i < this.movementsForHours.length; i++) {
+      this.movementsForHours[i] = new MovementsForHour(
+          movementsForHours[i].count,
+          movementsForHours[i].departureProbability == null ?
+              globalDepartureProbability : movementsForHours[i].departureProbability,
+          movementsForHours[i].generalAviationProbability == null ?
+              globalGeneralAviationProbability : movementsForHours[i].generalAviationProbability);
+
+      EAssert.Argument.isTrue(
+          NumberUtils.isBetweenOrEqual(0, this.movementsForHours[i].generalAviationProbability, 1));
+      EAssert.Argument.isTrue(
+          NumberUtils.isBetweenOrEqual(0, this.movementsForHours[i].departureProbability, 1));
+    }
+
     this.companies = companies;
     this.countries = countries;
   }
@@ -116,7 +152,6 @@ public class SimpleGenericTrafficModel implements ITrafficModel {
       String companyIcao = this.companies.getRandomByWeights(q -> (double) q.weight, rnd).value;
       ret = new GenericCommercialMovementTemplate(companyIcao, null,
           kind, initTime, new EntryExitInfo(radial));
-
     }
 
     return ret;

@@ -26,6 +26,7 @@ public class SimpleGenericTrafficModelXmlLoader {
     );
 
     SimpleGenericTrafficModel ret = SimpleGenericTrafficModel.create(
+        defaultProbabilityOfGeneralAviation, defaultProbabilityOfDeparture,
         movementsForHours.toArray(SimpleGenericTrafficModel.MovementsForHour.class),
         companies, countries);
     return ret;

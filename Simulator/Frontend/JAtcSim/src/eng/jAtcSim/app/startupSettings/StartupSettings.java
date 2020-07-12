@@ -1,12 +1,17 @@
 package eng.jAtcSim.app.startupSettings;
 
-import eng.eSystem.EStringBuilder;
-import eng.eSystem.collections.EList;
-import eng.eSystem.collections.IList;
+import eng.eSystem.collections.EMap;
+import eng.eSystem.collections.IMap;
 import eng.eSystem.eXml.XElement;
+import eng.eSystem.utilites.NumberUtils;
+import eng.eSystem.validation.EAssert;
 import eng.eXmlSerialization.XmlSerializer;
+import eng.jAtcSim.newLib.traffic.models.SimpleGenericTrafficModel;
+import org.jfree.date.EasterSundayRule;
 
 import java.time.LocalTime;
+
+import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class StartupSettings {
 
@@ -80,46 +85,77 @@ public class StartupSettings {
 
   public static class CustomTraffic {
 
-    public int arrivals2departuresRatio;
-    public String companies = "CSA;EZY";
-    public String countryCodes = "OK";
-    public int[] movementsPerHour;
-    public double nonCommercialFlightProbability;
-    public boolean useExtendedCallsigns;
-    public int weightTypeA;
-    public int weightTypeB;
-    public int weightTypeC;
-    public int weightTypeD;
+    private static final int MOVEMENTS_PER_HOUR_LENGTH = 24;
+    private IMap<String, Integer> companies = new EMap<>();
+    private IMap<String, Integer> countryCodes = new EMap<>();
+    private double departureProbability = .5;
+    private double generalAviationProbability = .5;
+    private SimpleGenericTrafficModel.MovementsForHour[] movementsPerHour;
+    private boolean useExtendedCallsigns = false;
 
-    public String[] getCompanies() {
-      return toModel(companies);
+    public CustomTraffic() {
+      this.companies.set("CSA", 1);
+      this.companies.set("EZY", 1);
+      this.countryCodes.set("OK", 1);
+      this.movementsPerHour = new SimpleGenericTrafficModel.MovementsForHour[MOVEMENTS_PER_HOUR_LENGTH];
+      for (int i = 0; i < movementsPerHour.length; i++) {
+        movementsPerHour[i] = new SimpleGenericTrafficModel.MovementsForHour(5, null,null);
+      }
     }
 
-    public void setCompanies(String[] companies) {
-      this.companies = fromModel(companies);
+    public IMap<String, Integer> getCompanies() {
+      return companies;
     }
 
-    public String[] getCountryCodes() {
-      return toModel(this.countryCodes);
+    public void setCompanies(IMap<String, Integer> companies) {
+      EAssert.Argument.isNotNull(companies, "companies");
+      this.companies = companies;
     }
 
-    public void setCountryCodes(String[] countryCodes) {
-      this.countryCodes = fromModel(countryCodes);
+    public IMap<String, Integer> getCountryCodes() {
+      return countryCodes;
     }
 
-    private String fromModel(String[] values) {
-      IList<String> lst = new EList<>(values);
-      EStringBuilder sb = new EStringBuilder();
-      sb.appendItems(lst, q -> q, ";");
-      return sb.toString();
+    public void setCountryCodes(IMap<String, Integer> countryCodes) {
+      EAssert.Argument.isNotNull(countryCodes, "countryCodes");
+      this.countryCodes = countryCodes;
     }
 
-    private String[] toModel(String value) {
-      String[] ret = value.split(";");
-      IList<String> lst = new EList<>(ret);
-      lst = lst.where(q -> q != null).select(q -> q.trim()).where(q -> q.length() > 0);
-      ret = lst.toArray(String.class);
-      return ret;
+    public double getDepartureProbability() {
+      return departureProbability;
+    }
+
+    public void setDepartureProbability(double departureProbability) {
+      EAssert.Argument.isTrue(NumberUtils.isBetweenOrEqual(0, departureProbability, 1), "Value must be between 0 and 1.");
+      this.departureProbability = departureProbability;
+    }
+
+    public double getGeneralAviationProbability() {
+      return generalAviationProbability;
+    }
+
+    public void setGeneralAviationProbability(double generalAviationProbability) {
+      EAssert.Argument.isTrue(NumberUtils.isBetweenOrEqual(0, generalAviationProbability, 1), "Value must be between 0 and 1.");
+      this.generalAviationProbability = generalAviationProbability;
+    }
+
+    public SimpleGenericTrafficModel.MovementsForHour[] getMovementsPerHour() {
+      return movementsPerHour;
+    }
+
+    public void setMovementsPerHour(SimpleGenericTrafficModel.MovementsForHour[] movementsPerHour) {
+      EAssert.Argument.isNotNull(movementsPerHour, "movementsPerHour");
+      EAssert.Argument.isTrue(movementsPerHour.length == MOVEMENTS_PER_HOUR_LENGTH,
+          sf("There must be exactly %d records in movements per hour.", MOVEMENTS_PER_HOUR_LENGTH));
+      this.movementsPerHour = movementsPerHour;
+    }
+
+    public boolean isUseExtendedCallsigns() {
+      return useExtendedCallsigns;
+    }
+
+    public void setUseExtendedCallsigns(boolean useExtendedCallsigns) {
+      this.useExtendedCallsigns = useExtendedCallsigns;
     }
   }
 

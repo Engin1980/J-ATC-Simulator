@@ -6,14 +6,19 @@
 package eng.jAtcSim.app.startupSettings.panels;
 
 import eng.eSystem.collections.EList;
+import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IList;
+import eng.eSystem.collections.IMap;
+import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.ToDoException;
 import eng.eSystem.swing.LayoutManager;
 import eng.eSystem.swing.extenders.ComboBoxExtender;
 import eng.eSystem.swing.extenders.DisplayItem;
+import eng.eSystem.swing.extenders.RegexPatternTextFieldExtender;
 import eng.eSystem.utilites.ExceptionUtils;
+import eng.eSystem.utilites.StringUtils;
 import eng.eSystem.utilites.awt.ComponentUtils;
-import eng.jAtcSim.app.extenders.ItemTextFieldExtender;
+import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.app.extenders.NumericUpDownExtender;
 import eng.jAtcSim.app.extenders.XmlFileSelectorExtender;
 import eng.jAtcSim.app.extenders.swingFactory.SwingFactory;
@@ -25,43 +30,41 @@ import eng.jAtcSim.newLib.gameSim.game.sources.TrafficXmlSource;
 import eng.jAtcSim.newLib.shared.context.SharedAcc;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 import eng.jAtcSim.newLib.traffic.ITrafficModel;
+import eng.jAtcSim.newLib.traffic.models.SimpleGenericTrafficModel;
 import eng.jAtcSim.shared.MessageBox;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
-import java.util.Arrays;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class TrafficPanel extends JStartupPanel {
 
+  private static final Pattern ALL_MOVEMENT_REGEX = Pattern.compile("^(\\d+)(?::(?:0?\\.(\\d+))?(?:\\/0?\\.(\\d+))?)?((;(\\d+)(?::(?:0?\\.(\\d+))?(?:\\/0?\\.(\\d+))?)?){23})?$");
+  private final static String ONE_COMPANY_REGEX = "([a-zA-Z]{3})(?:;(\\d+))?";
+  private final static String ONE_COUNTRY_CODE_REGEX = "([a-zA-Z]{2})(?:;(\\d+))?";
+  private static final Pattern ONE_MOVEMENT_REGEX = Pattern.compile("^(\\d+)(?::(?:0?\\.(\\d+))?(?:\\/0?\\.(\\d+))?)?$");
+
   private static ITrafficModel generateCustomTrafficModel(StartupSettings.Traffic trf) {
-    // Taken from JAtcSim class ! ! !
-    //TODO remove duplicit
-//    ITrafficModel ret = new
-//    GenericTraffic ret = new SimpleGenericTrafficModel(
-//        trf.customTraffic.companies, trf.customTraffic.countryCodes,
-//        trf.customTraffic.movementsPerHour,
-//        trf.customTraffic.arrivals2departuresRatio / 10d,
-//        trf.customTraffic.nonCommercialFlightProbability,
-//        trf.customTraffic.weightTypeA,
-//        trf.customTraffic.weightTypeB,
-//        trf.customTraffic.weightTypeC,
-//        trf.customTraffic.weightTypeD,
-//        trf.customTraffic.useExtendedCallsigns);
-    throw new ToDoException();
+
+    SimpleGenericTrafficModel ret = SimpleGenericTrafficModel.create(
+        trf.customTraffic.getGeneralAviationProbability(),
+        trf.customTraffic.getDepartureProbability(),
+        trf.customTraffic.getMovementsPerHour(),
+        trf.customTraffic.getCompanies(),
+        trf.customTraffic.getCountryCodes());
+
+    return ret;
+
 //    return ret;
   }
+
   private JButton btnAnalyseTraffic;
   private javax.swing.JCheckBox chkAllowDelays;
-  private javax.swing.JCheckBox chkCustomExtendedCallsigns;
   private ComboBoxExtender<DisplayItem<Double>> cmbEmergencyProbability;
   private XmlFileSelectorExtender fleTraffic;
   private javax.swing.ButtonGroup grpRdb;
-  private NumericUpDownExtender nudA;
-  private NumericUpDownExtender nudB;
-  private NumericUpDownExtender nudC;
-  private NumericUpDownExtender nudD;
   private NumericUpDownExtender nudMaxPlanes;
-  private NumericUpDownExtender nudMovements;
   private NumericUpDownExtender nudNonCommercials;
   private NumericUpDownExtender nudTrafficDensity;
   private JPanel pnlCustomTraffic;
@@ -69,8 +72,9 @@ public class TrafficPanel extends JStartupPanel {
   private javax.swing.JRadioButton rdbXml;
   private JScrollBar sldArrivalsDepartures;
   private int[] specificMovementValues = null;
-  private ItemTextFieldExtender txtCompanies;
-  private ItemTextFieldExtender txtCountryCodes;
+  private RegexPatternTextFieldExtender txtCompanies;
+  private RegexPatternTextFieldExtender txtCountryCodes;
+  private RegexPatternTextFieldExtender txtMovements;
 
   public TrafficPanel() {
     initComponents();
@@ -86,21 +90,11 @@ public class TrafficPanel extends JStartupPanel {
     adjustSelectedRdb(settings);
 
     chkAllowDelays.setSelected(settings.traffic.allowDelays);
-    if (settings.traffic.customTraffic.movementsPerHour == null)
-      nudMovements.setValue(10);
-    else {
-      nudMovements.setValue(settings.traffic.customTraffic.movementsPerHour[0]);
-      this.specificMovementValues = settings.traffic.customTraffic.movementsPerHour;
-    }
-    sldArrivalsDepartures.setValue(settings.traffic.customTraffic.arrivals2departuresRatio);
-    nudNonCommercials.setValue((int) (settings.traffic.customTraffic.nonCommercialFlightProbability * 100));
-    nudA.setValue(settings.traffic.customTraffic.weightTypeA);
-    nudB.setValue(settings.traffic.customTraffic.weightTypeB);
-    nudC.setValue(settings.traffic.customTraffic.weightTypeC);
-    nudD.setValue(settings.traffic.customTraffic.weightTypeD);
-    chkCustomExtendedCallsigns.setSelected(settings.traffic.customTraffic.useExtendedCallsigns);
-    txtCompanies.setItems(settings.traffic.customTraffic.getCompanies());
-    txtCountryCodes.setItems(settings.traffic.customTraffic.getCountryCodes());
+    txtMovements.setText(encodeMovements(settings.traffic.customTraffic.getMovementsPerHour()));
+    sldArrivalsDepartures.setValue((int) (settings.traffic.customTraffic.getDepartureProbability() * 10));
+    nudNonCommercials.setValue((int) (settings.traffic.customTraffic.getGeneralAviationProbability() * 100));
+    txtCompanies.setText(encodeMap(settings.traffic.customTraffic.getCompanies()));
+    txtCountryCodes.setText(encodeMap(settings.traffic.customTraffic.getCountryCodes()));
 
     setCmbEmergencyProbabilityByClosestValue(settings.traffic.emergencyPerDayProbability);
   }
@@ -111,24 +105,14 @@ public class TrafficPanel extends JStartupPanel {
 
     settings.traffic.maxPlanes = nudMaxPlanes.getValue();
     settings.traffic.densityPercentage = nudTrafficDensity.getValue() / 100d;
-    if (specificMovementValues == null) {
-      int tmp[] = new int[24];
-      Arrays.fill(tmp, nudMovements.getValue());
-      settings.traffic.customTraffic.movementsPerHour = tmp;
-    } else
-      settings.traffic.customTraffic.movementsPerHour = specificMovementValues;
+    settings.traffic.customTraffic.setMovementsPerHour(decodeMovements(txtMovements.getText()));
     adjustRdbSelected(settings);
 
     settings.traffic.allowDelays = chkAllowDelays.isSelected();
-    settings.traffic.customTraffic.nonCommercialFlightProbability = nudNonCommercials.getValue() / 100d;
-    settings.traffic.customTraffic.arrivals2departuresRatio = sldArrivalsDepartures.getValue();
-    settings.traffic.customTraffic.weightTypeA = nudA.getValue();
-    settings.traffic.customTraffic.weightTypeB = nudB.getValue();
-    settings.traffic.customTraffic.weightTypeC = nudC.getValue();
-    settings.traffic.customTraffic.weightTypeD = nudD.getValue();
-    settings.traffic.customTraffic.useExtendedCallsigns = chkCustomExtendedCallsigns.isSelected();
-    settings.traffic.customTraffic.setCompanies(txtCompanies.getItems());
-    settings.traffic.customTraffic.setCountryCodes(txtCountryCodes.getItems());
+    settings.traffic.customTraffic.setGeneralAviationProbability(nudNonCommercials.getValue() / 100d);
+    settings.traffic.customTraffic.setDepartureProbability(sldArrivalsDepartures.getValue() / 10d);
+    settings.traffic.customTraffic.setCompanies(decodeMapFromText(txtCompanies.getText(), ONE_COMPANY_REGEX));
+    settings.traffic.customTraffic.setCountryCodes(decodeMapFromText(txtCountryCodes.getText(), ONE_COUNTRY_CODE_REGEX));
 
     settings.traffic.emergencyPerDayProbability = cmbEmergencyProbability.getSelectedItem().value;
   }
@@ -163,19 +147,6 @@ public class TrafficPanel extends JStartupPanel {
     frm.setVisible(true);
   }
 
-  private void btnSpecifyTraffic_click(ActionEvent actionEvent) {
-    GenericTrafficMovementsPerHourPanel pnl = new GenericTrafficMovementsPerHourPanel();
-
-    if (specificMovementValues != null) pnl.setValues(this.specificMovementValues);
-    else pnl.setValues(nudMovements.getValue());
-    SwingFactory.showDialog(pnl, "Specify traffic per hour...", (JDialog) this.getRootPane().getParent());
-    int[] tmp = pnl.getValues();
-    if (tmp != null) {
-      nudMovements.setValue(tmp[0]);
-      specificMovementValues = tmp;
-    }
-  }
-
   private void createComponents() {
 
     btnAnalyseTraffic = SwingFactory.createButton("Analyse traffic movements", this::btnAnalyseTraffic_click);
@@ -191,19 +162,13 @@ public class TrafficPanel extends JStartupPanel {
 
     chkAllowDelays = new javax.swing.JCheckBox("Allow traffic delays");
 
-    nudMovements = new NumericUpDownExtender(new JSpinner(), 0, 120, 40, 1);
-    nudMovements.getOnChanged().add(q -> this.specificMovementValues = null);
     sldArrivalsDepartures = SwingFactory.createHorizontalBar(0, 10, 5);
-    nudA = new NumericUpDownExtender(new JSpinner(), 0, 100, 5, 1);
-    nudB = new NumericUpDownExtender(new JSpinner(), 0, 100, 5, 1);
-    nudC = new NumericUpDownExtender(new JSpinner(), 0, 100, 5, 1);
-    nudD = new NumericUpDownExtender(new JSpinner(), 0, 100, 5, 1);
-    chkCustomExtendedCallsigns = new javax.swing.JCheckBox("Use extended callsings");
     nudMaxPlanes = new NumericUpDownExtender(new JSpinner(), 1, 100, 15, 1);
     nudTrafficDensity = new NumericUpDownExtender(new JSpinner(), 0, 100, 100, 1);
     nudNonCommercials = new NumericUpDownExtender(new JSpinner(), 0, 100, 0, 10);
-    txtCompanies = new ItemTextFieldExtender();
-    txtCountryCodes = new ItemTextFieldExtender();
+    txtCompanies = new RegexPatternTextFieldExtender("^[A-Z]{3}(:\\d+)?(;[A-Z]{3}(:\\d+)?)*$");
+    txtCountryCodes = new RegexPatternTextFieldExtender("^[A-Z]{2}(:\\d+)?(;[A-Z]{2}(:\\d+)?)*$");
+    txtMovements = new RegexPatternTextFieldExtender(ALL_MOVEMENT_REGEX);
 
     cmbEmergencyProbability = new ComboBoxExtender<>(q -> q.label);
     setCmbEmergencyProbabilityModel();
@@ -214,20 +179,28 @@ public class TrafficPanel extends JStartupPanel {
   }
 
   private JPanel createCustomTrafficPanel() {
-    JPanel ret = LayoutManager.createFormPanel(7, 2,
-        null, chkCustomExtendedCallsigns,
-        new JLabel("Movements / hour:"),
-        LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.baseline, DISTANCE,
-            nudMovements.getControl(),
-            SwingFactory.createButton("Specify precisely", this::btnSpecifyTraffic_click)),
-        new JLabel("Non-commercial flights (%):"), nudNonCommercials.getControl(),
-        new JLabel("Arrivals <-> Departures"), sldArrivalsDepartures,
-        new JLabel("Companies (ICAO;ICAO;...):"), txtCompanies.getControl(),
-        new JLabel("Country codes (as above):"), txtCountryCodes.getControl(),
-        new JLabel("Plane weights A/B/C/D"), LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.baseline, DISTANCE,
-            nudA.getControl(), nudB.getControl(), nudC.getControl(), nudD.getControl())
-    );
-    return ret;
+    JPanel ret2 = LayoutManager.createFormPanel(5, 2,
+        new JLabel("Movements / hour:"), txtMovements.getControl(),
+        new JLabel("Overall departure probability:"), sldArrivalsDepartures,
+        new JLabel("Overall general aviation probability:"), nudNonCommercials.getControl(),
+        new JLabel("Companies:"), txtCompanies.getControl(),
+        new JLabel("Country codes:"), txtCountryCodes.getControl());
+    return ret2;
+
+//    JPanel ret = LayoutManager.createFormPanel(7, 2,
+//        null, chkCustomExtendedCallsigns,
+//        new JLabel("Movements / hour:"),
+//        LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.baseline, DISTANCE,
+//            nudMovements.getControl(),
+//            SwingFactory.createButton("Specify precisely", this::btnSpecifyTraffic_click)),
+//        new JLabel("Non-commercial flights (%):"), nudNonCommercials.getControl(),
+//        new JLabel("Arrivals <-> Departures"), sldArrivalsDepartures,
+//        new JLabel("Companies (ICAO;ICAO;...):"), txtCompanies.getControl(),
+//        new JLabel("Country codes (as above):"), txtCountryCodes.getControl(),
+//        new JLabel("Plane weights A/B/C/D"), LayoutManager.createFlowPanel(LayoutManager.eVerticalAlign.baseline, DISTANCE,
+//            nudA.getControl(), nudB.getControl(), nudC.getControl(), nudD.getControl())
+//    );
+//    return ret;
   }
 
   private JPanel createGlobalPanel() {
@@ -239,7 +212,7 @@ public class TrafficPanel extends JStartupPanel {
             nudMaxPlanes.getControl(),
             new JLabel("Traffic density (%):"), nudTrafficDensity.getControl(),
             chkAllowDelays),
-        new JLabel("Emergencies probabilty:"),
+        new JLabel("Emergencies probability:"),
         LayoutManager.createFlowPanel(
             LayoutManager.eVerticalAlign.baseline,
             super.DISTANCE,
@@ -276,6 +249,107 @@ public class TrafficPanel extends JStartupPanel {
         LayoutManager.createFlowPanel(fleTraffic.getTextControl(), fleTraffic.getButtonControl()),
         rdbUser, null,
         null, btnAnalyseTraffic);
+  }
+
+//  private void btnSpecifyTraffic_click(ActionEvent actionEvent) {
+//    GenericTrafficMovementsPerHourPanel pnl = new GenericTrafficMovementsPerHourPanel();
+//
+//    if (specificMovementValues != null) pnl.setValues(this.specificMovementValues);
+//    else pnl.setValues(nudMovements.getValue());
+//    SwingFactory.showDialog(pnl, "Specify traffic per hour...", (JDialog) this.getRootPane().getParent());
+//    int[] tmp = pnl.getValues();
+//    if (tmp != null) {
+//      nudMovements.setValue(tmp[0]);
+//      specificMovementValues = tmp;
+//    }
+//  }
+
+  private IMap<String, Integer> decodeMapFromText(String text, String regex) {
+    IMap<String, Integer> ret = new EMap<>();
+    Pattern p = Pattern.compile(regex);
+    String[] pts = text.split(";");
+    for (String pt : pts) {
+      Matcher m = p.matcher(pt);
+      if (m.find()) {
+        String a = m.group(1);
+        int w = Integer.parseInt(m.group(2));
+        ret.set(a, w);
+      }
+    }
+    return ret;
+  }
+
+  private SimpleGenericTrafficModel.MovementsForHour decodeMovement(String txt) {
+    Matcher m = ONE_MOVEMENT_REGEX.matcher(txt);
+    EAssert.isTrue(m.find());
+    int cnt = Integer.parseInt(m.group(1));
+    Double d = m.group(2) == null ? null
+        : Double.parseDouble("0." + m.group(2));
+    Double g = m.group(3) == null ? null
+        : Double.parseDouble("0." + m.group(3));
+    SimpleGenericTrafficModel.MovementsForHour ret = new SimpleGenericTrafficModel.MovementsForHour(cnt, g, d);
+    return ret;
+  }
+
+  private SimpleGenericTrafficModel.MovementsForHour[] decodeMovements(String txt) {
+    String[] pts = txt.split(";");
+    SimpleGenericTrafficModel.MovementsForHour[] ret = new SimpleGenericTrafficModel.MovementsForHour[24];
+    if (pts.length == 1) {
+      SimpleGenericTrafficModel.MovementsForHour mvm = decodeMovement(pts[0]);
+      for (int i = 0; i < ret.length; i++) {
+        ret[i] = mvm;
+      }
+    } else if (pts.length == 24) {
+      for (int i = 0; i < pts.length; i++) {
+        SimpleGenericTrafficModel.MovementsForHour mvm = decodeMovement(pts[i]);
+        ret[i] = mvm;
+      }
+    } else {
+      throw new EApplicationException("Movement-input-text does not have 1 or 24 blocks.");
+    }
+    return ret;
+  }
+
+  private String encodeMap(IMap<String, Integer> map) {
+    IList<String> pts = map.getEntries().select(q -> {
+      StringBuilder sb = new StringBuilder();
+      sb.append(q.getKey());
+      if (q.getValue() != 1)
+        sb.append(":").append(q.getValue().toString());
+      return sb.toString();
+    }).toList();
+    String ret = StringUtils.join(";", pts);
+    return ret;
+  }
+
+  private String encodeMovement(SimpleGenericTrafficModel.MovementsForHour movementPerHour) {
+    StringBuilder sb = new StringBuilder();
+    sb.append(movementPerHour.count);
+    if (movementPerHour.generalAviationProbability != null || movementPerHour.departureProbability != null) {
+      sb.append(":");
+      if (movementPerHour.departureProbability != null)
+        sb.append(movementPerHour.departureProbability.toString().substring(1));
+      if (movementPerHour.generalAviationProbability != null)
+        sb.append("/").append(movementPerHour.generalAviationProbability.toString().substring(1));
+    }
+    return sb.toString();
+  }
+
+  private String encodeMovements(SimpleGenericTrafficModel.MovementsForHour[] movementsPerHour) {
+    String ret;
+    int c = movementsPerHour[0].count;
+    Double d = movementsPerHour[0].departureProbability;
+    Double g = movementsPerHour[0].generalAviationProbability;
+    IList<SimpleGenericTrafficModel.MovementsForHour> lst = new EList<>(movementsPerHour);
+    if (lst.isAll(
+        q -> q.count == c && q.departureProbability == d && q.generalAviationProbability == g
+    )) {
+      ret = encodeMovement(movementsPerHour[0]);
+    } else {
+      IList<String> tmp = lst.select(q -> encodeMovement(q));
+      ret = StringUtils.join(";", tmp);
+    }
+    return ret;
   }
 
   private void fleetsChanged(FleetsSource.Fleets fleets) {
