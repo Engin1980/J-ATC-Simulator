@@ -36,7 +36,7 @@ public class SimulationTimeRadarSettings extends JStartupPanel {
   public void fillSettingsBy(StartupSettings settings) {
     settings.simulation.secondLengthInMs = this.nudSecondLength.getValue();
     settings.recent.time = this.tmeTime.getTime();
-    settings.radar.packClass = this.cmbRadarClass.getSelectedItem().value;
+    settings.radar.packClass = this.cmbRadarClass.getSelectedItem() == null ? null : this.cmbRadarClass.getSelectedItem().value;
   }
 
   private void initComponents() {

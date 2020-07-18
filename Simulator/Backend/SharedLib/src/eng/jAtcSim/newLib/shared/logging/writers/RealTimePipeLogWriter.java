@@ -5,7 +5,7 @@ import java.time.format.DateTimeFormatter;
 
 public class RealTimePipeLogWriter extends PipeLogWriter {
 
-  private static final String DATE_TIME_PATTERN = "yyyy-DD-mm HH:mm:ss";
+  private static final String DATE_TIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
   private static final String DELIMITER = " :: ";
 
   public RealTimePipeLogWriter(ILogWriter innerWriter) {

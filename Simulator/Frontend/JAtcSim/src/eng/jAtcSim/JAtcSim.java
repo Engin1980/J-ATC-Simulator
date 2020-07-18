@@ -1,11 +1,11 @@
 package eng.jAtcSim;
 
-import eng.eSystem.collections.EMap;
-import eng.eSystem.collections.IMap;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.exceptions.ERuntimeException;
 import eng.eSystem.exceptions.ToDoException;
+import eng.eSystem.utilites.ExceptionUtils;
+import eng.eXmlSerialization.XmlSerializer;
 import eng.jAtcSim.abstractRadar.global.SoundManager;
 import eng.jAtcSim.app.FrmIntro;
 import eng.jAtcSim.app.FrmStartupProgress;
@@ -15,7 +15,6 @@ import eng.jAtcSim.frmPacks.Pack;
 import eng.jAtcSim.frmPacks.shared.FrmLog;
 import eng.jAtcSim.newLib.gameSim.GameFactory;
 import eng.jAtcSim.newLib.gameSim.IGame;
-import eng.jAtcSim.newLib.gameSim.game.Game;
 import eng.jAtcSim.newLib.gameSim.game.startupInfos.*;
 import eng.jAtcSim.newLib.shared.context.SharedAcc;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
@@ -23,6 +22,8 @@ import eng.jAtcSim.newLib.shared.time.ETimeStamp;
 import eng.jAtcSim.newLib.traffic.ITrafficModel;
 import eng.jAtcSim.newLib.traffic.models.SimpleGenericTrafficModel;
 import eng.jAtcSim.newLib.weather.Weather;
+import eng.jAtcSim.xmlLoading.XmlSerialization;
+import eng.jAtcSim.xmlLoading.XmlSerializationFactory;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -120,7 +121,17 @@ public class JAtcSim {
 
 
     // startupSettings wizard
-    StartupSettings startupSettings = XmlLoadHelper.loadStartupSettings(appSettings.startupSettingsFile.toString());
+    XmlSerializer ser = XmlSerializationFactory.createForStartupSettings();
+    StartupSettings startupSettings;
+    try {
+      startupSettings = XmlSerialization.loadFromFile(ser, appSettings.startupSettingsFile.toString(), StartupSettings.class);
+    } catch (Exception ex) {
+      SharedAcc.getAppLog().write(
+          ApplicationLog.eType.warning,
+          "Failed to load startup settings from " + appSettings.startupSettingsFile.toString() +
+              ". Defaults used. Reason: " + ExceptionUtils.toFullString(ex, "\n\t"));
+      startupSettings = new StartupSettings();
+    }
 
     FrmIntro frmIntro = new FrmIntro(startupSettings);
     Stylist.apply(frmIntro, true);
@@ -147,7 +158,9 @@ public class JAtcSim {
     try {
       resolveShortXmlFileNamesInStartupSettings(appSettings, startupSettings);
       startupSettings.files.normalizeSlashes();
-      XmlLoadHelper.saveStartupSettings(startupSettings, appSettings.startupSettingsFile.toString());
+      XmlSerializer ser = XmlSerializationFactory.createForStartupSettings();
+      XmlSerialization.saveToFile(ser, startupSettings, StartupSettings.class,
+          appSettings.startupSettingsFile.toString(), "startupSettings");
     } catch (EApplicationException ex) {
       throw new EApplicationException("Failed to normalize or save default settings.", ex);
     }

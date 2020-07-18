@@ -272,7 +272,7 @@ public class TrafficPanel extends JStartupPanel {
       Matcher m = p.matcher(pt);
       if (m.find()) {
         String a = m.group(1);
-        int w = Integer.parseInt(m.group(2));
+        Integer w = m.groupCount() == 2 ? null : Integer.parseInt(m.group(2));
         ret.set(a, w);
       }
     }
@@ -314,7 +314,7 @@ public class TrafficPanel extends JStartupPanel {
     IList<String> pts = map.getEntries().select(q -> {
       StringBuilder sb = new StringBuilder();
       sb.append(q.getKey());
-      if (q.getValue() != 1)
+      if (q.getValue() != null && q.getValue() != 1)
         sb.append(":").append(q.getValue().toString());
       return sb.toString();
     }).toList();

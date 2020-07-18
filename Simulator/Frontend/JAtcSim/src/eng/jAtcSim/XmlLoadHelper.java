@@ -49,67 +49,6 @@ public class XmlLoadHelper {
 //
 //  }
 //
-  public static StartupSettings loadStartupSettings(String fileName) {
-    XmlSettings xmlSett = new XmlSettings();
-    {
-      TypeInfo ti = xmlSett.getMeta().forClass(StartupSettings.CustomTraffic.class);
-      ti.forField("movementsPerHour").getRules().add(
-          new XmlRule("item", int.class, XmlRepresentation.element, null)
-      );
-    }
-    xmlSett.getSerializers().add(new LocalTimeAttributeSerializer());
-    xmlSett.getLog().getOnLog().add(XmlLoadHelper::log_onLog);
-    XmlSerializer ser = new XmlSerializer(xmlSett);
-
-    StartupSettings ret;
-
-    try {
-      XDocument doc = XDocument.load(fileName);
-      XElement root = doc.getRoot();
-      ret = ser.deserialize(root, StartupSettings.class);
-    } catch (Exception ex) {
-      SharedAcc.getAppLog().write(
-          ApplicationLog.eType.warning,
-          "Failed to load startup settings from " + fileName +
-              ". Defaults used. Reason: " + ExceptionUtils.toFullString(ex, "\n"));
-      ret = new StartupSettings();
-    }
-
-    return ret;
-  }
-
-  private static void log_onLog(Log sender, Log.LogEventArgs e) {
-    if (e.type == Log.Type.progressObject) return;
-    if (e.type == Log.Type.progressXml) return;
-    if (e.type == Log.Type.progressSerializer) return;
-
-    System.out.print("XML ");
-    System.out.print(String.format("%-20s", e.type));
-    System.out.print(" :: ");
-    for (int i = 0; i < e.indent; i++) {
-      System.out.print(" ");
-    }
-    System.out.println(e.message);
-  }
-
-  public static void saveStartupSettings(StartupSettings sett, String fileName) {
-    XmlSettings xmlSett = new XmlSettings();
-    xmlSett.getSerializers().add(new LocalTimeAttributeSerializer());
-    xmlSett.getLog().getOnLog().add(XmlLoadHelper::log_onLog);
-    XmlSerializer ser = new XmlSerializer(xmlSett);
-
-    try {
-      XElement elm = new XElement("startupSettings");
-      XDocument doc = new XDocument(elm);
-      ser.serialize(sett, elm);
-
-      doc.save(fileName);
-    } catch (Exception ex) {
-      SharedAcc.getAppLog().write(
-          ApplicationLog.eType.warning,
-          "Failed to save app settings into " + fileName + ". Reason: " + ex.getMessage());
-    }
-  }
 
   public static RadarStyleSettings loadNewDisplaySettings(String fileName) {
     XmlSettings sett = new XmlSettings();

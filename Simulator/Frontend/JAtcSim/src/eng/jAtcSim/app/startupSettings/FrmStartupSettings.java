@@ -9,6 +9,7 @@ import eng.eSystem.exceptions.EXmlException;
 import eng.eSystem.swing.LayoutManager;
 import eng.eSystem.utilites.ExceptionUtils;
 import eng.eSystem.utilites.awt.ComponentUtils;
+import eng.eXmlSerialization.XmlSerializer;
 import eng.jAtcSim.app.extenders.swingFactory.FileHistoryManager;
 import eng.jAtcSim.app.extenders.swingFactory.SwingFactory;
 import eng.jAtcSim.app.startupSettings.panels.*;
@@ -18,6 +19,8 @@ import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 import eng.jAtcSim.newLib.traffic.ITrafficModel;
 import eng.jAtcSim.newLib.traffic.models.FlightListTrafficModel;
 import eng.jAtcSim.shared.MessageBox;
+import eng.jAtcSim.xmlLoading.XmlSerialization;
+import eng.jAtcSim.xmlLoading.XmlSerializationFactory;
 
 import javax.swing.*;
 import java.awt.*;
@@ -75,13 +78,14 @@ public class FrmStartupSettings extends JPanel {
     if (res != JFileChooser.APPROVE_OPTION) return;
 
     File file = jfc.getSelectedFile();
-    XDocument doc;
+    StartupSettings sett;
     try {
-      doc = XDocument.load(file);
-    } catch (EXmlException e) {
-      throw new EApplicationException(sf("Unable to load startup settings file from '%s'.", file), e);
+      XmlSerializer ser = XmlSerializationFactory.createForStartupSettings();
+      sett = XmlSerialization.loadFromFile(ser, file, StartupSettings.class);
+    } catch (Exception e) {
+      throw new EApplicationException("Unable to load startup settings.", e);
     }
-    StartupSettings sett = StartupSettings.load(doc.getRoot());
+
     this.fillBySettings(sett);
     FileHistoryManager.updateHistory(SwingFactory.FileDialogType.startupSettings.toString(), file.toPath().toString());
     this.lastStartupSettingsFileName = file.getAbsolutePath();
@@ -100,12 +104,11 @@ public class FrmStartupSettings extends JPanel {
     StartupSettings sett = new StartupSettings();
     this.fillSettingsBy(sett);
 
-    XDocument doc = new XDocument(new XElement("root"));
-    sett.save(doc.getRoot());
     try {
-      doc.save(fileName);
-    } catch (EXmlException e) {
-      throw new EApplicationException(sf("Failed to save startup settings into file '%s'.", fileName), e);
+      XmlSerializer ser = XmlSerializationFactory.createForStartupSettings();
+      XmlSerialization.saveToFile(ser, sett, StartupSettings.class, fileName);
+    } catch (Exception e) {
+      throw new EApplicationException("Failed to save startup settings.", e);
     }
     FileHistoryManager.updateHistory(SwingFactory.FileDialogType.startupSettings.toString(), fileName);
     this.lastStartupSettingsFileName = fileName;

@@ -26,6 +26,12 @@ public class SimpleGenericTrafficModel implements ITrafficModel {
     public final Double departureProbability;
     public final Double generalAviationProbability;
 
+    public MovementsForHour() {
+      this.count = 0;
+      this.departureProbability = 0.5;
+      this.generalAviationProbability = 0.2;
+    }
+
     public MovementsForHour(int count, Double generalAviationProbability, Double departureProbability) {
       EAssert.Argument.isTrue(count >= 0);
       EAssert.Argument.isTrue(generalAviationProbability == null || NumberUtils.isBetweenOrEqual(0, generalAviationProbability, 1),
@@ -78,8 +84,8 @@ public class SimpleGenericTrafficModel implements ITrafficModel {
       MovementsForHour[] movementsForHours,
       IMap<String, Integer> companies,
       IMap<String, Integer> countries) {
-    IList<ValueAndWeight> lstCompanies = companies.getEntries().select(q->new ValueAndWeight(q.getKey(), q.getValue())).toList();
-    IList<ValueAndWeight> lstCountries = countries.getEntries().select(q->new ValueAndWeight(q.getKey(), q.getValue())).toList();
+    IList<ValueAndWeight> lstCompanies = companies.getEntries().select(q -> new ValueAndWeight(q.getKey(), q.getValue())).toList();
+    IList<ValueAndWeight> lstCountries = countries.getEntries().select(q -> new ValueAndWeight(q.getKey(), q.getValue())).toList();
     return new SimpleGenericTrafficModel(globalGeneralAviationProbability,
         globalDepartureProbability, movementsForHours, lstCompanies, lstCountries);
   }
