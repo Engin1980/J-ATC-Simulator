@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="FlightRadarRealTrafficConverter" type="Application" factoryName="Application">
+  <configuration default="false" name="(Tools) FlightRadarRealTrafficConverter" type="Application" factoryName="Application">
     <option name="MAIN_CLASS_NAME" value="eng.flightRadarRealTrafficConveerter.Program" />
     <module name="FlightRadarRealTrafficConverter" />
     <option name="PROGRAM_PARAMETERS" value="&quot;C:\Users\Marek Vajgl\Documents\IdeaProjects\JAtcSimSolution\FlightRadarRealTrafficConverter\sources\lfmn&quot;" />

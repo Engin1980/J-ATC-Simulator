@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Air-company fleet downloader" type="Application" factoryName="Application">
+  <configuration default="false" name="(Tools) Air-company fleet downloader" type="Application" factoryName="Application">
     <option name="MAIN_CLASS_NAME" value="eng.airCompanyFleetDownloader.Program" />
     <module name="AirCompany Fleet Downloader" />
     <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
