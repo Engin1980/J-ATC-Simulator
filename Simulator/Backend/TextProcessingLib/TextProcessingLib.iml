@@ -9,7 +9,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="SpeechesLib" />
     <orderEntry type="module" module-name="SharedLib" />
-    <orderEntry type="library" name="eng.eSystem" level="project" />
+    <orderEntry type="library" name="eng.eSystem (jAtcSim)" level="project" />
     <orderEntry type="module" module-name="WeatherLib" />
   </component>
 </module>

@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="eng.eXmlSerialization (jAtcSim)">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/Simulator/_Libs/eng.eXmlSerialization.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

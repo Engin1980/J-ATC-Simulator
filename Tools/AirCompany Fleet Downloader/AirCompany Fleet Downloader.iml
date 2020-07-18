@@ -7,7 +7,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="eng.eSystem" level="project" />
+    <orderEntry type="library" name="eng.eSystem" level="application" />
     <orderEntry type="library" name="eng.eXmlSerialization" level="application" />
   </component>
 </module>

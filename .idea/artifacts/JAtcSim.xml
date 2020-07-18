@@ -8,7 +8,7 @@
         <element id="module-output" name="SwingRadar" />
         <element id="module-output" name="AbstractRadar" />
       </element>
-      <element id="library" level="project" name="eng.eSystem" />
+      <element id="library" level="project" name="eng.eSystem (jAtcSim)" />
       <element id="directory" name="_Sounds">
         <element id="dir-copy" path="$PROJECT_DIR$/Simulator/_Sounds" />
       </element>

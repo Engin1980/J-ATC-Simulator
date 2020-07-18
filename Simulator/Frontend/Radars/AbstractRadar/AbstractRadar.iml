@@ -7,7 +7,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="eng.eSystem" level="project" />
+    <orderEntry type="library" name="eng.eSystem (jAtcSim)" level="project" />
     <orderEntry type="module" module-name="SharedLib" />
     <orderEntry type="module" module-name="AirplanesLib" />
     <orderEntry type="module" module-name="AreaLib" />

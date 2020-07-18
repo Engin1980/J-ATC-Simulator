@@ -16,7 +16,6 @@
       <module fileurl="file://$PROJECT_DIR$/Simulator/Backend/FleetXmlLoaderLib/FleetXmlLoaderLib.iml" filepath="$PROJECT_DIR$/Simulator/Backend/FleetXmlLoaderLib/FleetXmlLoaderLib.iml" />
       <module fileurl="file://$PROJECT_DIR$/Tools/FlightRadarRealTrafficConverter/FlightRadarRealTrafficConverter.iml" filepath="$PROJECT_DIR$/Tools/FlightRadarRealTrafficConverter/FlightRadarRealTrafficConverter.iml" />
       <module fileurl="file://$PROJECT_DIR$/Simulator/Frontend/JAtcSim/JAtcSim.iml" filepath="$PROJECT_DIR$/Simulator/Frontend/JAtcSim/JAtcSim.iml" />
-      <module fileurl="file://$PROJECT_DIR$/Simulator/Frontend/JAtcSimFX/JAtcSimFX.iml" filepath="$PROJECT_DIR$/Simulator/Frontend/JAtcSimFX/JAtcSimFX.iml" />
       <module fileurl="file://$PROJECT_DIR$/Simulator/Backend/JAtcSimLib(OLD)/JAtcSimLib(OLD).iml" filepath="$PROJECT_DIR$/Simulator/Backend/JAtcSimLib(OLD)/JAtcSimLib(OLD).iml" />
       <module fileurl="file://$PROJECT_DIR$/JAtcSimSolution.iml" filepath="$PROJECT_DIR$/JAtcSimSolution.iml" />
       <module fileurl="file://$PROJECT_DIR$/Postponed/JavaFXRadar/JavaFXRadar.iml" filepath="$PROJECT_DIR$/Postponed/JavaFXRadar/JavaFXRadar.iml" />

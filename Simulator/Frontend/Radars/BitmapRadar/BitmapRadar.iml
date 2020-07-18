@@ -8,6 +8,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="AbstractRadar" />
-    <orderEntry type="library" name="eng.eSystem" level="project" />
+    <orderEntry type="library" name="eng.eSystem (jAtcSim)" level="project" />
   </component>
 </module>
