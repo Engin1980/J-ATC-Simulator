@@ -16,11 +16,10 @@ import eng.eXmlSerialization.meta.XmlRule;
 
 import java.io.*;
 import java.net.HttpURLConnection;
-import java.net.SocketTimeoutException;
 import java.net.URL;
-import java.nio.channels.Pipe;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.Collator;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -29,6 +28,7 @@ import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class Program {
 
+  private static final boolean USE_XML_LOG = false;
   private static final int DOWNLOAD_DELAY = 5000;
   private static final Path path = Paths.get("C:\\temp\\airlines");
   private static EMap<String, String> typeMap = new EMap<>();
@@ -42,12 +42,12 @@ public class Program {
     }
 
     //tmp();
-    downloadAirlines();
+    //downloadAirlines();
     //downloadAirlinesFleets();
-    //convertToFleets();
+    convertToFleets();
   }
 
-  private static void convertToFleets(){
+  private static void convertToFleets() {
     System.out.println("Phase 3 - converting to fleets xml file");
 
     XmlSerializer ser = getSerializer();
@@ -57,19 +57,19 @@ public class Program {
     System.out.println("\t found " + lst.count() + " decoded");
     lst = lst.where(q -> q.isActive());
     System.out.println("\t found " + lst.count() + " active");
-    lst = lst.where(q -> q.getCodes().count(p -> p.length() == 3) == 1);
-    System.out.println("\t found " + lst.count() + " airlines with exactly one ICAO code");
-    IMap<String, IList<AirlineInfo>> map = lst.groupBy(q->q.getCodes().getFirst(p->p.length() == 3));
-    System.out.println("\t found " + map.getKeys().count() + " unequivocal ICAO codes");
+    lst = lst.where(q -> q.tryGetSingleIcaoCode() != null);
+    System.out.println("\t found " + lst.count() + " airlines with exatly one ICAO code");
+    IMap<String, IList<AirlineInfo>> map = lst.groupBy(q -> q.tryGetSingleIcaoCode());
+    System.out.println("\t found " + map.getKeys().count() + " unique ICAO codes");
     System.out.println("\t duplicate ICAOs:");
     for (Map.Entry<String, IList<AirlineInfo>> entry : map.where(q -> q.getValue().count() > 1)) {
       System.out.println("\t\t" + entry.getKey() + " - " + entry.getValue().count());
       System.out.println("\t\t used will be: " + entry.getValue().get(0).getName());
     }
 
-    ISet<String> allUsedTypes = lst.selectMany(q->q.getFleet().getKeys().toList()).toSet();
+    ISet<String> allUsedTypes = lst.selectMany(q -> q.getFleet().getKeys().toList()).toSet();
     ISet<String> unknownTypes = allUsedTypes.minus(typeMap.getKeys());
-    if (unknownTypes.isEmpty() == false){
+    if (unknownTypes.isEmpty() == false) {
       System.out.println("\t unknown plane types:");
       for (String unknownType : unknownTypes) {
         System.out.println("\t\t" + unknownType);
@@ -82,18 +82,18 @@ public class Program {
     sb.appendLine("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
     sb.appendLine("<fleets>");
 
-    for (Map.Entry<String, IList<AirlineInfo>> entry : map) {
-      AirlineInfo ai = entry.getValue().getFirst();
+    IList<AirlineInfo> finalList = map.getValues()
+        .toList()
+        .select(q->q.getFirst())
+        .orderBy(q->q.tryGetSingleIcaoCode());
+    for (AirlineInfo ai : finalList) {
       sb.appendFormatLine("  <company icao=\"%s\" name=\"%s\">", ai.getCodes().getFirst(q -> q.length() == 3), ai.getName());
-      sb.appendLine("    <types>");
 
       for (String k : ai.getFleet().getKeys()) {
         int v = ai.getFleet().get(k);
         k = typeMap.get(k);
         sb.appendFormatLine("      <type name=\"%s\" weight=\"%d\" />", k, v);
       }
-
-      sb.appendLine("    </types>");
       sb.appendLine("  </company>");
     }
 
@@ -209,17 +209,33 @@ public class Program {
 
     System.out.println("Phase 1 - downloading airlines");
 
-    IList<AirlineInfo> lst = new EList<>();
     XmlSerializer ser = getSerializer();
+    IList<AirlineInfo> lst;
+    if (java.nio.file.Files.exists(getAirlinesListFile())) {
+      System.out.println("\t file " + getAirlinesListFile().toString() + " already exists, loading");
+      lst = (IList<AirlineInfo>) deserializeFromDocument(ser, getAirlinesListFile().toString(), EList.class);
+    } else {
+      lst = new EList<>();
+    }
+
+    char firstChar;
+    if (lst.isEmpty()) {
+      firstChar = 'a';
+    } else {
+      firstChar = Character.toLowerCase(lst.getLast().getName().charAt(0));
+      firstChar = (char) ((int) firstChar + 1);
+      System.out.println("\t starting from character " + firstChar);
+    }
+
 
     String base = "https://www.airfleets.net/recherche/list-airline-%s.htm";
-    for (int i = 'a'; i <= 'z'; i++) {
+    for (int i = firstChar; i <= 'z'; i++) {
       char c = (char) i;
       String s = sf(base, c);
       IList<AirlineInfo> tmp = downloadAirlinesByLetter(s);
       lst.add(tmp);
 
-      serializeToDocument(ser, lst, getTmpFile().toString());
+      serializeToDocument(ser, lst, getAirlinesListFile().toString());
     }
 
     lst = lst.where(q -> q.isActive());
@@ -273,22 +289,26 @@ public class Program {
     System.out.println("Total airlines: " + src.size());
     int undecodedCount = src.count(q -> q.isDecoded() == false);
     System.out.println("Undecoded airlines: " + undecodedCount);
-
-    System.out.println("Checking duplicates");
-    IList<AirlineInfo> toRem = new EList<>();
-    for (AirlineInfo a : src) {
-      for (AirlineInfo b : toRem) {
-        if (a.getName().equals(b.getName()) && a != b) {
-          toRem.add(b);
-        }
-      }
+    IMap<String, IList<AirlineInfo>> uniqueUrls = src.groupBy(q -> q.getUrl());
+    src.clear();
+    for (Map.Entry<String, IList<AirlineInfo>> entry : uniqueUrls) {
+      src.add(entry.getValue().getFirst());
     }
-    System.out.println("Found " + toRem.size() + " duplicate records, removing...");
-    for (AirlineInfo b : toRem) {
-      src.remove(b);
-    }
+    src.sort(q->q.getName().toLowerCase());
+    System.out.println("Unique URLs: " + src.count());
+// Prints which URL contains which airlines
+//    System.out.println("Groups:");
+//    for (Map.Entry<String, IList<AirlineInfo>> entry : uniqueUrls) {
+//      System.out.println("\t" + entry.getKey());
+//      for (AirlineInfo airlineInfo : entry.getValue()) {
+//        System.out.println("\t\t" + airlineInfo.getName() + " (" + airlineInfo.getUrl() + ")");
+//      }
+//    }
 
+    int index = 0;
+    int failedCount = 0;
     for (AirlineInfo airline : src) {
+      index++;
       System.out.println("Processing airline " + airline.getName());
       if (airline.isDecoded()) {
         System.out.println("\t already decoded, skipping");
@@ -300,18 +320,19 @@ public class Program {
         continue;
       }
 
-
       try {
         downloadAirlineFleet(airline);
       } catch (Exception ex) {
         System.out.println("\terror!");
         System.out.println(ExceptionUtils.toFullString(ex));
-        airline.setDecoded(true);
+        failedCount++;
+        //airline.setDecoded(true);
       }
 
       savedCount++;
       if (savedCount > saveStep) {
-        System.out.println("\tsaving");
+        double proc = (index / (double) src.count()) * 100d;
+        System.out.println(sf("\tsaving (processed %d of %d -- %.2f%%, failed %d)", index, src.count(), proc, failedCount));
         serializeToDocument(ser, src, getAirlinesListFile().toString());
         savedCount = 0;
       }
@@ -345,8 +366,7 @@ public class Program {
   private static XmlSerializer getSerializer() {
     XmlSettings sett = new XmlSettings();
     sett.setStoreTypeMode(StoreTypeMode.dontStore);
-    sett.setStoreTypeMode(StoreTypeMode.dontStore);
-    sett.getLog().getOnLog().add(new Log.DefaultOnLogHandler());
+    if (USE_XML_LOG) sett.getLog().getOnLog().add(new Log.DefaultOnLogHandler());
     sett.getMeta().forClass(EList.class).getRule().with(0, new XmlRule(null, AirlineInfo.class));
 
     sett.getMeta().forClass(AirlineInfo.class).forField("fleet")
@@ -356,16 +376,10 @@ public class Program {
             .with(1, new XmlRule(null, Integer.class)));
     sett.getMeta().forClass(AirlineInfo.class).forField("codes")
         .getRules().add(
-            new XmlRule(null, null)
+        new XmlRule(null, null)
             .with(0, new XmlRule(null, String.class))
     );
     XmlSerializer ret = new XmlSerializer(sett);
-    return ret;
-  }
-
-  private static Path getTmpFile() {
-    Path ret =
-        Paths.get(path.toAbsolutePath().toString(), "tmp.xml");
     return ret;
   }
 

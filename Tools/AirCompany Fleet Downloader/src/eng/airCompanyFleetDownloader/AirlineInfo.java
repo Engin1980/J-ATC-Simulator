@@ -25,6 +25,14 @@ public class AirlineInfo {
     active = false;
   }
 
+  public String tryGetSingleIcaoCode(){
+    IList<String> tmp = this.codes.where(q->q.length() == 3);
+    if (tmp.isEmpty() || tmp.count() > 1)
+      return null;
+    else
+      return tmp.getFirst();
+  }
+
   public IMap<String, Integer> getFleet() {
     return fleet;
   }
