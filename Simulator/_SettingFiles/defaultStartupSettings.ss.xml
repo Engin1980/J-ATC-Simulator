@@ -1,14 +1,8 @@
-<?xml version="1.0" encoding="UTF-8"?><root>
-  <files
-          areaXmlFile="_SettingFiles/airports/LFMN.ar.xml"
-          companiesFleetsXmlFile="_SettingFiles/airlinesFleets.afl.xml"
-          generalAviationFleetsXmlFile="_SettingFiles/countriesFleets.cfl.xml"
-          planesXmlFile="_SettingFiles/planeTypes.tp.xml"
-          trafficXmlFile="_SettingFiles/traffic/comeAndGoTraffic.tr.xml"
-          weatherXmlFile="_SettingFiles/developers/testWindChange.we.xml"/>
+<?xml version="1.0" encoding="UTF-8"?><startupSettings>
+  <files areaXmlFile="_SettingFiles/airports/LFMN.ar.xml" companiesFleetsXmlFile="_SettingFiles/airlinesFleets.afl.xml" generalAviationFleetsXmlFile="_SettingFiles/countriesFleets.cfl.xml" planesXmlFile="_SettingFiles/planeTypes.tp.xml" trafficXmlFile="_SettingFiles/traffic/comeAndGoTraffic.tr.xml" weatherXmlFile="_SettingFiles/developers/testWindChange.we.xml"/>
   <radar packClass="eng.jAtcSim.frmPacks.sdi.Pack"/>
-  <simulation secondLengthInMs="750"/>
   <recent icao="LFMN" time="10:45"/>
+  <simulation secondLengthInMs="750"/>
   <traffic allowDelays="false" densityPercentage="0.0" emergencyPerDayProbability="0.14285714285714285" maxPlanes="0" type="user">
     <customTraffic departureProbability="0.5" generalAviationProbability="0.5" useExtendedCallsigns="false">
       <companies __keyType="java.lang.String" __type="eng.eSystem.collections.EMap">
@@ -52,6 +46,5 @@
       </movementsPerHour>
     </customTraffic>
   </traffic>
-  <weather cloudBaseAltitudeFt="8000" cloudBaseProbability="0.75" snowState="intensive" type="online"
-           visibilityInM="7000" windDirection="281" windSpeed="31"/>
-</root>
+  <weather cloudBaseAltitudeFt="8000" cloudBaseProbability="0.75" snowState="intensive" type="online" visibilityInM="7000" windDirection="281" windSpeed="31"/>
+</startupSettings>
