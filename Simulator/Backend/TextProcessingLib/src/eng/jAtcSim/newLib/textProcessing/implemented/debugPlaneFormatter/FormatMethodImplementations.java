@@ -251,7 +251,7 @@ class FormatMethodImplementations {
   }
 
   public String format(GoodDayNotification cmd) {
-    int greetingIndex = Context.getShared().getRnd().nextInt(greetings.length);
+    int greetingIndex = Context.getApp().getRnd().nextInt(greetings.length);
     StringBuilder sb = new StringBuilder();
     sb
         .append(greetings[greetingIndex])

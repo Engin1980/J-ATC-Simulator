@@ -12,6 +12,5 @@ public interface ISharedContext {
   IReadOnlyList<AtcId> getAtcs();
   String getLogPath();
   EDayTimeRun getNow();
-  ERandom getRnd();
   SimulationLog getSimLog();
 }

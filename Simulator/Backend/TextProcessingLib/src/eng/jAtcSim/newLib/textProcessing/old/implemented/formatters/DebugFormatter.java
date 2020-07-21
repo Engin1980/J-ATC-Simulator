@@ -247,7 +247,7 @@
 //
 //  @Override
 //  protected String formatGoodDayNotification(GoodDayNotification cmd) {
-//    double d = Context.getShared().getRnd().nextDouble();
+//    double d = Context.getApp().getRnd().nextDouble();
 //    d = d * greetings.length;
 //    StringBuilder sb = new StringBuilder();
 //    sb

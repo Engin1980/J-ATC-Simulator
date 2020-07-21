@@ -21,7 +21,7 @@ public class CallsignFactory {
   private static final double EXTENDED_CALLSIGN_PROBABILITY = 0.3;
 
   private static Type getCallsignType(boolean useExtended) {
-    ERandom rnd = Context.getShared().getRnd();
+    ERandom rnd = Context.getApp().getRnd();
     Type ret;
     if (!useExtended)
       ret = Type.NNN;
@@ -37,7 +37,7 @@ public class CallsignFactory {
   }
 
   private static String generateCommercial(Type type) {
-    ERandom rnd = Context.getShared().getRnd();
+    ERandom rnd = Context.getApp().getRnd();
     StringBuilder ret = new StringBuilder();
     boolean addFourth =  rnd.nextDouble() > COMPANY_THREE_CHAR_NUMBER_PROBABILITY;
     switch (type) {
@@ -74,7 +74,7 @@ public class CallsignFactory {
   private static String generateNonCommercial(String prefix) {
     StringBuilder ret = new StringBuilder();
     for (int i = prefix.length(); i < 5; i++) {
-      char c = (char) Context.getShared().getRnd().nextInt('A', 'Z');
+      char c = (char) Context.getApp().getRnd().nextInt('A', 'Z');
       ret.append(c);
     }
     return ret.toString();

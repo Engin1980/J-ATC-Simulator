@@ -135,13 +135,13 @@ public class AirplanesSimModule extends SimModule {
 
   private Coordinate generateArrivalCoordinate(Coordinate navFix, Coordinate aipFix) {
     double radial = Coordinates.getBearing(aipFix, navFix);
-    radial += Context.getShared().getRnd().nextDouble(-15, 15); // nahodne zatoceni priletoveho radialu
+    radial += Context.getApp().getRnd().nextDouble(-15, 15); // nahodne zatoceni priletoveho radialu
     double dist = Coordinates.getDistanceInNM(navFix, AreaAcc.getAirport().getLocation());
     if (dist > (AreaAcc.getAirport().getCoveredDistance())) {
-      dist = Context.getShared().getRnd().nextDouble(25, 40);
+      dist = Context.getApp().getRnd().nextDouble(25, 40);
     } else {
       dist = AreaAcc.getAirport().getCoveredDistance() - dist;
-      if (dist < 25) dist = Context.getShared().getRnd().nextDouble(25, 40);
+      if (dist < 25) dist = Context.getApp().getRnd().nextDouble(25, 40);
     }
     Coordinate ret = Coordinates.getCoordinate(navFix, (int) radial, dist);
     return ret;
@@ -164,14 +164,14 @@ public class AirplanesSimModule extends SimModule {
     }
 
     // update by random value
-    ret += Context.getShared().getRnd().nextInt(-3000, 5000);
+    ret += Context.getApp().getRnd().nextInt(-3000, 5000);
     if (ret > type.maxAltitude) {
       if (ret < 12000)
-        ret = type.maxAltitude - Context.getShared().getRnd().nextInt(4) * 1000;
+        ret = type.maxAltitude - Context.getApp().getRnd().nextInt(4) * 1000;
       else if (ret < 20000)
-        ret = type.maxAltitude - Context.getShared().getRnd().nextInt(7) * 1000;
+        ret = type.maxAltitude - Context.getApp().getRnd().nextInt(7) * 1000;
       else
-        ret = type.maxAltitude - Context.getShared().getRnd().nextInt(11) * 1000;
+        ret = type.maxAltitude - Context.getApp().getRnd().nextInt(11) * 1000;
     }
     ret = ret / 1000 * 1000;
 
@@ -187,7 +187,7 @@ public class AirplanesSimModule extends SimModule {
   private int generateDelay() {
     double delayStepProbability = this.delayStepProbability;
     int delayStep = this.delayStep;
-    ERandom rnd = Context.getShared().getRnd();
+    ERandom rnd = Context.getApp().getRnd();
 
     int ret = 0;
     while (rnd.nextDouble() <= delayStepProbability) {

@@ -25,7 +25,7 @@ public class DivertModule extends Module{
 
   private static EDayTimeStamp generateDivertTime() {
     EDayTimeStamp now = Context.getShared().getNow().toStamp();
-    int divertTimeMinutes = Context.getShared().getRnd().nextInt(MINIMAL_DIVERT_TIME_MINUTES, MAXIMAL_DIVERT_TIME_MINUTES);
+    int divertTimeMinutes = Context.getApp().getRnd().nextInt(MINIMAL_DIVERT_TIME_MINUTES, MAXIMAL_DIVERT_TIME_MINUTES);
     EDayTimeStamp ret = now.addMinutes(divertTimeMinutes);
     return ret;
   }

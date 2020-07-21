@@ -93,7 +93,7 @@ public class SimpleGenericTrafficModel implements ITrafficModel {
   private final IList<ValueAndWeight> companies;
   private final IList<ValueAndWeight> countries;
   private final MovementsForHour[] movementsForHours;
-  private final ERandom rnd = Context.getShared().getRnd();
+  private final ERandom rnd = Context.getApp().getRnd();
 
   private SimpleGenericTrafficModel(
       double globalGeneralAviationProbability,

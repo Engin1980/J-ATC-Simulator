@@ -18,7 +18,7 @@ public class RunwayCheckInfo {
   private static final int MAX_EMERGENCY_MAINTENANCE_DURATION = 45;
 
   public static RunwayCheckInfo createImmediateAfterEmergency() {
-    int closeDuration = Context.getShared().getRnd().nextInt(MIN_EMERGENCY_MAINTENANCE_DURATION, MAX_EMERGENCY_MAINTENANCE_DURATION);
+    int closeDuration = Context.getApp().getRnd().nextInt(MIN_EMERGENCY_MAINTENANCE_DURATION, MAX_EMERGENCY_MAINTENANCE_DURATION);
     RunwayCheckInfo ret = new RunwayCheckInfo(0, closeDuration);
     return ret;
   }
@@ -26,9 +26,9 @@ public class RunwayCheckInfo {
   public static RunwayCheckInfo createNormal(boolean isInitial) {
     int maxTime;
     if (isInitial)
-      maxTime = Context.getShared().getRnd().nextInt(MAX_NORMAL_MAINTENANCE_INTERVAL);
+      maxTime = Context.getApp().getRnd().nextInt(MAX_NORMAL_MAINTENANCE_INTERVAL);
     else
-      maxTime = Context.getShared().getRnd().nextInt(MIN_NORMAL_MAINTENANCE_INTERVAL, MAX_NORMAL_MAINTENANCE_INTERVAL);
+      maxTime = Context.getApp().getRnd().nextInt(MIN_NORMAL_MAINTENANCE_INTERVAL, MAX_NORMAL_MAINTENANCE_INTERVAL);
 
     RunwayCheckInfo ret = new RunwayCheckInfo(maxTime, NORMAL_MAINTENACE_DURATION);
     return ret;
@@ -36,10 +36,10 @@ public class RunwayCheckInfo {
 
   public static RunwayCheckInfo createSnowCleaning(boolean isInitial, boolean isIntensive) {
     int maxTime = isIntensive
-        ? Context.getShared().getRnd().nextInt(MIN_SNOW_INTENSIVE_MAINTENANCE_INTERVAL, MAX_SNOW_INTENSIVE_MAINTENANCE_INTERVAL)
-        : Context.getShared().getRnd().nextInt(MIN_SNOW_MAINTENANCE_INTERVAL, MAX_SNOW_MAINTENANCE_INTERVAL);
+        ? Context.getApp().getRnd().nextInt(MIN_SNOW_INTENSIVE_MAINTENANCE_INTERVAL, MAX_SNOW_INTENSIVE_MAINTENANCE_INTERVAL)
+        : Context.getApp().getRnd().nextInt(MIN_SNOW_MAINTENANCE_INTERVAL, MAX_SNOW_MAINTENANCE_INTERVAL);
     if (isInitial)
-      maxTime = Context.getShared().getRnd().nextInt(maxTime);
+      maxTime = Context.getApp().getRnd().nextInt(maxTime);
 
     RunwayCheckInfo ret = new RunwayCheckInfo(maxTime, SNOW_MAINENANCE_DURATION);
     return ret;
@@ -60,7 +60,7 @@ public class RunwayCheckInfo {
 
   public void start() {
     double durationRangeSeconds = expectedDurationInMinutes * 60 * 0.2d;
-    int realDurationSeconds = (int) Context.getShared().getRnd().nextDouble(
+    int realDurationSeconds = (int) Context.getApp().getRnd().nextDouble(
         expectedDurationInMinutes * 60 - durationRangeSeconds,
         expectedDurationInMinutes * 60 + durationRangeSeconds);
     realDurationEnd = Context.getShared().getNow().toStamp().addSeconds(realDurationSeconds);

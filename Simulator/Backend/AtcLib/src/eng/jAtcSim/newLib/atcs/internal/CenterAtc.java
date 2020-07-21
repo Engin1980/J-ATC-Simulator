@@ -73,7 +73,7 @@ public class CenterAtc extends ComputerAtc {
         dist = Coordinates.getDistanceInNM(plane.getRouting().getEntryExitPoint().getCoordinate(), plane.getCoordinate());
         if (dist < 50) {
           if (plane.getSha().getAltitude() > 29_000) {
-            int newAlt = Context.getShared().getRnd().nextInt(25, 29) * 1_000;
+            int newAlt = Context.getApp().getRnd().nextInt(25, 29) * 1_000;
             SpeechList<IForPlaneSpeech> sl = new SpeechList<>();
             sl.add(ChangeAltitudeCommand.create(ChangeAltitudeCommand.eDirection.descend, newAlt));
             Message m = new Message(
@@ -213,7 +213,7 @@ public class CenterAtc extends ComputerAtc {
         throw new UnsupportedOperationException();
     }
     min = Math.max(p.getSha().getAltitude() / 1000, min);
-    int ret = Context.getShared().getRnd().nextInt(min, p.getType().maxAltitude / 1000);
+    int ret = Context.getApp().getRnd().nextInt(min, p.getType().maxAltitude / 1000);
     ret = ret * 1000;
     return ret;
   }

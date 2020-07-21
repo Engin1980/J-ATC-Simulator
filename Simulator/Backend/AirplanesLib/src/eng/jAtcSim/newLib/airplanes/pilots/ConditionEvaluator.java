@@ -33,7 +33,7 @@ public class ConditionEvaluator {
     if (w.getCloudBaseInFt() > plane.getSha().getAltitude())
       return true;
     else
-      return Context.getShared().getRnd().nextDouble() > w.getCloudBaseHitProbability();
+      return Context.getApp().getRnd().nextDouble() > w.getCloudBaseHitProbability();
   }
 
   private static boolean checkTrue(FlyRouteBehaviorEmptyCondition condition, IAirplane plane){

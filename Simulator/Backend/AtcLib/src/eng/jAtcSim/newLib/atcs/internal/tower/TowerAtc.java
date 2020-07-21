@@ -376,12 +376,12 @@ public class TowerAtc extends ComputerAtc {
   private double getDepartingPlaneSwitchAltitude(char category) {
     switch (category) {
       case 'A':
-        return (double) AreaAcc.getAirport().getAltitude() + Context.getShared().getRnd().nextInt(100, 250);
+        return (double) AreaAcc.getAirport().getAltitude() + Context.getApp().getRnd().nextInt(100, 250);
       case 'B':
-        return (double) AreaAcc.getAirport().getAltitude() + Context.getShared().getRnd().nextInt(150, 400);
+        return (double) AreaAcc.getAirport().getAltitude() + Context.getApp().getRnd().nextInt(150, 400);
       case 'C':
       case 'D':
-        return (double) AreaAcc.getAirport().getAltitude() + Context.getShared().getRnd().nextInt(200, 750);
+        return (double) AreaAcc.getAirport().getAltitude() + Context.getApp().getRnd().nextInt(200, 750);
       default:
         throw new EEnumValueUnsupportedException(category);
     }

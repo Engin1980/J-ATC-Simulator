@@ -107,7 +107,7 @@ public class Weather {
   }
 
   public int getWindSpeedOrWindGustSpeed() {
-    if (Context.getShared().getRnd().nextDouble() < WIND_GUST_PROBABILITY)
+    if (Context.getApp().getRnd().nextDouble() < WIND_GUST_PROBABILITY)
       return windGustSpeedInKts;
     else
       return windSpeetInKts;

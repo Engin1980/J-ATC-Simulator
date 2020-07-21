@@ -6,7 +6,7 @@ import eng.jAtcSim.newLib.traffic.contextLocal.Context;
 
 public class EntryExitInfo {
   public static EntryExitInfo getRandom() {
-    int radial = Context.getShared().getRnd().nextInt(0, 360);
+    int radial = Context.getApp().getRnd().nextInt(0, 360);
     EntryExitInfo ret = new EntryExitInfo(radial);
     return ret;
   }

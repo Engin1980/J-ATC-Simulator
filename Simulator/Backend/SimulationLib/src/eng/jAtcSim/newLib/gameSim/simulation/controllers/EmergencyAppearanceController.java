@@ -19,7 +19,7 @@ public class EmergencyAppearanceController {
   public void generateEmergencyTime(EDayTime now) {
     if (emergencyPerDayProbability > 0) {
       int secondsToNextEmerg = (int) ((60 * 60 * 24) / emergencyPerDayProbability);
-      secondsToNextEmerg = Context.getShared().getRnd().nextInt(secondsToNextEmerg);
+      secondsToNextEmerg = Context.getApp().getRnd().nextInt(secondsToNextEmerg);
       this.nextEmergencyTime = now.addSeconds(secondsToNextEmerg);
     }
   }

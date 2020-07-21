@@ -33,7 +33,7 @@ public class DelayedList<T> {
   }
 
   public void newRandomDelay() {
-    this.currentDelay = Context.getShared().getRnd().nextInt(minimalDelay, maximalDelay + 1);
+    this.currentDelay = Context.getApp().getRnd().nextInt(minimalDelay, maximalDelay + 1);
   }
 
   /**
