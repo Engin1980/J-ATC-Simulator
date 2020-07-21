@@ -2,7 +2,7 @@ package eng.jAtcSim.frmPacks.shared;
 
 import eng.eSystem.exceptions.EApplicationException;
 import eng.jAtcSim.Stylist;
-import eng.jAtcSim.newLib.shared.context.SharedAcc;
+import eng.jAtcSim.contextLocal.Context;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 
 import javax.swing.*;
@@ -37,7 +37,7 @@ public class FrmLog extends JFrame {
 
     txt.setBackground(bgColor);
 
-    SharedAcc.getAppLog().getOnNewMessage().add(this::newLogMessage);
+    Context.getApp().getAppLog().getOnNewMessage().add(this::newLogMessage);
   }
 
   private void newLogMessage(ApplicationLog.Message message) {

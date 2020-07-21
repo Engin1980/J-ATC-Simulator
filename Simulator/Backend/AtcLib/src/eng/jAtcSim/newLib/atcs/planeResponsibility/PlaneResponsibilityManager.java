@@ -11,11 +11,11 @@ import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.ToDoException;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplanes.IAirplane;
+import eng.jAtcSim.newLib.atcs.contextLocal.Context;
 import eng.jAtcSim.newLib.atcs.internal.Atc;
 import eng.jAtcSim.newLib.atcs.internal.InternalAcc;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.Callsign;
-import eng.jAtcSim.newLib.shared.context.SharedAcc;
 import eng.jAtcSim.newLib.shared.enums.AtcType;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
@@ -50,7 +50,7 @@ public class PlaneResponsibilityManager {
       tmp = tmp.where(q -> q.getSwitchRequest() != null
           && q.getAtc() == sender
           && q.getSwitchRequest().isConfirmed() == false
-          && q.getSwitchRequest().getRepeatRequestTime().isBefore(SharedAcc.getNow().toStamp()));
+          && q.getSwitchRequest().getRepeatRequestTime().isBefore(Context.getShared().getNow().toStamp()));
       tmp.forEach(q -> q.getSwitchRequest().updateLastRequestTime());
       IReadOnlyList<Callsign> ret = tmp.select(q -> q.getPlane());
       return ret;

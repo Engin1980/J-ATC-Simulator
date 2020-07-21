@@ -23,11 +23,11 @@ import eng.jAtcSim.app.extenders.NumericUpDownExtender;
 import eng.jAtcSim.app.extenders.XmlFileSelectorExtender;
 import eng.jAtcSim.app.extenders.swingFactory.SwingFactory;
 import eng.jAtcSim.app.startupSettings.StartupSettings;
+import eng.jAtcSim.contextLocal.Context;
 import eng.jAtcSim.frmPacks.shared.FrmTrafficBarGraph;
 import eng.jAtcSim.newLib.gameSim.game.sources.FleetsSource;
 import eng.jAtcSim.newLib.gameSim.game.sources.TrafficSource;
 import eng.jAtcSim.newLib.gameSim.game.sources.TrafficXmlSource;
-import eng.jAtcSim.newLib.shared.context.SharedAcc;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 import eng.jAtcSim.newLib.traffic.ITrafficModel;
 import eng.jAtcSim.newLib.traffic.models.SimpleGenericTrafficModel;
@@ -136,7 +136,7 @@ public class TrafficPanel extends JStartupPanel {
     try {
       tfc = getCurrentTraffic();
     } catch (Exception e) {
-      SharedAcc.getAppLog().write(ApplicationLog.eType.critical, "Failed to load traffic. " + ExceptionUtils.toFullString(e));
+      Context.getApp().getAppLog().write(ApplicationLog.eType.critical, "Failed to load traffic. " + ExceptionUtils.toFullString(e));
       MessageBox.show("Failed to obtain the traffic. Check the app log for more info.", "Failed to load traffic...");
       return;
     }

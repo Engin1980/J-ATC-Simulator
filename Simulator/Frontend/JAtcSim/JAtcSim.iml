@@ -26,5 +26,6 @@
     <orderEntry type="library" name="eng.eXmlSerialization" level="application" />
     <orderEntry type="module" module-name="MoodLib" />
     <orderEntry type="module" module-name="StatsLib" />
+    <orderEntry type="module" module-name="AtcLib" />
   </component>
 </module>

@@ -3,11 +3,11 @@ package eng.jAtcSim.newLib.atcs.internal;
 import eng.eSystem.exceptions.ToDoException;
 import eng.eSystem.functionalInterfaces.Producer;
 import eng.eSystem.validation.EAssert;
-import eng.jAtcSim.newLib.airplanes.context.AirplaneAcc;
 import eng.jAtcSim.newLib.airplanes.IAirplane;
 import eng.jAtcSim.newLib.area.ActiveRunway;
 import eng.jAtcSim.newLib.area.context.AreaAcc;
 import eng.jAtcSim.newLib.atcs.AtcList;
+import eng.jAtcSim.newLib.atcs.contextLocal.Context;
 import eng.jAtcSim.newLib.atcs.planeResponsibility.AirplaneResponsibilityInfo;
 import eng.jAtcSim.newLib.atcs.planeResponsibility.PlaneResponsibilityManager;
 import eng.jAtcSim.newLib.shared.AtcId;
@@ -52,7 +52,7 @@ public class InternalAcc {
   }
 
   public static Callsign getCallsignFromSquawk(Squawk squawk) {
-    return AirplaneAcc.getAirplanes().get(squawk).getCallsign();
+    return Context.getAirplane().getAirplanes().get(squawk).getCallsign();
   }
 
   public static Atc getCtr() {
@@ -68,7 +68,7 @@ public class InternalAcc {
 
   public static IAirplane getPlane(Callsign callsign) {
     EAssert.Argument.isNotNull(callsign, "callsign");
-    return AirplaneAcc.getAirplanes().get(callsign);
+    return Context.getAirplane().getAirplanes().get(callsign);
   }
 
   public static PlaneResponsibilityManager getPrm() {
@@ -80,7 +80,7 @@ public class InternalAcc {
   }
 
   public static Squawk getSquawkFromCallsign(Callsign callsign) {
-    return AirplaneAcc.getAirplanes().get(callsign).getSqwk();
+    return Context.getAirplane().getAirplanes().get(callsign).getSqwk();
   }
 
   public static Atc getTwr() {

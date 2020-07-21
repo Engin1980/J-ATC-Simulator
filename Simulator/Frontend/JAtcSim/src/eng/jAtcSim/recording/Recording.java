@@ -3,6 +3,7 @@ package eng.jAtcSim.recording;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.utilites.ExceptionUtils;
 import eng.jAtcSim.BitmapRadar.BitmapCanvas;
+import eng.jAtcSim.contextLocal.Context;
 import eng.jAtcSim.newLib.gameSim.ISimulation;
 import eng.jAtcSim.abstractRadar.settings.RadarBehaviorSettings;
 import eng.jAtcSim.abstractRadar.settings.RadarDisplaySettings;
@@ -10,7 +11,6 @@ import eng.jAtcSim.abstractRadar.settings.RadarStyleSettings;
 import eng.jAtcSim.abstractRadar.Radar;
 import eng.jAtcSim.newLib.area.Area;
 import eng.jAtcSim.newLib.area.InitialPosition;
-import eng.jAtcSim.newLib.shared.context.SharedAcc;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 
 import javax.imageio.IIOImage;
@@ -85,7 +85,7 @@ public class Recording {
           break;
       }
     } catch (Exception e) {
-      SharedAcc.getAppLog().write(ApplicationLog.eType.critical,
+      Context.getApp().getAppLog().write(ApplicationLog.eType.critical,
           "Recording error. " + ExceptionUtils.toFullString(e, "\n\t"));
       this.stop();
     }

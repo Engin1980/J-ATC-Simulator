@@ -1,12 +1,13 @@
 package eng.jAtcSim.newLib.shared;
 
+import eng.eSystem.ERandom;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.ESet;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.ISet;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.utilites.ArrayUtils;
-import eng.jAtcSim.newLib.shared.context.SharedAcc;
+import eng.jAtcSim.newLib.shared.contextLocal.Context;
 
 public class CallsignFactory {
   public enum Type {
@@ -20,13 +21,14 @@ public class CallsignFactory {
   private static final double EXTENDED_CALLSIGN_PROBABILITY = 0.3;
 
   private static Type getCallsignType(boolean useExtended) {
+    ERandom rnd = Context.getShared().getRnd();
     Type ret;
     if (!useExtended)
       ret = Type.NNN;
     else {
-      if (SharedAcc.getRnd().nextDouble() > EXTENDED_CALLSIGN_PROBABILITY)
+      if (rnd.nextDouble() > EXTENDED_CALLSIGN_PROBABILITY)
         ret = Type.NNN;
-      else if (SharedAcc.getRnd().nextDouble() < .5)
+      else if (rnd.nextDouble() < .5)
         ret = Type.NNX;
       else
         ret = Type.NXX;
@@ -35,23 +37,24 @@ public class CallsignFactory {
   }
 
   private static String generateCommercial(Type type) {
+    ERandom rnd = Context.getShared().getRnd();
     StringBuilder ret = new StringBuilder();
-    boolean addFourth = SharedAcc.getRnd().nextDouble() > COMPANY_THREE_CHAR_NUMBER_PROBABILITY;
+    boolean addFourth =  rnd.nextDouble() > COMPANY_THREE_CHAR_NUMBER_PROBABILITY;
     switch (type) {
       case NNN:
-        ret.append((char) SharedAcc.getRnd().nextDouble('0', '9'));
-        ret.append((char) SharedAcc.getRnd().nextDouble('0', '9'));
-        ret.append((char) SharedAcc.getRnd().nextDouble('0', '9'));
-        if (addFourth) ret.append((char) SharedAcc.getRnd().nextDouble('0', '9'));
+        ret.append((char)  rnd.nextDouble('0', '9'));
+        ret.append((char)  rnd.nextDouble('0', '9'));
+        ret.append((char)  rnd.nextDouble('0', '9'));
+        if (addFourth) ret.append((char)  rnd.nextDouble('0', '9'));
         break;
       case NNX:
-        ret.append((char) SharedAcc.getRnd().nextDouble('0', '9'));
-        ret.append((char) SharedAcc.getRnd().nextDouble('0', '9'));
+        ret.append((char)  rnd.nextDouble('0', '9'));
+        ret.append((char)  rnd.nextDouble('0', '9'));
         ret.append(getNumericalChar());
         if (addFourth) ret.append(getNumericalChar());
         break;
       case NXX:
-        ret.append((char) SharedAcc.getRnd().nextDouble('0', '9'));
+        ret.append((char)  rnd.nextDouble('0', '9'));
         ret.append(getNumericalChar());
         ret.append(getNumericalChar());
         if (addFourth) ret.append(getNumericalChar());
@@ -71,7 +74,7 @@ public class CallsignFactory {
   private static String generateNonCommercial(String prefix) {
     StringBuilder ret = new StringBuilder();
     for (int i = prefix.length(); i < 5; i++) {
-      char c = (char) SharedAcc.getRnd().nextInt('A', 'Z');
+      char c = (char) Context.getShared().getRnd().nextInt('A', 'Z');
       ret.append(c);
     }
     return ret.toString();

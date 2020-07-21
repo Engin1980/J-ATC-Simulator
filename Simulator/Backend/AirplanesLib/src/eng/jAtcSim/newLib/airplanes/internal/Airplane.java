@@ -9,7 +9,7 @@ import eng.eSystem.utilites.EnumUtils;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplaneType.AirplaneType;
 import eng.jAtcSim.newLib.airplanes.*;
-import eng.jAtcSim.newLib.airplanes.context.AirplaneAcc;
+import eng.jAtcSim.newLib.airplanes.contextLocal.Context;
 import eng.jAtcSim.newLib.airplanes.modules.AirplaneFlightModule;
 import eng.jAtcSim.newLib.airplanes.modules.AtcModule;
 import eng.jAtcSim.newLib.airplanes.modules.DivertModule;
@@ -36,7 +36,6 @@ import eng.jAtcSim.newLib.messaging.Participant;
 import eng.jAtcSim.newLib.messaging.context.MessagingAcc;
 import eng.jAtcSim.newLib.mood.Mood;
 import eng.jAtcSim.newLib.shared.*;
-import eng.jAtcSim.newLib.shared.context.SharedAcc;
 import eng.jAtcSim.newLib.shared.enums.DARouteType;
 import eng.jAtcSim.newLib.shared.enums.LeftRight;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
@@ -47,7 +46,6 @@ import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.DivertTimeNotification;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.DivertingNotification;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.GoingAroundNotification;
 import eng.jAtcSim.newLib.weather.Weather;
-import eng.jAtcSim.newLib.weather.context.WeatherAcc;
 
 public class Airplane {
 
@@ -271,7 +269,7 @@ public class Airplane {
       if (isInvokedByAtc) {
         if (Airplane.this.emergencyModule.isEmergency())
           this.addExperience(Mood.DepartureExperience.divertedAsEmergency);
-        else if (!AirplaneAcc.isSomeActiveEmergency() == false)
+        else if (!Context.getAirplane().isSomeActiveEmergency() == false)
           this.addExperience(Mood.ArrivalExperience.divertOrderedByAtcWhenNoEmergency);
         Airplane.this.divertModule.disable();
       } else {
@@ -355,7 +353,7 @@ public class Airplane {
     public void reportDivertTimeLeft() {
       EAssert.isTrue(Airplane.this.flightModule.isArrival());
       EDayTimeStamp divertTime = Airplane.this.divertModule.getDivertTime();
-      EDayTimeStamp now = SharedAcc.getNow().toStamp();
+      EDayTimeStamp now = Context.getShared().getNow().toStamp();
       int minutesLeft = (int) Math.ceil((divertTime.getValue() - now.getValue()) / 60d);
       EAssert.isTrue(minutesLeft >= 0);
       sendMessage(
@@ -600,7 +598,7 @@ public class Airplane {
         AirplaneState.takeOffRoll,
         AirplaneState.landed
     ) == false) {
-      Weather weather = WeatherAcc.getWeather();
+      Weather weather = Context.getWeather().getWeather();
       newC = Coordinates.getCoordinate(
           newC,
           weather.getWindHeading(),

@@ -1,6 +1,6 @@
 package eng.jAtcSim.newLib.shared.xml;
 
-import eng.jAtcSim.newLib.shared.context.SharedAcc;
+import eng.jAtcSim.newLib.shared.contextLocal.Context;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 
 public interface IXmlLogable {
@@ -14,7 +14,7 @@ public interface IXmlLogable {
     }
     sb.append(String.format(format, params));
     if (VERBOSE_LOG) {
-      SharedAcc.getAppLog().write(
+      Context.getApp().getAppLog().write(
           ApplicationLog.eType.info, sb.toString());
     }
   }

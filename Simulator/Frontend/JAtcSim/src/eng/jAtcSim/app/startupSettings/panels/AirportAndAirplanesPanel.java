@@ -9,9 +9,9 @@ import eng.eSystem.utilites.ExceptionUtils;
 import eng.jAtcSim.app.extenders.XmlFileSelectorExtender;
 import eng.jAtcSim.app.extenders.swingFactory.SwingFactory;
 import eng.jAtcSim.app.startupSettings.StartupSettings;
+import eng.jAtcSim.contextLocal.Context;
 import eng.jAtcSim.newLib.area.Area;
 import eng.jAtcSim.newLib.gameSim.game.sources.AreaSource;
-import eng.jAtcSim.newLib.shared.context.SharedAcc;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 import eng.jAtcSim.shared.MessageBox;
 
@@ -151,7 +151,7 @@ public class AirportAndAirplanesPanel extends JStartupPanel {
     try{
       area.init();
     } catch (Exception ex){
-      SharedAcc.getAppLog().write(ApplicationLog.eType.warning, "Failed to area from '%s'. '%s'", fleFleet.getFileName(),
+      Context.getApp().getAppLog().write(ApplicationLog.eType.warning, "Failed to area from '%s'. '%s'", fleFleet.getFileName(),
           ExceptionUtils.toFullString(ex));
       MessageBox.show("Failed to load area from file " + fleFleet.getFileName() + ". " + ex.getMessage(), "Error...");
       btnLoadArea.setEnabled(true);

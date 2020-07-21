@@ -1,11 +1,10 @@
 package eng.jAtcSim.newLib.textProcessing.implemented.systemFormatter.formatters;
 
 import eng.eSystem.EStringBuilder;
-import eng.jAtcSim.newLib.shared.context.SharedAcc;
 import eng.jAtcSim.newLib.speeches.system.system2user.MetarNotification;
+import eng.jAtcSim.newLib.textProcessing.contextLocal.Context;
 import eng.jAtcSim.newLib.textProcessing.implemented.formatterHelpers.SmartTextSpeechFormatter;
 import eng.jAtcSim.newLib.weather.Weather;
-import eng.jAtcSim.newLib.weather.context.WeatherAcc;
 
 public class MetarNotificationFormatter extends SmartTextSpeechFormatter<MetarNotification> {
 
@@ -16,9 +15,9 @@ public class MetarNotificationFormatter extends SmartTextSpeechFormatter<MetarNo
   protected String _format(MetarNotification input) {
     String ret;
     if (WEATHER_INFO_STRING_AS_METAR) {
-      ret = toMetarString(WeatherAcc.getWeather());
+      ret = toMetarString(Context.getWeather().getWeather());
     } else {
-      ret = toWeatherString(WeatherAcc.getWeather());
+      ret = toWeatherString(Context.getWeather().getWeather());
     }
     if (input.isUpdated())
       ret = "Weather updated. " + ret;
@@ -30,7 +29,7 @@ public class MetarNotificationFormatter extends SmartTextSpeechFormatter<MetarNo
     sb.append("METAR ");
     sb.append("???? ");
     sb.appendFormat("%02d", java.time.LocalDate.now().getDayOfMonth());
-    sb.appendFormat("%02d%02dZ ", SharedAcc.getNow().getHours(), SharedAcc.getNow().getMinutes());
+    sb.appendFormat("%02d%02dZ ", Context.getShared().getNow().getHours(), Context.getShared().getNow().getMinutes());
     if (weather.getWindSpeetInKts() == weather.getWindGustSpeedInKts())
       sb.appendFormat("%03d%02dKT ", weather.getWindHeading(), weather.getWindSpeetInKts());
     else

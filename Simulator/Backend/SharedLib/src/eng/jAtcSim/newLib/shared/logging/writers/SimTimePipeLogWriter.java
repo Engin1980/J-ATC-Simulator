@@ -1,6 +1,7 @@
 package eng.jAtcSim.newLib.shared.logging.writers;
 
-import eng.jAtcSim.newLib.shared.context.SharedAcc;
+
+import eng.jAtcSim.newLib.shared.contextLocal.Context;
 
 import java.io.IOException;
 
@@ -19,7 +20,7 @@ public class SimTimePipeLogWriter extends PipeLogWriter {
 
   @Override
   public void write(String text) throws IOException {
-    String timeText = SharedAcc.getNow().toString();
+    String timeText = Context.getShared().getNow().toString();
     innerWriter.write(timeText + delimiter + text);
   }
 }

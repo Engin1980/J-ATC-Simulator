@@ -1,6 +1,6 @@
 package eng.jAtcSim.newLib.atcs.internal.tower;
 
-import eng.jAtcSim.newLib.shared.context.SharedAcc;
+import eng.jAtcSim.newLib.atcs.contextLocal.Context;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 
 public class RunwayCheckInfo {
@@ -18,7 +18,7 @@ public class RunwayCheckInfo {
   private static final int MAX_EMERGENCY_MAINTENANCE_DURATION = 45;
 
   public static RunwayCheckInfo createImmediateAfterEmergency() {
-    int closeDuration = SharedAcc.getRnd().nextInt(MIN_EMERGENCY_MAINTENANCE_DURATION, MAX_EMERGENCY_MAINTENANCE_DURATION);
+    int closeDuration = Context.getShared().getRnd().nextInt(MIN_EMERGENCY_MAINTENANCE_DURATION, MAX_EMERGENCY_MAINTENANCE_DURATION);
     RunwayCheckInfo ret = new RunwayCheckInfo(0, closeDuration);
     return ret;
   }
@@ -26,9 +26,9 @@ public class RunwayCheckInfo {
   public static RunwayCheckInfo createNormal(boolean isInitial) {
     int maxTime;
     if (isInitial)
-      maxTime = SharedAcc.getRnd().nextInt(MAX_NORMAL_MAINTENANCE_INTERVAL);
+      maxTime = Context.getShared().getRnd().nextInt(MAX_NORMAL_MAINTENANCE_INTERVAL);
     else
-      maxTime = SharedAcc.getRnd().nextInt(MIN_NORMAL_MAINTENANCE_INTERVAL, MAX_NORMAL_MAINTENANCE_INTERVAL);
+      maxTime = Context.getShared().getRnd().nextInt(MIN_NORMAL_MAINTENANCE_INTERVAL, MAX_NORMAL_MAINTENANCE_INTERVAL);
 
     RunwayCheckInfo ret = new RunwayCheckInfo(maxTime, NORMAL_MAINTENACE_DURATION);
     return ret;
@@ -36,10 +36,10 @@ public class RunwayCheckInfo {
 
   public static RunwayCheckInfo createSnowCleaning(boolean isInitial, boolean isIntensive) {
     int maxTime = isIntensive
-        ? SharedAcc.getRnd().nextInt(MIN_SNOW_INTENSIVE_MAINTENANCE_INTERVAL, MAX_SNOW_INTENSIVE_MAINTENANCE_INTERVAL)
-        : SharedAcc.getRnd().nextInt(MIN_SNOW_MAINTENANCE_INTERVAL, MAX_SNOW_MAINTENANCE_INTERVAL);
+        ? Context.getShared().getRnd().nextInt(MIN_SNOW_INTENSIVE_MAINTENANCE_INTERVAL, MAX_SNOW_INTENSIVE_MAINTENANCE_INTERVAL)
+        : Context.getShared().getRnd().nextInt(MIN_SNOW_MAINTENANCE_INTERVAL, MAX_SNOW_MAINTENANCE_INTERVAL);
     if (isInitial)
-      maxTime = SharedAcc.getRnd().nextInt(maxTime);
+      maxTime = Context.getShared().getRnd().nextInt(maxTime);
 
     RunwayCheckInfo ret = new RunwayCheckInfo(maxTime, SNOW_MAINENANCE_DURATION);
     return ret;
@@ -49,7 +49,7 @@ public class RunwayCheckInfo {
   private SchedulerForAdvice scheduler;
 
   private RunwayCheckInfo(int minutesToNextCheck, int expectedDurationInMinutes) {
-    EDayTimeStamp et = SharedAcc.getNow().toStamp().addMinutes(minutesToNextCheck);
+    EDayTimeStamp et = Context.getShared().getNow().toStamp().addMinutes(minutesToNextCheck);
     this.scheduler = new SchedulerForAdvice(et, RWY_CHECK_ANNOUNCE_INTERVALS);
     this.expectedDurationInMinutes = expectedDurationInMinutes;
   }
@@ -60,10 +60,10 @@ public class RunwayCheckInfo {
 
   public void start() {
     double durationRangeSeconds = expectedDurationInMinutes * 60 * 0.2d;
-    int realDurationSeconds = (int) SharedAcc.getRnd().nextDouble(
+    int realDurationSeconds = (int) Context.getShared().getRnd().nextDouble(
         expectedDurationInMinutes * 60 - durationRangeSeconds,
         expectedDurationInMinutes * 60 + durationRangeSeconds);
-    realDurationEnd = SharedAcc.getNow().toStamp().addSeconds(realDurationSeconds);
+    realDurationEnd = Context.getShared().getNow().toStamp().addSeconds(realDurationSeconds);
     this.scheduler = null;
   }
 

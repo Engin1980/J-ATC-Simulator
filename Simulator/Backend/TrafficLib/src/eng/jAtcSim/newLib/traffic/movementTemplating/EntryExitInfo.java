@@ -2,11 +2,11 @@ package eng.jAtcSim.newLib.traffic.movementTemplating;
 
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.validation.EAssert;
-import eng.jAtcSim.newLib.shared.context.SharedAcc;
+import eng.jAtcSim.newLib.traffic.contextLocal.Context;
 
 public class EntryExitInfo {
   public static EntryExitInfo getRandom() {
-    int radial = SharedAcc.getRnd().nextInt(0, 360);
+    int radial = Context.getShared().getRnd().nextInt(0, 360);
     EntryExitInfo ret = new EntryExitInfo(radial);
     return ret;
   }

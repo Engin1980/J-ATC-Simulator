@@ -7,8 +7,8 @@
 package eng.jAtcSim.newLib.weather;
 
 import eng.eSystem.EStringBuilder;
-import eng.jAtcSim.newLib.shared.context.SharedAcc;
 import eng.jAtcSim.newLib.shared.UnitProvider;
+import eng.jAtcSim.newLib.weather.contextLocal.Context;
 
 /**
  * @author Marek
@@ -107,7 +107,7 @@ public class Weather {
   }
 
   public int getWindSpeedOrWindGustSpeed() {
-    if (SharedAcc.getRnd().nextDouble() < WIND_GUST_PROBABILITY)
+    if (Context.getShared().getRnd().nextDouble() < WIND_GUST_PROBABILITY)
       return windGustSpeedInKts;
     else
       return windSpeetInKts;
@@ -126,9 +126,9 @@ public class Weather {
     EStringBuilder sb = new EStringBuilder();
     if (fullText) {
       sb.append("METAR ");
-      sb.append(SharedAcc.getAirportIcao()).append(" ");
+      sb.append(Context.getShared().getAirportIcao()).append(" ");
       sb.appendFormat("%02d", java.time.LocalDate.now().getDayOfMonth());
-      sb.appendFormat("%02d%02dZ ", SharedAcc.getNow().getHours(), SharedAcc.getNow().getMinutes());
+      sb.appendFormat("%02d%02dZ ", Context.getShared().getNow().getHours(), Context.getShared().getNow().getMinutes());
       if (this.getWindSpeetInKts() == this.getWindGustSpeedInKts())
         sb.appendFormat("%03d%02dKT ", this.getWindHeading(), this.getWindSpeetInKts());
       else

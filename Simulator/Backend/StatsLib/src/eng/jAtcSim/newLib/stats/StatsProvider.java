@@ -2,21 +2,20 @@ package eng.jAtcSim.newLib.stats;
 
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
-import eng.eSystem.collections.IReadOnlyList;
 import eng.jAtcSim.newLib.mood.MoodResult;
-import eng.jAtcSim.newLib.shared.context.SharedAcc;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
+import eng.jAtcSim.newLib.stats.contextLocal.Context;
 import eng.jAtcSim.newLib.stats.properties.CounterProperty;
 import eng.jAtcSim.newLib.stats.recent.RecentStats;
 
 public class StatsProvider {
-  private final CounterProperty elapsedSecondsCounter = new CounterProperty();
-  private final RecentStats recentStats = new RecentStats();
   private final IList<Collector> collectors = new EList<>();
+  private final CounterProperty elapsedSecondsCounter = new CounterProperty();
+  private final IList<MoodResult> moodResults = new EList<>();
   private EDayTimeStamp nextCollectorStartTime = null;
+  private final RecentStats recentStats = new RecentStats();
   private final IList<Snapshot> snapshots = new EList<>();
   private final int statsSnapshotDistanceInMinutes;
-  private final IList<MoodResult> moodResults = new EList<>();
 
   public StatsProvider(int statsSnapshotDistanceInMinutes) {
     this.statsSnapshotDistanceInMinutes = statsSnapshotDistanceInMinutes;
@@ -86,7 +85,7 @@ public class StatsProvider {
   }
 
   private void snapshotizeCollectors() {
-    EDayTimeStamp now = SharedAcc.getNow().toStamp();
+    EDayTimeStamp now = Context.getShared().getNow().toStamp();
     if (nextCollectorStartTime == null) {
       // initialization
       Collector c = new Collector(now, now.addMinutes(statsSnapshotDistanceInMinutes * 2));

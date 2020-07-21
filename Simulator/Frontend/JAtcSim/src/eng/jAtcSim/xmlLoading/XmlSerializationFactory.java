@@ -5,7 +5,7 @@ import eng.eXmlSerialization.XmlSerializer;
 import eng.eXmlSerialization.XmlSettings;
 import eng.eXmlSerialization.common.Log;
 import eng.eXmlSerialization.serializers.implemented.java_time.LocalTimeAttributeSerializer;
-import eng.jAtcSim.newLib.shared.context.SharedAcc;
+import eng.jAtcSim.contextLocal.Context;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 
 import java.time.LocalTime;
@@ -55,6 +55,6 @@ public class XmlSerializationFactory {
         " :: " +
         StringUtils.repeat(" ", e.indent) +
         e.message;
-    SharedAcc.getAppLog().write(logType, sb);
+    Context.getApp().getAppLog().write(logType, sb);
   }
 }

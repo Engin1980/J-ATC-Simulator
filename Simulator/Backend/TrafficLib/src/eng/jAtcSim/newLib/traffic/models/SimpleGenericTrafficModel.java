@@ -7,9 +7,9 @@ import eng.eSystem.collections.IMap;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.utilites.NumberUtils;
 import eng.eSystem.validation.EAssert;
-import eng.jAtcSim.newLib.shared.context.SharedAcc;
 import eng.jAtcSim.newLib.shared.time.ETimeStamp;
 import eng.jAtcSim.newLib.traffic.ITrafficModel;
+import eng.jAtcSim.newLib.traffic.contextLocal.Context;
 import eng.jAtcSim.newLib.traffic.movementTemplating.EntryExitInfo;
 import eng.jAtcSim.newLib.traffic.movementTemplating.GenericCommercialMovementTemplate;
 import eng.jAtcSim.newLib.traffic.movementTemplating.GenericGeneralAviationMovementTemplate;
@@ -93,7 +93,7 @@ public class SimpleGenericTrafficModel implements ITrafficModel {
   private final IList<ValueAndWeight> companies;
   private final IList<ValueAndWeight> countries;
   private final MovementsForHour[] movementsForHours;
-  private final ERandom rnd = SharedAcc.getRnd();
+  private final ERandom rnd = Context.getShared().getRnd();
 
   private SimpleGenericTrafficModel(
       double globalGeneralAviationProbability,

@@ -2,19 +2,19 @@ package eng.jAtcSim.newLib.gameSim;
 
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
+import eng.jAtcSim.newLib.gameSim.contextLocal.Context;
 import eng.jAtcSim.newLib.gameSim.game.Game;
 import eng.jAtcSim.newLib.gameSim.game.sources.*;
 import eng.jAtcSim.newLib.gameSim.game.startupInfos.GameStartupInfo;
 import eng.jAtcSim.newLib.gameSim.simulation.Simulation;
 import eng.jAtcSim.newLib.gameSim.simulation.SimulationContext;
 import eng.jAtcSim.newLib.gameSim.simulation.SimulationSettings;
-import eng.jAtcSim.newLib.shared.context.SharedAcc;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 
 public class GameFactory {
   public Game create(GameStartupInfo gsi) {
     Game game;
-    ApplicationLog appLog = SharedAcc.getAppLog();
+    ApplicationLog appLog = Context.getApp().getAppLog();
 
     AreaSource areaSource;
     AirplaneTypesSource airplaneTypesSource;

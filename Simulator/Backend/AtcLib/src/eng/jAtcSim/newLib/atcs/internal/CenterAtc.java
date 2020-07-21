@@ -13,13 +13,13 @@ import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
 import eng.jAtcSim.newLib.area.context.AreaAcc;
 import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.area.routes.DARoute;
+import eng.jAtcSim.newLib.atcs.contextLocal.Context;
 import eng.jAtcSim.newLib.atcs.planeResponsibility.PlaneResponsibilityManager;
 import eng.jAtcSim.newLib.atcs.planeResponsibility.SwitchRoutingRequest;
 import eng.jAtcSim.newLib.messaging.Message;
 import eng.jAtcSim.newLib.messaging.Participant;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.Callsign;
-import eng.jAtcSim.newLib.shared.context.SharedAcc;
 import eng.jAtcSim.newLib.shared.enums.AtcType;
 import eng.jAtcSim.newLib.shared.enums.DARouteType;
 import eng.jAtcSim.newLib.speeches.airplane.ICommand;
@@ -53,7 +53,7 @@ public class CenterAtc extends ComputerAtc {
   public void elapseSecond() {
     super.elapseSecond();
 
-    if (SharedAcc.getNow().getValue() % 16 == 0) {
+    if (Context.getShared().getNow().getValue() % 16 == 0) {
       double dist;
 
       IList<IAirplane> tmp = new EList<>();
@@ -73,7 +73,7 @@ public class CenterAtc extends ComputerAtc {
         dist = Coordinates.getDistanceInNM(plane.getRouting().getEntryExitPoint().getCoordinate(), plane.getCoordinate());
         if (dist < 50) {
           if (plane.getSha().getAltitude() > 29_000) {
-            int newAlt = SharedAcc.getRnd().nextInt(25, 29) * 1_000;
+            int newAlt = Context.getShared().getRnd().nextInt(25, 29) * 1_000;
             SpeechList<IForPlaneSpeech> sl = new SpeechList<>();
             sl.add(ChangeAltitudeCommand.create(ChangeAltitudeCommand.eDirection.descend, newAlt));
             Message m = new Message(
@@ -213,7 +213,7 @@ public class CenterAtc extends ComputerAtc {
         throw new UnsupportedOperationException();
     }
     min = Math.max(p.getSha().getAltitude() / 1000, min);
-    int ret = SharedAcc.getRnd().nextInt(min, p.getType().maxAltitude / 1000);
+    int ret = Context.getShared().getRnd().nextInt(min, p.getType().maxAltitude / 1000);
     ret = ret * 1000;
     return ret;
   }

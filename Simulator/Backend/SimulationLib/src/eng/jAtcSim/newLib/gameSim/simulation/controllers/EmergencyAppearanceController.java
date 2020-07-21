@@ -1,6 +1,6 @@
 package eng.jAtcSim.newLib.gameSim.simulation.controllers;
 
-import eng.jAtcSim.newLib.shared.context.SharedAcc;
+import eng.jAtcSim.newLib.gameSim.contextLocal.Context;
 import eng.jAtcSim.newLib.shared.time.EDayTime;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 
@@ -19,7 +19,7 @@ public class EmergencyAppearanceController {
   public void generateEmergencyTime(EDayTime now) {
     if (emergencyPerDayProbability > 0) {
       int secondsToNextEmerg = (int) ((60 * 60 * 24) / emergencyPerDayProbability);
-      secondsToNextEmerg = SharedAcc.getRnd().nextInt(secondsToNextEmerg);
+      secondsToNextEmerg = Context.getShared().getRnd().nextInt(secondsToNextEmerg);
       this.nextEmergencyTime = now.addSeconds(secondsToNextEmerg);
     }
   }

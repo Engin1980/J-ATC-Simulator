@@ -2,8 +2,12 @@ package eng.jAtcSim.newLib.atcs;
 
 import eng.eSystem.collections.EDistinctList;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
+import eng.eSystem.exceptions.ToDoException;
+import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.area.Airport;
-import eng.jAtcSim.newLib.atcs.context.AtcAcc;
+import eng.jAtcSim.newLib.atcs.context.AtcContext;
+import eng.jAtcSim.newLib.atcs.context.IAtcContext;
+import eng.jAtcSim.newLib.atcs.contextLocal.Context;
 import eng.jAtcSim.newLib.atcs.internal.Atc;
 import eng.jAtcSim.newLib.atcs.internal.CenterAtc;
 import eng.jAtcSim.newLib.atcs.internal.ComputerAtc;
@@ -11,13 +15,13 @@ import eng.jAtcSim.newLib.atcs.internal.UserAtc;
 import eng.jAtcSim.newLib.atcs.internal.tower.TowerAtc;
 import eng.jAtcSim.newLib.atcs.planeResponsibility.PlaneResponsibilityManager;
 import eng.jAtcSim.newLib.shared.AtcId;
-import eng.jAtcSim.newLib.shared.enums.AtcType;
+import eng.jAtcSim.newLib.shared.ContextManager;
 
 public class AtcProvider {
-  private final AtcList<Atc> atcs = new AtcList<>(
-      q -> q.getAtcId(), EDistinctList.Behavior.exception);
   private final AtcList<AtcId> atcIds = new AtcList<>(
       q -> q, EDistinctList.Behavior.exception);
+  private final AtcList<Atc> atcs = new AtcList<>(
+      q -> q.getAtcId(), EDistinctList.Behavior.exception);
   private final PlaneResponsibilityManager prm = new PlaneResponsibilityManager();
 
   public AtcProvider(Airport activeAirport) {
@@ -26,13 +30,16 @@ public class AtcProvider {
       atcs.add(atc);
     }
 
-    AtcAcc.setAtcListProducer(() -> atcIds);
+    EAssert.isTrue(activeAirport.getIcao().equals(Context.getShared().getAirportIcao()));
+    throw new ToDoException("second parameter not set");
+//    IAtcContext atcContext = new AtcContext(atcIds, null);
+//    ContextManager.setContext(IAtcContext.class, atcContext);
   }
 
   public void adviceWeatherUpdated() {
     this.atcs
         .whereItemClassIs(TowerAtc.class, false)
-        .forEach(q->q.setUpdatedWeatherFlag());
+        .forEach(q -> q.setUpdatedWeatherFlag());
   }
 
   public void elapseSecond() {

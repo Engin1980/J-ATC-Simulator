@@ -2,11 +2,11 @@ package eng.jAtcSim.newLib.stats.recent;
 
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
-import eng.jAtcSim.newLib.shared.context.SharedAcc;
 import eng.jAtcSim.newLib.shared.time.EDayTimeRun;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 import eng.jAtcSim.newLib.stats.AnalysedPlanes;
 import eng.jAtcSim.newLib.stats.FinishedPlaneStats;
+import eng.jAtcSim.newLib.stats.contextLocal.Context;
 import eng.jAtcSim.newLib.stats.model.ElapsedSecondDurationModel;
 import eng.jAtcSim.newLib.stats.properties.TimedValue;
 
@@ -127,7 +127,7 @@ public class RecentStats {
   private static final int RECENT_INTERVAL_IN_SECONDS = 60;
 
   private static EDayTimeRun getNow() {
-    return SharedAcc.getNow();
+    return Context.getShared().getNow();
   }
 
   private int recentSecondsElapsed;
@@ -207,7 +207,7 @@ public class RecentStats {
     if (upd)
       this.maximumPlanesUnderApp.add(new TimedValue<>(nowTime, aarrs + adeps));
 
-    EDayTimeStamp lastTime = SharedAcc.getNow().addHours(-1);
+    EDayTimeStamp lastTime = Context.getShared().getNow().addHours(-1);
     cleanTimedList(this.airproxErrors, lastTime);
     cleanTimedList(this.mrvaErrors, lastTime);
     cleanTimedList(this.planeDelays, lastTime);
@@ -260,18 +260,18 @@ public class RecentStats {
       this.finishedArrivals++;
     else
       this.finishedDepartures++;
-    planeDelays.add(new TimedValue<>(SharedAcc.getNow().toStamp(), finishedPlaneStats.getDelayDifference()));
+    planeDelays.add(new TimedValue<>(Context.getShared().getNow().toStamp(), finishedPlaneStats.getDelayDifference()));
   }
 
   public void registerHoldingPointDelay(int delay) {
-    holdingPointDelays.add(new TimedValue<>(SharedAcc.getNow().toStamp(), delay));
+    holdingPointDelays.add(new TimedValue<>(Context.getShared().getNow().toStamp(), delay));
   }
 
   public void registerNewArrivalOrDeparture(boolean isArrival) {
     if (isArrival)
-      this.numberOfLandings.add(SharedAcc.getNow().toStamp());
+      this.numberOfLandings.add(Context.getShared().getNow().toStamp());
     else
-      this.numberOfDepartures.add(SharedAcc.getNow().toStamp());
+      this.numberOfDepartures.add(Context.getShared().getNow().toStamp());
   }
 
   private <T> void cleanTimedList(IList<TimedValue<T>> lst, EDayTimeStamp lastTime) {

@@ -6,7 +6,7 @@ import eng.eSystem.swing.LayoutManager;
 import eng.eSystem.swing.extenders.ComboBoxExtender;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.app.controls.ImagePanel;
-import eng.jAtcSim.newLib.shared.context.SharedAcc;
+import eng.jAtcSim.contextLocal.Context;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 import eng.jAtcSim.newLib.traffic.ITrafficModel;
 import eng.jAtcSim.newLib.traffic.movementTemplating.FlightMovementTemplate;
@@ -64,9 +64,7 @@ public class FrmTrafficBarGraph extends JFrame {
 
     IList<String> keyLst = new EList<>();
 
-    SharedAcc.setRandomProducer(() -> new ERandom());
     IReadOnlyList<MovementTemplate> scheduledTimes = traffic.generateMovementsForOneDay();
-    SharedAcc.setRandomProducer(null);
 
     IList<DataItem> dts = new EList<>();
     DataItem di;
@@ -104,7 +102,7 @@ public class FrmTrafficBarGraph extends JFrame {
 
     dts = new EList<>();
 
-    SharedAcc.getAppLog().write(ApplicationLog.eType.info,
+    Context.getApp().getAppLog().write(ApplicationLog.eType.info,
         "Implementation of type categories overview is not realized.");
 //    for (int i = 0; i < 23; i++) {
 //      String domain = i + ":00 - " + i + ":59";

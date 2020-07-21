@@ -6,12 +6,14 @@ import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.ToDoException;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.validation.EAssert;
-import eng.jAtcSim.newLib.airplanes.context.AirplaneAcc;
+import eng.jAtcSim.newLib.airplanes.context.AirplaneContext;
+import eng.jAtcSim.newLib.airplanes.context.IAirplaneContext;
 import eng.jAtcSim.newLib.airplanes.internal.Airplane;
 import eng.jAtcSim.newLib.airplanes.templates.AirplaneTemplate;
 import eng.jAtcSim.newLib.airplanes.templates.ArrivalAirplaneTemplate;
 import eng.jAtcSim.newLib.airplanes.templates.DepartureAirplaneTemplate;
 import eng.jAtcSim.newLib.shared.Callsign;
+import eng.jAtcSim.newLib.shared.ContextManager;
 import eng.jAtcSim.newLib.shared.Squawk;
 import eng.jAtcSim.newLib.shared.enums.AtcType;
 
@@ -40,8 +42,8 @@ public class AirplanesController {
   }
 
   public void init() {
-    AirplaneAcc.setAirplaneListProducer(() -> this.publicPlanes);
-    AirplaneAcc.setAirplanesControllerProducer(() -> this);
+    AirplaneContext airplaneContext = new AirplaneContext(this.publicPlanes, this);
+    ContextManager.setContext(IAirplaneContext.class, airplaneContext);
   }
 
   public void throwEmergency() {

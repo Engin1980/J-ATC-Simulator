@@ -1,61 +1,88 @@
 @startuml
 
-title Components - Component Diagram
+title Relations
 
-package Shared{
-  [SharedLib (sl)] as sl
+package "Shared"{
+[SharedLib] as shared
 }
 
-package "Base dependencies"{
-  [AreaLib (al)] as al
-  [AirplaneTypeLib (atl)] as atl
-  [TrafficLib (tl)] as tl
-  [FleetLib (fl)] as fl
-  [WeatherLib (wl)] as wl
-  [MessagingLib (ml)] as ml
-  [MoodLib (mol)] as mol
-  [StatsLib (stl)] as stl
-  [SpeechesList (bsl)] as bsl
+package "Low-level"{
+[FleetLib] as fleet
+[MessagingLib] as messaging
+[MoodLib] as mood
+[TrafficLib] as traffic
+[AirplaneTypeLib] as airplaneType
+
 }
 
-package "Higher"{
-  [AirplanesLib (pl)] as pl
+
+package "Midle-level"{
+[StatsLib] as stats
+[SpeechesLib] as speeches
 }
 
-package "Xml"{
-  [AreaXmlLoader]
+package "Upper-level"{
+[AreaLib] as area
+[WeatherLib] as weather
+[AtcLib] as atc
+[AirplanesLib] as airplanes
 }
 
-package "Sim"{
-  [SimulationLib (simlib)] as simlib
-}
+[SimulationLib] as simulation
+[TextProcessingLib] as textProcessing
 
-note top of stl : StatsManager and\nRecentStats should\nbe moved to SimulationLib
+atc <-up- simulation
+area <-up- simulation
+airplaneType <-up- simulation
+traffic <-up- simulation
+weather <-up- simulation
+fleet <-up- simulation
+airplanes <-up- simulation
+stats <-up- simulation
+messaging <-up- simulation
+textProcessing <-up- simulation
+mood <-up- simulation
+speeches <-up- simulation
 
-sl <-up- wl
-sl <-up- al
-sl <-up- atl
-sl <-up- tl
-sl <-up- mol
-sl <-up- bsl
+messaging <-up- speeches
 
-bsl <-up- al
+mood <-up- stats
 
-atl <-up- pl
+weather <-up- textProcessing
+speeches <-up- textProcessing
 
-bsl <-up- ml
+area <-up- weather
 
-al <-up- pl
+shared <-up- traffic
 
-pl <-up-simlib
 
-tl <-up- simlib
+shared <-up- mood
 
-wl <-up- simlib
+shared <-up- messaging
 
-fl <-up- simlib
 
-mol <-up- stl
+shared <-up- fleet
+
+airplanes <-up- atc
+area <-up- atc
+messaging <-up- atc
+speeches <-up- atc
+airplaneType <-up- atc
+weather <-up- atc
+stats <-up- atc
+
+speeches <-up- area
+
+shared <-up- airplaneType
+
+area <-up- airplanes
+airplaneType <-up- airplanes
+mood <-up- airplanes
+speeches <-up- airplanes
+messaging <-up- airplanes
+weather <-up- airplanes
+traffic <-up- airplanes
+stats <-up- airplanes
 
 
 @enduml

@@ -1,8 +1,8 @@
 package eng.jAtcSim.newLib.airplanes.other;
 
 import eng.eSystem.utilites.ExceptionUtils;
+import eng.jAtcSim.newLib.airplanes.contextLocal.Context;
 import eng.jAtcSim.newLib.shared.Callsign;
-import eng.jAtcSim.newLib.shared.context.SharedAcc;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 
 public abstract class AirplaneRecorder {
@@ -20,6 +20,6 @@ public abstract class AirplaneRecorder {
       sb.append("Exception object is null.");
     else
       sb.append(ex.getMessage()).append(":: " ).append(ExceptionUtils.toFullString(ex));
-    SharedAcc.getAppLog().write(ApplicationLog.eType.critical, sb.toString());
+    Context.getApp().getAppLog().write(ApplicationLog.eType.critical, sb.toString());
   }
 }
