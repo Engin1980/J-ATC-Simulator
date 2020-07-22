@@ -12,7 +12,6 @@ import eng.eSystem.geo.Headings;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplaneType.AirplaneType;
 import eng.jAtcSim.newLib.airplaneType.context.AirplaneTypeAcc;
-import eng.jAtcSim.newLib.airplanes.context.AirplaneAcc;
 import eng.jAtcSim.newLib.airplanes.AirproxType;
 import eng.jAtcSim.newLib.airplanes.IAirplane;
 import eng.jAtcSim.newLib.airplanes.templates.AirplaneTemplate;
@@ -20,22 +19,19 @@ import eng.jAtcSim.newLib.airplanes.templates.ArrivalAirplaneTemplate;
 import eng.jAtcSim.newLib.airplanes.templates.DepartureAirplaneTemplate;
 import eng.jAtcSim.newLib.area.context.AreaAcc;
 import eng.jAtcSim.newLib.area.EntryExitPoint;
-import eng.jAtcSim.newLib.atcs.context.AtcAcc;
 import eng.jAtcSim.newLib.fleet.TypeAndWeight;
 import eng.jAtcSim.newLib.fleet.airliners.CompanyFleet;
 import eng.jAtcSim.newLib.fleet.generalAviation.CountryFleet;
+import eng.jAtcSim.newLib.gameSim.contextLocal.Context;
 import eng.jAtcSim.newLib.messaging.context.MessagingAcc;
 import eng.jAtcSim.newLib.messaging.Participant;
 import eng.jAtcSim.newLib.mood.Mood;
-import eng.jAtcSim.newLib.mood.context.MoodAcc;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.CallsignFactory;
-import eng.jAtcSim.newLib.shared.context.SharedAcc;
 import eng.jAtcSim.newLib.shared.enums.AtcType;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 import eng.jAtcSim.newLib.stats.FinishedPlaneStats;
-import eng.jAtcSim.newLib.stats.context.StatsAcc;
 import eng.jAtcSim.newLib.traffic.movementTemplating.*;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
@@ -59,7 +55,7 @@ public class AirplanesSimModule extends SimModule {
     int delayDifference = exitDelay - entryDelay;
     FinishedPlaneStats ret = new FinishedPlaneStats(
         airplane.getCallsign(), airplane.isDeparture(), airplane.isEmergency(), delayDifference,
-        MoodAcc.getMoodManager().getMoodResult(airplane.getCallsign(), delayDifference)
+        Context.getMood().getMoodManager().getMoodResult(airplane.getCallsign(), delayDifference)
     );
     return ret;
   }
@@ -127,25 +123,25 @@ public class AirplanesSimModule extends SimModule {
   private void evaluateFails() {
     parent.getMrvaController().evaluateMrvaFails();
     parent.getMrvaController().getMrvaViolatingPlanes()
-        .where(q -> AtcAcc.getResponsibleAtcId(q).getType() == AtcType.app)
-        .forEach(q -> MoodAcc.getMoodManager().get(q).experience(Mood.SharedExperience.mrvaViolation));
+        .where(q -> Context.getAtc().getResponsibleAtcId(q).getType() == AtcType.app)
+        .forEach(q -> Context.getMood().getMoodManager().get(q).experience(Mood.SharedExperience.mrvaViolation));
 
     parent.getAirproxController().evaluateAirproxFails();
     parent.getAirproxController().getAirproxViolatingPlanes()
-        .where(q -> AtcAcc.getResponsibleAtcId(q.getKey()).getType() == AtcType.app
+        .where(q -> Context.getAtc().getResponsibleAtcId(q.getKey()).getType() == AtcType.app
             && q.getValue() == AirproxType.full)
-        .forEach(q -> MoodAcc.getMoodManager().get(q.getKey()).experience(Mood.SharedExperience.airprox));
+        .forEach(q -> Context.getMood().getMoodManager().get(q.getKey()).experience(Mood.SharedExperience.airprox));
   }
 
   private Coordinate generateArrivalCoordinate(Coordinate navFix, Coordinate aipFix) {
     double radial = Coordinates.getBearing(aipFix, navFix);
-    radial += SharedAcc.getRnd().nextDouble(-15, 15); // nahodne zatoceni priletoveho radialu
+    radial += Context.getApp().getRnd().nextDouble(-15, 15); // nahodne zatoceni priletoveho radialu
     double dist = Coordinates.getDistanceInNM(navFix, AreaAcc.getAirport().getLocation());
     if (dist > (AreaAcc.getAirport().getCoveredDistance())) {
-      dist = SharedAcc.getRnd().nextDouble(25, 40);
+      dist = Context.getApp().getRnd().nextDouble(25, 40);
     } else {
       dist = AreaAcc.getAirport().getCoveredDistance() - dist;
-      if (dist < 25) dist = SharedAcc.getRnd().nextDouble(25, 40);
+      if (dist < 25) dist = Context.getApp().getRnd().nextDouble(25, 40);
     }
     Coordinate ret = Coordinates.getCoordinate(navFix, (int) radial, dist);
     return ret;
@@ -168,14 +164,14 @@ public class AirplanesSimModule extends SimModule {
     }
 
     // update by random value
-    ret += SharedAcc.getRnd().nextInt(-3000, 5000);
+    ret += Context.getApp().getRnd().nextInt(-3000, 5000);
     if (ret > type.maxAltitude) {
       if (ret < 12000)
-        ret = type.maxAltitude - SharedAcc.getRnd().nextInt(4) * 1000;
+        ret = type.maxAltitude - Context.getApp().getRnd().nextInt(4) * 1000;
       else if (ret < 20000)
-        ret = type.maxAltitude - SharedAcc.getRnd().nextInt(7) * 1000;
+        ret = type.maxAltitude - Context.getApp().getRnd().nextInt(7) * 1000;
       else
-        ret = type.maxAltitude - SharedAcc.getRnd().nextInt(11) * 1000;
+        ret = type.maxAltitude - Context.getApp().getRnd().nextInt(11) * 1000;
     }
     ret = ret / 1000 * 1000;
 
@@ -191,7 +187,7 @@ public class AirplanesSimModule extends SimModule {
   private int generateDelay() {
     double delayStepProbability = this.delayStepProbability;
     int delayStep = this.delayStep;
-    ERandom rnd = SharedAcc.getRnd();
+    ERandom rnd = Context.getApp().getRnd();
 
     int ret = 0;
     while (rnd.nextDouble() <= delayStepProbability) {
@@ -205,11 +201,11 @@ public class AirplanesSimModule extends SimModule {
   }
 
   private void generateEmergencyIfRequired() {
-    if (parent.getEmergencyAppearanceController().isEmergencyTimeElapsed(SharedAcc.getNow())) {
-      if (!AirplaneAcc.getAirplanes().isAny(q -> q.isEmergency())) {
+    if (parent.getEmergencyAppearanceController().isEmergencyTimeElapsed(Context.getShared().getNow())) {
+      if (!Context.getAirplane().getAirplanes().isAny(q -> q.isEmergency())) {
         parent.getAirplanesController().throwEmergency();
       }
-      parent.getEmergencyAppearanceController().generateEmergencyTime(SharedAcc.getNow());
+      parent.getEmergencyAppearanceController().generateEmergencyTime(Context.getShared().getNow());
     }
   }
 
@@ -233,9 +229,9 @@ public class AirplanesSimModule extends SimModule {
     int spd = pt.vCruise;
 
     EDayTimeStamp entryTime =
-        m.getAppearanceTime().isAfterOrEq(SharedAcc.getNow().getTime()) ?
-            new EDayTimeStamp(SharedAcc.getNow().getDays(), m.getAppearanceTime()) :
-            new EDayTimeStamp(SharedAcc.getNow().getDays() + 1, m.getAppearanceTime());
+        m.getAppearanceTime().isAfterOrEq(Context.getShared().getNow().getTime()) ?
+            new EDayTimeStamp(Context.getShared().getNow().getDays(), m.getAppearanceTime()) :
+            new EDayTimeStamp(Context.getShared().getNow().getDays() + 1, m.getAppearanceTime());
 
     EDayTimeStamp expectedExitTime = entryTime.addMinutes(25);
     int delay = generateDelay();
@@ -260,9 +256,9 @@ public class AirplanesSimModule extends SimModule {
     }
 
     EDayTimeStamp entryTime =
-        m.getAppearanceTime().isAfterOrEq(SharedAcc.getNow().getTime()) ?
-            new EDayTimeStamp(SharedAcc.getNow().getDays(), m.getAppearanceTime()) :
-            new EDayTimeStamp(SharedAcc.getNow().getDays() + 1, m.getAppearanceTime());
+        m.getAppearanceTime().isAfterOrEq(Context.getShared().getNow().getTime()) ?
+            new EDayTimeStamp(Context.getShared().getNow().getDays(), m.getAppearanceTime()) :
+            new EDayTimeStamp(Context.getShared().getNow().getDays() + 1, m.getAppearanceTime());
 
     int entryDelay = generateDelay();
 
@@ -275,20 +271,20 @@ public class AirplanesSimModule extends SimModule {
   }
 
   private void introduceNewPlanes() {
-    IReadOnlyList<MovementTemplate> newMovements = parent.getTrafficProvider().getMovementsUntilTime(SharedAcc.getNow());
+    IReadOnlyList<MovementTemplate> newMovements = parent.getTrafficProvider().getMovementsUntilTime(Context.getShared().getNow());
     IList<AirplaneTemplate> newTemplates = new EList<>();
     for (MovementTemplate newMovement : newMovements) {
       TryResult<AirplaneTemplate> res = convertMovementToAirplane(newMovement);
       if (res.getException() != null)
-        SharedAcc.getAppLog().write(ApplicationLog.eType.warning,
+        Context.getApp().getAppLog().write(ApplicationLog.eType.warning,
             sf("Unable to create a flight, error when creating instance: %s.",
                 res.getException().getMessage()));
       else
         newTemplates.add(res.getValue());
     }
     parent.getAirplanesController().addNewPreparedPlanes(newTemplates);
-    if (SharedAcc.getNow().getHours() == 20 && SharedAcc.getNow().getMinutes() == 0 && SharedAcc.getNow().getSeconds() == 0)
-      parent.getTrafficProvider().prepareTrafficForDay(SharedAcc.getNow().getDays() + 1);
+    if (Context.getShared().getNow().getHours() == 20 && Context.getShared().getNow().getMinutes() == 0 && Context.getShared().getNow().getSeconds() == 0)
+      parent.getTrafficProvider().prepareTrafficForDay(Context.getShared().getNow().getDays() + 1);
   }
 
   public void elapseSecond() {
@@ -302,21 +298,21 @@ public class AirplanesSimModule extends SimModule {
   private void removeOldPlanes() {
     IList<IAirplane> ret = new EList<>();
 
-    for (IAirplane p : AirplaneAcc.getAirplanes()) {
+    for (IAirplane p : Context.getAirplane().getAirplanes()) {
       // landed
       if (p.isArrival() && p.getSha().getSpeed() < 11) {
         ret.add(p);
-        StatsAcc.getStatsProvider().registerFinishedPlane(buildFinishedAirplaneStats(p));
+        Context.getStats().getStatsProvider().registerFinishedPlane(buildFinishedAirplaneStats(p));
       }
 
       // departed
       if (p.isDeparture()
-          && AtcAcc.getResponsibleAtcId(p.getCallsign()).getType() == AtcType.ctr
+          && Context.getAtc().getResponsibleAtcId(p.getCallsign()).getType() == AtcType.ctr
           && Coordinates.getDistanceInNM(
           p.getCoordinate(),
           AreaAcc.getAirport().getLocation()) > AreaAcc.getAirport().getCoveredDistance()) {
         ret.add(p);
-        StatsAcc.getStatsProvider().registerFinishedPlane(buildFinishedAirplaneStats(p));
+        Context.getStats().getStatsProvider().registerFinishedPlane(buildFinishedAirplaneStats(p));
       }
 
       if (p.isEmergency() && p.hasElapsedEmergencyTime()) {
@@ -341,7 +337,7 @@ public class AirplanesSimModule extends SimModule {
       tmp = tmp.where(q -> q.getType() == EntryExitPoint.Type.exit || q.getType() == EntryExitPoint.Type.both);
     tmp = tmp.where(q -> q.getMaxMrvaAltitudeOrHigh() < pt.maxAltitude);
     if (tmp.isEmpty()) {
-      SharedAcc.getAppLog().write(ApplicationLog.eType.warning,
+      Context.getApp().getAppLog().write(ApplicationLog.eType.warning,
           sf("There are no available entry/exit points for plane of kind %s with service ceiling at %d ft. " +
                   "Flight must be cancelled.",
               pt.name, pt.maxAltitude));
@@ -353,7 +349,7 @@ public class AirplanesSimModule extends SimModule {
     } else if (entryExitInfo.getNavaid() != null) {
       ret = tmp.tryGetFirst(q -> q.getName().equals(entryExitInfo.getNavaid()));
       if (ret == null) {
-        SharedAcc.getAppLog().write(ApplicationLog.eType.warning,
+        Context.getApp().getAppLog().write(ApplicationLog.eType.warning,
             sf("Plane generation asks for entry point %s, but there is not such " +
                     "entry-exit point available.",
                 entryExitInfo.getNavaid()));

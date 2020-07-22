@@ -1,7 +1,7 @@
 package eng.jAtcSim.newLib.shared.logging.writers;
 
 import eng.eSystem.validation.EAssert;
-import eng.jAtcSim.newLib.shared.context.SharedAcc;
+import eng.jAtcSim.newLib.shared.contextLocal.Context;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -53,7 +53,7 @@ public class FileWriter implements ILogWriter {
   private String getFullFileName() {
     Path ret;
     if (Paths.get(this.fileName).isAbsolute() == false) {
-      Path parent = Paths.get(SharedAcc.getLogPath());
+      Path parent = Paths.get(Context.getShared().getLogPath());
       ret = parent.resolve(this.fileName);
     } else
       ret = Paths.get(this.fileName);

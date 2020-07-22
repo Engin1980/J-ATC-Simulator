@@ -6,10 +6,10 @@ import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.validation.EAssert;
-import eng.jAtcSim.newLib.shared.context.SharedAcc;
 import eng.jAtcSim.newLib.shared.time.ETimeStamp;
 import eng.jAtcSim.newLib.shared.xml.SmartXmlLoaderUtils;
 import eng.jAtcSim.newLib.traffic.ITrafficModel;
+import eng.jAtcSim.newLib.traffic.contextLocal.Context;
 import eng.jAtcSim.newLib.traffic.movementTemplating.EntryExitInfo;
 import eng.jAtcSim.newLib.traffic.movementTemplating.GenericGeneralAviationMovementTemplate;
 import eng.jAtcSim.newLib.traffic.movementTemplating.GenericCommercialMovementTemplate;
@@ -126,7 +126,7 @@ public class DensityBasedTrafficModel implements ITrafficModel {
       int count, double gaProb, MovementTemplate.eKind kind, int hour) {
     IList<MovementTemplate> ret = new EList<>();
 
-    ERandom rnd = SharedAcc.getRnd();
+    ERandom rnd = Context.getApp().getRnd();
     for (int i = 0; i < count; i++) {
       MovementTemplate mt = generateNewMovement(hour, rnd.nextDouble() < gaProb, kind);
       ret.add(mt);
@@ -136,7 +136,7 @@ public class DensityBasedTrafficModel implements ITrafficModel {
   }
 
   private MovementTemplate generateNewMovement(int hour, boolean isGA, MovementTemplate.eKind kind) {
-    ERandom rnd = SharedAcc.getRnd();
+    ERandom rnd = Context.getApp().getRnd();
     ETimeStamp time = new ETimeStamp(hour, rnd.nextInt(0, 59), rnd.nextInt(0, 59));
     int radial = getRandomEntryRadial();
 
@@ -157,7 +157,7 @@ public class DensityBasedTrafficModel implements ITrafficModel {
 
   private int getRandomEntryRadial() {
     int ret;
-    ERandom rnd = SharedAcc.getRnd();
+    ERandom rnd = Context.getApp().getRnd();
     if (directions.isEmpty())
       ret = rnd.nextInt(360);
     else {

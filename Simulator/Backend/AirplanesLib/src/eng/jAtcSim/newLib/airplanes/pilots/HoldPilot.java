@@ -5,11 +5,11 @@ import eng.eSystem.exceptions.ToDoException;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.geo.Headings;
 import eng.jAtcSim.newLib.airplanes.AirplaneState;
+import eng.jAtcSim.newLib.airplanes.contextLocal.Context;
 import eng.jAtcSim.newLib.airplanes.internal.Airplane;
 import eng.jAtcSim.newLib.airplanes.modules.sha.navigators.HeadingNavigator;
 import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.mood.Mood;
-import eng.jAtcSim.newLib.shared.context.SharedAcc;
 import eng.jAtcSim.newLib.shared.enums.LeftRight;
 import eng.jAtcSim.newLib.shared.enums.LeftRightAny;
 import eng.jAtcSim.newLib.shared.time.EDayTimeRun;
@@ -51,7 +51,7 @@ public class HoldPilot extends Pilot {
     if (rdr.getState() != AirplaneState.holding)
       super.throwIllegalStateException();
 
-    EDayTimeRun now = SharedAcc.getNow();
+    EDayTimeRun now = Context.getShared().getNow();
 
     switch (this.phase) {
       case directEntry:

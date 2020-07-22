@@ -3,10 +3,9 @@ package eng.jAtcSim.newLib.airplanes.pilots;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.geo.Headings;
 import eng.jAtcSim.newLib.airplanes.IAirplane;
+import eng.jAtcSim.newLib.airplanes.contextLocal.Context;
 import eng.jAtcSim.newLib.area.approaches.conditions.*;
-import eng.jAtcSim.newLib.shared.context.SharedAcc;
 import eng.jAtcSim.newLib.weather.Weather;
-import eng.jAtcSim.newLib.weather.context.WeatherAcc;
 
 public class ConditionEvaluator {
 
@@ -30,11 +29,11 @@ public class ConditionEvaluator {
   }
 
   private static boolean checkTrue(RunwayThresholdVisibilityCondition condition, IAirplane plane){
-    Weather w = WeatherAcc.getWeather();
+    Weather w = Context.getWeather().getWeather();
     if (w.getCloudBaseInFt() > plane.getSha().getAltitude())
       return true;
     else
-      return SharedAcc.getRnd().nextDouble() > w.getCloudBaseHitProbability();
+      return Context.getApp().getRnd().nextDouble() > w.getCloudBaseHitProbability();
   }
 
   private static boolean checkTrue(FlyRouteBehaviorEmptyCondition condition, IAirplane plane){

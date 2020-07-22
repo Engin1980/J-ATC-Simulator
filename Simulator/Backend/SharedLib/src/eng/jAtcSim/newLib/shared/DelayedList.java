@@ -1,10 +1,9 @@
 package eng.jAtcSim.newLib.shared;
 
-import eng.eSystem.ERandom;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
-import eng.jAtcSim.newLib.shared.context.SharedAcc;
+import eng.jAtcSim.newLib.shared.contextLocal.Context;
 
 import java.util.Collection;
 import java.util.LinkedList;
@@ -25,8 +24,7 @@ public class DelayedList<T> {
   private final int minimalDelay;
   private final int maximalDelay;
   private int currentDelay = 0;
-  private List<DelayedItem<T>> inner = new LinkedList<>();
-  private ERandom rnd = SharedAcc.getRnd();
+  private final List<DelayedItem<T>> inner = new LinkedList<>();
 
   public DelayedList(int minimalDelay, int maximalDelay) {
     this.minimalDelay = minimalDelay;
@@ -35,7 +33,7 @@ public class DelayedList<T> {
   }
 
   public void newRandomDelay() {
-    this.currentDelay = this.rnd.nextInt(minimalDelay, maximalDelay + 1);
+    this.currentDelay = Context.getApp().getRnd().nextInt(minimalDelay, maximalDelay + 1);
   }
 
   /**

@@ -1,16 +1,13 @@
 package eng.jAtcSim.newLib.textProcessing.implemented.debugPlaneFormatter;
 
-import eng.eSystem.collections.*;
 import eng.eSystem.geo.Headings;
 import eng.jAtcSim.newLib.shared.Format;
-import eng.jAtcSim.newLib.shared.context.SharedAcc;
 import eng.jAtcSim.newLib.shared.enums.LeftRight;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.*;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.responses.UnableToEnterApproachFromDifficultPosition;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.*;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.afterCommands.*;
-
-import static eng.eSystem.utilites.FunctionShortcuts.*;
+import eng.jAtcSim.newLib.textProcessing.contextLocal.Context;
 
 class FormatMethodImplementations {
   private final String[] greetings = new String[]{"Good day", "Hello", "Hi"};
@@ -211,13 +208,13 @@ class FormatMethodImplementations {
     return "Unable to follow ordered fromAtc, please confirm our radar contact first";
   }
 
-  public String format(EmergencyNotification cmd){
+  public String format(EmergencyNotification cmd) {
     return "Pan-Pan-Pan, we have an emergency situation, request landing immediately";
   }
 
-  public String format(ClearedToRouteCommand cmd){
+  public String format(ClearedToRouteCommand cmd) {
     String type;
-    switch (cmd.getRouteType()){
+    switch (cmd.getRouteType()) {
       case sid:
         type = "departure";
         break;
@@ -254,7 +251,7 @@ class FormatMethodImplementations {
   }
 
   public String format(GoodDayNotification cmd) {
-    int greetingIndex = SharedAcc.getRnd().nextInt(greetings.length);
+    int greetingIndex = Context.getApp().getRnd().nextInt(greetings.length);
     StringBuilder sb = new StringBuilder();
     sb
         .append(greetings[greetingIndex])

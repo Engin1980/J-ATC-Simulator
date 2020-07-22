@@ -10,6 +10,7 @@ import eng.jAtcSim.newLib.airplanes.AirplaneState;
 import eng.jAtcSim.newLib.airplanes.IAirplane;
 import eng.jAtcSim.newLib.area.*;
 import eng.jAtcSim.newLib.area.context.AreaAcc;
+import eng.jAtcSim.newLib.atcs.contextLocal.Context;
 import eng.jAtcSim.newLib.atcs.internal.ComputerAtc;
 import eng.jAtcSim.newLib.atcs.internal.InternalAcc;
 import eng.jAtcSim.newLib.atcs.planeResponsibility.SwitchRoutingRequest;
@@ -18,7 +19,6 @@ import eng.jAtcSim.newLib.messaging.Message;
 import eng.jAtcSim.newLib.messaging.Participant;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.Callsign;
-import eng.jAtcSim.newLib.shared.context.SharedAcc;
 import eng.jAtcSim.newLib.shared.enums.DARouteType;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 import eng.jAtcSim.newLib.speeches.SpeechList;
@@ -31,9 +31,7 @@ import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.TaxiToHoldingPointComma
 import eng.jAtcSim.newLib.speeches.atc.atc2user.*;
 import eng.jAtcSim.newLib.speeches.atc.user2atc.RunwayMaintenanceRequest;
 import eng.jAtcSim.newLib.speeches.atc.user2atc.RunwayInUseRequest;
-import eng.jAtcSim.newLib.stats.context.StatsAcc;
 import eng.jAtcSim.newLib.weather.Weather;
-import eng.jAtcSim.newLib.weather.context.WeatherAcc;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
@@ -65,7 +63,7 @@ public class TowerAtc extends ComputerAtc {
 
   private static RunwayConfiguration getSuggestedThresholds() {
     RunwayConfiguration ret = null;
-    Weather w = WeatherAcc.getWeather();
+    Weather w = Context.getWeather().getWeather();
 
     for (RunwayConfiguration rc : AreaAcc.getAirport().getRunwayConfigurations()) {
       if (rc.accepts(w.getWindHeading(), w.getWindSpeetInKts())) {
@@ -85,7 +83,7 @@ public class TowerAtc extends ComputerAtc {
   }
 
   private static ActiveRunwayThreshold getSuggestedThresholdsRegardlessRunwayConfigurations() {
-    Weather w = WeatherAcc.getWeather();
+    Weather w = Context.getWeather().getWeather();
     Airport airport = AreaAcc.getAirport();
     ActiveRunwayThreshold rt = null;
 
@@ -174,7 +172,7 @@ public class TowerAtc extends ComputerAtc {
       arrivalManager.deletePlane(plane);
       //TODO this will add to stats even planes deleted from the game by a user(?)
       //TODO this stats value should be increased outside of Tower atc??
-      StatsAcc.getStatsProvider().registerArrival();
+      Context.getStats().getStatsProvider().registerArrival();
     }
     if (plane.isDeparture()) {
       departureManager.deletePlane(plane);
@@ -203,11 +201,11 @@ public class TowerAtc extends ComputerAtc {
 
       // add to stats
       EDayTimeStamp holdingPointEntryTime = departureManager.getAndEraseHoldingPointEntryTime(plane);
-      int diffSecs = SharedAcc.getNow().getValue() - holdingPointEntryTime.getValue();
+      int diffSecs = Context.getShared().getNow().getValue() - holdingPointEntryTime.getValue();
       diffSecs -= 15; // generally let TWR atc asks APP atc to switch 15 seconds before HP.
       if (diffSecs < 0) diffSecs = 0;
       //TODO this stats value should be increased outside of Tower atc??
-      StatsAcc.getStatsProvider().registerDeparture(diffSecs);
+      Context.getStats().getStatsProvider().registerDeparture(diffSecs);
     }
 
     if (plane.isEmergency() && plane.getState() == AirplaneState.landed) {
@@ -294,7 +292,7 @@ public class TowerAtc extends ComputerAtc {
 
   private void beginRunwayMaintenance(String rwyName, RunwayCheckInfo rc) {
     RunwayMaintenanceProceedingNotification cnt = new RunwayMaintenanceProceedingNotification(
-        rwyName, SharedAcc.getNow().addMinutes(rc.getExpectedDurationInMinutes()));
+        rwyName, Context.getShared().getNow().addMinutes(rc.getExpectedDurationInMinutes()));
     Message m = new Message(
         Participant.createAtc(this.getAtcId()),
         Participant.createAtc(InternalAcc.getApp().getAtcId()),
@@ -358,7 +356,7 @@ public class TowerAtc extends ComputerAtc {
 
     boolean isSame = inUseInfo.current.isUsingTheSameRunwayConfiguration(newSuggested);
     if (!isSame) {
-      inUseInfo.scheduler = new SchedulerForAdvice(SharedAcc.getNow().addSeconds(10 * 60), RWY_CHANGE_ANNOUNCE_INTERVALS);
+      inUseInfo.scheduler = new SchedulerForAdvice(Context.getShared().getNow().addSeconds(10 * 60), RWY_CHANGE_ANNOUNCE_INTERVALS);
       inUseInfo.scheduled = newSuggested;
     }
   }
@@ -378,12 +376,12 @@ public class TowerAtc extends ComputerAtc {
   private double getDepartingPlaneSwitchAltitude(char category) {
     switch (category) {
       case 'A':
-        return (double) AreaAcc.getAirport().getAltitude() + SharedAcc.getRnd().nextInt(100, 250);
+        return (double) AreaAcc.getAirport().getAltitude() + Context.getApp().getRnd().nextInt(100, 250);
       case 'B':
-        return (double) AreaAcc.getAirport().getAltitude() + SharedAcc.getRnd().nextInt(150, 400);
+        return (double) AreaAcc.getAirport().getAltitude() + Context.getApp().getRnd().nextInt(150, 400);
       case 'C':
       case 'D':
-        return (double) AreaAcc.getAirport().getAltitude() + SharedAcc.getRnd().nextInt(200, 750);
+        return (double) AreaAcc.getAirport().getAltitude() + Context.getApp().getRnd().nextInt(200, 750);
       default:
         throw new EEnumValueUnsupportedException(category);
     }
@@ -463,7 +461,7 @@ public class TowerAtc extends ComputerAtc {
   }
 
   private boolean isRunwayThresholdHavingRecentDeparture(ActiveRunwayThreshold runwayThreshold) {
-    boolean ret = departureManager.getLastDepartureTime(runwayThreshold).addSeconds(60).isAfterOrEq(SharedAcc.getNow());
+    boolean ret = departureManager.getLastDepartureTime(runwayThreshold).addSeconds(60).isAfterOrEq(Context.getShared().getNow());
     return ret;
   }
 
@@ -579,7 +577,7 @@ public class TowerAtc extends ComputerAtc {
   private void processRunwayChangeBackground() {
     if (inUseInfo.scheduler == null) {
       if (isUpdatedWeather) {
-        if (WeatherAcc.getWeather().getSnowState() != Weather.eSnowState.none)
+        if (Context.getWeather().getWeather().getSnowState() != Weather.eSnowState.none)
           updateRunwayMaintenanceDueToSnow();
         checkForRunwayChange();
         isUpdatedWeather = false;
@@ -597,7 +595,7 @@ public class TowerAtc extends ComputerAtc {
     for (String runwayName : runwayChecks.getKeys()) {
       RunwayCheckInfo rc = runwayChecks.get(runwayName);
       if (rc.isActive()) {
-        if (rc.getRealDurationEnd().isBeforeOrEq(SharedAcc.getNow()))
+        if (rc.getRealDurationEnd().isBeforeOrEq(Context.getShared().getNow()))
           finishRunwayMaintenance(runwayName, rc);
       } else {
         if (rc.getScheduler().isElapsed()) {
@@ -685,16 +683,17 @@ public class TowerAtc extends ComputerAtc {
   }
 
   private void updateRunwayMaintenanceDueToSnow() {
+    Weather weather = Context.getWeather().getWeather();
     for (String rwyName : this.runwayChecks.getKeys()) {
       RunwayCheckInfo rc = this.runwayChecks.get(rwyName);
       if (rc.isActive()) continue;
-      int maxInterval = WeatherAcc.getWeather().getSnowState() == Weather.eSnowState.intensive
+      int maxInterval = weather.getSnowState() == Weather.eSnowState.intensive
           ? RunwayCheckInfo.MAX_SNOW_INTENSIVE_MAINTENANCE_INTERVAL
           : RunwayCheckInfo.MAX_SNOW_MAINTENANCE_INTERVAL;
       if (rc.getScheduler().getMinutesLeft() > maxInterval) {
         rc = RunwayCheckInfo.createSnowCleaning(
             false,
-            WeatherAcc.getWeather().getSnowState() == Weather.eSnowState.intensive);
+            weather.getSnowState() == Weather.eSnowState.intensive);
         runwayChecks.set(rwyName, rc);
         announceScheduledRunwayCheck(rwyName, rc);
       }

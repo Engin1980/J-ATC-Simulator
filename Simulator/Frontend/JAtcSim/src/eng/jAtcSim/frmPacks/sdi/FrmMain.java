@@ -6,6 +6,7 @@ import eng.eSystem.utilites.awt.ComponentUtils;
 import eng.jAtcSim.JAtcSim;
 import eng.jAtcSim.Stylist;
 import eng.jAtcSim.app.FrmAbout;
+import eng.jAtcSim.contextLocal.Context;
 import eng.jAtcSim.frmPacks.shared.*;
 import eng.jAtcSim.abstractRadar.settings.RadarBehaviorSettings;
 import eng.jAtcSim.abstractRadar.settings.RadarDisplaySettings;
@@ -13,7 +14,6 @@ import eng.jAtcSim.abstractRadar.RadarViewPort;
 import eng.jAtcSim.abstractRadar.global.SoundManager;
 import eng.jAtcSim.newLib.area.InitialPosition;
 import eng.jAtcSim.newLib.shared.Callsign;
-import eng.jAtcSim.newLib.shared.context.SharedAcc;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 import eng.jAtcSim.newLib.speeches.system.user2system.TickSpeedRequest;
 import eng.jAtcSim.recording.Recording;
@@ -239,7 +239,7 @@ public class FrmMain extends JFrame {
         try {
           pb.start();
         } catch (IOException e) {
-          SharedAcc.getAppLog().write(ApplicationLog.eType.warning, "Failed to start project web pages." + ExceptionUtils.toFullString(e));
+          Context.getApp().getAppLog().write(ApplicationLog.eType.warning, "Failed to start project web pages." + ExceptionUtils.toFullString(e));
         }
       });
       mnuHelp.addSeparator();

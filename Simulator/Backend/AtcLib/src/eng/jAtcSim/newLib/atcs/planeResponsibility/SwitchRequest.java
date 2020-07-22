@@ -1,8 +1,8 @@
 package eng.jAtcSim.newLib.atcs.planeResponsibility;
 
+import eng.jAtcSim.newLib.atcs.contextLocal.Context;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.Global;
-import eng.jAtcSim.newLib.shared.context.SharedAcc;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 
 public class SwitchRequest {
@@ -13,13 +13,13 @@ public class SwitchRequest {
   private SwitchRoutingRequest routing;
 
   public void setConfirmed(SwitchRoutingRequest newRoutingIfRequired) {
-    this.confirmedTime = SharedAcc.getNow().toStamp();
+    this.confirmedTime = Context.getShared().getNow().toStamp();
     this.routing = newRoutingIfRequired;
   }
 
   public SwitchRequest(AtcId atcId) {
     this.atc = atcId;
-    this.creationTime = SharedAcc.getNow().toStamp();
+    this.creationTime = Context.getShared().getNow().toStamp();
     this.updateLastRequestTime();
   }
 
@@ -61,6 +61,6 @@ public class SwitchRequest {
   }
 
   public void updateLastRequestTime() {
-    this.repeatRequestTime = SharedAcc.getNow().addSeconds(Global.REPEATED_RADAR_CONTACT_REQUEST_SECONDS);
+    this.repeatRequestTime = Context.getShared().getNow().addSeconds(Global.REPEATED_RADAR_CONTACT_REQUEST_SECONDS);
   }
 }

@@ -8,10 +8,10 @@ import eng.jAtcSim.newLib.area.ActiveRunway;
 import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
 import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.area.routes.DARoute;
+import eng.jAtcSim.newLib.atcs.contextLocal.Context;
 import eng.jAtcSim.newLib.atcs.internal.InternalAcc;
 import eng.jAtcSim.newLib.messaging.Message;
 import eng.jAtcSim.newLib.messaging.Participant;
-import eng.jAtcSim.newLib.shared.context.SharedAcc;
 import eng.jAtcSim.newLib.shared.enums.DARouteType;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 import eng.jAtcSim.newLib.speeches.SpeechList;
@@ -65,7 +65,7 @@ class DepartureManager {
     this.holdingPointReady.remove(plane);
     this.departing.add(plane);
     this.lastDepartingPlane.set(th, plane);
-    this.lastDeparturesTime.set(th, SharedAcc.getNow().toStamp());
+    this.lastDeparturesTime.set(th, Context.getShared().getNow().toStamp());
     this.departureSwitchAltitude.set(plane, switchAltitude);
   }
 
@@ -109,7 +109,7 @@ class DepartureManager {
 
   public void registerNewDeparture(IAirplane plane, ActiveRunwayThreshold runwayThreshold) {
     this.holdingPointNotReady.add(plane);
-    holdingPointWaitingTimeMap.set(plane, SharedAcc.getNow().toStamp());
+    holdingPointWaitingTimeMap.set(plane, Context.getShared().getNow().toStamp());
     DARoute r = getDepartureRouteForPlane(runwayThreshold,plane.getType(), plane.getRouting().getEntryExitPoint(), true);
     Message m = new Message(
         Participant.createAtc(this.parent.getAtcId()),

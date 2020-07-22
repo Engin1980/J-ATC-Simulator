@@ -2,14 +2,8 @@ package eng.jAtcSim.app.startupSettings;
 
 import eng.eSystem.collections.EMap;
 import eng.eSystem.collections.IMap;
-import eng.eSystem.eXml.XElement;
 import eng.eSystem.utilites.NumberUtils;
 import eng.eSystem.validation.EAssert;
-import eng.eXmlSerialization.StoreTypeMode;
-import eng.eXmlSerialization.XmlSerializer;
-import eng.eXmlSerialization.XmlSettings;
-import eng.eXmlSerialization.common.Log;
-import eng.eXmlSerialization.serializers.implemented.java_time.LocalTimeAttributeSerializer;
 import eng.jAtcSim.newLib.traffic.models.SimpleGenericTrafficModel;
 
 import java.time.LocalTime;
@@ -93,16 +87,16 @@ public class StartupSettings {
     private IMap<String, Integer> countryCodes = new EMap<>();
     private double departureProbability = .5;
     private double generalAviationProbability = .5;
-    private SimpleGenericTrafficModel.MovementsForHour[] movementsPerHour;
+    private SimpleGenericTrafficModel.MovementsForHour[] movementsForHours;
     private boolean useExtendedCallsigns = false;
 
     public CustomTraffic() {
       this.companies.set("CSA", 1);
       this.companies.set("EZY", 1);
       this.countryCodes.set("OK", 1);
-      this.movementsPerHour = new SimpleGenericTrafficModel.MovementsForHour[MOVEMENTS_PER_HOUR_LENGTH];
-      for (int i = 0; i < movementsPerHour.length; i++) {
-        movementsPerHour[i] = new SimpleGenericTrafficModel.MovementsForHour(5, null, null);
+      this.movementsForHours = new SimpleGenericTrafficModel.MovementsForHour[MOVEMENTS_PER_HOUR_LENGTH];
+      for (int i = 0; i < movementsForHours.length; i++) {
+        movementsForHours[i] = new SimpleGenericTrafficModel.MovementsForHour(5, null, null);
       }
     }
 
@@ -142,15 +136,15 @@ public class StartupSettings {
       this.generalAviationProbability = generalAviationProbability;
     }
 
-    public SimpleGenericTrafficModel.MovementsForHour[] getMovementsPerHour() {
-      return movementsPerHour;
+    public SimpleGenericTrafficModel.MovementsForHour[] getMovementsForHours() {
+      return movementsForHours;
     }
 
-    public void setMovementsPerHour(SimpleGenericTrafficModel.MovementsForHour[] movementsPerHour) {
-      EAssert.Argument.isNotNull(movementsPerHour, "movementsPerHour");
-      EAssert.Argument.isTrue(movementsPerHour.length == MOVEMENTS_PER_HOUR_LENGTH,
+    public void setMovementsForHours(SimpleGenericTrafficModel.MovementsForHour[] movementsForHours) {
+      EAssert.Argument.isNotNull(movementsForHours, "movementsPerHour");
+      EAssert.Argument.isTrue(movementsForHours.length == MOVEMENTS_PER_HOUR_LENGTH,
           sf("There must be exactly %d records in movements per hour.", MOVEMENTS_PER_HOUR_LENGTH));
-      this.movementsPerHour = movementsPerHour;
+      this.movementsForHours = movementsForHours;
     }
 
     public boolean isUseExtendedCallsigns() {

@@ -1,5 +1,4 @@
 module JAtcSim.Modules.Backend.AtcLib {
-  exports eng.jAtcSim.newLib.atcs;
   requires eng.eSystem;
   requires JAtcSim.Modules.Backend.AirplanesLib;
   requires JAtcSim.Modules.Backend.AreaLib;
@@ -9,6 +8,7 @@ module JAtcSim.Modules.Backend.AtcLib {
   requires JAtcSim.Modules.Backend.AirplaneTypeLib;
   requires JAtcSim.Modules.Backend.WeatherLib;
   requires JAtcSim.Modules.Backend.StatsLib;
+  exports eng.jAtcSim.newLib.atcs;
   exports eng.jAtcSim.newLib.atcs.context to
       JAtcSim.Modules.Backend.SimulationLib;
 }

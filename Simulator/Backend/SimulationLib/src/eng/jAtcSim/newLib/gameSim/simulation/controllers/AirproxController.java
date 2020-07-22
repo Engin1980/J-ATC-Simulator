@@ -5,11 +5,10 @@ import eng.eSystem.collections.IMap;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.collections.IReadOnlyMap;
 import eng.eSystem.geo.Coordinates;
-import eng.jAtcSim.newLib.airplanes.context.AirplaneAcc;
 import eng.jAtcSim.newLib.airplanes.AirplaneState;
 import eng.jAtcSim.newLib.airplanes.AirproxType;
 import eng.jAtcSim.newLib.airplanes.IAirplane;
-import eng.jAtcSim.newLib.atcs.context.AtcAcc;
+import eng.jAtcSim.newLib.gameSim.contextLocal.Context;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.enums.AtcType;
 
@@ -77,7 +76,7 @@ public class AirproxController {
   public void evaluateAirproxFails() {
     airproxViolatingPlanes.clear();
 
-    IReadOnlyList<IAirplane> planes = AirplaneAcc.getAirplanes();
+    IReadOnlyList<IAirplane> planes = Context.getAirplane().getAirplanes();
 
     for (int i = 0; i < planes.count() - 1; i++) {
       IAirplane a = planes.get(i);
@@ -96,8 +95,8 @@ public class AirproxController {
 
         AirproxType at = getAirproxLevel(a, b);
 
-        if (at == AirproxType.full && AtcAcc.getResponsibleAtcId(a.getCallsign()).getType() != AtcType.app &&
-            AtcAcc.getResponsibleAtcId(b.getCallsign()).getType() != AtcType.app)
+        if (at == AirproxType.full && Context.getAtc().getResponsibleAtcId(a.getCallsign()).getType() != AtcType.app &&
+            Context.getAtc().getResponsibleAtcId(b.getCallsign()).getType() != AtcType.app)
           at = AirproxType.partial;
 
         storeAirprox(a.getCallsign(), at);

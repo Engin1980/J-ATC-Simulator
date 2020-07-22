@@ -4,9 +4,9 @@ import eng.eSystem.exceptions.ToDoException;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplanes.AirplanesController;
 import eng.jAtcSim.newLib.area.Border;
-import eng.jAtcSim.newLib.atcs.context.AtcAcc;
 import eng.jAtcSim.newLib.atcs.AtcProvider;
 import eng.jAtcSim.newLib.gameSim.ISimulation;
+import eng.jAtcSim.newLib.gameSim.contextLocal.Context;
 import eng.jAtcSim.newLib.gameSim.game.startupInfos.ParserFormatterStartInfo;
 import eng.jAtcSim.newLib.gameSim.simulation.controllers.*;
 import eng.jAtcSim.newLib.gameSim.simulation.modules.AirplanesSimModule;
@@ -16,16 +16,13 @@ import eng.jAtcSim.newLib.messaging.IMessageContent;
 import eng.jAtcSim.newLib.messaging.Message;
 import eng.jAtcSim.newLib.messaging.context.MessagingAcc;
 import eng.jAtcSim.newLib.messaging.Participant;
-import eng.jAtcSim.newLib.shared.context.SharedAcc;
 import eng.jAtcSim.newLib.shared.enums.AtcType;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 import eng.jAtcSim.newLib.shared.time.EDayTimeRun;
 import eng.jAtcSim.newLib.shared.time.ETimeStamp;
 import eng.jAtcSim.newLib.speeches.system.system2user.MetarNotification;
-import eng.jAtcSim.newLib.stats.context.StatsAcc;
 import eng.jAtcSim.newLib.stats.StatsProvider;
 import eng.jAtcSim.newLib.traffic.TrafficProvider;
-import eng.jAtcSim.newLib.weather.context.WeatherAcc;
 import eng.jAtcSim.newLib.weather.WeatherManager;
 
 public class Simulation {
@@ -141,7 +138,7 @@ public class Simulation {
     long elapseStartMs = System.currentTimeMillis();
 
     if (isElapseSecondCalculationRunning) {
-      SharedAcc.getAppLog().write(
+      Context.getApp().getAppLog().write(
           ApplicationLog.eType.warning,
           "elapseSecond() called before the previous one was finished!");
       return;
@@ -163,15 +160,16 @@ public class Simulation {
     // stats here
 
     // weather
-    WeatherAcc.getWeatherManager().elapseSecond();
-    if (WeatherAcc.getWeatherManager().isNewWeather()) {
+    WeatherManager weatherManager = Context.getWeather().getWeatherManager();
+    weatherManager.elapseSecond();
+    if (weatherManager.isNewWeather()) {
       this.atcProvider.adviceWeatherUpdated();
       sendTextMessageForUser(new MetarNotification(true));
     }
 
     // finalize
     long elapseEndMs = System.currentTimeMillis();
-    StatsAcc.getStatsProvider().registerElapseSecondDuration((int) (elapseEndMs - elapseStartMs));
+    Context.getStats().getStatsProvider().registerElapseSecondDuration((int) (elapseEndMs - elapseStartMs));
 
     isElapseSecondCalculationRunning = false;
 
@@ -185,7 +183,7 @@ public class Simulation {
   private void sendTextMessageForUser(IMessageContent content) {
     Message m = new Message(
         Participant.createSystem(),
-        Participant.createAtc(AtcAcc.getAtcList().getFirst(q -> q.getType() == AtcType.app)),
+        Participant.createAtc(Context.getAtc().getAtcList().getFirst(q -> q.getType() == AtcType.app)),
         content);
     MessagingAcc.getMessenger().send(m);
   }

@@ -11,12 +11,15 @@ import eng.jAtcSim.app.FrmIntro;
 import eng.jAtcSim.app.FrmStartupProgress;
 import eng.jAtcSim.app.extenders.swingFactory.FileHistoryManager;
 import eng.jAtcSim.app.startupSettings.StartupSettings;
+import eng.jAtcSim.contextLocal.Context;
 import eng.jAtcSim.frmPacks.Pack;
 import eng.jAtcSim.frmPacks.shared.FrmLog;
 import eng.jAtcSim.newLib.gameSim.GameFactory;
 import eng.jAtcSim.newLib.gameSim.IGame;
 import eng.jAtcSim.newLib.gameSim.game.startupInfos.*;
-import eng.jAtcSim.newLib.shared.context.SharedAcc;
+import eng.jAtcSim.newLib.shared.ContextManager;
+import eng.jAtcSim.newLib.shared.context.AppContext;
+import eng.jAtcSim.newLib.shared.context.IAppContext;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 import eng.jAtcSim.newLib.shared.time.ETimeStamp;
 import eng.jAtcSim.newLib.traffic.ITrafficModel;
@@ -57,7 +60,7 @@ public class JAtcSim {
   public static void loadSimulation(StartupSettings startupSettings, String xmlFileName) {
     //TODO Implement this: loading of the simulation
     throw new ToDoException("loading of the simulation");
-//    SharedAcc.getAppLog().write(ApplicationLog.eType.info, "Loading saved simulation game");
+//    Context.getShared().getAppLog().write(ApplicationLog.eType.info, "Loading saved simulation game");
 //
 //    IMap<String, Object> map = new EMap<>();
 //
@@ -78,11 +81,11 @@ public class JAtcSim {
 ////        throw new EApplicationException("Some element in source XML files is not unique. Some of the input XML files is not valid.", ex);
 ////      }
 //
-//      SharedAcc.getAppLog().write(ApplicationLog.eType.info, "Initializing sound environment");
+//      Context.getShared().getAppLog().write(ApplicationLog.eType.info, "Initializing sound environment");
 //      // sound
 //      SoundManager.init(appSettings.soundFolder.toString());
 //
-//      SharedAcc.getAppLog().write(ApplicationLog.eType.info, "Starting a GUI");
+//      Context.getShared().getAppLog().write(ApplicationLog.eType.info, "Starting a GUI");
 //
 //    } catch (Exception ex) {
 //      throw ex;
@@ -110,7 +113,8 @@ public class JAtcSim {
 
     initStylist();
 
-    SharedAcc.setApplicationLogProducer(() -> new ApplicationLog());
+    IAppContext appContext = new AppContext(new ApplicationLog());
+    ContextManager.setContext(IAppContext.class, appContext);
     frmLog = new FrmLog();
 
     appSettings = AppSettings.create();
@@ -126,7 +130,7 @@ public class JAtcSim {
     try {
       startupSettings = XmlSerialization.loadFromFile(ser, appSettings.startupSettingsFile.toString(), StartupSettings.class);
     } catch (Exception ex) {
-      SharedAcc.getAppLog().write(
+      Context.getApp().getAppLog().write(
           ApplicationLog.eType.warning,
           "Failed to load startup settings from " + appSettings.startupSettingsFile.toString() +
               ". Defaults used. Reason: " + ExceptionUtils.toFullString(ex, "\n\t"));
@@ -167,7 +171,7 @@ public class JAtcSim {
 
     FrmStartupProgress frm = new FrmStartupProgress(10);
     frm.setVisible(true);
-    SharedAcc.getAppLog().write(ApplicationLog.eType.info, "Starting new simulation game");
+    Context.getApp().getAppLog().write(ApplicationLog.eType.info, "Starting new simulation game");
     try {
       GameStartupInfo gsi = new GameStartupInfo();
 
@@ -239,11 +243,11 @@ public class JAtcSim {
 //        throw new EApplicationException("Some element in source XML files is not unique. Some of the input XML files is not valid.", ex);
 //      }
 
-      SharedAcc.getAppLog().write(ApplicationLog.eType.info, "Initializing sound environment");
+      Context.getApp().getAppLog().write(ApplicationLog.eType.info, "Initializing sound environment");
       // sound
       SoundManager.init(appSettings.soundFolder.toString());
 
-      SharedAcc.getAppLog().write(ApplicationLog.eType.info, "Starting a GUI");
+      Context.getApp().getAppLog().write(ApplicationLog.eType.info, "Starting a GUI");
       // starting pack & simulation
       String packType = startupSettings.radar.packClass;
       Pack simPack

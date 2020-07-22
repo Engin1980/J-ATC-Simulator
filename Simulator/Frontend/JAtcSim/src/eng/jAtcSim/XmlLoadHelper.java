@@ -1,27 +1,18 @@
 package eng.jAtcSim;
 
 import eng.eSystem.eXml.XDocument;
-import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EXmlException;
-import eng.eSystem.utilites.ExceptionUtils;
 import eng.eXmlSerialization.XmlException;
 import eng.eXmlSerialization.XmlSerializer;
 import eng.eXmlSerialization.XmlSettings;
-import eng.eXmlSerialization.common.Log;
-import eng.eXmlSerialization.meta.TypeInfo;
-import eng.eXmlSerialization.meta.XmlRepresentation;
-import eng.eXmlSerialization.meta.XmlRule;
 import eng.eXmlSerialization.serializers.AttributeSerializer;
 import eng.eXmlSerialization.serializers.implemented.java_awt.AwtFontElementSerializer;
 import eng.eXmlSerialization.serializers.implemented.java_awt.HexToAwtColorAttributeSerializer;
 import eng.jAtcSim.abstractRadar.parsing.RadarColorAttributeSerializer;
 import eng.jAtcSim.abstractRadar.parsing.RadarFontElementSerializer;
 import eng.jAtcSim.abstractRadar.settings.RadarStyleSettings;
-import eng.jAtcSim.app.startupSettings.StartupSettings;
 import eng.jAtcSim.frmPacks.shared.FlightStripSettings;
-import eng.jAtcSim.newLib.shared.context.SharedAcc;
-import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -49,6 +40,19 @@ public class XmlLoadHelper {
 //
 //  }
 //
+
+  public static AppSettings loadApplicationSettings(String fileName) {
+    XmlSerializer ser = new XmlSerializer();
+
+    AppSettings ret = null;
+    try {
+      XDocument doc = XDocument.load(fileName);
+      ret = ser.deserialize(doc.getRoot(), AppSettings.class);
+    } catch (EXmlException e) {
+      throw new EApplicationException(sf("Unable to load application-settings from '%s'.", fileName), e);
+    }
+    return ret;
+  }
 
   public static RadarStyleSettings loadNewDisplaySettings(String fileName) {
     XmlSettings sett = new XmlSettings();
@@ -80,19 +84,6 @@ public class XmlLoadHelper {
       ret = ser.deserialize(doc.getRoot(), FlightStripSettings.class);
     } catch (EXmlException e) {
       throw new EApplicationException(sf("Unable to load flight-strip-settings from '%s'.", fileName), e);
-    }
-    return ret;
-  }
-
-  public static AppSettings loadApplicationSettings(String fileName) {
-    XmlSerializer ser = new XmlSerializer();
-
-    AppSettings ret = null;
-    try {
-      XDocument doc = XDocument.load(fileName);
-      ret = ser.deserialize(doc.getRoot(), AppSettings.class);
-    } catch (EXmlException e) {
-      throw new EApplicationException(sf("Unable to load application-settings from '%s'.", fileName), e);
     }
     return ret;
   }

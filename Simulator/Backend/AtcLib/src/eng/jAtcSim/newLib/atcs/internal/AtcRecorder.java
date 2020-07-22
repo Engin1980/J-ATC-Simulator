@@ -8,10 +8,10 @@ package eng.jAtcSim.newLib.atcs.internal;
 
 import eng.eSystem.EStringBuilder;
 import eng.eSystem.validation.EAssert;
+import eng.jAtcSim.newLib.atcs.contextLocal.Context;
 import eng.jAtcSim.newLib.messaging.IMessageContent;
 import eng.jAtcSim.newLib.messaging.Message;
 import eng.jAtcSim.newLib.shared.AtcId;
-import eng.jAtcSim.newLib.shared.context.SharedAcc;
 import eng.jAtcSim.newLib.shared.logging.Journal;
 import eng.jAtcSim.newLib.shared.logging.writers.*;
 
@@ -52,7 +52,7 @@ public class AtcRecorder  {
     sb.clear();
 
     sb.append("MSG ").append(SEPARATOR);
-    sb.appendFormat(" %s ", SharedAcc.getNow().toString()).append(SEPARATOR);
+    sb.appendFormat(" %s ", Context.getShared().getNow().toString()).append(SEPARATOR);
     sb.appendFormat("FROM: %s ", src).append(SEPARATOR);
     sb.appendFormat("TO: %s ", trg).append(SEPARATOR);
     sb.appendFormat(" %s ", cnt);
@@ -65,7 +65,7 @@ public class AtcRecorder  {
     String s = String.format("%s %s %s %s %s %s %s",
         type,
         SEPARATOR,
-        SharedAcc.getNow().toString(),
+        Context.getShared().getNow().toString(),
         SEPARATOR,
         this.atcId.getName(),
         SEPARATOR,

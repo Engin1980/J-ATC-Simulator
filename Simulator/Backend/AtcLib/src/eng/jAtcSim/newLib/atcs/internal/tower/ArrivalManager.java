@@ -3,19 +3,18 @@ package eng.jAtcSim.newLib.atcs.internal.tower;
 import eng.eSystem.collections.EDistinctList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.geo.Coordinates;
-import eng.jAtcSim.newLib.airplanes.context.AirplaneAcc;
 import eng.jAtcSim.newLib.airplanes.AirplaneState;
 import eng.jAtcSim.newLib.airplanes.IAirplane;
 import eng.jAtcSim.newLib.area.ActiveRunway;
 import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
+import eng.jAtcSim.newLib.atcs.contextLocal.Context;
 import eng.jAtcSim.newLib.atcs.internal.InternalAcc;
 import eng.jAtcSim.newLib.shared.Callsign;
-import eng.jAtcSim.newLib.shared.enums.AboveBelowExactly;
 
 class ArrivalManager {
-  private final TowerAtc parent;
-  private IList<IAirplane> landingPlanesList = new EDistinctList<>(EDistinctList.Behavior.exception);
   private IList<IAirplane> goAroundedPlanesToSwitchList = new EDistinctList<>(EDistinctList.Behavior.exception);
+  private IList<IAirplane> landingPlanesList = new EDistinctList<>(EDistinctList.Behavior.exception);
+  private final TowerAtc parent;
 
   public ArrivalManager(TowerAtc parent) {
     this.parent = parent;
@@ -35,7 +34,7 @@ class ArrivalManager {
   }
 
   public double getClosestLandingPlaneDistanceForThreshold(ActiveRunwayThreshold threshold) {
-    IList<IAirplane> tmp = AirplaneAcc.getAirplanes()
+    IList<IAirplane> tmp = Context.getAirplane().getAirplanes()
         .where(q -> threshold.equals(q.getRouting().getAssignedRunwayThreshold()));
     double ret = Double.MAX_VALUE;
     for (IAirplane plane : tmp) {

@@ -23,11 +23,11 @@ import eng.jAtcSim.app.extenders.NumericUpDownExtender;
 import eng.jAtcSim.app.extenders.XmlFileSelectorExtender;
 import eng.jAtcSim.app.extenders.swingFactory.SwingFactory;
 import eng.jAtcSim.app.startupSettings.StartupSettings;
+import eng.jAtcSim.contextLocal.Context;
 import eng.jAtcSim.frmPacks.shared.FrmTrafficBarGraph;
 import eng.jAtcSim.newLib.gameSim.game.sources.FleetsSource;
 import eng.jAtcSim.newLib.gameSim.game.sources.TrafficSource;
 import eng.jAtcSim.newLib.gameSim.game.sources.TrafficXmlSource;
-import eng.jAtcSim.newLib.shared.context.SharedAcc;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 import eng.jAtcSim.newLib.traffic.ITrafficModel;
 import eng.jAtcSim.newLib.traffic.models.SimpleGenericTrafficModel;
@@ -50,7 +50,7 @@ public class TrafficPanel extends JStartupPanel {
     SimpleGenericTrafficModel ret = SimpleGenericTrafficModel.create(
         trf.customTraffic.getGeneralAviationProbability(),
         trf.customTraffic.getDepartureProbability(),
-        trf.customTraffic.getMovementsPerHour(),
+        trf.customTraffic.getMovementsForHours(),
         trf.customTraffic.getCompanies(),
         trf.customTraffic.getCountryCodes());
 
@@ -90,7 +90,7 @@ public class TrafficPanel extends JStartupPanel {
     adjustSelectedRdb(settings);
 
     chkAllowDelays.setSelected(settings.traffic.allowDelays);
-    txtMovements.setText(encodeMovements(settings.traffic.customTraffic.getMovementsPerHour()));
+    txtMovements.setText(encodeMovements(settings.traffic.customTraffic.getMovementsForHours()));
     sldArrivalsDepartures.setValue((int) (settings.traffic.customTraffic.getDepartureProbability() * 10));
     nudNonCommercials.setValue((int) (settings.traffic.customTraffic.getGeneralAviationProbability() * 100));
     txtCompanies.setText(encodeMap(settings.traffic.customTraffic.getCompanies()));
@@ -105,7 +105,7 @@ public class TrafficPanel extends JStartupPanel {
 
     settings.traffic.maxPlanes = nudMaxPlanes.getValue();
     settings.traffic.densityPercentage = nudTrafficDensity.getValue() / 100d;
-    settings.traffic.customTraffic.setMovementsPerHour(decodeMovements(txtMovements.getText()));
+    settings.traffic.customTraffic.setMovementsForHours(decodeMovements(txtMovements.getText()));
     adjustRdbSelected(settings);
 
     settings.traffic.allowDelays = chkAllowDelays.isSelected();
@@ -136,7 +136,7 @@ public class TrafficPanel extends JStartupPanel {
     try {
       tfc = getCurrentTraffic();
     } catch (Exception e) {
-      SharedAcc.getAppLog().write(ApplicationLog.eType.critical, "Failed to load traffic. " + ExceptionUtils.toFullString(e));
+      Context.getApp().getAppLog().write(ApplicationLog.eType.critical, "Failed to load traffic. " + ExceptionUtils.toFullString(e));
       MessageBox.show("Failed to obtain the traffic. Check the app log for more info.", "Failed to load traffic...");
       return;
     }

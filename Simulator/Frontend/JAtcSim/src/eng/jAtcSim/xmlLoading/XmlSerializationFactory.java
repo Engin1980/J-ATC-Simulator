@@ -4,8 +4,10 @@ import eng.eSystem.utilites.StringUtils;
 import eng.eXmlSerialization.XmlSerializer;
 import eng.eXmlSerialization.XmlSettings;
 import eng.eXmlSerialization.common.Log;
+import eng.eXmlSerialization.meta.XmlRule;
 import eng.eXmlSerialization.serializers.implemented.java_time.LocalTimeAttributeSerializer;
-import eng.jAtcSim.newLib.shared.context.SharedAcc;
+import eng.jAtcSim.app.startupSettings.StartupSettings;
+import eng.jAtcSim.contextLocal.Context;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 
 import java.time.LocalTime;
@@ -13,14 +15,26 @@ import java.time.LocalTime;
 public class XmlSerializationFactory {
 
   private static final boolean VERBOSE_ERROR = true;
-  private static final boolean VERBOSE_PROGRESS_OBJECT = true;
-  private static final boolean VERBOSE_PROGRESS_SERIALIZER = true;
+  private static final boolean VERBOSE_PROGRESS_OBJECT = false;
+  private static final boolean VERBOSE_PROGRESS_SERIALIZER = false;
   private static final boolean VERBOSE_PROGRESS_XML = true;
   private static final boolean VERBOSE_WARNING = true;
 
   public static XmlSerializer createForStartupSettings() {
     XmlSettings sett = createBasicXmlSettings();
     sett.getSerializers().addAsFirstForType(LocalTime.class, new LocalTimeAttributeSerializer("HH:mm"));
+    sett.getMeta().forClass(StartupSettings.CustomTraffic.class)
+        .forField("companies")
+        .getRules()
+        .add(new XmlRule()
+            .with(0, new XmlRule(null, String.class))
+            .with(1, new XmlRule(null, Integer.class)));
+    sett.getMeta().forClass(StartupSettings.CustomTraffic.class)
+        .forField("countryCodes")
+        .getRules()
+        .add(new XmlRule()
+            .with(0, new XmlRule(null, String.class))
+            .with(1, new XmlRule(null, Integer.class)));
     XmlSerializer ser = new XmlSerializer(sett);
 
     return ser;
@@ -55,6 +69,6 @@ public class XmlSerializationFactory {
         " :: " +
         StringUtils.repeat(" ", e.indent) +
         e.message;
-    SharedAcc.getAppLog().write(logType, sb);
+    Context.getApp().getAppLog().write(logType, sb);
   }
 }

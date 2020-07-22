@@ -10,6 +10,7 @@ import eng.eSystem.utilites.Action;
 import eng.eSystem.utilites.ExceptionUtils;
 import eng.eSystem.validation.EAssert;
 import eng.eSystem.validation.Validator;
+import eng.jAtcSim.newLib.weather.contextLocal.Context;
 import eng.jAtcSim.newLib.weather.downloaders.MetarDownloader;
 import eng.jAtcSim.newLib.shared.InstanceProviderDictionary;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
@@ -109,7 +110,7 @@ public class DynamicWeatherProvider extends WeatherProvider {
   }
 
   private ApplicationLog getLog(){
-    return InstanceProviderDictionary.getInstance(ApplicationLog.class);
+    return Context.getApp().getAppLog();
   }
 
   private void newMetarDownloaded(UpdateResult result) {

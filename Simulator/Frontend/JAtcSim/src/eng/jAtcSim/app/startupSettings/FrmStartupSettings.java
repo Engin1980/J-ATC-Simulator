@@ -2,10 +2,7 @@ package eng.jAtcSim.app.startupSettings;
 
 import eng.eSystem.ERandom;
 import eng.eSystem.collections.IReadOnlyList;
-import eng.eSystem.eXml.XDocument;
-import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
-import eng.eSystem.exceptions.EXmlException;
 import eng.eSystem.swing.LayoutManager;
 import eng.eSystem.utilites.ExceptionUtils;
 import eng.eSystem.utilites.awt.ComponentUtils;
@@ -13,8 +10,8 @@ import eng.eXmlSerialization.XmlSerializer;
 import eng.jAtcSim.app.extenders.swingFactory.FileHistoryManager;
 import eng.jAtcSim.app.extenders.swingFactory.SwingFactory;
 import eng.jAtcSim.app.startupSettings.panels.*;
+import eng.jAtcSim.contextLocal.Context;
 import eng.jAtcSim.newLib.gameSim.game.sources.*;
-import eng.jAtcSim.newLib.shared.context.SharedAcc;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 import eng.jAtcSim.newLib.traffic.ITrafficModel;
 import eng.jAtcSim.newLib.traffic.models.FlightListTrafficModel;
@@ -169,19 +166,13 @@ public class FrmStartupSettings extends JPanel {
     StartupSettings ss = new StartupSettings();
     this.fillSettingsBy(ss);
 
-    // init required Acc accessors
-    {
-      ERandom rnd = new ERandom();
-      SharedAcc.setRandomProducer(() -> rnd);
-    }
-
     btnValidate.setEnabled(false);
     AirplaneTypesSource types = new AirplaneTypesSource(ss.files.planesXmlFile);
     FleetsSource fleets = new FleetsSource(ss.files.generalAviationFleetsXmlFile, ss.files.companiesFleetsXmlFile);
     try {
       types.init();
     } catch (Exception ex) {
-      SharedAcc.getAppLog().write(ApplicationLog.eType.warning, "Failed to load types from '%s'. '%s'", ss.files.planesXmlFile,
+      Context.getApp().getAppLog().write(ApplicationLog.eType.warning, "Failed to load types from '%s'. '%s'", ss.files.planesXmlFile,
           ExceptionUtils.toFullString(ex));
       MessageBox.show("Failed to load types from file " + ss.files.planesXmlFile + ". " + ex.getMessage(), "Error...");
       btnValidate.setEnabled(true);
@@ -190,7 +181,7 @@ public class FrmStartupSettings extends JPanel {
     try {
       fleets.init();
     } catch (Exception ex) {
-      SharedAcc.getAppLog().write(ApplicationLog.eType.warning, "Failed to load fleets from '%s' and/or '%s'. '%s'",
+      Context.getApp().getAppLog().write(ApplicationLog.eType.warning, "Failed to load fleets from '%s' and/or '%s'. '%s'",
           ss.files.companiesFleetsXmlFile,
           ss.files.generalAviationFleetsXmlFile,
           ExceptionUtils.toFullString(ex));
@@ -206,7 +197,7 @@ public class FrmStartupSettings extends JPanel {
       try {
         ws.init();
       } catch (Exception ex) {
-        SharedAcc.getAppLog().write(ApplicationLog.eType.warning, "Failed to load weather from '%s'. '%s'", ss.files.weatherXmlFile,
+        Context.getApp().getAppLog().write(ApplicationLog.eType.warning, "Failed to load weather from '%s'. '%s'", ss.files.weatherXmlFile,
             ExceptionUtils.toFullString(ex));
         MessageBox.show("Failed to load weather from file " + ss.files.weatherXmlFile + ". " + ex.getMessage(), "Error...");
         btnValidate.setEnabled(true);
@@ -219,7 +210,7 @@ public class FrmStartupSettings extends JPanel {
       try {
         traffics.init();
       } catch (Exception ex) {
-        SharedAcc.getAppLog().write(ApplicationLog.eType.warning, "Failed to load traffic from '%s'. '%s'", ss.files.trafficXmlFile,
+        Context.getApp().getAppLog().write(ApplicationLog.eType.warning, "Failed to load traffic from '%s'. '%s'", ss.files.trafficXmlFile,
             ExceptionUtils.toFullString(ex));
         MessageBox.show("Failed to load traffic from file " + ss.files.trafficXmlFile + ". " + ex.getMessage(), "Error...");
         btnValidate.setEnabled(true);
@@ -234,7 +225,7 @@ public class FrmStartupSettings extends JPanel {
         IReadOnlyList<String> unknownPlaneTypes = requiredPlaneTypes
             .where(q -> knownPlaneTypes.contains(q) == false);
         for (String unknownPlaneType : unknownPlaneTypes) {
-          SharedAcc.getAppLog().write(ApplicationLog.eType.warning, "Required plane kind '%s' not found in known plane types.", unknownPlaneType);
+          Context.getApp().getAppLog().write(ApplicationLog.eType.warning, "Required plane kind '%s' not found in known plane types.", unknownPlaneType);
         }
         if (unknownPlaneTypes.isEmpty() == false) {
           MessageBox.show("Some airplane types required by the traffic file are missing.", "Error...");

@@ -2,7 +2,7 @@
 //
 //import eng.eSystem.geo.Headings;
 //import eng.jAtcSim.newLib.shared.Format;
-//import eng.jAtcSim.newLib.shared.context.SharedAcc;
+//import eng.jAtcSim.newLib.shared.context.Context.getShared();
 //import eng.jAtcSim.newLib.shared.enums.LeftRight;
 //import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.responses.IllegalThenCommandRejection;
 //import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.responses.ShortCutToFixNotOnRouteRejection;
@@ -247,7 +247,7 @@
 //
 //  @Override
 //  protected String formatGoodDayNotification(GoodDayNotification cmd) {
-//    double d = SharedAcc.getRnd().nextDouble();
+//    double d = Context.getApp().getRnd().nextDouble();
 //    d = d * greetings.length;
 //    StringBuilder sb = new StringBuilder();
 //    sb
