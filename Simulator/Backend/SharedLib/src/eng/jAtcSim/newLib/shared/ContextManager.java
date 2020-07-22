@@ -22,6 +22,6 @@ public class ContextManager {
 
   public static <T> void setContext(Class<T> contextInterface, T context) {
     EAssert.Argument.isNotNull(context, "context");
-    inner.set(context.getClass(), context);
+    inner.set(contextInterface, context);
   }
 }

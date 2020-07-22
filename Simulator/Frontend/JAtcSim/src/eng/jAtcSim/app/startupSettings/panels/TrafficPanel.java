@@ -50,7 +50,7 @@ public class TrafficPanel extends JStartupPanel {
     SimpleGenericTrafficModel ret = SimpleGenericTrafficModel.create(
         trf.customTraffic.getGeneralAviationProbability(),
         trf.customTraffic.getDepartureProbability(),
-        trf.customTraffic.getMovementsPerHour(),
+        trf.customTraffic.getMovementsForHours(),
         trf.customTraffic.getCompanies(),
         trf.customTraffic.getCountryCodes());
 
@@ -90,7 +90,7 @@ public class TrafficPanel extends JStartupPanel {
     adjustSelectedRdb(settings);
 
     chkAllowDelays.setSelected(settings.traffic.allowDelays);
-    txtMovements.setText(encodeMovements(settings.traffic.customTraffic.getMovementsPerHour()));
+    txtMovements.setText(encodeMovements(settings.traffic.customTraffic.getMovementsForHours()));
     sldArrivalsDepartures.setValue((int) (settings.traffic.customTraffic.getDepartureProbability() * 10));
     nudNonCommercials.setValue((int) (settings.traffic.customTraffic.getGeneralAviationProbability() * 100));
     txtCompanies.setText(encodeMap(settings.traffic.customTraffic.getCompanies()));
@@ -105,7 +105,7 @@ public class TrafficPanel extends JStartupPanel {
 
     settings.traffic.maxPlanes = nudMaxPlanes.getValue();
     settings.traffic.densityPercentage = nudTrafficDensity.getValue() / 100d;
-    settings.traffic.customTraffic.setMovementsPerHour(decodeMovements(txtMovements.getText()));
+    settings.traffic.customTraffic.setMovementsForHours(decodeMovements(txtMovements.getText()));
     adjustRdbSelected(settings);
 
     settings.traffic.allowDelays = chkAllowDelays.isSelected();
