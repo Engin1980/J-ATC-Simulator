@@ -2,15 +2,14 @@ package eng.jAtcSim.newLib.xml.area.internal;
 
 import eng.eSystem.collections.*;
 import eng.eSystem.eXml.XElement;
-import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.jAtcSim.newLib.area.*;
 import eng.jAtcSim.newLib.shared.xml.SmartXmlLoaderUtils;
-import eng.jAtcSim.newLib.xml.area.internal.context.Context;
+import eng.jAtcSim.newLib.xml.area.internal.context.LoadingContext;
 
 public class RunwayConfigurationXmlLoader extends XmlLoader<RunwayConfiguration> {
 
-  protected RunwayConfigurationXmlLoader(Context context) {
+  protected RunwayConfigurationXmlLoader(LoadingContext context) {
     super(context);
   }
 

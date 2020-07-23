@@ -6,6 +6,7 @@ import eng.jAtcSim.newLib.airplanes.AirplaneState;
 import eng.jAtcSim.newLib.airplanes.IAirplane;
 import eng.jAtcSim.newLib.area.context.AreaAcc;
 import eng.jAtcSim.newLib.area.Border;
+import eng.jAtcSim.newLib.gameSim.contextLocal.Context;
 import eng.jAtcSim.newLib.shared.Callsign;
 
 public class MrvaController {
@@ -67,7 +68,7 @@ public class MrvaController {
       if (m != null) isOutOfAltitude = m.isIn(airplane.getSha().getAltitude());
       if (isOutOfAltitude && airplane.getState().is(AirplaneState.arrivingLow, AirplaneState.departingLow)) {
         // this is for departures/goarounds when close to runway, very low, so are omitted
-        double d = Coordinates.getDistanceInNM(airplane.getCoordinate(), AreaAcc.getAirport().getLocation());
+        double d = Coordinates.getDistanceInNM(airplane.getCoordinate(), Context.getArea().getAirport().getLocation());
         if (d < 3)
           isOutOfAltitude = false;
       }

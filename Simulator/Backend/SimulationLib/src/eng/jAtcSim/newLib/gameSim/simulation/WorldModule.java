@@ -8,7 +8,7 @@ import eng.jAtcSim.newLib.fleet.generalAviation.GeneralAviationFleets;
 import eng.jAtcSim.newLib.traffic.ITrafficModel;
 import eng.jAtcSim.newLib.weather.WeatherProvider;
 
-public class SimulationContext {
+public class WorldModule {
   private final Area area;
   private final AirplaneTypes airplaneTypes;
   private final AirlinesFleets airlinesFleets;
@@ -17,11 +17,11 @@ public class SimulationContext {
   private final Airport activeAirport;
   private final WeatherProvider weatherProvider;
 
-  public SimulationContext(Area area, String activeAirportIcao,
-                           AirplaneTypes airplaneTypes,
-                           AirlinesFleets airlinesFleets, GeneralAviationFleets gaFleets,
-                           ITrafficModel traffic,
-                           WeatherProvider weatherProvider) {
+  public WorldModule(Area area, String activeAirportIcao,
+                     AirplaneTypes airplaneTypes,
+                     AirlinesFleets airlinesFleets, GeneralAviationFleets gaFleets,
+                     ITrafficModel traffic,
+                     WeatherProvider weatherProvider) {
     this.area = area;
     this.airplaneTypes = airplaneTypes;
     this.airlinesFleets = airlinesFleets;

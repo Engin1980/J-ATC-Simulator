@@ -17,12 +17,12 @@ import eng.jAtcSim.newLib.shared.xml.SmartXmlLoaderUtils;
 import eng.jAtcSim.newLib.speeches.airplane.ICommand;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ToNavaidCommand;
 import eng.jAtcSim.newLib.xml.area.internal.XmlLoader;
-import eng.jAtcSim.newLib.xml.area.internal.context.Context;
+import eng.jAtcSim.newLib.xml.area.internal.context.LoadingContext;
 import eng.jAtcSim.newLib.xml.speeches.SpeechXmlLoader;
 
 public class DARouteXmlLoader extends XmlLoader<DARoute> {
 
-  public DARouteXmlLoader(Context context) {
+  public DARouteXmlLoader(LoadingContext context) {
     super(context);
   }
 

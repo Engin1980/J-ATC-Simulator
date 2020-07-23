@@ -11,19 +11,16 @@ import eng.eSystem.geo.Coordinates;
 import eng.eSystem.geo.Headings;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplaneType.AirplaneType;
-import eng.jAtcSim.newLib.airplaneType.context.AirplaneTypeAcc;
 import eng.jAtcSim.newLib.airplanes.AirproxType;
 import eng.jAtcSim.newLib.airplanes.IAirplane;
 import eng.jAtcSim.newLib.airplanes.templates.AirplaneTemplate;
 import eng.jAtcSim.newLib.airplanes.templates.ArrivalAirplaneTemplate;
 import eng.jAtcSim.newLib.airplanes.templates.DepartureAirplaneTemplate;
-import eng.jAtcSim.newLib.area.context.AreaAcc;
 import eng.jAtcSim.newLib.area.EntryExitPoint;
 import eng.jAtcSim.newLib.fleet.TypeAndWeight;
 import eng.jAtcSim.newLib.fleet.airliners.CompanyFleet;
 import eng.jAtcSim.newLib.fleet.generalAviation.CountryFleet;
 import eng.jAtcSim.newLib.gameSim.contextLocal.Context;
-import eng.jAtcSim.newLib.messaging.context.MessagingAcc;
 import eng.jAtcSim.newLib.messaging.Participant;
 import eng.jAtcSim.newLib.mood.Mood;
 import eng.jAtcSim.newLib.shared.Callsign;
@@ -36,17 +33,25 @@ import eng.jAtcSim.newLib.traffic.movementTemplating.*;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
-public class AirplanesSimModule extends SimModule {
+public class SimulationRunModule extends SimModule {
   private static final int MAX_ALLOWED_DELAY = 120;
-  private final double delayStepProbability;
-  private final int delayStep;
   private final CallsignFactory callsignFactory;
+  private final int delayStep;
+  private final double delayStepProbability;
 
-  public AirplanesSimModule(ISimulationModuleParent parent, double delayStepProbability, int delayStep, boolean useExtendedCallsigns) {
+  public SimulationRunModule(ISimulationModuleParent parent, double delayStepProbability, int delayStep, boolean useExtendedCallsigns) {
     super(parent);
     this.delayStepProbability = delayStepProbability;
     this.delayStep = delayStep;
     this.callsignFactory = new CallsignFactory(useExtendedCallsigns);
+  }
+
+  public void elapseSecond() {
+    introduceNewPlanes();
+    removeOldPlanes();
+    generateEmergencyIfRequired();
+    updatePlanes();
+    evaluateFails();
   }
 
   private FinishedPlaneStats buildFinishedAirplaneStats(IAirplane airplane) {
@@ -136,11 +141,11 @@ public class AirplanesSimModule extends SimModule {
   private Coordinate generateArrivalCoordinate(Coordinate navFix, Coordinate aipFix) {
     double radial = Coordinates.getBearing(aipFix, navFix);
     radial += Context.getApp().getRnd().nextDouble(-15, 15); // nahodne zatoceni priletoveho radialu
-    double dist = Coordinates.getDistanceInNM(navFix, AreaAcc.getAirport().getLocation());
-    if (dist > (AreaAcc.getAirport().getCoveredDistance())) {
+    double dist = Coordinates.getDistanceInNM(navFix, Context.getArea().getAirport().getLocation());
+    if (dist > (Context.getArea().getAirport().getCoveredDistance())) {
       dist = Context.getApp().getRnd().nextDouble(25, 40);
     } else {
-      dist = AreaAcc.getAirport().getCoveredDistance() - dist;
+      dist = Context.getArea().getAirport().getCoveredDistance() - dist;
       if (dist < 25) dist = Context.getApp().getRnd().nextDouble(25, 40);
     }
     Coordinate ret = Coordinates.getCoordinate(navFix, (int) radial, dist);
@@ -157,7 +162,7 @@ public class AirplanesSimModule extends SimModule {
     // update by distance
     {
       final double thousandsFeetPerMile = 500;
-      final double distance = Coordinates.getDistanceInNM(AreaAcc.getAirport().getLocation(), eep.getNavaid().getCoordinate())
+      final double distance = Coordinates.getDistanceInNM(Context.getArea().getAirport().getLocation(), eep.getNavaid().getCoordinate())
           + Coordinates.getDistanceInNM(eep.getNavaid().getCoordinate(), planeCoordinate);
       int tmp = (int) (distance * thousandsFeetPerMile);
       ret = Math.max(ret, tmp);
@@ -214,7 +219,7 @@ public class AirplanesSimModule extends SimModule {
 
     Callsign cs = m.getCallsign();
 
-    AirplaneType pt = AirplaneTypeAcc.getAirplaneTypes().tryGetByName(m.getAirplaneTypeName());
+    AirplaneType pt = Context.getAirplaneType().getAirplaneTypes().tryGetByName(m.getAirplaneTypeName());
     if (pt == null)
       return new TryResult<>(new EApplicationException("Unable to find plane type name " + m.getAirplaneTypeName()));
 
@@ -223,7 +228,7 @@ public class AirplanesSimModule extends SimModule {
       return new TryResult<>(new EApplicationException("Unable to find routing.")); // no route means disallowed IFR
     }
 
-    Coordinate coord = generateArrivalCoordinate(entryPoint.getNavaid().getCoordinate(), AreaAcc.getAirport().getLocation());
+    Coordinate coord = generateArrivalCoordinate(entryPoint.getNavaid().getCoordinate(), Context.getArea().getAirport().getLocation());
     int heading = (int) Coordinates.getBearing(coord, entryPoint.getNavaid().getCoordinate());
     int alt = generateArrivingPlaneAltitude(entryPoint, coord, pt);
     int spd = pt.vCruise;
@@ -246,7 +251,7 @@ public class AirplanesSimModule extends SimModule {
     DepartureAirplaneTemplate ret;
 
     Callsign cs = m.getCallsign();
-    AirplaneType pt = AirplaneTypeAcc.getAirplaneTypes().tryGetByName(m.getAirplaneTypeName());
+    AirplaneType pt = Context.getAirplaneType().getAirplaneTypes().tryGetByName(m.getAirplaneTypeName());
     if (pt == null)
       return new TryResult<>(new EApplicationException("Unable to find plane type name " + m.getAirplaneTypeName()));
 
@@ -287,14 +292,6 @@ public class AirplanesSimModule extends SimModule {
       parent.getTrafficProvider().prepareTrafficForDay(Context.getShared().getNow().getDays() + 1);
   }
 
-  public void elapseSecond() {
-    introduceNewPlanes();
-    removeOldPlanes();
-    generateEmergencyIfRequired();
-    updatePlanes();
-    evaluateFails();
-  }
-
   private void removeOldPlanes() {
     IList<IAirplane> ret = new EList<>();
 
@@ -310,7 +307,7 @@ public class AirplanesSimModule extends SimModule {
           && Context.getAtc().getResponsibleAtcId(p.getCallsign()).getType() == AtcType.ctr
           && Coordinates.getDistanceInNM(
           p.getCoordinate(),
-          AreaAcc.getAirport().getLocation()) > AreaAcc.getAirport().getCoveredDistance()) {
+          Context.getArea().getAirport().getLocation()) > Context.getArea().getAirport().getCoveredDistance()) {
         ret.add(p);
         Context.getStats().getStatsProvider().registerFinishedPlane(buildFinishedAirplaneStats(p));
       }
@@ -322,7 +319,7 @@ public class AirplanesSimModule extends SimModule {
 
     for (IAirplane plane : ret) {
       parent.getAirplanesController().unregisterPlane(plane.getCallsign());
-      MessagingAcc.getMessenger().unregisterListener(Participant.createAirplane(plane.getCallsign()));
+      Context.getMessaging().getMessenger().unregisterListener(Participant.createAirplane(plane.getCallsign()));
       parent.getMrvaController().unregisterPlane(plane);
     }
   }
@@ -330,7 +327,7 @@ public class AirplanesSimModule extends SimModule {
   private EntryExitPoint tryGetRandomEntryPoint(EntryExitInfo entryExitInfo, boolean isArrival, AirplaneType pt) {
     EntryExitPoint ret;
 
-    IReadOnlyList<EntryExitPoint> tmp = AreaAcc.getAirport().getEntryExitPoints();
+    IReadOnlyList<EntryExitPoint> tmp = Context.getArea().getAirport().getEntryExitPoints();
     if (isArrival)
       tmp = tmp.where(q -> q.getType() == EntryExitPoint.Type.entry || q.getType() == EntryExitPoint.Type.both);
     else
@@ -356,9 +353,9 @@ public class AirplanesSimModule extends SimModule {
         ret = tmp.getRandom();
       }
     } else if (entryExitInfo.getOtherAirportCoordinate() != null) {
-      double heading = Coordinates.getBearing(entryExitInfo.getOtherAirportCoordinate(), AreaAcc.getAirport().getLocation());
+      double heading = Coordinates.getBearing(entryExitInfo.getOtherAirportCoordinate(), Context.getArea().getAirport().getLocation());
       ret = tmp.getMinimal(q -> {
-        double pointHeading = Coordinates.getBearing(q.getNavaid().getCoordinate(), AreaAcc.getAirport().getLocation());
+        double pointHeading = Coordinates.getBearing(q.getNavaid().getCoordinate(), Context.getArea().getAirport().getLocation());
         return Headings.getDifference(heading, pointHeading, true);
       });
     } else

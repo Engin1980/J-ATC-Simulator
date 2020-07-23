@@ -34,11 +34,11 @@ import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ChangeHeadingCommand;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ProceedDirectCommand;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ThenCommand;
 import eng.jAtcSim.newLib.xml.area.internal.approaches.ApproachXmlLoader;
-import eng.jAtcSim.newLib.xml.area.internal.context.Context;
+import eng.jAtcSim.newLib.xml.area.internal.context.LoadingContext;
 
 public class ActiveRunwayThresholdXmlLoader extends XmlLoader<ActiveRunwayThreshold> {
 
-  ActiveRunwayThresholdXmlLoader(Context context) {
+  ActiveRunwayThresholdXmlLoader(LoadingContext context) {
     super(context);
   }
 

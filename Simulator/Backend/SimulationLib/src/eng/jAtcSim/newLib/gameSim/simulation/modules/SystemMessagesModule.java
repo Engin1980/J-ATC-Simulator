@@ -3,9 +3,9 @@ package eng.jAtcSim.newLib.gameSim.simulation.modules;
 import eng.eSystem.collections.IList;
 import eng.eSystem.exceptions.ToDoException;
 import eng.eSystem.utilites.StringUtils;
+import eng.jAtcSim.newLib.gameSim.contextLocal.Context;
 import eng.jAtcSim.newLib.messaging.IMessageContent;
 import eng.jAtcSim.newLib.messaging.Message;
-import eng.jAtcSim.newLib.messaging.context.MessagingAcc;
 import eng.jAtcSim.newLib.messaging.Participant;
 import eng.jAtcSim.newLib.speeches.system.system2user.*;
 import eng.jAtcSim.newLib.speeches.system.user2system.*;
@@ -13,8 +13,8 @@ import eng.jAtcSim.newLib.speeches.system.user2system.*;
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class SystemMessagesModule extends SimModule {
-  private static final int MIN_TICK_LENGTH_INTERVAL = 100;
   private static final int MAX_TICK_LENGTH_INTERVAL = 5000;
+  private static final int MIN_TICK_LENGTH_INTERVAL = 100;
 
   public SystemMessagesModule(ISimulationModuleParent parent) {
     super(parent);
@@ -22,7 +22,7 @@ public class SystemMessagesModule extends SimModule {
 
   public void elapseSecond() {
     IList<Message> systemMessages =
-        MessagingAcc.getMessenger().getMessagesByListener(Participant.createSystem(), true);
+        Context.getMessaging().getMessenger().getMessagesByListener(Participant.createSystem(), true);
 
     for (Message m : systemMessages) {
       processSystemMessage(m);
@@ -101,7 +101,7 @@ public class SystemMessagesModule extends SimModule {
   }
 
   private void sendMessage(Participant receiver, IMessageContent content) {
-    MessagingAcc.getMessenger().send(
+    Context.getMessaging().getMessenger().send(
         new Message(
             Participant.createSystem(),
             receiver,

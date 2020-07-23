@@ -1,17 +1,11 @@
 package eng.jAtcSim.newLib.gameSim.game;
 
 import eng.eSystem.collections.IMap;
-import eng.eSystem.exceptions.EApplicationException;
-import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.exceptions.ToDoException;
 import eng.jAtcSim.newLib.gameSim.IGame;
 import eng.jAtcSim.newLib.gameSim.ISimulation;
 import eng.jAtcSim.newLib.gameSim.game.sources.*;
-import eng.jAtcSim.newLib.gameSim.game.startupInfos.GameStartupInfo;
 import eng.jAtcSim.newLib.gameSim.simulation.Simulation;
-import eng.jAtcSim.newLib.gameSim.simulation.SimulationContext;
-import eng.jAtcSim.newLib.gameSim.simulation.SimulationSettings;
-import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 
 public class Game implements IGame {
   private AreaSource areaSource;

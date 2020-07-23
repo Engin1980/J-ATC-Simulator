@@ -17,7 +17,7 @@ import eng.jAtcSim.newLib.gameSim.ISimulation;
 import eng.jAtcSim.newLib.gameSim.contextLocal.Context;
 import eng.jAtcSim.newLib.gameSim.game.startupInfos.ParserFormatterStartInfo;
 import eng.jAtcSim.newLib.gameSim.simulation.controllers.*;
-import eng.jAtcSim.newLib.gameSim.simulation.modules.AirplanesSimModule;
+import eng.jAtcSim.newLib.gameSim.simulation.modules.SimulationRunModule;
 import eng.jAtcSim.newLib.gameSim.simulation.modules.ISimulationModuleParent;
 import eng.jAtcSim.newLib.gameSim.simulation.modules.SystemMessagesModule;
 import eng.jAtcSim.newLib.messaging.IMessageContent;
@@ -58,8 +58,8 @@ public class Simulation {
     }
 
     @Override
-    public SimulationContext getContext() {
-      return Simulation.this.context;
+    public WorldModule getContext() {
+      return Simulation.this.worldModule;
     }
 
     @Override
@@ -91,10 +91,10 @@ public class Simulation {
 
   private static final boolean DEBUG_STYLE_TIMER = false;
   private final AirplanesController airplanesController = new AirplanesController();
-  private final AirplanesSimModule airplanesSimModule;
+  private final SimulationRunModule simulationRunModule;
   private final AirproxController airproxController;
   private final AtcProvider atcProvider;
-  private final SimulationContext context;
+  private final WorldModule worldModule;
   private final EmergencyAppearanceController emergencyAppearanceController;
   private final IOController ioController;
   private boolean isElapseSecondCalculationRunning = false;
@@ -110,21 +110,21 @@ public class Simulation {
   private final WeatherManager weatherManager;
 
   public Simulation(
-      SimulationContext simulationContext,
+      WorldModule simulationContext,
       SimulationSettings simulationSettings) {
     EAssert.Argument.isNotNull(simulationContext, "simulationContext");
     EAssert.Argument.isNotNull(simulationSettings, "simulationSettings");
     ETimeStamp simulationStartTime = simulationSettings.simulationSettings.startTime;
-    this.context = simulationContext;
+    this.worldModule = simulationContext;
     this.now = new EDayTimeRun(simulationStartTime.getValue());
 
 
-    this.atcProvider = new AtcProvider(context.getActiveAirport());
-    this.trafficProvider = new TrafficProvider(context.getTraffic());
+    this.atcProvider = new AtcProvider(worldModule.getActiveAirport());
+    this.trafficProvider = new TrafficProvider(worldModule.getTraffic());
     this.emergencyAppearanceController = new EmergencyAppearanceController(
         simulationSettings.trafficSettings.emergencyPerDayProbability);
     this.mrvaController = new MrvaController(
-        context.getArea().getBorders().where(q -> q.getType() == Border.eType.mrva));
+        worldModule.getArea().getBorders().where(q -> q.getType() == Border.eType.mrva));
     this.airproxController = new AirproxController();
     this.ioController = new IOController();
     this.statsProvider = new StatsProvider(simulationSettings.simulationSettings.statsSnapshotDistanceInMinutes);
@@ -133,7 +133,7 @@ public class Simulation {
 
     this.parseFormat = simulationSettings.parserFormatterStartInfo;
 
-    this.airplanesSimModule = new AirplanesSimModule(
+    this.simulationRunModule = new SimulationRunModule(
         this.new SimulationModuleParent(),
         simulationSettings.trafficSettings.trafficDelayStepProbability,
         simulationSettings.trafficSettings.trafficDelayStep,
@@ -170,7 +170,7 @@ public class Simulation {
     systemMessagesProcessor.elapseSecond();
 
     // airplanes stuff
-    airplanesSimModule.elapseSecond();
+    simulationRunModule.elapseSecond();
 
     // atc stuff
     atcProvider.elapseSecond();
@@ -200,22 +200,22 @@ public class Simulation {
 
   private void initializeContexts() {
     SharedAcc sharedContext = new SharedAcc(
-        this.context.getActiveAirport().getIcao(),
+        this.worldModule.getActiveAirport().getIcao(),
         this.atcProvider.getAtcIds(),
         this.now,
         new SimulationLog()
     );
     ContextManager.setContext(ISharedAcc.class, sharedContext);
 
-    IAirplaneTypeAcc airplaneTypeAcc = new AirplaneTypeAcc(this.context.getAirplaneTypes());
+    IAirplaneTypeAcc airplaneTypeAcc = new AirplaneTypeAcc(this.worldModule.getAirplaneTypes());
     ContextManager.setContext(IAirplaneTypeAcc.class, airplaneTypeAcc);
 
     IAirplaneAcc airplaneContext = new AirplaneAcc(this.airplanesController);
     ContextManager.setContext(IAirplaneAcc.class, airplaneContext);
 
     IAreaAcc areaAcc = new AreaAcc(
-        this.context.getArea(),
-        this.context.getActiveAirport(),
+        this.worldModule.getArea(),
+        this.worldModule.getActiveAirport(),
         () -> this.atcProvider.getRunwayConfiguration(),
         () -> this.atcProvider.tryGetSchedulerRunwayConfiguration()
     );

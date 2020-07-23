@@ -2,7 +2,7 @@ package eng.jAtcSim.newLib.gameSim.simulation.modules;
 
 import eng.jAtcSim.newLib.airplanes.AirplanesController;
 import eng.jAtcSim.newLib.gameSim.simulation.controllers.*;
-import eng.jAtcSim.newLib.gameSim.simulation.SimulationContext;
+import eng.jAtcSim.newLib.gameSim.simulation.WorldModule;
 import eng.jAtcSim.newLib.traffic.TrafficProvider;
 
 public interface ISimulationModuleParent {
@@ -10,7 +10,7 @@ public interface ISimulationModuleParent {
 
   AirproxController getAirproxController();
 
-  SimulationContext getContext();
+  WorldModule getContext();
 
   EmergencyAppearanceController getEmergencyAppearanceController();
 

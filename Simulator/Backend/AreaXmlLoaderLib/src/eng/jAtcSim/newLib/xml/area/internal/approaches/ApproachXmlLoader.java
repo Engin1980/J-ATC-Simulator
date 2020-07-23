@@ -21,7 +21,6 @@ import eng.jAtcSim.newLib.area.approaches.conditions.*;
 import eng.jAtcSim.newLib.area.approaches.locations.FixRelatedLocation;
 import eng.jAtcSim.newLib.area.approaches.locations.ILocation;
 import eng.jAtcSim.newLib.area.approaches.perCategoryValues.IntegerPerCategoryValue;
-import eng.jAtcSim.newLib.area.context.AreaAcc;
 import eng.jAtcSim.newLib.area.routes.GaRoute;
 import eng.jAtcSim.newLib.area.routes.IafRoute;
 import eng.jAtcSim.newLib.shared.enums.ApproachType;
@@ -31,8 +30,9 @@ import eng.jAtcSim.newLib.speeches.airplane.ICommand;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ChangeAltitudeCommand;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ChangeHeadingCommand;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.ToNavaidCommand;
+import eng.jAtcSim.newLib.xml.area.contextLocal.Context;
 import eng.jAtcSim.newLib.xml.area.internal.XmlLoader;
-import eng.jAtcSim.newLib.xml.area.internal.context.Context;
+import eng.jAtcSim.newLib.xml.area.internal.context.LoadingContext;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
@@ -57,7 +57,7 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
     return Math.tan(Math.toRadians(gpDegrees));
   }
 
-  public ApproachXmlLoader(Context context) {
+  public ApproachXmlLoader(LoadingContext context) {
     super(context);
   }
 

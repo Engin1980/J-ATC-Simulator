@@ -6,11 +6,11 @@ import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
 import eng.jAtcSim.newLib.area.RunwayThresholdConfiguration;
 import eng.jAtcSim.newLib.shared.PlaneCategoryDefinitions;
 import eng.jAtcSim.newLib.shared.xml.SmartXmlLoaderUtils;
-import eng.jAtcSim.newLib.xml.area.internal.context.Context;
+import eng.jAtcSim.newLib.xml.area.internal.context.LoadingContext;
 
 public class RunwayThresholdConfigurationXmlLoader extends XmlLoader {
 
-  public RunwayThresholdConfigurationXmlLoader(Context context) {
+  public RunwayThresholdConfigurationXmlLoader(LoadingContext context) {
     super(context);
   }
 

@@ -6,12 +6,12 @@ import eng.jAtcSim.newLib.area.routes.GaRoute;
 import eng.jAtcSim.newLib.speeches.airplane.ICommand;
 import eng.jAtcSim.newLib.xml.area.internal.XmlLoader;
 import eng.jAtcSim.newLib.shared.xml.SmartXmlLoaderUtils;
-import eng.jAtcSim.newLib.xml.area.internal.context.Context;
+import eng.jAtcSim.newLib.xml.area.internal.context.LoadingContext;
 import eng.jAtcSim.newLib.xml.speeches.SpeechXmlLoader;
 
 public class GaRouteXmlLoader extends XmlLoader<GaRoute> {
 
-  public GaRouteXmlLoader(Context context) {
+  public GaRouteXmlLoader(LoadingContext context) {
     super(context);
   }
 

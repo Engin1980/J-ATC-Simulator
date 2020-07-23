@@ -8,12 +8,12 @@ import eng.jAtcSim.newLib.shared.PlaneCategoryDefinitions;
 import eng.jAtcSim.newLib.shared.xml.SmartXmlLoaderUtils;
 import eng.jAtcSim.newLib.speeches.airplane.ICommand;
 import eng.jAtcSim.newLib.xml.area.internal.XmlLoader;
-import eng.jAtcSim.newLib.xml.area.internal.context.Context;
+import eng.jAtcSim.newLib.xml.area.internal.context.LoadingContext;
 import eng.jAtcSim.newLib.xml.speeches.SpeechXmlLoader;
 
 public class IafRouteXmlLoader extends XmlLoader<IafRoute> {
 
-  public IafRouteXmlLoader(Context context) {
+  public IafRouteXmlLoader(LoadingContext context) {
     super(context);
   }
 

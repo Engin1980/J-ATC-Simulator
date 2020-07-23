@@ -6,11 +6,11 @@ import eng.eSystem.eXml.XElement;
 import eng.eSystem.geo.Coordinate;
 import eng.jAtcSim.newLib.area.*;
 import eng.jAtcSim.newLib.shared.xml.SmartXmlLoaderUtils;
-import eng.jAtcSim.newLib.xml.area.internal.context.Context;
+import eng.jAtcSim.newLib.xml.area.internal.context.LoadingContext;
 
 class EntryExitPointXmlLoader extends XmlLoader<EntryExitPoint> {
 
-  EntryExitPointXmlLoader(Context context) {
+  EntryExitPointXmlLoader(LoadingContext context) {
     super(context);
   }
 

@@ -14,7 +14,7 @@ import eng.jAtcSim.app.startupSettings.StartupSettings;
 import eng.jAtcSim.contextLocal.Context;
 import eng.jAtcSim.frmPacks.Pack;
 import eng.jAtcSim.frmPacks.shared.FrmLog;
-import eng.jAtcSim.newLib.gameSim.GameFactory;
+import eng.jAtcSim.newLib.gameSim.game.GameFactory;
 import eng.jAtcSim.newLib.gameSim.IGame;
 import eng.jAtcSim.newLib.gameSim.game.startupInfos.*;
 import eng.jAtcSim.newLib.shared.ContextManager;

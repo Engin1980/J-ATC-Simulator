@@ -1,13 +1,12 @@
-package eng.jAtcSim.newLib.gameSim;
+package eng.jAtcSim.newLib.gameSim.game;
 
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.jAtcSim.newLib.gameSim.contextLocal.Context;
-import eng.jAtcSim.newLib.gameSim.game.Game;
 import eng.jAtcSim.newLib.gameSim.game.sources.*;
 import eng.jAtcSim.newLib.gameSim.game.startupInfos.GameStartupInfo;
 import eng.jAtcSim.newLib.gameSim.simulation.Simulation;
-import eng.jAtcSim.newLib.gameSim.simulation.SimulationContext;
+import eng.jAtcSim.newLib.gameSim.simulation.WorldModule;
 import eng.jAtcSim.newLib.gameSim.simulation.SimulationSettings;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 
@@ -89,7 +88,7 @@ public class GameFactory {
 
     try {
       appLog.write(ApplicationLog.eType.info, "Creating the simulation");
-      SimulationContext simulationContext = new SimulationContext(
+      WorldModule simulationContext = new WorldModule(
           areaSource.getContent(),
           areaSource.getIcao(),
           airplaneTypesSource.getContent(),

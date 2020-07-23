@@ -1,18 +1,15 @@
 package eng.jAtcSim.newLib.xml.area.internal;
 
 import eng.eSystem.collections.IList;
-import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.eXml.XElement;
 import eng.jAtcSim.newLib.area.ActiveRunway;
 import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
-import eng.jAtcSim.newLib.area.routes.DARoute;
-import eng.jAtcSim.newLib.shared.xml.IXmlLoader;
-import eng.jAtcSim.newLib.xml.area.internal.context.Context;
+import eng.jAtcSim.newLib.xml.area.internal.context.LoadingContext;
 
 public class ActiveRunwayXmlLoader extends XmlLoader<ActiveRunway> {
 
 
-  protected ActiveRunwayXmlLoader(Context context) {
+  protected ActiveRunwayXmlLoader(LoadingContext context) {
     super(context);
   }
 

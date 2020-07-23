@@ -3,16 +3,13 @@ package eng.jAtcSim.newLib.xml.area.internal.context;
 import eng.eSystem.collections.IList;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Headings;
-import eng.jAtcSim.newLib.area.ActiveRunway;
-import eng.jAtcSim.newLib.area.Border;
-import eng.jAtcSim.newLib.area.Navaid;
-import eng.jAtcSim.newLib.area.NavaidList;
+import eng.jAtcSim.newLib.area.*;
 import eng.jAtcSim.newLib.area.routes.DARoute;
 import eng.jAtcSim.newLib.area.routes.GaRoute;
 import eng.jAtcSim.newLib.area.routes.IafRoute;
 import eng.jAtcSim.newLib.xml.area.internal.XmlMappingDictinary;
 
-public class Context {
+public class LoadingContext {
   public static class AreaInfo{
 
     public NavaidList navaids;

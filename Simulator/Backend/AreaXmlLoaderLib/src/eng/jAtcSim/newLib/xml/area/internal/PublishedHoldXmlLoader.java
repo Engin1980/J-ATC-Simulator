@@ -5,11 +5,11 @@ import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.area.PublishedHold;
 import eng.jAtcSim.newLib.shared.enums.LeftRight;
 import eng.jAtcSim.newLib.shared.xml.SmartXmlLoaderUtils;
-import eng.jAtcSim.newLib.xml.area.internal.context.Context;
+import eng.jAtcSim.newLib.xml.area.internal.context.LoadingContext;
 
 public class PublishedHoldXmlLoader extends XmlLoader<PublishedHold> {
 
-  PublishedHoldXmlLoader(Context context) {
+  PublishedHoldXmlLoader(LoadingContext context) {
     super(context);
   }
 

@@ -10,7 +10,7 @@ import eng.jAtcSim.newLib.area.routes.DARoute;
 import eng.jAtcSim.newLib.area.routes.GaRoute;
 import eng.jAtcSim.newLib.area.routes.IafRoute;
 import eng.jAtcSim.newLib.shared.xml.SmartXmlLoaderUtils;
-import eng.jAtcSim.newLib.xml.area.internal.context.Context;
+import eng.jAtcSim.newLib.xml.area.internal.context.LoadingContext;
 import eng.jAtcSim.newLib.xml.area.internal.routes.DARouteXmlLoader;
 import eng.jAtcSim.newLib.xml.area.internal.routes.GaRouteXmlLoader;
 import eng.jAtcSim.newLib.xml.area.internal.routes.IafRouteXmlLoader;
@@ -30,7 +30,7 @@ class AirportXmlLoader extends XmlLoader<Airport> {
     return ret;
   }
 
-  AirportXmlLoader(Context context) {
+  AirportXmlLoader(LoadingContext context) {
     super(context);
   }
 
