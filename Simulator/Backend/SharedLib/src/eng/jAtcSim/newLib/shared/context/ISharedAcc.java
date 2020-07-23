@@ -7,7 +7,7 @@ import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 import eng.jAtcSim.newLib.shared.logging.SimulationLog;
 import eng.jAtcSim.newLib.shared.time.EDayTimeRun;
 
-public interface ISharedContext {
+public interface ISharedAcc {
   String getAirportIcao();
   IReadOnlyList<AtcId> getAtcs();
   EDayTimeRun getNow();

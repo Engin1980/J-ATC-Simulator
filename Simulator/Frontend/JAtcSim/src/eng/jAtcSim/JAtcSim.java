@@ -18,8 +18,8 @@ import eng.jAtcSim.newLib.gameSim.GameFactory;
 import eng.jAtcSim.newLib.gameSim.IGame;
 import eng.jAtcSim.newLib.gameSim.game.startupInfos.*;
 import eng.jAtcSim.newLib.shared.ContextManager;
-import eng.jAtcSim.newLib.shared.context.AppContext;
-import eng.jAtcSim.newLib.shared.context.IAppContext;
+import eng.jAtcSim.newLib.shared.context.AppAcc;
+import eng.jAtcSim.newLib.shared.context.IAppAcc;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 import eng.jAtcSim.newLib.shared.time.ETimeStamp;
 import eng.jAtcSim.newLib.traffic.ITrafficModel;
@@ -113,8 +113,8 @@ public class JAtcSim {
     initStylist();
 
     //TODO solve somehow initial path
-    AppContext appContext = new AppContext(new ApplicationLog(), Paths.get("C:\\Temp\\"));
-    ContextManager.setContext(IAppContext.class, appContext);
+    AppAcc appContext = new AppAcc(new ApplicationLog(), Paths.get("C:\\Temp\\"));
+    ContextManager.setContext(IAppAcc.class, appContext);
     frmLog = new FrmLog();
 
     appSettings = AppSettings.create();

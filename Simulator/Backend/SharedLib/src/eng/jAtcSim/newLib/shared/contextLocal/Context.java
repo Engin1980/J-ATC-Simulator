@@ -1,14 +1,14 @@
 package eng.jAtcSim.newLib.shared.contextLocal;
 
 import eng.jAtcSim.newLib.shared.ContextManager;
-import eng.jAtcSim.newLib.shared.context.IAppContext;
-import eng.jAtcSim.newLib.shared.context.ISharedContext;
+import eng.jAtcSim.newLib.shared.context.IAppAcc;
+import eng.jAtcSim.newLib.shared.context.ISharedAcc;
 
 public class Context {
-  public static ISharedContext getShared(){
-    return ContextManager.getContext(ISharedContext.class);
+  public static ISharedAcc getShared(){
+    return ContextManager.getContext(ISharedAcc.class);
   }
-  public static IAppContext getApp(){
-    return ContextManager.getContext(IAppContext.class);
+  public static IAppAcc getApp(){
+    return ContextManager.getContext(IAppAcc.class);
   }
 }

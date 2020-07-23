@@ -11,8 +11,8 @@ import eng.jAtcSim.newLib.area.Border;
 import eng.jAtcSim.newLib.area.context.AreaAcc;
 import eng.jAtcSim.newLib.area.context.IAreaAcc;
 import eng.jAtcSim.newLib.atcs.AtcProvider;
-import eng.jAtcSim.newLib.atcs.context.AtcContext;
-import eng.jAtcSim.newLib.atcs.context.IAtcContext;
+import eng.jAtcSim.newLib.atcs.context.AtcAcc;
+import eng.jAtcSim.newLib.atcs.context.IAtcAcc;
 import eng.jAtcSim.newLib.gameSim.ISimulation;
 import eng.jAtcSim.newLib.gameSim.contextLocal.Context;
 import eng.jAtcSim.newLib.gameSim.game.startupInfos.ParserFormatterStartInfo;
@@ -23,14 +23,12 @@ import eng.jAtcSim.newLib.gameSim.simulation.modules.SystemMessagesModule;
 import eng.jAtcSim.newLib.messaging.IMessageContent;
 import eng.jAtcSim.newLib.messaging.Message;
 import eng.jAtcSim.newLib.messaging.Participant;
-import eng.jAtcSim.newLib.messaging.context.IMessagingContext;
-import eng.jAtcSim.newLib.messaging.context.MessagingContext;
 import eng.jAtcSim.newLib.mood.MoodManager;
-import eng.jAtcSim.newLib.mood.context.IMoodContext;
-import eng.jAtcSim.newLib.mood.context.MoodContext;
+import eng.jAtcSim.newLib.mood.context.IMoodAcc;
+import eng.jAtcSim.newLib.mood.context.MoodAcc;
 import eng.jAtcSim.newLib.shared.ContextManager;
-import eng.jAtcSim.newLib.shared.context.ISharedContext;
-import eng.jAtcSim.newLib.shared.context.SharedContext;
+import eng.jAtcSim.newLib.shared.context.ISharedAcc;
+import eng.jAtcSim.newLib.shared.context.SharedAcc;
 import eng.jAtcSim.newLib.shared.enums.AtcType;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 import eng.jAtcSim.newLib.shared.logging.SimulationLog;
@@ -38,12 +36,12 @@ import eng.jAtcSim.newLib.shared.time.EDayTimeRun;
 import eng.jAtcSim.newLib.shared.time.ETimeStamp;
 import eng.jAtcSim.newLib.speeches.system.system2user.MetarNotification;
 import eng.jAtcSim.newLib.stats.StatsProvider;
-import eng.jAtcSim.newLib.stats.context.IStatsContext;
-import eng.jAtcSim.newLib.stats.context.StatsContext;
+import eng.jAtcSim.newLib.stats.context.IStatsAcc;
+import eng.jAtcSim.newLib.stats.context.StatsAcc;
 import eng.jAtcSim.newLib.traffic.TrafficProvider;
 import eng.jAtcSim.newLib.weather.WeatherManager;
-import eng.jAtcSim.newLib.weather.context.IWeatherContext;
-import eng.jAtcSim.newLib.weather.context.WeatherContext;
+import eng.jAtcSim.newLib.weather.context.IWeatherAcc;
+import eng.jAtcSim.newLib.weather.context.WeatherAcc;
 
 public class Simulation {
 
@@ -201,13 +199,13 @@ public class Simulation {
   }
 
   private void initializeContexts() {
-    SharedContext sharedContext = new SharedContext(
+    SharedAcc sharedContext = new SharedAcc(
         this.context.getActiveAirport().getIcao(),
         this.atcProvider.getAtcIds(),
         this.now,
         new SimulationLog()
     );
-    ContextManager.setContext(ISharedContext.class, sharedContext);
+    ContextManager.setContext(ISharedAcc.class, sharedContext);
 
     IAirplaneTypeAcc airplaneTypeAcc = new AirplaneTypeAcc(this.context.getAirplaneTypes());
     ContextManager.setContext(IAirplaneTypeAcc.class, airplaneTypeAcc);
@@ -223,19 +221,19 @@ public class Simulation {
     );
     ContextManager.setContext(IAreaAcc.class, areaAcc);
 
-    IAtcContext atcContext = new AtcContext(
+    IAtcAcc atcContext = new AtcAcc(
         this.atcProvider.getAtcIds(),
         callsign -> this.atcProvider.getResponsibleAtc(callsign));
-    ContextManager.setContext(IAtcContext.class, atcContext);
+    ContextManager.setContext(IAtcAcc.class, atcContext);
 
-    IWeatherContext weatherContext = new WeatherContext(this.weatherManager);
-    ContextManager.setContext(IWeatherContext.class, weatherContext);
+    IWeatherAcc weatherContext = new WeatherAcc(this.weatherManager);
+    ContextManager.setContext(IWeatherAcc.class, weatherContext);
 
-    IStatsContext statsContext = new StatsContext(this.statsProvider);
-    ContextManager.setContext(IStatsContext.class, statsContext);
+    IStatsAcc statsContext = new StatsAcc(this.statsProvider);
+    ContextManager.setContext(IStatsAcc.class, statsContext);
 
-    IMoodContext moodContext = new MoodContext(this.moodManager);
-    ContextManager.setContext(IMoodContext.class, moodContext);
+    IMoodAcc moodContext = new MoodAcc(this.moodManager);
+    ContextManager.setContext(IMoodAcc.class, moodContext);
 
     //TODO Implement this: Implement this
     throw new ToDoException("Implement this");

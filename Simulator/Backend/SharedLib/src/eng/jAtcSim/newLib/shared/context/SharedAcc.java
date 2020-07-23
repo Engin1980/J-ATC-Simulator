@@ -6,13 +6,13 @@ import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.logging.SimulationLog;
 import eng.jAtcSim.newLib.shared.time.EDayTimeRun;
 
-public class SharedContext implements ISharedContext {
+public class SharedAcc implements ISharedAcc {
   private final String airportIcao;
   private final IReadOnlyList<AtcId> atcs;
   private final EDayTimeRun now;
   private final SimulationLog simLog;
 
-  public SharedContext(String airportIcao, IReadOnlyList<AtcId> atcs, EDayTimeRun now, SimulationLog simLog) {
+  public SharedAcc(String airportIcao, IReadOnlyList<AtcId> atcs, EDayTimeRun now, SimulationLog simLog) {
     EAssert.Argument.isNotNull(airportIcao, "airportIcao");
     EAssert.Argument.isNotNull(atcs, "atcs");
     EAssert.Argument.isNotNull(now, "now");

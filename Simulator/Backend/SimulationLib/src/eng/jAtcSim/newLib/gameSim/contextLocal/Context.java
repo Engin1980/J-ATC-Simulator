@@ -1,45 +1,45 @@
 package eng.jAtcSim.newLib.gameSim.contextLocal;
 
 import eng.jAtcSim.newLib.airplanes.context.IAirplaneAcc;
-import eng.jAtcSim.newLib.atcs.context.IAtcContext;
-import eng.jAtcSim.newLib.messaging.context.IMessagingContext;
-import eng.jAtcSim.newLib.mood.context.IMoodContext;
+import eng.jAtcSim.newLib.atcs.context.IAtcAcc;
+import eng.jAtcSim.newLib.messaging.context.IMessagingAcc;
+import eng.jAtcSim.newLib.mood.context.IMoodAcc;
 import eng.jAtcSim.newLib.shared.ContextManager;
-import eng.jAtcSim.newLib.shared.context.IAppContext;
-import eng.jAtcSim.newLib.shared.context.ISharedContext;
-import eng.jAtcSim.newLib.stats.context.IStatsContext;
-import eng.jAtcSim.newLib.weather.context.IWeatherContext;
+import eng.jAtcSim.newLib.shared.context.IAppAcc;
+import eng.jAtcSim.newLib.shared.context.ISharedAcc;
+import eng.jAtcSim.newLib.stats.context.IStatsAcc;
+import eng.jAtcSim.newLib.weather.context.IWeatherAcc;
 
 public class Context {
   public static IAirplaneAcc getAirplane() {
     return ContextManager.getContext(IAirplaneAcc.class);
   }
 
-  public static IAppContext getApp() {
-    return ContextManager.getContext(IAppContext.class);
+  public static IAppAcc getApp() {
+    return ContextManager.getContext(IAppAcc.class);
   }
 
-  public static IAtcContext getAtc() {
-    return ContextManager.getContext(IAtcContext.class);
+  public static IAtcAcc getAtc() {
+    return ContextManager.getContext(IAtcAcc.class);
   }
 
-  public static IMessagingContext getMessaging() {
-    return ContextManager.getContext(IMessagingContext.class);
+  public static IMessagingAcc getMessaging() {
+    return ContextManager.getContext(IMessagingAcc.class);
   }
 
-  public static IMoodContext getMood() {
-    return ContextManager.getContext(IMoodContext.class);
+  public static IMoodAcc getMood() {
+    return ContextManager.getContext(IMoodAcc.class);
   }
 
-  public static ISharedContext getShared() {
-    return ContextManager.getContext(ISharedContext.class);
+  public static ISharedAcc getShared() {
+    return ContextManager.getContext(ISharedAcc.class);
   }
 
-  public static IStatsContext getStats() {
-    return ContextManager.getContext(IStatsContext.class);
+  public static IStatsAcc getStats() {
+    return ContextManager.getContext(IStatsAcc.class);
   }
 
-  public static IWeatherContext getWeather() {
-    return ContextManager.getContext(IWeatherContext.class);
+  public static IWeatherAcc getWeather() {
+    return ContextManager.getContext(IWeatherAcc.class);
   }
 }

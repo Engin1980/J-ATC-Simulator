@@ -4,7 +4,7 @@ import eng.jAtcSim.newLib.atcs.AtcList;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.Callsign;
 
-public interface IAtcContext {
+public interface IAtcAcc {
   AtcList<AtcId> getAtcList();
   AtcId getResponsibleAtcId(Callsign callsign);
 }

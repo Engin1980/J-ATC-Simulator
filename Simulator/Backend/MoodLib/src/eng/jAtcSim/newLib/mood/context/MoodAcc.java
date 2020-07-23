@@ -1,16 +1,17 @@
-//package eng.jAtcSim.newLib.mood.context;
-//
-//import eng.eSystem.functionalInterfaces.Producer;
-//import eng.jAtcSim.newLib.mood.MoodManager;
-//
-//public class MoodAcc {
-//  private static Producer<MoodManager> moodManagerProducer;
-//
-//  public static MoodManager getMoodManager() {
-//    return moodManagerProducer.produce();
-//  }
-//
-//  public static void setMoodManagerProducer(Producer<MoodManager> moodManagerProducer) {
-//    MoodAcc.moodManagerProducer = moodManagerProducer;
-//  }
-//}
+package eng.jAtcSim.newLib.mood.context;
+
+import eng.jAtcSim.newLib.mood.MoodManager;
+
+public class MoodAcc implements IMoodAcc {
+
+  private final MoodManager moodManager;
+
+  public MoodAcc(MoodManager moodManager) {
+    this.moodManager = moodManager;
+  }
+
+  @Override
+  public MoodManager getMoodManager() {
+    return moodManager;
+  }
+}

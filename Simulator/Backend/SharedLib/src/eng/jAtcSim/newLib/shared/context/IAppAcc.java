@@ -5,7 +5,7 @@ import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 
 import java.nio.file.Path;
 
-public interface IAppContext {
+public interface IAppAcc {
   ApplicationLog getAppLog();
 
   Path getLogPath();

@@ -1,21 +1,18 @@
-//package eng.jAtcSim.newLib.messaging.context;
-//
-//import eng.eSystem.functionalInterfaces.Producer;
-//import eng.eSystem.collections.*;
-//import eng.eSystem.validation.EAssert;
-//import eng.jAtcSim.newLib.messaging.Messenger;
-//
-//import static eng.eSystem.utilites.FunctionShortcuts.*;
-//
-//public class MessagingAcc {
-//  private static Producer<Messenger> messengerProducer;
-//
-//  public static void setMessengerProducer(Producer<Messenger> messengerProducer) {
-//    EAssert.Argument.isNotNull(messengerProducer, "messengerProducer");
-//    messengerProducer = messengerProducer;
-//  }
-//
-//  public static Messenger getMessenger() {
-//    return messengerProducer.produce();
-//  }
-//}
+package eng.jAtcSim.newLib.messaging.context;
+
+import eng.eSystem.validation.EAssert;
+import eng.jAtcSim.newLib.messaging.Messenger;
+
+public class MessagingAcc implements IMessagingAcc {
+  private final Messenger messenger;
+
+  public MessagingAcc(Messenger messenger) {
+    EAssert.Argument.isNotNull(messenger, "messenger");
+    this.messenger = messenger;
+  }
+
+  @Override
+  public Messenger getMessenger() {
+    return messenger;
+  }
+}

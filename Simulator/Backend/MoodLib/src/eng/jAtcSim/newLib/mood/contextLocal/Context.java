@@ -1,14 +1,14 @@
 package eng.jAtcSim.newLib.mood.contextLocal;
 
-import eng.jAtcSim.newLib.mood.context.IMoodContext;
+import eng.jAtcSim.newLib.mood.context.IMoodAcc;
 import eng.jAtcSim.newLib.shared.ContextManager;
-import eng.jAtcSim.newLib.shared.context.ISharedContext;
+import eng.jAtcSim.newLib.shared.context.ISharedAcc;
 
 public class Context {
-  public static IMoodContext getMood(){
-    return ContextManager.getContext(IMoodContext.class);
+  public static IMoodAcc getMood(){
+    return ContextManager.getContext(IMoodAcc.class);
   }
-  public static ISharedContext getShared(){
-    return ContextManager.getContext(ISharedContext.class);
+  public static ISharedAcc getShared(){
+    return ContextManager.getContext(ISharedAcc.class);
   }
 }

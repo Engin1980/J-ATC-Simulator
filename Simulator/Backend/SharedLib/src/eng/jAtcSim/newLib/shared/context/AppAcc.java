@@ -6,12 +6,12 @@ import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 
 import java.nio.file.Path;
 
-public class AppContext implements IAppContext {
+public class AppAcc implements IAppAcc {
   private final ApplicationLog applicationLog;
   private Path logPath;
   private final ERandom rnd = new ERandom();
 
-  public AppContext(ApplicationLog applicationLog, Path logPath) {
+  public AppAcc(ApplicationLog applicationLog, Path logPath) {
     EAssert.Argument.isNotNull(applicationLog, "applicationLog");
     EAssert.Argument.isNotNull(logPath, "logPath");
     this.logPath = logPath;
