@@ -107,17 +107,18 @@ public class JAtcSim {
    * @param args the command line arguments
    */
   public static void main(String[] args) {
-//   LoadDemo.demoSerializer();
 
     AppSettings.init();
 
     initStylist();
 
-    IAppContext appContext = new AppContext(new ApplicationLog());
+    //TODO solve somehow initial path
+    AppContext appContext = new AppContext(new ApplicationLog(), Paths.get("C:\\Temp\\"));
     ContextManager.setContext(IAppContext.class, appContext);
     frmLog = new FrmLog();
 
     appSettings = AppSettings.create();
+    appContext.updateLogPath(appSettings.logFolder);
 
     // various inits
     FileHistoryManager.init();

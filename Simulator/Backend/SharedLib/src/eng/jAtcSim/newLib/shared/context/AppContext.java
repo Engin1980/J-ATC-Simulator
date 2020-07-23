@@ -4,13 +4,28 @@ import eng.eSystem.ERandom;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 
+import java.nio.file.Path;
+
 public class AppContext implements IAppContext {
   private final ApplicationLog applicationLog;
+  private Path logPath;
   private final ERandom rnd = new ERandom();
 
-  public AppContext(ApplicationLog applicationLog) {
+  public AppContext(ApplicationLog applicationLog, Path logPath) {
     EAssert.Argument.isNotNull(applicationLog, "applicationLog");
+    EAssert.Argument.isNotNull(logPath, "logPath");
+    this.logPath = logPath;
     this.applicationLog = applicationLog;
+  }
+
+  @Override
+  public ApplicationLog getAppLog() {
+    return this.applicationLog;
+  }
+
+  @Override
+  public Path getLogPath() {
+    return this.logPath;
   }
 
   @Override
@@ -18,8 +33,8 @@ public class AppContext implements IAppContext {
     return rnd;
   }
 
-  @Override
-  public ApplicationLog getAppLog() {
-    return this.applicationLog;
+  public void updateLogPath(Path logFolder) {
+    EAssert.Argument.isNotNull(logFolder, "logFolder");
+    this.logPath = logFolder;
   }
 }

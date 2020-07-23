@@ -2,6 +2,7 @@ package eng.jAtcSim.newLib.airplanes.internal;
 
 import eng.eSystem.functionalInterfaces.Producer;
 import eng.jAtcSim.newLib.airplanes.AirplaneList;
+import eng.jAtcSim.newLib.airplanes.contextLocal.Context;
 import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
 import eng.jAtcSim.newLib.area.context.AreaAcc;
 import eng.jAtcSim.newLib.area.Navaid;
@@ -17,7 +18,7 @@ public class InternalAcc {
   }
 
   public static Navaid getNavaid(ToNavaidCommand toNavaidCommand) {
-    return AreaAcc.getNavaids().get(toNavaidCommand.getNavaidName());
+    return Context.getArea().getNavaids().get(toNavaidCommand.getNavaidName());
   }
 
   public static void setAirplaneListProducer(Producer<AirplaneList<Airplane>> airplanesProducer) {
@@ -25,18 +26,18 @@ public class InternalAcc {
   }
 
   public static DARoute tryGetDARoute(String routeName) {
-    return AreaAcc.getAirport().getDaRoutes().getFirst(q -> q.getName().equals(routeName));
+    return Context.getArea().getAirport().getDaRoutes().getFirst(q -> q.getName().equals(routeName));
   }
 
   public static Navaid tryGetNavaid(String navaidName) {
-    return AreaAcc.getNavaids().get(navaidName);
+    return Context.getArea().getNavaids().get(navaidName);
   }
 
   public static PublishedHold tryGetPublishedHold(String navaidName) {
-    return AreaAcc.getAirport().getHolds().getFirst(q -> q.getNavaid().equals(navaidName));
+    return Context.getArea().getAirport().getHolds().getFirst(q -> q.getNavaid().equals(navaidName));
   }
 
   public static ActiveRunwayThreshold tryGetRunwayThreshold(String runwayThresholdName) {
-    return AreaAcc.getAirport().getAllThresholds().getFirst(q -> q.getName().equals(runwayThresholdName));
+    return Context.getArea().getAirport().getAllThresholds().getFirst(q -> q.getName().equals(runwayThresholdName));
   }
 }

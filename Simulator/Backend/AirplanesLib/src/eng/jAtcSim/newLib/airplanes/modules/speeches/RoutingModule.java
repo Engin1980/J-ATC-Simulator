@@ -12,13 +12,13 @@ import eng.jAtcSim.newLib.airplanes.AirplaneState;
 import eng.jAtcSim.newLib.airplanes.commandApplications.ApplicationManager;
 import eng.jAtcSim.newLib.airplanes.commandApplications.ApplicationResult;
 import eng.jAtcSim.newLib.airplanes.commandApplications.ConfirmationResult;
+import eng.jAtcSim.newLib.airplanes.contextLocal.Context;
 import eng.jAtcSim.newLib.airplanes.internal.Airplane;
 import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
 import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.messaging.IMessageContent;
 import eng.jAtcSim.newLib.messaging.Message;
 import eng.jAtcSim.newLib.messaging.Participant;
-import eng.jAtcSim.newLib.messaging.context.MessagingAcc;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.DelayedList;
 import eng.jAtcSim.newLib.shared.enums.AboveBelowExactly;
@@ -209,7 +209,7 @@ public class RoutingModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
   }
 
   private void obtainNewSpeeches() {
-    IList<Message> msgs = MessagingAcc.getMessenger().getMessagesByListener(
+    IList<Message> msgs = Context.getMessaging().getMessenger().getMessagesByListener(
         Participant.createAirplane(rdr.getCallsign()), true);
 
     // only responds to messages from tuned atc

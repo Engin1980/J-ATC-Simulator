@@ -31,5 +31,6 @@ public class AirplaneTypesSource extends Source<AirplaneTypes> {
     } catch (Exception e) {
       throw new EApplicationException(sf("Failed to load xml-airplaneTypes-file from '%s'", this.fileName), e);
     }
+    super.setInitialized();
   }
 }

@@ -10,7 +10,6 @@ import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplaneType.AirplaneType;
 import eng.jAtcSim.newLib.airplanes.IAirplane;
 import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
-import eng.jAtcSim.newLib.area.context.AreaAcc;
 import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.area.routes.DARoute;
 import eng.jAtcSim.newLib.atcs.contextLocal.Context;
@@ -22,9 +21,9 @@ import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.enums.AtcType;
 import eng.jAtcSim.newLib.shared.enums.DARouteType;
+import eng.jAtcSim.newLib.speeches.SpeechList;
 import eng.jAtcSim.newLib.speeches.airplane.ICommand;
 import eng.jAtcSim.newLib.speeches.airplane.IForPlaneSpeech;
-import eng.jAtcSim.newLib.speeches.SpeechList;
 import eng.jAtcSim.newLib.speeches.airplane.IFromPlaneSpeech;
 import eng.jAtcSim.newLib.speeches.airplane.airplane2atc.GoodDayNotification;
 import eng.jAtcSim.newLib.speeches.airplane.atc2airplane.*;
@@ -34,12 +33,11 @@ import eng.jAtcSim.newLib.speeches.atc.atc2user.AtcRejection;
 
 public class CenterAtc extends ComputerAtc {
 
+  private IList<IAirplane> closeArrivals = new EList<>();
   private int ctrAcceptDistance = 40;
   private int ctrNavaidAcceptDistance = 15;
-
   private IList<IAirplane> farArrivals = new EList<>();
   private IList<IAirplane> middleArrivals = new EList<>();
-  private IList<IAirplane> closeArrivals = new EList<>();
 
   public CenterAtc(eng.jAtcSim.newLib.area.Atc template) {
     super(template);
@@ -148,7 +146,7 @@ public class CenterAtc extends ComputerAtc {
         if (plane.getSha().getAltitude() > super.getAcceptAltitude() || plane.getSha().getAltitude() > (plane.getType().maxAltitude * .666)) {
           ret = new RequestResult(true, null);
         } else {
-          double aipDist = Coordinates.getDistanceInNM(plane.getCoordinate(), AreaAcc.getAirport().getLocation());
+          double aipDist = Coordinates.getDistanceInNM(plane.getCoordinate(), Context.getArea().getAirport().getLocation());
           if (aipDist > this.ctrAcceptDistance) {
             ret = new RequestResult(true, null);
           } else {
@@ -166,108 +164,6 @@ public class CenterAtc extends ComputerAtc {
         }
       }
     }
-    return ret;
-  }
-
-  private void evaluateMiddleArrivalsForCloseArrivals(IList<IAirplane> tmp, IAirplane plane) {
-    double dist;
-    dist = Coordinates.getDistanceInNM(plane.getRouting().getEntryExitPoint().getCoordinate(), plane.getCoordinate());
-    if (dist < 27) {
-      SpeechList<ICommand> cmds = new SpeechList<>();
-      if (plane.getSha().getTargetAltitude() > InternalAcc.getAtc(AtcType.ctr).getOrderedAltitude())
-        cmds.add(ChangeAltitudeCommand.create(
-            ChangeAltitudeCommand.eDirection.descend,
-            InternalAcc.getAtc(AtcType.ctr).getOrderedAltitude()));
-
-      // assigns route
-      Navaid n = plane.getRouting().getEntryExitPoint();
-      Tuple<DARoute, ActiveRunwayThreshold> rrt = getRoutingForPlaneAndFix(plane, n);
-      DARoute r = rrt.getA();
-      ActiveRunwayThreshold rt = rrt.getB();
-      cmds.add(ProceedDirectCommand.create(n.getName()));
-      cmds.add(ClearedToRouteCommand.create(r.getName(), r.getType(), rt.getName()));
-      Message msg = new Message(
-          Participant.createAtc(this.getAtcId()),
-          Participant.createAirplane(plane.getCallsign()),
-          cmds);
-      super.sendMessage(msg);
-
-      tmp.add(plane);
-    }
-  }
-
-  private int getDepartureRandomTargetAltitude(IAirplane p) {
-    int min;
-    switch (p.getType().category) {
-      case 'A':
-        min = 4;
-        break;
-      case 'B':
-        min = 14;
-        break;
-      case 'C':
-      case 'D':
-        min = 20;
-        break;
-      default:
-        throw new UnsupportedOperationException();
-    }
-    min = Math.max(p.getSha().getAltitude() / 1000, min);
-    int ret = Context.getApp().getRnd().nextInt(min, p.getType().maxAltitude / 1000);
-    ret = ret * 1000;
-    return ret;
-  }
-
-  private Tuple<DARoute, ActiveRunwayThreshold> getRoutingForPlaneAndFix(IAirplane plane, Navaid n) {
-    Tuple<DARoute, ActiveRunwayThreshold> ret;
-    DARoute r = null;
-    ActiveRunwayThreshold rt = null;
-    IList<ActiveRunwayThreshold> thresholdsCopy;
-
-    IReadOnlyList<ActiveRunwayThreshold> thresholds;
-    // if is arrival, scheduled thresholds are taken into account
-    if (AreaAcc.getScheduledRunwayConfiguration() != null)
-      thresholds = AreaAcc.getScheduledRunwayConfiguration().getArrivals()
-          .where(q -> q.isForCategory(plane.getType().category))
-          .select(q -> q.getThreshold());
-    else
-      thresholds = AreaAcc.getCurrentRunwayConfiguration().getArrivals()
-          .where(q -> q.isForCategory(plane.getType().category))
-          .select(q -> q.getThreshold());
-
-    thresholdsCopy = new EList<>(thresholds);
-    while (r == null && !thresholdsCopy.isEmpty()) {
-      rt = thresholdsCopy.getRandom();
-      thresholdsCopy.remove(rt);
-      r = getArrivalRouteForPlane(rt, plane.getType(), plane.getSha().getTargetAltitude(), plane.getRouting().getEntryExitPoint(), false);
-    }
-    if (thresholdsCopy.isEmpty() && r == null) {
-      rt = thresholds.getRandom();
-      r = getArrivalRouteForPlane(rt, plane.getType(), plane.getSha().getTargetAltitude(), plane.getRouting().getEntryExitPoint(), true);
-    }
-    assert rt != null;
-    assert r != null;
-
-    ret = new Tuple<>(r, rt);
-    return ret;
-  }
-
-    private DARoute getArrivalRouteForPlane(ActiveRunwayThreshold rt, AirplaneType type, int currentAltitude, Navaid mainNavaid, boolean canBeVectoring) {
-    DARoute ret = rt.getRoutes().where(
-        q -> q.getType() == DARouteType.transition
-            && q.isValidForCategory(type.category)
-            && q.getMaxMrvaAltitude() < currentAltitude
-            && q.getMainNavaid().equals(mainNavaid))
-        .tryGetRandom();
-    if (ret == null)
-      ret = rt.getRoutes().where(
-          q -> q.getType() == DARouteType.star
-              && q.isValidForCategory(type.category)
-              && q.getMaxMrvaAltitude() < currentAltitude
-              && q.getMainNavaid().equals(mainNavaid))
-          .tryGetRandom();
-    if (ret == null && canBeVectoring)
-      ret = DARoute.createNewVectoringByFix(mainNavaid);
     return ret;
   }
 
@@ -329,6 +225,68 @@ public class CenterAtc extends ComputerAtc {
     // nothing to process
   }
 
+  @Override
+  protected void processNonPlaneSwitchMessageFromAtc(Message m) {
+    // do nothing , ctr has no messages acceptable from ATC
+    EAssert.isTrue(m.getContent() instanceof IAtcSpeech);
+    IAtcSpeech origin = m.getContent();
+    super.sendMessage(new Message(
+        Participant.createAtc(this.getAtcId()),
+        m.getSource(),
+        new AtcRejection(origin, "Unable.")));
+  }
+
+  @Override
+  protected boolean shouldBeSwitched(Callsign callsign) {
+    return true;
+  }
+
+  private void evaluateMiddleArrivalsForCloseArrivals(IList<IAirplane> tmp, IAirplane plane) {
+    double dist;
+    dist = Coordinates.getDistanceInNM(plane.getRouting().getEntryExitPoint().getCoordinate(), plane.getCoordinate());
+    if (dist < 27) {
+      SpeechList<ICommand> cmds = new SpeechList<>();
+      if (plane.getSha().getTargetAltitude() > InternalAcc.getAtc(AtcType.ctr).getOrderedAltitude())
+        cmds.add(ChangeAltitudeCommand.create(
+            ChangeAltitudeCommand.eDirection.descend,
+            InternalAcc.getAtc(AtcType.ctr).getOrderedAltitude()));
+
+      // assigns route
+      Navaid n = plane.getRouting().getEntryExitPoint();
+      Tuple<DARoute, ActiveRunwayThreshold> rrt = getRoutingForPlaneAndFix(plane, n);
+      DARoute r = rrt.getA();
+      ActiveRunwayThreshold rt = rrt.getB();
+      cmds.add(ProceedDirectCommand.create(n.getName()));
+      cmds.add(ClearedToRouteCommand.create(r.getName(), r.getType(), rt.getName()));
+      Message msg = new Message(
+          Participant.createAtc(this.getAtcId()),
+          Participant.createAirplane(plane.getCallsign()),
+          cmds);
+      super.sendMessage(msg);
+
+      tmp.add(plane);
+    }
+  }
+
+  private DARoute getArrivalRouteForPlane(ActiveRunwayThreshold rt, AirplaneType type, int currentAltitude, Navaid mainNavaid, boolean canBeVectoring) {
+    DARoute ret = rt.getRoutes().where(
+        q -> q.getType() == DARouteType.transition
+            && q.isValidForCategory(type.category)
+            && q.getMaxMrvaAltitude() < currentAltitude
+            && q.getMainNavaid().equals(mainNavaid))
+        .tryGetRandom();
+    if (ret == null)
+      ret = rt.getRoutes().where(
+          q -> q.getType() == DARouteType.star
+              && q.isValidForCategory(type.category)
+              && q.getMaxMrvaAltitude() < currentAltitude
+              && q.getMainNavaid().equals(mainNavaid))
+          .tryGetRandom();
+    if (ret == null && canBeVectoring)
+      ret = DARoute.createNewVectoringByFix(mainNavaid);
+    return ret;
+  }
+
 //  @Override
 //  protected void _save(XElement elm) {
 //    super._save(elm);
@@ -345,19 +303,59 @@ public class CenterAtc extends ComputerAtc {
 //    LoadSave.loadField(elm, this, "closeArrivals");
 //  }
 
-  @Override
-  protected void processNonPlaneSwitchMessageFromAtc(Message m) {
-    // do nothing , ctr has no messages acceptable from ATC
-    EAssert.isTrue(m.getContent() instanceof IAtcSpeech);
-    IAtcSpeech origin = m.getContent();
-    super.sendMessage(new Message(
-        Participant.createAtc(this.getAtcId()),
-        m.getSource(),
-        new AtcRejection(origin, "Unable.")));
+  private int getDepartureRandomTargetAltitude(IAirplane p) {
+    int min;
+    switch (p.getType().category) {
+      case 'A':
+        min = 4;
+        break;
+      case 'B':
+        min = 14;
+        break;
+      case 'C':
+      case 'D':
+        min = 20;
+        break;
+      default:
+        throw new UnsupportedOperationException();
+    }
+    min = Math.max(p.getSha().getAltitude() / 1000, min);
+    int ret = Context.getApp().getRnd().nextInt(min, p.getType().maxAltitude / 1000);
+    ret = ret * 1000;
+    return ret;
   }
 
-  @Override
-  protected boolean shouldBeSwitched(Callsign callsign) {
-    return true;
+  private Tuple<DARoute, ActiveRunwayThreshold> getRoutingForPlaneAndFix(IAirplane plane, Navaid n) {
+    Tuple<DARoute, ActiveRunwayThreshold> ret;
+    DARoute r = null;
+    ActiveRunwayThreshold rt = null;
+    IList<ActiveRunwayThreshold> thresholdsCopy;
+
+    IReadOnlyList<ActiveRunwayThreshold> thresholds;
+    // if is arrival, scheduled thresholds are taken into account
+    if (Context.getArea().tryGetScheduledRunwayConfiguration() != null)
+      thresholds = Context.getArea().tryGetScheduledRunwayConfiguration().getArrivals()
+          .where(q -> q.isForCategory(plane.getType().category))
+          .select(q -> q.getThreshold());
+    else
+      thresholds = Context.getArea().getCurrentRunwayConfiguration().getArrivals()
+          .where(q -> q.isForCategory(plane.getType().category))
+          .select(q -> q.getThreshold());
+
+    thresholdsCopy = new EList<>(thresholds);
+    while (r == null && !thresholdsCopy.isEmpty()) {
+      rt = thresholdsCopy.getRandom();
+      thresholdsCopy.remove(rt);
+      r = getArrivalRouteForPlane(rt, plane.getType(), plane.getSha().getTargetAltitude(), plane.getRouting().getEntryExitPoint(), false);
+    }
+    if (thresholdsCopy.isEmpty() && r == null) {
+      rt = thresholds.getRandom();
+      r = getArrivalRouteForPlane(rt, plane.getType(), plane.getSha().getTargetAltitude(), plane.getRouting().getEntryExitPoint(), true);
+    }
+    assert rt != null;
+    assert r != null;
+
+    ret = new Tuple<>(r, rt);
+    return ret;
   }
 }

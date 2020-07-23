@@ -2,6 +2,7 @@ package eng.jAtcSim.newLib.xml.area.internal;
 
 import eng.eSystem.collections.IList;
 import eng.eSystem.eXml.XElement;
+import eng.eSystem.exceptions.ToDoException;
 import eng.jAtcSim.newLib.area.Airport;
 import eng.jAtcSim.newLib.area.Area;
 import eng.jAtcSim.newLib.area.NavaidList;
@@ -21,31 +22,33 @@ public class AreaXmlLoader extends XmlLoader<Area> {
     context.area.icao = SmartXmlLoaderUtils.loadString("icao");
     super.log(0, "... area '%s'", context.area.icao);
 
-    context.area.navaids = new NavaidList();
-    AreaAcc.setNavaidsProducer(() -> context.area.navaids);
-    SmartXmlLoaderUtils.loadList(
-        source.getChild("navaids").getChildren("navaid"),
-        context.area.navaids,
-        new NavaidXmlLoader()
-    );
-
-    context.area.borders = SmartXmlLoaderUtils.loadList(
-        source.getChild("borders").getChildren("border"),
-        new BorderXmlLoader());
-
-    IList<Airport> airports = SmartXmlLoaderUtils.loadList(
-        source.getChild("airports").getChildren("airport"),
-        new AirportXmlLoader(context));
-
-    super.log(0, "... area '%s' loading completed, compiling", context.area.icao);
-
-    Area ret = Area.create(
-        context.area.icao,
-        airports,
-        context.area.navaids,
-        context.area.borders);
-
-    super.log(0, "... area '%s' loading done", context.area.icao);
-    return ret;
+    //TODO Implement this: Implement this, uncomment rest
+    throw new ToDoException("Implement this, uncomment rest");
+//    context.area.navaids = new NavaidList();
+//    AreaAcc.setNavaidsProducer(() -> context.area.navaids);
+//    SmartXmlLoaderUtils.loadList(
+//        source.getChild("navaids").getChildren("navaid"),
+//        context.area.navaids,
+//        new NavaidXmlLoader()
+//    );
+//
+//    context.area.borders = SmartXmlLoaderUtils.loadList(
+//        source.getChild("borders").getChildren("border"),
+//        new BorderXmlLoader());
+//
+//    IList<Airport> airports = SmartXmlLoaderUtils.loadList(
+//        source.getChild("airports").getChildren("airport"),
+//        new AirportXmlLoader(context));
+//
+//    super.log(0, "... area '%s' loading completed, compiling", context.area.icao);
+//
+//    Area ret = Area.create(
+//        context.area.icao,
+//        airports,
+//        context.area.navaids,
+//        context.area.borders);
+//
+//    super.log(0, "... area '%s' loading done", context.area.icao);
+//    return ret;
   }
 }

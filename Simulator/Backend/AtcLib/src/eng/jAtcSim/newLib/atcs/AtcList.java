@@ -11,7 +11,7 @@ public class AtcList<T> extends EDistinctList<T> {
   private final Selector<T, AtcId> atcIdSelector;
   private T lastGot = null;
 
-  public AtcList(Selector<T, AtcId> atcIdSelector, Behavior onDuplicateBehavior) {
+  AtcList(Selector<T, AtcId> atcIdSelector, Behavior onDuplicateBehavior) {
     super(q -> atcIdSelector.getValue(q), onDuplicateBehavior);
     this.atcIdSelector = atcIdSelector;
   }

@@ -1,12 +1,12 @@
 package eng.jAtcSim.newLib.atcs;
 
 import eng.eSystem.collections.EDistinctList;
+import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.exceptions.ToDoException;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.area.Airport;
-import eng.jAtcSim.newLib.atcs.context.AtcContext;
-import eng.jAtcSim.newLib.atcs.context.IAtcContext;
+import eng.jAtcSim.newLib.area.RunwayConfiguration;
 import eng.jAtcSim.newLib.atcs.contextLocal.Context;
 import eng.jAtcSim.newLib.atcs.internal.Atc;
 import eng.jAtcSim.newLib.atcs.internal.CenterAtc;
@@ -15,7 +15,8 @@ import eng.jAtcSim.newLib.atcs.internal.UserAtc;
 import eng.jAtcSim.newLib.atcs.internal.tower.TowerAtc;
 import eng.jAtcSim.newLib.atcs.planeResponsibility.PlaneResponsibilityManager;
 import eng.jAtcSim.newLib.shared.AtcId;
-import eng.jAtcSim.newLib.shared.ContextManager;
+import eng.jAtcSim.newLib.shared.Callsign;
+import eng.jAtcSim.newLib.shared.enums.AtcType;
 
 public class AtcProvider {
   private final AtcList<AtcId> atcIds = new AtcList<>(
@@ -49,8 +50,29 @@ public class AtcProvider {
     }
   }
 
+  public AtcList<AtcId> getAtcIds() {
+    return atcIds;
+  }
+
+  public AtcId getResponsibleAtc(Callsign callsign) {
+    AtcId ret = prm.getResponsibleAtc(callsign);
+    return ret;
+  }
+
+  public RunwayConfiguration getRunwayConfiguration() {
+    TowerAtc towerAtc = (TowerAtc) atcs.getFirst(q -> q.getAtcId().getType() == AtcType.twr);
+    RunwayConfiguration ret = towerAtc.getRunwayConfigurationInUse();
+    return ret;
+  }
+
   public void init() {
     atcs.forEach(q -> q.init());
+  }
+
+  public RunwayConfiguration tryGetSchedulerRunwayConfiguration() {
+    TowerAtc towerAtc = (TowerAtc) atcs.getFirst(q -> q.getAtcId().getType() == AtcType.twr);
+    RunwayConfiguration ret = towerAtc.tryGetRunwayConfigurationScheduled();
+    return ret;
   }
 
   private Atc createAtc(eng.jAtcSim.newLib.area.Atc template) {

@@ -1,6 +1,6 @@
 package eng.jAtcSim.contextLocal;
 
-import eng.jAtcSim.newLib.airplanes.context.IAirplaneContext;
+import eng.jAtcSim.newLib.airplanes.context.IAirplaneAcc;
 import eng.jAtcSim.newLib.atcs.context.IAtcContext;
 import eng.jAtcSim.newLib.mood.context.IMoodContext;
 import eng.jAtcSim.newLib.shared.ContextManager;
@@ -10,8 +10,8 @@ import eng.jAtcSim.newLib.stats.context.IStatsContext;
 import eng.jAtcSim.newLib.weather.context.IWeatherContext;
 
 public class Context {
-  public static IAirplaneContext getAirplane() {
-    return ContextManager.getContext(IAirplaneContext.class);
+  public static IAirplaneAcc getAirplane() {
+    return ContextManager.getContext(IAirplaneAcc.class);
   }
 
   public static IAppContext getApp() {

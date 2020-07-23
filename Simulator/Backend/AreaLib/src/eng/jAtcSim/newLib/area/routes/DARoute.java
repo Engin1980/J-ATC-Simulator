@@ -5,6 +5,7 @@ import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.jAtcSim.newLib.area.context.AreaAcc;
 import eng.jAtcSim.newLib.area.Navaid;
+import eng.jAtcSim.newLib.area.contextLocal.Context;
 import eng.jAtcSim.newLib.shared.PlaneCategoryDefinitions;
 import eng.jAtcSim.newLib.shared.enums.DARouteType;
 import eng.jAtcSim.newLib.speeches.airplane.ICommand;
@@ -84,7 +85,7 @@ public class DARoute extends Route {
     IList<String> navaidNames = this.getRouteCommands()
         .whereItemClassIs(ToNavaidCommand.class,true)
         .select(q->q.getNavaidName());
-    IList<Navaid> ret = navaidNames.select(q -> AreaAcc.getNavaids().getWithPBD(q));
+    IList<Navaid> ret = navaidNames.select(q -> Context.getArea().getNavaids().getWithPBD(q));
     return ret;
   }
 

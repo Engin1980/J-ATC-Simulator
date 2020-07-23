@@ -28,12 +28,10 @@ import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
 import eng.jAtcSim.newLib.area.Navaid;
 import eng.jAtcSim.newLib.area.approaches.Approach;
 import eng.jAtcSim.newLib.area.approaches.ApproachEntry;
-import eng.jAtcSim.newLib.area.context.AreaAcc;
 import eng.jAtcSim.newLib.area.routes.DARoute;
 import eng.jAtcSim.newLib.area.routes.IafRoute;
 import eng.jAtcSim.newLib.messaging.Message;
 import eng.jAtcSim.newLib.messaging.Participant;
-import eng.jAtcSim.newLib.messaging.context.MessagingAcc;
 import eng.jAtcSim.newLib.mood.Mood;
 import eng.jAtcSim.newLib.shared.*;
 import eng.jAtcSim.newLib.shared.enums.DARouteType;
@@ -367,7 +365,7 @@ public class Airplane {
           Participant.createAirplane(Airplane.this.getReader().getCallsign()),
           Participant.createAtc(Airplane.this.getReader().getAtc().getTunedAtc()),
           speechList);
-      MessagingAcc.getMessenger().send(m);
+      Context.getMessaging().getMessenger().send(m);
     }
 
     @Override
@@ -485,12 +483,13 @@ public class Airplane {
 
   public static Airplane createDeparture(DepartureAirplaneTemplate template, Squawk sqwk) {
     Airplane ret = new Airplane(
-        template.getCallsign(), AreaAcc.getAirport().getLocation(), sqwk, template.getAirplaneType(),
-        0, AreaAcc.getAirport().getAltitude(), 0, true,
+        template.getCallsign(), Context.getArea().getAirport().getLocation(), sqwk, template.getAirplaneType(),
+        0, Context.getArea().getAirport().getAltitude(), 0, true,
         template.getExitPoint().getNavaid(), template.getExpectedExitTime(), template.getEntryDelay()
     );
     return ret;
   }
+
   private final AirplaneType airplaneType;
   //  private final MrvaAirproxModule mrvaAirproxModule;
   private final AtcModule atcModule;
@@ -561,7 +560,7 @@ public class Airplane {
   }
 
   private Navaid getDivertNavaid() {
-    IList<DARoute> rts = AreaAcc.getCurrentRunwayConfiguration()
+    IList<DARoute> rts = Context.getArea().getCurrentRunwayConfiguration()
         .getDepartures()
         .where(q -> q.isForCategory(Airplane.this.airplaneType.category))
         .getRandom()

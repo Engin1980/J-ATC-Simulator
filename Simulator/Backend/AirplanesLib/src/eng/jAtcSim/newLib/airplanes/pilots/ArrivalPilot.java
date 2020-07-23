@@ -2,6 +2,7 @@ package eng.jAtcSim.newLib.airplanes.pilots;
 
 import eng.eSystem.geo.Coordinates;
 import eng.jAtcSim.newLib.airplanes.AirplaneState;
+import eng.jAtcSim.newLib.airplanes.contextLocal.Context;
 import eng.jAtcSim.newLib.airplanes.internal.Airplane;
 import eng.jAtcSim.newLib.area.context.AreaAcc;
 
@@ -49,7 +50,7 @@ public class ArrivalPilot extends BasicPilot {
   }
 
   private void setArrivingCloseFafStateIfReady() {
-    double distToFaf = AreaAcc.getCurrentRunwayConfiguration()
+    double distToFaf = Context.getArea().getCurrentRunwayConfiguration()
         .getArrivals().where(q -> q.isForCategory(rdr.getType().category))
         .minDouble(q -> Coordinates.getDistanceInNM(rdr.getCoordinate(), q.getThreshold().getEstimatedFafPoint()));
     if (distToFaf < FAF_SPEED_DOWN_DISTANCE_IN_NM) {

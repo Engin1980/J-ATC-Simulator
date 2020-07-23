@@ -6,6 +6,7 @@ import eng.eSystem.geo.Coordinates;
 import eng.eSystem.geo.Headings;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplanes.AirplaneState;
+import eng.jAtcSim.newLib.airplanes.contextLocal.Context;
 import eng.jAtcSim.newLib.airplanes.internal.Airplane;
 import eng.jAtcSim.newLib.airplanes.modules.sha.navigators.HeadingNavigator;
 import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
@@ -62,7 +63,7 @@ public class ApproachPilot extends Pilot {
     // check if is before runway threshold.
     // if is far before, then first point will still be runway threshold
     if (isBeforeRunwayThreshold()) {
-      Navaid runwayThresholdNavaid = AreaAcc.getNavaids().addRunwayThresholdPoint(
+      Navaid runwayThresholdNavaid = Context.getArea().getNavaids().addRunwayThresholdPoint(
           this.getRunwayThreshold().getParent().getParent().getIcao(),
           this.getRunwayThreshold().getName(),
           this.getRunwayThreshold().getCoordinate()

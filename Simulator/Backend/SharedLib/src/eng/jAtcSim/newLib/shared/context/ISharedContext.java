@@ -10,7 +10,6 @@ import eng.jAtcSim.newLib.shared.time.EDayTimeRun;
 public interface ISharedContext {
   String getAirportIcao();
   IReadOnlyList<AtcId> getAtcs();
-  String getLogPath();
   EDayTimeRun getNow();
   SimulationLog getSimLog();
 }

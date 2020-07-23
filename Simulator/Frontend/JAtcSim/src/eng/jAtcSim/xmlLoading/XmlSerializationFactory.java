@@ -17,7 +17,7 @@ public class XmlSerializationFactory {
   private static final boolean VERBOSE_ERROR = true;
   private static final boolean VERBOSE_PROGRESS_OBJECT = false;
   private static final boolean VERBOSE_PROGRESS_SERIALIZER = false;
-  private static final boolean VERBOSE_PROGRESS_XML = true;
+  private static final boolean VERBOSE_PROGRESS_XML = false;
   private static final boolean VERBOSE_WARNING = true;
 
   public static XmlSerializer createForStartupSettings() {

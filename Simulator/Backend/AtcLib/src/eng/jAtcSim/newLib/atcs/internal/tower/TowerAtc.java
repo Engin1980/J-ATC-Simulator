@@ -37,7 +37,6 @@ import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class TowerAtc extends ComputerAtc {
 
-
   public static class RunwaysInUseInfo {
     private SchedulerForAdvice scheduler;
     private RunwayConfiguration current;
@@ -65,7 +64,7 @@ public class TowerAtc extends ComputerAtc {
     RunwayConfiguration ret = null;
     Weather w = Context.getWeather().getWeather();
 
-    for (RunwayConfiguration rc : AreaAcc.getAirport().getRunwayConfigurations()) {
+    for (RunwayConfiguration rc : Context.getArea().getAirport().getRunwayConfigurations()) {
       if (rc.accepts(w.getWindHeading(), w.getWindSpeetInKts())) {
         ret = rc;
         break;
@@ -84,7 +83,7 @@ public class TowerAtc extends ComputerAtc {
 
   private static ActiveRunwayThreshold getSuggestedThresholdsRegardlessRunwayConfigurations() {
     Weather w = Context.getWeather().getWeather();
-    Airport airport = AreaAcc.getAirport();
+    Airport airport = Context.getArea().getAirport();
     ActiveRunwayThreshold rt = null;
 
     double diff = Integer.MAX_VALUE;
@@ -139,7 +138,7 @@ public class TowerAtc extends ComputerAtc {
     super.init();
 
     runwayChecks = new EMap<>();
-    for (ActiveRunway runway : AreaAcc.getAirport().getRunways()) {
+    for (ActiveRunway runway : Context.getArea().getAirport().getRunways()) {
       RunwayCheckInfo rc = RunwayCheckInfo.createNormal(true);
       runwayChecks.set(runway.getName(), rc);
     }
@@ -319,7 +318,7 @@ public class TowerAtc extends ComputerAtc {
     if (plane.getSha().getAltitude() > this.getAcceptAltitude()) {
       return new ComputerAtc.RequestResult(false, String.format("%s is too high.", plane.getCallsign()));
     }
-    double dist = Coordinates.getDistanceInNM(plane.getCoordinate(), AreaAcc.getAirport().getLocation());
+    double dist = Coordinates.getDistanceInNM(plane.getCoordinate(), Context.getArea().getAirport().getLocation());
     if (dist > MAXIMAL_ACCEPT_DISTANCE_IN_NM) {
       return new ComputerAtc.RequestResult(false, String.format("%s is too far.", plane.getCallsign()));
     }
@@ -376,12 +375,12 @@ public class TowerAtc extends ComputerAtc {
   private double getDepartingPlaneSwitchAltitude(char category) {
     switch (category) {
       case 'A':
-        return (double) AreaAcc.getAirport().getAltitude() + Context.getApp().getRnd().nextInt(100, 250);
+        return (double) Context.getArea().getAirport().getAltitude() + Context.getApp().getRnd().nextInt(100, 250);
       case 'B':
-        return (double) AreaAcc.getAirport().getAltitude() + Context.getApp().getRnd().nextInt(150, 400);
+        return (double) Context.getArea().getAirport().getAltitude() + Context.getApp().getRnd().nextInt(150, 400);
       case 'C':
       case 'D':
-        return (double) AreaAcc.getAirport().getAltitude() + Context.getApp().getRnd().nextInt(200, 750);
+        return (double) Context.getArea().getAirport().getAltitude() + Context.getApp().getRnd().nextInt(200, 750);
       default:
         throw new EEnumValueUnsupportedException(category);
     }
@@ -394,7 +393,7 @@ public class TowerAtc extends ComputerAtc {
         .select(q -> q.getThreshold());
     assert rts.size() > 0 : "No runway for airplane kind " + plane.getType().name;
     ret = rts.getRandom();
-    restrictToRunwaysNotUnderLongMaintenance(rts, true);
+    restrictToRunwaysNotUnderLongMaintenance(rts);
     if (rts.size() > 0)
       ret = rts.getRandom();
     return ret;
@@ -609,7 +608,7 @@ public class TowerAtc extends ComputerAtc {
     }
   }
 
-  private void restrictToRunwaysNotUnderLongMaintenance(IList<ActiveRunwayThreshold> rts, boolean onlyLongTimeMaintenance) {
+  private void restrictToRunwaysNotUnderLongMaintenance(IList<ActiveRunwayThreshold> rts) {
     rts.remove(q -> {
       ActiveRunway r = q.getParent();
       RunwayCheckInfo rt = runwayChecks.get(r.getName());
@@ -699,5 +698,4 @@ public class TowerAtc extends ComputerAtc {
       }
     }
   }
-
 }

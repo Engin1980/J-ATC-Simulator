@@ -2,28 +2,26 @@ package eng.jAtcSim.newLib.airplanes;
 
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
+import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.ToDoException;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.validation.EAssert;
-import eng.jAtcSim.newLib.airplanes.context.AirplaneContext;
-import eng.jAtcSim.newLib.airplanes.context.IAirplaneContext;
 import eng.jAtcSim.newLib.airplanes.internal.Airplane;
 import eng.jAtcSim.newLib.airplanes.templates.AirplaneTemplate;
 import eng.jAtcSim.newLib.airplanes.templates.ArrivalAirplaneTemplate;
 import eng.jAtcSim.newLib.airplanes.templates.DepartureAirplaneTemplate;
 import eng.jAtcSim.newLib.shared.Callsign;
-import eng.jAtcSim.newLib.shared.ContextManager;
 import eng.jAtcSim.newLib.shared.Squawk;
 import eng.jAtcSim.newLib.shared.enums.AtcType;
 
 public class AirplanesController {
-  private final IList<AirplaneTemplate> preparedPlanes = new EList<>();
   private final AirplaneList<Airplane> planes = new AirplaneList<>(
       q -> q.getReader().getCallsign(),
-      q -> q.getReader().getSqwk()
-  );
-  private final AirplaneList<IAirplane> publicPlanes = new AirplaneList<>(q -> q.getCallsign(),
+      q -> q.getReader().getSqwk());
+  private final IList<AirplaneTemplate> preparedPlanes = new EList<>();
+  private final AirplaneList<IAirplane> publicPlanes = new AirplaneList<>(
+      q -> q.getCallsign(),
       q -> q.getSqwk());
 
   public void addNewPreparedPlanes(IList<AirplaneTemplate> airplaneTemplates) {
@@ -41,9 +39,12 @@ public class AirplanesController {
     }
   }
 
-  public void init() {
-    AirplaneContext airplaneContext = new AirplaneContext(this.publicPlanes, this);
-    ContextManager.setContext(IAirplaneContext.class, airplaneContext);
+  public AirplaneList<IAirplane> getPlanes() {
+    return publicPlanes;
+  }
+
+  public IReadOnlyList<AirplaneTemplate> getPreparedPlanes() {
+    return preparedPlanes;
   }
 
   public void throwEmergency() {

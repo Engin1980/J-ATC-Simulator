@@ -11,8 +11,8 @@ import eng.eSystem.exceptions.ToDoException;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplanes.IAirplane;
 import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
-import eng.jAtcSim.newLib.area.context.AreaAcc;
 import eng.jAtcSim.newLib.area.routes.DARoute;
+import eng.jAtcSim.newLib.atcs.contextLocal.Context;
 import eng.jAtcSim.newLib.atcs.planeResponsibility.PlaneResponsibilityManager;
 import eng.jAtcSim.newLib.atcs.planeResponsibility.SwitchRoutingRequest;
 import eng.jAtcSim.newLib.messaging.IMessageContent;
@@ -267,7 +267,7 @@ public class UserAtc extends Atc {
     if (m.group(1) == null)
       threshold = plane.getRouting().getAssignedRunwayThreshold();
     else {
-      threshold = AreaAcc.getAirport().tryGetRunwayThreshold(m.group(1));
+      threshold = Context.getArea().getAirport().tryGetRunwayThreshold(m.group(1));
       if (threshold == null) {
         return new Tuple<>(null, "Unable to find runway threshold {" + m.group(1) + "}.");
       }

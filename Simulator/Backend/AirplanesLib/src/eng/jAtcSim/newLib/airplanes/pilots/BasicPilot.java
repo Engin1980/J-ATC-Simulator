@@ -3,6 +3,7 @@ package eng.jAtcSim.newLib.airplanes.pilots;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.geo.Headings;
+import eng.jAtcSim.newLib.airplanes.contextLocal.Context;
 import eng.jAtcSim.newLib.airplanes.internal.Airplane;
 import eng.jAtcSim.newLib.airplanes.modules.sha.navigators.HeadingNavigator;
 import eng.jAtcSim.newLib.area.context.AreaAcc;
@@ -40,7 +41,7 @@ public abstract class BasicPilot extends Pilot {
           Navaid n = rdr.getRouting().getEntryExitPoint();
           dist = Coordinates.getDistanceInNM(rdr.getCoordinate(), n.getCoordinate());
           if (dist < 1.5) {
-            int rad = (int) Coordinates.getBearing(AreaAcc.getAirport().getLocation(), n.getCoordinate());
+            int rad = (int) Coordinates.getBearing(Context.getArea().getAirport().getLocation(), n.getCoordinate());
             rad = rad % 90;
             wrt.startHolding(n, rad, LeftRight.left);
             return;

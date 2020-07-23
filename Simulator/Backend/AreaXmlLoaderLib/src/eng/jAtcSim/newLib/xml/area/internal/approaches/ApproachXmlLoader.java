@@ -149,7 +149,7 @@ public class ApproachXmlLoader extends XmlLoader<IList<Approach>> {
             25);
         break;
       } else if (routeCommand instanceof ToNavaidCommand) {
-        Navaid secondNavaid = AreaAcc.getNavaids().getWithPBD(((ToNavaidCommand) routeCommand).getNavaidName());
+        Navaid secondNavaid = Context.getArea().getNavaids().getWithPBD(((ToNavaidCommand) routeCommand).getNavaidName());
         ret = new HeadingAndCoordinate(
             (int) Coordinates.getBearing(firstNavaid.getCoordinate(), secondNavaid.getCoordinate()),
             firstNavaid.getCoordinate(),

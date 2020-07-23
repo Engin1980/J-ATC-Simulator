@@ -1,8 +1,28 @@
 package eng.jAtcSim.newLib.shared.logging;
 
-public abstract class SimulationLog {
-  public abstract void sendTextMessageForUser(String s);
+import eng.jAtcSim.newLib.shared.logging.writers.AutoNewLineLogWriter;
+import eng.jAtcSim.newLib.shared.logging.writers.ConsoleWriter;
+import eng.jAtcSim.newLib.shared.logging.writers.RealTimePipeLogWriter;
+import eng.jAtcSim.newLib.shared.logging.writers.SimTimePipeLogWriter;
+
+public class SimulationLog {
+//  public void sendTextMessageForUser(String s){
 //
+//  }
+
+  private final Journal journal;
+
+  public SimulationLog() {
+    this.journal = new Journal(
+        "Simulation log",
+        false,
+        new AutoNewLineLogWriter(
+            new RealTimePipeLogWriter(
+                new SimTimePipeLogWriter(
+                    new ConsoleWriter()))));
+  }
+
+  //
 //  public boolean addSimulationTime;
 //  public String simulationTimeSeparator = " ";
 //

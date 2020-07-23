@@ -27,6 +27,4 @@ public class AirplaneTypes {
 
   private AirplaneTypes() {
   }
-
-
 }

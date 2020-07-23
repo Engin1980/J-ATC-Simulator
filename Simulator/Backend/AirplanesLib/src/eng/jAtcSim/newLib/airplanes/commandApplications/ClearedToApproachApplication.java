@@ -6,9 +6,9 @@ import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.geo.Coordinate;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplanes.AirplaneState;
+import eng.jAtcSim.newLib.airplanes.contextLocal.Context;
 import eng.jAtcSim.newLib.airplanes.internal.Airplane;
 import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
-import eng.jAtcSim.newLib.area.context.AreaAcc;
 import eng.jAtcSim.newLib.area.approaches.Approach;
 import eng.jAtcSim.newLib.area.approaches.ApproachEntry;
 import eng.jAtcSim.newLib.shared.Restriction;
@@ -38,7 +38,7 @@ public class ClearedToApproachApplication extends CommandApplication<ClearedToAp
       ret.informations.add(tmp);
     }
 
-    ActiveRunwayThreshold rt = AreaAcc.getAirport().tryGetRunwayThreshold(c.getThresholdName());
+    ActiveRunwayThreshold rt = Context.getArea().getAirport().tryGetRunwayThreshold(c.getThresholdName());
     ApproachInfo ai = ApproachInfo.create(rt, c.getType(), plane.getReader().getType().category, plane.getReader().getCoordinate());
     assert ai.status == ApproachInfo.Status.ok : "Error to obtain approach.";
 
@@ -51,7 +51,7 @@ public class ClearedToApproachApplication extends CommandApplication<ClearedToAp
   protected PlaneRejection checkCommandSanity(Airplane plane, ClearedToApproachCommand c) {
     PlaneRejection ret;
 
-    ActiveRunwayThreshold rt = AreaAcc.getAirport().tryGetRunwayThreshold(c.getThresholdName());
+    ActiveRunwayThreshold rt = Context.getArea().getAirport().tryGetRunwayThreshold(c.getThresholdName());
     if (rt == null) {
       ret = new PlaneRejection(c,
           "Cannot be cleared to approach. There is no runway designated as " + c.getThresholdName());
@@ -142,10 +142,9 @@ class ApproachInfo {
 
     return new ApproachInfo(Status.noApproachForPlaneLocation);
   }
-
-  public final Status status;
-  public final ApproachEntry entry;
   public final Approach approach;
+  public final ApproachEntry entry;
+  public final Status status;
 
   private ApproachInfo(ApproachEntry entry, Approach approach) {
     this.status = Status.ok;

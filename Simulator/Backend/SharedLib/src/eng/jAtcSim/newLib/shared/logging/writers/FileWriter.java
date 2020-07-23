@@ -11,9 +11,9 @@ import java.nio.file.Paths;
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
 public class FileWriter implements ILogWriter {
-  private final String fileName;
   private final boolean autoFlush;
   private BufferedWriter bw = null;
+  private final String fileName;
 
   public FileWriter(String fileName, boolean autoFlush) {
     EAssert.isNotNull(fileName, "Value of {fileName} cannot not be null.");
@@ -53,7 +53,7 @@ public class FileWriter implements ILogWriter {
   private String getFullFileName() {
     Path ret;
     if (Paths.get(this.fileName).isAbsolute() == false) {
-      Path parent = Paths.get(Context.getShared().getLogPath());
+      Path parent = Context.getApp().getLogPath();
       ret = parent.resolve(this.fileName);
     } else
       ret = Paths.get(this.fileName);

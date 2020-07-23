@@ -9,6 +9,7 @@ import eng.eSystem.geo.Headings;
 import eng.eSystem.utilites.ConversionUtils;
 import eng.eSystem.geo.Coordinate;
 import eng.jAtcSim.newLib.airplanes.IAirplane;
+import eng.jAtcSim.newLib.airplanes.contextLocal.Context;
 import eng.jAtcSim.newLib.airplanes.internal.InternalAcc;
 import eng.jAtcSim.newLib.area.context.AreaAcc;
 import eng.jAtcSim.newLib.area.Navaid;
@@ -43,7 +44,7 @@ public class AfterCommandList {
     boolean ret = false;
     if (item.antecedent instanceof AfterDistanceCommand) {
       AfterNavaidCommand anc = (AfterNavaidCommand) item.antecedent;
-      Navaid navaid = AreaAcc.getNavaids().get(anc.getNavaidName());
+      Navaid navaid = Context.getArea().getNavaids().get(anc.getNavaidName());
       if (navaid.getCoordinate().equals(coordinate)) {
         if (item.consequent instanceof ChangeHeadingCommand ||
             item.consequent instanceof ProceedDirectCommand ||
@@ -67,7 +68,7 @@ public class AfterCommandList {
       ret = (Math.abs(trgSpd - plane.getSha().getSpeed()) < 10);
     } else if (item.antecedent instanceof AfterNavaidCommand) {
       AfterNavaidCommand anc = (AfterNavaidCommand) item.antecedent;
-      Navaid navaid = AreaAcc.getNavaids().get(anc.getNavaidName());
+      Navaid navaid = Context.getArea().getNavaids().get(anc.getNavaidName());
       if ((navaid.getCoordinate().equals(currentTargetCoordinateOrNull) == false)) {
         // flying over some navaid, but not over current targeted by plane(pilot)
         ret = false;
@@ -81,18 +82,18 @@ public class AfterCommandList {
       }
     } else if (item.antecedent instanceof AfterHeadingCommand) {
       AfterHeadingCommand anc = (AfterHeadingCommand) item.antecedent;
-      double trgHdg = Headings.add(anc.getHeading(), AreaAcc.getAirport().getDeclination());
+      double trgHdg = Headings.add(anc.getHeading(), Context.getArea().getAirport().getDeclination());
       double diff = Headings.getDifference(plane.getSha().getHeading(), trgHdg, true);
       ret = (diff < 3);
     } else if (item.antecedent instanceof AfterDistanceCommand) {
       AfterDistanceCommand anc = (AfterDistanceCommand) item.antecedent;
-      Navaid navaid = AreaAcc.getNavaids().get(anc.getNavaidName());
+      Navaid navaid = Context.getArea().getNavaids().get(anc.getNavaidName());
       double dist = Coordinates.getDistanceInNM(plane.getCoordinate(), navaid.getCoordinate());
       double diff = Math.abs(dist - anc.getDistance());
       ret = (diff < 0.3);
     } else if (item.antecedent instanceof AfterRadialCommand) {
       AfterRadialCommand anc = (AfterRadialCommand) item.antecedent;
-      Navaid navaid = AreaAcc.getNavaids().get(anc.getNavaidName());
+      Navaid navaid = Context.getArea().getNavaids().get(anc.getNavaidName());
       double rad = Coordinates.getBearing(navaid.getCoordinate(), plane.getCoordinate());
       double diff = Headings.getDifference(rad, anc.getRadial(), true);
       ret = (diff < 3);

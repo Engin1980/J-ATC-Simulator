@@ -1,8 +1,11 @@
 package eng.jAtcSim.newLib.weather;
 
+import eng.eSystem.exceptions.ToDoException;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.weather.contextLocal.Context;
 import eng.jAtcSim.newLib.weather.decoders.MetarDecoder;
+
+import java.util.TooManyListenersException;
 
 public class WeatherManager {
   private Weather currentWeather;
@@ -47,7 +50,9 @@ public class WeatherManager {
       Weather tmp = MetarDecoder.decode(metarString);
       setWeather(tmp);
     } catch (Exception ex) {
-      Context.getShared().getSimLog().sendTextMessageForUser("Failed to decode metar. " + ex.getMessage());
+      //TODO Implement this: Implement this
+      throw new ToDoException("Implement this");
+      //Context.getShared().getSimLog().sendTextMessageForUser("Failed to decode metar. " + ex.getMessage());
     }
   }
 

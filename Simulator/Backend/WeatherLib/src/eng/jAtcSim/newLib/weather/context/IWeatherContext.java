@@ -5,5 +5,7 @@ import eng.jAtcSim.newLib.weather.WeatherManager;
 
 public interface IWeatherContext {
   WeatherManager getWeatherManager();
-  Weather getWeather();
+default  Weather getWeather(){
+  return getWeatherManager().getWeather();
+}
 }

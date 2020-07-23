@@ -4,10 +4,10 @@ import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.validation.EAssert;
+import eng.jAtcSim.newLib.atcs.contextLocal.Context;
 import eng.jAtcSim.newLib.atcs.planeResponsibility.PlaneResponsibilityManager;
 import eng.jAtcSim.newLib.atcs.planeResponsibility.SwitchRoutingRequest;
 import eng.jAtcSim.newLib.messaging.Message;
-import eng.jAtcSim.newLib.messaging.context.MessagingAcc;
 import eng.jAtcSim.newLib.messaging.Participant;
 import eng.jAtcSim.newLib.shared.*;
 import eng.jAtcSim.newLib.shared.enums.AtcType;
@@ -44,7 +44,7 @@ public abstract class ComputerAtc extends Atc {
 
   public void elapseSecond() {
 
-    IList<Message> msgs = MessagingAcc.getMessenger().getMessagesByListener(
+    IList<Message> msgs = Context.getMessaging().getMessenger().getMessagesByListener(
         Participant.createAtc(this.getAtcId()), true);
     speechDelayer.add(msgs);
 
@@ -66,6 +66,35 @@ public abstract class ComputerAtc extends Atc {
     return false;
   }
 
+  protected abstract boolean acceptsNewRouting(Callsign callsign, SwitchRoutingRequest srr);
+
+  protected abstract RequestResult canIAcceptPlane(Callsign callsign);
+
+  /**
+   * Returns target atc if plane is ready for switch.
+   *
+   * @param callsign Plane checked if ready to switch
+   * @return Target atc, or null if plane not ready to switch.
+   */
+  protected abstract AtcId getTargetAtcIfPlaneIsReadyToSwitch(Callsign callsign);
+
+  protected abstract void processMessagesFromPlane(Callsign callsign, SpeechList<IFromPlaneSpeech> spchs);
+
+  protected abstract void processNonPlaneSwitchMessageFromAtc(Message m);
+
+  protected void requestNewSwitch(Callsign callsign, AtcId targetAtcId) {
+    PlaneResponsibilityManager prm = InternalAcc.getPrm();
+    prm.forAtc().createSwitchRequest(this.getAtcId(), targetAtcId, callsign);
+    Squawk sqwk = InternalAcc.getSquawkFromCallsign(callsign);
+    Message m = new Message(
+        Participant.createAtc(this.getAtcId()),
+        Participant.createAtc(targetAtcId),
+        PlaneSwitchRequest.createFromComputer(sqwk, false));
+    sendMessage(m);
+  }
+
+  protected abstract boolean shouldBeSwitched(Callsign plane);
+
   private void acceptSwitch(Callsign callsign, AtcId targetAtcId, PlaneSwitchRequest psr) {
     PlaneResponsibilityManager prm = InternalAcc.getPrm();
     prm.forAtc().confirmSwitchRequest(callsign, this.getAtcId(), null);
@@ -76,8 +105,6 @@ public abstract class ComputerAtc extends Atc {
     sendMessage(nm);
   }
 
-  protected abstract boolean acceptsNewRouting(Callsign callsign, SwitchRoutingRequest srr);
-
   private void applySwitchHangOff(Callsign callsign) {
     PlaneResponsibilityManager prm = InternalAcc.getPrm();
     prm.forAtc().applyConfirmedSwitch(this.getAtcId(), callsign);
@@ -87,10 +114,8 @@ public abstract class ComputerAtc extends Atc {
         Participant.createAirplane(callsign),
         new SpeechList<>(
             new ContactCommand(newTargetAtc)));
-    MessagingAcc.getMessenger().send(msg);
+    Context.getMessaging().getMessenger().send(msg);
   }
-
-  protected abstract RequestResult canIAcceptPlane(Callsign callsign);
 
   /**
    * Checks for planes ready to switch and switch them.
@@ -162,18 +187,6 @@ public abstract class ComputerAtc extends Atc {
     }
   }
 
-  /**
-   * Returns target atc if plane is ready for switch.
-   *
-   * @param callsign Plane checked if ready to switch
-   * @return Target atc, or null if plane not ready to switch.
-   */
-  protected abstract AtcId getTargetAtcIfPlaneIsReadyToSwitch(Callsign callsign);
-
-  protected abstract void processMessagesFromPlane(Callsign callsign, SpeechList<IFromPlaneSpeech> spchs);
-
-  protected abstract void processNonPlaneSwitchMessageFromAtc(Message m);
-
   private void processPlaneSwitchMessage(Message m) {
     PlaneResponsibilityManager prm = InternalAcc.getPrm();
     PlaneSwitchRequest psm = m.getContent();
@@ -221,6 +234,14 @@ public abstract class ComputerAtc extends Atc {
     sendMessage(nm);
   }
 
+//  @Override
+//  protected void _save(XElement elm) {
+//  }
+//
+//  @Override
+//  protected void _load(XElement elm) {
+//  }
+
   private void repeatOldSwitchRequests() {
     PlaneResponsibilityManager prm = InternalAcc.getPrm();
     IReadOnlyList<Callsign> awaitings = prm.forAtc().getSwitchRequestsToRepeatByAtc(this.getAtcId());
@@ -233,31 +254,10 @@ public abstract class ComputerAtc extends Atc {
           Participant.createAtc(this.getAtcId()),
           Participant.createAtc(InternalAcc.getAtc(AtcType.app).getAtcId()),
           PlaneSwitchRequest.createFromComputer(sqwk, true));
-      MessagingAcc.getMessenger().send(m);
+      Context.getMessaging().getMessenger().send(m);
       super.getRecorder().write(m);
     }
   }
-
-  protected void requestNewSwitch(Callsign callsign, AtcId targetAtcId) {
-    PlaneResponsibilityManager prm = InternalAcc.getPrm();
-    prm.forAtc().createSwitchRequest(this.getAtcId(), targetAtcId, callsign);
-    Squawk sqwk = InternalAcc.getSquawkFromCallsign(callsign);
-    Message m = new Message(
-        Participant.createAtc(this.getAtcId()),
-        Participant.createAtc(targetAtcId),
-        PlaneSwitchRequest.createFromComputer(sqwk, false));
-    sendMessage(m);
-  }
-
-//  @Override
-//  protected void _save(XElement elm) {
-//  }
-//
-//  @Override
-//  protected void _load(XElement elm) {
-//  }
-
-  protected abstract boolean shouldBeSwitched(Callsign plane);
 
   private void switchConfirmedPlanesIfReady() {
     IReadOnlyList<Callsign> planes = InternalAcc.getPrm().forAtc().getConfirmedSwitchesByAtc(this.getAtcId(), true);

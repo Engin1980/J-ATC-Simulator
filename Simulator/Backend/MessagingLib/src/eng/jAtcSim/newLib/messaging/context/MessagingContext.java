@@ -1,0 +1,18 @@
+package eng.jAtcSim.newLib.messaging.context;
+
+import eng.eSystem.validation.EAssert;
+import eng.jAtcSim.newLib.messaging.Messenger;
+
+public class MessagingContext implements IMessagingContext {
+  private final Messenger messenger;
+
+  public MessagingContext(Messenger messenger) {
+    EAssert.Argument.isNotNull(messenger, "messenger");
+    this.messenger = messenger;
+  }
+
+  @Override
+  public Messenger getMessenger() {
+    return messenger;
+  }
+}

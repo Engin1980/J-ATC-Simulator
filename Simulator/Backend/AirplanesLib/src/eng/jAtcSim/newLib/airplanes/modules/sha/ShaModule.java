@@ -5,6 +5,7 @@ import eng.eSystem.geo.Headings;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplaneType.AirplaneType;
 import eng.jAtcSim.newLib.airplanes.AirplaneState;
+import eng.jAtcSim.newLib.airplanes.contextLocal.Context;
 import eng.jAtcSim.newLib.airplanes.internal.Airplane;
 import eng.jAtcSim.newLib.airplanes.modules.sha.navigators.HeadingNavigator;
 import eng.jAtcSim.newLib.airplanes.modules.sha.navigators.Navigator;
@@ -156,7 +157,7 @@ public class ShaModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
         altitude,
         planeType.lowClimbRate / 7d / 60,
         planeType.highDescendRate / 7d / 60,
-        (double) AreaAcc.getAirport().getAltitude());
+        (double) Context.getArea().getAirport().getAltitude());
 
     this.speed = new InertialValue(
         speed,
@@ -249,7 +250,7 @@ public class ShaModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
   }
 
   private void adjustAltitude(ValueRequest altitudeRequest) {
-    int airportAltitude = AreaAcc.getAirport().getAltitude();
+    int airportAltitude = Context.getArea().getAirport().getAltitude();
     if (rdr.getState().is(AirplaneState.takeOffRoll, AirplaneState.landed, AirplaneState.holdingPoint)) {
       // not adjusting altitude at this states
       this.altitude.reset(airportAltitude);

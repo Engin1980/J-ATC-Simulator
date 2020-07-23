@@ -1,7 +1,7 @@
 package eng.jAtcSim.newLib.atcs.internal;
 
+import eng.jAtcSim.newLib.atcs.contextLocal.Context;
 import eng.jAtcSim.newLib.messaging.Message;
-import eng.jAtcSim.newLib.messaging.context.MessagingAcc;
 import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.Callsign;
 
@@ -80,7 +80,7 @@ public abstract class Atc {
   }
 
   protected void sendMessage(Message msg) {
-    MessagingAcc.getMessenger().send(msg);
+    Context.getMessaging().getMessenger().send(msg);
     recorder.write(msg);
   }
 
