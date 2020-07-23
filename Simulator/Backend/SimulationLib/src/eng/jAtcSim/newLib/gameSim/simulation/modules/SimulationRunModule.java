@@ -21,6 +21,8 @@ import eng.jAtcSim.newLib.fleet.TypeAndWeight;
 import eng.jAtcSim.newLib.fleet.airliners.CompanyFleet;
 import eng.jAtcSim.newLib.fleet.generalAviation.CountryFleet;
 import eng.jAtcSim.newLib.gameSim.contextLocal.Context;
+import eng.jAtcSim.newLib.gameSim.simulation.modules.base.ISimulationModuleParent;
+import eng.jAtcSim.newLib.gameSim.simulation.modules.base.SimModule;
 import eng.jAtcSim.newLib.messaging.Participant;
 import eng.jAtcSim.newLib.mood.Mood;
 import eng.jAtcSim.newLib.shared.Callsign;

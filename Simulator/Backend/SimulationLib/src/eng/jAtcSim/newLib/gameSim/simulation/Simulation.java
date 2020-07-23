@@ -17,9 +17,8 @@ import eng.jAtcSim.newLib.gameSim.ISimulation;
 import eng.jAtcSim.newLib.gameSim.contextLocal.Context;
 import eng.jAtcSim.newLib.gameSim.game.startupInfos.ParserFormatterStartInfo;
 import eng.jAtcSim.newLib.gameSim.simulation.controllers.*;
-import eng.jAtcSim.newLib.gameSim.simulation.modules.SimulationRunModule;
-import eng.jAtcSim.newLib.gameSim.simulation.modules.ISimulationModuleParent;
-import eng.jAtcSim.newLib.gameSim.simulation.modules.SystemMessagesModule;
+import eng.jAtcSim.newLib.gameSim.simulation.modules.*;
+import eng.jAtcSim.newLib.gameSim.simulation.modules.base.ISimulationModuleParent;
 import eng.jAtcSim.newLib.messaging.IMessageContent;
 import eng.jAtcSim.newLib.messaging.Message;
 import eng.jAtcSim.newLib.messaging.Participant;
@@ -90,66 +89,68 @@ public class Simulation {
   }
 
   private static final boolean DEBUG_STYLE_TIMER = false;
-  private final AirplanesController airplanesController = new AirplanesController();
-  private final SimulationRunModule simulationRunModule;
-  private final AirproxController airproxController;
-  private final AtcProvider atcProvider;
-  private final WorldModule worldModule;
-  private final EmergencyAppearanceController emergencyAppearanceController;
-  private final IOController ioController;
+  private final AirplanesModule airplanesModule;
+  private final AtcModule atcModule;
   private boolean isElapseSecondCalculationRunning = false;
   public ISimulation isim;
-  private final MoodManager moodManager;
-  private final MrvaController mrvaController;
   private final EDayTimeRun now;
-  private final ParserFormatterStartInfo parseFormat;
-  private final StatsProvider statsProvider;
-  private final SystemMessagesModule systemMessagesProcessor;
+  private final SimulationRunModule simulationRunModule;
   private final TimerController timer;
-  private final TrafficProvider trafficProvider;
-  private final WeatherManager weatherManager;
+  private final TrafficModule trafficModule;
+  private final WorldModule worldModule;
+  private final StatsModule statsModule;
+  private final IOModule ioModule;
+  private final WeatherModule weatherModule;
 
   public Simulation(
       WorldModule simulationContext,
       SimulationSettings simulationSettings) {
     EAssert.Argument.isNotNull(simulationContext, "simulationContext");
     EAssert.Argument.isNotNull(simulationSettings, "simulationSettings");
+
     ETimeStamp simulationStartTime = simulationSettings.simulationSettings.startTime;
-    this.worldModule = simulationContext;
     this.now = new EDayTimeRun(simulationStartTime.getValue());
 
+    this.worldModule = simulationContext;
+    this.worldModule.init();
 
-    this.atcProvider = new AtcProvider(worldModule.getActiveAirport());
-    this.trafficProvider = new TrafficProvider(worldModule.getTraffic());
-    this.emergencyAppearanceController = new EmergencyAppearanceController(
-        simulationSettings.trafficSettings.emergencyPerDayProbability);
-    this.mrvaController = new MrvaController(
-        worldModule.getArea().getBorders().where(q -> q.getType() == Border.eType.mrva));
-    this.airproxController = new AirproxController();
-    this.ioController = new IOController();
-    this.statsProvider = new StatsProvider(simulationSettings.simulationSettings.statsSnapshotDistanceInMinutes);
-    this.weatherManager = new WeatherManager(simulationContext.getWeatherProvider());
-    this.moodManager = new MoodManager();
+    this.atcModule = new AtcModule(new AtcProvider(worldModule.getActiveAirport()));
+    this.atcModule.init();
 
-    this.parseFormat = simulationSettings.parserFormatterStartInfo;
+    this.trafficModule = new TrafficModule(new TrafficProvider(worldModule.getTraffic()));
+    this.trafficModule.init();
+
+    this.airplanesModule = new AirplanesModule(
+        new AirplanesController(),
+        new AirproxController(),
+        new MrvaController(worldModule.getArea().getBorders().where(q -> q.getType() == Border.eType.mrva)),
+        new EmergencyAppearanceController(simulationSettings.trafficSettings.emergencyPerDayProbability),
+        new MoodManager()
+    );
+    this.airplanesModule.init();
+
+    this.statsModule = new StatsModule(new StatsProvider(simulationSettings.simulationSettings.statsSnapshotDistanceInMinutes));
+    this.statsModule.init();
+
+    this.ioModule = new IOModule(
+        new IOController(),
+        simulationSettings.parserFormatterStartInfo,
+        new SystemMessagesModule(this.new SimulationModuleParent())
+    );
+    this.ioModule.init();
+
+    this.weatherModule = new WeatherModule(new WeatherManager(simulationContext.getWeatherProvider()));
+    this.weatherModule.init();
 
     this.simulationRunModule = new SimulationRunModule(
         this.new SimulationModuleParent(),
         simulationSettings.trafficSettings.trafficDelayStepProbability,
         simulationSettings.trafficSettings.trafficDelayStep,
         simulationSettings.trafficSettings.useExtendedCallsigns);
-    this.systemMessagesProcessor = new SystemMessagesModule(this.new SimulationModuleParent());
 
     this.timer = new TimerController(simulationSettings.simulationSettings.secondLengthInMs, this::timerTicked);
 
     initializeContexts();
-  }
-
-  public void init() {
-    this.weatherManager.init();
-    this.atcProvider.init();
-    this.statsProvider.init();
-    this.trafficProvider.init();
   }
 
   private void elapseSecond() {

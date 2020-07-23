@@ -4,6 +4,8 @@ import eng.eSystem.collections.IList;
 import eng.eSystem.exceptions.ToDoException;
 import eng.eSystem.utilites.StringUtils;
 import eng.jAtcSim.newLib.gameSim.contextLocal.Context;
+import eng.jAtcSim.newLib.gameSim.simulation.modules.base.ISimulationModuleParent;
+import eng.jAtcSim.newLib.gameSim.simulation.modules.base.SimModule;
 import eng.jAtcSim.newLib.messaging.IMessageContent;
 import eng.jAtcSim.newLib.messaging.Message;
 import eng.jAtcSim.newLib.messaging.Participant;

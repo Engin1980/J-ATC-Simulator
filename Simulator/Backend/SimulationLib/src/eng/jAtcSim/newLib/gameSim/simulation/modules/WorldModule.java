@@ -1,4 +1,4 @@
-package eng.jAtcSim.newLib.gameSim.simulation;
+package eng.jAtcSim.newLib.gameSim.simulation.modules;
 
 import eng.jAtcSim.newLib.airplaneType.AirplaneTypes;
 import eng.jAtcSim.newLib.area.Airport;

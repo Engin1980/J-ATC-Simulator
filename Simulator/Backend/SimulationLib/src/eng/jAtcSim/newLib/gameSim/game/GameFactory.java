@@ -6,7 +6,7 @@ import eng.jAtcSim.newLib.gameSim.contextLocal.Context;
 import eng.jAtcSim.newLib.gameSim.game.sources.*;
 import eng.jAtcSim.newLib.gameSim.game.startupInfos.GameStartupInfo;
 import eng.jAtcSim.newLib.gameSim.simulation.Simulation;
-import eng.jAtcSim.newLib.gameSim.simulation.WorldModule;
+import eng.jAtcSim.newLib.gameSim.simulation.modules.WorldModule;
 import eng.jAtcSim.newLib.gameSim.simulation.SimulationSettings;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 
