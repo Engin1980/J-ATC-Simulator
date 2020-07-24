@@ -1,5 +1,6 @@
 package eng.jAtcSim.xmlLoading;
 
+import eng.eSystem.collections.IMap;
 import eng.eSystem.utilites.StringUtils;
 import eng.eXmlSerialization.XmlSerializer;
 import eng.eXmlSerialization.XmlSettings;
@@ -9,6 +10,7 @@ import eng.eXmlSerialization.serializers.implemented.java_time.LocalTimeAttribut
 import eng.jAtcSim.app.startupSettings.StartupSettings;
 import eng.jAtcSim.contextLocal.Context;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
+import eng.jAtcSim.xmlLoading.serializers.SpeechResponsesDeserializer;
 
 import java.time.LocalTime;
 
@@ -19,6 +21,17 @@ public class XmlSerializationFactory {
   private static final boolean VERBOSE_PROGRESS_SERIALIZER = false;
   private static final boolean VERBOSE_PROGRESS_XML = false;
   private static final boolean VERBOSE_WARNING = true;
+
+  public static XmlSerializer createForSpeechResponses() {
+    XmlSettings sett = createBasicXmlSettings();
+
+    sett.getMeta().forClass(IMap.class).setRule(
+        new XmlRule(null, null).with(new SpeechResponsesDeserializer())
+    );
+
+    XmlSerializer ser = new XmlSerializer(sett);
+    return ser;
+  }
 
   public static XmlSerializer createForStartupSettings() {
     XmlSettings sett = createBasicXmlSettings();

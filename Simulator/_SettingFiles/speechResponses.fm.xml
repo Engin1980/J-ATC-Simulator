@@ -52,7 +52,7 @@
     <sentence kind="clear">resume own speed</sentence>
     <sentence kind="clear">speed at your discretion</sentence>
   </response>
-  <response type="SetAltitudeRestriction">
+  <response type="AltitudeRestrictionCommand">
     <sentence kind="atLeast">{cmd:altitude} at least</sentence>
     <sentence kind="atMost">{cmd:altitude} at most</sentence>
     <sentence kind="exactly">{cmd:altitude} exactly</sentence>
@@ -150,7 +150,7 @@
     <sentence kind="windGustBeforeTouchdown">Missed approach due to weather</sentence>
     <sentence kind="atcDecision">Missed approach ordered by ATC</sentence>
   </response>
-  <response type="ReportDivertTime">
+  <response type="ReportDivertTimeCommand">
     <sentence>N/A</sentence>
   </response>
   <response type="DivertCommand">

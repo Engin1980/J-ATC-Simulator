@@ -1,5 +1,7 @@
 package eng.jAtcSim;
 
+import eng.eSystem.collections.IList;
+import eng.eSystem.collections.IMap;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.exceptions.ERuntimeException;
@@ -14,14 +16,21 @@ import eng.jAtcSim.app.startupSettings.StartupSettings;
 import eng.jAtcSim.contextLocal.Context;
 import eng.jAtcSim.frmPacks.Pack;
 import eng.jAtcSim.frmPacks.shared.FrmLog;
-import eng.jAtcSim.newLib.gameSim.game.GameFactory;
 import eng.jAtcSim.newLib.gameSim.IGame;
+import eng.jAtcSim.newLib.gameSim.game.GameFactory;
 import eng.jAtcSim.newLib.gameSim.game.startupInfos.*;
 import eng.jAtcSim.newLib.shared.ContextManager;
 import eng.jAtcSim.newLib.shared.context.AppAcc;
 import eng.jAtcSim.newLib.shared.context.IAppAcc;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 import eng.jAtcSim.newLib.shared.time.ETimeStamp;
+import eng.jAtcSim.newLib.textProcessing.implemented.atcFormatter.AtcFormatter;
+import eng.jAtcSim.newLib.textProcessing.implemented.atcParser.AtcParser;
+import eng.jAtcSim.newLib.textProcessing.implemented.dynamicPlaneFormatter.DynamicPlaneFormatter;
+import eng.jAtcSim.newLib.textProcessing.implemented.dynamicPlaneFormatter.types.Sentence;
+import eng.jAtcSim.newLib.textProcessing.implemented.planeParser.PlaneParser;
+import eng.jAtcSim.newLib.textProcessing.implemented.systemFormatter.SystemFormatter;
+import eng.jAtcSim.newLib.textProcessing.implemented.systemParser.SystemParser;
 import eng.jAtcSim.newLib.traffic.ITrafficModel;
 import eng.jAtcSim.newLib.traffic.models.SimpleGenericTrafficModel;
 import eng.jAtcSim.newLib.weather.Weather;
@@ -198,7 +207,6 @@ public class JAtcSim {
         gsi.trafficSettings.trafficDelayStep = 0;
       }
 
-
       gsi.companyFleetsXmlFile = startupSettings.files.companiesFleetsXmlFile;
       gsi.generalAviationFleetsXmlFile = startupSettings.files.generalAviationFleetsXmlFile;
       gsi.planesXmlFile = startupSettings.files.planesXmlFile;
@@ -231,6 +239,28 @@ public class JAtcSim {
         default:
           throw new EEnumValueUnsupportedException(startupSettings.weather.type);
       }
+
+      IMap<Class<?>, IList<Sentence>> speechResponses;
+      try {
+        XmlSerializer ser = XmlSerializationFactory.createForSpeechResponses();
+        speechResponses = XmlSerialization.loadFromFile(ser, appSettings.speechFormatterFile.toString(), IMap.class);
+      } catch (EApplicationException ex) {
+        throw new EApplicationException(
+            sf("Unable to load speech responses from xml file '%s'.", appSettings.speechFormatterFile), ex);
+      }
+      //TODO do somehow configurable
+      gsi.parserFormatterStartInfo = new ParserFormatterStartInfo(
+          new ParserFormatterStartInfo.Parsers(
+              new PlaneParser(),
+              new AtcParser(),
+              new SystemParser()
+          ),
+          new ParserFormatterStartInfo.Formatters<>(
+              new DynamicPlaneFormatter(speechResponses),
+              new AtcFormatter(),
+              new SystemFormatter()
+          )
+      );
 
 
       IGame g;

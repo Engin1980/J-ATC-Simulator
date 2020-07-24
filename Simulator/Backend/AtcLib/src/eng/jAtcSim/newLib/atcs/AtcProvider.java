@@ -32,9 +32,6 @@ public class AtcProvider {
     }
 
     EAssert.isTrue(activeAirport.getIcao().equals(Context.getShared().getAirportIcao()));
-    throw new ToDoException("second parameter not set");
-//    IAtcContext atcContext = new AtcContext(atcIds, null);
-//    ContextManager.setContext(IAtcContext.class, atcContext);
   }
 
   public void adviceWeatherUpdated() {
