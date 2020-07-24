@@ -88,7 +88,7 @@ public class GameFactory {
 
     try {
       appLog.write(ApplicationLog.eType.info, "Creating the simulation");
-      WorldModule simulationContext = new WorldModule(
+      SimulationStartupContext simulationContext = new SimulationStartupContext(
           areaSource.getContent(),
           areaSource.getIcao(),
           airplaneTypesSource.getContent(),
@@ -103,8 +103,6 @@ public class GameFactory {
           gsi.simulationSettings
       );
 
-
-
       simulation = new Simulation(simulationContext, simulationSettings);
       game = new Game(
           areaSource,
@@ -115,7 +113,6 @@ public class GameFactory {
           simulation
       );
       appLog.write(ApplicationLog.eType.info, "Initializing the simulation");
-      simulation.init();
     } catch (Exception ex) {
       throw new EApplicationException("Unable to create or initialize the simulation.", ex);
     }

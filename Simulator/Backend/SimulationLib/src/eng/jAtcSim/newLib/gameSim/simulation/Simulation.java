@@ -6,6 +6,7 @@ import eng.jAtcSim.newLib.area.Border;
 import eng.jAtcSim.newLib.atcs.AtcProvider;
 import eng.jAtcSim.newLib.gameSim.ISimulation;
 import eng.jAtcSim.newLib.gameSim.contextLocal.Context;
+import eng.jAtcSim.newLib.gameSim.game.SimulationStartupContext;
 import eng.jAtcSim.newLib.gameSim.simulation.controllers.AirproxController;
 import eng.jAtcSim.newLib.gameSim.simulation.controllers.EmergencyAppearanceController;
 import eng.jAtcSim.newLib.gameSim.simulation.controllers.KeyShortcutManager;
@@ -43,7 +44,7 @@ public class Simulation {
   private final WorldModule worldModule;
 
   public Simulation(
-      WorldModule simulationContext,
+      SimulationStartupContext simulationContext,
       SimulationSettings simulationSettings) {
     EAssert.Argument.isNotNull(simulationContext, "simulationContext");
     EAssert.Argument.isNotNull(simulationSettings, "simulationSettings");
@@ -51,14 +52,14 @@ public class Simulation {
     ETimeStamp simulationStartTime = simulationSettings.simulationSettings.startTime;
     this.now = new EDayTimeRun(simulationStartTime.getValue());
     SharedAcc sharedContext = new SharedAcc(
-        simulationContext.getActiveAirport().getIcao(),
-        simulationContext.getActiveAirport().getAtcTemplates().select(q -> q.toAtcId()),
+        simulationContext.activeAirport.getIcao(),
+        simulationContext.activeAirport.getAtcTemplates().select(q -> q.toAtcId()),
         this.now,
         new SimulationLog()
     );
     ContextManager.setContext(ISharedAcc.class, sharedContext);
 
-    this.worldModule = simulationContext;
+    this.worldModule = new WorldModule(this, simulationContext);
     this.worldModule.init();
 
     this.atcModule = new AtcModule(new AtcProvider(worldModule.getActiveAirport()));
@@ -92,7 +93,7 @@ public class Simulation {
     );
     this.ioModule.init();
 
-    this.weatherModule = new WeatherModule(this, new WeatherManager(simulationContext.getWeatherProvider()));
+    this.weatherModule = new WeatherModule(this, new WeatherManager(simulationContext.weatherProvider));
     this.weatherModule.init();
 
     this.timerModule = new TimerModule(simulationSettings.simulationSettings.secondLengthInMs, this::timerTicked);

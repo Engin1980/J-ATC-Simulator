@@ -1,5 +1,6 @@
 package eng.jAtcSim.newLib.gameSim.simulation.modules;
 
+import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplaneType.AirplaneTypes;
 import eng.jAtcSim.newLib.airplaneType.context.AirplaneTypeAcc;
 import eng.jAtcSim.newLib.airplaneType.context.IAirplaneTypeAcc;
@@ -9,6 +10,7 @@ import eng.jAtcSim.newLib.area.context.AreaAcc;
 import eng.jAtcSim.newLib.area.context.IAreaAcc;
 import eng.jAtcSim.newLib.fleet.airliners.AirlinesFleets;
 import eng.jAtcSim.newLib.fleet.generalAviation.GeneralAviationFleets;
+import eng.jAtcSim.newLib.gameSim.game.SimulationStartupContext;
 import eng.jAtcSim.newLib.gameSim.simulation.Simulation;
 import eng.jAtcSim.newLib.gameSim.simulation.modules.base.SimulationModule;
 import eng.jAtcSim.newLib.shared.ContextManager;
@@ -26,19 +28,27 @@ public class WorldModule extends SimulationModule {
 
   public WorldModule(
       Simulation parent,
-      Area area, String activeAirportIcao,
+      Area area, Airport activeAirport,
                      AirplaneTypes airplaneTypes,
                      AirlinesFleets airlinesFleets, GeneralAviationFleets gaFleets,
                      ITrafficModel traffic,
                      WeatherProvider weatherProvider) {
     super(parent);
+    EAssert.Argument.isTrue(area.getAirports().contains(activeAirport));
     this.area = area;
     this.airplaneTypes = airplaneTypes;
     this.airlinesFleets = airlinesFleets;
     this.gaFleets = gaFleets;
     this.traffic = traffic;
-    this.activeAirport = area.getAirports().getFirst(q -> q.getIcao().equals(activeAirportIcao));
+    this.activeAirport = activeAirport;
     this.weatherProvider = weatherProvider;
+  }
+
+  public WorldModule(Simulation parent, SimulationStartupContext simulationContext) {
+    this(parent,
+        simulationContext.area, simulationContext.activeAirport,
+        simulationContext.airplaneTypes, simulationContext.airlinesFleets, simulationContext.gaFleets,
+        simulationContext.traffic, simulationContext.weatherProvider);
   }
 
   public Area getArea() {
