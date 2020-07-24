@@ -9,7 +9,7 @@ import java.util.TooManyListenersException;
 
 public class WeatherManager {
   private Weather currentWeather;
-  private boolean newWeatherFlag;
+  private boolean newWeatherFlag; //TODO delete if not used outside of this class
   private final WeatherProvider provider;
 
   public WeatherManager(WeatherProvider provider) {

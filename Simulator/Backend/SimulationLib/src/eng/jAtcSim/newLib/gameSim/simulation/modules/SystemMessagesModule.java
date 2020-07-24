@@ -4,8 +4,8 @@ import eng.eSystem.collections.IList;
 import eng.eSystem.exceptions.ToDoException;
 import eng.eSystem.utilites.StringUtils;
 import eng.jAtcSim.newLib.gameSim.contextLocal.Context;
-import eng.jAtcSim.newLib.gameSim.simulation.modules.base.ISimulationModuleParent;
-import eng.jAtcSim.newLib.gameSim.simulation.modules.base.SimModule;
+import eng.jAtcSim.newLib.gameSim.simulation.Simulation;
+import eng.jAtcSim.newLib.gameSim.simulation.modules.base.SimulationModule;
 import eng.jAtcSim.newLib.messaging.IMessageContent;
 import eng.jAtcSim.newLib.messaging.Message;
 import eng.jAtcSim.newLib.messaging.Participant;
@@ -14,11 +14,11 @@ import eng.jAtcSim.newLib.speeches.system.user2system.*;
 
 import static eng.eSystem.utilites.FunctionShortcuts.sf;
 
-public class SystemMessagesModule extends SimModule {
+public class SystemMessagesModule extends SimulationModule {
   private static final int MAX_TICK_LENGTH_INTERVAL = 5000;
   private static final int MIN_TICK_LENGTH_INTERVAL = 100;
 
-  public SystemMessagesModule(ISimulationModuleParent parent) {
+  public SystemMessagesModule(Simulation parent) {
     super(parent);
   }
 
@@ -33,7 +33,7 @@ public class SystemMessagesModule extends SimModule {
 
   private void processDeletePlaneRequest(DeletePlaneRequest content, Participant source) {
     try {
-      parent.getSimulation().deletePlane(content.getSquawk());
+      parent.getAirplanesModule().deletePlane(content.getSquawk());
       sendMessage(source, new SystemConfirmation(content));
     } catch (Exception ex) {
       sendMessage(source, new SystemRejection(content, ex.getMessage()));
@@ -49,20 +49,20 @@ public class SystemMessagesModule extends SimModule {
   }
 
   private void processShortcutRequest(ShortcutRequest content, Participant source) {
-    if (parent.getIO().isShortcutAvailable() == false) {
+    if (parent.getIoModule().getKeyShortcutManager().isShortcutAvailable() == false) {
       sendMessage(source, new SystemRejection(content, "Shortcuts are not available in the current mode."));
       return;
     }
 
     if (content.getType() == ShortcutRequest.eType.delete
         || (content.getType() == ShortcutRequest.eType.set && StringUtils.isNullOrWhitespace(content.getValue()))) {
-      parent.getIO().shortcutDeletion(content.getKey());
+      parent.getIoModule().getKeyShortcutManager().shortcutDeletion(content.getKey());
       sendMessage(source, new SystemConfirmation(content));
     } else if (content.getType() == ShortcutRequest.eType.set) {
-      parent.getIO().shortcutSet(content.getKey(), content.getValue());
+      parent.getIoModule().getKeyShortcutManager().shortcutSet(content.getKey(), content.getValue());
       sendMessage(source, new SystemConfirmation(content));
     } else if (content.getType() == ShortcutRequest.eType.get) {
-      sendMessage(source, new ShorcutsOverviewNotification(parent.getIO().shortcutList()));
+      sendMessage(source, new ShorcutsOverviewNotification(parent.getIoModule().getKeyShortcutManager().shortcutList()));
     } else {
       throw new UnsupportedOperationException();
     }
@@ -86,7 +86,7 @@ public class SystemMessagesModule extends SimModule {
 
   private void processTickSpeedRequest(TickSpeedRequest content, Participant source) {
     if (content.getValue() == null) {
-      sendMessage(source, new CurrentTickNotification(parent.getSimulation().getTickLength(), false));
+      sendMessage(source, new CurrentTickNotification(parent.getTimerModule().getTickInterval(), false));
     } else {
       int newInterval = content.getValue();
       if (newInterval < MIN_TICK_LENGTH_INTERVAL)
@@ -96,8 +96,8 @@ public class SystemMessagesModule extends SimModule {
         sendMessage(source, new SystemRejection(content, sf("Tick-length must be lower than %d (request was %d).",
             MAX_TICK_LENGTH_INTERVAL, newInterval)));
       else {
-        parent.getSimulation().setTickLength(newInterval);
-        sendMessage(source, new CurrentTickNotification(parent.getSimulation().getTickLength(), true));
+        parent.getTimerModule().setTickInterval(newInterval);
+        sendMessage(source, new CurrentTickNotification(parent.getTimerModule().getTickInterval(), true));
       }
     }
   }

@@ -45,8 +45,7 @@ public abstract class Atc {
   public abstract void registerNewPlaneUnderControl(Callsign plane, boolean initialRegistration);
 
   public Atc(eng.jAtcSim.newLib.area.Atc template) {
-    this.atcId = new AtcId(
-        template.getName(), template.getFrequency(), template.getType());
+    this.atcId = template.toAtcId();
     this.acceptAltitude = template.getAcceptAltitude();
     this.releaseAltitude = template.getReleaseAltitude();
     this.orderedAltitude = template.getOrderedAltitude();

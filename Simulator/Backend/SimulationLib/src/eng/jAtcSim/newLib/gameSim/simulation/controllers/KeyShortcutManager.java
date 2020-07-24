@@ -5,7 +5,7 @@ import eng.eSystem.exceptions.ToDoException;
 
 import static eng.eSystem.utilites.FunctionShortcuts.*;
 
-public class IOController {
+public class KeyShortcutManager {
   public boolean isShortcutAvailable() {
     //TODO Implement this:
     throw new ToDoException("");

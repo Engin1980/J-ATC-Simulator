@@ -54,6 +54,12 @@ public class AtcProvider {
     return atcIds;
   }
 
+  public int getPlanesCountAtHoldingPoint() {
+    TowerAtc towerAtc =(TowerAtc) atcs.getFirst(q -> q.getAtcId().getType() == AtcType.twr);
+    int ret = towerAtc.getNumberOfPlanesAtHoldingPoint();
+    return ret;
+  }
+
   public AtcId getResponsibleAtc(Callsign callsign) {
     AtcId ret = prm.getResponsibleAtc(callsign);
     return ret;

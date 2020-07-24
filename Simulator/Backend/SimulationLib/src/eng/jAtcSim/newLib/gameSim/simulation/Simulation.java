@@ -1,30 +1,20 @@
 package eng.jAtcSim.newLib.gameSim.simulation;
 
-import eng.eSystem.exceptions.ToDoException;
 import eng.eSystem.validation.EAssert;
-import eng.jAtcSim.newLib.airplaneType.context.AirplaneTypeAcc;
-import eng.jAtcSim.newLib.airplaneType.context.IAirplaneTypeAcc;
 import eng.jAtcSim.newLib.airplanes.AirplanesController;
-import eng.jAtcSim.newLib.airplanes.context.AirplaneAcc;
-import eng.jAtcSim.newLib.airplanes.context.IAirplaneAcc;
 import eng.jAtcSim.newLib.area.Border;
-import eng.jAtcSim.newLib.area.context.AreaAcc;
-import eng.jAtcSim.newLib.area.context.IAreaAcc;
 import eng.jAtcSim.newLib.atcs.AtcProvider;
-import eng.jAtcSim.newLib.atcs.context.AtcAcc;
-import eng.jAtcSim.newLib.atcs.context.IAtcAcc;
 import eng.jAtcSim.newLib.gameSim.ISimulation;
 import eng.jAtcSim.newLib.gameSim.contextLocal.Context;
-import eng.jAtcSim.newLib.gameSim.game.startupInfos.ParserFormatterStartInfo;
-import eng.jAtcSim.newLib.gameSim.simulation.controllers.*;
+import eng.jAtcSim.newLib.gameSim.simulation.controllers.AirproxController;
+import eng.jAtcSim.newLib.gameSim.simulation.controllers.EmergencyAppearanceController;
+import eng.jAtcSim.newLib.gameSim.simulation.controllers.KeyShortcutManager;
+import eng.jAtcSim.newLib.gameSim.simulation.controllers.MrvaController;
 import eng.jAtcSim.newLib.gameSim.simulation.modules.*;
-import eng.jAtcSim.newLib.gameSim.simulation.modules.base.ISimulationModuleParent;
 import eng.jAtcSim.newLib.messaging.IMessageContent;
 import eng.jAtcSim.newLib.messaging.Message;
 import eng.jAtcSim.newLib.messaging.Participant;
 import eng.jAtcSim.newLib.mood.MoodManager;
-import eng.jAtcSim.newLib.mood.context.IMoodAcc;
-import eng.jAtcSim.newLib.mood.context.MoodAcc;
 import eng.jAtcSim.newLib.shared.ContextManager;
 import eng.jAtcSim.newLib.shared.context.ISharedAcc;
 import eng.jAtcSim.newLib.shared.context.SharedAcc;
@@ -33,74 +23,24 @@ import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 import eng.jAtcSim.newLib.shared.logging.SimulationLog;
 import eng.jAtcSim.newLib.shared.time.EDayTimeRun;
 import eng.jAtcSim.newLib.shared.time.ETimeStamp;
-import eng.jAtcSim.newLib.speeches.system.system2user.MetarNotification;
 import eng.jAtcSim.newLib.stats.StatsProvider;
-import eng.jAtcSim.newLib.stats.context.IStatsAcc;
-import eng.jAtcSim.newLib.stats.context.StatsAcc;
 import eng.jAtcSim.newLib.traffic.TrafficProvider;
 import eng.jAtcSim.newLib.weather.WeatherManager;
-import eng.jAtcSim.newLib.weather.context.IWeatherAcc;
-import eng.jAtcSim.newLib.weather.context.WeatherAcc;
 
 public class Simulation {
-
-  public class SimulationModuleParent implements ISimulationModuleParent {
-
-    @Override
-    public AirplanesController getAirplanesController() {
-      return Simulation.this.airplanesController;
-    }
-
-    @Override
-    public AirproxController getAirproxController() {
-      return Simulation.this.airproxController;
-    }
-
-    @Override
-    public WorldModule getContext() {
-      return Simulation.this.worldModule;
-    }
-
-    @Override
-    public EmergencyAppearanceController getEmergencyAppearanceController() {
-      return Simulation.this.emergencyAppearanceController;
-    }
-
-    @Override
-    public IOController getIO() {
-      return Simulation.this.ioController;
-    }
-
-    @Override
-    public MrvaController getMrvaController() {
-      return Simulation.this.mrvaController;
-    }
-
-    @Override
-    public SimulationController getSimulation() {
-      //TODO Implement this: How this will be implemented?
-      throw new ToDoException("How this will be implemented?");
-    }
-
-    @Override
-    public TrafficProvider getTrafficProvider() {
-      return Simulation.this.trafficProvider;
-    }
-  }
 
   private static final boolean DEBUG_STYLE_TIMER = false;
   private final AirplanesModule airplanesModule;
   private final AtcModule atcModule;
+  private final IOModule ioModule;
   private boolean isElapseSecondCalculationRunning = false;
   public ISimulation isim;
   private final EDayTimeRun now;
-  private final SimulationRunModule simulationRunModule;
-  private final TimerController timer;
-  private final TrafficModule trafficModule;
-  private final WorldModule worldModule;
   private final StatsModule statsModule;
-  private final IOModule ioModule;
+  private final TimerModule timerModule;
+  private final TrafficModule trafficModule;
   private final WeatherModule weatherModule;
+  private final WorldModule worldModule;
 
   public Simulation(
       WorldModule simulationContext,
@@ -110,6 +50,13 @@ public class Simulation {
 
     ETimeStamp simulationStartTime = simulationSettings.simulationSettings.startTime;
     this.now = new EDayTimeRun(simulationStartTime.getValue());
+    SharedAcc sharedContext = new SharedAcc(
+        simulationContext.getActiveAirport().getIcao(),
+        simulationContext.getActiveAirport().getAtcTemplates().select(q -> q.toAtcId()),
+        this.now,
+        new SimulationLog()
+    );
+    ContextManager.setContext(ISharedAcc.class, sharedContext);
 
     this.worldModule = simulationContext;
     this.worldModule.init();
@@ -117,10 +64,16 @@ public class Simulation {
     this.atcModule = new AtcModule(new AtcProvider(worldModule.getActiveAirport()));
     this.atcModule.init();
 
-    this.trafficModule = new TrafficModule(new TrafficProvider(worldModule.getTraffic()));
+    this.trafficModule = new TrafficModule(
+        this,
+        new TrafficProvider(worldModule.getTraffic()),
+        simulationSettings.trafficSettings.trafficDelayStepProbability,
+        simulationSettings.trafficSettings.trafficDelayStep,
+        simulationSettings.trafficSettings.useExtendedCallsigns);
     this.trafficModule.init();
 
     this.airplanesModule = new AirplanesModule(
+        this,
         new AirplanesController(),
         new AirproxController(),
         new MrvaController(worldModule.getArea().getBorders().where(q -> q.getType() == Border.eType.mrva)),
@@ -129,28 +82,52 @@ public class Simulation {
     );
     this.airplanesModule.init();
 
-    this.statsModule = new StatsModule(new StatsProvider(simulationSettings.simulationSettings.statsSnapshotDistanceInMinutes));
+    this.statsModule = new StatsModule(this, new StatsProvider(simulationSettings.simulationSettings.statsSnapshotDistanceInMinutes));
     this.statsModule.init();
 
     this.ioModule = new IOModule(
-        new IOController(),
+        new KeyShortcutManager(),
         simulationSettings.parserFormatterStartInfo,
-        new SystemMessagesModule(this.new SimulationModuleParent())
+        new SystemMessagesModule(this)
     );
     this.ioModule.init();
 
-    this.weatherModule = new WeatherModule(new WeatherManager(simulationContext.getWeatherProvider()));
+    this.weatherModule = new WeatherModule(this, new WeatherManager(simulationContext.getWeatherProvider()));
     this.weatherModule.init();
 
-    this.simulationRunModule = new SimulationRunModule(
-        this.new SimulationModuleParent(),
-        simulationSettings.trafficSettings.trafficDelayStepProbability,
-        simulationSettings.trafficSettings.trafficDelayStep,
-        simulationSettings.trafficSettings.useExtendedCallsigns);
+    this.timerModule = new TimerModule(simulationSettings.simulationSettings.secondLengthInMs, this::timerTicked);
+  }
 
-    this.timer = new TimerController(simulationSettings.simulationSettings.secondLengthInMs, this::timerTicked);
+  public AirplanesModule getAirplanesModule() {
+    return airplanesModule;
+  }
 
-    initializeContexts();
+  public AtcModule getAtcModule() {
+    return atcModule;
+  }
+
+  public IOModule getIoModule() {
+    return ioModule;
+  }
+
+  public StatsModule getStatsModule() {
+    return statsModule;
+  }
+
+  public TimerModule getTimerModule() {
+    return timerModule;
+  }
+
+  public TrafficModule getTrafficModule() {
+    return trafficModule;
+  }
+
+  public WeatherModule getWeatherModule() {
+    return weatherModule;
+  }
+
+  public WorldModule getWorldModule() {
+    return worldModule;
   }
 
   private void elapseSecond() {
@@ -163,32 +140,29 @@ public class Simulation {
       return;
     }
     if (DEBUG_STYLE_TIMER)
-      timer.stop();
+      this.timerModule.stop();
     isElapseSecondCalculationRunning = true;
     now.increaseSecond();
 
     // process system messages
-    systemMessagesProcessor.elapseSecond();
+    this.ioModule.elapseSecond();
 
     // airplanes stuff
-    simulationRunModule.elapseSecond();
+    this.airplanesModule.elapseSecond();
 
     // atc stuff
-    atcProvider.elapseSecond();
+    this.atcModule.elapseSecond();
 
     // stats here
+    this.statsModule.elapseSecond();
 
     // weather
-    WeatherManager weatherManager = Context.getWeather().getWeatherManager();
-    weatherManager.elapseSecond();
-    if (weatherManager.isNewWeather()) {
-      this.atcProvider.adviceWeatherUpdated();
-      sendTextMessageForUser(new MetarNotification(true));
-    }
+    this.weatherModule.elapseSecond();
 
     // finalize
+    this.statsModule.elapseSecond();
     long elapseEndMs = System.currentTimeMillis();
-    Context.getStats().getStatsProvider().registerElapseSecondDuration((int) (elapseEndMs - elapseStartMs));
+    this.statsModule.registerElapseSecondDuration((int) (elapseEndMs - elapseStartMs));
 
     isElapseSecondCalculationRunning = false;
 
@@ -196,50 +170,7 @@ public class Simulation {
 //    this.onSecondElapsed.raise();
 
     if (DEBUG_STYLE_TIMER)
-      this.timer.start();
-  }
-
-  private void initializeContexts() {
-    SharedAcc sharedContext = new SharedAcc(
-        this.worldModule.getActiveAirport().getIcao(),
-        this.atcProvider.getAtcIds(),
-        this.now,
-        new SimulationLog()
-    );
-    ContextManager.setContext(ISharedAcc.class, sharedContext);
-
-    IAirplaneTypeAcc airplaneTypeAcc = new AirplaneTypeAcc(this.worldModule.getAirplaneTypes());
-    ContextManager.setContext(IAirplaneTypeAcc.class, airplaneTypeAcc);
-
-    IAirplaneAcc airplaneContext = new AirplaneAcc(this.airplanesController);
-    ContextManager.setContext(IAirplaneAcc.class, airplaneContext);
-
-    IAreaAcc areaAcc = new AreaAcc(
-        this.worldModule.getArea(),
-        this.worldModule.getActiveAirport(),
-        () -> this.atcProvider.getRunwayConfiguration(),
-        () -> this.atcProvider.tryGetSchedulerRunwayConfiguration()
-    );
-    ContextManager.setContext(IAreaAcc.class, areaAcc);
-
-    IAtcAcc atcContext = new AtcAcc(
-        this.atcProvider.getAtcIds(),
-        callsign -> this.atcProvider.getResponsibleAtc(callsign));
-    ContextManager.setContext(IAtcAcc.class, atcContext);
-
-    IWeatherAcc weatherContext = new WeatherAcc(this.weatherManager);
-    ContextManager.setContext(IWeatherAcc.class, weatherContext);
-
-    IStatsAcc statsContext = new StatsAcc(this.statsProvider);
-    ContextManager.setContext(IStatsAcc.class, statsContext);
-
-    IMoodAcc moodContext = new MoodAcc(this.moodManager);
-    ContextManager.setContext(IMoodAcc.class, moodContext);
-
-    //TODO Implement this: Implement this
-    throw new ToDoException("Implement this");
-//    IMessagingContext messagingContext = new MessagingContext( this.messenger);
-//    ContextManager.setContext(IMessagingContext.class, messagingContext);
+      this.timerModule.start();
   }
 
   private void sendTextMessageForUser(IMessageContent content) {
@@ -250,7 +181,7 @@ public class Simulation {
     Context.getMessaging().getMessenger().send(m);
   }
 
-  private void timerTicked(TimerController sender) {
+  private void timerTicked(TimerModule sender) {
     elapseSecond();
   }
 }

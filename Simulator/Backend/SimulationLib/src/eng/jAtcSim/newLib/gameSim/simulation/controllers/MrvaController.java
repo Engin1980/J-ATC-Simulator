@@ -28,8 +28,9 @@ public class MrvaController {
     mrvaMaps.set(plane, null);
   }
 
-  public void unregisterPlane(IAirplane plane) {
-    mrvaMaps.remove(plane);
+  public void unregisterPlane(Callsign callsign) {
+    IAirplane airplane = mrvaMaps.getKeys().getFirst(q->q.getCallsign().equals(callsign));
+    mrvaMaps.remove(airplane);
   }
 
   public void evaluateMrvaFails() {

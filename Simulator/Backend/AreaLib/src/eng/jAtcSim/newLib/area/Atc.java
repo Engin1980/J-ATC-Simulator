@@ -7,6 +7,7 @@
 package eng.jAtcSim.newLib.area;
 
 import eng.eSystem.validation.EAssert;
+import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.enums.AtcType;
 
 /**
@@ -20,14 +21,14 @@ public class Atc {
     return ret;
   }
 
-  private final AtcType type;
-  private final String name;
-  private final double frequency;
   private final int acceptAltitude;
-  private final int releaseAltitude;
-  private final int orderedAltitude;
   private final Integer ctrAcceptDistance;
   private final Integer ctrNavaidAcceptDistance;
+  private final double frequency;
+  private final String name;
+  private final int orderedAltitude;
+  private final int releaseAltitude;
+  private final AtcType type;
 
   private Atc(String name, AtcType type, double frequency, int acceptAltitude, int releaseAltitude, int orderedAltitude, Integer ctrAcceptDistance, Integer ctrNavaidAcceptDistance) {
     EAssert.Argument.isNotNull(name);
@@ -78,4 +79,7 @@ public class Atc {
     return type;
   }
 
+  public AtcId toAtcId() {
+    return new AtcId(this.getName(), this.getFrequency(), this.getType());
+  }
 }
