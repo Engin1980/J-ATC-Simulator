@@ -291,7 +291,6 @@ public class SwingRadarPanel extends JPanel {
 
     ButtonBinding.init(this.extBtn);
 
-
     Tuple<JPanel, JButton[]> pnlx;
     pnlx = buildButtonBlock(
         "Cntr",
@@ -342,14 +341,14 @@ public class SwingRadarPanel extends JPanel {
         "STAR", this.displaySettings, "StarVisible"
     );
     wrpRoutes =
-        new AdjustSelectionPanelWrapper(new RoutesAdjustSelectionPanelWrapperListener(), pnlx.getB());
+        new AdjustSelectionPanelWrapper(new RoutesAdjustSelectionPanelWrapperListener(), this.sim, pnlx.getB());
     ret.add(pnlx.getA());
 
     pnlx = buildButtonBlock(
         "Apps",
         this.displaySettings, "ApproachesVisible");
     wrpApproaches =
-        new AdjustSelectionPanelWrapper(new ApproachesAdjustSelectionPanelWrapperListener(), pnlx.getB());
+        new AdjustSelectionPanelWrapper(new ApproachesAdjustSelectionPanelWrapperListener(), this.sim, pnlx.getB());
     ret.add(pnlx.getA());
 
     pnlx = buildButtonBlock(

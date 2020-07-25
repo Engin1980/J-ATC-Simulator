@@ -6,12 +6,20 @@ import eng.eXmlSerialization.XmlSerializer;
 import eng.eXmlSerialization.XmlSettings;
 import eng.eXmlSerialization.common.Log;
 import eng.eXmlSerialization.meta.XmlRule;
+import eng.eXmlSerialization.serializers.ElementSerializerWrappingAttributeSerializer;
+import eng.eXmlSerialization.serializers.implemented.java_awt.AwtFontElementSerializer;
+import eng.eXmlSerialization.serializers.implemented.java_awt.HexToAwtColorAttributeSerializer;
 import eng.eXmlSerialization.serializers.implemented.java_time.LocalTimeAttributeSerializer;
+import eng.jAtcSim.abstractRadar.global.Color;
+import eng.jAtcSim.abstractRadar.global.Font;
+import eng.jAtcSim.abstractRadar.parsing.RadarColorAttributeSerializer;
+import eng.jAtcSim.abstractRadar.parsing.RadarFontElementSerializer;
 import eng.jAtcSim.app.startupSettings.StartupSettings;
 import eng.jAtcSim.contextLocal.Context;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 import eng.jAtcSim.xmlLoading.serializers.SpeechResponsesDeserializer;
 
+import java.awt.*;
 import java.time.LocalTime;
 
 public class XmlSerializationFactory {
@@ -21,6 +29,31 @@ public class XmlSerializationFactory {
   private static final boolean VERBOSE_PROGRESS_SERIALIZER = false;
   private static final boolean VERBOSE_PROGRESS_XML = false;
   private static final boolean VERBOSE_WARNING = true;
+
+  public static XmlSerializer createForFlightStripSettings() {
+    XmlSettings sett = createBasicXmlSettings();
+    sett.getSerializers().addAsFirstForType(java.awt.Color.class, new HexToAwtColorAttributeSerializer());
+    sett.getSerializers().addAsFirstForType(java.awt.Color.class, new ElementSerializerWrappingAttributeSerializer(new HexToAwtColorAttributeSerializer()));
+    sett.getSerializers().addAsFirstForType(java.awt.Font.class, new AwtFontElementSerializer());
+    XmlSerializer ret = new XmlSerializer(sett);
+    return ret;
+  }
+
+  public static XmlSerializer createForRadarStyleSettings() {
+    XmlSettings sett = createBasicXmlSettings();
+    //sett.getSerializers().addAsFirstForType(java.awt.Color.class, new HexToAwtColorAttributeSerializer());
+    //sett.getSerializers().addAsFirstForType(java.awt.Color.class, new ElementSerializerWrappingAttributeSerializer(new HexToAwtColorAttributeSerializer()));
+    //sett.getSerializers().addAsFirstForType(java.awt.Font.class, new AwtFontElementSerializer());
+    sett.getSerializers().addAsFirstForType(Font.class, new RadarFontElementSerializer());
+    sett.getSerializers().addAsFirstForType(
+        Color.class,
+        new ElementSerializerWrappingAttributeSerializer(new RadarColorAttributeSerializer()));
+    sett.getSerializers().addAsFirstForType(
+        Color.class,
+        new RadarColorAttributeSerializer());
+    XmlSerializer ser = new XmlSerializer(sett);
+    return ser;
+  }
 
   public static XmlSerializer createForSpeechResponses() {
     XmlSettings sett = createBasicXmlSettings();

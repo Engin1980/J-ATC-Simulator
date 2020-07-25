@@ -35,7 +35,7 @@ public interface ISimulation {
 
   EDayTimeStamp getNow();
 
-  EventSimple<ISimulation> getOnRunwayChanged();
+  int registerOnRunwayChanged(IEventListenerSimple<ISimulation> action);
 
   IParseFormat getParseFormat();
 

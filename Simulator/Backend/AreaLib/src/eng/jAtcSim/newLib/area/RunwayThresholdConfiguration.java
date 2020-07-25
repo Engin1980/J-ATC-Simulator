@@ -7,12 +7,16 @@ import java.util.Objects;
 public class RunwayThresholdConfiguration {
 
   private final PlaneCategoryDefinitions categories;
-  private final ActiveRunwayThreshold threshold;
   private final boolean primary;
-  private final boolean showRoutes;
   private final boolean showApproach;
+  private final boolean showRoutes;
+  private final ActiveRunwayThreshold threshold;
 
-  public RunwayThresholdConfiguration(PlaneCategoryDefinitions categories, ActiveRunwayThreshold threshold, boolean primary, boolean showRoutes, boolean showApproach) {
+  public RunwayThresholdConfiguration(PlaneCategoryDefinitions categories,
+                                      ActiveRunwayThreshold threshold,
+                                      boolean primary,
+                                      boolean showRoutes,
+                                      boolean showApproach) {
     this.categories = categories;
     this.threshold = threshold;
     this.primary = primary;
@@ -29,6 +33,10 @@ public class RunwayThresholdConfiguration {
         Objects.equals(threshold, that.threshold);
   }
 
+  public PlaneCategoryDefinitions getCategories() {
+    return categories;
+  }
+
   public ActiveRunwayThreshold getThreshold() {
     return threshold;
   }
@@ -40,10 +48,6 @@ public class RunwayThresholdConfiguration {
 
   public boolean isForCategory(char category) {
     return this.categories.contains(category);
-  }
-
-  public PlaneCategoryDefinitions getCategories() {
-    return categories;
   }
 
   public boolean isPrimary() {

@@ -28,14 +28,14 @@
   <borderCtr color="44AAFF" width="1"/>
   <borderTma color="44AAFF" width="1"/>
   <borderMrva color="555555" width="1">
-    <font name="Courier New" size="14" style="0"/>
+    <font family="Courier New" size="14" style="0"/>
   </borderMrva>
   <borderRestricted color="FF0000" width="1">
-    <font name="Consolas" size="14" style="0" />
+    <font family="Consolas" size="14" style="0" />
   </borderRestricted>
 
   <infoLine color="FFFF00" width="4">
-    <font name="Consolas" size="14" style="0"/>
+    <font family="Consolas" size="14" style="0"/>
   </infoLine>
 
   <mapBackcolor>000000</mapBackcolor>
@@ -45,22 +45,22 @@
 
   <!-- style: 0=plain, 1=bold, 2=italic -->
   <atc color="AAAAAA">
-    <font name="Arial Unicode MT" size="14" style="1"/>
+    <font family="Arial Unicode MT" size="14" style="1"/>
   </atc>
   <plane color="00FF00">
-    <font name="Arial Unicode MT" size="14" style="0"/>
+    <font family="Arial Unicode MT" size="14" style="0"/>
   </plane>
   <system color="FFFFFF">
-    <font name="Arial Unicode MT" size="14" style="1"/>
+    <font family="Arial Unicode MT" size="14" style="1"/>
   </system>
   <time color="AAAAFF">
-    <font name="Courier CE" size="10" style="0"/>
+    <font family="Courier CE" size="10" style="0"/>
   </time>
   <callsign color="000000">
-    <font name="Arial Unicode MT" size="14" style="0"/>
+    <font family="Arial Unicode MT" size="14" style="0"/>
   </callsign>
   <navaid color="000000">
-    <font name="Arial Unicode MT" size="10" style="0"/>
+    <font family="Arial Unicode MT" size="10" style="0"/>
   </navaid>
 
   <!--

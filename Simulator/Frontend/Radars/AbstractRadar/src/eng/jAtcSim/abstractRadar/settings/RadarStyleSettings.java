@@ -5,6 +5,7 @@ import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EXmlException;
 import eng.eXmlSerialization.XmlSerializer;
+import eng.eXmlSerialization.annotations.XmlIgnored;
 import eng.jAtcSim.abstractRadar.global.Color;
 import eng.jAtcSim.abstractRadar.global.Font;
 
@@ -81,6 +82,7 @@ public class RadarStyleSettings {
 
   public static class PlaneLabelSettings {
 
+    @XmlIgnored
     private boolean visible = true;
 
     private Color color;

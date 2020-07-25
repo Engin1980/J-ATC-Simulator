@@ -18,7 +18,7 @@ public class Fonting {
   }
 
   private static java.awt.Font convert(Font font) {
-    java.awt.Font ret = new java.awt.Font(font.getName(), font.getStyle(), font.getSize());
+    java.awt.Font ret = new java.awt.Font(font.getFamily(), font.getStyle(), font.getSize());
     return ret;
   }
 

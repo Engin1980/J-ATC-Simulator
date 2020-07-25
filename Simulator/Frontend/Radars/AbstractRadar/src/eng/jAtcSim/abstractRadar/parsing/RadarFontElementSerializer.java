@@ -14,7 +14,7 @@ public class RadarFontElementSerializer extends ElementSerializer {
 
   @Override
   public boolean acceptsType(Class<?> aClass) {
-    return false;
+    return Font.class.equals(aClass);
   }
 
   @Override
@@ -33,7 +33,7 @@ public class RadarFontElementSerializer extends ElementSerializer {
   @Override
   protected void _serialize(Object o, XElement element, GenericParameterXmlRuleList genericParameterXmlRuleList) {
     Font value = (Font) o;
-    element.setAttribute(ATTR_FAMILY, value.getName());
+    element.setAttribute(ATTR_FAMILY, value.getFamily());
     element.setAttribute(ATTR_STYLE, Integer.toString(value.getStyle()));
     element.setAttribute(ATTR_SIZE, Integer.toString(value.getSize()));
   }

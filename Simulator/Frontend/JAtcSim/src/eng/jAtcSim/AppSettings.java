@@ -4,10 +4,13 @@ import eng.eSystem.eXml.XDocument;
 import eng.eSystem.eXml.XElement;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EXmlException;
+import eng.eXmlSerialization.XmlSerializer;
 import eng.eXmlSerialization.annotations.XmlIgnored;
 import eng.jAtcSim.abstractRadar.settings.RadarDisplaySettings;
 import eng.jAtcSim.frmPacks.shared.FlightStripSettings;
 import eng.jAtcSim.newLib.shared.xml.SmartXmlLoaderUtils;
+import eng.jAtcSim.xmlLoading.XmlSerialization;
+import eng.jAtcSim.xmlLoading.XmlSerializationFactory;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -217,11 +220,11 @@ public class AppSettings {
 
   public FlightStripSettings getLoadedFlightStripSettings() {
     if (flightStripSettings == null) {
+      XmlSerializer ser = XmlSerializationFactory.createForFlightStripSettings();
       try {
-        this.flightStripSettings =
-            XmlLoadHelper.loadStripSettings(this.stripSettingsFile.toString());
+        this.flightStripSettings = XmlSerialization.loadFromFile(ser, this.stripSettingsFile.toString(), FlightStripSettings.class);
       } catch (Exception ex) {
-        throw new EApplicationException("Failed to load flight-strip-settings from " + this.startupSettingsFile.toString(), ex);
+        throw new EApplicationException("Failed to load flight-strip-settings from " + this.stripSettingsFile.toString(), ex);
       }
     }
     return this.flightStripSettings;

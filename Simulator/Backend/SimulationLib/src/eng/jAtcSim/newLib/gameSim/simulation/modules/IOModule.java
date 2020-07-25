@@ -66,6 +66,7 @@ public class IOModule extends SimulationModule {
   public void init() {
     IMessagingAcc messagingContext = new MessagingAcc(messenger);
     ContextManager.setContext(IMessagingAcc.class, messagingContext);
+    this.systemMessagesModule.init();
   }
 
   public void registerMessagesListenerByReceiver(Object key, Participant messageReceiver) {

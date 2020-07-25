@@ -1,5 +1,9 @@
 package eng.jAtcSim.newLib.gameSim.simulation.modules;
 
+import eng.eSystem.collections.IList;
+import eng.eSystem.events.EventAnonymousSimple;
+import eng.eSystem.events.IEventListenerAnonymousSimple;
+import eng.eSystem.events.IEventListenerSimple;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.area.RunwayConfiguration;
 import eng.jAtcSim.newLib.atcs.AtcList;
@@ -19,6 +23,10 @@ public class AtcModule {
 
     this.userAtcId = userAtcId;
     this.atcProvider = atcProvider;
+  }
+
+  public EventAnonymousSimple getOnRunwayChanged() {
+    return atcProvider.getOnRunwayChanged();
   }
 
   public AtcId getUserAtcId() {
@@ -55,6 +63,7 @@ public class AtcModule {
         this.atcProvider.getAtcIds(),
         callsign -> this.atcProvider.getResponsibleAtc(callsign));
     ContextManager.setContext(IAtcAcc.class, atcContext);
+    this.atcProvider.init();
   }
 
   public RunwayConfiguration tryGetSchedulerRunwayConfiguration() {

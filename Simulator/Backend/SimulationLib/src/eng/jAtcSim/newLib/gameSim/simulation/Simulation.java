@@ -2,11 +2,8 @@ package eng.jAtcSim.newLib.gameSim.simulation;
 
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
-import eng.eSystem.events.EventSimple;
 import eng.eSystem.events.IEventListenerSimple;
 import eng.eSystem.exceptions.ToDoException;
-import eng.eSystem.functionalInterfaces.Action;
-import eng.eSystem.functionalInterfaces.Action1;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplanes.AirplanesController;
 import eng.jAtcSim.newLib.area.Airport;
@@ -84,11 +81,6 @@ public class Simulation {
     }
 
     @Override
-    public EventSimple<ISimulation> getOnRunwayChanged() {
-      return null;
-    }
-
-    @Override
     public IParseFormat getParseFormat() {
       return null;
     }
@@ -111,8 +103,7 @@ public class Simulation {
 
     @Override
     public IStatsProvider getStats() {
-      //TODO Implement this:
-      throw new ToDoException("");
+      return Simulation.this.getStatsModule().getStatsProvider();
     }
 
     @Override
@@ -136,6 +127,11 @@ public class Simulation {
     @Override
     public void registerMessageListenerBySender(Object key, Participant messageSender) {
       Simulation.this.getIoModule().registerMessagesListenerBySender(key, messageSender);
+    }
+
+    @Override
+    public int registerOnRunwayChanged(IEventListenerSimple<ISimulation> action) {
+      return Simulation.this.getAtcModule().getOnRunwayChanged().add(() -> action.raise(Simulation.this.isim));
     }
 
     @Override
@@ -206,8 +202,11 @@ public class Simulation {
     this.worldModule = new WorldModule(this, simulationContext);
     this.worldModule.init();
 
+    this.weatherModule = new WeatherModule(this, new WeatherManager(simulationContext.weatherProvider));
+    this.weatherModule.init();
+
     this.atcModule = new AtcModule(
-        simulationContext.activeAirport.getAtcTemplates().select(q -> q.toAtcId()).getFirst(q->q.getType() == AtcType.app),
+        simulationContext.activeAirport.getAtcTemplates().select(q -> q.toAtcId()).getFirst(q -> q.getType() == AtcType.app),
         new AtcProvider(worldModule.getActiveAirport()));
     this.atcModule.init();
 
@@ -239,9 +238,6 @@ public class Simulation {
         new SystemMessagesModule(this)
     );
     this.ioModule.init();
-
-    this.weatherModule = new WeatherModule(this, new WeatherManager(simulationContext.weatherProvider));
-    this.weatherModule.init();
 
     this.timerModule = new TimerModule(this, simulationSettings.simulationSettings.secondLengthInMs);
     this.timerModule.registerOnTickListener(this::timerTicked);

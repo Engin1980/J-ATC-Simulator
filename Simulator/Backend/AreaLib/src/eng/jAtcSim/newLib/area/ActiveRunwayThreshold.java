@@ -100,6 +100,10 @@ public class ActiveRunwayThreshold extends Parentable<ActiveRunway> {
         9);
   }
 
+  public void bind() {
+    this.approaches.forEach(q->q.setParent(this));
+  }
+
   public int getAccelerationAltitude() {
     return accelerationAltitude;
   }

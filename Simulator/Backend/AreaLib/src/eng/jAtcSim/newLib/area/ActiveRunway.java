@@ -18,6 +18,8 @@ public class ActiveRunway extends Runway<ActiveRunway, ActiveRunwayThreshold> {
   public void bind() {
     this.getThresholdA().setParent(this);
     this.getThresholdB().setParent(this);
+    this.getThresholdA().bind();
+    this.getThresholdB().bind();
   }
 
   public ActiveRunway(IReadOnlyList<ActiveRunwayThreshold> thresholds) {

@@ -30,5 +30,6 @@ public class WeatherModule extends SimulationModule {
   public void init() {
     IWeatherAcc weatherContext = new WeatherAcc(this.weatherManager);
     ContextManager.setContext(IWeatherAcc.class, weatherContext);
+    weatherManager.init();
   }
 }

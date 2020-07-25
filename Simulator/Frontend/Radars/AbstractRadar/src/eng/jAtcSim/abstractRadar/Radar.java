@@ -102,7 +102,7 @@ public class Radar {
           Global.REPEATED_SWITCH_REQUEST_SECONDS);
     }
 
-    sim.getOnRunwayChanged().add(this::sim_runwayChanged);
+    sim.registerOnRunwayChanged(this::sim_runwayChanged);
 
     this.c.getMouseEvent().add(
         (sender, e) -> Radar.this.canvas_onMouseMove((ICanvas<?>) sender, (EMouseEventArg) e));

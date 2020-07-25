@@ -2,6 +2,8 @@ package eng.jAtcSim.newLib.atcs;
 
 import eng.eSystem.collections.EDistinctList;
 import eng.eSystem.collections.IReadOnlyList;
+import eng.eSystem.events.EventAnonymousSimple;
+import eng.eSystem.events.IEventListenerAnonymousSimple;
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
 import eng.eSystem.exceptions.ToDoException;
 import eng.eSystem.validation.EAssert;
@@ -49,6 +51,11 @@ public class AtcProvider {
 
   public AtcList<AtcId> getAtcIds() {
     return atcIds;
+  }
+
+  public EventAnonymousSimple getOnRunwayChanged() {
+    TowerAtc towerAtc =(TowerAtc) atcs.getFirst(q -> q.getAtcId().getType() == AtcType.twr);
+    return towerAtc.getOnRunwayChanged();
   }
 
   public int getPlanesCountAtHoldingPoint() {

@@ -25,11 +25,10 @@ public class AdjustSelectionPanelWrapper<T> {
   private final ActionSelectionPanelWraperListener<T> lis;
   private final AdjustSelectionPanel<T> pnl;
 
-  public AdjustSelectionPanelWrapper(ActionSelectionPanelWraperListener<T> listener, JButton... buttons) {
+  public AdjustSelectionPanelWrapper(ActionSelectionPanelWraperListener<T> listener, ISimulation sim, JButton... buttons) {
     this.lis = listener;
 
-    //TODO "null" is not correct on the next line
-    Tuple<Iterable<T>, Selector<T, String>> tmp = lis.doInit(null);
+    Tuple<Iterable<T>, Selector<T, String>> tmp = lis.doInit(sim);
     this.pnl = new AdjustSelectionPanel<>(tmp.getB());
     this.pnl.setItems(tmp.getA());
 

@@ -81,6 +81,9 @@ public class Airport extends Parentable<Area> {
   }
 
   public void bind() {
+    this.daRoutes.forEach(q->q.setParent(this));
+    this.iafRoutes.forEach(q->q.setParent(this));
+    this.gaRoutes.forEach(q->q.setParent(this));
     this.inactiveRunways.forEach(q->{
       q.setParent(this);
       q.bind();

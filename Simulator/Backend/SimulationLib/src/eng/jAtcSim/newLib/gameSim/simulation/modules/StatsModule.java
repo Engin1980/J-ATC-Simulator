@@ -28,6 +28,10 @@ public class StatsModule extends SimulationModule {
     statsProvider.elapseSecond(analysedPlanes);
   }
 
+  public IStatsProvider getStatsProvider() {
+    return statsProvider.getPublicStats();
+  }
+
   public void init() {
     IStatsAcc statsContext = new StatsAcc(this.statsProvider);
     ContextManager.setContext(IStatsAcc.class, statsContext);

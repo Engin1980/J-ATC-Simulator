@@ -13,6 +13,8 @@ import eng.jAtcSim.abstractRadar.parsing.RadarColorAttributeSerializer;
 import eng.jAtcSim.abstractRadar.parsing.RadarFontElementSerializer;
 import eng.jAtcSim.abstractRadar.settings.RadarStyleSettings;
 import eng.jAtcSim.frmPacks.shared.FlightStripSettings;
+import eng.jAtcSim.xmlLoading.XmlSerialization;
+import eng.jAtcSim.xmlLoading.XmlSerializationFactory;
 
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -55,35 +57,12 @@ public class XmlLoadHelper {
   }
 
   public static RadarStyleSettings loadNewDisplaySettings(String fileName) {
-    XmlSettings sett = new XmlSettings();
-    sett.getSerializers().add(new RadarColorAttributeSerializer());
-    sett.getSerializers().add(new RadarFontElementSerializer());
-    XmlSerializer ser = new XmlSerializer(sett);
-
-
     RadarStyleSettings ret = null;
     try {
-      XDocument doc = XDocument.load(fileName);
-      ret = ser.deserialize(doc.getRoot(), RadarStyleSettings.class);
-    } catch (EXmlException e) {
+      XmlSerializer ser = XmlSerializationFactory.createForRadarStyleSettings();
+      ret = XmlSerialization.loadFromFile(ser, fileName, RadarStyleSettings.class);
+    } catch (Exception e) {
       throw new EApplicationException(sf("Unable to load radar-style-settings from '%s'.", fileName), e);
-    }
-    return ret;
-  }
-
-  public static FlightStripSettings loadStripSettings(String fileName) {
-    XmlSettings sett = new XmlSettings();
-    sett.getSerializers().add(new HexToAwtColorAttributeSerializer());
-    sett.getSerializers().add(new AwtFontElementSerializer());
-
-    XmlSerializer ser = new XmlSerializer(sett);
-
-    FlightStripSettings ret = null;
-    try {
-      XDocument doc = XDocument.load(fileName);
-      ret = ser.deserialize(doc.getRoot(), FlightStripSettings.class);
-    } catch (EXmlException e) {
-      throw new EApplicationException(sf("Unable to load flight-strip-settings from '%s'.", fileName), e);
     }
     return ret;
   }

@@ -2,6 +2,8 @@ package eng.jAtcSim.newLib.stats;
 
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
+import eng.eSystem.collections.IReadOnlyList;
+import eng.eSystem.exceptions.ToDoException;
 import eng.jAtcSim.newLib.mood.MoodResult;
 import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 import eng.jAtcSim.newLib.stats.contextLocal.Context;
@@ -9,6 +11,31 @@ import eng.jAtcSim.newLib.stats.properties.CounterProperty;
 import eng.jAtcSim.newLib.stats.recent.RecentStats;
 
 public class StatsProvider {
+
+  public class MyStatsProvider implements IStatsProvider{
+
+    @Override
+    public int getElapsedSeconds() {
+      return StatsProvider.this.elapsedSecondsCounter.getCount();
+    }
+
+    @Override
+    public IReadOnlyList<MoodResult> getFullMoodHistory() {
+      return StatsProvider.this.moodResults;
+    }
+
+    @Override
+    public RecentStats getRecentStats() {
+      return StatsProvider.this.recentStats;
+    }
+
+    @Override
+    public IReadOnlyList<Snapshot> getSnapshots(int step) {
+      //TODO Implement this: how?
+      throw new ToDoException("how?");
+    }
+  }
+
   private final IList<Collector> collectors = new EList<>();
   private final CounterProperty elapsedSecondsCounter = new CounterProperty();
   private final IList<MoodResult> moodResults = new EList<>();
@@ -40,8 +67,12 @@ public class StatsProvider {
     }
   }
 
-  public void init() {
+  public IStatsProvider getPublicStats() {
+    return null;
+  }
 
+  public void init() {
+    // intentionally blank
   }
 
   public void registerArrival() {

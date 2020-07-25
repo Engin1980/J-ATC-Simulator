@@ -1,18 +1,18 @@
 package eng.jAtcSim.abstractRadar.global;
 
 public class Font {
-  private final String name;
+  private final String family;
   private final int style;
   private final int size;
 
-  public Font(String name, int size, int style) {
-    this.name = name;
+  public Font(String family, int size, int style) {
+    this.family = family;
     this.style = style;
     this.size = size;
   }
 
-  public String getName() {
-    return name;
+  public String getFamily() {
+    return family;
   }
 
   public int getStyle() {

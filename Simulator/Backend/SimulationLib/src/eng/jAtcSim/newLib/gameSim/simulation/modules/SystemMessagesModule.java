@@ -20,6 +20,14 @@ public class SystemMessagesModule extends SimulationModule {
 
   public SystemMessagesModule(Simulation parent) {
     super(parent);
+
+  }
+
+  public void init(){
+    Context.getMessaging().getMessenger().registerListener(
+        Participant.createSystem(),
+        Participant.createAtc(parent.getAtcModule().getUserAtcId())
+        );
   }
 
   public void elapseSecond() {

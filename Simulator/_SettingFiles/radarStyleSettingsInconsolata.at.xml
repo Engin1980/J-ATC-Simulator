@@ -28,14 +28,14 @@
   <borderCtr color="44AAFF" width="1"/>
   <borderTma color="44AAFF" width="1"/>
   <borderMrva color="555555" width="1">
-    <font name="Inconsolata" size="14" style="0"/>
+    <font family="Inconsolata" size="14" style="0"/>
   </borderMrva>
   <borderRestricted color="FF0000" width="1">
-    <font name="Inconsolata" size="14" style="0" />
+    <font family="Inconsolata" size="14" style="0" />
   </borderRestricted>
 
   <infoLine color="FFFF00" width="4">
-    <font name="Inconsolata" size="14" style="0"/>
+    <font family="Inconsolata" size="14" style="0"/>
   </infoLine>
 
   <mapBackcolor>000000</mapBackcolor>
@@ -45,22 +45,22 @@
 
   <!-- style: 0=plain, 1=bold, 2=italic -->
   <atc color="AAAAAA">
-    <font name="Inconsolata" size="14" style="0"/>
+    <font family="Inconsolata" size="14" style="0"/>
   </atc>
   <plane color="00FF00">
-    <font name="Inconsolata" size="14" style="0"/>
+    <font family="Inconsolata" size="14" style="0"/>
   </plane>
   <system color="FFFFFF">
-    <font name="Inconsolata" size="14" style="0"/>
+    <font family="Inconsolata" size="14" style="0"/>
   </system>
   <time color="AAAAFF">
-    <font name="Inconsolata" size="12" style="0"/>
+    <font family="Inconsolata" size="12" style="0"/>
   </time>
   <callsign color="000000">
-    <font name="Inconsolata" size="14" style="0"/>
+    <font family="Inconsolata" size="14" style="0"/>
   </callsign>
   <navaid color="000000">
-    <font name="Inconsolata" size="12" style="0"/>
+    <font family="Inconsolata" size="12" style="0"/>
   </navaid>
 
   <!--

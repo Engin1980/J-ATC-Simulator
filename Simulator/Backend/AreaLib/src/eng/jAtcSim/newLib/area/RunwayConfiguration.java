@@ -5,16 +5,21 @@ import eng.eSystem.Tuple;
 import eng.eSystem.collections.*;
 import eng.eSystem.geo.Headings;
 import eng.eSystem.utilites.NumberUtils;
+import eng.jAtcSim.newLib.shared.PlaneCategoryDefinitions;
 
 public class RunwayConfiguration {
 
   public static RunwayConfiguration createForThresholds(IReadOnlyList<ActiveRunwayThreshold> rts) {
-    throw new UnsupportedOperationException("This must also includes somehow created crossedThresholdsSet, what is n ow in XmlModelBinder.");
-//    IList<RunwayThresholdConfiguration> lst;
-//    lst = rts.select(q -> new RunwayThresholdConfiguration(q));
-//    RunwayConfiguration ret = new RunwayConfiguration(0, 359, 0, 999, lst, lst);
-//    ret.bind();
-//    return ret;
+    IList<RunwayThresholdConfiguration> lst;
+    lst = rts.select(q -> new RunwayThresholdConfiguration(
+        PlaneCategoryDefinitions.getAll(),
+        q,
+        false,
+        true,
+        true));
+    RunwayConfiguration ret = new RunwayConfiguration(0, 359, 0, 999, lst, lst);
+    ret.bind();
+    return ret;
   }
 
   private static boolean isIntersectionBetweenRunways(ActiveRunway a, ActiveRunway b) {
