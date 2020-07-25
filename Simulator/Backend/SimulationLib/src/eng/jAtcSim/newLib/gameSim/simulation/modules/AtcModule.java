@@ -1,16 +1,28 @@
 package eng.jAtcSim.newLib.gameSim.simulation.modules;
 
+import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.area.RunwayConfiguration;
+import eng.jAtcSim.newLib.atcs.AtcList;
 import eng.jAtcSim.newLib.atcs.AtcProvider;
 import eng.jAtcSim.newLib.atcs.context.AtcAcc;
 import eng.jAtcSim.newLib.atcs.context.IAtcAcc;
+import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.ContextManager;
 
 public class AtcModule {
   private final AtcProvider atcProvider;
+  private final AtcId userAtcId;
 
-  public AtcModule(AtcProvider atcProvider) {
+  public AtcModule(AtcId userAtcId, AtcProvider atcProvider) {
+    EAssert.Argument.isNotNull(userAtcId, "userAtcId");
+    EAssert.Argument.isNotNull(atcProvider, "atcProvider");
+
+    this.userAtcId = userAtcId;
     this.atcProvider = atcProvider;
+  }
+
+  public AtcId getUserAtcId() {
+    return userAtcId;
   }
 
   public void adviceWeatherUpdated() {
@@ -21,6 +33,10 @@ public class AtcModule {
     atcProvider.elapseSecond();
   }
 
+  public AtcList<AtcId> getAtcs() {
+    return atcProvider.getAtcIds();
+  }
+
   public int getPlanesCountAtHoldingPoint() {
     int ret = atcProvider.getPlanesCountAtHoldingPoint();
     return ret;
@@ -28,6 +44,10 @@ public class AtcModule {
 
   public RunwayConfiguration getRunwayConfiguration() {
     return this.atcProvider.getRunwayConfiguration();
+  }
+
+  public AtcId getUserAtc() {
+    return this.userAtcId;
   }
 
   public void init() {

@@ -21,7 +21,6 @@ import eng.jAtcSim.abstractRadar.settings.RadarDisplaySettings;
 import eng.jAtcSim.abstractRadar.settings.RadarStyleSettings;
 import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
 import eng.jAtcSim.newLib.area.Area;
-import eng.jAtcSim.newLib.area.context.AreaAcc;
 import eng.jAtcSim.newLib.area.InitialPosition;
 import eng.jAtcSim.newLib.area.approaches.Approach;
 import eng.jAtcSim.newLib.area.routes.DARoute;
@@ -423,7 +422,7 @@ public class SwingRadarPanel extends JPanel {
         // msg for atc
         AtcType atcType = msg.startsWith("+") ? AtcType.ctr : AtcType.twr;
         msg = msg.substring(1);
-        IAtcParser parser = this.sim.getAtcParser();
+        IAtcParser parser = this.sim.getParseFormat().getAtcParser();
         IAtcSpeech speech = parser.parse(msg);
         AtcId id = sim.getAtcs().getFirst(q -> q.getType() == atcType);
         sim.sendAtcCommand(id, speech);
@@ -431,7 +430,7 @@ public class SwingRadarPanel extends JPanel {
       } else if (msg.startsWith("?")) {
         // system
         msg = msg.substring(1);
-        ISystemParser parser = sim.getSystemParser();
+        ISystemParser parser = sim.getParseFormat().getSystemParser();
         ISystemSpeech speech = parser.parse(msg);
         sim.sendSystemCommand(speech);
         ret = true;

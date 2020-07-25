@@ -8,19 +8,23 @@ package eng.jAtcSim.newLib.gameSim.simulation.modules;
 import eng.eSystem.events.EventSimple;
 import eng.eSystem.events.IEventListenerSimple;
 import eng.eSystem.exceptions.EApplicationException;
+import eng.eSystem.functionalInterfaces.Action;
+import eng.eSystem.functionalInterfaces.Action1;
 import eng.eSystem.validation.EAssert;
+import eng.jAtcSim.newLib.gameSim.ISimulation;
+import eng.jAtcSim.newLib.gameSim.simulation.Simulation;
+import eng.jAtcSim.newLib.gameSim.simulation.modules.base.SimulationModule;
 
 import java.util.TimerTask;
 
-public class TimerModule {
+public class TimerModule extends SimulationModule {
 
   private java.util.Timer tmr = null;
   private final EventSimple<TimerModule> tickEvent = new EventSimple<>(this);
   private int tickInterval;
 
-  public TimerModule(int tickInterval, IEventListenerSimple<TimerModule> listener) {
-    setTickInterval(tickInterval);
-    this.tickEvent.add(listener);
+  public TimerModule(Simulation parent, int tickInterval) {
+    super(parent);setTickInterval(tickInterval);
   }
 
   public int getTickInterval() {
@@ -56,5 +60,14 @@ public class TimerModule {
 
   public synchronized boolean isRunning() {
     return tmr != null;
+  }
+
+  public int registerOnTickListener(IEventListenerSimple<ISimulation> action){
+    EAssert.Argument.isNotNull(action, "action");
+    return this.tickEvent.add(e -> action.raise(parent.isim));
+  }
+
+  public void unregisterOnTickListener(int listenerId){
+    this.tickEvent.remove(listenerId);
   }
 }

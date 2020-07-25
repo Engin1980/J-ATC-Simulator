@@ -1,9 +1,23 @@
 package eng.jAtcSim.newLib.gameSim.simulation;
 
+import eng.eSystem.collections.IList;
+import eng.eSystem.collections.IReadOnlyList;
+import eng.eSystem.events.EventSimple;
+import eng.eSystem.events.IEventListenerSimple;
+import eng.eSystem.exceptions.ToDoException;
+import eng.eSystem.functionalInterfaces.Action;
+import eng.eSystem.functionalInterfaces.Action1;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplanes.AirplanesController;
+import eng.jAtcSim.newLib.area.Airport;
+import eng.jAtcSim.newLib.area.Area;
 import eng.jAtcSim.newLib.area.Border;
+import eng.jAtcSim.newLib.area.RunwayConfiguration;
+import eng.jAtcSim.newLib.atcs.AtcList;
 import eng.jAtcSim.newLib.atcs.AtcProvider;
+import eng.jAtcSim.newLib.gameSim.IAirplaneInfo;
+import eng.jAtcSim.newLib.gameSim.IMessage;
+import eng.jAtcSim.newLib.gameSim.IParseFormat;
 import eng.jAtcSim.newLib.gameSim.ISimulation;
 import eng.jAtcSim.newLib.gameSim.contextLocal.Context;
 import eng.jAtcSim.newLib.gameSim.game.SimulationStartupContext;
@@ -12,30 +26,160 @@ import eng.jAtcSim.newLib.gameSim.simulation.controllers.EmergencyAppearanceCont
 import eng.jAtcSim.newLib.gameSim.simulation.controllers.KeyShortcutManager;
 import eng.jAtcSim.newLib.gameSim.simulation.controllers.MrvaController;
 import eng.jAtcSim.newLib.gameSim.simulation.modules.*;
-import eng.jAtcSim.newLib.messaging.IMessageContent;
-import eng.jAtcSim.newLib.messaging.Message;
 import eng.jAtcSim.newLib.messaging.Participant;
 import eng.jAtcSim.newLib.mood.MoodManager;
+import eng.jAtcSim.newLib.shared.AtcId;
+import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.ContextManager;
+import eng.jAtcSim.newLib.shared.context.IAppAcc;
 import eng.jAtcSim.newLib.shared.context.ISharedAcc;
 import eng.jAtcSim.newLib.shared.context.SharedAcc;
 import eng.jAtcSim.newLib.shared.enums.AtcType;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 import eng.jAtcSim.newLib.shared.logging.SimulationLog;
 import eng.jAtcSim.newLib.shared.time.EDayTimeRun;
+import eng.jAtcSim.newLib.shared.time.EDayTimeStamp;
 import eng.jAtcSim.newLib.shared.time.ETimeStamp;
+import eng.jAtcSim.newLib.speeches.SpeechList;
+import eng.jAtcSim.newLib.speeches.airplane.IForPlaneSpeech;
+import eng.jAtcSim.newLib.speeches.atc.IAtcSpeech;
+import eng.jAtcSim.newLib.speeches.system.ISystemSpeech;
+import eng.jAtcSim.newLib.stats.IStatsProvider;
 import eng.jAtcSim.newLib.stats.StatsProvider;
 import eng.jAtcSim.newLib.traffic.TrafficProvider;
 import eng.jAtcSim.newLib.weather.WeatherManager;
 
 public class Simulation {
 
+  public class MySimulation implements ISimulation {
+
+    @Override
+    public Airport getAirport() {
+      return Simulation.this.getWorldModule().getActiveAirport();
+    }
+
+    @Override
+    public ApplicationLog getAppLog() {
+      return ContextManager.getContext(IAppAcc.class).getAppLog();
+    }
+
+    @Override
+    public Area getArea() {
+      return Simulation.this.getWorldModule().getArea();
+    }
+
+    @Override
+    public AtcList<AtcId> getAtcs() {
+      return Simulation.this.getAtcModule().getAtcs();
+    }
+
+    @Override
+    public IList<IMessage> getMessages(Object key) {
+      return Simulation.this.getIoModule().getMessagesByKey(key);
+    }
+
+    @Override
+    public EDayTimeStamp getNow() {
+      return Simulation.this.now.toStamp();
+    }
+
+    @Override
+    public EventSimple<ISimulation> getOnRunwayChanged() {
+      return null;
+    }
+
+    @Override
+    public IParseFormat getParseFormat() {
+      return null;
+    }
+
+    @Override
+    public IReadOnlyList<IAirplaneInfo> getPlanesToDisplay() {
+      //TODO Implement this: implemet how and where this is stored AirplaneInfos for further updates
+      throw new ToDoException("implemet how and where this is stored AirplaneInfos for further updates");
+    }
+
+    @Override
+    public RunwayConfiguration getRunwayConfigurationInUse() {
+      return Simulation.this.getAtcModule().getRunwayConfiguration();
+    }
+
+    @Override
+    public IReadOnlyList<IScheduledMovement> getScheduledMovements() {
+      return Simulation.this.getAirplanesModule().getScheduledMovements();
+    }
+
+    @Override
+    public IStatsProvider getStats() {
+      //TODO Implement this:
+      throw new ToDoException("");
+    }
+
+    @Override
+    public AtcId getUserAtcId() {
+      return Simulation.this.getAtcModule().getUserAtcId();
+    }
+
+    @Override
+    public void pauseUnpauseSim() {
+      if (Simulation.this.getTimerModule().isRunning())
+        this.stop();
+      else
+        this.start();
+    }
+
+    @Override
+    public void registerMessageListenerByReceiver(Object key, Participant messageReceiver) {
+      Simulation.this.getIoModule().registerMessagesListenerByReceiver(key, messageReceiver);
+    }
+
+    @Override
+    public void registerMessageListenerBySender(Object key, Participant messageSender) {
+      Simulation.this.getIoModule().registerMessagesListenerBySender(key, messageSender);
+    }
+
+    @Override
+    public int registerOnSecondElapsed(IEventListenerSimple<ISimulation> action) {
+      return Simulation.this.getTimerModule().registerOnTickListener(action);
+    }
+
+    @Override
+    public void sendAtcCommand(AtcId id, IAtcSpeech speech) {
+      Simulation.this.getIoModule().sendAtcCommand(id, speech);
+    }
+
+    @Override
+    public void sendPlaneCommands(Callsign callsign, SpeechList<IForPlaneSpeech> cmds) {
+      Simulation.this.getIoModule().sendPlaneCommand(callsign, cmds);
+    }
+
+    @Override
+    public void sendSystemCommand(ISystemSpeech speech) {
+      Simulation.this.getIoModule().sendSystemCommand(speech);
+    }
+
+    @Override
+    public void start() {
+      Simulation.this.getTimerModule().start();
+    }
+
+    @Override
+    public void stop() {
+      Simulation.this.getTimerModule().stop();
+    }
+
+    @Override
+    public void unregisterOnSecondElapsed(int simulationSecondListenerHandlerId) {
+      Simulation.this.getTimerModule().unregisterOnTickListener(simulationSecondListenerHandlerId);
+    }
+  }
+
   private static final boolean DEBUG_STYLE_TIMER = false;
   private final AirplanesModule airplanesModule;
   private final AtcModule atcModule;
   private final IOModule ioModule;
   private boolean isElapseSecondCalculationRunning = false;
-  public ISimulation isim;
+  public ISimulation isim = this.new MySimulation();
   private final EDayTimeRun now;
   private final StatsModule statsModule;
   private final TimerModule timerModule;
@@ -62,7 +206,9 @@ public class Simulation {
     this.worldModule = new WorldModule(this, simulationContext);
     this.worldModule.init();
 
-    this.atcModule = new AtcModule(new AtcProvider(worldModule.getActiveAirport()));
+    this.atcModule = new AtcModule(
+        simulationContext.activeAirport.getAtcTemplates().select(q -> q.toAtcId()).getFirst(q->q.getType() == AtcType.app),
+        new AtcProvider(worldModule.getActiveAirport()));
     this.atcModule.init();
 
     this.trafficModule = new TrafficModule(
@@ -87,6 +233,7 @@ public class Simulation {
     this.statsModule.init();
 
     this.ioModule = new IOModule(
+        this,
         new KeyShortcutManager(),
         simulationSettings.parserFormatterStartInfo,
         new SystemMessagesModule(this)
@@ -96,7 +243,8 @@ public class Simulation {
     this.weatherModule = new WeatherModule(this, new WeatherManager(simulationContext.weatherProvider));
     this.weatherModule.init();
 
-    this.timerModule = new TimerModule(simulationSettings.simulationSettings.secondLengthInMs, this::timerTicked);
+    this.timerModule = new TimerModule(this, simulationSettings.simulationSettings.secondLengthInMs);
+    this.timerModule.registerOnTickListener(this::timerTicked);
   }
 
   public AirplanesModule getAirplanesModule() {
@@ -174,15 +322,7 @@ public class Simulation {
       this.timerModule.start();
   }
 
-  private void sendTextMessageForUser(IMessageContent content) {
-    Message m = new Message(
-        Participant.createSystem(),
-        Participant.createAtc(Context.getAtc().getAtcList().getFirst(q -> q.getType() == AtcType.app)),
-        content);
-    Context.getMessaging().getMessenger().send(m);
-  }
-
-  private void timerTicked(TimerModule sender) {
+  private void timerTicked(ISimulation sender) {
     elapseSecond();
   }
 }

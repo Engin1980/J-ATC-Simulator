@@ -43,7 +43,7 @@ public class FlightListPanel extends JPanel {
 
     pnlContent.setBackground(new Color(50, 50, 50));
 
-    this.sim.getOnSecondElapsed().add(o -> updateList());
+    this.sim.registerOnSecondElapsed(s -> updateList());
   }
 
   public Event<FlightListPanel, Callsign> getSelectedCallsignChangedEvent() {

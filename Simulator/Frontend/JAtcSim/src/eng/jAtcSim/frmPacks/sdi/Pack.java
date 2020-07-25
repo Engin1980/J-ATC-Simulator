@@ -39,7 +39,7 @@ public class Pack extends eng.jAtcSim.frmPacks.Pack {
     this.game = game;
     this.sim = game.getSimulation();
     if (appSettings.autosave.intervalInSeconds > 0) {
-      this.sim.getOnSecondElapsed().add(this::sim_secondElapsed);
+      this.sim.registerOnSecondElapsed(this::sim_secondElapsed);
       if (java.nio.file.Files.exists(appSettings.autosave.path) == false) {
         try {
           java.nio.file.Files.createDirectories(appSettings.autosave.path);

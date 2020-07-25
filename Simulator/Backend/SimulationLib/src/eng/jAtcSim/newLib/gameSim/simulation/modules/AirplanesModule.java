@@ -12,6 +12,7 @@ import eng.jAtcSim.newLib.airplanes.context.AirplaneAcc;
 import eng.jAtcSim.newLib.airplanes.context.IAirplaneAcc;
 import eng.jAtcSim.newLib.airplanes.templates.AirplaneTemplate;
 import eng.jAtcSim.newLib.gameSim.contextLocal.Context;
+import eng.jAtcSim.newLib.gameSim.simulation.IScheduledMovement;
 import eng.jAtcSim.newLib.gameSim.simulation.Simulation;
 import eng.jAtcSim.newLib.gameSim.simulation.controllers.AirproxController;
 import eng.jAtcSim.newLib.gameSim.simulation.controllers.EmergencyAppearanceController;
@@ -25,7 +26,9 @@ import eng.jAtcSim.newLib.mood.context.MoodAcc;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.ContextManager;
 import eng.jAtcSim.newLib.shared.Squawk;
+import eng.jAtcSim.newLib.shared.context.IAppAcc;
 import eng.jAtcSim.newLib.shared.enums.AtcType;
+import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 import eng.jAtcSim.newLib.stats.AnalysedPlanes;
 import eng.jAtcSim.newLib.stats.FinishedPlaneStats;
 
@@ -101,6 +104,12 @@ public class AirplanesModule extends SimulationModule {
 
     AnalysedPlanes ret = new AnalysedPlanes(arrivals, departures, appArrivals, appDepartures, mrvaErrors, airproxErrors, planesAtHoldingPoint);
     return ret;
+  }
+
+  public IReadOnlyList<IScheduledMovement> getScheduledMovements() {
+    ContextManager.getContext(IAppAcc.class).getAppLog().write(ApplicationLog.eType.info,
+        "TODO: AirplaneModules.getScheduledMovements not implemented.");
+    return new EList<>();
   }
 
   public void init() {

@@ -3,9 +3,13 @@ package eng.jAtcSim.newLib.gameSim;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
 import eng.eSystem.events.EventSimple;
+import eng.eSystem.events.IEventListenerSimple;
+import eng.eSystem.functionalInterfaces.Action;
+import eng.eSystem.functionalInterfaces.Action1;
 import eng.jAtcSim.newLib.area.Airport;
 import eng.jAtcSim.newLib.area.Area;
 import eng.jAtcSim.newLib.area.RunwayConfiguration;
+import eng.jAtcSim.newLib.atcs.AtcList;
 import eng.jAtcSim.newLib.gameSim.simulation.IScheduledMovement;
 import eng.jAtcSim.newLib.messaging.Participant;
 import eng.jAtcSim.newLib.shared.AtcId;
@@ -17,10 +21,6 @@ import eng.jAtcSim.newLib.speeches.airplane.IForPlaneSpeech;
 import eng.jAtcSim.newLib.speeches.atc.IAtcSpeech;
 import eng.jAtcSim.newLib.speeches.system.ISystemSpeech;
 import eng.jAtcSim.newLib.stats.IStatsProvider;
-import eng.jAtcSim.newLib.textProcessing.formatting.IPlaneFormatter;
-import eng.jAtcSim.newLib.textProcessing.parsing.IAtcParser;
-import eng.jAtcSim.newLib.textProcessing.parsing.IPlaneParser;
-import eng.jAtcSim.newLib.textProcessing.parsing.ISystemParser;
 
 public interface ISimulation {
   Airport getAirport();
@@ -29,17 +29,13 @@ public interface ISimulation {
 
   Area getArea();
 
-  IAtcParser getAtcParser();
-
-  IReadOnlyList<AtcId> getAtcs();
+  AtcList<AtcId> getAtcs();
 
   IList<IMessage> getMessages(Object key);
 
   EDayTimeStamp getNow();
 
   EventSimple<ISimulation> getOnRunwayChanged();
-
-  EventSimple<ISimulation> getOnSecondElapsed();
 
   IParseFormat getParseFormat();
 
@@ -51,13 +47,31 @@ public interface ISimulation {
 
   IStatsProvider getStats();
 
-  ISystemParser getSystemParser();
+  AtcId getUserAtcId();
 
   void pauseUnpauseSim();
 
+  default void registerMessageListenerByReceiver(Object key, Callsign recieverCallsign) {
+    registerMessageListenerByReceiver(key, Participant.createAirplane(recieverCallsign));
+  }
+
+  default void registerMessageListenerByReceiver(Object key, AtcId recieverAtc) {
+    registerMessageListenerByReceiver(key, Participant.createAtc(recieverAtc));
+  }
+
   void registerMessageListenerByReceiver(Object key, Participant messageReceiver);
 
+  default void registerMessageListenerBySender(Object key, Callsign senderCallsign) {
+    registerMessageListenerByReceiver(key, Participant.createAirplane(senderCallsign));
+  }
+
+  default void registerMessageListenerBySender(Object key, AtcId senderAtc) {
+    registerMessageListenerByReceiver(key, Participant.createAtc(senderAtc));
+  }
+
   void registerMessageListenerBySender(Object key, Participant messageSender);
+
+  int registerOnSecondElapsed(IEventListenerSimple<ISimulation> action);
 
   void sendAtcCommand(AtcId id, IAtcSpeech speech);
 
@@ -68,4 +82,6 @@ public interface ISimulation {
   void start();
 
   void stop();
+
+  void unregisterOnSecondElapsed(int simulationSecondListenerHandlerId);
 }

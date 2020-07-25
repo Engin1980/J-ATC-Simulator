@@ -62,7 +62,8 @@ public class Radar {
   private boolean switchFlagTrue = false;
 
   public Radar(ICanvas<?> canvas, InitialPosition initialPosition,
-               ISimulation sim, Area area,
+               ISimulation sim,
+               Area area,
                RadarStyleSettings styleSettings,
                RadarDisplaySettings displaySettings,
                RadarBehaviorSettings behaviorSettings) {
@@ -83,9 +84,7 @@ public class Radar {
     this.simulation = sim;
     this.area = area;
     this.simulation.registerMessageListenerByReceiver(this,
-        Participant.createAtc(
-            this.simulation.getAtcs().getFirst(q -> q.getType() == AtcType.app)
-        ));
+        this.simulation.getUserAtcId());
 
     buildLocalNavaidList();
     buildDrawnRoutesList();
@@ -210,11 +209,11 @@ public class Radar {
     this.planeRedrawCounter = new Counter(planeRepositionInterval);
     this.radarRedrawCounter = new Counter(redrawInterval);
     // listen to simulation seconds for redraw
-    this.simulationSecondListenerHandler = this.simulation.getOnSecondElapsed().add(o -> redraw(false));
+    this.simulationSecondListenerHandler = this.simulation.registerOnSecondElapsed((s)-> redraw(false));
   }
 
   public void stop() {
-    this.simulation.getOnSecondElapsed().remove(this.simulationSecondListenerHandler);
+    this.simulation.unregisterOnSecondElapsed(this.simulationSecondListenerHandler);
   }
 
   public void zoomIn() {

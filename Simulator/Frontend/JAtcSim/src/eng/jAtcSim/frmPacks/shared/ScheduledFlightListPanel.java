@@ -37,7 +37,7 @@ public class ScheduledFlightListPanel extends JPanel {
 
     pnlContent.setBackground(new Color(50, 50, 50));
 
-    this.sim.getOnSecondElapsed().add(o -> updateList());
+    this.sim.registerOnSecondElapsed(s -> updateList());
   }
 
   private void updateList() {
