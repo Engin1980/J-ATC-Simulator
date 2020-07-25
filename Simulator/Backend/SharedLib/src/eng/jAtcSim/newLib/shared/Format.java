@@ -7,7 +7,7 @@ public class Format {
   public static class Altitude {
     public static String toAlfOrFLLong(int value) {
       if (value < TRANSITION_ALTITUDE)
-        return String.format("%.0d ft", value);
+        return String.format("%d ft", value);
       else
         return String.format("FL%03d", (value / 100));
     }

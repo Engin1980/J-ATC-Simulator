@@ -48,7 +48,7 @@ public class DelayedList<T> {
   }
 
   public void add(IReadOnlyList<T> items){
-    this.add(items.toList());
+    this.add(items.toJavaList());
   }
 
   public void add(Collection<? extends T> items) {

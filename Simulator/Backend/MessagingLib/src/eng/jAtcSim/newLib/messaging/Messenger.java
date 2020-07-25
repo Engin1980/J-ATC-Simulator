@@ -55,7 +55,7 @@ public class Messenger {
 
     synchronized (this) {
       try {
-        li = listeners.getFirst(q -> q.listener == listener);
+        li = listeners.getFirst(q -> q.listener.equals(listener));
       } catch (Exception ex){
         throw new EApplicationException("Listener " + listener.toString() + " has not been registered.");
       }

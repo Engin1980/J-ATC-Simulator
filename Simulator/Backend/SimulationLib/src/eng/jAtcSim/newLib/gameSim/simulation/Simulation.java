@@ -199,14 +199,28 @@ public class Simulation {
     );
     ContextManager.setContext(ISharedAcc.class, sharedContext);
 
+    AtcId userAtcId = simulationContext.activeAirport.getAtcTemplates().select(q -> q.toAtcId()).getFirst(q -> q.getType() == AtcType.app);
+
     this.worldModule = new WorldModule(this, simulationContext);
     this.worldModule.init();
 
     this.weatherModule = new WeatherModule(this, new WeatherManager(simulationContext.weatherProvider));
     this.weatherModule.init();
 
+    this.ioModule = new IOModule(
+        this,
+        userAtcId,
+        new KeyShortcutManager(),
+        simulationSettings.parserFormatterStartInfo,
+        new SystemMessagesModule(this, userAtcId)
+    );
+    this.ioModule.init();
+
+    this.statsModule = new StatsModule(this, new StatsProvider(simulationSettings.simulationSettings.statsSnapshotDistanceInMinutes));
+    this.statsModule.init();
+
     this.atcModule = new AtcModule(
-        simulationContext.activeAirport.getAtcTemplates().select(q -> q.toAtcId()).getFirst(q -> q.getType() == AtcType.app),
+        userAtcId,
         new AtcProvider(worldModule.getActiveAirport()));
     this.atcModule.init();
 
@@ -228,16 +242,7 @@ public class Simulation {
     );
     this.airplanesModule.init();
 
-    this.statsModule = new StatsModule(this, new StatsProvider(simulationSettings.simulationSettings.statsSnapshotDistanceInMinutes));
-    this.statsModule.init();
 
-    this.ioModule = new IOModule(
-        this,
-        new KeyShortcutManager(),
-        simulationSettings.parserFormatterStartInfo,
-        new SystemMessagesModule(this)
-    );
-    this.ioModule.init();
 
     this.timerModule = new TimerModule(this, simulationSettings.simulationSettings.secondLengthInMs);
     this.timerModule.registerOnTickListener(this::timerTicked);

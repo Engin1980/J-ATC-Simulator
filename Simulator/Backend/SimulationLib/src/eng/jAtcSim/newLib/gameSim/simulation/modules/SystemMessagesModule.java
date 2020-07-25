@@ -9,6 +9,7 @@ import eng.jAtcSim.newLib.gameSim.simulation.modules.base.SimulationModule;
 import eng.jAtcSim.newLib.messaging.IMessageContent;
 import eng.jAtcSim.newLib.messaging.Message;
 import eng.jAtcSim.newLib.messaging.Participant;
+import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.speeches.system.system2user.*;
 import eng.jAtcSim.newLib.speeches.system.user2system.*;
 
@@ -17,17 +18,11 @@ import static eng.eSystem.utilites.FunctionShortcuts.sf;
 public class SystemMessagesModule extends SimulationModule {
   private static final int MAX_TICK_LENGTH_INTERVAL = 5000;
   private static final int MIN_TICK_LENGTH_INTERVAL = 100;
+  private final AtcId userAtcId;
 
-  public SystemMessagesModule(Simulation parent) {
+  public SystemMessagesModule(Simulation parent, AtcId userAtcId) {
     super(parent);
-
-  }
-
-  public void init(){
-    Context.getMessaging().getMessenger().registerListener(
-        Participant.createSystem(),
-        Participant.createAtc(parent.getAtcModule().getUserAtcId())
-        );
+    this.userAtcId = userAtcId;
   }
 
   public void elapseSecond() {
@@ -37,6 +32,13 @@ public class SystemMessagesModule extends SimulationModule {
     for (Message m : systemMessages) {
       processSystemMessage(m);
     }
+  }
+
+  public void init() {
+    Context.getMessaging().getMessenger().registerListener(
+        Participant.createSystem(),
+        Participant.createAtc(userAtcId)
+    );
   }
 
   private void processDeletePlaneRequest(DeletePlaneRequest content, Participant source) {
