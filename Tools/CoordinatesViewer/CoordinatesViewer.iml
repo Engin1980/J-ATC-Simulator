@@ -8,6 +8,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="eng.eSystem (jAtcSim)" level="project" />
-    <orderEntry type="library" name="eng.eXmlSerialization" level="application" />
+    <orderEntry type="library" name="eng.eXmlSerialization (jAtcSim)" level="project" />
   </component>
 </module>

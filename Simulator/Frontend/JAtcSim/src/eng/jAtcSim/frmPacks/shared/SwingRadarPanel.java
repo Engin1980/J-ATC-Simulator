@@ -111,7 +111,7 @@ public class SwingRadarPanel extends JPanel {
 
       for (ActiveRunwayThreshold runwayThreshold : sim.getRunwayConfigurationInUse().getArrivals()
           .select(q -> q.getThreshold())) {
-        tmp.add(runwayThreshold.getApproaches());
+        tmp.addMany(runwayThreshold.getApproaches());
       }
 
       ret.setA(tmp);

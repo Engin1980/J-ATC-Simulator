@@ -19,7 +19,7 @@ public class Stylist {
     private IList<Filter> inner = new EList<>();
 
     public AndFilter(Filter... filters) {
-      this.inner.add(filters);
+      this.inner.addMany(filters);
     }
 
     @Override

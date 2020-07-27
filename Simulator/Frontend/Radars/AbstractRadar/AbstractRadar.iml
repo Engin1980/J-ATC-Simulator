@@ -14,6 +14,6 @@
     <orderEntry type="module" module-name="AirplaneTypeLib" />
     <orderEntry type="module" module-name="MessagingLib" />
     <orderEntry type="module" module-name="SimulationLib" />
-    <orderEntry type="library" name="eng.eXmlSerialization" level="application" />
+    <orderEntry type="library" name="eng.eXmlSerialization (jAtcSim)" level="project" />
   </component>
 </module>
