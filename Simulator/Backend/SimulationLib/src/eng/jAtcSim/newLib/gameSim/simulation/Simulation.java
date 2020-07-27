@@ -87,8 +87,7 @@ public class Simulation {
 
     @Override
     public IReadOnlyList<IAirplaneInfo> getPlanesToDisplay() {
-      //TODO Implement this: implemet how and where this is stored AirplaneInfos for further updates
-      throw new ToDoException("implemet how and where this is stored AirplaneInfos for further updates");
+      return Simulation.this.getAirplanesModule().getPlanesForPublicAccess();
     }
 
     @Override

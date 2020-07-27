@@ -5,6 +5,7 @@ import eng.eSystem.events.EventAnonymousSimple;
 import eng.eSystem.events.IEventListenerAnonymousSimple;
 import eng.eSystem.events.IEventListenerSimple;
 import eng.eSystem.validation.EAssert;
+import eng.jAtcSim.newLib.airplanes.IAirplane;
 import eng.jAtcSim.newLib.area.RunwayConfiguration;
 import eng.jAtcSim.newLib.atcs.AtcList;
 import eng.jAtcSim.newLib.atcs.AtcProvider;
@@ -27,6 +28,10 @@ public class AtcModule {
 
   public EventAnonymousSimple getOnRunwayChanged() {
     return atcProvider.getOnRunwayChanged();
+  }
+
+  public AtcId getResponsibleAtc(IAirplane airplane) {
+    return atcProvider.getResponsibleAtc(airplane.getCallsign());
   }
 
   public AtcId getUserAtcId() {

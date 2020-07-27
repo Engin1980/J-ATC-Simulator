@@ -3,14 +3,21 @@ package eng.jAtcSim.newLib.gameSim.simulation.modules;
 import eng.eSystem.collections.EList;
 import eng.eSystem.collections.IList;
 import eng.eSystem.collections.IReadOnlyList;
+import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Coordinates;
 import eng.eSystem.validation.EAssert;
+import eng.jAtcSim.newLib.airplaneType.AirplaneType;
 import eng.jAtcSim.newLib.airplanes.AirplanesController;
 import eng.jAtcSim.newLib.airplanes.AirproxType;
 import eng.jAtcSim.newLib.airplanes.IAirplane;
 import eng.jAtcSim.newLib.airplanes.context.AirplaneAcc;
 import eng.jAtcSim.newLib.airplanes.context.IAirplaneAcc;
 import eng.jAtcSim.newLib.airplanes.templates.AirplaneTemplate;
+import eng.jAtcSim.newLib.airplanes.templates.ArrivalAirplaneTemplate;
+import eng.jAtcSim.newLib.area.ActiveRunwayThreshold;
+import eng.jAtcSim.newLib.area.Navaid;
+import eng.jAtcSim.newLib.area.routes.DARoute;
+import eng.jAtcSim.newLib.gameSim.IAirplaneInfo;
 import eng.jAtcSim.newLib.gameSim.contextLocal.Context;
 import eng.jAtcSim.newLib.gameSim.simulation.IScheduledMovement;
 import eng.jAtcSim.newLib.gameSim.simulation.Simulation;
@@ -23,11 +30,13 @@ import eng.jAtcSim.newLib.mood.Mood;
 import eng.jAtcSim.newLib.mood.MoodManager;
 import eng.jAtcSim.newLib.mood.context.IMoodAcc;
 import eng.jAtcSim.newLib.mood.context.MoodAcc;
+import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.ContextManager;
 import eng.jAtcSim.newLib.shared.Squawk;
 import eng.jAtcSim.newLib.shared.context.IAppAcc;
 import eng.jAtcSim.newLib.shared.enums.AtcType;
+import eng.jAtcSim.newLib.shared.enums.DepartureArrival;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 import eng.jAtcSim.newLib.stats.AnalysedPlanes;
 import eng.jAtcSim.newLib.stats.FinishedPlaneStats;
@@ -38,6 +47,8 @@ public class AirplanesModule extends SimulationModule {
   private final MrvaController mrvaController;
   private final AirplanesController airplanesController;
   private final MoodManager moodManager;
+  private final IList<IAirplaneInfo> planes4public = new EList<>();
+  private final IList<AirplaneTemplate> planesPrepared = new EList<>();
 
   public AirplanesModule(Simulation parent, AirplanesController airplanesController, AirproxController airproxController, MrvaController mrvaController, EmergencyAppearanceController emergencyAppearanceController, MoodManager moodManager) {
     super(parent);
@@ -55,7 +66,7 @@ public class AirplanesModule extends SimulationModule {
   }
 
   public void addNewPreparedPlanes(IList<AirplaneTemplate> newTemplates) {
-    this.airplanesController.addNewPreparedPlanes(newTemplates);
+    this.planesPrepared.add(newTemplates);
   }
 
   public void deletePlane(Squawk squawk) {
@@ -64,8 +75,82 @@ public class AirplanesModule extends SimulationModule {
     this.removePlane(callsign);
   }
 
+  public AirproxType getAirproxForPlane(IAirplane airplane) {
+    return this.airproxController.getAirproxForPlane(airplane);
+  }
+
+  public boolean isMrvaErrorForPlane(IAirplane airplane) {
+    return this.mrvaController.isMrvaErrorForPlane(airplane);
+  }
+
+  private void insertNewPlanes() {
+    int index = 0;
+    while (index < planesPrepared.count()) {
+      AirplaneTemplate at = planesPrepared.get(index);
+      if (at instanceof ArrivalAirplaneTemplate && isInSeparationConflictWithTraffic((ArrivalAirplaneTemplate) at))
+        index++;
+      else {
+        IAirplane tmp = registerAirplaneTemplate(at);
+        addAirplaneInfo(tmp);
+        planesPrepared.removeAt(index);
+      }
+    }
+  }
+
+  private void addAirplaneInfo(IAirplane tmp) {
+    IAirplaneInfo airplaneInfo = new AirplaneInfo(tmp, this.parent);
+    this.planes4public.add(airplaneInfo);
+  }
+
+  private Squawk generateAvailableSquawk() {
+    IList<Squawk> squawks = this.airplanesController.getPlanes().select(q -> q.getSqwk());
+    Squawk ret;
+    do {
+      ret = Squawk.generate();
+      if (squawks.contains(ret)) ret = null;
+    } while (ret == null);
+    return ret;
+  }
+
+  private IAirplane registerAirplaneTemplate(AirplaneTemplate at) {
+    Squawk sqwk = generateAvailableSquawk();
+    return this.airplanesController.registerPlane(at, sqwk);
+  }
+
+  private boolean isInSeparationConflictWithTraffic(ArrivalAirplaneTemplate template) {
+    Integer checkedAtEntryPointSeconds = null;
+
+    boolean ret = false;
+
+    for (IAirplane rdr : this.airplanesController.getPlanes()) {
+      if (rdr.isDeparture())
+        continue;
+      if (rdr.getAtc().getTunedAtc().getType() != AtcType.ctr)
+        continue;
+
+      if (template.getEntryPoint().getNavaid().equals(rdr.getRouting().getEntryExitPoint()) == false)
+        continue;
+
+      double dist = Coordinates.getDistanceInNM(
+          rdr.getRouting().getEntryExitPoint().getCoordinate(), rdr.getCoordinate());
+      int atEntryPointSeconds = (int) (dist / rdr.getSha().getSpeed() * 3600);
+
+      if (checkedAtEntryPointSeconds == null) {
+        dist = Coordinates.getDistanceInNM(
+            template.getEntryPoint().getNavaid().getCoordinate(), template.getCoordinate());
+        checkedAtEntryPointSeconds = (int) (dist / template.getSpeed() * 3600);
+      }
+
+      if (Math.abs(atEntryPointSeconds - checkedAtEntryPointSeconds) < 120) {
+        ret = true;
+        break;
+      }
+    }
+    return ret;
+  }
+
   public void elapseSecond() {
-    //insertNewPlanes();
+    insertNewPlanes();
     removeOldPlanes();
     generateEmergencyIfRequired();
     updatePlanes();
@@ -74,6 +159,10 @@ public class AirplanesModule extends SimulationModule {
 
   public IReadOnlyList<IAirplane> getPlanes() {
     return this.airplanesController.getPlanes();
+  }
+
+  public IReadOnlyList<IAirplaneInfo> getPlanesForPublicAccess() {
+    return this.planes4public;
   }
 
   public AnalysedPlanes getPlanesForStats() {
@@ -154,6 +243,8 @@ public class AirplanesModule extends SimulationModule {
     this.airplanesController.unregisterPlane(callsign);
     Context.getMessaging().getMessenger().unregisterListener(Participant.createAirplane(callsign));
     this.mrvaController.unregisterPlane(callsign);
+    this.planes4public.remove(q->q.callsign().equals(callsign));
+
   }
 
   private void updatePlanes() {
@@ -191,5 +282,146 @@ public class AirplanesModule extends SimulationModule {
         Context.getMood().getMoodManager().getMoodResult(airplane.getCallsign(), delayDifference)
     );
     return ret;
+  }
+}
+
+
+class AirplaneInfo implements IAirplaneInfo{
+
+  private final Simulation sim;
+  private final IAirplane airplane;
+
+  public AirplaneInfo(IAirplane airplane, Simulation sim) {
+    this.sim = sim;
+    this.airplane = airplane;
+  }
+
+
+  @Override
+  public int altitude() {
+    return airplane.getSha().getAltitude();
+  }
+
+  @Override
+  public Callsign callsign() {
+    return airplane.getCallsign();
+  }
+
+  @Override
+  public Coordinate coordinate() {
+    return airplane.getCoordinate();
+  }
+
+  @Override
+  public Navaid entryExitPoint() {
+    return airplane.getRouting().getEntryExitPoint();
+  }
+
+  @Override
+  public AirproxType getAirprox() {
+    return this.sim.getAirplanesModule().getAirproxForPlane(airplane);
+  }
+
+  @Override
+  public DepartureArrival getArriDep() {
+    return airplane.isDeparture() ? DepartureArrival.departure : DepartureArrival.arrival;
+  }
+
+  @Override
+  public DARoute getAssignedRoute() {
+    return airplane.getRouting().getAssignedRoute();
+  }
+
+  @Override
+  public ActiveRunwayThreshold getExpectedRunwayThreshold() {
+    return airplane.getRouting().getAssignedRunwayThreshold();
+  }
+
+  @Override
+  public boolean hasRadarContact() {
+    return airplane.getAtc().hasRadarContact();
+  }
+
+  @Override
+  public int heading() {
+    return airplane.getSha().getHeading();
+  }
+
+  @Override
+  public int ias() {
+    return airplane.getSha().getSpeed();
+  }
+
+  @Override
+  public boolean isDeparture() {
+    return airplane.isDeparture();
+  }
+
+  @Override
+  public boolean isEmergency() {
+    return airplane.isEmergency();
+  }
+
+  @Override
+  public boolean isMrvaError() {
+    return this.sim.getAirplanesModule().isMrvaErrorForPlane(this.airplane);
+  }
+
+  @Override
+  public boolean isUnderConfirmedSwitch() {
+    return false;
+  }
+
+  @Override
+  public AirplaneType planeType() {
+    return airplane.getType();
+  }
+
+  @Override
+  public AtcId responsibleAtc() {
+    return this.sim.getAtcModule().getResponsibleAtc(airplane);
+  }
+
+  @Override
+  public Squawk squawk() {
+    return airplane.getSqwk();
+  }
+
+  @Override
+  public String status() {
+    return airplane.getState().toString();
+  }
+
+  @Override
+  public int targetAltitude() {
+    return airplane.getSha().getTargetAltitude();
+  }
+
+  @Override
+  public int targetHeading() {
+    return airplane.getSha().getTargetHeading();
+  }
+
+  @Override
+  public int targetSpeed() {
+    //TODO remove this, probably useless?
+    return airplane.getSha().getSpeedRestriction().value;
+  }
+
+  @Override
+  public double tas() {
+    double m = 1 + this.altitude() / 100000d;
+    double ret = this.ias() * m;
+    return ret;
+  }
+
+  @Override
+  public AtcId tunedAtc() {
+    return airplane.getAtc().getTunedAtc();
+  }
+
+  @Override
+  public int verticalSpeed() {
+    return airplane.getSha().getVerticalSpeed();
   }
 }

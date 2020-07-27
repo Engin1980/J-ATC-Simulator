@@ -105,6 +105,10 @@ public class AirproxController {
     }
   }
 
+  public AirproxType getAirproxForPlane(IAirplane airplane) {
+    return this.airproxViolatingPlanes.tryGet(airplane.getCallsign(), AirproxType.none);
+  }
+
   public IReadOnlyMap<Callsign, AirproxType> getAirproxViolatingPlanes() {
     return airproxViolatingPlanes;
   }

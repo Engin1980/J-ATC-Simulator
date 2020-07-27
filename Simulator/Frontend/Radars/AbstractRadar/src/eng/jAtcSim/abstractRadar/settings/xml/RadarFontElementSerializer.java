@@ -1,4 +1,4 @@
-package eng.jAtcSim.abstractRadar.parsing;
+package eng.jAtcSim.abstractRadar.settings.xml;
 
 import eng.eSystem.eXml.XElement;
 import eng.eXmlSerialization.XmlException;

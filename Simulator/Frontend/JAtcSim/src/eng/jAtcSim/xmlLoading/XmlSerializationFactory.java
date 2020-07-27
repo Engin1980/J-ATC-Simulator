@@ -12,14 +12,13 @@ import eng.eXmlSerialization.serializers.implemented.java_awt.HexToAwtColorAttri
 import eng.eXmlSerialization.serializers.implemented.java_time.LocalTimeAttributeSerializer;
 import eng.jAtcSim.abstractRadar.global.Color;
 import eng.jAtcSim.abstractRadar.global.Font;
-import eng.jAtcSim.abstractRadar.parsing.RadarColorAttributeSerializer;
-import eng.jAtcSim.abstractRadar.parsing.RadarFontElementSerializer;
+import eng.jAtcSim.abstractRadar.settings.xml.RadarColorAttributeSerializer;
+import eng.jAtcSim.abstractRadar.settings.xml.RadarFontElementSerializer;
 import eng.jAtcSim.app.startupSettings.StartupSettings;
 import eng.jAtcSim.contextLocal.Context;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 import eng.jAtcSim.xmlLoading.serializers.SpeechResponsesDeserializer;
 
-import java.awt.*;
 import java.time.LocalTime;
 
 public class XmlSerializationFactory {

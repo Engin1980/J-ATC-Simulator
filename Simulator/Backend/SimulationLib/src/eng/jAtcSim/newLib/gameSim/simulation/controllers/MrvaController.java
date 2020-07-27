@@ -24,6 +24,10 @@ public class MrvaController {
     return mrvaViolatingPlanes;
   }
 
+  public boolean isMrvaErrorForPlane(IAirplane airplane) {
+    return this.mrvaViolatingPlanes.isAny(q->q.equals(airplane.getCallsign()));
+  }
+
   public void registerPlane(IAirplane plane) {
     mrvaMaps.set(plane, null);
   }

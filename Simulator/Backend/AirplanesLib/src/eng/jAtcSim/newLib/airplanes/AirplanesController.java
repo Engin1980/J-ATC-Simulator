@@ -19,15 +19,9 @@ public class AirplanesController {
   private final AirplaneList<Airplane> planes = new AirplaneList<>(
       q -> q.getReader().getCallsign(),
       q -> q.getReader().getSqwk());
-  private final IList<AirplaneTemplate> preparedPlanes = new EList<>();
   private final AirplaneList<IAirplane> publicPlanes = new AirplaneList<>(
       q -> q.getCallsign(),
       q -> q.getSqwk());
-
-  public void addNewPreparedPlanes(IList<AirplaneTemplate> airplaneTemplates) {
-    preparedPlanes.add(airplaneTemplates);
-    startNewPreparedPlanes();
-  }
 
   public void elapseSecond() {
     for (Airplane plane : planes) {
@@ -43,8 +37,18 @@ public class AirplanesController {
     return publicPlanes;
   }
 
-  public IReadOnlyList<AirplaneTemplate> getPreparedPlanes() {
-    return preparedPlanes;
+  public IAirplane registerPlane(AirplaneTemplate at, Squawk sqwk) {
+    Airplane airplane;
+    if (at instanceof DepartureAirplaneTemplate) {
+      airplane = Airplane.createDeparture((DepartureAirplaneTemplate) at, sqwk);
+    } else if (at instanceof ArrivalAirplaneTemplate) {
+      airplane = Airplane.createArrival((ArrivalAirplaneTemplate) at, sqwk);
+    } else
+      throw new EApplicationException("Unknown airplane template type " + at.getClass().getName());
+
+    planes.add(airplane);
+
+    return airplane.getReader();
   }
 
   public void throwEmergency() {
@@ -66,29 +70,9 @@ public class AirplanesController {
     throw new ToDoException();
   }
 
-  private void convertAndRegisterPlane(AirplaneTemplate at) {
-    EAssert.Argument.isNotNull(at, "at");
-    Squawk sqwk = generateAvailableSquawk();
-    Airplane airplane;
-    if (at instanceof DepartureAirplaneTemplate) {
-      airplane = Airplane.createDeparture((DepartureAirplaneTemplate) at, sqwk);
-    } else if (at instanceof ArrivalAirplaneTemplate) {
-      airplane = Airplane.createArrival((ArrivalAirplaneTemplate) at, sqwk);
-    } else
-      throw new EApplicationException("Unknown airplane template type " + at.getClass().getName());
 
-    planes.add(airplane);
-  }
 
-  private Squawk generateAvailableSquawk() {
-    IList<Squawk> squawks = this.planes.select(q -> q.getReader().getSqwk());
-    Squawk ret;
-    do {
-      ret = Squawk.generate();
-      if (squawks.contains(ret)) ret = null;
-    } while (ret == null);
-    return ret;
-  }
+
 
   private boolean isInSeparationConflictWithTraffic(ArrivalAirplaneTemplate template) {
     Integer checkedAtEntryPointSeconds = null;
@@ -121,18 +105,5 @@ public class AirplanesController {
       }
     }
     return ret;
-  }
-
-  private void startNewPreparedPlanes() {
-    int index = 0;
-    while (index < preparedPlanes.count()) {
-      AirplaneTemplate at = preparedPlanes.get(index);
-      if (at instanceof ArrivalAirplaneTemplate && isInSeparationConflictWithTraffic((ArrivalAirplaneTemplate) at))
-        index++;
-      else {
-        convertAndRegisterPlane(at);
-        preparedPlanes.removeAt(index);
-      }
-    }
   }
 }

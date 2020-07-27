@@ -43,6 +43,7 @@ public class StatsProvider {
   private final RecentStats recentStats = new RecentStats();
   private final IList<Snapshot> snapshots = new EList<>();
   private final int statsSnapshotDistanceInMinutes;
+  private final MyStatsProvider myStatsProvider = this.new MyStatsProvider();
 
   public StatsProvider(int statsSnapshotDistanceInMinutes) {
     this.statsSnapshotDistanceInMinutes = statsSnapshotDistanceInMinutes;
@@ -68,7 +69,7 @@ public class StatsProvider {
   }
 
   public IStatsProvider getPublicStats() {
-    return null;
+    return this.myStatsProvider;
   }
 
   public void init() {

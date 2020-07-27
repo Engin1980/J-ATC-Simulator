@@ -5,14 +5,8 @@ import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.exceptions.EXmlException;
 import eng.eXmlSerialization.XmlException;
 import eng.eXmlSerialization.XmlSerializer;
-import eng.eXmlSerialization.XmlSettings;
 import eng.eXmlSerialization.serializers.AttributeSerializer;
-import eng.eXmlSerialization.serializers.implemented.java_awt.AwtFontElementSerializer;
-import eng.eXmlSerialization.serializers.implemented.java_awt.HexToAwtColorAttributeSerializer;
-import eng.jAtcSim.abstractRadar.parsing.RadarColorAttributeSerializer;
-import eng.jAtcSim.abstractRadar.parsing.RadarFontElementSerializer;
 import eng.jAtcSim.abstractRadar.settings.RadarStyleSettings;
-import eng.jAtcSim.frmPacks.shared.FlightStripSettings;
 import eng.jAtcSim.xmlLoading.XmlSerialization;
 import eng.jAtcSim.xmlLoading.XmlSerializationFactory;
 

@@ -136,7 +136,7 @@
     </xs:attribute>
     <xs:attribute name="heading" type="sh:heading" use="optional"/>
     <xs:attribute name="otherAirport" type="sh:coordinateAsDouble" use="optional"/>
-    <xs:attribute name="planeType" type="xs:string" use="optional"/>
+    <xs:attribute name="planeType" type="xs:string" use="required"/>
     <xs:attribute name="follows" type="xs:string" use="optional"/>
   </xs:complexType>
 

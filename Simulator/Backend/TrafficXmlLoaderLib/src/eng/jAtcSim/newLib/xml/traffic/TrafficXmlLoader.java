@@ -14,7 +14,7 @@ public class TrafficXmlLoader {
       doc = XDocument.load(fileName);
       ret = eng.jAtcSim.newLib.xml.traffic.internal.TrafficXmlLoader.load(doc.getRoot());
     } catch (Exception ex) {
-      throw new XmlLoadException(sf("Failed to load traffic from '{0}'.", fileName));
+      throw new XmlLoadException(sf("Failed to load traffic from '%s'.", fileName), ex);
     }
 
     return ret;

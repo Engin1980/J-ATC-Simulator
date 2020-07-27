@@ -38,6 +38,7 @@ public interface IAirplaneInfo {
 
   int ias();
 
+  @Deprecated // used getArriDep() flag instead
   boolean isDeparture();
 
   boolean isEmergency();
@@ -58,7 +59,7 @@ public interface IAirplaneInfo {
 
   int targetHeading();
 
-  double targetSpeed();
+  int targetSpeed();
 
   double tas();
 

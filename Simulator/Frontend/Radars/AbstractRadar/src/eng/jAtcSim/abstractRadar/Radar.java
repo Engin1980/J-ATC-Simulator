@@ -865,7 +865,7 @@ public class Radar {
     //TODO rewrite using my list?
     RadarStyleSettings.TextSettings dt = styleSettings.time;
     List<String> lst = new ArrayList<>(1);
-    lst.add(simulation.getNow().toString());
+    lst.add(simulation.getNow().toTimeString());
     tl.drawTextBlock(lst, TextBlockLocation.topLeft, dt.getFont(), dt.getColor());
   }
 
