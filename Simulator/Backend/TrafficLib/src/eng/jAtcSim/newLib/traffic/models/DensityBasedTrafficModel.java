@@ -114,9 +114,9 @@ public class DensityBasedTrafficModel implements ITrafficModel {
       IReadOnlyList<MovementTemplate> tmp;
       HourBlockMovements hbm = perHourMovements[i];
       tmp = generateMovementsForHour(hbm.departures, hbm.generalAviationProbability, MovementTemplate.eKind.departure, i);
-      ret.add(tmp);
+      ret.addMany(tmp);
       tmp = generateMovementsForHour(hbm.arrivals, hbm.generalAviationProbability, MovementTemplate.eKind.arrival, i);
-      ret.add(tmp);
+      ret.addMany(tmp);
     }
 
     return ret;

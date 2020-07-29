@@ -158,7 +158,7 @@ public class BorderXmlLoader implements IXmlLoader<Border> {
     BorderPoint point = BorderPoint.create(pointCoordinate);
     IList<BorderPoint> tmp = generateArcPoints(point, coord, true, point);
     ret.add(point);
-    ret.add(tmp);
+    ret.addMany(tmp);
     return ret;
   }
 }

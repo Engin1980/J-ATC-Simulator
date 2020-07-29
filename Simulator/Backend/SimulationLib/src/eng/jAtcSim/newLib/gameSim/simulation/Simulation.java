@@ -296,6 +296,9 @@ public class Simulation {
     // process system messages
     this.ioModule.elapseSecond();
 
+    // traffic stuff
+    this.trafficModule.elapseSecond();
+
     // airplanes stuff
     this.airplanesModule.elapseSecond();
 

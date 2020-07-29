@@ -66,7 +66,7 @@ public class AirplanesModule extends SimulationModule {
   }
 
   public void addNewPreparedPlanes(IList<AirplaneTemplate> newTemplates) {
-    this.planesPrepared.add(newTemplates);
+    this.planesPrepared.addMany(newTemplates);
   }
 
   public void deletePlane(Squawk squawk) {

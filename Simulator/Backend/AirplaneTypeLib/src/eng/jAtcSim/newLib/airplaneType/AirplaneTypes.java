@@ -9,8 +9,8 @@ public class AirplaneTypes {
 
   public static AirplaneTypes create(IList<AirplaneType> types) {
     AirplaneTypes ret = new AirplaneTypes();
-    ret.inner.add(types);
-    ret.typeNamesOnly.add(types.select(q -> q.name));
+    ret.inner.addMany(types);
+    ret.typeNamesOnly.addMany(types.select(q -> q.name));
     return ret;
   }
 

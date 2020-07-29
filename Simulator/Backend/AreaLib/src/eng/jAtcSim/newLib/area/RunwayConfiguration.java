@@ -149,8 +149,8 @@ public class RunwayConfiguration {
     IList<ISet<ActiveRunwayThreshold>> ret = new EList<>();
 
     IList<ActiveRunway> rwys = new EDistinctList<>(EDistinctList.Behavior.skip);
-    rwys.add(this.arrivals.select(q -> q.getThreshold().getParent()).distinct());
-    rwys.add(this.departures.select(q -> q.getThreshold().getParent()).distinct());
+    rwys.addMany(this.arrivals.select(q -> q.getThreshold().getParent()).distinct());
+    rwys.addMany(this.departures.select(q -> q.getThreshold().getParent()).distinct());
     IList<ISet<ActiveRunway>> crossedRwys = new EList<>();
     while (rwys.isEmpty() == false) {
       ISet<ActiveRunway> set = new ESet<>();
@@ -160,7 +160,7 @@ public class RunwayConfiguration {
       set.add(
           rwys.where(q -> isIntersectionBetweenRunways(r, q))
       );
-      rwys.tryRemove(set);
+      rwys.tryRemoveMany(set);
       crossedRwys.add(set);
     }
 

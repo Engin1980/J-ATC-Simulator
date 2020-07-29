@@ -19,8 +19,8 @@ public class Airport extends Parentable<Area> {
       IList<RunwayThresholdConfiguration> arrivals) {
     //TODO this must be called after binding
     IList<ActiveRunway> rwys = new EDistinctList<>(EDistinctList.Behavior.skip);
-    rwys.add(arrivals.select(q -> q.getThreshold().getParent()).distinct());
-    rwys.add(departures.select(q -> q.getThreshold().getParent()).distinct());
+    rwys.addMany(arrivals.select(q -> q.getThreshold().getParent()).distinct());
+    rwys.addMany(departures.select(q -> q.getThreshold().getParent()).distinct());
 
     // check if all categories are applied
     for (char i = 'A'; i <= 'D'; i++) {

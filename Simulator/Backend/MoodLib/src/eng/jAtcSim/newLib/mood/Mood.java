@@ -94,9 +94,9 @@ public class Mood {
       depEvals = new EList<>();
     sharedEvals = evaluateShared();
     IList<MoodExperienceResult> tmp = new EList<>();
-    tmp.add(arrEvals);
-    tmp.add(depEvals);
-    tmp.add(sharedEvals);
+    tmp.addMany(arrEvals);
+    tmp.addMany(depEvals);
+    tmp.addMany(sharedEvals);
 
     if (delayMinutesPlusMinus != 0) {
       tmp.add(new MoodExperienceResult(null,

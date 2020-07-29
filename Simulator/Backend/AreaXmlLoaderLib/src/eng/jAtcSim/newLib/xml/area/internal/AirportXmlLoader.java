@@ -22,10 +22,10 @@ class AirportXmlLoader extends XmlLoader<Airport> {
   private static IReadOnlyList<XElement> extractRoutes(XElement source, String lookForElementName) {
     IList<XElement> ret = new EList<>();
 
-    ret.add(source.getChildren(lookForElementName));
+    ret.addMany(source.getChildren(lookForElementName));
 
     IReadOnlyList<XElement> groups = source.getChildren("group");
-    groups.forEach(q -> ret.add(extractRoutes(q, lookForElementName)));
+    groups.forEach(q -> ret.addMany(extractRoutes(q, lookForElementName)));
 
     return ret;
   }

@@ -163,7 +163,7 @@ public class AfterCommandList {
         return ret;
       };
     tmp.retain(prd);
-    lst.remove(tmp);
+    lst.removeMany(tmp);
   }
 
   private static boolean hasProceedDirectToNavaidAsConseqent(IList<AFItem> items, Navaid navaid) {
@@ -270,7 +270,7 @@ public class AfterCommandList {
         return ret;
       };
     tmp.retain(prd);
-    this.ex.remove(tmp);
+    this.ex.removeMany(tmp);
   }
 
   public void clearChangeSpeedClass(int referenceSpeed, boolean isArrival, Type type) {

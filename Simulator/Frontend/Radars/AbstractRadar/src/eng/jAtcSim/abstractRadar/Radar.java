@@ -139,7 +139,7 @@ public class Radar {
 
   public void setDrawnApproaches(Iterable<Approach> drawnApproaches) {
     this.drawnApproaches.clear();
-    this.drawnApproaches.add(drawnApproaches);
+    this.drawnApproaches.addMany(drawnApproaches);
   }
 
   public IReadOnlyList<DARoute> getDrawnRoutes() {
@@ -148,7 +148,7 @@ public class Radar {
 
   public void setDrawnRoutes(Iterable<DARoute> drawnRoutes) {
     this.drawnRoutes.clear();
-    this.drawnRoutes.add(drawnRoutes);
+    this.drawnRoutes.addMany(drawnRoutes);
   }
 
   public EventSimple<Radar> getGotFocusEvent() {
@@ -235,7 +235,7 @@ public class Radar {
             .select(q -> q.getThreshold().tryGetHighestApproachExceptVisuals());
 
     approachesToDraw.remove(q -> q == null);
-    this.drawnApproaches.add(approachesToDraw);
+    this.drawnApproaches.addMany(approachesToDraw);
   }
 
   private void buildDrawnRoutesList() {
@@ -243,11 +243,11 @@ public class Radar {
     RunwayConfiguration rc = simulation.getRunwayConfigurationInUse();
     rc.getArrivals()
         .where(q -> q.isShowRoutes())
-        .forEach(q -> this.drawnRoutes.add(
+        .forEach(q -> this.drawnRoutes.addMany(
             q.getThreshold().getRoutes().where(p -> p.getType() != DARouteType.sid)));
     rc.getDepartures()
         .where(q -> q.isShowRoutes())
-        .forEach(q -> this.drawnRoutes.add(
+        .forEach(q -> this.drawnRoutes.addMany(
             q.getThreshold().getRoutes().where(p -> p.getType() == DARouteType.sid)));
   }
 

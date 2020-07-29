@@ -134,7 +134,7 @@ public class FrmMain {
     esb.appendItems(cmds, " " );
     txtCmd.setText(esb.toString());
 
-    ProcessBuilder builder = new ProcessBuilder(cmds.toList());
+    ProcessBuilder builder = new ProcessBuilder(cmds.toJavaList());
     builder.redirectErrorStream(true);
     final Process process;
     try {

@@ -140,8 +140,8 @@ public class PlaneParser implements IPlaneParser, IWithShortcuts<String>, IWithH
     else {
       IList<String> tmp = TextParsing.tokenize(exp);
       ret = new EList<>();
-      ret.add(tmp);
-      ret.add(tokens);
+      ret.addMany(tmp);
+      ret.addMany(tokens);
       ret.removeAt(tmp.size());
     }
 

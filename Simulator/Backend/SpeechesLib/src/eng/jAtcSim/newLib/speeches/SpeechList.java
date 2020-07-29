@@ -12,6 +12,7 @@ public class SpeechList<T extends ISpeech> extends EList<T> implements IMessageC
   public SpeechList() {
   }
 
+  @SafeVarargs
   public SpeechList(T... speeches) {
     super(speeches);
     if (this.isAny(q -> q == null))
@@ -31,21 +32,21 @@ public class SpeechList<T extends ISpeech> extends EList<T> implements IMessageC
   }
 
   @Override
-  public void add(Iterable<? extends T> items) {
+  public void addMany(Iterable<? extends T> items) {
     for (T item : items) {
       if (item == null)
         throw new NullArgumentException("Some item in items is null.");
     }
-    super.add(items);
+    super.addMany(items);
   }
 
   @Override
-  public void add(T[] items) {
+  public void addMany(T[] items) {
     for (T item : items) {
       if (item == null)
         throw new NullArgumentException("Some item in items is null.");
     }
-    super.add(items);
+    super.addMany(items);
   }
 
   public SpeechList<T> clone() {
@@ -53,7 +54,7 @@ public class SpeechList<T extends ISpeech> extends EList<T> implements IMessageC
     return ret;
   }
 
-  public boolean containsType(Class type) {
+  public boolean containsType(Class<?> type) {
     for (ISpeech speech : this) {
       if (speech.getClass().equals(type))
         return true;

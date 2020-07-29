@@ -17,7 +17,7 @@ public class XmlMappingDictinary<T> {
     IList<T> ret = new EList<>();
     for (String pt : pts) {
       IList<T> tmp = getInner(pt);
-      ret.add(tmp);
+      ret.addMany(tmp);
     }
     return ret;
   }

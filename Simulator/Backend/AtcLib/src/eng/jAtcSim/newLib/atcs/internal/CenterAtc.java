@@ -63,8 +63,8 @@ public class CenterAtc extends ComputerAtc {
           throw new EApplicationException("Failed to evaluate " + plane.getCallsign() + ".", ex);
         }
       }
-      middleArrivals.remove(tmp);
-      closeArrivals.add(tmp);
+      middleArrivals.removeMany(tmp);
+      closeArrivals.addMany(tmp);
       tmp.clear();
 
       for (IAirplane plane : farArrivals) {
@@ -83,8 +83,8 @@ public class CenterAtc extends ComputerAtc {
           tmp.add(plane);
         }
       }
-      farArrivals.remove(tmp);
-      middleArrivals.add(tmp);
+      farArrivals.removeMany(tmp);
+      middleArrivals.addMany(tmp);
       tmp.clear();
     }
   }

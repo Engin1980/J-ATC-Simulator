@@ -30,8 +30,8 @@ public class TrafficProvider {
     for (Integer dayKey : movementsForDay.getKeys()) {
       if (dayKey > untilTime.getDays()) continue;
       IReadOnlyList<MovementTemplate> tmp = movementsForDay.get(dayKey).where(q->q.getAppearanceTime().isBeforeOrEq(untilTime.getTime()));
-      ret.add(tmp);
-      movementsForDay.get(dayKey).remove(tmp);
+      ret.addMany(tmp);
+      movementsForDay.get(dayKey).removeMany(tmp);
     }
 
     // delete empty days

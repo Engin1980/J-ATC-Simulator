@@ -70,7 +70,7 @@ public enum AirplaneState {
   public static AirplaneState[] valuesExcept(AirplaneState... exceptions) {
     IList<AirplaneState> ret = new EList<>(AirplaneState.values());
     IList<AirplaneState> exs = new EList<>(exceptions);
-    ret.remove(exs);
+    ret.removeMany(exs);
     return ret.toArray(AirplaneState.class);
   }
 

@@ -439,7 +439,7 @@ public class SwingCanvas implements ICanvas<JComponent> {
       if (location.isBottom()) tmp.reverse(); // to correct printing order
       adjustLineRelativePosition(tmp, location, width);
       globalY = adjustLineAbsolutePosition(tmp, globalY, lineStep);
-      ret.add(tmp);
+      ret.addMany(tmp);
       globalY += lineMid;
     }
 
