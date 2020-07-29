@@ -60,7 +60,7 @@ public class DARoute extends Route {
   }
 
   public int getMaxMrvaAltitude() {
-    int ret = maxMrvaAltitude == null ? 0 : maxMrvaAltitude * 100;
+    int ret = maxMrvaAltitude == null ? 0 : maxMrvaAltitude;
     return ret;
   }
 
