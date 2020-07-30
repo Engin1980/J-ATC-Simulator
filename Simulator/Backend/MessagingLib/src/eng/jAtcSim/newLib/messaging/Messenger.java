@@ -27,7 +27,7 @@ public class Messenger {
   public void registerListener(Participant listener, Participant messageTarget) {
     EAssert.isNotNull(listener);
     EAssert.isNotNull(messageTarget);
-    if (listeners.isAny(q -> q.listener == listener))
+    if (listeners.isAny(q -> q.listener.equals(listener)))
       throw new EApplicationException("Listener " + listener.toString() + " already registered.");
 
     ListenerInfo li = new ListenerInfo(listener, messageTarget);
@@ -36,14 +36,14 @@ public class Messenger {
 
   public void unregisterListener(Participant listener) {
     EAssert.isNotNull(listener);
-    ListenerInfo li = listeners.getFirst(q -> q.listener == listener);
+    ListenerInfo li = listeners.getFirst(q -> q.listener.equals(listener));
     listeners.remove(li);
   }
 
   public void send(Message msg) {
     synchronized (this) {
       listeners
-          .where(q -> q.messageTarget == msg.getTarget())
+          .where(q -> q.messageTarget.equals(msg.getTarget()))
           .forEach(q -> q.queue.add(msg));
 //      recorder.recordMessage(MessengerRecorder.eAction.ADD, msg);
     }
