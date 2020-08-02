@@ -35,7 +35,7 @@ public class SystemMessagesModule extends SimulationModule {
   }
 
   public void init() {
-    Context.getMessaging().getMessenger().registerListener(
+    Context.getMessaging().getMessenger().registerCustomListener(
         Participant.createSystem(),
         Participant.createAtc(userAtcId)
     );

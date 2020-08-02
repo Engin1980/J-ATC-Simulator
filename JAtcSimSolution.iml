@@ -5,10 +5,10 @@
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Radar/JAtcSimRadarBase/src" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/Tools/JAtcImagesToVideoConverter/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/JAtcSimDraw" />
       <excludeFolder url="file://$MODULE_DIR$/JAtcSimXml" />
       <excludeFolder url="file://$MODULE_DIR$/Simulator/temp" />
+      <excludeFolder url="file://$MODULE_DIR$/Tools/JAtcImagesToVideoConverter" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

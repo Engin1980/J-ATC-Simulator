@@ -5,49 +5,27 @@ import eng.eSystem.collections.IList;
 import eng.eSystem.exceptions.EApplicationException;
 import eng.eSystem.validation.EAssert;
 
+import static eng.eSystem.utilites.FunctionShortcuts.sf;
+
 public class Messenger {
 
   public static class ListenerInfo {
-    public final Participant listener;
+    public final Object key;
     public final Participant messageTarget;
     public final IList<Message> queue;
 
-    public ListenerInfo(Participant listener, Participant messageTarget) {
-      this.listener = listener;
+    public ListenerInfo(Object key, Participant messageTarget) {
+      this.key = key;
       this.messageTarget = messageTarget;
       this.queue = new EList<>();
     }
   }
+
   //TODO recorder reimplementation
 //  @XmlIgnore
 //  private MessengerRecorder recorder = new MessengerRecorder("Messenger log", "messenger.log");
   public static final Participant SYSTEM = Participant.createSystem();
   private IList<ListenerInfo> listeners = new EList<>();
-
-  public void registerListener(Participant listener, Participant messageTarget) {
-    EAssert.isNotNull(listener);
-    EAssert.isNotNull(messageTarget);
-    if (listeners.isAny(q -> q.listener.equals(listener)))
-      throw new EApplicationException("Listener " + listener.toString() + " already registered.");
-
-    ListenerInfo li = new ListenerInfo(listener, messageTarget);
-    this.listeners.add(li);
-  }
-
-  public void unregisterListener(Participant listener) {
-    EAssert.isNotNull(listener);
-    ListenerInfo li = listeners.getFirst(q -> q.listener.equals(listener));
-    listeners.remove(li);
-  }
-
-  public void send(Message msg) {
-    synchronized (this) {
-      listeners
-          .where(q -> q.messageTarget.equals(msg.getTarget()))
-          .forEach(q -> q.queue.add(msg));
-//      recorder.recordMessage(MessengerRecorder.eAction.ADD, msg);
-    }
-  }
 
   public IList<Message> getMessagesByListener(Participant listener, boolean deleteRetrieved) {
     ListenerInfo li;
@@ -55,8 +33,8 @@ public class Messenger {
 
     synchronized (this) {
       try {
-        li = listeners.getFirst(q -> q.listener.equals(listener));
-      } catch (Exception ex){
+        li = listeners.getFirst(q -> q.key.equals(listener));
+      } catch (Exception ex) {
         throw new EApplicationException("Listener " + listener.toString() + " has not been registered.");
       }
       ret = new EList(li.queue);
@@ -68,5 +46,41 @@ public class Messenger {
 
     return ret;
 
+  }
+
+  public void registerCustomListener(Object key, Participant messageTarget) {
+    EAssert.Argument.isNotNull(key, "key");
+    EAssert.Argument.isNotNull(messageTarget, "messageTarget");
+    if (listeners.isAny(q -> q.key.equals(key)))
+      throw new EApplicationException("Listener " + key + " already registered.");
+
+    ListenerInfo li = new ListenerInfo(key, messageTarget);
+    this.listeners.add(li);
+  }
+
+  public void registerListener(Participant listener) {
+    registerCustomListener(listener, listener);
+  }
+
+  public void send(Message msg) {
+    synchronized (this) {
+      listeners
+          .where(q -> q.messageTarget.equals(msg.getTarget()))
+          .forEach(q -> q.queue.add(msg));
+//      recorder.recordMessage(MessengerRecorder.eAction.ADD, msg);
+    }
+  }
+
+  public void unregisterCustomListener(Object key) {
+    EAssert.Argument.isNotNull(key, "key");
+    ListenerInfo li = listeners.tryGetFirst(q -> q.key.equals(key));
+    if (li == null)
+      throw new EApplicationException(sf("There is no listener object '%s'.", key));
+
+    listeners.remove(li);
+  }
+
+  public void unregisterListener(Participant listener) {
+    unregisterCustomListener(listener);
   }
 }

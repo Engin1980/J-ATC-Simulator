@@ -19,7 +19,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.text.Collator;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -182,7 +181,7 @@ public class Program {
     if (m.find()) {
       String codes = m.group(1).trim();
       String[] tmp = codes.split(" ");
-      airline.getCodes().add(tmp);
+      airline.getCodes().addMany(tmp);
     }
 
     final String typeRegex = "View production.+?<b>(.+?)<\\/b>.+?<b>(.*?)<\\/b>";
@@ -233,7 +232,7 @@ public class Program {
       char c = (char) i;
       String s = sf(base, c);
       IList<AirlineInfo> tmp = downloadAirlinesByLetter(s);
-      lst.add(tmp);
+      lst.addMany(tmp);
 
       serializeToDocument(ser, lst, getAirlinesListFile().toString());
     }
@@ -269,7 +268,7 @@ public class Program {
     String nextPageUrlPart = nextPageUrl.substring(36);
     if (cnt.contains(nextPageUrlPart)) {
       IList<AirlineInfo> tmp = downloadAirlinesByLetter(nextPageUrl);
-      ret.add(tmp);
+      ret.addMany(tmp);
     }
 
     return ret;
@@ -401,7 +400,7 @@ public class Program {
         getAirlinesListFile().toString(),
         EList.class);
 
-    lst.forEach(q -> dst.add(q.getFleet().getKeys()));
+    lst.forEach(q -> dst.addMany(q.getFleet().getKeys()));
 
     dst.sort(q -> q);
     for (String s : dst) {

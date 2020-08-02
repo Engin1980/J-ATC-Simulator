@@ -60,9 +60,7 @@ public abstract class ComputerAtc extends Atc {
   @Override
   public void init() {
     Context.getMessaging().getMessenger().registerListener(
-        Participant.createAtc(this.getAtcId()),
-        Participant.createAtc(this.getAtcId())
-    );
+        Participant.createAtc(this.getAtcId()));
   }
 
   @Override
