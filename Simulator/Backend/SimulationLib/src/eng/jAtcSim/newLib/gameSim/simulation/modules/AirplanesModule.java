@@ -20,6 +20,7 @@ import eng.jAtcSim.newLib.area.routes.DARoute;
 import eng.jAtcSim.newLib.gameSim.IAirplaneInfo;
 import eng.jAtcSim.newLib.gameSim.contextLocal.Context;
 import eng.jAtcSim.newLib.gameSim.simulation.IScheduledMovement;
+import eng.jAtcSim.newLib.gameSim.simulation.ScheduledMovement;
 import eng.jAtcSim.newLib.gameSim.simulation.Simulation;
 import eng.jAtcSim.newLib.gameSim.simulation.controllers.AirproxController;
 import eng.jAtcSim.newLib.gameSim.simulation.controllers.EmergencyAppearanceController;
@@ -40,6 +41,8 @@ import eng.jAtcSim.newLib.shared.enums.DepartureArrival;
 import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 import eng.jAtcSim.newLib.stats.AnalysedPlanes;
 import eng.jAtcSim.newLib.stats.FinishedPlaneStats;
+
+import java.time.chrono.IsoChronology;
 
 public class AirplanesModule extends SimulationModule {
   private final AirproxController airproxController;
@@ -199,9 +202,9 @@ public class AirplanesModule extends SimulationModule {
   }
 
   public IReadOnlyList<IScheduledMovement> getScheduledMovements() {
-    ContextManager.getContext(IAppAcc.class).getAppLog().write(ApplicationLog.eType.info,
-        "TODO: AirplaneModules.getScheduledMovements not implemented.");
-    return new EList<>();
+    //TODO do in some better way let not the object is always created for every time
+    IReadOnlyList<IScheduledMovement> ret = this.planesPrepared.select(q->new ScheduledMovement(q));
+    return ret;
   }
 
   public void init() {

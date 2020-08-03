@@ -18,4 +18,5 @@ module JAtcSim.Modules.Backend.SimulationLib {
   requires JAtcSim.Modules.Backend.SpeechesLib;
   exports eng.jAtcSim.newLib.gameSim;
   exports eng.jAtcSim.newLib.gameSim.game.startupInfos;
+  exports eng.jAtcSim.newLib.gameSim.simulation;
 }
