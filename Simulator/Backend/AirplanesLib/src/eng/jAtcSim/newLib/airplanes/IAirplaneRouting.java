@@ -28,12 +28,5 @@ public interface IAirplaneRouting {
 
   Coordinate tryGetTargetCoordinate();
 
-  /*
-if (targetCoordinate == null
-      && parent.getBehaviorModule().is(eng.jAtcSim.newLib.area.airplanes.behaviors.HoldBehavior.class)) {
-    eng.jAtcSim.newLib.area.airplanes.behaviors.HoldBehavior hb = parent.getBehaviorModule().getAs(eng.jAtcSim.newLib.area.airplanes.behaviors.HoldBehavior.class);
-    targetCoordinate = hb.navaid.getCoordinate();
-  }
- */
   Coordinate tryGetTargetOrHoldCoordinate();
 }

@@ -47,7 +47,7 @@ public class FlightDataRecorder extends AirplaneRecorder {
     ).append(SEPARATOR);
 
     // alt
-    sb.appendFormat(" A:%7.0f (%5.0f) => %7d ",
+    sb.appendFormat(" A:%7d (%5.0f) => %7d ",
         altitude,
         verticalSpeed,
         targetAltitude)

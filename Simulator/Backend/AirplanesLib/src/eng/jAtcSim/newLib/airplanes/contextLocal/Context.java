@@ -13,8 +13,16 @@ public class Context {
     return ContextManager.getContext(IAirplaneAcc.class);
   }
 
+  public static IAppAcc getApp() {
+    return ContextManager.getContext(IAppAcc.class);
+  }
+
   public static IAreaAcc getArea() {
     return ContextManager.getContext(IAreaAcc.class);
+  }
+
+  public static IMessagingAcc getMessaging() {
+    return ContextManager.getContext(IMessagingAcc.class);
   }
 
   public static ISharedAcc getShared() {
@@ -24,10 +32,4 @@ public class Context {
   public static IWeatherAcc getWeather() {
     return ContextManager.getContext(IWeatherAcc.class);
   }
-
-  public static IAppAcc getApp(){
-    return ContextManager.getContext(IAppAcc.class);
-  }
-
-  public static IMessagingAcc getMessaging(){return ContextManager.getContext(IMessagingAcc.class);}
 }

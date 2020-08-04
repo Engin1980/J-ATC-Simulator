@@ -1,6 +1,7 @@
 package eng.jAtcSim.newLib.airplanes.modules.sha;
 
 import eng.eSystem.exceptions.EEnumValueUnsupportedException;
+import eng.eSystem.geo.Coordinate;
 import eng.eSystem.geo.Headings;
 import eng.eSystem.validation.EAssert;
 import eng.jAtcSim.newLib.airplaneType.AirplaneType;
@@ -10,7 +11,7 @@ import eng.jAtcSim.newLib.airplanes.internal.Airplane;
 import eng.jAtcSim.newLib.airplanes.modules.sha.navigators.HeadingNavigator;
 import eng.jAtcSim.newLib.airplanes.modules.sha.navigators.Navigator;
 import eng.jAtcSim.newLib.airplanes.modules.sha.navigators.NavigatorResult;
-import eng.jAtcSim.newLib.area.context.AreaAcc;
+import eng.jAtcSim.newLib.airplanes.modules.sha.navigators.ToCoordinateNavigator;
 import eng.jAtcSim.newLib.shared.Restriction;
 import eng.jAtcSim.newLib.shared.enums.LeftRight;
 
@@ -79,66 +80,15 @@ public class ShaModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
 
     return ret;
   }
-
+  private InertialValue altitude;
+  private HeadingInertialValue heading;
+  private double lastVerticalSpeed = 0;
   private Navigator navigator;
+  private InertialValue speed;
+  private RestrictableItem targetAltitude;
   private int targetHeading;
   private LeftRight targetHeadingTurn;
-  private HeadingInertialValue heading;
-  private InertialValue altitude;
-  private RestrictableItem targetAltitude;
-  private double lastVerticalSpeed = 0;
-  private InertialValue speed;
   private RestrictableItem targetSpeed;
-
-  public void clearTargetAltitudeRestriction() {
-    this.targetAltitude.clearRestriction();
-  }
-
-  public void clearTargetSpeedRestriction() {
-    this.targetSpeed.clearRestriction();
-  }
-
-  public int getAltitude() {
-    return (int) altitude.value;
-  }
-
-  public int getGS() {
-    return this.getTAS();
-  }
-
-  public int getHeading() {
-    return (int) Math.round(heading.value);
-  }
-
-  public int getSpeed() {
-    return (int) Math.round(speed.value);
-  }
-
-  public Restriction getSpeedRestriction() {
-    return this.targetSpeed.getRestriction();
-  }
-
-  public int getTAS() {
-    double m = 1 + this.getAltitude() / 100000d;
-    double ret = this.getSpeed() * m;
-    return (int) Math.round(ret);
-  }
-
-  public int getTargetAltitude() {
-    return targetAltitude.getTargetValue();
-  }
-
-  public int getTargetHeading() {
-    return targetHeading;
-  }
-
-  public int getTargetSpeed() {
-    return targetSpeed.getTargetValue();
-  }
-
-  public int getVerticalSpeed() {
-    return (int) Math.round(this.lastVerticalSpeed);
-  }
 
   public ShaModule(Airplane plane, int heading, int altitude, int speed, AirplaneType planeType) {
     super(plane);
@@ -166,25 +116,12 @@ public class ShaModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
         0d);
   }
 
-  public void setAltitudeRestriction(Restriction altitudeRestriction) {
-    this.targetAltitude.setRestriction(altitudeRestriction);
+  public void clearTargetAltitudeRestriction() {
+    this.targetAltitude.clearRestriction();
   }
 
-  public void setSpeedRestriction(Restriction speedRestriction) {
-    this.targetSpeed.setRestriction(speedRestriction);
-  }
-
-  public void setTargetAltitude(int altitude) {
-    this.targetAltitude.setTargetValue(altitude);
-  }
-
-  public void setTargetSpeed(int speed) {
-    this.targetSpeed.setTargetValue(speed);
-  }
-
-  public void setNavigator(Navigator navigator){
-    EAssert.Argument.isNotNull(navigator, "navigator");
-    this.navigator = navigator;
+  public void clearTargetSpeedRestriction() {
+    this.targetSpeed.clearRestriction();
   }
 
   @Override
@@ -219,7 +156,7 @@ public class ShaModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
       this.lastVerticalSpeed = 0;
 
     NavigatorResult nr = this.navigator.navigate(rdr);
-    if (nr != null){
+    if (nr != null) {
       this.targetHeading = nr.getHeading();
       this.targetHeadingTurn = nr.getTurn();
     }
@@ -230,23 +167,76 @@ public class ShaModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
     }
   }
 
-  private void adjustHeading() {
-    double diff = Headings.getDifference(heading.getValue(), targetHeading, true);
+  public int getAltitude() {
+    return (int) altitude.value;
+  }
 
-    LeftRight turn = targetHeadingTurn;
-    if (diff < 5)
-      turn = Navigator.getBetterDirectionToTurn(heading.getValue(), targetHeading);
+  public int getGS() {
+    return this.getTAS();
+  }
 
-    switch (turn){
-      case left:
-        this.heading.add(-diff);
-        break;
-      case right:
-        this.heading.add(diff);
-        break;
-      default:
-        throw new EEnumValueUnsupportedException(turn);
+  public int getHeading() {
+    return (int) Math.round(heading.value);
+  }
+
+  public int getSpeed() {
+    return (int) Math.round(speed.value);
+  }
+
+  public Restriction getSpeedRestriction() {
+    return this.targetSpeed.getRestriction();
+  }
+
+  public void setSpeedRestriction(Restriction speedRestriction) {
+    this.targetSpeed.setRestriction(speedRestriction);
+  }
+
+  public int getTAS() {
+    double m = 1 + this.getAltitude() / 100000d;
+    double ret = this.getSpeed() * m;
+    return (int) Math.round(ret);
+  }
+
+  public int getTargetAltitude() {
+    return targetAltitude.getTargetValue();
+  }
+
+  public void setTargetAltitude(int altitude) {
+    this.targetAltitude.setTargetValue(altitude);
+  }
+
+  public int getTargetHeading() {
+    return targetHeading;
+  }
+
+  public int getTargetSpeed() {
+    return targetSpeed.getTargetValue();
+  }
+
+  public void setTargetSpeed(int speed) {
+    this.targetSpeed.setTargetValue(speed);
+  }
+
+  public int getVerticalSpeed() {
+    return (int) Math.round(this.lastVerticalSpeed);
+  }
+
+  public void setAltitudeRestriction(Restriction altitudeRestriction) {
+    this.targetAltitude.setRestriction(altitudeRestriction);
+  }
+
+  public void setNavigator(Navigator navigator) {
+    EAssert.Argument.isNotNull(navigator, "navigator");
+    this.navigator = navigator;
+  }
+
+  public Coordinate tryGetTargetCoordinate() {
+    Coordinate ret = null;
+    if (this.navigator instanceof ToCoordinateNavigator) {
+      ToCoordinateNavigator toCoordinateNavigator = (ToCoordinateNavigator) this.navigator;
+      ret = toCoordinateNavigator.getTargetCoordinate();
     }
+    return ret;
   }
 
   private void adjustAltitude(ValueRequest altitudeRequest) {
@@ -261,55 +251,6 @@ public class ShaModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
         this.altitude.reset(airportAltitude);
       }
     }
-  }
-
-  private void adjustSpeed(ValueRequest speedRequest) {
-    this.speed.add(speedRequest.value);
-  }
-
-  private ValueRequest getSpeedRequest() {
-    ValueRequest ret;
-    double delta = targetSpeed.getTargetValue() - speed.getValue();
-    if (delta == 0) {
-      // no change required
-      ret = new ValueRequest();
-      ret.energy = 0;
-      ret.value = 0;
-    } else {
-      double incStep = rdr.getType().speedIncreaseRate;
-      double decStep = rdr.getType().speedDecreaseRate;
-      if (rdr.getState().isOnGround()) {
-        incStep *= GROUND_SPEED_CHANGE_MULTIPLIER;
-        decStep *= GROUND_SPEED_CHANGE_MULTIPLIER;
-      }
-      ret = getRequest(
-          this.speed.getValue(),
-          this.targetSpeed.getTargetValue(),
-          incStep, decStep);
-    }
-
-    return ret;
-  }
-
-  private ValueRequest getAltitudeRequest() {
-    ValueRequest ret;
-    // if on ground, nothing required
-    if (rdr.getState().isOnGround()){ // && altitude.getValue() == Acc.airport().getAltitude()) {
-      ret = new ValueRequest();
-      ret.energy = 0;
-      ret.value = 0;
-    } else {
-      double climbRateForAltitude = rdr.getType().getClimbRateForAltitude(this.altitude.getValue());
-      double descentRateForAltitude = rdr.getType().getDescendRateForAltitude(this.altitude.getValue());
-      descentRateForAltitude = adjustDescentRateByApproachStateIfRequired(descentRateForAltitude);
-      ret = getRequest(
-          this.altitude.getValue(),
-          this.targetAltitude.getTargetValue(),
-          climbRateForAltitude,
-          descentRateForAltitude);
-    }
-
-    return ret;
   }
 
   private double adjustDescentRateByApproachStateIfRequired(double descentRateForAltitude) {
@@ -339,6 +280,74 @@ public class ShaModule extends eng.jAtcSim.newLib.airplanes.modules.Module {
       ret = Math.min(descentRateForAltitude, restrictedDescentRate);
     } else
       ret = descentRateForAltitude;
+    return ret;
+  }
+
+  private void adjustHeading() {
+    double diff = Headings.getDifference(heading.getValue(), targetHeading, true);
+
+    LeftRight turn = targetHeadingTurn;
+    if (diff < 5)
+      turn = Navigator.getBetterDirectionToTurn(heading.getValue(), targetHeading);
+
+    switch (turn) {
+      case left:
+        this.heading.add(-diff);
+        break;
+      case right:
+        this.heading.add(diff);
+        break;
+      default:
+        throw new EEnumValueUnsupportedException(turn);
+    }
+  }
+
+  private void adjustSpeed(ValueRequest speedRequest) {
+    this.speed.add(speedRequest.value);
+  }
+
+  private ValueRequest getAltitudeRequest() {
+    ValueRequest ret;
+    // if on ground, nothing required
+    if (rdr.getState().isOnGround()) { // && altitude.getValue() == Acc.airport().getAltitude()) {
+      ret = new ValueRequest();
+      ret.energy = 0;
+      ret.value = 0;
+    } else {
+      double climbRateForAltitude = rdr.getType().getClimbRateForAltitude(this.altitude.getValue());
+      double descentRateForAltitude = rdr.getType().getDescendRateForAltitude(this.altitude.getValue());
+      descentRateForAltitude = adjustDescentRateByApproachStateIfRequired(descentRateForAltitude);
+      ret = getRequest(
+          this.altitude.getValue(),
+          this.targetAltitude.getTargetValue(),
+          climbRateForAltitude,
+          descentRateForAltitude);
+    }
+
+    return ret;
+  }
+
+  private ValueRequest getSpeedRequest() {
+    ValueRequest ret;
+    double delta = targetSpeed.getTargetValue() - speed.getValue();
+    if (delta == 0) {
+      // no change required
+      ret = new ValueRequest();
+      ret.energy = 0;
+      ret.value = 0;
+    } else {
+      double incStep = rdr.getType().speedIncreaseRate;
+      double decStep = rdr.getType().speedDecreaseRate;
+      if (rdr.getState().isOnGround()) {
+        incStep *= GROUND_SPEED_CHANGE_MULTIPLIER;
+        decStep *= GROUND_SPEED_CHANGE_MULTIPLIER;
+      }
+      ret = getRequest(
+          this.speed.getValue(),
+          this.targetSpeed.getTargetValue(),
+          incStep, decStep);
+    }
+
     return ret;
   }
 }

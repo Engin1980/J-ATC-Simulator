@@ -28,4 +28,9 @@ public class AtcId {
   public AtcType getType() {
     return type;
   }
+
+  @Override
+  public String toString() {
+    return name;
+  }
 }

@@ -10,8 +10,10 @@ public class AtcModule extends Module {
   private AtcId atcId;
   private int secondsWithoutRadarContact = 0;
 
-  public AtcModule(Airplane plane) {
+  public AtcModule(Airplane plane, AtcId initialAtcId) {
     super(plane);
+    EAssert.Argument.isNotNull(initialAtcId, "initialAtcId");
+    this.atcId = initialAtcId;
   }
 
   @Override

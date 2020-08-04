@@ -44,10 +44,6 @@ public class AirplaneList<T> extends EDistinctList<T> {
     return this.tryGetFirst(q->squawkSelector.getValue(q).equals(squawk));
   }
 
-  public T bubla(Squawk squawk) {
-    return this.tryGetFirst(q->squawkSelector.getValue(q).equals(squawk));
-  }
-
   public T tryGet(Callsign callsign) {
     return this.tryGetFirst(q->callsignSelector.getValue(q).equals(callsign));
   }

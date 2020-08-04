@@ -35,14 +35,10 @@ import eng.jAtcSim.newLib.shared.AtcId;
 import eng.jAtcSim.newLib.shared.Callsign;
 import eng.jAtcSim.newLib.shared.ContextManager;
 import eng.jAtcSim.newLib.shared.Squawk;
-import eng.jAtcSim.newLib.shared.context.IAppAcc;
 import eng.jAtcSim.newLib.shared.enums.AtcType;
 import eng.jAtcSim.newLib.shared.enums.DepartureArrival;
-import eng.jAtcSim.newLib.shared.logging.ApplicationLog;
 import eng.jAtcSim.newLib.stats.AnalysedPlanes;
 import eng.jAtcSim.newLib.stats.FinishedPlaneStats;
-
-import java.time.chrono.IsoChronology;
 
 public class AirplanesModule extends SimulationModule {
   private final AirproxController airproxController;
@@ -213,6 +209,8 @@ public class AirplanesModule extends SimulationModule {
 
     IMoodAcc moodContext = new MoodAcc(this.moodManager);
     ContextManager.setContext(IMoodAcc.class, moodContext);
+
+    this.airplanesController.init();
   }
 
   private void removeOldPlanes() {
@@ -254,7 +252,7 @@ public class AirplanesModule extends SimulationModule {
   }
 
   private void updatePlanes() {
-    airplanesController.elapseSecond();
+    airplanesController.updatePlanes();
   }
 
   private void generateEmergencyIfRequired() {

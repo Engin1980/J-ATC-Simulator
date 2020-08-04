@@ -154,12 +154,20 @@ public class Airplane {
 
     @Override
     public Coordinate tryGetTargetCoordinate() {
-      throw new ToDoException();
+      return Airplane.this.sha.tryGetTargetCoordinate();
     }
 
     @Override
     public Coordinate tryGetTargetOrHoldCoordinate() {
-      throw new ToDoException();
+      Coordinate ret = tryGetTargetCoordinate();
+      if (ret == null) {
+        if (Airplane.this.pilot instanceof HoldPilot) {
+          HoldPilot holdPilot = (HoldPilot) Airplane.this.pilot;
+          ret = holdPilot.navaid.getCoordinate();
+        }
+      }
+
+      return ret;
     }
   }
 
@@ -472,26 +480,27 @@ public class Airplane {
 
   private static final double secondFraction = 1 / 60d / 60d;
 
-  public static Airplane createArrival(ArrivalAirplaneTemplate template, Squawk sqwk) {
+  public static Airplane createArrival(ArrivalAirplaneTemplate template, Squawk sqwk, AtcId initialAtcId) {
     Airplane ret = new Airplane(
         template.getCallsign(), template.getCoordinate(), sqwk, template.getAirplaneType(),
         template.getHeading(), template.getAltitude(), template.getSpeed(), false,
-        template.getEntryPoint().getNavaid(), template.getExpectedExitTime(), template.getEntryDelay()
+        template.getEntryPoint().getNavaid(), template.getExpectedExitTime(), template.getEntryDelay(),
+        initialAtcId
     );
     return ret;
   }
 
-  public static Airplane createDeparture(DepartureAirplaneTemplate template, Squawk sqwk) {
+  public static Airplane createDeparture(DepartureAirplaneTemplate template, Squawk sqwk, AtcId initialAtcId) {
     Airplane ret = new Airplane(
         template.getCallsign(), Context.getArea().getAirport().getLocation(), sqwk, template.getAirplaneType(),
         0, Context.getArea().getAirport().getAltitude(), 0, true,
-        template.getExitPoint().getNavaid(), template.getExpectedExitTime(), template.getEntryDelay()
+        template.getExitPoint().getNavaid(), template.getExpectedExitTime(), template.getEntryDelay(),
+        initialAtcId
     );
     return ret;
   }
 
   private final AirplaneType airplaneType;
-  //  private final MrvaAirproxModule mrvaAirproxModule;
   private final AtcModule atcModule;
   private Coordinate coordinate;
   private final CockpitVoiceRecorder cvr;
@@ -504,14 +513,14 @@ public class Airplane {
   private final IAirplane rdr = new AirplaneImpl();
   private final RoutingModule routingModule;
   private final ShaModule sha;
-  //  private final Airplane4Display plane4Display = new Airplane4Display();
   private final Squawk sqwk;
   private AirplaneState state;
   private final IAirplaneWriter wrt = new AirplaneWriterImpl();
 
   private Airplane(Callsign callsign, Coordinate coordinate, Squawk sqwk, AirplaneType airplaneType,
                    int heading, int altitude, int speed, boolean isDeparture,
-                   Navaid entryExitPoint, EDayTimeStamp expectedExitTime, int entryDelay) {
+                   Navaid entryExitPoint, EDayTimeStamp expectedExitTime, int entryDelay,
+                   AtcId initialAtcId) {
 
 
     this.sqwk = sqwk;
@@ -520,8 +529,7 @@ public class Airplane {
 
     this.sha = new ShaModule(this, heading, altitude, speed, airplaneType);
     this.emergencyModule = new EmergencyModule();
-//    this.mrvaAirproxModule = new MrvaAirproxModule();
-    this.atcModule = new AtcModule(this);
+    this.atcModule = new AtcModule(this, initialAtcId);
     this.routingModule = new RoutingModule(this, entryExitPoint);
     if (isDeparture)
       this.divertModule = null;
@@ -533,6 +541,13 @@ public class Airplane {
     this.state = isDeparture ? AirplaneState.holdingPoint : AirplaneState.arrivingHigh;
     this.coordinate = coordinate;
     this.airplaneType = airplaneType;
+
+    if (isDeparture) {
+      this.pilot = new HoldingPointPilot(this);
+    }
+    else {
+      this.pilot = new ArrivalPilot(this);
+    }
   }
 
   public void elapseSecond() {
